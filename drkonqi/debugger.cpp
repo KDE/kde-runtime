@@ -103,7 +103,7 @@ void KrashDebugger :: slotSave()
     }
     else
     {
-      KMessageBox::sorry(this, i18n("Can't create a file to save backtrace to"));
+      KMessageBox::sorry(this, i18n("Cannot create a file in which to save the backtrace"));
     }
   }
   else
@@ -131,7 +131,7 @@ void KrashDebugger :: slotSave()
       }
       else
       {
-        KMessageBox::sorry(this, i18n("Can't open file %1 for writing").arg(filename));
+        KMessageBox::sorry(this, i18n("Cannot open file %1 for writing").arg(filename));
       }
     }
   }
