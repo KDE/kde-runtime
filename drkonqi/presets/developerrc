@@ -108,6 +108,7 @@ Enable=true
 Name=The application %progname (%appname), pid %pid, crashed and caused the signal %signum (%signame).
 Name[da]=Programmet %progname (%appname), pid %pid brød sammen og gav signalet %signum (%signame).
 Name[he]=היישום %progname )%appname(, זיהוי תהליך %pid, התרסק וגרם לאיתות %signum )%signame(.
+Name[hu]=A(z) %progname (%appname) alkalmazás (azonosító=%pid) lefagyott és %signum (%signame) szignált okozott.
 
 [WhatToDoHint]
 Enable=true
