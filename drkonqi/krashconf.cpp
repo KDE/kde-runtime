@@ -95,16 +95,16 @@ void KrashConfig :: readConfig()
   QString configname = config->readEntry("ConfigName",
                                          QString::fromLatin1("enduser"));
 
-  QString debuggername = config->readEntry("Debugger",
+  QString debuggername = config->readPathEntry("Debugger",
                                            QString::fromLatin1("gdb"));
 
   KConfig debuggers(QString::fromLatin1("debuggers/%1rc").arg(debuggername),
                     true, false, "appdata");
 
   debuggers.setGroup("General");
-  m_debugger = debuggers.readEntry("Exec");
-  m_debuggerBatch = debuggers.readEntry("ExecBatch");
-  m_tryExec = debuggers.readEntry("TryExec");
+  m_debugger = debuggers.readPathEntry("Exec");
+  m_debuggerBatch = debuggers.readPathEntry("ExecBatch");
+  m_tryExec = debuggers.readPathEntry("TryExec");
 
   KConfig preset(QString::fromLatin1("presets/%1rc").arg(configname),
                  true, false, "appdata");
