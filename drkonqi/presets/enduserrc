@@ -247,6 +247,7 @@ Comment[cs]=Aplikace je ukončena se signálem SIGABRT, když zjistí vnitřní 
 Comment[da]=Et program afslutter med et SIGABRT signal, når det finder en intern inkonsistens forårsaget af et problem i programmet.
 Comment[fi]=Sovellus lopettaa SIGABRT signaalilla, kun se huomaa sisäisen virheen joka on johtunut ohjelmistovirheestä.
 Comment[he]=.תינכותב גאב בקע תמרגנה תימינפ תומיאת-יא ההזמ אוהשכ SIGABRT תותיא םע םייתסמ םושיי
+Comment[nl]=Een programma eindigt met een SIGABRT-signaal wanneer het een interne inconsistensie detecteerd, veroorzaakt door een fout in het programma.
 Comment[sv]=Ett program avslutar sig självt med signalen SIGABRT när det upptäcker en intern motsägelse, vilket orsakas av ett fel i programmet.
 
 [8]
