@@ -110,6 +110,7 @@ ShowDebugButton=true
 [ErrorDescription]
 Enable=true
 Name=The application %progname (%appname), pid %pid, crashed and caused the signal %signum (%signame).
+Name[bs]=Aplikacija %progname (%appname), %pid je srušena sa signalom %signum (%signame).
 Name[da]=Programmet %progname (%appname), pid %pid brød sammen og gav signalet %signum (%signame).
 Name[es]=La aplicación %progname (%appname), con número de proceso %pid,  falló y provocó la señal %signum (%signame).
 Name[eu]=%progname (%appname), %pid pid zenbakiarekin aplikazioa erajo da eta %signum (%signame) seinale sortu du.
@@ -127,6 +128,7 @@ Name[af]=jy dalk wil hê aan regmaak jou program. neem 'n kyk na die terugsoekto
 Name[ara]=ربما تريد اصلاح المشكلة. الق نظرة على علامة التبويب backtrace
 Name[az]=Proqramınızdakı problemi həll etmək istəsəniz xəta ayıqlayıcı səkməsinə baxın.
 Name[bg]=Възможно е, вие да искате да оправите програмата. Прегледайте tab за грешки.
+Name[bs]=Možda želite popraviti vaš program. Pogledajteu u pozadinski tab.
 Name[cs]=Možná budete chtít opravit váš program. Klikněte na záložku ladění.
 Name[da]=Måske har du lyst til at reparere dit program. Kig på fejlsporingsmærket.
 Name[de]=Vielleicht möchten Sie das Programm reparieren lassen. Werfen Sie einen Blick auf die Karteikarte "Rückverfolgung".
