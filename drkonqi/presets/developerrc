@@ -1,5 +1,6 @@
 [General]
 Name=Developer
+Name[ca]=Desenvolupador
 Name[cs]=Vývojovář
 Name[da]=Udvikler
 Name[de]=Entwickler
@@ -25,6 +26,7 @@ Name[sr]=Progremer
 Name[ta]=உருவாகஂகி
 Name[tr]=Programcý
 Comment=Settings preferred for developers
+Comment[ca]=Arranjament preferit pels desenvolupadors
 Comment[da]=Indstilling foretrukket af udviklere
 Comment[de]=Bevorzugte Einstellungen für Entwickler
 Comment[eo]=Agordo destinita por programistoj
@@ -48,6 +50,7 @@ ShowDebugButton=true
 [ErrorDescription]
 Enable=true
 Name=The application %progname (%appname) crashed and caused the signal %signum (%signame).
+Name[ca]=El programa d'aplicació %progname (%appname) ha fallat i ha causat la senyal %signum (%signame).
 Name[cs]=Aplikace %progname (%appname) spadla a vyvolala signál %signum (%signame).
 Name[da]=Anvendelsen %progname (%appname) brød sammen og gav signalet %signum (%signame).
 Name[de]=Die Anwendung %progname (%appname) ist abgestürzt und hat das Signal %signum (%signame) veranlasst.
@@ -74,6 +77,7 @@ Name[tr]= %progname (%appname) uygulamasý çöktü ve %signum (%signame) sinyal
 [WhatToDoHint]
 Enable=true
 Name=You might want to fix you program. Take a look at the debugger tab.
+Name[ca]=Potser voldreu reparar el programa. Feu un cop d'ull a la pestanya del depurador.
 Name[cs]=Možná budete chtít opravit váš program. Klikněte na záložku lazení.
 Name[da]=Hvis du har lyst til at ordne programmet, så kig på aflusermærket.
 Name[de]=Vielleicht möchten Sie das Programm reparieren. Werfen Sie einen Blick auf die Karteikarte "Debugger".
@@ -99,6 +103,7 @@ Name[tr]=Programýnýzdaki sorunu çözmek isteyebilirsiniz. Hata ayýklayýcý 
 [4]
 Name=SIGILL
 Comment=Illegal instruction.
+Comment[ca]=Instrucció il·legal
 Comment[cs]=Ilegální instrukce.
 Comment[da]=Ulovlig instruktion
 Comment[de]=Ungültige Anweisung
@@ -128,6 +133,7 @@ Comment[tr]=Hatalý talimat.
 Name=SIGFPE
 Name[da]=SIGFRE
 Comment=Floating point exception.
+Comment[ca]=Excepció de coma flotant.
 Comment[cs]=Vyjímka v plovoucí čárce.
 Comment[da]=Flydende punkt undtagelse
 Comment[de]=Gleitkomma-Ausnahme
@@ -154,6 +160,7 @@ Comment[tr]=Seyyar nokta hatasý.
 [11]
 Name=SIGSEGV
 Comment=Invalid memory reference.
+Comment[ca]=Referència a memòria no vàlida.
 Comment[cs]=Neplatný odkaz do paměti.
 Comment[da]=Ugyldig hukommelsesreference
 Comment[de]=Ungültige Speicherzuweisung
@@ -179,6 +186,7 @@ Comment[tr]=Geçersiz hafýza referansý.
 
 [unknown]
 Name=Unknown
+Name[ca]=Desconegut
 Name[cs]=Neznámý
 Name[da]=Ukendt
 Name[de]=Unbekannt
@@ -204,6 +212,7 @@ Name[sr]=Nepoznati
 Name[ta]=ெதரியாத
 Name[tr]=knetmon
 Comment=Sorry, I don't know this signal.
+Comment[ca]=Ho sento, no conec aquesta senyal.
 Comment[cs]=Lituji, tento signál neznám.
 Comment[da]=Jeg kender desværre ikke dette signal.
 Comment[de]=Das Signal ist leider nicht bekannt.

@@ -1,5 +1,6 @@
 [General]
 Name=End user
+Name[ca]=Usuari final
 Name[cs]=Koncový uživatel
 Name[da]=Slutbruger
 Name[de]=Endbenutzer
@@ -25,6 +26,7 @@ Name[sr]=Krajnji korisnik
 Name[ta]=கீழஂதடஂடுபஂபயனரஂ
 Name[tr]=Son kullanýcý
 Comment=Settings preferred for end users
+Comment[ca]=Arranjament preferit pels usuaris finals
 Comment[da]=Indstilling foretrukket af brugere
 Comment[de]=Bevorzugte Einstellungen für Endbenutzer
 Comment[eo]=Agordo destinita por uzantoj
@@ -48,6 +50,7 @@ ShowDebugButton=false
 [ErrorDescription]
 Enable=true
 Name=The application %progname (%appname) crashed and caused the signal %signum (%signame).
+Name[ca]=El programa d'aplicació %progname (%appname) ha fallat i ha causat la senyal %signum (%signame).
 Name[cs]=Aplikace %progname (%appname) spadla a vyvolala signál %signum (%signame).
 Name[da]=Anvendelsen %progname (%appname) brød sammen og gav signalet %signum (%signame).
 Name[de]=Die Anwendung %progname (%appname) ist abgestürzt und hat das Signal %signum (%signame) veranlasst.
@@ -94,6 +97,7 @@ Name[ru]=Возможно вы хотите послать отчет об ош�
 Name[sl]=Morda boste avtorju želeli poslati poročilo o hrošču. Prosim, vključite čimveč podatkov, morda tudi izvirne dokumente. Če lahko kako ponovite napako, vključite tudi to. Kliknite gum "Poročaj o hrošču".
 Name[ta]=எழு஡ஂதாளருகஂகு பிைழ அறிகஂைகைய அனுபஂப நீஙஂகளஂ விருமஂபுவீரஂகளஂ. தயவுெசயஂதுமுடிநஂதவைர அைன஡ஂது தகவலஂகைளயுமஂ, மூல ஆவணஙஂகைள ேசரஂகஂகவுமஂ. ஏதாவது பிைழஇருநஂதாலஂ, இைதயுமஂ ேசரஂகஂகவுமஂ."Bug report" எனஂற ெபா஡ஂதாைன கஂளிகஂ ெசயஂயவுமஂ.
 Name[tr]=Yazara bir hata raporu göstermek isteyebilirsiniz. Lütfen mümkün olduðunca fazla bilgi verin ve varsa orijinal belgeleri ekleyin. Eðer bu hatayý tekrar ortaya çýkarabilmenin bir yolu varsa, bunu da belirtin. "Hata raporu
+ düðmesine týklayýnýz.
  düðmesine týklayýnýz.
  düðmesine týklayýnýz.
  düðmesine týklayýnýz.
@@ -192,6 +196,7 @@ Comment[tr]=Uygulamadaki bir hata nedeniyle, uygulamalar çok kez SIGSEGV sinyal
 
 [unknown]
 Name=Unknown
+Name[ca]=Desconegut
 Name[cs]=Neznámý
 Name[da]=Ukendt
 Name[de]=Unbekannt
@@ -217,6 +222,7 @@ Name[sr]=Nepoznati
 Name[ta]=ெதரியாத
 Name[tr]=knetmon
 Comment=Sorry, I don't know this signal.
+Comment[ca]=Ho sento, no conec aquesta senyal.
 Comment[cs]=Lituji, tento signál neznám.
 Comment[da]=Jeg kender desværre ikke dette signal.
 Comment[de]=Das Signal ist leider nicht bekannt.

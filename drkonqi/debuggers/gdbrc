@@ -1,5 +1,6 @@
 [General]
 Name=GNU Debugger
+Name[ca]=Depurador GNU
 Name[da]=GNU afluser
 Name[de]=GNU-Debugger
 Name[eo]=GNUa Erarserĉilo
@@ -21,6 +22,7 @@ Name[sl]=GNU-jevski razhroščevalnik
 Name[ta]=GNU பிைழ நீகஂகி
 Name[tr]=GNU Hata Ayýklayýcý
 Comment=Text based debugger from GNU in a konsole
+Comment[ca]=Depurador textual de GNU en una finestra konsole
 Comment[cs]=Textový ladicí GNU program pro konsoli
 Comment[da]=Tekstbaseret afluser fra GNU i en konsol
 Comment[de]=Text-Debugger von GNU in einer Konsole
