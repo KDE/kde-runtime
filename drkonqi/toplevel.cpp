@@ -1,7 +1,7 @@
 /*****************************************************************
  * drkonki - The KDE Crash Handler
  * 
- * $Id:$
+ * $Id$
  *
  * Copyright (C) 2000 Hans Petter Bieker <bieker@kde.org>
  *****************************************************************/
@@ -33,22 +33,22 @@ Toplevel :: Toplevel(int _signalnum, const QCString appname, QWidget *parent, co
   setCaption( i18n("Application error: %1").arg(signal) );
 
   QString str;
-  str = i18n("<b>Short description</b><br>"
-	     "The application \"%1\" just received the %2 signal (%3).<br>"
-	     "<b>What is this?</b><br>"
+  str = i18n("<b>Short description</b><br>\n"
+	     "The application \"%1\" just received the %2 signal (%3).<br>\n"
+	     "<b>What is this?</b><br>\n"
 	     "An application mostly receives the %4 due to a bug in "
 	     "the application. The application was asked to save its "
-	     "documents.<br>"
-	     "<b>What can I do?</b><br>"
+	     "documents.<br>\n"
+	     "<b>What can I do?</b><br>\n"
 	     "You might want to send a bug reaport to the author. Please "
 	     "include as much information as possible, maybe the original "
 	     "documents. If you have a way to reproduce the error, include "
-	     "this also. Click on the button \"Bug raport\".<br>"
-	     "<b>Application messages</b><br>"
+	     "this also. Click on the button \"Bug raport\".<br>\n"
+	     "<b>Application messages</b><br>\n"
 	     "The application might have provided more information about "
 	     "the problem, maybe where it occured and why. Click on "
 	     "\"More...\" for more informations."
-	     "<br><hr>"
+	     "<br><hr>\n"
 	     "<b>Hint:</b> You can customize this dialog in the control panel.")
     .arg(appname.isEmpty() ? i18n("unknown") : QFile::decodeName(appname))
     .arg(signal)
