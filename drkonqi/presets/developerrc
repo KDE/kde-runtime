@@ -180,6 +180,7 @@ Name[ta]=¿¢Ãø %progname (%appname), ±ñ %pid, ÓÈ¢óÐ %signum (%signame)
 Name[th]=แอพพลิเคชัน %progname (%appname) หมายเลขโปรเซส %pid ทำงานล้มเหลวโดยแจ้งสัญญาณหมายเลข %signum (%signame)
 Name[tr]=%progname (%appname), pid %pid sonlandırıldı ve %signum (%signame) sinyali oluşturdu.
 Name[uk]=Програма %progname (%appname), pid %pid, дала збій та викликала сигнал %signum (%signame).
+Name[uz]=Дастурнинг %progname (%appname), pid %pid, ишида хато рўй берди ва %signum (%signame) сигналига сабабчи бўлди.
 Name[ven]=Apulifikhesheni ya %progdzina (%appdzina) pid %pid yo tshinyadzhwa ya dovha ya vhanga luswayo %signum (%sigdzina).
 Name[vi]=Chương trình %progname (%appname), pid %pid crash và gây ra tín hiệu  %signum (%signame). 
 Name[xh]=Isicelo %progname (%appname), pid %pid, ilalhekile kwaye ibangele uphawu %signum (%signame).
