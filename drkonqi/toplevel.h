@@ -23,19 +23,20 @@ public:
   Toplevel(const KrashConfig *krash, QWidget *parent = 0, const char * name = 0);
   ~Toplevel();
 
-private:
+ private:
   // helper methods
   void expandString(QString &str) const;
   QString generateText() const;
 
-protected slots:
+ protected slots:
   void slotUser1();
+  void slotUser2(); 
 
  protected slots:
   void slotBacktraceSomeError();
   void slotBacktraceDone(const QString &);
 
-private:
+ private:
   const KrashConfig *m_krashconf;
   DrKBugReport *bugreport;
 };

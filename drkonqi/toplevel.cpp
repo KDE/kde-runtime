@@ -16,6 +16,7 @@
 #include <kstddirs.h>
 #include <kbugreport.h>
 #include <kmessagebox.h>
+#include <kprocess.h>
 
 #include "backtrace.h"
 #include "drbugreport.h"
@@ -27,13 +28,14 @@
 Toplevel :: Toplevel(const KrashConfig *krashconf, QWidget *parent, const char *name)
   : KDialogBase( Tabbed,
 		 krashconf->programName(),
-                 User1 | Ok,
+                 User2 | User1 | Ok,
                  Ok,
                  parent,
                  name,
                  true, // modal
                  true, // separator
-		 i18n("Bug report")
+		 i18n("Bug report"),
+		 i18n("Debugger")
 		 ),
     m_krashconf(krashconf), bugreport(0)
 {
@@ -49,12 +51,13 @@ Toplevel :: Toplevel(const KrashConfig *krashconf, QWidget *parent, const char *
 
   new QLabel( generateText(), page );
 
-  if (m_krashconf->showDebugger()) {
-    page = addHBoxPage(i18n("Debugger"));
+  if (m_krashconf->showBacktrace()) {
+    page = addHBoxPage(i18n("Backtrace"));
     new KrashDebugger(m_krashconf, page);
   }
 
   showButton( User1, m_krashconf->showBugReport() );
+  showButton( User2, m_krashconf->showDebugger() );
 
   connect(this, SIGNAL(okClicked()), SLOT(accept()));
 }
@@ -128,6 +131,24 @@ void Toplevel :: slotUser1()
   bugreport = 0;
 }
 
+void Toplevel :: slotUser2()
+{
+  QString str = m_krashconf->debugger();
+  expandString(str);
+
+#if 1
+  // FIXME: Replace by KRun??
+  KProcess proc;
+  QStringList list = QStringList::split(' ', str);
+  for ( QStringList::Iterator it = list.begin(); it != list.end(); ++it )
+    proc << *it;
+
+  proc.start(KProcess::DontCare);
+#else
+  KRun::run(str);
+#endif
+}
+
 void Toplevel :: slotBacktraceDone(const QString &str)
 {
   // Do not translate.. This will be included in the _MAIL_.
@@ -168,7 +189,9 @@ void Toplevel :: expandString(QString &str) const
       str.replace(pos, 8, m_krashconf->signalName());
     else if (str.mid(pos, 9) == QString::fromLatin1("%progname"))
       str.replace(pos, 9, m_krashconf->programName());
+    else if (str.mid(pos, 4) == QString::fromLatin1("%pid"))
+      str.replace(pos, 4, QString::number(m_krashconf->pid()));
 
-    pos -= 7; // the smallest keyword is 7
+    pos -= 4; // the smallest keyword is 4
   }
 }

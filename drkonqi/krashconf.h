@@ -20,10 +20,12 @@ class KrashConfig
   
   QString programName() const { return m_aboutData->programName(); };
   const char* appName() const { return m_aboutData->appName(); };
+  QString debugger() const;
   const KAboutData *aboutData() const { return m_aboutData; };
   int signalNumber() const { return m_signalnum; };
   int pid() const { return m_pid; };
-  bool showDebugger() const { return m_showdebugger; };
+  bool showBacktrace() const { return m_showbacktrace; };
+  bool showDebugger() const { return m_showdebugger && !m_debugger.isNull(); };
   bool showBugReport() const { return m_showbugreport; };
   QString signalName() const { return m_signalName; };
   QString signalText() const { return m_signalText; };
@@ -35,11 +37,14 @@ class KrashConfig
   int m_pid;
   int m_signalnum;
   bool m_showdebugger;
+  bool m_showbacktrace;
   bool m_showbugreport;
   QString m_signalName;
   QString m_signalText;
   QString m_whatToDoText;
   QString m_errorDescriptionText;
+
+  QString m_debugger;
 };
 
 #endif

@@ -4,6 +4,7 @@ Comment=Settings prefered for developers
 
 SignalDetails=true
 ShowBugReportButton=true
+ShowBacktraceButton=true
 ShowDebugButton=true
 
 [ErrorDescription]

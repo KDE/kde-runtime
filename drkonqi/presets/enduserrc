@@ -3,6 +3,7 @@ Name=End user
 Comment=Settings prefered for end users
 
 SignalDetails=true
+ShowBacktraceButton=false
 ShowBugReportButton=true
 
 [ErrorDescription]

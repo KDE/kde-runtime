@@ -1,0 +1,4 @@
+[General]
+Name=GNU Debugger
+Comment=Text based debugger from GNU in a konsole
+Exec=konsole -e gdb %appname %pid

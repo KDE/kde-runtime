@@ -18,6 +18,12 @@ KrashConfig :: KrashConfig(KAboutData *aboutData, int signal, int pid)
   readConfig();
 }
 
+QString KrashConfig :: debugger() const
+{
+  return m_debugger;
+  return QString::fromLatin1("konsole -e gdb %appname %pid");
+}
+
 void KrashConfig :: readConfig()
 {
   KConfig *config = KGlobal::config();
@@ -26,6 +32,15 @@ void KrashConfig :: readConfig()
   // maybe we should check if it's relative?
   QString configname = config->readEntry(QString::fromLatin1("ConfigName"),
 					 QString::fromLatin1("enduser"));
+
+  QString debuggername = config->readEntry(QString::fromLatin1("Debugger"),
+					   QString::fromLatin1("gdb"));
+
+  KConfig debuggers(QString::fromLatin1("debuggers/%1rc").arg(debuggername),
+		    true, false, "appdata");
+
+  debuggers.setGroup(QString::fromLatin1("General"));
+  m_debugger = debuggers.readEntry(QString::fromLatin1("Exec"));
 
   KConfig preset(QString::fromLatin1("presets/%1rc").arg(configname), 
 		 true, false, "appdata");
@@ -40,9 +55,11 @@ void KrashConfig :: readConfig()
 
   preset.setGroup(QString::fromLatin1("General"));
   m_showbugreport = preset.readBoolEntry(QString::fromLatin1("ShowBugReportButton"), true);
-  m_showdebugger = m_pid != 0;
-  if (m_showdebugger)
-    m_showdebugger = preset.readBoolEntry(QString::fromLatin1("ShowDebugButton"), true);
+  m_showbacktrace = m_pid != 0;
+  if (m_showbacktrace) {
+    m_showbacktrace = preset.readBoolEntry(QString::fromLatin1("ShowBacktraceButton"), true);
+    m_showdebugger = preset.readBoolEntry(QString::fromLatin1("ShowDebugButton"), false);
+  }
 
   bool b = preset.readBoolEntry(QString::fromLatin1("SignalDetails"), true);
 
