@@ -131,7 +131,7 @@ void KrashDebugger :: slotSave()
 void KrashDebugger :: slotSomeError()
 {
   m_status->setText(i18n("Unable to create a valid backtrace."));
-  m_backtrace->setText(i18n("This backtrace appears to be useless.\n"
+  m_backtrace->setText(i18n("This backtrace appears to be of no use.\n"
       "This is probably because your packages are built in a way "
       "which prevents creating of proper backtraces, or the stack frame "
       "was seriously corrupted in the crash.\n\n" )
