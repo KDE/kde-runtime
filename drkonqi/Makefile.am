@@ -24,4 +24,4 @@ check_PROGRAMS = crashtest
 crashtest_SOURCES = crashtest.cpp
 
 messages:
-	$(XGETTEXT) $(drkonqi_SOURCES) -o $(podir)/drkonqi.pot
+	$(XGETTEXT) *.cpp -o $(podir)/drkonqi.pot
