@@ -1,7 +1,9 @@
 [General]
 Name=End user
+Name[cs]=Koncový uživatel
 Name[de]=Endbenutzer
 Name[eo]=Uzanto
+Name[he]=הצק-שמתשמ
 Name[hu]=Végfelhasználó
 Name[it]=Utente finale
 Name[nl]=Eindgebruiker
@@ -11,8 +13,10 @@ Name[ru]=Конечный пользователь
 Name[sl]=Končni uporabnik
 Name[tr]=Son kullanýcý
 Comment=Settings prefered for end users
+Comment[cs]=Nastavení upřednostňované koncovými uživateli
 Comment[de]=Bevorzugte Einstellungen für Endbenutzer
 Comment[eo]=Agordoj por uzantoj
+Comment[he]=הצק-ישמתשמ רובע תופדעומ תורדגה
 Comment[hu]=Vágfelhasználók számára javasolt beállítások
 Comment[it]=Impostazioni preferite per l'utente finale
 Comment[nl]=Gewenste instellingen voor eindgebruikers.
@@ -30,8 +34,10 @@ ShowDebugButton=false
 [ErrorDescription]
 Enable=true
 Name=The application %progname (%appname) crashed and caused the signal %signum (%signame).
+Name[cs]=Aplikace %progname (%appname) spadla a vyvolala signál %signum (%signame).
 Name[de]=Die Anwendung %progname (%appname) ist abgestürzt und hat das Signal %signum (%signame) veranlasst.
 Name[eo]=La aplikaĵo %progname (%appname) mortis kaj kaŭzis la signalon %signum (%signame).
+Name[he]=.(%signame) %signum תותיאל םרגו קסרתה (%appname) %progname םושייה
 Name[hu]=A %progname (%appname) alkalmazás összeomlott és %signum (%signame) szignált okozott.
 Name[it]=Il programma %progname (%appname) è andato in crash e ha causato il segnale %signum (%signame).
 Name[nl]=Het programma %progname (%appname) is gecrashed en gaf het volgende signaal: %signum (%signame).
@@ -46,6 +52,7 @@ Enable=true
 Name=You might want to send a bug report to the author. Please include as much information as possible, maybe the original documents. If you have a way to reproduce the error, include this also. Click on the "Bug report" button.
 Name[de]=Vielleicht möchten Sie einen Problembericht an den Autor schicken. Bitte geben Sie so viel Information wie möglich, am besten einschließlich der Originaldokumente. Wenn Sie einen Weg finden, wie sich der Fehler reproduzieren lässt, geben Sie bitte auch diesen an. Klicken Sie bitte jetzt auf den Knopf "Problembericht".
 Name[eo]=Vi povus sendi eraroraporton al la aŭtoro. Bonvolu kunsendi tiom da informoj, kiom eblas, laŭeble la originalajn dokumentojn. Se vi trovis manieron reprodukti la eraron, bonvolu aldoni ĝin. Premu "Eraroraporto".
+Name[he]=."גאב לע חוויד" רותפכה לע ץחל .התוא םג לולכ ,האיגשה לע רוזחל ךרד ךל שי םא .םיירוקמה םיכמסמה תא םג ילוא ,לוכי התאש עדימ רתויש המכ לולכ אנא .הנכותה בתוכל גאב לע חוויד חולשל הצרתו ןכתיי
 Name[hu]=Küldhet hibajelentést a szerzőnek. Ha így dönt, akkor csatoljon hozzá annyi információt, amennyit csak tud. Ha képes reprodukálni a hibát, akkor azt is írja bele. Klikkeljen a "Hibajelentés" gombra.
 Name[it]=Se vuoi spedire una segnalazione di bug all'autore, includi il maggior numero di informazioni. Se conosci un modo per riprodurre l'errore, includilo. Fai clic sul pulsante "Segnalazione di bug".
 Name[nl]=U wilt vast een bugrapport aan de auteur sturen. Voeg daarzoveel mogelijk informatie in, eventueel ook de originele documenten. Als u een manier kent om de fout te reproduceren, sluit dit dan ook in. Klik op de "bugrapport"-knop.
@@ -57,12 +64,14 @@ Name[tr]=Yazara bir hata raporu göstermek isteyebilirsiniz. Lütfen mümkün ol
  düðmesine týklayýnýz.
  düðmesine týklayýnýz.
  düðmesine týklayýnýz.
+ düðmesine týklayýnýz.
 
 [4]
 Name=SIGILL
 Comment=An application mostly receives the SIGILL signal due to a bug in the application. The application was asked to save its documents.
 Comment[de]=Eine Anwendung erhält das Signal SIGILL zumeist wegen eines Programmierfehlers. Die Anwendung wurde angewiesen, die Dokumente zu speichern.
 Comment[eo]=Aplikaĵo normale ricevas la signalon SIGILL pro eraro en ĝi. La aplikaĵo provu sekurigi siajn dokumentojn.
+Comment[he]=.ולש םיכמסמה תא רומשל שקבתה םושייה .םושייב גאב לשב םימעפה בורב SIGILL תותיאה תא לבקמ םושיי
 Comment[hu]=Ha egy alkalmazás SIGILL szignált kap, az többnyire akkor fordul elő, ha hibás az alkalmazás. Az alkalmazás megpróbálja elmenteni az adatokat.
 Comment[it]=Un programma di solito riceve un segnale SIGILL a causa di un bug nel programma. Al programma è stato chiesto di salvare i dati.
 Comment[nl]=Een programma ontvangt meestal het SIGILL-signaal vanwege een bug inhet programma. Het programma wordt dan gevraagd om zijn documenten op te slaan.
@@ -77,6 +86,7 @@ Name=SIGFPE
 Comment=An application mostly receives the SIGFPE signal due to a bug in the application. The application was asked to save its documents.
 Comment[de]=Eine Anwendung erhält das Signal SIGFPE zumeist wegen eines Programmierfehlers. Die Anwendung wurde angewiesen, die Dokumente zu speichern.
 Comment[eo]=Aplikaĵo normale ricevas la signalon SIGFPE pro eraro en ĝi. La aplikaĵo provu sekurigi siajn dokumentojn.
+Comment[he]=.ולש םיכמסמה תא רומשל שקבתה םושייה .םושייב גאב לשב םימעפה בורב SIGFPE תותיאה תא לבקמ םושיי
 Comment[hu]=Ha egy alkalmazás SIGFPE szignált kap, az többnyire akkor fordul elő, ha hibás az alkalmazás. Az alkalmazás megpróbálja elmenteni az adatokat.
 Comment[it]=Un programma di solito riceve un segnale SIGFPE a causa di un bug nel programma. Al programma è stato chiesto di salvare i dati.
 Comment[nl]=Een programma ontvangt meestal een SIGFPE-signaal vanwege een bug inhet programma. Het programma wordt dan gevraagd om zijn documenten op te slaan.
@@ -91,6 +101,7 @@ Name=SIGSEGV
 Comment=An application mostly receives the SIGSEGV signal due to a bug in the application. The application was asked to save its documents.
 Comment[de]=Eine Anwendung erhält das Signal SIGSEGV zumeist wegen eines Programmierfehlers. Die Anwendung wurde angewiesen, die Dokumente zu speichern.
 Comment[eo]=Aplikaĵo normale ricevas la signalon SIGSEGV pro eraro en ĝi. La aplikaĵo provu sekurigi ĝiajn dokumentojn.
+Comment[he]=.ולש םיכמסמה תא רומשל שקבתה םושייה .םושייב גאב לשב םימעפה בורב SIGSEGV תותיאה תא לבקמ םושיי
 Comment[hu]=Ha egy alkalmazás SIGSEGV szignált kap, az többnyire akkor fordul elő, ha hibás az alkalmazás. Az alkalmazás megpróbálja elmenteni az adatokat.
 Comment[it]=Un programma di solito riceve un segnale SIGSEGV a causa di un bug nel programma. Al programma è stato chiesto di salvare i dati.
 Comment[nl]=Een programma ontvangt meestal een SIGSEGV-signaal vanwege een bug inhet programma. Het programma wordt dan gevraagd om zijn documenten op te slaan.
@@ -102,8 +113,10 @@ Comment[tr]=Uygulamadaki bir hata nedeniyle, uygulamalar çok kez SIGSEGV sinyal
 
 [unknown]
 Name=Unknown
+Name[cs]=Neznámý
 Name[de]=Unbekannt
 Name[eo]=Nekonata
+Name[he]=עודי אל
 Name[hu]=Ismeretlen
 Name[it]=Sconosciuto
 Name[nl]=Onbekend
@@ -113,8 +126,10 @@ Name[ru]=Неизвестный
 Name[sl]=Neznan
 Name[tr]=knetmon
 Comment=Sorry, I don't know this signal.
+Comment[cs]=Lituji, tento signál neznám.
 Comment[de]=Das Signal ist leider nicht bekannt.
 Comment[eo]=Pardonu, mi ne konas tiun signalon.
+Comment[he]=.הזה תותיאה תא ריכמ אל ינא ,יל רצ
 Comment[hu]=Sajnálom, nem ismerem ezt a szignált.
 Comment[it]=Spiacente, non conosco questo segnale
 Comment[nl]=Helaas, dit signaal ken ik niet.

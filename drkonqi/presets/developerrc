@@ -1,7 +1,9 @@
 [General]
 Name=Developer
+Name[cs]=Vývojovář
 Name[de]=Entwickler
 Name[eo]=Programisto
+Name[he]=חתפמ
 Name[hu]=Fejlesztő
 Name[it]=Sviluppo
 Name[nl]=Ontwikkelaar
@@ -11,8 +13,10 @@ Name[ru]=Разработчик
 Name[sl]=Razvijalec
 Name[tr]=Programcý
 Comment=Settings prefered for developers
+Comment[cs]=Nastavení upřednostňované vývojáři
 Comment[de]=Bevorzugte Einstellungen für Entwickler
 Comment[eo]=Agordo por programistoj
+Comment[he]=םיחתפמ רובע תופדעומ תופדעה
 Comment[hu]=Fejlesztőknek szánt beállítások
 Comment[it]=Impostazioni preferite per gli sviluppatori
 Comment[nl]=Gewenste instellingen voor ontwikkelraars.
@@ -30,8 +34,10 @@ ShowDebugButton=true
 [ErrorDescription]
 Enable=true
 Name=The application %progname (%appname) crashed and caused the signal %signum (%signame).
+Name[cs]=Aplikace %progname (%appname) spadla a vyvolala signál %signum (%signame).
 Name[de]=Die Anwendung %progname (%appname) ist abgestürzt und hat das Signal %signum (%signame) veranlasst.
 Name[eo]=La aplikaĵo %progname (%appname) mortis kaj kaŭzis la signalon %signum (%signame).
+Name[he]=.(%signame) %signum תותיאל םרגו קסרתה (%appname) %progname םושייה
 Name[hu]=A %progname (%appname) alkalmazás összeomlott és %signum (%signame) szignált okozott.
 Name[it]=Il programma %progname (%appname) è andato in crash e ha causato il segnale %signum (%signame).
 Name[nl]=Het programma %progname (%appname) is gecrashed en gaf het volgende signaal: %signum (%signame).
@@ -44,8 +50,10 @@ Name[tr]= %progname (%appname) uygulamasý çöktü ve %signum (%signame) sinyal
 [WhatToDoHint]
 Enable=true
 Name=You might want to fix you program. Take a look at the debugger tab.
+Name[cs]=Možná budete chtít opravit váš program. Klikněte na záložku lazení.
 Name[de]=Vielleicht möchten Sie das Programm reparieren. Werfen Sie einen Blick auf die Karteikarte "Debugger".
 Name[eo]=Eble vi volas korekti vian programon. Rigardu sur la paĝon "Erarser ĉo".
+Name[he]=.םיגאבה הפנמ תייסיטרכב ןייע .ךלש תינכותה תא ןקתל הצרתו ןכתיי
 Name[hu]=Feltehetőleg ki szeretné javítani a hibát. Vessen egy pillantást a hibakereső ablakra.
 Name[it]=Se vuoi aggiustare il tuo programma, controlla la linguetta del debugger.
 Name[nl]=U wilt vast uw programma herstellen. Kijk even onder de tab 'debugger'.
@@ -58,8 +66,10 @@ Name[tr]=Programýnýzdaki sorunu çözmek isteyebilirsiniz. Hata ayýklayýcý 
 [4]
 Name=SIGILL
 Comment=Illegal instruction.
+Comment[cs]=Ilegální instrukce.
 Comment[de]=Ungültige Anweisung
 Comment[eo]=Nevalida instrukcio.
+Comment[he]=.תיקוח אל הארוה
 Comment[hu]=Végrehajthatatlan utasítás.
 Comment[it]=Istruzione illegale
 Comment[nl]=Illegale instructie.
@@ -72,8 +82,10 @@ Comment[tr]=Hatalý talimat.
 [8]
 Name=SIGFPE
 Comment=Floating point exception.
+Comment[cs]=Vyjímka v plovoucí čárce.
 Comment[de]=Gleitkomma-Ausnahme
 Comment[eo]=Escepto ĉe kalkulado kun realaj nombroj.
+Comment[he]=.הפצ הדוקנ תגירח
 Comment[hu]=Lebegőpontos megszakítás.
 Comment[it]=Eccezione virgola mobile
 Comment[nl]=Zwevend-punt-uitzondering.
@@ -86,8 +98,10 @@ Comment[tr]=Seyyar nokta hatasý.
 [11]
 Name=SIGSEGV
 Comment=Invalid memory reference.
+Comment[cs]=Neplatný odkaz do paměti.
 Comment[de]=Ungültige Speicherzuweisung
 Comment[eo]=Nevalida memoro-referenco.
+Comment[he]=.יוגש ןורכיז ןויע
 Comment[hu]=Érvénytelen memóriahivatkozás.
 Comment[it]=Riferimento memoria non valido
 Comment[nl]=Ongeldige geheugenverwijzing.
@@ -99,8 +113,10 @@ Comment[tr]=Geçersiz hafýza referansý.
 
 [unknown]
 Name=Unknown
+Name[cs]=Neznámý
 Name[de]=Unbekannt
 Name[eo]=Nekonata
+Name[he]=עודי אל
 Name[hu]=Ismeretlen
 Name[it]=Sconosciuto
 Name[nl]=Onbekend
@@ -110,8 +126,10 @@ Name[ru]=Неизвестный
 Name[sl]=Neznan
 Name[tr]=knetmon
 Comment=Sorry, I don't know this signal.
+Comment[cs]=Lituji, tento signál neznám.
 Comment[de]=Das Signal ist leider nicht bekannt.
 Comment[eo]=Pardonu, mi ne konas tiun signalon.
+Comment[he]=.הזה תותיאה תא ריכמ אל ינא ,יל רצ
 Comment[hu]=Sajnálom, nem ismerem ezt a szignált.
 Comment[it]=Spiacente, non conosco questo segnale
 Comment[nl]=Helaas, dit signaal ken ik niet.
