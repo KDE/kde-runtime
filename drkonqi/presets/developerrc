@@ -1,6 +1,6 @@
 [General]
 Name=Developer
-Name[af]=ontwikkelaar
+Name[af]=Ontwikkelaar
 Name[ar]=المطور
 Name[az]=Proqramcı
 Name[be]=Распрацоўшчык
@@ -60,7 +60,7 @@ Name[zh_CN]=开发人员
 Name[zh_TW]=開發人員
 Name[zu]=Umthuthukisi
 Comment=Settings preferred for developers
-Comment[af]=instellings verkies vir ontwikkelaars
+Comment[af]=Instellings verkies vir ontwikkelaars
 Comment[ar]=الضبط المفضل لدى المطور
 Comment[az]=Proqramcılar üçün tərcih edilən qurğular
 Comment[bg]=Настройки, предпочтитания за програмистите
@@ -125,7 +125,7 @@ ShowDebugButton=true
 [ErrorDescription]
 Enable=true
 Name=The application %progname (%appname), pid %pid, crashed and caused the signal %signum (%signame).
-Name[af]=die aansoek %progname (%appname), pid %pid, het gestaak en veroorsaak die sein %signum (%signame).
+Name[af]=Die aansoek %progname (%appname), pid %pid, het gestaak en veroorsaak Die sein %signum (%signame).
 Name[ar]=التطبيق %progname (%appname), pid %pid قد انهار و تسبب في الإشارة %signum (%signame)
 Name[az]= %progname (%appname), pid %pid proqramı çökdü və %signum (%signame) siqnalı göndərdi.
 Name[bg]=В приложение %progname (%appname), pid %pid, възникна фатална грешка, предизвиквайки сигнал %signum (%signame).
@@ -176,7 +176,7 @@ Name[zu]=I-%progname yomyaleli wekhompyutha (%appname), pid %pid, iphahlazekile 
 [WhatToDoHint]
 Enable=true
 Name=You might want to fix your program. Take a look at the backtrace tab.
-Name[af]=jy dalk wil hê na regmaak jou program. neem 'n kyk na die terugsoektog oortjie.
+Name[af]=Jy dalk wil hê na regmaak jou program. Neem 'n kyk na die terugsoektog oortjie.
 Name[ar]=ربما تريد اصلاح المشكلة. الق نظرة على علامة التبويب backtrace
 Name[az]=Proqramınızdakı problemi həll etmək istəsəniz xəta ayıqlayıcı səkməsinə baxın.
 Name[bg]=Възможно е, вие да искате да оправите програмата. Прегледайте tab за грешки.
@@ -229,11 +229,11 @@ Name[zu]=Ungafuna ukulungisa uhlelo lwakho lwemisebenzi. Buka i-tab yokubuyela e
 
 [4]
 Name=SIGILL
-Name[af]=sigill
+Name[af]=Sigill
 Name[vi]=SIGILL 
 Name[xx]=xx
 Comment=Illegal instruction.
-Comment[af]=onwettige instruksie.
+Comment[af]=Onwettige instruksie.
 Comment[ar]=تعليمة غير شرعية
 Comment[az]=Xətalı göstəriş.
 Comment[bg]=Недопустима инструкция.
@@ -291,12 +291,12 @@ Comment[zu]=Umyalelo ongekho emthethweni.
 
 [6]
 Name=SIGABRT
-Name[af]=sigabrt
+Name[af]=Sigabrt
 Name[fr]=SIABRT
 Name[vi]=SIGABRT 
 Name[xx]=xx
 Comment=Aborted.
-Comment[af]=gekanselleer.
+Comment[af]=Gekanselleer.
 Comment[ar]=اجهضت
 Comment[az]=Ləğv edildi.
 Comment[bg]=Прекъснато.
@@ -356,11 +356,11 @@ Comment[zu]=Ihushuliwe.
 
 [8]
 Name=SIGFPE
-Name[af]=sigfpe
+Name[af]=Sigfpe
 Name[vi]=SIGFPE 
 Name[xx]=xx
 Comment=Floating point exception.
-Comment[af]=wissel punt uitsondering.
+Comment[af]=Wissel punt uitsondering.
 Comment[az]=Üzən nöqtə xətası.
 Comment[bg]=Исключителна ситуация при изчисления с плаваща точка.
 Comment[br]=Direizhenn niver skej
@@ -412,11 +412,11 @@ Comment[zh_TW]=浮點計算異常。
 
 [11]
 Name=SIGSEGV
-Name[af]=sigsegv
+Name[af]=Sigsegv
 Name[vi]=SIGSEGV 
 Name[xx]=xx
 Comment=Invalid memory reference.
-Comment[af]=ongeldige geheue verwysing.
+Comment[af]=Ongeldige geheue verwysing.
 Comment[ar]=Invalid memory reference
 Comment[az]=Hökmsüz yaddaş referensi.
 Comment[bg]=Достъп към неразрешена област от паметта.
@@ -471,7 +471,7 @@ Comment[zu]=Uthelekiso lomqondo olungasebenzi
 
 [unknown]
 Name=Unknown
-Name[af]=onbekende
+Name[af]=Onbekende
 Name[ar]=غير معروف
 Name[az]=Namə'lum
 Name[be]=Невядомы
@@ -531,7 +531,7 @@ Name[zh_CN]=未知
 Name[zh_TW]=未知
 Name[zu]=Okungaziwa
 Comment=This signal is unknown.
-Comment[af]=hierdie sein is onbekende.
+Comment[af]=Hierdie sein is onbekende.
 Comment[be]=Невядомы сыгнал.
 Comment[bg]=Този сигнал е неизвестен.
 Comment[bs]=Ovaj signal je nepoznat.

@@ -1,6 +1,6 @@
 [General]
 Name=GNU Debugger
-Name[af]=gnu ontfouter
+Name[af]=Gnu Ontfouter
 Name[ar]=مزيل مشاكل GNU
 Name[az]=GNU Xəta Ayıqlayıcı
 Name[bg]=Дебъгер на GNU
@@ -50,7 +50,7 @@ Name[zh_CN]=GNU 调试器
 Name[zh_TW]=GNU 除錯器
 Name[zu]=Isilungisi-maphutha se-GNU
 Comment=Text based debugger from GNU in a konsole
-Comment[af]=teks gebaseerde ontfouter van gnu in 'n konsole
+Comment[af]=Teks gebaseerde ontfouter van Gnu in 'n konsole
 Comment[ar]=مزيل مشاكل GNU يعمل في وضعية سطر الأوامر
 Comment[az]=GNU'dan konsol üçün mətn əsaslı xəta ayıqlayıcı
 Comment[bg]=Текстови дебъгер на GNU
