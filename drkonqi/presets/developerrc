@@ -53,7 +53,6 @@ Name[wa]=Programeu
 Name[xh]=Umbhekisi phambili
 Name[xx]=xx
 Name[zh_CN]=开发人员
-Name[zh_TW]=開發人員
 Name[zu]=Umthuthukisi
 Comment=Settings preferred for developers
 Comment[af]=instellings verkies vir ontwikkelaars
@@ -107,7 +106,6 @@ Comment[vi]=Các thiết lập dành cho người phát triển
 Comment[xh]=Izicwangciso ezikhethelwa ababhekisi phambili
 Comment[xx]=xx
 Comment[zh_CN]=开发人员偏好的设置
-Comment[zh_TW]=開發人員的偏好設定
 Comment[zu]=Izilungiselelo ezikhethelwe abathuthukisi
 
 SignalDetails=true
@@ -143,7 +141,6 @@ Name[sv]=Programmet %progname (%appname), pid %pid, kraschade och orsakade signa
 Name[ta]=¿¢Ãø %progname (%appname), ±ñ %pid, ÓÈ¢óÐ %signum (%signame) ¨º¨¸¨Âò ¾ó¾Ð.
 Name[xh]=Isicelo %progname (%appname) , pid %pid, ilalhekile kwaye ibangele uphawu %signum (%signame).
 Name[zh_CN]=程序 %progname (%appname)，进程号 %pid，崩溃并导致信号 %signum (%signame)。
-Name[zh_TW]=此應用程式 %progname (%appname), pid %pid 不正常結束，產生信號 %signum (%signame)。
 Name[zu]=Isicelo %progname (%appname), pid %pid sihlakazekile futhi senzeukuthi uphawu %signum (%signame).
 
 [WhatToDoHint]
@@ -191,7 +188,6 @@ Name[uk]=Ви, можливо, хочете поладити Вашу прогр
 Name[xh]=Ungafuna ukulungisa udweliso lwakho lwenkqubo. Thatha ujongo kukhangelo lwasemva lwesithuba.
 Name[xx]=xx
 Name[zh_CN]=您应该改正程序。看看回溯跟踪部分。
-Name[zh_TW]=或許你想要修正你的程式。請查看一下回朔標籤裡的內容。
 Name[zu]=Ungafuna ukulungisa iprogramu yakho kulenqubo. Buka emuva kwe tab.
 
 [4]
@@ -250,7 +246,6 @@ Comment[vi]=ChềEthềEkhông hợp lềE
 Comment[xh]=Umyalelo ongekho semthethweni.
 Comment[xx]=xx
 Comment[zh_CN]=不合法的指令。
-Comment[zh_TW]=不合法的指令。
 Comment[zu]=Umyalelo ongekho emthethweni.
 
 [6]
@@ -311,7 +306,6 @@ Comment[vi]=BềEqua.
 Comment[xh]=Ikhatyiwe.
 Comment[xx]=xx
 Comment[zh_CN]=中止。
-Comment[zh_TW]=中止。
 Comment[zu]=Inqamuliwe.
 
 [8]
@@ -366,7 +360,6 @@ Comment[vi]=Dấu chấm không hợp lềE.
 Comment[xh]=Ubekelo bucala lencopho elungisiweyo.
 Comment[xx]=xx
 Comment[zh_CN]=浮点计算异常。
-Comment[zh_TW]=浮點計算異常。
 Comment[zu]=Ingqikimba ezulazulayo ehlungiwe.
 
 [11]
@@ -423,7 +416,6 @@ Comment[vi]=Tham khảo memory không hợp lềE
 Comment[xh]=Uthelekiso olungasebenziyo lwenkumbulo.
 Comment[xx]=xx
 Comment[zh_CN]=无效的内存引用。
-Comment[zh_TW]=無效的記憶體違規使用
 Comment[zu]=Uthelekiso olungasebenzi lwenkumbulo.
 
 [unknown]
@@ -481,7 +473,6 @@ Name[wa]=Nén cnoxhou
 Name[xh]=Ayaziwa
 Name[xx]=xx
 Name[zh_CN]=未知
-Name[zh_TW]=未知
 Name[zu]=Okungaziwa
 Comment=Sorry, I don't know this signal.
 Comment[ar]=آسف, لا أستطيع التعرف على الإشارة
@@ -534,5 +525,4 @@ Comment[vi]=Xin lỗi, Tôi không biết tín hiệu này .
 Comment[xh]=Uxolo, Andilazi olu phawu.
 Comment[xx]=xx
 Comment[zh_CN]=抱歉，我不知道这个信号。
-Comment[zh_TW]=抱歉，我不認識這個信號。
 Comment[zu]=Uxolo, Angilwazi loluphawu.
