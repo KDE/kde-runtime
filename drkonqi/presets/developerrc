@@ -32,7 +32,7 @@ Name[uk]=Розробник
 Comment=Settings preferred for developers
 Comment[ca]=Arranjament preferit pels desenvolupadors
 Comment[cs]=Nastavení upřednostňovaná vývojáři
-Comment[da]=Indstilling foretrukket af udviklere
+Comment[da]=Indstilling foretrukket for udviklere
 Comment[de]=Bevorzugte Einstellungen für Entwickler
 Comment[eo]=Agordo destinita por programistoj
 Comment[et]=Arendajate eelistatud seadistused
@@ -106,7 +106,10 @@ Name[hu]=Ki szeretné javítani a hibát? Vessen egy pillantást a nyomkövetés
 Name[nl]=U wilt vast uw programma herstellen. Kijk even onder de tab 'backtrace'.
 Name[no]=Du vil kanskje rette opp feilen selv. Ta en titt på siden med logg over funksjonskall.
 Name[no_NY]=Du vil kanskje fiksa programmet ditt. Ta ein kikk på tilbakeloggsida.
+Name[pt]=Podes querer corrigir o programa. Olha para a página de depuração.
 Name[pt_BR]=Você pode querer consertar o progama. Dê uma olhada na aba de depuração.
+Name[sl]=Morda boste želeli popraviti program. Poglejte na ustrezno oznako razhroščevalnika.
+Name[sv]=Du kanske vill fixa ditt program. Titta under bakåtspårning-fliken.
 
 [4]
 Name=SIGILL
