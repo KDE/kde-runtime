@@ -107,6 +107,11 @@ void KrashConfig :: readConfig()
   m_debugger = debuggers.readPathEntry("Exec");
   m_debuggerBatch = debuggers.readPathEntry("ExecBatch");
   m_tryExec = debuggers.readPathEntry("TryExec");
+  m_backtraceCommand = debuggers.readEntry("BacktraceCommand");
+  m_removeFromBacktraceRegExp = debuggers.readEntry("RemoveFromBacktraceRegExp");
+  m_invalidStackFrameRegExp = debuggers.readEntry("InvalidStackFrameRegExp");
+  m_frameRegExp = debuggers.readEntry("FrameRegExp");
+  m_neededInValidBacktraceRegExp = debuggers.readEntry("NeededInValidBacktraceRegExp");
 
   KConfig preset(QString::fromLatin1("presets/%1rc").arg(configname),
                  true, false, "appdata");

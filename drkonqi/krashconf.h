@@ -62,6 +62,11 @@ public:
   QString debugger() const { return m_debugger; }
   QString debuggerBatch() const { return m_debuggerBatch; }
   QString tryExec() const { return m_tryExec; }
+  QString backtraceCommand() const { return m_backtraceCommand; }
+  QString removeFromBacktraceRegExp() const { return m_removeFromBacktraceRegExp; }
+  QString invalidStackFrameRegExp() const { return m_invalidStackFrameRegExp; }
+  QString frameRegExp() const { return m_frameRegExp; }
+  QString neededInValidBacktraceRegExp() const { return m_neededInValidBacktraceRegExp; }
   bool showBacktrace() const { return m_showbacktrace; };
   bool showDebugger() const { return m_showdebugger && !m_debugger.isNull(); };
   bool showBugReport() const { return m_showbugreport; };
@@ -95,6 +100,11 @@ private:
   QString m_debugger;
   QString m_debuggerBatch;
   QString m_tryExec;
+  QString m_backtraceCommand;
+  QString m_removeFromBacktraceRegExp;
+  QString m_invalidStackFrameRegExp;
+  QString m_frameRegExp;
+  QString m_neededInValidBacktraceRegExp;
 };
 
 #endif

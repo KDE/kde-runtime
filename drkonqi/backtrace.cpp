@@ -88,7 +88,10 @@ void BackTrace::start()
   m_temp = new KTempFile;
   m_temp->setAutoDelete(TRUE);
   int handle = m_temp->handle();
-  ::write(handle, "bt\n", 3); // this is the command for a backtrace
+  QString backtraceCommand = m_krashconf->backtraceCommand();
+  const char* bt = backtraceCommand.latin1();
+  ::write(handle, bt, strlen(bt)); // the command for a backtrace
+  ::write(handle, "\n", 1);
   ::fsync(handle);
 
   // start the debugger
@@ -122,14 +125,26 @@ void BackTrace::slotProcessExited(KProcess *proc)
   kill(m_krashconf->pid(), SIGCONT);
 
   // remove crap
-  m_strBt.replace(QRegExp(QString::fromLatin1("\\(no debugging symbols found\\)\\.\\.\\.\\n?")), QString::null);
+  if( !m_krashconf->removeFromBacktraceRegExp().isEmpty())
+    m_strBt.replace(QRegExp( m_krashconf->removeFromBacktraceRegExp()), QString::null);
+  // analyze backtrace for usefulness
+  // prepend and append newline, so that regexps like '\nwhatever\n' work on all lines
+  QString strBt = '\n' + m_strBt + '\n';
   // how many " ?? " in the bt ?
-  int unknown = m_strBt.contains(QString::fromLatin1(" ?? "));
-  // how many lines in the bt ?
-  int lines = m_strBt.contains('\n');
-  bool tooShort = !m_strBt.find(QString::fromLatin1("#5"));
+  int unknown = 0;
+  if( !m_krashconf->invalidStackFrameRegExp().isEmpty())
+    unknown = strBt.contains( QRegExp( m_krashconf->invalidStackFrameRegExp()));
+  // how many stack frames in the bt ?
+  int frames = 0;
+  if( !m_krashconf->frameRegExp().isEmpty())
+    frames = strBt.contains( QRegExp( m_krashconf->frameRegExp()));
+  else
+    frames = strBt.contains('\n');
+  bool tooShort = false;
+  if( !m_krashconf->neededInValidBacktraceRegExp().isEmpty())
+    tooShort = ( strBt.find( QRegExp( m_krashconf->neededInValidBacktraceRegExp())) == -1 );
   if (proc->normalExit() && (proc->exitStatus() == 0) &&
-      !m_strBt.isNull() && !tooShort && (unknown + 2 < lines))
+      !m_strBt.isNull() && !tooShort && (unknown < frames))
   {
     emit done();
     emit done(m_strBt);

@@ -127,4 +127,8 @@ Comment[zu]=Umcoshi wamaphutha osekelwe umbhalo osuka kwi-GNU kwikhonsoli
 Exec=konsole -e gdb -nw %execname %pid
 ExecBatch=gdb -nw -n -batch -x %tempfile %execname %pid
 TryExec=gdb
-
+BacktraceCommand=bt
+RemoveFromBacktraceRegExp=\(no debugging symbols found\)\.\.\.\\n?
+InvalidStackFrameRegExp=\\n.* \?\? .*\\n
+FrameRegExp=\\n#[0-9]+
+NeededInValidBacktraceRegExp=\\n#5

@@ -129,7 +129,12 @@ void KrashDebugger :: slotSave()
 
 void KrashDebugger :: slotSomeError()
 {
-  m_status->setText(i18n("Unable to create backtrace."));
+  m_status->setText(i18n("Unable to create a valid backtrace."));
+  m_backtrace->setText(i18n("This backtrace appears to be useless.\n"
+      "This is probably because your packages are built in a way "
+      "which prevents creating of proper backtraces, or the stack frame "
+      "was seriously corrupted in the crash.\n\n" )
+      + m_backtrace->text());
 }
 
 void KrashDebugger :: slotAppend(const QString &str)
