@@ -1,0 +1,5 @@
+[Desktop Entry]
+Type=Service
+Name=Image Displayer
+X-KDE-Library=librenimageplugin
+ServiceTypes=RenameDlg/Plugin,image/jpeg
