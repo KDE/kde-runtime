@@ -81,7 +81,7 @@ qWarning("ABC3456: %d", mode );
 qWarning("overwrite" );
  adjustSize();
  }
- ImageVisualizer *left= new ImageVisualizer(this, "Visulaizer Left", _dest );
+ ImageVisualizer *left= new ImageVisualizer(this, "Visualizer Left", _dest );
  ImageVisualizer *right = new ImageVisualizer( this, "Visualizer Right", _src );
  lay->addWidget(left, 2, 0 );
  lay->addWidget(right, 2, 2 );
@@ -90,10 +90,4 @@ qWarning("overwrite" );
 }
 
 typedef KGenericFactory<KTestMenu, QDialog> KImageFactory;
-K_EXPORT_COMPONENT_FACTORY( librenimageplugin, KImageFactory );
-
-
-
-
-
-
+K_EXPORT_COMPONENT_FACTORY( librenimageplugin, KImageFactory("imagerename_plugin") );
