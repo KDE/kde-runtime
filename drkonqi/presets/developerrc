@@ -123,9 +123,11 @@ Name[az]= %progname (%appname), pid %pid proqramı çökdü və %signum (%signam
 Name[bs]=Aplikacija %progname (%appname), %pid je srušena sa signalom %signum (%signame).
 Name[cs]=Aplikace %progname (%appname), pid %pid, spadla a vyvolala signál %signum (%signame).
 Name[da]=Programmet %progname (%appname), pid %pid brød sammen og gav signalet %signum (%signame).
+Name[de]=Die Anwendung %progname (%appname), pid %pid ist abgestürzt und hat das Signal %signum (%signame) veranlasst.
 Name[es]=La aplicación %progname (%appname), con número de proceso %pid,  falló y provocó la señal %signum (%signame).
 Name[eu]=%progname (%appname), %pid pid zenbakiarekin aplikazioa erajo da eta %signum (%signame) seinale sortu du.
 Name[fi]=Sovellus %progname (%appname), pid %pid kaatui ja antoi signaalin %signum (%signame).
+Name[fr]=L'application %progname (%appname), de numéro %pid, s'est terminée anormalement et a provoqué le signal %signum (%signame).
 Name[he]=היישום %progname (%appname), זיהוי תהליך %pid, התרסק וגרם לאיתות %signum (%signame).
 Name[hu]=A(z) %progname (%appname) alkalmazás (azonosító=%pid) lefagyott és %signum (%signame) szignált okozott.
 Name[ko]=프로세서 아이디가 %pid이고 이름이 %progname (%appname)인 프로그램이 다음과 같은 신호를 보내면서 죽었습니다 : %signum (%signame)
