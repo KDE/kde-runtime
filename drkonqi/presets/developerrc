@@ -100,7 +100,7 @@ Comment[ru]=Настройки, предпочтительные для разр
 Comment[sk]=Preferované nastavenia pre vývojárov
 Comment[sl]=Nastavitve, ljubše razvijalcem
 Comment[sr]=Podešavanja koja više vole programeri
-Comment[sv]=Föredragna inställningar för utvecklare
+Comment[sv]=Rekommenderade inställningar för utvecklare
 Comment[ta]=¯ÕÅ¡ìÌ§Å¡÷¸Ùì¸¡É Å¢ÕôÀ «¨ÁôÒ¸û
 Comment[th]=ปรับแต่งเพื่อแสดงตัวเป็นผู้พัฒนา
 Comment[tr]=Programcılar için tercih edilen ayarlar
@@ -450,7 +450,7 @@ Comment[xh]=Uthelekiso lwenkumbulo engasebenziyo.
 Comment[xx]=xx
 Comment[zh_CN]=无效的内存引用。
 Comment[zh_TW]=無效的記憶體違規使用
-Comment[zu]=Uthelekiso olungasebenzi lwenkumbulo.
+Comment[zu]=Engasebenziyo incazelo ngobudlelwano yenkumbulo
 
 [unknown]
 Name=Unknown
