@@ -264,6 +264,7 @@ Comment[fr]=Une application se termine généralement par le signal SIGABRT quan
 Comment[he]=.תינכותב גאב בקע תמרגנה תימינפ תומיאת-יא ההזמ אוהשכ SIGABRT תותיא םע םייתסמ םושיי
 Comment[hu]=Egy alkalmazás akkor áll le SIGABRT szignállal, ha belső inkonzisztenciát észlel, melyet a program valamilyen hibája okozott.
 Comment[is]=Forrit hættir vegna SIGABRT boðs, þegar villa veldur ósamræmi gagna vegna galla í forritinu.
+Comment[it]=Un'applicazione termina con il segnale SIGABRT quando riscontra un'inconsistenza interna causata da un bug nel programma.
 Comment[ja]=アプリケーションはプログラムのバグにより起こる内部不整合が探知された時、SIGABRTシグナルと共に落ちます。
 Comment[nl]=Een programma eindigt met een SIGABRT-signaal wanneer het een interne inconsistensie detecteerd, veroorzaakt door een fout in het programma.
 Comment[no]=Et program avslutter med signalet SIGABRT når det oppdager en intern inkonsistens på grunn av en feil i programmet.
