@@ -29,6 +29,7 @@ Name[sv]=Utvecklare
 Name[ta]=உருவாகஂகி
 Name[tr]=Programcı
 Name[uk]=Розробник
+Name[zh_CN.GB2312]=开发人员
 Comment=Settings preferred for developers
 Comment[ca]=Arranjament preferit pels desenvolupadors
 Comment[cs]=Nastavení upřednostňovaná vývojáři
@@ -56,6 +57,7 @@ Comment[sv]=Föredragna inställningar för utvecklare
 Comment[ta]=உருவாகஂகிகளுகஂகான அைமபஂபுகளஂ
 Comment[tr]=Programcılar için tercih edilen ayarlar
 Comment[uk]=Настройки переважно для розробників
+Comment[zh_CN.GB2312]=开发人员偏好的设置
 
 SignalDetails=true
 ShowBugReportButton=true
@@ -97,6 +99,7 @@ Name[uk]=Програма %progname (%appname) дала сбій та визва
 [WhatToDoHint]
 Enable=true
 Name=You might want to fix you program. Take a look at the backtrace tab.
+Name[cs]=Možná budete chtít opravit váš program. Klikněte na záložku ladění.
 Name[da]=Hvis du har lyst til at ordne programmet, så kig på aflusermærket.
 Name[de]=Vielleicht möchten Sie das Programm reparieren lassen. Werfen Sie einen Blick auf die Karteikarte "Rückverfolgung".
 Name[eo]=Eble vi volas korekti vian programon. Rigardu sur la paĝon Reŝpurado.
@@ -146,6 +149,7 @@ Comment[sv]=Ogiltig instruktion.
 Comment[ta]=ஏறஂபிலஂலா ஆைண
 Comment[tr]=Hatalı talimat.
 Comment[uk]=Невірна інструкція.
+Comment[zh_CN.GB2312]=不合法的指令.
 
 [6]
 Name=SIGABRT
@@ -176,6 +180,7 @@ Comment[sv]=Misslyckades.
 Comment[ta]=முறிநஂதது.
 Comment[tr]=İptal edildi.
 Comment[uk]=Прервано.
+Comment[zh_CN.GB2312]=中止.
 
 [8]
 Name=SIGFPE
@@ -208,6 +213,7 @@ Comment[sv]=Flyttalsundantag.
 Comment[ta]=மிதைவபஂ புளஂளி விதிவிலகஂகு
 Comment[tr]=Kayar nokta hatası.
 Comment[uk]=Виключна ситуація операції з плаваючою точкою.
+Comment[zh_CN.GB2312]=浮点计算异常.
 
 [11]
 Name=SIGSEGV
@@ -239,6 +245,7 @@ Comment[sv]=Ogiltig minnesreferens.
 Comment[ta]=ஏறஂபிலஂலா நிைனவக ெபாருநஂது
 Comment[tr]=Geçersiz bellek referansı.
 Comment[uk]=Невірне посилання до пам'яті.
+Comment[zh_CN.GB2312]=无效的内存引用.
 
 [unknown]
 Name=Unknown
@@ -271,6 +278,7 @@ Name[sv]=Okänd
 Name[ta]=ெதரியாத
 Name[tr]=Bilinmeyen
 Name[uk]=Невідомий
+Name[zh_CN.GB2312]=未知
 Comment=Sorry, I don't know this signal.
 Comment[ca]=Ho sento, no conec aquesta senyal.
 Comment[cs]=Lituji, tento signál neznám.
@@ -301,3 +309,4 @@ Comment[sv]=Tyvärr, jag känner inte till den här signalen.
 Comment[ta]=மனஂனிகஂகவுமஂ, இநஂத குறிபஂபு எனகஂகு ெதரியாது. 
 Comment[tr]=Üzgünüm, bu sinyali tanımıyorum.
 Comment[uk]=Вибачте, не знаю цього сигналу.
+Comment[zh_CN.GB2312]=抱歉, 我不知道这个信号.
