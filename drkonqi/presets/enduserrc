@@ -274,6 +274,7 @@ Comment[pt_BR]=Uma aplicação termina com SIGABRT quando detecta uma inconsist�
 Comment[ro]=În general o aplicaţie se termină cu semnalul SIGABRT cînd detectează o inconsistenţă internă cauzată de o eroare în program.
 Comment[ru]=Приложение завершается сигналом SIGABRT, когда внутри него возникает сбой, вызванный ошибкой в программе.
 Comment[sk]=Aplikácia bola ukončená SIGABRT signálom keď program detekoval internú nezhodu spôsobenú chybou v programe.
+Comment[sl]=Program se prekine s signalom SIGABRT, ko zazna notranjo nekonsistentnost zaradi hrošča v programu.
 Comment[sv]=Ett program avslutar sig självt med signalen SIGABRT när det upptäcker en intern motsägelse, vilket orsakas av ett fel i programmet.
 Comment[tr]=Bir uygulama, programdaki bir hata yüzünden bir iç tutarsızlık tespit ettiğinde SIGABRT sinyaliyle sona erer.
 Comment[uk]=Програма завершується з сигналом SIGABRT, коли знайдена внутрішня несумісність, визвана помилкою у програмі.
