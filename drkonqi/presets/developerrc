@@ -154,6 +154,7 @@ Comment[uk]=Невірна інструкція.
 
 [6]
 Name=SIGABRT
+Name[fr]=SIABRT
 Comment=Aborted.
 Comment[ca]=S'ha interromput.
 Comment[cs]=Přerušeno.
@@ -162,6 +163,7 @@ Comment[de]=Abgebrochen
 Comment[eo]=Rompita.
 Comment[et]=Katkestatud.
 Comment[fi]=Keskeytetty.
+Comment[fr]=Avorté
 Comment[he]=.שטננ
 Comment[hu]=Félbeszakítva.
 Comment[it]=Terminato in maniera anomala.

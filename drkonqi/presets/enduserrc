@@ -132,6 +132,7 @@ Name[uk]=Можливо Ви хочете відіслати звіт про п�
  düğmesine tıklayın.
  düğmesine tıklayın.
  düğmesine tıklayın.
+ düğmesine tıklayın.
  düðmesine týklayýnýz.
  düðmesine týklayýnýz.
  düðmesine týklayýnýz.
@@ -187,6 +188,7 @@ Comment[uk]=Програма здебільшого отримує сигнал 
 
 [6]
 Name=SIGABRT
+Name[fr]=SIABRT
 Comment=An application terminates with a SIGABRT signal when it detects an internal inconcistency caused by a bug in the program.
 Comment[ca]=Una aplicació acaba amb una senyal SIGABRT quan detecta una inconsistència interna causada per un error al programa.
 Comment[cs]=Aplikace je ukončena se signálem SIGABRT, když zjistí vnitřní nekonzistenci způsobenou chybou v programu.
@@ -195,6 +197,7 @@ Comment[de]=Ein Programm bricht ab mit dem Signal SIGABRT, sobald es eine intern
 Comment[eo]=Aplikaĵo finiĝas per la signalo SIGABRT, kiam ĝi konstatas internan konfuzaĵon kaŭzitan de programeraro.
 Comment[et]=Rakendus katkestab töö SIGABRT signaaliga kui ta avastab sisemise ebakõla, mis on põhjustatud veast programmis.
 Comment[fi]=Sovellus lopettaa SIGABRT signaalilla, kun se huomaa sisäisen virheen joka on johtunut ohjelmavirheestä.
+Comment[fr]=Une application se termine généralement par le signal SIGILL quand elle détecte une incohérence interne causée par un bogue du programme.
 Comment[he]=.תינכותב גאב בקע תימינפ תומיאת-יא ההזמ אוהשכ SIGABRT תותיא םע םייתסמ םושיי
 Comment[hu]=Egy alkalmazás akkor áll le SIGABRT szignállal, ha belső inkonzisztenciátészlel, melyet a program saját hibája okozhatott.
 Comment[it]=Un'applicazione termina con il segnale SIGABRT quando riscontra un'inconsistenza interna causata da un bug nel programma.
