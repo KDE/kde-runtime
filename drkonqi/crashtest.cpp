@@ -9,7 +9,7 @@
 static KCmdLineOptions options[] =
 {
   { "+crash|malloc|div0|assert", "Type of crash.", 0 },
-  { 0, 0, 0 }
+  KCmdLineLastOption
 };
 
 enum CrashType { Crash, Malloc, Div0, Assert };
