@@ -9,13 +9,18 @@
 #include <kconfig.h>
 #include <kglobal.h>
 #include <kaboutdata.h>
+#include <kcmdlineargs.h>
 
 #include "krashconf.h"
 
-KrashConfig :: KrashConfig(KAboutData *aboutData, int signal, int pid)
-  : m_aboutData(aboutData), m_pid(pid), m_signalnum(signal)
+KrashConfig :: KrashConfig()
 {
   readConfig();
+}
+
+KrashConfig :: ~KrashConfig()
+{
+  delete m_aboutData;
 }
 
 QString KrashConfig :: debugger() const
@@ -26,6 +31,16 @@ QString KrashConfig :: debugger() const
 
 void KrashConfig :: readConfig()
 {
+  KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
+  m_signalnum = args->getOption( "signal" ).toInt();
+  m_pid = args->getOption( "pid" ).toInt();
+
+  m_aboutData = new KAboutData(args->getOption("appname"),
+		    args->getOption("programname"),
+		    args->getOption("appversion"),
+		    0, 0, 0, 0,	0,
+		    args->getOption("bugaddress"));
+
   KConfig *config = KGlobal::config();
   config->setGroup(QString::fromLatin1("drkonqi"));
 

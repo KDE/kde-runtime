@@ -52,23 +52,10 @@ int main( int argc, char* argv[] )
 
   KApplication a;
 
-  // parse command line arguments
-  // FIXME: there is error checking here.. 
-  KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
-  int signalnum = args->getOption( "signal" ).toInt();
-  int pid = args->getOption( "pid" ).toInt();
+  KrashConfig krashconf;
 
-  KAboutData oldabout(args->getOption("appname"),
-		    args->getOption("programname"),
-		    args->getOption("appversion"),
-		    0, 0, 0, 0,	0,
-		    args->getOption("bugaddress"));
+  Toplevel w(&krashconf);
 
-  KrashConfig krashconf(&oldabout, signalnum, pid);
-
-  Toplevel *w = new Toplevel(&krashconf);
-
-  int i = w->exec();
-  delete w;
-  return i;
+  return w.exec();
 }
+

@@ -98,21 +98,25 @@ void Toplevel :: slotUser1()
 {
   if (bugreport) return;
 
-  int i = KMessageBox::warningYesNoCancel(0,
-				  i18n("<p>Do you want to generate a "
-				       "backtrace? This will help the "
-				       "developers to figure out what went "
-				       "wrong.</p>\n"
-				       "<p>Unfortantly this will take some "
-				       "time on slow machines.</p>"
-				       "<p><b>Note: A backtrace is not a "
-				       "substitute for a proper description "
-				       "the bug and information on how to "
-				       "reproduce it. It is not possible "
-				       "to fix the bug without a proper "
-				       "description.</b></p>"),
-				  i18n("Include Backtrace"));
-  if (i == KMessageBox::Cancel) return;
+  int i = KMessageBox::No;
+  if ( m_krashconf->pid() != 0 )
+    i = KMessageBox::warningYesNoCancel
+      (0,
+       i18n("<p>Do you want to generate a "
+	    "backtrace? This will help the "
+	    "developers to figure out what went "
+	    "wrong.</p>\n"
+	    "<p>Unfortantly this will take some "
+	    "time on slow machines.</p>"
+	    "<p><b>Note: A backtrace is not a "
+	    "substitute for a proper description "
+	    "the bug and information on how to "
+	    "reproduce it. It is not possible "
+	    "to fix the bug without a proper "
+	    "description.</b></p>"),
+       i18n("Include Backtrace"));
+
+    if (i == KMessageBox::Cancel) return;
 
   bugreport = new DrKBugReport(0, true, m_krashconf->aboutData());
 
