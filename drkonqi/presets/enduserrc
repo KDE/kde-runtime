@@ -125,7 +125,7 @@ Comment[ven]=Dzudzanyo dzi shumisesiwaho nga Vhashumisi.
 Comment[vi]=Thiết lập ưa thích dành cho người dùng
 Comment[xh]=Izicwangciso ezikhethwayo zomsebenzisi osekugqhibeleni
 Comment[xx]=xxSettings preferred for end usersxx
-Comment[zh_CN]=普通用户偏好的设置
+Comment[zh_CN]=最终用户偏好的设置
 Comment[zh_TW]=一般使用者的偏好設定
 Comment[zu]=Izilungiselelo ezincanyelwayo zabasebenzisi bokugcina
 
@@ -237,6 +237,7 @@ Name[tr]=Bu uygulama için yazara bir hata raporu göndermek isterseniz, lütfen
 Name[uk]=Можливо, Ви захочете відіслати автору звіт про помилку. Будь ласка, перевірте що цю помилку ще не звітовано на http://bugs.kde.org, і лише потім відправляйте її автору. Будь ласка, додайте якомога більше інформації, можливо, вихідні документи. Якщо Ви можете повторити помилку, включіть це також.
 Name[vi]=Bạn nên gửi một bản báo cáo lỗi tới tác giả. Kiểm tra trước xem nếu lỗi đã được liệt kê trên http://bugs.kde.org. Xin kèm theo càng nhiều thông tin càng tốt, thậm chí cả tài liệu gốc. Nếu bạn có cách để tái hiện lại lỗi, xin gửi kèm theo luôn.
 Name[xx]=xxYou might want to send a bug report for this application. Check if it's listed on http://bugs.kde.org, otherwise mail the author. Please include as much information as possible, maybe the original documents. If you have a way to reproduce the error, include this also.xx
+Name[zh_CN]=您可能想要为此程序发送错误报告。请检查该错误是否已经在 http://bugs.kde.org 列出来了。如果尚未列出来的话，就需要联系作者。请尽可能提供详细的信息，比如当时程序使用的文档。如果您有办法重现错误，请同时提供这样的方法。
 
 [4]
 Name=SIGILL
