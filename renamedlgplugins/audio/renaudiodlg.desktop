@@ -1,5 +1,13 @@
 [Desktop Entry]
 Type=Service
 Name=Audio Preview
+Name[ca]=Escolta una mostra de so
+Name[da]=Lydforhåndsvisning
+Name[el]=Προεπισκόπιση ήχου
+Name[es]=Previsualización de Audio
+Name[hu]=Hang-előnézet
+Name[pt_BR]=Previsão de Áudio
+Name[sv]=Ljudförhandsgranskning
+Name[tr]=Audio Önizleme
 X-KDE-Library=librenaudioplugin
-ServiceTypes=RenameDlg/Plugin,audio/x-mp3,audio/x-wav,audio/x-ogg
+ServiceTypes=RenameDlg/Plugin,audio/x-mp3,audio/x-wav,application/ogg

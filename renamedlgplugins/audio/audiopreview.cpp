@@ -52,7 +52,7 @@ AudioPreview::AudioPreview( QWidget *parent, const char *name, const QString &fi
     pic->setPixmap(KMimeType::pixmapForURL(fileName));
     pic->adjustSize();
     QString desc;
-    if (mimeType == "audio/x-mp3" || mimeType == "audio/x-ogg"){
+    if (mimeType == "audio/x-mp3" || mimeType == "application/ogg"){
       desc.append(i18n("Artist: ") + info.item("Artist").value().toString() + "\n" );
       desc.append(i18n("Title: ") + info.item("Title").value().toString() + "\n" );
       desc.append(i18n("Comment: ") + info.item("Comment").value().toString() + "\n" );
