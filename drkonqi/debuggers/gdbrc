@@ -1,5 +1,6 @@
 [General]
 Name=GNU Debugger
+Name[af]=GNU ONTFOUTER
 Name[az]=GNU Xəta Ayıqlayıcı
 Name[bg]=Дебъгер на GNU
 Name[br]=Dizraener GNU
@@ -40,6 +41,7 @@ Name[uk]=Відладчик GNU
 Name[zh_CN.GB2312]=GNU 调试器
 Name[zh_TW.Big5]=GNU 除錯器
 Comment=Text based debugger from GNU in a konsole
+Comment[af]=TEKS GEBASEERDE ONTFOUTER VAN GNU IN 'N KONSOLE
 Comment[az]=GNU'dan konsol üçün mətn əsaslı xəta ayıqlayıcı
 Comment[bg]=Текстови дебъгер на GNU
 Comment[br]=Dizraener doare skrid eus GNU en ul letrin
