@@ -32,26 +32,37 @@ void KNetAttach::init()
     }
 }
 
+void KNetAttach::setInformationText( const QString &type )
+{
+    QString text = "Enter a name for this <i>%1</i> as well as a server address, port and folder path to use and press the <b>Save & Connect</b> button.";
+    
+    if (type=="WebFolder") {
+        _informationText->setText(text .arg("WebFolder"));
+    } else if (type=="Fish") {
+        _informationText->setText(text .arg("Secure shell connection"));
+    } else if (type=="SMB") {
+        text = "Enter a name for this <i>%1</i> as well as a server address and folder path to use and press the <b>Save & Connect</b> button.";
+        _informationText->setText(text.arg("Microsoft® Windows® network drive"));
+    }
+}
 
 void KNetAttach::showPage( QWidget *page )
 {
     if (page == _folderType) {
     } else if (page == _folderParameters) {
 	_host->setFocus();
-	QString text = "Enter a name for this <i>%1</i> as well as a server address, port and folder path to use and press the <b>Save & Connect</b> button.";
 	_connectionName->setFocus();
 
 	if (_webfolder->isChecked()) {
-	    _informationText->setText(text .arg("WebFolder"));
+	    setInformationText("WebFolder");
 	    updateForProtocol("WebFolder");
 	    _port->setValue(80);
 	} else if (_fish->isChecked()) {
-	    _informationText->setText(text.arg("Secure shell connection"));
+	    setInformationText("Fish");
 	    updateForProtocol("Fish");
 	    _port->setValue(22);
 	} else if (_smb->isChecked()) {
-	    text = "Enter a name for this <i>%1</i> as well as a server address and folder path to use and press the <b>Save & Connect</b> button.";
-	     _informationText->setText(text.arg("Microsoft® Windows® network drive"));
+	    setInformationText("SMB");
 	    updateForProtocol("SMB");
 	} else { //if (_recent->isChecked()) {
 	    KConfig recent("krecentconnections", true, false);
@@ -72,6 +83,7 @@ void KNetAttach::showPage( QWidget *page )
 	    }
 	    recent.setGroup(_recentConnectionName->currentText());
 	    _type = recent.readEntry("Type");
+	    setInformationText(_type);
 	    if (!updateForProtocol(_type)) {
 		// FIXME: handle error
 	    }

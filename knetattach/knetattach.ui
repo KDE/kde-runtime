@@ -384,6 +384,7 @@
 <functions>
     <function access="private" returnType="bool">doConnectionTest( const KURL &amp; url )</function>
     <function access="private" returnType="bool">updateForProtocol( const QString &amp; protocol )</function>
+    <function access="private" returnType="void">setInformationText( const QString &amp; type )</function>
 </functions>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>
