@@ -34,16 +34,17 @@ void KNetAttach::init()
 
 void KNetAttach::setInformationText( const QString &type )
 {
-    QString text = "Enter a name for this <i>%1</i> as well as a server address, port and folder path to use and press the <b>Save & Connect</b> button.";
+    QString text;
     
     if (type=="WebFolder") {
-        _informationText->setText(text .arg("WebFolder"));
+	text = i18n("Enter a name for this <i>WebFolder</i> as well as a server address, port and folder path to use and press the <b>Save & Connect</b> button.");
     } else if (type=="Fish") {
-        _informationText->setText(text .arg("Secure shell connection"));
+	text = i18n("Enter a name for this <i>Secure shell connetion</i> as well as a server address, port and folder path to use and press the <b>Save & Connect</b> button.");
     } else if (type=="SMB") {
-        text = "Enter a name for this <i>%1</i> as well as a server address and folder path to use and press the <b>Save & Connect</b> button.";
-        _informationText->setText(text.arg("Microsoft Windows network drive"));
+        text = i18n("Enter a name for this <i>Microsoft Windows network drive</i> as well as a server address and folder path to use and press the <b>Save & Connect</b> button.");
     }
+    
+    _informationText->setText(text);
 }
 
 void KNetAttach::showPage( QWidget *page )

@@ -9,6 +9,6 @@ xdg_apps_DATA = knetattach.desktop
 
 
 messages: rc.cpp
-	$(XGETTEXT) *.cpp -o $(podir)/knetattach.pot
+	$(XGETTEXT) *.cpp *.h -o $(podir)/knetattach.pot
 
 knetattach.lo: knetattach.ui knetattach.ui.h
