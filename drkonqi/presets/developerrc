@@ -1,6 +1,7 @@
 [General]
 Name=Developer
 Name[az]=Proqramcı
+Name[bg]=Програмисти
 Name[br]=Diorrer
 Name[bs]=Programer
 Name[ca]=Desenvolupador
@@ -145,6 +146,7 @@ Name[zh_TW.Big5]=應用程式 %progname (%appname) 已中止並產生信號 %sig
 Enable=true
 Name=You might want to fix you program. Take a look at the backtrace tab.
 Name[az]=Proqramınızdakı problemi həll etmək istəsəniz xəta ayıqlayıcı səkməsinə baxın.
+Name[bg]=Вие може би желаете да оправите Вашата програма. Проверете таб за грешки.
 Name[br]=Mennout a rit dresañ ho koulev. Taolit ur sell war ar pempilh kilroudenn.
 Name[ca]=Potser voldreu reparar el programa. Feu un cop d'ull a la pestanya del depurador.
 Name[cs]=Možná budete chtít opravit váš program. Klikněte na záložku ladění.
@@ -285,6 +287,7 @@ Name=SIGFPE
 Name[da]=SIGFRE
 Comment=Floating point exception.
 Comment[az]=Üzən nöqtə xətası.
+Comment[bg]=Подвижен стадий на exception.
 Comment[br]=Direizhenn niver skej
 Comment[ca]=Excepció de coma flotant.
 Comment[cs]=Vyjímka v plovoucí čárce.
