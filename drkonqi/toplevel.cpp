@@ -98,11 +98,12 @@ void Toplevel :: slotUser1()
   QString str;
 
   int i = KMessageBox::warningYesNoCancel(0,
-				  i18n("Do you want to generate a backtrace? "
-				       "This will help the developers to "
-				       "figure out what went wrong.\n\n"
-				       "Unfortantly this will take some time "
-				       "on slow machines."),
+				  i18n("<p>Do you want to generate a "
+				       "backtrace? This will help the "
+				       "developers to figure out what went "
+				       "wrong.</p><br>\n"
+				       "<p>Unfortantly this will take some "
+				       "time on slow machines.</p>"),
 				  i18n("Include Backtrace"));
   if (i == KMessageBox::Cancel) return;
 
