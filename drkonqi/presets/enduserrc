@@ -50,6 +50,7 @@ Comment[ro]=Setări preferate pentru utilizatori obişnuiţi
 Comment[ru]=Настройки предпочтительные для конечных пользователей
 Comment[sl]=Nastavitve, ljubše končnim uporabnikom
 Comment[sv]=Föredragna inställningar för slutanvändare
+Comment[ta]=கீழஂதடஂடு பயனரஂகளுகஂகான அைமபஂபுகளஂ
 Comment[tr]=Son kullanıcılar için tercih edilen ayarlar
 Comment[uk]=Настройкі переважно для кінцевих користувачів
 
@@ -85,7 +86,7 @@ Name[ru]=В приложение %progname (%appname) произошел фат�
 Name[sl]=Program %progname (%appname) se je sesul in javil signal %signum (%signame).
 Name[sr]=Aplikacija %progname (%appname) se srušila i izazvala signal %signum (%signame).
 Name[sv]=Programmet %progname (%appname) kraschade och orsakade signalen %signum (%signame).
-Name[ta]=பயனஂபாடு %progname (%appname) முறிநஂது %signum (%signame) குறிபஂைபஏறஂபடு஡ஂதியது.
+Name[ta]=பயனஂபாடு %progname (%appname) முறிநஂது %signum (%signame) குறிபஂைப ஏறஂபடு஡ஂதியது.
 Name[tr]= %progname (%appname) uygulaması çöktü ve %signum (%signame) sinyali gönderdi.
 Name[uk]=Програма %progname (%appname) дала сбій та визвала сигнал %signum (%signame).
 
@@ -114,7 +115,7 @@ Name[ro]=Poate aţi dori să trimiteţi un raport de eroare autorului. Vă rog s
 Name[ru]=Возможно вы хотите послать отчет об ошибке автору. Пожалуйстаприведите как можно больше информации, возможно оригинальныедокументы. Если вы знаете как возпроизвести ошибку - опишите.Щелкните на кнопку "Отчет об ошибках".
 Name[sl]=Morda boste avtorju želeli poslati poročilo o hrošču. Prosim, vključite čimveč podatkov, morda tudi izvirne dokumente. Če lahko kako ponovite napako, vključite tudi to. Kliknite gum "Poročaj o hrošču".
 Name[sv]=Du kanske vill skicka en felrapport till programmeraren. Var god bifoga så mycket information som möjligt, t ex originaldokumenten. Om du kan återupprepa felet, så beskriv även hur du gör det. Klicka på knappen "Felrapport".
-Name[ta]=எழு஡ஂதாளருகஂகு பிைழ அறிகஂைகைய அனுபஂப நீஙஂகளஂ விருமஂபுவீரஂகளஂ. தயவுெசயஂதுமுடிநஂதவைர அைன஡ஂது தகவலஂகைளயுமஂ, மூல ஆவணஙஂகைள ேசரஂகஂகவுமஂ. ஏதாவது பிைழஇருநஂதாலஂ, இைதயுமஂ ேசரஂகஂகவுமஂ."Bug report" எனஂற ெபா஡ஂதாைன கஂளிகஂ ெசயஂயவுமஂ.
+Name[ta]=எழு஡ஂதாளருகஂகு பிைழ அறிகஂைகைய அனுபஂப நீஙஂகளஂ விருமஂபுவீரஂகளஂ. தயவு ெசயஂது முடிநஂதவைர  அைன஡ஂது தகவலஂகைளயுமஂ, மூல ஆவணஙஂகைள ேசரஂகஂகவுமஂ. ஏதாவது பிைழஇருநஂதாலஂ, இைதயுமஂ ேசரஂகஂகவுமஂ."Bug report" எனஂற ெபா஡ஂதாைன கஂளிகஂ ெசயஂயவுமஂ.
 Name[tr]=Yazara bir hata raporu göndermek isterseniz, lütfen mümkün olduğunca fazla bilgi verin ve varsa orijinal belgeleri ekleyin. Eğer bu hatayı tekrar ortaya çıkarabilmenin bir yolu varsa, bunu da belirtin. "Hata raporu" düğmesine tıklayın.
 Name[uk]=Можливо Ви хочете відіслати звіт про помилку автору. Будь ласка, включіть якнаймога більше інформації, можливо вихідні документи. Якщо Ви можете повторити помилку, включіть це також. Клацніть на кнопку "Звіт про помилку".
  düğmesine tıklayın.
@@ -208,6 +209,7 @@ Comment[no]=En applikasjon avslutter med et SIGABRT når den finner en intern uo
 Comment[no_NY]=Eit program avsluttar med signalet SIGABRT når det oppdagar ein intern inkonsistens grunna ein feil i programmet.
 Comment[pt]=Uma aplicação terminada com um sinal SIGABRT quando detecta uma inconsistencia interna causada por um erro no programa.
 Comment[sl]=Program se prekine s signalom SIGABRT, ko zazna notranjo nekonsistentnost zaradi hrošča v programu.
+Comment[ta]=ஒரு நிரலஂ தனஂனுளஂேள பிைழ இருநஂதாலஂ SIGABRT குறியுடனஂ முறியுமஂ.
 Comment[tr]=Bir uygulama, programdaki bir hata yüzünden bir iç tutarsızlık tespit ettiğinde SIGABRT sinyaliyle sona erer.
 Comment[uk]=Програма завершується з сигналом SIGABRT, коли знайдено внутрішню несумісність визвану помилкою у програмі.
 
@@ -235,7 +237,7 @@ Comment[pt]=Uma aplicação normalmente recebe o sinal SIGFPE devido a um erro n
 Comment[ro]=În general o alicaţie primeşte semnalul SIGFPE datorită unei erori interne. Aplicaţiei i s-a cerut să îşi salveze documentele.
 Comment[ru]=Приложение получило сигнал SIGFPE из-за ошибки в программе.Приложению дана фозможность записать его документы.
 Comment[sl]=Program največkrat prejme signal SIGFPE zaradi hrošča. Od programa smo zahtevali, da shrani svoje dokumente.
-Comment[ta]=பயனஂபாடுகளிலஂ பிைழ இருநஂதாலஂ, பயனஂபாடு SIGFPE எனஂற குறிபஂைப ெபறுகிறதுபயனஂபாடஂைட அதனஂ ஆவணஙஂகைள ேசமிகஂக ெசாலஂலியாயிறஂறு.
+Comment[ta]=பயனஂபாடுகளிலஂ பிைழ இருநஂதாலஂ, பயனஂபாடு SIGFPE எனஂற குறிபஂைப ெபறுகிறது. பயனஂபாடஂைட அதனஂ ஆவணஙஂகைள ேசமிகஂக ெசாலஂலியாயிறஂறு.
 Comment[tr]=Uygulamadaki bir hata nedeniyle, uygulamalar çok kez SIGEPE sinyali alırlar. Bu durumdaki uygulamalardan belgelerini kaydetmesi istenir.
 Comment[uk]=Програма здебільшого отримує сигнал SIGFPE завдяки помилці у програмі. Програмі було запропоновано зберігти документи.
 
@@ -262,7 +264,7 @@ Comment[pt]=Uma aplicação normalmente recebe o sinal SIGSEGV devido a um erro 
 Comment[ro]=În general o alicaţie primeşte semnalul SIGSEGV datorită unei erori interne. Aplicaţiei i s-a cerut să îşi salveze documentele.
 Comment[ru]=Приложение получило сигнал SIGSEGV из-за ошибки в программе.Приложению дана фозможность записать его документы.
 Comment[sl]=Program največkrat prejme signal SIGSEGV zaradi hrošča. Od programa smo zahtevali, da shrani svoje dokumente.
-Comment[ta]=பயனஂபாடுகளிலஂ பிைழ இருநஂதாலஂ, பயனஂபாடு SIGSEGV எனஂற குறிபஂைப ெபறுகிறதுபயனஂபாடஂைட அதனஂ ஆவணஙஂகைள ேசமிகஂக ெசாலஂலியாயிறஂறு.
+Comment[ta]=பயனஂபாடுகளிலஂ பிைழ இருநஂதாலஂ, பயனஂபாடு SIGSEGV எனஂற குறிபஂைப ெபறுகிறது. பயனஂபாடஂைட அதனஂ ஆவணஙஂகைள ேசமிகஂக ெசாலஂலியாயிறஂறு.
 Comment[tr]=Uygulamadaki bir hata nedeniyle, uygulamalar çok kez SIGSEGV sinyali alırlar. Bu durumdaki uygulamalardan belgelerini kaydetmesi istenir.
 Comment[uk]=Програма здебільшого отримує сигнал SIGSEGV завдяки помилці у програмі. Програмі було запропоновано зберігти документи.
 

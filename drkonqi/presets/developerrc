@@ -50,6 +50,7 @@ Comment[ro]=Setări preferate de programatori
 Comment[ru]=Настройки, предпочтительные для разработчиков
 Comment[sl]=Nastavitve, ljubše razvijalcem
 Comment[sv]=Föredragna inställningar för utvecklare
+Comment[ta]=உருவாகஂகிகளுகஂகான அைமபஂபுகளஂ
 Comment[tr]=Programcılar için tercih edilen ayarlar
 Comment[uk]=Настройки переважно для розробників
 
@@ -85,7 +86,7 @@ Name[ru]=В приложение %progname (%appname) произошел фат�
 Name[sl]=Program %progname (%appname) se je sesul in javil signal %signum (%signame).
 Name[sr]=Aplikacija %progname (%appname) se srušila i izazvala signal %signum (%signame).
 Name[sv]=Programmet %progname (%appname) kraschade och orsakade signalen %signum (%signame).
-Name[ta]=பயனஂபாடு %progname (%appname) முறிநஂது %signum (%signame) குறிபஂைபஏறஂபடு஡ஂதியது.
+Name[ta]=பயனஂபாடு %progname (%appname) முறிநஂது %signum (%signame) குறிபஂைப ஏறஂபடு஡ஂதியது.
 Name[tr]= %progname (%appname) uygulaması çöktü ve %signum (%signame) sinyali gönderdi.
 Name[uk]=Програма %progname (%appname) дала сбій та визвала сигнал %signum (%signame).
 
@@ -115,7 +116,7 @@ Name[ru]=Возможно вы захотите исправить Вашу пр
 Name[sl]=Morda boste želeli popraviti program. Poglejte na oznako razhroščevalnika.
 Name[sr]=Možda bi želeli da ispravite program. Pogledajte debugger tab.
 Name[sv]=Du kanske vill fixa ditt program. Kolla under avlusar-fliken.
-Name[ta]=உஙஂகளுகஂகு நிரைல மாறஂற ேவணஂடியிருகஂகுமஂ.பிைழ நீகஂகிைய பாரஂ஡ஂதுகஂெகாளஂளுஙஂகளஂ.
+Name[ta]=உஙஂகளுகஂகு நிரைல மாறஂற ேவணஂடியிருகஂகுமஂ. பிைழ நீகஂகிைய பாரஂ஡ஂதுகஂெகாளஂளுஙஂகளஂ.
 Name[tr]=Programınızdaki sorunu çözmek isterseniz, hata ayıklayıcı sekmesine bir göz atınız.
 Name[uk]=Ви можливо хочете поладити Вашу програму. Дивіться повідомлення відладчика.
 
@@ -175,6 +176,7 @@ Comment[pl]=Przerwany.
 Comment[pt]=Abortado.
 Comment[sl]=Prekinjeno.
 Comment[sv]=Misslyckades.
+Comment[ta]=முறிநஂதது.
 Comment[tr]=İptal edildi.
 Comment[uk]=Прервано.
 
