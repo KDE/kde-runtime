@@ -466,6 +466,8 @@
     <include location="global" impldecl="in implementation">kglobalsettings.h</include>
     <include location="global" impldecl="in implementation">ksimpleconfig.h</include>
     <include location="global" impldecl="in implementation">kapplication.h</include>
+    <include location="global" impldecl="in implementation">kstandarddirs.h</include>
+    <include location="global" impldecl="in implementation">kdirnotify_stub.h</include>
     <include location="global" impldecl="in declaration">kurl.h</include>
 </includes>
 <variables>

@@ -10,9 +10,6 @@
 ** destructor.
 *****************************************************************************/
 
-#include <kstandarddirs.h>
-#include <kdirnotify_stub.h>
-
 void KNetAttach::init()
 {
     disconnect(finishButton(), SIGNAL(clicked()), (QDialog*)this, SLOT(accept()));
