@@ -7,7 +7,6 @@ knetattach_LDADD   = $(LIB_KIO)
 METASOURCES = AUTO
 xdg_apps_DATA = knetattach.desktop
 
-KDE_ICON = knetattach
 
 messages: rc.cpp
 	$(XGETTEXT) *.cpp -o $(podir)/knetattach.pot
