@@ -190,7 +190,6 @@ Name[zu]=I-%progname yomyaleli (%appname), iphahlazekile futhi yabanga uphawu %s
 [WhatToDoHint]
 Enable=true
 Name=You might want to send a bug report for this application. Check if it's listed on http://bugs.kde.org, otherwise mail the author. Please include as much information as possible, maybe the original documents. If you have a way to reproduce the error, include this also.
-Name[bg]=Вие може би желаете да пратите описание на грешката  до автора на програмата .Проверете дали е в списъка от грешки на http://bugs.kde.org, и ако не е там, пишете на авторите на програмата.Моля опишете подробно възникналият проблем. Ако имате решение на проблема, моля включете и него.
 Name[da]=Måske har du lyst til at sende en fejlrapport om dette program. Tjek om fejlen allerede er der på  listen ihttp://bugs.kde.org, skriv ellers til forfatteren. Husk at inkludere så meget information som muligt, måske de oprindelige dokumenter. Hvis du er i stand til at reproducere fejlen, så husk også at nævne dette.
 Name[el]=Ίσως θέλετε να στείλετε μια αναφορά σφάλματος γι' αυτήν την εφαρμογή. Ελέγξτε εάν είναι καταχωρημένη στο http://bugs.kde.org αλλιώς στείλετε mail στο συγγραφέα. Παρακαλώ συμπεριλάβετε τη μέγιστη δυνατή πληροφορία, ίσως και τα αυθεντικά έγγραφα. Εάν έχετε κάποιον τρόπο να ξαναεμφανίσετε το σφάλμα, συμπεριλάβετέ τον.
 Name[es]=Puede que quiera enviar un informe de fallos de esta aplicación Por favor compruebe si aparece en http://bugs.kde.org, si no, envíe un mensaje al autor. Por favor, incluya tanta información como pueda, tal vez incluso los documentos originales. Si hay una forma de reproducir el error, inclúyala también.
@@ -270,7 +269,7 @@ Name[vi]=SIGABRT
 Comment=An application terminates with a SIGABRT signal when it detects an internal inconsistency caused by a bug in the program.
 Comment[af]='n aansoek termineer met 'n Sigabrt sein wanneer dit bespeur 'n intern onkonsekwentheid veroorsaak deur 'n fout in die program.
 Comment[az]=Bir proqram, programdaki bir xəta yüzünden bir iç tutarsızlık tespit ettiğinde SIGABRT sinyaliyle sona erer.
-Comment[bg]=Приложение заършва със сигнал SIGABRT, когато в него возникне грешка.
+Comment[bg]=Приложение заършва със сигнал SIGABRT, когато в него възникне грешка.
 Comment[bs]=Aplikacija se prekida signalom SIGABRT kada se ustanovi interna nekonzistentnost koju izaziva bug u programu.
 Comment[ca]=Una aplicació ha finalitzat amb una senyal SIGABRT el qual detecta una inconsistència interna causada per un error al programa.
 Comment[cs]=Aplikace je ukončena se signálem SIGABRT, když zjistí vnitřní nekonzistenci způsobenou chybou v programu.
