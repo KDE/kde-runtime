@@ -88,7 +88,7 @@ Comment[sl]=Nastavitve, ljubše razvijalcem
 Comment[sv]=Föredragna inställningar för utvecklare
 Comment[ta]=¯ÕÅ¡ì¸¢Ùì¸¡É «¨ÁôÒ¸û
 Comment[tr]=Programcılar için tercih edilen ayarlar
-Comment[uk]=Настройки переважно для розробників
+Comment[uk]=Установки переважно для розробників
 Comment[zh_CN.GB2312]=开发人员偏好的设置
 Comment[zh_TW.Big5]=開發者偏好的設定
 
@@ -177,7 +177,7 @@ Name[ro]=S-ar putea să fie nevoie de repararea programului. Uitaţi-vă la subf
 Name[sk]=Možno chcete opraviť váš program. Prezrite si zápis tabuľky odlaďovača.
 Name[sl]=Morda boste želeli popraviti program. Poglejte si ustrezno oznako razhroščevalnika.
 Name[sr]=Možda biste želeli da popravite vaš program. Pogledajte panel bektrejs.
-Name[sv]=Du kanske vill fixa ditt program. Titta under bakåtspårning-fliken.
+Name[sv]=Du kanske vill fixa ditt program. Titta under fliken bakåtspårning.
 Name[ta]=¯í¸û ¿¢Ã¨Ä ºÃ¢ ¦ºöÂ §ÅñÊÂ¢ÕôÀ¢ý, À¢ýÍÅðÎò ¾ð¼¨Äô À¡÷ì¸×õ.
 Name[tr]=Programınızdaki sorunu çözmek isterseniz hata ayıklayıcı sekmesine bakın.
 Name[uk]=Ви, можливо, хочете поладити Вашу програму. Дивіться закладинку зворотнього трасування.
