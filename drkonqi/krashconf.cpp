@@ -26,7 +26,6 @@ KrashConfig :: ~KrashConfig()
 QString KrashConfig :: debugger() const
 {
   return m_debugger;
-  return QString::fromLatin1("konsole -e gdb %appname %pid");
 }
 
 void KrashConfig :: readConfig()
