@@ -54,4 +54,3 @@ void KrashConfig :: readConfig()
   if (b)
     m_signalText = preset.readEntry(QString::fromLatin1("Comment"));
 }
-
