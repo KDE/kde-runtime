@@ -45,14 +45,14 @@ static const char *description = I18N_NOOP( "KDE Crash Handler gives the user fe
 
 static const KCmdLineOptions options[] =
 {
-  {"signal <number>", I18N_NOOP("The signal number we caught."), 0},
-  {"appname <name>",  I18N_NOOP("Name of the program."), 0},
-  {"apppath <path>",  I18N_NOOP("Path to the executable."), 0},
-  {"appversion <version>", I18N_NOOP("The version of the program."), 0},
-  {"bugaddress <address>", I18N_NOOP("The bug address to use."), 0},
-  {"programname <name>", I18N_NOOP("Translated name of the program."), 0},
+  {"signal <number>", I18N_NOOP("The signal number that was caught"), 0},
+  {"appname <name>",  I18N_NOOP("Name of the program"), 0},
+  {"apppath <path>",  I18N_NOOP("Path to the executable"), 0},
+  {"appversion <version>", I18N_NOOP("The version of the program"), 0},
+  {"bugaddress <address>", I18N_NOOP("The bug address to use"), 0},
+  {"programname <name>", I18N_NOOP("Translated name of the program"), 0},
   {"pid <pid>", I18N_NOOP("The PID of the program"), 0},
-  {"startupid <id>", I18N_NOOP("Startup id of the program"), 0},
+  {"startupid <id>", I18N_NOOP("Startup ID of the program"), 0},
   {"kdeinit", I18N_NOOP("The program was started by kdeinit"), 0},
   { 0, 0, 0 }
 };
