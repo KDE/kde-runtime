@@ -95,7 +95,7 @@ void KrashConfig :: readConfig()
   QString configname = config->readEntry("ConfigName",
                                          QString::fromLatin1("enduser"));
 
-  QString debuggername = config->readPathEntry("Debugger",
+  QString debuggername = config->readEntry("Debugger",
                                            QString::fromLatin1("gdb"));
 
   KConfig debuggers(QString::fromLatin1("debuggers/%1rc").arg(debuggername),
