@@ -83,7 +83,8 @@ void BackTrace::start()
   ::fsync(handle);
 
   // start the debugger
-  m_proc = new KShellProcess;
+  m_proc = new KProcess;
+  m_proc->setUseShell(true);
 
   QString str = m_krashconf->debuggerBatch();
   m_krashconf->expandString(str, m_temp->name());

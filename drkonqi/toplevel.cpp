@@ -171,7 +171,8 @@ void Toplevel :: slotUser2()
   QString str = m_krashconf->debugger();
   m_krashconf->expandString(str);
 
-  KShellProcess proc;
+  KProcess proc;
+  proc.setUseShell(true);
   proc << str;
   proc.start(KProcess::DontCare);
 }
