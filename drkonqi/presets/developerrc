@@ -60,7 +60,7 @@ Name[no_NY]=Programmet %progname (%appname) krasja og gav signalet %signum (%sig
 Name[pt]=A aplicação %progname (%appname) estoirou e causar o sinal %signum (%signame).
 Name[ru]=В приложение %progname (%appname) произошел фатальный сбой,вызвавший сигнал %signum (%signame).
 Name[sl]=Program %progname (%appname) se je sesul in javil signal %signum (%signame).
-Name[sr]=Aplikacija %progname (%appname) se sru¹ila i izazvala signal %signum (%signame).
+Name[sr]=Aplikacija %progname (%appname) se srušila i izazvala signal %signum (%signame).
 Name[ta]=பயனஂபாடு %progname (%appname) முறிநஂது %signum (%signame) குறிபஂைபஏறஂபடு஡ஂதியது.
 Name[tr]= %progname (%appname) uygulamasý çöktü ve %signum (%signame) sinyali gönderdi.
 
@@ -84,7 +84,7 @@ Name[no_NY]=Du vil kanskje fiksa programmet ditt. Ta ein kikk i avlusingsmenyen.
 Name[pt]=Podes querer corrigir o programa. Olha para a página de depuração.
 Name[ru]=Возможно вы захотите исправить Вашу программу. Посмотрите на закладку отладчика.
 Name[sl]=Morda boste želeli popraviti program. Poglejte na oznako razhroščevalnika.
-Name[sr]=Mo¾da bi ¾eleli da ispravite program. Pogledajte debugger tab.
+Name[sr]=Možda bi želeli da ispravite program. Pogledajte debugger tab.
 Name[ta]=உஙஂகளுகஂகு நிரைல மாறஂற ேவணஂடியிருகஂகுமஂ.பிைழ நீகஂகிைய பாரஂ஡ஂதுகஂெகாளஂளுஙஂகளஂ.
 Name[tr]=Programýnýzdaki sorunu çözmek isteyebilirsiniz. Hata ayýklayýcý sekmesine bir göz atýnýz.
 

@@ -60,7 +60,7 @@ Name[no_NY]=Programmet %progname (%appname) krasja og gav signalet %signum (%sig
 Name[pt]=A aplicação %progname (%appname) estoirou e causar o sinal %signum (%signame).
 Name[ru]=В приложение %progname (%appname) произошел фатальный сбой,вызвавший сигнал %signum (%signame).
 Name[sl]=Program %progname (%appname) se je sesul in javil signal %signum (%signame).
-Name[sr]=Aplikacija %progname (%appname) se sru¹ila i izazvala signal %signum (%signame).
+Name[sr]=Aplikacija %progname (%appname) se srušila i izazvala signal %signum (%signame).
 Name[ta]=பயனஂபாடு %progname (%appname) முறிநஂது %signum (%signame) குறிபஂைபஏறஂபடு஡ஂதியது.
 Name[tr]= %progname (%appname) uygulamasý çöktü ve %signum (%signame) sinyali gönderdi.
 
@@ -85,6 +85,7 @@ Name[ru]=Возможно вы хотите послать отчет об ош�
 Name[sl]=Morda boste avtorju želeli poslati poročilo o hrošču. Prosim, vključite čimveč podatkov, morda tudi izvirne dokumente. Če lahko kako ponovite napako, vključite tudi to. Kliknite gum "Poročaj o hrošču".
 Name[ta]=எழு஡ஂதாளருகஂகு பிைழ அறிகஂைகைய அனுபஂப நீஙஂகளஂ விருமஂபுவீரஂகளஂ. தயவுெசயஂதுமுடிநஂதவைர அைன஡ஂது தகவலஂகைளயுமஂ, மூல ஆவணஙஂகைள ேசரஂகஂகவுமஂ. ஏதாவது பிைழஇருநஂதாலஂ, இைதயுமஂ ேசரஂகஂகவுமஂ."Bug report" எனஂற ெபா஡ஂதாைன கஂளிகஂ ெசயஂயவுமஂ.
 Name[tr]=Yazara bir hata raporu göstermek isteyebilirsiniz. Lütfen mümkün olduðunca fazla bilgi verin ve varsa orijinal belgeleri ekleyin. Eðer bu hatayý tekrar ortaya çýkarabilmenin bir yolu varsa, bunu da belirtin. "Hata raporu
+ düðmesine týklayýnýz.
  düðmesine týklayýnýz.
  düðmesine týklayýnýz.
  düðmesine týklayýnýz.
