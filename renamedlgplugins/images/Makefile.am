@@ -7,10 +7,8 @@ METASOURCES = AUTO
 # Install this plugin in the KDE modules directory
 kde_module_LTLIBRARIES = librenimageplugin.la
 
-# This is all standard.  Remove the LIB_KHTML reference if you are not
-# using the KHTML Part
 librenimageplugin_la_SOURCES = imagevisualizer.cpp image_plugin.cpp
-librenimageplugin_la_LIBADD = $(LIB_QT) $(LIB_KDECORE)
+librenimageplugin_la_LIBADD = $(LIB_KIO)
 librenimageplugin_la_LDFLAGS = -module $(KDE_PLUGIN) $(all_libraries)
 
 pluginsdir   = $(kde_servicesdir)

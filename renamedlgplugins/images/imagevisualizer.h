@@ -24,12 +24,19 @@
 
 class QPixmap;
 class QLabel;
-class ImageVisualizer : public QVBox{
- public:
+class ImageVisualizer : public QVBox
+{
+  Q_OBJECT
+public:
   ImageVisualizer(QWidget *parent, const char *name, const QString &fileName );
-  ~ImageVisualizer();
- private:
-  QPixmap *pixmap;
+
+private:
+  void loadImage( const QString& path );
+
+private slots:
+  void downloadImage( const QString& url );
+
+private:
   QLabel *pic;
   QLabel *description;
 };
