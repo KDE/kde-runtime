@@ -97,7 +97,9 @@ void KrashDebugger :: slotSave()
   if(!filename.isEmpty()) {
     QFile f(filename);
     if(f.open(IO_WriteOnly)) {
-      f.writeBlock(m_backtrace->text().local8Bit());
+      QByteArray bt = m_backtrace->text().local8Bit();  
+      // don't write the trailing \0
+      f.writeBlock(bt.data(), bt.size()-1);
       f.close();
     } else {
       KMessageBox::sorry(this, i18n("Can't open file %1 for writing").arg(filename));
