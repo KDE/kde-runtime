@@ -73,6 +73,7 @@ class KrashConfig
   QString m_signalText;
   QString m_whatToDoText;
   QString m_errorDescriptionText;
+  QString m_execname;
 
   QString m_debugger;
   QString m_debuggerBatch;

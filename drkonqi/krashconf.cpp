@@ -52,6 +52,9 @@ void KrashConfig :: readConfig()
   m_signalnum = args->getOption( "signal" ).toInt();
   m_pid = args->getOption( "pid" ).toInt();
   m_startedByKdeinit = args->isSet("kdeinit");
+  m_execname = args->getOption( "appname" );
+  if ( !args->getOption( "apppath" ).isEmpty() )
+      m_execname.prepend( args->getOption( "apppath" )+"/" );
 
   QCString programname = args->getOption("programname");
   if (programname.isEmpty()) programname.setStr(I18N_NOOP("unknown"));
@@ -123,7 +126,7 @@ void KrashConfig :: expandString(QString &str, QString tempFile) const
       if (startedByKdeinit())
         str.replace(pos, 9, QString::fromLatin1("kdeinit"));
       else
-        str.replace(pos, 9, QString::fromLatin1(appName()));
+        str.replace(pos, 9, m_execname);
     }
     else if (str.mid(pos, 7) == QString::fromLatin1("%signum"))
       str.replace(pos, 7, QString::number(signalNumber()));

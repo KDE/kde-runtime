@@ -8,13 +8,13 @@
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright
  *    notice, this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
@@ -47,6 +47,7 @@ static const KCmdLineOptions options[] =
 {
   {"signal <number>", I18N_NOOP("The signal number we caught."), 0},
   {"appname <name>",  I18N_NOOP("Name of the program."), 0},
+  {"apppath <path>",  I18N_NOOP("Path to the executable."), 0},
   {"appversion <version>", I18N_NOOP("The version of the program."), 0},
   {"bugaddress <address>", I18N_NOOP("The bug address to use."), 0},
   {"programname <name>", I18N_NOOP("Translated name of the program."), 0},
@@ -60,11 +61,11 @@ int main( int argc, char* argv[] )
   // Drop privs.
   setgid(getgid());
   setuid(getuid());
-  
-  // Make sure that DrKonqi doesn't start DrKonqi when it crashes :-]
-  setenv("KDE_DEBUG", "true", 1); 
 
-  KAboutData aboutData( "drkonqi", 
+  // Make sure that DrKonqi doesn't start DrKonqi when it crashes :-]
+  setenv("KDE_DEBUG", "true", 1);
+
+  KAboutData aboutData( "drkonqi",
 			I18N_NOOP("The KDE Crash Handler"),
 			version,
 			description,
