@@ -12,8 +12,7 @@
 class QTextView;
 class QLabel;
 class KrashConfig;
-class KProcess;
-class KTempFile;
+class BackTrace;
 
 #include <qwidget.h>
 
@@ -26,8 +25,9 @@ public:
   ~KrashDebugger();
 
 public slots:
-  void slotReadInput(KProcess *proc, char *buffer, int buflen);
-  void slotProcessExited(KProcess *proc); 
+  void slotAppend(const QString &);
+  void slotDone();
+  void slotSomeError();
 
 protected:
  void startDebugger();
@@ -37,8 +37,7 @@ protected slots:
 
 private:
   const KrashConfig *m_krashconf;
-  KProcess *m_proc;
-  KTempFile *m_temp;
+  BackTrace *m_proctrace;
   QLabel *m_status;
   QTextView *m_backtrace;
 };

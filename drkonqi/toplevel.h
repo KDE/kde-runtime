@@ -11,6 +11,7 @@
 
 class KAboutData;
 class KrashConfig;
+class DrKBugReport;
 
 #include <kdialogbase.h>
 
@@ -30,8 +31,13 @@ private:
 protected slots:
   void slotUser1();
 
+ protected slots:
+  void slotBacktraceSomeError();
+  void slotBacktraceDone(const QString &);
+
 private:
   const KrashConfig *m_krashconf;
+  DrKBugReport *bugreport;
 };
 
 #endif
