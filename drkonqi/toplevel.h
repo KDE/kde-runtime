@@ -10,6 +10,7 @@
 #define TOPLEVEL_H
 
 class KAboutData;
+class KrashConfig;
 
 #include <kdialogbase.h>
 
@@ -18,28 +19,19 @@ class Toplevel : public KDialogBase
   Q_OBJECT
 
 public:
-  Toplevel(int signal, const KAboutData &_oldabout, QWidget *parent = 0, const char * name = 0);
+  Toplevel(const KrashConfig *krash, QWidget *parent = 0, const char * name = 0);
   ~Toplevel();
 
 private:
   // helper methods
   void expandString(QString &str) const;
-  void readConfig();
   QString generateText() const;
 
 protected slots:
   void slotUser1();
 
 private:
-  bool showbugreport; 
-  int signalnum;
-
-  KAboutData oldabout;
-  QString signal;
-
-  QString signaldetails;
-  QString whattodohint;
-  QString errordescription;
+  const KrashConfig *m_krashconf;
 };
 
 #endif
