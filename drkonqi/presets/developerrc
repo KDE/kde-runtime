@@ -1,5 +1,6 @@
 [General]
 Name=Developer
+Name[bg]=Ïðîãðàìíè Ðàçðàáîòêè
 Name[ca]=Desenvolupador
 Name[cs]=Vývojář
 Name[da]=Udvikler
@@ -33,6 +34,7 @@ Name[tr]=Programcı
 Name[uk]=Розробник
 Name[zh_CN.GB2312]=开发人员
 Comment=Settings preferred for developers
+Comment[bg]=Îïöèè çà ïðîãðàìèñòè
 Comment[ca]=Arranjament preferit pels desenvolupadors
 Comment[cs]=Nastavení upřednostňovaná vývojáři
 Comment[da]=Indstilling foretrukket for udviklere
@@ -73,6 +75,7 @@ ShowDebugButton=true
 [ErrorDescription]
 Enable=true
 Name=The application %progname (%appname) crashed and caused the signal %signum (%signame).
+Name[bg]=Ïðîãðàìàòà %progname (%appname) áëîêèðà ïîðàäè ñèãíàë %signum (%signame)
 Name[ca]=El programa d'aplicaci� %progname (%appname) ha fallat i ha causat la senyal %signum (%signame).
 Name[cs]=Aplikace %progname (%appname) spadla a vyvolala signál %signum (%signame).
 Name[da]=Anvendelsen %progname (%appname) brød sammen og gav signalet %signum (%signame).
@@ -108,6 +111,7 @@ Name[zh_CN.GB2312]=程序 %progname (%appname) 已崩溃, 导致信号 %signum (
 [WhatToDoHint]
 Enable=true
 Name=You might want to fix you program. Take a look at the backtrace tab.
+Name[bg]=Âèå ìîæå áè æåëàåòå äà îïðàâèòå âàøàòà ïðîãðàìà. Ïîãëåäíåòå òàá çà ãðåøêè 
 Name[ca]=Potser voldreu reparar el programa. Feu un cop d'ull a la pestanya del depurador.
 Name[cs]=Možná budete chtít opravit váš program. Klikněte na záložku ladění.
 Name[da]=Hvis du har lyst til at ordne programmet, så kig på aflusermærket.
@@ -131,13 +135,13 @@ Name[ro]=S-ar putea s�fie nevoie s�reparai programul. Uitai-v�la tabul bac
 Name[sl]=Morda boste želeli popraviti program. Poglejte na ustrezno oznako razhroščevalnika.
 Name[sr]=Možda bi želeli da ispravite program. Pogledajte bektrejs tab.
 Name[sv]=Du kanske vill fixa ditt program. Titta under bakåtspårning-fliken.
-Name[uk]=Ви можливо хочете поладити Вашу програму. Дивіться закладинку зворотнього трасування.
 Name[zh_CN.GB2312]=你应该改正程序. 看看回溯跟踪部分.
 
 [4]
 Name=SIGILL
 Name[pl]=SIGKILL
 Comment=Illegal instruction.
+Comment[bg]=Íåëåãàëíà èíñòðóêöèÿ
 Comment[ca]=Instrucci� il�legal
 Comment[cs]=Ilegální instrukce.
 Comment[da]=Ulovlig instruktion
@@ -175,6 +179,7 @@ Comment[zh_CN.GB2312]=不合法的指令.
 Name=SIGABRT
 Name[fr]=SIABRT
 Comment=Aborted.
+Comment[bg]=Ïðåêúñíàò
 Comment[ca]=S'ha interromput.
 Comment[cs]=Přerušeno.
 Comment[da]=Mislykket
@@ -197,6 +202,7 @@ Comment[pl]=Przerwany.
 Comment[pt]=Abortado.
 Comment[pt_BR]=Abortado.
 Comment[ro]=Anulat.
+Comment[sk]=Zrušené.
 Comment[sl]=Prekinjeno.
 Comment[sr]=Napušteno.
 Comment[sv]=Misslyckades.
@@ -243,6 +249,7 @@ Comment[zh_CN.GB2312]=浮点计算异常.
 [11]
 Name=SIGSEGV
 Comment=Invalid memory reference.
+Comment[bg]=Ãðåøêà â ïàìåòòà
 Comment[ca]=Refer�ncia a mem�ria no v�lida.
 Comment[cs]=Neplatný odkaz do paměti.
 Comment[da]=Ugyldig hukommelsesreference
@@ -276,6 +283,7 @@ Comment[zh_CN.GB2312]=无效的内存引用.
 
 [unknown]
 Name=Unknown
+Name[bg]=Íåèçâåñòåí
 Name[ca]=Desconegut
 Name[cs]=Neznámý
 Name[da]=Ukendt
@@ -309,6 +317,7 @@ Name[tr]=Bilinmeyen
 Name[uk]=Невідомий
 Name[zh_CN.GB2312]=未知
 Comment=Sorry, I don't know this signal.
+Comment[bg]=Ñúæåëÿâàì íå çíàÿ òîçè ñèãíàë
 Comment[ca]=Ho sento, no conec aquesta senyal.
 Comment[cs]=Lituji, tento signál neznám.
 Comment[da]=Jeg kender desværre ikke dette signal.
