@@ -29,11 +29,13 @@ Name[ro]=Dezvoltator
 Name[ru]=Разработчик
 Name[sk]=Vývojár
 Name[sl]=Razvijalec
+Name[sr]=Progremer
 Name[sv]=Utvecklare
 Name[ta]=¯ÕÅ¡ì¸¢
 Name[tr]=Programcı
 Name[uk]=Розробник
 Name[zh_CN.GB2312]=开发人员
+Name[zh_TW.Big5]=開發者
 Comment=Settings preferred for developers
 Comment[bg]=Îïöèè çà ïðîãðàìèñòè
 Comment[ca]=Arranjament preferit pels desenvolupadors
@@ -64,11 +66,13 @@ Comment[ro]=Setări preferate de programatori
 Comment[ru]=Настройки, предпочтительные для разработчиков
 Comment[sk]=Preferované nastavenia pre vývojárov
 Comment[sl]=Nastavitve, ljubše razvijalcem
+Comment[sr]=Podešavanja koja više vole programeri
 Comment[sv]=Föredragna inställningar för utvecklare
 Comment[ta]=¯ÕÅ¡ì¸¢Ùì¸¡É «¨ÁôÒ¸û
 Comment[tr]=Programcılar için tercih edilen ayarlar
 Comment[uk]=Настройки переважно для розробників
 Comment[zh_CN.GB2312]=开发人员偏好的设置
+Comment[zh_TW.Big5]=開發者偏好的設定
 
 SignalDetails=true
 ShowBugReportButton=true
@@ -107,11 +111,13 @@ Name[ro]=Aplicaţia %progname (%appname) s-a prăbuşit şi a generat semnalul %
 Name[ru]=В приложение %progname (%appname) произошел фатальный сбой,вызвавший сигнал %signum (%signame).
 Name[sk]=Aplikácia %progname (%appname) spadla. Chyba bola zapríčinená signálom %signum (%signame).
 Name[sl]=Program %progname (%appname) se je sesul in javil signal %signum (%signame).
+Name[sr]=Aplikacija %progname (%appname) se srušila i izazvala signal %signum (%signame).
 Name[sv]=Programmet %progname (%appname) kraschade och orsakade signalen %signum (%signame).
 Name[ta]=ÀÂýÀ¡Î %progname (%appname) ÓÈ¢óÐ ÌÈ¢ %signum (%signame) ³ ¯ñ¼¡ì¸¢ÂÐ.
 Name[tr]= %progname (%appname) uygulaması çöktü ve %signum (%signame) sinyali gönderdi.
 Name[uk]=Програма %progname (%appname) дала сбій та визвала сигнал %signum (%signame).
 Name[zh_CN.GB2312]=程序 %progname (%appname) 已崩溃, 导致信号 %signum (%signame).
+Name[zh_TW.Big5]=應用程式 %progname (%appname) 已中止並產生信號 %signum (%signame).
 
 [WhatToDoHint]
 Enable=true
@@ -144,11 +150,13 @@ Name[ro]=S-ar putea să fie nevoie să reparaţi programul. Uitaţi-vă la subfe
 Name[ru]=Возможно вы захотите исправить Вашу программу. Посмотрите на закладку отладчика.
 Name[sk]=Možno chcete opraviť tento program. Prezrite si zápis tabuľky debugera.
 Name[sl]=Morda boste želeli popraviti program. Poglejte na ustrezno oznako razhroščevalnika.
+Name[sr]=Možda bi želeli da ispravite program. Pogledajte bektrejs tab.
 Name[sv]=Du kanske vill fixa ditt program. Titta under bakåtspårning-fliken.
 Name[ta]=¯í¸û ¿¢Ã¨Ä ºÃ¢ ¦ºöÂ§ÅñÊÂ¢ÕìÌõ. À¢ýÍÅÎ ¾ð¼¨Ä À¡÷ì¸×õ.
 Name[tr]=Programınızdaki sorunu çözmek isterseniz hata ayıklayıcı sekmesine bakın.
 Name[uk]=Ви, можливо, хочете поладити Вашу програму. Дивіться закладинку зворотнього трасування.
 Name[zh_CN.GB2312]=你应该改正程序. 看看回溯跟踪部分.
+Name[zh_TW.Big5]=你可能想要修護你的程式。請點選除錯器標簽來查看。
 
 [4]
 Name=SIGILL
@@ -183,11 +191,13 @@ Comment[ro]=Instrucţiune ilegală.
 Comment[ru]=Неверная инструкция
 Comment[sk]=Neplatná inštrukcia.
 Comment[sl]=Neveljaven ukaz.
+Comment[sr]=Neispravna instrukcija
 Comment[sv]=Ogiltig instruktion.
 Comment[ta]=À¢¨ÆÂ¡É ¬¨½
 Comment[tr]=Hatalı talimat.
 Comment[uk]=Невірна інструкція.
 Comment[zh_CN.GB2312]=不合法的指令.
+Comment[zh_TW.Big5]=不合法的指令。
 
 [6]
 Name=SIGABRT
@@ -222,11 +232,13 @@ Comment[ro]=Anulat.
 Comment[ru]=Прервано
 Comment[sk]=Zrušené.
 Comment[sl]=Prekinjeno.
+Comment[sr]=Napušteno.
 Comment[sv]=Misslyckades.
 Comment[ta]=¿¢Úò¾Àð¼Ð.
 Comment[tr]=İptal edildi.
 Comment[uk]=Прервано.
 Comment[zh_CN.GB2312]=中止.
+Comment[zh_TW.Big5]=中斷
 
 [8]
 Name=SIGFPE
@@ -264,6 +276,7 @@ Comment[ta]=Á¢¾¨Å ÒûÇ¢ ¾ÅÚ.
 Comment[tr]=Kayar nokta hatası.
 Comment[uk]=Виключна ситуація операції з плаваючою точкою.
 Comment[zh_CN.GB2312]=浮点计算异常.
+Comment[zh_TW.Big5]=浮點數異常。
 
 [11]
 Name=SIGSEGV
@@ -301,6 +314,7 @@ Comment[ta]=¾ÅÈ¡É ¿¢¨ÉÅ¸ «Û¸ø.
 Comment[tr]=Geçersiz bellek referansı.
 Comment[uk]=Невірне посилання до пам'яті.
 Comment[zh_CN.GB2312]=无效的内存引用.
+Comment[zh_TW.Big5]=不合法的記憶體參考。
 
 [unknown]
 Name=Unknown
@@ -333,11 +347,13 @@ Name[ro]=Necunoscut
 Name[ru]=Неизвестный
 Name[sk]=Neznámi
 Name[sl]=Neznan
+Name[sr]=Nepoznati
 Name[sv]=Okänd
 Name[ta]=¾Ã¢Â¡¾
 Name[tr]=Bilinmeyen
 Name[uk]=Невідомий
 Name[zh_CN.GB2312]=未知
+Name[zh_TW.Big5]=末知
 Comment=Sorry, I don't know this signal.
 Comment[bg]=Ñúæåëÿâàì íå çíàÿ òîçè ñèãíàë
 Comment[ca]=Ho sento, no conec aquesta senyal.
@@ -357,7 +373,7 @@ Comment[hu]=Nem ismerem ezt a szignált.
 Comment[is]=Því miður, ég þekki ekki þetta boð.
 Comment[it]=Spiacente, non conosco questo segnale.
 Comment[ja]=すみません、このシグナルはわかりません
-Comment[mk]=Се извинувам; не ми е познат овој сигнал.
+Comment[mk]=Жал ми е, но не ми е познат овој сигнал.
 Comment[nl]=Helaas, dit signaal ken ik niet.
 Comment[no]=Beklager, jeg kjenner ikke dette signalet.
 Comment[no_NY]=Orsak, eg kjenner ikkje dette signalet.
@@ -368,8 +384,10 @@ Comment[ro]=Nu cunosc acest tip de semnal.
 Comment[ru]=Извините, но я не знаю этого сигнала
 Comment[sk]=Prepáčte, nepoznám tento signál.
 Comment[sl]=Žal, ta signal je neznan.
+Comment[sr]=Izvinite ne znam za ovaj signal.
 Comment[sv]=Tyvärr, jag känner inte till den här signalen.
 Comment[ta]=ÁýÉ¢ì¸×õ, ­ó¾ ÌÈ¢ ±ÉìÌ ¦¾Ã¢Â¡Ð.
 Comment[tr]=Üzgünüm, bu sinyali tanımıyorum.
 Comment[uk]=Вибачте, не знаю цього сигналу.
 Comment[zh_CN.GB2312]=抱歉, 我不知道这个信号.
+Comment[zh_TW.Big5]=對不起，我不認識這個信號。
