@@ -62,9 +62,6 @@ Toplevel :: Toplevel(const KrashConfig *krashconf, QWidget *parent, const char *
                  ),
     m_krashconf(krashconf), m_bugreport(0)
 {
-  NETWinInfo inf(qt_xdisplay(), winId(), qt_xrootwin(), NET::WMState);
-  inf.setState(NET::StaysOnTop, NET::StaysOnTop);
-
   QHBox *page = addHBoxPage(i18n("General"));
   page->setSpacing(20);
 
