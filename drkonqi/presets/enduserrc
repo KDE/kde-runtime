@@ -1,0 +1,30 @@
+[General]
+Name=End user
+Comment=Settings prefered for endusers
+
+SignalDetails=true
+ShowBugReportbutton=true
+
+[ErrorDescription]
+Enable=true
+Name=The application "%appname" crashed and caused the signal %signum (%signame).
+
+[WhatToDoHint]
+Enable=true
+Name=You might want to send a bug report to the author. Please include as much information as possible, maybe the original documents. If you have a way to reproduce the error, include this also. Click on the "Bug report" button.
+
+[4]
+Name=SIGILL
+Comment=detail for illegal instruction signal.
+
+[8]
+Name=SIGFPE
+Comment=detail for SIGFPE signal.
+
+[11]
+Name=SIGSEGV
+Comment=An application mostly receives the SIGSEGV signal due to a bug in the application. The application was asked to save its documents.
+
+[unknown]
+Name=Unknown
+Comment=Sorry, I don't kwow this signal.

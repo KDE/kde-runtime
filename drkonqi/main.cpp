@@ -12,6 +12,8 @@
 
 #include <stdlib.h>
 
+#include <qfile.h>
+
 #include <kapp.h>
 #include <kcmdlineargs.h>
 #include <kaboutdata.h>
@@ -51,7 +53,8 @@ int main( int argc, char* argv[] )
   KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
   QCString signal = args->getOption( "signal" );
   int signalnum = signal.toInt();
-  QCString appname = args->getOption( "appname" );
+  if (signalnum < 0) signalnum = 11;
+  QString appname = QFile::decodeName(args->getOption( "appname" ));
 
   Toplevel *w = new Toplevel(signalnum, appname);
 
