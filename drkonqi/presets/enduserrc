@@ -27,6 +27,7 @@ Name[is]=Notandi
 Name[it]=Utente finale
 Name[ja]=エンドユーザ
 Name[ko]=일반 사용자
+Name[lo]=ຜູ້ໃຊ້ລະດັບສູງ
 Name[lt]=Galutinis vartotojas
 Name[lv]=Gala lietotājs
 Name[mt]=User finali
@@ -84,6 +85,7 @@ Comment[is]=RÃ¡Ã°lagÃ°ar stillingar fyrir notendur
 Comment[it]=Impostazioni preferite per l'utente finale
 Comment[ja]=エンドユーザ用の設定
 Comment[ko]=일반 사용자를 위한 설정
+Comment[lo]=ການປັບແຕ່ງສຳຫລັບຜູ້ໃຊ້ລະດັບສູງ
 Comment[lt]=Galutiniam vartotojui rekomenduojamos nuostatos
 Comment[lv]=Gala lietotājiem ieteicamie uzstādījumi
 Comment[mt]=Setings preferuti minn endusers
@@ -149,6 +151,7 @@ Name[is]=ForritiÃ° %progname (%appname) hrundi og gaf frÃ¡ sÃ©r boÃ°iÃ�
 Name[it]=L'applicazione %progname (%appname) è andata in crash e ha causato il segnale %signum (%signame).
 Name[ja]=このアプリケーション %progname (%appname) はクラッシュしシグナル %signum (%signame)を発行しました。
 Name[ko]=%progname (%appname)라는 프로그램이 다음과 같은 신호를 보내면서 죽었습니다 : %signum (%signame)
+Name[lo]=ອັບພລິກເຄຊັນ%progname (%appname) ທຳງານຫລົ້ມເຫລວໂດຍແຈ້ງສັນຍານຫມາຍເລກ%signum (%signame)
 Name[lt]=%progname programa (%appname) nulūžo ir gavo %signum (%signame) signalą.
 Name[lv]=Aplikācija %progname (%appname) avarējusi un izsaukusi signālu %signum (%signame).
 Name[mt]=Il-programm %progname (%appname) ikkraxxja u kkawża s-sinjal %signum (%signame).
@@ -206,6 +209,7 @@ Name[is]=ÃÃº vilt kannski senda villumeldingu til hÃ¶fundarins.  Vinsamle
 Name[it]=Se vuoi spedire una segnalazione di bug all'autore, includi il maggior numero di informazioni; se possibile, includi anche i documenti originali. Se conosci un modo per riprodurre l'errore, includilo.
 Name[ja]=あなたはバグレポートを作者に送れます。できるだけ多くの情報を含めて下さい。バグに再現性があるならばそれも書いて下さい。"バグレポートボタンを" 押して下さい。
 Name[ko]=만든 사람에게 벌레 보고서를 보내고 싶다면 되도록 기본 문서 정보를 포함하십시요. 만약 오류를 줄일 방법이 있다면 그것 또한 포함하십시요.
+Name[lo]=ທ່ານອາດຈະຕ້ອງການສົ່ງລາຍງານຄວາມຜິດພາດໃຫ້ກັບຜູ້ຂງນກະລຸນາລວບລວມຂໍ້ມູນຄວາມຜິດພາດຫລາຍທີ່ສຸດຫລືຫາກທ່ານຈຳວິທີທີ່ຈະເຮັດໃຫ້ເກີດຂໍ້ຜິດພາດເຊັ່ນອີກໄດ້ກໍ່ໃຫ້ສົ່ງວິທີການນັ້ນມາດ້ວຍ
 Name[lt]=Galbūt jūs norėtumėte pasiųsti klaidos raportą autoriui.  Prašom pateikite kiek galima daugiau informacijos, galbūt ir orginalius dokumentus.  Jei jūs žinote būdą pakartoti šią klaidą, aprašykite tai.
 Name[lv]=Jūs varbūt gribat nosūtīt kļūdu ziņojumu autoram. Lūdzu iekļaujiet pēc iespējas vairāk informācijas, varbūt oriģinālos dokumentus. Ja jums zināms ceļš kā izsaukt kļūdas atkārtošanos, iekļaujiet arī to.
 Name[mt]=Tista' tibgħat rapport dwar din il-problema lill-awtur. Inkludi kemm tista' informazzjoni, u forsi d-dokumenti oriġinali. Jekk hemm mod kif terġa tikkawża din il-problema, inkludi dawn id-dettalji.
@@ -266,6 +270,7 @@ Comment[is]=Forrit fÃ¦r yfirleitt SIGILL boÃ°iÃ° Ãºt af villu forritaran
 Comment[it]=Un'applicazione di solito riceve un segnale SIGILL a causa di un bug nell'applicazione. All'applicazione è stato chiesto di salvare i documenti.
 Comment[ja]=アプリケーションは内部のバグによりSIGILLシグナルを受けとります。アプリケーションは文書の保存をするかどうかを聞かれます。
 Comment[ko]=응용 프로그램이 벌레로 인해 SIGILL 신호를 전달 받았습니다. 응용 프로그램이 벌레를 문서로 저장해 줄 것을 요청했습니다.
+Comment[lo]=ອັບພລິກເຄເຊິນໄດ້ຮັບສັນຍານ SIGILL ໍຊຶ່ງອາດເປັນຂໍ້ຜິດພາດໃນອັບພລິກເຄເຊິນ
 Comment[lt]=Programa gauna SIGILL signalą paprastai dėl klaidos programoje.  Programa buvo paprašyta išsaugoti savo dokumentus.
 Comment[lv]=Aplikācija visbiežāk saņem SIGILL signālu sakarā ar kļūdu aplikācijā. Aplikācija piedāvāja saglabāt tās dokumentus.
 Comment[mt]=Programm normalment jirċievi s-sinjal SIGILL minħabba bug fil-programm. Dan il-programm intalab biex jikteb id-dokumenti tiegħu.
@@ -325,6 +330,7 @@ Comment[is]=Forrit hÃ¦ttir vegna SIGABRT boÃ°s, Ã¾egar villa veldur Ã³sa
 Comment[it]=Un'applicazione termina con il segnale SIGABRT quando riscontra un'inconsistenza interna causata da un bug nel programma.
 Comment[ja]=アプリケーションはプログラムのバグにより起こる内部不整合が探知された時、SIGABRTシグナルと共に落ちます。
 Comment[ko]=응용 프로그램이 벌레로 인해 안에서 무언가 일치하지 않다는 사실이 발견되어 SIGABRT 신호와 함께 끝나버렸습니다.
+Comment[lo]=ອັບພລິກເຄເຊິນຢຸດທຳງານດ້ວຍ SIGABRT ເມື່ອກວດພົບຄວາມຄັດແຍ້ງພາຍໃນເນື່ອງຈາກບັກໃນໂປຣແກຣມ
 Comment[lt]=Programa baigia darbą dėl SIGABRT signalo kai ji pastebi vidinį prieštaravimą dėl klaidos programoje.
 Comment[lv]=Aplikācija tiek pārtraukta ar SIGABRT signālu, kad tā detektē iekšējas nekonsistences ko izsaukušas kļūdas programmā.
 Comment[mt]=Programm jieqaf bis-sinjal SIGABRT meta jiltaqa' ma' inkonsistenza interna kkawżata minn bug fil-programm.
@@ -384,6 +390,7 @@ Comment[is]=Forrit fÃ¦r yfirleitt SIGFPE boÃ°iÃ° Ãºt af villu forritaran
 Comment[it]=Un'applicazione di solito riceve un segnale SIGFPE a causa di un bug nell'applicazione. All'applicazione è stato chiesto di salvare i documenti.
 Comment[ja]=アプリケーションは内部のバグによりSIGFPEシグナルを受けとります。アプリケーションは文書の保存をするかどうか聞かれます。
 Comment[ko]=응용 프로그램이 벌레로 인해 SIGFPE 신호를 전달 받았습니다. 응용 프로그램이 벌레를 문서로 저장해 줄 것을 요청 했습니다.
+Comment[lo]=ອັບພລິກເຄເຊິນໄດ້ຮັບສັນຍານ SIGFPE ຈາກບັກພາຍໃນໂປຣແກຣມແລະອັບພລິກເຄເຊິນໄດ້ຖາມເພື່ອທຳການບັນທຶກເອກະສານຂອງມັນ
 Comment[lt]=Programa dažniausiai gauna SIGFPE signalą dėl klaidos programoje.  Programa buvo paprašyta išsaugoti savo dokumentus.
 Comment[lv]=Aplikācija visbiežāk saņem SIGFPE signālu sakarā ar kļūdu aplikācijā. Aplikācija piedāvā saglabāt tās dokumentus.
 Comment[mt]=Programm ġeneralment jirċievi s-sinjal SIGFPE minħabba bug fil-programm. Il-programm intalab jikteb id-dokumenti tiegħu.
@@ -444,6 +451,7 @@ Comment[is]=Forrit fÃ¦r yfirleitt SIGSEGV boÃ°iÃ° Ãºt af villu forritara
 Comment[it]=Un'applicazione di solito riceve un segnale SIGSEGV a causa di un bug nell'applicazione. All'applicazione è stato chiesto di salvare i documenti.
 Comment[ja]=アプリケーションは内部のバグによりSIGSEGVシグナルを受けとります。アプリケーションは文書の保存をするかどうか聞かれます。
 Comment[ko]=응용 프로그램이 벌레로 인해 SIGSEGV 신호를 전달 받았습니다. 응용 프로그램이 벌레를 문서로 저장해 줄 것을 요청 했습니다.
+Comment[lo]=ອັບພລິກເຄເຊິນໄດ້ຮັບສັນຍານ SIGFPE ຈາກບັກພາຍໃນໂປຣແກຣມແລະອັບພລິກເຄເຊິນໄດ້ຖາມເພື່ອທຳການບັນທຶກເອກະສານຂອງມັນ
 Comment[lt]=Programa dažniausiai gauna SIGSEGV signalą dėl klaidos programoje.  Programos buvo paprašyta išsaugoti savo dokumentus.
 Comment[lv]=Aplikācija visbiežāk saņem SIGSEGV signālu sakarā ar kļūdu aplikācijā. Aplikācija piedāvā saglabāt tās dokumentus.
 Comment[mt]=Programm ġeneralment jirċievi s-sinjal SIGSEGV minħabba bug fil-programm. Il-programm intalab jikteb id-dokumenti tiegħu.
@@ -504,6 +512,7 @@ Name[is]=ÃÃ¾ekkt
 Name[it]=Sconosciuto
 Name[ja]=未知
 Name[ko]=모름
+Name[lo]=ບໍ່ຮູ້ຈັກ
 Name[lt]=Nežinoma
 Name[lv]=Nezināms
 Name[mt]=Mhux magħruf
@@ -563,6 +572,7 @@ Comment[is]=ÃvÃ­ miÃ°ur, Ã©g Ã¾ekki ekki Ã¾etta boÃ°.
 Comment[it]=Spiacente, non conosco questo segnale.
 Comment[ja]=すみません、このシグナルはわかりません
 Comment[ko]=모르는 신호입니다.
+Comment[lo]=ຂໍອະໄພບໍ່ຮູ້ຈັກຫມາຍເລກສັນຍານນີ້
 Comment[lt]=Apgailestauju, šito signalo aš nežinau.
 Comment[lv]=Atvainojiet, Es nezinu šo signālu.
 Comment[mt]=Jiddispjaċini, ma nafx dan is-sinjal.
