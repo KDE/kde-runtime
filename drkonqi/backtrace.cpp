@@ -49,6 +49,12 @@ void BackTrace::start()
   ::write(handle, "bt\n", 3); // this is the command for a backtrace
   ::fsync(handle);
 
+  QCString processName;
+  if (m_krashconf->startedByKdeinit())
+     processName = "kdeinit";
+  else
+     processName = m_krashconf->appName();
+
   // start the debugger
   m_proc = new KProcess;
   *m_proc << QString::fromLatin1("gdb")
@@ -56,7 +62,7 @@ void BackTrace::start()
 	  << QString::fromLatin1("-batch")
 	  << QString::fromLatin1("-x")
 	  << m_temp->name()
-	  << QFile::decodeName(m_krashconf->appName())
+	  << QFile::decodeName(processName)
     	  << QString::number(m_krashconf->pid());
 
   connect(m_proc, SIGNAL(receivedStdout(KProcess*, char*, int)),

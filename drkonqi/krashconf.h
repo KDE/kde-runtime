@@ -27,6 +27,7 @@ class KrashConfig
   bool showBacktrace() const { return m_showbacktrace; };
   bool showDebugger() const { return m_showdebugger && !m_debugger.isNull(); };
   bool showBugReport() const { return m_showbugreport; };
+  bool startedByKdeinit() const { return m_startedByKdeinit; };
   QString signalName() const { return m_signalName; };
   QString signalText() const { return m_signalText; };
   QString whatToDoText() const { return m_whatToDoText; }
@@ -42,6 +43,7 @@ class KrashConfig
   bool m_showdebugger;
   bool m_showbacktrace;
   bool m_showbugreport;
+  bool m_startedByKdeinit;
   QString m_signalName;
   QString m_signalText;
   QString m_whatToDoText;

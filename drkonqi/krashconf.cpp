@@ -34,6 +34,7 @@ void KrashConfig :: readConfig()
   KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
   m_signalnum = args->getOption( "signal" ).toInt();
   m_pid = args->getOption( "pid" ).toInt();
+  m_startedByKdeinit = args->isSet("kdeinit");
 
   QCString programname = args->getOption("programname");
   if (programname.isEmpty()) programname.setStr(I18N_NOOP("unknown"));
