@@ -20,7 +20,7 @@
 #include "krashconf.h"
 #include "toplevel.h"
 
-static const char *version = "0.2";
+static const char *version = "0.9";
 static const char *description = I18N_NOOP( "KDE Crash Handler give the user feedback if a program crashed." );
 
 static const KCmdLineOptions options[] =
