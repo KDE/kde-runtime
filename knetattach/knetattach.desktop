@@ -1,6 +1,18 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=KDE Network Wizard
+Name[bg]=Помощник за мрежата
+Name[da]=KDE's Netværksguide
+Name[fr]=Assistant réseau KDE
+Name[ga]=Draoi Líonra KDE
+Name[hu]=KDE hálózatbeállító varázsló
+Name[nl]=KDE-netwerkassistent
+Name[pt]=Assistente de Rede do KDE
+Name[pt_BR]=Assistente de Rede do KDE
+Name[sv]=KDE:s nätverksguide
+Name[ta]=கேடியி வலைப்பின்னல் பகுதி
+Name[uk]=Майстер мережі KDE
+Name[zh_CN]=KDE 网络向导
 Exec=knetattach
 InitialPreference=6
 Icon=knetattach
