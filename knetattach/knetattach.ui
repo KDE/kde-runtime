@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>594</width>
-            <height>302</height>
+            <width>574</width>
+            <height>369</height>
         </rect>
     </property>
     <property name="caption">
@@ -20,64 +20,16 @@
             <cstring>_folderType</cstring>
         </property>
         <attribute name="title">
-            <string>Connect To Network Folder</string>
+            <string>Connect to a Network Folder</string>
         </attribute>
         <grid>
             <property name="name">
                 <cstring>unnamed</cstring>
             </property>
-            <spacer row="1" column="2">
-                <property name="name">
-                    <cstring>spacer2_3</cstring>
-                </property>
-                <property name="orientation">
-                    <enum>Horizontal</enum>
-                </property>
-                <property name="sizeType">
-                    <enum>Expanding</enum>
-                </property>
-                <property name="sizeHint">
-                    <size>
-                        <width>40</width>
-                        <height>31</height>
-                    </size>
-                </property>
-            </spacer>
-            <spacer row="1" column="0">
-                <property name="name">
-                    <cstring>spacer2_4</cstring>
-                </property>
-                <property name="orientation">
-                    <enum>Horizontal</enum>
-                </property>
-                <property name="sizeType">
-                    <enum>Expanding</enum>
-                </property>
-                <property name="sizeHint">
-                    <size>
-                        <width>40</width>
-                        <height>31</height>
-                    </size>
-                </property>
-            </spacer>
-            <spacer row="2" column="1">
-                <property name="name">
-                    <cstring>spacer2_2</cstring>
-                </property>
-                <property name="orientation">
-                    <enum>Vertical</enum>
-                </property>
-                <property name="sizeType">
-                    <enum>Expanding</enum>
-                </property>
-                <property name="sizeHint">
-                    <size>
-                        <width>31</width>
-                        <height>50</height>
-                    </size>
-                </property>
-            </spacer>
-            <widget class="QButtonGroup" row="1" column="1">
+            <property name="margin">
+                <number>0</number>
+            </property>
+            <widget class="QButtonGroup" row="2" column="0">
                 <property name="name">
                     <cstring>buttonGroup1</cstring>
                 </property>
@@ -94,12 +46,18 @@
                     <property name="name">
                         <cstring>unnamed</cstring>
                     </property>
+                    <property name="margin">
+                        <number>0</number>
+                    </property>
                     <widget class="QRadioButton" row="3" column="0">
                         <property name="name">
                             <cstring>_recent</cstring>
                         </property>
                         <property name="text">
-                            <string>Recent connection</string>
+                            <string>&amp;Recent connection</string>
+                        </property>
+                        <property name="accel">
+                            <string>Alt+R</string>
                         </property>
                     </widget>
                     <widget class="QRadioButton" row="0" column="0" rowspan="1" colspan="2">
@@ -107,7 +65,10 @@
                             <cstring>_webfolder</cstring>
                         </property>
                         <property name="text">
-                            <string>WebFolder</string>
+                            <string>&amp;WebFolder (webdav)</string>
+                        </property>
+                        <property name="accel">
+                            <string>Alt+W</string>
                         </property>
                         <property name="checked">
                             <bool>true</bool>
@@ -118,7 +79,10 @@
                             <cstring>_fish</cstring>
                         </property>
                         <property name="text">
-                            <string>Fish (Secure Shell)</string>
+                            <string>&amp;Secure shell (ssh)</string>
+                        </property>
+                        <property name="accel">
+                            <string>Alt+S</string>
                         </property>
                         <property name="checked">
                             <bool>false</bool>
@@ -151,14 +115,17 @@
                             <cstring>_smb</cstring>
                         </property>
                         <property name="text">
-                            <string>MS Windows Network Drive</string>
+                            <string>&amp;Microsoft® Windows® network drive</string>
+                        </property>
+                        <property name="accel">
+                            <string>Alt+M</string>
                         </property>
                     </widget>
                 </grid>
             </widget>
-            <spacer row="0" column="1">
+            <spacer row="3" column="0">
                 <property name="name">
-                    <cstring>spacer2</cstring>
+                    <cstring>spacer2_2</cstring>
                 </property>
                 <property name="orientation">
                     <enum>Vertical</enum>
@@ -169,7 +136,35 @@
                 <property name="sizeHint">
                     <size>
                         <width>31</width>
-                        <height>50</height>
+                        <height>16</height>
+                    </size>
+                </property>
+            </spacer>
+            <widget class="QLabel" row="0" column="0">
+                <property name="name">
+                    <cstring>textLabel1_2</cstring>
+                </property>
+                <property name="text">
+                    <string>Select the type of network folder you wish to connect to and press the Next button.</string>
+                </property>
+                <property name="alignment">
+                    <set>WordBreak|AlignVCenter</set>
+                </property>
+            </widget>
+            <spacer row="1" column="0">
+                <property name="name">
+                    <cstring>spacer20</cstring>
+                </property>
+                <property name="orientation">
+                    <enum>Vertical</enum>
+                </property>
+                <property name="sizeType">
+                    <enum>Fixed</enum>
+                </property>
+                <property name="sizeHint">
+                    <size>
+                        <width>20</width>
+                        <height>21</height>
                     </size>
                 </property>
             </spacer>
@@ -180,113 +175,130 @@
             <cstring>_folderParameters</cstring>
         </property>
         <attribute name="title">
-            <string>Folder Information</string>
+            <string>Netowork Folder Information</string>
         </attribute>
         <grid>
             <property name="name">
                 <cstring>unnamed</cstring>
             </property>
-            <widget class="QLayoutWidget" row="1" column="0">
+            <property name="margin">
+                <number>0</number>
+            </property>
+            <widget class="QLabel" row="0" column="0" rowspan="1" colspan="3">
                 <property name="name">
-                    <cstring>layout8</cstring>
-                </property>
-                <hbox>
-                    <property name="name">
-                        <cstring>unnamed</cstring>
-                    </property>
-                    <widget class="QLabel">
-                        <property name="name">
-                            <cstring>textLabel1</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Host:</string>
-                        </property>
-                        <property name="buddy" stdset="0">
-                            <cstring>kLineEdit4</cstring>
-                        </property>
-                    </widget>
-                    <widget class="KLineEdit">
-                        <property name="name">
-                            <cstring>_host</cstring>
-                        </property>
-                    </widget>
-                </hbox>
-            </widget>
-            <widget class="QLayoutWidget" row="2" column="0" rowspan="1" colspan="2">
-                <property name="name">
-                    <cstring>layout10</cstring>
-                </property>
-                <hbox>
-                    <property name="name">
-                        <cstring>unnamed</cstring>
-                    </property>
-                    <widget class="QLabel">
-                        <property name="name">
-                            <cstring>textLabel3</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Path:</string>
-                        </property>
-                        <property name="buddy" stdset="0">
-                            <cstring>kLineEdit5</cstring>
-                        </property>
-                    </widget>
-                    <widget class="KLineEdit">
-                        <property name="name">
-                            <cstring>_path</cstring>
-                        </property>
-                    </widget>
-                </hbox>
-            </widget>
-            <widget class="QLayoutWidget" row="1" column="1">
-                <property name="name">
-                    <cstring>layout9</cstring>
-                </property>
-                <hbox>
-                    <property name="name">
-                        <cstring>unnamed</cstring>
-                    </property>
-                    <widget class="QLabel">
-                        <property name="name">
-                            <cstring>_portText</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Port:</string>
-                        </property>
-                        <property name="buddy" stdset="0">
-                            <cstring>spinBox1</cstring>
-                        </property>
-                    </widget>
-                    <widget class="QSpinBox">
-                        <property name="name">
-                            <cstring>_port</cstring>
-                        </property>
-                        <property name="sizePolicy">
-                            <sizepolicy>
-                                <hsizetype>1</hsizetype>
-                                <vsizetype>0</vsizetype>
-                                <horstretch>1</horstretch>
-                                <verstretch>0</verstretch>
-                            </sizepolicy>
-                        </property>
-                        <property name="maxValue">
-                            <number>32768</number>
-                        </property>
-                        <property name="minValue">
-                            <number>1</number>
-                        </property>
-                    </widget>
-                </hbox>
-            </widget>
-            <widget class="QCheckBox" row="3" column="1">
-                <property name="name">
-                    <cstring>_useEncryption</cstring>
+                    <cstring>_informationText</cstring>
                 </property>
                 <property name="text">
-                    <string>Use Encryption</string>
+                    <string>Enter a name for this &lt;i&gt;%1&lt;/i&gt; as well as the server address, port and folder path to use and press the Next button.</string>
+                </property>
+                <property name="alignment">
+                    <set>WordBreak|AlignVCenter</set>
                 </property>
             </widget>
-            <spacer row="4" column="0" rowspan="1" colspan="2">
+            <spacer row="1" column="2">
+                <property name="name">
+                    <cstring>spacer20_2</cstring>
+                </property>
+                <property name="orientation">
+                    <enum>Vertical</enum>
+                </property>
+                <property name="sizeType">
+                    <enum>Fixed</enum>
+                </property>
+                <property name="sizeHint">
+                    <size>
+                        <width>20</width>
+                        <height>21</height>
+                    </size>
+                </property>
+            </spacer>
+            <widget class="QLabel" row="2" column="0">
+                <property name="name">
+                    <cstring>textLabel4_2</cstring>
+                </property>
+                <property name="text">
+                    <string>&amp;Name:</string>
+                </property>
+                <property name="buddy" stdset="0">
+                    <cstring>_connectionName</cstring>
+                </property>
+            </widget>
+            <widget class="KLineEdit" row="2" column="1" rowspan="1" colspan="2">
+                <property name="name">
+                    <cstring>_connectionName</cstring>
+                </property>
+            </widget>
+            <widget class="QSpinBox" row="4" column="1">
+                <property name="name">
+                    <cstring>_port</cstring>
+                </property>
+                <property name="sizePolicy">
+                    <sizepolicy>
+                        <hsizetype>1</hsizetype>
+                        <vsizetype>0</vsizetype>
+                        <horstretch>1</horstretch>
+                        <verstretch>0</verstretch>
+                    </sizepolicy>
+                </property>
+                <property name="maxValue">
+                    <number>32768</number>
+                </property>
+                <property name="minValue">
+                    <number>1</number>
+                </property>
+            </widget>
+            <widget class="KLineEdit" row="5" column="1" rowspan="1" colspan="2">
+                <property name="name">
+                    <cstring>_path</cstring>
+                </property>
+            </widget>
+            <widget class="QLabel" row="3" column="0">
+                <property name="name">
+                    <cstring>textLabel1</cstring>
+                </property>
+                <property name="text">
+                    <string>Se&amp;rver:</string>
+                </property>
+                <property name="buddy" stdset="0">
+                    <cstring>_host</cstring>
+                </property>
+            </widget>
+            <widget class="QLabel" row="4" column="0">
+                <property name="name">
+                    <cstring>_portText</cstring>
+                </property>
+                <property name="text">
+                    <string>&amp;Port:</string>
+                </property>
+                <property name="buddy" stdset="0">
+                    <cstring>_port</cstring>
+                </property>
+            </widget>
+            <widget class="KLineEdit" row="3" column="1" rowspan="1" colspan="2">
+                <property name="name">
+                    <cstring>_host</cstring>
+                </property>
+                <property name="sizePolicy">
+                    <sizepolicy>
+                        <hsizetype>7</hsizetype>
+                        <vsizetype>0</vsizetype>
+                        <horstretch>10</horstretch>
+                        <verstretch>0</verstretch>
+                    </sizepolicy>
+                </property>
+            </widget>
+            <widget class="QLabel" row="5" column="0">
+                <property name="name">
+                    <cstring>textLabel3</cstring>
+                </property>
+                <property name="text">
+                    <string>&amp;Folder:</string>
+                </property>
+                <property name="buddy" stdset="0">
+                    <cstring>_path</cstring>
+                </property>
+            </widget>
+            <spacer row="8" column="0" rowspan="1" colspan="3">
                 <property name="name">
                     <cstring>spacer5</cstring>
                 </property>
@@ -299,125 +311,32 @@
                 <property name="sizeHint">
                     <size>
                         <width>560</width>
-                        <height>51</height>
+                        <height>16</height>
                     </size>
                 </property>
             </spacer>
-            <spacer row="0" column="0" rowspan="1" colspan="2">
-                <property name="name">
-                    <cstring>spacer5_2</cstring>
-                </property>
-                <property name="orientation">
-                    <enum>Vertical</enum>
-                </property>
-                <property name="sizeType">
-                    <enum>Expanding</enum>
-                </property>
-                <property name="sizeHint">
-                    <size>
-                        <width>560</width>
-                        <height>51</height>
-                    </size>
-                </property>
-            </spacer>
-        </grid>
-    </widget>
-    <widget class="QWidget">
-        <property name="name">
-            <cstring>_connectPage</cstring>
-        </property>
-        <attribute name="title">
-            <string>Connect!</string>
-        </attribute>
-        <grid>
-            <property name="name">
-                <cstring>unnamed</cstring>
-            </property>
-            <widget class="QLayoutWidget" row="1" column="0" rowspan="1" colspan="2">
-                <property name="name">
-                    <cstring>layout11</cstring>
-                </property>
-                <hbox>
-                    <property name="name">
-                        <cstring>unnamed</cstring>
-                    </property>
-                    <widget class="QLabel">
-                        <property name="name">
-                            <cstring>textLabel4</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Name for this connection:</string>
-                        </property>
-                        <property name="buddy" stdset="0">
-                            <cstring>kLineEdit6</cstring>
-                        </property>
-                    </widget>
-                    <widget class="KLineEdit">
-                        <property name="name">
-                            <cstring>_connectionName</cstring>
-                        </property>
-                    </widget>
-                </hbox>
-            </widget>
-            <widget class="QCheckBox" row="2" column="1">
+            <widget class="QCheckBox" row="6" column="1" rowspan="1" colspan="2">
                 <property name="name">
                     <cstring>_createIcon</cstring>
                 </property>
                 <property name="text">
-                    <string>Create desktop icon</string>
+                    <string>&amp;Create an icon on the desktop for this connection</string>
+                </property>
+                <property name="accel">
+                    <string>Alt+C</string>
                 </property>
             </widget>
-            <spacer row="0" column="0" rowspan="1" colspan="2">
+            <widget class="QCheckBox" row="7" column="1" rowspan="1" colspan="2">
                 <property name="name">
-                    <cstring>spacer7</cstring>
+                    <cstring>_useEncryption</cstring>
                 </property>
-                <property name="orientation">
-                    <enum>Vertical</enum>
+                <property name="text">
+                    <string>&amp;Use encryption</string>
                 </property>
-                <property name="sizeType">
-                    <enum>Expanding</enum>
+                <property name="accel">
+                    <string>Alt+U</string>
                 </property>
-                <property name="sizeHint">
-                    <size>
-                        <width>520</width>
-                        <height>51</height>
-                    </size>
-                </property>
-            </spacer>
-            <spacer row="3" column="0" rowspan="1" colspan="2">
-                <property name="name">
-                    <cstring>spacer7_2</cstring>
-                </property>
-                <property name="orientation">
-                    <enum>Vertical</enum>
-                </property>
-                <property name="sizeType">
-                    <enum>Expanding</enum>
-                </property>
-                <property name="sizeHint">
-                    <size>
-                        <width>520</width>
-                        <height>51</height>
-                    </size>
-                </property>
-            </spacer>
-            <spacer row="2" column="0">
-                <property name="name">
-                    <cstring>spacer9</cstring>
-                </property>
-                <property name="orientation">
-                    <enum>Horizontal</enum>
-                </property>
-                <property name="sizeType">
-                    <enum>Expanding</enum>
-                </property>
-                <property name="sizeHint">
-                    <size>
-                        <width>330</width>
-                        <height>21</height>
-                    </size>
-                </property>
-            </spacer>
+            </widget>
         </grid>
     </widget>
 </widget>
@@ -441,53 +360,47 @@
         <slot>updateParametersPageStatus()</slot>
     </connection>
     <connection>
-        <sender>_connectionName</sender>
-        <signal>textChanged(const QString&amp;)</signal>
-        <receiver>KNetAttach</receiver>
-        <slot>updateConnectPageStatus()</slot>
-    </connection>
-    <connection>
-        <sender>_createIcon</sender>
-        <signal>clicked()</signal>
-        <receiver>KNetAttach</receiver>
-        <slot>updateConnectPageStatus()</slot>
-    </connection>
-    <connection>
         <sender>_useEncryption</sender>
         <signal>toggled(bool)</signal>
         <receiver>KNetAttach</receiver>
         <slot>updatePort(bool)</slot>
     </connection>
 </connections>
+<tabstops>
+    <tabstop>_webfolder</tabstop>
+    <tabstop>_recentConnectionName</tabstop>
+    <tabstop>_host</tabstop>
+    <tabstop>_port</tabstop>
+    <tabstop>_path</tabstop>
+    <tabstop>_useEncryption</tabstop>
+    <tabstop>_connectionName</tabstop>
+</tabstops>
 <includes>
-    <include location="local" impldecl="in implementation">knetattach.ui.h</include>
     <include location="global" impldecl="in implementation">kio/netaccess.h</include>
     <include location="global" impldecl="in implementation">kmessagebox.h</include>
+    <include location="global" impldecl="in implementation">kiconloader.h</include>
+    <include location="global" impldecl="in implementation">klocale.h</include>
     <include location="global" impldecl="in implementation">kglobalsettings.h</include>
     <include location="global" impldecl="in implementation">ksimpleconfig.h</include>
     <include location="global" impldecl="in implementation">kapplication.h</include>
     <include location="global" impldecl="in implementation">kstandarddirs.h</include>
     <include location="global" impldecl="in implementation">kdirnotify_stub.h</include>
     <include location="global" impldecl="in declaration">kurl.h</include>
+    <include location="local" impldecl="in implementation">knetattach.ui.h</include>
 </includes>
 <variables>
     <variable access="private">QString _type;</variable>
 </variables>
 <slots>
     <slot access="private">init()</slot>
-    <slot access="private">showPage( QWidget *page )</slot>
+    <slot access="private">showPage( QWidget * page )</slot>
     <slot access="private">updateParametersPageStatus()</slot>
-    <slot access="private">updateConnectPageStatus()</slot>
     <slot access="private">finished()</slot>
     <slot access="private">updatePort( bool encryption )</slot>
 </slots>
 <functions>
-    <function access="private" returnType="bool">doConnectionTest(const KURL&amp; url)</function>
-    <function access="private" returnType="bool">updateForProtocol( const QString&amp; protocol )</function>
+    <function access="private" returnType="bool">doConnectionTest( const KURL &amp; url )</function>
+    <function access="private" returnType="bool">updateForProtocol( const QString &amp; protocol )</function>
 </functions>
 <layoutdefaults spacing="6" margin="11"/>
-<includehints>
-    <includehint>kcombobox.h</includehint>
-    <includehint>klineedit.h</includehint>
-</includehints>
 </UI>

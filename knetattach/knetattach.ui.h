@@ -12,11 +12,12 @@
 
 void KNetAttach::init()
 {
+    setIcon(SmallIcon("knetattach"));
     disconnect(finishButton(), SIGNAL(clicked()), (QDialog*)this, SLOT(accept()));
     connect(finishButton(), SIGNAL(clicked()), this, SLOT(finished()));
+    finishButton()->setText(i18n("&Save and Connect"));
     //setResizeMode(Fixed); FIXME: make the wizard fixed-geometry
-    setNextEnabled(_folderParameters, false);
-    setFinishEnabled(_connectPage, false);
+    setFinishEnabled(_folderParameters, false);
     KConfig recent("krecentconnections", true, false);
     recent.setGroup("General");
     QStringList idx = recent.readListEntry("Index");
@@ -37,13 +38,20 @@ void KNetAttach::showPage( QWidget *page )
     if (page == _folderType) {
     } else if (page == _folderParameters) {
 	_host->setFocus();
+	QString text = "Enter a name for this <i>%1</i> as well as a server address, port and folder path to use and press the <b>Save and Connect</b> button.";
+	_connectionName->setFocus();
+
 	if (_webfolder->isChecked()) {
+	    _informationText->setText(text .arg("WebFolder"));
 	    updateForProtocol("WebFolder");
 	    _port->setValue(80);
 	} else if (_fish->isChecked()) {
+	    _informationText->setText(text.arg("Secure shell connection"));
 	    updateForProtocol("Fish");
 	    _port->setValue(22);
 	} else if (_smb->isChecked()) {
+	    text = "Enter a name for this <i>%1</i> as well as a server address and folder path to use and press the <b>Save and Connect</b> button.";
+	     _informationText->setText(text.arg("Microsoft® Windows® network drive"));
 	    updateForProtocol("SMB");
 	} else { //if (_recent->isChecked()) {
 	    KConfig recent("krecentconnections", true, false);
@@ -79,9 +87,6 @@ void KNetAttach::showPage( QWidget *page )
 	    _createIcon->setChecked(false);
 	}
 	updateParametersPageStatus();
-    } else if (page == _connectPage) {
-	_connectionName->setFocus();
-	updateConnectPageStatus();
     }
 
     QWizard::showPage(page);
@@ -90,20 +95,16 @@ void KNetAttach::showPage( QWidget *page )
 
 void KNetAttach::updateParametersPageStatus()
 {
-    setNextEnabled(_folderParameters, !_host->text().stripWhiteSpace().isEmpty() && !_path->text().stripWhiteSpace().isEmpty());
+    setFinishEnabled(_folderParameters,
+		  !_host->text().stripWhiteSpace().isEmpty() &&
+		  !_path->text().stripWhiteSpace().isEmpty() &&
+		  !_connectionName->text().stripWhiteSpace().isEmpty());
 }
-
-
-void KNetAttach::updateConnectPageStatus()
-{
-    setFinishEnabled(_connectPage, !_createIcon->isChecked() || !_connectionName->text().stripWhiteSpace().isEmpty());
-}
-
 
 void KNetAttach::finished()
 {
-    setBackEnabled(_connectPage, false);
-    setFinishEnabled(_connectPage, false);
+    setBackEnabled(_folderParameters,false);
+    setFinishEnabled(_folderParameters, false);
     KURL url;
     if (_type == "WebFolder") {
 	if (_useEncryption->isChecked()) {
@@ -125,13 +126,13 @@ void KNetAttach::finished()
 	path = QString("/") + path;
     }
     url.setPath(path);
-    _connectPage->setEnabled(false);
+   _folderParameters->setEnabled(false);
     bool success = doConnectionTest(url);
-    _connectPage->setEnabled(true);
+   _folderParameters->setEnabled(true);
     if (!success) {
 	KMessageBox::sorry(this, i18n("Unable to connect to server.  Please check your settings and try again."));
 	showPage(_folderParameters);
-	setBackEnabled(_connectPage, true);
+	setBackEnabled(_folderParameters, true);
 	return;
     }
 
@@ -184,7 +185,7 @@ void KNetAttach::finished()
 	recent.writeEntry("Type", _type);
 	recent.sync();
     }
-    
+
     QDialog::accept();
 }
 
