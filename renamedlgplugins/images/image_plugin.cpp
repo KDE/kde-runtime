@@ -82,4 +82,4 @@ bool ImagePlugin::initialize( KIO::RenameDlg_Mode mode, const QString &_src, con
 }
 
 typedef KGenericFactory<ImagePlugin, QDialog> ImagePluginFactory;
-K_EXPORT_COMPONENT_FACTORY( librenimageplugin, ImagePluginFactory("imagerename_plugin") );
+K_EXPORT_COMPONENT_FACTORY( librenimageplugin, ImagePluginFactory("imagerename_plugin") )

@@ -50,7 +50,7 @@ public:
 
 AudioPlugin::AudioPlugin( QDialog *dialog, const char *name, const QStringList &list ) : RenameDlgPlugin( dialog, name, list) {
   qWarning("loaded" );  
-};
+}
 AudioPlugin::~AudioPlugin()
 {
 }
@@ -100,4 +100,4 @@ bool AudioPlugin::initialize( KIO::RenameDlg_Mode mode, const QString &_src, con
 }
 
 typedef KGenericFactory<AudioPlugin, QDialog> AudioPluginFactory;
-K_EXPORT_COMPONENT_FACTORY( librenaudioplugin, AudioPluginFactory("audiorename_plugin") );
+K_EXPORT_COMPONENT_FACTORY( librenaudioplugin, AudioPluginFactory("audiorename_plugin") )
