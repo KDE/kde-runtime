@@ -1,2 +1,2 @@
-data_DATA = gdbrc
-datadir = $(kde_datadir)/drkonqi/debuggers
+drkonqi_debuggers_data_DATA = gdbrc
+drkonqi_debuggers_datadir = $(kde_datadir)/drkonqi/debuggers
