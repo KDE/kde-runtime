@@ -35,6 +35,7 @@
 #include <kdebug.h>
 #include <kstartupinfo.h>
 #include <dcopclient.h>
+#include <kmacroexpander.h>
 
 #include "krashconf.h"
 
@@ -65,6 +66,7 @@ void KrashConfig :: readConfig()
   m_signalnum = args->getOption( "signal" ).toInt();
   m_pid = args->getOption( "pid" ).toInt();
   m_startedByKdeinit = args->isSet("kdeinit");
+  m_safeMode = args->isSet("safer");
   m_execname = args->getOption( "appname" );
   if ( !args->getOption( "apppath" ).isEmpty() )
     m_execname.prepend( args->getOption( "apppath" ) + "/" );
@@ -139,31 +141,20 @@ void KrashConfig :: readConfig()
 }
 
 // replace some of the strings
-void KrashConfig :: expandString(QString &str, QString tempFile) const
+void KrashConfig :: expandString(QString &str, bool shell, const QString &tempFile) const
 {
-  int pos = -1;
-  while ( (pos = str.findRev('%', pos)) != -1 )
-  {
-    if (str.mid(pos, 8) == QString::fromLatin1("%appname"))
-      str.replace(pos, 8, QString::fromLatin1(appName()));
-    if (str.mid(pos, 9) == QString::fromLatin1("%execname"))
-    {
-      if (startedByKdeinit())
-        str.replace(pos, 9, QString::fromLatin1("kdeinit"));
-      else
-        str.replace(pos, 9, m_execname);
-    }
-    else if (str.mid(pos, 7) == QString::fromLatin1("%signum"))
-      str.replace(pos, 7, QString::number(signalNumber()));
-    else if (str.mid(pos, 8) == QString::fromLatin1("%signame"))
-      str.replace(pos, 8, signalName());
-    else if (str.mid(pos, 9) == QString::fromLatin1("%progname"))
-      str.replace(pos, 9, programName());
-    else if (str.mid(pos, 4) == QString::fromLatin1("%pid"))
-      str.replace(pos, 4, QString::number(pid()));
-    else if (str.mid(pos, 9) == QString::fromLatin1("%tempfile"))
-      str.replace(pos, 9, tempFile);
-  }
+  QMap<QString,QString> map;
+  map[QString::fromLatin1("appname")] = QString::fromLatin1(appName());
+  map[QString::fromLatin1("execname")] = startedByKdeinit() ? QString::fromLatin1("kdeinit") : m_execname;
+  map[QString::fromLatin1("signum")] = QString::number(signalNumber());
+  map[QString::fromLatin1("signame")] = signalName();
+  map[QString::fromLatin1("progname")] = programName();
+  map[QString::fromLatin1("pid")] = QString::number(pid());
+  map[QString::fromLatin1("tempfile")] = tempFile;
+  if (shell)
+    str = KMacroExpander::expandMacrosShellQuote( str, map );
+  else
+    str = KMacroExpander::expandMacros( str, map );
 }
 
 #include "krashconf.moc"

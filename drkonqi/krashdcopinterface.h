@@ -52,6 +52,7 @@ k_dcop:
   virtual int signalNumber() const = 0;
   virtual int pid() const = 0;
   virtual bool startedByKdeinit() const = 0;
+  virtual bool safeMode() const = 0;
   virtual QString signalName() const = 0;
   virtual QString signalText() const = 0;
   virtual QString whatToDoText() const = 0;

@@ -54,6 +54,7 @@ static const KCmdLineOptions options[] =
   {"pid <pid>", I18N_NOOP("The PID of the program"), 0},
   {"startupid <id>", I18N_NOOP("Startup ID of the program"), 0},
   {"kdeinit", I18N_NOOP("The program was started by kdeinit"), 0},
+  {"safer", I18N_NOOP("Disable arbitrary disk access"), 0},
   KCmdLineLastOption
 };
 

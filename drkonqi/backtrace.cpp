@@ -96,7 +96,7 @@ void BackTrace::start()
   m_proc->setUseShell(true);
 
   QString str = m_krashconf->debuggerBatch();
-  m_krashconf->expandString(str, m_temp->name());
+  m_krashconf->expandString(str, true, m_temp->name());
 
   *m_proc << str;
 

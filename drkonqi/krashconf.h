@@ -50,6 +50,7 @@ k_dcop:
   virtual int signalNumber() const { return m_signalnum; };
   virtual int pid() const { return m_pid; };
   virtual bool startedByKdeinit() const { return m_startedByKdeinit; };
+  virtual bool safeMode() const { return m_safeMode; };
   virtual QString signalName() const { return m_signalName; };
   virtual QString signalText() const { return m_signalText; };
   virtual QString whatToDoText() const { return m_whatToDoText; }
@@ -66,7 +67,7 @@ public:
   bool showBugReport() const { return m_showbugreport; };
   const KAboutData *aboutData() const { return m_aboutData; }
 
-  void expandString(QString &str, QString tempFile = QString::null) const;
+  void expandString(QString &str, bool shell, const QString &tempFile = QString::null) const;
 
   void acceptDebuggingApp();
 
@@ -84,6 +85,7 @@ private:
   bool m_showbacktrace;
   bool m_showbugreport;
   bool m_startedByKdeinit;
+  bool m_safeMode;
   QString m_signalName;
   QString m_signalText;
   QString m_whatToDoText;

@@ -40,6 +40,7 @@
 #include <kpushbutton.h>
 #include <kstdguiitem.h>
 #include <ktextbrowser.h>
+#include <ktempfile.h>
 
 #include "backtrace.h"
 #include "krashconf.h"
@@ -67,7 +68,7 @@ KrashDebugger :: KrashDebugger (const KrashConfig *krashconf, QWidget *parent, c
   m_copyButton = new KPushButton( item, w );
   connect( m_copyButton, SIGNAL( clicked() ), this, SLOT( slotCopy() ) );
   m_copyButton->setEnabled( false );
-  m_saveButton = new KPushButton( KStdGuiItem::saveAs(), w );
+  m_saveButton = new KPushButton( m_krashconf->safeMode() ? KStdGuiItem::save() : KStdGuiItem::saveAs(), w );
   connect( m_saveButton, SIGNAL( clicked() ), this, SLOT( slotSave() ) );
   m_saveButton->setEnabled( false );
 }
@@ -93,20 +94,35 @@ void KrashDebugger :: slotCopy()
 
 void KrashDebugger :: slotSave()
 {
-  QString filename = KFileDialog::getSaveFileName(QString::null, QString::null, this, i18n("Select Filename"));
-  if (!filename.isEmpty())
+  if (m_krashconf->safeMode())
   {
-    QFile f(filename);
-    if (f.open(IO_WriteOnly))
+    KTempFile tf(QString::fromAscii("/tmp/"), QString::fromAscii(".kcrash"), 0666);
+    if (!tf.status())
     {
-      QByteArray bt = m_backtrace->text().local8Bit();
-      // don't write the trailing \0
-      f.writeBlock(bt.data(), bt.size() - 1);
-      f.close();
+      *tf.textStream() << m_backtrace->text();
+      KMessageBox::information(this, i18n("Backtrace saved to %1").arg(tf.name()));
     }
     else
     {
-      KMessageBox::sorry(this, i18n("Can't open file %1 for writing").arg(filename));
+      KMessageBox::sorry(this, i18n("Can't create a file to safe backtrace to"));
+    }
+  }
+  else
+  {
+    QString filename = KFileDialog::getSaveFileName(QString::null, QString::null, this, i18n("Select Filename"));
+    if (!filename.isEmpty())
+    {
+      QFile f(filename);
+      if (f.open(IO_WriteOnly))
+      {
+        QTextStream ts(&f);
+        ts << m_backtrace->text();
+        f.close();
+      }
+      else
+      {
+        KMessageBox::sorry(this, i18n("Can't open file %1 for writing").arg(filename));
+      }
     }
   }
 }

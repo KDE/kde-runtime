@@ -120,7 +120,7 @@ QString Toplevel :: generateText() const
                "<p>The program %appname crashed.</p>");
 
   // scan the string for %appname etc
-  m_krashconf->expandString(str);
+  m_krashconf->expandString(str, false);
 
   return str;
 }
@@ -177,7 +177,7 @@ void Toplevel :: slotUser1()
 void Toplevel :: slotUser2()
 {
   QString str = m_krashconf->debugger();
-  m_krashconf->expandString(str);
+  m_krashconf->expandString(str, true);
 
   KProcess proc;
   proc.setUseShell(true);
