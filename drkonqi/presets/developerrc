@@ -104,6 +104,8 @@ ShowDebugButton=true
 [ErrorDescription]
 Enable=true
 Name=The application %progname (%appname), pid %pid, crashed and caused the signal %signum (%signame).
+Name[da]=Programmet %progname (%appname), pid %pid brød sammen og gav signalet %signum (%signame).
+Name[he]=היישום %progname )%appname(, זיהוי תהליך %pid, התרסק וגרם לאיתות %signum )%signame(.
 
 [WhatToDoHint]
 Enable=true
