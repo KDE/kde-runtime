@@ -1,10 +1,12 @@
 /*****************************************************************
  * drkonki - The KDE Crash Handler
  *
- * $Id:$
+ * $Id$
  *
  * Copyright (C) 2000 Hans Petter Bieker <bieker@kde.org>
  *****************************************************************/
+
+#include <stdlib.h>
 
 #include <kapp.h>
 #include <kcmdlineargs.h>
@@ -25,6 +27,9 @@ static const KCmdLineOptions options[] =
 
 int main( int argc, char* argv[] )
 {
+  // Make sure that DrKonqi doesn't start DrKonqi when it crashes :-]
+  setenv("KDE_DEBUG", "true", 1); 
+
   KAboutData aboutData( "drkonqi", 
 			I18N_NOOP("The KDE Crash Handler"),
 			version,
