@@ -10,6 +10,8 @@
 ** destructor.
 *****************************************************************************/
 
+#include <kstandarddirs.h>
+#include <kdirnotify_stub.h>
 
 void KNetAttach::init()
 {
@@ -141,7 +143,11 @@ void KNetAttach::finished()
     QString name = _connectionName->text().stripWhiteSpace();
 
     if (_createIcon->isChecked()) {
-	QString path = KGlobalSettings::desktopPath() + name + ".desktop";
+	KGlobal::dirs()->addResourceType("remote_entries",
+		KStandardDirs::kde_default("data") + "remoteview");
+
+	QString path = KGlobal::dirs()->saveLocation("remote_entries");
+	path += name + ".desktop";
 	KSimpleConfig desktopFile(path, false);
 	desktopFile.setGroup("Desktop Entry");
 	desktopFile.writeEntry("Icon", "package_network");
@@ -149,6 +155,8 @@ void KNetAttach::finished()
 	desktopFile.writeEntry("Type", "Link");
 	desktopFile.writeEntry("URL", url.prettyURL());
 	desktopFile.sync();
+	KDirNotify_stub notifier("*", "*");
+	notifier.FilesAdded( "remote:/" );
     }
 
     if (!name.isEmpty()) {
