@@ -32,31 +32,46 @@
 
 #include <kaboutdata.h>
 #include <qstring.h>
+#include <qobject.h>
 
-class KrashConfig
+#include "krashdcopinterface.h"
+
+class KrashConfig : public QObject, public KrashDCOPInterface
 {
+  Q_OBJECT
+
 public:
   KrashConfig();
-  ~KrashConfig();
+  virtual ~KrashConfig();
 
-  QString programName() const { return m_aboutData->programName(); };
-  const char* appName() const { return m_aboutData->appName(); };
+k_dcop:
+  virtual QString programName() const { return m_aboutData->programName(); };
+  virtual QCString appName() const { return m_aboutData->appName(); };
+  virtual int signalNumber() const { return m_signalnum; };
+  virtual int pid() const { return m_pid; };
+  virtual bool startedByKdeinit() const { return m_startedByKdeinit; };
+  virtual QString signalName() const { return m_signalName; };
+  virtual QString signalText() const { return m_signalText; };
+  virtual QString whatToDoText() const { return m_whatToDoText; }
+  virtual QString errorDescriptionText() const { return m_errorDescriptionText; };
+
+  virtual ASYNC registerDebuggingApplication(const QString& launchName);
+
+public:
   QString debugger() const { return m_debugger; }
   QString debuggerBatch() const { return m_debuggerBatch; }
   QString tryExec() const { return m_tryExec; }
-  const KAboutData *aboutData() const { return m_aboutData; }
-  int signalNumber() const { return m_signalnum; };
-  int pid() const { return m_pid; };
   bool showBacktrace() const { return m_showbacktrace; };
   bool showDebugger() const { return m_showdebugger && !m_debugger.isNull(); };
   bool showBugReport() const { return m_showbugreport; };
-  bool startedByKdeinit() const { return m_startedByKdeinit; };
-  QString signalName() const { return m_signalName; };
-  QString signalText() const { return m_signalText; };
-  QString whatToDoText() const { return m_whatToDoText; }
-  QString errorDescriptionText() const { return m_errorDescriptionText; };
+  const KAboutData *aboutData() const { return m_aboutData; }
 
   void expandString(QString &str, QString tempFile = QString::null) const;
+
+  void acceptDebuggingApp();
+
+signals:
+  void newDebuggingApplication(const QString& launchName);
 
 private:
   void readConfig();

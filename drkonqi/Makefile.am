@@ -1,10 +1,11 @@
 # $Id$
 
-AM_CPPFLAGS = -DQT_NO_CAST_ASCII 
+AM_CPPFLAGS = -DQT_NO_CAST_ASCII
 
 SUBDIRS = presets pics debuggers
 
 INCLUDES = $(all_includes)
+METASOURCES = AUTO
 
 EXTRA_DIST = LICENSE
 
@@ -16,10 +17,8 @@ LDADD  = $(LIB_KDEUI) $(LIB_KIO)
 
 # toplevel.cpp must be last in row due to X-headers being included. (--enable-final)
 # Did I mention already that X header files really suck?
-drkonqi_SOURCES = main.cpp debugger.cpp krashconf.cpp \
-	drbugreport.cpp backtrace.cpp toplevel.cpp
+drkonqi_SOURCES = krashdcopinterface.skel main.cpp debugger.cpp krashconf.cpp drbugreport.cpp backtrace.cpp toplevel.cpp
 
-drkonqi_METASOURCES = AUTO
 
 check_PROGRAMS = crashtest
 crashtest_SOURCES = crashtest.cpp

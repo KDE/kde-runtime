@@ -35,11 +35,13 @@
 
 #include <klocale.h>
 #include <kglobal.h>
-#include <kdebug.h>
 #include <kstandarddirs.h>
 #include <kbugreport.h>
 #include <kmessagebox.h>
 #include <kprocess.h>
+#include <dcopref.h>
+#include <kapplication.h>
+#include <dcopclient.h>
 
 #include "backtrace.h"
 #include "drbugreport.h"
@@ -48,10 +50,10 @@
 #include "toplevel.h"
 #include "toplevel.moc"
 
-Toplevel :: Toplevel(const KrashConfig *krashconf, QWidget *parent, const char *name)
+Toplevel :: Toplevel(KrashConfig *krashconf, QWidget *parent, const char *name)
   : KDialogBase( Tabbed,
                  krashconf->programName(),
-                 User2 | User1 | Close,
+                 User3 | User2 | User1 | Close,
                  Close,
                  parent,
                  name,
@@ -83,8 +85,13 @@ Toplevel :: Toplevel(const KrashConfig *krashconf, QWidget *parent, const char *
 
   showButton( User1, m_krashconf->showBugReport() );
   showButton( User2, m_krashconf->showDebugger() );
+  showButton( User3, false );
 
   connect(this, SIGNAL(closeClicked()), SLOT(accept()));
+  connect(m_krashconf, SIGNAL(newDebuggingApplication(const QString&)), SLOT(slotNewDebuggingApp(const QString&)));
+
+  if ( kapp->dcopClient()->attach() )
+    kapp->dcopClient()->registerAs( kapp->name() );
 }
 
 Toplevel :: ~Toplevel()
@@ -176,6 +183,17 @@ void Toplevel :: slotUser2()
   proc.setUseShell(true);
   proc << str;
   proc.start(KProcess::DontCare);
+}
+
+void Toplevel :: slotNewDebuggingApp(const QString& launchName)
+{
+  setButtonText( User3, launchName );
+  showButton( User3, true );
+}
+
+void Toplevel :: slotUser3()
+{
+  m_krashconf->acceptDebuggingApp();
 }
 
 void Toplevel :: slotBacktraceDone(const QString &str)

@@ -1,9 +1,9 @@
 /*****************************************************************
  * drkonqi - The KDE Crash Handler
  *
- * toplevel.cpp
+ * krashdcopinterface.h
  *
- * Copyright (C) 2000-2003 Hans Petter Bieker <bieker@kde.org>
+ * Copyright (C) 2003 Hamish Rodda <rodda@kde.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,40 +27,40 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************/
 
-#ifndef TOPLEVEL_H
-#define TOPLEVEL_H
+#ifndef KRASHDCOPINTERFACE_SKEL
+#define KRASHDCOPINTERFACE_SKEL
 
-class KAboutData;
-class KrashConfig;
-class DrKBugReport;
+#include <dcopobject.h>
 
-#include <kdialogbase.h>
+#include <qstring.h>
+#include <qcstring.h>
+#include <kaboutdata.h>
 
-class Toplevel : public KDialogBase
+/**
+ * Provides information about a crashed process over dcop.
+ *
+ * @author Hamish Rodda <rodda@kde.org>
+ */
+class KrashDCOPInterface : virtual public DCOPObject
 {
-  Q_OBJECT
-
+  K_DCOP
 public:
-  Toplevel(KrashConfig *krash, QWidget *parent = 0, const char * name = 0);
-  ~Toplevel();
 
-private:
-  // helper methods
-  QString generateText() const;
+k_dcop:
+  virtual QString programName() const = 0;
+  virtual QCString appName() const = 0;
+  virtual int signalNumber() const = 0;
+  virtual int pid() const = 0;
+  virtual bool startedByKdeinit() const = 0;
+  virtual QString signalName() const = 0;
+  virtual QString signalText() const = 0;
+  virtual QString whatToDoText() const = 0;
+  virtual QString errorDescriptionText() const = 0;
 
-protected slots:
-  void slotUser1();
-  void slotUser2();
-  void slotNewDebuggingApp(const QString& launchName);
-  void slotUser3();
+  virtual ASYNC registerDebuggingApplication(const QString& launchName) = 0;
 
-protected slots:
-  void slotBacktraceSomeError();
-  void slotBacktraceDone(const QString &);
-
-private:
-  KrashConfig *m_krashconf;
-  DrKBugReport *m_bugreport;
+k_dcop_signals:
+  void acceptDebuggingApplication();
 };
 
 #endif

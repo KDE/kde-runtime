@@ -34,17 +34,29 @@
 #include <klocale.h>
 #include <kdebug.h>
 #include <kstartupinfo.h>
+#include <dcopclient.h>
 
 #include "krashconf.h"
 
 KrashConfig :: KrashConfig()
 {
+  setObjId("krashinfo");
   readConfig();
 }
 
 KrashConfig :: ~KrashConfig()
 {
   delete m_aboutData;
+}
+
+ASYNC KrashConfig :: registerDebuggingApplication(const QString& launchName)
+{
+  emit newDebuggingApplication( launchName );
+}
+
+void KrashConfig :: acceptDebuggingApp()
+{
+  acceptDebuggingApplication();
 }
 
 void KrashConfig :: readConfig()
@@ -153,3 +165,5 @@ void KrashConfig :: expandString(QString &str, QString tempFile) const
       str.replace(pos, 9, tempFile);
   }
 }
+
+#include "krashconf.moc"
