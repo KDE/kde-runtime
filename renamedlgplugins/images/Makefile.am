@@ -20,4 +20,4 @@ plugins_DATA = renimagedlg.desktop
 # is KHTMLPart)
 
 messages: rc.cpp
-	$(XGETTEXT) *.cpp *.h -o $(podir)/imagerename_plugin.pot
+	$(XGETTEXT) *.cpp  -o $(podir)/imagerename_plugin.pot
