@@ -123,6 +123,7 @@ Name[ca]=Potser voleu enviar un informe d'error a l'autor. Si us plau, incluiu t
 Name[cs]=Možná budete chtít zaslat nahlášení chyby autorovi. Prosím vložte co nejvíce informací, případně i původní dokument. Znáte-li způsob jak znovu vyvolat chybu, tak jej též popište.
 Name[da]=Måske har du lyst til at sende en problemrapport til forfatteren. Husk at inkludere så megen information som muligt, måske de oprindelige dokumenter. Hvis du er i stand til at reproducere fejlen, så husk også at nævne dette.
 Name[de]=Vielleicht möchten Sie einen Problembericht an den Autor schicken. Bitte liefern Sie dazu so viel Information wie möglich, eventuell einschließlich der bearbeiteten Dateien. Wenn Sie einen Weg finden, wie sich der Fehler reproduzieren lässt, geben Sie auch diesen an.
+Name[el]=Ίσως θέλετε να στείλετε μια αναφορά  σφάλματος στο δημιουργό.Παρακαλώ συμπεριλάβετε τη μέγιστη δυνατή πληροφορία, ίσως τα αυθεντικάέγγραφα. Άν έχετε κάποιον τρόπο να ξαναεμφανίσετε το σφάλμα, συμπεριλάβετέτον. Κάντε κλικ στο "Αναφορά Σφάλματος".
 Name[eo]=Vi povus sendi eraroraporton al la aŭtoro. Bonvolu kunsendi tiom da informoj, kiom eblas, laŭeble la originalajn dokumentojn. Se vi trovis manieron reprodukti la eraron, bonvolu aldoni ĝin.
 Name[es]=Puede querer mandár un aviso de error al autor. Por favor, incluya tanta información como pueda, tal vez incluso los documentos originales. Si hay forma de reproducir el error, añádalo también.
 Name[et]=Sa võid saata autorile vearaporti. Palun lisa niipalju infot, kui võimalik; võibolla ka originaaldokumendid. Kui sa tead viisi, kuidas viga korrata, siis lisa ka selle kirjeldus.
@@ -146,6 +147,7 @@ Name[sk]=Môžete poslať výpis chyby autorovi. Do správy uveďte čo najpodro
 Name[sl]=Morda boste avtorju želeli poslati poročilo o hrošču. Prosim, vključite čimveč podatkov, morda tudi izvirne dokumente. Če lahko kako ponovite napako, vključite tudi to.
 Name[sv]=Du kanske vill skicka en felrapport till programmeraren. Var god bifoga så mycket information som möjligt, t ex originaldokumenten. Om du kan återupprepa felet, så beskriv även hur du gör det.
 Name[ta]=¬º¢Ã¢ÂÕìÌ À¢¨Æ «È¢ì¨¸¨Â ¿£í¸û «ÛôÀ §ÅñÊÂ¢ÕìÌõ. ¾Â×¦ºöÐ ÓÊó¾ «ÇÅ¢üÌ ¾¸Å¨Ä ¦¸¡Îì¸×õ, ãÄ ¬Å½í¸Ç¡¸×õ ­Õì¸Ä¡õ. ²¾¡Å¾¡Õ ÅÆ¢Â¢ø À¢¨Æ ÅÕÁ¡É¡ø, «¨¾Ôõ ­¾¢ø §º÷ì¸×õ.
+Name[tr]=Yazara bir hata raporu göndermek isterseniz, lütfen mümkün olduğunca fazla bilgi verin ve varsa orijinal belgeleri ekleyin. Eğer bu hatayı tekrar ortaya çıkarabilmenin bir yolu varsa, bunu da belirtin. 
 Name[uk]=Можливо, Ви хочете відіслати автору звіт про помилку. Будь ласка, включіть якнаймога більше інформації, можливо, вихідні документи. Якщо Ви можете повторити помилку, включіть це також.
  düğmesine tıklayın.
  düğmesine tıklayın.
