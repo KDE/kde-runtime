@@ -48,7 +48,7 @@ Toplevel :: Toplevel(int _signalnum, const QString _appname, QWidget *parent, co
   QLabel *lab = new QLabel(page);
   lab->setBackgroundColor(Qt::white);
   lab->setFrameStyle(QFrame::Panel | QFrame::Raised);
-  QPixmap pix(locate("data", QString::fromLatin1("kdeui/pics/aboutkde.png")));
+  QPixmap pix(locate("appdata", QString::fromLatin1("pics/konqi.png")));
   lab->setPixmap(pix);
 
   new QLabel( generateText(), page );
