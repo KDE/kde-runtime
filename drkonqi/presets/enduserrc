@@ -297,6 +297,7 @@ Comment[lo]=ອັບພລິກເຄເຊິນໄດ້ຮັບສັນ�
 Comment[lt]=Programa gauna SIGILL signalą paprastai dėl ydos programoje.  Programa buvo paprašyta išsaugoti savo dokumentus.
 Comment[lv]=Aplikācija visbiežāk saņem SIGILL signālu sakarā ar kļūdu aplikācijā. Aplikācija piedāvāja saglabāt tās dokumentus.
 Comment[mn]=Програм SIGILL сигнал хүлээж авч байна. Энэ нь ихэвчилэн программчилалын алдаа байдаг. Програм баримт хадгалах эсэхийг асууж байна.
+Comment[ms]=Kebanyakan aplikasi menerima isyarat SIGILL disebabkan ralat di dalam aplikasi. Aplikasi hendaklah disimpan untuk mengelakkan perkara tidak diingini.
 Comment[mt]=Programm normalment jirċievi s-sinjal SIGILL minħabba bug fil-programm. Dan il-programm intalab biex jikteb id-dokumenti tiegħu.
 Comment[nb]=Et program mottar som oftest SIGILL-signalet på grunn av en feil i programmet. Programmet ble bedt om å lagre dokumentene.
 Comment[nl]=Een programma ontvangt meestal het SIGILL-signaal vanwege een fout in het programma. Het programma werd gevraagd om zijn documenten op te slaan.
