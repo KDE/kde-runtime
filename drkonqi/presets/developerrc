@@ -148,6 +148,7 @@ Name[zh_TW.Big5]=應用程式 %progname (%appname) 已中止並產生信號 %sig
 [WhatToDoHint]
 Enable=true
 Name=You might want to fix your program. Take a look at the backtrace tab.
+Name[az]=Proqramınızdakı problemi həll etmək istəsəniz xəta ayıqlayıcı səkməsinə baxın.
 Name[de]=Vielleicht möchten Sie das Programm reparieren lassen. Werfen Sie einen Blick auf die Karteikarte "Rückverfolgung".
 Name[eo]=Eble vi volas korekti vian programon. Rigardu sur la paĝon Reŝpurado.
 Name[es]=Quizás quiera reparar su programa. Observe la pestaña 'Trazado inverso'.
@@ -158,6 +159,7 @@ Name[lt]=Galite pabandyti ištaisyti programą. Pažiūrėkite žiniaraščio le
 Name[lv]=Jūs varbūt vēlaties saglābt jūsu programmu. Ieskatieties atpakaļatsekošanas tabā.
 Name[mt]=Forsi tixtieq tirranġa l-programm tiegħek. Agħti ħarsa lejn il-backtrace.
 Name[nl]=U wilt vast uw programma herstellen. Kijk even onder de tab 'backtrace'.
+Name[pl]=Możesz spróbować poprawić program. Spójrz na zakładkę z logiem debuggera.
 Name[pt_BR]=Podes querer corrigir o programa. Olha para o registo de 'backtrace'.
 Name[pt]=Podes querer corrigir o programa. Olha para o registo de 'backtrace'.
 Name[ro]=S-ar putea să fie nevoie de repararea programului. Uitaţi-vă la subfereastra "Backtrace".
