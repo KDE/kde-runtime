@@ -13,14 +13,14 @@
         </rect>
     </property>
     <property name="caption">
-        <string>KDE Network Folder Wizard</string>
+        <string>Network Folder Wizard</string>
     </property>
     <widget class="QWidget">
         <property name="name">
             <cstring>_folderType</cstring>
         </property>
         <attribute name="title">
-            <string>Add a Network Folder</string>
+            <string>Add Network Folder</string>
         </attribute>
         <grid>
             <property name="name">
