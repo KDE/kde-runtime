@@ -33,6 +33,7 @@
 #include <kcmdlineargs.h>
 #include <klocale.h>
 #include <kdebug.h>
+#include <kstartupinfo.h>
 
 #include "krashconf.h"
 
@@ -66,6 +67,14 @@ void KrashConfig :: readConfig()
                     0, 0, 0, 0, 0,
                     args->getOption("bugaddress"));
 
+  QCString startup_id( args->getOption( "startupid" ));
+  if( !startup_id.isEmpty())
+    { // stop startup notification
+    KStartupInfoId id;
+    id.initId( startup_id );
+    KStartupInfo::sendFinish( id );
+    }
+    
   KConfig *config = KGlobal::config();
   config->setGroup("drkonqi");
 

@@ -52,6 +52,7 @@ static const KCmdLineOptions options[] =
   {"bugaddress <address>", I18N_NOOP("The bug address to use."), 0},
   {"programname <name>", I18N_NOOP("Translated name of the program."), 0},
   {"pid <pid>", I18N_NOOP("The PID of the program"), 0},
+  {"startupid <id>", I18N_NOOP("Startup id of the program"), 0},
   {"kdeinit", I18N_NOOP("The program was started by kdeinit"), 0},
   { 0, 0, 0 }
 };
