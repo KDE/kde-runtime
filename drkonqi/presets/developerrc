@@ -53,7 +53,7 @@ ShowDebugButton=true
 [ErrorDescription]
 Enable=true
 Name=The application %progname (%appname) crashed and caused the signal %signum (%signame).
-Name[ca]=El programa d'aplicació %progname (%appname) ha fallat i ha causat la senyal %signum (%signame).
+Name[ca]=El programa d'aplicaci� %progname (%appname) ha fallat i ha causat la senyal %signum (%signame).
 Name[cs]=Aplikace %progname (%appname) spadla a vyvolala signál %signum (%signame).
 Name[da]=Anvendelsen %progname (%appname) brød sammen og gav signalet %signum (%signame).
 Name[de]=Die Anwendung %progname (%appname) ist abgestürzt und hat das Signal %signum (%signame) veranlasst.
@@ -93,6 +93,7 @@ Name[he]=.םיגאבה הפנמ תייסיטרכב ןייע .ךלש תינכות
 Name[hu]=Feltehetőleg ki szeretné javítani a hibát. Vessen egy pillantást a hibakereső ablakra.
 Name[is]=Þú ættir kannski að laga forritið þitt.  Kíktu á aflúsunarsíðuna.
 Name[it]=Se vuoi aggiustare il tuo programma, controlla sotto la linguetta del debugger.
+Name[ja]=このプログラムを修正する場合、デバッガタブを見て下さい。
 Name[mk]=Можеби треба да го поправите вашиот програм. Видете во (дебаг) панелот за отстранување на грешки.
 Name[nl]=U wilt vast uw programma herstellen. Kijk even onder de tab 'debugger'.
 Name[no]=Du vil kanskje rette opp feilen selv. Ta en titt på debugger-siden.
@@ -107,7 +108,7 @@ Name[tr]=Programınızdaki sorunu çözmek isterseniz, hata ayıklayıcı sekmes
 [4]
 Name=SIGILL
 Comment=Illegal instruction.
-Comment[ca]=Instrucció il·legal
+Comment[ca]=Instrucci� il�legal
 Comment[cs]=Ilegální instrukce.
 Comment[da]=Ulovlig instruktion
 Comment[de]=Ungültige Anweisung
@@ -136,12 +137,20 @@ Comment[tr]=Hatalı talimat.
 [6]
 Name=SIGABRT
 Comment=Aborted.
+Comment[ca]=S'ha interromput.
+Comment[de]=Abgebrochen
+Comment[he]=.שטננ
+Comment[ja]=中止されました。
+Comment[no]=Avbrutt.
+Comment[no_NY]=Avbrutt.
+Comment[pt]=Abortado.
+Comment[sl]=Prekinjeno.
 
 [8]
 Name=SIGFPE
 Name[da]=SIGFRE
 Comment=Floating point exception.
-Comment[ca]=Excepció de coma flotant.
+Comment[ca]=Excepci� de coma flotant.
 Comment[cs]=Vyjímka v plovoucí čárce.
 Comment[da]=Flydende punkt undtagelse
 Comment[de]=Gleitkomma-Ausnahme
@@ -158,7 +167,7 @@ Comment[mk]=Исклучок при аритметиката со подвижн
 Comment[nl]=Zwevend-punt-uitzondering.
 Comment[no]=Flyttallsunntak.
 Comment[no_NY]=Flyttalsunntak.
-Comment[pt]=Excepção de virgual flutoante.
+Comment[pt]=Excepção de virgula flutuante.
 Comment[ro]=Excepţie aritmetică.
 Comment[ru]=Исключение вычислений с плавающей точкой
 Comment[sl]=Izjema pri delu s plavajočo piko.
@@ -168,7 +177,7 @@ Comment[tr]=Kayar nokta hatası.
 [11]
 Name=SIGSEGV
 Comment=Invalid memory reference.
-Comment[ca]=Referència a memòria no vàlida.
+Comment[ca]=Refer�ncia a mem�ria no v�lida.
 Comment[cs]=Neplatný odkaz do paměti.
 Comment[da]=Ugyldig hukommelsesreference
 Comment[de]=Ungültige Speicherzuweisung
