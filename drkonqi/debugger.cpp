@@ -29,15 +29,17 @@
 
 #include <qtextview.h>
 #include <qlayout.h>
-#include <qpushbutton.h>
 #include <qhbox.h>
 #include <qlabel.h>
 
+#include <kdialog.h>
 #include <klocale.h>
 #include <kglobal.h>
 #include <kglobalsettings.h>
 #include <kfiledialog.h>
 #include <kmessagebox.h>
+#include <kpushbutton.h>
+#include <kstdguiitem.h>
 
 #include "backtrace.h"
 #include "krashconf.h"
@@ -49,22 +51,25 @@ KrashDebugger :: KrashDebugger (const KrashConfig *krashconf, QWidget *parent, c
     m_krashconf(krashconf),
     m_proctrace(0)
 {
-  QVBoxLayout *vbox = new QVBoxLayout(this);
+  QVBoxLayout *vbox = new QVBoxLayout( this, 0, KDialog::marginHint() );
   vbox->setAutoAdd(TRUE);
 
   m_backtrace = new QTextView(this);
   m_backtrace->setTextFormat(Qt::PlainText);
   m_backtrace->setFont(KGlobalSettings::fixedFont());
 
-  QHBox *hbox = new QHBox(this);
-  m_status = new QLabel(hbox);
-  hbox->setStretchFactor(m_status,10);
-  m_copyButton = new QPushButton(i18n("Copy"),hbox);
+  QWidget *w = new QWidget( this );
+  ( new QHBoxLayout( w, 0, KDialog::marginHint() ) )->setAutoAdd( true );
+  m_status = new QLabel( w );
+  m_status->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Preferred ) );
+  //m_copyButton = new KPushButton( KStdGuiItem::copy(), w );
+  KGuiItem item( i18n( "&Copy" ), QString::fromLatin1( "editcopy" ) );
+  m_copyButton = new KPushButton( item, w );
   connect( m_copyButton, SIGNAL( clicked() ), this, SLOT( slotCopy() ) );
-  m_copyButton->hide();
-  m_saveButton = new QPushButton(i18n("Save to Disk"),hbox);
+  m_copyButton->setEnabled( false );
+  m_saveButton = new KPushButton( KStdGuiItem::save(), w );
   connect( m_saveButton, SIGNAL( clicked() ), this, SLOT( slotSave() ) );
-  m_saveButton->hide();
+  m_saveButton->setEnabled( false );
 }
 
 KrashDebugger :: ~KrashDebugger()
@@ -76,8 +81,8 @@ KrashDebugger :: ~KrashDebugger()
 void KrashDebugger :: slotDone()
 {
   m_status->setText(i18n("Done."));
-  m_copyButton->show();
-  m_saveButton->show();
+  m_copyButton->setEnabled( true );
+  m_saveButton->setEnabled( true );
 }
 
 void KrashDebugger :: slotCopy()
@@ -135,3 +140,4 @@ void KrashDebugger :: startDebugger()
 
   m_proctrace->start();
 }
+
