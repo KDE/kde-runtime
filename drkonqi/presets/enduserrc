@@ -227,7 +227,7 @@ Comment[sl]=Program največkrat prejme signal SIGILL zaradi hrošča. Od program
 Comment[sv]=Signalen SIGILL orsakas oftast av ett fel i programmet. Programmet blev tillsagt att spara sina dokument.
 Comment[ta]=ÀÂýÀ¡ðÊø À¢¨Æ ­Õó¾¡ø, «Ð SIGILL ±ýÈ ÌÈ¢¨Â ¦ÀÚõ. ÀÂýÀ¡ð¨¼ «¾ý ¬Å½í¸¨Ç §ºÁ¢ì¸ ¦º¡øÄÀð¼Ð.
 Comment[tr]=Uygulamadaki bir hata nedeniyle, uygulamalar çok kez SIGILL sinyali alırlar. Bu durumdaki uygulamalardan belgelerini kaydetmesi istenir.
-Comment[uk]=Програма здебільшого отримує сигнал SIGILL завдяки помилці у програмі. Програмі було запропоновано зберігти документи.
+Comment[uk]=Програма здебільшого отримує сигнал SIGILL завдяки помилці у програмі. Програмі було запропоновано зберегти документи.
 Comment[zh_CN.GB2312]=多数情况下, 一个程序由于本身的错误会收到 SIGILL 信号. 程序被要求保存它的文档.
 
 [6]
@@ -258,6 +258,7 @@ Comment[pl]=Aplikacja zostaje zakończona sygnałem SIGABRT gdy zostaje wykryta 
 Comment[pt]=Uma aplicação terminada com um sinal SIGABRT quando detecta uma inconsistência interna causada por um erro no programa.
 Comment[pt_BR]=Uma aplicação termina com SIGABRT quando detecta uma inconsistência interna causada por um bug no programa.
 Comment[ro]=În general o aplicaţie se termină cu semnalul SIGABRT cînd detectează o inconsistenţă internă cauzată de o eroare în program.
+Comment[ru]=Приложение завершилось сигналом SIGABRT, когда оно обнаружило внутреннее противоречие,вызванное ошибкой в программе.
 Comment[sk]=Aplikácia bola ukončená SIGABRT signálom keď program detekovalinternú nezhodu spôsobenú chybou v programe.
 Comment[sl]=Program se prekine s signalom SIGABRT, ko zazna notranjo nekonsistentnost zaradi hrošča v programu.
 Comment[sv]=Ett program avslutar sig självt med signalen SIGABRT när det upptäcker en intern motsägelse, vilket orsakas av ett fel i programmet.
@@ -300,7 +301,7 @@ Comment[sl]=Program največkrat prejme signal SIGFPE zaradi hrošča. Od program
 Comment[sv]=Signalen SIGFPE orsakas oftast av ett fel i programmet. Programmet blev tillsagt att spara sina dokument.
 Comment[ta]=ÀÂýÀ¡ðÊø À¢¨Æ ­Õó¾¡ø, «Ð SIGFPE ±ýÈ ÌÈ¢¨Â ¦ÀÚõ. ÀÂýÀ¡ð¨¼ «¾ý ¬Å½í¸¨Ç §ºÁ¢ì¸ ¦º¡øÄÀð¼Ð.
 Comment[tr]=Uygulamadaki bir hata nedeniyle, uygulamalar çok kez SIGEPE sinyali alırlar. Bu durumdaki uygulamalardan belgelerini kaydetmesi istenir.
-Comment[uk]=Програма здебільшого отримує сигнал SIGFPE завдяки помилці у програмі. Програмі було запропоновано зберігти документи.
+Comment[uk]=Програма здебільшого отримує сигнал SIGFPE завдяки помилці у програмі. Програмі було запропоновано зберегти документи.
 Comment[zh_CN.GB2312]=大多数情况下, 接收到 SIGFPE 信号是由于程序的缺陷. 程序被要求保存它的文档.
 
 [11]
@@ -336,7 +337,7 @@ Comment[sl]=Program največkrat prejme signal SIGSEGV zaradi hrošča. Od progra
 Comment[sv]=Signalen SIGSEGV orsakas oftast av ett fel i programmet. Programmet blev tillsagt att spara sina dokument.
 Comment[ta]=ÀÂýÀ¡ðÊø À¢¨Æ ­Õó¾¡ø, «Ð SIGSEGV ±ýÈ ÌÈ¢¨Â ¦ÀÚõ. ÀÂýÀ¡ð¨¼ «¾ý ¬Å½í¸¨Ç §ºÁ¢ì¸ ¦º¡øÄÀð¼Ð.
 Comment[tr]=Uygulamadaki bir hata nedeniyle, uygulamalar çok kez SIGSEGV sinyali alırlar. Bu durumdaki uygulamalardan belgelerini kaydetmesi istenir.
-Comment[uk]=Програма здебільшого отримує сигнал SIGSEGV завдяки помилці у програмі. Програмі було запропоновано зберігти документи.
+Comment[uk]=Програма здебільшого отримує сигнал SIGSEGV завдяки помилці у програмі. Програмі було запропоновано зберегти документи.
 Comment[zh_CN.GB2312]=大多数情况下, 接收到 SIGSEGV 信号是由于程序的缺陷. 程序被要求保存它的文档.
 
 [unknown]
