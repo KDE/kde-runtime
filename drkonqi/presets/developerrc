@@ -111,6 +111,7 @@ ShowDebugButton=true
 [ErrorDescription]
 Enable=true
 Name=The application %progname (%appname), pid %pid, crashed and caused the signal %signum (%signame).
+Name[ara]=التطبيق %progname (%appname), pid %pid قد انهار و تسبب في الإشارة %signum (%signame)
 Name[bs]=Aplikacija %progname (%appname), %pid je srušena sa signalom %signum (%signame).
 Name[da]=Programmet %progname (%appname), pid %pid brød sammen og gav signalet %signum (%signame).
 Name[es]=La aplicación %progname (%appname), con número de proceso %pid,  falló y provocó la señal %signum (%signame).
