@@ -77,6 +77,7 @@ Name[tr]= %progname (%appname) uygulamasý çöktü ve %signum (%signame) sinyal
 [WhatToDoHint]
 Enable=true
 Name=You might want to send a bug report to the author. Please include as much information as possible, maybe the original documents. If you have a way to reproduce the error, include this also. Click on the "Bug report" button.
+Name[ca]=Potser voleu enviar un informe d'error a l'autor. Si us plau, incluiu tanta informació com sigui possible, potser els documents originals. Si teniu una manera de reproduir l'error, incluiu-la també. Feu clic al botó "Informe d'error".
 Name[da]=Måske har du lyst til at sende en problemrapport til forfatteren. Husk at inkludere så meget information som muligt, måske de oprindelige dokumenter.Hvis du er i stand til at reproducere fejlen, så husk at nævne dette. Klik på "Problemrapport" knappen.
 Name[de]=Vielleicht möchten Sie einen Problembericht an den Autor schicken. Bitte liefern Sie dazu so viel Information wie möglich, eventuell einschließlich der bearbeiteten Dateien. Wenn Sie einen Weg finden, wie sich der Fehler reproduzieren lässt, geben Sie auch diesen an. Klicken Sie bitte jetzt auf den Knopf "Problembericht".
 Name[eo]=Vi povus sendi eraroraporton al la aŭtoro. Bonvolu kunsendi tiom da informoj, kiom eblas, laŭeble la originalajn dokumentojn. Se vi trovis manieron reprodukti la eraron, bonvolu aldoni ĝin. Premu "Eraroraporto".
@@ -120,10 +121,12 @@ Name[tr]=Yazara bir hata raporu göstermek isteyebilirsiniz. Lütfen mümkün ol
  düðmesine týklayýnýz.
  düðmesine týklayýnýz.
  düðmesine týklayýnýz.
+ düðmesine týklayýnýz.
 
 [4]
 Name=SIGILL
 Comment=An application mostly receives the SIGILL signal due to a bug in the application. The application was asked to save its documents.
+Comment[ca]=Quan una aplicació rep la senyal SIGILL es degut la major part dels cops a un error de l'aplicació. Se li demana que desi els seus documents.
 Comment[da]=En anvendelse modtager som regel SIGILL signalet når der er et problem med anvendelsen. Anvendelsen blev bedt om at gemme sine dokumenter. 
 Comment[de]=Eine Anwendung erhält das Signal SIGILL zumeist wegen eines Programmierfehlers. Die Anwendung wurde angewiesen, die Dokumente zu speichern.
 Comment[eo]=Aplikaĵo normale ricevas la signalon SIGILL pro eraro en ĝi. La aplikaĵo provu sekurigi siajn dokumentojn.
@@ -149,6 +152,7 @@ Comment[tr]=Uygulamadaki bir hata nedeniyle, uygulamalar çok kez SIGILL sinyali
 Name=SIGFPE
 Name[da]=SIGFRE
 Comment=An application mostly receives the SIGFPE signal due to a bug in the application. The application was asked to save its documents.
+Comment[ca]=Quan una aplicació rep la senyal SIGFPE es degut la major part dels cops a un error de l'aplicació. Se li demana que desi els seus documents.
 Comment[da]=En anvendelse modtager som regel SIGFPE signalet når der er et problem med anvendelsen. Anvendelsen blev bedt om at gemme sine dokumenter. 
 Comment[de]=Eine Anwendung erhält das Signal SIGFPE zumeist wegen eines Programmierfehlers. Die Anwendung wurde angewiesen, die Dokumente zu speichern.
 Comment[eo]=Aplikaĵo normale ricevas la signalon SIGFPE pro eraro en ĝi. La aplikaĵo provu sekurigi siajn dokumentojn.
@@ -173,6 +177,7 @@ Comment[tr]=Uygulamadaki bir hata nedeniyle, uygulamalar çok kez SIGEPE sinyali
 [11]
 Name=SIGSEGV
 Comment=An application mostly receives the SIGSEGV signal due to a bug in the application. The application was asked to save its documents.
+Comment[ca]=Quan una aplicació rep la senyal SIGSEGV es degut la major part dels cops a un error de l'aplicació. Se li demana que desi els seus documents.
 Comment[da]=En anvendelse modtager som regel SIGSEGV signalet når der er et problem med anvendelsen. Anvendelsen blev bedt om at gemme sine dokumenter. 
 Comment[de]=Eine Anwendung erhält das Signal SIGSEGV zumeist wegen eines Programmierfehlers. Die Anwendung wurde angewiesen, die Dokumente zu speichern.
 Comment[eo]=Aplikaĵo normale ricevas la signalon SIGSEGV pro eraro en ĝi. La aplikaĵo provu sekurigi ĝiajn dokumentojn.
