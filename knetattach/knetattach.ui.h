@@ -68,6 +68,9 @@ void KNetAttach::showPage( QWidget *page )
 	    setInformationText("FTP");
 	    updateForProtocol("FTP");
 	    _port->setValue(21);
+	    if (_path->text().isEmpty()) {
+		_path->setText("/");
+	    }
 	} else if (_smb->isChecked()) {
 	    setInformationText("SMB");
 	    updateForProtocol("SMB");
