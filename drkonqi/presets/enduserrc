@@ -7,7 +7,7 @@ ShowBugReportbutton=true
 
 [ErrorDescription]
 Enable=true
-Name=The application "%appname" crashed and caused the signal %signum (%signame).
+Name=The application %progname (%appname) crashed and caused the signal %signum (%signame).
 
 [WhatToDoHint]
 Enable=true

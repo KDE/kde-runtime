@@ -153,6 +153,8 @@ void Toplevel :: expandString(QString &str) const
       str.replace(pos, 7, QString::number(signalnum));
     else if (str.mid(pos, 8) == QString::fromLatin1("%signame"))
       str.replace(pos, 8, signal);
+    else if (str.mid(pos, 9) == QString::fromLatin1("%progname"))
+      str.replace(pos, 9, oldabout.programName());
 
     pos -= 7; // the smallest keyword is 7
   }
