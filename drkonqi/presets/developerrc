@@ -148,7 +148,6 @@ Name[sl]=Program %progname (%appname), pid %pid, se je sesul in javil signal %si
 Name[sv]=Programmet %progname (%appname), pid %pid, kraschade och orsakade signalen %signum (%signame).
 Name[ta]=¿¢Ãø %progname (%appname), ±ñ %pid, ÓÈ¢óÐ %signum (%signame) ¨º¨¸¨Âò ¾ó¾Ð.
 Name[xh]=Isicelo %progname (%appname) , pid %pid, ilalhekile kwaye ibangele uphawu %signum (%signame).
-Name[xx]=xx
 Name[zh_CN]=程序 %progname (%appname)，进程号 %pid，崩溃并导致信号 %signum (%signame)。
 Name[zh_TW]=此應用程式 %progname (%appname), pid %pid 不正常結束，產生信號 %signum (%signame)。
 Name[zu]=Isicelo %progname (%appname), pid %pid sihlakazekile futhi senzeukuthi uphawu %signum (%signame).

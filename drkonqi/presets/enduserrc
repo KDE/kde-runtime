@@ -166,7 +166,6 @@ Name[tr]= %progname (%appname) uygulaması çöktü ve %signum (%signame) sinyal
 Name[uk]=Програма %progname (%appname) дала збій та викликала сигнал %signum (%signame).
 Name[vi]=Chương trình %progname (%appname) bềEvỡ(crash) và gây ra tín hiệu  %signum (%signame). 
 Name[xh]=Isicelo %progname (%appname) ilalhekile kwaye yenze uphawu %signum (%signame).
-Name[xx]=xx
 Name[zh_CN]=程序 %progname (%appname) 已崩溃，导致信号 %signum (%signame).
 Name[zh_TW]=此應用程式 %progname (%appname) 不正常結束，產生信號 %signum (%signame)。
 Name[zu]=Isicelo %progname (%appname) sihlakazekile futhi senze uphawu %signum (%signame).
