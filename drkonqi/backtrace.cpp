@@ -73,21 +73,6 @@ void BackTrace::start()
 
   // start the debugger
   m_proc = new KShellProcess;
-  /*
-  QCString processName;
-  if (m_krashconf->startedByKdeinit())
-     processName = "kdeinit";
-  else
-     processName = m_krashconf->appName();
-
-  *m_proc << QString::fromLatin1("gdb")
-          << QString::fromLatin1("-n")
-          << QString::fromLatin1("-batch")
-          << QString::fromLatin1("-x")
-          << m_temp->name()
-          << QFile::decodeName(processName)
-          << QString::number(m_krashconf->pid());
-          */
 
   QString str = m_krashconf->debuggerBatch();
   m_krashconf->expandString(str, m_temp->name());
@@ -115,7 +100,11 @@ void BackTrace::slotProcessExited(KProcess *proc)
   // start it again
   kill(m_krashconf->pid(), SIGCONT);
 
+  // remove crap
+  m_strBt.replace(QRegExp(QString::fromLatin1("\\(no debugging symbols found\\)\\.\\.\\.\\n?")),QString::null);
+  // how many " ?? " in the bt ?
   int unknown = m_strBt.contains(QString::fromLatin1(" ?? "));
+  // how many lines in the bt ?
   int lines = m_strBt.contains('\n');
   bool tooShort = !m_strBt.find(QString::fromLatin1("#5"));
   if (proc->normalExit() && (proc->exitStatus() == 0) &&
