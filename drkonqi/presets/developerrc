@@ -53,6 +53,7 @@ Name[wa]=Programeu
 Name[xh]=Umbhekisi phambili
 Name[xx]=xx
 Name[zh_CN]=开发人员
+Name[zh_TW]=開發人員
 Name[zu]=Umthuthukisi
 Comment=Settings preferred for developers
 Comment[af]=instellings verkies vir ontwikkelaars
@@ -106,6 +107,7 @@ Comment[vi]=Các thiết lập dành cho người phát triển
 Comment[xh]=Izicwangciso ezikhethelwa ababhekisi phambili
 Comment[xx]=xx
 Comment[zh_CN]=开发人员偏好的设置
+Comment[zh_TW]=開發人員的偏好設定
 Comment[zu]=Izilungiselelo ezikhethelwe abathuthukisi
 
 SignalDetails=true
@@ -145,6 +147,7 @@ Name[ta]=¿¢Ãø %progname (%appname), ±ñ %pid, ÓÈ¢óÐ %signum (%signame)
 Name[xh]=Isicelo %progname (%appname) , pid %pid, ilalhekile kwaye ibangele uphawu %signum (%signame).
 Name[xx]=xx
 Name[zh_CN]=程序 %progname (%appname)，进程号 %pid，崩溃并导致信号 %signum (%signame)。
+Name[zh_TW]=此應用程式 %progname (%appname), pid %pid 不正常結束，產生信號 %signum (%signame)。
 Name[zu]=Isicelo %progname (%appname), pid %pid sihlakazekile futhi senzeukuthi uphawu %signum (%signame).
 
 [WhatToDoHint]
@@ -171,7 +174,7 @@ Name[is]=Þú ættir kannski að laga forritið þitt.  Kíktu á úttakið..
 Name[it]=Se vuoi aggiustare il tuo programma, controlla sotto la linguetta del backtrace.
 Name[ja]=このプログラムを修正する場合、backtraceタブを見て下さい。
 Name[ko]=프로그램을 고치고 싶다면 시행착오를 겪으면서 해답을 얻으십시요.
-Name[lt]=Galite pabandyti ištaisyti programą. Pažiūrėkite žiniaraščio lentelę.
+Name[lt]=Galite pabandyti ištaisyti savo programą. Pažiūrėkite į žiniaraščio kortelę.
 Name[lv]=Jūs varbūt vēlaties saglābt jūsu programmu. Ieskatieties atpakaļatsekošanas tabā.
 Name[mt]=Forsi tixtieq tirranġa l-programm tiegħek. Agħti ħarsa lejn il-backtrace.
 Name[nb]=Du vil kanskje rette opp feilen selv. Ta en titt på siden med logg over funksjonskall.
@@ -192,6 +195,7 @@ Name[uk]=Ви, можливо, хочете поладити Вашу прогр
 Name[xh]=Ungafuna ukulungisa udweliso lwakho lwenkqubo. Thatha ujongo kukhangelo lwasemva lwesithuba.
 Name[xx]=xx
 Name[zh_CN]=您应该改正程序。看看回溯跟踪部分。
+Name[zh_TW]=或許你想要修正你的程式。請查看一下回朔標籤裡的內容。
 Name[zu]=Ungafuna ukulungisa iprogramu yakho kulenqubo. Buka emuva kwe tab.
 
 [4]
@@ -226,7 +230,7 @@ Comment[is]=Ólögleg aðgerð.
 Comment[it]=Istruzione illegale.
 Comment[ja]=間違った命令。
 Comment[ko]=알맞지 않은 명령입니다.
-Comment[lt]=Negalima instrukcija
+Comment[lt]=Neleistina instrukcija
 Comment[lv]=Nelegāla instrukcija
 Comment[mk]=Невалидна инструкција.
 Comment[nb]=Ugyldige instruksjoner.
@@ -250,6 +254,7 @@ Comment[vi]=ChềEthềEkhông hợp lềE
 Comment[xh]=Umyalelo ongekho semthethweni.
 Comment[xx]=xx
 Comment[zh_CN]=不合法的指令。
+Comment[zh_TW]=不合法的指令。
 Comment[zu]=Umyalelo ongekho emthethweni.
 
 [6]
@@ -310,6 +315,7 @@ Comment[vi]=BềEqua.
 Comment[xh]=Ikhatyiwe.
 Comment[xx]=xx
 Comment[zh_CN]=中止。
+Comment[zh_TW]=中止。
 Comment[zu]=Inqamuliwe.
 
 [8]
@@ -341,7 +347,7 @@ Comment[is]=Villa í fleytitölureikningum.
 Comment[it]=Eccezione virgola mobile.
 Comment[ja]=浮動小数点の例外。
 Comment[ko]=부동 소수를 처리 못했습니다.
-Comment[lt]=Plaukiojančio taško išimtis
+Comment[lt]=Plaukiojančio taško klaida
 Comment[lv]=Peldošā punkta izņēmums.
 Comment[mk]=Исклучок при аритметиката со подвижна запирка.
 Comment[nb]=Flyttallsunntak.
@@ -364,6 +370,7 @@ Comment[vi]=Dấu chấm không hợp lềE.
 Comment[xh]=Ubekelo bucala lencopho elungisiweyo.
 Comment[xx]=xx
 Comment[zh_CN]=浮点计算异常。
+Comment[zh_TW]=浮點計算異常。
 Comment[zu]=Ingqikimba ezulazulayo ehlungiwe.
 
 [11]
@@ -420,6 +427,7 @@ Comment[vi]=Tham khảo memory không hợp lềE
 Comment[xh]=Uthelekiso olungasebenziyo lwenkumbulo.
 Comment[xx]=xx
 Comment[zh_CN]=无效的内存引用。
+Comment[zh_TW]=無效的記憶體違規使用
 Comment[zu]=Uthelekiso olungasebenzi lwenkumbulo.
 
 [unknown]
@@ -477,6 +485,7 @@ Name[wa]=Nén cnoxhou
 Name[xh]=Ayaziwa
 Name[xx]=xx
 Name[zh_CN]=未知
+Name[zh_TW]=未知
 Name[zu]=Okungaziwa
 Comment=Sorry, I don't know this signal.
 Comment[ar]=آسف, لا أستطيع التعرف على الإشارة
@@ -504,7 +513,7 @@ Comment[is]=Því miður, ég þekki ekki þetta boð.
 Comment[it]=Spiacente, non conosco questo segnale.
 Comment[ja]=すみません、このシグナルはわかりません
 Comment[ko]=모르는 신호입니다.
-Comment[lt]=Apgailestauju, šito signalo aš nesuprantu.
+Comment[lt]=Apgailestauju, šito signalo aš nežinau.
 Comment[lv]=Atvainojiet, Es nezinu šo signālu.
 Comment[mk]=Жал ми е, но не ми е познат овој сигнал.
 Comment[mt]=Jiddispjaċini, ma nafx dan is-sinjal.
@@ -529,4 +538,5 @@ Comment[vi]=Xin lỗi, Tôi không biết tín hiệu này .
 Comment[xh]=Uxolo, Andilazi olu phawu.
 Comment[xx]=xx
 Comment[zh_CN]=抱歉，我不知道这个信号。
+Comment[zh_TW]=抱歉，我不認識這個信號。
 Comment[zu]=Uxolo, Angilwazi loluphawu.

@@ -51,6 +51,7 @@ Name[vi]=End user
 Name[xh]=Phelisa umsebenzisi
 Name[xx]=xx
 Name[zh_CN]=普通用户
+Name[zh_TW]=一般使用者
 Name[zu]=Phetha umsebenzisi
 Comment=Settings preferred for end users
 Comment[af]=instellings verkies vir einde gebruikers
@@ -104,6 +105,7 @@ Comment[vi]=Thiết lập được ưa thích dành cho người dùng
 Comment[xh]=Izicwangciso ezikhethelwa abasebenzisi besiphelo
 Comment[xx]=xx
 Comment[zh_CN]=普通用户偏好的设置
+Comment[zh_TW]=一般使用者的偏好設定
 Comment[zu]=Izilungiselelo ezikhethelwe abasebenzisi bokugcina
 
 SignalDetails=true
@@ -166,6 +168,7 @@ Name[vi]=Chương trình %progname (%appname) bềEvỡ(crash) và gây ra tín 
 Name[xh]=Isicelo %progname (%appname) ilalhekile kwaye yenze uphawu %signum (%signame).
 Name[xx]=xx
 Name[zh_CN]=程序 %progname (%appname) 已崩溃，导致信号 %signum (%signame).
+Name[zh_TW]=此應用程式 %progname (%appname) 不正常結束，產生信號 %signum (%signame)。
 Name[zu]=Isicelo %progname (%appname) sihlakazekile futhi senze uphawu %signum (%signame).
 
 [WhatToDoHint]
@@ -218,6 +221,7 @@ Name[uk]=Можливо, Ви хочете відіслати автору зв�
 Name[xh]=Ungafuna ukuthumela ingxelo yebug kumbhali. Nceda quka ulwazi kangangoko kusenzeka, okanye amaxwebhu angawo. Ukuba unendlela yokuvelisa kwakhona imposiso, quka noku.
 Name[xx]=xx
 Name[zh_CN]=您可能希望发送一个错误报告给作者。请尽可能提供详细的信息，比如当时程序使用的文档。如果您有办法重现错误，请同时提供这样的方法。
+Name[zh_TW]=您可能希望發送一個錯誤報告給作者。請盡可能提供詳細的資訊，比如當時程式使用的文件。如果您有辦法重現錯誤，請同時提供這樣的方法。
 Name[zu]=Ungafuna ukuthumela ingxoxo yebug kumbhali. Siza wenezele ulwazi oluningi ngokungenzeka, noma amadokhumethi awangempela. Umangabe unendlela yokukhombisa futhi iphutha, yenezelela lokhu futhi.
 
 [4]
@@ -275,6 +279,7 @@ Comment[vi]=Một chương trình nhận hầu hết các tín hiệu SIGILL vì
 Comment[xh]=Isicelo sifumana ikakhulu upahwu lwe SIGILL ngokwe bug ekwisicelo. Isicelo sacelwa ukuba sigcine amaxwebhu aso.
 Comment[xx]=xx
 Comment[zh_CN]=多数情况下，一个程序由于本身的错误会收到 SIGILL 信号。程序被要求保存它的文档。
+Comment[zh_TW]=多數情況下，一個程式由於本身的錯誤會收到 SIGILL 信號。程式會被要求保存它的文件。
 Comment[zu]=Isicelo sithola kakhulu uphawu lwe SIGILL ngokwe bug oluyisicelo. Isicelo sacelwa ukuba sigcine amadokhumenti aso.
 
 [6]
@@ -330,6 +335,7 @@ Comment[vi]= Một chương trình bềEkết liềE(terminate) với một tín
 Comment[xh]=Isicelo senza isiphelo sendlela ngophawu lwe SIGABRT xa ifumana okwenzekayo ngaphakathi okubangelwa yibug ekudweliso lwenkqubo.
 Comment[xx]=xx
 Comment[zh_CN]=程序在检测到缺陷引起的内部不一致时，以 SIGABRT 信号中止。
+Comment[zh_TW]=程式偵測發生到內部錯誤時，以 SIGABRT 信號中止。
 Comment[zu]=Isicelo senza isiphelo sendlela ngophawu lwe SIGABRT uma ithola okwenzekayo ngaphakathi okubangelwa yibug ekulenqubo.
 
 [8]
@@ -387,6 +393,7 @@ Comment[vi]=Có một chương trình nhận hầu hết các tìn hiệu SIGFPE
 Comment[xh]=Isicelo sifumana ikakhulu uphawu lwe SIGFPE ngokwebug ekwisicelo. Isicelo sacelwa ukuba sigcine amaxwebhu aso.
 Comment[xx]=xx
 Comment[zh_CN]=大多数情况下，接收到 SIGFPE 信号是由于程序的缺陷。程序被要求保存它的文档。
+Comment[zh_TW]=大多數情況下，接收到 SIGFPE 信號是由於程式的錯誤。程式被要求保存它的文件。
 Comment[zu]=Isicelo sithola kakhulu uphawu lwe SIGFPE ngokwebug okuyisicelo. Isicelo sacelwa ukuba sigcine amadokhumenti aso.
 
 [11]
@@ -444,6 +451,7 @@ Comment[vi]=Có một chương trình nhận hầu hết các tìn hiệu SIGSEG
 Comment[xh]=Isicelo sifumana ikakhulu uphawu lwe SIGSEGV ngokwebug ekwisicelo. Isicelo sacelwa ukuba sigcine amaxwebhu aso.
 Comment[xx]=xx
 Comment[zh_CN]=大多数情况下，接收到 SIGSEGV 信号是由于程序的缺陷。程序被要求保存它的文档。
+Comment[zh_TW]=大多數情況下，接收到 SIGSEGV 信號是由於程式的錯誤。程式被要求保存它的文件。
 Comment[zu]=Isicelo sithola kakhulu uphawu lwe SIGSEGV ngokwebug okuyisicelo. Isicelo sacelwa ukuba sigcine amadokhumenti aso.
 
 [unknown]
@@ -501,6 +509,7 @@ Name[wa]=Nén cnoxhou
 Name[xh]=Ayaziwa
 Name[xx]=xx
 Name[zh_CN]=未知
+Name[zh_TW]=未知
 Name[zu]=Okungaziwa
 Comment=Sorry, I don't know this signal.
 Comment[ar]=آسف, لا أستطيع التعرف على الإشارة
@@ -528,7 +537,7 @@ Comment[is]=Því miður, ég þekki ekki þetta boð.
 Comment[it]=Spiacente, non conosco questo segnale.
 Comment[ja]=すみません、このシグナルはわかりません
 Comment[ko]=모르는 신호입니다.
-Comment[lt]=Apgailestauju, šito signalo aš nesuprantu.
+Comment[lt]=Apgailestauju, šito signalo aš nežinau.
 Comment[lv]=Atvainojiet, Es nezinu šo signālu.
 Comment[mk]=Жал ми е, но не ми е познат овој сигнал.
 Comment[mt]=Jiddispjaċini, ma nafx dan is-sinjal.
@@ -553,4 +562,5 @@ Comment[vi]=Xin lỗi, Tôi không biết tín hiệu này .
 Comment[xh]=Uxolo, Andilazi olu phawu.
 Comment[xx]=xx
 Comment[zh_CN]=抱歉，我不知道这个信号。
+Comment[zh_TW]=抱歉，我不認識這個信號。
 Comment[zu]=Uxolo, Angilwazi loluphawu.
