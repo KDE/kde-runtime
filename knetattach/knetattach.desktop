@@ -1,16 +1,21 @@
 [Desktop Entry]
 Encoding=UTF-8
-Name=KDE Network Wizard
+Name=KNetAttach
+GenericName=Network Folder Wizard
 Name[bg]=Помощник за мрежата
+Name[cs]=Průvodce sítí KDE
 Name[da]=KDE's Netværksguide
 Name[fr]=Assistant réseau KDE
+Name[fy]=KDE-netwurkassistint
 Name[ga]=Draoi Líonra KDE
+Name[he]=אשף הרשת של KDE
 Name[hu]=KDE hálózatbeállító varázsló
 Name[nl]=KDE-netwerkassistent
 Name[pt]=Assistente de Rede do KDE
 Name[pt_BR]=Assistente de Rede do KDE
 Name[sv]=KDE:s nätverksguide
 Name[ta]=கேடியி வலைப்பின்னல் பகுதி
+Name[tr]=KDE Ağ Sihirbazı
 Name[uk]=Майстер мережі KDE
 Name[zh_CN]=KDE 网络向导
 Exec=knetattach
