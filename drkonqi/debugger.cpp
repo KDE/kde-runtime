@@ -12,6 +12,7 @@
 
 #include <klocale.h>
 #include <kglobal.h>
+#include <kglobalsettings.h>
 
 #include "backtrace.h"
 #include "krashconf.h"
@@ -28,7 +29,7 @@ KrashDebugger :: KrashDebugger (const KrashConfig *krashconf, QWidget *parent, c
 
   m_backtrace = new QTextView(this);
   m_backtrace->setTextFormat(Qt::PlainText);
-  m_backtrace->setFont(KGlobal::fixedFont());
+  m_backtrace->setFont(KGlobalSettings::fixedFont());
   m_status = new QLabel(this);
 }
 
