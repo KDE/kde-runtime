@@ -82,26 +82,29 @@ void AudioPreview::initView( const QString& mimeType )
   KMimeType::Ptr mimeptr = KMimeType::mimeType(mimeType);
 
   QString desc;
-  if (mimeptr->is("audio/x-mp3") || mimeptr->is("application/ogg"))
+  if (info.isValid()) 
   {
-    desc.append(i18n("Artist: %1\n").arg (info.item("Artist").value().toString() ));
-    desc.append(i18n("Title: %1\n").arg( info.item("Title").value().toString() ));
-    desc.append(i18n("Comment: %1\n").arg( info.item("Comment").value().toString() ));
-    desc.append(i18n("Biterate: 160 kbits/s", "Bitrate: %1 %2\n").arg( info.item("Bitrate").value().toString() ).arg( info.item("Bitrate").suffix() ));
-  }
-  desc.append(i18n("Sample rate: %1 %2\n").arg( info.item("Sample Rate").value().toString() ).arg( info.item("Sample Rate").suffix() ));
-  desc.append(i18n("Length: "));
+    if (mimeptr->is("audio/x-mp3") || mimeptr->is("application/ogg"))
+    {
+      desc.append(i18n("Artist: %1\n").arg (info.item("Artist").value().toString() ));
+      desc.append(i18n("Title: %1\n").arg( info.item("Title").value().toString() ));
+      desc.append(i18n("Comment: %1\n").arg( info.item("Comment").value().toString() ));
+      desc.append(i18n("Biterate: 160 kbits/s", "Bitrate: %1 %2\n").arg( info.item("Bitrate").value().toString() ).arg( info.item("Bitrate").suffix() ));
+    }
+    desc.append(i18n("Sample rate: %1 %2\n").arg( info.item("Sample Rate").value().toString() ).arg( info.item("Sample Rate").suffix() ));
+    desc.append(i18n("Length: "));
 
-  /* Calculate length in mm:ss format */
-  int length = info.item("Length").value().toInt();
-  if (length/60 < 10)
-    desc.append("0");
-  desc.append(QString("%1:").arg(length/60, 0, 10));
-  if (length%60 < 10)
-    desc.append("0");
-  desc.append(QString("%1\n").arg(length%60, 0, 10));
+    /* Calculate length in mm:ss format */
+    int length = info.item("Length").value().toInt();
+    if (length/60 < 10)
+      desc.append("0");
+    desc.append(QString("%1:").arg(length/60, 0, 10));
+    if (length%60 < 10)
+      desc.append("0");
+    desc.append(QString("%1\n").arg(length%60, 0, 10));
+  }
  
- description->setText( desc );
+  description->setText( desc );
   description->adjustSize();
   m_player = KParts::ComponentFactory::createInstanceFromQuery<KMediaPlayer::Player>( "KMediaPlayer/Player", QString::null, this );
   if ( m_player )
