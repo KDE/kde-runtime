@@ -1,5 +1,5 @@
 // Let's crash.
-#include <kapp.h>
+#include <kapplication.h>
 #include <kdebug.h>
 #include <stdio.h>
 
