@@ -29,7 +29,7 @@
 KrashDebuger :: KrashDebuger (const KrashConfig *krashconf, QWidget *parent, const char *name)
   : QWidget( parent, name ),
     m_krashconf(krashconf),
-    m_proc(0)
+    m_proc(0), m_temp(0)
 {
   QVBoxLayout *hbox = new QVBoxLayout(this);
   hbox->setAutoAdd(TRUE);
@@ -41,9 +41,20 @@ KrashDebuger :: KrashDebuger (const KrashConfig *krashconf, QWidget *parent, con
 
 KrashDebuger :: ~KrashDebuger()
 {
+  pid_t pid = m_proc ? m_proc->getPid() : 0;
   // we don't want the gdb process to hang around
-  m_proc->kill();
-  delete m_proc;
+  delete m_proc; // this will kill gdb (SIGKILL, signal 9)
+
+  // continue the process we ran backtrace on. Gdb sends SIGSTOP to the 
+  // process. For some reason it doesn't work if we send the signal before the
+  // gdb has exited, so we better wayt for it
+  // Do not touch it if we never had never ran backtrace.
+  if (pid) {
+    waitpid(pid, NULL, 0);
+    kill(m_krashconf->pid(), SIGCONT);
+  }
+
+  delete m_temp;
 }
 
 void KrashDebuger :: slotProcessExited(KProcess *proc)
@@ -75,10 +86,11 @@ void KrashDebuger :: startDebuger()
 
   m_status->setText(i18n("Loading symboles..."));
 
-  KTempFile temp;
-  // temp.setAutoDelete(true);
-  QTextStream *stream = temp.textStream();
-  stream->writeRawBytes("bt\n", 3); // backtrace
+  m_temp = new KTempFile;
+  m_temp->setAutoDelete(TRUE);
+  int handle = m_temp->handle();
+  ::write(handle, "bt\n", 3);
+  ::fsync(handle);
 
   // start the debuger
   m_proc = new KProcess;
@@ -86,7 +98,7 @@ void KrashDebuger :: startDebuger()
 	  << QString::fromLatin1("-n")
 	  << QString::fromLatin1("-batch")
 	  << QString::fromLatin1("-x")
-	  << temp.name()
+	  << m_temp->name()
 	  << QString::fromLatin1(m_krashconf->appName())
     	  << QString::number(m_krashconf->pid());
 

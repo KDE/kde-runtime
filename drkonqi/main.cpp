@@ -71,6 +71,8 @@ int main( int argc, char* argv[] )
 
   Toplevel *w = new Toplevel(&krashconf);
 
-  return w->exec();
+  int i = w->exec();
+  delete w;
+  return i;
 }
 

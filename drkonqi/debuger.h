@@ -13,6 +13,7 @@ class QTextView;
 class QLabel;
 class KrashConfig;
 class KProcess;
+class KTempFile;
 
 #include <qwidget.h>
 
@@ -37,6 +38,7 @@ protected slots:
 private:
   const KrashConfig *m_krashconf;
   KProcess *m_proc;
+  KTempFile *m_temp;
   QLabel *m_status;
   QTextView *m_backtrace;
 };

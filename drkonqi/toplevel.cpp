@@ -61,7 +61,7 @@ Toplevel :: Toplevel(const KrashConfig *krashconf, QWidget *parent, const char *
 
   showButton( User1, m_krashconf->showBugReport() );
 
-  connect(this, SIGNAL(okClicked()), kapp, SLOT(quit()));
+  connect(this, SIGNAL(okClicked()), SLOT(accept()));
 }
 
 Toplevel :: ~Toplevel()
