@@ -82,8 +82,9 @@ void BackTrace::slotProcessExited(KProcess *proc)
 
   int unknown = str.contains(QString::fromLatin1(" ?? "));
   int lines = str.contains('\n');
-  if (proc->normalExit() && proc->exitStatus() == 0 &&
-      !str.isNull() && unknown + 2 < lines) {
+  bool tooShort = !str.find(QString::fromLatin1("#5"));
+  if (proc->normalExit() && (proc->exitStatus() == 0) &&
+      !str.isNull() && !tooShort && (unknown + 2 < lines)) {
     emit done();
     emit done(str);
   } else
