@@ -56,9 +56,6 @@
                         <property name="text">
                             <string>&amp;Recent connection:</string>
                         </property>
-                        <property name="accel">
-                            <string>Alt+R</string>
-                        </property>
                     </widget>
                     <widget class="QRadioButton" row="0" column="0" rowspan="1" colspan="2">
                         <property name="name">
@@ -66,9 +63,6 @@
                         </property>
                         <property name="text">
                             <string>&amp;WebFolder (webdav)</string>
-                        </property>
-                        <property name="accel">
-                            <string>Alt+W</string>
                         </property>
                         <property name="checked">
                             <bool>true</bool>
@@ -80,9 +74,6 @@
                         </property>
                         <property name="text">
                             <string>&amp;Secure shell (ssh)</string>
-                        </property>
-                        <property name="accel">
-                            <string>Alt+S</string>
                         </property>
                         <property name="checked">
                             <bool>false</bool>
@@ -116,9 +107,6 @@
                         </property>
                         <property name="text">
                             <string>&amp;Microsoft® Windows® network drive</string>
-                        </property>
-                        <property name="accel">
-                            <string>Alt+M</string>
                         </property>
                     </widget>
                 </grid>
@@ -322,9 +310,6 @@
                 <property name="text">
                     <string>&amp;Create an icon on the desktop for this connection</string>
                 </property>
-                <property name="accel">
-                    <string>Alt+C</string>
-                </property>
             </widget>
             <widget class="QCheckBox" row="7" column="1" rowspan="1" colspan="2">
                 <property name="name">
@@ -332,9 +317,6 @@
                 </property>
                 <property name="text">
                     <string>&amp;Use encryption</string>
-                </property>
-                <property name="accel">
-                    <string>Alt+U</string>
                 </property>
             </widget>
         </grid>
