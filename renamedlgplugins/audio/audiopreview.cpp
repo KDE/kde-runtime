@@ -78,9 +78,10 @@ void AudioPreview::initView( const QString& mimeType )
   pic->adjustSize();
  
   KFileMetaInfo info(m_localFile);
+  KMimeType::Ptr mimeptr = KMimeType::mimeType(mimeType);
 
   QString desc;
-  if (mimeType == "audio/x-mp3" || mimeType == "application/ogg")
+  if (mimeptr->is("audio/x-mp3") || mimeptr->is("application/ogg"))
   {
     desc.append(i18n("Artist: %1\n").arg (info.item("Artist").value().toString() ));
     desc.append(i18n("Title: %1\n").arg( info.item("Title").value().toString() ));
