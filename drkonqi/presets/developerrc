@@ -152,7 +152,6 @@ Name[ko]=프로세서 아이디가 %pid이고 이름이 %progname (%appname)인 
 Name[lt]=%progname programa (%appname), pid %pid nulūžo ir gavo %signum (%signame) signalą.
 Name[lv]=Aplikācija %progname (%appname), pid %pid avarējusi un izsaukusi signālu %signum (%signame).
 Name[mt]=Il-programm %progname (%appname), pid %pid, ikkraxxja u kkawża s-sinjal %signum (%signame).
-Name[nb]=Applikasjonen %progname (%appname) krasjet og gav signalet %signum (%signame).
 Name[nl]=Het programma %progname (%appname),pid %pid heeft een ongeldige bewerking gemaakt en wordt afgesloten. Het gaf het volgende signaal: %signum (%signame).
 Name[nn]=Programmet %progname (%appname), pid %pid, krasja og gav signalet %signum (%signame).
 Name[pl]=Program %progname (%appname), id procesu %pid, uległ awarii, wywołując sygnał %signum (%signame).
