@@ -20,12 +20,12 @@
 #include "krashconf.h"
 #include "toplevel.h"
 
-static const char *version = "0.1";
+static const char *version = "0.2";
 static const char *description = I18N_NOOP( "KDE Crash Handler give the user feedback if a program crashed." );
 
 static const KCmdLineOptions options[] =
 {
-  {"signal <number>", I18N_NOOP("The signal number we caught."), "11"},
+  {"signal <number>", I18N_NOOP("The signal number we caught."), 0},
   {"appname <name>",  I18N_NOOP("Name of the program."), 0},
   {"appversion <version>", I18N_NOOP("The version of the program."), 0},
   {"bugaddress <address>", I18N_NOOP("The bug address to use."), 0},
@@ -53,6 +53,7 @@ int main( int argc, char* argv[] )
   KApplication a;
 
   // parse command line arguments
+  // FIXME: there is error checking here.. 
   KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
   int signalnum = args->getOption( "signal" ).toInt();
   int pid = args->getOption( "pid" ).toInt();
@@ -60,11 +61,7 @@ int main( int argc, char* argv[] )
   KAboutData oldabout(args->getOption("appname"),
 		    args->getOption("programname"),
 		    args->getOption("appversion"),
-		    0,
-		    0,
-		    0,
-		    0,
-		    0,
+		    0, 0, 0, 0,	0,
 		    args->getOption("bugaddress"));
 
   KrashConfig krashconf(&oldabout, signalnum, pid);
@@ -75,4 +72,3 @@ int main( int argc, char* argv[] )
   delete w;
   return i;
 }
-

@@ -6,19 +6,15 @@
  * Copyright (C) 2000 Hans Petter Bieker <bieker@kde.org>
  *****************************************************************/
 
-#include <stdlib.h>
-
 #include <qstring.h>
 #include <qlabel.h>
 #include <qlayout.h>
 
-#include <kapp.h>
 #include <klocale.h>
-#include <kconfig.h>
-#include <kglobal.h>
 #include <kstddirs.h>
-#include <kaboutdata.h>
 #include <kbugreport.h>
+
+class KAboutData;
 
 #include "debugger.h"
 #include "krashconf.h"

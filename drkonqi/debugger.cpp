@@ -59,10 +59,13 @@ KrashDebugger :: ~KrashDebugger()
 
 void KrashDebugger :: slotProcessExited(KProcess *proc)
 {
+  QString str;
   if (proc->normalExit() || proc->exitStatus() == 0)
-    m_status->setText(i18n("Done."));
+    str = i18n("Done.");
   else
-    m_status->setText(i18n("Unable to create backtrace."));
+    str = i18n("Unable to create backtrace.");
+
+  m_status->setText(str);
 }
 
 void KrashDebugger :: slotReadInput(KProcess *, char *buffer, int buflen)
@@ -70,6 +73,7 @@ void KrashDebugger :: slotReadInput(KProcess *, char *buffer, int buflen)
   m_status->setText(i18n("Loading backtrace..."));
   QString str = QString::fromLocal8Bit(buffer, buflen);
 
+  // append doesn't work here because it will add a newline as well
   m_backtrace->setText(m_backtrace->text() + str);
 }
 
