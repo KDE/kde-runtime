@@ -1,4 +1,23 @@
 [General]
 Name=GNU Debugger
+Name[de]=GNU-Debugger
+Name[eo]=GNUa Erarserĉilo
+Name[hu]=GNU hibakereső
+Name[it]=Debugger GNU
+Name[no]=GNU-avluser
+Name[no_NY]=GNU-avluser
+Name[ru]=Отладчик GNU
+Name[sl]=GNU-jevski razhroščevalnik
+Name[tr]=GNU Hata Ayýklayýcý
 Comment=Text based debugger from GNU in a konsole
+Comment[de]=Text-Debugger von GNU in einer Konsole
+Comment[eo]=Tekstbazita GNU-erarserĉilo en konzolo
+Comment[hu]=Szöveges módú, konzolban futó GNU hibakereső
+Comment[it]=Debugger testuale GNU in una konsole
+Comment[nl]=Tekstgeoriënteerde debugger GNU, in een konsole
+Comment[no]=Tekstbasert avluser fra GNU i konsollet
+Comment[no_NY]=Tekstbasert avluser fra GNU i konsollet
+Comment[ru]=Текстовый отладчик для консоли от GNU
+Comment[sl]=GNU-jevski razhroščevalnik za besedilno konzolo
+Comment[tr]=GNU'dan konsol için metin tabanlý hata ayýklayýcý
 Exec=konsole -e gdb %appname %pid

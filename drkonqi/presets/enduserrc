@@ -1,6 +1,26 @@
 [General]
 Name=End user
+Name[de]=Endbenutzer
+Name[eo]=Uzanto
+Name[hu]=Végfelhasználó
+Name[it]=Utente finale
+Name[nl]=Eindgebruiker
+Name[no]=Sluttbruker
+Name[no_NY]=Sluttbruker
+Name[ru]=Конечный пользователь
+Name[sl]=Končni uporabnik
+Name[tr]=Son kullanýcý
 Comment=Settings prefered for end users
+Comment[de]=Bevorzugte Einstellungen für Endbenutzer
+Comment[eo]=Agordoj por uzantoj
+Comment[hu]=Vágfelhasználók számára javasolt beállítások
+Comment[it]=Impostazioni preferite per l'utente finale
+Comment[nl]=Gewenste instellingen voor eindgebruikers.
+Comment[no]=Innstillinger fortrukket av sluttbrukere
+Comment[no_NY]=Innstillinger fortrukket av sluttbrukere
+Comment[ru]=Настройки предпочтительные для конечных пользователей
+Comment[sl]=Nastavitve, ki jih imajo raje končni uporabniki
+Comment[tr]=Son kullanýcýlar için tercih edilen ayarlar
 
 SignalDetails=true
 ShowBacktraceButton=false
@@ -10,23 +30,94 @@ ShowDebugButton=false
 [ErrorDescription]
 Enable=true
 Name=The application %progname (%appname) crashed and caused the signal %signum (%signame).
+Name[de]=Die Anwendung %progname (%appname) ist abgestürzt und hat das Signal %signum (%signame) veranlasst.
+Name[eo]=La aplikaĵo %progname (%appname) mortis kaj kaŭzis la signalon %signum (%signame).
+Name[hu]=A %progname (%appname) alkalmazás összeomlott és %signum (%signame) szignált okozott.
+Name[it]=Il programma %progname (%appname) è andato in crash e ha causato il segnale %signum (%signame).
+Name[nl]=Het programma %progname (%appname) is gecrashed en gaf het volgende signaal: %signum (%signame).
+Name[no]=Applikasjonen %progname (%appname) krasjet og gav signalet %signum (%signame).
+Name[no_NY]=Applikasjonen %progname (%appname) krasjet og gav signalet %signum (%signame).
+Name[ru]=В приложение %progname (%appname) произошел фатальный сбой,вызвавший сигнал %signum (%signame).
+Name[sl]=Program %progname (%appname) se je sesul in javil signal %signum (%signame).
+Name[tr]= %progname (%appname) uygulamasý çöktü ve %signum (%signame) sinyali gönderdi.
 
 [WhatToDoHint]
 Enable=true
 Name=You might want to send a bug report to the author. Please include as much information as possible, maybe the original documents. If you have a way to reproduce the error, include this also. Click on the "Bug report" button.
+Name[de]=Vielleicht möchten Sie einen Problembericht an den Autor schicken. Bitte geben Sie so viel Information wie möglich, am besten einschließlich der Originaldokumente. Wenn Sie einen Weg finden, wie sich der Fehler reproduzieren lässt, geben Sie bitte auch diesen an. Klicken Sie bitte jetzt auf den Knopf "Problembericht".
+Name[eo]=Vi povus sendi eraroraporton al la aŭtoro. Bonvolu kunsendi tiom da informoj, kiom eblas, laŭeble la originalajn dokumentojn. Se vi trovis manieron reprodukti la eraron, bonvolu aldoni ĝin. Premu "Eraroraporto".
+Name[hu]=Küldhet hibajelentést a szerzőnek. Ha így dönt, akkor csatoljon hozzá annyi információt, amennyit csak tud. Ha képes reprodukálni a hibát, akkor azt is írja bele. Klikkeljen a "Hibajelentés" gombra.
+Name[it]=Se vuoi spedire una segnalazione di bug all'autore, includi il maggior numero di informazioni. Se conosci un modo per riprodurre l'errore, includilo. Fai clic sul pulsante "Segnalazione di bug".
+Name[nl]=U wilt vast een bugrapport aan de auteur sturen. Voeg daarzoveel mogelijk informatie in, eventueel ook de originele documenten. Als u een manier kent om de fout te reproduceren, sluit dit dan ook in. Klik op de "bugrapport"-knop.
+Name[no]=Du vil kanskje sende en feilrapport til forfatteren. Vennligst ta med så mye informasjon som mulig, kanskje det originale dokumentet. Hvis du vet hvordan du kan reprodusere feilen, så ta også med en beskrivelse av hvordan det gjøres. Klikk på "Feilrapport"-knappen.
+Name[no_NY]=Du vil kanskje sende en feilrapport til forfatteren. Vennligst ta med så mye informasjon som mulig, kanskje det originale dokumentet. Hvis du vet hvordan du kan reprodusere feilen, så ta også med en beskrivelse av hvordan det gjøres. Klikk på "Feilrapport"-knappen.
+Name[ru]=Возможно вы хотите послать отчет об ошибке автору. Пожалуйстаприведите как можно больше информации, возможно оригинальныедокументы. Если вы знаете как возпроизвести ошибку - опишите.Щелкните на кнопку "Отчет об ошибках".
+Name[sl]=Morda boste avtorju želeli poslati poročilo o hrošču. Prosim, vključite čimveč podatkov, morda tudi izvirne dokumente. Če lahko kako ponovite napako, vključite tudi to. Kliknite gum "Poročaj o hrošču".
+Name[tr]=Yazara bir hata raporu göstermek isteyebilirsiniz. Lütfen mümkün olduðunca fazla bilgi verin ve varsa orijinal belgeleri ekleyin. Eðer bu hatayý tekrar ortaya çýkarabilmenin bir yolu varsa, bunu da belirtin. "Hata raporu
+ düðmesine týklayýnýz.
 
 [4]
 Name=SIGILL
 Comment=An application mostly receives the SIGILL signal due to a bug in the application. The application was asked to save its documents.
+Comment[de]=Eine Anwendung erhält das Signal SIGILL zumeist wegen eines Programmierfehlers. Die Anwendung wurde angewiesen, die Dokumente zu speichern.
+Comment[eo]=Aplikaĵo normale ricevas la signalon SIGILL pro eraro en ĝi. La aplikaĵo provu sekurigi siajn dokumentojn.
+Comment[hu]=Ha egy alkalmazás SIGILL szignált kap, az többnyire akkor fordul elő, ha hibás az alkalmazás. Az alkalmazás megpróbálja elmenteni az adatokat.
+Comment[it]=Un programma di solito riceve un segnale SIGILL a causa di un bug nel programma. Al programma è stato chiesto di salvare i dati.
+Comment[nl]=Een programma ontvangt meestal het SIGILL-signaal vanwege een bug inhet programma. Het programma wordt dan gevraagd om zijn documenten op te slaan.
+Comment[no]=En applikasjon mottar som oftest SIGILL-signalet  på grunn av en feil i applikasjonen. Applikasjonen ble bedt om å lagre dokumentene.
+Comment[no_NY]=En applikasjon mottar som oftest SIGILL-signalet  på grunn av en feil i applikasjonen. Applikasjonen ble bedt om å lagre dokumentene.
+Comment[ru]=Приложение получило сигнал SIGILL из-за ошибки в программе.Приложению дана фозможность записать его документы.
+Comment[sl]=Program največkrat prejme signal SIGILL zaradi hrošča. Od programa smo zahtevali, da shrani svoje dokumente.
+Comment[tr]=Uygulamadaki bir hata nedeniyle, uygulamalar çok kez SIGILL sinyali alýrlar. Bu durumdaki uygulamalardan belgelerini kaydetmesi istenir.
 
 [8]
 Name=SIGFPE
 Comment=An application mostly receives the SIGFPE signal due to a bug in the application. The application was asked to save its documents.
+Comment[de]=Eine Anwendung erhält das Signal SIGFPE zumeist wegen eines Programmierfehlers. Die Anwendung wurde angewiesen, die Dokumente zu speichern.
+Comment[eo]=Aplikaĵo normale ricevas la signalon SIGFPE pro eraro en ĝi. La aplikaĵo provu sekurigi siajn dokumentojn.
+Comment[hu]=Ha egy alkalmazás SIGFPE szignált kap, az többnyire akkor fordul elő, ha hibás az alkalmazás. Az alkalmazás megpróbálja elmenteni az adatokat.
+Comment[it]=Un programma di solito riceve un segnale SIGFPE a causa di un bug nel programma. Al programma è stato chiesto di salvare i dati.
+Comment[nl]=Een programma ontvangt meestal een SIGFPE-signaal vanwege een bug inhet programma. Het programma wordt dan gevraagd om zijn documenten op te slaan.
+Comment[no]=En applikasjon mottar som oftest SIGFFE-signalet  på grunn av en feil i applikasjonen. Applikasjonen ble bedt om å lagre dokumentene.
+Comment[no_NY]=En applikasjon mottar som oftest SIGFFE-signalet  på grunn av en feil i applikasjonen. Applikasjonen ble bedt om å lagre dokumentene.
+Comment[ru]=Приложение получило сигнал SIGFPE из-за ошибки в программе.Приложению дана фозможность записать его документы.
+Comment[sl]=Program največkrat prejme signal SIGFPE zaradi hrošča. Od programa smo zahtevali, da shrani svoje dokumente.
+Comment[tr]=Uygulamadaki bir hata nedeniyle, uygulamalar çok kez SIGEPE sinyali alýrlar. Bu durumdaki uygulamalardan belgelerini kaydetmesi istenir.
 
 [11]
 Name=SIGSEGV
 Comment=An application mostly receives the SIGSEGV signal due to a bug in the application. The application was asked to save its documents.
+Comment[de]=Eine Anwendung erhält das Signal SIGSEGV zumeist wegen eines Programmierfehlers. Die Anwendung wurde angewiesen, die Dokumente zu speichern.
+Comment[eo]=Aplikaĵo normale ricevas la signalon SIGSEGV pro eraro en ĝi. La aplikaĵo provu sekurigi ĝiajn dokumentojn.
+Comment[hu]=Ha egy alkalmazás SIGSEGV szignált kap, az többnyire akkor fordul elő, ha hibás az alkalmazás. Az alkalmazás megpróbálja elmenteni az adatokat.
+Comment[it]=Un programma di solito riceve un segnale SIGSEGV a causa di un bug nel programma. Al programma è stato chiesto di salvare i dati.
+Comment[nl]=Een programma ontvangt meestal een SIGSEGV-signaal vanwege een bug inhet programma. Het programma wordt dan gevraagd om zijn documenten op te slaan.
+Comment[no]=En applikasjon mottar som oftest SIGSEGV-signalet  på grunn av en feil i applikasjonen. Applikasjonen ble bedt om å lagre dokumentene.
+Comment[no_NY]=En applikasjon mottar som oftest SIGSEGV-signalet  på grunn av en feil i applikasjonen. Applikasjonen ble bedt om å lagre dokumentene.
+Comment[ru]=Приложение получило сигнал SIGSEGV из-за ошибки в программе.Приложению дана фозможность записать его документы.
+Comment[sl]=Program največkrat prejme signal SIGSEGV zaradi hrošča. Od programa smo zahtevali, da shrani svoje dokumente.
+Comment[tr]=Uygulamadaki bir hata nedeniyle, uygulamalar çok kez SIGSEGV sinyali alýrlar. Bu durumdaki uygulamalardan belgelerini kaydetmesi istenir.
 
 [unknown]
 Name=Unknown
+Name[de]=Unbekannt
+Name[eo]=Nekonata
+Name[hu]=Ismeretlen
+Name[it]=Sconosciuto
+Name[nl]=Onbekend
+Name[no]=ukjent
+Name[no_NY]=ukjent
+Name[ru]=Неизвестный
+Name[sl]=Neznan
+Name[tr]=knetmon
 Comment=Sorry, I don't know this signal.
+Comment[de]=Das Signal ist leider nicht bekannt.
+Comment[eo]=Pardonu, mi ne konas tiun signalon.
+Comment[hu]=Sajnálom, nem ismerem ezt a szignált.
+Comment[it]=Spiacente, non conosco questo segnale
+Comment[nl]=Helaas, dit signaal ken ik niet.
+Comment[no]=Beklager, jeg kjenner ikke dette signalet.
+Comment[no_NY]=Beklager, jeg kjenner ikke dette signalet.
+Comment[ru]=Извините, но я не знаю этого сигнала
+Comment[sl]=Žal, ta signal je neznan.
+Comment[tr]=Üzgünüm, bu sinyali tanýmýyorum.

@@ -1,6 +1,26 @@
 [General]
 Name=Developer
+Name[de]=Entwickler
+Name[eo]=Programisto
+Name[hu]=Fejlesztő
+Name[it]=Sviluppo
+Name[nl]=Ontwikkelaar
+Name[no]=Utvikler
+Name[no_NY]=Utvikler
+Name[ru]=Разработчик
+Name[sl]=Razvijalec
+Name[tr]=Programcý
 Comment=Settings prefered for developers
+Comment[de]=Bevorzugte Einstellungen für Entwickler
+Comment[eo]=Agordo por programistoj
+Comment[hu]=Fejlesztőknek szánt beállítások
+Comment[it]=Impostazioni preferite per gli sviluppatori
+Comment[nl]=Gewenste instellingen voor ontwikkelraars.
+Comment[no]=Innstillinger foretrukket av utviklere
+Comment[no_NY]=Innstillinger foretrukket av utviklere
+Comment[ru]=Настройки, предпочтительные для разработчиков
+Comment[sl]=Nastavitve, ki jih imajo raje razvijalci
+Comment[tr]=Programcýlar için tercih edilen ayarlar
 
 SignalDetails=true
 ShowBugReportButton=true
@@ -10,23 +30,93 @@ ShowDebugButton=true
 [ErrorDescription]
 Enable=true
 Name=The application %progname (%appname) crashed and caused the signal %signum (%signame).
+Name[de]=Die Anwendung %progname (%appname) ist abgestürzt und hat das Signal %signum (%signame) veranlasst.
+Name[eo]=La aplikaĵo %progname (%appname) mortis kaj kaŭzis la signalon %signum (%signame).
+Name[hu]=A %progname (%appname) alkalmazás összeomlott és %signum (%signame) szignált okozott.
+Name[it]=Il programma %progname (%appname) è andato in crash e ha causato il segnale %signum (%signame).
+Name[nl]=Het programma %progname (%appname) is gecrashed en gaf het volgende signaal: %signum (%signame).
+Name[no]=Applikasjonen %progname (%appname) krasjet og gav signalet %signum (%signame).
+Name[no_NY]=Applikasjonen %progname (%appname) krasjet og gav signalet %signum (%signame).
+Name[ru]=В приложение %progname (%appname) произошел фатальный сбой,вызвавший сигнал %signum (%signame).
+Name[sl]=Program %progname (%appname) se je sesul in javil signal %signum (%signame).
+Name[tr]= %progname (%appname) uygulamasý çöktü ve %signum (%signame) sinyali gönderdi.
 
 [WhatToDoHint]
 Enable=true
 Name=You might want to fix you program. Take a look at the debugger tab.
+Name[de]=Vielleicht möchten Sie das Programm reparieren. Werfen Sie einen Blick auf die Karteikarte "Debugger".
+Name[eo]=Eble vi volas korekti vian programon. Rigardu sur la paĝon "Erarser ĉo".
+Name[hu]=Feltehetőleg ki szeretné javítani a hibát. Vessen egy pillantást a hibakereső ablakra.
+Name[it]=Se vuoi aggiustare il tuo programma, controlla la linguetta del debugger.
+Name[nl]=U wilt vast uw programma herstellen. Kijk even onder de tab 'debugger'.
+Name[no]=Du vil kanskje rette opp feilen selv. Ta en titt på debugger-siden.
+Name[no_NY]=Du vil kanskje rette opp feilen selv. Ta en titt på debugger-siden.
+Name[ru]=Возможно вы захотите исправить Вашу программу. Посмотрите на закладку отладчика.
+Name[sl]=Morda boste želeli popraviti program. Poglejte na oznako razhroščevalnika.
+Name[tr]=Programýnýzdaki sorunu çözmek isteyebilirsiniz. Hata ayýklayýcý sekmesine bir göz atýnýz.
 
 [4]
 Name=SIGILL
 Comment=Illegal instruction.
+Comment[de]=Ungültige Anweisung
+Comment[eo]=Nevalida instrukcio.
+Comment[hu]=Végrehajthatatlan utasítás.
+Comment[it]=Istruzione illegale
+Comment[nl]=Illegale instructie.
+Comment[no]=Ugyldige instruksjoner.
+Comment[no_NY]=Ugyldige instruksjoner.
+Comment[ru]=Неверная инструкция
+Comment[sl]=Neveljaven ukaz.
+Comment[tr]=Hatalý talimat.
 
 [8]
 Name=SIGFPE
 Comment=Floating point exception.
+Comment[de]=Gleitkomma-Ausnahme
+Comment[eo]=Escepto ĉe kalkulado kun realaj nombroj.
+Comment[hu]=Lebegőpontos megszakítás.
+Comment[it]=Eccezione virgola mobile
+Comment[nl]=Zwevend-punt-uitzondering.
+Comment[no]=Flyttallsunntak.
+Comment[no_NY]=Flyttallsunntak.
+Comment[ru]=Исключение вычислений с плавающей точкой
+Comment[sl]=Izjema pri delu s plavajočo piko.
+Comment[tr]=Seyyar nokta hatasý.
 
 [11]
 Name=SIGSEGV
 Comment=Invalid memory reference.
+Comment[de]=Ungültige Speicherzuweisung
+Comment[eo]=Nevalida memoro-referenco.
+Comment[hu]=Érvénytelen memóriahivatkozás.
+Comment[it]=Riferimento memoria non valido
+Comment[nl]=Ongeldige geheugenverwijzing.
+Comment[no]=Ugyldig referanse til minnet.
+Comment[no_NY]=Ugyldig referanse til minnet.
+Comment[ru]=Доступ к неразрешенной области памяти
+Comment[sl]=Neveljavno naslavljanje pomnilnika.
+Comment[tr]=Geçersiz hafýza referansý.
 
 [unknown]
 Name=Unknown
+Name[de]=Unbekannt
+Name[eo]=Nekonata
+Name[hu]=Ismeretlen
+Name[it]=Sconosciuto
+Name[nl]=Onbekend
+Name[no]=ukjent
+Name[no_NY]=ukjent
+Name[ru]=Неизвестный
+Name[sl]=Neznan
+Name[tr]=knetmon
 Comment=Sorry, I don't know this signal.
+Comment[de]=Das Signal ist leider nicht bekannt.
+Comment[eo]=Pardonu, mi ne konas tiun signalon.
+Comment[hu]=Sajnálom, nem ismerem ezt a szignált.
+Comment[it]=Spiacente, non conosco questo segnale
+Comment[nl]=Helaas, dit signaal ken ik niet.
+Comment[no]=Beklager, jeg kjenner ikke dette signalet.
+Comment[no_NY]=Beklager, jeg kjenner ikke dette signalet.
+Comment[ru]=Извините, но я не знаю этого сигнала
+Comment[sl]=Žal, ta signal je neznan.
+Comment[tr]=Üzgünüm, bu sinyali tanýmýyorum.
