@@ -121,7 +121,11 @@ void KNetAttach::finished()
     }
 
     url.setHost(_host->text().stripWhiteSpace());
-    url.setPath(_path->text().stripWhiteSpace());
+    QString path = _path->text().stripWhiteSpace();
+    if (!path.startsWith("/")) {
+	path = QString("/") + path;
+    }
+    url.setPath(path);
     _connectPage->setEnabled(false);
     bool success = doConnectionTest(url);
     _connectPage->setEnabled(true);
