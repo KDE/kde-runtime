@@ -214,6 +214,10 @@ Name[zu]=I-%progname yomyaleli (%appname), iphahlazekile futhi yabanga uphawu %s
 Enable=true
 Name=You might want to send a bug report for this application. Check if it is listed on http://bugs.kde.org, otherwise mail the author. Please include as much information as possible, maybe the original documents. If you have a way to reproduce the error, include this also.
 Name[da]=Måske har du lyst til at sende en fejlrapport om dette program. Tjek om fejlen allerede er der på  listen ihttp://bugs.kde.org, skriv ellers til forfatteren. Husk at inkludere så meget information som muligt, måske de oprindelige dokumenter. Hvis du er i stand til at reproducere fejlen, så husk også at nævne dette.
+Name[eo]=Vi povus sendi eraroraporton pri ĉi tiu aplikaĵo. Kontrolu ĉu la listo ĉe http://bugs.kde.org jam enhavas ĝin, alie sendu retpoŝton al la aŭtoro. Bonvolu kunsendi tiom da informoj, kiom eblas, laŭeble la originalajn dokumentojn. Se vi trovis manieron reprodukti la eraron, bonvolu krome aldoni ĝin.
+Name[et]=Kui soovid rakenduse kohta veateadet saata, kontrolli kõigepealt, ega sellest ei tea juba http://bugs.kde.org. Kui mitte, saada veateade autorile ja lisa palun nii palju infot, kui võimalik. Kui võimalik, siis ka originaaldokumendid. Kui tead, kuidas viga korrata, siis lisa ka see info.
+Name[he]=ייתכן שיהיה ברצונך לשלוח דיווח על הבאג. בדוק האם הבאג רשום ב http://bugs.kde.org, אם לא, שלח דוא"ל לכותב התוכנה. מומלץ לכלול מידע רב ככל האפשר, ואולי גם את המסמכים המקוריים. אם יש לך דרך לשחזר את השגיאה, כלול גם אותה.
+Name[sv]=Du kanske vill skicka en felrapport för det här programmet. Kontrollera om det finns listat på http://bugs.kde.org, skicka annars e-post till upphovsmannen. Bifoga så mycket information som möjligt, kanske originaldokumenten. Om du kan återupprepa felet, så beskriv även hur du gör det.
 Name[ta]=இந்த பயன்பாட்டுக்கான நீங்கள் பிழை அறிக்கையொன்றை அனுப்பலாம்.  http://bugs.kde.org,ல் அது உள்ளதா என்பதை சரிபார்க்கவும் அல்லது ஆசிரியருக்கு மின்னஞ்சல் அனுப்பலாம். தயவுசெய்து முடிந்த அளவிற்கு தகவல்களை உள்ளடக்கவும். அவை மூல ஆவணங்களாகவும் இருக்கலாம். இந்த தவறை திரும்ப உருவாக்க ஏதேனும் வழியிருப்பின் அதனையும் குறிப்பிடவும்.
 
 [4]
@@ -565,4 +569,8 @@ Name[zh_TW]=未知
 Name[zu]=Okungaziwa
 Comment=Sorry, I do not know this signal.
 Comment[da]=Jeg kender desværre ikke dette signal.
+Comment[eo]=Pardonu, mi ne konas tiun signalon.
+Comment[et]=Vabandust, ma ei tunne seda signaali.
+Comment[he]=איתות זה אינו מוכר.
+Comment[sv]=Känner tyvärr inte till den här signalen.
 Comment[ta]=மன்னிக்கவும், இந்த சின்னம் எணக்கு தெரியாது.
