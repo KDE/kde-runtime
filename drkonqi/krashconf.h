@@ -43,6 +43,7 @@ class KrashConfig
   const char* appName() const { return m_aboutData->appName(); };
   QString debugger() const { return m_debugger; }
   QString debuggerBatch() const { return m_debuggerBatch; }
+  QString tryExec() const { return m_tryExec; }
   const KAboutData *aboutData() const { return m_aboutData; }
   int signalNumber() const { return m_signalnum; };
   int pid() const { return m_pid; };
@@ -75,6 +76,7 @@ class KrashConfig
 
   QString m_debugger;
   QString m_debuggerBatch;
+  QString m_tryExec;
 };
 
 #endif

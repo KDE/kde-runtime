@@ -31,6 +31,9 @@
 
 #include <kprocess.h>
 #include <kdebug.h>
+#include <kstddirs.h>
+#include <kmessagebox.h>
+#include <klocale.h>
 #include <ktempfile.h>
 
 #include "krashconf.h"
@@ -65,6 +68,13 @@ BackTrace::~BackTrace()
 
 void BackTrace::start()
 {
+  QString exec = m_krashconf->tryExec();
+  if ( !exec.isEmpty() && KStandardDirs::findExe(exec).isEmpty() )
+  {
+    KMessageBox::error(0L,i18n("%1 not found. Check if it is installed, you need it to generate backtraces.\n"
+                               "If you have another debugger, contact kde-devel@kde.org for help on how to set it up.").arg(exec));
+    return;
+  }
   m_temp = new KTempFile;
   m_temp->setAutoDelete(TRUE);
   int handle = m_temp->handle();
