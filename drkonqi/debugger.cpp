@@ -62,7 +62,7 @@ KrashDebugger :: KrashDebugger (const KrashConfig *krashconf, QWidget *parent, c
   m_copyButton = new QPushButton(i18n("Copy"),hbox);
   connect( m_copyButton, SIGNAL( clicked() ), this, SLOT( slotCopy() ) );
   m_copyButton->hide();
-  m_saveButton = new QPushButton(i18n("Save to disk"),hbox);
+  m_saveButton = new QPushButton(i18n("Save to Disk"),hbox);
   connect( m_saveButton, SIGNAL( clicked() ), this, SLOT( slotSave() ) );
   m_saveButton->hide();
 }
@@ -88,7 +88,7 @@ void KrashDebugger :: slotCopy()
 
 void KrashDebugger :: slotSave()
 {
-  QString filename=KFileDialog::getSaveFileName(QString::null, QString::null, this, i18n("Select filename"));
+  QString filename=KFileDialog::getSaveFileName(QString::null, QString::null, this, i18n("Select Filename"));
   if(!filename.isEmpty()) {
     QFile f(filename);
     if(f.open(IO_WriteOnly)) {
