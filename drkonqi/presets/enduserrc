@@ -80,10 +80,12 @@ Name[mk]=Можеби би сакале да му пратите известу�
 Name[nl]=U wilt vast een bugrapport aan de auteur sturen. Voeg daarzoveel mogelijk informatie in, eventueel ook de originele documenten. Als u een manier kent om de fout te reproduceren, sluit dit dan ook in. Klik op de "bugrapport"-knop.
 Name[no]=Du vil kanskje sende en feilrapport til forfatteren. Vennligst ta med så mye informasjon som mulig, kanskje det originale dokumentet. Hvis du vet hvordan du kan reprodusere feilen, så ta også med en beskrivelse av hvordan det gjøres. Klikk på "Feilrapport"-knappen.
 Name[pt]=Podes queres enviar um relatório do erro ao autor. Por favor inclui o máximo possível de informação, e também os documentos em que estavas a trabalhar. Se consegues reproduzir o erro, inclui também o modo. Carrega no botão "Comunicar Erro".
+Name[ro]=Poate aţi dori să trimiteţi un raport de eroare autorului. Vă rog să includeţi cît mai multă informaţie posibil, poate chiar documentele originale. Dacă aveţi vreo o cale de reproduce eroarea, includeţi şi acest lucru. Daţi clic pe butonul "Raport de eroare".
 Name[ru]=Возможно вы хотите послать отчет об ошибке автору. Пожалуйстаприведите как можно больше информации, возможно оригинальныедокументы. Если вы знаете как возпроизвести ошибку - опишите.Щелкните на кнопку "Отчет об ошибках".
 Name[sl]=Morda boste avtorju želeli poslati poročilo o hrošču. Prosim, vključite čimveč podatkov, morda tudi izvirne dokumente. Če lahko kako ponovite napako, vključite tudi to. Kliknite gum "Poročaj o hrošču".
 Name[ta]=எழு஡ஂதாளருகஂகு பிைழ அறிகஂைகைய அனுபஂப நீஙஂகளஂ விருமஂபுவீரஂகளஂ. தயவுெசயஂதுமுடிநஂதவைர அைன஡ஂது தகவலஂகைளயுமஂ, மூல ஆவணஙஂகைள ேசரஂகஂகவுமஂ. ஏதாவது பிைழஇருநஂதாலஂ, இைதயுமஂ ேசரஂகஂகவுமஂ."Bug report" எனஂற ெபா஡ஂதாைன கஂளிகஂ ெசயஂயவுமஂ.
 Name[tr]=Yazara bir hata raporu göstermek isteyebilirsiniz. Lütfen mümkün olduðunca fazla bilgi verin ve varsa orijinal belgeleri ekleyin. Eðer bu hatayý tekrar ortaya çýkarabilmenin bir yolu varsa, bunu da belirtin. "Hata raporu
+ düðmesine týklayýnýz.
  düðmesine týklayýnýz.
  düðmesine týklayýnýz.
  düðmesine týklayýnýz.
@@ -112,8 +114,9 @@ Comment[is]=Forrit fær yfirleitt SIGFPE boðið út af villu forritarans.  Forr
 Comment[it]=Un'applicazione di solito riceve un segnale SIGILL a causa di un bug nell'applicazione. All'applicazione è stato chiesto di salvare i documenti.
 Comment[mk]=Една апликација најчесто го добива SIGILL сигналот заради бубачка во неа самата. Апликацијата беше замолена да ги сними документите врз кои работеше.
 Comment[nl]=Een programma ontvangt meestal het SIGILL-signaal vanwege een bug inhet programma. Het programma wordt dan gevraagd om zijn documenten op te slaan.
-Comment[no]=En applikasjon mottar som oftest SIGILL-signalet  på grunn av en feil i applikasjonen. Applikasjonen ble bedt om å lagre dokumentene.
+Comment[no]=En applikasjon mottar som oftest SIGILL-signalet på grunn av en feil i applikasjonen. Applikasjonen ble bedt om å lagre dokumentene.
 Comment[pt]=Uma aplicação normalmente recebe o sinal SIGILL devido a um erro nela própria. Foi pedido à aplicação que gravá-se os seus documentos.<
+Comment[ro]=În general o alicaţie primeşte semnalul SIGILL datorită unei erori interne. Aplicaţiei i s-a cerut să îşi salveze documentele.
 Comment[ru]=Приложение получило сигнал SIGILL из-за ошибки в программе.Приложению дана фозможность записать его документы.
 Comment[sl]=Program največkrat prejme signal SIGILL zaradi hrošča. Od programa smo zahtevali, da shrani svoje dokumente.
 Comment[ta]=பயனஂபாடுகளிலஂ பிைழ இருநஂதாலஂ SIGILL எனஂற குறிபஂபு கிைடகஂகுமஂ.இநஂத பயணஂபாடஂடினஂ ஆவணஙஂகைள ேசமிகஂக ேகடஂகபடுகிறது.
@@ -133,8 +136,9 @@ Comment[is]=Forrit fær yfirleitt SIGFPE boðið út af villu forritarans.  Forr
 Comment[it]=Un'applicazione di solito riceve un segnale SIGFPE a causa di un bug nell'applicazione. All'applicazione è stato chiesto di salvare i documenti.
 Comment[mk]=Една апликација најчесто го добива SIGFPE сигналот заради бубачка во неа самата. Апликацијата беше замолена да ги сними документите врз кои работеше.
 Comment[nl]=Een programma ontvangt meestal een SIGFPE-signaal vanwege een bug inhet programma. Het programma wordt dan gevraagd om zijn documenten op te slaan.
-Comment[no]=En applikasjon mottar som oftest SIGFFE-signalet  på grunn av en feil i applikasjonen. Applikasjonen ble bedt om å lagre dokumentene.
+Comment[no]=En applikasjon mottar som oftest SIGFFE-signalet på grunn av en feil i applikasjonen. Applikasjonen ble bedt om å lagre dokumentene.
 Comment[pt]=Uma aplicação normalmente recebe o sinal SIGFPE devido a um erro nela própria. Foi pedido à aplicação que gravá-se os seus documentos.<
+Comment[ro]=În general o alicaţie primeşte semnalul SIGFPE datorită unei erori interne. Aplicaţiei i s-a cerut să îşi salveze documentele.
 Comment[ru]=Приложение получило сигнал SIGFPE из-за ошибки в программе.Приложению дана фозможность записать его документы.
 Comment[sl]=Program največkrat prejme signal SIGFPE zaradi hrošča. Od programa smo zahtevali, da shrani svoje dokumente.
 Comment[ta]=பயனஂபாடுகளிலஂ பிைழ இருநஂதாலஂ, பயனஂபாடு SIGFPE எனஂற குறிபஂைப ெபறுகிறதுபயனஂபாடஂைட அதனஂ ஆவணஙஂகைள ேசமிகஂக ெசாலஂலியாயிறஂறு.
@@ -154,8 +158,9 @@ Comment[is]=Forrit fær yfirleitt SIGSEGV boðið út af villu forritarans.  For
 Comment[it]=Un'applicazione di solito riceve un segnale SIGSEGV a causa di un bug nell'applicazione. All'applicazione è stato chiesto di salvare i documenti.
 Comment[mk]=Една апликација најчесто го добива SIGSEGV сигналот заради бубачка во неа самата. Апликацијата беше замолена да ги сними документите врз кои работеше.
 Comment[nl]=Een programma ontvangt meestal een SIGSEGV-signaal vanwege een bug inhet programma. Het programma wordt dan gevraagd om zijn documenten op te slaan.
-Comment[no]=En applikasjon mottar som oftest SIGSEGV-signalet  på grunn av en feil i applikasjonen. Applikasjonen ble bedt om å lagre dokumentene.
+Comment[no]=En applikasjon mottar som oftest SIGSEGV-signalet på grunn av en feil i applikasjonen. Applikasjonen ble bedt om å lagre dokumentene.
 Comment[pt]=Uma aplicação normalmente recebe o sinal SIGSEGV devido a um erro nela própria. Foi pedido à aplicação que gravá-se os seus documentos.
+Comment[ro]=În general o alicaţie primeşte semnalul SIGSEGV datorită unei erori interne. Aplicaţiei i s-a cerut să îşi salveze documentele.
 Comment[ru]=Приложение получило сигнал SIGSEGV из-за ошибки в программе.Приложению дана фозможность записать его документы.
 Comment[sl]=Program največkrat prejme signal SIGSEGV zaradi hrošča. Od programa smo zahtevali, da shrani svoje dokumente.
 Comment[ta]=பயனஂபாடுகளிலஂ பிைழ இருநஂதாலஂ, பயனஂபாடு SIGSEGV எனஂற குறிபஂைப ெபறுகிறதுபயனஂபாடஂைட அதனஂ ஆவணஙஂகைள ேசமிகஂக ெசாலஂலியாயிறஂறு.
