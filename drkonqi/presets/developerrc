@@ -124,6 +124,7 @@ Name[fi]=Voit haluta korjata ohjelmaa. Katso backtrace-osiota ikkunasta.
 Name[fr]=Vous devriez participer à la correction du programme. Consultez l'onglet 'Pile d'appels'.
 Name[he]=.םיגאבה הפנמ תייסיטרכב ןייע .ךלש תינכותה תא ןקתל הצרתו ןכתיי
 Name[hu]=Ki szeretné javítani a hibát? Vessen egy pillantást a nyomkövetési ablakra.
+Name[it]=Se vuoi aggiustare il tuo programma, controlla sotto la linguetta del debugger.
 Name[ja]=このプログラムを修正する場合、backtraceタブを見て下さい。
 Name[mk]=Можеби треба да го поправите вашиот програм. Видете во backtrace панелот за отстранување на грешки.
 Name[nl]=U wilt vast uw programma herstellen. Kijk even onder de tab 'backtrace'.
@@ -136,6 +137,7 @@ Name[ro]=S-ar putea s�fie nevoie s�reparai programul. Uitai-v�la tabul bac
 Name[sl]=Morda boste želeli popraviti program. Poglejte na ustrezno oznako razhroščevalnika.
 Name[sr]=Možda bi želeli da ispravite program. Pogledajte bektrejs tab.
 Name[sv]=Du kanske vill fixa ditt program. Titta under bakåtspårning-fliken.
+Name[uk]=Ви можливо хочете поладити Вашу програму. Дивіться закладинку зворотнього трасування.
 Name[zh_CN.GB2312]=你应该改正程序. 看看回溯跟踪部分.
 
 [4]
