@@ -30,6 +30,7 @@
 #include <config.h>
 
 #include <stdlib.h>
+#include <unistd.h>
 
 #include <kapp.h>
 #include <kcmdlineargs.h>
@@ -56,6 +57,10 @@ static const KCmdLineOptions options[] =
 
 int main( int argc, char* argv[] )
 {
+  // Drop privs.
+  setgid(getgid());
+  setuid(getuid());
+  
   // Make sure that DrKonqi doesn't start DrKonqi when it crashes :-]
   setenv("KDE_DEBUG", "true", 1); 
 
