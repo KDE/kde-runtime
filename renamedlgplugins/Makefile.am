@@ -1,4 +1,3 @@
-
-#SUBDIRS = images audio
+SUBDIRS = images audio
 
 
