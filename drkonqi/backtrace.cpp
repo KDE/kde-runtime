@@ -82,7 +82,7 @@ void BackTrace::start()
 
     KMessageBox::error(
                         (QWidget *)o,
-			i18n("%1 not found. Check if it is installed -- you need it to generate the backtrace.\n" "If you have another debugger, contact kde-devel@kde.org for help on how to set it up.").arg(exec));
+			i18n("%1 not found. Please check if the debugger is installed!").arg(exec));
     return;
   }
   m_temp = new KTempFile;
