@@ -9,6 +9,7 @@
 #include <qstring.h>
 #include <qlabel.h>
 #include <qlayout.h>
+#include <qhbox.h>
 
 #include <klocale.h>
 #include <kstddirs.h>
@@ -34,10 +35,8 @@ Toplevel :: Toplevel(const KrashConfig *krashconf, QWidget *parent, const char *
 		 ),
     m_krashconf(krashconf)
 {
-  QWidget *page = addPage(i18n("General"));
-  QHBoxLayout* hbox = new QHBoxLayout(page);
-  hbox->setSpacing(20);
-  hbox->setAutoAdd(TRUE);
+  QHBox *page = addHBoxPage(i18n("General"));
+  page->setSpacing(20);
 
   // picture of konqi
   QLabel *lab = new QLabel(page);
@@ -49,9 +48,7 @@ Toplevel :: Toplevel(const KrashConfig *krashconf, QWidget *parent, const char *
   new QLabel( generateText(), page );
 
   if (m_krashconf->showDebugger()) {
-    page = addPage(i18n("Debugger"));
-    hbox = new QHBoxLayout(page);
-    hbox->setAutoAdd(TRUE);
+    page = addHBoxPage(i18n("Debugger"));
     new KrashDebugger(m_krashconf, page);
   }
 
