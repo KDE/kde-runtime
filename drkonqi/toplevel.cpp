@@ -65,10 +65,10 @@ Toplevel :: Toplevel(const KrashConfig *krashconf, QWidget *parent, const char *
 
   // picture of konqi
   QLabel *lab = new QLabel(page);
-  lab->setBackgroundColor(Qt::white);
   lab->setFrameStyle(QFrame::Panel | QFrame::Sunken);
   QPixmap pix(locate("appdata", QString::fromLatin1("pics/konqi.png")));
   lab->setPixmap(pix);
+  lab->setFixedSize( lab->sizeHint() );
 
   QLabel * info = new QLabel(generateText(), page);
   info->setMinimumSize(info->sizeHint());
