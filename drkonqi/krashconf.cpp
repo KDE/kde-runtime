@@ -79,7 +79,6 @@ void KrashConfig :: readConfig()
   debuggers.setGroup(QString::fromLatin1("General"));
   m_debugger = debuggers.readEntry(QString::fromLatin1("Exec"));
   m_debuggerBatch = debuggers.readEntry(QString::fromLatin1("ExecBatch"));
-  kdDebug() << "KrashConfig :: readConfig m_debuggerBatch=" << m_debuggerBatch << endl;
 
   KConfig preset(QString::fromLatin1("presets/%1rc").arg(configname),
                  true, false, "appdata");
