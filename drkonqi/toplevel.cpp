@@ -98,16 +98,8 @@ QString Toplevel :: generateText() const
 // starting bug report
 void Toplevel :: slotUser1()
 {
-  // FIXME: this is a hack!!
-  KInstance *instance = KGlobal::_instance;
-  KGlobal::_instance = new KInstance(m_krashconf->aboutData());
-
-  QWidget *w = new KBugReport;
+  QWidget *w = new KBugReport(0, true, m_krashconf->aboutData());
   w->show();
-
-  // restore
-  delete KGlobal::_instance;
-  KGlobal::_instance = instance;
 }
 
 // replace some of the strings
