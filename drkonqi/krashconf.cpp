@@ -10,6 +10,7 @@
 #include <kglobal.h>
 #include <kaboutdata.h>
 #include <kcmdlineargs.h>
+#include <klocale.h>
 
 #include "krashconf.h"
 
@@ -34,8 +35,12 @@ void KrashConfig :: readConfig()
   m_signalnum = args->getOption( "signal" ).toInt();
   m_pid = args->getOption( "pid" ).toInt();
 
+  QCString programname = args->getOption("programname");
+  if (programname.isEmpty()) programname.setStr(I18N_NOOP("unknown"));
+  const char * progname = qstrdup(programname);
   m_aboutData = new KAboutData(args->getOption("appname"),
-		    args->getOption("programname"),
+			       //args->getOption("programname"),
+		    progname,
 		    args->getOption("appversion"),
 		    0, 0, 0, 0,	0,
 		    args->getOption("bugaddress"));
