@@ -1,7 +1,7 @@
 /*****************************************************************
  * drkonki - The KDE Crash Handler
  * 
- * $Id:$
+ * $Id$
  *
  * Copyright (C) 2000 Hans Petter Bieker <bieker@kde.org>
  *****************************************************************/
@@ -10,6 +10,7 @@
 #define DEBUGER_H
 
 class QTextView;
+class QLabel;
 class KrashConfig;
 class KProcess;
 
@@ -25,6 +26,7 @@ public:
 
 public slots:
   void slotReadInput(KProcess *proc, char *buffer, int buflen);
+  void slotProcessExited(KProcess *proc); 
 
 protected:
  void startDebuger();
@@ -35,7 +37,8 @@ protected slots:
 private:
   const KrashConfig *m_krashconf;
   KProcess *m_proc;
-  QTextView *m_textview;
+  QLabel *m_status;
+  QTextView *m_backtrace;
 };
 
 #endif
