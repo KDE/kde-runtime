@@ -58,7 +58,7 @@ class DrKBugReport : public KBugReport
   virtual void slotOk( void );   
 
  private:
-  QString startstring;
+  QString m_startstring;
 };
 
 #endif

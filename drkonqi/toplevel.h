@@ -58,7 +58,7 @@ public:
 
  private:
   const KrashConfig *m_krashconf;
-  DrKBugReport *bugreport;
+  DrKBugReport *m_bugreport;
 };
 
 #endif
