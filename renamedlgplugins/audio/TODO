@@ -1,0 +1,9 @@
+Some ideas on what would be nice if implemented...
+
+* Start playing the audio file when icon is hovered.
+* Colorize differences in file information
+* On remote files: load file when label is clicked
+* Tell if source or destination file is broken
+* Tell if they're different or the same, not taking e.g. the IDtag into
+  account, only the actual audio data.
+* ...
