@@ -175,7 +175,7 @@
             <cstring>_folderParameters</cstring>
         </property>
         <attribute name="title">
-            <string>Netowork Folder Information</string>
+            <string>Network Folder Information</string>
         </attribute>
         <grid>
             <property name="name">
