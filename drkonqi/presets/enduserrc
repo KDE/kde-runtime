@@ -211,7 +211,7 @@ Name[zu]=I-%progname yomyaleli (%appname), iphahlazekile futhi yabanga uphawu %s
 
 [WhatToDoHint]
 Enable=true
-Name=You might want to send a bug report for this application. Check if it's listed on http://bugs.kde.org, otherwise mail the author. Please include as much information as possible, maybe the original documents. If you have a way to reproduce the error, include this also.
+Name=You might want to send a bug report for this application. Check if it is listed on http://bugs.kde.org, otherwise mail the author. Please include as much information as possible, maybe the original documents. If you have a way to reproduce the error, include this also.
 Name[ar]=قد يكون من الأفضل إرسال تقرير بهذا الخطأ بالنسبة لهذا البرنامج. تأكد من عدم وجود نفس الخطأ في http://bugs.kde.org ثم أعلم القائم على البرنامج. من فضلك اجعل تقريرك شاملاً كل المعلومات الممكنة عن الخطأ. وإذا كان لديك طريقة لجعل هذا الخطأ يظهر، يرجى إضافنها أيضاً.
 Name[bg]=Ако искате може да изпратите съобщение за грешка за тази програма. В такъв случай натиснете бутона "Съобщаване за грешка" или се свържете с автора на програмата по електронна поща. Моля, опишете подробно възникналия проблем. Желателно е да опишете подробно стъпките, необходими за възпроизвеждане на проблема.
 Name[bs]=Možda biste trebali prijaviti bug za ovu aplikaciju. Provjerite da li je aplikacija izlistana na http://bugs.kde.org, pa ako nije pošaljite e-mail autoru. Molim uključite što je više moguće podataka, po mogućnosti originalne datoteke. Ako znate kako pouzdano ponoviti ovu grešku, navedite i to.
@@ -601,7 +601,7 @@ Name[xx]=xxUnknownxx
 Name[zh_CN]=未知
 Name[zh_TW]=未知
 Name[zu]=Okungaziwa
-Comment=Sorry, I don't know this signal.
+Comment=Sorry, I do not know this signal.
 Comment[af]=Jammer, I moet nie ken hierdie sein.
 Comment[ar]=آسف, لا أستطيع التعرف على الإشارة
 Comment[az]=Bağışlayın, bu siqnalı tanımıram.
