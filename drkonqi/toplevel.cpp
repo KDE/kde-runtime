@@ -26,8 +26,8 @@
 Toplevel :: Toplevel(const KrashConfig *krashconf, QWidget *parent, const char *name)
   : KDialogBase( Tabbed,
 		 krashconf->programName(),
-                 User2 | User1 | Ok,
-                 Ok,
+                 User2 | User1 | Cancel,
+                 Cancel,
                  parent,
                  name,
                  true, // modal
@@ -57,7 +57,7 @@ Toplevel :: Toplevel(const KrashConfig *krashconf, QWidget *parent, const char *
   showButton( User1, m_krashconf->showBugReport() );
   showButton( User2, m_krashconf->showDebugger() );
 
-  connect(this, SIGNAL(okClicked()), SLOT(accept()));
+  connect(this, SIGNAL(cancelClicked()), SLOT(accept()));
 }
 
 Toplevel :: ~Toplevel()

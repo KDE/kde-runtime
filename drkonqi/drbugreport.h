@@ -15,6 +15,8 @@ class KAboutData;
 
 class DrKBugReport : public KBugReport
 {
+  Q_OBJECT
+
  public:
   /**
    * Constructor.
@@ -27,6 +29,15 @@ class DrKBugReport : public KBugReport
    * Allows the debugger to set the default text in the editor.
    */
   void setText(const QString &str);
+
+ protected slots:
+  /**
+   * OK has been clicked
+   */
+  virtual void slotOk( void );   
+
+ private:
+  QString startstring;
 };
 
 #endif
