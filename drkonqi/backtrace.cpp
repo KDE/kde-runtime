@@ -51,7 +51,7 @@ BackTrace::BackTrace(const KrashConfig *krashconf, QObject *parent,
 
 BackTrace::~BackTrace()
 {
-  pid_t pid = m_proc ? m_proc->getPid() : 0;
+  pid_t pid = m_proc ? m_proc->pid() : 0;
   // we don't want the gdb process to hang around
   delete m_proc; // this will kill gdb (SIGKILL, signal 9)
 
