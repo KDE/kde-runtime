@@ -242,7 +242,7 @@ Comment[zh_TW.Big5]=由於有錯誤在應用程式產生，所以大部份都會
 [6]
 Name=SIGABRT
 Name[fr]=SIABRT
-Comment=An application terminates with a SIGABRT signal when it detects an internal inconcistency caused by a bug in the program.
+Comment=An application terminates with a SIGABRT signal when it detects an internal inconsistency caused by a bug in the program.
 Comment[ca]=Una aplicació acaba amb una senyal SIGABRT quan detecta una inconsistència interna causada per un error al programa.
 Comment[cs]=Aplikace je ukončena se signálem SIGABRT, když zjistí vnitřní nekonzistenci způsobenou chybou v programu.
 Comment[da]=Et program afslutter med et SIGABRT signal når det finder en intern inkonsistens forårsaget af et problem i programmet.
