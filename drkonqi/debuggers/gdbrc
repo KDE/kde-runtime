@@ -2,6 +2,7 @@
 Name=GNU Debugger
 Name[de]=GNU-Debugger
 Name[eo]=GNUa Erarserĉilo
+Name[et]=GNU silur
 Name[fi]=GNU Debuggeri
 Name[fr]=Débogueur GNU
 Name[he]=GNU לש םיגאב הפנמ
@@ -19,6 +20,7 @@ Comment=Text based debugger from GNU in a konsole
 Comment[cs]=Textový ladicí GNU program pro konsoli
 Comment[de]=Text-Debugger von GNU in einer Konsole
 Comment[eo]=Tekstbazita GNU-erarserĉilo en konzolo
+Comment[et]=Tekstipõhine silur GNU'lt konsoolil
 Comment[fi]=Tekstipohjainen GNU-debuggeri konsoliin
 Comment[fr]=Débogueur du GNU en mode texte dans une konsole
 Comment[he]=Konsole ךותב טסקט ססובמ GNU-מ םיגאב הפנמ
