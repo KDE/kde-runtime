@@ -63,7 +63,7 @@ KrashDebugger :: KrashDebugger (const KrashConfig *krashconf, QWidget *parent, c
   m_status = new QLabel( w );
   m_status->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Preferred ) );
   //m_copyButton = new KPushButton( KStdGuiItem::copy(), w );
-  KGuiItem item( i18n( "&Copy" ), QString::fromLatin1( "editcopy" ) );
+  KGuiItem item( i18n( "C&opy" ), QString::fromLatin1( "editcopy" ) );
   m_copyButton = new KPushButton( item, w );
   connect( m_copyButton, SIGNAL( clicked() ), this, SLOT( slotCopy() ) );
   m_copyButton->setEnabled( false );
