@@ -3,7 +3,7 @@
  * 
  * $Id$
  *
- * Copyright (C) 2000 Hans Petter Bieker <bieker@kde.org>
+ * Copyright (C) 2000-2003 Hans Petter Bieker <bieker@kde.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -93,15 +93,19 @@ void KrashDebugger :: slotCopy()
 
 void KrashDebugger :: slotSave()
 {
-  QString filename=KFileDialog::getSaveFileName(QString::null, QString::null, this, i18n("Select Filename"));
-  if(!filename.isEmpty()) {
+  QString filename = KFileDialog::getSaveFileName(QString::null, QString::null, this, i18n("Select Filename"));
+  if (!filename.isEmpty())
+  {
     QFile f(filename);
-    if(f.open(IO_WriteOnly)) {
-      QByteArray bt = m_backtrace->text().local8Bit();  
+    if (f.open(IO_WriteOnly))
+    {
+      QByteArray bt = m_backtrace->text().local8Bit();
       // don't write the trailing \0
-      f.writeBlock(bt.data(), bt.size()-1);
+      f.writeBlock(bt.data(), bt.size() - 1);
       f.close();
-    } else {
+    }
+    else
+    {
       KMessageBox::sorry(this, i18n("Can't open file %1 for writing").arg(filename));
     }
   }
@@ -129,14 +133,15 @@ void KrashDebugger :: showEvent(QShowEvent *e)
 void KrashDebugger :: startDebugger()
 {
   // Only start one copy
-  if (m_proctrace) return;
+  if (m_proctrace)
+    return;
 
   m_status->setText(i18n("Loading symbols..."));
 
   m_proctrace = new BackTrace(m_krashconf, this);
 
   connect(m_proctrace, SIGNAL(append(const QString &)),
-	  SLOT(slotAppend(const QString &)));
+          SLOT(slotAppend(const QString &)));
   connect(m_proctrace, SIGNAL(done()), SLOT(slotDone()));
   connect(m_proctrace, SIGNAL(someError()), SLOT(slotSomeError()));
 

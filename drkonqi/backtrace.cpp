@@ -3,7 +3,7 @@
  *
  * $Id$
  *
- * Copyright (C) 2000 Hans Petter Bieker <bieker@kde.org>
+ * Copyright (C) 2000-2003 Hans Petter Bieker <bieker@kde.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -59,7 +59,8 @@ BackTrace::~BackTrace()
   // process. For some reason it doesn't work if we send the signal before
   // gdb has exited, so we better wait for it.
   // Do not touch it if we never ran backtrace.
-  if (pid) {
+  if (pid)
+  {
     waitpid(pid, NULL, 0);
     kill(m_krashconf->pid(), SIGCONT);
   }
@@ -73,7 +74,7 @@ void BackTrace::start()
   if ( !exec.isEmpty() && KStandardDirs::findExe(exec).isEmpty() )
   {
     QObject * o = parent();
-    
+
     if (o && !o->inherits("QWidget"))
     {
       o = NULL;
@@ -121,16 +122,18 @@ void BackTrace::slotProcessExited(KProcess *proc)
   kill(m_krashconf->pid(), SIGCONT);
 
   // remove crap
-  m_strBt.replace(QRegExp(QString::fromLatin1("\\(no debugging symbols found\\)\\.\\.\\.\\n?")),QString::null);
+  m_strBt.replace(QRegExp(QString::fromLatin1("\\(no debugging symbols found\\)\\.\\.\\.\\n?")), QString::null);
   // how many " ?? " in the bt ?
   int unknown = m_strBt.contains(QString::fromLatin1(" ?? "));
   // how many lines in the bt ?
   int lines = m_strBt.contains('\n');
   bool tooShort = !m_strBt.find(QString::fromLatin1("#5"));
   if (proc->normalExit() && (proc->exitStatus() == 0) &&
-      !m_strBt.isNull() && !tooShort && (unknown + 2 < lines)) {
+      !m_strBt.isNull() && !tooShort && (unknown + 2 < lines))
+  {
     emit done();
     emit done(m_strBt);
-  } else
+  }
+  else
     emit someError();
 }

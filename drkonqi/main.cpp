@@ -3,7 +3,7 @@
  *
  * $Id$
  *
- * Copyright (C) 2000 Hans Petter Bieker <bieker@kde.org>
+ * Copyright (C) 2000-2003 Hans Petter Bieker <bieker@kde.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -67,11 +67,11 @@ int main( int argc, char* argv[] )
   setenv("KDE_DEBUG", "true", 1);
 
   KAboutData aboutData( "drkonqi",
-			I18N_NOOP("The KDE Crash Handler"),
-			version,
-			description,
-			KAboutData::License_BSD,
-			"(C) 2000, Hans Petter Bieker");
+                        I18N_NOOP("The KDE Crash Handler"),
+                        version,
+                        description,
+                        KAboutData::License_BSD,
+                        "(C) 2000-2003, Hans Petter Bieker");
   aboutData.addAuthor("Hans Petter Bieker", 0, "bieker@kde.org");
 
   KCmdLineArgs::init(argc, argv, &aboutData);

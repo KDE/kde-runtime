@@ -3,7 +3,7 @@
  *
  * $Id$
  *
- * Copyright (C) 2000 Hans Petter Bieker <bieker@kde.org>
+ * Copyright (C) 2000-2003 Hans Petter Bieker <bieker@kde.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -55,26 +55,27 @@ void KrashConfig :: readConfig()
   m_startedByKdeinit = args->isSet("kdeinit");
   m_execname = args->getOption( "appname" );
   if ( !args->getOption( "apppath" ).isEmpty() )
-      m_execname.prepend( args->getOption( "apppath" )+"/" );
+    m_execname.prepend( args->getOption( "apppath" ) + "/" );
 
   QCString programname = args->getOption("programname");
-  if (programname.isEmpty()) programname.setStr(I18N_NOOP("unknown"));
+  if (programname.isEmpty())
+    programname.setStr(I18N_NOOP("unknown"));
   // leak some memory... Well. It's only done once anyway :-)
   const char * progname = qstrdup(programname);
   m_aboutData = new KAboutData(args->getOption("appname"),
-                    progname,
-                    args->getOption("appversion"),
-                    0, 0, 0, 0, 0,
-                    args->getOption("bugaddress"));
+                               progname,
+                               args->getOption("appversion"),
+                               0, 0, 0, 0, 0,
+                               args->getOption("bugaddress"));
 
   QCString startup_id( args->getOption( "startupid" ));
-  if( !startup_id.isEmpty())
-    { // stop startup notification
+  if (!startup_id.isEmpty())
+  { // stop startup notification
     KStartupInfoId id;
     id.initId( startup_id );
     KStartupInfo::sendFinish( id );
-    }
-    
+  }
+
   KConfig *config = KGlobal::config();
   config->setGroup("drkonqi");
 
@@ -107,7 +108,8 @@ void KrashConfig :: readConfig()
   preset.setGroup("General");
   m_showbugreport = preset.readBoolEntry("ShowBugReportButton", false);
   m_showdebugger = m_showbacktrace = m_pid != 0;
-  if (m_showbacktrace) {
+  if (m_showbacktrace)
+  {
     m_showbacktrace = preset.readBoolEntry("ShowBacktraceButton", true);
     m_showdebugger = preset.readBoolEntry("ShowDebugButton", true);
   }
@@ -116,7 +118,8 @@ void KrashConfig :: readConfig()
 
   QString str = QString::number(m_signalnum);
   // use group unknown if signal not found
-  if (!preset.hasGroup(str)) str = QString::fromLatin1("unknown");
+  if (!preset.hasGroup(str))
+    str = QString::fromLatin1("unknown");
   preset.setGroup(str);
   m_signalName = preset.readEntry("Name");
   if (b)
@@ -127,9 +130,10 @@ void KrashConfig :: readConfig()
 void KrashConfig :: expandString(QString &str, QString tempFile) const
 {
   int pos = -1;
-  while ( (pos = str.findRev('%', pos)) != -1 ) {
+  while ( (pos = str.findRev('%', pos)) != -1 )
+  {
     if (str.mid(pos, 8) == QString::fromLatin1("%appname"))
-        str.replace(pos, 8, QString::fromLatin1(appName()));
+      str.replace(pos, 8, QString::fromLatin1(appName()));
     if (str.mid(pos, 9) == QString::fromLatin1("%execname"))
     {
       if (startedByKdeinit())

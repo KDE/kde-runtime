@@ -3,7 +3,7 @@
  *
  * $Id$
  *
- * Copyright (C) 2000 Hans Petter Bieker <bieker@kde.org>
+ * Copyright (C) 2000-2003 Hans Petter Bieker <bieker@kde.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -121,7 +121,8 @@ QString Toplevel :: generateText() const
 // starting bug report
 void Toplevel :: slotUser1()
 {
-  if (m_bugreport) return;
+  if (m_bugreport)
+    return;
 
   int i = KMessageBox::No;
   if ( m_krashconf->pid() != 0 )

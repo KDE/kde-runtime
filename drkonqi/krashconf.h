@@ -3,7 +3,7 @@
  *
  * $Id$
  *
- * Copyright (C) 2000 Hans Petter Bieker <bieker@kde.org>
+ * Copyright (C) 2000-2003 Hans Petter Bieker <bieker@kde.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,7 +35,7 @@
 
 class KrashConfig
 {
- public:
+public:
   KrashConfig();
   ~KrashConfig();
 
@@ -58,10 +58,10 @@ class KrashConfig
 
   void expandString(QString &str, QString tempFile = QString::null) const;
 
- private:
+private:
   void readConfig();
 
- private:
+private:
   KAboutData *m_aboutData;
   int m_pid;
   int m_signalnum;

@@ -3,7 +3,7 @@
  *
  * toplevel.cpp
  *
- * Copyright (C) 2000 Hans Petter Bieker <bieker@kde.org>
+ * Copyright (C) 2000-2003 Hans Petter Bieker <bieker@kde.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,19 +44,19 @@ public:
   Toplevel(const KrashConfig *krash, QWidget *parent = 0, const char * name = 0);
   ~Toplevel();
 
- private:
+private:
   // helper methods
   QString generateText() const;
 
- protected slots:
+protected slots:
   void slotUser1();
   void slotUser2();
 
- protected slots:
+protected slots:
   void slotBacktraceSomeError();
   void slotBacktraceDone(const QString &);
 
- private:
+private:
   const KrashConfig *m_krashconf;
   DrKBugReport *m_bugreport;
 };

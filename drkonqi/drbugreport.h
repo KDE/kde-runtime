@@ -3,7 +3,7 @@
  *
  * $Id$
  *
- * Copyright (C) 2000 Hans Petter Bieker <bieker@kde.org>
+ * Copyright (C) 2000-2003 Hans Petter Bieker <bieker@kde.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,26 +38,26 @@ class DrKBugReport : public KBugReport
 {
   Q_OBJECT
 
- public:
+public:
   /**
    * Constructor.
    */
   DrKBugReport(QWidget *parent = 0, bool modal = true,
-	       const KAboutData *aboutData = 0);
+               const KAboutData *aboutData = 0);
 
- public:
+public:
   /**
    * Allows the debugger to set the default text in the editor.
    */
   void setText(const QString &str);
 
- protected slots:
+protected slots:
   /**
    * OK has been clicked
    */
-  virtual void slotOk( void );   
+  virtual void slotOk( void );
 
- private:
+private:
   QString m_startstring;
 };
 

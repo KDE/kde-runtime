@@ -3,7 +3,7 @@
  *
  * $Id$
  *
- * Copyright (C) 2000 Hans Petter Bieker <bieker@kde.org>
+ * Copyright (C) 2000-2003 Hans Petter Bieker <bieker@kde.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,7 +36,7 @@
 #include "drbugreport.h"
 
 DrKBugReport::DrKBugReport(QWidget *parent, bool modal,
-			   const KAboutData *aboutData)
+                           const KAboutData *aboutData)
   : KBugReport(parent, modal, aboutData)
 {
 }
@@ -54,9 +54,9 @@ void DrKBugReport::slotOk()
   {
     QString msg = i18n("You have to edit the description "
                        "before the report can be sent.");
-    KMessageBox::error(this,msg);
+    KMessageBox::error(this, msg);
     return;
-  }                            
+  }
   KBugReport::slotOk();
 }
 

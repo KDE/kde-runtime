@@ -3,7 +3,7 @@
  *
  * $Id$
  *
- * Copyright (C) 2000 Hans Petter Bieker <bieker@kde.org>
+ * Copyright (C) 2000-2003 Hans Petter Bieker <bieker@kde.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,14 +40,14 @@ class BackTrace : public QObject
 {
   Q_OBJECT
 
- public:
+public:
   BackTrace(const KrashConfig *krashconf, QObject *parent,
             const char *name = 0);
   ~BackTrace();
 
   void start();
 
- signals:
+signals:
   // Just the new text
   void append(const QString &str);
 
@@ -55,11 +55,11 @@ class BackTrace : public QObject
   void done();
   void done(const QString &);
 
- protected slots:
+protected slots:
   void slotProcessExited(KProcess * proc);
   void slotReadInput(KProcess * proc, char * buf, int buflen);
 
- private:
+private:
   KProcess *m_proc;
   const KrashConfig *m_krashconf;
   KTempFile *m_temp;
