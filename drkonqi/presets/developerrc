@@ -152,7 +152,6 @@ Name[fi]=Sovellus %progname (%appname), pid %pid kaatui ja antoi signaalin %sign
 Name[fo]=Forritið %progname (%appname) við koyrslunummar %pid fór í sor og elvaði báknið %signum (%signame).
 Name[fr]=L'application %progname (%appname), de numéro %pid, s'est terminée anormalement et a provoqué le signal %signum (%signame).
 Name[he]=היישום %progname (%appname), זיהוי תהליך %pid, התרסק וגרם לאיתות %signum (%signame).
-Name[hr]=Aplikacija %progname (%appname), pid: %pid, je krahirala sa signalom %signum (%signame).
 Name[hu]=A(z) %progname (%appname) alkalmazás (azonosító=%pid) lefagyott és %signum (%signame) szignált okozott.
 Name[is]=ForritiÃ° %progname (%appname) pid %pid, hrundi og gaf frÃ¡ sÃ©r boÃ°iÃ° %signum (%signame).
 Name[it]=L'applicazione %progname (%appname), pid %pid, è andata in crash e ha causato il segnale %signum (%signame).
