@@ -6,6 +6,8 @@ SUBDIRS = presets pics
 
 INCLUDES = $(all_includes)
 
+EXTRA_DIST = LICENSE
+
 bin_PROGRAMS = drkonqi
 
 # Libraries:
