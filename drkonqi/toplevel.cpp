@@ -66,7 +66,7 @@ Toplevel :: Toplevel(const KrashConfig *krashconf, QWidget *parent, const char *
   // picture of konqi
   QLabel *lab = new QLabel(page);
   lab->setBackgroundColor(Qt::white);
-  lab->setFrameStyle(QFrame::Panel | QFrame::Raised);
+  lab->setFrameStyle(QFrame::Panel | QFrame::Sunken);
   QPixmap pix(locate("appdata", QString::fromLatin1("pics/konqi.png")));
   lab->setPixmap(pix);
 
