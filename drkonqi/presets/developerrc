@@ -122,7 +122,7 @@ Name[sr]=Aplikacija %progname (%appname) se srušila i izazvala signal %signum (
 Name[sv]=Programmet %progname (%appname) kraschade och orsakade signalen %signum (%signame).
 Name[ta]=ÀÂýÀ¡Î %progname (%appname) ÓÈ¢óÐ ÌÈ¢ %signum (%signame) ³ ¯ñ¼¡ì¸¢ÂÐ.
 Name[tr]= %progname (%appname) uygulaması çöktü ve %signum (%signame) sinyali gönderdi.
-Name[uk]=Програма %progname (%appname) дала сбій та визвала сигнал %signum (%signame).
+Name[uk]=Програма %progname (%appname) дала збій та визвала сигнал %signum (%signame).
 Name[zh_CN.GB2312]=程序 %progname (%appname) 已崩溃, 导致信号 %signum (%signame).
 Name[zh_TW.Big5]=應用程式 %progname (%appname) 已中止並產生信號 %signum (%signame).
 
@@ -231,6 +231,7 @@ Comment[hu]=Félbeszakítva.
 Comment[is]=Hætt við.
 Comment[it]=Terminato in maniera anomala.
 Comment[ja]=中止されました。
+Comment[lv]=Atcelta.
 Comment[mk]=Прекинато.
 Comment[nl]=Geannuleerd.
 Comment[no]=Avbrutt.
@@ -247,7 +248,7 @@ Comment[sr]=Napušteno.
 Comment[sv]=Misslyckades.
 Comment[ta]=¿¢Úò¾Àð¼Ð.
 Comment[tr]=İptal edildi.
-Comment[uk]=Прервано.
+Comment[uk]=Перервано.
 Comment[zh_CN.GB2312]=中止.
 Comment[zh_TW.Big5]=中斷
 
