@@ -109,6 +109,7 @@ Name=The application %progname (%appname), pid %pid, crashed and caused the sign
 Name[da]=Programmet %progname (%appname), pid %pid brød sammen og gav signalet %signum (%signame).
 Name[he]=היישום %progname )%appname(, זיהוי תהליך %pid, התרסק וגרם לאיתות %signum )%signame(.
 Name[hu]=A(z) %progname (%appname) alkalmazás (azonosító=%pid) lefagyott és %signum (%signame) szignált okozott.
+Name[ko]=프로세서 아이디가 %pid이고 이름이 %progname (%appname)인 프로그램이 다음과 같은 신호를 보내면서 죽었습니다 : %signum (%signame)
 
 [WhatToDoHint]
 Enable=true
