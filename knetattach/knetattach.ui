@@ -20,7 +20,7 @@
             <cstring>_folderType</cstring>
         </property>
         <attribute name="title">
-            <string>Connect to Network Folder</string>
+            <string>Add a Network Folder</string>
         </attribute>
         <grid>
             <property name="name">
@@ -369,11 +369,12 @@
 <tabstops>
     <tabstop>_webfolder</tabstop>
     <tabstop>_recentConnectionName</tabstop>
+    <tabstop>_connectionName</tabstop>
     <tabstop>_host</tabstop>
     <tabstop>_port</tabstop>
     <tabstop>_path</tabstop>
+    <tabstop>_createIcon</tabstop>
     <tabstop>_useEncryption</tabstop>
-    <tabstop>_connectionName</tabstop>
 </tabstops>
 <includes>
     <include location="global" impldecl="in implementation">kio/netaccess.h</include>
