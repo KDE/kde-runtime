@@ -154,6 +154,7 @@ Name[lt]=Galite pabandyti ištaisyti programą. Pažiūrėkite žiniaraščio le
 Name[lv]=Jūs varbūt vēlaties saglābt jūsu programmu. Ieskatieties atpakaļatsekošanas tabā.
 Name[mt]=Forsi tixtieq tirranġa l-programm tiegħek. Agħti ħarsa lejn il-backtrace.
 Name[nl]=U wilt vast uw programma herstellen. Kijk even onder de tab 'backtrace'.
+Name[no]=Du vil kanskje rette opp feilen selv. Ta en titt på siden med logg over funksjonskall.
 Name[no_NY]=Du vil kanskje fiksa programmet ditt. Ta ein kikk på tilbakeloggsida.
 Name[pl]=Możesz spróbować poprawić program. Spójrz na zakładkę z logiem debuggera.
 Name[pt]=Podes querer corrigir o programa. Olha para o registo de 'backtrace'.
