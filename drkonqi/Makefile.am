@@ -14,8 +14,10 @@ bin_PROGRAMS = drkonqi
 LDFLAGS = $(all_libraries) $(KDE_RPATH)
 LDADD  = $(LIB_KDEUI) $(LIB_KFILE)
 
-drkonqi_SOURCES = main.cpp toplevel.cpp debugger.cpp krashconf.cpp \
-	drbugreport.cpp backtrace.cpp
+# toplevel.cpp must be last in row due to X-headers being included. (--enable-final)
+# Did I mention already that X header files really suck?
+drkonqi_SOURCES = main.cpp debugger.cpp krashconf.cpp \
+	drbugreport.cpp backtrace.cpp toplevel.cpp
 
 drkonqi_METASOURCES = AUTO
 
