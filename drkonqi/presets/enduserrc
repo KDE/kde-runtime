@@ -216,6 +216,7 @@ Name[zu]=I-%progname yomyaleli (%appname), iphahlazekile futhi yabanga uphawu %s
 [WhatToDoHint]
 Enable=true
 Name=You might want to send a bug report for this application. Check if it is listed on http://bugs.kde.org, otherwise mail the author. Please include as much information as possible, maybe the original documents. If you have a way to reproduce the error, include this also.
+Name[bg]=Ако искате, може да изпратите съобщение за грешка за тази програма. В такъв случай, натиснете бутона "Съобщаване за грешка" или се свържете с автора на програмата по електронна поща. Преди това може да проверите на http://bugs.kde.org дали съществува грешката. Моля, опишете подробно възникналия проблем. Желателно е да опишете подробно стъпките, необходими за възпроизвеждане на проблема.
 Name[da]=Måske har du lyst til at sende en fejlrapport om dette program. Tjek om fejlen allerede er der på  listen ihttp://bugs.kde.org, skriv ellers til forfatteren. Husk at inkludere så meget information som muligt, måske de oprindelige dokumenter. Hvis du er i stand til at reproducere fejlen, så husk også at nævne dette.
 Name[eo]=Vi povus sendi eraroraporton pri ĉi tiu aplikaĵo. Kontrolu ĉu la listo ĉe http://bugs.kde.org jam enhavas ĝin, alie sendu retpoŝton al la aŭtoro. Bonvolu kunsendi tiom da informoj, kiom eblas, laŭeble la originalajn dokumentojn. Se vi trovis manieron reprodukti la eraron, bonvolu krome aldoni ĝin.
 Name[es]=Puede que quiera enviar un informe de fallos de esta aplicación. Por favor, compruebe si aparece en http://bugs.kde.org, si no, envíe un mensaje al autor. Por favor, incluya tanta información como pueda, tal vez incluso los documentos originales. Si hay una forma de reproducir el error, inclúyala también.
@@ -591,6 +592,7 @@ Name[zh_TW]=未知
 Name[zu]=Okungaziwa
 Comment=Sorry, I do not know this signal.
 Comment[be]=Прабачце, я ня ведаю гэты сыгнал.
+Comment[bg]=Неизвестен сигнал.
 Comment[da]=Jeg kender desværre ikke dette signal.
 Comment[eo]=Pardonu, mi ne konas tiun signalon.
 Comment[es]=Lo siento, se desconoce esta señal.
