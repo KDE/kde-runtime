@@ -1,0 +1,11 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=KDE Network Wizard
+Exec=knetattach
+InitialPreference=6
+Icon=knetattach
+Type=Application
+Terminal=false
+X-KDE-StartupNotify=true
+Categories=Qt;KDE;Network;
+DocPath=knetattach/index.html
