@@ -67,51 +67,51 @@ void KrashConfig :: readConfig()
                     args->getOption("bugaddress"));
 
   KConfig *config = KGlobal::config();
-  config->setGroup(QString::fromLatin1("drkonqi"));
+  config->setGroup("drkonqi");
 
   // maybe we should check if it's relative?
-  QString configname = config->readEntry(QString::fromLatin1("ConfigName"),
+  QString configname = config->readEntry("ConfigName",
                                          QString::fromLatin1("enduser"));
 
-  QString debuggername = config->readEntry(QString::fromLatin1("Debugger"),
+  QString debuggername = config->readEntry("Debugger",
                                            QString::fromLatin1("gdb"));
 
   KConfig debuggers(QString::fromLatin1("debuggers/%1rc").arg(debuggername),
                     true, false, "appdata");
 
-  debuggers.setGroup(QString::fromLatin1("General"));
-  m_debugger = debuggers.readEntry(QString::fromLatin1("Exec"));
-  m_debuggerBatch = debuggers.readEntry(QString::fromLatin1("ExecBatch"));
-  m_tryExec = debuggers.readEntry(QString::fromLatin1("TryExec"));
+  debuggers.setGroup("General");
+  m_debugger = debuggers.readEntry("Exec");
+  m_debuggerBatch = debuggers.readEntry("ExecBatch");
+  m_tryExec = debuggers.readEntry("TryExec");
 
   KConfig preset(QString::fromLatin1("presets/%1rc").arg(configname),
                  true, false, "appdata");
 
-  preset.setGroup(QString::fromLatin1("ErrorDescription"));
-  if (preset.readBoolEntry(QString::fromLatin1("Enable"), true))
-    m_errorDescriptionText = preset.readEntry(QString::fromLatin1("Name"));
+  preset.setGroup("ErrorDescription");
+  if (preset.readBoolEntry("Enable"), true)
+    m_errorDescriptionText = preset.readEntry("Name");
 
-  preset.setGroup(QString::fromLatin1("WhatToDoHint"));
-  if (preset.readBoolEntry(QString::fromLatin1("Enable")))
-    m_whatToDoText = preset.readEntry(QString::fromLatin1("Name"));
+  preset.setGroup("WhatToDoHint");
+  if (preset.readBoolEntry("Enable"))
+    m_whatToDoText = preset.readEntry("Name");
 
-  preset.setGroup(QString::fromLatin1("General"));
-  m_showbugreport = preset.readBoolEntry(QString::fromLatin1("ShowBugReportButton"), false);
+  preset.setGroup("General");
+  m_showbugreport = preset.readBoolEntry("ShowBugReportButton", false);
   m_showdebugger = m_showbacktrace = m_pid != 0;
   if (m_showbacktrace) {
-    m_showbacktrace = preset.readBoolEntry(QString::fromLatin1("ShowBacktraceButton"), true);
-    m_showdebugger = preset.readBoolEntry(QString::fromLatin1("ShowDebugButton"), true);
+    m_showbacktrace = preset.readBoolEntry("ShowBacktraceButton", true);
+    m_showdebugger = preset.readBoolEntry("ShowDebugButton", true);
   }
 
-  bool b = preset.readBoolEntry(QString::fromLatin1("SignalDetails"), true);
+  bool b = preset.readBoolEntry("SignalDetails", true);
 
   QString str = QString::number(m_signalnum);
   // use group unknown if signal not found
   if (!preset.hasGroup(str)) str = QString::fromLatin1("unknown");
   preset.setGroup(str);
-  m_signalName = preset.readEntry(QString::fromLatin1("Name"));
+  m_signalName = preset.readEntry("Name");
   if (b)
-    m_signalText = preset.readEntry(QString::fromLatin1("Comment"));
+    m_signalText = preset.readEntry("Comment");
 }
 
 // replace some of the strings
