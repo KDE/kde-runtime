@@ -19,5 +19,8 @@ drkonqi_SOURCES = main.cpp toplevel.cpp debugger.cpp krashconf.cpp \
 
 drkonqi_METASOURCES = AUTO
 
+check_PROGRAMS = crashtest
+crashtest_SOURCES = crashtest.cpp
+
 messages:
 	$(XGETTEXT) $(drkonqi_SOURCES) -o $(podir)/drkonqi.pot
