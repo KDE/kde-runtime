@@ -36,7 +36,7 @@
 #include <klocale.h>
 #include <kglobal.h>
 #include <kdebug.h>
-#include <kstddirs.h>
+#include <kstandarddirs.h>
 #include <kbugreport.h>
 #include <kmessagebox.h>
 #include <kprocess.h>

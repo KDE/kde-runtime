@@ -32,7 +32,7 @@
 
 #include <kprocess.h>
 #include <kdebug.h>
-#include <kstddirs.h>
+#include <kstandarddirs.h>
 #include <kmessagebox.h>
 #include <klocale.h>
 #include <ktempfile.h>
