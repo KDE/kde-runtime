@@ -12,8 +12,6 @@
 
 #include <stdlib.h>
 
-#include <qfile.h>
-
 #include <kapp.h>
 #include <kcmdlineargs.h>
 #include <kaboutdata.h>
