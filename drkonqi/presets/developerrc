@@ -384,7 +384,6 @@ Comment[zu]=Umyalelo ongekho emthethweni.
 [6]
 Name=SIGABRT
 Name[af]=Sigabrt
-Name[fr]=SIABRT
 Name[vi]=SIGABRT 
 Name[xx]=xxSIGABRTxx
 Comment=Aborted.

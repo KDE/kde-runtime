@@ -359,7 +359,6 @@ Comment[zu]=Umyaleli uthola kakhulu uphawu lwe-SIGILL ngenxa yegciwane elikumyal
 [6]
 Name=SIGABRT
 Name[af]=Sigabrt
-Name[fr]=SIABRT
 Name[vi]=SIGABRT 
 Name[xx]=xxSIGABRTxx
 Comment=An application terminates with a SIGABRT signal when it detects an internal inconsistency caused by a bug in the program.
