@@ -58,7 +58,7 @@ AudioPreview::AudioPreview( QWidget *parent, const char *name, const QString &fi
       desc.append(i18n("Comment: ") + info.item("Comment").value().toString() + "\n" );
       desc.append(i18n("Bitrate: ") + info.item("Bitrate").value().toString() + info.item("Bitrate").suffix() + "\n" );
     }
-    desc.append(i18n("Sample Rate: ") + info.item("Sample Rate").value().toString() + info.item("Sample Rate").suffix() + "\n" );
+    desc.append(i18n("Sample rate: ") + info.item("Sample Rate").value().toString() + info.item("Sample Rate").suffix() + "\n" );
     desc.append(i18n("Length: "));
     /* Calculate length in mm:ss format */
     int length = info.item("Length").value().toInt();
