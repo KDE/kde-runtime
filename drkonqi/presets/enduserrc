@@ -302,7 +302,7 @@ Comment[ko]=응용 프로그램이 벌레로 인해 SIGILL 신호를 전달 받�
 Comment[lo]=ອັບພລິກເຄເຊິນໄດ້ຮັບສັນຍານ SIGILL ໍຊຶ່ງອາດເປັນຂໍ້ຜິດພາດໃນອັບພລິກເຄເຊິນ
 Comment[lt]=Programa gauna SIGILL signalą paprastai dėl ydos programoje.  Programa buvo paprašyta išsaugoti savo dokumentus.
 Comment[lv]=Aplikācija visbiežāk saņem SIGILL signālu sakarā ar kļūdu aplikācijā. Aplikācija piedāvāja saglabāt tās dokumentus.
-Comment[mk]=Било која апликација најчесто го добива сигналот SIGILL поради бубачка. На апликацијата ѐ беше речено да ги сними сите свои документи.
+Comment[mk]=Било која апликација најчесто го добива сигналот SIGILL поради бубачка. На апликацијата ѝ беше речено да ги сними сите свои документи.
 Comment[mn]=Програм SIGILL сигнал хүлээж авч байна. Энэ нь ихэвчилэн программчилалын алдаа байдаг. Програм баримт хадгалах эсэхийг асууж байна.
 Comment[ms]=Kebanyakan aplikasi menerima isyarat SIGILL disebabkan ralat di dalam aplikasi. Aplikasi hendaklah disimpan untuk mengelakkan perkara tidak diingini.
 Comment[mt]=Programm normalment jirċievi s-sinjal SIGILL minħabba bug fil-programm. Dan il-programm intalab biex jikteb id-dokumenti tiegħu.
@@ -448,7 +448,7 @@ Comment[ko]=응용 프로그램이 벌레로 인해 SIGFPE 신호를 전달 받�
 Comment[lo]=ອັບພລິກເຄເຊິນໄດ້ຮັບສັນຍານ SIGFPE ຈາກບັກພາຍໃນໂປຣແກຣມແລະອັບພລິກເຄເຊິນໄດ້ຖາມເພື່ອທຳການບັນທຶກເອກະສານຂອງມັນ
 Comment[lt]=Programa dažniausiai gauna SIGFPE signalą dėl ydos programoje.  Programa buvo paprašyta išsaugoti savo dokumentus.
 Comment[lv]=Aplikācija visbiežāk saņem SIGFPE signālu sakarā ar kļūdu aplikācijā. Aplikācija piedāvā saglabāt tās dokumentus.
-Comment[mk]=Апликацијата најчесто добива сигнал SIGFPE поради грешка во апликацијата. На апликацијата ѐ беше речено да ги сними сите свои документи.
+Comment[mk]=Апликацијата најчесто добива сигнал SIGFPE поради грешка во апликацијата. На апликацијата ѝ беше речено да ги сними сите свои документи.
 Comment[mn]=Програм SIGFPE сигнал хүлээж авч байна. Энэ нь ихэвчилэн программчилалын алдаа байдаг. Програм баримт хадгалах эсэхийг асууж байна.
 Comment[mt]=Programm ġeneralment jirċievi s-sinjal SIGFPE minħabba bug fil-programm. Il-programm intalab jikteb id-dokumenti tiegħu.
 Comment[nb]=Et program mottar som oftest SIGFFE-signalet på grunn av en feil i programmet. Programmet ble bedt om å lagre dokumentene.
@@ -508,7 +508,7 @@ Comment[et]=Tavaliselt saab rakendus SIGSEGV signaali rakenduses endas tekkinud 
 Comment[eu]=Normalean aplikazio batek SIGSEGV seinalea jasotzen du bere baitanerrore bat dagoleko. Aplikazioari dokumentuak gordetzea eskatu zaio.
 Comment[fa]=برنامه معمولا هنگامی سیگنال SIGSEGV را دریافت می‌کند که مشکلی در برنامه وجود داشته باشد. از برنامه خواسته شد که سندش را ذخیره کند.
 Comment[fi]=Sovellus saa SIGSEGV-signaalin yleensä sovelluksen virheen vuoksi. Sovellusta pyydettiin tallentamaan asiakirjat.
-Comment[fr]=Une application reçoit généralement le signal SIGEGV à cause d'un bogue interne. Le programme a reçu une demande d'enregistrement de ses documents.
+Comment[fr]=Une application reçoit généralement le signal SIGSEGV à cause d'un bogue interne. Le programme a reçu une demande d'enregistrement de ses documents.
 Comment[gl]=Unha aplicación recibe o sinal SIGSEGV seguramente por mor dun erro interno. Pedíuselle á aplicación que garde os documentos.
 Comment[he]=בדרך כלל מקבל יישום את האיתות SIGSEGV עקב באג ביישום. היישום התבקש לשמור את המסמכים שלו.
 Comment[hi]=एक अनुप्रयोग प्रायः उस अनुप्रयोग में बग होने पर SIGSEGV संकेत प्राप्त करता है. अनुप्रयोग को इसका दस्तावेज़ सहेजने के लिए कहा गया है.
