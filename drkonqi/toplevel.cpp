@@ -37,6 +37,10 @@ Toplevel :: Toplevel(const KrashConfig *krashconf, QWidget *parent, const char *
 		 ),
     m_krashconf(krashconf), bugreport(0)
 {
+	int i;
+
+	qDebug( "%d", i );
+
   QHBox *page = addHBoxPage(i18n("General"));
   page->setSpacing(20);
 
