@@ -134,6 +134,7 @@ Name[uk]=Можливо Ви хочете відіслати звіт про п�
  düğmesine tıklayın.
  düğmesine tıklayın.
  düğmesine tıklayın.
+ düğmesine tıklayın.
  düðmesine týklayýnýz.
  düðmesine týklayýnýz.
  düðmesine týklayýnýz.
@@ -200,7 +201,7 @@ Comment[et]=Rakendus katkestab töö SIGABRT signaaliga kui ta avastab sisemise 
 Comment[fi]=Sovellus lopettaa SIGABRT signaalilla, kun se huomaa sisäisen virheen joka on johtunut ohjelmavirheestä.
 Comment[fr]=Une application se termine généralement par le signal SIGILL quand elle détecte une incohérence interne causée par un bogue du programme.
 Comment[he]=.תינכותב גאב בקע תימינפ תומיאת-יא ההזמ אוהשכ SIGABRT תותיא םע םייתסמ םושיי
-Comment[hu]=Egy alkalmazás akkor áll le SIGABRT szignállal, ha belső inkonzisztenciátészlel, melyet a program saját hibája okozhatott.
+Comment[hu]=Egy alkalmazás akkor áll le SIGABRT szignállal, ha belső inkonzisztenciát észlel, melyet a program saját hibája okozhatott.
 Comment[it]=Un'applicazione termina con il segnale SIGABRT quando riscontra un'inconsistenza interna causata da un bug nel programma.
 Comment[nl]=Een programma eindigd met een SIGABRT signaal wanneer het een interne inconsistensie detecteerd veroorzaakt door een fout in het programma.
 Comment[no]=En applikasjon avslutter med et SIGABRT når den finner en intern uoverenstemmelse som kommer av en feil i programmet.
