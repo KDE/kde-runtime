@@ -174,8 +174,8 @@ void KrashDebugger :: startDebugger()
     m_backtrace->setText( m_prependText +
         i18n( "The following options are enabled:\n\n" )
         + msg
-        + i18n( "\nAs the usage of these options is not recommended,"
-                " because they can be in rare case responsible for KDE problems, backtrace"
+        + i18n( "\nAs the usage of these options is not recommended -"
+                " because they can, in rare cases, be responsible for KDE problems - a backtrace"
                 " will not be generated.\n"
                 "You need to turn these options off and reproduce"
                 " the problem again in order to get a backtrace.\n" ));
@@ -209,7 +209,7 @@ bool KrashDebugger::performChecks( QString* msg )
   if( kdedcfg.readBoolEntry( "DelayedCheck", false ))
   {
     ret = false;
-    *msg += i18n( "System configuration startup check disabled!\n" );
+    *msg += i18n( "System configuration startup check disabled.\n" );
   }
   return ret;
 }
