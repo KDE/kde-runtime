@@ -47,7 +47,7 @@ Name[tr]=Son kullanıcı
 Name[vi]=End user 
 Name[xxx]=xx
 Name[zh_CN.GB2312]=普通用户
-Name[zh_TW.Big5]=最終使用者
+Name[zh_TW.Big5]=一般使用者
 Comment=Settings preferred for end users
 Comment[af]=instellings verkies vir einde gebruikers
 Comment[ara]=الضبط المفضل لدى المستخدم العادي
@@ -97,7 +97,7 @@ Comment[tr]=Son kullanıcılar için tercih edilen ayarlar
 Comment[vi]=Thiết lập được ưa thích dành cho người dùng 
 Comment[xxx]=xx
 Comment[zh_CN.GB2312]=普通用户偏好的设置
-Comment[zh_TW.Big5]=最終使用者者的偏好設定
+Comment[zh_TW.Big5]=一般使用者的偏好設定
 
 SignalDetails=true
 ShowBacktraceButton=true
@@ -155,7 +155,7 @@ Name[th]=แอพพลิเคชัน %progname (%appname) ทำงาน�
 Name[tr]= %progname (%appname) uygulaması çöktü ve %signum (%signame) sinyali gönderdi.
 Name[vi]=Chương trình %progname (%appname) bềEvỡ(crash) và gây ra tín hiệu  %signum (%signame). 
 Name[zh_CN.GB2312]=程序 %progname (%appname) 已崩溃，导致信号 %signum (%signame).
-Name[zh_TW.Big5]=應用程式 %progname (%appname) 已中止並產生信號 %signum (%signame).
+Name[zh_TW.Big5]=此應用程式 %progname (%appname) 不正常結束，產生信號 %signum (%signame)。
 
 [WhatToDoHint]
 Enable=true
@@ -204,7 +204,7 @@ Name[th]=คุณอาจต้องการส่งรายงานค�
 Name[tr]=Yazara bir hata raporu göndermek isterseniz, lütfen mümkün olduğunca fazla bilgi verin ve varsa orijinal belgeleri ekleyin. Eğer bu hatayı tekrar ortaya çıkarabilmenin bir yolu varsa, bunu da belirtin. 
 Name[xxx]=xx
 Name[zh_CN.GB2312]=您可能希望发送一个错误报告给作者。请尽可能提供详细的信息，比如当时程序使用的文档。如果您有办法重现错误，请同时提供这样的方法。
-Name[zh_TW.Big5]=你可能想要寄送錯誤報告給作者。請儘可能記下資訊，甚至是原始資料。如果你有重新產生錯誤的方法，請一併□□□□□上。
+Name[zh_TW.Big5]=您可能希望發送一個錯誤報告給作者。請盡可能提供詳細的資訊，比如當時程式使用的文件。如果您有辦法重現錯誤，請同時提供這樣的方法。
 
 [4]
 Name=SIGILL
@@ -257,7 +257,7 @@ Comment[tr]=Uygulamadaki bir hata nedeniyle, uygulamalar çok kez SIGILL sinyali
 Comment[vi]=Một chương trình nhận hầu hết các tín hiệu SIGILL vì có lỗi trong chương trình. Chương trình này đòi hỏi bạn phải luư trữ tài liệu trước. 
 Comment[xxx]=xx
 Comment[zh_CN.GB2312]=多数情况下，一个程序由于本身的错误会收到 SIGILL 信号。程序被要求保存它的文档。
-Comment[zh_TW.Big5]=由於有錯誤在應用程式產生，所以大部份都會接收到 SIGILL 信號。應用程式會被要求儲存孕扛爾禤ヾC
+Comment[zh_TW.Big5]=多數情況下，一個程式由於本身的錯誤會收到 SIGILL 信號。程式會被要求保存它的文件。
 
 [6]
 Name=SIGABRT
@@ -309,7 +309,7 @@ Comment[tr]=Bir uygulama, programdaki bir hata yüzünden bir iç tutarsızlık 
 Comment[vi]= Một chương trình bềEkết liềE(terminate) với một tín hiệu SIGABRT khi nó tìm ra một mâu thuẩn nội bềEgây ra bởi lỗi của chương trình. 
 Comment[xxx]=xx
 Comment[zh_CN.GB2312]=程序在检测到缺陷引起的内部不一致时，以 SIGABRT 信号中止。
-Comment[zh_TW.Big5]=當應用程式偵測到程式的臭蟲造成內部的不一致時會以 SIGABRT 訊號中斷程式。
+Comment[zh_TW.Big5]=程式偵測發生到內部錯誤時，以 SIGABRT 信號中止。
 
 [8]
 Name=SIGFPE
@@ -363,7 +363,7 @@ Comment[tr]=Uygulamadaki bir hata nedeniyle, uygulamalar çok kez SIGEPE sinyali
 Comment[vi]=Có một chương trình nhận hầu hết các tìn hiệu SIGFPE vì trong chương trình có lỗi. Chương trình đòi hỏi bạn phải sao luư tài liệu. 
 Comment[xxx]=xx
 Comment[zh_CN.GB2312]=大多数情况下，接收到 SIGFPE 信号是由于程序的缺陷。程序被要求保存它的文档。
-Comment[zh_TW.Big5]=由於有錯誤在應用程式產生，所以大部份都會接收到 SIGFPE 信號。應用程式會被要求儲存它的資料。
+Comment[zh_TW.Big5]=大多數情況下，接收到 SIGFPE 信號是由於程式的錯誤。程式被要求保存它的文件。
 
 [11]
 Name=SIGSEGV
@@ -416,7 +416,7 @@ Comment[tr]=Uygulamadaki bir hata nedeniyle, uygulamalar çok kez SIGSEGV sinyal
 Comment[vi]=Có một chương trình nhận hầu hết các tìn hiệu SIGSEGV vì trong chương trình có lỗi. Chương trình đòi hỏi bạn phải sao luư tài liệu.
 Comment[xxx]=xx
 Comment[zh_CN.GB2312]=大多数情况下，接收到 SIGSEGV 信号是由于程序的缺陷。程序被要求保存它的文档。
-Comment[zh_TW.Big5]=由於有錯誤在應用程式產生，所以大部份都會接收到 SIGSEGV 信號。應用程式會被要求儲存它的資料。
+Comment[zh_TW.Big5]=大多數情況下，接收到 SIGSEGV 信號是由於程式的錯誤。程式被要求保存它的文件。
 
 [unknown]
 Name=Unknown
@@ -469,7 +469,7 @@ Name[tr]=Bilinmeyen
 Name[vi]=Không biết 
 Name[xxx]=xx
 Name[zh_CN.GB2312]=未知
-Name[zh_TW.Big5]=末知
+Name[zh_TW.Big5]=未知
 Comment=Sorry, I don't know this signal.
 Comment[af]=jammer, i don't ken hierdie sein.
 Comment[ara]=آسف, لا أستطيع التعرف على الإشارة
@@ -519,4 +519,4 @@ Comment[tr]=Üzgünüm, bu sinyali tanımıyorum.
 Comment[vi]=Xin lỗi, Tôi không biết tín hiệu này . 
 Comment[xxx]=xx
 Comment[zh_CN.GB2312]=抱歉，我不知道这个信号。
-Comment[zh_TW.Big5]=對不起，我不認識這個信號。
+Comment[zh_TW.Big5]=抱歉，我不認識這個信號。

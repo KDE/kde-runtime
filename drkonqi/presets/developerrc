@@ -49,7 +49,7 @@ Name[tr]=Programcı
 Name[vi]=Nhà phát triển 
 Name[xxx]=xx
 Name[zh_CN.GB2312]=开发人员
-Name[zh_TW.Big5]=開發者
+Name[zh_TW.Big5]=開發人員
 Comment=Settings preferred for developers
 Comment[af]=instellings verkies vir ontwikkelaars
 Comment[ara]=الضبط المفضل لدى المطور
@@ -98,7 +98,7 @@ Comment[tr]=Programcılar için tercih edilen ayarlar
 Comment[vi]=Các thiết lập dành cho người phát triển 
 Comment[xxx]=xx
 Comment[zh_CN.GB2312]=开发人员偏好的设置
-Comment[zh_TW.Big5]=開發者偏好的設定
+Comment[zh_TW.Big5]=開發人員的偏好設定
 
 SignalDetails=true
 ShowBugReportButton=true
@@ -113,6 +113,7 @@ Name[he]=היישום %progname )%appname(, זיהוי תהליך %pid, התרס
 Name[hu]=A(z) %progname (%appname) alkalmazás (azonosító=%pid) lefagyott és %signum (%signame) szignált okozott.
 Name[ko]=프로세서 아이디가 %pid이고 이름이 %progname (%appname)인 프로그램이 다음과 같은 신호를 보내면서 죽었습니다 : %signum (%signame)
 Name[nl]=Het programma %progname (%appname), pid %pid is gecrashed en gaf het volgende signaal: %signum (%signame).
+Name[zh_TW.Big5]=此應用程式 %progname (%appname), pid %pid 不正常結束，產生信號 %signum (%signame)。
 
 [WhatToDoHint]
 Enable=true
@@ -153,6 +154,7 @@ Name[ta]=¿£í¸û ­ó¿¢Ã¨Äî ºÃ¢ ¦ºöÂ Å¢ÕõÀÄ¡õ. À¢ýÍ�
 Name[tr]=Programınızdaki sorunu çözmek isterseniz hata ayıklayıcı sekmesine bakın.
 Name[xxx]=xx
 Name[zh_CN.GB2312]=您应该改正程序。看看回溯跟踪部分。
+Name[zh_TW.Big5]=或許你想要修正你的程式。請查看一下回朔標籤裡的內容。
 
 [4]
 Name=SIGILL
@@ -263,7 +265,7 @@ Comment[tr]=İptal edildi.
 Comment[vi]=BềEqua. 
 Comment[xxx]=xx
 Comment[zh_CN.GB2312]=中止。
-Comment[zh_TW.Big5]=中斷
+Comment[zh_TW.Big5]=中止。
 
 [8]
 Name=SIGFPE
@@ -315,7 +317,7 @@ Comment[tr]=Kayar nokta hatası.
 Comment[vi]=Dấu chấm không hợp lềE. 
 Comment[xxx]=xx
 Comment[zh_CN.GB2312]=浮点计算异常。
-Comment[zh_TW.Big5]=浮點數異常。
+Comment[zh_TW.Big5]=浮點計算異常。
 
 [11]
 Name=SIGSEGV
@@ -368,7 +370,7 @@ Comment[tr]=Geçersiz bellek referansı.
 Comment[vi]=Tham khảo memory không hợp lềE 
 Comment[xxx]=xx
 Comment[zh_CN.GB2312]=无效的内存引用。
-Comment[zh_TW.Big5]=不合法的記憶體參考。
+Comment[zh_TW.Big5]=無效的記憶體違規使用
 
 [unknown]
 Name=Unknown
@@ -421,7 +423,7 @@ Name[tr]=Bilinmeyen
 Name[vi]=Không biết 
 Name[xxx]=xx
 Name[zh_CN.GB2312]=未知
-Name[zh_TW.Big5]=末知
+Name[zh_TW.Big5]=未知
 Comment=Sorry, I don't know this signal.
 Comment[af]=jammer, i don't ken hierdie sein.
 Comment[ara]=آسف, لا أستطيع التعرف على الإشارة
@@ -471,4 +473,4 @@ Comment[tr]=Üzgünüm, bu sinyali tanımıyorum.
 Comment[vi]=Xin lỗi, Tôi không biết tín hiệu này . 
 Comment[xxx]=xx
 Comment[zh_CN.GB2312]=抱歉，我不知道这个信号。
-Comment[zh_TW.Big5]=對不起，我不認識這個信號。
+Comment[zh_TW.Big5]=抱歉，我不認識這個信號。
