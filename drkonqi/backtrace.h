@@ -48,18 +48,18 @@ public:
   void start();
 
 signals:
-  // Just the new text
-  void append(const QString &str);
+  void append(const QString &str); // Just the new text
 
   void someError();
-  void done();
-  void done(const QString &);
+  void done(const QString &); // replaces whole text
 
 protected slots:
   void slotProcessExited(KProcess * proc);
   void slotReadInput(KProcess * proc, char * buf, int buflen);
 
 private:
+  bool usefulBacktrace();
+  void processBacktrace();
   KProcess *m_proc;
   const KrashConfig *m_krashconf;
   KTempFile *m_temp;

@@ -48,7 +48,7 @@ public:
 
 public slots:
   void slotAppend(const QString &);
-  void slotDone();
+  void slotDone(const QString&);
   void slotSomeError();
 
 protected:

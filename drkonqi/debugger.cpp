@@ -79,11 +79,12 @@ KrashDebugger :: ~KrashDebugger()
   //  delete m_proctrace;
 }
 
-void KrashDebugger :: slotDone()
+void KrashDebugger :: slotDone(const QString& str)
 {
   m_status->setText(i18n("Done."));
   m_copyButton->setEnabled( true );
   m_saveButton->setEnabled( true );
+  m_backtrace->setText(str); // replace with possibly post-processed backtrace
 }
 
 void KrashDebugger :: slotCopy()
@@ -163,7 +164,7 @@ void KrashDebugger :: startDebugger()
 
   connect(m_proctrace, SIGNAL(append(const QString &)),
           SLOT(slotAppend(const QString &)));
-  connect(m_proctrace, SIGNAL(done()), SLOT(slotDone()));
+  connect(m_proctrace, SIGNAL(done(const QString&)), SLOT(slotDone(const QString&)));
   connect(m_proctrace, SIGNAL(someError()), SLOT(slotSomeError()));
 
   m_proctrace->start();

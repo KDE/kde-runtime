@@ -67,6 +67,7 @@ public:
   QString invalidStackFrameRegExp() const { return m_invalidStackFrameRegExp; }
   QString frameRegExp() const { return m_frameRegExp; }
   QString neededInValidBacktraceRegExp() const { return m_neededInValidBacktraceRegExp; }
+  QString kcrashRegExp() const { return m_kcrashRegExp; }
   bool showBacktrace() const { return m_showbacktrace; };
   bool showDebugger() const { return m_showdebugger && !m_debugger.isNull(); };
   bool showBugReport() const { return m_showbugreport; };
@@ -105,6 +106,7 @@ private:
   QString m_invalidStackFrameRegExp;
   QString m_frameRegExp;
   QString m_neededInValidBacktraceRegExp;
+  QString m_kcrashRegExp;
 };
 
 #endif

@@ -124,10 +124,23 @@ void BackTrace::slotProcessExited(KProcess *proc)
   // start it again
   kill(m_krashconf->pid(), SIGCONT);
 
+  if (proc->normalExit() && (proc->exitStatus() == 0) &&
+      usefulBacktrace())
+  {
+    processBacktrace();
+    emit done(m_strBt);
+  }
+  else
+    emit someError();
+}
+
+// analyze backtrace for usefulness
+bool BackTrace::usefulBacktrace()
+{
   // remove crap
   if( !m_krashconf->removeFromBacktraceRegExp().isEmpty())
     m_strBt.replace(QRegExp( m_krashconf->removeFromBacktraceRegExp()), QString::null);
-  // analyze backtrace for usefulness
+
   // prepend and append newline, so that regexps like '\nwhatever\n' work on all lines
   QString strBt = '\n' + m_strBt + '\n';
   // how many " ?? " in the bt ?
@@ -143,12 +156,26 @@ void BackTrace::slotProcessExited(KProcess *proc)
   bool tooShort = false;
   if( !m_krashconf->neededInValidBacktraceRegExp().isEmpty())
     tooShort = ( strBt.find( QRegExp( m_krashconf->neededInValidBacktraceRegExp())) == -1 );
-  if (proc->normalExit() && (proc->exitStatus() == 0) &&
-      !m_strBt.isNull() && !tooShort && (unknown < frames))
-  {
-    emit done();
-    emit done(m_strBt);
-  }
-  else
-    emit someError();
+  return !m_strBt.isNull() && !tooShort && (unknown < frames);
+}
+
+// remove stack frames added because of KCrash
+void BackTrace::processBacktrace()
+{
+  if( !m_krashconf->kcrashRegExp().isEmpty())
+    {
+    QRegExp kcrashregexp( m_krashconf->kcrashRegExp());
+    int pos = kcrashregexp.search( m_strBt );
+    if( pos >= 0 )
+      {
+      int len = kcrashregexp.matchedLength();
+      if( m_strBt[ pos ] == '\n' )
+        {
+        ++pos;
+        --len;
+        }
+      m_strBt.remove( pos, len );
+      m_strBt.insert( pos, QString::fromLatin1( "[KCrash handler]\n" ));
+      }
+    }
 }
