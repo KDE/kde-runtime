@@ -191,7 +191,5 @@ void Toplevel :: expandString(QString &str) const
       str.replace(pos, 9, m_krashconf->programName());
     else if (str.mid(pos, 4) == QString::fromLatin1("%pid"))
       str.replace(pos, 4, QString::number(m_krashconf->pid()));
-
-    pos -= 4; // the smallest keyword is 4
   }
 }
