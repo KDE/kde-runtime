@@ -82,7 +82,7 @@ void BackTrace::start()
 
     KMessageBox::error(
                         (QWidget *)o,
-			i18n("Could not make a backtrace, as the debugger %1 was not found.").arg(exec));
+			i18n("Could not generate a backtrace as the debugger '%1' was not found.").arg(exec));
     return;
   }
   m_temp = new KTempFile;
