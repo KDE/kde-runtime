@@ -20,7 +20,7 @@
             <cstring>_folderType</cstring>
         </property>
         <attribute name="title">
-            <string>Connect to a Network Folder</string>
+            <string>Connect to Network Folder</string>
         </attribute>
         <grid>
             <property name="name">
@@ -54,7 +54,7 @@
                             <cstring>_recent</cstring>
                         </property>
                         <property name="text">
-                            <string>&amp;Recent connection</string>
+                            <string>&amp;Recent connection:</string>
                         </property>
                         <property name="accel">
                             <string>Alt+R</string>

@@ -15,7 +15,7 @@ void KNetAttach::init()
     setIcon(SmallIcon("knetattach"));
     disconnect(finishButton(), SIGNAL(clicked()), (QDialog*)this, SLOT(accept()));
     connect(finishButton(), SIGNAL(clicked()), this, SLOT(finished()));
-    finishButton()->setText(i18n("&Save and Connect"));
+    finishButton()->setText(i18n("&Save && Connect"));
     //setResizeMode(Fixed); FIXME: make the wizard fixed-geometry
     setFinishEnabled(_folderParameters, false);
     KConfig recent("krecentconnections", true, false);
@@ -38,7 +38,7 @@ void KNetAttach::showPage( QWidget *page )
     if (page == _folderType) {
     } else if (page == _folderParameters) {
 	_host->setFocus();
-	QString text = "Enter a name for this <i>%1</i> as well as a server address, port and folder path to use and press the <b>Save and Connect</b> button.";
+	QString text = "Enter a name for this <i>%1</i> as well as a server address, port and folder path to use and press the <b>Save & Connect</b> button.";
 	_connectionName->setFocus();
 
 	if (_webfolder->isChecked()) {
@@ -50,7 +50,7 @@ void KNetAttach::showPage( QWidget *page )
 	    updateForProtocol("Fish");
 	    _port->setValue(22);
 	} else if (_smb->isChecked()) {
-	    text = "Enter a name for this <i>%1</i> as well as a server address and folder path to use and press the <b>Save and Connect</b> button.";
+	    text = "Enter a name for this <i>%1</i> as well as a server address and folder path to use and press the <b>Save & Connect</b> button.";
 	     _informationText->setText(text.arg("Microsoft® Windows® network drive"));
 	    updateForProtocol("SMB");
 	} else { //if (_recent->isChecked()) {
