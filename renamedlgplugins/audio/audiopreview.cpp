@@ -106,7 +106,7 @@ void AudioPreview::initView( const QString& mimeType )
   m_player = KParts::ComponentFactory::createInstanceFromQuery<KMediaPlayer::Player>( "KMediaPlayer/Player", QString::null, this );
   if ( m_player )
   {
-    static_cast<KParts::ReadOnlyPart*>(m_player)->openURL( m_localFile );
+    static_cast<KParts::ReadOnlyPart*>(m_player)->openURL( KURL( m_localFile ) );
     m_player->widget()->show();
   }
 }
