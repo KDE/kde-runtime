@@ -147,7 +147,7 @@ Name[sv]=Programmet %progname (%appname) kraschade och orsakade signalen %signum
 Name[ta]=ÀÂýÀ¡Î %progname (%appname) ÓÈ¢óÐ ÌÈ¢ %signum (%signame) ³ ¯ñ¼¡ì¸¢ÂÐ.
 Name[tr]= %progname (%appname) uygulaması çöktü ve %signum (%signame) sinyali gönderdi.
 Name[uk]=Програма %progname (%appname) дала збій та визвала сигнал %signum (%signame).
-Name[zh_CN.GB2312]=程序 %progname (%appname) 已崩溃, 导致信号 %signum (%signame).
+Name[zh_CN.GB2312]=程序 %progname (%appname) 已崩溃，导致信号 %signum (%signame).
 Name[zh_TW.Big5]=應用程式 %progname (%appname) 已中止並產生信號 %signum (%signame).
 
 [WhatToDoHint]
@@ -192,7 +192,7 @@ Name[sv]=Du kanske vill skicka en felrapport till programmeraren. Bifoga så myc
 Name[ta]=¬º¢Ã¢ÂÕìÌ À¢¨Æ «È¢ì¨¸¨Â ¿£í¸û «ÛôÀ §ÅñÊÂ¢ÕìÌõ. ¾Â×¦ºöÐ ÓÊó¾ «ÇÅ¢üÌ ¾¸Å¨Ä ¦¸¡Îì¸×õ, ãÄ ¬Å½í¸Ç¡¸×õ ­Õì¸Ä¡õ. ²¾¡Å¾¡Õ ÅÆ¢Â¢ø À¢¨Æ ÅÕÁ¡É¡ø, «¨¾Ôõ ­¾¢ø §º÷ì¸×õ.
 Name[tr]=Yazara bir hata raporu göndermek isterseniz, lütfen mümkün olduğunca fazla bilgi verin ve varsa orijinal belgeleri ekleyin. Eğer bu hatayı tekrar ortaya çıkarabilmenin bir yolu varsa, bunu da belirtin. 
 Name[uk]=Можливо, Ви хочете відіслати автору звіт про помилку. Будь ласка, включіть якомога більше інформації, можливо, вихідні документи. Якщо Ви можете повторити помилку, включіть це також.
-Name[zh_CN.GB2312]=您可能希望发送一个错误报告给作者. 请尽可能提供详细的信息, 比如当时程序使用的文档. 如果您有办法重现错误, 请同时提供这样的方法. 
+Name[zh_CN.GB2312]=您可能希望发送一个错误报告给作者。请尽可能提供详细的信息，比如当时程序使用的文档。如果您有办法重现错误，请同时提供这样的方法。
 Name[zh_TW.Big5]=你可能想要寄送錯誤報告給作者。請儘可能記下資訊，甚至是原始資料。如果你有重新產生錯誤的方法，請一併□□□□□上。
 
 [4]
@@ -238,7 +238,7 @@ Comment[sv]=Signalen SIGILL orsakas oftast av ett fel i programmet. Programmet b
 Comment[ta]=ÀÂýÀ¡ðÊø À¢¨Æ ­Õó¾¡ø, «Ð SIGILL ±ýÈ ÌÈ¢¨Â ¦ÀÚõ. ÀÂýÀ¡ð¨¼ «¾ý ¬Å½í¸¨Ç §ºÁ¢ì¸ ¦º¡øÄÀð¼Ð.
 Comment[tr]=Uygulamadaki bir hata nedeniyle, uygulamalar çok kez SIGILL sinyali alırlar. Bu durumdaki uygulamalardan belgelerini kaydetmesi istenir.
 Comment[uk]=Програма здебільшого отримує сигнал SIGILL завдяки помилці у програмі. Програмі було запропоновано зберегти документи.
-Comment[zh_CN.GB2312]=多数情况下, 一个程序由于本身的错误会收到 SIGILL 信号. 程序被要求保存它的文档.
+Comment[zh_CN.GB2312]=多数情况下，一个程序由于本身的错误会收到 SIGILL 信号。程序被要求保存它的文档。
 Comment[zh_TW.Big5]=由於有錯誤在應用程式產生，所以大部份都會接收到 SIGILL 信號。應用程式會被要求儲存孕扛爾禤ヾC
 
 [6]
@@ -282,7 +282,7 @@ Comment[sv]=Ett program avslutar sig självt med signalen SIGABRT när det uppt�
 Comment[ta]=ÀÂýÀ¡ðÊø ­ÕìÌõ À¢¨ÆÂ¡ø ¯ûÇ¨Á ÓÃñÀ¡Î ´ýÚ ²üÀÎõ§À¡Ð, «ó¾ ÀÂýÀ¡Î SIGABRT ±ýÈ ÌÈ¢Ô¼ý ÓÊóÐÅ¢Îõ.
 Comment[tr]=Bir uygulama, programdaki bir hata yüzünden bir iç tutarsızlık tespit ettiğinde SIGABRT sinyaliyle sona erer.
 Comment[uk]=Програма завершується з сигналом SIGABRT, коли знайдена внутрішня несумісність, визвана помилкою у програмі.
-Comment[zh_CN.GB2312]=程序在检测到缺陷引起的内部不一致时, 以 SIGABRT 信号中止.
+Comment[zh_CN.GB2312]=程序在检测到缺陷引起的内部不一致时，以 SIGABRT 信号中止。
 Comment[zh_TW.Big5]=當應用程式偵測到程式的臭蟲造成內部的不一致時會以 SIGABRT 訊號中斷程式。
 
 [8]
@@ -329,7 +329,7 @@ Comment[sv]=Signalen SIGFPE orsakas oftast av ett fel i programmet. Programmet b
 Comment[ta]=ÀÂýÀ¡ðÊø À¢¨Æ ­Õó¾¡ø, «Ð SIGFPE ±ýÈ ÌÈ¢¨Â ¦ÀÚõ. ÀÂýÀ¡ð¨¼ «¾ý ¬Å½í¸¨Ç §ºÁ¢ì¸ ¦º¡øÄÀð¼Ð.
 Comment[tr]=Uygulamadaki bir hata nedeniyle, uygulamalar çok kez SIGEPE sinyali alırlar. Bu durumdaki uygulamalardan belgelerini kaydetmesi istenir.
 Comment[uk]=Програма здебільшого отримує сигнал SIGFPE завдяки помилці у програмі. Програмі було запропоновано зберегти документи.
-Comment[zh_CN.GB2312]=大多数情况下, 接收到 SIGFPE 信号是由于程序的缺陷. 程序被要求保存它的文档.
+Comment[zh_CN.GB2312]=大多数情况下，接收到 SIGFPE 信号是由于程序的缺陷。程序被要求保存它的文档。
 Comment[zh_TW.Big5]=由於有錯誤在應用程式產生，所以大部份都會接收到 SIGFPE 信號。應用程式會被要求儲存它的資料。
 
 [11]
@@ -375,7 +375,7 @@ Comment[sv]=Signalen SIGSEGV orsakas oftast av ett fel i programmet. Programmet 
 Comment[ta]=ÀÂýÀ¡ðÊø À¢¨Æ ­Õó¾¡ø, «Ð SIGSEGV ±ýÈ ÌÈ¢¨Â ¦ÀÚõ. ÀÂýÀ¡ð¨¼ «¾ý ¬Å½í¸¨Ç §ºÁ¢ì¸ ¦º¡øÄÀð¼Ð.
 Comment[tr]=Uygulamadaki bir hata nedeniyle, uygulamalar çok kez SIGSEGV sinyali alırlar. Bu durumdaki uygulamalardan belgelerini kaydetmesi istenir.
 Comment[uk]=Програма здебільшого отримує сигнал SIGSEGV завдяки помилці у програмі. Програмі було запропоновано зберегти документи.
-Comment[zh_CN.GB2312]=大多数情况下, 接收到 SIGSEGV 信号是由于程序的缺陷. 程序被要求保存它的文档.
+Comment[zh_CN.GB2312]=大多数情况下，接收到 SIGSEGV 信号是由于程序的缺陷。程序被要求保存它的文档。
 Comment[zh_TW.Big5]=由於有錯誤在應用程式產生，所以大部份都會接收到 SIGSEGV 信號。應用程式會被要求儲存它的資料。
 
 [unknown]
@@ -425,6 +425,7 @@ Name[sv]=Okänd
 Name[ta]=¾Ã¢Â¡¾
 Name[tr]=Bilinmeyen
 Name[uk]=Невідомий
+Name[wa]=Nén cnoxhou
 Name[zh_CN.GB2312]=未知
 Name[zh_TW.Big5]=末知
 Comment=Sorry, I don't know this signal.
@@ -471,5 +472,5 @@ Comment[sv]=Tyvärr, jag känner inte till den här signalen.
 Comment[ta]=ÁýÉ¢ì¸×õ, ­ó¾ ÌÈ¢ ±ÉìÌ ¦¾Ã¢Â¡Ð.
 Comment[tr]=Üzgünüm, bu sinyali tanımıyorum.
 Comment[uk]=Вибачте, не знаю цього сигналу.
-Comment[zh_CN.GB2312]=抱歉, 我不知道这个信号.
+Comment[zh_CN.GB2312]=抱歉，我不知道这个信号。
 Comment[zh_TW.Big5]=對不起，我不認識這個信號。

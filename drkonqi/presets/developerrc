@@ -146,7 +146,7 @@ Name[sv]=Programmet %progname (%appname) kraschade och orsakade signalen %signum
 Name[ta]=ÀÂýÀ¡Î %progname (%appname) ÓÈ¢óÐ ÌÈ¢ %signum (%signame) ³ ¯ñ¼¡ì¸¢ÂÐ.
 Name[tr]= %progname (%appname) uygulaması çöktü ve %signum (%signame) sinyali gönderdi.
 Name[uk]=Програма %progname (%appname) дала збій та визвала сигнал %signum (%signame).
-Name[zh_CN.GB2312]=程序 %progname (%appname) 已崩溃, 导致信号 %signum (%signame).
+Name[zh_CN.GB2312]=程序 %progname (%appname) 已崩溃，导致信号 %signum (%signame).
 Name[zh_TW.Big5]=應用程式 %progname (%appname) 已中止並產生信號 %signum (%signame).
 
 [WhatToDoHint]
@@ -162,10 +162,11 @@ Name[eo]=Eble vi volas korekti vian programon. Rigardu sur la paĝon Reŝpurado.
 Name[es]=Quizás quiera reparar su programa. Observe la pestaña 'Trazado inverso'.
 Name[et]=Kui soovid rakendust parandada, siis vaata ka tagasijälituse kaarti.
 Name[fi]=Voit haluta korjata ohjelmaasi. Katso backtrace -välilehden tietoja.
-Name[fr]=Vous devriez contribuer à la correction du programme. Consultez l'onglet « Pile des appels ».
+Name[fr]=Vous devriez contribuer à la correction du programme. Consultez l'onglet «Pile des appels».
 Name[he]=.בקעמה תייסיטרכב ןייע .ךלש תינכותה תא ןקתל הצרתו ןכתיי
 Name[hu]=Ha ki szeretné javítani a hibát, érdemes áttanulmányozni a nyomkövetési lap tartalmát.
 Name[is]=Þú ættir kannski að laga forritið þitt.  Kíktu á úttakið..
+Name[it]=Se vuoi aggiustare il tuo programma, controlla sotto la linguetta del backtrace.
 Name[ja]=このプログラムを修正する場合、backtraceタブを見て下さい。
 Name[ko]=프로그램을 고치고 싶다면 시행착오를 겪으면서 해답을 얻으십시요.
 Name[lt]=Galite pabandyti ištaisyti programą. Pažiūrėkite žiniaraščio lentelę.
@@ -177,6 +178,7 @@ Name[pl]=Możesz spróbować poprawić program. Spójrz na zakładkę z logiem d
 Name[pt_BR]=Podes querer corrigir o programa. Olha para o registo de 'backtrace'.
 Name[pt]=Podes querer corrigir o programa. Olha para o registo de 'backtrace'.
 Name[ro]=S-ar putea să fie nevoie de repararea programului. Uitaţi-vă la subfereastra "Backtrace".
+Name[ru]=Возможно, вы захотите исправить программу. Посмотрите отчет отладчика.
 Name[sk]=Možno chcete opraviť váš program. Prezrite si zápis tabuľky debuggera.
 Name[sl]=Morda boste želeli popraviti program. Poglejte si ustrezno oznako razhroščevalnika.
 Name[sr]=Možda biste želeli da popravite vaš program. Pogledajte panel bektrejs.
@@ -184,6 +186,7 @@ Name[sv]=Du kanske vill fixa ditt program. Titta under fliken bakåtspårning.
 Name[ta]=¯í¸û ¿¢Ã¨Ä ºÃ¢ ¦ºöÂ §ÅñÊÂ¢ÕôÀ¢ý, À¢ýÍÅðÎò ¾ð¼¨Äô À¡÷ì¸×õ.
 Name[tr]=Programınızdaki sorunu çözmek isterseniz hata ayıklayıcı sekmesine bakın.
 Name[uk]=Ви, можливо, хочете поладити Вашу програму. Дивіться закладку зворотнього трасування.
+Name[zh_CN.GB2312]=您应该改正程序。看看回溯跟踪部分。
 
 [4]
 Name=SIGILL
@@ -231,7 +234,7 @@ Comment[sv]=Ogiltig instruktion.
 Comment[ta]=À¢¨ÆÂ¡É ¬¨½
 Comment[tr]=Hatalı talimat.
 Comment[uk]=Невірна інструкція.
-Comment[zh_CN.GB2312]=不合法的指令.
+Comment[zh_CN.GB2312]=不合法的指令。
 Comment[zh_TW.Big5]=不合法的指令。
 
 [6]
@@ -281,7 +284,7 @@ Comment[sv]=Misslyckades.
 Comment[ta]=¿¢Úò¾Àð¼Ð.
 Comment[tr]=İptal edildi.
 Comment[uk]=Перервано.
-Comment[zh_CN.GB2312]=中止.
+Comment[zh_CN.GB2312]=中止。
 Comment[zh_TW.Big5]=中斷
 
 [8]
@@ -328,7 +331,7 @@ Comment[sv]=Flyttalsundantag.
 Comment[ta]=Á¢¾¨Å ÒûÇ¢ ¾ÅÚ.
 Comment[tr]=Kayar nokta hatası.
 Comment[uk]=Виключна ситуація операції з плаваючою точкою.
-Comment[zh_CN.GB2312]=浮点计算异常.
+Comment[zh_CN.GB2312]=浮点计算异常。
 Comment[zh_TW.Big5]=浮點數異常。
 
 [11]
@@ -375,7 +378,7 @@ Comment[sv]=Ogiltig minnesreferens.
 Comment[ta]=¾ÅÈ¡É ¿¢¨ÉÅ¸ «Û¸ø.
 Comment[tr]=Geçersiz bellek referansı.
 Comment[uk]=Невірне посилання до пам'яті.
-Comment[zh_CN.GB2312]=无效的内存引用.
+Comment[zh_CN.GB2312]=无效的内存引用。
 Comment[zh_TW.Big5]=不合法的記憶體參考。
 
 [unknown]
@@ -425,6 +428,7 @@ Name[sv]=Okänd
 Name[ta]=¾Ã¢Â¡¾
 Name[tr]=Bilinmeyen
 Name[uk]=Невідомий
+Name[wa]=Nén cnoxhou
 Name[zh_CN.GB2312]=未知
 Name[zh_TW.Big5]=末知
 Comment=Sorry, I don't know this signal.
@@ -471,5 +475,5 @@ Comment[sv]=Tyvärr, jag känner inte till den här signalen.
 Comment[ta]=ÁýÉ¢ì¸×õ, ­ó¾ ÌÈ¢ ±ÉìÌ ¦¾Ã¢Â¡Ð.
 Comment[tr]=Üzgünüm, bu sinyali tanımıyorum.
 Comment[uk]=Вибачте, не знаю цього сигналу.
-Comment[zh_CN.GB2312]=抱歉, 我不知道这个信号.
+Comment[zh_CN.GB2312]=抱歉，我不知道这个信号。
 Comment[zh_TW.Big5]=對不起，我不認識這個信號。
