@@ -131,9 +131,12 @@ Comment[sr]=Neispravna instrukcija
 Comment[ta]=ஏறஂபிலஂலா ஆைண
 Comment[tr]=Hatalı talimat.
 
+[6]
+Name=SIGABRT
+Comment=Aborted.
+
 [8]
 Name=SIGFPE
-Name[da]=SIGFRE
 Comment=Floating point exception.
 Comment[ca]=Excepció de coma flotant.
 Comment[cs]=Vyjímka v plovoucí čárce.

@@ -151,9 +151,12 @@ Comment[sl]=Program največkrat prejme signal SIGILL zaradi hrošča. Od program
 Comment[ta]=பயனஂபாடுகளிலஂ பிைழ இருநஂதாலஂ SIGILL எனஂற குறிபஂபு கிைடகஂகுமஂ.இநஂத பயணஂபாடஂடினஂ ஆவணஙஂகைள ேசமிகஂக ேகடஂகபடுகிறது.
 Comment[tr]=Uygulamadaki bir hata nedeniyle, uygulamalar çok kez SIGILL sinyali alırlar. Bu durumdaki uygulamalardan belgelerini kaydetmesi istenir.
 
+[6]
+Name=SIGABRT
+Comment=An application terminates with a SIGABRT signal when it detects an internal inconcistency caused by a bug in the program.
+
 [8]
 Name=SIGFPE
-Name[da]=SIGFRE
 Comment=An application mostly receives the SIGFPE signal due to a bug in the application. The application was asked to save its documents.
 Comment[ca]=Quan una aplicació rep la senyal SIGFPE es degut la major part dels cops a un error de l'aplicació. Se li demana que desi els seus documents.
 Comment[da]=En anvendelse modtager som regel SIGFPE signalet når der er et problem med anvendelsen. Anvendelsen blev bedt om at gemme sine dokumenter. 
