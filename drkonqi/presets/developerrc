@@ -167,6 +167,7 @@ Name[ss]=Sicelo %programe (%appname), pid %pid, sishayisile sabuye sabangela kuk
 Name[sv]=Programmet %progname (%appname), pid %pid, kraschade och orsakade signalen %signum (%signame).
 Name[ta]=¿¢Ãø %progname (%appname), ±ñ %pid, ÓÈ¢óÐ %signum (%signame) ¨º¨¸¨Âò ¾ó¾Ð.
 Name[th]=แอพพลิเคชัน %progname (%appname) หมายเลขโปรเซส %pid ทำงานล้มเหลวโดยแจ้งสัญญาณหมายเลข %signum (%signame)
+Name[tr]=%progname (%appname), pid %pid sonlandırıldı ve %signum (%signame) sinyali oluşturdu.
 Name[uk]=Програма %progname (%appname), pid %pid, дала збій та викликала сигнал %signum (%signame).
 Name[ven]=Apulifikhesheni ya %progdzina (%appdzina) pid %pid yo tshinyadzhwa ya dovha ya vhanga luswayo %signum (%sigdzina).
 Name[vi]=Chương trình %progname (%appname), pid %pid crash và gây ra tín hiệu  %signum (%signame). 
