@@ -2,7 +2,7 @@
 Name=Developer
 Name[af]=Ontwikkelaar
 Name[ar]=المطور
-Name[az]=Proqramcı
+Name[az]=İnkişafçı
 Name[be]=Распрацоўшчык
 Name[bg]=Разработка
 Name[bn]=ডেভেলপার
@@ -614,6 +614,7 @@ Name[zu]=Okungaziwa
 Comment=This signal is unknown.
 Comment[af]=Hierdie sein is onbekende.
 Comment[ar]=هذه الإشارة غير معروفة
+Comment[az]=Bu siqnal namə'lumdur.
 Comment[be]=Невядомы сыгнал.
 Comment[bg]=Този сигнал е неизвестен.
 Comment[bn]=অজ্ঞাত সংকেত
