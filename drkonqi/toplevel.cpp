@@ -196,7 +196,7 @@ void Toplevel :: slotBacktraceSomeError()
   QApplication::restoreOverrideCursor();
 
   KMessageBox::sorry(0, i18n("It was not possible to generate a backtrace."),
-                     i18n("Backtrace not possible"));
+                     i18n("Backtrace not Possible"));
 
   m_bugreport->exec();
   delete m_bugreport;
