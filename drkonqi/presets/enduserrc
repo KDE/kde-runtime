@@ -184,6 +184,7 @@ Name[zu]=I-%progname yomyaleli (%appname), iphahlazekile futhi yabanga uphawu %s
 [WhatToDoHint]
 Enable=true
 Name=You might want to send a bug report for this application. Check if it's listed on http://bugs.kde.org, otherwise mail the author. Please include as much information as possible, maybe the original documents. If you have a way to reproduce the error, include this also.
+Name[hu]=Ha úgy érzi, szükség van rá, küldjön hibabejelentést a szerzőnek. Kérjük hogy mindig először ellenőrizze, hogy a hiba nem szerepel-e már a http://bugs.kde.org hibanyilvántartóban, csak utána értesítse a szerzőt. Csatolja a bejelentéshez az összes fontos kiegészítő információt. Ha képes reprodukálni a hibát, írja le részletesen annak módját.
 Name[sv]=Du kanske vill skicka en felrapport för det här programmet. Kontrollera om det finns listat på http://bugs.kde.org, skicka annars e-post till upphovsmannen. Bifoga så mycket information som möjligt, t ex originaldokumenten. Om du kan återupprepa felet, så beskriv även hur du gör det.
 
 [4]
