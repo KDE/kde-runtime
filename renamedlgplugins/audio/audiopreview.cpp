@@ -39,7 +39,8 @@ AudioPreview::AudioPreview( QWidget *parent, const char *name, const QString &fi
   pic = 0;
   m_player = 0L;
   description = 0;
-  KURL url = KURL::fromPathOrURL( fileName );
+  // fileName is created by KUrl::prettyURL()
+  KURL url( fileName );
   setSpacing( 0 );
   if( url.isValid() && url.isLocalFile() ) {
     m_localFile = url.path();
