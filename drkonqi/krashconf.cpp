@@ -67,7 +67,7 @@ void KrashConfig :: readConfig()
   m_safeMode = args->isSet("safer");
   m_execname = args->getOption( "appname" );
   if ( !args->getOption( "apppath" ).isEmpty() )
-    m_execname.prepend( args->getOption( "apppath" ) + "/" );
+    m_execname.prepend( args->getOption( "apppath" ) + '/' );
 
   QCString programname = args->getOption("programname");
   if (programname.isEmpty())
