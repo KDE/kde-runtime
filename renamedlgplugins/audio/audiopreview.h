@@ -22,15 +22,32 @@
 
 #include <qvbox.h>
 
+namespace KMediaPlayer
+{
+  class Player;
+}
+
 class QPixmap;
 class QLabel;
-class AudioPreview : public QVBox{
- public:
+class AudioPreview : public QVBox
+{
+  Q_OBJECT
+public:
   AudioPreview(QWidget *parent, const char *name, const QString &fileName, const QString &mimeType);
   ~AudioPreview();
- private:
+
+private slots:
+  void downloadFile(const QString& url);
+
+private:
+  void initView(const QString& mimeType);
+
   QLabel *pic;
   QLabel *description;
+  QString m_localFile;
+  bool m_isTempFile;
+
+  KMediaPlayer::Player *m_player;
 };
 #endif
 

@@ -33,10 +33,10 @@
 
 #include "audiopreview.h"
 
-class KTestMenu : public RenameDlgPlugin{
+class AudioPlugin : public RenameDlgPlugin{
 public:
-  KTestMenu( QDialog *dialog, const char *name, const QStringList & );
-  ~KTestMenu();
+  AudioPlugin( QDialog *dialog, const char *name, const QStringList & );
+  ~AudioPlugin();
   virtual bool initialize( KIO::RenameDlg_Mode /*mod*/, const QString &/*_src*/, const QString &/*_dest*/,
 		  const QString &/*mimeSrc*/,
 		  const QString &/*mimeDest*/,
@@ -48,21 +48,21 @@ public:
 		  time_t /*mtimeDest*/ );
 };
 
-KTestMenu::KTestMenu( QDialog *dialog, const char *name, const QStringList &list ) : RenameDlgPlugin( dialog, name, list) {
+AudioPlugin::AudioPlugin( QDialog *dialog, const char *name, const QStringList &list ) : RenameDlgPlugin( dialog, name, list) {
   qWarning("loaded" );  
 };
-KTestMenu::~KTestMenu()
+AudioPlugin::~AudioPlugin()
 {
 }
-bool KTestMenu::initialize( KIO::RenameDlg_Mode mode, const QString &_src, const QString &_dest,
+bool AudioPlugin::initialize( KIO::RenameDlg_Mode mode, const QString &_src, const QString &_dest,
 		  const QString &mimeSrc,
 		  const QString &mimeDest,
-		  KIO::filesize_t sizeSrc,
-		  KIO::filesize_t sizeDest,
-		  time_t ctimeSrc,
-		  time_t ctimeDest,
+		  KIO::filesize_t /*sizeSrc*/,
+		  KIO::filesize_t /*sizeDest*/,
+		  time_t /*ctimeSrc*/,
+		  time_t /*ctimeDest*/,
 		  time_t mtimeSrc,
-                  time_t mtimeDest ) {
+		  time_t mtimeDest ) {
  QGridLayout *lay = new QGridLayout(this, 4, 3, 5);
  if( mode & KIO::M_OVERWRITE ){
    QLabel *label_head = new QLabel(this);
@@ -99,5 +99,5 @@ bool KTestMenu::initialize( KIO::RenameDlg_Mode mode, const QString &_src, const
  return true;
 }
 
-typedef KGenericFactory<KTestMenu, QDialog> KImageFactory;
-K_EXPORT_COMPONENT_FACTORY( librenaudioplugin, KImageFactory("audiorename_plugin") );
+typedef KGenericFactory<AudioPlugin, QDialog> AudioPluginFactory;
+K_EXPORT_COMPONENT_FACTORY( librenaudioplugin, AudioPluginFactory("audiorename_plugin") );

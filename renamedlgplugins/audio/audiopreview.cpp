@@ -24,61 +24,98 @@
 #include <qvbox.h>
 #include <qlabel.h>
 #include <qpixmap.h>
+#include <kio/netaccess.h>
+#include <kurllabel.h>
+#include <kmimetype.h>
+#include <kmediaplayer/player.h>
+#include <kparts/componentfactory.h>
+
 #include "audiopreview.h"
 
-AudioPreview::~AudioPreview()
-{
-
-}
 AudioPreview::AudioPreview( QWidget *parent, const char *name, const QString &fileName, const QString &mimeType)
   : QVBox( parent, name )
 {
+  m_isTempFile = false;
   pic = 0;
+  m_player = 0L;
   description = 0;
-  KURL url( fileName );
+  KURL url = KURL::fromPathOrURL( fileName );
   setSpacing( 0 );
   if( url.isValid() && url.isLocalFile() ) {
-    QString path;
-    if( QString::fromLatin1("file://") == fileName.left(7) ){
-      qWarning("file://" );
-      path = fileName.mid(6);
-    }else if(QString::fromLatin1("file:/") == fileName.left(6) ) {
-      path = fileName.mid(5);
-    }else {
-      path = fileName;
-    }
-    KFileMetaInfo info(path);
+    m_localFile = url.path();
     pic = new QLabel(this);
-    pic->setPixmap(KMimeType::pixmapForURL(fileName));
+    pic->setPixmap(KMimeType::pixmapForURL( url ));
     pic->adjustSize();
-    QString desc;
-    if (mimeType == "audio/x-mp3" || mimeType == "application/ogg"){
-      desc.append(i18n("Artist: ") + info.item("Artist").value().toString() + "\n" );
-      desc.append(i18n("Title: ") + info.item("Title").value().toString() + "\n" );
-      desc.append(i18n("Comment: ") + info.item("Comment").value().toString() + "\n" );
-      desc.append(i18n("Bitrate: ") + info.item("Bitrate").value().toString() + info.item("Bitrate").suffix() + "\n" );
-    }
-    desc.append(i18n("Sample rate: ") + info.item("Sample Rate").value().toString() + info.item("Sample Rate").suffix() + "\n" );
-    desc.append(i18n("Length: "));
-    /* Calculate length in mm:ss format */
-    int length = info.item("Length").value().toInt();
-    if (length/60 < 10)
-      desc.append("0");
-    desc.append(QString("%1:").arg(length/60, 0, 10));
-    if (length%60 < 10)
-      desc.append("0");
-    desc.append(QString("%1\n").arg(length%60, 0, 10));
     description = new QLabel(this);
-    description->setText(desc);
+    initView( mimeType );
   } else if( !url.isLocalFile() ) {
-    pic = new QLabel(this );
-    description = new QLabel(this );
-    /* This needs to implemented ... */
-    description->setText(i18n("This audio file isn't stored\non the local host.\nClick on this label to load it.\n" ) );
-      description->adjustSize( );
+    KURLLabel *label = new KURLLabel( this );
+    label->setText(i18n("This audio file isn't stored\non the local host.\nClick on this label to load it.\n" ) );
+    label->setURL( url.prettyURL() );
+    connect(label, SIGNAL(leftClickedURL(const QString&)), SLOT(downloadFile(const QString&)));
+    pic = label;
+    description = new QLabel(this);
+    description->adjustSize( );
   } else {
     description = new QLabel(this );
     description->setText(i18n("Unable to load audio file") );
   }
 }
 
+AudioPreview::~AudioPreview()
+{
+  if ( m_isTempFile )
+    KIO::NetAccess::removeTempFile( m_localFile );
+
+  delete m_player;
+}
+
+void AudioPreview::initView( const QString& mimeType )
+{
+  KURL url = KURL::fromPathOrURL( m_localFile );
+  pic->setText( QString::null );
+  pic->setPixmap(KMimeType::pixmapForURL( url ));
+  pic->adjustSize();
+ 
+  KFileMetaInfo info(m_localFile);
+
+  QString desc;
+  if (mimeType == "audio/x-mp3" || mimeType == "application/ogg")
+  {
+    desc.append(i18n("Artist: %1\n").arg (info.item("Artist").value().toString() ));
+    desc.append(i18n("Title: %1\n").arg( info.item("Title").value().toString() ));
+    desc.append(i18n("Comment: %1\n").arg( info.item("Comment").value().toString() ));
+    desc.append(i18n("Biterate: 160 kbits/s", "Bitrate: %1 %2\n").arg( info.item("Bitrate").value().toString() ).arg( info.item("Bitrate").suffix() ));
+  }
+  desc.append(i18n("Sample rate: %1 %2\n").arg( info.item("Sample Rate").value().toString() ).arg( info.item("Sample Rate").suffix() ));
+  desc.append(i18n("Length: "));
+
+  /* Calculate length in mm:ss format */
+  int length = info.item("Length").value().toInt();
+  if (length/60 < 10)
+    desc.append("0");
+  desc.append(QString("%1:").arg(length/60, 0, 10));
+  if (length%60 < 10)
+    desc.append("0");
+  desc.append(QString("%1\n").arg(length%60, 0, 10));
+ 
+ description->setText( desc );
+  description->adjustSize();
+  m_player = KParts::ComponentFactory::createInstanceFromQuery<KMediaPlayer::Player>( "KMediaPlayer/Player", QString::null, this );
+  if ( m_player )
+  {
+    static_cast<KParts::ReadOnlyPart*>(m_player)->openURL( m_localFile );
+    m_player->widget()->show();
+  }
+}
+
+void AudioPreview::downloadFile( const QString& url )
+{
+  if( KIO::NetAccess::download( KURL::fromPathOrURL( url ), m_localFile , topLevelWidget()) )
+  {
+    m_isTempFile = true;
+    initView( KMimeType::findByPath( m_localFile )->name() );
+  }
+}
+
+#include <audiopreview.moc>
