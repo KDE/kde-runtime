@@ -11,7 +11,7 @@ EXTRA_DIST = LICENSE
 bin_PROGRAMS = drkonqi
 
 # Libraries:
-LDFLAGS = $(all_libraries) $(KDE_RPATH)
+AM_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 LDADD  = $(LIB_KDEUI) $(LIB_KIO)
 
 # toplevel.cpp must be last in row due to X-headers being included. (--enable-final)
