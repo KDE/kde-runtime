@@ -72,7 +72,7 @@ void BackTrace::start()
   QString exec = m_krashconf->tryExec();
   if ( !exec.isEmpty() && KStandardDirs::findExe(exec).isEmpty() )
   {
-    KMessageBox::error(0L,i18n("%1 not found. Check if it is installed, you need it to generate backtraces.\n"
+    KMessageBox::error(0L,i18n("%1 not found. Check if it is installed -- you need it to generate backtraces.\n"
                                "If you have another debugger, contact kde-devel@kde.org for help on how to set it up.").arg(exec));
     return;
   }
