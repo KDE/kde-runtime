@@ -256,7 +256,7 @@ bool KNetAttach::updateForProtocol(const QString& protocol)
 	_useEncryption->hide();
 	_portText->show();
 	_port->show();
-	_userText->hide();
+	_userText->show();
 	_user->show();
     } else if (protocol == "SMB") {
 	_useEncryption->hide();
