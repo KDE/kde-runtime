@@ -40,6 +40,8 @@ void KNetAttach::setInformationText( const QString &type )
 	text = i18n("Enter a name for this <i>WebFolder</i> as well as a server address, port and folder path to use and press the <b>Save & Connect</b> button.");
     } else if (type=="Fish") {
 	text = i18n("Enter a name for this <i>Secure shell connection</i> as well as a server address, port and folder path to use and press the <b>Save & Connect</b> button.");
+    } else if (type=="FTP") {
+        text = i18n("Enter a name for this <i>File Transfer Protocol connection</i> as well as a server address and folder path to use and press the <b>Save & Connect</b> button.");
     } else if (type=="SMB") {
         text = i18n("Enter a name for this <i>Microsoft Windows network drive</i> as well as a server address and folder path to use and press the <b>Save & Connect</b> button.");
     }
@@ -62,6 +64,10 @@ void KNetAttach::showPage( QWidget *page )
 	    setInformationText("Fish");
 	    updateForProtocol("Fish");
 	    _port->setValue(22);
+	} else if (_ftp->isChecked()) {
+	    setInformationText("FTP");
+	    updateForProtocol("FTP");
+	    _port->setValue(21);
 	} else if (_smb->isChecked()) {
 	    setInformationText("SMB");
 	    updateForProtocol("SMB");
@@ -128,6 +134,9 @@ void KNetAttach::finished()
 	url.setPort(_port->value());
     } else if (_type == "Fish") {
 	url.setProtocol("fish");
+    } else if (_type == "FTP") {
+	url.setProtocol("ftp");
+	url.setPort(_port->value());
     } else if (_type == "SMB") {
 	url.setProtocol("smb");
     } else { // recent
@@ -192,7 +201,7 @@ void KNetAttach::finished()
 	}
 	recent.setGroup(name);
 	recent.writeEntry("URL", url.prettyURL());
-	if (_type == "WebFolder" || _type == "Fish") {
+	if (_type == "WebFolder" || _type == "Fish" || _type == "FTP") {
 	    recent.writeEntry("Port", _port->value());
 	}
 	recent.writeEntry("Type", _type);
@@ -234,6 +243,10 @@ bool KNetAttach::updateForProtocol(const QString& protocol)
 	_portText->show();
 	_port->show();
     } else if (protocol == "Fish") {
+	_useEncryption->hide();
+	_portText->show();
+	_port->show();
+    } else if (protocol == "FTP") {
 	_useEncryption->hide();
 	_portText->show();
 	_port->show();
