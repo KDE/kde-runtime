@@ -91,7 +91,7 @@ void KrashDebugger :: startDebugger()
   // Only start one copy
   if (m_proc) return;
 
-  m_status->setText(i18n("Loading symboles..."));
+  m_status->setText(i18n("Loading symbols..."));
 
   m_temp = new KTempFile;
   m_temp->setAutoDelete(TRUE);
