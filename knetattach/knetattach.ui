@@ -15,6 +15,11 @@
     <property name="caption">
         <string>Network Folder Wizard</string>
     </property>
+    <property name="titleFont">
+        <font>
+            <pointsize>16</pointsize>
+        </font>
+    </property>
     <widget class="QWidget">
         <property name="name">
             <cstring>_folderType</cstring>
@@ -25,9 +30,6 @@
         <grid>
             <property name="name">
                 <cstring>unnamed</cstring>
-            </property>
-            <property name="margin">
-                <number>0</number>
             </property>
             <widget class="QButtonGroup" row="2" column="0">
                 <property name="name">
@@ -397,4 +399,8 @@
     <function access="private" returnType="bool">updateForProtocol( const QString &amp; protocol )</function>
 </functions>
 <layoutdefaults spacing="6" margin="11"/>
+<includehints>
+    <includehint>kcombobox.h</includehint>
+    <includehint>klineedit.h</includehint>
+</includehints>
 </UI>
