@@ -72,7 +72,7 @@ ImageVisualizer::ImageVisualizer( QWidget *parent, const char *name, const QStri
       description->adjustSize( );
   } else {
     description = new QLabel(this );
-    description->setText(i18n("Sorry couldn't load the image") );
+    description->setText(i18n("Unable to load image") );
   }
 }
 
