@@ -1,6 +1,6 @@
 /*****************************************************************
  * drkonqi - The KDE Crash Handler
- * 
+ *
  * $Id$
  *
  * Copyright (C) 2000 Hans Petter Bieker <bieker@kde.org>
@@ -8,13 +8,13 @@
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright
  *    notice, this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
@@ -32,6 +32,7 @@
 #include <kaboutdata.h>
 #include <kcmdlineargs.h>
 #include <klocale.h>
+#include <kdebug.h>
 
 #include "krashconf.h"
 
@@ -43,11 +44,6 @@ KrashConfig :: KrashConfig()
 KrashConfig :: ~KrashConfig()
 {
   delete m_aboutData;
-}
-
-QString KrashConfig :: debugger() const
-{
-  return m_debugger;
 }
 
 void KrashConfig :: readConfig()
@@ -62,29 +58,31 @@ void KrashConfig :: readConfig()
   // leak some memory... Well. It's only done once anyway :-)
   const char * progname = qstrdup(programname);
   m_aboutData = new KAboutData(args->getOption("appname"),
-		    progname,
-		    args->getOption("appversion"),
-		    0, 0, 0, 0,	0,
-		    args->getOption("bugaddress"));
+                    progname,
+                    args->getOption("appversion"),
+                    0, 0, 0, 0, 0,
+                    args->getOption("bugaddress"));
 
   KConfig *config = KGlobal::config();
   config->setGroup(QString::fromLatin1("drkonqi"));
 
   // maybe we should check if it's relative?
   QString configname = config->readEntry(QString::fromLatin1("ConfigName"),
-					 QString::fromLatin1("enduser"));
+                                         QString::fromLatin1("enduser"));
 
   QString debuggername = config->readEntry(QString::fromLatin1("Debugger"),
-					   QString::fromLatin1("gdb"));
+                                           QString::fromLatin1("gdb"));
 
   KConfig debuggers(QString::fromLatin1("debuggers/%1rc").arg(debuggername),
-		    true, false, "appdata");
+                    true, false, "appdata");
 
   debuggers.setGroup(QString::fromLatin1("General"));
   m_debugger = debuggers.readEntry(QString::fromLatin1("Exec"));
+  m_debuggerBatch = debuggers.readEntry(QString::fromLatin1("ExecBatch"));
+  kdDebug() << "KrashConfig :: readConfig m_debuggerBatch=" << m_debuggerBatch << endl;
 
-  KConfig preset(QString::fromLatin1("presets/%1rc").arg(configname), 
-		 true, false, "appdata");
+  KConfig preset(QString::fromLatin1("presets/%1rc").arg(configname),
+                 true, false, "appdata");
 
   preset.setGroup(QString::fromLatin1("ErrorDescription"));
   if (preset.readBoolEntry(QString::fromLatin1("Enable"), true))
@@ -111,4 +109,31 @@ void KrashConfig :: readConfig()
   m_signalName = preset.readEntry(QString::fromLatin1("Name"));
   if (b)
     m_signalText = preset.readEntry(QString::fromLatin1("Comment"));
+}
+
+// replace some of the strings
+void KrashConfig :: expandString(QString &str, QString tempFile) const
+{
+  int pos = -1;
+  while ( (pos = str.findRev('%', pos)) != -1 ) {
+    if (str.mid(pos, 8) == QString::fromLatin1("%appname"))
+        str.replace(pos, 8, QString::fromLatin1(appName()));
+    if (str.mid(pos, 9) == QString::fromLatin1("%execname"))
+    {
+      if (startedByKdeinit())
+        str.replace(pos, 9, QString::fromLatin1("kdeinit"));
+      else
+        str.replace(pos, 9, QString::fromLatin1(appName()));
+    }
+    else if (str.mid(pos, 7) == QString::fromLatin1("%signum"))
+      str.replace(pos, 7, QString::number(signalNumber()));
+    else if (str.mid(pos, 8) == QString::fromLatin1("%signame"))
+      str.replace(pos, 8, signalName());
+    else if (str.mid(pos, 9) == QString::fromLatin1("%progname"))
+      str.replace(pos, 9, programName());
+    else if (str.mid(pos, 4) == QString::fromLatin1("%pid"))
+      str.replace(pos, 4, QString::number(pid()));
+    else if (str.mid(pos, 9) == QString::fromLatin1("%tempfile"))
+      str.replace(pos, 9, tempFile);
+  }
 }

@@ -8,13 +8,13 @@
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright
  *    notice, this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
@@ -30,6 +30,7 @@
 #include <qfile.h>
 
 #include <kprocess.h>
+#include <kdebug.h>
 #include <ktempfile.h>
 
 #include "krashconf.h"
@@ -37,7 +38,7 @@
 #include "backtrace.moc"
 
 BackTrace::BackTrace(const KrashConfig *krashconf, QObject *parent,
-		     const char *name)
+                     const char *name)
   : QObject(parent, name),
     m_krashconf(krashconf), m_temp(0)
 {
@@ -50,7 +51,7 @@ BackTrace::~BackTrace()
   // we don't want the gdb process to hang around
   delete m_proc; // this will kill gdb (SIGKILL, signal 9)
 
-  // continue the process we ran backtrace on. Gdb sends SIGSTOP to the 
+  // continue the process we ran backtrace on. Gdb sends SIGSTOP to the
   // process. For some reason it doesn't work if we send the signal before
   // gdb has exited, so we better wait for it.
   // Do not touch it if we never ran backtrace.
@@ -70,26 +71,33 @@ void BackTrace::start()
   ::write(handle, "bt\n", 3); // this is the command for a backtrace
   ::fsync(handle);
 
+  // start the debugger
+  m_proc = new KShellProcess;
+  /*
   QCString processName;
   if (m_krashconf->startedByKdeinit())
      processName = "kdeinit";
   else
      processName = m_krashconf->appName();
 
-  // start the debugger
-  m_proc = new KProcess;
   *m_proc << QString::fromLatin1("gdb")
-	  << QString::fromLatin1("-n")
-	  << QString::fromLatin1("-batch")
-	  << QString::fromLatin1("-x")
-	  << m_temp->name()
-	  << QFile::decodeName(processName)
-    	  << QString::number(m_krashconf->pid());
+          << QString::fromLatin1("-n")
+          << QString::fromLatin1("-batch")
+          << QString::fromLatin1("-x")
+          << m_temp->name()
+          << QFile::decodeName(processName)
+          << QString::number(m_krashconf->pid());
+          */
+
+  QString str = m_krashconf->debuggerBatch();
+  m_krashconf->expandString(str, m_temp->name());
+
+  *m_proc << str;
 
   connect(m_proc, SIGNAL(receivedStdout(KProcess*, char*, int)),
- 	  SLOT(slotReadInput(KProcess*, char*, int)));
+          SLOT(slotReadInput(KProcess*, char*, int)));
   connect(m_proc, SIGNAL(processExited(KProcess*)),
-	  SLOT(slotProcessExited(KProcess*)));
+          SLOT(slotProcessExited(KProcess*)));
 
   m_proc->start ( KProcess::NotifyOnExit, KProcess::All );
 }
@@ -97,7 +105,7 @@ void BackTrace::start()
 void BackTrace::slotReadInput(KProcess *, char* buf, int buflen)
 {
   QString newstr = QString::fromLocal8Bit(buf, buflen);
-  str.append(newstr);
+  m_strBt.append(newstr);
 
   emit append(newstr);
 }
@@ -107,13 +115,13 @@ void BackTrace::slotProcessExited(KProcess *proc)
   // start it again
   kill(m_krashconf->pid(), SIGCONT);
 
-  int unknown = str.contains(QString::fromLatin1(" ?? "));
-  int lines = str.contains('\n');
-  bool tooShort = !str.find(QString::fromLatin1("#5"));
+  int unknown = m_strBt.contains(QString::fromLatin1(" ?? "));
+  int lines = m_strBt.contains('\n');
+  bool tooShort = !m_strBt.find(QString::fromLatin1("#5"));
   if (proc->normalExit() && (proc->exitStatus() == 0) &&
-      !str.isNull() && !tooShort && (unknown + 2 < lines)) {
+      !m_strBt.isNull() && !tooShort && (unknown + 2 < lines)) {
     emit done();
-    emit done(str);
+    emit done(m_strBt);
   } else
     emit someError();
 }

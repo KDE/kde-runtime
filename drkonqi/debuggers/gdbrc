@@ -62,4 +62,5 @@ Comment[ta]=கடஂடுபஂபாடஂடடு ைமய஡ஂதில�
 Comment[tr]=GNU'dan konsol için metin tabanlı hata ayıklayıcı
 Comment[uk]=GNU відладчик командної стрічкі у консолі
 Comment[zh_CN.GB2312]=在 konsole 里运行的文本 GNU 调试器
-Exec=konsole -e gdb %appname %pid
+Exec=konsole -e gdb -nw %execname %pid
+ExecBatch=gdb -nw -n -batch -x %tempfile %execname %pid
