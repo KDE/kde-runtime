@@ -115,7 +115,7 @@ Name[zh_CN.GB2312]=程序 %progname (%appname) 已崩溃, 导致信号 %signum (
 
 [WhatToDoHint]
 Enable=true
-Name=You might want to send a bug report to the author. Please include as much information as possible, maybe the original documents. If you have a way to reproduce the error, include this also. Click on the "Bug report" button.
+Name=You might want to send a bug report to the author. Please include as much information as possible, maybe the original documents. If you have a way to reproduce the error, include this also.
 Name[bg]=Âèå ìîæå áè æåëàåòå äà ïðàòèòå îïèñàíèå íà ãðåøêàòà  äî àâòîðà íà ïðîãðàìàòà . Ìîëÿ âêëþ÷åòå âúçìîæíî íàé-ìíîãî èíôîðìàöèà çà ïðîáëåìà .Àêî èìàòå ðåøåíèå íà ïðîáëåìà ìîëÿ âêëþ÷åòå è íåãî. Íàòèñíè "Bug report" áóòîí
 Name[ca]=Potser voleu enviar un informe d'error a l'autor. Si us plau, incluiu tanta informació com sigui possible, potser els documents originals. Si teniu una manera de reproduir l'error, incluiu-la també. Feu clic al botó "Informe d'error".
 Name[cs]=Možná budete chtít zaslat nahlášení chyby autorovi. Prosím vložte co nejvíce informací, případně i původní dokument. Znáte-li způsob jak znovu vyvolat chybu, tak jej též popište. Klikněte na tlačítko "Nahlášení chyby".
