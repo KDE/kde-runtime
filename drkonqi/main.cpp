@@ -71,6 +71,7 @@ int main( int argc, char* argv[] )
   KCmdLineArgs::addCmdLineOptions( options );
 
   KApplication a;
+  a.disableSessionManagement();
 
   KrashConfig krashconf;
 
