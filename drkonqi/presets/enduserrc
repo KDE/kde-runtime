@@ -5,6 +5,7 @@ Comment=Settings prefered for end users
 SignalDetails=true
 ShowBacktraceButton=false
 ShowBugReportButton=true
+ShowDebugButton=false
 
 [ErrorDescription]
 Enable=true
