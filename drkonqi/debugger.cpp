@@ -104,7 +104,7 @@ void KrashDebugger :: slotSave()
     }
     else
     {
-      KMessageBox::sorry(this, i18n("Can't create a file to safe backtrace to"));
+      KMessageBox::sorry(this, i18n("Can't create a file to save backtrace to"));
     }
   }
   else
