@@ -280,6 +280,7 @@ Comment[zh_TW.Big5]=當應用程式偵測到程式的臭蟲造成內部的不一
 Name=SIGFPE
 Name[da]=SIGFRE
 Comment=An application mostly receives the SIGFPE signal due to a bug in the application. The application was asked to save its documents.
+Comment[az]=Proqramdakı bir xəta səbəbi ilə, proqramlar çox vaxt SIGFPE siqnalı alırlar. Bu haldakı proqramlardan sənədlərini qeyd etməsi istənir.
 Comment[br]=Resev a ra un arload an arhent SIGFPE abalamour d'un draen en arload, peurliesañ. Goulennet e voe d'an arload enrollañ e deulioù.
 Comment[ca]=Quan una aplicació rep la senyal SIGFPE es degut la major part dels cops a un error de l'aplicació. Se li demana que desi els seus documents.
 Comment[cs]=Aplikace dostavají signál SIGFPE převážně z důvodu chyby v aplikaci. Aplikace byla požádána o uložení svých dokumentů.
