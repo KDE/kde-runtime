@@ -12,7 +12,7 @@ bin_PROGRAMS = drkonqi
 
 # Libraries:
 LDFLAGS = $(all_libraries) $(KDE_RPATH)
-LDADD  = $(LIB_KDEUI) $(LIB_KFILE)
+LDADD  = $(LIB_KDEUI) $(LIB_KIO)
 
 # toplevel.cpp must be last in row due to X-headers being included. (--enable-final)
 # Did I mention already that X header files really suck?
