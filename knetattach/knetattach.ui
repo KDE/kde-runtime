@@ -308,10 +308,10 @@
                     <cstring>_createIcon</cstring>
                 </property>
                 <property name="text">
-                    <string>&amp;Create an icon for this remote folder</string>
+                    <string>Cr&amp;eate an icon for this remote folder</string>
                 </property>
                 <property name="accel">
-                    <string>Alt+C</string>
+                    <string>Alt+E</string>
                 </property>
                 <property name="checked">
                     <bool>true</bool>
