@@ -27,4 +27,4 @@ Comment=An application mostly receives the SIGSEGV signal due to a bug in the ap
 
 [unknown]
 Name=Unknown
-Comment=Sorry, I don't kwow this signal.
+Comment=Sorry, I don't know this signal.
