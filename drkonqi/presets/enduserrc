@@ -69,6 +69,7 @@ Name[ven]=U fhedza ha Mushumisi
 Name[vi]=Người dùng cuối
 Name[xh]=Umsebenzisi wokugqibela
 Name[xx]=xxEnd userxx
+Name[zh_CN]=普通用户
 Name[zh_TW]=一般使用者
 Name[zu]=Umsebenzisi wokugcina
 Comment=Settings preferred for end users
@@ -142,6 +143,7 @@ Comment[ven]=Dzudzanyo dzi shumisesiwaho nga Vhashumisi.
 Comment[vi]=Thiết lập ưa thích dành cho người dùng
 Comment[xh]=Izicwangciso ezikhethwayo zomsebenzisi osekugqhibeleni
 Comment[xx]=xxSettings preferred for end usersxx
+Comment[zh_CN]=最终用户的首选项
 Comment[zh_TW]=一般使用者的偏好設定
 Comment[zu]=Izilungiselelo ezincanyelwayo zabasebenzisi bokugcina
 
@@ -222,6 +224,7 @@ Name[ven]=Apulikhesheni ya %progdzina(%appdzina) yo tshinyadzhwa ya dovha ya vha
 Name[vi]=Chương trình %progname (%appname) bị vỡ(crash) và gây ra tín hiệu  %signum (%signame). 
 Name[xh]=Isicelo se %progname (%appname) ingqubekile yaze yabangela uphawu lwe %signum (%signame).
 Name[xx]=xxThe application %progname (%appname) crashed and caused the signal %signum (%signame).xx
+Name[zh_CN]=程序 %progname (%appname) 已崩溃，导致信号 %signum (%signame)。
 Name[zh_TW]=此應用程式 %progname (%appname) 不正常結束，產生信號 %signum (%signame)。
 Name[zu]=I-%progname yomyaleli (%appname), iphahlazekile futhi yabanga uphawu %signum (%signame).
 
@@ -271,6 +274,7 @@ Name[ta]=இந்த பயன்பாட்டுக்கான நீங்
 Name[tr]=Bu uygulama için yazara bir hata raporu göndermek isterseniz, öncelikle hatanın http://bugs.kde.org adresinde yer alıp almadığını kontrol edin. Lütfen mümkün olduğunca fazla bilgi verin ve varsa orjinal belgeleri ekleyin. Eğer bu hatayı tekrar ortaya çıkarabilmenin bir yolu varsa, bunu da belirtin.
 Name[uk]=Можливо, Ви захочете відіслати автору програми звіт про помилку. Будь ласка, перевірте що цю помилку ще не звітовано на http://bugs.kde.org, і лише потім відправляйте її автору. Будь ласка, додайте якомога більше інформації, можливо, вихідні документи. Якщо Ви можете повторити помилку, включіть це також.
 Name[xx]=xxYou might want to send a bug report for this application. Check if it is listed on http://bugs.kde.org, otherwise mail the author. Please include as much information as possible, maybe the original documents. If you have a way to reproduce the error, include this also.xx
+Name[zh_CN]=您可能想要为此程序发送错误报告。请检查该错误是否已经在 http://bugs.kde.org 列出来了。如果尚未列出来的话，就需要联系作者。请尽可能提供详细的信息，比如当时程序使用的文档。如果您有办法重现错误，请同时提供这样的方法。
 
 [4]
 Name=SIGILL
@@ -344,6 +348,7 @@ Comment[ven]=Apulikhesheni dzi anzela u wana luswayo lwa SIGILL nga mulandu wa b
 Comment[vi]=Một chương trình nhận hầu hết các tín hiệu SIGILL vì có lỗi trong chương trình. Chương trình này đòi hỏi bạn phải luư trữ tài liệu trước. 
 Comment[xh]=Isicelo esifumana i SIGILL uphawu enxa yegciwane kwi sicelo. Isicelo sicelwe ukuba sigcine amaxwebhu aso.
 Comment[xx]=xxAn application mostly receives the SIGILL signal due to a bug in the application. The application was asked to save its documents.xx
+Comment[zh_CN]=多数情况下，一个程序由于本身的错误会收到 SIGILL 信号。程序被要求保存它的文档。
 Comment[zh_TW]=多數情況下，一個程式由於本身的錯誤會收到 SIGILL 信號。程式會被要求保存它的文件。
 Comment[zu]=Umyaleli uthola kakhulu uphawu lwe-SIGILL ngenxa yegciwane elikumyaleli. Umyaleli ucelwe ukuba agcine ushicilelo lwakhe.
 
@@ -418,6 +423,7 @@ Comment[ven]==Apulikhesheni i fhela nga luswayo lwa SIGABRT musi i tshi sedzulus
 Comment[vi]= Một chương trình bị kết liễu bởi một tín hiệu SIGABRT khi nó tìm ra một mâu thuẩn nội bộ gây ra bởi lỗi trong một chương trình nào đó.
 Comment[xh]=Isicelo sicinywa ngophawu lwe SIGABRT xa sibona ukungahambisalani kwangaphakathi okwenziwa ligciwane kwinkqubo.
 Comment[xx]=xxAn application terminates with a SIGABRT signal when it detects an internal inconsistency caused by a bug in the program.xx
+Comment[zh_CN]=程序在检测到缺陷引起的内部不一致时，以 SIGABRT 信号中止。
 Comment[zh_TW]=程式偵測發生到內部錯誤時，以 SIGABRT 信號中止。
 Comment[zu]=Umyaleli wekhompyutha unqamuka ngophawu lwe-SIGABRT uma ecosha ukungahambisani kwangaphakathi okubangwe igciwane elisohlelweni lwemisebenzi.
 
@@ -492,6 +498,7 @@ Comment[ven]=Apulikhesheni i anzela u wana luswayo lwa SIGFPE nga nthani ha baga
 Comment[vi]=Có một chương trình nhận hầu hết các tìn hiệu SIGFPE vì trong chương trình có lỗị Chương trình đòi hỏi bạn phải sao luư tài liệụ 
 Comment[xh]=Isicelo sifumana i SIGFPE uphawu ngenxa ye gciwane kwisicelo. Isicelo sicelwe ukuba sigcine amaxwebhu ayo.
 Comment[xx]=xxAn application mostly receives the SIGFPE signal due to a bug in the application. The application was asked to save its documents.xx
+Comment[zh_CN]=大多数情况下，接收到 SIGFPE 信号是由于程序的缺陷。程序被要求保存它的文档。
 Comment[zh_TW]=大多數情況下，接收到 SIGFPE 信號是由於程式的錯誤。程式被要求保存它的文件。
 Comment[zu]=Umyaleli wekhompyutha uthola kakhulu uphawu lwe-SIGFPE ngenxa yegciwane elikumyaleli. Umyaleli ucelwe ukuba agcine ushicilelo lwakhe.
 
@@ -566,6 +573,7 @@ Comment[ven]=Apulifikhesheni i anzela u wana luswayo lwa SIGSEGV nga nthani ha b
 Comment[vi]=Có một chương trình nhận hầu hết các tìn hiệu SIGSEGV vì trong chương trình có lỗị Chương trình đòi hỏi bạn phải sao luư tài liệụ
 Comment[xh]=Isicelo esifumana i SIGSEGV uphawu ngenxa yegciwane. Isicelo siceliwe ukuba sigcine amaxwebhu aso.
 Comment[xx]=xxAn application mostly receives the SIGSEGV signal due to a bug in the application. The application was asked to save its documents.xx
+Comment[zh_CN]=大多数情况下，接收到 SIGSEGV 信号是由于程序的缺陷。程序被要求保存它的文档。
 Comment[zh_TW]=大多數情況下，接收到 SIGSEGV 信號是由於程式的錯誤。程式被要求保存它的文件。
 Comment[zu]=Umyaleli ithola kakhulu uphawu lwe-SIGSEGV ngenxa yegciwane elikumyaleli. Umyaleli ucelwe ukuba agcine ushicilelo lwakhe.
 
@@ -643,6 +651,7 @@ Name[vi]=Không biết
 Name[wa]=Nén cnoxhou
 Name[xh]=Engaziwayo
 Name[xx]=xxUnknownxx
+Name[zh_CN]=未知
 Name[zh_TW]=未知
 Name[zu]=Okungaziwa
 Comment=Sorry, I do not know this signal.
@@ -695,3 +704,4 @@ Comment[tr]=Üzgünüm, bu sinyali tanımıyorum.
 Comment[uk]=Вибачте, не знаю цього сигналу.
 Comment[uz]=Узр, мен бу сигнални билмайман.
 Comment[xx]=xxSorry, I do not know this signal.xx
+Comment[zh_CN]=抱歉，我不知道这个信号。
