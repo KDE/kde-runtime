@@ -92,11 +92,11 @@ void KrashConfig :: readConfig()
     m_whatToDoText = preset.readEntry(QString::fromLatin1("Name"));
 
   preset.setGroup(QString::fromLatin1("General"));
-  m_showbugreport = preset.readBoolEntry(QString::fromLatin1("ShowBugReportButton"), true);
+  m_showbugreport = preset.readBoolEntry(QString::fromLatin1("ShowBugReportButton"), false);
   m_showdebugger = m_showbacktrace = m_pid != 0;
   if (m_showbacktrace) {
     m_showbacktrace = preset.readBoolEntry(QString::fromLatin1("ShowBacktraceButton"), true);
-    m_showdebugger = preset.readBoolEntry(QString::fromLatin1("ShowDebugButton"), false);
+    m_showdebugger = preset.readBoolEntry(QString::fromLatin1("ShowDebugButton"), true);
   }
 
   bool b = preset.readBoolEntry(QString::fromLatin1("SignalDetails"), true);

@@ -71,8 +71,8 @@ Comment[uk]=Настройкі переважно для кінцевих кор
 Comment[zh_CN.GB2312]=普通用户偏好的设置
 
 SignalDetails=true
-ShowBacktraceButton=false
-ShowBugReportButton=true
+ShowBacktraceButton=true
+ShowBugReportButton=false
 ShowDebugButton=false
 
 [ErrorDescription]
