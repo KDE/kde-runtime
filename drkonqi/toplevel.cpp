@@ -56,7 +56,7 @@ Toplevel :: Toplevel(const KrashConfig *krashconf, QWidget *parent, const char *
                  parent,
                  name,
                  true, // modal
-                 true, // separator
+                 false, // no separator
                  i18n("&Bug report"),
                  i18n("&Debugger")
                  ),
