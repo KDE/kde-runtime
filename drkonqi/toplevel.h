@@ -1,5 +1,5 @@
 /*****************************************************************
- * drkonki - The KDE Crash Handler
+ * drkonqi - The KDE Crash Handler
  * 
  * toplevel.cpp
  *
