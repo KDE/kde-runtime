@@ -98,15 +98,19 @@ void Toplevel :: slotUser1()
 {
   if (bugreport) return;
 
-  QString str;
-
   int i = KMessageBox::warningYesNoCancel(0,
 				  i18n("<p>Do you want to generate a "
 				       "backtrace? This will help the "
 				       "developers to figure out what went "
-				       "wrong.</p><br>\n"
+				       "wrong.</p>\n"
 				       "<p>Unfortantly this will take some "
-				       "time on slow machines.</p>"),
+				       "time on slow machines.</p>"
+				       "<p><b>Note: A backtrace is not a "
+				       "substitute for a proper description "
+				       "the bug and information on how to "
+				       "reproduce it. It is not possible "
+				       "to fix the bug without a proper "
+				       "description.</b></p>"),
 				  i18n("Include Backtrace"));
   if (i == KMessageBox::Cancel) return;
 
@@ -136,7 +140,6 @@ void Toplevel :: slotUser2()
   QString str = m_krashconf->debugger();
   expandString(str);
 
-#if 1
   // FIXME: Replace by KRun??
   KProcess proc;
   QStringList list = QStringList::split(' ', str);
@@ -144,9 +147,6 @@ void Toplevel :: slotUser2()
     proc << *it;
 
   proc.start(KProcess::DontCare);
-#else
-  KRun::run(str);
-#endif
 }
 
 void Toplevel :: slotBacktraceDone(const QString &str)
