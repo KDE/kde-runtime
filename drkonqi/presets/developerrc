@@ -1,5 +1,6 @@
 [General]
 Name=Developer
+Name[af]=ontwikkelaar
 Name[az]=Proqramcı
 Name[bg]=Програмист
 Name[br]=Diorrer
@@ -49,6 +50,7 @@ Name[vi]=Nhà phát triển
 Name[zh_CN.GB2312]=开发人员
 Name[zh_TW.Big5]=開發者
 Comment=Settings preferred for developers
+Comment[af]=instellings verkies vir ontwikkelaars
 Comment[az]=Proqramcılar üçün tərcih edilən qurğular
 Comment[bg]=Настройки, предпочтитания за програмистите
 Comment[br]=Kefluniadur azas evir diorerien
@@ -110,6 +112,7 @@ Name[he]=היישום %progname )%appname(, זיהוי תהליך %pid, התרס
 [WhatToDoHint]
 Enable=true
 Name=You might want to fix your program. Take a look at the backtrace tab.
+Name[af]=jy dalk wil hê aan regmaak jou program. neem 'n kyk na die terugsoektog oortjie.
 Name[az]=Proqramınızdakı problemi həll etmək istəsəniz xəta ayıqlayıcı səkməsinə baxın.
 Name[bg]=Възможно е, вие да искате да оправите програмата. Прегледайте tab за грешки.
 Name[cs]=Možná budete chtít opravit váš program. Klikněte na záložku ladění.
@@ -148,8 +151,10 @@ Name[zh_CN.GB2312]=您应该改正程序。看看回溯跟踪部分。
 
 [4]
 Name=SIGILL
+Name[af]=sigill
 Name[vi]=SIGILL 
 Comment=Illegal instruction.
+Comment[af]=onwettige instruksie.
 Comment[az]=Xətalı göstəriş.
 Comment[bg]=Недопустима инструкция.
 Comment[br]=Kemennad siek
@@ -199,9 +204,11 @@ Comment[zh_TW.Big5]=不合法的指令。
 
 [6]
 Name=SIGABRT
+Name[af]=sigabrt
 Name[fr]=SIABRT
 Name[vi]=SIGABRT 
 Comment=Aborted.
+Comment[af]=gekanselleer.
 Comment[az]=Ləğv edildi.
 Comment[bg]=Прекъснато.
 Comment[br]=Dilezet
@@ -251,9 +258,11 @@ Comment[zh_TW.Big5]=中斷
 
 [8]
 Name=SIGFPE
+Name[af]=sigfpe
 Name[da]=SIGFRE
 Name[vi]=SIGFPE 
 Comment=Floating point exception.
+Comment[af]=wissel punt uitsondering.
 Comment[az]=Üzən nöqtə xətası.
 Comment[bg]=Исключителна ситуация при изчисления с плаваща точка.
 Comment[br]=Direizhenn niver skej
@@ -300,8 +309,10 @@ Comment[zh_TW.Big5]=浮點數異常。
 
 [11]
 Name=SIGSEGV
+Name[af]=sigsegv
 Name[vi]=SIGSEGV 
 Comment=Invalid memory reference.
+Comment[af]=ongeldige geheue verwysing.
 Comment[az]=Hökmsüz yaddaş referensi.
 Comment[bg]=Достъп към неразрешена област от паметта.
 Comment[br]=Daveen memor siek
@@ -349,6 +360,7 @@ Comment[zh_TW.Big5]=不合法的記憶體參考。
 
 [unknown]
 Name=Unknown
+Name[af]=onbekende
 Name[az]=Namə'lum
 Name[bg]=Неизвестен
 Name[br]=Dianav
@@ -399,6 +411,7 @@ Name[wa]=Nén cnoxhou
 Name[zh_CN.GB2312]=未知
 Name[zh_TW.Big5]=末知
 Comment=Sorry, I don't know this signal.
+Comment[af]=jammer, i don't ken hierdie sein.
 Comment[az]=Bağışlayın, bu siqnalı tanımıram.
 Comment[bg]=Неизвестен сигнал
 Comment[br]=Ho tigarez, n'anavezan ket an arhent-maÃ±
