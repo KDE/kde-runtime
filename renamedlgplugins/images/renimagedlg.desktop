@@ -1,5 +1,26 @@
 [Desktop Entry]
 Type=Service
 Name=Image Displayer
+Name[ar]=عارض الصور
+Name[bg]=Преглед на изображения
+Name[da]=Billedfremviser
+Name[de]=Bildbetrachter
+Name[es]=Visor de imágenes
+Name[fi]=Kuvannäyttäjä
+Name[fr]=Afficheur d'images
+Name[he]=מציג תמונות
+Name[hu]=Képmegjelenítő
+Name[it]=Visualizzatore di immagini
+Name[lt]=Paveikslėlių rodytojas
+Name[lv]=Attēlu Rādītājs
+Name[pt_BR]=Visualizador de Imagens
+Name[pt]=Visualizador de Imagens
+Name[sk]=Prehliadač obrázkov
+Name[sl]=Prikazovalnik slik
+Name[sv]=Bildvisare
+Name[ta]=¯Õì ¸¡ðÊ
+Name[tr]=Resim Gösterici
+Name[xh]=Umboniseli Womfanekiso
+Name[xx]=xx
 X-KDE-Library=librenimageplugin
-ServiceTypes=RenameDlg/Plugin,image/jpeg
+ServiceTypes=RenameDlg/Plugin,image/jpeg,image/png

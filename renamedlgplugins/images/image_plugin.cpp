@@ -29,8 +29,11 @@
 #include <qwidget.h>
 #include <qstringlist.h>
 #include <kio/global.h>
+#include <qlayout.h>
+
 #include <sys/types.h>
 
+#include "imagevisualizer.h"
 
 class KTestMenu : public RenameDlgPlugin{
 public:
@@ -48,9 +51,7 @@ public:
 };
 
 KTestMenu::KTestMenu( QDialog *dialog, const char *name, const QStringList &list ) : RenameDlgPlugin( dialog, name, list) {
-  QLabel *label = new QLabel(this );
-  label->setText("HiJa So you wan't to do some stuff?" );
-  qWarning("hidi ho32134");
+  qWarning("loaded" );  
 };
 KTestMenu::~KTestMenu()
 {
@@ -69,10 +70,22 @@ bool KTestMenu::initialize( KIO::RenameDlg_Mode mode, const QString &_src, const
   qWarning("%s", _dest.latin1() );
   qWarning("%s", mimeSrc.latin1() );
   qWarning("%s", mimeDest.latin1() );
+
+  QGridLayout *lay = new QGridLayout(this, 2, 3, 5  );
 qWarning("ABC3456: %d", mode );
  if( mode & KIO::M_OVERWRITE ){
+   QLabel *label = new QLabel(this );
+   label->setText(i18n("You want to overwrite the left picture with the one on the right.") );
+   label->adjustSize();
+   lay->addMultiCellWidget(label, 1, 1, 0, 2,  Qt::AlignHCenter  );
 qWarning("overwrite" );
+ adjustSize();
  }
+ ImageVisualizer *left= new ImageVisualizer(this, "Visulaizer Left", _dest );
+ ImageVisualizer *right = new ImageVisualizer( this, "Visualizer Right", _src );
+ lay->addWidget(left, 2, 0 );
+ lay->addWidget(right, 2, 2 );
+ adjustSize();
   return true;
 }
 
