@@ -32,6 +32,7 @@
 
 class QTextView;
 class QLabel;
+class QPushButton;
 class KrashConfig;
 class BackTrace;
 
@@ -51,16 +52,19 @@ public slots:
   void slotSomeError();
 
 protected:
- void startDebugger();
+  void startDebugger();
+
+  virtual void showEvent(QShowEvent *e);
 
 protected slots:
- virtual void showEvent(QShowEvent *e);
+  void slotCopy();
 
 private:
   const KrashConfig *m_krashconf;
   BackTrace *m_proctrace;
   QLabel *m_status;
   QTextView *m_backtrace;
+  QPushButton * m_copyButton;
 };
 
 #endif

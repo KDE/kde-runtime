@@ -29,6 +29,8 @@
 
 #include <qtextview.h>
 #include <qlayout.h>
+#include <qpushbutton.h>
+#include <qhbox.h>
 #include <qlabel.h>
 
 #include <klocale.h>
@@ -45,13 +47,19 @@ KrashDebugger :: KrashDebugger (const KrashConfig *krashconf, QWidget *parent, c
     m_krashconf(krashconf),
     m_proctrace(0)
 {
-  QVBoxLayout *hbox = new QVBoxLayout(this);
-  hbox->setAutoAdd(TRUE);
+  QVBoxLayout *vbox = new QVBoxLayout(this);
+  vbox->setAutoAdd(TRUE);
 
   m_backtrace = new QTextView(this);
   m_backtrace->setTextFormat(Qt::PlainText);
   m_backtrace->setFont(KGlobalSettings::fixedFont());
-  m_status = new QLabel(this);
+
+  QHBox *hbox = new QHBox(this);
+  m_status = new QLabel(hbox);
+  hbox->setStretchFactor(m_status,10);
+  m_copyButton = new QPushButton(i18n("Copy"),hbox);
+  connect( m_copyButton, SIGNAL( clicked() ), this, SLOT( slotCopy() ) );
+  m_copyButton->hide();
 }
 
 KrashDebugger :: ~KrashDebugger()
@@ -63,6 +71,13 @@ KrashDebugger :: ~KrashDebugger()
 void KrashDebugger :: slotDone()
 {
   m_status->setText(i18n("Done."));
+  m_copyButton->show();
+}
+
+void KrashDebugger :: slotCopy()
+{
+  m_backtrace->selectAll();
+  m_backtrace->copy();
 }
 
 void KrashDebugger :: slotSomeError()
