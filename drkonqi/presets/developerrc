@@ -154,6 +154,7 @@ Name[sk]=Aplikácia %progname (%appname), pid %pid spadla. Chyba bola spôsoben�
 Name[sl]=Program %progname (%appname), pid %pid, se je sesul in javil signal %signum (%signame).
 Name[sv]=Programmet %progname (%appname), pid %pid, kraschade och orsakade signalen %signum (%signame).
 Name[ta]=¿¢Ãø %progname (%appname), ±ñ %pid, ÓÈ¢óÐ %signum (%signame) ¨º¨¸¨Âò ¾ó¾Ð.
+Name[uk]=Програма %progname (%appname), pid %pid, дала збій та викликала сигнал %signum (%signame).
 Name[ven]=Apulifikhesheni ya %progdzina (%appdzina) pid %pid yo tshinyadzhwa ya dovha ya vhanga luswayo %signum (%sigdzina).
 Name[xh]=Isicelo %progname (%appname) , pid %pid, ilalhekile kwaye ibangele uphawu %signum (%signame).
 Name[zh_CN]=程序 %progname (%appname)，进程号 %pid，崩溃并导致信号 %signum (%signame)。
