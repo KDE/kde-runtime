@@ -24,7 +24,7 @@ Toplevel :: Toplevel(int _signalnum, const QCString appname, QWidget *parent, co
   QVBoxLayout* vbox = new QVBoxLayout(this,8);
   vbox->setAutoAdd(TRUE);
 
-  signalnum = _signalnum;
+  signalnum = _signalnum > 0 ? _signalnum : 11; // default to SIGSEGV
 
   // this should depend on the signalnum
   QString signal = getSignal();
@@ -49,7 +49,7 @@ Toplevel :: Toplevel(int _signalnum, const QCString appname, QWidget *parent, co
 	     "\"More...\" for more informations."
 	     "<br><hr>"
 	     "<b>Hint:</b> You can customize this dialog in the control panel.")
-    .arg(appname)
+    .arg(appname.isEmpty() ? i18n("unknown") : QString::fromLatin1(appname))
     .arg(signal)
     .arg(signalnum)
     .arg(signal);
@@ -73,6 +73,6 @@ QString Toplevel :: getSignal()
     case 11:
       return QString::fromLatin1("SIGSEGV");
     default:
-      return i18n("Unknown (%1)").arg(signalnum);
+      return i18n("unknown (%1)").arg(signalnum);
     }
 }
