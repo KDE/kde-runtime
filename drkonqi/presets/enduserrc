@@ -155,7 +155,6 @@ Name[mt]=Il-programm %progname (%appname) ikkraxxja u kkawża s-sinjal %signum (
 Name[nb]=Applikasjonen %progname (%appname) krasjet og gav signalet %signum (%signame).
 Name[nl]=Het programma %progname (%appname) heeft een ongeldige bewerking gemaakt en wordt daarom afgesloten. Het gaf het volgende signaal: %signum (%signame).
 Name[nn]=Programmet %progname (%appname) krasja og gav signalet %signum (%signame).
-Name[nso]=Lenaneo la %tshomiso (%appname) le thubagane gomme la hlola leswao %signum (%signame).
 Name[oc]=Lo programo d'aplicacion %progname (%appname) ei tombat e a causat lo sinhal %signum (%signame).
 Name[pl]=Program %progname (%appname) uległ awarii, wywołując sygnał %signum (%signame).
 Name[pt]=A aplicação %progname (%appname) estoirou e enviou o sinal %signum (%signame).
