@@ -116,6 +116,7 @@ Name[he]=היישום %progname )%appname(, זיהוי תהליך %pid, התרס
 Name[hu]=A(z) %progname (%appname) alkalmazás (azonosító=%pid) lefagyott és %signum (%signame) szignált okozott.
 Name[ko]=프로세서 아이디가 %pid이고 이름이 %progname (%appname)인 프로그램이 다음과 같은 신호를 보내면서 죽었습니다 : %signum (%signame)
 Name[nl]=Het programma %progname (%appname), pid %pid is gecrashed en gaf het volgende signaal: %signum (%signame).
+Name[sv]=Programmet %progname (%appname), pid %pid, kraschade och orsakade signalen %signum (%signame).
 Name[zh_TW.Big5]=此應用程式 %progname (%appname), pid %pid 不正常結束，產生信號 %signum (%signame)。
 
 [WhatToDoHint]
