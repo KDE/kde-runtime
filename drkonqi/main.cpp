@@ -26,8 +26,11 @@ static const char *description = I18N_NOOP( "KDE Crash Handler give the user fee
 
 static const KCmdLineOptions options[] =
 {
-  {"signal <number>", I18N_NOOP("The signal number."), 0},
+  {"signal <number>", I18N_NOOP("The signal number."), "11"},
   {"appname <name>",  I18N_NOOP("Name of the application which crashed."), 0},
+  {"appversion <version>", I18N_NOOP("The version of the application which crashed."), 0},
+  {"bugaddress <address>", I18N_NOOP("The bug address to use."), 0},
+  {"programname <name>", I18N_NOOP("Translated name of the program."), 0},
   { 0, 0, 0 }
 };
 
@@ -51,12 +54,19 @@ int main( int argc, char* argv[] )
 
   // parse command line arguments
   KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
-  QCString signal = args->getOption( "signal" );
-  int signalnum = signal.toInt();
-  if (signalnum < 0) signalnum = 11;
-  QString appname = QFile::decodeName(args->getOption( "appname" ));
+  int signalnum = args->getOption( "signal" ).toInt();
 
-  Toplevel *w = new Toplevel(signalnum, appname);
+  KAboutData oldabout(args->getOption("appname"),
+		    args->getOption("programname"),
+		    args->getOption("appversion"),
+		    0,
+		    0,
+		    0,
+		    0,
+		    0,
+		    args->getOption("bugaddress"));
+
+  Toplevel *w = new Toplevel(signalnum, oldabout);
 
   return w->exec();
 }

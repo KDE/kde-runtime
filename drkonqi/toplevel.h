@@ -9,6 +9,8 @@
 #ifndef TOPLEVEL_H
 #define TOPLEVEL_H
 
+class KAboutData;
+
 #include <kdialogbase.h>
 
 class Toplevel : public KDialogBase
@@ -16,7 +18,7 @@ class Toplevel : public KDialogBase
   Q_OBJECT
 
 public:
-  Toplevel(int signal, const QString _appname, QWidget *parent = 0, const char * name = 0);
+  Toplevel(int signal, const KAboutData &_oldabout, QWidget *parent = 0, const char * name = 0);
   ~Toplevel();
 
 private:
@@ -32,8 +34,9 @@ private:
   bool showbugreport; 
   int signalnum;
 
-  QString appname;
+  KAboutData oldabout;
   QString signal;
+
   QString signaldetails;
   QString whattodohint;
   QString errordescription;

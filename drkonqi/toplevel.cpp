@@ -16,14 +16,15 @@
 #include <kconfig.h>
 #include <kglobal.h>
 #include <kstddirs.h>
+#include <kaboutdata.h>
 #include <kbugreport.h>
 
 #include "toplevel.h"
 #include "toplevel.moc"
 
-Toplevel :: Toplevel(int _signalnum, const QString _appname, QWidget *parent, const char *name)
+Toplevel :: Toplevel(int _signalnum, const KAboutData &_oldabout, QWidget *parent, const char *name)
   : KDialogBase( Plain,
-		 _appname,
+		 _oldabout.programName(),
                  User1 | Ok,
                  Ok,
                  parent,
@@ -31,15 +32,13 @@ Toplevel :: Toplevel(int _signalnum, const QString _appname, QWidget *parent, co
                  true, // modal
                  true, // separator
 		 i18n("Bug report")
-		 )
+		 ),
+    signalnum(_signalnum), oldabout(_oldabout)
 {
   QWidget *page = plainPage();
   QHBoxLayout* hbox = new QHBoxLayout(page);
   hbox->setSpacing(20);
   hbox->setAutoAdd(TRUE);
-
-  appname = _appname;
-  signalnum = _signalnum;
 
   // parse the configuration files
   readConfig();
@@ -99,9 +98,15 @@ QString Toplevel :: generateText() const
 // starting bug report
 void Toplevel :: slotUser1()
 {
-  // this doesn't work -- appdata isn't set to the old application.
+  KInstance *instance = KGlobal::_instance;
+  KGlobal::_instance = new KInstance(&oldabout);
+
   QWidget *w = new KBugReport();
   w->show();
+
+  // restore
+  delete KGlobal::_instance;
+  KGlobal::_instance = instance;
 }
 
 void Toplevel :: readConfig()
@@ -143,7 +148,7 @@ void Toplevel :: expandString(QString &str) const
   int pos = -1;
   while ( (pos = str.findRev('%', pos)) != -1 ) {
     if (str.mid(pos, 8) == QString::fromLatin1("%appname"))
-      str.replace(pos, 8, appname);
+      str.replace(pos, 8, QString::fromLatin1(oldabout.appName()));
     else if (str.mid(pos, 7) == QString::fromLatin1("%signum"))
       str.replace(pos, 7, QString::number(signalnum));
     else if (str.mid(pos, 8) == QString::fromLatin1("%signame"))
