@@ -28,6 +28,7 @@
  *****************************************************************/
 
 #include <qfile.h>
+#include <qregexp.h>
 
 #include <kprocess.h>
 #include <kdebug.h>

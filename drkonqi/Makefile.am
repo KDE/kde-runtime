@@ -1,6 +1,6 @@
 # $Id$
 
-AM_CPPFLAGS = -DQT_NO_CAST_ASCII -DQT_NO_COMPAT
+AM_CPPFLAGS = -DQT_NO_CAST_ASCII 
 
 SUBDIRS = presets pics debuggers
 
