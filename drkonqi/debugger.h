@@ -51,6 +51,7 @@ public slots:
 
 protected:
   void startDebugger();
+  bool performChecks( QString* msg );
 
   virtual void showEvent(QShowEvent *e);
 
@@ -65,6 +66,7 @@ private:
   KTextBrowser *m_backtrace;
   QPushButton * m_copyButton;
   QPushButton * m_saveButton;
+  QString m_prependText;
 };
 
 #endif

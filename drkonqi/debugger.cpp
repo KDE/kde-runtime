@@ -82,7 +82,7 @@ void KrashDebugger :: slotDone(const QString& str)
   m_status->setText(i18n("Done."));
   m_copyButton->setEnabled( true );
   m_saveButton->setEnabled( true );
-  m_backtrace->setText(str); // replace with possibly post-processed backtrace
+  m_backtrace->setText( m_prependText + str ); // replace with possibly post-processed backtrace
 }
 
 void KrashDebugger :: slotCopy()
@@ -164,9 +164,29 @@ void KrashDebugger :: showEvent(QShowEvent *e)
 void KrashDebugger :: startDebugger()
 {
   // Only start one copy
-  if (m_proctrace)
+  if (m_proctrace || !m_backtrace->text().isEmpty())
     return;
 
+  QString msg;
+  bool checks = performChecks( &msg );
+  if( !checks && !m_krashconf->disableChecks())
+  {
+    m_backtrace->setText( m_prependText +
+        i18n( "The following options are enabled:\n\n" )
+        + msg
+        + i18n( "\nAs the usage of these options is not recommended,"
+                " because they can be in rare case responsible for KDE problems, backtrace"
+                " will not be generated.\n"
+                "You need to turn these options off and reproduce"
+                " the problem again in order to get a backtrace.\n" ));
+    m_status->setText( i18n( "Backtrace will not be created."));
+    return;
+  }
+  if( !checks )
+  {
+    m_prependText += msg + '\n';
+    m_backtrace->setText( m_prependText );
+  }
   m_status->setText(i18n("Loading symbols..."));
 
   m_proctrace = new BackTrace(m_krashconf, this);
@@ -179,3 +199,17 @@ void KrashDebugger :: startDebugger()
   m_proctrace->start();
 }
 
+// this function check for "dangerous" settings, returns false
+// and message in case some of them are activated
+bool KrashDebugger::performChecks( QString* msg )
+{
+  bool ret = true;
+  KConfig kdedcfg( QString::fromLatin1( "kdedrc" ), true );
+  kdedcfg.setGroup( "General" );
+  if( kdedcfg.readBoolEntry( "DelayedCheck", false ))
+  {
+    ret = false;
+    *msg += i18n( "System configuration startup check disabled!\n" );
+  }
+  return ret;
+}

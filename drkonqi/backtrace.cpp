@@ -139,6 +139,8 @@ bool BackTrace::usefulBacktrace()
   if( !m_krashconf->removeFromBacktraceRegExp().isEmpty())
     m_strBt.replace(QRegExp( m_krashconf->removeFromBacktraceRegExp()), QString::null);
 
+  if( m_krashconf->disableChecks())
+      return true;
   // prepend and append newline, so that regexps like '\nwhatever\n' work on all lines
   QString strBt = '\n' + m_strBt + '\n';
   // how many " ?? " in the bt ?

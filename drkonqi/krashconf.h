@@ -69,6 +69,7 @@ public:
   bool showBacktrace() const { return m_showbacktrace; };
   bool showDebugger() const { return m_showdebugger && !m_debugger.isNull(); };
   bool showBugReport() const { return m_showbugreport; };
+  bool disableChecks() const { return m_disablechecks; };
   const KAboutData *aboutData() const { return m_aboutData; }
 
   void expandString(QString &str, bool shell, const QString &tempFile = QString::null) const;
@@ -90,6 +91,7 @@ private:
   bool m_showbugreport;
   bool m_startedByKdeinit;
   bool m_safeMode;
+  bool m_disablechecks;
   QString m_signalName;
   QString m_signalText;
   QString m_whatToDoText;

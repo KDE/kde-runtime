@@ -131,6 +131,7 @@ void KrashConfig :: readConfig()
     m_showbacktrace = preset.readBoolEntry("ShowBacktraceButton", true);
     m_showdebugger = preset.readBoolEntry("ShowDebugButton", true);
   }
+  m_disablechecks = preset.readBoolEntry("DisableChecks", false);
 
   bool b = preset.readBoolEntry("SignalDetails", true);
 

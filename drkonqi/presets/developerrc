@@ -146,6 +146,7 @@ SignalDetails=true
 ShowBugReportButton=true
 ShowBacktraceButton=true
 ShowDebugButton=true
+DisableChecks=true
 
 [ErrorDescription]
 Enable=true
