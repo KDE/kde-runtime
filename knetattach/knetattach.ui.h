@@ -96,6 +96,7 @@ void KNetAttach::showPage( QWidget *page )
 	    }
 	    KURL u(recent.readEntry("URL"));
 	    _host->setText(u.host());
+	    _user->setText(u.user());
 	    _path->setText(u.path());
 	    if (recent.hasKey("Port")) {
 		_port->setValue(recent.readNumEntry("Port"));
@@ -143,6 +144,7 @@ void KNetAttach::finished()
     }
 
     url.setHost(_host->text().stripWhiteSpace());
+    url.setUser(_user->text().stripWhiteSpace());
     QString path = _path->text().stripWhiteSpace();
     if (!path.startsWith("/")) {
 	path = QString("/") + path;
@@ -242,35 +244,41 @@ bool KNetAttach::updateForProtocol(const QString& protocol)
 	_useEncryption->show();
 	_portText->show();
 	_port->show();
+	_userText->show();
+	_user->show();
     } else if (protocol == "Fish") {
 	_useEncryption->hide();
 	_portText->show();
 	_port->show();
+	_userText->show();
+	_user->show();
     } else if (protocol == "FTP") {
 	_useEncryption->hide();
 	_portText->show();
 	_port->show();
+	_userText->hide();
+	_user->show();
     } else if (protocol == "SMB") {
 	_useEncryption->hide();
 	_portText->hide();
 	_port->hide();
+	_userText->hide();
+	_user->hide();
     } else {
 	_type = "";
 	return false;
     }
     return true;
 }
-// vim: ts=8 sw=4 noet
 
 
-void KNetAttach::updateFinishButtonText( bool save)
+void KNetAttach::updateFinishButtonText(bool save)
 {
-    if (save)
-    {
+    if (save) {
 	finishButton()->setText(i18n("Save && C&onnect"));
-    }
-    else
-    {
+    } else {
 	finishButton()->setText(i18n("C&onnect"));
     }
 }
+
+// vim: ts=8 sw=4 noet

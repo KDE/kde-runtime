@@ -223,7 +223,7 @@
                     <cstring>_connectionName</cstring>
                 </property>
             </widget>
-            <widget class="QSpinBox" row="4" column="1">
+            <widget class="QSpinBox" row="5" column="1">
                 <property name="name">
                     <cstring>_port</cstring>
                 </property>
@@ -242,12 +242,23 @@
                     <number>1</number>
                 </property>
             </widget>
-            <widget class="KLineEdit" row="5" column="1" rowspan="1" colspan="2">
+            <widget class="KLineEdit" row="6" column="1" rowspan="1" colspan="2">
                 <property name="name">
                     <cstring>_path</cstring>
                 </property>
             </widget>
             <widget class="QLabel" row="3" column="0">
+                <property name="name">
+                    <cstring>_userText</cstring>
+                </property>
+                <property name="text">
+                    <string>&amp;User:</string>
+                </property>
+                <property name="buddy" stdset="0">
+                    <cstring>_user</cstring>
+                </property>
+            </widget>
+            <widget class="QLabel" row="4" column="0">
                 <property name="name">
                     <cstring>textLabel1</cstring>
                 </property>
@@ -258,7 +269,7 @@
                     <cstring>_host</cstring>
                 </property>
             </widget>
-            <widget class="QLabel" row="4" column="0">
+            <widget class="QLabel" row="5" column="0">
                 <property name="name">
                     <cstring>_portText</cstring>
                 </property>
@@ -271,6 +282,19 @@
             </widget>
             <widget class="KLineEdit" row="3" column="1" rowspan="1" colspan="2">
                 <property name="name">
+                    <cstring>_user</cstring>
+                </property>
+                <property name="sizePolicy">
+                    <sizepolicy>
+                        <hsizetype>7</hsizetype>
+                        <vsizetype>0</vsizetype>
+                        <horstretch>10</horstretch>
+                        <verstretch>0</verstretch>
+                    </sizepolicy>
+                </property>
+            </widget>
+            <widget class="KLineEdit" row="4" column="1" rowspan="1" colspan="2">
+                <property name="name">
                     <cstring>_host</cstring>
                 </property>
                 <property name="sizePolicy">
@@ -282,7 +306,7 @@
                     </sizepolicy>
                 </property>
             </widget>
-            <widget class="QLabel" row="5" column="0">
+            <widget class="QLabel" row="6" column="0">
                 <property name="name">
                     <cstring>textLabel3</cstring>
                 </property>
@@ -293,7 +317,7 @@
                     <cstring>_path</cstring>
                 </property>
             </widget>
-            <spacer row="8" column="0" rowspan="1" colspan="3">
+            <spacer row="9" column="0" rowspan="1" colspan="3">
                 <property name="name">
                     <cstring>spacer5</cstring>
                 </property>
@@ -310,7 +334,7 @@
                     </size>
                 </property>
             </spacer>
-            <widget class="QCheckBox" row="6" column="1" rowspan="1" colspan="2">
+            <widget class="QCheckBox" row="7" column="1" rowspan="1" colspan="2">
                 <property name="name">
                     <cstring>_createIcon</cstring>
                 </property>
@@ -321,7 +345,7 @@
                     <bool>true</bool>
                 </property>
             </widget>
-            <widget class="QCheckBox" row="7" column="1" rowspan="1" colspan="2">
+            <widget class="QCheckBox" row="8" column="1" rowspan="1" colspan="2">
                 <property name="name">
                     <cstring>_useEncryption</cstring>
                 </property>
@@ -338,6 +362,12 @@
         <signal>toggled(bool)</signal>
         <receiver>_recentConnectionName</receiver>
         <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>_user</sender>
+        <signal>textChanged(const QString&amp;)</signal>
+        <receiver>KNetAttach</receiver>
+        <slot>updateParametersPageStatus()</slot>
     </connection>
     <connection>
         <sender>_host</sender>
@@ -368,6 +398,7 @@
     <tabstop>_webfolder</tabstop>
     <tabstop>_recentConnectionName</tabstop>
     <tabstop>_connectionName</tabstop>
+    <tabstop>_user</tabstop>
     <tabstop>_host</tabstop>
     <tabstop>_port</tabstop>
     <tabstop>_path</tabstop>
