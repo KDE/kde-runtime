@@ -1,8 +1,6 @@
 /*****************************************************************
  * drkonqi - The KDE Crash Handler
  *
- * $Id$
- *
  * Copyright (C) 2000-2003 Hans Petter Bieker <bieker@kde.org>
  *
  * Redistribution and use in source and binary forms, with or without

@@ -1,4 +1,3 @@
-# $Id$
 
 AM_CPPFLAGS = -DQT_NO_CAST_ASCII
 
