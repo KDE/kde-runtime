@@ -135,6 +135,7 @@ void KNetAttach::finished()
 	url.setPort(_port->value());
     } else if (_type == "Fish") {
 	url.setProtocol("fish");
+	url.setPort(_port->value());
     } else if (_type == "FTP") {
 	url.setProtocol("ftp");
 	url.setPort(_port->value());
