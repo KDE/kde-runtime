@@ -112,6 +112,17 @@ void KrashDebugger :: slotSave()
     if (!filename.isEmpty())
     {
       QFile f(filename);
+      
+      if (f.exists()) {
+        if (KMessageBox::Cancel == 
+            KMessageBox::warningContinueCancel( 0,
+              i18n( "A file named \"%1\" already exists. "
+                    "Are you sure you want to overwrite it?" ).arg( filename ),
+              i18n( "Overwrite File?" ),
+              i18n( "&Overwrite" ) ))
+            return;       
+      }           
+      
       if (f.open(IO_WriteOnly))
       {
         QTextStream ts(&f);
