@@ -114,7 +114,7 @@ Comment[vi]=Các thiết lập dành cho người phát triển
 Comment[xh]=Izicwangciso ezikhetiweyo zababhekisi phambili
 Comment[zh_CN]=开发人员偏好的设置
 Comment[zh_TW]=開發人員的偏好設定
-Comment[zu]=Izilungiselelo ezincanyelwa abathuthukisi
+Comment[zu]=Izilungiselelo ezincanyelwayo zabathuthukisi
 
 SignalDetails=true
 ShowBugReportButton=true
@@ -171,7 +171,7 @@ Name[vi]=Chương trình %progname (%appname), pid %pid crash và gây ra tín h
 Name[xh]=Isicelo %progname (%appname), pid %pid, ilalhekile kwaye ibangele uphawu %signum (%signame).
 Name[zh_CN]=程序 %progname (%appname)，进程号 %pid，崩溃并导致信号 %signum (%signame)。
 Name[zh_TW]=此應用程式 %progname (%appname), pid %pid 不正常結束，產生信號 %signum (%signame)。
-Name[zu]=I-%progname yomyaleli wekhompyutha (%appname), pid %pid, iphahlazekile futhi yabanga uphawu %signum (%signame).
+Name[zu]=I-%progname yomyaleli (%appname), pid %pid, iphahlazekile futhi yabanga uphawu %signum (%signame).
 
 [WhatToDoHint]
 Enable=true
@@ -219,7 +219,7 @@ Name[sv]=Du kanske vill fixa ditt program. Titta under fliken bakåtspårning.
 Name[ta]=¿£í¸û þó¿¢Ã¨Äî ºÃ¢ ¦ºöÂ Å¢ÕõÀ¢É¡ø, À¢ýÍÅðÎò ¾ð¼¨Äô À¡÷ì¸×õ.
 Name[th]=คุณอาจต้องการแก้ไขโปรแกรมให้ทำงานได้ปกติ โปรดดูที่แท็บติดตามย้อนหลัง
 Name[tr]=Programınızdaki sorunu çözmek isterseniz hata ayıklayıcı sekmesine bakın.
-Name[uk]=Ви, можливо, хочете поладити Вашу програму. Дивіться закладку зворотного трасування.
+Name[uk]=Ви, можливо, хочете поладити Вашу програму. Дивіться вкладку зворотного трасування.
 Name[ven]=Ni nga di toda u lugisa mbekanyamushumo yanu. Lavhelesani kha dzi thebu dza murahu.
 Name[vi]=Bạn có thể cần phải sửa chương trình nàỵ Xin xem qua backtrace tab. 
 Name[xh]=Ungafuna ukulungisa udweliso lwakho lwenkqubo. Thatha ujongo kukhangelo lwasemva lwesithuba.
@@ -381,7 +381,7 @@ Comment[is]=Villa í fleytitölureikningum.
 Comment[it]=Eccezione virgola mobile.
 Comment[ja]=浮動小数点の例外。
 Comment[ko]=부동 소수를 처리 못했습니다.
-Comment[lt]=Plaukiojančio taško klaida
+Comment[lt]=Slankaus kablelio klaida
 Comment[lv]=Peldošā punkta izņēmums.
 Comment[mk]=Исклучок при аритметиката со подвижна запирка.
 Comment[nb]=Flyttallsunntak.
@@ -406,6 +406,7 @@ Comment[vi]=Dấu chấm không hợp lềE.
 Comment[xh]=Amaxabiso okudada akhethekileyo.
 Comment[zh_CN]=浮点计算异常。
 Comment[zh_TW]=浮點計算異常。
+Comment[zu]=Okwahlukile kwephuzu elintantayo.
 
 [11]
 Name=SIGSEGV
@@ -463,7 +464,7 @@ Comment[vi]=Tham khảo memory không hợp lềE
 Comment[xh]=Uthelekiso lwenkumbulo engasebenziyo.
 Comment[zh_CN]=无效的内存引用。
 Comment[zh_TW]=無效的記憶體違規使用
-Comment[zu]=Uthelekiso lomqondo olungasebenzi
+Comment[zu]=Okuqondiwe kwenkumbulo okungasebenzi.
 
 [unknown]
 Name=Unknown
@@ -521,7 +522,7 @@ Name[uk]=Невідомий
 Name[ven]=Zwisadivhei
 Name[vi]=Không biết 
 Name[wa]=Nén cnoxhou
-Name[xh]=Ayaziwa
+Name[xh]=Engaziwayo
 Name[zh_CN]=未知
 Name[zh_TW]=未知
 Name[zu]=Okungaziwa
@@ -539,6 +540,7 @@ Comment[el]=Αυτό το σήμα είναι άγνωστο.
 Comment[eo]=Ne konata signalo.
 Comment[es]=Señal desconocida.
 Comment[et]=Tundmatu signaal.
+Comment[eu]=Seinale hau ezezaguna da.
 Comment[fa]=سیگنال ناشناس است
 Comment[fi]=Tämä signaali on tuntematon
 Comment[fo]=Hetta báknið er ókent.
@@ -567,6 +569,7 @@ Comment[th]=ไม่รู้จักสัญญาณนี้
 Comment[tr]=Bilinmeyen sinyal
 Comment[uk]=Цей сигнал є невідомим
 Comment[ven]=Luswayo ulu alu divhei.
+Comment[xh]=Oluphawu olungaziwayo.
 Comment[zh_CN]=此信号未知。
 Comment[zh_TW]=未知的信號。
 Comment[zu]=Lolu phawu alwaziwa

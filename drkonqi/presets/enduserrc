@@ -51,10 +51,10 @@ Name[tr]=Son kullanıcı
 Name[uk]=Кінцевий користувач
 Name[ven]=U fhedza ha Mushumisi
 Name[vi]=End user 
-Name[xh]=Phelisa umsebenzisi
+Name[xh]=Umsebenzisi wokugqibela
 Name[zh_CN]=普通用户
 Name[zh_TW]=一般使用者
-Name[zu]=Phetha umsebenzisi
+Name[zu]=Umsebenzisi wokugcina
 Comment=Settings preferred for end users
 Comment[af]=Instellings verkies vir einde gebruikers
 Comment[ar]=الضبط المفضل لدى المستخدم العادي
@@ -108,9 +108,10 @@ Comment[tr]=Son kullanıcılar için tercih edilen ayarlar
 Comment[uk]=Установки переважно для кінцевих користувачів
 Comment[ven]=Dzudzanyo dzi shumisesiwaho nga Vhashumisi.
 Comment[vi]=Thiết lập được ưa thích dành cho người dùng 
-Comment[xh]=Izicwangciso zabasenzisi besiphelo abakhetiweyo
+Comment[xh]=Izicwangciso ezikhethwayo zomsebenzisi osekugqhibeleni
 Comment[zh_CN]=普通用户偏好的设置
 Comment[zh_TW]=一般使用者的偏好設定
+Comment[zu]=Izilungiselelo ezincanyelwayo zabasebenzisi bokugcina
 
 SignalDetails=true
 ShowBacktraceButton=true
@@ -171,10 +172,9 @@ Name[tr]= %progname (%appname) uygulaması çöktü ve %signum (%signame) sinyal
 Name[uk]=Програма %progname (%appname) дала збій та викликала сигнал %signum (%signame).
 Name[ven]=Apulikhesheni ya %progdzina(%appdzina) yo tshinyadzhwa ya dovha ya vhanga luswayo %signum (%signame).
 Name[vi]=Chương trình %progname (%appname) bềEvỡ(crash) và gây ra tín hiệu  %signum (%signame). 
-Name[xh]=Isicelo %progname (%appname) ilalhekile kwaye yenze uphawu %signum (%signame).
 Name[zh_CN]=程序 %progname (%appname) 已崩溃，导致信号 %signum (%signame)。
 Name[zh_TW]=此應用程式 %progname (%appname) 不正常結束，產生信號 %signum (%signame)。
-Name[zu]=I-%progname yomyaleli wekhompyutha (%appname), iphahlazekile futhi yabanga uphawu %signum (%signame).
+Name[zu]=I-%progname yomyaleli (%appname), iphahlazekile futhi yabanga uphawu %signum (%signame).
 
 [WhatToDoHint]
 Enable=true
@@ -231,7 +231,7 @@ Name[vi]=Bạn nên gửi một bản báo cáo lỗi tới tác giả. Xin kèm
 Name[xh]=Ungafuna ukuthumela ingxelo yebug kumbhali. Nceda quka ulwazi kangangoko kusenzeka, okanye amaxwebhu angawo. Ukuba unendlela yokuvelisa kwakhona imposiso, quka noku.
 Name[zh_CN]=您可能希望发送一个错误报告给作者。请尽可能提供详细的信息，比如当时程序使用的文档。如果您有办法重现错误，请同时提供这样的方法。
 Name[zh_TW]=您可能希望發送一個錯誤報告給作者。請盡可能提供詳細的資訊，比如當時程式使用的文件。如果您有辦法重現錯誤，請同時提供這樣的方法。
-Name[zu]=Ungafuna ukuthumela umbiko wamagciwane kumbhali. Siza ufake ulwazi oluningi ngokungenzeka, noma amadokhumenti angempela. Uma unendlela yokuphinda uliveze iphutha, ifake nayo.
+Name[zu]=Ungafuna ukuthumela umbiko wegciwane kumbhali. Siza ufake ulwazi oluningi ongakwazi ukulufaka, mhlawumbe ushicilelo lokuqala. Uma unendlela yokuphinda uliveze iphutha, ifake nayo.
 
 [4]
 Name=SIGILL
@@ -291,7 +291,7 @@ Comment[vi]=Một chương trình nhận hầu hết các tín hiệu SIGILL vì
 Comment[xh]=Isicelo esifumana i SIGILL uphawu enxa yegciwane kwi sicelo. Isicelo sicelwe ukuba sigcine amaxwebhu aso.
 Comment[zh_CN]=多数情况下，一个程序由于本身的错误会收到 SIGILL 信号。程序被要求保存它的文档。
 Comment[zh_TW]=多數情況下，一個程式由於本身的錯誤會收到 SIGILL 信號。程式會被要求保存它的文件。
-Comment[zu]=Umyaleli uthola kakhulu uphawu lwe-SIGILL ngenxa yegciwane elikumyaleli wekhompyutha. Umyaleli uceliwe ukuba agcine amadokhyumenti akhe.
+Comment[zu]=Umyaleli uthola kakhulu uphawu lwe-SIGILL ngenxa yegciwane elikumyaleli. Umyaleli ucelwe ukuba agcine ushicilelo lwakhe.
 
 [6]
 Name=SIGABRT
@@ -346,10 +346,10 @@ Comment[tr]=Bir uygulama, programdaki bir hata yüzünden bir iç tutarsızlık 
 Comment[uk]=Програма завершується з сигналом SIGABRT, коли знайдена внутрішня несумісність, викликана помилкою у програмі.
 Comment[ven]==Apulikhesheni i fhela nga luswayo lwa SIGABRT musi i tshi sedzulusa mifhirifhiri ya nga mgomu yo vhangwaho nga baga kha mbekanyamushumo.
 Comment[vi]= Một chương trình bềEkết liềE(terminate) với một tín hiệu SIGABRT khi nó tìm ra một mâu thuẩn nội bềEgây ra bởi lỗi của chương trình. 
-Comment[xh]=Isicelo sicinywa ne SIGABRT uphawu xz sibona ukungahambisalani kwangaphakathi okwenziwa ligciwane kwinkqubo.
+Comment[xh]=Isicelo sicinywa ngophawu lwe SIGABRT xa sibona ukungahambisalani kwangaphakathi okwenziwa ligciwane kwinkqubo.
 Comment[zh_CN]=程序在检测到缺陷引起的内部不一致时，以 SIGABRT 信号中止。
 Comment[zh_TW]=程式偵測發生到內部錯誤時，以 SIGABRT 信號中止。
-Comment[zu]=Umyaleli wekhompyutha unqamuka ngophawu lwe-SIGABRT uma ethola ukungahambisani ngaphakathi okubangwe igciwane elisohlelweni lwemisebenzi.
+Comment[zu]=Umyaleli wekhompyutha unqamuka ngophawu lwe-SIGABRT uma ecosha ukungahambisani kwangaphakathi okubangwe igciwane elisohlelweni lwemisebenzi.
 
 [8]
 Name=SIGFPE
@@ -406,10 +406,10 @@ Comment[tr]=Uygulamadaki bir hata nedeniyle, uygulamalar çok kez SIGEPE sinyali
 Comment[uk]=Програма здебільшого отримує сигнал SIGFPE завдяки помилці у програмі. Програмі було запропоновано зберегти документи.
 Comment[ven]=Apulikhesheni i anzela u wana luswayo lwa SIGFPE nga nthani ha baga kha apulifikhesheni. Apulifikhesheni yo vhudziswa u vhulunga manwalwa ayo.
 Comment[vi]=Có một chương trình nhận hầu hết các tìn hiệu SIGFPE vì trong chương trình có lỗị Chương trình đòi hỏi bạn phải sao luư tài liệụ 
-Comment[xh]=Isicelo sifumana i SIGFPE uphawu ngenxa ye gciwane kwisicelo. Isicelo sicelwe ukuba sigcine 
+Comment[xh]=Isicelo sifumana i SIGFPE uphawu ngenxa ye gciwane kwisicelo. Isicelo sicelwe ukuba sigcine amaxwebhu ayo.
 Comment[zh_CN]=大多数情况下，接收到 SIGFPE 信号是由于程序的缺陷。程序被要求保存它的文档。
 Comment[zh_TW]=大多數情況下，接收到 SIGFPE 信號是由於程式的錯誤。程式被要求保存它的文件。
-Comment[zu]=Umyaleli wekhompyutha uthola kakhulu uphawu lwe-SIGFPE ngenxa yegciwane elisohlwlweni lwemisebenzi. Umyaleli ucelwe ukuba agcine amadokhyumenti akhe.
+Comment[zu]=Umyaleli wekhompyutha uthola kakhulu uphawu lwe-SIGFPE ngenxa yegciwane elikumyaleli. Umyaleli ucelwe ukuba agcine ushicilelo lwakhe.
 
 [11]
 Name=SIGSEGV
@@ -466,10 +466,10 @@ Comment[tr]=Uygulamadaki bir hata nedeniyle, uygulamalar çok kez SIGSEGV sinyal
 Comment[uk]=Програма здебільшого отримує сигнал SIGSEGV завдяки помилці у програмі. Програмі було запропоновано зберегти документи.
 Comment[ven]=Apulifikhesheni i anzela u wana luswayo lwa SIGSEGV nga nthani ha baga kha apulifikhesheni. Apulifikhesheni yo humbelwa u vhulunga manwalwa ayo.
 Comment[vi]=Có một chương trình nhận hầu hết các tìn hiệu SIGSEGV vì trong chương trình có lỗị Chương trình đòi hỏi bạn phải sao luư tài liệụ
-Comment[xh]=Isicelo esifumana i SIGSEGV uphawu ngenxa ye gciwane kwisicelo. UIsicelo siceliwe ukuba sigcine amaxwebhu aso.
+Comment[xh]=Isicelo esifumana i SIGSEGV uphawu ngenxa yegciwane. Isicelo siceliwe ukuba sigcine amaxwebhu aso.
 Comment[zh_CN]=大多数情况下，接收到 SIGSEGV 信号是由于程序的缺陷。程序被要求保存它的文档。
 Comment[zh_TW]=大多數情況下，接收到 SIGSEGV 信號是由於程式的錯誤。程式被要求保存它的文件。
-Comment[zu]=Isicelo sithola kakhulu uphawu lwe SIGSEGV ngokwebug okuyisicelo. Isicelo sacelwa ukuba sigcine amadokhumenti aso.
+Comment[zu]=Umyaleli ithola kakhulu uphawu lwe-SIGSEGV ngenxa yegciwane elikumyaleli. Umyaleli ucelwe ukuba agcine ushicilelo lwakhe.
 
 [unknown]
 Name=Unknown
@@ -527,7 +527,7 @@ Name[uk]=Невідомий
 Name[ven]=Zwisadivhei
 Name[vi]=Không biết 
 Name[wa]=Nén cnoxhou
-Name[xh]=Ayaziwa
+Name[xh]=Engaziwayo
 Name[zh_CN]=未知
 Name[zh_TW]=未知
 Name[zu]=Okungaziwa
@@ -578,7 +578,7 @@ Comment[ru]=Неизвестный сигнал
 Comment[sk]=Prepáčte, nepoznám tento signál.
 Comment[sl]=Žal je ta signal neznan.
 Comment[sr]=Izvinite, ovaj signal mi nije poznat.
-Comment[sv]=Tyvärr, känner inte till den här signalen.
+Comment[sv]=Känner inte till den här signalen.
 Comment[ta]=ÁýÉ¢ì¸×õ, þî ¨º¨¸ ±ÉìÌ ¦¾Ã¢Â¡¾Ð.
 Comment[th]=ขออภัย ไม่รู้จักหมายเลขสัญญาณนี้
 Comment[tr]=Üzgünüm, bu sinyali tanımıyorum.
