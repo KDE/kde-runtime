@@ -252,6 +252,7 @@ Comment[ja]=アプリケーションはプログラムのバグにより起こ�
 Comment[ko]=응용 프로그램이 벌레로 인해 안에서 무언가 일치하지 않다는 사실이 발견되어 SIGABRT 신호와 함께 끝나버렸습니다.
 Comment[lt]=Programa baigia darbą dėl SIGABRT signalo kai ji pastebi vidinį prieštaravimą dėl klaidos programoje.
 Comment[lv]=Aplikācijas tiek pārtraukta ar SIGABRT signālu, kad tā detektē iek�ējas nekonsistences ko izsauku�as kļūdas programmā.
+Comment[mk]=Една апликација се исклучува со SIGABRT сигналот кога ќе детектира внатрешна неконзистентност предизвикана од бубачка во програмот.
 Comment[nl]=Een programma eindigt met een SIGABRT-signaal wanneer het een interne inconsistensie detecteerd, veroorzaakt door een fout in het programma.
 Comment[no]=Et program avslutter med signalet SIGABRT når det oppdager en intern inkonsistens på grunn av en feil i programmet.
 Comment[no_NY]=Eit program avsluttar med signalet SIGABRT når det oppdagar ein intern inkonsistens grunna ein feil i programmet.
