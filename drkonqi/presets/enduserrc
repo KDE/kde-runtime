@@ -213,6 +213,7 @@ Name[pt]=Você poderá querer enviar um relatório de erro para esta aplicação
 Name[pt_BR]=Você pode querer mandar um relatório de erro ao autor. Por favor, verifique se ele está listado em http://bugs.kde.org, caso contrário, envie um e-mail ao autor. Inclua o máximo de informação possível, talvez até os documentos originais. Se você sabe como reproduzir o erro, inclua essa informação também.
 Name[sr]=Можда бисте желели да пошаљете извештај о грешци за овај програм. Проверите да ли се налази на http://bugs.kde.org, иначе пошаљите пошту аутору. Молим вас укључите што је више података могуће, можда оригиналне документе. Ако имате начин да поновите ову грешку укључите и то такође.
 Name[sv]=Du kanske vill skicka en felrapport för det här programmet. Kontrollera om det finns listat på http://bugs.kde.org, skicka annars e-post till upphovsmannen. Bifoga så mycket information som möjligt, t ex originaldokumenten. Om du kan återupprepa felet, så beskriv även hur du gör det.
+Name[tr]=Bu uygulama için yazara bir hata raporu göndermek isterseniz, lütfen mümkün olduğunca fazla bilgi verin ve varsa orijinal belgeleri ekleyin. Eğer bu hatayı tekrar ortaya çıkarabilmenin bir yolu varsa, bunu da belirtin. 
 Name[xx]=xxYou might want to send a bug report for this application. Check if it's listed on http://bugs.kde.org, otherwise mail the author. Please include as much information as possible, maybe the original documents. If you have a way to reproduce the error, include this also.xx
 
 [4]
@@ -387,7 +388,7 @@ Comment[nl]=Een programma ontvangt meestal een SIGFPE-signaal vanwege een fout i
 Comment[nn]=Eit program får oftast signalet SIGFPE som følgje av ein feil i programmet. Programmet vart spurd om å lagra dokumenta sine.
 Comment[nso]=Tshomiso gantshi e amogela tshwaelo ya SIGFPE ka lebaka la bug katshumisong. Tshumiso e kgopetswe go boloka ditokomane tsa yona.
 Comment[oc]=Ua aplicacion recep lo sinhal SIGFPE dèut la major part dèus cops a un error de l'aplicacion. E li demana que salva los sens documents.
-Comment[pl]=Aplikacja otrzymuje zwykle sygnał SIGFPE z powodu błędu w niej samej.Aplikacja miała możliwość zapisania dokumentów.
+Comment[pl]=Aplikacja otrzymuje zwykle sygnał SIGFPE z powodu błędu w niej samej. Aplikacja miała możliwość zapisania dokumentów.
 Comment[pt]=Uma aplicação normalmente recebe o sinal SIGFPE devido a um erro interno. Foi pedido à aplicação que gravasse os seus documentos.
 Comment[pt_BR]=Uma aplicação costuma receber um sinal SIGFPE quando tem erros. A aplicação foi instruída a salvar seus documentos.
 Comment[ro]=În general o aplicaţie primeşte semnalul SIGFPE datorită unei erori interne. Aplicaţiei i s-a cerut să îşi salveze documentele.
@@ -453,7 +454,7 @@ Comment[nl]=Een programma ontvangt meestal een SIGSEGV-signaal vanwege een fout 
 Comment[nn]=Eit program får oftast signalet SIGSEGV som følgje av ein feil i programmet. Programmet vart spurd om å lagra dokumenta sine.
 Comment[nso]=Tshomiso gantshi e amogela tshwaelo ya SIGEGV ka lebaka la bug ka tshumisong. Tshumiso e kgopetswe go boloka ditokomane tsa yona.
 Comment[oc]=Ua aplicacion recep lo sinhal SIGSEGV dèut la major part dèus cops a un error de l'aplicacion. E li demana que salva los sens documents.
-Comment[pl]=Aplikacja otrzymuje zwykle sygnał SIGSEGV z powodu błędu w niej samej.Aplikacja miała możliwość zapisania dokumentów.
+Comment[pl]=Aplikacja otrzymuje zwykle sygnał SIGSEGV z powodu błędu w niej samej. Aplikacja miała możliwość zapisania dokumentów.
 Comment[pt]=Uma aplicação normalmente recebe o sinal SIGSEGV devido a um erro interno. Foi pedido à aplicação que gravasse os seus documentos.
 Comment[pt_BR]=Uma aplicação costuma receber um sinal SIGSEGV quando tem erros. A aplicação foi instruída a salvar seus documentos.
 Comment[ro]=În general o aplicaţie primeşte semnalul SIGSEGV datorită unei erori interne. Aplicaţiei i s-a cerut să îşi salveze documentele.
