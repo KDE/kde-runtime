@@ -63,28 +63,39 @@ bool KTestMenu::initialize( KIO::RenameDlg_Mode mode, const QString &_src, const
 		  time_t ctimeSrc,
 		  time_t ctimeDest,
 		  time_t mtimeSrc,
-		      time_t mtimeDest ) {
- QGridLayout *lay = new QGridLayout(this, 3, 3, 5  );
+                  time_t mtimeDest ) {
+ QGridLayout *lay = new QGridLayout(this, 4, 3, 5);
  if( mode & KIO::M_OVERWRITE ){
-   QLabel *label_src = new QLabel(this);
-   QLabel *label_dst = new QLabel(this);
-   QLabel *label_ask = new QLabel(this);
-
+   QLabel *label_head = new QLabel(this);
+   QLabel *label_src  = new QLabel(this);
+   QLabel *label_dst  = new QLabel(this);
+   QLabel *label_ask  = new QLabel(this);
+kdDebug() << "START" << endl;
+   QString sentence1;
+   if (mtimeDest < mtimeSrc)
+      sentence1 = i18n("An older file named '%1' already exists.\n").arg(_dest);
+   else if (mtimeDest == mtimeSrc)
+      sentence1 = i18n("A similar file named '%1' already exists.\n").arg(_dest);
+   else
+      sentence1 = i18n("A newer file named '%1' already exists.\n").arg(_dest);
+   label_head->setText(sentence1);
    label_src->setText(i18n("Source File"));
    label_dst->setText(i18n("Existing File"));
-   label_ask->setText(i18n("You want to overwrite the file on the left with the one on the right?") );
+   label_ask->setText(i18n("Would you like to replace the existing file with the one on the right?") );
+   label_head->adjustSize();
    label_src->adjustSize();
    label_dst->adjustSize();
    label_ask->adjustSize();
-   lay->addWidget(label_src, 0, 2, Qt::AlignLeft);
-   lay->addWidget(label_dst, 0, 0, Qt::AlignLeft);
-   lay->addMultiCellWidget(label_ask, 3, 3, 0, 2,  Qt::AlignHCenter  );
+   lay->addMultiCellWidget(label_head, 0, 0, 0, 2, Qt::AlignLeft);
+   lay->addWidget(label_dst, 1, 0, Qt::AlignLeft);
+   lay->addWidget(label_src, 1, 2, Qt::AlignLeft);
+   lay->addMultiCellWidget(label_ask, 3, 3, 0, 2,  Qt::AlignLeft);
    adjustSize();
  }
  AudioPreview *left= new AudioPreview(this, "Preview Left", _dest, mimeDest );
  AudioPreview *right = new AudioPreview( this, "Preview Right", _src, mimeSrc);
- lay->addWidget(left, 1, 0 );
- lay->addWidget(right, 1, 2 );
+ lay->addWidget(left, 2, 0 );
+ lay->addWidget(right, 2, 2 );
  adjustSize();
  return true;
 }

@@ -16,10 +16,10 @@
    the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
    Boston, MA 02111-1307, USA.
 */
-
+#include <kdebug.h>
 #include <kfilemetainfo.h>
-#include <kiconloader.h>
 #include <klocale.h>
+#include <kmimetype.h>
 #include <kurl.h>
 #include <qvbox.h>
 #include <qlabel.h>
@@ -33,7 +33,7 @@ AudioPreview::~AudioPreview()
 AudioPreview::AudioPreview( QWidget *parent, const char *name, const QString &fileName, const QString &mimeType)
   : QVBox( parent, name )
 {
-  KIconLoader icon;
+kdDebug() << "REACHED #1 #################" << endl;
   pic = 0;
   description = 0;
   KURL url( fileName );
@@ -49,8 +49,9 @@ AudioPreview::AudioPreview( QWidget *parent, const char *name, const QString &fi
       path = fileName;
     }
     KFileMetaInfo info(path);
+kdDebug() << "REACHED #2 ###############" << endl;
     pic = new QLabel(this);
-    pic->setPixmap(icon.loadIcon("mime_audio", KIcon::Desktop, 64));
+    pic->setPixmap(KMimeType::pixmapForURL(fileName));
     pic->adjustSize();
     QString desc;
     if (mimeType == "audio/x-mp3" || mimeType == "audio/x-ogg"){
@@ -69,7 +70,7 @@ AudioPreview::AudioPreview( QWidget *parent, const char *name, const QString &fi
     if (length%60 < 10)
       desc.append("0");
     desc.append(QString("%1\n").arg(length%60, 0, 10));
-    description = new QLabel( this );
+    description = new QLabel(this);
     description->setText(desc);
   } else if( !url.isLocalFile() ) {
     pic = new QLabel(this );
