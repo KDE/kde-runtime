@@ -27,7 +27,6 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************/
 
-#include <qtextview.h>
 #include <qlayout.h>
 #include <qhbox.h>
 #include <qlabel.h>
@@ -40,6 +39,7 @@
 #include <kmessagebox.h>
 #include <kpushbutton.h>
 #include <kstdguiitem.h>
+#include <ktextbrowser.h>
 
 #include "backtrace.h"
 #include "krashconf.h"
@@ -54,7 +54,7 @@ KrashDebugger :: KrashDebugger (const KrashConfig *krashconf, QWidget *parent, c
   QVBoxLayout *vbox = new QVBoxLayout( this, 0, KDialog::marginHint() );
   vbox->setAutoAdd(TRUE);
 
-  m_backtrace = new QTextView(this);
+  m_backtrace = new KTextBrowser(this);
   m_backtrace->setTextFormat(Qt::PlainText);
   m_backtrace->setFont(KGlobalSettings::fixedFont());
 

@@ -30,10 +30,10 @@
 #ifndef DEBUGGER_H
 #define DEBUGGER_H
 
-class QTextView;
 class QLabel;
 class QPushButton;
 class KrashConfig;
+class KTextBrowser;
 class BackTrace;
 
 #include <qwidget.h>
@@ -64,7 +64,7 @@ private:
   const KrashConfig *m_krashconf;
   BackTrace *m_proctrace;
   QLabel *m_status;
-  QTextView *m_backtrace;
+  KTextBrowser *m_backtrace;
   QPushButton * m_copyButton;
   QPushButton * m_saveButton;
 };
