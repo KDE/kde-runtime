@@ -136,6 +136,7 @@ Name[nl]=Het programma %progname (%appname), %pid is gecrashed en gaf het volgen
 Name[pt]=A aplicação %progname (%appname) com pid %pid estoirou e enviou o sinal %signum (%signame).
 Name[pt_BR]=A aplicação %progname (%appname), com número %pid, terminou anormalmente e causou o sinal %signum (%signame).
 Name[sk]=Aplikácia %progname (%appname), pid %pid spadla. Chyba bola spôsobená signálom %signum (%signame).
+Name[sl]=Program %progname (%appname), pid %pid, se je sesul in javil signal %signum (%signame).
 Name[sv]=Programmet %progname (%appname), pid %pid, kraschade och orsakade signalen %signum (%signame).
 Name[ta]=¿¢Ãø %progname (%appname), ±ñ %pid, ÓÈ¢óÐ %signum (%signame) ¨º¨¸¨Âò ¾ó¾Ð.
 Name[xh]=Isicelo %progname (%appname) , pid %pid, ilalhekile kwaye ibangele uphawu %signum (%signame).
