@@ -58,10 +58,6 @@ Toplevel :: Toplevel(const KrashConfig *krashconf, QWidget *parent, const char *
 		 ),
     m_krashconf(krashconf), bugreport(0)
 {
-	int i;
-
-	qDebug( "%d", i );
-
   QHBox *page = addHBoxPage(i18n("General"));
   page->setSpacing(20);
 
@@ -72,9 +68,11 @@ Toplevel :: Toplevel(const KrashConfig *krashconf, QWidget *parent, const char *
   QPixmap pix(locate("appdata", QString::fromLatin1("pics/konqi.png")));
   lab->setPixmap(pix);
 
-  new QLabel( generateText(), page );
+  QLabel * info = new QLabel(generateText(), page);
+  info->setMinimumSize(info->sizeHint());
 
-  if (m_krashconf->showBacktrace()) {
+  if (m_krashconf->showBacktrace())
+  {
     page = addHBoxPage(i18n("Backtrace"));
     new KrashDebugger(m_krashconf, page);
   }
