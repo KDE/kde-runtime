@@ -151,6 +151,7 @@ Name[lv]=Aplikācija %progname (%appname), pid %pid avarējusi un izsaukusi sign
 Name[mt]=Il-programm %progname (%appname), pid %pid, ikkraxxja u kkawża s-sinjal %signum (%signame).
 Name[nl]=Het programma %progname (%appname), %pid heeft een ongeldige bewerking gemaakt en wordt afgesloten. Het gaf het volgende signaal: %signum (%signame).
 Name[nn]=Programmet %progname (%appname), pid %pid, krasja og gav signalet %signum (%signame).
+Name[pl]=Program %progname (%appname), id procesu %pid, uległ awarii, wywołując sygnał %signum (%signame).
 Name[pt]=A aplicação %progname (%appname) com pid %pid estoirou e enviou o sinal %signum (%signame).
 Name[pt_BR]=A aplicação %progname (%appname), com número %pid, terminou anormalmente e causou o sinal %signum (%signame).
 Name[ro]=Aplicaţia %progname (%appname), pid %pid s-a prăbuşit şi a generat semnalul %signum (%signame).
