@@ -129,6 +129,7 @@ Name[fi]=Sovellus %progname (%appname), pid %pid kaatui ja antoi signaalin %sign
 Name[fr]=L'application %progname (%appname), de numéro %pid, s'est terminée anormalement et a provoqué le signal %signum (%signame).
 Name[he]=היישום %progname (%appname), זיהוי תהליך %pid, התרסק וגרם לאיתות %signum (%signame).
 Name[hu]=A(z) %progname (%appname) alkalmazás (azonosító=%pid) lefagyott és %signum (%signame) szignált okozott.
+Name[it]=L'applicazione %progname (%appname), pid %pid, è andata in crash e ha causato il segnale %signum (%signame).
 Name[ko]=프로세서 아이디가 %pid이고 이름이 %progname (%appname)인 프로그램이 다음과 같은 신호를 보내면서 죽었습니다 : %signum (%signame)
 Name[lv]=Aplikācija %progname (%appname), pid %pid avarējusi un izsaukusi signālu %signum (%signame).
 Name[nl]=Het programma %progname (%appname), %pid is gecrashed en gaf het volgende signaal: %signum (%signame).
