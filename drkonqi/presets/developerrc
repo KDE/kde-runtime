@@ -114,7 +114,7 @@ Name[bs]=Aplikacija %progname (%appname), %pid je srušena sa signalom %signum (
 Name[da]=Programmet %progname (%appname), pid %pid brød sammen og gav signalet %signum (%signame).
 Name[es]=La aplicación %progname (%appname), con número de proceso %pid,  falló y provocó la señal %signum (%signame).
 Name[eu]=%progname (%appname), %pid pid zenbakiarekin aplikazioa erajo da eta %signum (%signame) seinale sortu du.
-Name[he]=היישום %progname )%appname(, זיהוי תהליך %pid, התרסק וגרם לאיתות %signum )%signame(.
+Name[he]=היישום %progname (%appname), זיהוי תהליך %pid, התרסק וגרם לאיתות %signum (%signame).
 Name[hu]=A(z) %progname (%appname) alkalmazás (azonosító=%pid) lefagyott és %signum (%signame) szignált okozott.
 Name[ko]=프로세서 아이디가 %pid이고 이름이 %progname (%appname)인 프로그램이 다음과 같은 신호를 보내면서 죽었습니다 : %signum (%signame)
 Name[nl]=Het programma %progname (%appname), %pid is gecrashed en gaf het volgende signaal: %signum (%signame).
