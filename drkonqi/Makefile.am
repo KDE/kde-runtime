@@ -1,4 +1,6 @@
-# $Id:$
+# $Id$
+
+AM_CPPFLAGS = -DQT_NO_CAST_ASCII -DQT_NO_ASCII_CAST -DQT_NO_COMPAT
 
 INCLUDES = $(all_includes)
 

@@ -1,11 +1,12 @@
 /*****************************************************************
  * drkonki - The KDE Crash Handler
  * 
- * toplevel.cpp
+ * $Id:$
  *
  * Copyright (C) 2000 Hans Petter Bieker <bieker@kde.org>
  *****************************************************************/
 
+#include <qfile.h>
 #include <qstring.h>
 #include <qlabel.h>
 #include <qlayout.h>
@@ -49,7 +50,7 @@ Toplevel :: Toplevel(int _signalnum, const QCString appname, QWidget *parent, co
 	     "\"More...\" for more informations."
 	     "<br><hr>"
 	     "<b>Hint:</b> You can customize this dialog in the control panel.")
-    .arg(appname.isEmpty() ? i18n("unknown") : QString::fromLatin1(appname))
+    .arg(appname.isEmpty() ? i18n("unknown") : QFile::decodeName(appname))
     .arg(signal)
     .arg(signalnum)
     .arg(signal);
