@@ -1,5 +1,6 @@
 [General]
 Name=GNU Debugger
+Name[da]=GNU afluser
 Name[de]=GNU-Debugger
 Name[eo]=GNUa Erarserĉilo
 Name[et]=GNU silur
@@ -20,6 +21,7 @@ Name[ta]=GNU பிைழ நீகஂகி
 Name[tr]=GNU Hata Ayýklayýcý
 Comment=Text based debugger from GNU in a konsole
 Comment[cs]=Textový ladicí GNU program pro konsoli
+Comment[da]=Tekstbaseret afluser fra GNU i en konsol
 Comment[de]=Text-Debugger von GNU in einer Konsole
 Comment[eo]=Tekstbazita GNU-erarserĉilo en konzolo
 Comment[et]=Tekstipõhine silur GNU'lt konsoolil
@@ -30,7 +32,7 @@ Comment[hu]=Szöveges módú, konzolban futó GNU hibakereső
 Comment[is]=GNU aflúsnartólið (e. debugger) keyrt í skjáhermi
 Comment[it]=Debugger testuale GNU in una konsole
 Comment[mk]=Текстуален отстранувач на грешки од GNU во конзола
-Comment[nl]=Tekstgeori�nteerde debugger GNU, in een konsole
+Comment[nl]=Tekstgeoriënteerde debugger GNU, in een konsole
 Comment[no]=Tekstbasert avluser fra GNU i konsollet
 Comment[pt]=Depurador da GNU em modo texto, a correr na konsole
 Comment[ro]=Depanator GNU bazat pe text într-o consolă
