@@ -183,7 +183,7 @@ Name[zu]=I-%progname yomyaleli (%appname), iphahlazekile futhi yabanga uphawu %s
 
 [WhatToDoHint]
 Enable=true
-Name=You might want to send a bug report to the author. Please include as much information as possible, maybe the original documents. If you have a way to reproduce the error, include this also.
+Name=You might want to send a bug report for this application. Check if it's listed on http://bugs.kde.org, otherwise mail the author. Please include as much information as possible, maybe the original documents. If you have a way to reproduce the error, include this also.
 Name[af]=Jy dalk wil hê na stuur 'n fout raporteer na die outeur. Asseblief sluit in as baie informasie as moontlik, miskien die oorspronklike dokumente. As Jy het 'n weg na herproduseer die fout, sluit in hierdie asook.
 Name[az]=Müəllifə bir xəta raportu göndərmək istəsəniz, lütfən mümkün olduğunca çox mə'lumat verin və varsa original sənədləri əlavə edin. Əgər bu xətayı təkrar ortaya çıxara bilmənin bir yolu varsa, bunu da bildirin. 
 Name[bg]=Вие може би желаете да пратите описание на грешката  до автора на програмата . Моля опишете подробно възникналият проблем. Ако имате решение на проблема, моля включете и него. (Натисни "Съобщение за грешка" бутон)

@@ -1,2 +1,2 @@
-data_DATA = enduserrc developerrc
-datadir = $(kde_datadir)/drkonqi/presets
+presets_DATA = enduserrc developerrc
+presetsdir = $(kde_datadir)/drkonqi/presets
