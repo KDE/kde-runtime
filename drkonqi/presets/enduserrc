@@ -184,7 +184,6 @@ Name[lo]=ອັບພລິກເຄຊັນ%progname (%appname) ທຳງາ�
 Name[lt]=%progname programa (%appname) nulūžo ir gavo %signum (%signame) signalą.
 Name[lv]=Aplikācija %progname (%appname) avarējusi un izsaukusi signālu %signum (%signame).
 Name[mn]=Програм %progname (%appname) гацаж %signum (%signame) сигнал өгөв.
-Name[ms]=Aplikasi %progname (%appname), pid %pid, musnah dan menyebabkan isyarat %signum (%signame).
 Name[mt]=Il-programm %progname (%appname) ikkraxxja u kkawża s-sinjal %signum (%signame).
 Name[nb]=Programmet %progname (%appname) krasjet og gav signalet %signum (%signame).
 Name[nds]=Dat Programm %progname (%appname) is afstört un hett dat Signal %signum (%signame) geven.
