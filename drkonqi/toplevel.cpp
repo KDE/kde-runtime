@@ -39,7 +39,6 @@
 #include <kbugreport.h>
 #include <kmessagebox.h>
 #include <kprocess.h>
-#include <dcopref.h>
 #include <kapplication.h>
 #include <dcopclient.h>
 
@@ -90,7 +89,7 @@ Toplevel :: Toplevel(KrashConfig *krashconf, QWidget *parent, const char *name)
   connect(this, SIGNAL(closeClicked()), SLOT(accept()));
   connect(m_krashconf, SIGNAL(newDebuggingApplication(const QString&)), SLOT(slotNewDebuggingApp(const QString&)));
 
-  if ( kapp->dcopClient()->attach() )
+  if ( !m_krashconf->safeMode() && kapp->dcopClient()->attach() )
     kapp->dcopClient()->registerAs( kapp->name() );
 }
 
