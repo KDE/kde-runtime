@@ -104,7 +104,7 @@ void Toplevel :: slotUser1()
 	    "backtrace? This will help the "
 	    "developers to figure out what went "
 	    "wrong.</p>\n"
-	    "<p>Unfortantly this will take some "
+	    "<p>Unfortunately this will take some "
 	    "time on slow machines.</p>"
 	    "<p><b>Note: A backtrace is not a "
 	    "substitute for a proper description "
