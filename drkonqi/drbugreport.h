@@ -6,6 +6,9 @@
  * Copyright (C) 2000 Hans Petter Bieker <bieker@kde.org>
  *****************************************************************/
 
+#ifndef DRBUGREPORT_H
+#define DRBUGREPORT_H
+
 class KAboutData;
 
 #include <kbugreport.h>
@@ -25,3 +28,5 @@ class DrKBugReport : public KBugReport
    */
   void setText(const QString &str);
 };
+
+#endif
