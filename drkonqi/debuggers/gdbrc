@@ -1,5 +1,6 @@
 [General]
 Name=GNU Debugger
+Name[az]=GNU Xəta Ayıqlayıcı
 Name[ca]=Depurador GNU
 Name[da]=GNU fejlretter
 Name[de]=GNU-Debugger
@@ -36,6 +37,7 @@ Name[uk]=Відладчик GNU
 Name[zh_CN.GB2312]=GNU 调试器
 Name[zh_TW.Big5]=GNU 除錯器
 Comment=Text based debugger from GNU in a konsole
+Comment[az]=GNU'dan konsol üçün mətn əsaslı xəta ayıqlayıcı
 Comment[ca]=Depurador textual de GNU en una finestra konsole
 Comment[cs]=Textový ladicí GNU program pro konsoli
 Comment[da]=Tekstbaseret fejlretter fra GNU i en konsol

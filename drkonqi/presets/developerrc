@@ -1,5 +1,6 @@
 [General]
 Name=Developer
+Name[az]=Proqramcı
 Name[bg]=Ïðîãðàìíè Ðàçðàáîòêè
 Name[ca]=Desenvolupador
 Name[cs]=Vývojář
@@ -42,6 +43,7 @@ Name[uk]=Розробник
 Name[zh_CN.GB2312]=开发人员
 Name[zh_TW.Big5]=開發者
 Comment=Settings preferred for developers
+Comment[az]=Proqramcılar üçün tərcih edilən qurğular
 Comment[bg]=Îïöèè çà ïðîãðàìèñòè
 Comment[ca]=Arranjament preferit pels desenvolupadors
 Comment[cs]=Nastavení upřednostňovaná vývojáři
@@ -91,6 +93,7 @@ ShowDebugButton=true
 [ErrorDescription]
 Enable=true
 Name=The application %progname (%appname) crashed and caused the signal %signum (%signame).
+Name[az]= %progname (%appname) proqramı çökdü və %signum (%signame) siqnalı göndədi.
 Name[bg]=Ïðîãðàìàòà %progname (%appname) áëîêèðà ïîðàäè ñèãíàë %signum (%signame)
 Name[ca]=El programa d'aplicació %progname (%appname) ha fallat i ha causat la senyal %signum (%signame).
 Name[cs]=Aplikace %progname (%appname) spadla a vyvolala signál %signum (%signame).
@@ -136,6 +139,7 @@ Name[zh_TW.Big5]=應用程式 %progname (%appname) 已中止並產生信號 %sig
 [WhatToDoHint]
 Enable=true
 Name=You might want to fix you program. Take a look at the backtrace tab.
+Name[az]=Proqramınızdakı problemi həll etmək istəsəniz xəta ayıqlayıcı səkməsinə baxın.
 Name[bg]=Âèå ìîæå áè æåëàåòå äà îïðàâèòå âàøàòà ïðîãðàìà. Ïîãëåäíåòå òàá çà ãðåøêè 
 Name[ca]=Potser voldreu reparar el programa. Feu un cop d'ull a la pestanya del depurador.
 Name[cs]=Možná budete chtít opravit váš program. Klikněte na záložku ladění.
@@ -179,6 +183,7 @@ Name[zh_TW.Big5]=你可能想要修護你的程式。請點選除錯器標簽來
 [4]
 Name=SIGILL
 Comment=Illegal instruction.
+Comment[az]=Xətalı göstəriş.
 Comment[bg]=Íåëåãàëíà èíñòðóêöèÿ
 Comment[ca]=Instrucció il·legal
 Comment[cs]=Neplatná instrukce.
@@ -224,6 +229,7 @@ Comment[zh_TW.Big5]=不合法的指令。
 Name=SIGABRT
 Name[fr]=SIABRT
 Comment=Aborted.
+Comment[az]=Ləğv edildi.
 Comment[bg]=Ïðåêúñíàò
 Comment[ca]=S'ha interromput.
 Comment[cs]=Přerušeno.
@@ -269,6 +275,7 @@ Comment[zh_TW.Big5]=中斷
 Name=SIGFPE
 Name[da]=SIGFRE
 Comment=Floating point exception.
+Comment[az]=Üzən nöqtə xətası.
 Comment[ca]=Excepció de coma flotant.
 Comment[cs]=Vyjímka v plovoucí čárce.
 Comment[da]=Kommatal undtagelse
@@ -310,6 +317,7 @@ Comment[zh_TW.Big5]=浮點數異常。
 [11]
 Name=SIGSEGV
 Comment=Invalid memory reference.
+Comment[az]=Hökmsüz yaddaş referensi.
 Comment[bg]=Ãðåøêà â ïàìåòòà
 Comment[ca]=Referència a memòria no vàlida.
 Comment[cs]=Neplatný odkaz do paměti.
@@ -351,6 +359,7 @@ Comment[zh_TW.Big5]=不合法的記憶體參考。
 
 [unknown]
 Name=Unknown
+Name[az]=Namə'lum
 Name[bg]=Íåèçâåñòåí
 Name[ca]=Desconegut
 Name[cs]=Neznámý
@@ -393,6 +402,7 @@ Name[uk]=Невідомий
 Name[zh_CN.GB2312]=未知
 Name[zh_TW.Big5]=末知
 Comment=Sorry, I don't know this signal.
+Comment[az]=Bağışlayın, bu siqnalı tanımıram.
 Comment[bg]=Ñúæåëÿâàì íå çíàÿ òîçè ñèãíàë
 Comment[ca]=Ho sento, no conec aquesta senyal.
 Comment[cs]=Lituji, tento signál neznám.
