@@ -18,6 +18,11 @@ class Toplevel : public KDialog
 public:
   Toplevel(int signal, const QCString appname, QWidget *parent = 0, const char * name = 0);
   ~Toplevel();
+
+private:
+  int signalnum;
+
+  QString getSignal();
 };
 
 #endif

@@ -36,6 +36,7 @@ int main( int argc, char* argv[] )
 
   KApplication a;
 
+  // parse command line arguments
   KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
   QCString signal = args->getOption( "signal" );
   int signalnum = signal.toInt();

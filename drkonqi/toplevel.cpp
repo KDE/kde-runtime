@@ -18,14 +18,16 @@
 #include "toplevel.h"
 #include "toplevel.moc"
 
-Toplevel :: Toplevel(int signalnum, const QCString appname, QWidget *parent, const char *name)
+Toplevel :: Toplevel(int _signalnum, const QCString appname, QWidget *parent, const char *name)
   : KDialog(parent, name, TRUE)
 {
   QVBoxLayout* vbox = new QVBoxLayout(this,8);
   vbox->setAutoAdd(TRUE);
 
+  signalnum = _signalnum;
+
   // this should depend on the signalnum
-  QString signal = QString::fromLatin1("SIGSEGV");
+  QString signal = getSignal();
 
   setCaption( i18n("Application error: %1").arg(signal) );
 
@@ -62,4 +64,15 @@ Toplevel :: Toplevel(int signalnum, const QCString appname, QWidget *parent, con
 
 Toplevel :: ~Toplevel()
 {
+}
+
+QString Toplevel :: getSignal()
+{
+  switch (signalnum)
+    {
+    case 11:
+      return QString::fromLatin1("SIGSEGV");
+    default:
+      return i18n("Unknown (%1)").arg(signalnum);
+    }
 }
