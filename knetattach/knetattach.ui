@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>574</width>
-            <height>369</height>
+            <width>594</width>
+            <height>371</height>
         </rect>
     </property>
     <property name="caption">
@@ -178,9 +178,6 @@
         <grid>
             <property name="name">
                 <cstring>unnamed</cstring>
-            </property>
-            <property name="margin">
-                <number>0</number>
             </property>
             <widget class="QLabel" row="0" column="0" rowspan="1" colspan="3">
                 <property name="name">
@@ -407,8 +404,4 @@
     <function access="private" returnType="bool">updateForProtocol( const QString &amp; protocol )</function>
 </functions>
 <layoutdefaults spacing="6" margin="11"/>
-<includehints>
-    <includehint>kcombobox.h</includehint>
-    <includehint>klineedit.h</includehint>
-</includehints>
 </UI>
