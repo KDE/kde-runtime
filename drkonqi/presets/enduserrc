@@ -111,7 +111,6 @@ Comment[xh]=Izicwangciso zabasenzisi besiphelo abakhetiweyo
 Comment[xx]=xx
 Comment[zh_CN]=普通用户偏好的设置
 Comment[zh_TW]=一般使用者的偏好設定
-Comment[zu]=Izilungiselelo ezikhethelwe abasebenzisi bokugcina
 
 SignalDetails=true
 ShowBacktraceButton=true
@@ -175,7 +174,7 @@ Name[vi]=Chương trình %progname (%appname) bềEvỡ(crash) và gây ra tín 
 Name[xh]=Isicelo %progname (%appname) ilalhekile kwaye yenze uphawu %signum (%signame).
 Name[zh_CN]=程序 %progname (%appname) 已崩溃，导致信号 %signum (%signame).
 Name[zh_TW]=此應用程式 %progname (%appname) 不正常結束，產生信號 %signum (%signame)。
-Name[zu]=Isicelo %progname (%appname) sihlakazekile futhi senze uphawu %signum (%signame).
+Name[zu]=I-%progname yomyaleli (%appname), iphahlazekile futhi yabanga uphawu %signum (%signame).
 
 [WhatToDoHint]
 Enable=true
@@ -233,7 +232,7 @@ Name[xh]=Ungafuna ukuthumela ingxelo yebug kumbhali. Nceda quka ulwazi kangangok
 Name[xx]=xx
 Name[zh_CN]=您可能希望发送一个错误报告给作者。请尽可能提供详细的信息，比如当时程序使用的文档。如果您有办法重现错误，请同时提供这样的方法。
 Name[zh_TW]=您可能希望發送一個錯誤報告給作者。請盡可能提供詳細的資訊，比如當時程式使用的文件。如果您有辦法重現錯誤，請同時提供這樣的方法。
-Name[zu]=Ungafuna ukuthumela ingxoxo yebug kumbhali. Siza wenezele ulwazi oluningi ngokungenzeka, noma amadokhumethi awangempela. Umangabe unendlela yokukhombisa futhi iphutha, yenezelela lokhu futhi.
+Name[zu]=Ungafuna ukuthumela umbiko wamagciwane kumbhali. Siza ufake ulwazi oluningi ngokungenzeka, noma amadokhumenti angempela. Uma unendlela yokuphinda uliveze iphutha, ifake nayo.
 
 [4]
 Name=SIGILL
@@ -295,7 +294,7 @@ Comment[xh]=Isicelo esifumana i SIGILL uphawu enxa yegciwane kwi sicelo. Isicelo
 Comment[xx]=xx
 Comment[zh_CN]=多数情况下，一个程序由于本身的错误会收到 SIGILL 信号。程序被要求保存它的文档。
 Comment[zh_TW]=多數情況下，一個程式由於本身的錯誤會收到 SIGILL 信號。程式會被要求保存它的文件。
-Comment[zu]=Isicelo sithola kakhulu uphawu lwe SIGILL ngokwe bug oluyisicelo. Isicelo sacelwa ukuba sigcine amadokhumenti aso.
+Comment[zu]=Umyaleli uthola kakhulu uphawu lwe-SIGILL ngenxa yegciwane elikumyaleli. Umyaleli uceliwe ukuba agcine amadokhyumenti akhe.
 
 [6]
 Name=SIGABRT
@@ -355,7 +354,7 @@ Comment[xh]=Isicelo sicinywa ne SIGABRT uphawu xz sibona ukungahambisalani kwang
 Comment[xx]=xx
 Comment[zh_CN]=程序在检测到缺陷引起的内部不一致时，以 SIGABRT 信号中止。
 Comment[zh_TW]=程式偵測發生到內部錯誤時，以 SIGABRT 信號中止。
-Comment[zu]=Isicelo senza isiphelo sendlela ngophawu lwe SIGABRT uma ithola okwenzekayo ngaphakathi okubangelwa yibug ekulenqubo.
+Comment[zu]=Umyaleli unqamuka nophawu lwe-SIGABRT uma ethola ukungahambisani ngaphakathi okubangwe igciwane elisohlelweni lwemisebenzi.
 
 [8]
 Name=SIGFPE
@@ -417,7 +416,7 @@ Comment[xh]=Isicelo sifumana i SIGFPE uphawu ngenxa ye gciwane kwisicelo. Isicel
 Comment[xx]=xx
 Comment[zh_CN]=大多数情况下，接收到 SIGFPE 信号是由于程序的缺陷。程序被要求保存它的文档。
 Comment[zh_TW]=大多數情況下，接收到 SIGFPE 信號是由於程式的錯誤。程式被要求保存它的文件。
-Comment[zu]=Isicelo sithola kakhulu uphawu lwe SIGFPE ngokwebug okuyisicelo. Isicelo sacelwa ukuba sigcine amadokhumenti aso.
+Comment[zu]=Umyaleli uthola kakhulu uphawu lwe-SIGFPE ngenxa yegciwane elisohlwlweni lwemisebenzi. Umyaleli ucelwe ukuba agcine amadokhyumenti akhe.
 
 [11]
 Name=SIGSEGV

@@ -114,7 +114,7 @@ Comment[xh]=Izicwangciso ezikhetiweyo zababhekisi phambili
 Comment[xx]=xx
 Comment[zh_CN]=开发人员偏好的设置
 Comment[zh_TW]=開發人員的偏好設定
-Comment[zu]=Izilungiselelo ezikhethelwe abathuthukisi
+Comment[zu]=Izilungiselelo ezincanyelwa abathuthukisi
 
 SignalDetails=true
 ShowBugReportButton=true
@@ -171,7 +171,7 @@ Name[vi]=Chương trình %progname (%appname), pid %pid crash và gây ra tín h
 Name[xh]=Isicelo %progname (%appname), pid %pid, ilalhekile kwaye ibangele uphawu %signum (%signame).
 Name[zh_CN]=程序 %progname (%appname)，进程号 %pid，崩溃并导致信号 %signum (%signame)。
 Name[zh_TW]=此應用程式 %progname (%appname), pid %pid 不正常結束，產生信號 %signum (%signame)。
-Name[zu]=Isicelo %progname (%appname), pid %pid sihlakazekile futhi senzeukuthi uphawu %signum (%signame).
+Name[zu]=I-%progname yomyaleli (%appname), pid %pid, iphahlazekile futhi yabanga uphawu %signum (%signame).
 
 [WhatToDoHint]
 Enable=true
@@ -225,7 +225,7 @@ Name[xh]=Ungafuna ukulungisa udweliso lwakho lwenkqubo. Thatha ujongo kukhangelo
 Name[xx]=xx
 Name[zh_CN]=您应该改正程序。请查看回溯跟踪部分。
 Name[zh_TW]=或許您想要修正您的程式。請查看一下回朔標籤裡的內容。
-Name[zu]=Ungafuna ukulungisa iprogramu yakho kulenqubo. Buka emuva kwe tab.
+Name[zu]=Ungafuna ukulungisa uhlelo lwakho lwemisebenzi. Buka i-tab yokubuyela emuva.
 
 [4]
 Name=SIGILL
@@ -351,7 +351,7 @@ Comment[xh]=Ayamkelekanga.
 Comment[xx]=xx
 Comment[zh_CN]=中止。
 Comment[zh_TW]=中止。
-Comment[zu]=Inqamuliwe.
+Comment[zu]=Ihushuliwe.
 
 [8]
 Name=SIGFPE
@@ -408,7 +408,6 @@ Comment[xh]=Amaxabiso okudada akhethekileyo.
 Comment[xx]=xx
 Comment[zh_CN]=浮点计算异常。
 Comment[zh_TW]=浮點計算異常。
-Comment[zu]=Ingqikimba ezulazulayo ehlungiwe.
 
 [11]
 Name=SIGSEGV
@@ -467,7 +466,7 @@ Comment[xh]=Uthelekiso lwenkumbulo engasebenziyo.
 Comment[xx]=xx
 Comment[zh_CN]=无效的内存引用。
 Comment[zh_TW]=無效的記憶體違規使用
-Comment[zu]=Engasebenziyo incazelo ngobudlelwano yenkumbulo
+Comment[zu]=Uthelekiso lomqondo olungasebenzi
 
 [unknown]
 Name=Unknown
@@ -559,3 +558,4 @@ Comment[sv]=Signalen är okänd.
 Comment[th]=ไม่รู้จักสัญญาณนี้
 Comment[tr]=Bilinmeyen sinyal
 Comment[zh_TW]=未知的信號。
+Comment[zu]=Lolu phawu alwaziwa
