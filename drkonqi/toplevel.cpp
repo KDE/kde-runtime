@@ -138,7 +138,7 @@ void Toplevel :: slotUser1()
             "time on slow machines.</p>"
             "<p><b>Note: A backtrace is not a "
             "substitute for a proper description "
-            "the bug and information on how to "
+            "of the bug and information on how to "
             "reproduce it. It is not possible "
             "to fix the bug without a proper "
             "description.</b></p>"),
