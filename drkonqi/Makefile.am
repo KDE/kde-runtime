@@ -12,7 +12,7 @@ bin_PROGRAMS = drkonqi
 
 # Libraries:
 LDFLAGS = $(all_libraries) $(KDE_RPATH)
-LDADD  = $(LIB_KDEUI)
+LDADD  = $(LIB_KDEUI) $(LIB_KFILE)
 
 drkonqi_SOURCES = main.cpp toplevel.cpp debugger.cpp krashconf.cpp \
 	drbugreport.cpp backtrace.cpp

@@ -36,6 +36,8 @@
 #include <klocale.h>
 #include <kglobal.h>
 #include <kglobalsettings.h>
+#include <kfiledialog.h>
+#include <kmessagebox.h>
 
 #include "backtrace.h"
 #include "krashconf.h"
@@ -60,6 +62,9 @@ KrashDebugger :: KrashDebugger (const KrashConfig *krashconf, QWidget *parent, c
   m_copyButton = new QPushButton(i18n("Copy"),hbox);
   connect( m_copyButton, SIGNAL( clicked() ), this, SLOT( slotCopy() ) );
   m_copyButton->hide();
+  m_saveButton = new QPushButton(i18n("Save to disk"),hbox);
+  connect( m_saveButton, SIGNAL( clicked() ), this, SLOT( slotSave() ) );
+  m_saveButton->hide();
 }
 
 KrashDebugger :: ~KrashDebugger()
@@ -72,12 +77,27 @@ void KrashDebugger :: slotDone()
 {
   m_status->setText(i18n("Done."));
   m_copyButton->show();
+  m_saveButton->show();
 }
 
 void KrashDebugger :: slotCopy()
 {
   m_backtrace->selectAll();
   m_backtrace->copy();
+}
+
+void KrashDebugger :: slotSave()
+{
+  QString filename=KFileDialog::getSaveFileName(QString::null, QString::null, this, i18n("Select filename"));
+  if(!filename.isEmpty()) {
+    QFile f(filename);
+    if(f.open(IO_WriteOnly)) {
+      f.writeBlock(m_backtrace->text().local8Bit());
+      f.close();
+    } else {
+      KMessageBox::sorry(this, i18n("Can't open file %1 for writing").arg(filename));
+    }
+  }
 }
 
 void KrashDebugger :: slotSomeError()

@@ -58,6 +58,7 @@ protected:
 
 protected slots:
   void slotCopy();
+  void slotSave();
 
 private:
   const KrashConfig *m_krashconf;
@@ -65,6 +66,7 @@ private:
   QLabel *m_status;
   QTextView *m_backtrace;
   QPushButton * m_copyButton;
+  QPushButton * m_saveButton;
 };
 
 #endif
