@@ -1,7 +1,7 @@
 /*****************************************************************
  * drkonki - The KDE Crash Handler
  * 
- * $Id:$
+ * $Id$
  *
  * Copyright (C) 2000 Hans Petter Bieker <bieker@kde.org>
  *****************************************************************/
@@ -23,7 +23,7 @@ class KrashConfig
   const KAboutData *aboutData() const { return m_aboutData; };
   int signalNumber() const { return m_signalnum; };
   int pid() const { return m_pid; };
-  bool showDebuger() const { return m_showdebuger; };
+  bool showDebugger() const { return m_showdebugger; };
   bool showBugReport() const { return m_showbugreport; };
   QString signalName() const { return m_signalName; };
   QString signalText() const { return m_signalText; };
@@ -34,7 +34,7 @@ class KrashConfig
   KAboutData *m_aboutData;
   int m_pid;
   int m_signalnum;
-  bool m_showdebuger;
+  bool m_showdebugger;
   bool m_showbugreport;
   QString m_signalName;
   QString m_signalText;

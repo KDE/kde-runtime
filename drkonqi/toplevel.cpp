@@ -20,7 +20,7 @@
 #include <kaboutdata.h>
 #include <kbugreport.h>
 
-#include "debuger.h"
+#include "debugger.h"
 #include "krashconf.h"
 #include "toplevel.h"
 #include "toplevel.moc"
@@ -52,11 +52,11 @@ Toplevel :: Toplevel(const KrashConfig *krashconf, QWidget *parent, const char *
 
   new QLabel( generateText(), page );
 
-  if (m_krashconf->showDebuger()) {
-    page = addPage(i18n("Debuger"));
+  if (m_krashconf->showDebugger()) {
+    page = addPage(i18n("Debugger"));
     hbox = new QHBoxLayout(page);
     hbox->setAutoAdd(TRUE);
-    new KrashDebuger(m_krashconf, page);
+    new KrashDebugger(m_krashconf, page);
   }
 
   showButton( User1, m_krashconf->showBugReport() );

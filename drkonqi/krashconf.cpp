@@ -1,7 +1,7 @@
 /*****************************************************************
  * drkonki - The KDE Crash Handler
  * 
- * $Id:$
+ * $Id$
  *
  * Copyright (C) 2000 Hans Petter Bieker <bieker@kde.org>
  *****************************************************************/
@@ -40,9 +40,9 @@ void KrashConfig :: readConfig()
 
   preset.setGroup(QString::fromLatin1("General"));
   m_showbugreport = preset.readBoolEntry(QString::fromLatin1("ShowBugReportbutton"), true);
-  m_showdebuger = m_pid != 0;
-  if (m_showdebuger)
-    m_showdebuger = preset.readBoolEntry(QString::fromLatin1("ShowDebugButton"), true);
+  m_showdebugger = m_pid != 0;
+  if (m_showdebugger)
+    m_showdebugger = preset.readBoolEntry(QString::fromLatin1("ShowDebugButton"), true);
 
   bool b = preset.readBoolEntry(QString::fromLatin1("SignalDetails"), true);
 

@@ -23,10 +23,10 @@
 #include <klocale.h>
 
 #include "krashconf.h"
-#include "debuger.h"
-#include "debuger.moc"
+#include "debugger.h"
+#include "debugger.moc"
 
-KrashDebuger :: KrashDebuger (const KrashConfig *krashconf, QWidget *parent, const char *name)
+KrashDebugger :: KrashDebugger (const KrashConfig *krashconf, QWidget *parent, const char *name)
   : QWidget( parent, name ),
     m_krashconf(krashconf),
     m_proc(0), m_temp(0)
@@ -39,7 +39,7 @@ KrashDebuger :: KrashDebuger (const KrashConfig *krashconf, QWidget *parent, con
   m_status = new QLabel(this);
 }
 
-KrashDebuger :: ~KrashDebuger()
+KrashDebugger :: ~KrashDebugger()
 {
   pid_t pid = m_proc ? m_proc->getPid() : 0;
   // we don't want the gdb process to hang around
@@ -57,7 +57,7 @@ KrashDebuger :: ~KrashDebuger()
   delete m_temp;
 }
 
-void KrashDebuger :: slotProcessExited(KProcess *proc)
+void KrashDebugger :: slotProcessExited(KProcess *proc)
 {
   if (proc->normalExit() || proc->exitStatus() == 0)
     m_status->setText(i18n("Done."));
@@ -65,7 +65,7 @@ void KrashDebuger :: slotProcessExited(KProcess *proc)
     m_status->setText(i18n("Unable to create backtrace."));
 }
 
-void KrashDebuger :: slotReadInput(KProcess *, char *buffer, int buflen)
+void KrashDebugger :: slotReadInput(KProcess *, char *buffer, int buflen)
 {
   m_status->setText(i18n("Loading backtrace..."));
   QString str = QString::fromLocal8Bit(buffer, buflen);
@@ -73,13 +73,13 @@ void KrashDebuger :: slotReadInput(KProcess *, char *buffer, int buflen)
   m_backtrace->setText(m_backtrace->text() + str);
 }
 
-void KrashDebuger :: showEvent(QShowEvent *e)
+void KrashDebugger :: showEvent(QShowEvent *e)
 {
   QWidget::showEvent(e);
-  startDebuger();
+  startDebugger();
 }
 
-void KrashDebuger :: startDebuger()
+void KrashDebugger :: startDebugger()
 {
   // Only start one copy
   if (m_proc) return;
@@ -92,7 +92,7 @@ void KrashDebuger :: startDebuger()
   ::write(handle, "bt\n", 3);
   ::fsync(handle);
 
-  // start the debuger
+  // start the debugger
   m_proc = new KProcess;
   *m_proc << QString::fromLatin1("gdb")
 	  << QString::fromLatin1("-n")

@@ -6,8 +6,8 @@
  * Copyright (C) 2000 Hans Petter Bieker <bieker@kde.org>
  *****************************************************************/
 
-#ifndef DEBUGER_H
-#define DEBUGER_H
+#ifndef DEBUGGER_H
+#define DEBUGGER_H
 
 class QTextView;
 class QLabel;
@@ -17,20 +17,20 @@ class KTempFile;
 
 #include <qwidget.h>
 
-class KrashDebuger : public QWidget
+class KrashDebugger : public QWidget
 {
   Q_OBJECT
 
 public:
-  KrashDebuger(const KrashConfig *krashconf, QWidget *parent = 0, const char *name = 0);
-  ~KrashDebuger();
+  KrashDebugger(const KrashConfig *krashconf, QWidget *parent = 0, const char *name = 0);
+  ~KrashDebugger();
 
 public slots:
   void slotReadInput(KProcess *proc, char *buffer, int buflen);
   void slotProcessExited(KProcess *proc); 
 
 protected:
- void startDebuger();
+ void startDebugger();
 
 protected slots:
  virtual void showEvent(QShowEvent *e);
@@ -44,5 +44,3 @@ private:
 };
 
 #endif
-
-
