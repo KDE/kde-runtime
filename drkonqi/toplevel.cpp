@@ -46,11 +46,14 @@ Toplevel :: Toplevel(int _signalnum, const QString _appname, QWidget *parent, co
 
   // picture of konqi
   QLabel *lab = new QLabel(page);
+  lab->setBackgroundColor(Qt::white);
   lab->setFrameStyle(QFrame::Panel | QFrame::Raised);
   QPixmap pix(locate("data", QString::fromLatin1("kdeui/pics/aboutkde.png")));
   lab->setPixmap(pix);
 
   new QLabel( generateText(), page );
+
+  showButton( User1, showbugreport );
 
   connect(this, SIGNAL(okClicked()), kapp, SLOT(quit()));
 }
@@ -63,35 +66,29 @@ QString Toplevel :: generateText() const
 {
   QString str;
 
-  if (!errordescription.isEmpty()) {
-    str += i18n("<b>Short description</b><br>");
-    str += errordescription;
-  }
+  if (!errordescription.isEmpty())
+    str += i18n("<p><b>Short description</b></p><p>%1</p>")
+      .arg(errordescription);
 
-  if (!signaldetails.isEmpty()) {
-    str += i18n("<br><b>What is this?</b><br>");
-    str += signaldetails;
-  }
+  if (!signaldetails.isEmpty())
+    str += i18n("<p><b>What is this?</b></p><p>%1</p>")
+      .arg(signaldetails);
 
-  if (!whattodohint.isEmpty()) {
-    str += i18n("<br><b>What can I do?</b><br>");
-    str += whattodohint;
-  }
+  if (!whattodohint.isEmpty())
+    str += i18n("<p><b>What can I do?</b></p><p>%1</p>")
+      .arg(whattodohint);
 
 #if 0
-  str += i18n("<b>Application messages</b><br>\n");
-  str += i18n("The application might have provided more information about "
+  str += i18n("<p><b>Application messages</b></p>"
+	      "<p>The application might have provided more information about "
 	      "the problem, maybe where it occured and why. Click on "
-	      "\"More...\" for more informations."
-	      "<br><hr>\n"
-	      "<b>Hint:</b> You can customize this dialog in the control "
-	      "panel.");
+	      "\"More...\" for more informations.</p>");
 #endif
 
   // check if the string is still empty. if so, display a default.
   if (str.isEmpty())
-    str = i18n("<b>Application crashed</b><br>\n"
-	       "The program %appname crashed.");
+    str = i18n("<p><b>Application crashed</b></p>"
+	       "<p>The program %appname crashed.</p>");
 
   // scan the string for %appname etc
   expandString(str);
@@ -128,7 +125,9 @@ void Toplevel :: readConfig()
     whattodohint = preset.readEntry(QString::fromLatin1("Name"));
 
   preset.setGroup(QString::fromLatin1("General"));
+  showbugreport = preset.readBoolEntry(QString::fromLatin1("ShowBugReportbutton"), true);
   bool b = preset.readBoolEntry(QString::fromLatin1("SignalDetails"), true);
+
   QString str = QString::number(signalnum);
   // use group unknown if signal not found
   if (!preset.hasGroup(str)) str = QString::fromLatin1("unknown");

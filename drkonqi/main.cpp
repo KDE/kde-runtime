@@ -21,8 +21,8 @@
 
 #include "toplevel.h"
 
-static const char *version = "0.01";
-static const char *description = I18N_NOOP( "A test implementation of the KDE Crash Handler." );
+static const char *version = "0.1";
+static const char *description = I18N_NOOP( "KDE Crash Handler give the user feedback if a program crashed." );
 
 static const KCmdLineOptions options[] =
 {

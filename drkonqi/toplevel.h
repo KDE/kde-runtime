@@ -29,6 +29,7 @@ protected slots:
   void slotUser1();
 
 private:
+  bool showbugreport; 
   int signalnum;
 
   QString appname;
