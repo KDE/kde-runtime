@@ -23,23 +23,64 @@
 #include <kgenericfactory.h>
 #include <kiconloader.h>
 #include <renamedlgplugin.h>
+#include <kio/renamedlg.h>
 #include <qlabel.h>
 #include <qdialog.h>
 #include <qwidget.h>
 #include <qstringlist.h>
+#include <kio/global.h>
+#include <sys/types.h>
 
 
 class KTestMenu : public RenameDlgPlugin{
 public:
   KTestMenu( QDialog *dialog, const char *name, const QStringList & );
-
+  ~KTestMenu();
+  virtual bool initialize( KIO::RenameDlg_Mode /*mod*/, const QString &/*_src*/, const QString &/*_dest*/,
+		  const QString &/*mimeSrc*/,
+		  const QString &/*mimeDest*/,
+		  KIO::filesize_t /*sizeSrc*/,
+		  KIO::filesize_t /*sizeDest*/,
+		  time_t /*ctimeSrc*/,
+		  time_t /*ctimeDest*/,
+		  time_t /*mtimeSrc*/,
+		  time_t /*mtimeDest*/ );
 };
 
 KTestMenu::KTestMenu( QDialog *dialog, const char *name, const QStringList &list ) : RenameDlgPlugin( dialog, name, list) {
   QLabel *label = new QLabel(this );
-  label->setText("Yuhu" );
-  qWarning("hidi ho");
+  label->setText("HiJa So you wan't to do some stuff?" );
+  qWarning("hidi ho32134");
 };
+KTestMenu::~KTestMenu()
+{
+qWarning("byebye and cu all" );
+}
+bool KTestMenu::initialize( KIO::RenameDlg_Mode mode, const QString &_src, const QString &_dest,
+		  const QString &mimeSrc,
+		  const QString &mimeDest,
+		  KIO::filesize_t sizeSrc,
+		  KIO::filesize_t sizeDest,
+		  time_t ctimeSrc,
+		  time_t ctimeDest,
+		  time_t mtimeSrc,
+		      time_t mtimeDest ) {
+  qWarning("%s", _src.latin1() );
+  qWarning("%s", _dest.latin1() );
+  qWarning("%s", mimeSrc.latin1() );
+  qWarning("%s", mimeDest.latin1() );
+qWarning("ABC3456: %d", mode );
+ if( mode & KIO::M_OVERWRITE ){
+qWarning("overwrite" );
+ }
+  return true;
+}
 
 typedef KGenericFactory<KTestMenu, QDialog> KImageFactory;
 K_EXPORT_COMPONENT_FACTORY( librenimageplugin, KImageFactory );
+
+
+
+
+
+
