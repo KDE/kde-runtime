@@ -308,7 +308,13 @@
                     <cstring>_createIcon</cstring>
                 </property>
                 <property name="text">
-                    <string>&amp;Create an icon on the desktop for this connection</string>
+                    <string>&amp;Create an icon for this remote folder</string>
+                </property>
+                <property name="accel">
+                    <string>Alt+C</string>
+                </property>
+                <property name="checked">
+                    <bool>true</bool>
                 </property>
             </widget>
             <widget class="QCheckBox" row="7" column="1" rowspan="1" colspan="2">
@@ -347,6 +353,12 @@
         <receiver>KNetAttach</receiver>
         <slot>updatePort(bool)</slot>
     </connection>
+    <connection>
+        <sender>_createIcon</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>KNetAttach</receiver>
+        <slot>updateFinishButtonText(bool)</slot>
+    </connection>
 </connections>
 <tabstops>
     <tabstop>_webfolder</tabstop>
@@ -376,15 +388,16 @@
 </variables>
 <slots>
     <slot access="private">init()</slot>
+    <slot>setInformationText( const QString &amp; type )</slot>
     <slot access="private">showPage( QWidget * page )</slot>
     <slot access="private">updateParametersPageStatus()</slot>
     <slot access="private">finished()</slot>
     <slot access="private">updatePort( bool encryption )</slot>
+    <slot access="private">updateFinishButtonText( bool save )</slot>
 </slots>
 <functions>
     <function access="private" returnType="bool">doConnectionTest( const KURL &amp; url )</function>
     <function access="private" returnType="bool">updateForProtocol( const QString &amp; protocol )</function>
-    <function access="private" returnType="void">setInformationText( const QString &amp; type )</function>
 </functions>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>

@@ -15,7 +15,7 @@ void KNetAttach::init()
     setIcon(SmallIcon("knetattach"));
     disconnect(finishButton(), SIGNAL(clicked()), (QDialog*)this, SLOT(accept()));
     connect(finishButton(), SIGNAL(clicked()), this, SLOT(finished()));
-    finishButton()->setText(i18n("&Save && Connect"));
+    finishButton()->setText(i18n("Save && C&onnect"));
     //setResizeMode(Fixed); FIXME: make the wizard fixed-geometry
     setFinishEnabled(_folderParameters, false);
     KConfig recent("krecentconnections", true, false);
@@ -42,7 +42,7 @@ void KNetAttach::setInformationText( const QString &type )
         _informationText->setText(text .arg("Secure shell connection"));
     } else if (type=="SMB") {
         text = "Enter a name for this <i>%1</i> as well as a server address and folder path to use and press the <b>Save & Connect</b> button.";
-        _informationText->setText(text.arg("Microsoft® Windows® network drive"));
+        _informationText->setText(text.arg("Microsoft Windows network drive"));
     }
 }
 
@@ -247,3 +247,16 @@ bool KNetAttach::updateForProtocol(const QString& protocol)
     return true;
 }
 // vim: ts=8 sw=4 noet
+
+
+void KNetAttach::updateFinishButtonText( bool save)
+{
+    if (save)
+    {
+	finishButton()->setText(i18n("Save && C&onnect"));
+    }
+    else
+    {
+	finishButton()->setText(i18n("C&onnect"));
+    }
+}
