@@ -1,6 +1,7 @@
 [General]
 Name=GNU Debugger
 Name[af]=gnu ontfouter
+Name[ar]=مزيل مشاكل GNU
 Name[az]=GNU Xəta Ayıqlayıcı
 Name[bg]=Дебъгер на GNU
 Name[br]=Dizraener GNU
@@ -47,6 +48,7 @@ Name[zh_CN.GB2312]=GNU 调试器
 Name[zh_TW.Big5]=GNU 除錯器
 Comment=Text based debugger from GNU in a konsole
 Comment[af]=teks gebaseerde ontfouter van gnu in 'n konsole
+Comment[ar]=مزيل مشاكل GNU يعمل في وضعية سطر الأوامر
 Comment[az]=GNU'dan konsol üçün mətn əsaslı xəta ayıqlayıcı
 Comment[bg]=Текстови дебъгер на GNU
 Comment[br]=Dizraener doare skrid eus GNU en ul letrin
@@ -97,6 +99,7 @@ Comment[xh]=Isiseko esijoliswe kokubhaliweyo okusuka kwi GNU kwi konsole
 Comment[xx]=xx
 Comment[zh_CN.GB2312]=在 konsole 里运行的文本 GNU 调试器
 Comment[zh_TW.Big5]=在 konsole 中執行的文字 GNU 除錯器
+Comment[zu]=Okubhaliweyo okuqondene ne debugger kusuka kwi GNU eku konsole
 Exec=konsole -e gdb -nw %execname %pid
 ExecBatch=gdb -nw -n -batch -x %tempfile %execname %pid
 TryExec=gdb

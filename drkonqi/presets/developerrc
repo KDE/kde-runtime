@@ -1,6 +1,7 @@
 [General]
 Name=Developer
 Name[af]=ontwikkelaar
+Name[ar]=المطور
 Name[az]=Proqramcı
 Name[bg]=Програмист
 Name[br]=Diorrer
@@ -55,6 +56,7 @@ Name[zh_CN.GB2312]=开发人员
 Name[zh_TW.Big5]=開發人員
 Comment=Settings preferred for developers
 Comment[af]=instellings verkies vir ontwikkelaars
+Comment[ar]=الضبط المفضل لدى المطور
 Comment[az]=Proqramcılar üçün tərcih edilən qurğular
 Comment[bg]=Настройки, предпочтитания за програмистите
 Comment[br]=Kefluniadur azas evir diorerien
@@ -94,6 +96,7 @@ Comment[ro]=Setări preferate de programatori
 Comment[ru]=Настройки, предпочтительные для разработчиков
 Comment[sk]=Preferované nastavenia pre vývojárov
 Comment[sl]=Nastavitve, ljubše razvijalcem
+Comment[sr]=Podešavanja koja više vole programeri
 Comment[sv]=Föredragna inställningar för utvecklare
 Comment[ta]=¯ÕÅ¡ì¸¢¸Ùì¸¡É «¨ÁôÒ¸û
 Comment[th]=ปรับแต่งเพื่อแสดงตัวเป็นผู้พัฒนา
@@ -104,6 +107,7 @@ Comment[xh]=Izicwangciso ezikhethelwa ababhekisi phambili
 Comment[xx]=xx
 Comment[zh_CN.GB2312]=开发人员偏好的设置
 Comment[zh_TW.Big5]=開發人員的偏好設定
+Comment[zu]=Izilungiselelo ezikhethelwe abathuthukisi
 
 SignalDetails=true
 ShowBugReportButton=true
@@ -113,6 +117,7 @@ ShowDebugButton=true
 [ErrorDescription]
 Enable=true
 Name=The application %progname (%appname), pid %pid, crashed and caused the signal %signum (%signame).
+Name[ar]=التطبيق %progname (%appname), pid %pid قد انهار و تسبب في الإشارة %signum (%signame)
 Name[az]= %progname (%appname), pid %pid proqramı çökdü və %signum (%signame) siqnalı göndərdi.
 Name[bs]=Aplikacija %progname (%appname), %pid je srušena sa signalom %signum (%signame).
 Name[cs]=Aplikace %progname (%appname), pid %pid, spadla a vyvolala signál %signum (%signame).
@@ -133,11 +138,13 @@ Name[xh]=Isicelo %progname (%appname) , pid %pid, ilalhekile kwaye ibangele upha
 Name[xx]=xx
 Name[zh_CN.GB2312]=程序 %progname (%appname)，进程号 %pid，崩溃并导致信号 %signum (%signame)。
 Name[zh_TW.Big5]=此應用程式 %progname (%appname), pid %pid 不正常結束，產生信號 %signum (%signame)。
+Name[zu]=Isicelo %progname (%appname), pid %pid sihlakazekile futhi senzeukuthi uphawu %signum (%signame).
 
 [WhatToDoHint]
 Enable=true
 Name=You might want to fix your program. Take a look at the backtrace tab.
 Name[af]=jy dalk wil hê aan regmaak jou program. neem 'n kyk na die terugsoektog oortjie.
+Name[ar]=ربما تريد اصلاح المشكلة. الق نظرة على علامة التبويب backtrace
 Name[az]=Proqramınızdakı problemi həll etmək istəsəniz xəta ayıqlayıcı səkməsinə baxın.
 Name[bg]=Възможно е, вие да искате да оправите програмата. Прегледайте tab за грешки.
 Name[bs]=Možda želite popraviti vaš program. Pogledajteu u pozadinski tab.
@@ -170,7 +177,7 @@ Name[ro]=S-ar putea să fie nevoie de repararea programului. Uitaţi-vă la subf
 Name[ru]=Возможно, вы захотите исправить программу. Посмотрите отчет отладчика.
 Name[sk]=Možno chcete opraviť váš program. Prezrite si zápis tabuľky debuggera.
 Name[sl]=Morda boste želeli popraviti program. Poglejte si ustrezno oznako razhroščevalnika.
-Name[sr]=Možda biste želeli da popravite vaš program. Pogledajte panel bektrejs.
+Name[sr]=Možda biste želeli da popravite vaš program. Pogledajte jezičak bektrejs.
 Name[sv]=Du kanske vill fixa ditt program. Titta under fliken bakåtspårning.
 Name[ta]=¿£í¸û ­ó¿¢Ã¨Äî ºÃ¢ ¦ºöÂ Å¢ÕõÀÄ¡õ. À¢ýÍÅðÎò ¾ð¼¨Äô À¡÷ì¸×õ.
 Name[tr]=Programınızdaki sorunu çözmek isterseniz hata ayıklayıcı sekmesine bakın.
@@ -179,6 +186,7 @@ Name[xh]=Ungafuna ukulungisa udweliso lwakho lwenkqubo. Thatha ujongo kukhangelo
 Name[xx]=xx
 Name[zh_CN.GB2312]=您应该改正程序。看看回溯跟踪部分。
 Name[zh_TW.Big5]=或許你想要修正你的程式。請查看一下回朔標籤裡的內容。
+Name[zu]=Ungafuna ukulungisa iprogramu yakho kulenqubo. Buka emuva kwe tab.
 
 [4]
 Name=SIGILL
@@ -187,6 +195,7 @@ Name[vi]=SIGILL
 Name[xx]=xx
 Comment=Illegal instruction.
 Comment[af]=onwettige instruksie.
+Comment[ar]=تعليمة غير شرعية
 Comment[az]=Xətalı göstəriş.
 Comment[bg]=Недопустима инструкция.
 Comment[br]=Kemennad siek
@@ -236,6 +245,7 @@ Comment[xh]=Umyalelo ongekho semthethweni.
 Comment[xx]=xx
 Comment[zh_CN.GB2312]=不合法的指令。
 Comment[zh_TW.Big5]=不合法的指令。
+Comment[zu]=Umyalelo ongekho emthethweni.
 
 [6]
 Name=SIGABRT
@@ -245,6 +255,7 @@ Name[vi]=SIGABRT
 Name[xx]=xx
 Comment=Aborted.
 Comment[af]=gekanselleer.
+Comment[ar]=اجهضت
 Comment[az]=Ləğv edildi.
 Comment[bg]=Прекъснато.
 Comment[br]=Dilezet
@@ -284,6 +295,7 @@ Comment[ro]=Anulat.
 Comment[ru]=Прервано.
 Comment[sk]=Zrušené.
 Comment[sl]=Prekinjeno.
+Comment[sr]=Napušteno.
 Comment[sv]=Misslyckades.
 Comment[ta]=¨¸Å¢ð¼Ð.
 Comment[th]=ยกเลิกแล้ว
@@ -294,6 +306,7 @@ Comment[xh]=Ikhatyiwe.
 Comment[xx]=xx
 Comment[zh_CN.GB2312]=中止。
 Comment[zh_TW.Big5]=中止。
+Comment[zu]=Inqamuliwe.
 
 [8]
 Name=SIGFPE
@@ -348,6 +361,7 @@ Comment[xh]=Ubekelo bucala lencopho elungisiweyo.
 Comment[xx]=xx
 Comment[zh_CN.GB2312]=浮点计算异常。
 Comment[zh_TW.Big5]=浮點計算異常。
+Comment[zu]=Ingqikimba ezulazulayo ehlungiwe.
 
 [11]
 Name=SIGSEGV
@@ -356,6 +370,7 @@ Name[vi]=SIGSEGV
 Name[xx]=xx
 Comment=Invalid memory reference.
 Comment[af]=ongeldige geheue verwysing.
+Comment[ar]=Invalid memory reference
 Comment[az]=Hökmsüz yaddaş referensi.
 Comment[bg]=Достъп към неразрешена област от паметта.
 Comment[br]=Daveen memor siek
@@ -403,10 +418,12 @@ Comment[xh]=Uthelekiso olungasebenziyo lwenkumbulo.
 Comment[xx]=xx
 Comment[zh_CN.GB2312]=无效的内存引用。
 Comment[zh_TW.Big5]=無效的記憶體違規使用
+Comment[zu]=Uthelekiso olungasebenzi lwenkumbulo.
 
 [unknown]
 Name=Unknown
 Name[af]=onbekende
+Name[ar]=غير معروف
 Name[az]=Namə'lum
 Name[bg]=Неизвестен
 Name[br]=Dianav
@@ -459,8 +476,10 @@ Name[xh]=Ayaziwa
 Name[xx]=xx
 Name[zh_CN.GB2312]=未知
 Name[zh_TW.Big5]=未知
+Name[zu]=Okungaziwa
 Comment=Sorry, I don't know this signal.
 Comment[af]=jammer, i don't ken hierdie sein.
+Comment[ar]=آسف, لا أستطيع التعرف على الإشارة
 Comment[az]=Bağışlayın, bu siqnalı tanımıram.
 Comment[bg]=Неизвестен сигнал
 Comment[br]=Ho tigarez, n'anavezan ket an arhent-maÃ±
@@ -511,3 +530,4 @@ Comment[xh]=Uxolo, Andilazi olu phawu.
 Comment[xx]=xx
 Comment[zh_CN.GB2312]=抱歉，我不知道这个信号。
 Comment[zh_TW.Big5]=抱歉，我不認識這個信號。
+Comment[zu]=Uxolo, Angilwazi loluphawu.
