@@ -67,7 +67,7 @@ KrashDebugger :: KrashDebugger (const KrashConfig *krashconf, QWidget *parent, c
   m_copyButton = new KPushButton( item, w );
   connect( m_copyButton, SIGNAL( clicked() ), this, SLOT( slotCopy() ) );
   m_copyButton->setEnabled( false );
-  m_saveButton = new KPushButton( KStdGuiItem::save(), w );
+  m_saveButton = new KPushButton( KStdGuiItem::saveAs(), w );
   connect( m_saveButton, SIGNAL( clicked() ), this, SLOT( slotSave() ) );
   m_saveButton->setEnabled( false );
 }

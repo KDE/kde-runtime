@@ -62,7 +62,7 @@ Toplevel :: Toplevel(const KrashConfig *krashconf, QWidget *parent, const char *
                  ),
     m_krashconf(krashconf), m_bugreport(0)
 {
-  QHBox *page = addHBoxPage(i18n("General"));
+  QHBox *page = addHBoxPage(i18n("&General"));
   page->setSpacing(20);
 
   // picture of konqi
@@ -77,7 +77,7 @@ Toplevel :: Toplevel(const KrashConfig *krashconf, QWidget *parent, const char *
 
   if (m_krashconf->showBacktrace())
   {
-    page = addHBoxPage(i18n("Backtrace"));
+    page = addHBoxPage(i18n("&Backtrace"));
     new KrashDebugger(m_krashconf, page);
   }
 
