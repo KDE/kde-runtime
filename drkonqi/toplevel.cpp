@@ -8,9 +8,7 @@
 
 #include <qstring.h>
 #include <qlabel.h>
-#include <qlayout.h>
 #include <qhbox.h>
-#include <qapplication.h>
 
 #include <klocale.h>
 #include <kstddirs.h>

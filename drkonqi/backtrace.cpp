@@ -89,5 +89,3 @@ void BackTrace::slotProcessExited(KProcess *proc)
   } else
     emit someError();
 }
-
-

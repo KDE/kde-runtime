@@ -8,7 +8,6 @@
 
 #include <qtextview.h>
 #include <qlayout.h>
-#include <qtextstream.h>
 #include <qlabel.h>
 
 #include <klocale.h>
