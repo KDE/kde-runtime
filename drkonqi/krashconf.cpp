@@ -39,7 +39,7 @@ void KrashConfig :: readConfig()
     m_whatToDoText = preset.readEntry(QString::fromLatin1("Name"));
 
   preset.setGroup(QString::fromLatin1("General"));
-  m_showbugreport = preset.readBoolEntry(QString::fromLatin1("ShowBugReportbutton"), true);
+  m_showbugreport = preset.readBoolEntry(QString::fromLatin1("ShowBugReportButton"), true);
   m_showdebugger = m_pid != 0;
   if (m_showdebugger)
     m_showdebugger = preset.readBoolEntry(QString::fromLatin1("ShowDebugButton"), true);

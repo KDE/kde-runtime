@@ -1,9 +1,9 @@
 [General]
 Name=End user
-Comment=Settings prefered for endusers
+Comment=Settings prefered for end users
 
 SignalDetails=true
-ShowBugReportbutton=true
+ShowBugReportButton=true
 
 [ErrorDescription]
 Enable=true
@@ -15,11 +15,11 @@ Name=You might want to send a bug report to the author. Please include as much i
 
 [4]
 Name=SIGILL
-Comment=detail for illegal instruction signal.
+Comment=An application mostly receives the SIGILL signal due to a bug in the application. The application was asked to save its documents.
 
 [8]
 Name=SIGFPE
-Comment=detail for SIGFPE signal.
+Comment=An application mostly receives the SIGFPE signal due to a bug in the application. The application was asked to save its documents.
 
 [11]
 Name=SIGSEGV

@@ -1,0 +1,31 @@
+[General]
+Name=Developer
+Comment=Settings prefered for developers
+
+SignalDetails=true
+ShowBugReportButton=true
+ShowDebugButton=true
+
+[ErrorDescription]
+Enable=true
+Name=The application %progname (%appname) crashed and caused the signal %signum (%signame).
+
+[WhatToDoHint]
+Enable=true
+Name=You might want to fix you program. Take a look at the debugger tab.
+
+[4]
+Name=SIGILL
+Comment=Illegal instruction.
+
+[8]
+Name=SIGFPE
+Comment=Floating point exception.
+
+[11]
+Name=SIGSEGV
+Comment=Invalid memory reference.
+
+[unknown]
+Name=Unknown
+Comment=Sorry, I don't know this signal.
