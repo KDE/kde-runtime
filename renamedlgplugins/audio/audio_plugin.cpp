@@ -19,7 +19,6 @@
    Boston, MA 02111-1307, USA.
 */
 
-#include <kdebug.h>
 #include <kgenericfactory.h>
 #include <renamedlgplugin.h>
 #include <kio/renamedlg.h>
@@ -70,7 +69,7 @@ bool KTestMenu::initialize( KIO::RenameDlg_Mode mode, const QString &_src, const
    QLabel *label_src  = new QLabel(this);
    QLabel *label_dst  = new QLabel(this);
    QLabel *label_ask  = new QLabel(this);
-kdDebug() << "START" << endl;
+
    QString sentence1;
    if (mtimeDest < mtimeSrc)
       sentence1 = i18n("An older file named '%1' already exists.\n").arg(_dest);

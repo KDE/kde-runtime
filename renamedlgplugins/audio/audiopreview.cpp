@@ -16,7 +16,7 @@
    the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
    Boston, MA 02111-1307, USA.
 */
-#include <kdebug.h>
+
 #include <kfilemetainfo.h>
 #include <klocale.h>
 #include <kmimetype.h>
@@ -33,7 +33,6 @@ AudioPreview::~AudioPreview()
 AudioPreview::AudioPreview( QWidget *parent, const char *name, const QString &fileName, const QString &mimeType)
   : QVBox( parent, name )
 {
-kdDebug() << "REACHED #1 #################" << endl;
   pic = 0;
   description = 0;
   KURL url( fileName );
@@ -49,7 +48,6 @@ kdDebug() << "REACHED #1 #################" << endl;
       path = fileName;
     }
     KFileMetaInfo info(path);
-kdDebug() << "REACHED #2 ###############" << endl;
     pic = new QLabel(this);
     pic->setPixmap(KMimeType::pixmapForURL(fileName));
     pic->adjustSize();
