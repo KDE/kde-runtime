@@ -34,6 +34,7 @@
 #include <kcmdlineargs.h>
 #include <kaboutdata.h>
 #include <klocale.h>
+#include <dcopclient.h>
 
 #include "krashconf.h"
 #include "toplevel.h"
@@ -64,6 +65,7 @@ int main( int argc, char* argv[] )
 
   // Make sure that DrKonqi doesn't start DrKonqi when it crashes :-]
   setenv("KDE_DEBUG", "true", 1);
+  unsetenv("SESSION_MANAGER");
 
   KAboutData aboutData( "drkonqi",
                         I18N_NOOP("The KDE Crash Handler"),
@@ -79,7 +81,6 @@ int main( int argc, char* argv[] )
   KApplication::disableAutoDcopRegistration();
 
   KApplication a;
-  a.disableSessionManagement();
 
   KrashConfig krashconf;
 
