@@ -1,0 +1,6 @@
+How to activate the developer mode for DrKonqi:
+
+$KDEHOME/share/config/drkonqirc:
+
+[drkonqi]
+ConfigName=developer
