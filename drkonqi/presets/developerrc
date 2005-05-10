@@ -1,6 +1,6 @@
 [General]
 Name=Developer
-Name[af]=Ontwikkelaar
+Name[af]=Ontwikkeling
 Name[ar]=المطور
 Name[az]=İnkişafçı
 Name[be]=Распрацоўшчык
@@ -611,7 +611,7 @@ Comment[zu]=Okuqondiwe kwenkumbulo okungasebenzi.
 
 [unknown]
 Name=Unknown
-Name[af]=Onbekende
+Name[af]=Onbekend
 Name[ar]=غير معروف
 Name[az]=Namə'lum
 Name[be]=Невядомы

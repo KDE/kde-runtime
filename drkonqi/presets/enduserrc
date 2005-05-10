@@ -588,7 +588,7 @@ Comment[zu]=Umyaleli ithola kakhulu uphawu lwe-SIGSEGV ngenxa yegciwane elikumya
 
 [unknown]
 Name=Unknown
-Name[af]=Onbekende
+Name[af]=Onbekend
 Name[ar]=غير معروف
 Name[az]=Namə'lum
 Name[be]=Невядомы
@@ -664,6 +664,7 @@ Name[zh_CN]=未知
 Name[zh_TW]=未知
 Name[zu]=Okungaziwa
 Comment=Sorry, I do not know this signal.
+Comment[af]=Jammer, ek ken nie hierdie sein nie.
 Comment[az]=Bağışlayın, bu siqnalı tanımıram.
 Comment[be]=Прабачце, я ня ведаю гэты сыгнал.
 Comment[bg]=Неизвестен сигнал.
