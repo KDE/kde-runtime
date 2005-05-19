@@ -40,5 +40,6 @@ Name[tg]=Аудиошиносоӣ
 Name[tr]=Audio Önizleme
 Name[uk]=Перегляд аудіо
 Name[xx]=xxAudio Previewxx
+Name[zh_CN]=音频预览
 X-KDE-Library=librenaudioplugin
 ServiceTypes=RenameDlg/Plugin,audio/x-mp3,audio/x-wav,application/ogg
