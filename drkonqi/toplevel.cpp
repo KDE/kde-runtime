@@ -144,7 +144,7 @@ void Toplevel :: slotUser1()
             "reproduce it. It is not possible "
             "to fix the bug without a proper "
             "description.</b></p>"),
-       i18n("Include Backtrace"));
+       i18n("Include Backtrace"),i18n("Generate"),i18n("Do Not Generate"));
 
     if (i == KMessageBox::Cancel) return;
 
