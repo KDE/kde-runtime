@@ -21,7 +21,7 @@
 #include <klocale.h>
 #include <kmimetype.h>
 #include <kurl.h>
-#include <qvbox.h>
+#include <q3vbox.h>
 #include <qlabel.h>
 #include <qpixmap.h>
 #include <kio/netaccess.h>
@@ -33,7 +33,7 @@
 #include "audiopreview.h"
 
 AudioPreview::AudioPreview( QWidget *parent, const char *name, const QString &fileName, const QString &mimeType)
-  : QVBox( parent, name )
+  : Q3VBox( parent, name )
 {
   m_isTempFile = false;
   pic = 0;

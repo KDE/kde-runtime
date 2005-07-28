@@ -21,7 +21,7 @@
 #include <klocale.h>
 #include <kurl.h>
 #include <kurllabel.h>
-#include <qvbox.h>
+#include <q3vbox.h>
 #include <qlabel.h>
 #include <qpixmap.h>
 #include <qimage.h>
@@ -31,7 +31,7 @@
 #include "imagevisualizer.h"
 
 ImageVisualizer::ImageVisualizer( QWidget *parent, const char *name, const QString &fileName )
-  : QVBox( parent, name )
+  : Q3VBox( parent, name )
 {
   pic = 0;
   description = 0;
@@ -58,7 +58,7 @@ ImageVisualizer::ImageVisualizer( QWidget *parent, const char *name, const QStri
 void ImageVisualizer::loadImage( const QString& path )
 {
   QImage img(path);
-  QPixmap pixmap(img.smoothScale(180,200, QImage::ScaleMin) );
+  QPixmap pixmap(img.smoothScale(180,200, Qt::KeepAspectRatio) );
   pic->setText( QString::null );
   pic->setPixmap(pixmap );
   pic->adjustSize(); 

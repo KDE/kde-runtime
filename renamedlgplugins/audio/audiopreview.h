@@ -20,7 +20,10 @@
 #ifndef audiopreview_h
 #define audiopreview_h
 
-#include <qvbox.h>
+#include <q3vbox.h>
+//Added by qt3to4:
+#include <QPixmap>
+#include <QLabel>
 
 namespace KMediaPlayer
 {
@@ -29,7 +32,7 @@ namespace KMediaPlayer
 
 class QPixmap;
 class QLabel;
-class AudioPreview : public QVBox
+class AudioPreview : public Q3VBox
 {
   Q_OBJECT
 public:

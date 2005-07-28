@@ -20,11 +20,14 @@
 #ifndef imagevisualizer_h
 #define imagevisualizer_h
 
-#include <qvbox.h>
+#include <q3vbox.h>
+//Added by qt3to4:
+#include <QPixmap>
+#include <QLabel>
 
 class QPixmap;
 class QLabel;
-class ImageVisualizer : public QVBox
+class ImageVisualizer : public Q3VBox
 {
   Q_OBJECT
 public:
