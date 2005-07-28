@@ -33,7 +33,6 @@
 #include <dcopobject.h>
 
 #include <qstring.h>
-#include <qcstring.h>
 #include <kaboutdata.h>
 
 /**
@@ -48,7 +47,7 @@ public:
 
 k_dcop:
   virtual QString programName() const = 0;
-  virtual QCString appName() const = 0;
+  virtual QByteArray appName() const = 0;
   virtual int signalNumber() const = 0;
   virtual int pid() const = 0;
   virtual bool startedByKdeinit() const = 0;

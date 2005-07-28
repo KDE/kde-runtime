@@ -44,7 +44,7 @@ public:
 
 k_dcop:
   virtual QString programName() const { return m_aboutData->programName(); };
-  virtual QCString appName() const { return m_aboutData->appName(); };
+  virtual QByteArray appName() const { return m_aboutData->appName(); };
   virtual int signalNumber() const { return m_signalnum; };
   virtual int pid() const { return m_pid; };
   virtual bool startedByKdeinit() const { return m_startedByKdeinit; };

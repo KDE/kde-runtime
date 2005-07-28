@@ -69,9 +69,9 @@ void KrashConfig :: readConfig()
   if ( !args->getOption( "apppath" ).isEmpty() )
     m_execname.prepend( args->getOption( "apppath" ) + '/' );
 
-  QCString programname = args->getOption("programname");
+  QByteArray programname = args->getOption("programname");
   if (programname.isEmpty())
-    programname.setStr(I18N_NOOP("unknown"));
+    programname = I18N_NOOP("unknown");
   // leak some memory... Well. It's only done once anyway :-)
   const char * progname = qstrdup(programname);
   m_aboutData = new KAboutData(args->getOption("appname"),
@@ -80,7 +80,7 @@ void KrashConfig :: readConfig()
                                0, 0, 0, 0, 0,
                                args->getOption("bugaddress"));
 
-  QCString startup_id( args->getOption( "startupid" ));
+  QByteArray startup_id( args->getOption( "startupid" ));
   if (!startup_id.isEmpty())
   { // stop startup notification
     KStartupInfoId id;

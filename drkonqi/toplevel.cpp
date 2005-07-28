@@ -27,7 +27,8 @@
 
 #include <qstring.h>
 #include <qlabel.h>
-#include <qhbox.h>
+#include <Q3HBox>
+#include <QHBoxLayout>
 
 #include "netwm.h"
 
@@ -61,18 +62,25 @@ Toplevel :: Toplevel(KrashConfig *krashconf, QWidget *parent, const char *name)
                  ),
     m_krashconf(krashconf), m_bugreport(0)
 {
-  QHBox *page = addHBoxPage(i18n("&General"));
-  page->setSpacing(20);
+  QWidget* page = addPage(i18n("&General"));
+  QHBoxLayout* layout = new QHBoxLayout();
+  layout->setSpacing(20);
 
   // picture of konqi
   QLabel *lab = new QLabel(page);
-  lab->setFrameStyle(QFrame::Panel | QFrame::Sunken);
-  QPixmap pix(locate("appdata", QString::fromLatin1("pics/konqi.png")));
-  lab->setPixmap(pix);
-  lab->setFixedSize( lab->sizeHint() );
+  lab->setAlignment(Qt::AlignLeft | Qt::AlignTop);
+  lab->setPixmap(QPixmap(locate("appdata", QString::fromLatin1("pics/konqi.png"))));
 
   QLabel * info = new QLabel(generateText(), page);
-  info->setMinimumSize(info->sizeHint());
+  info->setWordWrap(true);
+  info->setAlignment(Qt::AlignLeft | Qt::AlignTop);
+
+  layout->addWidget(lab);
+  layout->addWidget(info);
+  layout->insertStretch(-1);
+  page->setLayout(layout);
+  page->setMinimumSize(page->sizeHint());
+  //page->adjustSize();
 
   if (m_krashconf->showBacktrace())
   {
@@ -151,7 +159,7 @@ void Toplevel :: slotUser1()
   m_bugreport = new DrKBugReport(0, true, m_krashconf->aboutData());
 
   if (i == KMessageBox::Yes) {
-    QApplication::setOverrideCursor ( waitCursor );
+    QApplication::setOverrideCursor ( Qt::waitCursor );
 
     // generate the backtrace
     BackTrace *backtrace = new BackTrace(m_krashconf, this);

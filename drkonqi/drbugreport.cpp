@@ -26,10 +26,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************/
 
-#include <qmultilineedit.h>
-
 #include <kmessagebox.h>
 #include <klocale.h>
+#include <Q3MultiLineEdit>
 
 #include "drbugreport.moc"
 #include "drbugreport.h"

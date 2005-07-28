@@ -37,7 +37,7 @@ QStringList readAreaList()
 
   QString confAreasFile = locate( "config", "kdebug.areas" );
   QFile file( confAreasFile );
-  if (!file.open(IO_ReadOnly)) {
+  if (!file.open(QIODevice::ReadOnly)) {
     kdWarning() << "Couldn't open " << confAreasFile << endl;
     file.close();
   }
@@ -47,7 +47,7 @@ QStringList readAreaList()
 
     QTextStream *ts = new QTextStream(&file);
     ts->setEncoding( QTextStream::Latin1 );
-    while (!ts->eof()) {
+    while (!ts->atEnd()) {
       data = ts->readLine().simplifyWhiteSpace();
 
       int pos = data.find("#");

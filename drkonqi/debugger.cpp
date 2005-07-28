@@ -26,7 +26,6 @@
  *****************************************************************/
 
 #include <qlayout.h>
-#include <qhbox.h>
 #include <qlabel.h>
 
 #include <kdialog.h>
@@ -44,6 +43,7 @@
 #include "krashconf.h"
 #include "debugger.h"
 #include "debugger.moc"
+#include <QTextStream>
 
 KrashDebugger :: KrashDebugger (const KrashConfig *krashconf, QWidget *parent, const char *name)
   : QWidget( parent, name ),

@@ -22,11 +22,11 @@
 
 #include "kabstractdebugdialog.h"
 #include <qcheckbox.h>
-#include <qptrlist.h>
 #include <qstringlist.h>
 
-class QVBox;
+class Q3VBox;
 class KLineEdit;
+class QListWidget;
 
 /**
  * Control debug output of KDE applications
@@ -43,7 +43,7 @@ public:
   KListDebugDialog( QStringList areaList, QWidget *parent=0, const char *name=0, bool modal=true );
   virtual ~KListDebugDialog() {}
 
-  void activateArea( QCString area, bool activate );
+  void activateArea( QByteArray area, bool activate );
 
   virtual void save();
 
@@ -51,15 +51,14 @@ protected slots:
   void selectAll();
   void deSelectAll();
 
-  void generateCheckBoxes( const QString& filter );
+  void generateCheckBoxes();
+  void filterCheckBoxes( const QString& filter );
 
 private:
   void load();
-  QPtrList<QCheckBox> boxes;
   QStringList m_areaList;
-  QVBox *m_box;
+  QListWidget* m_areaWidget;
   KLineEdit *m_incrSearch;
-  QMap<QCString, int> m_changes;
 };
 
 #endif

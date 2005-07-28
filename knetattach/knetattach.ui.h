@@ -112,7 +112,7 @@ void KNetAttach::showPage( QWidget *page )
 	updateParametersPageStatus();
     }
 
-    QWizard::showPage(page);
+    Q3Wizard::showPage(page);
 }
 
 

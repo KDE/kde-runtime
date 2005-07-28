@@ -1,5 +1,6 @@
 /* This file is part of the KDE libraries
    Copyright (C) 2000 David Faure <faure@kde.org>
+   Copyright (C) 2005 Hamish Rodda <rodda@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -23,8 +24,14 @@
 #include <kapplication.h>
 #include <kdebug.h>
 #include <qlayout.h>
-#include <qscrollview.h>
-#include <qvbox.h>
+#include <q3scrollview.h>
+#include <q3vbox.h>
+//Added by qt3to4:
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <Q3Button>
+#include <QListWidget>
+
 #include <klocale.h>
 #include <qpushbutton.h>
 #include <klineedit.h>
@@ -37,20 +44,17 @@ KListDebugDialog::KListDebugDialog( QStringList areaList, QWidget *parent, const
   setCaption(i18n("Debug Settings"));
 
   QVBoxLayout *lay = new QVBoxLayout( this, KDialog::marginHint(), KDialog::spacingHint() );
+  setLayout(lay);
 
   m_incrSearch = new KLineEdit( this );
   lay->addWidget( m_incrSearch );
   connect( m_incrSearch, SIGNAL( textChanged( const QString& ) ),
-           SLOT( generateCheckBoxes( const QString& ) ) );
+           SLOT( filterCheckBoxes( const QString& ) ) );
 
-  QScrollView * scrollView = new QScrollView( this );
-  scrollView->setResizePolicy( QScrollView::AutoOneFit );
-  lay->addWidget( scrollView );
+  m_areaWidget = new QListWidget(this);
+  lay->addWidget(m_areaWidget);
 
-  m_box = new QVBox( scrollView->viewport() );
-  scrollView->addChild( m_box );
-
-  generateCheckBoxes( QString::null );
+  generateCheckBoxes();
 
   QHBoxLayout* selectButs = new QHBoxLayout( lay );
   QPushButton* all = new QPushButton( i18n("&Select All"), this );
@@ -65,38 +69,31 @@ KListDebugDialog::KListDebugDialog( QStringList areaList, QWidget *parent, const
   resize( 350, 400 );
 }
 
-void KListDebugDialog::generateCheckBoxes( const QString& filter )
+void KListDebugDialog::filterCheckBoxes( const QString & filter )
 {
-  QPtrListIterator<QCheckBox> cb_it ( boxes );
-  for( ; cb_it.current() ; ++cb_it )
-  {
-    if( (*cb_it)->state() != QButton::NoChange )
-      m_changes.insert( (*cb_it)->name(), (*cb_it)->isChecked() ? 2 : 4 );
+  bool doFilter = filter.length();
+
+  for (int i = 0; i < m_areaWidget->count(); ++i) {
+    QListWidgetItem* item = m_areaWidget->item(i);
+    m_areaWidget->setItemHidden(item, doFilter);
   }
 
-  boxes.setAutoDelete( true );
-  boxes.clear();
-  boxes.setAutoDelete( false );
-
-  QWidget* taborder = m_incrSearch;
-  QStringList::Iterator it = m_areaList.begin();
-  for ( ; it != m_areaList.end() ; ++it )
-  {
-    QString data = (*it).simplifyWhiteSpace();
-    if ( filter.isEmpty() || data.lower().contains( filter.lower() ) )
-    {
-      int space = data.find(" ");
-      if (space == -1)
-        kdError() << "No space:" << data << endl;
-
-      QString areaNumber = data.left(space);
-      //kdDebug() << areaNumber << endl;
-      QCheckBox * cb = new QCheckBox( data, m_box, areaNumber.latin1() );
-      cb->show();
-      boxes.append( cb );
-      setTabOrder( taborder, cb );
-      taborder = cb;
+  if (doFilter)
+    foreach(QListWidgetItem* item, m_areaWidget->findItems(filter, Qt::MatchContains)) {
+      m_areaWidget->setItemHidden(item, false);
     }
+}
+
+void KListDebugDialog::generateCheckBoxes()
+{
+  foreach (QString area, m_areaList) {
+    QString data = area.simplifyWhiteSpace();
+    int space = data.find(" ");
+    if (space == -1)
+      kdError() << "No space:" << data << endl;
+
+    QListWidgetItem* item = new QListWidgetItem(data, m_areaWidget);
+    item->setData(Qt::UserRole, data.left(space).toLatin1());
   }
 
   load();
@@ -104,65 +101,60 @@ void KListDebugDialog::generateCheckBoxes( const QString& filter )
 
 void KListDebugDialog::selectAll()
 {
-  QPtrListIterator<QCheckBox> it ( boxes );
-  for ( ; it.current() ; ++it ) {
-    (*it)->setChecked( true );
-    m_changes.insert( (*it)->name(), 2 );
+  for (int i = 0; i < m_areaWidget->count(); ++i) {
+    QListWidgetItem* item = m_areaWidget->item(i);
+    if (!m_areaWidget->isItemHidden(item)) {
+      item->setCheckState(Qt::Checked);
+    }
   }
 }
 
 void KListDebugDialog::deSelectAll()
 {
-  QPtrListIterator<QCheckBox> it ( boxes );
-  for ( ; it.current() ; ++it ) {
-    (*it)->setChecked( false );
-    m_changes.insert( (*it)->name(), 4 );
+  for (int i = 0; i < m_areaWidget->count(); ++i) {
+    QListWidgetItem* item = m_areaWidget->item(i);
+    if (!m_areaWidget->isItemHidden(item)) {
+      item->setCheckState(Qt::Unchecked);
+    }
   }
 }
 
 void KListDebugDialog::load()
 {
-  QPtrListIterator<QCheckBox> it ( boxes );
-  for ( ; it.current() ; ++it )
-  {
-      pConfig->setGroup( (*it)->name() ); // Group name = debug area code = cb's name
+  for (int i = 0; i < m_areaWidget->count(); ++i) {
+    QListWidgetItem* item = m_areaWidget->item(i);
+    pConfig->setGroup( item->data(Qt::UserRole).toByteArray() ); // Group name = debug area code = cb's name
 
-      int setting = pConfig->readNumEntry( "InfoOutput", 2 );
-      // override setting if in m_changes
-      if( m_changes.find( (*it)->name() ) != m_changes.end() ) {
-        setting = m_changes[ (*it)->name() ];
-      }
+    int setting = pConfig->readNumEntry( "InfoOutput", 2 );
 
-      switch (setting) {
-        case 4: // off
-          (*it)->setChecked(false);
-          break;
-        case 2: //shell
-          (*it)->setChecked(true);
-          break;
-        case 3: //syslog
-        case 1: //msgbox
-        case 0: //file
-        default:
-          (*it)->setNoChange();
-          /////// Uses the triState capability of checkboxes
-          ////// Note: it seems some styles don't draw that correctly (BUG)
-          break;
-      }
+    switch (setting) {
+      case 4: // off
+        item->setCheckState(Qt::Unchecked);
+        break;
+      case 2: //shell
+        item->setCheckState(Qt::Checked);
+        break;
+      case 3: //syslog
+      case 1: //msgbox
+      case 0: //file
+      default:
+        item->setCheckState(Qt::PartiallyChecked);
+        /////// Uses the triState capability of checkboxes
+        break;
+    }
   }
 }
 
 void KListDebugDialog::save()
 {
-  QPtrListIterator<QCheckBox> it ( boxes );
-  for ( ; it.current() ; ++it )
-  {
-      pConfig->setGroup( (*it)->name() ); // Group name = debug area code = cb's name
-      if ( (*it)->state() != QButton::NoChange )
-      {
-          int setting = (*it)->isChecked() ? 2 : 4;
-          pConfig->writeEntry( "InfoOutput", setting );
-      }
+  for (int i = 0; i < m_areaWidget->count(); ++i) {
+    QListWidgetItem* item = m_areaWidget->item(i);
+    pConfig->setGroup( item->data(Qt::UserRole).toByteArray() ); // Group name = debug area code = cb's name
+    if (item->checkState() != Qt::PartiallyChecked)
+    {
+      int setting = (item->checkState() == Qt::Checked) ? 2 : 4;
+      pConfig->writeEntry( "InfoOutput", setting );
+    }
   }
   //sync done by main.cpp
 
@@ -172,21 +164,13 @@ void KListDebugDialog::save()
   {
     kdError() << "Unable to send DCOP message" << endl;
   }
-
-  m_changes.clear();
 }
 
-void KListDebugDialog::activateArea( QCString area, bool activate )
+void KListDebugDialog::activateArea( QByteArray area, bool activate )
 {
-  QPtrListIterator<QCheckBox> it ( boxes );
-  for ( ; it.current() ; ++it )
-  {
-      if ( area == (*it)->name()  // debug area code = cb's name
-          || (*it)->text().find( QString::fromLatin1(area) ) != -1 ) // area name included in cb text
-      {
-          (*it)->setChecked( activate );
-          return;
-      }
+  foreach(QListWidgetItem* item, m_areaWidget->findItems(area, Qt::MatchContains)) {
+    item->setCheckState( activate ? Qt::Checked : Qt::Unchecked );
+    return;
   }
 }
 

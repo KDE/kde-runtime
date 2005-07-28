@@ -146,13 +146,13 @@ bool BackTrace::usefulBacktrace()
   // how many " ?? " in the bt ?
   int unknown = 0;
   if( !m_krashconf->invalidStackFrameRegExp().isEmpty())
-    unknown = strBt.contains( QRegExp( m_krashconf->invalidStackFrameRegExp()));
+    unknown = strBt.count( QRegExp( m_krashconf->invalidStackFrameRegExp()));
   // how many stack frames in the bt ?
   int frames = 0;
   if( !m_krashconf->frameRegExp().isEmpty())
-    frames = strBt.contains( QRegExp( m_krashconf->frameRegExp()));
+    frames = strBt.count( QRegExp( m_krashconf->frameRegExp()));
   else
-    frames = strBt.contains('\n');
+    frames = strBt.count('\n');
   bool tooShort = false;
   if( !m_krashconf->neededInValidBacktraceRegExp().isEmpty())
     tooShort = ( strBt.find( QRegExp( m_krashconf->neededInValidBacktraceRegExp())) == -1 );

@@ -35,12 +35,6 @@
                 <property name="name">
                     <cstring>buttonGroup1</cstring>
                 </property>
-                <property name="frameShape">
-                    <enum>NoFrame</enum>
-                </property>
-                <property name="frameShadow">
-                    <enum>Plain</enum>
-                </property>
                 <property name="title">
                     <string></string>
                 </property>
@@ -126,7 +120,7 @@
                     <cstring>spacer2_2</cstring>
                 </property>
                 <property name="orientation">
-                    <enum>Vertical</enum>
+                    <enum>Qt::Vertical</enum>
                 </property>
                 <property name="sizeType">
                     <enum>Expanding</enum>
@@ -146,7 +140,7 @@
                     <string>Select the type of network folder you wish to connect to and press the Next button.</string>
                 </property>
                 <property name="alignment">
-                    <set>WordBreak|AlignVCenter</set>
+                    <set>Qt::TextWordWrap|Qt::AlignVCenter</set>
                 </property>
             </widget>
             <spacer row="1" column="0">
@@ -154,7 +148,7 @@
                     <cstring>spacer20</cstring>
                 </property>
                 <property name="orientation">
-                    <enum>Vertical</enum>
+                    <enum>Qt::Vertical</enum>
                 </property>
                 <property name="sizeType">
                     <enum>Fixed</enum>
@@ -187,7 +181,7 @@
                     <string>Enter a name for this &lt;i&gt;%1&lt;/i&gt; as well as the server address, port and folder path to use and press the Next button.</string>
                 </property>
                 <property name="alignment">
-                    <set>WordBreak|AlignVCenter</set>
+                    <set>Qt::TextWordWrap|Qt::AlignVCenter</set>
                 </property>
             </widget>
             <spacer row="1" column="2">
@@ -195,7 +189,7 @@
                     <cstring>spacer20_2</cstring>
                 </property>
                 <property name="orientation">
-                    <enum>Vertical</enum>
+                    <enum>Qt::Vertical</enum>
                 </property>
                 <property name="sizeType">
                     <enum>Fixed</enum>
@@ -322,7 +316,7 @@
                     <cstring>spacer5</cstring>
                 </property>
                 <property name="orientation">
-                    <enum>Vertical</enum>
+                    <enum>Qt::Vertical</enum>
                 </property>
                 <property name="sizeType">
                     <enum>Expanding</enum>
@@ -416,7 +410,8 @@
     <include location="global" impldecl="in implementation">kstandarddirs.h</include>
     <include location="global" impldecl="in implementation">kdirnotify_stub.h</include>
     <include location="global" impldecl="in declaration">kurl.h</include>
-    <include location="local" impldecl="in implementation">knetattach.ui.h</include>
+	<include location="global" impldecl="in declaration">qpushbutton.h</include>
+	<include location="local" impldecl="in implementation">knetattach.ui.h</include>
 </includes>
 <variables>
     <variable access="private">QString _type;</variable>
