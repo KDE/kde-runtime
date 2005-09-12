@@ -62,7 +62,7 @@ KrashDebugger :: KrashDebugger (const KrashConfig *krashconf, QWidget *parent, c
   m_status = new QLabel( w );
   m_status->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Preferred ) );
   //m_copyButton = new KPushButton( KStdGuiItem::copy(), w );
-  KGuiItem item( i18n( "C&opy" ), QString::fromLatin1( "editcopy" ) );
+  KGuiItem item( i18n( "C&opy" ), QLatin1String( "editcopy" ) );
   m_copyButton = new KPushButton( item, w );
   connect( m_copyButton, SIGNAL( clicked() ), this, SLOT( slotCopy() ) );
   m_copyButton->setEnabled( false );
@@ -204,7 +204,7 @@ void KrashDebugger :: startDebugger()
 bool KrashDebugger::performChecks( QString* msg )
 {
   bool ret = true;
-  KConfig kdedcfg( QString::fromLatin1( "kdedrc" ), true );
+  KConfig kdedcfg( QLatin1String( "kdedrc" ), true );
   kdedcfg.setGroup( "General" );
   if( kdedcfg.readBoolEntry( "DelayedCheck", false ))
   {

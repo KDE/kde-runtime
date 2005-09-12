@@ -93,10 +93,10 @@ void KrashConfig :: readConfig()
 
   // maybe we should check if it's relative?
   QString configname = config->readEntry("ConfigName",
-                                         QString::fromLatin1("enduser"));
+                                         QLatin1String("enduser"));
 
   QString debuggername = config->readEntry("Debugger",
-                                           QString::fromLatin1("gdb"));
+                                           QLatin1String("gdb"));
 
   KConfig debuggers(QString::fromLatin1("debuggers/%1rc").arg(debuggername),
                     true, false, "appdata");
@@ -138,7 +138,7 @@ void KrashConfig :: readConfig()
   QString str = QString::number(m_signalnum);
   // use group unknown if signal not found
   if (!preset.hasGroup(str))
-    str = QString::fromLatin1("unknown");
+    str = QLatin1String("unknown");
   preset.setGroup(str);
   m_signalName = preset.readEntry("Name");
   if (b)
@@ -149,13 +149,13 @@ void KrashConfig :: readConfig()
 void KrashConfig :: expandString(QString &str, bool shell, const QString &tempFile) const
 {
   QMap<QString,QString> map;
-  map[QString::fromLatin1("appname")] = QString::fromLatin1(appName());
-  map[QString::fromLatin1("execname")] = startedByKdeinit() ? QString::fromLatin1("kdeinit") : m_execname;
-  map[QString::fromLatin1("signum")] = QString::number(signalNumber());
-  map[QString::fromLatin1("signame")] = signalName();
-  map[QString::fromLatin1("progname")] = programName();
-  map[QString::fromLatin1("pid")] = QString::number(pid());
-  map[QString::fromLatin1("tempfile")] = tempFile;
+  map[QLatin1String("appname")] = QString::fromLatin1(appName());
+  map[QLatin1String("execname")] = startedByKdeinit() ? QString::fromLatin1("kdeinit") : m_execname;
+  map[QLatin1String("signum")] = QString::number(signalNumber());
+  map[QLatin1String("signame")] = signalName();
+  map[QLatin1String("progname")] = programName();
+  map[QLatin1String("pid")] = QString::number(pid());
+  map[QLatin1String("tempfile")] = tempFile;
   if (shell)
     str = KMacroExpander::expandMacrosShellQuote( str, map );
   else

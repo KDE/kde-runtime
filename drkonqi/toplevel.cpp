@@ -69,7 +69,7 @@ Toplevel :: Toplevel(KrashConfig *krashconf, QWidget *parent, const char *name)
   // picture of konqi
   QLabel *lab = new QLabel(page);
   lab->setAlignment(Qt::AlignLeft | Qt::AlignTop);
-  lab->setPixmap(QPixmap(locate("appdata", QString::fromLatin1("pics/konqi.png"))));
+  lab->setPixmap(QPixmap(locate("appdata", QLatin1String("pics/konqi.png"))));
 
   QLabel * info = new QLabel(generateText(), page);
   info->setWordWrap(true);
