@@ -20,18 +20,19 @@
 #ifndef imagevisualizer_h
 #define imagevisualizer_h
 
-#include <q3vbox.h>
+
 //Added by qt3to4:
 #include <QPixmap>
 #include <QLabel>
+#include <kvbox.h>
 
 class QPixmap;
 class QLabel;
-class ImageVisualizer : public Q3VBox
+class ImageVisualizer : public KVBox
 {
   Q_OBJECT
 public:
-  ImageVisualizer(QWidget *parent, const char *name, const QString &fileName );
+  ImageVisualizer(QWidget *parent, const QString &fileName );
 
 private:
   void loadImage( const QString& path );

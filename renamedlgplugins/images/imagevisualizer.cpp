@@ -21,17 +21,18 @@
 #include <klocale.h>
 #include <kurl.h>
 #include <kurllabel.h>
-#include <q3vbox.h>
+
 #include <qlabel.h>
 #include <qpixmap.h>
 #include <qimage.h>
 
 #include <kio/netaccess.h>
+#include <kvbox.h>
 
 #include "imagevisualizer.h"
 
-ImageVisualizer::ImageVisualizer( QWidget *parent, const char *name, const QString &fileName )
-  : Q3VBox( parent, name )
+ImageVisualizer::ImageVisualizer( QWidget *parent, const QString &fileName )
+  : KVBox( parent )
 {
   pic = 0;
   description = 0;

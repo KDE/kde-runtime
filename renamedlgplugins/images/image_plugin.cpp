@@ -75,8 +75,8 @@ bool ImagePlugin::initialize( KIO::RenameDlg_Mode mode, const QString &_src, con
     lay->addMultiCellWidget(label, 1, 1, 0, 2,  Qt::AlignHCenter  );
     adjustSize();
   }
-  ImageVisualizer *left= new ImageVisualizer(this, "Visualizer Left", _dest );
-  ImageVisualizer *right = new ImageVisualizer( this, "Visualizer Right", _src );
+  ImageVisualizer *left= new ImageVisualizer(this, _dest );
+  ImageVisualizer *right = new ImageVisualizer( this, _src );
   lay->addWidget(left, 2, 0 );
   lay->addWidget(right, 2, 2 );
   adjustSize();

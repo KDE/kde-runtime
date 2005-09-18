@@ -93,8 +93,8 @@ bool AudioPlugin::initialize( KIO::RenameDlg_Mode mode, const QString &_src, con
    lay->addMultiCellWidget(label_ask, 3, 3, 0, 2,  Qt::AlignLeft);
    adjustSize();
  }
- AudioPreview *left= new AudioPreview(this, "Preview Left", _dest, mimeDest );
- AudioPreview *right = new AudioPreview( this, "Preview Right", _src, mimeSrc);
+ AudioPreview *left= new AudioPreview(this,  _dest, mimeDest );
+ AudioPreview *right = new AudioPreview( this, _src, mimeSrc);
  lay->addWidget(left, 2, 0 );
  lay->addWidget(right, 2, 2 );
  adjustSize();

@@ -20,10 +20,11 @@
 #ifndef audiopreview_h
 #define audiopreview_h
 
-#include <q3vbox.h>
+
 //Added by qt3to4:
 #include <QPixmap>
 #include <QLabel>
+#include <kvbox.h>
 
 namespace KMediaPlayer
 {
@@ -32,11 +33,11 @@ namespace KMediaPlayer
 
 class QPixmap;
 class QLabel;
-class AudioPreview : public Q3VBox
+class AudioPreview : public KVBox
 {
   Q_OBJECT
 public:
-  AudioPreview(QWidget *parent, const char *name, const QString &fileName, const QString &mimeType);
+  AudioPreview(QWidget *parent, const QString &fileName, const QString &mimeType);
   ~AudioPreview();
 
 private slots:
