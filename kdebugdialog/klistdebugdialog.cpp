@@ -87,7 +87,7 @@ void KListDebugDialog::filterCheckBoxes( const QString & filter )
 void KListDebugDialog::generateCheckBoxes()
 {
   foreach (QString area, m_areaList) {
-    QString data = area.simplifyWhiteSpace();
+    QString data = area.simplified();
     int space = data.find(" ");
     if (space == -1)
       kdError() << "No space:" << data << endl;

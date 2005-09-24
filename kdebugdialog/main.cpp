@@ -48,7 +48,7 @@ QStringList readAreaList()
     QTextStream *ts = new QTextStream(&file);
     ts->setEncoding( QTextStream::Latin1 );
     while (!ts->atEnd()) {
-      data = ts->readLine().simplifyWhiteSpace();
+      data = ts->readLine().simplified();
 
       int pos = data.find("#");
       if ( pos != -1 )
