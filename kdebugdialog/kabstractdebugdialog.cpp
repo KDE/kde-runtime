@@ -24,6 +24,7 @@
 #include <kapplication.h>
 #include <klocale.h>
 #include <kstdguiitem.h>
+#include <ktoolinvocation.h>
 
 KAbstractDebugDialog::KAbstractDebugDialog( QWidget *parent, const char *name, bool modal )
     : KDialog( parent, name, modal )
@@ -73,7 +74,7 @@ void KAbstractDebugDialog::buildButtons( QVBoxLayout * topLayout )
 void KAbstractDebugDialog::slotShowHelp()
 {
   if (kapp)
-    kapp->invokeHelp();
+    KToolInvocation::invokeHelp();
 }
 
 void KAbstractDebugDialog::slotApply()
