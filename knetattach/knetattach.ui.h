@@ -10,6 +10,8 @@
 ** destructor.
 *****************************************************************************/
 
+#include <ktoolinvocation.h>
+#include <q3cstring.h>
 void KNetAttach::init()
 {
     setIcon(SmallIcon("knetattach"));
@@ -164,7 +166,7 @@ void KNetAttach::finished()
 	return;
     }
 
-    kapp->invokeBrowser(url.url());
+    KToolInvocation::invokeBrowser(url.url());
 
     QString name = _connectionName->text().stripWhiteSpace();
 
@@ -181,7 +183,7 @@ void KNetAttach::finished()
 	desktopFile.writeEntry("Type", "Link");
 	desktopFile.writeEntry("URL", url.prettyURL());
 	desktopFile.sync();
-	KDirNotify_stub notifier("*", "*");
+	KDirNotify_stub notifier(Q3CString("*"), Q3CString("*"));
 	notifier.FilesAdded( "remote:/" );
     }
 
