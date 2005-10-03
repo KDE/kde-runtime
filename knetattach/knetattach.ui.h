@@ -10,8 +10,6 @@
 ** destructor.
 *****************************************************************************/
 
-#include <ktoolinvocation.h>
-#include <q3cstring.h>
 void KNetAttach::init()
 {
     setIcon(SmallIcon("knetattach"));

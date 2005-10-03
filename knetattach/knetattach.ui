@@ -411,6 +411,8 @@
     <include location="global" impldecl="in implementation">kdirnotify_stub.h</include>
     <include location="global" impldecl="in declaration">kurl.h</include>
 	<include location="global" impldecl="in declaration">qpushbutton.h</include>
+	<include location="global" impldecl="in declaration">ktoolinvocation.h</include>
+	<include location="global" impldecl="in declaration">q3cstring.h</include>
 	<include location="local" impldecl="in implementation">knetattach.ui.h</include>
 </includes>
 <variables>
