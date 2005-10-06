@@ -40,6 +40,7 @@
 #include <kprocess.h>
 #include <kapplication.h>
 #include <dcopclient.h>
+#include <khbox.h>
 
 #include "backtrace.h"
 #include "drbugreport.h"

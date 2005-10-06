@@ -148,7 +148,7 @@ void KrashConfig :: readConfig()
 // replace some of the strings
 void KrashConfig :: expandString(QString &str, bool shell, const QString &tempFile) const
 {
-  QMap<QString,QString> map;
+  QHash<QString,QString> map;
   map[QLatin1String("appname")] = QString::fromLatin1(appName());
   map[QLatin1String("execname")] = startedByKdeinit() ? QString::fromLatin1("kdeinit") : m_execname;
   map[QLatin1String("signum")] = QString::number(signalNumber());
