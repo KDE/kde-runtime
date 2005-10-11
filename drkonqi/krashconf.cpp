@@ -35,6 +35,8 @@
 #include <dcopclient.h>
 #include <kmacroexpander.h>
 
+#include <QHash>
+
 #include "krashconf.h"
 
 KrashConfig :: KrashConfig()
