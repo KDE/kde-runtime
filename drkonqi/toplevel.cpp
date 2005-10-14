@@ -27,7 +27,7 @@
 
 #include <qstring.h>
 #include <qlabel.h>
-#include <Q3HBox>
+
 #include <QHBoxLayout>
 
 #include "netwm.h"
@@ -41,6 +41,7 @@
 #include <kapplication.h>
 #include <dcopclient.h>
 #include <khbox.h>
+#include <kvbox.h>
 
 #include "backtrace.h"
 #include "drbugreport.h"
