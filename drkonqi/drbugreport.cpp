@@ -28,7 +28,6 @@
 
 #include <kmessagebox.h>
 #include <klocale.h>
-#include <Q3MultiLineEdit>
 #include <QTextEdit>
 
 #include "drbugreport.moc"
