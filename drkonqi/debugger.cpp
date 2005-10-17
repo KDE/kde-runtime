@@ -182,7 +182,7 @@ void KrashDebugger :: startDebugger()
     m_status->setText( i18n( "Backtrace will not be created."));
     return;
   }
-  if( !checks )
+  if( !msg.isEmpty())
   {
     m_prependText += msg + '\n';
     m_backtrace->setText( m_prependText );
@@ -208,7 +208,7 @@ bool KrashDebugger::performChecks( QString* msg )
   kdedcfg.setGroup( "General" );
   if( kdedcfg.readBoolEntry( "DelayedCheck", false ))
   {
-    ret = false;
+    // ret = false; it's not that dangerous
     *msg += i18n( "System configuration startup check disabled.\n" );
   }
   return ret;
