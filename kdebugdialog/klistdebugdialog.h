@@ -24,7 +24,6 @@
 #include <qcheckbox.h>
 #include <qstringlist.h>
 
-class Q3VBox;
 class KLineEdit;
 class QListWidget;
 
