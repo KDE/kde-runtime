@@ -161,7 +161,7 @@ void Toplevel :: slotUser1()
   m_bugreport = new DrKBugReport(0, true, m_krashconf->aboutData());
 
   if (i == KMessageBox::Yes) {
-    QApplication::setOverrideCursor ( Qt::waitCursor );
+    QApplication::setOverrideCursor ( Qt::WaitCursor );
 
     // generate the backtrace
     BackTrace *backtrace = new BackTrace(m_krashconf, this);
