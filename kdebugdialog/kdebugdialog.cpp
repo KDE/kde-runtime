@@ -174,7 +174,7 @@ KDebugDialog::KDebugDialog( QStringList areaList, QWidget *parent, const char *n
   topLayout->addWidget(pAbortFatal);
 
   topLayout->addStretch();
-  KSeparator *hline = new KSeparator( KSeparator::HLine, this );
+  KSeparator *hline = new KSeparator( Qt::Horizontal, this );
   topLayout->addWidget( hline );
 
   buildButtons( topLayout );
