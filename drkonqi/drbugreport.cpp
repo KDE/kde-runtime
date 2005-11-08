@@ -42,13 +42,13 @@ DrKBugReport::DrKBugReport(QWidget *parent, bool modal,
 void DrKBugReport::setText(const QString &str)
 {
   m_lineedit->setText(str);
-  m_startstring = str.simplifyWhiteSpace();
+  m_startstring = str.simplified();
 }
 
 void DrKBugReport::slotOk()
 {
   if (!m_startstring.isEmpty() &&
-      m_lineedit->text().simplifyWhiteSpace() == m_startstring)
+      m_lineedit->text().simplified() == m_startstring)
   {
     QString msg = i18n("You have to edit the description "
                        "before the report can be sent.");
