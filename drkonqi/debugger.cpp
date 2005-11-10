@@ -123,7 +123,7 @@ void KrashDebugger :: slotSave()
             return;       
       }           
       
-      if (f.open(IO_WriteOnly))
+      if (f.open(QIODevice::WriteOnly))
       {
         QTextStream ts(&f);
         ts << m_backtrace->text();
