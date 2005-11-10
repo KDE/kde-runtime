@@ -73,12 +73,13 @@ bool AudioPlugin::initialize( KIO::RenameDlg_Mode mode, const QString &_src, con
    QLabel *label_ask  = new QLabel(this);
 
    QString sentence1;
+   QString dest = KURL::fromPathOrURL(_dest).pathOrURL();
    if (mtimeDest < mtimeSrc)
-      sentence1 = i18n("An older file named '%1' already exists.\n").arg(_dest);
+      sentence1 = i18n("An older file named '%1' already exists.\n").arg(dest);
    else if (mtimeDest == mtimeSrc)
-      sentence1 = i18n("A similar file named '%1' already exists.\n").arg(_dest);
+      sentence1 = i18n("A similar file named '%1' already exists.\n").arg(dest);
    else
-      sentence1 = i18n("A newer file named '%1' already exists.\n").arg(_dest);
+      sentence1 = i18n("A newer file named '%1' already exists.\n").arg(dest);
    label_head->setText(sentence1);
    label_src->setText(i18n("Source File"));
    label_dst->setText(i18n("Existing File"));
