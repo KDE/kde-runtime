@@ -181,7 +181,7 @@ void KNetAttach::finished()
 	desktopFile.writeEntry("Type", "Link");
 	desktopFile.writeEntry("URL", url.prettyURL());
 	desktopFile.sync();
-	KDirNotify_stub notifier(Q3CString("*"), Q3CString("*"));
+	KDirNotify_stub notifier("*", "*");
 	notifier.FilesAdded( "remote:/" );
     }
 
