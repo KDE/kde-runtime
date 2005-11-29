@@ -18,23 +18,18 @@
    Boston, MA 02110-1301, USA.
 */
 
-
 #include "klistdebugdialog.h"
+
 #include <kconfig.h>
 #include <kapplication.h>
 #include <kdebug.h>
-#include <qlayout.h>
-#include <q3scrollview.h>
-#include <q3vbox.h>
-//Added by qt3to4:
-#include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QListWidget>
-
 #include <klocale.h>
-#include <qpushbutton.h>
 #include <klineedit.h>
 #include <dcopclient.h>
+
+#include <QLayout>
+#include <QListWidget>
+#include <QPushButton>
 
 KListDebugDialog::KListDebugDialog( QStringList areaList, QWidget *parent, const char *name, bool modal )
   : KAbstractDebugDialog( parent, name, modal ),
