@@ -73,7 +73,7 @@ void BackTrace::start()
   {
     QObject * o = parent();
 
-    if (o && !o->inherits("QWidget"))
+    if (o && !qobject_cast<QWidget*>(o))
     {
       o = NULL;
     }
