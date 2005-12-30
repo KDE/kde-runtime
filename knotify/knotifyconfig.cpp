@@ -25,8 +25,8 @@
 
 KNotifyConfig::KNotifyConfig( const QString & _appname, const ContextList & _contexts, const QString & _eventid )
 	: appname (_appname),
-	eventsfile( _appname+QString::fromAscii( "/eventsrc" ), true, false, "data"),
-	configfile( _appname+QString::fromAscii( ".eventsrc" ), true, false),
+	eventsfile( _appname+"/"+_appname + ".notifyrc" , true, false, "data"),
+	configfile( _appname+QString::fromAscii( ".notifyrc" ), true, false),
 	contexts(_contexts) , eventid(_eventid) 
 {
 //	kdDebug() << k_funcinfo << appname << " , " << eventid << endl;
@@ -45,7 +45,7 @@ QString KNotifyConfig::readEntry( const QString & entry, bool path )
 		if(configfile.hasGroup( group ) )
 		{
 			configfile.setGroup(group);
-			QString p=path ?  configfile.readPathEntry(entry) : configfile.readEntry(entry);
+			QString p=path ?  configfile.readPathEntry(entry) : configfile.readEntry(entry,QString::null);
 			if(!p.isNull())
 				return p;
 		}
@@ -55,7 +55,7 @@ QString KNotifyConfig::readEntry( const QString & entry, bool path )
 	if(configfile.hasGroup( group ) )
 	{
 		configfile.setGroup(group);
-		QString p=path ?  configfile.readPathEntry(entry) : configfile.readEntry(entry);
+		QString p=path ?  configfile.readPathEntry(entry) : configfile.readEntry(entry,QString::null);
 		if(!p.isNull())
 			return p;
 	}
@@ -63,7 +63,7 @@ QString KNotifyConfig::readEntry( const QString & entry, bool path )
 	if(eventsfile.hasGroup( group ) )
 	{
 		eventsfile.setGroup(group);
-		QString p=path ?  eventsfile.readPathEntry(entry) : eventsfile.readEntry(entry);
+		QString p=path ?  eventsfile.readPathEntry(entry) : eventsfile.readEntry(entry, QString::null);
 		if(!p.isNull())
 			return p;
 	}
