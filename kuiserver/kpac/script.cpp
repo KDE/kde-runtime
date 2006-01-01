@@ -83,7 +83,7 @@ namespace
               flags = KNetwork::KResolver::NoResolve;
 
             KNetwork::KResolverResults addresses =
-               KNetwork::KResolver::resolve( host, QString::null, flags,
+               KNetwork::KResolver::resolve( host, QString(), flags,
                                              KNetwork::KResolver::IPv4Family );
 
             if ( addresses.error() || addresses.isEmpty() ) 
