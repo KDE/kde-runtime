@@ -95,10 +95,10 @@ void KrashConfig :: readConfig()
 
   // maybe we should check if it's relative?
   QString configname = config->readEntry("ConfigName",
-                                         QLatin1String("enduser"));
+                                         QString("enduser"));
 
   QString debuggername = config->readEntry("Debugger",
-                                           QLatin1String("gdb"));
+                                           QString("gdb"));
 
   KConfig debuggers(QString::fromLatin1("debuggers/%1rc").arg(debuggername),
                     true, false, "appdata");
