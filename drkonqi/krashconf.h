@@ -72,7 +72,7 @@ public:
   bool disableChecks() const { return m_disablechecks; };
   const KAboutData *aboutData() const { return m_aboutData; }
 
-  void expandString(QString &str, bool shell, const QString &tempFile = QString::null) const;
+  void expandString(QString &str, bool shell, const QString &tempFile = QString()) const;
 
   void acceptDebuggingApp();
 

@@ -137,7 +137,7 @@ bool BackTrace::usefulBacktrace()
 {
   // remove crap
   if( !m_krashconf->removeFromBacktraceRegExp().isEmpty())
-    m_strBt.replace(QRegExp( m_krashconf->removeFromBacktraceRegExp()), QString::null);
+    m_strBt.replace(QRegExp( m_krashconf->removeFromBacktraceRegExp()), QString());
 
   if( m_krashconf->disableChecks())
       return true;

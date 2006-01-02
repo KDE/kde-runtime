@@ -108,7 +108,7 @@ void KrashDebugger :: slotSave()
   }
   else
   {
-    QString filename = KFileDialog::getSaveFileName(QString::null, QString::null, this, i18n("Select Filename"));
+    QString filename = KFileDialog::getSaveFileName(QString(), QString(), this, i18n("Select Filename"));
     if (!filename.isEmpty())
     {
       QFile f(filename);
