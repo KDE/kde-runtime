@@ -118,24 +118,24 @@ void KrashConfig :: readConfig()
                  true, false, "appdata");
 
   preset.setGroup("ErrorDescription");
-  if (preset.readBoolEntry("Enable"), true)
+  if (preset.readEntry("Enable", QVariant(false)).toBool(), true)
     m_errorDescriptionText = preset.readEntry("Name");
 
   preset.setGroup("WhatToDoHint");
-  if (preset.readBoolEntry("Enable"))
+  if (preset.readEntry("Enable", QVariant(false)).toBool())
     m_whatToDoText = preset.readEntry("Name");
 
   preset.setGroup("General");
-  m_showbugreport = preset.readBoolEntry("ShowBugReportButton", false);
+  m_showbugreport = preset.readEntry("ShowBugReportButton", QVariant(false)).toBool();
   m_showdebugger = m_showbacktrace = m_pid != 0;
   if (m_showbacktrace)
   {
-    m_showbacktrace = preset.readBoolEntry("ShowBacktraceButton", true);
-    m_showdebugger = preset.readBoolEntry("ShowDebugButton", true);
+    m_showbacktrace = preset.readEntry("ShowBacktraceButton", QVariant(true)).toBool();
+    m_showdebugger = preset.readEntry("ShowDebugButton", QVariant(true)).toBool();
   }
-  m_disablechecks = preset.readBoolEntry("DisableChecks", false);
+  m_disablechecks = preset.readEntry("DisableChecks", QVariant(false)).toBool();
 
-  bool b = preset.readBoolEntry("SignalDetails", true);
+  bool b = preset.readEntry("SignalDetails", QVariant(true)).toBool();
 
   QString str = QString::number(m_signalnum);
   // use group unknown if signal not found
