@@ -27,8 +27,10 @@
 #include <ktoolinvocation.h>
 
 KAbstractDebugDialog::KAbstractDebugDialog( QWidget *parent, const char *name, bool modal )
-    : KDialog( parent, name, modal )
+    : KDialog( parent)
 {
+	setObjectName(name);
+	setModal(modal);
     pConfig = new KConfig( "kdebugrc" );
 }
 
