@@ -52,8 +52,9 @@ public:
 };
 
 ImagePlugin::ImagePlugin( QDialog *dialog, const char *name, const QStringList &list ) 
-  : RenameDlgPlugin( dialog, name, list) 
+  : RenameDlgPlugin( dialog) 
 {
+	setObjectName(name);
 }
 
 bool ImagePlugin::initialize( KIO::RenameDlg_Mode mode, const QString &_src, const QString &_dest,

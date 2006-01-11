@@ -50,7 +50,7 @@ public:
 		  time_t /*mtimeDest*/ );
 };
 
-AudioPlugin::AudioPlugin( QDialog *dialog, const char *name, const QStringList &list ) : RenameDlgPlugin( dialog, name, list) {
+AudioPlugin::AudioPlugin( QDialog *dialog, const char *name, const QStringList &list ) : RenameDlgPlugin( dialog) {
   qWarning("loaded" );  
 }
 AudioPlugin::~AudioPlugin()
