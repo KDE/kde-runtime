@@ -119,7 +119,7 @@ void KListDebugDialog::load()
     QListWidgetItem* item = m_areaWidget->item(i);
     pConfig->setGroup( item->data(Qt::UserRole).toByteArray() ); // Group name = debug area code = cb's name
 
-    int setting = pConfig->readNumEntry( "InfoOutput", 2 );
+    int setting = pConfig->readEntry( "InfoOutput", 2 );
 
     switch (setting) {
       case 4: // off
