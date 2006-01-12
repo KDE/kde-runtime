@@ -102,7 +102,7 @@ void KNetAttach::showPage( QWidget *page )
 	    _user->setText(u.user());
 	    _path->setText(u.path());
 	    if (recent.hasKey("Port")) {
-		_port->setValue(recent.readNumEntry("Port"));
+		_port->setValue(recent.readEntry("Port",0));
 	    } else {
 		_port->setValue(u.port());
 	    }
