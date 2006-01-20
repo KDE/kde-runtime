@@ -47,7 +47,7 @@ public:
 
   void save();
 
-protected slots:
+protected Q_SLOTS:
   void slotDebugAreaChanged( const QString & );
   void slotDestinationChanged(int);
 

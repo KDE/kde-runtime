@@ -45,13 +45,13 @@ public:
 
   void start();
 
-signals:
+Q_SIGNALS:
   void append(const QString &str); // Just the new text
 
   void someError();
   void done(const QString &); // replaces whole text
 
-protected slots:
+protected Q_SLOTS:
   void slotProcessExited(KProcess * proc);
   void slotReadInput(KProcess * proc, char * buf, int buflen);
 

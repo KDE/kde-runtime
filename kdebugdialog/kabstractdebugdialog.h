@@ -39,7 +39,7 @@ public:
   virtual void save() = 0;
   KConfig * config() { return pConfig; }
 
-protected slots:
+protected Q_SLOTS:
   void slotShowHelp();
   void slotApply();
 

@@ -49,7 +49,7 @@ public:
    */
   void setText(const QString &str);
 
-protected slots:
+protected Q_SLOTS:
   /**
    * OK has been clicked
    */

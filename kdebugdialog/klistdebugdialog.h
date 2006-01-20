@@ -46,7 +46,7 @@ public:
 
   virtual void save();
 
-protected slots:
+protected Q_SLOTS:
   void selectAll();
   void deSelectAll();
 

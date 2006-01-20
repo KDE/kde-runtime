@@ -76,7 +76,7 @@ public:
 
   void acceptDebuggingApp();
 
-signals:
+Q_SIGNALS:
   void newDebuggingApplication(const QString& launchName);
 
 private:

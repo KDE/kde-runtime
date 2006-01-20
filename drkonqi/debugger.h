@@ -44,7 +44,7 @@ public:
   KrashDebugger(const KrashConfig *krashconf, QWidget *parent = 0, const char *name = 0);
   ~KrashDebugger();
 
-public slots:
+public Q_SLOTS:
   void slotAppend(const QString &);
   void slotDone(const QString&);
   void slotSomeError();
@@ -55,7 +55,7 @@ protected:
 
   virtual void showEvent(QShowEvent *e);
 
-protected slots:
+protected Q_SLOTS:
   void slotCopy();
   void slotSave();
 

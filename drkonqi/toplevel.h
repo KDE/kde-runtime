@@ -48,13 +48,13 @@ private:
   // helper methods
   QString generateText() const;
 
-protected slots:
+protected Q_SLOTS:
   void slotUser1();
   void slotUser2();
   void slotNewDebuggingApp(const QString& launchName);
   void slotUser3();
 
-protected slots:
+protected Q_SLOTS:
   void slotBacktraceSomeError();
   void slotBacktraceDone(const QString &);
 
