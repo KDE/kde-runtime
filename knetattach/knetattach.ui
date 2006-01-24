@@ -427,7 +427,7 @@
     <slot access="private">updateFinishButtonText( bool save )</slot>
 </slots>
 <functions>
-    <function access="private" returnType="bool">doConnectionTest( const KURL &amp; url )</function>
+    <function access="private" returnType="bool">doConnectionTest( const KUrl &amp; url )</function>
     <function access="private" returnType="bool">updateForProtocol( const QString &amp; protocol )</function>
 </functions>
 <layoutdefaults spacing="6" margin="11"/>

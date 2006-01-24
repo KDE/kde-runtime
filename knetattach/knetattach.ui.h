@@ -97,7 +97,7 @@ void KNetAttach::showPage( QWidget *page )
 	    if (!updateForProtocol(_type)) {
 		// FIXME: handle error
 	    }
-	    KURL u(recent.readEntry("URL"));
+	    KUrl u(recent.readEntry("URL"));
 	    _host->setText(u.host());
 	    _user->setText(u.user());
 	    _path->setText(u.path());
@@ -128,7 +128,7 @@ void KNetAttach::finished()
 {
     setBackEnabled(_folderParameters,false);
     setFinishEnabled(_folderParameters, false);
-    KURL url;
+    KUrl url;
     if (_type == "WebFolder") {
 	if (_useEncryption->isChecked()) {
 	    url.setProtocol("webdavs");
@@ -230,7 +230,7 @@ void KNetAttach::updatePort(bool encryption)
 }
 
 
-bool KNetAttach::doConnectionTest(const KURL& url)
+bool KNetAttach::doConnectionTest(const KUrl& url)
 {
     KIO::UDSEntry entry;
     if (KIO::NetAccess::stat(url, entry, this)) {
