@@ -20,7 +20,7 @@ void KNetAttach::init()
     setFinishEnabled(_folderParameters, false);
     KConfig recent("krecentconnections", true, false);
     recent.setGroup("General");
-    QStringList idx = recent.readListEntry("Index");
+    QStringList idx = recent.readEntry("Index",QStringList());
     if (idx.isEmpty()) {
 	_recent->setEnabled(false);
 	if (_recent->isChecked()) {
@@ -78,7 +78,7 @@ void KNetAttach::showPage( QWidget *page )
 	    KConfig recent("krecentconnections", true, false);
 	    if (!recent.hasGroup(_recentConnectionName->currentText())) {
 		recent.setGroup("General");
-		QStringList idx = recent.readListEntry("Index");
+		QStringList idx = recent.readEntry("Index",QStringList());
 		if (idx.isEmpty()) {
 		    _recent->setEnabled(false);
 		    if (_recent->isChecked()) {
@@ -188,7 +188,7 @@ void KNetAttach::finished()
     if (!name.isEmpty()) {
 	KConfig recent("krecentconnections", false, false);
 	recent.setGroup("General");
-	QStringList idx = recent.readListEntry("Index");
+	QStringList idx = recent.readEntry("Index",QStringList());
 	recent.deleteGroup(name); // erase anything stale
 	if (idx.contains(name)) {
 	    idx.remove(name);
