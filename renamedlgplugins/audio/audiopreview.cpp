@@ -40,7 +40,7 @@ AudioPreview::AudioPreview( QWidget *parent, const QString &fileName, const QStr
   m_player = 0L;
   description = 0;
   // fileName is created by KUrl::prettyURL()
-  KURL url( fileName );
+  KUrl url( fileName );
   setSpacing( 0 );
   if( url.isValid() && url.isLocalFile() ) {
     m_localFile = url.path();
@@ -50,7 +50,7 @@ AudioPreview::AudioPreview( QWidget *parent, const QString &fileName, const QStr
     description = new QLabel(this);
     initView( mimeType );
   } else if( !url.isLocalFile() ) {
-    KURLLabel *label = new KURLLabel( this );
+    KUrlLabel *label = new KUrlLabel( this );
     label->setText(i18n("This audio file isn't stored\non the local host.\nClick on this label to load it.\n" ) );
     label->setURL( url.prettyURL() );
     connect(label, SIGNAL(leftClickedURL(const QString&)), SLOT(downloadFile(const QString&)));
@@ -73,7 +73,7 @@ AudioPreview::~AudioPreview()
 
 void AudioPreview::initView( const QString& mimeType )
 {
-  KURL url = KURL::fromPathOrURL( m_localFile );
+  KUrl url = KUrl::fromPathOrURL( m_localFile );
   pic->setText( QString::null );
   pic->setPixmap(KMimeType::pixmapForURL( url ));
   pic->adjustSize();
@@ -116,7 +116,7 @@ void AudioPreview::initView( const QString& mimeType )
 
 void AudioPreview::downloadFile( const QString& url )
 {
-  if( KIO::NetAccess::download( KURL::fromPathOrURL( url ), m_localFile , topLevelWidget()) )
+  if( KIO::NetAccess::download( KUrl::fromPathOrURL( url ), m_localFile , topLevelWidget()) )
   {
     m_isTempFile = true;
     initView( KMimeType::findByPath( m_localFile )->name() );

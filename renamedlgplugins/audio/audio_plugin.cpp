@@ -73,7 +73,7 @@ bool AudioPlugin::initialize( KIO::RenameDlg_Mode mode, const QString &_src, con
    QLabel *label_ask  = new QLabel(this);
 
    QString sentence1;
-   QString dest = KURL::fromPathOrURL(_dest).pathOrURL();
+   QString dest = KUrl::fromPathOrURL(_dest).pathOrURL();
    if (mtimeDest < mtimeSrc)
       sentence1 = i18n("An older file named '%1' already exists.\n").arg(dest);
    else if (mtimeDest == mtimeSrc)
