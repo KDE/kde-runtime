@@ -38,7 +38,7 @@ QStringList readAreaList()
   QString confAreasFile = locate( "config", "kdebug.areas" );
   QFile file( confAreasFile );
   if (!file.open(QIODevice::ReadOnly)) {
-    kdWarning() << "Couldn't open " << confAreasFile << endl;
+    kWarning() << "Couldn't open " << confAreasFile << endl;
     file.close();
   }
   else

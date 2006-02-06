@@ -84,7 +84,7 @@ void KListDebugDialog::generateCheckBoxes()
     QString data = area.simplified();
     int space = data.find(" ");
     if (space == -1)
-      kdError() << "No space:" << data << endl;
+      kError() << "No space:" << data << endl;
 
     QListWidgetItem* item = new QListWidgetItem(data, m_areaWidget);
     item->setData(Qt::UserRole, data.left(space).toLatin1());
@@ -156,7 +156,7 @@ void KListDebugDialog::save()
   QByteArray data;
   if (!kapp->dcopClient()->send("*", "KDebug", "notifyKDebugConfigChanged()", data))
   {
-    kdError() << "Unable to send DCOP message" << endl;
+    kError() << "Unable to send DCOP message" << endl;
   }
 }
 

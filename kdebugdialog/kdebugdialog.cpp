@@ -202,12 +202,12 @@ void KDebugDialog::slotDebugAreaChanged( const QString & text )
   QString data = text.simplified();
   int space = data.find(" ");
   if (space == -1)
-      kdError() << "No space:" << data << endl;
+      kError() << "No space:" << data << endl;
 
   bool longOK;
   unsigned long number = data.left(space).toULong(&longOK);
   if (!longOK)
-      kdError() << "The first part wasn't a number : " << data << endl;
+      kError() << "The first part wasn't a number : " << data << endl;
 
   /* Fill dialog fields with values from config data */
   pConfig->setGroup( QString::number( number ) ); // Group name = debug area code
@@ -246,7 +246,7 @@ void KDebugDialog::save()
   QByteArray data;
   if (!kapp->dcopClient()->send("*", "KDebug", "notifyKDebugConfigChanged()", data))
   {
-    kdError() << "Unable to send DCOP message" << endl;
+    kError() << "Unable to send DCOP message" << endl;
   }
 }
 
