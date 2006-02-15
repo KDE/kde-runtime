@@ -12,7 +12,7 @@
             <height>371</height>
         </rect>
     </property>
-    <property name="caption">
+    <property name="windowTitle">
         <string>Network Folder Wizard</string>
     </property>
     <property name="titleFont">
