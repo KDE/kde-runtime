@@ -1,6 +1,7 @@
 [Desktop Entry]
 Type=Service
 Name=Image Displayer
+Name[fr]=Afficheur d'images
 Name[x-test]=xxImage Displayerxx
 X-KDE-Library=librenimageplugin
 ServiceTypes=RenameDlg/Plugin,image/jpeg,image/png
