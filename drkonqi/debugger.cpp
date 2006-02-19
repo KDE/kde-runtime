@@ -51,7 +51,7 @@ KrashDebugger :: KrashDebugger (const KrashConfig *krashconf, QWidget *parent, c
     m_proctrace(0)
 {
   QVBoxLayout *vbox = new QVBoxLayout( this, 0, KDialog::marginHint() );
-  vbox->setAutoAdd(TRUE);
+  vbox->setAutoAdd(true);
 
   m_backtrace = new KTextBrowser(this);
   m_backtrace->setTextFormat(Qt::PlainText);

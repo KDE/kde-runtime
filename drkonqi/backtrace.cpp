@@ -84,7 +84,7 @@ void BackTrace::start()
     return;
   }
   m_temp = new KTempFile;
-  m_temp->setAutoDelete(TRUE);
+  m_temp->setAutoDelete(true);
   int handle = m_temp->handle();
   QString backtraceCommand = m_krashconf->backtraceCommand();
   const char* bt = backtraceCommand.latin1();
