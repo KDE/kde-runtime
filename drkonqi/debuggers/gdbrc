@@ -1,7 +1,9 @@
 [General]
 Name=GNU Debugger
+Name[fr]=Débogueur GNU
 Name[x-test]=xxGNU Debuggerxx
 Comment=Text based debugger from GNU in a konsole
+Comment[fr]=Débogueur du GNU en mode texte dans Konsole
 Comment[x-test]=xxText based debugger from GNU in a konsolexx
 Exec=konsole -e gdb -nw %execname %pid
 ExecBatch=gdb -nw -n -batch -x %tempfile %execname %pid

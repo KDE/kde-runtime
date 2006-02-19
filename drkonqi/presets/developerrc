@@ -1,7 +1,9 @@
 [General]
 Name=Developer
+Name[fr]=Développeur
 Name[x-test]=xxDeveloperxx
 Comment=Settings preferred for developers
+Comment[fr]=Paramètres adaptés aux développeurs
 Comment[x-test]=xxSettings preferred for developersxx
 
 SignalDetails=true
@@ -13,39 +15,47 @@ DisableChecks=true
 [ErrorDescription]
 Enable=true
 Name=The application %progname (%appname), pid %pid, crashed and caused the signal %signum (%signame).
+Name[fr]=L'application %progname (%appname), de numéro %pid, s'est terminée anormalement et a provoqué le signal %signum (%signame).
 Name[x-test]=xxThe application %progname (%appname), pid %pid, crashed and caused the signal %signum (%signame).xx
 
 [WhatToDoHint]
 Enable=true
 Name=You might want to fix your program. Take a look at the backtrace tab.
+Name[fr]=Vous devriez contribuer à la correction du programme. Consultez l'onglet « Pile des appels ».
 Name[x-test]=xxYou might want to fix your program. Take a look at the backtrace tab.xx
 
 [4]
 Name=SIGILL
 Name[x-test]=xxSIGILLxx
 Comment=Illegal instruction.
+Comment[fr]=Instruction illégale.
 Comment[x-test]=xxIllegal instruction.xx
 
 [6]
 Name=SIGABRT
 Name[x-test]=xxSIGABRTxx
 Comment=Aborted.
+Comment[fr]=Interrompu.
 Comment[x-test]=xxAborted.xx
 
 [8]
 Name=SIGFPE
 Name[x-test]=xxSIGFPExx
 Comment=Floating point exception.
+Comment[fr]=Exception de virgule flottante.
 Comment[x-test]=xxFloating point exception.xx
 
 [11]
 Name=SIGSEGV
 Name[x-test]=xxSIGSEGVxx
 Comment=Invalid memory reference.
+Comment[fr]=Référence en mémoire non valable.
 Comment[x-test]=xxInvalid memory reference.xx
 
 [unknown]
 Name=Unknown
+Name[fr]=Inconnu
 Name[x-test]=xxUnknownxx
 Comment=This signal is unknown.
+Comment[fr]=Ce signal est inconnu
 Comment[x-test]=xxThis signal is unknown.xx

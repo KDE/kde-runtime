@@ -1,7 +1,9 @@
 [General]
 Name=End user
+Name[fr]=Utilisateur final
 Name[x-test]=xxEnd userxx
 Comment=Settings preferred for end users
+Comment[fr]=Paramètres adaptés à l'utilisateur final
 Comment[x-test]=xxSettings preferred for end usersxx
 
 SignalDetails=true
@@ -13,39 +15,47 @@ DisableChecks=false
 [ErrorDescription]
 Enable=true
 Name=The application %progname (%appname) crashed and caused the signal %signum (%signame).
+Name[fr]=L'application %progname (%appname) s'est terminée anormalement et a provoqué le signal %signum (%signame).
 Name[x-test]=xxThe application %progname (%appname) crashed and caused the signal %signum (%signame).xx
 
 [WhatToDoHint]
 Enable=true
 Name=You might want to send a bug report for this application. Check if it is listed on http://bugs.kde.org, otherwise mail the author. Please include as much information as possible, maybe the original documents. If you have a way to reproduce the error, include this also.
+Name[fr]=Vous devriez envoyer un rapport de bogue pour cette application. Veuillez vérifier s'il est déjà inscrit sur http://bugs.kde.org, sinon envoyez un courrier électronique à l'auteur. Veuillez inclure autant d'informations que possible, peut-être aussi les documents de travail. Si vous savez comment reproduire le problème, indiquez-le.
 Name[x-test]=xxYou might want to send a bug report for this application. Check if it is listed on http://bugs.kde.org, otherwise mail the author. Please include as much information as possible, maybe the original documents. If you have a way to reproduce the error, include this also.xx
 
 [4]
 Name=SIGILL
 Name[x-test]=xxSIGILLxx
 Comment=An application mostly receives the SIGILL signal due to a bug in the application. The application was asked to save its documents.
+Comment[fr]=Une application reçoit généralement le signal SIGILL à cause d'un bogue interne. Le programme a reçu une demande d'enregistrement de ses documents.
 Comment[x-test]=xxAn application mostly receives the SIGILL signal due to a bug in the application. The application was asked to save its documents.xx
 
 [6]
 Name=SIGABRT
 Name[x-test]=xxSIGABRTxx
 Comment=An application terminates with a SIGABRT signal when it detects an internal inconsistency caused by a bug in the program.
+Comment[fr]=Une application se termine généralement par le signal SIGABRT quand elle détecte une incohérence interne causée par un bogue du programme.
 Comment[x-test]=xxAn application terminates with a SIGABRT signal when it detects an internal inconsistency caused by a bug in the program.xx
 
 [8]
 Name=SIGFPE
 Name[x-test]=xxSIGFPExx
 Comment=An application mostly receives the SIGFPE signal due to a bug in the application. The application was asked to save its documents.
+Comment[fr]=Une application reçoit généralement le signal SIGFPE à cause d'un bogue interne. Le programme a reçu une demande d'enregistrement de ses documents.
 Comment[x-test]=xxAn application mostly receives the SIGFPE signal due to a bug in the application. The application was asked to save its documents.xx
 
 [11]
 Name=SIGSEGV
 Name[x-test]=xxSIGSEGVxx
 Comment=An application mostly receives the SIGSEGV signal due to a bug in the application. The application was asked to save its documents.
+Comment[fr]=Une application reçoit généralement le signal SIGSEGV à cause d'un bogue interne. Le programme a reçu une demande d'enregistrement de ses documents.
 Comment[x-test]=xxAn application mostly receives the SIGSEGV signal due to a bug in the application. The application was asked to save its documents.xx
 
 [unknown]
 Name=Unknown
+Name[fr]=Inconnu
 Name[x-test]=xxUnknownxx
 Comment=Sorry, I do not know this signal.
+Comment[fr]=Désolé, ce signal est inconnu.
 Comment[x-test]=xxSorry, I do not know this signal.xx
