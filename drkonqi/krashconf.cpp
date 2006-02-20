@@ -79,7 +79,9 @@ void KrashConfig :: readConfig()
   m_aboutData = new KAboutData(args->getOption("appname"),
                                progname,
                                args->getOption("appversion"),
-                               0, 0, 0, 0, 0,
+                               0, // shortDescription
+                               KAboutData::License_Unknown,
+                               0, 0, 0,
                                args->getOption("bugaddress"));
 
   QByteArray startup_id( args->getOption( "startupid" ));
