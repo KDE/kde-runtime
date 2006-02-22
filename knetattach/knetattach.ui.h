@@ -119,9 +119,9 @@ void KNetAttach::showPage( QWidget *page )
 void KNetAttach::updateParametersPageStatus()
 {
     setFinishEnabled(_folderParameters,
-		  !_host->text().stripWhiteSpace().isEmpty() &&
-		  !_path->text().stripWhiteSpace().isEmpty() &&
-		  !_connectionName->text().stripWhiteSpace().isEmpty());
+		  !_host->text().trimmed().isEmpty() &&
+		  !_path->text().trimmed().isEmpty() &&
+		  !_connectionName->text().trimmed().isEmpty());
 }
 
 void KNetAttach::finished()
@@ -147,9 +147,9 @@ void KNetAttach::finished()
     } else { // recent
     }
 
-    url.setHost(_host->text().stripWhiteSpace());
-    url.setUser(_user->text().stripWhiteSpace());
-    QString path = _path->text().stripWhiteSpace();
+    url.setHost(_host->text().trimmed());
+    url.setUser(_user->text().trimmed());
+    QString path = _path->text().trimmed();
     if (!path.startsWith("/")) {
 	path = QString("/") + path;
     }
@@ -166,7 +166,7 @@ void KNetAttach::finished()
 
     KToolInvocation::invokeBrowser(url.url());
 
-    QString name = _connectionName->text().stripWhiteSpace();
+    QString name = _connectionName->text().trimmed();
 
     if (_createIcon->isChecked()) {
 	KGlobal::dirs()->addResourceType("remote_entries",
