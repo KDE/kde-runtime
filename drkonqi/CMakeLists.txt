@@ -1,0 +1,79 @@
+kde4_header()
+
+add_subdirectory( presets ) 
+add_subdirectory( pics ) 
+add_subdirectory( debuggers ) 
+
+include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
+
+
+########### next target ###############
+
+set(drkonqi_SRCS 
+   main.cpp 
+   debugger.cpp 
+   krashconf.cpp 
+   drbugreport.cpp 
+   backtrace.cpp 
+   toplevel.cpp )
+
+kde4_automoc(${drkonqi_SRCS})
+
+kde4_add_dcop_skels(drkonqi_SRCS krashdcopinterface.h )
+
+kde4_add_executable(drkonqi ${drkonqi_SRCS})
+
+target_link_libraries(drkonqi  ${QT_AND_KDECORE_LIBS} kdeui kio)
+
+install_targets(/bin drkonqi )
+
+
+########### next target ###############
+
+set(crashtest_SRCS crashtest.cpp )
+
+kde4_automoc(${crashtest_SRCS})
+
+if(KDE4_BUILD_TESTS)
+
+kde4_add_executable(crashtest ${crashtest_SRCS})
+
+target_link_libraries(crashtest  ${QT_AND_KDECORE_LIBS} kdeui )
+
+endif(KDE4_BUILD_TESTS)
+
+########### install files ###############
+
+
+kde4_footer()
+
+
+
+#original Makefile.am contents follow:
+
+#
+#AM_CPPFLAGS = -DQT_NO_CAST_ASCII
+#
+#SUBDIRS = presets pics debuggers
+#
+#INCLUDES = $(all_includes)
+#METASOURCES = AUTO
+#
+#EXTRA_DIST = LICENSE
+#
+#bin_PROGRAMS = drkonqi
+#
+## Libraries:
+#AM_LDFLAGS = $(all_libraries) $(KDE_RPATH)
+#LDADD  = $(LIB_KDEUI) $(LIB_KIO)
+#
+## toplevel.cpp must be last in row due to X-headers being included. (--enable-final)
+## Did I mention already that X header files really suck?
+#drkonqi_SOURCES = krashdcopinterface.skel main.cpp debugger.cpp krashconf.cpp drbugreport.cpp backtrace.cpp toplevel.cpp
+#
+#
+#check_PROGRAMS = crashtest
+#crashtest_SOURCES = crashtest.cpp
+#
+#messages:
+#	$(XGETTEXT) *.cpp -o $(podir)/drkonqi.pot
