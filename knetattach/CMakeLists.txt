@@ -13,7 +13,7 @@ kde4_add_ui3_files(knetattach_SRCS knetattach.ui )
 
 kde4_add_executable(knetattach ${knetattach_SRCS})
 
-target_link_libraries(knetattach  ${QT_AND_KDECORE_LIBS} kio )
+target_link_libraries(knetattach  ${LIB_KIO} )
 
 install_targets(/bin knetattach )
 

@@ -15,7 +15,7 @@ kde4_automoc(${kdebugdialog_SRCS})
 
 kde4_add_executable(kdebugdialog ${kdebugdialog_SRCS})
 
-target_link_libraries(kdebugdialog  ${QT_AND_KDECORE_LIBS} kdeui )
+target_link_libraries(kdebugdialog  ${LIB_KDEUI} )
 
 install_targets(/bin kdebugdialog )
 
