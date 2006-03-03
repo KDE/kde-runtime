@@ -22,7 +22,7 @@ install_targets(/bin knetattach )
 
 install_files( ${XDG_APPS_DIR} FILES knetattach.desktop )
 
-kde4_install_icons( hicolor crystalsvg )
+kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
 
 kde4_footer()
 
