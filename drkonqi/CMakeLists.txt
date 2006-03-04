@@ -23,7 +23,7 @@ kde4_add_dcop_skels(drkonqi_SRCS krashdcopinterface.h )
 
 kde4_add_executable(drkonqi ${drkonqi_SRCS})
 
-target_link_libraries(drkonqi  ${QT_AND_KDECORE_LIBS} kdeui kio)
+target_link_libraries(drkonqi  ${LIB_KIO})
 
 install_targets(/bin drkonqi )
 
@@ -38,7 +38,7 @@ if(KDE4_BUILD_TESTS)
 
 kde4_add_executable(crashtest ${crashtest_SRCS})
 
-target_link_libraries(crashtest  ${QT_AND_KDECORE_LIBS} kdeui )
+target_link_libraries(crashtest  ${LIB_KDEUI} )
 
 endif(KDE4_BUILD_TESTS)
 
