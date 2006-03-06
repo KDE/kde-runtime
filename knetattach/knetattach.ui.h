@@ -191,7 +191,7 @@ void KNetAttach::finished()
 	QStringList idx = recent.readEntry("Index",QStringList());
 	recent.deleteGroup(name); // erase anything stale
 	if (idx.contains(name)) {
-	    idx.remove(name);
+	    idx.removeAll(name);
 	    idx.prepend(name);
 	    recent.writeEntry("Index", idx);
 	    recent.setGroup(name);
