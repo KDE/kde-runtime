@@ -229,16 +229,16 @@ void KDebugDialog::slotDebugAreaChanged( const QString & text )
 
 void KDebugDialog::save()
 {
-  pConfig->writeEntry( "InfoOutput", pInfoCombo->currentItem() );
+  pConfig->writeEntry( "InfoOutput", pInfoCombo->currentIndex() );
   pConfig->writePathEntry( "InfoFilename", pInfoFile->text() );
   //pConfig->writeEntry( "InfoShow", pInfoShow->text() );
-  pConfig->writeEntry( "WarnOutput", pWarnCombo->currentItem() );
+  pConfig->writeEntry( "WarnOutput", pWarnCombo->currentIndex() );
   pConfig->writePathEntry( "WarnFilename", pWarnFile->text() );
   //pConfig->writeEntry( "WarnShow", pWarnShow->text() );
-  pConfig->writeEntry( "ErrorOutput", pErrorCombo->currentItem() );
+  pConfig->writeEntry( "ErrorOutput", pErrorCombo->currentIndex() );
   pConfig->writePathEntry( "ErrorFilename", pErrorFile->text() );
   //pConfig->writeEntry( "ErrorShow", pErrorShow->text() );
-  pConfig->writeEntry( "FatalOutput", pFatalCombo->currentItem() );
+  pConfig->writeEntry( "FatalOutput", pFatalCombo->currentIndex() );
   pConfig->writePathEntry( "FatalFilename", pFatalFile->text() );
   //pConfig->writeEntry( "FatalShow", pFatalShow->text() );
   pConfig->writeEntry( "AbortFatal", pAbortFatal->isChecked() );
@@ -251,10 +251,10 @@ void KDebugDialog::save()
 }
 
 void KDebugDialog::slotDestinationChanged(int) {
-    pInfoFile->setEnabled(pInfoCombo->currentItem() == 0);
-    pWarnFile->setEnabled(pWarnCombo->currentItem() == 0);
-    pErrorFile->setEnabled(pErrorCombo->currentItem() == 0);
-    pFatalFile->setEnabled(pFatalCombo->currentItem() == 0);
+    pInfoFile->setEnabled(pInfoCombo->currentIndex() == 0);
+    pWarnFile->setEnabled(pWarnCombo->currentIndex() == 0);
+    pErrorFile->setEnabled(pErrorCombo->currentIndex() == 0);
+    pFatalFile->setEnabled(pFatalCombo->currentIndex() == 0);
 }
 
 #include "kdebugdialog.moc"
