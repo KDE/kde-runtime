@@ -211,16 +211,16 @@ void KDebugDialog::slotDebugAreaChanged( const QString & text )
 
   /* Fill dialog fields with values from config data */
   pConfig->setGroup( QString::number( number ) ); // Group name = debug area code
-  pInfoCombo->setCurrentItem( pConfig->readEntry( "InfoOutput", 2 ) );
+  pInfoCombo->setCurrentIndex( pConfig->readEntry( "InfoOutput", 2 ) );
   pInfoFile->setText( pConfig->readPathEntry( "InfoFilename","kdebug.dbg" ) );
   //pInfoShow->setText( pConfig->readEntry( "InfoShow" ) );
-  pWarnCombo->setCurrentItem( pConfig->readEntry( "WarnOutput", 2 ) );
+  pWarnCombo->setCurrentIndex( pConfig->readEntry( "WarnOutput", 2 ) );
   pWarnFile->setText( pConfig->readPathEntry( "WarnFilename","kdebug.dbg" ) );
   //pWarnShow->setText( pConfig->readEntry( "WarnShow" ) );
-  pErrorCombo->setCurrentItem( pConfig->readEntry( "ErrorOutput", 2 ) );
+  pErrorCombo->setCurrentIndex( pConfig->readEntry( "ErrorOutput", 2 ) );
   pErrorFile->setText( pConfig->readPathEntry( "ErrorFilename","kdebug.dbg") );
   //pErrorShow->setText( pConfig->readEntry( "ErrorShow" ) );
-  pFatalCombo->setCurrentItem( pConfig->readEntry( "FatalOutput", 2 ) );
+  pFatalCombo->setCurrentIndex( pConfig->readEntry( "FatalOutput", 2 ) );
   pFatalFile->setText( pConfig->readPathEntry("FatalFilename","kdebug.dbg") );
   //pFatalShow->setText( pConfig->readEntry( "FatalShow" ) );
   pAbortFatal->setChecked( pConfig->readEntry( "AbortFatal", 1 ) );
