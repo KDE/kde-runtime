@@ -17,7 +17,6 @@
    Boston, MA 02110-1301, USA.
 */
 
-//#include "image_plugin.moc"
 
 #include <kdebug.h>
 #include <kgenericfactory.h>
