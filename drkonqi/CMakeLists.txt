@@ -23,7 +23,7 @@ kde4_add_dcop_skels(drkonqi_SRCS krashdcopinterface.h )
 
 kde4_add_executable(drkonqi ${drkonqi_SRCS})
 
-target_link_libraries(drkonqi  ${LIB_KIO})
+target_link_libraries(drkonqi  ${KDE4_KIO_LIBS})
 
 install_targets(/bin drkonqi )
 
