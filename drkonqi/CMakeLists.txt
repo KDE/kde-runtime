@@ -38,7 +38,7 @@ if(KDE4_BUILD_TESTS)
 
 kde4_add_executable(crashtest ${crashtest_SRCS})
 
-target_link_libraries(crashtest  ${LIB_KDEUI} )
+target_link_libraries(crashtest  ${KDE4_KDEUI_LIBS} )
 
 endif(KDE4_BUILD_TESTS)
 
