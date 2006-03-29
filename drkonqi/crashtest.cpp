@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
 
   KApplication app(false, false);
   KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
-  QCString type = args->arg(0);
+  QCString type = args->count() ? args->arg(0) : "";
   int crashtype = Crash;
   if (type == "malloc")
     crashtype = Malloc;
