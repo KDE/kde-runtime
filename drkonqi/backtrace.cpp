@@ -41,9 +41,10 @@
 
 BackTrace::BackTrace(const KrashConfig *krashconf, QObject *parent,
                      const char *name)
-  : QObject(parent, name),
+  : QObject(parent),
     m_krashconf(krashconf), m_temp(0)
 {
+  setObjectName(name);
   m_proc = new KProcess;
 }
 
@@ -87,7 +88,7 @@ void BackTrace::start()
   m_temp->setAutoDelete(true);
   int handle = m_temp->handle();
   QString backtraceCommand = m_krashconf->backtraceCommand();
-  const char* bt = backtraceCommand.latin1();
+  const char* bt = backtraceCommand.toLatin1();
   ::write(handle, bt, strlen(bt)); // the command for a backtrace
   ::write(handle, "\n", 1);
   ::fsync(handle);
@@ -155,7 +156,7 @@ bool BackTrace::usefulBacktrace()
     frames = strBt.count('\n');
   bool tooShort = false;
   if( !m_krashconf->neededInValidBacktraceRegExp().isEmpty())
-    tooShort = ( strBt.find( QRegExp( m_krashconf->neededInValidBacktraceRegExp())) == -1 );
+    tooShort = ( strBt.indexOf( QRegExp( m_krashconf->neededInValidBacktraceRegExp())) == -1 );
   return !m_strBt.isNull() && !tooShort && (unknown < frames);
 }
 
@@ -165,7 +166,7 @@ void BackTrace::processBacktrace()
   if( !m_krashconf->kcrashRegExp().isEmpty())
     {
     QRegExp kcrashregexp( m_krashconf->kcrashRegExp());
-    int pos = kcrashregexp.search( m_strBt );
+    int pos = kcrashregexp.indexIn( m_strBt );
     if( pos >= 0 )
       {
       int len = kcrashregexp.matchedLength();
