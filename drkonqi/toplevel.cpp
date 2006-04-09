@@ -98,7 +98,7 @@ Toplevel :: Toplevel(KrashConfig *krashconf, QWidget *parent, const char *name)
   connect(m_krashconf, SIGNAL(newDebuggingApplication(const QString&)), SLOT(slotNewDebuggingApp(const QString&)));
 
   if ( !m_krashconf->safeMode() && kapp->dcopClient()->attach() )
-    kapp->dcopClient()->registerAs( kapp->objectName().toUtf8() );
+    kapp->dcopClient()->registerAs( kapp->objectName().toLatin1() );
 }
 
 Toplevel :: ~Toplevel()
