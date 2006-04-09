@@ -46,29 +46,41 @@
 #include <QTextStream>
 
 KrashDebugger :: KrashDebugger (const KrashConfig *krashconf, QWidget *parent, const char *name)
-  : QWidget( parent, name ),
+  : QWidget( parent ),
     m_krashconf(krashconf),
     m_proctrace(0)
 {
-  QVBoxLayout *vbox = new QVBoxLayout( this, 0, KDialog::marginHint() );
-  vbox->setAutoAdd(true);
+  setObjectName(name);
+
+  QVBoxLayout *vbox = new QVBoxLayout( this );
+  vbox->setSpacing( KDialog::spacingHint() );
+  vbox->setMargin( KDialog::marginHint() );
 
   m_backtrace = new KTextBrowser(this);
-  m_backtrace->setTextFormat(Qt::PlainText);
   m_backtrace->setFont(KGlobalSettings::fixedFont());
 
+  vbox->addWidget(m_backtrace);
+
   QWidget *w = new QWidget( this );
-  ( new QHBoxLayout( w, 0, KDialog::marginHint() ) )->setAutoAdd( true );
+  QHBoxLayout *hbox = new QHBoxLayout( w );
+  hbox->setMargin( 0 );
+  hbox->setSpacing( KDialog::spacingHint() );
+
   m_status = new QLabel( w );
   m_status->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Preferred ) );
   //m_copyButton = new KPushButton( KStdGuiItem::copy(), w );
+  hbox->addWidget(m_status);
   KGuiItem item( i18n( "C&opy" ), QLatin1String( "editcopy" ) );
   m_copyButton = new KPushButton( item, w );
   connect( m_copyButton, SIGNAL( clicked() ), this, SLOT( slotCopy() ) );
   m_copyButton->setEnabled( false );
+  hbox->addWidget(m_copyButton);
   m_saveButton = new KPushButton( m_krashconf->safeMode() ? KStdGuiItem::save() : KStdGuiItem::saveAs(), w );
   connect( m_saveButton, SIGNAL( clicked() ), this, SLOT( slotSave() ) );
   m_saveButton->setEnabled( false );
+  hbox->addWidget(m_saveButton);
+
+  vbox->addWidget(w);
 }
 
 KrashDebugger :: ~KrashDebugger()
@@ -82,7 +94,7 @@ void KrashDebugger :: slotDone(const QString& str)
   m_status->setText(i18n("Done."));
   m_copyButton->setEnabled( true );
   m_saveButton->setEnabled( true );
-  m_backtrace->setText( m_prependText + str ); // replace with possibly post-processed backtrace
+  m_backtrace->setPlainText( m_prependText + str ); // replace with possibly post-processed backtrace
 }
 
 void KrashDebugger :: slotCopy()
@@ -98,7 +110,7 @@ void KrashDebugger :: slotSave()
     KTempFile tf(QString::fromAscii("/tmp/"), QString::fromAscii(".kcrash"), 0666);
     if (!tf.status())
     {
-      *tf.textStream() << m_backtrace->text();
+      *tf.textStream() << m_backtrace->toPlainText();
       KMessageBox::information(this, i18n("Backtrace saved to %1").arg(tf.name()));
     }
     else
@@ -126,7 +138,7 @@ void KrashDebugger :: slotSave()
       if (f.open(QIODevice::WriteOnly))
       {
         QTextStream ts(&f);
-        ts << m_backtrace->text();
+        ts << m_backtrace->toPlainText();
         f.close();
       }
       else
@@ -140,11 +152,11 @@ void KrashDebugger :: slotSave()
 void KrashDebugger :: slotSomeError()
 {
   m_status->setText(i18n("Unable to create a valid backtrace."));
-  m_backtrace->setText(i18n("This backtrace appears to be of no use.\n"
+  m_backtrace->setPlainText(i18n("This backtrace appears to be of no use.\n"
       "This is probably because your packages are built in a way "
       "which prevents creation of proper backtraces, or the stack frame "
       "was seriously corrupted in the crash.\n\n" )
-      + m_backtrace->text());
+      + m_backtrace->toPlainText());
 }
 
 void KrashDebugger :: slotAppend(const QString &str)
@@ -152,7 +164,7 @@ void KrashDebugger :: slotAppend(const QString &str)
   m_status->setText(i18n("Loading backtrace..."));
 
   // append doesn't work here because it will add a newline as well
-  m_backtrace->setText(m_backtrace->text() + str);
+  m_backtrace->setPlainText(m_backtrace->toPlainText() + str);
 }
 
 void KrashDebugger :: showEvent(QShowEvent *e)
@@ -164,14 +176,14 @@ void KrashDebugger :: showEvent(QShowEvent *e)
 void KrashDebugger :: startDebugger()
 {
   // Only start one copy
-  if (m_proctrace || !m_backtrace->text().isEmpty())
+  if (m_proctrace || !m_backtrace->toPlainText().isEmpty())
     return;
 
   QString msg;
   bool checks = performChecks( &msg );
   if( !checks && !m_krashconf->disableChecks())
   {
-    m_backtrace->setText( m_prependText +
+    m_backtrace->setPlainText( m_prependText +
         i18n( "The following options are enabled:\n\n" )
         + msg
         + i18n( "\nAs the usage of these options is not recommended -"
@@ -185,7 +197,7 @@ void KrashDebugger :: startDebugger()
   if( !msg.isEmpty())
   {
     m_prependText += msg + '\n';
-    m_backtrace->setText( m_prependText );
+    m_backtrace->setPlainText( m_prependText );
   }
   m_status->setText(i18n("Loading symbols..."));
 
