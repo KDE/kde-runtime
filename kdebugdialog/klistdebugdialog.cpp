@@ -82,7 +82,7 @@ void KListDebugDialog::generateCheckBoxes()
 {
   foreach (QString area, m_areaList) {
     QString data = area.simplified();
-    int space = data.find(" ");
+    int space = data.indexOf(" ");
     if (space == -1)
       kError() << "No space:" << data << endl;
 

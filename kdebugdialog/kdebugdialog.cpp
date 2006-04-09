@@ -200,7 +200,7 @@ void KDebugDialog::slotDebugAreaChanged( const QString & text )
     save();
 
   QString data = text.simplified();
-  int space = data.find(" ");
+  int space = data.indexOf(" ");
   if (space == -1)
       kError() << "No space:" << data << endl;
 

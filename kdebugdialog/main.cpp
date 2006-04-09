@@ -50,7 +50,7 @@ QStringList readAreaList()
     while (!ts->atEnd()) {
       data = ts->readLine().simplified();
 
-      int pos = data.find("#");
+      int pos = data.indexOf("#");
       if ( pos != -1 )
         data.truncate( pos );
 
