@@ -65,8 +65,8 @@ void ImageVisualizer::loadImage( const QString& path )
   pic->adjustSize(); 
 
   QString desc;
-  desc.append(i18n("The color depth of an image", "Depth: %1\n").arg( img.depth() ));
-  desc.append(i18n("The dimensions of an image", "Dimensions: %1x%1").arg(img.width()).arg(img.height() ));
+  desc.append(i18nc("The color depth of an image", "Depth: %1\n", img.depth() ));
+  desc.append(i18nc("The dimensions of an image", "Dimensions: %1x%2", img.width(), img.height() ));
   description->setText(desc );
   description->adjustSize();
 }

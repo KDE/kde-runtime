@@ -86,12 +86,12 @@ void AudioPreview::initView( const QString& mimeType )
   {
     if (mimeptr->is("audio/x-mp3") || mimeptr->is("application/ogg"))
     {
-      desc.append(i18n("Artist: %1\n").arg (info.item("Artist").value().toString() ));
-      desc.append(i18n("Title: %1\n").arg( info.item("Title").value().toString() ));
-      desc.append(i18n("Comment: %1\n").arg( info.item("Comment").value().toString() ));
-      desc.append(i18n("Biterate: 160 kbits/s", "Bitrate: %1 %2\n").arg( info.item("Bitrate").value().toString() ).arg( info.item("Bitrate").suffix() ));
+      desc.append(i18n("Artist: %1\n", info.item("Artist").value().toString() ));
+      desc.append(i18n("Title: %1\n", info.item("Title").value().toString() ));
+      desc.append(i18n("Comment: %1\n", info.item("Comment").value().toString() ));
+      desc.append(i18nc("Biterate: 160 kbits/s", "Bitrate: %1 %2\n", info.item("Bitrate").value().toString(), info.item("Bitrate").suffix() ));
     }
-    desc.append(i18n("Sample rate: %1 %2\n").arg( info.item("Sample Rate").value().toString() ).arg( info.item("Sample Rate").suffix() ));
+    desc.append(i18n("Sample rate: %1 %2\n", info.item("Sample Rate").value().toString(), info.item("Sample Rate").suffix() ));
     desc.append(i18n("Length: "));
 
     /* Calculate length in mm:ss format */

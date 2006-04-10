@@ -75,11 +75,11 @@ bool AudioPlugin::initialize( KIO::RenameDlg_Mode mode, const QString &_src, con
    QString sentence1;
    QString dest = KUrl::fromPathOrURL(_dest).pathOrURL();
    if (mtimeDest < mtimeSrc)
-      sentence1 = i18n("An older file named '%1' already exists.\n").arg(dest);
+      sentence1 = i18n("An older file named '%1' already exists.\n", dest);
    else if (mtimeDest == mtimeSrc)
-      sentence1 = i18n("A similar file named '%1' already exists.\n").arg(dest);
+      sentence1 = i18n("A similar file named '%1' already exists.\n", dest);
    else
-      sentence1 = i18n("A newer file named '%1' already exists.\n").arg(dest);
+      sentence1 = i18n("A newer file named '%1' already exists.\n", dest);
    label_head->setText(sentence1);
    label_src->setText(i18n("Source File"));
    label_dst->setText(i18n("Existing File"));
