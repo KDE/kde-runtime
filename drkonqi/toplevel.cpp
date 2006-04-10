@@ -110,16 +110,16 @@ QString Toplevel :: generateText() const
   QString str;
 
   if (!m_krashconf->errorDescriptionText().isEmpty())
-    str += i18n("<p><b>Short description</b></p><p>%1</p>")
-      .arg(m_krashconf->errorDescriptionText());
+    str += i18n("<p><b>Short description</b></p><p>%1</p>",
+       m_krashconf->errorDescriptionText());
 
   if (!m_krashconf->signalText().isEmpty())
-    str += i18n("<p><b>What is this?</b></p><p>%1</p>")
-      .arg(m_krashconf->signalText());
+    str += i18n("<p><b>What is this?</b></p><p>%1</p>",
+       m_krashconf->signalText());
 
   if (!m_krashconf->whatToDoText().isEmpty())
-    str += i18n("<p><b>What can I do?</b></p><p>%1</p>")
-      .arg(m_krashconf->whatToDoText());
+    str += i18n("<p><b>What can I do?</b></p><p>%1</p>",
+       m_krashconf->whatToDoText());
 
   // check if the string is still empty. if so, display a default.
   if (str.isEmpty())

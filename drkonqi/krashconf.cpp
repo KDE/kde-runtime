@@ -87,9 +87,11 @@ void KrashConfig :: readConfig()
   QByteArray startup_id( args->getOption( "startupid" ));
   if (!startup_id.isEmpty())
   { // stop startup notification
+#ifdef Q_WS_X11
     KStartupInfoId id;
     id.initId( startup_id );
     KStartupInfo::sendFinish( id );
+#endif
   }
 
   KConfig *config = KGlobal::config();

@@ -111,7 +111,7 @@ void KrashDebugger :: slotSave()
     if (!tf.status())
     {
       *tf.textStream() << m_backtrace->toPlainText();
-      KMessageBox::information(this, i18n("Backtrace saved to %1").arg(tf.name()));
+      KMessageBox::information(this, i18n("Backtrace saved to %1", tf.name()));
     }
     else
     {
@@ -129,7 +129,7 @@ void KrashDebugger :: slotSave()
         if (KMessageBox::Cancel == 
             KMessageBox::warningContinueCancel( 0,
               i18n( "A file named \"%1\" already exists. "
-                    "Are you sure you want to overwrite it?" ).arg( filename ),
+                    "Are you sure you want to overwrite it?", filename ),
               i18n( "Overwrite File?" ),
               i18n( "&Overwrite" ) ))
             return;       
@@ -143,7 +143,7 @@ void KrashDebugger :: slotSave()
       }
       else
       {
-        KMessageBox::sorry(this, i18n("Cannot open file %1 for writing").arg(filename));
+        KMessageBox::sorry(this, i18n("Cannot open file %1 for writing", filename));
       }
     }
   }
