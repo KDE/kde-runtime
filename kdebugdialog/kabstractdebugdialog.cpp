@@ -41,7 +41,8 @@ KAbstractDebugDialog::~KAbstractDebugDialog()
 
 void KAbstractDebugDialog::buildButtons( QVBoxLayout * topLayout )
 {
-  QHBoxLayout *hbox = new QHBoxLayout( KDialog::spacingHint() );
+  QHBoxLayout *hbox = new QHBoxLayout();
+  hbox->setSpacing( KDialog::spacingHint() );
   topLayout->addLayout( hbox );
   pHelpButton = new KPushButton( KStdGuiItem::help(), this );
   hbox->addWidget( pHelpButton );

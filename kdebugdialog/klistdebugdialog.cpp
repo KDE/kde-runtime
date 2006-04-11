@@ -37,7 +37,9 @@ KListDebugDialog::KListDebugDialog( QStringList areaList, QWidget *parent, const
 {
   setCaption(i18n("Debug Settings"));
 
-  QVBoxLayout *lay = new QVBoxLayout( this, KDialog::marginHint(), KDialog::spacingHint() );
+  QVBoxLayout *lay = new QVBoxLayout( this );
+  lay->setMargin( KDialog::marginHint() );
+  lay->setSpacing( KDialog::spacingHint() );
   setLayout(lay);
 
   m_incrSearch = new KLineEdit( this );
@@ -50,7 +52,8 @@ KListDebugDialog::KListDebugDialog( QStringList areaList, QWidget *parent, const
 
   generateCheckBoxes();
 
-  QHBoxLayout* selectButs = new QHBoxLayout( lay );
+  QHBoxLayout* selectButs = new QHBoxLayout();
+  lay->addLayout( selectButs );
   QPushButton* all = new QPushButton( i18n("&Select All"), this );
   QPushButton* none = new QPushButton( i18n("&Deselect All"), this );
   selectButs->addWidget( all );

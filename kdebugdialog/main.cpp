@@ -46,7 +46,7 @@ QStringList readAreaList()
     QString data;
 
     QTextStream *ts = new QTextStream(&file);
-    ts->setEncoding( QTextStream::Latin1 );
+    ts->setCodec( "ISO-8859-1" );
     while (!ts->atEnd()) {
       data = ts->readLine().simplified();
 

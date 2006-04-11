@@ -45,7 +45,9 @@ KDebugDialog::KDebugDialog( QStringList areaList, QWidget *parent, const char *n
 {
   setCaption(i18n("Debug Settings"));
 
-  QVBoxLayout *topLayout = new QVBoxLayout( this, KDialog::marginHint(), KDialog::spacingHint() );
+  QVBoxLayout *topLayout = new QVBoxLayout( this );
+  topLayout->setMargin( KDialog::marginHint() );
+  topLayout->setSpacing( KDialog::spacingHint() );
   if( topLayout == 0 ) { return; } // can this happen ?
 
   QLabel * tmpLabel = new QLabel( i18n("Debug area:"), this );
@@ -53,12 +55,14 @@ KDebugDialog::KDebugDialog( QStringList areaList, QWidget *parent, const char *n
   topLayout->addWidget( tmpLabel );
 
   // Build combo of debug areas
-  pDebugAreas = new QComboBox( false, this );
+  pDebugAreas = new QComboBox( this );
+  pDebugAreas->setEditable( false );
   pDebugAreas->setFixedHeight( pDebugAreas->sizeHint().height() );
-  pDebugAreas->insertStringList( areaList );
+  pDebugAreas->addItems( areaList );
   topLayout->addWidget( pDebugAreas );
 
-  QGridLayout *gbox = new QGridLayout( 2, 2, KDialog::marginHint() );
+  QGridLayout *gbox = new QGridLayout();
+  gbox->setMargin( KDialog::marginHint() );
   if( gbox == 0 ) { return; }
   topLayout->addLayout( gbox );
 
@@ -74,15 +78,17 @@ KDebugDialog::KDebugDialog( QStringList areaList, QWidget *parent, const char *n
   //
   pInfoGroup = new QGroupBox( i18n("Information"), this );
   gbox->addWidget( pInfoGroup, 0, 0 );
-  QVBoxLayout *vbox = new QVBoxLayout( pInfoGroup, KDialog::spacingHint() );
+  QVBoxLayout *vbox = new QVBoxLayout( pInfoGroup );
+  vbox->setSpacing( KDialog::spacingHint() );
   vbox->addSpacing( fontMetrics().lineSpacing() );
   pInfoLabel1 = new QLabel( i18n("Output to:"), pInfoGroup );
   vbox->addWidget( pInfoLabel1 );
-  pInfoCombo = new QComboBox( false, pInfoGroup );
+  pInfoCombo = new QComboBox( pInfoGroup );
+  pInfoCombo->setEditable( false );
   connect(pInfoCombo, SIGNAL(activated(int)),
 	  this, SLOT(slotDestinationChanged(int)));
   vbox->addWidget( pInfoCombo );
-  pInfoCombo->insertStringList( destList );
+  pInfoCombo->addItems( destList );
   pInfoLabel2 = new QLabel( i18n("Filename:"), pInfoGroup );
   vbox->addWidget( pInfoLabel2 );
   pInfoFile = new QLineEdit( pInfoGroup );
@@ -99,15 +105,17 @@ KDebugDialog::KDebugDialog( QStringList areaList, QWidget *parent, const char *n
   //
   pWarnGroup = new QGroupBox( i18n("Warning"), this );
   gbox->addWidget( pWarnGroup, 0, 1 );
-  vbox = new QVBoxLayout( pWarnGroup, KDialog::spacingHint() );
+  vbox = new QVBoxLayout( pWarnGroup );
+  vbox->setSpacing( KDialog::spacingHint() );
   vbox->addSpacing( fontMetrics().lineSpacing() );
   pWarnLabel1 = new QLabel( i18n("Output to:"), pWarnGroup );
   vbox->addWidget( pWarnLabel1 );
-  pWarnCombo = new QComboBox( false, pWarnGroup );
+  pWarnCombo = new QComboBox( pWarnGroup );
+  pWarnCombo->setEditable( false );
   connect(pWarnCombo, SIGNAL(activated(int)),
 	  this, SLOT(slotDestinationChanged(int)));
   vbox->addWidget( pWarnCombo );
-  pWarnCombo->insertStringList( destList );
+  pWarnCombo->addItems( destList );
   pWarnLabel2 = new QLabel( i18n("Filename:"), pWarnGroup );
   vbox->addWidget( pWarnLabel2 );
   pWarnFile = new QLineEdit( pWarnGroup );
@@ -124,15 +132,17 @@ KDebugDialog::KDebugDialog( QStringList areaList, QWidget *parent, const char *n
   //
   pErrorGroup = new QGroupBox( i18n("Error"), this );
   gbox->addWidget( pErrorGroup, 1, 0 );
-  vbox = new QVBoxLayout( pErrorGroup, KDialog::spacingHint() );
+  vbox = new QVBoxLayout( pErrorGroup );
+  vbox->setSpacing( KDialog::spacingHint() );
   vbox->addSpacing( fontMetrics().lineSpacing() );
   pErrorLabel1 = new QLabel( i18n("Output to:"), pErrorGroup );
   vbox->addWidget( pErrorLabel1 );
-  pErrorCombo = new QComboBox( false, pErrorGroup );
+  pErrorCombo = new QComboBox( pErrorGroup );
+  pErrorCombo->setEditable( false );
   connect(pErrorCombo, SIGNAL(activated(int)),
 	  this, SLOT(slotDestinationChanged(int)));
   vbox->addWidget( pErrorCombo );
-  pErrorCombo->insertStringList( destList );
+  pErrorCombo->addItems( destList );
   pErrorLabel2 = new QLabel( i18n("Filename:"), pErrorGroup );
   vbox->addWidget( pErrorLabel2 );
   pErrorFile = new QLineEdit( pErrorGroup );
@@ -149,15 +159,17 @@ KDebugDialog::KDebugDialog( QStringList areaList, QWidget *parent, const char *n
   //
   pFatalGroup = new QGroupBox( i18n("Fatal Error"), this );
   gbox->addWidget( pFatalGroup, 1, 1 );
-  vbox = new QVBoxLayout( pFatalGroup, KDialog::spacingHint() );
+  vbox = new QVBoxLayout( pFatalGroup );
+  vbox->setSpacing( KDialog::spacingHint() );
   vbox->addSpacing( fontMetrics().lineSpacing() );
   pFatalLabel1 = new QLabel( i18n("Output to:"), pFatalGroup );
   vbox->addWidget( pFatalLabel1 );
-  pFatalCombo = new QComboBox( false, pFatalGroup );
+  pFatalCombo = new QComboBox( pFatalGroup );
+  pFatalCombo->setEditable( false );
   connect(pFatalCombo, SIGNAL(activated(int)),
 	  this, SLOT(slotDestinationChanged(int)));
   vbox->addWidget( pFatalCombo );
-  pFatalCombo->insertStringList( destList );
+  pFatalCombo->addItems( destList );
   pFatalLabel2 = new QLabel( i18n("Filename:"), pFatalGroup );
   vbox->addWidget( pFatalLabel2 );
   pFatalFile = new QLineEdit( pFatalGroup );
