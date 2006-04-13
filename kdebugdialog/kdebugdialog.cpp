@@ -48,7 +48,6 @@ KDebugDialog::KDebugDialog( QStringList areaList, QWidget *parent, const char *n
   QVBoxLayout *topLayout = new QVBoxLayout( this );
   topLayout->setMargin( KDialog::marginHint() );
   topLayout->setSpacing( KDialog::spacingHint() );
-  if( topLayout == 0 ) { return; } // can this happen ?
 
   QLabel * tmpLabel = new QLabel( i18n("Debug area:"), this );
   tmpLabel->setFixedHeight( fontMetrics().lineSpacing() );
