@@ -15,7 +15,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} renimageplugin )
 
 target_link_libraries(renimageplugin  ${KDE4_KIO_LIBS} )
 
-install_targets(${LIB_INSTALL_DIR}/kde4 renimageplugin )
+install_targets(${PLUGIN_INSTALL_DIR} renimageplugin )
 
 
 ########### install files ###############

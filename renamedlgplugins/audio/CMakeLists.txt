@@ -15,7 +15,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} renaudioplugin )
 
 target_link_libraries(renaudioplugin  ${KDE4_KIO_LIBS} kmediaplayer )
 
-install_targets(${LIB_INSTALL_DIR}/kde4 renaudioplugin )
+install_targets(${PLUGIN_INSTALL_DIR} renaudioplugin )
 
 
 ########### install files ###############
