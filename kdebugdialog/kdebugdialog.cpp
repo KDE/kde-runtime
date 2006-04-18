@@ -62,7 +62,6 @@ KDebugDialog::KDebugDialog( QStringList areaList, QWidget *parent, const char *n
 
   QGridLayout *gbox = new QGridLayout();
   gbox->setMargin( KDialog::marginHint() );
-  if( gbox == 0 ) { return; }
   topLayout->addLayout( gbox );
 
   QStringList destList;
