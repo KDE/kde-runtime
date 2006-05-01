@@ -22,5 +22,3 @@ drkonqi_SOURCES = krashdcopinterface.skel main.cpp debugger.cpp krashconf.cpp dr
 check_PROGRAMS = crashtest
 crashtest_SOURCES = crashtest.cpp
 
-messages:
-	$(XGETTEXT) *.cpp -o $(podir)/drkonqi.pot
