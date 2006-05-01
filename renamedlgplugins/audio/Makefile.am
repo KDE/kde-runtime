@@ -12,5 +12,3 @@ librenaudioplugin_la_LDFLAGS = -module $(KDE_PLUGIN) $(all_libraries)
 pluginsdir   = $(kde_servicesdir)
 plugins_DATA = renaudiodlg.desktop
 
-messages: rc.cpp
-	$(XGETTEXT) *.cpp  -o $(podir)/audiorename_plugin.pot

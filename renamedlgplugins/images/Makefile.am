@@ -17,5 +17,3 @@ plugins_DATA = renimagedlg.desktop
 # Install the .rc file in the Part's directory (in this case, the part
 # is KHTMLPart)
 
-messages: rc.cpp
-	$(XGETTEXT) *.cpp  -o $(podir)/imagerename_plugin.pot
