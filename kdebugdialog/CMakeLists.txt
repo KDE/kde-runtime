@@ -18,7 +18,7 @@ kde4_add_executable(kdebugdialog ${kdebugdialog_SRCS})
 
 target_link_libraries(kdebugdialog  ${KDE4_KDEUI_LIBS} )
 
-install_targets(/bin kdebugdialog )
+install(TARGETS kdebugdialog DESTINATION bin)
 
 
 ########### install files ###############

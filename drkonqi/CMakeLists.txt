@@ -24,7 +24,7 @@ kde4_add_executable(drkonqi ${drkonqi_SRCS})
 
 target_link_libraries(drkonqi  ${KDE4_KIO_LIBS})
 
-install_targets(/bin drkonqi )
+install(TARGETS drkonqi DESTINATION bin)
 
 
 ########### next target ###############
