@@ -37,7 +37,7 @@
 
 class AudioPlugin : public RenameDlgPlugin{
 public:
-  AudioPlugin( QDialog *dialog, const char *name, const QStringList & );
+  AudioPlugin( QDialog *dialog, const QStringList & );
   ~AudioPlugin();
   virtual bool initialize( KIO::RenameDlg_Mode /*mod*/, const QString &/*_src*/, const QString &/*_dest*/,
 		  const QString &/*mimeSrc*/,
@@ -50,7 +50,7 @@ public:
 		  time_t /*mtimeDest*/ );
 };
 
-AudioPlugin::AudioPlugin( QDialog *dialog, const char *name, const QStringList &list ) : RenameDlgPlugin( dialog) {
+AudioPlugin::AudioPlugin( QDialog *dialog, const QStringList &list ) : RenameDlgPlugin( dialog) {
   qWarning("loaded" );  
 }
 AudioPlugin::~AudioPlugin()
