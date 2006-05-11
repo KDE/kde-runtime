@@ -32,7 +32,7 @@ class KProcess;
 class KrashConfig;
 class KTempFile;
 
-#include <qobject.h>
+#include <QObject>
 
 class BackTrace : public QObject
 {

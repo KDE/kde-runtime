@@ -34,7 +34,7 @@ class KrashConfig;
 class KTextBrowser;
 class BackTrace;
 
-#include <qwidget.h>
+#include <QWidget>
 
 class KrashDebugger : public QWidget
 {

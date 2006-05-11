@@ -29,8 +29,8 @@
 #define KRASHCONF_H
 
 #include <kaboutdata.h>
-#include <qstring.h>
-#include <qobject.h>
+#include <QString>
+#include <QObject>
 
 #include "krashdcopinterface.h"
 

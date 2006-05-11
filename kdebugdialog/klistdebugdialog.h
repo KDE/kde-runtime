@@ -21,7 +21,7 @@
 #define KLISTDEBUGDIALOG__H
 
 #include "kabstractdebugdialog.h"
-#include <qcheckbox.h>
+#include <QCheckBox>
 #include <qstringlist.h>
 
 class KLineEdit;

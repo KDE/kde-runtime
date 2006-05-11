@@ -20,7 +20,7 @@
 #include "kabstractdebugdialog.h"
 #include <kconfig.h>
 #include <kpushbutton.h>
-#include <qlayout.h>
+#include <QLayout>
 #include <kapplication.h>
 #include <klocale.h>
 #include <kstdguiitem.h>

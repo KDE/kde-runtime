@@ -22,13 +22,13 @@
 #include "config.h"
 #endif
 
-#include <qlayout.h>
-#include <qlineedit.h>
-#include <qcombobox.h>
-#include <qlabel.h>
+#include <QLayout>
+#include <QLineEdit>
+#include <QComboBox>
+#include <QLabel>
 #include <qgroupbox.h>
-#include <qcheckbox.h>
-#include <qpushbutton.h>
+#include <QCheckBox>
+#include <QPushButton>
 #include <kdebug.h>
 #include <kglobal.h>
 #include <klocale.h>

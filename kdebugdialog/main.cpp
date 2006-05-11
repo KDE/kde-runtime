@@ -28,7 +28,7 @@
 #include <kuniqueapplication.h>
 #include <kconfig.h>
 
-#include <qfile.h>
+#include <QFile>
 
 QStringList readAreaList()
 {

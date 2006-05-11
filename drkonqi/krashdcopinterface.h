@@ -32,7 +32,7 @@
 
 #include <dcopobject.h>
 
-#include <qstring.h>
+#include <QString>
 #include <kaboutdata.h>
 
 /**

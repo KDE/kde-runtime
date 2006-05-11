@@ -25,8 +25,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************/
 
-#include <qstring.h>
-#include <qlabel.h>
+#include <QString>
+#include <QLabel>
 
 #include <QHBoxLayout>
 
