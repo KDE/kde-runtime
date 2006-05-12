@@ -1,4 +1,3 @@
-kde4_header()
 
 add_subdirectory( presets ) 
 add_subdirectory( pics ) 
@@ -44,7 +43,6 @@ endif(KDE4_BUILD_TESTS)
 ########### install files ###############
 
 
-kde4_footer()
 
 
 

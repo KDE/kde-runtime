@@ -1,4 +1,3 @@
-kde4_header()
 
 project(kdebugdialog)
 
@@ -24,7 +23,6 @@ install(TARGETS kdebugdialog DESTINATION bin)
 ########### install files ###############
 
 
-kde4_footer()
 
 
 
