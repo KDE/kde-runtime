@@ -22,7 +22,7 @@
 
 #include "kabstractdebugdialog.h"
 #include <QCheckBox>
-#include <qstringlist.h>
+#include <QStringList>
 
 class KLineEdit;
 class QListWidget;

@@ -22,7 +22,7 @@
 #include <kcmdlineargs.h>
 #include <kaboutdata.h>
 #include <kstandarddirs.h>
-#include <qtextstream.h>
+#include <QTextStream>
 #include <klocale.h>
 #include <kdebug.h>
 #include <kuniqueapplication.h>

@@ -26,7 +26,7 @@
 #include <QLineEdit>
 #include <QComboBox>
 #include <QLabel>
-#include <qgroupbox.h>
+#include <QGroupBox>
 #include <QCheckBox>
 #include <QPushButton>
 #include <kdebug.h>
