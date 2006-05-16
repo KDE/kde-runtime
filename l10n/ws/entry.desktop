@@ -1,0 +1,24 @@
+[KCM Locale]
+# Western Samoa before 1997
+Name=Samoa
+Name[x-test]=xxSamoaxx
+Region=oceania
+Languages=en_GB
+#DecimalSymbol=,
+#ThousandsSeparator=
+CurrencySymbol=WS$
+#MonetaryDecimalSymbol=
+#MonetaryThousandsSeparator=
+#PositiveSign=
+#NegativeSign=-
+FracDigits=2
+#PositivePrefixCurrencySymbol=
+#NegativePrefixCurrencySymbol=true
+#PositiveMonetarySignPosition=1
+#NegativeMonetarySignPosition=1
+#DateFormat[??]=
+#DateFormatShort=
+#TimeFormat=
+#WeekStartDay=
+#PageSize=
+#MeasureSystem=

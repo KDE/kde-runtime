@@ -1,0 +1,23 @@
+[KCM Locale]
+Name=Brazil
+Name[fr]=Brésil
+Name[x-test]=xxBrazilxx
+Region=southamerica
+Languages=pt_BR
+DecimalSymbol=,
+ThousandsSeparator=.
+CurrencySymbol=R$
+MonetaryDecimalSymbol=,
+MonetaryThousandsSeparator=.
+PositiveSign=
+NegativeSign=-
+FracDigits=2
+PositivePrefixCurrencySymbol=true
+NegativePrefixCurrencySymbol=true
+PositiveMonetarySignPosition=1
+NegativeMonetarySignPosition=1
+DateFormat[pt_BR]=%a %d %b %Y
+DateFormat[eo]=%A, la %ea de %B %Y
+DateFormatShort=%d-%m-%Y
+TimeFormat=%H:%M:%S
+WeekStartDay=7

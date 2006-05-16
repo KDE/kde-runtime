@@ -1,0 +1,24 @@
+[KCM Locale]
+Name=Bosnia and Herzegovina
+Name[fr]=Bosnie herzégovine
+Name[x-test]=xxBosnia and Herzegovinaxx
+Region=southeurope
+Languages=bs,hr,sr
+DecimalSymbol=,
+ThousandsSeparator=
+CurrencySymbol=KM
+MonetaryDecimalSymbol=,
+MonetaryThousandsSeparator=$0 $0
+PositiveSign=
+NegativeSign=-
+FracDigits=2
+PositivePrefixCurrencySymbol=false
+NegativePrefixCurrencySymbol=false
+PositiveMonetarySignPosition=1
+NegativeMonetarySignPosition=1
+DateFormat[bs]=%a, %d %B %Y.
+DateFormat[hr]=%a, %d %B %Y.
+DateFormat[sr]=%a, %d %B %Y.
+DateFormat[eo]=%A, la %ea de %B %Y
+DateFormatShort=%d.%m.%Y.
+TimeFormat=%H:%M:%S

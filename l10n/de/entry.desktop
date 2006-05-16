@@ -1,0 +1,27 @@
+[KCM Locale]
+Name=Germany
+Name[fr]=Allemagne
+Name[x-test]=xxGermanyxx
+Region=centraleurope
+Languages=de
+DecimalSymbol=,
+ThousandsSeparator=$0 $0
+CurrencySymbol=€
+MonetaryDecimalSymbol=,
+MonetaryThousandsSeparator=$0 $0
+PositiveSign=
+NegativeSign=-
+FracDigits=2
+PositivePrefixCurrencySymbol=true
+NegativePrefixCurrencySymbol=true
+PositiveMonetarySignPosition=1
+NegativeMonetarySignPosition=1
+DateFormat[de]=%A, %e. %B %Y
+DateFormat[eo]=%A, la %ea de %B %Y
+DateFormatShort=%d.%m.%Y
+TimeFormat=%H:%M:%S
+#WeekStartDay=
+PageSize=0
+MeasureSystem=0
+AddressFormat=%0(%cm\n)%0(%n\n)%0(Postfach %p\n)%0(%s\n)%z%w%l
+AddressCountryPosition=BELOW

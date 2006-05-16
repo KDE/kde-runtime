@@ -1,0 +1,23 @@
+[KCM Locale]
+Name=Kenya
+Name[x-test]=xxKenyaxx
+Region=centralafrica
+Languages=en_GB,sw,om,so
+DecimalSymbol=.
+ThousandsSeparator=,
+CurrencySymbol=KSh
+MonetaryDecimalSymbol=.
+MonetaryThousandsSeparator=,
+PositiveSign=
+NegativeSign=-
+FracDigits=2
+PositivePrefixCurrencySymbol=true
+NegativePrefixCurrencySymbol=true
+PositiveMonetarySignPosition=3
+NegativeMonetarySignPosition=3
+#DateFormat[??]=
+DateFormatShort=%n/%e/%Y
+TimeFormat=%l:%M:%S %p
+WeekStartDay=7
+#PageSize=
+#MeasureSystem=

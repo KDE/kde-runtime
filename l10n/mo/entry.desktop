@@ -1,0 +1,24 @@
+[KCM Locale]
+Name=Macau SAR(China)
+Name[fr]=Macao SAR (Chine)
+Name[x-test]=xxMacau SAR(China)xx
+Region=eastasia
+Languages=pt_PT,zh_CN
+DecimalSymbol=.
+ThousandsSeparator=,
+CurrencySymbol=P
+MonetaryDecimalSymbol=.
+MonetaryThousandsSeparator=,
+PositiveSign=
+NegativeSign=-
+FracDigits=2
+PositivePrefixCurrencySymbol=true
+NegativePrefixCurrencySymbol=true
+PositiveMonetarySignPosition=1
+NegativeMonetarySignPosition=0
+#DateFormat[??]=
+#DateFormatShort=
+TimeFormat=%x %I:%M:%S
+WeekStartDay=7
+#PageSize=
+#MeasureSystem=

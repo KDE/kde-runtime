@@ -1,0 +1,27 @@
+[KCM Locale]
+Author=Eugene Zelenko <greendeath@mail.ru>
+Name=Belarus
+Name[fr]=Bélarus
+Name[x-test]=xxBelarusxx
+Region=easteurope
+Languages=be,ru
+DecimalSymbol=,
+ThousandsSeparator=.
+CurrencySymbol=р.
+MonetaryDecimalSymbol=,
+MonetaryThousandsSeparator=.
+PositiveSign=
+NegativeSign=-
+FractDigits=2
+PositivePrefixCurrencySymbol=false
+NegativePrefixCurrencySymbol=false
+PositiveMonetarySignPosition=1
+NegativeMonetarySignPosition=1
+DateFormat=%e %B %Y
+DateFormat[eo]=%A, la %ea de %B %Y
+DateFormatShort=%d/%m/%y
+TimeFormat=%H:%M:%S
+WeekStartDay=1
+MeasureSystem=0
+PageSize=0
+CalendarSystem=gregorian

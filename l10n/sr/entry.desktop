@@ -1,0 +1,24 @@
+[KCM Locale]
+Name=Suriname
+Name[fr]=Surinam
+Name[x-test]=xxSurinamexx
+Region=southamerica
+Languages=nl,en_GB
+#DecimalSymbol=
+#ThousandsSeparator=
+CurrencySymbol=Sf.
+#MonetaryDecimalSymbol=
+#MonetaryThousandsSeparator=
+#PositiveSign=
+#NegativeSign=-
+FracDigits=2
+#PositivePrefixCurrencySymbol=
+#NegativePrefixCurrencySymbol=true
+#PositiveMonetarySignPosition=1
+#NegativeMonetarySignPosition=1
+#DateFormat[??]=
+#DateFormatShort=
+#TimeFormat=
+#WeekStartDay=
+#PageSize=
+#MeasureSystem=

@@ -1,0 +1,23 @@
+[KCM Locale]
+Name=Botswana
+Name[x-test]=xxBotswanaxx
+Region=southafrica
+Languages=en_GB,ts
+DecimalSymbol=.
+ThousandsSeparator=.
+CurrencySymbol=Pu
+MonetaryDecimalSymbol=.
+MonetaryThousandsSeparator=.
+PositiveSign=
+NegativeSign=-
+FracDigits=2
+PositivePrefixCurrencySymbol=true
+NegativePrefixCurrencySymbol=true
+PositiveMonetarySignPosition=3
+NegativeMonetarySignPosition=3
+DateFormat[en_GB]=%A %d %B %Y
+DateFormatShort=%d/%m/%Y
+TimeFormat=%l.%M.%S %p
+WeekStartDay=7
+#PageSize=
+#MeasureSystem=

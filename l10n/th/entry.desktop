@@ -1,0 +1,22 @@
+[KCM Locale]
+Name=Thailand
+Name[fr]=Thaïlande
+Name[x-test]=xxThailandxx
+Region=southeastasia
+Languages=th
+DecimalSymbol=.
+ThousandsSeparator=,
+CurrencySymbol=
+MonetaryDecimalSymbol=.
+MonetaryThousandsSeparator=,
+PositiveSign=
+NegativeSign=-
+FracDigits=2
+PositivePrefixCurrencySymbol=true
+NegativePrefixCurrencySymbol=true
+PositiveMonetarySignPosition=4
+NegativeMonetarySignPosition=4
+DateFormat[th]=%a %e %b %Y
+DateFormat[eo]=%A, la %ea de %B %Y
+DateFormatShort=%d/%m/%Y
+TimeFormat=%H:%M:%S

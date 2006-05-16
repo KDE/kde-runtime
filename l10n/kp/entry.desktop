@@ -1,0 +1,11 @@
+[KCM Locale]
+Name=North Korea
+Name[fr]=Corée du nord
+Name[x-test]=xxNorth Koreaxx
+Region=eastasia
+Languages=ko
+CurrencySymbol=
+DateFormat[ko]=%Y %B %e %A
+DateFormat[eo]=%A, la %ea de %B %Y
+#DateFormatShort=
+TimeFormat=%H:%M:%S

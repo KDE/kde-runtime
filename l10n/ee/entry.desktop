@@ -1,0 +1,22 @@
+[KCM Locale]
+Name=Estonia
+Name[fr]=Estonie
+Name[x-test]=xxEstoniaxx
+Region=northeurope
+Languages=et
+DecimalSymbol=,
+ThousandsSeparator=$0 $0
+CurrencySymbol=kr
+MonetaryDecimalSymbol=.
+MonetaryThousandsSeparator=$0 $0
+PositiveSign=
+NegativeSign=-
+FracDigits=2
+PositivePrefixCurrencySymbol=false
+NegativePrefixCurrencySymbol=false
+PositiveMonetarySignPosition=1
+NegativeMonetarySignPosition=1
+DateFormat[et]=%A, %e. %B %Y
+DateFormat[eo]=%A, la %ea de %B %Y
+DateFormatShort=%d.%m.%Y
+TimeFormat=%H:%M:%S

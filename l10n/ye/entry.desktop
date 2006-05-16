@@ -1,0 +1,9 @@
+[KCM Locale]
+Name=Yemen
+Name[x-test]=xxYemenxx
+Region=middleeast
+Languages=ar
+DecimalSymbol=,
+CurrencySymbol=YER
+FracDigits=2
+DateFormatShort=%y/%m/%d

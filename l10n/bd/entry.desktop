@@ -1,0 +1,12 @@
+[KCM Locale]
+Name=Bangladesh
+Name[x-test]=xxBangladeshxx
+Region=southasia
+Languages=bn,en_GB
+CurrencySymbol=৳
+NegativeMonetarySignPosition=1
+DateFormat=%A %d %b %Y
+DateFormatShort=%d/%m/%Y
+TimeFormat=%l:%M:%S %p
+PageSize=0
+MeasureSystem=1

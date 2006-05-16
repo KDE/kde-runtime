@@ -1,0 +1,23 @@
+[KCM Locale]
+Name=Vanuatu
+Name[x-test]=xxVanuatuxx
+Region=oceania
+Languages=en_GB,fr
+#DecimalSymbol=,
+#ThousandsSeparator=
+CurrencySymbol=VT
+#MonetaryDecimalSymbol=
+#MonetaryThousandsSeparator=
+#PositiveSign=
+#NegativeSign=-
+FracDigits=2
+#PositivePrefixCurrencySymbol=
+#NegativePrefixCurrencySymbol=true
+#PositiveMonetarySignPosition=1
+#NegativeMonetarySignPosition=1
+#DateFormat[??]=
+#DateFormatShort=
+#TimeFormat=
+#WeekStartDay=
+#PageSize=
+#MeasureSystem=

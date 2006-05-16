@@ -1,0 +1,23 @@
+[KCM Locale]
+Name=Niger
+Name[x-test]=xxNigerxx
+Region=westafrica
+Languages=fr,ar
+#DecimalSymbol=,
+#ThousandsSeparator=
+CurrencySymbol=CFAF
+#MonetaryDecimalSymbol=
+#MonetaryThousandsSeparator=
+#PositiveSign=
+#NegativeSign=-
+FracDigits=2
+#PositivePrefixCurrencySymbol=
+#NegativePrefixCurrencySymbol=true
+#PositiveMonetarySignPosition=1
+#NegativeMonetarySignPosition=1
+#DateFormat[??]=
+#DateFormatShort=
+#TimeFormat=
+#WeekStartDay=
+#PageSize=
+#MeasureSystem=

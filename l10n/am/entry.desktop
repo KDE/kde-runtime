@@ -1,0 +1,25 @@
+[KCM Locale]
+Name=Armenia
+Name[fr]=Arménie
+Name[x-test]=xxArmeniaxx
+Region=middleeast
+Languages=hy
+DecimalSymbol=,
+ThousandsSeparator=.
+# FIXME Name is Dram, symbol is unknown
+CurrencySymbol=Dr
+MonetaryDecimalSymbol=,
+MonetaryThousandsSeparator=.
+PositiveSign=
+NegativeSign=-
+FracDigits=2
+#PositivePrefixCurrencySymbol=
+#NegativePrefixCurrencySymbol=true
+#PositiveMonetarySignPosition=1
+#NegativeMonetarySignPosition=1
+DateFormat[hy]=%A,%B %e, %Y
+DateFormatShort=%m/%d/%y
+TimeFormat=%H:%M:%S
+WeekStartDay=7
+#PageSize=
+#MeasureSystem=

@@ -1,0 +1,24 @@
+[KCM Locale]
+Name=Wallis and Futuna
+Name[fr]=Wallis et Futuna
+Name[x-test]=xxWallis and Futunaxx
+Region=oceania
+Languages=fr
+#DecimalSymbol=,
+#ThousandsSeparator=
+CurrencySymbol=CFPF
+#MonetaryDecimalSymbol=
+#MonetaryThousandsSeparator=
+#PositiveSign=
+#NegativeSign=-
+FracDigits=2
+#PositivePrefixCurrencySymbol=
+#NegativePrefixCurrencySymbol=true
+#PositiveMonetarySignPosition=1
+#NegativeMonetarySignPosition=1
+#DateFormat[??]=
+#DateFormatShort=
+#TimeFormat=
+#WeekStartDay=
+#PageSize=
+#MeasureSystem=

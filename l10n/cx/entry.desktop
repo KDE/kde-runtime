@@ -1,0 +1,24 @@
+[KCM Locale]
+Name=Christmas Island
+Name[fr]=Île de Noël
+Name[x-test]=xxChristmas Islandxx
+Region=southeastasia
+Languages=en_GB,zh_CN,ms
+#DecimalSymbol=,
+#ThousandsSeparator=
+CurrencySymbol=A$
+#MonetaryDecimalSymbol=
+#MonetaryThousandsSeparator=
+#PositiveSign=
+#NegativeSign=-
+FracDigits=2
+#PositivePrefixCurrencySymbol=
+#NegativePrefixCurrencySymbol=true
+#PositiveMonetarySignPosition=1
+#NegativeMonetarySignPosition=1
+#DateFormat[??]=
+#DateFormatShort=
+#TimeFormat=
+#WeekStartDay=
+#PageSize=
+#MeasureSystem=

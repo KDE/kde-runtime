@@ -1,0 +1,24 @@
+[KCM Locale]
+Name=Mauritania
+Name[fr]=Mauritanie
+Name[x-test]=xxMauritaniaxx
+Region=westafrica
+Languages=ar,en_GB
+#DecimalSymbol=,
+#ThousandsSeparator=
+CurrencySymbol=UM
+#MonetaryDecimalSymbol=
+#MonetaryThousandsSeparator=
+#PositiveSign=
+#NegativeSign=-
+FracDigits=1
+#PositivePrefixCurrencySymbol=
+#NegativePrefixCurrencySymbol=true
+#PositiveMonetarySignPosition=1
+#NegativeMonetarySignPosition=1
+#DateFormat[??]=
+#DateFormatShort=
+#TimeFormat=
+#WeekStartDay=
+#PageSize=
+#MeasureSystem=

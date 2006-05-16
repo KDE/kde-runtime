@@ -1,0 +1,24 @@
+[KCM Locale]
+Name=Hong Kong SAR(China)
+Name[fr]=Hong Kong SAR (Chine)
+Name[x-test]=xxHong Kong SAR(China)xx
+Region=eastasia
+Languages=zh_TW,en_GB
+#DecimalSymbol=,
+#ThousandsSeparator=
+CurrencySymbol=HK$
+#MonetaryDecimalSymbol=
+#MonetaryThousandsSeparator=
+#PositiveSign=
+#NegativeSign=-
+FracDigits=2
+#PositivePrefixCurrencySymbol=
+#NegativePrefixCurrencySymbol=true
+#PositiveMonetarySignPosition=1
+#NegativeMonetarySignPosition=1
+#DateFormat[??]=
+#DateFormatShort=
+#TimeFormat=
+#WeekStartDay=
+PageSize=0
+MeasureSystem=0

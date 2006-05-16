@@ -1,0 +1,10 @@
+[KCM Locale]
+Name=Algeria
+Name[fr]=Algérie
+Name[x-test]=xxAlgeriaxx
+Region=northafrica
+Languages=ar
+DecimalSymbol=,
+CurrencySymbol=DZD
+FracDigits=2
+DateFormatShort=%y/%m/%d

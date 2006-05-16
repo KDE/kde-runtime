@@ -1,0 +1,11 @@
+[KCM Locale]
+Author=zh-l10n@linux.org.tw
+Name=Taiwan
+Name[fr]=Taïwan
+Name[x-test]=xxTaiwanxx
+Region=eastasia
+Languages=zh_TW
+CurrencySymbol=NT$
+DateFormat[zh_TW]=%Y %B %e %A
+DateFormat[eo]=%A, la %ea de %B %Y
+TimeFormat=%H:%M:%S

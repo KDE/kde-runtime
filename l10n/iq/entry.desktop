@@ -1,0 +1,10 @@
+[KCM Locale]
+Name=Iraq
+Name[fr]=Irak
+Name[x-test]=xxIraqxx
+Region=middleeast
+Languages=ar
+DecimalSymbol=,
+CurrencySymbol=IQD
+FracDigits=2
+DateFormatShort=%y/%m/%d

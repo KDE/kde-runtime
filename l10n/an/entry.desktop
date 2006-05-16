@@ -1,0 +1,24 @@
+[KCM Locale]
+Name=Netherlands Antilles
+Name[fr]=Antilles néerlandaises
+Name[x-test]=xxNetherlands Antillesxx
+Region=caribbean
+Languages=nl,en_GB,es
+#DecimalSymbol=,
+#ThousandsSeparator=
+CurrencySymbol=Anf.t.
+#MonetaryDecimalSymbol=
+#MonetaryThousandsSeparator=
+#PositiveSign=
+#NegativeSign=-
+FracDigits=2
+#PositivePrefixCurrencySymbol=
+#NegativePrefixCurrencySymbol=true
+#PositiveMonetarySignPosition=1
+#NegativeMonetarySignPosition=1
+#DateFormat[??]=
+#DateFormatShort=
+#TimeFormat=
+#WeekStartDay=
+#PageSize=
+#MeasureSystem=

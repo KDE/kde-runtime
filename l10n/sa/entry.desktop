@@ -1,0 +1,11 @@
+[KCM Locale]
+Name=Saudi Arabia
+Name[fr]=Arabie Saoudite
+Name[x-test]=xxSaudi Arabiaxx
+Region=middleeast
+Languages=ar
+DecimalSymbol=,
+CurrencySymbol=SAR
+FracDigits=2
+DateFormatShort=%y/%m/%d
+CalendarSystem=hijri

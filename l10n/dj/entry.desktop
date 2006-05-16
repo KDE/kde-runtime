@@ -1,0 +1,9 @@
+[KCM Locale]
+Name=Djibouti
+Name[x-test]=xxDjiboutixx
+Region=northafrica
+Languages=ar
+DecimalSymbol=,
+CurrencySymbol=DJF
+FracDigits=2
+DateFormatShort=%y/%m/%d

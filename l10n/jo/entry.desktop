@@ -1,0 +1,10 @@
+[KCM Locale]
+Name=Jordan
+Name[fr]=Jordanie
+Name[x-test]=xxJordanxx
+Region=middleeast
+Languages=ar
+DecimalSymbol=,
+CurrencySymbol=JOD
+FracDigits=2
+DateFormatShort=%y/%m/%d

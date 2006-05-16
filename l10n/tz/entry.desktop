@@ -1,0 +1,24 @@
+[KCM Locale]
+Name=Tanzania, United Republic of
+Name[fr]=Tanzanie, République unie de
+Name[x-test]=xxTanzania, United Republic ofxx
+Region=southafrica
+Languages=en_GB,sw
+DecimalSymbol=.
+ThousandsSeparator=,
+CurrencySymbol=TSh
+MonetaryDecimalSymbol=.
+MonetaryThousandsSeparator=,
+PositiveSign=
+NegativeSign=-
+FracDigits=2
+PositivePrefixCurrencySymbol=false
+NegativePrefixCurrencySymbol=false
+PositiveMonetarySignPosition=1
+NegativeMonetarySignPosition=1
+#DateFormat[??]=
+DateFormatShort=%n/%e/%Y
+TimeFormat=%l:%M:%S %p
+WeekStartDay=7
+#PageSize=
+#MeasureSystem=

@@ -1,0 +1,23 @@
+[KCM Locale]
+Name=Palestinian Territory
+Name[fr]=Territoire palestinien
+Name[x-test]=xxPalestinian Territoryxx
+Region=middleeast
+Languages=ar
+ThousandsSeparator=.
+#CurrencySymbol=
+MonetaryDecimalSymbol=,
+MonetaryThousandsSeparator=.
+#PositiveSign=
+#NegativeSign=-
+FracDigits=2
+#PositivePrefixCurrencySymbol=
+#NegativePrefixCurrencySymbol=
+#PositiveMonetarySignPosition=
+#NegativeMonetarySignPosition=
+#DateFormat[??]=
+DateFormatShort=%y/%m/%d
+#TimeFormat=
+#WeekStartDay=
+#PageSize=
+#MeasureSystem=

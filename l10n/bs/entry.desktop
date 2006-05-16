@@ -1,0 +1,23 @@
+[KCM Locale]
+Name=Bahamas
+Name[x-test]=xxBahamasxx
+Region=caribbean
+Languages=en_GB,es
+#DecimalSymbol=,
+#ThousandsSeparator=
+CurrencySymbol=B$
+#MonetaryDecimalSymbol=
+#MonetaryThousandsSeparator=
+#PositiveSign=
+#NegativeSign=-
+FracDigits=2
+#PositivePrefixCurrencySymbol=
+#NegativePrefixCurrencySymbol=true
+#PositiveMonetarySignPosition=1
+#NegativeMonetarySignPosition=1
+#DateFormat[??]=
+#DateFormatShort=
+#TimeFormat=
+#WeekStartDay=
+#PageSize=
+#MeasureSystem=

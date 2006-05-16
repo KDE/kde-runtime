@@ -1,0 +1,24 @@
+[KCM Locale]
+Name=Uzbekistan
+Name[fr]=Ouzbékistan
+Name[x-test]=xxUzbekistanxx
+Region=centralasia
+Languages=uz
+DecimalSymbol=,
+ThousandsSeparator=
+CurrencySymbol=Сўм
+MonetaryDecimalSymbol=,
+MonetaryThousandsSeparator=
+PositiveSign=
+NegativeSign=-
+FracDigits=2
+PositivePrefixCurrencySymbol=false
+NegativePrefixCurrencySymbol=false
+PositiveMonetarySignPosition=1
+NegativeMonetarySignPosition=1
+DateFormat[uz]=%A %B %e %Y
+DateFormatShort=%d.%m.%Y
+TimeFormat=%H:%M:%S
+WeekStartDay=1
+PageSize=0
+MeasureSystem=0

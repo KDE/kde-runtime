@@ -1,0 +1,24 @@
+[KCM Locale]
+Name=Central African Republic
+Name[fr]=République centrafricaine
+Name[x-test]=xxCentral African Republicxx
+Region=centralafrica
+#Languages=
+#DecimalSymbol=,
+#ThousandsSeparator=
+CurrencySymbol=CFAF
+#MonetaryDecimalSymbol=
+#MonetaryThousandsSeparator=
+#PositiveSign=
+#NegativeSign=-
+FracDigits=2
+#PositivePrefixCurrencySymbol=
+#NegativePrefixCurrencySymbol=true
+#PositiveMonetarySignPosition=1
+#NegativeMonetarySignPosition=1
+#DateFormat[??]=
+#DateFormatShort=
+#TimeFormat=
+#WeekStartDay=
+#PageSize=
+#MeasureSystem=

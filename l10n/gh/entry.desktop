@@ -1,0 +1,20 @@
+[KCM Locale]
+Name=Ghana
+Name[x-test]=xxGhanaxx
+Region=westafrica
+Languages=en_GB
+DecimalSymbol=.
+ThousandsSeparator=,
+CurrencySymbol=GHC
+MonetaryDecimalSymbol=.
+MonetaryThousandsSeparator=,
+PositiveSign=
+NegativeSign=-
+FracDigits=2
+PositivePrefixCurrencySymbol=true
+NegativePrefixCurrencySymbol=true
+PositiveMonetarySignPosition=1
+NegativeMonetarySignPosition=1
+DateFormat[en_GB]=%A, %e %B %Y
+DateFormatShort=%d/%m/%Y
+TimeFormat=%H:%M:%S

@@ -1,0 +1,23 @@
+[KCM Locale]
+Name=Zimbabwe
+Name[x-test]=xxZimbabwexx
+Region=southafrica
+Languages=en_GB
+DecimalSymbol=.
+ThousandsSeparator=.
+CurrencySymbol=Z
+MonetaryDecimalSymbol=.
+MonetaryThousandsSeparator=,
+PositiveSign=
+NegativeSign=-
+FracDigits=2
+PositivePrefixCurrencySymbol=true
+NegativePrefixCurrencySymbol=true
+PositiveMonetarySignPosition=3
+NegativeMonetarySignPosition=3
+DateFormat[en_GB]=%A %d %B %Y
+DateFormatShort=%e/%n/%Y
+TimeFormat=%l:%M:%S %p
+WeekStartDay=7
+#PageSize=
+#MeasureSystem=

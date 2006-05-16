@@ -1,0 +1,10 @@
+[KCM Locale]
+Name=United Arab Emirates
+Name[fr]=Émirats Arabes Unis
+Name[x-test]=xxUnited Arab Emiratesxx
+Region=middleeast
+Languages=ar
+DecimalSymbol=,
+CurrencySymbol=AED
+FracDigits=2
+DateFormatShort=%y/%m/%d

@@ -1,0 +1,9 @@
+[KCM Locale]
+Name=Bahrain
+Name[x-test]=xxBahrainxx
+Region=middleeast
+Languages=ar
+DecimalSymbol=,
+CurrencySymbol=BHD
+FracDigits=2
+DateFormatShort=%y/%m/%d

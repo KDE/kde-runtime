@@ -1,0 +1,27 @@
+[KCM Locale]
+# Use this as an template for adding new countries
+
+#Author=
+
+#Name=
+#Region=
+#Languages=
+#DecimalSymbol=
+#ThousandsSeparator=
+#CurrencySymbol=
+#MonetaryDecimalSymbol=
+#MonetaryThousandsSeparator=
+#PositiveSign=
+#NegativeSign=-
+#FracDigits=
+#PositivePrefixCurrencySymbol=
+#NegativePrefixCurrencySymbol=
+#PositiveMonetarySignPosition=
+#NegativeMonetarySignPosition=
+#DateFormat[??]=
+#DateFormatShort=
+#TimeFormat=
+#WeekStartDay=
+#PageSize=
+#MeasureSystem=
+#CalendarSystem=

@@ -1,0 +1,23 @@
+[KCM Locale]
+Name=Nicaragua
+Name[x-test]=xxNicaraguaxx
+Region=centralamerica
+Languages=es
+DecimalSymbol=.
+ThousandsSeparator=,
+CurrencySymbol=C$
+MonetaryDecimalSymbol=.
+MonetaryThousandsSeparator=,
+PositiveSign=
+NegativeSign=-
+FracDigits=2
+PositivePrefixCurrencySymbol=true
+NegativePrefixCurrencySymbol=true
+PositiveMonetarySignPosition=1
+NegativeMonetarySignPosition=1
+DateFormat[es]=%A, %e de %B de %Y
+DateFormatShort=%d-%m-%y
+TimeFormat=%H:%M:%S
+WeekStartDay=1
+PageSize=2
+MeasureSystem=0

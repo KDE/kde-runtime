@@ -1,0 +1,24 @@
+[KCM Locale]
+Name=Marshall Islands
+Name[fr]=Îles Marshall
+Name[x-test]=xxMarshall Islandsxx
+Region=oceania
+Languages=en_GB
+#DecimalSymbol=,
+#ThousandsSeparator=
+CurrencySymbol=$
+#MonetaryDecimalSymbol=
+#MonetaryThousandsSeparator=
+#PositiveSign=
+#NegativeSign=-
+FracDigits=2
+#PositivePrefixCurrencySymbol=
+#NegativePrefixCurrencySymbol=true
+#PositiveMonetarySignPosition=1
+#NegativeMonetarySignPosition=1
+#DateFormat[??]=
+#DateFormatShort=
+#TimeFormat=
+#WeekStartDay=
+#PageSize=
+#MeasureSystem=

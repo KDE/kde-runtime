@@ -1,0 +1,25 @@
+[KCM Locale]
+Name=Hungary
+Name[fr]=Hongrie
+Name[x-test]=xxHungaryxx
+Region=centraleurope
+Languages=hu
+DecimalSymbol=,
+ThousandsSeparator=$0 $0
+CurrencySymbol=Ft
+MonetaryDecimalSymbol=,
+MonetaryThousandsSeparator=$0 $0
+PositiveSign=
+NegativeSign=-
+FracDigits=2
+PositivePrefixCurrencySymbol=false
+NegativePrefixCurrencySymbol=false
+PositiveMonetarySignPosition=1
+NegativeMonetarySignPosition=1
+DateFormat[hu]=%Y. %B %e.
+DateFormat[eo]=%A, la %ea de %B %Y
+DateFormatShort=%Y. %m. %d.
+TimeFormat=%H.%M.%S
+AddressFormat=%0(%n\n)%0(\n%l)%0(\n%s)%0(\nPF. %p)%0(\n%z)%0(\n%r)
+BusinessAddressFormat=%0(%n\n)%cm\n%z%w%l%0(\n%s)%0(\nPF. %p)%0(\n%r)
+AddressCountryPosition=below

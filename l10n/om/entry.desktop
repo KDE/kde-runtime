@@ -1,0 +1,9 @@
+[KCM Locale]
+Name=Oman
+Name[x-test]=xxOmanxx
+Region=middleeast
+Languages=ar
+DecimalSymbol=,
+CurrencySymbol=OMR
+FracDigits=2
+DateFormatShort=%y/%m/%d

@@ -1,0 +1,23 @@
+[KCM Locale]
+Name=Bolivia
+Name[fr]=Bolivie
+Name[x-test]=xxBoliviaxx
+Region=southamerica
+Languages=es
+DecimalSymbol=,
+ThousandsSeparator=
+CurrencySymbol=$b
+MonetaryDecimalSymbol=,
+MonetaryThousandsSeparator=.
+PositiveSign=
+NegativeSign=-
+FracDigits=2
+PositivePrefixCurrencySymbol=true
+NegativePrefixCurrencySymbol=true
+PositiveMonetarySignPosition=1
+NegativeMonetarySignPosition=1
+DateFormat[es]=%a %d %b %Y
+DateFormat[eu]=%a, %Yeko %bren %da
+DateFormat[eo]=%A, la %ea de %B %Y
+DateFormatShort=%d/%m/%y
+TimeFormat=%H:%M:%S

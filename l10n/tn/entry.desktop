@@ -1,0 +1,10 @@
+[KCM Locale]
+Name=Tunisia
+Name[fr]=Tunisie
+Name[x-test]=xxTunisiaxx
+Region=northafrica
+Languages=ar
+DecimalSymbol=,
+CurrencySymbol=TND
+FracDigits=2
+DateFormatShort=%y/%m/%d

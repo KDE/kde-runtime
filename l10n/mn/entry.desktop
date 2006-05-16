@@ -1,0 +1,26 @@
+[KCM Locale]
+Name=Mongolia
+Name[fr]=Mongolie
+Name[x-test]=xxMongoliaxx
+
+
+Region=eastasia
+Languages=mn
+#DecimalSymbol=,
+#ThousandsSeparator=.
+CurrencySymbol=Tug
+#MonetaryDecimalSymbol=,
+#MonetaryThousandsSeparator=.
+#PositiveSign=
+#NegativeSign=-
+FracDigits=2
+#PositivePrefixCurrencySymbol=false
+#NegativePrefixCurrencySymbol=false
+#PositiveMonetarySignPosition=2
+#NegativeMonetarySignPosition=2
+#DateFormat[mn]=%Y %B %e, %A
+#DateFormatShort=%Y/%m/%d
+#TimeFormat=%H:%M:%S
+#WeekStartDay=1
+#PageSize=0
+#MeasureSystem=0

@@ -1,0 +1,21 @@
+[KCM Locale]
+Name=South Korea
+Name[fr]=Corée du sud
+Name[x-test]=xxSouth Koreaxx
+Region=eastasia
+Languages=ko
+DecimalSymbol=.
+ThousandsSeparator=,
+CurrencySymbol=￦
+MonetaryDecimalSymbol=.
+MonetaryThousandsSeparator=,
+PositiveSign=
+NegativeSign=-
+FracDigits=0
+PositivePrefixCurrencySymbol=true
+NegativePrefixCurrencySymbol=true
+PositiveMonetarySignPosition=1
+NegativeMonetarySignPosition=1
+DateFormat=%Y년 %B %e일 %A
+DateFormatShort=%Y. %n. %e
+TimeFormat=%p %l:%M:%S

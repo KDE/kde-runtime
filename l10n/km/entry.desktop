@@ -1,0 +1,24 @@
+[KCM Locale]
+Name=Comoros
+Name[fr]=Comores
+Name[x-test]=xxComorosxx
+Region=southafrica
+Languages=fr,ar
+#DecimalSymbol=,
+#ThousandsSeparator=
+CurrencySymbol=CF
+#MonetaryDecimalSymbol=
+#MonetaryThousandsSeparator=
+#PositiveSign=
+#NegativeSign=-
+FracDigits=0
+#PositivePrefixCurrencySymbol=
+#NegativePrefixCurrencySymbol=true
+#PositiveMonetarySignPosition=1
+#NegativeMonetarySignPosition=1
+#DateFormat[??]=
+#DateFormatShort=
+#TimeFormat=
+#WeekStartDay=
+#PageSize=
+#MeasureSystem=

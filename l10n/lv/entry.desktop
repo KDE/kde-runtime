@@ -1,0 +1,22 @@
+[KCM Locale]
+Name=Latvia
+Name[fr]=Lettonie
+Name[x-test]=xxLatviaxx
+Region=northeurope
+Languages=lv
+DecimalSymbol=,
+ThousandsSeparator=.
+CurrencySymbol=Ls
+MonetaryDecimalSymbol=,
+MonetaryThousandsSeparator=.
+PositiveSign=
+NegativeSign=-
+FracDigits=2
+PositivePrefixCurrencySymbol=false
+NegativePrefixCurrencySymbol=false
+PositiveMonetarySignPosition=2
+NegativeMonetarySignPosition=2
+DateFormat[lv]=%A, %e. %B %Y
+DateFormat[eo]=%A, la %ea de %B %Y
+DateFormatShort=%d.%m.%Y
+TimeFormat=%H:%M:%S

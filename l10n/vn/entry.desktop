@@ -1,0 +1,20 @@
+[KCM Locale]
+Name=Vietnam
+Name[x-test]=xxVietnamxx
+Region=southeastasia
+Languages=vi
+DecimalSymbol=,
+ThousandsSeparator=.
+CurrencySymbol=VND
+MonetaryDecimalSymbol=,
+MonetaryThousandsSeparator=.
+PositiveSign=
+NegativeSign=-
+FracDigits=0
+PositivePrefixCurrencySymbol=true
+NegativePrefixCurrencySymbol=true
+PositiveMonetarySignPosition=1
+NegativeMonetarySignPosition=1
+DateFormat[vi]=%A %d %n %Y
+DateFormatShort=%d.%n.%Y
+TimeFormat=%H:%M:%S

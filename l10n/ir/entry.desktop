@@ -1,0 +1,23 @@
+[KCM Locale]
+Name=Iran
+Name[x-test]=xxIranxx
+Region=middleeast
+Languages=
+DecimalSymbol=.
+ThousandsSeparator=,
+CurrencySymbol=IRR
+MonetaryDecimalSymbol=.
+MonetaryThousandsSeparator=,
+PositiveSign=
+NegativeSign=-
+FracDigits=0
+PositivePrefixCurrencySymbol=false
+NegativePrefixCurrencySymbol=false
+PositiveMonetarySignPosition=1
+NegativeMonetarySignPosition=1
+DateFormat[fa]=%A %e %B %Y
+DateFormatShort=%Y-%d-%m
+TimeFormat=%H:%M:%S
+MeasureSystem=0
+PageSize=0
+WeekStartDay=6

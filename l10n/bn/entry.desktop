@@ -1,0 +1,24 @@
+[KCM Locale]
+# FIXME Which Chinese??
+Name=Brunei Darussalam
+Name[x-test]=xxBrunei Darussalamxx
+Region=southeastasia
+Languages=ms,zn_CN
+#DecimalSymbol=,
+#ThousandsSeparator=
+CurrencySymbol=B$
+#MonetaryDecimalSymbol=
+#MonetaryThousandsSeparator=
+#PositiveSign=
+#NegativeSign=-
+FracDigits=2
+#PositivePrefixCurrencySymbol=
+#NegativePrefixCurrencySymbol=true
+#PositiveMonetarySignPosition=1
+#NegativeMonetarySignPosition=1
+#DateFormat[??]=
+#DateFormatShort=
+#TimeFormat=
+#WeekStartDay=
+#PageSize=
+#MeasureSystem=

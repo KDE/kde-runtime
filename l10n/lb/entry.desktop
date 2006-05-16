@@ -1,0 +1,10 @@
+[KCM Locale]
+Name=Lebanon
+Name[fr]=Liban
+Name[x-test]=xxLebanonxx
+Region=middleeast
+Languages=ar
+DecimalSymbol=,
+CurrencySymbol=LBP
+FracDigits=2
+DateFormatShort=%y/%m/%d

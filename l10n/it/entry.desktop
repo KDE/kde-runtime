@@ -1,0 +1,21 @@
+[KCM Locale]
+Name=Italy
+Name[fr]=Italie
+Name[x-test]=xxItalyxx
+Region=southeurope
+Languages=it,de
+DecimalSymbol=,
+ThousandsSeparator=.
+CurrencySymbol=€
+MonetaryDecimalSymbol=,
+MonetaryThousandsSeparator=.
+PositiveSign=
+NegativeSign=-
+FracDigits=2
+PositivePrefixCurrencySymbol=true
+NegativePrefixCurrencySymbol=true
+NegativeMonetarySignPosition=1
+DateFormat[it]=%A %e %B %Y
+DateFormat[eo]=%A, la %ea de %B %Y
+DateFormatShort=%e/%n/%Y
+TimeFormat=%H:%M:%S

@@ -1,0 +1,23 @@
+[KCM Locale]
+Name=Liechtenstein
+Name[x-test]=xxLiechtensteinxx
+Region=centraleurope
+Languages=de
+#DecimalSymbol=,
+#ThousandsSeparator=
+CurrencySymbol=Fr.
+#MonetaryDecimalSymbol=
+#MonetaryThousandsSeparator=
+#PositiveSign=
+#NegativeSign=-
+FracDigits=2
+#PositivePrefixCurrencySymbol=
+#NegativePrefixCurrencySymbol=true
+#PositiveMonetarySignPosition=1
+#NegativeMonetarySignPosition=1
+#DateFormat[??]=
+#DateFormatShort=
+#TimeFormat=
+#WeekStartDay=
+#PageSize=
+#MeasureSystem=

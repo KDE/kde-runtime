@@ -1,0 +1,23 @@
+[KCM Locale]
+Name=Sri Lanka
+Name[x-test]=xxSri Lankaxx
+Region=southasia
+Languages=ta,en_GB,en_US
+#DecimalSymbol=,
+#ThousandsSeparator=
+CurrencySymbol=SLRs
+#MonetaryDecimalSymbol=
+#MonetaryThousandsSeparator=
+#PositiveSign=
+#NegativeSign=-
+FracDigits=2
+#PositivePrefixCurrencySymbol=
+#NegativePrefixCurrencySymbol=true
+#PositiveMonetarySignPosition=1
+#NegativeMonetarySignPosition=1
+#DateFormat[??]=
+#DateFormatShort=
+#TimeFormat=
+#WeekStartDay=
+#PageSize=
+#MeasureSystem=

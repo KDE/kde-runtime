@@ -1,0 +1,24 @@
+[KCM Locale]
+Name=St. Vincent and the Grenadines
+Name[fr]=St Vincent et les Grenadines
+Name[x-test]=xxSt. Vincent and the Grenadinesxx
+Region=caribbean
+Languages=en_GB,en_US
+DecimalSymbol=.
+ThousandsSeparator=,
+CurrencySymbol=EC
+MonetaryDecimalSymbol=.
+MonetaryThousandsSeparator=,
+PositiveSign=
+NegativeSign=-
+FracDigits=2
+PositivePrefixCurrencySymbol=true
+NegativePrefixCurrencySymbol=true
+PositiveMonetarySignPosition=1
+NegativeMonetarySignPosition=1
+DateFormat[en_US]=%A %d %b %Y
+DateFormat[en_GB]=%A %d %b %Y
+DateFormat[eo]=%A, la %ea de %B %Y
+DateFormatShort=%d/%m/%Y
+TimeFormat=%I:%M:%S %p
+WeekStartDay=7

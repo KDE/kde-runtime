@@ -1,0 +1,231 @@
+
+GENERAL
+=======
+In KDE 2 we added support for localization of dates, time, numbers and
+money. KDE will use this when displaying such information, giving you
+a feeling that KDE was written to fit your national standards. To make
+this possible, we need to gather some information on your national
+standards. Currently there is over 220 countries supported. If your
+country is missing, please let us know.
+
+HOW TO ADD INFORMATION
+======================
+First you have to write a file called "entry.desktop". This file will
+describe your national standards. Please read the section below for
+more information on that. Please use the file "country.template" as
+template.
+
+You will need a nice flag for your country. The size should be 21x14
+pixels, and it should be called "flag.png".
+
+To add your information, we need a two letter country code for you country.
+Use http://www.tu-berlin.de/zrz/dienste/netz/mail/iso-3166.html as a guide.
+
+Now you are done, and you can submit the files to KDE project by
+sending a mail to Hans Petter Bieker <bieker@kde.org>. The files will
+be added in the next release. Please include the country code in the
+mail.
+
+WHAT IS ENTRY.DESKTOP
+=====================
+entry.desktop is a file which defines a locale for a country. It's
+stored the same way as the rest of the KDE configuration files. The
+very first line should only contain "[KCM Locale]". The rest of the
+file should contain one line for each of the entries below. Add "="
+between the entry name and the value.
+
+* Author
+	The name of the email address to reach you.
+
+	Default: blank
+
+* Name
+	The name of the country in English.
+
+	Default: blank
+
+* Region
+	Defines which submenu the country belongs to. Currently there are
+	19 different regions:
+        centralasia (Central Asia), eastasia (East Asia),
+        southasia (South Asia), southeastasia(South-East Asia),
+        middleeast (Middle-East/West Asia)
+        centralafrica (Central Africa), northafrica (Northern Africa),
+        southafrica (Southern Africa), westafrica (Western Africa),
+        easteurope (Eastern Europe), westeurope (Western Europe),
+        southeurope (Southern Europe), northeurope (Northern Europe),
+        centraleurope (Central Europe),
+        northamerica (North America), southamerica (South America),
+        centralemarica (Central America), caribbean (Caribbean)
+        and oceania (Oceania).
+
+	Default: blank
+
+* Languages
+	A comma separated list of locale codes for the official languages
+	of the country.
+
+	Default: blank
+
+* DecimalSymbol
+	The symbol that separates the decimals from the rest of the
+	number.
+
+	Default: "."
+
+* ThousandsSeparator
+	Thousands separator.
+
+	Default: ","
+
+* CurrencySymbol
+	The symbol of the currency used in the country.
+
+	Default: "$"
+
+* MonetaryDecimalSymbol
+	The symbol that separates the decimals from the rest of the number
+	when displaying.
+
+	Default: "."
+
+* MonetaryThousandsSeparator
+	Thousands separator for money.
+
+	Default: ","
+
+* PositiveSign
+	Positive sign for money.
+	Note: this will be used for formatting numbers. Do not add "+" if
+	      you don't really want numbers to be formatted that way.
+
+	Default: ""
+
+* NegativeSign
+	Negative sign for money.
+
+	Default: "-"
+
+* FracDigits
+	Number fract digits used for money
+
+	Default: 2
+
+* PositivePrefixCurrencySymbol
+	If currency symbol should be prepended (if not, it will be
+	appended). This is for non-negative money values.
+
+	Default: true
+
+* NegativePrefixCurrencySymbol
+	If currency symbol should be prepended (if not, it will be
+	appended). This is for negative money values.
+
+	Default: true
+
+* PositiveMonetarySignPosition
+	Defines which type and where the sign (if it's positive or
+	negative) should be placed. This is for non-negative money values.
+
+	0 ParensAround
+	1 BeforeQuantityMoney
+	2 AfterQuantityMoney
+	3 BeforeMoney
+	4 AfterMoney
+
+	Default: 1
+
+* NegativeMonetarySignPosition
+	Same as PositiveMonetarySignPosition, but for negative numbers.
+
+	Default: 0
+
+* DateFormat[language code]
+	This defines how a date is formated. The date string will be
+    contructed from this string and the sequences below will be
+    replaced. This should be marked with a language code as well for
+    each supported language.
+
+	%Y The year with century as a decimal number.
+	%y The year without century as a decimal number (00-99).
+	%m The month as a decimal number (01-12).
+	%n The month as a decimal number (1-12).
+	%b The national representation of the abbreviated month name,
+	   where the abbreviation is the first three characters.
+	%B The national representation of the full month name.
+	%d The day of month as a decimal number (01-31).
+	%e The day of month as a decimal number (1-31).
+	%a The national representation of the abbreviated weekday name,
+	   where the abbreviation is the first three characters.
+	%A The national representation of the full weekday name.
+
+	Default: "%A %d %B %Y"
+
+* DateFormatShort
+	This is the same as DateFormat, but is used when the program asks
+	for a short date. Usally this is used when listing files etc.
+
+	Default: "%Y-%m-%d"
+
+* TimeFormat
+	This defines how a times are formated. The date string will be
+    contructed from this string and the sequences below will be
+    replaced.
+
+	%H The hour as a decimal number using a 24-hour clock (range 00 to
+		   23).
+	%k The hour (24-hour clock) as a decimal number (range 0 to 23).
+	%I The hour as a decimal number using a 12-hour clock (range 01 to
+           12).
+	%l The hour (12-hour clock) as a decimal number (range 1 to 12).
+	%M The minute as a decimal number (range 00 to 59).
+	%S The second as a decimal number (range 00 to 59).
+	%p Either AM or PM according to the given time value. AM or PM are
+           translating to the current language. Noon is treated as PM
+           and midnight as AM.
+
+	Default: "%H:%M:%S"
+
+* WeekStartDay
+	This defines which day is the first of the week. Accepted value is
+	an integer number where 1 means Monday, 2 Tuesday, and so on.
+
+	Default: 1
+
+* MeasureSystem
+	This defines which measure system we should use. There are two
+	values here, 0 for Metric and 1 for Imperial. Metric would give
+	you meters (or cm/mm), while Imperial would give you inches.
+
+	Default: 0
+
+* PageSize
+	This defines which page size we should use by default. It should
+	be the number of the item in the QPrinter::PageSize enum. Here are
+	some values:
+
+	0	A4
+	1	B5
+	2	US Letter
+	...and so on
+
+	Default: 0
+
+* CalendarSystem
+	This defines which calendar system should use. This is currently not
+	supported by the KDE internals. Here are some values:
+
+	gregorian
+	hijri
+
+	Default: gregorian
+
+* AddressFormat
+* BusinessAddressFormat
+* AddressCountryPosition
+	These fields define the formatting of postal addresses. For
+	detailled information on these fields' format, please refer to
+	kdelibs/kabc/README.AddressFormat
+
+Hans Petter Bieker <bieker@kde.org>
+Lukas Tinkl <lukas@kde.org>

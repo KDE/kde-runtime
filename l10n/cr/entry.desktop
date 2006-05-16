@@ -1,0 +1,23 @@
+[KCM Locale]
+Name=Costa Rica
+Name[x-test]=xxCosta Ricaxx
+Region=centralamerica
+Languages=es
+DecimalSymbol=,
+ThousandsSeparator=
+CurrencySymbol=¢
+MonetaryDecimalSymbol=,
+MonetaryThousandsSeparator=
+PositiveSign=
+NegativeSign=-
+FracDigits=2
+PositivePrefixCurrencySymbol=true
+NegativePrefixCurrencySymbol=true
+PositiveMonetarySignPosition=1
+NegativeMonetarySignPosition=1
+DateFormat[es]=%A, %e de %B de %Y
+DateFormatShort=%d/%m/%y
+TimeFormat=%I:%M:%S %p
+WeekStartDay=1
+PageSize=2
+MeasureSystem=0

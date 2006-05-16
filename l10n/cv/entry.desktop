@@ -1,0 +1,24 @@
+[KCM Locale]
+Name=Cape Verde
+Name[fr]=Cap vert
+Name[x-test]=xxCape Verdexx
+Region=westafrica
+Languages=pt
+#DecimalSymbol=,
+#ThousandsSeparator=
+CurrencySymbol=C.V.Esc.
+#MonetaryDecimalSymbol=
+#MonetaryThousandsSeparator=
+#PositiveSign=
+#NegativeSign=-
+FracDigits=2
+#PositivePrefixCurrencySymbol=
+#NegativePrefixCurrencySymbol=true
+#PositiveMonetarySignPosition=1
+#NegativeMonetarySignPosition=1
+#DateFormat[??]=
+#DateFormatShort=
+#TimeFormat=
+#WeekStartDay=
+#PageSize=
+#MeasureSystem=

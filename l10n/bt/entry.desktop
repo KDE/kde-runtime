@@ -1,0 +1,27 @@
+[KCM Locale]
+#Author=cfynn@gmx.net
+Name=Bhutan
+Name[fr]=Bhoutan
+Name[x-test]=xxBhutanxx
+Region=southasia
+Languages=dz,en
+DecimalSymbol=.
+ThousandsSeparator=,
+CurrencySymbol=Nu
+MonetaryDecimalSymbol=.
+MonetaryThousandsSeparator=,
+PositiveSign=
+NegativeSign=-
+FracDigits=2
+PositivePrefixCurrencySymbol=
+NegativePrefixCurrencySymbol=true
+PositiveMonetarySignPosition=1
+NegativeMonetarySignPosition=1
+DateFormat[en]=%A %d %B %Y
+DateFormat[dz]=སྤྱི་ལོ་%Y ཟླ%n ཚེ་%d
+DateFormatShort=%Y-%m-%d
+TimeFormat=%I:%M:%S %p
+WeekStartDay=7
+PageSize=0
+MeasureSystem=0
+

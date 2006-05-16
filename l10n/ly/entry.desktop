@@ -1,0 +1,10 @@
+[KCM Locale]
+Name=Libya
+Name[fr]=Lybie
+Name[x-test]=xxLibyaxx
+Region=northafrica
+Languages=ar
+DecimalSymbol=,
+CurrencySymbol=LYD
+FracDigits=2
+DateFormatShort=%y/%m/%d

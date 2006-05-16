@@ -1,0 +1,24 @@
+[KCM Locale]
+Name=Trinidad and Tobago
+Name[fr]=Trinidad et Tobago
+Name[x-test]=xxTrinidad and Tobagoxx
+Region=caribbean
+Languages=en_GB,en_US
+DecimalSymbol=.
+ThousandsSeparator=,
+CurrencySymbol=$
+MonetaryDecimalSymbol=.
+MonetaryThousandsSeparator=,
+PositiveSign=
+NegativeSign=-
+FracDigits=2
+PositivePrefixCurrencySymbol=true
+NegativePrefixCurrencySymbol=true
+PositiveMonetarySignPosition=1
+NegativeMonetarySignPosition=1
+DateFormat[en_US]=%A %d %b %Y
+DateFormat[en_GB]=%A %d %b %Y
+DateFormat[eo]=%A, la %ea de %B %Y
+DateFormatShort=%d/%m/%Y
+TimeFormat=%I:%M:%S %p
+WeekStartDay=7

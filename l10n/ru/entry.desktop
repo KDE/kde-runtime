@@ -1,0 +1,26 @@
+[KCM Locale]
+Author=Denis Perchine <dyp@perchine.com>
+Name=Russia
+Name[fr]=Russie
+Name[x-test]=xxRussiaxx
+Region=easteurope
+Languages=ru
+DecimalSymbol=,
+ThousandsSeparator=.
+CurrencySymbol=руб.
+MonetaryDecimalSymbol=,
+MonetaryThousandsSeparator=.
+PositiveSign=
+NegativeSign=-
+FracDigits=2
+PositivePrefixCurrencySymbol=false
+NegativePrefixCurrencySymbol=false
+PositiveMonetarySignPosition=2
+NegativeMonetarySignPosition=2
+DateFormat[ru]=%e %B %Y
+DateFormat[eo]=%A, la %ea de %B %Y
+DateFormatShort=%d/%m/%y
+TimeFormat=%H:%M:%S
+#WeekStartDay=
+PageSize=0
+MeasureSystem=0

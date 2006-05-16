@@ -1,0 +1,10 @@
+[KCM Locale]
+Name=Sudan
+Name[fr]=Soudan
+Name[x-test]=xxSudanxx
+Region=northafrica
+Languages=ar
+DecimalSymbol=,
+CurrencySymbol=SDD
+FracDigits=2
+DateFormatShort=%y/%m/%d

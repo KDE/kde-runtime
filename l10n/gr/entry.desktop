@@ -1,0 +1,22 @@
+[KCM Locale]
+Name=Greece
+Name[fr]=Grèce
+Name[x-test]=xxGreecexx
+Region=southeurope
+Languages=el
+DecimalSymbol=,
+ThousandsSeparator=.
+CurrencySymbol=€
+MonetaryDecimalSymbol=,
+MonetaryThousandsSeparator=.
+PositiveSign=
+NegativeSign=-
+FracDigits=2
+PositivePrefixCurrencySymbol=false
+NegativePrefixCurrencySymbol=false
+PositiveMonetarySignPosition=1
+NegativeMonetarySignPosition=1
+DateFormat[el]=%a %d %b %Y
+DateFormat[eo]=%A, la %ea de %B %Y
+DateFormatShort=%d/%m/%Y
+TimeFormat=%H:%M:%S

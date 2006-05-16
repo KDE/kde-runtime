@@ -1,0 +1,6 @@
+[KCM Locale]
+Name=Default
+Name[fr]=Par défaut
+Name[x-test]=xxDefaultxx
+Languages=en_US
+DateFormat[eo]=%A, la %ea de %B %Y

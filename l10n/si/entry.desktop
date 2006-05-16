@@ -1,0 +1,24 @@
+[KCM Locale]
+Name=Slovenia
+Name[fr]=Slovénie
+Name[x-test]=xxSloveniaxx
+Region=centraleurope
+Languages=sl
+DecimalSymbol=,
+ThousandsSeparator=$0 $0
+CurrencySymbol=SIT
+MonetaryDecimalSymbol=,
+MonetaryThousandsSeparator=$0 $0
+PositiveSign=
+NegativeSign=-
+FracDigits=2
+PositivePrefixCurrencySymbol=true
+NegativePrefixCurrencySymbol=true
+PositiveMonetarySignPosition=1
+NegativeMonetarySignPosition=1
+DateFormat[sl]=%A %e. %B %Y
+DateFormat[eo]=%A, la %ea de %B %Y
+DateFormatShort=%d.%m.%y
+TimeFormat=%H:%M:%S
+NounDeclension=true
+DateMonthNamePossessive=true

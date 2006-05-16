@@ -1,0 +1,31 @@
+[KCM Locale]
+Author=Meni Livne <livne@kde.org>
+Name=Israel
+Name[fr]=Israël
+Name[x-test]=xxIsraelxx
+Region=middleeast
+Languages=he,ar
+#DecimalSymbol=
+#ThousandsSeparator=
+CurrencySymbol=₪
+#MonetaryDecimalSymbol=
+#MonetaryThousandsSeparator=
+#PositiveSign=
+#NegativeSign=-
+#FracDigits=
+#PositivePrefixCurrencySymbol=
+#NegativePrefixCurrencySymbol=
+#PositiveMonetarySignPosition=
+NegativeMonetarySignPosition=1
+DateFormat[he]=%A, %e ב%B %Y
+DateFormat[eo]=%A, la %ea de %B %Y
+DateFormatShort=%e/%n/%Y
+TimeFormat=%H:%M:%S
+WeekStartDay=7
+#PageSize=
+#MeasureSystem=
+# FIXME HPB: I somewhere read that the hebrew calendar was the official
+#            calendar in Israel
+CalendarSystem=gregorian
+AddressFormat=%0(%n\n)%0(%cm\n)%0(ת.ד. %p\n)%0(%s\n)%0(%l%w%z)
+AddressCountryPosition=BELOW

@@ -1,0 +1,10 @@
+[KCM Locale]
+Name=Egypt
+Name[fr]=Égypte
+Name[x-test]=xxEgyptxx
+Region=northafrica
+Languages=ar
+DecimalSymbol=,
+CurrencySymbol=EGP
+FracDigits=2
+DateFormatShort=%y/%m/%d

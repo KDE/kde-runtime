@@ -1,0 +1,24 @@
+[KCM Locale]
+Name=Bermuda
+Name[fr]=Bermudes
+Name[x-test]=xxBermudaxx
+Region=northamerica
+Languages=en_GB
+#DecimalSymbol=,
+#ThousandsSeparator=
+CurrencySymbol=Bd$
+#MonetaryDecimalSymbol=
+#MonetaryThousandsSeparator=
+#PositiveSign=
+#NegativeSign=-
+FracDigits=2
+#PositivePrefixCurrencySymbol=
+#NegativePrefixCurrencySymbol=true
+#PositiveMonetarySignPosition=1
+#NegativeMonetarySignPosition=1
+#DateFormat[??]=
+#DateFormatShort=
+#TimeFormat=
+#WeekStartDay=
+#PageSize=
+#MeasureSystem=

@@ -1,0 +1,25 @@
+[KCM Locale]
+Author=Pedro Morais <morais@kde.org>
+Name=Portugal
+Name[x-test]=xxPortugalxx
+Region=westeurope
+Languages=pt
+DecimalSymbol=,
+ThousandsSeparator=.
+CurrencySymbol=€
+MonetaryDecimalSymbol=
+MonetaryThousandsSeparator=.
+PositiveSign=
+NegativeSign=-
+FracDigits=2
+PositivePrefixCurrencySymbol=false
+NegativePrefixCurrencySymbol=false
+PositiveMonetarySignPosition=1
+NegativeMonetarySignPosition=1
+TimeFormat=%H:%M:%S
+DateFormat[pt]=%A, %e de %B de %Y
+DateFormat[eo]=%A, la %ea de %B %Y
+DateFormatShort=%Y-%m-%d
+WeekStartDay=7
+PageSize=0
+MeasureSystem=0

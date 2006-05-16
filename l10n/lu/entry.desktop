@@ -1,0 +1,22 @@
+[KCM Locale]
+Name=Luxembourg
+Name[x-test]=xxLuxembourgxx
+Region=westeurope
+Languages=de,fr
+DecimalSymbol=,
+ThousandsSeparator=.
+CurrencySymbol=€
+MonetaryDecimalSymbol=,
+MonetaryThousandsSeparator=.
+PositiveSign=
+NegativeSign=-
+FracDigits=2
+PositivePrefixCurrencySymbol=true
+NegativePrefixCurrencySymbol=true
+PositiveMonetarySignPosition=4
+NegativeMonetarySignPosition=4
+DateFormat[de]=%a %d %b %Y
+DateFormat[fr]=%a %d %b %Y
+DateFormat[eo]=%A, la %ea de %B %Y
+DateFormatShort=%d.%m.%Y
+TimeFormat=%H:%M:%S

@@ -1,0 +1,23 @@
+[KCM Locale]
+Name=Tonga
+Name[x-test]=xxTongaxx
+Region=oceania
+Languages=en_GB
+#DecimalSymbol=,
+#ThousandsSeparator=
+CurrencySymbol=PT
+#MonetaryDecimalSymbol=
+#MonetaryThousandsSeparator=
+#PositiveSign=
+#NegativeSign=-
+FracDigits=2
+#PositivePrefixCurrencySymbol=
+#NegativePrefixCurrencySymbol=true
+#PositiveMonetarySignPosition=1
+#NegativeMonetarySignPosition=1
+#DateFormat[??]=
+#DateFormatShort=
+#TimeFormat=
+#WeekStartDay=
+#PageSize=
+#MeasureSystem=

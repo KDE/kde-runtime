@@ -1,0 +1,10 @@
+[KCM Locale]
+Name=Morocco
+Name[fr]=Maroc
+Name[x-test]=xxMoroccoxx
+Region=northafrica
+Languages=ar
+DecimalSymbol=,
+CurrencySymbol=MAD
+FracDigits=2
+DateFormatShort=%y/%m/%d

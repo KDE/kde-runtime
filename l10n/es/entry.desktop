@@ -1,0 +1,27 @@
+[KCM Locale]
+Name=Spain
+Name[fr]=Espagne
+Name[x-test]=xxSpainxx
+Region=westeurope
+Languages=es,ca,eu,gl
+DecimalSymbol=,
+ThousandsSeparator=
+CurrencySymbol=€
+MonetaryDecimalSymbol=,
+MonetaryThousandsSeparator=
+PositiveSign=
+NegativeSign=-
+FracDigits=2
+PositivePrefixCurrencySymbol=false
+NegativePrefixCurrencySymbol=false
+PositiveMonetarySignPosition=1
+NegativeMonetarySignPosition=1
+DateFormat[es]=%A, %e de %B de %Y
+DateFormat[eu]=%a, %Yeko %bren %da
+DareFormat[gl]=%A, %e de %B de %Y
+DateFormat[eo]=%A, la %ea de %B %Y
+DateFormatShort=%d-%m-%y
+TimeFormat=%H:%M:%S
+WeekStartDay=1
+PageSize=0
+MeasureSystem=0

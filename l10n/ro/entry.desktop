@@ -1,0 +1,22 @@
+[KCM Locale]
+Name=Romania
+Name[fr]=Roumanie
+Name[x-test]=xxRomaniaxx
+Region=easteurope
+Languages=ro
+DecimalSymbol=,
+ThousandsSeparator=$0 $0
+CurrencySymbol=Lei
+MonetaryDecimalSymbol=,
+MonetaryThousandsSeparator=$0 $0
+PositiveSign=
+NegativeSign=-
+FracDigits=2
+PositivePrefixCurrencySymbol=true
+NegativePrefixCurrencySymbol=true
+PositiveMonetarySignPosition=1
+NegativeMonetarySignPosition=1
+DateFormat[ro]=%a %d %b %Y
+DateFormat[eo]=%A, la %ea de %B %Y
+DateFormatShort=%d %m %Y
+TimeFormat=%H:%M:%S

@@ -1,0 +1,10 @@
+[KCM Locale]
+Name=Kuwait
+Name[fr]=Kowait
+Name[x-test]=xxKuwaitxx
+Region=middleeast
+Languages=ar
+DecimalSymbol=,
+CurrencySymbol=KWD
+FracDigits=2
+DateFormatShort=%y/%m/%d

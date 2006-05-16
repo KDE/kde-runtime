@@ -1,0 +1,24 @@
+[KCM Locale]
+Name=Faroe Islands
+Name[fr]=Îles Féroé
+Name[x-test]=xxFaroe Islandsxx
+Region=northeurope
+Languages=fa,da
+DecimalSymbol=,
+ThousandsSeparator=.
+CurrencySymbol=kr
+MonetaryDecimalSymbol=,
+MonetaryThousandsSeparator=.
+PositiveSign=
+NegativeSign=-
+FracDigits=2
+PositivePrefixCurrencySymbol=true
+NegativePrefixCurrencySymbol=true
+PositiveMonetarySignPosition=1
+NegativeMonetarySignPosition=1
+DateFormat[fo]=%A %d %B %Y
+DateFormatShort=%d/%m/%Y
+TimeFormat=%l:%M:%S %p
+WeekStartDay=7
+#PageSize=
+#MeasureSystem=

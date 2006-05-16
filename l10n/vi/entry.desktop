@@ -1,0 +1,24 @@
+[KCM Locale]
+Name=Virgin Islands, U.S.
+Name[fr]=Îles Vierges américaines
+Name[x-test]=xxVirgin Islands, U.S.xx
+Region=caribbean
+Languages=en_GB
+DecimalSymbol=.
+ThousandsSeparator=,
+CurrencySymbol=$
+MonetaryDecimalSymbol=.
+MonetaryThousandsSeparator=,
+PositiveSign=
+NegativeSign=-
+FracDigits=2
+PositivePrefixCurrencySymbol=true
+NegativePrefixCurrencySymbol=true
+PositiveMonetarySignPosition=1
+NegativeMonetarySignPosition=0
+DateFormat[en_US]=%A, %B %n, %Y
+DateFormatShort=%n/%e/%Y
+TimeFormat=%l:%M:%S %p
+WeekStartDay=7
+#PageSize=
+#MeasureSystem=

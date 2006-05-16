@@ -1,0 +1,24 @@
+[KCM Locale]
+Name=East Timor
+Name[fr]=Timor oriental
+Name[x-test]=xxEast Timorxx
+Region=southeastasia
+Languages=pt,en_GB
+#DecimalSymbol=,
+#ThousandsSeparator=
+CurrencySymbol=Rp
+#MonetaryDecimalSymbol=
+#MonetaryThousandsSeparator=
+#PositiveSign=
+#NegativeSign=-
+FracDigits=2
+#PositivePrefixCurrencySymbol=
+#NegativePrefixCurrencySymbol=true
+#PositiveMonetarySignPosition=1
+#NegativeMonetarySignPosition=1
+#DateFormat[??]=
+#DateFormatShort=
+#TimeFormat=
+#WeekStartDay=
+#PageSize=
+#MeasureSystem=

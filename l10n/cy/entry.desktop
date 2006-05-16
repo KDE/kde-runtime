@@ -1,0 +1,24 @@
+[KCM Locale]
+Name=Cyprus
+Name[fr]=Chypre
+Name[x-test]=xxCyprusxx
+Region=southeurope
+Languages=el,tr,en_GB
+#DecimalSymbol=,
+#ThousandsSeparator=
+CurrencySymbol=£C
+#MonetaryDecimalSymbol=
+#MonetaryThousandsSeparator=
+#PositiveSign=
+#NegativeSign=-
+FracDigits=2
+#PositivePrefixCurrencySymbol=
+#NegativePrefixCurrencySymbol=true
+#PositiveMonetarySignPosition=1
+#NegativeMonetarySignPosition=1
+#DateFormat[??]=
+#DateFormatShort=
+#TimeFormat=
+#WeekStartDay=
+#PageSize=
+#MeasureSystem=

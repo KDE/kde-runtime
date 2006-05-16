@@ -1,0 +1,12 @@
+[KCM Locale]
+Name=Pakistan
+Name[x-test]=xxPakistanxx
+Region=southasia
+Languages=ur,en,en_GB,en_US
+CurrencySymbol=Rs.
+NegativeMonetarySignPosition=1
+DateFormat=%A %d %b %Y
+DateFormatShort=%d/%m/%Y
+TimeFormat=%l:%M:%S %p
+PageSize=0
+MeasureSystem=0

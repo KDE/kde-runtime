@@ -1,0 +1,24 @@
+[KCM Locale]
+Name=Guinea
+Name[fr]=Guinée
+Name[x-test]=xxGuineaxx
+Region=westafrica
+Languages=fr
+#DecimalSymbol=,
+#ThousandsSeparator=
+CurrencySymbol=FG
+#MonetaryDecimalSymbol=
+#MonetaryThousandsSeparator=
+#PositiveSign=
+#NegativeSign=-
+FracDigits=1
+#PositivePrefixCurrencySymbol=
+#NegativePrefixCurrencySymbol=true
+#PositiveMonetarySignPosition=1
+#NegativeMonetarySignPosition=1
+#DateFormat[??]=
+#DateFormatShort=
+#TimeFormat=
+#WeekStartDay=
+#PageSize=
+#MeasureSystem=

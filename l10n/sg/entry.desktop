@@ -1,0 +1,24 @@
+[KCM Locale]
+Name=Singapore
+Name[fr]=Singapour
+Name[x-test]=xxSingaporexx
+Region=southeastasia
+Languages=ms,zh_CN,ta,en_GB
+DecimalSymbol=.
+ThousandsSeparator=,
+CurrencySymbol=S$
+MonetaryDecimalSymbol=.
+MonetaryThousandsSeparator=,
+PositiveSign=
+NegativeSign=-
+FracDigits=2
+PositivePrefixCurrencySymbol=true
+NegativePrefixCurrencySymbol=true
+PositiveMonetarySignPosition=3
+NegativeMonetarySignPosition=3
+DateFormat=%d %B %Y
+DateFormatShort=%d/%m/%Y
+TimeFormat=%p %H:%M:%S
+WeekStartDay=7
+PageSize=0
+MeasureSystem=0

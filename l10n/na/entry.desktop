@@ -1,0 +1,27 @@
+[KCM Locale]
+Name=Namibia
+Name[fr]=Namibie
+Name[x-test]=xxNamibiaxx
+Region=southafrica
+Languages=af,de,en_GB
+DecimalSymbol=.
+ThousandsSeparator=,
+CurrencySymbol=N$
+MonetaryDecimalSymbol=.
+MonetaryThousandsSeparator=,
+PositiveSign=
+NegativeSign=-
+FracDigits=2
+PositivePrefixCurrencySymbol=true
+NegativePrefixCurrencySymbol=true
+PositiveMonetarySignPosition=1
+NegativeMonetarySignPosition=0
+DateFormat=%A %d %b %Y
+DateFormatShort=%d-%m-%Y
+TimeFormat=%H:%M:%S
+WeekStartDay=7
+PageSize=0
+MeasureSystem=0
+AddressFormat=%0(%cm\n)%0(%n\n)%0(P.O. Box %p\n)%l
+AddressCountrzPosition=below
+

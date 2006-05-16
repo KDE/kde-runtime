@@ -1,0 +1,23 @@
+[KCM Locale]
+Name=Ireland
+Name[fr]=Irlande
+Name[x-test]=xxIrelandxx
+Region=westeurope
+Languages=en_GB,ga
+DecimalSymbol=.
+ThousandsSeparator=,
+CurrencySymbol=€
+MonetaryDecimalSymbol=.
+MonetaryThousandsSeparator=,
+PositiveSign=
+NegativeSign=-
+FracDigits=2
+PositivePrefixCurrencySymbol=true
+NegativePrefixCurrencySymbol=true
+PositiveMonetarySignPosition=1
+NegativeMonetarySignPosition=1
+DateFormat[ga]=%a %d %b %Y
+DateFormat[en_GB]=%a %d %b %Y
+DateFormat[eo]=%A, la %ea de %B %Y
+DateFormatShort=%d/%m/%y
+TimeFormat=%H:%M:%S

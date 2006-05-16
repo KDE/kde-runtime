@@ -1,0 +1,14 @@
+[KCM Locale]
+Name=India
+Name[fr]=Inde
+Name[x-test]=xxIndiaxx
+Region=southasia
+Languages=hi,bn,ta,en_GB
+CurrencySymbol=Rs.
+NegativeMonetarySignPosition=1
+DateFormat=%A %d %b %Y
+DateFormatShort=%d/%m/%Y
+TimeFormat=%l:%M:%S %p
+#WeekStartDay=
+PageSize=0
+MeasureSystem=0

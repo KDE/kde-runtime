@@ -1,0 +1,9 @@
+[KCM Locale]
+Name=Qatar
+Name[x-test]=xxQatarxx
+Region=middleeast
+Languages=ar
+DecimalSymbol=,
+CurrencySymbol=QAR
+FracDigits=2
+DateFormatShort=%y/%m/%d

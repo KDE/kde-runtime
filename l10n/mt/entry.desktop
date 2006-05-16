@@ -1,0 +1,25 @@
+[KCM Locale]
+Author=Ramon Casha <ramon.casha@megabyte.net>
+Name=Malta
+Name[fr]=Malte
+Name[x-test]=xxMaltaxx
+Region=southeurope
+Languages=mt,en_GB,en
+DecimalSymbol=.
+ThousandsSeparator=,
+CurrencySymbol=Lm
+MonetaryDecimalSymbol=.
+MonetaryThousandsSeparator=,
+PositiveSign=
+NegativeSign=-
+FracDigits=2
+PositivePrefixCurrencySymbol=true
+NegativePrefixCurrencySymbol=true
+PositiveMonetarySignPosition=1
+NegativeMonetarySignPosition=1
+DateFormat[mt]=%A, %e ta' %B %Y
+DateFormat[en_GB]=%A %d %B %Y
+DateFormat[en]=%A %d %B %Y
+DateFormatShort=%d/%m/%Y
+TimeFormat=%H:%M:%S
+WeekStartDay=1

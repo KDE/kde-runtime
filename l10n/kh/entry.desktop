@@ -1,0 +1,26 @@
+[KCM Locale]
+Name=Cambodia
+Name[fr]=Cambodge
+Name[x-test]=xxCambodiaxx
+Region=southeastasia
+Languages=km
+DecimalSymbol=,
+ThousandsSeparator=.
+CurrencySymbol=៛
+MonetaryDecimalSymbol=,
+MonetaryThousandsSeparator=.
+#PositiveSign=
+#NegativeSign=-
+FracDigits=0
+PositivePrefixCurrencySymbol=false
+NegativePrefixCurrencySymbol=false
+PositiveMonetarySignPosition=1
+NegativeMonetarySignPosition=1
+DateFormat[km]=%A ទី %d %B %Y
+DateFormatShort=%d/%m/%Y
+TimeFormat=%l:%M:%S %p
+#WeekStartDay=
+#PageSize=
+#MeasureSystem=
+AddressFormat=%0(%cm\n)%0(%n\n)%0(%s\n)%0(P.O. Box %p\n)%z%w%L%0(\n%r)
+AddressCountryPosition=BELOW

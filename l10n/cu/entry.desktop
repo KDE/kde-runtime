@@ -1,0 +1,23 @@
+[KCM Locale]
+Name=Cuba
+Name[x-test]=xxCubaxx
+Region=caribbean
+Languages=es
+DecimalSymbol=.
+ThousandsSeparator=,
+CurrencySymbol=CUP
+MonetaryDecimalSymbol=.
+MonetaryThousandsSeparator=,
+PositiveSign=
+NegativeSign=-
+FracDigits=2
+PositivePrefixCurrencySymbol=true
+NegativePrefixCurrencySymbol=true
+PositiveMonetarySignPosition=1
+NegativeMonetarySignPosition=1
+DateFormat[es]=%A, %e de %B de %Y
+DateFormatShort=%d/%m/%y
+TimeFormat=%I:%M:%S %p
+WeekStartDay=1
+PageSize=2
+MeasureSystem=0

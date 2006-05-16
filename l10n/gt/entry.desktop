@@ -1,0 +1,21 @@
+[KCM Locale]
+Name=Guatemala
+Name[x-test]=xxGuatemalaxx
+Region=centralamerica
+Languages=es
+DecimalSymbol=.
+ThousandsSeparator=
+CurrencySymbol=Q
+MonetaryDecimalSymbol=.
+MonetaryThousandsSeparator=,
+PositiveSign=
+NegativeSign=-
+FracDigits=2
+PositivePrefixCurrencySymbol=true
+NegativePrefixCurrencySymbol=true
+PositiveMonetarySignPosition=1
+NegativeMonetarySignPosition=1
+DateFormat[es]=%a %d %b %Y
+DateFormat[eo]=%A, la %ea de %B %Y
+DateFormatShort=%d/%m/%y
+TimeFormat=%H:%M:%S

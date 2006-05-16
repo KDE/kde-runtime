@@ -1,0 +1,22 @@
+[KCM Locale]
+Name=Turkey
+Name[fr]=Turquie
+Name[x-test]=xxTurkeyxx
+Region=southeurope
+Languages=tr
+DecimalSymbol=,
+ThousandsSeparator=
+CurrencySymbol=YTL
+MonetaryDecimalSymbol=,
+MonetaryThousandsSeparator=.
+PositiveSign=
+NegativeSign=-
+FracDigits=2
+PositivePrefixCurrencySymbol=true
+NegativePrefixCurrencySymbol=true
+PositiveMonetarySignPosition=1
+NegativeMonetarySignPosition=1
+DateFormat[tr]=%a %d %b %Y
+DateFormat[eo]=%A, la %ea de %B %Y
+DateFormatShort=%Y-%m-%d
+TimeFormat=%H:%M:%S

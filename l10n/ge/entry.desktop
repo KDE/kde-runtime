@@ -1,0 +1,25 @@
+[KCM Locale]
+Name=Georgia
+Name[fr]=Géorgie
+Name[x-test]=xxGeorgiaxx
+Region=easteurope
+Languages=ka,ru
+DecimalSymbol=,
+ThousandsSeparator=$0 $0
+# Currency is Georgian Lari, symbol is GEL
+CurrencySymbol=GEL
+MonetaryDecimalSymbol=,
+MonetaryThousandsSeparator=$0 $0
+PositiveSign=$0
+NegativeSign=-
+FracDigits=2
+PositivePrefixCurrencySymbol=false
+NegativePrefixCurrencySymbol=false
+PositiveMonetarySignPosition=2
+NegativeMonetarySignPosition=2
+DateFormat=%Y წლის %e %B, %A
+DateFormatShort=%d.%m.%Y
+TimeFormat=%H:%M:%S
+WeekStartDay=1
+PageSize=A4
+MeasureSystem=Metric

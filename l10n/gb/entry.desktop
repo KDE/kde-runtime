@@ -1,0 +1,15 @@
+[KCM Locale]
+Name=United Kingdom
+Name[fr]=Royaume Uni
+Name[x-test]=xxUnited Kingdomxx
+Region=westeurope
+Languages=en_GB,cy
+CurrencySymbol=£
+NegativeMonetarySignPosition=1
+DateFormat[en_GB]=%A %d %b %Y
+DateFormat[eo]=%A, la %ea de %B %Y
+DateFormatShort=%d/%m/%Y
+TimeFormat=%H:%M:%S
+PageSize=0
+MeasureSystem=0
+WeekStartDay=7

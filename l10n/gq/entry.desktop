@@ -1,0 +1,24 @@
+[KCM Locale]
+Name=Equatorial Guinea
+Name[fr]=Guinée équatoriale
+Name[x-test]=xxEquatorial Guineaxx
+Region=centralafrica
+Languages=es,fr,en_GB
+#DecimalSymbol=,
+#ThousandsSeparator=
+CurrencySymbol=CFAF
+#MonetaryDecimalSymbol=
+#MonetaryThousandsSeparator=
+#PositiveSign=
+#NegativeSign=-
+FracDigits=2
+#PositivePrefixCurrencySymbol=
+#NegativePrefixCurrencySymbol=true
+#PositiveMonetarySignPosition=1
+#NegativeMonetarySignPosition=1
+#DateFormat[??]=
+#DateFormatShort=
+#TimeFormat=
+#WeekStartDay=
+#PageSize=
+#MeasureSystem=

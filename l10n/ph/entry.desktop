@@ -1,0 +1,23 @@
+[KCM Locale]
+Name=Philippines
+Name[x-test]=xxPhilippinesxx
+Region=southeastasia
+Languages=en_GB
+DecimalSymbol=.
+ThousandsSeparator=,
+CurrencySymbol=Php
+MonetaryDecimalSymbol=.
+MonetaryThousandsSeparator=,
+PositiveSign=
+NegativeSign=-
+FracDigits=2
+PositivePrefixCurrencySymbol=true
+NegativePrefixCurrencySymbol=true
+PositiveMonetarySignPosition=1
+NegativeMonetarySignPosition=0
+DateFormat[en_GB]=%A, %B %e, %Y
+DateFormatShort=%n/%e/%Y
+TimeFormat=%l:%M:%S %p
+WeekStartDay=7
+PageSize=0
+MeasureSystem=0
