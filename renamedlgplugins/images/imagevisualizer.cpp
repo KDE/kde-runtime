@@ -36,7 +36,7 @@ ImageVisualizer::ImageVisualizer( QWidget *parent, const QString &fileName )
 {
   pic = 0;
   description = 0;
-  KUrl url=KUrl::fromPathOrURL( fileName );
+  KUrl url=KUrl::fromPathOrUrl( fileName );
   setSpacing( 0 );
   if( url.isValid() && url.isLocalFile() ) {
     pic = new QLabel(this );
@@ -45,7 +45,7 @@ ImageVisualizer::ImageVisualizer( QWidget *parent, const QString &fileName )
   } else if( !url.isLocalFile() ) {
     KUrlLabel *label = new KUrlLabel( this );
     label->setText(i18n("This picture isn't stored\non the local host.\nClick on this label to load it.\n" ) );
-    label->setURL( url.prettyURL() );
+    label->setURL( url.prettyUrl() );
     connect(label, SIGNAL(leftClickedURL(const QString&)), SLOT(downloadImage(const QString&)));
     pic = label;
     description = new QLabel(this);
@@ -74,7 +74,7 @@ void ImageVisualizer::loadImage( const QString& path )
 void ImageVisualizer::downloadImage(const QString& url)
 {
   QString tmpFile;
-  if( KIO::NetAccess::download( KUrl::fromPathOrURL( url ), tmpFile , topLevelWidget()) )
+  if( KIO::NetAccess::download( KUrl::fromPathOrUrl( url ), tmpFile , topLevelWidget()) )
   {
     loadImage( tmpFile );
     KIO::NetAccess::removeTempFile( tmpFile );
