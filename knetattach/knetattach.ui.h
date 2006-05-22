@@ -179,7 +179,7 @@ void KNetAttach::finished()
 	desktopFile.writeEntry("Icon", "package_network");
 	desktopFile.writeEntry("Name", name);
 	desktopFile.writeEntry("Type", "Link");
-	desktopFile.writeEntry("URL", url.prettyURL());
+	desktopFile.writeEntry("URL", url.prettyUrl());
 	desktopFile.sync();
 	KDirNotify_stub notifier("*", "*");
 	notifier.FilesAdded( KUrl("remote:/") );
@@ -206,7 +206,7 @@ void KNetAttach::finished()
 	    recent.writeEntry("Index", idx);
 	}
 	recent.setGroup(name);
-	recent.writeEntry("URL", url.prettyURL());
+	recent.writeEntry("URL", url.prettyUrl());
 	if (_type == "WebFolder" || _type == "Fish" || _type == "FTP") {
 	    recent.writeEntry("Port", _port->value());
 	}
