@@ -1,4 +1,5 @@
 add_subdirectory(drkonqi)
+add_subdirectory(kioslave)
 add_subdirectory(kdebugdialog)
 if ( UNIX )
    add_subdirectory( kdesu )
