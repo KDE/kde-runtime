@@ -28,7 +28,7 @@
 #include <kurllabel.h>
 #include <kmimetype.h>
 #include <kmediaplayer/player.h>
-#include <kparts/componentfactory.h>
+#include <kservicetypetrader.h>
 
 #include "audiopreview.h"
 
@@ -106,7 +106,7 @@ void AudioPreview::initView( const QString& mimeType )
  
   description->setText( desc );
   description->adjustSize();
-  m_player = KParts::ComponentFactory::createInstanceFromQuery<KMediaPlayer::Player>( "KMediaPlayer/Player", QString::null, this );
+  m_player = KServiceTypeTrader::createInstanceFromQuery<KMediaPlayer::Player>( "KMediaPlayer/Player", QString::null, this );
   if ( m_player )
   {
     static_cast<KParts::ReadOnlyPart*>(m_player)->openURL( url );
