@@ -30,36 +30,39 @@
 #ifndef KRASHDCOPINTERFACE_SKEL
 #define KRASHDCOPINTERFACE_SKEL
 
-#include <dcopobject.h>
-
 #include <QString>
 #include <kaboutdata.h>
+
+#include <dbus/qdbus.h>
 
 /**
  * Provides information about a crashed process over dcop.
  *
  * @author Hamish Rodda <rodda@kde.org>
  */
-class KrashDCOPInterface : virtual public DCOPObject
+class KrashAdaptor : public QDBusAbstractAdaptor
 {
-  K_DCOP
+ Q_OBJECT
+ Q_CLASSINFO("D-Bus Interface", "org.kde.Krash")
 public:
+ KrashAdaptor(QObject *parent);
+ virtual ~KrashAdaptor();
 
-k_dcop:
-  virtual QString programName() const = 0;
-  virtual QByteArray appName() const = 0;
-  virtual int signalNumber() const = 0;
-  virtual int pid() const = 0;
-  virtual bool startedByKdeinit() const = 0;
-  virtual bool safeMode() const = 0;
-  virtual QString signalName() const = 0;
-  virtual QString signalText() const = 0;
-  virtual QString whatToDoText() const = 0;
-  virtual QString errorDescriptionText() const = 0;
+public slots:
+  QString programName();
+  QByteArray appName();
+  int signalNumber();
+  int pid();
+  bool startedByKdeinit();
+  bool safeMode();
+  QString signalName();
+  QString signalText();
+  QString whatToDoText();
+  QString errorDescriptionText();
 
-  virtual ASYNC registerDebuggingApplication(const QString& launchName) = 0;
+  Q_ASYNC void registerDebuggingApplication(const QString& launchName);
 
-k_dcop_signals:
+signals:
   void acceptDebuggingApplication();
 };
 

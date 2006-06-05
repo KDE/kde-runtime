@@ -32,9 +32,9 @@
 #include <QString>
 #include <QObject>
 
-#include "krashdcopinterface.h"
+#include "krashadaptor.h"
 
-class KrashConfig : public QObject, public KrashDCOPInterface
+class KrashConfig : public QObject
 {
   Q_OBJECT
 
@@ -42,19 +42,19 @@ public:
   KrashConfig();
   virtual ~KrashConfig();
 
-k_dcop:
-  virtual QString programName() const { return m_aboutData->programName(); };
-  virtual QByteArray appName() const { return m_aboutData->appName(); };
-  virtual int signalNumber() const { return m_signalnum; };
-  virtual int pid() const { return m_pid; };
-  virtual bool startedByKdeinit() const { return m_startedByKdeinit; };
-  virtual bool safeMode() const { return m_safeMode; };
-  virtual QString signalName() const { return m_signalName; };
-  virtual QString signalText() const { return m_signalText; };
-  virtual QString whatToDoText() const { return m_whatToDoText; }
-  virtual QString errorDescriptionText() const { return m_errorDescriptionText; };
+public Q_SLOTS:
+  QString programName() const { return m_aboutData->programName(); };
+  QByteArray appName() const { return m_aboutData->appName(); };
+  int signalNumber() const { return m_signalnum; };
+  int pid() const { return m_pid; };
+  bool startedByKdeinit() const { return m_startedByKdeinit; };
+  bool safeMode() const { return m_safeMode; };
+  QString signalName() const { return m_signalName; };
+  QString signalText() const { return m_signalText; };
+  QString whatToDoText() const { return m_whatToDoText; }
+  QString errorDescriptionText() const { return m_errorDescriptionText; };
 
-  virtual ASYNC registerDebuggingApplication(const QString& launchName);
+  void registerDebuggingApplication(const QString& launchName);
 
 public:
   QString debugger() const { return m_debugger; }
@@ -78,6 +78,7 @@ public:
 
 Q_SIGNALS:
   void newDebuggingApplication(const QString& launchName);
+  void acceptDebuggingApplication();
 
 private:
   void readConfig();

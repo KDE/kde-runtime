@@ -39,9 +39,10 @@
 #include <kmessagebox.h>
 #include <kprocess.h>
 #include <kapplication.h>
-#include <dcopclient.h>
 #include <khbox.h>
 #include <kvbox.h>
+
+#include <dbus/qdbus.h>
 
 #include "backtrace.h"
 #include "drbugreport.h"
@@ -97,8 +98,8 @@ Toplevel :: Toplevel(KrashConfig *krashconf, QWidget *parent, const char *name)
   connect(this, SIGNAL(closeClicked()), SLOT(accept()));
   connect(m_krashconf, SIGNAL(newDebuggingApplication(const QString&)), SLOT(slotNewDebuggingApp(const QString&)));
 
-  if ( !m_krashconf->safeMode() && kapp->dcopClient()->attach() )
-    kapp->dcopClient()->registerAs( kapp->objectName().toLatin1() );
+  if ( !m_krashconf->safeMode() && QDBus::sessionBus().busService() )
+    QDBus::sessionBus().busService()->requestName( "org.kde.drkonqi", 0 );
 }
 
 Toplevel :: ~Toplevel()

@@ -34,7 +34,6 @@
 #include <kcmdlineargs.h>
 #include <kaboutdata.h>
 #include <klocale.h>
-#include <dcopclient.h>
 
 #include "krashconf.h"
 #include "toplevel.h"
@@ -78,7 +77,7 @@ int main( int argc, char* argv[] )
   KCmdLineArgs::init(argc, argv, &aboutData);
   KCmdLineArgs::addCmdLineOptions( options );
 
-  KApplication::disableAutoDcopRegistration();
+  //KApplication::disableAutoDcopRegistration();
 
   KApplication a;
 

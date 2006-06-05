@@ -32,16 +32,17 @@
 #include <klocale.h>
 #include <kdebug.h>
 #include <kstartupinfo.h>
-#include <dcopclient.h>
 #include <kmacroexpander.h>
 
 #include <QHash>
+#include <dbus/qdbus.h>
 
 #include "krashconf.h"
 
 KrashConfig :: KrashConfig()
 {
-  setObjId("krashinfo");
+  QDBus::sessionBus().registerObject("/krashinfo", this);
+  new KrashAdaptor(this);
   readConfig();
 }
 
@@ -50,14 +51,14 @@ KrashConfig :: ~KrashConfig()
   delete m_aboutData;
 }
 
-ASYNC KrashConfig :: registerDebuggingApplication(const QString& launchName)
+void KrashConfig :: registerDebuggingApplication(const QString& launchName)
 {
   emit newDebuggingApplication( launchName );
 }
 
 void KrashConfig :: acceptDebuggingApp()
 {
-  acceptDebuggingApplication();
+  emit acceptDebuggingApplication();
 }
 
 void KrashConfig :: readConfig()

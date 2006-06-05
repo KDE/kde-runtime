@@ -25,8 +25,8 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <klineedit.h>
-#include <dcopclient.h>
 
+#include <dbus/qdbus.h>
 #include <QLayout>
 #include <QListWidget>
 #include <QPushButton>
@@ -156,10 +156,10 @@ void KListDebugDialog::save()
   //sync done by main.cpp
 
   // send DCOP message to all clients
-  QByteArray data;
-  if (!kapp->dcopClient()->send("*", "KDebug", "notifyKDebugConfigChanged()", data))
+  QDBusMessage msg = QDBusMessage::signal("/", "org.kde.KDebug", "configChanged");
+  if (!QDBus::sessionBus().send(msg))
   {
-    kError() << "Unable to send DCOP message" << endl;
+    kError() << "Unable to send D-BUS message" << endl;
   }
 }
 

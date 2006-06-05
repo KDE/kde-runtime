@@ -29,6 +29,7 @@
 #include <QGroupBox>
 #include <QCheckBox>
 #include <QPushButton>
+#include <dbus/qdbus.h>
 #include <kdebug.h>
 #include <kglobal.h>
 #include <klocale.h>
@@ -36,7 +37,6 @@
 #include <kconfig.h>
 #include <kseparator.h>
 #include <kapplication.h>
-#include <dcopclient.h>
 
 #include "kdebugdialog.h"
 
@@ -253,10 +253,10 @@ void KDebugDialog::save()
   //pConfig->writeEntry( "FatalShow", pFatalShow->text() );
   pConfig->writeEntry( "AbortFatal", pAbortFatal->isChecked() );
 
-  QByteArray data;
-  if (!kapp->dcopClient()->send("*", "KDebug", "notifyKDebugConfigChanged()", data))
+  QDBusMessage msg = QDBusMessage::signal("/", "org.kde.KDebug", "configChanged");
+  if (!QDBus::sessionBus().send(msg))
   {
-    kError() << "Unable to send DCOP message" << endl;
+    kError() << "Unable to send D-BUS message" << endl;
   }
 }
 
