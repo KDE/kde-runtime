@@ -408,7 +408,8 @@
     <include location="global" impldecl="in implementation">ksimpleconfig.h</include>
     <include location="global" impldecl="in implementation">kapplication.h</include>
     <include location="global" impldecl="in implementation">kstandarddirs.h</include>
-    <include location="global" impldecl="in implementation">kdirnotify_stub.h</include>
+	<include location="global" impldecl="in implementation">kdirnotify.h</include>
+	<include location="global" impldecl="in decaratio">dbus/qdbus.h</include>
     <include location="global" impldecl="in declaration">kurl.h</include>
 	<include location="global" impldecl="in declaration">qpushbutton.h</include>
 	<include location="global" impldecl="in declaration">ktoolinvocation.h</include>

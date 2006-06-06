@@ -181,8 +181,7 @@ void KNetAttach::finished()
 	desktopFile.writeEntry("Type", "Link");
 	desktopFile.writeEntry("URL", url.prettyUrl());
 	desktopFile.sync();
-	KDirNotify_stub notifier("*", "*");
-	notifier.FilesAdded( KUrl("remote:/") );
+	org::kde::KDirNotify::emitFilesAdded( "remote:/" );
     }
 
     if (!name.isEmpty()) {
