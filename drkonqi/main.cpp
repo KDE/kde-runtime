@@ -60,7 +60,8 @@ int main( int argc, char* argv[] )
 {
   // Drop privs.
   setgid(getgid());
-  setuid(getuid());
+  if (setuid(getuid()) < 0 && geteuid() != getuid())
+     exit (255);
 
   // Make sure that DrKonqi doesn't start DrKonqi when it crashes :-]
   setenv("KDE_DEBUG", "true", 1);
