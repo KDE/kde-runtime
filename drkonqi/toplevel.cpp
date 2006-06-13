@@ -40,7 +40,6 @@
 #include <kprocess.h>
 #include <kapplication.h>
 #include <khbox.h>
-#include <kvbox.h>
 
 #include <dbus/qdbus.h>
 
@@ -52,20 +51,22 @@
 #include "toplevel.moc"
 
 Toplevel :: Toplevel(KrashConfig *krashconf, QWidget *parent, const char *name)
-  : KDialogBase( Tabbed,
-                 krashconf->programName(),
-                 User3 | User2 | User1 | Close,
-                 Close,
-                 parent,
-                 name,
-                 true, // modal
-                 false, // no separator
-                 i18n("&Bug report"),
-                 i18n("&Debugger")
-                 ),
+  : KDialog( parent ),
     m_krashconf(krashconf), m_bugreport(0)
 {
-  QWidget* page = addPage(i18n("&General"));
+  setFaceType( Tabbed );
+  setCaption( krashconf->programName() );
+  setButtons( User3 | User2 | User1 | Close );
+  setDefaultButton( Close );
+  setObjectName( name );
+  setModal( true );
+  enableButtonSeparator( false );
+  setButtonGuiItem( User1, i18n("&Bug report") );
+  setButtonGuiItem( User2, i18n("&Debugger") );
+
+  QWidget* page = new QWidget();
+  addPage(page, i18n("&General"));
+
   QHBoxLayout* layout = new QHBoxLayout();
   layout->setSpacing(20);
 
@@ -87,7 +88,8 @@ Toplevel :: Toplevel(KrashConfig *krashconf, QWidget *parent, const char *name)
 
   if (m_krashconf->showBacktrace())
   {
-    page = addHBoxPage(i18n("&Backtrace"));
+    page = new KHBox( this );
+    addPage(page, i18n("&Backtrace"));
     new KrashDebugger(m_krashconf, page);
   }
 

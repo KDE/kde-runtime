@@ -50,10 +50,7 @@ public:
   void setText(const QString &str);
 
 protected Q_SLOTS:
-  /**
-   * OK has been clicked
-   */
-  virtual void slotOk( void );
+  virtual void accept();
 
 private:
   QString m_startstring;

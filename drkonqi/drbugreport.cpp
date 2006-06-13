@@ -45,7 +45,7 @@ void DrKBugReport::setText(const QString &str)
   m_startstring = str.simplified();
 }
 
-void DrKBugReport::slotOk()
+void DrKBugReport::accept()
 {
   if (!m_startstring.isEmpty() &&
       m_lineedit->toPlainText().simplified() == m_startstring)
@@ -55,6 +55,6 @@ void DrKBugReport::slotOk()
     KMessageBox::error(this, msg);
     return;
   }
-  KBugReport::slotButtonClicked(KDialogBase::Ok);
-}
 
+  KBugReport::accept();
+}
