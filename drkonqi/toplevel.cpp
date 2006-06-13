@@ -52,21 +52,22 @@
 #include "toplevel.moc"
 
 Toplevel :: Toplevel(KrashConfig *krashconf, QWidget *parent, const char *name)
-  : KPageDialog( parent ),
+  : KDialogBase( Tabbed,
+                 krashconf->programName(),
+                 User3 | User2 | User1 | Close,
+                 Close,
+                 parent,
+                 name,
+                 true, // modal
+                 false, // no separator
+                 i18n("&Bug report"),
+                 i18n("&Debugger")
+                 ),
     m_krashconf(krashconf), m_bugreport(0)
 {
-  setCaption( krashconf->programName() );
-  setButtons( User1 | User2 | User3 | Close);
-  setDefaultButton( Close );
-  setModal( true );
-  setButtonGuiItem( User1, i18n("&Bug report"));
-  setButtonGuiItem( User2, i18n("&Debugger"));
-
-  QWidget* page = new QWidget();
-  KPageWidgetItem* dbgeneral = addPage(page, i18n("&General"));
+  QWidget* page = addPage(i18n("&General"));
   QHBoxLayout* layout = new QHBoxLayout();
   layout->setSpacing(20);
-  dbgeneral->setHeader(i18n("&General"));
 
   // picture of konqi
   QLabel *lab = new QLabel(page);
@@ -86,13 +87,8 @@ Toplevel :: Toplevel(KrashConfig *krashconf, QWidget *parent, const char *name)
 
   if (m_krashconf->showBacktrace())
   {
-    page = new QWidget();
-    KPageWidgetItem* dbpage = addPage(page, i18n("&Backtrace"));
-    QWidget* debugger = new KrashDebugger(m_krashconf, page);
-    layout = new QHBoxLayout();
-    layout->addWidget(debugger);
-    page->setLayout(layout);
-    dbpage->setHeader(i18n("&Backtrace"));
+    page = addHBoxPage(i18n("&Backtrace"));
+    new KrashDebugger(m_krashconf, page);
   }
 
   showButton( User1, m_krashconf->showBugReport() );
@@ -182,7 +178,7 @@ void Toplevel :: slotUser1()
   int result = m_bugreport->exec();
   delete m_bugreport;
   m_bugreport = 0;
-  if (result == KDialog::Accepted)
+  if (result == KDialogBase::Accepted)
      close();
 }
 
