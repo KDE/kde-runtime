@@ -180,7 +180,7 @@ void Toplevel :: slotUser1()
   int result = m_bugreport->exec();
   delete m_bugreport;
   m_bugreport = 0;
-  if (result == KDialogBase::Accepted)
+  if (result == KDialog::Accepted)
      close();
 }
 
