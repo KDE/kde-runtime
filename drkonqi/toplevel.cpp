@@ -51,7 +51,7 @@
 #include "toplevel.moc"
 
 Toplevel :: Toplevel(KrashConfig *krashconf, QWidget *parent, const char *name)
-  : KDialog( parent ),
+  : KPageDialog( parent ),
     m_krashconf(krashconf), m_bugreport(0)
 {
   setFaceType( Tabbed );
