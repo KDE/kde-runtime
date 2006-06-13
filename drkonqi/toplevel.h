@@ -34,9 +34,9 @@ class KAboutData;
 class KrashConfig;
 class DrKBugReport;
 
-#include <kdialogbase.h>
+#include <kpagedialog.h>
 
-class Toplevel : public KDialogBase
+class Toplevel : public KPageDialog
 {
   Q_OBJECT
 

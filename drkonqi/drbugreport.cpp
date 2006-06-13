@@ -55,6 +55,6 @@ void DrKBugReport::slotOk()
     KMessageBox::error(this, msg);
     return;
   }
-  KBugReport::slotButtonClicked(KDialogBase::Ok);
+  KBugReport::slotButtonClicked(KDialog::Ok);
 }
 
