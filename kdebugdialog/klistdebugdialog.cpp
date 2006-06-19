@@ -36,8 +36,8 @@ KListDebugDialog::KListDebugDialog( QStringList areaList, QWidget *parent, const
   m_areaList( areaList )
 {
   setCaption(i18n("Debug Settings"));
-
-  QVBoxLayout *lay = new QVBoxLayout( this );
+  QWidget* mainWidget = new QWidget( this );
+  QVBoxLayout *lay = new QVBoxLayout( mainWidget );
   lay->setMargin( KDialog::marginHint() );
   lay->setSpacing( KDialog::spacingHint() );
   setLayout(lay);
@@ -64,6 +64,8 @@ KListDebugDialog::KListDebugDialog( QStringList areaList, QWidget *parent, const
 
   buildButtons( lay );
   resize( 350, 400 );
+  setMainWidget( mainWidget );
+  setButtons( KDialog::NoDefault );
 }
 
 void KListDebugDialog::filterCheckBoxes( const QString & filter )
