@@ -35,7 +35,7 @@
 #include <kmacroexpander.h>
 
 #include <QHash>
-#include <dbus/qdbus.h>
+#include <QtDBus/QtDBus>
 
 #include "krashconf.h"
 

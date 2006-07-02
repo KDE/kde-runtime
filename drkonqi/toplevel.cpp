@@ -25,10 +25,12 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************/
 
-#include <QString>
-#include <QLabel>
-
-#include <QHBoxLayout>
+#include <QtCore/QString>
+#include <QtDBus/QtDBus>
+#include <QtDBus/QDBusConnection>
+#include <QtGui/QHBoxLayout>
+#include <QtGui/QLabel>
+#include <QtGui/QPixmap>
 
 #include "netwm.h"
 
@@ -40,8 +42,6 @@
 #include <kprocess.h>
 #include <kapplication.h>
 #include <khbox.h>
-
-#include <dbus/qdbus.h>
 
 #include "backtrace.h"
 #include "drbugreport.h"
@@ -60,7 +60,7 @@ Toplevel :: Toplevel(KrashConfig *krashconf, QWidget *parent, const char *name)
   setDefaultButton( Close );
   setObjectName( name );
   setModal( true );
-  enableButtonSeparator( false );
+  showButtonSeparator( false );
   setButtonGuiItem( User1, i18n("&Bug report") );
   setButtonGuiItem( User2, i18n("&Debugger") );
 
@@ -100,8 +100,8 @@ Toplevel :: Toplevel(KrashConfig *krashconf, QWidget *parent, const char *name)
   connect(this, SIGNAL(closeClicked()), SLOT(accept()));
   connect(m_krashconf, SIGNAL(newDebuggingApplication(const QString&)), SLOT(slotNewDebuggingApp(const QString&)));
 
-  if ( !m_krashconf->safeMode() && QDBus::sessionBus().busService() )
-    QDBus::sessionBus().busService()->requestName( "org.kde.drkonqi", 0 );
+  if ( !m_krashconf->safeMode() && QDBus::sessionBus().interface() )
+    QDBus::sessionBus().interface()->registerService( "org.kde.drkonqi" );
 }
 
 Toplevel :: ~Toplevel()

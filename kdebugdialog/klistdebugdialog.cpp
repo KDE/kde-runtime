@@ -26,7 +26,7 @@
 #include <klocale.h>
 #include <klineedit.h>
 
-#include <dbus/qdbus.h>
+#include <QtDBus/QtDBus>
 #include <QLayout>
 #include <QListWidget>
 #include <QPushButton>

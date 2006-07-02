@@ -29,7 +29,7 @@
 #include <QGroupBox>
 #include <QCheckBox>
 #include <QPushButton>
-#include <dbus/qdbus.h>
+#include <QtDBus/QtDBus>
 #include <kdebug.h>
 #include <kglobal.h>
 #include <klocale.h>

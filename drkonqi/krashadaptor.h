@@ -33,7 +33,7 @@
 #include <QString>
 #include <kaboutdata.h>
 
-#include <dbus/qdbus.h>
+#include <QtDBus/QtDBus>
 
 /**
  * Provides information about a crashed process over dcop.
@@ -42,28 +42,29 @@
  */
 class KrashAdaptor : public QDBusAbstractAdaptor
 {
- Q_OBJECT
- Q_CLASSINFO("D-Bus Interface", "org.kde.Krash")
-public:
- KrashAdaptor(QObject *parent);
- virtual ~KrashAdaptor();
+  Q_OBJECT
+  Q_CLASSINFO("D-Bus Interface", "org.kde.Krash")
 
-public slots:
-  QString programName();
-  QByteArray appName();
-  int signalNumber();
-  int pid();
-  bool startedByKdeinit();
-  bool safeMode();
-  QString signalName();
-  QString signalText();
-  QString whatToDoText();
-  QString errorDescriptionText();
+  public:
+    KrashAdaptor(QObject *parent);
+    virtual ~KrashAdaptor();
 
-  Q_ASYNC void registerDebuggingApplication(const QString& launchName);
+  public slots:
+    QString programName();
+    QByteArray appName();
+    int signalNumber();
+    int pid();
+    bool startedByKdeinit();
+    bool safeMode();
+    QString signalName();
+    QString signalText();
+    QString whatToDoText();
+    QString errorDescriptionText();
 
-signals:
-  void acceptDebuggingApplication();
+    Q_NOREPLY void registerDebuggingApplication(const QString& launchName);
+
+  signals:
+    void acceptDebuggingApplication();
 };
 
 #endif
