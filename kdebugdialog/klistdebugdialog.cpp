@@ -158,7 +158,7 @@ void KListDebugDialog::save()
   //sync done by main.cpp
 
   // send DCOP message to all clients
-  QDBusMessage msg = QDBusMessage::signal("/", "org.kde.KDebug", "configChanged");
+  QDBusMessage msg = QDBusMessage::signal("/", "org.kde.KDebug", "configChanged", QDBus::sessionBus());
   if (!QDBus::sessionBus().send(msg))
   {
     kError() << "Unable to send D-BUS message" << endl;

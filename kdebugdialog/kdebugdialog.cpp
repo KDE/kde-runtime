@@ -253,7 +253,7 @@ void KDebugDialog::save()
   //pConfig->writeEntry( "FatalShow", pFatalShow->text() );
   pConfig->writeEntry( "AbortFatal", pAbortFatal->isChecked() );
 
-  QDBusMessage msg = QDBusMessage::signal("/", "org.kde.KDebug", "configChanged");
+  QDBusMessage msg = QDBusMessage::signal("/", "org.kde.KDebug", "configChanged", QDBus::sessionBus());
   if (!QDBus::sessionBus().send(msg))
   {
     kError() << "Unable to send D-BUS message" << endl;
