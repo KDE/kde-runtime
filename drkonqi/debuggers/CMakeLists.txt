@@ -3,7 +3,7 @@
 
 ########### install files ###############
 
-install_files( ${DATA_INSTALL_DIR}/drkonqi/debuggers FILES gdbrc )
+install( FILES gdbrc  DESTINATION  ${DATA_INSTALL_DIR}/drkonqi/debuggers )
 
 
 

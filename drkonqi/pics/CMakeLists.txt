@@ -3,7 +3,7 @@
 
 ########### install files ###############
 
-install_files( ${DATA_INSTALL_DIR}/drkonqi/pics FILES konqi.png )
+install( FILES konqi.png  DESTINATION  ${DATA_INSTALL_DIR}/drkonqi/pics )
 
 
 

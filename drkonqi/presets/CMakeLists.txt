@@ -3,7 +3,7 @@
 
 ########### install files ###############
 
-install_files( ${DATA_INSTALL_DIR}/drkonqi/presets FILES enduserrc developerrc )
+install( FILES enduserrc developerrc  DESTINATION  ${DATA_INSTALL_DIR}/drkonqi/presets )
 
 
 

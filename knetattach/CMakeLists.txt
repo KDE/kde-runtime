@@ -20,7 +20,7 @@ install(TARGETS knetattach DESTINATION bin)
 
 ########### install files ###############
 
-install_files( ${XDG_APPS_DIR} FILES knetattach.desktop )
+install( FILES knetattach.desktop  DESTINATION  ${XDG_APPS_DIR} )
 
 kde4_install_icons( ${ICON_INSTALL_DIR} hicolor )
 
