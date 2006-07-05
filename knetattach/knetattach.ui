@@ -31,7 +31,7 @@
             <property name="name">
                 <cstring>unnamed</cstring>
             </property>
-            <widget class="QButtonGroup" row="2" column="0">
+            <widget class="KButtonGroup" row="2" column="0">
                 <property name="name">
                     <cstring>buttonGroup1</cstring>
                 </property>
@@ -411,7 +411,8 @@
 	<include location="global" impldecl="in implementation">kdirnotify.h</include>
 	<include location="global" impldecl="in decaratio">dbus/qdbus.h</include>
     <include location="global" impldecl="in declaration">kurl.h</include>
-	<include location="global" impldecl="in declaration">qpushbutton.h</include>
+    <include location="global" impldecl="in declaration">qpushbutton.h</include>
+    <include location="global" impldecl="in declaration">kbuttongroup.h</include>
 	<include location="global" impldecl="in declaration">ktoolinvocation.h</include>
 	<include location="local" impldecl="in implementation">knetattach.ui.h</include>
 </includes>
