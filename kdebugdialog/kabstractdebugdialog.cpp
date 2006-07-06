@@ -44,16 +44,16 @@ void KAbstractDebugDialog::buildButtons( QVBoxLayout * topLayout )
   QHBoxLayout *hbox = new QHBoxLayout();
   hbox->setSpacing( KDialog::spacingHint() );
   topLayout->addLayout( hbox );
-  pHelpButton = new KPushButton( KStdGuiItem::help(), this );
+  pHelpButton = new KPushButton( KStdGuiItem::help() );
   hbox->addWidget( pHelpButton );
   hbox->addStretch(10);
   QSpacerItem *spacer = new QSpacerItem(40, 0);
   hbox->addItem(spacer);
-  pOKButton = new KPushButton( KStdGuiItem::ok(), this );
+  pOKButton = new KPushButton( KStdGuiItem::ok() );
   hbox->addWidget( pOKButton );
-  pApplyButton = new KPushButton( KStdGuiItem::apply(), this );
+  pApplyButton = new KPushButton( KStdGuiItem::apply() );
   hbox->addWidget( pApplyButton );
-  pCancelButton = new KPushButton( KStdGuiItem::cancel(), this );
+  pCancelButton = new KPushButton( KStdGuiItem::cancel() );
   hbox->addWidget( pCancelButton );
 
   int w1 = pHelpButton->sizeHint().width();

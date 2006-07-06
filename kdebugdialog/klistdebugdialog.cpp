@@ -42,20 +42,20 @@ KListDebugDialog::KListDebugDialog( QStringList areaList, QWidget *parent, const
   lay->setSpacing( KDialog::spacingHint() );
   setLayout(lay);
 
-  m_incrSearch = new KLineEdit( this );
+  m_incrSearch = new KLineEdit();
   lay->addWidget( m_incrSearch );
   connect( m_incrSearch, SIGNAL( textChanged( const QString& ) ),
            SLOT( filterCheckBoxes( const QString& ) ) );
 
-  m_areaWidget = new QListWidget(this);
+  m_areaWidget = new QListWidget();
   lay->addWidget(m_areaWidget);
 
   generateCheckBoxes();
 
   QHBoxLayout* selectButs = new QHBoxLayout();
   lay->addLayout( selectButs );
-  QPushButton* all = new QPushButton( i18n("&Select All"), this );
-  QPushButton* none = new QPushButton( i18n("&Deselect All"), this );
+  QPushButton* all = new QPushButton( i18n("&Select All"));
+  QPushButton* none = new QPushButton( i18n("&Deselect All"));
   selectButs->addWidget( all );
   selectButs->addWidget( none );
 
