@@ -45,7 +45,7 @@ ImageVisualizer::ImageVisualizer( QWidget *parent, const QString &fileName )
   } else if( !url.isLocalFile() ) {
     KUrlLabel *label = new KUrlLabel( this );
     label->setText(i18n("This picture isn't stored\non the local host.\nClick on this label to load it.\n" ) );
-    label->setURL( url.prettyUrl() );
+    label->setUrl( url.prettyUrl() );
     connect(label, SIGNAL(leftClickedURL(const QString&)), SLOT(downloadImage(const QString&)));
     pic = label;
     description = new QLabel(this);
