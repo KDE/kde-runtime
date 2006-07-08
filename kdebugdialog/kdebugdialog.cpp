@@ -45,9 +45,11 @@ KDebugDialog::KDebugDialog( QStringList areaList, QWidget *parent, const char *n
 {
   setCaption(i18n("Debug Settings"));
 
-  QVBoxLayout *topLayout = new QVBoxLayout( this );
+  QWidget* mainWidget = new QWidget( this );
+  QVBoxLayout *topLayout = new QVBoxLayout( mainWidget );
   topLayout->setMargin( KDialog::marginHint() );
   topLayout->setSpacing( KDialog::spacingHint() );
+  setLayout( topLayout );
 
   QLabel * tmpLabel = new QLabel( i18n("Debug area:"), this );
   tmpLabel->setFixedHeight( fontMetrics().lineSpacing() );
@@ -197,6 +199,7 @@ KDebugDialog::KDebugDialog( QStringList areaList, QWidget *parent, const char *n
   slotDestinationChanged(0);
 
   resize( 300, height() );
+  setMainWidget( mainWidget );
 }
 
 KDebugDialog::~KDebugDialog()
