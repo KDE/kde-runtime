@@ -180,8 +180,11 @@
                 <property name="text">
                     <string>Enter a name for this &lt;i&gt;%1&lt;/i&gt; as well as the server address, port and folder path to use and press the Next button.</string>
                 </property>
+                <property name="wordWrap">
+                    <bool>true</bool> 
+                </property>
                 <property name="alignment">
-                    <set>Qt::TextWordWrap|Qt::AlignVCenter</set>
+                    <set>Qt::AlignVCenter</set>
                 </property>
             </widget>
             <spacer row="1" column="2">
