@@ -28,7 +28,7 @@ void KNetAttach::init()
 	}
     } else {
 	_recent->setEnabled(true);
-	_recentConnectionName->insertStringList(idx);
+	_recentConnectionName->addItems(idx);
     }
 }
 
@@ -86,7 +86,7 @@ void KNetAttach::showPage( QWidget *page )
 		    }
 		} else {
 		    _recent->setEnabled(true);
-		    _recentConnectionName->insertStringList(idx);
+		    _recentConnectionName->addItems(idx);
 		}
 		showPage(_folderType);
 		return;
