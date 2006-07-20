@@ -15,7 +15,7 @@ kde4_add_executable(knetattach ${knetattach_SRCS})
 
 target_link_libraries(knetattach  ${KDE4_KIO_LIBS} )
 
-install(TARGETS knetattach DESTINATION bin)
+install(TARGETS knetattach DESTINATION ${BIN_INSTALL_DIR})
 
 
 ########### install files ###############
