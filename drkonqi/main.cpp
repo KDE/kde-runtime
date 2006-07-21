@@ -58,10 +58,12 @@ static const KCmdLineOptions options[] =
 
 int main( int argc, char* argv[] )
 {
+#ifndef Q_OS_WIN
   // Drop privs.
   setgid(getgid());
   if (setuid(getuid()) < 0 && geteuid() != getuid())
      exit (255);
+#endif
 
   // Make sure that DrKonqi doesn't start DrKonqi when it crashes :-]
   setenv("KDE_DEBUG", "true", 1);
