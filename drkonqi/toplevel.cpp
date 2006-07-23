@@ -72,19 +72,19 @@ Toplevel :: Toplevel(KrashConfig *krashconf, QWidget *parent, const char *name)
 
   // picture of konqi
   QLabel *lab = new QLabel(page);
-  lab->setAlignment(Qt::AlignLeft | Qt::AlignTop);
+  lab->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
   lab->setPixmap(QPixmap(KStandardDirs::locate("appdata", QLatin1String("pics/konqi.png"))));
+  lab->setFrameStyle(QFrame::Panel | QFrame::Sunken);
+  lab->setFixedSize(lab->sizeHint());
 
   QLabel * info = new QLabel(generateText(), page);
   info->setWordWrap(true);
-  info->setAlignment(Qt::AlignLeft | Qt::AlignTop);
+  info->setMinimumSize(info->sizeHint());
+  info->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
 
   layout->addWidget(lab);
   layout->addWidget(info);
-  layout->insertStretch(-1);
   page->setLayout(layout);
-  page->setMinimumSize(page->sizeHint());
-  //page->adjustSize();
 
   if (m_krashconf->showBacktrace())
   {
@@ -98,6 +98,9 @@ Toplevel :: Toplevel(KrashConfig *krashconf, QWidget *parent, const char *name)
   showButton( User3, false );
 
   connect(this, SIGNAL(closeClicked()), SLOT(accept()));
+  connect(this, SIGNAL(user1Clicked()), SLOT(slotUser1()));
+  connect(this, SIGNAL(user2Clicked()), SLOT(slotUser2()));
+  connect(this, SIGNAL(user3Clicked()), SLOT(slotUser3()));
   connect(m_krashconf, SIGNAL(newDebuggingApplication(const QString&)), SLOT(slotNewDebuggingApp(const QString&)));
 
   if ( !m_krashconf->safeMode() && QDBus::sessionBus().interface() )
