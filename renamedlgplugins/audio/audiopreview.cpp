@@ -53,7 +53,7 @@ AudioPreview::AudioPreview( QWidget *parent, const QString &fileName, const QStr
     KUrlLabel *label = new KUrlLabel( this );
     label->setText(i18n("This audio file isn't stored\non the local host.\nClick on this label to load it.\n" ) );
     label->setUrl( url.prettyUrl() );
-    connect(label, SIGNAL(leftClickedURL(const QString&)), SLOT(downloadFile(const QString&)));
+    connect(label, SIGNAL(leftClickedUrl(const QString&)), SLOT(downloadFile(const QString&)));
     pic = label;
     description = new QLabel(this);
     description->adjustSize( );
