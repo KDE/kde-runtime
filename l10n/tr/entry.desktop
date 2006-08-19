@@ -1,5 +1,7 @@
 [KCM Locale]
 Name=Turkey
+Name[fr]=Turquie
+Name[x-test]=xxTurkeyxx
 Region=southeurope
 Languages=tr
 DecimalSymbol=,
