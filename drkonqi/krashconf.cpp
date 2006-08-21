@@ -41,7 +41,7 @@
 
 KrashConfig :: KrashConfig()
 {
-  QDBus::sessionBus().registerObject("/krashinfo", this);
+  QDBusConnection::sessionBus().registerObject("/krashinfo", this);
   new KrashAdaptor(this);
   readConfig();
 }

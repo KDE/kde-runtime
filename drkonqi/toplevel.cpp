@@ -103,8 +103,8 @@ Toplevel :: Toplevel(KrashConfig *krashconf, QWidget *parent, const char *name)
   connect(this, SIGNAL(user3Clicked()), SLOT(slotUser3()));
   connect(m_krashconf, SIGNAL(newDebuggingApplication(const QString&)), SLOT(slotNewDebuggingApp(const QString&)));
 
-  if ( !m_krashconf->safeMode() && QDBus::sessionBus().interface() )
-    QDBus::sessionBus().interface()->registerService( "org.kde.drkonqi" );
+  if ( !m_krashconf->safeMode() && QDBusConnection::sessionBus().interface() )
+    QDBusConnection::sessionBus().interface()->registerService( "org.kde.drkonqi" );
 }
 
 Toplevel :: ~Toplevel()
