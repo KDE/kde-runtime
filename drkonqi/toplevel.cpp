@@ -88,7 +88,7 @@ Toplevel :: Toplevel(KrashConfig *krashconf, QWidget *parent, const char *name)
 
   if (m_krashconf->showBacktrace())
   {
-    page = new KHBox( this );
+    page = new KHBox();
     addPage(page, i18n("&Backtrace"));
     new KrashDebugger(m_krashconf, page);
   }
