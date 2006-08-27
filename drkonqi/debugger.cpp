@@ -107,15 +107,16 @@ void KrashDebugger :: slotSave()
 {
   if (m_krashconf->safeMode())
   {
-    KTempFile tf(QString::fromAscii("/tmp/"), QString::fromAscii(".kcrash"), 0666);
+    KTempFile tf(QString::fromAscii("/tmp/"), QString::fromAscii(".kcrash"), 0600);
     if (!tf.status())
     {
       *tf.textStream() << m_backtrace->toPlainText();
+      tf.close();
       KMessageBox::information(this, i18n("Backtrace saved to %1", tf.name()));
     }
     else
     {
-      KMessageBox::sorry(this, i18n("Cannot create a file in which to save the backtrace"));
+      KMessageBox::sorry(this, i18n("Cannot create a file to save the backtrace in"));
     }
   }
   else
