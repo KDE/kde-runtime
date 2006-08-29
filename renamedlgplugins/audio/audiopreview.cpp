@@ -45,7 +45,7 @@ AudioPreview::AudioPreview( QWidget *parent, const QString &fileName, const QStr
   if( url.isValid() && url.isLocalFile() ) {
     m_localFile = url.path();
     pic = new QLabel(this);
-    pic->setPixmap(KIO::pixmapForURL( url ));
+    pic->setPixmap(KIO::pixmapForUrl( url ));
     pic->adjustSize();
     description = new QLabel(this);
     initView( mimeType );
@@ -75,7 +75,7 @@ void AudioPreview::initView( const QString& mimeType )
 {
   KUrl url = KUrl::fromPathOrUrl( m_localFile );
   pic->setText( QString::null );
-  pic->setPixmap(KIO::pixmapForURL( url ));
+  pic->setPixmap(KIO::pixmapForUrl( url ));
   pic->adjustSize();
  
   KFileMetaInfo info(m_localFile);
@@ -109,7 +109,7 @@ void AudioPreview::initView( const QString& mimeType )
   m_player = KServiceTypeTrader::createInstanceFromQuery<KMediaPlayer::Player>( "KMediaPlayer/Player", QString::null, this );
   if ( m_player )
   {
-    static_cast<KParts::ReadOnlyPart*>(m_player)->openURL( url );
+    static_cast<KParts::ReadOnlyPart*>(m_player)->openUrl( url );
     m_player->widget()->show();
   }
 }
