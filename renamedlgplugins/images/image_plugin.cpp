@@ -39,7 +39,7 @@
 class ImagePlugin : public RenameDlgPlugin{
 public:
   ImagePlugin( QDialog *dialog, const QStringList & );
-  virtual bool initialize( KIO::RenameDlg_Mode /*mod*/, const QString &/*_src*/, const QString &/*_dest*/,
+  virtual bool initialize( KIO::RenameDlg_Mode /*mod*/, const KUrl &/*_src*/, const KUrl &/*_dest*/,
 		  const QString &/*mimeSrc*/,
 		  const QString &/*mimeDest*/,
 		  KIO::filesize_t /*sizeSrc*/,
@@ -50,12 +50,12 @@ public:
 		  time_t /*mtimeDest*/ );
 };
 
-ImagePlugin::ImagePlugin( QDialog *dialog, const QStringList &list ) 
-  : RenameDlgPlugin( dialog) 
+ImagePlugin::ImagePlugin( QDialog *dialog, const QStringList & )
+  : RenameDlgPlugin( dialog)
 {
 }
 
-bool ImagePlugin::initialize( KIO::RenameDlg_Mode mode, const QString &_src, const QString &_dest,
+bool ImagePlugin::initialize( KIO::RenameDlg_Mode mode, const KUrl &_src, const KUrl &_dest,
 		  const QString &/*mimeSrc*/,
 		  const QString &/*mimeDest*/,
 		  KIO::filesize_t /*sizeSrc*/,
@@ -63,7 +63,7 @@ bool ImagePlugin::initialize( KIO::RenameDlg_Mode mode, const QString &_src, con
 		  time_t /*ctimeSrc*/,
 		  time_t /*ctimeDest*/,
 		  time_t /*mtimeSrc*/,
-		  time_t /*mtimeDest*/ ) 
+		  time_t /*mtimeDest*/ )
 {
   QGridLayout *lay = new QGridLayout(this, 2, 3, 5  );
   if( mode & KIO::M_OVERWRITE )

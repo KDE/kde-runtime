@@ -39,7 +39,7 @@ class AudioPlugin : public RenameDlgPlugin{
 public:
   AudioPlugin( QDialog *dialog, const QStringList & );
   ~AudioPlugin();
-  virtual bool initialize( KIO::RenameDlg_Mode /*mod*/, const QString &/*_src*/, const QString &/*_dest*/,
+  virtual bool initialize( KIO::RenameDlg_Mode /*mod*/, const KUrl &/*_src*/, const KUrl &/*_dest*/,
 		  const QString &/*mimeSrc*/,
 		  const QString &/*mimeDest*/,
 		  KIO::filesize_t /*sizeSrc*/,
@@ -50,13 +50,13 @@ public:
 		  time_t /*mtimeDest*/ );
 };
 
-AudioPlugin::AudioPlugin( QDialog *dialog, const QStringList &list ) : RenameDlgPlugin( dialog) {
-  qWarning("loaded" );  
+AudioPlugin::AudioPlugin( QDialog *dialog, const QStringList & ) : RenameDlgPlugin( dialog) {
+  qWarning("loaded" );
 }
 AudioPlugin::~AudioPlugin()
 {
 }
-bool AudioPlugin::initialize( KIO::RenameDlg_Mode mode, const QString &_src, const QString &_dest,
+bool AudioPlugin::initialize( KIO::RenameDlg_Mode mode, const KUrl &_src, const KUrl &_dest,
 		  const QString &mimeSrc,
 		  const QString &mimeDest,
 		  KIO::filesize_t /*sizeSrc*/,
@@ -73,7 +73,7 @@ bool AudioPlugin::initialize( KIO::RenameDlg_Mode mode, const QString &_src, con
    QLabel *label_ask  = new QLabel(this);
 
    QString sentence1;
-   QString dest = KUrl::fromPathOrUrl(_dest).pathOrUrl();
+   QString dest = _dest.pathOrUrl();
    if (mtimeDest < mtimeSrc)
       sentence1 = i18n("An older file named '%1' already exists.\n", dest);
    else if (mtimeDest == mtimeSrc)

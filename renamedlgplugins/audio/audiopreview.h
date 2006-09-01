@@ -37,7 +37,7 @@ class AudioPreview : public KVBox
 {
   Q_OBJECT
 public:
-  AudioPreview(QWidget *parent, const QString &fileName, const QString &mimeType);
+  AudioPreview(QWidget *parent, const KUrl &url, const QString &mimeType);
   ~AudioPreview();
 
 private slots:

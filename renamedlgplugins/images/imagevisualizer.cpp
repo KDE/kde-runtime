@@ -31,12 +31,11 @@
 
 #include "imagevisualizer.h"
 
-ImageVisualizer::ImageVisualizer( QWidget *parent, const QString &fileName )
+ImageVisualizer::ImageVisualizer( QWidget *parent, const KUrl &url )
   : KVBox( parent )
 {
   pic = 0;
   description = 0;
-  KUrl url=KUrl::fromPathOrUrl( fileName );
   setSpacing( 0 );
   if( url.isValid() && url.isLocalFile() ) {
     pic = new QLabel(this );
@@ -62,7 +61,7 @@ void ImageVisualizer::loadImage( const QString& path )
   QPixmap pixmap(img.smoothScale(180,200, Qt::KeepAspectRatio) );
   pic->setText( QString::null );
   pic->setPixmap(pixmap );
-  pic->adjustSize(); 
+  pic->adjustSize();
 
   QString desc;
   desc.append(i18nc("The color depth of an image", "Depth: %1\n", img.depth() ));
@@ -74,7 +73,7 @@ void ImageVisualizer::loadImage( const QString& path )
 void ImageVisualizer::downloadImage(const QString& url)
 {
   QString tmpFile;
-  if( KIO::NetAccess::download( KUrl::fromPathOrUrl( url ), tmpFile , topLevelWidget()) )
+  if( KIO::NetAccess::download( KUrl( url ), tmpFile, topLevelWidget()) )
   {
     loadImage( tmpFile );
     KIO::NetAccess::removeTempFile( tmpFile );

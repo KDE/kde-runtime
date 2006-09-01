@@ -32,7 +32,7 @@ class ImageVisualizer : public KVBox
 {
   Q_OBJECT
 public:
-  ImageVisualizer(QWidget *parent, const QString &fileName );
+  ImageVisualizer(QWidget *parent, const KUrl & );
 
 private:
   void loadImage( const QString& path );

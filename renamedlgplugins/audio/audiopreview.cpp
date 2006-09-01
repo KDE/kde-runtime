@@ -32,15 +32,13 @@
 
 #include "audiopreview.h"
 
-AudioPreview::AudioPreview( QWidget *parent, const QString &fileName, const QString &mimeType)
+AudioPreview::AudioPreview( QWidget *parent, const KUrl &url, const QString &mimeType)
   : KVBox( parent )
 {
   m_isTempFile = false;
   pic = 0;
   m_player = 0L;
   description = 0;
-  // fileName is created by KUrl::prettyUrl()
-  KUrl url( fileName );
   setSpacing( 0 );
   if( url.isValid() && url.isLocalFile() ) {
     m_localFile = url.path();
@@ -73,16 +71,16 @@ AudioPreview::~AudioPreview()
 
 void AudioPreview::initView( const QString& mimeType )
 {
-  KUrl url = KUrl::fromPathOrUrl( m_localFile );
+  KUrl url = KUrl::fromPath( m_localFile );
   pic->setText( QString::null );
   pic->setPixmap(KIO::pixmapForUrl( url ));
   pic->adjustSize();
- 
+
   KFileMetaInfo info(m_localFile);
   KMimeType::Ptr mimeptr = KMimeType::mimeType(mimeType);
 
   QString desc;
-  if (info.isValid()) 
+  if (info.isValid())
   {
     if (mimeptr->is("audio/x-mp3") || mimeptr->is("application/ogg"))
     {
@@ -103,7 +101,7 @@ void AudioPreview::initView( const QString& mimeType )
       desc.append("0");
     desc.append(QString("%1\n").arg(length%60, 0, 10));
   }
- 
+
   description->setText( desc );
   description->adjustSize();
   m_player = KServiceTypeTrader::createInstanceFromQuery<KMediaPlayer::Player>( "KMediaPlayer/Player", QString::null, this );
@@ -116,7 +114,7 @@ void AudioPreview::initView( const QString& mimeType )
 
 void AudioPreview::downloadFile( const QString& url )
 {
-  if( KIO::NetAccess::download( KUrl::fromPathOrUrl( url ), m_localFile , topLevelWidget()) )
+  if( KIO::NetAccess::download( KUrl( url ), m_localFile , topLevelWidget()) )
   {
     m_isTempFile = true;
     initView( KMimeType::findByPath( m_localFile )->name() );
