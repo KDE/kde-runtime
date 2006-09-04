@@ -5,11 +5,11 @@ project(knetattach)
 
 ########### next target ###############
 
-set(knetattach_SRCS main.cpp )
+set(knetattach_SRCS main.cpp knetattach.cpp)
 
 kde4_automoc(${knetattach_SRCS})
 
-kde4_add_ui3_files(knetattach_SRCS knetattach.ui )
+kde4_add_ui_files(knetattach_SRCS knetattach.ui )
 
 kde4_add_executable(knetattach ${knetattach_SRCS})
 

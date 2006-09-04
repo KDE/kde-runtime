@@ -1,17 +1,48 @@
-/****************************************************************************
-** ui.h extension file, included from the uic-generated form implementation.
-**
-** If you want to add, delete, or rename functions or slots, use
-** Qt Designer to update this file, preserving your code.
-**
-** You should not define a constructor or destructor in this file.
-** Instead, write your code in functions called init() and destroy().
-** These will automatically be called by the form's constructor and
-** destructor.
-*****************************************************************************/
+/*
+   Copyright (C) 2004 George Staikos <staikos@kde.org>
 
-void KNetAttach::init()
+   This program is free software; you can redistribute it and/or
+   modify it under the terms of the GNU General Public
+   License as published by the Free Software Foundation; either
+   version 2 of the License, or (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program; see the file COPYING.  If not, write to
+   the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+   Boston, MA 02110-1301, USA.
+ */
+
+
+#include "knetattach.h"
+
+#include <qvariant.h>
+#include <kio/netaccess.h>
+#include <kmessagebox.h>
+#include <kiconloader.h>
+#include <klocale.h>
+#include <kglobalsettings.h>
+#include <ksimpleconfig.h>
+#include <kapplication.h>
+#include <kstandarddirs.h>
+#include <kdirnotify.h>
+
+KNetAttach::KNetAttach( QWidget* parent )
+    : Q3Wizard( parent ), Ui_KNetAttach()
 {
+    setupUi( this );
+
+    connect(_recent, SIGNAL(toggled(bool)), _recentConnectionName, SLOT(setEnabled(bool)));
+    connect(_user, SIGNAL(textChanged(const QString&)), this, SLOT(updateParametersPageStatus()));
+    connect(_host, SIGNAL(textChanged(const QString&)), this, SLOT(updateParametersPageStatus()));
+    connect(_path, SIGNAL(textChanged(const QString&)), this, SLOT(updateParametersPageStatus()));
+    connect(_useEncryption, SIGNAL(toggled(bool)), this, SLOT(updatePort(bool)));
+    connect(_createIcon, SIGNAL(toggled(bool)), this, SLOT(updateFinishButtonText(bool)));
+
     setIcon(SmallIcon("knetattach"));
     disconnect(finishButton(), SIGNAL(clicked()), (QDialog*)this, SLOT(accept()));
     connect(finishButton(), SIGNAL(clicked()), this, SLOT(finished()));
@@ -35,7 +66,7 @@ void KNetAttach::init()
 void KNetAttach::setInformationText( const QString &type )
 {
     QString text;
-    
+
     if (type=="WebFolder") {
 	text = i18n("Enter a name for this <i>WebFolder</i> as well as a server address, port and folder path to use and press the <b>Save & Connect</b> button.");
     } else if (type=="Fish") {
@@ -45,7 +76,7 @@ void KNetAttach::setInformationText( const QString &type )
     } else if (type=="SMB") {
         text = i18n("Enter a name for this <i>Microsoft Windows network drive</i> as well as a server address and folder path to use and press the <b>Save & Connect</b> button.");
     }
-    
+
     _informationText->setText(text);
 }
 
@@ -285,3 +316,4 @@ void KNetAttach::updateFinishButtonText(bool save)
 }
 
 // vim: ts=8 sw=4 noet
+#include "knetattach.moc"
