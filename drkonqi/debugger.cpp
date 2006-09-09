@@ -132,7 +132,7 @@ void KrashDebugger :: slotSave()
               i18n( "A file named \"%1\" already exists. "
                     "Are you sure you want to overwrite it?", filename ),
               i18n( "Overwrite File?" ),
-              i18n( "&Overwrite" ) ))
+              KGuiItem( i18n( "&Overwrite" ) ) ))
             return;       
       }           
       
