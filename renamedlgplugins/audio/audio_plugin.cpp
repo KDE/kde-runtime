@@ -20,8 +20,7 @@
 */
 
 #include <kgenericfactory.h>
-#include <renamedlgplugin.h>
-#include <kio/renamedlg.h>
+#include <kio/renamedlgplugin.h>
 #include <qlabel.h>
 #include <qdialog.h>
 #include <qwidget.h>
@@ -35,19 +34,15 @@
 
 #include "audiopreview.h"
 
-class AudioPlugin : public RenameDlgPlugin{
+class AudioPlugin : public KIO::RenameDlgPlugin{
 public:
   AudioPlugin( QDialog *dialog, const QStringList & );
   ~AudioPlugin();
-  virtual bool initialize( KIO::RenameDlg_Mode /*mod*/, const KUrl &/*_src*/, const KUrl &/*_dest*/,
-		  const QString &/*mimeSrc*/,
-		  const QString &/*mimeDest*/,
-		  KIO::filesize_t /*sizeSrc*/,
-		  KIO::filesize_t /*sizeDest*/,
-		  time_t /*ctimeSrc*/,
-		  time_t /*ctimeDest*/,
-		  time_t /*mtimeSrc*/,
-		  time_t /*mtimeDest*/ );
+
+  bool wantToHandle( KIO::RenameDlg_Mode mode, const KIO::RenameDlgPlugin::FileItem& src,
+                     const KIO::RenameDlgPlugin::FileItem& dst ) const;
+  void handle( KIO::RenameDlg_Mode, const KIO::RenameDlgPlugin::FileItem& src,
+               const KIO::RenameDlgPlugin::FileItem& dst );
 };
 
 AudioPlugin::AudioPlugin( QDialog *dialog, const QStringList & ) : RenameDlgPlugin( dialog) {
@@ -56,15 +51,14 @@ AudioPlugin::AudioPlugin( QDialog *dialog, const QStringList & ) : RenameDlgPlug
 AudioPlugin::~AudioPlugin()
 {
 }
-bool AudioPlugin::initialize( KIO::RenameDlg_Mode mode, const KUrl &_src, const KUrl &_dest,
-		  const QString &mimeSrc,
-		  const QString &mimeDest,
-		  KIO::filesize_t /*sizeSrc*/,
-		  KIO::filesize_t /*sizeDest*/,
-		  time_t /*ctimeSrc*/,
-		  time_t /*ctimeDest*/,
-		  time_t mtimeSrc,
-		  time_t mtimeDest ) {
+
+bool AudioPlugin::wantToHandle( KIO::RenameDlg_Mode, const KIO::RenameDlgPlugin::FileItem&,
+                                const KIO::RenameDlgPlugin::FileItem& ) const {
+    return true;
+}
+
+void AudioPlugin::handle( KIO::RenameDlg_Mode mode, const KIO::RenameDlgPlugin::FileItem& src,
+                          const KIO::RenameDlgPlugin::FileItem& dst ) {
  QGridLayout *lay = new QGridLayout(this, 4, 3, 5);
  if( mode & KIO::M_OVERWRITE ){
    QLabel *label_head = new QLabel(this);
@@ -73,10 +67,10 @@ bool AudioPlugin::initialize( KIO::RenameDlg_Mode mode, const KUrl &_src, const 
    QLabel *label_ask  = new QLabel(this);
 
    QString sentence1;
-   QString dest = _dest.pathOrUrl();
-   if (mtimeDest < mtimeSrc)
+   QString dest = dst.url().pathOrUrl();
+   if ( src.mTime() < dst.mTime() )
       sentence1 = i18n("An older file named '%1' already exists.\n", dest);
-   else if (mtimeDest == mtimeSrc)
+   else if ( src.mTime() == dst.mTime() )
       sentence1 = i18n("A similar file named '%1' already exists.\n", dest);
    else
       sentence1 = i18n("A newer file named '%1' already exists.\n", dest);
@@ -94,12 +88,11 @@ bool AudioPlugin::initialize( KIO::RenameDlg_Mode mode, const KUrl &_src, const 
    lay->addMultiCellWidget(label_ask, 3, 3, 0, 2,  Qt::AlignLeft);
    adjustSize();
  }
- AudioPreview *left= new AudioPreview(this,  _dest, mimeDest );
- AudioPreview *right = new AudioPreview( this, _src, mimeSrc);
+ AudioPreview *left= new AudioPreview(this,  dst.url(), dst.mimeType() );
+ AudioPreview *right = new AudioPreview( this, src.url(), src.mimeType() );
  lay->addWidget(left, 2, 0 );
  lay->addWidget(right, 2, 2 );
  adjustSize();
- return true;
 }
 
 typedef KGenericFactory<AudioPlugin, QDialog> AudioPluginFactory;
