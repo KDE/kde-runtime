@@ -58,19 +58,19 @@ ImagePlugin::ImagePlugin( QDialog *dialog, const QStringList & )
 {
 }
 
-bool ImagePlugin::wantToHandle( KIO::RenameDlg_Mode mode, const KIO::RenameDlgPlugin::FileItem&,
+bool ImagePlugin::wantToHandle( KIO::RenameDlg_Mode, const KIO::RenameDlgPlugin::FileItem&,
                                 const KIO::RenameDlgPlugin::FileItem& ) const {
     return true;
 }
 
 void ImagePlugin::handle( KIO::RenameDlg_Mode mode, const KIO::RenameDlgPlugin::FileItem& src,
                           const KIO::RenameDlgPlugin::FileItem& dst ) {
-    QGridLayout *lay = new QGridLayout(this, 2, 3, 5  );
+    QGridLayout *lay = new QGridLayout( this );
     if( mode & KIO::M_OVERWRITE ) {
         QLabel *label = new QLabel(this );
         label->setText(i18n("You want to overwrite the left picture with the one on the right.") );
         label->adjustSize();
-        lay->addMultiCellWidget(label, 1, 1, 0, 2,  Qt::AlignHCenter  );
+        lay->addWidget(label, 1, 0, 1, 3, Qt::AlignHCenter );
         adjustSize();
     }
 

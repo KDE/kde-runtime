@@ -1,5 +1,5 @@
 /* This file is part of the KDE project
-   Copyright (C) 2002 Holger Freyther <freyther@yahoo.com>
+   Copyright (C) 2002 Holger Freyther <freyther@kde.org>
                  2003 Carsten Pfeiffer <pfeiffer@kde.org>
 
    This program is free software; you can redistribute it and/or
@@ -57,15 +57,15 @@ ImageVisualizer::ImageVisualizer( QWidget *parent, const KUrl &url )
 
 void ImageVisualizer::loadImage( const QString& path )
 {
-  QImage img(path);
-  QPixmap pixmap(img.smoothScale(180,200, Qt::KeepAspectRatio) );
+  QPixmap pix(path);
+  QPixmap pixmap(pix.scaled(180, 200, Qt::KeepAspectRatio, Qt::SmoothTransformation) );
   pic->setText( QString::null );
   pic->setPixmap(pixmap );
   pic->adjustSize();
 
   QString desc;
-  desc.append(i18nc("The color depth of an image", "Depth: %1\n", img.depth() ));
-  desc.append(i18nc("The dimensions of an image", "Dimensions: %1x%2", img.width(), img.height() ));
+  desc.append(i18nc("The color depth of an image", "Depth: %1\n", pix.depth() ));
+  desc.append(i18nc("The dimensions of an image", "Dimensions: %1x%2", pix.width(), pix.height() ));
   description->setText(desc );
   description->adjustSize();
 }
