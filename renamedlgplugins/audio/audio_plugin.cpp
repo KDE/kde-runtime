@@ -59,7 +59,7 @@ bool AudioPlugin::wantToHandle( KIO::RenameDlg_Mode, const KIO::RenameDlgPlugin:
 
 void AudioPlugin::handle( KIO::RenameDlg_Mode mode, const KIO::RenameDlgPlugin::FileItem& src,
                           const KIO::RenameDlgPlugin::FileItem& dst ) {
- QGridLayout *lay = new QGridLayout(this, 4, 3, 5);
+ QGridLayout *lay = new QGridLayout( this );
  if( mode & KIO::M_OVERWRITE ){
    QLabel *label_head = new QLabel(this);
    QLabel *label_src  = new QLabel(this);
@@ -82,10 +82,10 @@ void AudioPlugin::handle( KIO::RenameDlg_Mode mode, const KIO::RenameDlgPlugin::
    label_src->adjustSize();
    label_dst->adjustSize();
    label_ask->adjustSize();
-   lay->addMultiCellWidget(label_head, 0, 0, 0, 2, Qt::AlignLeft);
+   lay->addWidget(label_head, 0, 0, 1, 3, Qt::AlignLeft);
    lay->addWidget(label_dst, 1, 0, Qt::AlignLeft);
    lay->addWidget(label_src, 1, 2, Qt::AlignLeft);
-   lay->addMultiCellWidget(label_ask, 3, 3, 0, 2,  Qt::AlignLeft);
+   lay->addWidget(label_ask, 3, 0, 1, 3,  Qt::AlignLeft);
    adjustSize();
  }
  AudioPreview *left= new AudioPreview(this,  dst.url(), dst.mimeType() );
