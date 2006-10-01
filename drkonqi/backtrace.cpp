@@ -33,7 +33,7 @@
 #include <kstandarddirs.h>
 #include <kmessagebox.h>
 #include <klocale.h>
-#include <ktempfile.h>
+#include <ktemporaryfile.h>
 
 #include "krashconf.h"
 #include "backtrace.h"
@@ -84,8 +84,8 @@ void BackTrace::start()
 			i18n("Could not generate a backtrace as the debugger '%1' was not found.", exec));
     return;
   }
-  m_temp = new KTempFile;
-  m_temp->setAutoDelete(true);
+  m_temp = new KTemporaryFile;
+  m_temp->open();
   int handle = m_temp->handle();
   QString backtraceCommand = m_krashconf->backtraceCommand();
   const char* bt = backtraceCommand.toLatin1();
@@ -98,7 +98,7 @@ void BackTrace::start()
   m_proc->setUseShell(true);
 
   QString str = m_krashconf->debuggerBatch();
-  m_krashconf->expandString(str, true, m_temp->name());
+  m_krashconf->expandString(str, true, m_temp->fileName());
 
   *m_proc << str;
 

@@ -37,7 +37,7 @@
 #include <kpushbutton.h>
 #include <kstdguiitem.h>
 #include <ktextbrowser.h>
-#include <ktempfile.h>
+#include <ktemporaryfile.h>
 
 #include "backtrace.h"
 #include "krashconf.h"
@@ -107,12 +107,16 @@ void KrashDebugger :: slotSave()
 {
   if (m_krashconf->safeMode())
   {
-    KTempFile tf(QString::fromAscii("/tmp/"), QString::fromAscii(".kcrash"), 0600);
-    if (!tf.status())
+    KTemporaryFile tf;
+    tf.setPrefix("/tmp/");
+    tf.setSuffix(".kcrash");
+    tf.setAutoRemove(false);
+    if (tf.open())
     {
-      *tf.textStream() << m_backtrace->toPlainText();
-      tf.close();
-      KMessageBox::information(this, i18n("Backtrace saved to %1", tf.name()));
+      QTextStream textStream( &tf );
+      textStream << m_backtrace->toPlainText();
+      textStream.flush();
+      KMessageBox::information(this, i18n("Backtrace saved to %1", tf.fileName()));
     }
     else
     {

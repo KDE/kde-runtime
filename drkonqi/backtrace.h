@@ -30,7 +30,7 @@
 
 class KProcess;
 class KrashConfig;
-class KTempFile;
+class KTemporaryFile;
 
 #include <QObject>
 
@@ -60,7 +60,7 @@ private:
   void processBacktrace();
   KProcess *m_proc;
   const KrashConfig *m_krashconf;
-  KTempFile *m_temp;
+  KTemporaryFile *m_temp;
   QString m_strBt;
 };
 #endif
