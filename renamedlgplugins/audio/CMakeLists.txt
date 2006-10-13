@@ -6,7 +6,7 @@
 
 set(renaudioplugin_PART_SRCS audiopreview.cpp audio_plugin.cpp )
 
-kde4_automoc(${renaudioplugin_PART_SRCS})
+kde4_automoc(renaudioplugin ${renaudioplugin_PART_SRCS})
 
 kde4_add_plugin(renaudioplugin WITH_PREFIX ${renaudioplugin_PART_SRCS})
 
