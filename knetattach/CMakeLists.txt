@@ -7,7 +7,7 @@ project(knetattach)
 
 set(knetattach_SRCS main.cpp knetattach.cpp)
 
-kde4_automoc(knetattach ${knetattach_SRCS})
+kde4_automoc(${knetattach_SRCS})
 
 kde4_add_ui_files(knetattach_SRCS knetattach.ui )
 

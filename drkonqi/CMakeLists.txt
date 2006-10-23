@@ -16,7 +16,7 @@ set(drkonqi_SRCS
    backtrace.cpp 
    toplevel.cpp )
 
-kde4_automoc(drkonqi ${drkonqi_SRCS})
+kde4_automoc(${drkonqi_SRCS})
 
 kde4_add_executable(drkonqi ${drkonqi_SRCS})
 
@@ -29,7 +29,7 @@ install(TARGETS drkonqi DESTINATION ${BIN_INSTALL_DIR})
 if(KDE4_BUILD_TESTS)
 set(crashtest_SRCS crashtest.cpp )
 
-kde4_automoc(crashtest ${crashtest_SRCS})
+kde4_automoc(${crashtest_SRCS})
 
 kde4_add_executable(crashtest ${crashtest_SRCS})
 
