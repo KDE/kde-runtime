@@ -6,7 +6,7 @@
 
 set(renimageplugin_PART_SRCS imagevisualizer.cpp image_plugin.cpp )
 
-kde4_automoc(renimageplugin ${renimageplugin_PART_SRCS})
+kde4_automoc(${renimageplugin_PART_SRCS})
 
 kde4_add_plugin(renimageplugin WITH_PREFIX ${renimageplugin_PART_SRCS})
 
