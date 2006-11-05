@@ -10,5 +10,6 @@ if (Q_WS_X11)
   add_subdirectory(kstart)
 endif (Q_WS_X11)
 add_subdirectory(kurifilter-plugins)
+add_subdirectory(solid)
 add_subdirectory(l10n)
 
