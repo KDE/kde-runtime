@@ -27,8 +27,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************/
 
-#ifndef KRASHDCOPINTERFACE_SKEL
-#define KRASHDCOPINTERFACE_SKEL
+#ifndef KRASHDBUSINTERFACE_SKEL
+#define KRASHDBUSINTERFACE_SKEL
 
 #include <QString>
 #include <kaboutdata.h>
