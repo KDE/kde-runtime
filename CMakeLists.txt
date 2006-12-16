@@ -1,5 +1,5 @@
 add_subdirectory(drkonqi)
-add_subdirectory(dbusquit)
+add_subdirectory(kquitapp)
 add_subdirectory(kioclient)
 add_subdirectory(kioslave)
 add_subdirectory(kdebugdialog)
