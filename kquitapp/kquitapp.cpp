@@ -32,7 +32,7 @@ static KCmdLineOptions options[] =
 
 int main(int argc, char* argv[])
 {
-    KAboutData aboutData( "krunner", I18N_NOOP("Run Command Interface"),
+    KAboutData aboutData( "kquitapp", I18N_NOOP("Command line application quitter"),
                           "1.0", I18N_NOOP("Quit a DBUS enabled application easily"), KAboutData::License_GPL,
                            I18N_NOOP("(c) 2006, Aaron Seigo") );
     aboutData.addAuthor("Aaron J. Seigo", I18N_NOOP("Current maintainer"), "aseigo@kde.org");

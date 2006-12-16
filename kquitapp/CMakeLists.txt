@@ -1,6 +1,6 @@
-set(kquitapp_SRCS dbusquit.cpp)
+set(kquitapp_SRCS kquitapp.cpp)
 
-kde4_add_executable(kquitapp_executable ${dbusquit_SRCS})
+kde4_add_executable(kquitapp_executable ${kquitapp_SRCS})
 set_target_properties(kquitapp_executable PROPERTIES OUTPUT_NAME kquitapp)
 target_link_libraries(kquitapp_executable  ${KDE4_KDECORE_LIBS})
 
