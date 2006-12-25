@@ -42,6 +42,7 @@
 #include <kprocess.h>
 #include <kapplication.h>
 #include <khbox.h>
+#include <KTabWidget>
 
 #include "backtrace.h"
 #include "drbugreport.h"
@@ -50,22 +51,23 @@
 #include "toplevel.h"
 #include "toplevel.moc"
 
-Toplevel :: Toplevel(KrashConfig *krashconf, QWidget *parent, const char *name)
-  : KPageDialog( parent ),
+Toplevel :: Toplevel(KrashConfig *krashconf, QWidget *parent)
+  : KDialog( parent ),
     m_krashconf(krashconf), m_bugreport(0)
 {
-  setFaceType( Tabbed );
   setCaption( krashconf->programName() );
   setButtons( User3 | User2 | User1 | Close );
   setDefaultButton( Close );
-  setObjectName( name );
   setModal( true );
   showButtonSeparator( false );
   setButtonGuiItem( User1, KGuiItem(i18n("&Bug report")) );
   setButtonGuiItem( User2, KGuiItem(i18n("&Debugger")) );
 
+  KTabWidget *tabWidget = new KTabWidget(this);
+  setMainWidget(tabWidget);
+
   QWidget* page = new QWidget();
-  addPage(page, i18n("&General"));
+  tabWidget->addTab(page, i18n("General"));
 
   QHBoxLayout* layout = new QHBoxLayout();
   layout->setSpacing(20);
@@ -89,7 +91,7 @@ Toplevel :: Toplevel(KrashConfig *krashconf, QWidget *parent, const char *name)
   if (m_krashconf->showBacktrace())
   {
     page = new KHBox();
-    addPage(page, i18n("&Backtrace"));
+    tabWidget->addTab(page, i18n("Backtrace"));
     new KrashDebugger(m_krashconf, page);
   }
 

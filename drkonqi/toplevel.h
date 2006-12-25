@@ -34,14 +34,14 @@ class KAboutData;
 class KrashConfig;
 class DrKBugReport;
 
-#include <kpagedialog.h>
+#include <KDialog>
 
-class Toplevel : public KPageDialog
+class Toplevel : public KDialog
 {
   Q_OBJECT
 
 public:
-  Toplevel(KrashConfig *krash, QWidget *parent = 0, const char * name = 0);
+  Toplevel(KrashConfig *krash, QWidget *parent = 0);
   ~Toplevel();
 
 private:
