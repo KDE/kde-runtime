@@ -23,7 +23,7 @@
 #include <QLayout>
 #include <kapplication.h>
 #include <klocale.h>
-#include <kstdguiitem.h>
+#include <kstandardguiitem.h>
 #include <ktoolinvocation.h>
 
 KAbstractDebugDialog::KAbstractDebugDialog( QWidget *parent, const char *name, bool modal )
@@ -44,16 +44,16 @@ void KAbstractDebugDialog::buildButtons( QVBoxLayout * topLayout )
   QHBoxLayout *hbox = new QHBoxLayout();
   hbox->setSpacing( KDialog::spacingHint() );
   topLayout->addLayout( hbox );
-  pHelpButton = new KPushButton( KStdGuiItem::help() );
+  pHelpButton = new KPushButton( KStandardGuiItem::help() );
   hbox->addWidget( pHelpButton );
   hbox->addStretch(10);
   QSpacerItem *spacer = new QSpacerItem(40, 0);
   hbox->addItem(spacer);
-  pOKButton = new KPushButton( KStdGuiItem::ok() );
+  pOKButton = new KPushButton( KStandardGuiItem::ok() );
   hbox->addWidget( pOKButton );
-  pApplyButton = new KPushButton( KStdGuiItem::apply() );
+  pApplyButton = new KPushButton( KStandardGuiItem::apply() );
   hbox->addWidget( pApplyButton );
-  pCancelButton = new KPushButton( KStdGuiItem::cancel() );
+  pCancelButton = new KPushButton( KStandardGuiItem::cancel() );
   hbox->addWidget( pCancelButton );
 
   int w1 = pHelpButton->sizeHint().width();

@@ -35,7 +35,7 @@
 #include <kfiledialog.h>
 #include <kmessagebox.h>
 #include <kpushbutton.h>
-#include <kstdguiitem.h>
+#include <kstandardguiitem.h>
 #include <ktextbrowser.h>
 #include <ktemporaryfile.h>
 
@@ -68,14 +68,14 @@ KrashDebugger :: KrashDebugger (const KrashConfig *krashconf, QWidget *parent, c
 
   m_status = new QLabel( w );
   m_status->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Preferred ) );
-  //m_copyButton = new KPushButton( KStdGuiItem::copy(), w );
+  //m_copyButton = new KPushButton( KStandardGuiItem::copy(), w );
   hbox->addWidget(m_status);
   KGuiItem item( i18n( "C&opy" ), QLatin1String( "editcopy" ) );
   m_copyButton = new KPushButton( item, w );
   connect( m_copyButton, SIGNAL( clicked() ), this, SLOT( slotCopy() ) );
   m_copyButton->setEnabled( false );
   hbox->addWidget(m_copyButton);
-  m_saveButton = new KPushButton( m_krashconf->safeMode() ? KStdGuiItem::save() : KStdGuiItem::saveAs(), w );
+  m_saveButton = new KPushButton( m_krashconf->safeMode() ? KStandardGuiItem::save() : KStandardGuiItem::saveAs(), w );
   connect( m_saveButton, SIGNAL( clicked() ), this, SLOT( slotSave() ) );
   m_saveButton->setEnabled( false );
   hbox->addWidget(m_saveButton);
