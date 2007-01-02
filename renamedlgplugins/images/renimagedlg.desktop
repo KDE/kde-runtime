@@ -4,4 +4,4 @@ Name=Image Displayer
 Name[fr]=Afficheur d'images
 Name[x-test]=xxImage Displayerxx
 X-KDE-Library=librenimageplugin
-ServiceTypes=RenameDlg/Plugin,image/jpeg,image/png
+ServiceTypes=RenameDialog/Plugin,image/jpeg,image/png
