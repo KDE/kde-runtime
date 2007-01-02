@@ -23,7 +23,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <kio/renamedlgplugin.h>
+#include <kio/renamedialogplugin.h>
 #include <kio/global.h>
 
 #include <kdebug.h>
@@ -44,27 +44,27 @@
 
 #include "imagevisualizer.h"
 
-class ImagePlugin : public KIO::RenameDlgPlugin {
+class ImagePlugin : public KIO::RenameDialogPlugin {
 public:
     ImagePlugin( QDialog *dialog, const QStringList & );
-    virtual bool wantToHandle( KIO::RenameDlg_Mode, const KIO::RenameDlgPlugin::FileItem&,
-                               const KIO::RenameDlgPlugin::FileItem& ) const;
-    virtual void handle( KIO::RenameDlg_Mode, const KIO::RenameDlgPlugin::FileItem&,
-                         const KIO::RenameDlgPlugin::FileItem& );
+    virtual bool wantToHandle( KIO::RenameDialog_Mode, const KIO::RenameDialogPlugin::FileItem&,
+                               const KIO::RenameDialogPlugin::FileItem& ) const;
+    virtual void handle( KIO::RenameDialog_Mode, const KIO::RenameDialogPlugin::FileItem&,
+                         const KIO::RenameDialogPlugin::FileItem& );
 };
 
 ImagePlugin::ImagePlugin( QDialog *dialog, const QStringList & )
-  : RenameDlgPlugin( dialog)
+  : RenameDialogPlugin( dialog)
 {
 }
 
-bool ImagePlugin::wantToHandle( KIO::RenameDlg_Mode, const KIO::RenameDlgPlugin::FileItem&,
-                                const KIO::RenameDlgPlugin::FileItem& ) const {
+bool ImagePlugin::wantToHandle( KIO::RenameDialog_Mode, const KIO::RenameDialogPlugin::FileItem&,
+                                const KIO::RenameDialogPlugin::FileItem& ) const {
     return true;
 }
 
-void ImagePlugin::handle( KIO::RenameDlg_Mode mode, const KIO::RenameDlgPlugin::FileItem& src,
-                          const KIO::RenameDlgPlugin::FileItem& dst ) {
+void ImagePlugin::handle( KIO::RenameDialog_Mode mode, const KIO::RenameDialogPlugin::FileItem& src,
+                          const KIO::RenameDialogPlugin::FileItem& dst ) {
     QGridLayout *lay = new QGridLayout( this );
     if( mode & KIO::M_OVERWRITE ) {
         QLabel *label = new QLabel(this );

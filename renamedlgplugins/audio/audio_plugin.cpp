@@ -20,7 +20,7 @@
 */
 
 #include <kgenericfactory.h>
-#include <kio/renamedlgplugin.h>
+#include <kio/renamedialogplugin.h>
 #include <qlabel.h>
 #include <qdialog.h>
 #include <qwidget.h>
@@ -34,31 +34,31 @@
 
 #include "audiopreview.h"
 
-class AudioPlugin : public KIO::RenameDlgPlugin{
+class AudioPlugin : public KIO::RenameDialogPlugin{
 public:
   AudioPlugin( QDialog *dialog, const QStringList & );
   ~AudioPlugin();
 
-  bool wantToHandle( KIO::RenameDlg_Mode mode, const KIO::RenameDlgPlugin::FileItem& src,
-                     const KIO::RenameDlgPlugin::FileItem& dst ) const;
-  void handle( KIO::RenameDlg_Mode, const KIO::RenameDlgPlugin::FileItem& src,
-               const KIO::RenameDlgPlugin::FileItem& dst );
+  bool wantToHandle( KIO::RenameDialog_Mode mode, const KIO::RenameDialogPlugin::FileItem& src,
+                     const KIO::RenameDialogPlugin::FileItem& dst ) const;
+  void handle( KIO::RenameDialog_Mode, const KIO::RenameDialogPlugin::FileItem& src,
+               const KIO::RenameDialogPlugin::FileItem& dst );
 };
 
-AudioPlugin::AudioPlugin( QDialog *dialog, const QStringList & ) : RenameDlgPlugin( dialog) {
+AudioPlugin::AudioPlugin( QDialog *dialog, const QStringList & ) : RenameDialogPlugin( dialog) {
   qWarning("loaded" );
 }
 AudioPlugin::~AudioPlugin()
 {
 }
 
-bool AudioPlugin::wantToHandle( KIO::RenameDlg_Mode, const KIO::RenameDlgPlugin::FileItem&,
-                                const KIO::RenameDlgPlugin::FileItem& ) const {
+bool AudioPlugin::wantToHandle( KIO::RenameDialog_Mode, const KIO::RenameDialogPlugin::FileItem&,
+                                const KIO::RenameDialogPlugin::FileItem& ) const {
     return true;
 }
 
-void AudioPlugin::handle( KIO::RenameDlg_Mode mode, const KIO::RenameDlgPlugin::FileItem& src,
-                          const KIO::RenameDlgPlugin::FileItem& dst ) {
+void AudioPlugin::handle( KIO::RenameDialog_Mode mode, const KIO::RenameDialogPlugin::FileItem& src,
+                          const KIO::RenameDialogPlugin::FileItem& dst ) {
  QGridLayout *lay = new QGridLayout( this );
  if( mode & KIO::M_OVERWRITE ){
    QLabel *label_head = new QLabel(this);
