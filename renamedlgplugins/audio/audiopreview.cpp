@@ -29,6 +29,7 @@
 #include <kmimetype.h>
 #include <kmediaplayer/player.h>
 #include <kservicetypetrader.h>
+#include <ksqueezedtextlabel.h>
 
 #include "audiopreview.h"
 
@@ -45,7 +46,6 @@ AudioPreview::AudioPreview( QWidget *parent, const KUrl &url, const QString &mim
     pic = new QLabel(this);
     pic->setPixmap(KIO::pixmapForUrl( url ));
     pic->adjustSize();
-    description = new QLabel(this);
     initView( mimeType );
   } else if( !url.isLocalFile() ) {
     KUrlLabel *label = new KUrlLabel( this );
@@ -53,8 +53,6 @@ AudioPreview::AudioPreview( QWidget *parent, const KUrl &url, const QString &mim
     label->setUrl( url.prettyUrl() );
     connect(label, SIGNAL(leftClickedUrl(const QString&)), SLOT(downloadFile(const QString&)));
     pic = label;
-    description = new QLabel(this);
-    description->adjustSize( );
   } else {
     description = new QLabel(this );
     description->setText(i18n("Unable to load audio file") );
@@ -84,10 +82,19 @@ void AudioPreview::initView( const QString& mimeType )
   {
     if (mimeptr->is("audio/x-mp3") || mimeptr->is("application/ogg"))
     {
-      desc.append(i18n("Artist: %1\n", info.item("Artist").value().toString() ));
-      desc.append(i18n("Title: %1\n", info.item("Title").value().toString() ));
-      desc.append(i18n("Comment: %1\n", info.item("Comment").value().toString() ));
-      desc.append(i18nc("Biterate: 160 kbits/s", "Bitrate: %1 %2\n", info.item("Bitrate").value().toString(), info.item("Bitrate").suffix() ));
+      // following 3 infos might be very long; make sure they get squeezed
+      KSqueezedTextLabel *sl;
+
+      sl = new KSqueezedTextLabel(this);
+      sl->setText(i18n("Artist: %1").arg(info.item("Artist").value().toString()));
+
+      sl = new KSqueezedTextLabel(this);
+      sl->setText(i18n("Title: %1").arg(info.item("Title").value().toString()));
+
+      sl = new KSqueezedTextLabel(this);
+      sl->setText(i18n("Comment: %1").arg(info.item("Comment").value().toString()));
+
+      desc.append(i18nc("Bitrate: 160 kbits/s", "Bitrate: %1 %2\n", info.item("Bitrate").value().toString(), info.item("Bitrate").suffix() ));
     }
     desc.append(i18n("Sample rate: %1 %2\n", info.item("Sample Rate").value().toString(), info.item("Sample Rate").suffix() ));
     desc.append(i18n("Length: "));
@@ -102,6 +109,7 @@ void AudioPreview::initView( const QString& mimeType )
     desc.append(QString("%1\n").arg(length%60, 0, 10));
   }
 
+  description = new QLabel(this);
   description->setText( desc );
   description->adjustSize();
   m_player = KServiceTypeTrader::createInstanceFromQuery<KMediaPlayer::Player>( "KMediaPlayer/Player", QString::null, this );
@@ -122,4 +130,3 @@ void AudioPreview::downloadFile( const QString& url )
 }
 
 #include <audiopreview.moc>
-#include <kvbox.h>
