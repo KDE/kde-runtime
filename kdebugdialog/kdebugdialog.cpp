@@ -44,7 +44,7 @@ KDebugDialog::KDebugDialog( QStringList areaList, QWidget *parent, const char *n
   : KAbstractDebugDialog( parent, name, modal )
 {
   setCaption(i18n("Debug Settings"));
-
+  setButtons(None);
   QWidget* mainWidget = new QWidget( this );
   QVBoxLayout *topLayout = new QVBoxLayout( mainWidget );
   topLayout->setMargin( KDialog::marginHint() );
