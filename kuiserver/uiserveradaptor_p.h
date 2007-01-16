@@ -162,21 +162,6 @@ class UIServerAdaptor: public QDBusAbstractAdaptor
 "      <arg direction=\"in\" type=\"b\" name=\"visible\" />\n"
 "      <annotation value=\"true\" name=\"org.freedesktop.DBus.Method.NoReply\" />\n"
 "    </method>\n"
-"    <method name=\"showSSLInfoDialog\" >\n"
-"      <arg direction=\"in\" type=\"s\" name=\"url\" />\n"
-"      <arg direction=\"in\" type=\"a{ss}\" name=\"data\" />\n"
-"      <arg direction=\"in\" type=\"x\" name=\"mainwindow\" />\n"
-"      <annotation value=\"QMap&lt;QString,QString>\" name=\"com.trolltech.QtDBus.QtTypeName.In1\" />\n"
-"    </method>\n"
-"    <method name=\"showSSLCertDialog\" >\n"
-"      <arg direction=\"in\" type=\"s\" name=\"host\" />\n"
-"      <arg direction=\"in\" type=\"as\" name=\"certList\" />\n"
-"      <arg direction=\"in\" type=\"x\" name=\"mainwindow\" />\n"
-"      <arg direction=\"out\" type=\"b\" name=\"ok\" />\n"
-"      <arg direction=\"out\" type=\"b\" name=\"send\" />\n"
-"      <arg direction=\"out\" type=\"b\" name=\"save\" />\n"
-"      <arg direction=\"out\" type=\"s\" name=\"choice\" />\n"
-"    </method>\n"
 "  </interface>\n"
         "")
 public:
@@ -205,8 +190,6 @@ public Q_SLOTS: // METHODS
     Q_NOREPLY void processedDirs(int id, uint dirs);
     Q_NOREPLY void processedFiles(int id, uint files);
     Q_NOREPLY void processedSize(int id, qulonglong size);
-    bool showSSLCertDialog(const QString &host, const QStringList &certList, qlonglong mainwindow, bool &send, bool &save, QString &choice);
-    void showSSLInfoDialog(const QString &url, const QMap<QString,QString> &data, qlonglong mainwindow);
     Q_NOREPLY void speed(int id, const QString &bytesPerSecond);
     Q_NOREPLY void stating(int id, const QString &url);
     Q_NOREPLY void totalDirs(int id, uint dirs);

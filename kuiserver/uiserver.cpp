@@ -52,13 +52,13 @@
 #include "progresslistmodel.h"
 #include "progresslistdelegate.h"
 
-#include "observer.h" // for static methods only
+#include "kio/observer.h" // for static methods only
 #include "kio/defaultprogress.h"
 #include "kio/jobclasses.h"
 #include "uiserver.h"
 #include "kio/renamedialog.h"
 #include "kio/skipdialog.h"
-#include "slavebase.h" // for QuestionYesNo etc.
+#include "kio/slavebase.h" // for QuestionYesNo etc.
 #include <ksslinfodialog.h>
 #include <ksslcertdialog.h>
 #include <ksslcertificate.h>
@@ -138,7 +138,7 @@ UIServer* UIServer::createInstance()
 
 int UIServer::newJob(const QString &appServiceName, bool showProgress, const QString &internalAppName, const QString &jobIcon, const QString &appName)
 {
-    // Uncomment if you want to see kio_uiserver in action (ereslibre)
+    // Uncomment if you want to see kuiserver in action (ereslibre)
     // if (isHidden()) show();
 
     s_jobId++;
@@ -418,80 +418,6 @@ void UIServer::setJobVisible(int id, bool visible)
     listProgress->setRowHidden(progressListModel->indexForJob(id).row(), !visible);
 }
 
-void UIServer::showSSLInfoDialog(const QString &url, const KIO::MetaData &data, int mainwindow)
-{
-   KSSLInfoDialog *kid = new KSSLInfoDialog(data["ssl_in_use"].toUpper()=="TRUE", 0L /*parent?*/, 0L, true);
-   KSSLCertificate *x = KSSLCertificate::fromString(data["ssl_peer_certificate"].toLocal8Bit());
-
-   if (x) {
-      // Set the chain back onto the certificate
-      QStringList cl =
-                      data["ssl_peer_chain"].split(QString("\n"), QString::SkipEmptyParts);
-      Q3PtrList<KSSLCertificate> ncl;
-
-      ncl.setAutoDelete(true);
-      for (QStringList::Iterator it = cl.begin(); it != cl.end(); ++it) {
-         KSSLCertificate *y = KSSLCertificate::fromString((*it).toLocal8Bit());
-         if (y) ncl.append(y);
-      }
-
-      if (ncl.count() > 0)
-         x->chain().setChain(ncl);
-
-      kDebug(7024) << "ssl_cert_errors=" << data["ssl_cert_errors"] << endl;
-      kid->setCertState(data["ssl_cert_errors"]);
-      QString ip = data.contains("ssl_proxied") ? "" : data["ssl_peer_ip"];
-      kid->setup( x,
-                  ip,
-                  url, // the URL
-                  data["ssl_cipher"],
-                  data["ssl_cipher_desc"],
-                  data["ssl_cipher_version"],
-                  data["ssl_cipher_used_bits"].toInt(),
-                  data["ssl_cipher_bits"].toInt(),
-                  KSSLCertificate::KSSLValidation(data["ssl_cert_state"].toInt()));
-      kDebug(7024) << "Showing SSL Info dialog" << endl;
-#ifndef Q_WS_WIN
-      if( mainwindow != 0 )
-          KWin::setMainWindow( kid, mainwindow );
-#endif
-      kid->exec();
-      delete x;
-      kDebug(7024) << "SSL Info dialog closed" << endl;
-   } else {
-      KMessageBox::information( 0L, // parent ?
-                              i18n("The peer SSL certificate appears to be corrupt."), i18n("SSL") );
-   }
-   // Don't delete kid!!
-}
-
-KSSLCertDialogRet UIServer::showSSLCertDialog(const QString& host, const QStringList& certList, int mainwindow)
-{
-    KSSLCertDialogRet rc;
-    rc.ok = false;
-    if (!certList.isEmpty())
-    {
-        KSSLCertDialog *kcd = new KSSLCertDialog(0L, 0L, true);
-        kcd->setupDialog(certList);
-        kcd->setHost(host);
-        kDebug(7024) << "Showing SSL certificate dialog" << endl;
-
-#ifndef Q_WS_WIN
-        if( mainwindow != 0 )
-            KWin::setMainWindow( kcd, mainwindow );
-#endif
-
-        kcd->exec();
-        rc.ok = true;
-        rc.choice = kcd->getChoice();
-        rc.save = kcd->saveChoice();
-        rc.send = kcd->wantsToSend();
-        kDebug(7024) << "SSL certificate dialog closed" << endl;
-        delete kcd;
-    }
-    return rc;
-}
-
 void UIServer::slotRemoveSystemTrayIcon()
 {
 #ifdef __GNUC__
@@ -540,7 +466,7 @@ void UIConfigurationDialog::show()
 
 void UIConfigurationDialog::loadSettings()
 {
-    KConfig config("kio_uiserver", false, false);
+    KConfig config("kuiserver", false, false);
     config.setGroup("configuration");
 
     int appearance = config.readNumEntry("appearance");
@@ -559,7 +485,7 @@ void UIConfigurationDialog::loadSettings()
 
 void UIConfigurationDialog::saveSettings()
 {
-    KConfig config("kio_uiserver", false, false);
+    KConfig config("kuiserver", false, false);
     config.setGroup("configuration");
 
     if (radioList->isChecked())
@@ -587,7 +513,7 @@ extern "C" KDE_EXPORT int kdemain(int argc, char **argv)
     KLocale::setMainCatalog("kdelibs");
     //  GS 5/2001 - I changed the name to "KDE" to make it look better
     //              in the titles of dialogs which are displayed.
-    KAboutData aboutdata("kio_uiserver", I18N_NOOP("Progress Manager"),
+    KAboutData aboutdata("kuiserver", I18N_NOOP("Progress Manager"),
                          "0.8", I18N_NOOP("KDE Progress Information UI Server"),
                          KAboutData::License_GPL, "(C) 2000-2005, David Faure & Matt Koss");
     aboutdata.addAuthor("David Faure",I18N_NOOP("Maintainer"),"faure@kde.org");
@@ -600,7 +526,7 @@ extern "C" KDE_EXPORT int kdemain(int argc, char **argv)
 
     if (!KUniqueApplication::start())
     {
-      kDebug(7024) << "kio_uiserver is already running!" << endl;
+      kDebug(7024) << "kuiserver is already running!" << endl;
       return (0);
     }
 

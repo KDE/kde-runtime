@@ -1,3 +1,4 @@
+add_subdirectory(kuiserver)
 add_subdirectory(drkonqi)
 add_subdirectory(kquitapp)
 add_subdirectory(kioclient)

@@ -1,9 +1,9 @@
 [Desktop Entry]
 Encoding=UTF-8
 Type=Service
-Name=kio_uiserver
-Name[x-test]=xxkio_uiserverxx
-Exec=kio_uiserver
+Name=kuiserver
+Name[x-test]=xxkuiserverxx
+Exec=kuiserver
 Comment=KDE's Progress Info UI server
 Comment[el]=Εξυπηρετητής πληροφοριών προόδου περιβάλλοντος χρήσης του KDE
 Comment[fr]=Serveur graphique d'infos de progression de KDE

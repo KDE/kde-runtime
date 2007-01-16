@@ -133,23 +133,6 @@ void UIServerAdaptor::setJobVisible(int id, bool enable)
     parent()->setJobVisible(id, enable);
 }
 
-bool UIServerAdaptor::showSSLCertDialog(const QString &host, const QStringList &certList, qlonglong mainwindow, bool &send, bool &save, QString &choice)
-{
-    // handle method call org.kde.KIO.UIServer.showSSLCertDialog
-    // HAND EDIT: expand the return values
-    KSSLCertDialogRet ret = parent()->showSSLCertDialog(host, certList, mainwindow);
-    save = ret.save;
-    choice = ret.choice;
-    send = ret.send;
-    return ret.ok;
-}
-
-void UIServerAdaptor::showSSLInfoDialog(const QString &url, const QMap<QString,QString> &data, qlonglong mainwindow)
-{
-    // handle method call org.kde.KIO.UIServer.showSSLInfoDialog
-    parent()->showSSLInfoDialog(url, data, mainwindow);
-}
-
 void UIServerAdaptor::speed(int id, const QString &bytesPerSecond)
 {
     // handle method call org.kde.KIO.UIServer.speed

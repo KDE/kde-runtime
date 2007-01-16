@@ -61,7 +61,7 @@ public:
       * @param appServiceName   the DBUS service name
       * @see                    KIO::Observer::newJob
       * @param showProgress     whether to popup the progress for the job.
-      *                         Usually true, but may be false when we use kio_uiserver for
+      *                         Usually true, but may be false when we use kuiserver for
       *                         other things, like SSL dialogs.
       * @param internalAppName  the application name that launched the job (kopete, konqueror...)
       * @param jobIcon          the job icon name
@@ -269,16 +269,6 @@ public:
       * @param visible  whether the job will be shown or not
       */
     void setJobVisible(int jobId, bool visible);
-
-    /**
-      * Show a SSL Information Dialog
-      */
-    void showSSLInfoDialog(const QString &url, const KIO::MetaData &data, int mainwindow);
-
-    /**
-      * Show an SSL Certificate Selection Dialog
-      */
-    KSSLCertDialogRet showSSLCertDialog(const QString &host, const QStringList &certList, int mainwindow);
 
 public Q_SLOTS:
     void slotRemoveSystemTrayIcon();
