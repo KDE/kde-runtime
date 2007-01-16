@@ -1,6 +1,7 @@
 [Desktop Entry]
 Type=Service
 Name=Audio Preview
+Name[el]=Προεπισκόπηση ήχου
 Name[fr]=Aperçu audio
 Name[x-test]=xxAudio Previewxx
 X-KDE-Library=librenaudioplugin
