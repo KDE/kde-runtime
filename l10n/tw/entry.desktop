@@ -1,6 +1,7 @@
 [KCM Locale]
 Author=zh-l10n@linux.org.tw
 Name=Taiwan
+Name[el]=Ταϊβάν
 Name[fr]=Taïwan
 Name[x-test]=xxTaiwanxx
 Region=eastasia

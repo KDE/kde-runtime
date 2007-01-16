@@ -1,5 +1,6 @@
 [KCM Locale]
 Name=Luxembourg
+Name[el]=Λουξεμβούργο
 Name[x-test]=xxLuxembourgxx
 Region=westeurope
 Languages=de,fr

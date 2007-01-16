@@ -1,6 +1,7 @@
 [KCM Locale]
 Author=Meni Livne <livne@kde.org>
 Name=Israel
+Name[el]=Ισραήλ
 Name[fr]=Israël
 Name[x-test]=xxIsraelxx
 Region=middleeast

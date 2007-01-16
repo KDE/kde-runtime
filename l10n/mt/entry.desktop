@@ -1,6 +1,7 @@
 [KCM Locale]
 Author=Ramon Casha <ramon.casha@megabyte.net>
 Name=Malta
+Name[el]=Μάλτα
 Name[fr]=Malte
 Name[x-test]=xxMaltaxx
 Region=southeurope

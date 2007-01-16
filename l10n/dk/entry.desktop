@@ -1,6 +1,7 @@
 [KCM Locale]
 Author=Erik Kjær Pedersen <erik@binghamton.edu>
 Name=Denmark
+Name[el]=Δανία
 Name[fr]=Danemark
 Name[x-test]=xxDenmarkxx
 Region=northeurope

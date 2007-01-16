@@ -1,6 +1,7 @@
 [KCM Locale]
 Author=Hans Petter Bieker <bieker@kde.org>
 Name=Norway
+Name[el]=Νορβηγία
 Name[fr]=Norvège
 Name[x-test]=xxNorwayxx
 Region=northeurope

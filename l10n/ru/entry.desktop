@@ -1,6 +1,7 @@
 [KCM Locale]
 Author=Denis Perchine <dyp@perchine.com>
 Name=Russia
+Name[el]=Ρωσία
 Name[fr]=Russie
 Name[x-test]=xxRussiaxx
 Region=easteurope

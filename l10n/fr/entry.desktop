@@ -1,6 +1,7 @@
 [KCM Locale]
 Author=Francois-Xavier Duranceau <duranceau@kde.org>
 Name=France
+Name[el]=Γαλλία
 Name[x-test]=xxFrancexx
 Region=westeurope
 Languages=fr,br,eu,ca,oc,de

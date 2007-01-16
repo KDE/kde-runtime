@@ -1,6 +1,7 @@
 [KCM Locale]
 Author=Pedro Morais <morais@kde.org>
 Name=Portugal
+Name[el]=Πορτογαλία
 Name[x-test]=xxPortugalxx
 Region=westeurope
 Languages=pt

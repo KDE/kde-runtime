@@ -1,5 +1,6 @@
 [KCM Locale]
 Name=Greece
+Name[el]=Ελλάδα
 Name[fr]=Grèce
 Name[x-test]=xxGreecexx
 Region=southeurope

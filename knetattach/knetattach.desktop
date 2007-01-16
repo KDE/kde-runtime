@@ -3,6 +3,7 @@ Encoding=UTF-8
 Name=KNetAttach
 Name[x-test]=xxKNetAttachxx
 GenericName=Network Folder Wizard
+GenericName[el]=Μάγος Φακέλων Δικτύου
 GenericName[fr]=Assistant dossier réseau
 GenericName[x-test]=xxNetwork Folder Wizardxx
 Exec=knetattach

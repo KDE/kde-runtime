@@ -1,6 +1,7 @@
 [KCM Locale]
 Author=Eugene Zelenko <greendeath@mail.ru>
 Name=Belarus
+Name[el]=Λευκορωσία
 Name[fr]=Bélarus
 Name[x-test]=xxBelarusxx
 Region=easteurope

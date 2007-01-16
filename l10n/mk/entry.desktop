@@ -1,6 +1,7 @@
 [KCM Locale]
 Author=Danko Ilik <danko@mindless.com>
 Name=Macedonia
+Name[el]=Σλαβομακεδονία
 Name[fr]=Macédoine
 Name[x-test]=xxMacedoniaxx
 Languages=mk

@@ -1,6 +1,7 @@
 [KCM Locale]
 Author=i18n-translation@lists.linux.net.cn
 Name=China
+Name[el]=Κίνα
 Name[fr]=Chine
 Name[x-test]=xxChinaxx
 Region=eastasia

@@ -1,5 +1,6 @@
 [KCM Locale]
 Name=Egypt
+Name[el]=Αίγυπτος
 Name[fr]=Égypte
 Name[x-test]=xxEgyptxx
 Region=northafrica
