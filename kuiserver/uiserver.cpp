@@ -469,8 +469,8 @@ void UIConfigurationDialog::loadSettings()
     KConfig config("kuiserver", false, false);
     config.setGroup("configuration");
 
-    int appearance = config.readNumEntry("appearance");
-    int finishedJobs = config.readNumEntry("finishedJobs");
+    int appearance = config.readEntry("appearance",0);
+    int finishedJobs = config.readEntry("finishedJobs",0);
 
     if (appearance)
         radioTree->setChecked(true);
