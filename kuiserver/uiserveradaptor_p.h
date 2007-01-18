@@ -105,6 +105,11 @@ class UIServerAdaptor: public QDBusAbstractAdaptor
 "      <arg direction=\"in\" type=\"s\" name=\"msg\" />\n"
 "      <annotation value=\"true\" name=\"org.freedesktop.DBus.Method.NoReply\" />\n"
 "    </method>\n"
+"    <method name=\"progressInfoMessage\" >\n"
+"      <arg direction=\"in\" type=\"i\" name=\"id\" />\n"
+"      <arg direction=\"in\" type=\"s\" name=\"msg\" />\n"
+"      <annotation value=\"true\" name=\"org.freedesktop.DBus.Method.NoReply\" />\n"
+"    </method>\n"
 "    <method name=\"copying\" >\n"
 "      <arg direction=\"in\" type=\"i\" name=\"id\" />\n"
 "      <arg direction=\"in\" type=\"s\" name=\"from\" />\n"
@@ -177,6 +182,7 @@ public Q_SLOTS: // METHODS
     Q_NOREPLY void creatingDir(int id, const QString &url);
     Q_NOREPLY void deleting(int id, const QString &url);
     Q_NOREPLY void infoMessage(int id, const QString &msg);
+    Q_NOREPLY void progressInfoMessage(int id, const QString &msg);
     Q_NOREPLY void jobFinished(int id);
     int messageBox(int id, int type, const QString &text, const QString &caption, const QString &buttonYes, const QString &buttonNo);
     void setJobVisible(int jobId, bool visible);

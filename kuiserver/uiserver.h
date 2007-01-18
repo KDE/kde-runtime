@@ -174,6 +174,14 @@ public:
     void infoMessage(int jobId, QString msg);
 
     /**
+      * Sets the current progress info message
+      *
+      * @param jobId    the identification number of the job
+      * @param msg      the progress info message to show
+      */
+    void progressInfoMessage(int jobId, QString msg);
+
+    /**
       * Starts a copying progress
       *
       * @param jobId    the identification number of the job

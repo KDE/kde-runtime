@@ -48,6 +48,8 @@ struct jobInfo
     QString icon;                           ///< The icon name
     qlonglong fileTotals;                   ///< The number of total files to be processed
     qlonglong filesProcessed;               ///< The number of processed files
+    qlonglong dirTotals;                    ///< The number of total dirs to be processed
+    qlonglong dirsProcessed;                ///< The number of processed dirs
     QString sizeTotals;                     ///< The total size of the operation
     QString sizeProcessed;                  ///< The processed size at the moment
     qlonglong timeElapsed;                  ///< The elapsed time
@@ -59,6 +61,7 @@ struct jobInfo
     QString speed;                          ///< The current speed of the operation (human readable, example, "3Mb/s")
     int percent;                            ///< The current percent of the progress
     QString message;                        ///< The information message to be shown
+    QString progressMessage;                ///< The progress information message to be shown
     QList<actionInfo> actionInfoList;       ///< The list of actions added to the job
     QStyleOptionProgressBarV2 *progressBar; ///< The progress bar to be shown
     KIconLoader *iconLoader;                ///< The icon loader for loading the icon on the delegate

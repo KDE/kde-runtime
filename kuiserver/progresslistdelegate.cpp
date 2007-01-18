@@ -67,6 +67,16 @@ qlonglong ProgressListDelegate::Private::getFilesProcessed(const QModelIndex &in
     return index.model()->data(index, filesProcessed).toLongLong();
 }
 
+qlonglong ProgressListDelegate::Private::getDirTotals(const QModelIndex &index) const
+{
+    return index.model()->data(index, dirTotals).toLongLong();
+}
+
+qlonglong ProgressListDelegate::Private::getDirsProcessed(const QModelIndex &index) const
+{
+    return index.model()->data(index, dirsProcessed).toLongLong();
+}
+
 QString ProgressListDelegate::Private::getSizeTotals(const QModelIndex &index) const
 {
     return index.model()->data(index, sizeTotals).toString();
@@ -120,6 +130,11 @@ int ProgressListDelegate::Private::getPercent(const QModelIndex &index) const
 QString ProgressListDelegate::Private::getMessage(const QModelIndex &index) const
 {
     return index.model()->data(index, message).toString();
+}
+
+QString ProgressListDelegate::Private::getProgressMessage(const QModelIndex &index) const
+{
+    return index.model()->data(index, progressMessage).toString();
 }
 
 const QList<actionInfo> &ProgressListDelegate::Private::getActionList(const QModelIndex &index) const
@@ -306,6 +321,17 @@ void ProgressListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
         coordY += d->separatorPixels + textHeight;
     }
 
+    if (!d->getProgressMessage(index).isEmpty())
+    {
+        QString textToShow = fontMetrics.elidedText(d->getProgressMessage(index), Qt::ElideRight, canvas.width() - d->getCurrentLeftMargin(textHeight) - d->rightMargin);
+
+        textHeight = fontMetrics.size(Qt::TextSingleLine, textToShow).height();
+
+        painter->drawText(d->getCurrentLeftMargin(textHeight), coordY, fontMetrics.width(textToShow), textHeight, Qt::AlignLeft, textToShow);
+
+        coordY += d->separatorPixels + textHeight;
+    }
+
     if (d->getFilesProcessed(index) > 1)
     {
         QString textToShow;
@@ -369,6 +395,12 @@ QSize ProgressListDelegate::sizeHint(const QStyleOptionViewItem &option, const Q
     if (!d->getMessage(index).isEmpty())
     {
         textSize = fontMetrics.size(Qt::TextSingleLine, d->getMessage(index)).height() + d->separatorPixels;
+        itemHeight += textSize;
+    }
+
+    if (!d->getProgressMessage(index).isEmpty())
+    {
+        textSize = fontMetrics.size(Qt::TextSingleLine, d->getProgressMessage(index)).height() + d->separatorPixels;
         itemHeight += textSize;
     }
 

@@ -72,6 +72,8 @@ public:
         icon,
         fileTotals,
         filesProcessed,
+        dirTotals,
+        dirsProcessed,
         sizeTotals,
         sizeProcessed,
         timeTotals,
@@ -82,7 +84,8 @@ public:
         toLabel,
         speed,
         percent,
-        message
+        message,
+        progressMessage
     };
 
 Q_SIGNALS:

@@ -58,6 +58,12 @@ void UIServerAdaptor::infoMessage(int id, const QString &msg)
     parent()->infoMessage(id, msg);
 }
 
+void UIServerAdaptor::progressInfoMessage(int id, const QString &msg)
+{
+    // handle method call org.kde.KIO.UIServer.progressInfoMessage
+    parent()->progressInfoMessage(id, msg);
+}
+
 void UIServerAdaptor::jobFinished(int id)
 {
     // handle method call org.kde.KIO.UIServer.jobFinished

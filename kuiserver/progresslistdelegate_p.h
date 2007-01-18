@@ -55,6 +55,8 @@ public:
     QString getIcon(const QModelIndex &index) const;
     qlonglong getFileTotals(const QModelIndex &index) const;
     qlonglong getFilesProcessed(const QModelIndex &index) const;
+    qlonglong getDirTotals(const QModelIndex &index) const;
+    qlonglong getDirsProcessed(const QModelIndex &index) const;
     QString getSizeTotals(const QModelIndex &index) const;
     QString getSizeProcessed(const QModelIndex &index) const;
     qlonglong getTimeTotals(const QModelIndex &index) const;
@@ -66,6 +68,7 @@ public:
     QString getSpeed(const QModelIndex &index) const;
     int getPercent(const QModelIndex &index) const;
     QString getMessage(const QModelIndex &index) const;
+    QString getProgressMessage(const QModelIndex &index) const;
     const QList<actionInfo> &getActionList(const QModelIndex &index) const;
     QStyleOptionProgressBarV2 *getProgressBar(const QModelIndex &index) const;
     int getCurrentLeftMargin(int fontHeight) const;

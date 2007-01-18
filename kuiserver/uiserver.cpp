@@ -207,9 +207,8 @@ void UIServer::totalDirs(int id, unsigned long dirs)
 {
     if (id < 1) return;
 
-#ifdef __GNUC__
-    #warning implement me (ereslibre)
-#endif
+    progressListModel->setData(progressListModel->indexForJob(id), qulonglong(dirs),
+                               ProgressListDelegate::dirTotals);
 }
 
 void UIServer::processedSize(int id, KIO::filesize_t bytes)
@@ -232,9 +231,8 @@ void UIServer::processedDirs(int id, unsigned long dirs)
 {
     if (id < 1) return;
 
-#ifdef __GNUC__
-    #warning implement me (ereslibre)
-#endif
+    progressListModel->setData(progressListModel->indexForJob(id), qulonglong(dirs),
+                               ProgressListDelegate::dirsProcessed);
 }
 
 void UIServer::percent(int id, unsigned long ipercent)
@@ -259,6 +257,14 @@ void UIServer::infoMessage(int id, QString msg)
 
     progressListModel->setData(progressListModel->indexForJob(id), msg,
                                ProgressListDelegate::message);
+}
+
+void UIServer::progressInfoMessage(int id, QString msg)
+{
+    if (id < 1) return;
+
+    progressListModel->setData(progressListModel->indexForJob(id), msg,
+                               ProgressListDelegate::progressMessage);
 }
 
 void UIServer::copying(int id, QString from, QString to)
@@ -442,15 +448,19 @@ void UIServer::showConfigurationDialog()
 }
 
 UIConfigurationDialog::UIConfigurationDialog(QWidget *parent)
-    : QWidget(parent)
+    : KDialog(parent)
 {
+    setButtons(KDialog::Ok | KDialog::Close);
+
     setupUi(this);
 
-    connect(buttonAccept, SIGNAL(clicked(bool)), this,
+    connect(this, SIGNAL(okClicked()), this,
             SLOT(saveAndExit()));
 
-    connect(buttonCancel, SIGNAL(clicked(bool)), this,
+    connect(this, SIGNAL(cancelClicked()), this,
             SLOT(close()));
+
+    centerOnScreen(this);
 }
 
 UIConfigurationDialog::~UIConfigurationDialog()

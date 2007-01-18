@@ -165,6 +165,8 @@ bool ProgressListModel::insertRow(int row, uint jobId, const QModelIndex &parent
     newJob.icon = QString();
     newJob.fileTotals = -1;
     newJob.filesProcessed = -1;
+    newJob.dirTotals = -1;
+    newJob.dirsProcessed = -1;
     newJob.sizeTotals = QString();
     newJob.sizeProcessed = QString();
     newJob.timeElapsed = -1;
@@ -176,6 +178,7 @@ bool ProgressListModel::insertRow(int row, uint jobId, const QModelIndex &parent
     newJob.speed = QString();
     newJob.percent = -1;
     newJob.message = QString();
+    newJob.progressMessage = QString();
     newJob.progressBar = 0;
     newJob.iconLoader = 0;
     newJob.defaultProgress = 0;
