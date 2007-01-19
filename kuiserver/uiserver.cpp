@@ -36,7 +36,6 @@
 #include <kstatusbar.h>
 #include <kdebug.h>
 #include <kmessagebox.h>
-#include <kdesu/client.h>
 #include <kwin.h>
 #include <kdialog.h>
 #include <ksystemtrayicon.h>
