@@ -36,7 +36,7 @@
 #include <QtDBus/QtDBus>
 
 /**
- * Provides information about a crashed process over dcop.
+ * Provides information about a crashed process over dbus.
  *
  * @author Hamish Rodda <rodda@kde.org>
  */
