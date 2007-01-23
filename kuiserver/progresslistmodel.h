@@ -36,6 +36,7 @@ namespace KIO
 
 struct actionInfo
 {
+    bool enabled;                         ///< Button enabled or not
     int actionId;                           ///< The number that identificates the action
     QString actionText;                     ///< The text that is shown on the button on the editor
 };
@@ -196,6 +197,22 @@ public:
       * @param actionText   the new text to be shown related to this action
       */
     void editAction(int jobId, int actionId, const QString &actionText);
+
+    /**
+      * Enables an existing action (the press button)
+      *
+      * @param jobId    the identification number of the job that contains the action to be enabled
+      * @param actionId the action that is going to be enabled
+      */
+    void enableAction(int jobId, int actionId);
+
+    /**
+      * Disables an existing action (the press button)
+      *
+      * @param jobId    the identification number of the job that contains the action to be disabled
+      * @param actionId the action that is going to be disabled
+      */
+    void disableAction(int jobId, int actionId);
 
     /**
       * Removes an existing action

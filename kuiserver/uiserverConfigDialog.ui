@@ -5,85 +5,104 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>320</width>
-    <height>231</height>
+    <width>450</width>
+    <height>214</height>
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>Progress Manager - Configuration</string>
+   <string/>
   </property>
-  <layout class="QVBoxLayout" >
+  <layout class="QHBoxLayout" >
    <property name="margin" >
     <number>9</number>
    </property>
    <property name="spacing" >
-    <number>6</number>
+    <number>10</number>
    </property>
    <item>
-    <widget class="QGroupBox" name="groupAppearance" >
-     <property name="title" >
-      <string>Appearance</string>
+    <layout class="QVBoxLayout" >
+     <property name="margin" >
+      <number>0</number>
      </property>
-     <widget class="QRadioButton" name="radioList" >
-      <property name="geometry" >
-       <rect>
-        <x>10</x>
-        <y>30</y>
-        <width>201</width>
-        <height>24</height>
-       </rect>
-      </property>
-      <property name="text" >
-       <string>Show all jobs in a list</string>
-      </property>
-     </widget>
-     <widget class="QRadioButton" name="radioTree" >
-      <property name="geometry" >
-       <rect>
-        <x>10</x>
-        <y>70</y>
-        <width>201</width>
-        <height>24</height>
-       </rect>
-      </property>
-      <property name="text" >
-       <string>Show all jobs in a tree</string>
-      </property>
-     </widget>
-    </widget>
+     <property name="spacing" >
+      <number>6</number>
+     </property>
+     <item>
+      <widget class="QGroupBox" name="groupFinishedJobs" >
+       <property name="title" >
+        <string>Finished jobs</string>
+       </property>
+       <layout class="QVBoxLayout" >
+        <property name="margin" >
+         <number>9</number>
+        </property>
+        <property name="spacing" >
+         <number>6</number>
+        </property>
+        <item>
+         <widget class="QRadioButton" name="kcfg_radioMove" >
+          <property name="text" >
+           <string>Move them to a different list</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="kcfg_radioRemove" >
+          <property name="text" >
+           <string>Remove them</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="groupAppearance" >
+       <property name="title" >
+        <string>Appearance</string>
+       </property>
+       <layout class="QVBoxLayout" >
+        <property name="margin" >
+         <number>9</number>
+        </property>
+        <property name="spacing" >
+         <number>6</number>
+        </property>
+        <item>
+         <widget class="QRadioButton" name="kcfg_radioList" >
+          <property name="text" >
+           <string>Show all jobs in a list</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="kcfg_radioTree" >
+          <property name="text" >
+           <string>Show all jobs in a tree</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
    </item>
    <item>
-    <widget class="QGroupBox" name="groupFinishedJobs" >
-     <property name="title" >
-      <string>Finished jobs</string>
+    <layout class="QVBoxLayout" >
+     <property name="margin" >
+      <number>0</number>
      </property>
-     <widget class="QRadioButton" name="radioRemove" >
-      <property name="geometry" >
-       <rect>
-        <x>10</x>
-        <y>70</y>
-        <width>201</width>
-        <height>24</height>
-       </rect>
-      </property>
-      <property name="text" >
-       <string>Remove them</string>
-      </property>
-     </widget>
-     <widget class="QRadioButton" name="radioMove" >
-      <property name="geometry" >
-       <rect>
-        <x>10</x>
-        <y>30</y>
-        <width>201</width>
-        <height>24</height>
-       </rect>
-      </property>
-      <property name="text" >
-       <string>Move them to a different list</string>
-      </property>
-     </widget>
-    </widget>
+     <property name="spacing" >
+      <number>6</number>
+     </property>
+     <item>
+      <widget class="QCheckBox" name="kcfg_checkShowSeparateWindows" >
+       <property name="text" >
+        <string>Show separate windows</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>

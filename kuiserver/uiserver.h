@@ -37,10 +37,12 @@
 #include <ktoolbar.h>
 
 #include "uiserver_p.h"
+#include <kuiserversettings.h>
 
 class ProgressListModel;
 class UIServerAdaptor;
 class QToolBar;
+class QTabWidget;
 class KLineEdit;
 
 class UIServer
@@ -93,6 +95,20 @@ public:
       * @param actionText   the new button text
       */
     void editAction(int actionId, const QString &actionText);
+
+    /**
+      * Enables an existing action (the press button)
+      *
+      * @param actionId the action that is going to be enabled
+      */
+    void enableAction(int actionId);
+
+    /**
+      * Disables an existing action (the press button)
+      *
+      * @param actionId the action that is going to be disabled
+      */
+    void disableAction(int actionId);
 
     /**
       * Removes an existing action
@@ -187,8 +203,9 @@ public:
       * @param jobId    the identification number of the job
       * @param from     the source of the copying
       * @param to       the destination of copying transfer
+      * @return         whether it was added to the list/tree or not
       */
-    void copying(int jobId, QString from, QString to);
+    bool copying(int jobId, QString from, QString to);
 
     /**
       * Starts a moving progress
@@ -196,40 +213,45 @@ public:
       * @param jobId    the identification number of the job
       * @param from     the source of the moving
       * @param to       the destination of the moving
+      * @return         whether it was added to the list/tree or not
       */
-    void moving(int jobId, QString from, QString to);
+    bool moving(int jobId, QString from, QString to);
 
     /**
       * Starts a deleting progress
       *
       * @param jobId    the identification number of the job
       * @param url      the path that is going to be deleted
+      * @return         whether it was added to the list/tree or not
       */
-    void deleting(int jobId, QString url);
+    bool deleting(int jobId, QString url);
 
     /**
       * Starts a transferring progress
       *
       * @param jobId    the identification number of the job
       * @param url      the path that is going to be transferred
+      * @return         whether it was added to the list/tree or not
       */
-    void transferring(int jobId, QString url);
+    bool transferring(int jobId, QString url);
 
     /**
       * Starts a dir creation progress
       *
       * @param jobId    the identification number of the job
       * @param dir      the path where the directory is going to be created
+      * @return         whether it was added to the list/tree or not
       */
-    void creatingDir(int jobId, QString dir);
+    bool creatingDir(int jobId, QString dir);
 
     /**
       * Starts a stating progress
       *
       * @param jobId    the identification number of the job
       * @param url      the path that is going to be stated
+      * @return         whether it was added to the list/tree or not
       */
-    void stating(int jobId, QString url);
+    bool stating(int jobId, QString url);
 
     /**
       * Starts a mounting progress
@@ -237,16 +259,18 @@ public:
       * @param jobId    the identification number of the job
       * @param dev      the device that is going to be mounted
       * @param point    the mount point where the device will be mounted
+      * @return         whether it was added to the list/tree or not
       */
-    void mounting(int jobId, QString dev, QString point);
+    bool mounting(int jobId, QString dev, QString point);
 
     /**
       * Starts an unmounting progress
       *
       * @param jobId    the identification number of the job
       * @param point    the mount point that is going to be unmounted
+      * @return         whether it was added to the list/tree or not
       */
-    void unmounting(int jobId, QString point);
+    bool unmounting(int jobId, QString point);
 
     /**
       * Popup a message box
@@ -280,21 +304,24 @@ public:
 
 public Q_SLOTS:
     void slotRemoveSystemTrayIcon();
+    void updateConfiguration();
     void applySettings();
 
 private Q_SLOTS:
     void showConfigurationDialog();
 
-protected:
-    ProgressListModel *progressListModel;
-    QListView *listProgress;
-
 private:
-    UIConfigurationDialog *configurationDialog;
+    ProgressListModel *progressListModel;
+    ProgressListModel *progressListFinishedModel;
+    QListView *listProgress;
+    QListView *listFinished;
+    QTabWidget *tabWidget;
+
     QToolBar *toolBar;
     KLineEdit *searchText;
     UIServerAdaptor *serverAdaptor;
     QHash<int, int> m_hashActions;
+    QHash<int, int> m_jobTimesAdded;
 
     static int s_jobId;
     static int s_actionId;

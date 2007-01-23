@@ -34,22 +34,22 @@ UIServerAdaptor::~UIServerAdaptor()
     // destructor
 }
 
-void UIServerAdaptor::copying(int id, const QString &from, const QString &to)
+bool UIServerAdaptor::copying(int id, const QString &from, const QString &to)
 {
     // handle method call org.kde.KIO.UIServer.copying
-    parent()->copying(id, from, to);
+    return parent()->copying(id, from, to);
 }
 
-void UIServerAdaptor::creatingDir(int id, const QString &url)
+bool UIServerAdaptor::creatingDir(int id, const QString &url)
 {
     // handle method call org.kde.KIO.UIServer.creatingDir
-    parent()->creatingDir(id, url);
+    return parent()->creatingDir(id, url);
 }
 
-void UIServerAdaptor::deleting(int id, const QString &url)
+bool UIServerAdaptor::deleting(int id, const QString &url)
 {
     // handle method call org.kde.KIO.UIServer.deleting
-    parent()->deleting(id, url);
+    return parent()->deleting(id, url);
 }
 
 void UIServerAdaptor::infoMessage(int id, const QString &msg)
@@ -76,16 +76,16 @@ int UIServerAdaptor::messageBox(int id, int type, const QString &text, const QSt
     return parent()->messageBox(id, type, text, caption, buttonYes, buttonNo);
 }
 
-void UIServerAdaptor::mounting(int id, const QString &dev, const QString &point)
+bool UIServerAdaptor::mounting(int id, const QString &dev, const QString &point)
 {
     // handle method call org.kde.KIO.UIServer.mounting
-    parent()->mounting(id, dev, point);
+    return parent()->mounting(id, dev, point);
 }
 
-void UIServerAdaptor::moving(int id, const QString &from, const QString &to)
+bool UIServerAdaptor::moving(int id, const QString &from, const QString &to)
 {
     // handle method call org.kde.KIO.UIServer.moving
-    parent()->moving(id, from, to);
+    return parent()->moving(id, from, to);
 }
 
 int UIServerAdaptor::newJob(const QString &appServiceName, bool showProgress, const QString &internalAppName, const QString &jobIcon, const QString &appName)
@@ -102,6 +102,16 @@ int UIServerAdaptor::newAction(int jobId, const QString &actionText)
 void UIServerAdaptor::editAction(int actionId, const QString &actionText)
 {
     parent()->editAction(actionId, actionText);
+}
+
+void UIServerAdaptor::enableAction(int actionId)
+{
+    parent()->enableAction(actionId);
+}
+
+void UIServerAdaptor::disableAction(int actionId)
+{
+    parent()->disableAction(actionId);
 }
 
 void UIServerAdaptor::removeAction(int actionId)
@@ -145,10 +155,10 @@ void UIServerAdaptor::speed(int id, const QString &bytesPerSecond)
     parent()->speed(id, bytesPerSecond);
 }
 
-void UIServerAdaptor::stating(int id, const QString &url)
+bool UIServerAdaptor::stating(int id, const QString &url)
 {
     // handle method call org.kde.KIO.UIServer.stating
-    parent()->stating(id, url);
+    return parent()->stating(id, url);
 }
 
 void UIServerAdaptor::totalDirs(int id, uint dirs)
@@ -169,16 +179,16 @@ void UIServerAdaptor::totalSize(int id, qulonglong size)
     parent()->totalSize(id, size);
 }
 
-void UIServerAdaptor::transferring(int id, const QString &url)
+bool UIServerAdaptor::transferring(int id, const QString &url)
 {
     // handle method call org.kde.KIO.UIServer.transferring
-    parent()->transferring(id, url);
+    return parent()->transferring(id, url);
 }
 
-void UIServerAdaptor::unmounting(int id, const QString &point)
+bool UIServerAdaptor::unmounting(int id, const QString &point)
 {
     // handle method call org.kde.KIO.UIServer.unmounting
-    parent()->unmounting(id, point);
+    return parent()->unmounting(id, point);
 }
 
 

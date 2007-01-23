@@ -56,6 +56,14 @@ class UIServerAdaptor: public QDBusAbstractAdaptor
 "      <arg direction=\"in\" type=\"s\" name=\"actionText\" />\n"
 "      <annotation value=\"true\" name=\"org.freedesktop.DBus.Method.NoReply\" />\n"
 "    </method>\n"
+"    <method name=\"enableAction\" >\n"
+"      <arg direction=\"in\" type=\"i\" name=\"actionId\" />\n"
+"      <annotation value=\"true\" name=\"org.freedesktop.DBus.Method.NoReply\" />\n"
+"    </method>\n"
+"    <method name=\"disableAction\" >\n"
+"      <arg direction=\"in\" type=\"i\" name=\"actionId\" />\n"
+"      <annotation value=\"true\" name=\"org.freedesktop.DBus.Method.NoReply\" />\n"
+"    </method>\n"
 "    <method name=\"removeAction\" >\n"
 "      <arg direction=\"in\" type=\"i\" name=\"actionId\" />\n"
 "      <annotation value=\"true\" name=\"org.freedesktop.DBus.Method.NoReply\" />\n"
@@ -114,44 +122,44 @@ class UIServerAdaptor: public QDBusAbstractAdaptor
 "      <arg direction=\"in\" type=\"i\" name=\"id\" />\n"
 "      <arg direction=\"in\" type=\"s\" name=\"from\" />\n"
 "      <arg direction=\"in\" type=\"s\" name=\"to\" />\n"
-"      <annotation value=\"true\" name=\"org.freedesktop.DBus.Method.NoReply\" />\n"
+"      <arg direction=\"out\" type=\"b\" name=\"res\" />\n"
 "    </method>\n"
 "    <method name=\"moving\" >\n"
 "      <arg direction=\"in\" type=\"i\" name=\"id\" />\n"
 "      <arg direction=\"in\" type=\"s\" name=\"from\" />\n"
 "      <arg direction=\"in\" type=\"s\" name=\"to\" />\n"
-"      <annotation value=\"true\" name=\"org.freedesktop.DBus.Method.NoReply\" />\n"
+"      <arg direction=\"out\" type=\"b\" name=\"res\" />\n"
 "    </method>\n"
 "    <method name=\"deleting\" >\n"
 "      <arg direction=\"in\" type=\"i\" name=\"id\" />\n"
 "      <arg direction=\"in\" type=\"s\" name=\"url\" />\n"
-"      <annotation value=\"true\" name=\"org.freedesktop.DBus.Method.NoReply\" />\n"
+"      <arg direction=\"out\" type=\"b\" name=\"res\" />\n"
 "    </method>\n"
 "    <method name=\"transferring\" >\n"
 "      <arg direction=\"in\" type=\"i\" name=\"id\" />\n"
 "      <arg direction=\"in\" type=\"s\" name=\"url\" />\n"
-"      <annotation value=\"true\" name=\"org.freedesktop.DBus.Method.NoReply\" />\n"
+"      <arg direction=\"out\" type=\"b\" name=\"res\" />\n"
 "    </method>\n"
 "    <method name=\"creatingDir\" >\n"
 "      <arg direction=\"in\" type=\"i\" name=\"id\" />\n"
 "      <arg direction=\"in\" type=\"s\" name=\"url\" />\n"
-"      <annotation value=\"true\" name=\"org.freedesktop.DBus.Method.NoReply\" />\n"
+"      <arg direction=\"out\" type=\"b\" name=\"res\" />\n"
 "    </method>\n"
 "    <method name=\"stating\" >\n"
 "      <arg direction=\"in\" type=\"i\" name=\"id\" />\n"
 "      <arg direction=\"in\" type=\"s\" name=\"url\" />\n"
-"      <annotation value=\"true\" name=\"org.freedesktop.DBus.Method.NoReply\" />\n"
+"      <arg direction=\"out\" type=\"b\" name=\"res\" />\n"
 "    </method>\n"
 "    <method name=\"mounting\" >\n"
 "      <arg direction=\"in\" type=\"i\" name=\"id\" />\n"
 "      <arg direction=\"in\" type=\"s\" name=\"dev\" />\n"
 "      <arg direction=\"in\" type=\"s\" name=\"point\" />\n"
-"      <annotation value=\"true\" name=\"org.freedesktop.DBus.Method.NoReply\" />\n"
+"      <arg direction=\"out\" type=\"b\" name=\"res\" />\n"
 "    </method>\n"
 "    <method name=\"unmounting\" >\n"
 "      <arg direction=\"in\" type=\"i\" name=\"id\" />\n"
 "      <arg direction=\"in\" type=\"s\" name=\"point\" />\n"
-"      <annotation value=\"true\" name=\"org.freedesktop.DBus.Method.NoReply\" />\n"
+"      <arg direction=\"out\" type=\"b\" name=\"res\" />\n"
 "    </method>\n"
 "    <method name=\"messageBox\" >\n"
 "      <arg direction=\"in\" type=\"i\" name=\"id\" />\n"
@@ -178,31 +186,33 @@ public:
 
 public: // PROPERTIES
 public Q_SLOTS: // METHODS
-    Q_NOREPLY void copying(int id, const QString &from, const QString &to);
-    Q_NOREPLY void creatingDir(int id, const QString &url);
-    Q_NOREPLY void deleting(int id, const QString &url);
+    bool copying(int id, const QString &from, const QString &to);
+    bool creatingDir(int id, const QString &url);
+    bool deleting(int id, const QString &url);
     Q_NOREPLY void infoMessage(int id, const QString &msg);
     Q_NOREPLY void progressInfoMessage(int id, const QString &msg);
     Q_NOREPLY void jobFinished(int id);
     int messageBox(int id, int type, const QString &text, const QString &caption, const QString &buttonYes, const QString &buttonNo);
     void setJobVisible(int jobId, bool visible);
-    Q_NOREPLY void mounting(int id, const QString &dev, const QString &point);
-    Q_NOREPLY void moving(int id, const QString &from, const QString &to);
+    bool mounting(int id, const QString &dev, const QString &point);
+    bool moving(int id, const QString &from, const QString &to);
     int newJob(const QString &appServiceName, bool showProgress, const QString &internalAppName, const QString &jobIcon, const QString &appName);
     int newAction(int jobId, const QString &actionText);
     Q_NOREPLY void editAction(int actionId, const QString &actionText);
+    Q_NOREPLY void enableAction(int actionId);
+    Q_NOREPLY void disableAction(int actionId);
     Q_NOREPLY void removeAction(int actionId);
     Q_NOREPLY void percent(int id, uint ipercent);
     Q_NOREPLY void processedDirs(int id, uint dirs);
     Q_NOREPLY void processedFiles(int id, uint files);
     Q_NOREPLY void processedSize(int id, qulonglong size);
     Q_NOREPLY void speed(int id, const QString &bytesPerSecond);
-    Q_NOREPLY void stating(int id, const QString &url);
+    bool stating(int id, const QString &url);
     Q_NOREPLY void totalDirs(int id, uint dirs);
     Q_NOREPLY void totalFiles(int id, uint files);
     Q_NOREPLY void totalSize(int id, qulonglong size);
-    Q_NOREPLY void transferring(int id, const QString &url);
-    Q_NOREPLY void unmounting(int id, const QString &point);
+    bool transferring(int id, const QString &url);
+    bool unmounting(int id, const QString &point);
 Q_SIGNALS: // SIGNALS
     void actionPerformed(int actionId);
 };

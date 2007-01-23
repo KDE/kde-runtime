@@ -221,6 +221,7 @@ QWidget *ProgressListDelegate::createEditor(QWidget *parent, const QStyleOptionV
     foreach (const actionInfo &actionIt, actionsModel)
     {
         newButton = new Private::QActionPushButton(actionIt.actionId, actionIt.actionText);
+        newButton->setEnabled(actionIt.enabled);
 
         connect(newButton, SIGNAL(actionButtonPressed(int)), this,
                 SIGNAL(actionPerformed(int)));

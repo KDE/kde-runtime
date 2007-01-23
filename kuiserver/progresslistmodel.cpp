@@ -309,6 +309,7 @@ void ProgressListModel::newAction(uint jobId, uint actionId, const QString &acti
     int row = index.row();
 
     actionInfo newActionInfo;
+    newActionInfo.enabled = true;
     newActionInfo.actionId = actionId;
     newActionInfo.actionText = actionText;
 
@@ -332,7 +333,60 @@ void ProgressListModel::editAction(int jobId, int actionId, const QString &actio
 
         if (actionId == actionIt.actionId)
         {
+            jobInfoList[index.row()].actionInfoList[i].enabled = true;
             jobInfoList[index.row()].actionInfoList[i].actionText = actionText;
+
+            keepSearching = false;
+        }
+
+        i++;
+    }
+
+    emit actionEdited(index);
+    emit dataChanged(index, index);
+}
+
+void ProgressListModel::enableAction(int jobId, int actionId)
+{
+    QModelIndex index = indexForJob(jobId);
+
+    int i = 0;
+    bool keepSearching = true;
+    actionInfo actionIt;
+    while ((i < jobInfoList[index.row()].actionInfoList.count()) &&
+           keepSearching)
+    {
+        actionIt = jobInfoList[index.row()].actionInfoList[i];
+
+        if (actionId == actionIt.actionId)
+        {
+            jobInfoList[index.row()].actionInfoList[i].enabled = true;
+
+            keepSearching = false;
+        }
+
+        i++;
+    }
+
+    emit actionEdited(index);
+    emit dataChanged(index, index);
+}
+
+void ProgressListModel::disableAction(int jobId, int actionId)
+{
+    QModelIndex index = indexForJob(jobId);
+
+    int i = 0;
+    bool keepSearching = true;
+    actionInfo actionIt;
+    while ((i < jobInfoList[index.row()].actionInfoList.count()) &&
+           keepSearching)
+    {
+        actionIt = jobInfoList[index.row()].actionInfoList[i];
+
+        if (actionId == actionIt.actionId)
+        {
+            jobInfoList[index.row()].actionInfoList[i].enabled = false;
 
             keepSearching = false;
         }

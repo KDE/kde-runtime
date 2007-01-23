@@ -20,12 +20,13 @@
 #ifndef UISERVER_P_H
 #define UISERVER_P_H
 
-class KDialog;
+//#include <kcmodule.h>
+#include <QWidget>
 
 #include "ui_uiserverConfigDialog.h"
 
 class UIConfigurationDialog
-    : public KDialog
+    : public QWidget
     , private Ui::configurationDialog
 {
     Q_OBJECT
@@ -33,14 +34,6 @@ class UIConfigurationDialog
 public:
     UIConfigurationDialog(QWidget *parent);
     ~UIConfigurationDialog();
-
-public Q_SLOTS:
-    void show();
-
-private Q_SLOTS:
-    void loadSettings();
-    void saveSettings();
-    void saveAndExit();
 };
 
 #endif // UISERVER_P_H
