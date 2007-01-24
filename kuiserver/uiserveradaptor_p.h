@@ -161,15 +161,6 @@ class UIServerAdaptor: public QDBusAbstractAdaptor
 "      <arg direction=\"in\" type=\"s\" name=\"point\" />\n"
 "      <arg direction=\"out\" type=\"b\" name=\"res\" />\n"
 "    </method>\n"
-"    <method name=\"messageBox\" >\n"
-"      <arg direction=\"in\" type=\"i\" name=\"id\" />\n"
-"      <arg direction=\"in\" type=\"i\" name=\"type\" />\n"
-"      <arg direction=\"in\" type=\"s\" name=\"text\" />\n"
-"      <arg direction=\"in\" type=\"s\" name=\"caption\" />\n"
-"      <arg direction=\"in\" type=\"s\" name=\"buttonYes\" />\n"
-"      <arg direction=\"in\" type=\"s\" name=\"buttonNo\" />\n"
-"      <arg direction=\"out\" type=\"i\" name=\"buttonCode\" />\n"
-"    </method>\n"
 "    <method name=\"setJobVisible\" >\n"
 "      <arg direction=\"in\" type=\"i\" name=\"jobId\" />\n"
 "      <arg direction=\"in\" type=\"b\" name=\"visible\" />\n"
@@ -192,7 +183,6 @@ public Q_SLOTS: // METHODS
     Q_NOREPLY void infoMessage(int id, const QString &msg);
     Q_NOREPLY void progressInfoMessage(int id, const QString &msg);
     Q_NOREPLY void jobFinished(int id);
-    int messageBox(int id, int type, const QString &text, const QString &caption, const QString &buttonYes, const QString &buttonNo);
     void setJobVisible(int jobId, bool visible);
     bool mounting(int id, const QString &dev, const QString &point);
     bool moving(int id, const QString &from, const QString &to);

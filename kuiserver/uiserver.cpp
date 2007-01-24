@@ -37,14 +37,10 @@
 #include <klocale.h>
 #include <kstatusbar.h>
 #include <kdebug.h>
-#include <kmessagebox.h>
-#include <kwin.h>
 #include <kdialog.h>
 #include <ksystemtrayicon.h>
 #include <kmenu.h>
 #include <kaction.h>
-#include <kdialog.h>
-#include <kstandardaction.h>
 #include <klineedit.h>
 
 #include "uiserver.h"
@@ -53,17 +49,9 @@
 #include "progresslistmodel.h"
 #include "progresslistdelegate.h"
 
-#include "kio/observer.h" // for static methods only
 #include "kio/defaultprogress.h"
 #include "kio/jobclasses.h"
 #include "uiserver.h"
-#include "kio/renamedialog.h"
-#include "kio/skipdialog.h"
-#include "kio/slavebase.h" // for QuestionYesNo etc.
-#include <ksslinfodialog.h>
-#include <ksslcertdialog.h>
-#include <ksslcertificate.h>
-#include <ksslcertchain.h>
 
 UIServer::UIServer()
     : KMainWindow(0)
@@ -505,12 +493,6 @@ bool UIServer::unmounting(int id, QString point)
                                ProgressListDelegate::fromLabel);
 
     return true;
-}
-
-int UIServer::messageBox(int id, int type, const QString &text, const QString &caption,
-               const QString &buttonYes, const QString &buttonNo)
-{
-    return Observer::messageBox(id, type, text, caption, buttonYes, buttonNo);
 }
 
 void UIServer::setJobVisible(int id, bool visible)

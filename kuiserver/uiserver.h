@@ -273,28 +273,6 @@ public:
     bool unmounting(int jobId, QString point);
 
     /**
-      * Popup a message box
-      *
-      * @param type         type of message box: QuestionYesNo, WarningYesNo, WarningContinueCancel...
-      *                     This enum is defined in slavebase.h, it currently is:
-      *                     QuestionYesNo = 1, WarningYesNo = 2, WarningContinueCancel = 3,
-      *                     WarningYesNoCancel = 4, Information = 5, SSLMessageBox = 6
-      * @param text         Message string. May contain newlines
-      * @param caption      Message box title
-      * @param buttonYes    The text for the first button
-      *                     The default is i18n("&Yes")
-      * @param buttonNo     The text for the second button
-      *                     The default is i18n("&No")
-      *
-      * Note: for ContinueCancel, buttonYes is the continue button and buttonNo is unused.
-      * ====  and for Information, none is used
-      *
-      * @return             a button code, as defined in KMessageBox, or 0 on communication error
-      */
-    int messageBox(int jobId, int type, const QString &text, const QString &caption,
-                   const QString &buttonYes, const QString &buttonNo);
-
-    /**
       * Sets a job visible or hidden
       *
       * @param jobId    the job that will be hidden or shown

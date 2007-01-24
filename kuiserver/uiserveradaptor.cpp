@@ -70,12 +70,6 @@ void UIServerAdaptor::jobFinished(int id)
     parent()->jobFinished(id);
 }
 
-int UIServerAdaptor::messageBox(int id, int type, const QString &text, const QString &caption, const QString &buttonYes, const QString &buttonNo)
-{
-    // handle method call org.kde.KIO.UIServer.messageBox
-    return parent()->messageBox(id, type, text, caption, buttonYes, buttonNo);
-}
-
 bool UIServerAdaptor::mounting(int id, const QString &dev, const QString &point)
 {
     // handle method call org.kde.KIO.UIServer.mounting
