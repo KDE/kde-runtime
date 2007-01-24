@@ -532,7 +532,7 @@ void UIServer::showConfigurationDialog()
 
     dialog->addPage(configurationUI, i18n("Behavior"), "display");
 
-    connect(dialog, SIGNAL(settingsChanged()), this,
+    connect(dialog, SIGNAL(settingsChanged(const QString&)), this,
             SLOT(updateConfiguration()));
 
     dialog->show();
