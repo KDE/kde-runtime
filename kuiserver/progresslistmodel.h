@@ -1,6 +1,6 @@
 /**
   * This file is part of the KDE project
-  * Copyright (C) 2006 Rafael Fernández López <ereslibre@gmail.com>
+  * Copyright (C) 2007, 2006 Rafael Fernández López <ereslibre@gmail.com>
   *
   * This library is free software; you can redistribute it and/or
   * modify it under the terms of the GNU Library General Public
@@ -34,14 +34,14 @@ namespace KIO
     class DefaultProgress;
 }
 
-struct actionInfo
+struct ActionInfo
 {
-    bool enabled;                         ///< Button enabled or not
+    bool enabled;                           ///< Button enabled or not
     int actionId;                           ///< The number that identificates the action
     QString actionText;                     ///< The text that is shown on the button on the editor
 };
 
-struct jobInfo
+struct JobInfo
 {
     int jobId;                              ///< The number that is associated with the job
     QString applicationInternalName;        ///< The application name (konqueror, kopete...)
@@ -63,7 +63,7 @@ struct jobInfo
     int percent;                            ///< The current percent of the progress
     QString message;                        ///< The information message to be shown
     QString progressMessage;                ///< The progress information message to be shown
-    QList<actionInfo> actionInfoList;       ///< The list of actions added to the job
+    QList<ActionInfo> actionInfoList;       ///< The list of actions added to the job
     QStyleOptionProgressBarV2 *progressBar; ///< The progress bar to be shown
     KIconLoader *iconLoader;                ///< The icon loader for loading the icon on the delegate
     KIO::DefaultProgress *defaultProgress;  ///< The default progress operation window
@@ -228,7 +228,7 @@ public:
       * @param jobId    the job which we want to retrieve all actions
       * @return         the list of actions related to the identification job number @p jobId
       */
-    const QList<actionInfo> &actions(uint jobId) const;
+    const QList<ActionInfo> &actions(uint jobId) const;
 
     /**
       * Returns the progress bar for the given @p index
@@ -292,7 +292,7 @@ private:
       */
     void setIconLoader(int row, KIconLoader *iconLoader);
 
-    QList<jobInfo> jobInfoList; /// @internal
+    QList<JobInfo> jobInfoList; /// @internal
 };
 
 #endif // PROGRESSLISTMODEL_H

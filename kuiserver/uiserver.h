@@ -1,6 +1,6 @@
 /**
   * This file is part of the KDE project
-  * Copyright (C) 2006 Rafael Fernández López <ereslibre@gmail.com>
+  * Copyright (C) 2007, 2006 Rafael Fernández López <ereslibre@gmail.com>
   * Copyright (C) 2000 Matej Koss <koss@miesto.sk>
   *                    David Faure <faure@kde.org>
   *
@@ -40,6 +40,7 @@
 #include <kuiserversettings.h>
 
 class ProgressListModel;
+class ProgressListDelegate;
 class UIServerAdaptor;
 class QToolBar;
 class QTabWidget;
@@ -83,39 +84,44 @@ public:
       * Adds an action (button) to a job
       *
       * @param jobId        the identification number of the job in which the action will be added
+      * @param actionId     the identification number of the action
       * @param actionText   the button text
       * @return             the identification number of the action (actionId)
       */
-    int newAction(int jobId, const QString &actionText);
+    void newAction(int jobId, int actionId, const QString &actionText);
 
     /**
       * Edits an existing action
       *
+      * @param jobId        the identification number of the job
       * @param actionId     the identification number of the action to be modified
       * @param actionText   the new button text
       */
-    void editAction(int actionId, const QString &actionText);
+    void editAction(int jobId, int actionId, const QString &actionText);
 
     /**
       * Enables an existing action (the press button)
       *
+      * @param jobId    the identification number of the job
       * @param actionId the action that is going to be enabled
       */
-    void enableAction(int actionId);
+    void enableAction(int jobId, int actionId);
 
     /**
       * Disables an existing action (the press button)
       *
+      * @param jobId    the identification number of the job
       * @param actionId the action that is going to be disabled
       */
-    void disableAction(int actionId);
+    void disableAction(int jobId, int actionId);
 
     /**
       * Removes an existing action
       *
+      * @param jobId    the identification number of the job
       * @param actionId the identification number of the action to be removed
       */
-    void removeAction(int actionId);
+    void removeAction(int jobId, int actionId);
 
     /**
       * Sets the total size of a job
@@ -287,10 +293,13 @@ public Q_SLOTS:
 
 private Q_SLOTS:
     void showConfigurationDialog();
+    void slotRowsRemoved(const QModelIndex &parent, int start, int end);
 
 private:
     ProgressListModel *progressListModel;
     ProgressListModel *progressListFinishedModel;
+    ProgressListDelegate *progressListDelegate;
+    ProgressListDelegate *progressListDelegateFinished;
     QListView *listProgress;
     QListView *listFinished;
     QTabWidget *tabWidget;
@@ -302,7 +311,6 @@ private:
     QHash<int, int> m_jobTimesAdded;
 
     static int s_jobId;
-    static int s_actionId;
 };
 
 #endif // UISERVER_H

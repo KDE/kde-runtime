@@ -1,6 +1,6 @@
 /**
   * This file is part of the KDE project
-  * Copyright (C) 2006 Rafael Fernández López <ereslibre@gmail.com>
+  * Copyright (C) 2007, 2006 Rafael Fernández López <ereslibre@gmail.com>
   *
   * This library is free software; you can redistribute it and/or
   * modify it under the terms of the GNU Library General Public
@@ -69,7 +69,7 @@ public:
     int getPercent(const QModelIndex &index) const;
     QString getMessage(const QModelIndex &index) const;
     QString getProgressMessage(const QModelIndex &index) const;
-    const QList<actionInfo> &getActionList(const QModelIndex &index) const;
+    const QList<ActionInfo> &getActionList(const QModelIndex &index) const;
     QStyleOptionProgressBarV2 *getProgressBar(const QModelIndex &index) const;
     int getCurrentLeftMargin(int fontHeight) const;
 
@@ -97,16 +97,17 @@ class ProgressListDelegate::Private::QActionPushButton
     Q_OBJECT
 
 public:
-    QActionPushButton(int actionId, const QString &actionText, QWidget *parent = 0);
+    QActionPushButton(int actionId, int jobId, const QString &actionText, QWidget *parent = 0);
 
 public Q_SLOTS:
     void buttonPressed();
 
 Q_SIGNALS:
-    void actionButtonPressed(int actionId);
+    void actionButtonPressed(int actionId, int jobId);
 
 private:
     int actionId;
+    int jobId;
 };
 
 #endif // PROGRESSLISTDELEGATE_P_H

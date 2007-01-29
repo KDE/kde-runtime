@@ -33,6 +33,7 @@ class UIServerAdaptor: public QDBusAbstractAdaptor
 "  <interface name=\"org.kde.KIO.UIServer\" >\n"
 "    <signal name=\"actionPerformed\" >\n"
 "      <arg name=\"actionId\" type=\"i\" direction=\"out\" />\n"
+"      <arg name=\"jobId\" type=\"i\" direction=\"out\" />\n"
 "    </signal>\n"
 "    <method name=\"newJob\" >\n"
 "      <arg direction=\"in\" type=\"s\" name=\"appServiceName\" />\n"
@@ -48,23 +49,28 @@ class UIServerAdaptor: public QDBusAbstractAdaptor
 "    </method>\n"
 "    <method name=\"newAction\" >\n"
 "      <arg direction=\"in\" type=\"i\" name=\"jobId\" />\n"
+"      <arg direction=\"in\" type=\"i\" name=\"actionId\" />\n"
 "      <arg direction=\"in\" type=\"s\" name=\"actionText\" />\n"
-"      <arg direction=\"out\" type=\"i\" name=\"actionId\" />\n"
+"      <annotation value=\"true\" name=\"org.freedesktop.DBus.Method.NoReply\" />\n"
 "    </method>\n"
 "    <method name=\"editAction\" >\n"
+"      <arg direction=\"in\" type=\"i\" name=\"jobId\" />\n"
 "      <arg direction=\"in\" type=\"i\" name=\"actionId\" />\n"
 "      <arg direction=\"in\" type=\"s\" name=\"actionText\" />\n"
 "      <annotation value=\"true\" name=\"org.freedesktop.DBus.Method.NoReply\" />\n"
 "    </method>\n"
 "    <method name=\"enableAction\" >\n"
+"      <arg direction=\"in\" type=\"i\" name=\"jobId\" />\n"
 "      <arg direction=\"in\" type=\"i\" name=\"actionId\" />\n"
 "      <annotation value=\"true\" name=\"org.freedesktop.DBus.Method.NoReply\" />\n"
 "    </method>\n"
 "    <method name=\"disableAction\" >\n"
+"      <arg direction=\"in\" type=\"i\" name=\"jobId\" />\n"
 "      <arg direction=\"in\" type=\"i\" name=\"actionId\" />\n"
 "      <annotation value=\"true\" name=\"org.freedesktop.DBus.Method.NoReply\" />\n"
 "    </method>\n"
 "    <method name=\"removeAction\" >\n"
+"      <arg direction=\"in\" type=\"i\" name=\"jobId\" />\n"
 "      <arg direction=\"in\" type=\"i\" name=\"actionId\" />\n"
 "      <annotation value=\"true\" name=\"org.freedesktop.DBus.Method.NoReply\" />\n"
 "    </method>\n"
@@ -187,11 +193,11 @@ public Q_SLOTS: // METHODS
     bool mounting(int id, const QString &dev, const QString &point);
     bool moving(int id, const QString &from, const QString &to);
     int newJob(const QString &appServiceName, bool showProgress, const QString &internalAppName, const QString &jobIcon, const QString &appName);
-    int newAction(int jobId, const QString &actionText);
-    Q_NOREPLY void editAction(int actionId, const QString &actionText);
-    Q_NOREPLY void enableAction(int actionId);
-    Q_NOREPLY void disableAction(int actionId);
-    Q_NOREPLY void removeAction(int actionId);
+    Q_NOREPLY void newAction(int jobId, int actionId, const QString &actionText);
+    Q_NOREPLY void editAction(int jobId, int actionId, const QString &actionText);
+    Q_NOREPLY void enableAction(int jobId, int actionId);
+    Q_NOREPLY void disableAction(int jobId, int actionId);
+    Q_NOREPLY void removeAction(int jobId, int actionId);
     Q_NOREPLY void percent(int id, uint ipercent);
     Q_NOREPLY void processedDirs(int id, uint dirs);
     Q_NOREPLY void processedFiles(int id, uint files);
@@ -204,7 +210,7 @@ public Q_SLOTS: // METHODS
     bool transferring(int id, const QString &url);
     bool unmounting(int id, const QString &point);
 Q_SIGNALS: // SIGNALS
-    void actionPerformed(int actionId);
+    void actionPerformed(int actionId, int jobId);
 };
 
 #endif

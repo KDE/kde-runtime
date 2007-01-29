@@ -1,6 +1,6 @@
 /**
   * This file is part of the KDE project
-  * Copyright (C) 2006 Rafael Fernández López <ereslibre@gmail.com>
+  * Copyright (C) 2007, 2006 Rafael Fernández López <ereslibre@gmail.com>
   *
   * This library is free software; you can redistribute it and/or
   * modify it under the terms of the GNU Library General Public
@@ -39,105 +39,105 @@
 
 int ProgressListDelegate::Private::getJobId(const QModelIndex &index) const
 {
-    return index.model()->data(index, jobId).toInt();
+    return index.model()->data(index, JobId).toInt();
 }
 
 QString ProgressListDelegate::Private::getApplicationInternalName(const QModelIndex &index) const
 {
-    return index.model()->data(index, applicationInternalName).toString();
+    return index.model()->data(index, ApplicationInternalName).toString();
 }
 
 QString ProgressListDelegate::Private::getApplicationName(const QModelIndex &index) const
 {
-    return index.model()->data(index, applicationName).toString();
+    return index.model()->data(index, ApplicationName).toString();
 }
 
 QString ProgressListDelegate::Private::getIcon(const QModelIndex &index) const
 {
-    return index.model()->data(index, icon).toString();
+    return index.model()->data(index, Icon).toString();
 }
 
 qlonglong ProgressListDelegate::Private::getFileTotals(const QModelIndex &index) const
 {
-    return index.model()->data(index, fileTotals).toLongLong();
+    return index.model()->data(index, FileTotals).toLongLong();
 }
 
 qlonglong ProgressListDelegate::Private::getFilesProcessed(const QModelIndex &index) const
 {
-    return index.model()->data(index, filesProcessed).toLongLong();
+    return index.model()->data(index, FilesProcessed).toLongLong();
 }
 
 qlonglong ProgressListDelegate::Private::getDirTotals(const QModelIndex &index) const
 {
-    return index.model()->data(index, dirTotals).toLongLong();
+    return index.model()->data(index, DirTotals).toLongLong();
 }
 
 qlonglong ProgressListDelegate::Private::getDirsProcessed(const QModelIndex &index) const
 {
-    return index.model()->data(index, dirsProcessed).toLongLong();
+    return index.model()->data(index, DirsProcessed).toLongLong();
 }
 
 QString ProgressListDelegate::Private::getSizeTotals(const QModelIndex &index) const
 {
-    return index.model()->data(index, sizeTotals).toString();
+    return index.model()->data(index, SizeTotals).toString();
 }
 
 QString ProgressListDelegate::Private::getSizeProcessed(const QModelIndex &index) const
 {
-    return index.model()->data(index, sizeProcessed).toString();
+    return index.model()->data(index, SizeProcessed).toString();
 }
 
 qlonglong ProgressListDelegate::Private::getTimeTotals(const QModelIndex &index) const
 {
-    return index.model()->data(index, timeTotals).toLongLong();
+    return index.model()->data(index, TimeTotals).toLongLong();
 }
 
 qlonglong ProgressListDelegate::Private::getTimeProcessed(const QModelIndex &index) const
 {
-    return index.model()->data(index, timeElapsed).toLongLong();
+    return index.model()->data(index, TimeElapsed).toLongLong();
 }
 
 QString ProgressListDelegate::Private::getFromLabel(const QModelIndex &index) const
 {
-    return index.model()->data(index, fromLabel).toString();
+    return index.model()->data(index, FromLabel).toString();
 }
 
 QString ProgressListDelegate::Private::getFrom(const QModelIndex &index) const
 {
-    return index.model()->data(index, from).toString();
+    return index.model()->data(index, From).toString();
 }
 
 QString ProgressListDelegate::Private::getToLabel(const QModelIndex &index) const
 {
-    return index.model()->data(index, toLabel).toString();
+    return index.model()->data(index, ToLabel).toString();
 }
 
 QString ProgressListDelegate::Private::getTo(const QModelIndex &index) const
 {
-    return index.model()->data(index, to).toString();
+    return index.model()->data(index, To).toString();
 }
 
 QString ProgressListDelegate::Private::getSpeed(const QModelIndex &index) const
 {
-    return index.model()->data(index, speed).toString();
+    return index.model()->data(index, Speed).toString();
 }
 
 int ProgressListDelegate::Private::getPercent(const QModelIndex &index) const
 {
-    return index.model()->data(index, percent).toInt();
+    return index.model()->data(index, Percent).toInt();
 }
 
 QString ProgressListDelegate::Private::getMessage(const QModelIndex &index) const
 {
-    return index.model()->data(index, message).toString();
+    return index.model()->data(index, Message).toString();
 }
 
 QString ProgressListDelegate::Private::getProgressMessage(const QModelIndex &index) const
 {
-    return index.model()->data(index, progressMessage).toString();
+    return index.model()->data(index, ProgressMessage).toString();
 }
 
-const QList<actionInfo> &ProgressListDelegate::Private::getActionList(const QModelIndex &index) const
+const QList<ActionInfo> &ProgressListDelegate::Private::getActionList(const QModelIndex &index) const
 {
     const ProgressListModel *progressListModel = static_cast<const ProgressListModel*>(index.model());
 
@@ -173,10 +173,11 @@ void ProgressListDelegate::Private::actionRemoved(const QModelIndex &index)
     listView->closePersistentEditor(index);
 }
 
-ProgressListDelegate::Private::QActionPushButton::QActionPushButton(int actionId, const QString &actionText, QWidget *parent)
+ProgressListDelegate::Private::QActionPushButton::QActionPushButton(int actionId, int jobId, const QString &actionText, QWidget *parent)
     : QPushButton(actionText, parent)
 {
     this->actionId = actionId;
+    this->jobId = jobId;
 
     connect(this, SIGNAL(clicked(bool)), this,
             SLOT(buttonPressed()));
@@ -184,7 +185,7 @@ ProgressListDelegate::Private::QActionPushButton::QActionPushButton(int actionId
 
 void ProgressListDelegate::Private::QActionPushButton::buttonPressed()
 {
-    emit actionButtonPressed(actionId);
+    emit actionButtonPressed(actionId, jobId);
 }
 
 ProgressListDelegate::ProgressListDelegate(QObject *parent, QListView *listView)
@@ -203,9 +204,9 @@ QWidget *ProgressListDelegate::createEditor(QWidget *parent, const QStyleOptionV
 {
     const ProgressListModel *progressListModel = static_cast<const ProgressListModel*>(index.model());
 
-    int jobIdModel = index.model()->data(index, jobId).toInt();
+    int jobIdModel = index.model()->data(index, JobId).toInt();
 
-    QList<actionInfo> actionsModel = progressListModel->actions(jobIdModel);
+    QList<ActionInfo> actionsModel = progressListModel->actions(jobIdModel);
 
     if (actionsModel.isEmpty())
         return 0;
@@ -218,13 +219,13 @@ QWidget *ProgressListDelegate::createEditor(QWidget *parent, const QStyleOptionV
 
     QPushButton *newButton;
     int i = 0;
-    foreach (const actionInfo &actionIt, actionsModel)
+    foreach (const ActionInfo &actionIt, actionsModel)
     {
-        newButton = new Private::QActionPushButton(actionIt.actionId, actionIt.actionText);
+        newButton = new Private::QActionPushButton(actionIt.actionId, jobIdModel, actionIt.actionText);
         newButton->setEnabled(actionIt.enabled);
 
-        connect(newButton, SIGNAL(actionButtonPressed(int)), this,
-                SIGNAL(actionPerformed(int)));
+        connect(newButton, SIGNAL(actionButtonPressed(int,int)), this,
+                SIGNAL(actionPerformed(int,int)));
 
         layout->addWidget(newButton);
 

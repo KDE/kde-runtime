@@ -20,7 +20,6 @@
 #ifndef UISERVER_P_H
 #define UISERVER_P_H
 
-//#include <kcmodule.h>
 #include <QWidget>
 
 #include "ui_uiserverConfigDialog.h"

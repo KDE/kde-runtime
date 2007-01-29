@@ -1,6 +1,6 @@
 /**
   * This file is part of the KDE project
-  * Copyright (C) 2006 Rafael Fernández López <ereslibre@gmail.com>
+  * Copyright (C) 2007, 2006 Rafael Fernández López <ereslibre@gmail.com>
   *
   * This library is free software; you can redistribute it and/or
   * modify it under the terms of the GNU Library General Public
@@ -66,30 +66,30 @@ public:
 
     enum ProgressItemRole
     {
-        jobId = 33,
-        applicationInternalName,
-        applicationName,
-        icon,
-        fileTotals,
-        filesProcessed,
-        dirTotals,
-        dirsProcessed,
-        sizeTotals,
-        sizeProcessed,
-        timeTotals,
-        timeElapsed,
-        from,
-        to,
-        fromLabel,
-        toLabel,
-        speed,
-        percent,
-        message,
-        progressMessage
+        JobId = 33,
+        ApplicationInternalName,
+        ApplicationName,
+        Icon,
+        FileTotals,
+        FilesProcessed,
+        DirTotals,
+        DirsProcessed,
+        SizeTotals,
+        SizeProcessed,
+        TimeTotals,
+        TimeElapsed,
+        From,
+        To,
+        FromLabel,
+        ToLabel,
+        Speed,
+        Percent,
+        Message,
+        ProgressMessage
     };
 
 Q_SIGNALS:
-    void actionPerformed(int actionId);
+    void actionPerformed(int actionId, int jobId);
 
 private:
     class Private;

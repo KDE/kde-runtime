@@ -88,29 +88,29 @@ int UIServerAdaptor::newJob(const QString &appServiceName, bool showProgress, co
     return parent()->newJob(appServiceName, showProgress, internalAppName, jobIcon, appName);
 }
 
-int UIServerAdaptor::newAction(int jobId, const QString &actionText)
+void UIServerAdaptor::newAction(int jobId, int actionId, const QString &actionText)
 {
-    return parent()->newAction(jobId, actionText);
+    return parent()->newAction(jobId, actionId, actionText);
 }
 
-void UIServerAdaptor::editAction(int actionId, const QString &actionText)
+void UIServerAdaptor::editAction(int jobId, int actionId, const QString &actionText)
 {
-    parent()->editAction(actionId, actionText);
+    parent()->editAction(jobId, actionId, actionText);
 }
 
-void UIServerAdaptor::enableAction(int actionId)
+void UIServerAdaptor::enableAction(int jobId, int actionId)
 {
-    parent()->enableAction(actionId);
+    parent()->enableAction(jobId, actionId);
 }
 
-void UIServerAdaptor::disableAction(int actionId)
+void UIServerAdaptor::disableAction(int jobId, int actionId)
 {
-    parent()->disableAction(actionId);
+    parent()->disableAction(jobId, actionId);
 }
 
-void UIServerAdaptor::removeAction(int actionId)
+void UIServerAdaptor::removeAction(int jobId, int actionId)
 {
-    parent()->removeAction(actionId);
+    parent()->removeAction(jobId, actionId);
 }
 
 void UIServerAdaptor::percent(int id, uint ipercent)
