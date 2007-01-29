@@ -95,7 +95,7 @@ void KrashConfig :: readConfig()
 #endif
   }
 
-  KConfig *config = KGlobal::config();
+  KSharedConfig::Ptr config = KGlobal::config();
   config->setGroup("drkonqi");
 
   // maybe we should check if it's relative?

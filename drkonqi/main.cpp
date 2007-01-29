@@ -82,7 +82,7 @@ int main( int argc, char* argv[] )
 
   //KApplication::disableAutoDcopRegistration();
 
-  KInstance inst(KCmdLineArgs::aboutData());
+  KComponentData inst(KCmdLineArgs::aboutData());
   QApplication a(*KCmdLineArgs::qt_argc(), *KCmdLineArgs::qt_argv());
 
   KrashConfig krashconf;
