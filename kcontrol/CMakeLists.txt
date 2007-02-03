@@ -1,0 +1,7 @@
+if ( Q_WS_X11 )
+add_subdirectory(kcontrol)
+endif( Q_WS_X11 )
+add_subdirectory(icons)
+add_subdirectory(locale)
+add_subdirectory(style)
+add_subdirectory(krdb)
