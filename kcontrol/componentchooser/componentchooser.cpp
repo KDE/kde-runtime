@@ -18,6 +18,9 @@
 
 #include "componentchooser.h"
 #include "componentchooser.moc"
+#ifdef Q_OS_UNIX
+#include "componentchooserterminal.h"
+#endif
 
 #include <QCheckBox>
 #include <QLabel>
@@ -216,79 +219,6 @@ void CfgEmailClient::save(KConfig *)
 
 
 
-//BEGIN Terminal Emulator Configuration
-#ifdef Q_OS_UNIX
-CfgTerminalEmulator::CfgTerminalEmulator(QWidget *parent):TerminalEmulatorConfig_UI(parent),CfgPlugin(){
-	connect(terminalLE,SIGNAL(textChanged(const QString &)), this, SLOT(configChanged()));
-	connect(terminalCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
-	connect(otherCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
-	connect(btnSelectTerminal,SIGNAL(clicked()),this,SLOT(selectTerminalApp()));
-
-}
-
-CfgTerminalEmulator::~CfgTerminalEmulator() {
-}
-
-void CfgTerminalEmulator::configChanged()
-{
-	emit changed(true);
-}
-
-void CfgTerminalEmulator::defaults()
-{
-    load(0L);
-}
-
-
-void CfgTerminalEmulator::load(KConfig *) {
-	KConfig *config = new KConfig("kdeglobals", true);
-	config->setGroup("General");
-	QString terminal = config->readPathEntry("TerminalApplication","konsole");
-	if (terminal == "konsole")
-	{
-	   terminalLE->setText("xterm");
-	   terminalCB->setChecked(true);
-	}
-	else
-	{
-	  terminalLE->setText(terminal);
-	  otherCB->setChecked(true);
-	}
-	delete config;
-
-	emit changed(false);
-}
-
-void CfgTerminalEmulator::save(KConfig *) {
-
-	KConfig *config = new KConfig("kdeglobals");
-	config->setGroup("General");
-	config->writePathEntry("TerminalApplication", terminalCB->isChecked()?"konsole":terminalLE->text(), KConfigBase::Normal|KConfigBase::Global);
-	config->sync();
-	delete config;
-
-	KGlobalSettings::self()->emitChange(KGlobalSettings::SettingsChanged);
-        KToolInvocation::klauncher()->reparseConfiguration();
-
-	emit changed(false);
-}
-
-void CfgTerminalEmulator::selectTerminalApp()
-{
-	KUrl::List urlList;
-	KOpenWithDialog dlg(urlList, i18n("Select preferred terminal application:"), QString(), this);
-	// hide "Run in &terminal" here, we don't need it for a Terminal Application
-	dlg.hideRunInTerminal();
-	if (dlg.exec() != QDialog::Accepted) return;
-	QString client = dlg.text();
-
-	if (!client.isEmpty())
-	{
-		terminalLE->setText(client);
-	}
-}
-#endif
-//END Terminal Emulator Configuration
 
 //BEGIN Browser Configuration
 
