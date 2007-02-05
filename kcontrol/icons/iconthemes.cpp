@@ -47,6 +47,7 @@
 #include <kiconloader.h>
 #include <kprogressdialog.h>
 #include <kio/job.h>
+#include <kio/deletejob.h>
 #include <kio/netaccess.h>
 #include <ktar.h>
 
