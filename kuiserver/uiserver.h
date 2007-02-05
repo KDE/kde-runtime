@@ -63,6 +63,7 @@ public:
       *
       * @param appServiceName   the DBUS service name
       * @see                    KIO::Observer::newJob
+      * @param capabilities		the capabilities that this job accepts
       * @param showProgress     whether to popup the progress for the job.
       *                         Usually true, but may be false when we use kuiserver for
       *                         other things, like SSL dialogs.
@@ -71,7 +72,7 @@ public:
       * @param appName          the translated application name (Kopete, Konqueror...)
       * @return                 the identification number of the job (jobId)
       */
-    int newJob(const QString &appServiceName, bool showProgress, const QString &internalAppName, const QString &jobIcon, const QString &appName);
+    int newJob(const QString &appServiceName, int capabilities, bool showProgress, const QString &internalAppName, const QString &jobIcon, const QString &appName);
 
     /**
       * Finishes a job
@@ -89,39 +90,6 @@ public:
       * @return             the identification number of the action (actionId)
       */
     void newAction(int jobId, int actionId, const QString &actionText);
-
-    /**
-      * Edits an existing action
-      *
-      * @param jobId        the identification number of the job
-      * @param actionId     the identification number of the action to be modified
-      * @param actionText   the new button text
-      */
-    void editAction(int jobId, int actionId, const QString &actionText);
-
-    /**
-      * Enables an existing action (the press button)
-      *
-      * @param jobId    the identification number of the job
-      * @param actionId the action that is going to be enabled
-      */
-    void enableAction(int jobId, int actionId);
-
-    /**
-      * Disables an existing action (the press button)
-      *
-      * @param jobId    the identification number of the job
-      * @param actionId the action that is going to be disabled
-      */
-    void disableAction(int jobId, int actionId);
-
-    /**
-      * Removes an existing action
-      *
-      * @param jobId    the identification number of the job
-      * @param actionId the identification number of the action to be removed
-      */
-    void removeAction(int jobId, int actionId);
 
     /**
       * Sets the total size of a job

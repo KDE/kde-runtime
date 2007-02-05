@@ -82,35 +82,10 @@ bool UIServerAdaptor::moving(int id, const QString &from, const QString &to)
     return parent()->moving(id, from, to);
 }
 
-int UIServerAdaptor::newJob(const QString &appServiceName, bool showProgress, const QString &internalAppName, const QString &jobIcon, const QString &appName)
+int UIServerAdaptor::newJob(const QString &appServiceName, int capabilities, bool showProgress, const QString &internalAppName, const QString &jobIcon, const QString &appName)
 {
     // handle method call org.kde.KIO.UIServer.newJob
-    return parent()->newJob(appServiceName, showProgress, internalAppName, jobIcon, appName);
-}
-
-void UIServerAdaptor::newAction(int jobId, int actionId, const QString &actionText)
-{
-    return parent()->newAction(jobId, actionId, actionText);
-}
-
-void UIServerAdaptor::editAction(int jobId, int actionId, const QString &actionText)
-{
-    parent()->editAction(jobId, actionId, actionText);
-}
-
-void UIServerAdaptor::enableAction(int jobId, int actionId)
-{
-    parent()->enableAction(jobId, actionId);
-}
-
-void UIServerAdaptor::disableAction(int jobId, int actionId)
-{
-    parent()->disableAction(jobId, actionId);
-}
-
-void UIServerAdaptor::removeAction(int jobId, int actionId)
-{
-    parent()->removeAction(jobId, actionId);
+    return parent()->newJob(appServiceName, capabilities, showProgress, internalAppName, jobIcon, appName);
 }
 
 void UIServerAdaptor::percent(int id, uint ipercent)

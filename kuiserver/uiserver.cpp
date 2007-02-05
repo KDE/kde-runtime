@@ -42,6 +42,9 @@
 #include <kmenu.h>
 #include <kaction.h>
 #include <klineedit.h>
+#include <kio/defaultprogress.h>
+#include <kio/jobclasses.h>
+#include <kjob.h>
 
 #include "uiserver.h"
 #include "uiserveradaptor_p.h"
@@ -49,8 +52,6 @@
 #include "progresslistmodel.h"
 #include "progresslistdelegate.h"
 
-#include "kio/defaultprogress.h"
-#include "kio/jobclasses.h"
 #include "uiserver.h"
 
 UIServer::UIServer()
@@ -164,10 +165,10 @@ UIServer* UIServer::createInstance()
     return new UIServer;
 }
 
-int UIServer::newJob(const QString &appServiceName, bool showProgress, const QString &internalAppName, const QString &jobIcon, const QString &appName)
+int UIServer::newJob(const QString &appServiceName, int capabilities, bool showProgress, const QString &internalAppName, const QString &jobIcon, const QString &appName)
 {
     // Uncomment if you want to see kuiserver in action (ereslibre)
-    // if (isHidden()) show();
+    if (isHidden()) show();
 
     s_jobId++;
 
@@ -176,6 +177,15 @@ int UIServer::newJob(const QString &appServiceName, bool showProgress, const QSt
                                ProgressListDelegate::JobId);
 
     m_jobTimesAdded.insert(s_jobId, 0);
+
+    if (capabilities == KJob::NoCapabilities)
+        return s_jobId;
+
+    if (capabilities & KJob::Pausable)
+        newAction(s_jobId, KJob::Pausable, i18n("Pause"));
+
+    if (capabilities & KJob::Killable)
+        newAction(s_jobId, KJob::Killable, i18n("Cancel"));
 
     return s_jobId;
 }
@@ -199,38 +209,6 @@ void UIServer::newAction(int jobId, int actionId, const QString &actionText)
 
     progressListModel->newAction(jobId, actionId, actionText);
 }
-
-void UIServer::editAction(int jobId, int actionId, const QString &actionText)
-{
-    if (!m_hashActions.contains(actionId)) return;
-
-    progressListModel->editAction(m_hashActions[actionId], actionId,
-                                  actionText);
-}
-
-void UIServer::enableAction(int jobId, int actionId)
-{
-    if (!m_hashActions.contains(actionId)) return;
-
-    progressListModel->enableAction(m_hashActions[actionId], actionId);
-}
-
-void UIServer::disableAction(int jobId, int actionId)
-{
-    if (!m_hashActions.contains(actionId)) return;
-
-    progressListModel->disableAction(m_hashActions[actionId], actionId);
-}
-
-void UIServer::removeAction(int jobId, int actionId)
-{
-    if (!m_hashActions.contains(actionId)) return;
-
-    progressListModel->removeAction(m_hashActions[actionId], actionId);
-
-    m_hashActions.remove(actionId);
-}
-
 
 /// ===========================================================
 
