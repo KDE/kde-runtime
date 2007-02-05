@@ -1,3 +1,4 @@
+macro_optional_find_package(OpenSSL)
 if ( Q_WS_X11 )
 add_subdirectory(kcontrol)
 endif( Q_WS_X11 )
@@ -5,3 +6,7 @@ add_subdirectory(icons)
 add_subdirectory(locale)
 add_subdirectory(style)
 add_subdirectory(krdb)
+if(OPENSSL_FOUND)
+  add_subdirectory( crypto )
+endif(OPENSSL_FOUND)
+
