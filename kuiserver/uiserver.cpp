@@ -74,7 +74,7 @@ UIServer::UIServer()
     toolBar->addSeparator();
 
     searchText = new KLineEdit(toolBar);
-    searchText->setText(i18n("Search"));
+    searchText->setClickMessage(i18n("Search"));
     searchText->setClearButtonShown(true);
 
     toolBar->addWidget(searchText);
