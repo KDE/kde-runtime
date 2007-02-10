@@ -86,13 +86,13 @@ void AudioPreview::initView( const QString& mimeType )
       KSqueezedTextLabel *sl;
 
       sl = new KSqueezedTextLabel(this);
-      sl->setText(i18n("Artist: %1").arg(info.item("Artist").value().toString()));
+      sl->setText(i18n("Artist: %1", info.item("Artist").value().toString()));
 
       sl = new KSqueezedTextLabel(this);
-      sl->setText(i18n("Title: %1").arg(info.item("Title").value().toString()));
+      sl->setText(i18n("Title: %1", info.item("Title").value().toString()));
 
       sl = new KSqueezedTextLabel(this);
-      sl->setText(i18n("Comment: %1").arg(info.item("Comment").value().toString()));
+      sl->setText(i18n("Comment: %1", info.item("Comment").value().toString()));
 
       desc.append(i18nc("Bitrate: 160 kbits/s", "Bitrate: %1 %2\n", info.item("Bitrate").value().toString(), info.item("Bitrate").suffix() ));
     }
