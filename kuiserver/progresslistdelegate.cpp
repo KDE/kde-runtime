@@ -338,14 +338,9 @@ void ProgressListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
     {
         QString textToShow;
         if (d->getFileTotals(index))
-            textToShow = fontMetrics.elidedText(i18n("%1 of %2 files processed", QString::number(d->getFilesProcessed(index)), QString::number(d->getFileTotals(index))), Qt::ElideRight, canvas.width() - d->getCurrentLeftMargin(textHeight) - d->rightMargin);
+            textToShow = fontMetrics.elidedText(i18np("1 of %2 files processed", "%1 of %2 files processed", d->getFilesProcessed(index), d->getFileTotals(index)), Qt::ElideRight, canvas.width() - d->getCurrentLeftMargin(textHeight) - d->rightMargin);
         else
-        {
-            if (d->getFilesProcessed(index) == 1)
-                textToShow = fontMetrics.elidedText(i18n("%1 file processed", QString::number(d->getFilesProcessed(index))), Qt::ElideRight, canvas.width() - d->getCurrentLeftMargin(textHeight) - d->rightMargin);
-            else
-                textToShow = fontMetrics.elidedText(i18n("%1 files processed", QString::number(d->getFilesProcessed(index))), Qt::ElideRight, canvas.width() - d->getCurrentLeftMargin(textHeight) - d->rightMargin);
-        }
+            textToShow = fontMetrics.elidedText(i18np("1 file processed", "%1 files processed", d->getFilesProcessed(index)), Qt::ElideRight, canvas.width() - d->getCurrentLeftMargin(textHeight) - d->rightMargin);
 
         textHeight = fontMetrics.size(Qt::TextSingleLine, textToShow).height();
 
