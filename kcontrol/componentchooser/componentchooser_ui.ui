@@ -123,7 +123,6 @@
     </customwidget>
   </customwidgets>
   <includes>
-    <include location="global" >klistbox.h</include>
     <include location="local" >kdialog.h</include>
   </includes>
 </ui>
