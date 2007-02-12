@@ -146,7 +146,8 @@ void KDEDConfig::load() {
 	QStringList files;
 	KGlobal::dirs()->findAllResources( "services",
 			QLatin1String( "kded/*.desktop" ),
-			true, true, files );
+			KStandardDirs::Recursive | KStandardDirs::NoDuplicates,
+			files );
 
 	Q3ListViewItem* item = 0L;
 	CheckListItem* clitem;
@@ -183,7 +184,8 @@ void KDEDConfig::save() {
 	QStringList files;
 	KGlobal::dirs()->findAllResources( "services",
 			QLatin1String( "kded/*.desktop" ),
-			true, true, files );
+			KStandardDirs::Recursive | KStandardDirs::NoDuplicates,
+			files );
 
 	KConfig kdedrc("kdedrc", false, false);
 

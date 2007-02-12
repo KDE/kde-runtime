@@ -323,7 +323,8 @@ ComponentChooser::ComponentChooser(QWidget *parent):
 	latestEditedService="";
 
 	QStringList dummy;
-	QStringList services=KGlobal::dirs()->findAllResources( "data","kcm_componentchooser/*.desktop",false,true,dummy);
+	QStringList services=KGlobal::dirs()->findAllResources( "data","kcm_componentchooser/*.desktop",
+															KStandardDirs::NoDuplicates, dummy );
 	for (QStringList::Iterator it=services.begin();it!=services.end();++it)
 	{
 		KSimpleConfig cfg(*it);

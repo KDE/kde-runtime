@@ -146,7 +146,7 @@ void KCMKNotify::load()
 //    m_notifyWidget->clear();
 
     QStringList fullpaths =
-        KGlobal::dirs()->findAllResources("data", "*/*.notifyrc", false, true );
+        KGlobal::dirs()->findAllResources("data", "*/*.notifyrc", KStandardDirs::NoDuplicates );
 
 	foreach (const QString &fullPath, fullpaths )
 	{
