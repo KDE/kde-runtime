@@ -60,10 +60,10 @@ KCMIOSlaveInfo::KCMIOSlaveInfo(QWidget *parent, const QStringList &)
    QWidget *hbox=new QWidget(this);
    QHBoxLayout *hboxLayout1 = new QHBoxLayout(hbox);
    hbox->setLayout(hboxLayout1);
-   m_ioslavesLb=new KListBox(hbox);
+   m_ioslavesLb=new KListWidget(hbox);
    m_ioslavesLb->setMinimumSize(fontMetrics().width("blahfaselwhatever----"),10);
    hboxLayout1->addWidget( m_ioslavesLb );
-   connect( m_ioslavesLb, SIGNAL( selectionChanged( Q3ListBoxItem * ) ), SLOT( showInfo( Q3ListBoxItem * ) ) );
+   connect( m_ioslavesLb, SIGNAL( selectionChanged( QListWidgetItem * ) ), SLOT( showInfo( QListWidgetItem * ) ) );
    //TODO make something useful after 2.1 is released
    m_info=new KTextBrowser(hbox);
    hboxLayout1->setSpacing(KDialog::spacingHint());
@@ -141,7 +141,7 @@ void KCMIOSlaveInfo::showInfo(const QString& protocol)
    m_info->setPlainText(i18n("Some info about protocol %1:/ ...", protocol));
 }
 
-void KCMIOSlaveInfo::showInfo(Q3ListBoxItem *item)
+void KCMIOSlaveInfo::showInfo(QListWidgetItem *item)
 {
    if (item==0)
       return;

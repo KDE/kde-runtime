@@ -32,7 +32,7 @@
 #include <kaboutdata.h>
 #include <kcmodule.h>
 #include <kio/job.h>
-#include <klistbox.h>
+#include <klistwidget.h>
 #include <ktextbrowser.h>
 
 class KIOTimeoutControl;
@@ -47,7 +47,7 @@ public:
     KCMIOSlaveInfo(QWidget *parent = 0L, const QStringList &lits=QStringList() );
 
 protected:
-    KListBox *m_ioslavesLb;
+    KListWidget *m_ioslavesLb;
     KTextBrowser *m_info;
     QByteArray helpData;
     KIO::Job *m_tfj;
@@ -55,7 +55,7 @@ protected:
 protected Q_SLOTS:
 
     void showInfo(const QString& protocol);
-    void showInfo(Q3ListBoxItem *item);
+    void showInfo(QListWidgetItem *item);
     void slaveHelp( KIO::Job *, const QByteArray &data);
     void slotResult( KJob * );
 

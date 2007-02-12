@@ -28,7 +28,7 @@ class QComboBox;
 class QGridLayout;
 class Q3GroupBox;
 class QLabel;
-class Q3ListBox;
+class QListWidget;
 class Q3ListView;
 class QPushButton;
 class QSlider;
@@ -106,7 +106,7 @@ private:
     typedef QLabel *QLabelPtr;
     QLabelPtr mpPreview[3];
 
-    Q3ListBox *mpUsageList;
+    QListWidget *mpUsageList;
     QComboBox *mpSizeBox;
     QCheckBox *mpDPCheck, *wordWrapCB, *underlineCB, *mpAnimatedCheck;
     QTabWidget *m_pTabWidget;
@@ -138,7 +138,7 @@ protected Q_SLOTS:
 
 private:
     KIconEffect *mpEffect;
-    Q3ListBox *mpEffectBox;
+    QListWidget *mpEffectBox;
     QCheckBox *mpSTCheck;
     QSlider *mpEffectSlider;
     KColorButton *mpEColButton;

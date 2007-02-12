@@ -22,7 +22,7 @@
 #include <QGridLayout>
 #include <QBoxLayout>
 #include <QVBoxLayout>
-#include <Q3ListBox>
+#include <QListWidget>
 #include <KApplication>
 #include <kcolorbutton.h>
 #include <kconfig.h>
@@ -54,7 +54,7 @@ KIconConfig::KIconConfig(const KComponentData &inst, QWidget *parent)
     g_vlay->setMargin(KDialog::marginHint());
     g_vlay->setSpacing(KDialog::spacingHint());
     g_vlay->addSpacing(fontMetrics().lineSpacing());
-    mpUsageList = new Q3ListBox(gbox);
+    mpUsageList = new QListWidget(gbox);
     connect(mpUsageList, SIGNAL(highlighted(int)), SLOT(slotUsage(int)));
     g_vlay->addWidget(mpUsageList);
 
@@ -141,12 +141,12 @@ void KIconConfig::init()
 	mbChanged[i] = false;
 
     // Fill list/checkboxen
-    mpUsageList->insertItem(i18n("Desktop/File Manager"));
-    mpUsageList->insertItem(i18n("Toolbar"));
-    mpUsageList->insertItem(i18n("Main Toolbar"));
-    mpUsageList->insertItem(i18n("Small Icons"));
-    mpUsageList->insertItem(i18n("Panel"));
-    mpUsageList->insertItem(i18n("All Icons"));
+    mpUsageList->addItem(i18n("Desktop/File Manager"));
+    mpUsageList->addItem(i18n("Toolbar"));
+    mpUsageList->addItem(i18n("Main Toolbar"));
+    mpUsageList->addItem(i18n("Small Icons"));
+    mpUsageList->addItem(i18n("Panel"));
+    mpUsageList->addItem(i18n("All Icons"));
 
     // For reading the configuration
     mGroups += "Desktop";
@@ -280,7 +280,7 @@ void KIconConfig::read()
 
 void KIconConfig::apply()
 {
-    mpUsageList->setCurrentItem(mUsage);
+    mpUsageList->setCurrentRow(mUsage);
 
     int delta = 1000, dw, index = -1, size = 0, i;
     QList<int>::Iterator it;
@@ -548,13 +548,13 @@ KIconEffectSetupDialog::KIconEffectSetupDialog(const Effect &effect,
     lbl = new QLabel(i18n("&Effect:"), page);
     lbl->setFixedSize(lbl->sizeHint());
     top->addWidget(lbl, 0, 0, Qt::AlignLeft);
-    mpEffectBox = new Q3ListBox(page);
-    mpEffectBox->insertItem(i18n("No Effect"));
-    mpEffectBox->insertItem(i18n("To Gray"));
-    mpEffectBox->insertItem(i18n("Colorize"));
-    mpEffectBox->insertItem(i18n("Gamma"));
-    mpEffectBox->insertItem(i18n("Desaturate"));
-    mpEffectBox->insertItem(i18n("To Monochrome"));
+    mpEffectBox = new QListWidget(page);
+    mpEffectBox->addItem(i18n("No Effect"));
+    mpEffectBox->addItem(i18n("To Gray"));
+    mpEffectBox->addItem(i18n("Colorize"));
+    mpEffectBox->addItem(i18n("Gamma"));
+    mpEffectBox->addItem(i18n("Desaturate"));
+    mpEffectBox->addItem(i18n("To Monochrome"));
     mpEffectBox->setMinimumWidth( 100 );
     connect(mpEffectBox, SIGNAL(highlighted(int)), SLOT(slotEffectType(int)));
     top->addWidget(mpEffectBox, 1, 0, 2, 1, Qt::AlignLeft);
@@ -621,7 +621,7 @@ KIconEffectSetupDialog::~KIconEffectSetupDialog()
 
 void KIconEffectSetupDialog::init()
 {
-    mpEffectBox->setCurrentItem(mEffect.type);
+    mpEffectBox->setCurrentRow(mEffect.type);
     mpEffectSlider->setEnabled(mEffect.type != KIconEffect::NoEffect);
     mpEColButton->setEnabled(mEffect.type == KIconEffect::Colorize || mEffect.type == KIconEffect::ToMonochrome);
     mpECol2Button->setEnabled(mEffect.type == KIconEffect::ToMonochrome);

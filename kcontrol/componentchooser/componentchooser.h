@@ -27,7 +27,7 @@
 
 #include <kservice.h>
 
-class Q3ListBoxItem;
+class QListWidgetItem;
 class KEMailSettings;
 class KConfig;
 
@@ -160,7 +160,7 @@ private:
 	QVBoxLayout *myLayout;
 protected Q_SLOTS:
 	void emitChanged(bool);
-	void slotServiceSelected(Q3ListBoxItem *);
+	void slotServiceSelected(QListWidgetItem *);
 
 Q_SIGNALS:
 	void changed(bool);

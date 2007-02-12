@@ -28,9 +28,9 @@
 
 #include "modules.h"
 
-class KListBox;
+class KListWidget;
 class KLineEdit;
-class Q3ListBoxItem;
+class QListWidgetItem;
 
 class KeywordListEntry
 {
@@ -67,11 +67,11 @@ protected:
 protected Q_SLOTS:
   void slotSearchTextChanged(const QString &);
   void slotKeywordSelected(const QString &);
-  void slotModuleSelected(Q3ListBoxItem *item);
-  void slotModuleClicked(Q3ListBoxItem *item);
+  void slotModuleSelected(QListWidgetItem *item);
+  void slotModuleClicked(QListWidgetItem *item);
 
 private:
-  KListBox  *_keyList, *_resultList;
+  KListWidget  *_keyList, *_resultList;
   KLineEdit *_input; 
   Q3PtrList<KeywordListEntry> _keywords;
 };

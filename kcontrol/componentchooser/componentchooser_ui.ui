@@ -90,7 +90,7 @@
         </widget>
       </item>
       <item rowspan="2" row="0" column="0" colspan="1" >
-        <widget class="KListBox" name="ServiceChooser" >
+        <widget class="KListWidget" name="ServiceChooser" >
           <property name="sizePolicy" >
             <sizepolicy>
               <hsizetype>5</hsizetype>
@@ -99,7 +99,7 @@
               <verstretch>0</verstretch>
             </sizepolicy>
           </property>
-          <property name="currentItem" >
+          <property name="currentRow" >
             <number>-1</number>
           </property>
           <property name="whatsThis" stdset="0" >
@@ -117,9 +117,9 @@
   <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
   <customwidgets>
     <customwidget>
-      <class>KListBox</class>
-      <extends>Q3ListBox</extends>
-      <header>klistbox.h</header>
+      <class>KListWidget</class>
+      <extends>QListWidget</extends>
+      <header>klistwidget.h</header>
     </customwidget>
   </customwidgets>
   <includes>

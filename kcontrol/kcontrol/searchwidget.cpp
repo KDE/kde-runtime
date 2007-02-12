@@ -18,18 +18,19 @@
 
 */
 
+#include <Q3PtrList>
+
 #include <QLabel>
 #include <QLayout>
+#include <QListWidgetItem>
 #include <QRegExp>
-//Added by qt3to4:
 #include <QVBoxLayout>
-#include <Q3PtrList>
 
 #include <KApplication>
 #include <klineedit.h>
 #include <kiconloader.h>
 #include <klocale.h>
-#include <klistbox.h>
+#include <klistwidget.h>
 
 #include "searchwidget.h"
 #include "searchwidget.moc"
@@ -37,16 +38,15 @@
 /**
  * Helper class for sorting icon modules by name without losing the fileName ID
  */
-class ModuleItem : public Q3ListBoxPixmap
+class ModuleItem : public QListWidgetItem
 {
 public:
- ModuleItem(ConfigModule *module, Q3ListBox * listbox = 0) :
-	Q3ListBoxPixmap(listbox,
-      KIconLoader::global()->loadIcon(module->icon(), K3Icon::Desktop, K3Icon::SizeSmall),
-      module->moduleName())
+ ModuleItem(ConfigModule *module, QListWidget * listbox = 0) :
+	QListWidgetItem(listbox)
   , m_module(module)
- { 
- 
+ {
+    setText( module->moduleName() ); 
+    setIcon( KIconLoader::global()->loadIcon(module->icon(), K3Icon::Desktop, K3Icon::SizeSmall) ); 
  }
 
  ConfigModule *module() const { return m_module; };
@@ -88,7 +88,7 @@ SearchWidget::SearchWidget(QWidget *parent)
   l->addWidget(_input);
 
   // keyword list
-  _keyList = new KListBox(this);
+  _keyList = new KListWidget(this);
   QLabel *keyl = new QLabel(i18n("&Keywords:"), this);
   keyl->setBuddy(_keyList);
 
@@ -96,7 +96,7 @@ SearchWidget::SearchWidget(QWidget *parent)
   l->addWidget(_keyList);
 
   // result list
-  _resultList = new KListBox(this);
+  _resultList = new KListWidget(this);
   QLabel *resultl = new QLabel(i18n("&Results:"), this);
   resultl->setBuddy(_resultList);
 
@@ -114,10 +114,10 @@ SearchWidget::SearchWidget(QWidget *parent)
   connect(_keyList, SIGNAL(highlighted(const QString&)),
           this, SLOT(slotKeywordSelected(const QString&)));
 
-  connect(_resultList, SIGNAL(selected(Q3ListBoxItem*)),
-          this, SLOT(slotModuleSelected(Q3ListBoxItem *)));
-  connect(_resultList, SIGNAL(clicked(Q3ListBoxItem *)),
-          this, SLOT(slotModuleClicked(Q3ListBoxItem *)));
+  connect(_resultList, SIGNAL(selected(QListWidgetItem*)),
+          this, SLOT(slotModuleSelected(QListWidgetItem *)));
+  connect(_resultList, SIGNAL(clicked(QListWidgetItem *)),
+          this, SLOT(slotModuleClicked(QListWidgetItem *)));
 }
 
 void SearchWidget::populateKeywordList(ConfigModuleList *list)
@@ -175,9 +175,9 @@ void SearchWidget::populateKeyListBox(const QString& s)
     }
 
   for(QStringList::ConstIterator it = matches.begin(); it != matches.end(); it++)
-    _keyList->insertItem(*it);
+    _keyList->addItem(*it);
 
-  _keyList->sort();
+  _keyList->model()->sort(0);
 }
 
 void SearchWidget::populateResultListBox(const QString& s)
@@ -197,7 +197,7 @@ void SearchWidget::populateResultListBox(const QString& s)
         }
     }
 
-  _resultList->sort();
+  _resultList->model()->sort(0);
 }
 
 void SearchWidget::slotSearchTextChanged(const QString & s)
@@ -212,13 +212,13 @@ void SearchWidget::slotKeywordSelected(const QString & s)
   populateResultListBox(s);
 }
 
-void SearchWidget::slotModuleSelected(Q3ListBoxItem *item)
+void SearchWidget::slotModuleSelected(QListWidgetItem *item)
 {
   if (item)
     emit moduleSelected( static_cast<ModuleItem*>(item)->module() );
 }
 
-void SearchWidget::slotModuleClicked(Q3ListBoxItem *item)
+void SearchWidget::slotModuleClicked(QListWidgetItem *item)
 {
   if (item)
     emit moduleSelected( static_cast<ModuleItem*>(item)->module() );

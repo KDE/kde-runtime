@@ -44,10 +44,10 @@
 #include <kconfiggroup.h>
 
 
-class MyListBoxItem: public Q3ListBoxText
+class MyListBoxItem: public QListWidgetItem
 {
 public:
-	MyListBoxItem(const QString& text, const QString &file):Q3ListBoxText(text),File(file){}
+	MyListBoxItem(const QString& text, const QString &file):QListWidgetItem(text),File(file){}
 	virtual ~MyListBoxItem(){;}
 	QString File;
 };
@@ -328,18 +328,18 @@ ComponentChooser::ComponentChooser(QWidget *parent):
 	for (QStringList::Iterator it=services.begin();it!=services.end();++it)
 	{
 		KSimpleConfig cfg(*it);
-		ServiceChooser->insertItem(new MyListBoxItem(cfg.readEntry("Name",i18n("Unknown")),(*it)));
+		ServiceChooser->addItem(new MyListBoxItem(cfg.readEntry("Name",i18n("Unknown")),(*it)));
 
 	}
 	ServiceChooser->setFixedWidth(ServiceChooser->sizeHint().width());
-	ServiceChooser->sort();
-	connect(ServiceChooser,SIGNAL(highlighted(Q3ListBoxItem*)),this,SLOT(slotServiceSelected(Q3ListBoxItem*)));
-	ServiceChooser->setSelected(0,true);
+	ServiceChooser->model()->sort(0);
+	connect(ServiceChooser,SIGNAL(highlighted(QListWidgetItem*)),this,SLOT(slotServiceSelected(QListWidgetItem*)));
+	ServiceChooser->item(0)->setSelected(true);
 	slotServiceSelected(ServiceChooser->item(0));
 
 }
 
-void ComponentChooser::slotServiceSelected(Q3ListBoxItem* it) {
+void ComponentChooser::slotServiceSelected(QListWidgetItem* it) {
 	if (!it) return;
 
 	if (somethingChanged) {

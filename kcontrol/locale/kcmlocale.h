@@ -35,7 +35,7 @@ class KLocale;
 class KLocaleSample;
 
 class QLabel;
-class Q3ListBox;
+class QListWidget;
 class QPushButton;
 
 class KLocaleConfig : public QWidget, public Ui_Language
