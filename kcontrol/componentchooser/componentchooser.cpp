@@ -333,7 +333,7 @@ ComponentChooser::ComponentChooser(QWidget *parent):
 	}
 	ServiceChooser->setFixedWidth(ServiceChooser->sizeHint().width());
 	ServiceChooser->model()->sort(0);
-	connect(ServiceChooser,SIGNAL(highlighted(QListWidgetItem*)),this,SLOT(slotServiceSelected(QListWidgetItem*)));
+	connect(ServiceChooser,SIGNAL(itemClicked(QListWidgetItem*)),this,SLOT(slotServiceSelected(QListWidgetItem*)));
 	ServiceChooser->item(0)->setSelected(true);
 	slotServiceSelected(ServiceChooser->item(0));
 
