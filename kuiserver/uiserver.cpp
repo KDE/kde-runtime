@@ -194,7 +194,7 @@ void UIServer::jobFinished(int id)
 {
     if ((id < 1) || !m_jobTimesAdded.contains(id)) return;
 
-    m_jobTimesAdded.remove(s_jobId);
+    m_jobTimesAdded.remove(id);
 
     progressListModel->finishJob(id);
 }
