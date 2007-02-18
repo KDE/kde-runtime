@@ -49,7 +49,7 @@ AudioPreview::AudioPreview( QWidget *parent, const KUrl &url, const QString &mim
     initView( mimeType );
   } else if( !url.isLocalFile() ) {
     KUrlLabel *label = new KUrlLabel( this );
-    label->setText(i18n("This audio file isn't stored\non the local host.\nClick on this label to load it.\n" ) );
+    label->setText(i18n("This audio file is not stored\non the local host.\nClick on this label to load it.\n" ) );
     label->setUrl( url.prettyUrl() );
     connect(label, SIGNAL(leftClickedUrl(const QString&)), SLOT(downloadFile(const QString&)));
     pic = label;
@@ -70,7 +70,7 @@ AudioPreview::~AudioPreview()
 void AudioPreview::initView( const QString& mimeType )
 {
   KUrl url = KUrl::fromPath( m_localFile );
-  pic->setText( QString::null );
+  pic->setText( QString() );
   pic->setPixmap(KIO::pixmapForUrl( url ));
   pic->adjustSize();
 
@@ -112,7 +112,7 @@ void AudioPreview::initView( const QString& mimeType )
   description = new QLabel(this);
   description->setText( desc );
   description->adjustSize();
-  m_player = KServiceTypeTrader::createInstanceFromQuery<KMediaPlayer::Player>( "KMediaPlayer/Player", QString::null, this );
+  m_player = KServiceTypeTrader::createInstanceFromQuery<KMediaPlayer::Player>( "KMediaPlayer/Player", QString(), this );
   if ( m_player )
   {
     static_cast<KParts::ReadOnlyPart*>(m_player)->openUrl( url );

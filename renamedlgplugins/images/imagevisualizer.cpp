@@ -43,7 +43,7 @@ ImageVisualizer::ImageVisualizer( QWidget *parent, const KUrl &url )
     loadImage( url.path() );
   } else if( !url.isLocalFile() ) {
     KUrlLabel *label = new KUrlLabel( this );
-    label->setText(i18n("This picture isn't stored\non the local host.\nClick on this label to load it.\n" ) );
+    label->setText(i18n("This picture is not stored\non the local host.\nClick on this label to load it.\n" ) );
     label->setUrl( url.prettyUrl() );
     connect(label, SIGNAL(leftClickedUrl(const QString&)), SLOT(downloadImage(const QString&)));
     pic = label;
@@ -59,7 +59,7 @@ void ImageVisualizer::loadImage( const QString& path )
 {
   QPixmap pix(path);
   QPixmap pixmap(pix.scaled(180, 200, Qt::KeepAspectRatio, Qt::SmoothTransformation) );
-  pic->setText( QString::null );
+  pic->setText( QString() );
   pic->setPixmap(pixmap );
   pic->adjustSize();
 
