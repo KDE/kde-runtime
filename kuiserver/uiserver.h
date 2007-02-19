@@ -45,6 +45,7 @@ class UIServerAdaptor;
 class QToolBar;
 class QTabWidget;
 class KLineEdit;
+class OrgKdeKIOObserverInterface;
 
 class UIServer
     : public KMainWindow
@@ -276,7 +277,7 @@ private:
     KLineEdit *searchText;
     UIServerAdaptor *serverAdaptor;
     QHash<int, int> m_hashActions;
-    QHash<int, int> m_jobTimesAdded;
+    QHash<int, OrgKdeKIOObserverInterface*> m_hashObserverInterfaces;
 
     static int s_jobId;
 };

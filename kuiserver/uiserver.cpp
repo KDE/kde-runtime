@@ -48,15 +48,18 @@
 
 #include "uiserver.h"
 #include "uiserveradaptor_p.h"
-#include "uiserveriface.h"
 #include "progresslistmodel.h"
 #include "progresslistdelegate.h"
+#include "observeriface.h"
 
 #include "uiserver.h"
 
 UIServer::UIServer()
     : KMainWindow(0)
 {
+    serverAdaptor = new UIServerAdaptor(this);
+    QDBusConnection::sessionBus().registerObject(QLatin1String("/UIServer"), this);
+
     tabWidget = new QTabWidget();
 
     QString configure = i18n("Configure");
@@ -90,16 +93,13 @@ UIServer::UIServer()
     tabWidget->addTab(listProgress, i18n("In progress"));
     tabWidget->addTab(listFinished, i18n("Finished"));
 
+    setCentralWidget(tabWidget);
+
     progressListModel = new ProgressListModel(this);
     progressListFinishedModel = new ProgressListModel(this);
 
-    serverAdaptor = new UIServerAdaptor(this);
-    QDBusConnection::sessionBus().registerObject(QLatin1String("/UIServer"), this);
-
     listProgress->setModel(progressListModel);
     listFinished->setModel(progressListFinishedModel);
-
-    setCentralWidget(tabWidget);
 
     progressListDelegate = new ProgressListDelegate(this, listProgress);
     progressListDelegate->setSeparatorPixels(10);
@@ -112,13 +112,13 @@ UIServer::UIServer()
     listProgress->setItemDelegate(progressListDelegate);
 
     progressListDelegateFinished = new ProgressListDelegate(this, listFinished);
-    progressListDelegate->setSeparatorPixels(10);
-    progressListDelegate->setLeftMargin(10);
-    progressListDelegate->setRightMargin(10);
-    progressListDelegate->setProgressBarHeight(20);
-    progressListDelegate->setMinimumItemHeight(100);
-    progressListDelegate->setMinimumContentWidth(300);
-    progressListDelegate->setEditorHeight(20);
+    progressListDelegateFinished->setSeparatorPixels(10);
+    progressListDelegateFinished->setLeftMargin(10);
+    progressListDelegateFinished->setRightMargin(10);
+    progressListDelegateFinished->setProgressBarHeight(20);
+    progressListDelegateFinished->setMinimumItemHeight(100);
+    progressListDelegateFinished->setMinimumContentWidth(300);
+    progressListDelegateFinished->setEditorHeight(20);
     listFinished->setItemDelegate(progressListDelegateFinished);
 
     connect(progressListModel, SIGNAL(rowsInserted(const QModelIndex&,int,int)),
@@ -133,23 +133,17 @@ UIServer::UIServer()
     connect(progressListModel, SIGNAL(dataChanged(const QModelIndex&,const QModelIndex&)),
             listProgress, SLOT(dataChanged(const QModelIndex&,const QModelIndex&)));
 
-    connect(progressListDelegate, SIGNAL(actionPerformed(int,int)), serverAdaptor,
-            SIGNAL(actionPerformed(int,int)));
-
     connect(progressListFinishedModel, SIGNAL(rowsInserted(const QModelIndex&,int,int)),
             listFinished, SLOT(rowsInserted(const QModelIndex&,int,int)));
 
     connect(progressListFinishedModel, SIGNAL(rowsRemoved(const QModelIndex&,int,int)),
             listFinished, SLOT(rowsAboutToBeRemoved(const QModelIndex&,int,int)));
 
-    connect(progressListModel, SIGNAL(rowsRemoved(const QModelIndex&,int,int)),
+    connect(progressListFinishedModel, SIGNAL(rowsRemoved(const QModelIndex&,int,int)),
             this, SLOT(slotRowsRemoved(const QModelIndex&,int,int)));
 
     connect(progressListFinishedModel, SIGNAL(dataChanged(const QModelIndex&,const QModelIndex&)),
             listFinished, SLOT(dataChanged(const QModelIndex&,const QModelIndex&)));
-
-    connect(progressListDelegateFinished, SIGNAL(actionPerformed(int,int)), serverAdaptor,
-            SIGNAL(actionPerformed(int,int)));
 
     applySettings();
 
@@ -168,21 +162,29 @@ UIServer* UIServer::createInstance()
 int UIServer::newJob(const QString &appServiceName, int capabilities, bool showProgress, const QString &internalAppName, const QString &jobIcon, const QString &appName)
 {
     // Uncomment if you want to see kuiserver in action (ereslibre)
-    // if (isHidden()) show();
+    if (isHidden()) show();
 
     s_jobId++;
+
+    OrgKdeKIOObserverInterface *observer = new org::kde::KIO::Observer(appServiceName, "/Observer", QDBusConnection::sessionBus());
+
+    m_hashObserverInterfaces.insert(s_jobId, observer);
+
+    connect(progressListDelegate, SIGNAL(actionPerformed(int,int)), observer,
+            SLOT(slotActionPerformed(int,int)));
+
+    connect(progressListDelegateFinished, SIGNAL(actionPerformed(int,int)), observer,
+            SLOT(slotActionPerformed(int,int)));
 
     progressListModel->newJob(s_jobId, internalAppName, jobIcon, appName, showProgress);
     progressListModel->setData(progressListModel->indexForJob(s_jobId), s_jobId,
                                ProgressListDelegate::JobId);
 
-    m_jobTimesAdded.insert(s_jobId, 0);
-
     if (capabilities == KJob::NoCapabilities)
         return s_jobId;
 
-    if (capabilities & KJob::Pausable)
-        newAction(s_jobId, KJob::Pausable, i18n("Pause"));
+    if (capabilities & KJob::Suspendable)
+        newAction(s_jobId, KJob::Suspendable, i18n("Pause"));
 
     if (capabilities & KJob::Killable)
         newAction(s_jobId, KJob::Killable, i18n("Cancel"));
@@ -192,9 +194,19 @@ int UIServer::newJob(const QString &appServiceName, int capabilities, bool showP
 
 void UIServer::jobFinished(int id)
 {
-    if ((id < 1) || !m_jobTimesAdded.contains(id)) return;
+    if ((id < 1) || !m_hashObserverInterfaces.contains(id)) return;
 
-    m_jobTimesAdded.remove(id);
+    QModelIndex index = progressListModel->indexForJob(id);
+
+    progressListFinishedModel->newJob(id, progressListModel->data(index, ProgressListDelegate::ApplicationInternalName).toString(),
+                                      progressListModel->data(index, ProgressListDelegate::Icon).toString(),
+                                      progressListModel->data(index, ProgressListDelegate::ApplicationName).toString(),
+                                      true /* showProgress (show or hide) */);
+
+    // TODO: Set all properties to the last added item to the finished list of items
+
+    delete m_hashObserverInterfaces[id];
+    m_hashObserverInterfaces.remove(id);
 
     progressListModel->finishJob(id);
 }
@@ -215,7 +227,7 @@ void UIServer::newAction(int jobId, int actionId, const QString &actionText)
 
 void UIServer::totalSize(int id, KIO::filesize_t size)
 {
-    if ((id < 1) || !m_jobTimesAdded.contains(id)) return;
+    if (id < 1) return;
 
     progressListModel->setData(progressListModel->indexForJob(id), KIO::convertSize(size),
                                ProgressListDelegate::SizeTotals);
@@ -223,7 +235,7 @@ void UIServer::totalSize(int id, KIO::filesize_t size)
 
 void UIServer::totalFiles(int id, unsigned long files)
 {
-    if ((id < 1) || !m_jobTimesAdded.contains(id)) return;
+    if (id < 1) return;
 
     progressListModel->setData(progressListModel->indexForJob(id), qulonglong(files),
                                ProgressListDelegate::FileTotals);
@@ -231,7 +243,7 @@ void UIServer::totalFiles(int id, unsigned long files)
 
 void UIServer::totalDirs(int id, unsigned long dirs)
 {
-    if ((id < 1) || !m_jobTimesAdded.contains(id)) return;
+    if (id < 1) return;
 
     progressListModel->setData(progressListModel->indexForJob(id), qulonglong(dirs),
                                ProgressListDelegate::DirTotals);
@@ -239,7 +251,7 @@ void UIServer::totalDirs(int id, unsigned long dirs)
 
 void UIServer::processedSize(int id, KIO::filesize_t bytes)
 {
-    if ((id < 1) || !m_jobTimesAdded.contains(id)) return;
+    if (id < 1) return;
 
     progressListModel->setData(progressListModel->indexForJob(id), KIO::convertSize(bytes),
                                ProgressListDelegate::SizeProcessed);
@@ -247,7 +259,7 @@ void UIServer::processedSize(int id, KIO::filesize_t bytes)
 
 void UIServer::processedFiles(int id, unsigned long files)
 {
-    if ((id < 1) || !m_jobTimesAdded.contains(id)) return;
+    if (id < 1) return;
 
     progressListModel->setData(progressListModel->indexForJob(id), qulonglong(files),
                                ProgressListDelegate::FilesProcessed);
@@ -255,7 +267,7 @@ void UIServer::processedFiles(int id, unsigned long files)
 
 void UIServer::processedDirs(int id, unsigned long dirs)
 {
-    if ((id < 1) || !m_jobTimesAdded.contains(id)) return;
+    if (id < 1) return;
 
     progressListModel->setData(progressListModel->indexForJob(id), qulonglong(dirs),
                                ProgressListDelegate::DirsProcessed);
@@ -263,7 +275,7 @@ void UIServer::processedDirs(int id, unsigned long dirs)
 
 void UIServer::percent(int id, unsigned long ipercent)
 {
-    if ((id < 1) || !m_jobTimesAdded.contains(id)) return;
+    if (id < 1) return;
 
     progressListModel->setData(progressListModel->indexForJob(id), qulonglong(ipercent),
                                ProgressListDelegate::Percent);
@@ -271,7 +283,7 @@ void UIServer::percent(int id, unsigned long ipercent)
 
 void UIServer::speed(int id, QString bytes_per_second)
 {
-    if ((id < 1) || !m_jobTimesAdded.contains(id)) return;
+    if (id < 1) return;
 
     progressListModel->setData(progressListModel->indexForJob(id), bytes_per_second,
                                ProgressListDelegate::Speed);
@@ -279,7 +291,7 @@ void UIServer::speed(int id, QString bytes_per_second)
 
 void UIServer::infoMessage(int id, QString msg)
 {
-    if ((id < 1) || !m_jobTimesAdded.contains(id)) return;
+    if (id < 1) return;
 
     progressListModel->setData(progressListModel->indexForJob(id), msg,
                                ProgressListDelegate::Message);
@@ -287,7 +299,7 @@ void UIServer::infoMessage(int id, QString msg)
 
 void UIServer::progressInfoMessage(int id, QString msg)
 {
-    if ((id < 1) || !m_jobTimesAdded.contains(id)) return;
+    if (id < 1) return;
 
     progressListModel->setData(progressListModel->indexForJob(id), msg,
                                ProgressListDelegate::ProgressMessage);
@@ -299,9 +311,7 @@ void UIServer::progressInfoMessage(int id, QString msg)
 
 bool UIServer::copying(int id, QString from, QString to)
 {
-    if ((id < 1) || (m_jobTimesAdded.contains(id) && m_jobTimesAdded[id])) return false;
-
-    m_jobTimesAdded[id]++;
+    if (id < 1) return false;
 
     QString delegateMessage(i18n("Copying"));
 
@@ -325,9 +335,7 @@ bool UIServer::copying(int id, QString from, QString to)
 
 bool UIServer::moving(int id, QString from, QString to)
 {
-    if ((id < 1) || (m_jobTimesAdded.contains(id) && m_jobTimesAdded[id])) return false;
-
-    m_jobTimesAdded[id]++;
+    if (id < 1) return false;
 
     QString delegateMessage(i18n("Moving"));
 
@@ -351,9 +359,7 @@ bool UIServer::moving(int id, QString from, QString to)
 
 bool UIServer::deleting(int id, QString url)
 {
-    if ((id < 1) || (m_jobTimesAdded.contains(id) && m_jobTimesAdded[id])) return false;
-
-    m_jobTimesAdded[id]++;
+    if (id < 1) return false;
 
     QString delegateMessage(i18n("Deleting"));
 
@@ -371,9 +377,7 @@ bool UIServer::deleting(int id, QString url)
 
 bool UIServer::transferring(int id, QString url)
 {
-    if ((id < 1) || (m_jobTimesAdded.contains(id) && m_jobTimesAdded[id])) return false;
-
-    m_jobTimesAdded[id]++;
+    if (id < 1) return false;
 
     QString delegateMessage(i18n("Transferring"));
 
@@ -391,9 +395,7 @@ bool UIServer::transferring(int id, QString url)
 
 bool UIServer::creatingDir(int id, QString dir)
 {
-    if ((id < 1) || (m_jobTimesAdded.contains(id) && m_jobTimesAdded[id])) return false;
-
-    m_jobTimesAdded[id]++;
+    if (id < 1) return false;
 
     QString delegateMessage(i18n("Creating directory"));
 
@@ -411,9 +413,7 @@ bool UIServer::creatingDir(int id, QString dir)
 
 bool UIServer::stating(int id, QString url)
 {
-    if ((id < 1) || (m_jobTimesAdded.contains(id) && m_jobTimesAdded[id])) return false;
-
-    m_jobTimesAdded[id]++;
+    if (id < 1) return false;
 
     QString delegateMessage(i18n("Stating"));
 
@@ -431,9 +431,7 @@ bool UIServer::stating(int id, QString url)
 
 bool UIServer::mounting(int id, QString dev, QString point)
 {
-    if ((id < 1) || (m_jobTimesAdded.contains(id) && m_jobTimesAdded[id])) return false;
-
-    m_jobTimesAdded[id]++;
+    if (id < 1) return false;
 
     QString delegateMessage(i18n("Mounting device"));
 
@@ -457,9 +455,7 @@ bool UIServer::mounting(int id, QString dev, QString point)
 
 bool UIServer::unmounting(int id, QString point)
 {
-    if ((id < 1) || (m_jobTimesAdded.contains(id) && m_jobTimesAdded[id])) return false;
-
-    m_jobTimesAdded[id]++;
+    if (id < 1) return false;
 
     QString delegateMessage(i18n("Unmounting device"));
 
@@ -523,7 +519,9 @@ void UIServer::slotRowsRemoved(const QModelIndex &parent, int start, int end)
     // TODO: unify all width's of progress bars
 }
 
+
 /// ===========================================================
+
 
 UIConfigurationDialog::UIConfigurationDialog(QWidget *parent)
     : QWidget(parent)
@@ -535,6 +533,7 @@ UIConfigurationDialog::UIConfigurationDialog(QWidget *parent)
 UIConfigurationDialog::~UIConfigurationDialog()
 {
 }
+
 
 /// ===========================================================
 
