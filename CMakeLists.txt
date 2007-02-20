@@ -1,6 +1,7 @@
 add_subdirectory(kuiserver)
 add_subdirectory(drkonqi)
 add_subdirectory(kquitapp)
+add_subdirectory(kinstalltheme)
 add_subdirectory(kioclient)
 add_subdirectory(kioslave)
 add_subdirectory(kdebugdialog)
