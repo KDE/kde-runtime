@@ -222,8 +222,7 @@ bool KrashDebugger::performChecks( QString* msg )
 {
   bool ret = true;
   KConfig kdedcfg( QLatin1String( "kdedrc" ) );
-  kdedcfg.setGroup( "General" );
-  if( kdedcfg.readEntry( "DelayedCheck", false))
+  if( kdedcfg.group("General").readEntry( "DelayedCheck", false))
   {
     // ret = false; it's not that dangerous
     *msg += i18n( "System configuration startup check disabled.\n" );

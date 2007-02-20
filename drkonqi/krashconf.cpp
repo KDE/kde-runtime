@@ -106,49 +106,49 @@ void KrashConfig :: readConfig()
 
   KConfig debuggers("appdata", QString::fromLatin1("debuggers/%1rc").arg(debuggername),
                     KConfig::NoGlobals );
+  const KConfigGroup generalGroup = debuggers.group("General");
 
-  debuggers.setGroup("General");
-  m_debugger = debuggers.readPathEntry("Exec");
-  m_debuggerBatch = debuggers.readPathEntry("ExecBatch");
-  m_tryExec = debuggers.readPathEntry("TryExec");
-  m_backtraceCommand = debuggers.readEntry("BacktraceCommand");
-  m_removeFromBacktraceRegExp = debuggers.readEntry("RemoveFromBacktraceRegExp");
-  m_invalidStackFrameRegExp = debuggers.readEntry("InvalidStackFrameRegExp");
-  m_frameRegExp = debuggers.readEntry("FrameRegExp");
-  m_neededInValidBacktraceRegExp = debuggers.readEntry("NeededInValidBacktraceRegExp");
-  m_kcrashRegExp = debuggers.readEntry("KCrashRegExp");
+  m_debugger = generalGroup.readPathEntry("Exec");
+  m_debuggerBatch = generalGroup.readPathEntry("ExecBatch");
+  m_tryExec = generalGroup.readPathEntry("TryExec");
+  m_backtraceCommand = generalGroup.readEntry("BacktraceCommand");
+  m_removeFromBacktraceRegExp = generalGroup.readEntry("RemoveFromBacktraceRegExp");
+  m_invalidStackFrameRegExp = generalGroup.readEntry("InvalidStackFrameRegExp");
+  m_frameRegExp = generalGroup.readEntry("FrameRegExp");
+  m_neededInValidBacktraceRegExp = generalGroup.readEntry("NeededInValidBacktraceRegExp");
+  m_kcrashRegExp = generalGroup.readEntry("KCrashRegExp");
 
   KConfig preset("appdata", QString::fromLatin1("presets/%1rc").arg(configname),
                  KConfig::NoGlobals );
 
-  preset.setGroup("ErrorDescription");
-  if (preset.readEntry("Enable", false), true)
-    m_errorDescriptionText = preset.readEntry("Name");
+  const KConfigGroup errorDescrGroup = preset.group("ErrorDescription");
+  if (errorDescrGroup.readEntry("Enable", false), true)
+    m_errorDescriptionText = errorDescrGroup.readEntry("Name");
 
-  preset.setGroup("WhatToDoHint");
-  if (preset.readEntry("Enable", false))
-    m_whatToDoText = preset.readEntry("Name");
+  const KConfigGroup whatToDoGroup = preset.group("WhatToDoHint");
+  if (whatToDoGroup.readEntry("Enable", false))
+    m_whatToDoText = whatToDoGroup.readEntry("Name");
 
-  preset.setGroup("General");
-  m_showbugreport = preset.readEntry("ShowBugReportButton", false);
+  const KConfigGroup presetGeneralGroup = preset.group("General");
+  m_showbugreport = presetGeneralGroup.readEntry("ShowBugReportButton", false);
   m_showdebugger = m_showbacktrace = m_pid != 0;
   if (m_showbacktrace)
   {
-    m_showbacktrace = preset.readEntry("ShowBacktraceButton", true);
-    m_showdebugger = preset.readEntry("ShowDebugButton", true);
+    m_showbacktrace = presetGeneralGroup.readEntry("ShowBacktraceButton", true);
+    m_showdebugger = presetGeneralGroup.readEntry("ShowDebugButton", true);
   }
-  m_disablechecks = preset.readEntry("DisableChecks", false);
+  m_disablechecks = presetGeneralGroup.readEntry("DisableChecks", false);
 
-  bool b = preset.readEntry("SignalDetails", true);
+  bool b = presetGeneralGroup.readEntry("SignalDetails", true);
 
   QString str = QString::number(m_signalnum);
   // use group unknown if signal not found
   if (!preset.hasGroup(str))
     str = QLatin1String("unknown");
-  preset.setGroup(str);
-  m_signalName = preset.readEntry("Name");
+  const KConfigGroup signalGroup = preset.group(str);
+  m_signalName = signalGroup.readEntry("Name");
   if (b)
-    m_signalText = preset.readEntry("Comment");
+    m_signalText = signalGroup.readEntry("Comment");
 }
 
 // replace some of the strings
