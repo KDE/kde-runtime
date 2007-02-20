@@ -223,38 +223,40 @@ void KDebugDialog::slotDebugAreaChanged( const QString & text )
       kError() << "The first part wasn't a number : " << data << endl;
 
   /* Fill dialog fields with values from config data */
-  pConfig->setGroup( QString::number( number ) ); // Group name = debug area code
-  pInfoCombo->setCurrentIndex( pConfig->readEntry( "InfoOutput", 2 ) );
-  pInfoFile->setText( pConfig->readPathEntry( "InfoFilename","kdebug.dbg" ) );
-  //pInfoShow->setText( pConfig->readEntry( "InfoShow" ) );
-  pWarnCombo->setCurrentIndex( pConfig->readEntry( "WarnOutput", 2 ) );
-  pWarnFile->setText( pConfig->readPathEntry( "WarnFilename","kdebug.dbg" ) );
-  //pWarnShow->setText( pConfig->readEntry( "WarnShow" ) );
-  pErrorCombo->setCurrentIndex( pConfig->readEntry( "ErrorOutput", 2 ) );
-  pErrorFile->setText( pConfig->readPathEntry( "ErrorFilename","kdebug.dbg") );
-  //pErrorShow->setText( pConfig->readEntry( "ErrorShow" ) );
-  pFatalCombo->setCurrentIndex( pConfig->readEntry( "FatalOutput", 2 ) );
-  pFatalFile->setText( pConfig->readPathEntry("FatalFilename","kdebug.dbg") );
-  //pFatalShow->setText( pConfig->readEntry( "FatalShow" ) );
-  pAbortFatal->setChecked( pConfig->readEntry( "AbortFatal", 1 ) );
+  mCurrentDebugArea = number;
+  KConfigGroup group = pConfig->group( QString::number( number ) ); // Group name = debug area code
+  pInfoCombo->setCurrentIndex( group.readEntry( "InfoOutput", 2 ) );
+  pInfoFile->setText( group.readPathEntry( "InfoFilename","kdebug.dbg" ) );
+  //pInfoShow->setText( group.readEntry( "InfoShow" ) );
+  pWarnCombo->setCurrentIndex( group.readEntry( "WarnOutput", 2 ) );
+  pWarnFile->setText( group.readPathEntry( "WarnFilename","kdebug.dbg" ) );
+  //pWarnShow->setText( group.readEntry( "WarnShow" ) );
+  pErrorCombo->setCurrentIndex( group.readEntry( "ErrorOutput", 2 ) );
+  pErrorFile->setText( group.readPathEntry( "ErrorFilename","kdebug.dbg") );
+  //pErrorShow->setText( group.readEntry( "ErrorShow" ) );
+  pFatalCombo->setCurrentIndex( group.readEntry( "FatalOutput", 2 ) );
+  pFatalFile->setText( group.readPathEntry("FatalFilename","kdebug.dbg") );
+  //pFatalShow->setText( group.readEntry( "FatalShow" ) );
+  pAbortFatal->setChecked( group.readEntry( "AbortFatal", 1 ) );
   slotDestinationChanged(0);
 }
 
 void KDebugDialog::save()
 {
-  pConfig->writeEntry( "InfoOutput", pInfoCombo->currentIndex() );
-  pConfig->writePathEntry( "InfoFilename", pInfoFile->text() );
-  //pConfig->writeEntry( "InfoShow", pInfoShow->text() );
-  pConfig->writeEntry( "WarnOutput", pWarnCombo->currentIndex() );
-  pConfig->writePathEntry( "WarnFilename", pWarnFile->text() );
-  //pConfig->writeEntry( "WarnShow", pWarnShow->text() );
-  pConfig->writeEntry( "ErrorOutput", pErrorCombo->currentIndex() );
-  pConfig->writePathEntry( "ErrorFilename", pErrorFile->text() );
-  //pConfig->writeEntry( "ErrorShow", pErrorShow->text() );
-  pConfig->writeEntry( "FatalOutput", pFatalCombo->currentIndex() );
-  pConfig->writePathEntry( "FatalFilename", pFatalFile->text() );
-  //pConfig->writeEntry( "FatalShow", pFatalShow->text() );
-  pConfig->writeEntry( "AbortFatal", pAbortFatal->isChecked() );
+  KConfigGroup group = pConfig->group( QString::number( mCurrentDebugArea ) ); // Group name = debug area code
+  group.writeEntry( "InfoOutput", pInfoCombo->currentIndex() );
+  group.writePathEntry( "InfoFilename", pInfoFile->text() );
+  //group.writeEntry( "InfoShow", pInfoShow->text() );
+  group.writeEntry( "WarnOutput", pWarnCombo->currentIndex() );
+  group.writePathEntry( "WarnFilename", pWarnFile->text() );
+  //group.writeEntry( "WarnShow", pWarnShow->text() );
+  group.writeEntry( "ErrorOutput", pErrorCombo->currentIndex() );
+  group.writePathEntry( "ErrorFilename", pErrorFile->text() );
+  //group.writeEntry( "ErrorShow", pErrorShow->text() );
+  group.writeEntry( "FatalOutput", pFatalCombo->currentIndex() );
+  group.writePathEntry( "FatalFilename", pFatalFile->text() );
+  //group.writeEntry( "FatalShow", pFatalShow->text() );
+  group.writeEntry( "AbortFatal", pAbortFatal->isChecked() );
 
   QDBusMessage msg = QDBusMessage::createSignal("/", "org.kde.KDebug", "configChanged");
   if (!QDBusConnection::sessionBus().send(msg))

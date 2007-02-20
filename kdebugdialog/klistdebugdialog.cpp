@@ -122,9 +122,9 @@ void KListDebugDialog::load()
 {
   for (int i = 0; i < m_areaWidget->count(); ++i) {
     QListWidgetItem* item = m_areaWidget->item(i);
-    pConfig->setGroup( item->data(Qt::UserRole).toByteArray() ); // Group name = debug area code = cb's name
+    KConfigGroup group = pConfig->group( item->data(Qt::UserRole).toByteArray() ); // Group name = debug area code = cb's name
 
-    int setting = pConfig->readEntry( "InfoOutput", 2 );
+    int setting = group.readEntry( "InfoOutput", 2 );
 
     switch (setting) {
       case 4: // off
@@ -148,16 +148,16 @@ void KListDebugDialog::save()
 {
   for (int i = 0; i < m_areaWidget->count(); ++i) {
     QListWidgetItem* item = m_areaWidget->item(i);
-    pConfig->setGroup( item->data(Qt::UserRole).toByteArray() ); // Group name = debug area code = cb's name
+    KConfigGroup group = pConfig->group( item->data(Qt::UserRole).toByteArray() ); // Group name = debug area code = cb's name
     if (item->checkState() != Qt::PartiallyChecked)
     {
       int setting = (item->checkState() == Qt::Checked) ? 2 : 4;
-      pConfig->writeEntry( "InfoOutput", setting );
+      group.writeEntry( "InfoOutput", setting );
     }
   }
   //sync done by main.cpp
 
-  // send DCOP message to all clients
+  // send DBus message to all clients
   QDBusMessage msg = QDBusMessage::createSignal("/", "org.kde.KDebug", "configChanged" );
   if (!QDBusConnection::sessionBus().send(msg))
   {

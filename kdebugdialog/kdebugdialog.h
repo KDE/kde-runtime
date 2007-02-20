@@ -28,8 +28,6 @@ class QGroupBox;
 class QCheckBox;
 class QPushButton;
 
-class KConfig;
-
 /**
  * Control debug/warning/error/fatal output of KDE applications
  *
@@ -52,6 +50,7 @@ protected Q_SLOTS:
   void slotDestinationChanged(int);
 
 private:
+  int mCurrentDebugArea;
   QComboBox* pDebugAreas;
   QGroupBox* pInfoGroup;
   QLabel* pInfoLabel1;
