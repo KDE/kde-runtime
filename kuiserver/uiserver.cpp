@@ -83,10 +83,12 @@ UIServer::UIServer()
     toolBar->addWidget(searchText);
 
     listProgress = new QListView(tabWidget);
+    listProgress->setFrameStyle(QFrame::NoFrame);
     listProgress->setObjectName("progresslist");
     listProgress->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
 
     listFinished = new QListView(tabWidget);
+    listFinished->setFrameStyle(QFrame::NoFrame);
     listFinished->setObjectName("progresslistFinished");
     listFinished->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
 
