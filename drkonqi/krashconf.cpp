@@ -95,18 +95,17 @@ void KrashConfig :: readConfig()
 #endif
   }
 
-  KSharedConfig::Ptr config = KGlobal::config();
-  config->setGroup("drkonqi");
+  KConfigGroup config(KGlobal::config(), "drkonqi");
 
   // maybe we should check if it's relative?
-  QString configname = config->readEntry("ConfigName",
-                                         QString("enduser"));
+  QString configname = config.readEntry("ConfigName",
+                                        QString("enduser"));
 
-  QString debuggername = config->readEntry("Debugger",
+  QString debuggername = config.readEntry("Debugger",
                                            QString("gdb"));
 
-  KConfig debuggers(QString::fromLatin1("debuggers/%1rc").arg(debuggername),
-                    true, false, "appdata");
+  KConfig debuggers("appdata", QString::fromLatin1("debuggers/%1rc").arg(debuggername),
+                    KConfig::NoGlobals );
 
   debuggers.setGroup("General");
   m_debugger = debuggers.readPathEntry("Exec");
@@ -119,8 +118,8 @@ void KrashConfig :: readConfig()
   m_neededInValidBacktraceRegExp = debuggers.readEntry("NeededInValidBacktraceRegExp");
   m_kcrashRegExp = debuggers.readEntry("KCrashRegExp");
 
-  KConfig preset(QString::fromLatin1("presets/%1rc").arg(configname),
-                 true, false, "appdata");
+  KConfig preset("appdata", QString::fromLatin1("presets/%1rc").arg(configname),
+                 KConfig::NoGlobals );
 
   preset.setGroup("ErrorDescription");
   if (preset.readEntry("Enable", false), true)

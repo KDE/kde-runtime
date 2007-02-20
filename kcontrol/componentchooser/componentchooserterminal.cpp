@@ -31,7 +31,7 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kopenwithdialog.h>
-#include <ksimpleconfig.h>
+#include <kconfig.h>
 #include <kstandarddirs.h>
 #include <kmimetypetrader.h>
 #include <kurlrequester.h>
@@ -61,9 +61,8 @@ void CfgTerminalEmulator::defaults()
 
 
 void CfgTerminalEmulator::load(KConfig *) {
-	KConfig *config = new KConfig("kdeglobals", true);
-	config->setGroup("General");
-	QString terminal = config->readPathEntry("TerminalApplication","konsole");
+        KConfigGroup config(KSharedConfig::openConfig("kdeglobals"), "General");
+	QString terminal = config.readPathEntry("TerminalApplication","konsole");
 	if (terminal == "konsole")
 	{
 	   terminalLE->setText("xterm");
@@ -74,18 +73,15 @@ void CfgTerminalEmulator::load(KConfig *) {
 	  terminalLE->setText(terminal);
 	  otherCB->setChecked(true);
 	}
-	delete config;
 
 	emit changed(false);
 }
 
-void CfgTerminalEmulator::save(KConfig *) {
-
-	KConfig *config = new KConfig("kdeglobals");
-	config->setGroup("General");
-	config->writePathEntry("TerminalApplication", terminalCB->isChecked()?"konsole":terminalLE->text(), KConfigBase::Normal|KConfigBase::Global);
-	config->sync();
-	delete config;
+void CfgTerminalEmulator::save(KConfig *)
+{
+        KConfigGroup config(KSharedConfig::openConfig("kdeglobals"), "General");
+	config.writePathEntry("TerminalApplication", terminalCB->isChecked()?"konsole":terminalLE->text(), KConfigBase::Normal|KConfigBase::Global);
+	config.sync();
 
 	KGlobalSettings::self()->emitChange(KGlobalSettings::SettingsChanged);
         KToolInvocation::klauncher()->reparseConfiguration();

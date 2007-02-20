@@ -29,7 +29,7 @@
 
 #include <kaboutdata.h>
 #include <kbuildsycocaprogressdialog.h>
-#include <kconfig.h>
+#include <ksharedconfig.h>
 #include <kdebug.h>
 #include <kdialog.h>
 #include <kmessagebox.h>
@@ -61,8 +61,8 @@ KLocaleApplication::KLocaleApplication(QWidget *parent,
         0, 0, "bieker@kde.org");
   setAboutData( aboutData );
 
-  m_nullConfig = KSharedConfig::openConfig(QString(), false, false);
-  m_globalConfig = KSharedConfig::openConfig(QString(), false, true);
+  m_nullConfig = KSharedConfig::openConfig(QString(), KConfig::NoGlobals );
+  m_globalConfig = KSharedConfig::openConfig(QString(), KConfig::IncludeGlobals );
 
   m_locale = new KLocale(QLatin1String("kcmlocale"), m_nullConfig);
 

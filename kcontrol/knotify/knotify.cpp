@@ -114,8 +114,8 @@ K_EXPORT_COMPONENT_FACTORY( knotify, NotifyFactory("kcmnotify") )
 
 KCMKNotify::~KCMKNotify()
 {
-    KConfig config( "knotifyrc", false, false );
-    config.setGroup( "Misc" );
+    KConfig _config("knotifyrc", KConfig::NoGlobals);
+    KConfigGroup config(&_config, "Misc" );
     config.writeEntry( "LastConfiguredApp", m_appCombo->currentText() );
     config.sync();
 }
@@ -214,8 +214,8 @@ PlayerSettingsDialog::PlayerSettingsDialog( QWidget *parent )
 
 void PlayerSettingsDialog::load()
 {
-    KConfig config( "knotifyrc", true, false );
-    config.setGroup( "Misc" );
+    KConfig _config( "knotifyrc", KConfig::NoGlobals  );
+    KConfigGroup config(&_config, "Misc" );
     bool useExternal = config.readEntry( "Use external player", false );
     m_ui->cbExternal->setChecked( useExternal );
     m_ui->reqExternal->setPath( config.readPathEntry( "External player" ) );
@@ -223,7 +223,7 @@ void PlayerSettingsDialog::load()
 
     if ( !m_ui->cbExternal->isChecked() )
     {
-        config.setGroup( "StartProgress" );
+        config.changeGroup( "StartProgress" );
         if ( config.readEntry( "Use Arts", true ) )
         {
             m_ui->cbArts->setChecked( true );
@@ -238,14 +238,14 @@ void PlayerSettingsDialog::load()
 void PlayerSettingsDialog::save()
 {
     // see kdelibs/arts/knotify/knotify.cpp
-    KConfig config( "knotifyrc", false, false );
-    config.setGroup( "Misc" );
+    KConfig _config("knotifyrc", KConfig::NoGlobals);
+    KConfigGroup config(&_config, "Misc" );
 
     config.writePathEntry( "External player", m_ui->reqExternal->url().path() );
     config.writeEntry( "Use external player", m_ui->cbExternal->isChecked() );
     config.writeEntry( "Volume", m_ui->volumeSlider->value() );
 
-    config.setGroup( "StartProgress" );
+    config.changeGroup( "StartProgress" );
 
     if ( m_ui->cbNone->isChecked() )
     {

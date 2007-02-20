@@ -60,16 +60,15 @@ TopLevel::TopLevel()
   report_bug = 0;
 
   // read settings
-  KSharedConfig::Ptr config = KGlobal::config();
-  config->setGroup("Index");
-  QString viewmode = config->readEntry("ViewMode", "Tree");
+  KConfigGroup config(KGlobal::config(), "Index");
+  QString viewmode = config.readEntry("ViewMode", "Tree");
 
   if (viewmode == "Tree")
     KCGlobal::setViewMode(Tree);
   else
     KCGlobal::setViewMode(Icon);
 
-  QString size = config->readEntry("IconSize", "Medium");
+  QString size = config.readEntry("IconSize", "Medium");
   if (size == "Small")
     KCGlobal::setIconSize(K3Icon::SizeSmall);
   else if (size == "Large")
@@ -118,8 +117,8 @@ TopLevel::TopLevel()
   _tab->setSizePolicy( QSizePolicy( QSizePolicy::Maximum, QSizePolicy::Preferred ) );
 
  // Restore sizes
-  config->setGroup("General");
-  QList<int> sizes = config->readEntry(  "SplitterSizes",QList<int>() );
+  config.changeGroup("General");
+  QList<int> sizes = config.readEntry(  "SplitterSizes",QList<int>() );
   if (!sizes.isEmpty())
      _splitter->setSizes(sizes);
 
@@ -157,7 +156,7 @@ TopLevel::TopLevel()
       connect( aw, SIGNAL( moduleSelected( ConfigModule * ) ),
                SLOT( activateModule( ConfigModule * ) ) );
       _dock->setBaseWidget( aw );
-#ifdef Q_WS_X11      
+#ifdef Q_WS_X11
       KWin::setIcons(  winId(),
 		       KIconLoader::global()->loadIcon("hwinfo", K3Icon::NoGroup, 32 ),
 		       KIconLoader::global()->loadIcon("hwinfo", K3Icon::NoGroup, 16 ) );
@@ -174,33 +173,32 @@ TopLevel::TopLevel()
 
 TopLevel::~TopLevel()
 {
-  KSharedConfig::Ptr config = KGlobal::config();
-  config->setGroup("Index");
+  KConfigGroup config(KGlobal::config(), "Index");
   if (KCGlobal::viewMode() == Tree)
-    config->writeEntry("ViewMode", "Tree");
+    config.writeEntry("ViewMode", "Tree");
   else
-    config->writeEntry("ViewMode", "Icon");
+    config.writeEntry("ViewMode", "Icon");
 
   switch (KCGlobal::iconSize())
     {
     case K3Icon::SizeSmall:
-      config->writeEntry("IconSize", "Small");
+      config.writeEntry("IconSize", "Small");
       break;
     case K3Icon::SizeLarge:
-      config->writeEntry("IconSize", "Large");
+      config.writeEntry("IconSize", "Large");
       break;
     case K3Icon::SizeHuge:
-      config->writeEntry("IconSize", "Huge");
+      config.writeEntry("IconSize", "Huge");
       break;
     default:
-      config->writeEntry("IconSize", "Medium");
+      config.writeEntry("IconSize", "Medium");
       break;
     }
 
-  config->setGroup("General");
-  config->writeEntry("SplitterSizes", _splitter->sizes());
+  config.changeGroup("General");
+  config.writeEntry("SplitterSizes", _splitter->sizes());
 
-  config->sync();
+  config.sync();
 
   delete _modules;
 }

@@ -69,8 +69,7 @@ KControlApp::KControlApp()
   connect (modIface, SIGNAL(handbookClicked()), toplevel, SLOT(slotHandbookRequest()));
 
   QRect desk = KGlobalSettings::desktopGeometry(toplevel);
-  KSharedConfig::Ptr config = KGlobal::config();
-  config->setGroup("General");
+  KConfigGroup config(KGlobal::config(), "General");
   // Initial size is:
   // never bigger than workspace as reported by desk
   // 940x700 on 96 dpi, 12 pt font
@@ -80,9 +79,9 @@ KControlApp::KControlApp()
   int fontSize = toplevel->fontInfo().pointSize();
   if (fontSize == 0)
     fontSize = (toplevel->fontInfo().pixelSize() * 72) / toplevel->logicalDpiX();
-  int x = config->readEntry(QString::fromLatin1("InitialWidth %1").arg(desk.width()), 
+  int x = config.readEntry(QString::fromLatin1("InitialWidth %1").arg(desk.width()),
 			       qMin( desk.width(), 368 + (6*toplevel->logicalDpiX()*fontSize)/12 ) );
-  int y = config->readEntry(QString::fromLatin1("InitialHeight %1").arg(desk.height()), 
+  int y = config.readEntry(QString::fromLatin1("InitialHeight %1").arg(desk.height()),
 			       qMin( desk.height(), 312 + (4*toplevel->logicalDpiX()*fontSize)/12 ) );
   toplevel->resize(x,y);
 }
@@ -91,12 +90,11 @@ KControlApp::~KControlApp()
 {
   if (toplevel)
     {
-      KSharedConfig::Ptr config = KGlobal::config();
-      config->setGroup("General");
+      KConfigGroup config(KGlobal::config(), "General");
       QDesktopWidget *desk = QApplication::desktop();
-      config->writeEntry(QString::fromLatin1("InitialWidth %1").arg(desk->width()), toplevel->width());
-      config->writeEntry(QString::fromLatin1("InitialHeight %1").arg(desk->height()), toplevel->height());
-      config->sync();
+      config.writeEntry(QString::fromLatin1("InitialWidth %1").arg(desk->width()), toplevel->width());
+      config.writeEntry(QString::fromLatin1("InitialHeight %1").arg(desk->height()), toplevel->height());
+      config.sync();
     }
   delete toplevel;
 }
@@ -126,7 +124,7 @@ extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])
      KCGlobal::setIsInfoCenter(false);
   }
 
-  
+
   if (argv_0.right(11) == "kinfocenter")
     aboutData->addAuthor("Helge Deller", I18N_NOOP("Current Maintainer"), "deller@kde.org");
   else

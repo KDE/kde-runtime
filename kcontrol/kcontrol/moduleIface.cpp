@@ -46,8 +46,8 @@ QPalette ModuleIface::getPalette(){
 }
 #endif
 QString ModuleIface::getStyle() const {
-	KConfig config(  "kdeglobals" );
-	config.setGroup( "General" );
+	KConfig _config( "kdeglobals" );
+	KConfigGroup config(&_config, "General" );
 	return config.readEntry("widgetStyle");
 }
 

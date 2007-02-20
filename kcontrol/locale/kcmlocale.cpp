@@ -37,7 +37,7 @@
 #include <kdialog.h>
 #include <kiconloader.h>
 #include <klanguagebutton.h>
-#include <ksimpleconfig.h>
+#include <kconfig.h>
 #include <kstandarddirs.h>
 
 #include "kcmlocale.h"
@@ -202,7 +202,7 @@ void KLocaleConfig::loadLanguageList()
       menu_index = -2; // first entries should _not_ be sorted
       continue;
     }
-    KSimpleConfig entry(*it);
+    KConfig entry(*it, KConfig::OnlyLocal);
     entry.setGroup("KCM Locale");
     QString name = entry.readEntry("Name",
                                    ki18n("without name").toString(m_locale));
@@ -311,7 +311,7 @@ void KLocaleConfig::readLocale(const QString &path, QString &name,
     .arg(sub)
     .arg(path);
 
-  KSimpleConfig entry(KStandardDirs::locate("locale", filepath));
+  KConfig entry(KStandardDirs::locate("locale", filepath));
   entry.setGroup("KCM Locale");
   name = entry.readEntry("Name");
 
@@ -415,8 +415,8 @@ QStringList KLocaleConfig::languageList() const
                             QString::fromLatin1("l10n/%1/entry.desktop")
                             .arg(m_locale->country()));
 
-  KSimpleConfig entry(fileName);
-  entry.setGroup("KCM Locale");
+  KConfig _entry( fileName, KConfig::OnlyLocal );
+  KConfigGroup entry(&_entry, "KCM Locale");
 
   return entry.readEntry("Languages", QStringList());
 }

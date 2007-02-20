@@ -26,7 +26,7 @@
 #include <kiconloader.h>
 #include <klocale.h>
 #include <kglobalsettings.h>
-#include <ksimpleconfig.h>
+#include <kconfig.h>
 #include <kapplication.h>
 #include <kstandarddirs.h>
 #include <kdirnotify.h>
@@ -49,8 +49,8 @@ KNetAttach::KNetAttach( QWidget* parent )
     finishButton()->setText(i18n("Save && C&onnect"));
     //setResizeMode(Fixed); FIXME: make the wizard fixed-geometry
     setFinishEnabled(_folderParameters, false);
-    KConfig recent("krecentconnections", true, false);
-    recent.setGroup("General");
+    KConfig crecent( "krecentconnections", KConfig::NoGlobals  );
+    KConfigGroup recent(&crecent, "General");
     QStringList idx = recent.readEntry("Index",QStringList());
     if (idx.isEmpty()) {
 	_recent->setEnabled(false);
@@ -106,7 +106,7 @@ void KNetAttach::showPage( QWidget *page )
 	    setInformationText("SMB");
 	    updateForProtocol("SMB");
 	} else { //if (_recent->isChecked()) {
-	    KConfig recent("krecentconnections", true, false);
+	    KConfig recent( "krecentconnections", KConfig::NoGlobals );
 	    if (!recent.hasGroup(_recentConnectionName->currentText())) {
 		recent.setGroup("General");
 		QStringList idx = recent.readEntry("Index",QStringList());
@@ -205,8 +205,8 @@ void KNetAttach::finished()
 
 	QString path = KGlobal::dirs()->saveLocation("remote_entries");
 	path += name + ".desktop";
-	KSimpleConfig desktopFile(path, false);
-	desktopFile.setGroup("Desktop Entry");
+	KConfig _desktopFile( path, KConfig::OnlyLocal );
+	KConfigGroup desktopFile(&_desktopFile, "Desktop Entry");
 	desktopFile.writeEntry("Icon", "package_network");
 	desktopFile.writeEntry("Name", name);
 	desktopFile.writeEntry("Type", "Link");
@@ -216,15 +216,15 @@ void KNetAttach::finished()
     }
 
     if (!name.isEmpty()) {
-	KConfig recent("krecentconnections", false, false);
-	recent.setGroup("General");
+	KConfig _recent("krecentconnections", KConfig::NoGlobals);
+	KConfigGroup recent(&_recent, "General");
 	QStringList idx = recent.readEntry("Index",QStringList());
-	recent.deleteGroup(name); // erase anything stale
+	_recent.deleteGroup(name); // erase anything stale
 	if (idx.contains(name)) {
 	    idx.removeAll(name);
 	    idx.prepend(name);
 	    recent.writeEntry("Index", idx);
-	    recent.setGroup(name);
+	    recent.changeGroup(name);
 	} else {
 	    QString last;
 	    if (!idx.isEmpty()) {
@@ -232,10 +232,10 @@ void KNetAttach::finished()
 		idx.pop_back();
 	    }
 	    idx.prepend(name);
-	    recent.deleteGroup(last);
+	    _recent.deleteGroup(last);
 	    recent.writeEntry("Index", idx);
 	}
-	recent.setGroup(name);
+	recent.changeGroup(name);
 	recent.writeEntry("URL", url.prettyUrl());
 	if (_type == "WebFolder" || _type == "Fish" || _type == "FTP") {
 	    recent.writeEntry("Port", _port->value());

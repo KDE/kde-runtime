@@ -28,7 +28,7 @@
 
 #include <kdialog.h>
 #include <klocale.h>
-#include <ksimpleconfig.h>
+#include <kconfig.h>
 #include <kstandarddirs.h>
 
 #include "localeother.h"
@@ -81,10 +81,9 @@ void KLocaleConfigOther::save()
 {
   KSharedConfig::Ptr config = KGlobal::config();
   KConfigGroup group(config, "Locale");
-
-  KSimpleConfig ent(KStandardDirs::locate("locale",
+  KConfig ent(KStandardDirs::locate("locale",
                            QString::fromLatin1("l10n/%1/entry.desktop")
-                           .arg(m_locale->country())), true);
+                           .arg(m_locale->country())));
   ent.setGroup("KCM Locale");
 
   // ### HPB: Add code here

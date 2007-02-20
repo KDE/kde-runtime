@@ -37,7 +37,7 @@
 #include <klocale.h>
 #include <kstandarddirs.h>
 #include <kservice.h>
-#include <ksimpleconfig.h>
+#include <kconfig.h>
 #undef Unsorted
 
 #include <k3listview.h>
@@ -432,14 +432,11 @@ void IconThemesConfig::save()
   if (!selected)
      return;
 
-  KSimpleConfig *config = new KSimpleConfig("kdeglobals", false);
-  config->setGroup("Icons");
+  KConfigGroup config(KSharedConfig::openConfig("kdeglobals", KConfig::OnlyLocal), "Icons");
 
-  config->writeEntry("Theme", m_themeNames[selected->text(0)]);
+  config.writeEntry("Theme", m_themeNames[selected->text(0)]);
   KIconTheme::reconfigure();
   emit changed(false);
-
-  delete config;
 
   for (int i=0; i<K3Icon::LastGroup; i++)
   {

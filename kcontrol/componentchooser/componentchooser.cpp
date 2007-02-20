@@ -34,7 +34,7 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kopenwithdialog.h>
-#include <ksimpleconfig.h>
+#include <kconfig.h>
 #include <kstandarddirs.h>
 #include <kmimetypetrader.h>
 #include <kurlrequester.h>
@@ -244,9 +244,8 @@ void CfgBrowser::defaults()
 
 
 void CfgBrowser::load(KConfig *) {
-	KConfig *config = new KConfig("kdeglobals", true);
-	config->setGroup("General");
-	QString exec = config->readEntry("BrowserApplication");
+	KConfigGroup config(KSharedConfig::openConfig("kdeglobals"), "General");
+	QString exec = config.readEntry("BrowserApplication");
 	if (exec.isEmpty())
 	{
 	   radioKIO->setChecked(true);
@@ -272,15 +271,13 @@ void CfgBrowser::load(KConfig *) {
 	}
 
 	lineExec->setText(m_browserExec);
-	delete config;
 
 	emit changed(false);
 }
 
-void CfgBrowser::save(KConfig *) {
-
-	KConfig *config = new KConfig("kdeglobals");
-	config->setGroup("General");
+void CfgBrowser::save(KConfig *)
+{
+        KConfigGroup config(KSharedConfig::openConfig("kdeglobals"), "General");
 	QString exec;
 	if (radioExec->isChecked())
 	{
@@ -290,9 +287,8 @@ void CfgBrowser::save(KConfig *) {
 	   else
 	      exec = '!' + exec; // Litteral command
 	}
-	config->writePathEntry("BrowserApplication", exec, KConfigBase::Normal|KConfigBase::Global);
-	config->sync();
-	delete config;
+	config.writePathEntry("BrowserApplication", exec, KConfigBase::Normal|KConfigBase::Global);
+	config.sync();
 
 	KGlobalSettings::self()->emitChange(KGlobalSettings::SettingsChanged);
 
@@ -327,7 +323,7 @@ ComponentChooser::ComponentChooser(QWidget *parent):
 															KStandardDirs::NoDuplicates, dummy );
 	for (QStringList::Iterator it=services.begin();it!=services.end();++it)
 	{
-		KSimpleConfig cfg(*it);
+		KConfig cfg(*it, KConfig::OnlyLocal);
 		ServiceChooser->addItem(new MyListBoxItem(cfg.readEntry("Name",i18n("Unknown")),(*it)));
 
 	}
@@ -345,7 +341,7 @@ void ComponentChooser::slotServiceSelected(QListWidgetItem* it) {
 	if (somethingChanged) {
 		if (KMessageBox::questionYesNo(this,i18n("<qt>You changed the default component of your choice, do want to save that change now ?</qt>"),QString(),KStandardGuiItem::save(),KStandardGuiItem::discard())==KMessageBox::Yes) save();
 	}
-	KSimpleConfig cfg(static_cast<MyListBoxItem*>(it)->File);
+	KConfig cfg(static_cast<MyListBoxItem*>(it)->File, KConfig::OnlyLocal);
 
 	ComponentDescription->setText(cfg.readEntry("Comment",i18n("No description available")));
 	ComponentDescription->setMinimumSize(ComponentDescription->sizeHint());
@@ -374,7 +370,7 @@ void ComponentChooser::slotServiceSelected(QListWidgetItem* it) {
 		}
 
 	}
-#ifdef Q_OS_UNIX	
+#ifdef Q_OS_UNIX
 	else if (cfgType=="internal_terminal")
 	{
 		if (!(configWidget && qobject_cast<CfgTerminalEmulator*>(configWidget)))
@@ -383,7 +379,7 @@ void ComponentChooser::slotServiceSelected(QListWidgetItem* it) {
 		}
 
 	}
-#endif	
+#endif
 	else if (cfgType=="internal_browser")
 	{
 		if (!(configWidget && qobject_cast<CfgBrowser*>(configWidget)))
@@ -429,7 +425,7 @@ void ComponentChooser::load() {
 		CfgPlugin * plugin = dynamic_cast<CfgPlugin*>( configWidget );
 		if( plugin )
 		{
-			KSimpleConfig cfg(latestEditedService);
+			KConfig cfg(latestEditedService, KConfig::OnlyLocal);
 			plugin->load( &cfg );
 		}
 	}
@@ -441,7 +437,7 @@ void ComponentChooser::save() {
 		CfgPlugin* plugin = dynamic_cast<CfgPlugin*>( configWidget );
 		if( plugin )
 		{
-			KSimpleConfig cfg(latestEditedService);
+			KConfig cfg(latestEditedService, KConfig::OnlyLocal);
 			plugin->save( &cfg );
 		}
 	}
