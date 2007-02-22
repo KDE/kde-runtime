@@ -248,14 +248,14 @@ void KIconConfig::read()
     {
         mbChanged[i] = false;
 
-	mpConfig->setGroup(*it + "Icons");
-	mSizes[i] = mpConfig->readEntry("Size", mSizes[i]);
-	mbDP[i] = mpConfig->readEntry("DoublePixels", mbDP[i]);
-	mbAnimated[i] = mpConfig->readEntry("Animated", mbAnimated[i]);
+        KConfigGroup iconGroup(mpConfig, *it + "Icons");
+	mSizes[i] = iconGroup.readEntry("Size", mSizes[i]);
+	mbDP[i] = iconGroup.readEntry("DoublePixels", mbDP[i]);
+	mbAnimated[i] = iconGroup.readEntry("Animated", mbAnimated[i]);
 
 	for (it2=mStates.begin(), j=0; it2!=mStates.end(); ++it2, j++)
 	{
-	    QString tmp = mpConfig->readEntry(*it2 + "Effect", QString());
+	    QString tmp = iconGroup.readEntry(*it2 + "Effect", QString());
 	    if (tmp == "togray")
 		effect = KIconEffect::ToGray;
 	    else if (tmp == "colorize")
@@ -270,10 +270,10 @@ void KIconConfig::read()
 		effect = KIconEffect::NoEffect;
 	    else continue;
 	    mEffects[i][j].type = effect;
-	    mEffects[i][j].value = mpConfig->readEntry(*it2 + "Value", 0.0);
-	    mEffects[i][j].color = mpConfig->readEntry(*it2 + "Color",QColor());
-	    mEffects[i][j].color2 = mpConfig->readEntry(*it2 + "Color2", QColor());
-	    mEffects[i][j].transparent = mpConfig->readEntry(*it2 + "SemiTransparent", false);
+	    mEffects[i][j].value = iconGroup.readEntry(*it2 + "Value", 0.0);
+	    mEffects[i][j].color = iconGroup.readEntry(*it2 + "Color",QColor());
+	    mEffects[i][j].color2 = iconGroup.readEntry(*it2 + "Color2", QColor());
+	    mEffects[i][j].transparent = iconGroup.readEntry(*it2 + "SemiTransparent", false);
 	}
     }
 }

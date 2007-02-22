@@ -100,8 +100,8 @@ void CfgComponent::load(KConfig *cfg) {
 	}
 
 	KConfig *store = new KConfig(cfg->readPathEntry("storeInFile","null"));
-        store->setGroup(cfg->readEntry("valueSection"));
-	QString setting=store->readEntry(cfg->readEntry("valueName","kcm_componenchooser_null"), QString());
+        KConfigGroup group(store, cfg->readEntry("valueSection"));
+	QString setting=group.readEntry(cfg->readEntry("valueName","kcm_componenchooser_null"), QString());
         delete store;
 	if (setting.isEmpty()) setting=cfg->readEntry("defaultImplementation", QString());
 	QString *tmp=m_revLookupDict[setting];
