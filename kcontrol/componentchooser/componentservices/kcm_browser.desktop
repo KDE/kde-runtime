@@ -1,5 +1,5 @@
 Name=Web Browser
-Name[el]=Περιηγητής Ιστού
+Name[el]=Περιηγητής ιστού
 Name[fr]=Navigateur web
 Name[x-test]=xxWeb Browserxx
 Comment=Here you can configure your default web browser. All KDE applications in which you can select hyperlinks should honor this setting.
