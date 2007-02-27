@@ -355,10 +355,10 @@ void KIconConfig::save()
     QStringList::ConstIterator it, it2;
     for (it=mGroups.begin(), i=0; it!=mGroups.end(); ++it, i++)
     {
-	mpConfig->setGroup(*it + "Icons");
-	mpConfig->writeEntry("Size", mSizes[i], KConfigBase::Normal|KConfigBase::Global);
-	mpConfig->writeEntry("DoublePixels", mbDP[i], KConfigBase::Normal|KConfigBase::Global);
-	mpConfig->writeEntry("Animated", mbAnimated[i], KConfigBase::Normal|KConfigBase::Global);
+	KConfigGroup cg(mpConfig, *it + "Icons");
+	cg.writeEntry("Size", mSizes[i], KConfigBase::Normal|KConfigBase::Global);
+	cg.writeEntry("DoublePixels", mbDP[i], KConfigBase::Normal|KConfigBase::Global);
+	cg.writeEntry("Animated", mbAnimated[i], KConfigBase::Normal|KConfigBase::Global);
 	for (it2=mStates.begin(), j=0; it2!=mStates.end(); ++it2, j++)
 	{
 	    QString tmp;
@@ -383,11 +383,11 @@ void KIconConfig::save()
 		tmp = "none";
 		break;
 	    }
-	    mpConfig->writeEntry(*it2 + "Effect", tmp, KConfigBase::Normal|KConfigBase::Global);
-	    mpConfig->writeEntry(*it2 + "Value", int(mEffects[i][j].value), KConfigBase::Normal|KConfigBase::Global);
-            mpConfig->writeEntry(*it2 + "Color", mEffects[i][j].color, KConfigBase::Normal|KConfigBase::Global);
-            mpConfig->writeEntry(*it2 + "Color2", mEffects[i][j].color2, KConfigBase::Normal|KConfigBase::Global);
-            mpConfig->writeEntry(*it2 + "SemiTransparent", mEffects[i][j].transparent, KConfigBase::Normal|KConfigBase::Global);
+	    cg.writeEntry(*it2 + "Effect", tmp, KConfigBase::Normal|KConfigBase::Global);
+	    cg.writeEntry(*it2 + "Value", int(mEffects[i][j].value), KConfigBase::Normal|KConfigBase::Global);
+            cg.writeEntry(*it2 + "Color", mEffects[i][j].color, KConfigBase::Normal|KConfigBase::Global);
+            cg.writeEntry(*it2 + "Color2", mEffects[i][j].color2, KConfigBase::Normal|KConfigBase::Global);
+            cg.writeEntry(*it2 + "SemiTransparent", mEffects[i][j].transparent, KConfigBase::Normal|KConfigBase::Global);
 	}
     }
 
