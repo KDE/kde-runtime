@@ -308,167 +308,38 @@ void UIServer::progressInfoMessage(int id, QString msg)
 }
 
 
-/// ===========================================================
-
-
-bool UIServer::copying(int id, QString from, QString to)
+bool UIServer::setDescription(int id, const QString &description)
 {
     if (id < 1) return false;
 
-    QString delegateMessage(i18n("Copying"));
-
-    progressListModel->setData(progressListModel->indexForJob(id), delegateMessage,
+    progressListModel->setData(progressListModel->indexForJob(id), description,
                                ProgressListDelegate::Message);
 
-    progressListModel->setData(progressListModel->indexForJob(id), from,
-                               ProgressListDelegate::From);
+    return true;
+}
 
-    progressListModel->setData(progressListModel->indexForJob(id), to,
-                               ProgressListDelegate::To);
+bool UIServer::setDescriptionFirstField(int id, const QString &name, const QString &value)
+{
+    if (id < 1) return false;
 
-    progressListModel->setData(progressListModel->indexForJob(id), i18n("From"),
+    progressListModel->setData(progressListModel->indexForJob(id), name,
                                ProgressListDelegate::FromLabel);
 
-    progressListModel->setData(progressListModel->indexForJob(id), i18n("To"),
+    progressListModel->setData(progressListModel->indexForJob(id), value,
+                               ProgressListDelegate::From);
+
+    return true;
+}
+
+bool UIServer::setDescriptionSecondField(int id, const QString &name, const QString &value)
+{
+    if (id < 1) return false;
+
+    progressListModel->setData(progressListModel->indexForJob(id), name,
                                ProgressListDelegate::ToLabel);
 
-    return true;
-}
-
-bool UIServer::moving(int id, QString from, QString to)
-{
-    if (id < 1) return false;
-
-    QString delegateMessage(i18n("Moving"));
-
-    progressListModel->setData(progressListModel->indexForJob(id), delegateMessage,
-                               ProgressListDelegate::Message);
-
-    progressListModel->setData(progressListModel->indexForJob(id), from,
-                               ProgressListDelegate::From);
-
-    progressListModel->setData(progressListModel->indexForJob(id), to,
+    progressListModel->setData(progressListModel->indexForJob(id), value,
                                ProgressListDelegate::To);
-
-    progressListModel->setData(progressListModel->indexForJob(id), i18n("From"),
-                               ProgressListDelegate::FromLabel);
-
-    progressListModel->setData(progressListModel->indexForJob(id), i18n("To"),
-                               ProgressListDelegate::ToLabel);
-
-    return true;
-}
-
-bool UIServer::deleting(int id, QString url)
-{
-    if (id < 1) return false;
-
-    QString delegateMessage(i18n("Deleting"));
-
-    progressListModel->setData(progressListModel->indexForJob(id), delegateMessage,
-                               ProgressListDelegate::Message);
-
-    progressListModel->setData(progressListModel->indexForJob(id), url,
-                               ProgressListDelegate::From);
-
-    progressListModel->setData(progressListModel->indexForJob(id), i18n("File"),
-                               ProgressListDelegate::FromLabel);
-
-    return true;
-}
-
-bool UIServer::transferring(int id, QString url)
-{
-    if (id < 1) return false;
-
-    QString delegateMessage(i18n("Transferring"));
-
-    progressListModel->setData(progressListModel->indexForJob(id), delegateMessage,
-                               ProgressListDelegate::Message);
-
-    progressListModel->setData(progressListModel->indexForJob(id), url,
-                               ProgressListDelegate::From);
-
-    progressListModel->setData(progressListModel->indexForJob(id), i18n("Source on"),
-                               ProgressListDelegate::FromLabel);
-
-    return true;
-}
-
-bool UIServer::creatingDir(int id, QString dir)
-{
-    if (id < 1) return false;
-
-    QString delegateMessage(i18n("Creating directory"));
-
-    progressListModel->setData(progressListModel->indexForJob(id), delegateMessage,
-                               ProgressListDelegate::Message);
-
-    progressListModel->setData(progressListModel->indexForJob(id), dir,
-                               ProgressListDelegate::From);
-
-    progressListModel->setData(progressListModel->indexForJob(id), i18n("New directory"),
-                               ProgressListDelegate::FromLabel);
-
-    return true;
-}
-
-bool UIServer::stating(int id, QString url)
-{
-    if (id < 1) return false;
-
-    QString delegateMessage(i18n("Stating"));
-
-    progressListModel->setData(progressListModel->indexForJob(id), delegateMessage,
-                               ProgressListDelegate::Message);
-
-    progressListModel->setData(progressListModel->indexForJob(id), url,
-                               ProgressListDelegate::From);
-
-    progressListModel->setData(progressListModel->indexForJob(id), i18n("Stating"),
-                               ProgressListDelegate::FromLabel);
-
-    return true;
-}
-
-bool UIServer::mounting(int id, QString dev, QString point)
-{
-    if (id < 1) return false;
-
-    QString delegateMessage(i18n("Mounting device"));
-
-    progressListModel->setData(progressListModel->indexForJob(id), delegateMessage,
-                               ProgressListDelegate::Message);
-
-    progressListModel->setData(progressListModel->indexForJob(id), dev,
-                               ProgressListDelegate::From);
-
-    progressListModel->setData(progressListModel->indexForJob(id), point,
-                               ProgressListDelegate::To);
-
-    progressListModel->setData(progressListModel->indexForJob(id), i18n("Device"),
-                               ProgressListDelegate::FromLabel);
-
-    progressListModel->setData(progressListModel->indexForJob(id), i18n("Mount point"),
-                               ProgressListDelegate::ToLabel);
-
-    return true;
-}
-
-bool UIServer::unmounting(int id, QString point)
-{
-    if (id < 1) return false;
-
-    QString delegateMessage(i18n("Unmounting device"));
-
-    progressListModel->setData(progressListModel->indexForJob(id), delegateMessage,
-                               ProgressListDelegate::Message);
-
-    progressListModel->setData(progressListModel->indexForJob(id), point,
-                               ProgressListDelegate::From);
-
-    progressListModel->setData(progressListModel->indexForJob(id), i18n("Mount point"),
-                               ProgressListDelegate::FromLabel);
 
     return true;
 }

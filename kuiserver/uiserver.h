@@ -173,79 +173,30 @@ public:
     void progressInfoMessage(int jobId, QString msg);
 
     /**
-      * Starts a copying progress
-      *
-      * @param jobId    the identification number of the job
-      * @param from     the source of the copying
-      * @param to       the destination of copying transfer
-      * @return         whether it was added to the list/tree or not
-      */
-    bool copying(int jobId, QString from, QString to);
+     * Set the current job description
+     *
+     * @param jobId       the identification number of the job
+     * @param description the description of the job
+     */
+    bool setDescription(int jobId, const QString &title);
 
     /**
-      * Starts a moving progress
-      *
-      * @param jobId    the identification number of the job
-      * @param from     the source of the moving
-      * @param to       the destination of the moving
-      * @return         whether it was added to the list/tree or not
-      */
-    bool moving(int jobId, QString from, QString to);
+     * Set the current first field for the job description
+     *
+     * @param jobId       the identification number of the job
+     * @param name        the name of this field
+     * @param value       the value of this field
+     */
+    bool setDescriptionFirstField(int jobId, const QString &name, const QString &value);
 
     /**
-      * Starts a deleting progress
-      *
-      * @param jobId    the identification number of the job
-      * @param url      the path that is going to be deleted
-      * @return         whether it was added to the list/tree or not
-      */
-    bool deleting(int jobId, QString url);
-
-    /**
-      * Starts a transferring progress
-      *
-      * @param jobId    the identification number of the job
-      * @param url      the path that is going to be transferred
-      * @return         whether it was added to the list/tree or not
-      */
-    bool transferring(int jobId, QString url);
-
-    /**
-      * Starts a dir creation progress
-      *
-      * @param jobId    the identification number of the job
-      * @param dir      the path where the directory is going to be created
-      * @return         whether it was added to the list/tree or not
-      */
-    bool creatingDir(int jobId, QString dir);
-
-    /**
-      * Starts a stating progress
-      *
-      * @param jobId    the identification number of the job
-      * @param url      the path that is going to be stated
-      * @return         whether it was added to the list/tree or not
-      */
-    bool stating(int jobId, QString url);
-
-    /**
-      * Starts a mounting progress
-      *
-      * @param jobId    the identification number of the job
-      * @param dev      the device that is going to be mounted
-      * @param point    the mount point where the device will be mounted
-      * @return         whether it was added to the list/tree or not
-      */
-    bool mounting(int jobId, QString dev, QString point);
-
-    /**
-      * Starts an unmounting progress
-      *
-      * @param jobId    the identification number of the job
-      * @param point    the mount point that is going to be unmounted
-      * @return         whether it was added to the list/tree or not
-      */
-    bool unmounting(int jobId, QString point);
+     * Set the current second field for the job description
+     *
+     * @param jobId       the identification number of the job
+     * @param name        the name of this field
+     * @param value       the value of this field
+     */
+    bool setDescriptionSecondField(int jobId, const QString &name, const QString &value);
 
     /**
       * Sets a job visible or hidden
