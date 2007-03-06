@@ -1,7 +1,26 @@
 [KCM Locale]
 Name=Pitcairn
+Name[ar]=بيتكايرن
+Name[be]=Піткерн
+Name[cy]=Ynys Pitcairn
 Name[el]=Πίτκαιρν
+Name[eo]=Pitkarna Insulo
+Name[fa]=پیتکرن
+Name[he]=פיטקרן
+Name[ja]=ピトケアン島
+Name[ka]=პიტიკაირნი
+Name[kk]=Питкэрн ар-ы
+Name[ko]=핏케언
+Name[lv]=Pitkērna
+Name[mk]=Питкерн
+Name[ne]=पिटक्याइरन
+Name[pa]=ਪੀਟਕਾਰਨ
+Name[ru]=Питкэрн
+Name[ta]=பிட்காய்ன்
+Name[tg]=Питкорин
+Name[uz]=Питкерн
 Name[x-test]=xxPitcairnxx
+Name[zh_TW]=匹特開恩島
 Region=oceania
 Languages=en_GB
 #DecimalSymbol=,

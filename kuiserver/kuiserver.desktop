@@ -2,8 +2,10 @@
 Encoding=UTF-8
 Type=Service
 Name=kuiserver
+Name[x-test]=xxkuiserverxx
 Exec=kuiserver
 Comment=KDE's Progress Info UI server
+Comment[x-test]=xxKDE's Progress Info UI serverxx
 ServiceTypes=
 # It is a server
 X-DBUS-StartupType=Unique
