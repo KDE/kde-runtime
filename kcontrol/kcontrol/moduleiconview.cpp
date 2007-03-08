@@ -93,7 +93,7 @@ void ModuleIconView::fill()
   // add our "up" icon if we aren't top level
   if (_path != KCGlobal::baseGroup())
   {
-     icon = loadIcon( "back" );
+     icon = loadIcon( "go-previous" );
      // go-back node
      ModuleIconItem *i = new ModuleIconItem(this, i18n("Back"), icon);
      i->setOrderNo(0);

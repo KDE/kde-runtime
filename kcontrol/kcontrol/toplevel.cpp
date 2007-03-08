@@ -108,11 +108,11 @@ TopLevel::TopLevel()
   connect(_searchtab, SIGNAL(moduleSelected(ConfigModule *)),
                   this, SLOT(activateModule(ConfigModule *)));
 
-  _tab->addTab(_searchtab, KIcon("find"), i18n("Sear&ch"));
+  _tab->addTab(_searchtab, KIcon("edit-find"), i18n("Sear&ch"));
 
   // help tab
   _helptab = new HelpWidget(0L);
-  _tab->addTab(_helptab, KIcon("help"), i18n("Hel&p"));
+  _tab->addTab(_helptab, KIcon("help-contents"), i18n("Hel&p"));
 
   _tab->setSizePolicy( QSizePolicy( QSizePolicy::Maximum, QSizePolicy::Preferred ) );
 
