@@ -71,6 +71,7 @@ Name[xh]=Umphathi Wenkonzo
 Name[zh_TW]=服務管理程式
 Comment=KDE Services Configuration
 Comment[el]=Ρύθμιση των υπηρεσιών συστήματος
+Comment[nds]=KDE-Systeemdeensten instellen
 Comment[x-test]=xxKDE Services Configurationxx
 Keywords=KDED,Daemon,Services
 Keywords[ar]=KDED,Daemon,Services,مراقب,خدمات

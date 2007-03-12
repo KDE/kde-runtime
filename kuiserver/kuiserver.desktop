@@ -6,6 +6,7 @@ Name[x-test]=xxkuiserverxx
 Exec=kuiserver
 Comment=KDE's Progress Info UI server
 Comment[el]=Εξυπηρετητής πληροφοριών διεργασιών του KDE
+Comment[nds]=De KDE-Server för Vörankamen-Infos för Böversieden
 Comment[x-test]=xxKDE's Progress Info UI serverxx
 ServiceTypes=
 # It is a server
