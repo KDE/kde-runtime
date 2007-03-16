@@ -1,4 +1,5 @@
 add_subdirectory( pics )
+add_subdirectory( tests )
 
 
 set(kuiserver_KDEINIT_SRCS
