@@ -47,18 +47,18 @@
 #include <kjob.h>
 
 #include "uiserver.h"
-#include "uiserveradaptor_p.h"
+#include "uiserveradaptor.h"
 #include "progresslistmodel.h"
 #include "progresslistdelegate.h"
-#include "observeriface.h"
+#include "callbacksiface.h"
 
 #include "uiserver.h"
 
 UIServer::UIServer()
     : KMainWindow(0)
 {
-    serverAdaptor = new UIServerAdaptor(this);
-    QDBusConnection::sessionBus().registerObject(QLatin1String("/UIServer"), this);
+    serverAdaptor = new UiServerAdaptor(this);
+    QDBusConnection::sessionBus().registerObject(QLatin1String("/UiServer"), this);
 
     tabWidget = new QTabWidget();
 
@@ -168,14 +168,14 @@ int UIServer::newJob(const QString &appServiceName, int capabilities, bool showP
 
     s_jobId++;
 
-    OrgKdeKIOObserverInterface *observer = new org::kde::KIO::Observer(appServiceName, "/Observer", QDBusConnection::sessionBus());
+    OrgKdeUiServerCallbacksInterface *callbacks = new org::kde::UiServerCallbacks(appServiceName, "/UiServerCallbacks", QDBusConnection::sessionBus());
 
-    m_hashObserverInterfaces.insert(s_jobId, observer);
+    m_hashCallbacksInterfaces.insert(s_jobId, callbacks);
 
-    connect(progressListDelegate, SIGNAL(actionPerformed(int,int)), observer,
+    connect(progressListDelegate, SIGNAL(actionPerformed(int,int)), callbacks,
             SLOT(slotActionPerformed(int,int)));
 
-    connect(progressListDelegateFinished, SIGNAL(actionPerformed(int,int)), observer,
+    connect(progressListDelegateFinished, SIGNAL(actionPerformed(int,int)), callbacks,
             SLOT(slotActionPerformed(int,int)));
 
     progressListModel->newJob(s_jobId, internalAppName, jobIcon, appName, showProgress);
@@ -196,7 +196,7 @@ int UIServer::newJob(const QString &appServiceName, int capabilities, bool showP
 
 void UIServer::jobFinished(int id)
 {
-    if ((id < 1) || !m_hashObserverInterfaces.contains(id)) return;
+    if ((id < 1) || !m_hashCallbacksInterfaces.contains(id)) return;
 
     QModelIndex index = progressListModel->indexForJob(id);
 
@@ -207,8 +207,8 @@ void UIServer::jobFinished(int id)
 
     // TODO: Set all properties to the last added item to the finished list of items
 
-    delete m_hashObserverInterfaces[id];
-    m_hashObserverInterfaces.remove(id);
+    delete m_hashCallbacksInterfaces[id];
+    m_hashCallbacksInterfaces.remove(id);
 
     progressListModel->finishJob(id);
 }

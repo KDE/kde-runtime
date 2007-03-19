@@ -41,11 +41,11 @@
 
 class ProgressListModel;
 class ProgressListDelegate;
-class UIServerAdaptor;
+class UiServerAdaptor;
 class QToolBar;
 class QTabWidget;
 class KLineEdit;
-class OrgKdeKIOObserverInterface;
+class OrgKdeUiServerCallbacksInterface;
 
 class UIServer
     : public KMainWindow
@@ -226,9 +226,9 @@ private:
 
     QToolBar *toolBar;
     KLineEdit *searchText;
-    UIServerAdaptor *serverAdaptor;
+    UiServerAdaptor *serverAdaptor;
     QHash<int, int> m_hashActions;
-    QHash<int, OrgKdeKIOObserverInterface*> m_hashObserverInterfaces;
+    QHash<int, OrgKdeUiServerCallbacksInterface*> m_hashCallbacksInterfaces;
 
     static int s_jobId;
 };
