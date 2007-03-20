@@ -80,7 +80,7 @@ void AudioPreview::initView( const QString& mimeType )
   QString desc;
   if (info.isValid())
   {
-    if (mimeptr->is("audio/x-mp3") || mimeptr->is("application/ogg"))
+    if (mimeptr->is("audio/mpeg") || mimeptr->is("application/ogg"))
     {
       // following 3 infos might be very long; make sure they get squeezed
       KSqueezedTextLabel *sl;
