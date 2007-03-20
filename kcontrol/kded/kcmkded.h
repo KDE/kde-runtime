@@ -33,7 +33,7 @@ class KDEDConfig : public KCModule
 Q_OBJECT
 public:
 	KDEDConfig(QWidget* parent, const QStringList& foo = QStringList());
-	~KDEDConfig() {};
+	~KDEDConfig() {}
 
 	void       load();
 	void       save();

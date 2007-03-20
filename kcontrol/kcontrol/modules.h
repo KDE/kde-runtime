@@ -47,10 +47,10 @@ public:
   ConfigModule(const KService::Ptr &s);
   ~ConfigModule();
 
-  bool isChanged() { return _changed; };
-  void setChanged(bool changed) { _changed = changed; };
+  bool isChanged() { return _changed; }
+  void setChanged(bool changed) { _changed = changed; }
 
-  bool isActive() { return _module != 0; };
+  bool isActive() { return _module != 0; }
   ProxyWidget *module();
   const KAboutData *aboutData() const;
 

@@ -46,9 +46,9 @@ public:
   void setTag(const QString& tag) { _tag = tag; }
   void setCaption(const QString& caption) { _caption = caption; }
   void setModule(ConfigModule *m) { _module = m; }
-  QString tag() const { return _tag; };
-  QString caption() const { return _caption; };
-  ConfigModule *module() { return _module; };
+  QString tag() const { return _tag; }
+  QString caption() const { return _caption; }
+  ConfigModule *module() { return _module; }
   void regChildIconWidth(int width);
   int  maxChildIconWidth() { return _maxChildIconWidth; }
 

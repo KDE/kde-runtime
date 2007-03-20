@@ -59,7 +59,7 @@ class ModuleTreeWhatsThis : public Q3WhatsThis
 public:
     ModuleTreeWhatsThis( ModuleTreeView* tree)
         : Q3WhatsThis( tree ), treeView( tree ) {}
-    ~ModuleTreeWhatsThis(){};
+    ~ModuleTreeWhatsThis(){}
 
 
     QString text( const QPoint & p) {

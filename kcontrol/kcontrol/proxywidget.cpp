@@ -51,7 +51,7 @@ class WhatsThis : public Q3WhatsThis
 public:
     WhatsThis( ProxyWidget* parent )
     : Q3WhatsThis( parent ), proxy( parent ) {}
-    ~WhatsThis(){};
+    ~WhatsThis(){}
 
 
     QString text( const QPoint &  ) {

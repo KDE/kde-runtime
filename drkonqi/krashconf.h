@@ -43,16 +43,16 @@ public:
   virtual ~KrashConfig();
 
 public Q_SLOTS:
-  QString programName() const { return m_aboutData->programName(); };
-  QByteArray appName() const { return m_aboutData->appName(); };
-  int signalNumber() const { return m_signalnum; };
-  int pid() const { return m_pid; };
-  bool startedByKdeinit() const { return m_startedByKdeinit; };
-  bool safeMode() const { return m_safeMode; };
-  QString signalName() const { return m_signalName; };
-  QString signalText() const { return m_signalText; };
+  QString programName() const { return m_aboutData->programName(); }
+  QByteArray appName() const { return m_aboutData->appName(); }
+  int signalNumber() const { return m_signalnum; }
+  int pid() const { return m_pid; }
+  bool startedByKdeinit() const { return m_startedByKdeinit; }
+  bool safeMode() const { return m_safeMode; }
+  QString signalName() const { return m_signalName; }
+  QString signalText() const { return m_signalText; }
   QString whatToDoText() const { return m_whatToDoText; }
-  QString errorDescriptionText() const { return m_errorDescriptionText; };
+  QString errorDescriptionText() const { return m_errorDescriptionText; }
 
   void registerDebuggingApplication(const QString& launchName);
 
@@ -66,10 +66,10 @@ public:
   QString frameRegExp() const { return m_frameRegExp; }
   QString neededInValidBacktraceRegExp() const { return m_neededInValidBacktraceRegExp; }
   QString kcrashRegExp() const { return m_kcrashRegExp; }
-  bool showBacktrace() const { return m_showbacktrace; };
-  bool showDebugger() const { return m_showdebugger && !m_debugger.isNull(); };
-  bool showBugReport() const { return m_showbugreport; };
-  bool disableChecks() const { return m_disablechecks; };
+  bool showBacktrace() const { return m_showbacktrace; }
+  bool showDebugger() const { return m_showdebugger && !m_debugger.isNull(); }
+  bool showBugReport() const { return m_showbugreport; }
+  bool disableChecks() const { return m_disablechecks; }
   const KAboutData *aboutData() const { return m_aboutData; }
 
   void expandString(QString &str, bool shell, const QString &tempFile = QString()) const;

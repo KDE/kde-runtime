@@ -49,7 +49,7 @@ public:
     setIcon( KIconLoader::global()->loadIcon(module->icon(), K3Icon::Desktop, K3Icon::SizeSmall) ); 
  }
 
- ConfigModule *module() const { return m_module; };
+ ConfigModule *module() const { return m_module; }
 
 protected:
  ConfigModule *m_module;

@@ -37,8 +37,8 @@ class KConfig;
 class CfgPlugin
 {
 public:
-	CfgPlugin(){};
-	virtual ~CfgPlugin(){};
+	CfgPlugin(){}
+	virtual ~CfgPlugin(){}
 	virtual void load(KConfig *cfg)=0;
 	virtual void save(KConfig *cfg)=0;
 	virtual void defaults()=0;
