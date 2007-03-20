@@ -48,4 +48,4 @@ Name[uz]=Аудио кўриб чиқиш
 Name[x-test]=xxAudio Previewxx
 Name[zh_TW]=音效預覽
 X-KDE-Library=librenaudioplugin
-ServiceTypes=RenameDialog/Plugin,audio/x-mp3,audio/x-wav,application/ogg
+ServiceTypes=RenameDialog/Plugin,audio/mpeg,audio/x-wav,application/ogg
