@@ -28,7 +28,7 @@
 #ifndef BACKTRACE_H
 #define BACKTRACE_H
 
-class KProcess;
+class K3Process;
 class KrashConfig;
 class KTemporaryFile;
 
@@ -52,13 +52,13 @@ Q_SIGNALS:
   void done(const QString &); // replaces whole text
 
 protected Q_SLOTS:
-  void slotProcessExited(KProcess * proc);
-  void slotReadInput(KProcess * proc, char * buf, int buflen);
+  void slotProcessExited(K3Process * proc);
+  void slotReadInput(K3Process * proc, char * buf, int buflen);
 
 private:
   bool usefulBacktrace();
   void processBacktrace();
-  KProcess *m_proc;
+  K3Process *m_proc;
   const KrashConfig *m_krashconf;
   KTemporaryFile *m_temp;
   QString m_strBt;

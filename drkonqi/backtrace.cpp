@@ -28,7 +28,7 @@
 #include <QFile>
 #include <QRegExp>
 
-#include <kprocess.h>
+#include <k3process.h>
 #include <kdebug.h>
 #include <kstandarddirs.h>
 #include <kmessagebox.h>
@@ -45,7 +45,7 @@ BackTrace::BackTrace(const KrashConfig *krashconf, QObject *parent,
     m_krashconf(krashconf), m_temp(0)
 {
   setObjectName(name);
-  m_proc = new KProcess;
+  m_proc = new K3Process;
 }
 
 BackTrace::~BackTrace()
@@ -94,7 +94,7 @@ void BackTrace::start()
   ::fsync(handle);
 
   // start the debugger
-  m_proc = new KProcess;
+  m_proc = new K3Process;
   m_proc->setUseShell(true);
 
   QString str = m_krashconf->debuggerBatch();
@@ -102,15 +102,15 @@ void BackTrace::start()
 
   *m_proc << str;
 
-  connect(m_proc, SIGNAL(receivedStdout(KProcess*, char*, int)),
-          SLOT(slotReadInput(KProcess*, char*, int)));
-  connect(m_proc, SIGNAL(processExited(KProcess*)),
-          SLOT(slotProcessExited(KProcess*)));
+  connect(m_proc, SIGNAL(receivedStdout(K3Process*, char*, int)),
+          SLOT(slotReadInput(K3Process*, char*, int)));
+  connect(m_proc, SIGNAL(processExited(K3Process*)),
+          SLOT(slotProcessExited(K3Process*)));
 
-  m_proc->start ( KProcess::NotifyOnExit, KProcess::All );
+  m_proc->start ( K3Process::NotifyOnExit, K3Process::All );
 }
 
-void BackTrace::slotReadInput(KProcess *, char* buf, int buflen)
+void BackTrace::slotReadInput(K3Process *, char* buf, int buflen)
 {
   QString newstr = QString::fromLocal8Bit(buf, buflen);
   m_strBt.append(newstr);
@@ -118,7 +118,7 @@ void BackTrace::slotReadInput(KProcess *, char* buf, int buflen)
   emit append(newstr);
 }
 
-void BackTrace::slotProcessExited(KProcess *proc)
+void BackTrace::slotProcessExited(K3Process *proc)
 {
   // start it again
   kill(m_krashconf->pid(), SIGCONT);

@@ -23,7 +23,7 @@
 
 #include <klocale.h>
 #include <kdebug.h>
-#include <kprocess.h>
+#include <k3process.h>
 #include <kapplication.h>
 #include <krun.h>
 #include <ktoolinvocation.h>
@@ -82,13 +82,13 @@ void HelpWidget::setBaseText()
 
 void HelpWidget::urlClicked(const QString & _url)
 {
-    KProcess process;
+    K3Process process;
     KUrl url(KUrl("help:/"), _url);
 
     if (url.protocol() == "help" || url.protocol() == "man" || url.protocol() == "info") {
         process << "khelpcenter"
                 << url.url();
-        process.start(KProcess::DontCare);
+        process.start(K3Process::DontCare);
     } else {
         new KRun(url, this);
     }

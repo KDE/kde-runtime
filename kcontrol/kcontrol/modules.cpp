@@ -31,7 +31,7 @@
 #include <kapplication.h>
 #include <kdebug.h>
 #include <kservicegroup.h>
-#include <kprocess.h>
+#include <k3process.h>
 #include <klocale.h>
 #include <kstandarddirs.h>
 #include <kauthorized.h>
@@ -197,7 +197,7 @@ void ConfigModule::runAsRoot()
   QString kdesu = KStandardDirs::findExe("kdesu");
   if (!kdesu.isEmpty())
     {
-      _rootProcess = new KProcess;
+      _rootProcess = new K3Process;
       *_rootProcess << kdesu;
 #ifdef __GNUC__
 #warning "--nonewdcop doesn't exist now"; 
@@ -215,9 +215,9 @@ void ConfigModule::runAsRoot()
          *_rootProcess << QString("%1 --embed %2 --lang %3").arg(cmd).arg(_embedWidget->winId()).arg( KGlobal::locale()->language() );
       }
 
-      connect(_rootProcess, SIGNAL(processExited(KProcess*)), this, SLOT(rootExited(KProcess*)));
+      connect(_rootProcess, SIGNAL(processExited(K3Process*)), this, SLOT(rootExited(K3Process*)));
 
-      if ( !_rootProcess->start(KProcess::NotifyOnExit) )
+      if ( !_rootProcess->start(K3Process::NotifyOnExit) )
       {
           delete _rootProcess;
           _rootProcess = 0L;
@@ -235,7 +235,7 @@ void ConfigModule::runAsRoot()
 }
 
 
-void ConfigModule::rootExited(KProcess *)
+void ConfigModule::rootExited(K3Process *)
 {
 
   if (_embedWidget->containerWinId())

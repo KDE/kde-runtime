@@ -33,7 +33,7 @@ class QStringList;
 class KAboutData;
 class KCModule;
 class ProxyWidget;
-class KProcess;
+class K3Process;
 class QX11EmbedWidget;
 class QVBoxLayout;
 class KVBox;
@@ -65,7 +65,7 @@ private Q_SLOTS:
   void clientClosed();
   void clientChanged(bool state);
   void runAsRoot();
-  void rootExited(KProcess *proc);
+  void rootExited(K3Process *proc);
 
 
 Q_SIGNALS:
@@ -80,7 +80,7 @@ private:
   bool         _changed;
   ProxyWidget *_module;
   QX11EmbedWidget  *_embedWidget;
-  KProcess    *_rootProcess;
+  K3Process    *_rootProcess;
   QVBoxLayout *_embedLayout;
   KVBox       *_embedFrame;
 
