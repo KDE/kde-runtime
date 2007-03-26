@@ -42,7 +42,6 @@
 #include <kmenu.h>
 #include <kaction.h>
 #include <klineedit.h>
-#include <kio/defaultprogress.h>
 #include <kio/jobclasses.h>
 #include <kjob.h>
 

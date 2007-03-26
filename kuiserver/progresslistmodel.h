@@ -28,11 +28,7 @@
 #include <kiconloader.h>
 
 class QStyleOptionProgressBarV2;
-
-namespace KIO
-{
-    class DefaultProgress;
-}
+class KWidgetJobTracker;
 
 struct ActionInfo
 {
@@ -66,7 +62,7 @@ struct JobInfo
     QList<ActionInfo> actionInfoList;       ///< The list of actions added to the job
     QStyleOptionProgressBarV2 *progressBar; ///< The progress bar to be shown
     KIconLoader *iconLoader;                ///< The icon loader for loading the icon on the delegate
-    KIO::DefaultProgress *defaultProgress;  ///< The default progress operation window
+    KWidgetJobTracker *defaultTracker;      ///< The default progress operation window
 };
 
 class ProgressListModel
@@ -244,15 +240,15 @@ public:
       * @param row  the row of which we want to retrieve the default progress window
       * @return     the default progress window for given @p row
       */
-    KIO::DefaultProgress *defaultProgress(int row) const;
+    KWidgetJobTracker *defaultTracker(int row) const;
 
     /**
       * Sets the default progress window for the given @p row to @p defaultProgress
       *
       * @param row              the row in which we want to set the default window progress
-      * @param defaultProgress  the default window progress
+      * @param defaultTracker   the default window progress
       */
-    void setDefaultProgress(int row, KIO::DefaultProgress *defaultProgress);
+    void setDefaultTracker(int row, KWidgetJobTracker *defaultTracker);
 
 Q_SIGNALS:
     /**

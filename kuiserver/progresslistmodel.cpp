@@ -23,7 +23,7 @@
 #include <QStyleOptionProgressBarV2>
 
 #include <kiconloader.h>
-#include <kio/defaultprogress.h>
+#include <kwidgetjobtracker.h>
 
 ProgressListModel::ProgressListModel(QObject *parent)
     : QAbstractItemModel(parent)
@@ -36,7 +36,7 @@ ProgressListModel::~ProgressListModel()
     {
         delete it.progressBar;
         delete it.iconLoader;
-        delete it.defaultProgress;
+        delete it.defaultTracker;
     }
 }
 
@@ -181,7 +181,7 @@ bool ProgressListModel::insertRow(int row, uint jobId, const QModelIndex &parent
     newJob.progressMessage = QString();
     newJob.progressBar = 0;
     newJob.iconLoader = 0;
-    newJob.defaultProgress = 0;
+    newJob.defaultTracker = 0;
 
     jobInfoList.append(newJob);
 
@@ -434,14 +434,14 @@ QStyleOptionProgressBarV2 *ProgressListModel::progressBar(const QModelIndex &ind
     return jobInfoList[index.row()].progressBar;
 }
 
-KIO::DefaultProgress *ProgressListModel::defaultProgress(int row) const
+KWidgetJobTracker *ProgressListModel::defaultTracker(int row) const
 {
-    return jobInfoList[row].defaultProgress;
+    return jobInfoList[row].defaultTracker;
 }
 
-void ProgressListModel::setDefaultProgress(int row, KIO::DefaultProgress *defaultProgress)
+void ProgressListModel::setDefaultTracker(int row, KWidgetJobTracker *defaultTracker)
 {
-    jobInfoList[row].defaultProgress = defaultProgress;
+    jobInfoList[row].defaultTracker = defaultTracker;
 }
 
 bool ProgressListModel::setData(int row, const QVariant &value, int role)
