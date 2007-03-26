@@ -1,6 +1,8 @@
 [KCM Locale]
 Name=Czech Republic
+Name[de]=Tschechien
 Name[el]=Δημοκρατία της Τσεχίας
+Name[ja]=チェコ
 Name[nds]=Tschechsche Republiek
 Name[x-test]=xxCzech Republicxx
 Region=centraleurope
