@@ -156,21 +156,10 @@ int ProgressListDelegate::Private::getCurrentLeftMargin(int fontHeight) const
     return leftMargin + separatorPixels + fontHeight;
 }
 
-void ProgressListDelegate::Private::actionAdded(const QModelIndex &index)
+void ProgressListDelegate::Private::actionModified(const QModelIndex &index)
 {
     listView->closePersistentEditor(index);
     listView->openPersistentEditor(index);
-}
-
-void ProgressListDelegate::Private::actionEdited(const QModelIndex &index)
-{
-    listView->closePersistentEditor(index);
-    listView->openPersistentEditor(index);
-}
-
-void ProgressListDelegate::Private::actionRemoved(const QModelIndex &index)
-{
-    listView->closePersistentEditor(index);
 }
 
 ProgressListDelegate::Private::QActionPushButton::QActionPushButton(int actionId, int jobId, const QString &actionText, QWidget *parent)
@@ -199,8 +188,7 @@ ProgressListDelegate::~ProgressListDelegate()
     delete d;
 }
 
-QWidget *ProgressListDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option,
-                                            const QModelIndex &index) const
+QWidget *ProgressListDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     const ProgressListModel *progressListModel = static_cast<const ProgressListModel*>(index.model());
 
@@ -222,7 +210,6 @@ QWidget *ProgressListDelegate::createEditor(QWidget *parent, const QStyleOptionV
     foreach (const ActionInfo &actionIt, actionsModel)
     {
         newButton = new Private::QActionPushButton(actionIt.actionId, jobIdModel, actionIt.actionText);
-        newButton->setEnabled(actionIt.enabled);
 
         connect(newButton, SIGNAL(actionButtonPressed(int,int)), this,
                 SIGNAL(actionPerformed(int,int)));

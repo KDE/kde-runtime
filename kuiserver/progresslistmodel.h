@@ -32,7 +32,6 @@ class KWidgetJobTracker;
 
 struct ActionInfo
 {
-    bool enabled;                           ///< Button enabled or not
     int actionId;                           ///< The number that identificates the action
     QString actionText;                     ///< The text that is shown on the button on the editor
 };
@@ -130,23 +129,9 @@ public:
       */
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
 
-    /**
-      * Inserts a row into the model with the given @p jobId
-      *
-      * @param row      the row where the data will be inserted
-      * @param jobId    the identification number of the job to be added at the row @p row
-      * @param parent   will be ignored
-      * @return         whether the operation was sucessful or not
-      */
-    bool insertRow(int row, uint jobId, const QModelIndex &parent = QModelIndex());
+    virtual bool insertRows(int row, int count, const QModelIndex &parent = QModelIndex());
 
-    /**
-      * Removes the row @p row from the model
-      *
-      * @param row      the row to be removed
-      * @param parent   will be ignored
-      */
-    void removeRow(int row, const QModelIndex &parent = QModelIndex());
+    virtual bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex());
 
     /**
       * Sets the data contained on @p value to the given @p index and @p role
@@ -195,30 +180,6 @@ public:
     void editAction(int jobId, int actionId, const QString &actionText);
 
     /**
-      * Enables an existing action (the press button)
-      *
-      * @param jobId    the identification number of the job that contains the action to be enabled
-      * @param actionId the action that is going to be enabled
-      */
-    void enableAction(int jobId, int actionId);
-
-    /**
-      * Disables an existing action (the press button)
-      *
-      * @param jobId    the identification number of the job that contains the action to be disabled
-      * @param actionId the action that is going to be disabled
-      */
-    void disableAction(int jobId, int actionId);
-
-    /**
-      * Removes an existing action
-      *
-      * @param jobId    the identification number of the job that contains the action to be removed
-      * @param actionId the identification number of the action to be removed
-      */
-    void removeAction(int jobId, int actionId);
-
-    /**
       * Returns all existing actions related to a given job identification number
       *
       * @param jobId    the job which we want to retrieve all actions
@@ -252,25 +213,11 @@ public:
 
 Q_SIGNALS:
     /**
-      * Called when an action has been added to the model at @p index
+      * Called when an action has been modified at @p index
       *
-      * @param index the index where the action was added
+      * @param index the index where the action has been modified
       */
-    void actionAdded(const QModelIndex &index);
-
-    /**
-      * Called when an action has been edited on the model at @p index
-      *
-      * @param index the index where the action was edited
-      */
-    void actionEdited(const QModelIndex &index);
-
-    /**
-      * Called when an action has been removed from the model at @p index
-      *
-      * @param index the index where the action was removed
-      */
-    void actionRemoved(const QModelIndex &index);
+    void actionModified(const QModelIndex &index);
 
 private:
     /**

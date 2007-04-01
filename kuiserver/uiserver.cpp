@@ -122,31 +122,13 @@ UIServer::UIServer()
     progressListDelegateFinished->setEditorHeight(20);
     listFinished->setItemDelegate(progressListDelegateFinished);
 
-    connect(progressListModel, SIGNAL(rowsInserted(const QModelIndex&,int,int)),
-            listProgress, SLOT(rowsInserted(const QModelIndex&,int,int)));
-
-    connect(progressListModel, SIGNAL(rowsRemoved(const QModelIndex&,int,int)),
-            listProgress, SLOT(rowsAboutToBeRemoved(const QModelIndex&,int,int)));
-
-    connect(progressListModel, SIGNAL(rowsRemoved(const QModelIndex&,int,int)),
-            this, SLOT(slotRowsRemoved(const QModelIndex&,int,int)));
-
-    connect(progressListModel, SIGNAL(dataChanged(const QModelIndex&,const QModelIndex&)),
-            listProgress, SLOT(dataChanged(const QModelIndex&,const QModelIndex&)));
-
-    connect(progressListFinishedModel, SIGNAL(rowsInserted(const QModelIndex&,int,int)),
-            listFinished, SLOT(rowsInserted(const QModelIndex&,int,int)));
-
-    connect(progressListFinishedModel, SIGNAL(rowsRemoved(const QModelIndex&,int,int)),
-            listFinished, SLOT(rowsAboutToBeRemoved(const QModelIndex&,int,int)));
-
-    connect(progressListFinishedModel, SIGNAL(rowsRemoved(const QModelIndex&,int,int)),
-            this, SLOT(slotRowsRemoved(const QModelIndex&,int,int)));
-
-    connect(progressListFinishedModel, SIGNAL(dataChanged(const QModelIndex&,const QModelIndex&)),
-            listFinished, SLOT(dataChanged(const QModelIndex&,const QModelIndex&)));
-
     applySettings();
+
+    connect(progressListDelegate, SIGNAL(actionPerformed(int,int)), this,
+            SLOT(slotActionPerformed(int,int)));
+
+    connect(progressListDelegateFinished, SIGNAL(actionPerformed(int,int)), this,
+            SLOT(slotActionPerformedFinishedJob(int,int)));
 
     hide();
 }
@@ -163,19 +145,13 @@ UIServer* UIServer::createInstance()
 int UIServer::newJob(const QString &appServiceName, int capabilities, bool showProgress, const QString &internalAppName, const QString &jobIcon, const QString &appName)
 {
     // Uncomment if you want to see kuiserver in action (ereslibre)
-    // if (isHidden()) show();
+    if (isHidden()) show();
 
     s_jobId++;
 
     OrgKdeUiServerCallbacksInterface *callbacks = new org::kde::UiServerCallbacks(appServiceName, "/UiServerCallbacks", QDBusConnection::sessionBus());
 
     m_hashCallbacksInterfaces.insert(s_jobId, callbacks);
-
-    connect(progressListDelegate, SIGNAL(actionPerformed(int,int)), callbacks,
-            SLOT(slotActionPerformed(int,int)));
-
-    connect(progressListDelegateFinished, SIGNAL(actionPerformed(int,int)), callbacks,
-            SLOT(slotActionPerformed(int,int)));
 
     progressListModel->newJob(s_jobId, internalAppName, jobIcon, appName, showProgress);
     progressListModel->setData(progressListModel->indexForJob(s_jobId), s_jobId,
@@ -193,23 +169,40 @@ int UIServer::newJob(const QString &appServiceName, int capabilities, bool showP
     return s_jobId;
 }
 
-void UIServer::jobFinished(int id)
+void UIServer::jobFinished(int id, int errorCode)
 {
-    if ((id < 1) || !m_hashCallbacksInterfaces.contains(id)) return;
+    if (errorCode == KJob::NoError)
+    {
+        if ((id < 1) || !m_hashCallbacksInterfaces.contains(id)) return;
 
-    QModelIndex index = progressListModel->indexForJob(id);
+        QModelIndex index = progressListModel->indexForJob(id);
 
-    progressListFinishedModel->newJob(id, progressListModel->data(index, ProgressListDelegate::ApplicationInternalName).toString(),
-                                      progressListModel->data(index, ProgressListDelegate::Icon).toString(),
-                                      progressListModel->data(index, ProgressListDelegate::ApplicationName).toString(),
-                                      true /* showProgress (show or hide) */);
+        progressListFinishedModel->newJob(id, progressListModel->data(index, ProgressListDelegate::ApplicationInternalName).toString(),
+                                        progressListModel->data(index, ProgressListDelegate::Icon).toString(),
+                                        progressListModel->data(index, ProgressListDelegate::ApplicationName).toString(),
+                                        true /* showProgress (show or hide) */);
 
-    // TODO: Set all properties to the last added item to the finished list of items
+        progressListFinishedModel->newAction(id, KJob::Killable, i18n("Close information"));
+    }
 
     delete m_hashCallbacksInterfaces[id];
     m_hashCallbacksInterfaces.remove(id);
 
     progressListModel->finishJob(id);
+}
+
+void UIServer::jobSuspended(int id)
+{
+    if (id < 1) return;
+
+    progressListModel->editAction(id, KJob::Suspendable, i18n("Resume"));
+}
+
+void UIServer::jobResumed(int id)
+{
+    if (id < 1) return;
+
+    progressListModel->editAction(id, KJob::Suspendable, i18n("Pause"));
 }
 
 
@@ -368,6 +361,18 @@ void UIServer::applySettings()
      m_systemTray->show();
 }
 
+void UIServer::slotActionPerformed(int actionId, int jobId)
+{
+    if (!m_hashCallbacksInterfaces.contains(jobId)) return;
+
+    m_hashCallbacksInterfaces[jobId]->slotActionPerformed(actionId, jobId);
+}
+
+void UIServer::slotActionPerformedFinishedJob(int /* actionId */, int jobId)
+{
+    progressListFinishedModel->finishJob(jobId);
+}
+
 void UIServer::showConfigurationDialog()
 {
     if (KConfigDialog::showDialog("configuration"))
@@ -384,11 +389,6 @@ void UIServer::showConfigurationDialog()
             SLOT(updateConfiguration()));
 
     dialog->show();
-}
-
-void UIServer::slotRowsRemoved(const QModelIndex &parent, int start, int end)
-{
-    // TODO: unify all width's of progress bars
 }
 
 

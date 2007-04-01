@@ -35,14 +35,8 @@ public:
 
         ProgressListModel *progressListModel = static_cast<ProgressListModel*>(listView->model());
 
-        connect(progressListModel, SIGNAL(actionAdded(const QModelIndex&)), this,
-                SLOT(actionAdded(const QModelIndex&)));
-
-        connect(progressListModel, SIGNAL(actionEdited(const QModelIndex&)), this,
-                SLOT(actionEdited(const QModelIndex&)));
-
-        connect(progressListModel, SIGNAL(actionRemoved(const QModelIndex&)), this,
-                SLOT(actionRemoved(const QModelIndex&)));
+        connect(progressListModel, SIGNAL(actionModified(const QModelIndex&)), this,
+                SLOT(actionModified(const QModelIndex&)));
     }
 
     ~Private()
@@ -74,9 +68,7 @@ public:
     int getCurrentLeftMargin(int fontHeight) const;
 
 public Q_SLOTS:
-    void actionAdded(const QModelIndex &index);
-    void actionEdited(const QModelIndex &index);
-    void actionRemoved(const QModelIndex &index);
+    void actionModified(const QModelIndex &index);
 
 public:
     int separatorPixels;

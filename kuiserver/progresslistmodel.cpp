@@ -153,13 +153,16 @@ int ProgressListModel::rowCount(const QModelIndex &parent) const
     return parent.isValid() ? 0 : jobInfoList.count();
 }
 
-bool ProgressListModel::insertRow(int row, uint jobId, const QModelIndex &parent)
+bool ProgressListModel::insertRows(int row, int count, const QModelIndex &parent)
 {
+    Q_UNUSED(count);
+    Q_UNUSED(parent);
+
     beginInsertRows(QModelIndex(), row, row);
 
     JobInfo newJob;
 
-    newJob.jobId = jobId;
+    newJob.jobId = -1;
     newJob.applicationInternalName = QString();
     newJob.applicationName = QString();
     newJob.icon = QString();
@@ -190,16 +193,21 @@ bool ProgressListModel::insertRow(int row, uint jobId, const QModelIndex &parent
     return true;
 }
 
-void ProgressListModel::removeRow(int row, const QModelIndex &parent)
+bool ProgressListModel::removeRows(int row, int count, const QModelIndex &parent)
 {
+    Q_UNUSED(count);
+    Q_UNUSED(parent);
+
     if (row >= rowCount())
-        return;
+        return false;
 
     beginRemoveRows(QModelIndex(), row, row);
 
     jobInfoList.removeAt(row);
 
     endRemoveRows();
+
+    return true;
 }
 
 bool ProgressListModel::setData(const QModelIndex &index, const QVariant &value, int role)
@@ -283,16 +291,14 @@ void ProgressListModel::newJob(uint jobId, const QString &internalAppName, const
 {
     int newRow = rowCount();
 
-    insertRow(rowCount(), jobId);
+    insertRow(rowCount());
+    setData(newRow, jobId, ProgressListDelegate::JobId);
     setData(newRow, internalAppName, ProgressListDelegate::ApplicationInternalName);
     setData(newRow, appName, ProgressListDelegate::ApplicationName);
     setData(newRow, jobIcon, ProgressListDelegate::Icon);
     setIconLoader(newRow, new KIconLoader(internalAppName));
-
-    // Add a configuration window for showing this progresses or not (and more options) (ereslibre)
-    // KIO::DefaultProgress *progressWindow = new KIO::DefaultProgress(true);
-    // setDefaultProgress(newRow, progressWindow);
 }
+
 
 void ProgressListModel::finishJob(uint jobId)
 {
@@ -309,14 +315,13 @@ void ProgressListModel::newAction(uint jobId, uint actionId, const QString &acti
     int row = index.row();
 
     ActionInfo newActionInfo;
-    newActionInfo.enabled = true;
     newActionInfo.actionId = actionId;
     newActionInfo.actionText = actionText;
 
     jobInfoList[row].actionInfoList.append(newActionInfo);
 
-    emit actionAdded(index);
     emit dataChanged(index, index);
+    emit actionModified(index);
 }
 
 void ProgressListModel::editAction(int jobId, int actionId, const QString &actionText)
@@ -333,7 +338,6 @@ void ProgressListModel::editAction(int jobId, int actionId, const QString &actio
 
         if (actionId == actionIt.actionId)
         {
-            jobInfoList[index.row()].actionInfoList[i].enabled = true;
             jobInfoList[index.row()].actionInfoList[i].actionText = actionText;
 
             keepSearching = false;
@@ -342,86 +346,8 @@ void ProgressListModel::editAction(int jobId, int actionId, const QString &actio
         i++;
     }
 
-    emit actionEdited(index);
     emit dataChanged(index, index);
-}
-
-void ProgressListModel::enableAction(int jobId, int actionId)
-{
-    QModelIndex index = indexForJob(jobId);
-
-    int i = 0;
-    bool keepSearching = true;
-    ActionInfo actionIt;
-    while ((i < jobInfoList[index.row()].actionInfoList.count()) &&
-           keepSearching)
-    {
-        actionIt = jobInfoList[index.row()].actionInfoList[i];
-
-        if (actionId == actionIt.actionId)
-        {
-            jobInfoList[index.row()].actionInfoList[i].enabled = true;
-
-            keepSearching = false;
-        }
-
-        i++;
-    }
-
-    emit actionEdited(index);
-    emit dataChanged(index, index);
-}
-
-void ProgressListModel::disableAction(int jobId, int actionId)
-{
-    QModelIndex index = indexForJob(jobId);
-
-    int i = 0;
-    bool keepSearching = true;
-    ActionInfo actionIt;
-    while ((i < jobInfoList[index.row()].actionInfoList.count()) &&
-           keepSearching)
-    {
-        actionIt = jobInfoList[index.row()].actionInfoList[i];
-
-        if (actionId == actionIt.actionId)
-        {
-            jobInfoList[index.row()].actionInfoList[i].enabled = false;
-
-            keepSearching = false;
-        }
-
-        i++;
-    }
-
-    emit actionEdited(index);
-    emit dataChanged(index, index);
-}
-
-void ProgressListModel::removeAction(int jobId, int actionId)
-{
-    QModelIndex index = indexForJob(jobId);
-
-    int i = 0;
-    bool keepSearching = true;
-    ActionInfo actionIt;
-    while ((i < jobInfoList[index.row()].actionInfoList.count()) &&
-           keepSearching)
-    {
-        actionIt = jobInfoList[index.row()].actionInfoList[i];
-
-        if (actionId == actionIt.actionId)
-        {
-            jobInfoList[index.row()].actionInfoList.removeAt(i);
-
-            keepSearching = false;
-        }
-
-        i++;
-    }
-
-    emit actionRemoved(index);
-    emit dataChanged(index, index);
+    emit actionModified(index);
 }
 
 const QList<ActionInfo> &ProgressListModel::actions(uint jobId) const

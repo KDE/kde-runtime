@@ -78,9 +78,24 @@ public:
     /**
       * Finishes a job
       *
+      * @param jobId     the identification number of the job
+      * @param errorCode the error code of the job (succeeded, killed...)
+      */
+    void jobFinished(int jobId, int errorCode);
+
+    /**
+      * Suspends a job
+      *
       * @param jobId the identification number of the job
       */
-    void jobFinished(int jobId);
+    void jobSuspended(int jobId);
+
+    /**
+      * Resumes a job
+      *
+      * @param jobId the identification number of the job
+      */
+    void jobResumed(int jobId);
 
     /**
       * Adds an action (button) to a job
@@ -210,10 +225,11 @@ public Q_SLOTS:
     void slotRemoveSystemTrayIcon();
     void updateConfiguration();
     void applySettings();
+    void slotActionPerformed(int actionId, int jobId);
+    void slotActionPerformedFinishedJob(int actionId, int jobId);
 
 private Q_SLOTS:
     void showConfigurationDialog();
-    void slotRowsRemoved(const QModelIndex &parent, int start, int end);
 
 private:
     ProgressListModel *progressListModel;
