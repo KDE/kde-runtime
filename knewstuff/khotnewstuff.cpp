@@ -24,7 +24,7 @@
 #include <kcmdlineargs.h>
 #include <kaboutdata.h>
 
-#include <knewstuff/downloaddialog.h>
+#include <knewstuff2/engine.h>
 
 static const KCmdLineOptions op[] =
 {
@@ -44,11 +44,10 @@ int main(int argc, char **argv)
 
 	KApplication i;
 
-	KNS::DownloadDialog d;
-	if(args->isSet("type")) d.setCategory(args->getOption("type"));
-	if(args->count() == 1) d.setProviderList(args->arg(0));
-	d.load();
-	d.exec();
+	KNS::Engine::download();
+	//if(args->isSet("type")) d.setCategory(args->getOption("type"));
+	//if(args->count() == 1) d.setProviderList(args->arg(0));
+	// FIXME (KNS2): do we still need/want those?
 
 	return 0;
 }
