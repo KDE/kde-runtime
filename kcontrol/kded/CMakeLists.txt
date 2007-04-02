@@ -10,7 +10,7 @@ kde4_automoc(${kcm_kded_PART_SRCS})
 kde4_add_plugin(kcm_kded ${kcm_kded_PART_SRCS})
 
 
-target_link_libraries(kcm_kded  ${KDE4_KIO_LIBS} ${QT_QT3SUPPORT_LIBRARY} ${QT_QTGUI_LIBRARY} )
+target_link_libraries(kcm_kded  ${KDE4_KIO_LIBS} ${KDE4_KDE3SUPPORT_LIBS} ${QT_QT3SUPPORT_LIBRARY} ${QT_QTGUI_LIBRARY} )
 
 install(TARGETS kcm_kded  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
