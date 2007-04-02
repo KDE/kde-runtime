@@ -28,7 +28,6 @@
 #include <QBoxLayout>
 
 #include <kdebug.h>
-#include <kwin.h>
 #include <kicon.h>
 #include <klocale.h>
 #include <kiconloader.h>

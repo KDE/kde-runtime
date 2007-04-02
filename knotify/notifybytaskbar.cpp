@@ -23,7 +23,7 @@
 #include "knotifyconfig.h"
 
 #include <kdebug.h>
-#include <kwin.h>
+#include <kwm.h>
 
 NotifyByTaskbar::NotifyByTaskbar(QObject *parent) : KNotifyPlugin(parent)
 {
@@ -43,7 +43,7 @@ void NotifyByTaskbar::notify( int id, KNotifyConfig * config )
 	WId win = config->winId;
 #ifndef Q_OS_WIN
 	if( win != 0 )
-		KWin::demandAttention( win );
+		KWM::demandAttention( win );
 #endif	
 	finish( id );
 }

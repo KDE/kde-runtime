@@ -32,7 +32,7 @@
 #include <kstandarddirs.h>
 #include <kstandardaction.h>
 #include <ktoggleaction.h>
-#include <kwin.h>
+#include <kwm.h>
 #include <kxmlguifactory.h>
 #include <QSplitter>
 
@@ -157,7 +157,7 @@ TopLevel::TopLevel()
                SLOT( activateModule( ConfigModule * ) ) );
       _dock->setBaseWidget( aw );
 #ifdef Q_WS_X11
-      KWin::setIcons(  winId(),
+      KWM::setIcons(  winId(),
 		       KIconLoader::global()->loadIcon("hwinfo", K3Icon::NoGroup, 32 ),
 		       KIconLoader::global()->loadIcon("hwinfo", K3Icon::NoGroup, 16 ) );
 #endif
