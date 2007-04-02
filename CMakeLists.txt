@@ -26,4 +26,5 @@ add_subdirectory(kfile)
 if (Q_WS_X11)
   add_subdirectory(kstart)
 endif (Q_WS_X11)
+add_subdirectory(knotify)
 
