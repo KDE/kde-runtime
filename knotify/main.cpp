@@ -25,6 +25,8 @@
 #include <kdebug.h>
 #include <kglobal.h>
 #include <klocale.h>
+#include <kmessage.h>
+#include <kpassivepopupmessagehandler.h>
 
 #include "knotify.h"
 
@@ -54,6 +56,13 @@ KDE_EXPORT int kdemain(int argc, char **argv)
 
     KUniqueApplication app;
     app.disableSessionManagement();
+    
+    /*
+     * the default KMessageBoxMessageHandler will do messagesbox that notify
+     * so we have a deadlock if one debug message is shown as messagebox.
+     * that's why we're forced to change the default handler
+     */
+    KMessage::setMessageHandler( new KPassivePopupMessageHandler(0) );
 
     // start notify service
     KNotify notify;
