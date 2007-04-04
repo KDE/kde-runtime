@@ -178,7 +178,7 @@ static KCmdLineOptions options[] =
 //
 
 // Caller needs to delete the items in the list after use!
-/*static KFileItemList fileItemList( const KCmdLineArgs *args )
+static KFileItemList fileItemList( const KCmdLineArgs *args )
 {
     KFileItemList items;
     for ( int i = 0; i < args->count(); i++ )
@@ -186,14 +186,13 @@ static KCmdLineOptions options[] =
                                       KFileItem::Unknown,
                                       args->url( i ) ));
     return items;
-}*/
+}
 
-/*static void showPropertiesDialog( const KCmdLineArgs *args )
-{
+static void showPropertiesDialog( const KCmdLineArgs *args ) {
     const KFileItemList items = fileItemList( args );
     KPropertiesDialog::showDialog( items, 0, true );
     qDeleteAll( items );
-}*/
+}
 /*
 static void printMimeTypes( const KCmdLineArgs *args )
 {
@@ -297,29 +296,26 @@ int main( int argc, char **argv )
     bool quiet = args->isSet( "quiet" );
 
     int files = args->count();
-    if ( files == 0 )
+    if ( files == 0 ) {
         KCmdLineArgs::usage( i18n("No files specified") ); // exit()s
+    }
 
-    if ( args->isSet( "dialog" ) )
-    {
-        //showPropertiesDialog( args );
+    if ( args->isSet( "dialog" ) ) {
+        showPropertiesDialog( args );
         return true;
     }
 
     QString mimeType;
 
-    for ( int i = 0; i < files; i++ )
-    {
+    for ( int i = 0; i < files; i++ ) {
         //if ( args->isSet( "mimetype" ) )
             //printMimeTypes( args );
 
         FileProps *props = new FileProps( args->url(i).path());
-        if ( props->isValid() )
+        if ( props->isValid() ) {
             m_props.append( props );
-        else
-        {
-            if ( !quiet )
-            {
+        } else {
+            if ( !quiet ) {
                 kWarning() << args->arg(i) << ": " <<
                 i18n("Cannot determine metadata").toLocal8Bit() << endl;
             }
