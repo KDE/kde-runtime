@@ -3,6 +3,8 @@ project(knetattach)
 
 
 
+add_definitions (-DQT3_SUPPORT)
+
 ########### next target ###############
 
 set(knetattach_SRCS main.cpp knetattach.cpp)

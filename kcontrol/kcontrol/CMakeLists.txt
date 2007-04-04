@@ -2,6 +2,7 @@
 add_subdirectory( about ) 
 
 
+add_definitions (-DQT3_SUPPORT)
 
 ########### next target ###############
 set(kcontrol_SRCS

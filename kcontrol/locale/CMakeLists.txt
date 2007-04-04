@@ -3,6 +3,7 @@ add_subdirectory( default )
 add_subdirectory( pics ) 
 
 
+add_definitions (-DQT3_SUPPORT)
 
 ########### next target ###############
 
