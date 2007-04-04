@@ -4,6 +4,7 @@ Type=Service
 Name=KNotify
 Exec=knotify
 Comment=KDE Notification Daemon
+Comment[zh_TW]=KDE Notification 伺服程式
 Icon=knotify
 X-DBUS-StartupType=Unique
 X-KDE-StartupNotify=false

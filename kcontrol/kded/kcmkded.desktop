@@ -77,6 +77,7 @@ Comment[el]=Ρύθμιση των υπηρεσιών συστήματος
 Comment[ja]=KDE サービスの設定
 Comment[nds]=KDE-Systeemdeensten instellen
 Comment[x-test]=xxKDE Services Configurationxx
+Comment[zh_TW]=KDE 系統服務組態
 Keywords=KDED,Daemon,Services
 Keywords[ar]=KDED,Daemon,Services,مراقب,خدمات
 Keywords[be]=Дэман,Сервісы,KDED,Daemon,Services
