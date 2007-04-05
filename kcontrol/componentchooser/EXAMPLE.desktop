@@ -1,7 +1,6 @@
 Name=A nice name you have chosen for your interface
 Name[af]='n oulike naam jy het gekies vir jou koppelvlak
 Name[ar]=اسم ما اخترته من قبل للواجهة الخاصة بك
-Name[be]=Файная назва, якую вы выбралі для свайго інтэрфейса
 Name[bg]=Име на компонент
 Name[ca]=Un bonic nom que heu triat per a la interfície
 Name[cs]=Hezký název pro vaše rozhraní
@@ -58,7 +57,6 @@ Name[xh]=Igama elihle olikhetileyo kujongano lwakho
 Name[zh_TW]=您為您的界面選擇的好名字
 Comment=A helpful description of the interface for the top right info box
 Comment[af]='n hulpvaardig beskrywing van die koppelvlak vir die bo regterkant inligting boks
-Comment[be]=Карыснае апісанне інтэрфейсу для інфармацыйнай скрыні ў правым верхнім куце
 Comment[bg]=Описание на компонент
 Comment[ca]=Una útil descripció de l'interfície per al rètol informatiu superior dret
 Comment[cs]=Smysluplný popis vašeho rozhraní pro informační box

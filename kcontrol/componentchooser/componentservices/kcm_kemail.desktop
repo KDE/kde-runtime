@@ -1,7 +1,6 @@
 Name=Email Client
 Name[af]=E-pos Kliënt
 Name[ar]=زبون البريد الإلكتروني
-Name[be]=Кліент электроннай пошты
 Name[bg]=Клиент за е-поща
 Name[br]=Kliant Postel
 Name[ca]=Client de correu
@@ -61,7 +60,6 @@ Name[zh_TW]=電子郵件客戶端程式
 Comment=This service allows you to configure your default email client. All KDE applications which need access to an email client application should honor this setting.
 Comment[af]=Hierdie diens laat jou toe om jou standaard e-pos kliënt op te stel. Al die KDE programme wat toegang tot 'n e-pos kliënt benodig behoort hierdie instelling te gebruik.
 Comment[ar]=هذه الخدمة تسمح لك بتهيئة برنامج البريد الافتراضي. جميع تطبيقات كيدي التي ستحتاج الى الوصول الى تطبيق بريد الكتروني يجب أن تتبع هذا الضبط.
-Comment[be]=Гэты сервіс дазваляе вызначыць для сябе стандартны кліент электроннай пошты. Усе праграмы KDE, у якіх вы можаце выбраць гіперспасылку, павінны выкарыстоўваць гэтае настаўленне.
 Comment[bg]=Избор на предпочитан пощенски клиент. Всички програми от KDE, които се нуждаят от достъп до електронната поща, ще ползват този компонент.
 Comment[ca]=Aquest servei us permet configurar el vostre client de correu per omissió. Totes les aplicacions KDE que precisin d'accés a una aplicació de client de correu tindria que reconèixer aquesta opció.
 Comment[cs]=Tato služba umožňuje nastavit si výchozího klienta emailu. Všechny KDE aplikace, které vyžadují přístup k emailové aplikaci, by měly používat toto nastavení.

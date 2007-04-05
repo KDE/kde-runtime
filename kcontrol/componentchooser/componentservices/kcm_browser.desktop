@@ -1,7 +1,6 @@
 Name=Web Browser
 Name[af]=Web Blaaier
 Name[ar]=متصفح الشبكة
-Name[be]=Вандроўнік па Сеціве
 Name[bg]=Уеб браузър
 Name[br]=Furcher an Internet
 Name[ca]=Navegació Web
@@ -61,7 +60,6 @@ Name[xh]=Umkhangeli zincwadi we Web
 Name[zh_TW]=網頁瀏覽器
 Comment=Here you can configure your default web browser. All KDE applications in which you can select hyperlinks should honor this setting.
 Comment[af]=Hier kan jy die standaard web blaaier opstel. Al die KDE programme waarin jy hiperskakels kan kies behoort hierdie instelling te gebruik.
-Comment[be]=Тут вы можаце вызначыць для сябе стандартны вандроўнік па Сеціве. Усе праграмы KDE, у якіх вы можаце выбраць гіперспасылку, павінны выкарыстоўваць гэтае настаўленне.
 Comment[bg]=Избор на предпочитан браузър. Всички програми от KDE, които се нуждаят от достъп до уеб страници, ще ползват този компонент.
 Comment[ca]=Aquí podeu configurar el vostre fullejador web per omissió. Totes les aplicacions KDE on podeu seleccionar hiperenllaços haurien de respectar aquest arranjament.
 Comment[cs]=Tato služba umožňuje nastavit si výchozí prohlížeč. Všechny KDE aplikace, které vyžadují přístup k hypertextovým odkazům, by měly používat toto nastavení.
