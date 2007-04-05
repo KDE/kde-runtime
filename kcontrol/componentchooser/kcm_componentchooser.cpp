@@ -32,8 +32,9 @@ K_EXPORT_COMPONENT_FACTORY(componentchooser, KCMComponentChooserFactory("kcmcomp
 KCMComponentChooser::KCMComponentChooser(QWidget *parent, const QStringList &):
 	KCModule(KCMComponentChooserFactory::componentData(), parent) {
 
-	(new QVBoxLayout(this))->setAutoAdd(true);
+	QVBoxLayout *lay = new QVBoxLayout(this);
 	m_chooser=new ComponentChooser(this);
+	lay->addWidget(m_chooser);
 	connect(m_chooser,SIGNAL(changed(bool)),this,SIGNAL(changed(bool)));
 	setButtons( Help | Apply );
 

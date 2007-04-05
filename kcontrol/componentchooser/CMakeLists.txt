@@ -2,7 +2,6 @@
 add_subdirectory( componentservices ) 
 
 
-add_definitions (-DQT3_SUPPORT)
 
 ########### next target ###############
 
@@ -23,7 +22,7 @@ endif(NOT WIN32)
 kde4_add_plugin(kcm_componentchooser ${kcm_componentchooser_PART_SRCS})
 
 
-target_link_libraries(kcm_componentchooser  ${KDE4_KDE3SUPPORT_LIBS})
+target_link_libraries(kcm_componentchooser  ${KDE4_KIO_LIBS} ${QT_QT3SUPPORT_LIBRARY})
 
 install(TARGETS kcm_componentchooser  DESTINATION ${PLUGIN_INSTALL_DIR} )
 

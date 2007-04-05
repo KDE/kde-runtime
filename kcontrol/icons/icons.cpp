@@ -65,7 +65,7 @@ KIconConfig::KIconConfig(const KComponentData &inst, QWidget *parent)
     g_lay->setMargin( KDialog::marginHint() );
     g_lay->setSpacing( 0);
     top->addLayout(g_lay, 2, 0, 1, 2 );
-    g_lay->addRowSpacing(0, fontMetrics().lineSpacing());
+    g_lay->addItem(new QSpacerItem(0, fontMetrics().lineSpacing()), 0, 0);
 
     QPushButton *push;
 
@@ -541,7 +541,7 @@ KIconEffectSetupDialog::KIconEffectSetupDialog(const Effect &effect,
     top->setSpacing(spacingHint());
     top->setMargin(0);
     top->setColumnStretch(0,1);
-    top->addColSpacing(1,10);
+    top->addItem(new QSpacerItem(10, 0), 0, 1);
     top->setColumnStretch(2,2);
     top->setRowStretch(1,1);
 
@@ -569,7 +569,7 @@ KIconEffectSetupDialog::KIconEffectSetupDialog(const Effect &effect,
     grid = new QGridLayout(frame);
     grid->setSpacing(spacingHint());
     grid->setMargin(marginHint());
-    grid->addRowSpacing(0, fontMetrics().lineSpacing());
+    grid->addItem(new QSpacerItem(0, fontMetrics().lineSpacing()), 0, 0);
     grid->setRowStretch(1, 1);
 
     mpPreview = new QLabel(frame);
@@ -582,7 +582,7 @@ KIconEffectSetupDialog::KIconEffectSetupDialog(const Effect &effect,
     grid = new QGridLayout(mpEffectGroup);
     grid->setSpacing(spacingHint());
     grid->setMargin(marginHint());
-    grid->addRowSpacing(0, fontMetrics().lineSpacing());
+    grid->addItem(new QSpacerItem(0, fontMetrics().lineSpacing()), 0, 0);
 
     mpEffectLabel = new QLabel(i18n("&Amount:"), mpEffectGroup);
     grid->addWidget(mpEffectLabel, 1, 0);
