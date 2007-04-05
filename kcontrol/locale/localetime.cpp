@@ -203,11 +203,12 @@ KLocaleConfigTime::KLocaleConfigTime(KLocale *_locale,
   QGridLayout *lay = new QGridLayout( this );
   lay->setMargin( KDialog::marginHint() );
   lay->setSpacing( KDialog::spacingHint());
-  lay->setAutoAdd(true);
 
   m_labCalendarSystem = new QLabel(this);
+  lay->addWidget(m_labCalendarSystem, 0, 0);
   m_labCalendarSystem->setObjectName( I18N_NOOP("Calendar system:") );
   m_comboCalendarSystem = new QComboBox(this);
+  lay->addWidget(m_comboCalendarSystem, 0, 1);
   m_comboCalendarSystem->setEditable(false);
   connect(m_comboCalendarSystem, SIGNAL(activated(int)),
 	  this, SLOT(slotCalendarSystemChanged(int)));
@@ -216,8 +217,10 @@ KLocaleConfigTime::KLocaleConfigTime(KLocale *_locale,
   m_comboCalendarSystem->addItems(tmpCalendars);
 
   m_labTimeFmt = new QLabel(this);
+  lay->addWidget(m_labTimeFmt, 1, 0);
   m_labTimeFmt->setObjectName( I18N_NOOP("Time format:") );
   m_comboTimeFmt = new QComboBox(this);
+  lay->addWidget(m_comboTimeFmt, 1, 1);
   m_comboTimeFmt->setEditable(true);
   //m_edTimeFmt = m_comboTimeFmt->lineEdit();
   //m_edTimeFmt = new QLineEdit(this);
@@ -225,29 +228,37 @@ KLocaleConfigTime::KLocaleConfigTime(KLocale *_locale,
 	   this, SLOT( slotTimeFmtChanged(const QString &) ) );
 
   m_labDateFmt = new QLabel(this);
+  lay->addWidget(m_labDateFmt, 2, 0);
   m_labDateFmt->setObjectName( I18N_NOOP("Date format:") );
   m_comboDateFmt = new QComboBox(this);
+  lay->addWidget(m_comboDateFmt, 2, 1);
   m_comboDateFmt->setEditable(true);
   connect( m_comboDateFmt, SIGNAL( textChanged(const QString &) ),
 	   this, SLOT( slotDateFmtChanged(const QString &) ) );
 
   m_labDateFmtShort = new QLabel(this);
+  lay->addWidget(m_labDateFmtShort, 3, 0);
   m_labDateFmtShort->setObjectName( I18N_NOOP("Short date format:") );
   m_comboDateFmtShort = new QComboBox(this);
+  lay->addWidget(m_comboDateFmtShort, 3, 1);
   m_comboDateFmtShort->setEditable(true);
   connect( m_comboDateFmtShort, SIGNAL( textChanged(const QString &) ),
 	   this, SLOT( slotDateFmtShortChanged(const QString &) ) );
 
   m_labWeekStartDay = new QLabel(this);
+  lay->addWidget(m_labWeekStartDay, 4, 0);
   m_labWeekStartDay->setObjectName( I18N_NOOP("First day of the week:") );
   m_comboWeekStartDay = new QComboBox(this);
+  lay->addWidget(m_comboWeekStartDay, 4, 1);
   m_comboWeekStartDay->setEditable(false);
   connect (m_comboWeekStartDay, SIGNAL(activated(int)),
            this, SLOT(slotWeekStartDayChanged(int)));
 
   updateWeekDayNames();
 
-  m_chDateMonthNamePossessive = new QCheckBox(this, I18N_NOOP("Use declined form of month name"));
+  m_chDateMonthNamePossessive = new QCheckBox(this);
+  m_chDateMonthNamePossessive->setObjectName(I18N_NOOP("Use declined form of month name"));
+  lay->addWidget(m_chDateMonthNamePossessive, 5, 0, 1, 2);
   connect( m_chDateMonthNamePossessive, SIGNAL( clicked() ),
 	     SLOT( slotDateMonthNamePossChanged() ) );
 

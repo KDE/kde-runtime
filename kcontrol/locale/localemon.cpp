@@ -92,7 +92,8 @@ KLocaleConfigMoney::KLocaleConfigMoney(KLocale *locale,
   lay->addWidget(vbox, 4, 0, 1, 2 );
   Q3GroupBox *vgrp;
   vgrp = new Q3GroupBox( 1, Qt::Horizontal, vbox, I18N_NOOP("Positive") );
-  m_chMonPosPreCurSym = new QCheckBox(vgrp, I18N_NOOP("Prefix currency symbol"));
+  m_chMonPosPreCurSym = new QCheckBox(vgrp);
+  m_chMonPosPreCurSym->setObjectName(I18N_NOOP("Prefix currency symbol"));
   connect( m_chMonPosPreCurSym, SIGNAL( clicked() ),
            SLOT( slotMonPosPreCurSymChanged() ) );
 
@@ -108,7 +109,8 @@ KLocaleConfigMoney::KLocaleConfigMoney(KLocale *locale,
            SLOT( slotMonPosMonSignPosChanged(int) ) );
 
   vgrp = new Q3GroupBox(  1, Qt::Horizontal, vbox, I18N_NOOP("Negative") );
-  m_chMonNegPreCurSym = new QCheckBox(vgrp, I18N_NOOP("Prefix currency symbol"));
+  m_chMonNegPreCurSym = new QCheckBox(vgrp);
+  m_chMonNegPreCurSym->setObjectName(I18N_NOOP("Prefix currency symbol"));
   connect( m_chMonNegPreCurSym, SIGNAL( clicked() ),
            SLOT( slotMonNegPreCurSymChanged() ) );
 
@@ -131,7 +133,7 @@ KLocaleConfigMoney::KLocaleConfigMoney(KLocale *locale,
   }
 
   lay->setColumnStretch(1, 1);
-  lay->addRowSpacing(5, 0);
+  lay->addItem(new QSpacerItem(0, 0), 5, 0);
 
   adjustSize();
 }

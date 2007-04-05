@@ -40,47 +40,55 @@ KLocaleSample::KLocaleSample(KLocale *locale, QWidget *parent)
     m_locale(locale)
 {
   QGridLayout *lay = new QGridLayout(this);
-  lay->setAutoAdd(true);
 
   // Whatever the color scheme is, we want black text
-  QColorGroup a = palette().active();
-  a.setColor(QPalette::Foreground, Qt::black);
-  QPalette pal(a, a, a);
+  QPalette pal = palette();
+  pal.setColor(QPalette::Disabled, QPalette::WindowText, Qt::black);
+  pal.setColor(QPalette::Active, QPalette::WindowText, Qt::black);
+  pal.setColor(QPalette::Inactive, QPalette::WindowText, Qt::black);
+  setPalette(pal);
 
   m_labNumber = new QLabel(this);
+  lay->addWidget(m_labNumber);
   m_labNumber->setObjectName( I18N_NOOP("Numbers:") );
   m_labNumber->setPalette(pal);
   m_numberSample = new QLabel(this);
   m_numberSample->setPalette(pal);
 
   m_labMoney = new QLabel(this);
+  lay->addWidget(m_labMoney);
   m_labMoney->setObjectName( I18N_NOOP("Money:") );
   m_labMoney->setPalette(pal);
   m_moneySample = new QLabel(this);
   m_moneySample->setPalette(pal);
 
   m_labDate = new QLabel(this);
+  lay->addWidget(m_labDate);
   m_labDate->setObjectName( I18N_NOOP("Date:") );
   m_labDate->setPalette(pal);
   m_dateSample = new QLabel(this);
   m_dateSample->setPalette(pal);
 
   m_labDateShort = new QLabel(this);
+  lay->addWidget(m_labDateShort);
   m_labDateShort->setObjectName( I18N_NOOP("Short date:") );
   m_labDateShort->setPalette(pal);
   m_dateShortSample = new QLabel(this);
   m_dateShortSample->setPalette(pal);
 
   m_labTime = new QLabel(this);
+  lay->addWidget(m_labTime);
   m_labTime->setObjectName( I18N_NOOP("Time:") );
   m_labTime->setPalette(pal);
   m_timeSample = new QLabel(this);
+  lay->addWidget(m_timeSample);
   m_timeSample->setPalette(pal);
 
   lay->setColumnStretch(0, 1);
   lay->setColumnStretch(1, 3);
 
-  QTimer *timer = new QTimer(this, "clock_timer");
+  QTimer *timer = new QTimer(this);
+  timer->setObjectName(QLatin1String("clock_timer"));
   connect(timer, SIGNAL(timeout()), this, SLOT(slotUpdateTime()));
   timer->start(1000);
 }

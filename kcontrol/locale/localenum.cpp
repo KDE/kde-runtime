@@ -43,32 +43,39 @@ KLocaleConfigNumber::KLocaleConfigNumber(KLocale *locale,
   QGridLayout *lay = new QGridLayout(this );
   lay->setMargin( KDialog::marginHint() );
   lay->setSpacing( KDialog::spacingHint());
-  lay->setAutoAdd(true);
 
   m_labDecSym = new QLabel(this);
+  lay->addWidget(m_labDecSym, 0, 0);
   m_labDecSym->setObjectName( I18N_NOOP("&Decimal symbol:") );
   m_edDecSym = new QLineEdit(this);
+  lay->addWidget(m_edDecSym, 0, 1);
   connect( m_edDecSym, SIGNAL( textChanged(const QString &) ),
 	   this, SLOT( slotDecSymChanged(const QString &) ) );
   m_labDecSym->setBuddy(m_edDecSym);
 
   m_labThoSep = new QLabel(this);
+  lay->addWidget(m_labThoSep, 1, 0);
   m_labThoSep->setObjectName( I18N_NOOP("Tho&usands separator:") );
   m_edThoSep = new QLineEdit(this);
+  lay->addWidget(m_edThoSep, 1, 1);
   connect( m_edThoSep, SIGNAL( textChanged(const QString &) ),
 	   this, SLOT( slotThoSepChanged(const QString &) ) );
   m_labThoSep->setBuddy(m_edThoSep);
 
   m_labMonPosSign = new QLabel(this);
+  lay->addWidget(m_labMonPosSign, 2, 0);
   m_labMonPosSign->setObjectName( I18N_NOOP("Positive si&gn:") );
   m_edMonPosSign = new QLineEdit(this);
+  lay->addWidget(m_edMonPosSign, 2, 1);
   connect( m_edMonPosSign, SIGNAL( textChanged(const QString &) ),
 	   this, SLOT( slotMonPosSignChanged(const QString &) ) );
   m_labMonPosSign->setBuddy(m_edMonPosSign);
 
   m_labMonNegSign = new QLabel(this);
+  lay->addWidget(m_labMonNegSign, 3, 0);
   m_labMonNegSign->setObjectName( I18N_NOOP("&Negative sign:") );
   m_edMonNegSign = new QLineEdit(this);
+  lay->addWidget(m_edMonNegSign, 3, 1);
   connect( m_edMonNegSign, SIGNAL( textChanged(const QString &) ),
 	   this, SLOT( slotMonNegSignChanged(const QString &) ) );
   m_labMonNegSign->setBuddy(m_edMonNegSign);
