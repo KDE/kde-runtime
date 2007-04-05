@@ -14,9 +14,6 @@
 
 #include <QColor>
 #include <QImage>
-//Added by qt3to4:
-#include <QGridLayout>
-#include <QLabel>
 
 #include <kcmodule.h>
 #include <kdialog.h>
@@ -26,10 +23,9 @@ class QCheckBox;
 class QColor;
 class QComboBox;
 class QGridLayout;
-class Q3GroupBox;
+class QGroupBox;
 class QLabel;
 class QListWidget;
-class Q3ListView;
 class QPushButton;
 class QSlider;
 class QTabWidget;
@@ -103,8 +99,7 @@ private:
     KIconLoader *mpLoader;
     KSharedConfigPtr mpConfig;
 
-    typedef QLabel *QLabelPtr;
-    QLabelPtr mpPreview[3];
+    QLabel *mpPreview[3];
 
     QListWidget *mpUsageList;
     QComboBox *mpSizeBox;
@@ -146,7 +141,7 @@ private:
     Effect mEffect;
     Effect mDefaultEffect;
     QImage mExample;
-    Q3GroupBox *mpEffectGroup;
+    QGroupBox *mpEffectGroup;
     QLabel *mpPreview, *mpEffectLabel, *mpEffectColor, *mpEffectColor2;
 };
 

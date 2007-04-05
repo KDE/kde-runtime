@@ -10,7 +10,7 @@ kde4_automoc(${kcm_icons_PART_SRCS})
 kde4_add_plugin(kcm_icons ${kcm_icons_PART_SRCS})
 
 
-target_link_libraries(kcm_icons  ${KDE4_KIO_LIBS} ${KDE4_KDE3SUPPORT_LIBS} ${QT_QT3SUPPORT_LIBRARY})
+target_link_libraries(kcm_icons ${KDE4_KIO_LIBS})
 
 install(TARGETS kcm_icons  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
@@ -23,7 +23,7 @@ kde4_automoc(${testicons_SRCS})
 
 kde4_add_executable(testicons ${testicons_SRCS})
 
-target_link_libraries(testicons  ${KDE4_KDEUI_LIBS} ${QT_QT3SUPPORT_LIBRARY} )
+target_link_libraries(testicons ${KDE4_KDEUI_LIBS})
 
 endif(KDE4_BUILD_TESTS)
 

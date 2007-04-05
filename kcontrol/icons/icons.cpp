@@ -48,14 +48,12 @@ KIconConfig::KIconConfig(const KComponentData &inst, QWidget *parent)
     top->setColumnStretch(1, 1);
 
     // Use of Icon at (0,0) - (1, 0)
-    Q3GroupBox *gbox = new Q3GroupBox(i18n("Use of Icon"), this);
+    QGroupBox *gbox = new QGroupBox(i18n("Use of Icon"), this);
     top->addWidget(gbox, 0, 0, 2, 1);
     QBoxLayout *g_vlay = new QVBoxLayout(gbox);
-    g_vlay->setMargin(KDialog::marginHint());
     g_vlay->setSpacing(KDialog::spacingHint());
-    g_vlay->addSpacing(fontMetrics().lineSpacing());
     mpUsageList = new QListWidget(gbox);
-    connect(mpUsageList, SIGNAL(highlighted(int)), SLOT(slotUsage(int)));
+    connect(mpUsageList, SIGNAL(currentRowChanged(int)), SLOT(slotUsage(int)));
     g_vlay->addWidget(mpUsageList);
 
     KSeparator *sep = new KSeparator( Qt::Horizontal, this );
@@ -416,6 +414,9 @@ void KIconConfig::defaults()
 
 void KIconConfig::slotUsage(int index)
 {
+    if (index == -1)
+        return;
+
     mUsage = index;
     if ( mUsage == K3Icon::Panel || mUsage == K3Icon::LastGroup )
     {
@@ -531,7 +532,7 @@ KIconEffectSetupDialog::KIconEffectSetupDialog(const Effect &effect,
     mpEffect = new KIconEffect;
 
     QLabel *lbl;
-    Q3GroupBox *frame;
+    QGroupBox *frame;
     QGridLayout *grid;
 
     QWidget *page = new QWidget(this);
@@ -556,7 +557,7 @@ KIconEffectSetupDialog::KIconEffectSetupDialog(const Effect &effect,
     mpEffectBox->addItem(i18n("Desaturate"));
     mpEffectBox->addItem(i18n("To Monochrome"));
     mpEffectBox->setMinimumWidth( 100 );
-    connect(mpEffectBox, SIGNAL(highlighted(int)), SLOT(slotEffectType(int)));
+    connect(mpEffectBox, SIGNAL(currentRowChanged(int)), SLOT(slotEffectType(int)));
     top->addWidget(mpEffectBox, 1, 0, 2, 1, Qt::AlignLeft);
     lbl->setBuddy(mpEffectBox);
 
@@ -564,7 +565,7 @@ KIconEffectSetupDialog::KIconEffectSetupDialog(const Effect &effect,
     connect(mpSTCheck, SIGNAL(toggled(bool)), SLOT(slotSTCheck(bool)));
     top->addWidget(mpSTCheck, 3, 0, Qt::AlignLeft);
 
-    frame = new Q3GroupBox(i18n("Preview"), page);
+    frame = new QGroupBox(i18n("Preview"), page);
     top->addWidget(frame, 0, 1, 2, 1);
     grid = new QGridLayout(frame);
     grid->setSpacing(spacingHint());
@@ -577,7 +578,7 @@ KIconEffectSetupDialog::KIconEffectSetupDialog(const Effect &effect,
     mpPreview->setMinimumSize(105, 105);
     grid->addWidget(mpPreview, 1, 0);
 
-    mpEffectGroup = new Q3GroupBox(i18n("Effect Parameters"), page);
+    mpEffectGroup = new QGroupBox(i18n("Effect Parameters"), page);
     top->addWidget(mpEffectGroup, 2, 1, 2, 1);
     grid = new QGridLayout(mpEffectGroup);
     grid->setSpacing(spacingHint());
@@ -651,6 +652,9 @@ void KIconEffectSetupDialog::slotEffectColor2(const QColor &col)
 
 void KIconEffectSetupDialog::slotEffectType(int type)
 {
+    if (type == -1)
+        return;
+
     mEffect.type = type;
     mpEffectGroup->setEnabled(mEffect.type != KIconEffect::NoEffect);
     mpEffectSlider->setEnabled(mEffect.type != KIconEffect::NoEffect);

@@ -30,6 +30,7 @@
 #include <QVBoxLayout>
 #include <QFrame>
 #include <QHBoxLayout>
+#include <QTreeWidget>
 
 #include <kdebug.h>
 #include <kapplication.h>
@@ -40,7 +41,6 @@
 #include <kconfig.h>
 #undef Unsorted
 
-#include <k3listview.h>
 #include <kbuildsycocaprogressdialog.h>
 #include <kurlrequesterdialog.h>
 #include <kmessagebox.h>
@@ -85,13 +85,15 @@ IconThemesConfig::IconThemesConfig(const KComponentData &inst, QWidget *parent)
   lh2->addStretch(10);
 
 
-  m_iconThemes=new K3ListView(this/*"IconThemeList"*/);
-  m_iconThemes->addColumn(i18n("Name"));
-  m_iconThemes->addColumn(i18n("Description"));
+  m_iconThemes=new QTreeWidget(this/*"IconThemeList"*/);
+  QStringList columns;
+  columns.append(i18n("Name"));
+  columns.append(i18n("Description"));
+  m_iconThemes->setHeaderLabels(columns);
   m_iconThemes->setAllColumnsShowFocus( true );
-  m_iconThemes->setFullWidth(true);
-  connect(m_iconThemes,SIGNAL(selectionChanged(Q3ListViewItem *)),
-		SLOT(themeSelected(Q3ListViewItem *)));
+  m_iconThemes->setRootIsDecorated(false);
+  connect(m_iconThemes,SIGNAL(currentItemChanged(QTreeWidgetItem *, QTreeWidgetItem *)),
+		SLOT(themeSelected(QTreeWidgetItem *)));
 
   QPushButton *installButton=new QPushButton( i18n("Install New Theme..."), this);
   installButton->setObjectName("InstallNewTheme");
@@ -113,7 +115,8 @@ IconThemesConfig::IconThemesConfig(const KComponentData &inst, QWidget *parent)
   loadThemes();
 
   m_defaultTheme=iconThemeItem(KIconTheme::current());
-  m_iconThemes->setSelected(m_defaultTheme, true);
+  if (m_defaultTheme)
+    m_iconThemes->setCurrentItem(m_defaultTheme);
   updateRemoveButton();
 
   load();
@@ -125,11 +128,10 @@ IconThemesConfig::~IconThemesConfig()
 {
 }
 
-Q3ListViewItem *IconThemesConfig::iconThemeItem(const QString &name)
+QTreeWidgetItem *IconThemesConfig::iconThemeItem(const QString &name)
 {
-  Q3ListViewItem *item;
-  for ( item=m_iconThemes->firstChild(); item ; item=item->nextSibling() )
-    if (m_themeNames[item->text(0)]==name) return item;
+  for (int i = 0; i < m_iconThemes->topLevelItemCount(); ++i)
+    if (m_themeNames[m_iconThemes->topLevelItem(i)->text(0)]==name) return m_iconThemes->topLevelItem(i);
 
   return 0L;
 }
@@ -155,12 +157,15 @@ void IconThemesConfig::loadThemes()
     for (int i=2; m_themeNames.find(tname)!=m_themeNames.end() ; i++)
         tname=QString("%1-%2").arg(name).arg(i);
 
-    m_iconThemes->insertItem(new Q3ListViewItem(m_iconThemes,name,
-		icontheme.description()));
+    QTreeWidgetItem *newitem = new QTreeWidgetItem();
+    newitem->setText(0, name);
+    newitem->setText(1, icontheme.description());
+    m_iconThemes->addTopLevelItem(newitem);
 
     m_themeNames.insert(name,*it);
 
   }
+  m_iconThemes->sortByColumn(0, Qt::DescendingOrder);
 }
 
 void IconThemesConfig::installNewTheme()
@@ -210,8 +215,9 @@ void IconThemesConfig::installNewTheme()
   KIconLoader::global()->newIconLoader();
   loadThemes();
 
-  Q3ListViewItem *item=iconThemeItem(KIconTheme::current());
-  m_iconThemes->setSelected(item, true);
+  QTreeWidgetItem *item=iconThemeItem(KIconTheme::current());
+  if (item)
+    m_iconThemes->setCurrentItem(item);
   updateRemoveButton();
 }
 
@@ -296,7 +302,7 @@ QStringList IconThemesConfig::findThemeDirs(const QString &archiveName)
 
 void IconThemesConfig::removeSelectedTheme()
 {
-  Q3ListViewItem *selected = m_iconThemes->selectedItem();
+  QTreeWidgetItem *selected = m_iconThemes->currentItem();
   if (!selected)
      return;
 
@@ -323,14 +329,15 @@ void IconThemesConfig::removeSelectedTheme()
 
   loadThemes();
 
-  Q3ListViewItem *item=0L;
+  QTreeWidgetItem *item=0L;
   //Fallback to the default if we've deleted the current theme
   if (!deletingCurrentTheme)
      item=iconThemeItem(KIconTheme::current());
   if (!item)
      item=iconThemeItem(KIconTheme::defaultThemeName());
 
-  m_iconThemes->setSelected(item, true);
+  if (item)
+    m_iconThemes->setCurrentItem(item);
   updateRemoveButton();
 
   if (deletingCurrentTheme) // Change the configuration
@@ -339,7 +346,7 @@ void IconThemesConfig::removeSelectedTheme()
 
 void IconThemesConfig::updateRemoveButton()
 {
-  Q3ListViewItem *selected = m_iconThemes->selectedItem();
+  QTreeWidgetItem *selected = m_iconThemes->currentItem();
   bool enabled = false;
   if (selected)
   {
@@ -354,8 +361,10 @@ void IconThemesConfig::updateRemoveButton()
   m_removeButton->setEnabled(enabled);
 }
 
-void IconThemesConfig::themeSelected(Q3ListViewItem *item)
+void IconThemesConfig::themeSelected(QTreeWidgetItem *item)
 {
+  if (item && item == m_defaultTheme) return;
+
 #ifdef HAVE_LIBAGG
   KSVGIconEngine engine;
 #endif
@@ -428,7 +437,7 @@ void IconThemesConfig::save()
 {
   if (!m_bChanged)
      return;
-  Q3ListViewItem *selected = m_iconThemes->selectedItem();
+  QTreeWidgetItem *selected = m_iconThemes->currentItem();
   if (!selected)
      return;
 
@@ -453,7 +462,8 @@ void IconThemesConfig::defaults()
 {
   if (m_iconThemes->currentItem()==m_defaultTheme) return;
 
-  m_iconThemes->setSelected(m_defaultTheme, true);
+  if (m_defaultTheme)
+    m_iconThemes->setCurrentItem(m_defaultTheme);
   updateRemoveButton();
 
   emit changed(true);

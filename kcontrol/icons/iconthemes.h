@@ -23,12 +23,13 @@
 #include <QMap>
 //Added by qt3to4:
 #include <QLabel>
-#include <k3listview.h>
 
 class QPushButton;
 class DeviceManager;
 class QCheckBox;
 class QStringList;
+class QTreeWidget;
+class QTreeWidgetItem;
 
 
 class IconThemesConfig : public KCModule
@@ -52,20 +53,20 @@ public:
   int buttons();
 
 protected Q_SLOTS:
-  void themeSelected(Q3ListViewItem *item);
+  void themeSelected(QTreeWidgetItem *item);
   void installNewTheme();
   void removeSelectedTheme();
 
 private:
-  Q3ListViewItem *iconThemeItem(const QString &name);
+  QTreeWidgetItem *iconThemeItem(const QString &name);
 
-  K3ListView *m_iconThemes;
+  QTreeWidget *m_iconThemes;
   QPushButton *m_removeButton;
 
   QLabel *m_previewExec;
   QLabel *m_previewFolder;
   QLabel *m_previewDocument;
-  Q3ListViewItem *m_defaultTheme;
+  QTreeWidgetItem *m_defaultTheme;
   QMap <QString, QString>m_themeNames;
   bool m_bChanged;
 };
