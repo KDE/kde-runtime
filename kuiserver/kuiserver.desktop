@@ -6,6 +6,7 @@ Name[x-test]=xxkuiserverxx
 Name[zh_TW]=介面伺服器
 Exec=kuiserver
 Comment=KDE's Progress Info UI server
+Comment[de]=KDEs Dienst für Fortschrittsanzeige
 Comment[el]=Εξυπηρετητής πληροφοριών διεργασιών του KDE
 Comment[ja]=KDE 進捗情報 UI サーバ
 Comment[nds]=De KDE-Server för Vörankamen-Infos för Böversieden
