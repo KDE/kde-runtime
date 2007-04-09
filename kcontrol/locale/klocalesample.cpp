@@ -101,8 +101,8 @@ void KLocaleSample::slotUpdateTime()
 {
   QDateTime dt = QDateTime::currentDateTime();
 
-  m_dateSample->setText(m_locale->formatDate(dt.date(), false));
-  m_dateShortSample->setText(m_locale->formatDate(dt.date(), true));
+  m_dateSample->setText(m_locale->formatDate(dt.date(), KLocale::LongDate));
+  m_dateShortSample->setText(m_locale->formatDate(dt.date(), KLocale::ShortDate));
   m_timeSample->setText(m_locale->formatTime(dt.time(), true));
 }
 
