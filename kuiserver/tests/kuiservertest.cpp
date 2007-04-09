@@ -87,7 +87,7 @@ int main(int argc, char **argv)
     KApplication app;
 
     KJobTest *myJob = new KJobTest(10 /* 10 seconds before it gets removed */);
-    myJob->setUiDelegate(new KIO::JobUiDelegate());
+    myJob->setUiDelegate(new KIO::JobUiDelegate( true ));
     myJob->start();
 
     return app.exec();
