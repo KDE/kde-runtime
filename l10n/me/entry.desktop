@@ -1,0 +1,26 @@
+[KCM Locale]
+Author=Chusslove Illich <caslav.ilic@gmx.net>
+Name=Montenegro
+Region=southeurope
+Languages=sr
+DecimalSymbol=,
+ThousandsSeparator=.
+CurrencySymbol=€
+MonetaryDecimalSymbol=,
+MonetaryThousandsSeparator=.
+PositiveSign=
+NegativeSign=-
+FracDigits=2
+PositivePrefixCurrencySymbol=false
+NegativePrefixCurrencySymbol=false
+PositiveMonetarySignPosition=1
+NegativeMonetarySignPosition=1
+DateFormat[sr]=%A %e. %B %Y.
+DateFormatShort=%d.%m.%Y.
+TimeFormat=%H.%M:%S
+WeekStartDay=1
+MeasureSystem=0
+PageSize=0
+CalendarSystem=gregorian
+AddressFormat=%0(%cm\n)%0(%n\n)%0(%s\n)%0(poštanski fah %p\n)%z%w%l
+AddressCountryPosition=BELOW
