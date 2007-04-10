@@ -24,6 +24,7 @@
 #include <kcmdlineargs.h>
 #include <klocale.h>
 #include <kio/jobclasses.h>
+#include <kuiserverjobtracker.h>
 
 KJobTest::KJobTest(int numberOfSeconds)
     : KIO::Job(), timer(new QTimer(this)), clockTimer(new QTimer(this)),
@@ -88,6 +89,7 @@ int main(int argc, char **argv)
 
     KJobTest *myJob = new KJobTest(10 /* 10 seconds before it gets removed */);
     myJob->setUiDelegate(new KIO::JobUiDelegate());
+    KIO::getJobTracker()->registerJob(myJob);
     myJob->start();
 
     return app.exec();
