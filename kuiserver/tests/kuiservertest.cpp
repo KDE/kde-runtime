@@ -26,7 +26,7 @@
 #include <kio/jobclasses.h>
 
 KJobTest::KJobTest(int numberOfSeconds)
-    : KIO::Job(true), timer(new QTimer(this)), clockTimer(new QTimer(this)),
+    : KIO::Job(), timer(new QTimer(this)), clockTimer(new QTimer(this)),
       seconds(numberOfSeconds), total(numberOfSeconds)
 {
     setCapabilities(KJob::NoCapabilities);
