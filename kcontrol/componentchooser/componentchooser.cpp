@@ -392,7 +392,7 @@ void ComponentChooser::slotServiceSelected(QListWidgetItem* it) {
 	if (newConfigWidget)
 	{
 		configContainer->addWidget(newConfigWidget);
-		configContainer->raiseWidget(newConfigWidget);
+		configContainer->setCurrentWidget (newConfigWidget);
 		configContainer->removeWidget(configWidget);
 		delete configWidget;
 		configWidget=newConfigWidget;
