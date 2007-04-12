@@ -61,7 +61,7 @@ UIServer::UIServer()
 
     tabWidget = new QTabWidget();
 
-    QString configure = i18n("Configure");
+    QString configure = i18n("Configure...");
 
     toolBar = addToolBar(configure);
     toolBar->setMovable(false);
@@ -91,7 +91,7 @@ UIServer::UIServer()
     listFinished->setObjectName("progresslistFinished");
     listFinished->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
 
-    tabWidget->addTab(listProgress, i18n("In progress"));
+    tabWidget->addTab(listProgress, i18n("In Progress"));
     tabWidget->addTab(listFinished, i18n("Finished"));
 
     setCentralWidget(tabWidget);
@@ -182,7 +182,7 @@ void UIServer::jobFinished(int id, int errorCode)
                                         progressListModel->data(index, ProgressListDelegate::ApplicationName).toString(),
                                         true /* showProgress (show or hide) */);
 
-        progressListFinishedModel->newAction(id, KJob::Killable, i18n("Close information"));
+        progressListFinishedModel->newAction(id, KJob::Killable, i18n("Close Information"));
     }
 
     delete m_hashCallbacksInterfaces[id];
