@@ -18,7 +18,7 @@
 
 */
 
-#include <q3listview.h>
+#include <Qt3Support/Q3CheckListItem>
 //Added by qt3to4:
 #include <QResizeEvent>
 

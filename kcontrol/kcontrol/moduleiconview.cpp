@@ -18,7 +18,7 @@
 
 */
 
-#include <q3header.h>
+#include <Qt3Support/Q3Header>
 #include <QCursor>
 //Added by qt3to4:
 #include <QPixmap>

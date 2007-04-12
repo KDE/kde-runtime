@@ -20,7 +20,7 @@
 
 #include "knetattach.h"
 
-#include <qvariant.h>
+#include <QtCore/QVariant>
 #include <kio/netaccess.h>
 #include <kmessagebox.h>
 #include <kiconloader.h>

@@ -25,7 +25,7 @@
 
 #include <QLabel>
 #include <QLayout>
-#include <q3listbox.h>
+#include <Qt3Support/Q3ListBox>
 #include <QPushButton>
 #include <QToolTip>
 

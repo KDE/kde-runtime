@@ -27,7 +27,7 @@
 #include <QLineEdit>
 
 #include <QLayout>
-#include <q3groupbox.h>
+#include <Qt3Support/Q3GroupBox>
 
 #include <QRegExp>
 //Added by qt3to4:

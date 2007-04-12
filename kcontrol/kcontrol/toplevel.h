@@ -22,7 +22,7 @@
 #define __TOPLEVEL_H__
 
 #include <kmainwindow.h>
-#include <q3listview.h>
+#include <Qt3Support/Q3CheckListItem>
 
 
 class QSplitter;

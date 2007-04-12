@@ -25,7 +25,7 @@ that is intentional :-]
 
 
 #include <QStringList>
-#include <q3intdict.h>
+#include <Qt3Support/Q3IntDict>
 #include <QString>
 #include <QWidget>
 

@@ -17,8 +17,8 @@
    Boston, MA 02110-1301, USA.
 */
 
-#include <q3groupbox.h>
-#include <q3header.h>
+#include <Qt3Support/Q3GroupBox>
+#include <Qt3Support/Q3Header>
 
 #include <QByteArray>
 #include <QtDBus/QtDBus>

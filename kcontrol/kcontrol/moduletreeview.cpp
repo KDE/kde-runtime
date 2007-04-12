@@ -18,7 +18,7 @@
 
 */
 
-#include <q3header.h>
+#include <Qt3Support/Q3Header>
 #include <QImage>
 #include <QPainter>
 #include <QBitmap>
@@ -32,7 +32,7 @@
 #include <kiconloader.h>
 #include <kservicegroup.h>
 #include <kdebug.h>
-#include <q3whatsthis.h>
+#include <Qt3Support/Q3WhatsThis>
 #include <QBitmap>
 
 #include "moduletreeview.h"

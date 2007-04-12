@@ -51,7 +51,6 @@
 #include "progresslistdelegate.h"
 #include "callbacksiface.h"
 
-#include "uiserver.h"
 
 UIServer::UIServer()
     : KMainWindow(0)

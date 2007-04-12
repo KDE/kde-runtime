@@ -21,7 +21,7 @@
 #define __aboutwidget_h__
 
 #include <QWidget>
-#include <q3listview.h>
+#include <Qt3Support/Q3CheckListItem>
 
 #include <QPixmap>
 #include <kvbox.h>

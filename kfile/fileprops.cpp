@@ -19,7 +19,7 @@
 #include <iostream>
 
 #include <QtCore/QFile>
-#include <q3ptrlist.h>
+#include <Qt3Support/Q3PtrList>
 
 #include <kaboutdata.h>
 #include <kapplication.h>

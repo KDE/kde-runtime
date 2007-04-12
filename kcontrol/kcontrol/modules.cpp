@@ -48,7 +48,6 @@
 #include <QX11EmbedWidget>
 #endif
 #include <kvbox.h>
-#include <kauthorized.h>
 
 
 template class Q3PtrList<ConfigModule>;

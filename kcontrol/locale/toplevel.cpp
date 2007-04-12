@@ -25,7 +25,7 @@
 #include <QLayout>
 #include <QPushButton>
 #include <QTabWidget>
-#include <q3groupbox.h>
+#include <Qt3Support/Q3GroupBox>
 
 #include <kaboutdata.h>
 #include <kbuildsycocaprogressdialog.h>

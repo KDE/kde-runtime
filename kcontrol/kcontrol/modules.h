@@ -22,7 +22,7 @@
 
 #include <kcmoduleinfo.h>
 #include <QObject>
-#include <q3dict.h>
+#include <Qt3Support/Q3Dict>
 //Added by qt3to4:
 #include <QVBoxLayout>
 #include <Q3PtrList>

@@ -21,13 +21,13 @@
 #define __moduletreeview_h__
 
 #include <QPalette>
-#include <q3ptrlist.h>
-#include <q3listview.h>
+#include <Qt3Support/Q3PtrList>
+#include <Qt3Support/Q3CheckListItem>
 //Added by qt3to4:
 #include <QPixmap>
 #include <QKeyEvent>
 #include <k3listview.h>
-#include <q3dict.h>
+#include <Qt3Support/Q3Dict>
 
 
 class ConfigModule;

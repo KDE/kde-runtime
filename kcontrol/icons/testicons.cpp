@@ -1,6 +1,6 @@
 /* Test program for icons setup module. */
 
-#include <qapplication.h>
+#include <QtGui/QApplication>
 #include <kcomponentdata.h>
 #include "icons.h"
 

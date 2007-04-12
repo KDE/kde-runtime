@@ -21,9 +21,9 @@ that is intentional :-]
 */
 
 
-#include <q3header.h>
+#include <Qt3Support/Q3Header>
 #include <QString>
-#include <q3ptrlist.h>
+#include <Qt3Support/Q3PtrList>
 #include <QPoint>
 #include <QCursor>
 

@@ -22,7 +22,7 @@
 #define __searchwidget_h__
 
 #include <QWidget>
-#include <q3ptrlist.h>
+#include <Qt3Support/Q3PtrList>
 #include <QString>
 #include <QStringList>
 

@@ -20,7 +20,7 @@
 #include "ui_componentconfig_ui.h"
 #include "ui_emailclientconfig_ui.h"
 #include "ui_browserconfig_ui.h"
-#include <q3dict.h>
+#include <Qt3Support/Q3Dict>
 #include <QString>
 //Added by qt3to4:
 #include <QVBoxLayout>

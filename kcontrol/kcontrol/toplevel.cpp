@@ -48,7 +48,6 @@
 #include <stdio.h>
 
 #include "toplevel.h"
-#include <kaboutdata.h>
 #include "toplevel.moc"
 
 TopLevel::TopLevel()

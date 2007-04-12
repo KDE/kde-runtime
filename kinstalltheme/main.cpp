@@ -20,11 +20,11 @@
   DEALINGS IN THE SOFTWARE.
 */
 
-#include <qfileinfo.h>
-#include <qmap.h>
-#include <qstringlist.h>
-#include <qsettings.h>
-#include <qcoreapplication.h>
+#include <QtCore/QFileInfo>
+#include <QtCore/QMap>
+#include <QtCore/QMutableStringListIterator>
+#include <QtCore/QSettings>
+#include <QtCore/QCoreApplication>
 
 #include <kcomponentdata.h>
 #include <kcmdlineargs.h>
