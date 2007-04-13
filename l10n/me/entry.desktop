@@ -23,5 +23,6 @@ WeekStartDay=1
 MeasureSystem=0
 PageSize=0
 CalendarSystem=gregorian
-AddressFormat=%0(%cm\n)%0(%n\n)%0(%s\n)%0(poštanski fah %p\n)%z%w%l
+AddressFormat[sr]=%0(%cm\n)%0(%n\n)%0(%s\n)%0(поштански фах %p\n)%z%w%l
+AddressFormat[sr@Latn]=%0(%cm\n)%0(%n\n)%0(%s\n)%0(poštanski fah %p\n)%z%w%l
 AddressCountryPosition=BELOW
