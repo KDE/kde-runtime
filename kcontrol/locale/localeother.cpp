@@ -26,13 +26,13 @@
 #include <QLabel>
 #include <QPrinter>
 
-#include <kdialog.h>
-#include <klocale.h>
-#include <kconfig.h>
-#include <kstandarddirs.h>
+#include <KDialog>
+#include <KLocale>
+#include <KConfig>
+#include <KConfigGroup>
+#include <KStandardDirs>
 
 #include "localeother.h"
-#include <kconfiggroup.h>
 #include "localeother.moc"
 
 
@@ -84,17 +84,17 @@ void KLocaleConfigOther::save()
   KConfig ent(KStandardDirs::locate("locale",
                            QString::fromLatin1("l10n/%1/entry.desktop")
                            .arg(m_locale->country())));
-  ent.setGroup("KCM Locale");
+  KConfigGroup entGrp = ent.group("KCM Locale");
 
   // ### HPB: Add code here
   int i;
-  i = ent.readEntry("PageSize", (int)QPrinter::A4);
+  i = entGrp.readEntry("PageSize", (int)QPrinter::A4);
   group.deleteEntry("PageSize", KConfigBase::Global);
   if (i != m_locale->pageSize())
     group.writeEntry("PageSize",
                        m_locale->pageSize(), KConfigBase::Persistent|KConfigBase::Global);
 
-  i = ent.readEntry("MeasureSystem", (int)KLocale::Metric);
+  i = entGrp.readEntry("MeasureSystem", (int)KLocale::Metric);
   group.deleteEntry("MeasureSystem", KConfigBase::Global);
   if (i != m_locale->measureSystem())
     group.writeEntry("MeasureSystem",

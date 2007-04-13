@@ -33,12 +33,13 @@
 #include <QVBoxLayout>
 #include <QGridLayout>
 
-#include <kdebug.h>
-#include <kdialog.h>
-#include <kiconloader.h>
-#include <klanguagebutton.h>
-#include <kconfig.h>
-#include <kstandarddirs.h>
+#include <KDebug>
+#include <KDialog>
+#include <KIconLoader>
+#include <KLanguageButton>
+#include <KConfig>
+#include <KConfigGroup>
+#include <KStandardDirs>
 
 #include "kcmlocale.h"
 #include "kcmlocale.moc"
@@ -312,8 +313,8 @@ void KLocaleConfig::readLocale(const QString &path, QString &name,
     .arg(path);
 
   KConfig entry(KStandardDirs::locate("locale", filepath));
-  entry.setGroup("KCM Locale");
-  name = entry.readEntry("Name");
+  KConfigGroup entryGroup = entry.group("KCM Locale");
+  name = entryGroup.readEntry("Name");
 
   // restore the old global locale
   KGlobal::setLocale(lsave);
@@ -323,13 +324,13 @@ void KLocaleConfig::save()
 {
   KSharedConfigPtr config = KGlobal::config();
 
-  config->setGroup("Locale");
+  KConfigGroup configGroup = config->group("Locale");
 
-  config->writeEntry("Country", m_locale->country(), KConfigBase::Persistent|KConfigBase::Global);
+  configGroup.writeEntry("Country", m_locale->country(), KConfigBase::Persistent|KConfigBase::Global);
   if ( m_locale->languageList().isEmpty() )
-    config->writeEntry("Language", QString::fromLatin1(""), KConfigBase::Persistent|KConfigBase::Global);
+    configGroup.writeEntry("Language", QString::fromLatin1(""), KConfigBase::Persistent|KConfigBase::Global);
   else
-    config->writeEntry("Language",
+    configGroup.writeEntry("Language",
                        m_locale->languageList(), ':', KConfigBase::Persistent|KConfigBase::Global);
 
   config->sync();

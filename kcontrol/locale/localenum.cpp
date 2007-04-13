@@ -26,13 +26,13 @@
 #include <QLayout>
 #include <QRegExp>
 
-#include <kdialog.h>
-#include <kconfig.h>
-#include <kstandarddirs.h>
+#include <KDialog>
+#include <KConfig>
+#include <KConfigGroup>
+#include <KStandardDirs>
 
 #include "toplevel.h"
 #include "localenum.h"
-#include <kconfiggroup.h>
 #include "localenum.moc"
 
 KLocaleConfigNumber::KLocaleConfigNumber(KLocale *locale,
@@ -101,18 +101,18 @@ void KLocaleConfigNumber::save()
   KConfig ent(KStandardDirs::locate("locale",
 			   QString::fromLatin1("l10n/%1/entry.desktop")
 			   .arg(m_locale->country())));
-  ent.setGroup("KCM Locale");
+  KConfigGroup entGrp = ent.group("KCM Locale");
 
   QString str;
 
-  str = ent.readEntry("DecimalSymbol",
+  str = entGrp.readEntry("DecimalSymbol",
 		      QString::fromLatin1("."));
   group.deleteEntry("DecimalSymbol", KConfigBase::Global);
   if (str != m_locale->decimalSymbol())
     group.writeEntry("DecimalSymbol",
 		       m_locale->decimalSymbol(), KConfigBase::Persistent|KConfigBase::Global);
 
-  str = ent.readEntry("ThousandsSeparator",
+  str = entGrp.readEntry("ThousandsSeparator",
 		      QString::fromLatin1(","));
   group.deleteEntry("ThousandsSeparator", KConfigBase::Global);
   str.replace(QString::fromLatin1("$0"), QString());
@@ -121,12 +121,12 @@ void KLocaleConfigNumber::save()
 		       QString::fromLatin1("$0%1$0")
 		       .arg(m_locale->thousandsSeparator()), KConfigBase::Persistent|KConfigBase::Global);
 
-  str = ent.readEntry("PositiveSign");
+  str = entGrp.readEntry("PositiveSign");
   group.deleteEntry("PositiveSign", KConfigBase::Global);
   if (str != m_locale->positiveSign())
     group.writeEntry("PositiveSign", m_locale->positiveSign(), KConfigBase::Persistent|KConfigBase::Global);
 
-  str = ent.readEntry("NegativeSign", QString::fromLatin1("-"));
+  str = entGrp.readEntry("NegativeSign", QString::fromLatin1("-"));
   group.deleteEntry("NegativeSign", KConfigBase::Global);
   if (str != m_locale->negativeSign())
     group.writeEntry("NegativeSign", m_locale->negativeSign(), KConfigBase::Persistent|KConfigBase::Global);
