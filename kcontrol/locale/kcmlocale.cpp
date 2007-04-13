@@ -36,7 +36,6 @@
 #include <KDebug>
 #include <KDialog>
 #include <KIconLoader>
-#include <KLanguageButton>
 #include <KConfig>
 #include <KConfigGroup>
 #include <KStandardDirs>
@@ -44,6 +43,7 @@
 #include "kcmlocale.h"
 #include "kcmlocale.moc"
 #include "toplevel.h"
+#include "klanguagebutton.h"
 
 KLocaleConfig::KLocaleConfig(KLocale *locale, QWidget *parent)
   : QWidget (parent),
