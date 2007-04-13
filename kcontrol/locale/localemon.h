@@ -42,7 +42,7 @@ class KLocaleConfigMoney : public QWidget
   Q_OBJECT
 
 public:
-  KLocaleConfigMoney(KLocale *locale, QWidget *parent = 0, const char *name = 0);
+  KLocaleConfigMoney(KLocale *locale, QWidget *parent = 0);
   virtual ~KLocaleConfigMoney();
 
   void save();
