@@ -1,6 +1,7 @@
 [KCM Locale]
 Author=Chusslove Illich <caslav.ilic@gmx.net>
 Name=Serbia
+Name[ja]=セルビア
 Name[zh_TW]=塞爾維亞
 Region=southeurope
 Languages=sr
