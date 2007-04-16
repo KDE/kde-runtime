@@ -207,7 +207,7 @@ void KNetAttach::finished()
 	path += name + ".desktop";
 	KConfig _desktopFile( path, KConfig::OnlyLocal );
 	KConfigGroup desktopFile(&_desktopFile, "Desktop Entry");
-	desktopFile.writeEntry("Icon", "package_network");
+	desktopFile.writeEntry("Icon", "package-network");
 	desktopFile.writeEntry("Name", name);
 	desktopFile.writeEntry("Type", "Link");
 	desktopFile.writeEntry("URL", url.prettyUrl());
