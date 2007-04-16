@@ -2,10 +2,12 @@
 Encoding=UTF-8
 Type=Service
 Name=KNotify
+Name[sv]=Underrättelse
 Exec=knotify
 Comment=KDE Notification Daemon
 Comment[de]=KDE Benachrichtigungsdienst
 Comment[nds]=KDE-Dämoon för Bescheden
+Comment[sv]=KDE-underrättelsedemon
 Comment[zh_TW]=KDE Notification 伺服程式
 Icon=knotify
 X-DBUS-StartupType=Unique
