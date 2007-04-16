@@ -26,7 +26,7 @@
 #include <QDateTime>
 #include <QListView>
 #include <QPersistentModelIndex>
-#include <kmainwindow.h>
+#include <kxmlguiwindow.h>
 #include <ksslcertdialog.h>
 #include <kio/global.h>
 #include <kio/authinfo.h>
@@ -46,7 +46,7 @@ class KLineEdit;
 class OrgKdeUiServerCallbacksInterface;
 
 class UIServer
-    : public KMainWindow
+    : public KXmlGuiWindow
 {
   Q_OBJECT
 

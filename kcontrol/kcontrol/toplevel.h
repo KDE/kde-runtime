@@ -21,7 +21,7 @@
 #ifndef __TOPLEVEL_H__
 #define __TOPLEVEL_H__
 
-#include <kmainwindow.h>
+#include <kxmlguiwindow.h>
 #include <Qt3Support/Q3CheckListItem>
 
 
@@ -39,7 +39,7 @@ class ConfigModule;
 class ConfigModuleList;
 class ModuleTitle;
 
-class TopLevel : public KMainWindow
+class TopLevel : public KXmlGuiWindow
 {
   Q_OBJECT
 

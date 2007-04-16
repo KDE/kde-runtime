@@ -51,7 +51,7 @@
 #include "toplevel.moc"
 
 TopLevel::TopLevel()
-  : KMainWindow( 0, Qt::WStyle_ContextHelp  )
+  : KXmlGuiWindow( 0, Qt::WStyle_ContextHelp  )
   , _active(0), dummyAbout(0)
 {
   setCaption(QString());

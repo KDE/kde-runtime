@@ -53,7 +53,7 @@
 
 
 UIServer::UIServer()
-    : KMainWindow(0)
+    : KXmlGuiWindow(0)
 {
     serverAdaptor = new UiServerAdaptor(this);
     QDBusConnection::sessionBus().registerObject(QLatin1String("/UiServer"), this);
