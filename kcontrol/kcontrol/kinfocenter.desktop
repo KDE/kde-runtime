@@ -9,6 +9,7 @@ OnlyShowIn=KDE;
 
 Name=KInfoCenter
 Name[af]=Inligting Sentrum
+Name[csb]=Centróm wëdowiédzë
 Name[de]=Infozentrum
 Name[el]=Κέντρο πληροφοριών
 Name[et]=KDE infokeskus
@@ -34,6 +35,7 @@ GenericName[bg]=Информационен център
 GenericName[br]=Kreizenn Titouroù
 GenericName[ca]=Centre d'informació
 GenericName[cs]=Informační centrum
+GenericName[csb]=Centróm wëdowiédzë
 GenericName[cy]=Canolfan Gwybodaeth
 GenericName[da]=Infocenter
 GenericName[de]=Infozentrum
