@@ -1504,13 +1504,13 @@ Action=Sound
 sound=KDE_Logout_3.ogg
 
 [Event/cancellogout]
-Name=Logout canceled
+Name=Logout Canceled
 Comment=KDE logout was canceled
 Action=Popup
 sound=
 
 [Event/printerror]
-Name=Print error
+Name=Print Error
 Name[af]=Druk fout
 Name[ar]=خطأ في الطباعة
 Name[az]=Çap Edici xətası
@@ -1655,7 +1655,7 @@ Comment[zh_TW]=列印時發生錯誤
 Action=Messagebox
 
 [Event/messageInformation]
-Name=Information message
+Name=Information Message
 Name[af]=Inligting boodskap
 Name[ar]=رسالة المعلومات
 Name[az]=Mə'lumat ismarışı
@@ -1790,7 +1790,7 @@ sound=KDE_Chimes_2.ogg
 Action=Sound|Taskbar
 
 [Event/messageWarning]
-Name=Warning message
+Name=Warning Message
 Name[af]=Waarskuwing boodskap
 Name[ar]=رسالة تحذيرية
 Name[az]=Xəbərdarlıq ismarışı
@@ -1926,7 +1926,7 @@ sound=KDE_Error_1.ogg
 Action=Sound|Taskbar
 
 [Event/messageCritical]
-Name=Critical message
+Name=Critical Message
 Name[af]=Kritiese boodskap
 Name[ar]=رسالة هامَة
 Name[az]=Kritik ismarış

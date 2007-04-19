@@ -91,7 +91,7 @@ K_EXPORT_COMPONENT_FACTORY( knotify, NotifyFactory("kcmnotify") )
 /*	general->layout()->setMargin( KDialog::marginHint() );
 	hardware->layout()->setMargin( KDialog::marginHint() );*/
 	tab->addTab(app_tab, i18n("&Applications"));
-	tab->addTab(m_playerSettings, i18n("&Player settings"));
+	tab->addTab(m_playerSettings, i18n("&Player Settings"));
 
     connect( m_appCombo, SIGNAL( activated( const QString& ) ),
              SLOT( slotAppActivated( const QString& )) );
