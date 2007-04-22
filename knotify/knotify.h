@@ -24,7 +24,7 @@
 #include <QObject>
 #include <QPixmap>
 #include <QHash>
-#include <QString>
+
 #include <QList>
 #include <QPair>
 

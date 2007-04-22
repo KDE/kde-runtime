@@ -25,7 +25,7 @@
 #define kcmioslaveinfo_h_included
 
 #include <Qt3Support/Q3ListBox>
-#include <QString>
+
 //Added by qt3to4:
 #include <QByteArray>
 

@@ -30,7 +30,7 @@
 #ifndef KRASHDBUSINTERFACE_SKEL
 #define KRASHDBUSINTERFACE_SKEL
 
-#include <QString>
+
 #include <kaboutdata.h>
 
 #include <QtDBus/QtDBus>

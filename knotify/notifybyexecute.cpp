@@ -18,7 +18,7 @@
 
  */
 
-#include <QString>
+
 #include <QHash>
 #include <QProcess>
 

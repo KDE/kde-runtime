@@ -23,7 +23,7 @@
 
 #include <QWidget>
 #include <Qt3Support/Q3PtrList>
-#include <QString>
+
 #include <QStringList>
 
 #include "modules.h"

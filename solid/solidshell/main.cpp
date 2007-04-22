@@ -20,7 +20,7 @@
 #include "main.h"
 
 
-#include <QString>
+
 #include <QStringList>
 #include <QMetaProperty>
 #include <QMetaEnum>

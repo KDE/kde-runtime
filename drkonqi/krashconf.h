@@ -29,7 +29,7 @@
 #define KRASHCONF_H
 
 #include <kaboutdata.h>
-#include <QString>
+
 #include <QObject>
 
 #include "krashadaptor.h"

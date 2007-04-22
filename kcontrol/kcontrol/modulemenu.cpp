@@ -22,7 +22,7 @@ that is intentional :-]
 
 
 #include <Qt3Support/Q3Header>
-#include <QString>
+
 #include <Qt3Support/Q3PtrList>
 #include <QPoint>
 #include <QCursor>

@@ -26,7 +26,7 @@ that is intentional :-]
 
 #include <QStringList>
 #include <Qt3Support/Q3IntDict>
-#include <QString>
+
 #include <QWidget>
 
 #include <kmenu.h>
