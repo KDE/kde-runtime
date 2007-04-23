@@ -228,7 +228,7 @@ bool IconThemesConfig::installThemes(const QStringList &themes, const QString &a
   KProgressDialog progressDiag(this,
                                i18n("Installing icon themes"),
                                QString());
-  progressDiag.s(true);
+  progressDiag.setModal(true);
   progressDiag.setAutoClose(true);
   QProgressBar* progressBar = progressDiag.progressBar();
   progressBar->setMaximum(themes.count());
