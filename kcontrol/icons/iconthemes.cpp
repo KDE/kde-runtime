@@ -244,7 +244,7 @@ bool IconThemesConfig::installThemes(const QStringList &themes, const QString &a
   for (QStringList::ConstIterator it = themes.begin();
        it != themes.end();
        ++it) {
-    progressDiag.setLabel(
+    progressDiag.setLabelText(
         i18n("<qt>Installing <strong>%1</strong> theme</qt>",
          *it));
     kapp->processEvents();
