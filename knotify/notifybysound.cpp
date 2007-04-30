@@ -153,7 +153,7 @@ void NotifyBySound::notify( int eventId, KNotifyConfig * config )
 		d->signalmapper->setMapping( media , eventId );
 
 		media->addAudioPath(d->audiopath);
-		media->setUrl( KUrl(soundFile) );
+		media->setCurrentSource(soundFile);
 		media->play();
 		d->mediaobjects.insert(eventId , media);
 	}
