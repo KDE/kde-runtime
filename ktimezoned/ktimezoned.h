@@ -66,7 +66,7 @@ class KTimeZoned : public KDEDModule
             EnvTzFile = EnvTz | File,
             EnvTzLink = EnvTz | Link,
             LocaltimeCopy = Localtime | File,
-            LocaltimeLink = Localtime | Link,
+            LocaltimeLink = Localtime | Link
         };
         // Type of zone.tab cache
         enum CacheType
