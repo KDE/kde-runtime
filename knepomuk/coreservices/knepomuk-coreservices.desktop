@@ -1,0 +1,21 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Service
+URL=file://tmp/soprano/services/SopranoRDFRepository
+ServiceTypes=KNepomukService
+Name=KNepomuk Core Services
+Name[de]=KNepomuk-Basisdienste
+Name[it]=Servizi base KNepomuk
+Name[pt]=Serviços Básicos do KNepomuk
+Name[pt_BR]=Serviços Básicos do KNepomuk
+Name[sv]=Nepomuk-systemtjänster
+Comment=The KNepomuk Core Services mainly consisting of the RDF Repository
+Comment[de]=Die KNepomuk-Basisdienste bestehen größtenteils aus dem RDF-Repository
+Comment[it]=I servizi base di KNepomuk consistono principalmente nel deposito RDF
+Comment[pt]=Os Serviços Básicos do KNepomuk, que consistem principalmente no Repositório de RDF
+Comment[pt_BR]=Os Serviços Básicos do KNepomuk, que consistem principalmente no Repositório de RDF
+Comment[sv]=Nepomuk-systemtjänster består i huvudsak av RDF-arkivet
+X-Nepomuk-ServiceType=http://nepomuk.semanticdesktop.org/services/RDFRepository
+X-Nepomuk-AutoLoad=false
+X-Nepomuk-LoadOnDemand=true
+Exec=knepcoreservices

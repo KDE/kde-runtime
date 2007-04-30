@@ -29,3 +29,6 @@ if (Q_WS_X11)
 endif (Q_WS_X11)
 add_subdirectory(knotify)
 
+if(Soprano_FOUND AND KNEPOMUK_FOUND)
+  macro_optional_add_subdirectory(knepomuk)
+endif(Soprano_FOUND AND KNEPOMUK_FOUND)
