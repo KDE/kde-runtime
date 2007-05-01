@@ -27,4 +27,5 @@ configure_file(org.semanticdesktop.nepomuk.ServiceRegistry.service.cmake
 
 install(TARGETS knepdaemon DESTINATION ${BIN_INSTALL_DIR} )
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/org.semanticdesktop.nepomuk.ServiceRegistry.service
-  DESTINATION ${CMAKE_INSTALL_PREFIX}/share/dbus-1/services)
+  DESTINATION ${DBUS_SERVICES_DIR})
+
