@@ -233,7 +233,9 @@ bool KTimeZoned::findZoneTab(QFile& f)
         d.setFilter(QDir::Files | QDir::Hidden | QDir::NoSymLinks);
         QStringList fileList = d.entryList();
 
+#ifdef __GNUC__
 #warning Do cache files persist between sessions?
+#endif
         mZoneTab = KStandardDirs::locateLocal("cache", QLatin1String("zone.tab"));
         f.setFileName(mZoneTab);
         if (!f.open(QIODevice::WriteOnly))
