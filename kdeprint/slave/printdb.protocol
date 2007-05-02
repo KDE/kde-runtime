@@ -1,0 +1,14 @@
+[Protocol]
+exec=kio_print
+protocol=printdb
+input=none
+output=filesystem
+listing=Name,Type,Access
+reading=true
+writing=false
+makedir=false
+deleting=false
+moving=false
+linking=false
+Icon=postscript
+defaultMimetype=application/octet-stream

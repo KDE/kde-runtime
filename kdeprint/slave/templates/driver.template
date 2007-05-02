@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for Linux/x86 (vers 1st August 2004), see www.w3.org" />
+
+  <title>%1</title>
+<style type="text/css">
+/*<![CDATA[*/
+img {margin: 0px; padding: 0px}
+body {margin: 0px; padding: 0px; background-color: #418ade;}
+.bar_text a {color: #008;};
+/*]]>*/
+</style>
+<link rel="stylesheet" href="htmlstyles.css" type="text/css" />
+</head>
+
+<body>
+  <div style=
+  "background-image: url(top-middle.png); width: 100%; height: 131px;">
+  <div style="position: absolute; right: 0px;">
+      <img src="top-right-kdeprint.png" style="margin: 0px" alt="" />
+    </div>
+
+    <div style="position: absolute; left: 0px;">
+      <img src="top-left.png" style="margin: 0px" alt="" />
+    </div>
+
+    <div style=
+    "position: absolute; top: 25px; right: 100px; text-align: right; font-size: xx-large; font-weight: bold; text-shadow: #fff 0px 0px 5px; color: #444">
+    %1 <!-- Konqueror -->
+    </div>
+
+    <div style=
+    "position: absolute; top: 70px; right: 100px; text-align: right; font-size: large; font-weight: bold; text-shadow: #fff 0px 0px 5px; color: #444">
+    %1 <!-- Conquer your Desktop -->
+    </div>
+  </div><!-- the bar -->
+
+  <div style=
+  "width: 100%; background-image: url(bar-middle-right.png); background-repeat: repeat-y; background-position: right; background-color: #57a1d8;">
+  <div style=
+  "width: 100%; height: 19px; background-image: url(bar-top-middle.png);">
+    <div style="width: 22px; height: 19px; float: left;">
+        <img src="bar-top-left.png" style="margin: 0px" alt="" />
+      </div>
+
+      <div style="width: 22px; height: 19px; float: right;">
+        <img src="bar-top-right.png" style="margin: 0px" alt="" />
+      </div>
+    </div>
+
+    <div style=
+    "width: 100%; background-image: url(bar-middle-left.png); background-repeat: repeat-y; text-align: center; color: white;"
+    class="bar_text">
+      %1      <!-- Menu -->
+    </div>
+
+    <div style=
+    "width: 100%; height: 25px; background-image: url(bar-bottom-middle.png);">
+    <div style="width: 22px; height: 25px; float: left;">
+        <img src="bar-bottom-left.png" style="margin: 0px" alt="" />
+      </div>
+
+      <div style="width: 22px; height: 25px; float: right;">
+        <img src="bar-bottom-right.png" style="margin: 0px" alt="" />
+      </div>
+    </div>
+  </div><!-- the main text box -->
+
+  <div align="center">
+    <div style=
+    "width: 90%; background-image: url(box-middle-right.png); background-repeat: repeat-y; background-position: right;">
+    <div style=
+    "width: 100%; height: 35px; background-image: url(box-top-middle.png);">
+      <div style="width: 20px; height: 35px; float: left;">
+          <img src="box-top-left.png" style="margin: 0px" alt="" />
+        </div>
+
+        <div style="width: 20px; height: 35px; float: right;">
+          <img src="box-top-right.png" style="margin: 0px" alt="" />
+        </div>
+      </div>
+
+      <div style=
+      "width: 100%; background-image: url(box-middle-left.png); background-repeat: repeat-y; text-align: center">
+      <div style=
+      "background-image: url(box-centre-kdeprint.png); background-repeat: no-repeat; background-color: #dfe7f3; background-position: top right; margin-left: 20px; margin-right: 20px;">
+	<h2 style="margin-top: 0px;"><img src="%1" width="32" height="32"/>&nbsp;%1<!--Title--></h2>
+	
+	<table border="1" cellspacing="0" cellpadding="1" width="100%">
+	  <tr>
+	    <td>
+	      <table border="1" cellspacing="0" cellpadding="2" width="100%">
+		
+		%1
+		
+	      </table>
+	    </td>
+	  </tr>
+	</table>
+
+        </div>
+      </div>
+
+      <div style=
+      "width: 100%; height: 22px; background-image: url(box-bottom-middle.png);">
+      <div style="width: 25px; height: 22px; float: left;">
+          <img src="box-bottom-left.png" style="margin: 0px" alt="" />
+        </div>
+
+        <div style="width: 25px; height: 22px; float: right;">
+          <img src="box-bottom-right.png" style="margin: 0px" alt="" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style=
+  "background-image: url(bottom-middle.png); width: 100%; height: 100px;">
+  <div style="position: absolute; right: 0px;">
+      <img src="bottom-right.png" style="margin: 0px" alt="" />
+    </div>
+
+    <div style="position: absolute; left: 0px;">
+      <img src="bottom-left.png" style="margin: 0px" alt="" />
+    </div>
+  </div>
+</body>
+</html>

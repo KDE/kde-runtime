@@ -1,0 +1,92 @@
+#! /usr/bin/perl
+
+$inui = 0;
+$tag = "";
+$linenr = 0;
+
+$incomdata = 0;
+$aftername = 0;
+$aftercomment = 0;
+$commentvalue = "";
+
+while ( <STDIN> )
+{
+  $linenr = $linenr + 1;
+
+     # *LanguageVersion: Check for English
+     if (/^\*LanguageVersion:\s+([\w\-]+)\s*$/) {
+          last if ($1 ne "English");
+     }
+
+     # *OpenUI *InputSlot/Media Source: PickOne
+     if ($_ =~ "^*OpenUI") {
+	  $inui = 1;
+	  $_ =~ s/^\*OpenUI\s*//;
+	  $tag = $_;
+	  $tag =~ s%:.*$%%;
+	  $tag =~ s%/.*%%;
+	  chomp($tag);
+	  $_ =~ s%\s*:.*$%%;
+	  $_ =~ s%\s*\*%%;
+	  $_ =~ s%^[^/]*/%%;
+	  $_ =~ s%\"%\\\"%g;
+	  chomp($_);
+          if (length($_)) {
+              # Print only non-empty entries 
+	      print "i18n(\"", $_, "\");\n";
+          }
+	  next;
+     }
+
+     if ($_ =~ "^*CloseUI") {
+	  $inui = 0;
+	  $tag = "";
+     }
+
+     if ($inui) {
+       if (substr($_, 0, length($tag)) eq $tag) {
+	 $_ =~ s%\s*:.*$%%;
+	 $_ =~ s%\*\S*\s*%%;
+	 $_ =~ s%^[^/]*/%%;
+	 $_ =~ s%\"%\\\"%g;
+	 chomp($_);
+         if (length($_)) {
+              # Print only non-empty entries 
+	      print "i18n(\"", $_, "\");\n";
+         }
+       }
+     }
+
+     # *% COMDATA #$VAR1 = {: Start looking for 'name','comment','type'
+     if (/^\*\% COMDATA \#\$VAR1/) {
+       $incomdata = 1;
+     }
+
+     # *% COMDATA #      'name': Continue looking for 'comment'
+     if ($incomdata && /^\*\% COMDATA \#\s*\'name\'/) {
+       $aftername    = 1;
+       $aftercomment = 0;
+     }
+
+     # *% COMDATA #      'comment' => '*': Continue looking for 'type'
+     if ($aftername && /^\*\% COMDATA \#\s*\'comment\'\s*\=\>\s*\'(.*)\'/) {
+       $aftername    = 0;
+       $aftercomment = 1;
+       $commentvalue = $1;
+     }
+
+     # *% COMDATA #      'type' => '*':
+     # Output comment if type is 'int', 'float' or 'string'
+     if ($aftercomment && /^\*\% COMDATA \#\s*\'type\'\s*\=\>\s*\'(.*)\'/) {
+       $aftername    = 0;
+       $aftercomment = 0;
+       if ($1 eq "int" || $1 eq "float" || $1 eq "string") {
+          if (length($commentvalue)) {
+              # Print only non-empty entries 
+              print "i18n(\"$commentvalue\");\n";
+          }
+       }
+     }
+	
+   
+}

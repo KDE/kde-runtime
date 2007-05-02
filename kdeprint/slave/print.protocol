@@ -1,0 +1,15 @@
+[Protocol]
+exec=kio_print
+protocol=print
+input=none
+output=filesystem
+listing=Name,Type,Access
+reading=true
+writing=false
+makedir=false
+deleting=false
+moving=false
+linking=false
+Icon=postscript
+DocPath=kioslave/print.html
+defaultMimetype=application/octet-stream
