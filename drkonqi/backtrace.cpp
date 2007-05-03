@@ -25,18 +25,19 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************/
 
+#include "backtrace.h"
+
 #include <QFile>
 #include <QRegExp>
 
 #include <k3process.h>
-#include <kdebug.h>
-#include <kstandarddirs.h>
-#include <kmessagebox.h>
-#include <klocale.h>
+#include <KDebug>
+#include <KStandardDirs>
+#include <KMessageBox>
+#include <KLocale>
 #include <ktemporaryfile.h>
 
 #include "krashconf.h"
-#include "backtrace.h"
 #include "backtrace.moc"
 
 BackTrace::BackTrace(const KrashConfig *krashconf, QObject *parent,

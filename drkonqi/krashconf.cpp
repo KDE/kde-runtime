@@ -25,6 +25,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************/
 
+#include "krashconf.h"
+
 #include <kconfig.h>
 #include <kglobal.h>
 #include <kaboutdata.h>
@@ -36,8 +38,6 @@
 
 #include <QHash>
 #include <QtDBus/QtDBus>
-
-#include "krashconf.h"
 
 KrashConfig :: KrashConfig()
 {

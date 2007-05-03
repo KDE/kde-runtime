@@ -39,7 +39,6 @@
 #include <kaboutdata.h>
 #include <k3process.h>
 #include <ktemporaryfile.h>
-#include <QFile>
 #include <Qt/qdom.h>
 #include <Q3PtrListIterator>
 #include <stdio.h>

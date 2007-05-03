@@ -33,7 +33,6 @@
 #include <kservicegroup.h>
 #include <kdebug.h>
 #include <Qt3Support/Q3WhatsThis>
-#include <QBitmap>
 
 #include "moduletreeview.h"
 #include "moduletreeview.moc"

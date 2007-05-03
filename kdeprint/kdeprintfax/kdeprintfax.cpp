@@ -31,8 +31,6 @@
 #include <QtGui/QDateEdit>
 #include <QComboBox>
 #include <QtGui/QDesktopWidget>
-
-#include <QTextEdit>
 #include <QDateTimeEdit>
 
 #include <kapplication.h>

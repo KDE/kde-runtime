@@ -25,8 +25,11 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************/
 
+#include "debugger.h"
+
 #include <QLayout>
 #include <QLabel>
+#include <QTextStream>
 
 #include <kdialog.h>
 #include <klocale.h>
@@ -41,9 +44,7 @@
 
 #include "backtrace.h"
 #include "krashconf.h"
-#include "debugger.h"
 #include "debugger.moc"
-#include <QTextStream>
 
 KrashDebugger :: KrashDebugger (const KrashConfig *krashconf, QWidget *parent, const char *name)
   : QWidget( parent ),

@@ -25,6 +25,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************/
 
+#include "toplevel.h"
+
 #include <QtCore/QString>
 #include <QtDBus/QtDBus>
 #include <QtDBus/QDBusConnection>
@@ -48,7 +50,6 @@
 #include "drbugreport.h"
 #include "debugger.h"
 #include "krashconf.h"
-#include "toplevel.h"
 #include "toplevel.moc"
 
 Toplevel :: Toplevel(KrashConfig *krashconf, QWidget *parent)
