@@ -29,6 +29,7 @@ if (Q_WS_X11)
   add_subdirectory(kstart)
 endif (Q_WS_X11)
 add_subdirectory(knotify)
+add_subdirectory(knetattach)
 
 find_package(Soprano)
 find_package(KNepomuk)
