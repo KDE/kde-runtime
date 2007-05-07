@@ -9,6 +9,9 @@ X-KDE-Kded-autoload=true
 X-KDE-Kded-load-on-demand=true
 
 Name=KDE Time Zone Daemon
+Name[de]=Zeitzonen-Dienst
+Name[el]=Δαίμονας ωρολογιακής ζώνης του KDE
 Name[zh_TW]=KDE 時區伺服程式
 Comment=Time zone daemon for KDE
+Comment[de]=Zeitzonen-Dienst für KDE
 Comment[zh_TW]=KDE 的時區伺服程式

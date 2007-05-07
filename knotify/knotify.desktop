@@ -7,6 +7,7 @@ Name[x-test]=xxKNotifyxx
 Exec=knotify
 Comment=KDE Notification Daemon
 Comment[de]=KDE Benachrichtigungsdienst
+Comment[el]=Δαίμονας ειδοποιήσεων του KDE
 Comment[nds]=KDE-Dämoon för Bescheden
 Comment[sv]=KDE-underrättelsedemon
 Comment[x-test]=xxKDE Notification Daemonxx
