@@ -72,7 +72,7 @@ KdeprintFax::KdeprintFax(QWidget *parent, const char *name)
 	QWidget	*mainw = new QWidget(this);
 	setCentralWidget(mainw);
 	m_files = new KListWidget(mainw);
-	connect( m_files, SIGNAL( currentChanged( QListWidgetItem* ) ), SLOT( slotCurrentChanged() ) );
+	connect( m_files, SIGNAL(currentItemChanged (QListWidgetItem*,QListWidgetItem*)), SLOT( slotCurrentChanged() ) );
 	m_upbtn = new KPushButton( mainw );
 	m_upbtn->setIcon( KIcon( "go-up" ) );
 	m_upbtn->setToolTip( i18n( "Move up" ) );
