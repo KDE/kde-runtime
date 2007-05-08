@@ -1,4 +1,4 @@
-
+KDE4_NO_ENABLE_FINAL(kcontrol)
 add_subdirectory( about ) 
 
 
