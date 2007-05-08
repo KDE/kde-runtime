@@ -8,6 +8,7 @@ Exec=knotify
 Comment=KDE Notification Daemon
 Comment[de]=KDE Benachrichtigungsdienst
 Comment[el]=Δαίμονας ειδοποιήσεων του KDE
+Comment[ja]=KDE 通知デーモン
 Comment[nds]=KDE-Dämoon för Bescheden
 Comment[sv]=KDE-underrättelsedemon
 Comment[x-test]=xxKDE Notification Daemonxx
