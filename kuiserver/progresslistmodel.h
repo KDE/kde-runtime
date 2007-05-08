@@ -139,7 +139,7 @@ public:
       * @param index    the index where the data contained on @p value will be stored
       * @param value    the data that is going to be stored
       * @param role     in what role we want to store the data at the given @p index
-      * @return         whether the data was sucessfully stored or not
+      * @return         whether the data was successfully stored or not
       */
     bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
 
