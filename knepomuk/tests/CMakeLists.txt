@@ -10,7 +10,13 @@ include_directories(
 # The basis of all the tests handling statements
 qt4_automoc(testbase.cpp)
 add_library(testbase_backbone STATIC testbase.cpp)
-target_link_libraries(testbase_backbone ${KNEPOMUK_LIBRARIES} ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
+target_link_libraries(testbase_backbone
+  ${KNEPOMUK_LIBRARIES}
+  ${KDE4_KDECORE_LIBRARY}
+  ${SOPRANO_LIBRARIES}
+  ${QT_QTCORE_LIBRARY}
+  ${QT_QTTEST_LIBRARY}
+)
 
 # tests
 kde4_automoc(rdfrepositorytest.cpp)
