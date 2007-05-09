@@ -40,7 +40,6 @@ KListDebugDialog::KListDebugDialog( QStringList areaList, QWidget *parent, const
   QVBoxLayout *lay = new QVBoxLayout( mainWidget );
   lay->setMargin( KDialog::marginHint() );
   lay->setSpacing( KDialog::spacingHint() );
-  setLayout(lay);
 
   m_incrSearch = new KLineEdit();
   lay->addWidget( m_incrSearch );
