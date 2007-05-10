@@ -49,7 +49,7 @@ private:
 	KJobViewerApp	*m_app;
 };
 
-void KJobViewerApp::trayActivated( int reason )
+void KJobViewerApp::trayActivated( QSystemTrayIcon::ActivationReason reason )
 {
 /* not sure what to do with this for other platforms */
 #ifdef Q_WS_X11
@@ -147,7 +147,7 @@ void KJobViewerApp::initialize()
         if (!m_tray)
         {
             m_tray = new KSystemTrayIcon(QLatin1String( "document-print" ), 0);
-            connect( m_tray, SIGNAL( activated( int ) ), SLOT( trayActivated( int ) ) );
+            connect( m_tray, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), SLOT( trayActivated(QSystemTrayIcon::ActivationReason) ) );
         }
 
         view = m_views.find(prname);

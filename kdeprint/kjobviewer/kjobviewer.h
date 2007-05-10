@@ -23,10 +23,9 @@
 #include <kuniqueapplication.h>
 #include <kdeprint/kpreloadobject.h>
 #include <Qt3Support/Q3Dict>
-
+#include <KSystemTrayIcon>
 class KMJobViewer;
 class KMTimer;
-class KSystemTrayIcon;
 
 class KJobViewerApp : public KUniqueApplication, public KPReloadObject
 {
@@ -47,7 +46,7 @@ protected Q_SLOTS:
 	void slotTimer();
 	void slotPrinterChanged(KMJobViewer*, const QString&);
 	void slotViewerDestroyed(KMJobViewer*);
-	void trayActivated( int reason );
+	void trayActivated(QSystemTrayIcon::ActivationReason);
 
 private:
 	Q3Dict<KMJobViewer>	m_views;
