@@ -23,7 +23,7 @@
 
 class RdfRepositoryTest : public TestBase
 {
-    Q_OBJECT;
+    Q_OBJECT
 
  private Q_SLOTS:
     void testCreateRepository();
