@@ -23,17 +23,48 @@
 
 class RdfRepositoryTest : public TestBase
 {
-  Q_OBJECT
+    Q_OBJECT;
 
  private Q_SLOTS:
-   void testListStatements_data();
-   void testListStatements();
-
-   void testAddStatements();
+    void testCreateRepository();
+    void testListRepositoriyIds();
+    void testRemoveRepository();
+    void testGetRepositorySize();
+    void testContains();
+    void testAddStatement();
+    void testAddStatements();
+    void testRemoveContext();
+    void testRemoveStatement();
+    void testRemoveStatements();
+    void testRemoveAllStatements();
+    void testListStatements();
+    void testConstructSparql();
+    void testSelectSparql();
+    void testDescribeSparql();
+    void testConstruct();
+    void testSelect();
+    void testQueryListStatements();
+    void testQueryConstruct();
+    void testQuerySelect();
+    void testQueryConstructSparql();
+    void testQuerySelectSparql();
+    void testQueryDescribeSparql();
+    void testAskSparql();
+    void testFetchListStatementsResults();
+    void testFetchConstructResults();
+    void testFetchDescribeResults();
+    void testFetchSelectResults();
+    void testCloseQuery();
+    void testSupportedQueryLanguages();
+    void testSupportsQueryLanguage();
+    void testSupportedSerializations();
+    void testSupportsSerialization();
+    void testAddGraph();
+    void testRemoveGraph();
 
  private:
-   QList<Soprano::Statement> createTestData( const Soprano::Statement&,
-						  int num = 10 );
+    QList<Soprano::Statement> createTestData( const Soprano::Statement&,
+					      int num = 10 );
 };
 
 #endif

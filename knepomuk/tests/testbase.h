@@ -39,10 +39,14 @@ class TestBase : public QObject
     */
    virtual void initTestCase();
    virtual void cleanupTestCase();
+   virtual void init();
+   virtual void cleanup();
 
  private:
    Nepomuk::Backbone::Registry* m_registry;
    Nepomuk::Services::RDFRepository* m_repository;
+
+   QStringList m_repositoryIds;
 };
 
 #endif

@@ -38,9 +38,9 @@ Nepomuk::CoreServices::DBusInterface::~DBusInterface()
 }
 
 
-QStringList Nepomuk::CoreServices::DBusInterface::dumpGraph( const QString& graph )
+void Nepomuk::CoreServices::DBusInterface::dumpGraph( const QString& graph )
 {
-    return d->rep->dumpGraph( graph );
+    d->rep->dumpGraph( graph );
 }
 
 

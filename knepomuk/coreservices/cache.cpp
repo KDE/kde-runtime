@@ -1,6 +1,7 @@
 /*
  * This file is part of the Nepomuk KDE project.
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
+ * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -97,12 +98,11 @@ bool Cache::contains( int listId ) const
 
 void Cache::remove( int listId )
 {
-    if ( d->cache.contains( listId ) )
-    {
+    if ( d->cache.contains( listId ) ) {
         CacheObject *obj = d->cache.value ( listId );
         disconnect(obj, SIGNAL( timeout(int) ), this, SLOT( remove(int) ));
 
-        obj->deleteLater();
+        delete obj;
         d->cache.remove( listId );
     }
 

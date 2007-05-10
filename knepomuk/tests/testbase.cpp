@@ -42,10 +42,25 @@ Nepomuk::Services::RDFRepository* TestBase::repository() const
 }
 
 
+void TestBase::init()
+{
+}
+
+
+void TestBase::cleanup()
+{
+    // remove everything
+    repository()->removeAllStatements( testRepository(), Statement() );
+}
+
+
 void TestBase::initTestCase()
 {
   m_registry = new Nepomuk::Backbone::Registry( this );
   m_repository = new RDFRepository( m_registry->discoverRDFRepository() );
+
+  m_repositoryIds = m_repository->listRepositoriyIds();
+
   m_repository->createRepository( s_testRep );
   QVERIFY( m_repository->success() );
 }
@@ -53,11 +68,16 @@ void TestBase::initTestCase()
 
 void TestBase::cleanupTestCase()
 {
-  m_repository->removeRepository( s_testRep );
-  QEXPECT_FAIL( "", "removeRepository not implemented yet.", Continue );
-  QVERIFY( m_repository->success() );
-  delete m_repository;
-  delete m_registry;
+    QStringList repos = m_repository->listRepositoriyIds();
+    foreach( QString repo, repos ) {
+        if ( !m_repositoryIds.contains( repo ) ) {
+            m_repository->removeRepository( repo );
+            QVERIFY( m_repository->success() );
+        }
+    }
+
+    delete m_repository;
+    delete m_registry;
 }
 
 

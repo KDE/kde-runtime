@@ -75,7 +75,6 @@ bool Nepomuk::CoreServices::DaemonImpl::registerServices()
         return false;
     }
 
-
     // /////////////////////////////////////////////////
     // Load graphs
     // /////////////////////////////////////////////////
@@ -85,11 +84,12 @@ bool Nepomuk::CoreServices::DaemonImpl::registerServices()
 
     while( res.next() ) {
         QString modelId = res.binding( "modelId" ).literal().toString();
-
-        KStandardDirs::makeDir( storagePath + modelId );
-        d->resolver.insert( modelId, Soprano::createModel( modelId,
-                                                           QString("dir=" + storagePath + modelId ).split(",") ) );
-        kDebug(300002) << "(Nepomuk::CoreServices) found repository: " << modelId << endl;
+        if ( !d->resolver.contains( modelId ) ) {
+            KStandardDirs::makeDir( storagePath + modelId );
+            d->resolver.insert( modelId, Soprano::createModel( modelId,
+                                                               QString("dir=" + storagePath + modelId ).split(",") ) );
+            kDebug(300002) << "(Nepomuk::CoreServices) found repository: " << modelId << endl;
+        }
     }
 
     // FIXME: add error handling

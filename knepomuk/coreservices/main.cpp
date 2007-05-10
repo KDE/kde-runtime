@@ -12,19 +12,41 @@
  * See the file "COPYING" for the exact licensing terms.
  */
 
-#include <QCoreApplication>
-
-#include <kdebug.h>
+#include <KApplication>
+#include <KDebug>
+#include <KLocale>
+#include <KCmdLineArgs>
+#include <KAboutData>
 
 #include "coreservices.h"
 
+static const char* version = "0.8";
+static const char* description = I18N_NOOP( "KNepomuk Core Services including the RDF Repository" );
+static const KCmdLineOptions options[] = {
+    KCmdLineLastOption
+};
+
+
 int main( int argc, char** argv )
 {
-    QCoreApplication app( argc, argv );
+    KAboutData aboutData( "knepomukcoreservices",
+                          I18N_NOOP("The KNepomuk Core Services"),
+                          version,
+                          description,
+                          KAboutData::License_GPL,
+                          "(C) 2007, Sebastian Trüg");
+    aboutData.addAuthor("Sebastian Trüg", 0, "trueg@kde.org");
+    aboutData.addAuthor("Daniele Galdi", 0, "daniele.galdi@gmail.com" );
+
+    KCmdLineArgs::init( argc, argv, &aboutData );
+    KCmdLineArgs::addCmdLineOptions( options );
+
+    KApplication app( false ); // no need for a GUI
 
     Nepomuk::CoreServices::DaemonImpl instance( &app );
-    if( instance.registerServices() )
+    if( instance.registerServices() ) {
         return app.exec();
+    }
     else {
         kDebug(300002) << "Failed to setup core services." << endl;
         return -1;

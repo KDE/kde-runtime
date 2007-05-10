@@ -35,7 +35,7 @@ namespace Nepomuk {
 		~DBusInterface();
 	  
 	    public Q_SLOTS:
-		QStringList dumpGraph( const QString& graph );
+		void dumpGraph( const QString& graph );
 		void quit();
 		Soprano::Statement testStatement();
 		Soprano::Node testNode();

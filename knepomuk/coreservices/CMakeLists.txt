@@ -26,6 +26,7 @@ target_link_libraries(knepcoreservices
   ${QT_QTCORE_LIBRARY}
   ${QT_QTDBUS_LIBRARY}
   ${KDE4_KDECORE_LIBS}
+  ${KDE4_KIO_LIBS}
 )
 
 install(FILES knepomuk-coreservices.desktop DESTINATION ${SERVICES_INSTALL_DIR}/knepomuk)

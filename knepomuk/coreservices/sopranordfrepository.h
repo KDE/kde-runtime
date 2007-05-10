@@ -118,12 +118,21 @@ namespace Nepomuk {
 		void removeGraph( const QString& repositoryId, const QString& graph,
 				  const QString& formatMimetype, const Soprano::Node& context );
 
-		QStringList dumpGraph( const QString& graph );
+		void dumpGraph( const QString& graph );
 
 	    private:
 		Soprano::ResultSet executeQuery( const QString& graphId,
 						 const QString& query,
 						 const QString& queryType );
+
+		/**
+		 * Creates a pseudo-index graph for the given statement if the object
+		 * is a literal. The literal will be split into single words and for
+		 * each word a new index statement is created.
+		 */
+		QList<Soprano::Statement> buildIndexGraph( const Soprano::Statement& ) const;
+
+		QString createStoragePath( const QString& repositoryId ) const;
 
 		class Private;
 		Private *d;
