@@ -114,9 +114,9 @@ SearchWidget::SearchWidget(QWidget *parent)
   connect(_keyList, SIGNAL(highlighted(const QString&)),
           this, SLOT(slotKeywordSelected(const QString&)));
 
-  connect(_resultList, SIGNAL(selected(QListWidgetItem*)),
+  connect(_resultList, SIGNAL(itemChanged (QListWidgetItem*)),
           this, SLOT(slotModuleSelected(QListWidgetItem *)));
-  connect(_resultList, SIGNAL(clicked(QListWidgetItem *)),
+  connect(_resultList, SIGNAL(executed(QListWidgetItem *)),
           this, SLOT(slotModuleClicked(QListWidgetItem *)));
 }
 
