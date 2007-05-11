@@ -357,16 +357,19 @@ void RdfRepositoryTest::testSelectSparql()
 
 void RdfRepositoryTest::testDescribeSparql()
 {
+    // FIXME: implement the testDescribeSparql test
 }
 
 
 void RdfRepositoryTest::testConstruct()
 {
+    // the sparql test should be sufficient
 }
 
 
 void RdfRepositoryTest::testSelect()
 {
+    // the sparql test should be sufficient
 }
 
 
@@ -480,6 +483,7 @@ void RdfRepositoryTest::testQuerySelectSparql()
 
 void RdfRepositoryTest::testQueryDescribeSparql()
 {
+    // FIXME: implement the testQueryDescribeSparql test
 }
 
 
@@ -545,6 +549,7 @@ void RdfRepositoryTest::testCloseQuery()
 
 void RdfRepositoryTest::testSupportedQueryLanguages()
 {
+    // I see no way to test this...
 }
 
 
