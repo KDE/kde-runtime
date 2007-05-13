@@ -8,8 +8,8 @@ include_directories(
 )
 
 # The basis of all the tests handling statements
-qt4_automoc(testbase.cpp)
-add_library(testbase_backbone STATIC testbase.cpp)
+kde4_automoc(testbase.cpp)
+kde4_add_library(testbase_backbone STATIC testbase.cpp)
 target_link_libraries(testbase_backbone
   ${KNEPOMUK_LIBRARIES}
   ${KDE4_KDECORE_LIBRARY}

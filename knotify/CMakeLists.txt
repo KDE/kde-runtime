@@ -17,7 +17,7 @@ kde4_automoc(${knotify_KDEINIT_SRCS})
 
 kde4_add_kdeinit_executable( knotify ${knotify_KDEINIT_SRCS})
 
-target_link_libraries(kdeinit_knotify  ${KDE4_KDECORE_LIBS} kdeui ${KDE4_PHONON_LIBS})
+target_link_libraries(kdeinit_knotify ${KDE4_KDECORE_LIBS} ${KDE4_KDEUI_LIBS} ${KDE4_PHONON_LIBS})
 
 
 install(TARGETS kdeinit_knotify  DESTINATION ${LIB_INSTALL_DIR} )
