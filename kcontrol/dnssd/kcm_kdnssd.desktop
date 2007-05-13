@@ -2,7 +2,6 @@
 Comment=Configure service discovery
 Comment[af]=Stel dienste ontdekker op
 Comment[ar]=إعداد إكتشاف الخدمات
-Comment[bg]=Конфигуриране на откриването на услуги
 Comment[ca]=Configura el descobriment de serveis
 Comment[cs]=Nastavení hledání služeb
 Comment[csb]=Kòfigùracëjô wëkrëwaniô ùsłëżnotów
@@ -63,7 +62,6 @@ MimeType=
 Name=Service Discovery
 Name[af]=Dienste ontdekker
 Name[ar]=إكتشاف الخدمات
-Name[bg]=Откриване на услуги
 Name[ca]=Descobriment de serveis
 Name[cs]=Hledání služeb
 Name[csb]=Wëkrëwanié ùsłëżnotów
