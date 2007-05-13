@@ -68,7 +68,7 @@ void Nepomuk::CoreServices::SopranoRDFRepository::createRepository( const QStrin
     if( graphId.contains( '/' ) ) {
         kDebug(300002) << k_funcinfo << ": " << "Invalid repository name: " << graphId << endl;
         setError( "org.semanticdesktop.nepomuk.error.InvalidParameter",
-                  i18n("Invalid repository name: %1").arg(graphId) );
+                  i18n("Invalid repository name: %1", graphId) );
         return;
     }
 
