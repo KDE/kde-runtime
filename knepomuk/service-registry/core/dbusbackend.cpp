@@ -61,7 +61,7 @@ Nepomuk::Backbone::Result Nepomuk::Backbone::Registry::DBus::Backend::methodCall
 
   if( !serviceProxy.isValid() ) {
     // FIXME: define proper error codes
-    return Result( -1 );
+    return Result::createSimpleResult( -1 );
   }
 
   QDBusMessage dbusReply = serviceProxy.callWithArgumentList( QDBus::Block, 
@@ -70,11 +70,13 @@ Nepomuk::Backbone::Result Nepomuk::Backbone::Registry::DBus::Backend::methodCall
 
   if( dbusReply.type() != QDBusMessage::ReplyMessage ) {
     // FIXME: define proper error codes
-    return Result( -1 );
+    return Result::createSimpleResult( -1 );
   }
 
   // FIXME: we silently assume that the method has only a single return value
-  return Result( 0, dbusReply.arguments()[0] );
+  Result res = Result();
+  res.setValue( dbusReply.arguments()[0] );
+  return Result( res );
 }
 
 
