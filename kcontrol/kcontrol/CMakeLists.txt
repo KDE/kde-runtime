@@ -36,7 +36,7 @@ kde4_automoc(${kcontrol_KDEINIT_SRCS})
 
 kde4_add_kdeinit_executable( kcontrol ${kcontrol_KDEINIT_SRCS})
 
-target_link_libraries(kdeinit_kcontrol  ${KDE4_KDE3SUPPORT_LIBS} ${KDE4_KHTML_LIBS} )
+target_link_libraries(kdeinit_kcontrol  ${KDE4_KDE3SUPPORT_LIBS} ${KDE4_KHTML_LIBS} ${KDE4_KUTILS_LIBS} )
 
 install(TARGETS kdeinit_kcontrol  DESTINATION ${LIB_INSTALL_DIR} )
 
@@ -51,7 +51,7 @@ kde4_automoc(${kinfocenter_KDEINIT_SRCS})
 
 kde4_add_kdeinit_executable( kinfocenter ${kinfocenter_KDEINIT_SRCS})
 
-target_link_libraries(kdeinit_kinfocenter  ${KDE4_KDE3SUPPORT_LIBS} ${KDE4_KHTML_LIBS} )
+target_link_libraries(kdeinit_kinfocenter  ${KDE4_KDE3SUPPORT_LIBS} ${KDE4_KHTML_LIBS} ${KDE4_KUTILS_LIBS} )
 
 install(TARGETS kdeinit_kinfocenter  DESTINATION ${LIB_INSTALL_DIR} )
 

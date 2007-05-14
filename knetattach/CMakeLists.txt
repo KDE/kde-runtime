@@ -15,7 +15,8 @@ kde4_add_ui_files(knetattach_SRCS knetattach.ui )
 
 kde4_add_executable(knetattach ${knetattach_SRCS})
 
-target_link_libraries(knetattach  ${KDE4_KIO_LIBS} )
+# needs qt3support for Q3Wizard
+target_link_libraries(knetattach  ${KDE4_KIO_LIBS} ${QT_QT3SUPPORT_LIBRARY} )
 
 install(TARGETS knetattach DESTINATION ${BIN_INSTALL_DIR})
 

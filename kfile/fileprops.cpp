@@ -19,7 +19,6 @@
 #include <iostream>
 
 #include <QtCore/QFile>
-#include <Qt3Support/Q3PtrList>
 
 #include <kaboutdata.h>
 #include <kapplication.h>
@@ -213,16 +212,14 @@ static void printList( const QStringList& list )
     kDebug() << endl;
 }
 
-static void processMetaDataOptions( const Q3PtrList<FileProps> propList,
+static void processMetaDataOptions( const QList<FileProps *> propList,
                                     KCmdLineArgs *args )
 {
 // kfile --mimetype --listsupported --listavailable --listwritable --getValue "key" --setValue "key=value" --allValues --dialog --quiet file [file...]
 // "key" may be a list of keys, separated by commas
 
     QString line("-- -------------------------------------------------------");
-    FileProps *props;
-    Q3PtrListIterator<FileProps> it( propList );
-    for ( ; (props = it.current()); ++it )
+    foreach ( FileProps *props, propList )
     {
         QString file = props->fileName() + ' ';
         QString fileString = line;
@@ -290,8 +287,7 @@ int main( int argc, char **argv )
 
     KApplication app( useGUI );
 
-    Q3PtrList<FileProps> m_props;
-    m_props.setAutoDelete( true );
+    QList<FileProps *> m_props;
 
     bool quiet = args->isSet( "quiet" );
 
@@ -326,7 +322,7 @@ int main( int argc, char **argv )
 
     processMetaDataOptions( m_props, args );
 
-    m_props.clear(); // force destruction/sync of props
+    qDeleteAll(m_props); // force destruction/sync of props
     kDebug().flush();
 
     return 0;
