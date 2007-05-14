@@ -31,7 +31,6 @@
 #include <kio/global.h>
 #include <kio/authinfo.h>
 #include <kurl.h>
-#include <k3listview.h>
 #include <ktoolbar.h>
 
 #include "uiserver_p.h"
