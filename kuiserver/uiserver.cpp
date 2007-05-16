@@ -144,7 +144,7 @@ UIServer* UIServer::createInstance()
 int UIServer::newJob(const QString &appServiceName, int capabilities, bool showProgress, const QString &internalAppName, const QString &jobIcon, const QString &appName)
 {
     // Uncomment if you want to see kuiserver in action (ereslibre)
-    if (isHidden()) show();
+    // if (isHidden()) show();
 
     s_jobId++;
 
