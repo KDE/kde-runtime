@@ -362,7 +362,7 @@ void IconThemesConfig::updateRemoveButton()
 
 void IconThemesConfig::themeSelected(QTreeWidgetItem *item)
 {
-  if (item && item == m_defaultTheme) return;
+  if (!item || item == m_defaultTheme) return;
 
 #ifdef HAVE_LIBAGG
   KSVGIconEngine engine;
