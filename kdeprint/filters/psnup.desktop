@@ -2,5 +2,6 @@
 Name=psnup
 Require=exec:/psnup
 Comment=Multiple Pages per Sheet Filter
+Comment[el]=Φίλτρο πολλών σελίδων ανά φύλλο
 MimeTypeIn=application/postscript
 MimeTypeOut=application/postscript

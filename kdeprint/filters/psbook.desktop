@@ -2,5 +2,6 @@
 Name=psbook
 Require=exec:/psbook,exec:/psnup
 Comment=Pamphlet Printing (use with small side duplex printing)
+Comment[el]=Εκτύπωση φυλλαδίου (χρήση μαζί με εκτύπωση διπλής όψης μικρής πλευράς)
 MimeTypeIn=application/postscript
 MimeTypeOut=application/postscript

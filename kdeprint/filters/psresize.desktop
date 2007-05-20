@@ -2,5 +2,6 @@
 Name=psresize
 Require=exec:/psresize
 Comment=Scale Print Content to Fit on Another Paper Size
+Comment[el]=Προσαρμογή περιεχομένου εκτύπωσης για ταίριασμα σε διαφορετικό μέγεθος χαρτιού
 MimeTypeIn=application/postscript
 MimeTypeOut=application/postscript

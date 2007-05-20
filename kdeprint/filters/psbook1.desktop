@@ -2,5 +2,6 @@
 Name=psbook1
 Require=exec:/psbook,exec:/psnup,exec:/psselect
 Comment=Pamphlet Printing - Even Pages (step 1)
+Comment[el]=Εκτύπωση φυλλαδίου - Ζυγές σελίδες (βήμα 1)
 MimeTypeIn=application/postscript
 MimeTypeOut=application/postscript

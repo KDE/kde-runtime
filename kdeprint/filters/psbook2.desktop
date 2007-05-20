@@ -2,5 +2,6 @@
 Name=psbook2
 Require=exec:/psbook,exec:/psnup,exec:/psselect
 Comment=Pamphlet Printing - Odd Pages (step 2)
+Comment[el]=Εκτύπωση φυλλαδίου - Μονές σελίδες (βήμα 2)
 MimeTypeIn=application/postscript
 MimeTypeOut=application/postscript

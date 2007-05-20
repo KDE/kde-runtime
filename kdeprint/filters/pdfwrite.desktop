@@ -2,5 +2,6 @@
 Name=pdfwrite
 Require=exec:/gs
 Comment=PDF Writer (needs Ghostscript)
+Comment[el]=Εγγραφέας PDF (χρειάζεται το Ghostscript)
 MimeTypeIn=application/postscript
 MimeTypeOut=application/pdf
