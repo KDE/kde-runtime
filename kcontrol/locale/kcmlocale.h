@@ -30,7 +30,6 @@
 #include "ui_language.h"
 
 class KAddButton;
-class KLanguageButton;
 class KLocale;
 class KLocaleSample;
 
