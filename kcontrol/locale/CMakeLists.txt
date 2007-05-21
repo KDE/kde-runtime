@@ -10,7 +10,6 @@ set(kcm_locale_PART_SRCS
    main.cpp 
    toplevel.cpp 
    kcmlocale.cpp 
-   klanguagebutton.cpp 
    klocalesample.cpp 
    localenum.cpp 
    localemon.cpp 
