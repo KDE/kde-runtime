@@ -3,5 +3,6 @@ Name=psresize
 Require=exec:/psresize
 Comment=Scale Print Content to Fit on Another Paper Size
 Comment[el]=Προσαρμογή περιεχομένου εκτύπωσης για ταίριασμα σε διαφορετικό μέγεθος χαρτιού
+Comment[zh_TW]=將列印內容縮放到符合另一個紙張的大小
 MimeTypeIn=application/postscript
 MimeTypeOut=application/postscript
