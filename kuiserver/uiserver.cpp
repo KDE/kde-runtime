@@ -350,7 +350,7 @@ void UIServer::slotRemoveSystemTrayIcon()
 
 void UIServer::updateConfiguration()
 {
-    Configuration::writeConfig();
+    Configuration::self()->writeConfig();
 }
 
 void UIServer::applySettings()
