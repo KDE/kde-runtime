@@ -3,6 +3,7 @@ Name=ps2pdf
 Require=exec:/gs
 Comment=PostScript to PDF Converter
 Comment[el]=Μετατροπέας από PostScript σε PDF
+Comment[ja]=PostScript から PDF に変換
 Comment[zh_TW]=PostScript 轉 PDF 轉換器
 MimeTypeIn=application/postscript
 MimeTypeOut=application/pdf

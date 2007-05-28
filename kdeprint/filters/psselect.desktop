@@ -3,6 +3,7 @@ Name=psselect
 Require=exec:/psselect
 Comment=Page Selection/Ordering Filter
 Comment[el]=Φίλτρο επιλογής/διευθέτησης σελίδων
+Comment[ja]=ページ選択/並べ替えフィルタ
 Comment[zh_TW]=頁面選擇/排序過濾器
 MimeTypeIn=application/postscript
 MimeTypeOut=application/postscript
