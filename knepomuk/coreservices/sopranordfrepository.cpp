@@ -111,7 +111,7 @@ void Nepomuk::CoreServices::SopranoRDFRepository::createRepository( const QStrin
 }
 
 
-QStringList Nepomuk::CoreServices::SopranoRDFRepository::listRepositoriyIds( )
+QStringList Nepomuk::CoreServices::SopranoRDFRepository::listRepositoryIds( )
 {
     return d->resolver->keys();
 

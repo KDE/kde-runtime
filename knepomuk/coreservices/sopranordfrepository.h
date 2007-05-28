@@ -39,7 +39,7 @@ namespace Nepomuk {
 
 		void createRepository( const QString& repositoryId );
 
-		QStringList listRepositoriyIds();
+		QStringList listRepositoryIds();
 
 		void removeRepository( const QString& repositoryId );
 

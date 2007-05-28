@@ -59,7 +59,7 @@ void TestBase::initTestCase()
   m_registry = new Nepomuk::Backbone::Registry( this );
   m_repository = new RDFRepository( m_registry->discoverRDFRepository() );
 
-  m_repositoryIds = m_repository->listRepositoriyIds();
+  m_repositoryIds = m_repository->listRepositoryIds();
 
   m_repository->createRepository( s_testRep );
   QVERIFY( m_repository->success() );
@@ -68,7 +68,7 @@ void TestBase::initTestCase()
 
 void TestBase::cleanupTestCase()
 {
-    QStringList repos = m_repository->listRepositoriyIds();
+    QStringList repos = m_repository->listRepositoryIds();
     foreach( QString repo, repos ) {
         if ( !m_repositoryIds.contains( repo ) ) {
             m_repository->removeRepository( repo );

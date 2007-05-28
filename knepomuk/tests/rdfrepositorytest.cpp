@@ -51,7 +51,7 @@ void RdfRepositoryTest::testCreateRepository()
 {
     repository()->createRepository( "Testi" );
     KNEP_VERIFY
-    QVERIFY( repository()->listRepositoriyIds().contains( "Testi" ) );
+    QVERIFY( repository()->listRepositoryIds().contains( "Testi" ) );
     KNEP_VERIFY
     repository()->removeRepository( "Testi" );
     KNEP_VERIFY
@@ -60,7 +60,7 @@ void RdfRepositoryTest::testCreateRepository()
 
 void RdfRepositoryTest::testListRepositoriyIds()
 {
-    QStringList oldIds = repository()->listRepositoriyIds();
+    QStringList oldIds = repository()->listRepositoryIds();
     qDebug() << "Old rep ids: " << oldIds;
     repository()->createRepository( "Testi1" );
     KNEP_VERIFY
@@ -71,7 +71,7 @@ void RdfRepositoryTest::testListRepositoriyIds()
     repository()->createRepository( "Testi4" );
     KNEP_VERIFY
 
-    QStringList ids = repository()->listRepositoriyIds();
+    QStringList ids = repository()->listRepositoryIds();
     qDebug() << "New rep ids: " << oldIds;
     KNEP_VERIFY
     QCOMPARE( ids.count(), 4 + oldIds.count() );
@@ -97,7 +97,7 @@ void RdfRepositoryTest::testRemoveRepository()
     KNEP_VERIFY
     repository()->removeRepository( "Testi" );
     KNEP_VERIFY
-    QVERIFY( !repository()->listRepositoriyIds().contains( "Testi" ) );
+    QVERIFY( !repository()->listRepositoryIds().contains( "Testi" ) );
 }
 
 
