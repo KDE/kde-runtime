@@ -713,7 +713,8 @@ QList<Soprano::Statement> Nepomuk::CoreServices::SopranoRDFRepository::buildInde
         QString literal = statement.object().toString();
         QStringList words = literal.split( QRegExp( "\\W+" ), QString::SkipEmptyParts );
         for ( QStringList::const_iterator it = words.constBegin(); it != words.constEnd(); ++it ) {
-            indexGraph.append( Soprano::Statement( QUrl( "http://nepomuk-kde.semanticdesktop.org/words#" + *it ),
+            QString keyword = ( *it ).toLower();
+            indexGraph.append( Soprano::Statement( QUrl( "http://nepomuk-kde.semanticdesktop.org/words#" + keyword ),
                                                    QUrl( "http://nepomuk-kde.semanticdesktop.org/words/appearsIn" ),
                                                    statement.subject(),
                                                    statement.context() ) );
