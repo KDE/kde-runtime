@@ -33,6 +33,8 @@ KCMComponentChooser::KCMComponentChooser(QWidget *parent, const QStringList &):
 	KCModule(KCMComponentChooserFactory::componentData(), parent) {
 
 	QVBoxLayout *lay = new QVBoxLayout(this);
+    lay->setMargin(0);
+
 	m_chooser=new ComponentChooser(this);
 	lay->addWidget(m_chooser);
 	connect(m_chooser,SIGNAL(changed(bool)),this,SIGNAL(changed(bool)));

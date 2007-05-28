@@ -42,6 +42,8 @@ IconModule::IconModule(QWidget *parent, const QStringList &)
   : KCModule(IconsFactory::componentData(), parent)
 {
   QVBoxLayout *layout = new QVBoxLayout(this);
+  layout->setMargin(0);
+
   tab = new QTabWidget(this);
   layout->addWidget(tab);
 

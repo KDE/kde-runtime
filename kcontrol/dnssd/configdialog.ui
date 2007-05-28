@@ -25,6 +25,18 @@
    <string>MyDialog1</string>
   </property>
   <layout class="QGridLayout" >
+   <property name="leftMargin" >
+    <number>0</number>
+   </property>
+   <property name="topMargin" >
+    <number>0</number>
+   </property>
+   <property name="rightMargin" >
+    <number>0</number>
+   </property>
+   <property name="bottomMargin" >
+    <number>0</number>
+   </property>
    <item row="0" column="0" >
     <widget class="KEditListBox" name="kcfg_DomainList" >
      <property name="sizePolicy" >
@@ -50,6 +62,7 @@
    <class>KEditListBox</class>
    <extends>QGroupBox</extends>
    <header>keditlistbox.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <includes>
