@@ -39,8 +39,11 @@ class KTimeZoned : public KDEDModule
         ~KTimeZoned();
 
     public Q_SLOTS:
-        /** D-Bus call to reinitialise the module */
-        Q_SCRIPTABLE void restart()   { init(true); }
+        /** D-Bus call to initialize the module.
+         *  @param reinit determines whether to reinitialize if the module has already
+	 *                initialized itself
+         */
+        Q_SCRIPTABLE void initialize(bool reinit);
 
     Q_SIGNALS:
         void configChanged();

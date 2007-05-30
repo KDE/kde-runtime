@@ -70,6 +70,14 @@ KTimeZoned::~KTimeZoned()
     mDirWatch = 0;
 }
 
+void KTimeZoned::initialize(bool reinit)
+{
+    // If we reach here, the module has already been constructed and therefore
+    // initialized. So only do anything if reinit is true.
+    if (reinit)
+        init(true);
+}
+
 void KTimeZoned::init(bool restart)
 {
     if (restart)
@@ -379,9 +387,6 @@ if (!mLocalZone.isEmpty()) kDebug(1221)<<"/etc/default/init: "<<mLocalZone<<endl
         // None of the deterministic stuff above has worked: try a heuristic. We
         // try to find a pair of matching time zone abbreviations...that way, we'll
         // likely return a value in the user's own country.
-#ifdef __GNUC__
-#warning glibc tzset() requires TZ to be set, so is there any point in this heuristic?
-#endif
         tzset();
         QByteArray tzname0(tzname[0]);   // store copies, because zone->parse() will change them
         QByteArray tzname1(tzname[1]);
@@ -407,9 +412,6 @@ if (!mLocalZone.isEmpty()) kDebug(1221)<<"/etc/default/init: "<<mLocalZone<<endl
             }
         }
         KSystemTimeZoneSource::endParseBlock();
-#ifdef __GNUC__
-#warning Restore tzname values? Remember, TZ was not valid
-#endif
         if (!mLocalZone.isEmpty())
             mLocalMethod = TzName;
 if (!mLocalZone.isEmpty()) kDebug(1221)<<"tzname: "<<mLocalZone<<endl;
