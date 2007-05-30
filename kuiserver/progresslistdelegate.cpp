@@ -226,6 +226,8 @@ QWidget *ProgressListDelegate::createEditor(QWidget *parent, const QStyleOptionV
 
 void ProgressListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
+    painter->setClipping(false); // workaround for qt bug
+
     QFontMetrics fontMetrics = painter->fontMetrics();
     int textHeight = fontMetrics.height();
 
@@ -364,6 +366,8 @@ void ProgressListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
     }
 
     painter->restore();
+
+    painter->setClipping(true); // workaround for qt bug
 }
 
 QSize ProgressListDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
