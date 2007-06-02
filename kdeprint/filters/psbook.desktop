@@ -2,6 +2,7 @@
 Name=psbook
 Require=exec:/psbook,exec:/psnup
 Comment=Pamphlet Printing (use with small side duplex printing)
+Comment[de]=Broschüre drucken (Verwendung: Duplex kurze Seite)
 Comment[el]=Εκτύπωση φυλλαδίου (χρήση μαζί με εκτύπωση διπλής όψης μικρής πλευράς)
 Comment[ja]=小冊子の印刷 - (短辺とじ両面印刷を使用)
 Comment[zh_TW]=列印小冊

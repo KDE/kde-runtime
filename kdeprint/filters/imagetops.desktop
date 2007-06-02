@@ -2,6 +2,7 @@
 Name=imagetops
 Require=exec:/imagetops
 Comment=Generic Image to PS Filter
+Comment[de]=Umwandlung von Bildern zu PS
 Comment[el]=Γενικό φίλτρο εικόνας σε PS
 Comment[ja]=一般的な画像を PS に変換
 Comment[zh_TW]=一般影像轉 PS 過濾器

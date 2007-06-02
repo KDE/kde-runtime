@@ -2,6 +2,7 @@
 Name=enscript
 Require=exec:/enscript
 Comment=Enscript Text Filter
+Comment[de]=Enscript Text-Filter
 Comment[el]=Φίλτρο κειμένου του enscript
 Comment[ja]=Enscript テキストフィルタ
 Comment[zh_TW]=Enscript 文字過濾器
