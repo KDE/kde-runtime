@@ -32,7 +32,6 @@ class QTabWidget;
 class QWidget;
 
 class KColorButton;
-class KConfig;
 class KIconEffect;
 class KIconLoader;
 class KIconTheme;

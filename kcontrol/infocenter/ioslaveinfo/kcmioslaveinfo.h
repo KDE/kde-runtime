@@ -35,10 +35,6 @@
 #include <klistwidget.h>
 #include <ktextbrowser.h>
 
-class KIOTimeoutControl;
-class QTabWidget;
-class QSpinBox;
-class KConfig;
 
 class KCMIOSlaveInfo : public KCModule
 {

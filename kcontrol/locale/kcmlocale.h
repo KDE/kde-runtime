@@ -29,13 +29,8 @@
 #include <QStringList>
 #include "ui_language.h"
 
-class KAddButton;
 class KLocale;
-class KLocaleSample;
 
-class QLabel;
-class QListWidget;
-class QPushButton;
 
 class KLocaleConfig : public QWidget, public Ui_Language
 {

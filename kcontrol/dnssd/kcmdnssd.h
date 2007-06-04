@@ -27,7 +27,6 @@
 #include <kaboutdata.h>
 #include <kcmodule.h> 
 
-class KConfig;
 class KCMDnssd: public KCModule
 {
 	Q_OBJECT

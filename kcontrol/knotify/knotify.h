@@ -30,13 +30,9 @@
 #include <kcmodule.h>
 #include <kdialog.h>
 
-class QCheckBox;
 class QLabel;
-class QSlider;
 
-class KAboutData;
 class KComboBox;
-class KUrlRequester;
 class PlayerSettingsDialog;
 namespace Ui{
 class PlayerSettingsUI;

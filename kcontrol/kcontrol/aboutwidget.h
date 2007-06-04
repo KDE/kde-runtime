@@ -26,7 +26,6 @@
 #include <QPixmap>
 #include <kvbox.h>
 
-class KCModuleInfo;
 class QPixmap;
 class ConfigModule;
 class KHTMLPart;

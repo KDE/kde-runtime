@@ -32,7 +32,6 @@ class QCheckBox;
 class QComboBox;
 
 class KLocale;
-class KLanguageCombo;
 
 class StringPair;
 

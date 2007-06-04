@@ -26,7 +26,6 @@ class QComboBox;
 class QLabel;
 class QGroupBox;
 class QCheckBox;
-class QPushButton;
 
 /**
  * Control debug/warning/error/fatal output of KDE applications

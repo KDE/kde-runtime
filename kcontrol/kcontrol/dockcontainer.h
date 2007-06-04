@@ -27,7 +27,6 @@
 class ConfigModule;
 class ModuleWidget;
 class ProxyWidget;
-class KVBox;
 
 class DockContainer : public QStackedWidget
 {

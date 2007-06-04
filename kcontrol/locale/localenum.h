@@ -27,12 +27,9 @@
 
 #include <QWidget>
 
-class QCheckBox;
-class QComboBox;
 class QLineEdit;
 
 class KLocale;
-class KLanguageCombo;
 
 class KLocaleConfigNumber : public QWidget
 {

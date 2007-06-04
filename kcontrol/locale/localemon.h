@@ -35,7 +35,6 @@ class QLineEdit;
 
 class KIntNumInput;
 class KLocale;
-class KLanguageCombo;
 
 class KLocaleConfigMoney : public QWidget
 {

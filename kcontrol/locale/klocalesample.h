@@ -28,7 +28,6 @@
 #include <QWidget>
 
 class QLabel;
-class QResizeEvent;
 
 class KLocale;
 

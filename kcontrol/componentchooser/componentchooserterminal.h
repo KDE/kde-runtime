@@ -18,7 +18,6 @@
 
 #include "ui_terminalemulatorconfig_ui.h"
 #include "componentchooser.h"
-class QListWidgetItem;
 class KConfig;
 class CfgPlugin;
 

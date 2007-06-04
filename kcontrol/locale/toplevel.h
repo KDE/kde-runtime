@@ -32,7 +32,6 @@
 class QTabWidget;
 class Q3GroupBox;
 
-class KConfig;
 class KLocale;
 class KLocaleConfig;
 class KLocaleConfigMoney;

@@ -25,8 +25,6 @@
 #include <QLabel>
 
 class QPushButton;
-class DeviceManager;
-class QCheckBox;
 class QStringList;
 class QTreeWidget;
 class QTreeWidgetItem;

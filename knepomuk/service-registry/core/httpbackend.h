@@ -23,8 +23,7 @@
 namespace Nepomuk {
     namespace Backbone {
 	namespace Registry {
-	    class RegistryCore;
-
+	    
 	    namespace Http {
 
 		class KNEPREGCORE_EXPORT Backend : public QObject, public Backend
