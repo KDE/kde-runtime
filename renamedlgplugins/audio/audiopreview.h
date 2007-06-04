@@ -27,7 +27,6 @@ namespace KMediaPlayer
   class Player;
 }
 
-class QPixmap;
 class QLabel;
 
 class AudioPreview : public KVBox
