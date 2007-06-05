@@ -5,6 +5,7 @@ Comment=Pamphlet Printing - Odd Pages (step 2)
 Comment[de]=Broschüre drucken - ungerade Seiten (Schritt 2)
 Comment[el]=Εκτύπωση φυλλαδίου - Μονές σελίδες (βήμα 2)
 Comment[ja]=小冊子の印刷 - 奇数ページ (ステップ 2)
+Comment[nds]=Lütt Book drucken - Uneven Sieden (Schritt 2)
 Comment[zh_TW]=列印小冊─奇數頁（第二步）
 MimeTypeIn=application/postscript
 MimeTypeOut=application/postscript

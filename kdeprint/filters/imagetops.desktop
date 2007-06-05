@@ -5,6 +5,7 @@ Comment=Generic Image to PS Filter
 Comment[de]=Umwandlung von Bildern zu PS
 Comment[el]=Γενικό φίλτρο εικόνας σε PS
 Comment[ja]=一般的な画像を PS に変換
+Comment[nds]=Allgemeen Ümwanneln vun Biller na PS-Dateien
 Comment[zh_TW]=一般影像轉 PS 過濾器
 MimeTypeIn=image/jpeg,image/png,image/x-png,image/bmp,image/bmp,image/gif,image/tiff
 MimeTypeOut=application/postscript

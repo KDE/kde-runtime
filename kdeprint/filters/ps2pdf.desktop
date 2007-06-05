@@ -5,6 +5,7 @@ Comment=PostScript to PDF Converter
 Comment[de]=Umwandlung von PostScript zu PDF
 Comment[el]=Μετατροπέας από PostScript σε PDF
 Comment[ja]=PostScript から PDF に変換
+Comment[nds]=PostScript-PDF-Ümdoer
 Comment[zh_TW]=PostScript 轉 PDF 轉換器
 MimeTypeIn=application/postscript
 MimeTypeOut=application/pdf
