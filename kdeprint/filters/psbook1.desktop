@@ -6,6 +6,7 @@ Comment[de]=Broschüre drucken - gerade Seiten (Schritt 1)
 Comment[el]=Εκτύπωση φυλλαδίου - Ζυγές σελίδες (βήμα 1)
 Comment[ja]=小冊子の印刷 - 偶数ページ (ステップ 1)
 Comment[nds]=Lütt Book drucken - Even Sieden (Schritt 1)
+Comment[nl]=Pamflet afdrukken - Even pagina's (stap 1)
 Comment[zh_TW]=列印小冊─偶數頁（第一步）
 MimeTypeIn=application/postscript
 MimeTypeOut=application/postscript
