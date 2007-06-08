@@ -1,7 +1,7 @@
 
 ########### next target ###############
 
-set(knotify_KDEINIT_SRCS
+set(knotify_SRCS
 main.cpp
 knotify.cpp
 knotifyplugin.cpp
@@ -13,22 +13,21 @@ notifybytaskbar.cpp
 notifybyexecute.cpp
 )
 
-kde4_automoc(${knotify_KDEINIT_SRCS})
+kde4_automoc(${knotify_SRCS})
 
-kde4_add_kdeinit_executable( knotify ${knotify_KDEINIT_SRCS})
+kde4_add_executable( knotify ${knotify_SRCS})
 
-target_link_libraries(kdeinit_knotify ${KDE4_KDECORE_LIBS} ${KDE4_KDEUI_LIBS} ${KDE4_PHONON_LIBS})
+target_link_libraries( knotify ${KDE4_KDECORE_LIBS} ${KDE4_KDEUI_LIBS} ${KDE4_PHONON_LIBS})
 
+set_target_properties(knotify PROPERTIES OUTPUT_NAME knotify4 )
+install(TARGETS knotify DESTINATION ${LIB_INSTALL_DIR} )
 
-install(TARGETS kdeinit_knotify  DESTINATION ${LIB_INSTALL_DIR} )
-
-target_link_libraries( knotify kdeinit_knotify )
 install(TARGETS knotify DESTINATION ${BIN_INSTALL_DIR} )
 
 ########### install files ###############
 
 install( FILES kde.notifyrc  DESTINATION  ${DATA_INSTALL_DIR}/kde )
-install( FILES knotify.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
+install( FILES knotify4.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
 
 
 

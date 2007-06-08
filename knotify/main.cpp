@@ -31,9 +31,7 @@
 #include "knotify.h"
 
 
-extern "C"{
-
-KDE_EXPORT int kdemain(int argc, char **argv)
+int main(int argc, char **argv)
 {
     KAboutData aboutdata("knotify", I18N_NOOP("KNotify"),
                          "4.0", I18N_NOOP("KDE Notification Daemon"),
@@ -69,4 +67,4 @@ KDE_EXPORT int kdemain(int argc, char **argv)
 
     return app.exec();
 }
-}// end extern "C"
+
