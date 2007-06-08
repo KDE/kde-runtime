@@ -41,7 +41,7 @@ int main(int argc, char **argv)
     KComponentData componentData("kinstalltheme"); // TODO use KAboutData
     QCoreApplication qapp(argc, argv);
 
-    KGlobal::dirs()->addResourceType("themercs", KGlobal::dirs()->kde_default("data")+QString("kstyle/themes"));
+    KGlobal::dirs()->addResourceType("themercs", "data", "kstyle/themes");
     QStringList themercs = KGlobal::dirs()->findAllResources("themercs","*.themerc");
 
     QMap <QString, QString> themes; //Name->file mapping..

@@ -200,8 +200,7 @@ void KNetAttach::finished()
     QString name = _connectionName->text().trimmed();
 
     if (_createIcon->isChecked()) {
-	KGlobal::dirs()->addResourceType("remote_entries",
-		KStandardDirs::kde_default("data") + "remoteview");
+	KGlobal::dirs()->addResourceType("remote_entries", "data", "remoteview");
 
 	QString path = KGlobal::dirs()->saveLocation("remote_entries");
 	path += name + ".desktop";
