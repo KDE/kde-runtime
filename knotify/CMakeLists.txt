@@ -29,6 +29,14 @@ install(TARGETS knotify DESTINATION ${BIN_INSTALL_DIR} )
 install( FILES kde.notifyrc  DESTINATION  ${DATA_INSTALL_DIR}/kde )
 install( FILES knotify4.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
 
+########### D-Bus Autostart Services #########
+
+
+configure_file(org.kde.knotify.service.cmake
+	  ${CMAKE_CURRENT_BINARY_DIR}/org.kde.knotify.service)
+
+install( FILES ${CMAKE_CURRENT_BINARY_DIR}/org.kde.knotify.service DESTINATION ${CMAKE_INSTALL_PREFIX}/share/dbus-1/services )
+
 
 
 
