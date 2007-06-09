@@ -1,4 +1,3 @@
-macro_optional_find_package(OpenSSL)
 if ( Q_WS_X11 )
   add_subdirectory(kcontrol)
 endif( Q_WS_X11 )
@@ -13,7 +12,3 @@ add_subdirectory( dnssd )
 if(NOT WIN32)
   add_subdirectory( samba )
 endif(NOT WIN32)
-if(OPENSSL_FOUND)
-  add_subdirectory( crypto )
-endif(OPENSSL_FOUND)
-
