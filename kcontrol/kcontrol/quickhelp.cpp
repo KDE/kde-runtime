@@ -22,8 +22,8 @@
 
 #include <QFrame>
 
-QuickHelp::QuickHelp(QWidget *parent , const char *name)
-    : KTextBrowser( parent, name)
+QuickHelp::QuickHelp(QWidget *parent)
+    : KTextBrowser( parent )
 {
   setFrameStyle( QFrame::Panel | QFrame::Sunken );
   setFocusPolicy( Qt::ClickFocus );
