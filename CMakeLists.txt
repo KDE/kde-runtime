@@ -35,6 +35,6 @@ add_subdirectory(kde-menu)
 
 find_package(Soprano)
 find_package(Nepomuk)
-if(Soprano_FOUND AND NEPOMUK_FOUND)
+if(Soprano_FOUND AND Nepomuk_FOUND)
   macro_optional_add_subdirectory(nepomuk)
-endif(Soprano_FOUND AND NEPOMUK_FOUND)
+endif(Soprano_FOUND AND Nepomuk_FOUND)
