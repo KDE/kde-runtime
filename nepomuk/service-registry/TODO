@@ -1,0 +1,4 @@
+* Implement the HTTP interface to other registries including the occupation of an open port
+* Implement the registerRegistryCall
+* Create wrapper DBus interfaces for services from other service registries (maybe caching
+  is the easiest solution here)
