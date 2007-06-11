@@ -143,7 +143,7 @@ void FaxAB::initialize()
 
 void FaxAB::slotEditAb()
 {
-	KRun::runCommand("kaddressbook");
+	KRun::runCommand("kaddressbook",topLevelWidget());
 }
 
 void FaxAB::slotAbChanged(AddressBook*)
