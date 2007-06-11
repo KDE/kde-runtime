@@ -3,7 +3,7 @@
  * $Id: sourceheader 511311 2006-02-19 14:51:05Z trueg $
  *
  * This file is part of the Nepomuk KDE project.
- * Copyright (C) 2006 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2006-2007 Sebastian Trueg <trueg@kde.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 #include <QtDBus>
 
 namespace Nepomuk {
-    namespace Backbone {
+    namespace Middleware {
 
 	class ServiceDesc;
 
@@ -40,44 +40,44 @@ namespace Nepomuk {
 		 * a method to retrieve the Nepomuk service URI. Also no specific DBus interface or DBus object
 		 * name are necessary since both are predefined by the service type.
 		 *
-		 * HINT: We need to use fully qualified names in the DBus interface, i.e. Nepomuk::Backbone::ServiceDesc
+		 * HINT: We need to use fully qualified names in the DBus interface, i.e. Nepomuk::Middleware::ServiceDesc
 		 */
 		class BackendInterface : public QDBusAbstractAdaptor
-		    {
-			Q_OBJECT
-			Q_CLASSINFO("D-Bus Interface", "org.semanticdesktop.nepomuk.ServiceRegistry")
+		{
+		    Q_OBJECT
+		    Q_CLASSINFO("D-Bus Interface", "org.semanticdesktop.nepomuk.ServiceRegistry")
 
-		    public:
-			BackendInterface( Backend* parent );
-			~BackendInterface();
+		public:
+		    BackendInterface( Backend* parent );
+		    ~BackendInterface();
 
-		    public Q_SLOTS:
-			int registerService( const Nepomuk::Backbone::ServiceDesc& desc );
-			int unregisterService( const Nepomuk::Backbone::ServiceDesc& desc );
-			int unregisterService( const QString& uri );
+		public Q_SLOTS:
+		    int registerService( const Nepomuk::Middleware::ServiceDesc& desc );
+		    int unregisterService( const Nepomuk::Middleware::ServiceDesc& desc );
+		    int unregisterService( const QString& uri );
 
-			Nepomuk::Backbone::ServiceDesc discoverServiceByUrl( const QString& url );
-			Nepomuk::Backbone::ServiceDesc discoverServiceByType( const QString& type );
-			QList<Nepomuk::Backbone::ServiceDesc> discoverServicesByName( const QString& name );
-			QList<Nepomuk::Backbone::ServiceDesc> discoverServicesByType( const QString& type );
-			QList<Nepomuk::Backbone::ServiceDesc> discoverAllServices();
+		    Nepomuk::Middleware::ServiceDesc discoverServiceByUrl( const QString& url );
+		    Nepomuk::Middleware::ServiceDesc discoverServiceByType( const QString& type );
+		    QList<Nepomuk::Middleware::ServiceDesc> discoverServicesByName( const QString& name );
+		    QList<Nepomuk::Middleware::ServiceDesc> discoverServicesByType( const QString& type );
+		    QList<Nepomuk::Middleware::ServiceDesc> discoverAllServices();
 
-			// FIXME: find a better solution: either always communicate D-Bus names instead of Nepomuk URLs
-			//        or add the dbus name to the ServiceDesc (in that case we need another ServiceDesc for
-			//        the federation.
-			QString discoverDBusServiceByUrl( const QString& url );
+		    // FIXME: find a better solution: either always communicate D-Bus names instead of Nepomuk URLs
+		    //        or add the dbus name to the ServiceDesc (in that case we need another ServiceDesc for
+		    //        the federation.
+		    QString discoverDBusServiceByUrl( const QString& url );
 
-		    Q_SIGNALS:
-			void serviceRegistered( const Nepomuk::Backbone::ServiceDesc& uri );
-			void serviceUnregistered( const Nepomuk::Backbone::ServiceDesc& uri );
+		Q_SIGNALS:
+		    void serviceRegistered( const Nepomuk::Middleware::ServiceDesc& uri );
+		    void serviceUnregistered( const Nepomuk::Middleware::ServiceDesc& uri );
 
 		    private Q_SLOTS:
-			void slotServiceRegistered( const Service* );
-			void slotServiceUnregistered( const Service* );
+		    void slotServiceRegistered( const Service* );
+		    void slotServiceUnregistered( const Service* );
 
-		    private:
-			Backend* m_backend;
-		    };
+		private:
+		    Backend* m_backend;
+		};
 
 	    }
 	}

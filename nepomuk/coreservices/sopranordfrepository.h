@@ -16,127 +16,127 @@
 #include <QtCore/QString>
 #include <QtCore/QList>
 
-#include <knepomuk/services/rdfrepositorypublisher.h>
+#include <nepomuk/rdfrepositorypublisher.h>
 
 #include <soprano/soprano.h>
 
-using namespace Nepomuk::Backbone;
+using namespace Nepomuk::Middleware;
 using namespace Nepomuk::Services;
 
 namespace Nepomuk {
     namespace CoreServices {
 	class SopranoRDFRepository : public Services::RDFRepositoryPublisher
-	    {
-		Q_OBJECT
+	{
+	    Q_OBJECT
 
-	    public:
-		SopranoRDFRepository( Soprano::Model *system,
-				      QMap<QString, Soprano::Model *> *resolver );
+	public:
+	    SopranoRDFRepository( Soprano::Model *system,
+				  QMap<QString, Soprano::Model *> *resolver );
 
-		~SopranoRDFRepository();
+	    ~SopranoRDFRepository();
  
-	    public Q_SLOTS:
+	public Q_SLOTS:
 
-		void createRepository( const QString& repositoryId );
+	    void createRepository( const QString& repositoryId );
 
-		QStringList listRepositoryIds();
+	    QStringList listRepositoryIds();
 
-		void removeRepository( const QString& repositoryId );
+	    void removeRepository( const QString& repositoryId );
 
-		int getRepositorySize( const QString& graphId );
+	    int getRepositorySize( const QString& graphId );
 
-		int contains( const QString& repositoryId, const Soprano::Statement& statement );
+	    int contains( const QString& repositoryId, const Soprano::Statement& statement );
 
-		void addStatement( const QString& repositoryId, const Soprano::Statement& statement );
+	    void addStatement( const QString& repositoryId, const Soprano::Statement& statement );
 
-		void addStatements( const QString& repositoryId, const QList<Soprano::Statement>& statements );
+	    void addStatements( const QString& repositoryId, const QList<Soprano::Statement>& statements );
 
-		void removeContext( const QString& repositoryId, const Soprano::Node& context );
+	    void removeContext( const QString& repositoryId, const Soprano::Node& context );
 
-		int removeStatement( const QString& repositoryId, const Soprano::Statement& statement );
+	    int removeStatement( const QString& repositoryId, const Soprano::Statement& statement );
 
-		int removeStatements( const QString& repositoryId, const QList<Soprano::Statement>& statements );
+	    int removeStatements( const QString& repositoryId, const QList<Soprano::Statement>& statements );
 
-		int removeAllStatements( const QString& repositoryId, const Soprano::Statement& statement );
+	    int removeAllStatements( const QString& repositoryId, const Soprano::Statement& statement );
 
-		QList<Soprano::Statement> listStatements( const QString& repositoryId, const Soprano::Statement& statement );
+	    QList<Soprano::Statement> listStatements( const QString& repositoryId, const Soprano::Statement& statement );
 
-		QList<Soprano::Statement> constructSparql( const QString& repositoryId, const QString& query );
+	    QList<Soprano::Statement> constructSparql( const QString& repositoryId, const QString& query );
 
-		Nepomuk::RDF::QueryResultTable selectSparql( const QString& repositoryId, const QString& query );
+	    Nepomuk::RDF::QueryResultTable selectSparql( const QString& repositoryId, const QString& query );
 	  
-		QList<Soprano::Statement> describeSparql( const QString& repositoryId, const QString& query );
+	    QList<Soprano::Statement> describeSparql( const QString& repositoryId, const QString& query );
 
-		QList<Soprano::Statement> construct( const QString& repositoryId, const QString& query,
-							  const QString& querylanguage );
+	    QList<Soprano::Statement> construct( const QString& repositoryId, const QString& query,
+						 const QString& querylanguage );
 	  
-		Nepomuk::RDF::QueryResultTable select( const QString& repositoryId, const QString& query,
-						       const QString& querylangauge );
+	    Nepomuk::RDF::QueryResultTable select( const QString& repositoryId, const QString& query,
+						   const QString& querylangauge );
 
-		int queryListStatements( const QString& repositoryId, const Soprano::Statement& statement,
-					 int timeoutMSec );
+	    int queryListStatements( const QString& repositoryId, const Soprano::Statement& statement,
+				     int timeoutMSec );
 
-		int queryConstruct( const QString& repositoryId, const QString& query,
-				    const QString& querylanguage, int timeoutMSec );
+	    int queryConstruct( const QString& repositoryId, const QString& query,
+				const QString& querylanguage, int timeoutMSec );
 
-		int querySelect( const QString& repositoryId, const QString& query,
-				 const QString& querylanguage, int timeoutMSec );
+	    int querySelect( const QString& repositoryId, const QString& query,
+			     const QString& querylanguage, int timeoutMSec );
 
-		int queryConstructSparql( const QString& repositoryId, const QString& query,
-					  int timeoutMSec );
+	    int queryConstructSparql( const QString& repositoryId, const QString& query,
+				      int timeoutMSec );
 
-		int querySelectSparql( const QString& repositoryId, const QString& query,
-				       int timeoutMSec );
+	    int querySelectSparql( const QString& repositoryId, const QString& query,
+				   int timeoutMSec );
 
-		int queryDescribeSparql( const QString& repositoryId, const QString& query,
-					 int timeoutMSec );
+	    int queryDescribeSparql( const QString& repositoryId, const QString& query,
+				     int timeoutMSec );
 
-		int askSparql( const QString& repositoryId, const QString& query );
+	    int askSparql( const QString& repositoryId, const QString& query );
 
-		QList<Soprano::Statement> fetchListStatementsResults( int queryId, int max );
+	    QList<Soprano::Statement> fetchListStatementsResults( int queryId, int max );
 
-		QList<Soprano::Statement> fetchConstructResults( int queryId, int max );
+	    QList<Soprano::Statement> fetchConstructResults( int queryId, int max );
 
-		QList<Soprano::Statement> fetchDescribeResults( int queryId, int max );
+	    QList<Soprano::Statement> fetchDescribeResults( int queryId, int max );
 
-		RDF::QueryResultTable fetchSelectResults( int queryId, int size );
+	    RDF::QueryResultTable fetchSelectResults( int queryId, int size );
 
-		void closeQuery( int queryId );
+	    void closeQuery( int queryId );
 
-		QStringList supportedQueryLanguages();
+	    QStringList supportedQueryLanguages();
 
-		int supportsQueryLanguage( const QString& lang );
+	    int supportsQueryLanguage( const QString& lang );
 
-		QStringList supportedSerializations();
+	    QStringList supportedSerializations();
 
-		int supportsSerialization( const QString& serializationMimeType );
+	    int supportsSerialization( const QString& serializationMimeType );
 
-		void addGraph( const QString& repositoryId, const QString& graph,
-			       const QString& formatMimetype, const Soprano::Node& context );
+	    void addGraph( const QString& repositoryId, const QString& graph,
+			   const QString& formatMimetype, const Soprano::Node& context );
 	  
 
-		void removeGraph( const QString& repositoryId, const QString& graph,
-				  const QString& formatMimetype, const Soprano::Node& context );
+	    void removeGraph( const QString& repositoryId, const QString& graph,
+			      const QString& formatMimetype, const Soprano::Node& context );
 
-		void dumpGraph( const QString& graph );
+	    void dumpGraph( const QString& graph );
 
-	    private:
-		Soprano::ResultSet executeQuery( const QString& graphId,
-						 const QString& query,
-						 const QString& queryType );
+	private:
+	    Soprano::ResultSet executeQuery( const QString& graphId,
+					     const QString& query,
+					     const QString& queryType );
 
-		/**
-		 * Creates a pseudo-index graph for the given statement if the object
-		 * is a literal. The literal will be split into single words and for
-		 * each word a new index statement is created.
-		 */
-		QList<Soprano::Statement> buildIndexGraph( const Soprano::Statement& ) const;
+	    /**
+	     * Creates a pseudo-index graph for the given statement if the object
+	     * is a literal. The literal will be split into single words and for
+	     * each word a new index statement is created.
+	     */
+	    QList<Soprano::Statement> buildIndexGraph( const Soprano::Statement& ) const;
 
-		QString createStoragePath( const QString& repositoryId ) const;
+	    QString createStoragePath( const QString& repositoryId ) const;
 
-		class Private;
-		Private *d;
-	    };
+	    class Private;
+	    Private *d;
+	};
     }
 }
 

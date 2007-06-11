@@ -19,7 +19,7 @@
 #include <QStringList>
 
 namespace Nepomuk {
-    namespace Backbone {
+    namespace Middleware {
 	namespace Registry {
 
 	    class Core;

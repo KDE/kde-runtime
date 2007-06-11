@@ -3,7 +3,7 @@
  * $Id: sourceheader 511311 2006-02-19 14:51:05Z trueg $
  *
  * This file is part of the Nepomuk KDE project.
- * Copyright (C) 2006 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2006-2007 Sebastian Trueg <trueg@kde.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,15 +17,15 @@
 
 #include <QtTest/QtTest>
 
-#include <knepomuk/registry.h>
-#include <knepomuk/services/rdfrepository.h>
+#include <nepomuk/registry.h>
+#include <nepomuk/services/rdfrepository.h>
 
 class TestBase : public QObject
 {
   Q_OBJECT
 
  public:
-   Nepomuk::Backbone::Registry* registry() const;
+   Nepomuk::Middleware::Registry* registry() const;
    Nepomuk::Services::RDFRepository* repository() const;
 
    static QString testRepository();
@@ -43,7 +43,7 @@ class TestBase : public QObject
    virtual void cleanup();
 
  private:
-   Nepomuk::Backbone::Registry* m_registry;
+   Nepomuk::Middleware::Registry* m_registry;
    Nepomuk::Services::RDFRepository* m_repository;
 
    QStringList m_repositoryIds;

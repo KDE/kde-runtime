@@ -21,7 +21,7 @@
 #include <kdebug.h>
 
 
-class Nepomuk::Backbone::Registry::ServiceWaiter::Private
+class Nepomuk::Middleware::Registry::ServiceWaiter::Private
 {
 public:
     QStringList serviceUris;
@@ -31,7 +31,7 @@ public:
 };
 
 
-Nepomuk::Backbone::Registry::ServiceWaiter::ServiceWaiter( Core* parent )
+Nepomuk::Middleware::Registry::ServiceWaiter::ServiceWaiter( Core* parent )
     : QObject( parent )
 {
     d = new Private;
@@ -41,22 +41,22 @@ Nepomuk::Backbone::Registry::ServiceWaiter::ServiceWaiter( Core* parent )
 }
 
 
-Nepomuk::Backbone::Registry::ServiceWaiter::~ServiceWaiter()
+Nepomuk::Middleware::Registry::ServiceWaiter::~ServiceWaiter()
 {
     delete d;
 }
 
 
-bool Nepomuk::Backbone::Registry::ServiceWaiter::waitForService( const QString& service, int msecs )
+bool Nepomuk::Middleware::Registry::ServiceWaiter::waitForService( const QString& service, int msecs )
 {
     return waitForServices( QStringList( service ), msecs );
 }
 
 
-bool Nepomuk::Backbone::Registry::ServiceWaiter::waitForServices( const QStringList& services, int msecs )
+bool Nepomuk::Middleware::Registry::ServiceWaiter::waitForServices( const QStringList& services, int msecs )
 {
     if ( d->loop.isRunning() ) {
-        kDebug(300003) << "(Nepomuk::Backbone::Registry::ServiceWaiter) called wait() on a running instance." << endl;
+        kDebug(300003) << "(Nepomuk::Middleware::Registry::ServiceWaiter) called wait() on a running instance." << endl;
         return false;
     }
 
@@ -85,12 +85,12 @@ bool Nepomuk::Backbone::Registry::ServiceWaiter::waitForServices( const QStringL
 }
 
 
-void Nepomuk::Backbone::Registry::ServiceWaiter::slotServiceRegistered( const QString& uri )
+void Nepomuk::Middleware::Registry::ServiceWaiter::slotServiceRegistered( const QString& uri )
 {
     if ( d->loop.isRunning() ) {
         d->serviceUris.removeAll( uri );
         if ( d->serviceUris.isEmpty() ) {
-            kDebug(300003) << "(Nepomuk::Backbone::Registry::ServiceWaiter) all services found" << endl;
+            kDebug(300003) << "(Nepomuk::Middleware::Registry::ServiceWaiter) all services found" << endl;
             d->timer.stop();
             d->loop.exit( 0 );
         }
@@ -98,7 +98,7 @@ void Nepomuk::Backbone::Registry::ServiceWaiter::slotServiceRegistered( const QS
 }
 
 
-void Nepomuk::Backbone::Registry::ServiceWaiter::slotTimeout()
+void Nepomuk::Middleware::Registry::ServiceWaiter::slotTimeout()
 {
     d->loop.exit( 1 );
 }

@@ -1,10 +1,11 @@
-project(NepomukKDECoreServices)
+project(NepomukCoreServices)
 
 include_directories(
   ${QT_INCLUDES}
   ${KDE4_INCLUDES}
   ${SOPRANO_INCLUDE_DIR}
   ${CMAKE_SOURCE_DIR}
+  ${NEPOMUK_INCLUDES}
 )
 
 set( SRCS
@@ -18,10 +19,10 @@ set( SRCS
 
 kde4_automoc(${SRCS})
 
-kde4_add_executable(knepcoreservices ${SRCS} main.cpp)
+kde4_add_executable(nepomukcoreservices ${SRCS} main.cpp)
 
-target_link_libraries(knepcoreservices
-  ${KNEPOMUK_LIBRARIES}
+target_link_libraries(nepomukcoreservices
+  ${NEPOMUK_LIBRARIES}
   ${SOPRANO_LIBRARIES}
   ${QT_QTCORE_LIBRARY}
   ${QT_QTDBUS_LIBRARY}
@@ -29,6 +30,6 @@ target_link_libraries(knepcoreservices
   ${KDE4_KIO_LIBS}
 )
 
-install(FILES knepomuk-coreservices.desktop DESTINATION ${SERVICES_INSTALL_DIR}/knepomuk)
+install(FILES nepomuk-coreservices.desktop DESTINATION ${SERVICES_INSTALL_DIR}/nepomuk)
 
-install(TARGETS knepcoreservices DESTINATION ${BIN_INSTALL_DIR} )
+install(TARGETS nepomukcoreservices DESTINATION ${BIN_INSTALL_DIR} )

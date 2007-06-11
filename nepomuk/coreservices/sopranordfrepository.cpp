@@ -21,7 +21,7 @@
 #include <QtCore/QDir>
 
 #include <soprano/soprano.h>
-#include <knepomuk/error.h>
+#include <nepomuk/error.h>
 
 #include <kstandarddirs.h>
 #include <kdebug.h>

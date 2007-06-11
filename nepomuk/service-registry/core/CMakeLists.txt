@@ -1,14 +1,13 @@
-project(knepregcore)
+project(nepomukregcore)
 
 include_directories(
   ${CMAKE_SOURCE_DIR}
-  ${knepregistry_SOURCE_DIR}
   ${QT_INCLUDES}
   ${KDE4_INCLUDES}
   ${KNEPOMUK_INCLUDES}
 )
 
-set( knepregcore_LIB_SRCS
+set( nepomukregcore_LIB_SRCS
   core.cpp
   service.cpp
   dbusbackend.cpp
@@ -16,12 +15,12 @@ set( knepregcore_LIB_SRCS
   servicewaiter.cpp
 )
 
-kde4_automoc(${knepregcore_LIB_SRCS})
+kde4_automoc(${nepomukregcore_LIB_SRCS})
 
-kde4_add_library(knepregcore STATIC ${knepregcore_LIB_SRCS})
+kde4_add_library(nepomukregcore STATIC ${nepomukregcore_LIB_SRCS})
 
-target_link_libraries(knepregcore
-  ${KNEPOMUK_LIBRARIES}
+target_link_libraries(nepomukregcore
+  ${NEPOMUK_LIBRARIES}
   ${QT_QTCORE_LIBRARY}
   ${QT_QTDBUS_LIBRARY}
   ${QT_QTXML_LIBRARY}

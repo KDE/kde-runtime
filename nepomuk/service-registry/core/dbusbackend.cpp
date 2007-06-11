@@ -1,9 +1,9 @@
-/* 
+/*
  *
  * $Id: sourceheader 511311 2006-02-19 14:51:05Z trueg $
  *
  * This file is part of the Nepomuk KDE project.
- * Copyright (C) 2006 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2006-2007 Sebastian Trueg <trueg@kde.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,45 +17,45 @@
 #include "core.h"
 #include "service.h"
 
-#include <knepomuk/message.h>
-#include <knepomuk/result.h>
-#include <knepomuk/dbustools.h>
+#include <nepomuk/message.h>
+#include <nepomuk/result.h>
+#include <nepomuk/dbustools.h>
 
 #include <QtDBus>
 
 #include <kdebug.h>
 
 
-Nepomuk::Backbone::Registry::DBus::Backend::Backend( Nepomuk::Backbone::Registry::Core* parent )
+Nepomuk::Middleware::Registry::DBus::Backend::Backend( Nepomuk::Middleware::Registry::Core* parent )
   : QObject( parent ),
-    Nepomuk::Backbone::Registry::Backend(),
+    Nepomuk::Middleware::Registry::Backend(),
     m_core( parent )
 {
   // register our ServiceDesc structure for usage with QtDBus
-  qDBusRegisterMetaType<Nepomuk::Backbone::ServiceDesc>();
-  qDBusRegisterMetaType<QList<Nepomuk::Backbone::ServiceDesc> >();
+  qDBusRegisterMetaType<Nepomuk::Middleware::ServiceDesc>();
+  qDBusRegisterMetaType<QList<Nepomuk::Middleware::ServiceDesc> >();
 
   m_registryInterface = new BackendInterface( this );
   QDBusConnection::sessionBus().registerService( "org.semanticdesktop.nepomuk.ServiceRegistry" );
   QDBusConnection::sessionBus().registerObject( "/org/semanticdesktop/nepomuk/ServiceRegistry", this );
 
-  connect( QDBusConnection::sessionBus().interface(), 
+  connect( QDBusConnection::sessionBus().interface(),
 	   SIGNAL(serviceOwnerChanged(const QString&, const QString&, const QString&)),
-	   this, 
+	   this,
 	   SLOT(slotServiceOwnerChanged(const QString&, const QString&, const QString&)) );
 }
 
 
-Nepomuk::Backbone::Registry::DBus::Backend::~Backend()
+Nepomuk::Middleware::Registry::DBus::Backend::~Backend()
 {
 }
 
 
-Nepomuk::Backbone::Result Nepomuk::Backbone::Registry::DBus::Backend::methodCall( const Nepomuk::Backbone::Message& message )
+Nepomuk::Middleware::Result Nepomuk::Middleware::Registry::DBus::Backend::methodCall( const Nepomuk::Middleware::Message& message )
 {
-  QDBusInterface serviceProxy( Backbone::DBus::dbusServiceFromUrl( message.service() ), 
-			       Backbone::DBus::dbusObjectFromType( message.service() ),
-			       Backbone::DBus::dbusInterfaceFromType( message.service() ),
+  QDBusInterface serviceProxy( Middleware::DBus::dbusServiceFromUrl( message.service() ),
+			       Middleware::DBus::dbusObjectFromType( message.service() ),
+			       Middleware::DBus::dbusInterfaceFromType( message.service() ),
 			       QDBusConnection::sessionBus(),
 			       this );
 
@@ -64,8 +64,8 @@ Nepomuk::Backbone::Result Nepomuk::Backbone::Registry::DBus::Backend::methodCall
     return Result::createSimpleResult( -1 );
   }
 
-  QDBusMessage dbusReply = serviceProxy.callWithArgumentList( QDBus::Block, 
-							      message.method(), 
+  QDBusMessage dbusReply = serviceProxy.callWithArgumentList( QDBus::Block,
+							      message.method(),
 							      message.arguments() );
 
   if( dbusReply.type() != QDBusMessage::ReplyMessage ) {
@@ -80,7 +80,7 @@ Nepomuk::Backbone::Result Nepomuk::Backbone::Registry::DBus::Backend::methodCall
 }
 
 
-void Nepomuk::Backbone::Registry::DBus::Backend::slotServiceOwnerChanged( const QString& name,
+void Nepomuk::Middleware::Registry::DBus::Backend::slotServiceOwnerChanged( const QString& name,
 									  const QString& oldOwner,
 									  const QString& newOwner )
 {
@@ -93,19 +93,19 @@ void Nepomuk::Backbone::Registry::DBus::Backend::slotServiceOwnerChanged( const 
   if( newOwner.isEmpty() ) {
     const Service* s = findServiceByDBusName( name );
     if( s ) {
-      kDebug(300003) << "(Nepomuk::Backbone::Registry::DBus::Backend) Looks as if service " << name << " crashed." << endl;
+      kDebug(300003) << "(Nepomuk::Middleware::Registry::DBus::Backend) Looks as if service " << name << " crashed." << endl;
       m_core->unregisterService( s->url(), this );
     }
   }
 }
 
 
-const Nepomuk::Backbone::Registry::Service* 
-Nepomuk::Backbone::Registry::DBus::Backend::findServiceByDBusName( const QString& name ) const
+const Nepomuk::Middleware::Registry::Service*
+Nepomuk::Middleware::Registry::DBus::Backend::findServiceByDBusName( const QString& name ) const
 {
   const QList<const Service*> l = m_core->allServices();
   for( QList<const Service*>::const_iterator it = l.begin(); it != l.end(); it++ )
-    if( Backbone::DBus::dbusServiceFromUrl( (*it)->url() ) == name )
+    if( Middleware::DBus::dbusServiceFromUrl( (*it)->url() ) == name )
       return *it;
   return 0;
 }

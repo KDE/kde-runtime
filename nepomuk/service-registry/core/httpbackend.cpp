@@ -3,7 +3,7 @@
  * $Id: sourceheader 511311 2006-02-19 14:51:05Z trueg $
  *
  * This file is part of the Nepomuk KDE project.
- * Copyright (C) 2006 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2006-2007 Sebastian Trueg <trueg@kde.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
 #include "httpbackend.h"
 #include "message.h"
 
-Nepomuk::Backbone::Registry::Http::Backend::Backend( Core* core )
+Nepomuk::Middleware::Registry::Http::Backend::Backend( Core* core )
     : QObject( core ),
       Backend(),
       m_core( core )
@@ -23,13 +23,13 @@ Nepomuk::Backbone::Registry::Http::Backend::Backend( Core* core )
 }
 
 
-Nepomuk::Backbone::Registry::Http::Backend::~Backend()
+Nepomuk::Middleware::Registry::Http::Backend::~Backend()
 {
 }
 
 
-Nepomuk::Backbone::Result
-Nepomuk::Backbone::Registry::Http::Backend::methodCall( const Nepomuk::Message& message )
+Nepomuk::Middleware::Result
+Nepomuk::Middleware::Registry::Http::Backend::methodCall( const Nepomuk::Message& message )
 {
     //
     // 1. Open socket to the http service

@@ -3,7 +3,7 @@
  * $Id: sourceheader 511311 2006-02-19 14:51:05Z trueg $
  *
  * This file is part of the Nepomuk KDE project.
- * Copyright (C) 2006 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2006-2007 Sebastian Trueg <trueg@kde.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,11 +17,11 @@
 
 #include <QtCore/QString>
 
-#include <knepomuk/servicedesc.h>
-#include "knepregcore_export.h"
+#include <nepomuk/servicedesc.h>
+
 
 namespace Nepomuk {
-    namespace Backbone {
+    namespace Middleware {
 	namespace Registry {
 
 	    class Backend;
@@ -29,45 +29,45 @@ namespace Nepomuk {
 	    /**
 	     * @author Sebastian Trueg <sebastian@trueg.de>
 	     */
-	    class KNEPREGCORE_EXPORT Service
-		{
-		public:
-		    ~Service();
+	    class Service
+	    {
+	    public:
+		~Service();
       
-		    const ServiceDesc& desc() const;
-		    const QString& name() const;
-		    const QString& url() const;
-		    const QString& type() const;
+		const ServiceDesc& desc() const;
+		const QString& name() const;
+		const QString& url() const;
+		const QString& type() const;
 
-		    /**
-		     * The backend this service was created from.
-		     *
-		     * This will most likely always be the DBus backend.
-		     */
-		    Backend* backend() const { return m_backend; }
+		/**
+		 * The backend this service was created from.
+		 *
+		 * This will most likely always be the DBus backend.
+		 */
+		Backend* backend() const { return m_backend; }
       
-		    /**
-		     * Creates a Service object from a service description.
-		     *
-		     * Example:
-		     * <pre>
-		     * <nepomuk:service>
-		     *   <nepomuk:uri>http://nepomuk,semanticdesktop.org/services/storage/SesameStore</nepomuk:uri>
-		     *   <nepomuk:type>org.semanticdesktop.nepomuk.services.storage</nepomuk:type>
-		     * </nepomuk:service>
-		     *
-		     * FIXME: add fields like author, copyright, and so on...
-		     */
-		    static Service* createFromDefinition( const ServiceDesc&,
-							  Backend* backend );
+		/**
+		 * Creates a Service object from a service description.
+		 *
+		 * Example:
+		 * <pre>
+		 * <nepomuk:service>
+		 *   <nepomuk:uri>http://nepomuk,semanticdesktop.org/services/storage/SesameStore</nepomuk:uri>
+		 *   <nepomuk:type>org.semanticdesktop.nepomuk.services.storage</nepomuk:type>
+		 * </nepomuk:service>
+		 *
+		 * FIXME: add fields like author, copyright, and so on...
+		 */
+		static Service* createFromDefinition( const ServiceDesc&,
+						      Backend* backend );
       
-		private:
-		    Service();
+	    private:
+		Service();
 
-		    ServiceDesc m_desc;
+		ServiceDesc m_desc;
 
-		    Backend* m_backend;
-		};
+		Backend* m_backend;
+	    };
 	}
     }
 }

@@ -3,7 +3,7 @@
  * $Id: sourceheader 511311 2006-02-19 14:51:05Z trueg $
  *
  * This file is part of the Nepomuk KDE project.
- * Copyright (C) 2006 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2006-2007 Sebastian Trueg <trueg@kde.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,24 +26,24 @@ namespace Nepomuk {
 	class SopranoRDFRepository;
 
 	class DBusInterface : public QDBusAbstractAdaptor
-	    {
-		Q_OBJECT
-		Q_CLASSINFO("D-Bus Interface", "org.semanticdesktop.nepomuk.CoreServices.debug")
+	{
+	    Q_OBJECT
+	    Q_CLASSINFO("D-Bus Interface", "org.semanticdesktop.nepomuk.CoreServices.debug")
 
-	    public:
-		DBusInterface( QObject*, SopranoRDFRepository* rep );
-		~DBusInterface();
+	public:
+	    DBusInterface( QObject*, SopranoRDFRepository* rep );
+	    ~DBusInterface();
 	  
-	    public Q_SLOTS:
-		void dumpGraph( const QString& graph );
-		void quit();
-		Soprano::Statement testStatement();
-		Soprano::Node testNode();
+	public Q_SLOTS:
+	    void dumpGraph( const QString& graph );
+	    void quit();
+	    Soprano::Statement testStatement();
+	    Soprano::Node testNode();
 
-	    private:
-		class Private;
-		Private* d;
-	    };
+	private:
+	    class Private;
+	    Private* d;
+	};
     }
 }
 

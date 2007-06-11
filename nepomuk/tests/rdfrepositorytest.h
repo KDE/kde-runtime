@@ -3,7 +3,7 @@
  * $Id: sourceheader 511311 2006-02-19 14:51:05Z trueg $
  *
  * This file is part of the Nepomuk KDE project.
- * Copyright (C) 2006 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2006-2007 Sebastian Trueg <trueg@kde.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
 
 #include "testbase.h"
 
-#include <knepomuk/registry.h>
-#include <knepomuk/services/rdfrepository.h>
+#include <nepomuk/registry.h>
+#include <nepomuk/services/rdfrepository.h>
 
 
 class RdfRepositoryTest : public TestBase

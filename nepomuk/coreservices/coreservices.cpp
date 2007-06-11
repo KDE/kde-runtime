@@ -3,7 +3,7 @@
  * $Id: sourceheader 511311 2006-02-19 14:51:05Z trueg $
  *
  * This file is part of the Nepomuk KDE project.
- * Copyright (C) 2006 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2006-2007 Sebastian Trueg <trueg@kde.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 #include "querydefinition.h"
 #include "dbusinterface.h"
 
-#include <knepomuk/knepomuk.h>
+#include <nepomuk/registry.h>
 #include <soprano/soprano.h>
 
 #include <kstandarddirs.h>
@@ -37,7 +37,7 @@ public:
     }
 
     // nepomuk registry
-    Nepomuk::Backbone::Registry* registry;
+    Nepomuk::Middleware::Registry* registry;
 
     // RDF storage
     Soprano::Model* system;
@@ -52,7 +52,7 @@ Nepomuk::CoreServices::DaemonImpl::DaemonImpl( QObject* parent )
     : QObject( parent )
 {
     d = new Private;
-    d->registry = new Nepomuk::Backbone::Registry( this );
+    d->registry = new Nepomuk::Middleware::Registry( this );
 }
 
 

@@ -1,4 +1,4 @@
-project(knepomuk_tests)
+project(nepomuk_tests)
 
 include_directories(
   ${CMAKE_SOURCE_DIR}
@@ -11,7 +11,7 @@ include_directories(
 kde4_automoc(testbase.cpp)
 kde4_add_library(testbase_backbone STATIC testbase.cpp)
 target_link_libraries(testbase_backbone
-  ${KNEPOMUK_LIBRARIES}
+  ${NEPOMUK_LIBRARIES}
   ${KDE4_KDECORE_LIBRARY}
   ${SOPRANO_LIBRARIES}
   ${QT_QTCORE_LIBRARY}

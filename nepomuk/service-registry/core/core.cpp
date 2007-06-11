@@ -17,7 +17,7 @@
 #include "backend.h"
 #include "servicewaiter.h"
 
-#include <knepomuk/servicedesc.h>
+#include <nepomuk/servicedesc.h>
 
 #include <QMap>
 #include <QProcess>
@@ -30,22 +30,22 @@
 
 
 namespace Nepomuk {
-    namespace Backbone {
+    namespace Middleware {
         namespace Registry {
-            typedef QMap<QString, Nepomuk::Backbone::Registry::Service*> ServiceMap;
+            typedef QMap<QString, Nepomuk::Middleware::Registry::Service*> ServiceMap;
         }
     }
 }
 
 
-class Nepomuk::Backbone::Registry::Core::Private
+class Nepomuk::Middleware::Registry::Core::Private
 {
 public:
     ServiceMap services;
 };
 
 
-Nepomuk::Backbone::Registry::Core::Core( QObject* parent )
+Nepomuk::Middleware::Registry::Core::Core( QObject* parent )
     : QObject( parent )
 {
     d = new Private;
@@ -53,16 +53,16 @@ Nepomuk::Backbone::Registry::Core::Core( QObject* parent )
 }
 
 
-Nepomuk::Backbone::Registry::Core::~Core()
+Nepomuk::Middleware::Registry::Core::~Core()
 {
     delete d;
 }
 
 
-const QList<const Nepomuk::Backbone::Registry::Service*>
-Nepomuk::Backbone::Registry::Core::allServices()
+const QList<const Nepomuk::Middleware::Registry::Service*>
+Nepomuk::Middleware::Registry::Core::allServices()
 {
-    QList<const Nepomuk::Backbone::Registry::Service*> l;
+    QList<const Nepomuk::Middleware::Registry::Service*> l;
     for( ServiceMap::const_iterator it = d->services.constBegin();
          it != d->services.constEnd(); ++it ) {
         l.append( it.value() );
@@ -71,11 +71,11 @@ Nepomuk::Backbone::Registry::Core::allServices()
 }
 
 
-const QList<const Nepomuk::Backbone::Registry::Service*>
-Nepomuk::Backbone::Registry::Core::findServicesByName( const QString& name )
+const QList<const Nepomuk::Middleware::Registry::Service*>
+Nepomuk::Middleware::Registry::Core::findServicesByName( const QString& name )
 {
     QRegExp rex( name );
-    QList<const Nepomuk::Backbone::Registry::Service*> l;
+    QList<const Nepomuk::Middleware::Registry::Service*> l;
     for( ServiceMap::const_iterator it = d->services.constBegin();
          it != d->services.constEnd(); ++it ) {
         if( rex.exactMatch( it.value()->name() ) )
@@ -85,8 +85,8 @@ Nepomuk::Backbone::Registry::Core::findServicesByName( const QString& name )
 }
 
 
-Nepomuk::Backbone::Registry::Service*
-Nepomuk::Backbone::Registry::Core::findServiceByUrl_internal( const QString& url )
+Nepomuk::Middleware::Registry::Service*
+Nepomuk::Middleware::Registry::Core::findServiceByUrl_internal( const QString& url )
 {
     for( ServiceMap::const_iterator it = d->services.constBegin();
          it != d->services.constEnd(); ++it ) {
@@ -98,15 +98,15 @@ Nepomuk::Backbone::Registry::Core::findServiceByUrl_internal( const QString& url
 }
 
 
-const Nepomuk::Backbone::Registry::Service*
-Nepomuk::Backbone::Registry::Core::findServiceByUrl( const QString& url )
+const Nepomuk::Middleware::Registry::Service*
+Nepomuk::Middleware::Registry::Core::findServiceByUrl( const QString& url )
 {
     return findServiceByUrl_internal( url );
 }
 
 
-const Nepomuk::Backbone::Registry::Service*
-Nepomuk::Backbone::Registry::Core::findServiceByType_internal( const QString& type )
+const Nepomuk::Middleware::Registry::Service*
+Nepomuk::Middleware::Registry::Core::findServiceByType_internal( const QString& type )
 {
     for( ServiceMap::const_iterator it = d->services.constBegin();
          it != d->services.constEnd(); ++it ) {
@@ -118,8 +118,8 @@ Nepomuk::Backbone::Registry::Core::findServiceByType_internal( const QString& ty
 }
 
 
-const Nepomuk::Backbone::Registry::Service*
-Nepomuk::Backbone::Registry::Core::findServiceByType( const QString& type )
+const Nepomuk::Middleware::Registry::Service*
+Nepomuk::Middleware::Registry::Core::findServiceByType( const QString& type )
 {
     kDebug() << k_funcinfo << endl;
     const Service* service = findServiceByType_internal( type );
@@ -132,12 +132,12 @@ Nepomuk::Backbone::Registry::Core::findServiceByType( const QString& type )
 }
 
 
-const QList<const Nepomuk::Backbone::Registry::Service*>
-Nepomuk::Backbone::Registry::Core::findServicesByType( const QString& type )
+const QList<const Nepomuk::Middleware::Registry::Service*>
+Nepomuk::Middleware::Registry::Core::findServicesByType( const QString& type )
 {
     loadServiceOnDemand( type );
 
-    QList<const Nepomuk::Backbone::Registry::Service*> l;
+    QList<const Nepomuk::Middleware::Registry::Service*> l;
     for( ServiceMap::const_iterator it = d->services.constBegin();
          it != d->services.constEnd(); ++it ) {
         if( it.value()->type() == type )
@@ -147,19 +147,19 @@ Nepomuk::Backbone::Registry::Core::findServicesByType( const QString& type )
 }
 
 
-int Nepomuk::Backbone::Registry::Core::registerService( const Nepomuk::Backbone::ServiceDesc& desc,
-							Nepomuk::Backbone::Registry::Backend* backend )
+int Nepomuk::Middleware::Registry::Core::registerService( const Nepomuk::Middleware::ServiceDesc& desc,
+							Nepomuk::Middleware::Registry::Backend* backend )
 {
     //
     // 1. Check if the uri already exists
-    // 2. Check if it is a valid Nepomuk::Backbone::KDE service
+    // 2. Check if it is a valid Nepomuk::Middleware::KDE service
     //
     if( findServiceByUrl_internal( desc.url ) )
         return URI_ALREDAY_REGISTERED;
 
     Service* newService = Service::createFromDefinition( desc, backend );
     if( newService ) {
-        kDebug(300003) << "(Nepomuk::Backbone::Registry::Core) Found valid service: " << newService->url() << endl;
+        kDebug(300003) << "(Nepomuk::Middleware::Registry::Core) Found valid service: " << newService->url() << endl;
         d->services[newService->url()] = newService;
 
         emit serviceRegistered( desc.url );
@@ -173,26 +173,26 @@ int Nepomuk::Backbone::Registry::Core::registerService( const Nepomuk::Backbone:
 }
 
 
-bool Nepomuk::Backbone::Registry::Core::loadServiceOnDemand( const QString& typeUri )
+bool Nepomuk::Middleware::Registry::Core::loadServiceOnDemand( const QString& typeUri )
 {
     // FIXME: check if the service is already running
 
     kDebug(300003) << k_funcinfo << endl;
 
-    QStringList allServices = KGlobal::dirs()->findAllResources( "services", "knepomuk/*" );
+    QStringList allServices = KGlobal::dirs()->findAllResources( "services", "nepomuk/*" );
     foreach( QString service, allServices ) {
         KDesktopFile serviceDesktopFile( service );
         if ( serviceDesktopFile.readType() == "Service" &&
-             serviceDesktopFile.readEntry( "ServiceTypes" ) == "KNepomukService" &&
+             serviceDesktopFile.readEntry( "ServiceTypes" ) == "NepomukService" &&
              serviceDesktopFile.readEntry( "X-Nepomuk-ServiceType" ) == typeUri &&
              serviceDesktopFile.readBoolEntry( "X-Nepomuk-LoadOnDemand", false ) ) {
 
             if ( serviceDesktopFile.readEntry( "URL" ).isEmpty() ) {
-                kDebug( 300003 ) << "(Nepomuk::Backbone::Registry::Core) invalid Nepomuk service desktop file: missing URL." << endl;
+                kDebug( 300003 ) << "(Nepomuk::Middleware::Registry::Core) invalid Nepomuk service desktop file: missing URL." << endl;
                 continue;
             }
 
-            kDebug(300003) << "(Nepomuk::Backbone::Registry::Core) starting service "
+            kDebug(300003) << "(Nepomuk::Middleware::Registry::Core) starting service "
                            << serviceDesktopFile.readEntry( "Exec" ) << " on demand." << endl;
 
             // service fits. Load it and go on
@@ -204,7 +204,7 @@ bool Nepomuk::Backbone::Registry::Core::loadServiceOnDemand( const QString& type
                 }
             }
             else {
-                kDebug(300003) << "(Nepomuk::Backbone::Registry::Core) failed to start service: "
+                kDebug(300003) << "(Nepomuk::Middleware::Registry::Core) failed to start service: "
                                << serviceDesktopFile.readEntry( "Exec" ) << endl;
             }
         }
@@ -214,29 +214,29 @@ bool Nepomuk::Backbone::Registry::Core::loadServiceOnDemand( const QString& type
 }
 
 
-void Nepomuk::Backbone::Registry::Core::autoStartServices()
+void Nepomuk::Middleware::Registry::Core::autoStartServices()
 {
     QStringList serviceUris;
-    QStringList allServices = KGlobal::dirs()->findAllResources( "services", "knepomuk/*" );
+    QStringList allServices = KGlobal::dirs()->findAllResources( "services", "nepomuk/*" );
     foreach( QString service, allServices ) {
         KDesktopFile serviceDesktopFile( service );
         if ( serviceDesktopFile.readType() == "Service" &&
-             serviceDesktopFile.readEntry( "ServiceTypes" ) == "KNepomukService" &&
+             serviceDesktopFile.readEntry( "ServiceTypes" ) == "NepomukService" &&
              serviceDesktopFile.readBoolEntry( "X-Nepomuk-AutoLoad", false ) ) {
 
             if ( serviceDesktopFile.readEntry( "URL" ).isEmpty() ) {
-                kDebug( 300003 ) << "(Nepomuk::Backbone::Registry::Core) invalid Nepomuk service desktop file: missing URL." << endl;
+                kDebug( 300003 ) << "(Nepomuk::Middleware::Registry::Core) invalid Nepomuk service desktop file: missing URL." << endl;
                 continue;
             }
 
             // service fits. Load it and go on
             if ( QProcess::startDetached( serviceDesktopFile.readEntry( "Exec" ) ) ) {
                 serviceUris.append( serviceDesktopFile.readEntry( "URL" ) );
-                kDebug(300003) << "(Nepomuk::Backbone::Registry::Core) started service "
+                kDebug(300003) << "(Nepomuk::Middleware::Registry::Core) started service "
                                << serviceDesktopFile.readEntry( "Exec" ) << endl;
             }
             else {
-                kDebug(300003) << "(Nepomuk::Backbone::Registry::Core) failed to start service: "
+                kDebug(300003) << "(Nepomuk::Middleware::Registry::Core) failed to start service: "
                                << serviceDesktopFile.readEntry( "Exec" ) << endl;
             }
         }
@@ -247,20 +247,20 @@ void Nepomuk::Backbone::Registry::Core::autoStartServices()
 }
 
 
-int Nepomuk::Backbone::Registry::Core::unregisterService( const Nepomuk::Backbone::ServiceDesc& desc,
-							  Nepomuk::Backbone::Registry::Backend* backend )
+int Nepomuk::Middleware::Registry::Core::unregisterService( const Nepomuk::Middleware::ServiceDesc& desc,
+							  Nepomuk::Middleware::Registry::Backend* backend )
 {
     return unregisterService( desc.url, backend );
 }
 
 
-int Nepomuk::Backbone::Registry::Core::unregisterService( const QString& uri, Nepomuk::Backbone::Registry::Backend* backend )
+int Nepomuk::Middleware::Registry::Core::unregisterService( const QString& uri, Nepomuk::Middleware::Registry::Backend* backend )
 {
     Q_UNUSED( backend );
 
     Service* s = findServiceByUrl_internal( uri );
     if( s ) {
-        kDebug(300003) << "(Nepomuk::Backbone::Registry::Core) Removing service " << uri << endl;
+        kDebug(300003) << "(Nepomuk::Middleware::Registry::Core) Removing service " << uri << endl;
 
         d->services.remove( uri );
         emit serviceUnregistered( uri );
@@ -270,7 +270,7 @@ int Nepomuk::Backbone::Registry::Core::unregisterService( const QString& uri, Ne
         return SERVICE_REGISTERED;
     }
     else {
-        kDebug(300003) << "(Nepomuk::Backbone::Registry::Core) No service with this URI found: " << uri << endl;
+        kDebug(300003) << "(Nepomuk::Middleware::Registry::Core) No service with this URI found: " << uri << endl;
         return INVALID_SERVICE;
     }
 }

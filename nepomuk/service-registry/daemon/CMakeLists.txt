@@ -1,21 +1,20 @@
-project(knepdaemon)
+project(nepomukdaemon)
 
 include_directories(
-  ${knepregistry_SOURCE_DIR}
   ${QT_INCLUDES}
   ${KDE4_INCLUDES}
 )
 
-set( knepdaemon_BIN_SRCS
+set( nepomukdaemon_BIN_SRCS
   main.cpp
 )
 
-kde4_automoc(${knepdaemon_BIN_SRCS})
+kde4_automoc(${nepomukdaemon_BIN_SRCS})
 
-kde4_add_executable(knepdaemon ${knepdaemon_BIN_SRCS})
+kde4_add_executable(nepomukdaemon ${nepomukdaemon_BIN_SRCS})
 
-target_link_libraries(knepdaemon
-  knepregcore 
+target_link_libraries(nepomukdaemon
+  nepomukregcore 
   ${QT_QTCORE_LIBRARY}
   ${QT_QTDBUS_LIBRARY}
   ${QT_QTXML_LIBRARY}
@@ -25,7 +24,6 @@ target_link_libraries(knepdaemon
 configure_file(org.semanticdesktop.nepomuk.ServiceRegistry.service.cmake 
   ${CMAKE_CURRENT_BINARY_DIR}/org.semanticdesktop.nepomuk.ServiceRegistry.service)
 
-install(TARGETS knepdaemon DESTINATION ${BIN_INSTALL_DIR} )
+install(TARGETS nepomukdaemon DESTINATION ${BIN_INSTALL_DIR} )
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/org.semanticdesktop.nepomuk.ServiceRegistry.service
   DESTINATION ${DBUS_SERVICES_DIR})
-

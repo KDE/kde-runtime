@@ -3,7 +3,7 @@
  * $Id: sourceheader 511311 2006-02-19 14:51:05Z trueg $
  *
  * This file is part of the Nepomuk KDE project.
- * Copyright (C) 2006 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2006-2007 Sebastian Trueg <trueg@kde.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
 #define _NEPOMUK_REGISTRY_BACKEND_H_
 
 namespace Nepomuk {
-    namespace Backbone {
+    namespace Middleware {
 
 	class Message;
 	class Result;
@@ -24,15 +24,15 @@ namespace Nepomuk {
 	namespace Registry {
  
 	    class Backend
-		{
-		public:
-		    virtual ~Backend() {}
+	    {
+	    public:
+		virtual ~Backend() {}
       
-		    virtual Result methodCall( const Message& message ) = 0;
+		virtual Result methodCall( const Message& message ) = 0;
       
-		protected:
-		    Backend() {}
-		};
+	    protected:
+		Backend() {}
+	    };
 	}
     }
 }

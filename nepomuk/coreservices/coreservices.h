@@ -3,7 +3,7 @@
  * $Id: sourceheader 511311 2006-02-19 14:51:05Z trueg $
  *
  * This file is part of the Nepomuk KDE project.
- * Copyright (C) 2006 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2006-2007 Sebastian Trueg <trueg@kde.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,19 +20,19 @@
 namespace Nepomuk {
     namespace CoreServices {
 	class DaemonImpl : public QObject
-	    {
-		Q_OBJECT
+	{
+	    Q_OBJECT
 	
-	    public:
-		DaemonImpl( QObject* parent = 0 );
-		~DaemonImpl();
+	public:
+	    DaemonImpl( QObject* parent = 0 );
+	    ~DaemonImpl();
 	
-		bool registerServices();
+	    bool registerServices();
 	
-	    private:
-		class Private;
-		Private* d;
-	    };
+	private:
+	    class Private;
+	    Private* d;
+	};
     }
 }
 

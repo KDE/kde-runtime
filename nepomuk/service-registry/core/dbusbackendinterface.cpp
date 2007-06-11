@@ -3,7 +3,7 @@
  * $Id: sourceheader 511311 2006-02-19 14:51:05Z trueg $
  *
  * This file is part of the Nepomuk KDE project.
- * Copyright (C) 2006 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2006-2007 Sebastian Trueg <trueg@kde.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,12 +17,12 @@
 #include "core.h"
 #include "service.h"
 
-#include <knepomuk/dbustools.h>
+#include <nepomuk/dbustools.h>
 
 #include <kdebug.h>
 
 
-Nepomuk::Backbone::Registry::DBus::BackendInterface::BackendInterface( Nepomuk::Backbone::Registry::DBus::Backend* parent )
+Nepomuk::Middleware::Registry::DBus::BackendInterface::BackendInterface( Nepomuk::Middleware::Registry::DBus::Backend* parent )
     : QDBusAbstractAdaptor( parent ),
       m_backend( parent )
 {
@@ -33,31 +33,31 @@ Nepomuk::Backbone::Registry::DBus::BackendInterface::BackendInterface( Nepomuk::
 }
 
 
-Nepomuk::Backbone::Registry::DBus::BackendInterface::~BackendInterface()
+Nepomuk::Middleware::Registry::DBus::BackendInterface::~BackendInterface()
 {
 }
 
 
-int Nepomuk::Backbone::Registry::DBus::BackendInterface::registerService( const ServiceDesc& desc )
+int Nepomuk::Middleware::Registry::DBus::BackendInterface::registerService( const ServiceDesc& desc )
 {
     return m_backend->core()->registerService( desc, m_backend );
 }
 
 
-int Nepomuk::Backbone::Registry::DBus::BackendInterface::unregisterService( const ServiceDesc& desc )
+int Nepomuk::Middleware::Registry::DBus::BackendInterface::unregisterService( const ServiceDesc& desc )
 {
     return m_backend->core()->unregisterService( desc, m_backend );
 }
 
 
-int Nepomuk::Backbone::Registry::DBus::BackendInterface::unregisterService( const QString& url )
+int Nepomuk::Middleware::Registry::DBus::BackendInterface::unregisterService( const QString& url )
 {
     return m_backend->core()->unregisterService( url, m_backend );
 }
 
 
-QList<Nepomuk::Backbone::ServiceDesc>
-Nepomuk::Backbone::Registry::DBus::BackendInterface::discoverServicesByName( const QString& name )
+QList<Nepomuk::Middleware::ServiceDesc>
+Nepomuk::Middleware::Registry::DBus::BackendInterface::discoverServicesByName( const QString& name )
 {
     const QList<const Service*> services = m_backend->core()->findServicesByName( name );
     QList<ServiceDesc> l;
@@ -68,10 +68,10 @@ Nepomuk::Backbone::Registry::DBus::BackendInterface::discoverServicesByName( con
 }
 
 
-Nepomuk::Backbone::ServiceDesc
-Nepomuk::Backbone::Registry::DBus::BackendInterface::discoverServiceByUrl( const QString& url )
+Nepomuk::Middleware::ServiceDesc
+Nepomuk::Middleware::Registry::DBus::BackendInterface::discoverServiceByUrl( const QString& url )
 {
-    const Nepomuk::Backbone::Registry::Service* s = m_backend->core()->findServiceByUrl( url );
+    const Nepomuk::Middleware::Registry::Service* s = m_backend->core()->findServiceByUrl( url );
     if( s )
         return s->desc();
     else
@@ -79,10 +79,10 @@ Nepomuk::Backbone::Registry::DBus::BackendInterface::discoverServiceByUrl( const
 }
 
 
-Nepomuk::Backbone::ServiceDesc
-Nepomuk::Backbone::Registry::DBus::BackendInterface::discoverServiceByType( const QString& type )
+Nepomuk::Middleware::ServiceDesc
+Nepomuk::Middleware::Registry::DBus::BackendInterface::discoverServiceByType( const QString& type )
 {
-    const Nepomuk::Backbone::Registry::Service* s = m_backend->core()->findServiceByType( type );
+    const Nepomuk::Middleware::Registry::Service* s = m_backend->core()->findServiceByType( type );
     if( s )
         return s->desc();
     else
@@ -90,8 +90,8 @@ Nepomuk::Backbone::Registry::DBus::BackendInterface::discoverServiceByType( cons
 }
 
 
-QList<Nepomuk::Backbone::ServiceDesc>
-Nepomuk::Backbone::Registry::DBus::BackendInterface::discoverServicesByType( const QString& type )
+QList<Nepomuk::Middleware::ServiceDesc>
+Nepomuk::Middleware::Registry::DBus::BackendInterface::discoverServicesByType( const QString& type )
 {
     const QList<const Service*> services = m_backend->core()->findServicesByType( type );
     QList<ServiceDesc> l;
@@ -102,8 +102,8 @@ Nepomuk::Backbone::Registry::DBus::BackendInterface::discoverServicesByType( con
 }
 
 
-QList<Nepomuk::Backbone::ServiceDesc>
-Nepomuk::Backbone::Registry::DBus::BackendInterface::discoverAllServices()
+QList<Nepomuk::Middleware::ServiceDesc>
+Nepomuk::Middleware::Registry::DBus::BackendInterface::discoverAllServices()
 {
     const QList<const Service*> services = m_backend->core()->allServices();
     QList<ServiceDesc> l;
@@ -114,21 +114,21 @@ Nepomuk::Backbone::Registry::DBus::BackendInterface::discoverAllServices()
 }
 
 
-void Nepomuk::Backbone::Registry::DBus::BackendInterface::slotServiceRegistered( const Nepomuk::Backbone::Registry::Service* s )
+void Nepomuk::Middleware::Registry::DBus::BackendInterface::slotServiceRegistered( const Nepomuk::Middleware::Registry::Service* s )
 {
     emit serviceRegistered( s->desc() );
 }
 
 
-void Nepomuk::Backbone::Registry::DBus::BackendInterface::slotServiceUnregistered( const Nepomuk::Backbone::Registry::Service* s )
+void Nepomuk::Middleware::Registry::DBus::BackendInterface::slotServiceUnregistered( const Nepomuk::Middleware::Registry::Service* s )
 {
     emit serviceUnregistered( s->desc() );
 }
 
 
-QString Nepomuk::Backbone::Registry::DBus::BackendInterface::discoverDBusServiceByUrl( const QString& url )
+QString Nepomuk::Middleware::Registry::DBus::BackendInterface::discoverDBusServiceByUrl( const QString& url )
 {
-    return Nepomuk::Backbone::DBus::dbusServiceFromUrl( url );
+    return Nepomuk::Middleware::DBus::dbusServiceFromUrl( url );
 }
 
 #include "dbusbackendinterface.moc"
