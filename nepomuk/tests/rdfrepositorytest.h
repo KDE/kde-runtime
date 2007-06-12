@@ -18,7 +18,7 @@
 #include "testbase.h"
 
 #include <nepomuk/registry.h>
-#include <nepomuk/services/rdfrepository.h>
+#include <nepomuk/rdfrepository.h>
 
 
 class RdfRepositoryTest : public TestBase

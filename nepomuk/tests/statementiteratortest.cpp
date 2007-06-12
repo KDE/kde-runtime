@@ -14,7 +14,7 @@
 
 #include "statementiteratortest.h"
 
-#include <nepomuk/services/rdfrepository.h>
+#include <nepomuk/rdfrepository.h>
 #include <nepomuk/statementlistiterator.h>
 
 #include <krandom.h>

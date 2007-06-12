@@ -14,8 +14,8 @@
 
 #include "rdfrepositorytest.h"
 
-#include <nepomuk/services/rdfrepository.h>
-
+#include <nepomuk/rdfrepository.h>
+#include <soprano/statement.h>
 #include <krandom.h>
 
 #define KNEP_VERIFY \

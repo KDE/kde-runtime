@@ -18,7 +18,7 @@
 #include <QtTest/QtTest>
 
 #include <nepomuk/registry.h>
-#include <nepomuk/services/rdfrepository.h>
+#include <nepomuk/rdfrepository.h>
 
 class TestBase : public QObject
 {
