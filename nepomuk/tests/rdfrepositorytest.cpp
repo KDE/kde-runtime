@@ -16,6 +16,7 @@
 
 #include <nepomuk/rdfrepository.h>
 #include <soprano/statement.h>
+#include <nepomuk/queryresulttable.h>
 #include <krandom.h>
 
 #define KNEP_VERIFY \
