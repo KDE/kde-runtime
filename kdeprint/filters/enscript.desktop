@@ -4,6 +4,7 @@ Require=exec:/enscript
 Comment=Enscript Text Filter
 Comment[de]=Enscript Text-Filter
 Comment[el]=Φίλτρο κειμένου του enscript
+Comment[fa]=پالایۀ‌ متنی Enscript
 Comment[ja]=Enscript テキストフィルタ
 Comment[nds]=Textfilter "enscript"
 Comment[nl]=Enscript-tekstfilter
