@@ -24,7 +24,6 @@
 #include <QWidget>
 #include <Qt3Support/Q3PtrList>
 
-#include <QStringList>
 
 #include "modules.h"
 

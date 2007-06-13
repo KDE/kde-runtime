@@ -22,7 +22,6 @@
 #define CONFSYSTEM_H
 
 #include <QWidget>
-#include <QStringList>
 
 class QLineEdit;
 class QComboBox;

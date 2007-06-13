@@ -26,7 +26,6 @@
 #define KCMLOCALE_H
 
 #include <QWidget>
-#include <QStringList>
 #include "ui_language.h"
 
 class KLocale;

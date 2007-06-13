@@ -26,7 +26,6 @@
 #include <sys/time.h>
 
 
-#include <QStringList>
 #include <stdlib.h>
 #include <kmessagebox.h>
 #include <QFile>

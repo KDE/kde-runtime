@@ -27,7 +27,6 @@
 #include <QFileInfo>
 #include <QDir>
 #include <QRegExp>
-#include <QStringList>
 #include <QTextStream>
 #include <QtDBus/QtDBus>
 

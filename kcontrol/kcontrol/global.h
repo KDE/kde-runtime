@@ -23,7 +23,6 @@
 #include <kicontheme.h>
 
 
-#include <QStringList>
 
 enum IndexViewMode {Icon, Tree};
 

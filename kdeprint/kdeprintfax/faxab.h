@@ -23,7 +23,6 @@
 
 #include <kdialog.h>
 #include <QMap>
-#include <QStringList>
 #include <kabc/phonenumber.h>
 
 class K3ListView;

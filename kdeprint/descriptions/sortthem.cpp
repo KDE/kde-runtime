@@ -1,7 +1,6 @@
 
 
 
-#include <QStringList>
 #include <stdlib.h>
 #include <stdio.h>
 
