@@ -52,8 +52,9 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <krandom.h>
+#include <kshell.h>
 
-#define quote(x) K3Process::quote(x)
+#define quote(x) KShell::quoteArg(x)
 
 static QString stripNumber( const QString& s )
 {
