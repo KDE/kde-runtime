@@ -4,16 +4,13 @@ project(kdeprint-descriptions)
 
 
 ########### next target ###############
-if(KDE4_BUILD_TESTS)
 set(sortthem_SRCS sortthem.cpp )
 
 kde4_automoc(${sortthem_SRCS})
 
-kde4_add_executable(sortthem ${sortthem_SRCS})
+kde4_add_test_executable(sortthem ${sortthem_SRCS})
 
 target_link_libraries(sortthem  ${KDE4_KDECORE_LIBS} )
-
-endif(KDE4_BUILD_TESTS)
 
 ########### install files ###############
 

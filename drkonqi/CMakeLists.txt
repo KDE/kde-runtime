@@ -26,16 +26,13 @@ install(TARGETS drkonqi DESTINATION ${BIN_INSTALL_DIR})
 
 
 ########### next target ###############
-if(KDE4_BUILD_TESTS)
 set(crashtest_SRCS crashtest.cpp )
 
 kde4_automoc(${crashtest_SRCS})
 
-kde4_add_executable(crashtest ${crashtest_SRCS})
+kde4_add_test_executable(crashtest ${crashtest_SRCS})
 
 target_link_libraries(crashtest  ${KDE4_KDEUI_LIBS} )
-
-endif(KDE4_BUILD_TESTS)
 
 ########### install files ###############
 

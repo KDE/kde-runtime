@@ -20,11 +20,9 @@ target_link_libraries(testbase_backbone
 
 # tests
 kde4_automoc(rdfrepositorytest.cpp)
-kde4_add_executable(rdfrepositorytest rdfrepositorytest.cpp)
+kde4_add_unit_test(rdfrepositorytest rdfrepositorytest.cpp)
 target_link_libraries(rdfrepositorytest testbase_backbone)
-add_test(rdfrepositorytest ${EXECUTABLE_OUTPUT_PATH}/rdfrepositorytest)
 
 kde4_automoc(statementiteratortest.cpp)
-kde4_add_executable(statementiteratortest statementiteratortest.cpp)
+kde4_add_unit_test(statementiteratortest statementiteratortest.cpp)
 target_link_libraries(statementiteratortest testbase_backbone)
-add_test(statementiteratortest ${EXECUTABLE_OUTPUT_PATH}/statementiteratortest)

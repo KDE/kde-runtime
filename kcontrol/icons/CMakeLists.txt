@@ -16,16 +16,13 @@ install(TARGETS kcm_icons  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 
 ########### next target ###############
-if(KDE4_BUILD_TESTS)
 set(testicons_SRCS testicons.cpp icons.cpp )
 
 kde4_automoc(${testicons_SRCS})
 
-kde4_add_executable(testicons ${testicons_SRCS})
+kde4_add_test_executable(testicons ${testicons_SRCS})
 
 target_link_libraries(testicons ${KDE4_KDEUI_LIBS})
-
-endif(KDE4_BUILD_TESTS)
 
 ########### install files ###############
 
