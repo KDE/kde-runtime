@@ -165,7 +165,7 @@ void NotifyBySound::notify( int eventId, KNotifyConfig * config )
 		         d->signalmapper,  SLOT(map()) );
 		d->signalmapper->setMapping( proc , eventId );
 
-		(*proc) << d->externalPlayer << QFile::encodeName( soundFile );
+		(*proc) << d->externalPlayer << soundFile;
 		proc->start();
 		return;
 	}
