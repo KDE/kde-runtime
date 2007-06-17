@@ -10,7 +10,7 @@ X-KDE-Kded-load-on-demand=true
 
 Name=KDE Time Zone Daemon
 Name[be]=Сервіс часавых зон KDE
-Name[csb]=Demóna czasowi conë KDE
+Name[csb]=Ùsłëżnota czasowi conë KDE
 Name[de]=Zeitzonen-Dienst
 Name[el]=Δαίμονας ωρολογιακής ζώνης του KDE
 Name[fa]=شبح ناحیۀ زمان KDE
@@ -18,7 +18,7 @@ Name[nds]=Tietrebeet-Dämoon
 Name[nl]=KDE Tijdzone-daemon
 Name[zh_TW]=KDE 時區伺服程式
 Comment=Time zone daemon for KDE
-Comment[csb]=Demóna czasowi conë KDE
+Comment[csb]=Ùsłëżnota czasowi conë KDE
 Comment[de]=Zeitzonen-Dienst für KDE
 Comment[el]=Δαίμονας ωρολογιακής ζώνης για το KDE
 Comment[nds]=Tietrebeet-Dämoon för KDE

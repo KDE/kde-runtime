@@ -3,6 +3,7 @@ Name=pdfwrite
 Require=exec:/gs
 Comment=PDF Writer (needs Ghostscript)
 Comment[be]=PDF Writer (патрабуе Ghostscript)
+Comment[csb]=Ùsôdzanié PDF (je nót Ghostscript)
 Comment[de]=PDF-Erzeugung (erfordert Ghostscript)
 Comment[el]=Εγγραφέας PDF (χρειάζεται το Ghostscript)
 Comment[ja]=PDF ライター (GhostScript が必要)

@@ -3,6 +3,7 @@ Name=ps2pdf
 Require=exec:/gs
 Comment=PostScript to PDF Converter
 Comment[be]=Праглядальнік PostScript
+Comment[csb]=Kònwerter Postscript do PDF
 Comment[de]=Umwandlung von PostScript zu PDF
 Comment[el]=Μετατροπέας από PostScript σε PDF
 Comment[fa]=مبدل پست‌اسکریپت به PDF
