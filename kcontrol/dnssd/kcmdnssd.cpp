@@ -32,7 +32,6 @@
 #include <klocale.h>
 #include <kglobal.h>
 #include <kparts/genericfactory.h>
-#include <k3process.h>
 #include <klineedit.h>
 #include <kpassworddialog.h>
 #include <kconfig.h>

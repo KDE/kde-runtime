@@ -33,7 +33,6 @@
 #include <kdebug.h>
 #include <kdialog.h>
 #include <kmessagebox.h>
-#include <k3process.h>
 #include <kservice.h>
 
 #include "localenum.h"
