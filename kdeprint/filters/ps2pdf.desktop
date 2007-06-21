@@ -10,6 +10,7 @@ Comment[fa]=مبدل پست‌اسکریپت به PDF
 Comment[ja]=PostScript から PDF に変換
 Comment[nds]=PostScript-PDF-Ümdoer
 Comment[nl]=PostScript naar PDF conversie
+Comment[sv]=Konvertering från Postscript till PDF
 Comment[zh_TW]=PostScript 轉 PDF 轉換器
 MimeTypeIn=application/postscript
 MimeTypeOut=application/pdf

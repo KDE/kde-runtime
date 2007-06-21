@@ -7,6 +7,7 @@ Comment[el]=Εκτύπωση φυλλαδίου (χρήση μαζί με εκτ
 Comment[ja]=小冊子の印刷 - (短辺とじ両面印刷を使用)
 Comment[nds]=Lütt Book drucken (mit Duplexdruck för lütte Sieden bruken)
 Comment[nl]=Pamflet afdrukken (gebruik met korte-zijde dubbelzijdig afdrukken)
+Comment[sv]=Broschyrutskrift (använd med dubbelsidig utskrift längs kortsidan)
 Comment[zh_TW]=列印小冊
 MimeTypeIn=application/postscript
 MimeTypeOut=application/postscript

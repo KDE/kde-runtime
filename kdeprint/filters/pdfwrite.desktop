@@ -9,6 +9,7 @@ Comment[el]=Εγγραφέας PDF (χρειάζεται το Ghostscript)
 Comment[ja]=PDF ライター (GhostScript が必要)
 Comment[nds]=PDF-Schriever (Ghostscript nödig)
 Comment[nl]=PDF-schrijver (vereist GhostScript)
+Comment[sv]=PDF-utskrift (kräver Ghostscript)
 Comment[zh_TW]=PDF 產生器（需要 Ghostscript）
 MimeTypeIn=application/postscript
 MimeTypeOut=application/pdf
