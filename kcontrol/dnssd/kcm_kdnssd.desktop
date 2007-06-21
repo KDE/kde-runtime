@@ -126,3 +126,4 @@ X-KDE-ParentApp=kcontrol
 X-KDE-SubstituteUID=false
 X-KDE-RootOnly=true
 Categories=Qt;KDE;X-KDE-settings-network;
+X-KDE-System-Settings-Parent-Category=network-settings

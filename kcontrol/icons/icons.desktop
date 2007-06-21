@@ -6,6 +6,7 @@ DocPath=kcontrol/icons/index.html
 Icon=icons
 Exec=kcmshell icons
 
+X-KDE-System-Settings-Parent-Category=appearance
 
 X-KDE-Library=icons
 X-KDE-FactoryName=icons

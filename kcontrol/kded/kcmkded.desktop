@@ -5,10 +5,11 @@ Icon=services
 Type=Service
 ServiceTypes=KCModule
 
-
 X-KDE-Library=kded
 X-KDE-Factoryname=kded
 X-KDE-ParentApp=kcontrol
+
+X-KDE-System-Settings-Parent-Category=advanced-user-settings
 
 Name=Service Manager
 Name[af]=Diens Bestuurder
