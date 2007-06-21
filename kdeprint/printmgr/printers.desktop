@@ -15,6 +15,8 @@ X-KDE-FactoryName=printmgr
 
 X-KDE-ParentApp=kcontrol
 
+X-KDE-System-Settings-Parent-Category=computer-administration
+
 Name=Printers
 Name[af]=Drukkers
 Name[ar]=الطابعات
