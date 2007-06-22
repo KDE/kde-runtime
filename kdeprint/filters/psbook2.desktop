@@ -4,6 +4,7 @@ Require=exec:/psbook,exec:/psnup,exec:/psselect
 Comment=Pamphlet Printing - Odd Pages (step 2)
 Comment[de]=Broschüre drucken - ungerade Seiten (Schritt 2)
 Comment[el]=Εκτύπωση φυλλαδίου - Μονές σελίδες (βήμα 2)
+Comment[es]=Impresión de folletos - Páginas impares (paso 2)
 Comment[ja]=小冊子の印刷 - 奇数ページ (ステップ 2)
 Comment[nds]=Lütt Book drucken - Uneven Sieden (Schritt 2)
 Comment[nl]=Pamflet afdrukken - Oneven pagina's (stap 2)
