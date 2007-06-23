@@ -6,6 +6,7 @@ ServiceTypes=NepomukService
 Name=Nepomuk Core Services
 Name[de]=Nepomuk-Basisdienste
 Name[el]=Υπηρεσίες πυρήνα Nepomuk
+Name[ja]=Nepomuk コアサービス
 Name[nds]=Nepomuk-Karndeensten
 Name[nl]=KNepomuk Kerndiensten
 Name[sv]=Nepomuks kärntjänster
