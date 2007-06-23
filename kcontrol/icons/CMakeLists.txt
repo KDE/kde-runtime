@@ -1,5 +1,5 @@
 
-
+add_subdirectory(tests)
 
 ########### next target ###############
 
@@ -14,15 +14,6 @@ target_link_libraries(kcm_icons ${KDE4_KIO_LIBS})
 
 install(TARGETS kcm_icons  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
-
-########### next target ###############
-set(testicons_SRCS testicons.cpp icons.cpp )
-
-kde4_automoc(${testicons_SRCS})
-
-kde4_add_test_executable(testicons ${testicons_SRCS})
-
-target_link_libraries(testicons ${KDE4_KDEUI_LIBS})
 
 ########### install files ###############
 

@@ -2,6 +2,7 @@
 add_subdirectory( presets ) 
 add_subdirectory( pics ) 
 add_subdirectory( debuggers ) 
+add_subdirectory( tests ) 
 
 
 
@@ -24,15 +25,6 @@ target_link_libraries(drkonqi  ${KDE4_KIO_LIBS})
 
 install(TARGETS drkonqi DESTINATION ${BIN_INSTALL_DIR})
 
-
-########### next target ###############
-set(crashtest_SRCS crashtest.cpp )
-
-kde4_automoc(${crashtest_SRCS})
-
-kde4_add_test_executable(crashtest ${crashtest_SRCS})
-
-target_link_libraries(crashtest  ${KDE4_KDEUI_LIBS} )
 
 ########### install files ###############
 
