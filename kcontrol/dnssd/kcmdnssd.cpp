@@ -19,7 +19,7 @@
  ***************************************************************************/
 
 #include <sys/stat.h>
-#include <config.h>
+#include <config-runtime.h>
 
 #include <QLayout>
 #include <QFile>

@@ -26,7 +26,7 @@
 #include <kglobal.h>
 #include <klocale.h>
 
-#include <config.h>
+#include <config-runtime.h>
 
 #include "knotify.h"
 #include "knotifyconfig.h"

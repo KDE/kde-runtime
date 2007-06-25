@@ -25,7 +25,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************/
 
-#include <config.h>
+#include <config-runtime.h>
 
 #include <stdlib.h>
 #include <unistd.h>

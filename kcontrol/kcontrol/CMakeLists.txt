@@ -22,7 +22,7 @@ set(kcontrol_SRCS
    kcrootonly.cpp 
    searchwidget.cpp )
 
-set(kcontrol_adaptor ${CMAKE_SOURCE_DIR}/runtime/kcontrol/kcontrol/moduleIface.h)
+set(kcontrol_adaptor ${KDEBASE_RUNTIME_SOURCE_DIR}/kcontrol/kcontrol/moduleIface.h)
 set(kcontrol_xml ${CMAKE_CURRENT_BINARY_DIR}/org.kde.KControl.xml)
 ADD_CUSTOM_COMMAND(OUTPUT ${kcontrol_xml}
        COMMAND ${QT_DBUSCPP2XML_EXECUTABLE} ${kcontrol_adaptor} > ${kcontrol_xml}
