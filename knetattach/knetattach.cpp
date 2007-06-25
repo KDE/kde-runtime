@@ -108,8 +108,8 @@ void KNetAttach::showPage( QWidget *page )
 	} else { //if (_recent->isChecked()) {
 	    KConfig recent( "krecentconnections", KConfig::NoGlobals );
 	    if (!recent.hasGroup(_recentConnectionName->currentText())) {
-		recent.setGroup("General");
-		QStringList idx = recent.readEntry("Index",QStringList());
+		KConfigGroup group = recent.group("General");
+		QStringList idx = group.readEntry("Index",QStringList());
 		if (idx.isEmpty()) {
 		    _recent->setEnabled(false);
 		    if (_recent->isChecked()) {
@@ -122,18 +122,18 @@ void KNetAttach::showPage( QWidget *page )
 		showPage(_folderType);
 		return;
 	    }
-	    recent.setGroup(_recentConnectionName->currentText());
-	    _type = recent.readEntry("Type");
+	    KConfigGroup group = recent.group(_recentConnectionName->currentText());
+	    _type = group.readEntry("Type");
 	    setInformationText(_type);
 	    if (!updateForProtocol(_type)) {
 		// FIXME: handle error
 	    }
-	    KUrl u(recent.readEntry("URL"));
+	    KUrl u(group.readEntry("URL"));
 	    _host->setText(u.host());
 	    _user->setText(u.user());
 	    _path->setText(u.path());
-	    if (recent.hasKey("Port")) {
-		_port->setValue(recent.readEntry("Port",0));
+	    if (group.hasKey("Port")) {
+		_port->setValue(group.readEntry("Port",0));
 	    } else {
 		_port->setValue(u.port());
 	    }
