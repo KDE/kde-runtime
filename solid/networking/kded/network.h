@@ -23,7 +23,7 @@
 #ifndef NETWORKSTATUS_NETWORK_H
 #define NETWORKSTATUS_NETWORK_H
 
-#include <networkstatuscommon.h>
+#include <solid/networking.h>
 
 class Network
 {
@@ -33,11 +33,11 @@ public:
 	/**
 	 * Update the status of this network
 	 */
-	void setStatus( NetworkStatus::Status status );
+	void setStatus( Solid::Networking::Status status );
 	/**
 	 * The connection status of this network
 	 */
-	NetworkStatus::Status status();
+	Solid::Networking::Status status();
 	/**
 	 * The name of this network
 	 */
@@ -52,7 +52,7 @@ public:
 private:
 	Network( const Network & );
 	QString m_name;
-	NetworkStatus::Status m_status;
+	Solid::Networking::Status m_status;
 	QString m_service;
 };
 

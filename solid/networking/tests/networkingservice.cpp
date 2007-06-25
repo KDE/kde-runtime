@@ -31,36 +31,27 @@
 #include <KDebug>
 #include <KLocale>
 
-#include "service.h"
+#include "networkingservice.h"
 #include "serviceinterface.h"
 
-QString toString( NetworkStatus::Status st )
+QString toString( Solid::Networking::Status st )
 {
   QString str;
   switch ( st ) {
-    case NetworkStatus::NoNetworks:
-      str = "NoNetworks";
+    case Solid::Networking::Unknown:
+      str = "Unknown";
       break;
-    case NetworkStatus::Unreachable:
-      str = "Unreachable";
+    case Solid::Networking::Disconnecting:
+      str = "Disconnecting";
       break;
-    case NetworkStatus::OfflineDisconnected:
-      str = "OfflineDisconnected";
+    case Solid::Networking::Unconnected:
+      str = "Unconnected";
       break;
-    case NetworkStatus::OfflineFailed:
-      str = "OfflineFailed";
+    case Solid::Networking::Connecting:
+      str = "Connecting";
       break;
-    case NetworkStatus::TearingDown:
-      str = "TearingDown";
-      break;
-    case NetworkStatus::Offline:
-      str = "Offline";
-      break;
-    case NetworkStatus::Establishing:
-      str = "Establishing";
-      break;
-    case NetworkStatus::Online:
-      str = "Online";
+    case Solid::Networking::Connected:
+      str = "Connected";
       break;
   }
   return str;
@@ -68,8 +59,8 @@ QString toString( NetworkStatus::Status st )
 
 TestService::TestService() : KMainWindow( 0 ),
     m_service( new OrgKdeSolidNetworkingServiceInterface( "org.kde.kded", "/modules/networkstatus", QDBusConnection::sessionBus(), this ) ),
-    m_status ( NetworkStatus::Offline ),
-    m_nextStatus( NetworkStatus::OfflineDisconnected ),
+    m_status ( Solid::Networking::Unconnected ),
+    m_nextStatus( Solid::Networking::Unconnected ),
     m_view( new QWidget( this ) )
 {
     QDBusConnection::sessionBus().registerService( "org.kde.Solid.Networking.TestService" );
@@ -118,23 +109,20 @@ int TestService::status( const QString & network )
 void TestService::changeComboActivated( int index )
 {
   switch ( index ) {
-    case 0 /*NetworkStatus::OfflineDisconnected*/:
-      m_nextStatus = NetworkStatus::OfflineDisconnected;
+    case 0 /*Solid::Networking::Unknown*/:
+      m_nextStatus = Solid::Networking::Unknown;
       break;
-    case 1 /*NetworkStatus::OfflineFailed*/:
-      m_nextStatus = NetworkStatus::OfflineFailed;
+    case 1 /*Solid::Networking::Unconnected*/:
+      m_nextStatus = Solid::Networking::Unconnected;
       break;
-    case 2 /*NetworkStatus::TearingDown*/:
-      m_nextStatus = NetworkStatus::TearingDown;
+    case 2 /*Solid::Networking::Disconnecting*/:
+      m_nextStatus = Solid::Networking::Disconnecting;
       break;
-    case 3 /*NetworkStatus::Offline*/:
-      m_nextStatus = NetworkStatus::Offline;
+    case 3 /*Solid::Networking::Connecting*/:
+      m_nextStatus = Solid::Networking::Connecting;
       break;
-    case 4 /*NetworkStatus::Establishing*/:
-      m_nextStatus = NetworkStatus::Establishing;
-      break;
-    case 5 /*NetworkStatus::Online*/:
-      m_nextStatus = NetworkStatus::Online;
+    case 4 /*Solid::Networking::Connected*/:
+      m_nextStatus = Solid::Networking::Connected;
       break;
     default:
       kDebug() << "Unrecognised status!" << endl;
@@ -158,32 +146,32 @@ void TestService::changeButtonClicked()
 int TestService::establish( const QString & network )
 {
 	Q_UNUSED( network );
-	m_status = NetworkStatus::Establishing;
+	m_status = Solid::Networking::Connecting;
 	m_service->setNetworkStatus( "test_net", (int)m_status );
-	m_nextStatus = NetworkStatus::Online;
+	m_nextStatus = Solid::Networking::Connected;
 	QTimer::singleShot( 5000, this, SLOT( slotStatusChange() ) );
-	return (int)NetworkStatus::RequestAccepted;
+	return (int)Solid::Networking::RequestAccepted;
 }
 
 int TestService::shutdown( const QString & network )
 {
 	Q_UNUSED( network );
-	m_status = NetworkStatus::TearingDown;
+	m_status = Solid::Networking::Disconnecting;
 	m_service->setNetworkStatus( "test_net", (int)m_status );
-	m_nextStatus = NetworkStatus::Offline;
+	m_nextStatus = Solid::Networking::Unconnected;
 	QTimer::singleShot( 5000, this, SLOT( slotStatusChange() ) );
-	return (int)NetworkStatus::RequestAccepted;
+	return (int)Solid::Networking::RequestAccepted;
 }
 
 void TestService::simulateFailure()
 {
-	m_status = NetworkStatus::OfflineFailed;
+	m_status = Solid::Networking::UnconnectedFailed;
 	m_service->setNetworkStatus( "test_net", (int)m_status );
 }
 
 void TestService::simulateDisconnect()
 {
-	m_status = NetworkStatus::OfflineDisconnected;
+	m_status = Solid::Networking::UnconnectedDisconnected;
 	m_service->setNetworkStatus( "test_net", (int)m_status );
 }
 #endif
@@ -193,32 +181,23 @@ void TestService::slotStatusChange()
 	m_service->setNetworkStatus( "test_net", (int)m_status );
 }
 
-QColor TestService::toQColor( NetworkStatus::Status st )
+QColor TestService::toQColor( Solid::Networking::Status st )
 {
     QColor col;
     switch ( st ) {
-      case NetworkStatus::NoNetworks:
+      case Solid::Networking::Unknown:
         col = Qt::darkGray;
         break;
-      case NetworkStatus::Unreachable:
-        col = Qt::darkMagenta;
-        break;
-      case NetworkStatus::OfflineDisconnected:
-        col = Qt::blue;
-        break;
-      case NetworkStatus::OfflineFailed:
-        col = Qt::darkRed;
-        break;
-      case NetworkStatus::TearingDown:
+      case Solid::Networking::Disconnecting:
         col = Qt::darkYellow;
         break;
-      case NetworkStatus::Offline:
+      case Solid::Networking::Unconnected:
         col = Qt::blue;
         break;
-      case NetworkStatus::Establishing:
+      case Solid::Networking::Connecting:
         col = Qt::yellow;
         break;
-      case NetworkStatus::Online:
+      case Solid::Networking::Connected:
         col = Qt::green;
         break;
     }
@@ -248,4 +227,4 @@ int main( int argc, char** argv )
     return app.exec();
 }
 
-#include "service.moc"
+#include "networkingservice.moc"

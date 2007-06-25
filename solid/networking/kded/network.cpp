@@ -25,16 +25,16 @@
 #include "network.h"
 
 Network::Network( const QString & name, int status, const QString & serviceName )
-	: m_name( name ), m_status( (NetworkStatus::Status)status ), m_service( serviceName )
+	: m_name( name ), m_status( (Solid::Networking::Status)status ), m_service( serviceName )
 {
 }
 
-void Network::setStatus( NetworkStatus::Status status )
+void Network::setStatus( Solid::Networking::Status status )
 {
 	m_status = status;
 }
 
-NetworkStatus::Status Network::status()
+Solid::Networking::Status Network::status()
 {
 	return m_status;
 }

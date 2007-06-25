@@ -75,32 +75,27 @@ p, li { white-space: pre-wrap; }
       <widget class="QComboBox" name="changeCombo" >
        <item>
         <property name="text" >
-         <string>Offline Disconnected</string>
+         <string>Unknown</string>
         </property>
        </item>
        <item>
         <property name="text" >
-         <string>Offline Failed</string>
+         <string>Unconnected</string>
         </property>
        </item>
        <item>
         <property name="text" >
-         <string>Shutting Down</string>
+         <string>Disconnecting</string>
         </property>
        </item>
        <item>
         <property name="text" >
-         <string>Offline</string>
+         <string>Connecting</string>
         </property>
        </item>
        <item>
         <property name="text" >
-         <string>Establishing</string>
-        </property>
-       </item>
-       <item>
-        <property name="text" >
-         <string>Online</string>
+         <string>Connected</string>
         </property>
        </item>
       </widget>

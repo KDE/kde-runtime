@@ -25,9 +25,8 @@
 #define _TEST_NETWORKSTATUS_SERVICE_H
 
 #include <KMainWindow>
-
-#include <networkstatuscommon.h>
-#include "ui_testserviceview.h"
+#include <solid/networking.h>
+#include "ui_networkingserviceview.h"
 
 class OrgKdeSolidNetworkingServiceInterface;
 
@@ -37,12 +36,6 @@ public:
 	TestService();
 	virtual ~TestService();
 	int status( const QString & network );
-#if 0
-	int establish( const QString & network );
-	int shutdown( const QString & network );
-	void simulateFailure();
-	void simulateDisconnect();
-#endif
 protected slots:
 	void changeComboActivated( int index );
     void serviceOwnerChanged( const QString& service,const QString& oldOwner, const QString& newOwner );
@@ -52,10 +45,10 @@ protected slots:
 	void slotStatusChange();
 private:
     void registerService();
-    static QColor toQColor( NetworkStatus::Status );
+    static QColor toQColor( Solid::Networking::Status );
     OrgKdeSolidNetworkingServiceInterface * m_service;
-    NetworkStatus::Status m_status;
-    NetworkStatus::Status m_nextStatus;
+    Solid::Networking::Status m_status;
+    Solid::Networking::Status m_nextStatus;
     Ui_TestServiceView ui;
     QWidget * m_view;
 };

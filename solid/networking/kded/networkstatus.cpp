@@ -45,7 +45,7 @@ typedef QMap< QString, Network * > NetworkMap;
 class NetworkStatusModule::Private
 {
 public:
-    Private() : status( NetworkStatus::NoNetworks )
+    Private() : status( Solid::Networking::Unknown )
     {
 
     }
@@ -54,7 +54,7 @@ public:
 
     }
     NetworkMap networks;
-    NetworkStatus::Status status;
+    Solid::Networking::Status status;
 };
 
 // CTORS/DTORS
@@ -91,8 +91,8 @@ int NetworkStatusModule::status()
 
 void NetworkStatusModule::updateStatus()
 {
-    NetworkStatus::Status bestStatus = NetworkStatus::NoNetworks;
-    const NetworkStatus::Status oldStatus = d->status;
+    Solid::Networking::Status bestStatus = Solid::Networking::Unknown;
+    const Solid::Networking::Status oldStatus = d->status;
 
     Q_FOREACH ( Network * net, d->networks ) {
         if ( net->status() > bestStatus )
@@ -139,7 +139,7 @@ QStringList NetworkStatusModule::networks()
 void NetworkStatusModule::setNetworkStatus( const QString & networkName, int st )
 {
     kDebug( 1222 ) << k_funcinfo << networkName << ", " << st << endl;
-    NetworkStatus::Status changedStatus = (NetworkStatus::Status)st;
+    Solid::Networking::Status changedStatus = (Solid::Networking::Status)st;
     if ( d->networks.contains( networkName ) ) {
       Network * net = d->networks[ networkName ];
         net->setStatus( changedStatus );
