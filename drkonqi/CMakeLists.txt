@@ -4,7 +4,7 @@ add_subdirectory( pics )
 add_subdirectory( debuggers ) 
 add_subdirectory( tests ) 
 
-
+include_directories(${CMAKE_CURRENT_BINARY_DIR}/..)
 
 ########### next target ###############
 
