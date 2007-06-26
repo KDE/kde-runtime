@@ -1,8 +1,8 @@
 project(KDEBASE_RUNTIME)
 
 #search packages used by KDE
-find_package(KDE4 REQUIRED)
-find_package(Strigi REQUIRED)
+#find_package(KDE4 REQUIRED)    // it's in kdebase... no need to search kde4 again 
+#find_package(Strigi REQUIRED)
 find_package(KdepimLibs REQUIRED)
 
 include (KDE4Defaults)
