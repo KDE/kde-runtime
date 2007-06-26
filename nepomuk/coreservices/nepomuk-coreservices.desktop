@@ -14,6 +14,7 @@ Name[zh_TW]=Nepomuk 核心服務
 Comment=The Nepomuk Core Services mainly consisting of the RDF Repository
 Comment[de]=Die Nepomuk-Basisdienste bestehen hauptsächlich aus dem RDF-Depot
 Comment[el]=Οι υπηρεσίες πυρήνα Nepomuk αποτελούνται κυρίως από το χώρο αποθήκευσης RDF
+Comment[ja]=主に RDF リポジトリから成る Nepomuk コアサービス
 Comment[nds]=De Nepomuk-Karndeensten, in de Hööftsaak dat RDF-Archiv
 Comment[nl]=De KNepomuk-kerndiensten bestaan voornamelijk uit de RDF-repository
 Comment[sv]=Nepomuks kärntjänster består i huvudsak av RDF-arkivet
