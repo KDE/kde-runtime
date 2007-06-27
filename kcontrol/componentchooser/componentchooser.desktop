@@ -14,6 +14,7 @@ Name=Default Applications
 Name[be]=Праграмы па змаўчанні
 Name[el]=Προκαθορισμένες εφαρμογές
 Name[es]=Aplicaciones predefinidas
+Name[ja]=標準アプリケーション
 Name[sv]=Standardprogram
 Name[zh_TW]=預設應用程式
 Comment=Choose the default components for various services
