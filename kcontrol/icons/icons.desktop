@@ -14,7 +14,6 @@ X-KDE-ParentApp=kcontrol
 
 Name=Icons
 Name[af]=Ikoone
-Name[ar]=الأيقونات
 Name[be]=Значкі
 Name[br]=Arlunioù
 Name[ca]=Icones
@@ -76,7 +75,6 @@ Name[zh_TW]=圖示
 
 Comment=Customize KDE Icons
 Comment[af]=Pasmaak Kde Ikoone
-Comment[ar]=تخصيص أيقونات KDE الإعتيادية
 Comment[be]=Настаўленні значак KDE
 Comment[br]=Neuziañ arlunioù KDE
 Comment[ca]=Configura les icones del KDE
@@ -137,7 +135,6 @@ Comment[xh]=Yenza Imphawu zomfanekiso ze KDE Ngokwemfuneko
 Comment[zh_TW]=自訂 KDE 圖示
 
 Keywords=icons,effects,size,hicolor,locolor
-Keywords[ar]=icons,effects,size,hicolor,locolor,أيقونات,تأثيرات,حجم لون عالي,لون مخفض,الحجم,التأثيرات,الأيقونات
 Keywords[be]=значка,значкі,эфекты,памер,кантраст,высокі кантраст,нізкі кантраст,icons,effects,size,hicolor,locolor
 Keywords[br]=arlunioù,efedoù,ment,liv,liv izel
 Keywords[ca]=icones,efectes,mida,hicolor,locolor
@@ -156,6 +153,7 @@ Keywords[fa]=شمایلها، جلوه‌ها، اندازه، پررنگ، کم
 Keywords[fi]=kuvakkeet,tehosteet,koko,korkeaväri,matalaväri
 Keywords[fr]=icônes,effets,taille,hicolor,locolor,coloré
 Keywords[fy]=iconen,byldkaikes,effekten,grutte,ôfmjiting,formaat,kleuren,hege,lege
+Keywords[ga]=deilbhíní,maisíochtaí,méid,ard-dath,ísealdath
 Keywords[gl]=iconas,efeitos,tamaño,moitas cores,poucas cores
 Keywords[he]=סמלים,אפקטים,גודל,צבע גבוה,צבע נמוך,icons,effects,size,hicolor,locolor
 Keywords[hr]=icons,effects,size,hicolor,locolor,ikone,efekti,veličina,boja

@@ -14,7 +14,6 @@ X-KDE-System-Settings-Parent-Category=regional-and-language
 
 Name=Country/Region & Language
 Name[af]=Land/Streek & Taal
-Name[ar]=البلد/المنطقة و اللغة
 Name[be]=Краіна/Рэгіён і Мова
 Name[br]=Bro/Rann-vro & yezh
 Name[ca]=País/Regió i idioma
@@ -76,7 +75,6 @@ Name[zh_TW]=國家/地區與語言
 
 Comment=Language, numeric, and time settings for your particular region
 Comment[af]=Taal, numeries, en tyd instellings vir jou spesifieke streek
-Comment[ar]=ضبط اللغة, و التقويم, و الأرقام الخاصة بمنطقتك
 Comment[be]=Моўныя, лічбавыя і часавыя настаўленні для вашага канкрэтнага рэгіёну
 Comment[br]=Kefluniadur yezh, sifroù hag eur evit ho rannved-c'hwi
 Comment[ca]=Arranjaments d'idioma, numèric i d'hora per a la vostra regió
