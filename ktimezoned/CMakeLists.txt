@@ -7,7 +7,7 @@ kde4_add_plugin(kded_ktimezoned ${kded_ktimezoned_SRCS})
 
 #qt4_add_dbus_adaptor(kded_ktimezoned_SRCS org.kde.KTimeZoned ktimezonedbus.h DBusHandler)
 
-target_link_libraries(kded_ktimezoned ${KDE4_KDECORE_LIBS} ${KDE4_KIO_LIBS})
+target_link_libraries(kded_ktimezoned ${KDE4_KIO_LIBS})
 
 install(TARGETS kded_ktimezoned DESTINATION ${PLUGIN_INSTALL_DIR})
 
