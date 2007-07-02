@@ -23,6 +23,8 @@
 #define SOLID_BLUETOOTHREMOTEDEVICE_H
 
 #include <QtCore/QObject>
+#include <QStringList>
+#include <QMap>
 
 #include <solid/control/bluetoothmanager.h>
 #include <solid/control/bluetoothinterface.h>
@@ -34,6 +36,22 @@ namespace Solid
 namespace Control
 {
 class BluetoothRemoteDevicePrivate;
+
+class BluetoothServiceRecord
+{
+	public:
+		QString state;
+		QString name;
+		QString handle;
+		QStringList serviceClasses;
+		QStringList langBaseAttributes;
+		
+		QStringList protocolDescriptors;
+		QMap<QString,QString> protocolChannels;
+		
+		QStringList profileDescriptors;
+		QMap<QString,QString> profileVersions;
+};
 
 /**
  * Represents a bluetooth remote device as seen by the bluetoothing subsystem.
@@ -70,6 +88,13 @@ public:
      * @return a reference to the bluetooth remote device
      */
     BluetoothRemoteDevice &operator=(const BluetoothRemoteDevice &device);
+
+    /**
+     * Checks for equality.
+     * @param other the bluetooth remote device to compare with this
+     * @return true if this->ubi() equals other.ubi(), false otherwise
+     */
+    bool operator==(const BluetoothRemoteDevice  & other) const;
 
     /**
      * Retrieves the Universal Bluetooth Identifier (UBI) of the remote device.
@@ -238,6 +263,7 @@ public Q_SLOTS:
      */
     void removeBonding();
 
+    void findServices(const QString &filter = QString());
 
 Q_SIGNALS:
     /**
@@ -296,6 +322,20 @@ Q_SIGNALS:
      */
     void bondingRemoved();
 
+    /**
+     * Service discovery has started
+     */
+    void serviceDiscoveryStarted(const QString &ubi);
+
+    /**
+     * A new service has been found
+     */
+    void remoteServiceFound(const QString &ubi, const Solid::Control::BluetoothServiceRecord &service);
+
+    /**
+     * Service discovery has finished
+     */
+    void serviceDiscoveryFinished(const QString &ubi);
 protected:
     BluetoothRemoteDevicePrivate *d_ptr;
 
