@@ -50,10 +50,10 @@ KDEDConfig::KDEDConfig(QWidget* parent, const QStringList &) :
 	KCModule( KDEDFactory::componentData(), parent )
 {
 	KAboutData *about =
-		new KAboutData( I18N_NOOP( "kcmkded" ), I18N_NOOP( "KDE Service Manager" ),
-				0, 0, KAboutData::License_GPL,
-				I18N_NOOP( "(c) 2002 Daniel Molkentin" ) );
-	about->addAuthor("Daniel Molkentin",0,"molkentin@kde.org");
+		new KAboutData( I18N_NOOP( "kcmkded" ), 0, ki18n( "KDE Service Manager" ),
+				0, KLocalizedString(), KAboutData::License_GPL,
+				ki18n( "(c) 2002 Daniel Molkentin" ) );
+	about->addAuthor(ki18n("Daniel Molkentin"),KLocalizedString(),"molkentin@kde.org");
 	setAboutData( about );
 
 	setQuickHelp( i18n("<h1>Service Manager</h1><p>This module allows you to have an overview of all plugins of the "

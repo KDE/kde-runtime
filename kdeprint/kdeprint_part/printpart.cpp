@@ -59,7 +59,7 @@ PrintPart::~PrintPart()
 
 KAboutData *PrintPart::createAboutData()
 {
-	return new KAboutData(I18N_NOOP("kdeprint_part"), I18N_NOOP("A Konqueror Plugin for Print Management"), "0.1");
+	return new KAboutData(I18N_NOOP("kdeprint_part"), 0, ki18n("A Konqueror Plugin for Print Management"), "0.1");
 }
 
 bool PrintPart::openFile()

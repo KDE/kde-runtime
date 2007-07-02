@@ -72,25 +72,24 @@ void KrashConfig :: readConfig()
   if ( !args->getOption( "apppath" ).isEmpty() )
     m_execname.prepend( args->getOption( "apppath" ) + '/' );
 
-  QByteArray programname = args->getOption("programname");
+  QString programname = args->getOption("programname");
   if (programname.isEmpty())
     programname = I18N_NOOP("unknown");
-  // leak some memory... Well. It's only done once anyway :-)
-  const char * progname = qstrdup(programname);
-  m_aboutData = new KAboutData(args->getOption("appname"),
-                               progname,
-                               args->getOption("appversion"),
-                               0, // shortDescription
+  m_aboutData = new KAboutData(args->getOption("appname").toUtf8(),
+                               0,
+                               ki18n(programname.toUtf8()),
+                               args->getOption("appversion").toUtf8(),
+                               KLocalizedString(), // shortDescription
                                KAboutData::License_Unknown,
-                               0, 0, 0,
-                               args->getOption("bugaddress"));
+                               KLocalizedString(), KLocalizedString(), 0,
+                               args->getOption("bugaddress").toUtf8());
 
-  QByteArray startup_id( args->getOption( "startupid" ));
+  QString startup_id( args->getOption( "startupid" ));
   if (!startup_id.isEmpty())
   { // stop startup notification
 #ifdef Q_WS_X11
     KStartupInfoId id;
-    id.initId( startup_id );
+    id.initId( startup_id.toLocal8Bit() );
     KStartupInfo::sendFinish( id );
 #endif
   }
@@ -155,7 +154,7 @@ void KrashConfig :: readConfig()
 void KrashConfig :: expandString(QString &str, bool shell, const QString &tempFile) const
 {
   QHash<QString,QString> map;
-  map[QLatin1String("appname")] = QString::fromLatin1(appName());
+  map[QLatin1String("appname")] = appName();
   map[QLatin1String("execname")] = startedByKdeinit() ? QString::fromLatin1("kdeinit") : m_execname;
   map[QLatin1String("signum")] = QString::number(signalNumber());
   map[QLatin1String("signame")] = signalName();

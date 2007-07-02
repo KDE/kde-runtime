@@ -26,19 +26,16 @@
 
 #include <knewstuff2/engine.h>
 
-static const KCmdLineOptions op[] =
-{
-	{"type <type>", I18N_NOOP("Display only media of this type"), 0},
-	{"+[providerlist]", I18N_NOOP("Provider list to use"), 0},
-	KCmdLineLastOption
-};
-
 int main(int argc, char **argv)
 {
-	KAboutData about("khotnewstuff", "KHotNewStuff", "0.2");
+	KAboutData about("khotnewstuff", 0, ki18n("KHotNewStuff"), "0.2");
 	KCmdLineArgs *args;
 
 	KCmdLineArgs::init(argc, argv, &about);
+
+	KCmdLineOptions op;
+	op.add("type <type>", ki18n("Display only media of this type"));
+	op.add("+[providerlist]", ki18n("Provider list to use"));
 	KCmdLineArgs::addCmdLineOptions(op);
 	args = KCmdLineArgs::parsedArgs();
 

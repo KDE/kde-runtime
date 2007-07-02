@@ -102,13 +102,13 @@ KControlApp::~KControlApp()
 extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])
 {
   KLocale::setMainCatalog("kcontrol");
-  KAboutData aboutKControl( "kcontrol", I18N_NOOP("KDE Control Center"),
-    KCONTROL_VERSION, I18N_NOOP("The KDE Control Center"), KAboutData::License_GPL,
-    I18N_NOOP("(c) 1998-2004, The KDE Control Center Developers"));
+  KAboutData aboutKControl( "kcontrol", 0, ki18n("KDE Control Center"),
+    KCONTROL_VERSION, ki18n("The KDE Control Center"), KAboutData::License_GPL,
+    ki18n("(c) 1998-2004, The KDE Control Center Developers"));
 
-  KAboutData aboutKInfoCenter( "kinfocenter", I18N_NOOP("KDE Info Center"),
-    KCONTROL_VERSION, I18N_NOOP("The KDE Info Center"), KAboutData::License_GPL,
-    I18N_NOOP("(c) 1998-2004, The KDE Control Center Developers"));
+  KAboutData aboutKInfoCenter( "kinfocenter", 0, ki18n("KDE Info Center"),
+    KCONTROL_VERSION, ki18n("The KDE Info Center"), KAboutData::License_GPL,
+    ki18n("(c) 1998-2004, The KDE Control Center Developers"));
 
   QByteArray argv_0 = argv[0];
   KAboutData *aboutData;
@@ -126,14 +126,14 @@ extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])
 
 
   if (argv_0.right(11) == "kinfocenter")
-    aboutData->addAuthor("Helge Deller", I18N_NOOP("Current Maintainer"), "deller@kde.org");
+    aboutData->addAuthor(ki18n("Helge Deller"), ki18n("Current Maintainer"), "deller@kde.org");
   else
-    aboutData->addAuthor("Daniel Molkentin", I18N_NOOP("Current Maintainer"), "molkentin@kde.org");
+    aboutData->addAuthor(ki18n("Daniel Molkentin"), ki18n("Current Maintainer"), "molkentin@kde.org");
 
-  aboutData->addAuthor("Matthias Hoelzer-Kluepfel",0, "hoelzer@kde.org");
-  aboutData->addAuthor("Matthias Elter",0, "elter@kde.org");
-  aboutData->addAuthor("Matthias Ettrich",0, "ettrich@kde.org");
-  aboutData->addAuthor("Waldo Bastian",0, "bastian@kde.org");
+  aboutData->addAuthor(ki18n("Matthias Hoelzer-Kluepfel"),KLocalizedString(), "hoelzer@kde.org");
+  aboutData->addAuthor(ki18n("Matthias Elter"),KLocalizedString(), "elter@kde.org");
+  aboutData->addAuthor(ki18n("Matthias Ettrich"),KLocalizedString(), "ettrich@kde.org");
+  aboutData->addAuthor(ki18n("Waldo Bastian"),KLocalizedString(), "bastian@kde.org");
 
   KCmdLineArgs::init( argc, argv, aboutData );
   KUniqueApplication::addCmdLineOptions();

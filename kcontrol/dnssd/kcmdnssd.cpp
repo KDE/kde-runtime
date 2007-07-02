@@ -53,9 +53,9 @@ KCMDnssd::KCMDnssd(QWidget *parent, const QStringList&)
 
     widget = new Ui_ConfigDialog();
     widget->setupUi(this);
-    setAboutData(new KAboutData(I18N_NOOP("kcm_kdnssd"),
-	                            I18N_NOOP("ZeroConf configuration"),0,0,KAboutData::License_GPL,
-	                            I18N_NOOP("(C) 2004-2007 Jakub Stachowski")));
+    setAboutData(new KAboutData(I18N_NOOP("kcm_kdnssd"), 0,
+	                            ki18n("ZeroConf configuration"),0,KLocalizedString(),KAboutData::License_GPL,
+	                            ki18n("(C) 2004-2007 Jakub Stachowski")));
 	setQuickHelp(i18n("Setup services browsing with ZeroConf"));
 	addConfig(DNSSD::Configuration::self(),this);
 	load();

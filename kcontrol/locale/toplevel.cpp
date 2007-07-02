@@ -50,14 +50,14 @@ KLocaleApplication::KLocaleApplication(QWidget *parent,
                                        const QStringList &args)
   : KCModule( KLocaleFactory::componentData(), parent, args)
 {
-  KAboutData* aboutData = new KAboutData("kcmlocale",
-        I18N_NOOP("KCMLocale"),
+  KAboutData* aboutData = new KAboutData("kcmlocale", 0,
+        ki18n("KCMLocale"),
         "3.0",
-        I18N_NOOP("Regional settings"),
+        ki18n("Regional settings"),
         KAboutData::License_GPL,
-        "(C) 1998 Matthias Hoelzer, "
-        "(C) 1999-2003 Hans Petter Bieker",
-        0, 0, "bieker@kde.org");
+        ki18n("(C) 1998 Matthias Hoelzer, "
+        "(C) 1999-2003 Hans Petter Bieker"),
+        KLocalizedString(), 0, "bieker@kde.org");
   setAboutData( aboutData );
 
   m_nullConfig = KSharedConfig::openConfig(QString(), KConfig::NoGlobals );

@@ -25,19 +25,17 @@
 #include <klocale.h>
 #include <stdlib.h>
 
-static KCmdLineOptions options[] = {
-	{ "d <printer-name>", I18N_NOOP("The printer for which jobs are requested"), 0 },
-	{ "noshow", I18N_NOOP("Show job viewer at startup"), 0},
-	{ "all", I18N_NOOP("Show jobs for all printers"), 0},
-        KCmdLineLastOption
-};
-
 
 extern "C" int KDE_EXPORT kdemain(int argc, char *argv[])
 {
-	KAboutData	aboutData("kjobviewer",I18N_NOOP("KJobViewer"),"0.1",I18N_NOOP("A print job viewer"),KAboutData::License_GPL,"(c) 2001, Michael Goffioul", 0, "http://printing.kde.org");
-	aboutData.addAuthor("Michael Goffioul",0,"kdeprint@swing.be");
+	KAboutData	aboutData("kjobviewer", 0,ki18n("KJobViewer"),"0.1",ki18n("A print job viewer"),KAboutData::License_GPL,ki18n("(c) 2001, Michael Goffioul"), KLocalizedString(), "http://printing.kde.org");
+	aboutData.addAuthor(ki18n("Michael Goffioul"),KLocalizedString(),"kdeprint@swing.be");
 	KCmdLineArgs::init(argc,argv,&aboutData);
+
+	KCmdLineOptions options;
+	options.add("d <printer-name>", ki18n("The printer for which jobs are requested"));
+	options.add("noshow", ki18n("Show job viewer at startup"));
+	options.add("all", ki18n("Show jobs for all printers"));
 	KCmdLineArgs::addCmdLineOptions(options);
 	KJobViewerApp::addCmdLineOptions();
 

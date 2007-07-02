@@ -34,24 +34,20 @@ static const char description[] =
 // INSERT A DESCRIPTION FOR YOUR APPLICATION HERE
 
 
-static KCmdLineOptions options[] =
-{
-  { "phone ", I18N_NOOP("Phone number to fax to"), 0 },
-  { "immediate", I18N_NOOP("Send fax immediately"), 0 },
-  { "batch", I18N_NOOP("Exit after sending"), 0 },
-  { "+[file]", I18N_NOOP("File to fax (added to the file list)"), 0 },
-   KCmdLineLastOption
-  // INSERT YOUR COMMANDLINE OPTIONS HERE
-};
-
 int main(int argc, char *argv[])
 {
 
-  KAboutData aboutData( "kdeprintfax", I18N_NOOP("KdeprintFax"),
-    "1.0", description, KAboutData::License_GPL,
-    "(c), 2001 Michael Goffioul", 0, "http://printing.kde.org");
-  aboutData.addAuthor("Michael Goffioul",0, "kdeprint@swing.be");
+  KAboutData aboutData( "kdeprintfax", 0, ki18n("KdeprintFax"),
+    "1.0", ki18n(description), KAboutData::License_GPL,
+    ki18n("(c), 2001 Michael Goffioul"), KLocalizedString(), "http://printing.kde.org");
+  aboutData.addAuthor(ki18n("Michael Goffioul"),KLocalizedString(), "kdeprint@swing.be");
   KCmdLineArgs::init( argc, argv, &aboutData );
+
+  KCmdLineOptions options;
+  options.add("phone ", ki18n("Phone number to fax to"));
+  options.add("immediate", ki18n("Send fax immediately"));
+  options.add("batch", ki18n("Exit after sending"));
+  options.add("+[file]", ki18n("File to fax (added to the file list)"));
   KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.
   KCmdLineArgs::addStdCmdLineOptions();
 

@@ -33,15 +33,15 @@
 
 int main(int argc, char **argv)
 {
-    KAboutData aboutdata("knotify", I18N_NOOP("KNotify"),
-                         "4.0", I18N_NOOP("KDE Notification Daemon"),
-                         KAboutData::License_GPL, "(C) 1997-2006, KDE Developers");
-    aboutdata.addAuthor("Olivier Goffart",I18N_NOOP("Current Maintainer"),"pfeiffer@kde.org");
-    aboutdata.addAuthor("Carsten Pfeiffer",I18N_NOOP("Previous Maintainer"),"pfeiffer@kde.org");
-    aboutdata.addAuthor("Christian Esken",0,"esken@kde.org");
-    aboutdata.addAuthor("Stefan Westerfeld",I18N_NOOP("Sound support"),"stefan@space.twc.de");
-    aboutdata.addAuthor("Charles Samuels",I18N_NOOP("Previous Maintainer"),"charles@kde.org");
-    aboutdata.addAuthor("Allan Sandfeld Jensen",I18N_NOOP("Porting to KDE 4"),"kde@carewolf.com");
+    KAboutData aboutdata("knotify", 0, ki18n("KNotify"),
+                         "4.0", ki18n("KDE Notification Daemon"),
+                         KAboutData::License_GPL, ki18n("(C) 1997-2006, KDE Developers"));
+    aboutdata.addAuthor(ki18n("Olivier Goffart"),ki18n("Current Maintainer"),"pfeiffer@kde.org");
+    aboutdata.addAuthor(ki18n("Carsten Pfeiffer"),ki18n("Previous Maintainer"),"pfeiffer@kde.org");
+    aboutdata.addAuthor(ki18n("Christian Esken"),KLocalizedString(),"esken@kde.org");
+    aboutdata.addAuthor(ki18n("Stefan Westerfeld"),ki18n("Sound support"),"stefan@space.twc.de");
+    aboutdata.addAuthor(ki18n("Charles Samuels"),ki18n("Previous Maintainer"),"charles@kde.org");
+    aboutdata.addAuthor(ki18n("Allan Sandfeld Jensen"),ki18n("Porting to KDE 4"),"kde@carewolf.com");
 
     KCmdLineArgs::init( argc, argv, &aboutdata );
     KUniqueApplication::addCmdLineOptions();

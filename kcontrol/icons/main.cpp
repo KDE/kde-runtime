@@ -57,13 +57,13 @@ IconModule::IconModule(QWidget *parent, const QStringList &)
   tab->addTab(tab2, i18n("Ad&vanced"));
   connect(tab2, SIGNAL(changed(bool)), this, SLOT(moduleChanged(bool)));
 
-  KAboutData* about = new KAboutData("kcmicons", I18N_NOOP("Icons"), "3.0",
-	      I18N_NOOP("Icons Control Panel Module"),
+  KAboutData* about = new KAboutData("kcmicons", 0, ki18n("Icons"), "3.0",
+	      ki18n("Icons Control Panel Module"),
 	      KAboutData::License_GPL,
- 	      I18N_NOOP("(c) 2000-2003 Geert Jansen"), 0, 0);
-  about->addAuthor("Geert Jansen", 0, "jansen@kde.org");
-  about->addAuthor("Antonio Larrosa Jimenez", 0, "larrosa@kde.org");
-  about->addCredit("Torsten Rahn", 0, "torsten@kde.org");
+ 	      ki18n("(c) 2000-2003 Geert Jansen"));
+  about->addAuthor(ki18n("Geert Jansen"), KLocalizedString(), "jansen@kde.org");
+  about->addAuthor(ki18n("Antonio Larrosa Jimenez"), KLocalizedString(), "larrosa@kde.org");
+  about->addCredit(ki18n("Torsten Rahn"), KLocalizedString(), "torsten@kde.org");
   setAboutData( about );
 }
 

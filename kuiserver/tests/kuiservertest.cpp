@@ -83,7 +83,7 @@ bool KJobTest::doSuspend()
 
 int main(int argc, char **argv)
 {
-    KCmdLineArgs::init(argc, argv, "kjobtest", "KJobTest", "A KJob tester", "0.01");
+    KCmdLineArgs::init(argc, argv, "kjobtest", 0, ki18n("KJobTest"), "0.01", ki18n("A KJob tester"));
 
     KApplication app;
 

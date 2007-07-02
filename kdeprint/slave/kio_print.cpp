@@ -132,8 +132,8 @@ int kdemain(int argc, char **argv)
 	}
 
 	/* create fake KApplicatiom object, needed for job stuffs */
-	KAboutData about( "kio_print", "kio_print", "fake_version",
-			"KDEPrint IO slave", KAboutData::License_GPL, "(c) 2003, Michael Goffioul" );
+	KAboutData about( "kio_print", 0, ki18n("kio_print"), "fake_version",
+			ki18n("KDEPrint IO slave"), KAboutData::License_GPL, ki18n("(c) 2003, Michael Goffioul") );
 	KCmdLineArgs::init( &about );
 	KApplication app;
 

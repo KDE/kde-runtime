@@ -41,11 +41,11 @@ KCMComponentChooser::KCMComponentChooser(QWidget *parent, const QStringList &):
 	setButtons( Help | Apply );
 
 	KAboutData *about =
-	new KAboutData(I18N_NOOP("kcmcomponentchooser"), I18N_NOOP("Component Chooser"),
-			0, 0, KAboutData::License_GPL,
-			I18N_NOOP("(c), 2002 Joseph Wenninger"));
+	new KAboutData(I18N_NOOP("kcmcomponentchooser"), 0, ki18n("Component Chooser"),
+			0, KLocalizedString(), KAboutData::License_GPL,
+			ki18n("(c), 2002 Joseph Wenninger"));
 
-	about->addAuthor("Joseph Wenninger", 0 , "jowenn@kde.org");
+	about->addAuthor(ki18n("Joseph Wenninger"), KLocalizedString() , "jowenn@kde.org");
 	setAboutData( about );
 
 }

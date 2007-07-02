@@ -67,21 +67,18 @@ QStringList readAreaList()
   return lst;
 }
 
-static KCmdLineOptions options[] =
-{
-  { "fullmode", I18N_NOOP("Show the fully-fledged dialog instead of the default list dialog"), 0 },
-  { "on <area>", /*I18N_NOOP TODO*/ "Turn area on", 0 },
-  { "off <area>", /*I18N_NOOP TODO*/ "Turn area off", 0 },
-  KCmdLineLastOption
-};
-
 int main(int argc, char ** argv)
 {
-  KAboutData data( "kdebugdialog", I18N_NOOP( "KDebugDialog"),
-    "1.0", I18N_NOOP("A dialog box for setting preferences for debug output"),
-    KAboutData::License_GPL, "(c) 1999-2000, David Faure <faure@kde.org>");
-  data.addAuthor("David Faure", I18N_NOOP("Maintainer"), "faure@kde.org");
+  KAboutData data( "kdebugdialog", 0, ki18n( "KDebugDialog"),
+    "1.0", ki18n("A dialog box for setting preferences for debug output"),
+    KAboutData::License_GPL, ki18n("(c) 1999-2000, David Faure <faure@kde.org>"));
+  data.addAuthor(ki18n("David Faure"), ki18n("Maintainer"), "faure@kde.org");
   KCmdLineArgs::init( argc, argv, &data );
+
+  KCmdLineOptions options;
+  options.add("fullmode", ki18n("Show the fully-fledged dialog instead of the default list dialog"));
+  options.add("on <area>", ki18n(/*I18N_NOOP TODO*/ "Turn area on"));
+  options.add("off <area>", ki18n(/*I18N_NOOP TODO*/ "Turn area off"));
   KCmdLineArgs::addCmdLineOptions( options );
   KUniqueApplication::addCmdLineOptions();
   KUniqueApplication app;
@@ -96,13 +93,13 @@ int main(int argc, char ** argv)
       KListDebugDialog * listdialog = new KListDebugDialog(areaList, 0L);
       if (args->isSet("on"))
       {
-          listdialog->activateArea( args->getOption("on"), true );
+          listdialog->activateArea( args->getOption("on").toUtf8(), true );
           /*listdialog->save();
           listdialog->config()->sync();
           return 0;*/
       } else if ( args->isSet("off") )
       {
-          listdialog->activateArea( args->getOption("off"), false );
+          listdialog->activateArea( args->getOption("off").toUtf8(), false );
           /*listdialog->save();
           listdialog->config()->sync();
           return 0;*/

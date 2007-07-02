@@ -97,13 +97,13 @@ K_EXPORT_COMPONENT_FACTORY( knotify, NotifyFactory("kcmnotify") )
              SLOT( slotAppActivated( const QString& )) );
 
     KAboutData* ab = new KAboutData(
-        "kcmknotify", I18N_NOOP("KNotify"), "4.0",
-        I18N_NOOP("System Notification Control Panel Module"),
-        KAboutData::License_GPL, "(c) 2002-2006 KDE Team", 0, 0 );
+        "kcmknotify", 0, ki18n("KNotify"), "4.0",
+        ki18n("System Notification Control Panel Module"),
+        KAboutData::License_GPL, ki18n("(c) 2002-2006 KDE Team"));
 
-	ab->addAuthor( "Olivier Goffart", 0, "ogoffart@kde.org" );
-    ab->addAuthor( "Carsten Pfeiffer", 0, "pfeiffer@kde.org" );
-    ab->addCredit( "Charles Samuels", I18N_NOOP("Original implementation"),
+	ab->addAuthor( ki18n("Olivier Goffart"), KLocalizedString(), "ogoffart@kde.org" );
+    ab->addAuthor( ki18n("Carsten Pfeiffer"), KLocalizedString(), "pfeiffer@kde.org" );
+    ab->addCredit( ki18n("Charles Samuels"), ki18n("Original implementation"),
 	       "charles@altair.dhs.org" );
     setAboutData( ab );
 

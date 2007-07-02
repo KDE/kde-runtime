@@ -44,7 +44,7 @@ public:
 
 public Q_SLOTS:
   QString programName() const { return m_aboutData->programName(); }
-  QByteArray appName() const { return m_aboutData->appName(); }
+  QString appName() const { return m_aboutData->appName(); }
   int signalNumber() const { return m_signalnum; }
   int pid() const { return m_pid; }
   bool startedByKdeinit() const { return m_startedByKdeinit; }

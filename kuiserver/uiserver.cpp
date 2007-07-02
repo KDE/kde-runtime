@@ -413,15 +413,14 @@ int UIServer::s_jobId = 0;
 
 extern "C" KDE_EXPORT int kdemain(int argc, char **argv)
 {
-    KLocale::setMainCatalog("kdelibs");
     //  GS 5/2001 - I changed the name to "KDE" to make it look better
     //              in the titles of dialogs which are displayed.
-    KAboutData aboutdata("kuiserver", I18N_NOOP("Progress Manager"),
-                         "0.8", I18N_NOOP("KDE Progress Information UI Server"),
-                         KAboutData::License_GPL, "(C) 2000-2005, David Faure & Matt Koss");
-    aboutdata.addAuthor("David Faure",I18N_NOOP("Maintainer"),"faure@kde.org");
-    aboutdata.addAuthor("Matej Koss",I18N_NOOP("Developer"),"koss@miesto.sk");
-    aboutdata.addAuthor("Rafael Fernández López",I18N_NOOP("Developer"),"ereslibre@gmail.com");
+    KAboutData aboutdata("kuiserver", "kdelibs", ki18n("Progress Manager"),
+                         "0.8", ki18n("KDE Progress Information UI Server"),
+                         KAboutData::License_GPL, ki18n("(C) 2000-2005, David Faure & Matt Koss"));
+    aboutdata.addAuthor(ki18n("David Faure"),ki18n("Maintainer"),"faure@kde.org");
+    aboutdata.addAuthor(ki18n("Matej Koss"),ki18n("Developer"),"koss@miesto.sk");
+    aboutdata.addAuthor(ki18n("Rafael Fernández López"),ki18n("Developer"),"ereslibre@gmail.com");
 
     KCmdLineArgs::init( argc, argv, &aboutdata );
     // KCmdLineArgs::addCmdLineOptions( options );

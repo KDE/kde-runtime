@@ -87,13 +87,13 @@ KCMIOSlaveInfo::KCMIOSlaveInfo(QWidget *parent, const QStringList &)
    setButtons(KCModule::Help);
 
    KAboutData *about =
-   new KAboutData(I18N_NOOP("kcmioslaveinfo"),
-	I18N_NOOP("KDE Panel System Information Control Module"),
-	0, 0, KAboutData::License_GPL,
-    	I18N_NOOP("(c) 2001 - 2002 Alexander Neundorf"));
+   new KAboutData(I18N_NOOP("kcmioslaveinfo"), 0,
+	ki18n("KDE Panel System Information Control Module"),
+	0, KLocalizedString(), KAboutData::License_GPL,
+    	ki18n("(c) 2001 - 2002 Alexander Neundorf"));
 
-   about->addAuthor("Alexander Neundorf", 0, "neundorf@kde.org");
-   about->addAuthor("George Staikos", 0, "staikos@kde.org");
+   about->addAuthor(ki18n("Alexander Neundorf"), KLocalizedString(), "neundorf@kde.org");
+   about->addAuthor(ki18n("George Staikos"), KLocalizedString(), "staikos@kde.org");
    setAboutData( about );
 
 }

@@ -41,21 +41,6 @@
 static const char version[] = "1.0";
 static const char description[] = I18N_NOOP( "KDE crash handler gives the user feedback if a program crashed" );
 
-static const KCmdLineOptions options[] =
-{
-  {"signal <number>", I18N_NOOP("The signal number that was caught"), 0},
-  {"appname <name>", I18N_NOOP("Name of the program"), 0},
-  {"apppath <path>", I18N_NOOP("Path to the executable"), 0},
-  {"appversion <version>", I18N_NOOP("The version of the program"), 0},
-  {"bugaddress <address>", I18N_NOOP("The bug address to use"), 0},
-  {"programname <name>", I18N_NOOP("Translated name of the program"), 0},
-  {"pid <pid>", I18N_NOOP("The PID of the program"), 0},
-  {"startupid <id>", I18N_NOOP("Startup ID of the program"), 0},
-  {"kdeinit", I18N_NOOP("The program was started by kdeinit"), 0},
-  {"safer", I18N_NOOP("Disable arbitrary disk access"), 0},
-  KCmdLineLastOption
-};
-
 int main( int argc, char* argv[] )
 {
 #ifndef Q_OS_WIN
@@ -69,15 +54,27 @@ int main( int argc, char* argv[] )
   setenv("KDE_DEBUG", "true", 1);
   unsetenv("SESSION_MANAGER");
 
-  KAboutData aboutData( "drkonqi",
-                        I18N_NOOP("The KDE Crash Handler"),
+  KAboutData aboutData( "drkonqi", 0,
+                        ki18n("The KDE Crash Handler"),
                         version,
-                        description,
+                        ki18n(description),
                         KAboutData::License_BSD,
-                        "(C) 2000-2003, Hans Petter Bieker");
-  aboutData.addAuthor("Hans Petter Bieker", 0, "bieker@kde.org");
+                        ki18n("(C) 2000-2003, Hans Petter Bieker"));
+  aboutData.addAuthor(ki18n("Hans Petter Bieker"), KLocalizedString(), "bieker@kde.org");
 
   KCmdLineArgs::init(argc, argv, &aboutData);
+
+  KCmdLineOptions options;
+  options.add("signal <number>", ki18n("The signal number that was caught"));
+  options.add("appname <name>", ki18n("Name of the program"));
+  options.add("apppath <path>", ki18n("Path to the executable"));
+  options.add("appversion <version>", ki18n("The version of the program"));
+  options.add("bugaddress <address>", ki18n("The bug address to use"));
+  options.add("programname <name>", ki18n("Translated name of the program"));
+  options.add("pid <pid>", ki18n("The PID of the program"));
+  options.add("startupid <id>", ki18n("Startup ID of the program"));
+  options.add("kdeinit", ki18n("The program was started by kdeinit"));
+  options.add("safer", ki18n("Disable arbitrary disk access"));
   KCmdLineArgs::addCmdLineOptions( options );
 
   //KApplication::disableAutoDcopRegistration();

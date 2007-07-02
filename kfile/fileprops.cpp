@@ -130,47 +130,6 @@ QStringList FileProps::createKeyValueList( const KFileMetaInfoItemList& items )
 
 // kfile --mimetype --listsupported --listavailable --listwritable --getValue "key" --setValue "key=value" --allValues --dialog --quiet file [file...]
 // "key" may be a list of keys, separated by commas
-static KCmdLineOptions options[] =
-{
-    { "m", 0, 0 }, // short option for --mimetype
-    { "nomimetype", I18N_NOOP("Do not print the mimetype of the given file(s)"), 0 },
-
-    { "ls", 0, 0 }, // short option for --listsupported
-    { "listsupported",
-      I18N_NOOP("List all supported metadata keys." ), 0 },
-
-    { "la", 0, 0 }, // short option for --listavailable
-    { "listavailable",
-      I18N_NOOP("List all metadata keys which have a value in the given "
-                "file(s)."), 0 },
-
-    { "q", 0, 0 }, // short option for --quiet
-    { "quiet",
-      I18N_NOOP("Do not print a warning when more than one file was given "
-                "and they do not all have the same mimetype."), 0 },
-
-    { "av", 0, 0 }, // short option for --allValues
-    { "allValues",
-      I18N_NOOP("Prints all metadata values, available in the given "
-                "file(s)."), 0 },
-
-    { "dialog",
-      I18N_NOOP("Opens a KDE properties dialog to allow viewing and "
-                "modifying of metadata of the given file(s)"), 0 },
-
-    { "getValue <key>",
-      I18N_NOOP("Prints the value for 'key' of the given file(s). 'key' "
-                "may also be a comma-separated list of keys"), 0 },
-
-    { "setValue <key=value>",
-      I18N_NOOP("Attempts to set the value 'value' for the metadata key "
-                "'key' for the given file(s)"), 0 },
-
-    { "+[files]",
-      I18N_NOOP("The file (or a number of files) to operate on."), 0 },
-    KCmdLineLastOption
-};
-
 
 //
 // helper functions
@@ -243,14 +202,14 @@ static void processMetaDataOptions( const QList<FileProps *> propList,
         if ( args->isSet( "getValue" ) )
         {
             kDebug() << "=Value=" << endl;
-            QString key = QString::fromLocal8Bit( args->getOption("getValue"));
+            QString key = args->getOption("getValue");
             kDebug() << props->getValue( key ).toLocal8Bit() << endl;
         }
 
         if ( args->isSet( "setValue" ) )
         {
             // separate key and value from the line "key=value"
-            QString cmd = QString::fromLocal8Bit( args->getOption("setValue"));
+            QString cmd = args->getOption("setValue");
             QString key = cmd.section( '=', 0, 0 );
             QString value = cmd.section( '=', 1 );
 
@@ -269,17 +228,40 @@ static void processMetaDataOptions( const QList<FileProps *> propList,
 int main( int argc, char **argv )
 {
     KAboutData about(
-	  "kfile", I18N_NOOP( "kfile" ), KFILEVERSION,
-	  I18N_NOOP("A commandline tool to read and modify metadata of files."),
-	  KAboutData::License_LGPL, "(c) 2002, Carsten Pfeiffer",
-	  0 /*text*/, "http://devel-home.kde.org/~pfeiffer/",
+	  "kfile", 0, ki18n( "kfile" ), KFILEVERSION,
+	  ki18n("A commandline tool to read and modify metadata of files."),
+	  KAboutData::License_LGPL, ki18n("(c) 2002, Carsten Pfeiffer"),
+	  ki18n(0 /*text*/), "http://devel-home.kde.org/~pfeiffer/",
 	  "pfeiffer@kde.org" );
 
-    about.addAuthor( "Carsten Pfeiffer", 0, "pfeiffer@kde.org",
+    about.addAuthor( ki18n("Carsten Pfeiffer"), KLocalizedString(), "pfeiffer@kde.org",
 		     "http://devel-home.kde.org/~pfeiffer/" );
 
     KCmdLineArgs::init( argc, argv, &about );
 
+
+    KCmdLineOptions options;
+
+    options.add("m"); // short option for --mimetype
+    options.add("nomimetype", ki18n("Do not print the mimetype of the given file(s)"));
+    options.add("ls"); // short option for --listsupported
+    options.add("listsupported", ki18n("List all supported metadata keys." ));
+    options.add("la"); // short option for --listavailable
+    options.add("listavailable", ki18n("List all metadata keys which have a value in the given "
+                "file(s)."));
+    options.add("q"); // short option for --quiet
+    options.add("quiet", ki18n("Do not print a warning when more than one file was given "
+                "and they do not all have the same mimetype."));
+    options.add("av"); // short option for --allValues
+    options.add("allValues", ki18n("Prints all metadata values, available in the given "
+                "file(s)."));
+    options.add("dialog", ki18n("Opens a KDE properties dialog to allow viewing and "
+                "modifying of metadata of the given file(s)"));
+    options.add("getValue <key>", ki18n("Prints the value for 'key' of the given file(s). 'key' "
+                "may also be a comma-separated list of keys"));
+    options.add("setValue <key=value>", ki18n("Attempts to set the value 'value' for the metadata key "
+                "'key' for the given file(s)"));
+    options.add("+[files]", ki18n("The file (or a number of files) to operate on."));
     KCmdLineArgs::addCmdLineOptions( options );
 
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
@@ -293,7 +275,7 @@ int main( int argc, char **argv )
 
     int files = args->count();
     if ( files == 0 ) {
-        KCmdLineArgs::usage( i18n("No files specified") ); // exit()s
+        KCmdLineArgs::usageError( i18n("No files specified") ); // exit()s
     }
 
     if ( args->isSet( "dialog" ) ) {

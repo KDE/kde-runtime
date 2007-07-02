@@ -22,23 +22,21 @@
 
 static const char* version = "0.9";
 static const char* description = I18N_NOOP( "Nepomuk Core Services including the RDF Repository" );
-static const KCmdLineOptions options[] = {
-    KCmdLineLastOption
-};
-
 
 int main( int argc, char** argv )
 {
-    KAboutData aboutData( "nepomukcoreservices",
-                          I18N_NOOP("The Nepomuk Core Services"),
+    KAboutData aboutData( "nepomukcoreservices", 0,
+                          ki18n("The Nepomuk Core Services"),
                           version,
-                          description,
+                          ki18n(description),
                           KAboutData::License_GPL,
-                          "(C) 2007, Sebastian Trüg");
-    aboutData.addAuthor("Sebastian Trüg", 0, "trueg@kde.org");
-    aboutData.addAuthor("Daniele Galdi", 0, "daniele.galdi@gmail.com" );
+                          ki18n("(C) 2007, Sebastian Trüg"));
+    aboutData.addAuthor(ki18n("Sebastian Trüg"), KLocalizedString(), "trueg@kde.org");
+    aboutData.addAuthor(ki18n("Daniele Galdi"), KLocalizedString(), "daniele.galdi@gmail.com" );
 
     KCmdLineArgs::init( argc, argv, &aboutData );
+
+    KCmdLineOptions options;
     KCmdLineArgs::addCmdLineOptions( options );
 
     KApplication app( false ); // no need for a GUI

@@ -34,16 +34,6 @@
 #include "klauncher_iface.h"
 #include <ksycoca.h>
 
-static KCmdLineOptions options[] = {
-   { "utf8", I18N_NOOP("Output data in UTF-8 instead of local encoding"), 0 },
-   { "print-menu-id", I18N_NOOP("Print menu-id of the menu that contains\nthe application"), 0 },
-   { "print-menu-name", I18N_NOOP("Print menu name (caption) of the menu that\ncontains the application"), 0 },
-   { "highlight", I18N_NOOP("Highlight the entry in the menu"), 0 },
-   { "nocache-update", I18N_NOOP("Do not check if sycoca database is up to date"), 0 },
-   { "+<application-id>", I18N_NOOP("The id of the menu entry to locate"), 0 },
-   KCmdLineLastOption
-};
-
 static const char appName[] = "kde-menu";
 static const char appVersion[] = "1.0";
 static bool utf8;
@@ -111,18 +101,25 @@ static void findMenuEntry(KServiceGroup::Ptr parent, const QString &name, const 
 
 int main(int argc, char **argv)
 {
-   KLocale::setMainCatalog("kdelibs");
    const char *description = I18N_NOOP("KDE Menu query tool.\n"
    "This tool can be used to find in which menu a specific application is shown.\n"
    "The --highlight option can be used to visually indicate to the user where\n"
    "in the KDE menu a specific application is located.");
 
-   KAboutData d(appName, I18N_NOOP("kde-menu"), appVersion,
-                description,
-                KAboutData::License_GPL, "(c) 2003 Waldo Bastian");
-   d.addAuthor("Waldo Bastian", I18N_NOOP("Author"), "bastian@kde.org");
+   KAboutData d(appName, "kdelibs", ki18n("kde-menu"), appVersion,
+                ki18n(description),
+                KAboutData::License_GPL, ki18n("(c) 2003 Waldo Bastian"));
+   d.addAuthor(ki18n("Waldo Bastian"), ki18n("Author"), "bastian@kde.org");
 
    KCmdLineArgs::init(argc, argv, &d);
+
+   KCmdLineOptions options;
+   options.add("utf8", ki18n("Output data in UTF-8 instead of local encoding"));
+   options.add("print-menu-id", ki18n("Print menu-id of the menu that contains\nthe application"));
+   options.add("print-menu-name", ki18n("Print menu name (caption) of the menu that\ncontains the application"));
+   options.add("highlight", ki18n("Highlight the entry in the menu"));
+   options.add("nocache-update", ki18n("Do not check if sycoca database is up to date"));
+   options.add("+<application-id>", ki18n("The id of the menu entry to locate"));
    KCmdLineArgs::addCmdLineOptions(options);
 
 //   KApplication k(false, false);
@@ -134,7 +131,7 @@ int main(int argc, char **argv)
 
    KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
    if (args->count() != 1)
-      KCmdLineArgs::usage(i18n("You must specify an application-id such as 'kde4-konsole.desktop'"));
+      KCmdLineArgs::usageError(i18n("You must specify an application-id such as 'kde4-konsole.desktop'"));
 
    utf8 = args->isSet("utf8");
 
@@ -143,7 +140,7 @@ int main(int argc, char **argv)
    bHighlight = args->isSet("highlight");
 
    if (!bPrintMenuId && !bPrintMenuName && !bHighlight)
-      KCmdLineArgs::usage(i18n("You must specify at least one of --print-menu-id, --print-menu-name or --highlight"));
+      KCmdLineArgs::usageError(i18n("You must specify at least one of --print-menu-id, --print-menu-name or --highlight"));
 
    if (args->isSet("cache-update"))
    {
@@ -161,7 +158,7 @@ int main(int argc, char **argv)
       }
    }
 
-   QString menuId = QFile::decodeName(args->arg(0));
+   QString menuId = args->arg(0);
    KService::Ptr s = KService::serviceByMenuId(menuId);
 
    if (!s)

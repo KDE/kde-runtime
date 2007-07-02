@@ -51,10 +51,10 @@ KCMPrintMgr::KCMPrintMgr(QWidget *parent, const QStringList &)
 	main_->activate();
 	
 	KAboutData *about =
-	  new KAboutData(I18N_NOOP("kcmprintmgr"), I18N_NOOP("KDE Printing Management"),
-                  0, 0, KAboutData::License_GPL,
-                  I18N_NOOP("(c) 2000 - 2002 Michael Goffioul"));
-	about->addAuthor("Michael Goffioul", 0, "kdeprint@swing.be");
+	  new KAboutData(I18N_NOOP("kcmprintmgr"), 0, ki18n("KDE Printing Management"),
+                  0, KLocalizedString(), KAboutData::License_GPL,
+                  ki18n("(c) 2000 - 2002 Michael Goffioul"));
+	about->addAuthor(ki18n("Michael Goffioul"), KLocalizedString(), "kdeprint@swing.be");
 	setAboutData(about);
 }
 
