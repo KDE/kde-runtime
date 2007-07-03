@@ -41,7 +41,7 @@
 #include <kstandarddirs.h>
 #include <kbugreport.h>
 #include <kmessagebox.h>
-#include <k3process.h>
+#include <kprocess.h>
 #include <kapplication.h>
 #include <khbox.h>
 #include <KTabWidget>
@@ -192,10 +192,9 @@ void Toplevel :: slotUser2()
   QString str = m_krashconf->debugger();
   m_krashconf->expandString(str, true);
 
-  K3Process proc;
-  proc.setUseShell(true);
-  proc << str;
-  proc.start(K3Process::DontCare);
+  KProcess proc;
+  proc.setShellCommand(str);
+  proc.startDetached();
 }
 
 void Toplevel :: slotNewDebuggingApp(const QString& launchName)
