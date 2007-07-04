@@ -90,15 +90,17 @@ KLocaleConfigMoney::KLocaleConfigMoney(KLocale *locale,
   QVBoxLayout *vboxLayout1 = new QVBoxLayout(vbox);
   vbox->setLayout(vboxLayout1);
   lay->addWidget(vbox, 4, 0, 1, 2 );
-  Q3GroupBox *vgrp;
-  vgrp = new Q3GroupBox( 1, Qt::Horizontal, vbox, I18N_NOOP("Positive") );
+  QGroupBox *vgrp = new QGroupBox( i18n("Positive"), vbox );
+  QVBoxLayout* vgrpLayout = new QVBoxLayout;
   m_chMonPosPreCurSym = new QCheckBox(vgrp);
+  vgrpLayout->addWidget(m_chMonPosPreCurSym);
   m_chMonPosPreCurSym->setObjectName(I18N_NOOP("Prefix currency symbol"));
   connect( m_chMonPosPreCurSym, SIGNAL( clicked() ),
            SLOT( slotMonPosPreCurSymChanged() ) );
 
   QWidget *hbox;
   hbox = new QWidget(vgrp );
+  vgrpLayout->addWidget(hbox);
   QHBoxLayout *hboxLayout1 = new QHBoxLayout(hbox);
   hbox->setLayout(hboxLayout1);
   m_labMonPosMonSignPos = new QLabel(hbox);
@@ -108,13 +110,18 @@ KLocaleConfigMoney::KLocaleConfigMoney(KLocale *locale,
   connect( m_cmbMonPosMonSignPos, SIGNAL( activated(int) ),
            SLOT( slotMonPosMonSignPosChanged(int) ) );
 
-  vgrp = new Q3GroupBox(  1, Qt::Horizontal, vbox, I18N_NOOP("Negative") );
+  vgrp->setLayout(vgrpLayout);
+  vgrp = new QGroupBox( i18n("Negative"), vbox );
+  vgrpLayout = new QVBoxLayout;
   m_chMonNegPreCurSym = new QCheckBox(vgrp);
+  vgrpLayout->addWidget(m_chMonNegPreCurSym);
   m_chMonNegPreCurSym->setObjectName(I18N_NOOP("Prefix currency symbol"));
   connect( m_chMonNegPreCurSym, SIGNAL( clicked() ),
            SLOT( slotMonNegPreCurSymChanged() ) );
 
   hbox = new QWidget(vgrp );
+  vgrpLayout->addWidget(hbox);
+  vgrp->setLayout(vgrpLayout);
   QHBoxLayout *hboxLayout2 = new QHBoxLayout(hbox);
   hbox->setLayout(hboxLayout2);
   m_labMonNegMonSignPos = new QLabel(hbox);
