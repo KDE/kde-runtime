@@ -1,5 +1,4 @@
 
-project(kdeprint_part)
 
 add_definitions(-D_KDEPRINT_COMPILE)
 

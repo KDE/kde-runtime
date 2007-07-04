@@ -1,4 +1,3 @@
-project(nepomukdaemon)
 
 include_directories(
   ${QT_INCLUDES}

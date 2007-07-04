@@ -1,5 +1,4 @@
 
-project(kioslave-print)
 
 add_definitions(-D_KDEPRINT_COMPILE)
 add_subdirectory( templates ) 

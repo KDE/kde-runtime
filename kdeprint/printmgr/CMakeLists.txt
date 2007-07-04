@@ -1,5 +1,4 @@
 
-project(printmgr)
 
 add_definitions(-D_KDEPRINT_COMPILE)
 

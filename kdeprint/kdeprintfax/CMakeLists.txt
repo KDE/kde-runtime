@@ -1,5 +1,4 @@
 
-project(kdeprintfax)
 
 
 add_definitions (-DQT3_SUPPORT)

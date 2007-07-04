@@ -1,4 +1,3 @@
-project(NepomukCoreServices)
 
 include_directories(
   ${QT_INCLUDES}

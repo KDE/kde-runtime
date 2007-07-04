@@ -1,5 +1,4 @@
 
-project(knewstuff)
 
 include_directories( ${KDE4_KIO_INCLUDES} )
 
