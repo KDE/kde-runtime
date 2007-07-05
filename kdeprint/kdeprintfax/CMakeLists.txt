@@ -22,7 +22,7 @@ kde4_automoc(${kdeprintfax_SRCS})
 
 kde4_add_executable(kdeprintfax ${kdeprintfax_SRCS})
 
-target_link_libraries(kdeprintfax  ${KDE4_KIO_LIBS} ${KDE4_KDEPRINT_LIBS} ${KDE4_KABC_LIBS} ${KDE4_KDE3SUPPORT_LIBS} )
+target_link_libraries(kdeprintfax   ${KDE4_KDEPRINT_LIBS} ${KDE4_KABC_LIBS} ${KDE4_KDE3SUPPORT_LIBS} )
 
 install(TARGETS kdeprintfax DESTINATION ${BIN_INSTALL_DIR})
 
