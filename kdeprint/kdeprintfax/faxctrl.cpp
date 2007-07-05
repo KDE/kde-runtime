@@ -122,7 +122,7 @@ static QString replaceTags( const QString& s, const QString& tags, KdeprintFax *
 
 	QStack<bool> stack;
 	KSharedConfig::Ptr conf = KGlobal::config();
-
+	KConfigGroup group;
 	QString cmd = s;
 
 	bool issinglequote=false;
@@ -208,14 +208,14 @@ static QString replaceTags( const QString& s, const QString& tags, KdeprintFax *
 			// settings
 			if ( isTag( match, "%dev" ) )
 			{
-				conf->setGroup("Fax");
-				v = processTag( match, conf->readEntry("Device", "modem") );
+				group = conf->group("Fax");
+				v = processTag( match, group.readEntry("Device", "modem") );
 
 			}
 			else if (isTag( match, "%server" ))
 			{
-				conf->setGroup( "Fax" );
-				v = conf->readEntry("Server");
+				group = conf->group( "Fax" );
+				v = group.readEntry("Server");
 				if (v.isEmpty())
 					v = getenv("FAXSERVER");
 				if (v.isEmpty())
@@ -224,26 +224,26 @@ static QString replaceTags( const QString& s, const QString& tags, KdeprintFax *
 			}
 			else if (isTag( match, "%page" ))
 			{
-				conf->setGroup( "Fax" );
-				v = processTag( match, conf->readEntry( "Page", KGlobal::locale()->pageSize() == QPrinter::A4 ? "a4" : "letter" ) );
+				group = conf->group( "Fax" );
+				v = processTag( match, group.readEntry( "Page", KGlobal::locale()->pageSize() == QPrinter::A4 ? "a4" : "letter" ) );
 			}
 			else if (match == "%res" )
 			{
-				conf->setGroup( "Fax" );
-				if (conf->readEntry("Resolution", "High") == "High")
+				group = conf->group( "Fax" );
+				if (group.readEntry("Resolution", "High") == "High")
 					v ="";
 				else
 					v = "-l";
 			}
 			else if (isTag( match, "%user" ))
 			{
-				conf->setGroup("Personal");
-				v = processTag(match, conf->readEntry("Name", QString::fromLocal8Bit(getenv("USER"))));
+				group = conf->group("Personal");
+				v = processTag(match, group.readEntry("Name", QString::fromLocal8Bit(getenv("USER"))));
 			}
 			else if (isTag( match, "%from" ))
 			{
-				conf->setGroup( "Personal" );
-				v = processTag(match, conf->readEntry("Number"));
+				group = conf->group( "Personal" );
+				v = processTag(match,group.readEntry("Number"));
 			}
 			else if (isTag( match, "%email" ))
 			{
@@ -458,6 +458,7 @@ void FaxCtrl::viewLog(QWidget *)
     topView->setObjectName( "LogView" );
 		m_logview = new KTextEdit(topView);
 		m_logview->setAcceptRichText( false );
+		m_logview->setReadOnly(true);
 		QPalette tempPalette( m_logview->viewport()->palette() );
 		tempPalette.setBrush( QPalette::Background, Qt::white );
 		m_logview->viewport()->setPalette( tempPalette );
