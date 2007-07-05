@@ -83,7 +83,7 @@ bool Nepomuk::CoreServices::DaemonImpl::registerServices()
     Soprano::ResultSet res = d->system->executeQuery( query );
 
     while( res.next() ) {
-        QString modelId = res.binding( "modelId" ).literal();
+        QString modelId = res.binding( "modelId" ).literal().toString();
         if ( !d->resolver.contains( modelId ) ) {
             KStandardDirs::makeDir( storagePath + modelId );
             d->resolver.insert( modelId, Soprano::createModel( modelId,
