@@ -88,8 +88,7 @@ void CfgComponent::load(KConfig *cfg) {
 
 	QString ServiceTypeToConfigure=cfg->readEntry("ServiceTypeToConfigure");
 
-	QString MimeTypeOfInterest=cfg->readEntry("MimeTypeOfInterest");
-	KService::List offers = KServiceTypeTrader::self()->query(MimeTypeOfInterest, '\''+ServiceTypeToConfigure+"' in ServiceTypes");
+	KService::List offers = KServiceTypeTrader::self()->query(ServiceTypeToConfigure);
 
 	for (KService::List::Iterator tit = offers.begin(); tit != offers.end(); ++tit)
         {
