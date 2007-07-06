@@ -174,7 +174,7 @@ void SearchWidget::populateKeyListBox(const QString& s)
         matches.append(k->moduleName().trimmed());
     }
 
-  for(QStringList::ConstIterator it = matches.begin(); it != matches.end(); it++)
+  for(QStringList::ConstIterator it = matches.begin(); it != matches.end(); ++it)
     _keyList->addItem(*it);
 
   _keyList->model()->sort(0);
