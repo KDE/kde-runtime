@@ -41,7 +41,7 @@
 #include <ktoolinvocation.h>
 #include <klauncher_iface.h>
 #include <kconfiggroup.h>
-
+#include <KServiceTypeTrader>
 
 class MyListBoxItem: public QListWidgetItem
 {
@@ -89,7 +89,7 @@ void CfgComponent::load(KConfig *cfg) {
 	QString ServiceTypeToConfigure=cfg->readEntry("ServiceTypeToConfigure");
 
 	QString MimeTypeOfInterest=cfg->readEntry("MimeTypeOfInterest");
-	KService::List offers = KMimeTypeTrader::self()->query(MimeTypeOfInterest, '\''+ServiceTypeToConfigure+"' in ServiceTypes");
+	KService::List offers = KServiceTypeTrader::self()->query(MimeTypeOfInterest, '\''+ServiceTypeToConfigure+"' in ServiceTypes");
 
 	for (KService::List::Iterator tit = offers.begin(); tit != offers.end(); ++tit)
         {
