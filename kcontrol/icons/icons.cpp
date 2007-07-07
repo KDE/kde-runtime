@@ -13,10 +13,10 @@
 
 #include <QCheckBox>
 #include <QComboBox>
-#include <Qt3Support/Q3GroupBox>
 #include <QLabel>
 #include <QLayout>
 #include <QSlider>
+#include <QGroupBox>
 //Added by qt3to4:
 #include <QPixmap>
 #include <QGridLayout>
