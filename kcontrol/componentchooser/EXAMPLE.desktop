@@ -110,7 +110,6 @@ Comment[zh_TW]=用於右上方資訊方塊界面的有用敘述
 
 configurationType=Possible values are component and application. Only component is handled at the moment though
 ServiceTypeToConfigure=The service type, which should be  configured. If this line is empty you have to provide a plugin (not supported yet)
-MimeTypeOfInterest=A mimetype which should be used in conjunction with ServiceTypeToConfigure
 defaultImplementation=The name of the default implementation as it would be returned by KService::desktopEntryName()
 storeInFile=default_components //the file where the setting should be saved (default_components sounds reasonable for a central storage)
 valueSection=The desktop section, where the setting should be stored
