@@ -10,7 +10,6 @@ set(kdebugdialog_SRCS
    kdebugdialog.cpp 
    klistdebugdialog.cpp )
 
-kde4_automoc(${kdebugdialog_SRCS})
 
 kde4_add_executable(kdebugdialog ${kdebugdialog_SRCS})
 

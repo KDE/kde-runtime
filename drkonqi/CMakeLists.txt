@@ -15,7 +15,6 @@ set(drkonqi_SRCS
    backtrace.cpp 
    toplevel.cpp )
 
-kde4_automoc(${drkonqi_SRCS})
 
 kde4_add_executable(drkonqi ${drkonqi_SRCS})
 

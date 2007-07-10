@@ -5,7 +5,6 @@
 
 set(kcm_kded_PART_SRCS kcmkded.cpp )
 
-kde4_automoc(${kcm_kded_PART_SRCS})
 
 kde4_add_plugin(kcm_kded ${kcm_kded_PART_SRCS})
 

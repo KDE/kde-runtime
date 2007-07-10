@@ -18,7 +18,6 @@ set(kdeprintfax_SRCS
    filterdlg.cpp 
    defcmds.cpp )
 
-kde4_automoc(${kdeprintfax_SRCS})
 
 kde4_add_executable(kdeprintfax ${kdeprintfax_SRCS})
 

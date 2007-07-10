@@ -9,7 +9,6 @@ add_subdirectory( templates )
 
 set(kio_print_PART_SRCS kio_print.cpp )
 
-kde4_automoc(${kio_print_PART_SRCS})
 
 kde4_add_plugin(kio_print ${kio_print_PART_SRCS})
 

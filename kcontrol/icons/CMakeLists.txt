@@ -5,7 +5,6 @@ add_subdirectory(tests)
 
 set(kcm_icons_PART_SRCS iconthemes.cpp icons.cpp main.cpp )
 
-kde4_automoc(${kcm_icons_PART_SRCS})
 
 kde4_add_plugin(kcm_icons ${kcm_icons_PART_SRCS})
 

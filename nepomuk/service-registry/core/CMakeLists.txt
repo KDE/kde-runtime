@@ -14,7 +14,6 @@ set( nepomukregcore_LIB_SRCS
   servicewaiter.cpp
 )
 
-kde4_automoc(${nepomukregcore_LIB_SRCS})
 
 kde4_add_library(nepomukregcore STATIC ${nepomukregcore_LIB_SRCS})
 

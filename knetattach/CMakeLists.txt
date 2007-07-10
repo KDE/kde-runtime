@@ -8,7 +8,6 @@ add_definitions (-DQT3_SUPPORT)
 
 set(knetattach_SRCS main.cpp knetattach.cpp)
 
-kde4_automoc(${knetattach_SRCS})
 
 kde4_add_ui_files(knetattach_SRCS knetattach.ui )
 

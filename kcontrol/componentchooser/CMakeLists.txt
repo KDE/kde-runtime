@@ -11,7 +11,6 @@ if(NOT WIN32)
   set(kcm_componentchooser_PART_SRCS ${kcm_componentchooser_PART_SRCS} componentchooserterminal.cpp)
 endif(NOT WIN32)
 
-kde4_automoc(${kcm_componentchooser_PART_SRCS})
 
 kde4_add_ui_files(kcm_componentchooser_PART_SRCS browserconfig_ui.ui emailclientconfig_ui.ui componentchooser_ui.ui componentconfig_ui.ui) 
 

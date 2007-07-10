@@ -1,6 +1,5 @@
 set(kded_ktimezoned_SRCS ktimezoned.cpp)
 
-kde4_automoc(${kded_ktimezoned_SRCS})
 
 kde4_add_plugin(kded_ktimezoned ${kded_ktimezoned_SRCS})
 

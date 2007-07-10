@@ -31,7 +31,6 @@ QT4_ADD_DBUS_INTERFACE( kcontrol_SRCS ${kcontrol_xml} kcontrol_interface )
 
 set(kcontrol_KDEINIT_SRCS ${kcontrol_SRCS})
 
-kde4_automoc(${kcontrol_KDEINIT_SRCS})
 
 
 kde4_add_kdeinit_executable( kcontrol ${kcontrol_KDEINIT_SRCS})
@@ -47,7 +46,6 @@ install(TARGETS kcontrol DESTINATION ${BIN_INSTALL_DIR})
 
 set(kinfocenter_KDEINIT_SRCS ${kcontrol_SRCS})
 
-kde4_automoc(${kinfocenter_KDEINIT_SRCS})
 
 kde4_add_kdeinit_executable( kinfocenter ${kinfocenter_KDEINIT_SRCS})
 

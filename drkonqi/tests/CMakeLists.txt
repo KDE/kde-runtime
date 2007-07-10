@@ -1,7 +1,6 @@
 
 set(crashtest_SRCS crashtest.cpp )
 
-kde4_automoc(${crashtest_SRCS})
 
 kde4_add_test_executable(crashtest ${crashtest_SRCS})
 

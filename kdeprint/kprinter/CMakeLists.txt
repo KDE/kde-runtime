@@ -6,7 +6,6 @@
 
 set(kprinter_KDEINIT_SRCS main.cpp printwrapper.cpp )
 
-kde4_automoc(${kprinter_KDEINIT_SRCS})
 
 kde4_add_kdeinit_executable( kprinter ${kprinter_KDEINIT_SRCS})
 

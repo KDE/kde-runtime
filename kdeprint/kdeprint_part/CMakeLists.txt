@@ -8,7 +8,6 @@ add_definitions(-D_KDEPRINT_COMPILE)
 
 set(kdeprint_part_PART_SRCS printpart.cpp )
 
-kde4_automoc(${kdeprint_part_PART_SRCS})
 
 kde4_add_plugin(kdeprint_part WITH_PREFIX ${kdeprint_part_PART_SRCS})
 

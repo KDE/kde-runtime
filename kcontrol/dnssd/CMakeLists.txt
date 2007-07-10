@@ -5,7 +5,6 @@
 
 set(kcm_kdnssd_PART_SRCS kcmdnssd.cpp kcmdnssd.h )
 
-kde4_automoc(${kcm_kdnssd_PART_SRCS})
 
 kde4_add_ui_files(kcm_kdnssd_PART_SRCS configdialog.ui )
 

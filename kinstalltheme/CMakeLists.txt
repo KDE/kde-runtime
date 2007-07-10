@@ -5,7 +5,6 @@
 
 set(kinstalltheme_SRCS main.cpp )
 
-kde4_automoc(${kinstalltheme_SRCS})
 
 kde4_add_executable(kinstalltheme NOGUI ${kinstalltheme_SRCS})
 

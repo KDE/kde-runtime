@@ -8,7 +8,6 @@ add_definitions(-D_KDEPRINT_COMPILE)
 
 set(kcm_printmgr_PART_SRCS kcmprintmgr.cpp )
 
-kde4_automoc(${kcm_printmgr_PART_SRCS})
 
 kde4_add_plugin(kcm_printmgr ${kcm_printmgr_PART_SRCS})
 

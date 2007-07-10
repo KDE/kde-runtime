@@ -8,7 +8,6 @@ add_definitions(-D_KDEPRINT_COMPILE)
 
 set(kjobviewer_KDEINIT_SRCS kjobviewer.cpp main.cpp )
 
-kde4_automoc(${kjobviewer_KDEINIT_SRCS})
 
 kde4_add_kdeinit_executable( kjobviewer ${kjobviewer_KDEINIT_SRCS})
 

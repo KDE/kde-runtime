@@ -16,7 +16,6 @@ set( SRCS
   dbusinterface.cpp
 )
 
-kde4_automoc(${SRCS})
 
 kde4_add_executable(nepomukcoreservices ${SRCS} main.cpp)
 

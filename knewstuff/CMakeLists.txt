@@ -5,7 +5,6 @@ include_directories( ${KDE4_KIO_INCLUDES} )
 
 set(khotnewstuff_SRCS khotnewstuff.cpp )
 
-kde4_automoc(${khotnewstuff_SRCS})
 
 kde4_add_executable(khotnewstuff ${khotnewstuff_SRCS})
 

@@ -8,7 +8,6 @@ set( nepomukdaemon_BIN_SRCS
   main.cpp
 )
 
-kde4_automoc(${nepomukdaemon_BIN_SRCS})
 
 kde4_add_executable(nepomukdaemon ${nepomukdaemon_BIN_SRCS})
 

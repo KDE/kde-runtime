@@ -3,7 +3,6 @@
 
 set(kuiservertest_SRCS kuiservertest.cpp)
 
-kde4_automoc(${kuiservertest_SRCS})
 
 kde4_add_test_executable(kuiservertest ${kuiservertest_SRCS})
 

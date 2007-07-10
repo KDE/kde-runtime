@@ -3,7 +3,6 @@
 
 set(kfile_SRCS fileprops.cpp )
 
-kde4_automoc(${kfile_SRCS})
 
 kde4_add_executable(kfile NOGUI ${kfile_SRCS})
 

@@ -5,7 +5,6 @@
 
 set(kcm_ioslaveinfo_PART_SRCS kcmioslaveinfo.cpp )
 
-kde4_automoc(${kcm_ioslaveinfo_PART_SRCS})
 
 kde4_add_plugin(kcm_ioslaveinfo ${kcm_ioslaveinfo_PART_SRCS})
 

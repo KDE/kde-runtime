@@ -5,7 +5,6 @@
 ########### next target ###############
 set(sortthem_SRCS sortthem.cpp )
 
-kde4_automoc(${sortthem_SRCS})
 
 kde4_add_test_executable(sortthem ${sortthem_SRCS})
 
