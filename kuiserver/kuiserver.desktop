@@ -9,6 +9,7 @@ Exec=kuiserver
 Comment=KDE's Progress Info UI server
 Comment[de]=KDE-Dienst zur Fortschrittsanzeige
 Comment[el]=Εξυπηρετητής πληροφοριών διεργασιών του KDE
+Comment[fa]=کارساز واسط کاربر اطلاعات پیشرفت KDE
 Comment[ja]=KDE 進捗情報 UI サーバ
 Comment[nds]=De KDE-Server för Vörankamen-Infos för Böversieden
 Comment[nl]=KDE's UI-server voor voortgangsinformatie
