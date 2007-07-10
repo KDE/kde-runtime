@@ -415,7 +415,7 @@ extern "C" KDE_EXPORT int kdemain(int argc, char **argv)
 {
     //  GS 5/2001 - I changed the name to "KDE" to make it look better
     //              in the titles of dialogs which are displayed.
-    KAboutData aboutdata("kuiserver", "kdelibs", ki18n("Progress Manager"),
+    KAboutData aboutdata("kuiserver", "kdelibs4", ki18n("Progress Manager"),
                          "0.8", ki18n("KDE Progress Information UI Server"),
                          KAboutData::License_GPL, ki18n("(C) 2000-2005, David Faure & Matt Koss"));
     aboutdata.addAuthor(ki18n("David Faure"),ki18n("Maintainer"),"faure@kde.org");
