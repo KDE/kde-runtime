@@ -27,6 +27,7 @@
 #include <QFileInfo>
 #include <QDir>
 #include <QRegExp>
+#include <QStringList>
 #include <QTextStream>
 #include <QtDBus/QtDBus>
 
@@ -321,8 +322,7 @@ void KTimeZoned::readZoneTab(QFile &f)
             tokens[0] = "";
         else if (!tokens[0].isEmpty())
             mHaveCountryCodes = true;
-        KTimeZone *tzone = new KSystemTimeZone(mSource, tokens[2], tokens[0]);
-        mZones.add(tzone);
+        mZones.add(KSystemTimeZone(mSource, tokens[2], tokens[0]));
     }
     f.close();
 }
@@ -387,23 +387,25 @@ if (!mLocalZone.isEmpty()) kDebug(1221)<<"/etc/default/init: "<<mLocalZone<<endl
         // try to find a pair of matching time zone abbreviations...that way, we'll
         // likely return a value in the user's own country.
         tzset();
-        QByteArray tzname0(tzname[0]);   // store copies, because zone->parse() will change them
+        QByteArray tzname0(tzname[0]);   // store copies, because zone.parse() will change them
         QByteArray tzname1(tzname[1]);
         int bestOffset = INT_MAX;
         KSystemTimeZoneSource::startParseBlock();
         const KTimeZones::ZoneMap zmap = mZones.zones();
         for (KTimeZones::ZoneMap::ConstIterator it = zmap.begin(), end = zmap.end();  it != end;  ++it)
         {
-            const KSystemTimeZone *zone = static_cast<const KSystemTimeZone*>(it.value());
-            int candidateOffset = qAbs(zone->currentOffset(Qt::LocalTime));
+#warning Is KSystemTimeZone cast necessary???
+//            KSystemTimeZone zone = static_cast<const KSystemTimeZone*>(it.value());
+            KTimeZone zone = it.value();
+            int candidateOffset = qAbs(zone.currentOffset(Qt::LocalTime));
             if (candidateOffset < bestOffset
-            &&  zone->parse())
+            &&  zone.parse())
             {
-                QList<QByteArray> abbrs = zone->abbreviations();
+                QList<QByteArray> abbrs = zone.abbreviations();
                 if (abbrs.contains(tzname0)  &&  abbrs.contains(tzname1))
                 {
-                    // kDebug(1221) << "local=" << zone->name() << endl;
-                    mLocalZone = zone->name();
+                    // kDebug(1221) << "local=" << zone.name() << endl;
+                    mLocalZone = zone.name();
                     bestOffset = candidateOffset;
                     if (!bestOffset)
                         break;
@@ -418,7 +420,7 @@ if (!mLocalZone.isEmpty()) kDebug(1221)<<"tzname: "<<mLocalZone<<endl;
     if (mLocalZone.isEmpty())
     {
         // SOLUTION 7: FAILSAFE.
-        mLocalZone = KTimeZones::utc()->name();
+        mLocalZone = KTimeZone::utc().name();
         mLocalMethod = Utc;
 if (!mLocalZone.isEmpty()) kDebug(1221)<<"Failsafe: "<<mLocalZone<<endl;
     }
@@ -490,7 +492,7 @@ bool KTimeZoned::checkTZ(const char *envZone)
         if (envZone[0] == '\0')
         {
             mLocalMethod = EnvTz;
-            mLocalZone = KTimeZones::utc()->name();
+            mLocalZone = KTimeZone::utc().name();
             mLocalIdFile.clear();
             mLocalZoneDataFile.clear();
             return true;
@@ -551,9 +553,9 @@ kDebug(1221)<<"checkTimezone(): /etc/timezone opened"<<endl;
     f.close();
     if (!zoneName.isEmpty())
     {
-        const KTimeZone *local = mZones.zone(zoneName);
-kDebug(1221)<<"checkTimezone(): local="<<(bool)local<<", name="<<zoneName<<endl;
-        if (local)
+        KTimeZone local = mZones.zone(zoneName);
+kDebug(1221)<<"checkTimezone(): local="<<local.isValid()<<", name="<<zoneName<<endl;
+        if (local.isValid())
         {
             mLocalZone = zoneName;
             mLocalMethod = Timezone;
@@ -586,8 +588,8 @@ bool KTimeZoned::matchZoneFile(const QString &path)
                 // The time zone name is the part of the path after the zoneinfo directory.
                 QString name = zoneInfoFileName.mid(mZoneinfoDir.length() + 1);
                 // kDebug(1221) << "local=" << name << endl;
-                const KTimeZone *local = mZones.zone(name);
-                if (!local)
+                KTimeZone local = mZones.zone(name);
+                if (!local.isValid())
                     return false;
                 mLocalZone = name;
             }
@@ -616,23 +618,23 @@ bool KTimeZoned::matchZoneFile(const QString &path)
         QString referenceMd5Sum = context.hexDigest();
         f.close();
         MD5Map::ConstIterator it5, end5;
-        const KTimeZone *local = 0;
+        KTimeZone local;
         QString zoneName;
 
         if (!mConfigLocalZone.isEmpty())
         {
             // We know the local zone from last time.
             // Check whether the file still matches it.
-            const KTimeZone *tzone = mZones.zone(mConfigLocalZone);
-            if (tzone)
+            KTimeZone tzone = mZones.zone(mConfigLocalZone);
+            if (tzone.isValid())
             {
                 local = compareChecksum(tzone, referenceMd5Sum, referenceSize);
-                if (local)
-                    zoneName = local->name();
+                if (local.isValid())
+                    zoneName = local.name();
             }
         }
 
-        if (!local && mHaveCountryCodes)
+        if (!local.isValid() && mHaveCountryCodes)
         {
             /* Look for time zones with the user's country code.
              * This has two advantages: 1) it shortens the search;
@@ -646,20 +648,20 @@ bool KTimeZoned::matchZoneFile(const QString &path)
             const KTimeZones::ZoneMap zmap = mZones.zones();
             for (KTimeZones::ZoneMap::ConstIterator zit = zmap.begin(), zend = zmap.end();  zit != zend;  ++zit)
             {
-                const KTimeZone *tzone = zit.value();
-                if (tzone->countryCode() == country)
+                KTimeZone tzone = zit.value();
+                if (tzone.countryCode() == country)
                 {
                     local = compareChecksum(tzone, referenceMd5Sum, referenceSize);
-                    if (local)
+                    if (local.isValid())
                     {
-                        zoneName = local->name();
+                        zoneName = local.name();
                         break;
                     }
                 }
             }
         }
 
-        if (!local)
+        if (!local.isValid())
         {
             // Look for a checksum match with the cached checksum values
             MD5Map oldChecksums = mMd5Sums;   // save a copy of the existing checksums
@@ -672,7 +674,7 @@ bool KTimeZoned::matchZoneFile(const QString &path)
                     {
                         zoneName = it5.key();
                         local = mZones.zone(zoneName);
-                        if (local)
+                        if (local.isValid())
                             break;
                     }
                     oldChecksums.clear();    // the cache has been cleared
@@ -680,7 +682,7 @@ bool KTimeZoned::matchZoneFile(const QString &path)
                 }
             }
 
-            if (!local)
+            if (!local.isValid())
             {
                 // The checksum didn't match any in the cache.
                 // Continue building missing entries in the cache on the assumption that
@@ -688,14 +690,14 @@ bool KTimeZoned::matchZoneFile(const QString &path)
                 const KTimeZones::ZoneMap zmap = mZones.zones();
                 for (KTimeZones::ZoneMap::ConstIterator zit = zmap.begin(), zend = zmap.end();  zit != zend;  ++zit)
                 {
-                    const KTimeZone *zone = zit.value();
-                    zoneName = zone->name();
+                    KTimeZone zone = zit.value();
+                    zoneName = zone.name();
                     if (!mMd5Sums.contains(zoneName))
                     {
                         QString candidateMd5Sum = calcChecksum(zoneName, referenceSize);
                         if (candidateMd5Sum == referenceMd5Sum)
                         {
-                            // kDebug(1221) << "local=" << zone->name() << endl;
+                            // kDebug(1221) << "local=" << zone.name() << endl;
                             local = zone;
                             break;
                         }
@@ -703,7 +705,7 @@ bool KTimeZoned::matchZoneFile(const QString &path)
                 }
             }
 
-            if (!local)
+            if (!local.isValid())
             {
                 // Didn't find the file, so presumably a previously cached checksum must
                 // have changed. Delete all the old checksums.
@@ -726,7 +728,7 @@ bool KTimeZoned::matchZoneFile(const QString &path)
                 }
             }
         }
-        if (local)
+        if (local.isValid())
         {
             // The file matches a zoneinfo file
             mLocalZone = zoneName;
@@ -769,8 +771,8 @@ bool KTimeZoned::checkDefaultInit()
         }
     }
     f.close();
-    const KTimeZone *local = mZones.zone(zoneName);
-    if (!local)
+    KTimeZone local = mZones.zone(zoneName);
+    if (!local.isValid())
         return false;
     mLocalZone = zoneName;
     mLocalMethod = DefaultInit;
@@ -780,17 +782,17 @@ bool KTimeZoned::checkDefaultInit()
 }
 
 // Check whether the checksum for a time zone matches a given saved checksum.
-const KTimeZone *KTimeZoned::compareChecksum(const KTimeZone *zone, const QString &referenceMd5Sum, qlonglong size)
+KTimeZone KTimeZoned::compareChecksum(const KTimeZone &zone, const QString &referenceMd5Sum, qlonglong size)
 {
-    MD5Map::ConstIterator it5 = mMd5Sums.find(zone->name());
+    MD5Map::ConstIterator it5 = mMd5Sums.find(zone.name());
     if (it5 == mMd5Sums.end())
     {
         // No checksum has been computed yet for this zone file.
         // Compute it now.
-        QString candidateMd5Sum = calcChecksum(zone->name(), size);
+        QString candidateMd5Sum = calcChecksum(zone.name(), size);
         if (candidateMd5Sum == referenceMd5Sum)
         {
-            // kDebug(1221) << "local=" << zone->name() << endl;
+            // kDebug(1221) << "local=" << zone.name() << endl;
             return zone;
         }
     }
@@ -800,7 +802,7 @@ const KTimeZone *KTimeZoned::compareChecksum(const KTimeZone *zone, const QStrin
         if (compareChecksum(it5, referenceMd5Sum, size))
             return mZones.zone(it5.key());
     }
-    return 0;
+    return KTimeZone();
 }
 
 // Check whether a checksum matches a given saved checksum.

@@ -90,7 +90,7 @@ class KTimeZoned : public KDEDModule
         bool  checkDefaultInit();
         void  updateLocalZone();
 	bool  matchZoneFile(const QString &path);
-        const KTimeZone *compareChecksum(const KTimeZone*, const QString &referenceMd5Sum, qlonglong size);
+        KTimeZone compareChecksum(const KTimeZone&, const QString &referenceMd5Sum, qlonglong size);
         bool  compareChecksum(MD5Map::ConstIterator, const QString &referenceMd5Sum, qlonglong size);
         QString calcChecksum(const QString &zoneName, qlonglong size);
 
