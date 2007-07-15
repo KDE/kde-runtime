@@ -12,6 +12,7 @@ X-KDE-System-Settings-Parent-Category=personal
 
 Name=Default Applications
 Name[be]=Праграмы па змаўчанні
+Name[de]=Standard-Komponenten
 Name[el]=Προκαθορισμένες εφαρμογές
 Name[es]=Aplicaciones predefinidas
 Name[fa]=کاربردهای پیش‌فرض
@@ -31,7 +32,7 @@ Comment[cs]=Vyberte výchozí komponenty pro různé služby
 Comment[csb]=Wébiérk domëslnych kòmpònentów dlô wszelejaczich ùsłëżnotów
 Comment[cy]=Dewiswch y cydrannau rhagosodedig i wasanaethau amrywiol
 Comment[da]=Vælg standardkomponenterne for forskellige tjenester
-Comment[de]=Die Standardkomponenten für diverse Dienste
+Comment[de]=Die Standard-Komponenten für diverse Dienste
 Comment[el]=Επιλέξτε τα προκαθορισμένα συστατικά για διάφορες υπηρεσίες
 Comment[eo]=Elektu la normajn partojn por malsamaj servoj
 Comment[es]=Elegir los componentes predeterminados para varios servicios
@@ -82,6 +83,7 @@ Comment[zh_TW]=選擇各種服務的預設元件
 
 Keywords=components,component chooser,resources,e-mail,email client,terminal emulator,applications
 Keywords[be]=кампаненты,выбар кампанентаў,рэсурсы,кліент электроннай пошты,эмулятар тэрміналу,components,component chooser,resources, email client, terminal emulator
+Keywords[de]=Komponenten,Ressourcen,E-Mail,E-Mail-Programm,Terminal-Emulation,Programme,Anwendungen
 Keywords[el]=συστατικά,επιλογέας συστατικών,πόροι, πελάτης email, email,προσομοιωτής τερματικού,εφαρμογές
 Keywords[es]=componentes,selector de componentes,recursos,correo electrónico,cliente de correo,emulador de terminal,aplicaciones
 Keywords[fa]=مؤلفه‌ها، انتخابگر مؤلفه، منابع، رایانامه، کارخواه رایانامه، مقلد رایانه، کاربردها
