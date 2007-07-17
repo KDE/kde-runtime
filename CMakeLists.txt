@@ -35,6 +35,7 @@ if ( UNIX )
    add_subdirectory(kdeeject)
 endif ( UNIX )
 add_subdirectory(kurifilter-plugins)
+add_subdirectory(soliduiserver)
 add_subdirectory(l10n)
 
 # Command-line tools (e.g. for shell scripts)
