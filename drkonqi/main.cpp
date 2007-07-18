@@ -81,6 +81,7 @@ int main( int argc, char* argv[] )
 
   KComponentData inst(KCmdLineArgs::aboutData());
   QApplication a(KCmdLineArgs::qtArgc(), KCmdLineArgs::qtArgv());
+  QApplication::instance()->setApplicationName(inst.componentName());
 
   KrashConfig krashconf;
 
