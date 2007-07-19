@@ -25,6 +25,9 @@
 #include <QTextStream>
 #include <QByteArray>
 #include <QLinkedList>
+#include <QtDBus/QDBusInterface>
+#include <QtDBus/QDBusReply>
+#include <QtDBus/QDBusError>
 #include <kjobuidelegate.h>
 
 #include <kapplication.h>
@@ -36,6 +39,8 @@
 #include <kstandardguiitem.h>
 #include <kstandarddirs.h>
 #include <kdesktopfileactions.h>
+#include <kwindowsystem.h>
+#include <kpassworddialog.h>
 
 #include "deviceactionsdialog.h"
 #include "deviceaction.h"
@@ -61,7 +66,6 @@ void SolidUiServer::showActionsDialog(const QString &udi,
     }
 
 
-    Solid::Device device(udi);
     QList<DeviceAction*> actions;
 
     foreach (QString desktop, desktopFiles) {
@@ -105,6 +109,98 @@ void SolidUiServer::onActionDialogFinished()
         m_udiToActionsDialog.remove(udi);
     }
 }
+
+
+void SolidUiServer::showPassphraseDialog(const QString &udi,
+                                         const QString &returnService, const QString &returnObject,
+                                         uint wId, const QString &appId)
+{
+    if (m_udiToPassphraseDialog.contains(udi)) {
+        KPasswordDialog *dialog = m_udiToPassphraseDialog[udi];
+        dialog->activateWindow();
+        return;
+    }
+
+    Solid::Device device(udi);
+
+    KPasswordDialog *dialog = new KPasswordDialog();
+
+    QString label = device.vendor();
+    if (!label.isEmpty()) label+=" ";
+    label+= device.product();
+
+    dialog->setPrompt(i18n("'%1' needs a password to be accessed. Please enter a password.", label));
+    dialog->setPixmap(KIcon(device.icon()).pixmap(64, 64));
+    dialog->setProperty("soliduiserver.udi", udi);
+    dialog->setProperty("soliduiserver.returnService", returnService);
+    dialog->setProperty("soliduiserver.returnObject", returnObject);
+
+    connect(dialog, SIGNAL(gotPassword(const QString&, bool)),
+            this, SLOT(onPassphraseDialogCompleted(const QString&, bool)));
+    connect(dialog, SIGNAL(rejected()),
+            this, SLOT(onPassphraseDialogRejected()));
+
+    m_udiToPassphraseDialog[udi] = dialog;
+
+    reparentDialog(dialog, wId, appId, true);
+    dialog->show();
+}
+
+void SolidUiServer::onPassphraseDialogCompleted(const QString &pass, bool keep)
+{
+    KPasswordDialog *dialog = qobject_cast<KPasswordDialog*>(sender());
+
+    if (dialog) {
+        QString returnService = dialog->property("soliduiserver.returnService").toString();
+        QString returnObject = dialog->property("soliduiserver.returnObject").toString();
+        QDBusInterface returnIface(returnService, returnObject);
+
+        QDBusReply<void> reply = returnIface.call("passphraseReply", pass);
+
+        QString udi = dialog->property("soliduiserver.udi").toString();
+        m_udiToPassphraseDialog.remove(udi);
+
+        if (!reply.isValid()) {
+            kWarning() << "Impossible to send the passphrase to the application, D-Bus said: "
+                       << reply.error().name() << ", " << reply.error().message() << endl;
+        }
+    }
+}
+
+void SolidUiServer::onPassphraseDialogRejected()
+{
+    onPassphraseDialogCompleted(QString(), false);
+}
+
+void SolidUiServer::reparentDialog(QWidget *dialog, WId wId, const QString &appId, bool modal)
+{
+    // Code borrowed from kwalletd
+
+#ifdef Q_WS_X11
+    if (wId != 0) {
+        KWindowSystem::setMainWindow(dialog, wId); // correct, set dialog parent
+    } else {
+#endif
+        if (appId.isEmpty()) {
+            kWarning() << "Using soliduiserver passphrase dialog without parent window!" << endl;
+        } else {
+            kWarning() << "Application '" << appId << "' using passphrase dialog without parent window!" << endl;
+        }
+
+        // allow dialog activation even if it interrupts, better than trying hacks
+        // with keeping the dialog on top or on all desktops
+        kapp->updateUserTimestamp();
+#ifdef Q_WS_X11
+    }
+
+    if (modal) {
+        KWindowSystem::setState(dialog->winId(), NET::Modal);
+    } else {
+        KWindowSystem::clearState(dialog->winId(), NET::Modal);
+    }
+#endif
+}
+
 
 #if 0
 void SolidUiServer::onMediumChange(const QString &name, bool allowNotification)
