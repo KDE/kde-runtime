@@ -232,7 +232,7 @@ void Nepomuk::CoreServices::SopranoRDFRepository::addStatements( const QString& 
         for( QList<Soprano::Statement>::const_iterator it = statements.constBegin();
              it != statements.constEnd(); ++it ) {
             if( Soprano::ErrorCode r = model->add( *it ) ) {
-                kDebug(300002) << k_funcinfo << " failed to add " << *it << endl;
+                kDebug(300002) << k_funcinfo << " failed to add " << (*it).subject().toString() << endl;
                 setError( "org.semanticdesktop.nepomuk.error.UnknownError",
                           '(' + Soprano::errorMessage(r) + ") Failed to add statement ["
                           + (*it).subject().toString() + ','
