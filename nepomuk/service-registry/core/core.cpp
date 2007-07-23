@@ -185,7 +185,7 @@ bool Nepomuk::Middleware::Registry::Core::loadServiceOnDemand( const QString& ty
         if ( serviceDesktopFile.readType() == "Service" &&
              serviceDesktopFile.readEntry( "ServiceTypes" ) == "NepomukService" &&
              serviceDesktopFile.readEntry( "X-Nepomuk-ServiceType" ) == typeUri &&
-             serviceDesktopFile.readBoolEntry( "X-Nepomuk-LoadOnDemand", false ) ) {
+             serviceDesktopFile.readEntry( "X-Nepomuk-LoadOnDemand", false ) ) {
 
             if ( serviceDesktopFile.readEntry( "URL" ).isEmpty() ) {
                 kDebug( 300003 ) << "(Nepomuk::Middleware::Registry::Core) invalid Nepomuk service desktop file: missing URL." << endl;
@@ -222,7 +222,7 @@ void Nepomuk::Middleware::Registry::Core::autoStartServices()
         KDesktopFile serviceDesktopFile( service );
         if ( serviceDesktopFile.readType() == "Service" &&
              serviceDesktopFile.readEntry( "ServiceTypes" ) == "NepomukService" &&
-             serviceDesktopFile.readBoolEntry( "X-Nepomuk-AutoLoad", false ) ) {
+             serviceDesktopFile.readEntry( "X-Nepomuk-AutoLoad", false ) ) {
 
             if ( serviceDesktopFile.readEntry( "URL" ).isEmpty() ) {
                 kDebug( 300003 ) << "(Nepomuk::Middleware::Registry::Core) invalid Nepomuk service desktop file: missing URL." << endl;
