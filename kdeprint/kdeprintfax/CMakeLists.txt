@@ -28,7 +28,7 @@ install(TARGETS kdeprintfax DESTINATION ${BIN_INSTALL_DIR})
 
 ########### install files ###############
 
-install( FILES kdeprintfax.desktop  DESTINATION  ${XDG_APPS_DIR} )
+install( FILES kdeprintfax.desktop  DESTINATION  ${XDG_APPS_INSTALL_DIR} )
 install( FILES kdeprintfaxui.rc faxfilters  DESTINATION  ${DATA_INSTALL_DIR}/kdeprintfax )
 
 install( PROGRAMS anytops  DESTINATION  ${DATA_INSTALL_DIR}/kdeprintfax )

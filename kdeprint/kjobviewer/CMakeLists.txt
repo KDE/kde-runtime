@@ -20,7 +20,7 @@ install(TARGETS kjobviewer DESTINATION ${BIN_INSTALL_DIR})
 
 ########### install files ###############
 
-install( FILES kjobviewer.desktop  DESTINATION  ${XDG_APPS_DIR} )
+install( FILES kjobviewer.desktop  DESTINATION  ${XDG_APPS_INSTALL_DIR} )
 install( FILES kjobviewerui.rc  DESTINATION  ${DATA_INSTALL_DIR}/kjobviewer )
 
 kde4_install_icons( ${ICON_INSTALL_DIR}  )

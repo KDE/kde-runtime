@@ -24,4 +24,4 @@ configure_file(org.semanticdesktop.nepomuk.ServiceRegistry.service.cmake
 
 install(TARGETS nepomukdaemon DESTINATION ${BIN_INSTALL_DIR} )
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/org.semanticdesktop.nepomuk.ServiceRegistry.service
-  DESTINATION ${DBUS_SERVICES_DIR})
+  DESTINATION ${DBUS_SERVICES_INSTALL_DIR})
