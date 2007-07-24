@@ -54,26 +54,26 @@ extern "C"
 static void createDirEntry(KIO::UDSEntry& entry, const QString& name, const QString& url, const QString& mime)
 {
 	entry.clear();
-	entry.insert( KIO::UDS_NAME, name);
-	entry.insert(KIO::UDS_FILE_TYPE, S_IFDIR);
-	entry.insert(KIO::UDS_ACCESS, 0500);
-	entry.insert(KIO::UDS_MIME_TYPE, mime);
-	entry.insert(KIO::UDS_URL, url);
+	entry.insert( KIO::UDSEntry::UDS_NAME, name);
+	entry.insert(KIO::UDSEntry::UDS_FILE_TYPE, S_IFDIR);
+	entry.insert(KIO::UDSEntry::UDS_ACCESS, 0500);
+	entry.insert(KIO::UDSEntry::UDS_MIME_TYPE, mime);
+	entry.insert(KIO::UDSEntry::UDS_URL, url);
 	PRINT_DEBUG << "creating dir entry url=" << url << " mimetype=" << mime << endl;
-	entry.insert(KIO::UDS_SIZE,0);
-	//addAtom(entry, KIO::UDS_GUESSED_MIME_TYPE, 0, "application/octet-stream");
+	entry.insert(KIO::UDSEntry::UDS_SIZE,0);
+	//addAtom(entry, KIO::UDSEntry::UDS_GUESSED_MIME_TYPE, 0, "application/octet-stream");
 }
 
 static void createFileEntry(KIO::UDSEntry& entry, const QString& name, const QString& url, const QString& mime)
 {
 	entry.clear();
-	entry.insert(KIO::UDS_NAME, name);
-	entry.insert(KIO::UDS_FILE_TYPE, S_IFREG);
-	entry.insert(KIO::UDS_URL, url);
-	entry.insert(KIO::UDS_ACCESS, 0400);
-	entry.insert(KIO::UDS_MIME_TYPE, mime);
-	entry.insert(KIO::UDS_SIZE, 0);
-	entry.insert(KIO::UDS_GUESSED_MIME_TYPE, QString::fromLatin1("application/octet-stream"));
+	entry.insert(KIO::UDSEntry::UDS_NAME, name);
+	entry.insert(KIO::UDSEntry::UDS_FILE_TYPE, S_IFREG);
+	entry.insert(KIO::UDSEntry::UDS_URL, url);
+	entry.insert(KIO::UDSEntry::UDS_ACCESS, 0400);
+	entry.insert(KIO::UDSEntry::UDS_MIME_TYPE, mime);
+	entry.insert(KIO::UDSEntry::UDS_SIZE, 0);
+	entry.insert(KIO::UDSEntry::UDS_GUESSED_MIME_TYPE, QString::fromLatin1("application/octet-stream"));
 }
 
 QString buildMenu(const QStringList& items, const QStringList& links, int active)
