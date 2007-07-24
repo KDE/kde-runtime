@@ -1,6 +1,22 @@
-/**
-* @mainpage Nepomuk
-*
-* 
-*
+/** @mainpage Nepomuk
+
+Runtime provides the core services daemon and the service registry
+daemon for Nepomuk.  This is what users of the
+<a href="http://api.kde.org/4.0-api/kdelibs-apidocs/nepomuk/html/index.html">Nepomuk
+library</a> connect to.
+
+@authors
+Sebastian Trueg \<trueg@kde.org\>
+
+@maintainers
+Sebastian Trueg \<trueg@kde.org\>
+
+@licenses
+@gpl
+
 */
+
+// DOXYGEN_SET_PROJECT_NAME = Nepomuk Daemons
+// DOXYGEN_SET_RECURSIVE = YES
+// DOXYGEN_EXCLUDE = tests
+// vim:ts=4:sw=4:expandtab:filetype=doxygen
