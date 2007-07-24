@@ -42,7 +42,7 @@
 static QPixmap appIcon(const QString &iconName)
 {
      QString path;
-     QPixmap normal = KIconLoader::global()->loadIcon(iconName, K3Icon::Small, 0, K3Icon::DefaultState, &path, true);
+     QPixmap normal = KIconLoader::global()->loadIcon(iconName, K3Icon::Small, 0, K3Icon::DefaultState, QStringList(), &path, true);
      // make sure they are not larger than K3Icon::SizeSmall
      if (normal.width() > K3Icon::SizeSmall || normal.height() > K3Icon::SizeSmall)
      {
