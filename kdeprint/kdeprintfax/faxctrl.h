@@ -25,8 +25,8 @@
 
 
 #include "kdeprintfax.h"
+#include <KProcess>
 
-class K3Process;
 class QTextEdit;
 
 class FaxCtrl : public QObject
@@ -37,7 +37,7 @@ public:
 	~FaxCtrl();
 
 	bool send(KdeprintFax *f);
-	bool abort();
+	void abort();
 	void viewLog(QWidget *parent = 0);
 	QString faxSystem();
 	QString faxCommand();
@@ -47,8 +47,8 @@ Q_SIGNALS:
 	void faxSent(bool);
 
 protected Q_SLOTS:
-	void slotReceivedStdout(K3Process*, char*, int);
-	void slotProcessExited(K3Process*);
+	void slotReceivedStdout();
+	void slotProcessExited(int, QProcess::ExitStatus);
 	void cleanTempFiles();
 	void slotClearLog();
 	void slotCloseLog();
@@ -63,7 +63,7 @@ protected:
 	void addLogTitle( const QString& );
 
 private:
-	K3Process	*m_process;
+	KProcess	*m_process;
 	QString		m_log, m_command;
 	QStringList	m_files, m_filteredfiles, m_tempfiles;
 	QTextEdit	*m_logview;

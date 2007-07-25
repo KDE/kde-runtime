@@ -285,11 +285,10 @@ FaxCtrl::FaxCtrl(QWidget *parent, const char *name)
 {
   setObjectName( name );
 
-	m_process = new K3Process();
-	m_process->setUseShell(true);
-	connect(m_process, SIGNAL(receivedStdout(K3Process*,char*,int)), SLOT(slotReceivedStdout(K3Process*,char*,int)));
-	connect(m_process, SIGNAL(receivedStderr(K3Process*,char*,int)), SLOT(slotReceivedStdout(K3Process*,char*,int)));
-	connect(m_process, SIGNAL(processExited(K3Process*)), SLOT(slotProcessExited(K3Process*)));
+	m_process = new KProcess();
+	connect(m_process, SIGNAL(readyReadStandardOutput ()), SLOT(slotReceivedStdout()));
+	connect(m_process, SIGNAL(receivedStderr(readyReadStandardError ())), SLOT(slotReceivedStdout()));
+	connect(m_process, SIGNAL(processExited(int, QProcess::ExitStatus)), SLOT(slotProcessExited(int, QProcess::ExitStatus)));
 	connect(this, SIGNAL(faxSent(bool)), SLOT(cleanTempFiles()));
 	m_logview = 0;
 }
@@ -321,18 +320,18 @@ bool FaxCtrl::send(KdeprintFax *f)
 	return true;
 }
 
-void FaxCtrl::slotReceivedStdout(K3Process*, char *buffer, int len)
+void FaxCtrl::slotReceivedStdout()
 {
-	QByteArray str(buffer, len);
+	QByteArray str = m_process->readAllStandardOutput ();
 	kDebug() << "Received stdout: " << str << endl;
 	addLog(QString(str));
 }
 
-void FaxCtrl::slotProcessExited(K3Process*)
+void FaxCtrl::slotProcessExited(int exitCode, QProcess::ExitStatus exitStatus)
 {
 	// we exited a process: if there's still entries in m_files, this was a filter
 	// process, else this was the fax process
-	bool	ok = (m_process->normalExit() && ((m_process->exitStatus() & (m_files.count() > 0 ? 0x1 : 0xFFFFFFFF)) == 0));
+	bool	ok = (exitStatus==QProcess::NormalExit && ((exitStatus & (m_files.count() > 0 ? 0x1 : 0xFFFFFFFF)) == 0));
 	if ( ok )
 	{
 		if ( m_files.count() > 0 )
@@ -398,10 +397,12 @@ void FaxCtrl::sendFax()
 		addLogTitle( i18n( "Sending fax to %1 (%2)", item.number, item.name ) );
 
                 QString cmd = replaceTags( m_command, tagList( 4, "%number", "%name", "%enterprise", "%rawnumber" ), NULL, item );
-		m_process->clearArguments();
-		*m_process << cmd;
+		m_process->clearProgram();
+		m_process->setShellCommand(cmd);
 		addLog(i18n("Sending to fax using: %1", cmd));
-		if (!m_process->start(K3Process::NotifyOnExit, K3Process::AllOutput))
+		m_process->setOutputChannelMode(KProcess::SeparateChannels);
+		m_process->start();
+		if (!m_process->waitForStarted())
 			emit faxSent(false);
 		else
 			emit message(i18n("Sending fax to %1...", item.number ));
@@ -425,12 +426,15 @@ void FaxCtrl::filter()
 			QString	tmp = KStandardDirs::locateLocal("tmp","kdeprintfax_") + KRandom::randomString(8);
 			m_filteredfiles.prepend(tmp);
 			m_tempfiles.append(tmp);
-			m_process->clearArguments();
-			*m_process << KStandardDirs::locate("data","kdeprintfax/anytops") << "-m" << quote(KStandardDirs::locate("data","kdeprintfax/faxfilters"))
+			m_process->clearProgram();
+			m_process->setShellCommand(KStandardDirs::locate("data","kdeprintfax/anytops"));
+			*m_process << "-m" << quote(KStandardDirs::locate("data","kdeprintfax/faxfilters"))
 				<< QString::fromLatin1("--mime=%1").arg(mimeType)
 				<< "-p" << pageSize()
 				<<  quote(m_files[0]) << quote(tmp);
-			if (!m_process->start(K3Process::NotifyOnExit, K3Process::AllOutput))
+			m_process->setOutputChannelMode(KProcess::SeparateChannels);
+			m_process->start();
+			if (!m_process->waitForStarted())
 				emit faxSent(false);
 			else
 				emit message(i18n("Filtering %1...", m_files[0]));
@@ -442,12 +446,10 @@ void FaxCtrl::filter()
 	}
 }
 
-bool FaxCtrl::abort()
+void FaxCtrl::abort()
 {
-	if (m_process->isRunning())
-		return m_process->kill();
-	else
-		return false;
+	if (m_process->state ()==QProcess::Running)
+		m_process->kill();
 }
 
 void FaxCtrl::viewLog(QWidget *)

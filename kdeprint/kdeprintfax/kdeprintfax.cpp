@@ -317,8 +317,7 @@ void KdeprintFax::slotFax()
 
 void KdeprintFax::slotAbort()
 {
-	if (!m_faxctrl->abort())
-		KMessageBox::error(this, i18n("Unable to stop Fax process."));
+	m_faxctrl->abort();
 }
 
 void KdeprintFax::slotKab()
