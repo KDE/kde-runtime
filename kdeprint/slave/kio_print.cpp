@@ -516,7 +516,7 @@ void KIO_Print::slotData( KIO::Job *j, const QByteArray& d )
 		{
 			m_httpError = KIO::ERR_INTERNAL;
 			m_httpErrorTxt = "Unable to write to the internal buffer.";
-			j->doKill();
+			j->kill();
 		}
 	}
 }
