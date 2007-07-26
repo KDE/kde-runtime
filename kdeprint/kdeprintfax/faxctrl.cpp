@@ -287,7 +287,7 @@ FaxCtrl::FaxCtrl(QWidget *parent, const char *name)
 
 	m_process = new KProcess();
 	connect(m_process, SIGNAL(readyReadStandardOutput ()), SLOT(slotReceivedStdout()));
-	connect(m_process, SIGNAL(receivedStderr(readyReadStandardError ())), SLOT(slotReceivedStdout()));
+	connect(m_process, SIGNAL(readyReadStandardError ()), SLOT(slotReceivedStdout()));
 	connect(m_process, SIGNAL(processExited(int, QProcess::ExitStatus)), SLOT(slotProcessExited(int, QProcess::ExitStatus)));
 	connect(this, SIGNAL(faxSent(bool)), SLOT(cleanTempFiles()));
 	m_logview = 0;
@@ -331,7 +331,7 @@ void FaxCtrl::slotProcessExited(int exitCode, QProcess::ExitStatus exitStatus)
 {
 	// we exited a process: if there's still entries in m_files, this was a filter
 	// process, else this was the fax process
-	bool	ok = (exitStatus==QProcess::NormalExit && ((exitStatus & (m_files.count() > 0 ? 0x1 : 0xFFFFFFFF)) == 0));
+	bool	ok = (exitStatus==QProcess::NormalExit && ((exitCode & (m_files.count() > 0 ? 0x1 : 0xFFFFFFFF)) == 0));
 	if ( ok )
 	{
 		if ( m_files.count() > 0 )
@@ -427,8 +427,7 @@ void FaxCtrl::filter()
 			m_filteredfiles.prepend(tmp);
 			m_tempfiles.append(tmp);
 			m_process->clearProgram();
-			m_process->setShellCommand(KStandardDirs::locate("data","kdeprintfax/anytops"));
-			*m_process << "-m" << quote(KStandardDirs::locate("data","kdeprintfax/faxfilters"))
+			*m_process <<KStandardDirs::locate("data","kdeprintfax/anytops")<< "-m" << quote(KStandardDirs::locate("data","kdeprintfax/faxfilters"))
 				<< QString::fromLatin1("--mime=%1").arg(mimeType)
 				<< "-p" << pageSize()
 				<<  quote(m_files[0]) << quote(tmp);
