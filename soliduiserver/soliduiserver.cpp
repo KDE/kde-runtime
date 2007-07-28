@@ -115,8 +115,8 @@ void SolidUiServer::showPassphraseDialog(const QString &udi,
                                          const QString &returnService, const QString &returnObject,
                                          uint wId, const QString &appId)
 {
-    if (m_udiToPassphraseDialog.contains(udi)) {
-        KPasswordDialog *dialog = m_udiToPassphraseDialog[udi];
+    if (m_idToPassphraseDialog.contains(returnService+":"+udi)) {
+        KPasswordDialog *dialog = m_idToPassphraseDialog[returnService+":"+udi];
         dialog->activateWindow();
         return;
     }
@@ -140,7 +140,7 @@ void SolidUiServer::showPassphraseDialog(const QString &udi,
     connect(dialog, SIGNAL(rejected()),
             this, SLOT(onPassphraseDialogRejected()));
 
-    m_udiToPassphraseDialog[udi] = dialog;
+    m_idToPassphraseDialog[returnService+":"+udi] = dialog;
 
     reparentDialog(dialog, wId, appId, true);
     dialog->show();
@@ -158,7 +158,7 @@ void SolidUiServer::onPassphraseDialogCompleted(const QString &pass, bool keep)
         QDBusReply<void> reply = returnIface.call("passphraseReply", pass);
 
         QString udi = dialog->property("soliduiserver.udi").toString();
-        m_udiToPassphraseDialog.remove(udi);
+        m_idToPassphraseDialog.remove(returnService+":"+udi);
 
         if (!reply.isValid()) {
             kWarning() << "Impossible to send the passphrase to the application, D-Bus said: "

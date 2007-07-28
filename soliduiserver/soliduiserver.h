@@ -64,7 +64,7 @@ private:
     void reparentDialog(QWidget *dialog, WId wId, const QString &appId, bool modal);
 
     QMap<QString, DeviceActionsDialog*> m_udiToActionsDialog;
-    QMap<QString, KPasswordDialog*> m_udiToPassphraseDialog;
+    QMap<QString, KPasswordDialog*> m_idToPassphraseDialog;
 
 #if 0
 private Q_SLOTS:
