@@ -12,6 +12,7 @@ X-KDE-System-Settings-Parent-Category=personal
 
 Name=Default Applications
 Name[be]=Праграмы па змаўчанні
+Name[bg]=Конзолни програми
 Name[de]=Standard-Komponenten
 Name[el]=Προκαθορισμένες εφαρμογές
 Name[es]=Aplicaciones predefinidas
@@ -27,6 +28,7 @@ Name[zh_TW]=預設應用程式
 Comment=Choose the default components for various services
 Comment[af]=Kies die verstek komponente vir verskeie dienste
 Comment[be]=Выбірае стандартныя кампаненты для розных сервісаў
+Comment[bg]=Избор на предпочитани компоненти за е-поща, редактиране на текст и др.
 Comment[ca]=Escull els components predeterminats per a diversos serveis
 Comment[cs]=Vyberte výchozí komponenty pro různé služby
 Comment[csb]=Wébiérk domëslnych kòmpònentów dlô wszelejaczich ùsłëżnotów
@@ -83,6 +85,7 @@ Comment[zh_TW]=選擇各種服務的預設元件
 
 Keywords=components,component chooser,resources,e-mail,email client,terminal emulator,applications
 Keywords[be]=кампаненты,выбар кампанентаў,рэсурсы,кліент электроннай пошты,эмулятар тэрміналу,components,component chooser,resources, email client, terminal emulator
+Keywords[bg]=Keywords=е-поща, ел, поща, редактор, стандартен, компонент, модул, components, component chooser, resources, email client, terminal emulator
 Keywords[de]=Komponenten,Ressourcen,E-Mail,E-Mail-Programm,Terminal-Emulation,Programme,Anwendungen
 Keywords[el]=συστατικά,επιλογέας συστατικών,πόροι, πελάτης email, email,προσομοιωτής τερματικού,εφαρμογές
 Keywords[es]=componentes,selector de componentes,recursos,correo electrónico,cliente de correo,emulador de terminal,aplicaciones

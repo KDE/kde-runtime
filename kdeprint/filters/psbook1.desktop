@@ -2,6 +2,7 @@
 Name=psbook1
 Require=exec:/psbook,exec:/psnup,exec:/psselect
 Comment=Pamphlet Printing - Even Pages (step 1)
+Comment[bg]=psbook1
 Comment[de]=Broschüre drucken - gerade Seiten (Schritt 1)
 Comment[el]=Εκτύπωση φυλλαδίου - Ζυγές σελίδες (βήμα 1)
 Comment[es]=Impresión de folletos - Páginas pares (paso 1)

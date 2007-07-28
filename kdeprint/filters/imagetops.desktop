@@ -1,8 +1,10 @@
 [KDE Print Filter Entry]
 Name=imagetops
+Name[bg]=Графични файлове
 Require=exec:/imagetops
 Comment=Generic Image to PS Filter
 Comment[be]=Адмысловы праглядальнік відарысаў
+Comment[bg]=Преглед на изображения
 Comment[de]=Umwandlung von Bildern zu PS
 Comment[el]=Γενικό φίλτρο εικόνας σε PS
 Comment[es]=Filtro genérico de imagen a PostScript

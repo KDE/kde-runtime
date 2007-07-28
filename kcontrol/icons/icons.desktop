@@ -15,6 +15,7 @@ X-KDE-ParentApp=kcontrol
 Name=Icons
 Name[af]=Ikoone
 Name[be]=Значкі
+Name[bg]=Икони
 Name[br]=Arlunioù
 Name[ca]=Icones
 Name[cs]=Ikony
@@ -76,6 +77,7 @@ Name[zh_TW]=圖示
 Comment=Customize KDE Icons
 Comment[af]=Pasmaak Kde Ikoone
 Comment[be]=Настаўленні значак KDE
+Comment[bg]=Настройване и избор на тема с икони
 Comment[br]=Neuziañ arlunioù KDE
 Comment[ca]=Configura les icones del KDE
 Comment[cs]=Přizpůsobení ikon KDE
@@ -136,6 +138,7 @@ Comment[zh_TW]=自訂 KDE 圖示
 
 Keywords=icons,effects,size,hicolor,locolor
 Keywords[be]=значка,значкі,эфекты,памер,кантраст,высокі кантраст,нізкі кантраст,icons,effects,size,hicolor,locolor
+Keywords[bg]=Keywords=икона, икони, icons, effects, size, hicolor, locolor
 Keywords[br]=arlunioù,efedoù,ment,liv,liv izel
 Keywords[ca]=icones,efectes,mida,hicolor,locolor
 Keywords[cs]=Ikony,Efekty,Velikost,HiColor,LoColor

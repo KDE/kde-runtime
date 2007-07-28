@@ -1,6 +1,7 @@
 Name=Terminal Emulator
 Name[af]=Terminaal Emulasie
 Name[be]=Эмулятар тэрміналу
+Name[bg]=Конзолна програма
 Name[br]=Kendarvanerezh termenell
 Name[ca]=Emulador de terminal
 Name[cs]=Emulátor terminálu
@@ -61,6 +62,7 @@ Name[zh_TW]=終端機模擬程式
 Comment=This service allows you to configure your default terminal emulator. All KDE applications which invoke a terminal emulator application should honor this setting.
 Comment[af]=Hierdie diens laat jou toe om jou standaard terminaal emuleerder op te stel. Al die KDE programme wat 'n terminaal skep behoort hierdie instelling te gebruik.
 Comment[be]=Гэты сервіс дазваляе вызначыць для сябе стандартны эмулятар тэрміналу. Усе праграмы KDE, якія запускаюць эмулятар тэрміналу, павінны выкарыстоўваць гэтае настаўленне.
+Comment[bg]=Избор на предпочитана конзолна програма. Всички програми от KDE, които се нуждаят от достъп до конзолата, ще ползват този компонент.
 Comment[ca]=Aquest servei us permet configurar el vostre emulador de terminal per omissió. Totes les aplicacions KDE que precisin d'accés a una aplicació de client de correu tindria que reconèixer aquesta opció.
 Comment[cs]=Tato služba umožňuje nastavit si výchozího emulátor terminálu. Všechny KDE aplikace, které spouští emulátor terminálu, by měly používat toto nastavení.
 Comment[csb]=Tuwò mòżne wëbrac domëslny emùlator terminala. Wszëtczé programë KDE, w jaczich brëkùje sã z lënkòw, mùszôłëbë ùżëwac tegò ùstôwù.

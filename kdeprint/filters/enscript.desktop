@@ -3,6 +3,7 @@ Name=enscript
 Require=exec:/enscript
 Comment=Enscript Text Filter
 Comment[be]=Тэкставы фільтр Enscript
+Comment[bg]=Description=Текстов файл
 Comment[csb]=Tekstowi filter enscript
 Comment[de]=Enscript Text-Filter
 Comment[el]=Φίλτρο κειμένου του enscript

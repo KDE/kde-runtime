@@ -4,6 +4,7 @@ Type=Service
 URL=file://tmp/soprano/services/SopranoRDFRepository
 ServiceTypes=NepomukService
 Name=Nepomuk Core Services
+Name[bg]=Услуги
 Name[de]=Nepomuk-Basisdienste
 Name[el]=Υπηρεσίες πυρήνα Nepomuk
 Name[fa]=خدمات هسته Nepomuk
