@@ -176,29 +176,19 @@ void SolidUiServer::reparentDialog(QWidget *dialog, WId wId, const QString &appI
 {
     // Code borrowed from kwalletd
 
-#ifdef Q_WS_X11
-    if (wId != 0) {
-        KWindowSystem::setMainWindow(dialog, wId); // correct, set dialog parent
-    } else {
-#endif
-        if (appId.isEmpty()) {
-            kWarning() << "Using soliduiserver passphrase dialog without parent window!" << endl;
-        } else {
-            kWarning() << "Application '" << appId << "' using passphrase dialog without parent window!" << endl;
-        }
+    KWindowSystem::setMainWindow(dialog, wId); // correct, set dialog parent
 
-        // allow dialog activation even if it interrupts, better than trying hacks
-        // with keeping the dialog on top or on all desktops
-        kapp->updateUserTimestamp();
 #ifdef Q_WS_X11
-    }
-
     if (modal) {
         KWindowSystem::setState(dialog->winId(), NET::Modal);
     } else {
         KWindowSystem::clearState(dialog->winId(), NET::Modal);
     }
 #endif
+
+    // allow dialog activation even if it interrupts, better than trying hacks
+    // with keeping the dialog on top or on all desktops
+    kapp->updateUserTimestamp();
 }
 
 
