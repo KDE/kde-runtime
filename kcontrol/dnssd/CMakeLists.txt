@@ -11,7 +11,7 @@ kde4_add_ui_files(kcm_kdnssd_PART_SRCS configdialog.ui )
 kde4_add_plugin(kcm_kdnssd ${kcm_kdnssd_PART_SRCS})
 
 
-target_link_libraries(kcm_kdnssd  ${KDE4_KDNSSD_LIBS} ${KDE4_KDEUI_LIBS} )
+target_link_libraries(kcm_kdnssd  ${KDE4_KDNSSD_LIBS} )
 
 install(TARGETS kcm_kdnssd  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
