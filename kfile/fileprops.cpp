@@ -305,7 +305,6 @@ int main( int argc, char **argv )
     processMetaDataOptions( m_props, args );
 
     qDeleteAll(m_props); // force destruction/sync of props
-    kDebug().flush();
 
     return 0;
 }
