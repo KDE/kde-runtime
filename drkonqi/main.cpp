@@ -34,6 +34,7 @@
 #include <kcmdlineargs.h>
 #include <kaboutdata.h>
 #include <klocale.h>
+#include <kdefakes.h>
 
 #include "krashconf.h"
 #include "toplevel.h"
