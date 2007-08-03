@@ -46,7 +46,7 @@ int main( int argc, char** argv )
         return app.exec();
     }
     else {
-        kDebug(300002) << "Failed to setup core services." << endl;
+        kDebug(300002) << "Failed to setup core services.";
         return -1;
     }
 }

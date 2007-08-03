@@ -121,7 +121,7 @@ Nepomuk::Middleware::Registry::Core::findServiceByType_internal( const QString& 
 const Nepomuk::Middleware::Registry::Service*
 Nepomuk::Middleware::Registry::Core::findServiceByType( const QString& type )
 {
-    kDebug() << k_funcinfo << endl;
+    kDebug() << k_funcinfo;
     const Service* service = findServiceByType_internal( type );
     if ( !service ) {
         if ( loadServiceOnDemand( type ) ) {
@@ -159,7 +159,7 @@ int Nepomuk::Middleware::Registry::Core::registerService( const Nepomuk::Middlew
 
     Service* newService = Service::createFromDefinition( desc, backend );
     if( newService ) {
-        kDebug(300003) << "(Nepomuk::Middleware::Registry::Core) Found valid service: " << newService->url() << endl;
+        kDebug(300003) << "(Nepomuk::Middleware::Registry::Core) Found valid service: " << newService->url();
         d->services[newService->url()] = newService;
 
         emit serviceRegistered( desc.url );
@@ -177,7 +177,7 @@ bool Nepomuk::Middleware::Registry::Core::loadServiceOnDemand( const QString& ty
 {
     // FIXME: check if the service is already running
 
-    kDebug(300003) << k_funcinfo << endl;
+    kDebug(300003) << k_funcinfo;
 
     QStringList allServices = KGlobal::dirs()->findAllResources( "services", "nepomuk/*" );
     foreach( QString service, allServices ) {
@@ -188,7 +188,7 @@ bool Nepomuk::Middleware::Registry::Core::loadServiceOnDemand( const QString& ty
              serviceDesktopFile.readEntry( "X-Nepomuk-LoadOnDemand", false ) ) {
 
             if ( serviceDesktopFile.readEntry( "URL" ).isEmpty() ) {
-                kDebug( 300003 ) << "(Nepomuk::Middleware::Registry::Core) invalid Nepomuk service desktop file: missing URL." << endl;
+                kDebug( 300003 ) << "(Nepomuk::Middleware::Registry::Core) invalid Nepomuk service desktop file: missing URL.";
                 continue;
             }
 
@@ -225,7 +225,7 @@ void Nepomuk::Middleware::Registry::Core::autoStartServices()
              serviceDesktopFile.readEntry( "X-Nepomuk-AutoLoad", false ) ) {
 
             if ( serviceDesktopFile.readEntry( "URL" ).isEmpty() ) {
-                kDebug( 300003 ) << "(Nepomuk::Middleware::Registry::Core) invalid Nepomuk service desktop file: missing URL." << endl;
+                kDebug( 300003 ) << "(Nepomuk::Middleware::Registry::Core) invalid Nepomuk service desktop file: missing URL.";
                 continue;
             }
 
@@ -260,7 +260,7 @@ int Nepomuk::Middleware::Registry::Core::unregisterService( const QString& uri, 
 
     Service* s = findServiceByUrl_internal( uri );
     if( s ) {
-        kDebug(300003) << "(Nepomuk::Middleware::Registry::Core) Removing service " << uri << endl;
+        kDebug(300003) << "(Nepomuk::Middleware::Registry::Core) Removing service " << uri;
 
         d->services.remove( uri );
         emit serviceUnregistered( uri );
@@ -270,7 +270,7 @@ int Nepomuk::Middleware::Registry::Core::unregisterService( const QString& uri, 
         return SERVICE_REGISTERED;
     }
     else {
-        kDebug(300003) << "(Nepomuk::Middleware::Registry::Core) No service with this URI found: " << uri << endl;
+        kDebug(300003) << "(Nepomuk::Middleware::Registry::Core) No service with this URI found: " << uri;
         return INVALID_SERVICE;
     }
 }

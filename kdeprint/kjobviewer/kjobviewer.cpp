@@ -153,7 +153,7 @@ void KJobViewerApp::initialize()
         view = m_views.find(prname);
         if (!view)
         {
-            kDebug() << "creating new view: " << prname << endl;
+            kDebug() << "creating new view: " << prname;
             view = new KMJobViewer();
             connect(view, SIGNAL(jobsShown(KMJobViewer*,bool)), SLOT(slotJobsShown(KMJobViewer*,bool)));
             connect(view, SIGNAL(printerChanged(KMJobViewer*,const QString&)), SLOT(slotPrinterChanged(KMJobViewer*,const QString&)));
@@ -177,7 +177,7 @@ void KJobViewerApp::slotJobsShown(KMJobViewer *view, bool hasJobs)
 {
 	if (!hasJobs && !view->isVisible() && !view->isSticky())
 	{
-		kDebug() << "removing view: " << view->printer() << endl;
+		kDebug() << "removing view: " << view->printer();
 		// the window is hidden and doesn't have any job shown -> destroy it
 		// closing won't have any effect as the KMJobViewer overload closeEvent()
 		m_views.remove(view->printer());

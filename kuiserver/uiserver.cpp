@@ -428,7 +428,7 @@ extern "C" KDE_EXPORT int kdemain(int argc, char **argv)
 
     if (!KUniqueApplication::start())
     {
-      kDebug(7024) << "kuiserver is already running!" << endl;
+      kDebug(7024) << "kuiserver is already running!";
       return (0);
     }
 

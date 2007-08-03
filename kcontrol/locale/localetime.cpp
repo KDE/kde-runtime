@@ -337,7 +337,7 @@ void KLocaleConfigTime::showEvent( QShowEvent *e )
 
 void KLocaleConfigTime::slotCalendarSystemChanged(int calendarSystem)
 {
-  kDebug() << "CalendarSystem: " << calendarSystem << endl;
+  kDebug() << "CalendarSystem: " << calendarSystem;
 
   typedef QVector<QString> CalendarVector;
   CalendarVector calendars(4);
@@ -375,7 +375,7 @@ calendarType);
   if ( it != calendars.end() )
     calendarSystem = it - calendars.begin();
 
-  kDebug() << "calSys: " << calendarSystem << ": " << calendarType << endl;
+  kDebug() << "calSys: " << calendarSystem << ": " << calendarType;
   m_comboCalendarSystem->setCurrentIndex( calendarSystem );
 
   //  m_edTimeFmt->setText( m_locale->timeFormat() );
@@ -392,7 +392,7 @@ calendarType);
   if ( m_locale->nounDeclension() )
     m_chDateMonthNamePossessive->setChecked( m_locale->dateMonthNamePossessive() );
 
-  kDebug(173) << "converting: " << m_locale->timeFormat() << endl;
+  kDebug(173) << "converting: " << m_locale->timeFormat();
   kDebug(173) << storeToUser(timeMap(),
 			   m_locale->timeFormat()) << endl;
   kDebug(173) << userToStore(timeMap(),
@@ -423,7 +423,7 @@ void KLocaleConfigTime::slotDateFmtShortChanged(const QString &t)
 }
 
 void KLocaleConfigTime::slotWeekStartDayChanged(int firstDay) {
-    kDebug(173) << k_funcinfo << "first day is now: " << firstDay << endl;
+    kDebug(173) << k_funcinfo << "first day is now: " << firstDay;
     m_locale->setWeekStartDay(m_comboWeekStartDay->currentIndex() + 1);
     emit localeChanged();
 }

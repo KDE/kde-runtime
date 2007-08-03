@@ -48,7 +48,7 @@ int main(int argc, char **argv)
 
     // initialize application
     if ( !KUniqueApplication::start() ) {
-        kDebug() << "Running knotify found" << endl;
+        kDebug() << "Running knotify found";
         return 0;
     }
 

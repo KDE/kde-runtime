@@ -106,7 +106,7 @@ void Cache::remove( int listId )
         d->cache.remove( listId );
     }
 
-    //  kDebug(300002) << "(SopranoRDFRepository::Cache) Cache size: " << d->cache.size() << endl;
+    //  kDebug(300002) << "(SopranoRDFRepository::Cache) Cache size: " << d->cache.size();
 }
 
 /////////////////

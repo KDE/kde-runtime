@@ -323,7 +323,7 @@ bool FaxCtrl::send(KdeprintFax *f)
 void FaxCtrl::slotReceivedStdout()
 {
 	QByteArray str = m_process->readAllStandardOutput ();
-	kDebug() << "Received stdout: " << str << endl;
+	kDebug() << "Received stdout: " << str;
 	addLog(QString(str));
 }
 
@@ -549,7 +549,7 @@ void FaxCtrl::slotCloseLog()
 		m_logview = 0;
 		if (obj && obj->inherits("QPushButton"))
 			delete view->parentWidget();
-kDebug() << "slotClose()" << endl;
+kDebug() << "slotClose()";
 	}
 }
 
@@ -570,7 +570,7 @@ void FaxCtrl::slotPrintLog()
 			txt.replace( '\n', "<br>" );
 			txt.prepend( "<h2>" + i18n( "KDEPrint Fax Tool Log" ) + "</h2>" );
 
-			kDebug() << "Log: " << txt << endl;
+			kDebug() << "Log: " << txt;
 			Q3SimpleRichText richText( txt, m_logview->font() );
 
 			richText.setWidth( &painter, body.width() );

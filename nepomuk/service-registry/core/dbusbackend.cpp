@@ -93,7 +93,7 @@ void Nepomuk::Middleware::Registry::DBus::Backend::slotServiceOwnerChanged( cons
   if( newOwner.isEmpty() ) {
     const Service* s = findServiceByDBusName( name );
     if( s ) {
-      kDebug(300003) << "(Nepomuk::Middleware::Registry::DBus::Backend) Looks as if service " << name << " crashed." << endl;
+      kDebug(300003) << "(Nepomuk::Middleware::Registry::DBus::Backend) Looks as if service " << name << " crashed.";
       m_core->unregisterService( s->url(), this );
     }
   }

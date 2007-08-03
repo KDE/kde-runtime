@@ -43,7 +43,7 @@ NotifyByPopup::~NotifyByPopup()
 
 void NotifyByPopup::notify( int id, KNotifyConfig * config )
 {
-	kDebug(300) << k_funcinfo << id << endl;
+	kDebug(300) << k_funcinfo << id;
 	if(m_popups.contains(id))
 	{
 		//the popup is already shown
@@ -77,7 +77,7 @@ void NotifyByPopup::slotLinkClicked( const QString &adr )
 	unsigned int id=adr.section("/" , 0 , 0).toUInt();
 	unsigned int action=adr.section("/" , 1 , 1).toUInt();
 
-//	kDebug(300) << k_funcinfo << id << " " << action << endl;
+//	kDebug(300) << k_funcinfo << id << " " << action;
         
 	if(id==0 || action==0)
 		return;

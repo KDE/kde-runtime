@@ -260,7 +260,7 @@ void KLocaleConfig::loadCountryList()
     QString map( KStandardDirs::locate( "locale",
                           QString::fromLatin1( "l10n/%1.png" )
                           .arg(tag) ) );
-    //kDebug() << "REGION: " << (*it) << " Tag: " << tag << " Name: " << name << " Map: " << map << endl;
+    //kDebug() << "REGION: " << (*it) << " Tag: " << tag << " Name: " << name << " Map: " << map;
     QIcon icon;
     if ( !map.isNull() )
       icon = KIconLoader::global()->loadIconSet(map, K3Icon::Small);
@@ -289,7 +289,7 @@ void KLocaleConfig::loadCountryList()
     QString flag( KStandardDirs::locate( "locale",
                           QString::fromLatin1( "l10n/%1/flag.png" )
                           .arg(tag) ) );
-    //kDebug() << "COUNTRY: " << (*it) << " Tag: " << tag << " Submenu: " << submenu << " Flag: " << flag << endl;
+    //kDebug() << "COUNTRY: " << (*it) << " Tag: " << tag << " Submenu: " << submenu << " Flag: " << flag;
     QIcon icon( KIconLoader::global()->loadIconSet(flag, K3Icon::Small) );
 
     m_comboCountry->insertItem( icon, name, tag, submenu );
@@ -368,7 +368,7 @@ void KLocaleConfig::slotLocaleChanged()
 
 void KLocaleConfig::slotTranslate()
 {
-  kDebug() << "slotTranslate()" << endl;
+  kDebug() << "slotTranslate()";
 
 #if 0
   m_comboCountry->setToolTip( ki18n

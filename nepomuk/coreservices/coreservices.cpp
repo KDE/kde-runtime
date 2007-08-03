@@ -60,18 +60,18 @@ bool Nepomuk::CoreServices::DaemonImpl::registerServices()
 {
     QString storagePath = QDir::homePath() + "/.nepomuk/share/storage/";
     if( !KStandardDirs::makeDir( storagePath + "system" ) ) {
-        kDebug(300002) << "Failed to create the system storage folder: " << storagePath + "system" << endl;
+        kDebug(300002) << "Failed to create the system storage folder: " << storagePath + "system";
         return false;
     }
 
     if( !Soprano::usedBackend() ) {
-        kDebug(300002) << "Failed to load the Soprano Redland backend" << endl;
+        kDebug(300002) << "Failed to load the Soprano Redland backend";
         return false;
     }
 
     d->system = Soprano::createModel( "system", QString("new=no,dir="+ storagePath + "system").split( "," ) );
     if( !d->system ) {
-        kDebug(300002) << "Failed to create the system store" << endl;
+        kDebug(300002) << "Failed to create the system store";
         return false;
     }
 
@@ -88,7 +88,7 @@ bool Nepomuk::CoreServices::DaemonImpl::registerServices()
             KStandardDirs::makeDir( storagePath + modelId );
             d->resolver.insert( modelId, Soprano::createModel( modelId,
                                                                QString("dir=" + storagePath + modelId ).split(",") ) );
-            kDebug(300002) << "(Nepomuk::CoreServices) found repository: " << modelId << endl;
+            kDebug(300002) << "(Nepomuk::CoreServices) found repository: " << modelId;
         }
     }
 
@@ -96,7 +96,7 @@ bool Nepomuk::CoreServices::DaemonImpl::registerServices()
     d->repository = new SopranoRDFRepository( d->system, &d->resolver );
 
     if( d->registry->registerService( d->repository ) ) {
-        kDebug(300002) << "Failed to register Nepomuk services." << endl;
+        kDebug(300002) << "Failed to register Nepomuk services.";
         return false;
     }
 
@@ -112,7 +112,7 @@ bool Nepomuk::CoreServices::DaemonImpl::registerServices()
 
 Nepomuk::CoreServices::DaemonImpl::~DaemonImpl()
 {
-    kDebug(300002) << k_funcinfo << endl;
+    kDebug(300002) << k_funcinfo;
 
     delete d->system;
     for ( QMap<QString, Soprano::Model*>::iterator it = d->resolver.begin();

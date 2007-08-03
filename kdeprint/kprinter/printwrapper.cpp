@@ -69,7 +69,7 @@ void showmsgdialog(const QString& msg, int type = 0)
 void showmsgconsole(const QString& msg, int type = 0)
 {
 	QString	errmsg = QString::fromLatin1("%1 : ").arg((type == 0 ? i18n("Print info") : (type == 1 ? i18n("Print warning") : i18n("Print error"))));
-	kDebug() << errmsg << msg << endl;
+	kDebug() << errmsg << msg;
 }
 
 void showmsg(const QString& msg, int type = 0)
@@ -95,7 +95,7 @@ void signal_handler(int s)
 
 QString copyfile( const QString& filename )
 {
-	kDebug( 500 ) << "Copying file " << filename << endl;
+	kDebug( 500 ) << "Copying file " << filename;
 	QString result;
 	QFile f( filename );
 	if ( f.open( QIODevice::ReadOnly ) )
@@ -115,7 +115,7 @@ QString copyfile( const QString& filename )
 				temp.setAutoRemove( true );
 			else
 			{
-				kDebug( 500 ) << "File copied to " << temp.fileName() << endl;
+				kDebug( 500 ) << "File copied to " << temp.fileName();
 				result = temp.fileName();
 			}
 		}
@@ -154,7 +154,7 @@ void PrintWrapper::slotPrint()
 
 	if( isatty( 0 ))
 	    {
-	    kDebug( 500 ) << "stdin is a terminal, disabling it" << endl;
+	    kDebug( 500 ) << "stdin is a terminal, disabling it";
 	    check_stdin = false;
 	    }
 
@@ -208,16 +208,16 @@ void PrintWrapper::slotPrint()
 				force_stdin = true;
 				check_stdin = false;
 				dataread = true;
-				kDebug( 500 ) << "input detected on stdin" << endl;
+				kDebug( 500 ) << "input detected on stdin";
 			}
 			else
 			{
 				force_stdin = check_stdin = false;
-				kDebug( 500 ) << "stdin closed and empty" << endl;
+				kDebug( 500 ) << "stdin closed and empty";
 			}
 	    }
 		else
-			kDebug( 500 ) << "no input on stdin at startup" << endl;
+			kDebug( 500 ) << "no input on stdin at startup";
 	}
 
         // force_stdin ? or also check_stdin ?
@@ -249,7 +249,7 @@ void PrintWrapper::slotPrint()
 	kprinter.initOptions(opts);
 	kprinter.setOption("kde-filelist", files.toStringList().join("@@"));
 	QString str = kprinter.option( "kde-filelist" );
-	// kDebug( 500 ) << str << endl;
+	// kDebug( 500 ) << str;
 	if (ncopies > 0)
 		kprinter.setNumCopies(ncopies);
 
@@ -265,7 +265,7 @@ void PrintWrapper::slotPrint()
 			{
 			    notif = new QSocketNotifier( 0, QSocketNotifier::Read, this );
 			    connect( notif, SIGNAL( activated( int )), this, SLOT( slotGotStdin()));
-			    kDebug( 500 ) << "waiting for input on stdin" << endl;
+			    kDebug( 500 ) << "waiting for input on stdin";
 			}
 			dlg->exec();
 			delete dlg;
@@ -288,7 +288,7 @@ void PrintWrapper::slotGotStdin()
 		check_stdin = false;
 		dataread = true;
 		dlg->enableDialogPage( 0, false );
-		kDebug( 500 ) << "got delayed input on stdin" << endl;
+		kDebug( 500 ) << "got delayed input on stdin";
 	}
 }
 
@@ -303,7 +303,7 @@ void PrintWrapper::slotPrintRequested(KPrinter *kprinter)
 	{
 		QString	tmpFile;
 		KUrl url(*it);
-		kDebug( 500 ) << url.url() << endl;
+		kDebug( 500 ) << url.url();
 		if (KIO::NetAccess::download(url, tmpFile, this))
 		{
 			filestoprint << tmpFile;

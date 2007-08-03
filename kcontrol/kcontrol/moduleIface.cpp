@@ -41,7 +41,7 @@ QFont ModuleIface::getFont() {
 }
 
 QPalette ModuleIface::getPalette(){
-	kDebug(1208) << "Returned Palette" << endl;
+	kDebug(1208) << "Returned Palette";
 	return _parent->palette();
 }
 #endif

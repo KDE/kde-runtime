@@ -30,7 +30,7 @@ KNotifyConfig::KNotifyConfig( const QString & _appname, const ContextList & _con
 	configfile(KSharedConfig::openConfig (_appname+QString::fromAscii( ".notifyrc" ), KConfig::NoGlobals)),
 	contexts(_contexts) , eventid(_eventid)
 {
-//	kDebug(300) << k_funcinfo << appname << " , " << eventid << endl;
+//	kDebug(300) << k_funcinfo << appname << " , " << eventid;
 }
 
 KNotifyConfig::~KNotifyConfig()
@@ -51,7 +51,7 @@ QString KNotifyConfig::readEntry( const QString & entry, bool path )
 				return p;
 		}
 	}
-//	kDebug(300) << k_funcinfo << entry << " not found in contexts " << endl;
+//	kDebug(300) << k_funcinfo << entry << " not found in contexts ";
 	const QString group="Event/" + eventid ;
 	if(configfile->hasGroup( group ) )
 	{
@@ -60,7 +60,7 @@ QString KNotifyConfig::readEntry( const QString & entry, bool path )
 		if(!p.isNull())
 			return p;
 	}
-//	kDebug(300) << k_funcinfo << entry << " not found in config " << endl;
+//	kDebug(300) << k_funcinfo << entry << " not found in config ";
 	if(eventsfile->hasGroup( group ) )
 	{
             KConfigGroup cg( eventsfile, group);
@@ -68,7 +68,7 @@ QString KNotifyConfig::readEntry( const QString & entry, bool path )
 		if(!p.isNull())
 			return p;
 	}
-//	kDebug(300) << k_funcinfo << entry << " not found !!! " << endl;
+//	kDebug(300) << k_funcinfo << entry << " not found !!! ";
 
 	return QString();
 }

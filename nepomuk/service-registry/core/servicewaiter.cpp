@@ -56,7 +56,7 @@ bool Nepomuk::Middleware::Registry::ServiceWaiter::waitForService( const QString
 bool Nepomuk::Middleware::Registry::ServiceWaiter::waitForServices( const QStringList& services, int msecs )
 {
     if ( d->loop.isRunning() ) {
-        kDebug(300003) << "(Nepomuk::Middleware::Registry::ServiceWaiter) called wait() on a running instance." << endl;
+        kDebug(300003) << "(Nepomuk::Middleware::Registry::ServiceWaiter) called wait() on a running instance.";
         return false;
     }
 
@@ -90,7 +90,7 @@ void Nepomuk::Middleware::Registry::ServiceWaiter::slotServiceRegistered( const 
     if ( d->loop.isRunning() ) {
         d->serviceUris.removeAll( uri );
         if ( d->serviceUris.isEmpty() ) {
-            kDebug(300003) << "(Nepomuk::Middleware::Registry::ServiceWaiter) all services found" << endl;
+            kDebug(300003) << "(Nepomuk::Middleware::Registry::ServiceWaiter) all services found";
             d->timer.stop();
             d->loop.exit( 0 );
         }

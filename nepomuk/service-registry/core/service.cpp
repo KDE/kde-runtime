@@ -87,15 +87,15 @@ Nepomuk::Middleware::Registry::Service::createFromDefinition( const Nepomuk::Mid
 // 	return s;
 //       }
 //       else {
-// 	kDebug(300003) << "(Nepomuk::Middleware::Registry::Service) Could not find main service element" << endl;
+// 	kDebug(300003) << "(Nepomuk::Middleware::Registry::Service) Could not find main service element";
 //       }
 //     }
 //     else {
-//       kDebug(300003) << "(Nepomuk::Middleware::Registry::Service) Parse error in line " << line << " at column " << col << ": " << msg << endl;;
+//       kDebug(300003) << "(Nepomuk::Middleware::Registry::Service) Parse error in line " << line << " at column " << col << ": " << msg;;
 //     }
 //   }
 //   else {
-//     kDebug(300003) << "(Nepomuk::Middleware::Registry::Service) Not a valid Nepomuk-KDE service: " << desc.url << endl;
+//     kDebug(300003) << "(Nepomuk::Middleware::Registry::Service) Not a valid Nepomuk-KDE service: " << desc.url;
 //   }
 
 //   return 0;

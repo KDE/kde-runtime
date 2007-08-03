@@ -167,8 +167,8 @@ static void printList( const QStringList& list )
 {
     QStringList::ConstIterator it = list.begin();
     for ( ; it != list.end(); ++it )
-        kDebug() << (*it).toLocal8Bit() << endl;
-    kDebug() << endl;
+        kDebug() << (*it).toLocal8Bit();
+    kDebug();
 }
 
 static void processMetaDataOptions( const QList<FileProps *> propList,
@@ -183,27 +183,27 @@ static void processMetaDataOptions( const QList<FileProps *> propList,
         QString file = props->fileName() + ' ';
         QString fileString = line;
         fileString.replace( 3, file.length(), file );
-        kDebug() << QFile::encodeName( fileString ) << endl;
+        kDebug() << QFile::encodeName( fileString );
 
         if ( args->isSet( "listsupported" ) )
         {
-            kDebug() << "=Supported Keys=" << endl;
+            kDebug() << "=Supported Keys=";
             printList( props->supportedKeys() );
         }
         if ( args->isSet( "listavailable" ) )
         {
-            kDebug() << "=Available Keys=" << endl;
+            kDebug() << "=Available Keys=";
             printList( props->availableKeys() );
         }
 //         if ( args->isSet( "listwritable" ) )
 //         {
-//             kDebug() << "TODO :)" << endl;
+//             kDebug() << "TODO :)";
 //         }
         if ( args->isSet( "getValue" ) )
         {
-            kDebug() << "=Value=" << endl;
+            kDebug() << "=Value=";
             QString key = args->getOption("getValue");
-            kDebug() << props->getValue( key ).toLocal8Bit() << endl;
+            kDebug() << props->getValue( key ).toLocal8Bit();
         }
 
         if ( args->isSet( "setValue" ) )
@@ -218,7 +218,7 @@ static void processMetaDataOptions( const QList<FileProps *> propList,
 
         if ( args->isSet( "allValues" ) )
         {
-            kDebug() << "=All Values=" << endl;
+            kDebug() << "=All Values=";
             printList( props->allValues() );
         }
     }

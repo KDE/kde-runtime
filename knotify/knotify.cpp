@@ -86,7 +86,7 @@ void KNotify::closeNotification(int id)
 		return;
 	Event *e=m_notifications[id];
 	
-	kDebug(300) << k_funcinfo << e->id << " ref=" << e->ref << endl;
+	kDebug(300) << k_funcinfo << e->id << " ref=" << e->ref;
 	
 	//this has to be called before  plugin->close or we will get double deletion because of slotPluginFinished
 	m_notifications.remove(id);
@@ -120,7 +120,7 @@ int KNotify::event( const QString & event, const QString & appname, const Contex
 	emitEvent(e);
 	
 	e->ref--;
-	kDebug(300) << k_funcinfo << e->id << " ref=" << e->ref << endl;
+	kDebug(300) << k_funcinfo << e->id << " ref=" << e->ref;
 	if(e->ref==0)
 	{
 		m_notifications.remove(e->id);
@@ -176,7 +176,7 @@ void KNotify::slotPluginFinished( int id )
 	if(!m_notifications.contains(id))
 		return;
 	Event *e=m_notifications[id];
-	kDebug(300) << k_funcinfo << e->id << " ref=" << e->ref  << endl;
+	kDebug(300) << k_funcinfo << e->id << " ref=" << e->ref ;
 	e->ref--;
 	if(e->ref==0)
 		closeNotification( id );
@@ -212,7 +212,7 @@ int KNotifyAdaptor::event(const QString &event, const QString &fromApp, const QV
 		QVariantList vl=v.toList();
 		if(vl.count() != 2)
 		{
-			kWarning(300) << k_funcinfo << "Bad structure passed as argument" << endl;
+			kWarning(300) << k_funcinfo << "Bad structure passed as argument" ;
 			continue;
 		}
 		contextlist << qMakePair(vl[0].toString() , vl[1].toString());*/

@@ -324,7 +324,7 @@ void KDEDConfig::slotStartService()
 void KDEDConfig::slotStopService()
 {
 	QString service = _lvStartup->currentItem()->text(4);
-	kDebug() << "Stopping: " << service << endl;
+	kDebug() << "Stopping: " << service;
 
 	QDBusInterface kdedInterface( "org.kde.kded", "/kded", "org.kde.kded" );
 	QDBusReply<bool> reply = kdedInterface.call( "unloadModule", service  );

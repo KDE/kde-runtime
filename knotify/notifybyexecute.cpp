@@ -46,10 +46,10 @@ void NotifyByExecute::notify( int id, KNotifyConfig * config )
 {
 	QString command=config->readEntry( "execute" );
 	
-	kDebug(300) << k_funcinfo << command << endl;
+	kDebug(300) << k_funcinfo << command;
 	
 	if (!command.isEmpty()) {
-// 	kDebug(300) << "executing command '" << command << "'" << endl;
+// 	kDebug(300) << "executing command '" << command << "'";
 		QHash<QChar,QString> subst;
 		subst.insert( 'e', config->eventid );
 		subst.insert( 'a', config->appname );
