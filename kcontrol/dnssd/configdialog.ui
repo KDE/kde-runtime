@@ -21,9 +21,6 @@
     <height>0</height>
    </size>
   </property>
-  <property name="windowTitle" >
-   <string>MyDialog1</string>
-  </property>
   <layout class="QGridLayout" >
    <property name="leftMargin" >
     <number>0</number>
