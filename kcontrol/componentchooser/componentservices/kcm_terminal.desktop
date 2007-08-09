@@ -88,7 +88,7 @@ Comment[it]= Questo servizio ti permette di configurare il tuo programma di emul
 Comment[ja]=ここで標準のターミナルエミュレータを設定します。ターミナルエミュレータを起動するすべての KDE アプリケーションは、この設定に従います。
 Comment[ka]=Comment=აქ შეიძლება სტანდარტული ტერმინალის ემულატორის დაკონფიგურირება. KDE-ს ყველა პროგრამა, ვისაც სჭირდება ფოსტა, გაითვალისწინებენ ამ პარამეტრს
 Comment[kk]=Мұнда Сіз әдетті терминал эмуляторын таңдай аласыз. Бүкіл KDE қолданбаларда терминал эмуляторы керек болғанда осы таңдау қолданылады.
-Comment[km]=សេវា​នេះ​អនុញ្ញាត​ឲ្យ​អ្នក​កំណត់​រចនាសម្ព័ន្ធ វត្ថុ​ត្រាប់​តាម​ស្ថានីយ​លំនាំដើម​របស់​អ្នក ។ កម្មវិធី KDE ទាំងអស់ ដែល​ហៅ​វត្ថុ​ត្រាប់​តាម​ស្ថានីយ​មួយ គួរ​តែ​គោរព​ការ​កំណត់​នេះ ។
+Comment[km]=សេវា​នេះ​អនុញ្ញាត​ឲ្យ​អ្នក​កំណត់​រចនាសម្ព័ន្ធ វត្ថុ​ត្រាប់​តាម​ស្ថានីយ​លំនាំដើម​របស់​អ្នក ។ គ្រប់​កម្មវិធី KDE ទាំងអស់ដែល​ហៅ​វត្ថុ​ត្រាប់​តាម​ស្ថានីយ​មួយ គួរ​តែ​គោរពតាម​​ការ​កំណត់​នេះ ។
 Comment[lt]=Ši tarnyba leidžia jumos nustatyti Jūsų numatytą pašto klientą. Visos KDE programos, kurios iškviečia terminalo emuliatoriaus programa, turėtų atsižvelgti į šį nustatymą.
 Comment[lv]=Šis serviss Jums ļauj uzstādīt noklusējuma termināla emulātoru. Visas KDE aplikācijas, kurām vajag termināla emulātoru, izmantos šo parametru.
 Comment[mk]=Овој сервис ви овозможува да го конфигурирате вашиот стандарден терминалски емулатор. Сите KDE-апликации кои стартуваат апликација во терминалски емулатор ќе ги почитуваат овие поставувања.
