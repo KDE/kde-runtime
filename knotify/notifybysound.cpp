@@ -45,7 +45,7 @@
 
 // Phonon headers
 #include <phonon/mediaobject.h>
-#include <phonon/audiopath.h>
+#include <phonon/path.h>
 #include <phonon/audiooutput.h>
 
 
@@ -58,7 +58,6 @@ class NotifyBySound::Private
 		QHash<int, KProcess *> processes;
 		QHash<int, Phonon::MediaObject*> mediaobjects;
 		QSignalMapper *signalmapper;
-		Phonon::AudioPath *audiopath;
 		Phonon::AudioOutput *audiooutput;
 
 		int volume;
@@ -71,9 +70,7 @@ NotifyBySound::NotifyBySound(QObject *parent) : KNotifyPlugin(parent),d(new Priv
 	d->signalmapper = new QSignalMapper(this);
 	connect(d->signalmapper, SIGNAL(mapped(int)), this, SLOT(slotSoundFinished(int)));
 
-	d->audiopath = new Phonon::AudioPath( this );
 	d->audiooutput = new Phonon::AudioOutput( Phonon::NotificationCategory, this );
-	d->audiopath->addOutput( d->audiooutput );
 
 	loadConfig();
 }
@@ -152,7 +149,7 @@ void NotifyBySound::notify( int eventId, KNotifyConfig * config )
 		connect( media, SIGNAL( finished() ), d->signalmapper, SLOT(map()));
 		d->signalmapper->setMapping( media , eventId );
 
-		media->addAudioPath(d->audiopath);
+                Phonon::createPath(media, d->audiooutput);
 		media->setCurrentSource(soundFile);
 		media->play();
 		d->mediaobjects.insert(eventId , media);
