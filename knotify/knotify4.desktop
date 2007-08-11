@@ -8,6 +8,7 @@ Name[x-test]=xxKNotifyxx
 Exec=knotify
 Comment=KDE Notification Daemon
 Comment[ar]=مرقب الكتابة لِــ KDE
+Comment[be]=Сервіс абвяшчэнняў KDE
 Comment[csb]=Ùsłëżnota dôwanié wiédzë KDE
 Comment[de]=KDE Benachrichtigungsdienst
 Comment[el]=Δαίμονας ειδοποιήσεων του KDE
