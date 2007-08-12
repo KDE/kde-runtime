@@ -4,6 +4,7 @@ Require=exec:/psbook,exec:/psnup
 Comment=Pamphlet Printing (use with small side duplex printing)
 Comment[de]=Broschüre drucken (Verwendung: Duplex kurze Seite)
 Comment[el]=Εκτύπωση φυλλαδίου (χρήση μαζί με εκτύπωση διπλής όψης μικρής πλευράς)
+Comment[es]=Impresión de folletos (usar con impresión de doble cara en lado pequeño)
 Comment[fa]=چاپ جزوه )با استفاده از چاپ دوسویه جانبی کوچک(
 Comment[ja]=小冊子の印刷 - (短辺とじ両面印刷を使用)
 Comment[km]=ការ​បោះពុម្ព​ចុល្លលិខិត​ (ប្រើ​ជាមួយការ​បោះពុម្ពទ្វេទិស)
