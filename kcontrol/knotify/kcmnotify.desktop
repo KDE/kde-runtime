@@ -6,7 +6,7 @@ Type=Service
 ServiceTypes=KCModule
 DocPath=kcontrol/kcmnotify/index.html
 
-X-KDE-Library=knotify
+X-KDE-Library=kcm_knotify
 X-KDE-ParentApp=kcontrol
 
 X-KDE-System-Settings-Parent-Category=notifications

@@ -27,7 +27,7 @@
 #include "kcm_componentchooser.moc"
 
 typedef KGenericFactory<KCMComponentChooser> KCMComponentChooserFactory;
-K_EXPORT_COMPONENT_FACTORY(componentchooser, KCMComponentChooserFactory("kcmcomponentchooser"))
+K_EXPORT_COMPONENT_FACTORY(kcm_componentchooser, KCMComponentChooserFactory("kcmcomponentchooser"))
 
 KCMComponentChooser::KCMComponentChooser(QWidget *parent, const QStringList &):
 	KCModule(KCMComponentChooserFactory::componentData(), parent) {

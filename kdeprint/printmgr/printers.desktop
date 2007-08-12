@@ -8,7 +8,7 @@ Type=Service
 DocPath=kdeprint/index.html
 MimeType=print/manager
 
-X-KDE-Library=printmgr
+X-KDE-Library=kcm_printmgr
 X-KDE-RootOnly=true
 X-KDE-HasReadOnlyMode=true
 X-KDE-FactoryName=printmgr

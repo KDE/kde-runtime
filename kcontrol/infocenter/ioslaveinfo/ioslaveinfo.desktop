@@ -179,7 +179,7 @@ Terminal=false
 Type=Service
 ServiceTypes=KCModule
 X-KDE-FactoryName=ioslaveinfo
-X-KDE-Library=ioslaveinfo
+X-KDE-Library=kcm_ioslaveinfo
 
 X-KDE-ParentApp=kinfocenter
 
