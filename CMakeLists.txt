@@ -1,5 +1,8 @@
 project(KDEBASE_RUNTIME)
 
+# where to look first for cmake modules, before ${CMAKE_ROOT}/Modules/ is checked
+set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules )
+
 #search packages used by KDE
 find_package(KDE4 REQUIRED)
 find_package(Strigi REQUIRED)
@@ -15,6 +18,7 @@ configure_file (config-runtime.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-runtim
 add_definitions (${QT_DEFINITIONS} ${KDE4_DEFINITIONS})
 include_directories (${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} ${KDE4_INCLUDES})
 
+add_subdirectory(cmake)
 add_subdirectory(kuiserver)
 if ( NOT WIN32 )
   add_subdirectory(drkonqi)
@@ -37,6 +41,7 @@ endif ( UNIX )
 add_subdirectory(kurifilter-plugins)
 add_subdirectory(soliduiserver)
 add_subdirectory(l10n)
+add_subdirectory(phonon)
 
 # Command-line tools (e.g. for shell scripts)
 add_subdirectory(kinstalltheme)
