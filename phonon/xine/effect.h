@@ -33,6 +33,7 @@ namespace Phonon
 {
 namespace Xine
 {
+class Effect;
 
 class EffectXT : public SourceNodeXT, public SinkNodeXT
 {

@@ -32,6 +32,7 @@ namespace Phonon
 {
 namespace Xine
 {
+class VolumeFaderEffect;
 
 struct PluginParameters
 {

@@ -38,6 +38,8 @@ namespace Phonon
 namespace Xine
 {
 class MediaObject;
+class VideoWidget;
+
 class VideoWidgetXT : public SinkNodeXT
 {
     friend class VideoWidget;
