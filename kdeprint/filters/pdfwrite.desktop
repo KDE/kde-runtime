@@ -17,6 +17,7 @@ Comment[pa]=PDF ਰਾਇਟਰ (ਗੋਸਟ-ਸਕ੍ਰਿਪਟ ਲੋੜੀ
 Comment[pt]=Gravador de PDF (necessita do Ghostscript)
 Comment[pt_BR]=Gravador de PDF (necessita do Ghostscript)
 Comment[sv]=PDF-utskrift (kräver Ghostscript)
+Comment[th]=โปรแกรมเขียน PDF (จำเป็นต้องใช้ Ghostscript)
 Comment[zh_TW]=PDF 產生器（需要 Ghostscript）
 MimeTypeIn=application/postscript
 MimeTypeOut=application/pdf
