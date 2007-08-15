@@ -52,7 +52,7 @@ public Q_SLOTS:
 
     Q_SCRIPTABLE void showPassphraseDialog(const QString &udi,
                                            const QString &returnService, const QString &returnObject,
-                                           uint wId, const QString &appId);
+                                           WId wId, const QString &appId);
 
 
 private Q_SLOTS:
