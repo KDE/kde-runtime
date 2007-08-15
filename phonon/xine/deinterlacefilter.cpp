@@ -18,7 +18,6 @@
 */
 
 #include "deinterlacefilter.h"
-#include "videopath.h"
 #include "mediaobject.h"
 #include <kdebug.h>
 

@@ -18,7 +18,6 @@
 */
 
 #include "brightnesscontrol.h"
-#include "videopath.h"
 #include "mediaobject.h"
 #include <kdebug.h>
 
