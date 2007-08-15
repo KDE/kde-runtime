@@ -2,6 +2,7 @@
 Name=psnup
 Require=exec:/psnup
 Comment=Multiple Pages per Sheet Filter
+Comment[bg]=Филтър за много страници на лист
 Comment[de]=Ausdruck mehrere Seiten auf ein Blatt
 Comment[el]=Φίλτρο πολλών σελίδων ανά φύλλο
 Comment[es]=Filtro de varias páginas por hoja

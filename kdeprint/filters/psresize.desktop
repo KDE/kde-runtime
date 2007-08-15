@@ -2,6 +2,7 @@
 Name=psresize
 Require=exec:/psresize
 Comment=Scale Print Content to Fit on Another Paper Size
+Comment[bg]=Мащабиране на съдържанието за друг размер хартия
 Comment[de]=Skalierung des Ausdrucks auf eine andere Papiergröße
 Comment[el]=Προσαρμογή περιεχομένου εκτύπωσης για ταίριασμα σε διαφορετικό μέγεθος χαρτιού
 Comment[es]=Escala el contenido de la impresión para que quepa en otro tamaño de papel
