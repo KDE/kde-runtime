@@ -40,7 +40,7 @@ extern "C" {
 #ifdef VERBOSE_DEBUG
 #  define PXINE_VDEBUG kDebug( 610 )
 #else
-#  define PXINE_VDEBUG kndDebug()
+#  define PXINE_VDEBUG kDebugDevNull()
 #endif
 #define PXINE_DEBUG kDebug( 610 )
 
