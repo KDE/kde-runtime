@@ -103,7 +103,7 @@ static QString processTag( const QString& match, const QString& value )
 				v.replace( "@@", quote( value ) );
 			}
 			else
-				v = ( "-" + match.mid( p+1 ) + " " + quote( value ) );
+				v = ( '-' + match.mid( p+1 ) + ' ' + quote( value ) );
 		}
 	}
 	else
@@ -113,7 +113,7 @@ static QString processTag( const QString& match, const QString& value )
 
 static bool isTag( const QString& m, const QString& t )
 {
-	return ( m == t || m.startsWith( t+"_" ) );
+	return ( m == t || m.startsWith( t + '_' ) );
 }
 
 static QString replaceTags( const QString& s, const QString& tags, KdeprintFax *fax = NULL, const KdeprintFax::FaxItem& item = KdeprintFax::FaxItem() )
@@ -127,9 +127,9 @@ static QString replaceTags( const QString& s, const QString& tags, KdeprintFax *
 
 	bool issinglequote=false;
 	bool isdoublequote=false;
-	QRegExp re_noquote("(\\$\\(|\\)|\\(|\"|'|\\\\|`|"+tags+")");
-	QRegExp re_singlequote("('|"+tags+")");
-	QRegExp re_doublequote("(\\$\\(|\"|\\\\|`|"+tags+")");
+	QRegExp re_noquote("(\\$\\(|\\)|\\(|\"|'|\\\\|`|"+tags+')');
+	QRegExp re_singlequote("('|"+tags+')');
+	QRegExp re_doublequote("(\\$\\(|\"|\\\\|`|"+tags+')');
 	for	( int i = re_noquote.indexIn(cmd);
 		i != -1;
 		i = (issinglequote?re_singlequote.indexIn(cmd,i)
@@ -385,7 +385,7 @@ void FaxCtrl::sendFax()
 		// replace %files tag
 		QString	filestr;
 		for (QStringList::ConstIterator it=m_filteredfiles.begin(); it!=m_filteredfiles.end(); ++it)
-			filestr += (quote(*it)+" ");
+			filestr += (quote(*it) + ' ');
 		m_command.replace("%files", filestr);
 	}
 

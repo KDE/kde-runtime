@@ -253,7 +253,7 @@ void CfgBrowser::load(KConfig *) {
 	else
 	{
 	   radioExec->setChecked(true);
-	   if (exec.startsWith("!"))
+	   if (exec.startsWith('!'))
 	   {
 	      m_browserExec = exec.mid(1);
 	      m_browserService = 0;

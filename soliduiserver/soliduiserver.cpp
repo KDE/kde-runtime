@@ -115,8 +115,8 @@ void SolidUiServer::showPassphraseDialog(const QString &udi,
                                          const QString &returnService, const QString &returnObject,
                                          WId wId, const QString &appId)
 {
-    if (m_idToPassphraseDialog.contains(returnService+":"+udi)) {
-        KPasswordDialog *dialog = m_idToPassphraseDialog[returnService+":"+udi];
+    if (m_idToPassphraseDialog.contains(returnService+':'+udi)) {
+        KPasswordDialog *dialog = m_idToPassphraseDialog[returnService+':'+udi];
         dialog->activateWindow();
         return;
     }
@@ -126,7 +126,7 @@ void SolidUiServer::showPassphraseDialog(const QString &udi,
     KPasswordDialog *dialog = new KPasswordDialog();
 
     QString label = device.vendor();
-    if (!label.isEmpty()) label+=" ";
+    if (!label.isEmpty()) label+=' ';
     label+= device.product();
 
     dialog->setPrompt(i18n("'%1' needs a password to be accessed. Please enter a password.", label));
@@ -140,7 +140,7 @@ void SolidUiServer::showPassphraseDialog(const QString &udi,
     connect(dialog, SIGNAL(rejected()),
             this, SLOT(onPassphraseDialogRejected()));
 
-    m_idToPassphraseDialog[returnService+":"+udi] = dialog;
+    m_idToPassphraseDialog[returnService+':'+udi] = dialog;
 
     reparentDialog(dialog, wId, appId, true);
     dialog->show();
@@ -158,7 +158,7 @@ void SolidUiServer::onPassphraseDialogCompleted(const QString &pass, bool keep)
         QDBusReply<void> reply = returnIface.call("passphraseReply", pass);
 
         QString udi = dialog->property("soliduiserver.udi").toString();
-        m_idToPassphraseDialog.remove(returnService+":"+udi);
+        m_idToPassphraseDialog.remove(returnService+':'+udi);
 
         if (!reply.isValid()) {
             kWarning() << "Impossible to send the passphrase to the application, D-Bus said: "
@@ -328,7 +328,7 @@ bool SolidUiServer::execAutoopen(const KFileItem &medium, const QString &path,
 
     // The relative path MUST NOT contain path components that
     // refer to a parent directory (../)
-    if (relative_path.startsWith("/") || relative_path.contains("../")) {
+    if (relative_path.startsWith('/') || relative_path.contains("../")) {
         return false;
     }
 

@@ -181,7 +181,7 @@ void KNetAttach::finished()
     url.setHost(_host->text().trimmed());
     url.setUser(_user->text().trimmed());
     QString path = _path->text().trimmed();
-    if (!path.startsWith("/")) {
+    if (!path.startsWith('/')) {
 	path = QString("/") + path;
     }
     url.setPath(path);

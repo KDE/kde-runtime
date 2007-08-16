@@ -120,7 +120,7 @@ void FaxAB::initialize()
 					}
 					entry.m_name = key;
 				}
-				entry.m_name += ( " (" + ( *nit ).typeLabel() + ")" );
+				entry.m_name += ( " (" + ( *nit ).typeLabel() + ')' );
 				m_entries[ entry.m_name ] = entry;
 			}
 		}

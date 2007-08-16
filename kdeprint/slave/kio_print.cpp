@@ -299,7 +299,7 @@ void KIO_Print::listDirDB( const KUrl& url )
 					{
 						QString make = l.item( i ).toElement().text();
 						KUrl makeUrl = url;
-						makeUrl.addPath( "/" + make );
+						makeUrl.addPath( '/' + make );
 						createDirEntry( entry, make, makeUrl.url(), "print/folder" );
 						listEntry( entry, false );
 						PRINT_DEBUG << "make: " << make << endl;
@@ -321,7 +321,7 @@ void KIO_Print::listDirDB( const KUrl& url )
 						if ( !ID.isEmpty() && !name.isEmpty() )
 						{
 							KUrl printerUrl = url;
-							printerUrl.addPath( "/" + ID );
+							printerUrl.addPath( '/' + ID );
 							createDirEntry( entry, name, printerUrl.url(), "print/printermodel" );
 							listEntry( entry, false );
 							PRINT_DEBUG << "printer: " << ID << endl;
@@ -334,7 +334,7 @@ void KIO_Print::listDirDB( const KUrl& url )
 					{
 						QString driver = l.item( i ).toElement().text();
 						KUrl driverUrl = url;
-						driverUrl.addPath( "/" + driver );
+						driverUrl.addPath( '/' + driver );
 						createFileEntry( entry, driver, driverUrl.url(), "print/driver" );
 						listEntry( entry, false );
 						PRINT_DEBUG << "driver: " << driver << endl;
@@ -405,7 +405,7 @@ void KIO_Print::stat(const KUrl& url)
 				mime = "print/printer";
 			else
 				err = true;
-			createFileEntry(entry, path[1], "print:/"+path[0]+"/"+path[1], "text/html");
+			createFileEntry(entry, path[1], "print:/"+path[0]+'/'+path[1], "text/html");
 			break;
 	}
 
@@ -911,7 +911,7 @@ void KIO_Print::showDriver(KMPrinter *prt)
 						 1))
 			 .arg(QString())
 			 .arg(prt->pixmap())
-			 .arg(prt->printerName() + "&nbsp;(" + (driver ? driver->get("text") : i18n("No driver found")) + ")");
+			 .arg(prt->printerName() + "&nbsp;(" + (driver ? driver->get("text") : i18n("No driver found")) + ')');
 
 	if (driver)
 		content = content.arg(buildGroupTable(driver, false));
