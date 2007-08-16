@@ -29,7 +29,7 @@ class FilterDlg : public KDialog
 {
   	Q_OBJECT
 public:
-	FilterDlg(QWidget *parent = 0, const char *name = 0);
+	explicit FilterDlg(QWidget *parent = 0, const char *name = 0);
 
 	static bool doIt(QWidget *parent = 0, QString* mime = 0, QString *cmd = 0);
 protected Q_SLOTS:

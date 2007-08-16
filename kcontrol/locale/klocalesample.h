@@ -35,7 +35,7 @@ class KLocaleSample : public QWidget
 {
   Q_OBJECT
 public:
-  KLocaleSample(KLocale *_locale,
+  explicit KLocaleSample(KLocale *_locale,
                 QWidget *parent = 0);
   virtual ~KLocaleSample();
 

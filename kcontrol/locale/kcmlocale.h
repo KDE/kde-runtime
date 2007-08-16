@@ -36,7 +36,7 @@ class KLocaleConfig : public QWidget, public Ui_Language
   Q_OBJECT
 
 public:
-  KLocaleConfig( KLocale *_locale, QWidget *parent = 0);
+  explicit KLocaleConfig( KLocale *_locale, QWidget *parent = 0);
 
   void save();
 

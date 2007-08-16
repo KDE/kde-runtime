@@ -36,7 +36,7 @@ class KLocaleConfigOther : public QWidget
   Q_OBJECT
 
 public:
-  KLocaleConfigOther(KLocale *locale, QWidget *parent = 0);
+  explicit KLocaleConfigOther(KLocale *locale, QWidget *parent = 0);
   virtual ~KLocaleConfigOther();
 
   void save();

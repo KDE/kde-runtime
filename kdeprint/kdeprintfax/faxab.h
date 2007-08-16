@@ -33,7 +33,7 @@ class FaxAB : public KDialog
 {
 	Q_OBJECT
 public:
-	FaxAB(QWidget *parent = 0, const char *name = 0);
+	explicit FaxAB(QWidget *parent = 0, const char *name = 0);
 	~FaxAB();
 	bool isValid();
 

@@ -40,7 +40,7 @@ public:
   /**
    * Constructor.
    */
-  DrKBugReport(QWidget *parent = 0, bool modal = true,
+  explicit DrKBugReport(QWidget *parent = 0, bool modal = true,
                const KAboutData *aboutData = 0);
 
 public:

@@ -39,7 +39,7 @@ class KDebugDialog : public KAbstractDebugDialog
   Q_OBJECT
 
 public:
-  KDebugDialog( QStringList areaList, QWidget *parent=0, const char *name=0, bool modal=true );
+  explicit KDebugDialog( QStringList areaList, QWidget *parent=0, const char *name=0, bool modal=true );
   virtual ~KDebugDialog();
 
   void save();

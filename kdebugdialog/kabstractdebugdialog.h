@@ -30,7 +30,7 @@ class KAbstractDebugDialog : public KDialog
 {
   Q_OBJECT
 public:
-  KAbstractDebugDialog( QWidget *parent=0, const char *name=0, bool modal=true );
+  explicit KAbstractDebugDialog( QWidget *parent=0, const char *name=0, bool modal=true );
 
   virtual ~KAbstractDebugDialog();
 

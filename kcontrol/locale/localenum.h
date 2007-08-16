@@ -36,7 +36,7 @@ class KLocaleConfigNumber : public QWidget
   Q_OBJECT
 
 public:
-  KLocaleConfigNumber( KLocale *_locale, QWidget *parent=0);
+  explicit KLocaleConfigNumber( KLocale *_locale, QWidget *parent=0);
   virtual ~KLocaleConfigNumber( );
 
   void save();

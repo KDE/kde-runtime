@@ -40,7 +40,7 @@ class Toplevel : public KDialog
   Q_OBJECT
 
 public:
-  Toplevel(KrashConfig *krash, QWidget *parent = 0);
+  explicit Toplevel(KrashConfig *krash, QWidget *parent = 0);
   ~Toplevel();
 
 private:

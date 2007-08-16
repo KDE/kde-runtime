@@ -40,7 +40,7 @@ class KCMIOSlaveInfo : public KCModule
 {
     Q_OBJECT
 public:
-    KCMIOSlaveInfo(QWidget *parent = 0L, const QStringList &lits=QStringList() );
+    explicit KCMIOSlaveInfo(QWidget *parent = 0L, const QStringList &lits=QStringList() );
 
 protected:
     KListWidget *m_ioslavesLb;

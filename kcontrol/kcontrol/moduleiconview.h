@@ -62,7 +62,7 @@ class ModuleIconView : public K3ListView
   Q_OBJECT
 
 public:
-  ModuleIconView(ConfigModuleList *list, QWidget * parent = 0);
+  explicit ModuleIconView(ConfigModuleList *list, QWidget * parent = 0);
   
   void makeSelected(ConfigModule* module);
   void makeVisible(ConfigModule *module);

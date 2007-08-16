@@ -38,9 +38,9 @@ class ModuleTreeItem : public Q3ListViewItem
 {
 
 public:
-  ModuleTreeItem(Q3ListViewItem *parent, ConfigModule *module = 0);
+  explicit ModuleTreeItem(Q3ListViewItem *parent, ConfigModule *module = 0);
   ModuleTreeItem(Q3ListViewItem *parent, const QString& text);
-  ModuleTreeItem(Q3ListView *parent, ConfigModule *module = 0);
+  explicit ModuleTreeItem(Q3ListView *parent, ConfigModule *module = 0);
   ModuleTreeItem(Q3ListView *parent, const QString& text);
 
   void setTag(const QString& tag) { _tag = tag; }
@@ -70,7 +70,7 @@ class ModuleTreeView : public K3ListView
   Q_OBJECT
 
 public:
-  ModuleTreeView(ConfigModuleList *list, QWidget * parent = 0);
+  explicit ModuleTreeView(ConfigModuleList *list, QWidget * parent = 0);
 
   void makeSelected(ConfigModule* module);
   void makeVisible(ConfigModule *module);

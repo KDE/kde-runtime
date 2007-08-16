@@ -40,7 +40,7 @@ class ModuleMenu : public KMenu
   Q_OBJECT
 
 public:
-  ModuleMenu(ConfigModuleList *list, QWidget * parent = 0, const char * name = 0);
+  explicit ModuleMenu(ConfigModuleList *list, QWidget * parent = 0, const char * name = 0);
 
 Q_SIGNALS:
   void moduleActivated(ConfigModule*);

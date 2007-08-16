@@ -40,7 +40,7 @@ class KLocaleConfigTime : public QWidget
   Q_OBJECT
 
 public:
-  KLocaleConfigTime( KLocale *_locale, QWidget *parent=0);
+  explicit KLocaleConfigTime( KLocale *_locale, QWidget *parent=0);
   virtual ~KLocaleConfigTime( );
 
   void save();

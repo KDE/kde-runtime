@@ -33,7 +33,7 @@ class FaxCtrl : public QObject
 {
 	Q_OBJECT
 public:
-	FaxCtrl(QWidget *parent = 0, const char *name = 0);
+	explicit FaxCtrl(QWidget *parent = 0, const char *name = 0);
 	~FaxCtrl();
 
 	bool send(KdeprintFax *f);

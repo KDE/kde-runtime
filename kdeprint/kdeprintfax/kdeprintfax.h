@@ -52,7 +52,7 @@ public:
 	typedef QList<FaxItem> FaxItemList;
 	typedef QList<FaxItem>::ConstIterator FaxItemListIterator;
 
-	KdeprintFax(QWidget *parent = 0, const char *name = 0);
+	explicit KdeprintFax(QWidget *parent = 0, const char *name = 0);
 	~KdeprintFax();
 
 	void addURL(KUrl url);

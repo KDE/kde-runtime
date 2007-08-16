@@ -30,7 +30,7 @@ class ConfSystem : public QWidget
 {
 	Q_OBJECT
 public:
-	ConfSystem(QWidget *parent = 0, const char *name = 0);
+	explicit ConfSystem(QWidget *parent = 0, const char *name = 0);
 
 	void load();
 	void save();

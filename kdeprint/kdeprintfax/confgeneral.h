@@ -29,7 +29,7 @@ class QCheckBox;
 class ConfGeneral : public QWidget
 {
 public:
-	ConfGeneral(QWidget *parent = 0, const char *name = 0);
+	explicit ConfGeneral(QWidget *parent = 0, const char *name = 0);
 
 	void load();
 	void save();

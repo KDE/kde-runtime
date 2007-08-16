@@ -35,7 +35,7 @@ public:
     /**
       * @brief Constructor for the progress delegate.
       */
-    ProgressListDelegate(QObject *parent = 0, QListView *listView = 0);
+    explicit ProgressListDelegate(QObject *parent = 0, QListView *listView = 0);
 
     /**
      * @brief Destructor for the progress delegate.
