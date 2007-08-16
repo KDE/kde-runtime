@@ -1159,10 +1159,9 @@ xine_post_out_t *XineStream::videoOutputPort() const
     return xine_get_video_source(m_stream);
 }
 
-void XineStream::audioDeviceFailed()
+void XineStream::handleAudioDeviceFailed()
 {
-    kFatal(610) << k_funcinfo << "not implemented" << endl;
-    //QCoreApplication::postEvent(ap.audioOutput(), new QEvent(static_cast<QEvent::Type>(Events::AudioDeviceFailed)));
+    emit audioDeviceFailed();
 }
 
 // called from main thread

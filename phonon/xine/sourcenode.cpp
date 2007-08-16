@@ -19,6 +19,7 @@
 
 #include "sourcenode.h"
 #include "sinknode.h"
+#include <QtCore/QEvent>
 
 namespace Phonon
 {
@@ -74,6 +75,27 @@ QSet<SinkNode *> SourceNode::sinks() const
 SinkNode *SourceNode::sinkInterface()
 {
     return 0;
+}
+
+void SourceNode::upstreamEvent(QEvent *e)
+{
+    SinkNode *iface = sinkInterface();
+    if (iface) {
+        iface->upstreamEvent(e);
+    } else {
+        delete e;
+    }
+}
+
+void SourceNode::downstreamEvent(QEvent *e)
+{
+    if (m_sinks.isEmpty()) {
+        delete e;
+    } else {
+        foreach (SinkNode *sink, m_sinks) {
+            sink->downstreamEvent(e);
+        }
+    }
 }
 
 } // namespace Xine

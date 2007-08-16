@@ -166,7 +166,7 @@ namespace Xine
                         kDebug(610) << "XINE_MSG_AUDIO_OUT_UNAVAILABLE";
                         // we don't know for sure which AudioOutput failed. but the one without any
                         // capabilities must be the guilty one
-                        xs->audioDeviceFailed();
+                        xs->handleAudioDeviceFailed();
                     }
                 }
                 break;

@@ -117,7 +117,7 @@ class XineStream : public QObject, public SourceNodeXT
         xine_post_out_t *videoOutputPort() const;
 
         void setMediaObject(MediaObject *m) { m_mediaObject = m; }
-        void audioDeviceFailed();
+        void handleAudioDeviceFailed();
 
     public slots:
         void setUrl(const KUrl &url);
@@ -150,6 +150,7 @@ class XineStream : public QObject, public SourceNodeXT
         void availableTitlesChanged(int);
         void titleChanged(int);
         void frameFormatChange(int, int, int, bool);
+        void audioDeviceFailed();
 
     protected:
         bool event(QEvent *ev);

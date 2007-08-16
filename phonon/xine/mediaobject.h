@@ -136,6 +136,7 @@ class ByteStream;
             void handleFinished();
             void handleHasVideoChanged(bool);
             void handleFrameFormatChange(int w, int h, int a, bool ps);
+            void handleAudioDeviceFailed();
 
         private:
             enum HowToSetTheUrl {

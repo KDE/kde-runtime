@@ -53,6 +53,10 @@ class SinkNode
         void unsetSource(SourceNode *s);
         SourceNode *source() const;
         virtual SourceNode *sourceInterface();
+
+        virtual void upstreamEvent(QEvent *);
+        virtual void downstreamEvent(QEvent *);
+
     protected:
         QExplicitlySharedDataPointer<SinkNodeXT> threadSafeObject;
     private:

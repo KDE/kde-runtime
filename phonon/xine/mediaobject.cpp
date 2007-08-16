@@ -41,6 +41,7 @@
 #include "xinethread.h"
 #include "sinknode.h"
 #include "videowidget.h"
+#include "events.h"
 
 static const char *const green  = "\033[1;40;32m";
 static const char *const blue   = "\033[1;40;34m";
@@ -85,6 +86,7 @@ MediaObject::MediaObject(QObject *parent)
     connect(m_stream, SIGNAL(needNextUrl()), SLOT(needNextUrl()));
     connect(m_stream, SIGNAL(frameFormatChange(int w, int h, int a, bool ps)),
             SLOT(handleFrameFormatChange(int w, int h, int a, bool ps)));
+    connect(m_stream, SIGNAL(audioDeviceFailed()), SLOT(handleAudioDeviceFailed()));
 }
 
 class XineStreamKeeper : public QObject
@@ -686,6 +688,14 @@ void MediaObject::handleFrameFormatChange(int w, int h, int a, bool ps)
 {
     // FIXME
     //QCoreApplication::sendEvent(m_videoWidget, new XineFrameFormatChangeEvent(w, h, a, ps));
+}
+
+void MediaObject::handleAudioDeviceFailed()
+{
+    kDebug(610) << k_funcinfo << endl;
+    foreach (SinkNode *sink, sinks()) {
+        sink->downstreamEvent(new QEvent(static_cast<QEvent::Type>(Events::AudioDeviceFailed)));
+    }
 }
 
 }}

@@ -20,6 +20,7 @@
 
 #include "audiooutput.h"
 #include <QVector>
+#include <QtCore/QCoreApplication>
 #include <kdebug.h>
 
 #include <sys/ioctl.h>
@@ -103,6 +104,15 @@ bool AudioOutput::setOutputDevice(int newDevice)
     K_XT(AudioOutputXT)->m_audioPort.setAudioOutput(this);
     emit audioPortChanged(K_XT(AudioOutputXT)->m_audioPort);
     return true;
+}
+
+void AudioOutput::downstreamEvent(QEvent *e)
+{
+    if (QCoreApplication::sendEvent(this, e)) {
+        delete e;
+    } else {
+        SinkNode::downstreamEvent(e);
+    }
 }
 
 void AudioOutputXT::rewireTo(SourceNodeXT *source)
