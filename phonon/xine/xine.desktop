@@ -15,5 +15,7 @@ Name[te]=క్సైన్
 Name[x-test]=xxXinexx
 
 Comment=Phonon Xine backend
+Comment[de]=Phonon Xine-Treiber
 Comment[pt]=Infra-estrutura do Xine para o Phonon
 Comment[pt_BR]=Infra-estrutura do Xine para o Phonon
+Comment[sv]=Phonon Xine-gränssnitt

@@ -15,6 +15,7 @@ Comment[pa]=ਹੋਰ ਸਫ਼ਾ ਆਕਾਰ ਅਤੇ ਛਾਪਾਈ ਕਰ
 Comment[pt]=Ajustar a Impressão a Outro Tamanho de Papel
 Comment[pt_BR]=Ajustar a Impressão para caber em Outro Tamanho de Papel
 Comment[sv]=Skala utskriftens innehåll för att passa på en annan pappersstorlek
+Comment[th]=ปรับขนาดเนื้อหาที่จะพิมพ์ให้พอดีกับกระดาษขนาดอื่น
 Comment[zh_TW]=將列印內容縮放到符合另一個紙張的大小
 MimeTypeIn=application/postscript
 MimeTypeOut=application/postscript
