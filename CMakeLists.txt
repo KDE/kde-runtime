@@ -12,6 +12,7 @@ include (KDE4Defaults)
 include (MacroLibrary)
 include (MacroOptionalFindPackage)
 include(MacroOptionalAddSubdirectory)
+include(CheckFunctionExists)
 
 configure_file (config-runtime.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-runtime.h )
 
