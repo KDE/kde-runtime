@@ -681,9 +681,7 @@ void MediaObject::handleFrameFormatChange(int w, int h, int a, bool ps)
 void MediaObject::handleAudioDeviceFailed()
 {
     kDebug(610) << k_funcinfo << endl;
-    foreach (SinkNode *sink, sinks()) {
-        sink->downstreamEvent(new QEvent(static_cast<QEvent::Type>(Events::AudioDeviceFailed)));
-    }
+    downstreamEvent(new QEvent(static_cast<QEvent::Type>(Events::AudioDeviceFailed)));
 }
 
 void MediaObject::upstreamEvent(QEvent *e)
