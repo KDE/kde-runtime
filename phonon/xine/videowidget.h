@@ -88,9 +88,9 @@ class VideoWidget : public QWidget, public Phonon::VideoWidgetInterface, public 
 					double &ratio, int videoWidth, int videoHeight, double videoRatio, bool mayResize );
 
             bool isValid() const;
-            void setVideoEmpty(bool);
 
             MediaStreamTypes inputMediaStreamTypes() const { return Phonon::Xine::Video | Phonon::Xine::Subtitle; }
+        void downstreamEvent(QEvent *e);
 
 		signals:
 			void videoPortChanged();

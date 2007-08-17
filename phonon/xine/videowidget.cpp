@@ -429,14 +429,6 @@ bool VideoWidget::isValid() const
     return K_XT(const VideoWidgetXT)->m_videoPort != 0;
 }
 
-void VideoWidget::setVideoEmpty(bool b)
-{
-    m_empty = b;
-    if (b) {
-        update();
-    }
-}
-
 xine_video_port_t *VideoWidgetXT::videoPort() const
 {
     return m_videoPort;
@@ -510,6 +502,24 @@ void VideoWidget::changeEvent( QEvent* event )
             }
         }
 #endif // PHONON_XINE_NO_VIDEOWIDGET
+    }
+}
+
+void VideoWidget::downstreamEvent(QEvent *e)
+{
+    switch (e->type()) {
+    case Events::HasVideo:
+        {
+            HasVideoEvent *ev = static_cast<HasVideoEvent *>(e);
+            m_empty = !ev->hasVideo;
+            if (m_empty) {
+                update();
+            }
+        }
+        break;
+    default:
+        SinkNode::downstreamEvent(e);
+        break;
     }
 }
 

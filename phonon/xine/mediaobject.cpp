@@ -669,19 +669,7 @@ void MediaObject::setPrefinishMark( qint32 newPrefinishMark )
 
 void MediaObject::handleHasVideoChanged(bool hasVideo)
 {
-    foreach (SinkNode *sink, sinks()) {
-        if (sink->inputMediaStreamTypes() & Phonon::Xine::Video) {
-            VideoWidget *vw = dynamic_cast<VideoWidget *>(sink);
-            if (vw) {
-                vw->setVideoEmpty(!hasVideo);
-                break;
-            }
-            /* SourceNode *s = sink->sourceInterface();
-               if (s) {
-               sinkList = s->sinks();
-               } */
-        }
-    }
+    downstreamEvent(new HasVideoEvent(hasVideo));
 }
 
 void MediaObject::handleFrameFormatChange(int w, int h, int a, bool ps)

@@ -134,7 +134,7 @@ namespace Xine
             case XINE_EVENT_PROGRESS: /* index creation/network connections */
                 {
                     xine_progress_data_t *progress = static_cast<xine_progress_data_t*>(xineEvent->data);
-                    QCoreApplication::postEvent(xs, new XineProgressEvent(QString::fromUtf8(progress->description), progress->percent));
+                    QCoreApplication::postEvent(xs, new ProgressEvent(QString::fromUtf8(progress->description), progress->percent));
                 }
                 break;
             case XINE_EVENT_SPU_BUTTON: // the mouse pointer enter/leave a button, used to change the cursor

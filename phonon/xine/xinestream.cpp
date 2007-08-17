@@ -587,7 +587,7 @@ bool XineStream::event(QEvent *ev)
     }
     if (eventName) {
         if (static_cast<int>(ev->type()) == Events::Progress) {
-            XineProgressEvent* e = static_cast<XineProgressEvent*>(ev);
+            ProgressEvent* e = static_cast<ProgressEvent*>(ev);
             kDebug(610) << "################################ Event: " << eventName << ": " << e->percent;
         } else {
             kDebug(610) << "################################ Event: " << eventName;
@@ -792,7 +792,7 @@ bool XineStream::event(QEvent *ev)
             return true;
         case Events::Progress:
             {
-                XineProgressEvent* e = static_cast<XineProgressEvent*>(ev);
+                ProgressEvent* e = static_cast<ProgressEvent*>(ev);
                 if (e->percent < 100) {
                     if (m_state == Phonon::PlayingState) {
                         changeState(Phonon::BufferingState);

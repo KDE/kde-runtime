@@ -28,10 +28,30 @@
 #include <QtCore/QPair>
 #include <QtCore/QList>
 
+#define QEVENT(type) QEvent(static_cast<QEvent::Type>(Events::type))
+
+#define EVENT_CLASS1(type, arg1, init1, member1) \
+class type##Event : public QEvent \
+{ \
+    public: \
+        type##Event(arg1) : QEVENT(type), init1 {} \
+        member1; \
+}
+#define EVENT_CLASS2(type, arg1, arg2, init1, init2, member1, member2) \
+class type##Event : public QEvent \
+{ \
+    public: \
+        type##Event(arg1, arg2) : QEVENT(type), init1, init2 {} \
+        member1; \
+        member2; \
+}
 namespace Phonon
 {
 namespace Xine
 {
+
+class SourceNode;
+class SinkNode;
 
 namespace Events
 {
@@ -72,49 +92,16 @@ namespace Events
         Reference = 5408,
 
         Rewire = 5409,
-        AboutToDeleteVideoWidget = 5410
+        AboutToDeleteVideoWidget = 5410,
+        HasVideo = 5411
     };
 } // namespace Events
 
-class SourceNode;
-class SinkNode;
-
-#define QEVENT(type) QEvent(static_cast<QEvent::Type>(Events::type))
-
-#define EVENT_CLASS1(type, arg1, init1, member1) \
-class type##Event : public QEvent \
-{ \
-    public: \
-        type##Event(arg1) : QEVENT(type), init1 {} \
-        member1; \
-};
-#define EVENT_CLASS2(type, arg1, arg2, init1, init2, member1, member2) \
-class type##Event : public QEvent \
-{ \
-    public: \
-        type##Event(arg1, arg2) : QEVENT(type), init1, init2 {} \
-        member1; \
-        member2; \
-};
-
-EVENT_CLASS1(UpdateVolume, int v, volume(v), const int volume)
-EVENT_CLASS1(Rewire, QList<WireCall> _wireCalls, wireCalls(_wireCalls), const QList<WireCall> wireCalls)
-EVENT_CLASS2(Reference, bool alt, const QByteArray &m, alternative(alt), mrl(m), const bool alternative, const QByteArray mrl)
-
-#undef EVENT_CLASS1
-#undef EVENT_CLASS2
-
-
-class XineProgressEvent : public QEvent
-{
-    public:
-        XineProgressEvent(const QString &d, int p)
-            : QEvent(static_cast<QEvent::Type>(Xine::Events::Progress)),
-            description(d), percent(p) {}
-
-        const QString description;
-        const int percent;
-};
+EVENT_CLASS1(HasVideo, bool v, hasVideo(v), const bool hasVideo);
+EVENT_CLASS1(UpdateVolume, int v, volume(v), const int volume);
+EVENT_CLASS1(Rewire, QList<WireCall> _wireCalls, wireCalls(_wireCalls), const QList<WireCall> wireCalls);
+EVENT_CLASS2(Reference, bool alt, const QByteArray &m, alternative(alt), mrl(m), const bool alternative, const QByteArray mrl);
+EVENT_CLASS2(Progress, const QString &d, int p, description(d), percent(p), const QString description, const int percent);
 
 class XineFrameFormatChangeEvent : public QEvent
 {
@@ -136,19 +123,6 @@ class ErrorEvent : public QEvent
         const Phonon::ErrorType type;
         const QString reason;
 };
-
-/*
-class ChangeAudioPostListEvent : public QEvent
-{
-    public:
-        enum AddOrRemove { Add, Remove };
-        ChangeAudioPostListEvent(const AudioPostList &x, AddOrRemove y)
-            : QEvent(static_cast<QEvent::Type>(Events::ChangeAudioPostList)), postList(x), what(y) {}
-
-        AudioPostList postList;
-        const AddOrRemove what;
-};
-*/
 
 class AudioRewireEvent : public QEvent
 {
@@ -212,5 +186,8 @@ class SetPrefinishMarkEvent : public QEvent
 
 } // namespace Xine
 } // namespace Phonon
+
+#undef EVENT_CLASS1
+#undef EVENT_CLASS2
 
 #endif // PHONON_XINE_EVENTS_H
