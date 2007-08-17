@@ -102,7 +102,7 @@ class ByteStream;
             void setNextSource(const MediaSource &source);
 
             MediaStreamTypes outputMediaStreamTypes() const;
-            MediaObject *mediaObjectInterface() { return this; }
+            void upstreamEvent(QEvent *e);
 
         signals:
             void aboutToFinish();

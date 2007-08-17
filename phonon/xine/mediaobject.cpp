@@ -698,6 +698,23 @@ void MediaObject::handleAudioDeviceFailed()
     }
 }
 
+void MediaObject::upstreamEvent(QEvent *e)
+{
+    switch (e->type()) {
+    case Events::UpdateVolume:
+    case Events::SetParam:
+    case Events::EventSend:
+        QCoreApplication::postEvent(m_stream, e);
+        break;
+    case Events::AboutToDeleteVideoWidget:
+        m_stream->aboutToDeleteVideoWidget();
+        break;
+    default:
+        SourceNode::upstreamEvent(e);
+        break;
+    }
+}
+
 }}
 
 #include "mediaobject.moc"

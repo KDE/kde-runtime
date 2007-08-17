@@ -203,7 +203,7 @@ namespace Xine
                         << ", " << reference->mrl
                         << ", " << (reference->mrl + strlen(reference->mrl) + 1)
                         << endl;
-                    QCoreApplication::postEvent(xs, new XineReferenceEvent(reference->alternative, reference->mrl));
+                    QCoreApplication::postEvent(xs, new ReferenceEvent(reference->alternative, reference->mrl));
                 }
                 break;
         }

@@ -71,40 +71,39 @@ namespace Events
         UiChannelsChanged = 5407,
         Reference = 5408,
 
-        Rewire = 5409
+        Rewire = 5409,
+        AboutToDeleteVideoWidget = 5410
     };
 } // namespace Events
 
 class SourceNode;
 class SinkNode;
 
-class RewireEvent : public QEvent
-{
-    public:
-        RewireEvent(QList<WireCall> _wireCalls)
-            : QEvent(static_cast<QEvent::Type>(Events::Rewire)), wireCalls(_wireCalls) {}
-        const QList<WireCall> wireCalls;
+#define QEVENT(type) QEvent(static_cast<QEvent::Type>(Events::type))
+
+#define EVENT_CLASS1(type, arg1, init1, member1) \
+class type##Event : public QEvent \
+{ \
+    public: \
+        type##Event(arg1) : QEVENT(type), init1 {} \
+        member1; \
+};
+#define EVENT_CLASS2(type, arg1, arg2, init1, init2, member1, member2) \
+class type##Event : public QEvent \
+{ \
+    public: \
+        type##Event(arg1, arg2) : QEVENT(type), init1, init2 {} \
+        member1; \
+        member2; \
 };
 
-/*
-class NeedRewireEvent : public QEvent
-{
-    public:
-        NeedRewireEvent(AudioPostList *a) : QEvent(static_cast<QEvent::Type>(Events::NeedRewire)), audioPostList(a) {}
-        AudioPostList *const audioPostList;
-};
-*/
+EVENT_CLASS1(UpdateVolume, int v, volume(v), const int volume)
+EVENT_CLASS1(Rewire, QList<WireCall> _wireCalls, wireCalls(_wireCalls), const QList<WireCall> wireCalls)
+EVENT_CLASS2(Reference, bool alt, const QByteArray &m, alternative(alt), mrl(m), const bool alternative, const QByteArray mrl)
 
-class XineReferenceEvent : public QEvent
-{
-    public :
-        XineReferenceEvent(bool _alternative, const QByteArray &_mrl)
-            : QEvent(static_cast<QEvent::Type>(Events::Reference)),
-            alternative(_alternative), mrl(_mrl) {}
+#undef EVENT_CLASS1
+#undef EVENT_CLASS2
 
-        const bool alternative;
-        const QByteArray mrl;
-};
 
 class XineProgressEvent : public QEvent
 {

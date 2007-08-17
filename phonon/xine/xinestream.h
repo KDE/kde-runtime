@@ -68,7 +68,6 @@ class XineStream : public QObject, public SourceNodeXT
         int currentTime() const;
         bool hasVideo() const;
         bool isSeekable() const;
-        void setVolume(int vol);
 
         /*
         void addAudioPostList(const AudioPostList &);
@@ -79,8 +78,6 @@ class XineStream : public QObject, public SourceNodeXT
         void setPrefinishMark(qint32 time);
 
         //void needRewire(AudioPostList *postList);
-        void setParam(int param, int value);
-        void eventSend(xine_event_t *);
         void useGaplessPlayback(bool);
         void gaplessSwitchTo(const KUrl &url);
         void gaplessSwitchTo(const QByteArray &mrl);

@@ -54,8 +54,6 @@ class AudioOutputXT : public SinkNodeXT
             AudioOutput(QObject *parent);
 			~AudioOutput();
 
-            void updateVolume(MediaObject *mp) const;
-
 			// Attributes Getters:
             qreal volume() const;
 			int outputDevice() const;
@@ -78,7 +76,6 @@ class AudioOutputXT : public SinkNodeXT
             void audioPortChanged(const AudioPort &);
 
 		private:
-            MediaObject *findMediaObject() const;
             qreal m_volume;
 			int m_device;
 	};

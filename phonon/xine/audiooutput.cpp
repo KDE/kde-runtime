@@ -57,18 +57,6 @@ int AudioOutput::outputDevice() const
 	return m_device;
 }
 
-void AudioOutput::updateVolume(MediaObject *mo) const
-{
-    int xinevolume = static_cast<int>(m_volume * 100);
-    if (xinevolume > 200) {
-        xinevolume = 200;
-    } else if (xinevolume < 0) {
-        xinevolume = 0;
-    }
-
-    mo->stream().setVolume(xinevolume);
-}
-
 void AudioOutput::setVolume(qreal newVolume)
 {
 	m_volume = newVolume;
@@ -80,10 +68,7 @@ void AudioOutput::setVolume(qreal newVolume)
         xinevolume = 0;
     }
 
-    MediaObject *mo = findMediaObject();
-    if (mo) {
-        mo->stream().setVolume(xinevolume);
-    }
+    upstreamEvent(new UpdateVolumeEvent(xinevolume));
     emit volumeChanged(m_volume);
 }
 
@@ -133,23 +118,6 @@ bool AudioOutput::event(QEvent *ev)
         default:
             return AbstractAudioOutput::event(ev);
     }
-}
-
-MediaObject *AudioOutput::findMediaObject() const
-{
-    SourceNode *s = source();
-    while (s) {
-        MediaObject *mo = s->mediaObjectInterface();
-        if (mo) {
-            return mo;
-        }
-        SinkNode *ss = s->sinkInterface();
-        if (!ss) {
-            return 0;
-        }
-        s = ss->source();
-    }
-    return 0;
 }
 
 #undef K_XT

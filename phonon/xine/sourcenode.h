@@ -52,7 +52,6 @@ class SourceNode
         void removeSink(SinkNode *s);
         QSet<SinkNode *> sinks() const;
         virtual SinkNode *sinkInterface();
-        virtual MediaObject *mediaObjectInterface() { return 0; }
 
         virtual void upstreamEvent(QEvent *);
         virtual void downstreamEvent(QEvent *);

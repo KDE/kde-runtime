@@ -359,15 +359,6 @@ bool XineStream::createStream()
     return true;
 }
 
-//called from main thread
-void XineStream::setVolume(int vol)
-{
-    if (m_volume != vol) {
-        m_volume = vol;
-        QCoreApplication::postEvent(this, new QEvent(static_cast<QEvent::Type>(Events::UpdateVolume)));
-    }
-}
-
 /*
 //called from main thread
 void XineStream::addAudioPostList(const AudioPostList &postList)
@@ -405,18 +396,6 @@ void XineStream::setTickInterval(qint32 interval)
 void XineStream::setPrefinishMark(qint32 time)
 {
     QCoreApplication::postEvent(this, new SetPrefinishMarkEvent(time));
-}
-
-// called from main thread
-void XineStream::setParam(int param, int value)
-{
-    QCoreApplication::postEvent(this, new SetParamEvent(param, value));
-}
-
-// called from main thread
-void XineStream::eventSend(xine_event_t *event)
-{
-    QCoreApplication::postEvent(this, new EventSendEvent(event));
 }
 
 // called from main thread
@@ -618,7 +597,7 @@ bool XineStream::event(QEvent *ev)
     case Events::Reference:
         ev->accept();
         {
-            XineReferenceEvent *e = static_cast<XineReferenceEvent *>(ev);
+            ReferenceEvent *e = static_cast<ReferenceEvent *>(ev);
             m_mrl = e->mrl;
             if (xine_get_status(m_stream) != XINE_STATUS_IDLE) {
                 m_mutex.lock();
@@ -837,8 +816,12 @@ bool XineStream::event(QEvent *ev)
             return true;
         case Events::UpdateVolume:
             ev->accept();
-            if (m_stream) {
-                xine_set_param(m_stream, XINE_PARAM_AUDIO_AMP_LEVEL, m_volume);
+            {
+                UpdateVolumeEvent *e = static_cast<UpdateVolumeEvent *>(ev);
+                m_volume = e->volume;
+                if (m_stream) {
+                    xine_set_param(m_stream, XINE_PARAM_AUDIO_AMP_LEVEL, m_volume);
+                }
             }
             return true;
         case Events::MrlChanged:
