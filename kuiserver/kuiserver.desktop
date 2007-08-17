@@ -19,6 +19,7 @@ Comment[nl]=KDE's UI-server voor voortgangsinformatie
 Comment[pt]=Servidor da Interface de Progresso do KDE
 Comment[pt_BR]=Servidor da Interface de Informação de Progresso do KDE
 Comment[sv]=KDE:s gränssnittsserver för förloppsinformation
+Comment[th]=เซิร์ฟเวอร์ส่วนติดต่อผู้ใช้สำหรับแจ้งความก้าวหน้าของ KDE
 Comment[x-test]=xxKDE's Progress Info UI serverxx
 Comment[zh_TW]=KDE 的進度資訊介面伺服器
 ServiceTypes=
