@@ -1,5 +1,6 @@
 [KDE Print Filter Entry]
 Name=psbook
+Name[vi]=Sách PS
 Require=exec:/psbook,exec:/psnup
 Comment=Pamphlet Printing (use with small side duplex printing)
 Comment[bg]=Печат на брошури
@@ -15,6 +16,7 @@ Comment[pt]=Impressão de Panfletos (usar na impressão duplex pelo lado menor)
 Comment[pt_BR]=Impressão de Panfletos (usar na impressão duplex pelo lado menor)
 Comment[sv]=Broschyrutskrift (använd med dubbelsidig utskrift längs kortsidan)
 Comment[th]=การพิมพ์แผ่นพับ (ใช้กับการพิมพ์สองด้านโดยขอบด้านเล็ก)
+Comment[vi]=In ra cuốn sách nhỏ (dùng với khả năng in hai chiều có mặt nhỏ
 Comment[zh_TW]=列印小冊
 MimeTypeIn=application/postscript
 MimeTypeOut=application/postscript

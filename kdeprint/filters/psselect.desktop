@@ -1,5 +1,6 @@
 [KDE Print Filter Entry]
 Name=psselect
+Name[vi]=chọn/sắp xếp giấy
 Require=exec:/psselect
 Comment=Page Selection/Ordering Filter
 Comment[bg]=Избор на страници/Филтър за страници
@@ -16,6 +17,7 @@ Comment[pt]=Filtro de Selecção/Ordenação de Páginas
 Comment[pt_BR]=Filtro de Seleção/Ordenação de Páginas
 Comment[sv]=Sidvals- och sidordningsfilter
 Comment[th]=ตัวกรองเลือก/สั่งหน้า
+Comment[vi]=Bộ lọc chọn/sắp xếp trang
 Comment[zh_TW]=頁面選擇/排序過濾器
 MimeTypeIn=application/postscript
 MimeTypeOut=application/postscript

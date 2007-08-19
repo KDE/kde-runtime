@@ -17,6 +17,7 @@ Name[ro]=Vizualizor lucrări de tipărit
 Name[sv]=K-jobbvisare
 Name[ta]=கேபணி காட்சியாளன்
 Name[tg]=Намоишгари корҳо
+Name[vi]=Trình theo dõi Tác vụ In ấn
 Name[x-test]=xxKJobViewerxx
 GenericName=Print Jobs
 GenericName[af]=Drukker Werke
@@ -74,6 +75,7 @@ GenericName[th]=งานพิมพ์
 GenericName[tr]=Yazdırma Görevleri
 GenericName[uk]=Задачі друку
 GenericName[uz]=Босиб чиқариш вазифалари
+GenericName[vi]=Tác vụ In ấn
 GenericName[x-test]=xxPrint Jobsxx
 GenericName[zh_TW]=列印工作
 

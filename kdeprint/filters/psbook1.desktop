@@ -1,5 +1,6 @@
 [KDE Print Filter Entry]
 Name=psbook1
+Name[vi]=Sách PS 1
 Require=exec:/psbook,exec:/psnup,exec:/psselect
 Comment=Pamphlet Printing - Even Pages (step 1)
 Comment[bg]=Печат на брошури - нечетни страници (стъпка 1)
@@ -16,6 +17,7 @@ Comment[pt]=Impressão de Panfletos - Páginas Pares (passo 1)
 Comment[pt_BR]=Impressão de Panfletos - Páginas Pares (passo 1)
 Comment[sv]=Broschyrutskrift - jämna sidor (steg 1)
 Comment[th]=การพิมพ์แผ่นพับ - หน้าคู่ (ขั้นที่ 1)
+Comment[vi]=In ra cuốn sách nhỏ — các trang chẵn (bước 1)
 Comment[zh_TW]=列印小冊─偶數頁（第一步）
 MimeTypeIn=application/postscript
 MimeTypeOut=application/postscript

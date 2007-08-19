@@ -1,5 +1,6 @@
 [KDE Print Filter Entry]
 Name=pdfwrite
+Name[vi]=Ghi PDF
 Require=exec:/gs
 Comment=PDF Writer (needs Ghostscript)
 Comment[be]=PDF Writer (патрабуе Ghostscript)
@@ -20,6 +21,7 @@ Comment[pt]=Gravador de PDF (necessita do Ghostscript)
 Comment[pt_BR]=Gravador de PDF (necessita do Ghostscript)
 Comment[sv]=PDF-utskrift (kräver Ghostscript)
 Comment[th]=โปรแกรมเขียน PDF (จำเป็นต้องใช้ Ghostscript)
+Comment[vi]=Trình ghi PDF (cần thiết Ghostscript)
 Comment[zh_TW]=PDF 產生器（需要 Ghostscript）
 MimeTypeIn=application/postscript
 MimeTypeOut=application/pdf

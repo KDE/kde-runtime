@@ -16,6 +16,7 @@ Comment[pt]=Filtro de Várias Páginas por Folha
 Comment[pt_BR]=Filtro de Várias Páginas por Folha
 Comment[sv]=Filter för flera sidor per blad
 Comment[th]=ตัวกรองพิมพ์หลายหน้าบนแผ่นเดียว
+Comment[vi]=Bộ lọc nhiều trang trên mỗi tờ giấy
 Comment[zh_TW]=單張多頁過濾器
 MimeTypeIn=application/postscript
 MimeTypeOut=application/postscript
