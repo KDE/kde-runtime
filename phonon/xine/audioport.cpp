@@ -27,6 +27,7 @@
 #include <QSharedData>
 #include <kdebug.h>
 #include <QtCore/QTimerEvent>
+#include <QtGui/QApplication>
 
 namespace Phonon
 {
@@ -36,6 +37,7 @@ namespace Xine
 AudioPortDeleter::AudioPortDeleter(AudioPortData *dd)
     : d(dd)
 {
+    moveToThread(QApplication::instance()->thread());
     XineEngine::addCleanupObject(this);
     startTimer(2000);
 }
@@ -55,7 +57,9 @@ AudioPortData::~AudioPortData()
 {
     //kDebug(610) << k_funcinfo << this << " port = " << port;
     if (port) {
-        xine_close_audio_driver(XineEngine::xine(), port);
+        if (!dontDelete) {
+            xine_close_audio_driver(XineEngine::xine(), port);
+        }
         port = 0;
         kDebug(610) << "----------------------------------------------- audio_port destroyed";
     }
@@ -154,7 +158,7 @@ bool AudioPort::operator!=(const AudioPort& rhs) const
 
 void AudioPort::waitALittleWithDying()
 {
-    if (d->ref == 1) {
+    if (d->ref == 1 && !d->dontDelete) {
         // this is the last ref to the data, so it will get deleted in a few instructions unless
         new AudioPortDeleter(d);
         // AudioPortDeleter refs it once more

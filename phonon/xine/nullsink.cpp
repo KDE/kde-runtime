@@ -43,6 +43,7 @@ AudioPort NullSinkXT::audioPort() const
 {
     AudioPort ret;
     ret.d->port = XineEngine::nullPort();
+    ret.d->dontDelete = true;
     return ret;
 }
 

@@ -34,11 +34,12 @@ namespace Xine
 class AudioPortData : public QSharedData
 {
     public:
-        AudioPortData() : port(0), audioOutput(0) {}
+        AudioPortData() : port(0), audioOutput(0), dontDelete(false) {}
         ~AudioPortData();
 
         xine_audio_port_t *port;
         QObject *audioOutput;
+        bool dontDelete;
 };
 
 class AudioPort
