@@ -185,7 +185,7 @@ static int set_parameters (xine_post_t *this_gen, void *param_gen)
             x = "12dB";
             break;
     }
-    kDebug(610) << k_funcinfo << "set parameters to "
+    kDebug(610) << "set parameters to "
         << x << ", "
         << that->fadeStart << ", "
         << that->fadeDiff << ", "
@@ -297,7 +297,7 @@ void KVolumeFaderPlugin::fadeBuffer(audio_buffer_t *buf)
     const int num_channels = _x_ao_mode2channels(buf->format.mode);
     const int bufferLength = buf->num_frames * num_channels;
     if (buf->format.bits == 16) {
-        //kDebug(610) << k_funcinfo
+        //kDebug(610) 
             //<< " bufferLength = " << bufferLength
             //<< " start = " << fadeStart
             //<< " diff = " << fadeDiff
@@ -339,7 +339,7 @@ void KVolumeFaderPlugin::fadeBuffer(audio_buffer_t *buf)
             data[i] = data[i] * fadeStart / maxVolume;
         }*/
     } else {
-        kDebug(610) << k_funcinfo << "broken bits " << buf->format.bits;
+        kDebug(610) << "broken bits " << buf->format.bits;
     }
 }
 

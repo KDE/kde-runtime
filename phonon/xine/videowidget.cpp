@@ -361,7 +361,7 @@ bool VideoWidget::event(QEvent *ev)
             ev->accept();
             {
                 XineFrameFormatChangeEvent *e = static_cast<XineFrameFormatChangeEvent *>(ev);
-                kDebug(610) << k_funcinfo << "XineFrameFormatChangeEvent " << e->size;
+                kDebug(610) << "XineFrameFormatChangeEvent " << e->size;
                 m_sizeHint = e->size;
                 updateGeometry();
             }
@@ -444,7 +444,7 @@ void VideoWidgetXT::rewireTo(SourceNodeXT *source)
 
 void VideoWidget::paintEvent(QPaintEvent *event)
 {
-    //kDebug(610) << k_funcinfo << "m_empty = " << m_empty;
+    //kDebug(610) << "m_empty = " << m_empty;
     if (m_empty || !source()) {// || m_path->mediaObject()->state() == Phonon::LoadingState) {
         QPainter p(this);
         p.fillRect(rect(), Qt::black);
@@ -485,11 +485,11 @@ void VideoWidget::changeEvent( QEvent* event )
 {
 	if( event->type() == QEvent::ParentAboutToChange )
 	{
-		kDebug( 610 ) << k_funcinfo << "ParentAboutToChange";
+		kDebug( 610 ) << "ParentAboutToChange";
 	}
 	else if( event->type() == QEvent::ParentChange )
 	{
-        kDebug(610) << k_funcinfo << "ParentChange" << winId();
+        kDebug(610) << "ParentChange" << winId();
 #ifndef PHONON_XINE_NO_VIDEOWIDGET
         if (K_XT(VideoWidgetXT)->m_visual.window != winId()) {
             K_XT(VideoWidgetXT)->m_visual.window = winId();

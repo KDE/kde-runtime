@@ -423,7 +423,7 @@ void KLocaleConfigTime::slotDateFmtShortChanged(const QString &t)
 }
 
 void KLocaleConfigTime::slotWeekStartDayChanged(int firstDay) {
-    kDebug(173) << k_funcinfo << "first day is now: " << firstDay;
+    kDebug(173) << "first day is now: " << firstDay;
     m_locale->setWeekStartDay(m_comboWeekStartDay->currentIndex() + 1);
     emit localeChanged();
 }

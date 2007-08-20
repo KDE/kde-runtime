@@ -55,7 +55,7 @@ AudioPortDeleter::~AudioPortDeleter()
 
 AudioPortData::~AudioPortData()
 {
-    //kDebug(610) << k_funcinfo << this << " port = " << port;
+    //kDebug(610) << this << " port = " << port;
     if (port) {
         if (!dontDelete) {
             xine_close_audio_driver(XineEngine::xine(), port);
@@ -91,7 +91,7 @@ AudioPort::AudioPort(int deviceIndex)
     : d(new AudioPortData)
 {
     QByteArray outputPlugin = XineEngine::audioDriverFor(deviceIndex).toLatin1();
-    //kDebug(610) << k_funcinfo << outputPlugin << alsaDevices;
+    //kDebug(610) << outputPlugin << alsaDevices;
 
     if (outputPlugin == "alsa") {
         QStringList alsaDevices = XineEngine::alsaDevicesFor(deviceIndex);
@@ -108,7 +108,7 @@ AudioPort::AudioPort(int deviceIndex)
                     xine_close_audio_driver(XineEngine::xine(), port);
                     // port == 0 does not have to be fatal, since it might be only the default device
                     // that cannot be opened
-                    //kError(610) << k_funcinfo << "creating the correct ALSA output failed!" << endl;
+                    //kError(610) << "creating the correct ALSA output failed!" << endl;
                     //return;
                 }
                 // now the config key should be registered
@@ -130,12 +130,12 @@ AudioPort::AudioPort(int deviceIndex)
 
             d->port = xine_open_audio_driver(XineEngine::xine(), outputPlugin.constData(), 0);
             if (d->port) {
-                kDebug(610) << k_funcinfo << "use ALSA device: " << device;
+                kDebug(610) << "use ALSA device: " << device;
                 break;
             }
         }
     } else {
-        kDebug(610) << k_funcinfo << "use output plugin: '" << outputPlugin << "'";
+        kDebug(610) << "use output plugin: '" << outputPlugin << "'";
         d->port = xine_open_audio_driver(XineEngine::xine(), outputPlugin.constData(), 0);
     }
     kDebug(610) << "----------------------------------------------- audio_port created";

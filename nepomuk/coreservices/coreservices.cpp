@@ -112,7 +112,7 @@ bool Nepomuk::CoreServices::DaemonImpl::registerServices()
 
 Nepomuk::CoreServices::DaemonImpl::~DaemonImpl()
 {
-    kDebug(300002) << k_funcinfo;
+    kDebug(300002) ;
 
     delete d->system;
     for ( QMap<QString, Soprano::Model*>::iterator it = d->resolver.begin();

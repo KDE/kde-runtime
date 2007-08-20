@@ -95,7 +95,7 @@ static int portNumber(const post_audio_port_t *port)
     }
     Q_ASSERT(input);
 //X     if (!input) {
-//X         kError(610) << k_funcinfo << "did not find the input for this port" << endl;
+//X         kError(610) << "did not find the input for this port" << endl;
 //X         return -1;
 //X     }
     const int _portNumber = input->xine_in.name[2] - '0';
@@ -170,7 +170,7 @@ static int portNumber(const post_audio_port_t *port)
 //X             x = "12dB";
 //X             break;
 //X     }
-//X     kDebug(610) << k_funcinfo << "set parameters to "
+//X     kDebug(610) << "set parameters to "
 //X         << x << ", "
 //X         << that->fadeStart << ", "
 //X         << that->fadeDiff << ", "
@@ -244,7 +244,7 @@ static int kmixer_port_open(xine_audio_port_t *port_gen, xine_stream_t *stream,
     _x_post_rewire(&that->post);
     _x_post_inc_usage(port);
     if (port->usage_count != 1) {
-        kDebug(610) << k_funcinfo << "bad usage count: " << port->usage_count;
+        kDebug(610) << "bad usage count: " << port->usage_count;
     }
 
     if (that->rate) {

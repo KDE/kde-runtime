@@ -223,7 +223,7 @@ QSet<int> Backend::objectDescriptionIndexes( ObjectDescriptionType type ) const
 
 QHash<QByteArray, QVariant> Backend::objectDescriptionProperties(ObjectDescriptionType type, int index) const
 {
-    //kDebug(610) << k_funcinfo << type << index;
+    //kDebug(610) << type << index;
     QHash<QByteArray, QVariant> ret;
     switch (type) {
         case Phonon::AudioOutputDeviceType:
@@ -339,7 +339,7 @@ bool Backend::startConnectionChange(QSet<QObject *> nodes)
 
 bool Backend::connectNodes(QObject *_source, QObject *_sink)
 {
-    kDebug(610) << k_funcinfo << endl;
+    kDebug(610) << endl;
     SourceNode *source = qobject_cast<SourceNode *>(_source);
     SinkNode *sink = qobject_cast<SinkNode *>(_sink);
     if (!source || !sink) {
@@ -357,7 +357,7 @@ bool Backend::connectNodes(QObject *_source, QObject *_sink)
 
 bool Backend::disconnectNodes(QObject *_source, QObject *_sink)
 {
-    kDebug(610) << k_funcinfo << endl;
+    kDebug(610) << endl;
     SourceNode *source = qobject_cast<SourceNode *>(_source);
     SinkNode *sink = qobject_cast<SinkNode *>(_sink);
     if (!source || !sink) {

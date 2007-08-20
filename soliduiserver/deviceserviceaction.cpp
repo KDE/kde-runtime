@@ -79,7 +79,7 @@ void DeviceServiceAction::execute(Solid::Device &device)
     MacroExpander mx(device);
 
     if (!mx.expandMacrosShellQuote(exec)) {
-        kWarning() << k_funcinfo << ", Syntax error:" << m_service.m_strExec ;
+        kWarning() << ", Syntax error:" << m_service.m_strExec ;
         return;
     }
 

@@ -46,7 +46,7 @@ namespace Xine
 
     void XineEnginePrivate::emitAudioDeviceChange()
     {
-        kDebug(610) << k_funcinfo;
+        kDebug(610) ;
         emit objectDescriptionChanged(AudioOutputDeviceType);
     }
 
@@ -74,7 +74,7 @@ namespace Xine
             m_thread->wait();
             delete m_thread;
         }
-        //kDebug(610) << k_funcinfo;
+        //kDebug(610) ;
         if (m_nullPort) {
             xine_close_audio_driver(m_xine, m_nullPort);
         }
@@ -364,7 +364,7 @@ namespace Xine
 
     void XineEngine::checkAudioOutputs()
     {
-        kDebug(610) << k_funcinfo;
+        kDebug(610) ;
         if (m_audioOutputInfos.isEmpty()) {
             kDebug(610) << "isEmpty";
             QObject::connect(AudioDeviceEnumerator::self(), SIGNAL(devicePlugged(const AudioDevice &)),
@@ -442,7 +442,7 @@ namespace Xine
 
     void XineEnginePrivate::devicePlugged(const AudioDevice &dev)
     {
-        kDebug(610) << k_funcinfo << dev.cardName();
+        kDebug(610) << dev.cardName();
         if (!dev.isPlaybackDevice()) {
             return;
         }
@@ -473,7 +473,7 @@ namespace Xine
 
     void XineEnginePrivate::deviceUnplugged(const AudioDevice &dev)
     {
-        kDebug(610) << k_funcinfo << dev.cardName();
+        kDebug(610) << dev.cardName();
         if (!dev.isPlaybackDevice()) {
             return;
         }
@@ -499,7 +499,7 @@ namespace Xine
             s_instance->m_audioOutputInfos << info; // now the device is listed as not available
             signalTimer.start();
         } else {
-            kDebug(610) << k_funcinfo << "told to remove " << dev.cardName() + postfix <<
+            kDebug(610) << "told to remove " << dev.cardName() + postfix <<
                 " with driver " << driver << " but the device was not present in m_audioOutputInfos"
                 << endl;
         }

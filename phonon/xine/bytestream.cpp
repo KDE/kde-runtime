@@ -92,19 +92,19 @@ void ByteStream::pullBuffer(char *buf, int len)
     // never called from main thread
     //Q_ASSERT(m_mainThread != pthread_self());
 
-    PXINE_VDEBUG << k_funcinfo << len << ", m_offset = " << m_offset << ", m_currentPosition = "
+    PXINE_VDEBUG << len << ", m_offset = " << m_offset << ", m_currentPosition = "
         << m_currentPosition << ", m_buffersize = " << m_buffersize << endl;
     while (len > 0) {
         if (m_buffers.isEmpty()) {
             // pullBuffer is only called when there's => len data available
-            kFatal(610) << k_funcinfo << "m_currentPosition = " << m_currentPosition
+            kFatal(610) << "m_currentPosition = " << m_currentPosition
                 << ", m_preview.size() = " << m_preview.size() << ", len = " << len << kBacktrace()
                 << endl;
         }
         if (m_buffers.head().size() - m_offset <= len) {
             // The whole data of the next buffer is needed
             QByteArray buffer = m_buffers.dequeue();
-            PXINE_VDEBUG << k_funcinfo << "dequeue one buffer of size " << buffer.size()
+            PXINE_VDEBUG << "dequeue one buffer of size " << buffer.size()
                 << ", reading at offset = " << m_offset << ", resetting m_offset to 0" << endl;
             Q_ASSERT(buffer.size() > 0);
             int tocopy = buffer.size() - m_offset;
@@ -118,7 +118,7 @@ void ByteStream::pullBuffer(char *buf, int len)
             m_offset = 0;
         } else {
             // only a part of the next buffer is needed
-            PXINE_VDEBUG << k_funcinfo << "read " << len
+            PXINE_VDEBUG << "read " << len
                 << " bytes from the first buffer at offset = " << m_offset << endl;
             QByteArray &buffer = m_buffers.head();
             Q_ASSERT(buffer.size() > 0);
@@ -144,13 +144,13 @@ int ByteStream::peekBuffer(void *buf)
         QMutexLocker lock(&m_mutex);
         // the thread needs to sleep until a wait condition is signalled from writeData
         while (!m_eod && !m_stopped && m_preview.size() < MAX_PREVIEW_SIZE) {
-            PXINE_VDEBUG << k_funcinfo << "xine waits for data: " << m_buffersize << ", " << m_eod << endl;
+            PXINE_VDEBUG << "xine waits for data: " << m_buffersize << ", " << m_eod << endl;
             emit needDataQueued();
             m_waitingForData.wait(&m_mutex);
         }
         if (m_stopped) {
-            PXINE_DEBUG << k_funcinfo << "returning 0, m_stopped = true" << endl;
-            //kDebug(610) << "UNLOCKING m_mutex: " << k_funcinfo;
+            PXINE_DEBUG << "returning 0, m_stopped = true" << endl;
+            //kDebug(610) << "UNLOCKING m_mutex: " ;
             return 0;
         }
     }
@@ -169,44 +169,44 @@ qint64 ByteStream::readFromBuffer(void *buf, size_t count)
 
     qint64 currentPosition = m_currentPosition;
 
-    PXINE_VDEBUG << k_funcinfo << count << endl;
+    PXINE_VDEBUG << count << endl;
 
     QMutexLocker lock(&m_mutex);
-    //kDebug(610) << "LOCKED m_mutex: " << k_funcinfo;
+    //kDebug(610) << "LOCKED m_mutex: " ;
     // get data while more is needed and while we're still receiving data
     if (m_buffersize < count && !m_eod) {
         // the thread needs to sleep until a wait condition is signalled from writeData
         while (!m_eod && !m_stopped && m_buffersize < count) {
-            PXINE_VDEBUG << k_funcinfo << "xine waits for data: " << m_buffersize << ", " << m_eod << endl;
+            PXINE_VDEBUG << "xine waits for data: " << m_buffersize << ", " << m_eod << endl;
             emit needDataQueued();
             m_waitingForData.wait(&m_mutex);
         }
         if (m_stopped) {
-            PXINE_DEBUG << k_funcinfo << "returning 0, m_stopped = true" << endl;
-            //kDebug(610) << "UNLOCKING m_mutex: " << k_funcinfo;
+            PXINE_DEBUG << "returning 0, m_stopped = true" << endl;
+            //kDebug(610) << "UNLOCKING m_mutex: " ;
             return 0;
         }
         Q_ASSERT(currentPosition == m_currentPosition);
         //PXINE_VDEBUG << "m_buffersize = " << m_buffersize << endl;
     }
     if (m_buffersize >= count) {
-        PXINE_VDEBUG << k_funcinfo << "calling pullBuffer with m_buffersize = " << m_buffersize << endl;
+        PXINE_VDEBUG << "calling pullBuffer with m_buffersize = " << m_buffersize << endl;
         pullBuffer(static_cast<char*>(buf), count);
         m_currentPosition += count;
-        //kDebug(610) << "UNLOCKING m_mutex: " << k_funcinfo;
+        //kDebug(610) << "UNLOCKING m_mutex: " ;
         return count;
     }
     Q_ASSERT(m_eod);
     if (m_buffersize > 0) {
-        PXINE_VDEBUG << k_funcinfo << "calling pullBuffer with m_buffersize = " << m_buffersize << endl;
+        PXINE_VDEBUG << "calling pullBuffer with m_buffersize = " << m_buffersize << endl;
         pullBuffer(static_cast<char*>(buf), m_buffersize);
         m_currentPosition += m_buffersize;
-        PXINE_DEBUG << k_funcinfo << "returning less data than requested, the stream is at its end" << endl;
-        //kDebug(610) << "UNLOCKING m_mutex: " << k_funcinfo;
+        PXINE_DEBUG << "returning less data than requested, the stream is at its end" << endl;
+        //kDebug(610) << "UNLOCKING m_mutex: " ;
         return m_buffersize;
     }
-    PXINE_DEBUG << k_funcinfo << "return 0, the stream is at its end" << endl;
-    //kDebug(610) << "UNLOCKING m_mutex: " << k_funcinfo;
+    PXINE_DEBUG << "return 0, the stream is at its end" << endl;
+    //kDebug(610) << "UNLOCKING m_mutex: " ;
     return 0;
 }
 
@@ -231,7 +231,7 @@ off_t ByteStream::seekBuffer(qint64 offset)
 
     // first try to seek in the data we have buffered
     m_mutex.lock();
-    //kDebug(610) << "LOCKED m_mutex: " << k_funcinfo;
+    //kDebug(610) << "LOCKED m_mutex: " ;
     if (offset > m_currentPosition && offset < m_currentPosition + m_buffersize) {
         kDebug(610) << "seeking behind current position, but inside the buffered data";
         // seek behind the current position in the buffer
@@ -254,7 +254,7 @@ off_t ByteStream::seekBuffer(qint64 offset)
             }
         }
         Q_ASSERT( offset == m_currentPosition );
-        //kDebug(610) << "UNLOCKING m_mutex: " << k_funcinfo;
+        //kDebug(610) << "UNLOCKING m_mutex: " ;
         m_mutex.unlock();
         return m_currentPosition;
     } else if (offset < m_currentPosition && m_currentPosition - offset <= m_offset) {
@@ -264,14 +264,14 @@ off_t ByteStream::seekBuffer(qint64 offset)
         m_buffersize += m_currentPosition - offset;
         Q_ASSERT(m_offset >= 0);
         m_currentPosition = offset;
-        //kDebug(610) << "UNLOCKING m_mutex: " << k_funcinfo;
+        //kDebug(610) << "UNLOCKING m_mutex: " ;
         m_mutex.unlock();
         return m_currentPosition;
     }
 
     // the ByteStream is not seekable: no chance to seek to the requested offset
     if (!m_seekable) {
-        //kDebug(610) << "UNLOCKING m_mutex: " << k_funcinfo;
+        //kDebug(610) << "UNLOCKING m_mutex: " ;
         m_mutex.unlock();
         return m_currentPosition;
     }
@@ -291,7 +291,7 @@ off_t ByteStream::seekBuffer(qint64 offset)
     m_eod = false;
 
     m_currentPosition = offset;
-    //kDebug(610) << "UNLOCKING m_mutex: " << k_funcinfo;
+    //kDebug(610) << "UNLOCKING m_mutex: " ;
     m_mutex.unlock();
 
     QMutexLocker seekLock(&m_seekMutex);
@@ -310,7 +310,7 @@ off_t ByteStream::currentPosition() const
 
 ByteStream::~ByteStream()
 {
-    PXINE_DEBUG << k_funcinfo << endl;
+    PXINE_DEBUG << endl;
 }
 
 QByteArray ByteStream::mrl() const
@@ -348,7 +348,7 @@ QByteArray ByteStream::mrl() const
 
 void ByteStream::setStreamSize(qint64 x)
 {
-    PXINE_VDEBUG << k_funcinfo << x << endl;
+    PXINE_VDEBUG << x << endl;
     QMutexLocker lock(&m_streamSizeMutex);
     m_streamSize = x;
     if (m_streamSize != 0) {
@@ -370,7 +370,7 @@ void ByteStream::setPauseForBuffering(bool b)
 }
 void ByteStream::endOfData()
 {
-    PXINE_VDEBUG << k_funcinfo << endl;
+    PXINE_VDEBUG << endl;
     QMutexLocker lock(&m_mutex);
     m_eod = true;
     // don't reset the XineStream because many demuxers hit eod while trying to find the format of
@@ -400,7 +400,7 @@ void ByteStream::writeData(const QByteArray &data)
 
     // first fill the preview buffer
     if (m_preview.size() != MAX_PREVIEW_SIZE) {
-        PXINE_DEBUG << k_funcinfo << "fill preview" << endl;
+        PXINE_DEBUG << "fill preview" << endl;
         // more data than the preview buffer needs
         if (m_preview.size() + data.size() > MAX_PREVIEW_SIZE) {
             int tocopy = MAX_PREVIEW_SIZE - m_preview.size();
@@ -409,19 +409,19 @@ void ByteStream::writeData(const QByteArray &data)
             m_preview += data;
         }
 
-        PXINE_VDEBUG << k_funcinfo << "filled preview buffer to " << m_preview.size() << endl;
+        PXINE_VDEBUG << "filled preview buffer to " << m_preview.size() << endl;
 //X         if (m_preview.size() == MAX_PREVIEW_SIZE) { // preview buffer is full
 //X             setMrl();
 //X         }
     }
 
-    PXINE_VDEBUG << k_funcinfo << data.size() << " m_streamSize = " << m_streamSize << endl;
+    PXINE_VDEBUG << data.size() << " m_streamSize = " << m_streamSize << endl;
 
     QMutexLocker lock(&m_mutex);
-    //kDebug(610) << "LOCKED m_mutex: " << k_funcinfo;
+    //kDebug(610) << "LOCKED m_mutex: " ;
     m_buffers.enqueue(data);
     m_buffersize += data.size();
-    PXINE_VDEBUG << k_funcinfo << "m_buffersize = " << m_buffersize << endl;
+    PXINE_VDEBUG << "m_buffersize = " << m_buffersize << endl;
     switch (m_mediaObject->state()) {
     case Phonon::BufferingState: // if nbc is buffering we want more data
     case Phonon::LoadingState: // if the preview is not ready we want me more data
@@ -430,12 +430,12 @@ void ByteStream::writeData(const QByteArray &data)
         enoughData(); // else it's enough
     }
     m_waitingForData.wakeAll();
-    //kDebug(610) << "UNLOCKING m_mutex: " << k_funcinfo;
+    //kDebug(610) << "UNLOCKING m_mutex: " ;
 }
 
 void ByteStream::syncSeekStream(qint64 offset)
 {
-    PXINE_VDEBUG << k_funcinfo << endl;
+    PXINE_VDEBUG << endl;
     m_seekMutex.lock();
     seekStream(offset);
     m_seekWaitCondition.wakeAll();
@@ -444,7 +444,7 @@ void ByteStream::syncSeekStream(qint64 offset)
 
 //X void ByteStream::play()
 //X {
-//X     PXINE_VDEBUG << k_funcinfo << endl;
+//X     PXINE_VDEBUG << endl;
 //X     m_stopped = false;
 //X     if (m_streamSize <= 0 || m_preview.size() < MAX_PREVIEW_SIZE) {
 //X         m_playRequested = true; // not ready yet for playback, but keep it in mind so playback can
@@ -469,7 +469,7 @@ qint64 ByteStream::streamSize() const
 
 void ByteStream::stop()
 {
-    PXINE_VDEBUG << k_funcinfo << endl;
+    PXINE_VDEBUG << endl;
 
     m_mutex.lock();
     m_seekMutex.lock();

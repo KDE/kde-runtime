@@ -44,7 +44,7 @@ AudioOutput::AudioOutput(QObject *parent)
 
 AudioOutput::~AudioOutput()
 {
-    //kDebug(610) << k_funcinfo;
+    //kDebug(610) ;
 }
 
 qreal AudioOutput::volume() const

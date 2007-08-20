@@ -139,7 +139,7 @@ bool MediaObject::isSeekable() const
 
 qint64 MediaObject::currentTime() const
 {
-    //kDebug(610) << k_funcinfo << kBacktrace();
+    //kDebug(610) << kBacktrace();
     switch(m_stream->state()) {
     case Phonon::PausedState:
     case Phonon::BufferingState:
@@ -157,7 +157,7 @@ qint64 MediaObject::currentTime() const
 qint64 MediaObject::totalTime() const
 {
     const qint64 ret = stream().totalTime();
-    //kDebug(610) << k_funcinfo << "returning " << ret;
+    //kDebug(610) << "returning " << ret;
     return ret;
 }
 
@@ -169,18 +169,18 @@ qint64 MediaObject::remainingTime() const
     case Phonon::PlayingState:
         {
             const qint64 ret = stream().remainingTime();
-            //kDebug(610) << k_funcinfo << "returning " << ret;
+            //kDebug(610) << "returning " << ret;
             return ret;
         }
         break;
     case Phonon::StoppedState:
     case Phonon::LoadingState:
-        //kDebug(610) << k_funcinfo << "returning 0";
+        //kDebug(610) << "returning 0";
         return 0;
     case Phonon::ErrorState:
         break;
     }
-    //kDebug(610) << k_funcinfo << "returning -1";
+    //kDebug(610) << "returning -1";
     return -1;
 }
 
@@ -284,7 +284,7 @@ void MediaObject::stop()
 
 void MediaObject::seek(qint64 time)
 {
-    //kDebug(610) << k_funcinfo << time;
+    //kDebug(610) << time;
     m_stream->seek(time);
 }
 
@@ -355,13 +355,13 @@ void MediaObject::handleFinished()
 
 MediaSource MediaObject::source() const
 {
-	//kDebug( 610 ) << k_funcinfo;
+	//kDebug( 610 ) ;
 	return m_mediaSource;
 }
 
 qint32 MediaObject::prefinishMark() const
 {
-	//kDebug( 610 ) << k_funcinfo;
+	//kDebug( 610 ) ;
 	return m_prefinishMark;
 }
 
@@ -410,7 +410,7 @@ void MediaObject::setSource(const MediaSource &source)
 
 void MediaObject::setSourceInternal(const MediaSource &source, HowToSetTheUrl how)
 {
-	//kDebug( 610 ) << k_funcinfo;
+	//kDebug( 610 ) ;
     m_titles.clear();
     m_mediaSource = source;
 
@@ -512,7 +512,7 @@ QByteArray MediaObject::autoplayMrlsToTitles(const char *plugin, const char *def
     char **mrls = xine_get_autoplay_mrls(XineEngine::xine(), plugin, &num);
     for (int i = 0; i < num; ++i) {
         if (mrls[i]) {
-            kDebug(610) << k_funcinfo << mrls[i];
+            kDebug(610) << mrls[i];
             m_titles << QByteArray(mrls[i]);
         }
     }
@@ -548,7 +548,7 @@ bool MediaObject::hasInterface(Interface interface) const
 
 void MediaObject::handleAvailableTitlesChanged(int t)
 {
-    kDebug(610) << k_funcinfo << t;
+    kDebug(610) << t;
     if (m_mediaSource.discType() == Phonon::Dvd) {
         QByteArray mrl = "dvd:" + m_mediaDevice;
         const int lastSize = m_titles.size();
@@ -564,7 +564,7 @@ void MediaObject::handleAvailableTitlesChanged(int t)
 
 QVariant MediaObject::interfaceCall(Interface interface, int command, const QList<QVariant> &arguments)
 {
-    kDebug(610) << k_funcinfo << interface << ", " << command;
+    kDebug(610) << interface << ", " << command;
     switch (interface) {
     case AddonInterface::ChapterInterface:
         switch (static_cast<AddonInterface::ChapterCommand>(command)) {
@@ -680,7 +680,7 @@ void MediaObject::handleFrameFormatChange(int w, int h, int a, bool ps)
 
 void MediaObject::handleAudioDeviceFailed()
 {
-    kDebug(610) << k_funcinfo << endl;
+    kDebug(610) << endl;
     downstreamEvent(new QEvent(static_cast<QEvent::Type>(Events::AudioDeviceFailed)));
 }
 

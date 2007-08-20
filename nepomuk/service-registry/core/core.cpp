@@ -121,7 +121,7 @@ Nepomuk::Middleware::Registry::Core::findServiceByType_internal( const QString& 
 const Nepomuk::Middleware::Registry::Service*
 Nepomuk::Middleware::Registry::Core::findServiceByType( const QString& type )
 {
-    kDebug() << k_funcinfo;
+    kDebug() ;
     const Service* service = findServiceByType_internal( type );
     if ( !service ) {
         if ( loadServiceOnDemand( type ) ) {
@@ -177,7 +177,7 @@ bool Nepomuk::Middleware::Registry::Core::loadServiceOnDemand( const QString& ty
 {
     // FIXME: check if the service is already running
 
-    kDebug(300003) << k_funcinfo;
+    kDebug(300003) ;
 
     QStringList allServices = KGlobal::dirs()->findAllResources( "services", "nepomuk/*" );
     foreach( QString service, allServices ) {

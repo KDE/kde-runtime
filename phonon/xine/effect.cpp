@@ -63,7 +63,7 @@ void EffectXT::ensureInstance()
 
 void EffectXT::createInstance()
 {
-    kDebug(610) << k_funcinfo << "m_pluginName = \"" << m_pluginName << "\"" << endl;
+    kDebug(610) << "m_pluginName = \"" << m_pluginName << "\"" << endl;
     xine_audio_port_t *audioPort = XineEngine::nullPort();
     Q_ASSERT(m_plugin == 0 && m_pluginApi == 0);
     if (!m_pluginName) {

@@ -52,12 +52,12 @@ void Visualization::setVisualization( int newVisualization )
 
 void VisualizationXT::rewireTo(SourceNodeXT *)
 {
-    kFatal() << k_funcinfo << "not implemented" << endl;
+    kFatal() << "not implemented" << endl;
 }
 
 xine_post_out_t *VisualizationXT::videoOutputPort() const
 {
-    kFatal() << k_funcinfo << "not implemented" << endl;
+    kFatal() << "not implemented" << endl;
     return 0;
 }
 

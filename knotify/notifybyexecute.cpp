@@ -46,7 +46,7 @@ void NotifyByExecute::notify( int id, KNotifyConfig * config )
 {
 	QString command=config->readEntry( "execute" );
 	
-	kDebug(300) << k_funcinfo << command;
+	kDebug(300) << command;
 	
 	if (!command.isEmpty()) {
 // 	kDebug(300) << "executing command '" << command << "'";

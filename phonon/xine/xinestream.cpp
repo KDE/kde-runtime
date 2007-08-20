@@ -85,7 +85,7 @@ XineStream::~XineStream()
     QList<AudioPostList>::Iterator it = m_audioPostLists.begin();
     const QList<AudioPostList>::Iterator end = m_audioPostLists.end();
     for (; it != end; ++it) {
-        kDebug(610) << k_funcinfo << "unsetXineStream";
+        kDebug(610) << "unsetXineStream";
         it->unsetXineStream(this);
     }
     */
@@ -213,7 +213,7 @@ bool XineStream::hasVideo() const
         // FIXME: this is non-deterministic: a program might fail sometimes and sometimes work
         // because of this
         if (!m_waitingForStreamInfo.wait(&m_streamInfoMutex, 80)) {
-            kDebug(610) << k_funcinfo << "waitcondition timed out";
+            kDebug(610) << "waitcondition timed out";
         }
     }
     return m_hasVideo;
@@ -230,7 +230,7 @@ bool XineStream::isSeekable() const
         // FIXME: this is non-deterministic: a program might fail sometimes and sometimes work
         // because of this
         /*if (!m_waitingForStreamInfo.wait(&m_streamInfoMutex, 80)) {
-            kDebug(610) << k_funcinfo << "waitcondition timed out";
+            kDebug(610) << "waitcondition timed out";
             return false;
         }*/
     }
@@ -244,7 +244,7 @@ void XineStream::getStreamInfo()
 
     if (m_stream && !m_mrl.isEmpty()) {
         if (xine_get_status(m_stream) == XINE_STATUS_IDLE) {
-            kDebug(610) << "calling xineOpen from " << k_funcinfo;
+            kDebug(610) << "calling xineOpen from " ;
             if (!xineOpen(Phonon::StoppedState)) {
                 return;
             }
@@ -265,17 +265,17 @@ void XineStream::getStreamInfo()
             emit seekableChanged(m_isSeekable);
         }
         if (m_availableTitles != availableTitles) {
-            kDebug(610) << k_funcinfo << "available titles changed: " << availableTitles;
+            kDebug(610) << "available titles changed: " << availableTitles;
             m_availableTitles = availableTitles;
             emit availableTitlesChanged(m_availableTitles);
         }
         if (m_availableChapters != availableChapters) {
-            kDebug(610) << k_funcinfo << "available chapters changed: " << availableChapters;
+            kDebug(610) << "available chapters changed: " << availableChapters;
             m_availableChapters = availableChapters;
             emit availableChaptersChanged(m_availableChapters);
         }
         if (m_availableAngles != availableAngles) {
-            kDebug(610) << k_funcinfo << "available angles changed: " << availableAngles;
+            kDebug(610) << "available angles changed: " << availableAngles;
             m_availableAngles = availableAngles;
             emit availableAnglesChanged(m_availableAngles);
         }
@@ -298,7 +298,7 @@ bool XineStream::createStream()
     }
 
     m_portMutex.lock();
-    //kDebug(610) << k_funcinfo << "AudioPort.xinePort() = " << m_audioPort.xinePort();
+    //kDebug(610) << "AudioPort.xinePort() = " << m_audioPort.xinePort();
     xine_audio_port_t *audioPort = 0;
     xine_video_port_t *videoPort = 0;
     Q_ASSERT(m_mediaObject);
@@ -376,7 +376,7 @@ void XineStream::removeAudioPostList(const AudioPostList &postList)
 //called from main thread
 void XineStream::aboutToDeleteVideoWidget()
 {
-    kDebug(610) << k_funcinfo << endl;
+    kDebug(610) << endl;
     m_portMutex.lock();
 
     // schedule m_stream rewiring
@@ -618,17 +618,17 @@ bool XineStream::event(QEvent *ev)
             int availableChapters = xine_get_stream_info(m_stream, XINE_STREAM_INFO_DVD_CHAPTER_COUNT);
             int availableAngles   = xine_get_stream_info(m_stream, XINE_STREAM_INFO_DVD_ANGLE_COUNT);
             if (m_availableTitles != availableTitles) {
-                kDebug(610) << k_funcinfo << "available titles changed: " << availableTitles;
+                kDebug(610) << "available titles changed: " << availableTitles;
                 m_availableTitles = availableTitles;
                 emit availableTitlesChanged(m_availableTitles);
             }
             if (m_availableChapters != availableChapters) {
-                kDebug(610) << k_funcinfo << "available chapters changed: " << availableChapters;
+                kDebug(610) << "available chapters changed: " << availableChapters;
                 m_availableChapters = availableChapters;
                 emit availableChaptersChanged(m_availableChapters);
             }
             if (m_availableAngles != availableAngles) {
-                kDebug(610) << k_funcinfo << "available angles changed: " << availableAngles;
+                kDebug(610) << "available angles changed: " << availableAngles;
                 m_availableAngles = availableAngles;
                 emit availableAnglesChanged(m_availableAngles);
             }
@@ -637,17 +637,17 @@ bool XineStream::event(QEvent *ev)
             int currentChapter = xine_get_stream_info(m_stream, XINE_STREAM_INFO_DVD_CHAPTER_NUMBER);
             int currentAngle   = xine_get_stream_info(m_stream, XINE_STREAM_INFO_DVD_ANGLE_NUMBER);
             if (currentAngle != m_currentAngle) {
-                kDebug(610) << k_funcinfo << "current angle changed: " << currentAngle;
+                kDebug(610) << "current angle changed: " << currentAngle;
                 m_currentAngle = currentAngle;
                 emit angleChanged(m_currentAngle);
             }
             if (currentChapter != m_currentChapter) {
-                kDebug(610) << k_funcinfo << "current chapter changed: " << currentChapter;
+                kDebug(610) << "current chapter changed: " << currentChapter;
                 m_currentChapter = currentChapter;
                 emit chapterChanged(m_currentChapter);
             }
             if (currentTitle != m_currentTitle) {
-                kDebug(610) << k_funcinfo << "current title changed: " << currentTitle;
+                kDebug(610) << "current title changed: " << currentTitle;
                 m_currentTitle = currentTitle;
                 emit titleChanged(m_currentTitle);
             }
@@ -1156,7 +1156,7 @@ void XineStream::setUrl(const KUrl &url)
 // called from main thread
 void XineStream::setMrl(const QByteArray &mrl, StateForNewMrl sfnm)
 {
-    kDebug(610) << k_funcinfo << mrl << ", " << sfnm;
+    kDebug(610) << mrl << ", " << sfnm;
     QCoreApplication::postEvent(this, new MrlChangedEvent(mrl, sfnm));
 }
 
@@ -1199,7 +1199,7 @@ bool XineStream::updateTime()
     }
 
     if (xine_get_status(m_stream) == XINE_STATUS_IDLE) {
-        kDebug(610) << "calling xineOpen from " << k_funcinfo;
+        kDebug(610) << "calling xineOpen from " ;
         if (!xineOpen(Phonon::StoppedState)) {
             return false;
         }
@@ -1237,7 +1237,7 @@ bool XineStream::updateTime()
 void XineStream::emitAboutToFinishIn(int timeToAboutToFinishSignal)
 {
     Q_ASSERT(QThread::currentThread() == XineEngine::thread());
-    kDebug(610) << k_funcinfo << timeToAboutToFinishSignal;
+    kDebug(610) << timeToAboutToFinishSignal;
     Q_ASSERT(m_prefinishMark > 0);
     if (!m_prefinishMarkTimer) {
         m_prefinishMarkTimer = new QTimer(this);
@@ -1259,7 +1259,7 @@ void XineStream::emitAboutToFinishIn(int timeToAboutToFinishSignal)
 void XineStream::emitAboutToFinish()
 {
     Q_ASSERT(QThread::currentThread() == XineEngine::thread());
-    kDebug(610) << k_funcinfo << m_prefinishMarkReachedNotEmitted << ", " << m_prefinishMark;
+    kDebug(610) << m_prefinishMarkReachedNotEmitted << ", " << m_prefinishMark;
     if (m_prefinishMarkReachedNotEmitted && m_prefinishMark > 0) {
         updateTime();
         const int remainingTime = m_totalTime - m_currentTime;
@@ -1296,7 +1296,7 @@ void XineStream::timerEvent(QTimerEvent *event)
                 killTimer(m_waitForPlayingTimerId);
                 m_waitForPlayingTimerId = -1;
             } else {
-                kDebug(610) << k_funcinfo << "waiting";
+                kDebug(610) << "waiting";
             }
         }
     } else {
@@ -1309,11 +1309,11 @@ void XineStream::emitTick()
 {
     Q_ASSERT(QThread::currentThread() == XineEngine::thread());
     if (!updateTime()) {
-        kDebug(610) << k_funcinfo << "no useful time information available. skipped.";
+        kDebug(610) << "no useful time information available. skipped.";
         return;
     }
     if (m_ticking) {
-        //kDebug(610) << k_funcinfo << m_currentTime;
+        //kDebug(610) << m_currentTime;
         emit tick(m_currentTime);
     }
     if (m_prefinishMarkReachedNotEmitted && m_prefinishMark > 0) {
