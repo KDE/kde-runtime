@@ -3,19 +3,19 @@
 #
 #  XINE_FOUND - system has the XINE library
 #  XINE_INCLUDE_DIR - the XINE include directory
-#  XINE_LIBRARIES - The libraries needed to use XINE
+#  XINE_LIBRARY - The libraries needed to use XINE
 #  XINE_XCB_FOUND - libxine can use XCB for video output
 
-# Copyright (c) 2006, Laurent Montel, <montel@kde.org>
+# Copyright (c) 2006,2007 Laurent Montel, <montel@kde.org>
 # Copyright (c) 2006, Matthias Kretz, <kretz@kde.org>
 #
 # Redistribution and use is allowed according to the terms of the BSD license.
 # For details see the accompanying COPYING-CMAKE-SCRIPTS file.
 
-if (XINE_INCLUDE_DIR AND XINE_LIBRARIES)
+if (XINE_INCLUDE_DIR AND XINE_LIBRARY)
   # Already in cache, be silent
   set(Xine_FIND_QUIETLY TRUE)
-endif (XINE_INCLUDE_DIR AND XINE_LIBRARIES)
+endif (XINE_INCLUDE_DIR AND XINE_LIBRARY)
   IF (NOT WIN32)
 	INCLUDE(UsePkgConfig)
 	PKGCONFIG(libxine _LibXineIncDir _LibXineLinkDir _LibXineLinkFlags _LibXineCflags)
