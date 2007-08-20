@@ -1,7 +1,8 @@
 [KDE Print Filter Entry]
 Name=imagetops
-Name[ar]=الصور
+Name[ar]=الصور العلوية
 Name[bg]=Графични файлове
+Name[ne]=उच्च छवि
 Name[vi]=ảnh sang PS
 Require=exec:/imagetops
 Comment=Generic Image to PS Filter
@@ -16,6 +17,7 @@ Comment[he]=מסנן כללי מתמונה ל־PS
 Comment[ja]=一般的な画像を PS に変換
 Comment[km]=ប្រភេទ​រូបភាព​សម្រាប់​តម្រង​ PS 
 Comment[nds]=Allgemeen Ümwanneln vun Biller na PS-Dateien
+Comment[ne]=पीएस फिल्टरमा जेनेरिक छवि
 Comment[nl]=Generiek afbeelding-naar-postscript-filter
 Comment[pt]=Filtro de Imagens Genéricas para PS
 Comment[pt_BR]=Filtro de Imagens Genéricas para PS

@@ -1,7 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=KNetAttach
-Name[ne]=के नेट सङ्लग्न
+Name[ne]=केडीई नेट सङ्लग्नता
 Name[sv]=Knetattach
 Name[ta]=நெட்ஹாக்இணைப்பு
 Name[te]=కెనెట్ ఎటాచ్
@@ -9,6 +9,7 @@ Name[vi]=Gắn Mạng KDE
 Name[x-test]=xxKNetAttachxx
 GenericName=Network Folder Wizard
 GenericName[af]=Netwerk Gids Assistent
+GenericName[ar]=معالج مجلد الشبكة
 GenericName[be]=Майстар сеткавай тэчкі
 GenericName[bg]=Мрежови инструмент
 GenericName[br]=Skoazeller renkell rouedad

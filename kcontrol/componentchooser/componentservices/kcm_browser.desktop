@@ -1,5 +1,6 @@
 Name=Web Browser
 Name[af]=Web Blaaier
+Name[ar]=متصفح الشبكة
 Name[be]=Вандроўнік па Сеціве
 Name[bg]=Уеб браузър
 Name[br]=Furcher an Internet
@@ -98,7 +99,7 @@ Comment[mk]=Тука може да го конфигурирате вашиот 
 Comment[ms]=Di sini anda boleh konfigur pelayar web piawai anda.Semua aplikasi KDE yang di dalamnya anda boleh pilih hiperpautan hendaklah menerima seting ini.
 Comment[nb]=Her kan du sette opp nettleseren du bruker mest. Alle KDE-programmer der du kan velge hyperlenker skal bruke denne nettleseren.
 Comment[nds]=Hier kannst Du Dien Standard-Nettkieker angeven. All KDE- Programmen, binnen de Du Hyperlinks bruken kannst, schullen dat ümsetten.
-Comment[ne]=यहाँ तपाईँले पूर्वनिर्धारित वेब ब्राउजर कन्फिगर गर्न सक्नुहुन्छ । तपाईँले हाइपरलिङ्कहरू चयन गर्न सक्ने सबै KDE अनुप्रयोगहरूमा यो सेटिङ मान्नु पर्छ ।
+Comment[ne]=यहाँ तपाईँले पूर्वनिर्धारित वेब ब्राउजर कन्फिगर गर्न सक्नुहुन्छ । तपाईँले हाइपरलिङ्कहरू चयन गर्न सक्ने सबै केडीई अनुप्रयोगहरूमा यो सेटिङ मान्नु पर्छ ।
 Comment[nl]=Hier kunt u uw standaard webbrowser instellen. Alle KDE-toepassingen waarin u een hyperkoppeling kunt aanklikken maken gebruik van deze instelling.
 Comment[nn]=Med denne tenesta kan du setja opp standardnettlesaren. Alle KDE-program der du kan følgja hyperlenkjer skal bruka denne innstillinga.
 Comment[pa]=ਇਥੇ ਤੁਸੀਂ ਆਪਣੇ ਮੂਲ ਵੈੱਬ ਝਲਕਾਰੇ ਦੀ ਸੰਰਚਨਾ ਕਰ ਸਕਦੇ ਹੋ।ਸਭ KDE ਕਾਰਜ, ਜਿਨਾਂ ਵਿੱਚ ਵੀ ਨੈੱਟ ਸੰਬੰਧ ਹਨ, ਇਸ ਸੈਟਿੰਗ ਦਾ ਸਨਮਾਨ ਕਰਨਗੇ।

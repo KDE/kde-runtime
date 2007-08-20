@@ -1,5 +1,6 @@
 [KDE Print Filter Entry]
 Name=psselect
+Name[ne]=पीएस चयन
 Name[vi]=chọn/sắp xếp giấy
 Require=exec:/psselect
 Comment=Page Selection/Ordering Filter
@@ -12,6 +13,7 @@ Comment[ga]=Scagaire chun leathanaigh a roghnú agus a chur in ord
 Comment[ja]=ページ選択/並べ替えフィルタ
 Comment[km]=ជ្រើស​ទំព័រ/តាម​លំដាប់​តម្រង
 Comment[nds]=Sieden utsöken un sorteren
+Comment[ne]=पृष्ठ छनौट/क्रमिक फिल्टर
 Comment[nl]="Paginaselectie/ordenen" filter
 Comment[pt]=Filtro de Selecção/Ordenação de Páginas
 Comment[pt_BR]=Filtro de Seleção/Ordenação de Páginas

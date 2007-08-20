@@ -1,10 +1,12 @@
 [Icon Theme]
 Name=KDE-HiColor
 Name[he]=‏KDE ברמת צבע גבוהה
+Name[ja]=KDE ハイカラー
 Name[pt]=KDE-Muitas Cores
 Name[pt_BR]=KDE-Muitas Cores
 Name[sv]=KDE-färgrik
 Name[th]=KDE-ความละเอียดสีสูง
+Name[zh_TW]=KDE-高彩
 Comment=Fallback icon theme
 Comment[be]=Дадатковая тэма значак
 Comment[de]=Ausweich-Symbolset
@@ -14,6 +16,7 @@ Comment[pt]=Tema de ícones de última instância
 Comment[pt_BR]=Tema de ícones de última instância
 Comment[sv]=Reservikontema
 Comment[th]=ชุดไอคอนแบบปริยาย
+Comment[zh_TW]=最後圖示主題
 DisplayDepth=32
 Example=exec
 LinkOverlay=link

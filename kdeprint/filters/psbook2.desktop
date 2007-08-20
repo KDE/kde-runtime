@@ -1,5 +1,6 @@
 [KDE Print Filter Entry]
 Name=psbook2
+Name[ne]=पीएस बुक२
 Name[vi]=Sách PS 2
 Require=exec:/psbook,exec:/psnup,exec:/psselect
 Comment=Pamphlet Printing - Odd Pages (step 2)
@@ -12,6 +13,7 @@ Comment[ga]=Priontáil Phaimfléid - Leathanaigh Chorra (céim 2)
 Comment[ja]=小冊子の印刷 - 奇数ページ (ステップ 2)
 Comment[km]=ការ​បោះពុម្ព​ចុល្លលិខិត - ទំព័រ​សេស (ជំហាន ​២)
 Comment[nds]=Lütt Book drucken - Uneven Sieden (Schritt 2)
+Comment[ne]=पम्प्लेट मुद्रण - बिजोर पृष्ठहरू (चरण २)
 Comment[nl]=Pamflet afdrukken - Oneven pagina's (stap 2)
 Comment[pt]=Impressão de Panfletos - Páginas Ímpares (passo 2)
 Comment[pt_BR]=Impressão de Panfletos - Páginas Ímpares (passo 2)

@@ -1,6 +1,7 @@
 [Desktop Entry]
 Comment=Configure service discovery
 Comment[af]=Stel dienste ontdekker op
+Comment[ar]=إعداد إكتشاف الخدمات
 Comment[be]=Настаўленні пошуку сервісаў
 Comment[bg]=Настройване откриването на услуги
 Comment[ca]=Configura el descobriment de serveis
@@ -34,7 +35,7 @@ Comment[mk]=Конфигурирајте го откривањето серви�
 Comment[ms]=Konfigur penemuan servis
 Comment[nb]=Sett opp oppdagingstjenesten
 Comment[nds]=Dat Finnen vun Deensten inrichten
-Comment[ne]=पत्ता लगाउने कार्य कन्फिगर गर्नुहोस्
+Comment[ne]=सेवा खोजी कन्फिगर गर्नुहोस्
 Comment[nl]=Dienstwaarneming instellen
 Comment[nn]=Set opp oppdagingstenesta
 Comment[pa]=ਸਰਵਿਸ ਖੋਜ ਸੰਰਚਨਾ
@@ -64,6 +65,7 @@ Icon=blockdevice
 MimeType=
 Name=Service Discovery
 Name[af]=Dienste ontdekker
+Name[ar]=إكتشاف الخدمات
 Name[be]=Пошук сервісаў
 Name[bg]=Откриване на услуги
 Name[ca]=Descobriment de serveis
@@ -97,7 +99,7 @@ Name[mk]=Откривање сервиси
 Name[ms]=Penemuan Servis
 Name[nb]=Oppdaging av tjenester
 Name[nds]=Deensten finnen
-Name[ne]=पत्ता लगाउने कार्य
+Name[ne]=सेवा खोजी
 Name[nl]=Dienstwaarneming
 Name[nn]=Oppdaging av tenester
 Name[pa]=ਸਰਵਿਸ ਖੋਜ

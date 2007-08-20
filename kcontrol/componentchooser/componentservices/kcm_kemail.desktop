@@ -1,5 +1,6 @@
 Name=Email Client
 Name[af]=E-pos Kliënt
+Name[ar]=عميل البريد الإلكتروني
 Name[be]=Кліент электроннай пошты
 Name[bg]=Клиент за е-поща
 Name[br]=Kliant Postel
@@ -97,7 +98,7 @@ Comment[mk]=Овој сервис ви овозможува да го конфи
 Comment[ms]=Servis ini membolehkan anda konfigur klien e-mel piawai anda. Semua aplikasi KDE yang perlu akses kepada aplikasi klien e-mel hendaklah menerima seting ini.
 Comment[nb]=Med denne tjenesten kan du sette opp standard-e-postprogrammet. Alle KDE-programmer som trenger tilgang til e-post bør ta hensyn til denne innstillinga.
 Comment[nds]=Hier kannst Du Dien Standard-Nettpostprogramm angeven. All KDE- Programmen, de Togang to'n Nettpostprogramm bruukt, schullen dat denn anwennen.
-Comment[ne]=यो सेवाले तपाईँलाई पूर्वनिर्धारित इमेल क्लाइन्ट कन्फिगर गर्न अनुमति दिन्छ । इमेल क्लाइन्ट अनुप्रयोग पहुँच आवश्यक पर्ने सबै KDE अनुप्रयोगहरूले यो सेटिङ मान्नु पर्छ ।
+Comment[ne]=यो सेवाले तपाईँलाई पूर्वनिर्धारित इमेल क्लाइन्ट कन्फिगर गर्न अनुमति दिन्छ । इमेल क्लाइन्ट अनुप्रयोग पहुँच आवश्यक पर्ने सबै केडीई अनुप्रयोगहरूले यो सेटिङ मान्नु पर्छ ।
 Comment[nl]=Met deze service kunt u uw standaard e-mailprogramma instellen. KDE-toepassingen die toegang tot een e-mailprogramma nodig hebben zullen deze instellingen gebruiken.
 Comment[nn]=Med denne tenesta kan du setja opp standard-e-postprogrammet. Alle KDE-program som treng tilgang til e-post bør følgja denne innstillinga.
 Comment[pa]=ਇਥੇ ਤੁਸੀਂ ਆਪਣੇ ਮੂਲ ਈ-ਮੇਲ ਕਲਾਂਈਟ ਦੀ ਸੰਰਚਨਾ ਕਰ ਸਕਦੇ ਹੋ। ਸਭ KDE ਕਾਰਜ, ਜਿਨਾਂ ਨੇ ਵੀ ਈ-ਮੇਲ ਕਲਾਂਈਟ ਵਰਤਣਾ ਹੈ, ਇਸ ਸੈਟਿੰਗ ਦਾ ਸਨਮਾਨ ਕਰਨਗੇ।

@@ -19,6 +19,7 @@ X-KDE-System-Settings-Parent-Category=computer-administration
 
 Name=Printers
 Name[af]=Drukkers
+Name[ar]=الطابعات
 Name[be]=Друкаркі
 Name[bg]=Принтери
 Name[br]=Moullerezioù
@@ -115,7 +116,7 @@ Comment[mk]=Конфигурација на печатарскиот систе�
 Comment[ms]=Konfigurasi sistem pencetakan [pencetak, kerja, kelas, ...)
 Comment[nb]=Tilpass utskriftssystemet (skrivere, jobber, klasser ...)
 Comment[nds]=Instellen för dat Drucksysteem (Druckers, Opgaven, Klassen, ...)
-Comment[ne]=मुद्रण प्रणाली कन्फिगरेसन (मुद्रक, कार्य, बग, ...)
+Comment[ne]=मुद्रण प्रणाली कन्फिगरेसन (मुद्रक, कार्य, वर्ग, ...)
 Comment[nl]=Configuratie van het afdruksysteem (printers, taken, klassen, ...)
 Comment[nn]=Oppsett av utskriftssystem (skrivarar, jobbar, klassar, ...)
 Comment[pa]=ਪਰਿੰਟਿੰਗ ਸਿਸਟਮ ਸੰਰਚਨਾ (ਪਰਿੰਟਰ, ਕੰਮ, ਕਲਾਸ, ...)

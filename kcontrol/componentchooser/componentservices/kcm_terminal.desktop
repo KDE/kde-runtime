@@ -1,5 +1,6 @@
 Name=Terminal Emulator
 Name[af]=Terminaal Emulasie
+Name[ar]=محاكي الطرفية
 Name[be]=Эмулятар тэрміналу
 Name[bg]=Конзолна програма
 Name[br]=Kendarvanerezh termenell
@@ -97,7 +98,7 @@ Comment[mk]=Овој сервис ви овозможува да го конфи
 Comment[ms]=Servis ini membolehkan anda konfigur pelagak terminal piawai. Semua aplikasi KDE yang membatalkan aplikasi pelagak terminal hendaklah menerima seting ini.
 Comment[nb]=Denne tjenesten lar deg velge hvilken terminalemulator du foretrekker. Alle KDE-program som starter en terminalemulator bør ta hensyn til disse innstillingene.
 Comment[nds]=Hier kannst Du Dien Standard-Terminalemulator angeven. All KDE- Programmen, de en Terminalemulator starten wüllt, schullen dat denn anwennen.
-Comment[ne]=यो सेवाले तपाईँलाई पूर्वनिर्धारित टर्मिनल इमुलेटर कन्फिगर गर्न अनुमति दिन्छ । टर्मिनल इमुलेटर आव्हान गर्ने सबै KDE अनुप्रयोगहरूले यो सेटिङ मान्नु पर्छ ।
+Comment[ne]=यो सेवाले तपाईँलाई पूर्वनिर्धारित टर्मिनल इमुलेटर कन्फिगर गर्न अनुमति दिन्छ । टर्मिनल इमुलेटर आव्हान गर्ने सबै केडीई अनुप्रयोगहरूले यो सेटिङ मान्नु पर्छ ।
 Comment[nl]=Met deze service kunt u uw standaard terminalemulator instellen. Alle KDE-toepassingen die een terminalemulator aanroepen zullen gebruik maken van deze instelling.
 Comment[nn]=Med denne tenesta kan du setja oppp standardterminalemulatoren. Alle KDE-program som startar terminalemulatorar bør følgja denne innstillinga.
 Comment[pa]=ਇਥੇ ਤੁਸੀਂ ਆਪਣੇ ਮੂਲ ਟਰਮੀਨਲ ਦੀ ਸੰਰਚਨਾ ਕਰ ਸਕਦੇ ਹੋ। ਸਭ KDE ਕਾਰਜ, ਜਿਨਾਂ ਵਿੱਚ ਵੀ ਟਰਮੀਨਲ ਲੋੜੀਦਾ ਹੈ, ਇਸ ਸੈਟਿੰਗ ਦਾ ਸਨਮਾਨ ਕਰਨਗੇ।

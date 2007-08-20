@@ -1,5 +1,6 @@
 [KDE Print Filter Entry]
 Name=psbook1
+Name[ne]=पीएस बुक१
 Name[vi]=Sách PS 1
 Require=exec:/psbook,exec:/psnup,exec:/psselect
 Comment=Pamphlet Printing - Even Pages (step 1)
@@ -12,6 +13,7 @@ Comment[ga]=Priontáil Phaimfléid - Leathanaigh Chothroma (céim 1)
 Comment[ja]=小冊子の印刷 - 偶数ページ (ステップ 1)
 Comment[km]=ការ​បោះពុម្ព​ចុល្លលិខិត - ទំព័រ​គូរ (ជំហាន ១)
 Comment[nds]=Lütt Book drucken - Even Sieden (Schritt 1)
+Comment[ne]=पम्प्लेट मुद्रण - जोर पृष्ठहरू (चरण १)
 Comment[nl]=Pamflet afdrukken - Even pagina's (stap 1)
 Comment[pt]=Impressão de Panfletos - Páginas Pares (passo 1)
 Comment[pt_BR]=Impressão de Panfletos - Páginas Pares (passo 1)

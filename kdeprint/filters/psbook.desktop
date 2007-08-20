@@ -1,5 +1,6 @@
 [KDE Print Filter Entry]
 Name=psbook
+Name[ne]=पीएस बुक
 Name[vi]=Sách PS
 Require=exec:/psbook,exec:/psnup
 Comment=Pamphlet Printing (use with small side duplex printing)
@@ -11,6 +12,7 @@ Comment[ga]=Priontáil Phaimfléid (úsáid le priontáil dhéphléacsach - taob
 Comment[ja]=小冊子の印刷 - (短辺とじ両面印刷を使用)
 Comment[km]=ការ​បោះពុម្ព​ចុល្លលិខិត​ (ប្រើ​ជាមួយការ​បោះពុម្ពទ្វេទិស)
 Comment[nds]=Lütt Book drucken (mit Duplexdruck för lütte Sieden bruken)
+Comment[ne]=पम्प्लेट मुद्रण (सानो पट्टिको डुप्लेक्स मुद्रण प्रयोग गर्नुहोस्)
 Comment[nl]=Pamflet afdrukken (gebruik met korte-zijde dubbelzijdig afdrukken)
 Comment[pt]=Impressão de Panfletos (usar na impressão duplex pelo lado menor)
 Comment[pt_BR]=Impressão de Panfletos (usar na impressão duplex pelo lado menor)

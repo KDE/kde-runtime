@@ -1,5 +1,6 @@
 [KDE Print Filter Entry]
 Name=enscript
+Name[ne]=इनस्क्रिप्ट
 Require=exec:/enscript
 Comment=Enscript Text Filter
 Comment[be]=Тэкставы фільтр Enscript
@@ -14,6 +15,7 @@ Comment[he]=מסנן טקסט Enscript
 Comment[ja]=Enscript テキストフィルタ
 Comment[km]=តម្រង​អត្ថបទ Enscript 
 Comment[nds]=Textfilter "enscript"
+Comment[ne]=इनस्क्रिप्ट पाठ फिल्टर
 Comment[nl]=Enscript-tekstfilter
 Comment[pa]=ਇੰਸਕ੍ਰਿਪਟ ਪਾਠ ਫਿਲਟਰ
 Comment[pt]=Ficheiro de Texto Enscript

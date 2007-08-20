@@ -13,6 +13,7 @@ X-KDE-System-Settings-Parent-Category=notifications
 
 Name=System Notifications
 Name[af]=Stelsel Inkennistelling
+Name[ar]=إشعارات النظام
 Name[be]=Сістэмныя абвяшчэнні
 Name[bg]=Уведомяване
 Name[br]=Kemenn ar reizhiad
@@ -77,6 +78,7 @@ Name[zh_TW]=系統通知
 
 Comment=System Notification Configuration
 Comment[af]=Stelsel Inkennisstelling Opstelling
+Comment[ar]=إعدادات إعلامات النظام
 Comment[be]=Настаўленні сістэмных абвяшчэнняў
 Comment[bg]=Настройване на системата за уведомяване
 Comment[br]=Kefluniañ kemenn ar reizhiad

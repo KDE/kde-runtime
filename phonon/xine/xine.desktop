@@ -11,14 +11,17 @@ Icon=phonon-xine
 InitialPreference=15
 
 Name=Xine
+Name[ne]=जाइन
 Name[te]=క్సైన్
 Name[x-test]=xxXinexx
 
 Comment=Phonon Xine backend
 Comment[de]=Phonon Xine-Treiber
 Comment[he]=ממשק Phonon Xine
+Comment[ja]=Phonon Xine バックエンド
 Comment[nds]=Hülpprogramm Xine för Phonon
 Comment[pt]=Infra-estrutura do Xine para o Phonon
 Comment[pt_BR]=Infra-estrutura do Xine para o Phonon
 Comment[sv]=Phonon Xine-gränssnitt
 Comment[th]=โปรแกรมเบื้องหลัง Phonon Xine
+Comment[zh_TW]=Phonon Xine 後端介面

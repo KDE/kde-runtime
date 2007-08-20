@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Type=Service
 Name=kuiserver
+Name[ne]=कुइसर्भर
 Name[sv]=Gränssnittsserver
 Name[x-test]=xxkuiserverxx
 Name[zh_TW]=介面伺服器
@@ -15,6 +16,7 @@ Comment[he]=שרת ממשק משתמש של KDE למידע לגבי התקדמו
 Comment[ja]=KDE 進捗情報 UI サーバ
 Comment[km]=វឌ្ឍនភាព​របស់ KDE ព័ត៌មាន​ម៉ាស៊ីន​បម្រើ UI 
 Comment[nds]=De KDE-Server för Vörankamen-Infos för Böversieden
+Comment[ne]=केडीईको प्रगति सूचना यूआई सर्भर
 Comment[nl]=KDE's UI-server voor voortgangsinformatie
 Comment[pt]=Servidor da Interface de Progresso do KDE
 Comment[pt_BR]=Servidor da Interface de Informação de Progresso do KDE
