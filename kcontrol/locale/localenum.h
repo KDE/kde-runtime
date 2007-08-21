@@ -22,8 +22,8 @@
  */
 
 
-#ifndef __KLOCALECONFIGNUM_H__
-#define __KLOCALECONFIGNUM_H__
+#ifndef LOCALENUM_H
+#define LOCALENUM_H
 
 #include <QWidget>
 
@@ -75,4 +75,4 @@ private:
   QLineEdit *m_edMonNegSign;
 };
 
-#endif
+#endif // LOCALENUM_H

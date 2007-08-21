@@ -316,7 +316,7 @@ void KDEDConfig::slotStartService()
 			KMessageBox::error(this, "<qt>" + i18n("Unable to start server <em>service</em>.") + "</qt>");
 	}
 	else {
-		KMessageBox::error(this, "<qt>" + i18n("Unable to start service <em>service</em>.<br><br><i>Error: %1</i>",
+		KMessageBox::error(this, "<qt>" + i18n("Unable to start service <em>service</em>.<br /><br /><i>Error: %1</i>",
 											reply.error().message()) + "</qt>" );
 	}
 }
@@ -336,7 +336,7 @@ void KDEDConfig::slotStopService()
 			KMessageBox::error(this, "<qt>" + i18n("Unable to stop server <em>service</em>.") + "</qt>");
 	}
 	else {
-		KMessageBox::error(this, "<qt>" + i18n("Unable to stop service <em>service</em>.<br><br><i>Error: %1</i>",
+		KMessageBox::error(this, "<qt>" + i18n("Unable to stop service <em>service</em>.<br /><br /><i>Error: %1</i>",
 											reply.error().message()) + "</qt>" );
 	}
 }

@@ -56,11 +56,11 @@ K_EXPORT_COMPONENT_FACTORY( kcm_knotify, NotifyFactory("kcmnotify") )
                 "KDE allows for a great deal of control over how you "
                 "will be notified when certain events occur. There are "
                 "several choices as to how you are notified:"
-                "<ul><li>As the application was originally designed."
-                "<li>With a beep or other noise."
-                "<li>Via a popup dialog box with additional information."
+                "<ul><li>As the application was originally designed.</li>"
+                "<li>With a beep or other noise.</li>"
+                "<li>Via a popup dialog box with additional information.</li>"
                 "<li>By recording the event in a logfile without "
-                "any additional visual or audible alert."
+                "any additional visual or audible alert.</li>"
                 "</ul>"));
 
 	QVBoxLayout *layout = new QVBoxLayout( this );

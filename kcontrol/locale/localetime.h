@@ -21,8 +21,8 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef __KLOCALECONFIGTIME_H__
-#define __KLOCALECONFIGTIME_H__
+#ifndef LOCALETIME_H
+#define LOCALETIME_H
 
 #include <QWidget>
 
@@ -98,4 +98,4 @@ private:
   QComboBox * m_comboCalendarSystem;
 };
 
-#endif
+#endif // LOCALETIME_H

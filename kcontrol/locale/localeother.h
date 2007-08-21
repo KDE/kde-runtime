@@ -21,8 +21,8 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef __KLOCALECONFIGOTHER_H__
-#define __KLOCALECONFIGOTHER_H__
+#ifndef LOCALEOTHER_H
+#define LOCALEOTHER_H
 
 #include <QWidget>
 
@@ -67,4 +67,4 @@ private:
   QComboBox *m_combPageSize;
 };
 
-#endif
+#endif // LOCALEOTHER_H

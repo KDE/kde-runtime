@@ -27,9 +27,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************/
 
-#ifndef KRASHDBUSINTERFACE_SKEL
-#define KRASHDBUSINTERFACE_SKEL
-
+#ifndef KRASHADAPTOR_H
+#define KRASHADAPTOR_H
 
 #include <kaboutdata.h>
 
@@ -67,4 +66,4 @@ class KrashAdaptor : public QDBusAbstractAdaptor
     void acceptDebuggingApplication();
 };
 
-#endif
+#endif // KRASHADAPTOR_H

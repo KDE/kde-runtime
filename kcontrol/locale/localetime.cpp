@@ -498,7 +498,7 @@ void KLocaleConfigTime::slotTranslate()
      "<tr><td><b>pH</b></td><td>The hour (12-hour clock) as a decimal number "
      "(1-12).</td></tr>"
      "<tr><td><b>MM</b></td><td>The minutes as a decimal number (00-59)."
-     "</td><tr>"
+     "</td></tr>"
      "<tr><td><b>SS</b></td><td>The seconds as a decimal number (00-59)."
      "</td></tr>"
      "<tr><td><b>AMPM</b></td><td>Either \"am\" or \"pm\" according to the "

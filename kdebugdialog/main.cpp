@@ -71,7 +71,7 @@ int main(int argc, char ** argv)
 {
   KAboutData data( "kdebugdialog", 0, ki18n( "KDebugDialog"),
     "1.0", ki18n("A dialog box for setting preferences for debug output"),
-    KAboutData::License_GPL, ki18n("(c) 1999-2000, David Faure <faure@kde.org>"));
+    KAboutData::License_GPL, ki18n("Copyright 1999-2000, David Faure <email>faure@kde.org</email>"));
   data.addAuthor(ki18n("David Faure"), ki18n("Maintainer"), "faure@kde.org");
   KCmdLineArgs::init( argc, argv, &data );
 

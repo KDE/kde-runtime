@@ -301,19 +301,19 @@ void KLocaleConfigMoney::slotTranslate()
                "symbol, e.g. $ or €." ).toString( m_locale );
   m_labMonCurSym->setWhatsThis( str );
   m_edMonCurSym->setWhatsThis( str );
-  str = ki18n( "Here you can define the decimal separator used "
-               "to display monetary values."
+  str = ki18n( "<p>Here you can define the decimal separator used "
+               "to display monetary values.</p>"
                "<p>Note that the decimal separator used to "
                "display other numbers has to be defined "
-               "separately (see the 'Numbers' tab)." ).toString( m_locale );
+               "separately (see the 'Numbers' tab).</p>" ).toString( m_locale );
   m_labMonDecSym->setWhatsThis( str );
   m_edMonDecSym->setWhatsThis( str );
 
-  str = ki18n( "Here you can define the thousands separator "
-               "used to display monetary values."
+  str = ki18n( "<p>Here you can define the thousands separator "
+               "used to display monetary values.</p>"
                "<p>Note that the thousands separator used to "
                "display other numbers has to be defined "
-               "separately (see the 'Numbers' tab)." ).toString( m_locale );
+               "separately (see the 'Numbers' tab).</p>" ).toString( m_locale );
   m_labMonThoSep->setWhatsThis( str );
   m_edMonThoSep->setWhatsThis( str );
 

@@ -26,11 +26,9 @@
 #include <QEvent>
 #include <QFile>
 #include <QVector>
-#include <QFile>
 #include <QByteArray>
 #include <QStringList>
 #include <QMultiMap>
-#include <QEvent>
 #include <QtDebug>
 #include <QMetaType>
 

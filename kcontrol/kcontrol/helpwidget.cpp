@@ -71,12 +71,12 @@ void HelpWidget::setBaseText()
   if (KCGlobal::isInfoCenter())
      _browser->setText(i18n("<h1>KDE Info Center</h1>"
 			 "There is no quick help available for the active info module."
-			 "<br><br>"
+			 "<br /><br />"
 			 "Click <a href = \"kinfocenter/index.html\">here</a> to read the general Info Center manual.") );
   else
      _browser->setText(i18n("<h1>KDE Control Center</h1>"
 			 "There is no quick help available for the active control module."
-			 "<br><br>"
+			 "<br /><br />"
 			 "Click <a href = \"kcontrol/index.html\">here</a> to read the general Control Center manual.") );
 }
 

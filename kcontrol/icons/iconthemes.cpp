@@ -306,8 +306,8 @@ void IconThemesConfig::removeSelectedTheme()
      return;
 
   QString question=i18n("<qt>Are you sure you want to remove the "
-        "<strong>%1</strong> icon theme?<br>"
-        "<br>"
+        "<strong>%1</strong> icon theme?<br />"
+        "<br />"
         "This will delete the files installed by this theme.</qt>",
 	selected->text(0));
 

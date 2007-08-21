@@ -30,7 +30,6 @@
 #include <QByteArray>
 #include <QList>
 #include <QTime>
-#include <QList>
 #include <QHash>
 #include <QMultiMap>
 #include <QPointer>

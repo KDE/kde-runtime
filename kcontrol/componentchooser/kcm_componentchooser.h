@@ -13,8 +13,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef _KCM_KTEXTEDITORCHOOSER_H_
-#define _KCM_KTEXTEDITORCHOOSER_H_
+#ifndef KCM_COMPONENTCHOOSER_H
+#define KCM_COMPONENTCHOOSER_H
 
 #include <kcmodule.h>
 
@@ -35,4 +35,4 @@ private:
     ComponentChooser  *m_chooser;
 };
 
-#endif
+#endif // KCM_COMPONENTCHOOSER_H

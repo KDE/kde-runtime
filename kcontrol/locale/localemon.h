@@ -22,8 +22,8 @@
  */
 
 
-#ifndef __KLOCALECONFIGMON_H__
-#define __KLOCALECONFIGMON_H__
+#ifndef LOCALEMON_H
+#define LOCALEMON_H
 
 #include <QWidget>
 //Added by qt3to4:
@@ -91,4 +91,4 @@ private:
   QComboBox *m_cmbMonNegMonSignPos;
 };
 
-#endif
+#endif // LOCALEMON_H

@@ -172,20 +172,20 @@ void KLocaleConfigNumber::slotTranslate()
 {
   QString str;
 
-  str = ki18n( "Here you can define the decimal separator used "
+  str = ki18n( "<p>Here you can define the decimal separator used "
 	       "to display numbers (i.e. a dot or a comma in "
-	       "most countries).<p>"
+	       "most countries).</p><p>"
 	       "Note that the decimal separator used to "
 	       "display monetary values has to be set "
-	       "separately (see the 'Money' tab)." ).toString( m_locale );
+	       "separately (see the 'Money' tab).</p>" ).toString( m_locale );
   m_labDecSym->setWhatsThis( str );
   m_edDecSym->setWhatsThis( str );
 
-  str = ki18n( "Here you can define the thousands separator "
-	       "used to display numbers.<p>"
+  str = ki18n( "<p>Here you can define the thousands separator "
+	       "used to display numbers.</p><p>"
 	       "Note that the thousands separator used to "
 	       "display monetary values has to be set "
-	       "separately (see the 'Money' tab)." ).toString( m_locale );
+	       "separately (see the 'Money' tab).</p>" ).toString( m_locale );
   m_labThoSep->setWhatsThis( str );
   m_edThoSep->setWhatsThis( str );
 

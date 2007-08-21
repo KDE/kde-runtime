@@ -396,13 +396,13 @@ void KLocaleConfig::slotTranslate()
   m_comboCountry->setWhatsThis( str );
 
   str = ki18n
-    ( "Here you can choose the languages that will be used by KDE. If the "
+    ( "<p>Here you can choose the languages that will be used by KDE. If the "
       "first language in the list is not available, the second will be used, "
       "etc. If only US English is available, no translations "
       "have been installed. You can get translation packages for many "
-      "languages from the place you got KDE from.<p>"
+      "languages from the place you got KDE from.</p><p>"
       "Note that some applications may not be translated to your languages; "
-      "in this case, they will automatically fall back to US English." ).toString(m_locale);
+      "in this case, they will automatically fall back to US English.</p>" ).toString(m_locale);
   m_labLang->setWhatsThis( str );
   m_languages->setWhatsThis( str );
   languageAdd->setWhatsThis( str );
