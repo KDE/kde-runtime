@@ -44,6 +44,7 @@ add_subdirectory(soliduiserver)
 add_subdirectory(l10n)
 add_subdirectory(phonon)
 add_subdirectory(pics)
+add_subdirectory(kstyles)
 
 # Command-line tools (e.g. for shell scripts)
 add_subdirectory(kinstalltheme)
