@@ -11,12 +11,6 @@
    </rect>
   </property>
   <layout class="QVBoxLayout" >
-   <property name="margin" >
-    <number>9</number>
-   </property>
-   <property name="spacing" >
-    <number>6</number>
-   </property>
    <item>
     <widget class="QCheckBox" name="m_ossCheckbox" >
      <property name="toolTip" >
@@ -28,14 +22,66 @@
     </widget>
    </item>
    <item>
+    <widget class="QGroupBox" name="groupBox" >
+     <property name="title" >
+      <string>Deinterlacing</string>
+     </property>
+     <property name="flat" >
+      <bool>true</bool>
+     </property>
+     <layout class="QGridLayout" >
+      <item rowspan="2" row="0" column="0" >
+       <spacer>
+        <property name="orientation" >
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeType" >
+         <enum>QSizePolicy::Fixed</enum>
+        </property>
+        <property name="sizeHint" >
+         <size>
+          <width>20</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="0" column="1" >
+       <widget class="QLabel" name="label" >
+        <property name="text" >
+         <string>Deinterlace Media:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2" >
+       <widget class="QLabel" name="label_2" >
+        <property name="text" >
+         <string>Deinterlacing Method:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1" >
+       <widget class="QListWidget" name="deinterlaceMediaList" >
+        <property name="selectionMode" >
+         <enum>QAbstractItemView::NoSelection</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2" >
+       <widget class="QListWidget" name="deinterlaceMethodList" />
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
     <spacer>
      <property name="orientation" >
       <enum>Qt::Vertical</enum>
      </property>
      <property name="sizeHint" >
       <size>
-       <width>20</width>
-       <height>40</height>
+       <width>499</width>
+       <height>21</height>
       </size>
      </property>
     </spacer>
@@ -43,7 +89,6 @@
   </layout>
  </widget>
  <layoutfunction spacing="KDialog::spacingHint" margin="KDialog::marginHint" />
- <includes/>
  <resources/>
  <connections/>
 </ui>

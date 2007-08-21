@@ -64,6 +64,10 @@ namespace Xine
         s_instance = this;
         KConfigGroup cg(m_config, "Settings");
         m_useOss = cg.readEntry("showOssDevices", false);
+        m_deinterlaceDVD = cg.readEntry("deinterlaceDVD", true);
+        m_deinterlaceVCD = cg.readEntry("deinterlaceVCD", false);
+        m_deinterlaceFile = cg.readEntry("deinterlaceFile", false);
+        m_deinterlaceMethod = cg.readEntry("deinterlaceMethod", 0);
     }
 
     XineEngine::~XineEngine()
@@ -121,6 +125,26 @@ namespace Xine
             e->m_thread->waitForEventLoop();
         }
         return e->m_thread;
+    }
+
+    bool XineEngine::deinterlaceDVD()
+    {
+        return s_instance->m_deinterlaceDVD;
+    }
+
+    bool XineEngine::deinterlaceVCD()
+    {
+        return s_instance->m_deinterlaceVCD;
+    }
+
+    bool XineEngine::deinterlaceFile()
+    {
+        return s_instance->m_deinterlaceFile;
+    }
+
+    int XineEngine::deinterlaceMethod()
+    {
+        return s_instance->m_deinterlaceMethod;
     }
 
     void XineEngine::xineEventListener(void *p, const xine_event_t *xineEvent)

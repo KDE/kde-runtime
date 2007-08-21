@@ -84,6 +84,11 @@ namespace Xine
             static void addCleanupObject(QObject *o) { self()->m_cleanupObjects << o; }
             static void removeCleanupObject(QObject *o) { self()->m_cleanupObjects.removeAll(o); }
 
+            static bool deinterlaceDVD();
+            static bool deinterlaceVCD();
+            static bool deinterlaceFile();
+            static int deinterlaceMethod();
+
         protected:
             XineEngine(const KSharedConfigPtr &cfg);
             ~XineEngine();
@@ -112,7 +117,11 @@ namespace Xine
             QList<AudioOutputInfo> m_audioOutputInfos;
             QList<QObject *> m_cleanupObjects;
             KSharedConfigPtr m_config;
-            bool m_useOss;
+            bool m_useOss : 1;
+            bool m_deinterlaceDVD : 1;
+            bool m_deinterlaceVCD : 1;
+            bool m_deinterlaceFile : 1;
+            int m_deinterlaceMethod : 8;
             const XineEnginePrivate *const d;
             xine_audio_port_t *m_nullPort;
             xine_video_port_t *m_nullVideoPort;
