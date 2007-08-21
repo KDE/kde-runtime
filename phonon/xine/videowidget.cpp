@@ -45,11 +45,14 @@ namespace Xine
 static void dest_size_cb( void* user_data, int video_width, int video_height, double video_pixel_aspect,
 		int *dest_width, int *dest_height, double *dest_pixel_aspect )
 {
-	Phonon::Xine::VideoWidget* vw = static_cast<VideoWidget*>( user_data );
-	int win_x, win_y;
+    Phonon::Xine::VideoWidgetXT* xt = static_cast<VideoWidgetXT*>( user_data );
+    if (!xt->videoWidget()) {
+        return;
+    }
 
-	vw->xineCallback( win_x, win_y, *dest_width, *dest_height, *dest_pixel_aspect, video_width,
-			video_height, video_pixel_aspect, false );
+    int win_x, win_y;
+    xt->videoWidget()->xineCallback(win_x, win_y, *dest_width, *dest_height, *dest_pixel_aspect,
+            video_width, video_height, video_pixel_aspect, false);
 }
 
 static void frame_output_cb( void* user_data, int video_width, int video_height,
@@ -57,13 +60,16 @@ static void frame_output_cb( void* user_data, int video_width, int video_height,
 		int *dest_width, int *dest_height,
 		double *dest_pixel_aspect, int *win_x, int *win_y )
 {
-	Phonon::Xine::VideoWidget* vw = static_cast<VideoWidget*>( user_data );
+    Phonon::Xine::VideoWidgetXT* xt = static_cast<VideoWidgetXT*>( user_data );
+    if (!xt->videoWidget()) {
+        return;
+    }
 
-	vw->xineCallback( *win_x, *win_y, *dest_width, *dest_height, *dest_pixel_aspect, video_width,
-			video_height, video_pixel_aspect, true );
+    xt->videoWidget()->xineCallback(*win_x, *win_y, *dest_width, *dest_height, *dest_pixel_aspect,
+            video_width, video_height, video_pixel_aspect, true);
 
-	*dest_x            = 0;
-	*dest_y            = 0;
+    *dest_x = 0;
+    *dest_y = 0;
 }
 #endif // PHONON_XINE_NO_VIDEOWIDGET
 
@@ -84,8 +90,8 @@ void VideoWidget::xineCallback( int &x, int &y, int &width, int &height, double 
 	ratio = 1.0;
 }
 
-VideoWidgetXT::VideoWidgetXT(QWidget *w)
-    : m_videoPort(0)
+VideoWidgetXT::VideoWidgetXT(VideoWidget *w)
+    : m_videoPort(0), m_videoWidget(w)
 {
 #ifndef PHONON_XINE_NO_VIDEOWIDGET
     // make a new XCB connection for xine
@@ -100,7 +106,7 @@ VideoWidgetXT::VideoWidgetXT(QWidget *w)
         }
         m_visual.screen = screenIt.data;
         m_visual.window = w->winId();
-        m_visual.user_data = static_cast<void *>(w);
+        m_visual.user_data = static_cast<void *>(this);
         m_visual.dest_size_cb = Phonon::Xine::dest_size_cb;
         m_visual.frame_output_cb = Phonon::Xine::frame_output_cb;
 
@@ -148,6 +154,7 @@ VideoWidget::VideoWidget( QWidget* parent )
 VideoWidget::~VideoWidget()
 {
     kDebug(610);
+    K_XT(VideoWidgetXT)->m_videoWidget = 0;
     if (K_XT(VideoWidgetXT)->m_videoPort) {
         xine_port_send_gui_data(K_XT(VideoWidgetXT)->m_videoPort, XINE_GUI_SEND_WILL_DESTROY_DRAWABLE, 0);
     }

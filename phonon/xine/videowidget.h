@@ -44,10 +44,11 @@ class VideoWidgetXT : public SinkNodeXT
 {
     friend class VideoWidget;
     public:
-        VideoWidgetXT(QWidget *);
+        VideoWidgetXT(VideoWidget *);
         ~VideoWidgetXT();
         void rewireTo(SourceNodeXT *);
 
+        VideoWidget *videoWidget() const { return m_videoWidget; }
         xine_video_port_t *videoPort() const;
     private:
 #ifndef PHONON_XINE_NO_VIDEOWIDGET
@@ -55,6 +56,7 @@ class VideoWidgetXT : public SinkNodeXT
         xcb_connection_t *m_xcbConnection;
 #endif // PHONON_XINE_NO_VIDEOWIDGET
         xine_video_port_t *m_videoPort;
+        VideoWidget *m_videoWidget;
 };
 
 class VideoWidget : public QWidget, public Phonon::VideoWidgetInterface, public Phonon::Xine::SinkNode
