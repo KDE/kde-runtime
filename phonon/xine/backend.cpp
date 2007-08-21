@@ -52,7 +52,7 @@ extern plugin_info_t phonon_xine_plugin_info[];
 }
 
 typedef KGenericFactory<Phonon::Xine::Backend> XineBackendFactory;
-K_EXPORT_COMPONENT_FACTORY(phonon_xine, XineBackendFactory("xinebackend"))
+Q_EXPORT_PLUGIN2(phonon_xine, XineBackendFactory("xinebackend"))
 
 namespace Phonon
 {
@@ -407,7 +407,7 @@ bool Backend::endConnectionChange(QSet<QObject *> nodes)
 {
     QList<WireCall> wireCallsUnordered;
     QList<WireCall> wireCalls;
-    KeepReference *keep = new KeepReference(3000);
+    KeepReference *keep = new KeepReference(10000);
 
     // first we need to find all vertices of the subgraphs formed by the given nodes that are not
     // source nodes but don't have a sink node connected and connect them to the NullSink, otherwise
@@ -429,7 +429,7 @@ bool Backend::endConnectionChange(QSet<QObject *> nodes)
     foreach (QObject *q, nodes) {
         SourceNode *source = qobject_cast<SourceNode *>(q);
         if (source) {
-            keep->addObject(source->threadSafeObject());
+            //keep->addObject(source->threadSafeObject());
             foreach (SinkNode *sink, source->sinks()) {
                 WireCall w(source, sink);
                 if (wireCallsUnordered.contains(w)) {
