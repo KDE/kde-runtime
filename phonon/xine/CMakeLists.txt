@@ -26,7 +26,6 @@ set(phonon_xine_PART_SRCS
     bytestreamplugin.cpp
     net_buf_ctrl.c
     volumefader_plugin.cpp
-    mixer_plugin.cpp
     plugins.c
     videowidget.cpp
    )
