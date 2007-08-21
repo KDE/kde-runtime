@@ -191,7 +191,7 @@ QVariant VideoEffect::parameterValue(int parameterIndex) const
                 abort();
         }
     }
-    kError(610) << "invalid parameterIndex passed to VideoEffect::value" << endl;
+    kError(610) << "invalid parameterIndex passed to VideoEffect::value";
     return QVariant();
 }
 
@@ -239,14 +239,14 @@ void VideoEffect::setParameterValue(int parameterIndex, const QVariant &newValue
                 }
                 break;
             case POST_PARAM_TYPE_LAST:         /* terminator of parameter list       */
-                kError(610) << "invalid parameterIndex passed to VideoEffect::setValue" << endl;
+                kError(610) << "invalid parameterIndex passed to VideoEffect::setValue";
                 break;
             default:
                 abort();
         }
         api->set_parameters(post, m_pluginParams);
     } else {
-        kError(610) << "invalid parameterIndex passed to VideoEffect::setValue" << endl;
+        kError(610) << "invalid parameterIndex passed to VideoEffect::setValue";
     }
 }
 

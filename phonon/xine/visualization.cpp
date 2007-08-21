@@ -32,7 +32,7 @@ class VisualizationXT : public SinkNodeXT, public SourceNodeXT
         xine_post_out_t *videoOutputPort() const;
 };
 
-#define K_XT(type) (static_cast<type *>(SinkNode::threadSafeObject.data()))
+#define K_XT(type) (static_cast<type *>(SinkNode::threadSafeObject().data()))
 Visualization::Visualization( QObject* parent )
     : QObject(parent),
     SinkNode(new VisualizationXT),
@@ -52,12 +52,12 @@ void Visualization::setVisualization( int newVisualization )
 
 void VisualizationXT::rewireTo(SourceNodeXT *)
 {
-    kFatal() << "not implemented" << endl;
+    kFatal() << "not implemented";
 }
 
 xine_post_out_t *VisualizationXT::videoOutputPort() const
 {
-    kFatal() << "not implemented" << endl;
+    kFatal() << "not implemented";
     return 0;
 }
 

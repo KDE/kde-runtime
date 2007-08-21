@@ -32,13 +32,19 @@ namespace Xine
 {
 class SinkNode;
 class MediaObject;
+class Event;
 
 class SourceNodeXT : virtual public QSharedData
 {
     public:
+        SourceNodeXT() : deleted(false) {}
         virtual ~SourceNodeXT();
         virtual xine_post_out_t *audioOutputPort() const;
         virtual xine_post_out_t *videoOutputPort() const;
+        void assert() { Q_ASSERT(!deleted); }
+
+    private:
+        bool deleted;
 };
 
 class SourceNode
@@ -53,11 +59,13 @@ class SourceNode
         QSet<SinkNode *> sinks() const;
         virtual SinkNode *sinkInterface();
 
-        virtual void upstreamEvent(QEvent *);
-        virtual void downstreamEvent(QEvent *);
+        virtual void upstreamEvent(Event *);
+        virtual void downstreamEvent(Event *);
+
+        QExplicitlySharedDataPointer<SourceNodeXT> threadSafeObject() const { return m_threadSafeObject; }
 
     protected:
-        QExplicitlySharedDataPointer<SourceNodeXT> threadSafeObject;
+        QExplicitlySharedDataPointer<SourceNodeXT> m_threadSafeObject;
     private:
         QSet<SinkNode *> m_sinks;
 };

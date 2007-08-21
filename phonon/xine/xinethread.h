@@ -40,7 +40,6 @@ class XineThread : public QThread
 
         void waitForEventLoop();
         static XineStream *newStream();
-        //static void needRewire(AudioPostList *);
         void quit();
 
     protected:

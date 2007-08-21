@@ -28,22 +28,30 @@
 #include <QtCore/QPair>
 #include <QtCore/QList>
 
-#define QEVENT(type) QEvent(static_cast<QEvent::Type>(Events::type))
+#define QEVENT(type) Event(Event::type)
 
-#define EVENT_CLASS1(type, arg1, init1, member1) \
-class type##Event : public QEvent \
+#define EVENT_CLASS1(type, arg1, init1, member1type, member1name) \
+class type##Event : public Event \
 { \
     public: \
         type##Event(arg1) : QEVENT(type), init1 {} \
-        member1; \
+        member1type member1name; \
+}; \
+template <> inline type##Event *copyEvent<type##Event>(type##Event *e) \
+{ \
+    return new type##Event(static_cast<type##Event *>(e)->member1name); \
 }
-#define EVENT_CLASS2(type, arg1, arg2, init1, init2, member1, member2) \
-class type##Event : public QEvent \
+#define EVENT_CLASS2(type, arg1, arg2, init1, init2, member1type, member1name, member2type, member2name) \
+class type##Event : public Event \
 { \
     public: \
         type##Event(arg1, arg2) : QEVENT(type), init1, init2 {} \
-        member1; \
-        member2; \
+        member1type member1name; \
+        member2type member2name; \
+}; \
+template <> inline type##Event *copyEvent<type##Event>(type##Event *e) \
+{ \
+    return new type##Event(static_cast<type##Event *>(e)->member1name, static_cast<type##Event *>(e)->member2name); \
 }
 namespace Phonon
 {
@@ -53,136 +61,98 @@ namespace Xine
 class SourceNode;
 class SinkNode;
 
-namespace Events
+class Event : public QEvent
 {
-    enum {
+public:
+    enum Type {
         GetStreamInfo = 2001,
-        UpdateVolume = 2002,
-        RewireVideoToNull = 2003,
-        PlayCommand = 2004,
-        PauseCommand = 2005,
-        StopCommand = 2006,
-        SeekCommand = 2007,
-        MrlChanged = 2008,
-        GaplessPlaybackChanged = 2009,
-        GaplessSwitch = 2010,
-        UpdateTime = 2011,
-        SetTickInterval = 2012,
-        SetPrefinishMark = 2013,
-        SetParam = 2014,
-        EventSend = 2015,
-        AudioRewire = 2016,
-        //ChangeAudioPostList = 2017,
-        QuitLoop = 2018,
-        PauseForBuffering = 2019,  // XXX numerically used in bytestream.cpp
-        UnpauseForBuffering = 2020, // XXX numerically used in bytestream.cpp
-        Error = 2021,
-
-        //NeedRewire = 4800,
-        NewStream = 4801,
-
-        NewMetaData = 5400,
-        MediaFinished = 5401,
-        Progress = 5402,
-        NavButtonIn = 5403,
-        NavButtonOut = 5404,
-        AudioDeviceFailed = 5405,
-        FrameFormatChange = 5406,
-        UiChannelsChanged = 5407,
-        Reference = 5408,
-
-        Rewire = 5409,
-        AboutToDeleteVideoWidget = 5410,
-        HasVideo = 5411
+        UpdateVolume,
+        RewireVideoToNull,
+        PlayCommand,
+        PauseCommand,
+        StopCommand,
+        SeekCommand,
+        MrlChanged,
+        GaplessPlaybackChanged,
+        GaplessSwitch,
+        UpdateTime,
+        SetTickInterval,
+        SetPrefinishMark,
+        SetParam,
+        EventSend,
+        AudioRewire,
+        QuitLoop,
+        PauseForBuffering,
+        UnpauseForBuffering,
+        Error,
+        NewStream,
+        NewMetaData,
+        MediaFinished,
+        Progress,
+        NavButtonIn,
+        NavButtonOut,
+        AudioDeviceFailed,
+        FrameFormatChange,
+        UiChannelsChanged,
+        Reference,
+        Rewire,
+        HasVideo
     };
-} // namespace Events
 
-EVENT_CLASS1(HasVideo, bool v, hasVideo(v), const bool hasVideo);
-EVENT_CLASS1(UpdateVolume, int v, volume(v), const int volume);
-EVENT_CLASS1(Rewire, QList<WireCall> _wireCalls, wireCalls(_wireCalls), const QList<WireCall> wireCalls);
-EVENT_CLASS2(Reference, bool alt, const QByteArray &m, alternative(alt), mrl(m), const bool alternative, const QByteArray mrl);
-EVENT_CLASS2(Progress, const QString &d, int p, description(d), percent(p), const QString description, const int percent);
+    QAtomic ref;
 
-class XineFrameFormatChangeEvent : public QEvent
+    inline Event(Type t) : QEvent(static_cast<QEvent::Type>(t)), ref(1) {}
+}; // class Event
+
+template<typename T>
+inline T *copyEvent(T *)
+{
+    abort();
+    return 0;
+}
+
+EVENT_CLASS1(HasVideo, bool v, hasVideo(v), const bool, hasVideo)
+EVENT_CLASS1(UpdateVolume, int v, volume(v), const int, volume)
+EVENT_CLASS1(Rewire, QList<WireCall> _wireCalls, wireCalls(_wireCalls), const QList<WireCall>, wireCalls)
+EVENT_CLASS1(AudioRewire, AudioPostList *x, postList(x), AudioPostList *const, postList)
+EVENT_CLASS1(EventSend, const xine_event_t *const e, event(e), const xine_event_t *const, event)
+EVENT_CLASS1(GaplessSwitch, const QByteArray &_mrl, mrl(_mrl), const QByteArray, mrl)
+EVENT_CLASS1(SetTickInterval, qint32 i, interval(i), const qint32, interval)
+EVENT_CLASS1(SetPrefinishMark, qint32 i, time(i), const qint32, time)
+
+EVENT_CLASS2(Reference, bool alt, const QByteArray &m, alternative(alt), mrl(m), const bool, alternative, const QByteArray, mrl)
+EVENT_CLASS2(Progress, const QString &d, int p, description(d), percent(p), const QString, description, const int, percent)
+EVENT_CLASS2(Error, Phonon::ErrorType t, const QString &r, type(t), reason(r), const Phonon::ErrorType, type, const QString, reason)
+EVENT_CLASS2(SetParam, int p, int v, param(p), value(v), const int, param, const int, value)
+EVENT_CLASS2(MrlChanged, const QByteArray &_mrl, XineStream::StateForNewMrl _s, mrl(_mrl), stateForNewMrl(_s), const QByteArray, mrl, const XineStream::StateForNewMrl, stateForNewMrl)
+
+class FrameFormatChangeEvent : public Event
 {
     public:
-        XineFrameFormatChangeEvent(int w, int h, int a, bool ps)
-            : QEvent(static_cast<QEvent::Type>(Events::FrameFormatChange)),
+        FrameFormatChangeEvent(int w, int h, int a, bool ps)
+            : QEVENT(FrameFormatChange),
             size(w, h), aspect(a), panScan(ps) {}
 
         const QSize size;
         const int aspect;
         const bool panScan;
 };
+template <> inline FrameFormatChangeEvent *copyEvent<FrameFormatChangeEvent>(FrameFormatChangeEvent *e)
+{
+    return new FrameFormatChangeEvent(static_cast<FrameFormatChangeEvent *>(e)->size.width(), static_cast<FrameFormatChangeEvent *>(e)->size.height(), static_cast<FrameFormatChangeEvent *>(e)->aspect, static_cast<FrameFormatChangeEvent *>(e)->panScan);
+}
 
-class ErrorEvent : public QEvent
+class SeekCommandEvent : public Event
 {
     public:
-        ErrorEvent(Phonon::ErrorType t, const QString &r)
-            : QEvent(static_cast<QEvent::Type>(Events::Error)), type(t), reason(r) {}
-        const Phonon::ErrorType type;
-        const QString reason;
-};
-
-class AudioRewireEvent : public QEvent
-{
-    public:
-        AudioRewireEvent(AudioPostList *x) : QEvent(static_cast<QEvent::Type>(Events::AudioRewire)), postList(x) {}
-        AudioPostList *const postList;
-};
-
-class EventSendEvent : public QEvent
-{
-    public:
-        EventSendEvent(xine_event_t *e) : QEvent(static_cast<QEvent::Type>(Events::EventSend)), event(e) {}
-        const xine_event_t *const event;
-};
-
-class SetParamEvent : public QEvent
-{
-    public:
-        SetParamEvent(int p, int v) : QEvent(static_cast<QEvent::Type>(Events::SetParam)), param(p), value(v) {}
-        const int param;
-        const int value;
-};
-
-class MrlChangedEvent : public QEvent
-{
-    public:
-        MrlChangedEvent(const QByteArray &_mrl, XineStream::StateForNewMrl _s)
-            : QEvent(static_cast<QEvent::Type>(Events::MrlChanged)), mrl(_mrl), stateForNewMrl(_s) {}
-        const QByteArray mrl;
-        const XineStream::StateForNewMrl stateForNewMrl;
-};
-
-class GaplessSwitchEvent : public QEvent
-{
-    public:
-        GaplessSwitchEvent(const QByteArray &_mrl) : QEvent(static_cast<QEvent::Type>(Events::GaplessSwitch)), mrl(_mrl) {}
-        const QByteArray mrl;
-};
-
-class SeekCommandEvent : public QEvent
-{
-    public:
-        SeekCommandEvent(qint64 t) : QEvent(static_cast<QEvent::Type>(Events::SeekCommand)), valid(true), time(t) {}
+        SeekCommandEvent(qint64 t) : QEVENT(SeekCommand), valid(true), time(t) {}
         bool valid;
         const qint64 time;
 };
-
-class SetTickIntervalEvent : public QEvent
+template <> inline SeekCommandEvent *copyEvent<SeekCommandEvent>(SeekCommandEvent *e)
 {
-    public:
-        SetTickIntervalEvent(qint32 i) : QEvent(static_cast<QEvent::Type>(Events::SetTickInterval)), interval(i) {}
-        const qint32 interval;
-};
-
-class SetPrefinishMarkEvent : public QEvent
-{
-    public:
-        SetPrefinishMarkEvent(qint32 i) : QEvent(static_cast<QEvent::Type>(Events::SetPrefinishMark)), time(i) {}
-        const qint32 time;
-};
+    return new SeekCommandEvent(static_cast<SeekCommandEvent *>(e)->time);
+}
 
 } // namespace Xine
 } // namespace Phonon

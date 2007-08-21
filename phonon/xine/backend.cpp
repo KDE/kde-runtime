@@ -39,6 +39,7 @@
 #include <QtCore/QCoreApplication>
 #include <QtCore/QSet>
 #include <QtCore/QVariant>
+#include <QtGui/QApplication>
 
 #include <phonon/audiodevice.h>
 #include <phonon/audiodeviceenumerator.h>
@@ -107,7 +108,7 @@ QObject *Backend::createObject(BackendInterface::Class c, QObject *parent, const
     case EffectClass:
         {
             Q_ASSERT(args.size() == 1);
-            kDebug(610) << "creating Effect(" << args[0] << endl;
+            kDebug(610) << "creating Effect(" << args[0];
             Effect *e = new Effect(args[0].toInt(), parent);
             if (e->isValid()) {
                 return e;
@@ -339,7 +340,7 @@ bool Backend::startConnectionChange(QSet<QObject *> nodes)
 
 bool Backend::connectNodes(QObject *_source, QObject *_sink)
 {
-    kDebug(610) << endl;
+    kDebug(610);
     SourceNode *source = qobject_cast<SourceNode *>(_source);
     SinkNode *sink = qobject_cast<SinkNode *>(_sink);
     if (!source || !sink) {
@@ -357,7 +358,7 @@ bool Backend::connectNodes(QObject *_source, QObject *_sink)
 
 bool Backend::disconnectNodes(QObject *_source, QObject *_sink)
 {
-    kDebug(610) << endl;
+    kDebug(610);
     SourceNode *source = qobject_cast<SourceNode *>(_source);
     SinkNode *sink = qobject_cast<SinkNode *>(_sink);
     if (!source || !sink) {
@@ -372,10 +373,41 @@ bool Backend::disconnectNodes(QObject *_source, QObject *_sink)
     return true;
 }
 
+class KeepReference : public QObject
+{
+    public:
+        KeepReference(int msec)
+        {
+            moveToThread(QApplication::instance()->thread());
+            XineEngine::addCleanupObject(this);
+            startTimer(msec);
+        }
+
+        ~KeepReference()
+        {
+            XineEngine::removeCleanupObject(this);
+        }
+
+        void addObject(QExplicitlySharedDataPointer<SinkNodeXT> sink) { sinks << sink; }
+        void addObject(QExplicitlySharedDataPointer<SourceNodeXT> source) { sources << source; }
+
+    protected:
+        void timerEvent(QTimerEvent *e)
+        {
+            killTimer(e->timerId());
+            deleteLater();
+        }
+
+    private:
+        QList<QExplicitlySharedDataPointer<SinkNodeXT> > sinks;
+        QList<QExplicitlySharedDataPointer<SourceNodeXT> > sources;
+};
+
 bool Backend::endConnectionChange(QSet<QObject *> nodes)
 {
     QList<WireCall> wireCallsUnordered;
     QList<WireCall> wireCalls;
+    KeepReference *keep = new KeepReference(3000);
 
     // first we need to find all vertices of the subgraphs formed by the given nodes that are not
     // source nodes but don't have a sink node connected and connect them to the NullSink, otherwise
@@ -397,6 +429,7 @@ bool Backend::endConnectionChange(QSet<QObject *> nodes)
     foreach (QObject *q, nodes) {
         SourceNode *source = qobject_cast<SourceNode *>(q);
         if (source) {
+            keep->addObject(source->threadSafeObject());
             foreach (SinkNode *sink, source->sinks()) {
                 WireCall w(source, sink);
                 if (wireCallsUnordered.contains(w)) {
@@ -408,13 +441,16 @@ bool Backend::endConnectionChange(QSet<QObject *> nodes)
             }
         }
         SinkNode *sink = qobject_cast<SinkNode *>(q);
-        if (sink && sink->source()) {
-            WireCall w(sink->source(), sink);
-            if (wireCallsUnordered.contains(w)) {
-                Q_ASSERT(!wireCalls.contains(w));
-                wireCalls << w;
-            } else {
-                wireCallsUnordered << w;
+        if (sink) {
+            keep->addObject(sink->threadSafeObject());
+            if (sink->source()) {
+                WireCall w(sink->source(), sink);
+                if (wireCallsUnordered.contains(w)) {
+                    Q_ASSERT(!wireCalls.contains(w));
+                    wireCalls << w;
+                } else {
+                    wireCallsUnordered << w;
+                }
             }
         }
     }

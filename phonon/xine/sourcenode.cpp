@@ -19,7 +19,7 @@
 
 #include "sourcenode.h"
 #include "sinknode.h"
-#include <QtCore/QEvent>
+#include "events.h"
 
 namespace Phonon
 {
@@ -28,6 +28,7 @@ namespace Xine
 
 SourceNodeXT::~SourceNodeXT()
 {
+    deleted = true;
 }
 
 xine_post_out_t *SourceNodeXT::audioOutputPort() const
@@ -41,7 +42,7 @@ xine_post_out_t *SourceNodeXT::videoOutputPort() const
 }
 
 SourceNode::SourceNode(SourceNodeXT *_xt)
-    : threadSafeObject(_xt)
+    : m_threadSafeObject(_xt)
 {
     Q_ASSERT(_xt);
 }
@@ -77,24 +78,28 @@ SinkNode *SourceNode::sinkInterface()
     return 0;
 }
 
-void SourceNode::upstreamEvent(QEvent *e)
+void SourceNode::upstreamEvent(Event *e)
 {
+    Q_ASSERT(e);
     SinkNode *iface = sinkInterface();
     if (iface) {
         iface->upstreamEvent(e);
     } else {
-        delete e;
+        if (!e->ref.deref()) {
+            delete e;
+        }
     }
 }
 
-void SourceNode::downstreamEvent(QEvent *e)
+void SourceNode::downstreamEvent(Event *e)
 {
-    if (m_sinks.isEmpty()) {
+    Q_ASSERT(e);
+    foreach (SinkNode *sink, m_sinks) {
+        e->ref.ref();
+        sink->downstreamEvent(e);
+    }
+    if (!e->ref.deref()) {
         delete e;
-    } else {
-        foreach (SinkNode *sink, m_sinks) {
-            sink->downstreamEvent(e);
-        }
     }
 }
 

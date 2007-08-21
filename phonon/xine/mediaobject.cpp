@@ -26,9 +26,11 @@
 #include <QEvent>
 #include <QFile>
 #include <QVector>
+#include <QFile>
 #include <QByteArray>
 #include <QStringList>
 #include <QMultiMap>
+#include <QEvent>
 #include <QtDebug>
 #include <QMetaType>
 
@@ -53,7 +55,7 @@ MediaObject::MediaObject(QObject *parent)
     : QObject(parent),
     SourceNode(XineThread::newStream()),
     m_state(Phonon::LoadingState),
-    m_stream(static_cast<XineStream *>(SourceNode::threadSafeObject.data())),
+    m_stream(static_cast<XineStream *>(SourceNode::threadSafeObject().data())),
     m_currentTitle(1),
     m_transitionTime(0),
     m_autoplayTitles(true),
@@ -82,9 +84,7 @@ MediaObject::MediaObject(QObject *parent)
     connect(m_stream, SIGNAL(prefinishMarkReached(qint32)), SIGNAL(prefinishMarkReached(qint32)), Qt::QueuedConnection);
     connect(m_stream, SIGNAL(availableTitlesChanged(int)), SLOT(handleAvailableTitlesChanged(int)));
     connect(m_stream, SIGNAL(needNextUrl()), SLOT(needNextUrl()));
-    connect(m_stream, SIGNAL(frameFormatChange(int w, int h, int a, bool ps)),
-            SLOT(handleFrameFormatChange(int w, int h, int a, bool ps)));
-    connect(m_stream, SIGNAL(audioDeviceFailed()), SLOT(handleAudioDeviceFailed()));
+    connect(m_stream, SIGNAL(downstreamEvent(Event *)), SLOT(downstreamEvent(Event *)));
 }
 
 class XineStreamKeeper : public QObject
@@ -111,7 +111,7 @@ MediaObject::~MediaObject()
     // is set to 0 (to avoid a race) and then keeper is the last object with a ref and deleted from
     // the xine thread.
     XineStreamKeeper *keeper = new XineStreamKeeper(m_stream);
-    SourceNode::threadSafeObject = 0;
+    SourceNode::m_threadSafeObject = 0;
     keeper->deleteLater();
 }
 
@@ -353,13 +353,13 @@ void MediaObject::handleFinished()
 
 MediaSource MediaObject::source() const
 {
-	//kDebug( 610 ) ;
+    //kDebug(610);
 	return m_mediaSource;
 }
 
 qint32 MediaObject::prefinishMark() const
 {
-	//kDebug( 610 ) ;
+    //kDebug(610);
 	return m_prefinishMark;
 }
 
@@ -394,9 +394,9 @@ void MediaObject::setNextSource(const MediaSource &source)
         return;
     }
     if (m_transitionTime < 0) {
-        kError(610) << "crossfades are not supported with the xine backend" << endl;
+        kError(610) << "crossfades are not supported with the xine backend";
     } else if (m_transitionTime > 0) {
-        kError(610) << "defined gaps are not supported with the xine backend" << endl;
+        kError(610) << "defined gaps are not supported with the xine backend";
     }
     setSourceInternal(source, GaplessSwitch);
 }
@@ -408,7 +408,7 @@ void MediaObject::setSource(const MediaSource &source)
 
 void MediaObject::setSourceInternal(const MediaSource &source, HowToSetTheUrl how)
 {
-	//kDebug( 610 ) ;
+    //kDebug(610);
     m_titles.clear();
     m_mediaSource = source;
 
@@ -420,7 +420,7 @@ void MediaObject::setSourceInternal(const MediaSource &source, HowToSetTheUrl ho
     case MediaSource::Url:
         if (source.url().scheme() == QLatin1String("kbytestream")) {
             m_mediaSource = MediaSource();
-            kError(610) << "do not ever use kbytestream:/ URLs with MediaObject!" << endl;
+            kError(610) << "do not ever use kbytestream:/ URLs with MediaObject!";
             m_shouldFakeBufferingOnPlay = false;
             stream().setMrl(QByteArray());
             stream().setError(Phonon::NormalError, i18n("Cannot open media data at '<i>%1</i>'", source.url().toString(QUrl::RemovePassword)));
@@ -440,7 +440,7 @@ void MediaObject::setSourceInternal(const MediaSource &source, HowToSetTheUrl ho
         {
             m_mediaDevice = QFile::encodeName(source.deviceName());
             if (!m_mediaDevice.isEmpty() && !m_mediaDevice.startsWith('/')) {
-                kError(610) << "mediaDevice '" << m_mediaDevice << "' has to be an absolute path - starts with a /" << endl;
+                kError(610) << "mediaDevice '" << m_mediaDevice << "' has to be an absolute path - starts with a /";
                 m_mediaDevice.clear();
             }
             m_mediaDevice += '/';
@@ -460,7 +460,7 @@ void MediaObject::setSourceInternal(const MediaSource &source, HowToSetTheUrl ho
                     mrl = autoplayMrlsToTitles("VCD", "vcd:/");
                     break;
                 default:
-                    kError(610) << "media " << source.discType() << " not implemented" << endl;
+                    kError(610) << "media " << source.discType() << " not implemented";
                     return;
             }
             switch (how) {
@@ -670,33 +670,32 @@ void MediaObject::handleHasVideoChanged(bool hasVideo)
     downstreamEvent(new HasVideoEvent(hasVideo));
 }
 
-void MediaObject::handleFrameFormatChange(int w, int h, int a, bool ps)
+void MediaObject::upstreamEvent(Event *e)
 {
-    // FIXME
-    //QCoreApplication::sendEvent(m_videoWidget, new XineFrameFormatChangeEvent(w, h, a, ps));
-}
-
-void MediaObject::handleAudioDeviceFailed()
-{
-    kDebug(610) << endl;
-    downstreamEvent(new QEvent(static_cast<QEvent::Type>(Events::AudioDeviceFailed)));
-}
-
-void MediaObject::upstreamEvent(QEvent *e)
-{
+    Q_ASSERT(e);
     switch (e->type()) {
-    case Events::UpdateVolume:
-    case Events::SetParam:
-    case Events::EventSend:
-        QCoreApplication::postEvent(m_stream, e);
+    case Event::UpdateVolume:
+        // postEvent takes ownership of the event and will delete it when done
+        QCoreApplication::postEvent(m_stream, copyEvent(static_cast<UpdateVolumeEvent *>(e)));
         break;
-    case Events::AboutToDeleteVideoWidget:
-        m_stream->aboutToDeleteVideoWidget();
+    case Event::SetParam:
+        // postEvent takes ownership of the event and will delete it when done
+        QCoreApplication::postEvent(m_stream, copyEvent(static_cast<SetParamEvent *>(e)));
+        break;
+    case Event::EventSend:
+        // postEvent takes ownership of the event and will delete it when done
+        QCoreApplication::postEvent(m_stream, copyEvent(static_cast<EventSendEvent *>(e)));
         break;
     default:
-        SourceNode::upstreamEvent(e);
         break;
     }
+    SourceNode::upstreamEvent(e);
+}
+
+// the point of this reimplementation is to make downstreamEvent available as a slot
+void MediaObject::downstreamEvent(Event *e)
+{
+    SourceNode::downstreamEvent(e);
 }
 
 }}

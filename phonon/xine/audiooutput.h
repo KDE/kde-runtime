@@ -62,7 +62,7 @@ class AudioOutputXT : public SinkNodeXT
             void setVolume(qreal newVolume);
             bool setOutputDevice(int newDevice);
 
-            void downstreamEvent(QEvent *);
+            void downstreamEvent(Event *);
 
         protected:
             bool event(QEvent *);

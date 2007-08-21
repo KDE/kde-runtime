@@ -39,7 +39,7 @@ namespace Phonon
 {
 namespace Xine
 {
-#define K_XT(type) (static_cast<type *>(SinkNode::threadSafeObject.data()))
+#define K_XT(type) (static_cast<type *>(SinkNode::threadSafeObject().data()))
 
 #ifndef PHONON_XINE_NO_VIDEOWIDGET
 static void dest_size_cb( void* user_data, int video_width, int video_height, double video_pixel_aspect,
@@ -111,7 +111,7 @@ VideoWidgetXT::VideoWidgetXT(QWidget *w)
         m_videoPort = xine_open_video_driver(XineEngine::xine(), "auto", XINE_VISUAL_TYPE_XCB, static_cast<void*>(&m_visual));
         if (!m_videoPort) {
 #endif // PHONON_XINE_NO_VIDEOWIDGET
-            kError(610) << "No xine video output plugin using libxcb for threadsafe access to the X server found. No video for you." << endl;
+            kError(610) << "No xine video output plugin using libxcb for threadsafe access to the X server found. No video for you.";
 #ifndef PHONON_XINE_NO_VIDEOWIDGET
         }
     }
@@ -147,15 +147,16 @@ VideoWidget::VideoWidget( QWidget* parent )
 
 VideoWidget::~VideoWidget()
 {
-    // tell the xine stream to stop using this videoPort
-    upstreamEvent(new QEVENT(AboutToDeleteVideoWidget));
+    kDebug(610);
+    if (K_XT(VideoWidgetXT)->m_videoPort) {
+        xine_port_send_gui_data(K_XT(VideoWidgetXT)->m_videoPort, XINE_GUI_SEND_WILL_DESTROY_DRAWABLE, 0);
+    }
 }
 
 VideoWidgetXT::~VideoWidgetXT()
 {
+    kDebug(610);
     if (m_videoPort) {
-        xine_port_send_gui_data(m_videoPort, XINE_GUI_SEND_WILL_DESTROY_DRAWABLE, 0);
-
         xine_video_port_t *vp = m_videoPort;
         m_videoPort = 0;
 
@@ -349,19 +350,19 @@ void VideoWidget::resizeEvent(QResizeEvent *ev)
 bool VideoWidget::event(QEvent *ev)
 {
     switch (ev->type()) {
-        case Events::NavButtonIn:
+        case Event::NavButtonIn:
             setCursor(QCursor(Qt::PointingHandCursor));
             ev->accept();
             return true;
-        case Events::NavButtonOut:
+        case Event::NavButtonOut:
             unsetCursor();
             ev->accept();
             return true;
-        case Events::FrameFormatChange:
+        case Event::FrameFormatChange:
             ev->accept();
             {
-                XineFrameFormatChangeEvent *e = static_cast<XineFrameFormatChangeEvent *>(ev);
-                kDebug(610) << "XineFrameFormatChangeEvent " << e->size;
+                FrameFormatChangeEvent *e = static_cast<FrameFormatChangeEvent *>(ev);
+                kDebug(610) << "FrameFormatChangeEvent " << e->size;
                 m_sizeHint = e->size;
                 updateGeometry();
             }
@@ -505,10 +506,11 @@ void VideoWidget::changeEvent( QEvent* event )
     }
 }
 
-void VideoWidget::downstreamEvent(QEvent *e)
+void VideoWidget::downstreamEvent(Event *e)
 {
+    Q_ASSERT(e);
     switch (e->type()) {
-    case Events::HasVideo:
+    case Event::HasVideo:
         {
             HasVideoEvent *ev = static_cast<HasVideoEvent *>(e);
             m_empty = !ev->hasVideo;
@@ -518,9 +520,10 @@ void VideoWidget::downstreamEvent(QEvent *e)
         }
         break;
     default:
-        SinkNode::downstreamEvent(e);
+        QCoreApplication::sendEvent(this, e);
         break;
     }
+    SinkNode::downstreamEvent(e);
 }
 
 #undef K_XT

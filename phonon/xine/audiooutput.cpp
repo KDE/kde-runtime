@@ -35,7 +35,7 @@ namespace Phonon
 namespace Xine
 {
 
-#define K_XT(type) (static_cast<type *>(SinkNode::threadSafeObject.data()))
+#define K_XT(type) (static_cast<type *>(SinkNode::threadSafeObject().data()))
 AudioOutput::AudioOutput(QObject *parent)
     : AbstractAudioOutput(new AudioOutputXT, parent),
     m_device(1)
@@ -91,13 +91,11 @@ bool AudioOutput::setOutputDevice(int newDevice)
     return true;
 }
 
-void AudioOutput::downstreamEvent(QEvent *e)
+void AudioOutput::downstreamEvent(Event *e)
 {
-    if (QCoreApplication::sendEvent(this, e)) {
-        delete e;
-    } else {
-        SinkNode::downstreamEvent(e);
-    }
+    Q_ASSERT(e);
+    QCoreApplication::sendEvent(this, e);
+    SinkNode::downstreamEvent(e);
 }
 
 void AudioOutputXT::rewireTo(SourceNodeXT *source)
@@ -105,13 +103,16 @@ void AudioOutputXT::rewireTo(SourceNodeXT *source)
     if (!source->audioOutputPort()) {
         return;
     }
+    source->assert();
     xine_post_wire_audio_port(source->audioOutputPort(), m_audioPort);
+    source->assert();
+    SinkNodeXT::assert();
 }
 
 bool AudioOutput::event(QEvent *ev)
 {
     switch (ev->type()) {
-        case Events::AudioDeviceFailed:
+        case Event::AudioDeviceFailed:
             ev->accept();
             emit audioDeviceFailed();
             return true;

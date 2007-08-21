@@ -90,7 +90,7 @@ class VideoWidget : public QWidget, public Phonon::VideoWidgetInterface, public 
             bool isValid() const;
 
             MediaStreamTypes inputMediaStreamTypes() const { return Phonon::Xine::Video | Phonon::Xine::Subtitle; }
-        void downstreamEvent(QEvent *e);
+        void downstreamEvent(Event *e);
 
 		signals:
 			void videoPortChanged();

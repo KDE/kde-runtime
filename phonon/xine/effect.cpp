@@ -63,11 +63,11 @@ void EffectXT::ensureInstance()
 
 void EffectXT::createInstance()
 {
-    kDebug(610) << "m_pluginName = \"" << m_pluginName << "\"" << endl;
+    kDebug(610) << "m_pluginName = \"" << m_pluginName << "\"";
     xine_audio_port_t *audioPort = XineEngine::nullPort();
     Q_ASSERT(m_plugin == 0 && m_pluginApi == 0);
     if (!m_pluginName) {
-        kWarning(610) << "tried to create invalid Effect" << endl;
+        kWarning(610) << "tried to create invalid Effect";
         return;
     }
     m_plugin = xine_post_init(XineEngine::xine(), m_pluginName, 1, &audioPort, 0);
@@ -101,7 +101,7 @@ void EffectXT::createInstance()
         case POST_PARAM_TYPE_CHAR:         /* char (or vector of chars = string) */
         case POST_PARAM_TYPE_STRING:       /* (char *), ASCIIZ                   */
         case POST_PARAM_TYPE_STRINGLIST:   /* (char **) list, NULL terminated    */
-            kWarning(610) << "char/string/stringlist parameter '" << p.name << "' not supported." << endl;
+            kWarning(610) << "char/string/stringlist parameter '" << p.name << "' not supported.";
             break;
         case POST_PARAM_TYPE_BOOL:         /* integer (0 or 1)                   */
             m_parameterList << EffectParameter(i, p.name, EffectParameter::ToggledHint,
@@ -115,7 +115,7 @@ void EffectXT::createInstance()
     }
 }
 
-#define K_XT(type) (static_cast<type *>(SinkNode::threadSafeObject.data()))
+#define K_XT(type) (static_cast<type *>(SinkNode::threadSafeObject().data()))
 Effect::Effect( int effectId, QObject* parent )
     : QObject(parent),
     SinkNode(new EffectXT(0)),
@@ -198,7 +198,7 @@ QVariant Effect::parameterValue(const EffectParameter &p) const
             case POST_PARAM_TYPE_CHAR:         /* char (or vector of chars = string) */
             case POST_PARAM_TYPE_STRING:       /* (char *), ASCIIZ                   */
             case POST_PARAM_TYPE_STRINGLIST:   /* (char **) list, NULL terminated    */
-                kWarning(610) << "char/string/stringlist parameter '" << p.name << "' not supported." << endl;
+                kWarning(610) << "char/string/stringlist parameter '" << p.name << "' not supported.";
                 return QVariant();
             case POST_PARAM_TYPE_BOOL:         /* integer (0 or 1)                   */
                 return static_cast<bool>(*reinterpret_cast<int *>(K_XT(const EffectXT)->m_pluginParams + p.offset));
@@ -208,7 +208,7 @@ QVariant Effect::parameterValue(const EffectParameter &p) const
                 abort();
         }
     }
-    kError(610) << "invalid parameterIndex passed to Effect::value" << endl;
+    kError(610) << "invalid parameterIndex passed to Effect::value";
     return QVariant();
 }
 
@@ -242,7 +242,7 @@ void Effect::setParameterValue(const EffectParameter &p, const QVariant &newValu
             case POST_PARAM_TYPE_CHAR:         /* char (or vector of chars = string) */
             case POST_PARAM_TYPE_STRING:       /* (char *), ASCIIZ                   */
             case POST_PARAM_TYPE_STRINGLIST:   /* (char **) list, NULL terminated    */
-                kWarning(610) << "char/string/stringlist parameter '" << p.name << "' not supported." << endl;
+                kWarning(610) << "char/string/stringlist parameter '" << p.name << "' not supported.";
                 return;
             case POST_PARAM_TYPE_BOOL:         /* integer (0 or 1)                   */
                 {
@@ -251,14 +251,14 @@ void Effect::setParameterValue(const EffectParameter &p, const QVariant &newValu
                 }
                 break;
             case POST_PARAM_TYPE_LAST:         /* terminator of parameter list       */
-                kError(610) << "invalid parameterIndex passed to Effect::setValue" << endl;
+                kError(610) << "invalid parameterIndex passed to Effect::setValue";
                 break;
             default:
                 abort();
         }
         K_XT(EffectXT)->m_pluginApi->set_parameters(K_XT(EffectXT)->m_plugin, K_XT(EffectXT)->m_pluginParams);
     } else {
-        kError(610) << "invalid parameterIndex passed to Effect::setValue" << endl;
+        kError(610) << "invalid parameterIndex passed to Effect::setValue";
     }
 }
 

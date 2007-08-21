@@ -33,7 +33,7 @@ class WireCall
 {
     public:
         WireCall() : src(0), snk(0) {}
-        WireCall(SourceNode *a, SinkNode *b) : source(a->threadSafeObject), sink(b->threadSafeObject), src(a), snk(b) {}
+        WireCall(SourceNode *a, SinkNode *b) : source(a->threadSafeObject()), sink(b->threadSafeObject()), src(a), snk(b) {}
         /**
          * If the two WireCalls are in separate graphs returns false
          *

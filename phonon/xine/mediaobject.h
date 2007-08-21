@@ -101,7 +101,10 @@ class ByteStream;
             void setNextSource(const MediaSource &source);
 
             MediaStreamTypes outputMediaStreamTypes() const;
-            void upstreamEvent(QEvent *e);
+            void upstreamEvent(Event *e);
+
+        public slots:
+            void downstreamEvent(Event *e);
 
         signals:
             void aboutToFinish();
@@ -134,8 +137,6 @@ class ByteStream;
             void handleAvailableTitlesChanged(int);
             void handleFinished();
             void handleHasVideoChanged(bool);
-            void handleFrameFormatChange(int w, int h, int a, bool ps);
-            void handleAudioDeviceFailed();
 
         private:
             enum HowToSetTheUrl {

@@ -95,7 +95,7 @@ static int portNumber(const post_audio_port_t *port)
     }
     Q_ASSERT(input);
 //X     if (!input) {
-//X         kError(610) << "did not find the input for this port" << endl;
+//X         kError(610) << "did not find the input for this port";
 //X         return -1;
 //X     }
     const int _portNumber = input->xine_in.name[2] - '0';
@@ -177,7 +177,7 @@ static int portNumber(const post_audio_port_t *port)
 //X         << that->curvePosition << ", "
 //X         << that->oneOverCurveLength << ", "
 //X         << param->fadeTime
-//X         << endl;
+//X        ;
 //X     pthread_mutex_unlock (&that->lock);
 //X 
 //X     return 1;

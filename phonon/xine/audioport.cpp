@@ -108,13 +108,13 @@ AudioPort::AudioPort(int deviceIndex)
                     xine_close_audio_driver(XineEngine::xine(), port);
                     // port == 0 does not have to be fatal, since it might be only the default device
                     // that cannot be opened
-                    //kError(610) << "creating the correct ALSA output failed!" << endl;
+                    //kError(610) << "creating the correct ALSA output failed!";
                     //return;
                 }
                 // now the config key should be registered
                 if(!xine_config_lookup_entry(XineEngine::xine(), "audio.device.alsa_default_device",
                             &alsaDeviceConfig)) {
-                    kError(610) << "cannot set the ALSA device on Xine's ALSA output plugin" << endl;
+                    kError(610) << "cannot set the ALSA device on Xine's ALSA output plugin";
                     return;
                 }
             }

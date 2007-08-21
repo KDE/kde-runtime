@@ -55,7 +55,7 @@ XineStream *XineThread::newStream()
 {
     XineThread *that = XineEngine::thread();
     Q_ASSERT(that->m_newStream == 0);
-    QCoreApplication::postEvent(that, new QEvent(static_cast<QEvent::Type>(Events::NewStream)));
+    QCoreApplication::postEvent(that, new QEVENT(NewStream));
     if (!that->m_newStream) {
         that->m_mutex.lock();
         if (!that->m_newStream) {
@@ -72,28 +72,15 @@ XineStream *XineThread::newStream()
 void XineThread::quit()
 {
     foreach (QObject *child, children()) {
-        kDebug(610) << child << endl;
+        kDebug(610) << child;
     }
     QThread::quit();
 }
 
-/*
-void XineThread::needRewire(AudioPostList *ap)
-{
-    QCoreApplication::postEvent(XineEngine::thread(), new NeedRewireEvent(ap));
-}
-*/
-
 bool XineThread::event(QEvent *e)
 {
     switch (e->type()) {
-        /*
-    case Events::NeedRewire:
-        e->accept();
-        static_cast<NeedRewireEvent *>(e)->audioPostList->wireStream();
-        return true;
-        */
-    case Events::NewStream:
+    case Event::NewStream:
         e->accept();
         m_mutex.lock();
         Q_ASSERT(m_newStream == 0);
@@ -102,13 +89,15 @@ bool XineThread::event(QEvent *e)
         m_mutex.unlock();
         m_waitingForNewStream.wakeAll();
         return true;
-    case Events::Rewire:
+    case Event::Rewire:
         e->accept();
-        kDebug(610) << "XineThread Rewire event:" << endl;
+        kDebug(610) << "XineThread Rewire event:";
         {
             RewireEvent *ev = static_cast<RewireEvent *>(e);
             foreach (WireCall wire, ev->wireCalls) {
-                kDebug(610) << "     " << wire.source << " -> " << wire.sink << endl;
+                kDebug(610) << "     " << wire.source << " -> " << wire.sink;
+                wire.sink->assert();
+                wire.source->assert();
                 wire.sink->rewireTo(wire.source);
             }
         }

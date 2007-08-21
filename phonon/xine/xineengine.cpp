@@ -68,7 +68,15 @@ namespace Xine
 
     XineEngine::~XineEngine()
     {
-        qDeleteAll(m_cleanupObjects);
+        QList<QObject *> cleanupObjects(m_cleanupObjects);
+        const QList<QObject *>::Iterator end = cleanupObjects.end();
+        QList<QObject *>::Iterator it = cleanupObjects.begin();
+        while (it != end) {
+            kDebug(610) << "delete" << *it;
+            delete *it;
+            ++it;
+        }
+        //qDeleteAll(cleanupObjects);
         if (m_thread) {
             m_thread->quit();
             m_thread->wait();
@@ -126,10 +134,10 @@ namespace Xine
 
         switch (xineEvent->type) {
             case XINE_EVENT_UI_SET_TITLE: /* request title display change in ui */
-                QCoreApplication::postEvent(xs, new QEvent(static_cast<QEvent::Type>(Events::NewMetaData)));
+                QCoreApplication::postEvent(xs, new QEVENT(NewMetaData));
                 break;
             case XINE_EVENT_UI_PLAYBACK_FINISHED: /* frontend can e.g. move on to next playlist entry */
-                QCoreApplication::postEvent(xs, new QEvent(static_cast<QEvent::Type>(Events::MediaFinished)));
+                QCoreApplication::postEvent(xs, new QEVENT(MediaFinished));
                 break;
             case XINE_EVENT_PROGRESS: /* index creation/network connections */
                 {
@@ -139,23 +147,18 @@ namespace Xine
                 break;
             case XINE_EVENT_SPU_BUTTON: // the mouse pointer enter/leave a button, used to change the cursor
                 {
-                    /* FIXME
-                    VideoWidget *vw = xs->videoWidget();
-                    if (vw) {
-                        xine_spu_button_t *button = static_cast<xine_spu_button_t *>(xineEvent->data);
-                        if (button->direction == 1) { // enter a button
-                            QCoreApplication::postEvent(vw, new QEvent(static_cast<QEvent::Type>(Events::NavButtonIn)));
-                        } else {
-                            QCoreApplication::postEvent(vw, new QEvent(static_cast<QEvent::Type>(Events::NavButtonOut)));
-                        }
+                    xine_spu_button_t *button = static_cast<xine_spu_button_t *>(xineEvent->data);
+                    if (button->direction == 1) { // enter a button
+                        xs->handleDownstreamEvent(new QEVENT(NavButtonIn));
+                    } else {
+                        xs->handleDownstreamEvent(new QEVENT(NavButtonOut));
                     }
-                    */
                 }
                 break;
             case XINE_EVENT_UI_CHANNELS_CHANGED:    /* inform ui that new channel info is available */
                 kDebug(610) << "XINE_EVENT_UI_CHANNELS_CHANGED";
                 {
-                    QCoreApplication::postEvent(xs, new QEvent(static_cast<QEvent::Type>(Events::UiChannelsChanged)));
+                    QCoreApplication::postEvent(xs, new QEVENT(UiChannelsChanged));
                 }
                 break;
             case XINE_EVENT_UI_MESSAGE:             /* message (dialog) for the ui to display */
@@ -166,20 +169,15 @@ namespace Xine
                         kDebug(610) << "XINE_MSG_AUDIO_OUT_UNAVAILABLE";
                         // we don't know for sure which AudioOutput failed. but the one without any
                         // capabilities must be the guilty one
-                        xs->handleAudioDeviceFailed();
+                        xs->handleDownstreamEvent(new QEVENT(AudioDeviceFailed));
                     }
                 }
                 break;
             case XINE_EVENT_FRAME_FORMAT_CHANGE:    /* e.g. aspect ratio change during dvd playback */
                 kDebug(610) << "XINE_EVENT_FRAME_FORMAT_CHANGE";
                 {
-                    /* FIXME
-                    VideoWidget *vw = xs->videoWidget();
-                    if (vw) {
-                        xine_format_change_data_t *data = static_cast<xine_format_change_data_t *>(xineEvent->data);
-                        QCoreApplication::postEvent(vw, new XineFrameFormatChangeEvent(data->width, data->height, data->aspect, data->pan_scan));
-                    }
-                    */
+                    xine_format_change_data_t *data = static_cast<xine_format_change_data_t *>(xineEvent->data);
+                    xs->handleDownstreamEvent(new FrameFormatChangeEvent(data->width, data->height, data->aspect, data->pan_scan));
                 }
                 break;
             case XINE_EVENT_AUDIO_LEVEL:            /* report current audio level (l/r/mute) */
@@ -202,7 +200,7 @@ namespace Xine
                         << ", " << reference->duration
                         << ", " << reference->mrl
                         << ", " << (reference->mrl + strlen(reference->mrl) + 1)
-                        << endl;
+                        ;
                     QCoreApplication::postEvent(xs, new ReferenceEvent(reference->alternative, reference->mrl));
                 }
                 break;
@@ -353,7 +351,7 @@ namespace Xine
         } else {
             AudioOutputInfo &infoInList = m_audioOutputInfos[listIndex];
             if (infoInList.icon != icon) {
-                KConfigGroup config(m_config, QLatin1String("AudioOutputDevice_") + QString::number(index));
+                KConfigGroup config(m_config, QLatin1String("AudioOutputDevice_") + QString::number(infoInList.index));
                 config.writeEntry("icon", icon);
                 infoInList.icon = icon;
             }
@@ -374,8 +372,8 @@ namespace Xine
             QStringList groups = m_config->groupList();
             int nextIndex = 10000;
             foreach (QString group, groups) {
-                if (group.startsWith("AudioOutputDevice")) {
-                    const int index = group.right(group.size() - 18).toInt();
+                if (group.startsWith("AudioOutputDevice_")) {
+                    const int index = group.right(group.size() - 18/*strlen("AudioOutputDevice_")*/).toInt();
                     if (index >= nextIndex) {
                         nextIndex = index + 1;
                     }
@@ -500,8 +498,7 @@ namespace Xine
             signalTimer.start();
         } else {
             kDebug(610) << "told to remove " << dev.cardName() + postfix <<
-                " with driver " << driver << " but the device was not present in m_audioOutputInfos"
-                << endl;
+                " with driver " << driver << " but the device was not present in m_audioOutputInfos";
         }
     }
 } // namespace Xine

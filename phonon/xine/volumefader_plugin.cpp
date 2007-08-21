@@ -192,7 +192,7 @@ static int set_parameters (xine_post_t *this_gen, void *param_gen)
         << that->curvePosition << ", "
         << that->oneOverCurveLength << ", "
         << param->fadeTime
-        << endl;
+        ;
     pthread_mutex_unlock (&that->lock);
 
     return 1;
@@ -304,7 +304,7 @@ void KVolumeFaderPlugin::fadeBuffer(audio_buffer_t *buf)
             //<< " pos = " << curvePosition
             //<< " curveLength = " << oneOverCurveLength
             //<< " curveValue = " << curveValue()
-            //<< endl;
+            //;
         int16_t *data = static_cast<int16_t *>(buf->mem);
         int i = 0;
         for (; curvePosition < curveLength && i < bufferLength; ++i, ++curvePosition) {

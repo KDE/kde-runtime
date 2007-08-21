@@ -26,7 +26,7 @@ namespace Phonon
 {
 namespace Xine
 {
-#define K_XT(type) (static_cast<type *>(SinkNode::threadSafeObject.data()))
+#define K_XT(type) (static_cast<type *>(SinkNode::threadSafeObject().data()))
 
 enum ParameterIds {
     VolumeParameter = 0,
@@ -77,7 +77,7 @@ QVariant VolumeFaderEffect::parameterValue(int parameterId) const
         case StartFadeParameter:
             return 0;
     }
-    kError(610) << "request for unknown parameter " << parameterId << endl;
+    kError(610) << "request for unknown parameter " << parameterId;
     return QVariant();
 }
 
@@ -103,7 +103,7 @@ void VolumeFaderEffect::setParameterValue(int parameterId, const QVariant &newVa
             }
             break;
         default:
-            kError(610) << "request for unknown parameter " << parameterId << endl;
+            kError(610) << "request for unknown parameter " << parameterId;
             break;
     }
 }
@@ -131,7 +131,7 @@ void VolumeFaderEffect::getParameters() const
 
 float VolumeFaderEffect::volume() const
 {
-    //kDebug(610) ;
+    //kDebug(610);
     getParameters();
     return K_XT(const VolumeFaderEffectXT)->m_parameters.currentVolume;
 }
@@ -144,7 +144,7 @@ void VolumeFaderEffect::setVolume( float volume )
 
 Phonon::VolumeFaderEffect::FadeCurve VolumeFaderEffect::fadeCurve() const
 {
-    //kDebug(610) ;
+    //kDebug(610);
     getParameters();
     return K_XT(const VolumeFaderEffectXT)->m_parameters.fadeCurve;
 }
