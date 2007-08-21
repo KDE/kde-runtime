@@ -1,19 +1,22 @@
 [Icon Theme]
 Name=KDE-HiColor
+Name[el]=KDE-Πολλά χρώματα
 Name[he]=‏KDE ברמת צבע גבוהה
 Name[ja]=KDE ハイカラー
 Name[pt]=KDE-Muitas Cores
-Name[pt_BR]=KDE-Muitas Cores
+Name[pt_BR]=KDE de Alta Resolução
 Name[sv]=KDE-färgrik
 Name[th]=KDE-ความละเอียดสีสูง
 Name[zh_TW]=KDE-高彩
 Comment=Fallback icon theme
 Comment[be]=Дадатковая тэма значак
 Comment[de]=Ausweich-Symbolset
+Comment[el]=Αναπληρωματικό θέμα εικονιδίων
 Comment[he]=ערכת סמלים לגיבוי
+Comment[km]=ស្បែក​រូបតំណាង Fallback 
 Comment[nds]=Tweet Lüttbildmuster
 Comment[pt]=Tema de ícones de última instância
-Comment[pt_BR]=Tema de ícones de última instância
+Comment[pt_BR]=Tema de Ícones
 Comment[sv]=Reservikontema
 Comment[th]=ชุดไอคอนแบบปริยาย
 Comment[zh_TW]=最後圖示主題

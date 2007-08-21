@@ -17,8 +17,10 @@ Name[x-test]=xxXinexx
 
 Comment=Phonon Xine backend
 Comment[de]=Phonon Xine-Treiber
+Comment[el]=Σύστημα υποστήριξης του Phonon Xine
 Comment[he]=ממשק Phonon Xine
 Comment[ja]=Phonon Xine バックエンド
+Comment[km]=Phonon Xine កម្មវិធី​ខាងក្រោយ​
 Comment[nds]=Hülpprogramm Xine för Phonon
 Comment[pt]=Infra-estrutura do Xine para o Phonon
 Comment[pt_BR]=Infra-estrutura do Xine para o Phonon
