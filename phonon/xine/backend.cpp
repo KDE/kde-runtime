@@ -376,11 +376,13 @@ bool Backend::disconnectNodes(QObject *_source, QObject *_sink)
 class KeepReference : public QObject
 {
     public:
-        KeepReference(int msec)
+        KeepReference()
         {
             moveToThread(QApplication::instance()->thread());
             XineEngine::addCleanupObject(this);
-            startTimer(msec);
+
+            // do this so that startTimer is called from the correct thread
+            QCoreApplication::postEvent(this, new QEvent(static_cast<QEvent::Type>(2345)));
         }
 
         ~KeepReference()
@@ -392,6 +394,16 @@ class KeepReference : public QObject
         void addObject(QExplicitlySharedDataPointer<SourceNodeXT> source) { sources << source; }
 
     protected:
+        bool event(QEvent *e)
+        {
+            if (e->type() == 2345) {
+                e->accept();
+                startTimer(10000);
+                return true;
+            }
+            return QObject::event(e);
+        }
+
         void timerEvent(QTimerEvent *e)
         {
             killTimer(e->timerId());
@@ -407,7 +419,7 @@ bool Backend::endConnectionChange(QSet<QObject *> nodes)
 {
     QList<WireCall> wireCallsUnordered;
     QList<WireCall> wireCalls;
-    KeepReference *keep = new KeepReference(10000);
+    KeepReference *keep = new KeepReference();
 
     // first we need to find all vertices of the subgraphs formed by the given nodes that are not
     // source nodes but don't have a sink node connected and connect them to the NullSink, otherwise
