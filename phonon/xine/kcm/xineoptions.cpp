@@ -34,7 +34,7 @@ XineOptions::XineOptions(QWidget *parent, const QStringList &args)
 
     connect(m_ossCheckbox, SIGNAL(toggled(bool)), SLOT(changed()));
     connect(deinterlaceMediaList, SIGNAL(clicked(const QModelIndex &)), SLOT(changed()));
-    connect(deinterlaceMethodList, SIGNAL(clicked(const QModelIndex &)), SLOT(changed()));
+    connect(deinterlaceMethodBox, SIGNAL(currentIndexChanged(int)), SLOT(changed()));
 
     QListWidgetItem *item = new QListWidgetItem(i18n("DVD"), deinterlaceMediaList);
     item->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
@@ -66,7 +66,7 @@ XineOptions::XineOptions(QWidget *parent, const QStringList &args)
             case POST_PARAM_TYPE_INT:          /* integer (or vector of integers)    */
                 if (0 == strcmp(p.name, "method") && p.enum_values) {
                     for (int j = 0; p.enum_values[j]; ++j) {
-                        item = new QListWidgetItem(p.enum_values[j], deinterlaceMethodList);
+                        deinterlaceMethodBox->addItem(p.enum_values[j]);
                     }
                 }
                 break;
@@ -96,7 +96,7 @@ void XineOptions::load()
     deinterlaceMediaList->item(0)->setCheckState(cg.readEntry("deinterlaceDVD", true) ? Qt::Checked : Qt::Unchecked);
     deinterlaceMediaList->item(1)->setCheckState(cg.readEntry("deinterlaceVCD", false) ? Qt::Checked : Qt::Unchecked);
     deinterlaceMediaList->item(2)->setCheckState(cg.readEntry("deinterlaceFile", false) ? Qt::Checked : Qt::Unchecked);
-    deinterlaceMethodList->setCurrentRow(cg.readEntry("deinterlaceMethod", 0));
+    deinterlaceMethodBox->setCurrentIndex(cg.readEntry("deinterlaceMethod", 0));
 }
 
 void XineOptions::save()
@@ -106,7 +106,7 @@ void XineOptions::save()
     cg.writeEntry("deinterlaceDVD", deinterlaceMediaList->item(0)->checkState() == Qt::Checked);
     cg.writeEntry("deinterlaceVCD", deinterlaceMediaList->item(1)->checkState() == Qt::Checked);
     cg.writeEntry("deinterlaceFile", deinterlaceMediaList->item(2)->checkState() == Qt::Checked);
-    cg.writeEntry("deinterlaceMethod", deinterlaceMethodList->currentRow());
+    cg.writeEntry("deinterlaceMethod", deinterlaceMethodBox->currentIndex());
 }
 
 void XineOptions::defaults()
@@ -115,7 +115,7 @@ void XineOptions::defaults()
     deinterlaceMediaList->item(0)->setCheckState(Qt::Checked);
     deinterlaceMediaList->item(1)->setCheckState(Qt::Unchecked);
     deinterlaceMediaList->item(2)->setCheckState(Qt::Unchecked);
-    deinterlaceMethodList->setCurrentRow(0);
+    deinterlaceMethodBox->setCurrentIndex(0);
 }
 
 #include "xineoptions.moc"
