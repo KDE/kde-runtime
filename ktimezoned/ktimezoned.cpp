@@ -394,7 +394,9 @@ if (!mLocalZone.isEmpty()) kDebug(1221)<<"/etc/default/init: "<<mLocalZone;
         const KTimeZones::ZoneMap zmap = mZones.zones();
         for (KTimeZones::ZoneMap::ConstIterator it = zmap.begin(), end = zmap.end();  it != end;  ++it)
         {
+#ifdef __GNUC__
 #warning Is KSystemTimeZone cast necessary???
+#endif
 //            KSystemTimeZone zone = static_cast<const KSystemTimeZone*>(it.value());
             KTimeZone zone = it.value();
             int candidateOffset = qAbs(zone.currentOffset(Qt::LocalTime));
