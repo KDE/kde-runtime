@@ -236,6 +236,7 @@ void VideoWidget::setContrast(qreal newContrast)
     newContrast = qBound(-1.0, newContrast, 1.0);
     if (m_contrast != newContrast) {
         m_contrast = newContrast;
+        upstreamEvent(new SetParamEvent(XINE_PARAM_VO_CONTRAST, static_cast<int>(0x7fff * (m_contrast + 1.0))));
     }
 }
 
@@ -249,6 +250,7 @@ void VideoWidget::setHue(qreal newHue)
     newHue = qBound(-1.0, newHue, 1.0);
     if (m_hue != newHue) {
         m_hue = newHue;
+        upstreamEvent(new SetParamEvent(XINE_PARAM_VO_HUE, static_cast<int>(0x7fff * (m_hue + 1.0))));
     }
 }
 
@@ -262,6 +264,7 @@ void VideoWidget::setSaturation(qreal newSaturation)
     newSaturation = qBound(-1.0, newSaturation, 1.0);
     if (m_saturation != newSaturation) {
         m_saturation = newSaturation;
+        upstreamEvent(new SetParamEvent(XINE_PARAM_VO_SATURATION, static_cast<int>(0x7fff * (m_saturation + 1.0))));
     }
 }
 
@@ -358,10 +361,12 @@ bool VideoWidget::event(QEvent *ev)
 {
     switch (ev->type()) {
         case Event::NavButtonIn:
+            kDebug(610) << "NavButtonIn";
             setCursor(QCursor(Qt::PointingHandCursor));
             ev->accept();
             return true;
         case Event::NavButtonOut:
+            kDebug(610) << "NavButtonOut";
             unsetCursor();
             ev->accept();
             return true;
@@ -402,6 +407,7 @@ void VideoWidget::mouseMoveEvent(QMouseEvent *mev)
     input->button      = 0;
     input->x           = rect.x;
     input->y           = rect.y;
+    //kDebug(610) << "upstreamEvent(EventSendEvent(move " << rect.x << rect.y;
     upstreamEvent(new EventSendEvent(event));
 
     QWidget::mouseMoveEvent(mev);
@@ -409,25 +415,39 @@ void VideoWidget::mouseMoveEvent(QMouseEvent *mev)
 
 void VideoWidget::mousePressEvent(QMouseEvent *mev)
 {
-    if (mev->button() == Qt::LeftButton) {
-        x11_rectangle_t   rect;
-        xine_event_t      *event = new xine_event_t;
-        xine_input_data_t *input = new xine_input_data_t;
+    uint8_t button = 1;
+    switch (mev->button()) {
+    case Qt::NoButton:
+    case Qt::XButton1:
+    case Qt::XButton2:
+    case Qt::MouseButtonMask:
+        break;
+    case Qt::RightButton: // 3
+        ++button;
+    case Qt::MidButton: // 2
+        ++button;
+    case Qt::LeftButton: // 1
+        {
+            x11_rectangle_t   rect;
+            xine_event_t      *event = new xine_event_t;
+            xine_input_data_t *input = new xine_input_data_t;
 
-        rect.x = mev->x();
-        rect.y = mev->y();
-        rect.w = 0;
-        rect.h = 0;
+            rect.x = mev->x();
+            rect.y = mev->y();
+            rect.w = 0;
+            rect.h = 0;
 
-        xine_port_send_gui_data(K_XT(VideoWidgetXT)->m_videoPort, XINE_GUI_SEND_TRANSLATE_GUI_TO_VIDEO, (void*)&rect);
+            xine_port_send_gui_data(K_XT(VideoWidgetXT)->m_videoPort, XINE_GUI_SEND_TRANSLATE_GUI_TO_VIDEO, (void*)&rect);
 
-        event->type        = XINE_EVENT_INPUT_MOUSE_BUTTON;
-        event->data        = input;
-        event->data_length = sizeof(*input);
-        input->button      = 1;
-        input->x           = rect.x;
-        input->y           = rect.y;
-        upstreamEvent(new EventSendEvent(event));
+            event->type        = XINE_EVENT_INPUT_MOUSE_BUTTON;
+            event->data        = input;
+            event->data_length = sizeof(*input);
+            input->button      = button;
+            input->x           = rect.x;
+            input->y           = rect.y;
+            //kDebug(610) << "upstreamEvent(EventSendEvent(button " << rect.x << rect.y;
+            upstreamEvent(new EventSendEvent(event));
+        }
     }
     QWidget::mousePressEvent(mev);
 }
