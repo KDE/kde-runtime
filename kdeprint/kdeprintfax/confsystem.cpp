@@ -108,19 +108,19 @@ ConfSystem::ConfSystem(QWidget *parent, const char *name)
 void ConfSystem::load() 
 { 
 	KSharedConfig::Ptr conf = KGlobal::config(); 
-	conf->setGroup("System");
-	m_commands << conf->readPathEntry("EFax", defaultCommand(efax_default_cmd)); 
-	m_commands << conf->readPathEntry("HylaFax", defaultCommand(hylafax_default_cmd));
-	m_commands << conf->readPathEntry("Mgetty", defaultCommand(mgetty_default_cmd));
-	m_commands << conf->readPathEntry( "Other", QString() );
-	QString	v = conf->readEntry("System", "efax");
+	KConfigGroup cg(conf, "system");
+	m_commands << cg.readPathEntry("EFax", defaultCommand(efax_default_cmd)); 
+	m_commands << cg.readPathEntry("HylaFax", defaultCommand(hylafax_default_cmd));
+	m_commands << cg.readPathEntry("Mgetty", defaultCommand(mgetty_default_cmd));
+	m_commands << cg.readPathEntry( "Other", QString() );
+	QString	v = cg.readEntry("System", "efax");
 	if (v == "mgetty") m_current = MGETTY_ID;
 	else if (v == "hylafax") m_current = HYLAFAX_ID;
 	else if ( v == "other" ) m_current = OTHER_ID;
 	else m_current = EFAX_ID;
-	conf->setGroup("Fax");
-	m_server->setText(conf->readEntry("Server", QString::fromLocal8Bit(getenv("FAXSERVER"))));
-	v = conf->readEntry("Device", "modem");
+	KConfigGroup cg2(conf, "Fax");
+	m_server->setText(cg2.readEntry("Server", QString::fromLocal8Bit(getenv("FAXSERVER"))));
+	v = cg2.readEntry("Device", "modem");
 	if (v.startsWith("ttyS"))
 		m_device->setCurrentIndex(v.right(v.length()-4).toInt()+1);
 	else if ( v == "modem" )

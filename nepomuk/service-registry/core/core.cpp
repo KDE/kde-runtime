@@ -183,29 +183,29 @@ bool Nepomuk::Middleware::Registry::Core::loadServiceOnDemand( const QString& ty
     foreach( QString service, allServices ) {
         KDesktopFile serviceDesktopFile( service );
         if ( serviceDesktopFile.readType() == "Service" &&
-             serviceDesktopFile.readEntry( "ServiceTypes" ) == "NepomukService" &&
-             serviceDesktopFile.readEntry( "X-Nepomuk-ServiceType" ) == typeUri &&
-             serviceDesktopFile.readEntry( "X-Nepomuk-LoadOnDemand", false ) ) {
+             serviceDesktopFile.desktopGroup().readEntry( "ServiceTypes" ) == "NepomukService" &&
+             serviceDesktopFile.desktopGroup().readEntry( "X-Nepomuk-ServiceType" ) == typeUri &&
+             serviceDesktopFile.desktopGroup().readEntry( "X-Nepomuk-LoadOnDemand", false ) ) {
 
-            if ( serviceDesktopFile.readEntry( "URL" ).isEmpty() ) {
+            if ( serviceDesktopFile.desktopGroup().readEntry( "URL" ).isEmpty() ) {
                 kDebug( 300003 ) << "(Nepomuk::Middleware::Registry::Core) invalid Nepomuk service desktop file: missing URL.";
                 continue;
             }
 
             kDebug(300003) << "(Nepomuk::Middleware::Registry::Core) starting service "
-                           << serviceDesktopFile.readEntry( "Exec" ) << " on demand." << endl;
+                           << serviceDesktopFile.desktopGroup().readEntry( "Exec" ) << " on demand." << endl;
 
             // service fits. Load it and go on
-            if ( QProcess::startDetached( serviceDesktopFile.readEntry( "Exec" ) ) ) {
+            if ( QProcess::startDetached( serviceDesktopFile.desktopGroup().readEntry( "Exec" ) ) ) {
                 // wait up to 5 seconds for the service
                 ServiceWaiter waiter( this );
-                if ( waiter.waitForService( serviceDesktopFile.readEntry( "URL" ), 5000 ) ) {
+                if ( waiter.waitForService( serviceDesktopFile.desktopGroup().readEntry( "URL" ), 5000 ) ) {
                     return true;
                 }
             }
             else {
                 kDebug(300003) << "(Nepomuk::Middleware::Registry::Core) failed to start service: "
-                               << serviceDesktopFile.readEntry( "Exec" ) << endl;
+                               << serviceDesktopFile.desktopGroup().readEntry( "Exec" ) << endl;
             }
         }
     }
@@ -221,23 +221,23 @@ void Nepomuk::Middleware::Registry::Core::autoStartServices()
     foreach( QString service, allServices ) {
         KDesktopFile serviceDesktopFile( service );
         if ( serviceDesktopFile.readType() == "Service" &&
-             serviceDesktopFile.readEntry( "ServiceTypes" ) == "NepomukService" &&
-             serviceDesktopFile.readEntry( "X-Nepomuk-AutoLoad", false ) ) {
+             serviceDesktopFile.desktopGroup().readEntry( "ServiceTypes" ) == "NepomukService" &&
+             serviceDesktopFile.desktopGroup().readEntry( "X-Nepomuk-AutoLoad", false ) ) {
 
-            if ( serviceDesktopFile.readEntry( "URL" ).isEmpty() ) {
+            if ( serviceDesktopFile.desktopGroup().readEntry( "URL" ).isEmpty() ) {
                 kDebug( 300003 ) << "(Nepomuk::Middleware::Registry::Core) invalid Nepomuk service desktop file: missing URL.";
                 continue;
             }
 
             // service fits. Load it and go on
-            if ( QProcess::startDetached( serviceDesktopFile.readEntry( "Exec" ) ) ) {
-                serviceUris.append( serviceDesktopFile.readEntry( "URL" ) );
+            if ( QProcess::startDetached( serviceDesktopFile.desktopGroup().readEntry( "Exec" ) ) ) {
+                serviceUris.append( serviceDesktopFile.desktopGroup().readEntry( "URL" ) );
                 kDebug(300003) << "(Nepomuk::Middleware::Registry::Core) started service "
-                               << serviceDesktopFile.readEntry( "Exec" ) << endl;
+                               << serviceDesktopFile.desktopGroup().readEntry( "Exec" ) << endl;
             }
             else {
                 kDebug(300003) << "(Nepomuk::Middleware::Registry::Core) failed to start service: "
-                               << serviceDesktopFile.readEntry( "Exec" ) << endl;
+                               << serviceDesktopFile.desktopGroup().readEntry( "Exec" ) << endl;
             }
         }
     }
