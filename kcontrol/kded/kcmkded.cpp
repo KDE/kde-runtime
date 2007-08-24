@@ -112,7 +112,7 @@ KDEDConfig::KDEDConfig(QWidget* parent, const QStringList &) :
 	load();
 }
 
-void setModuleGroup(KConfig *config, const QString &filename)
+QString setModuleGroup(const QString &filename)
 {
 	QString module = filename;
 	int i = module.lastIndexOf('/');
@@ -122,19 +122,19 @@ void setModuleGroup(KConfig *config, const QString &filename)
 	if (i != -1)
 	   module = module.left(i);
 
-	config->setGroup(QString("Module-%1").arg(module));
+	return QString("Module-%1").arg(module);
 }
 
 bool KDEDConfig::autoloadEnabled(KConfig *config, const QString &filename)
 {
-	setModuleGroup(config, filename);
-	return config->readEntry("autoload", true);
+	KConfigGroup cg(config, setModuleGroup(filename));
+	return cg.readEntry("autoload", true);
 }
 
 void KDEDConfig::setAutoloadEnabled(KConfig *config, const QString &filename, bool b)
 {
-	setModuleGroup(config, filename);
-	return config->writeEntry("autoload", b);
+	KConfigGroup cg(config, setModuleGroup(filename));
+	return cg.writeEntry("autoload", b);
 }
 
 void KDEDConfig::load() {
@@ -156,7 +156,7 @@ void KDEDConfig::load() {
 		if ( KDesktopFile::isDesktopFile( *it ) ) {
 			KDesktopFile file( "services", *it );
 
-			if ( file.readEntry("X-KDE-Kded-autoload", false) ) {
+			if ( file.desktopGroup().readEntry("X-KDE-Kded-autoload", false) ) {
 				clitem = new CheckListItem(_lvStartup, QString());
 				connect(clitem, SIGNAL(changed(Q3CheckListItem*)), SLOT(slotItemChecked(Q3CheckListItem*)));
 				clitem->setOn(autoloadEnabled(&kdedrc, *it));
@@ -164,13 +164,13 @@ void KDEDConfig::load() {
 				item->setText(1, file.readName());
 				item->setText(2, file.readComment());
 				item->setText(3, NOT_RUNNING);
-				item->setText(4, file.readEntry("X-KDE-Library"));
+				item->setText(4, file.desktopGroup().readEntry("X-KDE-Library"));
 			}
-			else if ( file.readEntry("X-KDE-Kded-load-on-demand", false) ) {
+			else if ( file.desktopGroup().readEntry("X-KDE-Kded-load-on-demand", false) ) {
 				item = new Q3ListViewItem(_lvLoD, file.readName());
 				item->setText(1, file.readComment());
 				item->setText(2, NOT_RUNNING);
-				item->setText(4, file.readEntry("X-KDE-Library"));
+				item->setText(4, file.desktopGroup().readEntry("X-KDE-Library"));
 			}
 		}
 	}

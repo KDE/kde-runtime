@@ -71,10 +71,11 @@ void CfgComponent::save(KConfig *cfg) {
 		if (!m_lookupDict[ComponentSelector->currentText()])
 			return;
 
-		QString ServiceTypeToConfigure=cfg->readEntry("ServiceTypeToConfigure");
-		KConfig *store = new KConfig(cfg->readPathEntry("storeInFile","null"));
-		store->setGroup(cfg->readEntry("valueSection"));
-		store->writePathEntry(cfg->readEntry("valueName","kcm_componenchooser_null"),*m_lookupDict[ComponentSelector->currentText()]);
+		QString ServiceTypeToConfigure=cfg->group("").readEntry("ServiceTypeToConfigure");
+		KConfig *store = new KConfig(cfg->group("").readPathEntry("storeInFile","null"));
+		KConfigGroup cg(store,cfg->group("").readEntry("valueSection"));
+//		store->setGroup(cfg->group("").readEntry("valueSection"));
+		cg.writePathEntry(cfg->group("").readEntry("valueName","kcm_componenchooser_null"),*m_lookupDict[ComponentSelector->currentText()]);
 		store->sync();
 		delete store;
 		emit changed(false);
@@ -86,7 +87,7 @@ void CfgComponent::load(KConfig *cfg) {
 	m_lookupDict.clear();
 	m_revLookupDict.clear();
 
-	QString ServiceTypeToConfigure=cfg->readEntry("ServiceTypeToConfigure");
+	QString ServiceTypeToConfigure=cfg->group("").readEntry("ServiceTypeToConfigure");
 
 	KService::List offers = KServiceTypeTrader::self()->query(ServiceTypeToConfigure);
 
@@ -97,11 +98,11 @@ void CfgComponent::load(KConfig *cfg) {
 		m_revLookupDict.insert((*tit)->desktopEntryName(),new QString((*tit)->name()));
 	}
 
-	KConfig *store = new KConfig(cfg->readPathEntry("storeInFile","null"));
-        KConfigGroup group(store, cfg->readEntry("valueSection"));
-	QString setting=group.readEntry(cfg->readEntry("valueName","kcm_componenchooser_null"), QString());
+	KConfig *store = new KConfig(cfg->group("").readPathEntry("storeInFile","null"));
+        KConfigGroup group(store, cfg->group("").readEntry("valueSection"));
+	QString setting=group.readEntry(cfg->group("").readEntry("valueName","kcm_componenchooser_null"), QString());
         delete store;
-	if (setting.isEmpty()) setting=cfg->readEntry("defaultImplementation", QString());
+	if (setting.isEmpty()) setting=cfg->group("").readEntry("defaultImplementation", QString());
 	QString *tmp=m_revLookupDict[setting];
 	if (tmp)
 		for (int i=0;i<ComponentSelector->count();i++)
@@ -322,7 +323,7 @@ ComponentChooser::ComponentChooser(QWidget *parent):
 	for (QStringList::Iterator it=services.begin();it!=services.end();++it)
 	{
 		KConfig cfg(*it, KConfig::OnlyLocal);
-		ServiceChooser->addItem(new MyListBoxItem(cfg.readEntry("Name",i18n("Unknown")),(*it)));
+		ServiceChooser->addItem(new MyListBoxItem(cfg.group("").readEntry("Name",i18n("Unknown")),(*it)));
 
 	}
 	ServiceChooser->setFixedWidth(ServiceChooser->sizeHint().width());
@@ -341,11 +342,11 @@ void ComponentChooser::slotServiceSelected(QListWidgetItem* it) {
 	}
 	KConfig cfg(static_cast<MyListBoxItem*>(it)->File, KConfig::OnlyLocal);
 
-	ComponentDescription->setText(cfg.readEntry("Comment",i18n("No description available")));
+	ComponentDescription->setText(cfg.group("").readEntry("Comment",i18n("No description available")));
 	ComponentDescription->setMinimumSize(ComponentDescription->sizeHint());
 
 
-	QString cfgType=cfg.readEntry("configurationType");
+	QString cfgType=cfg.group("").readEntry("configurationType");
 	QWidget *newConfigWidget = 0;
 	if (cfgType.isEmpty() || (cfgType=="component"))
 	{
