@@ -493,7 +493,7 @@ void XineStream::changeState(Phonon::State newstate)
         }
     }
     if (newstate == Phonon::ErrorState) {
-        kDebug(610) << "reached error state from: " << kBacktrace();
+        kDebug(610) << "reached error state";// from: " << kBacktrace();
         if (m_event_queue) {
             xine_event_dispose_queue(m_event_queue);
             m_event_queue = 0;
@@ -716,10 +716,12 @@ bool XineStream::event(QEvent *ev)
         return true;
     case Event::UnpauseForBuffering:
         ev->accept();
-        if (m_stream && Phonon::PausedState != m_state) {
-            xine_set_param(m_stream, XINE_PARAM_SPEED, XINE_SPEED_NORMAL); //_x_set_speed (m_stream, XINE_SPEED_NORMAL);
+        if (m_stream) {
+           if (Phonon::PausedState != m_state) {
+               xine_set_param(m_stream, XINE_PARAM_SPEED, XINE_SPEED_NORMAL); //_x_set_speed (m_stream, XINE_SPEED_NORMAL);
+           }
+           streamClock(m_stream)->set_option (streamClock(m_stream), CLOCK_SCR_ADJUSTABLE, 1);
         }
-        streamClock(m_stream)->set_option (streamClock(m_stream), CLOCK_SCR_ADJUSTABLE, 1);
         return true;
         /*
     case Event::ChangeAudioPostList:
