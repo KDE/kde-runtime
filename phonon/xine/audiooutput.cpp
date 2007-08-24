@@ -30,6 +30,8 @@
 #include "backend.h"
 #include "events.h"
 
+#undef assert
+
 namespace Phonon
 {
 namespace Xine
