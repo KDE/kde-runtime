@@ -35,6 +35,7 @@ class AudioPortDeleter : public QObject
         ~AudioPortDeleter();
 
     protected:
+        bool event(QEvent *e);
         void timerEvent(QTimerEvent *);
 
     private:

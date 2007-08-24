@@ -39,7 +39,17 @@ AudioPortDeleter::AudioPortDeleter(AudioPortData *dd)
 {
     moveToThread(QApplication::instance()->thread());
     XineEngine::addCleanupObject(this);
-    startTimer(2000);
+    QCoreApplication::postEvent(this, new QEvent(static_cast<QEvent::Type>(2345)));
+}
+
+bool AudioPortDeleter::event(QEvent *e)
+{
+    if (e->type() == 2345) {
+        e->accept();
+        startTimer(3000);
+        return true;
+    }
+    return QObject::event(e);
 }
 
 void AudioPortDeleter::timerEvent(QTimerEvent *e)
