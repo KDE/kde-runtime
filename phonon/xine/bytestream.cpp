@@ -369,7 +369,7 @@ void ByteStream::setPauseForBuffering(bool b)
 }
 void ByteStream::endOfData()
 {
-    PXINE_VDEBUG;
+    PXINE_DEBUG;
     QMutexLocker lock(&m_mutex);
     m_eod = true;
     // don't reset the XineStream because many demuxers hit eod while trying to find the format of

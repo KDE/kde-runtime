@@ -683,6 +683,7 @@ void MediaObject::upstreamEvent(Event *e)
         QCoreApplication::postEvent(m_stream, copyEvent(static_cast<SetParamEvent *>(e)));
         break;
     case Event::EventSend:
+        //kDebug(610) << "copying EventSendEvent and post it to XineStream" << m_stream;
         // postEvent takes ownership of the event and will delete it when done
         QCoreApplication::postEvent(m_stream, copyEvent(static_cast<EventSendEvent *>(e)));
         break;
