@@ -19,7 +19,9 @@
 #ifndef ICONTHEMES_H
 #define ICONTHEMES_H
 
+#define KDE3_SUPPORT
 #include <kcmodule.h>
+#undef KDE3_SUPPORT
 #include <QMap>
 //Added by qt3to4:
 #include <QLabel>

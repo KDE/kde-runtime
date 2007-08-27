@@ -25,7 +25,9 @@
 #ifndef __TOPLEVEL_H__
 #define __TOPLEVEL_H__
 
+#define KDE3_SUPPORT
 #include <kcmodule.h>
+#undef KDE3_SUPPORT
 #include <kgenericfactory.h>
 #include <kconfig.h>
 

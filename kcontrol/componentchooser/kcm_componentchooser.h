@@ -16,7 +16,9 @@
 #ifndef KCM_COMPONENTCHOOSER_H
 #define KCM_COMPONENTCHOOSER_H
 
+#define KDE3_SUPPORT
 #include <kcmodule.h>
+#undef KDE3_SUPPORT
 
 #include "componentchooser.h"
 

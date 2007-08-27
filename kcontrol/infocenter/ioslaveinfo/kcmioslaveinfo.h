@@ -30,7 +30,9 @@
 #include <QByteArray>
 
 #include <kaboutdata.h>
+#define KDE3_SUPPORT
 #include <kcmodule.h>
+#undef KDE3_SUPPORT
 #include <kio/job.h>
 #include <klistwidget.h>
 #include <ktextbrowser.h>

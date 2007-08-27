@@ -27,7 +27,9 @@
 //Added by qt3to4:
 #include <QLabel>
 
+#define KDE3_SUPPORT
 #include <kcmodule.h>
+#undef KDE3_SUPPORT
 #include <kdialog.h>
 
 class QLabel;
