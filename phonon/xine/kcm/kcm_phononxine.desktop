@@ -11,6 +11,7 @@ X-KDE-FactoryName=kcm_phononxine
 X-KDE-ParentComponents=phonon_xine
 
 Name=Phonon Xine
+Name[cs]=Phonom Xine
 Name[de]=Phonon-Xine
 Name[nds]=Phonon-Xine
 Name[pt]=Phonon por Xine
@@ -18,6 +19,7 @@ Comment=Xine Backend Configuration
 Comment[be]=Настаўленне унутранага карыстання Xine
 Comment[de]=Xine-Treiber-Einrichtung
 Comment[el]=Ρύθμιση του συστήματος υποστήριξης Xine
+Comment[fa]=پیکربندی پایانه Xine
 Comment[ga]=Cumraíocht Inneall Xine
 Comment[he]=הגדרות ממשק Xine
 Comment[ja]=Xine バックエンドの設定
