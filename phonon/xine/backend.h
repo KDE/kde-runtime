@@ -43,7 +43,7 @@ namespace Xine
 		Q_OBJECT
         Q_INTERFACES(Phonon::BackendInterface)
 		public:
-			Backend( QObject* parent, const QStringList& args );
+            Backend(QObject *parent, const QVariantList &args);
 			~Backend();
 
             QObject *createObject(BackendInterface::Class, QObject *parent, const QList<QVariant> &args);

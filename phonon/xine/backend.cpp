@@ -34,7 +34,8 @@
 
 #include <kdebug.h>
 #include <klocale.h>
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
+#include <kpluginloader.h>
 
 #include <QtCore/QCoreApplication>
 #include <QtCore/QSet>
@@ -51,15 +52,15 @@ extern "C" {
 extern plugin_info_t phonon_xine_plugin_info[];
 }
 
-typedef KGenericFactory<Phonon::Xine::Backend> XineBackendFactory;
-Q_EXPORT_PLUGIN2(phonon_xine, XineBackendFactory("xinebackend"))
+K_PLUGIN_FACTORY(XineBackendFactory, registerPlugin<Phonon::Xine::Backend>();)
+K_EXPORT_PLUGIN(XineBackendFactory("xinebackend"))
 
 namespace Phonon
 {
 namespace Xine
 {
 
-Backend::Backend( QObject* parent, const QStringList& )
+Backend::Backend(QObject *parent, const QVariantList &)
 	: QObject( parent )
 {
     setProperty("identifier",     QLatin1String("phonon_xine"));
