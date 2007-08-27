@@ -99,7 +99,7 @@ public:
         HasVideo
     };
 
-    QAtomic ref;
+    int ref;
 
     inline Event(Type t) : QEvent(static_cast<QEvent::Type>(t)), ref(1) {}
 }; // class Event

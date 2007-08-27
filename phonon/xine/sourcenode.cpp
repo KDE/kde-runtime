@@ -85,7 +85,7 @@ void SourceNode::upstreamEvent(Event *e)
     if (iface) {
         iface->upstreamEvent(e);
     } else {
-        if (!e->ref.deref()) {
+        if (!--e->ref) {
             delete e;
         }
     }
@@ -95,10 +95,10 @@ void SourceNode::downstreamEvent(Event *e)
 {
     Q_ASSERT(e);
     foreach (SinkNode *sink, m_sinks) {
-        e->ref.ref();
+        ++e->ref;
         sink->downstreamEvent(e);
     }
-    if (!e->ref.deref()) {
+    if (!--e->ref) {
         delete e;
     }
 }

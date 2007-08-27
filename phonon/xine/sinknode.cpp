@@ -82,7 +82,7 @@ void SinkNode::upstreamEvent(Event *e)
     if (m_source) {
         m_source->upstreamEvent(e);
     } else {
-        if (!e->ref.deref()) {
+        if (!--e->ref) {
             delete e;
         }
     }
@@ -95,7 +95,7 @@ void SinkNode::downstreamEvent(Event *e)
     if (iface) {
         iface->downstreamEvent(e);
     } else {
-        if (!e->ref.deref()) {
+        if (!--e->ref) {
             delete e;
         }
     }
