@@ -26,7 +26,6 @@
 #include <qpixmap.h>
 #include <kio/netaccess.h>
 #include <kurllabel.h>
-#include <kmimetype.h>
 #include <kmediaplayer/player.h>
 #include <kservicetypetrader.h>
 #include <ksqueezedtextlabel.h>
