@@ -23,10 +23,11 @@
 
 #include <xine.h>
 
-Q_EXPORT_PLUGIN2(kcm_phononxine, KGenericFactory<XineOptions>("kcm_phononxine"))
+K_PLUGIN_FACTORY(XineOptionsFactory, registerPlugin<XineOptions>(); )
+K_EXPORT_PLUGIN(XineOptionsFactory("kcm_phononxine"))
 
-XineOptions::XineOptions(QWidget *parent, const QStringList &args)
-    : KCModule(KGenericFactory<XineOptions>::componentData(), parent, args)
+XineOptions::XineOptions(QWidget *parent, const QVariantList &args)
+    : KCModule(XineOptionsFactory::componentData(), parent, args)
 {
     setupUi(this);
 

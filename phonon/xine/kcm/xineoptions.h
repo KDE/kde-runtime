@@ -30,7 +30,7 @@ class XineOptions : public KCModule, private Ui::XineOptions
 {
     Q_OBJECT
     public:
-        XineOptions(QWidget *parent, const QStringList &args);
+        XineOptions(QWidget *parent, const QVariantList &args);
 
         void load();
         void save();
