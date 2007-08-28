@@ -115,7 +115,6 @@ void ConfigModule::deleteClient()
   delete _embedLayout;
   _embedLayout = 0;
 
-  KCModuleLoader::unloadModule(*this);
   _changed = false;
 }
 
