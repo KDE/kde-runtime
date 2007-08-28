@@ -16,9 +16,7 @@
 #ifndef KCM_COMPONENTCHOOSER_H
 #define KCM_COMPONENTCHOOSER_H
 
-#define KDE3_SUPPORT
 #include <kcmodule.h>
-#undef KDE3_SUPPORT
 
 #include "componentchooser.h"
 
@@ -27,7 +25,7 @@ class KCMComponentChooser : public KCModule
 {
     Q_OBJECT
 public:
-    KCMComponentChooser(QWidget *parent, const QStringList &args);
+    KCMComponentChooser(QWidget *parent, const QVariantList &args);
 
     void load();
     void save();

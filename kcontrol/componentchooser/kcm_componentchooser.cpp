@@ -23,13 +23,15 @@
 #include <kcomponentdata.h>
 
 #include "kcm_componentchooser.h"
-#include <kgenericfactory.h>
+#include <KPluginFactory>
 #include "kcm_componentchooser.moc"
 
-typedef KGenericFactory<KCMComponentChooser> KCMComponentChooserFactory;
-K_EXPORT_COMPONENT_FACTORY(kcm_componentchooser, KCMComponentChooserFactory("kcmcomponentchooser"))
+K_PLUGIN_FACTORY(KCMComponentChooserFactory,
+        registerPlugin<KCMComponentChooser>();
+        )
+K_EXPORT_PLUGIN(KCMComponentChooserFactory("kcmcomponentchooser"))
 
-KCMComponentChooser::KCMComponentChooser(QWidget *parent, const QStringList &):
+KCMComponentChooser::KCMComponentChooser(QWidget *parent, const QVariantList &):
 	KCModule(KCMComponentChooserFactory::componentData(), parent) {
 
 	QVBoxLayout *lay = new QVBoxLayout(this);
