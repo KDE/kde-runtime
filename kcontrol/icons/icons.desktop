@@ -9,7 +9,6 @@ Exec=kcmshell icons
 X-KDE-System-Settings-Parent-Category=appearance
 
 X-KDE-Library=kcm_icons
-X-KDE-FactoryName=icons
 X-KDE-ParentApp=kcontrol
 
 Name=Icons

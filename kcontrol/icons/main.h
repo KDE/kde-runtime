@@ -27,16 +27,14 @@
 
 
 #include <QTabWidget>
-#define KDE3_SUPPORT
 #include <kcmodule.h>
-#undef KDE3_SUPPORT
 
 class IconModule : public KCModule
 {
   Q_OBJECT
 
 public:
-  IconModule(QWidget *parent, const QStringList &);
+  IconModule(QWidget *parent, const QVariantList &);
 
   void load();
   void save();

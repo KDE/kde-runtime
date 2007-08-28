@@ -7,7 +7,6 @@ ServiceTypes=KCModule
 DocPath=kcontrol/language/index.html
 
 X-KDE-Library=kcm_locale
-X-KDE-FactoryName=kcm_locale
 X-KDE-ParentApp=kcontrol
 
 X-KDE-System-Settings-Parent-Category=regional-and-language

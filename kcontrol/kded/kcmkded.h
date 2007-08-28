@@ -26,15 +26,13 @@
 #undef KDE3_SUPPORT
 
 class K3ListView;
-
-class QStringList;
 class QPushButton;
 
 class KDEDConfig : public KCModule
 {
 Q_OBJECT
 public:
-	explicit KDEDConfig(QWidget* parent, const QStringList& foo = QStringList());
+	explicit KDEDConfig(QWidget* parent, const QVariantList& foo = QVariantList());
 	~KDEDConfig() {}
 
 	void       load();

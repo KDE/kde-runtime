@@ -33,20 +33,23 @@
 #include <kdebug.h>
 #include <kdesktopfile.h>
 #include <kdialog.h>
-#include <kgenericfactory.h>
 #include <k3listview.h>
 #include <kmessagebox.h>
 #include <kservice.h>
 #include <kstandarddirs.h>
 
 #include "kcmkded.h"
+#include <KPluginFactory>
+#include <KPluginLoader>
 #include "kcmkded.moc"
 
-typedef KGenericFactory<KDEDConfig, QWidget> KDEDFactory;
-K_EXPORT_COMPONENT_FACTORY( kded, KDEDFactory( "kcmkded" ) )
+K_PLUGIN_FACTORY(KDEDFactory,
+        registerPlugin<KDEDConfig>();
+        )
+K_EXPORT_PLUGIN(KDEDFactory("kcmkded"))
 
 
-KDEDConfig::KDEDConfig(QWidget* parent, const QStringList &) :
+KDEDConfig::KDEDConfig(QWidget* parent, const QVariantList &) :
 	KCModule( KDEDFactory::componentData(), parent )
 {
 	KAboutData *about =

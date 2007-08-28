@@ -22,15 +22,18 @@
 
 #include <QLayout>
 
-#include <kgenericfactory.h>
 #include <kaboutdata.h>
 #include <kdebug.h>
 #include <klocale.h>
+#include <KPluginFactory>
+#include <KPluginLoader>
 
-typedef KGenericFactory<KCMPrintMgr, QWidget> KPrintMgrFactory;
-K_EXPORT_COMPONENT_FACTORY( printmgr, KPrintMgrFactory("kcmprintmgr") )
+K_PLUGIN_FACTORY(KPrintMgrFactory,
+        registerPlugin<KCMPrintMgr>(); //  printmgr
+        )
+K_EXPORT_PLUGIN(KPrintMgrFactory("kcmprintmgr"))
 
-KCMPrintMgr::KCMPrintMgr(QWidget *parent, const QStringList &)
+KCMPrintMgr::KCMPrintMgr(QWidget *parent, const QVariantList &)
 : KCModule(KPrintMgrFactory::componentData(), parent)
 {
 	setButtons(KCModule::Buttons());

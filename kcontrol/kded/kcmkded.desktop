@@ -6,7 +6,6 @@ Type=Service
 ServiceTypes=KCModule
 
 X-KDE-Library=kcm_kded
-X-KDE-FactoryName=kded
 X-KDE-ParentApp=kcontrol
 
 X-KDE-System-Settings-Parent-Category=advanced-user-settings

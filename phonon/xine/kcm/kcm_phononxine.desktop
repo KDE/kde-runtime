@@ -7,7 +7,6 @@ ServiceTypes=KCModule
 DocPath=kcontrol/phononxine/index.html
 
 X-KDE-Library=kcm_phononxine
-X-KDE-FactoryName=kcm_phononxine
 X-KDE-ParentComponents=phonon_xine
 
 Name=Phonon Xine

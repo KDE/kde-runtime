@@ -42,7 +42,7 @@ endif ( UNIX )
 add_subdirectory(kurifilter-plugins)
 add_subdirectory(soliduiserver)
 add_subdirectory(l10n)
-add_subdirectory(phonon)
+#add_subdirectory(phonon)
 add_subdirectory(pics)
 add_subdirectory(kstyles)
 

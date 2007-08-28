@@ -25,20 +25,23 @@
 //Added by qt3to4:
 #include <QVBoxLayout>
 
-#include <kgenericfactory.h>
 #include <kaboutdata.h>
 
 #include "icons.h"
 #include "iconthemes.h"
 #include "main.h"
+#include <KPluginFactory>
+#include <KPluginLoader>
 
 /**** DLL Interface ****/
-typedef KGenericFactory<IconModule, QWidget> IconsFactory;
-K_EXPORT_COMPONENT_FACTORY( icons, IconsFactory("kcmicons") )
+K_PLUGIN_FACTORY(IconsFactory,
+        registerPlugin<IconModule>();
+        )
+K_EXPORT_PLUGIN(IconsFactory("kcmicons"))
 
 /**** IconModule ****/
 
-IconModule::IconModule(QWidget *parent, const QStringList &)
+IconModule::IconModule(QWidget *parent, const QVariantList &)
   : KCModule(IconsFactory::componentData(), parent)
 {
   QVBoxLayout *layout = new QVBoxLayout(this);

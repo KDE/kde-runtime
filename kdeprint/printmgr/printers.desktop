@@ -11,7 +11,6 @@ MimeType=print/manager
 X-KDE-Library=kcm_printmgr
 X-KDE-RootOnly=true
 X-KDE-HasReadOnlyMode=true
-X-KDE-FactoryName=printmgr
 
 X-KDE-ParentApp=kcontrol
 

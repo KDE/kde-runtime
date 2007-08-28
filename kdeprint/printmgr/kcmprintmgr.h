@@ -20,16 +20,14 @@
 #ifndef KCMPRINTMGR_H
 #define KCMPRINTMGR_H
 
-#define KDE3_SUPPORT
 #include <kcmodule.h>
-#undef KDE3_SUPPORT
 
 class KMMainView;
 
 class KCMPrintMgr : public KCModule
 {
 public:
-	KCMPrintMgr(QWidget *parent, const QStringList &);
+	KCMPrintMgr(QWidget *parent, const QVariantList &);
 	~KCMPrintMgr();
 
 	QString quickHelp() const;
