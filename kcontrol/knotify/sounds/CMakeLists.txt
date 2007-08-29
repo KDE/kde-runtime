@@ -65,6 +65,36 @@ install( FILES
     KDE_Window_Sticky.ogg  
     KDE_Window_UnHide.ogg  
     KDE_Window_UnSticky.ogg 
+    sys.error.ogg
+    commercial.ogg
+    usb_in.ogg
+    error.ogg
+    sys.list.end.ogg
+    question.ogg
+    LogOut.ogg
+    sys.list.multiple.match.ogg
+    message.ogg
+    sys.list.no.match.ogg
+    sys-log-in.ogg
+    sys.print.error.ogg
+    LogOn.ogg
+    usb_out.ogg
+    sys.app.error.ogg
+    sys.app.error.serious.ogg
+    sys.app.error.serious.very.ogg
+    sys.app.special.ogg
+    sys.end.list.ogg
+    sys.error.critial.ogg
+    sys.error.print.ogg
+    sys.file.open.foes.ogg
+    sys.list.match.multiple.ogg
+    sys.list.match.no.ogg
+    sys.log.in.ogg
+    sys.log.out.ogg
+    sys.message.ogg
+    sys.question.ogg
+    sys.trash.emptied.ogg
+    sys.warning.ogg
     DESTINATION  ${SOUND_INSTALL_DIR} )
 
 
