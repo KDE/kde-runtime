@@ -1,0 +1,188 @@
+<chapter id="messaging">
+
+<chapterinfo>
+<authorgroup>
+<author>
+<firstname>Peter</firstname>
+<surname>Nuttall</surname>
+</author>
+
+<author>
+<firstname>Tom</firstname>
+<surname>Albers</surname>
+</author>
+
+</authorgroup>
+
+</chapterinfo>
+
+
+<title>Introduction to messaging</title>
+
+
+<para>The default way to send instant messages in &kde; is to use the <acronym>IM</acronym>
+client, &kopete;. This is a multi-protocol <acronym>IM</acronym> client, meaning that it
+handles several different protocols including <acronym>MSN</acronym>,
+Jabber, <acronym>AOL</acronym> and <acronym>IRC</acronym>. It also has
+useful features including support for &kaddressbook;, meta-contacts,
+encryption support and lots more.</para>
+
+<screenshot> 
+<screeninfo>&kopete;, the &kde; IM client.</screeninfo> 
+<mediaobject> 
+<imageobject> 
+<imagedata fileref="kopete.png" format="PNG"/> </imageobject> 
+<textobject> 
+<phrase>&kopete;, the &kde; IM client.</phrase> 
+</textobject> 
+<caption> 
+<para>&kopete;, the &kde; IM client.</para> 
+</caption> 
+</mediaobject> 
+</screenshot> 
+
+<sect1 id="messaging-getting-started">
+<title>How to get started</title>
+
+<para>Start up &kopete; from the menu (it can normally be found in the
+Internet folder) When it starts up you should see a window with &kopete;
+at the top, menus and a tool bar below, and then your contacts below.
+You should add some accounts by clicking on the
+<guimenu>Settings</guimenu> menu and selecting the <guimenuitem>Configure
+Kopete</guimenuitem> option. By selecting the <guilabel>Accounts</guilabel>
+option you should see a list of your accounts (initially empty) and
+options to add new accounts and to edit or remove existing accounts.
+By clicking on the <guibutton>add new account</guibutton> button, you can
+add a new account using the wizard. When you have added an account, you can
+connect to this account by clicking on the relevant icon at the bottom of
+your main &kopete; window. This should make your contacts appear in the 
+contacts window.</para>
+
+</sect1>
+
+<sect1 id="meta-contacts">
+<title>Meta-contacts</title>
+
+<para>Meta contacts are one of the features of &kopete; that make sense
+once you figure out what they are. Until you do, they annoy you. They are
+basically a way of taking a contact on one network (such as
+<acronym>MSN</acronym>) and linking it to another contact on a different
+network. This is useful for when people have accounts on different networks
+as you can chat to them without needing to know which account they are
+signed on to. This also lets you assign names to your meta-contacts that
+don't change when people change their names on their account, this is useful
+if you have contacts who insist upon setting their
+<acronym>MSN</acronym> nick to something like
+<quote>=EF=81=8A</quote>.</para>
+
+<para>You can do other useful things with meta-contacts like link them to
+entries in your address book. See <xref
+linkend="integrated-messaging"/></para>
+
+</sect1>
+
+<sect1 id="irc">
+<title><acronym>IRC</acronym></title>
+
+<para>Internet Relay Chat (<acronym>IRC</acronym>) has been around far longer than most <acronym>IM</acronym>
+systems, and is still widely used. It is mainly designed for group (many-to-many) communication in discussion forums called channels, but also allows one-to-one communication.</para>
+
+<para>The #kde channel is under Freenode, the <acronym>IRC</acronym> server, which provides an interactive environment for coordination and support of peer-directed projects, including -- and placing particular stress upon -- those relating to free software and open source projects, such as &kde;.</para>
+
+
+<para>While &kopete; has a <acronym>IRC</acronym> plugin, and handles both channels and nicks well,
+long time <acronym>IRC</acronym> users might prefer a client designed just
+for that role, which is what <application>Konversation</application> is. It supports features such
+as granting and taking op status, banning, easy nick changing, special
+channel support for passwords and invites, and other things that the power
+<acronym>IRC</acronym> users expect. It also is far better at handling
+large channels such as #debian. If you have used another
+power-<acronym>IRC</acronym> client before, you should have no trouble using
+<application>Konversation</application>.</para>
+
+
+</sect1>
+
+<sect1 id="integrated-messaging">
+<title>Linking email and messaging</title>
+
+<para>Did it happen to you? You received an email and the first thing
+you would like to do is to give a reaction on it, but not by
+email. So you switch to your instant messaging client and/or IRC
+client and look if that person is online via MSN, Jabber or IRC. Well
+&kde; 3.3 has made that a lot easier. A step-by-step manual:</para>
+
+<para>The requirements are &kmail;, &kaddressbook; and &kopete;
+(<application>Konversation</application> should do as well). Make sure &kmail; is configured and
+fully functional for email, and Kopete is well configured for IRC,
+Jabber and/or MSN and/or any other protocol. </para>
+
+<para>If an email comes in from a contact you know, the first thing
+you have to do is to add it to your address book. This can be achieved
+by right clicking the address and choosing the entry <guibutton>Add to Address
+Book</guibutton>.</para>
+
+<para>If you know the nickname which the user uses on, for example, IRC,
+go to &kopete;.  Go to
+<menuchoice><guimenu>File</guimenu><guimenuitem>Add
+contact</guimenuitem> </menuchoice>. In the wizard, select the
+checkbox at the bottom called <guilabel>Use the KDE address book for
+this contact</guilabel> and choose <guibutton>Next</guibutton>. Select
+the right Address Book entry for that contact and press
+<guibutton>Next</guibutton>. Now you can set the display name and the
+group it belongs to for &kopete;. In the next screen select which
+protocol should be used if you have set up more then one protocol. You
+can select more than one protocol. After that, depending on the
+protocol, there will be some other questions, which you can answer as
+you like.</para>
+
+<para>Although we did specify to choose from the address book,
+&kopete; has not automatically linked your contact to the address
+book. So select the contact and choose
+<menuchoice><guimenu>Edit</guimenu><guimenuitem>Properties</guimenuitem>
+</menuchoice>. On the <guilabel>General</guilabel> tab check the box
+labeled <guilabel>Has address book entry</guilabel>. Press
+<guilabel>...</guilabel> and select the contact. Close these two
+windows.</para>
+
+<para>Now go to your addressbook, if you select the contact you will
+see that it shows an extra field <guilabel>Presence</guilabel>, followed by the current
+status. This status will automatically update as soon as the contact
+goes away, offline, online, and so on.  Now go to &kmail;, select another email and return to the original email (in other words: reload
+the current email). You can now see behind the email address the
+current state of your contact. </para>
+
+<para>If you want to chat with this person, just right click the
+address in &kmail; and choose <guilabel>Chat With...</guilabel>. Your
+Instant Messenger will start a conversation with the contact.</para>
+
+<!-- Add links to "further reading" here -->
+<!--<itemizedlist>
+<title>Related Information</title>
+<listitem><para>to be written</para>
+</listitem>
+</itemizedlist>-->
+
+
+
+</sect1>
+
+</chapter>
+
+<!-- Keep this comment at the end of the file
+Local variables:
+mode: xml
+sgml-omittag:nil
+sgml-shorttag:nil
+sgml-namecase-general:nil
+sgml-general-insert-case:lower
+sgml-minimize-attributes:nil
+sgml-always-quote-attributes:t
+sgml-indent-step:0
+sgml-indent-data:true
+sgml-parent-document:("index.docbook" "book" "chapter")
+sgml-exposed-tags:nil
+sgml-local-catalogs:nil
+sgml-local-ecat-files:nil
+End:
+-->

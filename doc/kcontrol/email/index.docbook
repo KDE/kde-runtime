@@ -1,0 +1,103 @@
+<?xml version="1.0" ?>
+<!DOCTYPE article PUBLIC "-//KDE//DTD DocBook XML V4.2-Based Variant V1.1//EN"
+"dtd/kdex.dtd" [
+<!ENTITY % addindex "IGNORE">
+<!ENTITY % English "INCLUDE" > <!-- change language only here -->
+]>
+
+<article lang="&language;">
+<articleinfo>
+
+<authorgroup>
+<author>&Krishna.Tateneni; &Krishna.Tateneni.mail;</author>
+<author>&Jost.Schenck; &Jost.Schenck.mail;</author>
+<author>&Mike.McBride; &Mike.McBride.mail;</author>
+<!-- TRANS:ROLES_OF_TRANSLATORS -->
+</authorgroup>
+
+<date>2002-09-01</date>
+<releaseinfo>3.1.00</releaseinfo>
+
+<keywordset>
+<keyword>KDE</keyword>
+<keyword>KControl</keyword>
+<keyword>email</keyword>
+<keyword>e-mail</keyword>
+</keywordset>
+
+</articleinfo>
+<sect1 id="e-mail">
+<title>Email</title>
+
+
+<sect2 id="email-intro">
+<title>Introduction</title>
+
+<para>The email module of the &kcontrol; allows you to enter and save some
+basic email information. This information is used when performing functions
+related to email within &kde;, for example, when sending bug reports from the
+&kde; crash handler application.</para>
+
+<para>Programs such as &kmail;, which are used for reading and sending
+email, may offer many more options for customizing the way in which
+email is handled. These options depend upon the specific program being
+used.  &kmail;, for instance, offers its own configuration
+facilities.</para>
+
+<para>Some of the information needed for configuring email should have
+been provided by your internet service provider
+(<acronym>ISP</acronym>). If you are connected to a local network, then
+the system administrator of your network should be able to help
+you.</para>
+
+</sect2>
+
+<sect2 id="email-use">
+<title>Use</title>
+
+<para>&kde; automatically establishes some of the information for this control module 
+using the
+login information on the system. You will need to enter the remaining information.</para>
+<para>Looking at the page from top to
+bottom, the options are:</para>
+
+<variablelist>
+<varlistentry>
+<term><guilabel>Full name</guilabel></term>
+<listitem><para>Type your full name as you would like it to appear in the email
+messages that you send. </para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Organization</guilabel></term>
+<listitem><para>If you work for a company or
+organization, you can enter its name in this text box.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Email address</guilabel></term>
+<listitem><para>To be able to use email, you must enter your email
+address here.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Reply-to address</guilabel></term>
+<listitem><para>If replies to your email messages should be sent to a different
+address, you can enter that address in this text box.</para></listitem>
+</varlistentry>
+</variablelist>
+</sect2>
+
+</sect1>
+
+</article>
+
+<!-- Keep this comment at the end of the file
+Local variables:
+mode: sgml
+sgml-indent-step:0
+sgml-indent-data:nil
+sgml-parent-document:index.docbook
+End:
+-->
+

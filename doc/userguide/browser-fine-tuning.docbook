@@ -1,0 +1,71 @@
+<sect1 id="customizing-konqueror">
+<!-- Uncomment the <*info> below and add your name to be -->
+<!-- credited for writing this section. -->
+
+<!--
+<sect1info>
+<authorgroup>
+<author>
+<firstname>Your First Name here</firstname>
+<surname>Your Surname here </surname>
+</author>
+</authorgroup>
+</sect1info>
+-->
+
+<title>Fine Tuning your Browsing Experience</title>
+
+<example>
+<title>Using your own style for webpages</title>
+
+<para>Webpages come in every possible set of colors and fonts, and
+sometimes this doesn't give the best result. For example, if you have
+visual difficulties, it may be impossible to read certain combinations
+of background and text colors. &konqueror; provides a way to choose
+your own colors and apply them to all webpages. Here's how:</para>
+
+<orderedlist>
+<listitem><para>Open &konqueror; and go to
+<menuchoice><guimenu>Settings</guimenu><guimenuitem>Configure Konqueror...</guimenuitem></menuchoice>.</para>
+</listitem>
+<listitem><para>In the configuration dialog that appears, select the
+<guilabel>Stylesheets</guilabel> page on the left hand side.</para>
+</listitem>
+<listitem><para>On this page, choose <guilabel>Use accessibility
+stylesheet defined in "Customize" tab</guilabel>, then go to the
+<guilabel>Customize</guilabel> tab, and choose the settings you prefer.</para>
+</listitem>
+<listitem><para>Close all &konqueror; windows (you may need to restart
+&kde; to be sure) and when you re-open them, your settings should be applied.</para>
+</listitem>
+</orderedlist>
+
+</example>
+
+
+<!-- <itemizedlist>
+<title>Related Information</title>
+<listitem><para>to be written</para>
+</listitem>
+</itemizedlist>-->
+
+
+</sect1>
+
+<!-- Keep this comment at the end of the file
+Local variables:
+mode: xml
+sgml-omittag:nil
+sgml-shorttag:nil
+sgml-namecase-general:nil
+sgml-general-insert-case:lower
+sgml-minimize-attributes:nil
+sgml-always-quote-attributes:t
+sgml-indent-step:0
+sgml-indent-data:true
+sgml-parent-document:("index.docbook" "book" "sect1")
+sgml-exposed-tags:nil
+sgml-local-catalogs:nil
+sgml-local-ecat-files:nil
+End:
+-->

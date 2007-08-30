@@ -1,0 +1,251 @@
+<chapter id="usenet">
+<!-- Uncomment the <*info> below and add your name to be -->
+<!-- credited for writing this section. -->
+
+<!--
+<chapterinfo>
+<authorgroup>
+<author>
+<firstname>Your First Name here</firstname>
+<surname>Your Surname here </surname>
+</author>
+</authorgroup>
+</chapterinfo>
+-->
+
+<title>Usenet News</title>
+
+<para>Usenet newsgroups are forums in which you can post messages to discuss
+various topics: almost any subject you like (and many you don't!) can
+be found there. Although usenet has become less popular than it once
+was, because of the increasing use of web forums, &etc;, it is still a
+useful tool. &kde; provides a powerful usenet news reader called &knode;.</para>
+
+<para>You can find &knode; in the <guimenu>K</guimenu> Menu under the
+<guisubmenu>Internet</guisubmenu> entry: the menu entry
+<guimenuitem>&knode; (News Reader)</guimenuitem> launches the program.</para>
+
+
+<para>The main window of &knode; should now be displayed on your
+desktop as shown; on the first start, the settings dialog will be
+invoked.</para>
+
+<screenshot>
+<screeninfo>Setting up &knode;</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="knode-start.png" format="PNG"/> </imageobject>
+<textobject>
+<phrase>&knode; after first start</phrase>
+</textobject>
+<caption>
+<para>&knode; after first start</para>
+</caption>
+</mediaobject>
+</screenshot>
+
+<sect1 id="knode-setting-your-identity"> 
+<title>Personal settings</title>
+
+<para>The first page of the settings dialog is for personal settings: </para>
+<screenshot> 
+<screeninfo>Dialog for entering personal information</screeninfo> 
+<mediaobject> 
+<imageobject> 
+<imagedata fileref="knode-identity.png" format="PNG"/> </imageobject> 
+<textobject> 
+<phrase>Entering personal information</phrase> 
+</textobject> 
+<caption> 
+<para>Entering personal information</para></caption> 
+</mediaobject> 
+</screenshot> 
+
+<variablelist>
+
+<varlistentry>
+<term>
+<guilabel>Name</guilabel></term> 
+<listitem>
+<para>In the field <guilabel>Name</guilabel>, enter your name. This
+name will later appear in the newsgroups as sender, and can be seen by
+anyone.</para>
+
+<para>Filling out the field <guilabel>Name</guilabel> is
+mandatory.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term> 
+<guilabel>Email address</guilabel></term>
+<listitem>
+<para>The email address you enter here will be used as sender in news
+articles, &ie; as actual address of the author, in conjunction with
+the real name (set in the field <guilabel>Name</guilabel>).</para>
+
+<para>Filling out the <guilabel>Email Address</guilabel> field is
+mandatory.</para>
+
+</listitem>
+</varlistentry>
+
+</variablelist>
+
+</sect1>
+
+<sect1 id="knode-setting-the-news-account">
+<title>Configuring the news account</title>
+
+
+<para>Now we must tell &knode; about where we get the news from or
+where to send the articles to later on. In the list on the
+right, there is an <guilabel>Accounts</guilabel> entry; click on it and choose the
+<guilabel>Newsgroup servers</guilabel> tab, because we first want to configure
+the news account: the list of accounts is still empty.</para>
+
+<para>To create a new account click on <guibutton>Add...</guibutton>. The
+following dialog appears:</para>
+
+<screenshot>
+<screeninfo>The <guilabel>New Account</guilabel> dialog</screeninfo> 
+<mediaobject> 
+<imageobject> 
+<imagedata fileref="knode-news-account.png" format="PNG"/> </imageobject> 
+<textobject> 
+<phrase>The <guilabel>New Account</guilabel> dialog</phrase> 
+</textobject> 
+<caption>
+<para>The <guilabel>New Account</guilabel> dialog</para> 
+</caption> 
+</mediaobject> 
+</screenshot> 
+
+<variablelist>
+
+<varlistentry>
+<term><guilabel>Name</guilabel></term>
+<listitem>
+<para>The <guilabel>Name</guilabel> field can be filled in as you
+like; the text you enter will later be visible in the folder view. You
+could, for example, enter the name of your Internet Provider; for our example we
+enter the name <userinput>My News Account</userinput>.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Server</guilabel></term>
+<listitem>
+
+<para>The next field is labelled <guilabel>Server</guilabel>. Unlike
+the field <guilabel>Name</guilabel>, what you enter here is important.
+The name of the news server is fixed and you should be able to get it
+from your Internet service provider; if you do not know the name of
+the news server, you should get it now: without this information you
+cannot read any news. If your Internet service provider doesn't own a
+news server you can use a public one (universities often provide
+public news servers.)</para>
+
+<para>For our example configuration we enter the name
+<userinput><systemitem
+class="systemname">news.server.com</systemitem></userinput>; you will,
+of course, enter the real name of your news server.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Port</guilabel></term>
+<listitem>
+<para>You probably will not need to change this from the default in most
+cases.</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+
+</sect1>
+
+<sect1 id="knode-setting-the-mail-account"> 
+<title>Setting up the mail account</title> 
+
+<para>Sometimes you need to answer to the author of an article
+directly, without posting to the newsgroup; for example, when you want
+to make a very personal comment or want to correct an error. If you
+want to do this, select the <guilabel>Mail Server (SMTP)</guilabel> tab. The
+following dialog box appears:</para> 
+
+<screenshot> 
+<screeninfo>Dialog Box for setting up the mail account</screeninfo> 
+<mediaobject> 
+<imageobject> 
+<imagedata fileref="knode-mail-account.png" format="PNG"/> </imageobject> 
+<textobject> 
+<phrase>Setting up the mail account</phrase> 
+</textobject> 
+<caption> 
+<para>Setting up the mail account</para> 
+</caption> 
+</mediaobject> 
+</screenshot> 
+
+<variablelist>
+
+<varlistentry>
+<term><guilabel>Server</guilabel></term>
+<listitem>
+<para>The name (address) of your mail server as provided by your
+Internet service provider or system administrator; all you have to do
+here is enter the mail server's name in the
+<guilabel>Server</guilabel> field.</para>
+
+<para>In our example we enter <userinput><systemitem
+class="systemname">mail.server.com</systemitem></userinput></para>
+</listitem>
+</varlistentry>
+
+
+<varlistentry> 
+<term><guilabel>Port</guilabel></term>
+<listitem>
+
+<para>Again, you probably will not need to change the
+<guilabel>Port</guilabel> setting.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+
+<!-- Add links to "further reading" here -->
+<itemizedlist>
+<title>Related Information</title>
+<listitem><para>The comp.windows.x.kde newsgroup is the main user
+support group for &kde; on usenet. You can find other resources for
+getting help with &kde; in <xref linkend="getting-help"/>.</para>
+</listitem>
+<listitem><para><ulink url="http://gmane.org">Gmane</ulink> provides a
+usenet frontend to many mailing lists, including most of the &kde;
+lists, so you can read them with &knode;.</para>
+</listitem>
+</itemizedlist>
+
+
+</sect1>
+
+</chapter>
+
+<!-- Keep this comment at the end of the file
+Local variables:
+mode: xml
+sgml-omittag:nil
+sgml-shorttag:nil
+sgml-namecase-general:nil
+sgml-general-insert-case:lower
+sgml-minimize-attributes:nil
+sgml-always-quote-attributes:t
+sgml-indent-step:0
+sgml-indent-data:true
+sgml-parent-document:("index.docbook" "book" "chapter")
+sgml-exposed-tags:nil
+sgml-local-catalogs:nil
+sgml-local-ecat-files:nil
+End:
+-->

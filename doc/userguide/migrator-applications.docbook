@@ -1,0 +1,272 @@
+<chapter id="migrator-applications">
+<chapterinfo>
+<authorgroup>
+<author>
+&Francis.Giannaros; &Francis.Giannaros.mail;
+</author>
+</authorgroup>
+</chapterinfo>
+
+<title>Application Guide for Migrates</title>
+
+<!-- Section needs a +lot+ of work. I couldn't do any of the Mac equivalents, as I haven't used it before. More entries could be put in, too. -->
+
+<para>&kde; has many applications, often prefixed with (or containing) the letter k. The names are generally self-explanatory, but it can still be difficult sometimes to find the appropriate packages. Migrates from operating systems such as <trademark class="registered">Microsoft Windows</trademark> or <trademark class="registered">Apple Macintosh</trademark> might have some difficulty in locating an application for a particular job. Below is a table with an expansion on the &kmenu; and the respective Win/Mac equivalent.</para>
+
+<table><title>Sample Table</title>
+<tgroup cols='6' align='left' colsep='1' rowsep='1'>
+<colspec colname='c1'/>
+<colspec colname='c2'/>
+<colspec colname='c3'/>
+<colspec colname='c5'/>
+<colspec  colnum='6' colname='c6' />
+<thead>
+<row>
+  <entry namest="c1" nameend="c2" align="center"><para>&kmenu; Location</para></entry>
+  <entry><para>&kde; Application</para></entry>
+  <entry><para><trademark class="registered">Windows</trademark> Equivalent</para></entry>
+  <entry><para><trademark class="registered">Macintosh</trademark> Equivalent</para></entry>
+  <entry><para>Notes</para></entry>
+</row>
+</thead>
+<!--<tfoot>
+<row>
+  <entry><para>f1</para></entry>
+  <entry><para>f2</para></entry>
+  <entry><para>f3</para></entry>
+  <entry><para>f4</para></entry>
+  <entry><para>f5</para></entry>
+</row>
+</tfoot>-->
+<tbody>
+<row>
+	<entry align="center" namest="c1" nameend="c2"><para>File Manager</para></entry>
+	<entry align="center"><para>&konqueror; (Home Folder)</para></entry>
+	<entry align="center"><para>Windows Explorer</para></entry>
+	<entry align="center"><para>Integrated file manager, content
+viewer/player and web browser</para></entry>
+</row>
+<row>
+	<entry namest="c1" nameend="c2"><para>System and User Settings</para></entry>
+	<entry><para>&kcontrol;</para></entry>
+	<entry><para>Control Center</para></entry>
+</row>
+<row>
+	<entry morerows='1' valign='middle'><para>Office</para></entry>
+	<entry><para>Office Suite:
+		<orderedlist>
+			<listitem><para>Word Processing</para></listitem>
+			<listitem><para>Spreadsheets</para></listitem>
+			<listitem><para>Slide Presentations</para></listitem>
+			<listitem><para>Flowchart &amp; Diagram Editing</para></listitem>
+			<listitem><para>Scalable Graphics</para></listitem>
+			<listitem><para>Image Manipulation</para></listitem>
+			<listitem><para>Report Generator</para></listitem>
+			<listitem><para>Chart</para></listitem>
+			<listitem><para>Database Creation</para></listitem>
+			<listitem><para>Formula Editor</para></listitem>
+		</orderedlist>
+
+	</para></entry>
+	
+	<entry><para>
+		<orderedlist>
+			<listitem><para>&kword;</para></listitem>
+			<listitem><para>&kspread;</para></listitem>
+			<listitem><para>&kpresenter;</para></listitem>
+			<listitem><para>&kivio;</para></listitem>
+			<listitem><para>&karbon14;</para></listitem>
+			<listitem><para>&krita;</para></listitem>
+			<listitem><para>&kugar;</para></listitem>
+			<listitem><para>&kchart;</para></listitem>
+			<listitem><para>&kexi;</para></listitem>
+			<listitem><para>&kformula;</para></listitem>
+		</orderedlist>
+	
+	</para></entry>
+
+  <entry><para>
+	<orderedlist>
+		<listitem><para><application><acronym>MS</acronym> Word</application></para></listitem>
+		<listitem><para><application><acronym>MS</acronym> Excel</application></para></listitem>
+		<listitem><para><application><acronym>MS</acronym> Powerpoint</application></para></listitem>
+		<listitem><para><application>Adobe Illustrator</application></para></listitem>
+		<listitem><para><application>Adobe Photoshop</application></para></listitem>
+		<listitem><para><application>Report Generator</application></para></listitem>
+		<listitem><para><application>Chart</application></para></listitem>
+		<listitem><para><application><acronym>MS</acronym> Access</application></para></listitem>
+	</orderedlist>
+
+
+
+</para></entry>
+
+<!--Fill in Mac equivalents
+	<entry><para>Office Suite:
+<orderedlist>
+	<listitem><para>Word Processing</para></listitem>
+	<listitem><para>Spreadsheets</para></listitem>
+	<listitem><para>Slide Presentations</para></listitem>
+	<listitem><para>Flowchart &amp; Diagram Editing</para></listitem>
+	<listitem><para>Scalable Graphics</para></listitem>
+	<listitem><para>Image Manipulation</para></listitem>
+	<listitem><para>Report Generator</para></listitem>
+	<listitem><para>Chart</para></listitem>
+	<listitem><para>Database Creation</para></listitem>
+	<listitem><para>Formula Editor</para></listitem>
+</orderedlist>
+
+</para></entry>-->
+
+</row>
+
+<row>
+	<entry><para>Personal Information Management:
+		<orderedlist>
+			<listitem><para>Mail</para></listitem>
+			<listitem><para>Address Book</para></listitem>
+			<listitem><para>Personal Organizer</para></listitem>
+			<listitem><para>News Reader</para></listitem>
+			<listitem><para>Pop-up Notes</para></listitem>
+			<listitem><para><acronym>RSS</acronym> Reader</para></listitem>
+		</orderedlist>	
+	
+	</para></entry>
+	<entry><para>
+		<orderedlist>
+			<listitem><para>&kmail;</para></listitem>
+			<listitem><para>&kaddressbook;</para></listitem>
+			<listitem><para>&korganizer;</para></listitem>
+			<listitem><para>&knode;</para></listitem>
+			<listitem><para>&knotes;</para></listitem>
+			<listitem><para>&akregator;</para></listitem>
+		</orderedlist>	
+	
+	</para></entry>
+
+	<entry><para><application><acronym>MS</acronym> Outlook</application></para></entry>
+
+	<entry><para>The Personal Information Manager is &kontact;; all other &kde; <acronym>PIM</acronym> applications integrate into it.</para></entry>
+
+</row>
+
+<row>
+	<entry morerows='2' valign='middle'><para>Internet</para></entry>
+	<entry><para>Web Browser</para></entry>
+	<entry><para>&konqueror;</para></entry>
+	<entry><para><acronym>MS</acronym> Internet Explorer</para></entry>
+	<entry><para><application>Safari</application></para></entry>
+	<entry><para>Integrated file manager, web browser, <acronym>FTP</acronym> manager, and univerval viewing application.</para></entry>
+
+
+</row>
+
+<row>
+	<entry><para>Instant Messaging</para></entry>
+	<entry><para>&kopete;
+		<itemizedlist>
+			<listitem><para><acronym>AIM</acronym></para></listitem>
+			<listitem><para><acronym>MSN</acronym></para></listitem>
+			<listitem><para><acronym>ICQ</acronym></para></listitem>
+			<listitem><para>Jabber</para></listitem>
+			<listitem><para>Novell GroupWise</para></listitem>
+			<listitem><para>Yahoo</para></listitem>
+			<listitem><para><acronym>IRC</acronym></para></listitem>
+			<listitem><para><acronym>SMS</acronym></para></listitem>
+		</itemizedlist>
+
+</para></entry>
+	<entry><para><acronym>MSN</acronym> Messenger</para></entry>
+	<entry><para>Comprehensive multi-network compatible instant messaging software</para></entry>
+</row>
+
+<row>
+	<entry><para>Chat (<acronym>IRC</acronym>)</para></entry>
+	<entry><para>&ksirc;</para></entry>
+	<entry><para><application>mIRC</application></para></entry>
+</row>
+
+<row>
+	<entry morerows='4' align="center"><para>Multimedia</para></entry>
+	<entry><para>Music/Audio</para></entry>
+	<entry><para>&juk;</para></entry>
+	<entry><para><trademark class="registered">Windows</trademark> Media Player</para></entry>
+</row>
+
+<row>
+	<entry><para>&CD;/<acronym>DVD</acronym> Burner</para></entry>
+	<entry><para><application>K3b</application></para></entry>
+	<entry><para>Nero</para></entry>
+</row>
+
+<row>
+	<entry><para>Video Player</para></entry>
+	<entry><para>&noatun;</para></entry>
+	<entry><para><trademark class="registered">Windows</trademark> Media Player</para></entry>
+</row>
+
+<row>
+	<entry><para>Audio &CD; Ripper</para></entry>
+	<entry><para><application>KAudioCreator</application></para></entry>
+</row>
+
+<row>
+	<entry><para>Sound Controls</para></entry>
+	<entry><para>&kmix;</para></entry>
+</row>
+
+<row>
+	<entry morerows='3' align="center"><para>System</para></entry>
+	<entry><para>System Info Center</para></entry>
+	<entry><para>&kinfocenter;</para></entry>
+</row>
+
+<row>
+	<entry><para>Terminal</para></entry>
+	<entry><para>&konsole;</para></entry>
+	<entry><para><application>CMD</application></para></entry>
+</row>
+
+<row>
+	<entry><para>User Manager</para></entry>
+	<entry><para>&kuser;</para></entry>
+	<entry><para>User Manager</para></entry>
+</row>
+
+<row>
+	<entry><para>Package Manager</para></entry>
+	<entry><para>&kpackage;</para></entry>
+	<entry><para><application>Add/Remove Programs</application></para></entry>
+</row>
+
+<row>
+	<entry morerows='2' align="center"><para>Utilities</para></entry>
+	<entry><para>Archiver</para></entry>
+	<entry><para>&ark;</para></entry>
+	<entry><para><application>WinZip</application></para></entry>
+</row>
+
+<row>
+	<entry><para>Password Manager</para></entry>
+	<entry><para><application>KWallet</application></para></entry>
+</row>
+
+<row>
+	<entry><para>Text Editor</para></entry>
+	<entry><para>&kate;</para></entry>
+	<entry><para>Notepad</para></entry>
+</row>
+
+
+</tbody>
+</tgroup>
+
+</table>
+
+<itemizedlist>
+<title>Related Information</title>
+<listitem><para>Many more &kde; applications are available from the &kde; extragear (see <xref linkend="extragear-applications" /> for more information) or from <ulink url="http://kde-apps.org">http://kde-apps.org</ulink>.</para></listitem>
+<listitem><para>Reference: <ulink url="http://kudos.berlios.de/kf/kf1.html#pkgtablestock">http://kudos.berlios.de/kf/kf1.html#pkgtablestock</ulink></para></listitem>
+</itemizedlist>
+
+</chapter>

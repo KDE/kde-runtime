@@ -1,0 +1,25 @@
+<chapter id="lpr-bsd-style-module">
+<title><acronym>LPR</acronym> (<acronym>BSD</acronym>)</title>
+
+<para>Plain (old?) <acronym>LPR</acronym> support. An
+<acronym>LPRng</acronym> module is in development, and hopefully
+available for 2.3 release.</para>
+
+<sect1>
+<title>Overview of Provided Features</title>
+
+<itemizedlist>
+<listitem>
+<para>Printer management: basic support to add/remove/configure a
+printer, compatible with &RedHat;-6.x systems
+(<command>printtool</command> + rhs-printfilers packages).</para>
+</listitem>
+<listitem>
+<para>Job management: not supported</para>
+</listitem>
+<listitem>
+<para>Print options: basic control</para>
+</listitem>
+</itemizedlist>
+</sect1>
+</chapter>

@@ -1,0 +1,17 @@
+<article lang="&language;" id="imaps">
+<title>imaps</title>
+<articleinfo>
+<authorgroup>
+<author>&Michael.Haeckel; &Michael.Haeckel.mail;</author>
+<!-- TRANS:ROLES_OF_TRANSLATORS -->
+</authorgroup>
+ 
+<date>2001-08-07</date>
+ 
+ 
+</articleinfo>
+
+<para>IMAPS is the <ulink url="help:/kioslave/imap.html">IMAP</ulink> protocol
+encrypted via SSL.</para>
+
+</article>

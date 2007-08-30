@@ -1,0 +1,213 @@
+<sect1 id="getting-help">
+
+<sect1info>
+<authorgroup>
+<author>&Lauri.Watts;
+</author>
+</authorgroup>
+</sect1info>
+
+
+<title>Getting Help</title>
+
+<sect2 id="user-manuals">
+<title>User Manuals</title>
+
+<indexterm><primary>User Manual</primary></indexterm>
+<para>Most applications come with a comprehensive user manual<indexterm><primary>User Manual</primary><secondary>Handbook</secondary></indexterm>, which you can
+reach various ways:</para>
+
+<itemizedlist>
+<listitem>
+<para>By pressing <keycap>F1</keycap> inside the application.</para>
+</listitem>
+<listitem>
+<para>From the menu bar:
+<menuchoice><guimenu>Help</guimenu><guimenuitem><replaceable>Application name
+</replaceable></guimenuitem></menuchoice></para>
+</listitem>
+<listitem>
+<para>By browsing to it in &khelpcenter;<indexterm><primary>&khelpcenter;</primary></indexterm></para>
+</listitem>
+<listitem>
+<para>By using the help KIOslave in &konqueror;. So, in the Location Toolbar, simply type <userinput>help:/<replaceable>Application name</replaceable></userinput>
+</para>
+</listitem>
+<listitem>
+<para>Online at <ulink
+url="http://docs.kde.org">http://docs.kde.org</ulink></para>
+</listitem>
+</itemizedlist>
+
+</sect2>
+
+<sect2 id="context-help">
+<title>Context and <quote>What's This</quote> Help</title>
+
+<para>Many applications also provide context help in two forms:
+Tooltips, and <quote>What's This</quote> help.</para>
+
+<sect3 id="tooltips">
+<title>Tooltips</title>
+
+<indexterm><primary>Tooltips</primary></indexterm>
+<para>Tooltips are small informational windows or balloons that display when
+you hover the mouse over an item on your screen without clicking.</para>
+
+<para>&kde; uses tooltips in many places to provide brief help or
+information about an item on your screen.  For instance, most toolbar buttons
+inside applications will display their name in a tooltip if you rest or hover
+your mouse over them.</para>
+
+<para>Tooltips have another function, which is not specifically tied to
+help.  In the &konqueror; file manager and on your Desktop, tooltips can
+provide information about files.  This is commonly referred to as <quote>meta information</quote>.</para>
+
+<para>You can find out more about meta-information tooltips in the section
+about <link linkend="file-manager">the &konqueror; file manager</link>.</para>
+
+</sect3>
+
+<sect3 id="whats-this-help">
+<title><quote>What's This?</quote></title>
+
+<indexterm><primary>What's This?</primary></indexterm>
+
+<para><quote>What's This?</quote> help is usually more detailed than tooltips.
+You can access <quote>What's This?</quote> help in two ways:</para>
+
+<itemizedlist>
+<listitem>
+<para>By pressing the <guibutton>?</guibutton> button in the titlebar of the
+window.</para>
+</listitem>
+<listitem>
+<para>By pressing the key combination
+<keycombo>&Shift;<keycap>F1</keycap></keycombo></para>
+</listitem>
+</itemizedlist>
+
+<para>The cursor will change to a pointer with a question mark next to it.
+Click on the item you want to know about, and a small window will
+pop up displaying information.</para>
+
+</sect3>
+</sect2>
+
+<sect2 id="mailing-lists-newsgroups-and-irc">
+<title>Mailing Lists, Newsgroups and <acronym>IRC</acronym></title>
+
+<sect3 id="mailing-lists">
+<title>Mailing Lists</title>
+
+<indexterm><primary>Mailing Lists</primary></indexterm>
+<para>&kde; provides many mailing lists which can provide you with help
+and guidance in using and configuring your Desktop.</para>
+
+<para>Some of the lists you might find useful are:</para>
+
+<variablelist>
+<varlistentry>
+<term>The &kde; User List
+<indexterm><primary>&kde; User Mailing List</primary></indexterm></term>
+<listitem>
+<para>This mailing list focuses specifically on <acronym>OS</acronym>-independent questions
+and discussions regarding using &kde;. Operating-system-specific questions and
+discussion are off-topic here. For
+example, the question <quote>How do I change the margin size for KWord
+documents</quote> is appropriate for this list; whereas <quote>How do I set
+up my printer using &kde; under UnixOS X.Y</quote> is not. Questions asked and
+discussions here should apply to all &kde; users using the applicable &kde;
+software, not just those using the same operating system.</para>
+<para>You can subscribe to this list at <ulink
+url="https://mail.kde.org/mailman/listinfo/kde">https://mail.kde.org/mailman/listinfo/kde</ulink>.</para>
+<para>You can find archives at <ulink
+url="http://lists.kde.org/?l=kde">http://lists.kde.org/?l=kde</ulink>.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>The &kde;-&Linux; List
+<indexterm><primary>kde-linux Mailing List</primary></indexterm></term>
+<listitem>
+<para>This mailing list focusses specifically on questions and discussions
+regarding using &kde; on &Linux;. Questions and discussions can involve any
+issue confronting desktop users who run &kde; on a &Linux; system. Hence,
+questions such as <quote>How do I setup a networked printer for printing from
+&kde; on LinuxDistro X.Y</quote> are appropriate here. If you prefer a list
+limited to <acronym>OS</acronym>-independent questions and discussions
+concerning &kde;, please use the general &kde; mailing list.</para>
+<para>You can subscribe to this list at <ulink
+url="https://mail.kde.org/mailman/listinfo/kde-linux">https://mail.kde.org/mailman/listinfo/kde-linux</ulink>.</para>
+<para>You can find archives at <ulink
+url="http://lists.kde.org/?l=kde-linux">http://lists.kde.org/?l=kde-linux</ulink>.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect3>
+
+<sect3>
+<title>IRC</title>
+
+<para>There is a #kde channel on Freenode (irc.freenode.net) for support and other general talk about &kde;. As usual, you can access this channel by using any of &kde;'s popular IRC clients which include <application>konversation</application>, &ksirc;, as well as &kopete;. For more information, check the <xref linkend="irc"/> section.</para>
+
+</sect3>
+</sect2>
+
+
+<sect2 id="more-resources">
+<title>More Resources</title>
+
+<para>There are many other resources which you may found useful; some of these are listed below:</para>
+
+<variablelist>
+<varlistentry>
+<term>dot.kde.org
+<indexterm><primary>&kde; News Resource</primary></indexterm></term>
+<listitem>
+<para>This website has a searchable &kde; news resource where you can find out about a superfluity of innovations in the world of &kde;.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+
+<variablelist>
+<varlistentry>
+<term>kde-look.org
+<indexterm><primary>icandy for &kde;</primary></indexterm></term>
+<listitem>
+<para>The paramount resource for &kde; icandy, including themes, window decorations, wallpapers, mouse themes and icons for your &kde; desktop. Note also that the site contains a howto section on how to install the most common of these.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+
+<variablelist>
+<varlistentry>
+<term>wiki.kde.org
+<indexterm><primary>&kde; wiki</primary></indexterm></term>
+<listitem>
+<para>The official &kde; Wiki. From here you can have access to a plethora of information ranging from frequently asked questions and HOWTOs to tips and tricks. The wiki should never, however, be used as a substitute for the respective application's handbook or the official &kde; documentation.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+
+</sect2>
+
+</sect1>
+
+<!-- Keep this comment at the end of the file
+Local variables:
+mode: xml
+sgml-omittag:nil
+sgml-shorttag:nil
+sgml-namecase-general:nil
+sgml-general-insert-case:lower
+sgml-minimize-attributes:nil
+sgml-always-quote-attributes:t
+sgml-indent-step:0
+sgml-indent-data:true
+sgml-parent-document:("index.docbook" "book" "sect1")
+sgml-exposed-tags:nil
+sgml-local-catalogs:nil
+sgml-local-ecat-files:nil
+End:
+-->

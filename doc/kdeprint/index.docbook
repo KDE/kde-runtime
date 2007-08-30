@@ -1,0 +1,200 @@
+<?xml version="1.0" ?>
+<!DOCTYPE book PUBLIC "-//KDE//DTD DocBook XML V4.2-Based Variant V1.1//EN" 
+"dtd/kdex.dtd" [
+  <!ENTITY CUPS "<acronym>CUPS</acronym>">
+  <!ENTITY PPD "<acronym>PPD</acronym>">
+  <!ENTITY IPP "<acronym>IPP</acronym>">
+  <!ENTITY ghostscript "<application>ghostscript</application>">
+  <!ENTITY tech-overview-doc SYSTEM "tech-overview.docbook">
+  <!ENTITY highlights-doc SYSTEM "highlights.docbook">
+  <!ENTITY getting-started-doc SYSTEM "getting-started.docbook">
+  <!ENTITY theory-doc SYSTEM "theory.docbook">
+  <!ENTITY cups-configuration-doc SYSTEM "cups-config.docbook">
+  <!ENTITY add-printer-wizard-2-doc SYSTEM "add-printer-wiz.docbook">
+  <!ENTITY cupsoptions-presently-outside-kcontrol-doc SYSTEM 
+"cupsoptions.docbook">
+  <!ENTITY rlpr-doc SYSTEM "rlpr.docbook">
+  <!ENTITY lpd-doc SYSTEM "lpd.docbook">
+  <!ENTITY lpr-bsd-doc SYSTEM "lpr-bsd.docbook">
+  <!ENTITY lprng-doc SYSTEM "lprng.docbook">
+  <!ENTITY external-command-doc SYSTEM "external-command.docbook">
+  <!ENTITY extensions-doc SYSTEM "extensions.docbook">
+  <!ENTITY final-word-doc SYSTEM "final-word.docbook">
+  <!ENTITY kappname "&kdeprint;"><!-- replace kapp here -->
+  <!ENTITY % addindex "IGNORE">
+  <!ENTITY % English "INCLUDE"><!-- change language only here -->
+]>
+	
+<book lang="&language;">
+  
+<bookinfo>
+<title>The &kdeprint; Handbook</title>
+
+<authorgroup>
+<author>
+<firstname>Kurt</firstname>
+<surname>Pfeifle</surname>
+<affiliation>
+<address>&Kurt.Pfeifle.mail;</address>
+</affiliation>
+</author>
+        
+<othercredit role="developer">
+<firstname>Michael</firstname>
+<surname>Goffioul</surname>
+<affiliation>
+<address>&Michael.Goffioul.mail;</address>
+</affiliation>
+<contrib>Developer</contrib>
+</othercredit>
+
+<othercredit role="reviewer">
+<firstname>Lauri</firstname>
+<surname>Watts</surname>
+<affiliation>
+<address>&Lauri.Watts.mail;</address>
+</affiliation>
+<contrib>Reviewer</contrib>
+</othercredit>
+
+<!-- TRANS:ROLES_OF_TRANSLATORS -->
+
+</authorgroup>
+
+<copyright>
+<year>2001</year>
+<holder>&Kurt.Pfeifle;</holder>
+</copyright>
+
+<legalnotice>&FDLNotice;</legalnotice>
+
+<date>2001-08-09</date>
+<releaseinfo>1.00.04</releaseinfo>
+
+<abstract>
+<para>This handbook describes &kdeprint;. &kdeprint; is not a standalone
+program. It is the new printing framework for &kde; 2.2. &kdeprint;
+is an intermediate layer between &kde; (or other) applications and the selected
+(and installed) print subsystem of your OS (&OS;).</para>
+</abstract>
+
+<keywordset>
+<keyword>KDE</keyword>
+<keyword>kdebase</keyword>
+<keyword>kdeprint</keyword>
+<keyword>print</keyword>
+<keyword>printing</keyword>
+<keyword>CUPS</keyword>
+<keyword>LPR</keyword>
+</keywordset>
+
+</bookinfo>
+
+<chapter id="introduction">
+<title>Introduction</title>
+
+<para>This handbook describes &kdeprint;. &kdeprint; is not a standalone
+program. It is the new printing framework for &kde; 2.2. &kdeprint;
+is an intermediate layer between &kde; (or other) applications and the selected
+(and installed) print subsystem of your OS (&OS;).</para>
+
+<para>It should be noted that both the developer of this application,
+and the author of this document are most familiar with &CUPS; as a
+printing system.  At the time of writing, &CUPS; is the best supported
+printing subsystem, and it is the best documented.</para>
+
+<para>This handbook is a work in progress, and later versions of the
+&kdeprint; software and editions of this handbook will support and
+explore more closely other printing systems.</para>
+
+<para>In the meantime, even if your printing subsystem is not yet well
+covered, you are encouraged to explore the <guilabel>Printing
+Manager</guilabel> module in &kcontrol;, and you will find its
+operation to hopefully be fairly self evident, no matter what printing
+subsystem you use.</para>
+
+<para>&Lauri.Watts;, &kde; documentation team</para>
+
+<!-- Insert here screenshot : <steinbruch_scaled.png> -->
+
+<sect1>
+<title>To configure your printing subsystem from &kcontrol;</title>
+
+<para>To configure your printing subsystem from &kcontrol;, go to
+<menuchoice><guilabel>System</guilabel><guilabel>Printing
+Manager</guilabel></menuchoice> and select your subsystem. Or you can
+let &kdeprint; try to determine it... </para>
+
+<screenshot>
+<screeninfo>&CUPS; Printing Manager dialog: overview via &kcontrol;</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="steinbruch_scaled.png"
+format="PNG"/></imageobject>
+<textobject>
+<phrase>The dialog to configure the &CUPS; server: security 
+settings</phrase></textobject>
+<caption><para>Configuration of printing subsystem from 
+&kcontrol;</para></caption>
+</mediaobject>
+</screenshot>
+</sect1>
+
+</chapter>
+
+&tech-overview-doc;
+
+&highlights-doc;
+
+&theory-doc;
+
+&getting-started-doc;
+
+&cups-configuration-doc;
+
+&add-printer-wizard-2-doc;
+
+&cupsoptions-presently-outside-kcontrol-doc;
+
+&rlpr-doc;
+
+&lpd-doc;
+
+&lpr-bsd-doc;
+
+&lprng-doc;
+
+&external-command-doc;
+
+&extensions-doc;
+
+&final-word-doc;
+
+<chapter id="credits-and-license">
+<title>Credits And Licenses</title>
+
+<para>&kdeprint; copyright 2001, &Michael.Goffioul;
+&Michael.Goffioul.mail;</para>
+
+<para>Documentation copyright 2001, &Kurt.Pfeifle;,
+&Kurt.Pfeifle.mail;</para>
+ 
+<!-- TRANS:CREDIT_FOR_TRANSLATORS -->
+&underFDL;
+&underGPL;
+
+</chapter>
+
+</book>
+
+<!--
+Local Variables:
+mode: sgml
+sgml-minimize-attributes:nil
+sgml-general-insert-case:lower
+sgml-indent-step:0
+sgml-indent-data:nil
+End:
+
+// vim:ts=2:sw=2:tw=78:noet
+-->

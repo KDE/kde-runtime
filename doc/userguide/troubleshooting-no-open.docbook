@@ -1,0 +1,49 @@
+<sect1 id="troubleshooting-not-opening">
+<sect1info>
+<authorgroup>
+<author>&Lauri.Watts;</author>
+</authorgroup>
+</sect1info>
+<title>When An Application Will Not Open</title>
+
+<para>Sometimes when you start an application, it does not open the expected
+window.  Here are some questions to answer and steps to help you figure out
+what is wrong.</para>
+
+<variablelist>
+<varlistentry>
+<term>Did the application ever start, when launched in the same
+manner?</term>
+<listitem><para>If it did, for instance you have clicked an icon on your
+desktop that previously worked, then it is unlikely to be a problem with the
+launcher itself.</para>
+<para>If, however, you normally start your application from an icon on
+&kicker; and this time started it with a desktop icon, then it could simply
+be that the launcher itself is wrong.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>But I can see the launch notification spinning cursor and taskbar entry.
+</term>
+<listitem><para>Foo</para></listitem>
+</varlistentry>
+</variablelist>
+</sect1>
+
+<!-- Keep this comment at the end of the file
+Local variables:
+mode: xml
+sgml-omittag:nil
+sgml-shorttag:nil
+sgml-namecase-general:nil
+sgml-general-insert-case:lower
+sgml-minimize-attributes:nil
+sgml-always-quote-attributes:t
+sgml-indent-step:0
+sgml-indent-data:true
+sgml-parent-document:("index.docbook" "book" "sect1")
+sgml-exposed-tags:nil
+sgml-local-catalogs:nil
+sgml-local-ecat-files:nil
+End:
+-->

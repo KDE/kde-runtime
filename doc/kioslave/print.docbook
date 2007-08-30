@@ -1,0 +1,170 @@
+<article lang="&language;" id="print">
+<title>print</title>
+<articleinfo>
+<authorgroup>
+<author>&Kurt.Pfeifle; &Kurt.Pfeifle.mail;</author>
+<!-- TRANS:ROLES_OF_TRANSLATORS -->
+
+</authorgroup>
+
+<date>2002-06-23</date>
+<releaseinfo>1.00.00</releaseinfo>
+
+</articleinfo>
+
+<para>The <acronym>print</acronym> KIOSlave gives quick access to browse
+different &kdeprint; sections via <quote>virtual folders</quote>.
+These folders provide some information about and quick access to your print 
+subsystem.</para>
+
+<para><command>print:/</command> represents one more of those useful 
+KIOSlaves implemented by &kde;. To access it, just type  <userinput>print:/
+ </userinput> into the address field of &konqueror;. <userinput>print:/
+ </userinput>  doesn't purely provide <quote>read-only</quote> access to
+ your print subsystem, but it also allows you to change settings
+ of your printers, of your print system and lets you create new printers
+ and classes.</para>
+
+<para>You are asked for the Administrator or root password, if you are
+not allowed a view or an operation as a normal user.</para>
+
+<para>You can bookmark frequently used shortcuts like
+ <command>print:/manager</command></para>
+
+<para>Valid syntax is either
+<userinput>print:/[path-to-virtual-folder]</userinput> or
+<userinput>print:[path-to-virtual-folder]</userinput></para>
+
+<para>Note, that some of the views and actions offered do heavily
+ depend on the print subsystem that is installed on your box and presently
+activated for  &kde;. Pages showing printer information display only
+those parts that are valid for the &kde; selected print subsystem.
+(So if you normally run <acronym>CUPS</acronym>, but switched temporarily to 
+
+
+ <quote>Generic UNIX LPD Printing</quote>, which is possible, you will see  
+less printer info, because LPD is not capable of using the same amount of  
+print settings as are possible in CUPS).</para>
+
+<para>Valid syntax to access different virtual folders
+and a short explanation of what they represent:</para>
+
+<variablelist>
+<title>Some examples</title>
+
+<varlistentry>
+<term><userinput>print:/ </userinput> (&ie; the root of 
+print-kioslave)</term>
+<listitem>
+<para>  virtual root for browsing your print subsystem.
+        It displays subfolders <quote>Classes</quote>,
+	<quote>Jobs</quote>,
+	<quote>Manager</quote>, <quote>Printers</quote>, 
+        and <quote>Specials</quote></para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>print:/classes</userinput> or
+<userinput>print:classes </userinput>
+</term> <listitem>
+<para> view your printer classes
+       (supported by and useful for CUPS only)
+</para>
+</listitem>
+</varlistentry>
+
+
+<varlistentry>
+<term><userinput>print:/classes/class_name </userinput> or
+ <userinput>print:classes/class_name </userinput> </term> <listitem>
+<para>view all members of the named
+      printer class (supported by and useful only
+      for CUPS) </para>
+</listitem>
+</varlistentry>
+
+
+<varlistentry>
+<term><userinput>print:/jobs </userinput> 
+or <userinput>print:jobs </userinput></term>
+<listitem>
+<para> lists the current and pending jobs. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>print:/printers </userinput>
+or <userinput>print:printers </userinput></term>
+<listitem>
+<para> lists all your printers. Clicking
+       on a printer name shows more info about that printer.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>print:/printers/printer_name </userinput>
+or <userinput>print:printers/printer_name </userinput> </term>
+<listitem>
+<para>displays useful info about the named
+      printer </para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>print:/manager </userinput> or
+<userinput>print:manager </userinput>
+</term> <listitem>
+<para>opens a page very similar to the &kdeprint;
+      Manager module inside the  &kde; Control Center.
+      Switch to a different printing system here or do every
+      other administrative task. </para>
+<para>This is the most important of access points to your printing
+      system. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>print:/specials </userinput> or
+<userinput>print:specials </userinput>
+</term><listitem>
+<para>lists all presently available <quote>special printers</quote>:
+       Likely you'll see:</para>
+<itemizedlist>
+<listitem>
+        <para>The two that let you save a printfile to disk, in
+                 &PostScript; or <acronym>PDF</acronym> format.</para>
+</listitem>
+<listitem>
+        <para>One that sends it as a <acronym>PDF</acronym> attachment via 
+&kmail;.</para>
+</listitem>
+<listitem>
+        <para>And last, send it via fax, if you have one of the
+                 supported fax backends active, 
+<application>Hylafax</application> or 
+<application>efax</application>.</para>
+</listitem>
+</itemizedlist>
+</listitem>
+</varlistentry>
+
+</variablelist>
+
+<tip><para>You can also put <command>print:/manager</command>
+ or similar as the command in
+ the <quote>Quick Command</quote> utility (started via
+<keycombo action="simul">&Alt;<keycap>F2</keycap></keycombo>)</para></tip>
+
+<para>You can learn more about printing and &kdeprint;'s powerful abilities
+by reading the <ulink url="help:/kdeprint/index.html">&kdeprint; Handbook
+locally</ulink> or at the <ulink url="http://printing.kde.org/">&kdeprint;
+Website</ulink> where there are documents online (<acronym>HTML</acronym> and 
+<acronym>PDF</acronym>),containing
+<ulink 
+url="http://printing.kde.org/documentation/tutorials/">Tutorials</ulink>,
+ as well as <ulink url="http://printing.kde.org/faq/">FAQs</ulink> and
+ Tips and Tricks related to printing in general.</para>
+
+</article>

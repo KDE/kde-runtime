@@ -1,0 +1,53 @@
+<article lang="&language;" id="mac">
+<title>mac</title>
+<articleinfo>
+<authorgroup>
+<author><personname><firstname>Johnathan</firstname><surname>Riddell</surname></personname><email>jr@jriddell.org</email>
+</author>
+<!-- TRANS:ROLES_OF_TRANSLATORS -->
+</authorgroup>
+</articleinfo>
+
+<para>The mac ioslave lets you read an HFS+ partition from &konqueror;
+or any other &kde; file dialog. It uses <ulink
+url="http://www.google.com/search?hl=en&amp;q=hfsplus+utils"> hfsplus
+tools</ulink>, so you will need these installed for it to work.</para>
+
+<para>Enter <userinput>mac:/</userinput> into &konqueror; and you
+should see the contents of your &MacOS; partition. If you have not
+used kio-mac before, you will probably get an error message saying you
+have not specified the right partition. Enter something like
+<userinput>mac:/<option>?dev=/dev/hda2</option></userinput> to specify
+the partition (if you don't know which partition &MacOS; is on, you
+can probably guess by changing hda2 to hda3 and so on or use the print
+command from <command>mac-fdisk</command>). This partition will be
+used the next time, so you do not have to specify it each time.</para>
+
+<para><application>Hfsplus tools</application> let you see the file and copy
+data from the HFS+ partition, but not to copy data to it or change the
+filenames.</para>
+
+<para>HFS+ actually keeps two files for every one you see (called
+forks), a resource fork and a data fork. The default copy mode when
+you are copying files across to your native drive is raw data, which
+means it only copies the data fork. Text files are copied in text mode
+(same as raw format but changes the line endings to be &UNIX; friendly
+and gets rid of some extra characters - strongly advised for text
+files), unless you specify otherwise. You can also copy the files
+across in Mac Binary II format or specify text or raw format with
+another query:
+<userinput>mac:/<option>myfile?mode=b</option></userinput> or
+<userinput>mac:/<option>myfile?mode=t</option></userinput>. See the
+<command>hpcopy</command> man page for more.</para>
+
+<para>Note that you need permissions to read your HFS+ partition.  How
+you get this depends on your distribution. <!-- , do a <command>ls -l
+/dev/hdaX</command> on it to see. Under Debian you have to be in the
+'disk' group (just add your username to the end of the entry in
+/etc/group).--></para>
+
+<para>For some reason some folders in &MacOS; end in a funny tall
+<quote>f</quote> character. This seems to confuse hfstools.</para>
+
+</article>
+

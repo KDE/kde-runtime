@@ -1,0 +1,117 @@
+<chapter id="final-word-from-author">
+<title>Final word from the Author</title>
+
+<sect1 id="who-am-i">
+<title>Who am I, what is my business? </title>
+
+<para>
+My employer is Danka Deutschland GmbH, a leading and
+manufacturer-independent provider of professional and hi-speed digital
+printing systems, black-and-white as well as color. Danka provides
+hardware, software, service, maintenance, consumables and customized
+solutions for the products in its portfolio.  I work there as a
+System Engineer.  Amongst the brands Danka offers are Heidelberg
+(formerly Kodak), Canon, &Hewlett-Packard;, Hitachi, Infotec and
+EfI.</para>
+
+<para>
+My acquaintance with &Linux; and the Free Software community is not
+too old. When I started to play around with &Linux; at the beginning
+of 1999, my deepest disappointment was the poor support for
+printing. True, I made all our machines spit out simplex prints -- but
+what about duplex? What about punching the output? How to make sorting
+work? Or stapling, cover sheets and all the other beautiful finishing
+options our engines offer to customers? No way -- at least for me as a
+non-geek!</para>
+
+<para>
+I began a search on the Internet for a solution. Fortunately not
+much later, in May 1999, Mike Sweet, principal developer of &CUPS;,
+announced the first Beta release of this superb piece of printing
+software.  After trying it briefly, I knew this was it!</para>
+
+<para>
+Next thing I attempted: to make &Linux; distributions interested in
+this new stuff. Believe me -- it was more than tenacious! They seemed
+to think they already had the best thing they could get in
+printing. One reason probably was that they (and many &Linux;
+developers) never had to think about how to best support a printer
+duplexer -- because one had never come near their own
+desks...</para>
+
+<para>
+Finally, my attempts to make some &Linux; print publications
+interested in &CUPS; <quote>backfired</quote> on me - one editor
+squeezed me into writing a series on the subject myself.  And this is
+how some people started to give me the nickname <quote>CUPS
+Evangelist</quote>. I will not get rid of this nick anytime soon, now
+that even the &kde; people wedged me into their timeframe of
+releases. Oh, boy...</para>
+
+<para>Anyway, &CUPS; is now making its way around the world and it
+might well become a triumphal one: I am a little bit proud to have
+supported and contributed to this from near the beginning.</para>
+
+<para>It should encourage you: even if some more experienced &Linux;
+users than you are skeptical about it, and even if your programming
+skills are next to zero (like mine) - there are a lot of tasks and
+jobs and ideas, and talent that you can contribute to the Free Software
+community. Not least within the &kde; project... ;-)
+</para>
+
+</sect1>
+
+<sect1 id="credits">
+<title>Credits</title>
+
+<para>I'd like to thank...</para>
+<itemizedlist>
+<listitem>
+<para>Mike Sweet for developing &CUPS; in the first place</para>
+</listitem>
+<listitem>
+<para>Jean-Eric Cuendet for starting <application>kups</application>
+and <application>qtcups</application>, the predecessors of
+&kdeprint;</para>
+</listitem>
+<listitem>
+<para>Michael Goffioul for doing all the hard work recently</para>
+</listitem>
+<listitem>
+<para>Martin Konold for thinking twice</para>
+</listitem>
+<listitem>
+<para>Sven Guckes for teaching me a few things about the art of <quote>survival
+on the terminal</quote> (just in case &kde; is not there ;-) )</para>
+</listitem>
+<listitem>
+<para>...too numerous others to mention who also let me snatch bits
+and bytes of knowledge
+off them</para>
+</listitem>
+<listitem>
+<para> and last, but not least: Tom Schwaller for encouraging me
+to get into <quote>documentation
+writing</quote></para>
+</listitem>
+</itemizedlist>
+
+</sect1>
+
+<sect1 id="caveats">
+<title>Caveats</title>
+
+<para>&kdeprint; has been developed on a system using &CUPS; 1.1.6.
+&kdeprint; has been tested on other versions of &CUPS; and so
+far no incompatibilities are known. By the time of writing
+this Handbook, &CUPS; 1.1.9 is out with a few new features
+not yet supported by &kdeprint;. Of course you are able to
+access these features, but you will need to bypass &kdeprint;
+and use the &CUPS; command-line tools or edit configuration
+files manually. &kdeprint;'s development will go on and this
+Handbook strives to always be the best available user documentation
+resource for it.</para>
+
+</sect1>
+
+</chapter>

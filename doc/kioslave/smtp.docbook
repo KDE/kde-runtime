@@ -1,0 +1,16 @@
+<article lang="&language;" id="smtp">
+<title>smtp</title>
+<articleinfo>
+<authorgroup>
+<author>&Ferdinand.Gassauer; &Ferdinand.Gassauer.mail;</author>
+<!-- TRANS:ROLES_OF_TRANSLATORS -->
+</authorgroup>
+</articleinfo>
+<para>
+A protocol to send mail from the client workstation to the mail server.
+</para>
+
+<para> See : <ulink url="http://cr.yp.to/smtp.html">Simple Mail Transfer Protocol </ulink>.
+</para>
+
+</article>

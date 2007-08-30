@@ -1,0 +1,441 @@
+<chapter id="basic-applications">
+
+<chapterinfo>
+<authorgroup>
+<author>
+&Francis.Giannaros;
+&Francis.Giannaros.mail;
+</author>
+</authorgroup>
+</chapterinfo>
+
+<title>The Base &kde; Applications</title>
+
+<para>What follows is a brief description of a few of the base &kde; applications. For more information on any of the applications you should check the links recommended with each respective entry. </para>
+
+<!-- What are they?? (Phil) -->
+<!-- Included a few here; may be a good idea to add to this in future -->
+
+<sect1 id="base-applications-fundamental">
+
+<title>Fundamentals</title>
+
+<variablelist>
+<varlistentry>
+<term>&konqueror;</term>
+	<listitem><para>&kde;'s file manager, web browser, <acronym>FTP</acronym> client and much more. &konqueror; is the canvas for all the latest &kde; technology, from KIO slaves (which provide mechanisms for file access) to component embedding, allowing it to be a universal viewing application, capable of displaying various image files as well as documents.</para>
+	
+		<itemizedlist>
+			<listitem><para>Website: <ulink url="http://konqueror.org">http://konqueror.org</ulink></para></listitem>
+			<listitem><para>View the handbook by typing <userinput>help:/konqueror</userinput> in &konqueror;'s Location Toolbar, or by selecting it in &khelpcenter;.</para></listitem>
+		</itemizedlist>
+		
+	</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>&kate;</term>
+	<listitem><para>&kde;'s advanced multi-view text editor. &kate; is excellent for things such as viewing the &HTML; source of a webpage to handling advanced coding in <acronym>C++</acronym>, <acronym>PHP</acronym> and <acronym>XML</acronym> with its powerful syntax highlighting engine and code folding capabilities. &kate; is a very speedy application, being capable of opening huge text files in a matter of seconds, as well as allowing you to view a hefty amount of multiple views in order to see more instances of the same document and/or more documents at any particular time.</para>
+	
+		<itemizedlist>
+			<listitem><para>Website: <ulink url="http://kate.kde.org">http://kate.kde.org</ulink></para></listitem>
+			<listitem><para><ulink
+	url="help:/kate">&kate; Handbook</ulink></para></listitem>
+		</itemizedlist>
+		
+	</listitem>
+
+<!-- Insert Screeny -->
+
+</varlistentry>
+
+<varlistentry>
+<term>&konsole;</term>
+	<listitem><para>The X terminal emulator for &kde;. &konsole;, like many &kde; applications, is extremely customizable; while you can create your own user sessions, you can also of course open &Linux; console sessions, shell sessions, as well as standard <systemitem class="username">root</systemitem> and sudo sessions.</para>
+	
+		<itemizedlist>
+			<listitem><para>Website: <ulink url="http://konsole.kde.org">http://konsole.kde.org</ulink></para></listitem>
+			<listitem><para><ulink
+	url="help:/konsole">&konsole; Handbook</ulink></para></listitem>
+			<listitem><para>User Guide <xref linkend="konsole-intro" /></para></listitem>
+		</itemizedlist>
+		
+	</listitem>
+</varlistentry>
+
+
+<varlistentry>
+<term>&kicker;</term>
+	<listitem><para>The &kde; Panel, used for handling your currently running applications, a pager allowing you to switch between desktops, quick launch buttons to act as application launchers and much more.</para>
+	
+		<itemizedlist>
+			<listitem><para>See <xref linkend="panel-and-desktop"/> for altering some of its settings.</para></listitem>
+			<listitem><para><ulink
+	url="help:/kicker">&kicker; Handbook</ulink></para></listitem>
+		</itemizedlist>
+		
+	</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><application>kdcop</application></term>
+<!-- Mainly mentioned to raise awareness, for DCOP -->
+	<listitem><para>A <acronym>GUI</acronym> front-end to the powerful &DCOP; (Desktop COmmunications Protocol). &DCOP; provides a comprehensive protocol for interprocess communication between &kde; applications. While this is increasingly useful to &kde; programmers, it is also beneficial to the ordinary user who would want to create a script, or, say, a <application>SuperKaramba</application> theme.</para>
+	
+		<itemizedlist>
+			<listitem><para>In the User Guide <xref linkend="scripting-the-desktop"/> and <xref linkend="kdialog"/></para></listitem>
+			<listitem><para>Other Documentation: <ulink
+	url="http://developer.kde.org/documentation/library/kdeqt/dcop.html">http://developer.kde.org/documentation/library/kdeqt/dcop.html</ulink></para></listitem>
+		
+		</itemizedlist>
+	</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>&kcontrol;</term>
+	<listitem><para>The control center for the K Desktop Environment. You can alter a myriad of different things, ranging from themes, fonts and screensavers, to Internet, security and system administration.</para>
+	
+		<itemizedlist>
+			<listitem><para>See <xref linkend="control-center"/>.</para></listitem>
+			<listitem><para><ulink
+	url="help:/kcontrol">&kcontrol; Handbook</ulink></para></listitem>
+		</itemizedlist>
+		
+	</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>&khelpcenter;</term>
+	<listitem><para>The &kde; help system is used to provide access to the base &UNIX; help pages (man or info) as well as the native &kde; documentation provided by the &kde; documentation team or the application authors. You should be able to access all of the &kde; application handbooks from here.</para>
+
+		<itemizedlist>
+			<listitem><para><ulink
+	url="help:/khelpcenter">&khelpcenter; Handbook</ulink></para></listitem>
+			<listitem><para>For information on the &kde; Documentation team, how to possibly join and help &kde;, see: <ulink url="http://kde.org/documentation">http://kde.org/documentation</ulink></para></listitem>
+		</itemizedlist>
+	
+	</listitem>
+</varlistentry>
+
+ </variablelist>
+
+<itemizedlist>
+<title>Related Information</title>
+	<listitem><para><ulink url="http://kde-apps.org">http://kde-apps.org</ulink> -- The largest directory of third-party &kde; applications.</para></listitem>
+	<listitem><para>As you may have noticed, a wealth of information is accessible from the respective handbooks themselves, which can be accessed either by using the help KIO slave in &konqueror; (that is, type <userinput>help:/<replaceable>application</replaceable></userinput> in the Location toolbar), or by selecting it in the &khelpcenter;.</para></listitem>
+	<listitem><para>You can also likely find out quite a bit of information from the &kde; website, itself, at <ulink url="http://kde.org">http://kde.org</ulink>.</para></listitem>
+</itemizedlist>
+
+</sect1>
+
+<sect1 id="base-applications-kdepim">
+<sect1info>
+<authorgroup>
+<author>
+&Francis.Giannaros;
+&Francis.Giannaros.mail;
+</author>
+</authorgroup>
+</sect1info>
+
+<title>Personal Information Management</title>
+
+<para>&kde; <acronym>PIM</acronym> (Personal Information Manager) is a sub-project of &kde;, and it aims to provide an application suite to manage personal information. It has several components, but these can all be brought under one application -- &kontact;, which is the personal information manager. Below is an overview of a few of its popular components; that is, a few of the applications that integrate into it.</para>
+
+<variablelist>
+<varlistentry>
+<term>&kontact;</term>
+	<listitem><para>This serves as the medium by which the rest of the applications in &kde; <acronym>PIM</acronym> can integrate with one another. All of the applications in &kde; <acronym>PIM</acronym> can be displayed inside here, and you can easily choose which ones to display. It also contains a Summary page by which you can get a brief overview of events and information in the other components.</para>
+	
+		<itemizedlist>
+			<listitem><para>Website: <ulink url="http://kontact.kde.org">http://kontact.kde.org</ulink></para></listitem>
+			<listitem><para>View the handbook by typing <userinput>help:/kontact</userinput> in &konqueror;'s Location Toolbar, or by selecting it in &khelpcenter;.</para></listitem>
+		</itemizedlist>
+		
+	</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>&kmail;</term>
+	<listitem><para>The mail component. &kmail; comes with full <acronym>IMAP</acronym>, <acronym>POP3</acronym> and <acronym>SMTP</acronym> support. Signing and encrypting of emails is permitted, and there are many comprehensive anti-spam functions available. A spell check can easily be used, &HTML; emails can be viewed appropriately, and there is an advanced search feature.</para>
+	
+		<itemizedlist>
+			<listitem><para>Website: <ulink url="http://kmail.kde.org">http://kmail.kde.org</ulink></para></listitem>
+			<listitem><para><ulink url="help:/kmail">&kmail; Handbook</ulink></para></listitem>
+		</itemizedlist>
+		
+	</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>&korganizer;</term>
+	<listitem><para>A fully customizable organizer which constitutes as the calender component. &korganizer; provides management of events and tasks, alarm notification, web export, network transparent handling of data, group scheduling, import and export of calendar files, and much more.</para>
+	
+		<itemizedlist>
+			<listitem><para>Website: <ulink url="http://korganizer.kde.org">http://korganizer.kde.org</ulink></para></listitem>
+			<listitem><para><ulink url="help:/korganizer">&korganizer; Handbook</ulink></para></listitem>
+		</itemizedlist>
+		
+	</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>&kaddressbook;</term>
+	<listitem><para>The contacts component. &kaddressbook; enables you to manage your contacts efficiently and comfortably; contacts can be easily exported and imported from a plethora of different address book standards, and it can be efficiently integrated with &kopete;, &kde;'s multi-protocol instant messenger. Other features include support for all international character sets and advanced search functions.</para>
+	
+		<itemizedlist>
+			<listitem><para>Website: <ulink url="http://pim.kde.org/components/kaddressbook.php">http://pim.kde.org/components/kaddressbook.php</ulink></para></listitem>
+			<listitem><para><ulink url="help:/kaddressbook">&kaddressbook; Handbook</ulink></para></listitem>
+		</itemizedlist>
+		
+	</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>&knotes;</term>
+	<listitem><para>A handy component which can serve to handle all your digital sticky notes. You can have them displayed on your desktop, they can be <quote>dragged n' dropped</quote> into emails, printed, or even be displayed after &kontact; is closed down.</para>
+	
+		<itemizedlist>
+			<listitem><para>Website: <ulink url="http://pim.kde.org/components/knotes.php">http://pim.kde.org/components/knotes.php</ulink></para></listitem>
+			<listitem><para><ulink url="help:/knotes">&knotes; Handbook</ulink></para></listitem>
+		</itemizedlist>
+		
+	</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>&knode;</term>
+	<listitem><para>The newsreader component. It is <acronym>GNSKA</acronym> (The Good Net-Keeping Seal of Approval) compliant, has support for <acronym>MIME</acronym> and multiple servers.</para>
+	
+		<itemizedlist>
+			<listitem><para>Website: <ulink url="http://knode.sourceforge.net/">http://knode.sourceforge.net/</ulink></para></listitem>
+			<listitem><para><ulink url="help:/knode">&knode; Handbook</ulink></para></listitem>
+		</itemizedlist>
+		
+	</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>&akregator;</term>
+	<listitem><para>A lightweight and fast program to display news items provided by feeds, supporting all commonly used versions of <acronym>RSS</acronym> and <acronym>Atom</acronym> feeds. Useful features include searching in article titles, management of feeds in folders and setting archiving preferences.</para>
+		<itemizedlist>
+			<listitem><para>Website: <ulink url="http://akregator.sourceforge.net">http://akregator.sourceforge.net</ulink></para></listitem>
+			<listitem><para><ulink url="help:/akregator">&akregator; Handbook</ulink></para></listitem>
+		</itemizedlist>
+	</listitem>
+</varlistentry>
+
+</variablelist>
+
+<itemizedlist>
+<title>Related Information</title>
+	<listitem><para>See <ulink url="http://kontact.kde.org">http://kontact.kde.org</ulink> and <ulink url="http://kdepim.kde.org">http://kdepim.kde.org</ulink> for more information.</para></listitem>
+	<listitem><para><ulink url="help:kontact">&kontact; Handbook</ulink></para></listitem>
+</itemizedlist>
+
+</sect1>
+
+<sect1 id="network-applications">
+
+<title>Network</title>
+
+<para>There are several network-related applications in &kde;. Below is a description of a few of these.</para>
+
+<variablelist>
+<varlistentry>
+<term>&kopete;</term>
+	<listitem><para>A fully-featured and advanced <acronym>IM</acronym> (Instant Messaging) client, which has a number of protocols including <trademark class="registered">MSN</trademark>, <trademark class="registered">Yahoo</trademark>, and <trademark class="registered">AIM</trademark>. &kopete; can fetch display pictures, set aliases for particular persons, as well as run multiple <acronym>IM</acronym> sessions at any particular time. &kopete; is quite extensible, and has a comprehensive plugin system which comes with a searchable History of previous chats, statistics on a user's status, as well as a note system allowing you to create notes for each contact.</para>
+		<itemizedlist>
+			<listitem><para>Website: <ulink url="http://kopete.kde.org">http://kopete.kde.org</ulink></para></listitem>
+			<listitem><para><ulink url="help:/kopete">&kopete; Handbook</ulink></para></listitem>
+		</itemizedlist>
+	</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>&kdict;</term>
+	<listitem><para>A &GUI; front-end to the <acronym>DICT</acronym> protocol. It enables you to search through dictionary databases for a word or phrase, then displays suitable definitions.</para>
+		<itemizedlist>
+			<listitem><para><ulink url="help:/kdict">&kdict; Handbook</ulink></para></listitem>
+			<listitem><para>The <acronym>DICT</acronym> Development Group: <ulink url="http://www.dict.org/bin/Dict">http://www.dict.org/bin/Dict</ulink>.</para></listitem>
+		</itemizedlist>
+	</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>&kget;</term>
+	<listitem><para>A manager for your downloads which integrates with &konqueror;. &kget; allows you to group your downloads, pause and resume them, as well as several other things. </para>
+	
+		<itemizedlist>
+			<listitem><para>Website: <ulink url="http://kget.sourceforge.net/">http://kget.sourceforge.net</ulink></para></listitem>
+			<listitem><para><ulink url="help:/kget">&kget; Handbook</ulink></para></listitem>
+		
+		</itemizedlist>
+	</listitem>
+</varlistentry>
+</variablelist>
+
+<itemizedlist>
+<title>Related Information</title>
+	<listitem><para>Several more &kde; network applications can be found in the &kde; Extragear; see <xref linkend="extragear-network"/>, under <xref linkend="extragear-components"/>.</para></listitem>
+</itemizedlist>
+
+</sect1>
+
+<sect1 id="office-applications">
+
+<title>Office</title>
+
+<para>This includes all applications in the &koffice; suite. See <xref linkend="kde-office-components" /> for a summary of the components.</para>
+
+</sect1>
+
+<sect1 id="graphics-applications">
+
+<title>Graphics</title>
+
+<para>&kde; has several graphics-related applications, ranging from <acronym>PDF</acronym> viewers to applications enabling you to take screenshots. Below is a delineation, as well as some related links, for a few of them.</para>
+
+<variablelist>
+
+<varlistentry>
+<term><application>KColorEdit</application></term>
+	<listitem><para>A small and handy application for editing color palettes, as well as color choosing and naming. Colors can be chosen by giving the <acronym>RGB</acronym> hex code, by choosing the color from a myriad of different colors in the program, or even by grabbing the precise color of any particular thing on your screen.</para>
+	
+		<itemizedlist>
+			<listitem><para><ulink url="help:/kcoloredit"><application>KColorEdit</application> Handbook</ulink></para></listitem>
+		</itemizedlist>
+	</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><application>KPDF</application></term>
+	<listitem><para>An advanced <acronym>PDF</acronym> viewer, based on <application>xpdf</application>, for &kde;. <application>KPDF</application> contains a number of ways to search through the document (standard find dialog, thumbnail filter, etc.) and has other features such as hands-free reading.</para>
+	
+		<itemizedlist>
+			<listitem><para>Website: <ulink url="http://kpdf.kde.org">http://kpdf.kde.org</ulink></para></listitem>
+			<listitem><para><ulink url="help:/kpdf"><application>KPDF</application> Handbook</ulink></para></listitem>
+		</itemizedlist>
+	</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><application>KView</application></term>
+	<listitem><para>An image viewer program which supports a number of different image filetypes including <acronym>JPEG</acronym>, <acronym>GIF</acronym>, <acronym>PNG</acronym>, <acronym>TIFF</acronym> and many others. <application>Kview</application> has full integration with &kde; and it can be embedded into &konqueror; for viewing image files on your diskdrive as well as your <acronym>FTP</acronym> site or webserver, using its &URL; open support. Other features include a few image manipulations such as zoom, rotate, grayscale and flip. </para>
+	
+		<itemizedlist>
+			<listitem><para>Website: <ulink url="http://www.ph.unimelb.edu.au/~ssk/kde/kview/">http://www.ph.unimelb.edu.au/~ssk/kde/kview/</ulink></para></listitem>
+			<listitem><para><ulink url="help:/kview"><application>KView</application> Handbook</ulink></para></listitem>
+		</itemizedlist>
+	</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>&ksnapshot;</term>
+	<listitem><para>An application for taking screenshots. It is capable of capturing images of the whole desktop, a single window, or a selected region. The images can then be saved in a variety of formats, including <acronym>JPG</acronym> and <acronym>PNG</acronym>.</para>
+	
+		<itemizedlist>
+			<listitem><para>Website: <ulink url="http://www.ipso-facto.demon.co.uk/ksnapshot/">http://www.ipso-facto.demon.co.uk/ksnapshot/</ulink></para></listitem>
+			<listitem><para><ulink url="help:/ksnapshot">&ksnapshot; Handbook</ulink></para></listitem>
+		</itemizedlist>
+	</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>&kolourpaint;</term>
+	<listitem><para>A simple and easy-to-use paint program, with features such as basic painting (drawing diagrams and finger painting), image manipulation and icon editing. </para>
+	
+		<itemizedlist>
+			<listitem><para>Website: <ulink url="http://kolourpaint.sourceforge.net">http://kolourpaint.sourceforge.net</ulink></para></listitem>
+			<listitem><para><ulink url="help:/kolourpaint">&kolourpaint; Handbook</ulink></para></listitem>
+		</itemizedlist>
+	</listitem>
+</varlistentry>
+
+
+<varlistentry>
+<term>&kooka;</term>
+	<listitem><para>An intuitive raster image scan program. &kooka; helps you to handle the most important scan parameters, find the correct image file format to save and manage your scanned images.</para>
+	
+		<itemizedlist>
+			<listitem><para>Website: <ulink url="http://kooka.kde.org">http://kooka.kde.org</ulink></para></listitem>
+			<listitem><para><ulink url="help:/kooka">&kooka; Handbook</ulink></para></listitem>
+		</itemizedlist>
+	</listitem>
+</varlistentry>
+
+</variablelist>
+
+<itemizedlist>
+<title>Related Information</title>
+	<listitem><para>Several more advanced &kde; graphics applications can be found in the &kde; Extragear; under the <xref linkend="extragear-components"/>, see <xref linkend="extragear-graphics"/> for a list of a few of them.</para></listitem>
+</itemizedlist>
+
+</sect1>
+
+<sect1 id="multimedia-applications">
+<title>Multimedia</title>
+
+<para>A brief overview of a few of the multimedia-related applications below.</para>
+
+<variablelist>
+<varlistentry>
+<term>&juk;</term>
+	<listitem><para>An easy-to-use music player for &kde;. &juk; is playlist and meta-data focused, allowing you to quickly search through the dynamic playlist provided. Some of the features include &CD; cover-art fetching from <trademark class="registered">Google</trademark> images, <application>MusicBrainz</application> integration for file identification over the Internet, and multiple audio backends, including &arts;, <application>GStreamer</application> and <application>aKode</application>.  </para>
+	
+		<itemizedlist>
+			<listitem><para>Website: <ulink url="http://developer.kde.org/~wheeler/juk.html">http://developer.kde.org/~wheeler/juk.html</ulink></para></listitem>
+			<listitem><para><ulink url="help:/juk">&juk; Handbook</ulink></para></listitem>
+		</itemizedlist>
+	</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>&kmix;</term>
+	<listitem><para>An application that allows you to change the volume of your sound card, and it supports several sound drivers. Each mixer device is represented by a volume slider, and you have basic options such as to mute that particular mixer device.</para>
+	
+		<itemizedlist>
+			<listitem><para><ulink url="help:/kmix">&kmix; Handbook</ulink></para></listitem>
+		</itemizedlist>
+	</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>&noatun;</term>
+	<listitem><para>A media player capable of playing <acronym>WAV</acronym>, <application>Ogg Vorbis</application>, as well as DivX encoded <acronym>AVI</acronym>s and other media formats. &noatun; features audio effects, a six-band graphic equalizer, a full plugin architecture, network transparency, and various look and feels. </para>
+	
+		<itemizedlist>
+			<listitem><para>Website: <ulink url="http://noatun.kde.org">http://noatun.kde.org</ulink></para></listitem>
+			<listitem><para><ulink url="help:/noatun">&noatun; Handbook</ulink></para></listitem>
+		</itemizedlist>
+	</listitem>
+</varlistentry>
+
+</variablelist>
+
+<itemizedlist>
+<title>Related Information</title>
+	<listitem><para>Several more advanced &kde; multimedia applications can be found in the &kde; Extragear; under the <xref linkend="extragear-components"/>, see <xref linkend="extragear-multimedia"/> for a list of a few of them.</para></listitem>
+</itemizedlist>
+
+</sect1>
+
+</chapter>
+
+<!-- Keep this comment at the end of the file
+Local variables:
+mode: xml
+sgml-omittag:nil
+sgml-shorttag:nil
+sgml-namecase-general:nil
+sgml-general-insert-case:lower
+sgml-minimize-attributes:nil
+sgml-always-quote-attributes:t
+sgml-indent-step:0
+sgml-indent-data:true
+sgml-parent-document:("index.docbook" "book" "chapter")
+sgml-exposed-tags:nil
+sgml-local-catalogs:nil
+sgml-local-ecat-files:nil
+End:
+-->

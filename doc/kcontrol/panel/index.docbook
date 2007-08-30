@@ -1,0 +1,244 @@
+<?xml version="1.0" ?>
+<!DOCTYPE article PUBLIC "-//KDE//DTD DocBook XML V4.2-Based Variant V1.1//EN"
+"dtd/kdex.dtd" [
+<!ENTITY % addindex "IGNORE">
+<!ENTITY % English "INCLUDE" > <!-- change language only here -->
+]>
+
+<article lang="&language;">
+<articleinfo>
+
+<authorgroup>
+<author>&Mike.McBride; &Mike.McBride.mail;</author>
+<author>&Lauri.Watts; &Lauri.Watts.mail;</author>
+<!-- TRANS:ROLES_OF_TRANSLATORS -->
+</authorgroup>
+
+<date>2005-02-20</date>
+<releaseinfo>3.4</releaseinfo>
+
+<keywordset>
+<keyword>KDE</keyword>
+<keyword>KControl</keyword>
+<keyword>panel</keyword>
+</keywordset>
+</articleinfo>
+
+<sect1 id="panel">
+<title>Panel</title>
+
+<para> The &kde; panel (often referred to as &kicker;) is the bar that
+you'll usually find at the bottom of the screen when you start up &kde;
+for the first time. For detailed help on &kicker;'s usage you can type
+ <ulink url="help:/kicker">help:/kicker</ulink> in &konqueror; to read
+the user manual.</para>
+
+<para>The panel gives you quick access to applications and makes it
+easier for you to organize your desktop. Using the &kde; panel you
+can:</para>
+
+<itemizedlist>
+<listitem><para>launch applications using the <guimenu>K</guimenu> menu or
+the application buttons</para></listitem>
+<listitem><para>switch desktops using the panel's pager applet</para>
+</listitem>
+<listitem><para>switch active windows, and minimize or maximize them</para>
+</listitem>
+<listitem><para>browse folder using the browser menu functionality
+</para></listitem>
+<listitem><para>access panel applets that extend the panel's functionality,
+offering for example mixers, clocks or a system monitor</para> </listitem>
+</itemizedlist>
+
+<sect2 id="panel-position">
+<title><guilabel>Arrangement</guilabel></title>
+
+<para>In the <guilabel>Arrangement</guilabel> tab you can configure the size and
+position of the panel.</para>
+
+<para>If you have more than one panel on screen, you can select at the
+top of the window which panel you wish to configure.</para>
+
+<para>In the section labeled <guilabel>Position</guilabel> is a set of
+12 small buttons arranged in a square. Each button corresponds to a
+location for the panel. Click on a button and notice where the panel
+is located on the preview monitor to the right.</para>
+
+<tip><para>Generally, the available space in kicker is used more
+efficiently if the panel is aligned horizontally, &ie; attached to the
+top or bottom screen border.</para></tip>
+
+<para>In the section labeled <guilabel>Length</guilabel>, you can use
+the combo box and slider to adjust the <emphasis>minimum</emphasis>
+length of the panel.  If you place a mark in the checkbox labeled
+<guilabel>Expand as required to fit contents</guilabel>, the panel
+will become longer if more space is needed.  When less space is
+required on the panel, the panel will shrink down to the minimum size.
+If there is no mark in the checkbox, then the panel is fixed to the
+length specified in this section.</para>
+
+<para>The final section of this table is labeled
+<guilabel>Size</guilabel>, and refers to the
+<emphasis>height</emphasis> of the panel.  The panel's size can be
+<guilabel>Tiny</guilabel>, <guilabel>Small</guilabel>,
+<guilabel>Medium</guilabel>, <guilabel>Large</guilabel> or
+<guilabel>Custom</guilabel>.  If you choose
+<guilabel>Custom</guilabel> mode, you can resize &kicker; by
+specifying a height in the combobox.</para>
+
+<para>If you have multiple monitors, you can configure the panel for
+each screen entirely independently.  If you are not sure which screen
+is which, Press the <guibutton>Identify</guibutton> and a number will
+appear centred on each screen.</para>
+<!-- TODO: It's not centered on dual head non-xinerama, they both
+appear on the primarey head, file a bug -->
+
+<para>Then simply choose the screen you wish to configure from the
+drop down box labelled <guilabel>Xinerama screen</guilabel>, or choose
+<guilabel>All Screens</guilabel> to have identical configurations on
+each.</para>
+
+</sect2>
+
+<sect2 id="panel-hiding">
+<title>Hiding</title>
+
+<para>Depending on your screen resolution you may find that the panel
+takes away too much of your precious screen real estate. To save
+screen space, the panel offers manual hiding of the panel, an auto
+hide feature, and the ability to allow other windows to lay on top of
+the panel. These features are selected in the section entitled
+<guilabel>Hide Mode</guilabel>.</para>
+
+<para>The <guilabel>Hide Mode</guilabel> section has three options:</para>
+<variablelist>
+<varlistentry>
+<term><guilabel>Only hide when panel-hiding button is clicked</guilabel></term>
+<listitem><para>When this option is selected, the panel will remain visible at 
+the location you defined unless you click on the button at the far right (for horizontally 
+oriented) or bottom (for vertically oriented) button.  This button has an arrow on it pointed 
+to the edge of the screen.</para>
+
+<para>Once clicked, the panel will disappear.  If the button is clicked again, the panel will re-appear 
+at the same location.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Hide automatically</guilabel></term>
+<listitem><para>If this option is selected, then the panel will automatically disappear after 
+the number of seconds specified in the combo box below the option.  To make the panel reappear, 
+simply move the mouse pointer to the edge of the screen where the panel is located, and the 
+panel will reappear immediately.</para>
+
+<para>If you place a mark in the checkbox labeled <guilabel>Show panel when switching 
+desktops</guilabel>, the panel will automatically reappear when you switch desktops.  (The panel 
+will disappear again after the specified number of seconds.)</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Allow other windows to cover the panel</guilabel></term>
+<listitem><para>As this option's label implies, the panel is always on the desktop when 
+this option is selected.  It is now possible, however, for application windows to lay 
+on top of the panel.</para>  
+
+<para>To restore the panel, simply move the mouse cursor to the screen 
+location specified in the drop box labeled <guilabel>Raise when the pointer touches 
+the screen's:</guilabel>.  You can change this value by selecting one of the choices 
+provided in the drop down box.</para>
+
+<para>Once the panel has moved back on top of the application window, it will stay there 
+until an application window becomes active again.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+
+<para>The next section down is labeled <guilabel>Panel-Hiding Buttons</guilabel>.  It 
+consists of two check boxes:  <guilabel>Show left panel-hiding button</guilabel> and 
+<guilabel>Show left panel-hiding button</guilabel>.  Use these checkboxes to show and 
+hide the left and right manual panel hiding buttons.</para>
+
+<para>If there is no mark in the checkbox labeled <guilabel>Animate 
+panel hiding</guilabel>, then whenever the toolbar is hidden, is simply disappears.  If there 
+is a mark in the check box, then the panel appears to slide off the edge of the screen.</para>
+
+<para>You can determine how quickly the panel appears to move by adjusting the slider from 
+<guilabel>Fast</guilabel> to <guilabel>Slow</guilabel>.</para>
+</sect2>
+
+<sect2 id="panel-menus">
+<title>Menus</title>
+
+<para>In the <guilabel>Menus</guilabel> tab you can configure the panel
+menu's behavior. This affects the K menu you will often use to launch
+applications, the browser menus you can use to access folders and other
+menus like the recent documents menu.</para>
+
+<para>The <guilabel>K Menu</guilabel> frame offers you some options to
+configure the <guimenu>K</guimenu> menu's functionality. This frame consists 
+of 4 items:</para>
+
+<itemizedlist>
+<listitem><para>The <guilabel>Menu item format:</guilabel> radio
+buttons have three options.  This determines how the application name
+(&ie; &konqueror;, &kword;, &etc;) and the description (&ie; Web
+Browser, Word Processor, &etc;) are displayed on the &kmenu;.
+</para></listitem>
+
+<listitem><para>The <guilabel>Optional Menus</guilabel> checkboxes allow
+you to
+determine which special menu items appear in the &kmenu;.</para>
+<para>The <guilabel>Bookmarks</guilabel> 
+menu allows you to quickly select from the same bookmarks that are available in &konqueror;.  </para>
+<para>The <guilabel>Find</guilabel> menu offers access to the &kfind; application to search for local files, and a quick link to a search engine to search for things on the Internet.</para>
+<para>The <guilabel>Konqueror Profiles</guilabel> menu allows you to
+launch &konqueror; with any of your configured profiles.</para>
+<para>The <guilabel>Network Folders</guilabel> menu can launch a
+&konqueror; file manager window displaying any of your configured
+network folders.</para>
+<para>The <guilabel>Preferences</guilabel> menu allows you to launch each &kcontrol; module 
+directly from the K menu.</para>
+<para>The <guilabel>Print System</guilabel> menu provides several menu entries to help manage 
+the printer(s) attached to your system.</para>
+<para>The <guilabel>Quick Browser</guilabel> menu gives you quick links to locations on your hard drive.</para>
+<para>The <guilabel>Recent Documents</guilabel> menu lists the most recently edited documents and will automatically 
+launch the application to edit or view this document. </para>
+<para>The <guilabel>System</guilabel> menu allows you quick access to
+some commonly visited places, including your Home folder, and the
+Trash. You may find this useful instead of having a separate entry for
+each of these in the &kmenu;</para>
+<para>The <guilabel>Terminal Sessions</guilabel> menu provides menu items to launch several different types of 
+terminal programs (command line interfaces).</para>
+</listitem>
+
+<listitem><para><guilabel>Show side image</guilabel> will add a small
+image to the side of the menu.  This is purely decorative.</para></listitem>
+
+<listitem><para>The <guibutton>Edit K Menu</guibutton> button launches the &kde; 
+menu editor.</para></listitem>
+</itemizedlist>
+
+<para> In the <guilabel>QuickBrowser Menus</guilabel> area you can configure
+whether the panel's browser menus will show hidden files or not (hidden
+files on &UNIX; systems are those whose filenames begin with a dot) as
+well as how many files at most will be shown in a browser menu. The
+latter option may be especially useful if you have a rather small screen
+resolution, as then the browser menus will quickly fill up your screen
+when you browse folders containing many files.</para>
+
+<para>The quick start section in the K menu offers quick access to
+programs you have used often or recently. In the <guilabel>Quick Start Menu Items</guilabel> 
+frame you can choose whether
+this section will show the most recently or the most frequently used
+programs. Using the option <guilabel>Maximum number of entries</guilabel> 
+combo box, you can configure how many programs the quick start 
+section will remember.</para>
+
+</sect2>
+
+
+
+</sect1>
+
+</article>

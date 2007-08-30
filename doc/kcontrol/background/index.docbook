@@ -1,0 +1,383 @@
+<?xml version="1.0" ?>
+<!DOCTYPE article PUBLIC "-//KDE//DTD DocBook XML V4.2-Based Variant V1.1//EN"
+"dtd/kdex.dtd" [
+<!ENTITY % addindex "IGNORE">
+<!ENTITY % English "INCLUDE" > <!-- change language only here -->
+]>
+
+<article lang="&language;">
+<articleinfo>
+
+<authorgroup>
+<author>&Mark.Donohoe;</author>
+<author>&Martin.R.Jones;</author>
+<!-- <author>&Duncan.H;</author> -->
+<author>&Mike.McBride;</author>
+
+<!-- TRANS:ROLES_OF_TRANSLATORS -->
+</authorgroup>
+
+<date>2005-01-18</date>
+<releaseinfo>3.4</releaseinfo>
+
+<keywordset>
+<keyword>KDE</keyword>
+<keyword>KControl</keyword>
+<keyword>background</keyword>
+<keyword>wallpaper</keyword>
+</keywordset>
+</articleinfo>
+
+<sect1 id="background">
+
+<title>Background</title>
+
+<para>The Background module allows you to configure colors or wallpapers for
+your desktop background.</para>
+
+<para>It is comprised of four areas:</para>
+
+<orderedlist>
+<listitem>
+<para>Desktop selection area</para>
+</listitem>
+<listitem>
+<para>An area for selecting background images</para>
+</listitem>
+<listitem>
+<para>The background Preview Monitor</para>
+</listitem>
+<listitem>
+<para>An area for determining the background color</para>
+</listitem>
+</orderedlist>
+
+<variablelist>
+<varlistentry>
+<term>Selecting the desktop</term>
+<listitem>
+<para>The drop down box labeled <guilabel>Setting for
+desktop:</guilabel> is used to select the desktop you want to
+configure.  You can select any of the desktops individually, or you
+can select <guilabel>All Desktops</guilabel> and the changes you make
+will be applied to all desktops.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>Preview Monitor</term>
+<listitem>
+<para>This is a preview window.  It will give you a sense of what to
+expect with each change.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Background</guilabel></term>
+<listitem>
+<para>This section allows you to load a wallpaper on top of the color
+gradient chosen in the section below.</para>
+
+<para>There are three choices available here:</para>
+
+<variablelist>
+<varlistentry>
+<term><guilabel>No Picture</guilabel></term>
+<listitem>
+<para>No picture background will be shown.  The color and pattern
+choices below will still take effect.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Picture</guilabel></term>
+<listitem>
+<para>A single picture will be used as the background for the selected
+desktops.</para>
+<para>How this picture is positioned and scaled can be fine tuned
+below.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Slide show</guilabel></term>
+<listitem>
+<para>&kde; allows you to have an automatic slide show of wallpaper
+images. To enable this option, press the <guibutton>Setup...</guibutton>
+button.  In the resulting dialog you may choose any
+image or folder of images available on your computer, using the
+<guibutton>Add...</guibutton> button to navigate your file system.
+<guibutton>Remove</guibutton> will remove the currently selected
+entry from the list.</para>
+
+<para>You may choose the length of time any image is displayed in the
+<guilabel>Change picture after:</guilabel> box, and you may choose
+<guibutton>Show pictures in random order</guibutton> if you don't want
+them displayed in the order they are listed.</para>
+
+<tip><para>Displaying wallpaper requires that the image be kept in
+memory.  If you are low on memory, using a small, tiled image or none
+at all is recommended.</para>
+
+<para>Scaling or centering a small image still requires an image the
+size of your display to be maintained in memory.</para></tip>
+</listitem>
+</varlistentry>
+</variablelist>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Options</guilabel></term>
+<listitem>
+
+<variablelist><!-- Positioning -->
+<title><guilabel>Position:</guilabel></title>
+<varlistentry>
+<term>Centered</term>
+<listitem><para>The image will be centered on the screen without changing the
+size of the image.  The background colors will be present anywhere the image
+does not cover.</para> </listitem>
+</varlistentry>
+<varlistentry>
+<term>Tiled</term>
+<listitem><para>The image will be duplicated until it fills the entire
+desktop. The first image will be placed in the upper left corner of the screen,
+and duplicated downward and to the right.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>Center Tiled</term>
+<listitem><para>The image will be duplicated until it
+fills the entire desktop. The first image will be placed in the center of the
+screen, and duplicated upward, downward to the right, and to the left.</para>
+</listitem></varlistentry>
+<varlistentry>
+<term>Centered Maxpect</term>
+<listitem><para>The image will be placed in the center of the screen.  It will
+be scaled to fit the desktop, but it will not change the aspect ratio of the
+original image.  This will provide you with an image that is not distorted.
+</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>Tiled Maxpect</term>
+<listitem>
+<para>The image will be placed in the corner of the screen.  It will
+be scaled to fit the desktop, but it will not change the aspect ratio
+of the original image.  This will provide you with an image that is
+not distorted.  If there is any space over, the image will be
+duplicated to fill it.  </para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Scaled</term>
+<listitem><para>The image will be scaled to fit the desktop.  It will be
+stretched to fit to all four corners.  This may distort the image.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>Centered Auto fit</term>
+<listitem>
+<para>If the picture fits the desktop size, this mode works like the
+centered option. If the picture is larger than the desktop then it is
+scaled down to fit while keeping the aspect ratio.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Scale and Crop</term>
+<listitem>
+<para>Magnify the picture without distorting it until it fills both the
+width and height of the desktop (cropping the picture if necessary), and
+then center it on the desktop.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+
+<variablelist><!-- Colors -->
+<varlistentry>
+<term><guilabel>Colors:</guilabel></term>
+<listitem>
+<para>The first drop down box allows you to choose the type of color,
+gradient, or pattern to display under (or in place of) wallpaper.</para>
+<tip><para>If you are going to be using a picture as a wallpaper, you
+can skip this section of the dialog box.</para>
+<para>However, if your chosen wallpaper does not cover the entire
+desktop, the chosen colors will still show in the remaining
+space.</para></tip>
+
+<variablelist>
+<varlistentry>
+<term><guilabel>Single Color</guilabel></term>
+<listitem><para>By choosing this mode, you select one color using the
+first color bar, and the entire background is covered with this one
+color.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Horizontal Gradient</guilabel></term>
+<listitem><para>By choosing this mode, you select two colors (using both color
+buttons).  &kde; will then start with the color selected by <guilabel>Primary
+Color</guilabel> on the left edge of the screen, and slowly transform into the
+color selected by <guilabel>Blend Color</guilabel> by the time it gets to the
+right edge of the screen.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Vertical Gradient</guilabel></term>
+<listitem><para>By choosing this mode, you select two colors (using both color
+buttons).  &kde; will then start with the color selected by <guilabel>Primary
+Color</guilabel> on the top edge of the screen, and slowly transform into the
+color selected by <guilabel>Blend Color</guilabel> as it moves to the bottom of
+the screen.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Pyramid Gradient</guilabel></term>
+<listitem><para>By choosing this mode, you select two colors (using both color
+buttons).  &kde; will then start with the color selected by
+<guilabel>Primary Color</guilabel> in each
+corner of the screen, and slowly transform into the color selected by
+<guilabel>Blend Color</guilabel> as it moves to the center of the
+screen.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Pipecross Gradient</guilabel></term>
+<listitem><para>By choosing this mode, you select two colors (using both color
+buttons).  &kde; will then start with the color selected by
+<guilabel>Primary Color</guilabel> in each corner of the screen, and slowly
+transform into the color selected by <guilabel>Blend Color</guilabel>
+as it moves to the center of the screen. The shape of
+this gradient is different than the pyramid gradient.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Elliptic Gradient</guilabel></term>
+<listitem><para>By choosing this mode, you select two colors (using both color
+buttons).  &kde; will then start with the color selected by
+<guilabel>Blend Color</guilabel> in the center of the screen, and slowly
+transform into the color selected by <guilabel>Primary Color</guilabel>
+as it moves to the edges, in an elliptical pattern.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><replaceable>Pattern</replaceable></term>
+<listitem>
+<para>The rest of the list are the names of various patterns
+or textures you can choose.</para>
+<para>Click on
+<guibutton>OK</guibutton>, and &kde; will render the pattern you
+selected using the two colors you selected.  For more on patterns, see
+the section <link linkend="bkgnd-patterns">Adding, Removing and
+Modifying Patterns</link>.</para>
+
+<para>Select the primary color with the first color bar.  If you have
+chosen a pattern that requires two colors to be set the secondary
+color can be set by pressing the appropriate button.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+
+</listitem>
+</varlistentry>
+</variablelist>
+
+<variablelist>
+<varlistentry>
+<term><guilabel>Blending:</guilabel></term>
+<listitem>
+<para>The drop down box labeled <guilabel>Blending:</guilabel> contains the
+options to make a smooth transition (blend) from the wallpaper as it
+changes to the background.</para>
+
+<orderedlist>
+<listitem><para>A drop down box allows you to select the blending mode.
+Many of the modes are similar to blending modes for background colors.  Select
+your mode from the list, and the preview window shows you what it will look
+like.</para></listitem>
+<listitem><para>The <guilabel>Balance</guilabel> slider adjusts the
+blending.  The results can be seen immediately in the preview
+window.</para></listitem>
+<listitem><para>The <guilabel>Reverse roles</guilabel> can reverse the
+role of the picture and the background for some types of
+blending.</para>
+</listitem>
+</orderedlist>
+</listitem>
+</varlistentry>
+</variablelist>
+</listitem>
+</varlistentry>
+</variablelist>
+
+<sect2 id="bkgnd-advanced">
+<title>Advanced options</title>
+<para>Located below the preview monitor is a button labeled
+<guibutton>Advanced Options</guibutton>.</para>
+
+<para>To use an external program to determine and change the
+background of &kde;, simply select <guilabel>Use the following program
+for drawing the background</guilabel>.  Available &kde; programs are
+listed, select one to enable it.  To modify your choice, for example
+to change the refresh times, you may press the
+<guibutton>Modify...</guibutton> button.</para>
+
+<para>To add a third party application (&eg;
+<application>XEarth</application>) you may use the
+<guibutton>Add...</guibutton> button.  A dialog will open allowing you
+to choose your application, and fill in other data about it.  You may
+remove any entries from this list by selecting it and pressing the
+<guibutton>Remove</guibutton> button.</para>
+
+<para>Using third party external programs to modify or change the
+background is beyond the scope of this document, see their respective
+documentation for the format of command-line switches and other
+configuration information.</para>
+
+<para>Also in this section you may choose to set the color of text
+that is used for icons on the desktop.  If you find icon text
+difficult to read against a wallpaper or pattern, you can choose a
+solid color to show beneath text, or enable a shadow under the text to
+enhance its appearance.</para>
+
+<para>It is possible to set how many lines of text will be shown beneath each icon with the <guilabel>Lines for icon text:</guilabel>   If the text is longer than can be shown in the configured number of lines, it will be truncated.  You can also set a value for the <guilabel>Width for icon text:</guilabel> option.  The value is in pixels, and the default is <guilabel>Auto</guilabel>, which is a default calculated based on the current font.
+<!-- TODO: Find out what the actual calculation here is, in case someone needs it -->
+</para>
+
+<para>Finally you can set the <guilabel>Size of the background
+cache:</guilabel>.  The default (2048 KB) is usually a safe
+choice.</para>
+
+</sect2>
+
+<sect2 id="bkgnd-patterns">
+<title>Adding, Removing and Modifying Wallpapers and Patterns</title>
+
+<para>There is a button under the preview monitor labelled <guibutton>Get
+New Wallpapers</guibutton> that helps you fetch new wallpaper images from a
+selection of popular images from the <ulink
+url="http://www.kde-look.org">KDE-Look</ulink> website.  You can of course
+select any image you have available to use as wallpaper, and it may be
+stored in any location on your hard drive.  To have a wallpaper show up in
+the list automatically for all users, you should save it to the <filename
+class="directory">$<envar>KDEDIR</envar>/share/wallpapers</filename>
+folder.</para>
+
+<para>A pattern is a picture file which &kde; uses as a template to
+draw your background.  The picture file provides the shapes, but &kde;
+provides the colors.  &kde; is packaged with several patterns, and you also
+can add new patterns.</para>
+
+<para>To add a new pattern that is available to every user on your
+computer, simply place the file in <filename
+class="directory">$<envar>KDEDIR</envar>/share/apps/kdesktop/patterns/</filename>.</para>
+
+<para>Copy a <literal role="extension">.desktop</literal> file from
+this folder, and name it the same as your new pattern image file.
+Modify the contents to suit your new pattern.</para>
+
+<para>To add a new pattern for a single user, add the files to
+<filename
+class="directory">$<envar>KDEHOME</envar>/share/apps/kdesktop/patterns/</filename>.</para>
+
+<para>For best results, the pattern should be a grayscale PNG file.</para>
+
+</sect2>
+
+</sect1>
+
+</article>

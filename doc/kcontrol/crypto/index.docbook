@@ -1,0 +1,205 @@
+<?xml version="1.0" ?>
+<!DOCTYPE article PUBLIC "-//KDE//DTD DocBook XML V4.2-Based Variant V1.1//EN"
+"dtd/kdex.dtd" [
+<!ENTITY % addindex "IGNORE">
+<!ENTITY % English "INCLUDE" > <!-- change language only here -->
+]>
+
+<article lang="&language;">
+<articleinfo>
+
+<authorgroup>
+<author>&Mike.McBride; &Mike.McBride.mail;</author>
+<!-- TRANS:ROLES_OF_TRANSLATORS -->
+</authorgroup>
+
+<date>2002-10-17</date>
+<releaseinfo>3.1</releaseinfo>
+
+<keywordset>
+<keyword>KDE</keyword>
+<keyword>KControl</keyword>
+<keyword>crypto</keyword>
+<keyword>SSL</keyword>
+<keyword>encryption</keyword>
+
+</keywordset>
+</articleinfo>
+
+<sect1 id="crypto">
+
+<title>Encryption Configuration</title>
+
+<sect2 id="crypto-intro">
+<title>Introduction</title>
+<para>Many applications within &kde; are capable of exchanging information using
+encrypted files and/or network transmissions.</para>
+</sect2>
+
+<sect2 id="crypto-use">
+<title>Use</title>
+
+<warning><para>All encryption schemes are only as strong as their
+weakest link.  In general, unless you have some previous
+training/knowledge, it is better to leave this module
+unchanged.</para></warning>
+
+<para>The options within this module can be divided into two
+groups:</para>
+
+<para>Two options along the bottom of the module, <guilabel>Warn on
+entering SSL Mode</guilabel> and <guilabel>Warn on leaving SSL
+mode</guilabel>, allow you to determine if &kde; should inform you when
+you enter or leave SSL encryption.</para> 
+
+<para>The remainder of the options are about determining which
+encryption methods to use, and which should not be used. Once you have
+selected the appropriate encryption protocols, simply click
+<guibutton>Apply</guibutton> to commit your changes.</para>
+
+<tip><para>Only make changes to this module if specific information
+about the strength or weakness of a particular encryption method is
+given to you from <emphasis>a reliable source</emphasis>.</para></tip>
+
+</sect2>
+
+<!-- Ugh.. write a bunch of stuff about the rest of it -->
+<sect2 id="ssl_tab">
+<title>The <guilabel>SSL</guilabel> Tab</title>
+
+<para>The first option is <guilabel>Enable TLS support if supported by
+the server</guilabel>. <acronym>TLS</acronym> is Transport Layer
+Security, and is the newest version of <acronym>SSL</acronym>.  It
+integrates better than <acronym>SSL</acronym> with other protocols,
+and it has replaced <acronym>SSL</acronym> in protocols such as POP3
+and <acronym>SMTP</acronym>.</para>
+
+<para>Then next options are <guilabel>Enable SSL v2</guilabel> and
+<guilabel>Enable SSL v3</guilabel>.  These are the second and third
+revision of the <acronym>SSL</acronym> protocol, and it is normal to
+enable both.</para>
+
+<para>There are several different <firstterm>Ciphers</firstterm>
+available, and you can enable these separately in the lists labeled
+<guilabel>SSL v2 Ciphers to Use</guilabel> and <guilabel>SSL v3
+Ciphers to Use</guilabel>.  The actual protocol to use is negotiated
+by the application and the server when the connection is
+created.</para>
+
+<para>There are several <guilabel>Cipher Wizards</guilabel> to help
+you choose a set that is suitable for your use.</para>
+
+<variablelist>
+<varlistentry>
+<term><guibutton>Most Compatible</guibutton></term>
+<listitem>
+<para>Select the settings found to be most compatible with the most
+servers.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><guibutton>US Ciphers Only</guibutton></term>
+<listitem>
+<para>Select only the US <quote>strong</quote> (128 bit or greater)
+ciphers.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><guibutton>Export Ciphers Only</guibutton></term>
+<listitem>
+<para>Select only the weak (56 bit or less) ciphers.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><guibutton>Enable All</guibutton></term>
+<listitem>
+<para>Select all ciphers and methods.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+
+<para>Finally, there are some general <acronym>SSL</acronym> settings.</para>
+
+<variablelist>
+<varlistentry>
+<term><guilabel>Use EGD</guilabel></term>
+<listitem>
+<para>If selected, <application>OpenSSL</application> will be asked to
+use the entropy gathering daemon (<acronym>EGD</acronym>) for
+initializing the pseudo-random number generator.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Use entropy file</guilabel></term>
+<listitem>
+<para>If selected, <application>OpenSSL</application> will be asked to
+use the given file as entropy for initializing the pseudo-random number
+generator.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Warn on entering SSL mode</guilabel></term>
+<listitem>
+<para>If selected, you will be notified when entering an
+<acronym>SSL</acronym> enabled site.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Warn on leaving SSL mode</guilabel></term>
+<listitem>
+<para>If selected, you will be notified when leaving an
+<acronym>SSL</acronym> based site.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Warn on sending unencrypted data</guilabel></term>
+<listitem>
+<para>If selected, you will be notified before sending unencrypted
+data via a web browser.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect2>
+
+<sect2 id="openssl">
+<title>The <guilabel>OpenSSL</guilabel> Tab</title>
+
+<para>Here you can test if your <application>OpenSSL</application>
+libraries have been detected correctly by &kde;, with the
+<guibutton>Test</guibutton> button.</para>
+
+<para>If the test is unsuccessful, you can specify a path to the
+libraries in the field labelled <guilabel>Path to OpenSSL Shared
+Libraries</guilabel>.</para>
+
+</sect2>
+
+<sect2 id="your-certificates">
+<title>The <guilabel>Your Certificates</guilabel> Tab</title>
+
+<para>The list shows which certificates of yours &kde; knows about.
+You can easily manage them from here.</para>
+
+</sect2>
+
+<sect2 id="authentication">
+<title>The <guilabel>Authentication</guilabel> Tab</title>
+
+<para>Not yet documented<!-- No "what's this" to get any info from --></para>
+</sect2>
+
+<sect2 id="peer-ssl-certificates">
+<title>The <guilabel>Peer SSL Certificates</guilabel> Tab</title>
+
+<para>The list box shows which site and personal certificates &kde;
+knows about.  You can easily manage them from here.</para>
+
+</sect2>
+
+</sect1>
+
+</article>

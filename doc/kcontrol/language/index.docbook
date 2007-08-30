@@ -1,0 +1,218 @@
+<?xml version="1.0" ?>
+<!DOCTYPE article PUBLIC "-//KDE//DTD DocBook XML V4.2-Based Variant V1.1//EN"
+"dtd/kdex.dtd" [
+<!ENTITY % addindex "IGNORE">
+<!ENTITY % English "INCLUDE" > <!-- change language only here -->
+]>
+
+<article lang="&language;">
+<sect1 id="locale">
+
+<sect1info>
+<authorgroup>
+<author>&Mike.McBride; &Mike.McBride.mail;</author>
+<author>&Krishna.Tateneni; &Krishna.Tateneni.mail;</author>
+<!-- TRANS:ROLES_OF_TRANSLATORS -->
+ </authorgroup>
+
+	  <date>2003-10-14</date>
+	  <releaseinfo>3.2</releaseinfo>
+
+	  <keywordset>
+		<keyword>KDE</keyword>
+		<keyword>KControl</keyword>
+		<keyword>locale</keyword>
+		<keyword>country</keyword>
+		<keyword>language</keyword>
+	  </keywordset>
+
+	</sect1info>
+
+
+<title>Country and Language</title>
+
+<para>This module of the &kde; control center allows you select
+customization options that depend on the region of the world that you
+happen to live in. There are five different pages in this module, each
+of which is described in detail in the following sections.</para>
+
+<para>In most cases, you can simply select the country you live in, and
+the other options will be set in an appropriate manner.</para>
+
+<para>Below the pages of this module, you can see a preview of what the
+settings look like. In addition to positive and negative numbers, you
+can see how positive and negative currency values, long and short dates,
+and times are displayed. When you change any of the settings, the
+preview shows the effects of the changes before you apply them.</para>
+
+<sect2 id="locale-locale">
+<title>Locale</title>
+
+<para>On this page, there are two lists, from which you can
+select the country and languages that you want
+to use.</para>
+
+<para>When you click on the <guilabel>Country</guilabel> list,
+a menu pops up showing major groups of countries. You can select
+one of these regions and see a list of the countries that are
+available for that region.</para>
+
+<para>If the language for the country you have selected is available on your
+system, it will be selected automatically. For instance, choosing
+<guilabel>Germany</guilabel> as the country will select
+<guilabel>German</guilabel> as the language, if it is available.</para>
+
+</sect2>
+
+<sect2 id="locale-numbers">
+<title>Numbers</title>
+
+<para>On this page, you can select options for how numbers are
+displayed. The defaults are selected automatically based on the country
+which is currently selected.</para>
+
+<para>In the text box labeled <guilabel>Decimal symbol</guilabel>, you
+can type the character that you want to use to separate the decimal
+portion of numbers. You could put anything here you wanted to, but
+really, <userinput>.</userinput> and <userinput>,</userinput> are the
+two characters that make the most sense.</para>
+
+<para>Similarly, you can choose the character which is used to group
+units of thousands in numbers. If no character, not even a space, is
+present, then there will be no separator for thousands.</para>
+
+<para>Finally, you can choose what character should be prefixed to
+positive and negative numbers respectively. For example, the default
+for English is not to have any prefix for positive numbers, and a
+<userinput>-</userinput> for negative numbers.</para>
+
+</sect2>
+
+<sect2 id="locale-money">
+
+<title>Money</title>
+
+<para>Unlike the display of ordinary numbers, conventions for
+currency values do vary from region to region. However, you will
+find that the defaults are probably fine.</para>
+
+<para>The character or characters representing the currency symbol
+are based on the country that is currently selected. The decimal
+symbol and thousands separator work as they do for numbers. The
+text box labeled <guilabel>Fract digits</guilabel> allows you
+to specify the number of fractional digits used in displaying
+currency values.</para>
+
+<para>For both positive and negative currency values, you can
+control whether the currency symbol appears before or after the
+numeric value, and how the sign of the value is distinguished
+in the display. Note that the symbols used for the sign of
+currency values are the same as those used for other numeric
+values.</para>
+
+<para>If the checkbox labeled <guilabel>Prefix currency
+symbol</guilabel> is selected, the currency symbol appears
+before the numeric value. If this checkbox is cleared, then the
+currency symbol appears after the numeric value.</para>
+
+<para>There are five choices for the way in which the sign of the
+currency value is handled:</para>
+<itemizedlist>
+<listitem><para>The <guilabel>Parens around</guilabel>
+option displays the numeric value within a pair of
+parentheses.</para></listitem>
+<listitem><para>The <guilabel>Before quantity money</guilabel>
+option displays the sign before the numeric value, but after any
+currency symbol that may be present.</para></listitem>
+<listitem><para>The <guilabel>After quantity money</guilabel>
+option displays the sign after the numeric value, but before any
+currency symbol that may be present.</para></listitem>
+<listitem><para>The <guilabel>Before money</guilabel> option
+displays the sign before the numeric value as well as any
+currency symbol that may be present.</para></listitem>
+<listitem><para>The <guilabel>After money</guilabel> option
+displays the sign after the numeric value as well as any
+currency symbol that may be present.</para></listitem>
+</itemizedlist>
+
+</sect2>
+
+<sect2 id="locale-datetime">
+<title>Time and Dates</title>
+
+<para>If you use a different calendar system than Gregorian, you can
+choose this from the first dropdown box.</para>
+
+<para>On the rest of this page, there are text boxes for the time, long
+date, and short date, in which you can type format strings to control
+the way in which times and dates are displayed.</para>
+
+<para>Except for the special codes described below, any other characters in the
+format strings are displayed literally. The special codes consist of a
+<parameter>%</parameter> sign followed by a character, as shown in the list of
+codes below:</para>
+
+<itemizedlist>
+<listitem><para>Time format codes:</para>
+  <itemizedlist>
+
+  <listitem><para><parameter>HH</parameter> - The hour according to a 24-hour
+  clock, using two digits (00 to 23).</para></listitem>
+  <listitem><para><parameter>hH</parameter> - The hour according to a 24-hour
+  clock, using one or two digits (0 to 23).</para></listitem>
+  <listitem><para><parameter>PH</parameter> (uppercase <quote>p</quote>) - The hour according
+  to a 12-hour clock, using two digits (01 to 12).</para></listitem>
+  <listitem><para><parameter>pH</parameter> (lowercase <quote>p</quote>) - The hour according
+  to a 12-hour clock, using one or two digits (1 to 12).</para></listitem>
+  <listitem><para><parameter>MM</parameter> - The current minute using two digits
+  (00 to 59).</para></listitem>
+  <listitem><para><parameter>SS</parameter> - The current second using two digits
+  (00 to 59).</para></listitem>
+  <listitem><para><parameter>AMPM</parameter> - Either <quote>am</quote> or <quote>pm</quote> depending on the hour.
+  Useful with <parameter>PH</parameter> or
+  <parameter>pH</parameter>.</para></listitem>
+  </itemizedlist>
+</listitem>
+
+<listitem><para>Date format codes:</para>
+  <itemizedlist>
+  <listitem><para><parameter>YYYY</parameter> - The year, using 4
+  digits.</para></listitem>
+  <listitem><para><parameter>YY</parameter> - The year, using 2
+  digits.</para></listitem>
+  <listitem><para><parameter>MM</parameter> - The month, using 2 digits (01 to
+  12).</para></listitem>
+  <listitem><para><parameter>mM</parameter> - The month, using 1 or 2 digits (1
+  to 12).</para></listitem>
+  <listitem><para><parameter>MONTH</parameter> - The name of the
+  month.</para></listitem>
+  <listitem><para><parameter>SHORTMONTH</parameter> - The abbreviated name of the
+  month.</para></listitem>
+  <listitem><para><parameter>DD</parameter> - The day, using 2 digits (01 to
+  31).</para></listitem>
+  <listitem><para><parameter>dD</parameter> - The day, using 1 or 2 digits (1 to
+  31).</para></listitem>
+  <listitem><para><parameter>WEEKDAY</parameter> - The name of the
+  weekday.</para></listitem>
+  <listitem><para><parameter>SHORTWEEKDAY</parameter> - The abbreviated name of the
+  weekday.</para></listitem>
+  </itemizedlist>
+</listitem>
+</itemizedlist>
+
+<para>Finally, there's a combobox labeled <guilabel>First day
+of the week</guilabel> which lets you select which day is the first
+one of the week in your country.</para>
+
+</sect2>
+<sect2 id="locale-other">
+<title>Other</title>
+<para>You can select the default paper format with the combo box labeled <guilabel>Paper Format</guilabel>.</para>
+
+<para>Use the drop down box labeled <guilabel>Measure system</guilabel> to select Imperial or
+Metric systems of measurement.</para>
+
+</sect2>
+
+</sect1>
+</article>

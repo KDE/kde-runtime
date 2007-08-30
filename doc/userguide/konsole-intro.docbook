@@ -1,0 +1,126 @@
+<chapter id="konsole-intro">
+
+<chapterinfo>
+<authorgroup>
+<author>
+<firstname>Gardner</firstname>
+<surname>Bell</surname>
+</author>
+</authorgroup>
+</chapterinfo>
+
+
+<title>&konsole; Introduction</title>
+
+<para>Extremely brief intro to managing in a shell</para>
+
+<para>Emergency procedures: killing wild apps, etc</para>
+
+<para>SSH, sessions, envars, other fun things</para>
+
+<para>Some tips and tricks</para>
+
+
+<!-- Some Content borrowed from the konsole handbook -->
+
+<para>&konsole; is a terminal emulator for the X Window System. It is
+essentially based on the <ulink url="http://vt100.net">DEC's VT100</ulink> 
+and many of its succesors.  &konsole; &ndash; also referred to as a
+shell &ndash; is an
+essential tool on &Linux; and &UNIX; based machines for fast and productive
+work.</para>
+
+<para>Emergency Procedures:</para>
+
+<para>On &Linux; and &UNIX;-based systems every process runs independently in its own memory
+space so it can't accidentally overwrite any other processes memory, unless
+of course it has <systemitem class="username">root</systemitem> privileges. 
+If a process in &kde; crashes due to a bug one should not need to worry
+about it accessing any other active process.</para>
+
+<para>To keep track of all system processes use the <command>top</command>
+command or <command>ps</command> in &konsole;.  Using these utilities will
+make it much easier to find and kill off rogue programs.</para>
+
+<para>An example of using signals in &konsole;,  &konqueror; has crashed
+leaving behind a running process of
+<application>nspluginviewer</application> which is taking up 12% of your
+memory and 10% of your cpu cycles.  In <command>top</command> use the <keycap>k</keycap>
+command switch to kill the task.  You will be prompted for the PID and then
+the signal to send to kill it.  For more on info on what signals you can
+send to a running process see the full manual on signals (type
+<command>man signal</command> in a &konsole; or go to
+<userinput>#signal</userinput> in &konqueror;).</para>
+
+<para>SSH, sessions, envars, other fun things.</para>
+
+<para>If you are using &konsole; for remote administration consider using
+&konsole;'s <quote>Session</quote> feature.  To use this click on the menu
+entry
+<menuchoice><guimenu>Settings</guimenu><guimenuitem>Configure &konsole;</guimenuitem></menuchoice>.
+From here choose the <guimenuitem>Sessions</guimenuitem> tab and fill in the
+name for your new session.  This will now become your default session when
+you start &konsole;.</para>
+
+<para>When &konsole; is invoked <application>bash</application> specific
+commands and &kde; specific variables are read and executed from
+<filename>~/.bashrc</filename> or <filename>~/.bash_profile</filename>. 
+The preferred configuration file for user environments is
+<filename>~/.bash_profile</filename>, the commands
+<command>printenv</command> or <command>env</command> can be used to
+display all currently set variables.  To set a variable in the shell use 
+<command>VARNAME=<replaceable>value</replaceable></command>.  For a full
+list of variables that can be set in &kde; see the <ulink
+url="http://wiki.kde.org/tiki-index.php?page=Environment+Variables">wiki
+</ulink>.</para>
+
+<para>Some tips and tricks</para>
+
+<para>To rename &konsole;'s session use <keycombo
+action="simul">&Ctrl;&Alt;<keycap>S</keycap></keycombo> and enter the new
+name.</para>
+
+<para>If you find the need to run any &kde; program with <systemitem
+class="username">root</systemitem> privileges,  you can use the &kdesu; command with the <option>-c</option> switch
+from the command line like this: <userinput><command>kdesu</command>
+<option>-c -n <replaceable>PROGRAM</replaceable></option></userinput>, using
+the <option>-n</option> switch will prevent &kde; from remembering your
+passwords.</para>
+
+<!-- Add links to "further reading" here -->
+<itemizedlist>
+<title>Related Information</title>
+
+
+<listitem><para>The &konsole;
+Handbook has much more information about the features available in
+&konsole;. You can read it in &khelpcenter; or by entering
+<userinput>help:/konsole</userinput> in &konqueror;'s
+<guilabel>Location</guilabel> bar.</para>
+</listitem>
+
+</itemizedlist>
+
+
+
+
+
+</chapter>
+
+<!-- Keep this comment at the end of the file
+Local variables:
+mode: xml
+sgml-omittag:nil
+sgml-shorttag:nil
+sgml-namecase-general:nil
+sgml-general-insert-case:lower
+sgml-minimize-attributes:nil
+sgml-always-quote-attributes:t
+sgml-indent-step:0
+sgml-indent-data:true
+sgml-parent-document:("index.docbook" "book" "chapter")
+sgml-exposed-tags:nil
+sgml-local-catalogs:nil
+sgml-local-ecat-files:nil
+End:
+-->

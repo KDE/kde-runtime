@@ -1,0 +1,79 @@
+<sect1 id="fonts">
+
+<sect1info>
+<authorgroup>
+<author>
+<personname>
+<firstname>Simon</firstname>
+<surname>Vermeersch</surname>
+</personname>
+<email>titeuf@ph34rus.org</email>
+</author>
+</authorgroup>
+</sect1info>
+
+<title>Fonts - Installing and Configuring</title>
+
+<indexterm><primary>Fonts</primary></indexterm>
+
+<para>Fonts are really easy to configure in &kde;. Open up the Control
+Center (with <menuchoice><guimenu>K-Menu</guimenu><guimenuitem>Control
+Center</guimenuitem></menuchoice>) and choose
+<guilabel>Font Installer</guilabel> in <guilabel>System
+Administration</guilabel>in the tree view.</para>
+
+<para>There are two kinds of fonts: Personal and Global fonts.
+Personal fonts are only accessible to your user, whereas global fonts are
+accessible to everyone. When you open the <application>Font
+Installer</application>, you're in Personal mode (you can see this in
+the <guilabel>Location</guilabel> bar). When you click on the <guibutton>Administrator Mode</guibutton>
+button, and put the <systemitem class="username">root</systemitem> password,
+you can access global mode, where you can change the fonts for every user on
+this computer.</para>
+
+<para>For the rest, there is no difference between those two kind of fonts.</para>
+
+<indexterm><primary>Fonts</primary><secondary>previewing</secondary></indexterm>
+
+<para>There is a list of fonts in the center. Click on a font to see a preview.
+In the toolbar on the top you have buttons to access the top directory,
+refresh and change the view.</para>
+
+<para>If you want to, you can organise your fonts in multiple directories, so that
+you can easily find them later.</para>
+
+<indexterm><primary>Fonts</primary><secondary>installing</secondary></indexterm>
+
+<para>To install a font, click on the <guibutton>Add
+Fonts...</guibutton> button. A file open dialog will appear where you can
+choose your font.</para>
+
+<para>Alternatively, you can drag fonts from &konqueror; to the
+list. To remove a font, <mousebutton>right</mousebutton> click on it and
+choose <guibutton>Delete</guibutton>.</para>
+
+
+
+<para>Configuration (anti-aliasing)</para>
+
+<para>kfontinst and kfontview should probably get a mention too, since
+they don't seem to have any existing docs.</para>
+</sect1>
+
+<!-- Keep this comment at the end of the file
+Local variables:
+mode: xml
+sgml-omittag:nil
+sgml-shorttag:nil
+sgml-namecase-general:nil
+sgml-general-insert-case:lower
+sgml-minimize-attributes:nil
+sgml-always-quote-attributes:t
+sgml-indent-step:0
+sgml-indent-data:true
+sgml-parent-document:("index.docbook" "book" "sect1")
+sgml-exposed-tags:nil
+sgml-local-catalogs:nil
+sgml-local-ecat-files:nil
+End:
+-->

@@ -1,0 +1,2072 @@
+<chapter id="cups-configuration">
+<title>Print Server Configuration: CUPS</title>
+
+<para>Start the print server configuration (now that you have chosen
+&CUPS;, this is equivalent to the configuration of the &CUPS; daemon) by
+clicking on the appropriate button. You can find it by moving the mouse
+slowly over the buttons and reading the tooltips. It should be the 11th
+from the left , or third from the right; its icon is a
+<guiicon>wrench</guiicon>.</para>
+
+<para>The &CUPS; Server Configuration window pops up. It gives you a
+structured view of all the settings that apply to the &CUPS; daemon. The
+configuration file for that daemon is normally located in
+<filename>/etc/cups/cupsd.conf</filename>. This is a plain
+<acronym>ASCII</acronym> file with a syntax similar to the configuration
+file of the <application>Apache</application> web server. It is a good
+idea to create a backup copy, just in case something goes wrong with the
+configuration through &kdeprint;/&CUPS; Server Configuration
+dialogs:</para>
+
+<screen><userinput><command>cp</command> <filename>/etc/cups/cupsd.conf</filename> <filename>/etc/cups/cupsd.conf.bak</filename></userinput></screen>
+
+<para>As this graphical user interface to edit the configuration file is
+such a new feature, you should have the second chance of resorting to
+the original file. So back it up, please.</para>
+
+<sect1 id="quick-help">
+<title>Quick Help</title>
+
+<para>One very nice feature is the <quote>Quick Help</quote>
+available. If you click on the little question mark (<guiicon>What's
+this?</guiicon>) on your window title bar, you'll see the cursor
+changing its form.  Now click on a <command>cupsd</command>
+configuration setting field to find out what it means and what your
+options are. In most cases you should understand the meaning
+immediately, otherwise turn to the excellent &CUPS; documentation. (If
+your &CUPS; Daemon is running, you have it online on your own host at
+<ulink
+url="http://localhost:631/documentation.html">http://localhost:631/documentation.html</ulink>.</para>
+<para>If &CUPS; is not running, but installed on your system you could
+find it in your own host's file system.  The exact location depends on
+your &OS;, but on &Linux; the default is <filename
+class="directory">/usr/share/doc/cups/</filename> or
+<filename class="directory">
+/usr/share/doc/cups/documentation.html</filename>.</para>
+
+</sect1>
+<sect1 id="longer-help">
+<title>Longer Help</title>
+
+<para>For the best, most detailed and most recent information you should
+always refer to the original &CUPS; documentation.  &CUPS; is, much like
+&kde; in a rapid development process.  There are constantly new features
+being added. New features might for times be only configurable by
+directly editing the configuration files. The &kdeprint; &GUI; might not
+have caught up with &CUPS; development.</para>
+
+<para>Just in case you want to look at the original configuration files
+of your &CUPS; system -- they are here:</para>
+
+<note>
+<para>These paths are based on the default installation.  Your &OS;
+may have installed them to a different prefix, for example, <filename
+class="directory">/usr/local/</filename>, but the hierarchy should
+still match that shown below.</para>
+</note>
+
+<variablelist>
+<varlistentry>
+<term><filename class="directory">/etc/cups/</filename></term>
+<listitem>
+<para>The folder with the configuration files</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><filename>/etc/cups/cupsd.conf</filename></term>
+<listitem>
+<para>The configuration file for the &CUPS; daemon</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><filename>/etc/cups/printers.conf</filename></term>
+<listitem>
+<para>The configuration file that contains the information about your
+locally installed printers.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><filename class="directory">/etc/cups/ppd/</filename></term>
+<listitem>
+<para>The folder with &PPD; files of your installed
+printers.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+
+<para>The following links only work if your &CUPS; daemon is up and
+running.  To access all the original &CUPS; documentation, go
+to:</para>
+
+<variablelist>
+<varlistentry>
+<term><ulink url="http://localhost:631/documentation.html">
+http://localhost:631/documentation.html</ulink></term>
+<listitem>
+<para>A page with all the links to the other documents.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><ulink url="http://localhost:631/sam.html">
+http://localhost:631/sam.html</ulink></term>
+<listitem>
+<para>Direct access to the &CUPS; Software Administrator Manual
+in <acronym>HTML</acronym> format.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><ulink url="http://localhost:631/sam.pdf">
+http://localhost:631/sam.pdf</ulink></term>
+<listitem>
+<para>Direct access to the &CUPS; Software Administrator Manual in
+<acronym>PDF</acronym> format.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><ulink url="http://www.cups.org/documentation.html">
+http://www.cups.org/documentation.html</ulink></term>
+<listitem>
+<para>The latest on line documentation from the &CUPS; web
+site.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+<para>The following links give you access to the same files (probably
+icons and graphics will be missing) even if your CUPS daemon is not up
+and running. You need, however, CUPS installed on your system. (Some
+distributions might place the files somewhere else -- you're on your
+own then to find out where...) To access all the original CUPS
+documentation, go to:</para>
+
+<para>This documentation is available even when the &CUPS; daemon is
+not installed, although you may find images and icons are missing when
+you view the <acronym>HTML</acronym> files.</para>
+
+<para>As noted above, the hierarchy below should be intact, but your
+&OS; may have installed &CUPS; to a different location.</para>
+
+<variablelist>
+<varlistentry>
+<term><filename>/usr/share/doc/cups/documentation.html</filename></term>
+<listitem>
+<para>A page with all the links to the other documents.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><filename>/usr/share/doc/cups/sam.html</filename></term>
+<listitem>
+<para>Direct access to the &CUPS; Software Administrator Manual in
+<acronym>HTML</acronym> format.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><filename>/usr/share/doc/cups/sam.pdf</filename></term>
+<listitem>
+<para>Direct access to the &CUPS; Software Administrator Manual in
+<acronym>PDF</acronym> format.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+
+<para>There are a few WebSites and Newsgroups discussing &CUPS; (and
+&Linux; Printing in General) and giving help to newbies at:</para>
+
+<variablelist>
+<varlistentry>
+<term><ulink url="http://www.cups.org/newsgroups.php">
+http://www.cups.org/newsgroups.php</ulink></term>
+<listitem>
+<para>The &CUPS; website.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><ulink url="http://www.linuxprinting.org/newsportal/">
+http://www.linuxprinting.org/newsportal/</ulink></term>
+<listitem>
+<para>LinuxPrinting.org, the home of the Linuxprinting HOWTO and the
+&Linux; Printer Database</para>
+</listitem>
+</varlistentry>
+</variablelist>
+
+<para>And finally, there will be a WebSite for &kdeprint; and related
+documentation, at <ulink url="http://kdeprint.sourceforge.net/">
+http://kdeprint.sourceforge.net/</ulink></para>
+
+<para>In the next section I will step you through most of the
+configuration options of &kdeprint; with &CUPS;.</para>
+
+</sect1>
+<sect1 id="explaining-different-gui-elements">
+<title>Explaining different elements of the &GUI;</title>
+
+<sect2>
+<title>Upper Window: View on Printers, both Real and Virtual</title>
+
+<para>This section is not yet complete</para>
+
+<itemizedlist>
+<listitem>
+<para>Tree view, icon view and list view</para>
+</listitem>
+<listitem>
+<para>The icons of the task bar</para>
+</listitem>
+<listitem>
+<para>Different fonts for different printers</para>
+</listitem>
+<listitem>
+<para>Different printer icons mean different things</para>
+</listitem>
+</itemizedlist>
+
+</sect2>
+
+<sect2>
+<title>Lower Window: Tabbed View of Details</title>
+
+<para>This section is not yet complete.</para>
+
+<itemizedlist>
+<listitem>
+<para>The icons of the task bar</para>
+</listitem>
+<listitem>
+<para>The Tabs</para>
+</listitem>
+<listitem>
+<para>Changing printer settings</para>
+</listitem>
+</itemizedlist>
+
+</sect2>
+
+</sect1>
+
+
+<sect1 id="welcome-to-cups-server-configuration">
+<title>Welcome to the &CUPS; Server Configuration</title>
+
+<para>This is the Welcome Screen for your server configuration
+dialogs. Clicking onto one of the items of the tree view on left
+side of the screen opens the appropriate part of the configuration
+settings.</para>
+
+<para>Every setting has a default value. The defaults let &CUPS;
+normally work as a fully functional client. The clients listen on
+TCP/IP Port 631 for infos broadcast by &CUPS; servers on the
+<acronym>LAN</acronym>. This information let the clients print
+immediately after receiving them, without installing any driver or
+configuring any printer on the clients.</para>
+
+<para>To configure a &CUPS; server (which is broadcasting its service
+to the <acronym>LAN</acronym>) you need to change settings from the
+defaults.</para>
+
+<para>The dialog to configure the &CUPS; server: welcome screen. </para>
+<screenshot>
+<screeninfo>CUPS server configuration dialog: welcome screen</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="cupsserverconfiguration1_welcome.png"
+format="PNG"/></imageobject>
+<textobject>
+<phrase>The dialog to configure the &CUPS; server: welcome
+screen</phrase></textobject>
+<caption><para>The dialog to configure the &CUPS; server: welcome
+screen</para></caption>
+</mediaobject>
+</screenshot>
+
+<para>To select the default setting of any item just enable the
+checkbox on the right side of the screen. To set an item to a
+different value, disable the checkbox and then go on to do the setting
+you want on the left side of the screen.</para>
+
+<para>The complete server configuration includes:</para>
+
+<itemizedlist>
+<listitem>
+<para><link linkend="server-general-configuration"><guilabel>Server</guilabel>
+General Configuration</link></para>
+</listitem>
+<listitem>
+<para><link linkend="server-logging-configuration">Server
+<guilabel>Log</guilabel>ging Configuration</link></para>
+</listitem>
+<listitem>
+<para><link
+linkend="server-directories-configuration">Server
+<guilabel>Folders</guilabel> and Path Definitions</link></para>
+</listitem>
+<listitem>
+<para><link linkend="server-configuration">Server
+<guilabel>HTTP</guilabel> Configuration</link></para>
+</listitem>
+<listitem>
+<para><link linkend="server-encryption-support-configuration">Server
+<guilabel>Encryption</guilabel> and Certificate Support
+Configuration</link></para>
+</listitem>
+<listitem>
+<para><link linkend="server-miscellaneous-configuration">Server
+<guilabel>Misc</guilabel>ellaneous Configuration</link></para>
+</listitem>
+<listitem>
+<para><guilabel>Network</guilabel> General Configuration</para>
+</listitem>
+<listitem>
+<para><link linkend="network-clients-configuration">Network
+<guilabel>Clients</guilabel> Configuration</link></para>
+</listitem>
+<listitem>
+<para><link
+linkend="browsing-general-configuration"><guilabel>Browsing</guilabel>
+General Configuration</link></para>
+</listitem>
+<listitem>
+<para><link linkend="browsing-connection-configuration">Browsing
+<guilabel>Connection</guilabel> Configuration</link></para>
+</listitem>
+<listitem>
+<para><link
+linkend="browsing-masks-configuration">Browsing
+<guilabel>Masks</guilabel> Configuration</link></para>
+</listitem>
+<listitem>
+<para><link linkend="browsing-timeouts-configuration">Browsing
+<guilabel>Timeouts</guilabel> Configuration</link></para>
+</listitem>
+<listitem>
+<para><link linkend="browsing-relay-configuration">Browsing
+<guilabel>Relay</guilabel> Configuration</link></para>
+</listitem>
+<listitem>
+<para><link
+linkend="security-configuration"><guilabel>Security</guilabel>
+Configuration</link></para>
+</listitem>
+</itemizedlist>
+
+<para>Each of these configuration items will be described in the
+following sections of the manual.</para>
+
+</sect1>
+
+<sect1 id="server-general-configuration">
+<title>Server General Configuration</title>
+
+<para>The server general configuration is done on this screen. It
+includes:</para>
+
+<itemizedlist>
+<listitem><para><guilabel>Server name</guilabel></para></listitem>
+<listitem><para><guilabel>Administrators email</guilabel></para></listitem>
+<listitem><para><guilabel>Server user</guilabel></para></listitem>
+<listitem><para><guilabel>Server group</guilabel></para></listitem>
+<listitem><para><guilabel>Remote user name</guilabel></para></listitem>
+</itemizedlist>
+
+<para>The tab window to configure the &CUPS; server general settings
+lets you the change the default values. Click on the little question
+mark and then on one of the fields to get a <quote>Quick Help</quote>
+about the meaning of the setting.</para>
+
+<para>If you are unsure, leave alone and turn to the original &CUPS;
+documentation first.  If your &CUPS; daemon is already running, it is
+readable from the &konqueror; by pointing it to &URL; <ulink
+url="http://localhost:631/documentation.html">
+http://localhost:631/documentation.html</ulink>.</para>
+
+<para>There, first <quote>make friends</quote> with the Software
+Administrator Manual. Otherwise, for example, if the &CUPS; daemon is
+not running, try looking in your local file system, by default at
+<filename class="directory">/usr/share/doc/cups/</filename> or
+<filename>/usr/share/doc/cups/documentation.html</filename>.</para>
+
+<screenshot>
+<screeninfo>&CUPS; server general configuration dialog: ServerName, AdminMail,
+ServerUser, ServerGroup, RemoteUserName</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="cupsserverconfiguration2_general.png"
+format="PNG"/></imageobject>
+<textobject>
+<phrase>The dialog to configure the &CUPS; server general settings:
+ServerName, AdminMail, ServerUser, ServerGroup, RemoteUserName
+</phrase></textobject>
+</mediaobject>
+</screenshot>
+
+<variablelist>
+<varlistentry>
+<term><guilabel>Server Name</guilabel></term>
+<listitem>
+<para>The hostname of your server, as advertised to the world. By
+default, &CUPS; will use the hostname of the system.  To set the
+default server usd by clients, see the
+<filename>client.conf</filename> file.</para>
+
+<informalexample>
+<para>For example, enter <userinput>myhost.domain.com</userinput></para>
+</informalexample>
+
+<para>This is the hostname that is reported to clients. Should you
+ever encounter strange problems in accessing the server, put here its
+<acronym>IP</acronym> address for troubleshooting. This way you
+eliminate any potential name resolution problems; and you can more
+easily nail the real problem down.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Administrators email</guilabel></term>
+<listitem>
+<para>This is the email address to send all complaints or problems
+to.  By default &CUPS; will use <quote>root@hostname</quote>.</para>
+
+<informalexample>
+<para>For example, enter
+<userinput>root@myhost.com</userinput>.</para>
+</informalexample>
+
+<note>
+<para>Contrary to what the quickhelp suggests, it is also legal to
+send an email full of praise and enthusiasm about &CUPS; and
+&kdeprint; to the server administrator.</para>
+</note>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Server User</guilabel></term>
+<listitem>
+<para>The user the server runs under.  Normally this must be
+<systemitem class="username">lp</systemitem>, however you can
+configure things for another user if needed.</para>
+
+<note>
+<para>The server must be initially run as root to support the default
+<acronym>IPP</acronym> port of 631.  It changes users whenever an
+external program is run.</para>
+</note>
+
+<informalexample>
+<para>Enter for example <userinput>lp</userinput>.</para>
+</informalexample>
+
+<para>This is the &UNIX; user account for filters and
+<acronym>CGI</acronym> programs to run under. <acronym>CGI</acronym>
+programs are responsible for showing you the nice web administration
+interface accessible via <ulink
+url="http://localhost:631/">http://localhost:631/</ulink>).</para>
+
+<warning>
+<para>There is no need to set the <guilabel>User</guilabel> directive
+to <systemitem class="username">root</systemitem>, so never do this,
+as it only involves dangers. Should anyone discover security
+vulnerabilities in one of the used file filters, printer drivers or
+<acronym>CGI</acronym> programs, he could remotely execute arbitrary
+commands on your system with root user privileges. Always use an
+unprivileged account for the server directive
+<guilabel>User</guilabel>.</para>
+</warning>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Server group</guilabel></term>
+<listitem>
+<para>The group the server runs under.  Normally this must be
+<systemitem class="groupname">sys</systemitem>, however you can
+configure things for another group as needed.</para>
+
+<informalexample>
+<para>Enter for example <userinput>sys</userinput>.</para>
+</informalexample>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Remote user name</guilabel></term>
+<listitem>
+<para>The name of the user assigned to unauthenticated accesses from
+remote systems.  By default <userinput>remroot</userinput>.</para>
+
+<para>This name will appear in log files and in queries about the job
+owner &etc;, for all resources and locations of the &CUPS; server that
+are configured to allow access <emphasis>without</emphasis>
+authentication.  Authenticated entries will carry the authenticated
+names.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect1>
+
+<sect1 id="server-logging-configuration">
+<title>Server Logging Configuration</title>
+
+<para>The server logging configuration is done on this screen. It
+includes:</para>
+
+<itemizedlist>
+<listitem><para><guilabel>Access log file</guilabel> setting</para></listitem>
+<listitem><para><guilabel>Error log file</guilabel> setting</para></listitem>
+<listitem><para><guilabel>Page log</guilabel> file setting</para></listitem>
+<listitem><para><guilabel>Log level</guilabel> setting</para></listitem>
+<listitem><para><guilabel>Max log file size</guilabel>
+setting</para></listitem>
+</itemizedlist>
+
+<para>This is an important screen for you. Should you ever encounter
+problems: here is the place to set the Log level to
+<quote>debug</quote>, restart the &CUPS; daemon and then look at the
+Error log file defined here for entries that might give you an insight
+to the trouble.</para>
+
+<screenshot>
+<screeninfo>&CUPS; server configuration dialog: <guilabel>Server
+logging</guilabel>  </screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="cupsserverconfiguration3_logging.png"
+format="PNG"/></imageobject>
+<textobject>
+<phrase>The dialog to configure the &CUPS; server: <guilabel>Server
+logging</guilabel></phrase></textobject>
+</mediaobject>
+</screenshot>
+
+<variablelist>
+<varlistentry>
+<term><guilabel>Access log file</guilabel></term>
+<listitem>
+<para>This is where accesses to the server are logged.  If this does
+not start with a leading <literal>/</literal>, then it is assumed to
+be relative to the server root.</para>
+
+<para>You can also use the special name <userinput>syslog</userinput>
+to send the output to the syslog file or daemon.</para>
+
+<informalexample>
+<para>Enter a path, for example
+<userinput><filename>/var/log/cups/acces_log</filename></userinput>.</para>
+</informalexample>
+
+<para>The format of this file is stored in the so-called <quote>Common
+Log Format</quote>. This way you can use programs such as
+<application>Webalyzer</application> or any other Web access reporting
+tool to generate reports on the &CUPS; server activities.</para>
+
+<para>To include the server name in the file name use a
+<token>%s</token> in the name. Example:
+<userinput><filename>/var/log/cups/access_log-%s</filename></userinput>.</para>
+
+<screen><prompt>kurt@transmeta:~ ></prompt><userinput><command>tail</command> <parameter>/var/log/cups/access_log</parameter></userinput>
+<computeroutput>
+127.0.0.1    - - [04/Aug/2001:20:11:39 +0100] "POST /printers/ HTTP/1.1" 200 109
+127.0.0.1    - - [04/Aug/2001:20:11:39 +0100] "POST /admin/ HTTP/1.1" 401 0
+127.0.0.1    - - [04/Aug/2001:20:11:39 +0100] "POST / HTTP/1.1" 200 210
+127.0.0.1    - - [04/Aug/2001:20:11:39 +0100] "GET /ppd/DANKA_P450.ppd HTTP/1.1" 200 51021
+127.0.0.1    - - [04/Aug/2001:20:11:39 +0100] "POST /jobs/ HTTP/1.1" 200 246
+10.160.16.45 - - [04/Aug/2001:20:11:39 +0100] "GET /printers/DANKA_P450 HTTP/1.0" 200 0
+127.0.0.1    - - [04/Aug/2001:20:11:39 +0100] "POST / HTTP/1.1" 200 80
+127.0.0.1    - - [04/Aug/2001:20:11:39 +0100] "POST / HTTP/1.1" 200 139
+10.160.16.45 - - [04/Aug/2001:20:11:40 +0100] "GET /cups.css HTTP/1.0" 200 198
+127.0.0.1    - - [04/Aug/2001:20:11:40 +0100] "POST / HTTP/1.1" 200 139
+10.160.16.45 - - [04/Aug/2001:20:11:39 +0100] "GET /printers/DANKA_P450 HTTP/1.0" 200 7319
+10.160.16.45 - - [04/Aug/2001:20:11:40 +0100] "GET /images/title-logo.gif HTTP/1.0" 200 5729
+</computeroutput></screen>
+
+<para>You see a separate line for each single access, showing the
+<acronym>IP</acronym> address of the accessing client, date and time
+of access, method of access (<command>POST</command> or
+<command>GET</command>), the requested ressource, the &HTTP; version
+used by the client, status code and the number of transferred
+bytes. Status code <errorcode>200</errorcode> means
+<errorname>successful-OK</errorname> the <errorcode>401</errorcode> in
+the above example was an <errorname>unauthorized access</errorname>
+which was denied. For a detailed explanation of the log format go to
+<ulink url="http://localhost:631/sam.html#7_6_1">the &CUPS; Software
+Administrator Manual</ulink>.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Error log file</guilabel></term>
+<listitem>
+<para>If this does not start with a leading <literal>/</literal>, then
+it is assumed to be relative to the server root.  The default setting
+is <filename>/var/log/cups/error_log</filename>.</para>
+
+<para>You can also use the special name <userinput>syslog</userinput>
+to send the output to the syslog file or daemon.</para>
+
+<informalexample>
+<para>Enter the path, for example
+<userinput><filename>/var/log/cups/error_log</filename></userinput>.</para>
+</informalexample>
+
+<para>The error log excerpt below shows you the part logged for printing the test page
+with the default setting of <guilabel>Log level</guilabel> to
+<quote>info</quote>.  For an explanation of the <guilabel>Log
+Level</guilabel> setting see further below.</para>
+
+<screen><prompt>kurt@transmeta:~ ></prompt><userinput><command> tail </command> <parameter>/var/log/cups/error_log</parameter></userinput>
+<computeroutput>
+I [04/Aug/2001:23:15:10 +0100] Job 213 queued on 'DANKA_P450' by 'root'
+I [04/Aug/2001:23:15:10 +0100] Started filter /usr/lib/cups/filter/pstops (PID 18891) for job 213.
+I [04/Aug/2001:23:15:10 +0100] Started backend /usr/lib/cups/backend/lpd (PID 18892) for job 213.
+</computeroutput></screen>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Page log file</guilabel></term>
+<listitem>
+<para>If this does not start with a leading <literal>/</literal> then
+it is assumed to be relative to the server root.  The default is
+<filename>/var/log/cups/page_log</filename></para>
+
+<para>You can also use the special name <userinput>syslog</userinput>
+to send the output to the syslog file or daemon.</para>
+
+<informalexample>
+<para>Enter the path, for example
+<userinput><filename>/var/log/cups/page_log</filename></userinput>.</para>
+</informalexample>
+<para>The page log file has a line for every single page of every job
+printed.</para>
+
+<para> Here is what some entries look like:</para>
+
+<screen><prompt>kurt@transmeta:~ ></prompt><userinput><command> tail </command> <parameter>/var/log/cups/page_log</parameter></userinput>
+<computeroutput>
+GIMP_print_stp_HP kdetest 201 [03/Aug/2001:03:18:03 +0100] 4 1
+GIMP_print_stp_HP kdetest 201 [03/Aug/2001:03:18:03 +0100] 5 1
+GIMP_print_stp_HP kdetest 202 [03/Aug/2001:11:46:49 +0100] 1 1
+GIMP_print_stp_HP kdetest 203 [03/Aug/2001:11:46:54 +0100] 1 1
+DANKA_infotec_P450 kurt 204 [04/Aug/2001:03:29:00 +0100] 1 33
+DANKA_infotec_P450 kurt 204 [04/Aug/2001:03:29:00 +0100] 2 33
+DANKA_infotec_P450 kurt 204 [04/Aug/2001:03:29:00 +0100] 3 33
+DANKA_infotec_P450 kurt 204 [04/Aug/2001:03:29:00 +0100] 4 33
+DANKA_infotec_P450 root 205 [04/Aug/2001:19:12:34 +0100] 1 14
+DANKA_infotec_P450 root 206 [04/Aug/2001:19:15:20 +0100] 1 1
+</computeroutput></screen>
+
+<para>In this excerpt of the file you find information on the name of
+the printers (<systemitem
+class="resource">GIMP_print_stp_HP</systemitem> and <systemitem
+class="resource">DANKA_infotec_P450</systemitem>) used through this
+server, the user names (<systemitem
+class="username">kdetest</systemitem>, <systemitem
+class="username">kurt</systemitem> and <systemitem
+class="username">root</systemitem>), the job-IDs (<quote>201</quote>
+to <quote>205</quote>), time of printing, page number inside the job
+and the number of copies for the pages.  For example, job-ID 204 had 4
+pages and 33 copies printed, job-ID 205 had 14 copies of just 1 page)
+.</para>
+
+<note>
+<para>&CUPS; is dependent (for its calculation of the number of pages
+in a job) on passing the &PostScript; through the
+<quote>pstops</quote> filter.  See the <link
+linkend="architecture-diagram">&kivio; Flowchart</link> on the &CUPS;
+filter architecture for an idea about were this filter fits into the
+whole printing process).  More, <command>pstops</command> depends for
+the counting on a <acronym>DSC</acronym> conforming
+(<acronym>DSC</acronym> is Document Structuring Conventions, a
+standard defined by Adobe) to be sent by the client.  In most cases
+this is working.</para>
+
+<para>However, this page accounting does not work for any
+<quote>raw</quote> printer queues (as those, by definition, don't use
+any filtering on the &CUPS; host and are by-passing
+<command>pstops</command>.) Every job going through a
+<quote>raw</quote> queue is counted as a 1-page-job (with possibly
+multiple copies). This is especially true for all Jobs send from
+&Microsoft; &Windows; clients via <application>Samba</application> to
+the &CUPS; server, as those jobs are already arriving in the correct
+format for the printer, because the clients use the original printer
+driver.</para>
+</note>
+
+<note>
+<para>I am still looking for someone who will write a nice &CUPS; page
+log analysing tool. It should generate a report with a graphical
+output similar to the <application>Webalizer</application>'s access
+log reports. This way you could have nice statistics to be used for
+accounting about usage of printers, load dependent on daytime or
+weekday, users &etc; Anyone?</para>
+</note>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Log level</guilabel></term>
+<listitem>
+<para>This setting controls the number of messages logged to the error
+log file.  It can be one of the following:</para>
+
+<variablelist>
+<varlistentry>
+<term>debug2</term>
+<listitem>
+<para>Log everything.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>debug</term>
+<listitem>
+<para>Log almost everything.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>info</term>
+<listitem>
+<para>Log all requests and state changes.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>warn</term>
+<listitem>
+<para>Log errors and warnings.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>error</term>
+<listitem>
+<para>Log only errors.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>none</term>
+<listitem>
+<para>Log nothing.</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+
+<para>If you need to troubleshoot (or if you want to study the inner
+workings of &CUPS;), set the log level to debug or debug2. Then the
+error_log will have a lot more entries (not just errors, but also
+informational entries).</para> 
+
+<para>You can use this to watch <quote>live</quote> what &CUPS; is
+doing when you send a print job. In a &konsole; type:</para>
+
+<screen><prompt>kurt@transmeta:~ ></prompt><userinput><command>tail</command> <option>-f</option> <option>-n</option><parameter>100</parameter> <parameter>/var/log/cups/error_log</parameter></userinput></screen>
+
+<para>This will give you the last 100 lines (<option>-n</option>
+<parameter>100</parameter>) of the file onto the screen and a
+<quote>realtime</quote> update (<option>-f</option>)of what is
+happening. The following listing shows the printing of a test page
+(some pieces have been cut off for space reasons... Try it yourself if
+you need more info):</para>
+
+<screen><computeroutput> 
+I [04/Aug/2001:23:15:12 +0100] Job 214 queued on 'DANKA_P450' by 'root'
+D [04/Aug/2001:23:15:12 +0100] StartJob(214, 08426fe0) 
+D [04/Aug/2001:23:15:12 +0100] StartJob() id = 214, file = 0/1 
+D [04/Aug/2001:23:15:12 +0100] job-sheets=none,none 
+D [04/Aug/2001:23:15:12 +0100] banner_page = 0 
+D [04/Aug/2001:23:15:12 +0100] StartJob: argv = "DANKA_P450","214","root","KDE Print Test",
+[....]  
+D [04/Aug/2001:23:15:12 +0100] StartJob: envp = "PATH=/usr/lib/cups/filter:/bin:/usr/bin", [....]  
+D [04/Aug/2001:23:15:12 +0100] StartJob: statusfds = 5, 6 
+D [04/Aug/2001:23:15:12 +0100] StartJob: filterfds[1] = 7, -1 
+D [04/Aug/2001:23:15:12 +0100] StartJob: filter = "/usr/lib/cups/filter/pstops" 
+D [04/Aug/2001:23:15:12 +0100] StartJob: filterfds[0] = 8, 9 
+D [04/Aug/2001:23:15:12 +0100] start_process("/usr/lib/cups/filter/pstops", [....]  
+I [04/Aug/2001:23:15:12 +0100] Started filter /usr/lib/cups/filter/pstops (PID 18991) for job 214.  
+D [04/Aug/2001:23:15:12 +0100] StartJob: backend = "/usr/lib/cups/backend/lpd" 
+D [04/Aug/2001:23:15:12 +0100] StartJob: filterfds[1] = -1, 7 
+D [04/Aug/2001:23:15:12 +0100] start_process("/usr/lib/cups/backend/lpd", [....]  
+I [04/Aug/2001:23:15:12 +0100] Started backend /usr/lib/cups/backend/lpd (PID 18992) for job 214.
+D [04/Aug/2001:23:15:12 +0100] Page = 595x842; 15,16 to 580,833 [....]  </computeroutput></screen> 
+
+<para>The lines tagged <quote>D</quote> at the beginning are debug
+level entries, the ones tagged <quote>I</quote> are there in
+<quote>info</quote> level.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Max log file size</guilabel></term>
+<listitem>
+
+<para>Controls the maximum size of each log file before they are
+rotated.  Defaults to 1048576 (1 Mb).  Set this to 0 to disable log
+rotation.</para>
+
+<informalexample>
+<para>Enter an size in bytes, for example <userinput>1048576</userinput></para>
+</informalexample>
+
+</listitem>
+</varlistentry>
+</variablelist>
+</sect1>
+
+<sect1 id="server-directories-configuration">
+<title>Server Folders Configuration</title>
+
+<para>The dialog to configure the &CUPS; server.  Different
+folders are to be set here. Normally you don't need to change
+anything in this section. In case you play around with fancy
+(TrueType, &PostScript; or other) fonts on your system, this qis the
+place to do the settings for using those fonts when printing.  Server
+folder settings include:</para>
+
+<itemizedlist>
+<listitem>
+<para><guilabel>Executables</guilabel>: where to find the server
+executables</para>
+</listitem>
+<listitem>
+<para><guilabel>Configuration</guilabel>: where to find the server
+configuration files</para>
+</listitem>
+<listitem>
+<para><guilabel>Data</guilabel>: where to find the server data
+files</para>
+</listitem>
+<listitem>
+<para><guilabel>Temporary files</guilabel>: where to put the server
+temporary print files </para>
+</listitem>
+<listitem>
+<para><guilabel>Temporary Requests</guilabel>: where to find the
+server </para>
+</listitem>
+<listitem>
+<para><guilabel>Font Path</guilabel>: where to find the
+server fonts</para>
+</listitem>
+</itemizedlist>
+<screenshot>
+<screeninfo>&CUPS; server configuration dialog: &HTTP; configuration</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="cupsserverconfiguration4_directories.png"
+format="PNG"/></imageobject>
+<textobject>
+<phrase>The dialog to configure the &CUPS; server: &HTTP; configuration</phrase></textobject>
+</mediaobject>
+</screenshot>
+
+<variablelist>
+<varlistentry>
+<term><guilabel>Executables</guilabel></term>
+<listitem>
+<para>The root folder for the scheduler executables.  By default
+this is <filename class="directory">/usr/lib/cups</filename> (or
+<filename class="directory">/usr/lib32/cups</filename> on IRIX
+6.5)</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Configuration</guilabel></term>
+<listitem>
+<para>The root folder for the scheduler.  By default, <filename
+class="directory">/etc/cups</filename>.</para>
+<para>On the authors SuSE system, this is <filename
+class="directory">/usr/share/doc/cups</filename>.  It contains all the
+<acronym>HTML</acronym> or <acronym>PDF</acronym> documentation for
+&CUPS; which is available through the Web interface at <ulink
+url="http://localhost:631/documentation.html">
+http://localhost:631/documentation.html</ulink></para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Data</guilabel></term>
+<listitem>
+<para>The root folder for the &CUPS; data files.  By default this
+is <filename class="directory">/usr/share/cups</filename></para>
+<para>It contains such things as banners, charsets, data, drivers,
+fonts, and <command>pstoraster</command> templates.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Temporary files</guilabel></term>
+<listitem>
+<para>The folder to put temporary files in.  This folder must be
+writable by the user defined on the previous screen.  This defaults to
+either <filename class="directory">/var/spool/cups/tmp</filename> or
+the value of the <envar>TMPDIR</envar> environment variable.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Temporary Requests</guilabel></term>
+<listitem>
+<para>The folder where request files are stored.  By default this
+is <filename class="directory">/var/spool/cups</filename></para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Font path</guilabel></term>
+<listitem>
+<para>The place to configure the &CUPS; server for handling your fancy
+fonts (TrueType or &PostScript;).  &CUPS; will look here for fonts to
+embed in printfiles.  This currently only affects the
+<command>pstoraster</command> filter, and the default is <filename
+class="directory">/usr/share/cups/fonts</filename>.</para>
+
+<para>To specify more than one folder, list them with double colons as
+separator. Do it like this:</para>
+
+<informalexample>
+<para><userinput>/path/to/first/fontdir/:/path/to/second/fontdir/:/path/to/last/fontdir/</userinput></para>
+</informalexample>
+
+<para>For the Font path directive to work as intended, the application
+that wants to print needs to:</para>
+
+<itemizedlist>
+<listitem>
+<para>Either correctly reference its desired fonts in the header of the
+generated &PostScript;</para>
+</listitem>
+<listitem>
+<para>Or embed the font into the &PostScript; file.</para>
+</listitem>
+</itemizedlist>
+
+<para><emphasis>Referencing</emphasis> the font by name leaves it up
+to the <acronym>RIP</acronym> and print device to respect and actually
+use it. <acronym>RIP</acronym> or printer <emphasis>can</emphasis>
+only use the desired font, if it is available on the system.</para>
+
+<para> In the case of a &PostScript; printer, this needs to be a
+printer-resident font. If the printers doesn't have this font, it will
+try and replace it by an adequately similar font.</para>
+
+<para>In the case of a non &PostScript; printer, this is done by
+&CUPS; and its <acronym>RIP</acronym>-ing filtering system. &CUPS;
+will use the font path directive to grab the correct font when
+<acronym>RIP</acronym>-ing the &PostScript; in the
+<command>pstoraster</command> filter. </para>
+
+<para>In the case of a &PostScript; output device, &CUPS; is just
+spooling the file (actually, it is passing it through the
+<command>pstops</command> filter for accounting or n-up purposes), not
+<quote>working</quote> on it. Therefore, if you print to a
+&PostScript; printer it is solely the printer's responsibility to use
+the font asked for. It can't, if the font is neither loaded into the
+printer nor embedded in the &PostScript;.
+</para>
+</listitem>
+</varlistentry>
+</variablelist>
+
+</sect1>
+<sect1 id="server-configuration">
+<title>Server <acronym>HTTP</acronym>
+Configuration</title>
+
+<para>The dialog to configure the &CUPS; server &HTTP; settings
+is shown here. </para>
+<para>&CUPS; server &HTTP; settings are the following ones: </para>
+<itemizedlist>
+<listitem><para>the <guilabel>Document folder</guilabel></para></listitem>
+<listitem><para>the <guilabel>Default Language</guilabel></para></listitem>
+<listitem><para>the <guilabel>Default Charset</guilabel></para></listitem>
+</itemizedlist>
+
+<screenshot>
+<screeninfo>Dialog to configure the &CUPS; server &HTTP; settings
+</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="cupsserverconfiguration5_HTTP.png"
+format="PNG"/></imageobject>
+<textobject>
+<phrase>Dialog to configure the &CUPS; server &HTTP; settings
+</phrase></textobject>
+</mediaobject>
+</screenshot>
+
+<variablelist>
+<varlistentry>
+<term><guilabel>Document folder</guilabel></term>
+<listitem>
+<para>The root folder for &HTTP; documents that are served.  By
+default the compiled in folder, <filename
+class="directory">/usr/share/cups/doc</filename></para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Default Language</guilabel></term>
+<listitem>
+<para>The default language, if not specified by the browser.  If not
+specified, the current locale is used.</para>
+<informalexample>
+<para>Use the two letter locale codes, for example
+<userinput>en</userinput> or <userinput>de</userinput>.</para>
+</informalexample>
+<!-- available languages? -->
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Default charset</guilabel></term>
+<listitem>
+<para>The default character set to use. If not specified, this
+defaults to UTF-8.  This can also be overridden directly in the
+<acronym>HTML</acronym> documents.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect1>
+
+<sect1 id="server-encryption-support-configuration">
+<title><guilabel>Server encryption support configuration</guilabel></title>
+
+<para>This is the dialog to configure the &CUPS; server security
+settings. The server encryption support settings are these: </para>
+
+<itemizedlist>
+<listitem><para><guilabel>Server certificate</guilabel>: the file to
+read containing the server's certificate</para></listitem> 
+<listitem><para>Server key: the file to read containing the server's
+key</para></listitem>
+</itemizedlist>
+<screenshot>
+<screeninfo>&CUPS; server configuration dialog: security overview</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="cupsserverconfiguration6_encryption.png"
+format="PNG"/></imageobject>
+<textobject>
+<phrase>The dialog to configure the &CUPS; server: security settings</phrase></textobject>
+</mediaobject>
+</screenshot>
+
+<variablelist>
+<varlistentry>
+<term><guilabel>Server certificate</guilabel></term>
+<listitem>
+<para>The file to read containing the server's certificate.  Defaults
+to <filename>/etc/cups/ssl/server.crt</filename>.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Server key</guilabel></term>
+<listitem>
+<para>The file to read containing the server's key.  Defaults to
+<filename>/etc/cups/ssl/server.key</filename></para>
+</listitem>
+</varlistentry>
+</variablelist>
+
+</sect1>
+
+<sect1 id="server-miscellaneous-configuration">
+<title>Server Miscellaneous Configuration</title>
+
+<para>The dialog to configure the &CUPS; server miscellaneous settings
+is shown here. The following server settings are done through this
+screen:</para>
+
+<itemizedlist>
+<listitem><para><guilabel>Preserve job history</guilabel>: whether to
+preserve a job history for later re-view</para></listitem>
+<listitem><para><guilabel>Preserve job files</guilabel>: whether to
+preserve fully <acronym>RIP</acronym>-ed job files for later
+re-print</para></listitem>  
+<listitem><para><guilabel>Printcap file</guilabel>: setting the name
+of and the path to a printcap file</para></listitem>
+<listitem><para><guilabel>RIP Cache</guilabel>: setting the size of
+the <acronym>RIP</acronym> cache in memory</para></listitem>
+<listitem><para><guilabel>Filter Limit</guilabel>: defining a filter
+limit</para></listitem>
+</itemizedlist>
+
+<screenshot>
+<screeninfo>Dialog to configure the &CUPS; server miscellaneous settings</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="cupsserverconfiguration7_miscellanious.png"
+format="PNG"/></imageobject>
+<textobject>
+<phrase>Dialog to configure the &CUPS; server miscellaneous
+settings</phrase></textobject>
+</mediaobject>
+</screenshot>
+
+<variablelist>
+<varlistentry>
+<term><guilabel>Preserve job history (after completion)</guilabel></term>
+<listitem>
+<para>Whether or not to preserve the job history after a job is
+completed, canceled, or stopped.  The default is yes</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Preserve job file (after completion)</guilabel></term>
+<listitem>
+<para>Whether or not to preserve the job files after a job is
+completed, canceled, or stopped. The default is no.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Printcap file</guilabel></term>
+<listitem>
+<para>The name of the printcap file.  The default is no filename.
+Leave this blank, to disable printcap file generation.</para>
+<para>The printcap setting is only needed to satisfy older
+applications in need of such a file.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>RIP cache</guilabel></term>
+<listitem>
+<para>The amount of memory that each <acronym>RIP</acronym> should use
+to cache bitmaps.  The value can be any real number, followed by
+<quote>k</quote> for kilobytes, <quote>m</quote> for megabytes,
+<quote>g</quote>for gigabytes, or <quote>t</quote> for tiles, where
+one tile is 256 x 256 pixels.  The default value is 8m.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Filter limit</guilabel></term>
+<listitem>
+<para>Sets the maximum cost of all job filters that can be run at the
+same time.  A limit of 0 means no limit.  A typical job may need a
+filter limit of at least 200.  Limits less than the minimum required
+by a job force a single job to be printed at any time.  The default
+limit is 0 (unlimited).</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect1>
+
+<sect1 id="network-general-configuration">
+<title>Network General Configuration</title>
+
+<para>The dialog to configure the &CUPS; server network settings is
+shown here. It includes:</para>
+
+<itemizedlist>
+<listitem><para><guilabel>Look for hostname on IP
+addresses</guilabel></para></listitem>
+<listitem><para><guilabel>Port</guilabel></para></listitem>
+<listitem><para><guilabel>Max request size</guilabel></para></listitem>
+<listitem><para><guilabel>Timeout</guilabel></para></listitem>
+</itemizedlist>
+
+<screenshot>
+<screeninfo>Dialog to configure the &CUPS; server network settings</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="cupsserverconfiguration8_networkgeneral.png"
+format="PNG"/></imageobject>
+<textobject>
+<phrase>Dialog to configure the &CUPS; server network
+settings</phrase></textobject>
+</mediaobject>
+</screenshot>
+<variablelist>
+<varlistentry>
+<term><guilabel>Look for hostname on IP addresses</guilabel></term>
+<listitem>
+<para>Whether or not to do lookups on <acronym>IP</acronym> addresses
+to get a fully-qualified hostname.  This defaults to off, for
+performance reasons.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Port</guilabel></term>
+<listitem>
+<para>Enter here Ports and addresses that the server will listen to.
+The default port 631 is reserved for the Internet Printing Protocol,
+and is what we use here.</para>
+<para>You can have multiple entries, to listen to more than one port
+or address, or to restrict access.</para>
+<note>
+<para>Unfortunately, most web browsers don't support
+<acronym>TLS</acronym> or &HTTP; upgrades for encryption.  If you want
+to support web-based encryption, you'll probably need to listen on
+port 443, the <acronym>HTTPS</acronym> port.</para>
+</note>
+<para>Use the <guibutton>Add</guibutton> and
+<guibutton>Remove</guibutton> buttons to add and remove entries from
+the list.</para>
+<informalexample>
+<para>You can enter ports on their own, &eg;
+<userinput>631</userinput>, or hostnames with ports, &eg;
+<userinput>myhost:80</userinput> or <userinput>1.2.3.4:631</userinput>.</para>
+</informalexample>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Max request size</guilabel></term>
+<listitem>
+<para>Controls the maximum size of &HTTP; requests and print files.
+The default setting is 0, which disables this feature.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Timeout</guilabel></term>
+<listitem>
+<para>The timeout (in seconds) before requests time out.  The default
+is 300 seconds.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+
+</sect1>
+
+<sect1 id="network-clients-configuration">
+<title>Network Clients Configuration</title>
+
+<para>The dialog to configure the &CUPS; network client settings is
+shown here. It includes:</para>
+
+<itemizedlist>
+<listitem><para><guilabel>Accept "Keep Alive"
+requests</guilabel></para></listitem>
+<listitem><para>KeepAliveTimeout:</para> </listitem>
+<listitem><para>MaxClients: </para></listitem>
+</itemizedlist>
+<screenshot>
+<screeninfo>dialog to configure the &CUPS; network client settings</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="cupsserverconfiguration9_networkclients.png"
+format="PNG"/></imageobject>
+<textobject>
+<phrase>Dialog to configure the &CUPS; network client settings</phrase></textobject>
+</mediaobject>
+</screenshot>
+
+<variablelist>
+<varlistentry>
+<term><guilabel>Accept "Keep Alive" requests</guilabel></term>
+<listitem>
+<para>Whether or not to support the Keep-Alive connection option. The
+default is on.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Keep alive timeout</guilabel></term>
+<listitem>
+<para>The timeout (in seconds) before Keep-Alive connections are
+automatically closed.  The default is 60 seconds.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Max number of clients</guilabel></term>
+<listitem>
+<para>Controls the maximum number of simultaneous clients that will be
+handled.  Defaults to 100.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+
+</sect1>
+
+<sect1 id="browsing-general-configuration">
+<title>Browsing General Configuration</title>
+
+<para>The dialog to configure the &CUPS; browsing general settings
+is shown here. It includes: </para>
+
+<itemizedlist>
+<listitem><para><guilabel>Enable browsing</guilabel></para></listitem>
+<listitem><para><guilabel>Use short names when
+possible</guilabel></para></listitem>
+<listitem><para><guilabel>Use implicit
+classes</guilabel></para></listitem>
+</itemizedlist>
+
+
+<screenshot>
+<screeninfo>Dialog to configure the &CUPS; browsing general
+settings</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="cupsserverconfiguration10_browsinggeneral.png"
+format="PNG"/></imageobject>
+<textobject>
+<phrase>Dialog to configure the &CUPS; browsing general
+settings</phrase></textobject>
+</mediaobject>
+</screenshot>
+
+<variablelist>
+<varlistentry>
+<term><guilabel>Enable browsing</guilabel></term>
+<listitem>
+<para>Whether or not to broadcast printer information to other &CUPS;
+servers.  Enabled by default.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Use short names when possible</guilabel></term>
+<listitem>
+<para>Whether or not to use <quote>short</quote> names for remote
+printers when possible (&eg; <systemitem
+class="resource">printer</systemitem> instead of <systemitem
+class="resource">printer@host</systemitem>).  Enabled by
+default.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Use implicit classes</guilabel></term>
+<listitem>
+<para>Whether or not to use implicit classes.</para>
+<para>Printer classes can be specified explicitly, in the
+<filename>classes.conf</filename> file, implicitly based upon the
+printers available on the <acronym>LAN</acronym>, or both.</para>
+<para>When Implicit classes are enabled, printers on the
+<acronym>LAN</acronym> with the same name (&eg; <systemitem
+class="resource">Acme-LaserPrint-1000</systemitem>) will be put into
+a class with the same name.  This allows you to setup multiple
+redundant queues on a <acronym>LAN</acronym> without a lot of
+administrative difficulties.  If a user sends a job to <systemitem
+class="resource">Acme-LaserPrint-1000</systemitem>, the job will go to
+the first available queue.</para>
+<para>This option is enabled by default.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+
+</sect1>
+<sect1 id="browsing-connection-configuration">
+<title>Browsing Connection Configuration</title>
+
+<para>The dialog to configure the &CUPS; server browsing connection is
+shown here. Browsing connection settings include:</para>
+
+<itemizedlist>
+<listitem><para><guilabel>Broadcast addresses</guilabel>: The
+(<acronym>UDP</acronym>) broadcast address to transmit printer
+information to</para></listitem>
+<listitem><para><guilabel>Broadcast Port</guilabel>: The port number
+to use for broadcasting</para></listitem> 
+<listitem><para><guilabel>Poll addresses</guilabel>: The address(es)
+to poll for information about printers on servers that might not
+broadcast (or whose broadcasts might not reach your
+<acronym>LAN</acronym> due to routers in between).</para></listitem>
+</itemizedlist>
+
+<screenshot>
+<screeninfo>Dialog to configure the &CUPS; server browsing
+connection</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="cupsserverconfiguration11_browsingconnections.png"
+format="PNG"/></imageobject>
+<textobject>
+<phrase>Dialog to configure the &CUPS; server browsing
+connection</phrase></textobject>
+</mediaobject>
+</screenshot>
+
+<variablelist>
+<varlistentry>
+<term><guilabel>Broadcast addresses</guilabel></term>
+<listitem>
+<para>After pressing the <guibutton>Add</guibutton> button, you will
+see the following dialog to enter a new value for outgoing
+broadcasting browse packets. It is the same kind of dialog as for
+adding other &CUPS; server addresses to be polled for printer
+information.</para>
+
+<screenshot>
+<screeninfo>Dialog to enter a new value for broadcasting browse
+packets to</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="cupsserverconfig_browsingmasks_add_button.png"
+format="PNG"/></imageobject>
+<textobject>
+<phrase>Dialog to enter a new value for broadcasting browse packets
+to</phrase></textobject>
+</mediaobject>
+</screenshot>
+
+<para>This option specifies a broadcast address to be used.  By
+default, browsing information is broadcast to all active
+interfaces.</para>
+
+<note>
+<para>&HP-UX; 10.20 and earlier do not properly handle broadcast
+unless you have a Class A, B, C or D netmask (&ie;, there is no
+<acronym>CIDR</acronym> support).</para>
+</note>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Broadcast port</guilabel></term>
+<listitem>
+<para>The port used for <acronym>UDP</acronym> broadcasts.  By default
+this is the <acronym>IPP</acronym> port; if you change this, you need
+to do it on all servers.  Only one BrowsePort is recognized.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Poll addresses</guilabel></term>
+<listitem>
+<para>Poll the named server(s) for printers.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+
+</sect1>
+<sect1 id="browsing-masks-configuration">
+<title>Browsing Masks Configuration</title>
+
+<para>The dialog to configure the &CUPS; server allowed and/or denied browse
+packets from other servers is shown here. </para>
+
+<itemizedlist>
+<listitem><para><guilabel>Browse allow</guilabel>: </para></listitem>
+<listitem><para><guilabel>Browse deny</guilabel>: </para></listitem>
+<listitem><para><guilabel>Browse order</guilabel>: </para></listitem>
+</itemizedlist>
+
+<screenshot>
+<screeninfo>Dialog to configure the &CUPS; server allowed and/or
+denied browse packets from other servers</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="cupsserverconfiguration11_browsingmasks.png"
+format="PNG"/></imageobject>
+<textobject>
+<phrase>Dialog to configure the &CUPS; server allowed and/or denied
+browse packets from other servers</phrase></textobject>
+</mediaobject>
+</screenshot>
+
+<variablelist>
+<varlistentry>
+<term><guilabel>Add Browse Address</guilabel> dialog</term>
+<listitem>
+<para>The dialog to enter a new value for the address of another
+&CUPS; server to accept browse packets from is shown here. It is opened
+by clicking on the <guibutton>Add...</guibutton> button beside the
+field named <guilabel>Browse Allow:</guilabel>. It is the same dialog
+as for adding <quote>denied</quote> broadcast sending
+addresses.</para>
+
+<para>The dialog to enter a new value for the address of another
+&CUPS; server to accept browse packets from is shown here.</para>
+
+<screenshot>
+<screeninfo>Dialog to enter a new value for the address of another
+&CUPS; server to accept browse packets from</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="cupsserverconfig_browsingmasks_add_button.png"
+format="PNG" /></imageobject>
+<textobject>
+<phrase>Dialog to enter a new value for the address of another &CUPS;
+server to accept browse packets from</phrase></textobject>
+</mediaobject>
+</screenshot>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Browse allow</guilabel> and <guilabel>Browse
+deny</guilabel></term>
+<listitem>
+<para><guilabel>Browse allow</guilabel> specifies an address mask to
+allow for incoming browser packets.  The default is to allow packets
+from all addresses.</para>
+<para><guilabel>Browse deny</guilabel> specifies an address mask to
+deny for incoming browser packets.  The default is to deny packets
+from no addresses.</para>
+<para>Both <guilabel>Browse allow</guilabel> and <guilabel>Browse
+deny</guilabel> accept the following notations for addresses:</para>
+
+<informalexample>
+<itemizedlist>
+<listitem>
+<para><userinput>All</userinput></para>
+</listitem>
+<listitem>
+<para><userinput>None</userinput></para>
+</listitem>
+<listitem>
+<para><userinput>*.domain.com</userinput></para>
+</listitem>
+<listitem>
+<para><userinput>.domain.com</userinput></para>
+</listitem>
+<listitem>
+<para><userinput>host.domain.com</userinput></para>
+</listitem>
+<listitem>
+<para><userinput>nnn.*</userinput></para>
+</listitem>
+<listitem>
+<para><userinput>nnn.nnn.*</userinput></para>
+</listitem>
+<listitem>
+<para><userinput>nnn.nnn.nnn.*</userinput></para>
+</listitem>
+<listitem>
+<para><userinput>nnn.nnn.nnn.nnn</userinput></para>
+</listitem>
+<listitem>
+<para><userinput>nnn.nnn.nnn.nnn/mmm</userinput></para>
+</listitem>
+<listitem>
+<para><userinput>nnn.nnn.nnn.nnn/mmm.mmm.mmm.mmm</userinput></para>
+</listitem>
+</itemizedlist>
+</informalexample>
+
+<para>The hostname/domain name restrictions will only work if you have
+turned hostname lookups on!</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Browse order</guilabel></term>
+<listitem>
+<para>Specifies the order of the allow/deny comparisons.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+
+</sect1>
+
+<sect1 id="browsing-timeouts-configuration">
+<title>Browsing Timeouts Configuration</title>
+
+<para>The dialog to configure the &CUPS; server browse timeout settings
+is shown here. Browse timeout settings include:</para>
+<itemizedlist>
+<listitem><para><guilabel>Browse Interval</guilabel></para></listitem>
+<listitem><para><guilabel>Browse Timeout</guilabel></para></listitem>
+</itemizedlist>
+<screenshot>
+<screeninfo>Dialog to configure the &CUPS; server browse timeout
+settings</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="cupsserverconfiguration12_browsingtimeouts.png"
+format="PNG"/></imageobject>
+<textobject>
+<phrase>dialog to configure the &CUPS; server browse timeout
+settings</phrase></textobject>
+</mediaobject>
+</screenshot>
+
+<variablelist>
+<varlistentry>
+<term><guilabel>Browse interval</guilabel></term>
+<listitem>
+<para>The time between browsing updates in seconds.  The default is 30
+seconds.</para>
+<para>Note that browsing information is sent whenever a printer's
+state changes as well, so this represents the maximum time between
+updates.</para>
+<para>Set this to 0 to disable outgoing broadcasts so your local
+printers are not advertised, but you can still see printers on other
+hosts.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>Browse timeouts</term>
+<listitem>
+<para>The timeout (in seconds) for network printers - if we don't get
+an update within this time, the printer will be removed from the
+printer list.</para>
+<para>This number definitely should not be less than the browse
+interval period, for obvious reasons.  Defaults to 300 seconds.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+
+</sect1>
+<sect1 id="browsing-relay-configuration">
+<title>Browsing Relay Configuration</title>
+
+<para>The dialog to configure the &CUPS; server as a browsing relay is
+shown here. Browsing relay settings include:</para>
+
+<itemizedlist>
+<listitem><para><guilabel>Browser packets relay</guilabel></para></listitem>
+</itemizedlist>
+
+<screenshot>
+<screeninfo>Dialog to configure the &CUPS; server as a browsing
+relay</screeninfo> 
+<mediaobject>
+<imageobject>
+<imagedata fileref="cupsserverconfiguration14_browsingrelay.png"
+format="PNG"/></imageobject>
+<textobject>
+<phrase>Dialog to configure the &CUPS; server as a browsing
+relay</phrase></textobject> 
+</mediaobject>
+</screenshot>
+
+<variablelist>
+<varlistentry>
+<term>Add Browse Relay dialog</term>
+<listitem>
+<para>The dialog to enter a new value for an address pair to define
+browsing relaying between a &CUPS; server and a network is shown
+here.</para>
+
+<screenshot>
+<screeninfo>The dialog to enter a new value for an address pair to
+define browsing relaying between a &CUPS; server and a
+network</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="cupsserverconfig_browse_relay_add_button.png"
+format="PNG"/></imageobject>
+<textobject>
+<phrase>The dialog to enter a new value for an address pair to define
+browsing relaying between a &CUPS; server and a
+network</phrase></textobject>
+</mediaobject>
+</screenshot>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Browser packets relay</guilabel></term>
+<listitem>
+<para>Relay browser packets from one address or network to
+another.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+
+</sect1>
+
+<sect1 id="security-configuration">
+<title>Security Configuration</title>
+
+<para>The dialog to configure the &CUPS; server security settings for
+any of the defined server locations is shown here. It contains the
+following settings, which may be defined separately for any valid
+resource (or location) of the &CUPS; server:</para>
+
+<itemizedlist>
+<listitem><para>System Group:</para></listitem>
+<listitem><para>Access Permissions: </para></listitem>
+<listitem><para>Auth Type:</para></listitem>
+<listitem><para>Auth Class:</para></listitem>
+<listitem><para>Auth Group Name:</para></listitem>
+<listitem><para>Encryption:</para></listitem>
+<listitem><para>Allow:</para></listitem>
+<listitem><para>Deny:</para></listitem>
+<listitem><para>Order:</para></listitem>
+</itemizedlist>
+
+<para>Valid resources (or locations) of the &CUPS; server are:</para>
+
+<itemizedlist>
+<listitem><para>Server Root Location: <systemitem
+class="resource">/</systemitem> </para></listitem> 
+<listitem><para>Server Administration Location: <systemitem
+class="resource">/admin</systemitem></para></listitem>
+<listitem><para>All printers on the server: <systemitem
+class="resource">/printers</systemitem></para></listitem>
+<listitem><para>Any individual printer on the server:
+&eg; <systemitem
+class="resource">/printers/infotec_P320</systemitem></para></listitem> 
+<listitem><para>All printer classes on the server: <systemitem
+class="resource">/classes</systemitem>:</para></listitem> 
+<listitem><para>Any individual printer class on the server:
+&eg; <systemitem
+class="resource">/classes/all_infotecs_P320_or_P450</systemitem></para></listitem> 
+</itemizedlist>
+
+<screenshot>
+<screeninfo>Dialog to configure the &CUPS; server security settings
+for any of the defined server locations</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="cupsserverconfiguration_securityoverview.png"
+format="PNG"/></imageobject>
+<textobject>
+<phrase>dialog to configure the &CUPS; server security settings for
+any of the defined server locations</phrase></textobject>
+
+</mediaobject>
+</screenshot>
+
+<note>
+<para>For all locations that are not defined separately the setting of
+the location <quote>above</quote> it is valid.</para>
+
+<para>For example, you have a printer named <systemitem
+class="resource">infotec_P450</systemitem> with no set security
+options. Then the security of the location <systemitem
+class="resource">/printers</systemitem> will take the responsibility
+for this printer as it is a sub-location of<systemitem
+class="resource">/printers</systemitem>. If, in turn there is no
+security set for <systemitem class="resource">/printers</systemitem>,
+then the security for <systemitem class="resource">/</systemitem> (the
+general security) of the server takes responsibility. Either you have
+set this for your purpose or the compiled-in default value takes
+over.</para>
+</note>
+
+<variablelist>
+<varlistentry>
+<term>SystemGroup</term>
+<listitem>
+<para>The group name for <systemitem
+class="groupname">System</systemitem> or printer administration
+access.  The default varies depending on the operating system, but
+will be <systemitem class="groupname">sys</systemitem>, <systemitem
+class="groupname">system</systemitem> or <systemitem
+class="groupname">root</systemitem> (checked for in that order).</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>Access Permissions</term>
+<listitem>
+<para>Access permissions for each folder served by the scheduler.
+Locations are relative to the document root.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>Authorization Type</term>
+<listitem>
+<para>The authorization to use:</para>
+
+<variablelist>
+<varlistentry>
+<term>None</term>
+<listitem>
+<para>Perform no authentication.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Basic</term>
+<listitem>
+<para>Perform authentication using the &HTTP; Basic method.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Digest</term>
+<listitem>
+<para>Perform authentication using the &HTTP; Digest method.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+
+<note>
+<para>Local certificate authentication can be substituted by the
+client for Basic or Digest, when connecting to the localhost
+interface.</para>
+</note>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>Authorization Class</term>
+<listitem>
+<para>The authorization class.  Currently only
+<quote>Anonymous</quote>, <quote>User</quote>, <quote>System</quote>
+(valid user belonging to the group set as system group), and
+<quote>group</quote> (valid user belonging to the specified group) are
+supported.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>Authorization Group Name</term>
+<listitem>
+<para>The group name for <quote>Group</quote> authorization</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>Encryption</term>
+<listitem>
+<para>Whether or not to use encryption.  This depends on having the
+<application>OpenSSL</application> linked into the &CUPS; library and
+scheduler.</para>
+<para>Possible values are:</para>
+<variablelist>
+<varlistentry>
+<term>Always</term>
+<listitem>
+<para>Always use encryption (<acronym>SSL</acronym>)</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Never</term>
+<listitem>
+<para>Never use encryption.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Required</term>
+<listitem>
+<para>Use <acronym>TLS</acronym> encryption upgrade.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>IfRequested</term>
+<listitem>
+<para>Use encryption if the server requests it.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Allow</guilabel></term>
+<listitem>
+<para>Allows access from the specified hostname, domain,
+<acronym>IP</acronym> address or network.  Possible values are:</para>
+
+<informalexample>
+<itemizedlist>
+<listitem>
+<para><userinput>All</userinput></para>
+</listitem>
+<listitem>
+<para><userinput>None</userinput></para>
+</listitem>
+<listitem>
+<para><userinput>*.domain.com</userinput></para>
+</listitem>
+<listitem>
+<para><userinput>.domain.com</userinput></para>
+</listitem>
+<listitem>
+<para><userinput>host.domain.com</userinput></para>
+</listitem>
+<listitem>
+<para><userinput>nnn.*</userinput></para>
+</listitem>
+<listitem>
+<para><userinput>nnn.nnn.*</userinput></para>
+</listitem>
+<listitem>
+<para><userinput>nnn.nnn.nnn.*</userinput></para>
+</listitem>
+<listitem>
+<para><userinput>nnn.nnn.nnn.nnn</userinput></para>
+</listitem>
+<listitem>
+<para><userinput>nnn.nnn.nnn.nnn/mmm</userinput></para>
+</listitem>
+<listitem>
+<para><userinput>nnn.nnn.nnn.nnn/mmm.mmm.mmm.mmm</userinput></para>
+</listitem>
+</itemizedlist>
+</informalexample>
+
+<para>The host and domain address require that you enable hostname
+lookups, as described earlier.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Deny</guilabel></term>
+<listitem>
+<para>Denies access from the specified hostname, domain,
+<acronym>IP</acronym> address or network.  Possible values are:</para>
+<informalexample>
+<itemizedlist>
+<listitem>
+<para><userinput>All</userinput></para>
+</listitem>
+<listitem>
+<para><userinput>None</userinput></para>
+</listitem>
+<listitem>
+<para><userinput>*.domain.com</userinput></para>
+</listitem>
+<listitem>
+<para><userinput>.domain.com</userinput></para>
+</listitem>
+<listitem>
+<para><userinput>host.domain.com</userinput></para>
+</listitem>
+<listitem>
+<para><userinput>nnn.*</userinput></para>
+</listitem>
+<listitem>
+<para><userinput>nnn.nnn.*</userinput></para>
+</listitem>
+<listitem>
+<para><userinput>nnn.nnn.nnn.*</userinput></para>
+</listitem>
+<listitem>
+<para><userinput>nnn.nnn.nnn.nnn</userinput></para>
+</listitem>
+<listitem>
+<para><userinput>nnn.nnn.nnn.nnn/mmm</userinput></para>
+</listitem>
+<listitem>
+<para><userinput>nnn.nnn.nnn.nnn/mmm.mmm.mmm.mmm</userinput></para>
+</listitem>
+</itemizedlist>
+</informalexample>
+<para>The host and domain address require that you enable hostname
+lookups, as described earlier.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>Order</term>
+<listitem>
+<para>The order of the allow and deny processing.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect1>
+
+<sect1 id="example-how-define-security-for-all-printers">
+<title>Example: How To Define The Security For All Printers</title>
+
+<para>The dialog to configure the &CUPS; server security settings is
+discussed here. We use the example to add security definitions other
+than the default ones for the resource named <systemitem
+class="resource">all printers</systemitem>. For the &CUPS; web server,
+this is the location you access through <ulink
+url="http://localhost:631/printers/">
+http://localhost:631/printers/</ulink> or (remotely) through <ulink
+url="http://cups.server.name:631/printers/">
+http://cups.server.name:631/printers/</ulink></para>
+
+<para>The first screenshot shows the general location for this
+setting. <guilabel>Select</guilabel> <guibutton>Add</guibutton> or
+<guibutton>Modify</guibutton> a resource for which you want to decide
+about its security settings.</para>
+
+<screenshot>
+<screeninfo>Dialog to configure the &CUPS; server security
+settings</screeninfo><mediaobject>
+<imageobject>
+<imagedata fileref="cupsserverconfiguration15a_resourceallprinters_defineaccess.png"
+format="PNG"/></imageobject>
+<textobject>
+<phrase>Dialog to configure the &CUPS; server security
+settings</phrase></textobject>
+</mediaobject>
+</screenshot>
+
+<para>This dialog is to add a new resource.  It looks similar if you
+want to modify an already existing resource. Here are the general
+options:</para>
+
+<screenshot>
+<screeninfo>Dialog to add a new resource.</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="cupsserverconfiguration15b_resourceallprinters_defineaccess.png"
+format="PNG"/></imageobject>
+<textobject>
+<phrase>Dialog to add a new resource.</phrase></textobject>
+</mediaobject>
+</screenshot>
+
+<para>.This is the second part or the dialog is to add a new
+ressource.  It looks similar if you want to modify an already existing
+resource. Here you define the actual access masks for the resource in
+question. </para>
+
+<screenshot>
+<screeninfo>Dialog to add a new resource.</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="cupsserverconfiguration15c_resourceallprinters_defineaccess.png"
+format="PNG"/></imageobject>
+<textobject>
+<phrase>Dialog to add a new resource.</phrase></textobject>
+</mediaobject>
+</screenshot>
+<screenshot>
+<screeninfo>Resource dialog</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="cupsserverconfiguration_resourceadminaccessmasks.png"
+format="PNG"/></imageobject>
+<textobject>
+<phrase>Resource dialog</phrase></textobject>
+</mediaobject>
+</screenshot>
+
+<screenshot>
+<screeninfo>Resource dialog</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="cupsserverconfiguration_resourceadminaddprinters.png"
+format="PNG"/></imageobject>
+<textobject>
+<phrase>Resource dialog</phrase></textobject>
+</mediaobject>
+</screenshot>
+
+<screenshot>
+<screeninfo>Resource dialog</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="cupsserverconfiguration_resourceadminaddprinters_defineaccess.png"
+format="PNG"/></imageobject>
+<textobject>
+<phrase>Resource dialog</phrase></textobject>
+</mediaobject>
+</screenshot>
+
+<screenshot>
+<screeninfo>Resource dialog</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="cupsserverconfiguration_resourceadminauthorization.png"
+format="PNG"/></imageobject>
+<textobject>
+<phrase>Resource dialog</phrase></textobject>
+</mediaobject>
+</screenshot>
+
+</sect1>
+
+</chapter>

@@ -1,0 +1,325 @@
+<chapter id="panel-and-desktop">
+
+<chapterinfo>
+<authorgroup>
+<author>
+&Philip.Rodrigues;
+</author>
+</authorgroup>
+</chapterinfo>
+
+
+<title>The Panel and the Desktop</title>
+
+<sect1 id="kicker-panel">
+<title>&kicker;, the &kde; Panel</title>
+
+<indexterm
+significance="preferred"><primary>Panel</primary></indexterm>
+<indexterm
+significance="preferred"><primary>&kicker;</primary></indexterm>
+
+<para>&kicker; is the application launcher panel of the K Desktop
+Environment.  By default, it appears along the bottom of the screen,
+and takes up the whole of the width of the screen, but this is
+configurable. &kicker; is something of a one-stop shop for (almost!)
+everything that you might want quick access to. Besides the &kicon;
+Menu, where you can start applications, &kicker; is also capable of
+running docked applets like the pager, the taskbar or the clock, and
+extensions, such as child panels. With all these options, you will
+probably want to configure &kicker; so that it works best for you. The
+next section describes some common ways to customize the panel.</para>
+<!-- TODO: steal screenies from kicker manual -->
+</sect1>
+
+<!-- FIXME: Titles and id's  in this section should be more consistent -->
+<sect1 id="kicker-configuring">
+<title>Configuring &kicker;</title>
+
+
+<sect2 id="customize-panel-icons">
+<title>Customizing the icons on the panel</title>
+
+<para>When you first start &kde;, kicker displays some icons next to
+the <guimenu>K</guimenu> menu. These can be used to start the
+applications that they represent. To see which application is launched
+ by each icon, hold the mouse cursor over the icon until a tooltip (a
+small popup label) appears telling you the name of the application.</para>
+
+<para>These default icons might not represent the applications you use
+most often, so you can remove the ones you do not want and add icons
+for other applications that you use. To remove an icon, &RMB;-click on
+the icon, and select <guilabel>Remove <replaceable>application
+name</replaceable> Button</guilabel> in the popup menu that
+appears. To add a new icon, &RMB;-click on an empty space on the
+panel, and follow the menu entry <guisubmenu>Add Application to Panel
+</guisubmenu>. This leads you to a copy of the
+<guimenu>K</guimenu> menu, where you can find all of the &kde;
+applications. For example, to add an icon for the &juk; music player,
+follow through the menus to <menuchoice><guisubmenu>Add Application
+to Panel</guisubmenu><guisubmenu>Multimedia</guisubmenu><guimenuitem>&juk; (Music
+Player)</guimenuitem></menuchoice>. The icon will appear on the
+panel in the space that you <mousebutton>right</mousebutton>-clicked on.</para>
+
+</sect2>
+
+
+<sect2 id="adding-extras-and-applets">
+<title>Adding extras and applets</title>
+
+<indexterm><primary>Applets</primary></indexterm>
+
+<para>&kicker; can add many types of items as well as application
+launch icons. You can find these items using the same menu as before,
+but this time selecting
+<guisubmenu>Add Applet to Panel...</guisubmenu>
+or
+<guisubmenu>Add New Panel</guisubmenu>.
+The items in the <guilabel>Add Applet</guilabel> window are small
+programs that can reside on the panel. An example of an applet is the
+<guilabel>Desktop Preview &amp; Pager</guilabel><indexterm><primary>Pager</primary></indexterm>, which shows a small image of each of your virtual
+desktops. (For more information about virtual desktops, see <xref
+linkend="using-multiple-desktops" />). You can switch to a different
+virtual desktop by clicking on its image in the desktop pager. 
+<!-- TODO: screenie --></para>
+<para>You can find information about the other applets available for
+&kicker; in the &kicker; manual. Just enter
+<userinput>help:/kicker</userinput> in the
+<guilabel>Location</guilabel> bar in &konqueror;. </para>
+</sect2>
+
+<sect2 id="the-system-tray">
+<sect2info>
+<authorgroup>
+<author>
+<personname>
+<firstname>Simon</firstname>
+<surname>Vermeersch</surname>
+</personname>
+<email>titeuf@ph34rus.org</email>
+</author>
+</authorgroup>
+</sect2info>
+
+<title>The System Tray</title>
+
+<!-- Simon Vermeersch -->
+<para>The system tray is where programs that are run, but not directly needed are
+kept. Some programs (like music players) are shown there, because you
+probably want to keep them open, but so that it does not take too much space on
+your screen, it will put an icon in the system tray.</para>
+
+<para>When you <mousebutton>right</mousebutton> click on such an icon, a
+popup menu will appear where you can see some options of the program (like
+play, pause, stop, ... in a music player).</para>
+<para>When you <mousebutton>left</mousebutton> click on it, the main window
+of the program will appear. If you hover your mouse above the icon, a tool
+tip will appear with some information (in the music player case information
+like the current song). Programs that normally support system tray icons are
+music players, IRC clients, organizers, ...</para>
+
+<para>In most of these programs you can configure if you want an icon to be
+shown or not. For other tricks and tips with the system tray see the section on <xref linkend="system-tray" />.</para>
+
+</sect2>
+
+<sect2 id="removing-panel-items">
+<title>Removing Panel Items</title>
+
+<!-- TODO: Need a screenie to show the handles, since they're not very -->
+<!-- easy to describe (and also very small - possible -->
+<!-- accessibility/usability issue? -->
+<para>You can remove applets and other special items from the panel
+using the arrow on its handle on the applet's left. Right click on the
+arrow, and choose <guimenuitem>Remove <replaceable>applet
+name</replaceable></guimenuitem>.</para>
+</sect2>
+
+</sect1>
+
+<sect1 id="kicker-taskbar">
+<title>The Taskbar</title>
+<!-- TODO: Screenie (again), write more about why taskbar is useful -->
+<para>The taskbar is an item on the panel which displays an entry for
+each window that you have opened. You can use the taskbar to switch
+between windows by clicking on the entry of the window you want to
+activate. The taskbar has entries for windows on each virtual desktop,
+including windows which have been minimized.</para>
+
+</sect1>
+
+<sect1 id="using-the-clipboard">
+<sect1info>
+<authorgroup>
+<author>&Philip.Rodrigues;
+</author>
+</authorgroup>
+</sect1info>
+
+<title>Using the Clipboard</title>
+
+<indexterm><primary>Clipboard</primary></indexterm>
+
+<para>Very often, it's useful to move some text, or an object in a
+program, from one place to another. It's also very common to need to
+duplicate some text, for example, if you're typing the same thing
+several times. The system used for doing this is known as the
+<firstterm>clipboard</firstterm>. There are two slightly different ways to use this system,
+known technically as the <quote>selection</quote> and the
+<quote><glossterm>clipboard</glossterm></quote>. We'll look at them separately:
+</para>
+
+<!-- TODO: Describe how to select text -->
+
+<sect2 id="the-selection">
+<title>The Selection</title>
+<indexterm><primary>Selection</primary></indexterm>
+
+<para>This method uses the mouse to copy text from one place to
+another. The method is:
+<orderedlist>
+
+<listitem><para>Select the text you want to copy.</para>
+</listitem>
+
+<listitem><para>Click the &MMB; at the place you want the text to be
+copied to. This can be in the same program as you copied the text
+from, or in another program entirely.</para>
+</listitem>
+</orderedlist>
+If you have three buttons on your mouse, this is easy, but if not, all
+is not lost! If you have only two buttons, try clicking them both at
+the same time instead of the &MMB;. 
+<!-- Should we mention Emulate3Buttons in XF86Config here? -->
+</para>
+</sect2>
+
+<sect2 id="the-clipboard-proper">
+<title>The Clipboard</title>
+<indexterm><primary>Cut</primary></indexterm>
+<indexterm><primary>Paste</primary></indexterm>
+<para>With this method, you can copy text, or <quote>cut</quote> it
+(that is, remove it from one place and move it to another). You can
+use either the mouse and the menu entries, or the keyboard with this
+method. I'll list both ways, with the menu entry to use, followed by
+the keyboard shortcut which will do the same thing, like this:</para>
+<para>
+<menuchoice><shortcut><keycombo action="simul">&Ctrl;<keycap>X</keycap>
+</keycombo>
+</shortcut><guimenu>Edit</guimenu><guimenuitem>Cut</guimenuitem>
+</menuchoice> </para>
+<para>
+<orderedlist>
+<title>Moving (<quote>Cutting</quote>) Text</title>
+<listitem><para>Select the text you want to cut.</para>
+</listitem>
+<listitem><para>From the menu, select
+<menuchoice><shortcut><keycombo
+                      action="simul">&Ctrl;<keycap>X</keycap>
+</keycombo>
+</shortcut><guimenu>Edit</guimenu><guimenuitem>Cut</guimenuitem>
+</menuchoice>, and the text will be removed from its current location.</para>
+</listitem>
+<listitem><para>Position the text cursor at the point you want to
+insert the text. This can be in the same application you got the text
+from, or another application entirely. Select
+<menuchoice><shortcut><keycombo action="simul">&Ctrl;<keycap>V</keycap>
+</keycombo>
+</shortcut><guimenu>Edit</guimenu><guimenuitem>Paste</guimenuitem>
+</menuchoice>, and the text will appear at the point where you placed
+the cursor.</para>
+</listitem>
+</orderedlist>
+</para>
+
+<para>
+Copying text from one place to another is very similar:
+<orderedlist>
+<title>Copying Text</title>
+<listitem><para>Select the text you want to copy.</para>
+</listitem>
+<listitem><para>From the menu, select
+<menuchoice><shortcut><keycombo action="simul">&Ctrl;<keycap>C</keycap>
+</keycombo>
+</shortcut><guimenu>Edit</guimenu><guimenuitem>Copy</guimenuitem>
+</menuchoice>, and the text will be copied in the clipboard.</para>
+</listitem>
+<listitem><para>Position the text cursor at the point you want to
+insert the text. This can be in the same application you got the text
+from, or another application entirely. Select
+<menuchoice><shortcut><keycombo action="simul">&Ctrl;<keycap>V</keycap>
+</keycombo>
+</shortcut><guimenu>Edit</guimenu><guimenuitem>Paste</guimenuitem>
+</menuchoice></para>
+</listitem>
+</orderedlist>
+</para>
+
+
+</sect2>
+<sect2 id="klipper">
+<title>More Advanced Clipboard Use</title>
+<indexterm><primary>&klipper;</primary></indexterm>
+<indexterm><primary>Clipboard</primary><secondary>History</secondary></indexterm>
+<!-- Should we describe this advanced use, or just point to it? -->
+<para>The instructions above describe the default <glossterm>clipboard</glossterm>
+behavior. The &klipper; application, which you can add as an applet in
+the panel (see <xref linkend="kicker-configuring"/> for instructions
+on how to do this), provides some useful clipboard-related features,
+like a clipboard history, and the ability to change the behavior of
+the clipboard and selection. Take a look at the &klipper; Handbook for
+more information.</para>
+
+<!-- Add links to "further reading" here -->
+<itemizedlist>
+<title>Related Information</title> 
+
+<listitem><para>You can find more information about &kicker;, the
+&kde; Panel, in &khelpcenter; or by entering
+<userinput>help:/kicker</userinput> in &konqueror;'s
+<guilabel>Location</guilabel> bar.</para>
+</listitem>
+
+<listitem><para>The &klipper;
+Handbook has information about the advanced clipboard management
+features in &kde;. You can read it in &khelpcenter; or by entering
+<userinput>help:/klipper</userinput> in &konqueror;'s
+<guilabel>Location</guilabel> bar.</para>
+</listitem>
+
+</itemizedlist>
+
+
+</sect2>
+
+</sect1>
+
+<sect1 id="kicker-related-information">
+<title>Related Information</title>
+<itemizedlist>
+<title>Related Information</title>
+<listitem><para>Though some information has been presented here, there is a lot more information on &kicker; tips, options, tricks and hacks, in the &kicker; handbook. You can access it via the &khelpcenter; or by simply entering <userinput>help:/kicker</userinput> in the &konqueror; Location toolbar.</para>
+</listitem>
+</itemizedlist>
+
+</sect1>
+
+</chapter>
+
+<!-- Keep this comment at the end of the file
+Local variables:
+mode: xml
+sgml-omittag:nil
+sgml-shorttag:nil
+sgml-namecase-general:nil
+sgml-general-insert-case:lower
+sgml-minimize-attributes:nil
+sgml-always-quote-attributes:t
+sgml-indent-step:0
+sgml-indent-data:true
+sgml-parent-document:("index.docbook" "book" "sect1")
+sgml-exposed-tags:nil
+sgml-local-catalogs:nil
+sgml-local-ecat-files:nil
+End:
+-->

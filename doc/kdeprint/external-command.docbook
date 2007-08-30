@@ -1,0 +1,25 @@
+<chapter id="external-printcommand-module">
+<title>Module For External Print Command (&Netscape;-like) </title>
+
+<para>This module allows the print command to be specified completely
+(&Netscape;-like). An edit line is added in the print dialog for that
+purpose. Can be used in many cases, for example with a self-made print
+program. </para>
+
+<sect1>
+<title>Overview of provided features</title>
+
+<itemizedlist>
+<listitem>
+<para>Printer management: not supported</para>
+</listitem>
+<listitem>
+<para>Job management: not supported.</para>
+</listitem>
+<listitem>
+<para>Print options: basic control, depending on your knowledge of the
+print command</para>
+</listitem>
+</itemizedlist>
+</sect1>
+</chapter>

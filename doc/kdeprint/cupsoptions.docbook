@@ -1,0 +1,602 @@
+<chapter id="cupsoptions-presently-outside-kcontrol">
+<title>&CUPS; options presently not available through &kcontrol;</title>
+
+<para>This chapter gives you some hints about further configuration
+possibilities which may not be available through the &kdeprint; &GUI;
+interface to &CUPS;.</para>
+
+<sect1>
+<title>Overview of provided features</title>
+
+<para>All of the most often used features and functions &CUPS; provides
+are supported in &kdeprint;.</para>
+
+<itemizedlist>
+<listitem>
+<para>Printer management is supported: add, remove, modify, configure,
+test, disable, enable ...</para>
+</listitem>
+<listitem>
+<para>Job management is supported: cancel, hold, release, move to
+different printer</para>
+</listitem>
+<listitem>
+<para>Print options: for full control as provided by &CUPS;.</para>
+</listitem>
+</itemizedlist>
+
+</sect1>
+
+<sect1 id="where-to-find-further-chupshelp">
+<title>Where to find help when using &CUPS;</title>
+
+<para>A lot of information about the inner workings of &CUPS; is
+available through the web interface, which &CUPS; will always
+support. It works with any browser (yes, even text-based ones). Just go
+to <ulink url="http://localhost:631/">http://localhost:631/</ulink> for
+a start. There you find a link to locally available &CUPS; documentation
+in <acronym>HTML</acronym> and <acronym>PDF</acronym> if you are new to
+&CUPS;.</para>
+
+<para>&CUPS; is accessible through other means than &kdeprint;:
+commandline and browser are two native &CUPS; interfaces. The many
+commandline utilities add up to the most complete control you have on
+&CUPS;. The web interface is only a subset of all available
+configuration or control options. </para>
+
+<para>This is also true for &kdeprint;. Generally, as &CUPS; develops,
+most new features will first be implemented through the commandline. Be
+sure to check the latest versions of the man pages for &CUPS; to stay
+up-to-date with new features after you install a new version.</para>
+
+<tip>
+<para>Depending on your update method for &CUPS;, your active
+configuration file might not have been re-placed by a new one; thus your
+new, more capable &CUPS;-daemon might not have been told by the old
+configuration file about the new features to use.</para>
+</tip>
+
+<para>A complete list of available files and man pages should always be
+in the &CUPS; Software Administrator Manual (<ulink
+url="http://localhost:631/sam.html#FILES">http://localhost:631/sam.html#FILES</ulink>.
+In the &konqueror; &URL;/location field, type
+<userinput>man:/lpadmin</userinput> and
+<userinput>man:/cupsd.conf</userinput> to find out about the most
+important command and configuration file. You knew already about
+&konqueror;'s nice abilities to show you the traditional &UNIX; man
+pages, didn't you? Read this.  From there you find more interesting
+hints and links to other man pages and documentation.</para>
+
+<sect2>
+<title>How to find &CUPS; related man pages</title>
+
+<para>Here is a way to find out which &CUPS; related man pages there
+are on your system: </para>
+
+<screen><prompt>kurt@transmeta:~ ></prompt> <userinput><command>apropos</command> <parameter>cups</parameter></userinput>
+<computeroutput>
+cups-calibrate (8)- ESP Printer Calibration Tool
+lpstat (1)        - print cups status information
+cups-lpd (8)      - receive print jobs + report printer status to lpd clients
+classes.conf (5)  - class configuration file for cups
+backend (1)       - cups backend transmission interfaces
+filter (1)        - cups file conversion filter interfaces
+cups-polld (8)    - cups printer polling daemon
+mime.types (5)    - mime type description file for cups
+cupsd (8)         - common unix printing system daemon
+lpadmin (8)       - configure cups printers and classes
+cupsd.conf (5)    - server configuration file for cups
+mime.convs (5)    - mime type conversion file for cups
+printers.conf (5) - printer configuration file for cups
+mime.convs (5)    - mime type conversion file for cups
+cups-polld (8)    - cups printer polling daemon
+lpstat (1)        - print cups status information
+backend (1)       - cups backend transmission interfaces
+mime.types (5)    - mime type description file for cups
+cupsd (8)         - common unix printing system daemon
+lpadmin (8)       - configure cups printers and classes
+printers.conf (5) - printer configuration file for cups
+cupsd.conf (5)    - server configuration file for cups
+filter (1)        - cups file conversion filter interfaces
+</computeroutput></screen>
+</sect2>
+</sect1>
+
+<sect1 id="tips-and-tricks-for-cups">
+<title>Outside &kdeprint;: Hints &amp; Tips Tricks with &CUPS; on the
+Commandline</title>
+
+<para>Here are a few examples of options that are presently only
+available if you use the commandline. </para>
+
+<sect2>
+<title>Allowing or denying printer access for certain users</title>
+
+<para>When installing (or modifying) a printer through the command line,
+you can either deny or allow the usage of that printer to certain
+users:</para>
+
+<screen><userinput><command>lpadmin</command> <option>-p</option><parameter>HeidelbergDigimaster9110</parameter> <option>-v</option> <parameter>lpd:/10.160.16.99/mqueue</parameter> <option>-u</option> <parameter>allow:kurt,sylvi,hansjoerg</parameter> <option>-E</option> <option>-P</option> <parameter>/home/kurt/PPDs/DVHV.ppd</parameter></userinput></screen>
+
+<para>will allow the usage of this (believe me: very nice and also very
+professional) printer to only the three mentioned users and at the same
+time deny it to all others. If another user wants to print on the
+DigiMaster via this &CUPS; server, he will receive an error message
+along the lines <errortype>client-error-not-possible</errortype>.</para>
+
+<screen><userinput><command>lpadmin</command> <option>-p</option> <parameter>HeidelbergDigimaster9110</parameter> <option>-v</option> <parameter>lpd:/10.160.16.99/mqueue</parameter> <option>-u</option> <parameter>deny:tackat,boss,waba</parameter> <option>-E</option> <option>-P</option> <parameter>/home/kurt/PPDs/DVHV.ppd</parameter></userinput></screen>
+
+<para>will deny the usage of this same printer to the three mentioned
+users and at the same time allow it to all others. If
+<quote>denied</quote> user wants to print on the DigiMaster via this
+&CUPS; server, he will receive an error message along the lines
+<errortype>client-error-not-possible</errortype>.</para>
+
+<note>
+<para>Only one of the two options may be used at one time; at present
+there is no support to have a similar option in a per-group based
+way. This will be implemented in the future.</para>
+</note>
+
+</sect2>
+<sect2>
+<title>Imposing Quotas for certain printers</title>
+
+<para>Sometimes you want to impose quotas for certain printers.  With
+quotas you can set upper limits for the number of pages or the amount of
+data to be printed over a certain period to a certain printer.</para>
+
+<para>Quotas can be set with the <option>-o</option> option when
+installing a printer with the <command>lpadmin</command> command, or
+afterwards for an already existing printer. Following are some
+guidelines (which are missing at the time of writing in the, official
+&CUPS; documentation):</para>
+
+<itemizedlist>
+<listitem>
+<para>With &CUPS; you may have pagecount- and filesize-based quotas for
+individual printers.</para>
+</listitem>
+
+<listitem>
+<para>Quotas are calculated for each user individually (so a single set
+of limits applies to all users for the printer concerned).</para>
+</listitem>
+
+<listitem>
+<para>Quotas include banner pages (if those are used).</para>
+</listitem>
+
+<listitem>
+<para>This means: you can limit every user to 20 pages per day on an
+expensive printer, but you cannot limit every user except <systemitem
+class="username">Kurt</systemitem> or <systemitem
+class="username">root</systemitem>.</para>
+</listitem>
+
+<listitem>
+<para>There are <option>job-k-limit</option>,
+<option>job-page-limit</option>, and <option>job-quota-period</option>
+options to give when setting up a printer.</para>
+</listitem>
+
+<listitem>
+<para><option>job-quota-period</option> sets a time interval for quota
+computing (intervals are determined in seconds; so a day is
+60x60x24=86.400, a week is 60x60x24x7=604,800, and a month is
+60x60x24x30=2.592.000 seconds.)</para>
+</listitem>
+
+<listitem>
+<para>For quotas to be enforced, the time-period
+<emphasis>plus</emphasis> at least one job-limit must be set to
+non-zero.</para>
+</listitem>
+
+<listitem>
+<para>The default value of 0 for <option>job-k-limit</option> specifies
+that there is no limit.</para>
+</listitem>
+
+<listitem>
+<para>The default value of 0 for <option>job-page-limit</option>
+specifies that there is no limit.</para>
+</listitem>
+
+<listitem>
+<para>The default value of 0 for <option>job-quota-period</option>
+specifies that the limits apply to all jobs that have been printed by a
+user that are still known to the system.</para>
+</listitem>
+</itemizedlist>
+
+<sect3>
+<title>Working Examples:</title>
+
+<para>Working, as both, time-period <emphasis>plus</emphasis> one or
+both job-limits are defined</para>
+
+<screen><userinput><command>lpadmin</command> <option>-p</option> <parameter>danka_infotec_4850</parameter> <option>-o</option> <parameter>job-quota-period=604800</parameter> <option>-o</option> <parameter>job-k-limit=1024</parameter></userinput></screen>
+
+<para>This sets a limit of a file size of 1 MB (in total) for each user
+of existing printer <systemitem
+class="resource">danka_infotec_4850</systemitem> during one week.</para>
+
+<screen><userinput><command>lpadmin</command> <option>p</option> <parameter>danka_infotec_4105</parameter> <option>-o</option> <parameter>job-quota-period=604800</parameter> <option>-o</option> <parameter>job-page-limit=100</parameter></userinput></screen>
+
+<para>This sets a limit of 100 pages (in total) for each user of
+existing printer <systemitem
+class="resource">danka_infotec_4105</systemitem> during one week.</para>
+
+<screen><userinput><command>lpadmin</command> <option>-p</option> <parameter>danka_infotec_P450</parameter> <option>-o</option> <parameter>job-quota-period=604800</parameter> <option>-o</option> <parameter>job-k-limit=1024</parameter> <option>-o</option> <parameter>job-page-limit=100</parameter></userinput></screen>
+
+<para>This sets a combined limit of 1 MB (in total) and 100 pages (in
+total) for each user of existing printer <systemitem
+class="resource">danka_infotec_P450</systemitem> during one
+week. Whichever limit is reached first will take effect.</para>
+
+</sect3>
+
+<sect3>
+<title>Not working examples</title>
+
+<para><emphasis>NOT</emphasis> working, as only
+<emphasis>one</emphasis>, time-period <emphasis>or</emphasis> job-limit
+is defined)</para>
+
+<screen><userinput><command>lpadmin</command> <option>-p</option> <parameter>danka_infotec_P320</parameter> <option>-o</option> <parameter>job-quota-period=604800</parameter></userinput>
+
+<userinput><command>lpadmin</command> <option>-p</option> <parameter>danka_infotec_FullColor</parameter> <option>-o</option> <parameter>job-page-limit=100</parameter></userinput>
+
+<userinput><command>lpadmin</command> <option>-p</option> <parameter>danka_infotec_HiSpeed</parameter> <option>-o</option> <parameter>job-k-limit=1024</parameter></userinput></screen>
+
+</sect3>
+
+<sect3>
+<title>Related Error Messages</title>
+
+<para>Once a user reaches his quota limit, he'll get a
+<errortype>client-error-not-possible</errortype> message, if he wants to
+print.</para>
+
+</sect3>
+
+</sect2>
+
+<sect2>
+<title>Installing a <quote>raw</quote> printer</title>
+
+<para>There are different ways to define a <quote>raw</quote>
+printer. One comfortable one is to use the <command>lpadmin</command>
+command.  Just don't define a &PPD; file to be used for that printer and
+it will be a raw one:</para>
+
+<screen><userinput><command>lpadmin</command> <option>-p</option> <parameter>Raw_Danka_infotec</parameter> <option>-E</option> <option>-v</option> <parameter>lpd://10.160.16.137/PORT1</parameter></userinput></screen>
+
+<para>Raw printer queues are those which don't touch the print file to
+transform it to a different file format. You need this for example when
+printing from &Windows; clients via Samba through a &CUPS; server to a
+<acronym>PCL</acronym> printer: in this case the &Windows; side printer
+driver would generate the finished print file format for the target
+printer and filtering it through &CUPS; filters would only harm the
+purpose. Under certain circumstances (if you want to make sure that the
+file goes to the printer <quote>unfiltered</quote> by &CUPS;) the
+<quote><command>lpadmin</command> without a &PPD;</quote> comes in
+handy.</para>
+
+</sect2>
+
+</sect1>
+<sect1 id="troubleshooting-cups">
+<title>Troubleshooting &CUPS; in &kdeprint;</title>
+
+<para>This section of the &kdeprint; Handbook will live from the
+readers' feedback. Here is just a small beginning.</para>
+
+<sect2>
+<title>Error Messages</title>
+
+<qandaset>
+<qandaentry>
+<question>
+<para>What does the error
+<errortype>client-error-bad-request</errortype> mean?</para>
+</question>
+<answer>
+<para>The user sent a file to the &CUPS; which the server could not
+process. You get this also upon sending an <quote>empty</quote>
+file.</para>
+</answer>
+</qandaentry>
+
+<qandaentry>
+<question>
+<para>And <errortype>client-error-not-possible</errortype>?</para>
+</question>
+<answer>
+<para>User is either not allowed to print to a certain printer or has
+achieved his quota (based on file size and/or page number)</para>
+</answer>
+</qandaentry>
+
+<qandaentry>
+<question>
+<para>How about <errortype>client-error-not-found</errortype>?</para>
+</question>
+<answer>
+<para>The user tried to access a nonexistent resource on the &CUPS;
+server, such as trying to print a nonexistent file, or one that you are
+denied permission to read.</para>
+</answer>
+
+</qandaentry>
+</qandaset>
+
+</sect2>
+
+<sect2>
+<title>Questions and Answers</title>
+
+<qandaset>
+<qandaentry>
+<question>
+<para>Why can't I re-start my jobs?</para>
+</question>
+<answer>
+<para>To be able to re-start your <quote>completed</quote> jobs from the
+web interface, you need a setting in the
+<filename>/etc/cups/cupsd.conf</filename> file: set
+<userinput>PreserveJobFiles True</userinput>.</para>
+</answer>
+</qandaentry>
+
+<qandaentry>
+<question>
+<para>How do I get rid of the long list of completed jobs in the web
+interface?</para>
+</question>
+<answer>
+<para>TODO</para>
+</answer>
+</qandaentry>
+
+<qandaentry>
+<question>
+<para>How does page accounting work?</para>
+</question>
+<answer>
+<para>&CUPS; does the <quote>print accounting</quote> by passing nearly
+every job through the <quote>pstops</quote> filter.  This one does,
+amongst other things, the page counting. Output of this filter there may
+be piped into other filters (like pstoraster --> rastertopcl) or sent to
+the printer directly (if it is a &PostScript; printer).</para>
+
+<para>In any case, this works for network, parallel, serial or
+<acronym>USB</acronym> printers the same. For pstops to work, it needs
+<acronym>DSC</acronym>, Document Structuring Convention compliant
+&PostScript; (or near-equivalent) as input. So it calculates the pages
+during filtering on the print server and writes info about every single
+page (what time, which user, which job-ID and -name, which printer, how
+many copies of which pages of the document, how many kilo-bytes?) into
+<filename>/var/log/cups/page_log</filename>.</para>
+
+<para>By the way: on my personal <quote>wishlist</quote> is a hack of
+<quote>webalizer</quote> to read and analyze the page_log and give a
+similar output.  Anyone?</para>
+
+<para>However, it is <emphasis>not</emphasis> giving correct results in
+the following cases:</para>
+
+<itemizedlist>
+<listitem>
+<para>The printer jams and maybe therefor throw away the job (real live
+experience; or maybe throwing away the job because of problems with the
+data format)</para>
+</listitem>
+<listitem>
+<para>Jobs printed as <quote>raw</quote> are always counted as size of 1
+page (and maybe multiple copies).</para>
+</listitem>
+</itemizedlist>
+
+<para>Therefore the page accounting of &CUPS; is <quote>only</quote>
+an approximation (in many cases an excellent or at least good one, in
+others a quite poor one). The only reliable print count is the one
+done by the internal printer counter. (Because this is the one you pay
+for, if you are on a <quote>click price</quote> or similar.)  Some, by
+far not most, printers can be queried remotely for that information
+via <acronym>SNMP</acronym> (Simple Network Management Protocol). That
+means, in a bigger network with many different printers there
+<emphasis>is</emphasis> just no completely reliable and accurate page
+accounting tool!</para>
+</answer>
+</qandaentry>
+
+<qandaentry>
+<question>
+<para>Why doesn't page-accounting work with &Windows; clients?</para>
+</question>
+<answer>
+<para>From &Windows; clients jobs nearly always need to be sent as
+<quote>raw</quote>. Why? If &CUPS; works as a print server for &Windows;
+clients using the original native &Windows; driver for the target print
+device, this guarantees the correct formatting of the job on the clients
+already; therefor the server should not touch it and print
+<quote>raw</quote>; therefor no filtering is started (and this is not
+even possible as the input from the clients is not &PostScript; as
+pstops expects; hence no page-count other than the default
+<quote>1</quote>.</para>
+</answer>
+</qandaentry>
+
+<qandaentry>
+<question>
+<para>How do I get a list of available options for a given printer or a
+&PPD; file?</para>
+</question>
+<answer>
+<para>See the man page for the <command>lpoptions</command> command. You
+may investigate a &CUPS;-enabled box about any option of its available
+printers. There is no need to have the printer installed locally. As
+long as the printer is available locally (through the &CUPS;
+<quote>printer browsing</quote> feature), it will also work
+remote.</para>
+
+<para>To query for a printers' option typing
+<userinput><command>lpoptions</command> <option>-p</option>
+<parameter>HitachiDDP70MicroPress</parameter>
+<option>-l</option></userinput> will give a long listing of all
+available options as read from the &PPD; file for the given
+Hitachi-Printer (in my case installed on remote server
+transmeta). Remote server <systemitem
+class="systemname">Transmeta</systemitem> and its &CUPS; daemon as well
+as the localhost's &CUPS; daemon need to be up and running for this to
+succeed.</para>
+</answer>
+</qandaentry>
+
+<qandaentry>
+<question>
+<para>How do I read the listing retrieved by the
+<command>lpoptions</command> command?</para>
+</question>
+
+<answer>
+<para>You know that for &PostScript; printer manufacturers it is
+<quote>legal</quote> to define their own internal names and procedures
+even for standard &PostScript; options. As long as the driver is able to
+retrieve the option from the &PPD; and show it to the user in a way that
+he understands it everything is OK. But what do <emphasis>you</emphasis>
+do, if you want to use some obscure printer options on the command line?
+How do you find out its exact syntax?</para>
+
+<para>Let's take an example. Looking at Hitachi's DDP70 printer and how
+it implements duplex printing is revealing somehow. How do you tell how
+to print double sided? duplex or Duplex? Or another name altogether?.</para>
+
+<screen><userinput><command>lpoptions</command> <option>-h</option> <parameter>transmeta</parameter> <option>-p</option> <parameter>Hitachi_DDP70_ClusterPrintingSystem</parameter> <option>-l</option> | <command>grep</command> <parameter>uplex</parameter></userinput></screen>
+
+<para>This leads to the output</para>
+
+<screen><computeroutput>TR-Duplex/Duplex: False *True</computeroutput></screen>
+
+<para>This is to be interpreted like follows:</para>
+
+<itemizedlist>
+<listitem>
+<para>The name of the investigated option is
+<option>TR-Duplex</option>;</para>
+</listitem>
+<listitem>
+<para>Behind the slash you see the translation of the option, as it
+should be shown in a &GUI; or Web interface
+(<quote>Duplex</quote>);</para>
+</listitem>
+<listitem>
+<para>The option may take one of the two values
+<parameter>False</parameter> or <parameter>True</parameter>;</para>
+</listitem>
+<listitem>
+<para>The present setting is <parameter>True</parameter> to be
+recognized by the marking with a star <literal>*</literal>.</para>
+</listitem>
+</itemizedlist>
+
+<para>To override the present default setting (duplex) and print a job
+in simplex, you need to use the following command: </para>
+
+<screen><userinput><command>lpr</command> <option>-P</option> <parameter>Hitachi_DDP70_ClusterPrintingSystem</parameter> <option>-o</option> <parameter>TR-Duplex=False</parameter> <parameter>/path/to/your/printjob</parameter></userinput></screen>
+</answer>
+</qandaentry>
+
+<qandaentry>
+<question>
+<para>How do I get a nicely formatted listing of available options for a
+given printer or &PPD;?</para>
+</question>
+<answer>
+<para>Use the <command>lphelp</command> command which may be installed
+on your system locally. There is not yet a man page for
+<command>lphelp</command>.</para>
+
+<screen><userinput><command>lphelp</command> <parameter>infotecP450</parameter></userinput></screen>
+
+<para>This lists the available options for the named printer. It is
+nicely formatted and does explain every available option and how to use
+it. You can query different printers' options at once:</para>
+
+<screen><userinput><command>lphelp</command> <parameter>infotec7410color</parameter> <parameter>DANKA_fullcolor_D2000</parameter> <parameter>HP_ColorLaserJet8550</parameter></userinput></screen>
+
+<para>It also works for &PPD; files. Just specify the path to the
+&PPD;:</para>
+
+<screen><userinput><command>lphelp</command> <filename>/home/kurt/PPDs/HP-ColorLaserJet8550.ppd</filename></userinput></screen>
+</answer>
+</qandaentry>
+</qandaset>
+
+</sect2>
+<sect2>
+<title>Solving Problems</title>
+
+<para>No system is perfect. Here are some commonly seen traps people
+have fallen into.</para>
+
+<qandaset>
+<qandaentry>
+<question>
+<para>My printer named <quote>3-lp-duplex</quote> shows erratic
+behavior.  What's wrong?</para>
+</question>
+<answer>
+<para>The printer names used in &CUPS; shall start with a letter and may
+contain up to 128 letters, numbers or underscores. Using dashes may lead
+to problems. Speaking about naming: printer names in &CUPS; are not case
+sensitive. So a printer named <systemitem
+class="resource">Best_of_Danka</systemitem> will be the same as
+<systemitem class="resource">best_of_danka</systemitem> or <systemitem
+class="resource">BEST_OF_DANKA</systemitem>. (This is a requirement of
+&IPP;, which &CUPS; is fully compliant with).</para>
+</answer>
+</qandaentry>
+
+<qandaentry>
+<question>
+<para>Why do I get <errortype>Unable to connect to SAMBA host:
+Success</errortype> with my printer shares from &Windows; accessed via
+Samba?</para>
+</question>
+<answer>
+<para>Are the rights on the remote &Windows; box set correctly for you?
+Are you actually allowed to print on the &Windows; shared
+printer?</para>
+</answer>
+</qandaentry>
+
+<qandaentry>
+<question>
+<para>My files for printer <systemitem class="resource">lp</systemitem>
+sometimes mysteriously disappear and two days later I am told they got
+printed on a printer three floors below my office. What is going on?</para>
+</question>
+<answer>
+<para>Believe me, it is very unlikely that your printer is the only one
+with the name <systemitem class="resource">lp</systemitem>.  Maybe
+&CUPS; is playing a trick on you. As you might have the setting
+<quote>ImplicitClasses On</quote> activated, &CUPS; tries to stuff all
+printers it sees on the network into a <quote>Class</quote> name lp. All
+jobs destined to lp are sent to this class and the first available
+member prints it. So if you had this nice fellow (who listened closely
+when you raved about &CUPS; and &kdeprint;) install &CUPS; and poke
+around the system...get the idea?</para>
+
+<para>Take my advice: choose a unique name for any network printer!
+(Mind you, the one on your parallel port also turns out to be a network
+printer for the rest of the world if you don't take care of your
+settings).</para>
+</answer>
+</qandaentry>
+</qandaset>
+</sect2>
+</sect1>
+</chapter>

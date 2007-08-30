@@ -1,0 +1,319 @@
+<chapter id="menus">
+<chapterinfo>
+<authorgroup>
+<author>
+&Philip.Rodrigues;
+</author>
+</authorgroup>
+</chapterinfo>
+
+
+<title>The Standard Menu Entries</title>
+
+<!-- FIXME: The text is immensely repetitive. Fix that. -->
+
+<para>One of the main ways that you'll control programs in &kde; is
+via the program's menus. They provide access to nearly everything
+you'll need to do with that program. So that you can more easily
+remember where things are in the menus, and to help you learn new
+programs more easily, the menus have a standard layout. This means
+that once you know how to open a file in one program, you know how to
+open a file in any &kde; program. Let's take a look at the standard
+menus:</para> <!-- TODO: Note that programs have other menu entries as well-->
+
+<!-- Probably a good place for a screenie, but we'd need one showing
+*only* the standard entries -->
+
+<variablelist>
+<title>The <guimenu>File</guimenu> Menu</title>
+<varlistentry>
+<term><menuchoice><shortcut><keycombo action="simul">&Ctrl;<keycap>N</keycap>
+</keycombo>
+</shortcut><guimenuitem>New</guimenuitem>
+</menuchoice></term>
+<listitem><para>This entry will start a new, blank document that's
+appropriate to the program you're using. For example, in &kate; (the
+&kde; Advanced Text Editor) this entry creates a new text file.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice><shortcut><keycombo action="simul">&Ctrl;<keycap>O</keycap>
+</keycombo>
+</shortcut><guimenuitem>Open...</guimenuitem>
+</menuchoice></term>
+<listitem><para>The <guimenuitem>Open...</guimenuitem> menu entry
+displays the &kde; <quote>Open File</quote> dialog box, where you can
+choose a file to open in the program you're using. The <quote>Open
+File</quote> dialog is also standardized, so it's the same for all
+&kde; programs. You can find out more about using this dialog
+somewhere else in this guide <!-- FIXME: real link -->.</para>
+<para>You probably noticed that this menu entry had an ellipsis (...)
+after the name of the entry. This means that clicking on the entry
+will open a dialog box of some kind. If you make any changes in the
+dialog box that appears, they won't take effect until you click on the
+<guibutton>OK</guibutton> button in the dialog. You can always ignore
+any changes you made, and close the dialog, by clicking on the
+<guibutton>Cancel</guibutton> button.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice><shortcut><keycombo action="simul">&Ctrl;<keycap>S</keycap>
+</keycombo>
+</shortcut><guimenuitem>Save</guimenuitem>
+</menuchoice></term>
+<listitem><para>This menu entry will save any changes you've made to
+the file that you are currently working on. If this is the first time
+that you've saved the file, the &kde; <quote>Save File</quote> dialog
+will appear, and ask you for a name and location for the file. <!-- TODO: Point to another section for more info --></para>
+</listitem>
+</varlistentry>
+
+
+
+<varlistentry>
+<term><menuchoice><guimenuitem>Save As...</guimenuitem>
+</menuchoice></term>
+<listitem><para>The <guimenuitem>Save As...</guimenuitem> menu entry
+will save the file you're working on with a different name. The
+<quote>Save File</quote> dialog appears, and you can choose a name and
+location as usual. Note that after you save the file with
+<guimenuitem>Save As..</guimenuitem>, you will be working on the
+<emphasis>new</emphasis> file. If you save changes, they will be saved
+under the new filename. To make this a bit clearer, let's take an
+example:
+
+<orderedlist>
+<listitem><para>You are working on a file called
+<filename>hello.txt</filename> that contains the text <quote>Hello
+World!</quote> </para>
+</listitem>
+
+<listitem><para>You use the <guimenuitem>Save As...</guimenuitem> menu
+entry to save the file with the new name
+<filename>newhello.txt</filename>. </para>
+</listitem>
+
+<listitem><para>You add the text <quote>Nice to see you!</quote> to
+the file, and use the <guimenuitem>Save</guimenuitem> menu entry to
+save these changes.</para>
+</listitem>
+</orderedlist>
+
+
+
+Now, the file <filename>newhello.txt</filename> contains the text
+<quote>Hello World! Nice to see you!</quote>, while the file
+<filename>hello.txt</filename> contains only the text <quote>Hello
+World!</quote>. 
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice><shortcut><keycombo action="simul">&Ctrl;<keycap>P</keycap>
+</keycombo>
+</shortcut><guimenuitem>Print...</guimenuitem>
+</menuchoice></term>
+<listitem><para>This menu entry displays the &kde;
+<quote>Print</quote> dialog, read to print the current
+document. Youcan find more information about the options available in
+this dialog in <xref linkend="printing-from-apps"/>.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice><shortcut><keycombo action="simul">&Ctrl;<keycap>W</keycap>
+</keycombo>
+</shortcut><guimenuitem>Close</guimenuitem>
+</menuchoice></term>
+<listitem><para>This menu entry closes the current document. If you
+have made any changes since you last saved the document, you will be
+asked whether you want to save those changes. You can choose to
+<guibutton>Save</guibutton> or <guibutton>Discard</guibutton> those
+changes. If you didn't really want to close the file, just click
+<guibutton>Cancel</guibutton>.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice><shortcut><keycombo action="simul">&Ctrl;<keycap>Q</keycap>
+</keycombo>
+</shortcut><guimenuitem>Quit</guimenuitem>
+</menuchoice></term>
+<listitem><para>Use this entry to close the program you're using. If
+you have unsaved changes in any files, you will be asked whether you
+want to
+save them.</para>
+</listitem>
+</varlistentry>
+
+
+
+</variablelist>
+
+<variablelist>
+<title>The <guimenu>Edit</guimenu> Menu</title>
+
+<varlistentry>
+<term><menuchoice><shortcut><keycombo action="simul">&Ctrl;<keycap>Z</keycap>
+</keycombo>
+</shortcut><guimenuitem>Undo</guimenuitem>
+</menuchoice></term>
+<listitem><para>Use this entry to remove the effect of the last
+action you performed in the application. For example, if you deleted a
+line of text, the <guimenuitem>Undo</guimenuitem> menu entry will
+replace that line.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice><shortcut><keycombo action="simul">&Ctrl;&Shift;<keycap>Z</keycap>
+</keycombo>
+</shortcut><guimenuitem>Redo</guimenuitem>
+</menuchoice></term>
+<listitem><para>Use this menu entry to perform the last action that
+you removed with the <guimenuitem>Undo</guimenuitem> menu entry. For
+example, if, as in the example above, you had replaced a deleted line
+of text with <guimenuitem>Undo</guimenuitem>, the
+<guimenuitem>Redo</guimenuitem> entry would redo the action of
+deleting the line.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice><shortcut><keycombo action="simul">&Ctrl;<keycap>X</keycap>
+</keycombo>
+</shortcut><guimenuitem>Cut</guimenuitem>
+</menuchoice></term>
+<listitem><para>This menu entry cuts the contents of the current
+selection to the clipboard. See <xref linkend="using-the-clipboard"/>
+for more information.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice><shortcut><keycombo action="simul">&Ctrl;<keycap>C</keycap>
+</keycombo>
+</shortcut><guimenuitem>Copy</guimenuitem>
+</menuchoice></term>
+<listitem><para>This menu entry copies the contents of the current
+selection to the clipboard. See <xref linkend="using-the-clipboard"/>
+for more information.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice><shortcut><keycombo action="simul">&Ctrl;<keycap>V</keycap>
+</keycombo>
+</shortcut><guimenuitem>Paste</guimenuitem>
+</menuchoice></term>
+<listitem><para>This menu entry inserts the contents of the clipboard
+in the current document. The clipboard contents are inserted where the
+cursor is currently positioned.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice><shortcut><keycombo action="simul">&Ctrl;<keycap>A</keycap>
+</keycombo>
+</shortcut><guimenuitem>Select All</guimenuitem>
+</menuchoice></term>
+<listitem><para>Use this item to select the whole of the current
+document.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice><shortcut><keycombo action="simul">&Ctrl;<keycap>F</keycap>
+</keycombo>
+</shortcut><guimenuitem>Find...</guimenuitem>
+</menuchoice></term>
+<listitem><para>This menu entry displays the <guilabel>Find
+Text</guilabel> dialog, which you can use to search for a particular
+word or phrase in the current document.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice><shortcut><keycombo action="simul"><keycap>F3</keycap>
+</keycombo>
+</shortcut><guimenuitem>Find Next</guimenuitem>
+</menuchoice></term>
+<listitem><para>Use this item to find the next occurrence of the most
+recent text you searched for using <guimenuitem>Find...</guimenuitem>.
+</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+
+<variablelist>
+<title>The <guimenu>Settings</guimenu> Menu</title>
+
+<varlistentry>
+<term><menuchoice><guimenuitem>Configure Shortcuts...</guimenuitem></menuchoice></term>
+<listitem><para>In the dialog displayed by this menu entry, you can
+change the keyboard shortcuts used by the application. See <xref
+linkend="configure-shortcuts"/>.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice><guimenuitem>Configure
+Toolbars...</guimenuitem></menuchoice></term> 
+
+<listitem><para>In the dialog displayed by this menu entry, you can
+change which buttons appear on the application's toolbars. See <xref
+linkend="configuring-toolbars"/>.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice><guimenuitem>Configure Notifications...</guimenuitem></menuchoice></term>
+<listitem><para>In the dialog displayed by this menu entry, you can
+change the notifications (sounds, error messages, &etc;)  used by the
+application. See <xref
+linkend="configure-notifications"/>.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice><guimenuitem>Configure <replaceable>Application</replaceable></guimenuitem></menuchoice></term>
+<listitem><para>In the dialog displayed by this menu entry, you can
+change settings relating to how the application works in general.
+</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+
+
+&help.menu.documentation;
+
+</chapter>
+
+<!-- Keep this comment at the end of the file
+Local variables:
+mode: xml
+sgml-omittag:nil
+sgml-shorttag:nil
+sgml-namecase-general:nil
+sgml-general-insert-case:lower
+sgml-minimize-attributes:nil
+sgml-always-quote-attributes:t
+sgml-indent-step:0
+sgml-indent-data:true
+sgml-parent-document:("index.docbook" "book" "chapter")
+sgml-exposed-tags:nil
+sgml-local-catalogs:nil
+sgml-local-ecat-files:nil
+End:
+-->

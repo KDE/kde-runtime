@@ -1,0 +1,7 @@
+<chapter id="lprng-module">
+<title><application>LPRng</application></title>
+
+<para>An <application>LPRng</application> module for &kdeprint; is in
+development, and hopefully available for the &kde; 2.3 release.</para>
+
+</chapter>

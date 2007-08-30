@@ -1,0 +1,177 @@
+<?xml version="1.0" ?>
+<!DOCTYPE article PUBLIC "-//KDE//DTD DocBook XML V4.2-Based Variant V1.1//EN"
+"dtd/kdex.dtd" [
+<!ENTITY % addindex "IGNORE">
+<!ENTITY % English "INCLUDE" > <!-- change language only here -->
+]>
+
+<article lang="&language;">
+<articleinfo>
+
+
+<authorgroup>
+<author>&Jonathan.Singer; &Jonathan.Singer.mail;</author>
+<!-- TRANS:ROLES_OF_TRANSLATORS -->
+</authorgroup>
+
+<date>2002-02-12</date>
+<releaseinfo>3.00.00</releaseinfo>
+
+<keywordset>
+<keyword>KDE</keyword>
+<keyword>KControl</keyword>
+<keyword>konsole</keyword>
+<keyword>terminal</keyword>
+</keywordset>
+</articleinfo>
+
+<sect1 id="konsole">
+<title>&konsole;</title>
+
+<para>In this module, you can configure basic settings for &konsole;,
+the &kde; terminal.  You can also easily create new schemata (appearance
+files) for &konsole;.</para>
+
+<para>This module contains several tab pages:
+<guilabel>General</guilabel>, <guilabel>Schema</guilabel>,
+<guilabel>Session</guilabel> and <guilabel>Write
+Daemon</guilabel>.</para>
+
+<sect2>
+<title><guilabel>General</guilabel></title>
+
+<para>This tab page allows you to configure aspects of &konsole;'s
+functions.  It contains the following options:</para>
+
+<variablelist>
+<varlistentry>
+<term><guilabel>Use Konsole as default terminal
+application</guilabel></term>
+<listitem>
+<para>If you wish to have &kde; use another terminal application by
+default, uncheck this box and enter the preferred application
+(<application>wterm</application>, <application>rxvt</application>,
+&etc;) in the text field below.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Show Terminal Size when Resizing</guilabel></term>
+<listitem>
+<para>By default, &konsole; will show the size (in characters) of the
+window when you are resizing, allowing you to make the window a
+specific size.  Uncheck this box to turn off this
+behavior.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Show Frame</guilabel></term>
+<listitem>
+<para>Draw an inner frame around the inside of the &konsole; window.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Confirm quit with open sessions</guilabel></term>
+<listitem>
+<para>When set, a warning appears when you try to close a  &konsole;
+window with multiple sessions.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Blinking Cursor</guilabel></term>
+<listitem><para>If you have trouble spotting the cursor in the
+&konsole; window, you can have it blink to draw your
+attention.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Line Spacing</guilabel></term>
+<listitem><para>Change the space between lines of text.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Consider the following characters part of a word when
+double clicking</guilabel></term>
+<listitem><para>It is a common &UNIX; behavior to select a whole word
+when you double click on it, however, the computer's idea of a word may
+differ from yours.  Add characters here that you would like to be
+considered always to be <quote>part of a word</quote>.  For example,
+adding the <literal>@</literal> character will allow you to double
+click to select an entire email address.</para></listitem>
+</varlistentry>
+</variablelist>
+</sect2>
+
+<sect2>
+<title>Schema</title>
+
+<para>The <guilabel>Schema</guilabel> page will allow you to easily
+create, edit and save schemata, with text and background coloring,
+transparency and background images.</para>
+
+
+<!-- 
+<variablelist>
+<varlistentry>
+<term><guilabel>Font</guilabel></term>
+<listitem>
+<para>Use the drop-down box to select the default font size.  Use the
+<guibutton>Custom...</guibutton> button to select your own combination
+of font, size, and style.</para>
+</listitem>
+</varlistentry>
+ 
+<varlistentry>
+<term><guilabel>Full Screen</guilabel></term>
+<listitem>
+<para>Check the box to make &konsole; windows full-screen by
+default.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</listitem> 
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Bars</guilabel></term>
+<listitem>
+
+<variablelist>
+<varlistentry>
+<term><guilabel>Show menubar</guilabel></term>
+<listitem>
+<para>Check to show the menubar by default.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Show toolbar</guilabel></term>
+<listitem>
+<para>Check to show the toolbar by default.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Show frame</guilabel></term>
+<listitem>
+<para>Check to show the frame by default.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Scrollbar position</guilabel></term>
+<listitem>
+<para>Select the default position of the scrollbar:
+<guilabel>Hide</guilabel> (no scrollbar), <guilabel>Left</guilabel>, or
+<guilabel>Right</guilabel>.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+-->
+</sect2>
+
+</sect1>
+</article>

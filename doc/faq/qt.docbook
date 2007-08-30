@@ -1,0 +1,76 @@
+<chapter id="licensing">
+<title>&Qt; and Licensing questions</title>
+
+<qandaset>
+
+<qandaentry>
+<question id="qt">
+<para>What is &Qt;, by the way?</para>
+</question>
+<answer>
+<para>&Qt; is a C++-based class library to build user interfaces. It
+also includes many utility classes like string classes and classes
+to handle input and output. It
+provides most of the widgets you will see in a &kde; application:
+menus, buttons, sliders, &etc;.  &Qt; is a cross-platform library that
+allows you to write code that will compile on &UNIX; systems as well as
+&Windows; and embedded devices.  You can learn more about &Qt; at <ulink
+url="http://www.trolltech.com">http://www.trolltech.com</ulink>.</para>
+</answer>
+</qandaentry>
+
+<qandaentry>
+<question>
+<para>Why does &kde; use &Qt;?</para>
+</question>
+<answer>
+<para>&Qt; is a very sophisticated toolkit that provides everything that
+is needed to build a modern user interface.  &Qt; is written in C++, thus
+allowing object-oriented development which ensures efficiency and
+code reuse in a project the size and scope of &kde;.  In our opinion
+there is no better toolkit available for &UNIX; systems and that it
+would have been a grave mistake to try to build &kde; on anything but
+the best.</para>
+</answer>
+</qandaentry>
+
+<qandaentry>
+<question>
+<para>Why does &kde; not use gtk, xforms, xlib, whatever?</para>
+</question>
+<answer>
+<para>There are a number of toolkits available.  To provide a
+consistent user interface and to keep used resources such as memory to
+a minimum, &kde; can use only one of them.  &Qt; was selected for the
+reasons mentioned above.</para>
+</answer>
+</qandaentry>
+
+<qandaentry>
+<question>
+<para>But &Qt; isn't free, is it?</para>
+</question>
+<answer>
+<para>It is!  As of September 4, 2000, version 2.2 of the &Qt;
+libraries were licensed under the <acronym>GPL</acronym>, thereby
+fulfiling all aspects of <quote>free software</quote>.</para>
+</answer>
+</qandaentry>
+
+<qandaentry>
+<question>
+<para>Can I write commercial software for &kde;?</para>
+</question>
+<answer>
+<para>You can use the &kde; libraries to write <quote>commercial and
+closed source</quote> as well as <quote>commercial and open
+source</quote> software.  If you write open source software you can
+use the &Qt; free edition.  But if you write closed source software
+you may not use the &Qt; free edition; you need to obtain the &Qt;
+professional edition from Troll Tech. </para> <para>If you want more
+information, please contact <ulink
+url="http://www.trolltech.com">Troll Tech</ulink> directly.</para>
+</answer>
+</qandaentry>
+</qandaset>
+</chapter>

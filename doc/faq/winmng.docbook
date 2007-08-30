@@ -1,0 +1,134 @@
+<!--
+<?xml version="1.0" ?>
+<!DOCTYPE chapter PUBLIC "-//KDE//DTD DocBook XML V4.2-Based Variant V1.1//EN"
+ "dtd/kdex.dtd">
+-->
+
+
+
+<chapter id="windowmanager">
+<title>The window manager</title>
+
+<para>The default window manager provided by &kde; is the K Window
+Manager (&kwin;).  Please read <quote>The
+K Window Manager Handbook</quote> (which should be accessible from the
+<application>&kde; Help Center</application>) for usage information.</para>
+
+<qandaset>
+<qandaentry>
+<question>
+<para>Are there keyboard shortcuts for &kwin; operations?</para>
+</question>
+<answer>
+<para>Yes.  Please refer to "The K Window Manager Handbook" for the
+list of shortcuts available.</para>
+</answer>
+</qandaentry>
+
+<qandaentry>
+<question>
+<para>Can I define my own set of keyboard shortcuts?</para>
+</question>
+<answer>
+<para>Yes.  Launch the
+<application>&kde; Control Center</application> and select
+<menuchoice><guimenu>Regional &amp; Accessibility</guimenu><guimenuitem>Keyboard Shortcuts</guimenuitem></menuchoice> to
+configure window manager bindings like maximizing windows, &etc;. 
+</para>
+</answer>
+</qandaentry>
+
+<qandaentry>
+<question>
+<para>When I "iconify" a window, it disappears.  Where does it
+go?</para>
+</question>
+<answer>
+<para>With many &X-Window; &GUI;s, the minimize button (a little dot) will
+erase the window that the program is running in and create, instead,
+an icon on the desktop.  &kde; does not do this.  Instead, when a
+window is iconified it is simply hidden (but the program is still
+running).</para>
+<para>There are a few ways to access <quote>disappeared</quote> windows:</para>
+<itemizedlist>
+<listitem>
+<para>If you are running the taskbar part of &kicker;,
+you can choose to have a list of tasks displayed on your desktop.
+Iconified tasks will have their names displayed in gray.</para>
+</listitem>
+<listitem>
+<para>If you click the &MMB; on the root window (&ie;,
+the background of the desktop), &kwin; will give you a list
+of all available tasks.</para>
+</listitem>
+</itemizedlist>
+</answer>
+</qandaentry>
+
+<qandaentry>
+<question>
+<para>How do I maximize windows only vertically or horizontally?</para>
+</question>
+<answer>
+<para>Provided your window is not already maximized, clicking on the
+maximize button with the &LMB;/&MMB;/&RMB; will
+maximize fully/vertically/horizontally respectively.</para>
+</answer>
+</qandaentry>
+
+<qandaentry>
+<question>
+<para>What is <quote>shading</quote> a window?</para>
+</question>
+<answer>
+<para>By <quote>shading</quote> a window we mean <quote>rolling up</quote> the window leaving just
+the title bar visible.  You can do this by double clicking on the
+window title bar.</para>
+</answer>
+</qandaentry>
+
+<!-- This is kinda covered in desktop.docbook, but the question here -->
+<!-- is different, even if the answer is nearly the same -->
+<qandaentry>
+<question>
+<para>How can I start an application with special window options, like
+maximized/minimized/to stay on top?</para>
+</question>
+<answer>
+<para>Use the <command>kstart</command> command. As an example, to
+open &kcalc; with the <quote>Stay on Top</quote> option, use:
+<screen><prompt>%</prompt> <userinput><command>kstart</command> <option>--ontop</option> <option>kcalc</option></userinput></screen>
+</para>
+<para>For maximized windows, use the <option>--maximize</option>
+option, for minimized windows, use <option>--iconify</option>. You can
+see a full list of <command>kstart</command> options with
+<userinput><command>kstart</command>
+<option>--help-all</option></userinput>.</para>
+
+<warning><para>If you're using <command>kstart</command> to start
+applications at &kde; startup, you should use the
+<option>--window</option> option. See the &kde; User Guide, section
+<quote>Advanced Window Management</quote> for more information about
+this feature.</para>
+</warning>
+
+</answer>
+</qandaentry>
+
+<!-- Not sure this is still applicable
+<qandaentry>
+<question>
+<para>Is it possible to have FVWM2-like shadow frameworks for the
+placement of windows?</para>
+</question>
+<answer>
+<para>Yes.  Run <application>&kde; Control Center</application> and select <guimenu>Look and Feel</guimenu>
+followed by <guisubmenu>Window Behavior</guisubmenu> and finally
+<guimenuitem>Advanced</guimenuitem>.  There is a dialog option that
+allows you to set the placement policy you want.</para>
+</answer>
+</qandaentry>
+-->
+</qandaset>
+</chapter>
+

@@ -1,0 +1,92 @@
+<sect1 id="switching-sessions">
+
+<sect1info>
+<author>
+<personname>
+<firstname>Christian</firstname>
+<surname>Weickhmann</surname>
+</personname>
+<email>christian.weickhmann@gmx.de</email>
+</author>
+</sect1info>
+
+
+<title>Switching Sessions</title>
+
+<para>From version 3.3 onwards, &kde; provides a session management
+system which allows you to switch between different user account on
+one computer. You can stay logged in and &eg; let your sister,
+brother, wife, neigbour or whoever read her or his emails just for a
+moment. Before you had to log off (therefore &eg; close programs or
+save documents) and let her or him log in.</para>
+
+<para>Now it's almost as easy as switching to another virtual desktop.</para>
+
+<variablelist>
+<title>Switching Sessions: How it works</title>
+
+<varlistentry>
+<term>The <guimenuitem>Switch User</guimenuitem> Menu</term>
+<listitem>
+<para>The &kmenu; now bears a new entry. Rather at the bottom of the menu
+you will find a <guisubmenu>Switch User</guisubmenu> submenu. It contains
+the command to lock the current and start a new session which means that
+your desktop will start the screensaver and after a few seconds can log in
+with KDM as always. The <guimenuitem>Start New Session</guimenuitem> entry
+skips the activation of your screensaver.</para>
+
+<para>Once you have running more than one session you can either choose to
+press <keycombo action="simul">&Ctrl;&Alt;<keycap>F7</keycap></keycombo>
+ or <keycap>F8</keycap> and so on (what is usually configured by default) or
+&mdash; even more comfortable &mdash; choose from the list of active
+sessions at the bottom of the <guisubmenu>Switch User</guisubmenu>
+submenu.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>Switch User with the screensaver</term>
+<listitem><para>If you have activated your screensaver and another user
+wants to log in she or he can simply press the <guibutton>Switch
+User...</guibutton> button and log into another session.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>Switch Session in &kdm;</term>
+<listitem><para>If you are in &kdm; and want to switch to another active
+session you can press the <guibutton>Menu</guibutton> button and choose
+<guisubmenu>Switch User</guisubmenu> which is mainly the same as described
+above.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+
+<!-- Add links to "further reading" here -->
+<!-- <itemizedlist>
+<title>Related Information</title>
+<listitem><para>to be written</para>
+</listitem>
+</itemizedlist> -->
+
+
+
+</sect1>
+
+<!-- Keep this comment at the end of the file
+Local variables:
+mode: xml
+sgml-omittag:nil
+sgml-shorttag:nil
+sgml-namecase-general:nil
+sgml-general-insert-case:lower
+sgml-minimize-attributes:nil
+sgml-always-quote-attributes:t
+sgml-indent-step:0
+sgml-indent-data:true
+sgml-parent-document:("index.docbook" "book" "sect1")
+sgml-exposed-tags:nil
+sgml-local-catalogs:nil
+sgml-local-ecat-files:nil
+End:
+-->

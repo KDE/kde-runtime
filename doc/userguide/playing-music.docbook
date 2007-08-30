@@ -1,0 +1,150 @@
+<sect1 id="playing-music">
+<!-- Uncomment the <*info> below and add your name to be -->
+<!-- credited for writing this section. -->
+
+<sect1info>
+<authorgroup>
+<author>&Lauri.Watts;</author>
+</authorgroup>
+</sect1info>
+
+<title>Playing Music</title>
+<indexterm><primary>Music</primary></indexterm>
+<indexterm><primary>Sound</primary></indexterm>
+<indexterm><primary>Audio</primary></indexterm>
+<indexterm><primary>&arts;</primary></indexterm>
+
+<para>Intro to &arts;</para>
+
+<para>Performance tuning, sharing devices</para>
+
+<sect2 id="music-media-players">
+<title>Music Players</title>
+
+<para>There are several &kde; music players with somewhat overlapping
+feature sets, however, each is quite different in style. </para>
+
+<variablelist>
+<varlistentry>
+<term>
+<inlinemediaobject>
+<imageobject><imagedata fileref="noatun-icon.png" format="PNG"/>
+</imageobject>
+</inlinemediaobject>
+&noatun;
+<indexterm><primary>&noatun;</primary></indexterm>
+</term>
+<listitem>
+<para>Noatun is the default &kde; music player.  It features a highly
+configurable interface, including several styles of playlist manager, and
+many plugins to provide different &GUI;s, visualizations, and other
+features.</para>
+<para>&noatun; is part of the kdemultimedia package.</para>
+
+<para><mediaobject>
+<imageobject><imagedata fileref="noatun.png" format="PNG"/>
+</imageobject>
+</mediaobject></para>
+
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<inlinemediaobject>
+<imageobject><imagedata fileref="juk-icon.png" format="PNG"/>
+</imageobject>
+</inlinemediaobject>
+&juk;
+<indexterm><primary>&juk;</primary></indexterm></term>
+<listitem>
+<para>&juk; is a media manager, playlist manager, and metadata tagger.  It is a
+highly efficient way to manage all your music files, make and maintain
+playlists, and maintain the metadata tags in your music.</para>
+<para>It is equally useful as your primary music player, or managing
+playlists and files for use in another application.</para>
+<para>&juk; is part of the kdemultimedia package.</para>
+
+<para><mediaobject>
+<imageobject><imagedata fileref="juk.png" format="PNG"/>
+</imageobject>
+</mediaobject></para>
+
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<inlinemediaobject>
+<imageobject><imagedata fileref="kaboodle-icon.png" format="PNG"/>
+</imageobject>
+</inlinemediaobject>
+&kaboodle;
+<indexterm><primary>&kaboodle;</primary></indexterm></term>
+<listitem>
+<para>&kaboodle; is a one shot player.  That means, it will run, play a file,
+and stop.  &kaboodle; is useful for instance if you want to quickly listen
+to a single file without interupting your current playlist from another
+media player.</para>
+<para>&kaboodle; is part of the kdemultimedia package.</para>
+
+<para><mediaobject>
+<imageobject><imagedata fileref="kaboodle.png" format="PNG"/>
+</imageobject>
+</mediaobject></para>
+
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<inlinemediaobject>
+<imageobject><imagedata fileref="amarok-icon.png" format="PNG"/>
+</imageobject>
+</inlinemediaobject>
+<application>amaroK</application></term>
+<listitem>
+<para><application>amaroK</application> is a popular third party application. You should be able to
+find packages from your normal distribution source.</para>
+
+<para><mediaobject>
+<imageobject><imagedata fileref="amarok.png" format="PNG"/>
+</imageobject>
+</mediaobject></para>
+
+</listitem>
+</varlistentry>
+</variablelist>
+
+<para>Most of the &kde; based movie players such as
+<application>Kaffeine</application> and <application>kmplayer</application>
+also make useful music players.</para>
+
+<!-- Add links to "further reading" here -->
+<!-- <itemizedlist>
+<title>Related Information</title>
+<listitem><para>to be written</para>
+</listitem>
+</itemizedlist>-->
+
+
+</sect2>
+</sect1>
+
+<!-- Keep this comment at the end of the file
+Local variables:
+mode: xml
+sgml-omittag:nil
+sgml-shorttag:nil
+sgml-namecase-general:nil
+sgml-general-insert-case:lower
+sgml-minimize-attributes:nil
+sgml-always-quote-attributes:t
+sgml-indent-step:0
+sgml-indent-data:true
+sgml-parent-document:("index.docbook" "book" "sect1")
+sgml-exposed-tags:nil
+sgml-local-catalogs:nil
+sgml-local-ecat-files:nil
+End:
+-->

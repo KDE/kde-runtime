@@ -1,0 +1,129 @@
+<chapter id="what-is-kde">
+<chapterinfo>
+<date>2002-01-18</date>
+<releaseinfo>3.00.00</releaseinfo>
+</chapterinfo>
+<title>What is &kde;?</title>
+<anchor id="whatiskde"/>
+
+<sect1 id="what-is-kde-introduction">
+<title>What is &kde;?</title>
+
+<para>&kde; is a desktop environment. In other words, &kde; is a
+collection of programs, technologies and documentation that attempt to
+make life easier for computer users. &kde; is targeted at &UNIX;
+workstations. It features network transparency and a contemporary work
+philosophy. </para>
+
+<para>The creators of the K Desktop Environment are a world-wide group of
+software engineers. This group's major goal in free software development is to
+provide high quality software that empowers the user with easy control of his
+computer's resources.</para>
+
+<para>&kde; seeks to fill the need for an easy to use desktop for
+&UNIX; workstations, similar to the desktop environments found under
+&MacOS; or &Windows;. &kde; meets the requirement
+of users for an easy to use work environment. Tools used to reach
+this end are: enhanced inter-application communication, component
+reuse, generalized drag and drop, uniform look and feel and many
+more. Thus, &kde; offers much more than the traditional &UNIX; window
+managers.</para>
+
+<para>Stability, scaleability and openness are qualities which have
+made &UNIX; the undisputed choice for the information technology
+professional for many years.  &kde; builds on top of this excellent
+base framework and brings new, much needed qualities: usability, user
+friendliness and beauty! &kde; was the first, and stays the forefront
+player in bringing these qualities to &UNIX;, which constituted for
+years, the premier platform for server computers and scientific
+institutions, but wasn't very attractive for desktop users.</para>
+
+<para>Without &UNIX; the Internet would not exist, or at least would
+have a vastly different form. &UNIX; has not, until now, addressed the
+needs of the average computer user. This fact is particularly
+unfortunate, since a number of implementations of &UNIX; (<ulink
+url="http://www.linux.org">&Linux;</ulink>, <ulink
+url="http://www.freebsd.org">FreeBSD</ulink>, <ulink
+url="http://www.netbsd.org">NetBSD</ulink>, &etc;) are freely
+available on the Internet, all of which are of exceptional quality and
+stability.  </para>
+
+</sect1>
+
+<sect1 id="what-is-kde-the-desktop">
+<title>&kde; The Desktop Environment</title>
+
+<para>In combination with a free implementation of &UNIX;, &kde;
+provides to the world an open and completely free desktop computing
+platform either at home or at work.</para>
+
+<para> This platform is available to anyone free of charge including
+its source code for anyone to modify.</para>
+
+<para>While there will always be room for improvement we believe we
+have now delivered a viable alternative to some of the more commonly
+found and commercial operating systems/desktops combinations available
+today. It is our hope that the combination of &UNIX; and &kde; will
+finally bring the same open, reliable, stable, and monopoly free
+computing to the average computer user that scientists and computing
+professionals world-wide have enjoyed for years.  </para>
+
+</sect1>
+
+<sect1 id="what-is-kde-the-development-framework">
+<title>&kde; The Application Development Framework</title>
+
+<para>&kde; focuses on the user's needs, but it's obvious that this
+focus is more easily achieved by also giving developers the best
+tools.  &kde; code contains, and comes with, some of the best
+development technologies of the modern computing age.</para>
+
+<para>Authoring applications under &UNIX;/X11 used to be an extremely
+tedious and labor intensive process. &kde; recognizes the fact that a
+computing platform is only as good as the number of first class
+applications available to the users of that particular
+platform.</para>
+
+<para>&kde; defines new technologies in &DCOP; and KParts, created to
+offer a component document model and technology.  Together with the
+complete &kde; libraries programming interface, &DCOP;/KParts are set
+in direct competition with other similar technologies like &Microsoft;
+<abbrev>MFC</abbrev>/<abbrev>COM</abbrev>/ActiveX technologies. The
+excellent quality and the high level of refinement of &kde;'s
+application programming interface (<acronym>API</acronym>) enables
+developers to focus on original and interesting issues and avoid
+reinventing the wheel.</para>
+
+</sect1>
+
+<sect1 id="what-is-kde-the-office-suite">
+<title>&kde; The Office Application Suite</title>
+
+<para>In its current form, &kde; provides, apart from the essential desktop
+component applications, a suite of powerful office programs known to the
+world by the name &koffice;.</para>
+
+<para>&koffice; is based on the &kde; &DCOP;/KParts
+technologies. It currently contains: a word processor with desktop
+publishing capabilities (&kword;), a spreadsheet application (&kspread;)
+and accompanying charting program (&kchart;), a presentation program
+(&kpresenter;) and a vector drawing program (&kontour;).  Tying things
+together is the <application>KOffice Workspace</application>, an
+integrated shell to ease the use of the &koffice; components in
+conjunction with each other.  Additional components include an email
+client, a news reader, and a powerful <abbrev>PIM</abbrev> (Personal
+Information Manager - an organizer).</para>
+
+<para>While some of those components are still in alpha development,
+others are already extremely powerful.  For example, &kpresenter;,
+&kde;'s presentation application, was successfully used at the 5th
+International &Linux; Congress in Cologne, Germany to deliver a &kde;
+presentation.  </para>
+
+<para>We would like to invite you to <ulink
+url="http://www.kde.org">learn more about &kde;</ulink> and <ulink
+url="http://koffice.kde.org">&koffice;</ulink>.</para>
+
+</sect1>
+</chapter>
+

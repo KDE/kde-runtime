@@ -1,0 +1,142 @@
+<?xml version="1.0" ?>
+<!DOCTYPE article PUBLIC "-//KDE//DTD DocBook XML V4.2-Based Variant V1.1//EN"
+"dtd/kdex.dtd" [
+<!ENTITY % addindex "IGNORE">
+<!ENTITY % English "INCLUDE" > <!-- change language only here -->
+]>
+
+<article lang="&language;">
+<articleinfo>
+
+<authorgroup>
+<author>&Mike.McBride; &Mike.McBride.mail;</author>
+<!-- TRANS:ROLES_OF_TRANSLATORS -->
+</authorgroup>
+
+<date>2006-06-24</date>
+<releaseinfo>3.5.2</releaseinfo>
+
+<keywordset>
+<keyword>KDE</keyword>
+<keyword>KControl</keyword>
+<keyword>taskbar</keyword>
+<keyword>configure</keyword>
+</keywordset>
+</articleinfo>
+
+<sect1 id="taskbar">
+<title>Taskbar</title>
+
+<sect2>
+<title><guilabel>Taskbar</guilabel></title>
+
+<para>The taskbar is a quick way to switch between applications.  The taskbar
+can be located in the panel (default), or outside the panel on the
+desktop.</para>
+
+<para>This module has options to control how the taskbar operates:</para>
+
+<para><guilabel>Show windows from all desktops</guilabel>, determines
+if all open windows are included in the taskbar or not.  By default,
+the taskbar only shows the open windows <emphasis>on the current
+desktop</emphasis>.  If this option is enabled, the taskbar will show
+all open windows <emphasis>on all desktops</emphasis>.
+<guilabel>Sort windows by desktop</guilabel> changes the
+sort order of the icons on the taskbar, so that windows on virtual
+desktop 1 are shown first (to the left, or at the top of the taskbar),
+followed by windows on virtual desktop 2, and so on.</para>
+
+<para><guilabel>Sort alphabetically by application name</guilabel> shows
+the icons in an alphabetical sort order on the taskbar.</para>
+
+<para>You can have the taskbar <guilabel>Show only minimized
+windows</guilabel>.  In this case, when you minimize a window, it will
+show up on the taskbar, and when you open it again, its taskbar entry
+will disappear.</para>
+
+<para>You can disable <guilabel>Show application icons</guilabel>, and show just the
+text.  You might want to do this to save space on your taskbar, for
+example.</para>
+
+<para>Using the <guilabel>Show window list button</guilabel> option,
+you can enable a little button to be shown in the taskbar: this button
+will open a popup menu offering access to applications on other desktops
+as well as some useful actions, like <guilabel>Unclutter
+Windows</guilabel> or <guilabel>Cascade Windows</guilabel>.</para>
+
+<para><guilabel>Group similar tasks</guilabel> allows
+you to save some space on your taskbar, by only showing one icon for
+each running application, no matter how many windows are shown.  You can
+click on the icon to display a menu of all the windows that are
+available.  This is most useful when you have enabled <guilabel>Show windows
+from all desktops</guilabel>.</para>
+
+<para>The next option allows you to set the <guilabel>Appearance</guilabel> to <guilabel>Elegant</guilabel>, <guilabel>Classic</guilabel> or <guilabel>For Transparency</guilabel>.</para>
+
+</sect2>
+
+<sect2>
+<title><guilabel>Actions</guilabel></title>
+
+<para>The next set of options allow you to customize the actions
+performed with different mouse clicks on taskbar icons.</para>
+
+<para>You can select any action from the list for the <guilabel>Left button</guilabel>, 
+the <guilabel>Middle button</guilabel> and the <guilabel>Right button</guilabel>.</para>
+
+<para>The options available are:</para>
+
+<variablelist>
+<varlistentry>
+<term><guilabel>Show Task List</guilabel></term>
+<listitem>
+<para>Show the list of tasks grouped under the icon you have clicked
+on.  If there is only one task or window for that icon, it will become
+the active window.</para>
+<para>This is the default action for the &LMB;.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Cycle Through Windows</guilabel></term>
+<listitem>
+<para>If there is more than one task grouped under the icon, switch
+from one to the next, until you release the button (&ie; when you have
+reached the window you are looking for). If there is only one task or
+window for that icon, it will become the active window.</para> 
+
+<para>This is the default action for the &MMB; if window grouping is
+enabled.</para>
+
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Show Operations Menu</guilabel></term>
+<listitem>
+<para>Show the operations menu for the application.  This allows you
+to minimize, maximize, &etc;, move windows between desktops, and close
+windows. You can perform these actions on all windows grouped under
+that icon, or on any single window, by choosing it from the
+submenu.</para>
+<para>This is the default action for the &RMB;.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Raise Task</guilabel>, <guilabel>Lower
+Task</guilabel>, <guilabel>Minimize Task</guilabel></term>
+<listitem>
+<para>These three options make sense only if window grouping is
+disabled.  They are fairly self-explanatory.  Raise means to make
+active, bring to the front, and give focus.  Lower means, send to the
+back, and give focus to whichever window is now on top.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+
+</sect2>
+
+</sect1>
+
+</article>

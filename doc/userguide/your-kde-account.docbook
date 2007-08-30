@@ -1,0 +1,79 @@
+<sect1 id="account-intro">
+<!-- Uncomment the <*info> below and add your name to be -->
+<!-- credited for writing this section. -->
+
+<!--
+<sect1info>
+<authorgroup>
+<author>
+<firstname>Your First Name here</firstname>
+<surname>Your Surname here </surname>
+</author>
+</authorgroup>
+</sect1info>
+-->
+
+<title>About Your &kde; Account</title>
+
+<para>&kde; stores information about your personal settings in a few
+different places:
+
+<itemizedlist>
+<listitem><para>The hidden directory <filename>.kde</filename> (note the
+period at the beginning), located in your home directory, contains a
+large number of files that store &kde; settings. Some subdirectories
+you may find useful are:<filename>.kde/share/config</filename>, which
+contains configuration files for individual applications;
+<filename>.kde/Autostart</filename>, which contains links to
+applications which should start each time you start &kde;; and
+<filename>.kde/share/apps/kabc</filename>, where your address book is
+stored.</para>
+</listitem>
+<!-- FIXME: Apparently KDEDIR and KDEDIRS are deprecated. I need to -->
+<!-- get the truth on this -->
+<listitem><para>The environment variables <envar>KDEDIR</envar> and
+<envar>KDEDIRS</envar> tell &kde; where its files are stored. You will
+usually only need to set <envar>KDEDIR</envar> to the directory in which
+&kde; is installed, but sometimes you might have other &kde;
+programs installed elsewhere: in this case, you can use the
+<envar>KDEDIRS</envar> environment variable. Set
+<envar>KDEDIRS</envar> to a list of all the directories containing
+&kde; programs, separated by commas. For example, if you have &kde;
+programs in both <filename>/usr/local/kde</filename> and
+<filename>/home/phil/kde</filename>, you can use <userinput>export
+KDEDIR=/usr/local/kde,/home/phil/kde</userinput> if you use
+<application>bash</application> or <userinput>setenv
+KDEDIR=/usr/local/kde,/home/phil/kde</userinput> if you use sh.
+</para>
+</listitem>
+</itemizedlist>
+</para>
+
+<!-- Add links to "further reading" here -->
+<itemizedlist>
+<title>Related Information</title>
+<listitem><para><xref linkend="kde-for-administrators" /> contains
+more information about the directories that &kde; uses.</para>
+</listitem>
+</itemizedlist>
+
+
+</sect1>
+
+<!-- Keep this comment at the end of the file
+Local variables:
+mode: xml
+sgml-omittag:nil
+sgml-shorttag:nil
+sgml-namecase-general:nil
+sgml-general-insert-case:lower
+sgml-minimize-attributes:nil
+sgml-always-quote-attributes:t
+sgml-indent-step:0
+sgml-indent-data:true
+sgml-parent-document:("index.docbook" "book" "sect1")
+sgml-exposed-tags:nil
+sgml-local-catalogs:nil
+sgml-local-ecat-files:nil
+End:
+-->

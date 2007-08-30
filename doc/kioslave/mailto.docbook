@@ -1,0 +1,17 @@
+<article lang="&language;" id="mailto">
+<title>mailto</title>
+<articleinfo>
+<authorgroup>
+<author>&Ferdinand.Gassauer; &Ferdinand.Gassauer.mail;</author>
+<!-- TRANS:ROLES_OF_TRANSLATORS -->
+</authorgroup>
+</articleinfo>
+<para>The mailto kioslave is used when you click on a mailto link in an
+<acronym>HTML</acronym> page.  &konqueror; will open the preferred mail
+client you have configured, with a composer window.  Any information
+supplied in the <acronym>URL</acronym> will be filled in for you.</para>
+
+<para> 
+See the manual: <ulink url="man:/mailto">mailto</ulink>.
+</para>
+</article>

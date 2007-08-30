@@ -1,0 +1,48 @@
+<sect1 id="graphics">
+<!-- Uncomment the <*info> below and add your name to be -->
+<!-- credited for writing this section. -->
+
+<!--
+<sect1info>
+<authorgroup>
+<author>
+<firstname>Your First Name here</firstname>
+<surname>Your Surname here </surname>
+</author>
+</authorgroup>
+</sect1info>
+-->
+
+<title>Creating Graphics</title>
+
+<para>How to create graphics with &kde; apps.. (ok, maybe not)</para>
+
+<!-- Add links to "further reading" here - in this case, for the whole -->
+<!-- chapter. -->
+<!-- <itemizedlist>
+<title>Related Information</title>
+<listitem><para>to be written</para>
+</listitem>
+</itemizedlist>-->
+
+
+
+</sect1>
+
+<!-- Keep this comment at the end of the file
+Local variables:
+mode: xml
+sgml-omittag:nil
+sgml-shorttag:nil
+sgml-namecase-general:nil
+sgml-general-insert-case:lower
+sgml-minimize-attributes:nil
+sgml-always-quote-attributes:t
+sgml-indent-step:0
+sgml-indent-data:true
+sgml-parent-document:("index.docbook" "book" "sect1")
+sgml-exposed-tags:nil
+sgml-local-catalogs:nil
+sgml-local-ecat-files:nil
+End:
+-->

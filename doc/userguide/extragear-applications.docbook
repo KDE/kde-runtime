@@ -1,0 +1,199 @@
+<chapter id="extragear-applications">
+
+<chapterinfo>
+<authorgroup>
+<author>
+&Francis.Giannaros;
+&Francis.Giannaros.mail;
+</author>
+</authorgroup>
+</chapterinfo>
+
+<title>&kde; Extragear Applications</title>
+
+<para>These are applications that are directly associated with &kde;, the project, but do not appear and are not shipped with the main &kde; distribution. This can be down to a number of reasons, but a common case is either down to a duplication of functionality, or because they're simply too specialised. Perhaps the most popular occurence however is that the developers themselves may not want it to appear in the main &kde; distribution; choosing, rather, to handle their own release schedules. Nevertheless, the applications in Extragear are distinguished by &kde;, and many are increasingly popular. </para>
+
+<sect1 id="extragear-components">
+<title>Available in the &kde; Extragear</title>
+
+<!-- Begin Multimedia  -->
+<sect2 id="extragear-multimedia">
+<title>Multimedia</title>
+
+<variablelist>
+<varlistentry>
+<term>&amarok;</term>
+	<listitem><para>An advanced and comprehensive music player with the capability to play <acronym>MP3</acronym>, <acronym>WAV</acronym>, and <acronym>OGG</acronym> audio filetypes and others. There is not room here to mention all of &amarok;'s features, but by default, &amarok; can automatically fetch cover art, embed song lyrics, and display aesthetically pleasing visualizations. &amarok; remains, as much of &kde; does, highly customizable; it contains a powerful scripting interface, and the context browser can be stylised easily using &CSS;. &amarok; also supports several backends, including  <application>GStreamer</application>, <application>xine</application>, <acronym>NMM</acronym>, <acronym>MAS</acronym>, <application>aKode</application> and &arts;.</para>
+	
+		<itemizedlist>
+			<listitem><para>Website: <ulink url="http://amarok.kde.org">http://amarok.kde.org</ulink></para></listitem>
+			<listitem><para>View the handbook by typing <userinput>help:/amarok</userinput> in &konqueror;'s Location Toolbar, or by selecting it in &khelpcenter;; if you do not already have &amarok; installed (and hence do not have the handbook), then you can view it online <ulink url="http://amarok.kde.org/component/option,com_staticxt/staticfile,index.html/Itemid,49/">here</ulink>.</para></listitem>
+		</itemizedlist>
+		
+	</listitem>
+
+<!-- Insert Screeny -->
+
+</varlistentry>
+
+<varlistentry>
+<term><application>K3b</application></term>
+	<listitem><para>The definitive &CD;/<acronym>DVD</acronym> burning application for &kde;. With <application>K3b</application> you can create data, video, and audio (it comes with plugins for <acronym>WAV</acronym>, <acronym>MP3</acronym>, <acronym>FLAC</acronym>, and <application>Ogg Vorbis</application>) &CD;s. Projects can be saved and loaded, &CD;-ripping is supported, and you can appropriately make &CD;/<acronym>DVD</acronym> copies. </para>
+	
+		<itemizedlist>
+			<listitem><para>Extragear Summary: <ulink url="http://extragear.kde.org/apps/k3b/">http://extragear.kde.org/apps/k3b/</ulink></para></listitem>
+			<listitem><para>Website: <ulink url="http://k3b.org">http://k3b.org</ulink></para></listitem>
+			<listitem><para><ulink url="http://docs.kde.org/development/en/extragear-multimedia/k3b/index.html"><application>K3b</application> Handbook</ulink></para></listitem>
+		</itemizedlist>
+		
+	</listitem>
+</varlistentry>
+</variablelist>
+<!-- End Multimedia  -->
+</sect2>
+
+<!-- Begin Graphics -->
+<sect2 id="extragear-graphics">
+<title>Graphics</title>
+<variablelist>
+<varlistentry>
+<term>&digikam;</term>
+	<listitem><para>A photo management application which can conveniently organize and import digital photos. Features include complete tagging functionality, a plugin system, and a fully-featured comment system. &digikam; also makes use of <acronym>KIPI</acronym> (&kde; Image Plugin Interface), therefore contributing to the initiative to create a common plugin infrastructure, which allows development of image plugins that can be shared among graphical applications in &kde; (others include <application>Gwenview</application>, <application>ShowImg</application> and <application>KimDaBa</application>).</para>
+	
+		<itemizedlist>
+			<listitem><para>Website: <ulink url="http://digikam.org">http://digikam.org</ulink></para></listitem>
+			<listitem><para><ulink url="http://docs.kde.org/development/en/extragear-graphics/digikam/index.html">&digikam; Handbook</ulink></para></listitem>
+		</itemizedlist>
+		
+	</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><application>Gwenview</application></term>
+	<listitem><para>Another advanced image viewer which can load and save all image formats supported by &kde;, as well as being able to display the <application>GIMP</application> (*.<acronym>xcf</acronym>) image filetype. <application>Gwenview</application> can perform a few graphical manipulations (rotate, mirroring) and has full support for KIO slaves (allowing you to use it via &FTP;). Other features also include file management operations, such as copy, paste, move and delete.</para>
+	
+		<itemizedlist>
+			<listitem><para>Website: <ulink url="http://gwenview.sourceforge.net/">http://gwenview.sourceforge.net/</ulink></para></listitem>
+			<listitem><para><ulink url="http://docs.kde.org/development/en/extragear-graphics/gwenview/index.html"><application>Gwenview</application> Handbook</ulink></para></listitem>
+		</itemizedlist>
+		
+	</listitem>
+</varlistentry>
+
+
+<varlistentry>
+<term><application>ShowImg</application></term>
+	<listitem><para>A feature-rich image viewer, written for &kde;, which can display numerous formats, including <acronym>JPEG</acronym>, <acronym>PNG</acronym>, [animated] <acronym>GIF</acronym> and <acronym>MNG</acronym>. It consists of a tree-view frame, a directory/preview frame, and a view frame. The (larger) view frame can be exchanged with the (smaller) directory/preview frame. It can preview and display images from multiple directories and search for identical images. <application>ShowImg</application> also features a full-screen mode, zooming, sorting, drag and drop with &konqueror;, and support for images in compressed archives.</para>
+	
+		<itemizedlist>
+			<listitem><para>Website: <ulink url="http://www.jalix.org/projects/showimg/">http://www.jalix.org/projects/showimg/</ulink></para></listitem>
+			<listitem><para><ulink url="http://docs.kde.org/development/en/extragear-graphics/showimg/index.html"><application>ShowImg</application> Handbook</ulink></para></listitem>
+		</itemizedlist>
+		
+	</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><application>KimDaBa</application></term>
+	<listitem><para><application>KimDaBa</application> (&kde; Image Database) attempts to provide an efficient solution for the organization of hundreds (or even thousands) of images. Having been highly optimized for annotating images, <application>KimDaBa</application> can help you locate an image in a matter of seconds.</para>
+	
+		<itemizedlist>
+			<listitem><para>Website: <ulink url="http://ktown.kde.org/kimdaba/">http://ktown.kde.org/kimdaba/</ulink></para></listitem>
+			<listitem><para><ulink url="http://docs.kde.org/development/en/extragear-graphics/kimdaba/index.html"><application>KimDaBa</application> Handbook</ulink></para></listitem>
+		</itemizedlist>
+		
+	</listitem>
+</varlistentry>
+</variablelist>
+</sect2>
+<!-- End Graphics -->
+
+<!-- Begin Network -->
+
+<sect2 id="extragear-network">
+<title>Network</title>
+<variablelist>
+<varlistentry>
+<term>&konversation;</term>
+	<listitem><para>A fully-featured <acronym>IRC</acronym> client which supports per channel encoding, downloading and resuming file transfers, nick completion and highlighting, as well as tight integration with &kontact; and the rest of &kde;.</para>
+	
+		<itemizedlist>
+			<listitem><para>Website: <ulink url="http://konversation.kde.org">http://konversation.kde.org</ulink></para></listitem>
+			<listitem><para><ulink url="http://docs.kde.org/development/en/extragear-network/konversation/index.html">&konversation; Handbook</ulink></para></listitem>
+		</itemizedlist>
+		
+	</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><application>KMldonkey</application></term>
+	<listitem><para>A &kde; frontend for <application>MLDonkey</application>, a powerful <acronym>P2P</acronym> file-sharing tool. Highly configurable, real-time graphical bandwidth and network statistics, and much more.</para>
+	
+		<itemizedlist>
+			<listitem><para>Website: <ulink url="http://kmldonkey.org/">http://kmldonkey.org/</ulink></para></listitem>
+			<listitem><para><ulink url="http://docs.kde.org/development/en/extragear-network/kmldonkey/index.html"><application>KMldonkey</application> Handbook</ulink></para></listitem>
+		</itemizedlist>
+		
+	</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><application>KNemo</application></term>
+	<listitem><para>Displays for every network interface an icon in the systray. Tooltips and an info dialog provide further information about the interface. Passive popups inform about interface changes and a traffic plotter is also integrated.</para>
+	
+		<itemizedlist>
+			<listitem><para><ulink url="http://kde-apps.org">&kde;-apps</ulink> entry: <ulink url="http://kmldonkey.org/">http://www.kde-apps.org/content/show.php?content=12956</ulink></para></listitem>
+		</itemizedlist>
+		
+	</listitem>
+</varlistentry>
+</variablelist>
+</sect2>
+<!-- End Network -->
+
+<!-- Beging Utilities -->
+
+<sect2 id="extragear-utilities">
+<title>Utilities</title>
+<variablelist>
+<varlistentry>
+<term><application>Filelight</application></term>
+	<listitem><para>A simple, yet ideal, application for graphically displaying where your diskpace is being used. <application>Filelight</application> displays this information by representing your filesystem as a set of concentric segmented-rings.</para>
+	
+		<itemizedlist>
+			<listitem><para>Website: <ulink url="http://www.methylblue.com/filelight/">http://www.methylblue.com/filelight/</ulink></para></listitem>
+			<listitem><para><ulink url="http://docs.kde.org/development/en/extragear-utils/filelight/index.html"><application>Filelight</application> Handbook</ulink></para></listitem>
+		</itemizedlist>
+		
+	</listitem>
+<!-- Insert Screeny here -->
+</varlistentry>
+
+<varlistentry>
+<term><application>Krecipes</application></term>
+	<listitem><para>A &kde; recipe tool that can manage a recipe database with an easy-to-use interface. Full support for creating and removing ingredients as well as units; helps with diets, can calculate the amount of calories, vitamins, carbohydrates etc. Other advantages are its flexilibity and potential to extend further.</para>
+	
+		<itemizedlist>
+			<listitem><para>Website: <ulink url="http://krecipes.sourceforge.net">http://http://krecipes.sourceforge.net</ulink></para></listitem>
+			<listitem><para><ulink url="http://docs.kde.org/development/en/extragear-utils/krecipes/index.html"><application>Krecipes</application> Handbook</ulink></para></listitem>
+		</itemizedlist>
+		
+	</listitem>
+</varlistentry>
+</variablelist>
+</sect2>
+<!-- End Utilities -->
+
+</sect1>
+
+<sect1 id="extragear-related-information">
+<title>Related Information</title>
+<itemizedlist>
+<title>Related Information and Links</title>
+	<listitem><para>It should be stressed that the above is but a preview of what is available in the &kde; extragear. To view all of the applications and utilities available there visit <ulink url="http://extragear.kde.org">http://extragear.kde.org</ulink>, where a briefer summary of each application is provided.</para></listitem>
+	<listitem><para>The handbooks for the majority of applications in extragear can be viewed from <ulink url="http://docs.kde.org">http://docs.kde.org</ulink>.</para></listitem>
+	<listitem><para>Once again, you can find a plethora of other [third-party] &kde; applications at the popular <ulink url="http://kde-apps.org">http://kde-apps.org</ulink>.</para></listitem>
+</itemizedlist>
+</sect1>
+
+</chapter>

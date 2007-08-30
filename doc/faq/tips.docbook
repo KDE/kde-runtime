@@ -1,0 +1,137 @@
+<!--
+<?xml version="1.0" ?>
+<!DOCTYPE chapter PUBLIC "-//KDE//DTD DocBook XML V4.2-Based Variant V1.1//EN"
+ "dtd/kdex.dtd">
+-->
+
+<chapter id="tips">
+<title>Useful tips</title>
+
+<qandaset>
+<qandaentry>
+<question>
+<para>Reading documentation in &kde;</para>
+</question>
+<answer>
+<para>Pop up the <guilabel>Run Command</guilabel> window (<keycombo
+action="simul">&Alt;<keycap>F2</keycap></keycombo> by
+default) and type:
+<itemizedlist>
+<listitem>
+<para><command>man:<replaceable>command</replaceable></command> for man pages.  It
+even unpacks on the fly if the man pages are gzipped.</para>
+</listitem>
+
+<listitem>
+<para><command>info:<replaceable>command</replaceable></command> for info
+pages.</para>
+</listitem>
+
+<listitem>
+<para><command>help:<replaceable>kdeappname</replaceable></command> for &kde;
+application help pages.</para>
+</listitem>
+
+</itemizedlist>
+</para>
+
+<para>You can also enter any of these in the <guilabel>Location</guilabel> text
+box in &konqueror;.</para>
+<para>Or you can use the <application>&kde; Help Center</application> if you are using &kde;
+2.  Simply start the <application>&kde; Help Center</application> by clicking on the icon (the blue
+book with the yellow key) on the toolbar.  Once the <application>&kde; Help Center</application> has
+loaded, the window on the left will contain an entry called
+<guilabel>Unix manual pages</guilabel>.  Click once on this entry, and
+you can browse through all the installed manual pages on your
+system.</para>
+</answer>
+</qandaentry>
+
+<qandaentry>
+<question>
+<para>Move or resize windows quickly</para>
+</question>
+<answer>
+<para>To move a window, use <keycombo
+action="simul">&Alt;<mousebutton>left</mousebutton></keycombo> mouse
+button.  <keycombo
+action="simul">&Alt;<mousebutton>right</mousebutton></keycombo> mouse
+button will resize the window.  Last but not least, <keycombo
+action="simul">&Alt;<mousebutton>middle</mousebutton></keycombo> mouse button
+raises/lowers the window. The <application>&kde; Control Center</application>
+allows you to change these mouse bindings.</para>
+</answer>
+</qandaentry>
+
+<qandaentry>
+<question>
+<para>Killing windows in &kde;</para>
+</question>
+<answer>
+<para>There is a standard keybinding (<keycombo
+action="simul">&Ctrl;&Alt;&Esc;</keycombo>) 
+that gives you a skull &amp; crossbones cursor.  Click that cursor on a
+window to kill it.  The keybindings are viewable/changeable from the
+<application>&kde; Control Center</application>.
+
+<caution><para>Using this option kills the program forcibly. Data may be lost,
+and some processes related to the program may remain active. Use only as a
+last resort.</para></caution>
+<!-- fixme: use only if necessary; processes might remain --></para>
+</answer>
+</qandaentry>
+
+<qandaentry>
+<question>
+<para>What if something is so wrong that I can't even get the skull
+&amp; crossbones cursor? How do I get out of a total lockup?</para>
+</question>
+<answer>
+<para>These kind of locks tend to occur when an application locks up
+while it has a so called <quote>mouse/keyboard grab</quote>. When that
+happens you can try to select a virtual text console with <keycombo
+action="simul">&Ctrl;&Alt;<keycap>F1</keycap></keycombo> and login. With the
+following command you will get a list of all running processes:</para>
+
+<screen><userinput>        <command>ps</command> <option>-aux</option> | <command>more</command></userinput></screen>
+
+<para>By killing the process that has the mousegrab, your desktop will
+come to life again. Unfortunately you can't see which process that is,
+so you will have to find out through trial and error. To kill a process
+use:</para>
+
+<screen><userinput>        <command>kill</command> <option>-9</option> <replaceable>pid</replaceable></userinput></screen>
+
+<para>Here <replaceable>pid</replaceable> is the process id of the
+process, which is the first number on each line reported by
+<command>ps</command> <option>-aux</option>.</para>
+
+<para>You can switch back to the desktop with <keycombo
+action="simul">&Ctrl;&Alt;<keycap>F7</keycap></keycombo> (or
+<keycap>F8</keycap> through <keycap>F9</keycap> depending on your
+operating system) to see if things work again. When you press
+<keycombo action="simul">&Alt;<keycap>Tab</keycap></keycombo> you should get a
+response from the window manager. If not, you need to get back to the
+text console and try to kill another process.</para>
+
+<para>Good candidates to kill are: the application you were working
+with, &kicker;, &klipper; and &kdesktop;.</para>
+</answer>
+</qandaentry>
+
+<!-- fixme: how to do in KDE2.x
+<qandaentry>
+<question>
+<para>Switching window managers on the fly in &kde; 1.x</para>
+</question>
+<answer>
+<para>If you want to switch your window manager on the fly, type the
+following into a terminal window: <command>kwmcom
+go:<replaceable>blackbox</replaceable></command>.  This switches to
+Blackbox, but you can substitute any window manager you like.</para>
+</answer>
+</qandaentry>
+-->
+
+</qandaset>
+</chapter>

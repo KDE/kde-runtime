@@ -1,0 +1,39 @@
+<article lang="&language;" id="gopher">
+<title>gopher</title>
+<articleinfo>
+<authorgroup>
+<author>&Lauri.Watts; &Lauri.Watts.mail;</author>
+<!-- TRANS:ROLES_OF_TRANSLATORS -->
+</authorgroup>
+</articleinfo>
+
+<para>
+<command>gopher</command> began as a distributed campus information service 
+at the University of Minnesota. Gopher allows the user to access information 
+on Gopher servers running on Internet hosts.</para>
+
+<para>
+Gopher is an Internet information browsing service that uses a menu-driven 
+interface. Users select information from menus, which may return another 
+menu or display a text file. An item may reside on a Gopher server you 
+originally queried, or it may be on another Gopher server (or another host). 
+Gopher can <quote>tunnel</quote> from one Gopher to another without the 
+user knowing that the server and/or host machine have changed. Gopher keeps 
+the exact location of computers hidden from the user, providing the 
+<quote>illusion</quote> of a single, large set of interconnected menus. 
+</para>
+
+<para>
+Gopher permits the user to record an item's location in a 
+<quote>bookmark</quote> thereby allowing users to follow a 
+<quote>bookmark</quote> directly to a particular item without 
+searching the menu system. Gopher menus are not standardized, inasmuch as 
+each Gopher server is individually determined.
+</para>
+
+<para>
+Source:
+<ulink 
+url="http://tlc.nlm.nih.gov/resources/tutorials/internetdistlrn/gophrdef.htm"> http://tlc.nlm.nih.gov/resources/tutorials/internetdistlrn/gophrdef.htm</ulink>
+</para>
+</article>

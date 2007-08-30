@@ -1,0 +1,321 @@
+<part id="kde-office">
+<partinfo>
+<authorgroup>
+<author>
+<personname>
+<firstname>Raphael</firstname>
+<surname>Langerhorst</surname>
+</personname>
+<email>raphael.langerhorst@kdemail.net</email>
+</author>
+<!--
+<othercredit role="reviewer">
+</othercredit>
+-->
+</authorgroup>
+</partinfo>
+
+<!-- keep a copy of the desired structure here:
+* KDE Office
+        * Introduction to KOffice
+                * Overview
+                * Features
+                * OASIS OpenDocument file format
+        * Document embedding
+                * KParts and KOffice
+                * Example document
+        * KOffice components overview
+                * ... [a short intro to all components]
+        * Further information
+                * Application manuals
+                * Internet resources
+                * Plugin development
+-->
+
+<title>Office</title>
+
+<chapter id="kde-office-introduction">
+<title>Introduction to KOffice</title>
+
+<sect1 id="kde-office-overview">
+<title>Overview</title>
+<para>
+The &kde; project has also created a fully featured office suite
+called &koffice; which adheres to standards and fits very well into
+the &kde; desktop. This section was written with version 1.4 of
+&koffice; in mind.
+</para>
+<para>
+&koffice; is a highly integrated office suite that builds directly on the
+KDE technology. This has many advantages in terms of integration, features,
+performance, familiar look and feel and so on. All technologies like &DCOP;,
+KIO, KParts are directly available.
+</para>
+<para>
+In particular the KParts technology is extended for the &koffice;
+components to allow very flexible embedding of documents inside documents.
+</para>
+<para>
+Because much technology is already present inside &kde; itself, &koffice; is
+a very lightweight office suite, which results in fast application startup
+and low memory consumption. This makes &koffice; a very suitable office suite
+for older hardware as well, which can save lots of costs in some cases.
+</para>
+<para>
+&koffice; is also a very feature complete office suite. It is not limited to
+word processing, spreadsheets or presentations, but has also components for
+image manipulation, flow charts, business report generation, database
+management and project management. Because of the flexible component
+integration smaller utilities like the diagram and chart engine as well
+as the formula editor are available as stand alone tools.
+</para>
+<para>
+As you can see &koffice; brings a lot of features that can enrich your
+office experience. Its straight forward and &kde; like approach in look
+and feel as well as familiar usability makes &koffice; quite useful for
+daily office work.
+</para>
+<!-- include this para at the end in further information
+<para>
+You can always take a look at the &koffice;
+<ulink url="http://www.koffice.org">website</ulink> to check on the latest
+state of the application.
+</para>
+-->
+</sect1>
+
+<sect1 id="kde-office-features">
+<title>Features</title>
+<para>
+This list gives a general outline of the &koffice; features.
+The &koffice; office suite is too large to list every detail.
+</para>
+<itemizedlist>
+<title>&koffice; features:</title>
+<listitem><para>Fully builds on &kde; which makes these technologies available at low costs.</para></listitem>
+<listitem><para>Fully integrates into &kde; which is vital for business environments.</para></listitem>
+<listitem><para>&kde; technologies include document location abstraction, DCOP scripting, parts and plugins,...</para></listitem>
+<listitem><para>Full Component embedding.</para></listitem>
+<listitem><para>Low memory footprint, fast startup, lightweight.</para></listitem>
+<listitem><para>Feature complete: many components are offered.</para></listitem>
+<listitem><para>Intuitive, good looking and easy to learn user interface.</para></listitem>
+<listitem><para>Adheres to standards: OASIS OpenDocument file format.</para></listitem>
+</itemizedlist>
+</sect1>
+
+<sect1 id="kde-office-fileformat">
+<title>OASIS OpenDocument file format</title>
+<para>
+It is important for an office suite to use standards where possible,
+especially for the file format. The OASIS OpenDocument file format
+specification is an open standard for office applications. This
+format is spreading more and more, it is also the same file format
+OpenOffice.org uses, which means that file exchange with any
+user of this office suite is easily possible.
+</para>
+<para>
+Adhering to official standards is always a good thing. For business
+environments it is even vital to exactly know about their documents.
+</para>
+<para>
+&koffice; has more components to offer than what is covered by the
+OASIS specification. Still, all components covered by the specifications
+actually use the OASIS OpenDocument file format. 
+</para>
+</sect1>
+</chapter>
+
+<!-- comment out for final commit before freeze
+<chapter id="kde-office-embedding">
+<title>Component Embedding</title>
+<sect1 id="kde-office-kparts">
+<title>KParts and &koffice;</title>
+<para>To be written</para>
+</sect1>
+
+<sect1 id="kde-office-example">
+<title>Example</title>
+<para>To be written</para>
+</sect1>
+</chapter>
+-->
+
+<chapter id="kde-office-components">
+<title>&koffice; Components Overview</title>
+
+<para>Keep in mind that all these components can integrate very well into each other. So basically a spreadsheet can contain anything from charts to presentations, reports and even text documents. Likewise almost any component can contain almost any other.</para>
+
+<variablelist>
+
+<varlistentry>
+<term>&kword;</term>
+	<listitem><para>The textprocessing component, but it includes many aspects of a desktop publishing application. This creates a rather unique mixture of features that makes interesting layouts easily possible.</para>
+	
+		<itemizedlist>
+			<listitem><para>Website: <ulink url="http://www.koffice.org/kword/">http://www.koffice.org/kword/</ulink></para></listitem>
+			<listitem><para><ulink url="help:/kword">&kword; Handbook</ulink></para></listitem>
+		</itemizedlist>
+		
+	</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>&kspread;</term>
+	<listitem><para>The spreadsheet component. &kspread; is a scriptable spreadsheet program which provides both table-oriented sheets and support for complex mathematical formulas and statistics. Features include Hyperlinks, cell data validity checking with configurable warnings/actions, scripting and specific cell customization. </para>
+	
+		<itemizedlist>
+			<listitem><para>Website: <ulink url="http://www.koffice.org/kspread/">http://www.koffice.org/kspread/</ulink></para></listitem>
+			<listitem><para><ulink url="help:/kspread">&kspread; Handbook</ulink></para></listitem>
+		</itemizedlist>
+		
+	</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>&kpresenter;</term>
+	<listitem><para>The presentation component. It can be used to create on-screen presentations or to design and print transparencies. Features include embedding images and clip-art, easy working with objects, and the ability to make &HTML; or &XML; slideshows.</para>
+	
+		<itemizedlist>
+			<listitem><para>Website: <ulink url="http://www.koffice.org/kpresenter/">http://www.koffice.org/kpresenter/</ulink></para></listitem>
+			<listitem><para><ulink url="help:/kpresenter">&kpresenter; Handbook</ulink></para></listitem>
+		</itemizedlist>
+		
+	</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>&kivio;</term>
+	<listitem><para>The flowcharting and diagramming component. Additional stencil sets can be used for custom needs, there is a plugin framework for additional functionality, and even <acronym>UML</acronym> diagrams are possible.</para>
+	
+		<itemizedlist>
+			<listitem><para>Website: <ulink url="http://www.koffice.org/kivio/">http://www.koffice.org/kivio/</ulink></para></listitem>
+			<listitem><para><ulink url="help:/kivio">&kivio; Handbook</ulink></para></listitem>
+		</itemizedlist>
+		
+	</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>&karbon14;</term>
+	<listitem><para>A vector-drawing application.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term>&krita;</term>
+	<listitem><para>The painting and image manipulation component. &krita; contains both ease-of-use, fun features like guided painting, as well as high-end features like support for 16-bit images, <acronym>CMYK</acronym> and even OpenEXR <acronym>HDR</acronym> images.  </para>
+	
+		<itemizedlist>
+			<listitem><para>Website: <ulink url="http://www.koffice.org/krita/">http://www.koffice.org/krita/</ulink></para></listitem>
+			<listitem><para><ulink url="help:/krita">&krita; Handbook</ulink></para></listitem>
+		</itemizedlist>
+		
+	</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>&kugar;</term>
+	<listitem><para>The appropriate component for creating business reports, which is accomplished with an advanced designer that it has. Features include report printing in postscript, full control of fonts, colors, text alignment and wrapping, as well as open report definition files (with the layout stored as &XML;).</para>
+	
+		<itemizedlist>
+			<listitem><para>Website: <ulink url="http://www.koffice.org/kugar/">http://www.koffice.org/kugar/</ulink></para></listitem>
+			<listitem><para><ulink url="help:/kugar">&kugar; Handbook</ulink></para></listitem>
+		</itemizedlist>
+		
+	</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><application>KPlato</application></term>
+	<listitem><para>The component for project management, allowing for the planning and scheduling of various projects.</para>
+	
+		<itemizedlist>
+			<listitem><para>Website: <ulink url="http://www.koffice.org/kplato/">http://www.koffice.org/kplato/</ulink></para></listitem>
+		</itemizedlist>
+		
+	</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>&kexi;</term>
+	<listitem><para>The data management component. It can be used for creating database schemas, inserting data, performing queries, and processing data. Forms can be created to provide a custom interface to your data. All database objects -- tables, queries and forms -- are stored in the database, making it easy to share data and database design.</para>
+	
+		<itemizedlist>
+			<listitem><para>Website: <ulink url="http://www.koffice.org/kexi/">http://www.koffice.org/kexi/</ulink> and <ulink url="http://kexi-project.org">http://kexi-project.org</ulink>.</para></listitem>
+			<listitem><para><ulink url="help:/kexi">&kexi; Handbook</ulink></para></listitem>
+		</itemizedlist>
+		
+	</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>&kchart;</term>
+	<listitem><para>The chart drawing component; it is used to embed charts into one of the other &koffice; components. It's easy to use, highly customizable allowing all of the parameters to be changed, and has a flexible layout. </para>
+	
+		<itemizedlist>
+			<listitem><para>Website: <ulink url="http://www.koffice.org/kchart/">http://www.koffice.org/kchart/</ulink></para></listitem>
+			<listitem><para><ulink url="help:/kchart">&kchart; Handbook</ulink></para></listitem>
+		</itemizedlist>
+		
+	</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>&kformula;</term>
+	<listitem><para> A formula editor which provides the basic input facilities and support functionality that appears in other &koffice; applications. Some of its features include intelligent cursor management, multi-level undo support and advanced syntax highlighting.</para>
+	
+		<itemizedlist>
+			<listitem><para>Website: <ulink url="http://www.koffice.org/kformula/">http://www.koffice.org/kformula/</ulink></para></listitem>
+			<listitem><para><ulink url="help:/kformula">&kformula; Handbook</ulink></para></listitem>
+		</itemizedlist>
+		
+	</listitem>
+</varlistentry>
+
+</variablelist>
+
+<itemizedlist>
+<title>Related Information</title>
+	<listitem><para>Main website: <ulink url="http://www.koffice.org">http://www.koffice.org</ulink>.</para></listitem>
+	<listitem><para><ulink url="help:/koffice">&koffice; Handbook</ulink></para></listitem>
+</itemizedlist>
+
+</chapter>
+
+<chapter id="kde-office-furtherinfo">
+
+<title>Further Information</title>
+<sect1 id="kde-office-manuals">
+<title>Application Manuals</title>
+<para>Each Koffice component comes with its own manual.
+These manuals offer all the latest information about the
+various components &koffice; has to offer and should be
+read to learn more about &koffice;. The application manuals can be accessed by using the documentation KIO Slave in &konqueror; (that is, typing <userinput>help:/<replaceable>application</replaceable></userinput> into the Location toolbar) or by selecting the respective handbook from the &khelpcenter;. The website is
+also a good place to find out more; it is at <ulink url="http://www.koffice.org">http://www.koffice.org</ulink>.</para>
+</sect1>
+
+<sect1 id="kde-office-internet">
+<title>Internet Resources</title>
+<para>The primary site on the internet is
+<ulink url="http://www.koffice.org">http://www.koffice.org</ulink></para>
+<para>You will also find information about the user and developer
+mailing lists as well as additional developer resources.</para>
+<para>The Kexi project has even an additional website, which can be
+found at <ulink url="http://www.kexi-project.org">http://www.kexi-project.org
+</ulink></para>
+</sect1>
+
+<sect1 id="kde-office-plugininfo">
+<title>Plugin development</title>
+<para>&koffice; can easily be extended with plugins. Plugin development is
+not very difficult and can be used to optimize your everyday workflow. Such
+capabilities are probably very interesting in business environments to
+make &koffice; meet individual requirements. You can either take a look
+at existing plugins or read a general introduction at
+<ulink url="http://developer.kde.org/documentation/tutorials/developing-a-plugin-structure/index.html">
+the developer's site</ulink>. The general KDE developers website is available
+at <ulink url="http://developer.kde.org/">http://developer.kde.org</ulink>.
+</para>
+</sect1>
+
+</chapter>
+</part>

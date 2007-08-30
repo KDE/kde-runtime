@@ -1,0 +1,254 @@
+<chapter id="email">
+
+<chapterinfo>
+<authorgroup>
+<author>
+&Daniel.Naber;
+</author>
+<author>
+&David.Rugge;
+</author>
+</authorgroup>
+</chapterinfo>
+
+<!-- Stolen and modified by Phil from the KMail manual -->
+<!-- TODO: Screenies! -->
+<title>Getting Started with Email</title>
+
+<indexterm><primary>Email</primary><secondary>getting
+started</secondary></indexterm>
+
+<indexterm><primary>&kmail;</primary></indexterm>
+
+<para>&kde; features a powerful and easy-to-use email client called
+&kmail;, which allows you to send, receive, and organize your email
+quickly and efficiently. Let us look at how to set it up. If you have
+any problems with this procedure, refer to the full &kmail; manual.</para>
+
+<sect1 id="email-information-needed">
+<title>Information you will need before you start</title>
+
+<para>Many email settings can vary greatly depending on the setup of
+your system, your ISP's configuration, or your local network
+setup. You will need to find out some information before you can start
+setting up your email:
+<variablelist>
+
+<varlistentry>
+<term>Your email address</term>
+<listitem><para>This should be provided by your ISP or system administrator.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term>Your username and password for your email account</term>
+<listitem><para>The username is often the same as the part before the
+<quote>@</quote> symbol in your email address, but not always: check
+with your <acronym>ISP</acronym>.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+
+
+<term>
+<indexterm><primary>Email</primary><secondary>SMTP
+server</secondary></indexterm>
+Your outgoing email (<acronym>SMTP</acronym>) server name and
+details</term>
+<listitem><para>Again, your ISP should have provided
+you with this information. If not, you can try the form <systemitem
+class="systemname">smtp.<replaceable>your-isp-name</replaceable>.com</systemitem>.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+
+<term>
+<indexterm><primary>Email</primary><secondary>IMAP
+server</secondary></indexterm>
+
+<indexterm><primary>Email</primary><secondary>POP3
+server</secondary></indexterm>
+
+Your incoming email (<acronym>IMAP</acronym> or
+<acronym>POP</acronym>) server name and details</term>
+<listitem><para>If you do not have this information to hand, you can
+try <systemitem
+class="systemname">imap.<replaceable>your-isp-name</replaceable>.com</systemitem>
+for <acronym>IMAP</acronym> or <systemitem
+class="systemname">pop.<replaceable>your-isp-name</replaceable>.com</systemitem>
+if you use <acronym>POP3</acronym>.</para></listitem>
+</varlistentry>
+</variablelist>
+</para>
+
+<para>Once you have that information, you are ready to start setting
+up &kmail;. Open &kmail; from the <guimenu>K</guimenu> menu (you can
+find it in the <guisubmenu>Internet</guisubmenu> submenu, or use one
+of the methods described in <xref linkend="programs-launching"/>.) Once
+&kmail; has opened, select the menu entry
+<menuchoice><guimenu>Settings</guimenu><guimenuitem>Configure KMail...</guimenuitem>
+</menuchoice>. The next sections describe how to use the dialog that
+appears to set up &kmail;.</para>
+</sect1>
+
+
+<sect1 id="email-setting-your-identity">
+<title>Setting your Identity</title>
+
+<para>
+The settings in the <guilabel>Identities</guilabel> page are fairly
+straightforward. Select the <guilabel>default</guilabel> identity and
+click <guibutton>Modify...</guibutton>.  Fill in the <guilabel>Your
+name</guilabel> field with your full name (&eg; <userinput>John
+Doe</userinput>) and, optionally, the
+<guilabel>Organization</guilabel> field with the appropriate
+information.
+</para>
+<para>
+Next, fill in the <guilabel>Email address</guilabel> field with
+your email address (&eg; <userinput>john@example.net</userinput>).
+</para>
+
+<para>That is all for this dialog unless you want to use the more
+advanced features (cryptography, a signature, &etc;). You can find
+more information about these features in the full &kmail;
+manual. Click on the <guibutton>OK</guibutton> button to close this
+dialog, and move on to the next configuration page...</para>
+
+</sect1>
+ 
+<sect1 id="email-setting-up-your-account">
+<title>Setting up your Account</title>
+
+<para>Click on the <guilabel>Network</guilabel> icon to move to the
+network configuration page. It contains the settings that
+tell &kmail; how to send and receive your email messages. You will see
+two tabs on the right-hand side: <guilabel>Sending</guilabel> and
+<guilabel>Receiving</guilabel>. You need to set up both, so let us look
+at them each in turn:</para>
+
+<sect2 id="sending-mail">
+<title>Sending Messages</title>
+
+<indexterm><primary>Email</primary><secondary>sending</secondary></indexterm>
+
+<para>The <guilabel>Sending</guilabel> tab provides a list of
+ways to send messages. The first item in the list is the default
+way to send messages. Using the <guibutton>Add...</guibutton>
+button you can choose between two different ways of sending messages:
+<guilabel>SMTP</guilabel> and
+<guilabel>Sendmail</guilabel>. &Sendmail; here
+means a local software installation &mdash; this has a
+reputation of being difficult to set up, so if you do not already have a
+working &Sendmail; configuration, choose
+<guilabel>SMTP</guilabel> and fill in the <guilabel>Name</guilabel>
+field with a descriptive name 
+(&eg; <userinput>My Mail Account</userinput>)
+and the <guilabel>Host</guilabel>
+field with the name and domain of your mail server 
+(&eg; <userinput>smtp.provider.com</userinput>). You will probably
+not need to change the <guilabel>Port</guilabel> setting (the default is
+<userinput>25</userinput>).</para>
+
+<para>A description of the other options can be found
+in the full &kmail; manual. Click on <guibutton>OK</guibutton> to
+close this dialog, and then click on the
+<guilabel>Receiving</guilabel> tab.</para>
+
+</sect2>
+
+<sect2 id="receiving-mail">
+<title>Receiving Messages</title>
+
+<para>To set up an account so you can receive mail, press the
+<guibutton>Add...</guibutton> button in the
+<guilabel>Receiving</guilabel> tab. You will then be prompted for the
+type of your email account; most users should select
+<guilabel>POP3</guilabel> or <guilabel>IMAP</guilabel>. If you wish to
+use a different system, consult the &kmail; manual.</para>
+
+<para>You will then be presented with
+the <guilabel>Add account</guilabel> window. First, fill in the
+<guilabel>Name</guilabel> field to name your account. You can choose any name
+you like.  <guilabel>Login</guilabel>, <guilabel>Password</guilabel>, and
+<guilabel>Host</guilabel> should be filled in with the information you
+gathered earlier. You should not usually need to change the <guilabel>Port</guilabel> setting.</para>
+
+<para>You are now ready to send and receive mail. For
+<acronym>IMAP</acronym>, just open your folders in the
+folder tree in &kmail;'s main window. &kmail; then connects to your
+server and displays the messages it finds. For POP3 use
+<menuchoice><guimenu>File</guimenu><guimenuitem>Check
+Mail</guimenuitem></menuchoice>.</para>
+
+</sect2>
+
+</sect1>
+
+<sect1 id="email-testing-your-setup">
+<title>Testing your Setup</title>
+
+<indexterm><primary>Email</primary><secondary>testing</secondary></indexterm>
+
+<para>First, you should send yourself a message to test your
+configuration. To send a message, either hit <keycombo
+action="simul">&Ctrl;<keycap>N</keycap></keycombo>, select the
+<guiicon>New Message</guiicon> icon  or select
+the <menuchoice><guimenu>Message</guimenu><guimenuitem>New
+Message...</guimenuitem></menuchoice> menu item.  The
+composer window will appear. Fill in the
+<guilabel>To:</guilabel> field with your email address and type
+something in the <guilabel>Subject</guilabel> field. Send the message by
+selecting <menuchoice><guimenu>Message</guimenu> <guimenuitem>Send</guimenuitem>
+</menuchoice>.</para>
+
+<para>To check your email, select
+<menuchoice><guimenu>File</guimenu><guimenuitem>Check
+Mail</guimenuitem></menuchoice>. In the lower-right corner of the main
+window, a progress bar will indicate how many messages are being
+downloaded. If you receive the message you just sent, then
+congratulations!  If, however, you receive any error messages while
+testing your setup, make sure that your network connection is working
+and recheck your settings at
+<menuchoice><guimenu>Settings</guimenu> <guimenuitem>Configure
+&kmail;...</guimenuitem></menuchoice>.</para>
+
+<!-- Add links to "further reading" here -->
+<itemizedlist>
+<title>Related Information</title>
+
+<listitem><para>The &kmail; Handbook has full descriptions of advanced
+email settings and so on. You can read it in the &khelpcenter; or by
+entering <userinput>help:/kmail</userinput> in &konqueror;'s
+<guilabel>Location</guilabel> bar.</para>
+</listitem>
+
+<listitem><para>The &kmail; website at <ulink
+url="http://kmail.kde.org">http://kmail.kde.org</ulink> contains
+latest news, tips and tricks, and plenty more.</para>
+</listitem>
+
+</itemizedlist>
+
+
+
+</sect1>
+
+</chapter>
+
+<!-- Keep this comment at the end of the file
+Local variables:
+mode: xml
+sgml-omittag:nil
+sgml-shorttag:nil
+sgml-namecase-general:nil
+sgml-general-insert-case:lower
+sgml-minimize-attributes:nil
+sgml-always-quote-attributes:t
+sgml-indent-step:0
+sgml-indent-data:true
+sgml-parent-document:("index.docbook" "book" "chapter")
+sgml-exposed-tags:nil
+sgml-local-catalogs:nil
+sgml-local-ecat-files:nil
+End:
+-->

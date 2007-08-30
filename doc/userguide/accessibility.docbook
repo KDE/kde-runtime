@@ -1,0 +1,168 @@
+
+<chapter id="accessibility">
+
+<chapterinfo>
+<authorgroup>
+<author>
+<firstname>Gary</firstname>
+<surname>Cramblitt </surname>
+</author>
+</authorgroup>
+</chapterinfo>
+
+<title>Accessibility</title>
+
+<indexterm><primary>Accessibility</primary></indexterm>
+
+<para><acronym>KDEAP</acronym> (the &kde; Accessibility Project) aims to ensure that &kde;, as a desktop environment, is accessible to all users, including those of us with physical disabilities. In addition to the accessibility aids in the <link linkend="kcontrol-regional-and-accessibility">Control Center</link>, &kde; has several other accessibility tools, which are available in the &kde;-Accessibility package. This package may not be installed on your computer; if it is not, you can download it from here:</para>
+
+<para><itemizedlist>
+<listitem><para><ulink url="ftp://ftp.kde.org/pub/kde/stable/apps/KDE3.x/accessibility/kdeaccessibility-1.0.0.tar.gz">kdeaccessibility-1.0.0.tar.gz</ulink>, or 
+<ulink url="ftp://ftp.kde.org/pub/kde/stable/apps/KDE3.x/accessibility/kdeaccessibility-1.0.0.tar.bz2">kdeaccessibility-1.0.0.tar.bz2</ulink></para></listitem>
+<listitem><para><ulink url="ftp://ftp.kde.org/pub/kde/stable/apps/KDE3.x/accessibility/kdeaccessibility-1.0.0.md5">MD5</ulink></para></listitem>
+<listitem><para><ulink url="ftp://ftp.kde.org/pub/kde/stable/apps/KDE3.x/accessibility/kdeaccessibility-1.0.0.lsm">lsm file</ulink></para></listitem>
+</itemizedlist></para>
+
+<para>For more information on the project, visit the <ulink url="http://accessibility.kde.org/">&kde; Accessibility Home Page</ulink>.</para>
+
+<sect1 id="kmousetool">
+<title><application>KMouseTool</application></title>
+
+<indexterm><primary>Mouse</primary><secondary>clicking
+automatically</secondary></indexterm>
+
+<para>
+  <application>KMouseTool</application> is a   &kde; program, which clicks the mouse for you, so you
+  do not have to. <application>KMouseTool</application> works with any mouse or pointing device.
+</para>
+<para>
+<inlinemediaobject>
+	<imageobject>
+		<imagedata fileref="kmousetool.png" format="PNG" />
+	</imageobject>
+	<textobject>
+		<phrase>KMouseTool</phrase>
+	</textobject>
+</inlinemediaobject>
+</para>
+
+<itemizedlist><title>Related Information</title>
+	<listitem><para><application>MouseTool</application> Website: <ulink url="http://mousetool.com/">http://mousetool.com</ulink></para></listitem>
+	<listitem><para><ulink url="help:/kmousetool"><application>KMouseTool</application> Handbook</ulink></para></listitem>
+</itemizedlist>
+
+</sect1>
+
+<sect1 id="kmagnifier">
+<title>KMagnifier</title>
+
+<indexterm><primary>Magnifier</primary></indexterm>
+
+<para>KMagnifier (or <command>kmag</command>, to use its &UNIX; name) is a small utility for Linux to magnify
+  a part of the screen. It magnifies the area of the screen around the
+  mouse pointer or, optionally, a user-defined area. Additionally, it can save
+  a magnified screenshot to disk.
+</para>
+
+<para>
+<inlinemediaobject>
+	<imageobject>
+		<imagedata fileref="kmag.png" format="PNG" />
+	</imageobject>
+	<textobject>
+		<phrase>KMag</phrase>
+	</textobject>
+</inlinemediaobject>
+</para>
+
+<itemizedlist><title>Related Information</title>
+	<listitem><para>Website: <ulink url="http://kmag.sourceforge.net/">http://kmag.sourceforge.net</ulink></para></listitem>
+	<listitem><para><ulink url="help:/kmag"><application>KMag</application> Handbook</ulink></para></listitem>
+</itemizedlist>
+
+</sect1>
+
+<sect1 id="kmouth">
+<title><application>KMouth</application></title>
+
+<indexterm><primary>Speech</primary></indexterm>
+
+<para><application>KMouth</application> is a KDE program which enables people who cannot speak to let their
+ computer speak, &eg; mutal people or people who have lost their voice.
+ It has a text-input field and speaks the sentences that you enter. It also has
+ support for user-defined phrasebooks.
+</para>
+
+<para>
+<inlinemediaobject>
+	<imageobject>
+		<imagedata fileref="kmouth.png" format="PNG" />
+	</imageobject>
+	<textobject>
+		<phrase>First screenshot of <application>KMouth</application></phrase>
+	</textobject>
+</inlinemediaobject>
+</para>
+<para>
+<inlinemediaobject>
+	<imageobject>
+		<imagedata fileref="kmouth2.png" format="PNG" />
+	</imageobject>
+	<textobject>
+		<phrase>Second screenshot of <application>KMouth</application></phrase>
+	</textobject>
+</inlinemediaobject>
+</para>
+<para>
+<inlinemediaobject>
+	<imageobject>
+		<imagedata fileref="kmouth3.png" format="PNG" />
+	</imageobject>
+	<textobject>
+		<phrase>Third screenshot of <application>KMouth</application></phrase>
+	</textobject>
+</inlinemediaobject>
+</para>
+
+<itemizedlist><title>Related Information</title>
+	<listitem><para>Website: <ulink url="http://www.schmi-dt.de/kmouth/index.en.html">http://www.schmi-dt.de/kmouth/index.en.html</ulink></para></listitem>
+	<listitem><para><ulink url="help:/kmouth"><application>KMouth</application> Handbook</ulink></para></listitem>
+</itemizedlist>
+
+</sect1>
+
+<sect1 id="ktts">
+<title><application>KTTS</application> - Text-to-Speech</title>
+
+<para><application>KTTS</application> is a &kde; application for the conversion of text into audible speech. Currently, since &kde; 3.4, you can use <application>KTTS</application> to speak any text from the &klipper;, the &kde; clipboard, any text from a plain text file (using &kate; or otherwise), speak any portion of text from a &HTML; page in &konqueror;, and much more.</para>
+
+<para>To get <application>KTTS</application> up-and-running you will need to start by running <command>kttsmgr</command>, the &kde; Text-to-Speech manager.</para>
+
+<!-- Insert Screeny here -->
+
+<itemizedlist><title>Related Information</title>
+	<listitem><para>Website: <ulink url="http://accessibility.kde.org/developer/kttsd/">http://accessibility.kde.org/developer/kttsd/</ulink></para></listitem>
+	<listitem><para><ulink url="help:/kttsd"><application>KTTSD</application> Handbook</ulink></para></listitem>
+
+</itemizedlist>
+
+</sect1>
+</chapter>
+
+<!-- Keep this comment at the end of the file
+Local variables:
+mode: xml
+sgml-omittag:nil
+sgml-shorttag:nil
+sgml-namecase-general:nil
+sgml-general-insert-case:lower
+sgml-minimize-attributes:nil
+sgml-always-quote-attributes:t
+sgml-indent-step:0
+sgml-indent-data:true
+sgml-parent-document:("index.docbook" "book" "chapter")
+sgml-exposed-tags:nil
+sgml-local-catalogs:nil
+sgml-local-ecat-files:nil
+End:
+-->

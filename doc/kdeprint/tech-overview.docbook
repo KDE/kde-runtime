@@ -1,0 +1,280 @@
+<chapter id="technical-overview">
+<title>Technical Overview</title>
+
+<para>This chapter aims to give a technical overview of &kdeprint; which
+non-programmers can comprehend.</para>
+
+<para>&kdeprint; is a new and revolutionary tool to give easy access to
+printing services for both &kde; users and &kde; developers.</para>
+
+<sect1 id="brief-description">
+<title>A Brief Description of &kdeprint;</title>
+
+<para>You can access the functions of &kdeprint; in different ways:
+through the Printing Manger in the &kcontrol;, through the
+<command>kprinter</command> command or through the dialog that pops up
+if you want to print.</para>
+
+<sect2 id="what-kdeprint-is-not">
+<title>What it is <emphasis>not</emphasis></title>
+
+<para>&kdeprint; is <emphasis>not</emphasis> a replacement for the
+printing subsystem itself.  &kdeprint; does <emphasis>not</emphasis>
+therefore give provision for spooling, and it does
+<emphasis>not</emphasis> do the basic processing of &PostScript; or
+other print data.</para>
+
+</sect2>
+
+<sect2 id="what-kde-print-is">
+<title>What it <emphasis>is</emphasis></title>
+<para>&kdeprint; is an intermediate layer between the spooling and the
+data processing print subsystem (as installed), and the application that
+seeks to print.  &kdeprint; provides a common interface for &kde;
+developers and &kde; users, to various supported print subsystems.  At
+the same time, it is customizable, and highly configurable.</para>
+
+<para>&kdeprint; is easy to use for both &kde; developers and end-users.
+Developers can port their applications, with minimal changes, to use
+&kdeprint; instead of the old &Qt; print <quote>system</quote>. Users
+can easily choose and configure their print subsystem.</para>
+
+<para>For a reference to new &kde; users: &Qt; is the basic library and
+graphical toolkit, which is used by all &kde; applications; &Qt; is
+developed by TrollTech, a Norwegian software company.</para>
+
+</sect2>
+
+</sect1>
+
+<sect1 id="different-users">
+<title>&kdeprint; -- Different Usage for Different People</title>
+
+<para>&kdeprint; has different faces for different people.</para>
+
+<sect2 id="what-users-can-do">
+<title>What users and administrators can do with &kdeprint;</title>
+
+<para>&kdeprint; allows users and/or administrators, depending on their
+rights, access to printing subsystems (&CUPS;, <acronym>LPD</acronym>,
+<acronym>RLPR</acronym>, <application>LPRng</application>,
+<application>PDQ</application> &etc;) through a &kde; graphical user
+interface (&GUI;).  Using &kdeprint;, they can print, administer jobs,
+printers and the printing daemon, all in a comfortable manner.</para>
+
+<para>Experienced users will like the capability to plug any working
+filter for the print data between the output of their application and
+the input, into the chosen print subsystem. Some examples for this
+already ship with <quote>plain vanilla</quote> &kdeprint;. Read
+on.</para>
+
+</sect2>
+
+
+<sect2 id="what-developers-can-do">
+<title>What &kde; developers can do with it...</title>
+
+<para>If a &kde; developer needs printing access for his application, he
+does not code the printing functions from scratch. Before &kde; 2.2 this
+service was provided by the <classname>QPrinter</classname> class, a
+library function of the &Qt; Toolkit. The
+<classname>QPrinter</classname> class relied on the out-moded
+<quote>Line Printer Daemon</quote> (<acronym>LPD</acronym>). The
+&kdeprint; library bases itself firmly on the more modern Common &UNIX;
+Printing System (&CUPS;), while at the same time keeping backward
+compatibility with <acronym>LPD</acronym> and other legacy, or less
+elaborate, print systems. It also <quote>leaves the door open</quote>
+for any new development that might occur.</para>
+
+<para>For &kde; developers to use the new &kdeprint; class in their
+applications, they require only minimal changes to their code: for every
+call of <classname>QPrinter</classname>, they just need to change this to
+<classname>KPrinter</classname>.  Replacing one (!) letter in a few
+spots, and automatically they are done; their application can then use
+all of the features of the new &kdeprint; library.</para>
+
+<para>More ambitious developers, or ones with special requirements, can
+do more: despite &kdeprint;'s feature-rich framework, they are still able
+to customize the print dialog of their application
+by creating an additional <quote>Tab</quote>, where their
+extensions to the standard &kdeprint; will feel right at home.</para>
+
+
+<para>This last mentioned feature has not been used widely inside
+&kde; so far, as developers are not yet fully aware of &kdeprint;'s
+power. Expect more of this in the near future. One example I
+discovered is the &kcron; application. It lets you edit the crontab
+through a &GUI;. The developers have implemented a printing feature
+that lets you (or <systemitem class="username">root</systemitem>)
+choose if you want to print the whole of crontab (for all users) or
+just the part that is marked. You can see the effects on &kdeprint;
+in the following screenshots.</para>
+
+<para>This shot shows a sample from the &kcron; utility.
+<screenshot>
+<screeninfo>&kcron; utility: a small sample of a system's cronjobs as
+shown through the &kde; <acronym>GUI</acronym>&GUI;.</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="kcron_to_be_printed.png"
+format="PNG"/></imageobject>
+<textobject>
+<phrase>The &kcron; developers let you choose to print the whole of the
+cron table or just the marked part of it.</phrase></textobject>
+</mediaobject>
+</screenshot>
+</para>
+
+<para>The dialog to configure &kcron;'s printing options: the
+additional tab titled <guilabel>Cron Options</guilabel> is from inside
+&kcron;, not &kdeprint;; it is a special extension added by the
+&kcron; developers for printing purposes, not originating from, but
+executed by &kdeprint;. Developers of other applications are free
+to implement their own goodies, if they feel need for it.</para>
+
+
+<screenshot>
+<screeninfo>&kcron;'s addition to the &kdeprint; dialog.</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="kprinter_with_kcron_developer_special.png"
+format="PNG"/></imageobject>
+<textobject>
+<phrase>&kcron;'s addition to the &kdeprint; dialog.</phrase></textobject>
+<caption>
+<para>&kcron;'s addition to the &kdeprint; dialog.</para>
+</caption>
+</mediaobject>
+</screenshot>
+
+</sect2>
+
+<sect2>
+<title>What &kdeprint; offers to everybody...</title>
+
+<para>&kdeprint;'s easy-to-use interface for all supported print subsystems
+of course does not eliminate basic traditional weaknesses of some of
+those systems. But it smooths some rough edges.  Different users may use
+different printing systems on the same box. A user is free to even
+switch <quote>on the fly</quote>, from the print dialog, the print
+subsystem to be used for the next job. (This is possible if different
+systems are installed in a way that they don't <quote>get in each
+other's way</quote>.)</para>
+
+<para>Most &UNIX; users are used to
+<acronym>LPD</acronym> printing. <acronym>LPD</acronym> provides only
+basic printing functions, is very inflexible and does not utilize the
+many options of more modern print systems like &CUPS;. While also
+working remotely over any distance (like every TCP/IP based protocol),
+<acronym>LPD</acronym> lacks bi-directional communication,
+authentication, access control and encryption support.</para>
+
+<para>&kdeprint; can use &CUPS; to support:</para>
+
+<itemizedlist>
+<listitem>
+<para>Querying the <acronym>LAN</acronym> for available printers,</para>
+</listitem>
+<listitem>
+<para>Basic, Digest, and Certificate Authentication,</para>
+</listitem>
+<listitem>
+<para>Access Control based on <acronym>IP</acronym> addresses, net
+addresses, netmasks, host- and domain names,</para>
+</listitem>
+<listitem>
+<para>and 128-Bit TLS or SSL3 encryption of print data, to prevent
+eavesdropping, or at least make it much more difficult.</para>
+</listitem>
+</itemizedlist>
+
+<para>This makes &kdeprint; a much more robust and reliable solution
+than using the venerable <acronym>LPD</acronym>.</para>
+
+</sect2>
+<sect2>
+<title>How to access &kdeprint; </title>
+
+<para>You get access to &kdeprint;, or parts of it, in four different
+ways:</para>
+
+<itemizedlist>
+<listitem><para>through your applications: if you call the printing
+dialog (either <menuchoice><guilabel>File</guilabel>
+<guilabel>Print...</guilabel></menuchoice>) or the button with the
+little printer icon on it; this opens the printing
+dialog.</para></listitem>
+
+<listitem><para>through the typed command <command>kprinter</command>
+in a <application>terminal</application> or a &konsole; window or from
+the <guilabel>Run Command...</guilabel> mini-<acronym>CLI</acronym>
+window: this also opens the printing dialog.</para></listitem>
+
+<listitem><para>from the <inlinemediaobject><imageobject> <imagedata
+fileref="kcontrol-icon.png" format="PNG"/></imageobject>
+</inlinemediaobject> button, starting &kcontrol;, and then go to
+<menuchoice><guilabel>System</guilabel><guilabel>Printing
+Manager</guilabel></menuchoice>. This opens the &kdeprint;
+administration which is part of the &kcontrolcenter; and also lets
+you switch to other parts of the &kcontrol;</para></listitem>
+
+<listitem><para>from a command line (&konsole; or
+mini-<acronym>CLI</acronym>) type <userinput>
+<command>kcmshell</command> <option>printmgr</option></userinput>.
+This opens just the &kdeprint; part of &kcontrol; to change your settings
+</para></listitem>
+</itemizedlist>
+<screenshot>
+<screeninfo>&kprinter; dialog to be started from <guilabel>Run Command...</guilabel> window</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="kprinter_called_from_run_command.png"
+format="PNG"/></imageobject>
+<textobject>
+<phrase>Starting the &kprinter; dialog from
+a <guilabel>Run Command...</guilabel> window.</phrase></textobject>
+<caption><para>Starting the &kprinter; dialog from a <guilabel>Run
+Command...</guilabel> window.</para></caption>
+</mediaobject>
+</screenshot>
+
+<!-- TODO: This one ought to be a screenshot LW. --> <para>Here is a
+&kivio; drawing of the &kprinter; dialog as it pops up after being
+started... You can always add a new printer by clicking on the small
+<guiicon>Wizard</guiicon> button (marked red/yellow in this
+drawing).</para>
+  
+<screenshot>
+<screeninfo>&kprinter; dialog started (&kivio; draft drawing)
+</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="kprinter-kivio.png"
+format="PNG"/></imageobject>
+<textobject>
+<phrase>&kprinter; dialog started (&kivio; draft drawing)</phrase></textobject>
+<caption><para>&kprinter; dialog started (&kivio; draft
+drawing)</para></caption>
+</mediaobject>
+</screenshot>
+
+</sect2>
+
+</sect1>
+
+</chapter>
+
+<!-- Keep this comment at the end of the file
+Local variables:
+mode: sgml
+sgml-omittag:t
+sgml-shorttag:t
+sgml-namecase-general:t
+sgml-general-insert-case:lower
+sgml-minimize-attributes:nil
+sgml-always-quote-attributes:t
+sgml-indent-step:0
+sgml-indent-data:true
+sgml-parent-document:"index.docbook" "book"
+End:
+-->

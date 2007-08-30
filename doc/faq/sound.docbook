@@ -1,0 +1,55 @@
+<chapter id="sound">
+<title>Troubleshooting sound problems</title>
+
+<para>&kde; uses the &arts; sound system which is complex and powerful,
+making it difficult for some users to troubleshoot when things go
+wrong. Here are some tips to help you diagnose what it's doing when your
+sound misbehaves :</para>
+
+<qandaset>
+<qandaentry>
+<question>
+<para>How can I troubleshoot sound related problems in &kde;?</para>
+</question>
+
+<answer><para> To check that sound is working independently of &arts;, make
+sure that <command>artsd</command> isn't running and then try playing sound
+through <application>XMMS</application> or another multimedia application
+that isn't a part of &kde;. If that application doesn't play sound, then
+your general sound setup is probably broken and it's not a &kde;
+problem.</para>
+
+<para>Try playing sound with
+<userinput><command>artsplay</command><option><replaceable>
+/path/to/some/soundfile</replaceable></option></userinput>. Try various
+formats, ogg, mp3 and wav.  Any error messages there might be useful in
+pointing you in the right direction.</para>
+
+<para>Try setting the &arts; output method to <acronym>OSS</acronym>. In the
+&kcontrolcenter; go to <menuchoice><guimenu>Sound &amp; Multimedia</guimenu>
+<guimenuitem>Sound System</guimenuitem></menuchoice>. On the
+<guilabel>Hardware</guilabel> tab, under <guilabel>Select the audio
+device</guilabel> choose <guilabel>Open Sound System</guilabel>. If you are
+running <acronym>alsa</acronym> this will use the <acronym>OSS</acronym>
+emulation, which may give better or worse results.</para>
+
+<para>Running <userinput><command>artsd</command><option> -l
+0</option></userinput> from a terminal will give you a lot of debug output,
+some of which might help you to diagnose the problem. Trying this in
+conjunction with using <command>artsplay</command> in a second terminal can give a wealth of information. If an <application>artsd</application> instance is already running, exit it with <userinput><command>artsshell
+</command><parameter>terminate</parameter></userinput></para>
+</answer>
+</qandaentry>
+<qandaentry>
+<question><para>
+I've upgraded to the latest version of &kde; keeping my old configuration, and my system sounds don't work anymore!</para></question>
+<answer><para>
+Assuming you've installed &arts; correctly and you still have the codecs installed your previous &kde; installation needed, chances are this is a small problem with your <filename>knotifyrc</filename>. To confirm this, try creating an entirely new user and seeing if system notifications work under the new account. If they do, try moving your <filename>$<envar>KDEHOME</envar>/share/config/knotifyrc</filename> out of the way for your original user to see if this solves the problem.
+</para></answer>
+</qandaentry>
+
+
+</qandaset>
+
+</chapter>
+

@@ -1,0 +1,559 @@
+<sect1 id="windows-how-to-work">
+<sect1info>
+<authorgroup>
+<author>
+&Philip.Rodrigues;
+</author>
+</authorgroup>
+</sect1info>
+
+
+<title>Windows, How To Work Them</title>
+
+<sect2 id="basic-window-management">
+<title>Basic Window Management</title>
+<indexterm><primary>Window Management</primary></indexterm>
+
+<para>Each application running in &kde; has its own window, and some
+applications may use more than one window. You can manipulate these
+windows in many ways to make your desktop work for you. Here is a
+normal window:
+<screenshot>
+<mediaobject>
+<imageobject>
+<imagedata fileref="a-window.png" format="PNG"/>
+</imageobject>
+<textobject><phrase>A normal window</phrase>
+</textobject>
+</mediaobject>
+</screenshot>
+</para>
+
+<sect3 id="switching-between-windows">
+<title>Switching Between Windows</title> 
+<indexterm><primary>Focus (windows)</primary></indexterm>
+
+<para>If you want to use a window, it must be active. A window
+automatically becomes active when you open it, so that the application
+you opened is immediately ready to use. Only one window can be active
+at a time. The active window is the one into which you can type, and can
+be distinguished from the others because it has a different colored
+titlebar. (With the &kde; default theme, the active window has a
+<replaceable>light blue</replaceable> titlebar, and the inactive
+windows have <replaceable>gray</replaceable> titlebars.)</para>
+
+<para>
+<indexterm><primary>Raising Windows</primary></indexterm>
+When you want to work in a different window, you need to make
+it active. There are two ways to do this:
+<itemizedlist>
+
+<listitem>
+<para>&LMB;-click on the window that you want to make active. The
+window will become active and will be raised above other windows if it
+overlaps them.</para>
+</listitem>
+
+<listitem>
+<para><indexterm><primary><keycombo
+action="simul">&Alt;&Tab;</keycombo></primary></indexterm>
+Hold down &Alt; and press &Tab; (do not release the &Alt;
+key). A popup dialog appears with a list of available windows, one of
+which is highlighted. You can select a different window by pressing
+&Tab; again to move through the list, all the time holding down
+&Alt;. When you release the &Alt; key, the window which was highlighted
+is made active.</para>
+</listitem>
+</itemizedlist>
+</para>
+
+</sect3>
+
+<sect3 id="moving-windows">
+<title>Moving Windows</title>
+<indexterm><primary>Moving Windows</primary></indexterm>
+
+<para>The first way to organize the windows on your desktop is to move
+them around. You can move windows so that they overlap other windows,
+or so that you can see the whole window. There are three ways to move
+a window:
+<itemizedlist>
+<listitem>
+<para>Click the &LMB; on the window titlebar and hold it down. Move
+the mouse cursor and the window moves with it. Release the mouse
+button, and the window remains where you left it.</para>
+</listitem>
+
+<!-- FIXME:  OK, so the screenie sucks, but it shows the idea --> 
+<!-- In fact, maybe it's not even necessary: just mention the previous -->
+<!-- screenshot (having callouts on it would be nice) -->
+
+<listitem>
+<para>Open the window menu using the leftmost button on the window
+titlebar (as displayed below), and select <guimenuitem>Move</guimenuitem>. The mouse cursor
+moves to the center of the current window and by moving the mouse
+around, you can move the window. Once you have moved the window to the
+position you want, click the &LMB; to release it.</para>
+<indexterm><primary>Window Menu</primary></indexterm>
+
+<screenshot>
+<screeninfo>The Window Menu</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="titlebar-menu.png" format="PNG" />
+</imageobject>
+<textobject>
+<phrase>The Window Menu</phrase>
+</textobject>
+</mediaobject>
+</screenshot>
+</listitem>
+
+<listitem>
+<para>Hold down &Alt; and the &LMB; when the mouse cursor is
+above the window you want to move. The mouse cursor changes to a
+compass, and by moving the mouse, you can move the window. Just
+release the mouse button to release the window. This method is
+particularly useful if the window titlebar has been moved off the
+screen, so you cannot use the other methods.</para>
+</listitem>
+</itemizedlist>
+</para>
+
+</sect3>
+
+<sect3 id="resizing-windows">
+<title>Resizing Windows</title>
+
+<indexterm><primary>Resizing Windows</primary></indexterm>
+
+<para>You can make windows bigger or smaller, wider, or taller in
+one of two ways. Just use whichever you are most comfortable with:
+<itemizedlist>
+<listitem>
+<para>Move the mouse cursor over the border of the window (it is light
+blue in the screenshot above). The pointer will turn into a
+double-headed arrow. Click and drag, and the edge of the window
+follows the mouse cursor, making the window bigger or smaller. If you
+click on the borders on the top or bottom of the window, you can
+adjust the height on its own. If you click on the borders on the left
+or right of the window, you can adjust the width. To change both at
+the same time, move the mouse cursor over the corner of the
+window. When the pointer becomes a diagonal double-headed arrow, click
+and drag.</para>
+</listitem>
+<listitem>
+<para>Use the leftmost button on the window titlebar to display the
+window menu. Choose the <guimenuitem>Resize</guimenuitem> entry, and
+the mouse pointer will become a double-headed arrow. Move the mouse
+cursor around to resize, and click the &LMB; when you are done 
+to release the window.</para>
+</listitem>
+<listitem>
+<para>If you cannot see the window border or the button for the window
+menu, you can use &Alt; and the &RMB;: Hold down &Alt; and drag with
+the &RMB;. The window will resize. You just release the &RMB; when
+you are done. </para>
+</listitem>
+</itemizedlist>
+</para>
+
+<para>If you just want to make a window as big as possible, so it
+takes up the whole screen, use the
+<guibutton>Maximize<indexterm><primary>Maximizing
+Windows</primary></indexterm></guibutton> button, which is the second
+button from the right on the window titlebar. Clicking with the &LMB;
+on this button will make the window as big as possible in both
+directions; while clicking with the &MMB;<indexterm><primary>Maximizing
+Windows</primary><secondary>Vertically</secondary></indexterm> or the
+&RMB;<indexterm><primary>Maximizing Windows</primary><secondary>Horizontally</secondary></indexterm>
+will increase the window's size in only the vertical or horizontal
+direction, respectively.</para>
+
+
+</sect3>
+
+<sect3 id="hiding-windows">
+<title>Hiding Windows</title>
+<indexterm><primary>Hiding Windows</primary></indexterm>
+
+<!-- TODO: Screenshot of the minimize button -->
+<para>
+<indexterm><primary>Minimize</primary></indexterm>
+When you need to keep a program open, but you do not want it to
+take up space on your desktop, you can minimize it or shade it. To
+minimize a window, click the <guibutton>Minimize</guibutton> button,
+which is third from the right on the window titlebar. The window will
+not be displayed, but the program is still running, and an entry for
+it appears in the taskbar on the panel. To display the window again,
+click on its entry in the taskbar. You can also use <keycombo
+action="simul">&Alt;&Tab;</keycombo><indexterm><primary><keycombo
+action="simul">&Alt;&Tab;</keycombo></primary></indexterm>: see <xref
+linkend="switching-between-windows" />.</para>
+
+<para>
+<indexterm><primary>Shade</primary></indexterm>
+Shading windows is very similar to minimizing them, but this
+time, only the titlebar of the window is shown. To shade a window,
+double-click on the titlebar. To restore the window, just double-click
+on the titlebar again.</para>
+</sect3>
+
+<sect3 id="cascade-windows">
+<title>Cascading Windows</title>
+
+<para>Sometimes you might have a whole lot of windows open and all over the place. By selecting to cascade windows &kde; will automatically line them up as a succession from the top-left of your screen. To use this option use your &MMB; on the desktop, and then select <guimenuitem>Cascade Windows</guimenuitem>.</para>
+
+</sect3>
+
+<sect3 id="unclutter-windows">
+<title>Uncluttering Windows</title>
+
+<para>By selecting to unclutter your opened windows &kde; will attempt to use the maximum available space of the desktop in order to display as much of each window as possible. For example, should you have four windows open and you request that they be uncluttered, they will each be placed in a corner of the desktop, regardless of where they were originally. To use this option once again use your &MMB; on the desktop and then select <guimenuitem>Unclutter Windows</guimenuitem>.</para>
+
+</sect3>
+
+<sect3 id="closing-windows">
+<title>Closing Windows</title>
+
+<indexterm><primary>Closing Windows</primary></indexterm>
+
+<para>When you finish using an application, you will want to stop
+the application and close its window.  Once again, you have the choice
+of a few options:
+<itemizedlist>
+<listitem>
+<para>Click on the rightmost button on the window titlebar.<!-- TODO: -->
+<!-- Screenie --> If you are editing a document with that application,
+you will be asked whether you want to <guibutton>Save</guibutton> your
+changes, <guibutton>Discard</guibutton> them, or
+<guibutton>Cancel</guibutton> your command to close the application.</para>
+</listitem>
+<listitem>
+<para>Use the <menuchoice><guimenu>File</guimenu><guimenuitem>Quit</guimenuitem>
+</menuchoice> option on the menubar. You will be presented with the
+same choice of <guibutton>Save</guibutton>,
+<guibutton>Discard</guibutton>, or
+<guibutton>Cancel</guibutton>.</para>
+</listitem>
+
+<listitem>
+<para> <mousebutton>Right</mousebutton>-click on the respective window in &kicker;, the &kde; panel, and then select <guimenuitem>Close</guimenuitem>. You will be prompted with an option to save any documents that were being edited.</para>
+</listitem>
+
+<listitem>
+<para>Press <keycombo action="simul">&Alt;<keycap>F4</keycap></keycombo><indexterm><primary><keycombo action="simul">&Alt;<keycap>F4</keycap>
+</keycombo></primary></indexterm>
+. Once again, the confirmation dialog will be shown if you
+were editing any documents.</para>
+</listitem>
+</itemizedlist>
+</para>
+
+</sect3>
+
+<!-- Let's try organising this a different way
+<para>The bar along the top is called the titlebar, and contains most
+of the things you'll need to manipulate the window. Let's take a
+closer look:
+<screenshot>
+<mediaobject>
+<imageobject>
+<imagedata fileref="titlebar.png" format="png"/>
+</imageobject>
+<textobject><phrase>A window titlebar</phrase>
+</textobject>
+</mediaobject>
+</screenshot>
+<note><para>This screenshot shows the titlebar which appears in the
+default &kde; configuration. The exact appearance on your system may
+be slightly different, but the functions are similar.</para>
+</note>
+-->
+
+<!-- TODO:Note &MMB; mouse button/&RMB mouse button on maximize for
+vertical/horizontal maximization. Or is this advanced? -->
+
+</sect2>
+
+<sect2 id="advanced-window-management">
+<title>Advanced Window Management</title>
+
+<para>kstart</para>
+<sect3 id="kstart">
+<sect3info>
+<author>
+&Richard.J.Moore;
+&Richard.J.Moore.mail;
+</author>
+</sect3info>
+<title>&kstart;</title> 
+
+<para>The simplest way to access the advanced window management
+facilities in &kde; is to use a little known
+utility called  &kstart;, which is included in &kde; since version 2.1 &kstart; lets you control the way an application interacts with
+the window manager. The command is usually
+used to define special behavior for commonly-used applications, but
+it can also be useful for integrating non-&kde; applications into your
+desktop.</para>
+
+<para>Using &kstart; is easy: you simply put
+<userinput><command>kstart</command></userinput> and some options
+before a command. To begin, let's look at how we might use
+&kstart; to customize the behaviour of a
+&kcalc; window.  The command we'll use is as follows:
+
+<screen><prompt>%</prompt> <userinput><command>kstart</command> <option>--ontop</option> <option>--alldesktops</option> <option>kcalc</option></userinput></screen>
+</para>
+
+<para>With luck, the effect this command has
+should be fairly obvious - the kcalc window will stay on top of all
+the others and be visible on every virtual desktop. A feature that is
+less obvious is that this command will work with any NET compliant
+environment, not just &kde;.</para>
+
+<para>We can pass arguments to programs we invoke with &kstart; as normal, for
+example:
+
+<screen><prompt>%</prompt> <userinput><command>kstart</command>
+<option>--skiptaskbar</option> <option>--desktop</option>
+1 xmessage'Hello World'</userinput></screen>
+
+</para>
+
+<para>This command displays <computeroutput>Hello
+World</computeroutput> with <application>xmessage</application> and
+ensures that the window will be shown on the first virtual desktop and
+will be omitted from the taskbar. The fact that this program is
+written using the Xt toolkit rather than being a native &kde;
+application does not cause any problem for
+&kstart;, hopefully this illustrates how
+&kstart; can be used to integrate foreign
+applications into your &kde; desktop.</para>
+</sect3>
+
+<sect3 id="special-window-settings">
+<title>Other Special Window Settings</title>
+<para>While you can use &kstart; to assign particular window settings, &kde; also allows you to alter these -- as well as other similar settings -- from the program window itself. Simply select the leftmost button in the window titlebar (or just hit <keycombo action="simul">&Alt;<keycap>F3</keycap></keycombo> once the window is focued), and then go to <menuchoice><guisubmenu>Advanced</guisubmenu><guimenuitem>Special Window Settings...</guimenuitem></menuchoice>. As you can see, from here you change various things from its geometry upon startup, to whether it should have a border or not.</para>
+</sect3>
+
+<sect3 id="system-tray">
+<sect3info>
+<author>
+&Richard.J.Moore;
+&Richard.J.Moore.mail;
+</author>
+</sect3info>
+
+<title>The System Tray</title>
+
+<para>Now that we know how to customize the decoration of a window
+let's take a look at another aspect of the desktop: the system
+tray. The system tray is an area in which an application can display a
+small window. It is used to display status information or provide
+quick access to commands. A window that has an item in the system tray
+usually disappears from the task manager when minimised with the tray
+icon providing a replacement. Normally tray icons are specifically
+developed as part of an application, but as with window decorations,
+&kde; provides a tool for changing this:
+<application>ksystraycmd</application>.</para>
+
+<para>To begin with, we'll take the standard application &kcalc; and turn
+it into a system tray application. This is acheived with one simple
+command:
+<screen><prompt>%</prompt> <userinput><command>ksystraycmd</command> <option>--title</option> 'kcalc' kcalc</userinput></screen>
+
+</para>
+
+<para>The icon shown in the tray is the one specified in the window
+hints and will be updated if the icon changes.  The window title is
+shown as a tooltip if you hold the mouse over the icon.
+<application>ksystraycmd</application> follows standard &kde;
+behaviour so the target window can be shown and hidden by clicking the
+tray icon, and a standard context menu is available. </para>
+
+<screenshot> <mediaobject> <imageobject><imagedata
+fileref="kcalc-systray.png"></imagedata></imageobject>
+</mediaobject></screenshot>
+</sect3>
+
+<sect3 id="more-complex-uses-of-ksystraycmd">
+<sect3info>
+<author>
+&Richard.J.Moore;
+&Richard.J.Moore.mail;
+</author>
+</sect3info>
+
+<title>More Complex Uses of
+<application>ksystraycmd</application></title>
+
+<para>To illustrate the other features of
+<application>ksystraycmd</application>, we'll use a more complicated example: a &konsole; window tracking the
+<filename>.xsession-errors</filename> file (this is the log file that records what's
+happening on your desktop).  To begin with, we'll simply look at how
+we can view this:
+<screen><prompt>%</prompt> <userinput><command>konsole</command> <option>--icon</option>
+log <option>--caption</option> 'X Log' \ 
+<option>--nomenubar</option> <option>--notabbar</option>
+<option>--noframe</option> \ 
+<option>-e</option> tail -f ~/.xsession-errors</userinput></screen>
+</para>
+
+ <para>The <option>--caption</option> and <option>--icon</option>
+arguments are provided as standard by &kde; applications. You can get
+a full list of these global options by running an application with the
+<option>--help-kde</option> and <option>--help-qt</option>
+parameters. Here we give our &konsole; window the title 'X Log' and
+the icon <quote>log</quote>. You can use these options with any &kde; application and
+as  mentioned above, <application>ksystraycmd</application> takes account of these when creating
+the tray icon. The <option>-e</option> argument is specific to &konsole; and tells it
+to run the <command>less</command> command. Despite its complexity, we can easily move
+this window into the tray with <application>ksystraycmd</application>: 
+
+<screen><prompt>%</prompt> <userinput><command>ksystraycmd</command>
+<option>--hidden</option> <option>--title</option> 'X Log' \
+konsole --icon log --caption 'XLog' \ 
+--nomenubar --notabbar --noframe \ 
+-e tail -f .xsession-errors</userinput></screen>
+</para>
+
+ <para>In addition to being the
+most complex command we've used, this example demonstrates the
+<option>--hidden</option> option which starts the command with only the system tray
+icon visible. This example achieves our aim of providing quick access
+to the log file, but we can do things a little more efficiently if we
+only run the konsole process when it is visible. The command we use
+is
+<screen><prompt>%</prompt> <userinput><command>ksystraycmd</command> <option>--startonshow</option> \
+ --<option>icon</option> log <option>--tooltip</option> 'X Log' \ 
+konsole --icon log --caption 'X Log' \
+--nomenubar --notabbar --noframe \
+-e tail -f ~/.xsession-errors</userinput></screen>
+</para>
+
+<para>The addition of the <option>--startonshow</option> parameter tells
+<application>ksystraycmd</application> to start with only the tray
+icon visible (like the <option>--hidden</option> parameter), and to wait until the user
+activates the tray icon before running the target command. We've also
+used the <option>--quitonhide</option> parameter which tells <application>ksystraycmd</application> to terminate
+the target app whenever its window is hidden. Using both these
+parameters ensures that our &konsole; tray icon doesn't waste resources
+when we aren't using it.  Creating and destroying the target window as
+we do here prevents the standard icon and title handling of
+<application>ksystraycmd</application> from working, so we now need to
+specify the initial icon and tooltip explicitly
+too.</para>
+</sect3>
+
+<sect3 id="improving-reliability">
+<sect3info>
+<author>
+&Richard.J.Moore;
+&Richard.J.Moore.mail;
+</author>
+</sect3info>
+
+<title>Improving Reliability</title>
+
+<para>In all of our previous examples we've relied on
+&kstart; and
+<application>ksystraycmd</application> to figure out which window we
+want to affect, and unless we say otherwise, they assume that the first
+window to appear is the one we want. This policy is usually OK because
+we are starting the application at the same time, but it can fail
+badly when lots of windows are appearing (such as when you log on). To
+make our commands more robust we can use the
+<option>--window</option> parameter. This specifies the title
+of the target window. The following example uses the <option>--window</option> parameter
+to ensure that a particular konsole window is affected:
+
+<screen><prompt>%</prompt> <userinput><command>kstart</command> <option>--iconify</option> <option>--window</option> 'kstart_me' konsole
+--caption 'kstart_me' -e tail -f
+~/.xsession-errors</userinput></screen>
+
+</para>
+
+<para>Here we've used the tried and tested technique of specifying a
+title for both &kstart; and the target application. This is generally
+the best way to use &kstart; and <application>ksystraycmd</application>. The <option>--window</option> argument is
+supported by both &kstart; and <option>ksystraycmd</option> and can be regular expression
+(&eg; <quote>window[0-9]</quote>) as well as a particular title. (Regular
+expressions are a powerful pattern matching tool you'll find used
+throughout &kde;.) </para>
+
+</sect3>
+
+</sect2>
+
+<sect2 id="using-multiple-desktops">
+<title>Using Multiple Desktops</title>
+
+<indexterm><primary>Virtual Desktops</primary></indexterm>
+<indexterm><primary>Multiple Desktops</primary></indexterm>
+
+<para>Sometimes, one screen's worth is just not enough space. If you
+use many applications at the same time, and find yourself drowning in
+different windows, virtual desktops offer the solution. By default,
+&kde; has four virtual desktops, each one of which is like a separate
+screen: you can open windows, move windows around, and set backgrounds and
+icons on each of the desktops. If you are familiar with the concept of
+virtual terminals, you will have no trouble with &kde;'s virtual
+desktops.</para>
+
+<sect3 id="switching-virtual-desktops">
+<title>Switching Virtual Desktops</title>
+<para>To move to a different virtual desktop, you can use <keycombo action="simul">&Ctrl;&Tab;
+</keycombo> in the same way as you would use <keycombo action="simul">&Alt;&Tab;
+</keycombo> to switch between windows (see <xref linkend="switching-between-windows"/>): Hold down &Ctrl; and then press
+&Tab;. A small popup window appears, showing the virtual desktops,
+with one highlighted. If you release &Ctrl;, &kde; will switch to the
+highlighted virtual desktop. To select a different desktop, press
+&Tab; repeatedly, while holding down &Ctrl;. The selection moves
+through the available desktops. When the desktop you want to switch to
+is highlighted, release &Ctrl;.</para>
+
+<!-- TODO: Write about the desktop pager thing -->
+
+</sect3>
+
+<sect3 id="windows-and-virtual-desktops">
+<title>Windows and Virtual Desktops</title>
+<para>You can move windows around your virtual desktops with the
+<guisubmenu>To Desktop</guisubmenu> item in the window menu: just
+select the desktop to which you want to move the window. You can make the
+window appear on all desktops with the <guimenuitem>All
+Desktops</guimenuitem><indexterm><primary>Sticky
+Windows</primary></indexterm> item.</para>
+
+<!-- Add links to "further reading" here 
+<itemizedlist>
+<title>Related Information</title>
+<listitem><para></para>
+</listitem>
+</itemizedlist>
+
+-->
+</sect3>
+
+
+</sect2>
+
+</sect1>
+<!-- Keep this comment at the end of the file
+Local variables:
+mode: xml
+sgml-omittag:nil
+sgml-shorttag:nil
+sgml-namecase-general:nil
+sgml-general-insert-case:lower
+sgml-minimize-attributes:nil
+sgml-always-quote-attributes:t
+sgml-indent-step:0
+sgml-indent-data:true
+sgml-parent-document:("index.docbook" "book" "sect1")
+sgml-exposed-tags:nil
+sgml-local-catalogs:nil
+sgml-local-ecat-files:nil
+End:
+-->

@@ -1,0 +1,57 @@
+<chapter id="extensions-to-all-printsubsystems">
+<title>&kdeprint; Extensions To All Print Subsystems</title>
+
+<sect1>
+<title><quote>Virtual</quote> Printers</title>
+
+<sect2>
+<title>The <quote>Fax</quote> Printer</title>
+
+<para>To be written</para>
+
+</sect2>
+
+<sect2>
+<title>The <quote>File</quote> Printer</title>
+
+<para>To be written</para>
+
+</sect2>
+
+<sect2>
+<title>The <quote><acronym>PDF</acronym></quote> Printer</title>
+
+<para>To be written</para>
+
+</sect2>
+
+</sect1>
+
+<sect1 id="external-filters">
+<title><quote>External</quote> Filters</title>
+
+<sect2>
+<title>The <command>enscript</command> Filter for Text Files</title>
+
+<para>To be written</para>
+
+</sect2>
+
+<sect2>
+<title>The <quote>n-up</quote> Filter for Any File</title>
+
+<para>To be written</para>
+
+</sect2>
+
+<sect2>
+<title>Three different <quote>Make Pamphlet</quote> Filters for
+&PostScript; Files</title>
+
+<para>To be written</para>
+
+</sect2>
+
+</sect1>
+
+</chapter>

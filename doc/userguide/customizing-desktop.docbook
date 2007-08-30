@@ -1,0 +1,365 @@
+<chapter id="customizing-desktop">
+<chapterinfo>
+<authorgroup>
+<author>
+<firstname>Juan Carlos</firstname>
+<surname>Torres</surname>
+</author>
+</authorgroup>
+</chapterinfo>
+
+<title>Customizing the Appearance of your &kde; Desktop</title>
+
+<para>Changing the appearance of your &kde; desktop can be done quite easily and
+flexibly by either individually controlling different parts of the visual
+appearance or by using a predefined theme. This guide explains the various
+customizable parts of &kde; and how to control their appearance.</para>
+
+<sect1 id="background">
+<title>Background</title>
+<para>The desktop background, more commonly known as the wallpaper, allows you
+to display certain images on your desktop. The settings for the background are
+found in the &kcontrolcenter;, or by <mousebutton>right</mousebutton>-clicking
+on the desktop and selecting <guilabel>Configure Desktop...</guilabel>.</para>
+
+<para>In &kde;, you have the option to use no picture, a single picture, or a
+slideshow of images. If <guilabel>No picture</guilabel> is chosen to be the
+desktop background, the <guilabel>Colors</guilabel> options are used instead.
+You can also choose whether to use a single
+background on all virtual desktops or to apply a different background for each
+desktop. This is done by selecting <guilabel>All desktops</guilabel> or the
+specific desktop name from the drop-down menu.</para>
+
+<para>Other background images can be downloaded using the
+<guibutton>Get New Wallpapers</guibutton> button on the right or you can visit
+the <ulink url="http://www.kde-look.org/index.php?xcontentmode=1x2x3x4x5x6x7">
+Wallpapers section</ulink> of the kde-look.org website.</para>
+</sect1>
+
+<sect1 id="colors">
+<title>Colors</title>
+<para>The <guilabel>Colors</guilabel> settings of the &kcontrolcenter; allow you to control the
+colors that are used for various window elements, such as window titlebars,
+window backgrounds, text, and buttons. You can change the color of each window
+element by selecting the element from the drop down list and choosing a color
+for it. You can then save your changes by clicking on
+<guibutton>Save Scheme...</guibutton>. This will save your settings in a Color
+Scheme file. Color schemes are text files, with a <literal
+role="extension">.kcsrc</literal> extension, that contain
+entries for each window widget and its color, in RGB format. It is also very
+easy to add color schemes that you have downloaded by clicking on
+<guibutton>Import Scheme...</guibutton> and pointing to the <literal
+role="extension">.kcsrc</literal> file. With color schemes, you can save the
+changes you have done in one convenient file or easily change to a predefined
+color setting, without having to change each window element separately.</para>
+
+<para>Additional color schemes can be downloaded from <ulink
+url="http://www.kde-look.org/index.php?xcontentmode=28">the Color Schemes
+section</ulink> of kde-look.org.</para>
+</sect1>
+
+<sect1 id="icons">
+<title>Icons</title>
+<para>An icon theme contains the images used to represent actions, files,
+devices, and applications. Managing icon themes is easily done through the Icons
+module in the &kcontrolcenter;. Simply select the icon theme you want to use and
+click on <guibutton>Apply</guibutton> to switch to the new theme. To install new
+icon themes, all you need to do is to click on <guibutton>Install New
+Theme...</guibutton> and browse to the location of the icon theme archive. There
+is no need to extract the contents of the archive into a directory. In fact, the
+Icons module only accepts archived icon themes. To remove an icon theme, simply
+select the theme from the list and click on <guibutton>Remove Theme</guibutton>.
+Note that you cannot remove the icon theme that you are currently using. You
+need to switch to some other theme before the current one will become removable.
+You also cannot remove icon themes that were installed by the administrator
+(<systemitem class="username">root</systemitem>) or by your distribution's
+package manager.</para>
+<para>Other icon themes can be found in <ulink
+url="http://www.kde-look.org/index.php?xcontentmode=27">the Icon Themes
+subsection</ulink> of kde-look.org.</para>
+</sect1>
+
+<sect1 id="splash-screen">
+<title>Splash Screen</title>
+
+<mediaobject>
+<imageobject>
+<imagedata fileref="splash-screen.png" format="PNG" />
+</imageobject>
+<textobject><phrase>The default &kde; splash screen</phrase></textobject>
+<caption><para>The default &kde; splash screen</para></caption>
+</mediaobject>
+
+<para>The splash screen is the animated image or screen that is displayed while
+&kde; loads after you log in. Each user can have a different splash screen.
+Changing the splash screen for the current user can be done in the Splash
+Screen module of the &kcontrolcenter;. Select the splash screen you want to
+use and click on <guibutton>Apply</guibutton>. You can also test what a splash
+screen will look like by selecting the splash screen and clicking on
+<guibutton>Test</guibutton>. Installing a new splash theme is very easy. Just
+click on <guibutton>Add...</guibutton> and browse to the splash screen archive you
+want to add. There is no need to extract the contents of the archive. Removing
+splash screens is also easily done by selecting the splash screen and clicking
+on <guibutton>Remove</guibutton>. Note that you cannot remove splash screens
+installed by the administrator (<systemitem class="username">root</systemitem>)
+or by your distribution's package manager.</para>
+
+<para>Splash screen themes can be found on kde-look.org, in <ulink
+url="http://www.kde-look.org/index.php?xcontentmode=35">the Splash Screens
+section</ulink>. Take note that some splash screens require a specific &ksplash;
+engine to be installed.</para>
+</sect1>
+
+<sect1 id="win-deco">
+<title>Window Decorations</title>
+<para>You can change the appearance of window borders, titlebars and buttons in
+&kde; using window decorations. Some window decorations even have the capability
+to apply effects such as translucency. Window decorations must be able to do all
+these without sacrificing speed and performance. This is the reason why window
+decorations come in source code that must be compiled, or as binary packages
+that must be installed. Basically, Window decorations are plugins or small
+programs that instruct &kwin;, &kde;'s Window Manager,
+how to display window frames.</para>
+
+<para>In order to add a new window decoration, you need to compile it from
+source code. If a binary package for your distribution or system is provided,
+you simply need to install it using your distribution's package manager. Please
+refer to your distribution's manual for instructions on how to do this. Once the
+window decoration has been installed, it can be accessed in the Window
+Decorations settings in the &kcontrolcenter;. In the
+<guilabel>Window Decoration</guilabel> tab,
+a list of installed window decorations can be seen in the drop down box. Simply
+select the decoration you want to use and click on <guibutton>Apply</guibutton>.
+Different window decorations have different capabilities and settings. Play
+around with the different options available. The <guilabel>Buttons</guilabel> tab allows you to
+control the buttons on the window titlebar. Enable the <guilabel>Use custom
+titlebar button positions</guilabel> check box in order to rearrange, remove, or
+add buttons. To add buttons to the titlebar, drag an item from the list to the
+titlebar preview above it. To remove a button, drag the button from the titlebar
+preview to the item list. Simply drag buttons in the titlebar preview to
+rearrange them.</para>
+
+<para>While all window decorations need to be compiled from source code, some
+window decorations can load pixmap-based theme files that do not need to be
+compiled. &kde; ships with a pixmap-based window decoration called the IceWM
+window decoration. Another pixmap-based window decoration is <ulink
+url="http://www.kde-look.org/content/show.php?content=31447">deKorator</ulink>,
+which can be found on kde-look.org. Please refer to your distribution's
+documentation on how to install these. The advantage of using pixmap-based
+window decorations is it is relatively easy to make themes for them, by using
+images and editing a configuration file. The tradeoff is a slight loss of performance,
+while this may be unnoticeable on very fast systems.</para>
+
+<para>To add an IceWM theme, select IceWM as the window decoration and click on
+the <guilabel>Open &kde;'s IceWM theme folder</guilabel> link in the window
+decoration description area. This will open a &konqueror; window
+to <filename>$<envar>KDEHOME</envar>/share/apps/kwin/icewm-themes</filename>.
+Extract your IceWM theme to this folder. The theme will then be added to
+the list of IceWM themes. Select the theme you want to use and click on
+<guibutton>Apply</guibutton>.</para>
+
+<para>To add a deKorator theme after you've installed deKorator, select
+deKorator from the window decorations list and go to the <guilabel>Themes</guilabel>
+tab. Click on <guibutton>Install New Theme</guibutton> and locate
+your deKorator theme archive. Make sure that the version of the deKorator theme
+matches the deKorator version installed on your system. Once the theme has been
+added, select the theme you want to use and click on <guibutton>Set Theme
+Paths</guibutton>. Click on <guibutton>Apply</guibutton> for the changes to
+take effect.</para>
+
+<para>Some more window decorations are available at kde-look.org under <ulink
+url="http://www.kde-look.org/index.php?xcontentmode=17">the
+Native &kde; 3.x</ulink> and <ulink
+url="http://www.kde-look.org/index.php?xcontentmode=20">the
+Native &kde; 3.2+</ulink> subsections. Themes for the <ulink
+url="http://www.kde-look.org/index.php?xcontentmode=18">IceWM</ulink> and
+<ulink
+url="http://www.kde-look.org/index.php?xcontentmode=21">deKorator</ulink> window
+decorations have their own subsections under the Window Decorations
+category.</para>
+</sect1>
+
+<sect1 id="style">
+<title>Style</title>
+<para>Widgets are the basic elements of a graphical user interface, such as
+buttons, scrollbars, tabs, and menus. A widget style is a plugin or a small
+program that instructs &kde; how widgets are displayed. Since widgets are the
+very basic parts of an interface, they are frequently accessed and must be able
+to respond very quickly. This is why widget styles must come as source code to
+be compiled or as binary packages to be installed, just like window decorations.
+Please refer to your distribution's documentation on how to compile from source
+or install binary packages.</para>
+
+<para>Once a widget style has been installed, it will be added to the list of
+available styles in the <guilabel>Style</guilabel> module in the &kcontrolcenter;.
+The <guilabel>Style</guilabel> tab allows
+you to select a widget style from the list and to configure it if the style has
+a <guibutton>Configure...</guibutton> feature. Different styles have different options. A preview of the
+selected style is available at the lower portion of the tab. The
+<guilabel>Effects</guilabel> tab
+controls different visual effects for some widgets like comboboxes and tooltips.
+The <guilabel>Toolbar</guilabel> tab gives some options on the general appearance of toolbars.</para>
+
+<para>Additional widget styles can be found in <ulink
+url="http://www.kde-look.org/index.php?xcontentmode=
+8x9x10x11x12x13x14x15x16">the different &kde; subsections of the
+Themes/Styles</ulink> of kde-look.org. Take note that styles come in source
+code or binary package forms. They are not &kde; theme files.</para>
+</sect1>
+
+<sect1 id="kde-theme">
+<title>&kde; Theme</title>
+<para>&kde; allows you to save the different changes you made to your desktop's
+appearance in one file, using the Theme Manager in &kcontrolcenter;. Once you
+have set up your desktop the way you want, click on <guibutton>Create New
+Theme...</guibutton>. Enter the details you want to give your theme, such as theme
+name, author, version, &etc;, then click <guibutton>OK</guibutton> when done.
+This will add your theme to the list of available themes and save your settings
+in a &kde; theme. A &kde; theme (<literal role="extension">.kth</literal> file)
+instructs &kde; on what window decoration, style, or color scheme to use for
+that particular theme. To add a &kde; theme from an outside source, click on
+<guibutton>Install New Theme...</guibutton> and locate the &kde; theme file.
+Removing a theme is easily done by clicking on <guibutton>Remove
+Theme</guibutton>. If you made changes to your theme, you have to either create
+a new theme name for it, or remove the previous version first to be able to use
+the same theme name.</para>
+
+<para>The following are the settings that are saved and indicated in a &kde;
+Theme:</para>
+
+<itemizedlist>
+<listitem><para>
+Background</para>
+</listitem>
+<listitem>
+<para>
+Screen Saver</para>
+</listitem>
+<listitem>
+<para>
+Icon Theme</para>
+</listitem>
+<listitem>
+<para>
+System Notifications</para>
+</listitem>
+<listitem>
+<para>
+Color Scheme</para>
+</listitem>
+<listitem>
+<para>
+Cursor Theme</para>
+</listitem>
+<listitem>
+<para>
+Window Decoration</para>
+</listitem>
+<listitem>
+<para>
+&konqueror; background (File Management)</para>
+</listitem>
+<listitem>
+<para>
+Panel background</para>
+</listitem>
+<listitem>
+<para>
+Style</para>
+</listitem>
+<listitem>
+<para>
+Fonts</para>
+</listitem>
+</itemizedlist>
+
+<para>One very important thing to consider when using or installing a &kde;
+Theme is that it only indicates what settings to use for the above. A &kde;
+Theme includes only system notifications, desktop background, panel background,
+&konqueror; background, and  the color scheme in its package. The other
+components must be installed separately if they do not already come with
+&kde;.</para>
+
+<para>&kde; Themes can be downloaded from the <ulink
+url="http://www.kde-look.org/index.php?xcontentmode=8">Theme-Manager
+subsection</ulink> of
+kde-look.org, under the Themes/Styles section.</para>
+</sect1>
+
+<sect1 id="desktop-glossary">
+<title>Glossary</title>
+
+<glosslist>
+<glossentry id="gloss-background">
+<glossterm>Background</glossterm>
+<glossdef><para>Background/wallpaper image or color for the
+desktop</para></glossdef>
+</glossentry>
+
+<glossentry id="gloss-color-scheme">
+<glossterm>Color Scheme</glossterm>
+<glossdef><para>(<literal role="extension">.kcsrc</literal>)
+Configuration file that indicates what colors to use
+for certain widgets</para></glossdef>
+</glossentry>
+
+<glossentry id="gloss-icons">
+<glossterm>Icons</glossterm>
+<glossdef><para>Images representing applications, files,
+devices, &etc;</para></glossdef>
+</glossentry>
+
+<glossentry id="gloss-splash-screen">
+<glossterm>Splash Screen</glossterm>
+<glossdef><para>Animated image or screen that displays while &kde;
+loads after logging in</para></glossdef>
+</glossentry>
+
+<glossentry id="gloss-win-deco">
+<glossterm>Window Decoration</glossterm>
+<glossdef><para>Plugins or small programs that instruct the window
+manager how to display window frames</para></glossdef>
+</glossentry>
+
+<glossentry id="gloss-style">
+<glossterm>Style</glossterm>
+<glossdef><para>Plugin or a small program that instructs &kde;
+how widgets are displayed</para></glossdef>
+</glossentry>
+
+<glossentry id="gloss-kde-theme">
+<glossterm>&kde; Theme</glossterm>
+<glossdef><para>(<literal role="extension">.kth</literal>)
+A file that contains instructions on what settings to use for
+different GUI components</para></glossdef>
+</glossentry>
+
+<glossentry id="gloss-widgets">
+<glossterm>Widgets</glossterm>
+<glossdef><para>Basic elements that build up a graphical user
+interface: buttons, scrollbars, menus, tabs, &etc;</para></glossdef>
+</glossentry>
+
+</glosslist>
+</sect1>
+
+
+</chapter>
+
+<!-- Keep this comment at the end of the file
+Local variables:
+mode: xml
+sgml-omittag:nil
+sgml-shorttag:nil
+sgml-namecase-general:nil
+sgml-general-insert-case:lower
+sgml-minimize-attributes:nil
+sgml-always-quote-attributes:t
+sgml-indent-step:0
+sgml-indent-data:true
+sgml-parent-document:("index.docbook" "book" "chapter")
+sgml-exposed-tags:nil
+sgml-local-catalogs:nil
+sgml-local-ecat-files:nil
+End:
+-->

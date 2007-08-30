@@ -59,6 +59,7 @@ if (Q_WS_X11)
 endif (Q_WS_X11)
 add_subdirectory(knotify)
 add_subdirectory(kde-menu)
+add_subdirectory(doc
 
 find_package(Soprano)
 find_package(Nepomuk)

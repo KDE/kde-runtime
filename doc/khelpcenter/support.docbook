@@ -1,0 +1,102 @@
+<chapter id="supporting-kde">
+<chapterinfo>
+<date>2002-03-04</date>
+<releaseinfo>2.02.00</releaseinfo>
+</chapterinfo>
+<title>Supporting &kde;</title>
+<anchor id="support"/>
+
+<sect1 id="supporting-kde-introduction">
+<title>Supporting &kde;</title>
+
+<para> If you are new to &kde;, the &kde; project might look like big
+machinery to you. Undoubtedly, &kde; is no longer a small project,
+nevertheless it is very important to realize that it is easy to
+<quote>make a difference</quote> in the &kde; world.  </para>
+
+<para> There is always a need for dedicated developers, graphic
+artists, sound engineers, translators and documentation
+writers. Consider jumping aboard this exciting international project
+and make yourself a name in the software world.</para>
+
+<para> Along the way you will make countless friends and acquaintances
+all over the world. Also, the satisfaction that stems from doing
+actual hands-on work, that will benefit an uncountable number of users
+world-wide, and from seeing an unparalleled project grow, is hard to
+beat. Please consider joining and supporting &kde; and hop aboard this
+exciting journey towards a free and open alternative computing
+platform.  </para>
+
+</sect1>
+
+<sect1 id="supporting-kde-get-started">
+<title>How to get started</title>
+
+<itemizedlist>
+
+<listitem><para>
+Subscribe to the <link linkend="contact">&kde; mailing lists</link>
+that interest you.
+</para></listitem>
+
+<listitem><para>
+Read the <ulink url="http://lists.kde.org">mailing list</ulink> archives in
+order to get a feel for &kde; development.
+</para></listitem>
+
+<listitem><para>
+Learn how to program using the &kde; application framework and join the
+friendly &kde; developers' community.
+</para></listitem>
+
+</itemizedlist>
+
+</sect1>
+
+<sect1 id="supporting-kde-financial-support">
+<title>Supporting financially</title>
+
+<para> The &kde; team is working very hard on providing you with the
+best desktop available for the &UNIX; operating system. &kde; is
+available for free and will always be available for free, including
+each and every line of its source code, for everyone to modify and
+distribute. If you enjoy and use &kde; please consider supporting the
+&kde; Project financially.  &kde; is in constant need of funds in
+order to finance its operations.  </para>
+
+<para> If your busy schedule or skills do not permit you to be
+actively involved in &kde; development, please consider supporting
+&kde; financially by sending a donation to: </para>
+
+<para> You can send regular US checks to the following address: </para>
+
+<literallayout>
+K Desktop Environment e.V.
+Mirko Boehm
+2029 Chadds Ford Drive
+Reston, VA 20191
+USA
+</literallayout>
+
+<para> Use "KDE e.V. - Mirko Boehm" in the "Pay to the order of..." line. 
+</para>
+
+<para>
+From Europe, you may remit your donation to (be aware of a fee if wiring from outside of Germany): 
+</para>
+
+<literallayout>
+K Desktop Environment e.V.
+Account-Nr. 0 66 64 46
+BLZ 200 700 24
+Deutsche Bank 24
+</literallayout>
+
+<para> Please contact Mirko Boehm
+<email>kde-ev-treasurer@kde.org</email> if you have any questions.  </para>
+
+<para> Your contribution is very much appreciated. Thank you!  </para>
+
+</sect1>
+</chapter>
+

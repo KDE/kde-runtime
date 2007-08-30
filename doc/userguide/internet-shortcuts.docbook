@@ -1,0 +1,80 @@
+<sect1 id="internet-keywords">
+<sect1info>
+<authorgroup>
+<author>
+<personname>
+<firstname>Simon</firstname>
+<surname>Vermeersch</surname>
+</personname>
+<email>titeuf@ph34rus.org</email>
+</author>
+</authorgroup>
+</sect1info>
+
+<title>Internet Shortcuts</title>
+
+<indexterm><primary>Web shortcuts</primary></indexterm>
+<indexterm><primary>Internet Shortcuts</primary></indexterm>
+<indexterm><primary>gg:</primary></indexterm>
+
+<para>Internet shortcuts are a really useful feature of &konqueror;:
+once you get used to them, you'll wonder how you ever lived without them.</para>
+
+<para>To see what internet shortcuts are, open up &konqueror; and type
+<userinput>gg:kde</userinput> in the <guilabel>Location</guilabel>
+bar.</para>
+
+<para>You will go to Google, searching for &kde;.</para> 
+
+<para>They are many such shortcuts like <userinput>ggl:</userinput> (Google
+I'm feeling lucky), <userinput>bug:</userinput> (bugs.kde.org) and so
+on.</para>
+
+<para>To get a full list, click on <guimenu>Settings</guimenu> in the
+&konqueror; menu, and select <guilabel>Web Shortcuts</guilabel>. Here you will find a full list of all the shortcuts. You can create
+new ones, change existing ones, or delete unused shortcuts. You can also
+disable web shortcuts if you don't like them. If you set the <guilabel>Default
+search engine</guilabel>, you don't have to type the shortcut anymore. For
+instance if you set it to Google, you can just type
+<userinput>kde</userinput> in the <guilabel>Location</guilabel> bar,
+and it will search Google for <quote>&kde;</quote>.</para>
+
+<para>In <guilabel>Keyword delimiter</guilabel> you can choose if you want
+to separate a shortcut with a colon (<userinput>gg: kde</userinput>) or a
+space (<userinput>gg kde</userinput>).</para>
+
+<para>A nice tip with Internet shortcuts is that you can use them from the
+<guilabel>Run Command</guilabel> dialog. Just open it (through the &kmenu;
+or with <keycombo action="simul">&Alt;<keycap>F2</keycap></keycombo>) and
+type your shortcut, &eg; <userinput>gg: kde</userinput>, and press
+&Enter;. It will automatically open &konqueror; with a Google
+search for &kde;.</para>
+
+<!-- Add links to "further reading" here -->
+<!-- <itemizedlist>
+<title>Related Information</title>
+<listitem><para>to be written</para>
+</listitem>
+</itemizedlist>-->
+
+
+
+</sect1>
+
+<!-- Keep this comment at the end of the file
+Local variables:
+mode: xml
+sgml-omittag:nil
+sgml-shorttag:nil
+sgml-namecase-general:nil
+sgml-general-insert-case:lower
+sgml-minimize-attributes:nil
+sgml-always-quote-attributes:t
+sgml-indent-step:0
+sgml-indent-data:true
+sgml-parent-document:("index.docbook" "book" "sect1")
+sgml-exposed-tags:nil
+sgml-local-catalogs:nil
+sgml-local-ecat-files:nil
+End:
+-->

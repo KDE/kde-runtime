@@ -1,0 +1,198 @@
+<?xml version="1.0" ?>
+<!DOCTYPE article PUBLIC "-//KDE//DTD DocBook XML V4.2-Based Variant V1.1//EN"
+"dtd/kdex.dtd" [
+<!ENTITY % addindex "IGNORE">
+<!ENTITY % English "INCLUDE" > <!-- change language only here -->
+]>
+
+<article lang="&language;">
+<articleinfo>
+
+<authorgroup>
+<author>&Mike.McBride; &Mike.McBride.mail;</author>
+<author>&Jost.Schenck; &Jost.Schenck.mail;</author>
+<!-- TRANS:ROLES_OF_TRANSLATORS -->
+</authorgroup>
+
+<date>2005-02-20</date>
+<releaseinfo>3.4</releaseinfo>
+
+<keywordset>
+<keyword>KDE</keyword>
+<keyword>KControl</keyword>
+<keyword>desktop</keyword>
+</keywordset>
+</articleinfo>
+
+<sect1 id="desktop">
+
+<title>Desktop Behavior</title>
+
+<sect2 id="desktop-desktop">
+<title><guilabel>Desktop</guilabel> Tab</title>
+
+<variablelist>
+<varlistentry>
+<term><guilabel>Show icons on desktop</guilabel></term>
+<listitem>
+<para>Uncheck this option if you do not want to have icons on the
+desktop.  Without icons the desktop may be somewhat faster, but you
+will no longer be able to drag files to the desktop.</para>
+<para>This will not remove any files already stored on the desktop,
+they will instead be hidden.</para>
+
+<para>If this is enabled, you may also enable the ability to <guilabel>Allow programs in desktop window</guilabel>.</para>
+
+<para>Enabling this option allows you to set a program as your desktop
+background, for example <command>xearth</command>, or &kworldclock;</para>
+
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Show tooltips</guilabel></term>
+<listitem>
+<para>Check this option if you would like to see tooltips for icons on
+the desktop as you hover the mouse over them.  These tooltips display
+information about the file represented by the icon.  Depending on the
+type of file, the information can range from simple file size and
+creation dates for unfamiliar file types, to complete meta information
+such as the content of tags for music files.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Menu Bar at Top of Screen:</guilabel></term>
+<listitem>
+<para>This option determines whether there is a menu across
+the top of the &kde; Desktop similar to the style of &MacOS;.</para>
+
+<para>The default is <guilabel>None</guilabel>.  If you select
+<guilabel>Desktop menu bar</guilabel> one static menu is shown at the
+top of the screen, displaying the desktop menu.  Finally there is
+<guilabel>Current application's menu bar (Mac OS-style)</guilabel>.
+If this option is selected, applications won't have their menu bar
+attached to their own window anymore. Instead, there is one menu bar
+at the top of the screen which shows the menus of the currently active
+application. You might recognize this behavior from &MacOS;.
+</para>
+
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Mouse button actions:</guilabel></term>
+<listitem>
+
+<para>The mouse button section allows you to determine what happens when
+you click one of the three mouse buttons on the Desktop (where there is
+no window).</para>
+
+<note><para>Not all mice have three buttons.  Two button mice can
+usually activate the <mousebutton>Middle</mousebutton> button by
+pressing both the <mousebutton>Left</mousebutton> and
+<mousebutton>Right</mousebutton> mouse buttons at the same
+time.</para></note>
+
+<para>For each of the three mouse buttons, you can select:</para>
+
+<variablelist>
+<varlistentry>
+<term>No Action</term>
+<listitem><para>When you use this mouse button, nothing
+happens.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term>Window list menu</term>
+<listitem><para>This brings up a submenu with all the virtual desktops.
+Under each virtual desktop, you can select any window currently located
+on that desktop.  Once selected, &kde; will switch to that desktop, and
+place the focus on that window.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term>Desktop Menu.</term>
+<listitem><para>This brings up a submenu with commands specific to
+&kde;. You can create icons, edit bookmarks, cut and paste,
+run commands, configure &kde;, arrange icons, lock the session and log
+out of &kde;.  The exact content of the menu varies depending on the
+current status of &kde;. </para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term>Application Menu</term>
+<listitem><para>This brings up the <guimenu>Application</guimenu> Menus
+(also know as the <guimenu>K</guimenu> Menus), so you can start a new
+application.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term>Custom Menu 1</term>
+<term>Custom Menu 2</term>
+<listitem>
+<para>You may also configure up to two custom menus.  If you choose either of these, the <guibutton>Edit...</guibutton> becomes available, allowing you to edit the contents of the custom menus.</para>
+<!-- FIXME: Need to find out what else can be added here (for instance, it lets me type 'emacsclient' which isn't available in the K menu) -->
+</listitem>
+</varlistentry>
+</variablelist>
+
+</listitem>
+</varlistentry>
+</variablelist>
+
+</sect2>
+
+<sect2 id="desktop-behavior-file-icons">
+<title><guilabel>File Icons</guilabel></title>
+
+<para>First are two options regarding the placement of icons:</para>
+
+<variablelist>
+<varlistentry>
+<term><guilabel>Automatically line up icons</guilabel></term>
+<listitem><para>If this option is enabled, &kde; will align icons on a
+grid on the desktop. If it is not enabled, you may drop icons
+anywhere, and they will not be aligned for you.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Show hidden files</guilabel></term>
+<listitem><para>If this option is enabled, then all hidden files will
+appear on the desktop. Generally this only clutters your desktop area,
+but if you are often working with hidden files or folders, this can
+be useful.</para>
+<warning><para>Be very careful when deleting or modifying hidden files.
+Many of these files are configuration files and are essential for the
+correct operation of your computer.</para></warning>
+</listitem>
+</varlistentry>
+</variablelist>
+
+<para>The &kde; desktop has a preview feature for many file types,
+including <acronym>HTML</acronym>  files, images, &PostScript; and
+<acronym>PDF</acronym>, sound, web archives (if you have the
+appropriate &konqueror; plugin installed) and text files.</para>
+
+<para>if you enable previews for one of these, files of that particular
+file type will not be represented by standard icons on the desktop, but
+will instead be shown as miniature previews.  On slow computers, the
+previews can take some time to show up, so you might not want to enable
+this feature.</para>
+
+</sect2>
+
+<sect2 id="desktop-behavior-device-icons">
+<title><guilabel>Device Icons</guilabel></title>
+
+<para>On some operating systems (&Linux; and FreeBSD, so far) &kde; can
+dynamically display icons for each <firstterm>mountable</firstterm>
+device you have available.  This could be &CD-ROM; drives, floppy disk
+drives, or network shares.</para>
+
+<para>If you enable this, you can choose what kind, if any, of these
+devices you would like quick access icons to be displayed for.</para>
+
+</sect2>
+</sect1>
+
+</article>

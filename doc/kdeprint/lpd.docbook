@@ -1,0 +1,18 @@
+<chapter id="lpd-module">
+<title>Generic <acronym>LPD</acronym> Module (&UNIX;)</title>
+
+
+<sect1>
+<title>Overview of Provided Features</title>
+
+<para>Module used by default (on first start for example).</para>
+
+<para>Generic module that only allows sending of print jobs. No printer or
+job management supported. It is made to work on a wide variety of &UNIX;
+flavors: &Linux;/<acronym>LPR</acronym>, &HP-UX;, Solaris, &IRIX;.
+It also supports some <application>LPRng</application> extensions (like
+the absence of continuation character <literal>\</literal> in
+<filename>printcap</filename> files).</para>
+
+</sect1>
+</chapter>

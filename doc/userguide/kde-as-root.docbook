@@ -1,0 +1,52 @@
+<sect1 id="root">
+
+<sect1info>
+<authorgroup>
+<author>
+&Francis.Giannaros; &Francis.Giannaros.mail;
+</author>
+</authorgroup>
+</sect1info>
+
+
+<title>Using &kde; as Root</title>
+
+<para>For &UNIX; operating systems there are often different users, which in turn might have different privileges. The conventional method is to have an ordinary user account, whose files are generally stored in <filename>/home/username</filename>, and then to also have a <systemitem class="username">root</systemitem> account. The <systemitem class="username">root</systemitem>, or Super User, account has system-wide privileges, being able to modify any file on the system. </para>
+
+<para>Although this means that it is easy to perform administrative tasks without hassle, it also means that there are no security restrictions imposed upon it. Thus, a small typographical error or other mistake can result in irrevocable damage.</para>
+
+<para>Some of the operating systems that run &kde; come with a graphical <systemitem class="username">root</systemitem> login enabled. Despite this, you should never log in to &kde; as <systemitem class="username">root</systemitem>, and you should never need to. Your system is far more open to attack, particularly if you are browsing the Internet as <systemitem class="username">root</systemitem>, and you dramatically increase your chances of damaging your system.</para>
+
+<para>Some &Linux; distributions have tried to stress this point so much that they have disabled the <systemitem class="username">root</systemitem> account altogether, and instead use the <command>sudo</command> model. Nevertheless, the basic security model in <command>sudo</command> is the same as <command>su</command>, and thus they share the same security strengths and weaknesses, essentially.</para>
+
+<para>If you should ever need to run a program with Super User privileges, then it is always recommend that you use &kdesu;. From &konsole; or from hitting <keycombo action="simul">&Alt;<keycap>F2</keycap></keycombo>, enter <userinput>kdesu <replaceable>application</replaceable></userinput>, and the application will be run with the appropriate Super User privileges. </para>
+
+<para>Even if you have set up your system to use <command>sudo</command>, or you are on a distribution that uses <command>sudo</command>, such as &kubuntu;, you should still use &kdesu;. The program will be appropriately modified by the developers to use the correct settings. You should not, however, ever use <command>sudo <replaceable>application</replaceable></command> to run an application with <systemitem class="username">root</systemitem> permissions; it can derange permissions of certain configuration files for a program. Running a graphical applications as <systemitem class="username">root</systemitem> in general is not a good idea, but using &kdesu; will always be your safest bet with it.</para>
+
+<!-- Add links to "further reading" here -->
+<itemizedlist>
+<title>Related Information</title>
+<listitem><para><ulink url="help:kdesu">&kdesu; Handbook</ulink></para>
+</listitem>
+</itemizedlist>
+
+
+</sect1>
+
+<!-- Keep this comment at the end of the file
+Local variables:
+mode: xml
+sgml-omittag:nil
+sgml-shorttag:nil
+sgml-namecase-general:nil
+sgml-general-insert-case:lower
+sgml-minimize-attributes:nil
+sgml-always-quote-attributes:t
+sgml-indent-step:0
+sgml-indent-data:true
+sgml-parent-document:("index.docbook" "book" "sect1")
+sgml-exposed-tags:nil
+sgml-local-catalogs:nil
+sgml-local-ecat-files:nil
+End:
+-->

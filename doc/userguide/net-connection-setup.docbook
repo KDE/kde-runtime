@@ -1,0 +1,238 @@
+<chapter id="setup">
+
+<chapterinfo>
+<authorgroup>
+<author>
+&Lauri.Watts;
+</author>
+</authorgroup>
+</chapterinfo>
+
+
+<title>Setting up an Internet Connection</title>
+<!-- Contents shamelessly stolen from the KPPP manual, written by -->
+<!-- Lauri -->
+
+<para>&kde; offers a complete Internet experience, with all the
+programs you'll need to make the most of the Web, email, Usenet and
+many other Internet technologies. But before you can enjoy &kde;'s
+advanced features, you'll need to get online. Here's how:</para>
+
+<para>If you're using <quote>dialup</quote> (that is, connecting to
+the Internet with a modem connected to a telephone line), you'll want
+to set up the &kde; dialing program, &kppp;. If that sounds
+complicated, don't worry: &kppp; has an advanced configuration wizard,
+which will usually take the pain out of setting up your dialup
+connection. Take a look at the next two sections for more
+details.</para>
+
+<para>If you're using a broadband connection, or connecting via a
+local network, things are easier (from the point of view of
+&kde;). Once you've set up the connection with the tools provided by
+your &Linux; or &UNIX; distribution, &kde; will use the connection
+automatically.</para>
+
+<sect1 id="getting-online">
+<title>Getting online the easy way</title>
+
+<sect2 id="things-to-prepare">
+<title>A few things you should have ready before you start</title>
+
+<para>If you have a fairly modern &Linux; distribution, you might find the rest
+of this document superfluous.  &kppp; comes with a clever little wizard that in
+many cases can have you up and running with an internet connection in just a few
+minutes.</para>
+
+<para>Whether using the wizard or not, you should know the following information
+before you begin:</para>
+
+<itemizedlist>
+<listitem><para>Your <acronym>ISP</acronym> modem pool phone
+number.</para></listitem>
+<listitem><para>Your username and password for your
+<acronym>ISP</acronym>.</para></listitem>
+<listitem><para>Your <acronym>ISP</acronym>'s <acronym>DNS</acronym> servers
+(one is sufficient, but two is better).</para></listitem>
+</itemizedlist>
+
+<para>Other optional information you should find out to fully access your
+<acronym>ISP</acronym>'s services are:</para>
+
+<itemizedlist>
+<listitem><para>The incoming mail server address (often <systemitem
+class="systemname">pop.yourisp.com</systemitem> or <systemitem 
+class="systemname">mail.yourisp.com</systemitem>).</para><para>Also find out if
+your <acronym>ISP</acronym> uses the POP3 protocol or IMAP.</para></listitem>
+<listitem><para>The outgoing (<acronym>SMTP</acronym>) mail server address (it
+could be the same as the incoming mail server, or it is often called something
+like <systemitem
+class="systemname">smtp.yourisp.com</systemitem>).</para></listitem>
+<listitem><para>The Usenet News (<acronym>NNTP</acronym>) server address (possibly
+<systemitem class="systemname">news.yourisp.com</systemitem> or <systemitem
+class="systemname">nntp.yourisp.com</systemitem>).</para></listitem>
+<listitem><para>Any proxy servers your <acronym>ISP</acronym> has set
+up.</para></listitem>
+</itemizedlist>
+
+<para>All this information is probably available on any paperwork you received
+from your <acronym>ISP</acronym> when you signed up with them, or you can find
+it out from your <acronym>ISP</acronym>'s support telephone line.</para>
+
+<para>Armed with the above, and a fairly recent default installation
+of &Linux;, you may well find that setting up an internet connection
+is as simple as running the &kppp; wizard.</para>
+
+
+</sect2>
+
+</sect1>
+
+<sect1 id="wizard">
+<title>The &kppp; wizard</title>
+
+<sect2 id="starting-the-wizard">
+<title>Starting the Wizard.</title>
+
+<para>You can start the wizard from &kppp;'s initial screen.  Start &kppp; from
+your <guimenu>K</guimenu> menu, where you will find its entry in the
+<guisubmenu>Internet</guisubmenu> as <guimenuitem>&kppp; (Internet Dial-Up
+Tool</guimenuitem>.</para>
+
+<para>The following dialog will appear:</para>
+
+<screenshot>
+<screeninfo>The &kppp; dialer startup dialog</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="kppp-dialer-tab.png" format="PNG"/>
+</imageobject>
+<textobject><phrase>The &kppp; dialer startup dialog</phrase>
+</textobject>
+<caption><para>The &kppp; dialer startup dialog</para></caption>
+</mediaobject>
+</screenshot>
+
+<para>It will probably not have any entries to begin with, and that's
+what we're about to do now.</para>
+
+<para>Click the <guibutton>Configure...</guibutton> button to begin setting up a new
+Internet connection.</para>
+<!-- the following is outdated and has to be rewritten 27.06.2006 lueck-->
+<para>The wizard will offer you three choices, <guibutton>Wizard</guibutton>,
+<guibutton>Dialog Setup</guibutton> and <guibutton>Cancel</guibutton></para>
+
+<screenshot>
+<screeninfo>The wizard asks you what you want to do...</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="kppp-wizard.png" format="PNG"/>
+</imageobject>
+<textobject><phrase>The wizard asks you what you want to
+do...</phrase></textobject>
+<caption><para>The wizard asks you what you want to do</para></caption>
+</mediaobject>
+</screenshot>
+
+<variablelist>
+<varlistentry>
+<term><guibutton>Cancel</guibutton></term>
+<listitem><para>Choose this if you really don't want to be setting up a new
+account right now. The message box will go away, and you will be left with the
+dialer window as before.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guibutton>Wizard</guibutton></term>
+<listitem><para>If you have a fairly standard modem, and use one of the larger
+ISP's for your country, the wizard will probably be able to set you up
+immediately with a working Internet Connection. Try this first, before you try
+to set up the connection manually.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guibutton>Dialog Setup</guibutton></term>
+<listitem><para>If you don't succeed with the Wizard, or you just want to do
+things yourself, choose this.  The wizard currently is only useful for a small
+subset of countries and Internet Providers.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+
+<para>For the purposes of this chapter, we'll assume you are choosing
+<guibutton>Wizard</guibutton>, and the dialog based setup will be
+described in a later chapter.</para>
+
+</sect2>
+
+<sect2 id="finishing-the-wizard">
+<title>The Rest of the Wizard</title>
+
+<para>The first window you see contains just introductory text, explaining the
+things you read about in the first section of this chapter.  Click
+<guibutton>Next</guibutton> to move on.</para>
+
+<para>The second window asks you to choose the country you live in.  Not all
+countries are represented here, and if the country you live in is not listed,
+you will have to click <guibutton>Cancel</guibutton>, in which case the Dialog-based setup will start for you to continue
+with.</para>
+
+<para>On the next window, you will be given a choice of Internet
+Providers that &kppp; knows about, based on your choice of location in
+the previous window.  Again, if your <acronym>ISP</acronym> is not
+listed here, you will have to click <guibutton>Cancel</guibutton> and
+do your setup in the Dialog-based setup</para>
+
+<para>You will now be asked to enter your username and password for your
+internet connection.  Please note, that for some <acronym>ISP</acronym>s this
+differs from your mail account user name and password, so make sure you use the
+right one. Choose <guibutton>Next</guibutton> to continue.</para>
+
+<para>On the next window, you have a chance to enter any special dial prefixes
+you might have - for example, if you must dial <quote>0</quote> for an outside
+line, or if you have a prefix you can dial to turn off call waiting.  Choose
+<guibutton>Next</guibutton> to continue.</para>
+
+<para>And that's all!  If you want to revisit any of your choices, you can use
+the <guibutton>Back</guibutton> and <guibutton>Next</guibutton> buttons to move
+back and forth through the dialogs.  When you're done with your settings, click the
+<guibutton>Finish</guibutton> button, and you're all done.</para>
+
+<para>If you need more details, you can read the full &kppp;
+manual in the &kde; Help Center, or by typing
+<userinput>help:/kppp</userinput> in the <guilabel>Location</guilabel>
+bar in &konqueror;.</para>
+
+<!-- Add links to "further reading" here -->
+<!-- <itemizedlist>
+<title>Related Information</title>
+<listitem><para>to be written</para>
+</listitem>
+</itemizedlist>-->
+
+
+
+</sect2>
+
+</sect1>
+
+</chapter>
+
+<!-- Keep this comment at the end of the file
+Local variables:
+mode: xml
+sgml-omittag:nil
+sgml-shorttag:nil
+sgml-namecase-general:nil
+sgml-general-insert-case:lower
+sgml-minimize-attributes:nil
+sgml-always-quote-attributes:t
+sgml-indent-step:0
+sgml-indent-data:true
+sgml-parent-document:("index.docbook" "book" "chapter")
+sgml-exposed-tags:nil
+sgml-local-catalogs:nil
+sgml-local-ecat-files:nil
+End:
+-->
+
+

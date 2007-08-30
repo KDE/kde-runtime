@@ -1,0 +1,122 @@
+<?xml version="1.0" ?>
+<!DOCTYPE article PUBLIC "-//KDE//DTD DocBook XML V4.2-Based Variant V1.1//EN"
+"dtd/kdex.dtd" [
+<!ENTITY % addindex "IGNORE">
+<!ENTITY % English "INCLUDE" > <!-- change language only here -->
+]>
+
+<article lang="&language;">
+<articleinfo>
+
+<authorgroup>
+<author>
+<firstname>Mike</firstname>
+<surname>McBride</surname>
+</author>
+<author>
+<firstname>Jost</firstname>
+<surname>Schenck</surname>
+</author>
+<!-- TRANS:ROLES_OF_TRANSLATORS -->
+</authorgroup>
+
+<date>2003-10-06</date>
+<releaseinfo>3.2</releaseinfo>
+
+<keywordset>
+<keyword>KDE</keyword>
+<keyword>KControl</keyword>
+<keyword>panel</keyword>
+</keywordset>
+</articleinfo>
+
+<sect1 id="panel">
+<title>Panel</title>
+
+<para>Here you can configure the panel's overall appearance.</para>
+
+<para>You can also have the icons themselves zoom out when the
+mouse is over them, with the <guilabel>Enable icon zooming</guilabel>
+option. You can choose to have tooltips appear when your mouse button is
+over an icon, by enabling the <guilabel>Show tooltips</guilabel>
+option.</para>
+
+<sect2 id="button-backgrounds">
+<title>Button Backgrounds</title>
+
+<para>The &kde; panel supports so-called <guilabel>Button
+Backgrounds</guilabel>. This means that the buttons shown on the panel
+will be drawn using configurable images. To enable button backgrounds,
+simply choose the button type from the list, and change the drop down
+box to the color image you would like to use.  Choose
+<guilabel>Default</guilabel> to return to an unstyled button.  If you
+choose <guilabel>Custom color</guilabel>, the color button next to the
+drop down list will be enabled.  Click on it to select a custom color
+to use.</para>
+
+</sect2>
+
+<sect2 id="panel-background">
+<title><guilabel>Panel Background</guilabel></title>
+
+<para><guilabel>Enable transparency</guilabel> to turn the entire
+panel transparent.  The desktop background will show through instead
+of a background image or color.</para>
+
+<para>There will still be small handles beside each applet, to allow
+you to locate, move, and configure them.  These can be turned off in
+the <guilabel>Advanced Options</guilabel></para>
+
+<para>If you check <guilabel>Enable background image</guilabel> a
+picture will be used to draw the panel's background, just as you
+can use a picture for the desktop background. You can specify an image
+file in the line edit box below or choose one by clicking on the
+<guibutton>Browse</guibutton> button. You'll see a preview of the
+selected picture on the right.</para>
+
+<para>The image can be tinted on-the-fly by enabling the option
+<guilabel>Colorize to match the desktop color scheme</guilabel>.  You
+might use a grayscale texture that is tinted in this manner, to create
+a particular effect.</para>
+</sect2>
+
+<sect2 id="advanced-options">
+<title><guilabel>Advanced Options</guilabel></title>
+
+<para>The <guilabel>Hide button size:</guilabel> option allows you to
+choose a width in pixels for the hide buttons, if they are
+visible.</para>
+
+<para>The panel itself has several default sizes set, which you can
+switch between by simply dragging the edge of it, or by &RMB; clicking
+on an empty space in the panel, choosing <guisubmenu>Size</guisubmenu>
+and selecting the desired size from the submenu.  If you enable
+<guilabel>Allow Drag and Drop resizing of panels</guilabel> then by
+choosing <guimenuitem>Custom</guimenuitem> in the panel menu, you can
+drag the panel edge to any size you like.</para>
+
+<para>Applet handles are normally visible beside each applet on the panel, so that it is clear where to click to configure them, or to get to the panel menu.  You can instead have them <guilabel>Fade out</guilabel>, or hide unless you hover the mouse over them, or you can choose to <guilabel>Hide</guilabel> them completely.</para>
+
+<para>Finally, if the panel is transparent, you can tint it with a
+color of your choice.  The slider allows you to choose how opaque the
+tint is.  At the lowest end, there is no tint visible, while at the
+highest, the panel is not transparent at all.</para>
+
+</sect2>
+
+<sect2 id="panel-author">
+<title>Section Author</title>
+<para>This section written by: Jost Schenck <email>jost@schenck.de</email></para>
+<para>Minor update by Mike McBride
+<email>mpmcbride7@yahoo.com</email></para>
+
+<para>Some new options added by Lauri Watts
+<email>lauri@kde.org</email></para>
+
+<!-- TRANS:CREDIT_FOR_TRANSLATORS -->
+
+</sect2>
+
+</sect1>
+
+</article>

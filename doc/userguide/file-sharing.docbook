@@ -1,0 +1,109 @@
+<sect1 id="file-sharing">
+
+<sect1info>
+<authorgroup>
+<author>
+&Lauri.Watts;
+</author>
+</authorgroup>
+</sect1info>
+
+
+<title>File Sharing</title>
+<sect2 id="file-sharing-kpf">
+<title>How to share files with &kpf;</title>
+
+<indexterm><primary>File sharing</primary></indexterm>
+<indexterm><primary>Shared Folders</primary></indexterm>
+
+<para>&kpf; provides simple file sharing using &HTTP; (the Hyper Text
+Transfer Protocol,) which is the same protocol used by web sites to provide
+data to your web browser. &kpf; is strictly a public fileserver, which means
+that there are no access restrictions to shared files: whatever you select
+for sharing is available to anyone.</para>
+
+<para>&kpf; is designed to be used for sharing files with friends, not to
+act like a fully-fledged web server such as
+<application>Apache</application>. &kpf; was primarily conceived as an easy
+way to share files with others while chatting on <acronym>IRC</acronym>
+(Internet Relay Chat, or <quote>chat rooms</quote>.)</para>
+
+<para>&kpf; runs as an applet inside &kicker;. This means that it takes up
+little space on your screen and its status is always visible. To start the
+&kpf; applet, <mousebutton>right</mousebutton> click on &kicker; and choose
+<guimenu>Add Applet to Panel...</guimenu> to open the <guilabel>Add 
+Applet</guilabel> dialog. Select <guilabel>Public File Server</guilabel> and 
+click the <guibutton>Add to Panel</guibutton> button.</para>
+
+<para>&kpf; employs the concept of shared folders. You may choose one or
+more folders to make public, and all files in that folder (and any
+subfolders) will be shared.</para>
+
+<note><para>Please be extremely careful about which folders you share. Remember
+that all files in the folder and its subfolders, including
+<quote>hidden</quote> files (<quote>dotfiles</quote> to the techies) will be
+made available to the world, so be careful not to share sensitive
+information, such as passwords, cryptographic keys, your addressbook,
+documents private to your organization, &etc;.</para></note>
+
+<para>Once &kpf; is running, you will see a square applet with a thin sunken
+bevel and an icon depicting an <guiicon>hot air balloon</guiicon>. The
+balloon is visible when no folders are being shared.</para>
+
+<para>To share a folder, <mousebutton>right</mousebutton> click on the
+balloon icon and a pop-up menu will appear, containing only one item,
+<guimenuitem>New Server...</guimenuitem>. Selecting this entry will cause a
+<quote>wizard</quote> to appear, which will ask you a few simple
+questions. Completing the questions will set up a folder for sharing.</para>
+
+<para>There is an alternative to using the applet directly when you want to
+share a folder. &kpf; is integrated with &konqueror;.</para>
+
+<para>With &konqueror; open and displaying a folder,
+<mousebutton>right</mousebutton> click on the background and bring up the
+<quote>Properties</quote> dialog.  On install, &kpf; added a
+<guilabel>Sharing</guilabel> tab to this dialog. You will be offered the
+option of starting &kpf; if it is not running. Choosing
+<guibutton>Ok</guibutton> will send a signal to the &kpf; applet, asking it
+to add a new share.</para>
+
+<para>For more detailed information, such as how to share different
+directories to different people, see the <ulink
+url="help:/kpf">&kpf;</ulink> handbook.</para>
+
+</sect2>
+
+<!-- <sect2 id="file-sharing-other-strategies">
+<title>Other strategies</title>
+
+Samba, local cgi? nfs devices
+-->
+
+<!-- Add links to "further reading" here -->
+<!-- <itemizedlist>
+<title>Related Information</title>
+<listitem><para>to be written</para>
+</listitem>
+</itemizedlist> 
+
+
+</sect2>-->
+</sect1>
+
+<!-- Keep this comment at the end of the file
+Local variables:
+mode: xml
+sgml-omittag:nil
+sgml-shorttag:nil
+sgml-namecase-general:nil
+sgml-general-insert-case:lower
+sgml-minimize-attributes:nil
+sgml-always-quote-attributes:t
+sgml-indent-step:0
+sgml-indent-data:true
+sgml-parent-document:("index.docbook" "book" "sect1")
+sgml-exposed-tags:nil
+sgml-local-catalogs:nil
+sgml-local-ecat-files:nil
+End:
+-->

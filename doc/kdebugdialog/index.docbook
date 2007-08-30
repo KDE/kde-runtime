@@ -1,0 +1,134 @@
+<?xml version="1.0" ?>
+<!DOCTYPE book PUBLIC "-//KDE//DTD DocBook XML V4.2-Based Variant V1.1//EN"
+"dtd/kdex.dtd" [
+  <!ENTITY kdebugdialog "<application>KDebugDialog</application>">
+  <!ENTITY kappname "&kdebugdialog;">
+  <!ENTITY % addindex "IGNORE">
+  <!ENTITY % English "INCLUDE" > <!-- change language only here -->
+  
+  
+]>
+
+<book lang="&language;">
+<bookinfo>
+<title>The &kdebugdialog; Handbook</title>
+
+<authorgroup>
+<author>&David.Faure; &David.Faure.mail;</author>
+<!-- TRANS:ROLES_OF_TRANSLATORS -->
+</authorgroup>
+
+<date>2001-02-13</date>
+<releaseinfo>0.03.00</releaseinfo>
+
+<abstract>
+<para>This document describes &kdebugdialog;.</para>
+</abstract>
+
+<keywordset>
+<keyword>KDE</keyword>
+<keyword>KDebugdialog</keyword>
+</keywordset>
+</bookinfo>
+
+<chapter id="Introduction">
+<title>What is &kdebugdialog;?</title>
+
+<para>It is a dialog box for managing diagnostic messages at runtime.
+</para>
+
+<para>If you simply start <command>kdebugdialog</command>, you will
+see a list of <quote>areas</quote>, that can be disabled or enabled. A
+<function>kDebug(area)</function> call in the code will show
+something in the debug output only if the area is enabled.</para>
+
+<note><para>Note that kWarning, kError and kFatal always appear,
+they are NOT controlled by this setting.  </para></note>
+
+<variablelist>
+<varlistentry>
+<term><guilabel>Area</guilabel></term>
+<listitem>
+<para>The areas which should only be output. Every message
+that is not mentioned here will simply not be output (unless
+this field remains empty, which is the default, and means that all
+messages should be output). You can enter several areas
+separated by commas here, and you can also use area ranges with
+the syntax start-end. Thus a valid entry could be:
+117,214-289,356-359,221. Do not use whitespaces.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+
+<para>If you start <command>kdebugdialog</command>
+<option>--fullmode</option>, then for every severity level you can
+define separately what should be done with the diagnostic messages of
+that level, and the same for each debug area.</para>
+
+<para>In full mode, first you should select the debug area you are
+interested in from the drop down box at the top.</para>
+
+<para>You may independently set the output for various types of
+messages:</para>
+
+<itemizedlist>
+<listitem><para><guilabel>Information</guilabel></para></listitem>
+<listitem><para><guilabel>Warning</guilabel></para></listitem>
+<listitem><para><guilabel>Error</guilabel></para></listitem>
+<listitem><para><guilabel>Fatal Error</guilabel></para></listitem>
+</itemizedlist>
+
+<para>For each of these types, you can set the following:</para>
+
+<variablelist>
+<varlistentry>
+<term><guilabel>Output to:</guilabel></term>
+<listitem>
+<para>In this Combobox, you can choose where the messages
+should be output. The choices are: <quote>File</quote>, <quote>Message
+Box</quote>, <quote>Shell</quote> (meaning stderr) and
+<quote>Syslog</quote>. Please do not direct fatal messages to syslog
+unless you are the system administrator yourself. The default is
+<quote>Message Box</quote>.</para> 
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Filename:</guilabel></term>
+<listitem><para>This is only enabled when you have chosen
+<quote>File</quote> as the output and provides the name of that file
+(which is interpreted as relative to the current folder). The
+default is <filename>kdebug.dbg</filename>.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+
+<para>Apart from this, you can also tick the check box <guilabel>Abort
+on fatal errors</guilabel>. In this case, if a diagnostic message with
+the severity level <computeroutput>KDEBUG_FATAL</computeroutput> is
+output, the application aborts with a SIGABRT after outputting the
+message.</para>
+
+<para>When you close the dialog by pressing <guibutton>OK</guibutton>,
+your entries apply immediately and are saved in
+<filename>kdebugrc</filename>. When you press
+<guibutton>Cancel</guibutton>, your entries are discarded and the old
+ones are restored.</para>
+
+<para>Credits to Kalle Dalheimer for the original version of
+&kdebugdialog;</para>
+
+</chapter>
+
+&documentation.index; 
+</book>
+<!--
+Local Variables:
+mode: sgml
+sgml-omittag: nil
+sgml-general-insert-case: lower
+sgml-shorttag: t
+End:
+-->
+
+

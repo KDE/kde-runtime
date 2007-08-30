@@ -1,0 +1,18 @@
+<chapter id="rlpr-module">
+<title>Module Built Around <application>rlpr</application>
+Utility</title>
+
+<sect1>
+<title>Overview of provided features</title>
+
+<para>Printer management: basic operations are supported
+(add/remove/modify).</para>
+
+<para>Each user can predefine the printers he wants to use by specifying
+the host and related printer queues. Printers are stored on a <quote>per
+user basis</quote>. This module is built around the
+<application>rlpr</application> utility <ulink
+url="http://truffula.com/rlpr/">rlpr</ulink></para>
+
+</sect1>
+</chapter>

@@ -1,0 +1,290 @@
+<chapter id="add-printer-wizard-2">
+<title>The <quote>Add Printer Wizard</quote> for &CUPS;</title>
+
+<para>Clicking on the leftmost icon on the toolbar
+<inlinemediaobject><imageobject> <imagedata
+fileref="cr32-action-wizard.png" format="PNG"/></imageobject>
+</inlinemediaobject> in the upper part of the window starts the
+<quote>Add Printer Wizard</quote>.</para>
+
+<para>This wizard steps you through various screens to install a new
+printer. At present this Wizard works for &CUPS; and the
+<acronym>RLPR</acronym> environment module. The number of steps depend
+on the actual print-subsystem which is active and available to you on
+your box.</para>
+
+<sect1>
+<title>Starting</title>
+
+<para>The welcome screen informs you that you can go back any time to
+change a setting. </para>
+
+<screenshot>
+<screeninfo>The &kdeprint; wizard introduction screen</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="cupsaddprinterwizard1.png"
+format="PNG"/></imageobject>
+<textobject>
+<phrase>The introduction screen of the printer wizard</phrase></textobject>
+</mediaobject>
+</screenshot>
+
+</sect1>
+<sect1 id="backend-selection">
+<title>Backend Selection</title>
+
+<para>Choose the <quote>backend</quote> protocol that &CUPS; is supposed to
+use with your new printer. There are:</para>
+
+<itemizedlist>
+<listitem>
+<para>local printer (serial, parallel, <acronym>USB</acronym>)</para>
+</listitem>
+<listitem>
+<para>remote <acronym>LPD</acronym> queue</para>
+</listitem>
+<listitem>
+<para><acronym>SMB</acronym> shared printer (&Windows;)</para>
+</listitem>
+<listitem>
+<para>Network Printer (<acronym>TCP</acronym>, &HP; JetDirect,
+AppSocket)</para>
+</listitem>
+<listitem>
+<para>Network printer with &IPP; (&IPP;/<acronym>HTTP</acronym>)</para>
+</listitem>
+<listitem>
+<para>File printer</para>
+</listitem>
+<listitem>
+<para>serial fax /modem printer</para>
+</listitem>
+<listitem>
+<para>Class of Printers</para>
+</listitem>
+</itemizedlist>
+
+<para>If some choices are grayed out, they are not available.  For
+example, you may have no FAX backend software or no modem installed to
+use it.</para>
+
+<screenshot>
+<screeninfo>Choosing your Printer system</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="cupsaddprinterwizard2_backendselection.png"
+format="PNG"/></imageobject>
+<textobject>
+<phrase>Choosing your Printer System</phrase></textobject>
+</mediaobject>
+</screenshot>
+
+</sect1>
+
+<sect1 id="direct-network-settings">
+<title>Direct Network Setting</title>
+
+<para>The contents of your next screen is dependent on your choice in
+the previous screen. If you know the details, just type them in to
+configure your network settings directly.</para>
+
+<para>In other cases the wizard can scan the network for you, to help you
+decide which setting could be useful. </para>
+
+<screenshot>
+<screeninfo>&kdeprint; wizard network scan</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="cupsaddprinterwizard3_networkscan.png"
+format="PNG"/></imageobject>
+<textobject>
+<phrase>In the &kdeprint; wizard, you can enter network details
+directly, or you can scan the network
+automatically.</phrase></textobject>
+</mediaobject>
+</screenshot>
+
+</sect1>
+<sect1 id="information-retrieval-by-network-scanning">
+<title>Information Retrieval by Scanning the Network</title>
+
+<para>If you use one of the network connections (remote
+<acronym>LPD</acronym>, <acronym>SMB</acronym>, remote &CUPS;, network
+printer with &IPP;), you have an option for scanning the network. Be careful
+when applying this; in some environments network scanning is considered
+to be hostile and harmful!</para>
+
+<para>In the case of <acronym>SMB</acronym>, &kdeprint; will use the
+Samba utilities <command>nmblookup</command> and
+<command>smbclient</command> (which need to be installed for this to
+work) to retrieve the information it presents in a tree
+structure.</para>
+
+<para>In the case of &IPP; (Port 631) and <acronym>TCP</acronym>
+Network/AppSocket (Port 9100) &kdeprint; will try to open the port and,
+if successful, send an <command>ipp-get-printer-attribute</command>
+request to the printer. For newer &HP; printers the latter usually
+works, because they support both AppSocket and &IPP;.</para>
+
+<para>Some printers or manufacturers use other port numbers for direct
+TCP/IP printing. You may need to look up which one to use. The
+<guilabel>Settings</guilabel> button in the dialog lets you configure
+your scan, including <acronym>IP</acronym> addresses, ports and
+timeout to use.</para>
+
+<para>Once again: be careful not to be mistaken for an intruder on
+your network, if you use the scanning technique.</para>
+
+<screenshot>
+<screeninfo>&kdeprint; wizard network configuration dialog</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="cupsaddprinterwizard4_networkscan_config.png"
+format="PNG"/></imageobject>
+<textobject>
+<phrase>In the &kdeprint; wizard, you can enter parameters to have the
+wizard scan parts of your network.</phrase></textobject>
+</mediaobject>
+</screenshot>
+
+</sect1>
+<sect1 id="printer-model-selection">
+<title>Printer Model Selection</title>
+
+<para>The hardest part is probably the <quote>Printer Model
+Selection</quote>. In former years the situation was difficult, because
+there were hardly any drivers to find. The difficulty now is there are too
+many; though some of them are very good, many are quite broken. </para>
+
+<para>If you have a current <quote>database</quote> of available drivers
+on your system, select the manufacturer in the left part of the window
+first, then the device model in the right part. This split window shows
+all &PPD;s found by &CUPS; in its standard repository of installable
+&PPD;s.  This repository normally is <filename
+class="directory">/usr/share/cups/model/</filename>. If you want your
+driver to be found automatically by &CUPS; and &kdeprint;, place it in
+there.</para>
+
+<!-- Insert Screenshot here:  -->
+
+</sect1>
+
+<sect1 id="driver-selection">
+<title>Driver Selection</title>
+
+<para>On the next screen you will see a description of the driver
+selected previously. This description is extracted from the actual &PPD;
+used.</para>
+
+<warning>
+<para>For a real &PostScript; printer <emphasis>never</emphasis> try to
+install a <quote>Foomatic</quote> or <quote>Gimp-Print</quote> &PPD;,
+even if it is offered. You won't be happy with it. Instead find the
+original &PPD; from the manufacturer, preferably the one written for
+&Windows; NT and use it. </para>
+</warning>
+
+<para>Some &Linux; distributions have supplied for &CUPS; every
+possible combination of <application>Ghostscript</application> filters
+and <quote>foomatic</quote> &PPD; files they could find on the net.
+Many of these are quite useless; they were generated a year ago, when
+the people at <ulink
+url="http://www.linuxprinting.org">www.linuxprinting.org</ulink> began
+their first experiments with supplying third party &PPD;s for
+&CUPS;. Although dubbed <quote>Alpha</quote> at the time, these
+started to take on a life of their own and can now be found at various
+places on the net, doing &CUPS; no favors.</para>
+
+<para>If you are not sure which ones to use go to:</para>
+
+<itemizedlist>
+<listitem>
+<para><ulink
+url="http://www.linuxprinting.org">http://www.linuxprinting.org</ulink>
+</para>
+</listitem>
+
+<listitem>
+<para>
+<ulink url="http://www.cups.org">http://www.cups.org</ulink>
+</para>
+</listitem>
+</itemizedlist>
+
+<para>And ask for help. At a later stage, a document detailing the
+differences between the different driver and &PPD; models will appear at
+<ulink
+url="http://kdeprint.sourceforge.net">http://kdeprint.sourceforge.net/</ulink>
+Watch out for this!</para>
+
+<para>Via the <guibutton>Other...</guibutton> button you are able to
+retrieve any &PPD; located somewhere on your available file
+system.</para>
+
+<!-- Insert Screenshot here:  -->
+
+</sect1>
+<sect1 id="printer-test-and-finding-settings">
+<title>Printer Test and Finding the Right Settings</title>
+
+<para>Specify your first driver settings now. The most important one is the
+default paper size. In many cases this is set to
+<quote>Letter</quote>. If you live in an <quote>A4</quote>
+country and don't want your first test page to jam: now is the time to
+prevent this. </para>
+
+<para>You are ready to start a test print. Hit the
+<guibutton>Test</guibutton> button.</para>
+
+<!-- Insert Screenshot here: -->
+
+</sect1>
+
+<sect1 id="banner-selection">
+<title>Banner Selection</title>
+
+<para>The last but one screen lets you select whether you want banners, and
+which ones you want to use, to mark the beginning and/or end of every printjob
+on that printer. You can also select and deselect banners before printing
+in the job options dialogs.</para>
+
+<para>If you need to use custom banners, copy them into <filename
+class="directory">/usr/share/cups/banners/</filename> to make them
+available for selection. They must be &PostScript; files,
+however.</para>
+
+<!-- Insert Screenshot here: -->
+
+</sect1>
+
+<sect1 id="baptizing-your-printer">
+<title>Finally: Baptizing Your New Printer</title>
+
+<para>The last screen lets you insert a name for your new
+printer.</para>
+
+<para>The name must start with a letter and may contain numbers and
+underscores with a maximum size of 128 characters. Conform to this if you
+want to avoid erratic behavior of your &CUPS; daemon. The printer
+names in &CUPS; are <emphasis>not</emphasis> case sensitive! This is a
+requirement of &IPP;. So the names <systemitem
+class="resource">DANKA_infotec</systemitem>, <systemitem
+class="resource">Danka_Infotec</systemitem> and <systemitem
+class="resource">danka_infotec</systemitem> all represent the same
+printer.</para>
+
+<!-- Insert Screenshot here: -->
+
+</sect1>
+
+<sect1 id="final-confirmation-screen">
+<title>The Final Confirmation Screen</title>
+
+<para> 
+<!-- Insert Screenshot here: -->
+</para>
+
+</sect1>
+
+</chapter>

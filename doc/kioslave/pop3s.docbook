@@ -1,0 +1,14 @@
+<article lang="&language;" id="pop3s">
+<title>pop3s</title>
+<articleinfo>
+<authorgroup>
+<author>&Ferdinand.Gassauer; &Ferdinand.Gassauer.mail;</author>
+<!-- TRANS:ROLES_OF_TRANSLATORS -->
+</authorgroup>
+</articleinfo>
+<para>
+POP3S is the POP3 protocol encrypted via SSL.
+
+</para>
+
+</article>
