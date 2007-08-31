@@ -48,7 +48,7 @@ class KCMKNotify : public KCModule
     Q_OBJECT
 
 public:
-    KCMKNotify(QWidget *parent, const QStringList &);
+    KCMKNotify(QWidget *parent, const QVariantList &);
     virtual ~KCMKNotify();
 
     virtual void defaults();

@@ -7,7 +7,6 @@ add_subdirectory( pics )
 ########### next target ###############
 
 set(kcm_locale_PART_SRCS 
-   main.cpp 
    toplevel.cpp 
    kcmlocale.cpp 
    klocalesample.cpp 

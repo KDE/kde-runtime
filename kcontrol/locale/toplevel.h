@@ -28,7 +28,7 @@
 #define KDE3_SUPPORT
 #include <kcmodule.h>
 #undef KDE3_SUPPORT
-#include <kgenericfactory.h>
+#include <klocale.h>
 #include <kconfig.h>
 
 class QTabWidget;
@@ -47,7 +47,7 @@ class KLocaleApplication : public KCModule
   Q_OBJECT
 
 public:
-  KLocaleApplication(QWidget *parent, const QStringList &);
+  KLocaleApplication(QWidget *parent, const QVariantList &);
   virtual ~KLocaleApplication();
 
   virtual void load();
@@ -83,6 +83,5 @@ private:
   KSharedConfigPtr m_nullConfig;
 };
 
-typedef KGenericFactory<KLocaleApplication, QWidget > KLocaleFactory;
 
 #endif

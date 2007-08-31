@@ -30,8 +30,10 @@
 #include <QTextStream>
 
 #include <klocale.h>
+#include <kaboutdata.h>
 #include <kglobal.h>
-#include <kparts/genericfactory.h>
+#include <kpluginfactory.h>
+#include <kpluginloader.h>
 #include <klineedit.h>
 #include <kpassworddialog.h>
 #include <kconfig.h>
@@ -44,10 +46,10 @@
 #define MDNSD_CONF "/etc/mdnsd.conf"
 #define MDNSD_PID "/var/run/mdnsd.pid"
 
-typedef KGenericFactory<KCMDnssd, QWidget> KCMDnssdFactory;
-K_EXPORT_COMPONENT_FACTORY( kcm_kdnssd, KCMDnssdFactory("kcmkdnssd"))
+K_PLUGIN_FACTORY(KCMDnssdFactory, registerPlugin<KCMDnssd>();)
+K_EXPORT_PLUGIN(KCMDnssdFactory("kcmkdnssd"))
 
-KCMDnssd::KCMDnssd(QWidget *parent, const QStringList&)
+KCMDnssd::KCMDnssd(QWidget *parent, const QVariantList&)
 		: KCModule( KCMDnssdFactory::componentData(), parent)
 {
 

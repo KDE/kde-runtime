@@ -29,10 +29,12 @@
 
 
 #include <kapplication.h>
+#include <kaboutdata.h>
 #include <kcombobox.h>
 #include <kconfig.h>
 #include <knotifyconfigwidget.h>
-#include <kparts/genericfactory.h>
+#include <kpluginfactory.h>
+#include <kpluginloader.h>
 #include <kstandarddirs.h>
 #include <kurlcompletion.h>
 #include <kurlrequester.h>
@@ -43,10 +45,10 @@
 
 static const int COL_FILENAME = 1;
 
-typedef KGenericFactory<KCMKNotify, QWidget> NotifyFactory;
-K_EXPORT_COMPONENT_FACTORY( kcm_knotify, NotifyFactory("kcmnotify") )
+K_PLUGIN_FACTORY( NotifyFactory, registerPlugin<KCMKNotify>(); )
+K_EXPORT_PLUGIN( NotifyFactory("kcmnotify") )
 
-		KCMKNotify::KCMKNotify(QWidget *parent, const QStringList & )
+		KCMKNotify::KCMKNotify(QWidget *parent, const QVariantList & )
     : KCModule(NotifyFactory::componentData(), parent/*, name*/),
       m_playerSettings( 0L )
 {

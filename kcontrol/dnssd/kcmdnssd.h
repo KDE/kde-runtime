@@ -32,7 +32,7 @@ class KCMDnssd: public KCModule
 	Q_OBJECT
 
 public:
-	explicit KCMDnssd( QWidget *parent=0, const QStringList& = QStringList() );
+	explicit KCMDnssd( QWidget *parent=0, const QVariantList& = QVariantList() );
 	~KCMDnssd();
 	virtual void save();
 private: 

@@ -44,9 +44,17 @@
 #include "toplevel.moc"
 #include "ui_toplevelbase.h"
 #include <kconfiggroup.h>
+#include <kpluginfactory.h>
+#include <kpluginloader.h>
+
+K_PLUGIN_FACTORY(KLocaleFactory,
+        KLocale::setMainCatalog("kcmlocale");
+        registerPlugin<KLocaleApplication>();
+    )
+K_EXPORT_PLUGIN(KLocaleFactory("kcmlocale"))
 
 KLocaleApplication::KLocaleApplication(QWidget *parent,
-                                       const QStringList &args)
+                                       const QVariantList &args)
   : KCModule( KLocaleFactory::componentData(), parent, args)
 {
   KAboutData* aboutData = new KAboutData("kcmlocale", 0,

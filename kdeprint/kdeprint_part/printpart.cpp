@@ -30,12 +30,12 @@
 #include <kparts/genericfactory.h>
 #include <QWidget>
 
-typedef KParts::GenericFactory<PrintPart> PrintPartFactory;
-K_EXPORT_COMPONENT_FACTORY( libkdeprint_part, PrintPartFactory )
+K_PLUGIN_FACTORY(PrintPartFactory, registerPlugin<PrintPart>();)
+K_EXPORT_PLUGIN(PrintPartFactory)
 
 PrintPart::PrintPart(QWidget *parentWidget,
 	             QObject *parent,
-		     const QStringList & /*args*/ )
+		     const QVariantList & /*args*/ )
 : KParts::ReadOnlyPart(parent)
 {
         setComponentData(PrintPartFactory::componentData());
