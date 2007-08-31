@@ -16,6 +16,7 @@ Name[te]=క్సైన్
 Name[x-test]=xxXinexx
 
 Comment=Phonon Xine backend
+Comment[bg]=Заден слой Phonon Xine
 Comment[de]=Phonon Xine-Treiber
 Comment[el]=Σύστημα υποστήριξης του Phonon Xine
 Comment[he]=ממשק Phonon Xine

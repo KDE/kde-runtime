@@ -16,6 +16,7 @@ Name[nds]=Phonon-Xine
 Name[pt]=Phonon por Xine
 Comment=Xine Backend Configuration
 Comment[be]=Настаўленне унутранага карыстання Xine
+Comment[bg]=Настройване на задния слой Xine
 Comment[de]=Xine-Treiber-Einrichtung
 Comment[el]=Ρύθμιση του συστήματος υποστήριξης Xine
 Comment[fa]=پیکربندی پایانه Xine
