@@ -52,13 +52,13 @@ ConfFilters::ConfFilters(QWidget *parent, const char *name)
 	m_add = new QPushButton(this);
 	m_add->setIcon(BarIcon("document-new"));
 	m_remove = new QPushButton(this);
-	m_remove->setIcon(BarIconSet("list-remove"));
+	m_remove->setIcon(KIcon("list-remove"));
 	m_change = new QPushButton(this);
-	m_change->setIcon(BarIconSet("search-filter"));
+	m_change->setIcon(KIcon("search-filter"));
 	m_up = new QPushButton(this);
-	m_up->setIcon(BarIconSet("go-up"));
+	m_up->setIcon(KIcon("go-up"));
 	m_down = new QPushButton(this);
-	m_down->setIcon(BarIconSet("go-down"));
+	m_down->setIcon(KIcon("go-down"));
 	connect(m_add, SIGNAL(clicked()), SLOT(slotAdd()));
 	connect(m_change, SIGNAL(clicked()), SLOT(slotChange()));
 	connect(m_remove, SIGNAL(clicked()), SLOT(slotRemove()));
