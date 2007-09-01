@@ -148,7 +148,7 @@ int main(int argc, char **argv)
       QDBusMessage reply = KToolInvocation::klauncher()->call("kdeinit_exec_wait", command, args, QStringList(), QString());
       if (reply.type() != QDBusMessage::ReplyMessage)
       {
-         qWarning("Can't talk to klauncher!");
+         qWarning("Can not talk to klauncher!");
          command = KGlobal::dirs()->findExe(command);
          command += ' ' + args.join(" ");
          system(command.toLocal8Bit());

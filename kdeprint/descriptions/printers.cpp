@@ -3885,7 +3885,7 @@ i18n("Left Output Bin (Face Up)");
 // xgettext: no-c-format
 i18n("Stacker (Face Down)");
 // xgettext: no-c-format
-i18n("Job Seperator (Face Down)");
+i18n("Job Separator (Face Down)");
 // xgettext: no-c-format
 i18n("Mailbox 1 (Face Down)");
 // xgettext: no-c-format
