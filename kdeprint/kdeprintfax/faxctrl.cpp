@@ -288,7 +288,7 @@ FaxCtrl::FaxCtrl(QWidget *parent, const char *name)
 	m_process = new KProcess();
 	connect(m_process, SIGNAL(readyReadStandardOutput ()), SLOT(slotReceivedStdout()));
 	connect(m_process, SIGNAL(readyReadStandardError ()), SLOT(slotReceivedStdout()));
-	connect(m_process, SIGNAL(processExited(int, QProcess::ExitStatus)), SLOT(slotProcessExited(int, QProcess::ExitStatus)));
+	connect(m_process, SIGNAL(finished (int, QProcess::ExitStatus)), SLOT(slotProcessExited(int, QProcess::ExitStatus)));
 	connect(this, SIGNAL(faxSent(bool)), SLOT(cleanTempFiles()));
 	m_logview = 0;
 }
