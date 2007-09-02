@@ -19,11 +19,11 @@ The &kde; Team
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
 </authorgroup>
 
-<date>2006-12-06</date>
+<date>2007-09-02</date>
 <releaseinfo>3.00.00</releaseinfo>
 
 <copyright>
-<year>2000</year><year>2006</year>
+<year>2000</year><year>2007</year>
 <holder>The &kde; Team</holder>
 </copyright>
 
@@ -139,7 +139,7 @@ which will take you on a visual tour of &kde;.</para>
 </row>
 
 <row>
-<entry>Dialog Box</entry>
+<entry>Dialog</entry>
 <entry>
 <inlinemediaobject>
 <imageobject>
@@ -188,7 +188,7 @@ which will take you on a visual tour of &kde;.</para>
 </row>
 
 <row>
-<entry>Menubar</entry>
+<entry>Menu Bar</entry>
 <entry>
 <inlinemediaobject>
 <imageobject>
@@ -298,7 +298,7 @@ which will take you on a visual tour of &kde;.</para>
 </row>
 
 <row>
-<entry>Toolbar</entry>
+<entry>Tool Bar</entry>
 <entry>
 <inlinemediaobject>
 <imageobject>
@@ -321,7 +321,7 @@ which will take you on a visual tour of &kde;.</para>
 
 
 <row>
-<entry>Window Titlebar</entry>
+<entry>Window Title Bar</entry>
 <entry>
 <inlinemediaobject>
 <imageobject>
