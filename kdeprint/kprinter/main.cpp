@@ -46,7 +46,6 @@ extern "C" int KDE_EXPORT kdemain(int argc, char *argv[])
 	KApplication	app;
 
 	PrintWrapper	wrap;
-  wrap.show();
 
 	QTimer::singleShot(10,&wrap,SLOT(slotPrint()));
 
