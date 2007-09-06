@@ -71,4 +71,4 @@ Type=Application
 Terminal=false
 X-KDE-StartupNotify=true
 Categories=Qt;KDE;Network;
-DocPath=knetattach/index.html
+X-DocPath=knetattach/index.html
