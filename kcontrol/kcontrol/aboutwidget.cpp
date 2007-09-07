@@ -29,7 +29,6 @@
 #include <klocale.h>
 #include <kdebug.h>
 #include <QPixmap>
-#include <kpixmapeffect.h>
 #include <kcursor.h>
 #include <kglobalsettings.h>
 #include <khtml_part.h>

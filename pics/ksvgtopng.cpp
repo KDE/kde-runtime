@@ -1,7 +1,6 @@
 #include <QtGui/QImage>
 #include <QtCore/QString>
 
-#include <kimageeffect.h>
 #include <ksvgrenderer.h>
 #include <QtGui/QPainter>
 #include <iostream>
@@ -42,7 +41,7 @@ int main(int argc, char **argv)
 		else if(width == 64)
 			factor = 5;
 
-		*img = KImageEffect::sharpen(*img, factor);
+		*img = KImageEffect::sharpen(*img, factor); // use QImageBlitz::sharpen()
 */
 	}
 
