@@ -63,15 +63,15 @@ ConfGeneral::ConfGeneral(QWidget *parent, const char *name)
 	l0->addWidget(m_numberlabel, 2, 0);
 	l0->addWidget(m_name, 0, 1);
 	l0->addWidget(m_company, 1, 1);
-
 	l0->addWidget(m_number, 2, 1);
-	l0->addWidget( sep, 3, 3, 0, 1 );
+
+	l0->addWidget( sep, 3, 0, 3, 2 );
 
 
 	QHBoxLayout *l1 = new QHBoxLayout;
         l1->addSpacing( 10 );
-        l1->setMargin( 0 );
-	l0->addLayout( l1, 4, 4, 0, 1 );
+        l1->setMargin( 10 );
+	l0->addLayout( l1, 4, 0, 4, 2 );
 
 	l1->addWidget( m_replace_int_char );
 

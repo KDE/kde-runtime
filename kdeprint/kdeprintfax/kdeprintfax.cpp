@@ -130,11 +130,15 @@ KdeprintFax::KdeprintFax(QWidget *parent, const char *name)
 	QLabel *m_subjectlabel = new QLabel( i18n( "Su&bject:" ), mainw );
 	m_subjectlabel->setBuddy( m_subject );
 
+
+
+
 	QGridLayout	*l0 = new QGridLayout(mainw);
   l0->setMargin( 10 );
   l0->setSpacing( 5 );
 	l0->setColumnStretch(1,1);
 	l0->addWidget(m_filelabel, 0, 0, Qt::AlignLeft|Qt::AlignTop);
+
 	QHBoxLayout *l2 = new QHBoxLayout();
   l2->setMargin( 0 );
   l2->setSpacing( 10 );
@@ -148,7 +152,7 @@ KdeprintFax::KdeprintFax(QWidget *parent, const char *name)
 	l3->addWidget( m_upbtn );
 	l3->addWidget( m_downbtn );
 	l3->addStretch( 1 );
-	l0->addWidget(m_line, 1, 1, 0, 1);
+	l0->addWidget(m_line, 1, 0, 1, 2);
   l0->addItem( new QSpacerItem( 0, 10 ), 1, 0 );
 	QHBoxLayout *l5 = new QHBoxLayout();
   l5->setMargin( 0 );
@@ -156,14 +160,14 @@ KdeprintFax::KdeprintFax(QWidget *parent, const char *name)
 	QVBoxLayout *l6 = new QVBoxLayout();
   l6->setMargin( 0 );
   l6->setSpacing( 5 );
-	l0->addLayout( l5, 2, 4, 0, 1 );
+	l0->addLayout( l5, 2, 0, 4, 2 );
 	l5->addWidget( m_numbers );
 	l5->addLayout( l6 );
 	l6->addWidget( m_newbtn );
 	l6->addWidget( m_delbtn );
 	l6->addWidget( m_abbtn );
 	l6->addStretch( 1 );
-	l0->addWidget( m_line2, 5, 5, 0, 1 );
+	l0->addWidget( m_line2, 5, 0, 5, 2 );
   l0->addItem( new QSpacerItem( 0, 10 ), 5, 0 );
 	l0->addWidget( m_subjectlabel, 6, 0 );
 	l0->addWidget( m_subject, 6, 1 );
@@ -176,6 +180,11 @@ KdeprintFax::KdeprintFax(QWidget *parent, const char *name)
 	l0->addLayout(l1, 8, 1);
 	l1->addWidget(m_timecombo, 1);
 	l1->addWidget(m_time, 0);
+
+
+
+
+
 
 	m_msglabel = new KSqueezedTextLabel(statusBar());
 	statusBar()->addWidget(m_msglabel, 1);
@@ -627,7 +636,7 @@ bool KdeprintFax::manualFaxDialog( QString& number, QString& name, QString& ente
   l0->setMargin( 0 );
   l0->setSpacing( 5 );
 	l0->setColumnStretch( 1, 1 );
-	l0->addWidget( lab0, 0, 0, 0, 1 );
+	l0->addWidget( lab0, 0, 0, 1, 0);
   l0->addItem( new QSpacerItem( 0, 10 ), 1, 0 );
 	l0->addWidget( lab1, 2, 0 );
 	l0->addWidget( lab2, 3, 0 );
