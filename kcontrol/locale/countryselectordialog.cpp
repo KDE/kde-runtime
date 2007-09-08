@@ -299,7 +299,7 @@ bool CountrySelectorDialog::editCountry(KLocale *locale)
     lv1->setMinimumHeight((regionlist.count() + 2) * fm.height());
 
     connect(lv1->selectionModel(), SIGNAL(currentChanged(const QModelIndex &, const QModelIndex &)), SLOT(regionChanged(const QModelIndex &)));
-    connect(lv1, SIGNAL(activated(const QModelIndex &)), m_countriesView, SLOT(setFocus()));
+    connect(lv1, SIGNAL(activated(const QModelIndex &)), SLOT(regionActivated()));
     connect(m_countriesView, SIGNAL(activated(const QModelIndex &)), SLOT(accept()));
 
     for(int i = 0; i < lv1->model()->rowCount(); ++i)
@@ -355,4 +355,10 @@ void CountrySelectorDialog::regionChanged(const QModelIndex &current)
     {
         m_countriesView->setModel(NULL);
     }
+}
+
+void CountrySelectorDialog::regionActivated()
+{
+    if (m_countriesView->model() != NULL) m_countriesView->setFocus();
+    else accept();
 }

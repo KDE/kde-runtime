@@ -28,6 +28,7 @@ Q_OBJECT
 
     private slots:
         void regionChanged(const QModelIndex &current);
+        void regionActivated();
 
     private:
         CSDListView *m_countriesView;

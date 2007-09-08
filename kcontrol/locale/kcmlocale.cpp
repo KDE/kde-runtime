@@ -224,7 +224,7 @@ void KLocaleConfig::slotLocaleChanged()
   slotCheckButtons();
 
   QString country = m_locale->countryCodeToName(m_locale->country());
-  if (country.isEmpty()) country = i18nc("@item:intext Country", "Not Selected");
+  if (country.isEmpty()) country = i18nc("@item:intext Country", "Default");
   m_selectedCountryLabel->setText(i18nc("@info %1 is country name", "<html>%1 (<a href=\"changeCountry\">change...</a>)</html>", country));
 }
 
