@@ -21,6 +21,7 @@
   */
 
 #include <QCheckBox>
+#include <QGroupBox>
 #include <QLabel>
 #include <QLayout>
 #include <QPushButton>
@@ -42,7 +43,6 @@
 #include "toplevel.h"
 #include "kcmlocale.h"
 #include "toplevel.moc"
-#include "ui_toplevelbase.h"
 #include <kconfiggroup.h>
 #include <kpluginfactory.h>
 #include <kpluginloader.h>
@@ -72,35 +72,28 @@ KLocaleApplication::KLocaleApplication(QWidget *parent,
 
   m_locale = new KLocale(QLatin1String("kcmlocale"), m_nullConfig);
 
-  Ui_TopLevelBase ui;
-  ui.setupUi( this );
-  /*
   QVBoxLayout *l = new QVBoxLayout(this);
   l->setMargin(0);
   l->setSpacing(KDialog::spacingHint());
-  l->setAutoAdd(true);
 
   m_tab = new QTabWidget(this);
+  l->addWidget(m_tab);
 
   m_localemain = new KLocaleConfig(m_locale, this);
 
-  */
-  //m_tab->addTab( m_localemain, QString());
-#if 0
+  m_tab->addTab( m_localemain, QString());
   m_localenum = new KLocaleConfigNumber(m_locale, this);
-  //m_tab->addTab( m_localenum, QString() );
+  m_tab->addTab( m_localenum, QString() );
   m_localemon = new KLocaleConfigMoney(m_locale, this);
-  //m_tab->addTab( m_localemon, QString() );
+  m_tab->addTab( m_localemon, QString() );
   m_localetime = new KLocaleConfigTime(m_locale, this);
-  //m_tab->addTab( m_localetime, QString() );
+  m_tab->addTab( m_localetime, QString() );
   m_localeother = new KLocaleConfigOther(m_locale, this);
-  //m_tab->addTab( m_localeother, QString() );
-#endif
+  m_tab->addTab( m_localeother, QString() );
 
   // Examples
-/*
-  m_gbox = new Q3GroupBox(this);
-  m_gbox->setOrientation(Qt::Vertical);
+  m_gbox = new QGroupBox(this);
+  l->addWidget(m_gbox);
   QVBoxLayout *laygroup = new QVBoxLayout(m_gbox);
   laygroup->setSpacing(KDialog::spacingHint());
   m_sample = new KLocaleSample(m_locale, m_gbox);
@@ -167,7 +160,6 @@ KLocaleApplication::KLocaleApplication(QWidget *parent,
           SLOT(slotChanged()));
 
   load();
-*/
 }
 
 KLocaleApplication::~KLocaleApplication()
@@ -177,7 +169,6 @@ KLocaleApplication::~KLocaleApplication()
 
 void KLocaleApplication::load()
 {
-  return;
   m_globalConfig->reparseConfiguration();
   *m_locale = KLocale(QLatin1String("kcmlocale"), m_globalConfig);
 
@@ -246,45 +237,41 @@ QString KLocaleApplication::quickHelp() const
 
 void KLocaleApplication::slotTranslate()
 {
-#if 0
   // The untranslated string for QLabel are stored in
   // the name() so we use that when retranslating
-  QObjectList list = queryList("QWidget");
+  const QList<QWidget*> &list = findChildren<QWidget*>();
   foreach ( QObject* wc, list )
   {
     // unnamed labels will cause errors and should not be
     // retranslated. E.g. the example box should not be
     // retranslated from here.
-    if (wc->name() == 0)
+    if (wc->objectName().isEmpty())
       continue;
-    if (::qstrcmp(wc->name(), "") == 0)
-      continue;
-    if (::qstrcmp(wc->name(), "unnamed") == 0)
+    if (wc->objectName() == "unnamed")
       continue;
 
-    if (::qstrcmp(wc->className(), "QLabel") == 0)
-      ((QLabel *)wc)->setText( ki18n( wc->name() ).toString( m_locale ) );
-    else if (::qstrcmp(wc->className(), "QGroupBox") == 0 ||
-             ::qstrcmp(wc->className(), "QVGroupBox") == 0)
-      ((QGroupBox *)wc)->setTitle( ki18n( wc->name() ).toString( m_locale ) );
-    else if (::qstrcmp(wc->className(), "QPushButton") == 0 ||
-             ::qstrcmp(wc->className(), "KMenuButton") == 0)
-      ((QPushButton *)wc)->setText( ki18n( wc->name() ).toString( m_locale ) );
-    else if (::qstrcmp(wc->className(), "QCheckBox") == 0)
-      ((QCheckBox *)wc)->setText( ki18n( wc->name() ).toString( m_locale ) );
+    if (::qstrcmp(wc->metaObject()->className(), "QLabel") == 0)
+      ((QLabel *)wc)->setText( ki18n( wc->objectName().toLatin1() ).toString( m_locale ) );
+    else if (::qstrcmp(wc->metaObject()->className(), "QGroupBox") == 0 ||
+             ::qstrcmp(wc->metaObject()->className(), "QVGroupBox") == 0)
+      ((QGroupBox *)wc)->setTitle( ki18n( wc->objectName().toLatin1() ).toString( m_locale ) );
+    else if (::qstrcmp(wc->metaObject()->className(), "QPushButton") == 0 ||
+             ::qstrcmp(wc->metaObject()->className(), "KMenuButton") == 0)
+      ((QPushButton *)wc)->setText( ki18n( wc->objectName().toLatin1() ).toString( m_locale ) );
+    else if (::qstrcmp(wc->metaObject()->className(), "QCheckBox") == 0)
+      ((QCheckBox *)wc)->setText( ki18n( wc->objectName().toLatin1() ).toString( m_locale ) );
   }
 
   // Here we have the pointer
   m_gbox->setWindowTitle(ki18n("Examples").toString(m_locale));
-  m_tab->changeTab(m_localemain, ki18n("&Locale").toString(m_locale));
-  m_tab->changeTab(m_localenum, ki18n("&Numbers").toString(m_locale));
-  m_tab->changeTab(m_localemon, ki18n("&Money").toString(m_locale));
-  m_tab->changeTab(m_localetime, ki18n("&Time && Dates").toString(m_locale));
-  m_tab->changeTab(m_localeother, ki18n("&Other").toString(m_locale));
+  m_tab->setTabText(m_tab->indexOf(m_localemain), ki18n("&Locale").toString(m_locale));
+  m_tab->setTabText(m_tab->indexOf(m_localenum), ki18n("&Numbers").toString(m_locale));
+  m_tab->setTabText(m_tab->indexOf(m_localemon), ki18n("&Money").toString(m_locale));
+  m_tab->setTabText(m_tab->indexOf(m_localetime), ki18n("&Time && Dates").toString(m_locale));
+  m_tab->setTabText(m_tab->indexOf(m_localeother), ki18n("&Other").toString(m_locale));
   // FIXME: All widgets are done now. However, there are
   // still some problems. Popup menus from the QLabels are
   // not retranslated.
-#endif
 }
 
 void KLocaleApplication::slotChanged()

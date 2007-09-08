@@ -55,8 +55,7 @@ Q_SIGNALS:
   void languageChanged();
 
 private Q_SLOTS:
-  void loadLanguageList();
-  void loadCountryList();
+  void changeCountry();
 
   void changedCountry(const QString & code);
   void readLocale(const QString &path, QString &name,

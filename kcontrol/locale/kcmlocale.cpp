@@ -25,13 +25,7 @@
 
 #include <QLabel>
 #include <QLayout>
-#include <Qt3Support/Q3ListBox>
 #include <QPushButton>
-
-
-//Added by qt3to4:
-#include <QVBoxLayout>
-#include <QGridLayout>
 
 #include <KDebug>
 #include <KDialog>
@@ -44,12 +38,20 @@
 #include "kcmlocale.moc"
 #include "toplevel.h"
 #include "klanguagebutton.h"
+#include "countryselectordialog.h"
 
 KLocaleConfig::KLocaleConfig(KLocale *locale, QWidget *parent)
   : QWidget (parent),
     m_locale(locale)
 {
     setupUi( this );
+
+    m_crLabel->setObjectName(I18N_NOOP("Country or Region:"));
+    m_languagesLabel->setObjectName(I18N_NOOP("Languages:"));
+    languageRemove->setObjectName(I18N_NOOP("Remove"));
+    m_upButton->setObjectName(QString());
+    m_downButton->setObjectName(QString());
+    m_selectedCountryLabel->setObjectName(QString());
 
     connect(languageRemove, SIGNAL(clicked()),
           SLOT(slotRemoveLanguage()));
@@ -58,14 +60,21 @@ KLocaleConfig::KLocaleConfig(KLocale *locale, QWidget *parent)
     connect(m_downButton, SIGNAL(clicked()),
             SLOT(slotLanguageDown()));
 
+    connect(m_selectedCountryLabel, SIGNAL(linkActivated(const QString &)), SLOT(changeCountry()));
+    connect(languageAdd, SIGNAL(activated(const QString &)), SLOT(slotAddLanguage(const QString &)));
+    connect(m_languages, SIGNAL(itemSelectionChanged()), SLOT(slotCheckButtons()));
+
+    m_upButton->setIcon(KIcon("arrow-up"));
+    m_downButton->setIcon(KIcon("arrow-down"));
+
+    languageAdd->loadAllLanguages();
 }
 
 void KLocaleConfig::slotAddLanguage(const QString & code)
 {
-#if 0
   QStringList languageList = m_locale->languageList();
 
-  int pos = m_languages->currentItem();
+  int pos = m_languages->currentRow();
   if ( pos < 0 )
     pos = 0;
 
@@ -84,28 +93,23 @@ void KLocaleConfig::slotAddLanguage(const QString & code)
   emit localeChanged();
   if ( pos == 0 )
     emit languageChanged();
-#endif
 }
 
 void KLocaleConfig::slotRemoveLanguage()
 {
-#if 0
   QStringList languageList = m_locale->languageList();
-  int pos = m_languages->currentItem();
+  int pos = m_languages->currentRow();
 
-  QStringList::iterator it = languageList.begin() + pos;
+  if (pos != -1)
+  {
+    languageList.removeAt(pos);
 
-  if ( it != languageList.end() )
-    {
-      languageList.erase( it );
+    m_locale->setLanguage( languageList );
 
-      m_locale->setLanguage( languageList );
-
-      emit localeChanged();
-      if ( pos == 0 )
-        emit languageChanged();
-    }
-#endif
+    emit localeChanged();
+    if ( pos == 0 )
+      emit languageChanged();
+  }
 }
 
 void KLocaleConfig::slotLanguageUp()
@@ -152,152 +156,11 @@ void KLocaleConfig::slotLanguageDown()
     }
 }
 
-void KLocaleConfig::loadLanguageList()
+void KLocaleConfig::changeCountry()
 {
-#if 0
-  // temperary use of our locale as the global locale
-  KLocale *lsave = KGlobal::_locale;
-  KGlobal::_locale = m_locale;
-
-  // clear the list
-  languageAdd->clear();
-
-  QStringList first = languageList();
-
-  QStringList prilang;
-  // add the primary languages for the country to the list
-  for ( QStringList::ConstIterator it = first.begin();
-        it != first.end();
-        ++it )
-  {
-    QString str = KStandardDirs::locate("locale", QString::fromLatin1("%1/entry.desktop")
-                         .arg(*it));
-    if (!str.isNull())
-      prilang << str;
-  }
-
-  // add all languages to the list
-  QStringList alllang = KGlobal::dirs()->findAllResources("locale",
-                               QString::fromLatin1("*/entry.desktop"),
-                               false, true);
-  QStringList langlist = prilang;
-  if (langlist.count() > 0)
-    langlist << QString(); // separator
-  langlist += alllang;
-
-// menu_index has to be removed for the country list, so perhaps there is the sae problem for the language list in KDE4 (see also kpersonalizer).
-#ifdef __GNUC__
-# warning "Check if menu_index is usable for the language list in KDE4"
-#endif
-  int menu_index = -2;
-  QString submenu; // we are working on this menu
-  for ( QStringList::ConstIterator it = langlist.begin();
-        it != langlist.end(); ++it )
-  {
-    if ((*it).isNull())
-    {
-      languageAdd->addSeparator();
-      submenu = QString::fromLatin1("other");
-      languageAdd->insertSubmenu(ki18n("Other").toString(m_locale),
-                                   submenu, QString(), -1);
-      menu_index = -2; // first entries should _not_ be sorted
-      continue;
-    }
-    KConfig entry(*it, KConfig::OnlyLocal);
-    entry.setGroup("KCM Locale");
-    QString name = entry.readEntry("Name",
-                                   ki18n("without name").toString(m_locale));
-
-    QString tag = *it;
-    int index = tag.lastIndexOf('/');
-    tag = tag.left(index);
-    index = tag.lastIndexOf('/');
-    tag = tag.mid(index + 1);
-    languageAdd->insertItem(name, tag, submenu, menu_index);
-  }
-
-  // restore the old global locale
-  KGlobal::_locale = lsave;
-#endif
-}
-
-void KLocaleConfig::loadCountryList()
-{
-#if 0
-  // temperary use of our locale as the global locale
-  KLocale *lsave = KGlobal::_locale;
-  KGlobal::_locale = m_locale;
-
-  QString sub = QString::fromLatin1("l10n/");
-
-  // clear the list
-  m_comboCountry->clear();
-
-  QStringList regionlist = KGlobal::dirs()->findAllResources("locale",
-                                 sub + QString::fromLatin1("*.desktop"),
-                                 false, true );
-
-  for ( QStringList::ConstIterator it = regionlist.begin();
-    it != regionlist.end();
-    ++it )
-  {
-    QString tag = *it;
-    int index;
-
-    index = tag.lastIndexOf('/');
-    if (index != -1)
-      tag = tag.mid(index + 1);
-
-    index = tag.lastIndexOf('.');
-    if (index != -1)
-      tag.truncate(index);
-
-    KSimpleConfig entry(*it);
-    entry.setGroup("KCM Locale");
-    QString name = entry.readEntry("Name",
-                                   ki18n("without name").toString(m_locale));
-
-    QString map( KStandardDirs::locate( "locale",
-                          QString::fromLatin1( "l10n/%1.png" )
-                          .arg(tag) ) );
-    //kDebug() << "REGION: " << (*it) << " Tag: " << tag << " Name: " << name << " Map: " << map;
-    QIcon icon;
-    if ( !map.isNull() )
-      icon = KIconLoader::global()->loadIconSet(map, K3Icon::Small);
-    m_comboCountry->insertSubmenu( icon, name, tag );
-  }
-
-  // add all languages to the list
-  QStringList countrylist = KGlobal::dirs()->findAllResources
-    ("locale", sub + QString::fromLatin1("*/entry.desktop"), false, true);
-
-  for ( QStringList::ConstIterator it = countrylist.begin();
-        it != countrylist.end(); ++it )
-  {
-    KSimpleConfig entry(*it);
-    entry.setGroup("KCM Locale");
-    QString name = entry.readEntry("Name",
-                                   ki18n("without name").toString(m_locale));
-    QString submenu = entry.readEntry("Region");
-
-    QString tag = *it;
-    int index = tag.lastIndexOf('/');
-    tag.truncate(index);
-    index = tag.lastIndexOf('/');
-    tag = tag.mid(index + 1);
-
-    QString flag( KStandardDirs::locate( "locale",
-                          QString::fromLatin1( "l10n/%1/flag.png" )
-                          .arg(tag) ) );
-    //kDebug() << "COUNTRY: " << (*it) << " Tag: " << tag << " Submenu: " << submenu << " Flag: " << flag;
-    QIcon icon( KIconLoader::global()->loadIconSet(flag, K3Icon::Small) );
-
-    m_comboCountry->insertItem( icon, name, tag, submenu );
-  }
-
-  // restore the old global locale
-  KGlobal::_locale = lsave;
-#endif
+  CountrySelectorDialog *csd = new CountrySelectorDialog(this);
+  if (csd->editCountry(m_locale)) emit localeChanged();
+  delete csd;
 }
 
 void KLocaleConfig::readLocale(const QString &path, QString &name,
@@ -338,7 +201,7 @@ void KLocaleConfig::save()
 
 void KLocaleConfig::slotCheckButtons()
 {
-  languageRemove->setEnabled( m_languages->currentRow() != -1 );
+  languageRemove->setEnabled( m_languages->currentRow() != -1 && m_languages->count() > 1 );
   m_upButton->setEnabled( m_languages->currentRow() > 0 );
   m_downButton->setEnabled( m_languages->currentRow() != -1 &&
                             m_languages->currentRow() < (signed)(m_languages->count() - 1) );
@@ -346,9 +209,6 @@ void KLocaleConfig::slotCheckButtons()
 
 void KLocaleConfig::slotLocaleChanged()
 {
-  loadLanguageList();
-  loadCountryList();
-
   // update language widget
   m_languages->clear();
   QStringList languageList = m_locale->languageList();
@@ -359,19 +219,20 @@ void KLocaleConfig::slotLocaleChanged()
     QString name;
     readLocale(*it, name, QString());
 
-    m_languages->insertItem(0, name);
+    m_languages->addItem(name);
   }
   slotCheckButtons();
 
-  // FIXME m_comboCountry->setCurrentItem( m_locale->country() );
+  QString country = m_locale->countryCodeToName(m_locale->country());
+  if (country.isEmpty()) country = i18nc("@item:intext Country", "Not Selected");
+  m_selectedCountryLabel->setText(i18nc("@info %1 is country name", "<html>%1 (<a href=\"changeCountry\">change...</a>)</html>", country));
 }
 
 void KLocaleConfig::slotTranslate()
 {
-  kDebug() << "slotTranslate()";
+  languageAdd->setText( ki18n("Add Language").toString(m_locale) );
 
-#if 0
-  m_comboCountry->setToolTip( ki18n
+  m_selectedCountryLabel->setToolTip( ki18n
         ( "This is where you live. KDE will use the defaults for "
           "this country or region.").toString(m_locale) );
   languageAdd->setToolTip( ki18n
@@ -392,8 +253,8 @@ void KLocaleConfig::slotTranslate()
     ( "Here you can choose your country or region. The settings "
       "for languages, numbers etc. will automatically switch to the "
       "corresponding values." ).toString(m_locale);
-  m_labCountry->setWhatsThis( str );
-  m_comboCountry->setWhatsThis( str );
+  m_crLabel->setWhatsThis( str );
+  m_selectedCountryLabel->setWhatsThis( str );
 
   str = ki18n
     ( "<p>Here you can choose the languages that will be used by KDE. If the "
@@ -403,11 +264,10 @@ void KLocaleConfig::slotTranslate()
       "languages from the place you got KDE from.</p><p>"
       "Note that some applications may not be translated to your languages; "
       "in this case, they will automatically fall back to US English.</p>" ).toString(m_locale);
-  m_labLang->setWhatsThis( str );
+  m_languagesLabel->setWhatsThis( str );
   m_languages->setWhatsThis( str );
   languageAdd->setWhatsThis( str );
   languageRemove->setWhatsThis( str );
-#endif
 }
 
 QStringList KLocaleConfig::languageList() const

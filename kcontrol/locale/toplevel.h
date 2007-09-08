@@ -25,14 +25,12 @@
 #ifndef __TOPLEVEL_H__
 #define __TOPLEVEL_H__
 
-#define KDE3_SUPPORT
 #include <kcmodule.h>
-#undef KDE3_SUPPORT
 #include <klocale.h>
 #include <kconfig.h>
 
+class QGroupBox;
 class QTabWidget;
-class Q3GroupBox;
 
 class KLocale;
 class KLocaleConfig;
@@ -76,7 +74,7 @@ private:
   KLocaleConfigTime   *m_localetime;
   KLocaleConfigOther  *m_localeother;
 
-  Q3GroupBox           *m_gbox;
+  QGroupBox           *m_gbox;
   KLocaleSample       *m_sample;
 
   KSharedConfigPtr m_globalConfig;

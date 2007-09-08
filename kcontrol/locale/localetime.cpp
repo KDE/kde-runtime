@@ -26,11 +26,6 @@
 #include <QLayout>
 
 #include <QComboBox>
-//Added by qt3to4:
-#include <QShowEvent>
-#include <QGridLayout>
-//Should have been:
-#include <QtAlgorithms>
 
 #include <KDialog>
 #include <KConfig>
@@ -263,6 +258,7 @@ KLocaleConfigTime::KLocaleConfigTime(KLocale *_locale,
 	     SLOT( slotDateMonthNamePossChanged() ) );
 
   lay->setColumnStretch(1, 1);
+  lay->setRowStretch(6, 1);
 }
 
 KLocaleConfigTime::~KLocaleConfigTime()

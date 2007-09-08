@@ -27,11 +27,9 @@
 #include <QLineEdit>
 
 #include <QLayout>
-#include <Qt3Support/Q3GroupBox>
 
 #include <QRegExp>
-//Added by qt3to4:
-#include <QGridLayout>
+
 #include <KNumInput>
 #include <KDialog>
 #include <KConfig>
@@ -47,102 +45,45 @@ KLocaleConfigMoney::KLocaleConfigMoney(KLocale *locale,
   : QWidget(parent),
     m_locale(locale)
 {
-  // Money
-  QGridLayout *lay = new QGridLayout( this );
-  lay->setMargin( KDialog::marginHint() );
-  lay->setSpacing( KDialog::spacingHint());
+  setupUi(this);
 
-  m_labMonCurSym = new QLabel(this);
+  // Money
   m_labMonCurSym->setObjectName( I18N_NOOP("Currency symbol:") );
-  lay->addWidget(m_labMonCurSym, 0, 0);
-  m_edMonCurSym = new QLineEdit(this);
-  lay->addWidget(m_edMonCurSym, 0, 1);
+  m_labMonDecSym->setObjectName( I18N_NOOP("Decimal symbol:") );
+  m_labMonThoSep->setObjectName( I18N_NOOP("Thousands separator:") );
+  m_labMonFraDig->setObjectName( I18N_NOOP("Fract digits:") );
+  m_positiveGB->setObjectName( I18N_NOOP("Positive") );
+  m_chMonPosPreCurSym->setObjectName(I18N_NOOP("Prefix currency symbol"));
+  m_labMonPosMonSignPos->setObjectName( I18N_NOOP("Sign position:") );
+  m_negativeGB->setObjectName( I18N_NOOP("Negative") );
+  m_chMonNegPreCurSym->setObjectName(I18N_NOOP("Prefix currency symbol"));
+  m_labMonNegMonSignPos->setObjectName( I18N_NOOP("Sign position:") );
+
   connect( m_edMonCurSym, SIGNAL( textChanged(const QString &) ),
            SLOT( slotMonCurSymChanged(const QString &) ) );
 
-  m_labMonDecSym = new QLabel(this);
-  m_labMonDecSym->setObjectName( I18N_NOOP("Decimal symbol:") );
-  lay->addWidget(m_labMonDecSym, 1, 0);
-  m_edMonDecSym = new QLineEdit(this);
-  lay->addWidget(m_edMonDecSym, 1, 1);
   connect( m_edMonDecSym, SIGNAL( textChanged(const QString &) ),
            SLOT( slotMonDecSymChanged(const QString &) ) );
 
-  m_labMonThoSep = new QLabel(this);
-  m_labMonThoSep->setObjectName( I18N_NOOP("Thousands separator:") );
-  lay->addWidget(m_labMonThoSep, 2, 0);
-  m_edMonThoSep = new QLineEdit(this);
-  lay->addWidget(m_edMonThoSep, 2, 1);
   connect( m_edMonThoSep, SIGNAL( textChanged(const QString &) ),
            SLOT( slotMonThoSepChanged(const QString &) ) );
-
-  m_labMonFraDig = new QLabel(this);
-  m_labMonFraDig->setObjectName( I18N_NOOP("Fract digits:") );
-  lay->addWidget(m_labMonFraDig, 3, 0);
-  m_inMonFraDig = new KIntNumInput(this);
-  m_inMonFraDig->setRange(0, 10, 1, false);
-  lay->addWidget(m_inMonFraDig, 3, 1);
 
   connect( m_inMonFraDig, SIGNAL( valueChanged(int) ),
            SLOT( slotMonFraDigChanged(int) ) );
 
-  QWidget *vbox = new QWidget(this);
-  QVBoxLayout *vboxLayout1 = new QVBoxLayout(vbox);
-  vbox->setLayout(vboxLayout1);
-  lay->addWidget(vbox, 4, 0, 1, 2 );
-  QGroupBox *vgrp = new QGroupBox( i18n("Positive"), vbox );
-  QVBoxLayout* vgrpLayout = new QVBoxLayout;
-  m_chMonPosPreCurSym = new QCheckBox(vgrp);
-  vgrpLayout->addWidget(m_chMonPosPreCurSym);
-  m_chMonPosPreCurSym->setObjectName(I18N_NOOP("Prefix currency symbol"));
   connect( m_chMonPosPreCurSym, SIGNAL( clicked() ),
            SLOT( slotMonPosPreCurSymChanged() ) );
 
-  QWidget *hbox;
-  hbox = new QWidget(vgrp );
-  vgrpLayout->addWidget(hbox);
-  QHBoxLayout *hboxLayout1 = new QHBoxLayout(hbox);
-  hbox->setLayout(hboxLayout1);
-  m_labMonPosMonSignPos = new QLabel(hbox);
-  m_labMonPosMonSignPos->setObjectName( I18N_NOOP("Sign position:") );
-  m_cmbMonPosMonSignPos = new QComboBox(hbox);
-  m_cmbMonPosMonSignPos->setObjectName("signpos");
   connect( m_cmbMonPosMonSignPos, SIGNAL( activated(int) ),
            SLOT( slotMonPosMonSignPosChanged(int) ) );
 
-  vgrp->setLayout(vgrpLayout);
-  vgrp = new QGroupBox( i18n("Negative"), vbox );
-  vgrpLayout = new QVBoxLayout;
-  m_chMonNegPreCurSym = new QCheckBox(vgrp);
-  vgrpLayout->addWidget(m_chMonNegPreCurSym);
-  m_chMonNegPreCurSym->setObjectName(I18N_NOOP("Prefix currency symbol"));
   connect( m_chMonNegPreCurSym, SIGNAL( clicked() ),
            SLOT( slotMonNegPreCurSymChanged() ) );
 
-  hbox = new QWidget(vgrp );
-  vgrpLayout->addWidget(hbox);
-  vgrp->setLayout(vgrpLayout);
-  QHBoxLayout *hboxLayout2 = new QHBoxLayout(hbox);
-  hbox->setLayout(hboxLayout2);
-  m_labMonNegMonSignPos = new QLabel(hbox);
-  m_labMonNegMonSignPos->setObjectName( I18N_NOOP("Sign position:") );
-  m_cmbMonNegMonSignPos = new QComboBox(hbox);
-  m_cmbMonNegMonSignPos->setObjectName("signpos");
   connect( m_cmbMonNegMonSignPos, SIGNAL( activated(int) ),
            SLOT( slotMonNegMonSignPosChanged(int) ) );
 
-  // insert some items
-  int i = 5;
-  while (i--)
-  {
-    m_cmbMonPosMonSignPos->addItem(QString());
-    m_cmbMonNegMonSignPos->addItem(QString());
-  }
-
-  lay->setColumnStretch(1, 1);
-  lay->addItem(new QSpacerItem(0, 0), 5, 0);
-
-  adjustSize();
+  m_inMonFraDig->setRange(0, 10, 1, false);
 }
 
 KLocaleConfigMoney::~KLocaleConfigMoney()

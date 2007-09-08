@@ -21,27 +21,19 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-
 #ifndef LOCALEMON_H
 #define LOCALEMON_H
 
-#include <QWidget>
-//Added by qt3to4:
-#include <QLabel>
+#include "ui_localemon.h"
 
-class QCheckBox;
-class QComboBox;
-class QLineEdit;
-
-class KIntNumInput;
 class KLocale;
 
-class KLocaleConfigMoney : public QWidget
+class KLocaleConfigMoney : public QWidget, Ui::localemon
 {
   Q_OBJECT
 
 public:
-  explicit KLocaleConfigMoney(KLocale *locale, QWidget *parent = 0);
+  KLocaleConfigMoney(KLocale *locale, QWidget *parent);
   virtual ~KLocaleConfigMoney();
 
   void save();
@@ -72,23 +64,6 @@ private Q_SLOTS:
 
 private:
   KLocale *m_locale;
-
-  // Money
-  QLabel *m_labMonCurSym;
-  QLineEdit *m_edMonCurSym;
-  QLabel *m_labMonDecSym;
-  QLineEdit *m_edMonDecSym;
-  QLabel *m_labMonThoSep;
-  QLineEdit *m_edMonThoSep;
-  QLabel *m_labMonFraDig;
-  KIntNumInput * m_inMonFraDig;
-
-  QCheckBox *m_chMonPosPreCurSym;
-  QCheckBox *m_chMonNegPreCurSym;
-  QLabel *m_labMonPosMonSignPos;
-  QComboBox *m_cmbMonPosMonSignPos;
-  QLabel *m_labMonNegMonSignPos;
-  QComboBox *m_cmbMonNegMonSignPos;
 };
 
 #endif // LOCALEMON_H

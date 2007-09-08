@@ -1,0 +1,196 @@
+<ui version="4.0" >
+ <class>localemon</class>
+ <widget class="QWidget" name="localemon" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>460</width>
+    <height>433</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" >
+   <item>
+    <layout class="QGridLayout" >
+     <item row="0" column="0" >
+      <widget class="QLabel" name="m_labMonCurSym" >
+       <property name="text" >
+        <string>Currency symbol:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1" >
+      <widget class="QLineEdit" name="m_edMonCurSym" />
+     </item>
+     <item row="1" column="0" >
+      <widget class="QLabel" name="m_labMonDecSym" >
+       <property name="text" >
+        <string>Decimal symbol:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1" >
+      <widget class="QLineEdit" name="m_edMonDecSym" />
+     </item>
+     <item row="2" column="0" >
+      <widget class="QLabel" name="m_labMonThoSep" >
+       <property name="text" >
+        <string>Thousands separator:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1" >
+      <widget class="QLineEdit" name="m_edMonThoSep" />
+     </item>
+     <item row="3" column="0" >
+      <widget class="QLabel" name="m_labMonFraDig" >
+       <property name="text" >
+        <string>Fract digits:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1" >
+      <widget class="KIntNumInput" name="m_inMonFraDig" />
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="m_positiveGB" >
+     <property name="title" >
+      <string>Positive</string>
+     </property>
+     <layout class="QVBoxLayout" >
+      <item>
+       <widget class="QCheckBox" name="m_chMonPosPreCurSym" >
+        <property name="text" >
+         <string>Prefix currency symbol</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" >
+        <item>
+         <widget class="QLabel" name="m_labMonPosMonSignPos" >
+          <property name="text" >
+           <string>Sign position:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="m_cmbMonPosMonSignPos" >
+          <item>
+           <property name="text" >
+            <string>Parentheses Around</string>
+           </property>
+          </item>
+          <item>
+           <property name="text" >
+            <string>Before Quantity Money</string>
+           </property>
+          </item>
+          <item>
+           <property name="text" >
+            <string>After Quantity Money</string>
+           </property>
+          </item>
+          <item>
+           <property name="text" >
+            <string>Before Money</string>
+           </property>
+          </item>
+          <item>
+           <property name="text" >
+            <string>After Money</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="m_negativeGB" >
+     <property name="title" >
+      <string>Negative</string>
+     </property>
+     <layout class="QVBoxLayout" >
+      <item>
+       <widget class="QCheckBox" name="m_chMonNegPreCurSym" >
+        <property name="text" >
+         <string>Prefix currency symbol</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" >
+        <item>
+         <widget class="QLabel" name="m_labMonNegMonSignPos" >
+          <property name="text" >
+           <string>Sign position:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="m_cmbMonNegMonSignPos" >
+          <item>
+           <property name="text" >
+            <string>Parentheses Around</string>
+           </property>
+          </item>
+          <item>
+           <property name="text" >
+            <string>Before Quantity Money</string>
+           </property>
+          </item>
+          <item>
+           <property name="text" >
+            <string>After Quantity Money</string>
+           </property>
+          </item>
+          <item>
+           <property name="text" >
+            <string>Before Money</string>
+           </property>
+          </item>
+          <item>
+           <property name="text" >
+            <string>After Money</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" >
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>KIntNumInput</class>
+   <extends>QWidget</extends>
+   <header>knuminput.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>
