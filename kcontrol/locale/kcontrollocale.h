@@ -34,7 +34,7 @@ public:
 
     void setLanguage(const QString &lang)
     {
-        KLocale::setLanguage(lang);
+        KLocale::setLanguage(lang, config.data());
     }
 
     void setLanguage(const QStringList &langlist)
@@ -44,7 +44,7 @@ public:
 
     bool setCountry(const QString &country)
     {
-        return KLocale::setCountry(country);
+        return KLocale::setCountry(country, config.data());
     }
 private:
     KSharedConfig::Ptr config;
