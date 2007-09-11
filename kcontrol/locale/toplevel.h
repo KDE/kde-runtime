@@ -32,7 +32,7 @@
 class QGroupBox;
 class QTabWidget;
 
-class KLocale;
+class KControlLocale;
 class KLocaleConfig;
 class KLocaleConfigMoney;
 class KLocaleConfigNumber;
@@ -65,7 +65,7 @@ public Q_SLOTS:
   void slotChanged();
 
 private:
-  KLocale *m_locale;
+  KControlLocale *m_locale;
 
   QTabWidget          *m_tab;
   KLocaleConfig       *m_localemain;

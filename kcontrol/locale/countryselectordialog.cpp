@@ -9,7 +9,8 @@
 
 #include "countryselectordialog.h"
 
-#include <KLocale>
+#include "kcontrollocale.h"
+
 #include <KStandardDirs>
 
 #include <QAbstractItemModel>
@@ -220,7 +221,7 @@ CountrySelectorDialog::CountrySelectorDialog(QWidget *parent) : KDialog(parent)
     setMainWidget(widget);
 }
 
-bool CountrySelectorDialog::editCountry(KLocale *locale)
+bool CountrySelectorDialog::editCountry(KControlLocale *locale)
 {
     QHBoxLayout *hbl = new QHBoxLayout(mainWidget());
     CSDListView *lv1 = new CSDListView(mainWidget());

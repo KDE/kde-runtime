@@ -28,7 +28,7 @@
 #include <QWidget>
 #include "ui_language.h"
 
-class KLocale;
+class KControlLocale;
 
 
 class KLocaleConfig : public QWidget, public Ui_Language
@@ -36,7 +36,7 @@ class KLocaleConfig : public QWidget, public Ui_Language
   Q_OBJECT
 
 public:
-  explicit KLocaleConfig( KLocale *_locale, QWidget *parent = 0);
+  explicit KLocaleConfig( KControlLocale *_locale, QWidget *parent = 0);
 
   void save();
 
@@ -70,7 +70,7 @@ private Q_SLOTS:
 private:
   QStringList languageList() const;
 
-  KLocale *m_locale;
+  KControlLocale *m_locale;
 };
 
 #endif

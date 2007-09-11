@@ -46,6 +46,7 @@
 #include <kconfiggroup.h>
 #include <kpluginfactory.h>
 #include <kpluginloader.h>
+#include "kcontrollocale.h"
 
 K_PLUGIN_FACTORY(KLocaleFactory,
         KLocale::setMainCatalog("kcmlocale");
@@ -70,7 +71,7 @@ KLocaleApplication::KLocaleApplication(QWidget *parent,
   m_nullConfig = KSharedConfig::openConfig(QString(), KConfig::NoGlobals );
   m_globalConfig = KSharedConfig::openConfig(QString(), KConfig::IncludeGlobals );
 
-  m_locale = new KLocale(QLatin1String("kcmlocale"), m_nullConfig);
+  m_locale = new KControlLocale(QLatin1String("kcmlocale"), m_nullConfig);
 
   QVBoxLayout *l = new QVBoxLayout(this);
   l->setMargin(0);
@@ -170,7 +171,7 @@ KLocaleApplication::~KLocaleApplication()
 void KLocaleApplication::load()
 {
   m_globalConfig->reparseConfiguration();
-  *m_locale = KLocale(QLatin1String("kcmlocale"), m_globalConfig);
+  *m_locale = KControlLocale(QLatin1String("kcmlocale"), m_globalConfig);
 
   emit localeChanged();
   emit languageChanged();
@@ -216,7 +217,7 @@ void KLocaleApplication::save()
 
 void KLocaleApplication::defaults()
 {
-  *m_locale = KLocale(QLatin1String("kcmlocale"), m_nullConfig);
+  *m_locale = KControlLocale(QLatin1String("kcmlocale"), m_nullConfig);
 
   kDebug() << "defaults: " << m_locale->languageList();
 

@@ -14,7 +14,7 @@
 
 class CSDListView;
 
-class KLocale;
+class KControlLocale;
 
 class QModelIndex;
 
@@ -24,7 +24,7 @@ Q_OBJECT
     public:
         CountrySelectorDialog(QWidget *parent);
 
-        bool editCountry(KLocale *locale);
+        bool editCountry(KControlLocale *locale);
 
     private slots:
         void regionChanged(const QModelIndex &current);

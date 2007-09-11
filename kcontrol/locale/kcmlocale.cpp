@@ -39,8 +39,9 @@
 #include "toplevel.h"
 #include "klanguagebutton.h"
 #include "countryselectordialog.h"
+#include "kcontrollocale.h"
 
-KLocaleConfig::KLocaleConfig(KLocale *locale, QWidget *parent)
+KLocaleConfig::KLocaleConfig(KControlLocale *locale, QWidget *parent)
   : QWidget (parent),
     m_locale(locale)
 {
