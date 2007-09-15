@@ -72,19 +72,6 @@ ByteStream::ByteStream(const MediaSource &mediaSource, MediaObject* parent)
     //m_mainThread = pthread_self();
 }
 
-//X void ByteStream::setMrl()
-//X {
-//X     if (m_mrlSet || m_streamSize <= 0 || m_preview.size() < MAX_PREVIEW_SIZE) {
-//X         return;
-//X     }
-//X     m_mrlSet = true;
-//X     stream().setMrl(mrl());
-//X //X     if (m_playRequested) {
-//X //X         m_playRequested = false;
-//X //X         MediaObject::play();
-//X //X     }
-//X }
-
 void ByteStream::pullBuffer(char *buf, int len)
 {
     if (m_stopped) {
@@ -150,7 +137,6 @@ int ByteStream::peekBuffer(void *buf)
         }
         if (m_stopped) {
             PXINE_DEBUG << "returning 0, m_stopped = true";
-            //kDebug(610) << "UNLOCKING m_mutex: ";
             return 0;
         }
     }
@@ -353,7 +339,6 @@ void ByteStream::setStreamSize(qint64 x)
     if (m_streamSize != 0) {
         emit needDataQueued();
         m_waitForStreamSize.wakeAll();
-//X         setMrl();
     }
 }
 
@@ -421,6 +406,7 @@ void ByteStream::writeData(const QByteArray &data)
     m_buffers.enqueue(data);
     m_buffersize += data.size();
     PXINE_VDEBUG << "m_buffersize = " << m_buffersize;
+    // FIXME accessing m_mediaObject is not threadsafe
     switch (m_mediaObject->state()) {
     case Phonon::BufferingState: // if nbc is buffering we want more data
     case Phonon::LoadingState: // if the preview is not ready we want me more data

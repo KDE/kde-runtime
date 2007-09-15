@@ -146,6 +146,7 @@ bool XineStream::xineOpen(Phonon::State newstate)
         }
         return false;
     }
+    kDebug(610) << "xine_open succeeded for m_mrl = " << m_mrl.constData();
 
     if ((m_mrl.startsWith("dvd:/") && XineEngine::deinterlaceDVD()) ||
         (m_mrl.startsWith("vcd:/") && XineEngine::deinterlaceVCD()) ||
@@ -653,8 +654,9 @@ bool XineStream::event(QEvent *ev)
                 m_prefinishMarkReachedNotEmitted = true;
                 m_mutex.unlock();
             }
-            xineOpen(Phonon::BufferingState);
-            internalPlay();
+            if (xineOpen(Phonon::BufferingState)) {
+                internalPlay();
+            }
         }
         return true;
     case Event::UiChannelsChanged:
@@ -910,7 +912,9 @@ bool XineStream::event(QEvent *ev)
                     m_waitingForClose.wakeAll();
                 } else {
                     kDebug(610) << "calling xineOpen from MrlChanged";
-                    xineOpen(Phonon::StoppedState);
+                    if (!xineOpen(Phonon::StoppedState)) {
+                        return true;
+                    }
                     switch (e->stateForNewMrl) {
                     case StoppedState:
                         break;
