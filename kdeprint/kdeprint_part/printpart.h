@@ -37,8 +37,6 @@ public:
 		  const QVariantList & );
 	virtual ~PrintPart();
 
-	static KAboutData *createAboutData();
-
 protected:
 	bool openFile();
 	void initActions();

@@ -27,11 +27,12 @@
 #include <kiconloader.h>
 #include <kaboutdata.h>
 #include <kdebug.h>
-#include <kparts/genericfactory.h>
+#include <kpluginfactory.h>
+#include <kpluginloader.h>
 #include <QWidget>
 
 K_PLUGIN_FACTORY(PrintPartFactory, registerPlugin<PrintPart>();)
-K_EXPORT_PLUGIN(PrintPartFactory)
+K_EXPORT_PLUGIN(PrintPartFactory(KAboutData(I18N_NOOP("kdeprint_part"), 0, ki18n("A Konqueror Plugin for Print Management"), "0.1")))
 
 PrintPart::PrintPart(QWidget *parentWidget,
 	             QObject *parent,
@@ -55,11 +56,6 @@ PrintPart::PrintPart(QWidget *parentWidget,
 PrintPart::~PrintPart()
 {
 	delete m_iconLoader;
-}
-
-KAboutData *PrintPart::createAboutData()
-{
-	return new KAboutData(I18N_NOOP("kdeprint_part"), 0, ki18n("A Konqueror Plugin for Print Management"), "0.1");
 }
 
 bool PrintPart::openFile()
