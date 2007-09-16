@@ -28,9 +28,7 @@ namespace Phonon
 {
 namespace Xine
 {
-	class AudioPath;
-	class AbstractVideoOutput;
-
+		
 class Visualization : public QObject, public SinkNode, public SourceNode
 {
 	Q_OBJECT

@@ -58,8 +58,6 @@ namespace Phonon
 namespace Xine
 {
 
-class SourceNode;
-class SinkNode;
 
 class Event : public QEvent
 {

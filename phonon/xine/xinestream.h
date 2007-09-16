@@ -44,7 +44,6 @@ namespace Xine
 class VideoWidget;
 class SeekCommandEvent;
 class MediaObject;
-class XineThread;
 
 /**
  * \brief xine_stream_t wrapper that runs in its own thread.

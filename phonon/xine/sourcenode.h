@@ -31,7 +31,6 @@ namespace Phonon
 namespace Xine
 {
 class SinkNode;
-class MediaObject;
 class Event;
 
 class SourceNodeXT : virtual public QSharedData

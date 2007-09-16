@@ -45,7 +45,6 @@ class AudioOutputXT : public SinkNodeXT
         AudioPort m_audioPort;
 };
 
-    class MediaObject;
     class AudioOutput : public AbstractAudioOutput, public AudioOutputInterface
 	{
 		Q_OBJECT

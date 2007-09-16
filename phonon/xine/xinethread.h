@@ -29,7 +29,6 @@ namespace Phonon
 namespace Xine
 {
 class XineStream;
-class AudioPostList;
 
 class XineThread : public QThread
 {
