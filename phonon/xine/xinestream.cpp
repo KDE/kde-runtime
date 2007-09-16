@@ -807,9 +807,13 @@ bool XineStream::event(QEvent *ev)
             {
                 GaplessSwitchEvent *e = static_cast<GaplessSwitchEvent*>(ev);
                 m_mutex.lock();
-                m_mrl = e->mrl;
-                kDebug(610) << "GaplessSwitch new m_mrl = " << m_mrl.constData();
-                if (m_mrl.isEmpty() || m_closing) {
+                if (e->mrl.isEmpty()) {
+                    kDebug(610) << "no GaplessSwitch";
+                } else {
+                    m_mrl = e->mrl;
+                    kDebug(610) << "GaplessSwitch new m_mrl = " << m_mrl.constData();
+                }
+                if (e->mrl.isEmpty() || m_closing) {
                     xine_set_param(m_stream, XINE_PARAM_GAPLESS_SWITCH, 0);
                     m_mutex.unlock();
                     playbackFinished();

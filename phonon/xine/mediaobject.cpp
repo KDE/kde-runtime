@@ -388,7 +388,6 @@ void MediaObject::setNextSource(const MediaSource &source)
         // the frontend is telling us that the play-queue is empty, so stop waiting for a new MRL
         // for gapless playback
         m_stream->gaplessSwitchTo(QByteArray());
-        setSourceInternal(m_mediaSource, HardSwitch);
         return;
     }
     if (m_transitionTime < 0) {
