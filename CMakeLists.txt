@@ -14,6 +14,8 @@ include (MacroOptionalFindPackage)
 include(MacroOptionalAddSubdirectory)
 include(CheckFunctionExists)
 
+check_include_files(sys/wait.h HAVE_SYS_WAIT_H)
+
 configure_file (config-runtime.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-runtime.h )
 
 add_definitions (${QT_DEFINITIONS} ${KDE4_DEFINITIONS})
