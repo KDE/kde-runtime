@@ -37,6 +37,7 @@
 #include <kpluginfactory.h>
 #include <kpluginloader.h>
 
+#include <QtCore/QByteArray>
 #include <QtCore/QCoreApplication>
 #include <QtCore/QSet>
 #include <QtCore/QVariant>
@@ -73,7 +74,9 @@ Backend::Backend(QObject *parent, const QVariantList &)
     new XineEngine(XineBackendFactory::componentData().config());
 	char configfile[2048];
 
-    xine_engine_set_param(XineEngine::xine(), XINE_ENGINE_PARAM_VERBOSITY, 99);
+    const QByteArray phonon_xine_verbosity(getenv("PHONON_XINE_VERBOSITY"));
+    kDebug(610) << "setting xine verbosity to" << phonon_xine_verbosity.toInt();
+    xine_engine_set_param(XineEngine::xine(), XINE_ENGINE_PARAM_VERBOSITY, phonon_xine_verbosity.toInt());
 	sprintf(configfile, "%s%s", xine_get_homedir(), "/.xine/config");
 	xine_config_load( XineEngine::xine(), configfile );
 	xine_init( XineEngine::xine() );
