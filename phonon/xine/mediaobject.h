@@ -25,7 +25,6 @@
 #include <phonon/addoninterface.h>
 
 #include "xineengine.h"
-#include "xinestream.h"
 
 #include <QByteArray>
 #include <QList>
@@ -43,6 +42,7 @@ namespace Phonon
 {
 namespace Xine
 {
+class XineStream;
 class ByteStream;
 
     class MediaObject : public QObject, public MediaObjectInterface, public AddonInterface, public SourceNode

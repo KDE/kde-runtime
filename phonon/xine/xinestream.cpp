@@ -30,6 +30,7 @@
 #include "xinethread.h"
 #include <klocale.h>
 #include "events.h"
+#include "bytestream.h"
 
 extern "C" {
 #define this _this_xine_
@@ -54,6 +55,7 @@ XineStream::XineStream()
     m_event_queue(0),
     m_deinterlacer(0),
     m_state(Phonon::LoadingState),
+    m_byteStream(0),
     m_prefinishMarkTimer(0),
     m_errorType(Phonon::NoError),
     m_lastSeekCommand(0),
@@ -110,7 +112,7 @@ bool XineStream::xineOpen(Phonon::State newstate)
 
 #ifdef DISABLE_FILE_MRLS
     if (m_mrl.startsWith("file:/")) {
-        kDebug(610) << "faked xine_open failed for m_mrl = " << m_mrl.constData();
+        kDebug(610) << "faked xine_open failed for m_mrl =" << m_mrl.constData();
         error(Phonon::NormalError, i18n("Cannot open media data at '<i>%1</i>'", m_mrl.constData()));
         return false;
     }
@@ -119,7 +121,7 @@ bool XineStream::xineOpen(Phonon::State newstate)
     // xine_open can call functions from ByteStream which will block waiting for data.
     //kDebug(610) << "xine_open(" << m_mrl.constData() << ")";
     if (xine_open(m_stream, m_mrl.constData()) == 0) {
-        kDebug(610) << "xine_open failed for m_mrl = " << m_mrl.constData();
+        kDebug(610) << "xine_open failed for m_mrl =" << m_mrl.constData();
         switch (xine_get_error(m_stream)) {
         case XINE_ERROR_NONE:
             // hmm?
@@ -146,7 +148,7 @@ bool XineStream::xineOpen(Phonon::State newstate)
         }
         return false;
     }
-    kDebug(610) << "xine_open succeeded for m_mrl = " << m_mrl.constData();
+    kDebug(610) << "xine_open succeeded for m_mrl =" << m_mrl.constData();
 
     if ((m_mrl.startsWith("dvd:/") && XineEngine::deinterlaceDVD()) ||
         (m_mrl.startsWith("vcd:/") && XineEngine::deinterlaceVCD()) ||
@@ -544,6 +546,10 @@ void XineStream::playbackFinished()
         changeState(Phonon::StoppedState);
         emit finished();
         xine_close(m_stream); // TODO: is it necessary? should xine_close be called as late as possible?
+        if (m_mrl.startsWith("kbytestream:/")) {
+            // the ByteStream object will get deleted soon triggered by the above xine_close, that
+            // means the encoded pointer in the MRL is dangling
+        }
         m_streamInfoReady = false;
         m_prefinishMarkReachedNotEmitted = true;
     }
@@ -646,7 +652,7 @@ bool XineStream::event(QEvent *ev)
         ev->accept();
         {
             ReferenceEvent *e = static_cast<ReferenceEvent *>(ev);
-            m_mrl = e->mrl;
+            setMrlInternal(e->mrl);
             if (xine_get_status(m_stream) != XINE_STATUS_IDLE) {
                 m_mutex.lock();
                 xine_close(m_stream);
@@ -810,8 +816,8 @@ bool XineStream::event(QEvent *ev)
                 if (e->mrl.isEmpty()) {
                     kDebug(610) << "no GaplessSwitch";
                 } else {
-                    m_mrl = e->mrl;
-                    kDebug(610) << "GaplessSwitch new m_mrl = " << m_mrl.constData();
+                    setMrlInternal(e->mrl);
+                    kDebug(610) << "GaplessSwitch new m_mrl =" << m_mrl.constData();
                 }
                 if (e->mrl.isEmpty() || m_closing) {
                     xine_set_param(m_stream, XINE_PARAM_GAPLESS_SWITCH, 0);
@@ -890,7 +896,7 @@ bool XineStream::event(QEvent *ev)
                     return true;
                 }*/
                 State previousState = m_state;
-                m_mrl = e->mrl;
+                setMrlInternal(e->mrl);
                 m_errorType = Phonon::NoError;
                 m_errorString = QString();
                 if (!m_stream) {
@@ -912,7 +918,7 @@ bool XineStream::event(QEvent *ev)
                     m_mutex.unlock();
                 }
                 if (m_closing || m_mrl.isEmpty()) {
-                    kDebug(610) << "MrlChanged: don't call xineOpen. m_closing = " << m_closing << ", m_mrl = " << m_mrl.constData();
+                    kDebug(610) << "MrlChanged: don't call xineOpen. m_closing =" << m_closing << ", m_mrl =" << m_mrl.constData();
                     m_waitingForClose.wakeAll();
                 } else {
                     kDebug(610) << "calling xineOpen from MrlChanged";
@@ -1424,6 +1430,27 @@ void XineStream::internalPlay()
     } else {
         changeState(Phonon::BufferingState);
         m_waitForPlayingTimerId = startTimer(50);
+    }
+}
+
+void XineStream::setMrlInternal(const QByteArray &newMrl)
+{
+    if (newMrl != m_mrl) {
+        if (m_mrl.startsWith("kbytestream:/")) {
+            Q_ASSERT(m_byteStream);
+            Q_ASSERT(ByteStream::fromMrl(m_mrl) == m_byteStream);
+            if (!m_byteStream->ref.deref()) {
+                m_byteStream->deleteLater();
+            }
+            m_byteStream = 0;
+        }
+        m_mrl = newMrl;
+        if (m_mrl.startsWith("kbytestream:/")) {
+            Q_ASSERT(m_byteStream == 0);
+            m_byteStream = ByteStream::fromMrl(m_mrl);
+            Q_ASSERT(m_byteStream);
+            m_byteStream->ref.ref();
+        }
     }
 }
 

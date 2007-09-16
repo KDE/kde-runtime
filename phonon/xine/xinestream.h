@@ -44,6 +44,7 @@ namespace Xine
 class VideoWidget;
 class SeekCommandEvent;
 class MediaObject;
+class ByteStream;
 
 /**
  * \brief xine_stream_t wrapper that runs in its own thread.
@@ -168,6 +169,7 @@ class XineStream : public QObject, public SourceNodeXT
         void error(Phonon::ErrorType, const QString &);
         void internalPause();
         void internalPlay();
+        void setMrlInternal(const QByteArray &newMrl);
 
         xine_stream_t *m_stream;
         xine_event_queue_t *m_event_queue;
@@ -184,6 +186,7 @@ class XineStream : public QObject, public SourceNodeXT
         QWaitCondition m_waitingForRewire;
         QMultiMap<QString, QString> m_metaDataMap;
         QByteArray m_mrl;
+        ByteStream *m_byteStream;
         QTimer *m_prefinishMarkTimer;
         struct timeval m_lastTimeUpdate;
 

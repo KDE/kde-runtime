@@ -49,6 +49,43 @@ namespace Phonon
 {
 namespace Xine
 {
+
+ByteStream *ByteStream::fromMrl(const QByteArray &mrl)
+{
+    if (!mrl.startsWith("kbytestream:/")) {
+        return 0;
+    }
+    ByteStream *ret = 0;
+    const unsigned int length = mrl.length();
+    Q_ASSERT(length >= 13 + sizeof(void *) && length <= 13 + 2 * sizeof(void *));
+    const unsigned char *encoded = reinterpret_cast<const unsigned char*>(mrl.constData() + 13);
+    unsigned char *addrHack = reinterpret_cast<unsigned char *>(&ret);
+    for (unsigned int i = 0; i < sizeof(void *); ++i, ++encoded) {
+        if(*encoded == 0x01) {
+            ++encoded;
+            switch (*encoded) {
+            case 0x01:
+                addrHack[i] = '\0';
+                break;
+            case 0x02:
+                addrHack[i] = '\1';
+                break;
+            case 0x03:
+                addrHack[i] = '#';
+                break;
+            case 0x04:
+                addrHack[i] = '%';
+                break;
+            default:
+                abort();
+            }
+        } else {
+            addrHack[i] = *encoded;
+        }
+    }
+    return ret;
+}
+
 ByteStream::ByteStream(const MediaSource &mediaSource, MediaObject* parent)
     : QObject(0), // don't let MediaObject's ~QObject delete us - the input plugin will delete us
     m_mediaObject(parent),
@@ -352,6 +389,7 @@ void ByteStream::setPauseForBuffering(bool b)
         m_buffering = false;
     }
 }
+
 void ByteStream::endOfData()
 {
     PXINE_DEBUG;

@@ -25,11 +25,15 @@
 
 #include <kdemacros.h>
 
+#include <QExplicitlySharedDataPointer>
+
 #define __STDC_FORMAT_MACROS
 #include <inttypes.h>
 
 #include <xine.h>
 #include "bytestream.h"
+#include <assert.h>
+
 extern "C" {
 // xine headers use the reserved keyword this:
 #define this this_xine
@@ -38,7 +42,6 @@ extern "C" {
 #include <xine/xine_internal.h>
 #include <xine/xineutils.h>
 #include "net_buf_ctrl.h"
-#include <assert.h>
 #undef this
 
 typedef struct {
@@ -54,7 +57,7 @@ typedef struct {
     xine_stream_t    *stream;
     nbc_t *nbc;
     char *mrl;
-    Phonon::Xine::ByteStream *bytestream;
+    QExplicitlySharedDataPointer<Phonon::Xine::ByteStream> bytestream;
 } kbytestream_input_plugin_t;
 
 static uint32_t kbytestream_plugin_get_capabilities (input_plugin_t *this_gen) {
@@ -161,7 +164,9 @@ static void kbytestream_plugin_dispose (input_plugin_t *this_gen ) {
         nbc_close(that->nbc);
         that->nbc = NULL;
     }
-    that->bytestream->deleteLater();
+    if (!that->bytestream->ref.deref()) {
+        that->bytestream->deleteLater();
+    }
     free (that->mrl);
     free (that);
 }
@@ -210,34 +215,8 @@ static input_plugin_t *kbytestream_class_get_instance (input_class_t *cls_gen, x
     nbc_set_pause_cb(that->nbc, kbytestream_pause_cb, that);
     nbc_set_normal_cb(that->nbc, kbytestream_normal_cb, that);
     that->mrl    = strdup( mrl );
-    // 13 == strlen("kbytestream:/")
-    assert(strlen(mrl) >= 13 + sizeof(void *) && strlen(mrl) <= 13 + 2 * sizeof(void *));
-    const unsigned char *encoded = reinterpret_cast<const unsigned char*>( mrl + 13 );
-    unsigned char *addrHack = reinterpret_cast<unsigned char *>(&that->bytestream);
-    for (unsigned int i = 0; i < sizeof(void *); ++i, ++encoded) {
-        if( *encoded == 0x01 )
-        {
-            ++encoded;
-            switch (*encoded) {
-            case 0x01:
-                addrHack[i] = '\0';
-                break;
-            case 0x02:
-                addrHack[i] = '\1';
-                break;
-            case 0x03:
-                addrHack[i] = '#';
-                break;
-            case 0x04:
-                addrHack[i] = '%';
-                break;
-            default:
-                abort();
-            }
-        }
-        else
-            addrHack[i] = *encoded;
-    }
+    that->bytestream = Phonon::Xine::ByteStream::fromMrl(mrl);
+    that->bytestream->ref.ref();
 
     that->input_plugin.open               = kbytestream_plugin_open;
     that->input_plugin.get_capabilities   = kbytestream_plugin_get_capabilities;

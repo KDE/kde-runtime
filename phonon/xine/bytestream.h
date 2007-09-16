@@ -27,6 +27,7 @@
 #include "xineengine.h"
 #include <phonon/streaminterface.h>
 #include <QByteArray>
+#include <QSharedData>
 #include <QQueue>
 #include <kdebug.h>
 #include <QCoreApplication>
@@ -40,11 +41,13 @@ namespace Phonon
 {
 namespace Xine
 {
-    class ByteStream : public QObject, public StreamInterface
+class MediaObject;
+    class ByteStream : public QObject, public StreamInterface, public QSharedData
     {
         Q_OBJECT
         Q_INTERFACES(Phonon::StreamInterface)
         public:
+            static ByteStream *fromMrl(const QByteArray &mrl);
             ByteStream(const MediaSource &, MediaObject* parent);
             ~ByteStream();
 
