@@ -42,32 +42,9 @@ static void kbytestream_normal_cb(void *that_gen);
 class KByteStreamInputPlugin : public input_plugin_t
 {
 public:
-    KByteStreamInputPlugin(xine_stream_t *stream, const char *_mrl)
-        : m_stream(stream),
-        m_nbc(nbc_init(stream)),
-        m_mrl(_mrl),
-        m_bytestream(Phonon::Xine::ByteStream::fromMrl(m_mrl))
-    {
-        input_plugin_t *that = this;
-        memset(that, 0, sizeof(input_plugin_t));
+    KByteStreamInputPlugin(xine_stream_t *stream, const char *_mrl);
 
-        if (m_bytestream) {
-            m_bytestream->ref.ref();
-        }
-
-        nbc_set_pause_cb(m_nbc, kbytestream_pause_cb, this);
-        nbc_set_normal_cb(m_nbc, kbytestream_normal_cb, this);
-    }
-
-    ~KByteStreamInputPlugin()
-    {
-        if (m_nbc) {
-            nbc_close(m_nbc);
-        }
-        if (!m_bytestream->ref.deref()) {
-            m_bytestream->deleteLater();
-        }
-    }
+    ~KByteStreamInputPlugin();
 
     inline const char *mrl() const { return m_mrl.constData(); }
 
@@ -81,6 +58,35 @@ private:
     const QByteArray m_mrl;
     QExplicitlySharedDataPointer<Phonon::Xine::ByteStream> m_bytestream;
 };
+
+KByteStreamInputPlugin::KByteStreamInputPlugin(xine_stream_t *stream, const char *_mrl)
+    : m_stream(stream),
+    m_nbc(nbc_init(stream)),
+    m_mrl(_mrl),
+    m_bytestream(Phonon::Xine::ByteStream::fromMrl(m_mrl))
+{
+    if (!m_bytestream) {
+        return;
+    }
+    input_plugin_t *that = this;
+    memset(that, 0, sizeof(input_plugin_t));
+
+    m_bytestream->ref.ref();
+
+
+    nbc_set_pause_cb(m_nbc, kbytestream_pause_cb, this);
+    nbc_set_normal_cb(m_nbc, kbytestream_normal_cb, this);
+}
+
+KByteStreamInputPlugin::~KByteStreamInputPlugin()
+{
+    if (m_nbc) {
+        nbc_close(m_nbc);
+    }
+    if (m_bytestream && !m_bytestream->ref.deref()) {
+        m_bytestream->deleteLater();
+    }
+}
 
 static uint32_t kbytestream_plugin_get_capabilities (input_plugin_t *this_gen)
 {
