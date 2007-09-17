@@ -94,11 +94,10 @@ ByteStream::ByteStream(const MediaSource &mediaSource, MediaObject* parent)
     m_buffersize(0),
     m_offset(0),
     m_seekable(false),
-    m_mrlSet(false),
     m_stopped(false),
     m_eod(false),
     m_buffering(false),
-    m_playRequested(false)
+    m_firstReset(true)
 {
     connect(this, SIGNAL(needDataQueued()), this, SLOT(needData()), Qt::QueuedConnection);
     connect(this, SIGNAL(seekStreamQueued(qint64)), this, SLOT(syncSeekStream(qint64)), Qt::QueuedConnection);
@@ -406,14 +405,6 @@ void ByteStream::setStreamSeekable(bool seekable)
     m_seekable = seekable;
 }
 
-//X bool ByteStream::isSeekable() const
-//X {
-//X     if (m_seekable) {
-//X         return MediaObject::isSeekable();
-//X     }
-//X     return false;
-//X }
-
 void ByteStream::writeData(const QByteArray &data)
 {
     if (data.size() <= 0) {
@@ -432,9 +423,6 @@ void ByteStream::writeData(const QByteArray &data)
         }
 
         PXINE_VDEBUG << "filled preview buffer to " << m_preview.size();
-//X         if (m_preview.size() == MAX_PREVIEW_SIZE) { // preview buffer is full
-//X             setMrl();
-//X         }
     }
 
     PXINE_VDEBUG << data.size() << " m_streamSize = " << m_streamSize;
@@ -465,19 +453,6 @@ void ByteStream::syncSeekStream(qint64 offset)
     m_seekMutex.unlock();
 }
 
-//X void ByteStream::play()
-//X {
-//X     PXINE_VDEBUG;
-//X     m_stopped = false;
-//X     if (m_streamSize <= 0 || m_preview.size() < MAX_PREVIEW_SIZE) {
-//X         m_playRequested = true; // not ready yet for playback, but keep it in mind so playback can
-//X         // start when ready
-//X         return;
-//X     }
-//X     setMrl();
-//X     MediaObject::play(); // goes into Phonon::BufferingState/PlayingState
-//X }
-
 qint64 ByteStream::streamSize() const
 {
     if (m_streamSize == 0) {
@@ -506,6 +481,26 @@ void ByteStream::stop()
     m_mutex.unlock();
     m_waitForStreamSize.wakeAll();
     m_streamSizeMutex.unlock();
+}
+
+void ByteStream::reset()
+{
+    if (m_firstReset) {
+        kDebug(610) << "first reset";
+        m_firstReset = false;
+        return;
+    }
+    kDebug(610);
+    StreamInterface::reset();
+    m_currentPosition = 0;
+    m_buffersize = 0;
+    m_offset = 0;
+    m_stopped = false;
+    m_eod = false;
+    m_buffering = false;
+    if (m_streamSize != 0) {
+        emit needDataQueued();
+    }
 }
 
 }} //namespace Phonon::Xine

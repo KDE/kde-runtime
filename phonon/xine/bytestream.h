@@ -61,6 +61,8 @@ class MediaObject;
 
             void stop();
 
+            void reset();
+
         public slots:
             void writeData(const QByteArray &data);
             void endOfData();
@@ -104,11 +106,10 @@ class MediaObject;
             int m_offset;
 
             bool m_seekable : 1;
-            bool m_mrlSet : 1;
             bool m_stopped : 1;
             bool m_eod : 1;
             bool m_buffering : 1;
-            bool m_playRequested : 1;
+            bool m_firstReset : 1;
 	};
 }} //namespace Phonon::Xine
 
