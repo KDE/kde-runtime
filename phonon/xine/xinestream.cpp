@@ -546,10 +546,6 @@ void XineStream::playbackFinished()
         changeState(Phonon::StoppedState);
         emit finished();
         xine_close(m_stream); // TODO: is it necessary? should xine_close be called as late as possible?
-        if (m_mrl.startsWith("kbytestream:/")) {
-            // the ByteStream object will get deleted soon triggered by the above xine_close, that
-            // means the encoded pointer in the MRL is dangling
-        }
         m_streamInfoReady = false;
         m_prefinishMarkReachedNotEmitted = true;
     }
