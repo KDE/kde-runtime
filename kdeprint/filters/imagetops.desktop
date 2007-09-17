@@ -27,6 +27,7 @@ Comment[pt_BR]=Filtro de Imagens Genéricas para PS
 Comment[sv]=Generellt filter från bild till Postscript
 Comment[th]=เปลี่ยนแฟ้มภาพทั่วไปเป็นฟิลเตอร์ PS
 Comment[vi]=Bộ lọc ảnh-sang-PS giống loài
+Comment[wa]=Passete djenerike imådjes viè PostScript
 Comment[zh_TW]=一般影像轉 PS 過濾器
 MimeTypeIn=image/jpeg,image/png,image/x-png,image/bmp,image/bmp,image/gif,image/tiff
 MimeTypeOut=application/postscript

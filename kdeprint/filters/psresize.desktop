@@ -21,6 +21,7 @@ Comment[pt_BR]=Ajustar a Impressão para Caber em Outro Tamanho de Papel
 Comment[sv]=Skala utskriftens innehåll för att passa på en annan pappersstorlek
 Comment[th]=ปรับขนาดเนื้อหาที่จะพิมพ์ให้พอดีกับกระดาษขนาดอื่น
 Comment[vi]=Co dãn nội dung in ra để vừa khít kích cỡ giấy khác
+Comment[wa]=Mete al schåle çou ki va esse imprimer po k' ça rimplixhe ene pådje d' ene ôte grandeu di papî
 Comment[zh_TW]=將列印內容縮放到符合另一個紙張的大小
 MimeTypeIn=application/postscript
 MimeTypeOut=application/postscript
