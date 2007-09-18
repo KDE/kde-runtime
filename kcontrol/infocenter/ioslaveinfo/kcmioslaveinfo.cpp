@@ -33,20 +33,23 @@
 #include <kconfig.h>
 #include <kdebug.h>
 #include <kdialog.h>
-#include <kgenericfactory.h>
 #include <kglobal.h>
 #include <kiconloader.h>
 #include <kio/job.h>
 #include <klocale.h>
 #include <kprotocolinfo.h>
 #include <kstandarddirs.h>
+#include <kpluginfactory.h>
+#include <kpluginloader.h>
+
 
 #include "kcmioslaveinfo.h"
 
-typedef KGenericFactory<KCMIOSlaveInfo, QWidget> SlaveFactory;
-K_EXPORT_COMPONENT_FACTORY( ioslaveinfo, SlaveFactory("kcmioslaveinfo") )
+K_PLUGIN_FACTORY(SlaveFactory, registerPlugin<KCMIOSlaveInfo>();)
+K_EXPORT_PLUGIN( SlaveFactory("kcmioslaveinfo"))
 
-KCMIOSlaveInfo::KCMIOSlaveInfo(QWidget *parent, const QStringList &)
+
+KCMIOSlaveInfo::KCMIOSlaveInfo(QWidget *parent, const QVariantList &)
                :KCModule(SlaveFactory::componentData(), parent),m_ioslavesLb(0),m_tfj(0)
 {
    QVBoxLayout *layout=new QVBoxLayout(this);
