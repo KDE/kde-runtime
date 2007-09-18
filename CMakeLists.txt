@@ -13,6 +13,7 @@ include (MacroLibrary)
 include (MacroOptionalFindPackage)
 include(MacroOptionalAddSubdirectory)
 include(CheckFunctionExists)
+include(CheckIncludeFiles)
 
 check_include_files(sys/wait.h HAVE_SYS_WAIT_H)
 
