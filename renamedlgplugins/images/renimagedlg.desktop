@@ -49,6 +49,7 @@ Name[uk]=Перегляд зображень
 Name[vi]=Bộ hiển thị ảnh
 Name[x-test]=xxImage Displayerxx
 Name[xh]=Umbonisi wo Mfanekiso
+Name[zh_CN]=图像显示器
 Name[zh_TW]=影像顯示器
 X-KDE-Library=librenimageplugin
 ServiceTypes=RenameDialog/Plugin,image/jpeg,image/png

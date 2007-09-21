@@ -48,6 +48,7 @@ Name[uk]=Перегляд аудіо
 Name[uz]=Аудио кўриб чиқиш
 Name[vi]=Xem thử âm thanh
 Name[x-test]=xxAudio Previewxx
+Name[zh_CN]=音频预览
 Name[zh_TW]=音效預覽
 X-KDE-Library=librenaudioplugin
 ServiceTypes=RenameDialog/Plugin,audio/mpeg,audio/x-wav,application/ogg
