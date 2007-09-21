@@ -1,7 +1,7 @@
 [Desktop Entry]
 Comment=Configure service discovery
 Comment[af]=Stel dienste ontdekker op
-Comment[ar]=إعداد إكتشاف الخدمات
+Comment[ar]=اضبط استكشاف الخدمات
 Comment[be]=Настаўленні пошуку сервісаў
 Comment[bg]=Настройване откриването на услуги
 Comment[ca]=Configura el descobriment de serveis
@@ -67,7 +67,7 @@ Icon=blockdevice
 MimeType=
 Name=Service Discovery
 Name[af]=Dienste ontdekker
-Name[ar]=إكتشاف الخدمات
+Name[ar]=استكشف الخدمات
 Name[be]=Пошук сервісаў
 Name[bg]=Откриване на услуги
 Name[ca]=Descobriment de serveis

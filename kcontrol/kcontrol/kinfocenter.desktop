@@ -9,6 +9,7 @@ OnlyShowIn=KDE;
 
 Name=KInfoCenter
 Name[af]=Inligting Sentrum
+Name[ar]=مركز المعلومات لـٍ كدي
 Name[csb]=Centróm wëdowiédzë
 Name[de]=Infozentrum
 Name[el]=Κέντρο πληροφοριών
@@ -63,6 +64,7 @@ GenericName[ja]=インフォセンター
 GenericName[ka]=საინფორმაციო ცენტრი
 GenericName[kk]=Мәлімет орталығы
 GenericName[km]=មជ្ឈមណ្ឌល​ព័ត៌មាន
+GenericName[ko]=정보 센터
 GenericName[lt]=Info centras
 GenericName[mk]=Информативен центар
 GenericName[ms]=Pusat Maklumat
