@@ -71,9 +71,6 @@ class AudioOutputXT : public SinkNodeXT
             void volumeChanged(qreal newVolume);
             void audioDeviceFailed();
 
-            // internal
-            void audioPortChanged(const AudioPort &);
-
 		private:
             qreal m_volume;
 			int m_device;

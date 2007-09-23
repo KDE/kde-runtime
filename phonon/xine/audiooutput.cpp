@@ -29,6 +29,9 @@
 #include "mediaobject.h"
 #include "backend.h"
 #include "events.h"
+#include "wirecall.h"
+#include "xineengine.h"
+#include "xinethread.h"
 
 #undef assert
 
@@ -89,7 +92,12 @@ bool AudioOutput::setOutputDevice(int newDevice)
         return false;
     }
     K_XT(AudioOutputXT)->m_audioPort.setAudioOutput(this);
-    emit audioPortChanged(K_XT(AudioOutputXT)->m_audioPort);
+    SourceNode *src = source();
+    if (src) {
+        QList<WireCall> wireCall;
+        wireCall << WireCall(src, this);
+        QCoreApplication::postEvent(XineEngine::thread(), new RewireEvent(wireCall));
+    }
     return true;
 }
 
