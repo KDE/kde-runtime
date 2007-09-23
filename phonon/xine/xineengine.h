@@ -72,6 +72,7 @@ namespace Xine
             static QString audioOutputDescription(int audioDevice);
             static QString audioOutputIcon(int audioDevice);
             static bool audioOutputAvailable(int audioDevice);
+            static QVariant audioOutputMixerDevice(int audioDevice);
             static QString audioDriverFor(int audioDevice);
             static QStringList alsaDevicesFor(int audioDevice);
             static xine_audio_port_t *nullPort();
@@ -97,14 +98,16 @@ namespace Xine
             void checkAudioOutputs();
             void addAudioOutput(AudioDevice dev, QString driver);
             void addAudioOutput(int idx, const QString &n, const QString &desc, const QString &ic,
-                    const QString &dr, const QStringList &dev);
+                    const QString &dr, const QStringList &dev, const QString &mixerDevice);
 			xine_t* m_xine;
 
             struct AudioOutputInfo
             {
-                AudioOutputInfo(int idx, const QString &n, const QString &desc, const QString &ic, const QString &dr, const QStringList &dev)
-                    : available(false), index(idx), name(n), description(desc), icon(ic), driver(dr), devices(dev)
-                {}
+                AudioOutputInfo(int idx, const QString &n, const QString &desc, const QString &ic,
+                        const QString &dr, const QStringList &dev, const QString &mdev)
+                    : available(false), index(idx), name(n), description(desc), icon(ic),
+                    driver(dr), devices(dev), mixerDevice(mdev) {}
+
                 bool available;
                 int index;
                 QString name;
@@ -112,6 +115,7 @@ namespace Xine
                 QString icon;
                 QString driver;
                 QStringList devices;
+                QString mixerDevice;
                 bool operator==(const AudioOutputInfo& rhs) { return name == rhs.name && driver == rhs.driver; }
             };
             QList<AudioOutputInfo> m_audioOutputInfos;

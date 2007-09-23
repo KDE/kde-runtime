@@ -309,6 +309,21 @@ namespace Xine
         return false;
     }
 
+    QVariant XineEngine::audioOutputMixerDevice(int audioDevice)
+    {
+        XineEngine *that = self();
+        that->checkAudioOutputs();
+        for (int i = 0; i < that->m_audioOutputInfos.size(); ++i) {
+            if (that->m_audioOutputInfos[i].index == audioDevice) {
+                if (that->m_audioOutputInfos[i].driver == QLatin1String("alsa")) {
+                    return that->m_audioOutputInfos[i].mixerDevice;
+                }
+                break;
+            }
+        }
+        return QVariant();
+    }
+
     QString XineEngine::audioDriverFor(int audioDevice)
     {
         XineEngine *that = self();
@@ -345,13 +360,31 @@ namespace Xine
                 postfix = QLatin1String(" (OSS)");
             }
         }
+        QString mixerDevice;
+        if (dev.driver() == Solid::AudioInterface::Alsa) {
+            foreach (QString id, dev.deviceIds()) {
+                const int idx = id.indexOf(QLatin1String("CARD="));
+                if (idx > 0) {
+                    id = id.mid(idx + 5);
+                    const int commaidx = id.indexOf(QLatin1Char(','));
+                    if (commaidx > 0) {
+                        id = id.left(commaidx);
+                    }
+                    mixerDevice = QLatin1String("hw:") + id;
+                    break;
+                }
+                mixerDevice = id;
+            }
+        } else {
+            mixerDevice = dev.deviceIds().first();
+        }
         const QString description = dev.deviceIds().isEmpty() ?
             i18n("<html>This device is currently not available (either it is unplugged or the "
                     "driver is not loaded).</html>") :
             i18n("<html>This will try the following devices and use the first that works: "
                     "<ol><li>%1</li></ol></html>", dev.deviceIds().join("</li><li>"));
         AudioOutputInfo info(dev.index(), dev.cardName() + postfix,
-                description, dev.iconName(), driver, dev.deviceIds());
+                description, dev.iconName(), driver, dev.deviceIds(), mixerDevice);
         info.available = dev.isAvailable();
         if (m_audioOutputInfos.contains(info)) {
             m_audioOutputInfos.removeAll(info); // the latest is more up to date wrt availability
@@ -360,9 +393,9 @@ namespace Xine
     }
 
     void XineEngine::addAudioOutput(int index, const QString &name, const QString &description,
-            const QString &icon, const QString &driver, const QStringList &deviceIds)
+            const QString &icon, const QString &driver, const QStringList &deviceIds, const QString &mixerDevice)
     {
-        AudioOutputInfo info(index, name, description, icon, driver, deviceIds);
+        AudioOutputInfo info(index, name, description, icon, driver, deviceIds, mixerDevice);
         const int listIndex = m_audioOutputInfos.indexOf(info);
         if (listIndex == -1) {
             info.available = true;
@@ -380,13 +413,13 @@ namespace Xine
                 infoInList.icon = icon;
             }
             infoInList.devices = deviceIds;
+            infoInList.mixerDevice = mixerDevice;
             infoInList.available = true;
         }
     }
 
     void XineEngine::checkAudioOutputs()
     {
-        kDebug(610) ;
         if (m_audioOutputInfos.isEmpty()) {
             kDebug(610) << "isEmpty";
             QObject::connect(AudioDeviceEnumerator::self(), SIGNAL(devicePlugged(const AudioDevice &)),
@@ -407,7 +440,7 @@ namespace Xine
                             config.readEntry("description", QString()),
                             config.readEntry("icon", QString()),
                             config.readEntry("driver", QString()),
-                            QStringList()); // the device list can change and needs to be queried
+                            QStringList(), QString()); // the device list can change and needs to be queried
                                             // from the actual hardware configuration
                 }
             }
@@ -442,16 +475,18 @@ namespace Xine
                                 "<p>JACK was designed from the ground up for professional audio "
                                 "work, and its design focuses on two key areas: synchronous "
                                 "execution of all clients, and low latency operation.</p></html>"),
-                            /*icon name*/"audio-input-line", outputPlugins[i], QStringList());
+                            /*icon name*/"audio-input-line", outputPlugins[i], QStringList(),
+                            QString());
                 } else if (0 == strcmp(outputPlugins[i], "arts")) {
                     addAudioOutput(nextIndex++, i18n("aRts"),
                             i18n("<html><p>aRts is the old soundserver and media framework that was used "
                                 "in KDE2 and KDE3. Its use is discuraged.</p></html>"),
-                            /*icon name*/"arts", outputPlugins[i], QStringList());
+                            /*icon name*/"arts", outputPlugins[i], QStringList(), QString());
                 } else {
                     addAudioOutput(nextIndex++, outputPlugins[i],
                             xine_get_audio_driver_plugin_description(xine(), outputPlugins[i]),
-                            /*icon name*/outputPlugins[i], outputPlugins[i], QStringList());
+                            /*icon name*/outputPlugins[i], outputPlugins[i], QStringList(),
+                            QString());
                 }
             }
 
@@ -516,7 +551,7 @@ namespace Xine
                 break;
         }
         XineEngine::AudioOutputInfo info(dev.index(), dev.cardName() + postfix, QString(), dev.iconName(),
-                driver, dev.deviceIds());
+                driver, dev.deviceIds(), QString());
         if (s_instance->m_audioOutputInfos.removeAll(info)) {
             s_instance->m_audioOutputInfos << info; // now the device is listed as not available
             signalTimer.start();

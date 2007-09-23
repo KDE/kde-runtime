@@ -240,6 +240,10 @@ QHash<QByteArray, QVariant> Backend::objectDescriptionProperties(ObjectDescripti
                     ret.insert("icon", icon);
                 }
                 ret.insert("available", XineEngine::audioOutputAvailable(index));
+                QVariant mixer = XineEngine::audioOutputMixerDevice(index);
+                if (mixer.isValid()) {
+                    ret.insert("mixerDeviceId", mixer);
+                }
             }
             break;
             /*
