@@ -359,6 +359,12 @@ bool Backend::connectNodes(QObject *_source, QObject *_sink)
     if (sink->source() != 0 || source->sinks().contains(sink)) {
         return false;
     }
+    foreach (SinkNode *otherSinks, source->sinks()) {
+        if (otherSinks->inputMediaStreamTypes() & types) {
+            kWarning(610) << "phonon-xine does not support splitting of audio or video streams into multiple outputs.";
+            return false;
+        }
+    }
     source->addSink(sink);
     sink->setSource(source);
     return true;
