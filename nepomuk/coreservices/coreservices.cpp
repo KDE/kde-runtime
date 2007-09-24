@@ -53,59 +53,59 @@ Nepomuk::CoreServices::DaemonImpl::DaemonImpl( QObject* parent )
     : Soprano::Server::ServerCore( parent )
 {
     d = new Private;
-    d->registry = new Nepomuk::Middleware::Registry( this );
+//    d->registry = new Nepomuk::Middleware::Registry( this );
 }
 
 
 bool Nepomuk::CoreServices::DaemonImpl::registerServices()
 {
-    registerAsDBusObject( "/org/kde/nepomuk/repository" );
-//     QString storagePath = QDir::homePath() + "/.nepomuk/share/storage/";
-//     if( !KStandardDirs::makeDir( storagePath + "system" ) ) {
-//         kDebug(300002) << "Failed to create the system storage folder: " << storagePath + "system";
-//         return false;
-//     }
+    QString storagePath = QDir::homePath() + "/.nepomuk/share/storage/";
+    if( !KStandardDirs::makeDir( storagePath + "system" ) ) {
+        kDebug(300002) << "Failed to create the system storage folder: " << storagePath + "system";
+        return false;
+    }
 
-//     kDebug(300002) << "Trying the Sesame2 backend...";
-//     const Soprano::Backend* backend = 0;//Soprano::discoverBackendByName( "sesame2" );
-//     if ( !backend ) {
-//         kDebug(300002) << "...Sesame2 backend not found. Trying redland backend...";
-//         backend = Soprano::discoverBackendByName( "redland" );
-//     }
-//     if( !backend ) {
-//         kDebug(300002) << "Failed to load the Soprano Redland backend";
-//         return false;
-//     }
-//     Soprano::setUsedBackend( backend );
+    // FIXME: make the Seasem2 backend work for better performance
+//    kDebug(300002) << "Trying the Sesame2 backend...";
+    const Soprano::Backend* backend = 0;//Soprano::discoverBackendByName( "sesame2" );
+    if ( !backend ) {
+//        kDebug(300002) << "...Sesame2 backend not found. Trying redland backend...";
+        backend = Soprano::discoverBackendByName( "redland" );
+    }
+    if( !backend ) {
+        kDebug(300002) << "Failed to load the Soprano Redland backend";
+        return false;
+    }
+    Soprano::setUsedBackend( backend );
 
-//     QList<Soprano::BackendSetting> settings;
-//     settings.append( Soprano::BackendSetting( Soprano::BACKEND_OPTION_STORAGE_DIR, storagePath + "system" ) );
-//     d->system = Soprano::createModel( settings );
-//     if( !d->system ) {
-//         kDebug(300002) << "Failed to create the system store";
-//         return false;
-//     }
+    QList<Soprano::BackendSetting> settings;
+    settings.append( Soprano::BackendSetting( Soprano::BACKEND_OPTION_STORAGE_DIR, storagePath + "system" ) );
+    d->system = Soprano::createModel( settings );
+    if( !d->system ) {
+        kDebug(300002) << "Failed to create the system store";
+        return false;
+    }
 
-//     // /////////////////////////////////////////////////
-//     // Load graphs
-//     // /////////////////////////////////////////////////
+    // /////////////////////////////////////////////////
+    // Load graphs
+    // /////////////////////////////////////////////////
 
-//     Soprano::QueryLegacy query( QueryDefinition::FIND_GRAPHS, Soprano::QueryLegacy::SPARQL );
-//     Soprano::QueryResultIterator res = d->system->executeQuery( query );
+    Soprano::QueryResultIterator res = d->system->executeQuery( QueryDefinition::FIND_GRAPHS,
+                                                                Soprano::Query::QUERY_LANGUAGE_SPARQL );
 
-//     while( res.next() ) {
-//         QString modelId = res.binding( "modelId" ).literal().toString();
-//         if ( !d->resolver.contains( modelId ) ) {
-//             Repository* rep = Repository::open( storagePath + modelId, modelId );
-//             if ( rep ) {
-//                 d->resolver.insert( modelId, rep );
-//                 kDebug(300002) << "(Nepomuk::CoreServices) found repository: " << modelId;
-//             }
-//         }
-//     }
+    while( res.next() ) {
+        QString modelId = res.binding( "modelId" ).literal().toString();
+        if ( !d->resolver.contains( modelId ) ) {
+            Repository* rep = Repository::open( storagePath + modelId, modelId );
+            if ( rep ) {
+                d->resolver.insert( modelId, rep );
+                kDebug(300002) << "(Nepomuk::CoreServices) found repository: " << modelId;
+            }
+        }
+    }
 
-//     // FIXME: add error handling
-//     d->repository = new SopranoRDFRepository( d->system, &d->resolver );
+    // FIXME: add error handling
+    d->repository = new SopranoRDFRepository( d->system, &d->resolver );
 
 //     if( d->registry->registerService( d->repository ) ) {
 //         kDebug(300002) << "Failed to register Nepomuk services.";
@@ -113,10 +113,13 @@ bool Nepomuk::CoreServices::DaemonImpl::registerServices()
 //     }
 
 
-//     (void)new DBusInterface( this, d->repository );
+    (void)new DBusInterface( this, d->repository );
 
-//     QDBusConnection::sessionBus().registerService( "org.semanticdesktop.nepomuk.CoreServices" );
-//     QDBusConnection::sessionBus().registerObject( "/org/semanticdesktop/nepomuk/CoreServices", this );
+    QDBusConnection::sessionBus().registerService( "org.semanticdesktop.nepomuk.CoreServices" );
+    QDBusConnection::sessionBus().registerObject( "/org/semanticdesktop/nepomuk/CoreServices", this );
+
+    // register the soprano interface
+    registerAsDBusObject();
 
     return true;
 }

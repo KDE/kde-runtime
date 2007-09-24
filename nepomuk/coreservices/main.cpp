@@ -12,7 +12,7 @@
  * See the file "COPYING" for the exact licensing terms.
  */
 
-#include <KApplication>
+#include <KUniqueApplication>
 #include <KDebug>
 #include <KLocale>
 #include <KCmdLineArgs>
@@ -22,8 +22,8 @@
 
 #include <signal.h>
 
-static const char* version = "0.9";
-static const char* description = I18N_NOOP( "Nepomuk Core Services including the RDF Repository" );
+static const char* version = "0.91";
+static const char* description = I18N_NOOP( "Nepomuk data Repository" );
 
 namespace {
     void signalHandler( int signal )
@@ -39,8 +39,9 @@ namespace {
 
 int main( int argc, char** argv )
 {
-    KAboutData aboutData( "nepomukcoreservices", 0,
-                          ki18n("The Nepomuk Core Services"),
+    KAboutData aboutData( "DataRepository",
+                          0,
+                          ki18n("Nepomuk Data Repository"),
                           version,
                           ki18n(description),
                           KAboutData::License_GPL,
@@ -48,12 +49,14 @@ int main( int argc, char** argv )
     aboutData.addAuthor(ki18n("Sebastian Trüg"), KLocalizedString(), "trueg@kde.org");
     aboutData.addAuthor(ki18n("Daniele Galdi"), KLocalizedString(), "daniele.galdi@gmail.com" );
 
+    aboutData.setOrganizationDomain( "nepomuk.kde.org" );
+
     KCmdLineArgs::init( argc, argv, &aboutData );
 
     KCmdLineOptions options;
     KCmdLineArgs::addCmdLineOptions( options );
 
-    KApplication app( false ); // no need for a GUI
+    KUniqueApplication app( false ); // no need for a GUI
 
     struct sigaction sa;
     ::memset( &sa, 0, sizeof( sa ) );
@@ -61,6 +64,7 @@ int main( int argc, char** argv )
     sigaction( SIGHUP, &sa, 0 );
     sigaction( SIGINT, &sa, 0 );
     sigaction( SIGQUIT, &sa, 0 );
+    sigaction( SIGKILL, &sa, 0 );
 
     Nepomuk::CoreServices::DaemonImpl instance( &app );
     if( instance.registerServices() ) {
