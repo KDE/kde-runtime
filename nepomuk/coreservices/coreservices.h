@@ -16,10 +16,15 @@
 #define _NEPOMUK_CORE_SERVICES_DAEMON_IMPL_H_
 
 #include <QObject>
+#include <soprano/servercore.h>
+
+namespace Soprano {
+    class Model;
+}
 
 namespace Nepomuk {
     namespace CoreServices {
-	class DaemonImpl : public QObject
+	class DaemonImpl : public Soprano::Server::ServerCore
 	{
 	    Q_OBJECT
 	
@@ -28,6 +33,11 @@ namespace Nepomuk {
 	    ~DaemonImpl();
 	
 	    bool registerServices();
+
+	    /**
+	     * reimplemented from ServerCore
+	     */
+	    Soprano::Model* model( const QString& name );
 	
 	private:
 	    class Private;

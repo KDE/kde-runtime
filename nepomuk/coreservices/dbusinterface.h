@@ -36,6 +36,7 @@ namespace Nepomuk {
 	  
 	public Q_SLOTS:
 	    void dumpGraph( const QString& graph );
+	    void dumpIndex( const QString& graph );
 	    void quit();
 	    Soprano::Statement testStatement();
 	    Soprano::Node testNode();

@@ -44,6 +44,12 @@ void Nepomuk::CoreServices::DBusInterface::dumpGraph( const QString& graph )
 }
 
 
+void Nepomuk::CoreServices::DBusInterface::dumpIndex( const QString& graph )
+{
+    d->rep->dumpIndex( graph );
+}
+
+
 void Nepomuk::CoreServices::DBusInterface::quit()
 {
     QCoreApplication::instance()->quit();

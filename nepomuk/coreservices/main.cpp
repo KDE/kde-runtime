@@ -20,8 +20,22 @@
 
 #include "coreservices.h"
 
+#include <signal.h>
+
 static const char* version = "0.9";
 static const char* description = I18N_NOOP( "Nepomuk Core Services including the RDF Repository" );
+
+namespace {
+    void signalHandler( int signal )
+    {
+        switch( signal ) {
+        case SIGHUP:
+        case SIGINT:
+        case SIGQUIT:
+            QCoreApplication::exit( 1 );
+        }
+    }
+}
 
 int main( int argc, char** argv )
 {
@@ -40,6 +54,13 @@ int main( int argc, char** argv )
     KCmdLineArgs::addCmdLineOptions( options );
 
     KApplication app( false ); // no need for a GUI
+
+    struct sigaction sa;
+    ::memset( &sa, 0, sizeof( sa ) );
+    sa.sa_handler = signalHandler;
+    sigaction( SIGHUP, &sa, 0 );
+    sigaction( SIGINT, &sa, 0 );
+    sigaction( SIGQUIT, &sa, 0 );
 
     Nepomuk::CoreServices::DaemonImpl instance( &app );
     if( instance.registerServices() ) {

@@ -15,9 +15,9 @@
 
 
 const QString QueryDefinition::FIND_GRAPHS =
-"select ?graphId, ?modelId where "
-"(?graphId, <http://www.w3.org/2000/01/rdf-schema#label>, ?modelId)"
-"(?graphId, <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>, <http://www.soprano.org/types#Model>)";
+"select ?graphId ?modelId where { "
+"?graphId <http://www.w3.org/2000/01/rdf-schema#label> ?modelId . "
+"?graphId <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.soprano.org/types#Model> }";
 
 // Resolve a uri to another
 const QString QueryDefinition::TO_UNIQUE_URI = "select ?uri where (<@param>, <http://nepomuk.org/kde/ontology#hasUri>, ?uri)";

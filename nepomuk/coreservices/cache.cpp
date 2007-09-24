@@ -18,7 +18,9 @@
 
 #include <kdebug.h>
 
+#include <soprano/queryresultiterator.h>
 #include <soprano/model.h>
+
 
 class Cache::Private
 {
@@ -66,7 +68,7 @@ int Cache::insert( const Soprano::StatementIterator& sti, int timeout )
 }
 
 
-int Cache::insert( const Soprano::ResultSet& set, int timeout )
+int Cache::insert( const Soprano::QueryResultIterator& set, int timeout )
 {
     int id = getUniqueId();
     CacheObject *obj = new CacheObject( id, set, timeout );
@@ -84,7 +86,7 @@ Soprano::StatementIterator Cache::getStatements( int listId )
 }
 
 
-Soprano::ResultSet Cache::getResultSet( int listId )
+Soprano::QueryResultIterator Cache::getResultSet( int listId )
 {
     return d->cache.value( listId )->resultSet();
 }
@@ -126,7 +128,7 @@ CacheObject::CacheObject( int listId, const Soprano::StatementIterator &sti, int
     }
 }
 
-CacheObject::CacheObject( int listId, const Soprano::ResultSet& set, int timeout )
+CacheObject::CacheObject( int listId, const Soprano::QueryResultIterator& set, int timeout )
     : m_listId( listId ),
       m_set( set ),
       m_model( 0 )
@@ -159,15 +161,15 @@ Soprano::StatementIterator CacheObject::iterator()
     m_timer.start();
 
     if ( !m_sti.isValid() ) {
-        if ( ( m_model = m_set.model() ) ) {
-            m_sti = m_model->listStatements();
+        if ( m_set.isValid() ) {
+            m_sti = m_set.iterateStatements();
         }
     }
 
     return m_sti;
 }
 
-Soprano::ResultSet CacheObject::resultSet()
+Soprano::QueryResultIterator CacheObject::resultSet()
 {
     // Restart the timer
     m_timer.stop();

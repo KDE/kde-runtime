@@ -21,6 +21,7 @@
 #include <QtCore/QDir>
 
 #include <soprano/soprano.h>
+#include <soprano/cluceneindex.h>
 #include <nepomuk/error.h>
 
 #include <kstandarddirs.h>
@@ -35,7 +36,7 @@ public:
     Private() : resolver(0L), system(0L)
     {}
 
-    QMap<QString, Soprano::Model *> *resolver;
+    RepositoryMap *resolver;
     Soprano::Model *system;
 
     UniqueUriGenerator uug;
@@ -43,7 +44,7 @@ public:
 };
 
 Nepomuk::CoreServices::SopranoRDFRepository::SopranoRDFRepository( Soprano::Model *system,
-								   QMap<QString, Soprano::Model *> *resolver )
+								   RepositoryMap *resolver )
     : RDFRepositoryPublisher( "SopranoRDFRepository", "file://tmp/soprano/services/SopranoRDFRepository" )
 {
     d = new Private;
@@ -60,6 +61,7 @@ Nepomuk::CoreServices::SopranoRDFRepository::~SopranoRDFRepository()
 
 void Nepomuk::CoreServices::SopranoRDFRepository::createRepository( const QString& graphId )
 {
+    // FIXME: this method is not thread-safe!
     if ( d->resolver->contains( graphId ) ) {
         kDebug(300002) << ": " << graphId << " already present!";
         return;
@@ -74,34 +76,31 @@ void Nepomuk::CoreServices::SopranoRDFRepository::createRepository( const QStrin
 
     QString storagePath = createStoragePath( graphId );
 
-    KStandardDirs::makeDir( storagePath );
-
-    // FIXME: add configuration for stuff like this
-    Soprano::Model* m = Soprano::createModel( graphId, QString( "new=no,dir="+ storagePath ).split(",") );
-    if( m ) {
+    Repository* newRepo = Repository::open( storagePath, graphId );
+    if( newRepo ) {
         QUrl repositoryUri( "http://nepomuk.semanticdesktop.org/repositories/localhost/" + graphId );
 
         //
         // For easier handling we put all statements into one named graph although that might be redundant
         //
-        d->system->add( Soprano::Statement( repositoryUri,
-                                            QUrl("http://nepomuk-kde.semanticdesktop.org/rdfrepository#created"),
-                                            Soprano::LiteralValue( QDateTime::currentDateTime() ),
-                                            repositoryUri ) );
-        d->system->add( Soprano::Statement( repositoryUri,
-                                            QUrl("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
-                                            QUrl( "http://www.soprano.org/types#Model" ),
-                                            repositoryUri ) );
-        d->system->add( Soprano::Statement( repositoryUri,
-                                            QUrl("http://www.w3.org/2000/01/rdf-schema#label"),
-                                            Soprano::LiteralValue( graphId ),
-                                            repositoryUri ) );
-        d->system->add( Soprano::Statement( repositoryUri,
-                                            QUrl("http://nepomuk-kde.semanticdesktop.org/rdfrepository#hasStoragePath"),
-                                            Soprano::LiteralValue( storagePath ),
-                                            repositoryUri ) );
+        d->system->addStatement( Soprano::Statement( repositoryUri,
+                                                     QUrl("http://nepomuk-kde.semanticdesktop.org/rdfrepository#created"),
+                                                     Soprano::LiteralValue( QDateTime::currentDateTime() ),
+                                                     repositoryUri ) );
+        d->system->addStatement( Soprano::Statement( repositoryUri,
+                                                     QUrl("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
+                                                     QUrl( "http://www.soprano.org/types#Model" ),
+                                                     repositoryUri ) );
+        d->system->addStatement( Soprano::Statement( repositoryUri,
+                                                     QUrl("http://www.w3.org/2000/01/rdf-schema#label"),
+                                                     Soprano::LiteralValue( graphId ),
+                                                     repositoryUri ) );
+        d->system->addStatement( Soprano::Statement( repositoryUri,
+                                                     QUrl("http://nepomuk-kde.semanticdesktop.org/rdfrepository#hasStoragePath"),
+                                                     Soprano::LiteralValue( storagePath ),
+                                                     repositoryUri ) );
 
-        d->resolver->insert( graphId, m );
+        d->resolver->insert( graphId, newRepo );
     }
     else {
         // FIXME: use the Soprano error codes and messages
@@ -116,9 +115,9 @@ QStringList Nepomuk::CoreServices::SopranoRDFRepository::listRepositoryIds( )
     return d->resolver->keys();
 
     // Return a list of all graphId from system model
-//     Soprano::Query query( QueryDefinition::FIND_GRAPHS, Soprano::Query::RDQL );
+//     Soprano::QueryLegacy query( QueryDefinition::FIND_GRAPHS, Soprano::QueryLegacy::RDQL );
 
-//     Soprano::ResultSet res = d->system->executeQuery( query );
+//     Soprano::QueryResultIterator res = d->system->executeQuery( query );
 
 //     QStringList graphs;
 //     while ( res.next() )
@@ -135,12 +134,12 @@ void Nepomuk::CoreServices::SopranoRDFRepository::removeRepository( const QStrin
 {
     if ( d->resolver->contains( repositoryId ) ) {
         // cleanup the local data
-        Soprano::Model* model = d->resolver->value( repositoryId );
+        Repository* repo = d->resolver->value( repositoryId );
         d->resolver->remove( repositoryId );
-        delete model;
+        delete repo;
 
         // remove the metadata
-        d->system->remove( QUrl( "http://nepomuk.semanticdesktop.org/repositories/localhost/" + repositoryId ) );
+        d->system->removeContext( QUrl( "http://nepomuk.semanticdesktop.org/repositories/localhost/" + repositoryId ) );
 
         // delete the actual data
         // FIXME: check the return state of the job
@@ -162,8 +161,8 @@ int Nepomuk::CoreServices::SopranoRDFRepository::getRepositorySize( const QStrin
         return 0;
     }
 
-    Soprano::Model *model = d->resolver->value( graphId );
-    return model->size();
+    Soprano::Model *model = d->resolver->value( graphId )->model();
+    return model->statementCount();
 }
 
 
@@ -176,8 +175,8 @@ int Nepomuk::CoreServices::SopranoRDFRepository::contains( const QString& graphI
         return 0;
     }
 
-    Soprano::Model *model = d->resolver->value( graphId );
-    if ( model->contains( statement ) ) {
+    Soprano::Model *model = d->resolver->value( graphId )->model();
+    if ( model->containsAnyStatement( statement ) ) {
         return 1;
     }
     else {
@@ -194,21 +193,14 @@ void Nepomuk::CoreServices::SopranoRDFRepository::addStatement( const QString& g
                   "No such repository: " + graphId );
     }
     else {
-        if ( !d->resolver->contains( "index" ) ) {
-            createRepository( "index" );
-        }
+        Soprano::Model *model = d->resolver->value( graphId )->model();
 
-        Soprano::Model *model = d->resolver->value( graphId );
-
-        if ( model->add( statement ) ) {
+        if ( model->addStatement( statement ) ) {
             setError( "org.semanticdesktop.nepomuk.error.UnknownError",
                       "Failed to add statement ["
                       + statement.subject().toString() + ','
                       + statement.predicate().toString() + ','
                       + statement.object().toString() + ']' );
-        }
-        else {
-            d->resolver->value( "index" )->add( buildIndexGraph( statement ) );
         }
     }
 }
@@ -222,25 +214,18 @@ void Nepomuk::CoreServices::SopranoRDFRepository::addStatements( const QString& 
                   "No such repository: " + graphId );
     }
     else {
-        if ( !d->resolver->contains( "index" ) ) {
-            createRepository( "index" );
-        }
-
-        Soprano::Model *model = d->resolver->value( graphId );
+        Soprano::Model *model = d->resolver->value( graphId )->model();
 
         QList<Soprano::Statement> ssl;
         for( QList<Soprano::Statement>::const_iterator it = statements.constBegin();
              it != statements.constEnd(); ++it ) {
-            if( Soprano::ErrorCode r = model->add( *it ) ) {
+            if( Soprano::Error::ErrorCode r = model->addStatement( *it ) ) {
                 kDebug(300002) << " failed to add " << (*it).subject().toString();
                 setError( "org.semanticdesktop.nepomuk.error.UnknownError",
-                          '(' + Soprano::errorMessage(r) + ") Failed to add statement ["
+                          '(' + Soprano::Error::errorMessage(r) + ") Failed to add statement ["
                           + (*it).subject().toString() + ','
                           + (*it).predicate().toString() + ','
                           + (*it).object().toString() + ']' );
-            }
-            else {
-                d->resolver->value( "index" )->add( buildIndexGraph( *it ) );
             }
         }
     }
@@ -256,12 +241,9 @@ int Nepomuk::CoreServices::SopranoRDFRepository::removeStatement( const QString&
         return 0;
     }
 
-    Soprano::Model *model = d->resolver->value( graphId );
+    Soprano::Model *model = d->resolver->value( graphId )->model();
 
-    if( model->remove( statement ) == Soprano::ERROR_NONE ) {
-        if ( d->resolver->contains( "index" ) ) {
-            d->resolver->value( "index" )->remove( buildIndexGraph( statement ) );
-        }
+    if( model->removeStatement( statement ) == Soprano::Error::ERROR_NONE ) {
         return 1;
     }
     else
@@ -278,18 +260,15 @@ int Nepomuk::CoreServices::SopranoRDFRepository::removeStatements( const QString
         return 0;
     }
 
-    Soprano::Model *model = d->resolver->value( graphId );
+    Soprano::Model *model = d->resolver->value( graphId )->model();
 
     int cnt = 0;
 
     QList<Soprano::Statement> ssl;
     for( QList<Soprano::Statement>::const_iterator it = statements.constBegin();
          it != statements.constEnd(); ++it ) {
-        if( model->remove( *it ) == Soprano::ERROR_NONE ) {
+        if( model->removeStatement( *it ) == Soprano::Error::ERROR_NONE ) {
             ++cnt;
-            if ( d->resolver->contains( "index" ) ) {
-                d->resolver->value( "index" )->remove( buildIndexGraph( *it ) );
-            }
         }
     }
 
@@ -306,30 +285,16 @@ int Nepomuk::CoreServices::SopranoRDFRepository::removeAllStatements( const QStr
         return 0;
     }
 
-    Soprano::Model *model = d->resolver->value( graphId );
-    Soprano::StatementIterator iter = model->listStatements( statement );
-    int cnt = 0;
-    int errorCnt = 0;
-
-    while ( iter.hasNext() ) {
-        Soprano::Statement s = iter.next();
-        if ( model->remove( s ) == Soprano::ERROR_NONE ) {
-            ++cnt;
-            if ( d->resolver->contains( "index" ) ) {
-                d->resolver->value( "index" )->remove( buildIndexGraph( s ) );
-            }
-        }
-        else {
-            ++errorCnt;
-        }
+    Soprano::Model *model = d->resolver->value( graphId )->model();
+    if ( model->removeAllStatements( statement ) == Soprano::Error::ERROR_NONE ) {
+        // FIXME
+        return 1;
     }
-
-    if ( errorCnt ) {
+    else {
         setError( "org.semanticdesktop.nepomuk.error.UnknownError",
-                  QString( "Failed to remove %1 of %2 statements" ).arg( errorCnt ).arg( errorCnt+cnt ) );
+                  QString( "Failed to remove statements" ) );
+        return 0;
     }
-
-    return cnt;
 }
 
 
@@ -339,17 +304,12 @@ void Nepomuk::CoreServices::SopranoRDFRepository::removeContext( const QString& 
         kDebug(300002) << ": " << " repository " << graphId << " not found!";
         setError( "org.semanticdesktop.nepomuk.services.rdfrepository.error.UnknownRepositoryId",
                   "No such repository: " + graphId );
-        return;// ERROR_FAILURE;
+        return;// Error::ERROR_FAILURE;
     }
 
-    Soprano::Model *model = d->resolver->value( graphId );
+    Soprano::Model *model = d->resolver->value( graphId )->model();
 
-    // all index statements have the same context as the statement they were created from
-    if ( d->resolver->contains( "index" ) ) {
-        d->resolver->value( "index" )->remove( context );
-    }
-
-    if ( model->remove( context ) != Soprano::ERROR_NONE ) {
+    if ( model->removeContext( context ) != Soprano::Error::ERROR_NONE ) {
         setError( "org.semanticdesktop.nepomuk.error.UnknownError",
                   "Failed to remove context " + context.uri().toString() );
     }
@@ -367,14 +327,9 @@ Nepomuk::CoreServices::SopranoRDFRepository::listStatements( const QString& grap
         kDebug(300002) << ": " << " repository " << graphId << " not found!";
     }
     else {
-        Soprano::Model *model = d->resolver->value( graphId );
-        Soprano::StatementIterator iter = model->listStatements( statement );
-
-        while ( iter.hasNext() ) {
-            stmList.append( iter.next() );
-        }
+        Soprano::Model *model = d->resolver->value( graphId )->model();
+        stmList = model->listStatements( statement ).allStatements();
     }
-
 
     return stmList;
 }
@@ -396,13 +351,9 @@ QList<Soprano::Statement> Nepomuk::CoreServices::SopranoRDFRepository::describeS
 {
     QList<Soprano::Statement> stmList;
 
-    Soprano::ResultSet r = executeQuery( repositoryId, query, "sparql" );
-    if ( Soprano::Model* model = r.model() ) {
-        Soprano::StatementIterator iter = model->listStatements();
-
-        while ( iter.hasNext() ) {
-            stmList.append( iter.next() );
-        }
+    Soprano::QueryResultIterator r = executeQuery( repositoryId, query, "sparql" );
+    while ( r.next() ) {
+        stmList.append( r.currentStatement() );
     }
 
     return stmList;
@@ -414,13 +365,9 @@ QList<Soprano::Statement> Nepomuk::CoreServices::SopranoRDFRepository::construct
 {
     QList<Soprano::Statement> stmList;
 
-    Soprano::ResultSet r = executeQuery( repositoryId, query, querylanguage );
-    if ( Soprano::Model* model = r.model() ) {
-        Soprano::StatementIterator iter = model->listStatements();
-
-        while ( iter.hasNext() ) {
-            stmList.append( iter.next() );
-        }
+    Soprano::QueryResultIterator r = executeQuery( repositoryId, query, querylanguage );
+    while ( r.next() ) {
+        stmList.append( r.currentStatement() );
     }
 
     return stmList;
@@ -430,7 +377,7 @@ QList<Soprano::Statement> Nepomuk::CoreServices::SopranoRDFRepository::construct
 Nepomuk::RDF::QueryResultTable Nepomuk::CoreServices::SopranoRDFRepository::select( const QString& repositoryId, const QString& query,
 										    const QString& querylanguage )
 {
-    Soprano::ResultSet r = executeQuery( repositoryId, query, querylanguage );
+    Soprano::QueryResultIterator r = executeQuery( repositoryId, query, querylanguage );
     RDF::QueryResultTable rt;
     rt.columns = r.bindingNames();
 
@@ -457,7 +404,7 @@ int Nepomuk::CoreServices::SopranoRDFRepository::queryListStatements( const QStr
         return 0;
     }
     else {
-        Soprano::Model *model = d->resolver->value( repositoryId );
+        Soprano::Model *model = d->resolver->value( repositoryId )->model();
         Soprano::StatementIterator iter = model->listStatements( statement );
 
         return d->cache.insert( iter, timeoutMSec );
@@ -533,11 +480,8 @@ int Nepomuk::CoreServices::SopranoRDFRepository::askSparql( const QString& repos
         return 0;
     }
     else {
-        Soprano::ResultSet r = executeQuery( repositoryId, query, "sparql" );
-        if( r.isBool() )
-            return ( r.boolValue() ? 1 : 0 );
-        else
-            return 0;
+        Soprano::QueryResultIterator r = executeQuery( repositoryId, query, "sparql" );
+        return ( r.boolValue() ? 1 : 0 );
     }
 }
 
@@ -548,8 +492,8 @@ QList<Soprano::Statement> Nepomuk::CoreServices::SopranoRDFRepository::fetchList
     if( d->cache.contains( queryId ) ) {
         Soprano::StatementIterator it = d->cache.getStatements( queryId );
         int cnt = 0;
-        while( it.hasNext() && ( cnt < max || max == 0 ) ) {
-            sl.append( it.next() );
+        while( it.next() && ( cnt < max || max == 0 ) ) {
+            sl.append( *it );
             ++cnt;
         }
 
@@ -582,7 +526,7 @@ Nepomuk::RDF::QueryResultTable Nepomuk::CoreServices::SopranoRDFRepository::fetc
     RDF::QueryResultTable rt;
 
     if( d->cache.contains( queryId ) ) {
-        Soprano::ResultSet rs = d->cache.getResultSet( queryId );
+        Soprano::QueryResultIterator rs = d->cache.getResultSet( queryId );
 
         rt.columns = rs.bindingNames();
 
@@ -658,11 +602,11 @@ void Nepomuk::CoreServices::SopranoRDFRepository::removeGraph( const QString& re
 }
 
 
-Soprano::ResultSet Nepomuk::CoreServices::SopranoRDFRepository::executeQuery( const QString& graphId,
-									      const QString& query,
-									      const QString& queryType )
+Soprano::QueryResultIterator Nepomuk::CoreServices::SopranoRDFRepository::executeQuery( const QString& graphId,
+                                                                                        const QString& query,
+                                                                                        const QString& queryType )
 {
-    Soprano::ResultSet result;
+    Soprano::QueryResultIterator result;
 
     if ( !d->resolver->contains( graphId ) ) {
         kDebug(300002) << ": " << " repository " << graphId << " not found!";
@@ -670,17 +614,17 @@ Soprano::ResultSet Nepomuk::CoreServices::SopranoRDFRepository::executeQuery( co
                   "No such repository: " + graphId );
     }
     else {
-        Soprano::Model *model = d->resolver->value( graphId );
+        Soprano::Model *model = d->resolver->value( graphId )->model();
 
-        Soprano::Query::QueryType sopranoQueryType( Soprano::Query::SPARQL );
+        Soprano::QueryLegacy::QueryType sopranoQueryType( Soprano::QueryLegacy::SPARQL );
 
         if( queryType.toLower() == QString("rdql") )
-            sopranoQueryType = Soprano::Query::RDQL;
+            sopranoQueryType = Soprano::QueryLegacy::RDQL;
         else if( queryType.toLower() != QString("sparql") ) {
             kDebug(300002) << ": " << "Unsupported query language: " << queryType;
         }
         else
-            result = model->executeQuery( Soprano::Query( query, sopranoQueryType ) );
+            result = model->executeQuery( Soprano::QueryLegacy( query, sopranoQueryType ) );
     }
 
     return result;
@@ -690,7 +634,8 @@ Soprano::ResultSet Nepomuk::CoreServices::SopranoRDFRepository::executeQuery( co
 void Nepomuk::CoreServices::SopranoRDFRepository::dumpGraph( const QString& graphId )
 {
     if ( graphId == "system" ) {
-        d->system->print();
+        QTextStream s( stdout );
+        d->system->write( s );
     }
     else if ( !d->resolver->contains( graphId ) ) {
         kDebug(300002) << ": " << " repository " << graphId << " not found!";
@@ -699,29 +644,24 @@ void Nepomuk::CoreServices::SopranoRDFRepository::dumpGraph( const QString& grap
     }
     else {
         kDebug(300002) << ": " << "(SopranoRDFRepository) Listing statements in " << graphId;
-        Soprano::Model *model = d->resolver->value( graphId );
-        model->print();
+        Soprano::Model *model = d->resolver->value( graphId )->model();
+        QTextStream s( stdout );
+        model->write( s );
     }
 }
 
 
-QList<Soprano::Statement> Nepomuk::CoreServices::SopranoRDFRepository::buildIndexGraph( const Soprano::Statement& statement ) const
+void Nepomuk::CoreServices::SopranoRDFRepository::dumpIndex( const QString& graphId )
 {
-    QList<Soprano::Statement> indexGraph;
-
-    if ( statement.object().isLiteral() ) {
-        QString literal = statement.object().toString();
-        QStringList words = literal.split( QRegExp( "\\W+" ), QString::SkipEmptyParts );
-        for ( QStringList::const_iterator it = words.constBegin(); it != words.constEnd(); ++it ) {
-            QString keyword = ( *it ).toLower();
-            indexGraph.append( Soprano::Statement( QUrl( "http://nepomuk-kde.semanticdesktop.org/words#" + keyword ),
-                                                   QUrl( "http://nepomuk-kde.semanticdesktop.org/words/appearsIn" ),
-                                                   statement.subject(),
-                                                   statement.context() ) );
-        }
+    if ( !d->resolver->contains( graphId ) ) {
+        kDebug(300002) << k_funcinfo << ": " << " repository " << graphId << " not found!" << endl;
+        setError( "org.semanticdesktop.nepomuk.services.rdfrepository.error.UnknownRepositoryId",
+                  "No such repository: " + graphId );
     }
-
-    return indexGraph;
+    else {
+        QTextStream s( stdout );
+        d->resolver->value( graphId )->index()->dump( s );
+    }
 }
 
 

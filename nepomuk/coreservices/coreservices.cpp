@@ -17,6 +17,7 @@
 #include "sopranordfrepository.h"
 #include "querydefinition.h"
 #include "dbusinterface.h"
+#include "repository.h"
 
 #include <nepomuk/registry.h>
 #include <soprano/soprano.h>
@@ -41,7 +42,7 @@ public:
 
     // RDF storage
     Soprano::Model* system;
-    QMap<QString, Soprano::Model*> resolver;
+    RepositoryMap resolver;
 
     // the services
     SopranoRDFRepository* repository;
@@ -49,7 +50,7 @@ public:
 
 
 Nepomuk::CoreServices::DaemonImpl::DaemonImpl( QObject* parent )
-    : QObject( parent )
+    : Soprano::Server::ServerCore( parent )
 {
     d = new Private;
     d->registry = new Nepomuk::Middleware::Registry( this );
@@ -58,53 +59,64 @@ Nepomuk::CoreServices::DaemonImpl::DaemonImpl( QObject* parent )
 
 bool Nepomuk::CoreServices::DaemonImpl::registerServices()
 {
-    QString storagePath = QDir::homePath() + "/.nepomuk/share/storage/";
-    if( !KStandardDirs::makeDir( storagePath + "system" ) ) {
-        kDebug(300002) << "Failed to create the system storage folder: " << storagePath + "system";
-        return false;
-    }
+    registerAsDBusObject( "/org/kde/nepomuk/repository" );
+//     QString storagePath = QDir::homePath() + "/.nepomuk/share/storage/";
+//     if( !KStandardDirs::makeDir( storagePath + "system" ) ) {
+//         kDebug(300002) << "Failed to create the system storage folder: " << storagePath + "system";
+//         return false;
+//     }
 
-    if( !Soprano::usedBackend() ) {
-        kDebug(300002) << "Failed to load the Soprano Redland backend";
-        return false;
-    }
+//     kDebug(300002) << "Trying the Sesame2 backend...";
+//     const Soprano::Backend* backend = 0;//Soprano::discoverBackendByName( "sesame2" );
+//     if ( !backend ) {
+//         kDebug(300002) << "...Sesame2 backend not found. Trying redland backend...";
+//         backend = Soprano::discoverBackendByName( "redland" );
+//     }
+//     if( !backend ) {
+//         kDebug(300002) << "Failed to load the Soprano Redland backend";
+//         return false;
+//     }
+//     Soprano::setUsedBackend( backend );
 
-    d->system = Soprano::createModel( "system", QString("new=no,dir="+ storagePath + "system").split( "," ) );
-    if( !d->system ) {
-        kDebug(300002) << "Failed to create the system store";
-        return false;
-    }
+//     QList<Soprano::BackendSetting> settings;
+//     settings.append( Soprano::BackendSetting( Soprano::BACKEND_OPTION_STORAGE_DIR, storagePath + "system" ) );
+//     d->system = Soprano::createModel( settings );
+//     if( !d->system ) {
+//         kDebug(300002) << "Failed to create the system store";
+//         return false;
+//     }
 
-    // /////////////////////////////////////////////////
-    // Load graphs
-    // /////////////////////////////////////////////////
+//     // /////////////////////////////////////////////////
+//     // Load graphs
+//     // /////////////////////////////////////////////////
 
-    Soprano::Query query( QueryDefinition::FIND_GRAPHS, Soprano::Query::RDQL );
-    Soprano::ResultSet res = d->system->executeQuery( query );
+//     Soprano::QueryLegacy query( QueryDefinition::FIND_GRAPHS, Soprano::QueryLegacy::SPARQL );
+//     Soprano::QueryResultIterator res = d->system->executeQuery( query );
 
-    while( res.next() ) {
-        QString modelId = res.binding( "modelId" ).literal().toString();
-        if ( !d->resolver.contains( modelId ) ) {
-            KStandardDirs::makeDir( storagePath + modelId );
-            d->resolver.insert( modelId, Soprano::createModel( modelId,
-                                                               QString("dir=" + storagePath + modelId ).split(",") ) );
-            kDebug(300002) << "(Nepomuk::CoreServices) found repository: " << modelId;
-        }
-    }
+//     while( res.next() ) {
+//         QString modelId = res.binding( "modelId" ).literal().toString();
+//         if ( !d->resolver.contains( modelId ) ) {
+//             Repository* rep = Repository::open( storagePath + modelId, modelId );
+//             if ( rep ) {
+//                 d->resolver.insert( modelId, rep );
+//                 kDebug(300002) << "(Nepomuk::CoreServices) found repository: " << modelId;
+//             }
+//         }
+//     }
 
-    // FIXME: add error handling
-    d->repository = new SopranoRDFRepository( d->system, &d->resolver );
+//     // FIXME: add error handling
+//     d->repository = new SopranoRDFRepository( d->system, &d->resolver );
 
-    if( d->registry->registerService( d->repository ) ) {
-        kDebug(300002) << "Failed to register Nepomuk services.";
-        return false;
-    }
+//     if( d->registry->registerService( d->repository ) ) {
+//         kDebug(300002) << "Failed to register Nepomuk services.";
+//         return false;
+//     }
 
 
-    (void)new DBusInterface( this, d->repository );
+//     (void)new DBusInterface( this, d->repository );
 
-    QDBusConnection::sessionBus().registerService( "org.semanticdesktop.nepomuk.CoreServices" );
-    QDBusConnection::sessionBus().registerObject( "/org/semanticdesktop/nepomuk/CoreServices", this );
+//     QDBusConnection::sessionBus().registerService( "org.semanticdesktop.nepomuk.CoreServices" );
+//     QDBusConnection::sessionBus().registerObject( "/org/semanticdesktop/nepomuk/CoreServices", this );
 
     return true;
 }
@@ -112,15 +124,24 @@ bool Nepomuk::CoreServices::DaemonImpl::registerServices()
 
 Nepomuk::CoreServices::DaemonImpl::~DaemonImpl()
 {
-    kDebug(300002) ;
-
+    qDebug() << "Shutting down Nepomuk core services.";
     delete d->system;
-    for ( QMap<QString, Soprano::Model*>::iterator it = d->resolver.begin();
+    for ( RepositoryMap::iterator it = d->resolver.begin();
           it != d->resolver.end(); ++it ) {
         delete it.value();
     }
     delete d->repository;
     delete d;
+}
+
+
+Soprano::Model* Nepomuk::CoreServices::DaemonImpl::model( const QString& name )
+{
+    if ( !d->resolver.contains( name ) ) {
+        kDebug(300002) << "Creating new repository with name " << name;
+        d->repository->createRepository( name );
+    }
+    return d->resolver[name]->model();
 }
 
 #include "coreservices.moc"

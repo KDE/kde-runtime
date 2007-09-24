@@ -16,7 +16,7 @@
 #include <QTimer>
 
 #include <soprano/statementiterator.h>
-#include <soprano/resultset.h>
+#include <soprano/queryresultiterator.h>
 
 namespace Soprano {
     class Model;
@@ -31,10 +31,10 @@ class Cache : public QObject
     ~Cache();  
  
     int insert( const Soprano::StatementIterator&, int timeout = 100000 ); 
-    int insert( const Soprano::ResultSet&, int timeout = 100000 ); 
+    int insert( const Soprano::QueryResultIterator&, int timeout = 100000 ); 
  
     Soprano::StatementIterator getStatements( int listId ); 
-    Soprano::ResultSet getResultSet( int listId );
+    Soprano::QueryResultIterator getResultSet( int listId );
 
     bool contains( int listId ) const;
 
@@ -54,11 +54,11 @@ class CacheObject : public QObject
 
  public:
     CacheObject( int listId, const Soprano::StatementIterator&, int timeout );
-    CacheObject( int listId, const Soprano::ResultSet&, int timeout );
+    CacheObject( int listId, const Soprano::QueryResultIterator&, int timeout );
     ~CacheObject(); 
 
     Soprano::StatementIterator iterator();
-    Soprano::ResultSet resultSet();
+    Soprano::QueryResultIterator resultSet();
 
  signals:
     void timeout( int listId );
@@ -69,7 +69,7 @@ class CacheObject : public QObject
  private:
     int m_listId;
     Soprano::StatementIterator m_sti;
-    Soprano::ResultSet m_set;
+    Soprano::QueryResultIterator m_set;
     Soprano::Model* m_model;
 
     QTimer m_timer;

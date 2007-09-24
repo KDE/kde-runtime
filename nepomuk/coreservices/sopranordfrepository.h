@@ -20,6 +20,9 @@
 
 #include <soprano/soprano.h>
 
+#include "repository.h"
+
+
 using namespace Nepomuk::Middleware;
 using namespace Nepomuk::Services;
 
@@ -31,7 +34,7 @@ namespace Nepomuk {
 
 	public:
 	    SopranoRDFRepository( Soprano::Model *system,
-				  QMap<QString, Soprano::Model *> *resolver );
+				  RepositoryMap *resolver );
 
 	    ~SopranoRDFRepository();
  
@@ -120,17 +123,12 @@ namespace Nepomuk {
 
 	    void dumpGraph( const QString& graph );
 
-	private:
-	    Soprano::ResultSet executeQuery( const QString& graphId,
-					     const QString& query,
-					     const QString& queryType );
+	    void dumpIndex( const QString& graph );
 
-	    /**
-	     * Creates a pseudo-index graph for the given statement if the object
-	     * is a literal. The literal will be split into single words and for
-	     * each word a new index statement is created.
-	     */
-	    QList<Soprano::Statement> buildIndexGraph( const Soprano::Statement& ) const;
+	private:
+	    Soprano::QueryResultIterator executeQuery( const QString& graphId,
+						       const QString& query,
+						       const QString& queryType );
 
 	    QString createStoragePath( const QString& repositoryId ) const;
 

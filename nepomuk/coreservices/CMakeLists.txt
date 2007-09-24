@@ -14,14 +14,18 @@ set( SRCS
   sopranordfrepository.cpp
   coreservices.cpp
   dbusinterface.cpp
+  repository.cpp
 )
 
-
 kde4_add_executable(nepomukcoreservices ${SRCS} main.cpp)
+
+# FIXME: make the sopran index optional
 
 target_link_libraries(nepomukcoreservices
   ${NEPOMUK_LIBRARIES}
   ${SOPRANO_LIBRARIES}
+  ${SOPRANO_INDEX_LIBRARIES}
+  sopranoserver
   ${QT_QTCORE_LIBRARY}
   ${QT_QTDBUS_LIBRARY}
   ${KDE4_KDECORE_LIBS}
