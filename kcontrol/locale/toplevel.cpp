@@ -180,9 +180,6 @@ void KLocaleApplication::load()
 
 void KLocaleApplication::save()
 {
-  // temporary use of our locale as the global locale
-  KLocale *lsave = KGlobal::locale();
-  KGlobal::setLocale(m_locale);
   KMessageBox::information(this, ki18n
                            ("Changed language settings apply only to "
                             "newly started applications.\nTo change the "
@@ -190,8 +187,6 @@ void KLocaleApplication::save()
                             "logout first.").toString(m_locale),
                            ki18n("Applying Language Settings").toString(m_locale),
                            QLatin1String("LanguageChangesApplyOnlyToNewlyStartedPrograms"));
-  // restore the old global locale
-  KGlobal::setLocale(lsave);
 
   KSharedConfig::Ptr config = KGlobal::config();
   KConfigGroup group(config, "Locale");

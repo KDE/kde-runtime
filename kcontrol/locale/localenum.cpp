@@ -93,15 +93,12 @@ KLocaleConfigNumber::~KLocaleConfigNumber()
 
 void KLocaleConfigNumber::save()
 {
-  // temporary use of our locale as the global locale
-  KLocale *lsave = KGlobal::locale();
-  KGlobal::setLocale(m_locale);
-
   KSharedConfig::Ptr config = KGlobal::config();
   KConfigGroup group(config, "Locale");
   KConfig ent(KStandardDirs::locate("locale",
 			   QString::fromLatin1("l10n/%1/entry.desktop")
 			   .arg(m_locale->country())));
+  ent.setLocale(m_locale->language());
   KConfigGroup entGrp = ent.group("KCM Locale");
 
   QString str;
@@ -131,9 +128,6 @@ void KLocaleConfigNumber::save()
   group.deleteEntry("NegativeSign", KConfigBase::Global);
   if (str != m_locale->negativeSign())
     group.writeEntry("NegativeSign", m_locale->negativeSign(), KConfigBase::Persistent|KConfigBase::Global);
-
-  // restore the old global locale
-  KGlobal::setLocale(lsave);
 }
 
 void KLocaleConfigNumber::slotLocaleChanged()

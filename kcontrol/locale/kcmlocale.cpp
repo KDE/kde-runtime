@@ -167,21 +167,15 @@ void KLocaleConfig::changeCountry()
 void KLocaleConfig::readLocale(const QString &path, QString &name,
                                const QString &sub) const
 {
-  // temporary use of our locale as the global locale
-  KLocale *lsave = KGlobal::locale();
-  KGlobal::setLocale(m_locale);
-
   // read the name
   QString filepath = QString::fromLatin1("%1%2/entry.desktop")
     .arg(sub)
     .arg(path);
 
   KConfig entry(KStandardDirs::locate("locale", filepath));
+  entry.setLocale(m_locale->language());
   KConfigGroup entryGroup = entry.group("KCM Locale");
   name = entryGroup.readEntry("Name");
-
-  // restore the old global locale
-  KGlobal::setLocale(lsave);
 }
 
 void KLocaleConfig::save()
