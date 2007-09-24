@@ -244,6 +244,7 @@ QHash<QByteArray, QVariant> Backend::objectDescriptionProperties(ObjectDescripti
                 if (mixer.isValid()) {
                     ret.insert("mixerDeviceId", mixer);
                 }
+                ret.insert("initialPreference", XineEngine::audioOutputInitialPreference(index));
             }
             break;
             /*

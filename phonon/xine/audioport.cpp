@@ -100,7 +100,7 @@ AudioPort::~AudioPort()
 AudioPort::AudioPort(int deviceIndex)
     : d(new AudioPortData)
 {
-    QByteArray outputPlugin = XineEngine::audioDriverFor(deviceIndex).toLatin1();
+    QByteArray outputPlugin = XineEngine::audioDriverFor(deviceIndex);
     //kDebug(610) << outputPlugin << alsaDevices;
 
     if (outputPlugin == "alsa") {

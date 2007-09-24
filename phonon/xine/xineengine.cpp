@@ -315,7 +315,7 @@ namespace Xine
         that->checkAudioOutputs();
         for (int i = 0; i < that->m_audioOutputInfos.size(); ++i) {
             if (that->m_audioOutputInfos[i].index == audioDevice) {
-                if (that->m_audioOutputInfos[i].driver == QLatin1String("alsa")) {
+                if (that->m_audioOutputInfos[i].driver == "alsa") {
                     return that->m_audioOutputInfos[i].mixerDevice;
                 }
                 break;
@@ -324,7 +324,20 @@ namespace Xine
         return QVariant();
     }
 
-    QString XineEngine::audioDriverFor(int audioDevice)
+    int XineEngine::audioOutputInitialPreference(int audioDevice)
+    {
+        XineEngine *that = self();
+        that->checkAudioOutputs();
+
+        for (int i = 0; i < that->m_audioOutputInfos.size(); ++i) {
+            if (that->m_audioOutputInfos[i].index == audioDevice) {
+                return that->m_audioOutputInfos[i].initialPreference;
+            }
+        }
+        return 0;
+    }
+
+    QByteArray XineEngine::audioDriverFor(int audioDevice)
     {
         XineEngine *that = self();
         that->checkAudioOutputs();
@@ -333,7 +346,7 @@ namespace Xine
                 return that->m_audioOutputInfos[i].driver;
             }
         }
-        return QString();
+        return QByteArray();
     }
 
     QStringList XineEngine::alsaDevicesFor(int audioDevice)
@@ -350,7 +363,7 @@ namespace Xine
         return QStringList();
     }
 
-    void XineEngine::addAudioOutput(AudioDevice dev, QString driver)
+    void XineEngine::addAudioOutput(AudioDevice dev, const QByteArray &driver)
     {
         QString postfix;
         if (m_useOss) {
@@ -361,7 +374,9 @@ namespace Xine
             }
         }
         QString mixerDevice;
+        int initialPreference = dev.initialPreference();
         if (dev.driver() == Solid::AudioInterface::Alsa) {
+            initialPreference += 100;
             foreach (QString id, dev.deviceIds()) {
                 const int idx = id.indexOf(QLatin1String("CARD="));
                 if (idx > 0) {
@@ -376,6 +391,7 @@ namespace Xine
                 mixerDevice = id;
             }
         } else {
+            initialPreference += 50;
             mixerDevice = dev.deviceIds().first();
         }
         const QString description = dev.deviceIds().isEmpty() ?
@@ -383,7 +399,7 @@ namespace Xine
                     "driver is not loaded).</html>") :
             i18n("<html>This will try the following devices and use the first that works: "
                     "<ol><li>%1</li></ol></html>", dev.deviceIds().join("</li><li>"));
-        AudioOutputInfo info(dev.index(), dev.cardName() + postfix,
+        AudioOutputInfo info(dev.index(), initialPreference, dev.cardName() + postfix,
                 description, dev.iconName(), driver, dev.deviceIds(), mixerDevice);
         info.available = dev.isAvailable();
         if (m_audioOutputInfos.contains(info)) {
@@ -392,10 +408,10 @@ namespace Xine
         m_audioOutputInfos << info;
     }
 
-    void XineEngine::addAudioOutput(int index, const QString &name, const QString &description,
-            const QString &icon, const QString &driver, const QStringList &deviceIds, const QString &mixerDevice)
+    void XineEngine::addAudioOutput(int index, int initialPreference, const QString &name, const QString &description,
+            const QString &icon, const QByteArray &driver, const QStringList &deviceIds, const QString &mixerDevice)
     {
-        AudioOutputInfo info(index, name, description, icon, driver, deviceIds, mixerDevice);
+        AudioOutputInfo info(index, initialPreference, name, description, icon, driver, deviceIds, mixerDevice);
         const int listIndex = m_audioOutputInfos.indexOf(info);
         if (listIndex == -1) {
             info.available = true;
@@ -405,12 +421,17 @@ namespace Xine
             config.writeEntry("description", description);
             config.writeEntry("driver", driver);
             config.writeEntry("icon", icon);
+            config.writeEntry("initialPreference", initialPreference);
         } else {
             AudioOutputInfo &infoInList = m_audioOutputInfos[listIndex];
-            if (infoInList.icon != icon) {
+            if (infoInList.icon != icon || infoInList.initialPreference != initialPreference) {
                 KConfigGroup config(m_config, QLatin1String("AudioOutputDevice_") + QString::number(infoInList.index));
+
                 config.writeEntry("icon", icon);
+                config.writeEntry("initialPreference", initialPreference);
+
                 infoInList.icon = icon;
+                infoInList.initialPreference = initialPreference;
             }
             infoInList.devices = deviceIds;
             infoInList.mixerDevice = mixerDevice;
@@ -436,10 +457,11 @@ namespace Xine
                     }
                     KConfigGroup config(m_config, group);
                     m_audioOutputInfos << AudioOutputInfo(index,
+                            config.readEntry("initialPreference", 0),
                             config.readEntry("name", QString()),
                             config.readEntry("description", QString()),
                             config.readEntry("icon", QString()),
-                            config.readEntry("driver", QString()),
+                            config.readEntry("driver", QByteArray()),
                             QStringList(), QString()); // the device list can change and needs to be queried
                                             // from the actual hardware configuration
                 }
@@ -453,7 +475,7 @@ namespace Xine
                     QList<AudioDevice> alsaDevices = AudioDeviceEnumerator::availablePlaybackDevices();
                     foreach (AudioDevice dev, alsaDevices) {
                         if (dev.driver() == Solid::AudioInterface::Alsa) {
-                            addAudioOutput(dev, QLatin1String("alsa"));
+                            addAudioOutput(dev, "alsa");
                         }
                     }
                 } else if (0 == strcmp(outputPlugins[i], "none") || 0 == strcmp(outputPlugins[i], "file")) {
@@ -463,12 +485,12 @@ namespace Xine
                         QList<AudioDevice> audioDevices = AudioDeviceEnumerator::availablePlaybackDevices();
                         foreach (AudioDevice dev, audioDevices) {
                             if (dev.driver() == Solid::AudioInterface::OpenSoundSystem) {
-                                addAudioOutput(dev, QLatin1String("oss"));
+                                addAudioOutput(dev, "oss");
                             }
                         }
                     }
                 } else if (0 == strcmp(outputPlugins[i], "jack")) {
-                    addAudioOutput(nextIndex++, i18n("Jack Audio Connection Kit"),
+                    addAudioOutput(nextIndex++, -10, i18n("Jack Audio Connection Kit"),
                             i18n("<html><p>JACK is a low-latency audio server. It can connect a number "
                                 "of different applications to an audio device, as well as allowing "
                                 "them to share audio between themselves.</p>"
@@ -478,12 +500,16 @@ namespace Xine
                             /*icon name*/"audio-input-line", outputPlugins[i], QStringList(),
                             QString());
                 } else if (0 == strcmp(outputPlugins[i], "arts")) {
-                    addAudioOutput(nextIndex++, i18n("aRts"),
+                    addAudioOutput(nextIndex++, -100, i18n("aRts"),
                             i18n("<html><p>aRts is the old soundserver and media framework that was used "
                                 "in KDE2 and KDE3. Its use is discuraged.</p></html>"),
                             /*icon name*/"arts", outputPlugins[i], QStringList(), QString());
+                } else if (0 == strcmp(outputPlugins[i], "pulseaudio")) {
+                    addAudioOutput(nextIndex++, 10, i18n("PulseAudio"),
+                            xine_get_audio_driver_plugin_description(xine(), outputPlugins[i]),
+                            /*icon name*/"pulseaudio", outputPlugins[i], QStringList(), QString());
                 } else {
-                    addAudioOutput(nextIndex++, outputPlugins[i],
+                    addAudioOutput(nextIndex++, -20, outputPlugins[i],
                             xine_get_audio_driver_plugin_description(xine(), outputPlugins[i]),
                             /*icon name*/outputPlugins[i], outputPlugins[i], QStringList(),
                             QString());
@@ -491,7 +517,7 @@ namespace Xine
             }
 
             // now m_audioOutputInfos holds all devices this computer has ever seen
-            foreach (AudioOutputInfo info, m_audioOutputInfos) {
+            foreach (const AudioOutputInfo &info, m_audioOutputInfos) {
                 kDebug(610) << info.index << info.name << info.driver << info.devices;
             }
         }
@@ -508,7 +534,7 @@ namespace Xine
             case Solid::AudioInterface::Alsa:
                 for (int i = 0; outputPlugins[i]; ++i) {
                     if (0 == strcmp(outputPlugins[i], "alsa")) {
-                        s_instance->addAudioOutput(dev, QLatin1String("alsa"));
+                        s_instance->addAudioOutput(dev, "alsa");
                         signalTimer.start();
                     }
                 }
@@ -517,7 +543,7 @@ namespace Xine
                 if (s_instance->m_useOss) {
                     for (int i = 0; outputPlugins[i]; ++i) {
                         if (0 == strcmp(outputPlugins[i], "oss")) {
-                            s_instance->addAudioOutput(dev, QLatin1String("oss"));
+                            s_instance->addAudioOutput(dev, "oss");
                             signalTimer.start();
                         }
                     }
@@ -534,7 +560,7 @@ namespace Xine
         if (!dev.isPlaybackDevice()) {
             return;
         }
-        QString driver;
+        QByteArray driver;
         QString postfix;
         switch (dev.driver()) {
             case Solid::AudioInterface::Alsa:
@@ -550,15 +576,19 @@ namespace Xine
             case Solid::AudioInterface::UnknownAudioDriver:
                 break;
         }
-        XineEngine::AudioOutputInfo info(dev.index(), dev.cardName() + postfix, QString(), dev.iconName(),
+        XineEngine::AudioOutputInfo info(dev.index(), 0, dev.cardName() + postfix, QString(), dev.iconName(),
                 driver, dev.deviceIds(), QString());
-        if (s_instance->m_audioOutputInfos.removeAll(info)) {
-            s_instance->m_audioOutputInfos << info; // now the device is listed as not available
-            signalTimer.start();
-        } else {
+        const int indexOfInfo = s_instance->m_audioOutputInfos.indexOf(info);
+        if (indexOfInfo < 0) {
             kDebug(610) << "told to remove " << dev.cardName() + postfix <<
                 " with driver " << driver << " but the device was not present in m_audioOutputInfos";
+            return;
         }
+        const XineEngine::AudioOutputInfo oldInfo = s_instance->m_audioOutputInfos.takeAt(indexOfInfo);
+        Q_ASSERT(!s_instance->m_audioOutputInfos.contains(info));
+        info.initialPreference = oldInfo.initialPreference;
+        s_instance->m_audioOutputInfos << info; // now the device is listed as not available
+        signalTimer.start();
     }
 } // namespace Xine
 } // namespace Phonon
