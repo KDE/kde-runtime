@@ -69,3 +69,5 @@ find_package(Nepomuk)
 if(Soprano_FOUND AND Nepomuk_FOUND)
   macro_optional_add_subdirectory(nepomuk)
 endif(Soprano_FOUND AND Nepomuk_FOUND)
+
+macro_optional_add_subdirectory(renamedlgplugins)
