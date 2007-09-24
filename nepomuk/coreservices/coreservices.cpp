@@ -79,7 +79,7 @@ bool Nepomuk::CoreServices::DaemonImpl::registerServices()
     Soprano::setUsedBackend( backend );
 
     QList<Soprano::BackendSetting> settings;
-    settings.append( Soprano::BackendSetting( Soprano::BACKEND_OPTION_STORAGE_DIR, storagePath + "system" ) );
+    settings.append( Soprano::BackendSetting( Soprano::BackendOptionStorageDir, storagePath + "system" ) );
     d->system = Soprano::createModel( settings );
     if( !d->system ) {
         kDebug(300002) << "Failed to create the system store";

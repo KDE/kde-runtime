@@ -52,7 +52,7 @@ Nepomuk::CoreServices::Repository* Nepomuk::CoreServices::Repository::open( cons
     kDebug() << "(Nepomuk::Repository::open) opening repository '" << name << "' at '" << path << "'";
     KStandardDirs::makeDir( path );
     QList<Soprano::BackendSetting> settings;
-    settings.append( Soprano::BackendSetting( Soprano::BACKEND_OPTION_STORAGE_DIR, path ) );
+    settings.append( Soprano::BackendSetting( Soprano::BackendOptionStorageDir, path ) );
     Soprano::Model* model = Soprano::createModel( settings );
     if ( model ) {
         Soprano::Index::CLuceneIndex* index = new Soprano::Index::CLuceneIndex();
