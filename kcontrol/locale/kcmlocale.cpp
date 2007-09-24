@@ -173,7 +173,7 @@ void KLocaleConfig::readLocale(const QString &path, QString &name,
     .arg(path);
 
   KConfig entry(KStandardDirs::locate("locale", filepath));
-  //entry.setLocale(m_locale->language());
+  entry.setLocale(m_locale->language());
   KConfigGroup entryGroup = entry.group("KCM Locale");
   name = entryGroup.readEntry("Name");
 }
