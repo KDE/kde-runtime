@@ -243,7 +243,7 @@ int Nepomuk::CoreServices::SopranoRDFRepository::removeStatement( const QString&
 
     Soprano::Model *model = d->resolver->value( graphId )->model();
 
-    if( model->removeStatement( statement ) == Soprano::Error::ERROR_NONE ) {
+    if( model->removeStatement( statement ) == Soprano::Error::ErrorNone ) {
         return 1;
     }
     else
@@ -267,7 +267,7 @@ int Nepomuk::CoreServices::SopranoRDFRepository::removeStatements( const QString
     QList<Soprano::Statement> ssl;
     for( QList<Soprano::Statement>::const_iterator it = statements.constBegin();
          it != statements.constEnd(); ++it ) {
-        if( model->removeStatement( *it ) == Soprano::Error::ERROR_NONE ) {
+        if( model->removeStatement( *it ) == Soprano::Error::ErrorNone ) {
             ++cnt;
         }
     }
@@ -286,7 +286,7 @@ int Nepomuk::CoreServices::SopranoRDFRepository::removeAllStatements( const QStr
     }
 
     Soprano::Model *model = d->resolver->value( graphId )->model();
-    if ( model->removeAllStatements( statement ) == Soprano::Error::ERROR_NONE ) {
+    if ( model->removeAllStatements( statement ) == Soprano::Error::ErrorNone ) {
         // FIXME
         return 1;
     }
@@ -309,7 +309,7 @@ void Nepomuk::CoreServices::SopranoRDFRepository::removeContext( const QString& 
 
     Soprano::Model *model = d->resolver->value( graphId )->model();
 
-    if ( model->removeContext( context ) != Soprano::Error::ERROR_NONE ) {
+    if ( model->removeContext( context ) != Soprano::Error::ErrorNone ) {
         setError( "org.semanticdesktop.nepomuk.error.UnknownError",
                   "Failed to remove context " + context.uri().toString() );
     }
