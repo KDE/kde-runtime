@@ -616,15 +616,15 @@ Soprano::QueryResultIterator Nepomuk::CoreServices::SopranoRDFRepository::execut
     else {
         Soprano::Model *model = d->resolver->value( graphId )->model();
 
-        Soprano::QueryLegacy::QueryType sopranoQueryType( Soprano::QueryLegacy::SPARQL );
+        Soprano::Query::QueryLanguage sopranoQueryType( Soprano::Query::QUERY_LANGUAGE_SPARQL );
 
         if( queryType.toLower() == QString("rdql") )
-            sopranoQueryType = Soprano::QueryLegacy::RDQL;
+            sopranoQueryType = Soprano::Query::QUERY_LANGUAGE_RDQL;
         else if( queryType.toLower() != QString("sparql") ) {
             kDebug(300002) << ": " << "Unsupported query language: " << queryType;
         }
         else
-            result = model->executeQuery( Soprano::QueryLegacy( query, sopranoQueryType ) );
+            result = model->executeQuery( query, sopranoQueryType );
     }
 
     return result;
