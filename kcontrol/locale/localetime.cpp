@@ -219,7 +219,7 @@ KLocaleConfigTime::KLocaleConfigTime(KLocale *_locale,
   m_comboTimeFmt->setEditable(true);
   //m_edTimeFmt = m_comboTimeFmt->lineEdit();
   //m_edTimeFmt = new QLineEdit(this);
-  connect( m_comboTimeFmt, SIGNAL( textChanged(const QString &) ),
+  connect( m_comboTimeFmt, SIGNAL( editTextChanged(const QString &) ),
 	   this, SLOT( slotTimeFmtChanged(const QString &) ) );
 
   m_labDateFmt = new QLabel(this);
@@ -228,7 +228,7 @@ KLocaleConfigTime::KLocaleConfigTime(KLocale *_locale,
   m_comboDateFmt = new QComboBox(this);
   lay->addWidget(m_comboDateFmt, 2, 1);
   m_comboDateFmt->setEditable(true);
-  connect( m_comboDateFmt, SIGNAL( textChanged(const QString &) ),
+  connect( m_comboDateFmt, SIGNAL( editTextChanged(const QString &) ),
 	   this, SLOT( slotDateFmtChanged(const QString &) ) );
 
   m_labDateFmtShort = new QLabel(this);
@@ -237,7 +237,7 @@ KLocaleConfigTime::KLocaleConfigTime(KLocale *_locale,
   m_comboDateFmtShort = new QComboBox(this);
   lay->addWidget(m_comboDateFmtShort, 3, 1);
   m_comboDateFmtShort->setEditable(true);
-  connect( m_comboDateFmtShort, SIGNAL( textChanged(const QString &) ),
+  connect( m_comboDateFmtShort, SIGNAL( editTextChanged(const QString &) ),
 	   this, SLOT( slotDateFmtShortChanged(const QString &) ) );
 
   m_labWeekStartDay = new QLabel(this);
