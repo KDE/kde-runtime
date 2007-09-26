@@ -393,12 +393,20 @@ void ByteStream::setPauseForBuffering(bool b)
 void ByteStream::endOfData()
 {
     PXINE_DEBUG;
-    QMutexLocker lock(&m_mutex);
+
+    m_mutex.lock();
+    m_seekMutex.lock();
+    m_streamSizeMutex.lock();
     m_eod = true;
     // don't reset the XineStream because many demuxers hit eod while trying to find the format of
     // the data
     // stream().setMrl(mrl());
+    m_seekWaitCondition.wakeAll();
+    m_seekMutex.unlock();
     m_waitingForData.wakeAll();
+    m_mutex.unlock();
+    m_waitForStreamSize.wakeAll();
+    m_streamSizeMutex.unlock();
 }
 
 void ByteStream::setStreamSeekable(bool seekable)
@@ -464,7 +472,7 @@ qint64 ByteStream::streamSize() const
     if (m_streamSize == 0) {
         // stream size has not been set yet
         QMutexLocker lock(&m_streamSizeMutex);
-        if (m_streamSize == 0) {
+        if (m_streamSize == 0 && !m_eod) {
             m_waitForStreamSize.wait(&m_streamSizeMutex);
         }
     }
