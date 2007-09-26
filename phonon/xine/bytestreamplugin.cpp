@@ -158,7 +158,7 @@ static off_t kbytestream_plugin_get_length (input_plugin_t *this_gen)
 
 static uint32_t kbytestream_plugin_get_blocksize (input_plugin_t *)
 {
-    return 32768;
+    return 0;
 }
 
 #if (XINE_SUB_VERSION > 3 && XINE_MINOR_VERSION == 1) || (XINE_MINOR_VERSION > 1 && XINE_MAJOR_VERSION == 1) || XINE_MAJOR_VERSION > 1
