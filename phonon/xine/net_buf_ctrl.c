@@ -157,6 +157,7 @@ int report_bufferstatus (nbc_t *this)
     return progress;
 }
 
+#if 0
 static void display_stats (nbc_t *this) {
   printf("buff: %d, enb: %d "\
 	 "vid %3d%% %4.1fs %4" PRId64 "kbps %1d, "\
@@ -174,6 +175,7 @@ static void display_stats (nbc_t *this) {
 	 );
   fflush(stdout);
 }
+#endif
 
 /*  Try to compute the length of the fifo in 1/1000 s
  *  2 methods :
