@@ -78,10 +78,12 @@ class MediaObject;
             off_t currentPosition() const;
 
         signals:
+            void resetQueued();
             void needDataQueued();
             void seekStreamQueued(qint64);
 
         private slots:
+            void callStreamInterfaceReset();
             void syncSeekStream(qint64 offset);
             void needData() { StreamInterface::needData(); }
 

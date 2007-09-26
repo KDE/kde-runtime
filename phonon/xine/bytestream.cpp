@@ -99,6 +99,7 @@ ByteStream::ByteStream(const MediaSource &mediaSource, MediaObject* parent)
     m_buffering(false),
     m_firstReset(true)
 {
+    connect(this, SIGNAL(resetQueued()), this, SLOT(callStreamInterfaceReset()), Qt::BlockingQueuedConnection);
     connect(this, SIGNAL(needDataQueued()), this, SLOT(needData()), Qt::QueuedConnection);
     connect(this, SIGNAL(seekStreamQueued(qint64)), this, SLOT(syncSeekStream(qint64)), Qt::QueuedConnection);
 
@@ -444,6 +445,11 @@ void ByteStream::writeData(const QByteArray &data)
     //kDebug(610) << "UNLOCKING m_mutex: ";
 }
 
+void ByteStream::callStreamInterfaceReset()
+{
+    StreamInterface::reset();
+}
+
 void ByteStream::syncSeekStream(qint64 offset)
 {
     PXINE_VDEBUG;
@@ -491,7 +497,7 @@ void ByteStream::reset()
         return;
     }
     kDebug(610);
-    StreamInterface::reset();
+    emit resetQueued();
     m_currentPosition = 0;
     m_buffersize = 0;
     m_offset = 0;
