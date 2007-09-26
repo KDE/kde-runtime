@@ -57,6 +57,7 @@ const char LOCAL_ZONE[]     = "LocalZone";     // name of local time zone
 
 KTimeZoned::KTimeZoned()
   : mSource(0),
+    mZonetabWatch(0),
     mDirWatch(0)
 {
     init(false);
@@ -66,6 +67,8 @@ KTimeZoned::~KTimeZoned()
 {
     delete mSource;
     mSource = 0;
+    delete mZonetabWatch;
+    mZonetabWatch = 0;
     delete mDirWatch;
     mDirWatch = 0;
 }
@@ -85,6 +88,8 @@ void KTimeZoned::init(bool restart)
         kDebug(1221) << "KTimeZoned::init(restart)";
         delete mSource;
         mSource = 0;
+        delete mZonetabWatch;
+        mZonetabWatch = 0;
         delete mDirWatch;
         mDirWatch = 0;
     }
@@ -118,7 +123,7 @@ void KTimeZoned::init(bool restart)
         {
             // Check whether the cached zone.tab is still up to date
 #ifdef __GNUC__
-#warning Implement this
+#warning Implement checking whether Solaris cached zone.tab is up to date
 #endif
         }
     }
@@ -152,6 +157,10 @@ void KTimeZoned::init(bool restart)
 
     // Read zone.tab and create a collection of KTimeZone instances
     readZoneTab(f);
+
+    mZonetabWatch = new KDirWatch(this);
+    mZonetabWatch->addFile(mZoneTab);
+    connect(mZonetabWatch, SIGNAL(dirty(const QString&)), SLOT(zonetab_Changed(const QString&)));
 #endif
 
     // Find the local system time zone and set up file monitors to detect changes
@@ -241,14 +250,11 @@ bool KTimeZoned::findZoneTab(QFile& f)
         d.setFilter(QDir::Files | QDir::Hidden | QDir::NoSymLinks);
         QStringList fileList = d.entryList();
 
-#ifdef __GNUC__
-#warning Do cache files persist between sessions?
-#endif
         mZoneTab = KStandardDirs::locateLocal("cache", QLatin1String("zone.tab"));
         f.setFileName(mZoneTab);
         if (!f.open(QIODevice::WriteOnly))
         {
-            kError() << "Could not create zone.tab cache" << endl;
+            kError(1221) << "Could not create zone.tab cache" << endl;
             return false;
         }
 
@@ -285,7 +291,7 @@ bool KTimeZoned::findZoneTab(QFile& f)
         f.close();
         if (!f.open(QIODevice::ReadOnly))
         {
-            kError() << "Could not reopen zone.tab cache file for reading." << endl;
+            kError(1221) << "Could not reopen zone.tab cache file for reading." << endl;
             return false;
         }
         mZoneTabCache = Solaris;
@@ -313,7 +319,7 @@ void KTimeZoned::readZoneTab(QFile &f)
         int n = tokens.count();
         if (n < 3)
         {
-            kError() << "readZoneTab(): invalid record: " << line << endl;
+            kError(1221) << "readZoneTab(): invalid record: " << line << endl;
             continue;
         }
 
@@ -394,10 +400,6 @@ if (!mLocalZone.isEmpty()) kDebug(1221)<<"/etc/default/init: "<<mLocalZone;
         const KTimeZones::ZoneMap zmap = mZones.zones();
         for (KTimeZones::ZoneMap::ConstIterator it = zmap.begin(), end = zmap.end();  it != end;  ++it)
         {
-#ifdef __GNUC__
-#warning Is KSystemTimeZone cast necessary???
-#endif
-//            KSystemTimeZone zone = static_cast<const KSystemTimeZone*>(it.value());
             KTimeZone zone = it.value();
             int candidateOffset = qAbs(zone.currentOffset(Qt::LocalTime));
             if (candidateOffset < bestOffset
@@ -430,6 +432,32 @@ if (!mLocalZone.isEmpty()) kDebug(1221)<<"Failsafe: "<<mLocalZone;
     // Finally, if the local zone identity has changed, store
     // the new one in the config file.
     updateLocalZone();
+}
+
+// Called when KDirWatch detects a change in zone.tab
+void KTimeZoned::zonetab_Changed(const QString& path)
+{
+    kDebug(1221) << "zone.tab changed";
+    if (path != mZoneTab)
+    {
+        kError(1221) << "Wrong path (" << path << ") for zone.tab";
+        return;
+    }
+    QDBusMessage message = QDBusMessage::createSignal("/Daemon", "org.kde.KTimeZoned", "zonetabChanged");
+    QList<QVariant> args;
+    args += mZoneTab;
+    message.setArguments(args);
+    QDBusConnection::sessionBus().send(message);
+
+    // Reread zone.tab and recreate the collection of KTimeZone instances,
+    // in case any zones have been created or deleted and one of them
+    // subsequently becomes the local zone.
+    QFile f;
+    f.setFileName(mZoneTab);
+    if (!f.open(QIODevice::ReadOnly))
+        kError(1221) << "Could not open zone.tab (" << mZoneTab << ") to reread";
+    else
+        readZoneTab(f);
 }
 
 // Called when KDirWatch detects a change

@@ -3,9 +3,15 @@
 <node>
   <interface name="org.kde.KTimeZoned">
     <signal name="configChanged"/>
+
+    <signal name="zonetabChanged">
+      <arg name="zonetab" type="s" direction="out"/>
+    </signal>
+
     <signal name="zoneDefinitionChanged">
       <arg name="zone" type="s" direction="out"/>
     </signal>
+
     <method name="initialize">
       <arg name="reinit" type="b" direction="in"/>
     </method>

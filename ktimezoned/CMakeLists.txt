@@ -9,5 +9,7 @@ target_link_libraries(kded_ktimezoned ${KDE4_KIO_LIBS})
 
 install(TARGETS kded_ktimezoned DESTINATION ${PLUGIN_INSTALL_DIR})
 
+########### install files ###############
+
 install( FILES ktimezoned.desktop DESTINATION ${SERVICES_INSTALL_DIR}/kded )
 install( FILES org.kde.KTimeZoned.xml DESTINATION ${DBUS_INTERFACES_INSTALL_DIR} )

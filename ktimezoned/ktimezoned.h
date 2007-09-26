@@ -42,15 +42,25 @@ class KTimeZoned : public KDEDModule
     public Q_SLOTS:
         /** D-Bus call to initialize the module.
          *  @param reinit determines whether to reinitialize if the module has already
-	 *                initialized itself
+         *                initialized itself
          */
         Q_SCRIPTABLE void initialize(bool reinit);
 
     Q_SIGNALS:
+        /** D-Bus signal emitted when the time zone configuration file has changed. */
         void configChanged();
-	void zoneDefinitionChanged(const QString &zone);
+	/** D-Bus signal emitted when zone.tab contents have changed.
+	 *  @param zonetab path to zone.tab
+	 */
+        void zonetabChanged(const QString &zonetab);
+	/** D-Bus signal emitted when the definition (not the identity) of the local
+	 *  system time zone has changed.
+	 *  @param zone path to time zone definition file
+	 */
+        void zoneDefinitionChanged(const QString &zone);
 
     private Q_SLOTS:
+        void  zonetab_Changed(const QString& path);
         void  localChanged(const QString& path);
 
     private:
@@ -80,7 +90,7 @@ class KTimeZoned : public KDEDModule
         };
         typedef QMap<QString, QString> MD5Map;    // zone name, checksum
 
-	void  init(bool restart);
+        void  init(bool restart);
         bool  findZoneTab(QFile& f);
         void  readZoneTab(QFile& f);
         void  findLocalZone();
@@ -90,7 +100,7 @@ class KTimeZoned : public KDEDModule
         bool  checkTimezone();
         bool  checkDefaultInit();
         void  updateLocalZone();
-	bool  matchZoneFile(const QString &path);
+        bool  matchZoneFile(const QString &path);
         KTimeZone compareChecksum(const KTimeZone&, const QString &referenceMd5Sum, qlonglong size);
         bool  compareChecksum(MD5Map::ConstIterator, const QString &referenceMd5Sum, qlonglong size);
         QString calcChecksum(const QString &zoneName, qlonglong size);
@@ -106,6 +116,7 @@ class KTimeZoned : public KDEDModule
         QString     mLocalZoneDataFile; // zoneinfo file containing local time zone definition
         QString     mLocaltimeMd5Sum;   // MD5 checksum of /etc/localtime
         LocalMethod mLocalMethod;       // how the local time zone is specified
+        KDirWatch  *mZonetabWatch;      // watch for zone.tab file changes
         KDirWatch  *mDirWatch;          // watch for time zone definition file changes
         MD5Map      mMd5Sums;           // MD5 checksums of zoneinfo files
         CacheType   mZoneTabCache;      // type of cached simulated zone.tab
