@@ -32,10 +32,10 @@ target_link_libraries(nepomukcoreservices
   ${KDE4_KIO_LIBS}
 )
 
-configure_file(org.kde.nepomuk.Repository.service.cmake 
-  ${CMAKE_CURRENT_BINARY_DIR}/org.kde.nepomuk.Repository.service)
+configure_file(org.kde.nepomuk.DataRepository.service.cmake 
+  ${CMAKE_CURRENT_BINARY_DIR}/org.kde.nepomuk.DataRepository.service)
 
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/org.kde.nepomuk.Repository.service
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/org.kde.nepomuk.DataRepository.service
   DESTINATION ${DBUS_SERVICES_INSTALL_DIR})
 
 install(TARGETS nepomukcoreservices DESTINATION ${BIN_INSTALL_DIR} )
