@@ -2,7 +2,9 @@
 Encoding=UTF-8
 Type=Service
 Name=Audio Preview
+Name[el]=Προεπισκόπηση ήχου
 Name[ga]=Réamhamharc Fuaime
+Name[nds]=Klang-Vöransicht
 Name[pt]=Antevisão do Áudio
 Name[pt_BR]=Previsão de Áudio
 Name[sv]=Förhandsgranska ljud

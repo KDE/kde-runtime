@@ -2,7 +2,9 @@
 Encoding=UTF-8
 Type=Service
 Name=Image Displayer
+Name[el]=Προβολή εικόνων
 Name[ga]=Amharcán Íomhánna
+Name[nds]=Bildwieser
 Name[pt]=Visualizador de Imagens
 Name[pt_BR]=Visualizador de Imagens
 Name[sv]=Bildvisare
