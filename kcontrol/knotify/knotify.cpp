@@ -89,6 +89,7 @@ K_EXPORT_PLUGIN( NotifyFactory("kcmnotify") )
 	changed (true);
 
 	m_playerSettings = new PlayerSettingsDialog(tab);
+    connect(m_playerSettings, SIGNAL(changed(bool)) , this, SIGNAL(changed(bool)));
 
 /*	general->layout()->setMargin( KDialog::marginHint() );
 	hardware->layout()->setMargin( KDialog::marginHint() );*/
@@ -203,8 +204,7 @@ PlayerSettingsDialog::PlayerSettingsDialog( QWidget *parent )
     m_ui->setupUi( this );
 
     load();
-    dataChanged = false;
-
+    
     connect( m_ui->cbExternal, SIGNAL( toggled( bool ) ), this, SLOT( externalToggled( bool ) ) );
     connect( m_ui->cbArts, SIGNAL(clicked(bool)), this, SLOT(slotChanged()));
     connect( m_ui->cbExternal, SIGNAL(clicked(bool)), this, SLOT(slotChanged()));
@@ -243,27 +243,10 @@ void PlayerSettingsDialog::save()
     config.sync();
 }
 
-// reimplements KDialogBase::slotApply()
-void PlayerSettingsDialog::slotApply()
-{
-/*    save();
-    dataChanged = false;
-    enableButton(Apply, false);
-    kapp->dcopClient()->send("knotify", "", "reconfigure()", QString());*/
-}
-
-// reimplements KDialogBase::slotOk()
-void PlayerSettingsDialog::slotOk()
-{
-/*    if( dataChanged )
-        slotApply();
-    KDialogBase::slotOk();*/
-}
 
 void PlayerSettingsDialog::slotChanged()
 {
-    dataChanged = true;
-//    enableButton(Apply, true);
+    emit changed(true);
 }
 
 void PlayerSettingsDialog::externalToggled( bool on )

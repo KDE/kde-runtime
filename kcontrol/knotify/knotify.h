@@ -81,14 +81,13 @@ public:
     void save();
 
 protected Q_SLOTS:
-    virtual void slotApply();
-    virtual void slotOk();
     void externalToggled( bool on );
     void slotChanged();
-
+    
+    signals:
+    void changed(bool);
 private:
 	Ui::PlayerSettingsUI* m_ui;
-    bool dataChanged;
 };
 
 
