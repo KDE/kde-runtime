@@ -2,6 +2,7 @@
 Name=pdfwrite
 Name[ne]=पीडीएफ राइट
 Name[vi]=Ghi PDF
+Name[x-test]=xxpdfwritexx
 Require=exec:/gs
 Comment=PDF Writer (needs Ghostscript)
 Comment[ar]=PDF كاتب (needs Ghostscript)
@@ -29,6 +30,7 @@ Comment[sv]=PDF-utskrift (kräver Ghostscript)
 Comment[th]=โปรแกรมเขียน PDF (จำเป็นต้องใช้ Ghostscript)
 Comment[vi]=Trình ghi PDF (cần thiết Ghostscript)
 Comment[wa]=Fijheu di fitchîs PDF (a mezåjhe di Ghostscript)
+Comment[x-test]=xxPDF Writer (needs Ghostscript)xx
 Comment[zh_TW]=PDF 產生器（需要 Ghostscript）
 MimeTypeIn=application/postscript
 MimeTypeOut=application/pdf

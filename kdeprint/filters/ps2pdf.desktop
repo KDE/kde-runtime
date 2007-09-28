@@ -1,6 +1,7 @@
 [KDE Print Filter Entry]
 Name=ps2pdf
 Name[vi]=PS-sang-PDF
+Name[x-test]=xxps2pdfxx
 Require=exec:/gs
 Comment=PostScript to PDF Converter
 Comment[be]=Праглядальнік PostScript
@@ -29,6 +30,7 @@ Comment[sv]=Konvertering från Postscript till PDF
 Comment[th]=โปรแกรมแปลง PostScript เป็น PDF
 Comment[vi]=Bộ chuyển đổi tập tin kiểu PostScript (.PS) sang PDF (.pdf)
 Comment[wa]=Covierseu di PostScript viè PDF
+Comment[x-test]=xxPostScript to PDF Converterxx
 Comment[zh_TW]=PostScript 轉 PDF 轉換器
 MimeTypeIn=application/postscript
 MimeTypeOut=application/pdf

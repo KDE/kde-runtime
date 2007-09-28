@@ -1,5 +1,6 @@
 [KDE Print Filter Entry]
 Name=psnup
+Name[x-test]=xxpsnupxx
 Require=exec:/psnup
 Comment=Multiple Pages per Sheet Filter
 Comment[bg]=Филтър за много страници на лист
@@ -22,6 +23,7 @@ Comment[sv]=Filter för flera sidor per blad
 Comment[th]=ตัวกรองพิมพ์หลายหน้าบนแผ่นเดียว
 Comment[vi]=Bộ lọc nhiều trang trên mỗi tờ giấy
 Comment[wa]=Passete pus d' ene pådje par foye
+Comment[x-test]=xxMultiple Pages per Sheet Filterxx
 Comment[zh_TW]=單張多頁過濾器
 MimeTypeIn=application/postscript
 MimeTypeOut=application/postscript

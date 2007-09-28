@@ -1,103 +1,231 @@
 [Global]
 IconName=kmenu
 Comment=KDE System Notifications
+Comment[ga]=Fógairt an Chórais KDE
+Comment[ja]=KDE システム通知
+Comment[nds]=KDE-Systeembescheden
+Comment[sv]=KDE:s systemunderrättelser
+Comment[x-test]=xxKDE System Notificationsxx
 
 [Event/Trash: emptied]
 Name=Trash: emptied
+Name[ga]=Bruscar: folamh
+Name[ja]=ごみ箱: 空
+Name[nds]=Affalltünn leddig maakt
+Name[x-test]=xxTrash: emptiedxx
 Comment=The trash has been emptied
+Comment[ga]=Folmhaíodh an bruscar
+Comment[ja]=ごみ箱を空にしました
+Comment[nds]=De Affalltünn wöör leddig maakt
+Comment[x-test]=xxThe trash has been emptiedxx
 Action=Sound
 
 [Event/Textcompletion: rotation]
 Name=Textcompletion: rotation
+Name[ja]=テキスト補完: 繰り返し
+Name[nds]=Textkompletteren: Dreihen
+Name[x-test]=xxTextcompletion: rotationxx
 Comment=The end of the list of matches has been reached
+Comment[ja]=マッチリストの終端に達しました
+Comment[nds]=Bi't Enn vun list mit Drepers anlangt
+Comment[x-test]=xxThe end of the list of matches has been reachedxx
 Action=Sound
 
 [Event/Textcompletion: no match]
 Name=Textcompletion: no match
+Name[ja]=テキスト補完: マッチなし
+Name[nds]=Textkompletteren: keen Dreper
+Name[x-test]=xxTextcompletion: no matchxx
 Comment=No matching completion was found
+Comment[ja]=マッチする補完は見つかりませんでした
+Comment[nds]=Dor findt sik keen passen Kompletteren
+Comment[x-test]=xxNo matching completion was foundxx
 Action=Sound
 
 [Event/Textcompletion: partial match]
 Name=Textcompletion: partial match
+Name[ja]=テキスト補完: 部分的にマッチ
+Name[nds]=Textkompletteren: Deeldreper
+Name[x-test]=xxTextcompletion: partial matchxx
 Comment=There is more than one possible match
+Comment[ja]=マッチするものが複数あります
+Comment[nds]=Dat gifft mehr as een mööglichen Dreper
+Comment[x-test]=xxThere is more than one possible matchxx
 Action=Sound
 
 [Event/cannotopenfile]
 Name=Cannot Open File
+Name[ja]=ファイルを開けません
+Name[nds]=Datei lett sik nich opmaken
+Name[x-test]=xxCannot Open Filexx
 Comment=The selected file cannot be opened for reading or writing
+Comment[ja]=選択されたファイルを読み込みまたは書き込みのために開けません
+Comment[nds]=De utsöchte Datei lett sik nich lesen oder nich schrieven
+Comment[x-test]=xxThe selected file cannot be opened for reading or writingxx
 Action=None
 
 [Event/fatalerror]
 Name=Fatal Error
+Name[ja]=致命的なエラー
+Name[nds]=Swoor Fehler
+Name[x-test]=xxFatal Errorxx
 Comment=There was a serious error causing the program to exit
+Comment[ja]=プログラムを終了させる深刻なエラーが発生しました
+Comment[nds]=Dat geev en swoor Fehler, dat Programm is utstegen
+Comment[x-test]=xxThere was a serious error causing the program to exitxx
 Action=Messagebox
 
 
 [Event/notification]
 Name=Notification
+Name[ga]=Fógairt
+Name[ja]=通知
+Name[nds]=Bescheed
+Name[x-test]=xxNotificationxx
 Comment=Something special happened in the program
+Comment[ja]=何か特別なことがプログラムに起こりました
+Comment[nds]=Dat geev en afsünnerlich Begeefnis binnen dat Programm
+Comment[x-test]=xxSomething special happened in the programxx
 Action=Sound
 sound=KDE_Beep.ogg
 
 [Event/warning]
 Name=Warning
+Name[ga]=Rabhadh
+Name[ja]=警告
+Name[nds]=Wohrschoen
+Name[x-test]=xxWarningxx
 Comment=There was an error in the program which may cause problems
+Comment[ja]=問題を引き起こす可能性のあるエラーがプログラムに発生しました
+Comment[nds]=Dat geev en Fehler binnen dat Programm, villicht suert dor Problemen bi rut
+Comment[x-test]=xxThere was an error in the program which may cause problemsxx
 Action=Messagebox
 
 [Event/catastrophe]
 Name=Catastrophe
+Name[ga]=Tubaiste
+Name[ja]=大惨事
+Name[nds]=Groot Malöör
+Name[x-test]=xxCatastrophexx
 Comment=A very serious error occurred, at least causing the program to exit
+Comment[ja]=少なくともプログラムを終了させる非常に重大なエラーが発生しました
+Comment[nds]=Dat geev en groot Malöör, tominnst dat Programm is utstegen
+Comment[x-test]=xxA very serious error occurred, at least causing the program to exitxx
 Action=Messagebox
 
 [Event/startkde]
 Name=Login
+Name[ga]=Logáil Isteach
+Name[ja]=ログイン
+Name[nds]=Anmellen
+Name[x-test]=xxLoginxx
 Comment=KDE is starting up
+Comment[ja]=KDE 起動中
+Comment[nds]=KDE fohrt hooch
+Comment[x-test]=xxKDE is starting upxx
 Action=Sound
 sound=KDE_Startup_1.ogg
 
 [Event/exitkde]
 Name=Logout
+Name[ga]=Logáil Amach
+Name[ja]=ログアウト
+Name[nds]=Afmellen
+Name[x-test]=xxLogoutxx
 Comment=KDE is exiting
+Comment[ja]=KDE 終了中
+Comment[nds]=KDE stiegt ut
+Comment[x-test]=xxKDE is exitingxx
 Action=Sound
 sound=KDE_Logout_3.ogg
 
 [Event/cancellogout]
 Name=Logout Canceled
+Name[ja]=ログアウトのキャンセル
+Name[nds]=Afmellen afbraken
+Name[x-test]=xxLogout Canceledxx
 Comment=KDE logout was canceled
+Comment[ja]=KDE からのログアウトがキャンセルされました
+Comment[nds]=Afmellen ut KDE wöör afbraken
+Comment[x-test]=xxKDE logout was canceledxx
 Action=Popup
 sound=
 
 [Event/printerror]
 Name=Print Error
+Name[ga]=Earráid Priontála
+Name[ja]=印刷エラー
+Name[nds]=Druckfehler
+Name[x-test]=xxPrint Errorxx
 Comment=A print error has occurred
+Comment[ga]=Tharla earráid priontála
+Comment[ja]=印刷エラーが発生しました
+Comment[nds]=Dat geev en Fehler bi't Drucken
+Comment[x-test]=xxA print error has occurredxx
 Action=Messagebox
 
 [Event/messageInformation]
 Name=Information Message
+Name[ga]=Teachtaireacht
+Name[ja]=情報メッセージ
+Name[nds]=Informatschoon
+Name[x-test]=xxInformation Messagexx
 Comment=An information message is being shown
+Comment[ga]=Teachtaireacht á taispeáint
+Comment[ja]=情報メッセージが表示されています
+Comment[nds]=En Informatschoon warrt wiest
+Comment[x-test]=xxAn information message is being shownxx
 sound=KDE_Chimes_2.ogg
 Action=Sound|Taskbar
 
 [Event/messageWarning]
 Name=Warning Message
+Name[ga]=Rabhadh
+Name[ja]=警告メッセージ
+Name[nds]=Wohrschoen
+Name[x-test]=xxWarning Messagexx
 Comment=A warning message is being shown
+Comment[ga]=Rabhadh á thaispeáint
+Comment[ja]=警告メッセージが表示されています
+Comment[nds]=En Wohrschoen warrt wiest
+Comment[x-test]=xxA warning message is being shownxx
 sound=KDE_Error_1.ogg
 Action=Sound|Taskbar
 
 [Event/messageCritical]
 Name=Critical Message
+Name[ja]=重大なメッセージ
+Name[nds]=Eernst Mellen
+Name[x-test]=xxCritical Messagexx
 Comment=A critical message is being shown
+Comment[ja]=重大なメッセージが表示されています
+Comment[nds]=En eernst Mellen warrt wiest
+Comment[x-test]=xxA critical message is being shownxx
 sound=KDE_Glass_Break.ogg
 Action=Sound|Taskbar
 
 [Event/messageboxQuestion]
 Name=Question
+Name[ga]=Ceist
+Name[ja]=質問
+Name[nds]=Fraag
+Name[x-test]=xxQuestionxx
 Comment=A question is being asked
+Comment[ja]=質問が出されています
+Comment[nds]=En Fraag warrt wiest
+Comment[x-test]=xxA question is being askedxx
 sound=KDE_Vox_Ahem.ogg
 Action=Sound|Taskbar
 
 
 [Event/beep]
 Name=Beep
+Name[ga]=Bíp
+Name[ja]=ビープ
+Name[nds]=Tüüt
+Name[x-test]=xxBeepxx
 Comment=Sound bell
+Comment[ja]=サウンドベル
+Comment[nds]=Klangpingel
+Comment[x-test]=xxSound bellxx
 Action=Sound

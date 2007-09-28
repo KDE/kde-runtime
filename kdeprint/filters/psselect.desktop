@@ -2,6 +2,7 @@
 Name=psselect
 Name[ne]=पीएस चयन
 Name[vi]=chọn/sắp xếp giấy
+Name[x-test]=xxpsselectxx
 Require=exec:/psselect
 Comment=Page Selection/Ordering Filter
 Comment[bg]=Избор на страници/Филтър за страници
@@ -24,6 +25,7 @@ Comment[sv]=Sidvals- och sidordningsfilter
 Comment[th]=ตัวกรองเลือก/สั่งหน้า
 Comment[vi]=Bộ lọc chọn/sắp xếp trang
 Comment[wa]=Tchoezi les pådjes/Relére les passetes
+Comment[x-test]=xxPage Selection/Ordering Filterxx
 Comment[zh_TW]=頁面選擇/排序過濾器
 MimeTypeIn=application/postscript
 MimeTypeOut=application/postscript
