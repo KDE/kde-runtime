@@ -1,4 +1,5 @@
 macro_optional_find_package(Xine)
+macro_log_feature(XINE_FOUND "Xine" "xine-lib is required for the multimedia backend" "http://sourceforge.net/project/showfiles.php?group_id=9655&package_id=9732")
 if(XINE_FOUND)
   macro_optional_add_subdirectory(xine)
 endif(XINE_FOUND)
