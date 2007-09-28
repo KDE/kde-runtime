@@ -52,7 +52,7 @@
 class NotifyBySound::Private
 {
 	public:
-		bool useExternal;
+		enum { NoSound, UsePhonon, ExternalPlayer } playerMode;
 		QString externalPlayer;
 
 		QHash<int, KProcess *> processes;
@@ -86,19 +86,27 @@ void NotifyBySound::loadConfig()
 {
     // load external player settings
 	KSharedConfig::Ptr kc = KGlobal::config();
-	KConfigGroup cg(kc, "Misc");
-	d->useExternal = cg.readEntry( "Use external player", false );
-	d->externalPlayer = cg.readPathEntry("External player");
+	KConfigGroup cg(kc, "Sounds");
 
-	// try to locate a suitable player if none is configured
-	if ( d->useExternal && d->externalPlayer.isEmpty() ) {
-		QStringList players;
-		players << "wavplay" << "aplay" << "auplay" << "artsplay" << "akodeplay";
-		QStringList::Iterator it = players.begin();
-		while ( d->externalPlayer.isEmpty() && it != players.end() ) {
-			d->externalPlayer = KStandardDirs::findExe( *it );
-			++it;
+	d->playerMode = Private::UsePhonon;
+	if(cg.readEntry( "Use external player", false ))
+	{
+		d->playerMode = Private::ExternalPlayer;
+		d->externalPlayer = cg.readPathEntry("External player");
+		// try to locate a suitable player if none is configured
+		if ( d->externalPlayer.isEmpty() ) {
+			QStringList players;
+			players << "wavplay" << "aplay" << "auplay" << "artsplay" << "akodeplay";
+			QStringList::Iterator it = players.begin();
+			while ( d->externalPlayer.isEmpty() && it != players.end() ) {
+				d->externalPlayer = KStandardDirs::findExe( *it );
+				++it;
+			}
 		}
+	}
+	else if(cg.readEntry( "No sound" , false ))
+	{
+		d->playerMode = Private::NoSound;
 	}
 	// load default volume
 	setVolume( cg.readEntry( "Volume", 100 ) );
@@ -116,14 +124,15 @@ void NotifyBySound::notify( int eventId, KNotifyConfig * config )
 		return;
 	}
 
-	QString soundFile = config->readEntry( "sound" , true );
+	KUrl soundFileURL = config->readEntry( "sound" , true );
+	QString soundFile = soundFileURL.toLocalFile();
 
 	if (soundFile.isEmpty())
 	{
 		finish( eventId );
 		return;
 	}
-
+	
     // get file name
 	if ( KUrl::isRelativeUrl(soundFile) )
 	{
@@ -142,9 +151,8 @@ void NotifyBySound::notify( int eventId, KNotifyConfig * config )
 
 	kDebug(300) << " going to play " << soundFile;
 
-	if(!d->useExternal || d->externalPlayer.isEmpty())
+	if(d->playerMode == Private::UsePhonon)
 	{
-
 		Phonon::MediaObject *media = new Phonon::MediaObject( this );
 		connect( media, SIGNAL( finished() ), d->signalmapper, SLOT(map()));
 		d->signalmapper->setMapping( media , eventId );
@@ -154,7 +162,7 @@ void NotifyBySound::notify( int eventId, KNotifyConfig * config )
 		media->play();
 		d->mediaobjects.insert(eventId , media);
 	}
-	else
+	else if (d->playerMode == Private::ExternalPlayer && !d->externalPlayer.isEmpty())
 	{
         // use an external player to play the sound
 		KProcess *proc = new KProcess( this );
@@ -164,6 +172,9 @@ void NotifyBySound::notify( int eventId, KNotifyConfig * config )
 
 		(*proc) << d->externalPlayer << soundFile;
 		proc->start();
+		
+		
+		
 		return;
 	}
 }

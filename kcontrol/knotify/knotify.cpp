@@ -217,7 +217,7 @@ PlayerSettingsDialog::PlayerSettingsDialog( QWidget *parent )
 void PlayerSettingsDialog::load()
 {
     KConfig _config( "knotifyrc", KConfig::NoGlobals  );
-    KConfigGroup config(&_config, "Misc" );
+    KConfigGroup config(&_config, "Sounds" );
     bool useExternal = config.readEntry( "Use external player", false );
     m_ui->cbExternal->setChecked( useExternal );
     m_ui->reqExternal->setPath( config.readPathEntry( "External player" ) );
@@ -225,45 +225,20 @@ void PlayerSettingsDialog::load()
 
     if ( !m_ui->cbExternal->isChecked() )
     {
-        config.changeGroup( "StartProgress" );
-        if ( config.readEntry( "Use Arts", true ) )
-        {
-            m_ui->cbArts->setChecked( true );
-        }
-        else
-        {
-            m_ui->cbNone->setChecked( true );
-        }
+        m_ui->cbArts->setChecked( config.readEntry( "No sound", false ) );
     }
 }
 
 void PlayerSettingsDialog::save()
 {
-    // see kdelibs/arts/knotify/knotify.cpp
+    // see kdebase/runtime/knotify/notifybysound.h
     KConfig _config("knotifyrc", KConfig::NoGlobals);
-    KConfigGroup config(&_config, "Misc" );
+    KConfigGroup config(&_config, "Sounds" );
 
     config.writePathEntry( "External player", m_ui->reqExternal->url().path() );
     config.writeEntry( "Use external player", m_ui->cbExternal->isChecked() );
     config.writeEntry( "Volume", m_ui->volumeSlider->value() );
-
-    config.changeGroup( "StartProgress" );
-
-    if ( m_ui->cbNone->isChecked() )
-    {
-        // user explicitly says "no sound!"
-        config.writeEntry( "Use Arts", false );
-    }
-    else if ( m_ui->cbArts->isChecked() )
-    {
-        // use explicitly said to use aRts so we turn it back on
-        // we don't want to always set this to the value of
-        // m_ui->cbArts->isChecked() since we don't want to
-        // turn off aRts support just because they also chose
-        // an external player
-        config.writeEntry( "Use Arts", true );
-        config.writeEntry( "Arts Init", true ); // reset it for the next time
-    }
+    config.writeEntry( "No sound",  m_ui->cbNone->isChecked() );
 
     config.sync();
 }
