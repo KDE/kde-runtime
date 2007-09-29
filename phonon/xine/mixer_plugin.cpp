@@ -216,7 +216,7 @@ static int portNumber(const post_audio_port_t *port)
 //X              "the standard weighted mean over past samples (default); 2: use "
 //X              "several samples to smooth the variations via the standard "
 //X              "weighted mean over past samples.\n"
-//X              ).toLocal8Bit()))
+//X           ).toLocal8Bit()))
 //X 
 //X static char *get_help ()
 //X {

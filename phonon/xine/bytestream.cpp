@@ -39,11 +39,11 @@ extern "C" {
 
 //#define VERBOSE_DEBUG
 #ifdef VERBOSE_DEBUG
-#  define PXINE_VDEBUG kDebug( 610 )
+#  define PXINE_VDEBUG kDebug(610)
 #else
 #  define PXINE_VDEBUG kDebugDevNull()
 #endif
-#define PXINE_DEBUG kDebug( 610 )
+#define PXINE_DEBUG kDebug(610)
 
 namespace Phonon
 {
@@ -58,10 +58,10 @@ ByteStream *ByteStream::fromMrl(const QByteArray &mrl)
     ByteStream *ret = 0;
     const unsigned int length = mrl.length();
     Q_ASSERT(length >= 13 + sizeof(void *) && length <= 13 + 2 * sizeof(void *));
-    const unsigned char *encoded = reinterpret_cast<const unsigned char*>(mrl.constData() + 13);
+    const unsigned char *encoded = reinterpret_cast<const unsigned char *>(mrl.constData() + 13);
     unsigned char *addrHack = reinterpret_cast<unsigned char *>(&ret);
     for (unsigned int i = 0; i < sizeof(void *); ++i, ++encoded) {
-        if(*encoded == 0x01) {
+        if (*encoded == 0x01) {
             ++encoded;
             switch (*encoded) {
             case 0x01:
@@ -86,7 +86,7 @@ ByteStream *ByteStream::fromMrl(const QByteArray &mrl)
     return ret;
 }
 
-ByteStream::ByteStream(const MediaSource &mediaSource, MediaObject* parent)
+ByteStream::ByteStream(const MediaSource &mediaSource, MediaObject *parent)
     : QObject(0), // don't let MediaObject's ~QObject delete us - the input plugin will delete us
     m_mediaObject(parent),
     m_streamSize(0),
@@ -214,7 +214,7 @@ qint64 ByteStream::readFromBuffer(void *buf, size_t count)
     }
     if (m_buffersize >= count) {
         PXINE_VDEBUG << "calling pullBuffer with m_buffersize = " << m_buffersize;
-        pullBuffer(static_cast<char*>(buf), count);
+        pullBuffer(static_cast<char *>(buf), count);
         m_currentPosition += count;
         //kDebug(610) << "UNLOCKING m_mutex: ";
         return count;
@@ -222,7 +222,7 @@ qint64 ByteStream::readFromBuffer(void *buf, size_t count)
     Q_ASSERT(m_eod);
     if (m_buffersize > 0) {
         PXINE_VDEBUG << "calling pullBuffer with m_buffersize = " << m_buffersize;
-        pullBuffer(static_cast<char*>(buf), m_buffersize);
+        pullBuffer(static_cast<char *>(buf), m_buffersize);
         m_currentPosition += m_buffersize;
         PXINE_DEBUG << "returning less data than requested, the stream is at its end";
         //kDebug(610) << "UNLOCKING m_mutex: ";
@@ -258,7 +258,7 @@ off_t ByteStream::seekBuffer(qint64 offset)
     if (offset > m_currentPosition && offset < m_currentPosition + m_buffersize) {
         kDebug(610) << "seeking behind current position, but inside the buffered data";
         // seek behind the current position in the buffer
-        while( offset > m_currentPosition ) {
+        while (offset > m_currentPosition) {
             const int gap = offset - m_currentPosition;
             Q_ASSERT(!m_buffers.isEmpty());
             const int buffersize = m_buffers.head().size() - m_offset;
@@ -276,7 +276,7 @@ off_t ByteStream::seekBuffer(qint64 offset)
                 m_offset += gap;
             }
         }
-        Q_ASSERT( offset == m_currentPosition );
+        Q_ASSERT(offset == m_currentPosition);
         //kDebug(610) << "UNLOCKING m_mutex: ";
         m_mutex.unlock();
         return m_currentPosition;

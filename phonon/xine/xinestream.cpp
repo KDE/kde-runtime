@@ -257,7 +257,7 @@ bool XineStream::hasVideo() const
 {
     if (!m_streamInfoReady) {
         QMutexLocker locker(&m_streamInfoMutex);
-        QCoreApplication::postEvent(const_cast<XineStream*>(this), new QEVENT(GetStreamInfo));
+        QCoreApplication::postEvent(const_cast<XineStream *>(this), new QEVENT(GetStreamInfo));
         // wait a few ms, perhaps the other thread finishes the event in time and this method
         // can return a useful value
         // FIXME: this is non-deterministic: a program might fail sometimes and sometimes work
@@ -274,7 +274,7 @@ bool XineStream::isSeekable() const
 {
     if (!m_streamInfoReady) {
         //QMutexLocker locker(&m_streamInfoMutex);
-        QCoreApplication::postEvent(const_cast<XineStream*>(this), new QEVENT(GetStreamInfo));
+        QCoreApplication::postEvent(const_cast<XineStream *>(this), new QEVENT(GetStreamInfo));
         // wait a few ms, perhaps the other thread finishes the event in time and this method
         // can return a useful value
         // FIXME: this is non-deterministic: a program might fail sometimes and sometimes work
@@ -282,7 +282,7 @@ bool XineStream::isSeekable() const
         /*if (!m_waitingForStreamInfo.wait(&m_streamInfoMutex, 80)) {
             kDebug(610) << "waitcondition timed out";
             return false;
-        }*/
+        } */
     }
     return m_isSeekable;
 }
@@ -398,7 +398,7 @@ bool XineStream::createStream()
 
     Q_ASSERT(!m_event_queue);
     m_event_queue = xine_event_new_queue(m_stream);
-    xine_event_create_listener_thread(m_event_queue, &XineEngine::self()->xineEventListener, (void*)this);
+    xine_event_create_listener_thread(m_event_queue, &XineEngine::self()->xineEventListener, (void *)this);
 
     if (m_useGaplessPlayback) {
         xine_set_param(m_stream, XINE_PARAM_EARLY_FINISHED_EVENT, 1);
@@ -560,57 +560,57 @@ inline void XineStream::error(Phonon::ErrorType type, const QString &string)
     changeState(Phonon::ErrorState);
 }
 
-const char* nameForEvent(int e)
+const char *nameForEvent(int e)
 {
     switch (e) {
-        case Event::Reference:
-            return "Reference";
-        case Event::UiChannelsChanged:
-            return "UiChannelsChanged";
-        case Event::MediaFinished:
-            return "MediaFinished";
-        case Event::UpdateTime:
-            return "UpdateTime";
-        case Event::GaplessSwitch:
-            return "GaplessSwitch";
-        case Event::NewMetaData:
-            return "NewMetaData";
-        case Event::Progress:
-            return "Progress";
-        case Event::GetStreamInfo:
-            return "GetStreamInfo";
-        case Event::UpdateVolume:
-            return "UpdateVolume";
-        case Event::MrlChanged:
-            return "MrlChanged";
-        case Event::GaplessPlaybackChanged:
-            return "GaplessPlaybackChanged";
-        case Event::RewireVideoToNull:
-            return "RewireVideoToNull";
-        case Event::PlayCommand:
-            return "PlayCommand";
-        case Event::PauseCommand:
-            return "PauseCommand";
-        case Event::StopCommand:
-            return "StopCommand";
-        case Event::SetTickInterval:
-            return "SetTickInterval";
-        case Event::SetPrefinishMark:
-            return "SetPrefinishMark";
-        case Event::SeekCommand:
-            return "SeekCommand";
-        //case Event::EventSend:
-            //return "EventSend";
-        case Event::SetParam:
-            return "SetParam";
-            /*
-        case Event::ChangeAudioPostList:
-            return "ChangeAudioPostList";
-            */
-//X         case Event::AudioRewire:
-//X             return "AudioRewire";
-        default:
-            return 0;
+    case Event::Reference:
+        return "Reference";
+    case Event::UiChannelsChanged:
+        return "UiChannelsChanged";
+    case Event::MediaFinished:
+        return "MediaFinished";
+    case Event::UpdateTime:
+        return "UpdateTime";
+    case Event::GaplessSwitch:
+        return "GaplessSwitch";
+    case Event::NewMetaData:
+        return "NewMetaData";
+    case Event::Progress:
+        return "Progress";
+    case Event::GetStreamInfo:
+        return "GetStreamInfo";
+    case Event::UpdateVolume:
+        return "UpdateVolume";
+    case Event::MrlChanged:
+        return "MrlChanged";
+    case Event::GaplessPlaybackChanged:
+        return "GaplessPlaybackChanged";
+    case Event::RewireVideoToNull:
+        return "RewireVideoToNull";
+    case Event::PlayCommand:
+        return "PlayCommand";
+    case Event::PauseCommand:
+        return "PauseCommand";
+    case Event::StopCommand:
+        return "StopCommand";
+    case Event::SetTickInterval:
+        return "SetTickInterval";
+    case Event::SetPrefinishMark:
+        return "SetPrefinishMark";
+    case Event::SeekCommand:
+        return "SeekCommand";
+    //case Event::EventSend:
+        //return "EventSend";
+    case Event::SetParam:
+        return "SetParam";
+        /*
+    case Event::ChangeAudioPostList:
+        return "ChangeAudioPostList";
+        */
+//X case Event::AudioRewire:
+//X     return "AudioRewire";
+    default:
+        return 0;
     }
 }
 
@@ -637,7 +637,7 @@ bool XineStream::event(QEvent *ev)
     }
     if (eventName) {
         if (static_cast<int>(ev->type()) == Event::Progress) {
-            ProgressEvent* e = static_cast<ProgressEvent*>(ev);
+            ProgressEvent *e = static_cast<ProgressEvent *>(ev);
             kDebug(610) << "################################ Event: " << eventName << ": " << e->percent;
         } else {
             kDebug(610) << "################################ Event: " << eventName;
@@ -757,409 +757,409 @@ bool XineStream::event(QEvent *ev)
             }
             return true;
             */
-//X         case Event::AudioRewire:
-//X             ev->accept();
-//X             if (m_stream) {
-//X                 AudioRewireEvent *e = static_cast<AudioRewireEvent *>(ev);
-//X                 e->postList->wireStream();
-//X                 xine_set_param(m_stream, XINE_PARAM_AUDIO_AMP_LEVEL, m_volume);
-//X             }
+//X     case Event::AudioRewire:
+//X         ev->accept();
+//X         if (m_stream) {
+//X             AudioRewireEvent *e = static_cast<AudioRewireEvent *>(ev);
+//X             e->postList->wireStream();
+//X             xine_set_param(m_stream, XINE_PARAM_AUDIO_AMP_LEVEL, m_volume);
+//X         }
 //X             return true;
-        case Event::EventSend:
-            ev->accept();
-            {
-                EventSendEvent *e = static_cast<EventSendEvent *>(ev);
-                if (m_stream) {
-                    xine_event_send(m_stream, e->event);
-                }
-                switch (e->event->type) {
-                    case XINE_EVENT_INPUT_MOUSE_MOVE:
-                    case XINE_EVENT_INPUT_MOUSE_BUTTON:
-                        delete static_cast<xine_input_data_t *>(e->event->data);
-                        break;
-                }
-                delete e->event;
-            }
-            return true;
-        case Event::SetParam:
-            ev->accept();
+    case Event::EventSend:
+        ev->accept();
+        {
+            EventSendEvent *e = static_cast<EventSendEvent *>(ev);
             if (m_stream) {
-                SetParamEvent *e = static_cast<SetParamEvent *>(ev);
-                xine_set_param(m_stream, e->param, e->value);
+                xine_event_send(m_stream, e->event);
             }
-            return true;
-        case Event::MediaFinished:
-            ev->accept();
-            kDebug(610) << "MediaFinishedEvent m_useGaplessPlayback = " << m_useGaplessPlayback;
-            if (m_stream) {
-                if (m_useGaplessPlayback) {
-                    xine_set_param(m_stream, XINE_PARAM_GAPLESS_SWITCH, 1);
-                    emit needNextUrl();
-                } else {
-                    playbackFinished();
-                }
+            switch (e->event->type) {
+            case XINE_EVENT_INPUT_MOUSE_MOVE:
+            case XINE_EVENT_INPUT_MOUSE_BUTTON:
+                delete static_cast<xine_input_data_t *>(e->event->data);
+                break;
             }
-            return true;
-        case Event::UpdateTime:
-            updateTime();
-            ev->accept();
-            return true;
-        case Event::GaplessSwitch:
-            ev->accept();
-            {
-                GaplessSwitchEvent *e = static_cast<GaplessSwitchEvent*>(ev);
-                m_mutex.lock();
-                if (e->mrl.isEmpty()) {
-                    kDebug(610) << "no GaplessSwitch";
-                } else {
-                    setMrlInternal(e->mrl);
-                    kDebug(610) << "GaplessSwitch new m_mrl =" << m_mrl.constData();
-                }
-                if (e->mrl.isEmpty() || m_closing) {
-                    xine_set_param(m_stream, XINE_PARAM_GAPLESS_SWITCH, 0);
-                    m_mutex.unlock();
-                    playbackFinished();
-                    return true;
-                }
-                if (!xine_open(m_stream, m_mrl.constData())) {
-                    kWarning(610) << "xine_open for gapless playback failed!";
-                    xine_set_param(m_stream, XINE_PARAM_GAPLESS_SWITCH, 0);
-                    m_mutex.unlock();
-                    playbackFinished();
-                    return true; // FIXME: correct?
-                }
-                m_mutex.unlock();
-                xine_play(m_stream, 0, 0);
-
-                if (m_prefinishMarkReachedNotEmitted && m_prefinishMark > 0) {
-                    emit prefinishMarkReached(0);
-                }
-                m_prefinishMarkReachedNotEmitted = true;
-                getStreamInfo();
-                updateTime();
-                updateMetaData();
+            delete e->event;
+        }
+        return true;
+    case Event::SetParam:
+        ev->accept();
+        if (m_stream) {
+            SetParamEvent *e = static_cast<SetParamEvent *>(ev);
+            xine_set_param(m_stream, e->param, e->value);
+        }
+        return true;
+    case Event::MediaFinished:
+        ev->accept();
+        kDebug(610) << "MediaFinishedEvent m_useGaplessPlayback = " << m_useGaplessPlayback;
+        if (m_stream) {
+            if (m_useGaplessPlayback) {
+                xine_set_param(m_stream, XINE_PARAM_GAPLESS_SWITCH, 1);
+                emit needNextUrl();
+            } else {
+                playbackFinished();
             }
-            return true;
-        case Event::NewMetaData:
-            ev->accept();
-            if (m_stream) {
-                getStreamInfo();
-                updateMetaData();
-            }
-            return true;
-        case Event::Progress:
-            {
-                ProgressEvent* e = static_cast<ProgressEvent*>(ev);
-                if (e->percent < 100) {
-                    if (m_state == Phonon::PlayingState) {
-                        changeState(Phonon::BufferingState);
-                    }
-                } else {
-                    if (m_state == Phonon::BufferingState) {
-                        changeState(Phonon::PlayingState);
-                    }
-                    //QTimer::singleShot(20, this, SLOT(getStartTime()));
-                }
-                kDebug(610) << "emit bufferStatus(" << e->percent << ")";
-                emit bufferStatus(e->percent);
-            }
-            ev->accept();
-            return true;
-        case Event::GetStreamInfo:
-            ev->accept();
-            if (m_stream) {
-                getStreamInfo();
-            }
-            return true;
-        case Event::UpdateVolume:
-            ev->accept();
-            {
-                UpdateVolumeEvent *e = static_cast<UpdateVolumeEvent *>(ev);
-                m_volume = e->volume;
-                if (m_stream) {
-                    xine_set_param(m_stream, XINE_PARAM_AUDIO_AMP_LEVEL, m_volume);
-                }
-            }
-            return true;
-        case Event::MrlChanged:
-            ev->accept();
-            {
-                MrlChangedEvent *e = static_cast<MrlChangedEvent*>(ev);
-                /* Always handle a MRL change request. We assume the application knows what it's
-                 * doing. If we return here then the stream is not reinitialized and the state
-                 * changes are different.
-                if (m_mrl == e->mrl) {
-                    return true;
-                }*/
-                State previousState = m_state;
+        }
+        return true;
+    case Event::UpdateTime:
+        updateTime();
+        ev->accept();
+        return true;
+    case Event::GaplessSwitch:
+        ev->accept();
+        {
+            GaplessSwitchEvent *e = static_cast<GaplessSwitchEvent *>(ev);
+            m_mutex.lock();
+            if (e->mrl.isEmpty()) {
+                kDebug(610) << "no GaplessSwitch";
+            } else {
                 setMrlInternal(e->mrl);
-                m_errorType = Phonon::NoError;
-                m_errorString = QString();
-                if (!m_stream) {
-                    changeState(Phonon::LoadingState);
-                    m_mutex.lock();
-                    createStream();
-                    m_mutex.unlock();
-                    if (!m_stream) {
-                        kError(610) << "MrlChangedEvent: createStream didn't create a stream. This should not happen.";
-                        error(Phonon::FatalError, i18n("Xine failed to create a stream."));
-                        return true;
-                    }
-                } else if (xine_get_status(m_stream) != XINE_STATUS_IDLE) {
-                    m_mutex.lock();
-                    xine_close(m_stream);
-                    m_streamInfoReady = false;
-                    m_prefinishMarkReachedNotEmitted = true;
-                    changeState(Phonon::LoadingState);
-                    m_mutex.unlock();
+                kDebug(610) << "GaplessSwitch new m_mrl =" << m_mrl.constData();
+            }
+            if (e->mrl.isEmpty() || m_closing) {
+                xine_set_param(m_stream, XINE_PARAM_GAPLESS_SWITCH, 0);
+                m_mutex.unlock();
+                playbackFinished();
+                return true;
+            }
+            if (!xine_open(m_stream, m_mrl.constData())) {
+                kWarning(610) << "xine_open for gapless playback failed!";
+                xine_set_param(m_stream, XINE_PARAM_GAPLESS_SWITCH, 0);
+                m_mutex.unlock();
+                playbackFinished();
+                return true; // FIXME: correct?
+            }
+            m_mutex.unlock();
+            xine_play(m_stream, 0, 0);
+
+            if (m_prefinishMarkReachedNotEmitted && m_prefinishMark > 0) {
+                emit prefinishMarkReached(0);
+            }
+            m_prefinishMarkReachedNotEmitted = true;
+            getStreamInfo();
+            updateTime();
+            updateMetaData();
+        }
+        return true;
+    case Event::NewMetaData:
+        ev->accept();
+        if (m_stream) {
+            getStreamInfo();
+            updateMetaData();
+        }
+        return true;
+    case Event::Progress:
+        {
+            ProgressEvent *e = static_cast<ProgressEvent *>(ev);
+            if (e->percent < 100) {
+                if (m_state == Phonon::PlayingState) {
+                    changeState(Phonon::BufferingState);
                 }
-                if (m_closing || m_mrl.isEmpty()) {
-                    kDebug(610) << "MrlChanged: don't call xineOpen. m_closing =" << m_closing << ", m_mrl =" << m_mrl.constData();
-                    m_waitingForClose.wakeAll();
-                } else {
-                    kDebug(610) << "calling xineOpen from MrlChanged";
-                    if (!xineOpen(Phonon::StoppedState)) {
-                        return true;
+            } else {
+                if (m_state == Phonon::BufferingState) {
+                    changeState(Phonon::PlayingState);
+                }
+                //QTimer::singleShot(20, this, SLOT(getStartTime()));
+            }
+            kDebug(610) << "emit bufferStatus(" << e->percent << ")";
+            emit bufferStatus(e->percent);
+        }
+        ev->accept();
+        return true;
+    case Event::GetStreamInfo:
+        ev->accept();
+        if (m_stream) {
+            getStreamInfo();
+        }
+        return true;
+    case Event::UpdateVolume:
+        ev->accept();
+        {
+            UpdateVolumeEvent *e = static_cast<UpdateVolumeEvent *>(ev);
+            m_volume = e->volume;
+            if (m_stream) {
+                xine_set_param(m_stream, XINE_PARAM_AUDIO_AMP_LEVEL, m_volume);
+            }
+        }
+        return true;
+    case Event::MrlChanged:
+        ev->accept();
+        {
+            MrlChangedEvent *e = static_cast<MrlChangedEvent *>(ev);
+            /* Always handle a MRL change request. We assume the application knows what it's
+             * doing. If we return here then the stream is not reinitialized and the state
+             * changes are different.
+            if (m_mrl == e->mrl) {
+                return true;
+            } */
+            State previousState = m_state;
+            setMrlInternal(e->mrl);
+            m_errorType = Phonon::NoError;
+            m_errorString = QString();
+            if (!m_stream) {
+                changeState(Phonon::LoadingState);
+                m_mutex.lock();
+                createStream();
+                m_mutex.unlock();
+                if (!m_stream) {
+                    kError(610) << "MrlChangedEvent: createStream didn't create a stream. This should not happen.";
+                    error(Phonon::FatalError, i18n("Xine failed to create a stream."));
+                    return true;
+                }
+            } else if (xine_get_status(m_stream) != XINE_STATUS_IDLE) {
+                m_mutex.lock();
+                xine_close(m_stream);
+                m_streamInfoReady = false;
+                m_prefinishMarkReachedNotEmitted = true;
+                changeState(Phonon::LoadingState);
+                m_mutex.unlock();
+            }
+            if (m_closing || m_mrl.isEmpty()) {
+                kDebug(610) << "MrlChanged: don't call xineOpen. m_closing =" << m_closing << ", m_mrl =" << m_mrl.constData();
+                m_waitingForClose.wakeAll();
+            } else {
+                kDebug(610) << "calling xineOpen from MrlChanged";
+                if (!xineOpen(Phonon::StoppedState)) {
+                    return true;
+                }
+                switch (e->stateForNewMrl) {
+                case StoppedState:
+                    break;
+                case PlayingState:
+                    if (m_stream) {
+                        internalPlay();
                     }
-                    switch (e->stateForNewMrl) {
-                    case StoppedState:
-                        break;
-                    case PlayingState:
+                    break;
+                case PausedState:
+                    if (m_stream) {
+                        internalPause();
+                    }
+                    break;
+                case KeepState:
+                    switch (previousState) {
+                    case Phonon::PlayingState:
+                    case Phonon::BufferingState:
                         if (m_stream) {
                             internalPlay();
                         }
                         break;
-                    case PausedState:
+                    case Phonon::PausedState:
                         if (m_stream) {
                             internalPause();
                         }
                         break;
-                    case KeepState:
-                        switch (previousState) {
-                        case Phonon::PlayingState:
-                        case Phonon::BufferingState:
-                            if (m_stream) {
-                                internalPlay();
-                            }
-                            break;
-                        case Phonon::PausedState:
-                            if (m_stream) {
-                                internalPause();
-                            }
-                            break;
-                        case Phonon::LoadingState:
-                        case Phonon::StoppedState:
-                        case Phonon::ErrorState:
-                            break;
-                        }
-                    }
-                }
-            }
-            return true;
-        case Event::GaplessPlaybackChanged:
-            if (m_stream) {
-                if (m_useGaplessPlayback) {
-                    xine_set_param(m_stream, XINE_PARAM_EARLY_FINISHED_EVENT, 1);
-                } else {
-                    xine_set_param(m_stream, XINE_PARAM_EARLY_FINISHED_EVENT, 0);
-                }
-            }
-            ev->accept();
-            return true;
-        case Event::RewireVideoToNull:
-            ev->accept();
-            {
-                QMutexLocker locker(&m_mutex);
-                if (!m_stream) {
-                    return true;
-                }
-                QMutexLocker portLocker(&m_portMutex);
-                kDebug(610) << "rewiring ports";
-                xine_post_out_t *videoSource = xine_get_video_source(m_stream);
-                xine_video_port_t *videoPort = XineEngine::nullVideoPort();
-                xine_post_wire_video_port(videoSource, videoPort);
-                m_waitingForRewire.wakeAll();
-            }
-            return true;
-        case Event::PlayCommand:
-            ev->accept();
-            if (m_mediaObject->sinks().isEmpty()) {
-                kWarning(610) << "request to play a stream, but no valid audio/video outputs are given/available";
-                error(Phonon::FatalError, i18n("Playback failed because no valid audio or video outputs are available"));
-                return true;
-            }
-            if (m_state == Phonon::ErrorState || m_state == Phonon::PlayingState) {
-                return true;
-            }
-            Q_ASSERT(!m_mrl.isEmpty());
-            /*if (m_mrl.isEmpty()) {
-                kError(610) << "PlayCommand: m_mrl is empty. This should not happen.";
-                error(Phonon::NormalError, i18n("Request to play without media data"));
-                return true;
-            }*/
-            if (!m_stream) {
-                QMutexLocker locker(&m_mutex);
-                createStream();
-                if (!m_stream) {
-                    kError(610) << "PlayCommand: createStream didn't create a stream. This should not happen.";
-                    error(Phonon::FatalError, i18n("Xine failed to create a stream."));
-                    return true;
-                }
-            }
-            if (m_state == Phonon::PausedState) {
-                xine_set_param(m_stream, XINE_PARAM_SPEED, XINE_SPEED_NORMAL);
-                changeState(Phonon::PlayingState);
-            } else {
-                //X                 int total;
-                //X                 if (xine_get_pos_length(stream(), 0, &m_startTime, &total) == 1) {
-                //X                     if (total > 0 && m_startTime < total && m_startTime >= 0)
-                //X                         m_startTime = -1;
-                //X                 } else {
-                //X                     m_startTime = -1;
-                //X                 }
-                if (xine_get_status(m_stream) == XINE_STATUS_IDLE) {
-                    kDebug(610) << "calling xineOpen from PlayCommand";
-                    if (!xineOpen(Phonon::BufferingState)) {
-                        return true;
-                    }
-                }
-                internalPlay();
-            }
-            return true;
-        case Event::PauseCommand:
-            ev->accept();
-            if (m_state == Phonon::ErrorState || m_state == Phonon::PausedState) {
-                return true;
-            }
-            Q_ASSERT(!m_mrl.isEmpty());
-            /*if (m_mrl.isEmpty()) {
-                kError(610) << "PauseCommand: m_mrl is empty. This should not happen.";
-                error(Phonon::NormalError, i18n("Request to pause without media data"));
-                return true;
-            }*/
-            if (!m_stream) {
-                QMutexLocker locker(&m_mutex);
-                createStream();
-                if (!m_stream) {
-                    kError(610) << "PauseCommand: createStream didn't create a stream. This should not happen.";
-                    error(Phonon::FatalError, i18n("Xine failed to create a stream."));
-                    return true;
-                }
-            }
-            if (xine_get_status(m_stream) == XINE_STATUS_IDLE) {
-                kDebug(610) << "calling xineOpen from PauseCommand";
-                if (!xineOpen(Phonon::StoppedState)) {
-                    return true;
-                }
-            }
-            internalPause();
-            return true;
-        case Event::StopCommand:
-            ev->accept();
-            if (m_state == Phonon::ErrorState || m_state == Phonon::LoadingState || m_state == Phonon::StoppedState) {
-                return true;
-            }
-            Q_ASSERT(!m_mrl.isEmpty());
-            /*if (m_mrl.isEmpty()) {
-                kError(610) << "StopCommand: m_mrl is empty. This should not happen.";
-                error(Phonon::NormalError, i18n("Request to stop without media data"));
-                return true;
-            }*/
-            if (!m_stream) {
-                QMutexLocker locker(&m_mutex);
-                createStream();
-                if (!m_stream) {
-                    kError(610) << "StopCommand: createStream didn't create a stream. This should not happen.";
-                    error(Phonon::FatalError, i18n("Xine failed to create a stream."));
-                    return true;
-                }
-            }
-            xine_stop(m_stream);
-            changeState(Phonon::StoppedState);
-            return true;
-        case Event::SetTickInterval:
-            ev->accept();
-            {
-                SetTickIntervalEvent *e = static_cast<SetTickIntervalEvent*>(ev);
-                if (e->interval <= 0) {
-                    // disable ticks
-                    m_ticking = false;
-                    m_tickTimer.stop();
-                    //kDebug(610) << "tickTimer stopped.";
-                } else {
-                    m_tickTimer.setInterval(e->interval);
-                    if (m_ticking == false && m_state == Phonon::PlayingState) {
-                        m_tickTimer.start();
-                        //kDebug(610) << "tickTimer started.";
-                    }
-                    m_ticking = true;
-                }
-            }
-            return true;
-        case Event::SetPrefinishMark:
-            ev->accept();
-            {
-                SetPrefinishMarkEvent *e = static_cast<SetPrefinishMarkEvent*>(ev);
-                m_prefinishMark = e->time;
-                if (m_prefinishMark > 0) {
-                    updateTime();
-                    if (m_currentTime < m_totalTime - m_prefinishMark) { // not about to finish
-                        m_prefinishMarkReachedNotEmitted = true;
-                        if (m_state == Phonon::PlayingState) {
-                            emitAboutToFinishIn(m_totalTime - m_prefinishMark - m_currentTime);
-                        }
-                    }
-                }
-            }
-            return true;
-        case Event::SeekCommand:
-            m_lastSeekCommand = 0;
-            ev->accept();
-            if (m_state == Phonon::ErrorState || !m_isSeekable) {
-                return true;
-            }
-            {
-                SeekCommandEvent *e = static_cast<SeekCommandEvent*>(ev);
-                if (!e->valid) { // a newer SeekCommand is in the pipe, ignore this one
-                    return true;
-                }
-                switch(m_state) {
-                    case Phonon::PausedState:
-                    case Phonon::BufferingState:
-                    case Phonon::PlayingState:
-                        kDebug(610) << "seeking xine stream to " << e->time << "ms";
-                        // xine_trick_mode aborts :(
-                        //if (0 == xine_trick_mode(m_stream, XINE_TRICK_MODE_SEEK_TO_TIME, time)) {
-                        xine_play(m_stream, 0, e->time);
-                        if (Phonon::PausedState == m_state) {
-                            // go back to paused speed after seek
-                            xine_set_param(m_stream, XINE_PARAM_SPEED, XINE_SPEED_PAUSE);
-                        } else if (Phonon::PlayingState == m_state) {
-                            gettimeofday(&m_lastTimeUpdate, 0);
-                        }
-                        //}
-                        break;
+                    case Phonon::LoadingState:
                     case Phonon::StoppedState:
                     case Phonon::ErrorState:
-                    case Phonon::LoadingState:
-                        return true; // cannot seek
-                }
-                m_currentTime = e->time;
-                const int timeToSignal = m_totalTime - m_prefinishMark - e->time;
-                if (m_prefinishMark > 0) {
-                    if (timeToSignal > 0 ) { // not about to finish
-                        m_prefinishMarkReachedNotEmitted = true;
-                        emitAboutToFinishIn(timeToSignal);
-                    } else if (m_prefinishMarkReachedNotEmitted) {
-                        m_prefinishMarkReachedNotEmitted = false;
-                        kDebug(610) << "emitting prefinishMarkReached(" << timeToSignal + m_prefinishMark << ")";
-                        emit prefinishMarkReached(timeToSignal + m_prefinishMark);
+                        break;
                     }
                 }
             }
+        }
+        return true;
+    case Event::GaplessPlaybackChanged:
+        if (m_stream) {
+            if (m_useGaplessPlayback) {
+                xine_set_param(m_stream, XINE_PARAM_EARLY_FINISHED_EVENT, 1);
+            } else {
+                xine_set_param(m_stream, XINE_PARAM_EARLY_FINISHED_EVENT, 0);
+            }
+        }
+        ev->accept();
+        return true;
+    case Event::RewireVideoToNull:
+        ev->accept();
+        {
+            QMutexLocker locker(&m_mutex);
+            if (!m_stream) {
+                return true;
+            }
+            QMutexLocker portLocker(&m_portMutex);
+            kDebug(610) << "rewiring ports";
+            xine_post_out_t *videoSource = xine_get_video_source(m_stream);
+            xine_video_port_t *videoPort = XineEngine::nullVideoPort();
+            xine_post_wire_video_port(videoSource, videoPort);
+            m_waitingForRewire.wakeAll();
+        }
+        return true;
+    case Event::PlayCommand:
+        ev->accept();
+        if (m_mediaObject->sinks().isEmpty()) {
+            kWarning(610) << "request to play a stream, but no valid audio/video outputs are given/available";
+            error(Phonon::FatalError, i18n("Playback failed because no valid audio or video outputs are available"));
             return true;
-        default:
-            return QObject::event(ev);
+        }
+        if (m_state == Phonon::ErrorState || m_state == Phonon::PlayingState) {
+            return true;
+        }
+        Q_ASSERT(!m_mrl.isEmpty());
+        /*if (m_mrl.isEmpty()) {
+            kError(610) << "PlayCommand: m_mrl is empty. This should not happen.";
+            error(Phonon::NormalError, i18n("Request to play without media data"));
+            return true;
+        } */
+        if (!m_stream) {
+            QMutexLocker locker(&m_mutex);
+            createStream();
+            if (!m_stream) {
+                kError(610) << "PlayCommand: createStream didn't create a stream. This should not happen.";
+                error(Phonon::FatalError, i18n("Xine failed to create a stream."));
+                return true;
+            }
+        }
+        if (m_state == Phonon::PausedState) {
+            xine_set_param(m_stream, XINE_PARAM_SPEED, XINE_SPEED_NORMAL);
+            changeState(Phonon::PlayingState);
+        } else {
+            //X                 int total;
+            //X                 if (xine_get_pos_length(stream(), 0, &m_startTime, &total) == 1) {
+            //X                     if (total > 0 && m_startTime < total && m_startTime >= 0)
+            //X                         m_startTime = -1;
+            //X                 } else {
+            //X                     m_startTime = -1;
+            //X                 }
+            if (xine_get_status(m_stream) == XINE_STATUS_IDLE) {
+                kDebug(610) << "calling xineOpen from PlayCommand";
+                if (!xineOpen(Phonon::BufferingState)) {
+                    return true;
+                }
+            }
+            internalPlay();
+        }
+        return true;
+    case Event::PauseCommand:
+        ev->accept();
+        if (m_state == Phonon::ErrorState || m_state == Phonon::PausedState) {
+            return true;
+        }
+        Q_ASSERT(!m_mrl.isEmpty());
+        /*if (m_mrl.isEmpty()) {
+            kError(610) << "PauseCommand: m_mrl is empty. This should not happen.";
+            error(Phonon::NormalError, i18n("Request to pause without media data"));
+            return true;
+        } */
+        if (!m_stream) {
+            QMutexLocker locker(&m_mutex);
+            createStream();
+            if (!m_stream) {
+                kError(610) << "PauseCommand: createStream didn't create a stream. This should not happen.";
+                error(Phonon::FatalError, i18n("Xine failed to create a stream."));
+                return true;
+            }
+        }
+        if (xine_get_status(m_stream) == XINE_STATUS_IDLE) {
+            kDebug(610) << "calling xineOpen from PauseCommand";
+            if (!xineOpen(Phonon::StoppedState)) {
+                return true;
+            }
+        }
+        internalPause();
+        return true;
+    case Event::StopCommand:
+        ev->accept();
+        if (m_state == Phonon::ErrorState || m_state == Phonon::LoadingState || m_state == Phonon::StoppedState) {
+            return true;
+        }
+        Q_ASSERT(!m_mrl.isEmpty());
+        /*if (m_mrl.isEmpty()) {
+            kError(610) << "StopCommand: m_mrl is empty. This should not happen.";
+            error(Phonon::NormalError, i18n("Request to stop without media data"));
+            return true;
+        } */
+        if (!m_stream) {
+            QMutexLocker locker(&m_mutex);
+            createStream();
+            if (!m_stream) {
+                kError(610) << "StopCommand: createStream didn't create a stream. This should not happen.";
+                error(Phonon::FatalError, i18n("Xine failed to create a stream."));
+                return true;
+            }
+        }
+        xine_stop(m_stream);
+        changeState(Phonon::StoppedState);
+        return true;
+    case Event::SetTickInterval:
+        ev->accept();
+        {
+            SetTickIntervalEvent *e = static_cast<SetTickIntervalEvent *>(ev);
+            if (e->interval <= 0) {
+                // disable ticks
+                m_ticking = false;
+                m_tickTimer.stop();
+                //kDebug(610) << "tickTimer stopped.";
+            } else {
+                m_tickTimer.setInterval(e->interval);
+                if (m_ticking == false && m_state == Phonon::PlayingState) {
+                    m_tickTimer.start();
+                    //kDebug(610) << "tickTimer started.";
+                }
+                m_ticking = true;
+            }
+        }
+        return true;
+    case Event::SetPrefinishMark:
+        ev->accept();
+        {
+            SetPrefinishMarkEvent *e = static_cast<SetPrefinishMarkEvent *>(ev);
+            m_prefinishMark = e->time;
+            if (m_prefinishMark > 0) {
+                updateTime();
+                if (m_currentTime < m_totalTime - m_prefinishMark) { // not about to finish
+                    m_prefinishMarkReachedNotEmitted = true;
+                    if (m_state == Phonon::PlayingState) {
+                        emitAboutToFinishIn(m_totalTime - m_prefinishMark - m_currentTime);
+                    }
+                }
+            }
+        }
+        return true;
+    case Event::SeekCommand:
+        m_lastSeekCommand = 0;
+        ev->accept();
+        if (m_state == Phonon::ErrorState || !m_isSeekable) {
+            return true;
+        }
+        {
+            SeekCommandEvent *e = static_cast<SeekCommandEvent *>(ev);
+            if (!e->valid) { // a newer SeekCommand is in the pipe, ignore this one
+                return true;
+            }
+            switch(m_state) {
+            case Phonon::PausedState:
+            case Phonon::BufferingState:
+            case Phonon::PlayingState:
+                kDebug(610) << "seeking xine stream to " << e->time << "ms";
+                // xine_trick_mode aborts :(
+                //if (0 == xine_trick_mode(m_stream, XINE_TRICK_MODE_SEEK_TO_TIME, time)) {
+                xine_play(m_stream, 0, e->time);
+                if (Phonon::PausedState == m_state) {
+                    // go back to paused speed after seek
+                    xine_set_param(m_stream, XINE_PARAM_SPEED, XINE_SPEED_PAUSE);
+                } else if (Phonon::PlayingState == m_state) {
+                    gettimeofday(&m_lastTimeUpdate, 0);
+                }
+                //}
+                break;
+            case Phonon::StoppedState:
+            case Phonon::ErrorState:
+            case Phonon::LoadingState:
+                return true; // cannot seek
+            }
+            m_currentTime = e->time;
+            const int timeToSignal = m_totalTime - m_prefinishMark - e->time;
+            if (m_prefinishMark > 0) {
+                if (timeToSignal > 0) { // not about to finish
+                    m_prefinishMarkReachedNotEmitted = true;
+                    emitAboutToFinishIn(timeToSignal);
+                } else if (m_prefinishMarkReachedNotEmitted) {
+                    m_prefinishMarkReachedNotEmitted = false;
+                    kDebug(610) << "emitting prefinishMarkReached(" << timeToSignal + m_prefinishMark << ")";
+                    emit prefinishMarkReached(timeToSignal + m_prefinishMark);
+                }
+            }
+        }
+        return true;
+    default:
+        return QObject::event(ev);
     }
 }
 

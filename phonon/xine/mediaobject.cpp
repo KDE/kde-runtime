@@ -352,13 +352,13 @@ void MediaObject::handleFinished()
 MediaSource MediaObject::source() const
 {
     //kDebug(610);
-	return m_mediaSource;
+    return m_mediaSource;
 }
 
 qint32 MediaObject::prefinishMark() const
 {
     //kDebug(610);
-	return m_prefinishMark;
+    return m_prefinishMark;
 }
 
 qint32 MediaObject::transitionTime() const
@@ -444,21 +444,21 @@ void MediaObject::setSourceInternal(const MediaSource &source, HowToSetTheUrl ho
 
             QByteArray mrl;
             switch (source.discType()) {
-                case Phonon::NoDisc:
-                    kFatal(610) << "I should never get to see a MediaSource that is a disc but doesn't specify which one";
-                    return;
-                case Phonon::Cd:
-                    mrl = autoplayMrlsToTitles("CD", "cdda:/");
-                    break;
-                case Phonon::Dvd:
-                    mrl = "dvd:" + m_mediaDevice;
-                    break;
-                case Phonon::Vcd:
-                    mrl = autoplayMrlsToTitles("VCD", "vcd:/");
-                    break;
-                default:
-                    kError(610) << "media " << source.discType() << " not implemented";
-                    return;
+            case Phonon::NoDisc:
+                kFatal(610) << "I should never get to see a MediaSource that is a disc but doesn't specify which one";
+                return;
+            case Phonon::Cd:
+                mrl = autoplayMrlsToTitles("CD", "cdda:/");
+                break;
+            case Phonon::Dvd:
+                mrl = "dvd:" + m_mediaDevice;
+                break;
+            case Phonon::Vcd:
+                mrl = autoplayMrlsToTitles("VCD", "vcd:/");
+                break;
+            default:
+                kError(610) << "media " << source.discType() << " not implemented";
+                return;
             }
             switch (how) {
             case GaplessSwitch:
@@ -656,7 +656,7 @@ void MediaObject::needNextUrl()
     emit aboutToFinish();
 }
 
-void MediaObject::setPrefinishMark( qint32 newPrefinishMark )
+void MediaObject::setPrefinishMark(qint32 newPrefinishMark)
 {
     m_prefinishMark = newPrefinishMark;
     stream().setPrefinishMark(newPrefinishMark);

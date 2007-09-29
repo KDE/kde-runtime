@@ -32,10 +32,10 @@ class VideoDataOutputXT : public SinkNodeXT
         void rewireTo(SourceNodeXT *);
 
     private:
-        xine_video_port_t* m_videoPort;
+        xine_video_port_t *m_videoPort;
 };
 
-VideoDataOutput::VideoDataOutput( QObject* parent )
+VideoDataOutput::VideoDataOutput(QObject *parent)
     : QObject(parent),
     SinkNode(new VideoDataOutputXT)
 {
@@ -52,37 +52,37 @@ void VideoDataOutputXT::rewireTo(SourceNodeXT *source)
 
 quint32 VideoDataOutput::format() const
 {
-	return m_fourcc;
+    return m_fourcc;
 }
 
 int VideoDataOutput::frameRate() const
 {
-	return m_frameRate;
+    return m_frameRate;
 }
 
-void VideoDataOutput::setFrameRate( int frameRate )
+void VideoDataOutput::setFrameRate(int frameRate)
 {
-	m_frameRate = frameRate;
+    m_frameRate = frameRate;
 }
 
 QSize VideoDataOutput::naturalFrameSize() const
 {
-	return QSize( 320, 240 );
+    return QSize(320, 240);
 }
 
 QSize VideoDataOutput::frameSize() const
 {
-	return m_frameSize;
+    return m_frameSize;
 }
 
-void VideoDataOutput::setFrameSize( const QSize& frameSize )
+void VideoDataOutput::setFrameSize(const QSize &frameSize)
 {
-	m_frameSize = frameSize;
+    m_frameSize = frameSize;
 }
 
-void VideoDataOutput::setFormat( quint32 fourcc )
+void VideoDataOutput::setFormat(quint32 fourcc)
 {
-	m_fourcc = fourcc;
+    m_fourcc = fourcc;
 }
 
 }} //namespace Phonon::Xine

@@ -80,11 +80,11 @@ static const float maxVolume = 1.0f;
  *                                                               ___
  * -3dB  =   log(0.5)             => power = 0.5   => voltage = √0.5
  *
- * -6dB  = 2*log(0.5) = log(0.5²) => power = 0.25  => voltage = 0.5
+ * -6dB  = 2 *log(0.5) = log(0.5²) => power = 0.25  => voltage = 0.5
  *                                                               ____
- * -9dB  = 3*log(0.5) = log(0.5³) => power = 0.125 => voltage = √0.5³
+ * -9dB  = 3 *log(0.5) = log(0.5³) => power = 0.125 => voltage = √0.5³
  *
- * -12dB = 4*log(0.5) = log(0.5⁴) => power = 0.5⁴  => voltage = 0.5²
+ * -12dB = 4 *log(0.5) = log(0.5⁴) => power = 0.5⁴  => voltage = 0.5²
  */
 static float curveValueFadeIn3dB(const float &fadeStart, const float &fadeDiff, const int &position, const float &length)
 {
@@ -156,34 +156,34 @@ static int set_parameters (xine_post_t *this_gen, void *param_gen)
     that->oneOverCurveLength = 1000.0f / (param->fadeTime * that->rate);
     const char *x = "unknown";
     switch (that->fadeCurve) {
-        case Phonon::VolumeFaderEffect::Fade3Decibel:
-            if (that->fadeDiff > 0) {
-                that->curveValue = curveValueFadeIn3dB;
-            } else {
-                that->curveValue = curveValueFadeOut3dB;
-            }
-            x = "3dB";
-            break;
-        case Phonon::VolumeFaderEffect::Fade6Decibel:
-            that->curveValue = curveValueFade6dB;
-            x = "6dB";
-            break;
-        case Phonon::VolumeFaderEffect::Fade9Decibel:
-            if (that->fadeDiff > 0) {
-                that->curveValue = curveValueFadeIn9dB;
-            } else {
-                that->curveValue = curveValueFadeOut9dB;
-            }
-            x = "9dB";
-            break;
-        case Phonon::VolumeFaderEffect::Fade12Decibel:
-            if (that->fadeDiff > 0) {
-                that->curveValue = curveValueFadeIn12dB;
-            } else {
-                that->curveValue = curveValueFadeOut12dB;
-            }
-            x = "12dB";
-            break;
+    case Phonon::VolumeFaderEffect::Fade3Decibel:
+        if (that->fadeDiff > 0) {
+            that->curveValue = curveValueFadeIn3dB;
+        } else {
+            that->curveValue = curveValueFadeOut3dB;
+        }
+        x = "3dB";
+        break;
+    case Phonon::VolumeFaderEffect::Fade6Decibel:
+        that->curveValue = curveValueFade6dB;
+        x = "6dB";
+        break;
+    case Phonon::VolumeFaderEffect::Fade9Decibel:
+        if (that->fadeDiff > 0) {
+            that->curveValue = curveValueFadeIn9dB;
+        } else {
+            that->curveValue = curveValueFadeOut9dB;
+        }
+        x = "9dB";
+        break;
+    case Phonon::VolumeFaderEffect::Fade12Decibel:
+        if (that->fadeDiff > 0) {
+            that->curveValue = curveValueFadeIn12dB;
+        } else {
+            that->curveValue = curveValueFadeOut12dB;
+        }
+        x = "12dB";
+        break;
     }
     kDebug(610) << "set parameters to "
         << x << ", "
@@ -231,7 +231,7 @@ K_GLOBAL_STATIC_WITH_ARGS(QByteArray, helpText, (
              "the standard weighted mean over past samples (default); 2: use "
              "several samples to smooth the variations via the standard "
              "weighted mean over past samples.\n"
-             ).toLocal8Bit()))
+           ).toLocal8Bit()))
 
 static char *get_help ()
 {
@@ -265,17 +265,17 @@ static int kvolumefader_port_open(xine_audio_port_t *port_gen, xine_stream_t *st
     port->mode = mode;
     that->rate = rate;
     switch (mode) {
-        case AO_CAP_MODE_STEREO:
-            that->rate *= 2;
-            break;
-        case AO_CAP_MODE_4CHANNEL:
-            that->rate *= 4;
-            break;
-        case AO_CAP_MODE_4_1CHANNEL:
-        case AO_CAP_MODE_5CHANNEL:
-        case AO_CAP_MODE_5_1CHANNEL:
-            that->rate *= 6;
-            break;
+    case AO_CAP_MODE_STEREO:
+        that->rate *= 2;
+        break;
+    case AO_CAP_MODE_4CHANNEL:
+        that->rate *= 4;
+        break;
+    case AO_CAP_MODE_4_1CHANNEL:
+    case AO_CAP_MODE_5CHANNEL:
+    case AO_CAP_MODE_5_1CHANNEL:
+        that->rate *= 6;
+        break;
     }
     that->curveLength = static_cast<int>((that->fadeTime * that->rate) / 1000);
     that->oneOverCurveLength = 1000.0f / (that->fadeTime * that->rate);
@@ -318,7 +318,7 @@ void KVolumeFaderPlugin::fadeBuffer(audio_buffer_t *buf)
             kDebug(610) << "fade ended: stay at " << fadeStart;
         }
         if (fadeStart == 0.0f) {
-            memset(data + i, 0, sizeof(int16_t)*(bufferLength-i));
+            memset(data + i, 0, sizeof(int16_t) *(bufferLength-i));
         } else if (fadeStart != maxVolume) {
             for (; i < bufferLength; ++i) {
                 data[i] = static_cast<int16_t>(data[i] * fadeStart);
@@ -337,7 +337,7 @@ void KVolumeFaderPlugin::fadeBuffer(audio_buffer_t *buf)
         }
         for (; i < bufferLength; ++i) {
             data[i] = data[i] * fadeStart / maxVolume;
-        }*/
+        } */
     } else {
         kDebug(610) << "broken bits " << buf->format.bits;
     }

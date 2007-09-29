@@ -62,7 +62,7 @@ namespace Xine
 {
 
 Backend::Backend(QObject *parent, const QVariantList &)
-    : QObject( parent )
+    : QObject(parent)
 {
     setProperty("identifier",     QLatin1String("phonon_xine"));
     setProperty("backendName",    QLatin1String("Xine"));
@@ -78,10 +78,10 @@ Backend::Backend(QObject *parent, const QVariantList &)
     kDebug(610) << "setting xine verbosity to" << phonon_xine_verbosity.toInt();
     xine_engine_set_param(XineEngine::xine(), XINE_ENGINE_PARAM_VERBOSITY, phonon_xine_verbosity.toInt());
     sprintf(configfile, "%s%s", xine_get_homedir(), "/.xine/config");
-    xine_config_load( XineEngine::xine(), configfile );
-    xine_init( XineEngine::xine() );
+    xine_config_load(XineEngine::xine(), configfile);
+    xine_init(XineEngine::xine());
 
-    kDebug( 610 ) << "Using Xine version " << xine_get_version_string();
+    kDebug(610) << "Using Xine version " << xine_get_version_string();
 
     connect(XineEngine::sender(), SIGNAL(objectDescriptionChanged(ObjectDescriptionType)),
             SIGNAL(objectDescriptionChanged(ObjectDescriptionType)));
@@ -143,9 +143,9 @@ bool Backend::supportsOSD() const
     return true;
 }
 
-bool Backend::supportsFourcc( quint32 fourcc ) const
+bool Backend::supportsFourcc(quint32 fourcc) const
 {
-    switch( fourcc )
+    switch(fourcc)
     {
     case 0x00000000:
         return true;
@@ -161,25 +161,25 @@ bool Backend::supportsSubtitles() const
 
 QStringList Backend::availableMimeTypes() const
 {
-    if( m_supportedMimeTypes.isEmpty() )
+    if (m_supportedMimeTypes.isEmpty())
     {
-        char* mimeTypes_c = xine_get_mime_types( XineEngine::xine() );
-        QString mimeTypes( mimeTypes_c );
-        free( mimeTypes_c );
-        QStringList lstMimeTypes = mimeTypes.split( ";", QString::SkipEmptyParts );
-        foreach( QString mimeType, lstMimeTypes )
-            m_supportedMimeTypes << mimeType.left( mimeType.indexOf( ':' ) ).trimmed();
-        if( m_supportedMimeTypes.contains( "application/ogg" ) )
-            m_supportedMimeTypes << QLatin1String( "audio/x-vorbis+ogg" ) << QLatin1String( "application/ogg" );
+        char *mimeTypes_c = xine_get_mime_types(XineEngine::xine());
+        QString mimeTypes(mimeTypes_c);
+        free(mimeTypes_c);
+        QStringList lstMimeTypes = mimeTypes.split(";", QString::SkipEmptyParts);
+        foreach (QString mimeType, lstMimeTypes)
+            m_supportedMimeTypes << mimeType.left(mimeType.indexOf(':')).trimmed();
+        if (m_supportedMimeTypes.contains("application/ogg"))
+            m_supportedMimeTypes << QLatin1String("audio/x-vorbis+ogg") << QLatin1String("application/ogg");
     }
 
     return m_supportedMimeTypes;
 }
 
-QSet<int> Backend::objectDescriptionIndexes( ObjectDescriptionType type ) const
+QSet<int> Backend::objectDescriptionIndexes(ObjectDescriptionType type) const
 {
     QSet<int> set;
-    switch( type )
+    switch(type)
     {
     case Phonon::AudioOutputDeviceType:
         return XineEngine::audioOutputIndexes();
@@ -194,8 +194,8 @@ QSet<int> Backend::objectDescriptionIndexes( ObjectDescriptionType type ) const
         break;
     case Phonon::VideoOutputDeviceType:
         {
-            const char* const* outputPlugins = xine_list_video_output_plugins( XineEngine::xine() );
-            for( int i = 0; outputPlugins[i]; ++i )
+            const char *const *outputPlugins = xine_list_video_output_plugins(XineEngine::xine());
+            for (int i = 0; outputPlugins[i]; ++i)
                 set << 40000 + i;
             break;
         }
@@ -213,13 +213,13 @@ QSet<int> Backend::objectDescriptionIndexes( ObjectDescriptionType type ) const
         */
     case Phonon::EffectType:
         {
-            const char* const* postPlugins = xine_list_post_plugins_typed( XineEngine::xine(), XINE_POST_TYPE_AUDIO_FILTER );
-            for( int i = 0; postPlugins[i]; ++i )
+            const char *const *postPlugins = xine_list_post_plugins_typed(XineEngine::xine(), XINE_POST_TYPE_AUDIO_FILTER);
+            for (int i = 0; postPlugins[i]; ++i)
                 set << 0x7F000000 + i;
-            /*const char *const *postVPlugins = xine_list_post_plugins_typed( XineEngine::xine(), XINE_POST_TYPE_VIDEO_FILTER );
+            /*const char *const *postVPlugins = xine_list_post_plugins_typed(XineEngine::xine(), XINE_POST_TYPE_VIDEO_FILTER);
             for (int i = 0; postVPlugins[i]; ++i) {
                 set << 0x7E000000 + i;
-            }*/
+            } */
             break;
         }
     }
@@ -332,7 +332,7 @@ QHash<QByteArray, QVariant> Backend::objectDescriptionProperties(ObjectDescripti
                     ret.insert("name", QLatin1String(postPlugins[i]));
                     break;
                 }
-            }*/
+            } */
         }
         break;
     }
@@ -356,12 +356,12 @@ bool Backend::connectNodes(QObject *_source, QObject *_sink)
         return false;
     }
     // what streams to connect - i.e. all both nodes support
-    const MediaStreamTypes types = source->outputMediaStreamTypes() & sink->inputMediaStreamTypes();
+    const MediaStreamTypes types = source->outputMediaStreamTypes()    & sink->inputMediaStreamTypes();
     if (sink->source() != 0 || source->sinks().contains(sink)) {
         return false;
     }
     foreach (SinkNode *otherSinks, source->sinks()) {
-        if (otherSinks->inputMediaStreamTypes() & types) {
+        if (otherSinks->inputMediaStreamTypes()    & types) {
             kWarning(610) << "phonon-xine does not support splitting of audio or video streams into multiple outputs.";
             return false;
         }
@@ -379,7 +379,7 @@ bool Backend::disconnectNodes(QObject *_source, QObject *_sink)
     if (!source || !sink) {
         return false;
     }
-    const MediaStreamTypes types = source->outputMediaStreamTypes() & sink->inputMediaStreamTypes();
+    const MediaStreamTypes types = source->outputMediaStreamTypes()    & sink->inputMediaStreamTypes();
     if (!source->sinks().contains(sink) || sink->source() != source) {
         return false;
     }

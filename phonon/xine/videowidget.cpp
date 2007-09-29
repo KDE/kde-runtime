@@ -42,10 +42,10 @@ namespace Xine
 #define K_XT(type) (static_cast<type *>(SinkNode::threadSafeObject().data()))
 
 #ifndef PHONON_XINE_NO_VIDEOWIDGET
-static void dest_size_cb( void* user_data, int video_width, int video_height, double video_pixel_aspect,
-		int *dest_width, int *dest_height, double *dest_pixel_aspect )
+static void dest_size_cb(void *user_data, int video_width, int video_height, double video_pixel_aspect,
+        int *dest_width, int *dest_height, double *dest_pixel_aspect)
 {
-    Phonon::Xine::VideoWidgetXT* xt = static_cast<VideoWidgetXT*>( user_data );
+    Phonon::Xine::VideoWidgetXT *xt = static_cast<VideoWidgetXT *>(user_data);
     if (!xt->videoWidget()) {
         return;
     }
@@ -55,12 +55,12 @@ static void dest_size_cb( void* user_data, int video_width, int video_height, do
             video_width, video_height, video_pixel_aspect, false);
 }
 
-static void frame_output_cb( void* user_data, int video_width, int video_height,
-		double video_pixel_aspect, int *dest_x, int *dest_y,
-		int *dest_width, int *dest_height,
-		double *dest_pixel_aspect, int *win_x, int *win_y )
+static void frame_output_cb(void *user_data, int video_width, int video_height,
+        double video_pixel_aspect, int *dest_x, int *dest_y,
+        int *dest_width, int *dest_height,
+        double *dest_pixel_aspect, int *win_x, int *win_y)
 {
-    Phonon::Xine::VideoWidgetXT* xt = static_cast<VideoWidgetXT*>( user_data );
+    Phonon::Xine::VideoWidgetXT *xt = static_cast<VideoWidgetXT *>(user_data);
     if (!xt->videoWidget()) {
         return;
     }
@@ -73,21 +73,21 @@ static void frame_output_cb( void* user_data, int video_width, int video_height,
 }
 #endif // PHONON_XINE_NO_VIDEOWIDGET
 
-void VideoWidget::xineCallback( int &x, int &y, int &width, int &height, double &ratio,
-		int videoWidth, int videoHeight, double videoRatio, bool mayResize )
+void VideoWidget::xineCallback(int &x, int &y, int &width, int &height, double &ratio,
+        int videoWidth, int videoHeight, double videoRatio, bool mayResize)
 {
-	Q_UNUSED( videoRatio );
-	Q_UNUSED( videoWidth );
-	Q_UNUSED( videoHeight );
-	Q_UNUSED( mayResize );
+    Q_UNUSED(videoRatio);
+    Q_UNUSED(videoWidth);
+    Q_UNUSED(videoHeight);
+    Q_UNUSED(mayResize);
 
-	x = this->x();
-	y = this->y();
-	width = this->width();
-	height = this->height();
+    x = this->x();
+    y = this->y();
+    width = this->width();
+    height = this->height();
 
-	// square pixels
-	ratio = 1.0;
+    // square pixels
+    ratio = 1.0;
 }
 
 VideoWidgetXT::VideoWidgetXT(VideoWidget *w)
@@ -114,7 +114,7 @@ VideoWidgetXT::VideoWidgetXT(VideoWidget *w)
         QApplication::syncX();
 
         Q_ASSERT(w->testAttribute(Qt::WA_WState_Created));
-        m_videoPort = xine_open_video_driver(XineEngine::xine(), "auto", XINE_VISUAL_TYPE_XCB, static_cast<void*>(&m_visual));
+        m_videoPort = xine_open_video_driver(XineEngine::xine(), "auto", XINE_VISUAL_TYPE_XCB, static_cast<void *>(&m_visual));
         if (!m_videoPort) {
 #endif // PHONON_XINE_NO_VIDEOWIDGET
             kError(610) << "No xine video output plugin using libxcb for threadsafe access to the X server found. No video for you.";
@@ -124,7 +124,7 @@ VideoWidgetXT::VideoWidgetXT(VideoWidget *w)
 #endif // PHONON_XINE_NO_VIDEOWIDGET
 }
 
-VideoWidget::VideoWidget( QWidget* parent )
+VideoWidget::VideoWidget(QWidget *parent)
     : QWidget(parent),
     SinkNode(new VideoWidgetXT(this)),
     m_fullScreen(false),
@@ -134,18 +134,18 @@ VideoWidget::VideoWidget( QWidget* parent )
     m_hue(0.0),
     m_saturation(0.0)
 {
-	// for some reason it can hang if the widget is 0x0
-	setMinimumSize( 1, 1 );
+    // for some reason it can hang if the widget is 0x0
+    setMinimumSize(1, 1);
 
-	QPalette palette = this->palette();
-	palette.setColor( backgroundRole(), Qt::black );
-	setPalette( palette );
+    QPalette palette = this->palette();
+    palette.setColor(backgroundRole(), Qt::black);
+    setPalette(palette);
 
-	// when resizing fill with black (backgroundRole color) the rest is done by paintEvent
-	setAttribute( Qt::WA_OpaquePaintEvent, true );
+    // when resizing fill with black (backgroundRole color) the rest is done by paintEvent
+    setAttribute(Qt::WA_OpaquePaintEvent, true);
 
-	// disable Qt composition management as Xine draws onto the widget directly using X calls
-	setAttribute( Qt::WA_PaintOnScreen, true );
+    // disable Qt composition management as Xine draws onto the widget directly using X calls
+    setAttribute(Qt::WA_PaintOnScreen, true);
 
     // required for dvdnav
     setMouseTracking(true);
@@ -178,10 +178,10 @@ VideoWidgetXT::~VideoWidgetXT()
 
 Phonon::VideoWidget::AspectRatio VideoWidget::aspectRatio() const
 {
-	return m_aspectRatio;
+    return m_aspectRatio;
 }
 
-void VideoWidget::setAspectRatio( Phonon::VideoWidget::AspectRatio aspectRatio )
+void VideoWidget::setAspectRatio(Phonon::VideoWidget::AspectRatio aspectRatio)
 {
     m_aspectRatio = aspectRatio;
     switch (m_aspectRatio) {
@@ -271,31 +271,31 @@ void VideoWidget::setSaturation(qreal newSaturation)
 /*
 int VideoWidget::overlayCapabilities() const
 {
-	return Phonon::Experimental::OverlayApi::OverlayOpaque;
+    return Phonon::Experimental::OverlayApi::OverlayOpaque;
 }
 
 bool VideoWidget::createOverlay(QWidget *widget, int type)
 {
-	if ((overlay != 0) || (type != Phonon::Experimental::OverlayApi::OverlayOpaque))
-		return false;
+    if ((overlay != 0) || (type != Phonon::Experimental::OverlayApi::OverlayOpaque))
+        return false;
 
-	if (layout() == 0) {
-		QLayout *layout = new QVBoxLayout(this);
-		layout->setMargin(0);
-		setLayout(layout);
-	}
+    if (layout() == 0) {
+        QLayout *layout = new QVBoxLayout(this);
+        layout->setMargin(0);
+        setLayout(layout);
+    }
 
-	layout()->addWidget(widget);
-	overlay = widget;
+    layout()->addWidget(widget);
+    overlay = widget;
 
-	return true;
+    return true;
 }
 
 void VideoWidget::childEvent(QChildEvent *event)
 {
-	if (event->removed() && (event->child() == overlay))
-		overlay = 0;
-	QWidget::childEvent(event);
+    if (event->removed() && (event->child() == overlay))
+        overlay = 0;
+    QWidget::childEvent(event);
 }
 */
 
@@ -321,18 +321,18 @@ void VideoWidget::updateZoom()
         // first transform it to the current aspect ratio
         kDebug(610) << imageSize;
         switch (m_aspectRatio) {
-            case Phonon::VideoWidget::AspectRatioAuto:
-                // FIXME: how can we find out the ratio xine decided on? the event?
-                break;
-            case Phonon::VideoWidget::AspectRatio4_3:
-                imageSize.setWidth(imageSize.height() * 4 / 3);
-                break;
-            case Phonon::VideoWidget::AspectRatio16_9:
-                imageSize.setWidth(imageSize.height() * 16 / 9);
-                break;
-            default:
-                // correct ratio already
-                break;
+        case Phonon::VideoWidget::AspectRatioAuto:
+            // FIXME: how can we find out the ratio xine decided on? the event?
+            break;
+        case Phonon::VideoWidget::AspectRatio4_3:
+            imageSize.setWidth(imageSize.height() * 4 / 3);
+            break;
+        case Phonon::VideoWidget::AspectRatio16_9:
+            imageSize.setWidth(imageSize.height() * 16 / 9);
+            break;
+        default:
+            // correct ratio already
+            break;
         }
         kDebug(610) << imageSize;
         imageSize.scale(s, Qt::KeepAspectRatioByExpanding);
@@ -360,27 +360,27 @@ void VideoWidget::resizeEvent(QResizeEvent *ev)
 bool VideoWidget::event(QEvent *ev)
 {
     switch (ev->type()) {
-        case Event::NavButtonIn:
-            kDebug(610) << "NavButtonIn";
-            setCursor(QCursor(Qt::PointingHandCursor));
-            ev->accept();
-            return true;
-        case Event::NavButtonOut:
-            kDebug(610) << "NavButtonOut";
-            unsetCursor();
-            ev->accept();
-            return true;
-        case Event::FrameFormatChange:
-            ev->accept();
-            {
-                FrameFormatChangeEvent *e = static_cast<FrameFormatChangeEvent *>(ev);
-                kDebug(610) << "FrameFormatChangeEvent " << e->size;
-                m_sizeHint = e->size;
-                updateGeometry();
-            }
-            return true;
-        default:
-            return QWidget::event(ev);
+    case Event::NavButtonIn:
+        kDebug(610) << "NavButtonIn";
+        setCursor(QCursor(Qt::PointingHandCursor));
+        ev->accept();
+        return true;
+    case Event::NavButtonOut:
+        kDebug(610) << "NavButtonOut";
+        unsetCursor();
+        ev->accept();
+        return true;
+    case Event::FrameFormatChange:
+        ev->accept();
+        {
+            FrameFormatChangeEvent *e = static_cast<FrameFormatChangeEvent *>(ev);
+            kDebug(610) << "FrameFormatChangeEvent " << e->size;
+            m_sizeHint = e->size;
+            updateGeometry();
+        }
+        return true;
+    default:
+        return QWidget::event(ev);
     }
 }
 
@@ -399,7 +399,7 @@ void VideoWidget::mouseMoveEvent(QMouseEvent *mev)
     rect.w = 0;
     rect.h = 0;
 
-    xine_port_send_gui_data(K_XT(VideoWidgetXT)->m_videoPort, XINE_GUI_SEND_TRANSLATE_GUI_TO_VIDEO, (void*)&rect);
+    xine_port_send_gui_data(K_XT(VideoWidgetXT)->m_videoPort, XINE_GUI_SEND_TRANSLATE_GUI_TO_VIDEO, (void *) &rect);
 
     event->type        = XINE_EVENT_INPUT_MOUSE_MOVE;
     event->data        = input;
@@ -437,7 +437,7 @@ void VideoWidget::mousePressEvent(QMouseEvent *mev)
             rect.w = 0;
             rect.h = 0;
 
-            xine_port_send_gui_data(K_XT(VideoWidgetXT)->m_videoPort, XINE_GUI_SEND_TRANSLATE_GUI_TO_VIDEO, (void*)&rect);
+            xine_port_send_gui_data(K_XT(VideoWidgetXT)->m_videoPort, XINE_GUI_SEND_TRANSLATE_GUI_TO_VIDEO, (void *) &rect);
 
             event->type        = XINE_EVENT_INPUT_MOUSE_BUTTON;
             event->data        = input;
@@ -499,24 +499,24 @@ void VideoWidget::paintEvent(QPaintEvent *event)
     QWidget::paintEvent(event);
 }
 
-void VideoWidget::showEvent( QShowEvent* )
+void VideoWidget::showEvent(QShowEvent *)
 {
-	//xine_port_send_gui_data( K_XT(VideoWidgetXT)->m_videoPort, XINE_GUI_SEND_VIDEOWIN_VISIBLE, static_cast<void*>( 1 ) );
+    //xine_port_send_gui_data(K_XT(VideoWidgetXT)->m_videoPort, XINE_GUI_SEND_VIDEOWIN_VISIBLE, static_cast<void *>(1));
 }
 
-void VideoWidget::hideEvent( QHideEvent* )
+void VideoWidget::hideEvent(QHideEvent *)
 {
-	//xine_port_send_gui_data( K_XT(VideoWidgetXT)->m_videoPort, XINE_GUI_SEND_VIDEOWIN_VISIBLE, static_cast<void*>( 0 ) );
+    //xine_port_send_gui_data(K_XT(VideoWidgetXT)->m_videoPort, XINE_GUI_SEND_VIDEOWIN_VISIBLE, static_cast<void *>(0));
 }
 
-void VideoWidget::changeEvent( QEvent* event )
+void VideoWidget::changeEvent(QEvent *event)
 {
-	if( event->type() == QEvent::ParentAboutToChange )
-	{
-		kDebug( 610 ) << "ParentAboutToChange";
-	}
-	else if( event->type() == QEvent::ParentChange )
-	{
+    if (event->type() == QEvent::ParentAboutToChange)
+    {
+        kDebug(610) << "ParentAboutToChange";
+    }
+    else if (event->type() == QEvent::ParentChange)
+    {
         kDebug(610) << "ParentChange" << winId();
 #ifndef PHONON_XINE_NO_VIDEOWIDGET
         if (K_XT(VideoWidgetXT)->m_visual.window != winId()) {
@@ -525,7 +525,7 @@ void VideoWidget::changeEvent( QEvent* event )
                 // make sure all Qt<->X communication is done, else winId() might not be known at the
                 // X-server yet
                 QApplication::syncX();
-                xine_port_send_gui_data(K_XT(VideoWidgetXT)->m_videoPort, XINE_GUI_SEND_DRAWABLE_CHANGED, reinterpret_cast<void*>(K_XT(VideoWidgetXT)->m_visual.window));
+                xine_port_send_gui_data(K_XT(VideoWidgetXT)->m_videoPort, XINE_GUI_SEND_DRAWABLE_CHANGED, reinterpret_cast<void *>(K_XT(VideoWidgetXT)->m_visual.window));
                 kDebug(610) << "XINE_GUI_SEND_DRAWABLE_CHANGED done.";
             }
         }

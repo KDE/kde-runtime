@@ -52,7 +52,7 @@ namespace Xine
 
     static XineEngine *s_instance = 0;
 
-    XineEngine::XineEngine(const KSharedConfigPtr& _config)
+    XineEngine::XineEngine(const KSharedConfigPtr &_config)
         : m_xine(xine_new()),
         m_config(_config),
         d(new XineEnginePrivate),
@@ -110,7 +110,7 @@ namespace Xine
         return self()->d;
     }
 
-    xine_t* XineEngine::xine()
+    xine_t *XineEngine::xine()
     {
         return self()->m_xine;
     }
@@ -152,83 +152,83 @@ namespace Xine
         if (!p || !xineEvent) {
             return;
         }
-        //kDebug( 610 ) << "Xine event: " << xineEvent->type << QByteArray((char *)xineEvent->data, xineEvent->data_length);
+        //kDebug(610) << "Xine event: " << xineEvent->type << QByteArray((char *)xineEvent->data, xineEvent->data_length);
 
         XineStream *xs = static_cast<XineStream *>(p);
 
         switch (xineEvent->type) {
-            case XINE_EVENT_UI_SET_TITLE: /* request title display change in ui */
-                QCoreApplication::postEvent(xs, new QEVENT(NewMetaData));
-                break;
-            case XINE_EVENT_UI_PLAYBACK_FINISHED: /* frontend can e.g. move on to next playlist entry */
-                QCoreApplication::postEvent(xs, new QEVENT(MediaFinished));
-                break;
-            case XINE_EVENT_PROGRESS: /* index creation/network connections */
-                {
-                    xine_progress_data_t *progress = static_cast<xine_progress_data_t*>(xineEvent->data);
-                    QCoreApplication::postEvent(xs, new ProgressEvent(QString::fromUtf8(progress->description), progress->percent));
+        case XINE_EVENT_UI_SET_TITLE: /* request title display change in ui */
+            QCoreApplication::postEvent(xs, new QEVENT(NewMetaData));
+            break;
+        case XINE_EVENT_UI_PLAYBACK_FINISHED: /* frontend can e.g. move on to next playlist entry */
+            QCoreApplication::postEvent(xs, new QEVENT(MediaFinished));
+            break;
+        case XINE_EVENT_PROGRESS: /* index creation/network connections */
+            {
+                xine_progress_data_t *progress = static_cast<xine_progress_data_t *>(xineEvent->data);
+                QCoreApplication::postEvent(xs, new ProgressEvent(QString::fromUtf8(progress->description), progress->percent));
+            }
+            break;
+        case XINE_EVENT_SPU_BUTTON: // the mouse pointer enter/leave a button, used to change the cursor
+            {
+                xine_spu_button_t *button = static_cast<xine_spu_button_t *>(xineEvent->data);
+                if (button->direction == 1) { // enter a button
+                    xs->handleDownstreamEvent(new QEVENT(NavButtonIn));
+                } else {
+                    xs->handleDownstreamEvent(new QEVENT(NavButtonOut));
                 }
-                break;
-            case XINE_EVENT_SPU_BUTTON: // the mouse pointer enter/leave a button, used to change the cursor
-                {
-                    xine_spu_button_t *button = static_cast<xine_spu_button_t *>(xineEvent->data);
-                    if (button->direction == 1) { // enter a button
-                        xs->handleDownstreamEvent(new QEVENT(NavButtonIn));
-                    } else {
-                        xs->handleDownstreamEvent(new QEVENT(NavButtonOut));
-                    }
+            }
+            break;
+        case XINE_EVENT_UI_CHANNELS_CHANGED:    /* inform ui that new channel info is available */
+            kDebug(610) << "XINE_EVENT_UI_CHANNELS_CHANGED";
+            {
+                QCoreApplication::postEvent(xs, new QEVENT(UiChannelsChanged));
+            }
+            break;
+        case XINE_EVENT_UI_MESSAGE:             /* message (dialog) for the ui to display */
+            {
+                kDebug(610) << "XINE_EVENT_UI_MESSAGE";
+                const xine_ui_message_data_t *message = static_cast<xine_ui_message_data_t *>(xineEvent->data);
+                if (message->type == XINE_MSG_AUDIO_OUT_UNAVAILABLE) {
+                    kDebug(610) << "XINE_MSG_AUDIO_OUT_UNAVAILABLE";
+                    // we don't know for sure which AudioOutput failed. but the one without any
+                    // capabilities must be the guilty one
+                    xs->handleDownstreamEvent(new QEVENT(AudioDeviceFailed));
                 }
-                break;
-            case XINE_EVENT_UI_CHANNELS_CHANGED:    /* inform ui that new channel info is available */
-                kDebug(610) << "XINE_EVENT_UI_CHANNELS_CHANGED";
-                {
-                    QCoreApplication::postEvent(xs, new QEVENT(UiChannelsChanged));
-                }
-                break;
-            case XINE_EVENT_UI_MESSAGE:             /* message (dialog) for the ui to display */
-                {
-                    kDebug(610) << "XINE_EVENT_UI_MESSAGE";
-                    const xine_ui_message_data_t *message = static_cast<xine_ui_message_data_t *>(xineEvent->data);
-                    if (message->type == XINE_MSG_AUDIO_OUT_UNAVAILABLE) {
-                        kDebug(610) << "XINE_MSG_AUDIO_OUT_UNAVAILABLE";
-                        // we don't know for sure which AudioOutput failed. but the one without any
-                        // capabilities must be the guilty one
-                        xs->handleDownstreamEvent(new QEVENT(AudioDeviceFailed));
-                    }
-                }
-                break;
-            case XINE_EVENT_FRAME_FORMAT_CHANGE:    /* e.g. aspect ratio change during dvd playback */
-                kDebug(610) << "XINE_EVENT_FRAME_FORMAT_CHANGE";
-                {
-                    xine_format_change_data_t *data = static_cast<xine_format_change_data_t *>(xineEvent->data);
-                    xs->handleDownstreamEvent(new FrameFormatChangeEvent(data->width, data->height, data->aspect, data->pan_scan));
-                }
-                break;
-            case XINE_EVENT_AUDIO_LEVEL:            /* report current audio level (l/r/mute) */
-                kDebug(610) << "XINE_EVENT_AUDIO_LEVEL";
-                break;
-            case XINE_EVENT_QUIT:                   /* last event sent when stream is disposed */
-                kDebug(610) << "XINE_EVENT_QUIT";
-                break;
-            case XINE_EVENT_UI_NUM_BUTTONS:         /* number of buttons for interactive menus */
-                kDebug(610) << "XINE_EVENT_UI_NUM_BUTTONS";
-                break;
-            case XINE_EVENT_DROPPED_FRAMES:         /* number of dropped frames is too high */
-                kDebug(610) << "XINE_EVENT_DROPPED_FRAMES";
-                break;
-            case XINE_EVENT_MRL_REFERENCE_EXT:      /* demuxer->frontend: MRL reference(s) for the real stream */
-                {
-                    xine_mrl_reference_data_ext_t *reference = static_cast<xine_mrl_reference_data_ext_t *>(xineEvent->data);
-                    kDebug(610) << "XINE_EVENT_MRL_REFERENCE_EXT: " << reference->alternative
-                        << ", " << reference->start_time
-                        << ", " << reference->duration
-                        << ", " << reference->mrl
-                        << ", " << (reference->mrl + strlen(reference->mrl) + 1)
-                        ;
-                    QCoreApplication::postEvent(xs, new ReferenceEvent(reference->alternative, reference->mrl));
-                }
-                break;
-        }
+            }
+            break;
+        case XINE_EVENT_FRAME_FORMAT_CHANGE:    /* e.g. aspect ratio change during dvd playback */
+            kDebug(610) << "XINE_EVENT_FRAME_FORMAT_CHANGE";
+            {
+                xine_format_change_data_t *data = static_cast<xine_format_change_data_t *>(xineEvent->data);
+                xs->handleDownstreamEvent(new FrameFormatChangeEvent(data->width, data->height, data->aspect, data->pan_scan));
+            }
+            break;
+        case XINE_EVENT_AUDIO_LEVEL:            /* report current audio level (l/r/mute) */
+            kDebug(610) << "XINE_EVENT_AUDIO_LEVEL";
+            break;
+        case XINE_EVENT_QUIT:                   /* last event sent when stream is disposed */
+            kDebug(610) << "XINE_EVENT_QUIT";
+            break;
+        case XINE_EVENT_UI_NUM_BUTTONS:         /* number of buttons for interactive menus */
+            kDebug(610) << "XINE_EVENT_UI_NUM_BUTTONS";
+            break;
+        case XINE_EVENT_DROPPED_FRAMES:         /* number of dropped frames is too high */
+            kDebug(610) << "XINE_EVENT_DROPPED_FRAMES";
+            break;
+        case XINE_EVENT_MRL_REFERENCE_EXT:      /* demuxer->frontend: MRL reference(s) for the real stream */
+            {
+                xine_mrl_reference_data_ext_t *reference = static_cast<xine_mrl_reference_data_ext_t *>(xineEvent->data);
+                kDebug(610) << "XINE_EVENT_MRL_REFERENCE_EXT: " << reference->alternative
+                    << ", " << reference->start_time
+                    << ", " << reference->duration
+                    << ", " << reference->mrl
+                    << ", " << (reference->mrl + strlen(reference->mrl) + 1)
+                    ;
+                QCoreApplication::postEvent(xs, new ReferenceEvent(reference->alternative, reference->mrl));
+            }
+            break;
+    }
     }
 
     xine_audio_port_t *XineEngine::nullPort()
@@ -451,7 +451,7 @@ namespace Xine
 //X             QStringList groups = m_config->groupList();
 //X             foreach (QString group, groups) {
 //X                 if (group.startsWith("AudioOutputDevice_")) {
-//X                     const int index = group.right(group.size() - 18/*strlen("AudioOutputDevice_")*/).toInt();
+//X                     const int index = group.right(group.size() - 18/*strlen("AudioOutputDevice_") */).toInt();
 //X                     if (index >= nextIndex) {
 //X                         nextIndex = index + 1;
 //X                     }
@@ -497,25 +497,25 @@ namespace Xine
                                 "<p>JACK was designed from the ground up for professional audio "
                                 "work, and its design focuses on two key areas: synchronous "
                                 "execution of all clients, and low latency operation.</p></html>"),
-                            /*icon name*/"audio-backend-jack", outputPlugins[i], QStringList(),
+                            /*icon name */"audio-backend-jack", outputPlugins[i], QStringList(),
                             QString());
                 } else if (0 == strcmp(outputPlugins[i], "arts")) {
                     addAudioOutput(nextIndex++, -100, i18n("aRts"),
                             i18n("<html><p>aRts is the old soundserver and media framework that was used "
                                 "in KDE2 and KDE3. Its use is discuraged.</p></html>"),
-                            /*icon name*/"audio-backend-arts", outputPlugins[i], QStringList(), QString());
+                            /*icon name */"audio-backend-arts", outputPlugins[i], QStringList(), QString());
                 } else if (0 == strcmp(outputPlugins[i], "pulseaudio")) {
                     addAudioOutput(nextIndex++, 10, i18n("PulseAudio"),
                             xine_get_audio_driver_plugin_description(xine(), outputPlugins[i]),
-                            /*icon name*/"audio-backend-pulseaudio", outputPlugins[i], QStringList(), QString());
+                            /*icon name */"audio-backend-pulseaudio", outputPlugins[i], QStringList(), QString());
                 } else if (0 == strcmp(outputPlugins[i], "esd")) {
                     addAudioOutput(nextIndex++, 10, i18n("Esound (ESD)"),
                             xine_get_audio_driver_plugin_description(xine(), outputPlugins[i]),
-                            /*icon name*/"audio-backend-esd", outputPlugins[i], QStringList(), QString());
+                            /*icon name */"audio-backend-esd", outputPlugins[i], QStringList(), QString());
                 } else {
                     addAudioOutput(nextIndex++, -20, outputPlugins[i],
                             xine_get_audio_driver_plugin_description(xine(), outputPlugins[i]),
-                            /*icon name*/outputPlugins[i], outputPlugins[i], QStringList(),
+                            /*icon name */outputPlugins[i], outputPlugins[i], QStringList(),
                             QString());
                 }
             }
@@ -535,26 +535,26 @@ namespace Xine
         }
         const char *const *outputPlugins = xine_list_audio_output_plugins(XineEngine::xine());
         switch (dev.driver()) {
-            case Solid::AudioInterface::Alsa:
+        case Solid::AudioInterface::Alsa:
+            for (int i = 0; outputPlugins[i]; ++i) {
+                if (0 == strcmp(outputPlugins[i], "alsa")) {
+                    s_instance->addAudioOutput(dev, "alsa");
+                    signalTimer.start();
+                }
+            }
+            break;
+        case Solid::AudioInterface::OpenSoundSystem:
+            if (s_instance->m_useOss) {
                 for (int i = 0; outputPlugins[i]; ++i) {
-                    if (0 == strcmp(outputPlugins[i], "alsa")) {
-                        s_instance->addAudioOutput(dev, "alsa");
+                    if (0 == strcmp(outputPlugins[i], "oss")) {
+                        s_instance->addAudioOutput(dev, "oss");
                         signalTimer.start();
                     }
                 }
-                break;
-            case Solid::AudioInterface::OpenSoundSystem:
-                if (s_instance->m_useOss) {
-                    for (int i = 0; outputPlugins[i]; ++i) {
-                        if (0 == strcmp(outputPlugins[i], "oss")) {
-                            s_instance->addAudioOutput(dev, "oss");
-                            signalTimer.start();
-                        }
-                    }
-                }
-                break;
-            case Solid::AudioInterface::UnknownAudioDriver:
-                break;
+            }
+            break;
+        case Solid::AudioInterface::UnknownAudioDriver:
+            break;
         }
     }
 
@@ -567,18 +567,18 @@ namespace Xine
         QByteArray driver;
         QString postfix;
         switch (dev.driver()) {
-            case Solid::AudioInterface::Alsa:
-                driver = "alsa";
-                if (s_instance->m_useOss) {
-                    postfix = QLatin1String(" (ALSA)");
-                }
-                break;
-            case Solid::AudioInterface::OpenSoundSystem:
-                driver = "oss";
-                postfix = QLatin1String(" (OSS)");
-                break;
-            case Solid::AudioInterface::UnknownAudioDriver:
-                break;
+        case Solid::AudioInterface::Alsa:
+            driver = "alsa";
+            if (s_instance->m_useOss) {
+                postfix = QLatin1String(" (ALSA)");
+            }
+            break;
+        case Solid::AudioInterface::OpenSoundSystem:
+            driver = "oss";
+            postfix = QLatin1String(" (OSS)");
+            break;
+        case Solid::AudioInterface::UnknownAudioDriver:
+            break;
         }
         XineEngine::AudioOutputInfo info(dev.index(), 0, dev.cardName() + postfix, QString(), dev.iconName(),
                 driver, dev.deviceIds(), QString());

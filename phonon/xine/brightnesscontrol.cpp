@@ -26,9 +26,9 @@ namespace Phonon
 namespace Xine
 {
 
-BrightnessControl::BrightnessControl( QObject *parent )
-	: VideoEffect( 1, parent )
-	, m_brightness( 100 )
+BrightnessControl::BrightnessControl(QObject *parent)
+    : VideoEffect(1, parent)
+    , m_brightness(100)
 {
 }
 
@@ -36,40 +36,40 @@ BrightnessControl::~BrightnessControl()
 {
 }
 
-void BrightnessControl::setPath( VideoPath* path )
+void BrightnessControl::setPath(VideoPath *path)
 {
-	VideoEffect::setPath( path );
-	//TODO find output and set brightness
+    VideoEffect::setPath(path);
+    //TODO find output and set brightness
 }
 
-void BrightnessControl::setBrightness( int newBrightness )
+void BrightnessControl::setBrightness(int newBrightness)
 {
-	if( newBrightness < 0 )
-		newBrightness = 0;
-	else if( newBrightness > 65535 )
-		newBrightness = 65535;
-	if( m_brightness != newBrightness )
-	{
-		m_brightness = newBrightness;
+    if (newBrightness < 0)
+        newBrightness = 0;
+    else if (newBrightness > 65535)
+        newBrightness = 65535;
+    if (m_brightness != newBrightness)
+    {
+        m_brightness = newBrightness;
         XineStream *s = stream();
-		if (s) {
-			kDebug( 610 ) << m_brightness;
+        if (s) {
+            kDebug(610) << m_brightness;
             s->setParam(XINE_PARAM_VO_BRIGHTNESS, m_brightness);
-		}
-	}
+        }
+    }
 }
 
 int BrightnessControl::upperBound() const
 {
-	return 65535;
+    return 65535;
 }
 
 int BrightnessControl::lowerBound() const
 {
-	return 0;
+    return 0;
 }
 
-XineStream* BrightnessControl::stream()
+XineStream *BrightnessControl::stream()
 {
     if (path() && path()->mediaObject()) {
         return &path()->mediaObject()->stream();

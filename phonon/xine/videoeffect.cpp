@@ -27,7 +27,7 @@ namespace Phonon
 {
 namespace Xine
 {
-VideoEffect::VideoEffect( int effectId, QObject* parent )
+VideoEffect::VideoEffect(int effectId, QObject *parent)
     : QObject(parent),
     m_pluginName(0),
     m_pluginParams(0),
@@ -62,9 +62,9 @@ VideoEffect::~VideoEffect()
     free(m_pluginParams);
 }
 
-void VideoEffect::setPath( VideoPath* path )
+void VideoEffect::setPath(VideoPath *path)
 {
-	m_path = path;
+    m_path = path;
 }
 
 QList<EffectParameter> VideoEffect::allDescriptions()
@@ -174,21 +174,21 @@ QVariant VideoEffect::parameterValue(int parameterIndex) const
     if (i == parameterIndex) {
         xine_post_api_parameter_t &p = desc->parameter[i];
         switch (p.type) {
-            case POST_PARAM_TYPE_INT:          /* integer (or vector of integers)    */
-                return *reinterpret_cast<int *>(m_pluginParams + p.offset);
-            case POST_PARAM_TYPE_DOUBLE:       /* double (or vector of doubles)      */
-                return *reinterpret_cast<double *>(m_pluginParams + p.offset);
-            case POST_PARAM_TYPE_CHAR:         /* char (or vector of chars = string) */
-            case POST_PARAM_TYPE_STRING:       /* (char *), ASCIIZ                   */
-            case POST_PARAM_TYPE_STRINGLIST:   /* (char **) list, NULL terminated    */
-                kWarning(610) << "char/string/stringlist parameter '" << p.name << "' not supported.";
-                return QVariant();
-            case POST_PARAM_TYPE_BOOL:         /* integer (0 or 1)                   */
-                return static_cast<bool>(*reinterpret_cast<int *>(m_pluginParams + p.offset));
-            case POST_PARAM_TYPE_LAST:         /* terminator of parameter list       */
-                break;
-            default:
-                abort();
+        case POST_PARAM_TYPE_INT:          /* integer (or vector of integers)    */
+            return *reinterpret_cast<int *>(m_pluginParams + p.offset);
+        case POST_PARAM_TYPE_DOUBLE:       /* double (or vector of doubles)      */
+            return *reinterpret_cast<double *>(m_pluginParams + p.offset);
+        case POST_PARAM_TYPE_CHAR:         /* char (or vector of chars = string) */
+        case POST_PARAM_TYPE_STRING:       /* (char *), ASCIIZ                   */
+        case POST_PARAM_TYPE_STRINGLIST:   /* (char **) list, NULL terminated    */
+            kWarning(610) << "char/string/stringlist parameter '" << p.name << "' not supported.";
+            return QVariant();
+        case POST_PARAM_TYPE_BOOL:         /* integer (0 or 1)                   */
+            return static_cast<bool>(*reinterpret_cast<int *>(m_pluginParams + p.offset));
+        case POST_PARAM_TYPE_LAST:         /* terminator of parameter list       */
+            break;
+        default:
+            abort();
         }
     }
     kError(610) << "invalid parameterIndex passed to VideoEffect::value";
@@ -215,34 +215,34 @@ void VideoEffect::setParameterValue(int parameterIndex, const QVariant &newValue
     if (i == parameterIndex) {
         xine_post_api_parameter_t &p = desc->parameter[i];
         switch (p.type) {
-            case POST_PARAM_TYPE_INT:          /* integer (or vector of integers)    */
-                {
-                    int *value = reinterpret_cast<int *>(m_pluginParams + p.offset);
-                    *value = newValue.toInt();
-                }
-                break;
-            case POST_PARAM_TYPE_DOUBLE:       /* double (or vector of doubles)      */
-                {
-                    double *value = reinterpret_cast<double *>(m_pluginParams + p.offset);
-                    *value = newValue.toDouble();
-                }
-                break;
-            case POST_PARAM_TYPE_CHAR:         /* char (or vector of chars = string) */
-            case POST_PARAM_TYPE_STRING:       /* (char *), ASCIIZ                   */
-            case POST_PARAM_TYPE_STRINGLIST:   /* (char **) list, NULL terminated    */
-                kWarning(610) << "char/string/stringlist parameter '" << p.name << "' not supported.";
-                return;
-            case POST_PARAM_TYPE_BOOL:         /* integer (0 or 1)                   */
-                {
-                   int *value = reinterpret_cast<int *>(m_pluginParams + p.offset);
-                   *value = newValue.toBool() ? 1 : 0;
-                }
-                break;
-            case POST_PARAM_TYPE_LAST:         /* terminator of parameter list       */
-                kError(610) << "invalid parameterIndex passed to VideoEffect::setValue";
-                break;
-            default:
-                abort();
+        case POST_PARAM_TYPE_INT:          /* integer (or vector of integers)    */
+            {
+                int *value = reinterpret_cast<int *>(m_pluginParams + p.offset);
+                *value = newValue.toInt();
+            }
+            break;
+        case POST_PARAM_TYPE_DOUBLE:       /* double (or vector of doubles)      */
+            {
+                double *value = reinterpret_cast<double *>(m_pluginParams + p.offset);
+                *value = newValue.toDouble();
+            }
+            break;
+        case POST_PARAM_TYPE_CHAR:         /* char (or vector of chars = string) */
+        case POST_PARAM_TYPE_STRING:       /* (char *), ASCIIZ                   */
+        case POST_PARAM_TYPE_STRINGLIST:   /* (char **) list, NULL terminated    */
+            kWarning(610) << "char/string/stringlist parameter '" << p.name << "' not supported.";
+            return;
+        case POST_PARAM_TYPE_BOOL:         /* integer (0 or 1)                   */
+            {
+               int *value = reinterpret_cast<int *>(m_pluginParams + p.offset);
+               *value = newValue.toBool() ? 1 : 0;
+            }
+            break;
+        case POST_PARAM_TYPE_LAST:         /* terminator of parameter list       */
+            kError(610) << "invalid parameterIndex passed to VideoEffect::setValue";
+            break;
+        default:
+            abort();
         }
         api->set_parameters(post, m_pluginParams);
     } else {

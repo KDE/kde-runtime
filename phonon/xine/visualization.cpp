@@ -33,7 +33,7 @@ class VisualizationXT : public SinkNodeXT, public SourceNodeXT
 };
 
 #define K_XT(type) (static_cast<type *>(SinkNode::threadSafeObject().data()))
-Visualization::Visualization( QObject* parent )
+Visualization::Visualization(QObject *parent)
     : QObject(parent),
     SinkNode(new VisualizationXT),
     SourceNode(K_XT(VisualizationXT))
@@ -42,12 +42,12 @@ Visualization::Visualization( QObject* parent )
 
 int Visualization::visualization() const
 {
-	return m_visualization;
+    return m_visualization;
 }
 
-void Visualization::setVisualization( int newVisualization )
+void Visualization::setVisualization(int newVisualization)
 {
-	m_visualization = newVisualization;
+    m_visualization = newVisualization;
 }
 
 void VisualizationXT::rewireTo(SourceNodeXT *)
