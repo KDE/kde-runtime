@@ -416,19 +416,19 @@ namespace Xine
         if (listIndex == -1) {
             info.available = true;
             m_audioOutputInfos << info;
-            KConfigGroup config(m_config, QLatin1String("AudioOutputDevice_") + QString::number(index));
-            config.writeEntry("name", name);
-            config.writeEntry("description", description);
-            config.writeEntry("driver", driver);
-            config.writeEntry("icon", icon);
-            config.writeEntry("initialPreference", initialPreference);
+//X             KConfigGroup config(m_config, QLatin1String("AudioOutputDevice_") + QString::number(index));
+//X             config.writeEntry("name", name);
+//X             config.writeEntry("description", description);
+//X             config.writeEntry("driver", driver);
+//X             config.writeEntry("icon", icon);
+//X             config.writeEntry("initialPreference", initialPreference);
         } else {
             AudioOutputInfo &infoInList = m_audioOutputInfos[listIndex];
             if (infoInList.icon != icon || infoInList.initialPreference != initialPreference) {
-                KConfigGroup config(m_config, QLatin1String("AudioOutputDevice_") + QString::number(infoInList.index));
+//X                 KConfigGroup config(m_config, QLatin1String("AudioOutputDevice_") + QString::number(infoInList.index));
 
-                config.writeEntry("icon", icon);
-                config.writeEntry("initialPreference", initialPreference);
+//X                 config.writeEntry("icon", icon);
+//X                 config.writeEntry("initialPreference", initialPreference);
 
                 infoInList.icon = icon;
                 infoInList.initialPreference = initialPreference;
@@ -447,25 +447,25 @@ namespace Xine
                     d, SLOT(devicePlugged(const AudioDevice &)));
             QObject::connect(AudioDeviceEnumerator::self(), SIGNAL(deviceUnplugged(const AudioDevice &)),
                     d, SLOT(deviceUnplugged(const AudioDevice &)));
-            QStringList groups = m_config->groupList();
             int nextIndex = 10000;
-            foreach (QString group, groups) {
-                if (group.startsWith("AudioOutputDevice_")) {
-                    const int index = group.right(group.size() - 18/*strlen("AudioOutputDevice_")*/).toInt();
-                    if (index >= nextIndex) {
-                        nextIndex = index + 1;
-                    }
-                    KConfigGroup config(m_config, group);
-                    m_audioOutputInfos << AudioOutputInfo(index,
-                            config.readEntry("initialPreference", 0),
-                            config.readEntry("name", QString()),
-                            config.readEntry("description", QString()),
-                            config.readEntry("icon", QString()),
-                            config.readEntry("driver", QByteArray()),
-                            QStringList(), QString()); // the device list can change and needs to be queried
-                                            // from the actual hardware configuration
-                }
-            }
+//X             QStringList groups = m_config->groupList();
+//X             foreach (QString group, groups) {
+//X                 if (group.startsWith("AudioOutputDevice_")) {
+//X                     const int index = group.right(group.size() - 18/*strlen("AudioOutputDevice_")*/).toInt();
+//X                     if (index >= nextIndex) {
+//X                         nextIndex = index + 1;
+//X                     }
+//X                     KConfigGroup config(m_config, group);
+//X                     m_audioOutputInfos << AudioOutputInfo(index,
+//X                             config.readEntry("initialPreference", 0),
+//X                             config.readEntry("name", QString()),
+//X                             config.readEntry("description", QString()),
+//X                             config.readEntry("icon", QString()),
+//X                             config.readEntry("driver", QByteArray()),
+//X                             QStringList(), QString()); // the device list can change and needs to be queried
+//X                                             // from the actual hardware configuration
+//X                 }
+//X             }
 
             // This will list the audio drivers, not the actual devices.
             const char *const *outputPlugins = xine_list_audio_output_plugins(xine());
@@ -497,17 +497,21 @@ namespace Xine
                                 "<p>JACK was designed from the ground up for professional audio "
                                 "work, and its design focuses on two key areas: synchronous "
                                 "execution of all clients, and low latency operation.</p></html>"),
-                            /*icon name*/"audio-input-line", outputPlugins[i], QStringList(),
+                            /*icon name*/"audio-backend-jack", outputPlugins[i], QStringList(),
                             QString());
                 } else if (0 == strcmp(outputPlugins[i], "arts")) {
                     addAudioOutput(nextIndex++, -100, i18n("aRts"),
                             i18n("<html><p>aRts is the old soundserver and media framework that was used "
                                 "in KDE2 and KDE3. Its use is discuraged.</p></html>"),
-                            /*icon name*/"arts", outputPlugins[i], QStringList(), QString());
+                            /*icon name*/"audio-backend-arts", outputPlugins[i], QStringList(), QString());
                 } else if (0 == strcmp(outputPlugins[i], "pulseaudio")) {
                     addAudioOutput(nextIndex++, 10, i18n("PulseAudio"),
                             xine_get_audio_driver_plugin_description(xine(), outputPlugins[i]),
-                            /*icon name*/"pulseaudio", outputPlugins[i], QStringList(), QString());
+                            /*icon name*/"audio-backend-pulseaudio", outputPlugins[i], QStringList(), QString());
+                } else if (0 == strcmp(outputPlugins[i], "esd")) {
+                    addAudioOutput(nextIndex++, 10, i18n("Esound (ESD)"),
+                            xine_get_audio_driver_plugin_description(xine(), outputPlugins[i]),
+                            /*icon name*/"audio-backend-esd", outputPlugins[i], QStringList(), QString());
                 } else {
                     addAudioOutput(nextIndex++, -20, outputPlugins[i],
                             xine_get_audio_driver_plugin_description(xine(), outputPlugins[i]),
