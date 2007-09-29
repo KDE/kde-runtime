@@ -1,5 +1,22 @@
-macro_optional_find_package(Xine)
-macro_log_feature(XINE_FOUND "Xine" "xine-lib is required for the multimedia backend" "http://sourceforge.net/project/showfiles.php?group_id=9655&package_id=9732")
-if(XINE_FOUND)
-  macro_optional_add_subdirectory(xine)
-endif(XINE_FOUND)
+# known limitations:
+#  xinelib 1.1.1 adds audio
+#  xinelib 1.1.2 adds audio with gapless playback
+#  xinelib 1.1.5 + xcb adds video
+#  xinelib 1.1.7 does not abort() when unplugging a USB device
+
+# If you want to build KDE without any multimedia support
+# define the cmake variable KDE4_DISABLE_MULTIMEDIA, i.e,
+# % cmake -DKDE4_DISABLE_MULTIMEDIA=TRUE
+#
+
+if(KDE4_DISABLE_MULTIMEDIA)
+  message(STATUS "NOTICE: Multimedia support DISABLED (KDE4_DISABLE_MULTIMEDIA!=0)")
+else(KDE4_DISABLE_MULTIMEDIA)
+
+  macro_optional_find_package(Xine)
+  macro_log_feature(XINE_FOUND "Xine" "xine-lib is required for the multimedia backend" "http://xinehq.de/index.php/releases" TRUE "1.1.1" "The xine development libraries (v1.1.1 or above) are required to provide audio and video support. Run cmake again with the variable KDE4_DISABLE_MULTIMEDIA set if you really want to build KDE without multimedia support." )
+  if(XINE_FOUND)
+    macro_optional_add_subdirectory(xine)
+  endif(XINE_FOUND)
+
+endif(KDE4_DISABLE_MULTIMEDIA)
