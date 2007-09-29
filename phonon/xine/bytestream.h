@@ -42,77 +42,77 @@ namespace Phonon
 namespace Xine
 {
 class MediaObject;
-    class ByteStream : public QObject, public StreamInterface, public QSharedData
-    {
-        Q_OBJECT
-        Q_INTERFACES(Phonon::StreamInterface)
-        public:
-            static ByteStream *fromMrl(const QByteArray &mrl);
-            ByteStream(const MediaSource &, MediaObject* parent);
-            ~ByteStream();
+class ByteStream : public QObject, public StreamInterface, public QSharedData
+{
+    Q_OBJECT
+    Q_INTERFACES(Phonon::StreamInterface)
+    public:
+        static ByteStream *fromMrl(const QByteArray &mrl);
+        ByteStream(const MediaSource &, MediaObject *parent);
+        ~ByteStream();
 
-            QByteArray mrl() const;
+        QByteArray mrl() const;
 
-            // does not block, but might change later
-            bool streamSeekable() const { return m_seekable; }
+        // does not block, but might change later
+        bool streamSeekable() const { return m_seekable; }
 
-            // blocks until the size is known
-            qint64 streamSize() const;
+        // blocks until the size is known
+        qint64 streamSize() const;
 
-            void stop();
+        void stop();
 
-            void reset();
+        void reset();
 
-        public slots:
-            void writeData(const QByteArray &data);
-            void endOfData();
-            void setStreamSeekable(bool);
-            void setStreamSize(qint64);
+    public slots:
+        void writeData(const QByteArray &data);
+        void endOfData();
+        void setStreamSeekable(bool);
+        void setStreamSize(qint64);
 
-            void setPauseForBuffering(bool);
+        void setPauseForBuffering(bool);
 
-            // for the xine input plugin:
-            int peekBuffer(void *buf);
-            qint64 readFromBuffer(void *buf, size_t count);
-            off_t seekBuffer(qint64 offset);
-            off_t currentPosition() const;
+        // for the xine input plugin:
+        int peekBuffer(void *buf);
+        qint64 readFromBuffer(void *buf, size_t count);
+        off_t seekBuffer(qint64 offset);
+        off_t currentPosition() const;
 
-        signals:
-            void resetQueued();
-            void needDataQueued();
-            void seekStreamQueued(qint64);
+    signals:
+        void resetQueued();
+        void needDataQueued();
+        void seekStreamQueued(qint64);
 
-        private slots:
-            void callStreamInterfaceReset();
-            void syncSeekStream(qint64 offset);
-            void needData() { StreamInterface::needData(); }
+    private slots:
+        void callStreamInterfaceReset();
+        void syncSeekStream(qint64 offset);
+        void needData() { StreamInterface::needData(); }
 
-        private:
+    private:
 //X             void setMrl();
-            void pullBuffer(char *buf, int len);
+        void pullBuffer(char *buf, int len);
 
-            MediaObject *m_mediaObject;
-            QByteArray m_preview;
-            QMutex m_mutex;
-            QMutex m_seekMutex;
-            mutable QMutex m_streamSizeMutex;
-            mutable QWaitCondition m_waitForStreamSize;
-            QWaitCondition m_waitingForData;
-            QWaitCondition m_seekWaitCondition;
-            QQueue<QByteArray> m_buffers;
+        MediaObject *m_mediaObject;
+        QByteArray m_preview;
+        QMutex m_mutex;
+        QMutex m_seekMutex;
+        mutable QMutex m_streamSizeMutex;
+        mutable QWaitCondition m_waitForStreamSize;
+        QWaitCondition m_waitingForData;
+        QWaitCondition m_seekWaitCondition;
+        QQueue<QByteArray> m_buffers;
 
-            //pthread_t m_mainThread;
-            qint64 m_streamSize;
-            qint64 m_currentPosition;
-            size_t m_buffersize;
-            int m_offset;
+        //pthread_t m_mainThread;
+        qint64 m_streamSize;
+        qint64 m_currentPosition;
+        size_t m_buffersize;
+        int m_offset;
 
-            bool m_seekable : 1;
-            bool m_stopped : 1;
-            bool m_eod : 1;
-            bool m_buffering : 1;
-            bool m_firstReset : 1;
-	};
+        bool m_seekable : 1;
+        bool m_stopped : 1;
+        bool m_eod : 1;
+        bool m_buffering : 1;
+        bool m_firstReset : 1;
+};
 }} //namespace Phonon::Xine
 
 // vim: sw=4 ts=4 sts=4 et tw=100

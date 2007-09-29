@@ -28,26 +28,28 @@ namespace Phonon
 {
 namespace Xine
 {
-	class BrightnessControl : public VideoEffect
-	{
-		Q_OBJECT
-		public:
-			BrightnessControl( QObject *parent = 0 );
-			~BrightnessControl();
 
-			Q_INVOKABLE int brightness() const { return m_brightness; }
-			Q_INVOKABLE void setBrightness( int );
+class BrightnessControl : public VideoEffect
+{
+    Q_OBJECT
+    public:
+        BrightnessControl(QObject *parent = 0);
+        ~BrightnessControl();
 
-			Q_INVOKABLE int upperBound() const;
-			Q_INVOKABLE int lowerBound() const;
+        Q_INVOKABLE int brightness() const { return m_brightness; }
+        Q_INVOKABLE void setBrightness(int);
 
-			virtual void setPath( VideoPath* );
+        Q_INVOKABLE int upperBound() const;
+        Q_INVOKABLE int lowerBound() const;
 
-		private:
-            XineStream* stream();
+        virtual void setPath(VideoPath *);
 
-			int m_brightness;
-	};
+    private:
+        XineStream *stream();
+
+        int m_brightness;
+};
+
 } // namespace Xine
 } // namespace Phonon
 

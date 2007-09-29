@@ -67,7 +67,7 @@ class VideoWidget : public QWidget, public Phonon::VideoWidgetInterface, public 
         ~VideoWidget();
 
         Phonon::VideoWidget::AspectRatio aspectRatio() const;
-        void setAspectRatio( Phonon::VideoWidget::AspectRatio aspectRatio );
+        void setAspectRatio(Phonon::VideoWidget::AspectRatio aspectRatio);
         Phonon::VideoWidget::ScaleMode scaleMode() const;
         void setScaleMode(Phonon::VideoWidget::ScaleMode mode);
 
@@ -85,48 +85,49 @@ class VideoWidget : public QWidget, public Phonon::VideoWidgetInterface, public 
         qreal saturation() const;
         void  setSaturation(qreal);
 
-			void xineCallback( int &x, int &y, int &width, int &height,
-					double &ratio, int videoWidth, int videoHeight, double videoRatio, bool mayResize );
+        void xineCallback(int &x, int &y, int &width, int &height,
+                double &ratio, int videoWidth, int videoHeight, double videoRatio, bool mayResize);
 
-            bool isValid() const;
+        bool isValid() const;
 
-            MediaStreamTypes inputMediaStreamTypes() const { return Phonon::Xine::Video | Phonon::Xine::Subtitle; }
+        MediaStreamTypes inputMediaStreamTypes() const { return Phonon::Xine::Video | Phonon::Xine::Subtitle; }
         void downstreamEvent(Event *e);
 
-		signals:
-			void videoPortChanged();
+    signals:
+        void videoPortChanged();
 
-		protected:
-            //virtual void childEvent(QChildEvent *);
-            virtual void resizeEvent(QResizeEvent *);
-            virtual bool event(QEvent *);
-            virtual void mouseMoveEvent(QMouseEvent *);
-            virtual void mousePressEvent(QMouseEvent *);
-			virtual void showEvent( QShowEvent* );
-			virtual void hideEvent( QHideEvent* );
-			virtual void paintEvent( QPaintEvent* );
-			virtual void changeEvent( QEvent* );
-            virtual QSize sizeHint() const { return m_sizeHint; }
+    protected:
+        //virtual void childEvent(QChildEvent *);
+        virtual void resizeEvent(QResizeEvent *);
+        virtual bool event(QEvent *);
+        virtual void mouseMoveEvent(QMouseEvent *);
+        virtual void mousePressEvent(QMouseEvent *);
+        virtual void showEvent(QShowEvent *);
+        virtual void hideEvent(QHideEvent *);
+        virtual void paintEvent(QPaintEvent *);
+        virtual void changeEvent(QEvent *);
+        virtual QSize sizeHint() const { return m_sizeHint; }
 
-		private:
-            void updateZoom();
-			Phonon::VideoWidget::AspectRatio m_aspectRatio;
-            Phonon::VideoWidget::ScaleMode m_scaleMode;
+    private:
+        void updateZoom();
+        Phonon::VideoWidget::AspectRatio m_aspectRatio;
+        Phonon::VideoWidget::ScaleMode m_scaleMode;
 
-            QSize m_sizeHint;
-			int m_videoWidth;
-			int m_videoHeight;
-			bool m_fullScreen;
-            /**
-             * No video should be shown, all paint events should draw black
-             */
-            bool m_empty;
+        QSize m_sizeHint;
+        int m_videoWidth;
+        int m_videoHeight;
+        bool m_fullScreen;
+        /**
+         * No video should be shown, all paint events should draw black
+         */
+        bool m_empty;
 
-            qreal m_brightness;
-            qreal m_contrast;
-            qreal m_hue;
-            qreal m_saturation;
-	};
+        qreal m_brightness;
+        qreal m_contrast;
+        qreal m_hue;
+        qreal m_saturation;
+};
+
 }} //namespace Phonon::Xine
 
 // vim: sw=4 ts=4 tw=80

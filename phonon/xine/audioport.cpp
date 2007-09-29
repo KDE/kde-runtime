@@ -156,12 +156,12 @@ bool AudioPort::isValid() const
     return (d->port != 0);
 }
 
-bool AudioPort::operator==(const AudioPort& rhs) const
+bool AudioPort::operator==(const AudioPort &rhs) const
 {
     return d->port == rhs.d->port;
 }
 
-bool AudioPort::operator!=(const AudioPort& rhs) const
+bool AudioPort::operator!=(const AudioPort &rhs) const
 {
     return d->port != rhs.d->port;
 }
@@ -175,7 +175,7 @@ void AudioPort::waitALittleWithDying()
     }
 }
 
-AudioPort::operator xine_audio_port_t*() const
+AudioPort::operator xine_audio_port_t *() const
 {
     return d->port;
 }

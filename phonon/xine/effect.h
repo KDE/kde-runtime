@@ -55,30 +55,30 @@ class EffectXT : public SourceNodeXT, public SinkNodeXT
         QList<Phonon::EffectParameter> m_parameterList;
 };
 
-    class Effect : public QObject, public EffectInterface, public SinkNode, public SourceNode
-	{
-		Q_OBJECT
-        Q_INTERFACES(Phonon::EffectInterface Phonon::Xine::SinkNode Phonon::Xine::SourceNode)
-		public:
-			Effect( int effectId, QObject* parent );
+class Effect : public QObject, public EffectInterface, public SinkNode, public SourceNode
+{
+    Q_OBJECT
+    Q_INTERFACES(Phonon::EffectInterface Phonon::Xine::SinkNode Phonon::Xine::SourceNode)
+    public:
+        Effect(int effectId, QObject *parent);
 
-            bool isValid() const;
+        bool isValid() const;
 
-            MediaStreamTypes inputMediaStreamTypes() const;
-            MediaStreamTypes outputMediaStreamTypes() const;
-            SourceNode *sourceInterface() { return this; }
-            SinkNode *sinkInterface() { return this; }
+        MediaStreamTypes inputMediaStreamTypes() const;
+        MediaStreamTypes outputMediaStreamTypes() const;
+        SourceNode *sourceInterface() { return this; }
+        SinkNode *sinkInterface() { return this; }
 
-            QList<EffectParameter> parameters() const;
+        QList<EffectParameter> parameters() const;
 
-            QVariant parameterValue(const EffectParameter &p) const;
-            void setParameterValue(const EffectParameter &p, const QVariant &newValue);
+        QVariant parameterValue(const EffectParameter &p) const;
+        void setParameterValue(const EffectParameter &p, const QVariant &newValue);
 
-        protected:
-            virtual void ensureParametersReady();
-            Effect(EffectXT *, QObject *parent);
-            void addParameter(const EffectParameter &p);
-	};
+    protected:
+        virtual void ensureParametersReady();
+        Effect(EffectXT *, QObject *parent);
+        void addParameter(const EffectParameter &p);
+};
 }} //namespace Phonon::Xine
 
 // vim: sw=4 ts=4

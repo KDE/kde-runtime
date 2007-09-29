@@ -28,15 +28,15 @@ namespace Phonon
 {
 namespace Xine
 {
-    class DeinterlaceFilter : public VideoEffect
-    {
-        Q_OBJECT
-        public:
-            DeinterlaceFilter(QObject *parent = 0);
-            ~DeinterlaceFilter();
+class DeinterlaceFilter : public VideoEffect
+{
+    Q_OBJECT
+    public:
+        DeinterlaceFilter(QObject *parent = 0);
+        ~DeinterlaceFilter();
 
-            virtual void setPath(VideoPath*);
-    };
+        virtual void setPath(VideoPath *);
+};
 } // namespace Xine
 } // namespace Phonon
 

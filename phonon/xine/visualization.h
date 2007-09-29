@@ -28,23 +28,23 @@ namespace Phonon
 {
 namespace Xine
 {
-		
+
 class Visualization : public QObject, public SinkNode, public SourceNode
 {
-	Q_OBJECT
+    Q_OBJECT
     Q_INTERFACES(Phonon::Xine::SinkNode Phonon::Xine::SourceNode)
-	public:
-		Visualization( QObject* parent = 0 );
+    public:
+        Visualization(QObject *parent = 0);
 
         MediaStreamTypes inputMediaStreamTypes() const { return Phonon::Xine::Audio; }
         MediaStreamTypes outputMediaStreamTypes() const { return Phonon::Xine::Video; }
 
-	public slots:
-		int visualization() const;
-		void setVisualization( int newVisualization );
+    public slots:
+        int visualization() const;
+        void setVisualization(int newVisualization);
 
-	private:
-		int m_visualization;
+    private:
+        int m_visualization;
 };
 
 }} //namespace Phonon::Xine

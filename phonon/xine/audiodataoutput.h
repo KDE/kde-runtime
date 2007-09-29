@@ -27,32 +27,34 @@ namespace Phonon
 {
 namespace Xine
 {
-    class AudioDataOutput : public AbstractAudioOutput
-	{
-		Q_OBJECT
-		public:
-            AudioDataOutput(QObject* parent);
-			~AudioDataOutput();
 
-		public slots:
-            Phonon::Experimental::AudioDataOutput::Format format() const;
-			int dataSize() const;
-			int sampleRate() const;
-            void setFormat(Phonon::Experimental::AudioDataOutput::Format format);
-			void setDataSize( int size );
+class AudioDataOutput : public AbstractAudioOutput
+{
+    Q_OBJECT
+    public:
+        AudioDataOutput(QObject *parent);
+        ~AudioDataOutput();
 
-		signals:
-            void dataReady(const QMap<Phonon::Experimental::AudioDataOutput::Channel, QVector<qint16> > &data);
-            void dataReady(const QMap<Phonon::Experimental::AudioDataOutput::Channel, QVector<float> > &data);
-			void endOfMedia( int remainingSamples );
+    public slots:
+        Phonon::Experimental::AudioDataOutput::Format format() const;
+        int dataSize() const;
+        int sampleRate() const;
+        void setFormat(Phonon::Experimental::AudioDataOutput::Format format);
+        void setDataSize(int size);
 
-		private:
-			void convertAndEmit( const QVector<float>& buffer );
+    signals:
+        void dataReady(const QMap<Phonon::Experimental::AudioDataOutput::Channel, QVector<qint16> > &data);
+        void dataReady(const QMap<Phonon::Experimental::AudioDataOutput::Channel, QVector<float> > &data);
+        void endOfMedia(int remainingSamples);
 
-            Phonon::Experimental::AudioDataOutput::Format m_format;
-			int m_dataSize;
-			QVector<float> m_pendingData;
-	};
+    private:
+        void convertAndEmit(const QVector<float> &buffer);
+
+        Phonon::Experimental::AudioDataOutput::Format m_format;
+        int m_dataSize;
+        QVector<float> m_pendingData;
+};
+
 }} //namespace Phonon::Xine
 
 // vim: sw=4 ts=4 tw=80

@@ -33,39 +33,39 @@ namespace Phonon
 {
 namespace Xine
 {
-	/**
-	 * \author Matthias Kretz <kretz@kde.org>
-	 */
-    class VideoDataOutput : public QObject, public Phonon::Xine::SinkNode
-	{
-		Q_OBJECT
-        Q_INTERFACES(Phonon::Xine::SinkNode)
-		public:
-			VideoDataOutput( QObject* parent );
-			~VideoDataOutput();
+/**
+ * \author Matthias Kretz <kretz@kde.org>
+ */
+class VideoDataOutput : public QObject, public Phonon::Xine::SinkNode
+{
+    Q_OBJECT
+    Q_INTERFACES(Phonon::Xine::SinkNode)
+    public:
+        VideoDataOutput(QObject *parent);
+        ~VideoDataOutput();
 
-            MediaStreamTypes inputMediaStreamTypes() const { return Phonon::Xine::Video; }
+        MediaStreamTypes inputMediaStreamTypes() const { return Phonon::Xine::Video; }
 
-		public slots:
-			int frameRate() const;
-			void setFrameRate( int frameRate );
+    public slots:
+        int frameRate() const;
+        void setFrameRate(int frameRate);
 
-			QSize naturalFrameSize() const;
-			QSize frameSize() const;
-			void setFrameSize( const QSize& frameSize );
+        QSize naturalFrameSize() const;
+        QSize frameSize() const;
+        void setFrameSize(const QSize &frameSize);
 
-			quint32 format() const;
-			void setFormat( quint32 fourcc );
+        quint32 format() const;
+        void setFormat(quint32 fourcc);
 
-		signals:
-            void frameReady(const Phonon::Experimental::VideoFrame &frame);
-			void endOfMedia();
+    signals:
+        void frameReady(const Phonon::Experimental::VideoFrame &frame);
+        void endOfMedia();
 
-		private:
-			quint32 m_fourcc;
-			int m_frameRate;
-			QSize m_frameSize;
-	};
+    private:
+        quint32 m_fourcc;
+        int m_frameRate;
+        QSize m_frameSize;
+};
 }} //namespace Phonon::Xine
 
 // vim: sw=4 ts=4 tw=80

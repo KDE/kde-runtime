@@ -54,17 +54,17 @@ AudioOutput::~AudioOutput()
 
 qreal AudioOutput::volume() const
 {
-	return m_volume;
+    return m_volume;
 }
 
 int AudioOutput::outputDevice() const
 {
-	return m_device;
+    return m_device;
 }
 
 void AudioOutput::setVolume(qreal newVolume)
 {
-	m_volume = newVolume;
+    m_volume = newVolume;
 
     int xinevolume = static_cast<int>(m_volume * 100);
     if (xinevolume > 200) {
@@ -122,12 +122,12 @@ void AudioOutputXT::rewireTo(SourceNodeXT *source)
 bool AudioOutput::event(QEvent *ev)
 {
     switch (ev->type()) {
-        case Event::AudioDeviceFailed:
-            ev->accept();
-            emit audioDeviceFailed();
-            return true;
-        default:
-            return AbstractAudioOutput::event(ev);
+    case Event::AudioDeviceFailed:
+        ev->accept();
+        emit audioDeviceFailed();
+        return true;
+    default:
+        return AbstractAudioOutput::event(ev);
     }
 }
 

@@ -54,86 +54,86 @@ namespace Phonon
 {
 namespace Xine
 {
-    class Backend;
-    class XineEnginePrivate;
-    class XineThread;
+class Backend;
+class XineEnginePrivate;
+class XineThread;
 
-    class XineEngine
-	{
-        friend class Phonon::Xine::Backend;
-        friend class XineEnginePrivate;
-		public:
-			static XineEngine* self();
-			static xine_t* xine();
-			static void xineEventListener( void*, const xine_event_t* );
+class XineEngine
+{
+    friend class Phonon::Xine::Backend;
+    friend class XineEnginePrivate;
+    public:
+        static XineEngine *self();
+        static xine_t *xine();
+        static void xineEventListener(void *, const xine_event_t *);
 
-            static QSet<int> audioOutputIndexes();
-            static QString audioOutputName(int audioDevice);
-            static QString audioOutputDescription(int audioDevice);
-            static QString audioOutputIcon(int audioDevice);
-            static bool audioOutputAvailable(int audioDevice);
-            static QVariant audioOutputMixerDevice(int audioDevice);
-            static int audioOutputInitialPreference(int audioDevice);
-            static QByteArray audioDriverFor(int audioDevice);
-            static QStringList alsaDevicesFor(int audioDevice);
-            static xine_audio_port_t *nullPort();
-            static xine_video_port_t *nullVideoPort();
+        static QSet<int> audioOutputIndexes();
+        static QString audioOutputName(int audioDevice);
+        static QString audioOutputDescription(int audioDevice);
+        static QString audioOutputIcon(int audioDevice);
+        static bool audioOutputAvailable(int audioDevice);
+        static QVariant audioOutputMixerDevice(int audioDevice);
+        static int audioOutputInitialPreference(int audioDevice);
+        static QByteArray audioDriverFor(int audioDevice);
+        static QStringList alsaDevicesFor(int audioDevice);
+        static xine_audio_port_t *nullPort();
+        static xine_video_port_t *nullVideoPort();
 
-            static const QObject *sender();
+        static const QObject *sender();
 
-            static XineThread *thread();
+        static XineThread *thread();
 
-            static void addCleanupObject(QObject *o) { self()->m_cleanupObjects << o; }
-            static void removeCleanupObject(QObject *o) { self()->m_cleanupObjects.removeAll(o); }
+        static void addCleanupObject(QObject *o) { self()->m_cleanupObjects << o; }
+        static void removeCleanupObject(QObject *o) { self()->m_cleanupObjects.removeAll(o); }
 
-            static bool deinterlaceDVD();
-            static bool deinterlaceVCD();
-            static bool deinterlaceFile();
-            static int deinterlaceMethod();
+        static bool deinterlaceDVD();
+        static bool deinterlaceVCD();
+        static bool deinterlaceFile();
+        static int deinterlaceMethod();
 
-        protected:
-            XineEngine(const KSharedConfigPtr &cfg);
-            ~XineEngine();
+    protected:
+        XineEngine(const KSharedConfigPtr &cfg);
+        ~XineEngine();
 
-		private:
-            void checkAudioOutputs();
-            void addAudioOutput(AudioDevice dev, const QByteArray &driver);
-            void addAudioOutput(int idx, int initialPreference, const QString &n,
-                    const QString &desc, const QString &ic, const QByteArray &dr,
-                    const QStringList &dev, const QString &mixerDevice);
-			xine_t* m_xine;
+    private:
+        void checkAudioOutputs();
+        void addAudioOutput(AudioDevice dev, const QByteArray &driver);
+        void addAudioOutput(int idx, int initialPreference, const QString &n,
+                const QString &desc, const QString &ic, const QByteArray &dr,
+                const QStringList &dev, const QString &mixerDevice);
+        xine_t *m_xine;
 
-            struct AudioOutputInfo
-            {
-                AudioOutputInfo(int idx, int ip, const QString &n, const QString &desc, const QString &ic,
-                        const QByteArray &dr, const QStringList &dev, const QString &mdev)
-                    : available(false), index(idx), initialPreference(ip), name(n),
-                    description(desc), icon(ic), driver(dr), devices(dev), mixerDevice(mdev) {}
+        struct AudioOutputInfo
+        {
+            AudioOutputInfo(int idx, int ip, const QString &n, const QString &desc, const QString &ic,
+                    const QByteArray &dr, const QStringList &dev, const QString &mdev)
+                : available(false), index(idx), initialPreference(ip), name(n),
+                description(desc), icon(ic), driver(dr), devices(dev), mixerDevice(mdev) {}
 
-                bool available;
-                int index;
-                int initialPreference;
-                QString name;
-                QString description;
-                QString icon;
-                QByteArray driver;
-                QStringList devices;
-                QString mixerDevice;
-                bool operator==(const AudioOutputInfo& rhs) { return name == rhs.name && driver == rhs.driver; }
-            };
-            QList<AudioOutputInfo> m_audioOutputInfos;
-            QList<QObject *> m_cleanupObjects;
-            KSharedConfigPtr m_config;
-            bool m_useOss : 1;
-            bool m_deinterlaceDVD : 1;
-            bool m_deinterlaceVCD : 1;
-            bool m_deinterlaceFile : 1;
-            int m_deinterlaceMethod : 8;
-            const XineEnginePrivate *const d;
-            xine_audio_port_t *m_nullPort;
-            xine_video_port_t *m_nullVideoPort;
-            XineThread *m_thread;
-	};
+            bool available;
+            int index;
+            int initialPreference;
+            QString name;
+            QString description;
+            QString icon;
+            QByteArray driver;
+            QStringList devices;
+            QString mixerDevice;
+            bool operator==(const AudioOutputInfo &rhs) { return name == rhs.name && driver == rhs.driver; }
+        };
+        QList<AudioOutputInfo> m_audioOutputInfos;
+        QList<QObject *> m_cleanupObjects;
+        KSharedConfigPtr m_config;
+        bool m_useOss : 1;
+        bool m_deinterlaceDVD : 1;
+        bool m_deinterlaceVCD : 1;
+        bool m_deinterlaceFile : 1;
+        int m_deinterlaceMethod : 8;
+        const XineEnginePrivate *const d;
+        xine_audio_port_t *m_nullPort;
+        xine_video_port_t *m_nullVideoPort;
+        XineThread *m_thread;
+};
 }
 }
 

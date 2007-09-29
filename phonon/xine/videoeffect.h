@@ -30,43 +30,43 @@ namespace Phonon
 {
 namespace Xine
 {
-	class VideoPath;
+class VideoPath;
 
-	class VideoEffect : public QObject
-	{
-		Q_OBJECT
-		public:
-			VideoEffect( int effectId, QObject* parent );
-			~VideoEffect();
+class VideoEffect : public QObject
+{
+    Q_OBJECT
+    public:
+        VideoEffect(int effectId, QObject *parent);
+        ~VideoEffect();
 
-			virtual void setPath( VideoPath* );
+        virtual void setPath(VideoPath *);
 
-            virtual xine_post_t *newInstance(xine_video_port_t *);
+        virtual xine_post_t *newInstance(xine_video_port_t *);
 
-        public slots:
-            QList<EffectParameter> allDescriptions();
-            EffectParameter description(int parameterIndex);
-            int parameterCount();
+    public slots:
+        QList<EffectParameter> allDescriptions();
+        EffectParameter description(int parameterIndex);
+        int parameterCount();
 
-            QVariant parameterValue(int parameterIndex) const;
-            void setParameterValue(int parameterIndex, const QVariant &newValue);
+        QVariant parameterValue(int parameterIndex) const;
+        void setParameterValue(int parameterIndex, const QVariant &newValue);
 
-        protected:
-            VideoPath *path() const { return m_path; }
-            virtual void ensureParametersReady();
-            VideoEffect(const char *name, QObject *parent);
-            void addParameter(const EffectParameter &p) { m_parameterList << p; }
+    protected:
+        VideoPath *path() const { return m_path; }
+        virtual void ensureParametersReady();
+        VideoEffect(const char *name, QObject *parent);
+        void addParameter(const EffectParameter &p) { m_parameterList << p; }
 
-            QList<xine_post_t *> m_plugins;
-            QList<xine_post_api_t *> m_pluginApis;
+        QList<xine_post_t *> m_plugins;
+        QList<xine_post_api_t *> m_pluginApis;
 
-        private:
-            mutable QMutex m_mutex;
-            const char *m_pluginName;
-            char *m_pluginParams;
-			VideoPath* m_path;
-            QList<Phonon::EffectParameter> m_parameterList;
-	};
+    private:
+        mutable QMutex m_mutex;
+        const char *m_pluginName;
+        char *m_pluginParams;
+        VideoPath *m_path;
+        QList<Phonon::EffectParameter> m_parameterList;
+};
 }} //namespace Phonon::Xine
 
 // vim: sw=4 ts=4 tw=80

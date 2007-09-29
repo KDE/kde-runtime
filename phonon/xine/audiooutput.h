@@ -50,34 +50,34 @@ class AudioOutput : public AbstractAudioOutput, public AudioOutputInterface, pub
 {
     Q_OBJECT
     Q_INTERFACES(Phonon::AudioOutputInterface Phonon::Xine::ConnectNotificationInterface)
-		public:
-            AudioOutput(QObject *parent);
-			~AudioOutput();
+    public:
+        AudioOutput(QObject *parent);
+        ~AudioOutput();
 
-			// Attributes Getters:
-            qreal volume() const;
-			int outputDevice() const;
+        // Attributes Getters:
+        qreal volume() const;
+        int outputDevice() const;
 
-			// Attributes Setters:
-            void setVolume(qreal newVolume);
-            bool setOutputDevice(int newDevice);
+        // Attributes Setters:
+        void setVolume(qreal newVolume);
+        bool setOutputDevice(int newDevice);
 
-            void downstreamEvent(Event *);
+        void downstreamEvent(Event *);
 
-            virtual void graphChanged();
+        virtual void graphChanged();
 
-        protected:
-            bool event(QEvent *);
+    protected:
+        bool event(QEvent *);
 
-		Q_SIGNALS:
-            // for the Frontend
-            void volumeChanged(qreal newVolume);
-            void audioDeviceFailed();
+    Q_SIGNALS:
+        // for the Frontend
+        void volumeChanged(qreal newVolume);
+        void audioDeviceFailed();
 
-		private:
-            qreal m_volume;
-			int m_device;
-	};
+    private:
+        qreal m_volume;
+        int m_device;
+};
 }} //namespace Phonon::Xine
 
 // vim: sw=4 ts=4 tw=80

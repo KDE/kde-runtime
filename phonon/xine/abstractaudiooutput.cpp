@@ -24,7 +24,7 @@ namespace Phonon
 namespace Xine
 {
 
-AbstractAudioOutput::AbstractAudioOutput(SinkNodeXT *xt, QObject* parent)
+AbstractAudioOutput::AbstractAudioOutput(SinkNodeXT *xt, QObject *parent)
     : QObject(parent), SinkNode(xt)
 {
 }

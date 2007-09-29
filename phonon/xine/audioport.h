@@ -50,12 +50,12 @@ class AudioPort
         AudioPort(int deviceIndex);
 
         bool isValid() const;
-        bool operator==(const AudioPort& rhs) const;
-        bool operator!=(const AudioPort& rhs) const;
+        bool operator==(const AudioPort &rhs) const;
+        bool operator!=(const AudioPort &rhs) const;
 
         void waitALittleWithDying();
 
-        operator xine_audio_port_t*() const;
+        operator xine_audio_port_t *() const;
         xine_audio_port_t *xinePort() const;
 
         /**

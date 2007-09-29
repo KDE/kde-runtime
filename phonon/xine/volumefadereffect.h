@@ -59,22 +59,22 @@ class VolumeFaderEffect : public Effect, public Phonon::VolumeFaderInterface
 {
     Q_OBJECT
     Q_INTERFACES(Phonon::VolumeFaderInterface)
-		public:
-			VolumeFaderEffect( QObject* parent );
-			~VolumeFaderEffect();
+    public:
+        VolumeFaderEffect(QObject *parent);
+        ~VolumeFaderEffect();
 
-			float volume() const;
-			void setVolume( float volume );
-			Phonon::VolumeFaderEffect::FadeCurve fadeCurve() const;
-			void setFadeCurve( Phonon::VolumeFaderEffect::FadeCurve curve );
-			void fadeTo( float volume, int fadeTime );
+        float volume() const;
+        void setVolume(float volume);
+        Phonon::VolumeFaderEffect::FadeCurve fadeCurve() const;
+        void setFadeCurve(Phonon::VolumeFaderEffect::FadeCurve curve);
+        void fadeTo(float volume, int fadeTime);
 
-            QVariant parameterValue(int parameterId) const;
-            void setParameterValue(int parameterId, const QVariant &newValue);
+        QVariant parameterValue(int parameterId) const;
+        void setParameterValue(int parameterId, const QVariant &newValue);
 
-		private:
-            void getParameters() const;
-	};
+    private:
+        void getParameters() const;
+};
 }} //namespace Phonon::Xine
 
 // vim: sw=4 ts=4 tw=80

@@ -28,16 +28,16 @@ namespace Phonon
 {
 namespace Xine
 {
-    class AbstractAudioOutput : public QObject, public SinkNode
-	{
-		Q_OBJECT
-        Q_INTERFACES(Phonon::Xine::SinkNode)
-		public:
-            AbstractAudioOutput(SinkNodeXT *, QObject* parent);
-			virtual ~AbstractAudioOutput();
+class AbstractAudioOutput : public QObject, public SinkNode
+{
+    Q_OBJECT
+    Q_INTERFACES(Phonon::Xine::SinkNode)
+    public:
+        AbstractAudioOutput(SinkNodeXT *, QObject *parent);
+        virtual ~AbstractAudioOutput();
 
-            MediaStreamTypes inputMediaStreamTypes() const { return Phonon::Xine::Audio; }
-	};
+        MediaStreamTypes inputMediaStreamTypes() const { return Phonon::Xine::Audio; }
+};
 }} //namespace Phonon::Xine
 
 // vim: sw=4 ts=4 tw=80

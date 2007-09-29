@@ -37,41 +37,41 @@ namespace Phonon
 {
 namespace Xine
 {
-	
-    class Backend : public QObject, public BackendInterface
-	{
-		Q_OBJECT
-        Q_INTERFACES(Phonon::BackendInterface)
-		public:
-            Backend(QObject *parent, const QVariantList &args);
-			~Backend();
 
-            QObject *createObject(BackendInterface::Class, QObject *parent, const QList<QVariant> &args);
+class Backend : public QObject, public BackendInterface
+{
+    Q_OBJECT
+    Q_INTERFACES(Phonon::BackendInterface)
+    public:
+        Backend(QObject *parent, const QVariantList &args);
+        ~Backend();
 
-			Q_INVOKABLE bool supportsVideo() const;
-			Q_INVOKABLE bool supportsOSD() const;
-			Q_INVOKABLE bool supportsFourcc( quint32 fourcc ) const;
-			Q_INVOKABLE bool supportsSubtitles() const;
+        QObject *createObject(BackendInterface::Class, QObject *parent, const QList<QVariant> &args);
 
-			Q_INVOKABLE void freeSoundcardDevices();
+        Q_INVOKABLE bool supportsVideo() const;
+        Q_INVOKABLE bool supportsOSD() const;
+        Q_INVOKABLE bool supportsFourcc(quint32 fourcc) const;
+        Q_INVOKABLE bool supportsSubtitles() const;
 
-            QSet<int> objectDescriptionIndexes(ObjectDescriptionType) const;
-            QHash<QByteArray, QVariant> objectDescriptionProperties(ObjectDescriptionType, int) const;
+        Q_INVOKABLE void freeSoundcardDevices();
 
-            bool startConnectionChange(QSet<QObject *>);
-            bool connectNodes(QObject *, QObject *);
-            bool disconnectNodes(QObject *, QObject *);
-            bool endConnectionChange(QSet<QObject *>);
+        QSet<int> objectDescriptionIndexes(ObjectDescriptionType) const;
+        QHash<QByteArray, QVariant> objectDescriptionProperties(ObjectDescriptionType, int) const;
 
-		public slots:
-            QStringList availableMimeTypes() const;
+        bool startConnectionChange(QSet<QObject *>);
+        bool connectNodes(QObject *, QObject *);
+        bool disconnectNodes(QObject *, QObject *);
+        bool endConnectionChange(QSet<QObject *>);
 
-        signals:
-            void objectDescriptionChanged(ObjectDescriptionType);
+    public slots:
+        QStringList availableMimeTypes() const;
 
-		private:
-            mutable QStringList m_supportedMimeTypes;
-	};
+    signals:
+        void objectDescriptionChanged(ObjectDescriptionType);
+
+    private:
+        mutable QStringList m_supportedMimeTypes;
+};
 }} // namespace Phonon::Xine
 
 // vim: sw=4 ts=4 tw=80
