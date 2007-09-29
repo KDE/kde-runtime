@@ -16,7 +16,6 @@ else(KDE4_DISABLE_MULTIMEDIA)
   macro_optional_find_package(Xine)
   macro_log_feature(XINE_FOUND "Xine" "xine-lib is required for the multimedia backend" "http://xinehq.de/index.php/releases" TRUE "1.1.1" "The xine development libraries (v1.1.1 or above) are required to provide audio and video support. Run cmake again with the variable KDE4_DISABLE_MULTIMEDIA set if you really want to build KDE without multimedia support." )
   if(XINE_FOUND)
-    set(XINE_BUGFIX_VERSION 7)
     # provide extra nice messages depending on the XINE_BUGFIX_VERSION
     if(XINE_BUGFIX_VERSION LESS 7)
       if(XINE_BUGFIX_VERSION LESS 5)
