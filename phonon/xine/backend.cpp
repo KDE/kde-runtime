@@ -62,7 +62,7 @@ namespace Xine
 {
 
 Backend::Backend(QObject *parent, const QVariantList &)
-	: QObject( parent )
+    : QObject( parent )
 {
     setProperty("identifier",     QLatin1String("phonon_xine"));
     setProperty("backendName",    QLatin1String("Xine"));
@@ -72,16 +72,16 @@ Backend::Backend(QObject *parent, const QVariantList &)
     setProperty("backendWebsite", QLatin1String("http://multimedia.kde.org/"));
 
     new XineEngine(XineBackendFactory::componentData().config());
-	char configfile[2048];
+    char configfile[2048];
 
     const QByteArray phonon_xine_verbosity(getenv("PHONON_XINE_VERBOSITY"));
     kDebug(610) << "setting xine verbosity to" << phonon_xine_verbosity.toInt();
     xine_engine_set_param(XineEngine::xine(), XINE_ENGINE_PARAM_VERBOSITY, phonon_xine_verbosity.toInt());
-	sprintf(configfile, "%s%s", xine_get_homedir(), "/.xine/config");
-	xine_config_load( XineEngine::xine(), configfile );
-	xine_init( XineEngine::xine() );
+    sprintf(configfile, "%s%s", xine_get_homedir(), "/.xine/config");
+    xine_config_load( XineEngine::xine(), configfile );
+    xine_init( XineEngine::xine() );
 
-	kDebug( 610 ) << "Using Xine version " << xine_get_version_string();
+    kDebug( 610 ) << "Using Xine version " << xine_get_version_string();
 
     connect(XineEngine::sender(), SIGNAL(objectDescriptionChanged(ObjectDescriptionType)),
             SIGNAL(objectDescriptionChanged(ObjectDescriptionType)));
@@ -91,24 +91,24 @@ Backend::Backend(QObject *parent, const QVariantList &)
 
 Backend::~Backend()
 {
-	delete XineEngine::self();
+    delete XineEngine::self();
 }
 
 QObject *Backend::createObject(BackendInterface::Class c, QObject *parent, const QList<QVariant> &args)
 {
     switch (c) {
-        case MediaObjectClass:
-            return new MediaObject(parent);
-        case VolumeFaderEffectClass:
-            return new VolumeFaderEffect(parent);
-        case AudioOutputClass:
-            return new AudioOutput(parent);
-        case AudioDataOutputClass:
-            return new AudioDataOutput(parent);
-        case VisualizationClass:
-            return new Visualization(parent);
-        case VideoDataOutputClass:
-            return new VideoDataOutput(parent);
+    case MediaObjectClass:
+        return new MediaObject(parent);
+    case VolumeFaderEffectClass:
+        return new VolumeFaderEffect(parent);
+    case AudioOutputClass:
+        return new AudioOutput(parent);
+    case AudioDataOutputClass:
+        return new AudioDataOutput(parent);
+    case VisualizationClass:
+        return new Visualization(parent);
+    case VideoDataOutputClass:
+        return new VideoDataOutput(parent);
     case EffectClass:
         {
             Q_ASSERT(args.size() == 1);
@@ -135,95 +135,95 @@ QObject *Backend::createObject(BackendInterface::Class c, QObject *parent, const
 
 bool Backend::supportsVideo() const
 {
-	return true;
+    return true;
 }
 
 bool Backend::supportsOSD() const
 {
-	return true;
+    return true;
 }
 
 bool Backend::supportsFourcc( quint32 fourcc ) const
 {
-	switch( fourcc )
-	{
-		case 0x00000000:
-			return true;
-		default:
-			return false;
-	}
+    switch( fourcc )
+    {
+    case 0x00000000:
+        return true;
+    default:
+        return false;
+    }
 }
 
 bool Backend::supportsSubtitles() const
 {
-	return true;
+    return true;
 }
 
 QStringList Backend::availableMimeTypes() const
 {
-	if( m_supportedMimeTypes.isEmpty() )
-	{
-		char* mimeTypes_c = xine_get_mime_types( XineEngine::xine() );
-		QString mimeTypes( mimeTypes_c );
-		free( mimeTypes_c );
-		QStringList lstMimeTypes = mimeTypes.split( ";", QString::SkipEmptyParts );
-		foreach( QString mimeType, lstMimeTypes )
-			m_supportedMimeTypes << mimeType.left( mimeType.indexOf( ':' ) ).trimmed();
-		if( m_supportedMimeTypes.contains( "application/ogg" ) )
-			m_supportedMimeTypes << QLatin1String( "audio/x-vorbis+ogg" ) << QLatin1String( "application/ogg" );
-	}
+    if( m_supportedMimeTypes.isEmpty() )
+    {
+        char* mimeTypes_c = xine_get_mime_types( XineEngine::xine() );
+        QString mimeTypes( mimeTypes_c );
+        free( mimeTypes_c );
+        QStringList lstMimeTypes = mimeTypes.split( ";", QString::SkipEmptyParts );
+        foreach( QString mimeType, lstMimeTypes )
+            m_supportedMimeTypes << mimeType.left( mimeType.indexOf( ':' ) ).trimmed();
+        if( m_supportedMimeTypes.contains( "application/ogg" ) )
+            m_supportedMimeTypes << QLatin1String( "audio/x-vorbis+ogg" ) << QLatin1String( "application/ogg" );
+    }
 
-	return m_supportedMimeTypes;
+    return m_supportedMimeTypes;
 }
 
 QSet<int> Backend::objectDescriptionIndexes( ObjectDescriptionType type ) const
 {
-	QSet<int> set;
-	switch( type )
-	{
-		case Phonon::AudioOutputDeviceType:
-            return XineEngine::audioOutputIndexes();
+    QSet<int> set;
+    switch( type )
+    {
+    case Phonon::AudioOutputDeviceType:
+        return XineEngine::audioOutputIndexes();
 /*
     case Phonon::AudioCaptureDeviceType:
-            {
-                QList<AudioDevice> devlist = AudioDeviceEnumerator::availableCaptureDevices();
-                foreach (AudioDevice dev, devlist) {
-                    set << dev.index();
-                }
+        {
+            QList<AudioDevice> devlist = AudioDeviceEnumerator::availableCaptureDevices();
+            foreach (AudioDevice dev, devlist) {
+                set << dev.index();
             }
-			break;
-		case Phonon::VideoOutputDeviceType:
-			{
-				const char* const* outputPlugins = xine_list_video_output_plugins( XineEngine::xine() );
-				for( int i = 0; outputPlugins[i]; ++i )
-					set << 40000 + i;
-				break;
-			}
-		case Phonon::VideoCaptureDeviceType:
-			set << 30000 << 30001;
-			break;
-		case Phonon::VisualizationType:
-			break;
-		case Phonon::AudioCodecType:
-			break;
-		case Phonon::VideoCodecType:
-			break;
-		case Phonon::ContainerFormatType:
-			break;
-            */
-		case Phonon::EffectType:
-			{
-				const char* const* postPlugins = xine_list_post_plugins_typed( XineEngine::xine(), XINE_POST_TYPE_AUDIO_FILTER );
-				for( int i = 0; postPlugins[i]; ++i )
-					set << 0x7F000000 + i;
-                /*const char *const *postVPlugins = xine_list_post_plugins_typed( XineEngine::xine(), XINE_POST_TYPE_VIDEO_FILTER );
-                for (int i = 0; postVPlugins[i]; ++i) {
-					set << 0x7E000000 + i;
-                }*/
-				break;
-			}
-	}
-	return set;
+        }
+        break;
+    case Phonon::VideoOutputDeviceType:
+        {
+            const char* const* outputPlugins = xine_list_video_output_plugins( XineEngine::xine() );
+            for( int i = 0; outputPlugins[i]; ++i )
+                set << 40000 + i;
+            break;
+        }
+    case Phonon::VideoCaptureDeviceType:
+        set << 30000 << 30001;
+        break;
+    case Phonon::VisualizationType:
+        break;
+    case Phonon::AudioCodecType:
+        break;
+    case Phonon::VideoCodecType:
+        break;
+    case Phonon::ContainerFormatType:
+        break;
+        */
+    case Phonon::EffectType:
+        {
+            const char* const* postPlugins = xine_list_post_plugins_typed( XineEngine::xine(), XINE_POST_TYPE_AUDIO_FILTER );
+            for( int i = 0; postPlugins[i]; ++i )
+                set << 0x7F000000 + i;
+            /*const char *const *postVPlugins = xine_list_post_plugins_typed( XineEngine::xine(), XINE_POST_TYPE_VIDEO_FILTER );
+            for (int i = 0; postVPlugins[i]; ++i) {
+                set << 0x7E000000 + i;
+            }*/
+            break;
+        }
+    }
+    return set;
 }
 
 QHash<QByteArray, QVariant> Backend::objectDescriptionProperties(ObjectDescriptionType type, int index) const
@@ -231,110 +231,110 @@ QHash<QByteArray, QVariant> Backend::objectDescriptionProperties(ObjectDescripti
     //kDebug(610) << type << index;
     QHash<QByteArray, QVariant> ret;
     switch (type) {
-        case Phonon::AudioOutputDeviceType:
-            {
-                ret.insert("name", XineEngine::audioOutputName(index));
-                ret.insert("description", XineEngine::audioOutputDescription(index));
-                QString icon = XineEngine::audioOutputIcon(index);
-                if (!icon.isEmpty()) {
-                    ret.insert("icon", icon);
-                }
-                ret.insert("available", XineEngine::audioOutputAvailable(index));
-                QVariant mixer = XineEngine::audioOutputMixerDevice(index);
-                if (mixer.isValid()) {
-                    ret.insert("mixerDeviceId", mixer);
-                }
-                ret.insert("initialPreference", XineEngine::audioOutputInitialPreference(index));
+    case Phonon::AudioOutputDeviceType:
+        {
+            ret.insert("name", XineEngine::audioOutputName(index));
+            ret.insert("description", XineEngine::audioOutputDescription(index));
+            QString icon = XineEngine::audioOutputIcon(index);
+            if (!icon.isEmpty()) {
+                ret.insert("icon", icon);
             }
-            break;
-            /*
-        case Phonon::AudioCaptureDeviceType:
-            {
-                QList<AudioDevice> devlist = AudioDeviceEnumerator::availableCaptureDevices();
-                foreach (AudioDevice dev, devlist) {
-                    if (dev.index() == index) {
-                        ret.insert("name", dev.cardName());
-                        switch (dev.driver()) {
-                            case Solid::AudioInterface::Alsa:
-                                ret.insert("description", i18n("ALSA Capture Device"));
-                                break;
-                            case Solid::AudioInterface::OpenSoundSystem:
-                                ret.insert("description", i18n("OSS Capture Device"));
-                                break;
-                            case Solid::AudioInterface::UnknownAudioDriver:
-                                break;
-                        }
-                        ret.insert("icon", dev.iconName());
-                        ret.insert("available", dev.isAvailable());
+            ret.insert("available", XineEngine::audioOutputAvailable(index));
+            QVariant mixer = XineEngine::audioOutputMixerDevice(index);
+            if (mixer.isValid()) {
+                ret.insert("mixerDeviceId", mixer);
+            }
+            ret.insert("initialPreference", XineEngine::audioOutputInitialPreference(index));
+        }
+        break;
+        /*
+    case Phonon::AudioCaptureDeviceType:
+        {
+            QList<AudioDevice> devlist = AudioDeviceEnumerator::availableCaptureDevices();
+            foreach (AudioDevice dev, devlist) {
+                if (dev.index() == index) {
+                    ret.insert("name", dev.cardName());
+                    switch (dev.driver()) {
+                    case Solid::AudioInterface::Alsa:
+                        ret.insert("description", i18n("ALSA Capture Device"));
+                        break;
+                    case Solid::AudioInterface::OpenSoundSystem:
+                        ret.insert("description", i18n("OSS Capture Device"));
+                        break;
+                    case Solid::AudioInterface::UnknownAudioDriver:
                         break;
                     }
+                    ret.insert("icon", dev.iconName());
+                    ret.insert("available", dev.isAvailable());
+                    break;
                 }
             }
-            switch (index) {
-                case 20000:
-                    ret.insert("name", QLatin1String("Soundcard"));
-                    break;
-                case 20001:
-                    ret.insert("name", QLatin1String("DV"));
-                    break;
-            }
-            //kDebug(610) << ret["name"];
+        }
+        switch (index) {
+        case 20000:
+            ret.insert("name", QLatin1String("Soundcard"));
             break;
-        case Phonon::VideoOutputDeviceType:
-            {
-                const char *const *outputPlugins = xine_list_video_output_plugins(XineEngine::xine());
-                for (int i = 0; outputPlugins[i]; ++i) {
-                    if (40000 + i == index) {
-                        ret.insert("name", QLatin1String(outputPlugins[i]));
-                        ret.insert("description", "");
-                        // description should be the result of the following call, but it crashes.
-                        // It looks like libxine initializes the plugin even when we just want the description...
-                        //QLatin1String(xine_get_video_driver_plugin_description(XineEngine::xine(), outputPlugins[i])));
-                        break;
-                    }
+        case 20001:
+            ret.insert("name", QLatin1String("DV"));
+            break;
+        }
+        //kDebug(610) << ret["name"];
+        break;
+    case Phonon::VideoOutputDeviceType:
+        {
+            const char *const *outputPlugins = xine_list_video_output_plugins(XineEngine::xine());
+            for (int i = 0; outputPlugins[i]; ++i) {
+                if (40000 + i == index) {
+                    ret.insert("name", QLatin1String(outputPlugins[i]));
+                    ret.insert("description", "");
+                    // description should be the result of the following call, but it crashes.
+                    // It looks like libxine initializes the plugin even when we just want the description...
+                    //QLatin1String(xine_get_video_driver_plugin_description(XineEngine::xine(), outputPlugins[i])));
+                    break;
                 }
             }
+        }
+        break;
+    case Phonon::VideoCaptureDeviceType:
+        switch (index) {
+        case 30000:
+            ret.insert("name", "USB Webcam");
+            ret.insert("description", "first description");
             break;
-        case Phonon::VideoCaptureDeviceType:
-            switch (index) {
-                case 30000:
-                    ret.insert("name", "USB Webcam");
-                    ret.insert("description", "first description");
+        case 30001:
+            ret.insert("name", "DV");
+            ret.insert("description", "second description");
+            break;
+        }
+        break;
+    case Phonon::VisualizationType:
+        break;
+    case Phonon::AudioCodecType:
+        break;
+    case Phonon::VideoCodecType:
+        break;
+    case Phonon::ContainerFormatType:
+        break;
+        */
+    case Phonon::EffectType:
+        {
+            const char *const *postPlugins = xine_list_post_plugins_typed(XineEngine::xine(), XINE_POST_TYPE_AUDIO_FILTER);
+            for (int i = 0; postPlugins[i]; ++i) {
+                if (0x7F000000 + i == index) {
+                    ret.insert("name", QLatin1String(postPlugins[i]));
+                    ret.insert("description", QLatin1String(xine_get_post_plugin_description(XineEngine::xine(), postPlugins[i])));
                     break;
-                case 30001:
-                    ret.insert("name", "DV");
-                    ret.insert("description", "second description");
-                    break;
-            }
-            break;
-        case Phonon::VisualizationType:
-            break;
-        case Phonon::AudioCodecType:
-            break;
-        case Phonon::VideoCodecType:
-            break;
-        case Phonon::ContainerFormatType:
-            break;
-            */
-        case Phonon::EffectType:
-            {
-                const char *const *postPlugins = xine_list_post_plugins_typed(XineEngine::xine(), XINE_POST_TYPE_AUDIO_FILTER);
-                for (int i = 0; postPlugins[i]; ++i) {
-                    if (0x7F000000 + i == index) {
-                        ret.insert("name", QLatin1String(postPlugins[i]));
-                        ret.insert("description", QLatin1String(xine_get_post_plugin_description(XineEngine::xine(), postPlugins[i])));
-                        break;
-                    }
                 }
-                /*const char *const *postVPlugins = xine_list_post_plugins_typed(XineEngine::xine(), XINE_POST_TYPE_VIDEO_FILTER);
-                for (int i = 0; postVPlugins[i]; ++i) {
-                    if (0x7E000000 + i == index) {
-                        ret.insert("name", QLatin1String(postPlugins[i]));
-                        break;
-                    }
-                }*/
             }
-            break;
+            /*const char *const *postVPlugins = xine_list_post_plugins_typed(XineEngine::xine(), XINE_POST_TYPE_VIDEO_FILTER);
+            for (int i = 0; postVPlugins[i]; ++i) {
+                if (0x7E000000 + i == index) {
+                    ret.insert("name", QLatin1String(postPlugins[i]));
+                    break;
+                }
+            }*/
+        }
+        break;
     }
     return ret;
 }

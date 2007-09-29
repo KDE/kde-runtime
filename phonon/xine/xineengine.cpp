@@ -110,10 +110,10 @@ namespace Xine
         return self()->d;
     }
 
-	xine_t* XineEngine::xine()
-	{
-		return self()->m_xine;
-	}
+    xine_t* XineEngine::xine()
+    {
+        return self()->m_xine;
+    }
 
     XineThread *XineEngine::thread()
     {
