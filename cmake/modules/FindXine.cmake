@@ -2,6 +2,8 @@
 # Once done this will define
 #
 #  XINE_FOUND - system has the XINE library
+#  XINE_VERSION - XINE version
+#  XINE_BUGFIX_VERSION - the XINE bugfix version
 #  XINE_INCLUDE_DIR - the XINE include directory
 #  XINE_LIBRARY - The libraries needed to use XINE
 #  XINE_XCB_FOUND - libxine can use XCB for video output
@@ -41,6 +43,7 @@ if (XINE_INCLUDE_DIR AND XINE_LIBRARY AND XINECONFIG_EXECUTABLE)
    macro_ensure_version(1.1.1 ${XINE_VERSION} XINE_VERSION_OK)
    if (XINE_VERSION_OK)
       set(XINE_FOUND TRUE)
+      string(REGEX REPLACE "[0-9].[0-9]." "" XINE_BUGFIX_VERSION ${XINE_VERSION})
    endif (XINE_VERSION_OK)
 endif (XINE_INCLUDE_DIR AND XINE_LIBRARY AND XINECONFIG_EXECUTABLE)
 
