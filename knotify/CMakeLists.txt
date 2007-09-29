@@ -1,4 +1,4 @@
-
+add_subdirectory( sounds  )
 ########### next target ###############
 
 set(knotify_SRCS

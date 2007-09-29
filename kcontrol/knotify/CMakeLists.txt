@@ -1,5 +1,3 @@
-add_subdirectory( sounds )
-
 
 ########### next target ###############
 
