@@ -480,6 +480,11 @@ bool Backend::endConnectionChange(QSet<QObject *> nodes)
                 }
             }
         }
+        ConnectNotificationInterface *connectNotify = qobject_cast<ConnectNotificationInterface *>(q);
+        if (connectNotify) {
+            // the object wants to know when the graph has changed
+            connectNotify->graphChanged();
+        }
     }
     if (!wireCalls.isEmpty()) {
         qSort(wireCalls);

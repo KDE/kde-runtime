@@ -131,6 +131,19 @@ bool AudioOutput::event(QEvent *ev)
     }
 }
 
+void AudioOutput::graphChanged()
+{
+    kDebug(610);
+    // we got connected to a new XineStream, it needs to know our m_volume
+    int xinevolume = static_cast<int>(m_volume * 100);
+    if (xinevolume > 200) {
+        xinevolume = 200;
+    } else if (xinevolume < 0) {
+        xinevolume = 0;
+    }
+    upstreamEvent(new UpdateVolumeEvent(xinevolume));
+}
+
 #undef K_XT
 }} //namespace Phonon::Xine
 

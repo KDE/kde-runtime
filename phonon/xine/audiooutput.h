@@ -28,6 +28,7 @@
 #include "xinestream.h"
 #include "audioport.h"
 #include <phonon/audiooutputinterface.h>
+#include "connectnotificationinterface.h"
 
 namespace Phonon
 {
@@ -45,10 +46,10 @@ class AudioOutputXT : public SinkNodeXT
         AudioPort m_audioPort;
 };
 
-    class AudioOutput : public AbstractAudioOutput, public AudioOutputInterface
-	{
-		Q_OBJECT
-        Q_INTERFACES(Phonon::AudioOutputInterface)
+class AudioOutput : public AbstractAudioOutput, public AudioOutputInterface, public ConnectNotificationInterface
+{
+    Q_OBJECT
+    Q_INTERFACES(Phonon::AudioOutputInterface Phonon::Xine::ConnectNotificationInterface)
 		public:
             AudioOutput(QObject *parent);
 			~AudioOutput();
@@ -62,6 +63,8 @@ class AudioOutputXT : public SinkNodeXT
             bool setOutputDevice(int newDevice);
 
             void downstreamEvent(Event *);
+
+            virtual void graphChanged();
 
         protected:
             bool event(QEvent *);
