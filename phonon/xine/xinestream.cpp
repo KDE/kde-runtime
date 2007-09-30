@@ -69,6 +69,7 @@ XineStream::XineStream()
     m_currentAngle(-1),
     m_currentTitle(-1),
     m_currentChapter(-1),
+    m_transitionGap(0),
     m_streamInfoReady(false),
     m_hasVideo(false),
     m_isSeekable(false),
@@ -149,7 +150,6 @@ bool XineStream::xineOpen(Phonon::State newstate)
         return false;
     }
     kDebug(610) << "xine_open succeeded for m_mrl =" << m_mrl.constData();
-
     if ((m_mrl.startsWith("dvd:/") && XineEngine::deinterlaceDVD()) ||
         (m_mrl.startsWith("vcd:/") && XineEngine::deinterlaceVCD()) ||
         (m_mrl.startsWith("file:/") && XineEngine::deinterlaceFile())) {
@@ -401,8 +401,15 @@ bool XineStream::createStream()
     xine_event_create_listener_thread(m_event_queue, &XineEngine::self()->xineEventListener, (void *)this);
 
     if (m_useGaplessPlayback) {
+        kDebug(610) << "XINE_PARAM_EARLY_FINISHED_EVENT: 1";
         xine_set_param(m_stream, XINE_PARAM_EARLY_FINISHED_EVENT, 1);
+#ifdef XINE_PARAM_DELAY_FINISHED_EVENT
+    } else if (m_transitionGap > 0) {
+        kDebug(610) << "XINE_PARAM_DELAY_FINISHED_EVENT:" << m_transitionGap;
+        xine_set_param(m_stream, XINE_PARAM_DELAY_FINISHED_EVENT, m_transitionGap);
+#endif // XINE_PARAM_DELAY_FINISHED_EVENT
     } else {
+        kDebug(610) << "XINE_PARAM_EARLY_FINISHED_EVENT: 0";
         xine_set_param(m_stream, XINE_PARAM_EARLY_FINISHED_EVENT, 0);
     }
 
@@ -455,7 +462,15 @@ void XineStream::useGaplessPlayback(bool b)
         return;
     }
     m_useGaplessPlayback = b;
-    QCoreApplication::postEvent(this, new QEVENT(GaplessPlaybackChanged));
+    QCoreApplication::postEvent(this, new QEVENT(TransitionTypeChanged));
+}
+
+// called from main thread
+void XineStream::useGapOf(int gap)
+{
+    m_useGaplessPlayback = false;
+    m_transitionGap = gap;
+    QCoreApplication::postEvent(this, new QEVENT(TransitionTypeChanged));
 }
 
 // called from main thread
@@ -544,10 +559,10 @@ void XineStream::playbackFinished()
             emit prefinishMarkReached(0);
         }
         changeState(Phonon::StoppedState);
-        emit finished();
         xine_close(m_stream); // TODO: is it necessary? should xine_close be called as late as possible?
         m_streamInfoReady = false;
         m_prefinishMarkReachedNotEmitted = true;
+        emit finished();
     }
     m_waitingForClose.wakeAll();
 }
@@ -583,8 +598,8 @@ const char *nameForEvent(int e)
         return "UpdateVolume";
     case Event::MrlChanged:
         return "MrlChanged";
-    case Event::GaplessPlaybackChanged:
-        return "GaplessPlaybackChanged";
+    case Event::TransitionTypeChanged:
+        return "TransitionTypeChanged";
     case Event::RewireVideoToNull:
         return "RewireVideoToNull";
     case Event::PlayCommand:
@@ -956,11 +971,18 @@ bool XineStream::event(QEvent *ev)
             }
         }
         return true;
-    case Event::GaplessPlaybackChanged:
+    case Event::TransitionTypeChanged:
         if (m_stream) {
             if (m_useGaplessPlayback) {
+                kDebug(610) << "XINE_PARAM_EARLY_FINISHED_EVENT: 1";
                 xine_set_param(m_stream, XINE_PARAM_EARLY_FINISHED_EVENT, 1);
+#ifdef XINE_PARAM_DELAY_FINISHED_EVENT
+            } else if (m_transitionGap > 0) {
+                kDebug(610) << "XINE_PARAM_DELAY_FINISHED_EVENT:" << m_transitionGap;
+                xine_set_param(m_stream, XINE_PARAM_DELAY_FINISHED_EVENT, m_transitionGap);
+#endif // XINE_PARAM_DELAY_FINISHED_EVENT
             } else {
+                kDebug(610) << "XINE_PARAM_EARLY_FINISHED_EVENT: 0";
                 xine_set_param(m_stream, XINE_PARAM_EARLY_FINISHED_EVENT, 0);
             }
         }
@@ -1131,6 +1153,14 @@ bool XineStream::event(QEvent *ev)
                 // xine_trick_mode aborts :(
                 //if (0 == xine_trick_mode(m_stream, XINE_TRICK_MODE_SEEK_TO_TIME, time)) {
                 xine_play(m_stream, 0, e->time);
+
+#ifdef XINE_PARAM_DELAY_FINISHED_EVENT
+                if (!m_useGaplessPlayback && m_transitionGap > 0) {
+                    kDebug(610) << "XINE_PARAM_DELAY_FINISHED_EVENT:" << m_transitionGap;
+                    xine_set_param(m_stream, XINE_PARAM_DELAY_FINISHED_EVENT, m_transitionGap);
+                }
+#endif // XINE_PARAM_DELAY_FINISHED_EVENT
+
                 if (Phonon::PausedState == m_state) {
                     // go back to paused speed after seek
                     xine_set_param(m_stream, XINE_PARAM_SPEED, XINE_SPEED_PAUSE);
@@ -1421,6 +1451,14 @@ void XineStream::internalPause()
 void XineStream::internalPlay()
 {
     xine_play(m_stream, 0, 0);
+
+#ifdef XINE_PARAM_DELAY_FINISHED_EVENT
+    if (!m_useGaplessPlayback && m_transitionGap > 0) {
+        kDebug(610) << "XINE_PARAM_DELAY_FINISHED_EVENT:" << m_transitionGap;
+        xine_set_param(m_stream, XINE_PARAM_DELAY_FINISHED_EVENT, m_transitionGap);
+    }
+#endif // XINE_PARAM_DELAY_FINISHED_EVENT
+
     if (updateTime()) {
         changeState(Phonon::PlayingState);
     } else {

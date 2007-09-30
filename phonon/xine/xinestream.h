@@ -79,6 +79,7 @@ class XineStream : public QObject, public SourceNodeXT
 
         //void needRewire(AudioPostList *postList);
         void useGaplessPlayback(bool);
+        void useGapOf(int gap);
         void gaplessSwitchTo(const KUrl &url);
         void gaplessSwitchTo(const QByteArray &mrl);
         void closeBlocking();
@@ -207,6 +208,7 @@ class XineStream : public QObject, public SourceNodeXT
         int m_currentAngle;
         int m_currentTitle;
         int m_currentChapter;
+        int m_transitionGap;
         bool m_streamInfoReady : 1;
         bool m_hasVideo : 1;
         bool m_isSeekable : 1;

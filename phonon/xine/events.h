@@ -71,7 +71,7 @@ public:
         StopCommand,
         SeekCommand,
         MrlChanged,
-        GaplessPlaybackChanged,
+        TransitionTypeChanged,
         GaplessSwitch,
         UpdateTime,
         SetTickInterval,

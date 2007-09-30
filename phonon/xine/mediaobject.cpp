@@ -373,8 +373,7 @@ void MediaObject::setTransitionTime(qint32 newTransitionTime)
         if (m_transitionTime == 0) {
             stream().useGaplessPlayback(true);
         } else if (m_transitionTime > 0) {
-            // TODO: a gap of m_transitionTime milliseconds
-            stream().useGaplessPlayback(true);
+            stream().useGapOf((newTransitionTime + 50) / 100); // xine-lib provides a resolution of 1/10s
         } else {
             // TODO: a crossfade of milliseconds milliseconds
             stream().useGaplessPlayback(true);
