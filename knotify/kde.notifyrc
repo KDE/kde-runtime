@@ -30,6 +30,7 @@ Comment[pt_BR]=O lixo foi esvaziado
 Comment[sv]=Papperskorgen har tömts
 Comment[x-test]=xxThe trash has been emptiedxx
 Action=Sound
+sound=sys.trash.emptied.ogg
 
 [Event/Textcompletion: rotation]
 Name=Textcompletion: rotation
@@ -49,6 +50,7 @@ Comment[pt_BR]=O final da lista de correspondência foi atingido
 Comment[sv]=Slutet av listan med träffar har nåtts
 Comment[x-test]=xxThe end of the list of matches has been reachedxx
 Action=Sound
+sound=sys.list.end.ogg
 
 [Event/Textcompletion: no match]
 Name=Textcompletion: no match
@@ -68,6 +70,7 @@ Comment[pt_BR]=Nenhuma correspondência de complementação foi encontrada
 Comment[sv]=Ingen matchande komplettering hittades
 Comment[x-test]=xxNo matching completion was foundxx
 Action=Sound
+sound=sys.list.match.no.ogg
 
 [Event/Textcompletion: partial match]
 Name=Textcompletion: partial match
@@ -87,25 +90,7 @@ Comment[pt_BR]=Existe mais que uma correspondência possível
 Comment[sv]=Det finns mer än en möjlig träff
 Comment[x-test]=xxThere is more than one possible matchxx
 Action=Sound
-
-[Event/cannotopenfile]
-Name=Cannot Open File
-Name[it]=Impossibile aprire il file
-Name[ja]=ファイルを開けません
-Name[km]=មិន​អាច​បើក​ឯកសារ
-Name[nds]=Datei lett sik nich opmaken
-Name[pt_BR]=Não foi Possível Abrir o Arquivo
-Name[sv]=Kan inte öppna fil
-Name[x-test]=xxCannot Open Filexx
-Comment=The selected file cannot be opened for reading or writing
-Comment[it]=Il file selezionato non si può aprire per la lettura o la scrittura
-Comment[ja]=選択されたファイルを読み込みまたは書き込みのために開けません
-Comment[km]=ឯកសារ​ដែល​បាន​ជ្រើស​មិន​អាច​ត្រូវ​បាន​បើក​សម្រាប់​អាន ឬ​សរសេរ
-Comment[nds]=De utsöchte Datei lett sik nich lesen oder nich schrieven
-Comment[pt_BR]=O arquivo selecionado não pôde ser aberto para leitura ou escrita
-Comment[sv]=Den valda filen kan inte öppnas för läsning eller skrivning
-Comment[x-test]=xxThe selected file cannot be opened for reading or writingxx
-Action=None
+sound=sys.list.match.multiple.ogg
 
 [Event/fatalerror]
 Name=Fatal Error
@@ -124,7 +109,8 @@ Comment[nds]=Dat geev en swoor Fehler, dat Programm is utstegen
 Comment[pt_BR]=Houve um erro sério, que fez com que o programa fosse fechado
 Comment[sv]=Ett allvarligt fel uppstod vilket fick programmet att avslutas
 Comment[x-test]=xxThere was a serious error causing the program to exitxx
-Action=Messagebox
+Action=Popup|Sound
+sound=error.ogg
 
 
 [Event/notification]
@@ -146,7 +132,7 @@ Comment[pt_BR]=Algo especial aconteceu no programa
 Comment[sv]=Någonting speciellt inträffade i programmet
 Comment[x-test]=xxSomething special happened in the programxx
 Action=Sound
-sound=KDE_Beep.ogg
+sound=message.ogg
 
 [Event/warning]
 Name=Warning
@@ -166,7 +152,8 @@ Comment[nds]=Dat geev en Fehler binnen dat Programm, villicht suert dor Probleme
 Comment[pt_BR]=Houve um erro no programa, que pode causar problemas
 Comment[sv]=Det uppstod ett fel i programmet vilket kan orsaka problem
 Comment[x-test]=xxThere was an error in the program which may cause problemsxx
-Action=Messagebox
+Action=Popup|Sound
+sound=sys.warning.ogg
 
 [Event/catastrophe]
 Name=Catastrophe
@@ -185,7 +172,9 @@ Comment[nds]=Dat geev en groot Malöör, tominnst dat Programm is utstegen
 Comment[pt_BR]=Um erro muito sério aconteceu, que causou (no mínimo) o fechamento do programa
 Comment[sv]=Ett mycket allvarligt fel uppstod, som åtminstone fick programmet att avslutas
 Comment[x-test]=xxA very serious error occurred, at least causing the program to exitxx
-Action=Messagebox
+Action=Popup|Sound
+sound=sys.app.error.serious.ogg
+
 
 [Event/startkde]
 Name=Login
@@ -241,7 +230,6 @@ Comment[pt_BR]=O logout do KDE foi cancelado
 Comment[sv]=Utloggning från KDE avbröts
 Comment[x-test]=xxKDE logout was canceledxx
 Action=Popup
-sound=
 
 [Event/printerror]
 Name=Print Error
@@ -262,7 +250,8 @@ Comment[nds]=Dat geev en Fehler bi't Drucken
 Comment[pt_BR]=Um erro de impressão ocorreu
 Comment[sv]=Utskriftsfel har inträffat
 Comment[x-test]=xxA print error has occurredxx
-Action=Messagebox
+Action=Popup|Sound
+sound=sys.print.error.orgg
 
 [Event/messageInformation]
 Name=Information Message
@@ -352,7 +341,7 @@ Comment[nds]=En Fraag warrt wiest
 Comment[pt_BR]=Uma pergunta está sendo feita
 Comment[sv]=Fråga ställs
 Comment[x-test]=xxA question is being askedxx
-sound=KDE_Vox_Ahem.ogg
+sound=question.ogg
 Action=Sound|Taskbar
 
 
@@ -376,3 +365,4 @@ Comment[pt_BR]=Som da campainha
 Comment[sv]=Ge ljudsignal
 Comment[x-test]=xxSound bellxx
 Action=Sound
+sound=KDE_Beep.ogg
