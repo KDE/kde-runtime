@@ -44,7 +44,7 @@ NotifyByExecute::~NotifyByExecute()
 
 void NotifyByExecute::notify( int id, KNotifyConfig * config )
 {
-	QString command=config->readEntry( "execute" );
+	QString command=config->readEntry( "Execute" );
 	
 	kDebug(300) << command;
 	

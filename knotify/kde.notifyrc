@@ -30,7 +30,7 @@ Comment[pt_BR]=O lixo foi esvaziado
 Comment[sv]=Papperskorgen har tömts
 Comment[x-test]=xxThe trash has been emptiedxx
 Action=Sound
-sound=sys.trash.emptied.ogg
+Sound=sys.trash.emptied.ogg
 
 [Event/Textcompletion: rotation]
 Name=Textcompletion: rotation
@@ -50,7 +50,7 @@ Comment[pt_BR]=O final da lista de correspondência foi atingido
 Comment[sv]=Slutet av listan med träffar har nåtts
 Comment[x-test]=xxThe end of the list of matches has been reachedxx
 Action=Sound
-sound=sys.list.end.ogg
+Sound=sys.list.end.ogg
 
 [Event/Textcompletion: no match]
 Name=Textcompletion: no match
@@ -70,7 +70,7 @@ Comment[pt_BR]=Nenhuma correspondência de complementação foi encontrada
 Comment[sv]=Ingen matchande komplettering hittades
 Comment[x-test]=xxNo matching completion was foundxx
 Action=Sound
-sound=sys.list.match.no.ogg
+Sound=sys.list.match.no.ogg
 
 [Event/Textcompletion: partial match]
 Name=Textcompletion: partial match
@@ -90,7 +90,7 @@ Comment[pt_BR]=Existe mais que uma correspondência possível
 Comment[sv]=Det finns mer än en möjlig träff
 Comment[x-test]=xxThere is more than one possible matchxx
 Action=Sound
-sound=sys.list.match.multiple.ogg
+Sound=sys.list.match.multiple.ogg
 
 [Event/fatalerror]
 Name=Fatal Error
@@ -110,7 +110,7 @@ Comment[pt_BR]=Houve um erro sério, que fez com que o programa fosse fechado
 Comment[sv]=Ett allvarligt fel uppstod vilket fick programmet att avslutas
 Comment[x-test]=xxThere was a serious error causing the program to exitxx
 Action=Popup|Sound
-sound=error.ogg
+Sound=error.ogg
 
 
 [Event/notification]
@@ -132,7 +132,7 @@ Comment[pt_BR]=Algo especial aconteceu no programa
 Comment[sv]=Någonting speciellt inträffade i programmet
 Comment[x-test]=xxSomething special happened in the programxx
 Action=Sound
-sound=message.ogg
+Sound=message.ogg
 
 [Event/warning]
 Name=Warning
@@ -153,7 +153,7 @@ Comment[pt_BR]=Houve um erro no programa, que pode causar problemas
 Comment[sv]=Det uppstod ett fel i programmet vilket kan orsaka problem
 Comment[x-test]=xxThere was an error in the program which may cause problemsxx
 Action=Popup|Sound
-sound=sys.warning.ogg
+Sound=sys.warning.ogg
 
 [Event/catastrophe]
 Name=Catastrophe
@@ -173,7 +173,7 @@ Comment[pt_BR]=Um erro muito sério aconteceu, que causou (no mínimo) o fechame
 Comment[sv]=Ett mycket allvarligt fel uppstod, som åtminstone fick programmet att avslutas
 Comment[x-test]=xxA very serious error occurred, at least causing the program to exitxx
 Action=Popup|Sound
-sound=sys.app.error.serious.ogg
+Sound=sys.app.error.serious.ogg
 
 
 [Event/startkde]
@@ -193,7 +193,7 @@ Comment[pt_BR]=O KDE está sendo inicializado
 Comment[sv]=KDE startas
 Comment[x-test]=xxKDE is starting upxx
 Action=Sound
-sound=KDE_Startup_1.ogg
+Sound=KDE_Startup_1.ogg
 
 [Event/exitkde]
 Name=Logout
@@ -212,7 +212,7 @@ Comment[pt_BR]=O KDE está sendo fechado
 Comment[sv]=KDE avslutas
 Comment[x-test]=xxKDE is exitingxx
 Action=Sound
-sound=KDE_Logout_3.ogg
+Sound=KDE_Logout_3.ogg
 
 [Event/cancellogout]
 Name=Logout Canceled
@@ -251,7 +251,7 @@ Comment[pt_BR]=Um erro de impressão ocorreu
 Comment[sv]=Utskriftsfel har inträffat
 Comment[x-test]=xxA print error has occurredxx
 Action=Popup|Sound
-sound=sys.print.error.orgg
+Sound=sys.print.error.orgg
 
 [Event/messageInformation]
 Name=Information Message
@@ -274,7 +274,7 @@ Comment[nds]=En Informatschoon warrt wiest
 Comment[pt_BR]=Uma mensagem de informação está sendo mostrada
 Comment[sv]=Informationsmeddelande visas
 Comment[x-test]=xxAn information message is being shownxx
-sound=KDE_Chimes_2.ogg
+Sound=KDE_Chimes_2.ogg
 Action=Sound|Taskbar
 
 [Event/messageWarning]
@@ -298,7 +298,7 @@ Comment[nds]=En Wohrschoen warrt wiest
 Comment[pt_BR]=Uma mensagem de aviso está sendo mostrada
 Comment[sv]=Varningsmeddelande visas
 Comment[x-test]=xxA warning message is being shownxx
-sound=KDE_Error_1.ogg
+Sound=KDE_Error_1.ogg
 Action=Sound|Taskbar
 
 [Event/messageCritical]
@@ -320,7 +320,7 @@ Comment[nds]=En eernst Mellen warrt wiest
 Comment[pt_BR]=Uma mensagem crítica está sendo mostrada
 Comment[sv]=Kritiskt meddelande visas
 Comment[x-test]=xxA critical message is being shownxx
-sound=KDE_Glass_Break.ogg
+Sound=KDE_Glass_Break.ogg
 Action=Sound|Taskbar
 
 [Event/messageboxQuestion]
@@ -341,7 +341,7 @@ Comment[nds]=En Fraag warrt wiest
 Comment[pt_BR]=Uma pergunta está sendo feita
 Comment[sv]=Fråga ställs
 Comment[x-test]=xxA question is being askedxx
-sound=question.ogg
+Sound=question.ogg
 Action=Sound|Taskbar
 
 
@@ -365,4 +365,4 @@ Comment[pt_BR]=Som da campainha
 Comment[sv]=Ge ljudsignal
 Comment[x-test]=xxSound bellxx
 Action=Sound
-sound=KDE_Beep.ogg
+Sound=KDE_Beep.ogg

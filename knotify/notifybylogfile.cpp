@@ -40,7 +40,7 @@ NotifyByLogfile::~NotifyByLogfile()
 
 void NotifyByLogfile::notify( int id, KNotifyConfig * config )
 {
-	QString file=config->readEntry( "logfile" );
+	QString file=config->readEntry( "Logfile" );
 
 	kDebug(300) << file;
 	

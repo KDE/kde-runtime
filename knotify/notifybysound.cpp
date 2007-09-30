@@ -124,7 +124,7 @@ void NotifyBySound::notify( int eventId, KNotifyConfig * config )
 		return;
 	}
 
-	KUrl soundFileURL = config->readEntry( "sound" , true );
+	KUrl soundFileURL = config->readEntry( "Sound" , true );
 	QString soundFile = soundFileURL.toLocalFile();
 
 	if (soundFile.isEmpty())
