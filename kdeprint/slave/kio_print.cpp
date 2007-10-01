@@ -792,7 +792,7 @@ QString KIO_Print::locateData(const QString& item)
 {
 	QString	path = KStandardDirs::locate("data", "kdeprint/template/"+item);
 	if (path.isEmpty())
-		path = KIconLoader::global()->iconPath(item, K3Icon::Desktop, true);
+		path = KIconLoader::global()->iconPath(item, KIconLoader::Desktop, true);
 	return path;
 }
 

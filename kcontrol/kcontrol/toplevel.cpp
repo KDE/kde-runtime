@@ -69,13 +69,13 @@ TopLevel::TopLevel()
 
   QString size = config.readEntry("IconSize", "Medium");
   if (size == "Small")
-    KCGlobal::setIconSize(K3Icon::SizeSmall);
+    KCGlobal::setIconSize(KIconLoader::SizeSmall);
   else if (size == "Large")
-    KCGlobal::setIconSize(K3Icon::SizeLarge);
+    KCGlobal::setIconSize(KIconLoader::SizeLarge);
   else if (size == "Huge")
-    KCGlobal::setIconSize(K3Icon::SizeHuge);
+    KCGlobal::setIconSize(KIconLoader::SizeHuge);
   else
-    KCGlobal::setIconSize(K3Icon::SizeMedium);
+    KCGlobal::setIconSize(KIconLoader::SizeMedium);
 
   // initialize the entries
   _modules = new ConfigModuleList();
@@ -156,8 +156,8 @@ TopLevel::TopLevel()
                SLOT( activateModule( ConfigModule * ) ) );
       _dock->setBaseWidget( aw );
       KWindowSystem::setIcons(  winId(),
-		       KIconLoader::global()->loadIcon("hwinfo", K3Icon::NoGroup, 32 ),
-		       KIconLoader::global()->loadIcon("hwinfo", K3Icon::NoGroup, 16 ) );
+		       KIconLoader::global()->loadIcon("hwinfo", KIconLoader::NoGroup, 32 ),
+		       KIconLoader::global()->loadIcon("hwinfo", KIconLoader::NoGroup, 16 ) );
   }
   else
   {
@@ -178,13 +178,13 @@ TopLevel::~TopLevel()
 
   switch (KCGlobal::iconSize())
     {
-    case K3Icon::SizeSmall:
+    case KIconLoader::SizeSmall:
       config.writeEntry("IconSize", "Small");
       break;
-    case K3Icon::SizeLarge:
+    case KIconLoader::SizeLarge:
       config.writeEntry("IconSize", "Large");
       break;
-    case K3Icon::SizeHuge:
+    case KIconLoader::SizeHuge:
       config.writeEntry("IconSize", "Huge");
       break;
     default:
@@ -275,13 +275,13 @@ void TopLevel::activateIconView()
 
   switch(KCGlobal::iconSize())
     {
-    case K3Icon::SizeSmall:
+    case KIconLoader::SizeSmall:
       icon_small->setChecked(true);
       break;
-    case K3Icon::SizeLarge:
+    case KIconLoader::SizeLarge:
       icon_large->setChecked(true);
       break;
-    case K3Icon::SizeHuge:
+    case KIconLoader::SizeHuge:
       icon_huge->setChecked(true);
       break;
     default:
@@ -303,25 +303,25 @@ void TopLevel::activateTreeView()
 
 void TopLevel::activateSmallIcons()
 {
-  KCGlobal::setIconSize(K3Icon::SizeSmall);
+  KCGlobal::setIconSize(KIconLoader::SizeSmall);
   _indextab->reload();
 }
 
 void TopLevel::activateMediumIcons()
 {
-  KCGlobal::setIconSize(K3Icon::SizeMedium);
+  KCGlobal::setIconSize(KIconLoader::SizeMedium);
   _indextab->reload();
 }
 
 void TopLevel::activateLargeIcons()
 {
-  KCGlobal::setIconSize(K3Icon::SizeLarge);
+  KCGlobal::setIconSize(KIconLoader::SizeLarge);
   _indextab->reload();
 }
 
 void TopLevel::activateHugeIcons()
 {
-  KCGlobal::setIconSize(K3Icon::SizeHuge);
+  KCGlobal::setIconSize(KIconLoader::SizeHuge);
   _indextab->reload();
 }
 

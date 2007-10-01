@@ -44,7 +44,7 @@ QString KCGlobal::_irelease = "";
 QString KCGlobal::_iversion = "";
 QString KCGlobal::_imachine = "";
 IndexViewMode KCGlobal::_viewmode = Icon;
-K3Icon::StdSizes KCGlobal::_iconsize = K3Icon::SizeMedium;
+KIconLoader::StdSizes KCGlobal::_iconsize = KIconLoader::SizeMedium;
 QString KCGlobal::_baseGroup = "";
 
 void KCGlobal::init()

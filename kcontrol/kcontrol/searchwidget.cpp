@@ -46,7 +46,7 @@ public:
   , m_module(module)
  {
     setText( module->moduleName() ); 
-    setIcon( KIconLoader::global()->loadIcon(module->icon(), K3Icon::Desktop, K3Icon::SizeSmall) ); 
+    setIcon( KIconLoader::global()->loadIcon(module->icon(), KIconLoader::Desktop, KIconLoader::SizeSmall) ); 
  }
 
  ConfigModule *module() const { return m_module; }

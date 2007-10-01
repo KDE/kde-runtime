@@ -135,7 +135,7 @@ void KIconConfig::init()
     mpEffect = new KIconEffect;
     mpTheme = mpLoader->theme();
     mUsage = 0;
-    for (int i=0; i<K3Icon::LastGroup; i++)
+    for (int i=0; i<KIconLoader::LastGroup; i++)
 	mbChanged[i] = false;
 
     // Fill list/checkboxen
@@ -178,9 +178,9 @@ void KIconConfig::initDefaults()
 
     const int defDefSizes[] = { 32, 22, 22, 16, 32 };
 
-    K3Icon::Group i;
+    KIconLoader::Group i;
     QStringList::ConstIterator it;
-    for(it=mGroups.begin(), i=K3Icon::FirstGroup; it!=mGroups.end(); ++it, i++)
+    for(it=mGroups.begin(), i=KIconLoader::FirstGroup; it!=mGroups.end(); ++it, i++)
     {
 	mbDP[i] = false;
 	mbChanged[i] = true;
@@ -223,7 +223,7 @@ void KIconConfig::read()
 {
     if (mpTheme)
     {
-        for (K3Icon::Group i=K3Icon::FirstGroup; i<K3Icon::LastGroup; i++)
+        for (KIconLoader::Group i=KIconLoader::FirstGroup; i<KIconLoader::LastGroup; i++)
             mAvSizes[i] = mpTheme->querySizes(i);
 
         mTheme = mpTheme->current();
@@ -231,7 +231,7 @@ void KIconConfig::read()
     }
     else
     {
-        for (K3Icon::Group i=K3Icon::FirstGroup; i<K3Icon::LastGroup; i++)
+        for (KIconLoader::Group i=KIconLoader::FirstGroup; i<KIconLoader::LastGroup; i++)
             mAvSizes[i] = QList<int>();
 
         mTheme.clear();
@@ -283,7 +283,7 @@ void KIconConfig::apply()
     int delta = 1000, dw, index = -1, size = 0, i;
     QList<int>::Iterator it;
     mpSizeBox->clear();
-    if (mUsage < K3Icon::LastGroup) {
+    if (mUsage < KIconLoader::LastGroup) {
         for (it=mAvSizes[mUsage].begin(), i=0; it!=mAvSizes[mUsage].end(); ++it, i++)
         {
             mpSizeBox->addItem(QString().setNum(*it));
@@ -311,9 +311,9 @@ void KIconConfig::preview(int i)
     // Apply effects ourselves because we don't want to sync
     // the configuration every preview.
 
-    int viewedGroup = (mUsage == K3Icon::LastGroup) ? K3Icon::FirstGroup : mUsage;
+    int viewedGroup = (mUsage == KIconLoader::LastGroup) ? KIconLoader::FirstGroup : mUsage;
 
-    QPixmap pm = mpLoader->loadIcon(mExample, K3Icon::NoGroup, mSizes[viewedGroup]);
+    QPixmap pm = mpLoader->loadIcon(mExample, KIconLoader::NoGroup, mSizes[viewedGroup]);
     QImage img = pm.toImage();
     if (mbDP[viewedGroup])
     {
@@ -341,7 +341,7 @@ void KIconConfig::load()
     read();
     apply();
     emit changed(false);
-    for (int i=0; i<K3Icon::LastGroup; i++)
+    for (int i=0; i<KIconLoader::LastGroup; i++)
 	mbChanged[i] = false;
     preview();
 }
@@ -394,7 +394,7 @@ void KIconConfig::save()
     emit changed(false);
 
     // Emit KIPC change message.
-    for (int i=0; i<K3Icon::LastGroup; i++)
+    for (int i=0; i<KIconLoader::LastGroup; i++)
     {
 	if (mbChanged[i])
 	{
@@ -418,17 +418,17 @@ void KIconConfig::slotUsage(int index)
         return;
 
     mUsage = index;
-    if ( mUsage == K3Icon::Panel || mUsage == K3Icon::LastGroup )
+    if ( mUsage == KIconLoader::Panel || mUsage == KIconLoader::LastGroup )
     {
         mpSizeBox->setEnabled(false);
         mpDPCheck->setEnabled(false);
-	mpAnimatedCheck->setEnabled( mUsage == K3Icon::Panel );
+	mpAnimatedCheck->setEnabled( mUsage == KIconLoader::Panel );
     }
     else
     {
         mpSizeBox->setEnabled(true);
         mpDPCheck->setEnabled(true);
-	mpAnimatedCheck->setEnabled( mUsage == K3Icon::Desktop );
+	mpAnimatedCheck->setEnabled( mUsage == KIconLoader::Desktop );
     }
 
     apply();
@@ -437,9 +437,9 @@ void KIconConfig::slotUsage(int index)
 
 void KIconConfig::EffectSetup(int state)
 {
-    int viewedGroup = (mUsage == K3Icon::LastGroup) ? K3Icon::FirstGroup : mUsage;
+    int viewedGroup = (mUsage == KIconLoader::LastGroup) ? KIconLoader::FirstGroup : mUsage;
 
-    QPixmap pm = mpLoader->loadIcon(mExample, K3Icon::NoGroup, mSizes[viewedGroup]);
+    QPixmap pm = mpLoader->loadIcon(mExample, KIconLoader::NoGroup, mSizes[viewedGroup]);
     QImage img = pm.toImage();
     if (mbDP[viewedGroup])
     {
@@ -459,8 +459,8 @@ void KIconConfig::EffectSetup(int state)
 
     if (dlg.exec() == QDialog::Accepted)
     {
-        if (mUsage == K3Icon::LastGroup) {
-            for (int i=0; i<K3Icon::LastGroup; i++)
+        if (mUsage == KIconLoader::LastGroup) {
+            for (int i=0; i<KIconLoader::LastGroup; i++)
                 mEffects[i][state] = dlg.effect();
         } else {
             mEffects[mUsage][state] = dlg.effect();
@@ -471,8 +471,8 @@ void KIconConfig::EffectSetup(int state)
 
         emit changed(true);
 
-        if (mUsage == K3Icon::LastGroup) {
-            for (int i=0; i<K3Icon::LastGroup; i++)
+        if (mUsage == KIconLoader::LastGroup) {
+            for (int i=0; i<KIconLoader::LastGroup; i++)
                 mbChanged[i] = true;
         } else {
             mbChanged[mUsage] = true;
@@ -483,7 +483,7 @@ void KIconConfig::EffectSetup(int state)
 
 void KIconConfig::slotSize(int index)
 {
-    Q_ASSERT(mUsage < K3Icon::LastGroup);
+    Q_ASSERT(mUsage < KIconLoader::LastGroup);
     mSizes[mUsage] = mAvSizes[mUsage][index];
     preview();
     emit changed(true);
@@ -492,7 +492,7 @@ void KIconConfig::slotSize(int index)
 
 void KIconConfig::slotDPCheck(bool check)
 {
-    Q_ASSERT(mUsage < K3Icon::LastGroup);
+    Q_ASSERT(mUsage < KIconLoader::LastGroup);
     if (mbDP[mUsage] != check)
     {
         mbDP[mUsage] = check;
@@ -505,7 +505,7 @@ void KIconConfig::slotDPCheck(bool check)
 
 void KIconConfig::slotAnimatedCheck(bool check)
 {
-    Q_ASSERT(mUsage < K3Icon::LastGroup);
+    Q_ASSERT(mUsage < KIconLoader::LastGroup);
     if (mbAnimated[mUsage] != check)
     {
         mbAnimated[mUsage] = check;

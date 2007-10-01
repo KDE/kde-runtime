@@ -83,7 +83,7 @@ void ModuleTitle::showTitleFor( ConfigModule *config )
 
   this->setWhatsThis( config->comment() );
   KIconLoader *loader = KIconLoader::global();
-  QPixmap icon = loader->loadIcon( config->icon(), K3Icon::NoGroup, 22 );
+  QPixmap icon = loader->loadIcon( config->icon(), KIconLoader::NoGroup, 22 );
   m_icon->setPixmap( icon );
   m_name->setText( config->moduleName() );
 
