@@ -809,10 +809,8 @@ bool XineStream::event(QEvent *ev)
         if (m_stream) {
             if (m_useGaplessPlayback) {
                 xine_set_param(m_stream, XINE_PARAM_GAPLESS_SWITCH, 1);
-                emit needNextUrl();
-            } else {
-                playbackFinished();
             }
+            emit needNextUrl();
         }
         return true;
     case Event::UpdateTime:

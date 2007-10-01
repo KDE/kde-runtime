@@ -383,16 +383,22 @@ void MediaObject::setTransitionTime(qint32 newTransitionTime)
 
 void MediaObject::setNextSource(const MediaSource &source)
 {
+    if (m_transitionTime < 0) {
+        kError(610) << "crossfades are not supported with the xine backend";
+    } else if (m_transitionTime > 0) {
+        if (source.type() == MediaSource::Invalid) {
+            QMetaObject::invokeMethod(m_stream, "playbackFinished", Qt::QueuedConnection);
+        } else {
+            setSourceInternal(source, HardSwitch);
+            play();
+        }
+        return;
+    }
     if (source.type() == MediaSource::Invalid) {
         // the frontend is telling us that the play-queue is empty, so stop waiting for a new MRL
         // for gapless playback
         m_stream->gaplessSwitchTo(QByteArray());
         return;
-    }
-    if (m_transitionTime < 0) {
-        kError(610) << "crossfades are not supported with the xine backend";
-    } else if (m_transitionTime > 0) {
-        kError(610) << "defined gaps are not supported with the xine backend";
     }
     setSourceInternal(source, GaplessSwitch);
 }

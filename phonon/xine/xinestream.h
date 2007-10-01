@@ -158,6 +158,9 @@ class XineStream : public QObject, public SourceNodeXT
         void emitAboutToFinish();
         void emitTick();
 
+    private slots:
+        void playbackFinished();
+
     private:
         void getStreamInfo();
         bool xineOpen(Phonon::State);
@@ -166,7 +169,6 @@ class XineStream : public QObject, public SourceNodeXT
         void changeState(Phonon::State newstate);
         void emitAboutToFinishIn(int timeToAboutToFinishSignal);
         bool updateTime();
-        void playbackFinished();
         void error(Phonon::ErrorType, const QString &);
         void internalPause();
         void internalPlay();
