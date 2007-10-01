@@ -140,16 +140,15 @@ static KFileItemList fileItemList( const KCmdLineArgs *args )
 {
     KFileItemList items;
     for ( int i = 0; i < args->count(); i++ )
-        items.append( new KFileItem( KFileItem::Unknown,
-                                      KFileItem::Unknown,
-                                      args->url( i ) ));
+        items.append( KFileItem( KFileItem::Unknown,
+                                 KFileItem::Unknown,
+                                 args->url( i ) ));
     return items;
 }
 
 static void showPropertiesDialog( const KCmdLineArgs *args ) {
     const KFileItemList items = fileItemList( args );
     KPropertiesDialog::showDialog( items, 0, true );
-    qDeleteAll( items );
 }
 /*
 static void printMimeTypes( const KCmdLineArgs *args )
