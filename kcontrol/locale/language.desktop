@@ -75,6 +75,7 @@ Name[vi]=Quốc gia và Ngôn ngữ
 Name[wa]=Payis & lingaedje
 Name[x-test]=xxCountry/Region & Languagexx
 Name[xh]=Ilizwe/Ummandla & Ulwimi
+Name[zh_CN]=国家/地区和语言
 Name[zh_TW]=國家/地區與語言
 
 Comment=Language, numeric, and time settings for your particular region
@@ -137,6 +138,7 @@ Comment[vi]=Ngôn ngữ, số và các thiết lập về thời gian cho vùng 
 Comment[wa]=Apontiaedje do lingaedje et des preferinces (prezintaedje des limeros, des dates, evnd.) po vosse payis
 Comment[x-test]=xxLanguage, numeric, and time settings for your particular regionxx
 Comment[xh]=Ulwimi, amanani, kunye nezicwangciso zexesha zommandla wakho
+Comment[zh_CN]=您所在地区的语言、数字和时间设置
 Comment[zh_TW]=您所在地區的語言、數字和時間設定
 
 Keywords=language,translation,number format,currency,time,date,formats,locale,Country,charsets,character sets,Decimal symbol,Thousands separator,symbol,separator,sign,positive,negative,fractional digits,week,week start
@@ -194,6 +196,7 @@ Keywords[vi]=ngôn ngữ,dịch,định dạng số,tiền tệ,thời gian,ngà
 Keywords[wa]=lingaedje,ratournaedje,cogne des limeros,manoye,eure,date,cogne pol date et l' eure,fôrmats,locåle,payis,ecôdaedjes,djeus d' ecôdaedje,pont decimå,separateu po les meye,simbole,separateu,sene,pôzitif,negatif,fraccions,samwinne,comince del samwinne
 Keywords[x-test]=xxlanguage,translation,number format,currency,time,date,formats,locale,Country,charsets,character sets,Decimal symbol,Thousands separator,symbol,separator,sign,positive,negative,fractional digits,week,week startxx
 Keywords[xh]=ulwimi,uguqulelo kolunye ulwimi,ifomati yenani,okwangoku,ixesha,umhla,iifomati,locale,Ilizwe,charsets,amaqela abasebenzi,uphawu lwenani leshumi,Umahluli wamawaka,uphawu, umahluli,tyikitya,echaza uvumo,echaza ukhanyelo,amasuntswana angamaqhezu,iveki,isiqalo seveki
+Keywords[zh_CN]=language,translation,number format,currency,time,date,formats,locale,Country,charsets,character sets,Decimal symbol,Thousands separator,symbol,separator,sign,positive,negative,fractional digits,week,week start,语言,翻译,数字格式,货币,时间,日期,格式,区域设置,国家,字符集,千位分隔符,符号,分隔符,正,负,小数,星期
 Keywords[zh_TW]=language,translation,number format,currency,time,date,formats,locale,Country,charsets,character sets,Decimal symbol,Thousands separator,symbol,separator,sign,positive,negative,fractional digits,week,week start,語言,翻譯,數字格式,貨幣格式,時間格式,日期格式,格式,地區,國家,字元,字元集,小數點符號,千分位分隔,符號,分隔,符號,正數,負數,小數點位數,一週,由週日開始
 
 Categories=Qt;KDE;X-KDE-settings-accessibility;

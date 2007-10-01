@@ -32,6 +32,7 @@ Comment[th]=เปลี่ยนแฟ้มภาพทั่วไปเป�
 Comment[vi]=Bộ lọc ảnh-sang-PS giống loài
 Comment[wa]=Passete djenerike imådjes viè PostScript
 Comment[x-test]=xxGeneric Image to PS Filterxx
+Comment[zh_CN]=通用图片转 PS 过滤器
 Comment[zh_TW]=一般影像轉 PS 過濾器
 MimeTypeIn=image/jpeg,image/png,image/x-png,image/bmp,image/bmp,image/gif,image/tiff
 MimeTypeOut=application/postscript

@@ -64,6 +64,7 @@ Name[vi]=Công cụ Quản lý In ấn
 Name[wa]=Usteye po manaedjî l' imprimaedje
 Name[x-test]=xxPrint Management Toolxx
 Name[xh]=Isixhobo Sophatho soshicilelo
+Name[zh_CN]=打印管理工具
 Name[zh_TW]=列印管理工具
 MimeType=print/manager
 ServiceTypes=Browser/View,KParts/ReadOnlyPart

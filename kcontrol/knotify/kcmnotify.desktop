@@ -74,6 +74,7 @@ Name[vi]=Thông báo Hệ thống
 Name[wa]=Notifiaedjes do sistinme
 Name[x-test]=xxSystem Notificationsxx
 Name[xh]=Izaziso Zendlela esetyenziswayo
+Name[zh_CN]=系统通知
 Name[zh_TW]=系統通知
 
 Comment=System Notification Configuration
@@ -138,6 +139,7 @@ Comment[vi]=Cấu hình Thông báo Hệ thống
 Comment[wa]=Apontiaedje po les notifiaedjes do sistinme
 Comment[x-test]=xxSystem Notification Configurationxx
 Comment[xh]=Uqwalaselo Lwezaziso Zendlela yokusebenza
+Comment[zh_CN]=系统通知配置
 Comment[zh_TW]=系統通知組態
 
 Keywords=System sounds,Audio,Sound,Notify,Alerts,Notification
@@ -197,6 +199,7 @@ Keywords[vi]=Âm thanh hệ thống,Âm,Âm thanh,Thông báo,Cảnh báo,Thông
 Keywords[wa]=sons do sistinme,odio,son,notifyî,abranles,notifiaedje
 Keywords[x-test]=xxSystem sounds,Audio,Sound,Notify,Alerts,Notificationxx
 Keywords[xh]=Izandi zendlela,Evakalayo,Isandi,Yazisa,Izilumkiso zengozi,Izaziso
+Keywords[zh_CN]=System sounds,Audio,Sound,Notify,Alerts,Notification,系统音效,音频,音效,通知,警报
 Keywords[zh_TW]=System sounds,Audio,Sound,Notify,Alerts,Notification,系統音效,音效,通知,警報
 
 Categories=Qt;KDE;X-KDE-settings-sound;

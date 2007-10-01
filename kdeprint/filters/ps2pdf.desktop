@@ -32,6 +32,7 @@ Comment[th]=โปรแกรมแปลง PostScript เป็น PDF
 Comment[vi]=Bộ chuyển đổi tập tin kiểu PostScript (.PS) sang PDF (.pdf)
 Comment[wa]=Covierseu di PostScript viè PDF
 Comment[x-test]=xxPostScript to PDF Converterxx
+Comment[zh_CN]=PostScript 到 PDF 转换器
 Comment[zh_TW]=PostScript 轉 PDF 轉換器
 MimeTypeIn=application/postscript
 MimeTypeOut=application/pdf

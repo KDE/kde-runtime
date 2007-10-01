@@ -31,6 +31,7 @@ Comment[th]=ตัวกรองข้อความ Enscript
 Comment[vi]=Bộ lọc văn bản enscript
 Comment[wa]=Passete po-z imprimer do peur tecse avou enscript
 Comment[x-test]=xxEnscript Text Filterxx
+Comment[zh_CN]=Enscript 文本过滤器
 Comment[zh_TW]=Enscript 文字過濾器
 MimeTypeIn=text/html,text/plain,text/sgml,text/x-c++hdr,text/x-c++src,text/x-chdr,text/x-csrc,text/x-java,text/x-makefile,text/x-pascal,text/x-python,text/x-tcl,text/x-tex,application/xml,text/x-fortran,application/x-perl,appication/x-perl-module,text/x-python,application/docbook+xml,text/x-log,text/x-patch,application/x-ruby
 MimeTypeOut=application/postscript

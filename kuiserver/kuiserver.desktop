@@ -21,6 +21,7 @@ Comment[nb]=KDEs -tjener for UI med fremdriftsinformasjon
 Comment[nds]=De KDE-Server för Vörankamen-Infos för Böversieden
 Comment[ne]=केडीईको प्रगति सूचना यूआई सर्भर
 Comment[nl]=KDE's UI-server voor voortgangsinformatie
+Comment[nn]=KDEs framgangsvisartenar
 Comment[pt]=Servidor da Interface de Progresso do KDE
 Comment[pt_BR]=Servidor da Interface de Informação de Progresso do KDE
 Comment[sv]=KDE:s gränssnittsserver för förloppsinformation
@@ -28,6 +29,7 @@ Comment[th]=เซิร์ฟเวอร์ส่วนติดต่อผ�
 Comment[vi]=Trình phục vụ giao diện người dùng thông tin tiến hành của KDE
 Comment[wa]=Sierveu grafike KDE d' infôrmåcions so l' avançmint.
 Comment[x-test]=xxKDE's Progress Info UI serverxx
+Comment[zh_CN]=KDE 的进程信息用户界面服务器
 Comment[zh_TW]=KDE 的進度資訊介面伺服器
 ServiceTypes=
 # It is a server

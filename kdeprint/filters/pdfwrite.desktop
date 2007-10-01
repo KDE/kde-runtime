@@ -32,6 +32,7 @@ Comment[th]=โปรแกรมเขียน PDF (จำเป็นต้�
 Comment[vi]=Trình ghi PDF (cần thiết Ghostscript)
 Comment[wa]=Fijheu di fitchîs PDF (a mezåjhe di Ghostscript)
 Comment[x-test]=xxPDF Writer (needs Ghostscript)xx
+Comment[zh_CN]=PDF 生成器(需要 Ghostscript)
 Comment[zh_TW]=PDF 產生器（需要 Ghostscript）
 MimeTypeIn=application/postscript
 MimeTypeOut=application/pdf

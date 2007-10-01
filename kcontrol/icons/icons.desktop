@@ -74,6 +74,7 @@ Name[vi]=Biểu tượng
 Name[wa]=Imådjetes
 Name[x-test]=xxIconsxx
 Name[xh]=Imphawu zemmifanekiso
+Name[zh_CN]=图标
 Name[zh_TW]=圖示
 
 Comment=Customize KDE Icons
@@ -140,6 +141,7 @@ Comment[vi]=Tuỳ chỉnh các biểu tượng của KDE
 Comment[wa]=Mete les imådjetes KDE a vosse môde
 Comment[x-test]=xxCustomize KDE Iconsxx
 Comment[xh]=Yenza Imphawu zomfanekiso ze KDE Ngokwemfuneko
+Comment[zh_CN]=自定义 KDE 图标
 Comment[zh_TW]=自訂 KDE 圖示
 
 Keywords=icons,effects,size,hicolor,locolor
@@ -200,6 +202,7 @@ Keywords[vi]=biểu tượng,hiệu ứng,cỡ,màu tươi,màu thẫm
 Keywords[wa]=imådjetes,efets,grandeu,hôtès coleurs,bassès coleurs,coleurs
 Keywords[x-test]=xxicons,effects,size,hicolor,locolorxx
 Keywords[xh]=imphawu zomfanekiso,iziphumo,ubungakanani,hicolor,locolor
+Keywords[zh_CN]=icons,effects,size,hicolor,locolor,图标,效果,大小,高色彩,低色彩
 Keywords[zh_TW]=icons,effects,size,hicolor,locolor,圖示,效果,大小,高彩,低彩
 
 Categories=Qt;KDE;X-KDE-settings-looknfeel;

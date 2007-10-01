@@ -82,6 +82,7 @@ GenericName[uz]=Босиб чиқариш вазифалари
 GenericName[vi]=Tác vụ In ấn
 GenericName[wa]=Bouyes d' imprimaedje
 GenericName[x-test]=xxPrint Jobsxx
+GenericName[zh_CN]=打印任务
 GenericName[zh_TW]=列印工作
 
 X-DBUS-StartupType=Unique
