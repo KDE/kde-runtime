@@ -27,6 +27,7 @@ Comment[th]=ปรับขนาดเนื้อหาที่จะพิ�
 Comment[vi]=Co dãn nội dung in ra để vừa khít kích cỡ giấy khác
 Comment[wa]=Mete al schåle çou ki va esse imprimer po k' ça rimplixhe ene pådje d' ene ôte grandeu di papî
 Comment[x-test]=xxScale Print Content to Fit on Another Paper Sizexx
+Comment[zh_CN]=调整打印内容以适应另一个纸张大小
 Comment[zh_TW]=將列印內容縮放到符合另一個紙張的大小
 MimeTypeIn=application/postscript
 MimeTypeOut=application/postscript

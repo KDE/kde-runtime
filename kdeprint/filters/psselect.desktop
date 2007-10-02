@@ -27,6 +27,7 @@ Comment[th]=ตัวกรองเลือก/สั่งหน้า
 Comment[vi]=Bộ lọc chọn/sắp xếp trang
 Comment[wa]=Tchoezi les pådjes/Relére les passetes
 Comment[x-test]=xxPage Selection/Ordering Filterxx
+Comment[zh_CN]=页面选择/顺序过滤器
 Comment[zh_TW]=頁面選擇/排序過濾器
 MimeTypeIn=application/postscript
 MimeTypeOut=application/postscript

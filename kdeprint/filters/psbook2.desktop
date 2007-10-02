@@ -26,6 +26,7 @@ Comment[sv]=Broschyrutskrift - udda sidor (steg 2)
 Comment[th]=การพิมพ์แผ่นพับ - หน้าคี่ (ขั้นที่ 2)
 Comment[vi]=In ra cuốn sách nhỏ — các trang lẻ (bước 2)
 Comment[x-test]=xxPamphlet Printing - Odd Pages (step 2)xx
+Comment[zh_CN]=小册子打印 - 奇数页(第二步)
 Comment[zh_TW]=列印小冊─奇數頁（第二步）
 MimeTypeIn=application/postscript
 MimeTypeOut=application/postscript

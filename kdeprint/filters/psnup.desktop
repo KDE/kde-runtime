@@ -26,6 +26,7 @@ Comment[th]=ตัวกรองพิมพ์หลายหน้าบน�
 Comment[vi]=Bộ lọc nhiều trang trên mỗi tờ giấy
 Comment[wa]=Passete pus d' ene pådje par foye
 Comment[x-test]=xxMultiple Pages per Sheet Filterxx
+Comment[zh_CN]=单张多页过滤器
 Comment[zh_TW]=單張多頁過濾器
 MimeTypeIn=application/postscript
 MimeTypeOut=application/postscript

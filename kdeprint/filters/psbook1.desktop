@@ -26,6 +26,7 @@ Comment[sv]=Broschyrutskrift - jämna sidor (steg 1)
 Comment[th]=การพิมพ์แผ่นพับ - หน้าคู่ (ขั้นที่ 1)
 Comment[vi]=In ra cuốn sách nhỏ — các trang chẵn (bước 1)
 Comment[x-test]=xxPamphlet Printing - Even Pages (step 1)xx
+Comment[zh_CN]=小册子打印 - 偶数页(第一步)
 Comment[zh_TW]=列印小冊─偶數頁（第一步）
 MimeTypeIn=application/postscript
 MimeTypeOut=application/postscript
