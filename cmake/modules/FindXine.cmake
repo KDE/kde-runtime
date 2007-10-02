@@ -21,6 +21,7 @@ endif (XINE_INCLUDE_DIR AND XINE_LIBRARY)
   IF (NOT WIN32)
 	INCLUDE(UsePkgConfig)
 	PKGCONFIG(libxine _LibXineIncDir _LibXineLinkDir _LibXineLinkFlags _LibXineCflags)
+	EXEC_PROGRAM(${PKGCONFIG_EXECUTABLE} ARGS "--variable=prefix libxine" OUTPUT_VARIABLE _LibXinePrefix)
   ENDIF (NOT WIN32)
 FIND_PATH(XINE_INCLUDE_DIR NAMES xine.h 
     PATHS 
@@ -34,6 +35,7 @@ FIND_LIBRARY(XINE_LIBRARY NAMES xine
 )
 
 FIND_PROGRAM(XINECONFIG_EXECUTABLE NAMES xine-config PATHS
+   ${_LibXinePrefix}/bin
    /usr/bin
    /usr/local/bin
 )
