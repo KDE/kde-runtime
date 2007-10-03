@@ -1,6 +1,6 @@
 /**
   * This file is part of the KDE project
-  * Copyright (C) 2007, 2006 Rafael Fernández López <ereslibre@gmail.com>
+  * Copyright (C) 2007, 2006 Rafael Fernández López <ereslibre@kde.org>
   * Copyright (C) 2001 George Staikos <staikos@kde.org>
   * Copyright (C) 2000 Matej Koss <koss@miesto.sk>
   *                    David Faure <faure@kde.org>
@@ -420,7 +420,7 @@ extern "C" KDE_EXPORT int kdemain(int argc, char **argv)
                          KAboutData::License_GPL, ki18n("(C) 2000-2005, David Faure & Matt Koss"));
     aboutdata.addAuthor(ki18n("David Faure"),ki18n("Maintainer"),"faure@kde.org");
     aboutdata.addAuthor(ki18n("Matej Koss"),ki18n("Developer"),"koss@miesto.sk");
-    aboutdata.addAuthor(ki18n("Rafael Fernández López"),ki18n("Developer"),"ereslibre@gmail.com");
+    aboutdata.addAuthor(ki18n("Rafael Fernández López"),ki18n("Developer"),"ereslibre@kde.org");
 
     KCmdLineArgs::init( argc, argv, &aboutdata );
     // KCmdLineArgs::addCmdLineOptions( options );
