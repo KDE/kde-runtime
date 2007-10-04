@@ -124,11 +124,16 @@ class XineEngine
         QList<AudioOutputInfo> m_audioOutputInfos;
         QList<QObject *> m_cleanupObjects;
         KSharedConfigPtr m_config;
-        bool m_useOss : 1;
+        int m_deinterlaceMethod : 8;
+        enum UseOss {
+            False = 0,
+            True = 1,
+            Unknown = 2
+        };
+        UseOss m_useOss : 2;
         bool m_deinterlaceDVD : 1;
         bool m_deinterlaceVCD : 1;
         bool m_deinterlaceFile : 1;
-        int m_deinterlaceMethod : 8;
         const XineEnginePrivate *const d;
         xine_audio_port_t *m_nullPort;
         xine_video_port_t *m_nullVideoPort;

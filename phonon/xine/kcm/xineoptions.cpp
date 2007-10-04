@@ -22,6 +22,8 @@
 #include <kconfiggroup.h>
 
 #include <xine.h>
+#include <QtDBus/QDBusConnection>
+#include <QtDBus/QDBusInterface>
 
 K_PLUGIN_FACTORY(XineOptionsFactory, registerPlugin<XineOptions>(); )
 K_EXPORT_PLUGIN(XineOptionsFactory("kcm_phononxine"))
@@ -34,6 +36,7 @@ XineOptions::XineOptions(QWidget *parent, const QVariantList &args)
     m_config = KSharedConfig::openConfig("xinebackendrc");
 
     connect(m_ossCheckbox, SIGNAL(toggled(bool)), SLOT(changed()));
+    connect(m_ossCheckbox, SIGNAL(toggled(bool)), SLOT(ossCheckboxToggled(bool)));
     connect(deinterlaceMediaList, SIGNAL(clicked(const QModelIndex &)), SLOT(changed()));
     connect(deinterlaceMethodBox, SIGNAL(currentIndexChanged(int)), SLOT(changed()));
 
@@ -88,6 +91,15 @@ XineOptions::XineOptions(QWidget *parent, const QVariantList &args)
         xine_exit(xine);
     }
     load();
+}
+
+void XineOptions::ossCheckboxToggled(bool b)
+{
+    const QString x = QDBusConnection::sessionBus().baseService();
+    QDBusInterface iface(x, "/internal/PhononXine", "org.kde.phonon.XineEnginePrivate");
+    if (iface.isValid()) {
+        iface.call(QDBus::NoBlock, "ossSettingChanged", b);
+    }
 }
 
 void XineOptions::load()

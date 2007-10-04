@@ -33,6 +33,7 @@ namespace Xine
 class XineEnginePrivate : public QObject
 {
     Q_OBJECT
+    Q_CLASSINFO("D-Bus Interface", "org.kde.phonon.XineEnginePrivate")
     public:
         XineEnginePrivate();
 
@@ -41,6 +42,8 @@ class XineEnginePrivate : public QObject
     public slots:
         void devicePlugged(const AudioDevice &);
         void deviceUnplugged(const AudioDevice &);
+
+        Q_SCRIPTABLE void ossSettingChanged(bool);
 
     signals:
         void objectDescriptionChanged(ObjectDescriptionType);
