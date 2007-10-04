@@ -38,7 +38,8 @@ NotifyByPopup::NotifyByPopup(QObject *parent) : KNotifyPlugin(parent)
 
 NotifyByPopup::~NotifyByPopup()
 {
-	qDeleteAll(m_popups);
+	foreach(KPassivePopup *p,m_popups)
+		p->deleteLater();
 }
 
 void NotifyByPopup::notify( int id, KNotifyConfig * config )
