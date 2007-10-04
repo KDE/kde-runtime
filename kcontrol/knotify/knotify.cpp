@@ -26,6 +26,7 @@
 #include <QVBoxLayout>
 #include <QFrame>
 #include <QHBoxLayout>
+#include <QDBusInterface>
 
 
 #include <kapplication.h>
@@ -197,7 +198,7 @@ void KCMKNotify::save()
 ///////////////////////////////////////////////////////////////////
 
 PlayerSettingsDialog::PlayerSettingsDialog( QWidget *parent )
-	: QWidget(parent)
+	: QWidget(parent), m_change(false)
 {
 
     m_ui = new Ui::PlayerSettingsUI();
@@ -227,6 +228,7 @@ void PlayerSettingsDialog::load()
     {
         m_ui->cbArts->setChecked( config.readEntry( "No sound", false ) );
     }
+    m_change=false;
 }
 
 void PlayerSettingsDialog::save()
@@ -241,11 +243,16 @@ void PlayerSettingsDialog::save()
     config.writeEntry( "No sound",  m_ui->cbNone->isChecked() );
 
     config.sync();
+    
+    QDBusInterface itr("org.kde.knotify", "/Notify", "org.kde.KNotify", QDBusConnection::sessionBus(), this);
+    itr.call("reconfigure");
+    m_change=false;
 }
 
 
 void PlayerSettingsDialog::slotChanged()
 {
+    m_change=true;
     emit changed(true);
 }
 

@@ -88,6 +88,7 @@ protected Q_SLOTS:
     void changed(bool);
 private:
 	Ui::PlayerSettingsUI* m_ui;
+    bool m_change;
 };
 
 
