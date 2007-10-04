@@ -35,6 +35,7 @@ XineOptions::XineOptions(QWidget *parent, const QVariantList &args)
 
     m_config = KSharedConfig::openConfig("xinebackendrc");
 
+    // TODO m_ossCheckbox is useless for systems without ALSA - should be disabled
     connect(m_ossCheckbox, SIGNAL(toggled(bool)), SLOT(changed()));
     connect(m_ossCheckbox, SIGNAL(toggled(bool)), SLOT(ossCheckboxToggled(bool)));
     connect(deinterlaceMediaList, SIGNAL(clicked(const QModelIndex &)), SLOT(changed()));
