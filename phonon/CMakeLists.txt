@@ -6,11 +6,13 @@
 
 # If you want to build KDE without any multimedia support
 # define the cmake variable KDE4_DISABLE_MULTIMEDIA, i.e,
-# % cmake -DKDE4_DISABLE_MULTIMEDIA=TRUE
+# % cmake -DKDE4_DISABLE_MULTIMEDIA=ON
 #
 
+OPTION(KDE4_DISABLE_MULTIMEDIA "Disable multimedia support (default: off)" OFF)
+
 if(KDE4_DISABLE_MULTIMEDIA)
-   message(STATUS "NOTICE: Multimedia support DISABLED (KDE4_DISABLE_MULTIMEDIA != 0)")
+   message(STATUS "NOTICE: Multimedia support DISABLED (KDE4_DISABLE_MULTIMEDIA == ON)")
 else(KDE4_DISABLE_MULTIMEDIA)
    macro_optional_find_package(Xine)
 
