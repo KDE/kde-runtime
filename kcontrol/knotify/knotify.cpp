@@ -233,6 +233,9 @@ void PlayerSettingsDialog::load()
 
 void PlayerSettingsDialog::save()
 {
+    if(!m_change)
+        return;
+    
     // see kdebase/runtime/knotify/notifybysound.h
     KConfig _config("knotifyrc", KConfig::NoGlobals);
     KConfigGroup config(&_config, "Sounds" );
