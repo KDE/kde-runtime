@@ -23,6 +23,7 @@
 #include "sourcenode.h"
 
 #include <QtCore/QObject>
+#include <QtCore/QReadWriteLock>
 #include <QtCore/QMutex>
 #include <QtCore/QMultiMap>
 #include <QtCore/QWaitCondition>
@@ -93,8 +94,8 @@ class XineStream : public QObject, public SourceNodeXT
         }*/
 
         void setError(Phonon::ErrorType, const QString &);
-        QString errorString() const { return m_errorString; }
-        Phonon::ErrorType errorType() const { return m_errorType; }
+        QString errorString() const;
+        Phonon::ErrorType errorType() const;
 
         int availableChapters() const { return m_availableChapters; }
         int availableAngles()   const { return m_availableAngles;   }
@@ -181,6 +182,7 @@ class XineStream : public QObject, public SourceNodeXT
         Phonon::State m_state;
 
         QMutex m_portMutex;
+        mutable QReadWriteLock m_errorLock;
         mutable QMutex m_mutex;
         mutable QMutex m_streamInfoMutex;
         mutable QMutex m_updateTimeMutex;

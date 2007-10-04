@@ -570,8 +570,10 @@ void XineStream::playbackFinished()
 // xine thread
 inline void XineStream::error(Phonon::ErrorType type, const QString &string)
 {
+    m_errorLock.lockForWrite();
     m_errorType = type;
     m_errorString = string;
+    m_errorLock.unlock();
     changeState(Phonon::ErrorState);
 }
 
@@ -1211,6 +1213,26 @@ void XineStream::closeBlocking()
 void XineStream::setError(Phonon::ErrorType type, const QString &reason)
 {
     QCoreApplication::postEvent(this, new ErrorEvent(type, reason));
+}
+
+struct ReadLock
+{
+    ReadLock(QReadWriteLock &l) : lock(l) { lock.lockForRead(); }
+    ~ReadLock() { lock.unlock(); }
+    QReadWriteLock &lock;
+};
+
+// called from main thread
+QString XineStream::errorString() const
+{
+    ReadLock lock(m_errorLock);
+    return m_errorString;
+}
+// called from main thread
+Phonon::ErrorType XineStream::errorType() const
+{
+    ReadLock lock(m_errorLock);
+    return m_errorType;
 }
 
 xine_post_out_t *XineStream::audioOutputPort() const
