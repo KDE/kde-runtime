@@ -206,7 +206,7 @@ void SolidUiServer::onMediumChange(const QString &name, bool allowNotification)
 
     KUrl url("system:/media/"+name);
 
-    KIO::SimpleJob *job = KIO::stat(url, false);
+    KIO::SimpleJob *job = KIO::stat(url, KIO::HideProgressInfo);
     job->setUiDelegate(0);
 
     m_allowNotificationMap[job] = allowNotification;

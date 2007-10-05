@@ -442,7 +442,7 @@ bool KIO_Print::getDBFile( const KUrl& src )
 	m_httpBuffer.open( QIODevice::WriteOnly|QIODevice::Truncate ); // be sure to erase the existing data
 
 	/* start the transfer job */
-	KIO::TransferJob *job = KIO::get( src, false, false );
+	KIO::TransferJob *job = KIO::get( src, KIO::NoReload, KIO::HideProgressInfo );
 	connect( job, SIGNAL( result( KJob* ) ), SLOT( slotResult( KJob* ) ) );
 	connect( job, SIGNAL( data( KIO::Job*, const QByteArray& ) ), SLOT( slotData( KIO::Job*, const QByteArray& ) ) );
 	connect( job, SIGNAL( totalSize( KJob*, qulonglong ) ), SLOT( slotTotalSize( KJob*, qulonglong ) ) );
