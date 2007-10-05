@@ -80,7 +80,7 @@ void CfgTerminalEmulator::load(KConfig *) {
 void CfgTerminalEmulator::save(KConfig *)
 {
         KConfigGroup config(KSharedConfig::openConfig("kdeglobals"), "General");
-	config.writePathEntry("TerminalApplication", terminalCB->isChecked()?"konsole":terminalLE->text(), KConfigBase::Normal|KConfigBase::Global);
+	config.writePathEntry("TerminalApplication", terminalCB->isChecked()?"konsole":terminalLE->text(), KConfig::Normal|KConfig::Global);
 	config.sync();
 
 	KGlobalSettings::self()->emitChange(KGlobalSettings::SettingsChanged);

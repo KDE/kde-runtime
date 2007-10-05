@@ -118,7 +118,7 @@ K_EXPORT_PLUGIN( NotifyFactory("kcmnotify") )
 
 KCMKNotify::~KCMKNotify()
 {
-    KConfig _config("knotifyrc", KConfig::NoGlobals);
+    KConfig _config("knotifyrc", KConfig::CascadeConfig);
     KConfigGroup config(&_config, "Misc" );
     config.writeEntry( "LastConfiguredApp", m_appCombo->currentText() );
     config.sync();
@@ -217,7 +217,7 @@ PlayerSettingsDialog::PlayerSettingsDialog( QWidget *parent )
 
 void PlayerSettingsDialog::load()
 {
-    KConfig _config( "knotifyrc", KConfig::NoGlobals  );
+    KConfig _config( "knotifyrc", KConfig::CascadeConfig  );
     KConfigGroup config(&_config, "Sounds" );
     bool useExternal = config.readEntry( "Use external player", false );
     m_ui->cbExternal->setChecked( useExternal );
@@ -237,7 +237,7 @@ void PlayerSettingsDialog::save()
         return;
     
     // see kdebase/runtime/knotify/notifybysound.h
-    KConfig _config("knotifyrc", KConfig::NoGlobals);
+    KConfig _config("knotifyrc", KConfig::CascadeConfig);
     KConfigGroup config(&_config, "Sounds" );
 
     config.writePathEntry( "External player", m_ui->reqExternal->url().path() );

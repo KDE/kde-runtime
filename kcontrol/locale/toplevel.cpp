@@ -68,7 +68,7 @@ KLocaleApplication::KLocaleApplication(QWidget *parent,
         KLocalizedString(), 0, "bieker@kde.org");
   setAboutData( aboutData );
 
-  m_nullConfig = KSharedConfig::openConfig(QString(), KConfig::NoGlobals );
+  m_nullConfig = KSharedConfig::openConfig(QString(), KConfig::CascadeConfig );
   m_globalConfig = KSharedConfig::openConfig(QString(), KConfig::IncludeGlobals );
 
   m_locale = new KControlLocale(QLatin1String("kcmlocale"), m_nullConfig);

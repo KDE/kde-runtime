@@ -31,6 +31,7 @@
 #include <kglobal.h>
 #include <klocale.h>
 #include <kconfig.h>
+#include <kconfiggroup.h>
 #include <kstandarddirs.h>
 
 //static const char desc[] = I18N_NOOP("KDE Tool to build a cache list of all pixmap themes installed");

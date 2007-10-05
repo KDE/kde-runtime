@@ -21,6 +21,7 @@
 #include <QtDBus/qdbusconnection.h>
 #include <kdebug.h>
 #include <kconfig.h>
+#include <kconfiggroup.h>
 
 ModuleIface::ModuleIface(QObject *parent, const char *name)
 	: QObject(parent) {

@@ -27,6 +27,7 @@
 #include <kdebug.h>
 #include <kuniqueapplication.h>
 #include <kconfig.h>
+#include <kconfiggroup.h>
 
 #include <QFile>
 
@@ -115,7 +116,7 @@ int main(int argc, char ** argv)
       dialog->config()->sync();
   }
   else
-    dialog->config()->rollback( true );
+    dialog->config()->clean();
 
   return 0;
 }

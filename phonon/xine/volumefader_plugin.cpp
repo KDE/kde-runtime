@@ -21,6 +21,7 @@
 #include <phonon/volumefadereffect.h>
 #include <klocale.h>
 #include <kdebug.h>
+#include <kglobal.h>
 #include <cmath>
 
 #define __STDC_FORMAT_MACROS

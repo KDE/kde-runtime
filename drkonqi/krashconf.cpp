@@ -28,6 +28,7 @@
 #include "krashconf.h"
 
 #include <kconfig.h>
+#include <kconfiggroup.h>
 #include <kglobal.h>
 #include <kaboutdata.h>
 #include <kcmdlineargs.h>
@@ -103,8 +104,8 @@ void KrashConfig :: readConfig()
   QString debuggername = config.readEntry("Debugger",
                                            QString("gdb"));
 
-  KConfig debuggers("appdata", QString::fromLatin1("debuggers/%1rc").arg(debuggername),
-                    KConfig::NoGlobals );
+  KConfig debuggers(QString::fromLatin1("debuggers/%1rc").arg(debuggername),
+                    KConfig::CascadeConfig, "appdata" );
   const KConfigGroup generalGroup = debuggers.group("General");
 
   m_debugger = generalGroup.readPathEntry("Exec");
@@ -117,8 +118,8 @@ void KrashConfig :: readConfig()
   m_neededInValidBacktraceRegExp = generalGroup.readEntry("NeededInValidBacktraceRegExp");
   m_kcrashRegExp = generalGroup.readEntry("KCrashRegExp");
 
-  KConfig preset("appdata", QString::fromLatin1("presets/%1rc").arg(configname),
-                 KConfig::NoGlobals );
+  KConfig preset(QString::fromLatin1("presets/%1rc").arg(configname),
+                 KConfig::CascadeConfig, "appdata" );
 
   const KConfigGroup errorDescrGroup = preset.group("ErrorDescription");
   if (errorDescrGroup.readEntry("Enable", false), true)

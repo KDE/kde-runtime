@@ -26,8 +26,8 @@
 
 KNotifyConfig::KNotifyConfig( const QString & _appname, const ContextList & _contexts, const QString & _eventid )
 	: appname (_appname),
-	eventsfile(KSharedConfig::openConfig (_appname+'/'+_appname + ".notifyrc" , KConfig::NoGlobals, "data" )),
-	configfile(KSharedConfig::openConfig (_appname+QString::fromAscii( ".notifyrc" ), KConfig::NoGlobals)),
+	eventsfile(KSharedConfig::openConfig (_appname+'/'+_appname + ".notifyrc" , KConfig::CascadeConfig, "data" )),
+	configfile(KSharedConfig::openConfig (_appname+QString::fromAscii( ".notifyrc" ), KConfig::CascadeConfig)),
 	contexts(_contexts) , eventid(_eventid)
 {
 //	kDebug(300) << appname << " , " << eventid;

@@ -184,12 +184,12 @@ void KLocaleConfig::save()
 
   KConfigGroup configGroup = config->group("Locale");
 
-  configGroup.writeEntry("Country", m_locale->country(), KConfigBase::Persistent|KConfigBase::Global);
+  configGroup.writeEntry("Country", m_locale->country(), KConfig::Persistent|KConfig::Global);
   if ( m_locale->languageList().isEmpty() )
-    configGroup.writeEntry("Language", QString::fromLatin1(""), KConfigBase::Persistent|KConfigBase::Global);
+    configGroup.writeEntry("Language", QString::fromLatin1(""), KConfig::Persistent|KConfig::Global);
   else
     configGroup.writeEntry("Language",
-                       m_locale->languageList(), ':', KConfigBase::Persistent|KConfigBase::Global);
+                       m_locale->languageList(), ':', KConfig::Persistent|KConfig::Global);
 
   config->sync();
 }
@@ -271,7 +271,7 @@ QStringList KLocaleConfig::languageList() const
                             QString::fromLatin1("l10n/%1/entry.desktop")
                             .arg(m_locale->country()));
 
-  KConfig _entry( fileName, KConfig::OnlyLocal );
+  KConfig _entry( fileName, KConfig::SimpleConfig );
   KConfigGroup entry(&_entry, "KCM Locale");
 
   return entry.readEntry("Languages", QStringList());

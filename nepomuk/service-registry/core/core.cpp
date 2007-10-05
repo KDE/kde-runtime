@@ -26,7 +26,7 @@
 #include <kstandarddirs.h>
 #include <kglobal.h>
 #include <KDesktopFile>
-
+#include <kconfiggroup.h>
 
 
 namespace Nepomuk {

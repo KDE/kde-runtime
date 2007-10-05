@@ -27,6 +27,7 @@
 
 #include <kglobal.h>
 #include <kconfig.h>
+#include <kconfiggroup.h>
 #include <klocale.h>
 #include <kseparator.h>
 

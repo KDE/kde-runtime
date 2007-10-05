@@ -286,7 +286,7 @@ void CfgBrowser::save(KConfig *)
 	   else
 	      exec = '!' + exec; // Literal command
 	}
-	config.writePathEntry("BrowserApplication", exec, KConfigBase::Normal|KConfigBase::Global);
+	config.writePathEntry("BrowserApplication", exec, KConfig::Normal|KConfig::Global);
 	config.sync();
 
 	KGlobalSettings::self()->emitChange(KGlobalSettings::SettingsChanged);
@@ -322,7 +322,7 @@ ComponentChooser::ComponentChooser(QWidget *parent):
 															KStandardDirs::NoDuplicates, dummy );
 	for (QStringList::Iterator it=services.begin();it!=services.end();++it)
 	{
-		KConfig cfg(*it, KConfig::OnlyLocal);
+		KConfig cfg(*it, KConfig::SimpleConfig);
 		ServiceChooser->addItem(new MyListBoxItem(cfg.group("").readEntry("Name",i18n("Unknown")),(*it)));
 
 	}
@@ -340,7 +340,7 @@ void ComponentChooser::slotServiceSelected(QListWidgetItem* it) {
 	if (somethingChanged) {
 		if (KMessageBox::questionYesNo(this,i18n("<qt>You changed the default component of your choice, do want to save that change now ?</qt>"),QString(),KStandardGuiItem::save(),KStandardGuiItem::discard())==KMessageBox::Yes) save();
 	}
-	KConfig cfg(static_cast<MyListBoxItem*>(it)->File, KConfig::OnlyLocal);
+	KConfig cfg(static_cast<MyListBoxItem*>(it)->File, KConfig::SimpleConfig);
 
 	ComponentDescription->setText(cfg.group("").readEntry("Comment",i18n("No description available")));
 	ComponentDescription->setMinimumSize(ComponentDescription->sizeHint());
@@ -424,7 +424,7 @@ void ComponentChooser::load() {
 		CfgPlugin * plugin = dynamic_cast<CfgPlugin*>( configWidget );
 		if( plugin )
 		{
-			KConfig cfg(latestEditedService, KConfig::OnlyLocal);
+			KConfig cfg(latestEditedService, KConfig::SimpleConfig);
 			plugin->load( &cfg );
 		}
 	}
@@ -436,7 +436,7 @@ void ComponentChooser::save() {
 		CfgPlugin* plugin = dynamic_cast<CfgPlugin*>( configWidget );
 		if( plugin )
 		{
-			KConfig cfg(latestEditedService, KConfig::OnlyLocal);
+			KConfig cfg(latestEditedService, KConfig::SimpleConfig);
 			plugin->save( &cfg );
 		}
 	}

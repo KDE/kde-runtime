@@ -441,7 +441,7 @@ void IconThemesConfig::save()
   if (!selected)
      return;
 
-  KConfigGroup config(KSharedConfig::openConfig("kdeglobals", KConfig::OnlyLocal), "Icons");
+  KConfigGroup config(KSharedConfig::openConfig("kdeglobals", KConfig::SimpleConfig), "Icons");
 
   config.writeEntry("Theme", m_themeNames[selected->text(0)]);
   KIconTheme::reconfigure();

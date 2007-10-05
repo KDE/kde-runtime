@@ -27,6 +27,7 @@
 #include <klocale.h>
 #include <kmacroexpander.h>
 #include <krun.h>
+#include <kdebug.h>
 #include <solid/storageaccess.h>
 #include <solid/block.h>
 

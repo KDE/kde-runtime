@@ -31,7 +31,7 @@ KAbstractDebugDialog::KAbstractDebugDialog( QWidget *parent, const char *name, b
 {
 	setObjectName(name);
 	setModal(modal);
-    pConfig = new KConfig( "kdebugrc", KConfig::NoGlobals );
+    pConfig = new KConfig( "kdebugrc", KConfig::CascadeConfig );
 }
 
 KAbstractDebugDialog::~KAbstractDebugDialog()

@@ -38,7 +38,7 @@
 #include <kstringhandler.h>
 #include <ktemporaryfile.h>
 #include <kdebug.h>
-
+#include <kconfiggroup.h>
 
 extern "C"
 {
