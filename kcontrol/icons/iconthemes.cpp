@@ -44,6 +44,7 @@
 #include <kurlrequesterdialog.h>
 #include <kmessagebox.h>
 #include <kiconloader.h>
+#include <k3icon_p.h>  // this private header is only installed for us!
 #include <kprogressdialog.h>
 #include <kio/job.h>
 #include <kio/deletejob.h>
