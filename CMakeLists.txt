@@ -50,7 +50,6 @@ add_subdirectory(pics)
 add_subdirectory(kstyles)
 
 # Command-line tools (e.g. for shell scripts)
-add_subdirectory(kinstalltheme)
 add_subdirectory(kquitapp)
 add_subdirectory(kioclient)
 add_subdirectory(ktraderclient)

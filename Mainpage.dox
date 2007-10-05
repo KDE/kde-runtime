@@ -18,7 +18,6 @@ The following components are available:
   as a different user (typically with root privileges)
 - KFile, a utility for reading and writing file metadata
 - KHelpCenter, the KDE help center
-- KInstallTheme, a utility for installing KDE themes
 - KIOClient, a command-line tool for network-transparent file
   operations
 - KIOExec, a utility to allow non-network-aware applications to
