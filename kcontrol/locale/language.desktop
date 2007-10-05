@@ -1,7 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Exec=kcmshell language
-Icon=locale
+Icon=preferences-desktop-locale
 Type=Service
 ServiceTypes=KCModule
 DocPath=kcontrol/language/index.html

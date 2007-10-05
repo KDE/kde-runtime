@@ -1,4 +1,11 @@
 [Desktop Entry]
+Encoding=UTF-8
+Exec=kcmshell kcm_kdnssd
+GenericName=
+Icon=preferences-system-network-discovery
+MimeType=
+Name=Service Discovery
+
 Comment=Configure service discovery
 Comment[af]=Stel dienste ontdekker op
 Comment[ar]=اضبط استكشاف الخدمات
@@ -61,12 +68,6 @@ Comment[wa]=Apontyî l' discovraedje di siervices
 Comment[x-test]=xxConfigure service discoveryxx
 Comment[zh_CN]=配置服务探索
 Comment[zh_TW]=設定服務偵測
-Encoding=UTF-8
-Exec=kcmshell kcm_kdnssd
-GenericName=
-Icon=blockdevice
-MimeType=
-Name=Service Discovery
 Name[af]=Dienste ontdekker
 Name[ar]=استكشف الخدمات
 Name[be]=Пошук сервісаў

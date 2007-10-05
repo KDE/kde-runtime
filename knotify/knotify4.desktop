@@ -39,6 +39,6 @@ Comment[wa]=Demon di notifiaedje di KDE
 Comment[x-test]=xxKDE Notification Daemonxx
 Comment[zh_CN]=KDE 通知守护程序
 Comment[zh_TW]=KDE Notification 伺服程式
-Icon=knotify
+Icon=preferences-desktop-notification
 X-DBUS-StartupType=Unique
 X-KDE-StartupNotify=false

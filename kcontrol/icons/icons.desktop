@@ -1,15 +1,15 @@
 [Desktop Entry]
 Encoding=UTF-8
+Exec=kcmshell icons
+Icon=preferences-desktop-icons
 Type=Service
 ServiceTypes=KCModule
 DocPath=kcontrol/icons/index.html
-Icon=icons
-Exec=kcmshell icons
-
-X-KDE-System-Settings-Parent-Category=appearance
 
 X-KDE-Library=kcm_icons
 X-KDE-ParentApp=kcontrol
+
+X-KDE-System-Settings-Parent-Category=appearance
 
 Name=Icons
 Name[af]=Ikoone
