@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Type=Service
 Name=Image Displayer
+Name[be]=Праглядчык відарысаў
 Name[el]=Προβολή εικόνων
 Name[ga]=Amharcán Íomhánna
 Name[it]=Visore di immagini
@@ -16,6 +17,7 @@ Name[nn]=Biletvisar
 Name[pt]=Visualizador de Imagens
 Name[pt_BR]=Visualizador de Imagens
 Name[sv]=Bildvisare
+Name[th]=โปรแกรมแสดงภาพ
 Name[x-test]=xxImage Displayerxx
 Name[zh_CN]=图片查看程序
 Name[zh_TW]=影像顯示

@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Type=Service
 Name=Audio Preview
+Name[be]=Прагляд аўдыё
 Name[el]=Προεπισκόπηση ήχου
 Name[ga]=Réamhamharc Fuaime
 Name[it]=Anteprima audio
@@ -16,6 +17,7 @@ Name[nn]=Lyd-førehandsvising
 Name[pt]=Antevisão do Áudio
 Name[pt_BR]=Previsão de Áudio
 Name[sv]=Förhandsgranska ljud
+Name[th]=ตัวอย่างเสียง
 Name[x-test]=xxAudio Previewxx
 Name[zh_CN]=音频预览
 Name[zh_TW]=音效預覽
