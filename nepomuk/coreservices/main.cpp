@@ -57,7 +57,7 @@ int main( int argc, char** argv )
     KCmdLineArgs::addCmdLineOptions( options );
 
     KUniqueApplication app( false ); // no need for a GUI
-
+#ifndef Q_OS_WIN
     struct sigaction sa;
     ::memset( &sa, 0, sizeof( sa ) );
     sa.sa_handler = signalHandler;
@@ -65,7 +65,7 @@ int main( int argc, char** argv )
     sigaction( SIGINT, &sa, 0 );
     sigaction( SIGQUIT, &sa, 0 );
     sigaction( SIGKILL, &sa, 0 );
-
+#endif
     Nepomuk::CoreServices::DaemonImpl instance( &app );
     if( instance.registerServices() ) {
         return app.exec();
