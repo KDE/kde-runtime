@@ -225,20 +225,18 @@ static xine_post_api_descr_t *get_param_descr()
     return &param_descr;
 }
 
-K_GLOBAL_STATIC_WITH_ARGS(QByteArray, helpText, (
-            i18n("Normalizes audio by maximizing the volume without distorting "
-             "the sound.\n"
-             "\n"
-             "Parameters:\n"
-             "  method: 1: use a single sample to smooth the variations via "
-             "the standard weighted mean over past samples (default); 2: use "
-             "several samples to smooth the variations via the standard "
-             "weighted mean over past samples.\n"
-           ).toLocal8Bit()))
-
 static char *get_help ()
 {
-    return helpText->data();
+    static QByteArray helpText(
+            i18n("Normalizes audio by maximizing the volume without distorting "
+                 "the sound.\n"
+                 "\n"
+                 "Parameters:\n"
+                 "  method: 1: use a single sample to smooth the variations via "
+                 "the standard weighted mean over past samples (default); 2: use "
+                 "several samples to smooth the variations via the standard "
+                 "weighted mean over past samples.\n").toUtf8());
+    return helpText.data();
 }
 
 static xine_post_api_t post_api = {
@@ -299,7 +297,7 @@ void KVolumeFaderPlugin::fadeBuffer(audio_buffer_t *buf)
 {
     const int num_channels = _x_ao_mode2channels(buf->format.mode);
     const int bufferLength = buf->num_frames * num_channels;
-    if (buf->format.bits == 16) {
+    if (buf->format.bits == 16 || buf->format.bits == 0) {
         //kDebug(610) 
             //<< " bufferLength = " << bufferLength
             //<< " start = " << fadeStart
@@ -436,7 +434,9 @@ static char *kvolumefader_get_identifier(post_class_t *class_gen)
 static char *kvolumefader_get_description(post_class_t *class_gen)
 {
     Q_UNUSED(class_gen);
-    return "Fade in or fade out with different fade curves";
+    static QByteArray description(
+            i18n("Fade in or fade out with different fade curves").toUtf8());
+    return description.data();
 }
 
 static void kvolumefader_class_dispose(post_class_t *class_gen)
