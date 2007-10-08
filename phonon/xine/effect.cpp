@@ -63,7 +63,7 @@ void EffectXT::ensureInstance()
 
 void EffectXT::createInstance()
 {
-    kDebug(610) << "m_pluginName = \"" << m_pluginName << "\"";
+    kDebug(610) << "m_pluginName =" << m_pluginName;
     xine_audio_port_t *audioPort = XineEngine::nullPort();
     Q_ASSERT(m_plugin == 0 && m_pluginApi == 0);
     if (!m_pluginName) {
@@ -89,9 +89,20 @@ void EffectXT::createInstance()
         xine_post_api_parameter_t &p = desc->parameter[i];
         switch (p.type) {
         case POST_PARAM_TYPE_INT:          /* integer (or vector of integers)    */
-            m_parameterList << EffectParameter(i, p.name, EffectParameter::IntegerHint,
-                    *reinterpret_cast<int *>(m_pluginParams + p.offset),
-                    static_cast<int>(p.range_min), static_cast<int>(p.range_max), QVariantList(), p.description);
+            if (p.enum_values) {
+                // it's an enum
+                QVariantList values;
+                for (int j = 0; p.enum_values[j]; ++j) {
+                    values << QString::fromUtf8(p.enum_values[j]);
+                }
+                m_parameterList << EffectParameter(i, QString::fromUtf8(p.name), 0,
+                        *reinterpret_cast<int *>(m_pluginParams + p.offset),
+                        0, values.count() - 1, values, QString::fromUtf8(p.description));
+            } else {
+                m_parameterList << EffectParameter(i, p.name, EffectParameter::IntegerHint,
+                        *reinterpret_cast<int *>(m_pluginParams + p.offset),
+                        static_cast<int>(p.range_min), static_cast<int>(p.range_max), QVariantList(), p.description);
+            }
             break;
         case POST_PARAM_TYPE_DOUBLE:       /* double (or vector of doubles)      */
             m_parameterList << EffectParameter(i, p.name, 0,
