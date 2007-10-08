@@ -1,8 +1,6 @@
 add_subdirectory( pics )
 add_subdirectory( tests )
 
-include_directories( ${CMAKE_BINARY_DIR}/kio/kssl )
-include_directories( ${CMAKE_SOURCE_DIR}/kio/kssl ${CMAKE_SOURCE_DIR}/kde3support ${CMAKE_SOURCE_DIR}/kde3support/kdeui )
 include_directories( ${KDE4_KIO_INCLUDES} )
 
 set(kuiserver_KDEINIT_SRCS
