@@ -91,7 +91,7 @@ void VideoWidget::xineCallback(int &x, int &y, int &width, int &height, double &
 }
 
 VideoWidgetXT::VideoWidgetXT(VideoWidget *w)
-    : m_videoPort(0), m_videoWidget(w)
+    : SinkNodeXT("VideoWidget"), m_videoPort(0), m_videoWidget(w)
 {
 #ifndef PHONON_XINE_NO_VIDEOWIDGET
     // make a new XCB connection for xine

@@ -31,6 +31,7 @@ namespace Xine
 class NullSinkXT : public SinkNodeXT
 {
     public:
+        NullSinkXT() : SinkNodeXT("NullSink") {}
         virtual void rewireTo(SourceNodeXT *);
         virtual AudioPort audioPort() const;
         virtual xine_video_port_t *videoPort() const;

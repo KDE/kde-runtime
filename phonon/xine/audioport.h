@@ -45,6 +45,7 @@ class AudioPortData : public QSharedData
 class AudioPort
 {
     friend class NullSinkXT;
+    friend class EffectXT;
     public:
         AudioPort();
         AudioPort(int deviceIndex);

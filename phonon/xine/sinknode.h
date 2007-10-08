@@ -36,12 +36,15 @@ class Event;
 class SinkNodeXT : virtual public QSharedData
 {
     public:
-        SinkNodeXT() : deleted(false) {}
+        SinkNodeXT(const char *name = "SinkNode") : className(name), deleted(false) {}
         virtual ~SinkNodeXT();
         virtual void rewireTo(SourceNodeXT *) = 0;
         virtual AudioPort audioPort() const;
         virtual xine_video_port_t *videoPort() const;
         void assert() { Q_ASSERT(!deleted); }
+
+        const char *const className;
+
     private:
         bool deleted;
 };
@@ -73,5 +76,15 @@ class SinkNode
 } // namespace Phonon
 
 Q_DECLARE_INTERFACE(Phonon::Xine::SinkNode, "XineSinkNode.phonon.kde.org")
+
+inline QDebug operator<<(QDebug &s, const Phonon::Xine::SinkNodeXT *const node)
+{
+    if (node->className) {
+        s.nospace() << node->className << '(' << static_cast<const void *>(node) << ')';
+    } else {
+        s.nospace() << static_cast<const void *>(node);
+    }
+    return s.space();
+}
 
 #endif // SINKNODE_H

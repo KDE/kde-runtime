@@ -36,11 +36,13 @@ class Event;
 class SourceNodeXT : virtual public QSharedData
 {
     public:
-        SourceNodeXT() : deleted(false) {}
+        SourceNodeXT(const char *name = "SourceNode") : className(name), deleted(false) {}
         virtual ~SourceNodeXT();
         virtual xine_post_out_t *audioOutputPort() const;
         virtual xine_post_out_t *videoOutputPort() const;
         void assert() { Q_ASSERT(!deleted); }
+
+        const char *const className;
 
     private:
         bool deleted;
@@ -72,5 +74,15 @@ class SourceNode
 } // namespace Phonon
 
 Q_DECLARE_INTERFACE(Phonon::Xine::SourceNode, "XineSourceNode.phonon.kde.org")
+
+inline QDebug operator<<(QDebug &s, const Phonon::Xine::SourceNodeXT *const node)
+{
+    if (node->className) {
+        s.nospace() << node->className << '(' << static_cast<const void *>(node) << ')';
+    } else {
+        s.nospace() << static_cast<const void *>(node);
+    }
+    return s.space();
+}
 
 #endif // SOURCENODE_H

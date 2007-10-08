@@ -29,6 +29,20 @@ namespace Phonon
 namespace Xine
 {
 
+AudioPort EffectXT::audioPort() const
+{
+    const_cast<EffectXT *>(this)->ensureInstance();
+    Q_ASSERT(m_plugin);
+    Q_ASSERT(m_plugin->audio_input);
+
+    AudioPort ret;
+    ret.d->port = m_plugin->audio_input[0];
+    Q_ASSERT(ret.d->port);
+
+    ret.d->dontDelete = true;
+    return ret;
+}
+
 xine_post_out_t *EffectXT::audioOutputPort() const
 {
     const_cast<EffectXT *>(this)->ensureInstance();

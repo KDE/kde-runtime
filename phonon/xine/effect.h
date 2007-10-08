@@ -39,8 +39,9 @@ class EffectXT : public SourceNodeXT, public SinkNodeXT
 {
     friend class Effect;
     public:
-        EffectXT(const char *name) : m_plugin(0), m_pluginApi(0), m_pluginName(name), m_pluginParams(0) {}
+        EffectXT(const char *name) : SourceNodeXT("Effect"), SinkNodeXT("Effect"), m_plugin(0), m_pluginApi(0), m_pluginName(name), m_pluginParams(0) {}
         ~EffectXT();
+        AudioPort audioPort() const;
         xine_post_out_t *audioOutputPort() const;
         void rewireTo(SourceNodeXT *source);
         void ensureInstance();

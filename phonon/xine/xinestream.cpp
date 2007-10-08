@@ -51,6 +51,7 @@ namespace Xine
 // called from main thread
 XineStream::XineStream()
     : QObject(0), // XineStream is ref-counted
+    SourceNodeXT("MediaObject"),
     m_stream(0),
     m_event_queue(0),
     m_deinterlacer(0),

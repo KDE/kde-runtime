@@ -39,6 +39,7 @@ class AudioOutputXT : public SinkNodeXT
 {
     friend class AudioOutput;
     public:
+        AudioOutputXT() : SinkNodeXT("AudioOutput") {}
         void rewireTo(SourceNodeXT *);
         AudioPort audioPort() const;
 
