@@ -34,23 +34,27 @@ class WireCall
     public:
         WireCall() : src(0), snk(0) {}
         WireCall(SourceNode *a, SinkNode *b) : source(a->threadSafeObject()), sink(b->threadSafeObject()), src(a), snk(b) {}
+
         /**
-         * If the two WireCalls are in separate graphs returns false
+         * If the two WireCalls are in separate graphs treat them as equal (returns false)
+         *
+         * If the two WireCalls have the same source treat them as equal (returns false)
          *
          * If the two WireCalls are in the same graph:
-         * returns true if this wire is a source for \p rhs
-         * returns false if \p rhs is a source for this wire
+         * returns false if this wire is a source for \p rhs
+         * returns true if \p rhs is a source for this wire
          */
         bool operator<(const WireCall &rhs) const {
-            SourceNode *s = rhs.src;
-            if (src == s) {
-                return true;
+            if (src == rhs.src) {
+                // treat the wire calls as equal
+                return false;
             }
-            while (s->sinkInterface() && s->sinkInterface()->source()) {
-                s = s->sinkInterface()->source();
-                if (src == s) {
+            SourceNode *s = src;
+            while (s && s->sinkInterface()) {
+                if (rhs.snk == s->sinkInterface()) {
                     return true;
                 }
+                s = s->sinkInterface()->source();
             }
             return false;
         }
