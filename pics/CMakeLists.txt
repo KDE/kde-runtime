@@ -3,9 +3,6 @@ add_subdirectory( hicolor )
 add_subdirectory( emoticons )
 add_subdirectory( oxygen )
 
-include_directories( ${KDE4_KDEUI_INCLUDES} )
-include_directories( ${CMAKE_SOURCE_DIR}/kdecore/svgicons )
-
 set(ksvgtopng_SRCS ksvgtopng.cpp )
 kde4_add_executable(ksvgtopng NOGUI ${ksvgtopng_SRCS})
 target_link_libraries(ksvgtopng ${KDE4_KDEUI_LIBS})
