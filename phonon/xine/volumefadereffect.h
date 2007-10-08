@@ -37,10 +37,10 @@ class VolumeFaderEffect;
 struct PluginParameters
 {
     Phonon::VolumeFaderEffect::FadeCurve fadeCurve;
-    float currentVolume;
-    float fadeTo;
+    double currentVolume;
+    double fadeTo;
     int fadeTime;
-    PluginParameters(Phonon::VolumeFaderEffect::FadeCurve a, float b, float c, int d)
+    PluginParameters(Phonon::VolumeFaderEffect::FadeCurve a, double b, double c, int d)
         : fadeCurve(a), currentVolume(b), fadeTo(c), fadeTime(d) {}
 };
 

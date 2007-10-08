@@ -126,8 +126,8 @@ static float curveValueFadeOut12dB(const float &fadeStart, const float &fadeDiff
 typedef struct
 {
     Phonon::VolumeFaderEffect::FadeCurve fadeCurve;
-    float currentVolume;
-    float fadeTo;
+    double currentVolume;
+    double fadeTo;
     int fadeTime;
 } kvolumefader_parameters_t;
 
@@ -186,13 +186,15 @@ static int set_parameters (xine_post_t *this_gen, void *param_gen)
         x = "12dB";
         break;
     }
-    kDebug(610) << "set parameters to "
-        << x << ", "
-        << that->fadeStart << ", "
-        << that->fadeDiff << ", "
-        << that->curvePosition << ", "
-        << that->oneOverCurveLength << ", "
-        << param->fadeTime
+    kDebug(610)
+        << x
+        << param->currentVolume
+        << param->fadeTo
+        << param->fadeTime << "=>"
+        << that->fadeStart
+        << that->fadeDiff
+        << that->curvePosition
+        << that->oneOverCurveLength
         ;
     pthread_mutex_unlock (&that->lock);
 
