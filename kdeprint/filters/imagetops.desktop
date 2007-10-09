@@ -2,6 +2,7 @@
 Name=imagetops
 Name[ar]=الصور العلوية
 Name[bg]=Графични файлове
+Name[km]=កំពូល​រូបភាព
 Name[ne]=उच्च छवि
 Name[vi]=ảnh sang PS
 Name[x-test]=xximagetopsxx
@@ -18,7 +19,7 @@ Comment[he]=מסנן כללי מתמונה ל־PS
 Comment[it]=Filtro da immagine generica a PS
 Comment[ja]=一般的な画像を PS に変換
 Comment[kk]=Негізгі кескін -> PS сүзгісі
-Comment[km]=ប្រភេទ​រូបភាព​នៃ​តម្រង​ PS
+Comment[km]=ប្រភេទ​រូបភាព​ទៅ​តម្រង PS
 Comment[ko]=일반적인 그림 PS 변환 필터
 Comment[lt]=Bendras filtras iš paveiksliukų į PS
 Comment[nb]=Generisk filter for bilde til PS
