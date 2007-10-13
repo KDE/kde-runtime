@@ -9,7 +9,7 @@ set(kcm_kded_PART_SRCS kcmkded.cpp )
 kde4_add_plugin(kcm_kded ${kcm_kded_PART_SRCS})
 
 
-target_link_libraries(kcm_kded   ${KDE4_KDE3SUPPORT_LIBS} ${QT_QT3SUPPORT_LIBRARY} ${QT_QTGUI_LIBRARY} )
+target_link_libraries(kcm_kded ${KDE4_KDEUI_LIBS})
 
 install(TARGETS kcm_kded  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
