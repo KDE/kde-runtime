@@ -19,25 +19,20 @@
 
 #include "kcmkded.h"
 
-#include <Qt3Support/Q3Header>
-
 #include <QByteArray>
 #include <QtDBus/QtDBus>
 #include <QGroupBox>
 #include <QHeaderView>
-#include <QLayout>
 #include <QPushButton>
 #include <QTimer>
 #include <QTreeWidget>
 #include <QVBoxLayout>
 
 #include <kaboutdata.h>
-#include <kapplication.h>
 #include <kdialogbuttonbox.h>
 #include <kdebug.h>
 #include <kdesktopfile.h>
 #include <kdialog.h>
-#include <k3listview.h>
 #include <kmessagebox.h>
 #include <kservice.h>
 #include <kstandarddirs.h>
@@ -396,13 +391,3 @@ void KDEDConfig::slotItemChecked(QTreeWidgetItem*)
 	emit changed(true);
 }
 
-CheckListItem::CheckListItem(Q3ListView *parent, const QString &text)
-	: QObject(parent),
-	  Q3CheckListItem(parent, text, CheckBox)
-{ }
-
-void CheckListItem::stateChange(bool on)
-{
-	Q3CheckListItem::stateChange(on);
-	emit changed(this);
-}

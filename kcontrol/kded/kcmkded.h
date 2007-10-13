@@ -19,16 +19,12 @@
 #ifndef KCMKDED_H
 #define KCMKDED_H
 
-#define KDE3_SUPPORT
 #include <kcmodule.h>
-#undef KDE3_SUPPORT
 
-#include <k3listview.h>
-
-class K3ListView;
 class QPushButton;
 class QTreeWidget;
 class QTreeWidgetItem;
+class KConfig;
 
 class KDEDConfig : public KCModule
 {
@@ -61,18 +57,6 @@ private:
 	
 	QString RUNNING;
 	QString NOT_RUNNING;
-};
-
-class CheckListItem : public QObject, public Q3CheckListItem
-{
-	Q_OBJECT
-public:
-	CheckListItem(Q3ListView* parent, const QString &text);
-	~CheckListItem() { }
-Q_SIGNALS:
-	void changed(Q3CheckListItem*);
-protected:
-	virtual void stateChange(bool);
 };
 
 #endif // KCMKDED_H
