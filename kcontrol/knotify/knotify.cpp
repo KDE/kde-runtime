@@ -79,6 +79,7 @@ K_EXPORT_PLUGIN( NotifyFactory("kcmnotify") )
 	m_appCombo = new KComboBox( false, app_tab );
 	m_appCombo->setObjectName( "app combo" );
 	QHBoxLayout *hbox = new QHBoxLayout();
+	hbox->setSpacing( KDialog::spacingHint() );
 	app_layout->addItem( hbox );
 	hbox->addWidget( label );
 	hbox->addWidget( m_appCombo, 10 );
@@ -113,7 +114,7 @@ K_EXPORT_PLUGIN( NotifyFactory("kcmnotify") )
 
     load();
 
-
+    m_notifyWidget->setApplication( m_appCombo->currentText() );
 }
 
 KCMKNotify::~KCMKNotify()
