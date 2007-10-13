@@ -17,11 +17,13 @@
    Boston, MA 02110-1301, USA.
 */
 
-#include <Qt3Support/Q3GroupBox>
+#include "kcmkded.h"
+
 #include <Qt3Support/Q3Header>
 
 #include <QByteArray>
 #include <QtDBus/QtDBus>
+#include <QGroupBox>
 #include <QLayout>
 #include <QPushButton>
 #include <QTimer>
@@ -38,7 +40,6 @@
 #include <kservice.h>
 #include <kstandarddirs.h>
 
-#include "kcmkded.h"
 #include <KPluginFactory>
 #include <KPluginLoader>
 #include "kcmkded.moc"
@@ -74,11 +75,13 @@ KDEDConfig::KDEDConfig(QWidget* parent, const QVariantList &) :
 	lay->setMargin( 0 );
 	lay->setSpacing( KDialog::spacingHint() );
 
-	Q3GroupBox *gb = new Q3GroupBox(1, Qt::Vertical, i18n("Load-on-Demand Services"), this );
+	QGroupBox *gb = new QGroupBox( i18n("Load-on-Demand Services"), this );
 	gb->setWhatsThis( i18n("This is a list of available KDE services which will "
 			"be started on demand. They are only listed for convenience, as you "
 			"cannot manipulate these services."));
 	lay->addWidget( gb );
+
+	QVBoxLayout *gblay = new QVBoxLayout( gb );
 
 	_lvLoD = new K3ListView( gb );
 	_lvLoD->addColumn(i18n("Service"));
@@ -86,12 +89,15 @@ KDEDConfig::KDEDConfig(QWidget* parent, const QVariantList &) :
 	_lvLoD->addColumn(i18n("Status"));
 	_lvLoD->setAllColumnsShowFocus(true);
 	_lvLoD->header()->setStretchEnabled(true, 1);
+	gblay->addWidget( _lvLoD );
 
- 	gb = new Q3GroupBox(1, Qt::Horizontal, i18n("Startup Services"), this );
+ 	gb = new QGroupBox( i18n("Startup Services"), this );
 	gb->setWhatsThis( i18n("This shows all KDE services that can be loaded "
 				"on KDE startup. Checked services will be invoked on next startup. "
 				"Be careful with deactivation of unknown services."));
 	lay->addWidget( gb );
+
+	gblay = new QVBoxLayout( gb );
 
 	_lvStartup = new K3ListView( gb );
 	_lvStartup->addColumn(i18n("Use"));
@@ -100,10 +106,12 @@ KDEDConfig::KDEDConfig(QWidget* parent, const QVariantList &) :
 	_lvStartup->addColumn(i18n("Status"));
 	_lvStartup->setAllColumnsShowFocus(true);
 	_lvStartup->header()->setStretchEnabled(true, 2);
+	gblay->addWidget( _lvStartup );
 
 	KDialogButtonBox *buttonBox = new KDialogButtonBox( gb, Qt::Horizontal);
 	_pbStart = buttonBox->addButton( i18n("Start") , QDialogButtonBox::ActionRole  );
 	_pbStop = buttonBox->addButton( i18n("Stop") , QDialogButtonBox::ActionRole );
+	gblay->addWidget( buttonBox );
 
 	_pbStart->setEnabled( false );
 	_pbStop->setEnabled( false );

@@ -19,11 +19,11 @@
 #ifndef KCMKDED_H
 #define KCMKDED_H
 
-#include <QListView>
-
 #define KDE3_SUPPORT
 #include <kcmodule.h>
 #undef KDE3_SUPPORT
+
+#include <k3listview.h>
 
 class K3ListView;
 class QPushButton;
