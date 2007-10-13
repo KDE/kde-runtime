@@ -271,7 +271,7 @@ void KDEDConfig::getServiceStatus()
                 _lvLoD->topLevelItem( i )->setText( 2, NOT_RUNNING );
 	count = _lvStartup->topLevelItemCount();
 	for( int i = 0; i < count; ++i )
-                _lvLoD->topLevelItem( i )->setText( 3, NOT_RUNNING );
+                _lvStartup->topLevelItem( i )->setText( 3, NOT_RUNNING );
 	foreach( const QString& module, modules )
 	{
 		count = _lvLoD->topLevelItemCount();
@@ -368,7 +368,7 @@ void KDEDConfig::slotStartService()
 
 void KDEDConfig::slotStopService()
 {
-	QString service = _lvStartup->currentItem()->text(4);
+	QString service = _lvStartup->currentItem()->data( 1, LibraryRole ).toString();
 	kDebug() << "Stopping: " << service;
 
 	QDBusInterface kdedInterface( "org.kde.kded", "/kded", "org.kde.kded" );
