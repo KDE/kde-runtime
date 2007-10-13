@@ -27,6 +27,7 @@
 
 class K3ListView;
 class QPushButton;
+class QTreeWidget;
 
 class KDEDConfig : public KCModule
 {
@@ -52,7 +53,7 @@ protected Q_SLOTS:
         void setAutoloadEnabled(KConfig *config, const QString &filename, bool b);
 
 private:
-	K3ListView *_lvLoD;
+	QTreeWidget *_lvLoD;
 	K3ListView *_lvStartup;
 	QPushButton *_pbStart;
 	QPushButton *_pbStop;

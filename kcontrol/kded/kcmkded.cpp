@@ -24,9 +24,11 @@
 #include <QByteArray>
 #include <QtDBus/QtDBus>
 #include <QGroupBox>
+#include <QHeaderView>
 #include <QLayout>
 #include <QPushButton>
 #include <QTimer>
+#include <QTreeWidget>
 #include <QVBoxLayout>
 
 #include <kaboutdata.h>
@@ -49,6 +51,7 @@ K_PLUGIN_FACTORY(KDEDFactory,
         )
 K_EXPORT_PLUGIN(KDEDFactory("kcmkded"))
 
+static const int LibraryRole = Qt::UserRole + 1;
 
 KDEDConfig::KDEDConfig(QWidget* parent, const QVariantList &) :
 	KCModule( KDEDFactory::componentData(), parent )
@@ -83,12 +86,15 @@ KDEDConfig::KDEDConfig(QWidget* parent, const QVariantList &) :
 
 	QVBoxLayout *gblay = new QVBoxLayout( gb );
 
-	_lvLoD = new K3ListView( gb );
-	_lvLoD->addColumn(i18n("Service"));
-	_lvLoD->addColumn(i18n("Description"));
-	_lvLoD->addColumn(i18n("Status"));
+	_lvLoD = new QTreeWidget( gb );
+	QStringList cols;
+	cols.append( i18n("Service") );
+	cols.append( i18n("Description") );
+	cols.append( i18n("Status") );
+	_lvLoD->setHeaderLabels( cols );
 	_lvLoD->setAllColumnsShowFocus(true);
-	_lvLoD->header()->setStretchEnabled(true, 1);
+	_lvLoD->setRootIsDecorated( false );
+	//_lvLoD->header()->setStretchEnabled(true, 1);
 	gblay->addWidget( _lvLoD );
 
  	gb = new QGroupBox( i18n("Startup Services"), this );
@@ -161,6 +167,7 @@ void KDEDConfig::load() {
 			files );
 
 	Q3ListViewItem* item = 0L;
+	QTreeWidgetItem* treeitem = 0L;
 	CheckListItem* clitem;
 	for ( QStringList::ConstIterator it = files.begin(); it != files.end(); ++it ) {
 
@@ -178,13 +185,16 @@ void KDEDConfig::load() {
 				item->setText(4, file.desktopGroup().readEntry("X-KDE-Library"));
 			}
 			else if ( file.desktopGroup().readEntry("X-KDE-Kded-load-on-demand", false) ) {
-				item = new Q3ListViewItem(_lvLoD, file.readName());
-				item->setText(1, file.readComment());
-				item->setText(2, NOT_RUNNING);
-				item->setText(4, file.desktopGroup().readEntry("X-KDE-Library"));
+				treeitem = new QTreeWidgetItem();
+				treeitem->setText( 0, file.readName() );
+				treeitem->setText( 1, file.readComment() );
+				treeitem->setText( 2, NOT_RUNNING );
+				treeitem->setData( 0, LibraryRole, file.desktopGroup().readEntry( "X-KDE-Library" ) );
+				_lvLoD->addTopLevelItem( treeitem );
 			}
 		}
 	}
+	_lvLoD->resizeColumnToContents( 0 );
 
 	getServiceStatus();
 }
@@ -256,19 +266,25 @@ void KDEDConfig::getServiceStatus()
 		return;
 	}
 
-	for( Q3ListViewItemIterator it( _lvLoD); it.current() != 0; ++it )
-                it.current()->setText(2, NOT_RUNNING);
+	int count = _lvLoD->topLevelItemCount();
+	for( int i = 0; i < count; ++i )
+                _lvLoD->topLevelItem( i )->setText( 2, NOT_RUNNING );
 	for( Q3ListViewItemIterator it( _lvStartup); it.current() != 0; ++it )
                 it.current()->setText(3, NOT_RUNNING);
 	foreach( const QString& module, modules )
 	{
-		Q3ListViewItem *item = _lvLoD->findItem(module, 4);
-		if ( item )
+		count = _lvLoD->topLevelItemCount();
+		for( int i = 0; i < count; ++i )
 		{
-			item->setText(2, RUNNING);
+			QTreeWidgetItem *treeitem = _lvLoD->topLevelItem( i );
+                	if ( treeitem->data( 0, LibraryRole ).toString() == module )
+			{
+				treeitem->setText( 2, RUNNING );
+				break;
+			}
 		}
 
-		item = _lvStartup->findItem(module, 4);
+		Q3ListViewItem *item = _lvStartup->findItem(module, 4);
 		if ( item )
 		{
 			item->setText(3, RUNNING);
