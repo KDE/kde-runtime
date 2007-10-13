@@ -105,13 +105,16 @@ KDEDConfig::KDEDConfig(QWidget* parent, const QVariantList &) :
 
 	gblay = new QVBoxLayout( gb );
 
-	_lvStartup = new K3ListView( gb );
-	_lvStartup->addColumn(i18n("Use"));
-	_lvStartup->addColumn(i18n("Service"));
-	_lvStartup->addColumn(i18n("Description"));
-	_lvStartup->addColumn(i18n("Status"));
+	_lvStartup = new QTreeWidget( gb );
+	cols.clear();
+	cols.append( i18n("Use") );
+	cols.append( i18n("Service") );
+	cols.append( i18n("Description") );
+	cols.append( i18n("Status") );
+	_lvStartup->setHeaderLabels( cols );
 	_lvStartup->setAllColumnsShowFocus(true);
-	_lvStartup->header()->setStretchEnabled(true, 2);
+	_lvStartup->setRootIsDecorated( false );
+	//_lvStartup->header()->setStretchEnabled(true, 2);
 	gblay->addWidget( _lvStartup );
 
 	KDialogButtonBox *buttonBox = new KDialogButtonBox( gb, Qt::Horizontal);
@@ -124,7 +127,8 @@ KDEDConfig::KDEDConfig(QWidget* parent, const QVariantList &) :
 
 	connect(_pbStart, SIGNAL(clicked()), SLOT(slotStartService()));
 	connect(_pbStop, SIGNAL(clicked()), SLOT(slotStopService()));
-	connect(_lvStartup, SIGNAL(selectionChanged(Q3ListViewItem*)), SLOT(slotEvalItem(Q3ListViewItem*)) );
+	connect(_lvStartup, SIGNAL(itemClicked(QTreeWidgetItem*, int)), SLOT(slotEvalItem(QTreeWidgetItem*)) );
+	connect(_lvStartup, SIGNAL(itemChanged(QTreeWidgetItem*, int)), SLOT(slotItemChecked(QTreeWidgetItem*)) );
 
 	load();
 }
@@ -166,23 +170,20 @@ void KDEDConfig::load() {
 			KStandardDirs::Recursive | KStandardDirs::NoDuplicates,
 			files );
 
-	Q3ListViewItem* item = 0L;
 	QTreeWidgetItem* treeitem = 0L;
-	CheckListItem* clitem;
 	for ( QStringList::ConstIterator it = files.begin(); it != files.end(); ++it ) {
 
 		if ( KDesktopFile::isDesktopFile( *it ) ) {
 			KDesktopFile file( "services", *it );
 
 			if ( file.desktopGroup().readEntry("X-KDE-Kded-autoload", false) ) {
-				clitem = new CheckListItem(_lvStartup, QString());
-				connect(clitem, SIGNAL(changed(Q3CheckListItem*)), SLOT(slotItemChecked(Q3CheckListItem*)));
-				clitem->setOn(autoloadEnabled(&kdedrc, *it));
-				item = clitem;
-				item->setText(1, file.readName());
-				item->setText(2, file.readComment());
-				item->setText(3, NOT_RUNNING);
-				item->setText(4, file.desktopGroup().readEntry("X-KDE-Library"));
+				treeitem = new QTreeWidgetItem();
+				treeitem->setCheckState( 0, autoloadEnabled(&kdedrc, *it) ? Qt::Checked : Qt::Unchecked );
+				treeitem->setText( 1, file.readName() );
+				treeitem->setText( 2, file.readComment() );
+				treeitem->setText( 3, NOT_RUNNING );
+				treeitem->setData( 1, LibraryRole, file.desktopGroup().readEntry("X-KDE-Library") );
+				_lvStartup->addTopLevelItem( treeitem );
 			}
 			else if ( file.desktopGroup().readEntry("X-KDE-Kded-load-on-demand", false) ) {
 				treeitem = new QTreeWidgetItem();
@@ -194,14 +195,14 @@ void KDEDConfig::load() {
 			}
 		}
 	}
+	_lvStartup->resizeColumnToContents( 0 );
+	_lvStartup->resizeColumnToContents( 1 );
 	_lvLoD->resizeColumnToContents( 0 );
 
 	getServiceStatus();
 }
 
 void KDEDConfig::save() {
-	Q3CheckListItem* item = 0L;
-
 	QStringList files;
 	KGlobal::dirs()->findAllResources( "services",
 			QLatin1String( "kded/*.desktop" ),
@@ -219,10 +220,17 @@ void KDEDConfig::save() {
 
 			if (file.readEntry("X-KDE-Kded-autoload", false)){
 
-				item = static_cast<Q3CheckListItem *>(_lvStartup->findItem(file.readEntry("X-KDE-Library"),4));
-				if (item) {
-					// we found a match, now compare and see what changed
-					setAutoloadEnabled(&kdedrc, *it, item->isOn());
+				QString libraryName = file.readEntry( "X-KDE-Library" );
+				int count = _lvStartup->topLevelItemCount();
+				for( int i = 0; i < count; ++i )
+				{
+					QTreeWidgetItem *treeitem = _lvStartup->topLevelItem( i );
+                			if ( treeitem->data( 1, LibraryRole ).toString() == libraryName )
+					{
+						// we found a match, now compare and see what changed
+						setAutoloadEnabled( &kdedrc, *it, treeitem->checkState( 0 ) == Qt::Checked);
+						break;
+					}
 				}
 			}
 		}
@@ -237,13 +245,10 @@ void KDEDConfig::save() {
 
 void KDEDConfig::defaults()
 {
-	Q3ListViewItemIterator it( _lvStartup);
-	while ( it.current() != 0 ) {
-		if (it.current()->rtti()==1) {
-			Q3CheckListItem *item = static_cast<Q3CheckListItem *>(it.current());
-			item->setOn(false);
-		}
-		++it;
+	int count = _lvStartup->topLevelItemCount();
+	for( int i = 0; i < count; ++i )
+	{
+		_lvStartup->topLevelItem( i )->setCheckState( 0, Qt::Unchecked );
 	}
 
 	getServiceStatus();
@@ -269,8 +274,9 @@ void KDEDConfig::getServiceStatus()
 	int count = _lvLoD->topLevelItemCount();
 	for( int i = 0; i < count; ++i )
                 _lvLoD->topLevelItem( i )->setText( 2, NOT_RUNNING );
-	for( Q3ListViewItemIterator it( _lvStartup); it.current() != 0; ++it )
-                it.current()->setText(3, NOT_RUNNING);
+	count = _lvStartup->topLevelItemCount();
+	for( int i = 0; i < count; ++i )
+                _lvLoD->topLevelItem( i )->setText( 3, NOT_RUNNING );
 	foreach( const QString& module, modules )
 	{
 		count = _lvLoD->topLevelItemCount();
@@ -284,24 +290,41 @@ void KDEDConfig::getServiceStatus()
 			}
 		}
 
-		Q3ListViewItem *item = _lvStartup->findItem(module, 4);
-		if ( item )
+		count = _lvStartup->topLevelItemCount();
+		for( int i = 0; i < count; ++i )
 		{
-			item->setText(3, RUNNING);
+			QTreeWidgetItem *treeitem = _lvStartup->topLevelItem( i );
+                	if ( treeitem->data( 1, LibraryRole ).toString() == module )
+			{
+				treeitem->setText( 3, RUNNING );
+				break;
+			}
 		}
 	}
 }
 
 void KDEDConfig::slotReload()
 {
-	QString current = _lvStartup->currentItem()->text(4);
+	QString current;
+	if ( _lvStartup->currentItem() )
+		current = _lvStartup->currentItem()->data( 1, LibraryRole ).toString();
 	load();
-	Q3ListViewItem *item = _lvStartup->findItem(current, 4);
-	if (item)
-		_lvStartup->setCurrentItem(item);
+	if ( !current.isEmpty() )
+	{
+		int count = _lvStartup->topLevelItemCount();
+		for( int i = 0; !i < count; ++i )
+		{
+			QTreeWidgetItem *treeitem = _lvStartup->topLevelItem( i );
+                	if ( treeitem->data( 1, LibraryRole ).toString() == current )
+			{
+				_lvStartup->setCurrentItem( treeitem );
+				break;
+			}
+		}
+	}
 }
 
-void KDEDConfig::slotEvalItem(Q3ListViewItem * item)
+void KDEDConfig::slotEvalItem(QTreeWidgetItem * item)
 {
 	if (!item)
 		return;
@@ -331,7 +354,7 @@ void KDEDConfig::slotServiceRunningToggled()
 
 void KDEDConfig::slotStartService()
 {
-	QString service = _lvStartup->currentItem()->text(4);
+	QString service = _lvStartup->currentItem()->data( 1, LibraryRole ).toString();
 
 	QDBusInterface kdedInterface( "org.kde.kded", "/kded","org.kde.kded" );
 	QDBusReply<bool> reply = kdedInterface.call( "loadModule", service  );
@@ -368,7 +391,7 @@ void KDEDConfig::slotStopService()
 	}
 }
 
-void KDEDConfig::slotItemChecked(Q3CheckListItem*)
+void KDEDConfig::slotItemChecked(QTreeWidgetItem*)
 {
 	emit changed(true);
 }

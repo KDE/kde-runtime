@@ -28,6 +28,7 @@
 class K3ListView;
 class QPushButton;
 class QTreeWidget;
+class QTreeWidgetItem;
 
 class KDEDConfig : public KCModule
 {
@@ -45,8 +46,8 @@ protected Q_SLOTS:
 	void slotStartService();
 	void slotStopService();
 	void slotServiceRunningToggled();
-	void slotEvalItem(Q3ListViewItem *item);
-	void slotItemChecked(Q3CheckListItem *item);
+	void slotEvalItem(QTreeWidgetItem *item);
+	void slotItemChecked(QTreeWidgetItem *item);
 	void getServiceStatus();
 
         bool autoloadEnabled(KConfig *config, const QString &filename);
@@ -54,7 +55,7 @@ protected Q_SLOTS:
 
 private:
 	QTreeWidget *_lvLoD;
-	K3ListView *_lvStartup;
+	QTreeWidget *_lvStartup;
 	QPushButton *_pbStart;
 	QPushButton *_pbStop;
 	
