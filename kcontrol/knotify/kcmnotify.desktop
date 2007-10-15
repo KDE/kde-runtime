@@ -1,6 +1,6 @@
 [Desktop Entry]
 Encoding=UTF-8
-Exec=kcmshell kcmnotify
+Exec=kcmshell4 kcmnotify
 Icon=preferences-desktop-notification
 Type=Service
 ServiceTypes=KCModule

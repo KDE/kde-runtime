@@ -1,7 +1,7 @@
 [Desktop Entry]
 OnlyShowIn=KDE;
 Encoding=UTF-8
-Exec=kcmshell printmgr
+Exec=kcmshell4 printmgr
 Icon=printmgr
 Type=Application
 DocPath=kdeprint/index.html

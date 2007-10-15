@@ -1,6 +1,6 @@
 [Desktop Entry]
 Encoding=UTF-8
-Exec=kcmshell language
+Exec=kcmshell4 language
 Icon=preferences-desktop-locale
 Type=Service
 ServiceTypes=KCModule

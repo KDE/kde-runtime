@@ -144,7 +144,7 @@ void ConfigModule::runAsRoot()
   delete _embedLayout;
 
   // create an embed widget that will embed the
-  // kcmshell running as root
+  // kcmshell4 running as root
   _embedLayout = new QVBoxLayout(_module->parentWidget());
   _embedFrame = new KVBox( _module->parentWidget() );
 #ifdef __GNUC__
@@ -171,7 +171,7 @@ void ConfigModule::runAsRoot()
   _busy->setGeometry(0,0, _module->width(), _module->height());
   _busy->show();
 
-  // prepare the process to run the kcmshell
+  // prepare the process to run the kcmshell4
   QString cmd = service()->exec().trimmed();
   bool kdeshell = false;
   if (cmd.left(5) == "kdesu")
@@ -185,7 +185,7 @@ void ConfigModule::runAsRoot()
         }
     }
 
-  if (cmd.left(8) == "kcmshell")
+  if (cmd.left(8) == "kcmshell4")
     {
       cmd = cmd.remove(0,8).trimmed();
       kdeshell = true;
@@ -207,7 +207,7 @@ void ConfigModule::runAsRoot()
       // We also don't have a way to close the module in that case.
       *_rootProcess << "--n"; // Don't keep password.
       if (kdeshell) {
-         *_rootProcess << QString("kcmshell %1 --embed %2 --lang %3").arg(cmd).arg(_embedWidget->winId()).arg(KGlobal::locale()->language());
+         *_rootProcess << QString("kcmshell4 %1 --embed %2 --lang %3").arg(cmd).arg(_embedWidget->winId()).arg(KGlobal::locale()->language());
       }
       else {
          *_rootProcess << QString("%1 --embed %2 --lang %3").arg(cmd).arg(_embedWidget->winId()).arg( KGlobal::locale()->language() );

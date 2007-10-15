@@ -1,6 +1,6 @@
 [Desktop Entry]
 Encoding=UTF-8
-Exec=kcmshell kcm_kdnssd
+Exec=kcmshell4 kcm_kdnssd
 GenericName=
 Icon=preferences-system-network-discovery
 MimeType=

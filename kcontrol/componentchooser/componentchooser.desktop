@@ -1,6 +1,6 @@
 [Desktop Entry]
 Encoding=UTF-8
-Exec=kcmshell componentchooser
+Exec=kcmshell4 componentchooser
 Icon=preferences-desktop-default-applications
 Type=Service
 ServiceTypes=KCModule
