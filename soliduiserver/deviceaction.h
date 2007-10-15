@@ -28,13 +28,15 @@ public:
     DeviceAction();
     virtual ~DeviceAction();
 
-    virtual QString label() const;
-    virtual QString iconName() const;
-    virtual void setLabel(const QString &label);
-    virtual void setIconName(const QString &icon);
+    QString label() const;
+    QString iconName() const;
 
     virtual QString id() const = 0;
     virtual void execute(Solid::Device &device) = 0;
+
+protected:
+    void setLabel(const QString &label);
+    void setIconName(const QString &icon);
 
 private:
     QString m_label;

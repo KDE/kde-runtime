@@ -1,6 +1,6 @@
 ########### next target ###############
 
-set(kded_soliduiserver_PART_SRCS
+set(kded_soliduiserver_SRCS
    soliduiserver.cpp
    deviceactionsdialog.cpp
    deviceaction.cpp
@@ -8,9 +8,9 @@ set(kded_soliduiserver_PART_SRCS
    deviceserviceaction.cpp
 )
 
-kde4_add_ui_files(kded_soliduiserver_PART_SRCS deviceactionsdialogview.ui)
+kde4_add_ui_files(kded_soliduiserver_SRCS deviceactionsdialogview.ui)
 
-kde4_add_plugin(kded_soliduiserver ${kded_soliduiserver_PART_SRCS})
+kde4_add_plugin(kded_soliduiserver ${kded_soliduiserver_SRCS})
 
 
 target_link_libraries(kded_soliduiserver ${KDE4_SOLID_LIBS}  ${KDE4_KIO_LIBS})

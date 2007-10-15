@@ -20,11 +20,11 @@
 #ifndef DEVICESERVICEACTION_H
 #define DEVICESERVICEACTION_H
 
-#include <kmimetype.h>
-#include <kdesktopfileactions.h>
+#include "deviceaction.h"
+
+#include <kserviceaction.h>
 #include <solid/predicate.h>
 
-#include "deviceaction.h"
 
 class DeviceServiceAction : public DeviceAction
 {
@@ -33,14 +33,11 @@ public:
     virtual QString id() const;
     virtual void execute(Solid::Device &device);
 
-    virtual void setIconName(const QString &icon);
-    virtual void setLabel(const QString &label);
-
-    void setService(KDesktopFileActions::Service service);
-    KDesktopFileActions::Service service() const;
+    void setService(const KServiceAction& service);
+    KServiceAction service() const;
 
 private:
-    KDesktopFileActions::Service m_service;
+    KServiceAction m_service;
 };
 
 #endif

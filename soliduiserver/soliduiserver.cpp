@@ -71,10 +71,10 @@ void SolidUiServer::showActionsDialog(const QString &udi,
     foreach (QString desktop, desktopFiles) {
         QString filePath = KStandardDirs::locate("data", "solid/actions/"+desktop);
 
-        QList<KDesktopFileActions::Service> services
+        QList<KServiceAction> services
             = KDesktopFileActions::userDefinedServices(filePath, true);
 
-        foreach (KDesktopFileActions::Service service, services) {
+        foreach (KServiceAction service, services) {
             DeviceServiceAction *action = new DeviceServiceAction();
             action->setService(service);
             actions << action;

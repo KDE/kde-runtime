@@ -19,10 +19,6 @@
 
 #include "deviceserviceaction.h"
 
-#include <QDir>
-#include <QFile>
-#include <QFileInfo>
-#include <kstandarddirs.h>
 #include <kdesktopfile.h>
 #include <klocale.h>
 #include <kmacroexpander.h>
@@ -55,47 +51,35 @@ DeviceServiceAction::DeviceServiceAction()
 
 QString DeviceServiceAction::id() const
 {
-    if (m_service.isEmpty()) {
+    if (m_service.name().isEmpty() && m_service.exec().isEmpty()) {
         return QString();
     } else {
-        return "#Service:"+m_service.m_strName+m_service.m_strExec;
+        return "#Service:"+m_service.name()+m_service.exec();
     }
-}
-
-void DeviceServiceAction::setIconName(const QString &icon)
-{
-    m_service.m_strIcon = icon;
-    DeviceAction::setIconName(icon);
-}
-
-void DeviceServiceAction::setLabel(const QString &label)
-{
-    m_service.m_strName = label;
-    DeviceAction::setLabel(label);
 }
 
 void DeviceServiceAction::execute(Solid::Device &device)
 {
-    QString exec = m_service.m_strExec;
+    QString exec = m_service.exec();
     MacroExpander mx(device);
 
     if (!mx.expandMacrosShellQuote(exec)) {
-        kWarning() << ", Syntax error:" << m_service.m_strExec ;
+        kWarning() << ", Syntax error:" << m_service.exec();
         return;
     }
 
-    KRun::runCommand(exec, QString(), m_service.m_strIcon, 0);
+    KRun::runCommand(exec, QString(), m_service.icon(), 0);
 }
 
-void DeviceServiceAction::setService(KDesktopFileActions::Service service)
+void DeviceServiceAction::setService(const KServiceAction& service)
 {
-    DeviceAction::setIconName(service.m_strIcon);
-    DeviceAction::setLabel(service.m_strName);
+    DeviceAction::setIconName(service.icon());
+    DeviceAction::setLabel(service.text());
 
     m_service = service;
 }
 
-KDesktopFileActions::Service DeviceServiceAction::service() const
+KServiceAction DeviceServiceAction::service() const
 {
     return m_service;
 }
