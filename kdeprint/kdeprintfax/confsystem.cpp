@@ -166,7 +166,7 @@ void ConfSystem::save()
 		case MGETTY_ID: conf.writeEntry("System", "mgetty"); break;
 		case OTHER_ID: conf.writeEntry( "System", "other" ); break;
 	}
-	conf.changeGroup("Fax");
+	conf = KConfigGroup(KGlobal::config(),"Fax");
 	if ( m_device->currentIndex() != ( m_device->count()-1 ) )
 		conf.writeEntry("Device", m_device->currentIndex() == 0 ? QString("modem") : QString("ttyS%1").arg(m_device->currentIndex()-1));
 	else
