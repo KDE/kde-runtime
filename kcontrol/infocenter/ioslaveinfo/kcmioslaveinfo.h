@@ -24,8 +24,6 @@
 #ifndef kcmioslaveinfo_h_included
 #define kcmioslaveinfo_h_included
 
-#include <Qt3Support/Q3ListBox>
-
 //Added by qt3to4:
 #include <QByteArray>
 
@@ -51,7 +49,7 @@ protected:
 protected Q_SLOTS:
 
     void showInfo(const QString& protocol);
-    void showInfo(QListWidgetItem *item);
+    void showInfo();
     void slaveHelp( KIO::Job *, const QByteArray &data);
     void slotResult( KJob * );
 

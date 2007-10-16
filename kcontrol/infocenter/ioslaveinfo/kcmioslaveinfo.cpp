@@ -66,7 +66,7 @@ KCMIOSlaveInfo::KCMIOSlaveInfo(QWidget *parent, const QVariantList &)
    m_ioslavesLb=new KListWidget(hbox);
    m_ioslavesLb->setMinimumSize(fontMetrics().width("blahfaselwhatever----"),10);
    hboxLayout1->addWidget( m_ioslavesLb );
-   connect( m_ioslavesLb, SIGNAL( selectionChanged( QListWidgetItem * ) ), SLOT( showInfo( QListWidgetItem * ) ) );
+   connect( m_ioslavesLb, SIGNAL(itemSelectionChanged() ), SLOT( showInfo() ) );
    //TODO make something useful after 2.1 is released
    m_info=new KTextBrowser(hbox);
    hboxLayout1->setSpacing(KDialog::spacingHint());
@@ -81,11 +81,10 @@ KCMIOSlaveInfo::KCMIOSlaveInfo(QWidget *parent, const QVariantList &)
    for (QStringList::Iterator it=protocols.begin(); it!=protocols.end(); ++it)
    {
       QString proto = *it;
-      m_ioslavesLb->insertItem( SmallIcon( KProtocolInfo::icon( proto )),
-                                proto );
+      m_ioslavesLb->addItem( new QListWidgetItem ( SmallIcon( KProtocolInfo::icon( proto )), proto, m_ioslavesLb));
    };
-   m_ioslavesLb->sort();
-   m_ioslavesLb->setSelected(0, true);
+   //m_ioslavesLb->sort();
+   //m_ioslavesLb->setSelected(0, true);
 
    setButtons(KCModule::Help);
 
@@ -144,8 +143,9 @@ void KCMIOSlaveInfo::showInfo(const QString& protocol)
    m_info->setPlainText(i18n("Some info about protocol %1:/ ...", protocol));
 }
 
-void KCMIOSlaveInfo::showInfo(QListWidgetItem *item)
+void KCMIOSlaveInfo::showInfo()
 {
+   QListWidgetItem *item = m_ioslavesLb->currentItem();   
    if (item==0)
       return;
    showInfo( item->text() );
