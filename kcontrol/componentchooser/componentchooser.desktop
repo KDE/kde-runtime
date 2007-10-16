@@ -17,6 +17,7 @@ Name[bg]=Конзолни програми
 Name[de]=Standard-Komponenten
 Name[el]=Προκαθορισμένες εφαρμογές
 Name[es]=Aplicaciones predefinidas
+Name[et]=Vaikimisi rakendused
 Name[fa]=کاربردهای پیش‌فرض
 Name[ga]=Feidhmchláir Réamhshocraithe
 Name[he]=תוכניות ברירת מחדל
@@ -111,6 +112,7 @@ Keywords[bg]=Keywords=е-поща, ел, поща, редактор, станд�
 Keywords[de]=Komponenten,Ressourcen,E-Mail,E-Mail-Programm,Terminal-Emulation,Programme,Anwendungen
 Keywords[el]=συστατικά,επιλογέας συστατικών,πόροι, πελάτης email, email,προσομοιωτής τερματικού,εφαρμογές
 Keywords[es]=componentes,selector de componentes,recursos,correo electrónico,cliente de correo,emulador de terminal,aplicaciones
+Keywords[et]=komponendid,komponentide valija,ressursid,e-post,e-posti klient,terminaliemulaator,rakendused
 Keywords[fa]=مؤلفه‌ها، انتخابگر مؤلفه، منابع، رایانامه، کارخواه رایانامه، مقلد رایانه، کاربردها
 Keywords[ga]=comhpháirteanna,roghnóir comhpháirte,acmhainní,ríomhphost,cliant ríomhphoist,aithriseoir teirminéil
 Keywords[he]=רכיבים,בוחר הרכיבים,משאבים,תוכנית דוא"ל ,הדמיית מסוף,components,component chooser, resources, email client, terminal emulator
