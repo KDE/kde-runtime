@@ -46,7 +46,7 @@ the left of the notification name.  These columns (from left to right) are:</par
 <variablelist>
 <varlistentry>
 <term><guiicon>Execute a program</guiicon></term>
-<listitem><para>If an icon is present in this column, a seperate program will be executed when this notification is performed.  This can be used to execute a program to help restore data, shutdown a potentially compromised system or email another user to alert them to a problem.</para></listitem>
+<listitem><para>If an icon is present in this column, a separate program will be executed when this notification is performed.  This can be used to execute a program to help restore data, shutdown a potentially compromised system or email another user to alert them to a problem.</para></listitem>
 </varlistentry>
 
 <varlistentry>
