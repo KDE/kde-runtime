@@ -3601,7 +3601,7 @@ i18n("Manual Images");
 // xgettext: no-c-format
 i18n("Private Stored Job");
 // xgettext: no-c-format
-i18n("PrinterÕs Current Setting");
+i18n("Printer's Current Setting");
 // xgettext: no-c-format
 i18n("Stacker-Separator-Collator");
 // xgettext: no-c-format
@@ -4279,7 +4279,7 @@ i18n("Line art (color or gray scale)");
 // xgettext: no-c-format
 i18n("Continuous-tone photographs (color or gray scale)");
 // xgettext: no-c-format
-i18n("Primarily solid colors ro smooth gradients (color or gray scale)");
+i18n("Primarily solid colors to smooth gradients (color or gray scale)");
 // xgettext: no-c-format
 i18n("Dithering Algorithm");
 // xgettext: no-c-format
