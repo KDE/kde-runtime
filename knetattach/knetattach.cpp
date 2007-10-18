@@ -223,7 +223,6 @@ void KNetAttach::finished()
 	    idx.removeAll(name);
 	    idx.prepend(name);
 	    recent.writeEntry("Index", idx);
-	    recent.changeGroup(name);
 	} else {
 	    QString last;
 	    if (!idx.isEmpty()) {
@@ -234,7 +233,7 @@ void KNetAttach::finished()
 	    _recent.deleteGroup(last);
 	    recent.writeEntry("Index", idx);
 	}
-	recent.changeGroup(name);
+       recent = KConfigGroup(&_recent,name);
 	recent.writeEntry("URL", url.prettyUrl());
 	if (_type == "WebFolder" || _type == "Fish" || _type == "FTP") {
 	    recent.writeEntry("Port", _port->value());
