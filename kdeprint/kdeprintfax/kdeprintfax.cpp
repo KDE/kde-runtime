@@ -104,7 +104,7 @@ KdeprintFax::KdeprintFax(QWidget *parent, const char *name)
 	m_abbtn->setToolTip( i18n( "Add fax number from addressbook" ) );
 	connect( m_abbtn, SIGNAL( clicked() ), SLOT( slotKab() ) );
 	m_delbtn = new KPushButton( mainw );
-	m_delbtn->setIcon( KIcon( "edit-trash" ) );
+	m_delbtn->setIcon( KIcon( "user-trash" ) );
 	m_delbtn->setToolTip( i18n( "Remove fax number" ) );
 	m_delbtn->setEnabled( false );
 	connect( m_delbtn, SIGNAL( clicked() ), SLOT( slotFaxRemove() ) );
