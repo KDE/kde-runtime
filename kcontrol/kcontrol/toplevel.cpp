@@ -116,7 +116,7 @@ TopLevel::TopLevel()
   _tab->setSizePolicy( QSizePolicy( QSizePolicy::Maximum, QSizePolicy::Preferred ) );
 
  // Restore sizes
-  config.changeGroup("General");
+  config = KConfigGroup(KGlobal::config(),"General");
   QList<int> sizes = config.readEntry(  "SplitterSizes",QList<int>() );
   if (!sizes.isEmpty())
      _splitter->setSizes(sizes);
@@ -192,7 +192,7 @@ TopLevel::~TopLevel()
       break;
     }
 
-  config.changeGroup("General");
+  config = KConfigGroup(KGlobal::config(),"General");
   config.writeEntry("SplitterSizes", _splitter->sizes());
 
   config.sync();
