@@ -33,7 +33,7 @@ class QFile;
 class KTimeZoned : public KDEDModule
 {
         Q_OBJECT
-        Q_CLASSINFO("Bus Interface", "org.kde.KTimeZoned")
+        Q_CLASSINFO("D-Bus Interface", "org.kde.KTimeZoned")
 
     public:
         KTimeZoned();
