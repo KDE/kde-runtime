@@ -113,7 +113,7 @@ void SolidUiServer::onActionDialogFinished()
 
 void SolidUiServer::showPassphraseDialog(const QString &udi,
                                          const QString &returnService, const QString &returnObject,
-                                         WId wId, const QString &appId)
+                                         uint wId, const QString &appId)
 {
     if (m_idToPassphraseDialog.contains(returnService+':'+udi)) {
         KPasswordDialog *dialog = m_idToPassphraseDialog[returnService+':'+udi];
