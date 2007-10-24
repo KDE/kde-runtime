@@ -94,12 +94,14 @@ public:
         UiChannelsChanged,
         Reference,
         Rewire,
-        HasVideo
+        HasVideo,
+        RequestFrameFormat
     };
 
     int ref;
 
     inline Event(Type t) : QEvent(static_cast<QEvent::Type>(t)), ref(1) {}
+    Type type() const { return static_cast<Type>(QEvent::type()); }
 }; // class Event
 
 template<typename T>

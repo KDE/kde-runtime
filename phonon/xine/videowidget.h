@@ -30,6 +30,7 @@
 
 #include <Phonon/VideoWidget>
 #include <Phonon/VideoWidgetInterface>
+#include "connectnotificationinterface.h"
 
 class QMouseEvent;
 
@@ -58,10 +59,10 @@ class VideoWidgetXT : public SinkNodeXT
         VideoWidget *m_videoWidget;
 };
 
-class VideoWidget : public QWidget, public Phonon::VideoWidgetInterface, public Phonon::Xine::SinkNode
+class VideoWidget : public QWidget, public Phonon::VideoWidgetInterface, public Phonon::Xine::SinkNode, public ConnectNotificationInterface
 {
     Q_OBJECT
-    Q_INTERFACES(Phonon::VideoWidgetInterface Phonon::Xine::SinkNode)
+    Q_INTERFACES(Phonon::VideoWidgetInterface Phonon::Xine::SinkNode Phonon::Xine::ConnectNotificationInterface)
     public:
         VideoWidget(QWidget *parent = 0);
         ~VideoWidget();
@@ -92,6 +93,8 @@ class VideoWidget : public QWidget, public Phonon::VideoWidgetInterface, public 
 
         MediaStreamTypes inputMediaStreamTypes() const { return Phonon::Xine::Video | Phonon::Xine::Subtitle; }
         void downstreamEvent(Event *e);
+
+        void graphChanged();
 
     signals:
         void videoPortChanged();

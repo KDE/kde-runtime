@@ -553,6 +553,11 @@ void VideoWidget::downstreamEvent(Event *e)
     SinkNode::downstreamEvent(e);
 }
 
+void VideoWidget::graphChanged()
+{
+    upstreamEvent(new Event(Event::RequestFrameFormat));
+}
+
 #undef K_XT
 }} //namespace Phonon::Xine
 
