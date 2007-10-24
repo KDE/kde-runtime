@@ -599,6 +599,8 @@ const char *nameForEvent(int e)
         return "GetStreamInfo";
     case Event::UpdateVolume:
         return "UpdateVolume";
+    case Event::RequestFrameFormat:
+        return "RequestFrameFormat";
     case Event::MrlChanged:
         return "MrlChanged";
     case Event::TransitionTypeChanged:
@@ -895,6 +897,14 @@ bool XineStream::event(QEvent *ev)
             if (m_stream) {
                 xine_set_param(m_stream, XINE_PARAM_AUDIO_AMP_LEVEL, m_volume);
             }
+        }
+        return true;
+    case Event::RequestFrameFormat:
+        ev->accept();
+        if (m_stream) {
+            uint32_t width = xine_get_stream_info(m_stream, XINE_STREAM_INFO_VIDEO_WIDTH);
+            uint32_t height = xine_get_stream_info(m_stream, XINE_STREAM_INFO_VIDEO_HEIGHT);
+            handleDownstreamEvent(new FrameFormatChangeEvent(width, height, 0, 0));
         }
         return true;
     case Event::MrlChanged:

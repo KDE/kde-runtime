@@ -680,6 +680,10 @@ void MediaObject::upstreamEvent(Event *e)
         // postEvent takes ownership of the event and will delete it when done
         QCoreApplication::postEvent(m_stream, copyEvent(static_cast<UpdateVolumeEvent *>(e)));
         break;
+    case Event::RequestFrameFormat:
+        // postEvent takes ownership of the event and will delete it when done
+        QCoreApplication::postEvent(m_stream, new Event(e->type()));
+        break;
     case Event::SetParam:
         // postEvent takes ownership of the event and will delete it when done
         QCoreApplication::postEvent(m_stream, copyEvent(static_cast<SetParamEvent *>(e)));
