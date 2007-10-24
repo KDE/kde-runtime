@@ -154,7 +154,7 @@ void KDEDConfig::setAutoloadEnabled(KConfig *config, const QString &filename, bo
 }
 
 void KDEDConfig::load() {
-	KConfig kdedrc( "kdedrc", KConfig::CascadeConfig );
+	KConfig kdedrc( "kdedrc", KConfig::NoGlobals );
 
 	_lvStartup->clear();
 	_lvLoD->clear();
@@ -204,13 +204,13 @@ void KDEDConfig::save() {
 			KStandardDirs::Recursive | KStandardDirs::NoDuplicates,
 			files );
 
-	KConfig kdedrc("kdedrc", KConfig::CascadeConfig);
+	KConfig kdedrc("kdedrc", KConfig::NoGlobals);
 
 	for ( QStringList::ConstIterator it = files.begin(); it != files.end(); ++it ) {
 
 		if ( KDesktopFile::isDesktopFile( *it ) ) {
 
-                        KConfig _file( *it, KConfig::CascadeConfig, "services"  );
+                        KConfig _file( *it, KConfig::NoGlobals, "services"  );
                         KConfigGroup file(&_file, "Desktop Entry");
 
 			if (file.readEntry("X-KDE-Kded-autoload", false)){

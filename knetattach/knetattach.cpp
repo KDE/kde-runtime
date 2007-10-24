@@ -49,7 +49,7 @@ KNetAttach::KNetAttach( QWidget* parent )
     finishButton()->setText(i18n("Save && C&onnect"));
     //setResizeMode(Fixed); FIXME: make the wizard fixed-geometry
     setFinishEnabled(_folderParameters, false);
-    KConfig crecent( "krecentconnections", KConfig::CascadeConfig  );
+    KConfig crecent( "krecentconnections", KConfig::NoGlobals  );
     KConfigGroup recent(&crecent, "General");
     QStringList idx = recent.readEntry("Index",QStringList());
     if (idx.isEmpty()) {
@@ -106,7 +106,7 @@ void KNetAttach::showPage( QWidget *page )
 	    setInformationText("SMB");
 	    updateForProtocol("SMB");
 	} else { //if (_recent->isChecked()) {
-	    KConfig recent( "krecentconnections", KConfig::CascadeConfig );
+	    KConfig recent( "krecentconnections", KConfig::NoGlobals );
 	    if (!recent.hasGroup(_recentConnectionName->currentText())) {
 		KConfigGroup group = recent.group("General");
 		QStringList idx = group.readEntry("Index",QStringList());
@@ -215,7 +215,7 @@ void KNetAttach::finished()
     }
 
     if (!name.isEmpty()) {
-	KConfig _recent("krecentconnections", KConfig::CascadeConfig);
+	KConfig _recent("krecentconnections", KConfig::NoGlobals);
 	KConfigGroup recent(&_recent, "General");
 	QStringList idx = recent.readEntry("Index",QStringList());
 	_recent.deleteGroup(name); // erase anything stale

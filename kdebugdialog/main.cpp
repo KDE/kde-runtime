@@ -116,7 +116,7 @@ int main(int argc, char ** argv)
       dialog->config()->sync();
   }
   else
-    dialog->config()->clean();
+    dialog->config()->markAsClean();
 
   return 0;
 }

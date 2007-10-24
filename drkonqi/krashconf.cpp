@@ -105,12 +105,12 @@ void KrashConfig :: readConfig()
                                            QString("gdb"));
 
   KConfig debuggers(QString::fromLatin1("debuggers/%1rc").arg(debuggername),
-                    KConfig::CascadeConfig, "appdata" );
+                    KConfig::NoGlobals, "appdata" );
   const KConfigGroup generalGroup = debuggers.group("General");
 
-  m_debugger = generalGroup.readPathEntry("Exec");
-  m_debuggerBatch = generalGroup.readPathEntry("ExecBatch");
-  m_tryExec = generalGroup.readPathEntry("TryExec");
+  m_debugger = generalGroup.readPathEntry("Exec", QString());
+  m_debuggerBatch = generalGroup.readPathEntry("ExecBatch", QString());
+  m_tryExec = generalGroup.readPathEntry("TryExec", QString());
   m_backtraceCommand = generalGroup.readEntry("BacktraceCommand");
   m_removeFromBacktraceRegExp = generalGroup.readEntry("RemoveFromBacktraceRegExp");
   m_invalidStackFrameRegExp = generalGroup.readEntry("InvalidStackFrameRegExp");
@@ -119,7 +119,7 @@ void KrashConfig :: readConfig()
   m_kcrashRegExp = generalGroup.readEntry("KCrashRegExp");
 
   KConfig preset(QString::fromLatin1("presets/%1rc").arg(configname),
-                 KConfig::CascadeConfig, "appdata" );
+                 KConfig::NoGlobals, "appdata" );
 
   const KConfigGroup errorDescrGroup = preset.group("ErrorDescription");
   if (errorDescrGroup.readEntry("Enable", false), true)

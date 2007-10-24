@@ -92,7 +92,7 @@ void NotifyBySound::loadConfig()
 	if(cg.readEntry( "Use external player", false ))
 	{
 		d->playerMode = Private::ExternalPlayer;
-		d->externalPlayer = cg.readPathEntry("External player");
+		d->externalPlayer = cg.readPathEntry("External player", QString());
 		// try to locate a suitable player if none is configured
 		if ( d->externalPlayer.isEmpty() ) {
 			QStringList players;

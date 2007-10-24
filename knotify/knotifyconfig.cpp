@@ -26,8 +26,8 @@
 
 KNotifyConfig::KNotifyConfig( const QString & _appname, const ContextList & _contexts, const QString & _eventid )
 	: appname (_appname),
-	eventsfile(KSharedConfig::openConfig (_appname+'/'+_appname + ".notifyrc" , KConfig::CascadeConfig, "data" )),
-	configfile(KSharedConfig::openConfig (_appname+QString::fromAscii( ".notifyrc" ), KConfig::CascadeConfig)),
+	eventsfile(KSharedConfig::openConfig (_appname+'/'+_appname + ".notifyrc" , KConfig::NoGlobals, "data" )),
+	configfile(KSharedConfig::openConfig (_appname+QString::fromAscii( ".notifyrc" ), KConfig::NoGlobals)),
 	contexts(_contexts) , eventid(_eventid)
 {
 //	kDebug(300) << appname << " , " << eventid;
@@ -46,7 +46,7 @@ QString KNotifyConfig::readEntry( const QString & entry, bool path )
 		if( configfile->hasGroup( group ) )
 		{
 			KConfigGroup cg(configfile, group);
-			QString p=path ?  cg.readPathEntry(entry) : cg.readEntry(entry,QString());
+			QString p=path ?  cg.readPathEntry(entry, QString()) : cg.readEntry(entry,QString());
 			if(!p.isNull())
 				return p;
 		}
@@ -56,7 +56,7 @@ QString KNotifyConfig::readEntry( const QString & entry, bool path )
 	if(configfile->hasGroup( group ) )
 	{
 		KConfigGroup cg(configfile, group);
-		QString p=path ?  cg.readPathEntry(entry) : cg.readEntry(entry,QString());
+		QString p=path ?  cg.readPathEntry(entry, QString()) : cg.readEntry(entry,QString());
 		if(!p.isNull())
 			return p;
 	}
@@ -64,7 +64,7 @@ QString KNotifyConfig::readEntry( const QString & entry, bool path )
 	if(eventsfile->hasGroup( group ) )
 	{
             KConfigGroup cg( eventsfile, group);
-		QString p=path ?  cg.readPathEntry(entry) : cg.readEntry(entry, QString());
+		QString p=path ?  cg.readPathEntry(entry, QString()) : cg.readEntry(entry, QString());
 		if(!p.isNull())
 			return p;
 	}

@@ -185,11 +185,8 @@ void KLocaleConfig::save()
   KConfigGroup configGroup = config->group("Locale");
 
   configGroup.writeEntry("Country", m_locale->country(), KConfig::Persistent|KConfig::Global);
-  if ( m_locale->languageList().isEmpty() )
-    configGroup.writeEntry("Language", QString::fromLatin1(""), KConfig::Persistent|KConfig::Global);
-  else
-    configGroup.writeEntry("Language",
-                       m_locale->languageList(), ':', KConfig::Persistent|KConfig::Global);
+  configGroup.writeEntry("Language",
+                         m_locale->languageList().join(":"), KConfig::Persistent|KConfig::Global);
 
   config->sync();
 }
