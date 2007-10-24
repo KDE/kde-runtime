@@ -356,15 +356,28 @@ bool Backend::connectNodes(QObject *_source, QObject *_sink)
         return false;
     }
     // what streams to connect - i.e. all both nodes support
-    const MediaStreamTypes types = source->outputMediaStreamTypes()    & sink->inputMediaStreamTypes();
+    const MediaStreamTypes types = source->outputMediaStreamTypes() & sink->inputMediaStreamTypes();
     if (sink->source() != 0 || source->sinks().contains(sink)) {
         return false;
     }
+    NullSink *nullSink = 0;
     foreach (SinkNode *otherSinks, source->sinks()) {
-        if (otherSinks->inputMediaStreamTypes()    & types) {
-            kWarning(610) << "phonon-xine does not support splitting of audio or video streams into multiple outputs.";
-            return false;
+        if (otherSinks->inputMediaStreamTypes() & types) {
+            if (nullSink) {
+                kWarning(610) << "phonon-xine does not support splitting of audio or video streams into multiple outputs. The sink node is already connected to" << otherSinks->threadSafeObject().data();
+                return false;
+            } else {
+                nullSink = dynamic_cast<NullSink *>(otherSinks);
+                if (!nullSink) {
+                    kWarning(610) << "phonon-xine does not support splitting of audio or video streams into multiple outputs. The sink node is already connected to" << otherSinks->threadSafeObject().data();
+                    return false;
+                }
+            }
         }
+    }
+    if (nullSink) {
+        source->removeSink(nullSink);
+        nullSink->unsetSource(source);
     }
     source->addSink(sink);
     sink->setSource(source);
@@ -379,7 +392,7 @@ bool Backend::disconnectNodes(QObject *_source, QObject *_sink)
     if (!source || !sink) {
         return false;
     }
-    const MediaStreamTypes types = source->outputMediaStreamTypes()    & sink->inputMediaStreamTypes();
+    const MediaStreamTypes types = source->outputMediaStreamTypes() & sink->inputMediaStreamTypes();
     if (!source->sinks().contains(sink) || sink->source() != source) {
         return false;
     }
