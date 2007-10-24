@@ -624,6 +624,16 @@ namespace Xine
             return;
         }
         QByteArray driver;
+        switch (dev.driver()) {
+        case Solid::AudioInterface::Alsa:
+            driver = "alsa";
+            break;
+        case Solid::AudioInterface::OpenSoundSystem:
+            driver = "oss";
+            break;
+        case Solid::AudioInterface::UnknownAudioDriver:
+            break;
+        }
         XineEngine::AudioOutputInfo info(dev.index(), 0, dev.cardName(), QString(), dev.iconName(),
                 driver, dev.deviceIds(), QString());
         const int indexOfInfo = s_instance->m_audioOutputInfos.indexOf(info);
