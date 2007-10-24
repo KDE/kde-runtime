@@ -109,29 +109,29 @@ void EffectXT::createInstance()
                 for (int j = 0; p.enum_values[j]; ++j) {
                     values << QString::fromUtf8(p.enum_values[j]);
                 }
-                m_parameterList << EffectParameter(i, QString::fromUtf8(p.name), 0,
+                m_parameterList << EffectParameter(i, QString::fromUtf8(p.description ? p.description : p.name), 0,
                         *reinterpret_cast<int *>(m_pluginParams + p.offset),
-                        0, values.count() - 1, values, QString::fromUtf8(p.description));
+                        0, values.count() - 1, values);
             } else {
-                m_parameterList << EffectParameter(i, p.name, EffectParameter::IntegerHint,
+                m_parameterList << EffectParameter(i, QString::fromUtf8(p.description ? p.description : p.name), EffectParameter::IntegerHint,
                         *reinterpret_cast<int *>(m_pluginParams + p.offset),
-                        static_cast<int>(p.range_min), static_cast<int>(p.range_max), QVariantList(), p.description);
+                        static_cast<int>(p.range_min), static_cast<int>(p.range_max), QVariantList());
             }
             break;
         case POST_PARAM_TYPE_DOUBLE:       /* double (or vector of doubles)      */
-            m_parameterList << EffectParameter(i, p.name, 0,
+            m_parameterList << EffectParameter(i, QString::fromUtf8(p.description ? p.description : p.name), 0,
                     *reinterpret_cast<double *>(m_pluginParams + p.offset),
-                    p.range_min, p.range_max, QVariantList(), p.description);
+                    p.range_min, p.range_max, QVariantList());
             break;
         case POST_PARAM_TYPE_CHAR:         /* char (or vector of chars = string) */
         case POST_PARAM_TYPE_STRING:       /* (char *), ASCIIZ                   */
         case POST_PARAM_TYPE_STRINGLIST:   /* (char **) list, NULL terminated    */
-            kWarning(610) << "char/string/stringlist parameter '" << p.name << "' not supported.";
+            kWarning(610) << "char/string/stringlist parameter '" << (p.description ? p.description : p.name) << "' not supported.";
             break;
         case POST_PARAM_TYPE_BOOL:         /* integer (0 or 1)                   */
-            m_parameterList << EffectParameter(i, p.name, EffectParameter::ToggledHint,
+            m_parameterList << EffectParameter(i, QString::fromUtf8(p.description ? p.description : p.name), EffectParameter::ToggledHint,
                     static_cast<bool>(*reinterpret_cast<int *>(m_pluginParams + p.offset)),
-                    QVariant(), QVariant(), QVariantList(), p.description);
+                    QVariant(), QVariant(), QVariantList());
             break;
         case POST_PARAM_TYPE_LAST:         /* terminator of parameter list       */
         default:
@@ -223,7 +223,7 @@ QVariant Effect::parameterValue(const EffectParameter &p) const
         case POST_PARAM_TYPE_CHAR:         /* char (or vector of chars = string) */
         case POST_PARAM_TYPE_STRING:       /* (char *), ASCIIZ                   */
         case POST_PARAM_TYPE_STRINGLIST:   /* (char **) list, NULL terminated    */
-            kWarning(610) << "char/string/stringlist parameter '" << p.name << "' not supported.";
+            kWarning(610) << "char/string/stringlist parameter '" << (p.description ? p.description : p.name) << "' not supported.";
             return QVariant();
         case POST_PARAM_TYPE_BOOL:         /* integer (0 or 1)                   */
             return static_cast<bool>(*reinterpret_cast<int *>(K_XT(const EffectXT)->m_pluginParams + p.offset));
@@ -267,7 +267,7 @@ void Effect::setParameterValue(const EffectParameter &p, const QVariant &newValu
         case POST_PARAM_TYPE_CHAR:         /* char (or vector of chars = string) */
         case POST_PARAM_TYPE_STRING:       /* (char *), ASCIIZ                   */
         case POST_PARAM_TYPE_STRINGLIST:   /* (char **) list, NULL terminated    */
-            kWarning(610) << "char/string/stringlist parameter '" << p.name << "' not supported.";
+            kWarning(610) << "char/string/stringlist parameter '" << (p.description ? p.description : p.name) << "' not supported.";
             return;
         case POST_PARAM_TYPE_BOOL:         /* integer (0 or 1)                   */
             {
