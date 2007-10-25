@@ -29,7 +29,6 @@
 <!ENTITY kio-nntp SYSTEM "nntp.docbook">
 <!ENTITY kio-pop3 SYSTEM "pop3.docbook">
 <!ENTITY kio-pop3s SYSTEM "pop3s.docbook">
-<!ENTITY kio-print SYSTEM "print.docbook">
 <!ENTITY kio-rlan SYSTEM "rlan.docbook">
 <!ENTITY kio-rlogin SYSTEM "rlogin.docbook">
 <!ENTITY kio-sftp SYSTEM "sftp.docbook">
@@ -77,7 +76,6 @@
 &kio-nntp;
 &kio-pop3;
 &kio-pop3s;
-&kio-print;
 &kio-rlan;
 &kio-rlogin;
 &kio-sftp;
