@@ -67,7 +67,6 @@ private:
   QLabel *m_previewFolder;
   QLabel *m_previewDocument;
   QTreeWidgetItem *m_defaultTheme;
-  QMap <QString, QString>m_themeNames;
   bool m_bChanged;
 };
 

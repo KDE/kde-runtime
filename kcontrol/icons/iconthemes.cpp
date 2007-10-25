@@ -58,6 +58,8 @@
 #include "iconthemes.h"
 #include <kglobalsettings.h>
 
+static const int ThemeNameRole = Qt::UserRole + 1;
+
 IconThemesConfig::IconThemesConfig(const KComponentData &inst, QWidget *parent)
   : KCModule(inst, parent)
 {
@@ -92,6 +94,7 @@ IconThemesConfig::IconThemesConfig(const KComponentData &inst, QWidget *parent)
   m_iconThemes->setHeaderLabels(columns);
   m_iconThemes->setAllColumnsShowFocus( true );
   m_iconThemes->setRootIsDecorated(false);
+  m_iconThemes->setSortingEnabled(true);
   connect(m_iconThemes,SIGNAL(currentItemChanged(QTreeWidgetItem *, QTreeWidgetItem *)),
 		SLOT(themeSelected(QTreeWidgetItem *)));
 
@@ -131,7 +134,8 @@ IconThemesConfig::~IconThemesConfig()
 QTreeWidgetItem *IconThemesConfig::iconThemeItem(const QString &name)
 {
   for (int i = 0; i < m_iconThemes->topLevelItemCount(); ++i)
-    if (m_themeNames[m_iconThemes->topLevelItem(i)->text(0)]==name) return m_iconThemes->topLevelItem(i);
+    if (m_iconThemes->topLevelItem(i)->data(0, ThemeNameRole).toString()==name)
+      return m_iconThemes->topLevelItem(i);
 
   return 0L;
 }
@@ -139,11 +143,11 @@ QTreeWidgetItem *IconThemesConfig::iconThemeItem(const QString &name)
 void IconThemesConfig::loadThemes()
 {
   m_iconThemes->clear();
-  m_themeNames.clear();
   QStringList themelist(KIconTheme::list());
   QString name;
   QString tname;
   QStringList::Iterator it;
+  QMap <QString, QString> themeNames;
   for (it=themelist.begin(); it != themelist.end(); ++it)
   {
     KIconTheme icontheme(*it);
@@ -154,18 +158,17 @@ void IconThemesConfig::loadThemes()
     tname=name;
 
  //  Just in case we have duplicated icon theme names on separate directories
-    for (int i=2; m_themeNames.find(tname)!=m_themeNames.end() ; i++)
+    for (int i = 2; themeNames.find(tname) != themeNames.end(); ++i)
         tname=QString("%1-%2").arg(name).arg(i);
 
     QTreeWidgetItem *newitem = new QTreeWidgetItem();
     newitem->setText(0, name);
     newitem->setText(1, icontheme.description());
+    newitem->setData(0, ThemeNameRole, *it);
     m_iconThemes->addTopLevelItem(newitem);
 
-    m_themeNames.insert(name,*it);
-
+    themeNames.insert(name, *it);
   }
-  m_iconThemes->sortByColumn(0, Qt::DescendingOrder);
 }
 
 void IconThemesConfig::installNewTheme()
@@ -317,7 +320,7 @@ void IconThemesConfig::removeSelectedTheme()
   int r=KMessageBox::warningContinueCancel(this,question,i18n("Confirmation"),KStandardGuiItem::del());
   if (r!=KMessageBox::Continue) return;
 
-  KIconTheme icontheme(m_themeNames[selected->text(0)]);
+  KIconTheme icontheme(selected->data(0, ThemeNameRole).toString());
 
   // delete the index file before the async KIO::del so loadThemes() will
   // ignore that dir.
@@ -350,12 +353,13 @@ void IconThemesConfig::updateRemoveButton()
   bool enabled = false;
   if (selected)
   {
-    KIconTheme icontheme(m_themeNames[selected->text(0)]);
+    QString selectedtheme = selected->data(0, ThemeNameRole).toString();
+    KIconTheme icontheme(selectedtheme);
     QFileInfo fi(icontheme.dir());
     enabled = fi.isWritable();
     // Don't let users remove the current theme.
-    if(m_themeNames[selected->text(0)] == KIconTheme::current() ||
-			 m_themeNames[selected->text(0)] == KIconTheme::defaultThemeName())
+    if (selectedtheme == KIconTheme::current() ||
+        selectedtheme == KIconTheme::defaultThemeName())
       enabled = false;
   }
   m_removeButton->setEnabled(enabled);
@@ -363,12 +367,12 @@ void IconThemesConfig::updateRemoveButton()
 
 void IconThemesConfig::themeSelected(QTreeWidgetItem *item)
 {
-  if (!item || item == m_defaultTheme) return;
+  if (!item) return;
 
 #ifdef HAVE_LIBAGG
   KSVGIconEngine engine;
 #endif
-  QString dirName(m_themeNames[item->text(0)]);
+  QString dirName(item->data(0, ThemeNameRole).toString());
   KIconTheme icontheme(dirName);
   if (!icontheme.isValid()) kDebug() << "notvalid\n";
 
@@ -407,14 +411,14 @@ void IconThemesConfig::themeSelected(QTreeWidgetItem *item)
   else
   	  m_previewFolder->setPixmap(QPixmap(icon.path));
 
-  icon=icontheme.iconPath("txt.png",size,KIconLoader::MatchBest);
+  icon=icontheme.iconPath("text-x-generic.png",size,KIconLoader::MatchBest);
   if (!icon.isValid()) {
 #ifdef HAVE_LIBAGG
-	  icon=icontheme.iconPath("txt.svg", size, KIconLoader::MatchBest);
+	  icon=icontheme.iconPath("text-x-generic.svg", size, KIconLoader::MatchBest);
 	  if(engine.load(size, size, icon.path))
               m_previewDocument->setPixmap(QPixmap(*engine.image()));
           else {
-              icon=icontheme.iconPath("txt.svgz", size, KIconLoader::MatchBest);
+              icon=icontheme.iconPath("text-x-generic.svgz", size, KIconLoader::MatchBest);
               if(engine.load(size, size, icon.path))
                   m_previewDocument->setPixmap(QPixmap(*engine.image()));
           }
@@ -443,7 +447,7 @@ void IconThemesConfig::save()
 
   KConfigGroup config(KSharedConfig::openConfig("kdeglobals", KConfig::SimpleConfig), "Icons");
 
-  config.writeEntry("Theme", m_themeNames[selected->text(0)]);
+  config.writeEntry("Theme", selected->data(0, ThemeNameRole).toString());
   KIconTheme::reconfigure();
   emit changed(false);
 
