@@ -129,6 +129,7 @@ ProxyView::ProxyView(KCModule *_client, const QString&, QWidget *parent, bool ru
   contentWidget = new ProxyContentWidget( viewport() );
 
   QVBoxLayout* vbox = new QVBoxLayout( contentWidget );
+  vbox->setMargin(0);
 
   if (run_as_root && _client->useRootOnlyMessage()) // notify the user
   {
