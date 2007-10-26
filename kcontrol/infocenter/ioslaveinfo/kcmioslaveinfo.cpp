@@ -54,7 +54,6 @@ KCMIOSlaveInfo::KCMIOSlaveInfo(QWidget *parent, const QVariantList &)
 {
    QVBoxLayout *layout=new QVBoxLayout(this);
    layout->setMargin(0);
-   layout->setSpacing(KDialog::spacingHint());
 
    setQuickHelp( i18n("<h1>IO slaves</h1> Gives you an overview of the installed ioslaves."));
    setButtons( KCModule::Help );
@@ -62,7 +61,7 @@ KCMIOSlaveInfo::KCMIOSlaveInfo(QWidget *parent, const QVariantList &)
    QLabel* label=new QLabel(i18n("Available IO slaves:"),this);
    QWidget *hbox=new QWidget(this);
    QHBoxLayout *hboxLayout1 = new QHBoxLayout(hbox);
-   hbox->setLayout(hboxLayout1);
+   hboxLayout1->setMargin(0);
    m_ioslavesLb=new KListWidget(hbox);
    m_ioslavesLb->setMinimumSize(fontMetrics().width("blahfaselwhatever----"),10);
    hboxLayout1->addWidget( m_ioslavesLb );
@@ -134,7 +133,7 @@ void KCMIOSlaveInfo::showInfo(const QString& protocol)
 
    if (!file.isEmpty())
    {
-       helpData.truncate( 0 );
+       helpData.clear();
        m_tfj = KIO::get( KUrl( QString("help:/kioslave/%1.html").arg( protocol ) ), KIO::Reload, KIO::HideProgressInfo );
        connect( m_tfj, SIGNAL( data( KIO::Job *, const QByteArray &) ), SLOT( slaveHelp( KIO::Job *, const QByteArray &) ) );
        connect( m_tfj, SIGNAL( result( KJob * ) ), SLOT( slotResult( KJob * ) ) );
