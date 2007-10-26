@@ -35,6 +35,7 @@
 #include <klocale.h>
 #include <kstandarddirs.h>
 #include <kauthorized.h>
+#include <kservicetypetrader.h>
 
 #include "modules.h"
 #include "modules.moc"
@@ -276,12 +277,7 @@ void ConfigModuleList::readDesktopEntries()
 
 bool ConfigModuleList::readDesktopEntriesRecursive(const QString &path)
 {
-
-  KServiceGroup::Ptr group = KServiceGroup::group(path);
-
-  if (!group || !group->isValid()) return false;
-
-	KServiceGroup::List list = group->entries(true, true);
+  KService::List list = KServiceTypeTrader::self()->query( "KCModule", "[X-KDE-ParentApp] == 'kinfocenter'" );
 
   if( list.isEmpty() )
 	  return false;
@@ -289,11 +285,10 @@ bool ConfigModuleList::readDesktopEntriesRecursive(const QString &path)
   Menu *menu = new Menu;
   subMenus.insert(path, menu);
 
-  foreach(const KSycocaEntry::Ptr &p, group->entries(true, true))
+  foreach(const KService::Ptr &s, list)
   {
-     if (p->isType(KST_KService))
+     if (s->isType(KST_KService))
      {
-		KService::Ptr s(KService::Ptr::staticCast(p));
         if (!KAuthorized::authorizeControlModule(s->menuId()))
            continue;
 
@@ -307,9 +302,9 @@ bool ConfigModuleList::readDesktopEntriesRecursive(const QString &path)
         append(module);
         menu->modules.append(module);
      }
-     else if (p->isType(KST_KServiceGroup) &&
-		     readDesktopEntriesRecursive(p->entryPath()) )
-        	menu->submenus.append(p->entryPath());
+     else if (s->isType(KST_KServiceGroup) &&
+		     readDesktopEntriesRecursive(s->entryPath()) )
+        	menu->submenus.append(s->entryPath());
 
   }
   return true;
