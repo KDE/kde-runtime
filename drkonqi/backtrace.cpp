@@ -75,13 +75,9 @@ void BackTrace::start()
   {
     QObject * o = parent();
 
-    if (o && !qobject_cast<QWidget*>(o))
-    {
-      o = NULL;
-    }
+    QWidget* w = o ? qobject_cast<QWidget*>( o ) : 0;
 
-    KMessageBox::error(
-                        (QWidget *)o,
+    KMessageBox::error( w,
 			i18n("Could not generate a backtrace as the debugger '%1' was not found.", exec));
     return;
   }
