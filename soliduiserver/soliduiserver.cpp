@@ -142,7 +142,11 @@ void SolidUiServer::showPassphraseDialog(const QString &udi,
 
     m_idToPassphraseDialog[returnService+':'+udi] = dialog;
 
+#ifdef _WIN32
+    reparentDialog(dialog, (WId) wId, appId, true);
+#else
     reparentDialog(dialog, wId, appId, true);
+#endif
     dialog->show();
 }
 
