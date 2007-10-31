@@ -32,6 +32,7 @@
 #include <QHash>
 #include <QSignalMapper>
 #include <QFileInfo>
+#include <QTimer>
 
 // KDE headers
 #include <kdebug.h>
@@ -148,16 +149,31 @@ void NotifyBySound::notify( int eventId, KNotifyConfig * config )
 		finish( eventId );
 		return;
 	}
+	
+	kDebug(300) << " prepare to play  " << soundFile;
 
+	//we will play the sound in the next event loop.  return now in order to finish de dbus call
+	QTimer *timer= new QTimer(this);
+	timer->setProperty("eventId" , eventId );
+	timer->setProperty("soundFile" , soundFile );
+	timer->setSingleShot(true);
+	connect(timer, SIGNAL(timeout()) , this, SLOT(slotPlay()));
+	timer->start(0);
+	
+}
+
+void NotifyBySound::slotPlay()
+{
+	int eventId = qvariant_cast<int>(sender()->property("eventId"));
+	QString soundFile = qvariant_cast<QString>(sender()->property("soundFile"));
 	kDebug(300) << " going to play " << soundFile;
-
 	if(d->playerMode == Private::UsePhonon)
 	{
 		Phonon::MediaObject *media = new Phonon::MediaObject( this );
 		connect( media, SIGNAL( finished() ), d->signalmapper, SLOT(map()));
 		d->signalmapper->setMapping( media , eventId );
 
-                Phonon::createPath(media, d->audiooutput);
+		Phonon::createPath(media, d->audiooutput);
 		media->setCurrentSource(soundFile);
 		media->play();
 		d->mediaobjects.insert(eventId , media);
@@ -172,11 +188,8 @@ void NotifyBySound::notify( int eventId, KNotifyConfig * config )
 
 		(*proc) << d->externalPlayer << soundFile;
 		proc->start();
-		
-		
-		
-		return;
 	}
+	sender()->deleteLater();
 }
 
 
