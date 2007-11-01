@@ -67,8 +67,12 @@ add_subdirectory(doc)
 
 find_package(Soprano)
 find_package(Nepomuk)
+
+#Anybody who looks at this: the nepomuk subdir is disabled because it
+#hasn't been ported to Soprano2 and the new nepomuk libs from kdelibs
+#If you want to fix that please do so, else let it commented out
 if(Soprano_FOUND AND Nepomuk_FOUND)
-   macro_optional_add_subdirectory(nepomuk)
+#   macro_optional_add_subdirectory(nepomuk)
 endif(Soprano_FOUND AND Nepomuk_FOUND)
 
 macro_optional_add_subdirectory(renamedlgplugins)
