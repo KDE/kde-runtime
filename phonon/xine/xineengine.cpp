@@ -88,7 +88,11 @@ namespace Xine
         //qDeleteAll(cleanupObjects);
         if (m_thread) {
             m_thread->quit();
-            m_thread->wait();
+            if (!m_thread->wait(4000)) {
+                // timed out
+                // assuming a deadlock, we better create a backtrace than block something important
+                abort();
+            }
             delete m_thread;
         }
         //kDebug(610) ;
