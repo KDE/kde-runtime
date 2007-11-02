@@ -30,6 +30,7 @@
 
 // QT headers
 #include <QHash>
+#include <QtCore/QStack>
 #include <QSignalMapper>
 #include <QFileInfo>
 #include <QTimer>
@@ -49,6 +50,75 @@
 #include <phonon/path.h>
 #include <phonon/audiooutput.h>
 
+struct Player
+{
+	Player()
+		: media(new Phonon::MediaObject),
+		output(new Phonon::AudioOutput(Phonon::NotificationCategory))
+	{
+		Phonon::createPath(media, output);
+	}
+
+	inline void play(const QString &file) { media->setCurrentSource(file); media->play(); }
+	inline void stop() { media->stop(); }
+	inline void setVolume(float volume) { output->setVolume(volume); }
+
+	~Player()
+	{
+		output->deleteLater();
+		media->deleteLater();
+	}
+
+	Phonon::MediaObject *const media;
+	Phonon::AudioOutput *const output;
+};
+
+class PlayerPool
+{
+	public:
+		PlayerPool() : m_volume(1.0) {}
+
+		Player *getPlayer();
+		void returnPlayer(Player *);
+
+		void setVolume(float volume);
+
+	private:
+		QStack<Player *> m_playerPool;
+		QList<Player *> m_playersInUse;
+		float m_volume;
+};
+
+Player *PlayerPool::getPlayer()
+{
+	Player *p = 0;
+	if (m_playerPool.isEmpty()) {
+		p = new Player;
+	} else {
+		p = m_playerPool.pop();
+	}
+	p->setVolume(m_volume);
+	m_playersInUse << p;
+	return p;
+}
+
+void PlayerPool::returnPlayer(Player *p)
+{
+	m_playersInUse.removeAll(p);
+	if (m_playerPool.size() > 2) {
+		delete p;
+	} else {
+		m_playerPool.push(p);
+	}
+}
+
+void PlayerPool::setVolume(float v)
+{
+	m_volume = v;
+	foreach (Player *p, m_playersInUse) {
+		p->setVolume(v);
+	}
+}
 
 class NotifyBySound::Private
 {
@@ -57,21 +127,18 @@ class NotifyBySound::Private
 		QString externalPlayer;
 
 		QHash<int, KProcess *> processes;
-		QHash<int, Phonon::MediaObject*> mediaobjects;
+		QHash<int, Player*> playerObjects;
 		QSignalMapper *signalmapper;
-		Phonon::AudioOutput *audiooutput;
+		PlayerPool playerPool;
 
 		int volume;
 
 };
 
-
 NotifyBySound::NotifyBySound(QObject *parent) : KNotifyPlugin(parent),d(new Private)
 {
 	d->signalmapper = new QSignalMapper(this);
 	connect(d->signalmapper, SIGNAL(mapped(int)), this, SLOT(slotSoundFinished(int)));
-
-	d->audiooutput = new Phonon::AudioOutput( Phonon::NotificationCategory, this );
 
 	loadConfig();
 }
@@ -118,7 +185,7 @@ void NotifyBySound::loadConfig()
 
 void NotifyBySound::notify( int eventId, KNotifyConfig * config )
 {
-	if(d->mediaobjects.contains(eventId)  || d->processes.contains(eventId) )
+	if(d->playerObjects.contains(eventId)  || d->processes.contains(eventId) )
 	{
 		//a sound is already playing for this notification,  we don't support playing two sounds.
 		finish( eventId );
@@ -149,34 +216,16 @@ void NotifyBySound::notify( int eventId, KNotifyConfig * config )
 		finish( eventId );
 		return;
 	}
-	
-	kDebug(300) << " prepare to play  " << soundFile;
 
-	//we will play the sound in the next event loop.  return now in order to finish de dbus call
-	QTimer *timer= new QTimer(this);
-	timer->setProperty("eventId" , eventId );
-	timer->setProperty("soundFile" , soundFile );
-	timer->setSingleShot(true);
-	connect(timer, SIGNAL(timeout()) , this, SLOT(slotPlay()));
-	timer->start(0);
-	
-}
-
-void NotifyBySound::slotPlay()
-{
-	int eventId = qvariant_cast<int>(sender()->property("eventId"));
-	QString soundFile = qvariant_cast<QString>(sender()->property("soundFile"));
 	kDebug(300) << " going to play " << soundFile;
+
 	if(d->playerMode == Private::UsePhonon)
 	{
-		Phonon::MediaObject *media = new Phonon::MediaObject( this );
-		connect( media, SIGNAL( finished() ), d->signalmapper, SLOT(map()));
-		d->signalmapper->setMapping( media , eventId );
-
-		Phonon::createPath(media, d->audiooutput);
-		media->setCurrentSource(soundFile);
-		media->play();
-		d->mediaobjects.insert(eventId , media);
+		Player *player = d->playerPool.getPlayer();
+		connect(player->media, SIGNAL(finished()), d->signalmapper, SLOT(map()));
+		d->signalmapper->setMapping(player->media, eventId);
+		player->play(soundFile);
+		d->playerObjects.insert(eventId, player);
 	}
 	else if (d->playerMode == Private::ExternalPlayer && !d->externalPlayer.isEmpty())
 	{
@@ -198,17 +247,16 @@ void NotifyBySound::setVolume( int volume )
 	if ( volume<0 ) volume=0;
 	if ( volume>=100 ) volume=100;
 	d->volume = volume;
-	d->audiooutput->setVolume(  d->volume / 100.0 );
+	d->playerPool.setVolume(d->volume / 100.0);
 }
 
 
 void NotifyBySound::slotSoundFinished(int id)
 {
 	kDebug(300) << id;
-	if(d->mediaobjects.contains(id))
+	if(d->playerObjects.contains(id))
 	{
-		d->mediaobjects[id]->deleteLater();
-		d->mediaobjects.remove(id);
+		d->playerPool.returnPlayer(d->playerObjects.take(id));
 	}
 	if(d->processes.contains(id))
 	{
@@ -221,11 +269,11 @@ void NotifyBySound::slotSoundFinished(int id)
 
 void NotifyBySound::close(int id)
 {
-	if(d->mediaobjects.contains(id))
+	if(d->playerObjects.contains(id))
 	{
-		d->mediaobjects[id]->stop();
-		d->mediaobjects[id]->deleteLater();
-		d->mediaobjects.remove(id);
+		Player *p = d->playerObjects.take(id);
+		p->stop();
+		d->playerPool.returnPlayer(p);
 	}
 	if(d->processes.contains(id))
 	{
@@ -236,3 +284,4 @@ void NotifyBySound::close(int id)
 }
 
 #include "notifybysound.moc"
+// vim: ts=4 noet
