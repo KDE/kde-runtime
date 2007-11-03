@@ -825,6 +825,7 @@ KTimeZone KTimeZoned::compareChecksum(const KTimeZone &zone, const QString &refe
             // kDebug(1221) << "local=" << zone.name();
             return zone;
         }
+        return KTimeZone();
     }
     if (it5.value() == referenceMd5Sum)
     {
