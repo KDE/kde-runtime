@@ -140,14 +140,8 @@ void Nepomuk::StrigiController::slotRunning5Minutes()
 bool Nepomuk::StrigiController::isRunning()
 {
     kDebug(300002);
-    // the most reliable way is probably dbus
-    // FIXME: this will actually start strigidaemon through DBus autostarting
-//     return( QDBusConnection::sessionBus().call( QDBusMessage::createMethodCall( "vandenoever.strigi",
-//                                                                                 "/search",
-//                                                                                 "vandenoever.strigi",
-//                                                                                 "getBackEnds" ) ).type()
-//             != QDBusMessage::ErrorMessage );
 
+#ifndef _WIN32
     int fd = open( QFile::encodeName( QString( "%1/.strigi/lock" ).arg( QDir::homePath() ) ), O_WRONLY );
     if ( fd == -1 ) {
         kDebug(300002) << "failed to open lock";
@@ -166,6 +160,15 @@ bool Nepomuk::StrigiController::isRunning()
     }
     close( fd );
     return lock.l_type == F_WRLCK;
+#else
+    // FIXME: this will actually start strigidaemon through DBus autostarting
+//     return( QDBusConnection::sessionBus().call( QDBusMessage::createMethodCall( "vandenoever.strigi",
+//                                                                                 "/search",
+//                                                                                 "vandenoever.strigi",
+//                                                                                 "getBackEnds" ) ).type()
+//             != QDBusMessage::ErrorMessage );
+    return false;
+#endif /* _WIN32 */
 }
 
 #include "strigicontroller.moc"
