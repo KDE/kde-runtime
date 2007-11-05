@@ -36,7 +36,7 @@ class KTimeZoned : public KDEDModule
         Q_CLASSINFO("D-Bus Interface", "org.kde.KTimeZoned")
 
     public:
-        KTimeZoned();
+        KTimeZoned(QObject* parent, const QList<QVariant>&);
         ~KTimeZoned();
 
     public Q_SLOTS:

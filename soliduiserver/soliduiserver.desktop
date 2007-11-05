@@ -3,7 +3,6 @@ Encoding=UTF-8
 Type=Service
 ServiceTypes=KDEDModule
 X-KDE-Library=soliduiserver
-X-KDE-FactoryName=soliduiserver
 X-KDE-Kded-autoload=false
 X-KDE-Kded-load-on-demand=true
 Name=Solid User Interface Server

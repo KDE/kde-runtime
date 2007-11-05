@@ -40,13 +40,14 @@
 #include <kdebug.h>
 #include <kconfiggroup.h>
 
-extern "C"
-{
-    KDE_EXPORT KDEDModule *create_ktimezoned()
-    {
-        return new KTimeZoned;
-    }
-}
+#include <kpluginfactory.h>
+#include <kpluginloader.h>
+
+K_PLUGIN_FACTORY(KTimeZonedFactory,
+                 registerPlugin<KTimeZoned>();
+    )
+K_EXPORT_PLUGIN(KTimeZonedFactory("ktimezoned"))
+
 
 // Config file entry names
 const char ZONEINFO_DIR[]   = "ZoneinfoDir";   // path to zoneinfo/ directory
@@ -55,8 +56,9 @@ const char ZONE_TAB_CACHE[] = "ZonetabCache";  // type of cached simulated zone.
 const char LOCAL_ZONE[]     = "LocalZone";     // name of local time zone
 
 
-KTimeZoned::KTimeZoned()
-  : mSource(0),
+KTimeZoned::KTimeZoned(QObject* parent, const QList<QVariant>&)
+  : KDEDModule(parent),
+    mSource(0),
     mZonetabWatch(0),
     mDirWatch(0)
 {
@@ -590,7 +592,7 @@ kDebug(1221)<<"checkTimezone(): local="<<local.isValid()<<", name="<<zoneName;
             mLocalZone = zoneName;
             mLocalMethod = Timezone;
             mLocalIdFile = f.fileName();
-            mLocalZoneDataFile = mZoneinfoDir.isEmpty() ? QString() : mZoneinfoDir + '/' + zoneName; 
+            mLocalZoneDataFile = mZoneinfoDir.isEmpty() ? QString() : mZoneinfoDir + '/' + zoneName;
             return true;
         }
     }
@@ -807,7 +809,7 @@ bool KTimeZoned::checkDefaultInit()
     mLocalZone = zoneName;
     mLocalMethod = DefaultInit;
     mLocalIdFile = f.fileName();
-    mLocalZoneDataFile = mZoneinfoDir.isEmpty() ? QString() : mZoneinfoDir + '/' + zoneName; 
+    mLocalZoneDataFile = mZoneinfoDir.isEmpty() ? QString() : mZoneinfoDir + '/' + zoneName;
     return true;
 }
 

@@ -40,10 +40,10 @@ class KPasswordDialog;
 class SolidUiServer : public KDEDModule
 {
     Q_OBJECT
-    Q_CLASSINFO("Bus Interface", "org.kde.SolidUiServer")
+    Q_CLASSINFO("D-Bus Interface", "org.kde.SolidUiServer")
 
 public:
-    SolidUiServer();
+    SolidUiServer(QObject* parent, const QList<QVariant>&);
     virtual ~SolidUiServer();
 
 public Q_SLOTS:

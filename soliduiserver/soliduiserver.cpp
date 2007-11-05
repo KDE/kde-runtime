@@ -48,7 +48,17 @@
 #include "devicenothingaction.h"
 
 
-SolidUiServer::SolidUiServer() : KDEDModule()
+#include <kpluginfactory.h>
+#include <kpluginloader.h>
+
+K_PLUGIN_FACTORY(SolidUiServerFactory,
+                 registerPlugin<SolidUiServer>();
+    )
+K_EXPORT_PLUGIN(SolidUiServerFactory("soliduiserver"))
+
+
+SolidUiServer::SolidUiServer(QObject* parent, const QList<QVariant>&)
+    : KDEDModule(parent)
 {
 }
 
@@ -382,13 +392,5 @@ bool SolidUiServer::execAutoopen(const KFileItem &medium, const QString &path,
     return true;
 }
 #endif
-
-extern "C"
-{
-    KDE_EXPORT KDEDModule *create_soliduiserver()
-    {
-        return new SolidUiServer();
-    }
-}
 
 #include "soliduiserver.moc"
