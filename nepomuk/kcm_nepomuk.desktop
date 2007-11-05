@@ -1,0 +1,12 @@
+[Desktop Entry]
+Encoding=UTF-8
+Exec=kcmshell kcm_nepomuk
+Icon=preferences-system-nepomuk
+Type=Service
+ServiceTypes=KCModule
+DocPath=kcontrol/nepomuk/index.html
+X-KDE-Library=kcm_nepomuk
+X-KDE-ParentApp=kcontrol
+Name=Nepomuk
+Comment=Nepomuk/Strigi Server Configuration
+Keywords=Nepomuk,Strigi,Metadata

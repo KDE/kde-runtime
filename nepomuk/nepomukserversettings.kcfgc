@@ -1,0 +1,4 @@
+File=nepomukserver.kcfg
+ClassName=NepomukServerSettings
+Singleton=true
+Mutators=true
