@@ -56,7 +56,7 @@ class Backend : public QObject, public BackendInterface
 
         Q_INVOKABLE void freeSoundcardDevices();
 
-        QSet<int> objectDescriptionIndexes(ObjectDescriptionType) const;
+        QList<int> objectDescriptionIndexes(ObjectDescriptionType) const;
         QHash<QByteArray, QVariant> objectDescriptionProperties(ObjectDescriptionType, int) const;
 
         bool startConnectionChange(QSet<QObject *>);

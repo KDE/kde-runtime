@@ -260,15 +260,15 @@ namespace Xine
         return s_instance->m_nullVideoPort;
     }
 
-    QSet<int> XineEngine::audioOutputIndexes()
+    QList<int> XineEngine::audioOutputIndexes()
     {
         XineEngine *that = self();
         that->checkAudioOutputs();
-        QSet<int> set;
+        QList<int> list;
         for (int i = 0; i < that->m_audioOutputInfos.size(); ++i) {
-            set << that->m_audioOutputInfos[i].index;
+            list << that->m_audioOutputInfos[i].index;
         }
-        return set;
+        return list;
     }
 
     QString XineEngine::audioOutputName(int audioDevice)

@@ -177,9 +177,9 @@ QStringList Backend::availableMimeTypes() const
     return m_supportedMimeTypes;
 }
 
-QSet<int> Backend::objectDescriptionIndexes(ObjectDescriptionType type) const
+QList<int> Backend::objectDescriptionIndexes(ObjectDescriptionType type) const
 {
-    QSet<int> set;
+    QList<int> list;
     switch(type)
     {
     case Phonon::AudioOutputDeviceType:
@@ -189,7 +189,7 @@ QSet<int> Backend::objectDescriptionIndexes(ObjectDescriptionType type) const
         {
             QList<AudioDevice> devlist = AudioDeviceEnumerator::availableCaptureDevices();
             foreach (AudioDevice dev, devlist) {
-                set << dev.index();
+                list << dev.index();
             }
         }
         break;
@@ -197,11 +197,11 @@ QSet<int> Backend::objectDescriptionIndexes(ObjectDescriptionType type) const
         {
             const char *const *outputPlugins = xine_list_video_output_plugins(XineEngine::xine());
             for (int i = 0; outputPlugins[i]; ++i)
-                set << 40000 + i;
+                list << 40000 + i;
             break;
         }
     case Phonon::VideoCaptureDeviceType:
-        set << 30000 << 30001;
+        list << 30000 << 30001;
         break;
     case Phonon::VisualizationType:
         break;
@@ -216,15 +216,15 @@ QSet<int> Backend::objectDescriptionIndexes(ObjectDescriptionType type) const
         {
             const char *const *postPlugins = xine_list_post_plugins_typed(XineEngine::xine(), XINE_POST_TYPE_AUDIO_FILTER);
             for (int i = 0; postPlugins[i]; ++i)
-                set << 0x7F000000 + i;
+                list << 0x7F000000 + i;
             /*const char *const *postVPlugins = xine_list_post_plugins_typed(XineEngine::xine(), XINE_POST_TYPE_VIDEO_FILTER);
             for (int i = 0; postVPlugins[i]; ++i) {
-                set << 0x7E000000 + i;
+                list << 0x7E000000 + i;
             } */
             break;
         }
     }
-    return set;
+    return list;
 }
 
 QHash<QByteArray, QVariant> Backend::objectDescriptionProperties(ObjectDescriptionType type, int index) const

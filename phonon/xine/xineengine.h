@@ -22,7 +22,6 @@
 #ifndef XINEENGINE_H
 #define XINEENGINE_H
 
-#include <QtCore/QSet>
 #include <QtCore/QSize>
 #include <QtCore/QString>
 #include <QtCore/QStringList>
@@ -68,7 +67,7 @@ class XineEngine
         static xine_t *xine();
         static void xineEventListener(void *, const xine_event_t *);
 
-        static QSet<int> audioOutputIndexes();
+        static QList<int> audioOutputIndexes();
         static QString audioOutputName(int audioDevice);
         static QString audioOutputDescription(int audioDevice);
         static QString audioOutputIcon(int audioDevice);
