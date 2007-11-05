@@ -16,6 +16,7 @@ Name[be]=Праграмы па змаўчанні
 Name[bg]=Конзолни програми
 Name[de]=Standard-Komponenten
 Name[el]=Προκαθορισμένες εφαρμογές
+Name[eo]=Defaŭltaj aplikaĵoj
 Name[es]=Aplicaciones predefinidas
 Name[et]=Vaikimisi rakendused
 Name[fa]=کاربردهای پیش‌فرض
@@ -111,6 +112,7 @@ Keywords[be]=кампаненты,выбар кампанентаў,рэсурс
 Keywords[bg]=Keywords=е-поща, ел, поща, редактор, стандартен, компонент, модул, components, component chooser, resources, email client, terminal emulator
 Keywords[de]=Komponenten,Ressourcen,E-Mail,E-Mail-Programm,Terminal-Emulation,Programme,Anwendungen
 Keywords[el]=συστατικά,επιλογέας συστατικών,πόροι, πελάτης email, email,προσομοιωτής τερματικού,εφαρμογές
+Keywords[eo]=partoj,partelektilo,risurco,retpoŝtilo,terminalo imitilo,aplikaĵoj
 Keywords[es]=componentes,selector de componentes,recursos,correo electrónico,cliente de correo,emulador de terminal,aplicaciones
 Keywords[et]=komponendid,komponentide valija,ressursid,e-post,e-posti klient,terminaliemulaator,rakendused
 Keywords[fa]=مؤلفه‌ها، انتخابگر مؤلفه، منابع، رایانامه، کارخواه رایانامه، مقلد رایانه، کاربردها
