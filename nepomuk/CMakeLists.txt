@@ -25,6 +25,19 @@ find_library(STRIGIQTDBUSCLIENT_LIBRARY NAMES strigiqtdbusclient
   $ENV{STRIGI_HOME}/lib
   )
 
+# optional Strigi backend
+# -----------------------------
+find_package(CLucene)
+if(CLucene_FOUND AND SopranoIndex_FOUND)
+  macro_optional_add_subdirectory(strigibackend)
+  set(HAVE_STRIGI_SOPRANO_BACKEND 1)
+endif(CLucene_FOUND AND SopranoIndex_FOUND)
+# -----------------------------
+
+
+# NepomukServer
+# -----------------------------
+
 # Server configuration
 kde4_add_kcfg_files(nepomukserversettings_SRCS nepomukserversettings.kcfgc)
 
@@ -55,6 +68,7 @@ target_link_libraries(kded_nepomukserver
 if(SopranoIndex_FOUND)
   target_link_libraries(kded_nepomukserver ${SOPRANO_INDEX_LIBRARIES})
 endif(SopranoIndex_FOUND)
+# -----------------------------
 
 set(kcmnepomuk_SRCS
   strigicontroller.cpp
@@ -63,11 +77,12 @@ set(kcmnepomuk_SRCS
   )
 
 
+# Nepomuk KCM
+# -----------------------------
 qt4_add_dbus_interface(kcmnepomuk_SRCS org.kde.NepomukServer.xml nepomukserverinterface)
 
 kde4_add_ui_files(kcmnepomuk_SRCS
   nepomukconfigwidget.ui)
-
 
 kde4_add_plugin(kcm_nepomuk ${kcmnepomuk_SRCS})
 
@@ -78,7 +93,11 @@ target_link_libraries(kcm_nepomuk
   ${KDE4_KDEUI_LIBS}
   ${STRIGIQTDBUSCLIENT_LIBRARY}
   )
+# -----------------------------
 
+
+# Installation
+# -----------------------------
 install(
   FILES nepomukserver.desktop
   DESTINATION ${SERVICES_INSTALL_DIR}/kded)
@@ -89,9 +108,4 @@ install(
 install(
   TARGETS kcm_nepomuk kded_nepomukserver
   DESTINATION ${PLUGIN_INSTALL_DIR})
-
-find_package(CLucene)
-if(CLucene_FOUND)
-  macro_optional_add_subdirectory(strigibackend)
-  set(HAVE_STRIGI_SOPRANO_BACKEND 1)
-endif(CLucene_FOUND)
+# -----------------------------
