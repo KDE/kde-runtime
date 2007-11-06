@@ -47,12 +47,10 @@ target_link_libraries(kded_nepomukserver
   ${STRIGIQTDBUSCLIENT_LIBRARY}
 )
 
-if(SopranoIndex_FOUND)
   target_link_libraries(kded_nepomukserver ${SOPRANO_INDEX_LIBRARIES})
-endif(SopranoIndex_FOUND)
 
 install(
-  TARGETS kded_nepomukserver kcm_nepomuk
+  TARGETS kded_nepomukserver
   DESTINATION ${PLUGIN_INSTALL_DIR})
 
 
@@ -87,6 +85,10 @@ install(
 install(
   FILES kcm_nepomuk.desktop
   DESTINATION ${SERVICES_INSTALL_DIR})
+
+install(
+  TARGETS kcm_nepomuk
+  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 find_package(CLucene)
 if(CLucene_FOUND)
