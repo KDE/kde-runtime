@@ -25,7 +25,7 @@
 namespace Nepomuk {
     class StrigiController : public QObject
     {
-	Q_OBJECT;
+	Q_OBJECT
 
     public:
 	StrigiController( QObject* parent = 0 );
