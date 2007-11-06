@@ -2,6 +2,12 @@ project(nepomuk)
 
 find_package(Soprano REQUIRED)
 
+if(SopranoIndex_FOUND)
+  set(HAVE_SOPRANO_INDEX "yes")
+endif(SopranoIndex_FOUND)
+
+configure_file(nepomukserver-config.h.cmake ${nepomuk_BINARY_DIR}/nepomukserver-config.h)
+
 include_directories(
   ${QT_INCLUDES}
   ${KDE4_INCLUDES}
@@ -9,7 +15,7 @@ include_directories(
   ${CMAKE_SOURCE_DIR}
   ${NEPOMUK_INCLUDE_DIR}
   ${nepomuk_BINARY_DIR}
-)
+  )
 
 find_library(STRIGIQTDBUSCLIENT_LIBRARY NAMES strigiqtdbusclient
   PATHS
@@ -17,25 +23,24 @@ find_library(STRIGIQTDBUSCLIENT_LIBRARY NAMES strigiqtdbusclient
   /usr/local/lib
   ${LIB_INSTALL_DIR}
   $ENV{STRIGI_HOME}/lib
-)
+  )
 
 # Server configuration
 kde4_add_kcfg_files(nepomukserversettings_SRCS nepomukserversettings.kcfgc)
-
-if(SopranoIndex_FOUND)
 
 set(nepomukserver_SRCS
   nepomukcore.cpp
   nepomukserver.cpp
   repository.cpp
   strigicontroller.cpp
-#  nepomuksearchagent.cpp
+  #  nepomuksearchagent.cpp
   ${nepomukserversettings_SRCS}
-)
+  )
 
 qt4_add_dbus_adaptor(nepomukserver_SRCS org.kde.NepomukServer.xml nepomukserver.h Nepomuk::Server)
 
 kde4_add_plugin(kded_nepomukserver ${nepomukserver_SRCS})
+
 target_link_libraries(kded_nepomukserver
   ${SOPRANO_LIBRARIES}
   ${SOPRANO_SERVER_LIBRARIES}
@@ -45,22 +50,17 @@ target_link_libraries(kded_nepomukserver
   ${KDE4_KDECORE_LIBS}
   ${KDE4_KIO_LIBS}
   ${STRIGIQTDBUSCLIENT_LIBRARY}
-)
+  )
 
+if(SopranoIndex_FOUND)
   target_link_libraries(kded_nepomukserver ${SOPRANO_INDEX_LIBRARIES})
-
-install(
-  TARGETS kded_nepomukserver
-  DESTINATION ${PLUGIN_INSTALL_DIR})
-
-
 endif(SopranoIndex_FOUND)
 
 set(kcmnepomuk_SRCS
   strigicontroller.cpp
   nepomukserverkcm.cpp
   ${nepomukserversettings_SRCS}
-)
+  )
 
 
 qt4_add_dbus_interface(kcmnepomuk_SRCS org.kde.NepomukServer.xml nepomukserverinterface)
@@ -77,7 +77,7 @@ target_link_libraries(kcm_nepomuk
   ${KDE4_KDECORE_LIBS}
   ${KDE4_KDEUI_LIBS}
   ${STRIGIQTDBUSCLIENT_LIBRARY}
-)
+  )
 
 install(
   FILES nepomukserver.desktop
@@ -87,7 +87,7 @@ install(
   DESTINATION ${SERVICES_INSTALL_DIR})
 
 install(
-  TARGETS kcm_nepomuk
+  TARGETS kcm_nepomuk kded_nepomukserver
   DESTINATION ${PLUGIN_INSTALL_DIR})
 
 find_package(CLucene)
@@ -95,5 +95,3 @@ if(CLucene_FOUND)
   macro_optional_add_subdirectory(strigibackend)
   set(HAVE_STRIGI_SOPRANO_BACKEND 1)
 endif(CLucene_FOUND)
-
-configure_file(nepomukserver-config.h.cmake ${nepomuk_BINARY_DIR}/nepomukserver-config.h)

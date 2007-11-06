@@ -35,7 +35,6 @@ namespace Nepomuk {
 
 	QString name() const { return m_name; }
 	Soprano::Model* model() const;
-	Soprano::Index::CLuceneIndex* index() const;
 
 	static Repository* open( const QString& path, const QString& name );
 

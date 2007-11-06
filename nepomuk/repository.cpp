@@ -13,37 +13,46 @@
  */
 
 #include "repository.h"
+#include "nepomukserver-config.h"
 
-#include <soprano/soprano.h>
-#include <soprano/cluceneindex.h>
-#include <soprano/indexfiltermodel.h>
+#include <Soprano/Backend>
+#include <Soprano/Global>
+#include <Soprano/Model>
+
+#ifdef HAVE_SOPRANO_INDEX
+#include <Soprano/Index/IndexFilterModel>
+#include <Soprano/Index/CLuceneIndex>
+#endif
 
 #include <kstandarddirs.h>
 #include <kdebug.h>
 
 
 Nepomuk::Repository::Repository()
+    : m_model( 0 ),
+      m_index( 0 ),
+      m_indexModel( 0 )
 {
 }
 
 
 Nepomuk::Repository::~Repository()
 {
+#ifdef HAVE_SOPRANO_INDEX
     delete m_indexModel;
     delete m_index;
+#endif
     delete m_model;
 }
 
 
 Soprano::Model* Nepomuk::Repository::model() const
 {
+#ifdef HAVE_SOPRANO_INDEX
     return m_indexModel;
-}
-
-
-Soprano::Index::CLuceneIndex* Nepomuk::Repository::index() const
-{
-    return m_index;
+#else
+    return m_model;
+#endif
 }
 
 
@@ -56,6 +65,7 @@ Nepomuk::Repository* Nepomuk::Repository::open( const QString& path, const QStri
     Soprano::Model* model = Soprano::createModel( settings );
     if ( model ) {
         kDebug(300002) << "(Nepomuk::Repository::open) Successfully created new model.";
+#ifdef HAVE_SOPRANO_INDEX
         Soprano::Index::CLuceneIndex* index = new Soprano::Index::CLuceneIndex();
         if ( index->open( path + "/index", true ) ) {
             kDebug(300002) << "(Nepomuk::Repository::open) Successfully created new index.";
@@ -71,6 +81,11 @@ Nepomuk::Repository* Nepomuk::Repository::open( const QString& path, const QStri
             delete index;
             delete model;
         }
+#else
+        Repository* rep = new Repository();
+        rep->m_model = model;
+        return rep;
+#endif
     }
     else {
         kDebug(300002) << "(Nepomuk::Repository::open) Unable to create new model.";
