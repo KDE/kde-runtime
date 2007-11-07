@@ -66,8 +66,9 @@ add_subdirectory(kde-menu)
 add_subdirectory(doc)
 
 find_package(Soprano)
-if(Soprano_FOUND)
+if(Soprano_FOUND AND NOT WIN32)
+  # win32: no strigidbusclient lib
   macro_optional_add_subdirectory(nepomuk)
-endif(Soprano_FOUND)
+endif(Soprano_FOUND AND NOT WIN32)
 
 macro_optional_add_subdirectory(renamedlgplugins)
