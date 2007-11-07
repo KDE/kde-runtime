@@ -586,6 +586,8 @@ namespace Xine
                 }
             }
 
+            qSort(m_audioOutputInfos);
+
             // now m_audioOutputInfos holds all devices this computer has ever seen
             foreach (const AudioOutputInfo &info, m_audioOutputInfos) {
                 kDebug(610) << info.index << info.name << info.driver << info.devices;
@@ -608,6 +610,7 @@ namespace Xine
                     signalTimer.start();
                 }
             }
+            qSort(s_instance->m_audioOutputInfos);
             break;
         case Solid::AudioInterface::OpenSoundSystem:
             if (s_instance->m_useOss) {
@@ -618,6 +621,7 @@ namespace Xine
                     }
                 }
             }
+            qSort(s_instance->m_audioOutputInfos);
             break;
         case Solid::AudioInterface::UnknownAudioDriver:
             break;
@@ -653,6 +657,7 @@ namespace Xine
         Q_ASSERT(!s_instance->m_audioOutputInfos.contains(info));
         info.initialPreference = oldInfo.initialPreference;
         s_instance->m_audioOutputInfos << info; // now the device is listed as not available
+        qSort(s_instance->m_audioOutputInfos);
         signalTimer.start();
     }
 } // namespace Xine
