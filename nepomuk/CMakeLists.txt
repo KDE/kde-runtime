@@ -17,14 +17,6 @@ include_directories(
   ${nepomuk_BINARY_DIR}
   )
 
-find_library(STRIGIQTDBUSCLIENT_LIBRARY NAMES strigiqtdbusclient
-  PATHS
-  /usr/lib
-  /usr/local/lib
-  ${LIB_INSTALL_DIR}
-  $ENV{STRIGI_HOME}/lib
-  )
-
 # optional Strigi backend
 # -----------------------------
 find_package(CLucene)
