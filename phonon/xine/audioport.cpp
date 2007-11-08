@@ -47,7 +47,7 @@ bool AudioPortDeleter::event(QEvent *e)
 {
     if (e->type() == 2345) {
         e->accept();
-        startTimer(3000);
+        startTimer(10000);
         return true;
     }
     return QObject::event(e);
