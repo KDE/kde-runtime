@@ -47,6 +47,7 @@ qt4_add_dbus_adaptor(nepomukserver_SRCS org.kde.NepomukServer.xml nepomukserver.
 kde4_add_plugin(kded_nepomukserver ${nepomukserver_SRCS})
 
 target_link_libraries(kded_nepomukserver
+  ${STRIGI_STRIGIQTDBUSCLIENT_LIBRARY}
   ${SOPRANO_LIBRARIES}
   ${SOPRANO_SERVER_LIBRARIES}
   ${SOPRANO_LIBRARIES}
@@ -54,7 +55,6 @@ target_link_libraries(kded_nepomukserver
   ${QT_QTDBUS_LIBRARY}
   ${KDE4_KDECORE_LIBS}
   ${KDE4_KIO_LIBS}
-  ${STRIGIQTDBUSCLIENT_LIBRARY}
   )
 
 if(SopranoIndex_FOUND)
@@ -79,11 +79,11 @@ kde4_add_ui_files(kcmnepomuk_SRCS
 kde4_add_plugin(kcm_nepomuk ${kcmnepomuk_SRCS})
 
 target_link_libraries(kcm_nepomuk
+  ${STRIGI_STRIGIQTDBUSCLIENT_LIBRARY}
   ${QT_QTCORE_LIBRARY}
   ${QT_QTDBUS_LIBRARY}
   ${KDE4_KDECORE_LIBS}
   ${KDE4_KDEUI_LIBS}
-  ${STRIGIQTDBUSCLIENT_LIBRARY}
   )
 # -----------------------------
 
