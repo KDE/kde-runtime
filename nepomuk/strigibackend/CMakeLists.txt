@@ -1,10 +1,7 @@
 project(strigi_soprano_indexer)
 
-find_package(Strigi REQUIRED)
-
 include_directories( 
   ${STRIGI_INCLUDE_DIR}
-  ${STRIGI_INCLUDE_DIR}/strigi
   ${SOPRANO_INCLUDE_DIR}
   ${CLUCENE_LIBRARY_DIR}
   ${CLUCENE_INCLUDE_DIR}

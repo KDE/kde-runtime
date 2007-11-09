@@ -21,9 +21,9 @@
 
 #include "sopranoindexreader.h"
 #include "tstring.h"
-#include "query.h"
-#include "queryparser.h"
-#include "fieldtypes.h"
+#include <strigi/query.h>
+#include <strigi/queryparser.h>
+#include <strigi/fieldtypes.h>
 #include "util.h"
 
 #include <Soprano/Soprano>

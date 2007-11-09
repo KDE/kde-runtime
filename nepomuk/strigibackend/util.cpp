@@ -20,7 +20,8 @@
 */
 
 #include "util.h"
-#include "variant.h"
+
+#include <strigi/variant.h>
 
 #include <QtCore/QUrl>
 #include <QtCore/QFile>
