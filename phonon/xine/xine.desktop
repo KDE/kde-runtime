@@ -12,6 +12,7 @@ InitialPreference=15
 
 Name=Xine
 Name[ne]=जाइन
+Name[sr]=Ксине
 Name[te]=క్సైన్
 Name[x-test]=xxXinexx
 
@@ -35,6 +36,8 @@ Comment[nl]=Xine-backend (Phonon)
 Comment[nn]=Phonon Xine-motor
 Comment[pt]=Infra-estrutura do Xine para o Phonon
 Comment[pt_BR]=Infra-estrutura do Xine para o Phonon
+Comment[sr]=Ксине као позадина Фонона
+Comment[sr@latin]=Xine kao pozadina Phonona
 Comment[sv]=Phonon Xine-gränssnitt
 Comment[th]=โปรแกรมเบื้องหลัง Phonon Xine
 Comment[x-test]=xxPhonon Xine backendxx
