@@ -72,7 +72,7 @@ IconThemesConfig::IconThemesConfig(const KComponentData &inst, QWidget *parent)
 
   QHBoxLayout *lh2=new QHBoxLayout( m_preview );
   m_previewExec=new QLabel(m_preview);
-  m_previewExec->setPixmap(DesktopIcon("exec"));
+  m_previewExec->setPixmap(DesktopIcon("system-run"));
   m_previewFolder=new QLabel(m_preview);
   m_previewFolder->setPixmap(DesktopIcon("folder"));
   m_previewDocument=new QLabel(m_preview);
