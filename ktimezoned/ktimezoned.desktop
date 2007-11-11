@@ -10,6 +10,7 @@ X-KDE-Kded-load-on-demand=true
 Name=KDE Time Zone Daemon
 Name[ar]=رقيب النطاق الزمني لـ كدي
 Name[be]=Сервіс часавых зон KDE
+Name[ca]=Dimoni de zona horària del KDE
 Name[csb]=Ùsłëżnota czasowi conë KDE
 Name[de]=Zeitzonen-Dienst
 Name[el]=Δαίμονας ωρολογιακής ζώνης του KDE

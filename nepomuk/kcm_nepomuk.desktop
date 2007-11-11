@@ -10,6 +10,7 @@ X-KDE-ParentApp=kcontrol
 Name=Nepomuk
 Name[sr]=Непомук
 Comment=Nepomuk/Strigi Server Configuration
+Comment[ca]=Configuració del servidor Nepomuk/Strigi
 Comment[el]=Ρύθμιση εξυπηρετητή Nepomuk/Strigi
 Comment[ga]=Cumraíocht Freastalaí Nepomuk/Strigi
 Comment[ja]=Nepomuk/Strigi サーバの設定
