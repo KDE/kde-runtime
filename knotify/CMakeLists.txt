@@ -11,6 +11,7 @@ notifybypopup.cpp
 notifybylogfile.cpp
 notifybytaskbar.cpp
 notifybyexecute.cpp
+notifybyktts.cpp
 )
 
 
