@@ -87,8 +87,7 @@ K_EXPORT_PLUGIN( NotifyFactory("kcmnotify") )
 	m_notifyWidget = new KNotifyConfigWidget( app_tab );
 	app_layout->addWidget( m_notifyWidget );
 
-//    connect( m_notifyWidget, SIGNAL( changed( bool )), SIGNAL( changed(bool)));
-	changed (true);
+	connect( m_notifyWidget, SIGNAL(changed(bool)), this,  SIGNAL(changed(bool)));
 
 	m_playerSettings = new PlayerSettingsDialog(tab);
     connect(m_playerSettings, SIGNAL(changed(bool)) , this, SIGNAL(changed(bool)));
