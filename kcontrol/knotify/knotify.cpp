@@ -98,8 +98,8 @@ K_EXPORT_PLUGIN( NotifyFactory("kcmnotify") )
 	tab->addTab(app_tab, i18n("&Applications"));
 	tab->addTab(m_playerSettings, i18n("&Player Settings"));
 
-    connect( m_appCombo, SIGNAL( activated( const QString& ) ),
-             SLOT( slotAppActivated( const QString& )) );
+    connect( m_appCombo, SIGNAL( activated( int ) ),
+             SLOT( slotAppActivated( int )) );
 
     KAboutData* ab = new KAboutData(
         "kcmknotify", 0, ki18n("KNotify"), "4.0",
@@ -125,11 +125,14 @@ KCMKNotify::~KCMKNotify()
     config.sync();
 }
 
-void KCMKNotify::slotAppActivated( const QString& text )
+void KCMKNotify::slotAppActivated( int index )
 {
-	m_notifyWidget->save();
-	m_notifyWidget->setApplication( text );
-	emit changed(true);
+    QString text;
+    if(index>=0 && index < m_appNames.size())
+        text=m_appNames[index];
+    m_notifyWidget->save();
+    m_notifyWidget->setApplication( text );
+    emit changed(true);
 }
 
 void KCMKNotify::slotPlayerSettings()
@@ -148,20 +151,28 @@ void KCMKNotify::load()
     // setCursor( KCursor::waitCursor() );
 
     m_appCombo->clear();
+    m_appNames.clear();
 //    m_notifyWidget->clear();
 
     QStringList fullpaths =
         KGlobal::dirs()->findAllResources("data", "*/*.notifyrc", KStandardDirs::NoDuplicates );
 
-	foreach (const QString &fullPath, fullpaths )
-	{
-		int slash = fullPath.lastIndexOf( '/' ) - 1;
-		int slash2 = fullPath.lastIndexOf( '/', slash );
-		QString appname= slash2 < 0 ? QString() :  fullPath.mid( slash2+1 , slash-slash2  );
-		if ( !appname.isEmpty() )
-			m_appCombo->addItem( appname );
-	}
-	/*
+    foreach (const QString &fullPath, fullpaths )
+    {
+        int slash = fullPath.lastIndexOf( '/' ) - 1;
+        int slash2 = fullPath.lastIndexOf( '/', slash );
+        QString appname= slash2 < 0 ? QString() :  fullPath.mid( slash2+1 , slash-slash2  );
+        if ( !appname.isEmpty() )
+        {
+            KConfig config(fullPath, KConfig::NoGlobals, "data" );
+            KConfigGroup globalConfig( &config, QString::fromLatin1("Global") );
+            QString icon = globalConfig.readEntry(QString::fromLatin1("IconName"), QString::fromLatin1("misc"));
+            QString description = globalConfig.readEntry( QString::fromLatin1("Comment"), appname );
+            m_appCombo->addItem( SmallIcon( icon ), description );
+            m_appNames.append( appname );
+        }
+    }
+    /*
     KConfig config( "knotifyrc", true, false );
     config.setGroup( "Misc" );
     QString appDesc = config.readEntry( "LastConfiguredApp", "KDE System Notifications" );

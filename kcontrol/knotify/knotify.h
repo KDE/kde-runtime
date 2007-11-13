@@ -58,15 +58,16 @@ public Q_SLOTS:
     virtual void load();
 
 private Q_SLOTS:
-    void slotAppActivated( const QString& app );
+    void slotAppActivated( int index );
     void slotPlayerSettings();
 
 private:
 
     KComboBox *m_appCombo;
+    QStringList m_appNames;
     KNotifyConfigWidget *m_notifyWidget;
     PlayerSettingsDialog *m_playerSettings;
-	QPushButton *m_psb;
+    QPushButton *m_psb;
 
 };
 
