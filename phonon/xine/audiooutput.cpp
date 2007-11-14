@@ -98,6 +98,7 @@ bool AudioOutput::setOutputDevice(int newDevice)
         QList<WireCall> wireCall;
         wireCall << WireCall(src, this);
         QCoreApplication::postEvent(XineEngine::thread(), new RewireEvent(wireCall));
+        graphChanged();
     }
     return true;
 }
