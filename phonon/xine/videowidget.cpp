@@ -48,6 +48,9 @@ static void dest_size_cb(void *user_data, int video_width, int video_height, dou
 {
     Phonon::Xine::VideoWidgetXT *xt = static_cast<VideoWidgetXT *>(user_data);
     if (!xt->videoWidget()) {
+        *dest_width = 1;
+        *dest_height = 1;
+        *dest_pixel_aspect = 1.0;
         return;
     }
 
@@ -63,6 +66,11 @@ static void frame_output_cb(void *user_data, int video_width, int video_height,
 {
     Phonon::Xine::VideoWidgetXT *xt = static_cast<VideoWidgetXT *>(user_data);
     if (!xt->videoWidget()) {
+        *win_x = 0;
+        *win_y = 0;
+        *dest_width = 1;
+        *dest_height = 1;
+        *dest_pixel_aspect = 1.0;
         return;
     }
 
