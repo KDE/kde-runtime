@@ -49,6 +49,7 @@
 
 extern "C" {
 #include <xine/xine_plugin.h>
+#include "shareddata.h"
 #include "sinknode.h"
 #include "sourcenode.h"
 extern plugin_info_t phonon_xine_plugin_info[];
@@ -448,9 +449,10 @@ bool Backend::endConnectionChange(QSet<QObject *> nodes)
 {
     QList<WireCall> wireCallsUnordered;
     QList<WireCall> wireCalls;
+    QList<QExplicitlySharedDataPointer<SharedData> > allXtObjects;
     KeepReference *keep = new KeepReference();
 
-    // first we need to find all vertices of the subgraphs formed by the given nodes that are not
+    // first we need to find all vertices of the subgraphs formed by the given nodes that are
     // source nodes but don't have a sink node connected and connect them to the NullSink, otherwise
     // disconnections won't work
     foreach (QObject *q, nodes) {
@@ -471,6 +473,7 @@ bool Backend::endConnectionChange(QSet<QObject *> nodes)
         SourceNode *source = qobject_cast<SourceNode *>(q);
         if (source) {
             //keep->addObject(source->threadSafeObject());
+            allXtObjects.append(QExplicitlySharedDataPointer<SharedData>(static_cast<SharedData *>(source->threadSafeObject())));
             foreach (SinkNode *sink, source->sinks()) {
                 WireCall w(source, sink);
                 if (wireCallsUnordered.contains(w)) {
@@ -484,6 +487,7 @@ bool Backend::endConnectionChange(QSet<QObject *> nodes)
         SinkNode *sink = qobject_cast<SinkNode *>(q);
         if (sink) {
             keep->addObject(sink->threadSafeObject());
+            allXtObjects.append(QExplicitlySharedDataPointer<SharedData>(static_cast<SharedData *>(sink->threadSafeObject())));
             if (sink->source()) {
                 WireCall w(sink->source(), sink);
                 if (wireCallsUnordered.contains(w)) {
@@ -502,6 +506,13 @@ bool Backend::endConnectionChange(QSet<QObject *> nodes)
     }
     if (!wireCalls.isEmpty()) {
         qSort(wireCalls);
+        // we want to be safe and make sure that the execution of a WireCall has all objects still
+        // alive that were used in this connection change
+        QList<WireCall>::Iterator it = wireCalls.begin();
+        const QList<WireCall>::Iterator end = wireCalls.end();
+        for (; it != end; ++it) {
+            it->addReferenceTo(allXtObjects);
+        }
         QCoreApplication::postEvent(XineEngine::thread(), new RewireEvent(wireCalls));
     }
     return true;

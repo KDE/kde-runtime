@@ -65,12 +65,18 @@ class WireCall
             return source == rhs.source && sink == rhs.sink;
         }
 
+        void addReferenceTo(const QList<QExplicitlySharedDataPointer<SharedData> > &data)
+        {
+            extraReferences += data;
+        }
+
         QExplicitlySharedDataPointer<SourceNodeXT> source;
         QExplicitlySharedDataPointer<SinkNodeXT> sink;
 
     private:
         SourceNode *src;
         SinkNode *snk;
+        QList<QExplicitlySharedDataPointer<SharedData> > extraReferences;
 };
 } // namespace Xine
 } // namespace Phonon
