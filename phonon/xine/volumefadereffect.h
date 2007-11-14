@@ -70,8 +70,8 @@ class VolumeFaderEffect : public Effect, public Phonon::VolumeFaderInterface
         void setFadeCurve(Phonon::VolumeFaderEffect::FadeCurve curve);
         void fadeTo(float volume, int fadeTime);
 
-        QVariant parameterValue(int parameterId) const;
-        void setParameterValue(int parameterId, const QVariant &newValue);
+        QVariant parameterValue(const EffectParameter &p) const;
+        void setParameterValue(const EffectParameter &p, const QVariant &newValue);
 
     private:
         void getParameters() const;
