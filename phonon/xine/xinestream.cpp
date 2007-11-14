@@ -572,6 +572,7 @@ void XineStream::playbackFinished()
 // xine thread
 inline void XineStream::error(Phonon::ErrorType type, const QString &string)
 {
+    kDebug(610) << type << string;
     m_errorLock.lockForWrite();
     m_errorType = type;
     m_errorString = string;
@@ -1414,8 +1415,8 @@ void XineStream::timerEvent(QTimerEvent *event)
                 changeState(Phonon::StoppedState);
                 killTimer(m_waitForPlayingTimerId);
                 m_waitForPlayingTimerId = -1;
-            } else {
-                kDebug(610) << "waiting";
+            //} else {
+                //kDebug(610) << "waiting";
             }
         }
     } else {
