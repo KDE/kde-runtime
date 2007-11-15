@@ -256,7 +256,9 @@ void NotifyBySound::slotSoundFinished(int id)
 	kDebug(300) << id;
 	if(d->playerObjects.contains(id))
 	{
-		d->playerPool.returnPlayer(d->playerObjects.take(id));
+		Player *player=d->playerObjects.take(id);
+		disconnect(player->media, SIGNAL(finished()), d->signalmapper, SLOT(map()));
+		d->playerPool.returnPlayer(player);
 	}
 	if(d->processes.contains(id))
 	{
