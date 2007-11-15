@@ -1,5 +1,4 @@
 [Desktop Entry]
-Encoding=UTF-8
 Type=Service
 Name=Audio Preview
 Name[be]=Прагляд аўдыё
@@ -30,4 +29,4 @@ Name[x-test]=xxAudio Previewxx
 Name[zh_CN]=音频预览
 Name[zh_TW]=音效預覽
 X-KDE-Library=librenaudioplugin
-ServiceTypes=RenameDialog/Plugin,audio/mpeg,audio/x-wav,application/ogg
+X-KDE-ServiceTypes=RenameDialog/Plugin,audio/mpeg,audio/x-wav,application/ogg

@@ -1,10 +1,9 @@
 [Desktop Entry]
-Encoding=UTF-8
 Exec=kcmshell4 kcm_phononxine
 Icon=phonon
 Type=Service
-ServiceTypes=KCModule
-DocPath=kcontrol/phononxine/index.html
+X-KDE-ServiceTypes=KCModule
+X-DocPath=kcontrol/phononxine/index.html
 
 X-KDE-Library=kcm_phononxine
 X-KDE-ParentComponents=phonon_xine
@@ -49,8 +48,8 @@ Comment[th]=ปรับแต่งโปรแกรมเบื้องห�
 Comment[x-test]=xxXine Backend Configurationxx
 Comment[zh_CN]=Xine 后端配置
 Comment[zh_TW]=Xine 後端介面設定
-Keywords=Xine
-Keywords[ne]=जाइन
-Keywords[sr]=Xine,Ксине
-Keywords[sr@latin]=Xine,Xine
-Keywords[x-test]=xxXinexx
+X-KDE-Keywords=Xine
+X-KDE-Keywords[ne]=जाइन
+X-KDE-Keywords[sr]=Xine,Ксине
+X-KDE-Keywords[sr@latin]=Xine,Xine
+X-KDE-Keywords[x-test]=xxXinexx

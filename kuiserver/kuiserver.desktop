@@ -1,5 +1,4 @@
 [Desktop Entry]
-Encoding=UTF-8
 Type=Service
 Name=kuiserver
 Name[ne]=कुइसर्भर
@@ -38,7 +37,7 @@ Comment[wa]=Sierveu grafike KDE d' infôrmåcions so l' avançmint.
 Comment[x-test]=xxKDE's Progress Info UI serverxx
 Comment[zh_CN]=KDE 的进程信息用户界面服务器
 Comment[zh_TW]=KDE 的進度資訊介面伺服器
-ServiceTypes=
+X-KDE-ServiceTypes=
 # It is a server
 X-DBUS-StartupType=Unique
 X-KDE-StartupNotify=false

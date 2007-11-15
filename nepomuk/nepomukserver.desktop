@@ -1,7 +1,6 @@
 [Desktop Entry]
-Encoding=UTF-8
 Type=Service
-ServiceTypes=KDEDModule
+X-KDE-ServiceTypes=KDEDModule
 X-KDE-Library=nepomukserver
 X-KDE-FactoryName=nepomukserver
 X-KDE-Kded-autoload=true
