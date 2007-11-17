@@ -10,6 +10,7 @@ Name[zh_TW]=介面伺服器
 Exec=kuiserver
 Comment=KDE's Progress Info UI server
 Comment[bg]=Сървър за интерфейса на KDE
+Comment[ca]=Servidor d'interfície d'usuari d'informació de progrés del KDE
 Comment[de]=KDE-Dienst zur Fortschrittsanzeige
 Comment[el]=Εξυπηρετητής πληροφοριών διεργασιών του KDE
 Comment[et]=KDE edenemisinfo graafiline server

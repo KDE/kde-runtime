@@ -25,6 +25,7 @@ Name[th]=เซิร์ฟเวอร์ Nepomuk
 Name[zh_CN]=Nepomuk 服务器
 Name[zh_TW]=Nepomuk 伺服器
 Comment=The Nepomuk Server providing Storage services and strigi controlling
+Comment[ca]=El servidor Nepomuk proporciona serveis d'emmagatzematge i de control de l'Strigi
 Comment[de]=Der Nepomuk-Server stellt Speicherdienste und Strigi-Kontrolle zur Verfügung
 Comment[el]=Ο εξυπηρετητής Nepomuk που παρέχει υπηρεσίες Αποθήκευσης και έλεγχο του Strigi
 Comment[et]=Salvestusteenuseid ja Strigi juhtimist pakkuv Nepomuki server
