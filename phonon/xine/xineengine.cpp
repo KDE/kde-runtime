@@ -568,7 +568,7 @@ namespace Xine
                 } else if (0 == strcmp(outputPlugins[i], "arts")) {
                     addAudioOutput(nextIndex++, -100, i18n("aRts"),
                             i18n("<html><p>aRts is the old soundserver and media framework that was used "
-                                "in KDE2 and KDE3. Its use is discuraged.</p></html>"),
+                                "in KDE2 and KDE3. Its use is discouraged.</p></html>"),
                             /*icon name */"audio-backend-arts", outputPlugins[i], QStringList(), QString());
                 } else if (0 == strcmp(outputPlugins[i], "pulseaudio")) {
                     addAudioOutput(nextIndex++, 10, i18n("PulseAudio"),
