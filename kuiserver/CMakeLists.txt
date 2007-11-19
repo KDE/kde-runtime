@@ -15,8 +15,8 @@ uiserver_p.h
 )
 
 kde4_add_ui_files(kuiserver_KDEINIT_SRCS uiserverConfigDialog.ui)
-qt4_add_dbus_interface(kuiserver_KDEINIT_SRCS ${DBUS_INTERFACES_INSTALL_DIR}/org.kde.UiServerCallbacks.xml callbacksiface )
-qt4_add_dbus_adaptor(kuiserver_KDEINIT_SRCS ${DBUS_INTERFACES_INSTALL_DIR}/org.kde.UiServer.xml uiserver.h UIServer uiserveradaptor )
+qt4_add_dbus_interface(kuiserver_KDEINIT_SRCS ${KDE4_DBUS_INTERFACES_DIR}/org.kde.UiServerCallbacks.xml callbacksiface )
+qt4_add_dbus_adaptor(kuiserver_KDEINIT_SRCS ${KDE4_DBUS_INTERFACES_DIR}/org.kde.UiServer.xml uiserver.h UIServer uiserveradaptor )
 kde4_add_kcfg_files(kuiserver_KDEINIT_SRCS kuiserversettings.kcfgc)
 
 kde4_add_kdeinit_executable( kuiserver ${kuiserver_KDEINIT_SRCS})
