@@ -47,6 +47,16 @@ Soprano::Model* Nepomuk::Core::model( const QString& name )
 }
 
 
+QStringList Nepomuk::Core::allModels() const
+{
+    QStringList models;
+    foreach( Repository* repo, m_repositories ) {
+        models.append( repo->name() );
+    }
+    return models;
+}
+
+
 Nepomuk::Repository* Nepomuk::Core::repository( const QString& name )
 {
     if ( !m_repositories.contains( name ) ) {

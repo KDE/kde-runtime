@@ -37,6 +37,8 @@ namespace Nepomuk {
 	Soprano::Model* model( const QString& name );
 	Repository* repository( const QString& name );
 
+	QStringList allModels() const;
+
     private:
 	QString createStoragePath( const QString& repositoryId ) const;
 
