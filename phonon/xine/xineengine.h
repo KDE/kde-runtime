@@ -117,7 +117,7 @@ class XineEngine
             bool available : 1;
             bool isAdvanced : 1;
             inline bool operator==(const AudioOutputInfo &rhs) const { return name == rhs.name && driver == rhs.driver; }
-            inline bool operator<(const AudioOutputInfo &rhs) const { return initialPreference < rhs.initialPreference; }
+            inline bool operator<(const AudioOutputInfo &rhs) const { return initialPreference > rhs.initialPreference; }
         };
         QList<AudioOutputInfo> m_audioOutputInfos;
         QList<QObject *> m_cleanupObjects;

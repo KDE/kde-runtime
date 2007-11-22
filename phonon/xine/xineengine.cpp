@@ -521,7 +521,7 @@ namespace Xine
                         }
                     }
                 } else if (0 == strcmp(outputPlugins[i], "jack")) {
-                    addAudioOutput(nextIndex++, -10, i18n("Jack Audio Connection Kit"),
+                    addAudioOutput(nextIndex++, 9, i18n("Jack Audio Connection Kit"),
                             i18n("<html><p>JACK is a low-latency audio server. It can connect a number "
                                 "of different applications to an audio device, as well as allowing "
                                 "them to share audio between themselves.</p>"
@@ -540,7 +540,7 @@ namespace Xine
                             xine_get_audio_driver_plugin_description(xine(), outputPlugins[i]),
                             /*icon name */"audio-backend-pulseaudio", outputPlugins[i], QStringList(), QString());
                 } else if (0 == strcmp(outputPlugins[i], "esd")) {
-                    addAudioOutput(nextIndex++, 10, i18n("Esound (ESD)"),
+                    addAudioOutput(nextIndex++, 8, i18n("Esound (ESD)"),
                             xine_get_audio_driver_plugin_description(xine(), outputPlugins[i]),
                             /*icon name */"audio-backend-esd", outputPlugins[i], QStringList(), QString());
                 } else {
