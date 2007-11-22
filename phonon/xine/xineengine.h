@@ -22,6 +22,7 @@
 #ifndef XINEENGINE_H
 #define XINEENGINE_H
 
+#include <QtCore/QHash>
 #include <QtCore/QSize>
 #include <QtCore/QString>
 #include <QtCore/QStringList>
@@ -68,12 +69,7 @@ class XineEngine
         static void xineEventListener(void *, const xine_event_t *);
 
         static QList<int> audioOutputIndexes();
-        static QString audioOutputName(int audioDevice);
-        static QString audioOutputDescription(int audioDevice);
-        static QString audioOutputIcon(int audioDevice);
-        static bool audioOutputAvailable(int audioDevice);
-        static QVariant audioOutputMixerDevice(int audioDevice);
-        static int audioOutputInitialPreference(int audioDevice);
+        static QHash<QByteArray, QVariant> audioOutputProperties(int audioDevice);
         static QByteArray audioDriverFor(int audioDevice);
         static QStringList alsaDevicesFor(int audioDevice);
         static xine_audio_port_t *nullPort();
@@ -97,7 +93,7 @@ class XineEngine
 
     private:
         void checkAudioOutputs();
-        void addAudioOutput(AudioDevice dev, const QByteArray &driver);
+        void addAudioOutput(const AudioDevice &dev, const QByteArray &driver);
         void addAudioOutput(int idx, int initialPreference, const QString &n,
                 const QString &desc, const QString &ic, const QByteArray &dr,
                 const QStringList &dev, const QString &mixerDevice);
@@ -107,18 +103,19 @@ class XineEngine
         {
             AudioOutputInfo(int idx, int ip, const QString &n, const QString &desc, const QString &ic,
                     const QByteArray &dr, const QStringList &dev, const QString &mdev)
-                : available(false), index(idx), initialPreference(ip), name(n),
-                description(desc), icon(ic), driver(dr), devices(dev), mixerDevice(mdev) {}
+                : devices(dev), name(n), description(desc), icon(ic), mixerDevice(mdev), driver(dr),
+                index(idx), initialPreference(ip), available(false), isAdvanced(false) {}
 
-            bool available;
-            int index;
-            int initialPreference;
+            QStringList devices;
             QString name;
             QString description;
             QString icon;
-            QByteArray driver;
-            QStringList devices;
             QString mixerDevice;
+            QByteArray driver;
+            int index;
+            int initialPreference;
+            bool available : 1;
+            bool isAdvanced : 1;
             inline bool operator==(const AudioOutputInfo &rhs) const { return name == rhs.name && driver == rhs.driver; }
             inline bool operator<(const AudioOutputInfo &rhs) const { return initialPreference < rhs.initialPreference; }
         };

@@ -234,20 +234,7 @@ QHash<QByteArray, QVariant> Backend::objectDescriptionProperties(ObjectDescripti
     QHash<QByteArray, QVariant> ret;
     switch (type) {
     case Phonon::AudioOutputDeviceType:
-        {
-            ret.insert("name", XineEngine::audioOutputName(index));
-            ret.insert("description", XineEngine::audioOutputDescription(index));
-            QString icon = XineEngine::audioOutputIcon(index);
-            if (!icon.isEmpty()) {
-                ret.insert("icon", icon);
-            }
-            ret.insert("available", XineEngine::audioOutputAvailable(index));
-            QVariant mixer = XineEngine::audioOutputMixerDevice(index);
-            if (mixer.isValid()) {
-                ret.insert("mixerDeviceId", mixer);
-            }
-            ret.insert("initialPreference", XineEngine::audioOutputInitialPreference(index));
-        }
+        ret = XineEngine::audioOutputProperties(index);
         break;
         /*
     case Phonon::AudioCaptureDeviceType:
