@@ -112,6 +112,7 @@ class MediaObject : public QObject, public MediaObjectInterface, public AddonInt
         void finished();
         void prefinishMarkReached(qint32 msec);
         void totalTimeChanged(qint64 length);
+        void currentSourceChanged(const MediaSource &);
 
         void stateChanged(Phonon::State newstate, Phonon::State oldstate);
         void tick(qint64 time);

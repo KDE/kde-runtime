@@ -316,16 +316,16 @@ void MediaObject::startToFakeBuffering()
 
 void MediaObject::handleStateChange(Phonon::State newstate, Phonon::State oldstate)
 {
-    if (m_state == newstate) {
-        if (m_fakingBuffering) {
-            Q_ASSERT(m_state == BufferingState);
-            m_fakingBuffering = false;
-            kDebug(610) << blue << "end faking" << normal;
-        }
+    if (m_state == newstate && m_state == BufferingState) {
+        m_fakingBuffering = false;
+        kDebug(610) << blue << "end faking" << normal;
         // BufferingState -> BufferingState, nothing to do
         return;
     } else if (m_state != oldstate) {
+        // m_state == oldstate always, except when faking buffering:
         Q_ASSERT(m_fakingBuffering);
+
+        // so we're faking BufferingState, then m_state must be in BufferingState
         Q_ASSERT(m_state == BufferingState);
         if (newstate == PlayingState || newstate == ErrorState) {
             m_fakingBuffering = false;
@@ -494,6 +494,7 @@ void MediaObject::setSourceInternal(const MediaSource &source, HowToSetTheUrl ho
         }
         break;
     }
+    emit currentSourceChanged(m_mediaSource);
 //X     if (state() != Phonon::LoadingState) {
 //X         stop();
 //X     }
