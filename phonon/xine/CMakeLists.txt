@@ -42,13 +42,6 @@ else(XCB_FOUND AND XINE_XCB_FOUND)
 endif(XCB_FOUND AND XINE_XCB_FOUND)
 macro_log_feature(XCB_VIDEO "XCB" "XCB is needed for the video widget, libxine needs to be compiled with XCB" "http://xcb.freedesktop.org/")
 
-macro(dbusadaptor _sources _header _parentClass)
-   GET_FILENAME_COMPONENT(_basename ${_header} NAME_WE)
-   qt4_generate_dbus_interface(${_header} ${_basename}.xml)
-   qt4_add_dbus_adaptor(${_sources} ${CMAKE_CURRENT_BINARY_DIR}/${_basename}.xml ${_header} ${_parentClass})
-endmacro(dbusadaptor)
-
-dbusadaptor(phonon_xine_PART_SRCS xineengine_p.h Phonon::Xine::XineEnginePrivate)
 kde4_add_plugin(phonon_xine ${phonon_xine_PART_SRCS})
 target_link_libraries(phonon_xine ${QT_QTGUI_LIBRARY} ${KDE4_KDECORE_LIBS} ${KDE4_PHONON_LIBS} ${XINE_LIBRARY} ${KDE4_KAUDIODEVICELIST_LIBS})
 if(XCB_FOUND AND XINE_XCB_FOUND)

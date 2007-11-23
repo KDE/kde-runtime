@@ -96,7 +96,7 @@ class XineEngine
         void addAudioOutput(const AudioDevice &dev, const QByteArray &driver);
         void addAudioOutput(int idx, int initialPreference, const QString &n,
                 const QString &desc, const QString &ic, const QByteArray &dr,
-                const QStringList &dev, const QString &mixerDevice);
+                const QStringList &dev, const QString &mixerDevice, bool isAdvanced = false);
         xine_t *m_xine;
 
         struct AudioOutputInfo

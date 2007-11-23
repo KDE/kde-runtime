@@ -35,7 +35,6 @@
 #include "backend.h"
 #include "events.h"
 #include "xinethread.h"
-#include <xineengine_padaptor.h>
 
 namespace Phonon
 {
@@ -45,8 +44,7 @@ namespace Xine
     {
         signalTimer.setSingleShot(true);
         connect(&signalTimer, SIGNAL(timeout()), SLOT(emitAudioDeviceChange()));
-        new XineEnginePrivateAdaptor(this);
-        QDBusConnection::sessionBus().registerObject("/internal/PhononXine", this);
+        QDBusConnection::sessionBus().registerObject("/internal/PhononXine", this, QDBusConnection::ExportScriptableSlots);
     }
 
     void XineEnginePrivate::emitAudioDeviceChange()
@@ -423,9 +421,10 @@ namespace Xine
     }
 
     void XineEngine::addAudioOutput(int index, int initialPreference, const QString &name, const QString &description,
-            const QString &icon, const QByteArray &driver, const QStringList &deviceIds, const QString &mixerDevice)
+            const QString &icon, const QByteArray &driver, const QStringList &deviceIds, const QString &mixerDevice, bool isAdvanced)
     {
         AudioOutputInfo info(index, initialPreference, name, description, icon, driver, deviceIds, mixerDevice);
+        info.isAdvanced = isAdvanced;
         const int listIndex = m_audioOutputInfos.indexOf(info);
         if (listIndex == -1) {
             info.available = true;
@@ -538,7 +537,7 @@ namespace Xine
                 } else if (0 == strcmp(outputPlugins[i], "pulseaudio")) {
                     addAudioOutput(nextIndex++, 10, i18n("PulseAudio"),
                             xine_get_audio_driver_plugin_description(xine(), outputPlugins[i]),
-                            /*icon name */"audio-backend-pulseaudio", outputPlugins[i], QStringList(), QString());
+                            /*icon name */"audio-backend-pulseaudio", outputPlugins[i], QStringList(), QString(), true /*isAdvanced*/);
                 } else if (0 == strcmp(outputPlugins[i], "esd")) {
                     addAudioOutput(nextIndex++, 8, i18n("Esound (ESD)"),
                             xine_get_audio_driver_plugin_description(xine(), outputPlugins[i]),
