@@ -29,6 +29,7 @@
 #include <QCheckBox>
 #include <QLinkedList>
 
+
 #include "deviceaction.h"
 #include "ui_deviceactionsdialogview.h"
 
@@ -43,13 +44,6 @@ DeviceActionsDialog::DeviceActionsDialog(QWidget *parent)
     QWidget *page = new QWidget(this);
     m_view.setupUi(page);
     setMainWidget(page);
-    //QVBoxLayout *topLayout = new QVBoxLayout(page);
-    //topLayout->setMargin(0);
-    //topLayout->setSpacing(spacingHint());
-
-
-    //topLayout->addWidget(page);
-
     updateActionsListBox();
 
     resize(QSize(400,400).expandedTo(minimumSizeHint()));
@@ -70,7 +64,13 @@ DeviceActionsDialog::~DeviceActionsDialog()
 void DeviceActionsDialog::setDevice(const Solid::Device &device)
 {
     m_device = device;
-
+    
+    QString label = device.vendor();
+    if (!label.isEmpty()) label+=' ';
+    label+= device.product();
+    
+    setWindowTitle(label); 
+    
     m_view.iconLabel->setPixmap(KIcon(device.icon()).pixmap(64));
     m_view.descriptionLabel->setText(device.vendor()+' '+device.product());
 }
