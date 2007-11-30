@@ -36,7 +36,7 @@ visit the <ulink url="http://kde-artists.org/">&kde;
 artists page</ulink> to find out more.</para></listitem>
 <listitem><para>Write articles and books about &kde;.  If you want to
 help spread the word about &kde;, simply send an email to
-<email>kde-pr@kde.org</email>.  This will get you in touch 
+<email>kde-promo@kde.org</email>.  This will get you in touch 
 with the &kde; public relations volunteers.</para></listitem>
 <listitem><para>Program new &kde; applications.  Please refer to <xref
 linkend="programming"/> for more information.</para></listitem>
@@ -79,12 +79,10 @@ should do first depends strongly on your experience, &eg; whether you have
 already learned C++ or have experience with the &Qt; toolkit and so
 on.</para>
 <para>To get into &kde; programming, you will need some basic tools:
-<application>automake</application>,
-<application>autoconf</application>, and
-<application>egcs</application>.  You should look to <ulink
-url="http://developer.kde.org/">http://developer.kde.org/</ulink> 
-for more tips. The new &kde; developer wiki at <ulink url="http://techbase.kde.org/">http://techbase.kde.org/</ulink>
-is also a great resource.
+<application>cmake</application>, and
+<application>gcc</application>.  You should look to <ulink 
+url="http://techbase.kde.org/">http://techbase.kde.org/</ulink>
+for more tips.
 </para>
 <para>Another excellent resource for learning &kde;
 programming is the &Qt; 
