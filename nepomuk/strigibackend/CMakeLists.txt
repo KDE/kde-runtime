@@ -46,7 +46,6 @@ target_link_libraries(sopranobackend
   ${SOPRANO_INDEX_LIBRARIES}
   ${SOPRANO_CLIENT_LIBRARIES}
   ${QT_QTCORE_LIBRARY}
-  ${KDE4_KDECORE_LIBS}
   ${CLUCENE_LIBRARY}
 )
 

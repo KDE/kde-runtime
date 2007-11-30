@@ -44,8 +44,6 @@
 #include <QtCore/QString>
 #include <QtCore/QLatin1String>
 
-#include <KDebug>
-
 
 using namespace Soprano;
 
@@ -74,7 +72,7 @@ static lucene::index::Term* createWildCardTerm( const TString& name,
 static lucene::index::Term* createTerm( const TString& name,
                                         const string& value )
 {
-    kDebug(300002) << "createTerm" << name << value.c_str();
+    qDebug() << "createTerm" << name << value.c_str();
 
     TString v = TString::fromUtf8( value.c_str() );
 
@@ -134,7 +132,7 @@ static lucene::search::Query* createSimpleQuery( const Strigi::Query& query )
 
 static lucene::search::Query* createSingleFieldQuery( const string& field,
                                                       const Strigi::Query& query ) {
-    kDebug(300002) << "Creating single field query: " << field.c_str();
+    qDebug() << "Creating single field query: " << field.c_str();
     TString fieldname = Strigi::Soprano::Util::convertSearchField( field );
     lucene::search::Query* q;
     lucene::index::Term* t;
@@ -207,7 +205,7 @@ public:
                     doc.fragment = value;
                 }
                 else if (fieldName == FieldRegister::pathFieldName) {
-                    kDebug(300002) << "Setting IndexedDocument uri=" << value.c_str();
+                    qDebug() << "Setting IndexedDocument uri=" << value.c_str();
                     doc.uri = value;
                 }
                 else if (fieldName == FieldRegister::mimetypeFieldName) {
@@ -240,7 +238,7 @@ public:
 Strigi::Soprano::IndexReader::IndexReader( ::Soprano::Model* model )
     : Strigi::IndexReader()
 {
-    kDebug(300002) << "IndexReader::IndexReader in thread" << QThread::currentThread();
+    qDebug() << "IndexReader::IndexReader in thread" << QThread::currentThread();
     d = new Private;
     d->repository = model;
 }
@@ -248,14 +246,14 @@ Strigi::Soprano::IndexReader::IndexReader( ::Soprano::Model* model )
 
 Strigi::Soprano::IndexReader::~IndexReader()
 {
-    kDebug(300002) << "IndexReader::~IndexReader in thread" << QThread::currentThread();
+    qDebug() << "IndexReader::~IndexReader in thread" << QThread::currentThread();
     delete d;
 }
 
 
 int32_t Strigi::Soprano::IndexReader::countHits( const Query& query )
 {
-    kDebug(300002) << "IndexReader::countHits in thread" << QThread::currentThread();
+    qDebug() << "IndexReader::countHits in thread" << QThread::currentThread();
 
     lucene::search::Query* q = createQuery( query );
     ::Soprano::QueryResultIterator hits = d->repository->executeQuery( TString( q->toString(), true ),
@@ -264,7 +262,7 @@ int32_t Strigi::Soprano::IndexReader::countHits( const Query& query )
 //    Iterator< ::Soprano::Index::QueryHit> hits = d->repository->index()->search( q );
     int s = 0;
     while ( hits.next() ) {
-        kDebug(300002) << "Query hit:" << hits.binding( 0 );
+        qDebug() << "Query hit:" << hits.binding( 0 );
         ++s;
     }
     _CLDELETE(q);
@@ -278,7 +276,7 @@ void Strigi::Soprano::IndexReader::getHits( const Strigi::Query& query,
                                             std::vector<std::vector<Strigi::Variant> >& result,
                                             int off, int max )
 {
-    kDebug(300002) << "IndexReader::getHits in thread" << QThread::currentThread();
+    qDebug() << "IndexReader::getHits in thread" << QThread::currentThread();
     lucene::search::Query* bq = createQuery( query );
     ::Soprano::QueryResultIterator hits = d->repository->executeQuery( TString( bq->toString(), true ),
                                                                        ::Soprano::Query::QUERY_LANGUAGE_USER,
@@ -328,7 +326,7 @@ void Strigi::Soprano::IndexReader::getHits( const Strigi::Query& query,
 
 std::vector<Strigi::IndexedDocument> Strigi::Soprano::IndexReader::query( const Query& query, int off, int max )
 {
-    kDebug(300002) << "IndexReader::query in thread" << QThread::currentThread();
+    qDebug() << "IndexReader::query in thread" << QThread::currentThread();
     vector<IndexedDocument> results;
     lucene::search::Query* bq = createQuery( query );
     ::Soprano::QueryResultIterator hits = d->repository->executeQuery( TString( bq->toString(), true ),
@@ -353,7 +351,7 @@ std::vector<Strigi::IndexedDocument> Strigi::Soprano::IndexReader::query( const 
             results.push_back( result );
         }
         else {
-            kDebug(300002) << "Failed to create indexed document for resource " << hits.binding( 0 ) << ": " << d->repository->lastError();
+            qDebug() << "Failed to create indexed document for resource " << hits.binding( 0 ) << ": " << d->repository->lastError();
         }
     }
     _CLDELETE(bq);
@@ -365,7 +363,7 @@ std::vector<Strigi::IndexedDocument> Strigi::Soprano::IndexReader::query( const 
 void Strigi::Soprano::IndexReader::getChildren( const std::string& parent,
                                                 std::map<std::string, time_t>& children )
 {
-    kDebug(300002) << "IndexReader::getChildren in thread" << QThread::currentThread();
+    qDebug() << "IndexReader::getChildren in thread" << QThread::currentThread();
     QString query = QString( "select distinct ?path ?mtime where { ?r <%1> \"%2\"^^<%3> . ?r <%4> ?mtime . ?r <%5> ?path . }")
                     .arg( Util::fieldUri( FieldRegister::parentLocationFieldName ).toString() )
                     .arg( QString::fromUtf8( parent.c_str() ) )
@@ -373,14 +371,14 @@ void Strigi::Soprano::IndexReader::getChildren( const std::string& parent,
                     .arg( Util::fieldUri( FieldRegister::mtimeFieldName ).toString() )
                     .arg( Util::fieldUri( FieldRegister::pathFieldName ).toString() );
 
-    kDebug(300002) << "running getChildren query:" << query;
+    qDebug() << "running getChildren query:" << query;
 
     QueryResultIterator result = d->repository->executeQuery( query, ::Soprano::Query::QUERY_LANGUAGE_SPARQL );
 
     while ( result.next() ) {
         Node pathNode = result.binding( "path" );
         Node mTimeNode = result.binding( "mtime" );
-        kDebug(300002) << "file in index: " << pathNode.toString() << "mtime:" << mTimeNode.literal().toDateTime() << "(" << mTimeNode.literal().toDateTime().toTime_t() << ")";
+        qDebug() << "file in index: " << pathNode.toString() << "mtime:" << mTimeNode.literal().toDateTime() << "(" << mTimeNode.literal().toDateTime().toTime_t() << ")";
         children[std::string( pathNode.toString().toUtf8().data() )] = mTimeNode.literal().toDateTime().toTime_t();
     }
 }
@@ -388,7 +386,7 @@ void Strigi::Soprano::IndexReader::getChildren( const std::string& parent,
 
 int32_t Strigi::Soprano::IndexReader::countDocuments()
 {
-    kDebug(300002) << "IndexReader::countDocuments in thread" << QThread::currentThread();
+    qDebug() << "IndexReader::countDocuments in thread" << QThread::currentThread();
     // FIXME: the only solution I see ATM is: select distinct ?r where { ?r ?p ?o }
     return 0;
 }
@@ -396,7 +394,7 @@ int32_t Strigi::Soprano::IndexReader::countDocuments()
 
 int32_t Strigi::Soprano::IndexReader::countWords()
 {
-    kDebug(300002) << "IndexReader::countWords in thread" << QThread::currentThread();
+    qDebug() << "IndexReader::countWords in thread" << QThread::currentThread();
     // FIXME: what to do here? use the index? Count the predicates?
     return -1;
 }
@@ -404,21 +402,21 @@ int32_t Strigi::Soprano::IndexReader::countWords()
 
 int64_t Strigi::Soprano::IndexReader::indexSize()
 {
-    kDebug(300002) << "IndexReader::indexSize in thread" << QThread::currentThread();
+    qDebug() << "IndexReader::indexSize in thread" << QThread::currentThread();
     return d->repository->statementCount();
 }
 
 
 time_t Strigi::Soprano::IndexReader::mTime( const std::string& uri )
 {
-    kDebug(300002) << "IndexReader::mTime in thread" << QThread::currentThread();
+    qDebug() << "IndexReader::mTime in thread" << QThread::currentThread();
     QString query = QString( "select ?mtime where { ?r <%2> \"%3\"^^<%4> . ?r <%1> ?mtime . }" )
                     .arg( Util::fieldUri( FieldRegister::mtimeFieldName ).toString() )
                     .arg( Util::fieldUri( FieldRegister::pathFieldName ).toString() )
                     .arg( QString::fromUtf8( uri.c_str() ) )
                     .arg( Vocabulary::XMLSchema::string().toString() );
 
-    kDebug(300002) << "mTime( " << uri.c_str() << ") query:" << query;
+    qDebug() << "mTime( " << uri.c_str() << ") query:" << query;
 
     QueryResultIterator it = d->repository->executeQuery( query, ::Soprano::Query::QUERY_LANGUAGE_SPARQL );
 
@@ -432,7 +430,7 @@ time_t Strigi::Soprano::IndexReader::mTime( const std::string& uri )
 
 std::vector<std::string> Strigi::Soprano::IndexReader::fieldNames()
 {
-    kDebug(300002) << "IndexReader::fieldNames in thread" << QThread::currentThread();
+    qDebug() << "IndexReader::fieldNames in thread" << QThread::currentThread();
     // This is a weird method
     // Our list of field names (the predicates) is probably awefully long.
 
@@ -450,7 +448,7 @@ std::vector<std::pair<std::string,uint32_t> > Strigi::Soprano::IndexReader::hist
                                                                                        const std::string& labeltype )
 {
     // FIXME: what is meant by fieldname and labeltype?
-    kDebug(300002) << "IndexReader::histogram in thread" << QThread::currentThread();
+    qDebug() << "IndexReader::histogram in thread" << QThread::currentThread();
     // IMPLEMENTME? Seems not like a very important method though.
     return std::vector<std::pair<std::string,uint32_t> >();
 }
@@ -459,7 +457,7 @@ std::vector<std::pair<std::string,uint32_t> > Strigi::Soprano::IndexReader::hist
 int32_t Strigi::Soprano::IndexReader::countKeywords( const std::string& keywordprefix,
                                                      const std::vector<std::string>& fieldnames)
 {
-    kDebug(300002) << "IndexReader::countKeywords in thread" << QThread::currentThread();
+    qDebug() << "IndexReader::countKeywords in thread" << QThread::currentThread();
     // the clucene indexer also returns 2. I suspect this means: "not implemented" ;)
     return 2;
 }
@@ -469,7 +467,7 @@ std::vector<std::string> Strigi::Soprano::IndexReader::keywords( const std::stri
                                                                  const std::vector<std::string>& fieldnames,
                                                                  uint32_t max, uint32_t offset )
 {
-    kDebug(300002) << "IndexReader::keywords in thread" << QThread::currentThread();
+    qDebug() << "IndexReader::keywords in thread" << QThread::currentThread();
     // IMPLEMENTME? Seems like a rarely used method...
     return std::vector<std::string>();
 }

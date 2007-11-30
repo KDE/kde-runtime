@@ -102,8 +102,8 @@ void Nepomuk::ServerConfigModule::save()
 
     // 2. update the current state of the nepomuk server
     if ( m_serverInterface.isValid() ) {
-        m_serverInterface.enableStrigi( m_checkEnableStrigi->isChecked() );
         m_serverInterface.enableNepomuk( m_checkEnableNepomuk->isChecked() );
+        m_serverInterface.enableStrigi( m_checkEnableStrigi->isChecked() );
     }
     else {
         KMessageBox::sorry( this,

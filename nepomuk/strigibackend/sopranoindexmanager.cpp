@@ -37,8 +37,6 @@
 #include <QtCore/QDebug>
 #include <QtCore/QString>
 
-#include <KDebug>
-
 
 namespace {
     ::Soprano::Client::DBusClient* s_sopranoClient = 0;
@@ -74,7 +72,7 @@ STRIGI_EXPORT Strigi::IndexManager* createIndexManager( const char* dir )
     }
 
     if ( s_sopranoClient->isValid() ) {
-        kDebug(300002) << "(Strigi::Soprano::IndexManager) found Soprano server.";
+        qDebug() << "(Strigi::Soprano::IndexManager) found Soprano server.";
         if ( ::Soprano::Model* model = s_sopranoClient->createModel( "main" ) ) {
             return new Strigi::Soprano::IndexManager( model, QString() );
         }
@@ -85,11 +83,11 @@ STRIGI_EXPORT Strigi::IndexManager* createIndexManager( const char* dir )
     else {
         const ::Soprano::Backend* backend = ::Soprano::discoverBackendByName( "sesame2" );
         if ( !backend ) {
-            kDebug(300002) << "(Strigi::Soprano::IndexManager) could not find Sesame2 backend. Falling back to redland. NO BACKEND CHANGE SUPPORT YET!";
+            qDebug() << "(Strigi::Soprano::IndexManager) could not find Sesame2 backend. Falling back to redland. NO BACKEND CHANGE SUPPORT YET!";
             backend = ::Soprano::discoverBackendByName( "redland" );
         }
         if ( !backend ) {
-            kDebug(300002) << "(Strigi::Soprano::IndexManager) could not find a backend.";
+            qDebug() << "(Strigi::Soprano::IndexManager) could not find a backend.";
             return 0;
         }
 
@@ -97,7 +95,7 @@ STRIGI_EXPORT Strigi::IndexManager* createIndexManager( const char* dir )
         storageDir.makeAbsolute();
         if ( !storageDir.exists() ) {
             if ( !QDir( "/" ).mkpath( storageDir.path() ) ) {
-                kDebug(300002) << "Failed to create storage dir " << storageDir.path();
+                qDebug() << "Failed to create storage dir " << storageDir.path();
                 return 0;
             }
         }
@@ -139,7 +137,7 @@ Strigi::Soprano::IndexManager::IndexManager( ::Soprano::Model* model, const QStr
 
 Strigi::Soprano::IndexManager::~IndexManager()
 {
-    kDebug(300002) << "Cleaning up SopranoIndexManager";
+    qDebug() << "Cleaning up SopranoIndexManager";
     delete d->reader;
     delete d->writer;
     delete d->indexModel;
@@ -153,7 +151,7 @@ Strigi::Soprano::IndexManager::~IndexManager()
 Strigi::IndexReader* Strigi::Soprano::IndexManager::indexReader()
 {
     if ( !d->reader ) {
-        kDebug(300002) << "(Soprano::IndexManager) creating IndexReader";
+        qDebug() << "(Soprano::IndexManager) creating IndexReader";
         if ( d->indexModel )
             d->reader = new Strigi::Soprano::IndexReader( d->indexModel );
         else
@@ -167,7 +165,7 @@ Strigi::IndexReader* Strigi::Soprano::IndexManager::indexReader()
 Strigi::IndexWriter* Strigi::Soprano::IndexManager::indexWriter()
 {
     if ( !d->writer ) {
-        kDebug(300002) << "(Soprano::IndexManager) creating IndexWriter";
+        qDebug() << "(Soprano::IndexManager) creating IndexWriter";
         if ( d->indexModel )
             d->writer = new Strigi::Soprano::IndexWriter( d->indexModel );
         else
