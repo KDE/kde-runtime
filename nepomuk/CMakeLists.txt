@@ -6,6 +6,15 @@ if(SopranoIndex_FOUND)
   set(HAVE_SOPRANO_INDEX "yes")
 endif(SopranoIndex_FOUND)
 
+# optional Strigi backend
+# -----------------------------
+find_package(CLucene)
+if(CLucene_FOUND AND SopranoIndex_FOUND)
+  set(HAVE_STRIGI_SOPRANO_BACKEND "yes")
+  macro_optional_add_subdirectory(strigibackend)
+endif(CLucene_FOUND AND SopranoIndex_FOUND)
+# -----------------------------
+
 configure_file(nepomukserver-config.h.cmake ${nepomuk_BINARY_DIR}/nepomukserver-config.h)
 
 include_directories(
@@ -16,16 +25,6 @@ include_directories(
   ${NEPOMUK_INCLUDE_DIR}
   ${nepomuk_BINARY_DIR}
   )
-
-# optional Strigi backend
-# -----------------------------
-find_package(CLucene)
-if(CLucene_FOUND AND SopranoIndex_FOUND)
-  macro_optional_add_subdirectory(strigibackend)
-  set(HAVE_STRIGI_SOPRANO_BACKEND 1)
-endif(CLucene_FOUND AND SopranoIndex_FOUND)
-# -----------------------------
-
 
 # NepomukServer
 # -----------------------------
