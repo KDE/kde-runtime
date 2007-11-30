@@ -73,7 +73,9 @@ Nepomuk::Repository* Nepomuk::Repository::open( const QString& path, const QStri
             rep->m_model = model;
             rep->m_index = index;
             rep->m_indexModel = new Soprano::Index::IndexFilterModel( index, model );
-//            rep->m_indexModel->setTransactionCacheSize( 50 );
+
+            // FIXME: find a good value here
+            rep->m_indexModel->setTransactionCacheSize( 500 );
             return rep;
         }
         else {

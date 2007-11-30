@@ -212,7 +212,13 @@ public:
                     doc.mimetype = value;
                 }
                 else if (fieldName == FieldRegister::mtimeFieldName) {
-                    doc.mtime = s.object().literal().toDateTime().toTime_t();
+                    // FIXME: Sadly in Xesam sourceModified is not typed as DateTime but defaults to an int :( We try to be compatible
+                    if ( s.object().literal().isDateTime() ) {
+                        doc.mtime = s.object().literal().toDateTime().toTime_t();
+                    }
+                    else {
+                        doc.mtime = s.object().literal().toUnsignedInt();
+                    }
                 }
                 else if (fieldName == FieldRegister::sizeFieldName) {
                     doc.size = s.object().literal().toInt64();
@@ -379,7 +385,14 @@ void Strigi::Soprano::IndexReader::getChildren( const std::string& parent,
         Node pathNode = result.binding( "path" );
         Node mTimeNode = result.binding( "mtime" );
         qDebug() << "file in index: " << pathNode.toString() << "mtime:" << mTimeNode.literal().toDateTime() << "(" << mTimeNode.literal().toDateTime().toTime_t() << ")";
-        children[std::string( pathNode.toString().toUtf8().data() )] = mTimeNode.literal().toDateTime().toTime_t();
+
+        // FIXME: Sadly in Xesam sourceModified is not typed as DateTime but defaults to an int :( We try to be compatible
+        if ( mTimeNode.literal().isDateTime() ) {
+            children[std::string( pathNode.toString().toUtf8().data() )] = mTimeNode.literal().toDateTime().toTime_t();
+        }
+        else {
+            children[std::string( pathNode.toString().toUtf8().data() )] = mTimeNode.literal().toUnsignedInt();
+        }
     }
 }
 
@@ -422,7 +435,15 @@ time_t Strigi::Soprano::IndexReader::mTime( const std::string& uri )
 
     time_t mtime = 0;
     if ( it.next() ) {
-        mtime = it.binding( "mtime" ).literal().toDateTime().toTime_t();
+        ::Soprano::LiteralValue val = it.binding( "mtime" ).literal();
+
+        // FIXME: Sadly in Xesam sourceModified is not typed as DateTime but defaults to an int :( We try to be compatible
+        if ( val.isDateTime() ) {
+            mtime = val.toDateTime().toTime_t();
+        }
+        else {
+            mtime = val.toUnsignedInt();
+        }
     }
     return mtime;
 }

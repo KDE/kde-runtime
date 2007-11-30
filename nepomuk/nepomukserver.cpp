@@ -82,6 +82,8 @@ void Nepomuk::Server::startStrigi()
             false
 #endif
             );
+
+        m_strigi->startIndexing();
     }
 }
 
