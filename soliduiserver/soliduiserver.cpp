@@ -91,8 +91,11 @@ void SolidUiServer::showActionsDialog(const QString &udi,
             actions << action;
         }
     }
-    actions << new DeviceNothingAction();
-
+    
+    if (actions.size()==0)
+    {
+	actions << new DeviceNothingAction();
+    }
     DeviceActionsDialog *dialog = new DeviceActionsDialog();
     dialog->setDevice(Solid::Device(udi));
     dialog->setActions(actions);
