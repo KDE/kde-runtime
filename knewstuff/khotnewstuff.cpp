@@ -41,7 +41,8 @@ int main(int argc, char **argv)
 
 	KApplication i;
 
-	KNS::Engine::download();
+	KNS::Engine::EntryList entries = KNS::Engine::download();
+	qDeleteAll(entries);
 	//if(args->isSet("type")) d.setCategory(args->getOption("type"));
 	//if(args->count() == 1) d.setProviderList(args->arg(0));
 	// FIXME (KNS2): do we still need/want those?
