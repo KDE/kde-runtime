@@ -41,7 +41,7 @@ int main(int argc, char **argv)
 
 	KApplication i;
 
-	KNS::Engine::EntryList entries = KNS::Engine::download();
+	KNS::Entry::List entries = KNS::Engine::download();
 	qDeleteAll(entries);
 	//if(args->isSet("type")) d.setCategory(args->getOption("type"));
 	//if(args->count() == 1) d.setProviderList(args->arg(0));
