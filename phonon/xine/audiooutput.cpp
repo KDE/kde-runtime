@@ -85,13 +85,13 @@ AudioPort AudioOutputXT::audioPort() const
 
 bool AudioOutput::setOutputDevice(int newDevice)
 {
-    m_device = newDevice;
-    K_XT(AudioOutputXT)->m_audioPort.setAudioOutput(0);
-    K_XT(AudioOutputXT)->m_audioPort = AudioPort(m_device);
-    if (!K_XT(AudioOutputXT)->m_audioPort.isValid()) {
+    AudioPort newPort(newDevice);
+    if (!newPort.isValid()) {
         kDebug(610) << "new audio port is invalid";
         return false;
     }
+    m_device = newDevice;
+    K_XT(AudioOutputXT)->m_audioPort = newPort;
     K_XT(AudioOutputXT)->m_audioPort.setAudioOutput(this);
     SourceNode *src = source();
     if (src) {
