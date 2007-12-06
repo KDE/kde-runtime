@@ -36,7 +36,7 @@ else(WIN32)
   set(prefix strigiindex_)
 endif(WIN32)
 
-add_library(sopranobackend MODULE ${strigi_soprano_indexer_SRCS})
+kde4_add_library(sopranobackend MODULE ${strigi_soprano_indexer_SRCS})
 
 set_target_properties(sopranobackend PROPERTIES PREFIX ${prefix})
 
