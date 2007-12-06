@@ -146,7 +146,7 @@ AudioPort::AudioPort(int deviceIndex)
             }
         }
     } else {
-        kDebug(610) << "use output plugin: '" << outputPlugin << "'";
+        kDebug(610) << "use output plugin:" << outputPlugin;
         d->port = xine_open_audio_driver(XineEngine::xine(), outputPlugin.constData(), 0);
     }
     kDebug(610) << "----------------------------------------------- audio_port created";
