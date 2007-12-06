@@ -19,6 +19,7 @@
 */
 
 #include "xinethread.h"
+#include <QtCore/QMutexLocker>
 #include <QtCore/QTimer>
 #include <QtCore/QCoreApplication>
 #include "xineengine.h"
@@ -55,15 +56,11 @@ void XineThread::waitForEventLoop()
 XineStream *XineThread::newStream()
 {
     XineThread *that = XineEngine::thread();
+
+    QMutexLocker locker(&that->m_mutex);
     Q_ASSERT(that->m_newStream == 0);
     QCoreApplication::postEvent(that, new QEVENT(NewStream));
-    if (!that->m_newStream) {
-        that->m_mutex.lock();
-        if (!that->m_newStream) {
-            that->m_waitingForNewStream.wait(&that->m_mutex);
-        }
-        that->m_mutex.unlock();
-    }
+    that->m_waitingForNewStream.wait(&that->m_mutex);
     Q_ASSERT(that->m_newStream);
     XineStream *ret = that->m_newStream;
     that->m_newStream = 0;
