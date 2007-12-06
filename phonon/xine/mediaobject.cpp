@@ -46,6 +46,8 @@ static const char *const green  = "\033[1;40;32m";
 static const char *const blue   = "\033[1;40;34m";
 static const char *const normal = "\033[0m";
 
+Q_DECLARE_METATYPE(QVariant)
+
 namespace Phonon
 {
 namespace Xine
@@ -84,6 +86,16 @@ MediaObject::MediaObject(QObject *parent)
     connect(m_stream, SIGNAL(availableTitlesChanged(int)), SLOT(handleAvailableTitlesChanged(int)));
     connect(m_stream, SIGNAL(needNextUrl()), SLOT(needNextUrl()));
     connect(m_stream, SIGNAL(downstreamEvent(Event *)), SLOT(downstreamEvent(Event *)));
+
+    qRegisterMetaType<QVariant>();
+    connect(m_stream, SIGNAL(hackSetProperty(const char *, const QVariant &)), SLOT(syncHackSetProperty(const char *, const QVariant &)), Qt::QueuedConnection);
+}
+
+void MediaObject::syncHackSetProperty(const char *name, const QVariant &val)
+{
+    if (parent()) {
+        parent()->setProperty(name, val);
+    }
 }
 
 class XineStreamKeeper : public QObject
