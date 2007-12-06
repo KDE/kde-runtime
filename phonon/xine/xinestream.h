@@ -151,6 +151,8 @@ class XineStream : public QObject, public SourceNodeXT
         void titleChanged(int);
         void downstreamEvent(Event *e);
 
+        void hackSetProperty(const char *name, const QVariant &val);
+
     protected:
         bool event(QEvent *ev);
         void timerEvent(QTimerEvent *event);

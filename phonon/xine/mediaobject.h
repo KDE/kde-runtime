@@ -139,6 +139,7 @@ class MediaObject : public QObject, public MediaObjectInterface, public AddonInt
         void handleAvailableTitlesChanged(int);
         void handleFinished();
         void handleHasVideoChanged(bool);
+        void syncHackSetProperty(const char *name, const QVariant &val);
 
     private:
         enum HowToSetTheUrl {

@@ -376,6 +376,7 @@ bool XineStream::createStream()
         videoPort = XineEngine::nullVideoPort();
     }
     m_stream = xine_stream_new(XineEngine::xine(), audioPort, videoPort);
+    hackSetProperty("xine_stream_t", QVariant::fromValue(static_cast<void *>(m_stream)));
     /*
     if (m_audioPostLists.size() == 1) {
         m_audioPostLists.first().wireStream();
@@ -521,6 +522,7 @@ void XineStream::changeState(Phonon::State newstate)
         if (m_stream) {
             xine_dispose(m_stream);
             m_stream = 0;
+            hackSetProperty("xine_stream_t", QVariant());
         }
     }
     emit stateChanged(newstate, oldstate);
