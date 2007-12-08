@@ -17,11 +17,7 @@ set( strigi_soprano_indexer_SRCS
 )
 
 # CLucene requires exception support
-IF(NOT WIN32)
-    IF (CMAKE_COMPILER_IS_GNUCXX)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fexceptions")
-    ENDIF(CMAKE_COMPILER_IS_GNUCXX)
-ENDIF(NOT WIN32)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${KDE4_ENABLE_EXCEPTIONS}")
 
 if(WIN32)
   # this is needed to have mingw, cygwin and msvc libs installed in one directory
