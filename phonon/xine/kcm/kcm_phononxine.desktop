@@ -10,6 +10,7 @@ X-KDE-ParentComponents=phonon_xine
 
 Name=Phonon Xine
 Name[cs]=Phonom Xine
+Name[csb]=Phonon-Xine
 Name[de]=Phonon-Xine
 Name[nds]=Phonon-Xine
 Name[ne]=फोनोन जाइन
@@ -23,6 +24,7 @@ Comment=Xine Backend Configuration
 Comment[be]=Настаўленне унутранага карыстання Xine
 Comment[bg]=Настройване на задния слой Xine
 Comment[ca]=Configuració del dorsal del Xine
+Comment[csb]=Kònfigùracëjô czérownika Xine
 Comment[de]=Xine-Treiber-Einrichtung
 Comment[el]=Ρύθμιση του συστήματος υποστήριξης Xine
 Comment[eo]=Xine interna agordo

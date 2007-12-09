@@ -11,6 +11,7 @@ Exec=kuiserver
 Comment=KDE's Progress Info UI server
 Comment[bg]=Сървър за интерфейса на KDE
 Comment[ca]=Servidor d'interfície d'usuari d'informació de progrés del KDE
+Comment[csb]=Wiadło KDE dlô pòstãpù
 Comment[de]=KDE-Dienst zur Fortschrittsanzeige
 Comment[el]=Εξυπηρετητής πληροφοριών διεργασιών του KDE
 Comment[eo]=UI servilo de progresa informo de KDE
