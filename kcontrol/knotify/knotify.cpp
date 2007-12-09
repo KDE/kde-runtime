@@ -113,7 +113,8 @@ K_EXPORT_PLUGIN( NotifyFactory("kcmnotify") )
 
     load();
 
-    m_notifyWidget->setApplication( m_appCombo->currentText() );
+    if ( m_appCombo->count() > 0 )
+        slotAppActivated( 0 );
 }
 
 KCMKNotify::~KCMKNotify()
