@@ -18,7 +18,7 @@
 
  */
 #include "notifybyktts.h" 
-#include <QtDBus>
+#include <QtDBus/QtDBus>
 #include <QHash>
 
 #include <kmacroexpander.h>
