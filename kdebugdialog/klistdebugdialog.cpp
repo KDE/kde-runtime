@@ -42,6 +42,7 @@ KListDebugDialog::KListDebugDialog( QStringList areaList, QWidget *parent, const
   lay->setSpacing( KDialog::spacingHint() );
 
   m_incrSearch = new KLineEdit();
+  m_incrSearch->setClearButtonShown(true);
   lay->addWidget( m_incrSearch );
   connect( m_incrSearch, SIGNAL( textChanged( const QString& ) ),
            SLOT( filterCheckBoxes( const QString& ) ) );
