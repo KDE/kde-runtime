@@ -51,7 +51,7 @@ public:
 
     inline xine_stream_t *stream() { return m_stream; }
 
-    inline Phonon::Xine::ByteStream *bytestream() { return m_bytestream; }
+    inline Phonon::Xine::ByteStream *bytestream() { return m_bytestream.data(); }
 
 private:
     xine_stream_t *m_stream;

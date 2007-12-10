@@ -96,7 +96,7 @@ bool XineThread::event(QEvent *e)
                 kDebug(610) << "     " << wire.source << " -> " << wire.sink;
                 wire.sink->assert();
                 wire.source->assert();
-                wire.sink->rewireTo(wire.source);
+                wire.sink->rewireTo(wire.source.data());
             }
         }
         return true;

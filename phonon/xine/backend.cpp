@@ -460,7 +460,7 @@ bool Backend::endConnectionChange(QSet<QObject *> nodes)
         SourceNode *source = qobject_cast<SourceNode *>(q);
         if (source) {
             //keep->addObject(source->threadSafeObject());
-            allXtObjects.append(QExplicitlySharedDataPointer<SharedData>(static_cast<SharedData *>(source->threadSafeObject())));
+            allXtObjects.append(QExplicitlySharedDataPointer<SharedData>(source->threadSafeObject().data()));
             foreach (SinkNode *sink, source->sinks()) {
                 WireCall w(source, sink);
                 if (wireCallsUnordered.contains(w)) {
@@ -474,7 +474,7 @@ bool Backend::endConnectionChange(QSet<QObject *> nodes)
         SinkNode *sink = qobject_cast<SinkNode *>(q);
         if (sink) {
             keep->addObject(sink->threadSafeObject());
-            allXtObjects.append(QExplicitlySharedDataPointer<SharedData>(static_cast<SharedData *>(sink->threadSafeObject())));
+            allXtObjects.append(QExplicitlySharedDataPointer<SharedData>(sink->threadSafeObject().data()));
             if (sink->source()) {
                 WireCall w(sink->source(), sink);
                 if (wireCallsUnordered.contains(w)) {

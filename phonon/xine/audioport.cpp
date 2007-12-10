@@ -171,7 +171,7 @@ void AudioPort::waitALittleWithDying()
 {
     if (d->ref == 1 && !d->dontDelete) {
         // this is the last ref to the data, so it will get deleted in a few instructions unless
-        new AudioPortDeleter(d);
+        new AudioPortDeleter(d.data());
         // AudioPortDeleter refs it once more
     }
 }
