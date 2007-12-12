@@ -1,7 +1,5 @@
 project(nepomuk)
 
-find_package(Soprano REQUIRED)
-
 if(SopranoIndex_FOUND)
   set(HAVE_SOPRANO_INDEX "yes")
 endif(SopranoIndex_FOUND)
