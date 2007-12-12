@@ -132,8 +132,11 @@ CfgEmailClient::CfgEmailClient(QWidget *parent):EmailClientConfig_UI(parent),Cfg
 
 	connect(kmailCB, SIGNAL(toggled(bool)), SLOT(configChanged()) );
 	connect(txtEMailClient, SIGNAL(textChanged(const QString&)), SLOT(configChanged()) );
-	//TODO need to remove it under windows
+#ifndef Q_OS_UNIX
 	connect(chkRunTerminal, SIGNAL(clicked()), SLOT(configChanged()) );
+#else
+    chkRunTerminal->hide();
+#endif
     connect(btnSelectEmail, SIGNAL(clicked()), SLOT(selectEmailClient()) );
 }
 
