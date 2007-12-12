@@ -90,9 +90,8 @@ void Nepomuk::Server::startStrigi()
 
 void Nepomuk::Server::startNepomuk()
 {
-    if ( !m_backend ) {
-        m_backend = findBackend();
-    }
+    m_backend = findBackend();
+
     if ( m_backend && !m_core ) {
         Soprano::setUsedBackend( m_backend );
         m_core = new Core( this );
@@ -133,8 +132,13 @@ void Nepomuk::Server::enableStrigi( bool enabled )
         startStrigi();
         m_strigi->startIndexing();
     }
-    else if ( StrigiController::isRunning() ) {
-        m_strigi->stopIndexing();
+    else {
+        if ( m_strigiController && m_strigiController->state() == StrigiController::Running ) {
+            m_strigiController->shutdown();
+        }
+        else if ( StrigiController::isRunning() ) {
+            m_strigi->stopDaemon();
+        }
     }
 
     NepomukServerSettings::self()->setStartStrigi( enabled );
@@ -154,14 +158,14 @@ bool Nepomuk::Server::isStrigiEnabled() const
     return NepomukServerSettings::self()->startStrigi();
 
     // FIXME: This is completely useless since it always returns "idling", regardless of its actual state (indexing or not indexing)
-    kDebug(300002) << "strigi status=" << m_strigi->getStatus()["Status"];
-    return m_strigi->getStatus()["Status"] != "stopping";
+//     kDebug(300002) << "strigi status=" << m_strigi->getStatus()["Status"];
+//     return m_strigi->getStatus()["Status"] != "stopping";
 }
 
 
 QString Nepomuk::Server::defaultRepository() const
 {
-    return "nepomukMain";
+    return "main";
 }
 
 
@@ -175,10 +179,11 @@ void Nepomuk::Server::reconfigure()
 
 const Soprano::Backend* Nepomuk::Server::findBackend() const
 {
-    const Soprano::Backend* backend = ::Soprano::discoverBackendByName( "sesame2" );
+    QString backendName = NepomukServerSettings::self()->sopranoBackend();
+    const Soprano::Backend* backend = ::Soprano::discoverBackendByName( backendName );
     if ( !backend ) {
-        kDebug(300002) << "(Nepomuk::Core::Core) could not find Sesame2 backend. Falling back to redland. NO BACKEND CHANGE SUPPORT YET!";
-        backend = ::Soprano::discoverBackendByName( "redland" );
+        kDebug(300002) << "(Nepomuk::Core::Core) could not find backend" << backendName << ". Falling back to default.";
+        backend = ::Soprano::usedBackend();
     }
     if ( !backend ) {
         kDebug(300002) << "(Nepomuk::Core::Core) could not find a backend.";

@@ -26,19 +26,21 @@
 namespace Nepomuk {
     class ServerConfigModule : public KCModule, private Ui::NepomukConfigWidget
     {
-	Q_OBJECT
+        Q_OBJECT
 
     public:
-	ServerConfigModule( QWidget* parent, const QVariantList& args );
-	~ServerConfigModule();
+        ServerConfigModule( QWidget* parent, const QVariantList& args );
+        ~ServerConfigModule();
 
     public Q_SLOTS:
-	void load();
-	void save();
-	void defaults();
+        void load();
+        void save();
+        void defaults();
 
     private:
-	org::kde::NepomukServer m_serverInterface;
+        void updateStrigiStatus();
+
+        org::kde::NepomukServer m_serverInterface;
     };
 }
 

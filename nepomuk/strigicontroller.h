@@ -25,35 +25,35 @@
 namespace Nepomuk {
     class StrigiController : public QObject
     {
-	Q_OBJECT
+        Q_OBJECT
 
     public:
-	StrigiController( QObject* parent = 0 );
-	~StrigiController();
+        StrigiController( QObject* parent = 0 );
+        ~StrigiController();
 
-	enum State {
-	    Idle,
-	    StartingUp,
-	    Running,
-	    ShuttingDown
-	};
+        enum State {
+            Idle,
+            StartingUp,
+            Running,
+            ShuttingDown
+        };
 
-	State state() const;
+        State state() const;
 
     public Q_SLOTS:
-	bool start( bool useNepomuk = true );
-	void shutdown();
+        bool start( bool useNepomuk = true );
+        void shutdown();
 
-	static bool isRunning();
+        static bool isRunning();
 
     private Q_SLOTS:
-	void slotProcessFinished( int exitCode, QProcess::ExitStatus exitStatus );
-	void slotRunning5Minutes();
+        void slotProcessFinished( int exitCode, QProcess::ExitStatus exitStatus );
+        void slotRunning5Minutes();
 
     private:
-	KProcess* m_strigiProcess;
-	bool m_running5Minutes;
-	State m_state;
+        KProcess* m_strigiProcess;
+        bool m_running5Minutes;
+        State m_state;
     };
 }
 

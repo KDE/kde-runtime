@@ -25,24 +25,24 @@
 namespace Nepomuk {
     class Core : public Soprano::Server::ServerCore
     {
-	Q_OBJECT
+        Q_OBJECT
 	
     public:
-	Core( QObject* parent = 0 );
-	~Core();
+        Core( QObject* parent = 0 );
+        ~Core();
 	
-	/**
-	 * reimplemented from ServerCore
-	 */
-	Soprano::Model* model( const QString& name );
-	Repository* repository( const QString& name );
+        /**
+         * reimplemented from ServerCore
+         */
+        Soprano::Model* model( const QString& name );
+        Repository* repository( const QString& name );
 
-	QStringList allModels() const;
+        QStringList allModels() const;
 
     private:
-	QString createStoragePath( const QString& repositoryId ) const;
+        QString createStoragePath( const QString& repositoryId ) const;
 
-	RepositoryMap m_repositories;
+        RepositoryMap m_repositories;
     };
 }
 

@@ -139,8 +139,6 @@ void Nepomuk::StrigiController::slotRunning5Minutes()
 
 bool Nepomuk::StrigiController::isRunning()
 {
-    kDebug(300002);
-
 #ifndef _WIN32
     int fd = open( QFile::encodeName( QString( "%1/.strigi/lock" ).arg( QDir::homePath() ) ), O_WRONLY );
     if ( fd == -1 ) {
@@ -159,6 +157,7 @@ bool Nepomuk::StrigiController::isRunning()
         return false;
     }
     close( fd );
+    kDebug(300002) << (lock.l_type == F_WRLCK);
     return lock.l_type == F_WRLCK;
 #else
     // FIXME: this will actually start strigidaemon through DBus autostarting
