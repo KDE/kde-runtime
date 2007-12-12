@@ -52,6 +52,8 @@ Nepomuk::ServerConfigModule::ServerConfigModule( QWidget* parent, const QVariant
              this, SLOT( changed() ) );
     connect( m_checkEnableNepomuk, SIGNAL( toggled(bool) ),
              this, SLOT( changed() ) );
+    connect( m_editStrigiFolders, SIGNAL( changed() ),
+             this, SLOT( changed() ) );
 
     load();
 }
@@ -79,17 +81,13 @@ void Nepomuk::ServerConfigModule::load()
     }
 
     if ( StrigiController::isRunning() ) {
-        m_strigiStatus->on();
-        m_strigiStatusLabel->setText( i18n( "Strigi is running" ) );
-
         m_editStrigiFolders->insertStringList( StrigiClient().getIndexedDirectories() );
     }
     else {
-        m_strigiStatus->off();
-        m_strigiStatusLabel->setText( i18n( "Strigi not running" ) );
-
         // FIXME: read the strigi daemon config.
     }
+
+    updateStrigiStatus();
 }
 
 
@@ -118,6 +116,8 @@ void Nepomuk::ServerConfigModule::save()
     else {
         // FIXME: update strigi daemon config
     }
+
+    updateStrigiStatus();
 }
 
 
@@ -126,6 +126,19 @@ void Nepomuk::ServerConfigModule::defaults()
     NepomukServerSettings::self()->setDefaults();
     m_checkEnableStrigi->setChecked( NepomukServerSettings::self()->startStrigi() );
     m_checkEnableNepomuk->setChecked( NepomukServerSettings::self()->startNepomuk() );
+}
+
+
+void Nepomuk::ServerConfigModule::updateStrigiStatus()
+{
+    if ( StrigiController::isRunning() ) {
+        m_strigiStatus->on();
+        m_strigiStatusLabel->setText( i18n( "Strigi is running" ) );
+    }
+    else {
+        m_strigiStatus->off();
+        m_strigiStatusLabel->setText( i18n( "Strigi not running" ) );
+    }
 }
 
 #include "nepomukserverkcm.moc"
