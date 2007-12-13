@@ -24,13 +24,13 @@ include(CheckCXXSourceCompiles)
 
 macro_push_required_vars()
 
-set(CMAKE_REQUIRED_INCLUDES "${CMAKE_REQUIRED_INCLUDES} $ENV{DXSDK_DIR}")
-set(CMAKE_REQUIRED_LIBRARIES "${CMAKE_REQUIRED_LIBRARIES} dxguid strmiids dmguids msdmo")
+set(CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES} $ENV{DXSDK_DIR})
+set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} dxguid strmiids dmoguids msdmo)
 
 CHECK_CXX_SOURCE_COMPILES(
 "#include <d3d9.h>
-#include <vmr9.h>
 #include <dshow.h>
+#include <vmr9.h>
 
 int main() { }" BUILD_PHONON_DS9)
 
