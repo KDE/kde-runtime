@@ -1,0 +1,64 @@
+/*  This file is part of the KDE project.
+
+    Copyright (C) 2007 Trolltech ASA. All rights reserved.
+
+    This library is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation, either version 2.1 or 3 of the License.
+
+    This library is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with this library.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#ifndef Phonon_Gstreamer_MEDIANODEEVENT_H
+#define Phonon_Gstreamer_MEDIANODEEVENT_H
+
+#include <QtCore>
+
+namespace Phonon
+{
+namespace Gstreamer
+{
+class MediaNodeEvent
+{
+public:
+    enum Type {
+        VideoAvailable,
+        AudioAvailable,
+        SourceChanged,
+        MediaSourceChanged,
+
+        VideoSinkAdded,
+        VideoSinkRemoved,
+        AudioSinkAdded,
+        AudioSinkRemoved,
+        VideoHandleRequest,
+        VideoSizeChanged
+    };
+
+    MediaNodeEvent(Type type, const void *data = 0);
+    virtual ~MediaNodeEvent();
+
+    inline Type type() const
+    {
+        return eventType;
+    };
+    inline const void* data() const
+    {
+        return eventData;
+    };
+
+private:
+    Type eventType;
+    const void *eventData;
+};
+
+}
+} // namespace Phonon::Gstreamer
+
+#endif // Phonon_Gstreamer_MEDIANODEEVENT_H

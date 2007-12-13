@@ -1,0 +1,351 @@
+/*  This file is part of the KDE project.
+
+    Copyright (C) 2007 Trolltech ASA. All rights reserved.
+
+    This library is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation, either version 2.1 or 3 of the License.
+
+    This library is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with this library.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#include "qbasefilter.h"
+#include "qpin.h"
+
+namespace Phonon
+{
+    namespace DS9
+    {
+        static int nbinst = 0;
+        class QEnumPins : public IEnumPins
+        {
+        public:
+            QEnumPins(QBaseFilter *filter) : m_refCount(1),
+                m_filter(filter), m_pins(filter->pins()), m_index(0)
+            {
+                m_filter->AddRef();
+            }
+
+            ~QEnumPins()
+            {
+                m_filter->Release();
+            }
+
+            STDMETHODIMP QueryInterface(const IID &iid,void **out)
+            {
+                if (!out) {
+                    return E_POINTER;
+                }
+
+                HRESULT hr = S_OK;
+                if (iid == IID_IEnumPins) {
+                    *out = static_cast<IEnumPins*>(this);
+                } else if (iid == IID_IUnknown) {
+                    *out = static_cast<IUnknown*>(this);
+                } else {
+                    *out = 0;
+                    hr = E_NOINTERFACE;
+                }
+
+                if (S_OK)
+                    AddRef();
+                return hr;
+            }
+
+            STDMETHODIMP_(ULONG) AddRef()
+            {
+                return InterlockedIncrement(&m_refCount);
+            }
+
+            STDMETHODIMP_(ULONG) Release()
+            {
+                ULONG refCount = InterlockedDecrement(&m_refCount);
+                if (refCount == 0) {
+                    delete this;
+                }
+
+                return refCount;
+            }
+
+            STDMETHODIMP Next(ULONG count,IPin **ret,ULONG *fetched)
+            {
+                QMutexLocker locker(&m_mutex);
+                if (m_filter->pins() != m_pins) {
+                    return VFW_E_ENUM_OUT_OF_SYNC;
+                }
+
+                if (fetched == 0 && count > 1) {
+                    return E_INVALIDARG;
+                }
+
+                if (!ret) {
+                    return E_POINTER;
+                }
+
+                int nbfetched = 0;
+                while (nbfetched < int(count) && m_index < m_pins.count()) {
+                    IPin *current = m_pins[m_index];
+                    current->AddRef();
+                    ret[nbfetched] = current;
+                    nbfetched++;
+                    m_index++;
+                }
+
+                if (fetched) {
+                    *fetched = nbfetched;
+                }
+
+                return nbfetched == count ? S_OK : S_FALSE;
+            }
+
+            STDMETHODIMP Skip(ULONG count)
+            {
+                QMutexLocker locker(&m_mutex);
+                if (m_filter->pins() != m_pins) {
+                    return VFW_E_ENUM_OUT_OF_SYNC;
+                }
+
+                m_index = qMin(m_index + int(count), m_pins.count());
+                return m_index == m_pins.count() ? S_FALSE : S_OK;
+            }
+
+            STDMETHODIMP Reset()
+            {
+                QMutexLocker locker(&m_mutex);
+                m_index = 0;
+                return S_OK;
+            }
+
+            STDMETHODIMP Clone(IEnumPins **out)
+            {
+                QMutexLocker locker(&m_mutex);
+                if (m_filter->pins() != m_pins) {
+                    return VFW_E_ENUM_OUT_OF_SYNC;
+                }
+
+                if (!out) {
+                    return E_POINTER;
+                }
+
+                *out = new QEnumPins(m_filter);
+                (*out)->Skip(m_index);
+                return S_OK;
+            }
+
+
+        private:
+            LONG m_refCount;
+            QBaseFilter *m_filter;
+            QList<QPin*> m_pins;
+            int m_index;
+            QMutex m_mutex;
+        };
+
+
+        QBaseFilter::QBaseFilter(const CLSID &clsid):
+        m_refCount(1), m_clsid(clsid), m_clock(0), m_graph(0), m_state(State_Stopped)
+        {
+        }
+
+        QBaseFilter::~QBaseFilter()
+        {
+            while (!m_pins.isEmpty()) {
+                delete m_pins.first();
+            }
+        }
+
+        const QList<QPin *> QBaseFilter::pins()
+        {
+            return m_pins;
+        }
+
+        void QBaseFilter::addPin(QPin *pin)
+        {
+            QMutexLocker locker(&m_mutex);
+            m_pins.append(pin);
+        }
+
+        void QBaseFilter::removePin(QPin *pin)
+        {
+            QMutexLocker locker(&m_mutex);
+            m_pins.removeAll(pin);
+        }
+
+        STDMETHODIMP QBaseFilter::QueryInterface(REFIID iid, void **out)
+        {
+            if (!out) {
+                return E_POINTER;
+            }
+
+            HRESULT hr = S_OK;
+
+            if (iid == IID_IBaseFilter) {
+                *out = static_cast<IBaseFilter*>(this);
+            } else if (iid == IID_IMediaFilter) {
+                *out = static_cast<IMediaFilter*>(this);
+            } else if (iid == IID_IPersist) {
+                *out = static_cast<IPersist*>(this);
+            } else if (iid == IID_IUnknown) {
+                *out = static_cast<IUnknown*>(this);
+            } else {
+                *out = 0;
+                hr = E_NOINTERFACE;
+            }
+
+            if (hr == S_OK) {
+                AddRef();
+            }
+
+            return hr;
+        }
+
+        STDMETHODIMP_(ULONG) QBaseFilter::AddRef()
+        {
+            return InterlockedIncrement(&m_refCount);
+        }
+
+        STDMETHODIMP_(ULONG) QBaseFilter::Release()
+        {
+            ULONG refCount = InterlockedDecrement(&m_refCount);
+            if (refCount == 0) {
+                delete this;
+            }
+
+            return refCount;
+        }
+
+        STDMETHODIMP QBaseFilter::GetClassID(CLSID *clsid)
+        {
+            *clsid = m_clsid;
+            return S_OK;
+        }
+
+        STDMETHODIMP QBaseFilter::Stop()
+        {
+            QMutexLocker locker(&m_mutex);
+            m_state = State_Stopped;
+            return S_OK;
+        }
+
+        STDMETHODIMP QBaseFilter::Pause()
+        {
+            QMutexLocker locker(&m_mutex);
+            m_state = State_Paused;
+            return S_OK;
+        }
+
+        STDMETHODIMP QBaseFilter::Run(REFERENCE_TIME t)
+        {
+            QMutexLocker locker(&m_mutex);
+            m_state = State_Running;
+            return S_OK;
+        }
+
+        STDMETHODIMP QBaseFilter::GetState(DWORD ms, FILTER_STATE *state)
+        {
+            QMutexLocker locker(&m_mutex);
+            if (state) {
+                *state = m_state;
+                return S_OK;
+            }
+            return E_POINTER;
+        }
+
+        STDMETHODIMP QBaseFilter::SetSyncSource(IReferenceClock *clock)
+        {
+            QMutexLocker locker(&m_mutex);
+            if (clock) {
+                clock->AddRef();
+            }
+            if (m_clock) {
+                m_clock->Release();
+            }
+            m_clock = clock;
+            return S_OK;
+        }
+
+        STDMETHODIMP QBaseFilter::GetSyncSource(IReferenceClock **clock)
+        {
+            QMutexLocker locker(&m_mutex);
+            if (!clock) {
+                return E_POINTER;
+            }
+
+            if (m_clock) {
+                m_clock->AddRef();
+            }
+
+            *clock = m_clock;
+            return S_OK;
+        }
+
+        STDMETHODIMP QBaseFilter::FindPin(LPCWSTR name, IPin**pin)
+        {
+            QMutexLocker locker(&m_mutex);
+            if (!pin) {
+                return E_POINTER;
+            }
+
+            foreach(IPin *current, m_pins) {
+                PIN_INFO info;
+                current->QueryPinInfo(&info);
+                if (info.pFilter) {
+                    info.pFilter->Release();
+                }
+                if ( wcscmp(info.achName, name) == 0) {
+                    *pin = current;
+                    current->AddRef();
+                    return S_OK;
+                }
+            }
+
+            *pin = 0;
+            return VFW_E_NOT_FOUND;
+        }
+
+        STDMETHODIMP QBaseFilter::QueryFilterInfo(FILTER_INFO *info )
+        {
+            QMutexLocker locker(&m_mutex);
+            if (!info) {
+                return E_POINTER;
+            }
+            info->pGraph = m_graph;
+            if (m_graph) {
+                m_graph->AddRef();
+            }
+            qMemCopy(info->achName, m_name.utf16(), qMin(MAX_FILTER_NAME, m_name.length()+1) *2);
+            return S_OK;
+        }
+
+        STDMETHODIMP QBaseFilter::JoinFilterGraph(IFilterGraph *graph, LPCWSTR name)
+        {
+            QMutexLocker locker(&m_mutex);
+            m_graph = graph;
+            m_name = QString::fromWCharArray(name);
+            return S_OK;
+        }
+
+        STDMETHODIMP QBaseFilter::EnumPins( IEnumPins **ep)
+        {
+            if (!ep)
+                return E_POINTER;
+
+            *ep = new QEnumPins(this);
+            return S_OK;
+        }
+
+
+        STDMETHODIMP QBaseFilter::QueryVendorInfo(LPWSTR *)
+        {
+            return E_NOTIMPL;
+        }
+
+
+    }
+}
