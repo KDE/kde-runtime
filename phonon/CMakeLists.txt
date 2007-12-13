@@ -9,6 +9,7 @@
 # % cmake -DKDE4_DISABLE_MULTIMEDIA=ON
 #
 
+include(UsePkgConfig)
 OPTION(KDE4_DISABLE_MULTIMEDIA "Disable multimedia support (default: off)" OFF)
 
 if(KDE4_DISABLE_MULTIMEDIA)
@@ -31,4 +32,14 @@ else(KDE4_DISABLE_MULTIMEDIA)
       endif(XINE_MINOR_VERSION LESS 2 AND XINE_BUGFIX_VERSION LESS 7)
       macro_optional_add_subdirectory(xine)
    endif(XINE_FOUND)
+
+   if (Q_WS_MAC)
+      add_subdirectory(qt7)
+   endif (Q_WS_MAC)
+   if (Q_WS_WIN)
+      add_subdirectory(ds9)
+   endif (Q_WS_WIN)
+   if (Q_WS_X11)
+      add_subdirectory(gstreamer)
+   endif (Q_WS_X11)
 endif(KDE4_DISABLE_MULTIMEDIA)
