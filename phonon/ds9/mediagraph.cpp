@@ -67,7 +67,7 @@ namespace Phonon
 
         MediaGraph::MediaGraph(MediaObject *mo, short index) : m_fakeSource(new FakeSource()),
             m_hasVideo(false), m_hasAudio(false), m_connectionsDirty(false),
-            m_mediaObject(mo), m_index(index)
+            m_mediaObject(mo), m_index(index), m_clockDelta(0)
         {
             //creates the graph
             HRESULT hr = CoCreateInstance(CLSID_FilterGraph, 0, 
@@ -227,6 +227,7 @@ namespace Phonon
                 if (FAILED(hr)) {
                     return ret;
                 }
+                ret -= m_clockDelta;
                 ret /= 10000; //convert to milliseconds
             }
             return ret;
@@ -543,7 +544,10 @@ namespace Phonon
             m_hasAudio = false;
 
             //we try to reset the clock here
-            seek(0);
+            if (m_mediaSeeking) {
+                m_mediaSeeking->GetCurrentPosition(&m_clockDelta);
+            }
+
 
             //cleanup of the previous filters
             HRESULT hr = cleanup();

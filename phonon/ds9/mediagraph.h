@@ -101,6 +101,7 @@ namespace Phonon
             bool m_hasAudio;
             bool m_connectionsDirty;
             short m_index;
+            qint64 m_clockDelta;
 
             MediaObject *m_mediaObject;
             MediaSource m_mediaSource;
