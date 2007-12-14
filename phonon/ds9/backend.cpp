@@ -174,8 +174,9 @@ namespace Phonon
                     LPOLESTR str = 0;
                     HRESULT hr = mon->GetDisplayName(0,0, &str);
                     if (SUCCEEDED(hr)) {
-                        ret["name"] = QString::fromUtf16(str);
+                        QString name = QString::fromUtf16(str); 
                         getIMalloc()->Free(str);
+                        ret["name"] = name.mid(name.indexOf('\\') + 1);
                     }
                 }
                 break;

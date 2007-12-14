@@ -158,3 +158,5 @@ namespace Phonon
         }
     }
 }
+
+#include "moc_volumeeffect.cpp"

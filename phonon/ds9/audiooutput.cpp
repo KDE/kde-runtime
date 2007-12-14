@@ -78,14 +78,58 @@ namespace Phonon
             bool ret = true;
             for(QVector<Filter>::iterator it = m_filters.begin(); it != m_filters.end(); ++it) {
                 Filter &filter = *it;
-                filter = Filter();
-                m_device = newDevice;
+                //TODO: I have to check if the filter is already created and connected, it must be destroyed
+                //and stop the graph if it is running...
+                OutputPin out;
+                ComPointer<IGraphBuilder> graph;
+                FILTER_STATE state = State_Stopped; 
+                if (filter) {
+                    FILTER_INFO info;
+                    filter->QueryFilterInfo(&info);
+                    graph = ComPointer<IGraphBuilder>(info.pGraph);
+
+                    InputPin pin = BackendNode::pins(filter, PINDIR_INPUT).first();
+                    if (pin->ConnectedTo(out.pobject()) == S_OK) {
+
+                        //if it is connected we disconnect it and
+                        //we'll reconnect out to the new filter
+                        if (graph) {
+                            filter->GetState(0, &state);
+                            if (state != State_Stopped) {
+                                ComPointer<IMediaControl>(graph)->Stop();
+                            }
+                            HRESULT hr = graph->RemoveFilter(filter);
+                            Q_ASSERT(SUCCEEDED(hr));
+                        }
+                    }
+                }
+
                 ComPointer<IMoniker> mon = m_backend->getAudioOutputMoniker(newDevice);
                 if (mon) {
                     HRESULT hr = mon->BindToObject(0, 0, IID_IBaseFilter, filter.pdata());
+
+                    //let's connect the new filter
+                    if (SUCCEEDED(hr) && graph) {
+                        graph->AddFilter(filter, 0);
+                        if (out && SUCCEEDED(hr)) {
+                            InputPin pin = BackendNode::pins(filter, PINDIR_INPUT).first();
+                            hr = graph->Connect(out, pin);
+                            if (state == State_Paused) {
+                                ComPointer<IMediaControl>(graph)->Pause();
+                            } else if (state == State_Running) {
+                                ComPointer<IMediaControl>(graph)->Run();
+                            }
+
+                        }
+                    }
+
                     ret = ret && SUCCEEDED(hr);
+                } else {
+                    filter = Filter();
                 }
             }
+
+            m_device = newDevice;
             setVolume(m_volume);
             return ret;
         }
