@@ -264,8 +264,12 @@ namespace Phonon
         HRESULT MediaGraph::seek(qint64 time)
         {
             qint64 newtime = time * 10000;
-            return m_mediaSeeking->SetPositions(&newtime, AM_SEEKING_AbsolutePositioning,
+            HRESULT hr = m_mediaSeeking->SetPositions(&newtime, AM_SEEKING_AbsolutePositioning,
                 0, AM_SEEKING_NoPositioning);
+            if (SUCCEEDED(hr)) {
+                m_clockDelta = 0;
+            }
+            return hr;
         }
 
         HRESULT MediaGraph::removeFilter(const Filter& filter)
