@@ -36,6 +36,7 @@
 #include "audiomixer.h"
 #include "audiooutput.h"
 #include "audiosplitter.h"
+#include "audioeffects.h"
 
 namespace Phonon
 {
@@ -62,7 +63,7 @@ Backend::~Backend()
 {
 }
 
-QObject *Backend::createObject(BackendInterface::Class c, QObject *parent, const QList<QVariant> &/*args*/)
+QObject *Backend::createObject(BackendInterface::Class c, QObject *parent, const QList<QVariant> &args)
 {
     switch (c) {
     case MediaObjectClass:
@@ -87,7 +88,8 @@ QObject *Backend::createObject(BackendInterface::Class c, QObject *parent, const
         NOT_IMPLEMENTED << "Creating new VideoDataOutputClass.";
         break;
     case EffectClass:
-        NOT_IMPLEMENTED << "Creating new EffectClass.";
+        IMPLEMENTED << "Creating new EffectClass.";
+        return new AudioEffect(args[0].toInt());
         break;
     case VideoWidgetClass:
         IMPLEMENTED << "Creating new VideoWidget.";
@@ -152,30 +154,33 @@ QList<int> Backend::objectDescriptionIndexes(ObjectDescriptionType type) const
     QList<int> ret;
 
     switch (type){
-    case EffectType:{
-#if 0 // will be awailable in a later version of phonon.
-        // Just count the number of filters awailable (c), and
-        // add return a set with the numbers 1..c inserted:
-        IMPLEMENTED_SILENT << "Creating index set for type: VideoEffectType";
-        QList<QString> filters = objc_getCiFilterInfo()->filterDisplayNames;
-        for (int i=0; i<filters.size(); i++)
-            ret << insert(i);
-#endif
-        break; }
     case AudioOutputDeviceType:{
         IMPLEMENTED_SILENT << "Creating index set for type: AudioOutputDeviceType";
         QList<AudioDeviceID> devices = AudioDevice::devices(AudioDevice::Out);
         for (int i=0; i<devices.size(); i++)
             ret << int(devices[i]);
         break; }
-/* NOT SUPPORTED BY FRONTEND
+    case EffectType:{
+        IMPLEMENTED_SILENT << "Creating index set for type: EffectType";
+        ret = AudioEffect::effectList();
+        break; }
+        
+#if 0 // will be awailable in a later version of phonon.
     case AudioCaptureDeviceType:{
         IMPLEMENTED_SILENT << "Creating index set for type: AudioCaptureDeviceType";
         QList<AudioDeviceID> devices = AudioDevice::devices(AudioDevice::In).keys();
         for (int i=0; i<devices.size(); i++)
             ret <<int(devices[i]);
         break; }
-*/
+    case VideoEffectType:{
+        // Just count the number of filters awailable (c), and
+        // add return a set with the numbers 1..c inserted:
+        IMPLEMENTED_SILENT << "Creating index set for type: VideoEffectType";
+        QList<QString> filters = objc_getCiFilterInfo()->filterDisplayNames;
+        for (int i=0; i<filters.size(); i++)
+            ret << insert(i);
+        break; }
+#endif
     default:
         NOT_IMPLEMENTED;
         break;
@@ -188,26 +193,29 @@ QHash<QByteArray, QVariant> Backend::objectDescriptionProperties(ObjectDescripti
     QHash<QByteArray, QVariant> ret;
 
     switch (type){
-    case EffectType:{
-#if 0 // will be awailable in a later version of phonon.
-        // Get list of effects, pick out filter at index, and return its name:
-        IMPLEMENTED_SILENT << "Creating description hash for type: VideoEffectType";
-        QList<QString> filters = objc_getCiFilterInfo()->filterDisplayNames;
-        ret.insert("name", filters[index]);
-#endif
-        break; }
     case AudioOutputDeviceType:{
         IMPLEMENTED_SILENT << "Creating description hash for type: AudioOutputDeviceType";
         ret.insert("name", AudioDevice::deviceSourceNameElseDeviceName(index));
         ret.insert("description", AudioDevice::deviceNameElseDeviceSourceName(index));
         break; }
-/* NOT SUPPORTED BY FRONTEND
+    case EffectType:{
+        AudioEffect e(index);
+        ret.insert("name", e.name());
+        ret.insert("description", e.description());
+        break; }
+        
+#if 0 // will be awailable in a later version of phonon.
+    case VideoEffectType:{
+        // Get list of effects, pick out filter at index, and return its name:
+        IMPLEMENTED_SILENT << "Creating description hash for type: VideoEffectType";
+        QList<QString> filters = objc_getCiFilterInfo()->filterDisplayNames;
+        ret.insert("name", filters[index]);
     case AudioCaptureDeviceType:{
         IMPLEMENTED_SILENT << "Creating description hash for type: AudioCaptureDeviceType";
         QMap<AudioDeviceID, QString> devices = AudioDevice::devices(AudioDevice::In);
         ret.insert("name", devices.value(index));
         break; }
-*/
+#endif
     default:
         NOT_IMPLEMENTED;
         break;
