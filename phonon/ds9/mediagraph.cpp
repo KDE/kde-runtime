@@ -542,11 +542,15 @@ namespace Phonon
             m_hasVideo = false;
             m_hasAudio = false;
 
+            //we try to reset the clock here
+            seek(0);
+
             //cleanup of the previous filters
             HRESULT hr = cleanup();
             if (FAILED(hr)) {
                 return hr;
             }
+
 
             const QSet<Filter> previous = getAllFilters();
             switch (source.type())
