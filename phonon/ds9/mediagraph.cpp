@@ -37,8 +37,10 @@ namespace Phonon
 {
     namespace DS9
     {
+        class DumbWidget;
+
         static const long WM_GRAPHNOTIFY = WM_APP + 1;
-        static QWidget *common = 0;
+        static DumbWidget *common = 0;
 
         //this class is used to get the events and redirect them to the objects
         class DumbWidget : public QWidget
@@ -52,12 +54,15 @@ namespace Phonon
             bool winEvent(MSG *msg, long *result)
             {
                 if (msg->message == WM_GRAPHNOTIFY) {
-                    if (MediaGraph *mg = reinterpret_cast<MediaGraph*>(msg->lParam)) {
+                    MediaGraph *mg = reinterpret_cast<MediaGraph*>(msg->lParam);
+                    if (mg && activeGraphs.contains(mg)) {
                         mg->handleEvents();
                     }
                 }
                 return QWidget::winEvent(msg, result);
             }
+
+            QSet<MediaGraph*> activeGraphs;
         };
 
         MediaGraph::MediaGraph(MediaObject *mo, short index) : m_fakeSource(new FakeSource()),
@@ -83,6 +88,8 @@ namespace Phonon
                 common = new DumbWidget;
             }
 
+            common->activeGraphs += this;
+
             //we route the events to the same widget
             hr = m_mediaEvent->SetNotifyWindow(reinterpret_cast<OAHWND>(common->winId()), WM_GRAPHNOTIFY,
                 reinterpret_cast<LONG_PTR>(this) );
@@ -98,6 +105,7 @@ namespace Phonon
 
         MediaGraph::~MediaGraph()
         {
+            common->activeGraphs -= this;
         }
 
         short MediaGraph::index() const
