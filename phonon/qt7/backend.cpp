@@ -164,7 +164,7 @@ QList<int> Backend::objectDescriptionIndexes(ObjectDescriptionType type) const
         break; }
     case AudioOutputDeviceType:{
         IMPLEMENTED_SILENT << "Creating index set for type: AudioOutputDeviceType";
-        QList<AudioDeviceID> devices = AudioDevice::devices(AudioDevice::Out).keys();
+        QList<AudioDeviceID> devices = AudioDevice::devices(AudioDevice::Out);
         for (int i=0; i<devices.size(); i++)
             ret << int(devices[i]);
         break; }
@@ -198,8 +198,8 @@ QHash<QByteArray, QVariant> Backend::objectDescriptionProperties(ObjectDescripti
         break; }
     case AudioOutputDeviceType:{
         IMPLEMENTED_SILENT << "Creating description hash for type: AudioOutputDeviceType";
-        QMap<AudioDeviceID, QString> devices = AudioDevice::devices(AudioDevice::Out);
-        ret.insert("name", devices.value(index));
+        ret.insert("name", AudioDevice::deviceSourceNameElseDeviceName(index));
+        ret.insert("description", AudioDevice::deviceNameElseDeviceSourceName(index));
         break; }
 /* NOT SUPPORTED BY FRONTEND
     case AudioCaptureDeviceType:{

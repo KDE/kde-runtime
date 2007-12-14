@@ -31,7 +31,7 @@ namespace QT7
         public:
             enum Scope {In, Out};
 
-            static QMap<AudioDeviceID, QString> devices(Scope scope);
+            static QList<AudioDeviceID> devices(Scope scope);
             static AudioDeviceID defaultDevice(Scope scope);
             static AudioDeviceID defaultSystemDevice(Scope scope);
             static AudioDeviceID currentDevice(AudioUnit unit, Scope scope);
@@ -39,6 +39,7 @@ namespace QT7
             static QString deviceName(AudioDeviceID deviceId);
             static QString deviceSourceName(AudioDeviceID deviceID);
             static QString deviceSourceNameElseDeviceName(AudioDeviceID deviceID);
+            static QString deviceNameElseDeviceSourceName(AudioDeviceID deviceID);
             static QString deviceUID(AudioDeviceID deviceID);
     };
 

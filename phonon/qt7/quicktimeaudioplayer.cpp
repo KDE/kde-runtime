@@ -42,7 +42,6 @@ QuickTimeAudioPlayer::QuickTimeAudioPlayer() : AudioNode(0, 1)
     m_sampleTimeStamp = 0;
     m_hasAudio = false;
     m_duration = 0;
-    allocateSoundSlices();
 }
 
 QuickTimeAudioPlayer::~QuickTimeAudioPlayer()

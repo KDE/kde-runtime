@@ -26,9 +26,14 @@ namespace Phonon
 namespace QT7
 {
 
-QMap<AudioDeviceID, QString> AudioDevice::devices(Scope scope)
+QList<AudioDeviceID> AudioDevice::devices(Scope scope)
 {
-    QMap<AudioDeviceID, QString> devices;
+    QList<AudioDeviceID> devices;
+
+    // Insert the default device explicit
+    if (AudioDeviceID defdev = defaultDevice(scope))
+        devices << defdev;
+
     // How many input/output devices are awailable:
     UInt32 deviceCount = 0;
 	OSStatus err = AudioHardwareGetPropertyInfo(kAudioHardwarePropertyDevices, &deviceCount, 0);
@@ -40,21 +45,14 @@ QMap<AudioDeviceID, QString> AudioDevice::devices(Scope scope)
     BACKEND_ASSERT3(err == noErr, "Could not get audio devices list.", FATAL_ERROR, devices)
 
     for (uint i=0; i<deviceCount; i++){
-        // Check if the current device is input or output:
-        UInt32 size;
-	    err = AudioDeviceGetPropertyInfo(deviceArray[i], 0, scope == In, kAudioDevicePropertyStreams, &size, 0);
-	    if (err == noErr && size > 0){
-            QString name = deviceSourceNameElseDeviceName(deviceArray[i]);
-            if (!name.isEmpty())
-                devices.insert(deviceArray[i], name);
+        if (!devices.contains(deviceArray[i])){
+            // Check if the current device is input or output:
+            UInt32 size;
+	        err = AudioDeviceGetPropertyInfo(deviceArray[i], 0, scope == In, kAudioDevicePropertyStreams, &size, 0);
+	        if (err == noErr && size > 0)
+                devices << deviceArray[i];
         }
     }
-
-    // Insert the default device explicit
-    // (this will remove the current entry for that device):
-    AudioDeviceID defdev = defaultDevice(scope);
-    if (defdev)
-        devices.insert(defdev, deviceSourceNameElseDeviceName(defdev));
     return devices;
 }
 
@@ -110,6 +108,14 @@ QString AudioDevice::deviceSourceNameElseDeviceName(AudioDeviceID deviceID)
     QString name = deviceSourceName(deviceID);
     if (name.isEmpty())
         name = deviceName(deviceID);
+    return name;
+}
+
+QString AudioDevice::deviceNameElseDeviceSourceName(AudioDeviceID deviceID)
+{
+    QString name = deviceName(deviceID);
+    if (name.isEmpty())
+        name = deviceSourceName(deviceID);
     return name;
 }
 
