@@ -60,7 +60,7 @@ namespace Phonon
 
         STDMETHODIMP QMemInputPin::GetAllocator(IMemAllocator **alloc)
         {
-            QMutexLocker locker(&m_mutex);
+            QWriteLocker locker(&m_lock);
             if (!alloc) {
                 return E_POINTER;
             }
@@ -76,15 +76,16 @@ namespace Phonon
 
         STDMETHODIMP QMemInputPin::NotifyAllocator(IMemAllocator *alloc, BOOL readonly)
         {
-            QMutexLocker locker(&m_mutex);
+            QWriteLocker locker(&m_lock);
             if (!alloc) {
                 return E_POINTER;
             }
 
             m_samplesReadonly = readonly;
             alloc->AddRef(); //we add a reference to it here
-            if (m_memAlloc)
+            if (m_memAlloc) {
                 m_memAlloc->Release();
+            }
 
             m_memAlloc = alloc;
 
@@ -103,7 +104,7 @@ namespace Phonon
 
         STDMETHODIMP QMemInputPin::Receive(IMediaSample *sample)
         {
-            QMutexLocker locker(&m_mutex);
+            QMutexLocker locker(&m_mutexReceive);
             if (!sample) {
                 return E_POINTER;
             }
@@ -158,13 +159,13 @@ namespace Phonon
 
         void QMemInputPin::addOutput(QPin *output)
         {
-            QMutexLocker locker(&m_mutex);
+            QWriteLocker locker(&m_lock);
             m_outputs.insert(output);
         }
 
         void QMemInputPin::removeOutput(QPin *output)
         {
-            QMutexLocker locker(&m_mutex);
+            QWriteLocker locker(&m_lock);
             m_outputs.remove(output);
         }
 

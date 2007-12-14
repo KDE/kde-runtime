@@ -27,6 +27,7 @@
 //windows specific (DirectX Media Object)
 #include <dmo.h>
 
+#include <QtCore/QSettings>
 #include <QtCore/QSet>
 #include <QtCore/QVariant>
 
@@ -82,12 +83,35 @@ namespace Phonon
 
         bool Backend::supportsVideo() const
         {
-            return true;
+            return VideoWidget::getVideoRenderer() != 0;
         }
 
         QStringList Backend::availableMimeTypes() const
         {
-            return QStringList();
+            QSet<QString> ret;
+            HKEY key;
+
+            for(int j = 0; j < 2; j++) {
+                if (j == 0) {
+                    ::RegOpenKeyEx(HKEY_LOCAL_MACHINE, L"SOFTWARE\\Microsoft\\Multimedia\\mplayer2\\mime types", 0, KEY_READ, &key);
+                } else {
+                    ::RegOpenKeyEx(HKEY_LOCAL_MACHINE, L"SOFTWARE\\Microsoft\\Multimedia\\wmplayer\\mime types", 0, KEY_READ, &key);
+                }
+
+                TCHAR name[255];
+                DWORD nameSize = sizeof(name)/sizeof(TCHAR);
+                FILETIME ft;
+                for(int i=0; ::RegEnumKeyEx(key, i, name, &nameSize, NULL, NULL, NULL, &ft) == ERROR_SUCCESS; ++i) {
+                    QString str = QT_WA_INLINE( QString::fromWCharArray(name), QString::fromLocal8Bit(reinterpret_cast<char*>(name)));
+                    ret += str;
+                    nameSize = sizeof(name)/sizeof(TCHAR);
+
+                }
+
+                ::RegCloseKey(key);
+            }
+            
+            return ret.toList();
         }
 
         ComPointer<IMoniker> Backend::getAudioOutputMoniker(int index) const

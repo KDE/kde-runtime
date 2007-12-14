@@ -221,7 +221,7 @@ namespace Phonon
                 return E_POINTER;
             }
 
-            if (m_connected) {
+            if (connected()) {
                 return VFW_E_ALREADY_CONNECTED;
             }
 
@@ -233,9 +233,8 @@ namespace Phonon
                 return VFW_E_TYPE_NOT_ACCEPTED;
             }
 
-            m_connected = pin;
-            m_connected->AddRef();
-            m_connectedType = *type;
+            setConnected(pin);
+            setConnectedType(*type);
 
             return S_OK;
         }
@@ -248,7 +247,7 @@ namespace Phonon
                 return E_POINTER;
             }
 
-            if (m_connected) {
+            if (connected()) {
                 return VFW_E_ALREADY_CONNECTED;
             }
 
@@ -258,8 +257,7 @@ namespace Phonon
 
             HRESULT hr = S_OK;
 
-            m_connected = pin;
-            m_connected->AddRef();
+            setConnected(pin);
             if (!type) {
 
                 //let(s first try the output pin's mediaTypes
@@ -269,16 +267,15 @@ namespace Phonon
                 }
             } else {
                 if (QueryAccept(type) == S_OK) {
-                    m_connectedType = *type;
+                    setConnectedType(*type);
                 } else {
                     hr = VFW_E_TYPE_NOT_ACCEPTED;
                 }
             }
 
             if (FAILED(hr)) {
-                m_connected->Release();
-                m_connectedType = defaultMediaType();
-                m_connected = 0;
+                setConnected(0);
+                setConnectedType(defaultMediaType());
             } else {
                 //TODO we should define the memory allocator to use
             }
@@ -289,7 +286,7 @@ namespace Phonon
         STDMETHODIMP QPin::Disconnect()
         {
             QMutexLocker locker(&m_mutex);
-            if (!m_connected) {
+            if (!connected()) {
                 return S_FALSE;
             }
 
@@ -297,39 +294,32 @@ namespace Phonon
                 return VFW_E_NOT_STOPPED;
             }
 
-            if (m_connected) {
-                m_connected->Release();
-                m_connected = 0;
-            }
+            setConnected(0);
             return S_OK;
         }
 
         STDMETHODIMP QPin::ConnectedTo(IPin **other)
         {
-            QMutexLocker locker(&m_mutex);
             if (!other) {
                 return E_POINTER;
             }
 
-            *other = m_connected;
-
-            if (!m_connected) {
+            *other = connected(true);
+            if (!(*other)) {
                 return VFW_E_NOT_CONNECTED;
             }
 
-            m_connected->AddRef();
             return S_OK;
         }
 
         STDMETHODIMP QPin::ConnectionMediaType(AM_MEDIA_TYPE *type)
         {
-            QMutexLocker locker(&m_mutex);
             if (!type) {
                 return E_POINTER;
             }
 
-           *type = m_connectedType;
-            if (!m_connected) {
+           *type = connectedType();
+            if (!connected()) {
                 return VFW_E_NOT_CONNECTED;
             } else {
                 return S_OK;
@@ -338,6 +328,7 @@ namespace Phonon
 
         STDMETHODIMP QPin::QueryPinInfo(PIN_INFO *info)
         {
+            QReadLocker locker(&m_lock);
             if (!info) {
                 return E_POINTER;
             }
@@ -352,6 +343,7 @@ namespace Phonon
 
         STDMETHODIMP QPin::QueryDirection(PIN_DIRECTION *dir)
         {
+            QReadLocker locker(&m_lock);
             if (!dir) {
                 return E_POINTER;
             }
@@ -362,7 +354,7 @@ namespace Phonon
 
         STDMETHODIMP QPin::QueryId(LPWSTR *id)
         {
-            QMutexLocker locker(&m_mutex);
+            QReadLocker locker(&m_lock);
             if (!id) {
                 return E_POINTER;
             }
@@ -375,6 +367,7 @@ namespace Phonon
 
         STDMETHODIMP QPin::QueryAccept(const AM_MEDIA_TYPE *type)
         {
+            QReadLocker locker(&m_lock);
             if (!type) {
                 return E_POINTER;
             }
@@ -411,14 +404,14 @@ namespace Phonon
 
         STDMETHODIMP QPin::BeginFlush()
         {
-            QMutexLocker locker(&m_mutex);
+            QWriteLocker locker(&m_lock);
             m_flushing = true;
             return S_OK;
         }
 
         STDMETHODIMP QPin::EndFlush()
         {
-            QMutexLocker locker(&m_mutex);
+            QWriteLocker locker(&m_lock);
             m_flushing = false;
             return S_OK;
         }
@@ -446,10 +439,12 @@ namespace Phonon
             AM_MEDIA_TYPE *type = 0;
             while (emt->Next(1, &type, 0) == S_OK) {
                 if (QueryAccept(type) == S_OK) {
-                    m_connectedType = *type;
-                    freeMediaType(type);
-                    if (pin->ReceiveConnection(this, &m_connectedType) == S_OK) {
+                    setConnectedType(*type);
+                    if (pin->ReceiveConnection(this, type) == S_OK) {
+                        freeMediaType(type);
                         return S_OK;
+                    } else {
+                        freeMediaType(type);
                     }
                 }
             }
@@ -459,9 +454,9 @@ namespace Phonon
         }
 
         HRESULT QPin::checkOwnMediaTypesConnection(IPin *pin)
-        {
-            foreach(const AM_MEDIA_TYPE current, m_mediaTypes) {
-                m_connectedType = current;
+        {   
+            foreach(const AM_MEDIA_TYPE current, mediaTypes()) {
+                setConnectedType(current);
                 if (pin->ReceiveConnection(this, &current) == S_OK) {
                     return S_OK;
                 }
@@ -484,17 +479,57 @@ namespace Phonon
         }
 
         //addition
+        void QPin::setConnectedType(const AM_MEDIA_TYPE &type)
+        {
+            QWriteLocker locker(&m_lock);
+            m_connectedType = type;
+        }
+
+        AM_MEDIA_TYPE QPin::connectedType() const 
+        {
+            QReadLocker locker(&m_lock);
+            return m_connectedType;
+        }
+
+        void QPin::setConnected(IPin *pin)
+        {
+            QWriteLocker locker(&m_lock);
+            if (pin) {
+                pin->AddRef();
+            }
+            if (m_connected) {
+                m_connected->Release();
+            }
+            m_connected = pin;
+        }
+
+        IPin *QPin::connected(bool addref) const
+        {
+            QReadLocker locker(&m_lock);
+            if (addref && m_connected) {
+                m_connected->AddRef();
+            }
+            return m_connected;
+        }
+
         bool QPin::isFlushing() const
         {
-            QMutexLocker locker(&m_mutex);
+            QReadLocker locker(&m_lock);
             return m_flushing;
         }
 
         FILTER_STATE QPin::filterState() const
         {
+            QReadLocker locker(&m_lock);
             FILTER_STATE fstate = State_Stopped;
             m_parent->GetState(0, &fstate);
             return fstate;
+        }
+
+        QVector<AM_MEDIA_TYPE> QPin::mediaTypes() const
+        {
+            QReadLocker locker(&m_lock);
+            return m_mediaTypes;
         }
 
 

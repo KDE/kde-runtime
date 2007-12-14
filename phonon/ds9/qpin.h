@@ -21,6 +21,7 @@
 #include <QtCore/QString>
 #include <QtCore/QMutex>
 #include <QtCore/QVector>
+#include <QtCore/QReadWriteLock>
 
 #include <dshow.h>
 
@@ -58,16 +59,19 @@ namespace Phonon
             STDMETHODIMP EndFlush();
             STDMETHODIMP NewSegment(REFERENCE_TIME, REFERENCE_TIME, double);
 
-            const QVector<AM_MEDIA_TYPE> &mediaTypes() const { return m_mediaTypes;}
-
+            QVector<AM_MEDIA_TYPE> mediaTypes() const;
 
         protected:
             bool isFlushing() const;
+            void setConnectedType(const AM_MEDIA_TYPE &type);
+            AM_MEDIA_TYPE connectedType() const;
+            void setConnected(IPin *pin);
+            IPin *connected(bool = false) const;
 
             FILTER_STATE filterState() const;
 
             //this can be used by sub-classes
-            mutable QMutex m_mutex;
+            mutable QReadWriteLock m_lock;
             IMemAllocator *m_memAlloc;
 
         private:
@@ -84,8 +88,7 @@ namespace Phonon
             QString m_name;
             bool m_flushing;
 
-
-
+            mutable QMutex m_mutex;
         };
     }
 }

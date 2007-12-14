@@ -112,8 +112,10 @@ namespace Phonon
                 return VFW_E_WRONG_STATE;
             }
 
-            QMutexLocker locker(&m_mutex);
-            m_requestQueue.enqueue(AsyncRequest(sample, user));
+            {
+                QWriteLocker locker(&m_lock);
+                m_requestQueue.enqueue(AsyncRequest(sample, user));
+            }
             m_requestWait.wakeOne();
 
             return S_OK;
@@ -203,36 +205,36 @@ namespace Phonon
 
         HRESULT QAsyncReader::actualSyncRead(LONGLONG pos, LONG length, BYTE *buffer, LONG *actual)
         {
-            QMutexLocker locker(&m_mutex);
+            QMutexLocker locker(&m_mutexRead);
 
-            if(m_size !=1 && pos + length > m_size) {
+            if(streamSize() !=1 && pos + length > streamSize()) {
                 //it tries to read outside of the boundaries
                 return E_FAIL;
             }
 
-            if (m_pos - m_buffer.size() != pos) {
-                if (!m_seekable) {
+            if (currentPos() - currentBufferSize() != pos) {
+                if (!streamSeekable()) {
                     return S_FALSE;
                 }
-                m_pos = pos;
-                seekStream(pos);
-                m_buffer.clear();
+                setCurrentPos(pos);
             }
 
-            int oldSize = m_buffer.size();
-            while (m_buffer.size() < int(length)) {
+            int oldSize = currentBufferSize();
+            while (currentBufferSize() < int(length)) {
                 needData();
-                if (oldSize == m_buffer.size()) {
+                if (oldSize == currentBufferSize()) {
                     break; //we didn't get any data
                 }
-                oldSize = m_buffer.size();
+                oldSize = currentBufferSize();
             }
 
-            DWORD bytesRead = qMin(m_buffer.size(), int(length));
-            memcpy(buffer, m_buffer.data(), bytesRead);
-
-            //truncate the buffer
-            m_buffer = m_buffer.mid(bytesRead);
+            DWORD bytesRead = qMin(currentBufferSize(), int(length));
+            {
+                QWriteLocker locker(&m_lock);
+                memcpy(buffer, m_buffer.data(), bytesRead);
+                //truncate the buffer
+                m_buffer = m_buffer.mid(bytesRead);
+            }
 
             if (actual) {
                 *actual = bytesRead; //initialization
@@ -243,7 +245,7 @@ namespace Phonon
 
         STDMETHODIMP QAsyncReader::Length(LONGLONG *total, LONGLONG *available)
         {
-            QMutexLocker locker(&m_mutex);
+            QReadLocker locker(&m_lock);
             if (total) {
                 *total = m_size;
             }
@@ -258,6 +260,7 @@ namespace Phonon
         //from Phonon::StreamInterface
         void QAsyncReader::writeData(const QByteArray &data)
         {
+            QWriteLocker locker(&m_lock);
             m_pos += data.size();
             m_buffer += data;
         }
@@ -268,20 +271,32 @@ namespace Phonon
 
         void QAsyncReader::setStreamSize(qint64 newSize)
         {
-            QMutexLocker locker(&m_mutex);
+            QWriteLocker locker(&m_lock);
             m_size = newSize;
+        }
+
+        qint64 QAsyncReader::streamSize() const
+        {
+            QReadLocker locker(&m_lock);
+            return m_size;
         }
 
         void QAsyncReader::setStreamSeekable(bool s)
         {
-            QMutexLocker locker(&m_mutex);
+            QWriteLocker locker(&m_lock);
             m_seekable = s;
+        }
+
+        bool QAsyncReader::streamSeekable() const
+        {
+            QReadLocker locker(&m_lock);
+            return m_seekable;
         }
 
         //addition
         QAsyncReader::AsyncRequest QAsyncReader::getNextRequest()
         {
-            QMutexLocker locker(&m_mutex);
+            QWriteLocker locker(&m_lock);
             AsyncRequest ret;
             if (!m_requestQueue.isEmpty()) {
                 ret = m_requestQueue.dequeue();
@@ -289,5 +304,26 @@ namespace Phonon
 
             return ret;
         }
+
+        void QAsyncReader::setCurrentPos(qint64 pos)
+        {
+            QWriteLocker locker(&m_lock);
+            m_pos = pos;
+            seekStream(pos);
+            m_buffer.clear();
+        }
+
+        qint64 QAsyncReader::currentPos() const
+        {
+            QReadLocker locker(&m_lock);
+            return m_pos;
+        }
+
+        int QAsyncReader::currentBufferSize() const
+        {
+            QReadLocker locker(&m_lock);
+            return m_buffer.size();
+        }
+
     }
 }

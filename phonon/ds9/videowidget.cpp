@@ -193,14 +193,13 @@ namespace Phonon
             for(QVector<Filter>::iterator it = m_filters.begin(); it != m_filters.end(); ++it) {
                 Filter &filter = *it;
                 // create the VMR9 filter COM instance and configure it
-                HRESULT hr = CoCreateInstance(CLSID_VideoMixingRenderer9, NULL,
-                    CLSCTX_INPROC_SERVER, IID_IBaseFilter, filter.pdata());
-                if (FAILED(hr)) {
+                filter = getVideoRenderer();
+                if (!filter) {
                     qWarning("the video widget could not be initialized correctly");
                 } else {
                     ComPointer<IVMRFilterConfig9> config(filter);
                     Q_ASSERT(config);
-                    hr = config->SetRenderingMode(VMR9Mode_Windowless);
+                    HRESULT hr = config->SetRenderingMode(VMR9Mode_Windowless);
                     Q_ASSERT(SUCCEEDED(hr));
                     hr = config->SetNumberOfStreams(1); //for now we limit it to 1 input stream
                     Q_ASSERT(SUCCEEDED(hr));
@@ -218,6 +217,15 @@ namespace Phonon
         VideoWidget::~VideoWidget()
         {
         }
+
+        Filter VideoWidget::getVideoRenderer()
+        {
+            Filter ret;
+            CoCreateInstance(CLSID_VideoMixingRenderer9, NULL,
+                CLSCTX_INPROC_SERVER, IID_IBaseFilter, ret.pdata());
+            return ret;
+        }
+
 
         void VideoWidget::setCurrentGraph(int index)
         {

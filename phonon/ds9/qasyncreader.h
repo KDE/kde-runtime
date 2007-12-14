@@ -18,7 +18,6 @@
 #ifndef PHONON_QASYNCREADER_H
 #define PHONON_QASYNCREADER_H
 
-#include <QtCore/QMutex>
 #include <QtCore/QWaitCondition>
 #include <QtCore/QQueue>
 
@@ -69,18 +68,18 @@ namespace Phonon
                 DWORD_PTR user;
             };
             HRESULT actualSyncRead(LONGLONG pos, LONG length, BYTE *buffer, LONG *actual);
-            bool IsStreamSeekable() const;
-            qint64 totalSize() const;
             qint64 currentPos() const;
             void setCurrentPos(qint64 newPos);
             int currentBufferSize() const;
             void transferMemoryFromBuffer(BYTE *buffer, int count);
             AsyncRequest getNextRequest();
             void enqueueRequest(const QAsyncReader::AsyncRequest &req);
+            qint64 streamSize() const;
+            bool streamSeekable() const;
 
             Phonon::MediaSource m_source;
 
-            QMutex m_mutex,
+            QMutex m_mutexRead,
                 m_mutexWait;
 
             QQueue<AsyncRequest> m_requestQueue;

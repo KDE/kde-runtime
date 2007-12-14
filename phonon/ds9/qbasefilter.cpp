@@ -162,18 +162,19 @@ namespace Phonon
 
         const QList<QPin *> QBaseFilter::pins()
         {
+            QReadLocker locker(&m_lock);
             return m_pins;
         }
 
         void QBaseFilter::addPin(QPin *pin)
         {
-            QMutexLocker locker(&m_mutex);
+            QWriteLocker locker(&m_lock);
             m_pins.append(pin);
         }
 
         void QBaseFilter::removePin(QPin *pin)
         {
-            QMutexLocker locker(&m_mutex);
+            QWriteLocker locker(&m_lock);
             m_pins.removeAll(pin);
         }
 
@@ -222,34 +223,35 @@ namespace Phonon
 
         STDMETHODIMP QBaseFilter::GetClassID(CLSID *clsid)
         {
+            QReadLocker locker(&m_lock);
             *clsid = m_clsid;
             return S_OK;
         }
 
         STDMETHODIMP QBaseFilter::Stop()
         {
-            QMutexLocker locker(&m_mutex);
+            QWriteLocker locker(&m_lock);
             m_state = State_Stopped;
             return S_OK;
         }
 
         STDMETHODIMP QBaseFilter::Pause()
         {
-            QMutexLocker locker(&m_mutex);
+            QWriteLocker locker(&m_lock);
             m_state = State_Paused;
             return S_OK;
         }
 
         STDMETHODIMP QBaseFilter::Run(REFERENCE_TIME t)
         {
-            QMutexLocker locker(&m_mutex);
+            QWriteLocker locker(&m_lock);
             m_state = State_Running;
             return S_OK;
         }
 
         STDMETHODIMP QBaseFilter::GetState(DWORD ms, FILTER_STATE *state)
         {
-            QMutexLocker locker(&m_mutex);
+            QReadLocker locker(&m_lock);
             if (state) {
                 *state = m_state;
                 return S_OK;
@@ -259,7 +261,7 @@ namespace Phonon
 
         STDMETHODIMP QBaseFilter::SetSyncSource(IReferenceClock *clock)
         {
-            QMutexLocker locker(&m_mutex);
+            QWriteLocker locker(&m_lock);
             if (clock) {
                 clock->AddRef();
             }
@@ -272,7 +274,7 @@ namespace Phonon
 
         STDMETHODIMP QBaseFilter::GetSyncSource(IReferenceClock **clock)
         {
-            QMutexLocker locker(&m_mutex);
+            QReadLocker locker(&m_lock);
             if (!clock) {
                 return E_POINTER;
             }
@@ -287,12 +289,11 @@ namespace Phonon
 
         STDMETHODIMP QBaseFilter::FindPin(LPCWSTR name, IPin**pin)
         {
-            QMutexLocker locker(&m_mutex);
             if (!pin) {
                 return E_POINTER;
             }
 
-            foreach(IPin *current, m_pins) {
+            foreach(IPin *current, pins()) {
                 PIN_INFO info;
                 current->QueryPinInfo(&info);
                 if (info.pFilter) {
@@ -311,7 +312,7 @@ namespace Phonon
 
         STDMETHODIMP QBaseFilter::QueryFilterInfo(FILTER_INFO *info )
         {
-            QMutexLocker locker(&m_mutex);
+            QReadLocker locker(&m_lock);
             if (!info) {
                 return E_POINTER;
             }
@@ -325,7 +326,7 @@ namespace Phonon
 
         STDMETHODIMP QBaseFilter::JoinFilterGraph(IFilterGraph *graph, LPCWSTR name)
         {
-            QMutexLocker locker(&m_mutex);
+            QWriteLocker locker(&m_lock);
             m_graph = graph;
             m_name = QString::fromWCharArray(name);
             return S_OK;
@@ -333,8 +334,9 @@ namespace Phonon
 
         STDMETHODIMP QBaseFilter::EnumPins( IEnumPins **ep)
         {
-            if (!ep)
+            if (!ep) {
                 return E_POINTER;
+            }
 
             *ep = new QEnumPins(this);
             return S_OK;
@@ -345,7 +347,5 @@ namespace Phonon
         {
             return E_NOTIMPL;
         }
-
-
     }
 }

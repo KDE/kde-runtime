@@ -20,7 +20,7 @@
 
 #include <QtCore/QString>
 #include <QtCore/QList>
-#include <QtCore/QMutex>
+#include <QtCore/QReadWriteLock>
 
 #include <dshow.h>
 
@@ -71,7 +71,7 @@ namespace Phonon
             IFilterGraph *m_graph;
             FILTER_STATE m_state;
             QList<QPin *> m_pins;
-            QMutex m_mutex;
+            QReadWriteLock m_lock;
         };
     }
 }

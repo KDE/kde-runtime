@@ -54,6 +54,8 @@ namespace Phonon
 
             QWidget *widget();
 
+            static Filter getVideoRenderer();
+
         protected:
             virtual void connected(BackendNode *, const InputPin& inpin);
 

@@ -56,6 +56,7 @@ namespace Phonon
         private:
             bool m_samplesReadonly;
             QSet<QPin*> m_outputs;
+            QMutex m_mutexReceive;
         };
     }
 }
