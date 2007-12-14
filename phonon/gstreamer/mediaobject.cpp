@@ -438,8 +438,8 @@ void MediaObject::changeState(State newstate)
     if (newstate == m_state)
         return;
 
-    m_state = newstate;
     emit stateChanged(newstate, m_state);
+    m_state = newstate;
 
     switch (newstate) {
     case Phonon::PausedState:
@@ -966,6 +966,7 @@ void MediaObject::handleBusMessage(const Message &message)
             g_free (debug);
             QString message;
             message.sprintf("Error: %s", err->message);
+            m_backend->logMessage(message, Backend::Warning);
             setError(QString(err->message));
             g_error_free (err);
             break;
