@@ -45,7 +45,7 @@ namespace Phonon
             return ret;
         }
 
-        Backend::Backend(QObject *parent, const QStringList &)
+        Backend::Backend(QObject *parent, const QVariantList &)
             : QObject(parent)
         {
         }

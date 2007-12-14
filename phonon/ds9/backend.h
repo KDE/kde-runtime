@@ -42,7 +42,7 @@ namespace Phonon
             Q_OBJECT
                 Q_INTERFACES(Phonon::BackendInterface)
         public:
-            Backend(QObject *parent = 0, const QStringList & = QStringList());
+            Backend(QObject *parent = 0, const QVariantList & = QVariantList());
             virtual ~Backend();
 
             QObject *createObject(BackendInterface::Class, QObject *parent, const QList<QVariant> &args);
