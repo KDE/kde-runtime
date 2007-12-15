@@ -12,3 +12,12 @@ InitialPreference=10
 Name=GStreamer
 
 Comment=Phonon GStreamer backend
+Comment[de]=Phonon GStreamer-Treiber
+Comment[el]=Σύστημα υποστήριξης του GStreamer
+Comment[ga]=Inneall Phonon GStreamer
+Comment[ja]=Phonon GStreamer バックエンド
+Comment[lv]=Phonon GStreamer aizmugure
+Comment[nds]=Hülpprogramm GStreamer för Phonon
+Comment[pt]=Infra-estrutura do GStreamer para o Phonon
+Comment[pt_BR]=Infra-estrutura do GStreamer para o Phonon
+Comment[zh_TW]=Phonon GStreamer 後端介面
