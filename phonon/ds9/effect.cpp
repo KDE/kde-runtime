@@ -33,7 +33,7 @@ namespace Phonon
                 Filter &filter = *it;
                 HRESULT hr = CoCreateInstance(CLSID_DMOWrapperFilter, 0, CLSCTX_INPROC_SERVER, IID_IBaseFilter, filter.pdata());
                 Q_ASSERT(SUCCEEDED(hr));
-                ComPointer<IDMOWrapperFilter> wrapper(filter);
+                ComPointer<IDMOWrapperFilter> wrapper(filter, IID_IDMOWrapperFilter);
                 Q_ASSERT(wrapper);
                 hr = wrapper->Init(effectClass, DMOCATEGORY_AUDIO_EFFECT);
                 Q_ASSERT(SUCCEEDED(hr));
@@ -53,7 +53,7 @@ namespace Phonon
         {
             QList<Phonon::EffectParameter> ret;
             if (!m_filters.isEmpty()) {
-                ComPointer<IMediaParamInfo> paramInfo(m_filters.first());
+                ComPointer<IMediaParamInfo> paramInfo(m_filters.first(), IID_IMediaParamInfo);
                 Q_ASSERT(paramInfo);
                 DWORD paramCount = 0;
                 paramInfo->GetParamCount( &paramCount);
@@ -100,7 +100,7 @@ namespace Phonon
                     }
 
                     Phonon::EffectParameter::Hints hint = info.mopCaps == MP_CAPS_CURVE_INVSQUARE ?
-                        Phonon::EffectParameter::LogarithmicHint : 0;
+                        Phonon::EffectParameter::LogarithmicHint : Phonon::EffectParameter::Hints(0);
 
                     ret.append(EffectParameter(i, QString::fromWCharArray(name), hint, def, min, max, values));
                     CoTaskMemFree(name); //let's free the memory
@@ -113,7 +113,7 @@ namespace Phonon
         {
             QVariant ret;
             if (!m_filters.isEmpty()) {
-                ComPointer<IMediaParams> params(m_filters.first());
+                ComPointer<IMediaParams> params(m_filters.first(), IID_IMediaParams);
                 Q_ASSERT(params);
                 MP_DATA data;
                 HRESULT hr = params->GetParam(p.id(), &data);
@@ -132,7 +132,7 @@ namespace Phonon
 
             for(QVector<Filter>::iterator it = m_filters.begin(); it != m_filters.end(); ++it) {
                 Filter &filter = *it;
-                ComPointer<IMediaParams> params(filter);
+                ComPointer<IMediaParams> params(filter, IID_IMediaParams);
                 Q_ASSERT(params);
 
                 MP_DATA data = float(v.toDouble());

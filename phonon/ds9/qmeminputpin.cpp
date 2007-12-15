@@ -118,7 +118,7 @@ namespace Phonon
                 ComPointer<IPin> pin;
                 current->ConnectedTo(pin.pobject());
                 if (pin) {
-                    ComPointer<IMemInputPin> input(pin);
+                    ComPointer<IMemInputPin> input(pin, IID_IMemInputPin);
                     if (input) {
                         input->Receive(sample);
                     }

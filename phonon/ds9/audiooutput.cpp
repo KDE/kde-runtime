@@ -44,7 +44,7 @@ namespace Phonon
         void AudioOutput::setVolume(qreal newVolume)
         {
             for(int i = 0; i < m_filters.count(); ++i) {
-                ComPointer<IBasicAudio> audio(m_filters[i]);
+                ComPointer<IBasicAudio> audio(m_filters[i], IID_IBasicAudio);
                 if (audio) {
                     const qreal currentVolume = newVolume * (m_currentIndex == i ? m_crossfadeProgress : 1-m_crossfadeProgress);
                     const qreal newDbVolume = (qMax(0., 1.-::log(::pow(currentVolume, -log10over20)))-1.) * 10000;
@@ -86,7 +86,7 @@ namespace Phonon
                 if (filter) {
                     FILTER_INFO info;
                     filter->QueryFilterInfo(&info);
-                    graph = ComPointer<IGraphBuilder>(info.pGraph);
+                    graph = ComPointer<IGraphBuilder>(info.pGraph, IID_IGraphBuilder);
 
                     InputPin pin = BackendNode::pins(filter, PINDIR_INPUT).first();
                     if (pin->ConnectedTo(out.pobject()) == S_OK) {
@@ -96,7 +96,7 @@ namespace Phonon
                         if (graph) {
                             filter->GetState(0, &state);
                             if (state != State_Stopped) {
-                                ComPointer<IMediaControl>(graph)->Stop();
+                                ComPointer<IMediaControl>(graph, IID_IMediaControl)->Stop();
                             }
                             HRESULT hr = graph->RemoveFilter(filter);
                             Q_ASSERT(SUCCEEDED(hr));
@@ -115,9 +115,9 @@ namespace Phonon
                             InputPin pin = BackendNode::pins(filter, PINDIR_INPUT).first();
                             hr = graph->Connect(out, pin);
                             if (state == State_Paused) {
-                                ComPointer<IMediaControl>(graph)->Pause();
+                                ComPointer<IMediaControl>(graph, IID_IMediaControl)->Pause();
                             } else if (state == State_Running) {
-                                ComPointer<IMediaControl>(graph)->Run();
+                                ComPointer<IMediaControl>(graph, IID_IMediaControl)->Run();
                             }
 
                         }

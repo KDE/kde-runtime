@@ -30,6 +30,7 @@ set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} dxguid strmiids dmoguid
 CHECK_CXX_SOURCE_COMPILES(
 "#include <d3d9.h>
 #include <dshow.h>
+#include <strmif.h>
 #include <vmr9.h>
 
 int main() { }" BUILD_PHONON_DS9)

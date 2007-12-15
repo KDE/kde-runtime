@@ -39,11 +39,15 @@ if (BUILD_PHONON_DS9)
 	    # see http://www.qtcentre.org/forum/f-installation-5/t-wchar-to-qstring-giving-error-in-vs2005-4625.html
 	    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zc:wchar_t-")
     endif (MSVC80)
+    
+    if (MINGW)
+        add_definitions("-DUNICODE")
+    endif (MINGW)
 	
     kde4_add_plugin(phonon_ds9 ${phonon_ds9_SRCS})
     target_link_libraries(phonon_ds9
             ${QT_QTGUI_LIBRARY} ${KDE4_PHONON_LIBS} ${KDE4_KDECORE_LIBS}
-	    dxguid strmiids dmoguids msdmo)
+	    dxguid strmiids dmoguids msdmo ole32 oleaut32 uuid gdi32)
     install(TARGETS phonon_ds9
 	    RUNTIME DESTINATION ${BIN_INSTALL_DIR}
 	    LIBRARY DESTINATION ${LIB_INSTALL_DIR}

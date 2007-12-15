@@ -19,6 +19,7 @@
 #include "qpin.h"
 
 #include <initguid.h>
+#include <amvideo.h> // VIDEOINFOHEADER
 
 namespace Phonon
 {

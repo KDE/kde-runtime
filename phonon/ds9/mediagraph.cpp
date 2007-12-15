@@ -33,6 +33,13 @@ uint qHash (const Phonon::DS9::Filter &f)
     return uint(static_cast<IBaseFilter*>(f));
 }
 
+// ushort != wchar_t on mingw
+// so isolate the reinterpret_cast to this fn
+inline const wchar_t * toWChar(const ushort *str)
+{
+    return reinterpret_cast<const wchar_t *>(str);
+}
+
 namespace Phonon
 {
     namespace DS9
@@ -76,11 +83,11 @@ namespace Phonon
                 return;
             }
 
-            m_mediaControl = ComPointer<IMediaControl>(m_graph);
+            m_mediaControl = ComPointer<IMediaControl>(m_graph, IID_IMediaControl);
             Q_ASSERT(m_mediaControl);
-            m_mediaSeeking = ComPointer<IMediaSeeking>(m_graph);
+            m_mediaSeeking = ComPointer<IMediaSeeking>(m_graph, IID_IMediaSeeking);
             Q_ASSERT(m_mediaSeeking);
-            m_mediaEvent = ComPointer<IMediaEventEx>(m_graph);
+            m_mediaEvent = ComPointer<IMediaEventEx>(m_graph, IID_IMediaEventEx);
             Q_ASSERT(m_mediaEvent);
 
             //event management
@@ -277,7 +284,7 @@ namespace Phonon
             FILTER_INFO info;
             filter->QueryFilterInfo(&info);
 #ifdef GRAPH_DEBUG
-            qDebug() << "removeFilter" << QString::fromUtf16(info.achName);
+            qDebug() << "removeFilter" << QString::fromWCharArray(info.achName);
 #endif
             if (info.pGraph) {
                 info.pGraph->Release();
@@ -570,7 +577,7 @@ namespace Phonon
                 return hr;
             case MediaSource::Url:
                 if (source.url().isValid()) {
-                    hr = m_graph->RenderFile(source.url().toString().utf16(), 0);
+                    hr = m_graph->RenderFile(toWChar(source.url().toString().utf16()), 0);
                     if (FAILED(hr)) {
                         return hr;
                     }
@@ -578,7 +585,7 @@ namespace Phonon
                 break;
             case MediaSource::LocalFile:
                 if (!source.fileName().isEmpty()) {
-                    hr = m_graph->RenderFile(source.fileName().utf16(), 0);
+                    hr = m_graph->RenderFile(toWChar(source.fileName().utf16()), 0);
                     if (FAILED(hr)) {
                         return hr;
                     }
@@ -657,7 +664,7 @@ namespace Phonon
 #ifdef GRAPH_DEBUG
             qDebug() << Q_FUNC_INFO << m_unusedFilters;
 #endif
-            ComPointer<IGraphConfig> graphConfig(m_graph);
+            ComPointer<IGraphConfig> graphConfig(m_graph, IID_IGraphConfig);
             foreach(const Filter filter, m_unusedFilters) {
                 m_graph->AddFilter(filter, 0);
             }
@@ -673,7 +680,7 @@ namespace Phonon
             usedFilters += connectedFilters( root);
 
             m_unusedFilters += getAllFilters() - usedFilters;
-            ComPointer<IGraphConfig> graphConfig(m_graph);
+            ComPointer<IGraphConfig> graphConfig(m_graph, IID_IGraphConfig);
             foreach(const Filter filter, m_unusedFilters) {
                 FILTER_INFO info;
                 filter->QueryFilterInfo(&info);
@@ -754,7 +761,7 @@ namespace Phonon
             {
                 FILTER_INFO info;
                 filter->QueryFilterInfo(&info);
-                qDebug() << Q_FUNC_INFO << QString::fromUtf16(info.achName);
+                qDebug() << Q_FUNC_INFO << QString::fromWCharArray(info.achName);
                 if (info.pGraph) {
                     info.pGraph->Release();
                 }
@@ -803,7 +810,7 @@ namespace Phonon
             {
                 FILTER_INFO info;
                 filter->QueryFilterInfo(&info);
-                qDebug() << "found a decoder filter" << QString::fromUtf16(info.achName);
+                qDebug() << "found a decoder filter" << QString::fromWCharArray(info.achName);
                 if (info.pGraph) {
                     info.pGraph->Release();
                 }
@@ -828,7 +835,7 @@ namespace Phonon
             {
                 FILTER_INFO info;
                 filter->QueryFilterInfo(&info);
-                qDebug() << Q_FUNC_INFO << QString::fromUtf16(info.achName);
+                qDebug() << Q_FUNC_INFO << QString::fromWCharArray(info.achName);
                 if (info.pGraph) {
                     info.pGraph->Release();
                 }
@@ -862,7 +869,7 @@ namespace Phonon
             {
                 FILTER_INFO info;
                 filter->QueryFilterInfo(&info);
-                qDebug() << "found a demuxer filter" << QString::fromUtf16(info.achName);
+                qDebug() << "found a demuxer filter" << QString::fromWCharArray(info.achName);
                 if (info.pGraph) {
                     info.pGraph->Release();
                 }
@@ -880,27 +887,27 @@ namespace Phonon
                 BSTR str;
                 HRESULT hr = mediaContent->get_AuthorName(&str);
                 if (SUCCEEDED(hr)) {
-                    ret.insert(QLatin1String("ARTIST"), QString::fromUtf16(str));
+                    ret.insert(QLatin1String("ARTIST"), QString::fromWCharArray(str));
                     SysFreeString(str);
                 }
                 hr = mediaContent->get_Title(&str);
                 if (SUCCEEDED(hr)) {
-                    ret.insert(QLatin1String("TITLE"), QString::fromUtf16(str));
+                    ret.insert(QLatin1String("TITLE"), QString::fromWCharArray(str));
                     SysFreeString(str);
                 }
                 hr = mediaContent->get_Description(&str);
                 if (SUCCEEDED(hr)) {
-                    ret.insert(QLatin1String("DESCRIPTION"), QString::fromUtf16(str));
+                    ret.insert(QLatin1String("DESCRIPTION"), QString::fromWCharArray(str));
                     SysFreeString(str);
                 }
                 hr = mediaContent->get_Copyright(&str);
                 if (SUCCEEDED(hr)) {
-                    ret.insert(QLatin1String("COPYRIGHT"), QString::fromUtf16(str));
+                    ret.insert(QLatin1String("COPYRIGHT"), QString::fromWCharArray(str));
                     SysFreeString(str);
                 }
                 hr = mediaContent->get_MoreInfoText(&str);
                 if (SUCCEEDED(hr)) {
-                    ret.insert(QLatin1String("MOREINFO"), QString::fromUtf16(str));
+                    ret.insert(QLatin1String("MOREINFO"), QString::fromWCharArray(str));
                     SysFreeString(str);
                 }
             }
@@ -923,7 +930,7 @@ namespace Phonon
             ComPointer<IStorage> pStorage;
 
             // First, create a document file that will hold the GRF file
-            hr = StgCreateDocfile(filepath.utf16(),
+            hr = StgCreateDocfile(toWChar(filepath.utf16()),
                 STGM_CREATE | STGM_TRANSACTED | STGM_READWRITE |
                 STGM_SHARE_EXCLUSIVE,
                 0, pStorage.pobject());
@@ -943,7 +950,7 @@ namespace Phonon
             }
 
             // The IpersistStream::Save method converts a stream into a persistent object.
-            ComPointer<IPersistStream> pPersist(m_graph);
+            ComPointer<IPersistStream> pPersist(m_graph, IID_IPersistStream);
             hr = pPersist->Save(pStream, TRUE);
             if (SUCCEEDED(hr)) {
                 hr = pStorage->Commit(STGC_DEFAULT);

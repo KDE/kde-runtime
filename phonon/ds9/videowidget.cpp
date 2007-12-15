@@ -50,7 +50,7 @@ namespace Phonon
                     m_windowlessControl->SetVideoPosition(&dummyRect, &dummyRect);
                 }
 
-                m_windowlessControl = ComPointer<IVMRWindowlessControl9>(filter);
+                m_windowlessControl = ComPointer<IVMRWindowlessControl9>(filter, IID_IVMRWindowlessControl9);
                 if (m_windowlessControl) {
                     updateVideoSize();
                     update(); //be sure to update the current video frame
@@ -197,13 +197,13 @@ namespace Phonon
                 if (!filter) {
                     qWarning("the video widget could not be initialized correctly");
                 } else {
-                    ComPointer<IVMRFilterConfig9> config(filter);
+                    ComPointer<IVMRFilterConfig9> config(filter, IID_IVMRFilterConfig9);
                     Q_ASSERT(config);
                     HRESULT hr = config->SetRenderingMode(VMR9Mode_Windowless);
                     Q_ASSERT(SUCCEEDED(hr));
                     hr = config->SetNumberOfStreams(1); //for now we limit it to 1 input stream
                     Q_ASSERT(SUCCEEDED(hr));
-                    ComPointer<IVMRWindowlessControl9> windowless(filter);
+                    ComPointer<IVMRWindowlessControl9> windowless(filter, IID_IVMRWindowlessControl9);
                     Q_ASSERT(config);
                     hr = windowless->SetVideoClippingWindow(reinterpret_cast<HWND>(m_widget->winId()));
                     Q_ASSERT(SUCCEEDED(hr));
@@ -327,7 +327,7 @@ namespace Phonon
                 }
 
                 //get the mixer (used for brightness/contrast/saturation/hue)
-                ComPointer<IVMRMixerControl9> mixer(filter);
+                ComPointer<IVMRMixerControl9> mixer(filter, IID_IVMRMixerControl9);
                 Q_ASSERT(mixer);
 
                 VMR9ProcAmpControl ctrl;

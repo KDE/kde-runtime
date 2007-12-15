@@ -31,7 +31,7 @@ namespace Phonon
             {
             }
 
-            explicit ComPointer(IUnknown *_unk, const GUID &guid = __uuidof(T)) : m_t(0)
+            explicit ComPointer(IUnknown *_unk, const GUID &guid) : m_t(0)
             {
                 if (_unk)
                     _unk->QueryInterface(guid, pdata());

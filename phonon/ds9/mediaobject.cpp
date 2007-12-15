@@ -32,6 +32,7 @@
 #include <initguid.h>
 #include <qnetwork.h>
 #include <comdef.h>
+#include <evcode.h>
 
 #define TIMER_INTERVAL 25 //... ms for the timer that polls the current state
 #define PRELOAD_TIME 2000 // 2 sencods to load a source

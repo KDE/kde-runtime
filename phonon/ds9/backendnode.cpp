@@ -18,6 +18,9 @@
 #include "backendnode.h"
 #include "mediaobject.h"
 
+#include <ocidl.h> // ISpecifyPropertyPages
+#include <olectl.h> // OleCreatePropertyFrame
+
 namespace Phonon
 {
     namespace DS9
@@ -25,7 +28,7 @@ namespace Phonon
         // Displays a property dialog for a filter (experimental but should be put into main
         void BackendNode::showPropertyDialog(const Filter &filter)
         {
-            ComPointer<ISpecifyPropertyPages> prop(filter);
+            ComPointer<ISpecifyPropertyPages> prop(filter, IID_ISpecifyPropertyPages);
             if (prop != 0) {
                 IUnknown *iunk[] = {filter};
                 // Show the page.

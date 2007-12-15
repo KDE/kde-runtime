@@ -153,7 +153,7 @@ namespace Phonon
                         LPOLESTR str = 0;
                         mon->GetDisplayName(0,0,&str);
                         if (SUCCEEDED(hr)) {
-                            const QString name = QString::fromUtf16(str);
+                            const QString name = QString::fromWCharArray(str);
                             getIMalloc()->Free(str);
                             //that's the only way to test of the device is a DirectSound device
                             if (name.contains(QLatin1String("DirectSound"))) {
@@ -198,7 +198,7 @@ namespace Phonon
                     LPOLESTR str = 0;
                     HRESULT hr = mon->GetDisplayName(0,0, &str);
                     if (SUCCEEDED(hr)) {
-                        QString name = QString::fromUtf16(str); 
+                        QString name = QString::fromWCharArray(str); 
                         getIMalloc()->Free(str);
                         ret["name"] = name.mid(name.indexOf('\\') + 1);
                     }
