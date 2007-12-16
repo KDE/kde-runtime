@@ -351,7 +351,7 @@ void KTimeZoned::findLocalZone()
     if (checkTZ(envtz))
     {
         mSavedTZ = envtz;
-if (!mLocalZone.isEmpty()) kDebug(1221)<<"TZ: "<<mLocalZone;
+if (!mSavedTZ.isEmpty()) kDebug(1221)<<"TZ: "<<mSavedTZ;
     }
 
     if (mLocalZone.isEmpty())
