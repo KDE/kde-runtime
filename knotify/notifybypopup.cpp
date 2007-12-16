@@ -29,6 +29,8 @@
 #include <kvbox.h>
 #include <QLabel>
 #include <QTextDocument>
+#include <QApplication>
+#include <QDesktopWidget>
 #include <kconfiggroup.h>
 
 NotifyByPopup::NotifyByPopup(QObject *parent) : KNotifyPlugin(parent)
@@ -167,7 +169,8 @@ KPassivePopup * NotifyByPopup::showPopup(int id,KNotifyConfig * config)
 	connect(pop, SIGNAL(destroyed()) , this, SLOT(slotPopupDestroyed()) );
 	pop->setTimeout( 0 );
 	pop->setView( vb2 );
-	pop->show();
+	QRect screen = QApplication::desktop()->availableGeometry();
+	pop->show(QPoint(screen.left() + screen.width()/2  , screen.top()));
 	return pop;
 }
 
