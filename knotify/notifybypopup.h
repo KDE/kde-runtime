@@ -38,7 +38,7 @@ class NotifyByPopup : public KNotifyPlugin
 		virtual void update(int id, KNotifyConfig *config);
 	private:
 		QHash<int, KPassivePopup * > m_popups;
-		KPassivePopup *showPopup(int id,KNotifyConfig *config);
+		void fillPopup(KPassivePopup *,int id,KNotifyConfig *config);
 		
 	private Q_SLOTS:
 		void slotPopupDestroyed();

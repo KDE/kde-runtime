@@ -54,7 +54,14 @@ void NotifyByPopup::notify( int id, KNotifyConfig * config )
 		return;
 	}
 
-	m_popups[id]=showPopup(id,config);
+	KPassivePopup *pop = new KPassivePopup( config->winId );
+	m_popups[id]=pop;
+	fillPopup(pop,id,config);
+	QRect screen = QApplication::desktop()->availableGeometry();
+	pop->setAutoDelete( true );
+	connect(pop, SIGNAL(destroyed()) , this, SLOT(slotPopupDestroyed()) );
+	pop->setTimeout( 0 );
+	pop->show(QPoint(screen.left() + screen.width()/2  , screen.top()));
 }
 
 void NotifyByPopup::slotPopupDestroyed( )
@@ -99,18 +106,12 @@ void NotifyByPopup::update(int id, KNotifyConfig * config)
 	if(!m_popups.contains(id))
 		return;
 	KPassivePopup *p=m_popups[id];
-	m_popups.remove(id);
-	delete p;
-	
-	//FIXME:  the popup should not be closed, it should be updated as it.
-	m_popups.insert(id, showPopup(id, config) );
+	fillPopup(p, id, config);
 }
 
-KPassivePopup * NotifyByPopup::showPopup(int id,KNotifyConfig * config)
+void NotifyByPopup::fillPopup(KPassivePopup *pop,int id,KNotifyConfig * config)
 {
 	const QString &appname=config->appname;
-	
-	KPassivePopup *pop = new KPassivePopup( config->winId );
 	
 	KConfigGroup globalgroup( &(*config->eventsfile), "Global" );
 	QString iconName = globalgroup.readEntry( "IconName", appname );
@@ -119,7 +120,7 @@ KPassivePopup * NotifyByPopup::showPopup(int id,KNotifyConfig * config)
 	QString appCaption = globalgroup.readEntry( "Name", appname );
 
 	KVBox *vb = pop->standardView( appCaption , config->pix.isNull() ? config->text : QString() , appIcon );
-	KVBox *vb2=vb;
+	KVBox *vb2 = vb;
 
 	if(!config->pix.isNull())
 	{
@@ -163,15 +164,7 @@ KPassivePopup * NotifyByPopup::showPopup(int id,KNotifyConfig * config)
 		QObject::connect(link, SIGNAL(linkActivated(const QString &)), pop, SLOT(hide()));
 	}
 
-	pop->setAutoDelete( true );
-	
-	
-	connect(pop, SIGNAL(destroyed()) , this, SLOT(slotPopupDestroyed()) );
-	pop->setTimeout( 0 );
 	pop->setView( vb2 );
-	QRect screen = QApplication::desktop()->availableGeometry();
-	pop->show(QPoint(screen.left() + screen.width()/2  , screen.top()));
-	return pop;
 }
 
 #include "notifybypopup.moc"
