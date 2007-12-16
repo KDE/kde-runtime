@@ -35,6 +35,8 @@
 
 NotifyByPopup::NotifyByPopup(QObject *parent) : KNotifyPlugin(parent)
 {
+	QRect screen = QApplication::desktop()->availableGeometry();
+	m_nextPosition = screen.top();
 }
 
 
@@ -61,7 +63,8 @@ void NotifyByPopup::notify( int id, KNotifyConfig * config )
 	pop->setAutoDelete( true );
 	connect(pop, SIGNAL(destroyed()) , this, SLOT(slotPopupDestroyed()) );
 	pop->setTimeout( 0 );
-	pop->show(QPoint(screen.left() + screen.width()/2  , screen.top()));
+	pop->show(QPoint(screen.left() + screen.width()/2  , m_nextPosition));
+	m_nextPosition+=pop->height();
 }
 
 void NotifyByPopup::slotPopupDestroyed( )
@@ -69,7 +72,7 @@ void NotifyByPopup::slotPopupDestroyed( )
 	const QObject *s=sender();
 	if(!s)
 		return;
-	QHash<int,KPassivePopup*>::iterator it;
+	QMap<int,KPassivePopup*>::iterator it;
 	for(it=m_popups.begin() ; it!=m_popups.end(); ++it   )
 	{
 		QObject *o=it.value();
@@ -79,6 +82,15 @@ void NotifyByPopup::slotPopupDestroyed( )
 			m_popups.remove(it.key());
 			break;
 		}
+	}
+
+	//relocate popup
+	QRect screen = QApplication::desktop()->availableGeometry();
+	m_nextPosition = screen.top();
+	foreach(KPassivePopup *pop,m_popups)
+	{
+		pop->move(pop->pos().x(),m_nextPosition);
+		m_nextPosition+=pop->height();
 	}
 }
 

@@ -45,10 +45,11 @@ class KNotify : public QObject
 	Q_OBJECT
 	Q_CLASSINFO("D-Bus Interface", "org.kde.KNotify")
 	public:
+		using QObject::event;
 		KNotify(QObject *parent=0l);
 		~KNotify();
 		void addPlugin( KNotifyPlugin *p );
-
+	
 	public Q_SLOTS:
 		void reconfigure();
 		void closeNotification( int id);
@@ -126,6 +127,7 @@ class KNotifyAdaptor : public QDBusAbstractAdaptor
 
 	public:
 		KNotifyAdaptor(QObject *parent);
+		using QObject::event;
 
 	public Q_SLOTS:
 	

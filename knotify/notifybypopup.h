@@ -22,7 +22,7 @@
 #define NOTIFYBYPOPUP_H
 
 #include "knotifyplugin.h"
-#include <QHash>
+#include <QMap>
 
 class KPassivePopup;
 
@@ -37,7 +37,9 @@ class NotifyByPopup : public KNotifyPlugin
 		virtual void close( int id );
 		virtual void update(int id, KNotifyConfig *config);
 	private:
-		QHash<int, KPassivePopup * > m_popups;
+		QMap<int, KPassivePopup * > m_popups;
+		// the y coordinate of the next position popup should appears
+		int m_nextPosition;
 		void fillPopup(KPassivePopup *,int id,KNotifyConfig *config);
 		
 	private Q_SLOTS:
