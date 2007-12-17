@@ -6,6 +6,8 @@ X-KDE-ServiceTypes=KCModule
 X-DocPath=kcontrol/nepomuk/index.html
 X-KDE-Library=kcm_nepomuk
 X-KDE-ParentApp=kcontrol
+X-KDE-System-Settings-Category=computer-administration
+
 Name=Nepomuk
 Name[pa]=ਨਿਪੋਮੁਕ
 Name[sr]=Непомук
