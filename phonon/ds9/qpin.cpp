@@ -17,6 +17,7 @@
 
 #include "qbasefilter.h"
 #include "qpin.h"
+#include "compointer.h"
 
 namespace Phonon
 {
@@ -169,9 +170,7 @@ namespace Phonon
         QPin::~QPin()
         {
             m_parent->removePin(this);
-            if (m_memAlloc) {
-                m_memAlloc->Release();
-            }
+            setMemoryAllocator(0);
         }
 
         //reimplementation from IUnknown
@@ -265,19 +264,41 @@ namespace Phonon
                     checkOwnMediaTypesConnection(pin) != S_OK) {
                     hr = VFW_E_NO_ACCEPTABLE_TYPES;
                 }
+            } else if (QueryAccept(type) == S_OK) {
+                setConnectedType(*type);
             } else {
-                if (QueryAccept(type) == S_OK) {
-                    setConnectedType(*type);
-                } else {
-                    hr = VFW_E_TYPE_NOT_ACCEPTED;
-                }
+                hr = VFW_E_TYPE_NOT_ACCEPTED;
             }
 
             if (FAILED(hr)) {
                 setConnected(0);
                 setConnectedType(defaultMediaType());
             } else {
-                //TODO we should define the memory allocator to use
+                ComPointer<IMemInputPin> input(pin, IID_IMemInputPin);
+                ComPointer<IMemAllocator> alloc;
+                
+                if (input) {
+                    input->GetAllocator(&alloc);
+                    if (alloc) {
+                        //be default we take the allocator from the input pin
+                        //we have no reason to force using our own
+                        setMemoryAllocator(alloc);
+                    }
+                }
+                if (memoryAllocator() == 0) {
+                    ALLOCATOR_PROPERTIES prop;
+                    if (input && input->GetAllocatorRequirements(&prop) == S_OK) {
+                        createDefaultMemoryAllocator(&prop);
+                    } else {
+                        createDefaultMemoryAllocator();
+                    }
+                }
+
+                Q_ASSERT(memoryAllocator() != 0);
+                if (input) {
+                    input->NotifyAllocator(alloc, TRUE); //TRUE is arbitrarily chosen here
+                }
+
             }
 
             return hr;
@@ -532,6 +553,37 @@ namespace Phonon
             return m_mediaTypes;
         }
 
+        //addition
+
+        void QPin::createDefaultMemoryAllocator(ALLOCATOR_PROPERTIES *prop)
+        {
+            ComPointer<IMemAllocator> alloc(CLSID_MemoryAllocator, IID_IMemAllocator);
+            if (prop) {
+                alloc->SetProperties(prop, 0);
+            }
+            setMemoryAllocator(alloc);
+        }
+
+        void QPin::setMemoryAllocator(IMemAllocator *alloc)
+        {
+            QWriteLocker locker(&m_lock);
+            if (alloc) {
+                alloc->AddRef();
+            }
+            if (m_memAlloc) {
+                m_memAlloc->Release();
+            }
+            m_memAlloc = alloc;
+        }
+
+        IMemAllocator *QPin::memoryAllocator(bool addref) const
+        {
+            QReadLocker locker(&m_lock);
+            if (addref && m_memAlloc) {
+                m_memAlloc->AddRef();
+            }
+            return m_memAlloc;
+        }
 
 
     }

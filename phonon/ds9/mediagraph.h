@@ -24,7 +24,7 @@
 
 #include <phonon/mediasource.h>
 
-#define GRAPH_DEBUG
+//#define GRAPH_DEBUG
 
 namespace Phonon
 {

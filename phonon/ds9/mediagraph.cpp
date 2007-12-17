@@ -90,7 +90,7 @@ namespace Phonon
                 return;
             }
 
-            hr = m_graph->AddFilter(m_fakeSource, 0);
+            hr = m_graph->AddFilter(m_fakeSource, L"Fake Source");
             if (m_mediaObject->catchComError(hr)) {
                 return;
             }
@@ -456,6 +456,7 @@ namespace Phonon
 
                         Filter filter(CLSID_InfTee, IID_IBaseFilter);
                         if (!filter) {
+                            //rollback
                             m_mediaObject->catchComError(m_graph->Connect(out, inPin));
                             return false;
                         }
@@ -603,7 +604,7 @@ namespace Phonon
             case MediaSource::Stream:
                 {
                     IODeviceReader *rdr = new IODeviceReader(source);
-                    HRESULT hr = m_graph->AddFilter(rdr, 0);
+                    HRESULT hr = m_graph->AddFilter(rdr, L"Phonon Stream Reader");
                     if (FAILED(hr)) {
                         return hr;
                     }

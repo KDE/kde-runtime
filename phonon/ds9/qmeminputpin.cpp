@@ -24,7 +24,8 @@ namespace Phonon
     namespace DS9
     {
 
-        QMemInputPin::QMemInputPin(QBaseFilter *parent, const QVector<AM_MEDIA_TYPE> &mt) :  QPin(parent, PINDIR_INPUT, mt)
+        QMemInputPin::QMemInputPin(QBaseFilter *parent, const QVector<AM_MEDIA_TYPE> &mt) : 
+            QPin(parent, PINDIR_INPUT, mt)
         {
         }
 
@@ -65,9 +66,7 @@ namespace Phonon
                 return E_POINTER;
             }
 
-            *alloc = m_memAlloc;
-            if (m_memAlloc) {
-                m_memAlloc->AddRef();
+            if (*alloc = memoryAllocator(true)) {
                 return S_OK;
             }
 
@@ -76,19 +75,15 @@ namespace Phonon
 
         STDMETHODIMP QMemInputPin::NotifyAllocator(IMemAllocator *alloc, BOOL readonly)
         {
-            QWriteLocker locker(&m_lock);
             if (!alloc) {
                 return E_POINTER;
             }
 
-            m_samplesReadonly = readonly;
-            alloc->AddRef(); //we add a reference to it here
-            if (m_memAlloc) {
-                m_memAlloc->Release();
+            {
+                QWriteLocker locker(&m_lock);
+                m_samplesReadonly = readonly;
             }
-
-            m_memAlloc = alloc;
-
+            setMemoryAllocator(alloc);
             return S_OK;
         }
 

@@ -67,12 +67,14 @@ namespace Phonon
             AM_MEDIA_TYPE connectedType() const;
             void setConnected(IPin *pin);
             IPin *connected(bool = false) const;
+            void setMemoryAllocator(IMemAllocator *alloc);
+            IMemAllocator *memoryAllocator(bool = false) const;
+            void createDefaultMemoryAllocator(ALLOCATOR_PROPERTIES * = 0);
 
             FILTER_STATE filterState() const;
 
             //this can be used by sub-classes
             mutable QReadWriteLock m_lock;
-            IMemAllocator *m_memAlloc;
 
         private:
             HRESULT checkOutputMediaTypesConnection(IPin *pin);
@@ -87,6 +89,7 @@ namespace Phonon
             AM_MEDIA_TYPE m_connectedType;
             QString m_name;
             bool m_flushing;
+            IMemAllocator *m_memAlloc;
 
             mutable QMutex m_mutex;
         };
