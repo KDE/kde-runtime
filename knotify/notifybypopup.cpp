@@ -85,12 +85,35 @@ void NotifyByPopup::slotPopupDestroyed( )
 	}
 
 	//relocate popup
+	if(!m_animationTimer)
+		m_animationTimer = startTimer(10);
+}
+
+void NotifyByPopup::timerEvent(QTimerEvent * event)
+{
+	if(event->timerId() != m_animationTimer)
+		return KNotifyPlugin::timerEvent(event);
+	
+	bool cont=false;
 	QRect screen = QApplication::desktop()->availableGeometry();
 	m_nextPosition = screen.top();
 	foreach(KPassivePopup *pop,m_popups)
 	{
-		pop->move(pop->pos().x(),m_nextPosition);
-		m_nextPosition+=pop->height();
+		int posy=pop->pos().y();
+		if(posy > m_nextPosition)
+		{
+			posy=qMax(posy-5,m_nextPosition);
+			m_nextPosition = posy + pop->height();
+			cont = cont || posy != m_nextPosition;
+			pop->move(pop->pos().x(),posy);
+		}
+		else
+			m_nextPosition += pop->height();
+	}
+	if(!cont)
+	{
+		killTimer(m_animationTimer);
+		m_animationTimer = 0;
 	}
 }
 
@@ -178,6 +201,7 @@ void NotifyByPopup::fillPopup(KPassivePopup *pop,int id,KNotifyConfig * config)
 
 	pop->setView( vb2 );
 }
+
 
 #include "notifybypopup.moc"
 

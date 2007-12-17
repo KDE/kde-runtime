@@ -40,8 +40,12 @@ class NotifyByPopup : public KNotifyPlugin
 		QMap<int, KPassivePopup * > m_popups;
 		// the y coordinate of the next position popup should appears
 		int m_nextPosition;
+		int m_animationTimer;
 		void fillPopup(KPassivePopup *,int id,KNotifyConfig *config);
 		
+	protected:
+		void timerEvent(QTimerEvent *event);
+
 	private Q_SLOTS:
 		void slotPopupDestroyed();
 		void slotLinkClicked(const QString & );
