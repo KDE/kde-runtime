@@ -1,6 +1,6 @@
 /*
    This file is part of the KDE libraries
-   Copyright (c) 2005-2007 David Jarvie <software@astrojar.org.uk>
+   Copyright (c) 2005-2007 David Jarvie <djarvie@kde.org>
    Copyright (c) 2005 S.R.Haque <srhaque@iee.org>.
 
    This library is free software; you can redistribute it and/or
@@ -649,7 +649,6 @@ bool KTimeZoned::matchZoneFile(const QString &path)
         context.update(f);
         qlonglong referenceSize = f.size();
         QString referenceMd5Sum = context.hexDigest();
-        f.close();
         MD5Map::ConstIterator it5, end5;
         KTimeZone local;
         QString zoneName;
@@ -761,22 +760,36 @@ bool KTimeZoned::matchZoneFile(const QString &path)
                 }
             }
         }
+        bool success = false;
         if (local.isValid())
         {
             // The file matches a zoneinfo file
             mLocalZone = zoneName;
             mLocalZoneDataFile = mZoneinfoDir + '/' + zoneName;
+            success = true;
         }
         else
         {
-            // The file doesn't match a zoneinfo file, so use its absolute
-            // path as the zone name.
-            mLocalZone = f.fileName();
-            mLocalZoneDataFile.clear();
+            // The file doesn't match a zoneinfo file. If it's a TZfile, use it directly.
+            // Read the file type identifier.
+            char buff[4];
+            QDataStream str(&f);
+            if (str.readRawData(buff, 4) == 4
+            &&  buff[0] == 'T' && buff[1] == 'Z' && buff[2] == 'i' && buff[3] == 'f')
+            {
+                // Use its absolute path as the zone name.
+                mLocalZone = f.fileName();
+                mLocalZoneDataFile.clear();
+                success = true;
+            }
         }
-        mLocalMethod = LocaltimeCopy;
-        mLocalIdFile = f.fileName();
-        return true;
+        f.close();
+        if (success)
+        {
+            mLocalMethod = LocaltimeCopy;
+            mLocalIdFile = f.fileName();
+            return true;
+        }
     }
     return false;
 }
