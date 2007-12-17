@@ -31,32 +31,57 @@ namespace Phonon
             {
             }
 
+            explicit ComPointer( const IID &clsid, const IID &iid) : m_t(0)
+            {
+                ::CoCreateInstance(clsid, 0, CLSCTX_INPROC_SERVER, iid,
+                    reinterpret_cast<void**>(&m_t));
+            }
+
             explicit ComPointer(IUnknown *_unk, const GUID &guid) : m_t(0)
             {
-                if (_unk)
-                    _unk->QueryInterface(guid, pdata());
+                if (_unk) {
+                    _unk->QueryInterface(guid, reinterpret_cast<void**>(&m_t));
+                }
             }
 
             ComPointer(const ComPointer<T> &other) : m_t(other.m_t)
             {
-                if (m_t) m_t->AddRef();
+                if (m_t) {
+                    m_t->AddRef();
+                }
             }
 
             ComPointer<T> &operator=(const ComPointer<T> &other)
             {
-                if (other.m_t) other.m_t->AddRef();
-                if (m_t) m_t->Release();
+                if (other.m_t) {
+                    other.m_t->AddRef();
+                }
+                if (m_t) { 
+                    m_t->Release();
+                }
                 m_t = other.m_t;
                 return *this;
             }
 
-            T *operator->() const { return m_t; }
+            T *operator->() const 
+            {
+                return m_t;
+            }
 
-            operator T*() const { return m_t; }
+            operator T*() const 
+            {
+                return m_t; 
+            }
 
-            //the 2 following methods first reinitialize their value to avoid mem leaks
-            void **pdata() { if (m_t) m_t->Release(); m_t = 0; return reinterpret_cast<void**>(&m_t);}
-            T **pobject() { if (m_t) m_t->Release(); m_t = 0; return &m_t;}
+            //the following method first reinitialize their value to avoid mem leaks
+            T ** operator&()
+            {
+                if (m_t) { 
+                    m_t->Release();
+                    m_t = 0;
+                }
+                return &m_t;
+            }
 
             bool operator==(const ComPointer<T> &other) const
             {
@@ -70,7 +95,9 @@ namespace Phonon
 
             ~ComPointer()
             {
-                if (m_t) m_t->Release();
+                if (m_t) { 
+                    m_t->Release();
+                }
             }
 
         private:

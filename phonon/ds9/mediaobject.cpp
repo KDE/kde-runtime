@@ -46,7 +46,8 @@ namespace Phonon
             m_errorType(Phonon::NoError),
             m_state(Phonon::StoppedState),
             m_prefinishMark(0),
-            m_tickInterval(0)
+            m_tickInterval(0),
+            m_buffering(false)
         {
             m_graphs << new MediaGraph(this, 0)
             //the reserved graph (used for cross-fading and gapless transition)
@@ -104,26 +105,17 @@ namespace Phonon
                     emit prefinishMarkReached( remaining );
                 }
 
-                ///TODO: do the management of the buffer elsewhere (porbably in a thread...)
-                /*ComPointer<IAsyncReader> reader(m_graph.realSource());
-                if (reader) {
-                    LONGLONG total, available;
-                    if (reader->Length(&total, &available) != E_UNEXPECTED) {
-                        const int percent = qRound(qreal(available) / qreal(total));
-                        //qDebug() << "available" << percent << '%';
-                        emit bufferStatus(percent);
+                if (m_buffering) {
+                    ComPointer<IAMNetworkStatus> status(currentGraph()->realSource(), IID_IAMNetworkStatus);
+                    if (status) {
+                        long l;
+                        status->get_BufferingProgress(&l);
+                        emit bufferStatus(l);
+#ifdef GRAPH_DEBUG
+                        qDebug() << "emit bufferStatus(" << l << ")";
+#endif
                     }
                 }
-
-                ComPointer<IAMOpenProgress> reader2(m_graph.realSource());
-                if (reader2) {
-                    LONGLONG total, available;
-                    if (reader2->QueryProgress(&total, &available) != E_UNEXPECTED) {
-                        const int percent = qRound(qreal(available) / qreal(total));
-                        //qDebug() << "available" << percent << '%';
-                        emit bufferStatus(percent);
-                    }
-                }*/
             }
         }
 
@@ -147,7 +139,11 @@ namespace Phonon
 
         State MediaObject::state() const
         {
-            return m_state;
+            if (m_buffering) {
+                return Phonon::BufferingState;
+            } else {
+                return m_state;
+            }
         }
 
         bool MediaObject::hasVideo() const
@@ -393,16 +389,16 @@ namespace Phonon
             QTextStream o(&eventDescription);
             switch (eventCode)
             {
-            case EC_ACTIVATE: o << "EC_ACTIVATE: A video window is being " << (param1 ? "ACTIVATED" : "DEACTIVATED"); break;
             case EC_BUFFERING_DATA:
                 if (graph == currentGraph()) {
-                    setState(param1 ? Phonon::BufferingState : Phonon::PlayingState);
+                    m_buffering = param1;
+                    emit stateChanged(state(), m_state);
                 }
                 break;
-            case EC_BUILT: o << "EC_BUILT: Send by the Video Control when a graph has been built. Not forwarded to applications."; break;
-            case EC_CLOCK_CHANGED: o << "EC_CLOCK_CHANGED"; break;
-            case EC_CLOCK_UNSET: o << "EC_CLOCK_UNSET: The clock provider was disconnected."; break;
-            case EC_CODECAPI_EVENT: o << "EC_CODECAPI_EVENT: Sent by an encoder to signal an encoding event."; break;
+            case EC_LENGTH_CHANGED: 
+                emit totalTimeChanged( totalTime() );
+                break;
+
             case EC_COMPLETE:
                 if (graph == currentGraph()) {
                     graph->stop();
@@ -432,6 +428,11 @@ namespace Phonon
 
                 }
                 break;
+            case EC_ACTIVATE: o << "EC_ACTIVATE: A video window is being " << (param1 ? "ACTIVATED" : "DEACTIVATED"); break;
+            case EC_BUILT: o << "EC_BUILT: Send by the Video Control when a graph has been built. Not forwarded to applications."; break;
+            case EC_CLOCK_CHANGED: o << "EC_CLOCK_CHANGED"; break;
+            case EC_CLOCK_UNSET: o << "EC_CLOCK_UNSET: The clock provider was disconnected."; break;
+            case EC_CODECAPI_EVENT: o << "EC_CODECAPI_EVENT: Sent by an encoder to signal an encoding event."; break;
             case EC_DEVICE_LOST: o << "EC_DEVICE_LOST: A Plug and Play device was removed or has become available again."; break;
             case EC_DISPLAY_CHANGED: o << "EC_DISPLAY_CHANGED: The display mode has changed."; break;
             case EC_END_OF_SEGMENT: o << "EC_END_OF_SEGMENT: The end of a segment has been reached."; break;
@@ -440,7 +441,6 @@ namespace Phonon
             case EC_EXTDEVICE_MODE_CHANGE: o << "EC_EXTDEVICE_MODE_CHANGE: Not supported."; break;
             case EC_FULLSCREEN_LOST: o << "EC_FULLSCREEN_LOST: The video renderer is switching out of full-screen mode."; break;
             case EC_GRAPH_CHANGED: o << "EC_GRAPH_CHANGED: The filter graph has changed."; break;
-            case EC_LENGTH_CHANGED: o << "EC_LENGTH_CHANGED: The length of a source has changed."; break;
             case EC_NEED_RESTART: o << "EC_NEED_RESTART: A filter is requesting that the graph be restarted."; break;
             case EC_NOTIFY_WINDOW: o << "EC_NOTIFY_WINDOW: Notifies a filter of the video renderer's window."; break;
             case EC_OLE_EVENT: o << "EC_OLE_EVENT: A filter is passing a text string to the application."; break;

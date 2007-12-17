@@ -116,7 +116,7 @@ namespace Phonon
             //we just do nothing and transfer immediately the sample
             foreach(QPin *current, m_outputs) {
                 ComPointer<IPin> pin;
-                current->ConnectedTo(pin.pobject());
+                current->ConnectedTo(&pin);
                 if (pin) {
                     ComPointer<IMemInputPin> input(pin, IID_IMemInputPin);
                     if (input) {

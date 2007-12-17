@@ -49,7 +49,7 @@ namespace Phonon
         ComPointer<IMalloc> getIMalloc()
         {
             ComPointer<IMalloc> ret;
-            CoGetMalloc(1, ret.pobject());
+            ::CoGetMalloc(1, &ret);
             return ret;
         }
 
@@ -127,10 +127,8 @@ namespace Phonon
         QList<int> Backend::objectDescriptionIndexes(ObjectDescriptionType type) const
         {
             QList<int> ret;
-            ComPointer<ICreateDevEnum> devEnum;
-            HRESULT hr = CoCreateInstance(CLSID_SystemDeviceEnum, NULL, CLSCTX_INPROC_SERVER,
-                IID_ICreateDevEnum, devEnum.pdata());
-            if (FAILED(hr)) {
+            ComPointer<ICreateDevEnum> devEnum(CLSID_SystemDeviceEnum, IID_ICreateDevEnum);
+            if (!devEnum) {
                 return ret; //it is impossible to enumerate the devices
             }
 
@@ -140,7 +138,7 @@ namespace Phonon
                 {
                     m_audioOutput.clear();
                     ComPointer<IEnumMoniker> enumMon;
-                    hr = devEnum->CreateClassEnumerator(CLSID_AudioRendererCategory, enumMon.pobject(), 0);
+                    HRESULT hr = devEnum->CreateClassEnumerator(CLSID_AudioRendererCategory, &enumMon, 0);
                     if (FAILED(hr)) {
                         break;
                     }
@@ -149,7 +147,7 @@ namespace Phonon
                     //let's reorder the devices so that directshound appears first
                     int nbds = 0; //number of directsound devices
 
-                    while (S_OK == enumMon->Next(1, mon.pobject(), 0)) {
+                    while (S_OK == enumMon->Next(1, &mon, 0)) {
                         LPOLESTR str = 0;
                         mon->GetDisplayName(0,0,&str);
                         if (SUCCEEDED(hr)) {
@@ -169,11 +167,11 @@ namespace Phonon
             case Phonon::EffectType:
                 {
                     m_audioEffects.clear();
-                    ComPointer<IEnumDMO> pEnumDMO;
-                    hr = DMOEnum(DMOCATEGORY_AUDIO_EFFECT, DMO_ENUMF_INCLUDE_KEYED, 0, 0, 0, 0, pEnumDMO.pobject());
+                    ComPointer<IEnumDMO> enumDMO;
+                    HRESULT hr = DMOEnum(DMOCATEGORY_AUDIO_EFFECT, DMO_ENUMF_INCLUDE_KEYED, 0, 0, 0, 0, &enumDMO);
                     if (SUCCEEDED(hr)) {
                         CLSID clsid;
-                        while (S_OK == pEnumDMO->Next(1, &clsid, 0, 0)) {
+                        while (S_OK == enumDMO->Next(1, &clsid, 0, 0)) {
                             ret += m_audioEffects.count();
                             m_audioEffects.append(clsid);
                         }

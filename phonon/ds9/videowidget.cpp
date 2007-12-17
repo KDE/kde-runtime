@@ -220,10 +220,7 @@ namespace Phonon
 
         Filter VideoWidget::getVideoRenderer()
         {
-            Filter ret;
-            CoCreateInstance(CLSID_VideoMixingRenderer9, NULL,
-                CLSCTX_INPROC_SERVER, IID_IBaseFilter, ret.pdata());
-            return ret;
+            return Filter(CLSID_VideoMixingRenderer9, IID_IBaseFilter);
         }
 
 
@@ -322,7 +319,7 @@ namespace Phonon
 
                 InputPin sink = BackendNode::pins(filter, PINDIR_INPUT).first();
                 OutputPin source;
-                if (FAILED(sink->ConnectedTo(source.pobject()))) {
+                if (FAILED(sink->ConnectedTo(&source))) {
                     continue; //it must be connected to work
                 }
 

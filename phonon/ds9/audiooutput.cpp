@@ -89,7 +89,7 @@ namespace Phonon
                     graph = ComPointer<IGraphBuilder>(info.pGraph, IID_IGraphBuilder);
 
                     InputPin pin = BackendNode::pins(filter, PINDIR_INPUT).first();
-                    if (pin->ConnectedTo(out.pobject()) == S_OK) {
+                    if (pin->ConnectedTo(&out) == S_OK) {
 
                         //if it is connected we disconnect it and
                         //we'll reconnect out to the new filter
@@ -106,7 +106,8 @@ namespace Phonon
 
                 ComPointer<IMoniker> mon = m_backend->getAudioOutputMoniker(newDevice);
                 if (mon) {
-                    HRESULT hr = mon->BindToObject(0, 0, IID_IBaseFilter, filter.pdata());
+                    HRESULT hr = mon->BindToObject(0, 0, IID_IBaseFilter, 
+                        reinterpret_cast<void**>(&filter));
 
                     //let's connect the new filter
                     if (SUCCEEDED(hr) && graph) {

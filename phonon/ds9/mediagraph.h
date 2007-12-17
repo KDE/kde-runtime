@@ -24,6 +24,8 @@
 
 #include <phonon/mediasource.h>
 
+#define GRAPH_DEBUG
+
 namespace Phonon
 {
     class MediaSource; //from phonon's frontend
@@ -32,7 +34,7 @@ namespace Phonon
     {
         class MediaObject;
 
-        //in the end we should probably have no more inheritance here: everythoung should be in the interface of the class
+        //in the end we should probably have no more inheritance here: everything should be in the interface of the class
         //could be nice to then remove all the "*this" in the code of this class
         class MediaGraph
         {
@@ -68,6 +70,8 @@ namespace Phonon
             HRESULT cleanup();
 
             short index() const;
+
+            Filter realSource() const;
 
         private:
             //utility functions

@@ -138,6 +138,8 @@ namespace Phonon
             //...the videowidgets in the graph
             QSet<VideoWidget*> m_videoWidgets;
             QSet<AudioOutput*> m_audioOutputs;
+
+            bool m_buffering;
         };
     }
 } //namespace Phonon::DS9

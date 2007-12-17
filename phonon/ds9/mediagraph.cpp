@@ -26,18 +26,9 @@
 
 #include <qnetwork.h>
 
-//#define GRAPH_DEBUG
-
 uint qHash (const Phonon::DS9::Filter &f)
 {
     return uint(static_cast<IBaseFilter*>(f));
-}
-
-// ushort != wchar_t on mingw
-// so isolate the reinterpret_cast to this fn
-inline const wchar_t * toWChar(const ushort *str)
-{
-    return reinterpret_cast<const wchar_t *>(str);
 }
 
 namespace Phonon
@@ -74,15 +65,9 @@ namespace Phonon
 
         MediaGraph::MediaGraph(MediaObject *mo, short index) : m_fakeSource(new FakeSource()),
             m_hasVideo(false), m_hasAudio(false), m_connectionsDirty(false),
-            m_mediaObject(mo), m_index(index), m_clockDelta(0)
+            m_index(index), m_clockDelta(0), m_mediaObject(mo), 
+            m_graph(CLSID_FilterGraph, IID_IGraphBuilder)
         {
-            //creates the graph
-            HRESULT hr = CoCreateInstance(CLSID_FilterGraph, 0, 
-                CLSCTX_INPROC_SERVER, IID_IGraphBuilder, m_graph.pdata());
-            if (m_mediaObject->catchComError(hr)) {
-                return;
-            }
-
             m_mediaControl = ComPointer<IMediaControl>(m_graph, IID_IMediaControl);
             Q_ASSERT(m_mediaControl);
             m_mediaSeeking = ComPointer<IMediaSeeking>(m_graph, IID_IMediaSeeking);
@@ -98,8 +83,9 @@ namespace Phonon
             common->activeGraphs += this;
 
             //we route the events to the same widget
-            hr = m_mediaEvent->SetNotifyWindow(reinterpret_cast<OAHWND>(common->winId()), WM_GRAPHNOTIFY,
+            HRESULT hr = m_mediaEvent->SetNotifyWindow(reinterpret_cast<OAHWND>(common->winId()), WM_GRAPHNOTIFY,
                 reinterpret_cast<LONG_PTR>(this) );
+
             if (m_mediaObject->catchComError(hr)) {
                 return;
             }
@@ -189,12 +175,12 @@ namespace Phonon
         {
             QSet<Filter> ret;
             ComPointer<IEnumFilters> enumFilters;
-            HRESULT hr = m_graph->EnumFilters(enumFilters.pobject());
+            HRESULT hr = m_graph->EnumFilters(&enumFilters);
             if (m_mediaObject->catchComError(hr)) {
                 return ret;
             }
             Filter current;
-            while( enumFilters->Next(1, current.pobject(), 0) == S_OK) {
+            while( enumFilters->Next(1, &current, 0) == S_OK) {
                 ret += current;
             }
             return ret;
@@ -365,14 +351,14 @@ namespace Phonon
             bool ret = false;
 
             OutputPin output;
-            if (SUCCEEDED(in->ConnectedTo(output.pobject()))) {
+            if (SUCCEEDED(in->ConnectedTo(&output))) {
 
                 if (output == out) {
                     //we need a simple disconnection
                     ret = SUCCEEDED(out->Disconnect()) && SUCCEEDED(in->Disconnect());
                 } else {
                     InputPin in2;
-                    if (SUCCEEDED(out->ConnectedTo(in2.pobject()))) {
+                    if (SUCCEEDED(out->ConnectedTo(&in2))) {
                         PIN_INFO info;
                         in2->QueryPinInfo(&info);
                         Filter tee(info.pFilter);
@@ -406,7 +392,7 @@ namespace Phonon
                                 int connections = 0;
                                 foreach (OutputPin out, BackendNode::pins(tee, PINDIR_OUTPUT)) {
                                     InputPin p;
-                                    if ( SUCCEEDED(out->ConnectedTo(p.pobject()))) {
+                                    if ( SUCCEEDED(out->ConnectedTo(&p))) {
                                         connections++;
                                     }
                                 }
@@ -428,7 +414,7 @@ namespace Phonon
         {
             ///The management of the creation of the Tees is done here (this is the only place where we call IPin::Connect
             InputPin inPin;
-            if (SUCCEEDED(out->ConnectedTo(inPin.pobject()))) {
+            if (SUCCEEDED(out->ConnectedTo(&inPin))) {
 
                 //the fake source has another mechanism for the connection
                 if (BackendNode::pins(m_fakeSource, PINDIR_OUTPUT).contains(out)) {
@@ -444,7 +430,7 @@ namespace Phonon
                 if (clsid == CLSID_InfTee) {
                     //there is already a Tee (namely 'filter') in use
                     foreach(OutputPin pin, BackendNode::pins(filter, PINDIR_OUTPUT)) {
-                        if (VFW_E_NOT_CONNECTED == pin->ConnectedTo(inPin.pobject())) {
+                        if (VFW_E_NOT_CONNECTED == pin->ConnectedTo(&inPin)) {
                             return SUCCEEDED(pin->Connect(newIn, 0));
                         }
                     }
@@ -468,9 +454,8 @@ namespace Phonon
                             return false;
                         }
 
-                        Filter filter;
-                        HRESULT hr = CoCreateInstance(CLSID_InfTee, 0, CLSCTX_INPROC_SERVER, IID_IBaseFilter, filter.pdata());
-                        if (m_mediaObject->catchComError(hr)) {
+                        Filter filter(CLSID_InfTee, IID_IBaseFilter);
+                        if (!filter) {
                             m_mediaObject->catchComError(m_graph->Connect(out, inPin));
                             return false;
                         }
@@ -481,7 +466,7 @@ namespace Phonon
 
 
                         InputPin teeIn = BackendNode::pins(filter, PINDIR_INPUT).first(); //a Tee has always one input
-                        hr = out->Connect(teeIn, &type);
+                        HRESULT hr = out->Connect(teeIn, &type);
                         if (FAILED(hr)) {
                             hr = m_graph->Connect(out, teeIn);
                         }
@@ -571,13 +556,37 @@ namespace Phonon
             switch (source.type())
             {
             case MediaSource::Disc:
-                //TODO
+                if (source.discType() == Phonon::Dvd) {
+                    //TODO : add the nevigation system
+
+                    m_realSource = Filter(CLSID_DVDNavigator, IID_IBaseFilter);
+                    if (m_realSource) {
+                        return REGDB_E_CLASSNOTREG;
+                    }
+
+                    hr = m_graph->AddFilter(m_realSource, L"DVD Navigator");
+                    if (FAILED(hr)) {
+                        return hr;
+                    }
+
+                    const QList<OutputPin> outputs = BackendNode::pins(m_realSource, PINDIR_OUTPUT);
+                    foreach(OutputPin out, outputs) {
+                        hr = m_graph->Render(out);
+                        if (FAILED(hr)) {
+                            return hr;
+                        }
+                    }
+
+                } else if (source.discType() == Phonon::Cd) {
+                    //TODO
+
+                }
                 return hr;
             case MediaSource::Invalid:
                 return hr;
             case MediaSource::Url:
                 if (source.url().isValid()) {
-                    hr = m_graph->RenderFile(toWChar(source.url().toString().utf16()), 0);
+                    hr = m_graph->RenderFile(reinterpret_cast<const wchar_t *>(source.url().toString().utf16()), 0);
                     if (FAILED(hr)) {
                         return hr;
                     }
@@ -585,7 +594,7 @@ namespace Phonon
                 break;
             case MediaSource::LocalFile:
                 if (!source.fileName().isEmpty()) {
-                    hr = m_graph->RenderFile(toWChar(source.fileName().utf16()), 0);
+                    hr = m_graph->RenderFile(reinterpret_cast<const wchar_t *>(source.fileName().utf16()), 0);
                     if (FAILED(hr)) {
                         return hr;
                     }
@@ -699,7 +708,7 @@ namespace Phonon
             QSet<Filter> ret;
             foreach(OutputPin out, BackendNode::pins(filter, PINDIR_OUTPUT)) {
                 InputPin in;
-                if (SUCCEEDED(out->ConnectedTo(in.pobject()))) {
+                if (SUCCEEDED(out->ConnectedTo(&in))) {
                     PIN_INFO info;
                     in->QueryPinInfo(&info);
                     const Filter current(info.pFilter);
@@ -717,7 +726,7 @@ namespace Phonon
             foreach(const Filter &decoder, m_decoders) {
                 OutputPin pin = BackendNode::pins(decoder, PINDIR_OUTPUT).first();
                 InputPin input;
-                if (pin->ConnectedTo(input.pobject()) == VFW_E_NOT_CONNECTED) {
+                if (pin->ConnectedTo(&input) == VFW_E_NOT_CONNECTED) {
                     //"we should remove this filter from the graph
                     HRESULT hr = removeFilter(decoder);
                     if (FAILED(hr)) {
@@ -738,7 +747,7 @@ namespace Phonon
                 InputPin pin = BackendNode::pins(current, PINDIR_INPUT).first();
                 current = Filter();
                 OutputPin output;
-                if (pin->ConnectedTo(output.pobject()) == S_OK) {
+                if (pin->ConnectedTo(&output) == S_OK) {
                     PIN_INFO info;
                     if (SUCCEEDED(output->QueryPinInfo(&info)) && info.pFilter) {
                         current = Filter(info.pFilter); //this will take care of releasing the interface pFilter
@@ -923,37 +932,43 @@ namespace Phonon
             }
         }
 
+        Filter MediaGraph::realSource() const
+        {
+            return m_realSource;
+        }
+
+
         HRESULT MediaGraph::saveToFile(const QString &filepath) const
         {
             const WCHAR wszStreamName[] = L"ActiveMovieGraph";
             HRESULT hr;
-            ComPointer<IStorage> pStorage;
+            ComPointer<IStorage> storage;
 
             // First, create a document file that will hold the GRF file
-            hr = StgCreateDocfile(toWChar(filepath.utf16()),
+            hr = StgCreateDocfile(reinterpret_cast<const wchar_t *>(filepath.utf16()),
                 STGM_CREATE | STGM_TRANSACTED | STGM_READWRITE |
                 STGM_SHARE_EXCLUSIVE,
-                0, pStorage.pobject());
+                0, &storage);
 
             if (FAILED(hr)) {
                 return hr;
             }
 
             // Next, create a stream to store.
-            ComPointer<IStream> pStream;
-            hr = pStorage->CreateStream(wszStreamName,
+            ComPointer<IStream> stream;
+            hr = storage->CreateStream(wszStreamName,
                 STGM_WRITE | STGM_CREATE | STGM_SHARE_EXCLUSIVE,
-                0, 0, pStream.pobject());
+                0, 0, &stream);
 
             if (FAILED(hr)) {
                 return hr;
             }
 
             // The IpersistStream::Save method converts a stream into a persistent object.
-            ComPointer<IPersistStream> pPersist(m_graph, IID_IPersistStream);
-            hr = pPersist->Save(pStream, TRUE);
+            ComPointer<IPersistStream> persist(m_graph, IID_IPersistStream);
+            hr = persist->Save(stream, TRUE);
             if (SUCCEEDED(hr)) {
-                hr = pStorage->Commit(STGC_DEFAULT);
+                hr = storage->Commit(STGC_DEFAULT);
             }
 
             return hr;

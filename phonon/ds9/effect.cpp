@@ -31,11 +31,11 @@ namespace Phonon
             //creation of the filter
             for(QVector<Filter>::iterator it = m_filters.begin(); it != m_filters.end(); ++it) {
                 Filter &filter = *it;
-                HRESULT hr = CoCreateInstance(CLSID_DMOWrapperFilter, 0, CLSCTX_INPROC_SERVER, IID_IBaseFilter, filter.pdata());
-                Q_ASSERT(SUCCEEDED(hr));
+                filter = Filter(CLSID_DMOWrapperFilter, IID_IBaseFilter);
+                Q_ASSERT(filter);
                 ComPointer<IDMOWrapperFilter> wrapper(filter, IID_IDMOWrapperFilter);
                 Q_ASSERT(wrapper);
-                hr = wrapper->Init(effectClass, DMOCATEGORY_AUDIO_EFFECT);
+                HRESULT hr = wrapper->Init(effectClass, DMOCATEGORY_AUDIO_EFFECT);
                 Q_ASSERT(SUCCEEDED(hr));
             }
         }

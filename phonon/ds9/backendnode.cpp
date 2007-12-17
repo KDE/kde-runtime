@@ -85,11 +85,11 @@ namespace Phonon
             QList<InputPin> ret;
             if (filter) {
                 ComPointer<IEnumPins> enumPin;
-                HRESULT hr = filter->EnumPins(enumPin.pobject());
+                HRESULT hr = filter->EnumPins(&enumPin);
                 Q_UNUSED(hr);
                 Q_ASSERT( SUCCEEDED(hr));
                 InputPin pin;
-                while (enumPin->Next(1, pin.pobject(), 0) == S_OK) {
+                while (enumPin->Next(1, &pin, 0) == S_OK) {
                     PIN_DIRECTION dir;
                     hr = pin->QueryDirection(&dir);
                     Q_ASSERT( SUCCEEDED(hr));
