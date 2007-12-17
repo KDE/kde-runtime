@@ -9,8 +9,19 @@ X-KDE-PhononBackendInfo-Website=http://www.trolltech.com/
 InitialPreference=15
 
 Name=DirectShow9
+Name[sv]=Directshow 9
 
 Comment=Phonon DirectShow9 backend
 Comment[ca]=Dorsal DirectShow9 del Phonon
+Comment[de]=Phonon DirectShow9-Treiber
+Comment[el]=Σύστημα υποστήριξης του DirectShow9
+Comment[ga]=Inneall Phonon DirectShow9
+Comment[ja]=Phonon DirectShow9 バックエンド
+Comment[km]=កម្មវិធី​ផ្ទៃខាងក្រោយខ DirectShow9 របស់ Phonon
+Comment[lv]=Phonon DirectShow9 aizmugure
+Comment[nds]=Hülpprogramm DirectShow9 för Phonon
+Comment[pt]=Infra-estrutura do DirectShow9 para o Phonon
+Comment[pt_BR]=Infra-estrutura do DirectShow9 para o Phonon
+Comment[sv]=Phonon Directshow 9-gränssnitt
 Comment[zh_CN]=Phonon DirectShow9 后端
 Comment[zh_TW]=Phonon DirectShow9 後端介面
