@@ -59,6 +59,7 @@ namespace Xine
         : m_xine(xine_new()),
         m_config(_config),
         m_useOss(XineEngine::Unknown),
+        m_inShutdown(false),
         d(new XineEnginePrivate),
         m_nullPort(0),
         m_nullVideoPort(0),
@@ -76,6 +77,7 @@ namespace Xine
 
     XineEngine::~XineEngine()
     {
+        m_inShutdown = true;
         /*if (m_thread) {
             m_thread->stopAllStreams();
         }*/

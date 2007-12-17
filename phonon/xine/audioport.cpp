@@ -169,7 +169,7 @@ bool AudioPort::operator!=(const AudioPort &rhs) const
 
 void AudioPort::waitALittleWithDying()
 {
-    if (d->ref == 1 && !d->dontDelete) {
+    if (d->ref == 1 && !d->dontDelete && !XineEngine::inShutdown()) {
         // this is the last ref to the data, so it will get deleted in a few instructions unless
         new AudioPortDeleter(d.data());
         // AudioPortDeleter refs it once more

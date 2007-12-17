@@ -86,6 +86,7 @@ class XineEngine
         static bool deinterlaceVCD();
         static bool deinterlaceFile();
         static int deinterlaceMethod();
+        static bool inShutdown() { return self()->m_inShutdown; }
 
     protected:
         XineEngine(const KSharedConfigPtr &cfg);
@@ -132,6 +133,7 @@ class XineEngine
         bool m_deinterlaceDVD : 1;
         bool m_deinterlaceVCD : 1;
         bool m_deinterlaceFile : 1;
+        bool m_inShutdown : 1;
         const XineEnginePrivate *const d;
         xine_audio_port_t *m_nullPort;
         xine_video_port_t *m_nullVideoPort;
