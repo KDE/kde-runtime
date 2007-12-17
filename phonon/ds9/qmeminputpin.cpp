@@ -58,10 +58,22 @@ namespace Phonon
             return QPin::Release();
         }
 
+        STDMETHODIMP QMemInputPin::ReceiveConnection(IPin *pin, const AM_MEDIA_TYPE *mt)
+        {
+            HRESULT hr = QPin::ReceiveConnection(pin, mt);
+            if (SUCCEEDED(hr)) {
+                QVector<AM_MEDIA_TYPE> vec;
+                vec << *mt;
+                //we tell the output pins that they should connect with this type
+                foreach(QPin *current, outputs()) {
+                    current->setMediaTypes(vec);
+                }
+            }
+            return hr;
+        }
 
         STDMETHODIMP QMemInputPin::GetAllocator(IMemAllocator **alloc)
         {
-            QWriteLocker locker(&m_lock);
             if (!alloc) {
                 return E_POINTER;
             }
@@ -109,7 +121,7 @@ namespace Phonon
             }
 
             //we just do nothing and transfer immediately the sample
-            foreach(QPin *current, m_outputs) {
+            foreach(QPin *current, outputs()) {
                 ComPointer<IPin> pin;
                 current->ConnectedTo(&pin);
                 if (pin) {
@@ -162,6 +174,12 @@ namespace Phonon
         {
             QWriteLocker locker(&m_lock);
             m_outputs.remove(output);
+        }
+
+        QSet<QPin*> QMemInputPin::outputs() const
+        {
+            QReadLocker locker(&m_lock);
+            return m_outputs;
         }
 
     }

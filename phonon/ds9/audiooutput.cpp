@@ -78,8 +78,6 @@ namespace Phonon
             bool ret = true;
             for(QVector<Filter>::iterator it = m_filters.begin(); it != m_filters.end(); ++it) {
                 Filter &filter = *it;
-                //TODO: I have to check if the filter is already created and connected, it must be destroyed
-                //and stop the graph if it is running...
                 OutputPin out;
                 ComPointer<IGraphBuilder> graph;
                 FILTER_STATE state = State_Stopped; 

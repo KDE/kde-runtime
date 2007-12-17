@@ -325,14 +325,14 @@ namespace Phonon
 
         bool MediaObject::catchComError(HRESULT hr) const
         {
-            //TODO: we should raise error here (changing the state of the mediaObject)
+            //TODO: we should raise error here (ie. change the state of the mediaObject)
             switch(hr)
             {
             case S_OK:
                 m_errorType = NoError;
                 break;
             default:
-                qDebug() << "an error occurred" << QString::fromWCharArray(_com_error(hr).ErrorMessage());
+                qWarning() << "an error occurred" << QString::fromWCharArray(_com_error(hr).ErrorMessage());
                 m_errorType = Phonon::FatalError;
                 break;
             }

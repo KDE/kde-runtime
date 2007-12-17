@@ -40,6 +40,9 @@ namespace Phonon
             STDMETHODIMP_(ULONG) AddRef();
             STDMETHODIMP_(ULONG) Release();
 
+            //reimplementation from IPin
+            STDMETHODIMP ReceiveConnection(IPin *,const AM_MEDIA_TYPE *);
+
 
             //reimplementation from IMemAllocator
             STDMETHODIMP GetAllocator(IMemAllocator **);
@@ -52,8 +55,10 @@ namespace Phonon
             //addition
             void addOutput(QPin *output);
             void removeOutput(QPin *output);
+            QSet<QPin*> outputs() const;
 
         private:
+
             bool m_samplesReadonly;
             QSet<QPin*> m_outputs;
             QMutex m_mutexReceive;

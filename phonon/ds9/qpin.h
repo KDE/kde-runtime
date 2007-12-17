@@ -61,6 +61,8 @@ namespace Phonon
 
             QVector<AM_MEDIA_TYPE> mediaTypes() const;
 
+            void setMediaTypes(const QVector<AM_MEDIA_TYPE> &);
+
         protected:
             bool isFlushing() const;
             void setConnectedType(const AM_MEDIA_TYPE &type);

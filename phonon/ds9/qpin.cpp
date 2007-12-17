@@ -275,9 +275,9 @@ namespace Phonon
                 setConnectedType(defaultMediaType());
             } else {
                 ComPointer<IMemInputPin> input(pin, IID_IMemInputPin);
-                ComPointer<IMemAllocator> alloc;
                 
                 if (input) {
+                    ComPointer<IMemAllocator> alloc;
                     input->GetAllocator(&alloc);
                     if (alloc) {
                         //be default we take the allocator from the input pin
@@ -296,7 +296,7 @@ namespace Phonon
 
                 Q_ASSERT(memoryAllocator() != 0);
                 if (input) {
-                    input->NotifyAllocator(alloc, TRUE); //TRUE is arbitrarily chosen here
+                    input->NotifyAllocator(memoryAllocator(), TRUE); //TRUE is arbitrarily chosen here
                 }
 
             }
@@ -553,7 +553,11 @@ namespace Phonon
             return m_mediaTypes;
         }
 
-        //addition
+        void QPin::setMediaTypes(const QVector<AM_MEDIA_TYPE> &vec)
+        {
+            QWriteLocker locker(&m_lock);
+            m_mediaTypes  = vec;
+        }
 
         void QPin::createDefaultMemoryAllocator(ALLOCATOR_PROPERTIES *prop)
         {
