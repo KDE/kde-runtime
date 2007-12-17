@@ -42,12 +42,18 @@ AudioNode::~AudioNode()
 
 void AudioNode::setGraph(AudioGraph *audioGraph)
 {
-    DEBUG_AUDIO_GRAPH("AudioNode" << int(this) << "is setting graph:" << int(audioGraph))
+    if (m_audioGraph == audioGraph)
+        return;
+
+    DEBUG_AUDIO_GRAPH("AudioNode" << int(this) << "is setting graph:" << int(audioGraph))    
+    if (m_auNode){
+        AUGraphRemoveNode(m_audioGraph->audioGraphRef(), m_auNode);
+        m_auNode = 0;
+    }
+    
     m_audioUnit = 0;
-    m_audioGraph = audioGraph;
     m_lastConnectionIn = 0;
-    m_auNode = 0;
-    // m_auNode node is 'owned' by the graph, and is released there.
+    m_audioGraph = audioGraph;
 }
 
 void AudioNode::createAndConnectAUNodes()
@@ -58,6 +64,7 @@ void AudioNode::createAndConnectAUNodes()
     DEBUG_AUDIO_GRAPH("AudioNode" << int(this) << "creates AUNode")
     ComponentDescription description = getAudioNodeDescription();
     OSStatus err = AUGraphNewNode(m_audioGraph->audioGraphRef(), &description, 0, 0, &m_auNode);
+    BACKEND_ASSERT2(err != kAUGraphErr_OutputNodeErr, "A MediaObject can only be connected to one audio output device.", FATAL_ERROR)
     BACKEND_ASSERT2(err == noErr, "Could not create new AUNode.", FATAL_ERROR)
 }
 
@@ -100,7 +107,7 @@ bool AudioNode::setStreamHelp(AudioConnection *c, int bus, OSType scope, bool fr
 	    OSStatus err = AudioUnitSetProperty(m_audioUnit, kAudioUnitProperty_StreamFormat, scope,
 	        bus, &c->m_sourceStreamDescription, sizeof(AudioStreamBasicDescription));
         if (err != noErr){
-            DEBUG_AUDIO_GRAPH("AudioNode" << int(this) << " - failed setting stream format")
+            DEBUG_AUDIO_STREAM("AudioNode" << int(this) << " - failed setting stream format")
             return false;
         }
 	    AudioUnitSetProperty(m_audioUnit, kAudioUnitProperty_AudioChannelLayout, scope,
@@ -109,7 +116,7 @@ bool AudioNode::setStreamHelp(AudioConnection *c, int bus, OSType scope, bool fr
 	    OSStatus err = AudioUnitSetProperty(m_audioUnit, kAudioUnitProperty_StreamFormat, scope,
 	        bus, &c->m_sinkStreamDescription, sizeof(AudioStreamBasicDescription));
         if (err != noErr){
-            DEBUG_AUDIO_GRAPH("AudioNode" << int(this) << " - failed setting stream format")
+            DEBUG_AUDIO_STREAM("AudioNode" << int(this) << " - failed setting stream format")
             return false;
         }
 	    AudioUnitSetProperty(m_audioUnit, kAudioUnitProperty_AudioChannelLayout, scope,
@@ -123,23 +130,23 @@ bool AudioNode::setStreamSpecification(AudioConnection *connection, ConnectionSi
     if (side == Source){
         // This object am source of connection:
         if (connection->m_hasSourceSpecification){
-            DEBUG_AUDIO_GRAPH("AudioNode" << int(this) << "sets stream specification out"
+            DEBUG_AUDIO_STREAM("AudioNode" << int(this) << "sets stream specification out"
                 << connection->m_sourceOutputBus << "from connection source")
             return setStreamHelp(connection, connection->m_sourceOutputBus, kAudioUnitScope_Output, true);
         } else {
-            DEBUG_AUDIO_GRAPH("AudioNode" << int(this) << "did not set stream specification out")
+            DEBUG_AUDIO_STREAM("AudioNode" << int(this) << "did not set stream specification out")
         }
     } else {
         if (connection->m_hasSinkSpecification){
-            DEBUG_AUDIO_GRAPH("AudioNode" << int(this) << "sets stream specification"
+            DEBUG_AUDIO_STREAM("AudioNode" << int(this) << "sets stream specification"
                 << connection->m_sinkInputBus << "from connection sink")
             return setStreamHelp(connection, connection->m_sinkInputBus, kAudioUnitScope_Input, false);
         } else if (connection->m_hasSourceSpecification){
-            DEBUG_AUDIO_GRAPH("AudioNode" << int(this) << "sets stream specification"
+            DEBUG_AUDIO_STREAM("AudioNode" << int(this) << "sets stream specification"
             << connection->m_sinkInputBus << "from connection source")
             return setStreamHelp(connection, connection->m_sinkInputBus, kAudioUnitScope_Input, true);
         } else {
-            DEBUG_AUDIO_GRAPH("AudioNode" << int(this) << "did not set stream specification in")
+            DEBUG_AUDIO_STREAM("AudioNode" << int(this) << "did not set stream specification in")
         }
     }
     return true;
@@ -150,25 +157,26 @@ bool AudioNode::fillInStreamSpecification(AudioConnection *connection, Connectio
     if (side == Source){
         // As default, use the last description to describe the source:
         if (m_lastConnectionIn->m_hasSinkSpecification){
-            DEBUG_AUDIO_GRAPH("AudioNode" << int(this) << "is source, and fills in stream spec using last connection sink.")
+            DEBUG_AUDIO_STREAM("AudioNode" << int(this) << "is source, and fills in stream spec using last connection sink.")
             connection->m_sourceStreamDescription = m_lastConnectionIn->m_sinkStreamDescription;
             connection->m_sourceChannelLayout = (AudioChannelLayout *) malloc(m_lastConnectionIn->m_sinkChannelLayoutSize);
             memcpy(connection->m_sourceChannelLayout, m_lastConnectionIn->m_sinkChannelLayout, m_lastConnectionIn->m_sinkChannelLayoutSize);
             connection->m_sourceChannelLayoutSize = m_lastConnectionIn->m_sinkChannelLayoutSize;
             connection->m_hasSourceSpecification = true;
         } else if (m_lastConnectionIn->m_hasSourceSpecification){
-            DEBUG_AUDIO_GRAPH("AudioNode" << int(this) << "is source, and fills in stream spec using last connection source.")
+            DEBUG_AUDIO_STREAM("AudioNode" << int(this) << "is source, and fills in stream spec using last connection source.")
             connection->m_sourceStreamDescription = m_lastConnectionIn->m_sourceStreamDescription;
             connection->m_sourceChannelLayout = (AudioChannelLayout *) malloc(m_lastConnectionIn->m_sourceChannelLayoutSize);
             memcpy(connection->m_sourceChannelLayout, m_lastConnectionIn->m_sourceChannelLayout, m_lastConnectionIn->m_sourceChannelLayoutSize);
             connection->m_sourceChannelLayoutSize = m_lastConnectionIn->m_sourceChannelLayoutSize;
             connection->m_hasSourceSpecification = true;
         } else {
-            DEBUG_AUDIO_GRAPH("AudioNode" << int(this) << " __WARNING__: could not get stream specification...")
+            DEBUG_AUDIO_STREAM("AudioNode" << int(this) << " __WARNING__: could not get stream specification...")
         }
     } else {
-        DEBUG_AUDIO_GRAPH("AudioNode" << int(this) << "is sink, skips filling in stream.")
-        m_lastConnectionIn = connection;
+        DEBUG_AUDIO_STREAM("AudioNode" << int(this) << "is sink, skips filling in stream.")
+        if (!connection->isSinkOnly())
+            m_lastConnectionIn = connection;
     }
     return true;
 }

@@ -244,12 +244,12 @@ bool QuickTimeAudioPlayer::fillInStreamSpecification(AudioConnection *connection
 {
     if (!m_movieRef){
         if (side == Source)
-            DEBUG_AUDIO_GRAPH("QuickTimeAudioPlayer" << int(this) << "is source, but has no movie to use for stream spec fill.");
+            DEBUG_AUDIO_STREAM("QuickTimeAudioPlayer" << int(this) << "is source, but has no movie to use for stream spec fill.")
         return true;
     }
 
     if (side == Source){
-        DEBUG_AUDIO_GRAPH("QuickTimeAudioPlayer" << int(this) << "is source, and fills in stream spec from movie.")
+        DEBUG_AUDIO_STREAM("QuickTimeAudioPlayer" << int(this) << "is source, and fills in stream spec from movie.")
         connection->m_sourceStreamDescription = m_audioStreamDescription;
         connection->m_sourceChannelLayout = (AudioChannelLayout *) malloc(m_audioChannelLayoutSize);
         memcpy(connection->m_sourceChannelLayout, m_audioChannelLayout, m_audioChannelLayoutSize);

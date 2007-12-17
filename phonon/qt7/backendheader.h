@@ -73,25 +73,25 @@ void gClearError();
         gSetErrorType(type);                    \
     }
 
-#if DEBUG_IMPLEMENTED
+#if SET_DEBUG_IMPLEMENTED
 #define IMPLEMENTED qDebug() << "QT7:" << __FUNCTION__ << "(" << __FILE__ << "):"
 #else
 #define IMPLEMENTED if (1); else qDebug()
 #endif
 
-#if DEBUG_HALF_IMPLEMENTED
+#if SET_DEBUG_HALF_IMPLEMENTED
 #define HALF_IMPLEMENTED qDebug() << "QT7: --- HALF IMPLEMENTED:" << __FUNCTION__ << "(" << __FILE__ << "," << __LINE__ << "):"
 #else
 #define HALF_IMPLEMENTED if (1); else qDebug()
 #endif
 
-#ifdef DEBUG_NOT_IMPLEMENTED
+#ifdef SET_DEBUG_NOT_IMPLEMENTED
 #define NOT_IMPLEMENTED qDebug() << "QT7: *** NOT IMPLEMENTED:" << __FUNCTION__ << "(" << __FILE__ << "," << __LINE__ << "):"
 #else
 #define NOT_IMPLEMENTED if (1); else qDebug()
 #endif
 
-#ifdef DEBUG_IMPLEMENTED_SILENT
+#ifdef SET_DEBUG_IMPLEMENTED_SILENT
 #define IMPLEMENTED_SILENT qDebug() << "QT7: (silent)" << __FUNCTION__ << "(" << __FILE__ << "," << __LINE__ << "):"
 #else
 #define IMPLEMENTED_SILENT if (1); else qDebug()
@@ -101,6 +101,12 @@ void gClearError();
 #define DEBUG_AUDIO_GRAPH(x) qDebug() << "QT7 DEBUG GRAPH:" << x;
 #else
 #define DEBUG_AUDIO_GRAPH(x) {}
+#endif
+
+#ifdef SET_DEBUG_AUDIO_STREAM
+#define DEBUG_AUDIO_STREAM(x) qDebug() << "QT7 DEBUG STREAM:" << x;
+#else
+#define DEBUG_AUDIO_STREAM(x) {}
 #endif
 
 }} //namespace Phonon::QT7

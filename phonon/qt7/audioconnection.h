@@ -51,7 +51,8 @@ namespace QT7
         bool isValid();
         bool isSinkOnly();
         void freeMemoryAllocations();
-
+        void invalidate();
+        
         MediaNode *m_source;
         AudioNode *m_sourceAudioNode;
         int m_sourceOutputBus;
@@ -71,6 +72,7 @@ namespace QT7
 
         bool m_hasSourceSpecification;
         bool m_hasSinkSpecification;
+        bool m_connected;
     };
 
 }} // namespace Phonon::QT7

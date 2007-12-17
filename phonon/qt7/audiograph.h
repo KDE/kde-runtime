@@ -38,8 +38,10 @@ namespace QT7
 
             bool openAndInit();
             void start();
+            void tryStartGraph();
             void stop();
             void rebuildGraph();
+            void update();
             bool graphCannotPlay();
             void rebuildGraphIfNeeded();
             void updateStreamSpecifications();
@@ -57,7 +59,6 @@ namespace QT7
             void connectLate(AudioConnection *connection);
             void disconnectLate(AudioConnection *connection);
 
-            void tryStartGraph();
             int nodeCount();
 
             bool m_initialized;

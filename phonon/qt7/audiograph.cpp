@@ -92,7 +92,7 @@ void AudioGraph::updateStreamSpecifications()
     AudioConnection rootConnection(m_root);
     bool updateOk = updateStreamSpecificationRecursive(&rootConnection);
     if (!updateOk){
-        DEBUG_AUDIO_GRAPH("Graph" << int(this) << "could not update stream specification. Rebuild:")
+        DEBUG_AUDIO_GRAPH("Graph" << int(this) << "could not update stream specification. Rebuild.")
         rebuildGraph();
     }
 }
@@ -186,34 +186,34 @@ void AudioGraph::connectLate(AudioConnection *connection)
     if (!m_initialized)
         return;
 
-    DEBUG_AUDIO_GRAPH("Graph:" << int(this) << "connect part after init:" << connection->m_sink->m_audioNode)
+    DEBUG_AUDIO_GRAPH("Graph:" << int(this) << "create and connect audio sink after init:" << int(connection->m_sink->m_audioNode))
     AudioConnection startConnection(connection->m_source);
     createAndConnectAuNodesRecursive(&startConnection);
     
     if (!createAudioUnitsRecursive(&startConnection)){
-        DEBUG_AUDIO_GRAPH("Graph" << int(this) << "could not update stream specification. Rebuild:")
+        DEBUG_AUDIO_GRAPH("Graph" << int(this) << "could not update stream specification. Rebuild.")
         rebuildGraph();
-    } else
-        AUGraphUpdate(m_audioGraphRef, 0);
-        
-    tryStartGraph();
+    }  
 }
 
 void AudioGraph::disconnectLate(AudioConnection *connection)
 {
-    MediaNodeEvent eventDelete(MediaNodeEvent::AudioGraphAboutToBeDeleted, this);
-    connection->m_sink->notify(&eventDelete);
-
     if (!m_initialized)
         return;
 
-    bool ok = connection->disconnect(this);
-    if (!ok)
+    DEBUG_AUDIO_GRAPH("Graph:" << int(this) << "disconnect audio sink after init:" << int(connection->m_sink->m_audioNode))
+
+    if (!connection->disconnect(this)){
+        DEBUG_AUDIO_GRAPH("Graph" << int(this) << "could not disconnect audio sink. Rebuild.")
         rebuildGraph();
-    else {
-        AUGraphUpdate(m_audioGraphRef, 0);
-        tryStartGraph();
     }
+}
+
+void AudioGraph::update()
+{
+    if (!m_initialized || !m_audioGraphRef)
+        return;
+    AUGraphUpdate(m_audioGraphRef, 0);
 }
 
 int AudioGraph::nodeCount()
@@ -230,7 +230,7 @@ void AudioGraph::start()
     // Start does not mean 'start to play
     // music'. It means 'prepare to receive
     // audio from the player units'.
-    DEBUG_AUDIO_GRAPH("Graph" << int(this) << "asked to start")
+    DEBUG_AUDIO_GRAPH("Graph" << int(this) << "asked to start (cannot play:" << m_graphCannotPlay << ")")
     m_startedLogically = true;
     
     if (m_graphCannotPlay)

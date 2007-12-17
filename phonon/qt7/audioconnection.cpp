@@ -29,33 +29,33 @@ namespace QT7
         :   m_source(0), m_sourceAudioNode(0), m_sourceOutputBus(0),
             m_sink(0), m_sinkAudioNode(0), m_sinkInputBus(0),
             m_sourceChannelLayout(0), m_sinkChannelLayout(0),
-            m_hasSourceSpecification(false), m_hasSinkSpecification(false)
+            m_hasSourceSpecification(false), m_hasSinkSpecification(false), m_connected(false)
     {}
 
     AudioConnection::AudioConnection(MediaNode *source, int output, MediaNode *sink, int input)
         : m_source(source), m_sourceAudioNode(source->m_audioNode), m_sourceOutputBus(output),
         m_sink(sink), m_sinkAudioNode(sink->m_audioNode), m_sinkInputBus(input),
         m_sourceChannelLayout(0), m_sinkChannelLayout(0),
-        m_hasSourceSpecification(false), m_hasSinkSpecification(false)
+        m_hasSourceSpecification(false), m_hasSinkSpecification(false), m_connected(false)
     {}
 
     AudioConnection::AudioConnection(MediaNode *sink)
         : m_source(0), m_sourceAudioNode(0), m_sourceOutputBus(0),
         m_sink(sink), m_sinkAudioNode(sink->m_audioNode), m_sinkInputBus(0),
-        m_sourceChannelLayout(0), m_sinkChannelLayout(0)
+        m_sourceChannelLayout(0), m_sinkChannelLayout(0), m_connected(false)
     {}
 
     AudioConnection::AudioConnection(AudioNode *source, int output, AudioNode *sink, int input)
         : m_source(0), m_sourceAudioNode(source), m_sourceOutputBus(output),
         m_sink(0), m_sinkAudioNode(sink), m_sinkInputBus(input),
         m_sourceChannelLayout(0), m_sinkChannelLayout(0),
-        m_hasSourceSpecification(false), m_hasSinkSpecification(false)
+        m_hasSourceSpecification(false), m_hasSinkSpecification(false), m_connected(false)
     {}
 
     AudioConnection::AudioConnection(AudioNode *sink)
         : m_source(0), m_sourceAudioNode(0), m_sourceOutputBus(0),
         m_sink(0), m_sinkAudioNode(sink), m_sinkInputBus(0),
-        m_sourceChannelLayout(0), m_sinkChannelLayout(0)
+        m_sourceChannelLayout(0), m_sinkChannelLayout(0), m_connected(false)
     {}
 
     AudioConnection::~AudioConnection()
@@ -99,7 +99,7 @@ namespace QT7
 
     bool AudioConnection::connect(AudioGraph *graph)
     {
-        if (!m_sourceAudioNode)
+        if (m_connected || !m_sourceAudioNode)
             return true;
 
         DEBUG_AUDIO_GRAPH("Connection" << int(this) << "connect"
@@ -109,29 +109,28 @@ namespace QT7
         AUNode sourceOut = m_sourceAudioNode->getOutputAUNode();
         AUNode sinkIn = m_sinkAudioNode->getInputAUNode();
         OSStatus err = AUGraphConnectNodeInput(graph->audioGraphRef(), sourceOut, m_sourceOutputBus, sinkIn, m_sinkInputBus);
-        if (err != noErr)
-            return false;
-        return true;
+        m_connected = (err == noErr) ? true : false;
+        return m_connected;
     }
 
     bool AudioConnection::disconnect(AudioGraph *graph)
     {
-        if (!m_sourceAudioNode)
+        if (!m_connected || !m_sourceAudioNode)
             return true;
 
-        DEBUG_AUDIO_GRAPH("Connection" << int(this) << "disconnect (and remove sink)"
+        DEBUG_AUDIO_GRAPH("Connection" << int(this) << "disconnect"
         << int(m_sourceAudioNode) << m_sourceOutputBus << "->"
         << int(m_sinkAudioNode) << m_sinkInputBus)
 
         AUNode sinkIn = m_sinkAudioNode->getInputAUNode();
-	    OSStatus err = AUGraphDisconnectNodeInput(graph->audioGraphRef(), sinkIn, m_sinkInputBus);
-        if (err != noErr){
-            DEBUG_AUDIO_GRAPH("Connection" << int(this) << "could not disconnect" << int(sinkIn))
-            return false;
-        }
-
-        AUGraphRemoveNode(graph->audioGraphRef(), sinkIn);
+	    AUGraphDisconnectNodeInput(graph->audioGraphRef(), sinkIn, m_sinkInputBus);
+        m_connected = false;
         return true;
+    }
+
+    void AudioConnection::invalidate()
+    {
+        m_connected = false;
     }
 
     bool AudioConnection::isBetween(MediaNode *source, MediaNode *sink){

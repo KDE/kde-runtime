@@ -48,7 +48,7 @@ MediaObjectAudioNode::~MediaObjectAudioNode()
 
 void MediaObjectAudioNode::createAndConnectAUNodes()
 {
-    DEBUG_AUDIO_GRAPH("* MediaObjectAudioNode" << int(this) << "creates and connects 3 audio nodes:" )
+    DEBUG_AUDIO_GRAPH("(MediaObjectAudioNode" << int(this) << "createAndConnectAUNodes called)" )
     m_player1->createAndConnectAUNodes();
     m_player2->createAndConnectAUNodes();
     m_mixer->createAndConnectAUNodes();
@@ -59,7 +59,7 @@ void MediaObjectAudioNode::createAndConnectAUNodes()
 
 void MediaObjectAudioNode::createAudioUnits()
 {
-    DEBUG_AUDIO_GRAPH("* MediaObjectAudioNode" << int(this) << "creates 3 audio units:" )
+    DEBUG_AUDIO_GRAPH("(MediaObjectAudioNode" << int(this) << "createAudioUnits called)" )
     m_player1->createAudioUnits();
     m_player2->createAudioUnits();
     m_mixer->createAudioUnits();
@@ -68,7 +68,7 @@ void MediaObjectAudioNode::createAudioUnits()
 
 void MediaObjectAudioNode::setGraph(AudioGraph *audioGraph)
 {
-    DEBUG_AUDIO_GRAPH("* MediaObjectAudioNode" << int(this) << "is setting graph:" << int(audioGraph))
+    DEBUG_AUDIO_GRAPH("MediaObjectAudioNode" << int(this) << "is setting graph:" << int(audioGraph))
     m_audioGraph = audioGraph;
     m_player1->setGraph(audioGraph);
     m_player2->setGraph(audioGraph);
@@ -83,12 +83,12 @@ AUNode MediaObjectAudioNode::getOutputAUNode()
 bool MediaObjectAudioNode::fillInStreamSpecification(AudioConnection *connection, ConnectionSide side)
 {
     if (side == Source){
-        DEBUG_AUDIO_GRAPH("* MediaObjectAudioNode" << int(this) << "is source. Let mixer fill in stream spec:")
+        DEBUG_AUDIO_STREAM("(MediaObjectAudioNode" << int(this) << "fillInStreamSpecification called, role = source)")
         return m_mixer->fillInStreamSpecification(connection, side);
     } else {
         // Let connection1 be last so m_mixer
         // will use it's stream to describe output:
-        DEBUG_AUDIO_GRAPH("* MediaObjectAudioNode" << int(this) << "is sink. Updates two internal connections (upon fill stream spec):")
+        DEBUG_AUDIO_STREAM("(MediaObjectAudioNode" << int(this) << "fillInStreamSpecification called, role = sink)")
         m_connection2->updateStreamSpecification();
         if (!m_connection1->updateStreamSpecification())
             return false;
@@ -99,7 +99,7 @@ bool MediaObjectAudioNode::fillInStreamSpecification(AudioConnection *connection
 bool MediaObjectAudioNode::setStreamSpecification(AudioConnection *connection, ConnectionSide side)
 {
     if (side == Source){
-        DEBUG_AUDIO_GRAPH("* MediaObjectAudioNode" << int(this) << "is source. Let mixer set stream spec:")
+        DEBUG_AUDIO_STREAM("(MediaObjectAudioNode" << int(this) << "setStreamSpecification called, role = source)")
         return m_mixer->setStreamSpecification(connection, side);
     }
     return true;
@@ -164,6 +164,15 @@ void MediaObjectAudioNode::cancelCrossFade()
 
 void MediaObjectAudioNode::mediaNodeEvent(const MediaNodeEvent *event)
 {
+    switch (event->type()){
+    case MediaNodeEvent::AudioGraphAboutToBeDeleted:
+        m_connection1->invalidate();
+        m_connection2->invalidate();
+        break;
+    default:
+        break;
+    }
+
     m_player1->mediaNodeEvent(event);
     m_player2->mediaNodeEvent(event);
     m_mixer->mediaNodeEvent(event);

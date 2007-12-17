@@ -101,15 +101,32 @@ QObject *Backend::createObject(BackendInterface::Class c, QObject *parent, const
     return 0;
 }
 
-bool Backend::startConnectionChange(QSet<QObject *> /*objects*/)
+bool Backend::startConnectionChange(QSet<QObject *> objects)
 {
     IMPLEMENTED;
+    for (int i=0; i<objects.size(); i++){
+        MediaNode *node = qobject_cast<MediaNode*>(objects.values()[i]);
+        if (node && node->audioGraph()){
+            MediaNodeEvent event(MediaNodeEvent::AboutToRestartAudioStream);
+            node->audioGraph()->root()->notify(&event);
+        }
+    }        
     return true;
 }
 
-bool Backend::endConnectionChange(QSet<QObject *> /*objects*/)
+bool Backend::endConnectionChange(QSet<QObject *> objects)
 {
     IMPLEMENTED;
+    if (!objects.empty()){      
+        // Update the audio graph, and start it
+        // if it should be running:
+        MediaNode *node = qobject_cast<MediaNode*>(objects.values()[0]);
+        if (node && node->audioGraph()){
+            node->audioGraph()->update();
+            MediaNodeEvent event(MediaNodeEvent::RestartAudioStreamRequest);
+            node->audioGraph()->root()->notify(&event);
+        }
+    }
     return true;
 }
 

@@ -247,9 +247,31 @@ bool QuickTimeVideoPlayer::openMovieFromFile(const MediaSource &mediaSource)
     return (err == noErr);
 }
 
-bool QuickTimeVideoPlayer::openMovieFromUrl(const MediaSource &/*mediaSource*/)
+bool QuickTimeVideoPlayer::openMovieFromUrl(const MediaSource &mediaSource)
 {
-    return false;
+	Boolean active = true;
+    QCFString urlString = QCFString(mediaSource.url().toString());
+//    QCFString urlString("http://www.cbc.ca/livemedia/cbcr1-calgary.asx");
+ 
+    DataReferenceRecord dataRef = {0, 0};    
+    CFURLRef url = CFURLCreateWithString(0, urlString, 0);
+    QTNewDataReferenceFromCFURL(url, 0, &dataRef.dataRef, &dataRef.dataRefType);
+
+	QTNewMoviePropertyElement props[] = {
+		{kQTPropertyClass_DataLocation,     kQTDataLocationPropertyID_DataReference, sizeof(dataRef),       &dataRef,       0},
+		{kQTPropertyClass_NewMovieProperty, kQTNewMoviePropertyID_Active,            sizeof(active),        &active,        0},
+		{kQTPropertyClass_MovieInstantiation, kQTMovieInstantiationPropertyID_DontResolveDataRefs, sizeof(active), &active, 0},
+		{kQTPropertyClass_MovieInstantiation, kQTMovieInstantiationPropertyID_AsyncOK, sizeof(active), &active, 0},
+		{kQTPropertyClass_Context,          kQTContextPropertyID_VisualContext,      sizeof(m_visualContext), &m_visualContext, 0},
+	};
+
+    int propCount = sizeof(props) / sizeof(props[0]);
+    OSStatus err = NewMovieFromProperties(propCount, props, 0, 0, &m_movieRef);
+    DisposeHandle(dataRef.dataRef);
+    
+    if (err != noErr)
+        m_movieRef = 0;
+    return (err == noErr);
 }
 
 MediaSource QuickTimeVideoPlayer::mediaSource() const

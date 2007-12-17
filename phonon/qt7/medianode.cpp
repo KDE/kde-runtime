@@ -74,7 +74,7 @@ AudioConnection *MediaNode::getAudioConnectionToSink(MediaNode *sink)
 bool MediaNode::connectToSink(MediaNode *sink)
 {
     if ((m_description & AudioSource) && (sink->m_description & AudioSink)){
-        // Check that they don't belong to different/no audio graphs already:
+        // Check that they don't belong to different graphs:
         if (m_audioNode->m_audioGraph && sink->m_audioNode->m_audioGraph
             && m_audioNode->m_audioGraph != sink->m_audioNode->m_audioGraph){
             return false;
@@ -195,8 +195,11 @@ void MediaNode::notify(const MediaNodeEvent *event, bool propagate)
 
     switch(event->type()){
     case MediaNodeEvent::AudioGraphAboutToBeDeleted:
-        if (m_audioNode)
+        if (m_audioNode){
             m_audioNode->setGraph(0);
+            foreach(AudioConnection *connection, m_audioSinkList)
+                connection->invalidate();
+        }
         break;
     case MediaNodeEvent::NewAudioGraph:
         if (m_audioNode)
