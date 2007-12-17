@@ -24,7 +24,6 @@
 #include <QtCore/QCoreApplication>
 #include "xineengine.h"
 #include "xinestream.h"
-#include "audiopostlist.h"
 #include "events.h"
 
 namespace Phonon

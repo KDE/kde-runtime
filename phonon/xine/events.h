@@ -21,7 +21,6 @@
 #ifndef PHONON_XINE_EVENTS_H
 #define PHONON_XINE_EVENTS_H
 
-#include "audiopostlist.h"
 #include "wirecall.h"
 #include "xinestream.h"
 
@@ -79,7 +78,6 @@ public:
         SetPrefinishMark,
         SetParam,
         EventSend,
-        AudioRewire,
         QuitLoop,
         PauseForBuffering,
         UnpauseForBuffering,
@@ -115,7 +113,6 @@ inline T *copyEvent(T *)
 EVENT_CLASS1(HasVideo, bool v, hasVideo(v), const bool, hasVideo)
 EVENT_CLASS1(UpdateVolume, int v, volume(v), const int, volume)
 EVENT_CLASS1(Rewire, QList<WireCall> _wireCalls, wireCalls(_wireCalls), const QList<WireCall>, wireCalls)
-EVENT_CLASS1(AudioRewire, AudioPostList *x, postList(x), AudioPostList *const, postList)
 EVENT_CLASS1(EventSend, const xine_event_t *const e, event(e), const xine_event_t *const, event)
 EVENT_CLASS1(GaplessSwitch, const QByteArray &_mrl, mrl(_mrl), const QByteArray, mrl)
 EVENT_CLASS1(SetTickInterval, qint32 i, interval(i), const qint32, interval)
