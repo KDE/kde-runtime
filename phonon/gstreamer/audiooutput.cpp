@@ -22,6 +22,8 @@
 #include "gsthelper.h"
 #include <phonon/audiooutput.h>
 
+QT_BEGIN_NAMESPACE
+
 namespace Phonon
 {
 namespace Gstreamer
@@ -121,24 +123,36 @@ void AudioOutput::setVolume(qreal newVolume)
 bool AudioOutput::setOutputDevice(int newDevice)
 {
     if (root()) {
-        m_backend->logMessage("Cannot change output device on a linked audioOutput");
-        return false;
+        root()->stop();  // We cannot currently change audiodevice while the stream is playing
+        if (gst_element_get_state (root()->pipeline(), NULL, NULL, 3000) != GST_STATE_CHANGE_SUCCESS)
+            return false;
     }
 
+    bool success = false;
     const QList<AudioDevice> deviceList = m_backend->deviceManager()->audioOutputDevices();
     if (m_audioSink &&  newDevice >= 0 && newDevice < deviceList.size()) {
+        // Save previous state
+        GstState oldState = GST_STATE(m_audioSink);
+        QString oldDeviceValue = GstHelper::property(m_audioSink, "device");
         QString deviceId = deviceList.at(newDevice).gstId;
         m_device = newDevice;
-        GstHelper::setProperty(m_audioSink, "device", deviceId);
-        // We check if the device can be opened by checking if it can go to the ready state
-        if (gst_element_set_state(m_audioSink, GST_STATE_READY) == GST_STATE_CHANGE_SUCCESS) {
-            return true;
+
+        // We test if the device can be opened by checking if it can go from NULL to READY state
+        gst_element_set_state(m_audioSink, GST_STATE_NULL);
+        success = GstHelper::setProperty(m_audioSink, "device", deviceId);
+        if (success) {
+            success = (gst_element_set_state(m_audioSink, oldState) == GST_STATE_CHANGE_SUCCESS);
+        }
+        if (!success) { // Revert state
+            GstHelper::setProperty(m_audioSink, "device", oldDeviceValue);
+            gst_element_set_state(m_audioSink, oldState);
         }
     }
-    return false;
+    return success;
 }
 
 }
 } //namespace Phonon::Gstreamer
 
+QT_END_NAMESPACE
 #include "moc_audiooutput.cpp"
