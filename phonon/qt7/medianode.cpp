@@ -101,9 +101,10 @@ bool MediaNode::connectToSink(MediaNode *sink)
         if (m_audioNode->m_audioGraph)
             m_audioNode->m_audioGraph->connectLate(connection);
 
-        // Tell the world about it:
-        MediaNodeEvent event(MediaNodeEvent::AudioSinkAdded, connection);
-        notify(&event, false);
+        MediaNodeEvent event1(MediaNodeEvent::AudioSinkAdded, connection);
+        notify(&event1, false);
+        MediaNodeEvent event2(MediaNodeEvent::AudioSourceAdded, connection);
+        sink->notify(&event2, false);
         return true;
     }
 
@@ -113,8 +114,10 @@ bool MediaNode::connectToSink(MediaNode *sink)
             return true;
 
         m_videoSinkList << sink;
-        MediaNodeEvent event(MediaNodeEvent::VideoSinkAdded, sink);
-        notify(&event, false);
+        MediaNodeEvent event1(MediaNodeEvent::VideoSinkAdded, sink);
+        notify(&event1, false);
+        MediaNodeEvent event2(MediaNodeEvent::VideoSourceAdded, this);
+        sink->notify(&event2, false);
         return true;
     }
 
@@ -134,16 +137,20 @@ bool MediaNode::disconnectToSink(MediaNode *sink)
         if (m_audioNode->m_audioGraph)
             m_audioNode->m_audioGraph->disconnectLate(connection);
 
-        MediaNodeEvent event(MediaNodeEvent::AudioSinkRemoved, connection);
-        notify(&event, false);
+        MediaNodeEvent event1(MediaNodeEvent::AudioSinkRemoved, connection);
+        notify(&event1, false);
+        MediaNodeEvent event2(MediaNodeEvent::AudioSourceRemoved, connection);
+        sink->notify(&event2, false);
         return true;
     }
 
     if ((m_description & VideoSource) && (sink->m_description & VideoSink)){
         m_videoSinkList.removeOne(sink);
 
-        MediaNodeEvent event(MediaNodeEvent::VideoSinkRemoved, sink);
-        notify(&event, false);
+        MediaNodeEvent event1(MediaNodeEvent::VideoSinkRemoved, sink);
+        notify(&event1, false);
+        MediaNodeEvent event2(MediaNodeEvent::VideoSourceRemoved, this);
+        sink->notify(&event2, false);
         return true;
     }
 

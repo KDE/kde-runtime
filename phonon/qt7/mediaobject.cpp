@@ -346,7 +346,8 @@ void MediaObject::synchAudioVideo()
 
 bool MediaObject::playVideoHint() const
 {
-    return (m_videoPlayer->hasVideo() && !m_videoSinkList.isEmpty()) || m_audioGraph->graphCannotPlay();
+    return (m_videoPlayer->hasVideo() && !m_videoSinkList.isEmpty()) ||
+        (!m_audioSinkList.isEmpty() && m_audioGraph->graphCannotPlay());
 }
 
 bool MediaObject::playAudioHint() const
@@ -370,7 +371,6 @@ void MediaObject::setTickInterval(qint32 interval)
         killTimer(m_tickTimer);
         m_tickTimer = 0;
     }
-
 }
 
 bool MediaObject::hasVideo() const

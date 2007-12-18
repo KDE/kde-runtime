@@ -40,6 +40,10 @@ namespace QT7
                 VideoSinkRemoved,
                 AudioSinkAdded,
                 AudioSinkRemoved,
+                VideoSourceAdded,
+                VideoSourceRemoved,
+                AudioSourceAdded,
+                AudioSourceRemoved,
                 VideoFrameSizeChanged,
                 SetMediaObject
             };

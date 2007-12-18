@@ -163,6 +163,10 @@ void AudioOutput::mediaNodeEvent(const MediaNodeEvent *event)
                 m_owningMediaObject->setAudioDeviceOnMovie(0);
             setVolume(volume());
             break;
+        case MediaNodeEvent::AudioSourceRemoved:
+            if (m_redirectToMovie && m_owningMediaObject)
+               m_owningMediaObject->setVolumeOnMovie(0);
+            break;
         default:
             break;
     }
