@@ -8,12 +8,15 @@ find_package(KDE4 REQUIRED)
 find_package(Strigi REQUIRED)
 find_package(KdepimLibs REQUIRED)
 
-include (KDE4Defaults)
-include (MacroLibrary)
-include (MacroOptionalFindPackage)
+include(KDE4Defaults)
+include(MacroLibrary)
+include(MacroOptionalFindPackage)
 include(MacroOptionalAddSubdirectory)
 include(CheckFunctionExists)
 include(CheckIncludeFiles)
+
+macro_optional_find_package(Soprano)
+macro_log_feature(Soprano_FOUND "Soprano" "Soprano Libraries" "kdesupport" FALSE "" "Required to build Nepomuk.")
 
 check_include_files(sys/wait.h HAVE_SYS_WAIT_H)
 
@@ -65,7 +68,6 @@ add_subdirectory(knotify)
 add_subdirectory(kde-menu)
 add_subdirectory(doc)
 
-find_package(Soprano)
 if(Soprano_FOUND AND STRIGI_STRIGIQTDBUSCLIENT_LIBRARY)
   macro_optional_add_subdirectory(nepomuk)
 endif(Soprano_FOUND AND STRIGI_STRIGIQTDBUSCLIENT_LIBRARY)
