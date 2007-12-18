@@ -34,6 +34,8 @@
 
 #include <unistd.h>             // for usleep
 
+QT_BEGIN_NAMESPACE
+
 namespace Phonon
 {
 namespace Gstreamer
@@ -225,7 +227,7 @@ bool MediaObject::createPipefromURL(const QString &url)
     // Remove any existing data source
     if (m_datasource) {
         gst_bin_remove(GST_BIN(m_pipeline), m_datasource);
-        gst_object_unref(m_datasource);
+        // m_pipeline has the only ref to datasource
         m_datasource = 0;
     }
 
@@ -813,7 +815,7 @@ void foreach_tag_function(const GstTagList *list, const gchar *tag, gpointer use
     case G_TYPE_STRING: {
             char *str = 0;
             gst_tag_list_get_string(list, tag, &str);
-            value = str;
+            value = QString::fromUtf8(str);
             delete str;
         }
         break;
@@ -1033,4 +1035,7 @@ void MediaObject::handleBusMessage(const Message &message)
 
 } // ns Gstreamer
 } // ns Phonon
+
+QT_END_NAMESPACE
+
 #include "moc_mediaobject.cpp"
