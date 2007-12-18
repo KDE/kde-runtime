@@ -49,9 +49,60 @@ namespace Phonon
 			return ret;
 		}
 
+        class VolumeMemInputPin : public QMemInputPin
+        {
+        public:
+            VolumeMemInputPin(QBaseFilter *parent, const QVector<AM_MEDIA_TYPE> &mt) : QMemInputPin(parent, mt)
+            {
+            }
 
-        //tricky way to test that the effect actually works
-        static QSlider *g_slider = 0;
+            ~VolumeMemInputPin()
+            {
+            }
+
+            STDMETHODIMP NotifyAllocator(IMemAllocator *alloc, BOOL b)
+            {
+                HRESULT hr = QMemInputPin::NotifyAllocator(alloc, b);
+                if (SUCCEEDED(hr)) {
+                    ALLOCATOR_PROPERTIES prop;
+                    hr = alloc->GetProperties(&prop);
+                    if (SUCCEEDED(hr)) {
+                        //this allows to reduce the latency for sound
+                        //the problem is that too low numbers makes the whole thing fail...
+                        ALLOCATOR_PROPERTIES actual;
+                        prop.cBuffers = 1;
+                        prop.cbBuffer = 4096;
+                        alloc->SetProperties(&prop, &actual);
+                    }
+                }
+                return hr;
+            }
+
+        };
+
+        class VolumeMemOutputPin : public QPin
+        {
+        public:
+            VolumeMemOutputPin(QBaseFilter *parent, const QVector<AM_MEDIA_TYPE> &mt) : QPin(parent, PINDIR_OUTPUT, mt)
+            {
+            }
+
+            ~VolumeMemOutputPin()
+            {
+            }
+
+            ALLOCATOR_PROPERTIES getDefaultAllocatorProperties() const
+            {
+                //those values reduce buffering a lot (good for the volume effect)
+                ALLOCATOR_PROPERTIES prop;
+                prop.cbAlign = 1;
+                prop.cbBuffer = 4096;
+                prop.cBuffers = 1;
+                prop.cbPrefix = 0;
+                return prop;
+            }
+
+        };
 
         class VolumeEffectFilter : public QBaseFilter
         {
@@ -59,10 +110,11 @@ namespace Phonon
             VolumeEffectFilter();
             void setVolume(float newVolume);
             float volume() const;
-            HRESULT Transform(IMediaSample * ms);
+            virtual void processSample(IMediaSample *);
 
         private:
-            AM_MEDIA_TYPE m_mt; //the current media type
+            QMemInputPin *m_input;
+            QPin *m_output;
             float m_volume;
         };
 
@@ -71,12 +123,12 @@ namespace Phonon
             QVector<AM_MEDIA_TYPE> mt;
 
             //creating the output
-            QPin *output = new QPin(this, PINDIR_OUTPUT, mt);
+            m_output = new VolumeMemOutputPin(this, mt);
 
             //then creating the input
             mt << audioMediaType();
-            QMemInputPin *input = new QMemInputPin(this, mt);
-            input->addOutput(output); //make the connection here
+            m_input = new VolumeMemInputPin(this, mt);
+            m_input->addOutput(m_output); //make the connection here
         }
 
         void VolumeEffectFilter::setVolume(float newVolume)
@@ -89,7 +141,7 @@ namespace Phonon
             return m_volume;
         }
 
-        HRESULT VolumeEffectFilter::Transform(IMediaSample * ms)
+        void VolumeEffectFilter::processSample(IMediaSample * ms)
         {
             if (m_volume != 1.) {
                 BYTE *buffer = 0;
@@ -97,8 +149,9 @@ namespace Phonon
 
                 REFERENCE_TIME start, end;
                 ms->GetTime(&start, &end);
+                const AM_MEDIA_TYPE mt = m_output->connectedType(); 
                 if (buffer) {
-                    switch(m_mt.lSampleSize)
+                    switch(mt.lSampleSize)
                     {
                     case 2:
                         {
@@ -117,12 +170,11 @@ namespace Phonon
                             break;
                         }
                     default:
-                        qWarning("The Volume Effect can't handle a sample size of %D bytes.", m_mt.lSampleSize);
-
+                        qWarning("The Volume Effect can't handle a sample size of %d bytes.", mt.lSampleSize);
+                        break;
                     }
                 }
             }
-            return S_OK;
         }
 
         VolumeEffect::VolumeEffect(QObject *parent) : Effect(parent)
@@ -134,10 +186,10 @@ namespace Phonon
                 *it = Filter(f);
             }
 
-            g_slider = new QSlider();
+            static QSlider *g_slider = new QSlider();
             g_slider->setRange(0,100);
             g_slider->show();
-            connect(g_slider, SIGNAL(valueChanged(int)), SLOT(test()));
+            connect(g_slider, SIGNAL(valueChanged(int)), SLOT(test(int)));
         }
 
         float VolumeEffect::volume() const
@@ -152,9 +204,9 @@ namespace Phonon
             }
         }
 
-        void VolumeEffect::test()
+        void VolumeEffect::test(int value)
         {
-            setVolume( g_slider->value() / 100.f);
+            setVolume( value / 100.f);
         }
     }
 }

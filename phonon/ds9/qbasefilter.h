@@ -63,6 +63,9 @@ namespace Phonon
             void addPin(QPin *pin);
             void removePin(QPin *pin);
 
+            //reimplement this if you want specific processing of media sample
+            virtual void processSample(IMediaSample *);
+
         private:
             LONG m_refCount;
             CLSID m_clsid;

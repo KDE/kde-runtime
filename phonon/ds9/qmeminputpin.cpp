@@ -16,8 +16,10 @@
 */
 
 #include "qmeminputpin.h"
-
+#include "qbasefilter.h"
 #include "compointer.h"
+
+#include <qdebug.h>
 
 namespace Phonon
 {
@@ -62,11 +64,11 @@ namespace Phonon
         {
             HRESULT hr = QPin::ReceiveConnection(pin, mt);
             if (SUCCEEDED(hr)) {
-                QVector<AM_MEDIA_TYPE> vec;
-                vec << *mt;
+               
                 //we tell the output pins that they should connect with this type
                 foreach(QPin *current, outputs()) {
-                    current->setMediaTypes(vec);
+                    current->setMediaType(*mt);
+
                 }
             }
             return hr;
@@ -94,7 +96,10 @@ namespace Phonon
             {
                 QWriteLocker locker(&m_lock);
                 m_samplesReadonly = readonly;
+
+
             }
+
             setMemoryAllocator(alloc);
             return S_OK;
         }
@@ -120,20 +125,35 @@ namespace Phonon
                 return VFW_E_WRONG_STATE;
             }
 
-            //we just do nothing and transfer immediately the sample
+            if (!m_samplesReadonly) {
+                //we do it just once
+                m_parent->processSample(sample);
+            }
+
             foreach(QPin *current, outputs()) {
                 ComPointer<IPin> pin;
                 current->ConnectedTo(&pin);
+                IMediaSample *outSample = m_samplesReadonly ? 
+                    duplicateSampleForOutput(sample, current->memoryAllocator())
+                    : sample;
+
+                if (m_samplesReadonly) {
+                    m_parent->processSample(outSample);
+                }
+
                 if (pin) {
                     ComPointer<IMemInputPin> input(pin, IID_IMemInputPin);
                     if (input) {
-                        input->Receive(sample);
+                        input->Receive(outSample);
                     }
                 }
 
-            }
+                if (m_samplesReadonly) {
+                    outSample->Release();
+                }
 
-            return E_NOTIMPL;
+            }
+            return S_OK;
         }
 
         STDMETHODIMP QMemInputPin::ReceiveMultiple(IMediaSample **samples,long count,long *nbDone)
@@ -181,6 +201,60 @@ namespace Phonon
             QReadLocker locker(&m_lock);
             return m_outputs;
         }
+
+        IMediaSample *QMemInputPin::duplicateSampleForOutput(IMediaSample *sample, IMemAllocator *alloc)
+        {
+            HRESULT hr = alloc->Commit();
+            Q_ASSERT(SUCCEEDED(hr));
+
+            IMediaSample *out;
+            hr = alloc->GetBuffer(&out, 0, 0, AM_GBF_NOTASYNCPOINT);
+            Q_ASSERT(SUCCEEDED(hr));
+
+            //let's copy the sample
+            {
+                REFERENCE_TIME start, end;
+                sample->GetTime(&start, &end);
+                out->SetTime(&start, &end);
+            }
+
+            LONG length = sample->GetActualDataLength();
+            hr = out->SetActualDataLength(length);
+            Q_ASSERT(SUCCEEDED(hr));
+            hr = out->SetDiscontinuity(sample->IsDiscontinuity());
+            Q_ASSERT(SUCCEEDED(hr));
+            
+            {
+                LONGLONG start, end;
+                hr = sample->GetMediaTime(&start, &end);
+                if (hr != VFW_E_MEDIA_TIME_NOT_SET) {
+                    hr = out->SetMediaTime(&start, &end);
+                    Q_ASSERT(SUCCEEDED(hr));
+                }
+            }
+
+            AM_MEDIA_TYPE *type = 0;
+            hr = sample->GetMediaType(&type);
+            Q_ASSERT(SUCCEEDED(hr));
+            hr = out->SetMediaType(type);
+            Q_ASSERT(SUCCEEDED(hr));
+
+            hr = out->SetPreroll(sample->IsPreroll());
+            Q_ASSERT(SUCCEEDED(hr));
+            hr = out->SetSyncPoint(sample->IsSyncPoint());
+            Q_ASSERT(SUCCEEDED(hr));
+
+            BYTE *dest = 0, *src = 0;
+            hr = out->GetPointer(&dest);
+            Q_ASSERT(SUCCEEDED(hr));
+            hr = sample->GetPointer(&src);
+            Q_ASSERT(SUCCEEDED(hr));
+
+            qMemCopy(dest, src, sample->GetActualDataLength());
+
+            return out;
+        }
+
 
     }
 }

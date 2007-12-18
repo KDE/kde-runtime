@@ -61,9 +61,8 @@ namespace Phonon
 
             QVector<AM_MEDIA_TYPE> mediaTypes() const;
 
-            void setMediaTypes(const QVector<AM_MEDIA_TYPE> &);
+            void setMediaType(const AM_MEDIA_TYPE &);
 
-        protected:
             bool isFlushing() const;
             void setConnectedType(const AM_MEDIA_TYPE &type);
             AM_MEDIA_TYPE connectedType() const;
@@ -75,15 +74,19 @@ namespace Phonon
 
             FILTER_STATE filterState() const;
 
+        protected:
+            virtual ALLOCATOR_PROPERTIES getDefaultAllocatorProperties() const;
+
             //this can be used by sub-classes
             mutable QReadWriteLock m_lock;
+
+            QBaseFilter *m_parent;
 
         private:
             HRESULT checkOutputMediaTypesConnection(IPin *pin);
             HRESULT checkOwnMediaTypesConnection(IPin *pin);
             void freeMediaType(AM_MEDIA_TYPE *type);
 
-            QBaseFilter *m_parent;
             LONG m_refCount;
             IPin *m_connected;
             PIN_DIRECTION m_direction;

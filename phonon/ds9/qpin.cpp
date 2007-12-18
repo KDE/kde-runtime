@@ -282,6 +282,18 @@ namespace Phonon
                     if (alloc) {
                         //be default we take the allocator from the input pin
                         //we have no reason to force using our own
+
+                        ALLOCATOR_PROPERTIES prop;
+                        alloc->GetProperties(&prop);
+                        if (prop.cBuffers == 0) {
+                            if (input->GetAllocatorRequirements(&prop) != S_OK) {
+                                prop = getDefaultAllocatorProperties();
+                            }
+                            ALLOCATOR_PROPERTIES actual;
+                            hr = alloc->SetProperties(&prop, &actual);
+                            Q_ASSERT(SUCCEEDED(hr));
+                        }
+
                         setMemoryAllocator(alloc);
                     }
                 }
@@ -396,8 +408,8 @@ namespace Phonon
             foreach(const AM_MEDIA_TYPE current, m_mediaTypes) {
 
                 if ( (type->majortype == current.majortype) &&
-                    (type->subtype == MEDIASUBTYPE_NULL || current.subtype == MEDIASUBTYPE_NULL || type->subtype == current.subtype) &&
-                    (type->formattype == GUID_NULL || current.formattype == GUID_NULL || type->formattype == current.formattype)
+                    (current.subtype == MEDIASUBTYPE_NULL || type->subtype == current.subtype) &&
+                    (current.formattype == GUID_NULL || type->formattype == current.formattype)
                     ) {
                     return S_OK;
                 }
@@ -553,10 +565,23 @@ namespace Phonon
             return m_mediaTypes;
         }
 
-        void QPin::setMediaTypes(const QVector<AM_MEDIA_TYPE> &vec)
+        void QPin::setMediaType(const AM_MEDIA_TYPE &mt)
         {
-            QWriteLocker locker(&m_lock);
-            m_mediaTypes  = vec;
+            {
+                QWriteLocker locker(&m_lock);
+                m_mediaTypes = QVector<AM_MEDIA_TYPE>() << mt;
+            }
+
+            IPin *conn = connected();
+            if (conn) {
+                //try to reconnect to redefine the media type
+                conn->Disconnect();
+                Disconnect();
+                HRESULT hr = Connect(conn, 0);
+
+
+                Q_ASSERT(SUCCEEDED(hr));
+            }
         }
 
         void QPin::createDefaultMemoryAllocator(ALLOCATOR_PROPERTIES *prop)
@@ -589,6 +614,15 @@ namespace Phonon
             return m_memAlloc;
         }
 
-
+        ALLOCATOR_PROPERTIES QPin::getDefaultAllocatorProperties() const
+        {
+            //those values reduce buffering a lot (good for the volume effect)
+            ALLOCATOR_PROPERTIES prop;
+            prop.cbAlign = 1;
+            prop.cbBuffer = 16384;
+            prop.cBuffers = 12;
+            prop.cbPrefix = 0;
+            return prop;
+        }
     }
 }

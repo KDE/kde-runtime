@@ -58,6 +58,7 @@ namespace Phonon
             QSet<QPin*> outputs() const;
 
         private:
+            IMediaSample *duplicateSampleForOutput(IMediaSample *, IMemAllocator *);
 
             bool m_samplesReadonly;
             QSet<QPin*> m_outputs;

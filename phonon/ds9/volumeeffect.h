@@ -37,8 +37,8 @@ namespace Phonon
             float volume() const;
             void setVolume(float);
 
-            public slots:
-                void test();
+            public Q_SLOTS:
+                void test(int);
         private:
             QList<VolumeEffectFilter*> m_volumeFilters;
         };

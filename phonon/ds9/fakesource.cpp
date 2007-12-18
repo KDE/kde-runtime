@@ -130,6 +130,7 @@ namespace Phonon
             mt.majortype = MEDIATYPE_Audio;
             mt.subtype = MEDIASUBTYPE_PCM;
             mt.formattype = FORMAT_WaveFormatEx;
+            mt.lSampleSize = 2;
 
             //fake the format (stereo 44.1 khz stereo 16 bits)
             mt.cbFormat = sizeof(WAVEFORMATEX);

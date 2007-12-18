@@ -71,9 +71,7 @@ namespace Phonon
             qint64 currentPos() const;
             void setCurrentPos(qint64 newPos);
             int currentBufferSize() const;
-            void transferMemoryFromBuffer(BYTE *buffer, int count);
             AsyncRequest getNextRequest();
-            void enqueueRequest(const QAsyncReader::AsyncRequest &req);
             qint64 streamSize() const;
             bool streamSeekable() const;
 

@@ -347,5 +347,11 @@ namespace Phonon
         {
             return E_NOTIMPL;
         }
+
+        //addition
+        void QBaseFilter::processSample(IMediaSample *sample)
+        {
+        }
+
     }
 }
