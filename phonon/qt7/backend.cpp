@@ -107,6 +107,8 @@ bool Backend::startConnectionChange(QSet<QObject *> objects)
     for (int i=0; i<objects.size(); i++){
         MediaNode *node = qobject_cast<MediaNode*>(objects.values()[i]);
         if (node && node->audioGraph()){
+            if (node->audioGraph()->graphCannotPlay())
+                node->audioGraph()->startAllOverFromScratch();
             MediaNodeEvent event(MediaNodeEvent::AboutToRestartAudioStream);
             node->audioGraph()->root()->notify(&event);
         }

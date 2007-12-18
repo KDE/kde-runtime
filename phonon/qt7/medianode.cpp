@@ -74,9 +74,11 @@ AudioConnection *MediaNode::getAudioConnectionToSink(MediaNode *sink)
 bool MediaNode::connectToSink(MediaNode *sink)
 {
     if ((m_description & AudioSource) && (sink->m_description & AudioSink)){
-        // Check that they don't belong to different graphs:
-        if (m_audioNode->m_audioGraph && sink->m_audioNode->m_audioGraph
-            && m_audioNode->m_audioGraph != sink->m_audioNode->m_audioGraph){
+        // Check that they don't belong to different graphs. If they do, but
+        // sink is not connected to any source, accept it:
+        if (m_owningMediaObject && sink->m_owningMediaObject
+            && m_owningMediaObject != sink->m_owningMediaObject
+            && !sink->m_audioSourceList.isEmpty()){
             return false;
         }
 

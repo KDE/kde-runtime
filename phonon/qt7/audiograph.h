@@ -35,6 +35,7 @@ namespace QT7
             AudioGraph(MediaNode *root);
             virtual ~AudioGraph();
             AUGraph audioGraphRef();
+            void startAllOverFromScratch();
 
             bool openAndInit();
             void start();
@@ -54,8 +55,7 @@ namespace QT7
             bool updateStreamSpecificationRecursive(AudioConnection *connection);
             void createAndConnectAuNodesRecursive(AudioConnection *connection);
             bool createAudioUnitsRecursive(AudioConnection *connection);
-            void deleteAUGraph();
-
+ 
             void connectLate(AudioConnection *connection);
             void disconnectLate(AudioConnection *connection);
 

@@ -127,10 +127,13 @@ bool AudioOutput::setOutputDevice(int device)
         m_audioOutput->setAudioDevice(device);
         return m_owningMediaObject->setAudioDeviceOnMovie(device);
     }
-    else if (audioGraph()){
+    
+    if (audioGraph()){
         MediaNodeEvent event1(MediaNodeEvent::AboutToRestartAudioStream, this);
         audioGraph()->root()->notify(&event1);
-        m_audioOutput->setAudioDevice(device);
+    }
+    m_audioOutput->setAudioDevice(device);
+    if (audioGraph()){
         MediaNodeEvent event2(MediaNodeEvent::RestartAudioStreamRequest, this);
         audioGraph()->root()->notify(&event2);
     }

@@ -34,10 +34,10 @@ AudioGraph::AudioGraph(MediaNode *root) : MediaNode(AudioGraphNode, 0, root), m_
 
 AudioGraph::~AudioGraph()
 {
-    deleteAUGraph();
+    startAllOverFromScratch();
 }
 
-void AudioGraph::deleteAUGraph()
+void AudioGraph::startAllOverFromScratch()
 {
     if (m_audioGraphRef){
         DEBUG_AUDIO_GRAPH("Graph" << int(this) << "is deleted")
@@ -65,7 +65,8 @@ void AudioGraph::rebuildGraph()
     DEBUG_AUDIO_GRAPH("Graph" << int(this) << "is rebuilding")
     MediaNodeEvent event(MediaNodeEvent::AudioGraphAboutToBeDeleted, this);
     m_root->notify(&event);
-    deleteAUGraph();
+    startAllOverFromScratch();
+    
     if (!openAndInit()){
         m_graphCannotPlay = true;
         MediaNodeEvent e(MediaNodeEvent::AudioGraphCannotPlay, this);
@@ -114,7 +115,7 @@ bool AudioGraph::openAndInit()
 {
 	OSStatus err;
 	err = NewAUGraph(&m_audioGraphRef);
-    BACKEND_ASSERT3(err == noErr, "Could not create new AUGraph.", FATAL_ERROR, false)
+    BACKEND_ASSERT3(err == noErr, "Could not create audio graph.", NORMAL_ERROR, false)
 
     MediaNodeEvent eventNew(MediaNodeEvent::NewAudioGraph, this);
     m_root->notify(&eventNew);
@@ -122,13 +123,13 @@ bool AudioGraph::openAndInit()
     AudioConnection rootConnection(m_root);
     createAndConnectAuNodesRecursive(&rootConnection);
 	err = AUGraphOpen(m_audioGraphRef);
-    BACKEND_ASSERT3(err == noErr, "Could not open AUGraph.", FATAL_ERROR, false)
+    BACKEND_ASSERT3(err == noErr, "Could not create audio graph.", NORMAL_ERROR, false)
 
     if (!createAudioUnitsRecursive(&rootConnection))
         return false;
 
 	err = AUGraphInitialize(m_audioGraphRef);
-    BACKEND_ASSERT3(err == noErr, "Could not initialize AUGraph.", FATAL_ERROR, false)
+    BACKEND_ASSERT3(err == noErr, "Could not initialize audio graph.", NORMAL_ERROR, false)
 
     m_initialized = true;
     MediaNodeEvent eventInit(MediaNodeEvent::AudioGraphInitialized, this);
@@ -143,7 +144,7 @@ void AudioGraph::createAndConnectAuNodesRecursive(AudioConnection *connection)
         AudioConnection *c = connection->m_sink->m_audioSinkList[i];
         createAndConnectAuNodesRecursive(c);
         bool ok = c->connect(this);
-        BACKEND_ASSERT2(ok, "Could not connect a pair of AUNodes in the AUGraph.", FATAL_ERROR)
+        BACKEND_ASSERT2(ok, "Could not connect an audio nodes pair in the audio graph.", NORMAL_ERROR)
     }
 }
 
@@ -214,6 +215,7 @@ void AudioGraph::update()
     if (!m_initialized || !m_audioGraphRef)
         return;
     AUGraphUpdate(m_audioGraphRef, 0);
+    tryStartGraph();
 }
 
 int AudioGraph::nodeCount()
