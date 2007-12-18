@@ -104,10 +104,10 @@ AudioEffect::AudioEffect(int effectType, QObject *parent)
     case kAudioUnitSubType_NetSend:
         m_audioNode = new AudioEffectAudioNode(effectType, "NetSend");
         break;
-    case kAudioUnitSubType_Distortion:
+    case FOUR_CHAR_CODE('dist'):
         m_audioNode = new AudioEffectAudioNode(effectType, "Distortion");
         break;
-    case kAudioUnitSubType_RogerBeep:
+    case FOUR_CHAR_CODE('rogr'):
         m_audioNode = new AudioEffectAudioNode(effectType, "RogerBeep");
         break;
     default:
@@ -162,8 +162,8 @@ QList<int> AudioEffect::effectList()
     << kAudioUnitSubType_Pitch
     << kAudioUnitSubType_AUFilter
     << kAudioUnitSubType_NetSend
-    << kAudioUnitSubType_Distortion
-    << kAudioUnitSubType_RogerBeep;
+    << FOUR_CHAR_CODE('dist')
+    << FOUR_CHAR_CODE('rogr');
     return effects;
 }
 

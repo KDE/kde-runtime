@@ -209,9 +209,8 @@ void MediaObject::play()
     }
     if (m_currentTime == m_videoPlayer->duration())
         return;
-    if (!m_videoPlayer->canPlayMedia()){
+    if (!m_videoPlayer->canPlayMedia())
         return;
-    }
 
     QMutexLocker locker(&m_quickTimeGuard);
         if (playAudioHint()){
@@ -347,7 +346,7 @@ void MediaObject::synchAudioVideo()
 
 bool MediaObject::playVideoHint() const
 {
-    return m_videoPlayer->hasVideo() && !m_videoSinkList.isEmpty();
+    return (m_videoPlayer->hasVideo() && !m_videoSinkList.isEmpty()) || m_audioGraph->graphCannotPlay();
 }
 
 bool MediaObject::playAudioHint() const
