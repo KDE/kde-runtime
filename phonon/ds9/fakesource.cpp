@@ -134,7 +134,7 @@ namespace Phonon
 
             //fake the format (stereo 44.1 khz stereo 16 bits)
             mt.cbFormat = sizeof(WAVEFORMATEX);
-            mt.pbFormat = static_cast<BYTE*>(CoTaskMemAlloc(sizeof(WAVEFORMATEX)));
+            mt.pbFormat = static_cast<BYTE*>(::CoTaskMemAlloc(sizeof(WAVEFORMATEX)));
             WAVEFORMATEX *format = reinterpret_cast<WAVEFORMATEX*>(mt.pbFormat);
             qMemSet(format, 0, sizeof(WAVEFORMATEX));
             format->cbSize = 0;
@@ -158,10 +158,9 @@ namespace Phonon
 
             //fake the format (RGB 32 bits)
             mt.cbFormat = sizeof(VIDEOINFOHEADER);
-            mt.pbFormat = static_cast<BYTE*>(CoTaskMemAlloc(sizeof(VIDEOINFOHEADER)));
+            mt.pbFormat = static_cast<BYTE*>(::CoTaskMemAlloc(sizeof(VIDEOINFOHEADER)));
             VIDEOINFOHEADER *format = reinterpret_cast<VIDEOINFOHEADER*>(mt.pbFormat);
             qMemSet(format, 0, sizeof(VIDEOINFOHEADER));
-
             new FakePin(this, mt);
         }
 

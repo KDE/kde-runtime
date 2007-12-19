@@ -60,18 +60,15 @@ namespace Phonon
             return QPin::Release();
         }
 
-        STDMETHODIMP QMemInputPin::ReceiveConnection(IPin *pin, const AM_MEDIA_TYPE *mt)
+        //reimplementation to set the type for the output pin
+        //no need to make a deep copy here
+        void QMemInputPin::setConnectedType(const AM_MEDIA_TYPE &type)
         {
-            HRESULT hr = QPin::ReceiveConnection(pin, mt);
-            if (SUCCEEDED(hr)) {
-               
-                //we tell the output pins that they should connect with this type
-                foreach(QPin *current, outputs()) {
-                    current->setMediaType(*mt);
-
-                }
+            QPin::setConnectedType(type);
+            //we tell the output pins that they should connect with this type
+            foreach(QPin *current, outputs()) {
+                current->setAcceptedMediaType(type);
             }
-            return hr;
         }
 
         STDMETHODIMP QMemInputPin::GetAllocator(IMemAllocator **alloc)

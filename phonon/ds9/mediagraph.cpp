@@ -558,7 +558,7 @@ namespace Phonon
             {
             case MediaSource::Disc:
                 if (source.discType() == Phonon::Dvd) {
-                    //TODO : add the nevigation system
+                    //TODO : add the navigation system
 
                     m_realSource = Filter(CLSID_DVDNavigator, IID_IBaseFilter);
                     if (m_realSource) {

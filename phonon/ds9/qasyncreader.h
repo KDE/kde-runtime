@@ -23,23 +23,19 @@
 
 #include "qpin.h"
 
-#include <phonon/streaminterface.h>
-#include <phonon/mediasource.h>
-
-class CAsyncStream;
 namespace Phonon
 {
     namespace DS9
     {
         //his class reads asynchronously from a QIODevice
-        class QAsyncReader : public QPin, public IAsyncReader, public Phonon::StreamInterface
+        class QAsyncReader : public QPin, public IAsyncReader
         {
         public:
-            QAsyncReader(QBaseFilter *, const Phonon::MediaSource &source);
+            QAsyncReader(QBaseFilter *, const QVector<AM_MEDIA_TYPE> &mediaTypes);
             ~QAsyncReader();
 
             //reimplementation from IUnknown
-            STDMETHODIMP QueryInterface(REFIID iid, void** ppvObject);
+            STDMETHODIMP QueryInterface(REFIID iid, void** out);
             STDMETHODIMP_(ULONG) AddRef();
             STDMETHODIMP_(ULONG) Release();
 
@@ -49,15 +45,12 @@ namespace Phonon
             STDMETHODIMP WaitForNext(DWORD,IMediaSample **,DWORD_PTR *);
             STDMETHODIMP SyncReadAligned(IMediaSample *);
             STDMETHODIMP SyncRead(LONGLONG,LONG,BYTE *);
-            STDMETHODIMP Length(LONGLONG *,LONGLONG *);
+            virtual STDMETHODIMP Length(LONGLONG *,LONGLONG *) = 0;
             STDMETHODIMP BeginFlush();
             STDMETHODIMP EndFlush();
 
-            //for Phonon::StreamInterface
-            void writeData(const QByteArray &data);
-            void endOfData();
-            void setStreamSize(qint64 newSize);
-            void setStreamSeekable(bool s);
+        protected:
+            virtual HRESULT read(LONGLONG pos, LONG length, BYTE *buffer, LONG *actual) = 0;
 
         private:
             class AsyncRequest
@@ -67,27 +60,12 @@ namespace Phonon
                 IMediaSample *sample;
                 DWORD_PTR user;
             };
-            HRESULT actualSyncRead(LONGLONG pos, LONG length, BYTE *buffer, LONG *actual);
-            qint64 currentPos() const;
-            void setCurrentPos(qint64 newPos);
-            int currentBufferSize() const;
             AsyncRequest getNextRequest();
-            qint64 streamSize() const;
-            bool streamSeekable() const;
 
-            Phonon::MediaSource m_source;
-
-            QMutex m_mutexRead,
-                m_mutexWait;
+            QMutex m_mutexWait;
 
             QQueue<AsyncRequest> m_requestQueue;
             QWaitCondition m_requestWait;
-
-            //for Phonon::StreamInterface
-            QByteArray m_buffer;
-            bool m_seekable;
-            qint64 m_pos;
-            qint64 m_size;
         };
     }
 }

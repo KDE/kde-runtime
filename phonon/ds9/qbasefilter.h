@@ -36,8 +36,8 @@ namespace Phonon
             virtual ~QBaseFilter();
 
             //reimplementation from IUnknown
-            STDMETHODIMP QueryInterface(REFIID iid, void** ppvObject);
-            STDMETHODIMP_(ULONG) AddRef(void);
+            STDMETHODIMP QueryInterface(REFIID iid, void** out);
+            STDMETHODIMP_(ULONG) AddRef();
             STDMETHODIMP_(ULONG) Release();
 
             //reimplementation from IPersist

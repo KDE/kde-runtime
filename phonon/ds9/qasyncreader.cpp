@@ -24,38 +24,10 @@ namespace Phonon
 {
     namespace DS9
     {
-        //this mediatype defines a stream, its type will be autodetecteed by DirectShow
 
-		static QVector<AM_MEDIA_TYPE> getMediaTypes()
-		{
-			AM_MEDIA_TYPE mt;
-			mt.majortype = MEDIATYPE_Stream;
-			mt.bFixedSizeSamples = TRUE;
-			mt.bTemporalCompression = FALSE;
-			mt.lSampleSize = 1;
-			mt.formattype = GUID_NULL;
-			mt.pUnk = 0;
-			mt.cbFormat = 0;
-			mt.pbFormat = 0;
-
-			QVector<AM_MEDIA_TYPE> ret;
-			//normal auto-detect stream
-			mt.subtype = MEDIASUBTYPE_NULL;
-			ret << mt;
-			//AVI stream
-			mt.subtype = MEDIASUBTYPE_Avi;
-			ret << mt;
-			//WAVE stream
-			mt.subtype = MEDIASUBTYPE_WAVE;
-			ret << mt;
-			return ret;
-		}
-
-        QAsyncReader::QAsyncReader(QBaseFilter *parent, const Phonon::MediaSource &source) :
-            QPin(parent, PINDIR_OUTPUT, getMediaTypes()),
-                m_source(source), m_seekable(false), m_pos(0), m_size(-1)
+        QAsyncReader::QAsyncReader(QBaseFilter *parent, const QVector<AM_MEDIA_TYPE> &mediaTypes) :
+            QPin(parent, PINDIR_OUTPUT, mediaTypes)
         {
-            connectToSource(source);
         }
 
         QAsyncReader::~QAsyncReader()
@@ -193,105 +165,16 @@ namespace Phonon
             }
 
             LONG actual = 0;
-            actualSyncRead(startPos, length, buffer, &actual);
+            read(startPos, length, buffer, &actual);
 
             return sample->SetActualDataLength(actual);
         }
 
         STDMETHODIMP QAsyncReader::SyncRead(LONGLONG pos, LONG length, BYTE *buffer)
         {
-            return actualSyncRead(pos, length, buffer, 0);
+            return read(pos, length, buffer, 0);
         }
 
-        HRESULT QAsyncReader::actualSyncRead(LONGLONG pos, LONG length, BYTE *buffer, LONG *actual)
-        {
-            QMutexLocker locker(&m_mutexRead);
-
-            if(streamSize() !=1 && pos + length > streamSize()) {
-                //it tries to read outside of the boundaries
-                return E_FAIL;
-            }
-
-            if (currentPos() - currentBufferSize() != pos) {
-                if (!streamSeekable()) {
-                    return S_FALSE;
-                }
-                setCurrentPos(pos);
-            }
-
-            int oldSize = currentBufferSize();
-            while (currentBufferSize() < int(length)) {
-                needData();
-                if (oldSize == currentBufferSize()) {
-                    break; //we didn't get any data
-                }
-                oldSize = currentBufferSize();
-            }
-
-            DWORD bytesRead = qMin(currentBufferSize(), int(length));
-            {
-                QWriteLocker locker(&m_lock);
-                memcpy(buffer, m_buffer.data(), bytesRead);
-                //truncate the buffer
-                m_buffer = m_buffer.mid(bytesRead);
-            }
-
-            if (actual) {
-                *actual = bytesRead; //initialization
-            }
-
-            return bytesRead == length ? S_OK : S_FALSE;
-        }
-
-        STDMETHODIMP QAsyncReader::Length(LONGLONG *total, LONGLONG *available)
-        {
-            QReadLocker locker(&m_lock);
-            if (total) {
-                *total = m_size;
-            }
-
-            if (available) {
-                *available = m_size;
-            }
-
-            return S_OK;
-        }
-
-        //from Phonon::StreamInterface
-        void QAsyncReader::writeData(const QByteArray &data)
-        {
-            QWriteLocker locker(&m_lock);
-            m_pos += data.size();
-            m_buffer += data;
-        }
-
-        void QAsyncReader::endOfData()
-        {
-        }
-
-        void QAsyncReader::setStreamSize(qint64 newSize)
-        {
-            QWriteLocker locker(&m_lock);
-            m_size = newSize;
-        }
-
-        qint64 QAsyncReader::streamSize() const
-        {
-            QReadLocker locker(&m_lock);
-            return m_size;
-        }
-
-        void QAsyncReader::setStreamSeekable(bool s)
-        {
-            QWriteLocker locker(&m_lock);
-            m_seekable = s;
-        }
-
-        bool QAsyncReader::streamSeekable() const
-        {
-            QReadLocker locker(&m_lock);
-            return m_seekable;
-        }
 
         //addition
         QAsyncReader::AsyncRequest QAsyncReader::getNextRequest()
@@ -303,26 +186,6 @@ namespace Phonon
             }
 
             return ret;
-        }
-
-        void QAsyncReader::setCurrentPos(qint64 pos)
-        {
-            QWriteLocker locker(&m_lock);
-            m_pos = pos;
-            seekStream(pos);
-            m_buffer.clear();
-        }
-
-        qint64 QAsyncReader::currentPos() const
-        {
-            QReadLocker locker(&m_lock);
-            return m_pos;
-        }
-
-        int QAsyncReader::currentBufferSize() const
-        {
-            QReadLocker locker(&m_lock);
-            return m_buffer.size();
         }
 
     }

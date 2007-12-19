@@ -38,7 +38,7 @@ namespace Phonon
             virtual ~QPin();
 
             //reimplementation from IUnknown
-            STDMETHODIMP QueryInterface(REFIID iid, void** ppvObject);
+            STDMETHODIMP QueryInterface(REFIID iid, void** out);
             STDMETHODIMP_(ULONG) AddRef();
             STDMETHODIMP_(ULONG) Release();
 
@@ -61,10 +61,10 @@ namespace Phonon
 
             QVector<AM_MEDIA_TYPE> mediaTypes() const;
 
-            void setMediaType(const AM_MEDIA_TYPE &);
+            void setAcceptedMediaType(const AM_MEDIA_TYPE &);
 
             bool isFlushing() const;
-            void setConnectedType(const AM_MEDIA_TYPE &type);
+            virtual void setConnectedType(const AM_MEDIA_TYPE &type);
             AM_MEDIA_TYPE connectedType() const;
             void setConnected(IPin *pin);
             IPin *connected(bool = false) const;
@@ -86,11 +86,12 @@ namespace Phonon
             HRESULT checkOutputMediaTypesConnection(IPin *pin);
             HRESULT checkOwnMediaTypesConnection(IPin *pin);
             void freeMediaType(AM_MEDIA_TYPE *type);
+            void freeMediaType(const AM_MEDIA_TYPE &type);
 
             LONG m_refCount;
             IPin *m_connected;
             PIN_DIRECTION m_direction;
-            QVector<AM_MEDIA_TYPE> m_mediaTypes;
+            QVector<AM_MEDIA_TYPE> m_mediaTypes; //accepted media types
             AM_MEDIA_TYPE m_connectedType;
             QString m_name;
             bool m_flushing;

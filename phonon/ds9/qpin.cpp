@@ -171,6 +171,7 @@ namespace Phonon
         {
             m_parent->removePin(this);
             setMemoryAllocator(0);
+            freeMediaType(m_connectedType);
         }
 
         //reimplementation from IUnknown
@@ -290,8 +291,8 @@ namespace Phonon
                                 prop = getDefaultAllocatorProperties();
                             }
                             ALLOCATOR_PROPERTIES actual;
-                            hr = alloc->SetProperties(&prop, &actual);
-                            Q_ASSERT(SUCCEEDED(hr));
+                            //we just try to set the properties...
+                            alloc->SetProperties(&prop, &actual);
                         }
 
                         setMemoryAllocator(alloc);
@@ -465,7 +466,7 @@ namespace Phonon
         {
             IEnumMediaTypes *emt = 0;
             HRESULT hr = pin->EnumMediaTypes(&emt);
-            if (FAILED(hr)) {
+            if (hr != S_OK) {
                 return hr;
             }
 
@@ -477,6 +478,7 @@ namespace Phonon
                         freeMediaType(type);
                         return S_OK;
                     } else {
+                        setConnectedType(defaultMediaType());
                         freeMediaType(type);
                     }
                 }
@@ -499,23 +501,39 @@ namespace Phonon
             return S_FALSE;
         }
 
+        void QPin::freeMediaType(const AM_MEDIA_TYPE &type)
+        {
+            if (type.cbFormat) {
+                ::CoTaskMemFree(type.pbFormat);
+            }
+            if (type.pUnk) {
+                type.pUnk->Release();
+            }
+        }
+
         void QPin::freeMediaType(AM_MEDIA_TYPE *type)
         {
-            if (type->cbFormat) {
-                CoTaskMemFree(type->pbFormat);
-            }
-            if (type->pUnk) {
-                type->pUnk->Release();
-            }
-
-            CoTaskMemFree(type);
+            freeMediaType(*type);
+            ::CoTaskMemFree(type);
         }
 
         //addition
         void QPin::setConnectedType(const AM_MEDIA_TYPE &type)
         {
             QWriteLocker locker(&m_lock);
+
+            //1st we free memory
+            freeMediaType(m_connectedType);
+
             m_connectedType = type;
+            //make a deep copy here
+            if (type.pbFormat) {
+                m_connectedType.pbFormat = reinterpret_cast<BYTE*>(::CoTaskMemAlloc(type.cbFormat));
+                qMemCopy(m_connectedType.pbFormat, type.pbFormat, type.cbFormat);
+                if (type.pUnk) {
+                    type.pUnk->AddRef();
+                }
+            }
         }
 
         AM_MEDIA_TYPE QPin::connectedType() const 
@@ -565,7 +583,7 @@ namespace Phonon
             return m_mediaTypes;
         }
 
-        void QPin::setMediaType(const AM_MEDIA_TYPE &mt)
+        void QPin::setAcceptedMediaType(const AM_MEDIA_TYPE &mt)
         {
             {
                 QWriteLocker locker(&m_lock);
@@ -578,8 +596,7 @@ namespace Phonon
                 conn->Disconnect();
                 Disconnect();
                 HRESULT hr = Connect(conn, 0);
-
-
+                Q_UNUSED(hr);
                 Q_ASSERT(SUCCEEDED(hr));
             }
         }
@@ -620,7 +637,7 @@ namespace Phonon
             ALLOCATOR_PROPERTIES prop;
             prop.cbAlign = 1;
             prop.cbBuffer = 16384;
-            prop.cBuffers = 12;
+            prop.cBuffers = 8;
             prop.cbPrefix = 0;
             return prop;
         }

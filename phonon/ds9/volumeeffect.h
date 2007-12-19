@@ -31,16 +31,35 @@ namespace Phonon
         class VolumeEffect : public Effect, public Phonon::VolumeFaderInterface
         {
             Q_OBJECT
-            Q_INTERFACES(Phonon::VolumeFaderInterface)
+                Q_INTERFACES(Phonon::VolumeFaderInterface)
         public:
             VolumeEffect(QObject *parent);
-            float volume() const;
-            void setVolume(float);
 
-            public Q_SLOTS:
-                void test(int);
+            //reimplementation
+            virtual float volume() const;
+            virtual void setVolume(float);
+            virtual VolumeFaderEffect::FadeCurve fadeCurve() const;
+            virtual void setFadeCurve(VolumeFaderEffect::FadeCurve);
+            virtual void fadeTo(float, int);
+
         private:
-            QList<VolumeEffectFilter*> m_volumeFilters;
+            float m_volume;
+
+            //paramaters used to fade
+            VolumeFaderEffect::FadeCurve m_fadeCurve;
+
+            bool m_fading; //determines if we should be fading.
+            float m_initialVolume;  
+            float m_targetVolume;
+            int m_fadeDuration;
+            int m_fadeSamplePosition;
+            qreal (*m_fadeCurveFn)(const qreal, const qreal, const qreal);
+            
+            //allow the filter to get access to that
+            friend class VolumeEffectFilter;
+
+            
+
         };
     }
 }
