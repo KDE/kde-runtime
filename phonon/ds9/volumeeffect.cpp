@@ -23,6 +23,12 @@
 
 #include <cmath>
 
+//#define DEBUG_VOLUMEEFFECT
+
+#ifdef DEBUG_VOLUMEEFFECT
+#include <QtGui/QSlider>
+#endif
+
 namespace Phonon
 {
     namespace DS9
@@ -95,20 +101,16 @@ namespace Phonon
 
             STDMETHODIMP NotifyAllocator(IMemAllocator *alloc, BOOL b)
             {
-                HRESULT hr = QMemInputPin::NotifyAllocator(alloc, b);
-                if (SUCCEEDED(hr)) {
-                    /*ALLOCATOR_PROPERTIES prop;
-                    hr = alloc->GetProperties(&prop);
-                    if (SUCCEEDED(hr)) {
-                        //this allows to reduce the latency for sound
-                        //the problem is that too low numbers makes the whole thing fail...
-                        ALLOCATOR_PROPERTIES actual;
-                        prop.cBuffers = 1;
-                        prop.cbBuffer = 16384;
-                        alloc->SetProperties(&prop, &actual);
-                    }*/
+                ALLOCATOR_PROPERTIES prop;
+                HRESULT hr = alloc->GetProperties(&prop);
+                if (SUCCEEDED(hr) && prop.cBuffers > 1) {
+                    //this allows to reduce the latency for sound
+                    //the problem is that too low numbers makes the whole thing fail...
+                    ALLOCATOR_PROPERTIES actual;
+                    prop.cBuffers = 1;
+                    alloc->SetProperties(&prop, &actual);
                 }
-                return hr;
+                return QMemInputPin::NotifyAllocator(alloc, b);
             }
 
         };
@@ -122,14 +124,6 @@ namespace Phonon
 
             ~VolumeMemOutputPin()
             {
-            }
-
-            ALLOCATOR_PROPERTIES getDefaultAllocatorProperties() const
-            {
-                //those values reduce buffering a lot (good for the volume effect)
-                ALLOCATOR_PROPERTIES prop = QPin::getDefaultAllocatorProperties();
-                prop.cBuffers = 1;
-                return prop;
             }
 
         };
@@ -162,7 +156,6 @@ namespace Phonon
             mt << audioMediaType();
             m_input = new VolumeMemInputPin(this, mt);
             m_input->addOutput(m_output); //make the connection here
-
         }
 
         void VolumeEffectFilter::treatOneSamplePerChannel(BYTE **buffer, int sampleSize, int channelCount, int frequency)
@@ -240,6 +233,13 @@ namespace Phonon
                 VolumeEffectFilter *f = new VolumeEffectFilter(this);
                 *it = Filter(f);
             }
+
+#ifdef DEBUG_VOLUMEEFFECT
+            static QSlider *g_slider = new QSlider;
+            g_slider->setRange(0, 100);
+            g_slider->show();
+            connect(g_slider, SIGNAL(sliderMoved(int)), SLOT(setVolumePercentage(int)));
+#endif
         }
 
         float VolumeEffect::volume() const
@@ -249,8 +249,14 @@ namespace Phonon
 
         void VolumeEffect::setVolume(float newVolume)
         {
-            //m_volume = newVolume;
+            m_volume = newVolume;
         }
+
+        void VolumeEffect::setVolumePercentage(int p)
+        {
+            setVolume(p / 100.);
+        }
+
 
         VolumeFaderEffect::FadeCurve VolumeEffect::fadeCurve() const
         {

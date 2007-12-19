@@ -65,7 +65,10 @@ namespace Phonon
         STDMETHODIMP QMemInputPin::ReceiveConnection(IPin *pin ,const AM_MEDIA_TYPE *mt)
         {
             const HRESULT hr = QPin::ReceiveConnection(pin, mt);
-            if (hr == S_OK) {
+            if (hr == S_OK &&
+                mt->majortype != MEDIATYPE_NULL &&
+                mt->subtype != MEDIASUBTYPE_NULL &&
+                mt->formattype != GUID_NULL) {
                 //we tell the output pins that they should connect with this type
                 foreach(QPin *current, outputs()) {
                     current->setAcceptedMediaType(connectedType());
@@ -96,8 +99,6 @@ namespace Phonon
             {
                 QWriteLocker locker(&m_lock);
                 m_samplesReadonly = readonly;
-
-
             }
 
             setMemoryAllocator(alloc);
@@ -202,9 +203,32 @@ namespace Phonon
             return m_outputs;
         }
 
+        ALLOCATOR_PROPERTIES QMemInputPin::getDefaultAllocatorProperties() const
+        {
+            //those values reduce buffering a lot (good for the volume effect)
+            ALLOCATOR_PROPERTIES prop;
+            prop.cbAlign = 1;
+            prop.cbBuffer = 4096;
+            prop.cBuffers = 1;
+            prop.cbPrefix = 0;
+            return prop;
+        }
+
+
         IMediaSample *QMemInputPin::duplicateSampleForOutput(IMediaSample *sample, IMemAllocator *alloc)
         {
+            LONG length = sample->GetActualDataLength();
+
             HRESULT hr = alloc->Commit();
+            if (hr == VFW_E_SIZENOTSET) {
+                ALLOCATOR_PROPERTIES prop = getDefaultAllocatorProperties();
+                prop.cbBuffer = qMax(prop.cbBuffer, length);
+                ALLOCATOR_PROPERTIES actual;
+                //we just try to set the properties...
+                alloc->SetProperties(&prop, &actual);
+                hr = alloc->Commit();
+            }
+
             Q_ASSERT(SUCCEEDED(hr));
 
             IMediaSample *out;
@@ -218,7 +242,6 @@ namespace Phonon
                 out->SetTime(&start, &end);
             }
 
-            LONG length = sample->GetActualDataLength();
             hr = out->SetActualDataLength(length);
             Q_ASSERT(SUCCEEDED(hr));
             hr = out->SetDiscontinuity(sample->IsDiscontinuity());

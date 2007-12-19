@@ -58,6 +58,7 @@ namespace Phonon
 
         private:
             IMediaSample *duplicateSampleForOutput(IMediaSample *, IMemAllocator *);
+            ALLOCATOR_PROPERTIES getDefaultAllocatorProperties() const;
 
             bool m_samplesReadonly;
             QSet<QPin*> m_outputs;

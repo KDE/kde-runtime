@@ -76,8 +76,6 @@ namespace Phonon
             FILTER_STATE filterState() const;
 
         protected:
-            virtual ALLOCATOR_PROPERTIES getDefaultAllocatorProperties() const;
-
             //this can be used by sub-classes
             mutable QReadWriteLock m_lock;
 
