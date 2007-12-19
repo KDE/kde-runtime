@@ -97,16 +97,16 @@ namespace Phonon
             {
                 HRESULT hr = QMemInputPin::NotifyAllocator(alloc, b);
                 if (SUCCEEDED(hr)) {
-                    ALLOCATOR_PROPERTIES prop;
+                    /*ALLOCATOR_PROPERTIES prop;
                     hr = alloc->GetProperties(&prop);
                     if (SUCCEEDED(hr)) {
                         //this allows to reduce the latency for sound
                         //the problem is that too low numbers makes the whole thing fail...
                         ALLOCATOR_PROPERTIES actual;
                         prop.cBuffers = 1;
-                        prop.cbBuffer = 4096;
+                        prop.cbBuffer = 16384;
                         alloc->SetProperties(&prop, &actual);
-                    }
+                    }*/
                 }
                 return hr;
             }
@@ -127,11 +127,8 @@ namespace Phonon
             ALLOCATOR_PROPERTIES getDefaultAllocatorProperties() const
             {
                 //those values reduce buffering a lot (good for the volume effect)
-                ALLOCATOR_PROPERTIES prop;
-                prop.cbAlign = 1;
-                prop.cbBuffer = 4096;
+                ALLOCATOR_PROPERTIES prop = QPin::getDefaultAllocatorProperties();
                 prop.cBuffers = 1;
-                prop.cbPrefix = 0;
                 return prop;
             }
 

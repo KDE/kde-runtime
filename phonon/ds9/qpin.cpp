@@ -19,8 +19,6 @@
 #include "qpin.h"
 #include "compointer.h"
 
-#include <qdebug.h>
-
 namespace Phonon
 {
     namespace DS9
@@ -600,7 +598,6 @@ namespace Phonon
                 QWriteLocker locker(&m_lock);
                 m_mediaTypes = QVector<AM_MEDIA_TYPE>() << mt;
             }
-            qDebug() << this << "QPin::setAcceptedMediaType";
 
             IPin *conn = connected();
             if (conn) {
