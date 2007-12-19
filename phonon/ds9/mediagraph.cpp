@@ -65,7 +65,7 @@ namespace Phonon
 
         MediaGraph::MediaGraph(MediaObject *mo, short index) : m_fakeSource(new FakeSource()),
             m_hasVideo(false), m_hasAudio(false), m_connectionsDirty(false),
-            m_index(index), m_clockDelta(0), m_mediaObject(mo), 
+            m_index(index), m_mediaObject(mo), 
             m_graph(CLSID_FilterGraph, IID_IGraphBuilder)
         {
             m_mediaControl = ComPointer<IMediaControl>(m_graph, IID_IMediaControl);
@@ -220,7 +220,6 @@ namespace Phonon
                 if (FAILED(hr)) {
                     return ret;
                 }
-                ret -= m_clockDelta;
                 ret /= 10000; //convert to milliseconds
             }
             return ret;
@@ -259,9 +258,6 @@ namespace Phonon
             qint64 newtime = time * 10000;
             HRESULT hr = m_mediaSeeking->SetPositions(&newtime, AM_SEEKING_AbsolutePositioning,
                 0, AM_SEEKING_NoPositioning);
-            if (SUCCEEDED(hr)) {
-                m_clockDelta = 0;
-            }
             return hr;
         }
 
@@ -541,17 +537,13 @@ namespace Phonon
             m_hasAudio = false;
 
             //we try to reset the clock here
-            if (m_mediaSeeking) {
-                m_mediaSeeking->GetCurrentPosition(&m_clockDelta);
-            }
-
+            seek(0);
 
             //cleanup of the previous filters
             HRESULT hr = cleanup();
             if (FAILED(hr)) {
                 return hr;
             }
-
 
             const QSet<Filter> previous = getAllFilters();
             switch (source.type())
