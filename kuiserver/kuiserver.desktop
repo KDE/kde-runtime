@@ -1,6 +1,7 @@
 [Desktop Entry]
 Type=Service
 Name=kuiserver
+Name[hi]=केयूआईसर्वर
 Name[ne]=कुइसर्भर
 Name[sr]=КУИ-сервер
 Name[sr@latin]=KUIServer
@@ -20,6 +21,7 @@ Comment[et]=KDE edenemisinfo graafiline server
 Comment[fa]=کارساز واسط کاربر اطلاعات پیشرفت KDE
 Comment[fy]=KDE's fuortgong ynfo UI tsjinner
 Comment[he]=שרת ממשק משתמש של KDE למידע לגבי התקדמות
+Comment[hi]=केडीई की प्रगति जानकारी यूआई सर्वर
 Comment[hu]=KDE állapotkijelző szolgáltatás
 Comment[ja]=KDE 進捗情報 UI サーバ
 Comment[kk]=KDE-ның барыс туралы мәлімет интерфейсінің сервері

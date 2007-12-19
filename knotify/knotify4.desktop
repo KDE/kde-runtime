@@ -1,6 +1,7 @@
 [Desktop Entry]
 Type=Service
 Name=KNotify
+Name[hi]=के-नोटिफाई
 Name[ne]=केडीई सूचना
 Name[pa]=ਕੇ-ਨੋਟੀਫਾਈ
 Name[sr]=К-обавештења
@@ -26,6 +27,7 @@ Comment[fi]=KDE-huomautuspalvelin
 Comment[fy]=KDE's systeemberjochtenprogramma
 Comment[ga]=Deamhan Fógartha KDE
 Comment[he]=שירות ההודעות של KDE
+Comment[hi]=केडीई सूचना डेमन
 Comment[hu]=KDE rendszerüzenet-kezelő szolgáltatás
 Comment[it]=Demone delle notifiche di KDE
 Comment[ja]=KDE 通知デーモン
