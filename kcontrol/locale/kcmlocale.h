@@ -70,6 +70,11 @@ private Q_SLOTS:
 private:
   QStringList languageList() const;
 
+  // NOTE: we need to mantain our own language list instead of using KLocale's
+  // because KLocale does not add a language if there is no translation
+  // for the current application so it would not be posible to set
+  // a language which has no systemsettings/kcontrol module translation
+  QStringList m_languageList;
   KControlLocale *m_locale;
 };
 

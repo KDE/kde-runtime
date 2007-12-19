@@ -69,27 +69,28 @@ KLocaleConfig::KLocaleConfig(KControlLocale *locale, QWidget *parent)
     m_downButton->setIcon(KIcon("arrow-down"));
 
     languageAdd->loadAllLanguages();
+    
+    KConfigGroup configGroup = KGlobal::config()->group("Locale");
+    m_languageList = configGroup.readEntry("Language").split(":");
 }
 
 void KLocaleConfig::slotAddLanguage(const QString & code)
 {
-  QStringList languageList = m_locale->languageList();
-
   int pos = m_languages->currentRow();
   if ( pos < 0 )
     pos = 0;
 
   // If it's already in list, just move it (delete the old, then insert a new)
-  int oldPos = languageList.indexOf( code );
+  int oldPos = m_languageList.indexOf( code );
   if ( oldPos != -1 )
-    languageList.removeAll( languageList.at(oldPos) );
+    m_languageList.removeAll( code );
 
   if ( oldPos != -1 && oldPos < pos )
     --pos;
 
-  languageList.insert( pos, code );
+  m_languageList.insert( pos, code );
 
-  m_locale->setLanguage( languageList );
+  m_locale->setLanguage( m_languageList );
 
   emit localeChanged();
   if ( pos == 0 )
@@ -98,14 +99,13 @@ void KLocaleConfig::slotAddLanguage(const QString & code)
 
 void KLocaleConfig::slotRemoveLanguage()
 {
-  QStringList languageList = m_locale->languageList();
   int pos = m_languages->currentRow();
 
   if (pos != -1)
   {
-    languageList.removeAt(pos);
+    m_languageList.removeAt(pos);
 
-    m_locale->setLanguage( languageList );
+    m_locale->setLanguage( m_languageList );
 
     emit localeChanged();
     if ( pos == 0 )
@@ -115,19 +115,18 @@ void KLocaleConfig::slotRemoveLanguage()
 
 void KLocaleConfig::slotLanguageUp()
 {
-  QStringList languageList = m_locale->languageList();
   int pos = m_languages->currentRow();
 
-  QStringList::Iterator it1 = languageList.begin() + pos - 1;
-  QStringList::Iterator it2 = languageList.begin() + pos;
+  QStringList::Iterator it1 = m_languageList.begin() + pos - 1;
+  QStringList::Iterator it2 = m_languageList.begin() + pos;
 
-  if ( it1 != languageList.end() && it2 != languageList.end()  )
+  if ( it1 != m_languageList.end() && it2 != m_languageList.end()  )
   {
     QString str = *it1;
     *it1 = *it2;
     *it2 = str;
 
-    m_locale->setLanguage( languageList );
+    m_locale->setLanguage( m_languageList );
 
     emit localeChanged();
     if ( pos == 1 ) // at the lang before the top
@@ -137,19 +136,18 @@ void KLocaleConfig::slotLanguageUp()
 
 void KLocaleConfig::slotLanguageDown()
 {
-  QStringList languageList = m_locale->languageList();
   int pos = m_languages->currentRow();
 
-  QStringList::Iterator it1 = languageList.begin() + pos;
-  QStringList::Iterator it2 = languageList.begin() + pos + 1;
+  QStringList::Iterator it1 = m_languageList.begin() + pos;
+  QStringList::Iterator it2 = m_languageList.begin() + pos + 1;
 
-  if ( it1 != languageList.end() && it2 != languageList.end()  )
+  if ( it1 != m_languageList.end() && it2 != m_languageList.end()  )
     {
       QString str = *it1;
       *it1 = *it2;
       *it2 = str;
 
-      m_locale->setLanguage( languageList );
+      m_locale->setLanguage( m_languageList );
 
       emit localeChanged();
       if ( pos == 0 ) // at the top
@@ -186,7 +184,7 @@ void KLocaleConfig::save()
 
   configGroup.writeEntry("Country", m_locale->country(), KConfig::Persistent|KConfig::Global);
   configGroup.writeEntry("Language",
-                         m_locale->languageList().join(":"), KConfig::Persistent|KConfig::Global);
+                         m_languageList.join(":"), KConfig::Persistent|KConfig::Global);
 
   config->sync();
 }
@@ -203,9 +201,8 @@ void KLocaleConfig::slotLocaleChanged()
 {
   // update language widget
   m_languages->clear();
-  QStringList languageList = m_locale->languageList();
-  for ( QStringList::Iterator it = languageList.begin();
-        it != languageList.end();
+  for ( QStringList::Iterator it = m_languageList.begin();
+        it != m_languageList.end();
         ++it )
   {
     QString name;
