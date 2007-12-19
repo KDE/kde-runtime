@@ -19,6 +19,8 @@
 #include "qpin.h"
 #include "compointer.h"
 
+#include <qdebug.h>
+
 namespace Phonon
 {
     namespace DS9
@@ -187,6 +189,8 @@ namespace Phonon
                 *out = static_cast<IPin*>(this);
             } else if (iid == IID_IUnknown) {
                 *out = static_cast<IUnknown*>(this);
+            } else if (iid == IID_IMediaSeeking) {
+                return m_parent->QueryInterface(iid, out);                
             } else {
                 *out = 0;
                 hr = E_NOINTERFACE;
@@ -409,8 +413,8 @@ namespace Phonon
             foreach(const AM_MEDIA_TYPE current, m_mediaTypes) {
 
                 if ( (type->majortype == current.majortype) &&
-                    (current.subtype == MEDIASUBTYPE_NULL || type->subtype == current.subtype) &&
-                    (current.formattype == GUID_NULL || type->formattype == current.formattype)
+                    (/*type->subtype == MEDIASUBTYPE_NULL ||*/  current.subtype == MEDIASUBTYPE_NULL || type->subtype == current.subtype) &&
+                    (/*type->formattype == GUID_NULL ||*/ current.formattype == GUID_NULL || type->formattype == current.formattype)
                     ) {
                     return S_OK;
                 }
@@ -492,7 +496,8 @@ namespace Phonon
         {   
             foreach(const AM_MEDIA_TYPE current, mediaTypes()) {
                 setConnectedType(current);
-                if (pin->ReceiveConnection(this, &current) == S_OK) {
+                HRESULT hr = pin->ReceiveConnection(this, &current);
+                if (hr == S_OK) {
                     return S_OK;
                 }
             }
@@ -518,6 +523,12 @@ namespace Phonon
         }
 
         //addition
+
+        PIN_DIRECTION QPin::direction() const
+        {
+            return m_direction;
+        }
+
         void QPin::setConnectedType(const AM_MEDIA_TYPE &type)
         {
             QWriteLocker locker(&m_lock);
@@ -536,7 +547,7 @@ namespace Phonon
             }
         }
 
-        AM_MEDIA_TYPE QPin::connectedType() const 
+        const AM_MEDIA_TYPE &QPin::connectedType() const 
         {
             QReadLocker locker(&m_lock);
             return m_connectedType;
@@ -589,6 +600,7 @@ namespace Phonon
                 QWriteLocker locker(&m_lock);
                 m_mediaTypes = QVector<AM_MEDIA_TYPE>() << mt;
             }
+            qDebug() << this << "QPin::setAcceptedMediaType";
 
             IPin *conn = connected();
             if (conn) {
@@ -596,7 +608,6 @@ namespace Phonon
                 conn->Disconnect();
                 Disconnect();
                 HRESULT hr = Connect(conn, 0);
-                Q_UNUSED(hr);
                 Q_ASSERT(SUCCEEDED(hr));
             }
         }

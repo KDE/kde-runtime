@@ -64,13 +64,14 @@ namespace Phonon
             void setAcceptedMediaType(const AM_MEDIA_TYPE &);
 
             bool isFlushing() const;
-            virtual void setConnectedType(const AM_MEDIA_TYPE &type);
-            AM_MEDIA_TYPE connectedType() const;
+            void setConnectedType(const AM_MEDIA_TYPE &type);
+            const AM_MEDIA_TYPE &connectedType() const;
             void setConnected(IPin *pin);
             IPin *connected(bool = false) const;
             void setMemoryAllocator(IMemAllocator *alloc);
             IMemAllocator *memoryAllocator(bool = false) const;
             void createDefaultMemoryAllocator(ALLOCATOR_PROPERTIES * = 0);
+            PIN_DIRECTION direction() const;
 
             FILTER_STATE filterState() const;
 

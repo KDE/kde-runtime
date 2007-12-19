@@ -18,11 +18,12 @@
 #include "qbasefilter.h"
 #include "qpin.h"
 
+#include <qdebug.h>
+
 namespace Phonon
 {
     namespace DS9
     {
-        static int nbinst = 0;
         class QEnumPins : public IEnumPins
         {
         public:
@@ -160,7 +161,7 @@ namespace Phonon
             }
         }
 
-        const QList<QPin *> QBaseFilter::pins()
+        const QList<QPin *> QBaseFilter::pins() const
         {
             QReadLocker locker(&m_lock);
             return m_pins;
@@ -193,7 +194,9 @@ namespace Phonon
             } else if (iid == IID_IPersist) {
                 *out = static_cast<IPersist*>(this);
             } else if (iid == IID_IUnknown) {
-                *out = static_cast<IUnknown*>(this);
+                *out = static_cast<IUnknown*>(static_cast<IBaseFilter*>(this));
+            } else if (iid == IID_IMediaSeeking) {
+                *out = static_cast<IMediaSeeking*>(this);
             } else {
                 *out = 0;
                 hr = E_NOINTERFACE;
@@ -345,7 +348,217 @@ namespace Phonon
 
         STDMETHODIMP QBaseFilter::QueryVendorInfo(LPWSTR *)
         {
+            //we give no information on that
             return E_NOTIMPL;
+        }
+
+        //implementation from IMediaSeeking
+
+        IMediaSeeking *QBaseFilter::getUpStreamMediaSeeking() const
+        {
+            foreach(QPin *pin, pins()) {
+                if (pin->direction() == PINDIR_INPUT) {
+                    IPin *out = pin->connected();
+                    if (out) {
+                        IMediaSeeking *ms = 0;
+                        out->QueryInterface(IID_IMediaSeeking, reinterpret_cast<void**>(&ms));
+                        if (ms) {
+                            return ms;
+                        }
+                    }
+                }
+            }
+            //none was found
+            return 0;
+        }
+        
+
+        STDMETHODIMP QBaseFilter::GetCapabilities(DWORD *pCapabilities)
+        {
+            IMediaSeeking *ms = getUpStreamMediaSeeking();
+            HRESULT ret = E_NOTIMPL;
+            if (ms) {
+                ret = ms->GetCapabilities(pCapabilities);
+                ms->Release();
+            }
+            return ret;
+        }
+
+        STDMETHODIMP QBaseFilter::CheckCapabilities(DWORD *pCapabilities)
+        {
+            IMediaSeeking *ms = getUpStreamMediaSeeking();
+            HRESULT ret = E_NOTIMPL;
+            if (ms) {
+                ret = ms->CheckCapabilities(pCapabilities);
+                ms->Release();
+            }
+            return ret;
+        }
+
+        STDMETHODIMP QBaseFilter::IsFormatSupported(const GUID *pFormat)
+        {
+            IMediaSeeking *ms = getUpStreamMediaSeeking();
+            HRESULT ret = E_NOTIMPL;
+            if (ms) {
+                ret = ms->IsFormatSupported(pFormat);
+                ms->Release();
+            }
+            return ret;
+        }
+
+        STDMETHODIMP QBaseFilter::QueryPreferredFormat(GUID *pFormat)
+        {
+            IMediaSeeking *ms = getUpStreamMediaSeeking();
+            HRESULT ret = E_NOTIMPL;
+            if (ms) {
+                ret = ms->QueryPreferredFormat(pFormat);
+                ms->Release();
+            }
+            return ret;
+        }
+
+        STDMETHODIMP QBaseFilter::GetTimeFormat(GUID *pFormat)
+        {
+            IMediaSeeking *ms = getUpStreamMediaSeeking();
+            HRESULT ret = E_NOTIMPL;
+            if (ms) {
+                ret = ms->GetTimeFormat(pFormat);
+                ms->Release();
+            }
+            return ret;
+        }
+
+        STDMETHODIMP QBaseFilter::IsUsingTimeFormat(const GUID *pFormat)
+        {
+            IMediaSeeking *ms = getUpStreamMediaSeeking();
+            HRESULT ret = E_NOTIMPL;
+            if (ms) {
+                ret = ms->IsUsingTimeFormat(pFormat);
+                ms->Release();
+            }
+            return ret;
+        }
+
+        STDMETHODIMP QBaseFilter::SetTimeFormat(const GUID *pFormat)
+        {
+            IMediaSeeking *ms = getUpStreamMediaSeeking();
+            HRESULT ret = E_NOTIMPL;
+            if (ms) {
+                ret = ms->SetTimeFormat(pFormat);
+                ms->Release();
+            }
+            return ret;
+        }
+
+        STDMETHODIMP QBaseFilter::GetDuration(LONGLONG *pDuration)
+        {
+            IMediaSeeking *ms = getUpStreamMediaSeeking();
+            HRESULT ret = E_NOTIMPL;
+            if (ms) {
+                ret = ms->GetDuration(pDuration);
+                ms->Release();
+            }
+            return ret;
+        }
+
+        STDMETHODIMP QBaseFilter::GetStopPosition(LONGLONG *pStop)
+        {
+            IMediaSeeking *ms = getUpStreamMediaSeeking();
+            HRESULT ret = E_NOTIMPL;
+            if (ms) {
+                ret = ms->GetStopPosition(pStop);
+                ms->Release();
+            }
+            return ret;
+        }
+
+        STDMETHODIMP QBaseFilter::GetCurrentPosition(LONGLONG *pCurrent)
+        {
+            IMediaSeeking *ms = getUpStreamMediaSeeking();
+            HRESULT ret = E_NOTIMPL;
+            if (ms) {
+                ret = ms->GetCurrentPosition(pCurrent);
+                ms->Release();
+            }
+            return ret;
+        }
+
+        STDMETHODIMP QBaseFilter::ConvertTimeFormat(LONGLONG *pTarget, const GUID *pTargetFormat,
+            LONGLONG Source, const GUID *pSourceFormat)
+        {
+            IMediaSeeking *ms = getUpStreamMediaSeeking();
+            HRESULT ret = E_NOTIMPL;
+            if (ms) {
+                ret = ms->ConvertTimeFormat(pTarget, pTargetFormat, Source, pSourceFormat);
+                ms->Release();
+            }
+            return ret;
+        }
+
+        STDMETHODIMP QBaseFilter::SetPositions(LONGLONG *pCurrent, DWORD dwCurrentFlags, LONGLONG *pStop, DWORD dwStopFlags)
+        {
+            IMediaSeeking *ms = getUpStreamMediaSeeking();
+            HRESULT ret = E_NOTIMPL;
+            if (ms) {
+                ret = ms->SetPositions(pCurrent, dwCurrentFlags, pStop, dwStopFlags);
+                ms->Release();
+            }
+            return ret;
+        }
+
+        STDMETHODIMP QBaseFilter::GetPositions(LONGLONG *pCurrent, LONGLONG *pStop)
+        {
+            IMediaSeeking *ms = getUpStreamMediaSeeking();
+            HRESULT ret = E_NOTIMPL;
+            if (ms) {
+                ret = ms->GetPositions(pCurrent, pStop);
+                ms->Release();
+            }
+            return ret;
+        }
+
+        STDMETHODIMP QBaseFilter::GetAvailable(LONGLONG *pEarliest, LONGLONG *pLatest)
+        {
+            IMediaSeeking *ms = getUpStreamMediaSeeking();
+            HRESULT ret = E_NOTIMPL;
+            if (ms) {
+                ret = ms->GetAvailable(pEarliest, pLatest);
+                ms->Release();
+            }
+            return ret;
+        }
+
+        STDMETHODIMP QBaseFilter::SetRate(double dRate)
+        {
+            IMediaSeeking *ms = getUpStreamMediaSeeking();
+            HRESULT ret = E_NOTIMPL;
+            if (ms) {
+                ret = ms->SetRate(dRate);
+                ms->Release();
+            }
+            return ret;
+        }
+
+        STDMETHODIMP QBaseFilter::GetRate(double *pdRate)
+        {
+            IMediaSeeking *ms = getUpStreamMediaSeeking();
+            HRESULT ret = E_NOTIMPL;
+            if (ms) {
+                ret = ms->GetRate(pdRate);
+                ms->Release();
+            }
+            return ret;
+        }
+
+        STDMETHODIMP QBaseFilter::GetPreroll(LONGLONG *pllPreroll)
+        {
+            IMediaSeeking *ms = getUpStreamMediaSeeking();
+            HRESULT ret = E_NOTIMPL;
+            if (ms) {
+                ret = ms->GetPreroll(pllPreroll);
+                ms->Release();
+            }
+            return ret;
         }
 
         //addition

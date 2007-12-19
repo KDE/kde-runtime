@@ -40,7 +40,8 @@ namespace Phonon
             STDMETHODIMP_(ULONG) AddRef();
             STDMETHODIMP_(ULONG) Release();
 
-
+            //reimplementation from IPin
+            STDMETHODIMP ReceiveConnection(IPin *,const AM_MEDIA_TYPE *);
 
             //reimplementation from IMemAllocator
             STDMETHODIMP GetAllocator(IMemAllocator **);
@@ -49,9 +50,6 @@ namespace Phonon
             STDMETHODIMP Receive(IMediaSample *);
             STDMETHODIMP ReceiveMultiple(IMediaSample **,long,long *);
             STDMETHODIMP ReceiveCanBlock();
-
-            //reimplementation from QPin
-            virtual void setConnectedType(const AM_MEDIA_TYPE &type);
 
             //addition
             void addOutput(QPin *output);

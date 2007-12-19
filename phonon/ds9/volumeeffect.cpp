@@ -216,7 +216,7 @@ namespace Phonon
             ms->GetTime(&start, &end);
 
             if (buffer) {
-                const AM_MEDIA_TYPE mt = m_output->connectedType();
+                const AM_MEDIA_TYPE &mt = m_output->connectedType();
                 if (mt.formattype != FORMAT_WaveFormatEx) {
                     qWarning("VolumeEffectFilter::processSample: the mediatype format should be FORMAT_WaveFormatEx");
                     return;
@@ -243,11 +243,6 @@ namespace Phonon
                 VolumeEffectFilter *f = new VolumeEffectFilter(this);
                 *it = Filter(f);
             }
-
-            m_volume = 0;
-            //TEST fade out in 3 seconds
-            fadeTo(1., 15000);
-
         }
 
         float VolumeEffect::volume() const
