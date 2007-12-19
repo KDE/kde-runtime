@@ -29,6 +29,8 @@ namespace Phonon
         DEFINE_GUID(CLSID_FakeSource,
             0xdfbeccbe, 0x4c37, 0x4bb9, 0xb5, 0xb6, 0xc7, 0x18, 0xea, 0x5d, 0x1f, 0xe8);
 
+        static WAVEFORMATEX g_defaultWaveFormat = {WAVE_FORMAT_PCM, 2, 44100, 176400, 4, 16, 0};
+
         class FakePin : public QPin
         {
         public:
@@ -134,16 +136,7 @@ namespace Phonon
 
             //fake the format (stereo 44.1 khz stereo 16 bits)
             mt.cbFormat = sizeof(WAVEFORMATEX);
-            mt.pbFormat = static_cast<BYTE*>(::CoTaskMemAlloc(sizeof(WAVEFORMATEX)));
-            WAVEFORMATEX *format = reinterpret_cast<WAVEFORMATEX*>(mt.pbFormat);
-            qMemSet(format, 0, sizeof(WAVEFORMATEX));
-            format->cbSize = 0;
-            format->nAvgBytesPerSec = 176400;
-            format->nBlockAlign = 4;
-            format->nChannels = 2;
-            format->nSamplesPerSec = 44100;
-            format->wBitsPerSample = 16;
-            format->wFormatTag = WAVE_FORMAT_PCM;
+            mt.pbFormat = reinterpret_cast<BYTE*>(&g_defaultWaveFormat);
 
             new FakePin(this, mt);
         }
@@ -155,12 +148,6 @@ namespace Phonon
             mt.majortype = MEDIATYPE_Video;
             mt.subtype = MEDIASUBTYPE_RGB32;
             mt.formattype = FORMAT_VideoInfo;
-
-            //fake the format (RGB 32 bits)
-            mt.cbFormat = sizeof(VIDEOINFOHEADER);
-            mt.pbFormat = static_cast<BYTE*>(::CoTaskMemAlloc(sizeof(VIDEOINFOHEADER)));
-            VIDEOINFOHEADER *format = reinterpret_cast<VIDEOINFOHEADER*>(mt.pbFormat);
-            qMemSet(format, 0, sizeof(VIDEOINFOHEADER));
             new FakePin(this, mt);
         }
 
