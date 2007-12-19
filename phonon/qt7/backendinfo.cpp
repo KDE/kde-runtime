@@ -38,7 +38,7 @@ QMap<QString, QString> BackendInfo::quickTimeMimeTypes(Scope scope)
     description.componentManufacturer = 0;
     description.componentFlags = hasMovieImportMIMEList | canMovieImportFiles;
     description.componentFlagsMask = canMovieImportFiles | movieImportSubTypeIsFileExtension | hasMovieImportMIMEList;
-    Component component = FindNextComponent(component, &description);
+    Component component = FindNextComponent(0, &description);
 
     while (component) {
         QTAtomContainer mimeList = 0;

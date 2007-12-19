@@ -92,7 +92,8 @@ void QuickTimeVideoPlayer::doRegularTasks()
         MoviesTask(m_movieRef, 1);
         long ms = 0;
         QTGetTimeUntilNextTask(&ms, 1000);
-        m_mediaUpdateTimer = startTimer(ms);
+        if (ms > 0)
+            m_mediaUpdateTimer = startTimer(ms);
     }
 }
 

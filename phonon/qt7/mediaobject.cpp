@@ -426,7 +426,10 @@ void MediaObject::updateCurrentTime()
         // We have a next source.
         // Check if it's time to swap to next source:
         mark = total + m_transitionTime;
-        if (mark >= total){
+        if (m_waitNextSwap && m_state == Phonon::PlayingState &&
+            m_transitionTime < m_swapTime.msecsTo(QTime::currentTime())){
+            swapCurrentWithNext(0);
+        } else if (mark >= total){
             if (lastUpdateTime < total && total == m_currentTime){
                 m_swapTime = QTime::currentTime();
                 m_swapTime.addMSecs(mark - total);
@@ -534,12 +537,14 @@ bool MediaObject::setAudioDeviceOnMovie(int id)
     return m_videoPlayer->setAudioDevice(id);
 }
 
-void MediaObject::doRegualarTasksThreadSafe()
+/**
+    Callback from the display link (in a thread != main thread)
+*/
+void MediaObject::displayLinkCallback(const CVTimeStamp &timeStamp)
 {
     QMutexLocker locker(&m_quickTimeGuard);
         m_audioPlayer->doRegularTasks();
-        m_videoPlayer->doRegularTasks();
-        
+        m_videoPlayer->doRegularTasks();        
         m_nextVideoPlayer->doRegularTasks();
         m_nextAudioPlayer->doRegularTasks();
         m_mediaObjectAudioNode->updateCrossFade(m_currentTime);
@@ -550,24 +555,9 @@ void MediaObject::doRegualarTasksThreadSafe()
             if (m_nextAudioPlayer->isPlaying())
                 m_nextAudioPlayer->unsetVideo();
         }        
-    locker.unlock();
 
-    if (m_waitNextSwap &&
-        m_state == Phonon::PlayingState &&
-        m_transitionTime < m_swapTime.msecsTo(QTime::currentTime()))
-        swapCurrentWithNext(0);
-}
-
-/**
-    Callback from the display link (in a thread != main thread)
-*/
-void MediaObject::displayLinkCallback(const CVTimeStamp &timeStamp)
-{
-    QMutexLocker locker(&m_quickTimeGuard);
-        // Update video:
         if (m_videoPlayer->videoFrameChanged(timeStamp)){
-            VideoFrame frame(m_videoPlayer, timeStamp);
-            
+            VideoFrame frame(m_videoPlayer, timeStamp);           
             if (m_nextVideoPlayer->isPlaying()){
                 if (m_mediaObjectAudioNode->m_fadeDuration > 0){
                     // We're cross-fading. Set the previous' movie frames
@@ -589,8 +579,7 @@ void MediaObject::displayLinkCallback(const CVTimeStamp &timeStamp)
         }
     locker.unlock();
 
-    // Take advantage of the callback for
-    // updating the media object time:
+    // Take advantage of the callback for updating the current time:
     QCoreApplication::postEvent(this, new QEvent(QEvent::User), Qt::HighEventPriority);
 }
 
@@ -613,7 +602,6 @@ bool MediaObject::event(QEvent *event)
     switch (event->type()){
         case QEvent::User:
             updateCurrentTime();
-            doRegualarTasksThreadSafe();
             break;
         case QEvent::Timer:
             QTimerEvent *timerEvent = static_cast<QTimerEvent *>(event);

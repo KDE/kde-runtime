@@ -59,6 +59,7 @@ namespace QT7
             virtual QVariant parameterValue(const Phonon::EffectParameter &parameter) const;
             virtual void setParameterValue(const Phonon::EffectParameter &parameter, const QVariant &newValue);
 
+            static bool effectAwailable(int effectType);
             static QList<int> effectList();
     };
 

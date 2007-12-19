@@ -145,7 +145,6 @@ namespace QT7
         void updateCurrentTime();
         void swapCurrentWithNext(qint32 transitionTime);
         void setState(Phonon::State state);
-        void doRegualarTasksThreadSafe();
 
         QString m_errorString;
         Phonon::ErrorType m_errorType;

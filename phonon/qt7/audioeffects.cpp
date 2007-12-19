@@ -142,6 +142,17 @@ void AudioEffect::setParameterValue(const Phonon::EffectParameter &/*parameter*/
 {
 }
 
+bool AudioEffect::effectAwailable(int effectType)
+{
+	ComponentDescription d;
+	d.componentType = kAudioUnitType_Effect;
+	d.componentSubType = effectType;
+	d.componentManufacturer = kAudioUnitManufacturer_Apple;
+	d.componentFlags = 0;
+	d.componentFlagsMask = 0;
+    return FindNextComponent(0, &d) != 0;
+}
+
 QList<int> AudioEffect::effectList()
 {
     QList<int> effects;
@@ -161,9 +172,13 @@ QList<int> AudioEffect::effectList()
     << kAudioUnitSubType_SampleDelay
     << kAudioUnitSubType_Pitch
     << kAudioUnitSubType_AUFilter
-    << kAudioUnitSubType_NetSend
-    << FOUR_CHAR_CODE('dist')
-    << FOUR_CHAR_CODE('rogr');
+    << kAudioUnitSubType_NetSend;
+    
+    if (effectAwailable(FOUR_CHAR_CODE('dist')))
+        effects << FOUR_CHAR_CODE('dist');
+    if (effectAwailable(FOUR_CHAR_CODE('rogr')))
+        effects << FOUR_CHAR_CODE('rogr');
+
     return effects;
 }
 
