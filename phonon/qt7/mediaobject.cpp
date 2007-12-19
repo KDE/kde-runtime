@@ -86,6 +86,7 @@ void MediaObject::setState(Phonon::State state)
 void MediaObject::setSource(const MediaSource &source)
 {
     IMPLEMENTED;
+    Phonon::State stateBeforeNewSource = m_state;
     setState(Phonon::LoadingState);
     
     // Save current state for event/signal handling below:
@@ -113,7 +114,14 @@ void MediaObject::setSource(const MediaSource &source)
     m_currentTime = 0;
 
     if (m_videoPlayer->canPlayMedia())
-        setState(Phonon::PausedState);
+        switch (stateBeforeNewSource){
+        case Phonon::PlayingState:
+            play();
+            break;
+        default:
+            pause();
+            break;
+        }
     else{
         gSetErrorString("Cannot play current media.");
         gSetErrorType(NORMAL_ERROR);
