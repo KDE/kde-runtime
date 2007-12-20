@@ -425,7 +425,8 @@ void QuickTimeAudioPlayer::mediaNodeEvent(const MediaNodeEvent *event)
             break;
         case MediaNodeEvent::AudioGraphInitialized:
         case MediaNodeEvent::RestartAudioStreamRequest:
-            seek(m_startTime);
+            if (m_state == Playing)
+                seek(m_startTime);
             break;
        default:
             break;
