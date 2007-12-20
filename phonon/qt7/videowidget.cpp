@@ -306,9 +306,12 @@ void VideoWidget::setSaturation(qreal value)
 void VideoWidget::mediaNodeEvent(const MediaNodeEvent *event)
 {
     switch (event->type()){
-    case MediaNodeEvent::VideoFrameSizeChanged:
+    case MediaNodeEvent::VideoFrameSizeChanged:{
+        // Prepare for new movie:
         m_videoRenderWidget->setMovieRect(*static_cast<QRect *>(event->data()));
-        break;
+        VideoFrame emptyFrame;
+        m_videoRenderWidget->setVideoFrame(emptyFrame);
+        break; }
     default:
         break;
     }
