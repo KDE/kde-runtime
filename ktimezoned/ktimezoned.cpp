@@ -773,6 +773,7 @@ bool KTimeZoned::matchZoneFile(const QString &path)
             // The file doesn't match a zoneinfo file. If it's a TZfile, use it directly.
             // Read the file type identifier.
             char buff[4];
+            f.reset();
             QDataStream str(&f);
             if (str.readRawData(buff, 4) == 4
             &&  buff[0] == 'T' && buff[1] == 'Z' && buff[2] == 'i' && buff[3] == 'f')
