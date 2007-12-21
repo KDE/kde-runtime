@@ -32,6 +32,8 @@
 #include <QtCore/QEvent>
 #include <QApplication>
 
+#define ABOUT_TO_FINNISH_TIME 2000
+
 #include <unistd.h>             // for usleep
 
 QT_BEGIN_NAMESPACE
@@ -45,12 +47,14 @@ MediaObject::MediaObject(Backend *backend, QObject *parent)
         : QObject(parent)
         , MediaNode(backend, AudioSource | VideoSource)
         , m_state(Phonon::LoadingState)
+        , m_pendingState(Phonon::LoadingState)
         , m_tickTimer(new QTimer(this))
         , m_prefinishMark(0)
         , m_transitionTime(0)
         , m_prefinishMarkReachedNotEmitted(true)
         , m_aboutToFinishEmitted(false)
         , m_loading(false)
+        , m_capsHandler(0)
         , m_datasource(0)
         , m_decodebin(0)
         , m_audioPipe(0)
@@ -65,6 +69,8 @@ MediaObject::MediaObject(Backend *backend, QObject *parent)
         , m_audioGraph(0)
         , m_videoGraph(0)
 {
+    qRegisterMetaType<GstCaps>("GstCaps");
+
     static int count = 0;
     m_name = "MediaObject" + QString::number(count++);
 
@@ -77,6 +83,9 @@ MediaObject::MediaObject(Backend *backend, QObject *parent)
         createPipeline();
         connect(m_tickTimer, SIGNAL(timeout()), SLOT(emitTick()));
     }
+    connect(this, SIGNAL(stateChanged(Phonon::State, Phonon::State)), 
+            this, SLOT(notifyStateChange(Phonon::State, Phonon::State)));
+
 }
 
 MediaObject::~MediaObject()
@@ -93,6 +102,24 @@ MediaObject::~MediaObject()
         gst_object_unref(m_videoGraph);
 }
 
+QString stateString(const Phonon::State &state)
+{
+    switch (state) {
+    case Phonon::LoadingState:
+        return QString("LoadingState");
+    case Phonon::StoppedState:
+        return QString("StoppedState");
+    case Phonon::PlayingState:
+        return QString("PlayingState");
+    case Phonon::BufferingState:
+        return QString("BufferingState");
+    case Phonon::PausedState:
+        return QString("PausedState");
+    case Phonon::ErrorState:
+        return QString("ErrorState");
+    }
+    return QString();
+}
 
 void MediaObject::newPadAvailable (GstPad *pad)
 {
@@ -148,18 +175,22 @@ static void notifyVideoCaps(GObject *obj, GParamSpec *, gpointer data)
     GstPad *pad = GST_PAD(obj);
     GstCaps *caps = gst_pad_get_caps (pad);
     Q_ASSERT(caps);
-
     MediaObject *media = static_cast<MediaObject*>(data);
-    media->setVideoCaps(caps);
+
+    // We do not want any more notifications until the source changes
+    g_signal_handler_disconnect(pad, media->capsHandler());
+
+    // setVideoCaps calls loadingComplete(), meaning we cannot call it from
+    // the streaming thread
+    QMetaObject::invokeMethod(media, "setVideoCaps", Qt::QueuedConnection, Q_ARG(GstCaps, *caps));
 }
 
-void MediaObject::setVideoCaps(GstCaps *caps)
+void MediaObject::setVideoCaps(GstCaps caps)
 {
-
     GstStructure *str;
     gint width, height;
 
-    if ((str = gst_caps_get_structure (caps, 0))) {
+    if ((str = gst_caps_get_structure (&caps, 0))) {
         if (gst_structure_get_int (str, "width", &width) && gst_structure_get_int (str, "height", &height)) {
             // Let child nodes know about our new video size
             QSize size(width, height);
@@ -167,6 +198,7 @@ void MediaObject::setVideoCaps(GstCaps *caps)
             notify(&event);
         }
     }
+    loadingComplete();
 }
 
 // Adds an element to the pipeline if not previously added
@@ -193,9 +225,7 @@ void MediaObject::connectVideo(GstPad *pad)
             m_hasVideo = true;
             m_backend->logMessage("Video track connected");
             // Note that the notify::caps _must_ be installed after linking to work with Dapper
-            g_signal_connect(pad, "notify::caps", G_CALLBACK(notifyVideoCaps), this);
-            MediaNodeEvent event(MediaNodeEvent::VideoAvailable);
-            notify(&event);
+            m_capsHandler = g_signal_connect(pad, "notify::caps", G_CALLBACK(notifyVideoCaps), this);
         }
         gst_object_unref (videopad);
     } else {
@@ -384,37 +414,52 @@ void MediaObject::setState(State newstate)
     if (!isValid())
         return;
 
-    if (newstate == m_state)
+    if (m_state == newstate)
         return;
+
+    if (m_loading) {
+        // We are still loading. The state will be requested
+        // when loading has completed.
+        m_pendingState = newstate;
+        return;
+    }
 
     switch (newstate) {
     case Phonon::BufferingState:
         m_backend->logMessage("phonon state request: buffering", Backend::Info, this);
-        changeState(newstate); //immediately set buffering state
         break;
 
     case Phonon::PausedState:
-        if (m_loading)
-            beginLoad();
-
         m_backend->logMessage("phonon state request: paused", Backend::Info, this);
-        if (gst_element_set_state(m_pipeline, GST_STATE_PAUSED) != GST_STATE_CHANGE_FAILURE)
+        if (GST_STATE(m_pipeline) == GST_STATE_PAUSED) {
             changeState(Phonon::PausedState);
-        break;
-
-    case Phonon::PlayingState:
-        if (m_loading)
-            beginLoad();
-
-        m_backend->logMessage("phonon state request: Playing", Backend::Info, this);
-        if (gst_element_set_state(m_pipeline, GST_STATE_PLAYING) != GST_STATE_CHANGE_FAILURE)
-            changeState(Phonon::PlayingState);
+        } else if (gst_element_set_state(m_pipeline, GST_STATE_PAUSED) != GST_STATE_CHANGE_FAILURE) {
+            m_pendingState = Phonon::PausedState;
+        } else {
+            m_backend->logMessage("phonon state request failed", Backend::Info, this);
+        }
         break;
 
     case Phonon::StoppedState:
         m_backend->logMessage("phonon state request: Stopped", Backend::Info, this);
-        if (gst_element_set_state(m_pipeline, GST_STATE_READY) != GST_STATE_CHANGE_FAILURE)
+        if (GST_STATE(m_pipeline) == GST_STATE_READY) {
             changeState(Phonon::StoppedState);
+        } else if (gst_element_set_state(m_pipeline, GST_STATE_READY) != GST_STATE_CHANGE_FAILURE) {
+            m_pendingState = Phonon::StoppedState;
+        } else {
+            m_backend->logMessage("phonon state request failed", Backend::Info, this);
+        }
+        break;
+
+    case Phonon::PlayingState:
+        m_backend->logMessage("phonon state request: Playing", Backend::Info, this);
+        if (GST_STATE(m_pipeline) == GST_STATE_PLAYING) {
+            changeState(Phonon::PlayingState);
+        } else if (gst_element_set_state(m_pipeline, GST_STATE_PLAYING) != GST_STATE_CHANGE_FAILURE) {
+            m_pendingState = Phonon::PlayingState;
+        } else {
+            m_backend->logMessage("phonon state request failed", Backend::Info, this);
+        }
         break;
 
     case Phonon::ErrorState:
@@ -440,8 +485,11 @@ void MediaObject::changeState(State newstate)
     if (newstate == m_state)
         return;
 
-    emit stateChanged(newstate, m_state);
-    m_state = newstate;
+    Phonon::State oldState = m_state;
+    m_state = newstate; // m_state must be set before emitting, since 
+                        // Error state requires that state() will return the new value
+    emit stateChanged(newstate, oldState);
+    m_pendingState = newstate;
 
     switch (newstate) {
     case Phonon::PausedState:
@@ -606,10 +654,13 @@ void MediaObject::setSource(const MediaSource &source)
     if (gst_element_set_state(m_pipeline, GST_STATE_NULL) != GST_STATE_CHANGE_SUCCESS) {
         setError(tr("Unable to flush pipeline"));
     }
+    emit currentSourceChanged(m_source);
+
 
     // Go into to loading state
     changeState(Phonon::LoadingState);
     m_loading = true;
+    m_pendingState = Phonon::StoppedState;
 
      // Make sure we start out unconnected
     if (gst_element_get_parent(m_audioGraph))
@@ -674,38 +725,28 @@ void MediaObject::setSource(const MediaSource &source)
     // before loading, otherwise the stream will be blocked
     link();
 
-    emit currentSourceChanged(m_source);
-
-    // Do not fetch content untill we are in the play or paused states
-    changeState(Phonon::StoppedState);
+    beginLoad();
 }
 
-// Called when the user triggers pause() or play() on the media source
-// while it is still in the loading state. This will block until the
-// all stream info has been obtained.
-
-// Currently both the Mac and Windows backends block on setSource, while 
-// here we require calling pause() or play() to actually fetch data.
-// 
 void MediaObject::beginLoad()
 {
     if (gst_element_set_state(m_pipeline, GST_STATE_PAUSED) != GST_STATE_CHANGE_FAILURE) {
-
-        QTime timeoutTimer;
-        timeoutTimer.start();
-
-        while (m_loading && timeoutTimer.elapsed() < 1000) {
-            QApplication::processEvents();
-            usleep(20);
-        }
-
-        if (m_loading) {
-            m_loading = false;
-            setError(tr("Timed out while waiting for source"));
-        }
+        m_backend->logMessage("Begin source load");
     } else {
         setError(tr("Could not load source"));
     }
+}
+
+// Called when we are ready to leave the loading state
+void MediaObject::loadingComplete()
+{
+    if (m_hasVideo) {
+        MediaNodeEvent event(MediaNodeEvent::VideoAvailable);
+        notify(&event);
+    }
+    getStreamInfo();
+    m_loading = false;
+    setState(m_pendingState);
 }
 
 void MediaObject::getStreamInfo()
@@ -734,10 +775,10 @@ void MediaObject::pause()
     case PlayingState:
     case BufferingState:
     case StoppedState:
+    case LoadingState:
         setState(Phonon::PausedState);
         break;
     case PausedState:
-    case LoadingState:
     case ErrorState:
         break;
     }
@@ -756,25 +797,33 @@ void MediaObject::seek(qint64 time)
     if (!isValid())
         return;
 
+    Phonon::State oldState = state();
+
     if (isSeekable()) {
         switch (state()) {
         case Phonon::PlayingState:
         case Phonon::StoppedState:
         case Phonon::PausedState:
         case Phonon::BufferingState:
+            // Go to buffering state, we resume paused state when ready
             if (gst_element_seek(m_pipeline, 1.0, GST_FORMAT_TIME,
                                  GST_SEEK_FLAG_FLUSH, GST_SEEK_TYPE_SET,
                                  time * GST_MSECOND,GST_SEEK_TYPE_NONE, GST_CLOCK_TIME_NONE))
-                emit tick(time); // Notifies the MediaObject about the position change.
-                                 // (will keep seek sliders in sync)
+            setState(oldState);
             break;
         case Phonon::LoadingState:
         case Phonon::ErrorState:
             return;
         }
 
-        if (currentTime() < totalTime() - m_prefinishMark)
+        quint64 current = currentTime();
+        quint64 total = totalTime(); 
+
+        if (current < total - m_prefinishMark)
             m_prefinishMarkReachedNotEmitted = true;
+        if (current < total - ABOUT_TO_FINNISH_TIME)
+            m_aboutToFinishEmitted = false;
+    
     }
 }
 
@@ -794,7 +843,7 @@ void MediaObject::emitTick()
     }
 
     //Prepare load of next source
-    if (currentTime >= totalTime - 2000) {
+    if (currentTime >= totalTime - ABOUT_TO_FINNISH_TIME) {
         if (!m_aboutToFinishEmitted) {
             m_aboutToFinishEmitted = true; // track is about to finish
             emit aboutToFinish();
@@ -863,9 +912,8 @@ void MediaObject::beginPlay()
 {
     if (m_nextSource.type() == MediaSource::Invalid)
         return;
-
+    setSource(m_nextSource);
     m_nextSource = MediaSource();
-
     play();
 }
 
@@ -886,12 +934,8 @@ void MediaObject::handleBusMessage(const Message &message)
     case GST_MESSAGE_EOS: {
             // Note that this event is the only reliable way of knowing that a track has finished, since
             // with some media streams we never actually reach the duration indicated by the stream duration
-            //
             if (m_nextSource.type() != MediaSource::Invalid) {  // We only emit finish when the queue is actually empty
-
-                // ### Due to timing issues, we currently wait for at least 100 ms before playback can start
-                //     This is obviously not ideal...
-                QTimer::singleShot (qMax(100, transitionTime()), this, SLOT(beginPlay()));
+                QTimer::singleShot (qMax(0, transitionTime()), this, SLOT(beginPlay()));
             } else {
                 stop(); // Current track completed
                 emit finished();
@@ -926,6 +970,8 @@ void MediaObject::handleBusMessage(const Message &message)
             case GST_STATE_PLAYING :
                 m_backend->logMessage("gstreamer: pipeline state set to playing", Backend::Info, this);
                 m_tickTimer->start();
+                changeState(Phonon::PlayingState);
+                emitTick();
                 break;
 
             case GST_STATE_NULL:
@@ -937,18 +983,23 @@ void MediaObject::handleBusMessage(const Message &message)
                 m_backend->logMessage("gstreamer: pipeline state set to paused", Backend::Info, this);
                 m_tickTimer->stop();
 
-                if (m_loading) {
-                    getStreamInfo();
-                    m_loading = false;
-                    if (state() == Phonon::LoadingState)
-                        setState(Phonon::PausedState);
-                    else if (state() == Phonon::PlayingState)
-                        setState(Phonon::PlayingState);
-                }
+                if (state() == Phonon::LoadingState) {
+                    // If we have video, wait for setVideoCaps
+                    // otherwise we are already done.
+                    if (!m_hasVideo) {
+                        loadingComplete();
+                    }
 
+                } else {
+                    if (m_pendingState == Phonon::PausedState)
+                        changeState(Phonon::PausedState);
+                    emitTick();
+                }
                 break;
 
             case GST_STATE_READY :
+                if (!m_loading && m_pendingState == Phonon::StoppedState)
+                    changeState(Phonon::StoppedState);
                 m_backend->logMessage("gstreamer: pipeline state set to ready", Backend::Debug, this);
                 m_tickTimer->stop();
                 break;
@@ -1028,9 +1079,17 @@ void MediaObject::handleBusMessage(const Message &message)
     default: 
         int type = GST_MESSAGE_TYPE(gstMessage);
         QString message = QString("Bus: %0").arg(gst_message_type_get_name ((GstMessageType)type));
-        m_backend->logMessage(message, Backend::Debug, this);
+        //m_backend->logMessage(message, Backend::Debug, this);
         break; 
     }
+}
+
+// Notifes the pipeline about state changes in the media object
+void MediaObject::notifyStateChange(Phonon::State newstate, Phonon::State oldstate)
+{
+    Q_UNUSED(oldstate);
+    MediaNodeEvent event(MediaNodeEvent::StateChanged, &newstate);
+    notify(&event);
 }
 
 } // ns Gstreamer

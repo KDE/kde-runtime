@@ -20,6 +20,8 @@
 
 #include <QtCore>
 
+QT_BEGIN_NAMESPACE
+
 namespace Phonon
 {
 namespace Gstreamer
@@ -31,8 +33,8 @@ public:
         VideoAvailable,
         AudioAvailable,
         SourceChanged,
-        MediaSourceChanged,
-
+        MediaObjectConnected,
+        StateChanged,
         VideoSinkAdded,
         VideoSinkRemoved,
         AudioSinkAdded,
@@ -60,5 +62,7 @@ private:
 
 }
 } // namespace Phonon::Gstreamer
+
+QT_END_NAMESPACE
 
 #endif // Phonon_Gstreamer_MEDIANODEEVENT_H

@@ -33,6 +33,8 @@
 #include "backend.h"
 #include "medianode.h"
 
+QT_BEGIN_NAMESPACE
+
 class QTimer;
 typedef QMultiMap<QString, QString> TagMap;
 
@@ -129,7 +131,11 @@ public:
         return m_pipeline;
     };
 
-    void setVideoCaps(GstCaps *caps);
+    gulong capsHandler()
+    {
+        return m_capsHandler;
+    };
+
     void connectVideo(GstPad *videoPad);
     void connectAudio(GstPad *audioPad);
     void handleBusMessage(const Message &msg);
@@ -155,6 +161,7 @@ Q_SIGNALS:
 
 protected:
     void beginLoad();
+    void loadingComplete();
     void newPadAvailable (GstPad *pad);
     void setState(State);
     void changeState(State);
@@ -165,7 +172,8 @@ private Q_SLOTS:
     void getStreamInfo();
     void emitTick();
     void beginPlay();
-
+    void setVideoCaps(GstCaps caps);
+    void notifyStateChange(Phonon::State newstate, Phonon::State oldstate);
 protected:
     GstElement *audioElement()
     {
@@ -191,6 +199,7 @@ private:
     qint64 getPipelinePos() const;
 
     State m_state;
+    State m_pendingState;
     QTimer *m_tickTimer;
     qint32 m_tickInterval;
 
@@ -202,6 +211,7 @@ private:
     bool m_prefinishMarkReachedNotEmitted;
     bool m_aboutToFinishEmitted;
     bool m_loading;
+    gulong m_capsHandler;
 
     GstElement *m_datasource;
     GstElement *m_decodebin;
@@ -225,5 +235,7 @@ private:
 };
 }
 } //namespace Phonon::Gstreamer
+
+QT_END_NAMESPACE
 
 #endif // Phonon_Gstreamer_MEDIAOBJECT_H

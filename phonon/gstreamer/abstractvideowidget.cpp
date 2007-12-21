@@ -30,6 +30,8 @@
 #include "message.h"
 #include "common.h"
 
+QT_BEGIN_NAMESPACE
+
 namespace Phonon
 {
 namespace Gstreamer
@@ -235,19 +237,12 @@ void AbstractVideoWidget::setMovieSize(const QSize &size)
 
 void AbstractVideoWidget::mediaNodeEvent(const MediaNodeEvent *event)
 {
-
     switch (event->type()) {
     case MediaNodeEvent::VideoSizeChanged: {
             const QSize *size = static_cast<const QSize*>(event->data());
             setMovieSize(*size);
         }
         break;
-
-    case MediaNodeEvent::VideoHandleRequest: {
-            widget()->adjustSize();
-        }
-        break;
-
     default:
         break;
     }
@@ -255,5 +250,7 @@ void AbstractVideoWidget::mediaNodeEvent(const MediaNodeEvent *event)
 
 }
 } //namespace Phonon::Gstreamer
+
+QT_END_NAMESPACE
 
 #include "moc_abstractvideowidget.cpp"

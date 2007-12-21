@@ -22,6 +22,8 @@
 #include "backend.h"
 #include "gsthelper.h"
 
+QT_BEGIN_NAMESPACE
+
 namespace Phonon
 {
 namespace Gstreamer
@@ -163,23 +165,23 @@ bool MediaNode::connectNode(QObject *obj)
         if ((m_description & AudioSource) && (sink->m_description & AudioSink)) {
             m_audioSinkList << obj;
             MediaNodeEvent event(MediaNodeEvent::AudioSinkAdded, sink);
-            mediaNodeEvent(&event);
+            root()->mediaNodeEvent(&event);
             success = true;
         }
 
         if ((m_description & VideoSource) && (sink->m_description & VideoSink)) {
             m_videoSinkList << obj;
             MediaNodeEvent event(MediaNodeEvent::VideoSinkAdded, sink);
-            mediaNodeEvent(&event);
+            root()->mediaNodeEvent(&event);
             success = true;
         }
 
         // If we have a root source, and we are connected
         // try to link the gstreamer elements
         if (success && root()) {
-            MediaNodeEvent sourceChanged(MediaNodeEvent::MediaSourceChanged, root());
-            notify(&sourceChanged);
-            buildGraph();
+            MediaNodeEvent mediaObjectConnected(MediaNodeEvent::MediaObjectConnected, root());
+            notify(&mediaObjectConnected);
+            root()->buildGraph();
         }
     }
     return success;
@@ -440,3 +442,5 @@ bool MediaNode::unlink()
 
 } // ns Gstreamer
 } // ns Phonon
+
+QT_END_NAMESPACE

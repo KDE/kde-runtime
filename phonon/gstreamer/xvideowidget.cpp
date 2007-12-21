@@ -20,6 +20,7 @@
 #ifndef Q_WS_QWS
 
 #include <QtGui/QPalette>
+#include <QtGui/QApplication>
 #include <X11/Xlib.h>
 #include <gst/gst.h>
 #include <gst/interfaces/xoverlay.h>
@@ -27,6 +28,8 @@
 #include "common.h"
 #include "mediaobject.h"
 #include "message.h"
+
+QT_BEGIN_NAMESPACE
 
 namespace Phonon
 {
@@ -65,24 +68,36 @@ GstElement* XVideoWidget::createVideoSink()
 void XVideoWidget::mediaNodeEvent(const MediaNodeEvent *event)
 {
     AbstractVideoWidget::mediaNodeEvent(event);
-
     switch (event->type()) {
-    case MediaNodeEvent::VideoAvailable: {
-            m_renderWidget->setAttribute(Qt::WA_NoSystemBackground, true);
-            m_renderWidget->setAttribute(Qt::WA_PaintOnScreen, true);
-        }
+    case MediaNodeEvent::SourceChanged:         // New media source is set
+    case MediaNodeEvent::MediaObjectConnected:  // We are inserted into a playing graph
+        m_renderWidget->setOverlay();
         break;
-
-    case MediaNodeEvent::SourceChanged: {
-            if (m_renderWidget->overlaySet()) {
-                m_renderWidget->setOverlay();
+    case MediaNodeEvent::StateChanged: 
+    {
+            const Phonon::State *newstate = static_cast<const Phonon::State*>(event->data());
+            switch (*newstate) {
+            case Phonon::PlayingState:
+            case Phonon::PausedState:
+                // Setting these attributes ensures smooth video resizing without flicker
+                if (root()->hasVideo()) {
+                    m_renderWidget->setAttribute(Qt::WA_NoSystemBackground, true);
+                    m_renderWidget->setAttribute(Qt::WA_PaintOnScreen, true);
+                }
+                break;
+        
+            case Phonon::LoadingState:
+            case Phonon::ErrorState:
+            case Phonon::StoppedState:
+                m_renderWidget->setAttribute(Qt::WA_NoSystemBackground, false);
+                m_renderWidget->setAttribute(Qt::WA_PaintOnScreen, false);
+                break;
+            default:
+                break;
+        
             }
-            // Setting these attributes ensures smooth video resizing without flicker
-            m_renderWidget->setAttribute(Qt::WA_NoSystemBackground, false);
-            m_renderWidget->setAttribute(Qt::WA_PaintOnScreen, false);
-        }
-        break;
-
+    break;
+    }
     default:
         break;
     }
@@ -115,16 +130,19 @@ void XVideoWidget::setAspectRatio(Phonon::VideoWidget::AspectRatio aspectRatio)
 
 void XWidget::paintEvent(QPaintEvent *)
 {
-    if (!m_overlaySet)
-        setOverlay();
     windowExposed();
 }
 
 void XWidget::setOverlay()
 {
     GstElement *sink = m_controller->videoSink();
-    if (sink && GST_IS_X_OVERLAY(sink))
-        gst_x_overlay_set_xwindow_id ( GST_X_OVERLAY(sink) ,  winId() );
+    if (sink && GST_IS_X_OVERLAY(sink)) {
+        WId windowId = winId();
+        // Even if we have created a winId at this point, other X applications
+        // need to be aware of it.
+        QApplication::syncX();
+        gst_x_overlay_set_xwindow_id ( GST_X_OVERLAY(sink) ,  windowId );
+    }
     windowExposed();
     m_overlaySet = true;
 }
@@ -143,5 +161,7 @@ QSize XWidget::sizeHint() const
 
 }
 } //namespace Phonon::Gstreamer
+
+QT_END_NAMESPACE
 
 #endif // Q_WS_QWS

@@ -25,6 +25,8 @@
 #include <QGLWidget>
 #endif
 
+QT_BEGIN_NAMESPACE
+
 class QString;
 
 namespace Phonon
@@ -105,7 +107,9 @@ public:
     void calculateDrawFrameRect();
     void setNextFrame(const QByteArray &array, int width, int height);
     bool event( QEvent * event );
-
+    void mediaNodeEvent(const MediaNodeEvent *event);
+    void clearFrame();
+    bool frameIsSet() { return !m_array.isNull(); }
 private:
     mutable QImage m_frame;
     QByteArray m_array;
@@ -118,5 +122,7 @@ private:
 
 }
 } //namespace Phonon::Gstreamer
+
+QT_END_NAMESPACE
 
 #endif // Phonon_UI_GSTREAMER_VIDEOWIDGET_H

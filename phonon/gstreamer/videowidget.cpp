@@ -24,6 +24,8 @@
 #include "videowidget.h"
 #include "qrgb.h"
 
+QT_BEGIN_NAMESPACE
+
 static void frameRendered()
 {
     static QString displayFps = qgetenv("PHONON_GST_FPS");
@@ -100,6 +102,9 @@ GstElement* VideoWidget::createVideoSink()
 
 void VideoWidget::setNextFrame(const QByteArray &array, int w, int h)
 {
+    if (root()->state() == Phonon::LoadingState)
+        return;
+
     m_frame = QImage();
 
 #ifndef QT_NO_OPENGL
@@ -120,6 +125,27 @@ void VideoWidget::setNextFrame(const QByteArray &array, int w, int h)
     m_width = w;
     m_height = h;
 
+    m_renderWidget->update();
+}
+
+void VideoWidget::mediaNodeEvent(const MediaNodeEvent *event)
+{
+    AbstractVideoWidget::mediaNodeEvent(event);
+    switch (event->type()) {
+    case MediaNodeEvent::SourceChanged:
+    {
+        clearFrame();
+        break;
+    }
+    default:
+        break;
+    }
+}
+
+void VideoWidget::clearFrame()
+{
+    m_frame = QImage();
+    m_array = QByteArray();
     m_renderWidget->update();
 }
 
@@ -357,11 +383,9 @@ void GLRenderWidget::paintEvent(QPaintEvent *)
 {
     QPainter painter(this);
     m_controller->calculateDrawFrameRect();
-
-    if (m_yuvSupport) {
+    if (m_yuvSupport && m_controller->frameIsSet()) {
         glEnable(GL_FRAGMENT_PROGRAM_ARB);
         glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB, m_program);
-
         const float tx_array[] = { 0, 0, 1, 0, 1, 1, 0, 1};
         const QRect r = m_controller->drawFrameRect();
         const float v_array[] = { r.left(), r.top(), r.right(), r.top(), r.right(), r.bottom(), r.left(), r.bottom() };
@@ -399,3 +423,5 @@ QSize GLRenderWidget::sizeHint() const
 
 }
 } //namespace Phonon::Gstreamer
+
+QT_END_NAMESPACE
