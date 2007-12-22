@@ -19,7 +19,6 @@
 
 #include "deviceaction.h"
 
-#include <QFile>
 #include <kglobal.h>
 #include <kiconloader.h>
 #include <kicontheme.h>

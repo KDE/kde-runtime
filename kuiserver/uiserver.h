@@ -22,10 +22,7 @@
 #ifndef UISERVER_H
 #define UISERVER_H
 
-#include <QTimer>
-#include <QDateTime>
 #include <QListView>
-#include <QPersistentModelIndex>
 #include <kxmlguiwindow.h>
 #include <kio/global.h>
 #include <kio/authinfo.h>

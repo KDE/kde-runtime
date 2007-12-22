@@ -27,9 +27,10 @@
 
 #include "debugger.h"
 
-#include <QLayout>
 #include <QLabel>
 #include <QTextStream>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
 
 #include <kdialog.h>
 #include <klocale.h>

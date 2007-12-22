@@ -26,7 +26,6 @@
 
 
 #include <QMap>
-#include <QByteArray>
 
 //solid specific includes
 #include <solid/devicenotifier.h>

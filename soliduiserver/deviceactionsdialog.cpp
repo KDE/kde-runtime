@@ -25,9 +25,7 @@
 #include <kstandarddirs.h>
 #include <kio/global.h>
 #include <klistwidget.h>
-#include <QLabel>
 #include <QCheckBox>
-#include <QLinkedList>
 
 
 #include "deviceaction.h"

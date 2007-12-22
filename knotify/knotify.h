@@ -25,8 +25,6 @@
 #include <QPixmap>
 #include <QHash>
 
-#include <QList>
-#include <QPair>
 
 #include <QtDBus/QtDBus>
 

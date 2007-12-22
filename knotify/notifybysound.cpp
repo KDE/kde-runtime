@@ -32,8 +32,6 @@
 #include <QHash>
 #include <QtCore/QStack>
 #include <QSignalMapper>
-#include <QFileInfo>
-#include <QTimer>
 
 // KDE headers
 #include <kdebug.h>

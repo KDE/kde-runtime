@@ -27,7 +27,6 @@
 
 #include "backtrace.h"
 
-#include <QFile>
 #include <QRegExp>
 
 #include <k3process.h>

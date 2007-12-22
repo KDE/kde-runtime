@@ -22,10 +22,9 @@
 #include <QPainter>
 #include <QStyleOptionProgressBarV2>
 #include <QHash>
-#include <QVariant>
 #include <QFontMetrics>
 #include <QListView>
-#include <QBoxLayout>
+#include <QHBoxLayout>
 
 #include <kdebug.h>
 #include <kicon.h>

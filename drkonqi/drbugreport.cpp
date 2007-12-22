@@ -30,7 +30,6 @@
 
 #include <KMessageBox>
 #include <KLocale>
-#include <QTextEdit>
 
 #include "drbugreport.moc"
 

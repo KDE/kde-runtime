@@ -21,10 +21,6 @@
 #include "soliduiserver.h"
 
 #include <QFile>
-#include <QFileInfo>
-#include <QTextStream>
-#include <QByteArray>
-#include <QLinkedList>
 #include <QtDBus/QDBusInterface>
 #include <QtDBus/QDBusReply>
 #include <QtDBus/QDBusError>

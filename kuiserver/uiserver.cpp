@@ -21,9 +21,7 @@
   */
 
 #include <QWidget>
-#include <QBoxLayout>
 #include <QAction>
-#include <QToolBar>
 #include <QTabWidget>
 
 #include <ksqueezedtextlabel.h>
