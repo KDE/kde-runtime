@@ -1,4 +1,3 @@
-add_subdirectory( pics )
 add_subdirectory( tests )
 
 include_directories( ${KDE4_KIO_INCLUDES} )
