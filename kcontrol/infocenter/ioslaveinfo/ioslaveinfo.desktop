@@ -68,7 +68,7 @@ Comment[zh_CN]=可用协议的信息
 Comment[zh_TW]=可用協定的資訊
 X-DocPath=kinfocenter/protocols/index.html
 Exec=kcmshell4 ioslaveinfo
-Icon=history
+Icon=help-about
 X-KDE-Keywords=Protocol,IO slaves,Slaves,Network,Information,Timeout
 X-KDE-Keywords[be]=Пратакол,Сетка,Звесткі,Тэрмін чакання,Protocol,IO slaves,Slaves,Network,Information,Timeout
 X-KDE-Keywords[bg]=Keywords=информация, система, системна, протокол, протоколи, наличен, поддържан, Protocol, IO slaves, Slaves, Network, Information, Timeout
