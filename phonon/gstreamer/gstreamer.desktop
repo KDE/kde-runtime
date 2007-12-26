@@ -10,6 +10,7 @@ Icon=phonon-gstreamer
 InitialPreference=10
 
 Name=GStreamer
+Name[pa]=ਜੀਸਟਰੀਮਰ
 Name[sr]=Гстример
 Name[sv]=Gstreamer
 Name[x-test]=xxGStreamerxx
@@ -27,6 +28,7 @@ Comment[km]=កម្មវិធី​ផ្ទៃខាងក្រោយ GStr
 Comment[lv]=Phonon GStreamer aizmugure
 Comment[nds]=Hülpprogramm GStreamer för Phonon
 Comment[nl]=GStreamer-backend (Phonon)
+Comment[pa]=ਫੋਨੋਨ ਜੀਸਟਰੀਮਰ ਬੈਕਐਂਡ
 Comment[pl]=Obsługa GStreamera przez Phonon
 Comment[pt]=Infra-estrutura do GStreamer para o Phonon
 Comment[pt_BR]=Infra-estrutura do GStreamer para o Phonon
