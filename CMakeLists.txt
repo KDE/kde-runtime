@@ -19,6 +19,7 @@ macro_optional_find_package(Soprano)
 macro_log_feature(Soprano_FOUND "Soprano" "Soprano Libraries" "kdesupport" FALSE "" "Required to build Nepomuk.")
 
 check_include_files(sys/wait.h HAVE_SYS_WAIT_H)
+check_include_files(sys/time.h HAVE_SYS_TIME_H)
 
 configure_file (config-runtime.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-runtime.h )
 
