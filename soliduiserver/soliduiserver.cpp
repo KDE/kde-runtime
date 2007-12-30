@@ -65,13 +65,12 @@ SolidUiServer::~SolidUiServer()
 void SolidUiServer::showActionsDialog(const QString &udi,
                                       const QStringList &desktopFiles)
 {
-        kDebug() << "Call dialog" << endl;
     if (m_udiToActionsDialog.contains(udi)) {
         DeviceActionsDialog *dialog = m_udiToActionsDialog[udi];
         dialog->activateWindow();
         return;
     }
-  
+
 
     QList<DeviceAction*> actions;
 
@@ -87,9 +86,18 @@ void SolidUiServer::showActionsDialog(const QString &udi,
             actions << action;
         }
     }
-    
+
+    // Only one action, execute directly
+    if (actions.size()==1) {
+        DeviceAction *action = actions.takeFirst();
+        Solid::Device device(udi);
+        action->execute(device);
+        delete action;
+        return;
+    }
+
     actions << new DeviceNothingAction();
- 
+
     DeviceActionsDialog *dialog = new DeviceActionsDialog();
     dialog->setDevice(Solid::Device(udi));
     dialog->setActions(actions);
