@@ -41,6 +41,20 @@ private:
     Solid::Device m_device;
 };
 
+class DelayedExecutor : public QObject
+{
+    Q_OBJECT
+public:
+    DelayedExecutor(const KServiceAction &service, Solid::Device &device);
+
+private slots:
+    void _k_storageSetupDone(Solid::ErrorType error, QVariant errorData, const QString &udi);
+
+private:
+    void delayedExecute(const QString &udi);
+
+    KServiceAction m_service;
+};
 
 DeviceServiceAction::DeviceServiceAction()
     : DeviceAction()
@@ -60,15 +74,16 @@ QString DeviceServiceAction::id() const
 
 void DeviceServiceAction::execute(Solid::Device &device)
 {
-    QString exec = m_service.exec();
-    MacroExpander mx(device);
+    new DelayedExecutor(m_service, device);
+}
 
-    if (!mx.expandMacrosShellQuote(exec)) {
-        kWarning() << ", Syntax error:" << m_service.exec();
-        return;
-    }
+void DelayedExecutor::_k_storageSetupDone(Solid::ErrorType error, QVariant errorData,
+                                          const QString &udi)
+{
+    Q_UNUSED(error);
+    Q_UNUSED(errorData);
 
-    KRun::runCommand(exec, QString(), m_service.icon(), 0);
+    delayedExecute(udi);
 }
 
 void DeviceServiceAction::setService(const KServiceAction& service)
@@ -120,3 +135,38 @@ int MacroExpander::expandEscapedMacro(const QString &str, int pos, QStringList &
     }
     return 2;
 }
+
+DelayedExecutor::DelayedExecutor(const KServiceAction &service, Solid::Device &device)
+    : m_service(service)
+{
+    if (device.is<Solid::StorageAccess>()
+     && !device.as<Solid::StorageAccess>()->isAccessible()) {
+        Solid::StorageAccess *access = device.as<Solid::StorageAccess>();
+
+        connect(access, SIGNAL(setupDone(Solid::ErrorType, QVariant, const QString &)),
+                this, SLOT(_k_storageSetupDone(Solid::ErrorType, QVariant, const QString &)));
+
+        access->setup();
+
+    } else {
+        delayedExecute(device.udi());
+    }
+}
+
+void DelayedExecutor::delayedExecute(const QString &udi)
+{
+    Solid::Device device(udi);
+
+    QString exec = m_service.exec();
+    MacroExpander mx(device);
+
+    if (!mx.expandMacrosShellQuote(exec)) {
+        kWarning() << ", Syntax error:" << m_service.exec();
+        return;
+    }
+
+    KRun::runCommand(exec, QString(), m_service.icon(), 0);
+    deleteLater();
+}
+
+#include "deviceserviceaction.moc"
