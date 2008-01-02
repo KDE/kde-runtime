@@ -455,7 +455,7 @@ void KIconConfig::EffectSetup(int state)
     case 2 : caption = i18n("Setup Disabled Icon Effect"); break;
     }
 
-    KIconEffectSetupDialog dlg(mEffects[viewedGroup][state], mDefaultEffect[state], caption, img);
+    KIconEffectSetupDialog dlg(mEffects[viewedGroup][state], mDefaultEffect[state], caption, img, this);
 
     if (dlg.exec() == QDialog::Accepted)
     {
