@@ -386,7 +386,7 @@ void Strigi::Soprano::IndexWriter::finishAnalysis( const AnalysisResult* idx )
     QUrl metaDataContext = Util::uniqueUri( "http://www.strigi.org/graphMetaData/", d->repository );
     d->repository->addStatement( Statement( md->context,
                                             Vocabulary::RDF::type(),
-                                            Vocabulary::NRL::KnowledgeBase(),
+                                            Vocabulary::NRL::InstanceBase(),
                                             metaDataContext ) );
     d->repository->addStatement( Statement( md->context,
                                             Vocabulary::NAO::created(),
@@ -398,7 +398,8 @@ void Strigi::Soprano::IndexWriter::finishAnalysis( const AnalysisResult* idx )
                                             metaDataContext ) );
     d->repository->addStatement( Statement( metaDataContext,
                                             Vocabulary::RDF::type(),
-                                            Vocabulary::NRL::GraphMetadata() ) );
+                                            Vocabulary::NRL::GraphMetadata(),
+                                            metaDataContext ) );
 
     // cleanup
     delete md;
