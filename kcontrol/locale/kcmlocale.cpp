@@ -47,7 +47,7 @@ KLocaleConfig::KLocaleConfig(KControlLocale *locale, QWidget *parent)
 {
     setupUi( this );
 
-    m_crLabel->setObjectName(I18N_NOOP("Country or Region:"));
+    m_crLabel->setObjectName(I18N_NOOP("Country or region:"));
     m_languagesLabel->setObjectName(I18N_NOOP("Languages:"));
     languageRemove->setObjectName(I18N_NOOP("Remove"));
     m_upButton->setObjectName(QString());

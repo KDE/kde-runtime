@@ -49,7 +49,7 @@ Comment[zh_CN]=系统通知
 Comment[zh_TW]=KDE 系統通知
 
 [Event/Trash: emptied]
-Name=Trash: emptied
+Name=Trash: Emptied
 Name[bg]=Кошче: изхвърлено
 Name[ca]=Paperera: s'ha buidat
 Name[csb]=Kòsz: wëczëszczony
@@ -142,7 +142,7 @@ Action=Sound
 Sound=KDE-Sys-Trash-Emptied.ogg
 
 [Event/Textcompletion: rotation]
-Name=Textcompletion: rotation
+Name=Textcompletion: Rotation
 Name[ar]=تتمة النصوص: دورة
 Name[bg]=Автоматично завършване: въртене
 Name[ca]=Compleció de text: rotació
@@ -232,7 +232,7 @@ Action=Sound
 Sound=KDE-Sys-List-End.ogg
 
 [Event/Textcompletion: no match]
-Name=Textcompletion: no match
+Name=Textcompletion: No Match
 Name[bg]=Автоматично завършване: няма съвпадения
 Name[ca]=Compleció de text: sense coincidència
 Name[csb]=Dofùlowanié tekstu: felënk trafieniô
@@ -321,7 +321,7 @@ Action=Sound
 Sound=KDE-Sys-List-Match-No.ogg
 
 [Event/Textcompletion: partial match]
-Name=Textcompletion: partial match
+Name=Textcompletion: Partial Match
 Name[bg]=Автоматично завършване: частично съвпадение
 Name[ca]=Compleció de text: coincidència parcial
 Name[csb]=Dofùlowanié tesktu: dzélowé trafienia
