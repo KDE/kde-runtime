@@ -2,6 +2,7 @@ project(nepomuk)
 
 if(SopranoIndex_FOUND)
   set(HAVE_SOPRANO_INDEX "yes")
+  include_directories(${STRIGI_INCLUDE_DIR})
 endif(SopranoIndex_FOUND)
 
 # optional Strigi backend
