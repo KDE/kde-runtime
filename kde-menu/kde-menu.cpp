@@ -83,6 +83,7 @@ static void findMenuEntry(KServiceGroup::Ptr parent, const QString &name, const 
             {
                result(name);
             }
+#if 0
 #ifdef Q_WS_X11
             if (bHighlight)
             {
@@ -91,6 +92,7 @@ static void findMenuEntry(KServiceGroup::Ptr parent, const QString &name, const 
                if (!result.isValid())
                   error(3, i18n("Menu item '%1' could not be highlighted.", menuId).toLocal8Bit());
             }
+#endif
 #endif
             exit(0);
          }
