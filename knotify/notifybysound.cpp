@@ -236,7 +236,6 @@ void NotifyBySound::notify( int eventId, KNotifyConfig * config )
 		(*proc) << d->externalPlayer << soundFile;
 		proc->start();
 	}
-	sender()->deleteLater();
 }
 
 
