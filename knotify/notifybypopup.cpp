@@ -33,7 +33,8 @@
 #include <QDesktopWidget>
 #include <kconfiggroup.h>
 
-NotifyByPopup::NotifyByPopup(QObject *parent) : KNotifyPlugin(parent)
+NotifyByPopup::NotifyByPopup(QObject *parent) 
+  : KNotifyPlugin(parent) , m_animationTimer(0)
 {
 	QRect screen = QApplication::desktop()->availableGeometry();
 	m_nextPosition = screen.top();
