@@ -74,3 +74,8 @@ if(Soprano_FOUND AND STRIGI_STRIGIQTDBUSCLIENT_LIBRARY)
 endif(Soprano_FOUND AND STRIGI_STRIGIQTDBUSCLIENT_LIBRARY)
 
 macro_optional_add_subdirectory(renamedlgplugins)
+
+if(CMAKE_SOURCE_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
+  macro_display_feature_log()
+endif(CMAKE_SOURCE_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
+
