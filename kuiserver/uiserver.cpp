@@ -384,7 +384,7 @@ void UIServer::showConfigurationDialog()
 
     connect(dialog, SIGNAL(settingsChanged(const QString&)), this,
             SLOT(updateConfiguration()));
-
+    dialog->enableButton(KDialog::Help, false);
     dialog->show();
 }
 
