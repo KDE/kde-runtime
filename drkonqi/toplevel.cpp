@@ -61,7 +61,7 @@ Toplevel :: Toplevel(KrashConfig *krashconf, QWidget *parent)
   setDefaultButton( Close );
   setModal( true );
   showButtonSeparator( false );
-  setButtonGuiItem( User1, KGuiItem(i18n("&Bug report")) );
+  setButtonGuiItem( User1, KGuiItem(i18n("&Bug Report")) );
   setButtonGuiItem( User2, KGuiItem(i18n("&Debugger")) );
 
   KTabWidget *tabWidget = new KTabWidget(this);
