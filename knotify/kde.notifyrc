@@ -50,6 +50,7 @@ Comment[zh_TW]=KDE 系統通知
 
 [Event/Trash: emptied]
 Name=Trash: Emptied
+Name[el]=Απορρίμματα: άδειασαν
 Name[eo]=Rubujo: malpleniĝis
 Name[ga]=Bruscar: Folmhaithe
 Name[km]=ធុង​សំរាម ៖ បាន​សម្អាត
@@ -107,6 +108,7 @@ Sound=KDE-Sys-Trash-Emptied.ogg
 
 [Event/Textcompletion: rotation]
 Name=Textcompletion: Rotation
+Name[el]=Συμπλήρωση κειμένου: περιστροφή
 Name[eo]=Teksta kompletado: turnado
 Name[ga]=Comhlánú téacs: Rothlú
 Name[km]=ការ​បំពេញ​អត្ថបទ ៖ ការ​បង្វិល
@@ -162,6 +164,7 @@ Sound=KDE-Sys-List-End.ogg
 
 [Event/Textcompletion: no match]
 Name=Textcompletion: No Match
+Name[el]=Συμπλήρωση κειμένου: κανένα ταίριασμα
 Name[eo]=Teksta kompletado: neniu kongruaĵo
 Name[ga]=Comhlánú téacs: Níl aon chomhlánú comhoiriúnach ann
 Name[km]=ការ​បំពេញ​អត្ថបទ ៖ គ្មាន​ដំណូច
@@ -219,6 +222,7 @@ Sound=KDE-Sys-List-Match-No.ogg
 
 [Event/Textcompletion: partial match]
 Name=Textcompletion: Partial Match
+Name[el]=Συμπλήρωση κειμένου: μερικό ταίριασμα
 Name[eo]=Teksta kompletado: parta kongruaĵo
 Name[ga]=Comhlánú téacs: Comhlánú Neamhiomlán
 Name[km]=ការ​បំពេញ​អត្ថបទ ៖ ដំណូច​​តាម​ផ្នែក
