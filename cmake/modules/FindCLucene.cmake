@@ -22,15 +22,13 @@ ENDIF(EXISTS ${PROJECT_CMAKE}/CLuceneConfig.cmake)
     /usr/local/lib${LIB_SUFFIX}
     /usr/lib${LIB_SUFFIX}
     /sw/lib${LIB_SUFFIX}
-    NO_DEFAULT_PATH
-  ) 
+  )
   SET(TRIAL_INCLUDE_PATHS
     $ENV{CLUCENE_HOME}/include
     ${CMAKE_INSTALL_PREFIX}/include
     /usr/local/include
     /usr/include
     /sw/include
-    NO_DEFAULT_PATH
   )
   FIND_LIBRARY_WITH_DEBUG(CLUCENE_LIBRARY
       WIN32_DEBUG_POSTFIX d
@@ -52,7 +50,7 @@ ENDIF(EXISTS ${PROJECT_CMAKE}/CLuceneConfig.cmake)
   ENDIF(WIN32)
 
   FIND_PATH(CLUCENE_LIBRARY_DIR
-      NAMES CLucene/clucene-config.h PATHS ${TRIAL_LIBRARY_PATHS})
+      NAMES CLucene/clucene-config.h PATHS ${TRIAL_LIBRARY_PATHS} ${TRIAL_INCLUDE_PATHS} NO_DEFAULT_PATH)
   IF (CLUCENE_LIBRARY_DIR)
     MESSAGE(STATUS "Found CLucene library dir: ${CLUCENE_LIBRARY_DIR}")
     FILE(READ ${CLUCENE_LIBRARY_DIR}/CLucene/clucene-config.h CLCONTENT)
