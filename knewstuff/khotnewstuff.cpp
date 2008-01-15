@@ -41,8 +41,16 @@ int main(int argc, char **argv)
 
 	KApplication i;
 
-	KNS::Entry::List entries = KNS::Engine::download();
-	qDeleteAll(entries);
+    if (args->count() > 0) {
+        KNS::Engine engine;
+        if (engine.init(args->arg(0))) {
+            KNS::Entry::List entries = engine.downloadDialogModal();
+            qDeleteAll(entries);
+        }
+        else {
+            kDebug() << i18n("could not load %1", args->arg(0));
+        }
+    }
 	//if(args->isSet("type")) d.setCategory(args->getOption("type"));
 	//if(args->count() == 1) d.setProviderList(args->arg(0));
 	// FIXME (KNS2): do we still need/want those?
