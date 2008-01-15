@@ -1,6 +1,7 @@
 /*
     This file is part of KNewStuff.
     Copyright (c) 2002 Cornelius Schumacher <schumacher@kde.org>
+    Copyright (c) 2007 Jeremy Whiting <jeremy@scitools.com>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -28,18 +29,19 @@
 
 int main(int argc, char **argv)
 {
-	KAboutData about("khotnewstuff", 0, ki18n("KHotNewStuff"), "0.2");
-	KCmdLineArgs *args;
+    KAboutData about("khotnewstuff", 0, ki18n("KHotNewStuff"), "0.3");
+    KCmdLineArgs *args;
 
-	KCmdLineArgs::init(argc, argv, &about);
+    KCmdLineArgs::init(argc, argv, &about);
 
-	KCmdLineOptions op;
-	op.add("type <type>", ki18n("Display only media of this type"));
-	op.add("+[providerlist]", ki18n("Provider list to use"));
-	KCmdLineArgs::addCmdLineOptions(op);
-	args = KCmdLineArgs::parsedArgs();
+    KCmdLineOptions op;
+    op.add("+filename", ki18n(".knsrc filename to read configuration from"));
+    //op.add("type <type>", ki18n("Display only media of this type"));
+    //op.add("+[providerlist]", ki18n("Provider list to use"));
+    KCmdLineArgs::addCmdLineOptions(op);
+    args = KCmdLineArgs::parsedArgs();
 
-	KApplication i;
+    KApplication i;
 
     if (args->count() > 0) {
         KNS::Engine engine;
@@ -51,9 +53,14 @@ int main(int argc, char **argv)
             kDebug() << i18n("could not load %1", args->arg(0));
         }
     }
-	//if(args->isSet("type")) d.setCategory(args->getOption("type"));
-	//if(args->count() == 1) d.setProviderList(args->arg(0));
-	// FIXME (KNS2): do we still need/want those?
+    else
+    {
+        args->usage();
+        return -1;
+    }
+    //if(args->isSet("type")) d.setCategory(args->getOption("type"));
+    //if(args->count() == 1) d.setProviderList(args->arg(0));
+    // FIXME (KNS2): do we still need/want those?
 
 	return 0;
 }
