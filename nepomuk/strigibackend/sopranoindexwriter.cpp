@@ -26,6 +26,7 @@
 #include <Soprano/Soprano>
 #include <Soprano/Index/IndexFilterModel>
 #include <Soprano/Index/CLuceneIndex>
+#include <Soprano/Vocabulary/RDF>
 
 #include <QtCore/QList>
 #include <QtCore/QHash>
@@ -34,7 +35,6 @@
 #include <QtCore/QFile>
 #include <QtCore/QUrl>
 #include <QtCore/QDebug>
-#include <QtCore/QMutex>
 #include <QtCore/QThread>
 #include <QtCore/QDateTime>
 
@@ -110,8 +110,6 @@ public:
     ::Soprano::Model* repository;
     int indexTransactionID;
 
-    QMutex mutex;
-
 private:
     QHash<std::string, QVariant::Type> literalTypes;
 };
@@ -129,23 +127,12 @@ Strigi::Soprano::IndexWriter::IndexWriter( ::Soprano::Model* model )
 
 Strigi::Soprano::IndexWriter::~IndexWriter()
 {
-    // just to be sure
-    commit();
-//    qDebug() << "IndexWriter::~IndexWriter in thread" << QThread::currentThread();
     delete d;
-//    qDebug() << "IndexWriter::~IndexWriter done in thread" << QThread::currentThread();
 }
 
 
 void Strigi::Soprano::IndexWriter::commit()
 {
-//    qDebug() << "IndexWriter::commit in thread" << QThread::currentThread();
-    d->mutex.lock();
-//     if ( d->indexTransactionID ) {
-//         d->repository->index()->closeTransaction( d->indexTransactionID );
-//         d->indexTransactionID = 0;
-//     }
-    d->mutex.unlock();
 }
 
 
@@ -228,18 +215,21 @@ void Strigi::Soprano::IndexWriter::startAnalysis( const AnalysisResult* idx )
 //    qDebug() << "IndexWriter::startAnalysis in thread" << QThread::currentThread();
     FileMetaData* data = new FileMetaData();
     data->fileUri = Util::fileUrl( idx->path() );
-    data->context = Util::uniqueUri( "http://www.strigi.org/contexts/", d->repository );
+
+    // let's check if we already have data on the file
+    StatementIterator it = d->repository->listStatements( Statement( Node(),
+                                                                     QUrl( "http://www.strigi.org/fields#indexGraphFor" ), // FIXME: put the URI somewhere else
+                                                                     data->fileUri ) );
+    if ( it.next() ) {
+        data->context = it.current().subject().uri();
+    }
+    else {
+        data->context = Util::uniqueUri( "http://www.strigi.org/contexts/", d->repository );
+    }
 
     qDebug() << "Starting analysis for" << data->fileUri << "in thread" << QThread::currentThread();
 
     idx->setWriterData( data );
-
-    d->mutex.lock();
-//     if ( d->indexTransactionID == 0 ) {
-//         d->indexTransactionID = d->repository->index()->startTransaction();
-//     }
-    d->mutex.unlock();
-//    qDebug() << "IndexWriter::startAnalysis done in thread" << QThread::currentThread();
 }
 
 
@@ -266,17 +256,41 @@ void Strigi::Soprano::IndexWriter::addValue( const AnalysisResult* idx,
                                              const unsigned char* data,
                                              uint32_t size )
 {
-//    qDebug() << "IndexWriter::addValue in thread" << QThread::currentThread();
-    FileMetaData* md = reinterpret_cast<FileMetaData*>( idx->writerData() );
+    addValue( idx, fieldname, fieldname->key(), std::string( ( const char* )data, size ) );
+}
 
-    if ( d->literalType( fieldname->type() ) == QVariant::Invalid ) {
-        // should not happen
-    }
-    else {
-        d->repository->addStatement( Statement( md->fileUri,
-                                                Util::fieldUri( fieldname->key() ),
-                                                d->createLiteraValue( fieldname->type(), data, size ),
-                                                md->context) );
+
+void Strigi::Soprano::IndexWriter::addValue( const AnalysisResult* idx, const RegisteredField* field,
+                                             const std::string& name, const std::string& value )
+{
+//    qDebug() << "IndexWriter::addValue in thread" << QThread::currentThread();
+    if ( value.length() > 0 ) {
+        FileMetaData* md = reinterpret_cast<FileMetaData*>( idx->writerData() );
+
+        if ( d->literalType( field->type() ) == QVariant::Invalid ) {
+            // FIXME: only save it in the index: binary data (how does strigi handle that anyway??)
+        }
+        else if ( name == FieldRegister::typeFieldName ) {
+            // Strigi uses rdf:type improperly since it stores the value as a string. We have to
+            // make sure it is a resource. The problem is that this results in the type not being
+            // indexed properly. Thus, it cannot be searched with normal lucene queries.
+            // That is why we need to introduce a stringType property
+
+            d->repository->addStatement( Statement( md->fileUri,
+                                                    ::Soprano::Vocabulary::RDF::type(),
+                                                    QUrl( QString::fromUtf8( value.c_str() ) ),
+                                                    md->context) );
+            d->repository->addStatement( Statement( md->fileUri,
+                                                    QUrl( "http://strigi.sourceforge.net/fields#rdf-string-type" ),
+                                                    d->createLiteraValue( field->type(), ( unsigned char* )value.c_str(), value.length() ),
+                                                    md->context) );
+        }
+        else {
+            d->repository->addStatement( Statement( md->fileUri,
+                                                    Util::fieldUri( name ),
+                                                    d->createLiteraValue( field->type(), ( unsigned char* )value.c_str(), value.length() ),
+                                                    md->context) );
+        }
     }
 //    qDebug() << "IndexWriter::addValue done in thread" << QThread::currentThread();
 }
@@ -336,7 +350,7 @@ void Strigi::Soprano::IndexWriter::addValue( const AnalysisResult* idx,
 void Strigi::Soprano::IndexWriter::addTriplet( const std::string& subject,
                                                const std::string& predicate, const std::string& object )
 {
-    // PROBLEM: which names graph (context) should we use here? Create a new one for each triple? Use one until the
+    // PROBLEM: which named graph (context) should we use here? Create a new one for each triple? Use one until the
     // next commit()?
 
     // FIXME: create an NRL metadata graph
@@ -347,39 +361,26 @@ void Strigi::Soprano::IndexWriter::addTriplet( const std::string& subject,
 }
 
 
-void Strigi::Soprano::IndexWriter::addValue( const AnalysisResult* idx, const RegisteredField* field,
-                                             const std::string& name, const std::string& value )
-{
-//    qDebug() << "IndexWriter::addValue in thread" << QThread::currentThread();
-    FileMetaData* md = reinterpret_cast<FileMetaData*>( idx->writerData() );
-
-    if ( d->literalType( field->type() ) == QVariant::Invalid ) {
-        // FIXME: only save it in the index: binary data (how does strigi handle that anyway??)
-    }
-    else {
-        d->repository->addStatement( Statement( md->fileUri,
-                                                Util::fieldUri( name ),
-                                                d->createLiteraValue( field->type(), ( unsigned char* )value.c_str(), value.length() ),
-                                                md->context) );
-    }
-//    qDebug() << "IndexWriter::addValue done in thread" << QThread::currentThread();
-}
-
-
 // called after each indexed file
 void Strigi::Soprano::IndexWriter::finishAnalysis( const AnalysisResult* idx )
 {
 //    qDebug() << "IndexWriter::finishAnalysis in thread" << QThread::currentThread();
     FileMetaData* md = static_cast<FileMetaData*>( idx->writerData() );
 
-    // FIXME: should we store the resource type? for example nie:File or Xesam:File or whatever?
-    // FIXME: Does Xesam split file and content resources? Should we do that here, too?
+    if ( md->content.length() > 0 ) {
+        d->repository->addStatement( Statement( md->fileUri,
+                                                Util::fieldUri( FieldRegister::contentFieldName ),
+                                                LiteralValue( QString::fromUtf8( md->content.c_str() ) ),
+                                                md->context ) );
+    }
 
-    // FIXME: index the content data. Storing it would take way too much space.
+    // Strigi only indexes files and extractors mostly (if at all) store the xesam:DataObject type (i.e. the contents)
+    // Thus, here we go the easy way and amrk each indexed file as a xesam:File.
     d->repository->addStatement( Statement( md->fileUri,
-                                            Util::fieldUri( FieldRegister::contentFieldName ),
-                                            LiteralValue( QString::fromUtf8( md->content.c_str() ) ),
+                                            Vocabulary::RDF::type(),
+                                            Vocabulary::Xesam::File(),
                                             md->context ) );
+
 
     // create the provedance data for the data graph
     // TODO: add more data at some point when it becomes of interest

@@ -35,8 +35,8 @@ set(nepomukserver_SRCS
   nepomukcore.cpp
   nepomukserver.cpp
   repository.cpp
+  ontologyloader.cpp
   strigicontroller.cpp
-  #  nepomuksearchagent.cpp
   ${nepomukserversettings_SRCS}
   )
 

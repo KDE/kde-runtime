@@ -23,6 +23,9 @@
 #include "repository.h"
 
 namespace Nepomuk {
+    
+    class OntologyLoader;
+
     class Core : public Soprano::Server::ServerCore
     {
         Q_OBJECT
@@ -43,6 +46,7 @@ namespace Nepomuk {
         QString createStoragePath( const QString& repositoryId ) const;
 
         RepositoryMap m_repositories;
+        OntologyLoader* m_ontologyLoader;
     };
 }
 

@@ -46,16 +46,6 @@ Nepomuk::Repository::~Repository()
 }
 
 
-Soprano::Model* Nepomuk::Repository::model() const
-{
-#ifdef HAVE_SOPRANO_INDEX
-    return m_indexModel;
-#else
-    return m_model;
-#endif
-}
-
-
 Nepomuk::Repository* Nepomuk::Repository::open( const QString& path, const QString& name )
 {
     kDebug(300002) << "(Nepomuk::Repository::open) opening repository '" << name << "' at '" << path << "'";
@@ -75,7 +65,10 @@ Nepomuk::Repository* Nepomuk::Repository::open( const QString& path, const QStri
             rep->m_indexModel = new Soprano::Index::IndexFilterModel( index, model );
 
             // FIXME: find a good value here
-            rep->m_indexModel->setTransactionCacheSize( 500 );
+            rep->m_indexModel->setTransactionCacheSize( 100 );
+
+            rep->setParentModel( rep->m_indexModel );
+
             return rep;
         }
         else {
@@ -86,6 +79,7 @@ Nepomuk::Repository* Nepomuk::Repository::open( const QString& path, const QStri
 #else
         Repository* rep = new Repository();
         rep->m_model = model;
+        rep->setParentModel( model );
         return rep;
 #endif
     }
@@ -95,3 +89,5 @@ Nepomuk::Repository* Nepomuk::Repository::open( const QString& path, const QStri
 
     return 0;
 }
+
+#include "repository.moc"

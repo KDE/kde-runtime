@@ -18,33 +18,52 @@
 #include <QtCore/QString>
 #include <QtCore/QMap>
 
+#include <soprano/version.h>
+
+#ifndef SOPRANO_IS_VERSION
+#define SOPRANO_IS_VERSION(a,b,c) false
+#endif
+
+#if SOPRANO_IS_VERSION(2,0,90)
+#include <Soprano/Util/SignalCacheModel>
+#else
+#include <Soprano/FilterModel>
+#endif
+
+
 namespace Soprano {
     class Model;
     namespace Index {
-	class IndexFilterModel;
-	class CLuceneIndex;
+        class IndexFilterModel;
+        class CLuceneIndex;
     }
 }
 
 namespace Nepomuk {
 
-    class Repository
+    class Repository : public
+#if SOPRANO_IS_VERSION(2,0,90)
+        Soprano::Util::SignalCacheModel
+#else
+        Soprano::FilterModel
+#endif
     {
+        Q_OBJECT
+
     public:
-	~Repository();
+        ~Repository();
 
-	QString name() const { return m_name; }
-	Soprano::Model* model() const;
+        QString name() const { return m_name; }
 
-	static Repository* open( const QString& path, const QString& name );
+        static Repository* open( const QString& path, const QString& name );
 
     private:
-	Repository();
+        Repository();
 
-	QString m_name;
-	Soprano::Model* m_model;
-	Soprano::Index::CLuceneIndex* m_index;
-	Soprano::Index::IndexFilterModel* m_indexModel;
+        QString m_name;
+        Soprano::Model* m_model;
+        Soprano::Index::CLuceneIndex* m_index;
+        Soprano::Index::IndexFilterModel* m_indexModel;
     };
 
     typedef QMap<QString, Repository*> RepositoryMap;

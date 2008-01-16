@@ -23,6 +23,7 @@
 #include "util.h"
 
 #include <strigi/variant.h>
+#include <strigi/fieldtypes.h>
 
 #include <QtCore/QUrl>
 #include <QtCore/QFile>
@@ -80,6 +81,10 @@ TString Strigi::Soprano::Util::convertSearchField( const std::string& field )
 {
     if ( QString::fromUtf8( field.c_str() ) == ::Soprano::Index::CLuceneIndex::defaultSearchField() ) {
         return TString::fromUtf8( field.c_str() );
+    }
+    else if ( field == FieldRegister::typeFieldName ) {
+        // see sopranoindexwriter:addValue for details in this conversion
+        return TString( "http://strigi.sourceforge.net/fields#rdf-string-type" );
     }
     else {
         return fieldUri( field ).toString();

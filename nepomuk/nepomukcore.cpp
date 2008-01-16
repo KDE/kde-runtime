@@ -18,13 +18,20 @@
 
 #include "nepomukcore.h"
 #include "repository.h"
+#include "ontologyloader.h"
 
 #include <KStandardDirs>
 #include <KDebug>
 
+#include <QtCore/QTimer>
+
+
 Nepomuk::Core::Core( QObject* parent )
     : Soprano::Server::ServerCore( parent )
 {
+    m_ontologyLoader = new OntologyLoader( model( "main" ), this );
+    QTimer::singleShot( 0, m_ontologyLoader, SLOT( update() ) );
+
     registerAsDBusObject();
 }
 
@@ -38,12 +45,7 @@ Nepomuk::Core::~Core()
 
 Soprano::Model* Nepomuk::Core::model( const QString& name )
 {
-    if ( Repository* repo = repository( name ) ) {
-        return repo->model();
-    }
-    else {
-        return 0;
-    }
+    return repository( name );
 }
 
 

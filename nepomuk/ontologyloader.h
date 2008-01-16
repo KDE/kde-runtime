@@ -16,54 +16,49 @@
    Boston, MA 02110-1301, USA.
 */
 
-#ifndef _NEPOMUK_SERVER_H_
-#define _NEPOMUK_SERVER_H_
+#ifndef _NEPOMUK_SERVER_ONTOLOGY_LOADER_H_
+#define _NEPOMUK_SERVER_ONTOLOGY_LOADER_H_
 
-#include <kdedmodule.h>
-
-class StrigiClient;
+#include <QtCore/QObject>
+#include <QtCore/QUrl>
 
 namespace Soprano {
-    class Backend;
+    class Model;
 }
 
+
 namespace Nepomuk {
-
-    class Core;
-    class StrigiController;
-
-    class Server : public KDEDModule
+    class OntologyLoader : public QObject
     {
 	Q_OBJECT
-	Q_CLASSINFO("Bus Interface", "org.kde.NepomukServer")
 
     public:
-	Server();
-	virtual ~Server();
+	OntologyLoader( Soprano::Model* model, QObject* parent = 0 );
+	~OntologyLoader();
 
     public Q_SLOTS:
-	void enableNepomuk(bool enabled);
-	void enableStrigi(bool enabled);
-	bool isNepomukEnabled() const;
-	bool isStrigiEnabled() const;
-
 	/**
-	 * \return the name of the default data repository.
+	 * Update all installed ontologies and install dir watches
+	 * to monitor newly installed and changed ontologies.
+	 *
+	 * This should also be called for initialization
 	 */
-	QString defaultRepository() const;
-	void reconfigure();
+	void update();
+
+	// FIXME: add methods (exported on DBus) like:
+	// void addOntology( ... )
+	// void addInstanceBase( ... )
+	// void removeData( ... );
 
     private:
-	void init();
-	void startNepomuk();
-	void startStrigi();
+	bool updateOntology( const QString& desktopFile );
+	bool removeOntology( const QUrl& ns );
 
-	const Soprano::Backend* findBackend() const;
+	bool ensureDataLayout( Soprano::Model* tmpModel, const QUrl& ns );
+	void createMetadata( Soprano::Model* tmpModel, const QUrl& ns );
 
-	Core* m_core;
-	StrigiController* m_strigiController;
-	StrigiClient* m_strigi;
-	const Soprano::Backend* m_backend;
+	class Private;
+	Private* const d;
     };
 }
 
