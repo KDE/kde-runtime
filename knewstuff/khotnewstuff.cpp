@@ -47,7 +47,6 @@ int main(int argc, char **argv)
         KNS::Engine engine;
         if (engine.init(args->arg(0))) {
             KNS::Entry::List entries = engine.downloadDialogModal();
-            qDeleteAll(entries);
         }
         else {
             kDebug() << i18n("could not load %1", args->arg(0));
