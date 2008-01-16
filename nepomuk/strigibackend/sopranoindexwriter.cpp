@@ -270,7 +270,7 @@ void Strigi::Soprano::IndexWriter::addValue( const AnalysisResult* idx, const Re
         if ( d->literalType( field->type() ) == QVariant::Invalid ) {
             // FIXME: only save it in the index: binary data (how does strigi handle that anyway??)
         }
-        else if ( name == FieldRegister::typeFieldName ) {
+        else if ( QString( name.c_str() ) == ::Soprano::Vocabulary::RDF::type().toString() ) {
             // Strigi uses rdf:type improperly since it stores the value as a string. We have to
             // make sure it is a resource. The problem is that this results in the type not being
             // indexed properly. Thus, it cannot be searched with normal lucene queries.

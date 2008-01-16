@@ -33,6 +33,7 @@
 
 #include <Soprano/Index/CLuceneIndex>
 #include <Soprano/Model>
+#include <Soprano/Vocabulary/RDF>
 
 
 #define STRIGI_NS "http://www.strigi.org/data#"
@@ -82,7 +83,7 @@ TString Strigi::Soprano::Util::convertSearchField( const std::string& field )
     if ( QString::fromUtf8( field.c_str() ) == ::Soprano::Index::CLuceneIndex::defaultSearchField() ) {
         return TString::fromUtf8( field.c_str() );
     }
-    else if ( field == FieldRegister::typeFieldName ) {
+    else if ( QString( field.c_str() ) == ::Soprano::Vocabulary::RDF::type().toString() ) {
         // see sopranoindexwriter:addValue for details in this conversion
         return TString( "http://strigi.sourceforge.net/fields#rdf-string-type" );
     }
