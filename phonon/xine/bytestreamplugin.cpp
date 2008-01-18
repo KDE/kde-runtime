@@ -200,7 +200,7 @@ static int kbytestream_plugin_open (input_plugin_t *this_gen)
     if (kbytestream_plugin_get_length (this_gen) == 0) {
         _x_message(that->stream(), XINE_MSG_FILE_EMPTY, that->mrl(), NULL);
         xine_log (that->stream()->xine, XINE_LOG_MSG,
-                _("input_kbytestream: File empty: >%s<\n"), that->mrl());
+                "input_kbytestream: File empty: >%s<\n", that->mrl());
         return 0;
     }
 
@@ -249,22 +249,33 @@ static input_plugin_t *kbytestream_class_get_instance (input_class_t *cls_gen, x
     return that;
 }
 
+#define PLUGIN_DESCRIPTION "kbytestream input plugin"
+#define PLUGIN_IDENTIFIER "kbytestream"
+
+#if XINE_MAJOR_VERSION < 1 || ( XINE_MAJOR_VERSION == 1 && ( XINE_MINOR_VERSION < 1 || ( XINE_MINOR_VERSION == 1 && XINE_SUB_VERSION < 90 ) ) )
+#define NEED_DESCRIPTION_FUNCTION 1
+#else
+#define NEED_DESCRIPTION_FUNCTION 0
+#endif
+
+#if NEED_DESCRIPTION_FUNCTION
 #if (XINE_SUB_VERSION > 3 && XINE_MINOR_VERSION == 1) || (XINE_MINOR_VERSION > 1 && XINE_MAJOR_VERSION == 1) || XINE_MAJOR_VERSION > 1
 static const char *kbytestream_class_get_description(input_class_t *)
 {
-    return _("kbytestream input plugin");
+    return PLUGIN_DESCRIPTION;
 }
 #else
 static char *kbytestream_class_get_description(input_class_t *)
 {
-    return const_cast<char *>(_("kbytestream input plugin"));
+    return const_cast<char *>(PLUGIN_DESCRIPTION);
 }
 #endif
 
 static const char *kbytestream_class_get_identifier(input_class_t *)
 {
-    return "kbytestream";
+    return PLUGIN_IDENTIFIER;
 }
+#endif /* NEED_DESCRIPTION_FUNCTIONS */
 
 static void kbytestream_class_dispose (input_class_t *this_gen)
 {
@@ -279,8 +290,14 @@ void *init_kbytestream_plugin (xine_t *xine, void *data)
     memset(that, 0, sizeof(that));
 
     that->get_instance       = kbytestream_class_get_instance;
+#if NEED_DESCRIPTION_FUNCTION
     that->get_identifier     = kbytestream_class_get_identifier;
     that->get_description    = kbytestream_class_get_description;
+#else
+    that->description        = PLUGIN_DESCRIPTION;
+    that->textdomain         = "phonon-xine";
+    that->identifier         = PLUGIN_IDENTIFIER;
+#endif
     that->get_dir            = NULL;
     that->get_autoplay_list  = NULL;
     that->dispose            = kbytestream_class_dispose;

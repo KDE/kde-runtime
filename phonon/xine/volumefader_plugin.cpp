@@ -426,19 +426,30 @@ static post_plugin_t *kvolumefader_open_plugin(post_class_t *class_gen, int inpu
     return &that->post;
 }
 
+#if XINE_MAJOR_VERSION < 1 || ( XINE_MAJOR_VERSION == 1 && ( XINE_MINOR_VERSION < 1 || ( XINE_MINOR_VERSION == 1 && XINE_SUB_VERSION < 90 ) ) )
+#define NEED_DESCRIPTION_FUNCTION 1
+#else
+#define NEED_DESCRIPTION_FUNCTION 0
+#endif
+
+#define PLUGIN_DESCRIPTION I18N_NOOP("Fade in or fade out with different fade curves")
+#define PLUGIN_IDENTIFIER "KVolumeFader"
+
+#if NEED_DESCRIPTION_FUNCTION
 static char *kvolumefader_get_identifier(post_class_t *class_gen)
 {
     Q_UNUSED(class_gen);
-    return "KVolumeFader";
+    return PLUGIN_IDENTIFIER;
 }
 
 static char *kvolumefader_get_description(post_class_t *class_gen)
 {
     Q_UNUSED(class_gen);
     static QByteArray description(
-            i18n("Fade in or fade out with different fade curves").toUtf8());
+            i18n(PLUGIN_DESCRIPTION).toUtf8());
     return description.data();
 }
+#endif
 
 static void kvolumefader_class_dispose(post_class_t *class_gen)
 {
@@ -455,8 +466,14 @@ void *init_kvolumefader_plugin (xine_t *xine, void *)
     }
 
     _class->post_class.open_plugin     = kvolumefader_open_plugin;
+#if NEED_DESCRIPTION_FUNCTION
     _class->post_class.get_identifier  = kvolumefader_get_identifier;
     _class->post_class.get_description = kvolumefader_get_description;
+#else
+    _class->post_class.description     = PLUGIN_DESCRIPTION;
+    _class->post_class.textdomain      = "phonon-xine";
+    _class->post_class.identifier      = PLUGIN_IDENTIFIER;
+#endif
     _class->post_class.dispose         = kvolumefader_class_dispose;
 
     _class->xine                       = xine;
