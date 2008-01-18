@@ -21,8 +21,6 @@
 
 #include <kdedmodule.h>
 
-class StrigiClient;
-
 namespace Soprano {
     class Backend;
 }
@@ -34,36 +32,36 @@ namespace Nepomuk {
 
     class Server : public KDEDModule
     {
-	Q_OBJECT
-	Q_CLASSINFO("Bus Interface", "org.kde.NepomukServer")
+        Q_OBJECT
+        Q_CLASSINFO("Bus Interface", "org.kde.NepomukServer")
 
     public:
-	Server();
-	virtual ~Server();
+        Server();
+        virtual ~Server();
 
     public Q_SLOTS:
-	void enableNepomuk(bool enabled);
-	void enableStrigi(bool enabled);
-	bool isNepomukEnabled() const;
-	bool isStrigiEnabled() const;
+        void enableNepomuk(bool enabled);
+        void enableStrigi(bool enabled);
+        bool isNepomukEnabled() const;
+        bool isStrigiEnabled() const;
 
-	/**
-	 * \return the name of the default data repository.
-	 */
-	QString defaultRepository() const;
-	void reconfigure();
+        /**
+         * \return the name of the default data repository.
+         */
+        QString defaultRepository() const;
+        void reconfigure();
 
     private:
-	void init();
-	void startNepomuk();
-	void startStrigi();
+        void init();
+        void startNepomuk();
+        void startStrigi();
+        void updateStrigiConfig();
 
-	const Soprano::Backend* findBackend() const;
+        const Soprano::Backend* findBackend() const;
 
-	Core* m_core;
-	StrigiController* m_strigiController;
-	StrigiClient* m_strigi;
-	const Soprano::Backend* m_backend;
+        Core* m_core;
+        StrigiController* m_strigiController;
+        const Soprano::Backend* m_backend;
     };
 }
 

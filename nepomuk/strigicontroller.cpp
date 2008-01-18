@@ -24,14 +24,62 @@
 #include <QtCore/QFile>
 #include <QtCore/QDir>
 
+#include <strigi/qtdbus/strigiclient.h>
+
 #include <KDebug>
 #include <KProcess>
 #include <KStandardDirs>
+#include <KMessageBox>
+#include <KLocale>
 
+#ifndef _WIN32
+
+#include <time.h>
 #include <sys/types.h>
-#include <sys/stat.h>
+#include <signal.h>
 #include <fcntl.h>
 #include <unistd.h>
+
+namespace {
+    pid_t strigidaemonPid() {
+        int fd = open( QFile::encodeName( QString( "%1/.strigi/lock" ).arg( QDir::homePath() ) ), O_WRONLY );
+        if ( fd == -1 ) {
+            kDebug(300002) << "failed to open lock";
+            return ( pid_t )-1;
+        }
+        struct flock lock;
+        lock.l_type = F_WRLCK;
+        lock.l_whence = SEEK_SET;
+        lock.l_start = 0;
+        lock.l_len = 0;
+        int r = fcntl( fd, F_GETLK, &lock );
+        if ( r == -1 ) {
+            kDebug(300002) << "failed to configure lock";
+            close(fd);
+            return ( pid_t )-1;
+        }
+        close( fd );
+        kDebug(300002) << (lock.l_type == F_WRLCK);
+        if ( lock.l_type == F_WRLCK ) {
+            return lock.l_pid;
+        }
+        else {
+            return ( pid_t )-1;
+        }
+    }
+
+    // FIXME: what if the pid is reused during the time of this calling?
+    bool waitForProcessToExit( pid_t pid, int timeout = 2 ) {
+        time_t startTime = time(0);
+        while ( time( 0 ) - startTime < timeout ) {
+            if ( kill( pid, 0 ) < 0 ) {
+                return true;
+            }
+        }
+        return false;
+    }
+}
+#endif // ifndef _WIN32
 
 
 Nepomuk::StrigiController::StrigiController( QObject* parent )
@@ -55,7 +103,7 @@ Nepomuk::StrigiController::State Nepomuk::StrigiController::state() const
 }
 
 
-bool Nepomuk::StrigiController::start( bool withNepomuk )
+bool Nepomuk::StrigiController::start()
 {
     kDebug(300002) << "(Nepomuk::StrigiController::start)";
     if ( !m_strigiProcess ) {
@@ -67,14 +115,6 @@ bool Nepomuk::StrigiController::start( bool withNepomuk )
 
     m_strigiProcess->clearProgram();
     *m_strigiProcess << KStandardDirs::findExe( "strigidaemon" );
-    if ( withNepomuk ) {
-        // use our soprano backend
-        *m_strigiProcess << "-t" << "sopranobackend";
-    }
-    else {
-        // use default backend
-        *m_strigiProcess << "-t" << "clucene";
-    }
 
     if ( m_strigiProcess->state() == QProcess::NotRunning ) {
         m_running5Minutes = false;
@@ -83,6 +123,12 @@ bool Nepomuk::StrigiController::start( bool withNepomuk )
         if ( m_strigiProcess->waitForStarted() ) {
             m_state = Running;
             QTimer::singleShot( 50000, this, SLOT( slotRunning5Minutes() ) );
+
+            kDebug(300002) << "Strigi started successfully.";
+
+            StrigiClient strigiClient;
+            strigiClient.startIndexing();
+
             return true;
         }
         else {
@@ -102,6 +148,7 @@ void Nepomuk::StrigiController::shutdown()
 {
     kDebug(300002) << "(Nepomuk::StrigiController::shutdown)";
     if ( state() == Running ) {
+        kDebug(300002) << "We started Strigi ourselves. Trying to shut it down gracefully.";
         m_state = ShuttingDown;
         m_strigiProcess->terminate();
         if ( !m_strigiProcess->waitForFinished() ) {
@@ -110,13 +157,34 @@ void Nepomuk::StrigiController::shutdown()
         }
         m_state = Idle;
     }
+    else {
+        // let's see if Strigi has been started by someone else
+#ifndef _WIN32
+        pid_t pid = strigidaemonPid();
+        if ( pid != ( pid_t )-1 ) {
+            kDebug(300002) << "Shutting down Strigi instance started by someone else.";
+
+            // give Strigi the possibility to shutdown gracefully
+            kill( pid, SIGQUIT );
+
+            // wait for the Strigi process to exit
+            if ( !waitForProcessToExit( pid ) ) {
+                // kill it the hard way if it won't stop (Strigi tends to ignore the quit signal during indexing)
+                kDebug(300002) << "strigidaemon does not terminate properly. Killing process...";
+                kill( pid, SIGKILL );
+            }
+        }
+#else
+#warning FIXME: No Strigi status support on Windows
+#endif
+    }
 }
 
 
 void Nepomuk::StrigiController::slotProcessFinished( int exitCode, QProcess::ExitStatus exitStatus )
 {
     if ( m_state != ShuttingDown ) {
-        kDebug(300002) << "strigidaemon shut down unexpectedly.";
+        kDebug(300002) << "strigidaemon shut down unexpectedly with exit code:" << exitCode;
         if ( exitStatus == QProcess::CrashExit ) {
             kDebug(300002) << "strigidaemon crashed.";
             if ( m_running5Minutes ) {
@@ -125,6 +193,9 @@ void Nepomuk::StrigiController::slotProcessFinished( int exitCode, QProcess::Exi
             }
             else {
                 kDebug(300002) << "looks like a recurring crash!";
+                KMessageBox::error( 0,
+                                    i18n( "Strigi (the desktop file indexer) crashed repeatedly. It will not be started again." ),
+                                    i18n( "Strigi Desktop Search" ) );
             }
         }
     }
@@ -140,26 +211,9 @@ void Nepomuk::StrigiController::slotRunning5Minutes()
 bool Nepomuk::StrigiController::isRunning()
 {
 #ifndef _WIN32
-    int fd = open( QFile::encodeName( QString( "%1/.strigi/lock" ).arg( QDir::homePath() ) ), O_WRONLY );
-    if ( fd == -1 ) {
-        kDebug(300002) << "failed to open lock";
-        return false;
-    }
-    struct flock lock;
-    lock.l_type = F_WRLCK;
-    lock.l_whence = SEEK_SET;
-    lock.l_start = 0;
-    lock.l_len = 0;
-    int r = fcntl( fd, F_GETLK, &lock );
-    if ( r == -1 ) {
-        kDebug(300002) << "failed to configure lock";
-        close(fd);
-        return false;
-    }
-    close( fd );
-    kDebug(300002) << (lock.l_type == F_WRLCK);
-    return lock.l_type == F_WRLCK;
+    return(  strigidaemonPid() != ( pid_t )-1 );
 #else
+#warning FIXME: No Strigi status support on Windows
     // FIXME: this will actually start strigidaemon through DBus autostarting
 //     return( QDBusConnection::sessionBus().call( QDBusMessage::createMethodCall( "vandenoever.strigi",
 //                                                                                 "/search",

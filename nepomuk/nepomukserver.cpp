@@ -21,10 +21,9 @@
 #include "nepomukserver.h"
 #include "nepomukcore.h"
 #include "strigicontroller.h"
+#include "strigiconfigfile.h"
 #include "nepomukserveradaptor.h"
 #include "nepomukserversettings.h"
-
-#include <strigi/qtdbus/strigiclient.h>
 
 #include <Soprano/Global>
 
@@ -38,8 +37,7 @@
 Nepomuk::Server::Server()
     : KDEDModule(),
       m_core( 0 ),
-      m_strigiController( 0 ),
-      m_strigi( new StrigiClient() ),
+      m_strigiController( new StrigiController( this ) ),
       m_backend( 0 )
 {
     // we want to be accessible through our own nice nepomuk service,
@@ -58,7 +56,6 @@ Nepomuk::Server::~Server()
 {
     NepomukServerSettings::self()->writeConfig();
     QDBusConnection::sessionBus().unregisterService( "org.kde.NepomukServer" );
-    delete m_strigi;
 }
 
 
@@ -71,19 +68,12 @@ void Nepomuk::Server::init()
 
 void Nepomuk::Server::startStrigi()
 {
-    if ( !StrigiController::isRunning() ) {
-        if ( !m_strigiController ) {
-            m_strigiController = new StrigiController( this );
-        }
-        m_strigiController->start(
-#ifdef HAVE_STRIGI_SOPRANO_BACKEND
-            NepomukServerSettings::self()->startNepomuk()
-#else
-            false
-#endif
-            );
+    // make sure we have a proper Strigi config
+    updateStrigiConfig();
 
-        m_strigi->startIndexing();
+    // start Strigi
+    if ( !StrigiController::isRunning() ) {
+        m_strigiController->start();
     }
 }
 
@@ -115,9 +105,9 @@ void Nepomuk::Server::enableNepomuk( bool enabled )
     // FIXME: make this a runtime descision
 #ifdef HAVE_STRIGI_SOPRANO_BACKEND
     if ( needToRestartStrigi ) {
-        // we use the dbus interface to also shut it down in case we did not start it ourselves
-        m_strigi->stopDaemon();
-        m_strigiController->start( enabled );
+        m_strigiController->shutdown();
+        updateStrigiConfig();
+        m_strigiController->start();
     }
 #endif
 
@@ -127,21 +117,30 @@ void Nepomuk::Server::enableNepomuk( bool enabled )
 
 void Nepomuk::Server::enableStrigi( bool enabled )
 {
-    kDebug(300002) << "enableStrigi" << enabled;
+    kDebug(300002) << enabled;
+
     if ( enabled ) {
         startStrigi();
-        m_strigi->startIndexing();
     }
     else {
-        if ( m_strigiController && m_strigiController->state() == StrigiController::Running ) {
-            m_strigiController->shutdown();
-        }
-        else if ( StrigiController::isRunning() ) {
-            m_strigi->stopDaemon();
-        }
+        m_strigiController->shutdown();
     }
 
     NepomukServerSettings::self()->setStartStrigi( enabled );
+}
+
+
+void Nepomuk::Server::updateStrigiConfig()
+{
+    StrigiConfigFile strigiConfig ( StrigiConfigFile::defaultStrigiConfigFilePath() );
+    strigiConfig.load();
+    if ( NepomukServerSettings::self()->startNepomuk() ) {
+        strigiConfig.defaultRepository().setType( "sopranobackend" );
+    }
+    else {
+        strigiConfig.defaultRepository().setType( "clucene" );
+    }
+    strigiConfig.save();
 }
 
 

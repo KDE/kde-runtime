@@ -41,7 +41,7 @@ namespace Nepomuk {
         State state() const;
 
     public Q_SLOTS:
-        bool start( bool useNepomuk = true );
+        bool start();
         void shutdown();
 
         static bool isRunning();

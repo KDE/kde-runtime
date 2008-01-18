@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>411</width>
-    <height>268</height>
+    <height>448</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" >
@@ -147,14 +147,27 @@ p, li { white-space: pre-wrap; }
         </widget>
        </item>
        <item>
+        <widget class="KEditListBox" name="m_editStrigiExcludeFilters" >
+         <property name="toolTip" >
+          <string>Filters which define the files that Strigi should ignore</string>
+         </property>
+         <property name="whatsThis" >
+          <string/>
+         </property>
+         <property name="title" >
+          <string>Strigi Index Exclude Filters</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <spacer>
          <property name="orientation" >
           <enum>Qt::Vertical</enum>
          </property>
          <property name="sizeHint" >
           <size>
-           <width>20</width>
-           <height>40</height>
+           <width>371</width>
+           <height>16</height>
           </size>
          </property>
         </spacer>

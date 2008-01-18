@@ -20,6 +20,7 @@
 #include "strigicontroller.h"
 #include "nepomukserversettings.h"
 #include "nepomukserverinterface.h"
+#include "strigiconfigfile.h"
 
 #include <KPluginFactory>
 #include <KPluginLoader>
@@ -27,6 +28,7 @@
 #include <KSharedConfig>
 #include <KLed>
 #include <KMessageBox>
+#include <KUrlRequester>
 
 #include <strigi/qtdbus/strigiclient.h>
 
@@ -48,11 +50,18 @@ Nepomuk::ServerConfigModule::ServerConfigModule( QWidget* parent, const QVariant
 
     setupUi( this );
 
+    KUrlRequester* urlReq = new KUrlRequester( m_editStrigiFolders );
+    urlReq->setMode( KFile::Directory|KFile::LocalOnly|KFile::ExistingOnly );
+    KEditListBox::CustomEditor ce( urlReq, urlReq->lineEdit() );
+    m_editStrigiFolders->setCustomEditor( ce );
+
     connect( m_checkEnableStrigi, SIGNAL( toggled(bool) ),
              this, SLOT( changed() ) );
     connect( m_checkEnableNepomuk, SIGNAL( toggled(bool) ),
              this, SLOT( changed() ) );
     connect( m_editStrigiFolders, SIGNAL( changed() ),
+             this, SLOT( changed() ) );
+    connect( m_editStrigiExcludeFilters, SIGNAL( changed() ),
              this, SLOT( changed() ) );
 
     load();
@@ -81,10 +90,23 @@ void Nepomuk::ServerConfigModule::load()
     }
 
     if ( StrigiController::isRunning() ) {
-        m_editStrigiFolders->insertStringList( StrigiClient().getIndexedDirectories() );
+        StrigiClient strigiClient;
+        m_editStrigiFolders->setItems( strigiClient.getIndexedDirectories() );
+        QList<QPair<bool, QString> > filters = strigiClient.getFilters();
+        m_editStrigiExcludeFilters->clear();
+        for( QList<QPair<bool, QString> >::const_iterator it = filters.constBegin();
+             it != filters.constEnd(); ++it ) {
+            if ( !it->first ) {
+                m_editStrigiExcludeFilters->insertItem( it->second );
+            }
+            // else: we simply drop include filters for now
+        }
     }
     else {
-        // FIXME: read the strigi daemon config.
+        StrigiConfigFile strigiConfig( StrigiConfigFile::defaultStrigiConfigFilePath() );
+        strigiConfig.load();
+        m_editStrigiFolders->setItems( strigiConfig.defaultRepository().indexedDirectories() );
+        m_editStrigiExcludeFilters->setItems( strigiConfig.excludeFilters() );
     }
 
     updateStrigiStatus();
@@ -98,7 +120,22 @@ void Nepomuk::ServerConfigModule::save()
     NepomukServerSettings::self()->setStartNepomuk( m_checkEnableNepomuk->isChecked() );
     NepomukServerSettings::self()->writeConfig();
 
-    // 2. update the current state of the nepomuk server
+
+    // 2. update Strigi config
+    StrigiConfigFile strigiConfig( StrigiConfigFile::defaultStrigiConfigFilePath() );
+    strigiConfig.load();
+    if ( NepomukServerSettings::self()->startNepomuk() ) {
+        strigiConfig.defaultRepository().setType( "sopranobackend" );
+    }
+    else {
+        strigiConfig.defaultRepository().setType( "clucene" );
+    }
+    strigiConfig.defaultRepository().setIndexedDirectories( m_editStrigiFolders->items() );
+    strigiConfig.setExcludeFilters( m_editStrigiExcludeFilters->items() );
+    strigiConfig.save();
+
+
+    // 3. update the current state of the nepomuk server
     if ( m_serverInterface.isValid() ) {
         m_serverInterface.enableNepomuk( m_checkEnableNepomuk->isChecked() );
         m_serverInterface.enableStrigi( m_checkEnableStrigi->isChecked() );
@@ -110,11 +147,19 @@ void Nepomuk::ServerConfigModule::save()
                             i18n( "Nepomuk server not running" ) );
     }
 
+
+    // 4. update values in the running Strigi instance
+    // TODO: there should be a dbus method to re-read the config
+    // -----------------------------
     if ( StrigiController::isRunning() ) {
-        StrigiClient().setIndexedDirectories( m_editStrigiFolders->items() );
-    }
-    else {
-        // FIXME: update strigi daemon config
+        StrigiClient strigiClient;
+        strigiClient.setIndexedDirectories( m_editStrigiFolders->items() );
+
+        QList<QPair<bool, QString> > filters;
+        foreach( QString filter, strigiConfig.excludeFilters() ) {
+            filters.append( qMakePair( false, filter ) );
+        }
+        strigiClient.setFilters( filters );
     }
 
     updateStrigiStatus();
@@ -126,6 +171,10 @@ void Nepomuk::ServerConfigModule::defaults()
     NepomukServerSettings::self()->setDefaults();
     m_checkEnableStrigi->setChecked( NepomukServerSettings::self()->startStrigi() );
     m_checkEnableNepomuk->setChecked( NepomukServerSettings::self()->startNepomuk() );
+    // create Strigi default config
+    StrigiConfigFile defaultConfig;
+    m_editStrigiFolders->setItems( defaultConfig.defaultRepository().indexedDirectories() );
+    m_editStrigiExcludeFilters->setItems( defaultConfig.excludeFilters() );
 }
 
 

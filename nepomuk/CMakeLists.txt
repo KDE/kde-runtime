@@ -37,6 +37,7 @@ set(nepomukserver_SRCS
   repository.cpp
   ontologyloader.cpp
   strigicontroller.cpp
+  strigiconfigfile.cpp
   ${nepomukserversettings_SRCS}
   )
 
@@ -53,6 +54,7 @@ target_link_libraries(kded_nepomukserver
   ${QT_QTDBUS_LIBRARY}
   ${KDE4_KDECORE_LIBS}
   ${KDE4_KIO_LIBS}
+  ${KDE4_KDEUI_LIBS}
   )
 
 if(SopranoIndex_FOUND)
@@ -62,6 +64,7 @@ endif(SopranoIndex_FOUND)
 
 set(kcmnepomuk_SRCS
   strigicontroller.cpp
+  strigiconfigfile.cpp
   nepomukserverkcm.cpp
   ${nepomukserversettings_SRCS}
   )
@@ -82,6 +85,7 @@ target_link_libraries(kcm_nepomuk
   ${QT_QTDBUS_LIBRARY}
   ${KDE4_KDECORE_LIBS}
   ${KDE4_KDEUI_LIBS}
+  ${KDE4_KIO_LIBS}
   )
 # -----------------------------
 
