@@ -43,7 +43,7 @@ KNetAttach::KNetAttach( QWidget* parent )
     connect(_useEncryption, SIGNAL(toggled(bool)), this, SLOT(updatePort(bool)));
     connect(_createIcon, SIGNAL(toggled(bool)), this, SLOT(updateFinishButtonText(bool)));
 
-    setIcon(SmallIcon("knetattach"));
+    setWindowIcon(KIcon("knetattach"));
     disconnect(finishButton(), SIGNAL(clicked()), (QDialog*)this, SLOT(accept()));
     connect(finishButton(), SIGNAL(clicked()), this, SLOT(finished()));
     finishButton()->setText(i18n("Save && C&onnect"));
