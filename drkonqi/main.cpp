@@ -44,7 +44,7 @@ static const char description[] = I18N_NOOP( "KDE crash handler gives the user f
 
 int main( int argc, char* argv[] )
 {
-#ifndef Q_OS_WIN
+#ifndef Q_OS_WIN //krazy:exclude=cpp
   // Drop privs.
   setgid(getgid());
   if (setuid(getuid()) < 0 && geteuid() != getuid())

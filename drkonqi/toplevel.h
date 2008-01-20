@@ -32,6 +32,8 @@
 
 class KrashConfig;
 class DrKBugReport;
+class KrashDebugger;
+class QLabel;
 
 #include <KDialog>
 
@@ -56,10 +58,13 @@ protected Q_SLOTS:
 protected Q_SLOTS:
   void slotBacktraceSomeError();
   void slotBacktraceDone(const QString &);
+  void expandDetails(bool expand);
 
 private:
   KrashConfig *m_krashconf;
   DrKBugReport *m_bugreport;
+  KrashDebugger *m_debugger;
+  QLabel *m_detailDescriptionLabel;
 };
 
 #endif

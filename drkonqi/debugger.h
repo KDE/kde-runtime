@@ -41,7 +41,7 @@ class KrashDebugger : public QWidget
   Q_OBJECT
 
 public:
-  explicit KrashDebugger(const KrashConfig *krashconf, QWidget *parent = 0, const char *name = 0);
+  explicit KrashDebugger(const KrashConfig *krashconf, QWidget *parent = 0);
   ~KrashDebugger();
 
 public Q_SLOTS:

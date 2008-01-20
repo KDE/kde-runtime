@@ -75,10 +75,10 @@ void KrashConfig :: readConfig()
 
   QString programname = args->getOption("programname");
   if (programname.isEmpty())
-    programname = I18N_NOOP("unknown");
+    programname = I18N_NOOP2("unknown application", "unknown");
   m_aboutData = new KAboutData(args->getOption("appname").toUtf8(),
                                0,
-                               ki18n(programname.toUtf8()),
+                               ki18nc("unknown application", programname.toUtf8()),
                                args->getOption("appversion").toUtf8(),
                                KLocalizedString(), // shortDescription
                                KAboutData::License_Unknown,

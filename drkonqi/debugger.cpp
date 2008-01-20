@@ -47,42 +47,38 @@
 #include "krashconf.h"
 #include "debugger.moc"
 
-KrashDebugger :: KrashDebugger (const KrashConfig *krashconf, QWidget *parent, const char *name)
+KrashDebugger :: KrashDebugger (const KrashConfig *krashconf, QWidget *parent)
   : QWidget( parent ),
     m_krashconf(krashconf),
     m_proctrace(0)
 {
-  setObjectName(name);
-
   QVBoxLayout *vbox = new QVBoxLayout( this );
   vbox->setSpacing( KDialog::spacingHint() );
-  vbox->setMargin( KDialog::marginHint() );
+  vbox->setMargin( 0 );
 
   m_backtrace = new KTextBrowser(this);
   m_backtrace->setFont(KGlobalSettings::fixedFont());
 
   vbox->addWidget(m_backtrace);
 
-  QWidget *w = new QWidget( this );
-  QHBoxLayout *hbox = new QHBoxLayout( w );
+  QHBoxLayout *hbox = new QHBoxLayout();
   hbox->setMargin( 0 );
   hbox->setSpacing( KDialog::spacingHint() );
 
-  m_status = new QLabel( w );
-  m_status->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Preferred ) );
+  m_status = new QLabel( this );
   //m_copyButton = new KPushButton( KStandardGuiItem::copy(), w );
-  hbox->addWidget(m_status);
+  hbox->addWidget(m_status, 1);
   KGuiItem item( i18n( "C&opy" ), QLatin1String( "edit-copy" ) );
-  m_copyButton = new KPushButton( item, w );
+  m_copyButton = new KPushButton( item, this );
   connect( m_copyButton, SIGNAL( clicked() ), this, SLOT( slotCopy() ) );
   m_copyButton->setEnabled( false );
   hbox->addWidget(m_copyButton);
-  m_saveButton = new KPushButton( m_krashconf->safeMode() ? KStandardGuiItem::save() : KStandardGuiItem::saveAs(), w );
+  m_saveButton = new KPushButton( m_krashconf->safeMode() ? KStandardGuiItem::save() : KStandardGuiItem::saveAs(), this );
   connect( m_saveButton, SIGNAL( clicked() ), this, SLOT( slotSave() ) );
   m_saveButton->setEnabled( false );
   hbox->addWidget(m_saveButton);
 
-  vbox->addWidget(w);
+  vbox->addLayout(hbox);
 }
 
 KrashDebugger :: ~KrashDebugger()
@@ -93,7 +89,7 @@ KrashDebugger :: ~KrashDebugger()
 
 void KrashDebugger :: slotDone(const QString& str)
 {
-  m_status->setText(i18n("Done."));
+  m_status->setText(i18nc("debugging finished", "Done."));
   m_copyButton->setEnabled( true );
   m_saveButton->setEnabled( true );
   m_backtrace->setPlainText( m_prependText + str ); // replace with possibly post-processed backtrace

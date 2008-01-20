@@ -74,7 +74,7 @@ Name[xh]=Isicelo se %progname (%appname) ingqubekile yaze yabangela uphawu lwe %
 
 [WhatToDoHint]
 Enable=true
-Name=You might want to send a bug report for this application. Check if it is listed on http://bugs.kde.org, otherwise mail the author. Please include as much information as possible, maybe the original documents. If you have a way to reproduce the error, include this also.
+Name=Please help us improving this application by reporting this error at <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Please include as much information as possible, maybe the original documents. If you have a way to reproduce the error, include this also.
 Name[af]=Jy kan 'n fout raport instuur vir die program. Kyk eers of dit by http://bugs.kde.org gelys is, anders kan jy die outeur direk kontak. Sluit asb. soveel inligting as moontlik in, selfs die oorspronklike dokumentasie. As jy weet hoe om die probleem te reproduseer, sluit asb. ook 'n beskrywing daarvan in.
 Name[bn]=আপনার সম্ভবত এই  অ্যাপলিকেশনটি সম্বন্ধে বাগ রিপোর্ট পাঠানো উচিত্‍।  প্রথমে খোঁজ করে দেখুন এই বাগ-টি http://bugs.kde.org-এ আগে থেকেই আছে কি না, এবং না থাকলে প্রোগ্রামটির লেখককে ই-মেইল করুন। অনুগ্রহ করে যতটা সম্ভব তথ্য অন্তর্ভুক্ত করার চেষ্টা করবেন। যদি এমন কোন উপায় খুঁজে পান যার সাহায্যে প্রতিবার নিশ্চিতভাবে সমস্যাটি দেখা যায়, তাহলে তা অবশ্যই জানাবেন।
 Name[cy]=Efallai y dymunwch yrru adroddiad o'r nam i'r awdur. Cywirwch os mae o wedi'i restru ar http://bugs.kde.org, neu anfonwch ebost i'r awdur.  Ceisiwch gynnwys cyn gymaint o wybodaeth â phosibl, ac efallai'r dogfennau gwreiddiol. Os oes modd i chi ail-greu'r gwall, cynhwyswch hwn hefyd.

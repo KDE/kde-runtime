@@ -2,6 +2,7 @@
  * drkonqi - The KDE Crash Handler
  *
  * Copyright (C) 2000-2003 Hans Petter Bieker <bieker@kde.org>
+ * Copyright (C) 2008 Urs Wolfer <uwolfer @ kde.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,29 +28,19 @@
 
 #include "toplevel.h"
 
-#include <QtCore/QString>
-#include <QtDBus/QtDBus>
-#include <QtDBus/QDBusConnection>
 #include <QtGui/QHBoxLayout>
 #include <QtGui/QLabel>
-#include <QtGui/QPixmap>
+#include <QtGui/QCheckBox>
 
-#include "netwm.h"
-
-#include <klocale.h>
-#include <kglobal.h>
 #include <kstandarddirs.h>
-#include <kbugreport.h>
 #include <kmessagebox.h>
-#include <kprocess.h>
 #include <kapplication.h>
-#include <khbox.h>
-#include <KTabWidget>
 
 #include "backtrace.h"
 #include "drbugreport.h"
 #include "debugger.h"
 #include "krashconf.h"
+
 #include "toplevel.moc"
 
 Toplevel :: Toplevel(KrashConfig *krashconf, QWidget *parent)
@@ -59,41 +50,51 @@ Toplevel :: Toplevel(KrashConfig *krashconf, QWidget *parent)
   setCaption( krashconf->programName() );
   setButtons( User3 | User2 | User1 | Close );
   setDefaultButton( Close );
-  setModal( true );
-  showButtonSeparator( false );
+  showButtonSeparator( true );
   setButtonGuiItem( User1, KGuiItem(i18n("&Bug Report")) );
   setButtonGuiItem( User2, KGuiItem(i18n("&Debugger")) );
 
-  KTabWidget *tabWidget = new KTabWidget(this);
-  setMainWidget(tabWidget);
+  QWidget *mainWidget = new QWidget(this);
+  setMainWidget(mainWidget);
 
-  QWidget* page = new QWidget();
-  tabWidget->addTab(page, i18n("General"));
+  QVBoxLayout* mainLayout = new QVBoxLayout(mainWidget);
+  mainLayout->setMargin(0);
+  mainLayout->setSpacing(spacingHint());
 
-  QHBoxLayout* layout = new QHBoxLayout();
-  layout->setSpacing(20);
-
-  // picture of konqi
-  QLabel *lab = new QLabel(page);
-  lab->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
-  lab->setPixmap(QPixmap(KStandardDirs::locate("appdata", QLatin1String("pics/konqi.png"))));
-  lab->setFrameStyle(QFrame::Panel | QFrame::Sunken);
-  lab->setFixedSize(lab->sizeHint());
-
-  QLabel * info = new QLabel(generateText(), page);
+  QLabel *info = new QLabel(generateText(), this);
+  info->setTextInteractionFlags(Qt::TextBrowserInteraction);
+  info->setOpenExternalLinks(true);
   info->setWordWrap(true);
-  info->setMinimumSize(info->sizeHint());
-  info->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+  info->setMinimumSize(info->sizeHint().width() + 100, info->sizeHint().height());
+  info->setAlignment(Qt::AlignJustify);
+  QString styleSheet = QString("QLabel {"
+                       "padding: 10px;"
+                       "background-image: url(%1);"
+                       "background-repeat: no-repleat;"
+                       "background-position: right;"
+                       "}").arg(KStandardDirs::locate("appdata", QLatin1String("pics/konqi.png")));
+  info->setStyleSheet(styleSheet);
+  mainLayout->addWidget(info);
 
-  layout->addWidget(lab);
-  layout->addWidget(info);
-  page->setLayout(layout);
+  QCheckBox *detailsCheckBox = new QCheckBox("Show Details", this);
+  connect(detailsCheckBox, SIGNAL(toggled(bool)), SLOT(expandDetails(bool)));
+  mainLayout->addWidget(detailsCheckBox);
 
   if (m_krashconf->showBacktrace())
   {
-    page = new KHBox();
-    tabWidget->addTab(page, i18n("Backtrace"));
-    new KrashDebugger(m_krashconf, page);
+    m_detailDescriptionLabel = new QLabel(this);
+    m_detailDescriptionLabel->setText(QString("<p style=\"margin: 10px;\">%1<br /><br />%2</p>")
+                                              .arg(m_krashconf->signalText())
+                                              .arg(i18n("Please attach the following backtrace to you bugreport.")));
+    m_detailDescriptionLabel->setWordWrap(true);
+    m_detailDescriptionLabel->setTextInteractionFlags(Qt::TextBrowserInteraction);
+    m_detailDescriptionLabel->setAlignment(Qt::AlignJustify);
+    m_detailDescriptionLabel->setVisible(false);
+    mainLayout->addWidget(m_detailDescriptionLabel);
+
+    m_debugger = new KrashDebugger(m_krashconf, this);
+    m_debugger->setVisible(false);
+    mainLayout->addWidget(m_debugger);
   }
 
   showButton( User1, m_krashconf->showBugReport() );
@@ -111,25 +112,31 @@ Toplevel :: ~Toplevel()
 {
 }
 
+void Toplevel :: expandDetails(bool expand)
+{
+  setUpdatesEnabled(false); // reduce flickering. remember to enable it at the end again.
+  m_detailDescriptionLabel->setVisible(expand);
+  m_debugger->setVisible(expand);
+  QCoreApplication::processEvents(); // force update of the size hint first...
+  resize(minimumSizeHint());
+  setUpdatesEnabled(true);
+}
+
 QString Toplevel :: generateText() const
 {
   QString str;
 
   if (!m_krashconf->errorDescriptionText().isEmpty())
-    str += i18n("<p><b>Short description</b></p><p>%1</p>",
-       m_krashconf->errorDescriptionText());
-
-  if (!m_krashconf->signalText().isEmpty())
-    str += i18n("<p><b>What is this?</b></p><p>%1</p>",
-       m_krashconf->signalText());
+    str += QString("<p style=\"margin-bottom: 6px;\"><b>%1</b></p>").arg(i18n("A fatal error occurred")) +
+       m_krashconf->errorDescriptionText();
 
   if (!m_krashconf->whatToDoText().isEmpty())
-    str += i18n("<p><b>What can I do?</b></p><p>%1</p>",
-       m_krashconf->whatToDoText());
+    str += QString("<br />%1<br />").arg(i18n("What can I do?")) +
+       m_krashconf->whatToDoText();
 
   // check if the string is still empty. if so, display a default.
   if (str.isEmpty())
-    str = i18n("<p><b>Application crashed</b></p>"
+    str = i18n("<p>Application crashed</p>"
                "<p>The program %appname crashed.</p>");
 
   // scan the string for %appname etc
@@ -147,7 +154,7 @@ void Toplevel :: slotUser1()
   int i = KMessageBox::No;
   if ( m_krashconf->pid() != 0 )
     i = KMessageBox::warningYesNoCancel
-      (0,
+      (this,
        i18n("<p>Do you want to generate a "
             "backtrace? This will help the "
             "developers to figure out what went "
@@ -164,7 +171,7 @@ void Toplevel :: slotUser1()
 
     if (i == KMessageBox::Cancel) return;
 
-  m_bugreport = new DrKBugReport(0, true, m_krashconf->aboutData());
+  m_bugreport = new DrKBugReport(this, true, m_krashconf->aboutData());
 
   if (i == KMessageBox::Yes) {
     QApplication::setOverrideCursor ( Qt::WaitCursor );
@@ -227,11 +234,10 @@ void Toplevel :: slotBacktraceSomeError()
 {
   QApplication::restoreOverrideCursor();
 
-  KMessageBox::sorry(0, i18n("It was not possible to generate a backtrace."),
+  KMessageBox::sorry(this, i18n("It was not possible to generate a backtrace."),
                      i18n("Backtrace Not Possible"));
 
   m_bugreport->exec();
   delete m_bugreport;
   m_bugreport = 0;
 }
-
