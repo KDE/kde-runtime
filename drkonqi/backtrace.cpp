@@ -29,41 +29,37 @@
 
 #include <QRegExp>
 
-#include <k3process.h>
+#include <KProcess>
 #include <KDebug>
 #include <KStandardDirs>
 #include <KMessageBox>
 #include <KLocale>
 #include <ktemporaryfile.h>
+#include <KShell>
+
+#include <signal.h>
 
 #include "krashconf.h"
 #include "backtrace.moc"
 
-BackTrace::BackTrace(const KrashConfig *krashconf, QObject *parent,
-                     const char *name)
+BackTrace::BackTrace(const KrashConfig *krashconf, QObject *parent)
   : QObject(parent),
     m_krashconf(krashconf), m_temp(0)
 {
-  setObjectName(name);
-  m_proc = new K3Process;
+  m_proc = new KProcess;
 }
 
 BackTrace::~BackTrace()
 {
-  pid_t pid = m_proc ? m_proc->pid() : 0;
-  // we don't want the gdb process to hang around
-  delete m_proc; // this will kill gdb (SIGKILL, signal 9)
-
-  // continue the process we ran backtrace on. Gdb sends SIGSTOP to the
-  // process. For some reason it doesn't work if we send the signal before
-  // gdb has exited, so we better wait for it.
   // Do not touch it if we never ran backtrace.
-  if (pid)
+  if (m_proc->state() == QProcess::Running)
   {
-    waitpid(pid, NULL, 0);
-    kill(m_krashconf->pid(), SIGCONT);
+    m_proc->kill();
+    m_proc->waitForFinished();
+    ::kill(m_krashconf->pid(), SIGCONT);
   }
 
+  delete m_proc;
   delete m_temp;
 }
 
@@ -82,44 +78,51 @@ void BackTrace::start()
   }
   m_temp = new KTemporaryFile;
   m_temp->open();
-  int handle = m_temp->handle();
-  QString backtraceCommand = m_krashconf->backtraceCommand();
-  const char* bt = backtraceCommand.toLatin1();
-  ::write(handle, bt, strlen(bt)); // the command for a backtrace
-  ::write(handle, "\n", 1);
-  ::fsync(handle);
+  m_temp->write(m_krashconf->backtraceCommand().toLatin1());
+  m_temp->write("\n", 1);
+  m_temp->flush();
 
   // start the debugger
-  m_proc = new K3Process;
-  m_proc->setUseShell(true);
-
   QString str = m_krashconf->debuggerBatch();
   m_krashconf->expandString(str, true, m_temp->fileName());
 
-  *m_proc << str;
+  *m_proc << KShell::splitArgs(str);
+  m_proc->setOutputChannelMode(KProcess::SeparateChannels); // Drop stderr
+  m_proc->setNextOpenMode(QIODevice::ReadWrite | QIODevice::Text);
+  connect(m_proc, SIGNAL(readyReadStandardOutput()),
+          SLOT(slotReadInput()));
+  connect(m_proc, SIGNAL(finished(int, QProcess::ExitStatus)),
+          SLOT(slotProcessExited(int, QProcess::ExitStatus)));
 
-  connect(m_proc, SIGNAL(receivedStdout(K3Process*, char*, int)),
-          SLOT(slotReadInput(K3Process*, char*, int)));
-  connect(m_proc, SIGNAL(processExited(K3Process*)),
-          SLOT(slotProcessExited(K3Process*)));
-
-  m_proc->start ( K3Process::NotifyOnExit, K3Process::All );
+  m_proc->start();
+  if (!m_proc->waitForStarted())
+  {
+    emit someError();
+  }
 }
 
-void BackTrace::slotReadInput(K3Process *, char* buf, int buflen)
+void BackTrace::slotReadInput()
 {
-  QString newstr = QString::fromLocal8Bit(buf, buflen);
-  m_strBt.append(newstr);
+    // we do not know if the output array ends in the middle of an utf-8 sequence
+    m_output += m_proc->readAllStandardOutput();
 
-  emit append(newstr);
+    int pos;
+    while ((pos = m_output.indexOf('\n')) != -1)
+    {
+        QString line = QString::fromLocal8Bit(m_output, pos + 1);
+        m_output.remove(0, pos + 1);
+
+        m_strBt.append(line);
+        emit append(line);
+    }
 }
 
-void BackTrace::slotProcessExited(K3Process *proc)
+void BackTrace::slotProcessExited(int exitCode, QProcess::ExitStatus exitStatus)
 {
   // start it again
-  kill(m_krashconf->pid(), SIGCONT);
+  ::kill(m_krashconf->pid(), SIGCONT);
 
-  if (proc->normalExit() && (proc->exitStatus() == 0) &&
+  if (((exitStatus == QProcess::NormalExit) && (exitCode == 0)) &&
       usefulBacktrace())
   {
     processBacktrace();
