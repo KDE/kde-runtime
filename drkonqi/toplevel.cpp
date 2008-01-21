@@ -76,7 +76,7 @@ Toplevel :: Toplevel(KrashConfig *krashconf, QWidget *parent)
   info->setStyleSheet(styleSheet);
   mainLayout->addWidget(info);
 
-  QCheckBox *detailsCheckBox = new QCheckBox("Show Details", this);
+  QCheckBox *detailsCheckBox = new QCheckBox("Show details", this);
   connect(detailsCheckBox, SIGNAL(toggled(bool)), SLOT(expandDetails(bool)));
   mainLayout->addWidget(detailsCheckBox);
 
@@ -127,7 +127,7 @@ QString Toplevel :: generateText() const
   QString str;
 
   if (!m_krashconf->errorDescriptionText().isEmpty())
-    str += QString("<p style=\"margin-bottom: 6px;\"><b>%1</b></p>").arg(i18n("A fatal error occurred")) +
+    str += QString("<p style=\"margin-bottom: 6px;\"><b>%1</b></p>").arg(i18n("A Fatal Error Occurred")) +
        m_krashconf->errorDescriptionText();
 
   if (!m_krashconf->whatToDoText().isEmpty())
