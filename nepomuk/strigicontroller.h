@@ -49,6 +49,7 @@ namespace Nepomuk {
     private Q_SLOTS:
         void slotProcessFinished( int exitCode, QProcess::ExitStatus exitStatus );
         void slotRunning5Minutes();
+        void slotStartStrigiIndexing();
 
     private:
         KProcess* m_strigiProcess;

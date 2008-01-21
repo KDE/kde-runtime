@@ -126,8 +126,10 @@ bool Nepomuk::StrigiController::start()
 
             kDebug(300002) << "Strigi started successfully.";
 
-            StrigiClient strigiClient;
-            strigiClient.startIndexing();
+            // Strigi might refuse to start properly for some reason (invalid config, lock file invalid, whatever.)
+            // In that case the dbus client would hang. Thus, we wait for 5 seconds before starting the indexing
+            // (Which is ugly anyway since Strigi should do that automatically)
+            QTimer::singleShot( 5000, this, SLOT( slotStartStrigiIndexing() ) );
 
             return true;
         }
@@ -225,6 +227,15 @@ bool Nepomuk::StrigiController::isRunning()
 //             != QDBusMessage::ErrorMessage );
     return false;
 #endif /* _WIN32 */
+}
+
+
+void Nepomuk::StrigiController::slotStartStrigiIndexing()
+{
+    if ( isRunning() ) {
+        StrigiClient strigiClient;
+        strigiClient.startIndexing();
+    }
 }
 
 #include "strigicontroller.moc"
