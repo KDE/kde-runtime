@@ -59,6 +59,48 @@ uint qHash( const std::string& s )
 }
 
 namespace {
+    QString findArchivePath( const QString& path ) {
+        QString p( path );
+        int i = 0;
+        while ( ( i = p.lastIndexOf( '/' ) ) > 0 ) {
+            p.truncate( i );
+            if ( QFileInfo( p ).isFile() ) {
+                return p;
+            }
+        }
+        return QString();
+    }
+
+    QUrl createResourceUri( const Strigi::AnalysisResult* idx ) {
+        // HACK: Strigi includes analysers that recurse into tar or zip archives and index
+        // the files therein. In KDE these files could perfectly be handled through kio slaves
+        // such as tar:/ or zip:/
+        // Here we try to use KDE-compatible URIs for these indexed files the best we can
+        // everything else defaults to file:/
+        QString path = QFile::decodeName( idx->path().c_str() );
+        QUrl url = QUrl::fromLocalFile( QFileInfo( path ).absoluteFilePath() );
+        if ( idx->depth() > 0 ) {
+            QString archivePath = findArchivePath( path );
+            if ( QFile::exists( archivePath ) ) {
+                if ( archivePath.endsWith( QLatin1String( "tar" ) ) ||
+                     archivePath.endsWith( QLatin1String( "tar.gz" ) ) ||
+                     archivePath.endsWith( QLatin1String( "tar.bz2" ) ) ) {
+                    url.setScheme( "tar" );
+                }
+                else if ( archivePath.endsWith( QLatin1String( "zip" ) ) ) {
+                    url.setScheme( "zip" );
+                }
+            }
+        }
+
+        // fallback for all
+        if ( url.scheme().isEmpty() ) {
+            url.setScheme( "file" );
+        }
+
+        return url;
+    }
+
     class FileMetaData
     {
     public:
@@ -214,7 +256,7 @@ void Strigi::Soprano::IndexWriter::startAnalysis( const AnalysisResult* idx )
 {
 //    qDebug() << "IndexWriter::startAnalysis in thread" << QThread::currentThread();
     FileMetaData* data = new FileMetaData();
-    data->fileUri = Util::fileUrl( idx->path() );
+    data->fileUri = createResourceUri( idx );
 
     // let's check if we already have data on the file
     StatementIterator it = d->repository->listStatements( Statement( Node(),
