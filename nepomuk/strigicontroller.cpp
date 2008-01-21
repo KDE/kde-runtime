@@ -185,6 +185,9 @@ void Nepomuk::StrigiController::slotProcessFinished( int exitCode, QProcess::Exi
 {
     if ( m_state != ShuttingDown ) {
         kDebug(300002) << "strigidaemon shut down unexpectedly with exit code:" << exitCode;
+
+        m_state = Idle;
+
         if ( exitStatus == QProcess::CrashExit ) {
             kDebug(300002) << "strigidaemon crashed.";
             if ( m_running5Minutes ) {
