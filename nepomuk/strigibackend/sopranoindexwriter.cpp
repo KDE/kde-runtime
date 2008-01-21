@@ -82,12 +82,12 @@ namespace {
         if ( idx->depth() > 0 ) {
             QString archivePath = findArchivePath( path );
             if ( QFile::exists( archivePath ) ) {
-                if ( archivePath.endsWith( QLatin1String( "tar" ) ) ||
-                     archivePath.endsWith( QLatin1String( "tar.gz" ) ) ||
-                     archivePath.endsWith( QLatin1String( "tar.bz2" ) ) ) {
+                if ( archivePath.endsWith( QLatin1String( ".tar" ) ) ||
+                     archivePath.endsWith( QLatin1String( ".tar.gz" ) ) ||
+                     archivePath.endsWith( QLatin1String( ".tar.bz2" ) ) ) {
                     url.setScheme( "tar" );
                 }
-                else if ( archivePath.endsWith( QLatin1String( "zip" ) ) ) {
+                else if ( archivePath.endsWith( QLatin1String( ".zip" ) ) ) {
                     url.setScheme( "zip" );
                 }
             }
