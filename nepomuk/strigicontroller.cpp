@@ -166,6 +166,8 @@ void Nepomuk::StrigiController::shutdown()
         if ( pid != ( pid_t )-1 ) {
             kDebug(300002) << "Shutting down Strigi instance started by someone else.";
 
+            m_state = ShuttingDown;
+
             // give Strigi the possibility to shutdown gracefully
             kill( pid, SIGQUIT );
 
@@ -175,6 +177,8 @@ void Nepomuk::StrigiController::shutdown()
                 kDebug(300002) << "strigidaemon does not terminate properly. Killing process...";
                 kill( pid, SIGKILL );
             }
+
+            m_state = Idle;
         }
 #else
 #warning FIXME: No Strigi status support on Windows
@@ -185,7 +189,7 @@ void Nepomuk::StrigiController::shutdown()
 
 void Nepomuk::StrigiController::slotProcessFinished( int exitCode, QProcess::ExitStatus exitStatus )
 {
-    if ( m_state != ShuttingDown ) {
+    if ( m_state == Running ) {
         kDebug(300002) << "strigidaemon shut down unexpectedly with exit code:" << exitCode;
 
         m_state = Idle;
