@@ -66,10 +66,9 @@ Toplevel :: Toplevel(KrashConfig *krashconf, QWidget *parent)
   info->setOpenExternalLinks(true);
   info->setWordWrap(true);
 
-  // if possible, try to fit the error description all on one line
   // the +20 pixels is some slop for QLabel
   int suggestedWidth = !m_krashconf->errorDescriptionText().isEmpty() ?
-        info->fontMetrics().width(m_krashconf->errorDescriptionText()) + 2 * marginHint() + 20
+        (info->fontMetrics().width(m_krashconf->errorDescriptionText()) / 3 * 2) + (2 * marginHint() + 20)
         : info->sizeHint().width() + 100;
   // ... but try to make sure the dialog fits on an 800x600 screen
   int width = qMin(suggestedWidth, 750);
@@ -78,7 +77,7 @@ Toplevel :: Toplevel(KrashConfig *krashconf, QWidget *parent)
   QString styleSheet = QString("QLabel {"
                        "padding: 10px;"
                        "background-image: url(%1);"
-                       "background-repeat: no-repleat;"
+                       "background-repeat: no-repeat;"
                        "background-position: right;"
                        "}").arg(KStandardDirs::locate("appdata", QLatin1String("pics/konqi.png")));
   info->setStyleSheet(styleSheet);
@@ -91,9 +90,7 @@ Toplevel :: Toplevel(KrashConfig *krashconf, QWidget *parent)
   if (m_krashconf->showBacktrace())
   {
     m_detailDescriptionLabel = new QLabel(this);
-    m_detailDescriptionLabel->setText(QString("<p style=\"margin: 10px;\">%1<br /><br />%2</p>")
-                                              .arg(m_krashconf->signalText())
-                                              .arg(i18n("Please attach the following backtrace to your bug report:")));
+    m_detailDescriptionLabel->setText(i18n("Please attach the following information to your bug report:"));
     m_detailDescriptionLabel->setWordWrap(true);
     m_detailDescriptionLabel->setTextInteractionFlags(Qt::TextBrowserInteraction);
     m_detailDescriptionLabel->setAlignment(Qt::AlignJustify);
@@ -139,8 +136,7 @@ QString Toplevel :: generateText() const
        m_krashconf->errorDescriptionText();
 
   if (!m_krashconf->whatToDoText().isEmpty())
-    str += QString("<p style=\"margin-top: 6px; margin-bottom: 6px;\"><b>%1</b></p>").arg(i18n("What can I do?")) +
-       m_krashconf->whatToDoText();
+    str += "<br />" + m_krashconf->whatToDoText();
 
   // check if the string is still empty. if so, display a default.
   if (str.isEmpty())

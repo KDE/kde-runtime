@@ -234,3 +234,9 @@ bool KrashDebugger::performChecks( QString* msg )
   }
   return ret;
 }
+
+QSize KrashDebugger::sizeHint() const
+{
+    // reduce inital size a bit (the text browser is affected)
+    return QSize(QWidget::sizeHint().width(), QWidget::sizeHint().height() / 3 * 2);
+}

@@ -54,6 +54,7 @@ protected:
   bool performChecks( QString* msg );
 
   virtual void showEvent(QShowEvent *e);
+  virtual QSize sizeHint() const;
 
 protected Q_SLOTS:
   void slotCopy();

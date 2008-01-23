@@ -95,7 +95,7 @@ Name[zh_TW]=應用程式 %progname（%appname），行程代碼 %pid，崩潰並
 
 [WhatToDoHint]
 Enable=true
-Name=Please help us improving this application by reporting this error at <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Please include as much information as possible, maybe the original documents. If you have a way to reproduce the error, include this also.
+Name=Please help us improve the software you use by filling a report at <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Useful details include how to reporduce the error, documents that were loaded, etc.
 Name[el]=Βοηθήστε μας να βελτιώσουμε την εφαρμογή αυτή αναφέροντας αυτό το σφάλμα στο <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Παρακαλώ συμπεριλάβετε όσες περισσότερες πληροφορίες είναι δυνατό και ίσως ακόμη και τα αρχικά έγγραφα. Αν γνωρίζετε κάποιο τρόπο για την αναπαραγωγή του σφάλματος, συμπεριλάβετε και αυτόν.
 Name[ga]=Cabhraigh linn trí thuairisc a sheoladh chuig <a href="http://bugs.kde.org">http://bugs.kde.org/</a> maidir leis an earráid seo. Déan do dhícheall an méid is mó is feidir eolais a chur san áireamh, na buncháipéisi mar shampla.  Más féidir leat an earráid a atáirgeadh, cuir é seo san áireamh freisin.
 Name[km]=អ្នក​ប្រហែល​ចង់​ផ្ញើ​របាយការណ៍​កំហុស​សម្រាប់​កម្មវិធី​នេះ ។ ពិនិត្យ​មើល​ថាតើ វា​មាន​រាយ​នៅ​ក្នុង http://bugs.kde.org ឬ​អត់ បើ​មិនឃើញ​មានទេ សូម​ផ្ញើ​សំបុត្រ​ទៅ​អ្នក​និពន្ធ ។ សូម​រួមបញ្ចូល​ព័ត៌មាន​ឲ្យ​បាន​ច្រើន​តាម​ដែល​អាច​ធ្វើ​ទៅ​បាន អាច​ជាឯកសារ​ដើម ។ ប្រសិន​បើ​អ្នក​មាន​វិធី​ដើម្បី​ធ្វើ​ឲ្យ​មាន​កំហុស​ឡើងវិញ​នោះ សូម​រួមបញ្ចូល​វា​ផងដែរ ។
