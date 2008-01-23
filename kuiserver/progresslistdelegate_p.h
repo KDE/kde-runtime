@@ -20,7 +20,16 @@
 #ifndef PROGRESSLISTDELEGATE_P_H
 #define PROGRESSLISTDELEGATE_P_H
 
-class QPushButton;
+#include "progresslistmodel.h"
+
+#include <QtCore/QList>
+#include <QtCore/QObject>
+
+#include <QtGui/QListView>
+#include <QtGui/QPushButton>
+
+class QModelIndex;
+class QString;
 
 class ProgressListDelegate::Private
     : public QObject

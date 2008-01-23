@@ -17,6 +17,10 @@
   * Boston, MA 02110-1301, USA.
   */
 
+#include "progresslistdelegate.h"
+#include "progresslistdelegate_p.h"
+#include "progresslistmodel.h"
+
 #include <QApplication>
 #include <QPushButton>
 #include <QPainter>
@@ -30,10 +34,6 @@
 #include <kicon.h>
 #include <klocale.h>
 #include <kiconloader.h>
-
-#include "progresslistdelegate.h"
-#include "progresslistmodel.h"
-#include "progresslistdelegate_p.h"
 
 int ProgressListDelegate::Private::getJobId(const QModelIndex &index) const
 {

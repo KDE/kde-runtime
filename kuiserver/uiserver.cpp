@@ -20,6 +20,12 @@
   * Boston, MA 02110-1301, USA.
   */
 
+#include "uiserver.h"
+#include "uiserveradaptor.h"
+#include "progresslistmodel.h"
+#include "progresslistdelegate.h"
+#include "callbacksiface.h"
+
 #include <QWidget>
 #include <QAction>
 #include <QTabWidget>
@@ -42,13 +48,6 @@
 #include <klineedit.h>
 #include <kio/jobclasses.h>
 #include <kjob.h>
-
-#include "uiserver.h"
-#include "uiserveradaptor.h"
-#include "progresslistmodel.h"
-#include "progresslistdelegate.h"
-#include "callbacksiface.h"
-
 
 UIServer::UIServer()
     : KXmlGuiWindow(0)
