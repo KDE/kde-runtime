@@ -93,7 +93,7 @@ Toplevel :: Toplevel(KrashConfig *krashconf, QWidget *parent)
     m_detailDescriptionLabel = new QLabel(this);
     m_detailDescriptionLabel->setText(QString("<p style=\"margin: 10px;\">%1<br /><br />%2</p>")
                                               .arg(m_krashconf->signalText())
-                                              .arg(i18n("Please attach the following backtrace to your bugreport.")));
+                                              .arg(i18n("Please attach the following backtrace to your bugreport:")));
     m_detailDescriptionLabel->setWordWrap(true);
     m_detailDescriptionLabel->setTextInteractionFlags(Qt::TextBrowserInteraction);
     m_detailDescriptionLabel->setAlignment(Qt::AlignJustify);
