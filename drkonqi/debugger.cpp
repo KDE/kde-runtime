@@ -93,7 +93,7 @@ KrashDebugger :: ~KrashDebugger()
 
 void KrashDebugger :: slotDone(const QString& str)
 {
-  m_status->setText(i18nc("debugging finished", "Done."));
+  m_status->setText(i18nc("debugging finished", "Backtrace loaded."));
   m_copyButton->setEnabled( true );
   m_saveButton->setEnabled( true );
   m_backtrace->setPlainText( m_prependText + str ); // replace with possibly post-processed backtrace
@@ -118,7 +118,7 @@ void KrashDebugger :: slotSave()
       QTextStream textStream( &tf );
       textStream << m_backtrace->toPlainText();
       textStream.flush();
-      KMessageBox::information(this, i18n("Backtrace saved to %1", tf.fileName()));
+      KMessageBox::information(this, i18n("Backtrace saved to <filename>%1</filename>.", tf.fileName()));
     }
     else
     {
@@ -138,7 +138,7 @@ void KrashDebugger :: slotSave()
       if (f.exists()) {
         if (KMessageBox::Cancel ==
             KMessageBox::warningContinueCancel( 0,
-              i18n( "A file named \"%1\" already exists. "
+              i18n( "A file named <filename>%1</filename> already exists. "
                     "Are you sure you want to overwrite it?", filename ),
               i18n( "Overwrite File?" ),
               KGuiItem( i18n( "&Overwrite" ) ) ))
@@ -153,7 +153,7 @@ void KrashDebugger :: slotSave()
       }
       else
       {
-        KMessageBox::sorry(this, i18n("Cannot open file %1 for writing", filename));
+        KMessageBox::sorry(this, i18n("Cannot open file <filename>%1</filename> for writing.", filename));
       }
     }
   }
