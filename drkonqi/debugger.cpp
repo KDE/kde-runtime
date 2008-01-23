@@ -81,7 +81,7 @@ KrashDebugger :: KrashDebugger (const KrashConfig *krashconf, QWidget *parent)
   vbox->addLayout(hbox);
   
   QString tmp = i18n( "Application: %progname (%execname), signal %signame" ) + '\n';
-  krashconf->expandString( tmp, false );
+  krashconf->expandString( tmp, KrashConfig::ExpansionUsagePlainText );
   m_prependText = tmp;
 }
 

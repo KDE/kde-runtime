@@ -84,7 +84,7 @@ void BackTrace::start()
 
   // start the debugger
   QString str = m_krashconf->debuggerBatch();
-  m_krashconf->expandString(str, true, m_temp->fileName());
+  m_krashconf->expandString(str, KrashConfig::ExpansionUsageShell, m_temp->fileName());
 
   *m_proc << KShell::splitArgs(str);
   m_proc->setOutputChannelMode(KProcess::SeparateChannels); // Drop stderr

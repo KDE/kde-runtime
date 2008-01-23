@@ -73,7 +73,12 @@ public:
   const KAboutData *aboutData() const { return m_aboutData; }
   QString execName() const { return m_execname; }
 
-  void expandString(QString &str, bool shell, const QString &tempFile = QString()) const;
+  enum ExpandStringUsage {
+    ExpansionUsagePlainText,
+    ExpansionUsageRichText,
+    ExpansionUsageShell
+  };
+  void expandString(QString &str, ExpandStringUsage usage, const QString &tempFile = QString()) const;
 
   void acceptDebuggingApp();
 

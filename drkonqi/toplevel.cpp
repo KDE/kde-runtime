@@ -144,11 +144,11 @@ QString Toplevel :: generateText() const
 
   // check if the string is still empty. if so, display a default.
   if (str.isEmpty())
-    str = i18n("<p>Application crashed</p>"
+    str = i18n("<p style=\"margin-bottom: 6px;\"><b>Application crashed</b></p>"
                "<p>The program %appname crashed.</p>");
 
   // scan the string for %appname etc
-  m_krashconf->expandString(str, false);
+  m_krashconf->expandString(str, KrashConfig::ExpansionUsageRichText);
 
   return str;
 }
@@ -205,7 +205,7 @@ void Toplevel :: slotUser1()
 void Toplevel :: slotUser2()
 {
   QString str = m_krashconf->debugger();
-  m_krashconf->expandString(str, true);
+  m_krashconf->expandString(str, KrashConfig::ExpansionUsageShell);
 
   KProcess proc;
   proc.setShellCommand(str);

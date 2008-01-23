@@ -152,17 +152,32 @@ void KrashConfig :: readConfig()
 }
 
 // replace some of the strings
-void KrashConfig :: expandString(QString &str, bool shell, const QString &tempFile) const
+void KrashConfig :: expandString(QString &str, ExpandStringUsage usage, const QString &tempFile) const
 {
   QHash<QString,QString> map;
-  map[QLatin1String("appname")] = appName();
-  map[QLatin1String("execname")] = startedByKdeinit() ? QString::fromLatin1("kdeinit") : m_execname;
+  map[QLatin1String("appname")] = (usage == ExpansionUsageRichText) ? 
+    i18n("<application>%1</application>", appName()) :
+    appName();
+
+  QString execname = startedByKdeinit() ? QLatin1String("kdeinit") : m_execname;
+  map[QLatin1String("execname")] = (usage == ExpansionUsageRichText) ?
+    i18n("<command>%1</command>", execname) :
+    execname;
+
   map[QLatin1String("signum")] = QString::number(signalNumber());
   map[QLatin1String("signame")] = signalName();
-  map[QLatin1String("progname")] = programName();
+
+  map[QLatin1String("progname")] = (usage == ExpansionUsageRichText) ?
+    i18n("<command>%1</command>", programName()) :
+    programName();
+
   map[QLatin1String("pid")] = QString::number(pid());
-  map[QLatin1String("tempfile")] = tempFile;
-  if (shell)
+
+  map[QLatin1String("tempfile")] = (usage == ExpansionUsageRichText) ?
+    i18n("<filename>%1</filename>", tempFile) :
+    tempFile;
+
+  if (usage == ExpansionUsageShell)
     str = KMacroExpander::expandMacrosShellQuote( str, map );
   else
     str = KMacroExpander::expandMacros( str, map );
