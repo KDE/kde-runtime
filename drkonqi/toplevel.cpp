@@ -65,7 +65,15 @@ Toplevel :: Toplevel(KrashConfig *krashconf, QWidget *parent)
   info->setTextInteractionFlags(Qt::TextBrowserInteraction);
   info->setOpenExternalLinks(true);
   info->setWordWrap(true);
-  info->setMinimumSize(info->sizeHint().width() + 100, info->sizeHint().height());
+
+  // if possible, try to fit the error description all on one line
+  // the +20 pixels is some slop for QLabel
+  int suggestedWidth = !m_krashconf->errorDescriptionText().isEmpty() ?
+        info->fontMetrics().width(m_krashconf->errorDescriptionText()) + 2 * marginHint() + 20
+        : info->sizeHint().width() + 100;
+  // ... but try to make sure the dialog fits on an 800x600 screen
+  int width = qMin(suggestedWidth, 750);
+  info->setMinimumSize(width, info->heightForWidth(width));
   info->setAlignment(Qt::AlignJustify);
   QString styleSheet = QString("QLabel {"
                        "padding: 10px;"
