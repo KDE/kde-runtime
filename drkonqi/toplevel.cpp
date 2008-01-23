@@ -139,7 +139,7 @@ QString Toplevel :: generateText() const
        m_krashconf->errorDescriptionText();
 
   if (!m_krashconf->whatToDoText().isEmpty())
-    str += QString("<br />%1<br />").arg(i18n("What can I do?")) +
+    str += QString("<p style=\"margin-top: 6px; margin-bottom: 6px;\"><b>%1</b></p>").arg(i18n("What can I do?")) +
        m_krashconf->whatToDoText();
 
   // check if the string is still empty. if so, display a default.
