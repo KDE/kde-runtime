@@ -83,7 +83,7 @@ Toplevel :: Toplevel(KrashConfig *krashconf, QWidget *parent)
   info->setStyleSheet(styleSheet);
   mainLayout->addWidget(info);
 
-  QCheckBox *detailsCheckBox = new QCheckBox("Show details", this);
+  QCheckBox *detailsCheckBox = new QCheckBox(i18n("Show details"), this);
   connect(detailsCheckBox, SIGNAL(toggled(bool)), SLOT(expandDetails(bool)));
   mainLayout->addWidget(detailsCheckBox);
 
