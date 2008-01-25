@@ -20,6 +20,7 @@
 */
 
 #include <kgenericfactory.h>
+#include <ksqueezedtextlabel.h>
 #include <kio/renamedialogplugin.h>
 #include <qlabel.h>
 #include <qdialog.h>
@@ -58,9 +59,9 @@ bool AudioPlugin::wantToHandle( KIO::RenameDialog_Mode, const KIO::RenameDialogP
 
 void AudioPlugin::handle( KIO::RenameDialog_Mode mode, const KIO::RenameDialogPlugin::FileItem& src,
                           const KIO::RenameDialogPlugin::FileItem& dst ) {
+
  QGridLayout *lay = new QGridLayout( this );
  if( mode & KIO::M_OVERWRITE ){
-   QLabel *label_head = new QLabel(this);
    QLabel *label_src  = new QLabel(this);
    QLabel *label_dst  = new QLabel(this);
    QLabel *label_ask  = new QLabel(this);
@@ -73,7 +74,7 @@ void AudioPlugin::handle( KIO::RenameDialog_Mode mode, const KIO::RenameDialogPl
       sentence1 = i18n("A similar file named '%1' already exists.\n", dest);
    else
       sentence1 = i18n("A newer file named '%1' already exists.\n", dest);
-   label_head->setText(sentence1);
+   QLabel *label_head = new KSqueezedTextLabel(sentence1, this);
    label_src->setText(i18n("Source File"));
    label_dst->setText(i18n("Existing File"));
    label_ask->setText(i18n("Would you like to replace the existing file with the one on the right?") );
