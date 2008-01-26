@@ -114,6 +114,8 @@ QVariant ProgressListModel::data(const QModelIndex &index, int role) const
 
 Qt::ItemFlags ProgressListModel::flags(const QModelIndex &index) const
 {
+    Q_UNUSED(index);
+
     return Qt::ItemIsSelectable
            | Qt::ItemIsEnabled
            | Qt::ItemIsEditable;
@@ -121,6 +123,8 @@ Qt::ItemFlags ProgressListModel::flags(const QModelIndex &index) const
 
 QModelIndex ProgressListModel::index(int row, int column, const QModelIndex &parent) const
 {
+    Q_UNUSED(parent);
+
     if (row >= rowCount())
         return QModelIndex();
 
@@ -132,7 +136,7 @@ QModelIndex ProgressListModel::indexForJob(uint jobId) const
     int i = 0;
     foreach (const JobInfo &it, jobInfoList)
     {
-        if (it.jobId == jobId)
+        if ((uint)it.jobId == jobId)
             return createIndex(i, 0, iconLoader(i));
 
         i++;
@@ -289,6 +293,7 @@ bool ProgressListModel::setData(const QModelIndex &index, const QVariant &value,
 
 void ProgressListModel::newJob(uint jobId, const QString &internalAppName, const QString &jobIcon, const QString &appName, bool showProgress)
 {
+    Q_UNUSED(showProgress);
     int newRow = rowCount();
 
     insertRow(rowCount());
