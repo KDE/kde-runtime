@@ -188,6 +188,8 @@ ProgressListDelegate::~ProgressListDelegate()
 
 QWidget *ProgressListDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
+    Q_UNUSED(option);
+
     const ProgressListModel *progressListModel = static_cast<const ProgressListModel*>(index.model());
 
     int jobIdModel = index.model()->data(index, JobId).toInt();
@@ -431,6 +433,8 @@ QSize ProgressListDelegate::sizeHint(const QStyleOptionViewItem &option, const Q
 void ProgressListDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option,
                                                 const QModelIndex &index) const
 {
+    Q_UNUSED(index);
+
     QRect editorRect(d->getCurrentLeftMargin(option.fontMetrics.height()), option.rect.height() - d->separatorPixels - d->editorHeight + option.rect.top(), option.rect.width() - d->getCurrentLeftMargin(option.fontMetrics.height()) - d->rightMargin - d->separatorPixels - d->iconWidth, d->editorHeight);
 
     editor->setGeometry(editorRect);
