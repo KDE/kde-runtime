@@ -43,6 +43,7 @@ AudioDataOutput::~AudioDataOutput()
 
 void AudioDataOutputXT::rewireTo(SourceNodeXT *source)
 {
+    Q_UNUSED(source);
     //xine_post_wire_audio_port(source->outputPort(), m_audioPort);
 }
 

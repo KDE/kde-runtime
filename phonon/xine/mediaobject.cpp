@@ -558,6 +558,9 @@ bool MediaObject::hasInterface(Interface interface) const
             return true;
         }
         break;
+    case AddonInterface::NavigationInterface:
+    case AddonInterface::AngleInterface:
+        break;
     }
     return false;
 }
@@ -581,6 +584,7 @@ void MediaObject::handleAvailableTitlesChanged(int t)
 QVariant MediaObject::interfaceCall(Interface interface, int command, const QList<QVariant> &arguments)
 {
     kDebug(610) << interface << ", " << command;
+
     switch (interface) {
     case AddonInterface::ChapterInterface:
         switch (static_cast<AddonInterface::ChapterCommand>(command)) {
@@ -632,7 +636,8 @@ QVariant MediaObject::interfaceCall(Interface interface, int command, const QLis
                 }
                 kDebug(610) << "change title from " << m_currentTitle << " to " << t;
                 m_currentTitle = t;
-                stream().setMrl(m_titles[t - 1], m_autoplayTitles ? XineStream::KeepState : XineStream::StoppedState);
+                stream().setMrl(m_titles[t - 1],
+                                m_autoplayTitles ? XineStream::KeepState : XineStream::StoppedState);
                 if (m_mediaSource.discType() == Phonon::Cd) {
                     emit titleChanged(m_currentTitle);
                 }
@@ -662,6 +667,9 @@ QVariant MediaObject::interfaceCall(Interface interface, int command, const QLis
                 return true;
             }
         }
+    case AddonInterface::NavigationInterface:
+    case AddonInterface::AngleInterface:
+        break;
     }
     return QVariant();
 }
