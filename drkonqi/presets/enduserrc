@@ -102,9 +102,11 @@ Name[zh_TW]=應用程式 %progname（%appname），行程代碼 %pid，崩潰並
 [WhatToDoHint]
 Enable=true
 Name=Please help us improve the software you use by filing a report at <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Useful details include how to reproduce the error, documents that were loaded, etc.
+Name[el]=Βοηθήστε μας να βελτιώσουμε την εφαρμογή αυτή αναφέροντας αυτό το σφάλμα στο <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Χρήσιμες πληροφορίες που θα μπορούσατε να συμπεριλάβετε είναι ο τρόπος αναπαραγωγής του σφάλματος, τα έγγραφα που ήταν φορτωμένα κλπ.
 Name[ga]=Cabhraigh linn an bogearra seo a fheabhsú trí thuairisc a sheoladh chuig <a href="http://bugs.kde.org">http://bugs.kde.org/</a> maidir leis an earráid seo. Rudaí le cur san áireamh: conas a dhéantar an earráid, cáipéisí a bhí luchtaithe, srl.
 Name[hu]=Ha hibát talált a KDE-ben, kérjük jelentse be ezen az oldalon: <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Kérjük írja le (angolul), hogyan reprodukálható a hiba, milyen dokumentumok voltak betöltve stb.
 Name[km]=សូម​ជួយ​យើង​បង្កើន​កម្មវិធី ដែល​អ្នក​ប្រើ​ដោយ​បំពេញ​របាយការណ៍​នៅ <a href="http://bugs.kde.org">http://bugs.kde.org</a> ។ សេចក្ដី​លម្អិត​ដ៏មាន​ប្រយោជន៍​​រួមមាន​វិធី​ត្រូវ​បង្កើត​កំហុស​ឡើ​ងវិញ ឯកសារ​ដែល​ត្រូវ​បាន​ផ្ទុក ។ល។
+Name[nds]=Bitte hölp uns dor bi, dat wi de Software, de Du bruukst, verbetern köönt. Du kannst en Fehlerbericht för dit Programm op <a href="http://bugs.kde.org">http://bugs.kde.org</a> afgeven. Föög em bitte so veel Informatschonen as mööglich to, villicht ok de Orginaaldokmenten. Kannst Du den Fehler wedderhalen, vertell bitte ok, wodennig dat geiht.
 Name[zh_TW]=請到 <a href="http://bugs.kde.org">http://bugs.kde.org</a> 回報此問題，以協助我們改進此軟體。回報時請盡量將看到的資訊提供給作者，並告知如何重現此錯誤。
 
 [4]
