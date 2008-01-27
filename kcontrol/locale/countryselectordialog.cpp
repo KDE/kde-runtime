@@ -96,6 +96,17 @@ class CountryModel : public QAbstractItemModel
             }
         }
 
+        void sort(int column, Qt::SortOrder order = Qt::AscendingOrder)
+        {
+            Q_UNUSED(column);
+            Q_UNUSED(order);
+            sort();
+            // /usr/include/qt4/QtCore/qabstractitemmodel.h:198:  warning: 
+            // ‘virtual void QAbstractItemModel::sort(int, Qt::SortOrder)’ was hidden
+            // /home/bill/SVN/KDE/kdebase/runtime/kcontrol/locale/countryselectordialog.cpp:99: 
+            // by ‘void CountryModel::sort()’
+        }
+
         void sort()
         {
             qSort(m_rootItem->children.begin(), m_rootItem->children.end(), CountryModelItemLessThan);
