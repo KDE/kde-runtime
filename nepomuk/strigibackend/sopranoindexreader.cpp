@@ -468,6 +468,10 @@ std::vector<std::pair<std::string,uint32_t> > Strigi::Soprano::IndexReader::hist
                                                                                        const std::string& fieldname,
                                                                                        const std::string& labeltype )
 {
+    Q_UNUSED(query);
+    Q_UNUSED(fieldname);
+    Q_UNUSED(labeltype);
+
     // FIXME: what is meant by fieldname and labeltype?
     qDebug() << "IndexReader::histogram in thread" << QThread::currentThread();
     // IMPLEMENTME? Seems not like a very important method though.
@@ -478,6 +482,9 @@ std::vector<std::pair<std::string,uint32_t> > Strigi::Soprano::IndexReader::hist
 int32_t Strigi::Soprano::IndexReader::countKeywords( const std::string& keywordprefix,
                                                      const std::vector<std::string>& fieldnames)
 {
+    Q_UNUSED(keywordprefix);
+    Q_UNUSED(fieldnames);
+
     qDebug() << "IndexReader::countKeywords in thread" << QThread::currentThread();
     // the clucene indexer also returns 2. I suspect this means: "not implemented" ;)
     return 2;
@@ -488,6 +495,11 @@ std::vector<std::string> Strigi::Soprano::IndexReader::keywords( const std::stri
                                                                  const std::vector<std::string>& fieldnames,
                                                                  uint32_t max, uint32_t offset )
 {
+    Q_UNUSED(keywordmatch);
+    Q_UNUSED(fieldnames);
+    Q_UNUSED(max);
+    Q_UNUSED(offset);
+
     qDebug() << "IndexReader::keywords in thread" << QThread::currentThread();
     // IMPLEMENTME? Seems like a rarely used method...
     return std::vector<std::string>();
