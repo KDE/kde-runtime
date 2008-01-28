@@ -59,7 +59,7 @@ void NotifyByExecute::notify( int id, KNotifyConfig * config )
 		QString execLine = KMacroExpander::expandMacrosShellQuote( command, subst );
 		if ( execLine.isEmpty() )
 			execLine = command; // fallback
-
+                //TODO fixme on WIN32
 		QProcess::startDetached( "/bin/sh", QStringList() << "-c" << execLine );
 	}
 	
