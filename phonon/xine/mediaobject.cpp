@@ -558,9 +558,6 @@ bool MediaObject::hasInterface(Interface interface) const
             return true;
         }
         break;
-    case AddonInterface::NavigationInterface:
-    case AddonInterface::AngleInterface:
-        break;
     }
     return false;
 }
@@ -667,9 +664,6 @@ QVariant MediaObject::interfaceCall(Interface interface, int command, const QLis
                 return true;
             }
         }
-    case AddonInterface::NavigationInterface:
-    case AddonInterface::AngleInterface:
-        break;
     }
     return QVariant();
 }
