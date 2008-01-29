@@ -77,6 +77,7 @@ KCMIOSlaveInfo::KCMIOSlaveInfo(QWidget *parent, const QVariantList &)
    hboxLayout1->setStretchFactor(m_info,5);
 
    QStringList protocols=KProtocolInfo::protocols();
+   protocols.sort();
    for (QStringList::Iterator it=protocols.begin(); it!=protocols.end(); ++it)
    {
       QString proto = *it;
