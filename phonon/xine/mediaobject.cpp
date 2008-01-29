@@ -552,10 +552,12 @@ bool MediaObject::hasInterface(Interface interface) const
         if (m_titles.size() > 1) {
             return true;
         }
+        break;
     case AddonInterface::ChapterInterface:
         if (stream().availableChapters() > 1) {
             return true;
         }
+        break;
     }
     return false;
 }
