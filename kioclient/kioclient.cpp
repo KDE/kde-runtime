@@ -243,7 +243,7 @@ bool ClientApp::doIt()
     if ( command == "openProperties" )
     {
         checkArgumentCount(argc, 2, 2);
-        KPropertiesDialog * p = new KPropertiesDialog( args->url(1) );
+        KPropertiesDialog * p = new KPropertiesDialog( args->url(1), 0 /*no parent*/ );
         QObject::connect( p, SIGNAL( destroyed() ), &app, SLOT( quit() ));
         QObject::connect( p, SIGNAL( canceled() ), &app, SLOT( slotDialogCanceled() ));
         p->show();
