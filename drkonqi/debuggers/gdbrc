@@ -67,6 +67,7 @@ Comment[ru]=Текстовый консольный отладчик от GNU
 Comment[sk]=Textový ladiaci program GNU pre konzolu
 Comment[sv]=Textbaserad avlusare från GNU i en terminal
 Comment[te]=కాన్సొల్ లో వచన ఆధారిత గ్నుడిబగ్గర్ 
+Comment[th]=โปรแกรมสำหรับดีบั๊ก (แก้ไขข้อผิดพลาด) แบบโหมดตัวอักษรจาก GNU ใน konsole
 Comment[tr]=Konsole içerisinde çalışabilen GNU metin tabanlı hata ayıklayıcı
 Comment[uz]=Терминалда GNU учун матн асосида дебаггер
 Comment[xh]=Text based debugger evela kwi GNU kwi konsole
