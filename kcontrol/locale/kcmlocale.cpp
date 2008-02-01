@@ -180,7 +180,7 @@ void KLocaleConfig::save()
 {
   KSharedConfigPtr config = KGlobal::config();
 
-  KConfigGroup configGroup = config->group("Locale");
+  KConfigGroup configGroup(config, "Locale");
 
   configGroup.writeEntry("Country", m_locale->country(), KConfig::Persistent|KConfig::Global);
   configGroup.writeEntry("Language",
