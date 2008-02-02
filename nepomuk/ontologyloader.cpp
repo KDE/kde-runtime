@@ -123,6 +123,11 @@ Nepomuk::OntologyLoader::~OntologyLoader()
 
 void Nepomuk::OntologyLoader::update()
 {
+    if ( !d->model ) {
+        kDebug() << "No Nepomuk Model. Cannot update ontologies.";
+        return;
+    }
+
     // update all installed ontologies
     QStringList ontoFiles = KGlobal::dirs()->findAllResources( "data", "nepomuk/ontologies/*.desktop" );
     foreach( QString file, ontoFiles ) {
