@@ -12,7 +12,6 @@ Name[csb]=Wiktionary - wòlny słowôrz
 Name[da]=Wiktionary - Den frie ordbog
 Name[de]=Wiktionary - Das freie Wörterbuch
 Name[el]=Wiktionary - Το ελεύθερο λεξικό
-Name[eo]=Vikivortaro - la libera vortaro
 Name[es]=Wikitionary - El diccionario libre
 Name[et]=Wiktionary - Vaba sõnaraamat
 Name[eu]=Wiktionary - Hiztegi librea
@@ -71,7 +70,6 @@ Query[be]=http://en.wiktionary.org/wiki/Special:Search?search=\{@}&go=Go
 Query[bg]=http://en.wiktionary.org/wiki/Special:Search?search=\{@}&go=Go
 Query[csb]=http://csb.wiktionary.org/wiki/Special:Search?search=\\{@}&go=Go
 Query[de]=http://de.wiktionary.org/wiki/Special:Search?search=\\{@}&go=Go
-Query[eo]=http://eo.wiktionary.org/wiki/Special:Search?search=\\{@}&go=Go
 Query[fr]=http://fr.wiktionary.org/wiki/Special:Search?search=\\{@}&go=Go
 Query[fy]=http://fy.wiktionary.org/wiki/Special:Search?search=\{@}&go=Go
 Query[it]=http://it.wiktionary.org/wiki/Special:Search?search=\\{@}&go=Go
