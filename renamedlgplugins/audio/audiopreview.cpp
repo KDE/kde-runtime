@@ -17,13 +17,14 @@
    Boston, MA 02110-1301, USA.
 */
 
+#include <QLabel>
+#include <QPixmap>
+
 #include <kfilemetainfo.h>
 #include <klocale.h>
 #include <kmimetype.h>
 #include <kurl.h>
 
-#include <qlabel.h>
-#include <qpixmap.h>
 #include <kio/netaccess.h>
 #include <kurllabel.h>
 #include <kmediaplayer/player.h>
