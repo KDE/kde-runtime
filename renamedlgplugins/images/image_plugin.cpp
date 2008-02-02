@@ -31,14 +31,14 @@
 #include <kiconloader.h>
 
 
-#include <qlabel.h>
-#include <qdialog.h>
-#include <qwidget.h>
-#include <qstringlist.h>
+#include <QLabel>
+#include <QDialog>
+#include <QWidget>
+#include <QStringList>
 
 //Added by qt3to4:
 #include <QGridLayout>
-#include <qlayout.h>
+#include <QLayout>
 
 #include <sys/types.h>
 
