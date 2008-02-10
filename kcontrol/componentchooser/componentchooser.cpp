@@ -55,12 +55,16 @@ public:
 //BEGIN  General kpart based Component selection
 
 CfgComponent::CfgComponent(QWidget *parent):ComponentConfig_UI(parent),CfgPlugin(){
-	m_lookupDict.setAutoDelete(true);
-	m_revLookupDict.setAutoDelete(true);
 	connect(ComponentSelector,SIGNAL(activated(const QString&)),this,SLOT(slotComponentChanged(const QString&)));
 }
 
-CfgComponent::~CfgComponent(){}
+CfgComponent::~CfgComponent()
+{
+    qDeleteAll(m_lookupDict);
+    m_lookupDict.clear();
+    qDeleteAll(m_revLookupDict);
+    m_revLookupDict.clear();
+}
 
 void CfgComponent::slotComponentChanged(const QString&) {
 	emit changed(true);

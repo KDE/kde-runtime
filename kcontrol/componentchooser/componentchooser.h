@@ -20,7 +20,7 @@
 #include "ui_componentconfig_ui.h"
 #include "ui_emailclientconfig_ui.h"
 #include "ui_browserconfig_ui.h"
-#include <Qt3Support/Q3Dict>
+#include <QHash>
 
 //Added by qt3to4:
 #include <QVBoxLayout>
@@ -90,7 +90,7 @@ public:
 	virtual void defaults();
 
 protected:
-	Q3Dict<QString>  m_lookupDict,m_revLookupDict;
+	QHash<QString, QString*>  m_lookupDict,m_revLookupDict;
 
 protected Q_SLOTS:
 	void slotComponentChanged(const QString&);
@@ -137,7 +137,7 @@ Q_SIGNALS:
 	void changed(bool);
 private:
 	QString m_browserExec;
-	KService::Ptr m_browserService;	
+	KService::Ptr m_browserService;
 };
 
 
