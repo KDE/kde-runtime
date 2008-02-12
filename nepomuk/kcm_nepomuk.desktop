@@ -9,6 +9,7 @@ X-KDE-ParentApp=kcontrol
 X-KDE-System-Settings-Category=computer-administration
 
 Name=Nepomuk
+Name[gu]=નેપોમુક
 Name[pa]=ਨਿਪੋਮੁਕ
 Name[sr]=Непомук
 Name[x-test]=xxNepomukxx
@@ -28,6 +29,7 @@ Comment[fr]=Configuration du serveur Nepomuk / Strigi
 Comment[fy]=Nepomuk/Strigi tsjinskonfiguraasje
 Comment[ga]=Cumraíocht Freastalaí Nepomuk/Strigi
 Comment[gl]=Configuración do servidor Nepomuk/Strigi
+Comment[gu]=નેપોમુક/સ્ટ્રિગી સર્વર રૂપરેખાંકન
 Comment[hu]=A Nepomuk/Strigi szolgáltatás beállítása
 Comment[is]=Nepomuk/Strigi miðlarastillingar
 Comment[it]=Configurazione dei server di Nepomuk/Strigi
