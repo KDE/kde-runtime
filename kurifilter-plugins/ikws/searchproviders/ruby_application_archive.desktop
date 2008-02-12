@@ -11,6 +11,7 @@ Name[csb]=Ruby - archiwa programów
 Name[cy]=Archif Cymhwysiadau Ruby
 Name[da]=Ruby programarkiv
 Name[el]=Αρχειοθήκη εφαρμογών Ruby
+Name[eo]=Aplikaĵoarĥivo por "Ruby"
 Name[es]=Archivo de aplicaciones en Ruby
 Name[eu]=Ruby aplikazio fitxategia
 Name[fa]=بایگانی کاربرد Ruby
@@ -64,4 +65,5 @@ Query=http://www.ruby-lang.org/en/raa-list.rhtml?name=\\{@}
 Query[be]=http://raa.ruby-lang.org/search.rhtml?search=\\{@}
 Query[bg]=http://raa.ruby-lang.org/search.rhtml?search=\\{@}
 Query[csb]=http://raa.ruby-lang.org/search.rhtml?search=\\{@}
+Query[eo]=http://raa.ruby-lang.org/en/raa-list.rhtml?name=\\{@}
 Query[x-test]=xxhttp://www.ruby-lang.org/en/raa-list.rhtml?name=\\{@}xx
