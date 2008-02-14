@@ -2,11 +2,11 @@
 Exec=kcmshell4 kcm_nepomuk
 Icon=preferences-system-nepomuk
 Type=Service
+
 X-KDE-ServiceTypes=KCModule
-X-DocPath=kcontrol/nepomuk/index.html
 X-KDE-Library=kcm_nepomuk
 X-KDE-ParentApp=kcontrol
-X-KDE-System-Settings-Category=computer-administration
+X-KDE-System-Settings-Parent-Category=advanced-user-settings
 
 Name=Nepomuk
 Name[gu]=નેપોમુક
