@@ -45,4 +45,4 @@ target_link_libraries(sopranobackend
   ${CLUCENE_LIBRARY}
 )
 
-install(TARGETS sopranobackend LIBRARY DESTINATION ${LIB_INSTALL_DIR}/strigi)
+install(TARGETS sopranobackend LIBRARY DESTINATION ${INSTALL_TARGETS_DEFAULT_ARGS}/strigi)
