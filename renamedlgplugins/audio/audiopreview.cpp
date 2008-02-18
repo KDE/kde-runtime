@@ -122,7 +122,7 @@ void AudioPreview::initView( const QString& mimeType )
 
 void AudioPreview::downloadFile( const QString& url )
 {
-  if( KIO::NetAccess::download( KUrl( url ), m_localFile , topLevelWidget()) )
+  if( KIO::NetAccess::download( KUrl( url ), m_localFile , window()) )
   {
     m_isTempFile = true;
     initView( KMimeType::findByPath( m_localFile )->name() );

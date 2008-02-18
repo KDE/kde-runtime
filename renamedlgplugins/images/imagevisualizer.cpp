@@ -73,7 +73,7 @@ void ImageVisualizer::loadImage( const QString& path )
 void ImageVisualizer::downloadImage(const QString& url)
 {
   QString tmpFile;
-  if( KIO::NetAccess::download( KUrl( url ), tmpFile, topLevelWidget()) )
+  if( KIO::NetAccess::download( KUrl( url ), tmpFile, window()) )
   {
     loadImage( tmpFile );
     KIO::NetAccess::removeTempFile( tmpFile );
