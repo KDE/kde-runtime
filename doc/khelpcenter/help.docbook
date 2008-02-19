@@ -1,3 +1,5 @@
+<!-- ui-catalogs: khelpcenter -->
+
 <chapter id="help-system-user-manual">
 <chapterinfo>
 <date>2002-02-03</date>
@@ -24,8 +26,8 @@ required, just enthusiasm and patience.
 
 <para>
 If you would like to help translating &kde; documentation to your native
-language, the Translation coordinator is Thomas Diehl,
-<email>thd@kde.org</email>, and he would also welcome the help.  More
+language, the Translation Coordinator is Albert Astals Cid,
+<email>aacid@kde.org</email>, and he would also welcome the help.  More
 information, including the coordinators for each language team, can be
 found on the <ulink url="http://i18n.kde.org">Internationalization web
 site</ulink>, and in the <link linkend="contact">Contact</link> section
