@@ -6,6 +6,7 @@ Name[br]=Implijer diwezh
 Name[cy]=Defnyddiwr Diwedd
 Name[da]=Slutbruger
 Name[el]=Τελικός χρήστης
+Name[es]=Usuario final
 Name[et]=Lõppkasutaja
 Name[ga]=Gnáth-úsáideoir
 Name[gl]=Usuario final
@@ -41,6 +42,7 @@ Comment[br]=Kefluniadur azas evit implijerien diwezh
 Comment[cy]=Gosodiadau hoffiannus i  ddefnyddwyr diwedd
 Comment[da]=Indstillinger foretrukket for slutbrugere
 Comment[el]=Ρυθμίσεις προτιμώμενες για τους τελικούς χρήστες
+Comment[es]=Configuraciones preferidas por los usuarios
 Comment[et]=Lõppkasutajale mõeldud seadistused
 Comment[ga]=Socruithe is fearr le húsáideoirí deiridh
 Comment[gl]=Configuracións preferidas para os usuarios finais
@@ -85,6 +87,7 @@ Name[br]=Sac'het eo bet an arload %progname (%appname) ha bet abeg d'an arhent %
 Name[cy]=Mae'r cymhwysiad %progname (%appname) wedi cwympo, gan achosi'r arwydd %signum (%signame).
 Name[da]=Programmet %progname (%appname) brød sammen og gav signalet %signum (%signame).
 Name[el]=Η εφαρμογή %progname (%appname) κατέρρευσε και προκάλεσε το σήμα signal %signum (%signame).
+Name[es]=La aplicación %progname (%appname) terminó de forma inesperada y generó la señal %signum (%signame).
 Name[et]=Rakendus %progname (%appname) astus ämbrisse põhjustatuna signaalist %signum (%signame).
 Name[ga]=Thuairteáil feidhmchlár %progname (%appname) agus thug sé comhartha %signum (%signame).
 Name[gl]=A aplicación %progname (%appname) estragou-se e provocou o sinal %signum (%signame).
@@ -118,9 +121,11 @@ Name[zh_TW]=應用程式 %progname（%appname），行程代碼 %pid，崩潰並
 Enable=true
 Name=Please help us improve the software you use by filing a report at <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Useful details include how to reproduce the error, documents that were loaded, etc.
 Name[el]=Βοηθήστε μας να βελτιώσουμε την εφαρμογή αυτή αναφέροντας αυτό το σφάλμα στο <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Χρήσιμες πληροφορίες που θα μπορούσατε να συμπεριλάβετε είναι ο τρόπος αναπαραγωγής του σφάλματος, τα έγγραφα που ήταν φορτωμένα κλπ.
+Name[es]=Ayudenos a mejorar los programas generando reportes en <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Detalles útiles incluyen cómo reproducir el error, documentos cargados, etc.
 Name[ga]=Cabhraigh linn an bogearra seo a fheabhsú trí thuairisc a sheoladh chuig <a href="http://bugs.kde.org">http://bugs.kde.org/</a> maidir leis an earráid seo. Rudaí le cur san áireamh: conas a dhéantar an earráid, cáipéisí a bhí luchtaithe, srl.
 Name[gu]=મહેરબાની કરી અમને બગ અહેવાલ આ જગ્યા પર ભરીને <a href="http://bugs.kde.org">http://bugs.kde.org</a> સોફ્ટવેરમાં સુધારો કરવામાં મદદ કરો. ઉપયોગી માહિતીમાં જેવીકે આ ક્ષતિ ફરી કઇ રીતે ઉભી કરવી, લાવવામાં આવેલ દસ્તાવેજો વગેરે નો સમાવેશ થાય છે.
 Name[hu]=Ha hibát talált a KDE-ben, kérjük jelentse be ezen az oldalon: <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Kérjük írja le (angolul), hogyan reprodukálható a hiba, milyen dokumentumok voltak betöltve stb.
+Name[ja]=<a href="http://bugs.kde.org">http://bugs.kde.org</a> にバグを報告することで、お使いのソフトウェアを改良する手助けをしてください。バグの再現方法、読み込んだ文書などの詳細情報が役立ちます。
 Name[km]=សូម​ជួយ​យើង​បង្កើន​កម្មវិធី ដែល​អ្នក​ប្រើ​ដោយ​បំពេញ​របាយការណ៍​នៅ <a href="http://bugs.kde.org">http://bugs.kde.org</a> ។ សេចក្ដី​លម្អិត​ដ៏មាន​ប្រយោជន៍​​រួមមាន​វិធី​ត្រូវ​បង្កើត​កំហុស​ឡើ​ងវិញ ឯកសារ​ដែល​ត្រូវ​បាន​ផ្ទុក ។ល។
 Name[ko]=이 오류를 <a href="http://bugs.kde.org">http://bugs.kde.org</a>에 보고해 주셔서 프로그램이 개선될 수 있도록 도와 주십시오. 오류를 다시 일으킬 수 있는 방법이나 불러온 문서 등의 자세한 정보가 있다면 제공해 주십시오.
 Name[nds]=Bitte hölp uns dor bi, dat wi de Software, de Du bruukst, verbetern köönt. Du kannst en Fehlerbericht för dit Programm op <a href="http://bugs.kde.org">http://bugs.kde.org</a> afgeven. Föög em bitte so veel Informatschonen as mööglich to, villicht ok de Orginaaldokmenten. Kannst Du den Fehler wedderhalen, vertell bitte ok, wodennig dat geiht.
@@ -140,6 +145,7 @@ Comment[br]=Un arload a vez kaset an arhent SIGILL dezhañ abalamour d'un draen 
 Comment[cy]=Derbyna cymhwysiad yr arwydd SIGILL gan amlaf o achos nam yn y cymhwysiad. Gofynnwyd i'r cymhwysiad gadw ei ddogfennau.
 Comment[da]=Et program modtager som regel SIGILL-signalet når der er en fejl i programmet. Programmet blev bedt om at gemme sine dokumenter.
 Comment[el]=Μια εφαρμογή συνήθως λαμβάνει το σήμα SIGILL εξαιτίας σφάλματος στην εφαρμογή. Ζητήθηκε από την εφαρμογή η αποθήκευση των εγγράφων.
+Comment[es]=Una aplicación recibe la señal SIGILL sobretodo debido a un error en la misma aplicación. La aplicación ha solicitado que se guarden sus documentos.
 Comment[et]=Tavaliselt saab rakendus SIGILL signaali rakenduses endas tekkinud vea tõttu. Rakendusel paluti avatud dokumendid salvestada.
 Comment[ga]=Go hiondúil, faigheann feidhmchlár comhartha SIGILL de bhrí go bhfuil fabht ann. Fiafraíodh den fheidhmchlár a chuid cáipéisí a shábháil.
 Comment[gl]=Unha aplicación recebe o sinal SIGILL seguramente por mor dun erro interno. Pediu-se-lle á aplicación que guarde os documentos.
@@ -176,6 +182,7 @@ Comment[br]=Echuiñ a ra un arload gant un arhent SIGABRT p'en  deus dinoet un d
 Comment[cy]=Terfyna cymhwysiad â'r arwydd SIGABRT pan ganfydda anghysondeb mewnol a achoswyd gan nam yn y rhaglen.
 Comment[da]=Et program afbryder med et SIGABRT-signal når det finder en intern inkonsistens forårsaget af en fejl i programmet.
 Comment[el]=Μια εφαρμογή τερματίζει με σήμα SIGABRT όταν ανιχνεύει μια εσωτερική ασυνέπεια λόγω ενός σφάλματος στο πρόγραμμα.
+Comment[es]=Una aplicación termina con la señal SIGABRT cuando detecta una inconsistencia causada por un error en el programa.
 Comment[et]=Rakendus katkestab töö signaaliga SIGABRT siis, kui avastab sisemise ebakõla, mis on põhjustatud veast rakenduses.
 Comment[ga]=Stopann feidhmchlár le comhartha SIGABRT nuair a bhraitheann sé bunoscionntacht inmheánach agus is fabht sa ríomhchlár is cúis leis.
 Comment[gl]=Unha aplicación remata cun sinal SIGABRT cando detecta unha inconsisténcia interna causada por un erro no programa.
@@ -212,6 +219,7 @@ Comment[br]=Resev a ra un arload an arhent SIGFPE abalamour d'un draen en arload
 Comment[cy]=Derbyna cymhwysiad yr arwydd SIGFPE gan amlaf o achos nam yn y cymhwysiad. Gofynnwyd i'r cymhwysiad gadw ei ddogfennau.
 Comment[da]=Et program modtager som regel SIGFPE-signalet når der er en fejl i programmet. Programmet blev bedt om at gemme sine dokumenter.
 Comment[el]=Μια εφαρμογή συνήθως λαμβάνει το σήμα SIGFPE εξαιτίας σφάλματος στην εφαρμογή. Ζητήθηκε από την εφαρμογή η αποθήκευση των εγγράφων.
+Comment[es]=Una aplicación recibe la señal SIGFPE sobretodo debido a un error en la aplicación. La aplicación solicitó que se guarden sus documentos.
 Comment[et]=Tavaliselt saab rakendus SIGFPE signaali rakenduses endas tekkinud vea tõttu. Rakendusel paluti avatud dokumendid salvestada.
 Comment[ga]=Go hiondúil, faigheann feidhmchlár comhartha SIGFPE de bhrí go bhfuil fabht ann. Fiafraíodh den fheidhmchlár a chuid cáipéisí a shábháil.
 Comment[gl]=Unha aplicación recebe un sinal SIGFPE seguramente por mor dun erro interno. Pediu-se-lle á aplicación que guarde os documentos.
@@ -248,6 +256,7 @@ Comment[br]=Resev a ra un arload an arhent SIGSEGV abalamour d'un draen en arloa
 Comment[cy]=Derbyna cymhwysiad yr arwydd SIGSEGV gan amlaf o achos nam yn y cymhwysiad. Gofynnwyd i'r cymhwysiad gadw ei ddogfennau.
 Comment[da]=Et program modtager som regel SIGSEGV-signalet når der er en fejl i programmet. Programmet blev bedt om at gemme sine dokumenter.
 Comment[el]=Μια εφαρμογή συνήθως λαμβάνει το σήμα SIGSEGV εξαιτίας σφάλματος στην εφαρμογή. Ζητήθηκε από την εφαρμογή η αποθήκευση των εγγράφων.
+Comment[es]=Una aplicación recibe la señal SIGSEGV sobretodo debido a un error en la aplicación. La aplicación ha solicitado que se guarden sus documentos.
 Comment[et]=Tavaliselt saab rakendus SIGSEGV signaali rakenduses endas tekkinud vea tõttu. Rakendusel paluti avatud dokumendid salvestada.
 Comment[ga]=Go hiondúil, faigheann feidhmchlár comhartha SIGSEGV de bhrí go bhfuil fabht ann. Fiafraíodh den fheidhmchlár a chuid cáipéisí a shábháil.
 Comment[gl]=Unha aplicación recebe o sinal SIGSEGV seguramente por mor dun erro interno. Pediu-se-lle á aplicación que guarde os documentos.
@@ -283,6 +292,7 @@ Name[br]=Dianav
 Name[cy]=Anhysbys
 Name[da]=Ukendt
 Name[el]=Άγνωστο
+Name[es]=Desconocido
 Name[et]=Tundmatu
 Name[ga]=Anaithnid
 Name[gl]=Descoñecido
@@ -318,6 +328,7 @@ Comment[br]=Ho tigarez, n'anavezan ket an arhent-mañ.
 Comment[cy]=Mae'n ddrwg gennym, ni wyddom yr arwydd yma.
 Comment[da]=Jeg kender desværre ikke dette signal.
 Comment[el]=Δυστυχώς, το σήμα αυτό είναι άγνωστο.
+Comment[es]=No conozco esta señal.
 Comment[et]=Vabandust, ma ei tunne seda signaali.
 Comment[ga]=Tá brón orm, níl aithne agam ar an chomhartha seo.
 Comment[gl]=Sinto-o, este sinal é descoñecido.
