@@ -291,12 +291,12 @@ bool CountrySelectorDialog::editCountry(KControlLocale *locale)
 
     cm->sort();
 
-    cm->addRegion(i18nc("@item:Country", "Default"), "C");
+    cm->addRegion(i18nc("@item:Country", "Not set (Generic English)"), "C");
     if (country == "C") region = "C";
 
     lv1->setModel(cm);
     lv1->setFixedWidth(lv1Width + lv1->verticalScrollBar()->height());
-    // + 2 because 1 is "Default" and the other is for spacing
+    // + 2 because 1 is "Not set (Generic English)" and the other is for spacing
     lv1->setMinimumHeight((regionlist.count() + 2) * fm.height());
 
     connect(lv1->selectionModel(), SIGNAL(currentChanged(const QModelIndex &, const QModelIndex &)), SLOT(regionChanged(const QModelIndex &)));
