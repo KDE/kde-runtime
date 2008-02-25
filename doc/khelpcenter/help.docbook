@@ -1,4 +1,4 @@
-<!-- ui-catalogs: khelpcenter -->
+<!-- ui-catalogs: khelpcenter desktop_kdebase kdelibs4 -->
 
 <chapter id="help-system-user-manual">
 <chapterinfo>
@@ -29,7 +29,7 @@ If you would like to help translating &kde; documentation to your native
 language, the Translation Coordinator is Albert Astals Cid,
 <email>aacid@kde.org</email>, and he would also welcome the help.  More
 information, including the coordinators for each language team, can be
-found on the <ulink url="http://i18n.kde.org">Internationalization web
+found on the <ulink url="http://l10n.kde.org">Localization web
 site</ulink>, and in the <link linkend="contact">Contact</link> section
 of this document.
 </para>
