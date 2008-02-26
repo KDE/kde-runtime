@@ -266,14 +266,19 @@ void KDEDConfig::getServiceStatus()
 		return;
 	}
 
+    // Initialize
 	int count = _lvLoD->topLevelItemCount();
 	for( int i = 0; i < count; ++i )
                 _lvLoD->topLevelItem( i )->setText( 2, NOT_RUNNING );
 	count = _lvStartup->topLevelItemCount();
 	for( int i = 0; i < count; ++i )
                 _lvStartup->topLevelItem( i )->setText( 3, NOT_RUNNING );
+
+    // Fill
 	foreach( const QString& module, modules )
 	{
+		bool found = false;
+
 		count = _lvLoD->topLevelItemCount();
 		for( int i = 0; i < count; ++i )
 		{
@@ -281,6 +286,7 @@ void KDEDConfig::getServiceStatus()
                 	if ( treeitem->data( 0, LibraryRole ).toString() == module )
 			{
 				treeitem->setText( 2, RUNNING );
+				found = true;
 				break;
 			}
 		}
@@ -292,9 +298,32 @@ void KDEDConfig::getServiceStatus()
                 	if ( treeitem->data( 1, LibraryRole ).toString() == module )
 			{
 				treeitem->setText( 3, RUNNING );
+				found = true;
 				break;
 			}
 		}
+
+		if (!found)
+		{
+			kDebug() << "Could not relate module " << module;
+#ifndef NDEBUG
+			kDebug() << "Candidates were:";
+			count = _lvLoD->topLevelItemCount();
+			for( int i = 0; i < count; ++i )
+			{
+				QTreeWidgetItem *treeitem = _lvLoD->topLevelItem( i );
+				kDebug() << treeitem->data( 0, LibraryRole ).toString();
+			}
+
+			count = _lvStartup->topLevelItemCount();
+			for( int i = 0; i < count; ++i )
+			{
+				QTreeWidgetItem *treeitem = _lvStartup->topLevelItem( i );
+				kDebug() << treeitem->data( 1, LibraryRole ).toString();
+			}
+#endif
+		}
+
 	}
 }
 
