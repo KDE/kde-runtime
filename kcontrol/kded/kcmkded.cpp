@@ -167,10 +167,13 @@ void KDEDConfig::load() {
 
 	QTreeWidgetItem* treeitem = 0L;
 	for ( QStringList::ConstIterator it = files.begin(); it != files.end(); ++it ) {
+        kDebug() << *it;
 
 		if ( KDesktopFile::isDesktopFile( *it ) ) {
 			KDesktopFile file( "services", *it );
-
+			// The logic has to be identical to Kded::initModules.
+			// They interpret X-KDE-Kded-autoload as false if not specified
+			//                X-KDE-Kded-load-on-demand as true if not specified
 			if ( file.desktopGroup().readEntry("X-KDE-Kded-autoload", false) ) {
 				treeitem = new QTreeWidgetItem();
 				treeitem->setCheckState( 0, autoloadEnabled(&kdedrc, *it) ? Qt::Checked : Qt::Unchecked );
@@ -180,7 +183,7 @@ void KDEDConfig::load() {
 				treeitem->setData( 1, LibraryRole, file.desktopGroup().readEntry("X-KDE-Library") );
 				_lvStartup->addTopLevelItem( treeitem );
 			}
-			else if ( file.desktopGroup().readEntry("X-KDE-Kded-load-on-demand", false) ) {
+			else if ( file.desktopGroup().readEntry("X-KDE-Kded-load-on-demand", true) ) {
 				treeitem = new QTreeWidgetItem();
 				treeitem->setText( 0, file.readName() );
 				treeitem->setText( 1, file.readComment() );
