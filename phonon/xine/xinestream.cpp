@@ -547,6 +547,8 @@ void XineStream::updateMetaData()
             QString::fromUtf8(xine_get_meta_info(m_stream, XINE_META_INFO_TRACK_NUMBER)));
     metaDataMap.insert(QLatin1String("DESCRIPTION"),
             QString::fromUtf8(xine_get_meta_info(m_stream, XINE_META_INFO_COMMENT)));
+    metaDataMap.insert(QLatin1String("MUSICBRAINZ_DISCID"),
+            QString::fromUtf8(xine_get_meta_info(m_stream, XINE_META_INFO_CDINDEX_DISCID)));
     if(metaDataMap == m_metaDataMap)
         return;
     m_metaDataMap = metaDataMap;
