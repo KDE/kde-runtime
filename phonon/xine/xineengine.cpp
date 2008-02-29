@@ -81,15 +81,6 @@ namespace Xine
         /*if (m_thread) {
             m_thread->stopAllStreams();
         }*/
-        QList<QObject *> cleanupObjects(m_cleanupObjects);
-        const QList<QObject *>::Iterator end = cleanupObjects.end();
-        QList<QObject *>::Iterator it = cleanupObjects.begin();
-        while (it != end) {
-            kDebug(610) << "delete" << (*it)->metaObject()->className();
-            delete *it;
-            ++it;
-        }
-        //qDeleteAll(cleanupObjects);
         if (m_thread) {
             m_thread->quit();
             if (!m_thread->wait(10000)) {
@@ -101,6 +92,20 @@ namespace Xine
             }
             delete m_thread;
         }
+
+        QList<QObject *> cleanupObjects(m_cleanupObjects);
+#if 0
+        qDeleteAll(cleanupObjects);
+#else
+        const QList<QObject *>::Iterator end = cleanupObjects.end();
+        QList<QObject *>::Iterator it = cleanupObjects.begin();
+        while (it != end) {
+            kDebug(610) << "delete" << (*it)->metaObject()->className();
+            delete *it;
+            ++it;
+        }
+#endif
+
         //kDebug(610) ;
         if (m_nullPort) {
             xine_close_audio_driver(m_xine, m_nullPort);
