@@ -53,6 +53,7 @@ Comment[zh_TW]=KDE 系統通知
 
 [Event/Trash: emptied]
 Name=Trash: Emptied
+Name[ca]=Paperera: s'ha buidat
 Name[el]=Απορρίμματα: άδειασαν
 Name[eo]=Rubujo: malpleniĝis
 Name[es]=Papelera: vaciada
@@ -125,6 +126,7 @@ Sound=KDE-Sys-Trash-Emptied.ogg
 
 [Event/Textcompletion: rotation]
 Name=Textcompletion: Rotation
+Name[ca]=Compleció de text: rotació
 Name[el]=Συμπλήρωση κειμένου: περιστροφή
 Name[eo]=Teksta kompletado: turnado
 Name[es]=Completado de texto: rotación
@@ -195,6 +197,7 @@ Sound=KDE-Sys-List-End.ogg
 
 [Event/Textcompletion: no match]
 Name=Textcompletion: No Match
+Name[ca]=Compleció de text: sense coincidència
 Name[el]=Συμπλήρωση κειμένου: κανένα ταίριασμα
 Name[eo]=Teksta kompletado: neniu kongruaĵo
 Name[es]=Completado de texto: sin coincidencia
@@ -267,6 +270,7 @@ Sound=KDE-Sys-List-Match-No.ogg
 
 [Event/Textcompletion: partial match]
 Name=Textcompletion: Partial Match
+Name[ca]=Compleció de text: coincidència parcial
 Name[el]=Συμπλήρωση κειμένου: μερικό ταίριασμα
 Name[eo]=Teksta kompletado: parta kongruaĵo
 Name[es]=Completado de texto: coincidencia parcial
