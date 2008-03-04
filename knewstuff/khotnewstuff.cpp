@@ -24,6 +24,7 @@
 #include <klocale.h>
 #include <kcmdlineargs.h>
 #include <kaboutdata.h>
+#include <kicon.h>
 
 #include <knewstuff2/engine.h>
 
