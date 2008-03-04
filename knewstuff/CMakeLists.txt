@@ -10,5 +10,3 @@ install(TARGETS khotnewstuff4 DESTINATION ${BIN_INSTALL_DIR} )
 
 install( FILES khotnewstuff.knsrc  DESTINATION  ${CONFIG_INSTALL_DIR} )
 
-kde4_install_icons( ${ICON_INSTALL_DIR}  )
-
