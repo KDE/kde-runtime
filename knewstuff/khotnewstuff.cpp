@@ -29,7 +29,7 @@
 
 int main(int argc, char **argv)
 {
-    KAboutData about("get-hot-new-stuff", 0, ki18n("KHotNewStuff"), "0.3");
+    KAboutData about("khotnewstuff", 0, ki18n("KHotNewStuff"), "0.3");
     KCmdLineArgs *args;
 
     KCmdLineArgs::init(argc, argv, &about);
@@ -42,6 +42,8 @@ int main(int argc, char **argv)
     args = KCmdLineArgs::parsedArgs();
 
     KApplication i;
+
+    QApplication::setWindowIcon(KIcon("get-hot-new-stuff"));
 
     if (args->count() > 0) {
         KNS::Engine engine;
