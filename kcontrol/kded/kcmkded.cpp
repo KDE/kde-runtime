@@ -57,7 +57,7 @@ KDEDConfig::KDEDConfig(QWidget* parent, const QVariantList &) :
 				ki18n( "(c) 2002 Daniel Molkentin" ) );
 	about->addAuthor(ki18n("Daniel Molkentin"),KLocalizedString(),"molkentin@kde.org");
 	setAboutData( about );
-
+	setButtons(Apply|Default);
 	setQuickHelp( i18n("<h1>Service Manager</h1><p>This module allows you to have an overview of all plugins of the "
 			"KDE Daemon, also referred to as KDE Services. Generally, there are two types of service:</p>"
 			"<ul><li>Services invoked at startup</li><li>Services called on demand</li></ul>"
