@@ -44,6 +44,7 @@ private slots:
     void finished();
     void updatePort( bool encryption );
     void updateFinishButtonText( bool save );
+    void slotHelpClicked();
 };
 
 #endif
