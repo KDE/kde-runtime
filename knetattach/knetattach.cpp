@@ -42,7 +42,7 @@ KNetAttach::KNetAttach( QWidget* parent )
     connect(_path, SIGNAL(textChanged(const QString&)), this, SLOT(updateParametersPageStatus()));
     connect(_useEncryption, SIGNAL(toggled(bool)), this, SLOT(updatePort(bool)));
     connect(_createIcon, SIGNAL(toggled(bool)), this, SLOT(updateFinishButtonText(bool)));
-
+    connect( this, SIGNAL(helpClicked() ), this, SLOT( slotHelpClicked() ) );
     setIcon(SmallIcon("knetattach"));
     disconnect(finishButton(), SIGNAL(clicked()), (QDialog*)this, SLOT(accept()));
     connect(finishButton(), SIGNAL(clicked()), this, SLOT(finished()));
@@ -61,6 +61,11 @@ KNetAttach::KNetAttach( QWidget* parent )
 	_recent->setEnabled(true);
 	_recentConnectionName->addItems(idx);
     }
+}
+
+void KNetAttach::slotHelpClicked()
+{
+    KToolInvocation::invokeHelp(QString(), "knetattach" );
 }
 
 void KNetAttach::setInformationText( const QString &type )
