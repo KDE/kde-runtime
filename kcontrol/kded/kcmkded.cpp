@@ -171,6 +171,7 @@ void KDEDConfig::load() {
 
 		if ( KDesktopFile::isDesktopFile( *it ) ) {
 			KDesktopFile file( "services", *it );
+			Q_ASSERT( file.desktopGroup().readEntry("X-KDE-ServiceTypes") == "KDEDModule" );
 			// The logic has to be identical to Kded::initModules.
 			// They interpret X-KDE-Kded-autoload as false if not specified
 			//                X-KDE-Kded-load-on-demand as true if not specified
@@ -180,7 +181,12 @@ void KDEDConfig::load() {
 				treeitem->setText( 1, file.readName() );
 				treeitem->setText( 2, file.readComment() );
 				treeitem->setText( 3, NOT_RUNNING );
-				treeitem->setData( 1, LibraryRole, file.desktopGroup().readEntry("X-KDE-Library") );
+				if (file.desktopGroup().hasKey("X-KDE-DBus-ModuleName")) {
+					treeitem->setData( 1, LibraryRole, file.desktopGroup().readEntry("X-KDE-DBus-ModuleName") );
+				} else {
+					kWarning() << "X-KDE-DBUS-ModuleName not set for module " << file.readName();
+					treeitem->setData( 1, LibraryRole, file.desktopGroup().readEntry("X-KDE-Library") );
+				}
 				_lvStartup->addTopLevelItem( treeitem );
 			}
 			else if ( file.desktopGroup().readEntry("X-KDE-Kded-load-on-demand", true) ) {
@@ -188,7 +194,12 @@ void KDEDConfig::load() {
 				treeitem->setText( 0, file.readName() );
 				treeitem->setText( 1, file.readComment() );
 				treeitem->setText( 2, NOT_RUNNING );
-				treeitem->setData( 0, LibraryRole, file.desktopGroup().readEntry( "X-KDE-Library" ) );
+				if (file.desktopGroup().hasKey("X-KDE-DBus-ModuleName")) {
+					treeitem->setData( 0, LibraryRole, file.desktopGroup().readEntry("X-KDE-DBus-ModuleName") );
+				} else {
+					kWarning() << "X-KDE-DBUS-ModuleName not set for module " << file.readName();
+					treeitem->setData( 0, LibraryRole, file.desktopGroup().readEntry("X-KDE-Library") );
+				}
 				_lvLoD->addTopLevelItem( treeitem );
 			}
 		}
