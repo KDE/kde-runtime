@@ -17,6 +17,3 @@ install(TARGETS kcm_icons  DESTINATION ${PLUGIN_INSTALL_DIR} )
 ########### install files ###############
 
 install( FILES icons.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
-
-kde4_install_icons( ${ICON_INSTALL_DIR}  )
-

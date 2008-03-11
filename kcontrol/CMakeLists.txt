@@ -1,7 +1,6 @@
 add_subdirectory(icons)
 add_subdirectory(locale)
 add_subdirectory( kded )
-add_subdirectory( pics )
 add_subdirectory( knotify )
 add_subdirectory( componentchooser )
 add_subdirectory( menus )
