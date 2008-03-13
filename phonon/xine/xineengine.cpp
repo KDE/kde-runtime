@@ -513,7 +513,10 @@ namespace Xine
                     foreach (const AudioDevice &dev, alsaDevices) {
                         if (dev.driver() == Solid::AudioInterface::Alsa) {
                             addAudioOutput(dev, "alsa");
+			   kDebug(610) << "added to audio output " << dev.driver();
                         }
+		       else
+			   kDebug(610) << "not an ALSA device " << dev.driver();
                     }
                 } else if (0 == strcmp(outputPlugins[i], "none") || 0 == strcmp(outputPlugins[i], "file")) {
                     // ignore these devices
@@ -564,6 +567,11 @@ namespace Xine
                 kDebug(610) << info.index << info.name << info.driver << info.devices;
             }
         }
+    }
+
+    void XineEngine::setObjectDescriptionProperities( ObjectDescriptionType type, int index, const QHash<QByteArray, QVariant>& properities )
+    {
+        s_instance->m_objectDescriptions[type][index] = properities;
     }
 
     void XineEnginePrivate::devicePlugged(const AudioDevice &dev)
@@ -631,6 +639,7 @@ namespace Xine
         qSort(s_instance->m_audioOutputInfos);
         signalTimer.start();
     }
+
 } // namespace Xine
 } // namespace Phonon
 

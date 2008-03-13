@@ -28,6 +28,7 @@
 #include <QtCore/QStringList>
 
 #include <Phonon/Global>
+#include <Phonon/ObjectDescription>
 
 #include <KDebug>
 #include <KSharedConfig>
@@ -88,6 +89,9 @@ class XineEngine
         static int deinterlaceMethod();
         static bool inShutdown() { return self()->m_inShutdown; }
 
+        static void setObjectDescriptionProperities( ObjectDescriptionType type, int index, const QHash<QByteArray, QVariant>& properities );
+        static QHash<ObjectDescriptionType, QHash< int, QHash<QByteArray, QVariant> > > objectDescriptions() { return self()->m_objectDescriptions; }
+
     protected:
         XineEngine(const KSharedConfigPtr &cfg);
         ~XineEngine();
@@ -99,6 +103,8 @@ class XineEngine
                 const QString &desc, const QString &ic, const QByteArray &dr,
                 const QStringList &dev, const QString &mixerDevice, bool isAdvanced = false);
         xine_t *m_xine;
+
+        QHash<ObjectDescriptionType, QHash< int, QHash<QByteArray, QVariant> > > m_objectDescriptions;
 
         struct AudioOutputInfo
         {

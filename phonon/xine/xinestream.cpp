@@ -1,5 +1,6 @@
 /*  This file is part of the KDE project
     Copyright (C) 2006-2007 Matthias Kretz <kretz@kde.org>
+    Copyright (C) 2008      Ian Monroe <imonroe@kde.org>
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -19,19 +20,23 @@
 */
 
 #include "xinestream.h"
-#include "xineengine.h"
+
 #include <QMutexLocker>
 #include <QEvent>
 #include <QCoreApplication>
 #include <QTimer>
+
 #include <kurl.h>
-#include "audioport.h"
-#include "videowidget.h"
-#include "mediaobject.h"
-#include "xinethread.h"
 #include <klocale.h>
-#include "events.h"
+
+#include "audioport.h"
+#include "backend.h"
 #include "bytestream.h"
+#include "events.h"
+#include "mediaobject.h"
+#include "videowidget.h"
+#include "xineengine.h"
+#include "xinethread.h"
 
 extern "C" {
 #define this _this_xine_
@@ -1251,6 +1256,78 @@ Phonon::ErrorType XineStream::errorType() const
     ReadLock lock(m_errorLock);
     return m_errorType;
 }
+
+QList<SubtitleStreamDescription> XineStream::availableSubtitleStreams() const
+{
+    QList<SubtitleStreamDescription> subtitles;
+    if( !m_stream )
+        return subtitles;
+    const int channels = subtitlesSize();
+    for( int index = 0; index < channels; index++ )
+    {
+        subtitles << streamDescription<SubtitleStreamDescription>( index, SubtitleStreamType, xine_get_spu_lang );
+    }
+    return subtitles;
+}
+
+QList<AudioStreamDescription> XineStream::availableAudioStreams() const
+{
+    QList<AudioStreamDescription> audios;
+    if( !m_stream )
+        return audios;
+    const int channels = audioChannelsSize();
+    for( int index = 0; index < channels; index++ )
+    {
+        audios << streamDescription<AudioStreamDescription>( index, AudioStreamType, xine_get_audio_lang );
+    }
+    return audios;
+}
+
+int XineStream::subtitlesSize() const
+{
+    return xine_get_stream_info( m_stream, XINE_STREAM_INFO_MAX_SPU_CHANNEL );
+}
+
+int XineStream::audioChannelsSize() const
+{
+    return xine_get_stream_info( m_stream, XINE_STREAM_INFO_MAX_AUDIO_CHANNEL );
+}
+
+void XineStream::setCurrentAudioStream(const AudioStreamDescription& streamDesc)
+{
+    xine_set_param( m_stream, XINE_PARAM_AUDIO_CHANNEL_LOGICAL, streamDesc.index() );
+}
+
+void XineStream::setCurrentSubtitleStream(const SubtitleStreamDescription& streamDesc)
+{
+    kDebug() << "setting the subtitle to: " << streamDesc.index();
+    xine_set_param( m_stream, XINE_PARAM_SPU_CHANNEL, streamDesc.index() );
+}
+
+template<class S>
+S XineStream::streamDescription(int index, ObjectDescriptionType type, int(*get_xine_stream_text)(xine_stream_t *stream, int channel, char *lang)) const
+{
+    QByteArray lang;
+    lang.resize( 150 );
+    get_xine_stream_text( m_stream, index, lang.data() );
+    QHash<QByteArray, QVariant> properities;
+    properities.insert( "name", QString( lang ) );
+    XineEngine::setObjectDescriptionProperities( type, index, properities );
+    return S( index, properities );
+}
+
+AudioStreamDescription XineStream::currentAudioStream() const
+{
+    int index = xine_get_param( m_stream, XINE_PARAM_AUDIO_CHANNEL_LOGICAL );
+    return streamDescription<AudioStreamDescription>( index, AudioStreamType, xine_get_audio_lang );
+}
+
+SubtitleStreamDescription XineStream::currentSubtitleStream() const
+{
+    int index = xine_get_param( m_stream, XINE_PARAM_SPU_CHANNEL );
+    return streamDescription<SubtitleStreamDescription>( index, SubtitleStreamType, xine_get_spu_lang );
+}
+
 
 xine_post_out_t *XineStream::audioOutputPort() const
 {

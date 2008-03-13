@@ -21,9 +21,12 @@
 #ifndef Phonon_XINE_BACKEND_H
 #define Phonon_XINE_BACKEND_H
 
+#include <QByteArray>
+#include <QHash>
 #include <QList>
 #include <QPointer>
 #include <QStringList>
+#include <QVariant>
 
 #include <xine.h>
 #include <xine/xineutils.h>

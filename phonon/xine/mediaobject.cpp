@@ -1,6 +1,7 @@
 /*  This file is part of the KDE project
     Copyright (C) 2006 Tim Beaulen <tbscope@gmail.com>
     Copyright (C) 2006-2007 Matthias Kretz <kretz@kde.org>
+    Copyright (C) 2008 Ian Monroe <imonroe@kde.org>
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -203,71 +204,6 @@ void MediaObject::setTickInterval(qint32 newTickInterval)
     m_tickInterval = newTickInterval;
     m_stream->setTickInterval(m_tickInterval);
 }
-
-/*
-QList<AudioStreamDescription> MediaObject::availableAudioStreams() const
-{
-    // TODO
-    QStringList ret;
-    ret << QLatin1String("en") << QLatin1String("de");
-    return ret;
-}
-
-QList<VideoStreamDescription> MediaObject::availableVideoStreams() const
-{
-    // TODO
-    QStringList ret;
-    ret << QLatin1String("en") << QLatin1String("de");
-    return ret;
-}
-
-QList<SubtitleStreamDescription> MediaObject::availableSubtitleStreams() const
-{
-    // TODO
-    QStringList ret;
-    ret << QLatin1String("en") << QLatin1String("de");
-    return ret;
-}
-
-AudioStreamDescription MediaObject::currentAudioStream(const QObject *audioPath) const
-{
-    // TODO
-    return m_currentAudioStream[audioPath];
-}
-
-VideoStreamDescription MediaObject::currentVideoStream(const QObject *videoPath) const
-{
-    // TODO
-    return m_currentVideoStream[videoPath];
-}
-
-SubtitleStreamDescription MediaObject::currentSubtitleStream(const QObject *videoPath) const
-{
-    // TODO
-    return m_currentSubtitleStream[videoPath];
-}
-
-void MediaObject::setCurrentAudioStream(const QString &streamName, const QObject *audioPath)
-{
-    // TODO
-    if(availableAudioStreams().contains(streamName))
-        m_currentAudioStream[audioPath] = streamName;
-}
-
-void MediaObject::setCurrentVideoStream(const QString &streamName, const QObject *videoPath)
-{
-    // TODO
-    if(availableVideoStreams().contains(streamName))
-        m_currentVideoStream[videoPath] = streamName;
-}
-
-void MediaObject::setCurrentSubtitleStream(const QString &streamName, const QObject *videoPath)
-{
-    // TODO
-    if(availableSubtitleStreams().contains(streamName))
-        m_currentSubtitleStream[videoPath] = streamName;
-}
-*/
 
 void MediaObject::play()
 {
@@ -558,6 +494,16 @@ bool MediaObject::hasInterface(Interface interface) const
             return true;
         }
         break;
+    case AddonInterface::SubtitleInterface:
+        if (stream().subtitlesSize() > 0) { //subtitles off by default, enable if any
+            return true;
+        }
+        break;
+    case AddonInterface::AudioChannelInterface:
+        if (stream().audioChannelsSize() > 1) { //first audio channel on by default, enable if > 1
+            return true;
+        }
+        break;
     }
     return false;
 }
@@ -664,6 +610,39 @@ QVariant MediaObject::interfaceCall(Interface interface, int command, const QLis
                 return true;
             }
         }
+        break;
+    case AddonInterface::SubtitleInterface:
+        switch (static_cast<AddonInterface::SubtitleCommand>(command))
+        {
+            case AddonInterface::availableSubtitleStreams:
+                return QVariant::fromValue( m_stream->availableSubtitleStreams() );
+            case AddonInterface::currentSubtitleStream:
+                return QVariant::fromValue(m_stream->currentSubtitleStream());
+            case AddonInterface::setCurrentSubtitleStream:
+                if (arguments.isEmpty() || !arguments.first().canConvert<SubtitleStreamDescription>() ) {
+                    kDebug(610) << "arguments invalid";
+                    return false;
+                }
+                m_stream->setCurrentSubtitleStream( arguments.first().value<SubtitleStreamDescription>() );
+                return true;
+        }
+        break;
+    case AddonInterface::AudioChannelInterface:
+        switch (static_cast<AddonInterface::AudioChannelCommand>(command))
+        {
+            case AddonInterface::availableAudioStreams:
+                return QVariant::fromValue( m_stream->availableAudioStreams() );
+            case AddonInterface::currentAudioStream:
+                return QVariant::fromValue( m_stream->currentAudioStream() );
+            case AddonInterface::setCurrentAudioStream:
+                if (arguments.isEmpty() || !arguments.first().canConvert<AudioStreamDescription>() ) {
+                    kDebug(610) << "arguments invalid";
+                    return false;
+                }
+                m_stream->setCurrentAudioStream( arguments.first().value<AudioStreamDescription>() );
+                return true;
+         }
+         break;
     }
     return QVariant();
 }

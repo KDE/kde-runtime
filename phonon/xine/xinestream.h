@@ -31,6 +31,7 @@
 #include <QtCore/QTimer>
 
 #include <Phonon/Global>
+#include <Phonon/ObjectDescription>
 
 #include <xine.h>
 
@@ -105,6 +106,18 @@ class XineStream : public QObject, public SourceNodeXT
         int currentAngle()      const { return m_currentAngle;      }
         int currentTitle()      const { return m_currentTitle;      }
 
+        QList<AudioStreamDescription> availableAudioStreams() const;
+        QList<SubtitleStreamDescription> availableSubtitleStreams() const;
+
+        AudioStreamDescription currentAudioStream() const;
+        SubtitleStreamDescription currentSubtitleStream() const;
+
+        void setCurrentAudioStream(const AudioStreamDescription& streamDesc);
+        void setCurrentSubtitleStream(const SubtitleStreamDescription& streamDesc);
+
+        int subtitlesSize() const;
+        int audioChannelsSize() const;
+
         enum StateForNewMrl {
             // no use: Loading, Error, Buffering
             StoppedState = Phonon::StoppedState,
@@ -151,6 +164,9 @@ class XineStream : public QObject, public SourceNodeXT
         void titleChanged(int);
         void downstreamEvent(Event *e);
 
+        void availableSubtitlesChanged();
+        void availableAudioChanged();
+
         void hackSetProperty(const char *name, const QVariant &val);
 
     protected:
@@ -177,6 +193,8 @@ class XineStream : public QObject, public SourceNodeXT
         void internalPause();
         void internalPlay();
         void setMrlInternal(const QByteArray &newMrl);
+        template<class S>
+        S streamDescription(int index, ObjectDescriptionType type, int(*get_xine_stream_text)(xine_stream_t *stream, int channel, char *lang)) const;
 
         xine_stream_t *m_stream;
         xine_event_queue_t *m_event_queue;

@@ -62,20 +62,6 @@ class MediaObject : public QObject, public MediaObjectInterface, public AddonInt
         Q_INVOKABLE qint64 remainingTime() const;
         qint32 tickInterval() const;
 
-        /*
-        QList<AudioStreamDescription> availableAudioStreams() const;
-        QList<VideoStreamDescription> availableVideoStreams() const;
-        QList<SubtitleStreamDescription> availableSubtitleStreams() const;
-
-        AudioStreamDescription currentAudioStream(const QObject *audioPath) const;
-        VideoStreamDescription currentVideoStream(const QObject *videoPath) const;
-        SubtitleStreamDescription currentSubtitleStream(const QObject *videoPath) const;
-
-        void setCurrentAudioStream(const QString &streamName, const QObject *audioPath);
-        void setCurrentVideoStream(const QString &streamName, const QObject *videoPath);
-        void setCurrentSubtitleStream(const QString &streamName, const QObject *videoPath);
-        */
-
         void setTickInterval(qint32 newTickInterval);
         void play();
         void pause();
@@ -153,10 +139,6 @@ class MediaObject : public QObject, public MediaObjectInterface, public AddonInt
         XineStream *m_stream;
         qint32 m_tickInterval;
         QPointer<ByteStream> m_bytestream;
-
-        QHash<const QObject *, QString> m_currentAudioStream;
-        QHash<const QObject *, QString> m_currentVideoStream;
-        QHash<const QObject *, QString> m_currentSubtitleStream;
 
         mutable int m_currentTimeOverride;
         MediaSource m_mediaSource;

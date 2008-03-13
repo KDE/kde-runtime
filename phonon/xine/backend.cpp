@@ -224,6 +224,12 @@ QList<int> Backend::objectDescriptionIndexes(ObjectDescriptionType type) const
             } */
             break;
         }
+    case Phonon::AudioStreamType:
+    case Phonon::SubtitleStreamType:
+        {
+            list = XineEngine::objectDescriptions().find(type).value().keys();
+        }
+        break;
     }
     return list;
 }
@@ -322,6 +328,12 @@ QHash<QByteArray, QVariant> Backend::objectDescriptionProperties(ObjectDescripti
                     break;
                 }
             } */
+        }
+        break;
+    case Phonon::AudioStreamType:
+    case Phonon::SubtitleStreamType:
+        {
+            ret = XineEngine::objectDescriptions().find(type).value().find(index).value();
         }
         break;
     }
