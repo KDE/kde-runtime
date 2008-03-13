@@ -1,6 +1,6 @@
 /**
   * This file is part of the KDE project
-  * Copyright (C) 2007, 2006 Rafael Fernández López <ereslibre@kde.org>
+  * Copyright (C) 2006-2008 Rafael Fernández López <ereslibre@kde.org>
   *
   * This library is free software; you can redistribute it and/or
   * modify it under the terms of the GNU Library General Public
@@ -22,7 +22,6 @@
 
 #include <QStyleOptionProgressBarV2>
 
-#include <kiconloader.h>
 #include <kwidgetjobtracker.h>
 
 ProgressListModel::ProgressListModel(QObject *parent)
@@ -35,9 +34,15 @@ ProgressListModel::~ProgressListModel()
     foreach (const JobInfo &it, jobInfoList)
     {
         delete it.progressBar;
-        delete it.iconLoader;
-        delete it.defaultTracker;
     }
+}
+
+UIServer::JobView *ProgressListModel::jobView(const QModelIndex &index) const
+{
+    if (!index.isValid())
+        return 0;
+
+    return jobInfoList[index.row()].jobView;
 }
 
 QModelIndex ProgressListModel::parent(const QModelIndex&) const
@@ -54,23 +59,14 @@ QVariant ProgressListModel::data(const QModelIndex &index, int role) const
 
     switch (role)
     {
-        case ProgressListDelegate::JobId:
-            result = jobInfoList[index.row()].jobId;
-            break;
-        case ProgressListDelegate::ApplicationInternalName:
-            result = jobInfoList[index.row()].applicationInternalName;
+        case ProgressListDelegate::Capabilities:
+            result = jobInfoList[index.row()].capabilities;
             break;
         case ProgressListDelegate::ApplicationName:
             result = jobInfoList[index.row()].applicationName;
             break;
         case ProgressListDelegate::Icon:
             result = jobInfoList[index.row()].icon;
-            break;
-        case ProgressListDelegate::FileTotals:
-            result = jobInfoList[index.row()].fileTotals;
-            break;
-        case ProgressListDelegate::FilesProcessed:
-            result = jobInfoList[index.row()].filesProcessed;
             break;
         case ProgressListDelegate::SizeTotals:
             result = jobInfoList[index.row()].sizeTotals;
@@ -84,18 +80,6 @@ QVariant ProgressListModel::data(const QModelIndex &index, int role) const
         case ProgressListDelegate::TimeElapsed:
             result = jobInfoList[index.row()].timeElapsed;
             break;
-        case ProgressListDelegate::From:
-            result = jobInfoList[index.row()].from;
-            break;
-        case ProgressListDelegate::To:
-            result = jobInfoList[index.row()].to;
-            break;
-        case ProgressListDelegate::FromLabel:
-            result = jobInfoList[index.row()].fromLabel;
-            break;
-        case ProgressListDelegate::ToLabel:
-            result = jobInfoList[index.row()].toLabel;
-            break;
         case ProgressListDelegate::Speed:
             result = jobInfoList[index.row()].speed;
             break;
@@ -104,6 +88,9 @@ QVariant ProgressListModel::data(const QModelIndex &index, int role) const
             break;
         case ProgressListDelegate::Message:
             result = jobInfoList[index.row()].message;
+            break;
+        case ProgressListDelegate::State:
+            result = jobInfoList[index.row()].state;
             break;
         default:
             return result;
@@ -128,16 +115,16 @@ QModelIndex ProgressListModel::index(int row, int column, const QModelIndex &par
     if (row >= rowCount())
         return QModelIndex();
 
-    return createIndex(row, column, iconLoader(row));
+    return createIndex(row, column, 0);
 }
 
-QModelIndex ProgressListModel::indexForJob(uint jobId) const
+QModelIndex ProgressListModel::indexForJob(UIServer::JobView *jobView) const
 {
     int i = 0;
     foreach (const JobInfo &it, jobInfoList)
     {
-        if ((uint)it.jobId == jobId)
-            return createIndex(i, 0, iconLoader(i));
+        if (it.jobView == jobView)
+            return createIndex(i, 0, 0);
 
         i++;
     }
@@ -166,29 +153,18 @@ bool ProgressListModel::insertRows(int row, int count, const QModelIndex &parent
 
     JobInfo newJob;
 
-    newJob.jobId = -1;
-    newJob.applicationInternalName = QString();
+    newJob.jobView = 0;
     newJob.applicationName = QString();
     newJob.icon = QString();
-    newJob.fileTotals = -1;
-    newJob.filesProcessed = -1;
-    newJob.dirTotals = -1;
-    newJob.dirsProcessed = -1;
     newJob.sizeTotals = QString();
     newJob.sizeProcessed = QString();
     newJob.timeElapsed = -1;
     newJob.timeTotals = -1;
-    newJob.from = QString();
-    newJob.to = QString();
-    newJob.fromLabel = QString();
-    newJob.toLabel = QString();
     newJob.speed = QString();
     newJob.percent = -1;
     newJob.message = QString();
-    newJob.progressMessage = QString();
     newJob.progressBar = 0;
-    newJob.iconLoader = 0;
-    newJob.defaultTracker = 0;
+    newJob.state = JobInfo::Running;
 
     jobInfoList.append(newJob);
 
@@ -221,23 +197,14 @@ bool ProgressListModel::setData(const QModelIndex &index, const QVariant &value,
 
     switch (role)
     {
-        case ProgressListDelegate::JobId:
-            jobInfoList[index.row()].jobId = value.toInt();
-            break;
-        case ProgressListDelegate::ApplicationInternalName:
-            jobInfoList[index.row()].applicationInternalName = value.toString();
+        case ProgressListDelegate::Capabilities:
+            jobInfoList[index.row()].capabilities = value.toInt();
             break;
         case ProgressListDelegate::ApplicationName:
             jobInfoList[index.row()].applicationName = value.toString();
             break;
         case ProgressListDelegate::Icon:
             jobInfoList[index.row()].icon = value.toString();
-            break;
-        case ProgressListDelegate::FileTotals:
-            jobInfoList[index.row()].fileTotals = value.toLongLong();
-            break;
-        case ProgressListDelegate::FilesProcessed:
-            jobInfoList[index.row()].filesProcessed = value.toLongLong();
             break;
         case ProgressListDelegate::SizeTotals:
             jobInfoList[index.row()].sizeTotals = value.toString();
@@ -250,18 +217,6 @@ bool ProgressListModel::setData(const QModelIndex &index, const QVariant &value,
             break;
         case ProgressListDelegate::TimeElapsed:
             jobInfoList[index.row()].timeElapsed = value.toLongLong();
-            break;
-        case ProgressListDelegate::From:
-            jobInfoList[index.row()].from = value.toString();
-            break;
-        case ProgressListDelegate::To:
-            jobInfoList[index.row()].to = value.toString();
-            break;
-        case ProgressListDelegate::FromLabel:
-            jobInfoList[index.row()].fromLabel = value.toString();
-            break;
-        case ProgressListDelegate::ToLabel:
-            jobInfoList[index.row()].toLabel = value.toString();
             break;
         case ProgressListDelegate::Speed:
             jobInfoList[index.row()].speed = value.toString();
@@ -282,82 +237,84 @@ bool ProgressListModel::setData(const QModelIndex &index, const QVariant &value,
         case ProgressListDelegate::Message:
             jobInfoList[index.row()].message = value.toString();
             break;
+        case ProgressListDelegate::State:
+            jobInfoList[index.row()].state = (JobInfo::State) value.toInt();
+            break;
         default:
             return false;
     }
 
     emit dataChanged(index, index);
+    emit layoutChanged();
 
     return true;
 }
 
-void ProgressListModel::newJob(uint jobId, const QString &internalAppName, const QString &jobIcon, const QString &appName, bool showProgress)
+void ProgressListModel::newJob(const QString &appName, const QString &appIcon, int capabilities, UIServer::JobView *jobView)
 {
-    Q_UNUSED(showProgress);
     int newRow = rowCount();
 
     insertRow(rowCount());
-    setData(newRow, jobId, ProgressListDelegate::JobId);
-    setData(newRow, internalAppName, ProgressListDelegate::ApplicationInternalName);
     setData(newRow, appName, ProgressListDelegate::ApplicationName);
-    setData(newRow, jobIcon, ProgressListDelegate::Icon);
-    setIconLoader(newRow, new KIconLoader(internalAppName));
+    setData(newRow, appIcon, ProgressListDelegate::Icon);
+    setData(newRow, capabilities, ProgressListDelegate::Capabilities);
+    jobInfoList[newRow].jobView = jobView;
 }
 
 
-void ProgressListModel::finishJob(uint jobId)
+void ProgressListModel::finishJob(UIServer::JobView *jobView)
 {
-    QModelIndex indexToRemove = indexForJob(jobId);
+    QModelIndex indexToRemove = indexForJob(jobView);
 
     if (indexToRemove.isValid())
         removeRow(indexToRemove.row());
 }
 
-void ProgressListModel::newAction(uint jobId, uint actionId, const QString &actionText)
+QPair<QString, QString> ProgressListModel::getDescriptionField(const QModelIndex &index, uint id)
 {
-    QModelIndex index = indexForJob(jobId);
+    if (!index.isValid() || !jobInfoList[index.row()].descFields.contains(id))
+        return QPair<QString, QString>(QString(), QString());
 
-    int row = index.row();
-
-    ActionInfo newActionInfo;
-    newActionInfo.actionId = actionId;
-    newActionInfo.actionText = actionText;
-
-    jobInfoList[row].actionInfoList.append(newActionInfo);
-
-    emit dataChanged(index, index);
-    emit actionModified(index);
+    return jobInfoList[index.row()].descFields[id];
 }
 
-void ProgressListModel::editAction(int jobId, int actionId, const QString &actionText)
+bool ProgressListModel::setDescriptionField(const QModelIndex &index, uint id, const QString &name, const QString &value)
 {
-    QModelIndex index = indexForJob(jobId);
+    if (!index.isValid())
+        return false;
 
-    int i = 0;
-    bool keepSearching = true;
-    ActionInfo actionIt;
-    while ((i < jobInfoList[index.row()].actionInfoList.count()) &&
-           keepSearching)
+    if (jobInfoList[index.row()].descFields.contains(id))
     {
-        actionIt = jobInfoList[index.row()].actionInfoList[i];
-
-        if (actionId == actionIt.actionId)
-        {
-            jobInfoList[index.row()].actionInfoList[i].actionText = actionText;
-
-            keepSearching = false;
-        }
-
-        i++;
+        jobInfoList[index.row()].descFields[id].first = name;
+        jobInfoList[index.row()].descFields[id].second = value;
+    }
+    else
+    {
+        QPair<QString, QString> descField(name, value);
+        jobInfoList[index.row()].descFields.insert(id, descField);
     }
 
-    emit dataChanged(index, index);
-    emit actionModified(index);
+    return true;
 }
 
-const QList<ActionInfo> &ProgressListModel::actions(uint jobId) const
+void ProgressListModel::clearDescriptionField(const QModelIndex &index, uint id)
 {
-    return jobInfoList[indexForJob(jobId).row()].actionInfoList;
+    if (!index.isValid())
+        return;
+
+    if (jobInfoList[index.row()].descFields.contains(id))
+    {
+        jobInfoList[index.row()].descFields.remove(id);
+    }
+}
+
+JobInfo::State ProgressListModel::state(const QModelIndex &index) const
+{
+    if (index.isValid()) {
+        return ((JobInfo::State) data(index, ProgressListDelegate::State).toInt());
+    }
+
+    return JobInfo::InvalidState;
 }
 
 QStyleOptionProgressBarV2 *ProgressListModel::progressBar(const QModelIndex &index) const
@@ -365,29 +322,9 @@ QStyleOptionProgressBarV2 *ProgressListModel::progressBar(const QModelIndex &ind
     return jobInfoList[index.row()].progressBar;
 }
 
-KWidgetJobTracker *ProgressListModel::defaultTracker(int row) const
-{
-    return jobInfoList[row].defaultTracker;
-}
-
-void ProgressListModel::setDefaultTracker(int row, KWidgetJobTracker *defaultTracker)
-{
-    jobInfoList[row].defaultTracker = defaultTracker;
-}
-
 bool ProgressListModel::setData(int row, const QVariant &value, int role)
 {
     return setData(index(row), value, role);
-}
-
-KIconLoader *ProgressListModel::iconLoader(int row) const
-{
-    return jobInfoList[row].iconLoader;
-}
-
-void ProgressListModel::setIconLoader(int row, KIconLoader *iconLoader)
-{
-    jobInfoList[row].iconLoader = iconLoader;
 }
 
 #include "progresslistmodel.moc"

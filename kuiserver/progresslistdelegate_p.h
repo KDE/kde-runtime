@@ -39,20 +39,14 @@ class ProgressListDelegate::Private
 public:
     Private(QObject *parent, QListView *listView)
         : QObject(parent)
+        , listView(listView)
     {
-        this->listView = listView;
-
-        ProgressListModel *progressListModel = static_cast<ProgressListModel*>(listView->model());
-
-        connect(progressListModel, SIGNAL(actionModified(const QModelIndex&)), this,
-                SLOT(actionModified(const QModelIndex&)));
     }
 
     ~Private()
     {
     }
 
-    int getJobId(const QModelIndex &index) const;
     QString getApplicationInternalName(const QModelIndex &index) const;
     QString getApplicationName(const QModelIndex &index) const;
     QString getIcon(const QModelIndex &index) const;
@@ -72,12 +66,8 @@ public:
     int getPercent(const QModelIndex &index) const;
     QString getMessage(const QModelIndex &index) const;
     QString getProgressMessage(const QModelIndex &index) const;
-    const QList<ActionInfo> &getActionList(const QModelIndex &index) const;
     QStyleOptionProgressBarV2 *getProgressBar(const QModelIndex &index) const;
     int getCurrentLeftMargin(int fontHeight) const;
-
-public Q_SLOTS:
-    void actionModified(const QModelIndex &index);
 
 public:
     int separatorPixels;
@@ -89,26 +79,6 @@ public:
     int editorHeight;
     int iconWidth;
     QListView *listView;
-    class QActionPushButton;
-};
-
-class ProgressListDelegate::Private::QActionPushButton
-    : public QPushButton
-{
-    Q_OBJECT
-
-public:
-    QActionPushButton(int actionId, int jobId, const QString &actionText, QWidget *parent = 0);
-
-public Q_SLOTS:
-    void buttonPressed();
-
-Q_SIGNALS:
-    void actionButtonPressed(int actionId, int jobId);
-
-private:
-    int actionId;
-    int jobId;
 };
 
 #endif // PROGRESSLISTDELEGATE_P_H

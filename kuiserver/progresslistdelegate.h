@@ -1,6 +1,6 @@
 /**
   * This file is part of the KDE project
-  * Copyright (C) 2007, 2006 Rafael Fernández López <ereslibre@kde.org>
+  * Copyright (C) 2006-2008 Rafael Fernández López <ereslibre@kde.org>
   *
   * This library is free software; you can redistribute it and/or
   * modify it under the terms of the GNU Library General Public
@@ -42,8 +42,6 @@ public:
      */
     ~ProgressListDelegate();
 
-    QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const;
-
     /**
       * @brief Paints the progress delegate.
       */
@@ -53,8 +51,6 @@ public:
       * @brief Gets the size of the progress delegate.
       */
     QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
-
-    void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
     void setSeparatorPixels(int separatorPixels);
     void setLeftMargin(int leftMargin);
@@ -66,30 +62,19 @@ public:
 
     enum ProgressItemRole
     {
-        JobId = 33,
-        ApplicationInternalName,
+        Capabilities = 33,
         ApplicationName,
         Icon,
-        FileTotals,
-        FilesProcessed,
-        DirTotals,
-        DirsProcessed,
         SizeTotals,
         SizeProcessed,
         TimeTotals,
         TimeElapsed,
-        From,
-        To,
-        FromLabel,
-        ToLabel,
         Speed,
         Percent,
         Message,
-        ProgressMessage
+        DescFields,
+        State
     };
-
-Q_SIGNALS:
-    void actionPerformed(int actionId, int jobId);
 
 private:
     class Private;

@@ -1,6 +1,6 @@
 /**
   * This file is part of the KDE project
-  * Copyright (C) 2007, 2006 Rafael Fernández López <ereslibre@kde.org>
+  * Copyright (C) 2006-2008 Rafael Fernández López <ereslibre@kde.org>
   * Copyright (C) 2001 George Staikos <staikos@kde.org>
   * Copyright (C) 2000 Matej Koss <koss@miesto.sk>
   *                    David Faure <faure@kde.org>
@@ -21,14 +21,17 @@
   */
 
 #include "uiserver.h"
-#include "uiserveradaptor.h"
+#include "uiserver_p.h"
+#include "jobviewadaptor.h"
+#include "jobviewserveradaptor.h"
 #include "progresslistmodel.h"
 #include "progresslistdelegate.h"
-#include "callbacksiface.h"
 
-#include <QWidget>
-#include <QAction>
-#include <QTabWidget>
+#include <QtGui/QWidget>
+#include <QtGui/QAction>
+#include <QtGui/QTabWidget>
+#include <QtGui/QBoxLayout>
+#include <QtGui/QCloseEvent>
 
 #include <ksqueezedtextlabel.h>
 #include <kconfig.h>
@@ -39,6 +42,7 @@
 #include <kcmdlineargs.h>
 #include <kglobal.h>
 #include <klocale.h>
+#include <kpushbutton.h>
 #include <kstatusbar.h>
 #include <kdebug.h>
 #include <kdialog.h>
@@ -49,13 +53,154 @@
 #include <kio/jobclasses.h>
 #include <kjob.h>
 
+UIServer *UIServer::s_uiserver = 0;
+
+UIServer::JobView::JobView(QObject *parent)
+    : QObject(parent)
+{
+    m_objectPath.setPath(QString("/JobViewServer/JobView_%1").arg(s_jobId));
+
+    new JobViewAdaptor(this);
+    QDBusConnection::sessionBus().registerObject(m_objectPath.path(), this);
+}
+
+void UIServer::JobView::terminate(const QString &errorMessage)
+{
+    QModelIndex index = s_uiserver->m_progressListModel->indexForJob(this);
+
+    s_uiserver->m_progressListModel->setData(index, JobInfo::Cancelled, ProgressListDelegate::State);
+
+    if (errorMessage.isNull())
+    {
+        s_uiserver->m_progressListFinishedModel->newJob(s_uiserver->m_progressListModel->data(index, ProgressListDelegate::ApplicationName).toString(),
+                                                        s_uiserver->m_progressListModel->data(index, ProgressListDelegate::Icon).toString(),
+                                                        s_uiserver->m_progressListModel->data(index, ProgressListDelegate::Capabilities).toInt(),
+                                                        0);
+    }
+
+    s_uiserver->m_progressListModel->finishJob(this);
+
+    QDBusConnection::sessionBus().unregisterObject(m_objectPath.path(), QDBusConnection::UnregisterTree);
+}
+
+void UIServer::JobView::setSuspended(bool suspended)
+{
+    QModelIndex currentIndex = s_uiserver->listProgress->currentIndex();
+
+    s_uiserver->m_progressListModel->setData(currentIndex, suspended ? JobInfo::Suspended
+                                                                     : JobInfo::Running, ProgressListDelegate::State);
+
+    if (currentIndex.isValid() &&
+        s_uiserver->listProgress->selectionModel()->isSelected(currentIndex))
+    {
+        JobView *jobView = s_uiserver->m_progressListModel->jobView(currentIndex);
+
+        if (s_uiserver->m_progressListModel->state(currentIndex) == JobInfo::Running)
+        {
+            s_uiserver->pauseResumeButton->setText(i18n("Pause"));
+            s_uiserver->pauseResumeButton->setIcon(KIcon("media-playback-pause"));
+        }
+        else
+        {
+            s_uiserver->pauseResumeButton->setText(i18n("Resume"));
+            s_uiserver->pauseResumeButton->setIcon(KIcon("media-playback-start"));
+        }
+    }
+}
+
+void UIServer::JobView::setTotalAmount(qlonglong amount, const QString &unit)
+{
+    QModelIndex index = s_uiserver->m_progressListModel->indexForJob(this);
+
+    if (unit == "bytes") {
+        s_uiserver->m_progressListModel->setData(index, amount ? KGlobal::locale()->formatByteSize(amount)
+                                                               : QString(), ProgressListDelegate::SizeTotals);
+    } else if (unit == "files") {
+        s_uiserver->m_progressListModel->setData(index, amount ? i18np("%1 file", "%1 files", amount)
+                                                               : QString(), ProgressListDelegate::SizeTotals);
+    } else if (unit == "dirs") {
+        s_uiserver->m_progressListModel->setData(index, amount ? i18np("%1 folder", "%1 folders", amount)
+                                                               : QString(), ProgressListDelegate::SizeTotals);
+    }
+}
+
+void UIServer::JobView::setProcessedAmount(qlonglong amount, const QString &unit)
+{
+    QModelIndex index = s_uiserver->m_progressListModel->indexForJob(this);
+
+    if (unit == "bytes") {
+        s_uiserver->m_progressListModel->setData(index, amount ? KGlobal::locale()->formatByteSize(amount)
+                                                               : QString(), ProgressListDelegate::SizeProcessed);
+    } else if (unit == "files") {
+        s_uiserver->m_progressListModel->setData(index, amount ? i18np("%1 file", "%1 files", amount)
+                                                               : QString(), ProgressListDelegate::SizeProcessed);
+    } else if (unit == "dirs") {
+        s_uiserver->m_progressListModel->setData(index, amount ? i18np("%1 folder", "%1 folders", amount)
+                                                               : QString(), ProgressListDelegate::SizeProcessed);
+    }
+}
+
+void UIServer::JobView::setPercent(uint percent)
+{
+    QModelIndex index = s_uiserver->m_progressListModel->indexForJob(this);
+
+    if (index.isValid())
+        s_uiserver->m_progressListModel->setData(index, percent, ProgressListDelegate::Percent);
+}
+
+void UIServer::JobView::setSpeed(qlonglong bytesPerSecond)
+{
+    QModelIndex index = s_uiserver->m_progressListModel->indexForJob(this);
+
+    if (index.isValid())
+        s_uiserver->m_progressListModel->setData(index, bytesPerSecond ? KGlobal::locale()->formatByteSize(bytesPerSecond)
+                                                                       : QString(), ProgressListDelegate::Speed);
+}
+
+void UIServer::JobView::setInfoMessage(const QString &infoMessage)
+{
+    QModelIndex index = s_uiserver->m_progressListModel->indexForJob(this);
+
+    if (index.isValid())
+        s_uiserver->m_progressListModel->setData(index, infoMessage, ProgressListDelegate::Message);
+}
+
+bool UIServer::JobView::setDescriptionField(uint number, const QString &name, const QString &value)
+{
+    QModelIndex index = s_uiserver->m_progressListModel->indexForJob(this);
+
+    if (index.isValid())
+        return s_uiserver->m_progressListModel->setDescriptionField(index, number, name, value);
+
+    return false;
+}
+
+void UIServer::JobView::clearDescriptionField(uint number)
+{
+    QModelIndex index = s_uiserver->m_progressListModel->indexForJob(this);
+
+    if (index.isValid())
+        s_uiserver->m_progressListModel->clearDescriptionField(index, number);
+}
+
+QDBusObjectPath UIServer::JobView::objectPath() const
+{
+    return m_objectPath;
+}
+
 UIServer::UIServer()
     : KXmlGuiWindow(0)
 {
-    serverAdaptor = new UiServerAdaptor(this);
-    QDBusConnection::sessionBus().registerObject(QLatin1String("/UiServer"), this);
+    // Register necessary services and D-Bus adaptors.
+    new JobViewServerAdaptor(this);
+    QDBusConnection::sessionBus().registerService(QLatin1String("org.kde.JobViewServer"));
+    QDBusConnection::sessionBus().registerObject(QLatin1String("/JobViewServer"), this);
 
-    tabWidget = new QTabWidget();
+    QWidget *centralWidget = new QWidget(this);
+    QVBoxLayout *layout = new QVBoxLayout;
+    centralWidget->setLayout(layout);
+
+    tabWidget = new QTabWidget(this);
 
     QString configure = i18n("Configure...");
 
@@ -69,6 +214,10 @@ UIServer::UIServer()
     connect(configureAction, SIGNAL(triggered(bool)), this,
             SLOT(showConfigurationDialog()));
 
+    connect(QDBusConnection::sessionBus().interface(), SIGNAL(serviceOwnerChanged(const QString&,const QString&,const QString&)), this,
+            SLOT(slotServiceOwnerChanged(const QString&,const QString&,const QString&)));
+
+
     toolBar->addSeparator();
 
     searchText = new KLineEdit(toolBar);
@@ -78,25 +227,46 @@ UIServer::UIServer()
     toolBar->addWidget(searchText);
 
     listProgress = new QListView(tabWidget);
-    listProgress->setFrameStyle(QFrame::NoFrame);
+    listProgress->setAlternatingRowColors(true);
     listProgress->setObjectName("progresslist");
     listProgress->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
 
     listFinished = new QListView(tabWidget);
-    listFinished->setFrameStyle(QFrame::NoFrame);
+    listFinished->setAlternatingRowColors(true);
+    listFinished->setVisible(false);
     listFinished->setObjectName("progresslistFinished");
     listFinished->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
 
-    tabWidget->addTab(listProgress, i18n("In Progress"));
-    tabWidget->addTab(listFinished, i18n("Finished"));
+    layout->addWidget(listProgress);
+
+    QHBoxLayout *horizLayout = new QHBoxLayout;
+
+    cancelButton = new KPushButton(KIcon("media-playback-stop"), i18n("Cancel"), this);
+    pauseResumeButton = new KPushButton(KIcon("media-playback-pause"), i18n("Pause"), this);
+
+    connect(cancelButton, SIGNAL(clicked(bool)), this, SLOT(slotCancelClicked()));
+    connect(pauseResumeButton, SIGNAL(clicked(bool)), this, SLOT(slotPauseResumeClicked()));
+
+    cancelButton->setEnabled(false);
+    pauseResumeButton->setEnabled(false);
+
+    horizLayout->addStretch();
+    horizLayout->addWidget(pauseResumeButton);
+    horizLayout->addSpacing(KDialog::spacingHint());
+    horizLayout->addWidget(cancelButton);
+
+    layout->addLayout(horizLayout);
+
+    tabWidget->addTab(centralWidget, i18n("In Progress"));
+    //tabWidget->addTab(listFinished, i18n("Finished"));
 
     setCentralWidget(tabWidget);
 
-    progressListModel = new ProgressListModel(this);
-    progressListFinishedModel = new ProgressListModel(this);
+    m_progressListModel = new ProgressListModel(this);
+    m_progressListFinishedModel = new ProgressListModel(this);
 
-    listProgress->setModel(progressListModel);
-    listFinished->setModel(progressListFinishedModel);
+    listProgress->setModel(m_progressListModel);
+    listFinished->setModel(m_progressListFinishedModel);
 
     progressListDelegate = new ProgressListDelegate(this, listProgress);
     progressListDelegate->setSeparatorPixels(10);
@@ -120,11 +290,8 @@ UIServer::UIServer()
 
     applySettings();
 
-    connect(progressListDelegate, SIGNAL(actionPerformed(int,int)), this,
-            SLOT(slotActionPerformed(int,int)));
-
-    connect(progressListDelegateFinished, SIGNAL(actionPerformed(int,int)), this,
-            SLOT(slotActionPerformedFinishedJob(int,int)));
+    connect(listProgress->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&,const QItemSelection&)), this,
+            SLOT(slotSelectionChanged(const QItemSelection&)));
 
     hide();
 }
@@ -135,206 +302,26 @@ UIServer::~UIServer()
 
 UIServer* UIServer::createInstance()
 {
-    return new UIServer;
+    s_uiserver = new UIServer;
+    return s_uiserver;
 }
 
-int UIServer::newJob(const QString &appServiceName, int capabilities, bool showProgress, const QString &internalAppName, const QString &jobIcon, const QString &appName)
+QDBusObjectPath UIServer::requestView(const QString &appName, const QString &appIconName, int capabilities)
 {
-    // Uncomment if you want to see kuiserver in action (ereslibre)
-    // if (isHidden()) show();
+    if (isHidden()) show();
 
     s_jobId++;
 
-    OrgKdeUiServerCallbacksInterface *callbacks = new org::kde::UiServerCallbacks(appServiceName, "/UiServerCallbacks", QDBusConnection::sessionBus());
+    // Since s_jobId is an unsigned int, if we got overflow and go back to 0,
+    // be sure we do not assign 0 to a valid job, since 0 is reserved only for
+    // reporting problems.
+    if (!s_jobId) s_jobId++;
 
-    m_hashCallbacksInterfaces.insert(s_jobId, callbacks);
+    JobView *jobView = new JobView();
 
-    progressListModel->newJob(s_jobId, internalAppName, jobIcon, appName, showProgress);
-    progressListModel->setData(progressListModel->indexForJob(s_jobId), s_jobId,
-                               ProgressListDelegate::JobId);
+    m_progressListModel->newJob(appName, appIconName, capabilities, jobView);
 
-    if (capabilities == KJob::NoCapabilities)
-        return s_jobId;
-
-    if (capabilities & KJob::Suspendable)
-        newAction(s_jobId, KJob::Suspendable, i18n("Pause"));
-
-    if (capabilities & KJob::Killable)
-        newAction(s_jobId, KJob::Killable, i18n("Cancel"));
-
-    return s_jobId;
-}
-
-void UIServer::jobFinished(int id, int errorCode)
-{
-    if (errorCode == KJob::NoError)
-    {
-        if ((id < 1) || !m_hashCallbacksInterfaces.contains(id)) return;
-
-        QModelIndex index = progressListModel->indexForJob(id);
-
-        progressListFinishedModel->newJob(id, progressListModel->data(index, ProgressListDelegate::ApplicationInternalName).toString(),
-                                        progressListModel->data(index, ProgressListDelegate::Icon).toString(),
-                                        progressListModel->data(index, ProgressListDelegate::ApplicationName).toString(),
-                                        true /* showProgress (show or hide) */);
-
-        progressListFinishedModel->newAction(id, KJob::Killable, i18n("Close Information"));
-    }
-
-    delete m_hashCallbacksInterfaces[id];
-    m_hashCallbacksInterfaces.remove(id);
-
-    progressListModel->finishJob(id);
-}
-
-void UIServer::jobSuspended(int id)
-{
-    if (id < 1) return;
-
-    progressListModel->editAction(id, KJob::Suspendable, i18n("Resume"));
-}
-
-void UIServer::jobResumed(int id)
-{
-    if (id < 1) return;
-
-    progressListModel->editAction(id, KJob::Suspendable, i18n("Pause"));
-}
-
-
-/// ===========================================================
-
-
-void UIServer::newAction(int jobId, int actionId, const QString &actionText)
-{
-    m_hashActions.insert(actionId, jobId);
-
-    progressListModel->newAction(jobId, actionId, actionText);
-}
-
-/// ===========================================================
-
-
-void UIServer::totalSize(int id, KIO::filesize_t size)
-{
-    if (id < 1) return;
-
-    progressListModel->setData(progressListModel->indexForJob(id), KIO::convertSize(size),
-                               ProgressListDelegate::SizeTotals);
-}
-
-void UIServer::totalFiles(int id, unsigned long files)
-{
-    if (id < 1) return;
-
-    progressListModel->setData(progressListModel->indexForJob(id), qulonglong(files),
-                               ProgressListDelegate::FileTotals);
-}
-
-void UIServer::totalDirs(int id, unsigned long dirs)
-{
-    if (id < 1) return;
-
-    progressListModel->setData(progressListModel->indexForJob(id), qulonglong(dirs),
-                               ProgressListDelegate::DirTotals);
-}
-
-void UIServer::processedSize(int id, KIO::filesize_t bytes)
-{
-    if (id < 1) return;
-
-    progressListModel->setData(progressListModel->indexForJob(id), KIO::convertSize(bytes),
-                               ProgressListDelegate::SizeProcessed);
-}
-
-void UIServer::processedFiles(int id, unsigned long files)
-{
-    if (id < 1) return;
-
-    progressListModel->setData(progressListModel->indexForJob(id), qulonglong(files),
-                               ProgressListDelegate::FilesProcessed);
-}
-
-void UIServer::processedDirs(int id, unsigned long dirs)
-{
-    if (id < 1) return;
-
-    progressListModel->setData(progressListModel->indexForJob(id), qulonglong(dirs),
-                               ProgressListDelegate::DirsProcessed);
-}
-
-void UIServer::percent(int id, unsigned long ipercent)
-{
-    if (id < 1) return;
-
-    progressListModel->setData(progressListModel->indexForJob(id), qulonglong(ipercent),
-                               ProgressListDelegate::Percent);
-}
-
-void UIServer::speed(int id, QString bytes_per_second)
-{
-    if (id < 1) return;
-
-    progressListModel->setData(progressListModel->indexForJob(id), bytes_per_second,
-                               ProgressListDelegate::Speed);
-}
-
-void UIServer::infoMessage(int id, QString msg)
-{
-    if (id < 1) return;
-
-    progressListModel->setData(progressListModel->indexForJob(id), msg,
-                               ProgressListDelegate::Message);
-}
-
-void UIServer::progressInfoMessage(int id, QString msg)
-{
-    if (id < 1) return;
-
-    progressListModel->setData(progressListModel->indexForJob(id), msg,
-                               ProgressListDelegate::ProgressMessage);
-}
-
-
-bool UIServer::setDescription(int id, const QString &description)
-{
-    if (id < 1) return false;
-
-    progressListModel->setData(progressListModel->indexForJob(id), description,
-                               ProgressListDelegate::Message);
-
-    return true;
-}
-
-bool UIServer::setDescriptionFirstField(int id, const QString &name, const QString &value)
-{
-    if (id < 1) return false;
-
-    progressListModel->setData(progressListModel->indexForJob(id), name,
-                               ProgressListDelegate::FromLabel);
-
-    progressListModel->setData(progressListModel->indexForJob(id), value,
-                               ProgressListDelegate::From);
-
-    return true;
-}
-
-bool UIServer::setDescriptionSecondField(int id, const QString &name, const QString &value)
-{
-    if (id < 1) return false;
-
-    progressListModel->setData(progressListModel->indexForJob(id), name,
-                               ProgressListDelegate::ToLabel);
-
-    progressListModel->setData(progressListModel->indexForJob(id), value,
-                               ProgressListDelegate::To);
-
-    return true;
-}
-
-void UIServer::setJobVisible(int id, bool visible)
-{
-    listProgress->setRowHidden(progressListModel->indexForJob(id).row(), !visible);
+    return jobView->objectPath();
 }
 
 void UIServer::slotRemoveSystemTrayIcon()
@@ -357,16 +344,10 @@ void UIServer::applySettings()
      m_systemTray->show();
 }
 
-void UIServer::slotActionPerformed(int actionId, int jobId)
+void UIServer::closeEvent(QCloseEvent *event)
 {
-    if (!m_hashCallbacksInterfaces.contains(jobId)) return;
-
-    m_hashCallbacksInterfaces[jobId]->slotActionPerformed(actionId, jobId);
-}
-
-void UIServer::slotActionPerformedFinishedJob(int /* actionId */, int jobId)
-{
-    progressListFinishedModel->finishJob(jobId);
+    event->ignore();
+    hide();
 }
 
 void UIServer::showConfigurationDialog()
@@ -385,6 +366,78 @@ void UIServer::showConfigurationDialog()
             SLOT(updateConfiguration()));
     dialog->enableButton(KDialog::Help, false);
     dialog->show();
+}
+
+void UIServer::slotServiceOwnerChanged(const QString &name, const QString &oldOwner, const QString &newOwner)
+{
+    kDebug() << "dbus name: " << name << " oldowner: " << oldOwner << " newowner: " << newOwner;
+}
+
+void UIServer::slotCancelClicked()
+{
+    if (listProgress->currentIndex().isValid())
+    {
+        JobView *jobView = m_progressListModel->jobView(listProgress->currentIndex());
+
+        emit jobView->cancelRequested();
+    }
+}
+
+void UIServer::slotPauseResumeClicked()
+{
+    if (listProgress->currentIndex().isValid())
+    {
+        JobView *jobView = m_progressListModel->jobView(listProgress->currentIndex());
+
+        if (s_uiserver->m_progressListModel->state(listProgress->currentIndex()) == JobInfo::Running)
+        {
+            emit jobView->suspendRequested();
+            pauseResumeButton->setText(i18n("Resume"));
+            pauseResumeButton->setIcon(KIcon("media-playback-start"));
+        }
+        else
+        {
+            emit jobView->resumeRequested();
+            pauseResumeButton->setText(i18n("Pause"));
+            pauseResumeButton->setIcon(KIcon("media-playback-pause"));
+        }
+    }
+}
+
+void UIServer::slotSelectionChanged(const QItemSelection &selection)
+{
+    bool enableCancelButton = false;
+    bool enableResumeButton = false;
+
+    if (selection.indexes().count())
+    {
+        JobView *jobView = m_progressListModel->jobView(listProgress->currentIndex());
+
+        if ((m_progressListModel->state(listProgress->currentIndex()) == JobInfo::Running) &&
+            ((m_progressListModel->data(listProgress->currentIndex(), ProgressListDelegate::Capabilities).toInt() &
+              KJob::Suspendable)))
+        {
+            pauseResumeButton->setText(i18n("Pause"));
+            pauseResumeButton->setIcon(KIcon("media-playback-pause"));
+            enableResumeButton = true;
+        }
+        else if ((m_progressListModel->data(listProgress->currentIndex(), ProgressListDelegate::Capabilities).toInt() &
+                  KJob::Suspendable))
+        {
+            pauseResumeButton->setText(i18n("Resume"));
+            pauseResumeButton->setIcon(KIcon("media-playback-start"));
+            enableResumeButton = true;
+        }
+
+        if ((m_progressListModel->data(listProgress->currentIndex(), ProgressListDelegate::Capabilities).toInt() &
+             KJob::Killable))
+        {
+            enableCancelButton = true;
+        }
+    }
+
+    cancelButton->setEnabled(enableCancelButton);
+    pauseResumeButton->setEnabled(enableResumeButton);
 }
 
 
@@ -406,7 +459,7 @@ UIConfigurationDialog::~UIConfigurationDialog()
 /// ===========================================================
 
 
-int UIServer::s_jobId = 0;
+uint UIServer::s_jobId = 0;
 
 extern "C" KDE_EXPORT int kdemain(int argc, char **argv)
 {
@@ -414,10 +467,10 @@ extern "C" KDE_EXPORT int kdemain(int argc, char **argv)
     //              in the titles of dialogs which are displayed.
     KAboutData aboutdata("kuiserver", "kdelibs4", ki18n("Progress Manager"),
                          "0.8", ki18n("KDE Progress Information UI Server"),
-                         KAboutData::License_GPL, ki18n("(C) 2000-2005, David Faure & Matt Koss"));
-    aboutdata.addAuthor(ki18n("David Faure"),ki18n("Maintainer"),"faure@kde.org");
+                         KAboutData::License_GPL, ki18n("(C) 2000-2008, KDE Team"));
+    aboutdata.addAuthor(ki18n("Rafael Fernández López"),ki18n("Maintainer"),"ereslibre@kde.org");
+    aboutdata.addAuthor(ki18n("David Faure"),ki18n("Former maintainer"),"faure@kde.org");
     aboutdata.addAuthor(ki18n("Matej Koss"),ki18n("Developer"),"koss@miesto.sk");
-    aboutdata.addAuthor(ki18n("Rafael Fernández López"),ki18n("Developer"),"ereslibre@kde.org");
 
     KCmdLineArgs::init( argc, argv, &aboutdata );
     // KCmdLineArgs::addCmdLineOptions( options );

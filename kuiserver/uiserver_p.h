@@ -20,7 +20,8 @@
 #ifndef UISERVER_P_H
 #define UISERVER_P_H
 
-#include <QWidget>
+#include <QtGui/QWidget>
+#include <QtDBus/QDBusObjectPath>
 
 #include "ui_uiserverConfigDialog.h"
 
