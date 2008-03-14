@@ -195,6 +195,7 @@ class XineStream : public QObject, public SourceNodeXT
         void setMrlInternal(const QByteArray &newMrl);
         template<class S>
         S streamDescription(int index, ObjectDescriptionType type, int(*get_xine_stream_text)(xine_stream_t *stream, int channel, char *lang)) const;
+        uint streamHash() const;
 
         xine_stream_t *m_stream;
         xine_event_queue_t *m_event_queue;

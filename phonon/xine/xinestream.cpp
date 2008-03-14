@@ -1259,26 +1259,28 @@ Phonon::ErrorType XineStream::errorType() const
 
 QList<SubtitleStreamDescription> XineStream::availableSubtitleStreams() const
 {
+    uint hash = streamHash();
     QList<SubtitleStreamDescription> subtitles;
     if( !m_stream )
         return subtitles;
     const int channels = subtitlesSize();
     for( int index = 0; index < channels; index++ )
     {
-        subtitles << streamDescription<SubtitleStreamDescription>( index, SubtitleStreamType, xine_get_spu_lang );
+        subtitles << streamDescription<SubtitleStreamDescription>( hash + index, SubtitleStreamType, xine_get_spu_lang );
     }
     return subtitles;
 }
 
 QList<AudioStreamDescription> XineStream::availableAudioStreams() const
 {
+    const uint hash = streamHash();
     QList<AudioStreamDescription> audios;
     if( !m_stream )
         return audios;
     const int channels = audioChannelsSize();
     for( int index = 0; index < channels; index++ )
     {
-        audios << streamDescription<AudioStreamDescription>( index, AudioStreamType, xine_get_audio_lang );
+        audios << streamDescription<AudioStreamDescription>( hash + index, AudioStreamType, xine_get_audio_lang );
     }
     return audios;
 }
@@ -1295,13 +1297,18 @@ int XineStream::audioChannelsSize() const
 
 void XineStream::setCurrentAudioStream(const AudioStreamDescription& streamDesc)
 {
-    xine_set_param( m_stream, XINE_PARAM_AUDIO_CHANNEL_LOGICAL, streamDesc.index() );
+    xine_set_param( m_stream, XINE_PARAM_AUDIO_CHANNEL_LOGICAL, streamDesc.index() - streamHash() );
 }
 
 void XineStream::setCurrentSubtitleStream(const SubtitleStreamDescription& streamDesc)
 {
     kDebug() << "setting the subtitle to: " << streamDesc.index();
-    xine_set_param( m_stream, XINE_PARAM_SPU_CHANNEL, streamDesc.index() );
+    xine_set_param( m_stream, XINE_PARAM_SPU_CHANNEL, streamDesc.index() - streamHash() );
+}
+
+uint XineStream::streamHash() const
+{
+    return qHash( m_mrl );
 }
 
 template<class S>
@@ -1318,14 +1325,14 @@ S XineStream::streamDescription(int index, ObjectDescriptionType type, int(*get_
 
 AudioStreamDescription XineStream::currentAudioStream() const
 {
-    int index = xine_get_param( m_stream, XINE_PARAM_AUDIO_CHANNEL_LOGICAL );
-    return streamDescription<AudioStreamDescription>( index, AudioStreamType, xine_get_audio_lang );
+    const int index = xine_get_param( m_stream, XINE_PARAM_AUDIO_CHANNEL_LOGICAL );
+    return streamDescription<AudioStreamDescription>( index + streamHash(), AudioStreamType, xine_get_audio_lang );
 }
 
 SubtitleStreamDescription XineStream::currentSubtitleStream() const
 {
     int index = xine_get_param( m_stream, XINE_PARAM_SPU_CHANNEL );
-    return streamDescription<SubtitleStreamDescription>( index, SubtitleStreamType, xine_get_spu_lang );
+    return streamDescription<SubtitleStreamDescription>( index + streamHash(), SubtitleStreamType, xine_get_spu_lang );
 }
 
 
