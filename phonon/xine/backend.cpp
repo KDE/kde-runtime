@@ -227,7 +227,10 @@ QList<int> Backend::objectDescriptionIndexes(ObjectDescriptionType type) const
     case Phonon::AudioStreamType:
     case Phonon::SubtitleStreamType:
         {
-            list = XineEngine::objectDescriptions().find(type).value().keys();
+            ObjectDescriptionHash hash = XineEngine::objectDescriptions();
+            ObjectDescriptionHash::iterator it = hash.find(type);
+            if( it != hash.end() )
+                list = it.value().keys();
         }
         break;
     }
@@ -333,7 +336,17 @@ QHash<QByteArray, QVariant> Backend::objectDescriptionProperties(ObjectDescripti
     case Phonon::AudioStreamType:
     case Phonon::SubtitleStreamType:
         {
-            ret = XineEngine::objectDescriptions().find(type).value().find(index).value();
+            ObjectDescriptionHash descriptionHash = XineEngine::objectDescriptions();
+            ObjectDescriptionHash::iterator descIt = descriptionHash.find(type);
+            if(descIt != descriptionHash.end())
+            {
+                ChannelIndexHash indexHash = descIt.value();
+                ChannelIndexHash::iterator indexIt = indexHash.find(index);
+                if(indexIt != indexHash.end() )
+                {
+                    ret = indexIt.value();
+                }
+            }
         }
         break;
     }

@@ -60,6 +60,9 @@ class Backend;
 class XineEnginePrivate;
 class XineThread;
 
+typedef QHash< int, QHash<QByteArray, QVariant> > ChannelIndexHash;
+typedef QHash<ObjectDescriptionType, ChannelIndexHash> ObjectDescriptionHash;
+
 class XineEngine
 {
     friend class Phonon::Xine::Backend;
@@ -90,7 +93,7 @@ class XineEngine
         static bool inShutdown() { return self()->m_inShutdown; }
 
         static void setObjectDescriptionProperities( ObjectDescriptionType type, int index, const QHash<QByteArray, QVariant>& properities );
-        static QHash<ObjectDescriptionType, QHash< int, QHash<QByteArray, QVariant> > > objectDescriptions() { return self()->m_objectDescriptions; }
+        static ObjectDescriptionHash objectDescriptions() { return self()->m_objectDescriptions; }
 
     protected:
         XineEngine(const KSharedConfigPtr &cfg);
