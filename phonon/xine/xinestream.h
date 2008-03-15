@@ -193,7 +193,7 @@ class XineStream : public QObject, public SourceNodeXT
         void internalPlay();
         void setMrlInternal(const QByteArray &newMrl);
         template<class S>
-        S streamDescription(int index, ObjectDescriptionType type, int(*get_xine_stream_text)(xine_stream_t *stream, int channel, char *lang)) const;
+        S streamDescription(int index, uint hash, ObjectDescriptionType type, int(*get_xine_stream_text)(xine_stream_t *stream, int channel, char *lang)) const;
         uint streamHash() const;
 
         xine_stream_t *m_stream;
