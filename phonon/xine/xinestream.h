@@ -156,6 +156,8 @@ class XineStream : public QObject, public SourceNodeXT
         void hasVideoChanged(bool);
         void bufferStatus(int);
 
+        void availableSubtitlesChanged();
+        void availableAudioChannelsChanged();
         void availableChaptersChanged(int);
         void chapterChanged(int);
         void availableAnglesChanged(int);
@@ -163,9 +165,6 @@ class XineStream : public QObject, public SourceNodeXT
         void availableTitlesChanged(int);
         void titleChanged(int);
         void downstreamEvent(Event *e);
-
-        void availableSubtitlesChanged();
-        void availableAudioChanged();
 
         void hackSetProperty(const char *name, const QVariant &val);
 
@@ -228,6 +227,8 @@ class XineStream : public QObject, public SourceNodeXT
         int m_totalTime;
         int m_currentTime;
         int m_waitForPlayingTimerId;
+        int m_availableSubtitles;
+        int m_availableAudioChannels;
         int m_availableTitles;
         int m_availableChapters;
         int m_availableAngles;

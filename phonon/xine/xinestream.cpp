@@ -70,6 +70,8 @@ XineStream::XineStream()
 //    m_startTime(-1),
     m_totalTime(-1),
     m_currentTime(-1),
+    m_availableSubtitles(-1),
+    m_availableAudioChannels(-1),
     m_availableTitles(-1),
     m_availableChapters(-1),
     m_availableAngles(-1),
@@ -713,6 +715,25 @@ bool XineStream::event(QEvent *ev)
                 kDebug(610) << "available angles changed: " << availableAngles;
                 m_availableAngles = availableAngles;
                 emit availableAnglesChanged(m_availableAngles);
+            }
+
+            {
+                int availableSubtitles = subtitlesSize();
+                if(availableSubtitles != m_availableSubtitles)
+                {
+                    kDebug(610) << "available subtitles changed: " << availableSubtitles;
+                    m_availableSubtitles = availableSubtitles;
+                    emit availableSubtitlesChanged();
+                }
+            }
+            {
+                int availableAudioStreams = audioChannelsSize();
+                if(availableAudioStreams != m_availableAudioChannels)
+                {
+                    kDebug(610) << "available audio channels changed: " << availableAudioStreams;
+                    m_availableAudioChannels = availableAudioStreams;
+                    emit availableAudioChannelsChanged();
+                }
             }
 
             int currentTitle   = xine_get_stream_info(m_stream, XINE_STREAM_INFO_DVD_TITLE_NUMBER);

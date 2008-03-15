@@ -77,6 +77,8 @@ MediaObject::MediaObject(QObject *parent)
     connect(m_stream, SIGNAL(hasVideoChanged(bool)), SLOT(handleHasVideoChanged(bool)));
     connect(m_stream, SIGNAL(bufferStatus(int)), SIGNAL(bufferStatus(int)));
     connect(m_stream, SIGNAL(tick(qint64)), SIGNAL(tick(qint64)));
+    connect(m_stream, SIGNAL(availableSubtitlesChanged()), SIGNAL(availableSubtitlesChanged()));
+    connect(m_stream, SIGNAL(availableAudioChannelsChanged()), SIGNAL(availableAudioChannelsChanged()));
     connect(m_stream, SIGNAL(availableChaptersChanged(int)), SIGNAL(availableChaptersChanged(int)));
     connect(m_stream, SIGNAL(chapterChanged(int)), SIGNAL(chapterChanged(int)));
     connect(m_stream, SIGNAL(availableAnglesChanged(int)), SIGNAL(availableAnglesChanged(int)));

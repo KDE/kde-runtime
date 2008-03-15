@@ -109,6 +109,8 @@ class MediaObject : public QObject, public MediaObjectInterface, public AddonInt
         void asyncSeek(xine_stream_t *, qint64, bool);
 
         // AddonInterface
+        void availableSubtitlesChanged();
+        void availableAudioChannelsChanged();
         void availableTitlesChanged(int);
         void titleChanged(int);
         void availableChaptersChanged(int);
