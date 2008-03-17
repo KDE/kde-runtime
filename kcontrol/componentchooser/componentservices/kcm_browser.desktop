@@ -1,3 +1,4 @@
+#krazy:excludeall=validate because not a true desktop file
 Name=Web Browser
 Name[af]=Web Blaaier
 Name[ar]=متصفح الشبكة

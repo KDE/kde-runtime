@@ -1,4 +1,5 @@
 [KCM Locale]
+#krazy:excludeall=validate
 Name=US English
 Name[af]=Amerikaanse Engels
 Name[ar]=إنكليزية الولايات المتحدة الأمريكية

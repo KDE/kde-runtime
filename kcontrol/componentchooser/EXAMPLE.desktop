@@ -1,3 +1,4 @@
+#krazy:excludeall=validate because not a true desktop file
 Name=A nice name you have chosen for your interface
 Name[af]='n oulike naam jy het gekies vir jou koppelvlak
 Name[ar]=اسم جميل تختاره لواجهتك

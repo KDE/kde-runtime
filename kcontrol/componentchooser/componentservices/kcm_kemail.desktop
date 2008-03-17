@@ -1,3 +1,4 @@
+#krazy:excludeall=validate because not a true desktop file
 Name=Email Client
 Name[af]=E-pos Kliënt
 Name[ar]=عميل البريد الإلكتروني
