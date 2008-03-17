@@ -1,7 +1,7 @@
 [Desktop Entry]
 Exec=kcmshell4 icons
 Icon=preferences-desktop-icons
-Type=Service
+Type=Application
 X-KDE-ServiceTypes=KCModule
 X-DocPath=kcontrol/icons/index.html
 

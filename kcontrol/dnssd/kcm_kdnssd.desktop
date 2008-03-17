@@ -1,8 +1,6 @@
 [Desktop Entry]
 Exec=kcmshell4 kcm_kdnssd
-GenericName=
 Icon=preferences-system-network-discovery
-MimeType=
 Name=Service Discovery
 Name[af]=Dienste ontdekker
 Name[ar]=استكشف الخدمات
@@ -140,7 +138,7 @@ Comment[zh_CN]=配置服务探索
 Comment[zh_TW]=設定服務偵測
 StartupNotify=true
 Terminal=false
-Type=Service
+Type=Application
 X-KDE-ServiceTypes=KCModule
 X-DBUS-StartupType=
 X-KDE-HasReadOnlyMode=false

@@ -1,7 +1,7 @@
 [Desktop Entry]
 Exec=kcmshell4 kcmkded
 Icon=preferences-system-session-services
-Type=Service
+Type=Application
 X-KDE-ServiceTypes=KCModule
 
 X-KDE-Library=kcm_kded

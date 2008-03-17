@@ -1,7 +1,7 @@
 [Desktop Entry]
 Exec=kcmshell4 kcmnotify
 Icon=preferences-desktop-notification
-Type=Service
+Type=Application
 X-KDE-ServiceTypes=KCModule
 X-DocPath=kcontrol/kcmnotify/index.html
 
