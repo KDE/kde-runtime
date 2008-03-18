@@ -52,6 +52,7 @@ add_subdirectory(l10n)
 add_subdirectory(phonon)
 add_subdirectory(pics)
 add_subdirectory(kstyles)
+add_subdirectory(solid-hardware)
 
 # Command-line tools (e.g. for shell scripts)
 add_subdirectory(kquitapp)
