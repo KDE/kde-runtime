@@ -1,7 +1,7 @@
 [Desktop Entry]
 Exec=kcmshell4 language
 Icon=preferences-desktop-locale
-Type=Application
+Type=Service
 X-KDE-ServiceTypes=KCModule
 X-DocPath=kcontrol/language/index.html
 
