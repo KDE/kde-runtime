@@ -1,4 +1,3 @@
-#krazy:excludeall=validate because not a true desktop file
 Name=Terminal Emulator
 Name[af]=Terminaal Emulasie
 Name[ar]=محاكي الطرفية
