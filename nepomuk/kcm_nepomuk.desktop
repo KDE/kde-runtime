@@ -1,6 +1,6 @@
 [Desktop Entry]
 Exec=kcmshell4 kcm_nepomuk
-Icon=preferences-system-nepomuk
+Icon=nepomuk
 Type=Service
 
 X-KDE-ServiceTypes=KCModule

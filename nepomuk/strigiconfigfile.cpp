@@ -28,6 +28,7 @@
 #include <QtXml/QDomElement>
 
 #include <KDebug>
+#include <KStandardDirs>
 
 
 namespace {
@@ -234,6 +235,7 @@ bool Nepomuk::StrigiConfigFile::save()
     }
 
     // save to file
+    KStandardDirs::makeDir( m_filename.section( '/', 0, -2 ) );
     QFile f( m_filename );
     if ( f.open( QIODevice::WriteOnly ) ) {
         QTextStream s( &f );

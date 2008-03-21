@@ -37,9 +37,11 @@ namespace Nepomuk {
         void save();
         void defaults();
 
-    private:
+    private Q_SLOTS:
         void updateStrigiStatus();
+        void updateStrigiSettingsInRunningInstance();
 
+    private:
         org::kde::NepomukServer m_serverInterface;
     };
 }

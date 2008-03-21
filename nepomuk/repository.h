@@ -33,11 +33,14 @@
 
 namespace Soprano {
     class Model;
+    class Backend;
     namespace Index {
         class IndexFilterModel;
         class CLuceneIndex;
     }
 }
+
+class KJob;
 
 namespace Nepomuk {
 
@@ -51,16 +54,47 @@ namespace Nepomuk {
         Q_OBJECT
 
     public:
+        Repository( const QString& name );
         ~Repository();
 
         QString name() const { return m_name; }
 
-        static Repository* open( const QString& path, const QString& name );
+        enum State {
+            CLOSED,
+            OPENING,
+            OPEN
+        };
+
+        State state() const;
+
+        static const Soprano::Backend* activeSopranoBackend();
+
+    public Q_SLOTS:
+        /**
+         * Will emit the opened signal
+         */
+        void open();
+
+        void close();
+
+    Q_SIGNALS:
+        void opened( Repository*, bool success );
+
+    private Q_SLOTS:
+        void copyFinished( KJob* job );
 
     private:
-        Repository();
-
         QString m_name;
+        State m_state;
+
+        // the base path for the data. Will contain subfolders:
+        // "index" for the fulltext index
+        // "data" for the data
+        QString m_basePath;
+
+        const Soprano::Backend* m_oldStorageBackend;
+        QString m_oldStoragePath;
+
         Soprano::Model* m_model;
         Soprano::Index::CLuceneIndex* m_index;
         Soprano::Index::IndexFilterModel* m_indexModel;

@@ -21,11 +21,12 @@
 
 #include <Soprano/Server/ServerCore>
 #include "repository.h"
+#include "nepomukserver.h"
+
+#include <QtCore/QStringList>
 
 namespace Nepomuk {
     
-    class OntologyLoader;
-
     class Core : public Soprano::Server::ServerCore
     {
         Q_OBJECT
@@ -42,11 +43,31 @@ namespace Nepomuk {
 
         QStringList allModels() const;
 
+        /**
+         * Open all repositories.
+         */
+        void init();
+
+        /**
+         * \return \p true if the core is already initialized.
+         * \p false otherwise, which means the initializationDone
+         * signal has not been emitted yet.
+         */
+        bool initialized() const;
+
+    Q_SIGNALS:
+        void initializationDone( bool success );
+
+    private Q_SLOTS:
+        void slotRepositoryOpened( Repository* repo, bool success );
+
     private:
-        QString createStoragePath( const QString& repositoryId ) const;
+        void createRepository( const QString& name );
 
         RepositoryMap m_repositories;
-        OntologyLoader* m_ontologyLoader;
+
+        // initialization
+        QStringList m_openingRepositories;
     };
 }
 

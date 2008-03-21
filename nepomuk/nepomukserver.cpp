@@ -24,22 +24,31 @@
 #include "strigiconfigfile.h"
 #include "nepomukserveradaptor.h"
 #include "nepomukserversettings.h"
+#include "ontologyloader.h"
 
 #include <Soprano/Global>
 
 #include <KConfig>
 #include <KConfigGroup>
 #include <KDebug>
+#include <KGlobal>
+#include <KStandardDirs>
 
 #include <QtDBus/QDBusConnection>
 
+
+Nepomuk::Server* Nepomuk::Server::s_self = 0;
 
 Nepomuk::Server::Server()
     : KDEDModule(),
       m_core( 0 ),
       m_strigiController( new StrigiController( this ) ),
-      m_backend( 0 )
+      m_restartStrigiAfterInitialization( false )
 {
+    s_self = this;
+
+    m_config = KSharedConfig::openConfig( "nepomukserverrc" );
+
     // we want to be accessible through our own nice nepomuk service,
     // not only kded
     QDBusConnection::sessionBus().registerService( "org.kde.NepomukServer" );
@@ -80,11 +89,11 @@ void Nepomuk::Server::startStrigi()
 
 void Nepomuk::Server::startNepomuk()
 {
-    m_backend = findBackend();
-
-    if ( m_backend && !m_core ) {
-        Soprano::setUsedBackend( m_backend );
+    if ( Repository::activeSopranoBackend() && !m_core ) {
         m_core = new Core( this );
+        connect( m_core, SIGNAL( initializationDone(bool) ),
+                 this, SLOT( slotNepomukCoreInitialized(bool) ) );
+        m_core->init();
     }
 }
 
@@ -94,6 +103,31 @@ void Nepomuk::Server::enableNepomuk( bool enabled )
     kDebug(300002) << "enableNepomuk" << enabled;
     bool needToRestartStrigi = ( NepomukServerSettings::self()->startStrigi() &&
                                  enabled != NepomukServerSettings::self()->startNepomuk() );
+    m_restartStrigiAfterInitialization = enabled && needToRestartStrigi;
+
+    NepomukServerSettings::self()->setStartNepomuk( enabled );
+
+    // 1. restart strigi if necessary
+    //    We do this before starting or stopping Nepomuk for 2 reasons:
+    //    * Let Strigi go down with a running Nepomuk -> no errors
+    //    * NepomukCore might emit the initializationDone signal before
+    //      this method is done
+    // =================================================================
+
+    // FIXME: make this a runtime descision
+#ifdef HAVE_STRIGI_SOPRANO_BACKEND
+    if ( needToRestartStrigi ) {
+        m_strigiController->shutdown();
+        updateStrigiConfig();
+        // if nepomuk is enabled wait for it to be initialized
+        if ( !enabled ) {
+            m_strigiController->start();
+        }
+    }
+#endif
+
+    // 2. Start/Stop Nepomuk
+    // =====================
     if ( enabled && !m_core ) {
         startNepomuk();
     }
@@ -101,17 +135,6 @@ void Nepomuk::Server::enableNepomuk( bool enabled )
         delete m_core;
         m_core = 0;
     }
-
-    // FIXME: make this a runtime descision
-#ifdef HAVE_STRIGI_SOPRANO_BACKEND
-    if ( needToRestartStrigi ) {
-        m_strigiController->shutdown();
-        updateStrigiConfig();
-        m_strigiController->start();
-    }
-#endif
-
-    NepomukServerSettings::self()->setStartNepomuk( enabled );
 }
 
 
@@ -119,14 +142,14 @@ void Nepomuk::Server::enableStrigi( bool enabled )
 {
     kDebug(300002) << enabled;
 
+    NepomukServerSettings::self()->setStartStrigi( enabled );
+
     if ( enabled ) {
         startStrigi();
     }
     else {
         m_strigiController->shutdown();
     }
-
-    NepomukServerSettings::self()->setStartStrigi( enabled );
 }
 
 
@@ -155,10 +178,6 @@ bool Nepomuk::Server::isStrigiEnabled() const
 {
     kDebug(300002 );
     return NepomukServerSettings::self()->startStrigi();
-
-    // FIXME: This is completely useless since it always returns "idling", regardless of its actual state (indexing or not indexing)
-//     kDebug(300002) << "strigi status=" << m_strigi->getStatus()["Status"];
-//     return m_strigi->getStatus()["Status"] != "stopping";
 }
 
 
@@ -176,18 +195,41 @@ void Nepomuk::Server::reconfigure()
 }
 
 
-const Soprano::Backend* Nepomuk::Server::findBackend() const
+KSharedConfig::Ptr Nepomuk::Server::config() const
 {
-    QString backendName = NepomukServerSettings::self()->sopranoBackend();
-    const Soprano::Backend* backend = ::Soprano::discoverBackendByName( backendName );
-    if ( !backend ) {
-        kDebug(300002) << "(Nepomuk::Core::Core) could not find backend" << backendName << ". Falling back to default.";
-        backend = ::Soprano::usedBackend();
+    return m_config;
+}
+
+
+Nepomuk::Server* Nepomuk::Server::self()
+{
+    return s_self;
+}
+
+
+void Nepomuk::Server::slotNepomukCoreInitialized( bool success )
+{
+    if ( success ) {
+        kDebug() << "Successfully initialized nepomuk core";
+
+        // the core is initialized. Export it to the clients.
+        // the D-Bus interface
+        m_core->registerAsDBusObject();
+
+        // the faster local socket interface
+        m_core->start( KGlobal::dirs()->locateLocal( "data", "nepomuk/socket" ) );
+
+        if ( m_restartStrigiAfterInitialization ) {
+            m_strigiController->start();
+        }
+
+        // FIXME: move this into an extra module once we have proper dependancy handling
+        m_ontologyLoader = new OntologyLoader( m_core->model( "main" ), this );
+        QTimer::singleShot( 0, m_ontologyLoader, SLOT( update() ) );
     }
-    if ( !backend ) {
-        kDebug(300002) << "(Nepomuk::Core::Core) could not find a backend.";
+    else {
+        kDebug() << "Failed to initialize nepomuk core";
     }
-    return backend;
 }
 
 

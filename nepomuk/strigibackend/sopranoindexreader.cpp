@@ -337,7 +337,7 @@ std::vector<Strigi::IndexedDocument> Strigi::Soprano::IndexReader::query( const 
     lucene::search::Query* bq = createQuery( query );
     ::Soprano::QueryResultIterator hits = d->repository->executeQuery( TString( bq->toString(), true ),
                                                                        ::Soprano::Query::QUERY_LANGUAGE_USER,
-                                                                       "lucene" );
+                                                                       QLatin1String( "lucene" ) );
 //    Iterator< ::Soprano::Index::QueryHit> hits = d->repository->index()->search( bq );
 
     int i = -1;

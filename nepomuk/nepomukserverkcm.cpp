@@ -151,18 +151,13 @@ void Nepomuk::ServerConfigModule::save()
     // 4. update values in the running Strigi instance
     // TODO: there should be a dbus method to re-read the config
     // -----------------------------
-    if ( StrigiController::isRunning() ) {
-        StrigiClient strigiClient;
-        strigiClient.setIndexedDirectories( m_editStrigiFolders->items() );
-
-        QList<QPair<bool, QString> > filters;
-        foreach( QString filter, strigiConfig.excludeFilters() ) {
-            filters.append( qMakePair( false, filter ) );
-        }
-        strigiClient.setFilters( filters );
+    if ( m_checkEnableStrigi->isChecked() ) {
+        // give strigi some time to start
+        QTimer::singleShot( 2000, this, SLOT( updateStrigiSettingsInRunningInstance() ) );
     }
 
-    updateStrigiStatus();
+    // give strigi some time to start
+    QTimer::singleShot( 2000, this, SLOT( updateStrigiStatus() ) );
 }
 
 
@@ -187,6 +182,25 @@ void Nepomuk::ServerConfigModule::updateStrigiStatus()
     else {
         m_strigiStatus->off();
         m_strigiStatusLabel->setText( i18n( "Strigi not running" ) );
+    }
+}
+
+
+void Nepomuk::ServerConfigModule::updateStrigiSettingsInRunningInstance()
+{
+    if ( StrigiController::isRunning() ) {
+        StrigiClient strigiClient;
+        strigiClient.setIndexedDirectories( m_editStrigiFolders->items() );
+
+        // FIXME: there should be a rereadConfig method in strigi
+        StrigiConfigFile strigiConfig( StrigiConfigFile::defaultStrigiConfigFilePath() );
+        strigiConfig.load();
+
+        QList<QPair<bool, QString> > filters;
+        foreach( QString filter, strigiConfig.excludeFilters() ) {
+            filters.append( qMakePair( false, filter ) );
+        }
+        strigiClient.setFilters( filters );
     }
 }
 

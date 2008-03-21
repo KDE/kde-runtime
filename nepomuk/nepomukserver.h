@@ -21,6 +21,8 @@
 
 #include <kdedmodule.h>
 
+#include <KSharedConfig>
+
 namespace Soprano {
     class Backend;
 }
@@ -29,6 +31,7 @@ namespace Nepomuk {
 
     class Core;
     class StrigiController;
+    class OntologyLoader;
 
     class Server : public KDEDModule
     {
@@ -38,6 +41,10 @@ namespace Nepomuk {
     public:
         Server();
         virtual ~Server();
+
+        KSharedConfig::Ptr config() const;
+
+        static Server* self();
 
     public Q_SLOTS:
         void enableNepomuk(bool enabled);
@@ -51,17 +58,24 @@ namespace Nepomuk {
         QString defaultRepository() const;
         void reconfigure();
 
+    private Q_SLOTS:
+        void slotNepomukCoreInitialized( bool success );
+
     private:
         void init();
         void startNepomuk();
         void startStrigi();
         void updateStrigiConfig();
 
-        const Soprano::Backend* findBackend() const;
-
         Core* m_core;
         StrigiController* m_strigiController;
-        const Soprano::Backend* m_backend;
+        OntologyLoader* m_ontologyLoader;
+
+        bool m_restartStrigiAfterInitialization;
+
+        KSharedConfigPtr m_config;
+
+        static Server* s_self;
     };
 }
 

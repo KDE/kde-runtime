@@ -35,7 +35,9 @@ set(nepomukserver_SRCS
   nepomukcore.cpp
   nepomukserver.cpp
   repository.cpp
+  modelcopyjob.cpp
   ontologyloader.cpp
+  ontologymanagermodel.cpp
   strigicontroller.cpp
   strigiconfigfile.cpp
   ${nepomukserversettings_SRCS}
@@ -103,3 +105,5 @@ install(
   TARGETS kcm_nepomuk kded_nepomukserver
   DESTINATION ${PLUGIN_INSTALL_DIR})
 # -----------------------------
+
+add_subdirectory(test)

@@ -30,35 +30,27 @@ namespace Soprano {
 namespace Nepomuk {
     class OntologyLoader : public QObject
     {
-	Q_OBJECT
+        Q_OBJECT
 
     public:
-	OntologyLoader( Soprano::Model* model, QObject* parent = 0 );
-	~OntologyLoader();
+        OntologyLoader( Soprano::Model* model, QObject* parent = 0 );
+        ~OntologyLoader();
 
     public Q_SLOTS:
-	/**
-	 * Update all installed ontologies and install dir watches
-	 * to monitor newly installed and changed ontologies.
-	 *
-	 * This should also be called for initialization
-	 */
-	void update();
+        /**
+         * Update all installed ontologies and install dir watches
+         * to monitor newly installed and changed ontologies.
+         *
+         * This should also be called for initialization
+         */
+        void update();
 
-	// FIXME: add methods (exported on DBus) like:
-	// void addOntology( ... )
-	// void addInstanceBase( ... )
-	// void removeData( ... );
+        // FIXME: add methods (exported on DBus) like:
+        // void importOntology( const QUrl& url... )
 
     private:
-	bool updateOntology( const QString& desktopFile );
-	bool removeOntology( const QUrl& ns );
-
-	bool ensureDataLayout( Soprano::Model* tmpModel, const QUrl& ns );
-	void createMetadata( Soprano::Model* tmpModel, const QUrl& ns );
-
-	class Private;
-	Private* const d;
+        class Private;
+        Private* const d;
     };
 }
 

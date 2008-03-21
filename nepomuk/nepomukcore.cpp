@@ -18,10 +18,10 @@
 
 #include "nepomukcore.h"
 #include "repository.h"
-#include "ontologyloader.h"
 
-#include <KStandardDirs>
 #include <KDebug>
+#include <KSharedConfig>
+#include <KConfigGroup>
 
 #include <QtCore/QTimer>
 
@@ -29,10 +29,6 @@
 Nepomuk::Core::Core( QObject* parent )
     : Soprano::Server::ServerCore( parent )
 {
-    m_ontologyLoader = new OntologyLoader( model( "main" ), this );
-    QTimer::singleShot( 0, m_ontologyLoader, SLOT( update() ) );
-
-    registerAsDBusObject();
 }
 
 
@@ -40,6 +36,59 @@ Nepomuk::Core::~Core()
 {
     kDebug(300002) << "Shutting down Nepomuk core services.";
     qDeleteAll( m_repositories );
+}
+
+
+void Nepomuk::Core::init()
+{
+    // FIXME: export the main model on org.kde.NepomukRepository via Soprano::Server::DBusExportModel
+
+    KSharedConfig::Ptr config = Server::self()->config();
+
+    const Soprano::Backend* backend = Repository::activeSopranoBackend();
+    if ( backend ) {
+        m_openingRepositories = config->group( "Basic Settings" ).readEntry( "Configured repositories", QStringList() << "main" );
+        if ( !m_openingRepositories.contains( "main" ) ) {
+            m_openingRepositories << "main";
+        }
+
+        foreach( QString repoName, m_openingRepositories ) {
+            createRepository( repoName );
+        }
+
+        if ( m_openingRepositories.isEmpty() ) {
+            emit initializationDone( true );
+        }
+    }
+    else {
+        kError() << "No Soprano backend found. Cannot start Nepomuk repository.";
+    }
+}
+
+
+bool Nepomuk::Core::initialized() const
+{
+    return m_openingRepositories.isEmpty() && !m_repositories.isEmpty();
+}
+
+
+void Nepomuk::Core::createRepository( const QString& name )
+{
+    Repository* repo = new Repository( name );
+    m_repositories.insert( name, repo );
+    connect( repo, SIGNAL( opened( Repository*, bool ) ),
+             this, SLOT( slotRepositoryOpened( Repository*, bool ) ) );
+    QTimer::singleShot( 0, repo, SLOT( open() ) );
+}
+
+
+void Nepomuk::Core::slotRepositoryOpened( Repository* repo, bool success )
+{
+    // FIXME: do something with success
+    m_openingRepositories.removeAll( repo->name() );
+    if ( m_openingRepositories.isEmpty() ) {
+        emit initializationDone( true );
+    }
 }
 
 
@@ -63,16 +112,12 @@ Nepomuk::Repository* Nepomuk::Core::repository( const QString& name )
 {
     if ( !m_repositories.contains( name ) ) {
         kDebug(300002) << "Creating new repository with name " << name;
-        QString storagePath = createStoragePath( name );
 
-        Repository* newRepo = Repository::open( storagePath, name );
-        if( newRepo ) {
-            m_repositories.insert( name, newRepo );
-            return newRepo;
-        }
-        else {
-            return 0;
-        }
+        // FIXME: There should be no need for conversion but who knows...
+        Repository* newRepo = new Repository( name );
+        m_repositories.insert( name, newRepo );
+        newRepo->open();
+        return newRepo;
     }
     else {
         return m_repositories[name];
@@ -80,9 +125,5 @@ Nepomuk::Repository* Nepomuk::Core::repository( const QString& name )
 }
 
 
-QString Nepomuk::Core::createStoragePath( const QString& repositoryId ) const
-{
-    return KStandardDirs::locateLocal( "data", "nepomuk/repository/" + repositoryId + "/" );
-}
 
 #include "nepomukcore.moc"
