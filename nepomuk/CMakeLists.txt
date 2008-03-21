@@ -106,4 +106,4 @@ install(
   DESTINATION ${PLUGIN_INSTALL_DIR})
 # -----------------------------
 
-add_subdirectory(test)
+#add_subdirectory(test)
