@@ -1,9 +1,3 @@
-project(emoticons)
-find_package(KDE4 REQUIRED)
-
-include(KDE4Defaults)
-add_definitions(${QT_DEFINITIONS} ${KDE_DEFINITIONS})
-include_directories( ${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${KDE4_INCLUDES} ${KDE4_KIO_INCLUDES})
 set(kcmemoticons_SRCS emoticonslist.cpp emoticons.cpp)
 kde4_add_ui_files(kcmemoticons_SRCS emoticonslist.ui)
 

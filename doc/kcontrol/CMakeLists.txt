@@ -6,6 +6,7 @@ add_subdirectory(ebrowsing)
 add_subdirectory(useragent)
 add_subdirectory(khtml)
 add_subdirectory(smb)
+add_subdirectory(emoticons)
 
 if ( Q_WS_X11 )
 add_subdirectory(background)
