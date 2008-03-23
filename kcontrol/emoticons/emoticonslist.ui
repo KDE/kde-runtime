@@ -142,7 +142,7 @@
         <string>Remove the selected theme from your disk</string>
        </property>
        <property name="whatsThis" >
-        <string>This will remove the selected from your disk.</string>
+        <string>This will remove the selected theme from your disk.</string>
        </property>
        <property name="text" >
         <string>Remove Theme</string>
