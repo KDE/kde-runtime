@@ -10,8 +10,6 @@ X-KDE-ParentApp=kcontrol
 X-KDE-System-Settings-Parent-Category=appearance
 
 Name=Emoticons
-Name[sv]=Smilisar
 Comment=Emoticons Themes Manager
-Comment[sv]=Hantering av smilisteman
 X-KDE-Keywords=Emoticons
 X-KDE-Keywords[sv]=Smilisar
