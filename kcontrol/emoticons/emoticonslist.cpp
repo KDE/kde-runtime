@@ -172,6 +172,7 @@ void EmoticonList::load()
             }
         }
     }
+    updateButton();
     emit changed(false);
 }
 
@@ -362,7 +363,7 @@ void EmoticonList::loadTheme(const QString &name)
 {
     if(name.isEmpty())
         return;
-    
+
     if(emoMap.contains(name)) {
         delete emoMap.value(name);
         emoMap.remove(name);
@@ -371,7 +372,7 @@ void EmoticonList::loadTheme(const QString &name)
             delete ls.at(0);
         }
     }
-    
+
     Emoticons *emo = new Emoticons(this, name);
     emoMap[name] = emo;
     QIcon previewIcon = QIcon(emo->getThemeMap().keys().value(0));
