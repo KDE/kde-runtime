@@ -448,7 +448,7 @@ QStringList Emoticons::installEmoticonTheme(QWidget *parent, const QString &arch
     // succeed copying all dirs from the tarball
     if (progressDlg->progressBar()->maximum() > progressDlg->progressBar()->value())
     {
-        KMessageBox::error(parent,i18n("<qt>A problem occurred during the installation process."
+        KMessageBox::error(parent,i18n("<qt>A problem occurred during the installation process. "
             "However, some of the emoticon themes in the archive may have been "
             "installed.</qt>"));
     }
