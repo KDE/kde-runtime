@@ -60,6 +60,7 @@ add_subdirectory(kioclient)
 add_subdirectory(ktraderclient)
 add_subdirectory(kreadconfig)
 add_subdirectory(kmimetypefinder)
+add_subdirectory(kiconfinder)
 if(NOT MSVC)
   # conflicts with kfile library from kdelibs
   add_subdirectory(kfile)
