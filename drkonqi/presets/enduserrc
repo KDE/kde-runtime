@@ -29,7 +29,7 @@ Name[nn]=Sluttbrukar
 Name[pl]=Użytkownik końcowy
 Name[pt]=Utilizador
 Name[pt_BR]=Usuário
-Name[ro]=Utilizator obişnuit
+Name[ro]=Utilizator obișnuit
 Name[ru]=Конечный пользователь
 Name[sk]=Užívateľ
 Name[sl]=Končni uporabnik
@@ -37,6 +37,7 @@ Name[sr]=Крајњи корисник
 Name[sr@latin]=Krajnji korisnik
 Name[sv]=Slutanvändare
 Name[te]=చివరి యూజర్
+Name[th]=ผู้ใช้ระดับสูง
 Name[tr]=Son kullanıcı
 Name[uk]=Кінцевий користувач
 Name[uz]=Оддий фойдаланувчи
@@ -74,7 +75,7 @@ Comment[nn]=Innstillingar føretrekt av sluttbrukarar
 Comment[pl]=Ustawienia dla użytkowników końcowych
 Comment[pt]=Configuração preferida para os utilizadores
 Comment[pt_BR]=Configurações preferidas por usuários
-Comment[ro]=Setări preferate pentru utilizatorii obişnuiţi
+Comment[ro]=Setări preferate pentru utilizatorii obișnuiți
 Comment[ru]=Настройки, предпочтительные для конечных пользователей
 Comment[sk]=Preferované nastavenia pre užívateľov
 Comment[sl]=Nastavitve, ki so primerne za končnega uporabnika
@@ -82,6 +83,7 @@ Comment[sr]=Поставке пригодне крајњим корисници�
 Comment[sr@latin]=Postavke prigodne krajnjim korisnicima
 Comment[sv]=Rekommenderade inställningar för slutanvändare
 Comment[te]=చివరి యూజర్లకు ఇష్టమైన అమరికలు
+Comment[th]=ตั้งค่าที่ควรใช้สำหรับผู้ใช้ระดับสูง
 Comment[tr]=Son kullanıcılar için tercih edilen ayarlar
 Comment[uk]=Параметри для користувачів
 Comment[uz]=Оддий фойдаланувчилар учун афзал мосламалар
@@ -128,7 +130,7 @@ Name[nn]=Programmet %progname (%appname) krasja, og sendte signalet %signum (%si
 Name[pl]=Program %progname (%appname) uległ awarii i spowodował sygnał %signum (%signame).
 Name[pt]=A aplicação %progname (%appname) estoirou e provocou o sinal %signum (%signame).
 Name[pt_BR]=O aplicativo %progname (%appname) travou e causou o sinal %signum (%signame).
-Name[ro]=Aplicaţia %progname (%appname) s-a prăbuşit şi a generat semnalul %signum (%signame).
+Name[ro]=Aplicația %progname (%appname) s-a prăbușit și a generat semnalul %signum (%signame).
 Name[ru]=В приложении %progname (%appname) произошёл фатальный сбой, вызвавший сигнал %signum (%signame).
 Name[sk]=Aplikácia %progname (%appname) spadla. Chyba bola spôsobená signálom %signum (%signame).
 Name[sl]=Program %progname (%appname) se je sesul in je sprožil signal %signum (%signame).
@@ -136,6 +138,7 @@ Name[sr]=Програм %progname (%appname) срушио се уз сигнал
 Name[sr@latin]=Program %progname (%appname) srušio se uz signal %signum (%signame).
 Name[sv]=Programmet %progname (%appname), kraschade och orsakade signalen %signum (%signame).
 Name[te]=ఈ కార్యక్రమం %progname (%appname) క్రాష్ అయినది మరయూ %signum సిగ్నల్ నూ కలుగ చేసింది
+Name[th]=แอพพลิเคชัน %progname (%appname) ทำงานล้มเหลวและจบการทำงานกระทันหัน โดยได้รับสัญญาณ %signum (%signame)
 Name[tr]= %progname (%appname) uygulaması çöktü ve %signum (%signame) sinyali gönderdi.
 Name[uk]=Програма %progname (%appname) зазнала аварії і спричинила сигнал signal %signum (%signame).
 Name[uz]=Дастурнинг %progname (%appname) ишида хато рўй берди ва %signum (%signame) сигналига сабабчи бўлди.
@@ -148,6 +151,7 @@ Name[zh_TW]=應用程式 %progname（%appname），行程代碼 %pid，崩潰並
 Enable=true
 Name=Please help us improve the software you use by filing a report at <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Useful details include how to reproduce the error, documents that were loaded, etc.
 Name[ca]=Si us plau, ajudeu-nos a millorar el programari que utilitzeu omplint un informe a <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Els detalls útils són com reproduir l'error, el documents carregats,  etc.
+Name[de]=Bitte helfen Sie uns dabei, die von Ihnen verwendeten Programme zu verbessern, indem Sie unter <a href="http://bugs.kde.org">http://bugs.kde.org</a> einen Fehlerbericht schreiben. Nützliche Informationen sind z. B. wie der Fehler reproduziert werden kann, welche Dokumente geladen waren, etc.
 Name[el]=Βοηθήστε μας να βελτιώσουμε την εφαρμογή αυτή αναφέροντας αυτό το σφάλμα στο <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Χρήσιμες πληροφορίες που θα μπορούσατε να συμπεριλάβετε είναι ο τρόπος αναπαραγωγής του σφάλματος, τα έγγραφα που ήταν φορτωμένα κλπ.
 Name[eo]=Bonvolu helpi plibonigi la programon kiun vi uzas per raporti la cimon ĉe <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Utilaj detaloj inkluzivas kiel oni reproduktas la eraron, kiuj dokumentoj estis traktataj, ktp.
 Name[es]=Ayudenos a mejorar los programas generando reportes en <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Detalles útiles incluyen cómo reproducir el error, documentos cargados, etc.
@@ -160,9 +164,11 @@ Name[ko]=이 오류를 <a href="http://bugs.kde.org">http://bugs.kde.org</a>에 
 Name[nds]=Bitte hölp uns dor bi, dat wi de Software, de Du bruukst, verbetern köönt. Du kannst en Fehlerbericht för dit Programm op <a href="http://bugs.kde.org">http://bugs.kde.org</a> afgeven. Föög em bitte so veel Informatschonen as mööglich to, villicht ok de Orginaaldokmenten. Kannst Du den Fehler wedderhalen, vertell bitte ok, wodennig dat geiht.
 Name[pt]=Por favor ajude-nos a melhor o 'software' que usa, preenchendo um relatório em <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Alguns detalhes úteis incluem a reprodução do erro, os documentos que foram carregados, etc.
 Name[pt_BR]=Por favor nos ajude a melhorar o software que você usa preenchendo um relatório em <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Detalhes úteis incluem como reproduzir o erro, documentos que foram carregados, etc.
+Name[ro]=Ajutați-ne să îmbunătățim programul, completînd un raport de eroare pe <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Vă rugăm să includeți cît mai multă informație, de exemplu cum se poate reproduce eroarea, documentele încărcate, etc.
 Name[sl]=Pomagajte nam izboljšati program, ki ga uporabljate. Oddajte poročilo o napaki  na <a href="http://bugs.kde.org">bugs.kde.org</a>. Uporabni podatki so na primer koraki za povzročitev napake, odprti dokumenti in podobno.
 Name[sr]=Помогните нам да побољшамо софтвер тако што ћете испунити извештај на <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Корисни детаљи: како изазвати грешку, документи који су учитавани, итд.
 Name[sr@latin]=Pomognite nam da poboljšamo softver tako što ćete ispuniti izveštaj na <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Korisni detalji: kako izazvati grešku, dokumenti koji su učitavani, itd.
+Name[th]=โปรดช่วยเหลือเราในการปรับปรุงซอฟต์แวร์ ด้วยการกรอกข้อมูลในรายงานที่ <a href="http://bugs.kde.org">http://bugs.kde.org</a> และโปรดกรอกรายละเอียดเกี่ยวกับวิธีการสร้างข้ผิดพลาดนี้, ได้โหลดเอกสารขึ้นมา เป็นต้น
 Name[tr]=Bu uygulamanın gelişimine katkıda bulunmak için lütfen <a href="http://bugs.kde.org">http://bugs.kde.org</a> adresini kullanarak hata raporu gönderin. İşe yarar ayrıntılar içerisinde hatanın nasıl tekrarlanabildiği ve hata oluşurken hangi belgelerin yüklendiği gibi şeyler vardır.
 Name[uk]=Будь ласка, допоможіть нам вдосконалити ПЗ, яким ви користуєтесь - заповніть звіт на <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Включіть корисні подробиці: як повторити помилку, документи, котрі було завантажено, тощо.
 Name[x-test]=xxPlease help us improve the software you use by filing a report at <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Useful details include how to reproduce the error, documents that were loaded, etc.xx
@@ -202,7 +208,7 @@ Comment[nn]=Eit program får som regel SIGILL-signalet på grunn av ein feil i p
 Comment[pl]=Program zazwyczaj otrzymuje sygnał SIGILL z powodu błędu w nim samym. Wysłano żądanie zapisania dokumentów.
 Comment[pt]=Uma aplicação normalmente recebe o sinal SIGILL devido a um erro na aplicação. Foi pedido à aplicação para gravar os seus documentos.
 Comment[pt_BR]=Um aplicativo normalmente recebe o sinal SIGILL devido a um erro no aplicativo. Foi solicitado ao aplicativo para salvar seus documentos.
-Comment[ro]=În general o aplicaţie primeşte semnalul SIGILL datorită unei erori interne. Aplicaţiei i s-a cerut să îşi salveze documentele.
+Comment[ro]=În general o aplicație primește semnalul SIGILL datorită unei erori interne. Aplicației i s-a cerut să își salveze documentele.
 Comment[ru]=Приложение получает сигнал SIGILL чаще всего из-за ошибки в программе. Данные приложения будут сохранены.
 Comment[sk]=Aplikácia väčšinou dostane SIGILL signál kvôli chybe v aplikácii. Tento signál žiada tiež aplikáciu, aby si uložila svoje dokumenty.
 Comment[sl]=Program večinoma prejme signal SIGILL, če vsebuje napako. Programu je bilo naročeno naj shrani dokumente.
@@ -219,6 +225,7 @@ Comment[zh_TW]=應用程式收到 SIGILL 信號，通常是因為應用程式的
 [6]
 Name=SIGABRT
 Name[sr]=СИГАБРТ
+Name[th]=สัญญาณ SIGABRT
 Name[x-test]=xxSIGABRTxx
 Comment=An application terminates with a SIGABRT signal when it detects an internal inconsistency caused by a bug in the program.
 Comment[af]='n aansoek termineer met 'n Sigabrt sein wanneer dit bespeur 'n intern onkonsekwentheid veroorsaak deur 'n fout in die program.
@@ -249,7 +256,7 @@ Comment[nn]=Eit program avsluttar med SIGABRT-signalet når det oppdagar ein ind
 Comment[pl]=Program kończy działanie z SIGABRT po wykryciu wewnętrznej niespójności powstałej w wyniku błędu w tym programie.
 Comment[pt]=Uma aplicação termina com um sinal SIGABRT quando detecta uma inconsistência interna provocada por um erro no programa.
 Comment[pt_BR]=Um aplicativo termina com um sinal SIGABRT quando ele detecta uma inconsistência interna causada por um erro no programa.
-Comment[ro]=În general o aplicaţie se termină cu semnalul SIGABRT cînd detectează o inconsistenţă internă cauzată de o eroare în program.
+Comment[ro]=În general o aplicație se termină cu semnalul SIGABRT cînd detectează o inconsistență internă cauzată de o eroare în program.
 Comment[ru]=Приложение завершается сигналом SIGABRT, когда внутри него возникает сбой, вызванный ошибкой в программе.
 Comment[sk]=Aplikácia bola ukončená SIGABRT signálom, keď program detekoval internú nezhodu spôsobenú chybou v programe.
 Comment[sl]=Program se zaključi s signalom SIGABRT, ko zazna notranjo neskladnost, ki je posledica napake v programu.
@@ -296,7 +303,7 @@ Comment[nn]=Eit program mottek som regel SIGFPE-signalet på grunn av ein feil i
 Comment[pl]=Program otrzymuje sygnał SIGFPE zazwyczaj z powodu błędu w nim samym. Nastąpiło żądanie zapisania dokumentów.
 Comment[pt]=Uma aplicação recebe normalmente o sinal SIGFPE devido a um erro na aplicação. Foi pedido à mesma para gravar os seus documentos.
 Comment[pt_BR]=Um aplicativo normalmente recebe um sinal SIGFPE devido a um erro no aplicativo. Foi solicitado ao aplicativo para salvar seus documentos.
-Comment[ro]=În general o aplicaţie primeşte semnalul SIGFPE datorită unei erori interne. Aplicaţiei i s-a cerut să îşi salveze documentele.
+Comment[ro]=În general o aplicație primește semnalul SIGFPE datorită unei erori interne. Aplicației i s-a cerut să își salveze documentele.
 Comment[ru]=Приложение получает сигнал SIGFPE чаще всего из-за ошибки в программе. Данные приложения будут сохранены.
 Comment[sk]=Aplikácia väčšinou dostane SIGFPE signál kvôli chybe v aplikácii. Tento signál žiada tiež aplikáciu, aby si uložila svoje dokumenty.
 Comment[sl]=Program večinoma prejme signal SIGFPE zaradi napake v programu. Programu je bilo naročeno naj shrani dokumente.
@@ -343,7 +350,7 @@ Comment[nn]=Eit program motek som regel SIGSEGV-signalet på grunn av ein feil i
 Comment[pl]=Program otrzymuje sygnał SIGSEGV zazwyczaj z powodu błędu w nim samym. Nastąpiło żądanie zapisania dokumentów.
 Comment[pt]=Uma aplicação recebe normalmente o sinal SIGSEGV devido a um erro na aplicação. Foi pedido à mesma para gravar os seus documentos.
 Comment[pt_BR]=Um aplicativo normalmente recebe um sinal SIGSEGV devido a um erro no aplicativo. Foi solicitado ao aplicativo para salvar seus documentos.
-Comment[ro]=În general o aplicaţie primeşte semnalul SIGSEGV datorită unei erori interne. Aplicaţiei i s-a cerut să îşi salveze documentele.
+Comment[ro]=În general o aplicație primește semnalul SIGSEGV datorită unei erori interne. Aplicației i s-a cerut să își salveze documentele.
 Comment[ru]=Приложение получает сигнал SIGSEGV чаще всего из-за ошибки в программе. Данные приложения будут сохранены.
 Comment[sk]=Aplikácia väčšinou dostane SIGSEGV signál kvôli chybe v aplikácii. Tento signál žiada tiež aplikáciu, aby si uložila svoje dokumenty.
 Comment[sl]=Program večinoma prejme signal SIGSEGV zaradi napake v programu. Programu je bilo naročeno naj shrani dokumente.
@@ -396,6 +403,7 @@ Name[sr]=непознат
 Name[sr@latin]=nepoznat
 Name[sv]=Okänd
 Name[te]=తెలియని
+Name[th]=ไม่รู้จัก
 Name[tr]=Bilinmeyen
 Name[uk]=Невідомий
 Name[uz]=Номаълум
@@ -441,6 +449,7 @@ Comment[sr]=Извините, овај сигнал није познат.
 Comment[sr@latin]=Izvinite, ovaj signal nije poznat.
 Comment[sv]=Känner tyvärr inte till den här signalen.
 Comment[te]=క్షమించండి, నాకు ఈ సిగ్నల్ తెలియదు
+Comment[th]=ขออภัย ไม่รู้จักสัญญาณนี้
 Comment[tr]=Üzgünüm, bu sinyali tanımıyorum.
 Comment[uz]=Узр, мен бу сигнални билмайман.
 Comment[x-test]=xxSorry, I do not know this signal.xx
