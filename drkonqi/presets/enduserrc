@@ -1,6 +1,7 @@
 [General]
 Name=End user
 Name[af]=Einde gebruiker
+Name[bg]=Краен потребител
 Name[bn]=ব্যবহারকারী
 Name[br]=Implijer diwezh
 Name[ca]=Usuaris finals
@@ -51,6 +52,7 @@ Name[zh_CN]=最终用户
 Name[zh_TW]=終端使用者
 Comment=Settings preferred for end users
 Comment[af]=Instellings verkies vir einde gebruikers
+Comment[bg]=Предпочитани настройки от крайни потребители
 Comment[bn]=সাধারণ ব্যবহারকারীদের জন্যপছন্দ করা সেটিংস
 Comment[br]=Kefluniadur azas evit implijerien diwezh
 Comment[ca]=Paràmetres preferits per usuaris finals
@@ -406,6 +408,7 @@ Comment[zh_TW]=應用程式收到 SIGSEGV 信號，通常是因為應用程式�
 [unknown]
 Name=Unknown
 Name[af]=Onbekend
+Name[bg]=Неизвестно
 Name[bn]=অজ্ঞাত
 Name[br]=Dianav
 Name[ca]=Desconegut
@@ -456,6 +459,7 @@ Name[zh_CN]=未知
 Name[zh_TW]=未知
 Comment=Sorry, I do not know this signal.
 Comment[af]=Jammer, ek ken nie hierdie sein nie.
+Comment[bg]=За съжаление сигналът е непознат.
 Comment[bn]=দুঃখিত, এই সিগনালটি আমার অচেনা।
 Comment[br]=Ho tigarez, n'anavezan ket an arhent-mañ.
 Comment[ca]=No es coneix aquest senyal.
