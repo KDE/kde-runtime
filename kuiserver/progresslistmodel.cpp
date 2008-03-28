@@ -104,8 +104,7 @@ Qt::ItemFlags ProgressListModel::flags(const QModelIndex &index) const
     Q_UNUSED(index);
 
     return Qt::ItemIsSelectable
-           | Qt::ItemIsEnabled
-           | Qt::ItemIsEditable;
+           | Qt::ItemIsEnabled;
 }
 
 QModelIndex ProgressListModel::index(int row, int column, const QModelIndex &parent) const
