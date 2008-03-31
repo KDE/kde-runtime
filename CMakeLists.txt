@@ -84,3 +84,5 @@ if(CMAKE_SOURCE_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
   macro_display_feature_log()
 endif(CMAKE_SOURCE_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
 
+########### install files ###############
+install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/kde4 DESTINATION ${BIN_INSTALL_DIR})
