@@ -19,7 +19,7 @@
 #ifndef _NEPOMUK_SERVER_H_
 #define _NEPOMUK_SERVER_H_
 
-#include <kdedmodule.h>
+#include <QtCore/QObject>
 
 #include <KSharedConfig>
 
@@ -29,17 +29,15 @@ namespace Soprano {
 
 namespace Nepomuk {
 
-    class Core;
-    class StrigiController;
-    class OntologyLoader;
+    class ServiceManager;
+    class LegacyStorageBridge;
 
-    class Server : public KDEDModule
+    class Server : public QObject
     {
         Q_OBJECT
-        Q_CLASSINFO("Bus Interface", "org.kde.NepomukServer")
 
     public:
-        Server();
+        Server( QObject* parent = 0 );
         virtual ~Server();
 
         KSharedConfig::Ptr config() const;
@@ -57,23 +55,20 @@ namespace Nepomuk {
          */
         QString defaultRepository() const;
         void reconfigure();
-
-    private Q_SLOTS:
-        void slotNepomukCoreInitialized( bool success );
+        void quit();
 
     private:
         void init();
-        void startNepomuk();
-        void startStrigi();
-        void updateStrigiConfig();
+        void updateServiceConfig();
 
-        Core* m_core;
-        StrigiController* m_strigiController;
-        OntologyLoader* m_ontologyLoader;
+        ServiceManager* m_serviceManager;
+        bool m_enabled;
 
-        bool m_restartStrigiAfterInitialization;
+        LegacyStorageBridge* m_legacyStorageBridge;
 
         KSharedConfigPtr m_config;
+
+        const QString m_strigiServiceName;
 
         static Server* s_self;
     };

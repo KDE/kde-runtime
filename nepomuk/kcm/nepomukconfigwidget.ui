@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>411</width>
-    <height>448</height>
+    <width>366</width>
+    <height>300</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" >
@@ -21,6 +21,32 @@
        <string>Basic Settings</string>
       </attribute>
       <layout class="QVBoxLayout" >
+       <item>
+        <widget class="QGroupBox" name="groupBox_2" >
+         <property name="title" >
+          <string>Nepomuk Semantic Desktop</string>
+         </property>
+         <layout class="QVBoxLayout" >
+          <item>
+           <widget class="QLabel" name="label_3" >
+            <property name="text" >
+             <string>Nepomuk Semantic Desktop enables tagging and rating of files integrated with the Strigi Desktop Search.</string>
+            </property>
+            <property name="wordWrap" >
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="m_checkEnableNepomuk" >
+            <property name="text" >
+             <string>Enable Nepomuk Semantic Desktop</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
        <item>
         <widget class="QGroupBox" name="groupBox" >
          <property name="title" >
@@ -53,8 +79,8 @@
               </property>
               <property name="sizeHint" >
                <size>
-                <width>40</width>
-                <height>20</height>
+                <width>20</width>
+                <height>40</height>
                </size>
               </property>
              </spacer>
@@ -62,7 +88,7 @@
             <item>
              <layout class="QHBoxLayout" >
               <item>
-               <widget class="KLed" name="m_strigiStatus" />
+               <widget class="KLed" native="1" name="m_strigiStatus" />
               </item>
               <item>
                <widget class="QLabel" name="m_strigiStatusLabel" >
@@ -85,40 +111,14 @@
         </widget>
        </item>
        <item>
-        <widget class="QGroupBox" name="groupBox_2" >
-         <property name="title" >
-          <string>Nepomuk Semantic Desktop</string>
-         </property>
-         <layout class="QVBoxLayout" >
-          <item>
-           <widget class="QLabel" name="label_3" >
-            <property name="text" >
-             <string>Nepomuk Semantic Desktop enables tagging and rating of files integrated with the Strigi Desktop Search.</string>
-            </property>
-            <property name="wordWrap" >
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="m_checkEnableNepomuk" >
-            <property name="text" >
-             <string>Enable Nepomuk Semantic Desktop</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
         <spacer>
          <property name="orientation" >
           <enum>Qt::Vertical</enum>
          </property>
          <property name="sizeHint" >
           <size>
-           <width>21</width>
-           <height>81</height>
+           <width>20</width>
+           <height>40</height>
           </size>
          </property>
         </spacer>
@@ -166,8 +166,8 @@ p, li { white-space: pre-wrap; }
          </property>
          <property name="sizeHint" >
           <size>
-           <width>371</width>
-           <height>16</height>
+           <width>20</width>
+           <height>40</height>
           </size>
          </property>
         </spacer>
@@ -183,6 +183,7 @@ p, li { white-space: pre-wrap; }
    <class>KEditListBox</class>
    <extends>QGroupBox</extends>
    <header>keditlistbox.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>KLed</class>
@@ -190,6 +191,28 @@ p, li { white-space: pre-wrap; }
    <header>kled.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>m_checkEnableNepomuk</tabstop>
+  <tabstop>m_checkEnableStrigi</tabstop>
+ </tabstops>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>m_checkEnableNepomuk</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>groupBox</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

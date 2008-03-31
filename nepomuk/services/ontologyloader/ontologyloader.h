@@ -19,7 +19,7 @@
 #ifndef _NEPOMUK_SERVER_ONTOLOGY_LOADER_H_
 #define _NEPOMUK_SERVER_ONTOLOGY_LOADER_H_
 
-#include <QtCore/QObject>
+#include <Nepomuk/Service>
 #include <QtCore/QUrl>
 
 namespace Soprano {
@@ -28,12 +28,13 @@ namespace Soprano {
 
 
 namespace Nepomuk {
-    class OntologyLoader : public QObject
+    class OntologyLoader : public Nepomuk::Service
     {
         Q_OBJECT
+        Q_CLASSINFO( "D-Bus Interface", "org.kde.nepomuk.OntologyManager" )
 
     public:
-        OntologyLoader( Soprano::Model* model, QObject* parent = 0 );
+        OntologyLoader( QObject* parent = 0, const QList<QVariant>& args = QList<QVariant>() );
         ~OntologyLoader();
 
     public Q_SLOTS:
@@ -43,10 +44,14 @@ namespace Nepomuk {
          *
          * This should also be called for initialization
          */
-        void update();
+        Q_SCRIPTABLE void updateAllOntologies();
 
         // FIXME: add methods (exported on DBus) like:
         // void importOntology( const QUrl& url... )
+
+    private Q_SLOTS:
+        // a little async updating
+        void updateNextOntology();
 
     private:
         class Private;

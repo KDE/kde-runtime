@@ -19,7 +19,7 @@
  */
 
 #include "strigiconfigfile.h"
-#include "nepomukserver-config.h"
+#include "nepomukstrigi-config.h"
 
 #include <QtCore/QFile>
 #include <QtCore/QTextStream>

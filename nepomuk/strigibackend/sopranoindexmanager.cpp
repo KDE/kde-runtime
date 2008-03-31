@@ -32,6 +32,7 @@
 #include <Soprano/Index/CLuceneIndex>
 #include <Soprano/Util/MutexModel>
 #include <Soprano/Client/DBusModel>
+#include <Soprano/Client/LocalSocketClient>
 
 #include <QtCore/QDir>
 #include <QtCore/QDebug>
@@ -39,7 +40,16 @@
 
 
 namespace {
-    ::Soprano::Client::DBusClient* s_sopranoClient = 0;
+    ::Soprano::Client::LocalSocketClient* s_sopranoSocketClient = 0;
+    ::Soprano::Client::DBusClient* s_sopranoDBusClient = 0;
+
+    QString nepomukServerSocketPath() {
+        QString kdeHome = getenv( "KDEHOME" );
+        if ( kdeHome.isEmpty() ) {
+            kdeHome = QDir::homePath() + "/.kde4";
+        }
+        return kdeHome + "/share/apps/nepomuk/socket";
+    }
 }
 
 class Strigi::Soprano::IndexManager::Private
@@ -67,50 +77,36 @@ extern "C" {
 // we do not use REGISTER_STRIGI_INDEXMANAGER as we do have to perform some additional checks
 STRIGI_EXPORT Strigi::IndexManager* createIndexManager( const char* dir )
 {
-    if ( !s_sopranoClient ) {
-        s_sopranoClient = new ::Soprano::Client::DBusClient( "org.kde.NepomukServer" );
+    if ( !s_sopranoSocketClient ) {
+        s_sopranoSocketClient = new ::Soprano::Client::LocalSocketClient();
     }
-
-    if ( s_sopranoClient->isValid() ) {
-        qDebug() << "(Strigi::Soprano::IndexManager) found Soprano server.";
-        if ( ::Soprano::Model* model = s_sopranoClient->createModel( "main" ) ) {
-            return new Strigi::Soprano::IndexManager( model, QString() );
+    ::Soprano::Model* model = 0;
+    if ( !s_sopranoSocketClient->isConnected() ) {
+        QString socket = nepomukServerSocketPath();
+        if ( s_sopranoSocketClient->connect( socket ) ) {
+            model = s_sopranoSocketClient->createModel( "main" );
         }
         else {
-            return 0;
+            qDebug() << "(Strigi::Soprano::IndexManager) unable to connect to nepomuks server via local socket:" << socket;
         }
+    }
+
+    if ( !model ) {
+        if ( !s_sopranoDBusClient ) {
+            s_sopranoDBusClient = new ::Soprano::Client::DBusClient( "org.kde.nepomuk.services.nepomukstorage" );
+        }
+
+        if ( s_sopranoDBusClient->isValid() ) {
+            qDebug() << "(Strigi::Soprano::IndexManager) found Soprano server.";
+            model = s_sopranoDBusClient->createModel( "main" );
+        }
+    }
+
+    if ( model ) {
+        return new Strigi::Soprano::IndexManager( model, QString() );
     }
     else {
-        const ::Soprano::Backend* backend = ::Soprano::discoverBackendByName( "sesame2" );
-        if ( !backend ) {
-            qDebug() << "(Strigi::Soprano::IndexManager) could not find Sesame2 backend. Falling back to redland. NO BACKEND CHANGE SUPPORT YET!";
-            backend = ::Soprano::discoverBackendByName( "redland" );
-        }
-        if ( !backend ) {
-            qDebug() << "(Strigi::Soprano::IndexManager) could not find a backend.";
-            return 0;
-        }
-
-        QDir storageDir( dir );
-        storageDir.makeAbsolute();
-        if ( !storageDir.exists() ) {
-            if ( !QDir( "/" ).mkpath( storageDir.path() ) ) {
-                qDebug() << "Failed to create storage dir " << storageDir.path();
-                return 0;
-            }
-        }
-        storageDir.mkdir( "index" );
-
-        QList< ::Soprano::BackendSetting> settings;
-        settings.append( ::Soprano::BackendSetting( ::Soprano::BackendOptionStorageDir, storageDir.path() ) );
-
-        ::Soprano::Model* model = backend->createModel( settings );
-        if ( model ) {
-            return new Strigi::Soprano::IndexManager( model, QString( "%1/index" ).arg( storageDir.path() ) );
-        }
-        else {
-            return 0;
-        }
+        return 0;
     }
 }
 

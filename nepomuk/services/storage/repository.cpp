@@ -13,14 +13,14 @@
  */
 
 #include "repository.h"
-#include "nepomukserver-config.h"
-#include "nepomukserver.h"
+#include "nepomukstorage-config.h"
 #include "modelcopyjob.h"
 
 #include <Soprano/Backend>
 #include <Soprano/Global>
 #include <Soprano/StorageModel>
 #include <Soprano/Error/Error>
+#include <Soprano/Util/MutexModel>
 
 #ifdef HAVE_SOPRANO_INDEX
 #include <Soprano/Index/IndexFilterModel>
@@ -31,7 +31,6 @@
 #include <KDebug>
 #include <KConfigGroup>
 #include <KSharedConfig>
-#include <KMessageBox>
 #include <KLocale>
 
 
@@ -91,10 +90,16 @@ void Nepomuk::Repository::open()
         return;
     }
 
+    // protect the model against deadlocks when used by multiple clients. ServerCore is single-threaded, thus,
+    // we use MutexModel in its ReadWriteSingleThreading mode which creates local event loops instead of hard locking
+    Soprano::Util::MutexModel* mutexModel = new Soprano::Util::MutexModel( Soprano::Util::MutexModel::ReadWriteSingleThreading );
+    mutexModel->setParent( this ); // memory management
+    setParentModel( mutexModel );
+
 
     // read config
     // =================================
-    KConfigGroup repoConfig = Server::self()->config()->group( name() + " Settings" );
+    KConfigGroup repoConfig = KSharedConfig::openConfig( "nepomukserverrc" )->group( name() + " Settings" );
     QString oldBackendName = repoConfig.readEntry( "Used Soprano Backend", backend->pluginName() );
     QString oldBasePath = repoConfig.readPathEntry( "Storage Dir", QString() ); // backward comp: empty string means old storage path
 
@@ -140,7 +145,7 @@ void Nepomuk::Repository::open()
         // FIXME: find a good value here
         m_indexModel->setTransactionCacheSize( 100 );
 
-        setParentModel( m_indexModel );
+        mutexModel->setParentModel( m_indexModel );
     }
     else {
         kDebug(300002) << "Unable to open CLucene index for repo '" << name() << "': " << m_index->lastError();
@@ -154,7 +159,7 @@ void Nepomuk::Repository::open()
         return;
     }
 #else
-    setParentModel( m_model );
+    mutexModel->setParentModel( m_model );
 #endif
 
     // check if we have to convert
@@ -231,7 +236,8 @@ void Nepomuk::Repository::open()
 void Nepomuk::Repository::copyFinished( KJob* job )
 {
     if ( job->error() ) {
-        KMessageBox::error( 0, i18n( "Converting the Nepomuk database failed." ) );
+        // FIXME: inform the user
+        kDebug( 300002 ) << "Converting old model failed.";
     }
     else {
         kDebug() << "Successfully converted model data for repo" << name();
@@ -245,7 +251,7 @@ void Nepomuk::Repository::copyFinished( KJob* job )
         m_oldStorageBackend->deleteModelData( QList<Soprano::BackendSetting>() << Soprano::BackendSetting( Soprano::BackendOptionStorageDir, m_oldStoragePath ) );
 
         // save our new settings
-        KConfigGroup repoConfig = Server::self()->config()->group( name() + " Settings" );
+        KConfigGroup repoConfig = KSharedConfig::openConfig( "nepomukserverrc" )->group( name() + " Settings" );
         repoConfig.writeEntry( "Used Soprano Backend", activeSopranoBackend()->pluginName() );
         repoConfig.writePathEntry( "Storage Dir", m_basePath );
         repoConfig.sync();
@@ -259,7 +265,7 @@ void Nepomuk::Repository::copyFinished( KJob* job )
 
 const Soprano::Backend* Nepomuk::Repository::activeSopranoBackend()
 {
-    QString backendName = Server::self()->config()->group( "Basic Settings" ).readEntry( "Soprano Backend", "sesame2" );
+    QString backendName = KSharedConfig::openConfig( "nepomukserverrc" )->group( "Basic Settings" ).readEntry( "Soprano Backend", "sesame2" );
     const Soprano::Backend* backend = ::Soprano::discoverBackendByName( backendName );
     if ( !backend ) {
         kDebug(300002) << "(Nepomuk::Core::Core) could not find backend" << backendName << ". Falling back to default.";

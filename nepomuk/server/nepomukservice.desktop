@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=ServiceType
+X-KDE-ServiceType=NepomukService
+Comment=Nepomuk Service
+[PropertyDef::X-KDE-Nepomuk-autostart]
+Type=bool
+[PropertyDef::X-KDE-Nepomuk-start-on-demand]
+Type=bool
+[PropertyDef::X-KDE-Nepomuk-dependencies]
+Type=QStringList

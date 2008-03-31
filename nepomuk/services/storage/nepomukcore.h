@@ -21,7 +21,6 @@
 
 #include <Soprano/Server/ServerCore>
 #include "repository.h"
-#include "nepomukserver.h"
 
 #include <QtCore/QStringList>
 

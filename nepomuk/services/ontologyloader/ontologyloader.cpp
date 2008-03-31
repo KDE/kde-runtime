@@ -33,10 +33,15 @@
 #include <KStandardDirs>
 
 #include <QtCore/QFileInfo>
+#include <QtCore/QTimer>
+
+#include <kpluginfactory.h>
+#include <kpluginloader.h>
+
+NEPOMUK_EXPORT_SERVICE( Nepomuk::OntologyLoader, "nepomukontologyloader")
 
 
 using namespace Soprano;
-
 
 class Nepomuk::OntologyLoader::Private
 {
@@ -47,6 +52,9 @@ public:
 
     OntologyManagerModel* model;
 
+    QTimer updateTimer;
+    QStringList desktopFilesToUpdate;
+
     void updateOntology( const QString& filename );
 
 private:
@@ -54,11 +62,16 @@ private:
 };
 
 
-Nepomuk::OntologyLoader::OntologyLoader( Soprano::Model* model, QObject* parent )
-    : QObject( parent ),
+Nepomuk::OntologyLoader::OntologyLoader( QObject* parent, const QList<QVariant>& )
+    : Service( parent ),
       d( new Private(this) )
 {
-    d->model = new OntologyManagerModel( model, this );
+    d->model = new OntologyManagerModel( mainModel(), this );
+    connect( &d->updateTimer, SIGNAL(timeout()), this, SLOT(updateNextOntology()) );
+    updateAllOntologies();
+
+    // FIXME: install watches for changed or newly installed ontologies
+//    QStringList dirs = KGlobal::dirs()->findDirs( "data", "nepomuk/ontologies" );
 }
 
 
@@ -68,7 +81,7 @@ Nepomuk::OntologyLoader::~OntologyLoader()
 }
 
 
-void Nepomuk::OntologyLoader::update()
+void Nepomuk::OntologyLoader::updateAllOntologies()
 {
     if ( !d->model ) {
         kDebug() << "No Nepomuk Model. Cannot update ontologies.";
@@ -76,13 +89,19 @@ void Nepomuk::OntologyLoader::update()
     }
 
     // update all installed ontologies
-    QStringList ontoFiles = KGlobal::dirs()->findAllResources( "data", "nepomuk/ontologies/*.desktop" );
-    foreach( QString file, ontoFiles ) {
-        d->updateOntology( file );
-    }
+    d->desktopFilesToUpdate = KGlobal::dirs()->findAllResources( "data", "nepomuk/ontologies/*.desktop" );
+    d->updateTimer.start(0);
+}
 
-    // FIXME: install watches for changed or newly installed ontologies
-//    QStringList dirs = KGlobal::dirs()->findDirs( "data", "nepomuk/ontologies" );
+
+void Nepomuk::OntologyLoader::updateNextOntology()
+{
+    if( !d->desktopFilesToUpdate.isEmpty() ) {
+        d->updateOntology( d->desktopFilesToUpdate.takeFirst() );
+    }
+    else {
+        d->updateTimer.stop();
+    }
 }
 
 

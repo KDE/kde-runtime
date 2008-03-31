@@ -17,7 +17,9 @@ include(CheckIncludeFiles)
 
 set(SOPRANO_MIN_VERSION "2.0.97")
 macro_optional_find_package(Soprano)
+macro_optional_find_package(Nepomuk)
 macro_log_feature(Soprano_FOUND "Soprano" "Soprano Libraries" "kdesupport" FALSE "" "Required to build Nepomuk.")
+macro_log_feature(Nepomuk_FOUND "Nepomuk" "Nepomuk Libraries" "kdelibs" FALSE "" "Required to build Nepomuk.")
 
 check_include_files(sys/wait.h HAVE_SYS_WAIT_H)
 check_include_files(sys/time.h HAVE_SYS_TIME_H)
@@ -72,9 +74,9 @@ add_subdirectory(knotify)
 add_subdirectory(kde-menu)
 add_subdirectory(doc)
 
-if(Soprano_FOUND AND STRIGI_STRIGIQTDBUSCLIENT_LIBRARY)
+if(Soprano_FOUND AND Nepomuk_FOUND AND STRIGI_STRIGIQTDBUSCLIENT_LIBRARY)
   macro_optional_add_subdirectory(nepomuk)
-endif(Soprano_FOUND AND STRIGI_STRIGIQTDBUSCLIENT_LIBRARY)
+endif(Soprano_FOUND AND Nepomuk_FOUND AND STRIGI_STRIGIQTDBUSCLIENT_LIBRARY)
 
 macro_optional_add_subdirectory(renamedlgplugins)
 

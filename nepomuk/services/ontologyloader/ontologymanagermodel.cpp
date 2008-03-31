@@ -266,7 +266,11 @@ bool Nepomuk::OntologyManagerModel::updateOntology( Soprano::StatementIterator d
     // ------------------------------------
     QUrl dataGraphUri, metadataGraphUri;
     if ( findGraphUris( tmpModel, ontoUri, dataGraphUri, metadataGraphUri ) ) {
-        tmpModel->addStatement( Statement( dataGraphUri, Soprano::Vocabulary::NAO::lastModified(), LiteralValue( QDateTime::currentDateTime() ), metadataGraphUri ) );
+        // remove any modification date data there is
+        tmpModel->removeAllStatements( dataGraphUri, Soprano::Vocabulary::NAO::lastModified(), Node() );
+
+        // set the new modification date
+        tmpModel->addStatement( dataGraphUri, Soprano::Vocabulary::NAO::lastModified(), LiteralValue( QDateTime::currentDateTime() ), metadataGraphUri );
 
         // now it is time to merge the new data in
         // ------------------------------------
@@ -317,11 +321,15 @@ bool Nepomuk::OntologyManagerModel::removeOntology( const QUrl& ns )
 
 QDateTime Nepomuk::OntologyManagerModel::ontoModificationDate( const QUrl& uri )
 {
-    QueryResultIterator it = executeQuery( QString( "select ?date where { ?onto <%1> \"%2\"^^<%3> . ?onto <%4> ?date . }" )
+    QueryResultIterator it = executeQuery( QString( "select ?date where { "
+                                                    "?onto <%1> \"%2\"^^<%3> . "
+                                                    "?onto <%4> ?date . "
+                                                    "FILTER(DATATYPE(?date) = <%5>) . }" )
                                            .arg( Soprano::Vocabulary::NAO::hasDefaultNamespace().toString() )
                                            .arg( uri.toString() )
                                            .arg( Soprano::Vocabulary::XMLSchema::string().toString() )
-                                           .arg( Soprano::Vocabulary::NAO::lastModified().toString() ),
+                                           .arg( Soprano::Vocabulary::NAO::lastModified().toString() )
+                                           .arg( Soprano::Vocabulary::XMLSchema::dateTime().toString() ),
                                            Soprano::Query::QueryLanguageSparql );
     if ( it.next() ) {
         kDebug() << "Found modification date for" << uri << it.binding( "date" ).literal().toDateTime();

@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Service
+X-KDE-ServiceTypes=NepomukService
+X-KDE-Library=nepomukstorage
+X-KDE-Nepomuk-autostart=true
+X-KDE-Nepomuk-start-on-demand=true
+Name=Nepomuk Data Storage
+Comment=The Core Nepomuk data storage service

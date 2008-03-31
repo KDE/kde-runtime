@@ -1,0 +1,5 @@
+add_subdirectory(storage)
+add_subdirectory(ontologyloader)
+if(HAVE_STRIGI_SOPRANO_BACKEND)
+  macro_optional_add_subdirectory(strigi)
+endif(HAVE_STRIGI_SOPRANO_BACKEND)

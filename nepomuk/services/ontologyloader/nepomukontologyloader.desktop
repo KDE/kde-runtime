@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Service
+X-KDE-ServiceTypes=NepomukService
+X-KDE-Library=nepomukontologyloader
+X-KDE-Nepomuk-autostart=true
+X-KDE-Nepomuk-start-on-demand=false
+X-KDE-Nepomuk-dependencies=nepomukstorage
+Name=Nepomuk Ontology Loader
+Comment=Nepomuk Service which maintains the ontologies installed on the system

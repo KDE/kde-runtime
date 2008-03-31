@@ -17,10 +17,9 @@
 */
 
 #include "nepomukserverkcm.h"
-#include "strigicontroller.h"
 #include "nepomukserversettings.h"
 #include "nepomukserverinterface.h"
-#include "strigiconfigfile.h"
+#include "../common/strigiconfigfile.h"
 
 #include <KPluginFactory>
 #include <KPluginLoader>
@@ -39,7 +38,7 @@ K_EXPORT_PLUGIN( NepomukConfigModuleFactory("kcm_nepomuk") )
 
 Nepomuk::ServerConfigModule::ServerConfigModule( QWidget* parent, const QVariantList& args )
     : KCModule( NepomukConfigModuleFactory::componentData(), parent, args ),
-      m_serverInterface( "org.kde.NepomukServer", "/modules/nepomukserver", QDBusConnection::sessionBus() )
+      m_serverInterface( "org.kde.NepomukServer", "/nepomukserver", QDBusConnection::sessionBus() )
 {
     KAboutData *about = new KAboutData(
         "kcm_nepomuk", 0, ki18n("Nepomuk Configuration Module"),
@@ -89,7 +88,7 @@ void Nepomuk::ServerConfigModule::load()
         m_checkEnableNepomuk->setChecked( NepomukServerSettings::self()->startNepomuk() );
     }
 
-    if ( StrigiController::isRunning() ) {
+    if ( isStrigiRunning() ) {
         StrigiClient strigiClient;
         m_editStrigiFolders->setItems( strigiClient.getIndexedDirectories() );
         QList<QPair<bool, QString> > filters = strigiClient.getFilters();
@@ -175,7 +174,7 @@ void Nepomuk::ServerConfigModule::defaults()
 
 void Nepomuk::ServerConfigModule::updateStrigiStatus()
 {
-    if ( StrigiController::isRunning() ) {
+    if ( isStrigiRunning() ) {
         m_strigiStatus->on();
         m_strigiStatusLabel->setText( i18n( "Strigi is running" ) );
     }
@@ -188,7 +187,7 @@ void Nepomuk::ServerConfigModule::updateStrigiStatus()
 
 void Nepomuk::ServerConfigModule::updateStrigiSettingsInRunningInstance()
 {
-    if ( StrigiController::isRunning() ) {
+    if ( isStrigiRunning() ) {
         StrigiClient strigiClient;
         strigiClient.setIndexedDirectories( m_editStrigiFolders->items() );
 
@@ -202,6 +201,12 @@ void Nepomuk::ServerConfigModule::updateStrigiSettingsInRunningInstance()
         }
         strigiClient.setFilters( filters );
     }
+}
+
+
+bool Nepomuk::ServerConfigModule::isStrigiRunning()
+{
+    return QDBusConnection::sessionBus().interface()->isServiceRegistered( "vandenoever.strigi" ).value();
 }
 
 #include "nepomukserverkcm.moc"

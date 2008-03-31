@@ -22,6 +22,7 @@
 #include <KDebug>
 #include <KSharedConfig>
 #include <KConfigGroup>
+#include <KStandardDirs>
 
 #include <QtCore/QTimer>
 
@@ -43,7 +44,7 @@ void Nepomuk::Core::init()
 {
     // FIXME: export the main model on org.kde.NepomukRepository via Soprano::Server::DBusExportModel
 
-    KSharedConfig::Ptr config = Server::self()->config();
+    KSharedConfig::Ptr config = KSharedConfig::openConfig( "nepomukserverrc" );
 
     const Soprano::Backend* backend = Repository::activeSopranoBackend();
     if ( backend ) {

@@ -42,6 +42,8 @@ namespace Nepomuk {
         void updateStrigiSettingsInRunningInstance();
 
     private:
+        bool isStrigiRunning();
+
         org::kde::NepomukServer m_serverInterface;
     };
 }

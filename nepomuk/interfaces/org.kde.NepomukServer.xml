@@ -17,7 +17,7 @@
     <method name="defaultRepository">
       <arg name="repositoryName" type="s" direction="out" />
     </method>
-    <method name="reconfigure">
-    </method>
+    <method name="reconfigure" />
+    <method name="quit" />
   </interface>
 </node>
