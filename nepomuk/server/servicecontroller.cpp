@@ -48,6 +48,7 @@ public:
     KService::Ptr service;
     bool autostart;
     bool startOnDemand;
+    bool runOnce;
 
     ProcessControl* processControl;
     OrgKdeNepomukServiceControlInterface* serviceControlInterface;
@@ -70,6 +71,9 @@ void Nepomuk::ServiceController::Private::init( KService::Ptr s )
 
     QVariant p = service->property( "X-KDE-Nepomuk-start-on-demand", QVariant::Bool );
     startOnDemand = ( p.isValid() ? p.toBool() : false );
+
+    p = service->property( "X-KDE-Nepomuk-run-once", QVariant::Bool );
+    runOnce = ( p.isValid() ? p.toBool() : false );
 
     initialized = false;
 }
@@ -122,6 +126,12 @@ bool Nepomuk::ServiceController::autostart() const
 bool Nepomuk::ServiceController::startOnDemand() const
 {
     return d->startOnDemand;
+}
+
+
+bool Nepomuk::ServiceController::runOnce() const
+{
+    return d->runOnce;
 }
 
 
@@ -231,6 +241,12 @@ void Nepomuk::ServiceController::slotServiceInitialized( bool success )
         kDebug() << "Service" << name() << "initialized:" << success;
         d->initialized = true;
         emit serviceInitialized( this );
+
+        if ( runOnce() ) {
+            // we have been run once. Do not autostart next time
+            KConfigGroup cg( Server::self()->config(), QString("Service-%1").arg(name()) );
+            cg.writeEntry( "autostart", false );
+        }
     }
 
     foreach( QEventLoop* loop, d->loops ) {

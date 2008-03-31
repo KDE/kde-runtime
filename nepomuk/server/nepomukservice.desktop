@@ -6,5 +6,7 @@ Comment=Nepomuk Service
 Type=bool
 [PropertyDef::X-KDE-Nepomuk-start-on-demand]
 Type=bool
+[PropertyDef::X-KDE-Nepomuk-run-once]
+Type=bool
 [PropertyDef::X-KDE-Nepomuk-dependencies]
 Type=QStringList
