@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Service
+X-KDE-ServiceTypes=NepomukService
+X-KDE-Library=nepomukmigration1
+X-KDE-Nepomuk-autostart=true
+X-KDE-Nepomuk-start-on-demand=false
+X-KDE-Nepomuk-run-once=true
+Comment=Nepomuk Data Migration Level 1
