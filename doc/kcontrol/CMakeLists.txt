@@ -45,6 +45,7 @@ add_subdirectory(proxy)
 add_subdirectory(screensaver)
 #add_subdirectory(spellchecking)
 add_subdirectory(windowmanagement)
+add_subdirectory(autostart)
 endif ( Q_WS_X11 )
 
 ########### install files ###############
