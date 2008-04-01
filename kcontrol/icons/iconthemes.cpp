@@ -68,7 +68,7 @@ IconThemesConfig::IconThemesConfig(const KComponentData &inst, QWidget *parent)
   topLayout->setSpacing(KDialog::spacingHint());
 
   QFrame *m_preview=new QFrame(this);
-  m_preview->setMinimumHeight(50);
+  m_preview->setMinimumHeight(80);
 
   QHBoxLayout *lh2=new QHBoxLayout( m_preview );
   m_previewExec=new QLabel(m_preview);
@@ -379,11 +379,13 @@ void IconThemesConfig::themeSelected(QTreeWidgetItem *item)
   updateRemoveButton();
   const int size = icontheme.defaultSize(KIconLoader::Desktop);
 
-  K3Icon icon=icontheme.iconPath("exec.png", size, KIconLoader::MatchBest);
+  K3Icon icon=icontheme.iconPath("system-run.png", size, KIconLoader::MatchBest);
   if (!icon.isValid()) {
+      icon=icontheme.iconPath("exec.png", size, KIconLoader::MatchBest);
+      if (!icon.isValid()) {
 #ifdef HAVE_LIBAGG
-	  icon=icontheme.iconPath("exec.svg", size, KIconLoader::MatchBest);
-	  if(engine.load(size, size, icon.path))
+          icon=icontheme.iconPath("exec.svg", size, KIconLoader::MatchBest);
+          if(engine.load(size, size, icon.path))
               m_previewExec->setPixmap(QPixmap(*engine.image()));
           else {
               icon=icontheme.iconPath("exec.svgz", size, KIconLoader::MatchBest);
@@ -391,9 +393,13 @@ void IconThemesConfig::themeSelected(QTreeWidgetItem *item)
                   m_previewExec->setPixmap(QPixmap(*engine.image()));
           }
 #endif
+      }
+      else
+          m_previewExec->setPixmap(QPixmap(icon.path));
   }
   else
           m_previewExec->setPixmap(QPixmap(icon.path));
+
 
   icon=icontheme.iconPath("folder.png",size,KIconLoader::MatchBest);
   if (!icon.isValid()) {
@@ -411,11 +417,13 @@ void IconThemesConfig::themeSelected(QTreeWidgetItem *item)
   else
   	  m_previewFolder->setPixmap(QPixmap(icon.path));
 
-  icon=icontheme.iconPath("text-x-generic.png",size,KIconLoader::MatchBest);
+  icon=icontheme.iconPath("document.png",size,KIconLoader::MatchBest);
   if (!icon.isValid()) {
+      icon=icontheme.iconPath("text-x-generic.png",size,KIconLoader::MatchBest);
+      if (!icon.isValid()) {
 #ifdef HAVE_LIBAGG
-	  icon=icontheme.iconPath("text-x-generic.svg", size, KIconLoader::MatchBest);
-	  if(engine.load(size, size, icon.path))
+          icon=icontheme.iconPath("text-x-generic.svg", size, KIconLoader::MatchBest);
+          if(engine.load(size, size, icon.path))
               m_previewDocument->setPixmap(QPixmap(*engine.image()));
           else {
               icon=icontheme.iconPath("text-x-generic.svgz", size, KIconLoader::MatchBest);
@@ -423,9 +431,12 @@ void IconThemesConfig::themeSelected(QTreeWidgetItem *item)
                   m_previewDocument->setPixmap(QPixmap(*engine.image()));
           }
 #endif
+      }
+      else
+          m_previewDocument->setPixmap(QPixmap(icon.path));
   }
   else
-	  m_previewDocument->setPixmap(QPixmap(icon.path));
+          m_previewDocument->setPixmap(QPixmap(icon.path));
 
   emit changed(true);
   m_bChanged = true;
