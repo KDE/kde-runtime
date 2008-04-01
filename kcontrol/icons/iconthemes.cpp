@@ -36,6 +36,7 @@
 #include <kapplication.h>
 #include <kbuildsycocaprogressdialog.h>
 #include <klocale.h>
+#include <kiconcache.h>
 #include <kstandarddirs.h>
 #include <kservice.h>
 #include <kconfig.h>
@@ -457,10 +458,13 @@ void IconThemesConfig::save()
      return;
 
   KConfigGroup config(KSharedConfig::openConfig("kdeglobals", KConfig::SimpleConfig), "Icons");
-
   config.writeEntry("Theme", selected->data(0, ThemeNameRole).toString());
+  config.sync();
+
   KIconTheme::reconfigure();
   emit changed(false);
+
+  KIconCache::deleteCache();
 
   for (int i=0; i<KIconLoader::LastGroup; i++)
   {
