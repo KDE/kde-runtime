@@ -133,7 +133,6 @@ void KIconConfig::init()
     mpLoader = KIconLoader::global();
     mpConfig = KGlobal::config();
     mpEffect = new KIconEffect;
-    mpTheme = mpLoader->theme();
     mUsage = 0;
     for (int i=0; i<KIconLoader::LastGroup; i++)
 	mbChanged[i] = false;
@@ -185,8 +184,8 @@ void KIconConfig::initDefaults()
 	mbDP[i] = false;
 	mbChanged[i] = true;
 	mbAnimated[i] = false;
-	if (mpTheme)
-	    mSizes[i] = mpTheme->defaultSize(i);
+	if (mpLoader->theme())
+	    mSizes[i] = mpLoader->theme()->defaultSize(i);
 	else
 	    mSizes[i] = defDefSizes[i];
 
@@ -221,13 +220,13 @@ void KIconConfig::initDefaults()
 
 void KIconConfig::read()
 {
-    if (mpTheme)
+    if (mpLoader->theme())
     {
         for (KIconLoader::Group i=KIconLoader::FirstGroup; i<KIconLoader::LastGroup; i++)
-            mAvSizes[i] = mpTheme->querySizes(i);
+            mAvSizes[i] = mpLoader->theme()->querySizes(i);
 
-        mTheme = mpTheme->current();
-        mExample = mpTheme->example();
+        mTheme = mpLoader->theme()->current();
+        mExample = mpLoader->theme()->example();
     }
     else
     {

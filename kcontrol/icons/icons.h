@@ -94,7 +94,6 @@ private:
     QStringList mGroups, mStates;
 
     KIconEffect *mpEffect;
-    KIconTheme *mpTheme;
     KIconLoader *mpLoader;
     KSharedConfigPtr mpConfig;
 
