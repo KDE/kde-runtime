@@ -372,32 +372,24 @@ void loadPreview(QLabel *label, KIconTheme& icontheme, const QStringList& iconna
         K3Icon icon = icontheme.iconPath(QString("%1.png").arg(name), size, KIconLoader::MatchBest);
         if (icon.isValid()) {
             label->setPixmap(QPixmap(icon.path));
+            return;
         }
-        else {
-            icon = icontheme.iconPath(QString("%1.svg").arg(name), size, KIconLoader::MatchBest);
-            if (renderer.load(icon.path)) {
-                QPixmap pix(size, size);
-                pix.fill(label->palette().color(QPalette::Background));
-                QPainter p(&pix);
-                p.setViewport(0, 0, size, size);
-                renderer.render(&p);
-                label->setPixmap(pix);
-            }
-            else {
-                icon = icontheme.iconPath(QString("%1.svgz").arg(name), size, KIconLoader::MatchBest);
-                if (renderer.load(icon.path)) {
-                    QPixmap pix(size, size);
-                    pix.fill(label->palette().color(QPalette::Background));
-                    QPainter p(&pix);
-                    p.setViewport(0, 0, size, size);
-                    renderer.render(&p);
-                    label->setPixmap(pix);
-                }
-                else
-                    continue;
+        icon = icontheme.iconPath(QString("%1.svg").arg(name), size, KIconLoader::MatchBest);
+        if( ! icon.isValid() ) {
+            icon = icontheme.iconPath(QString("%1.svgz").arg(name), size, KIconLoader::MatchBest);
+            if( ! icon.isValid() ) {
+                continue;
             }
         }
-        return;
+        if (renderer.load(icon.path)) {
+            QPixmap pix(size, size);
+            pix.fill(label->palette().color(QPalette::Background));
+            QPainter p(&pix);
+            p.setViewport(0, 0, size, size);
+            renderer.render(&p);
+            label->setPixmap(pix);
+            return;
+        }
     }
     label->setPixmap(QPixmap());
 }
