@@ -47,7 +47,7 @@
         <string>Create a new emoticon</string>
        </property>
        <property name="whatsThis" >
-        <string>Create a new emoticon by assigning it an icon and a text</string>
+        <string>Create a new emoticon by assigning it an icon and some text</string>
        </property>
        <property name="text" >
         <string>Add...</string>
@@ -113,10 +113,10 @@
      <item>
       <widget class="QPushButton" name="btGetNew" >
        <property name="toolTip" >
-        <string>Get new themes from the internet</string>
+        <string>Get new themes from the Internet</string>
        </property>
        <property name="whatsThis" >
-        <string>You need to be connected to the internet to use this action. A dialog will display a list of emoticons themes from the http://www.kde.org website. Clicking the Install button associated with a theme will install this theme locally.</string>
+        <string>You need to be connected to the Internet to use this action. A dialog will display a list of emoticon themes from the http://www.kde.org website. Clicking the Install button associated with a theme will install this theme locally.</string>
        </property>
        <property name="text" >
         <string>Get New Themes...</string>

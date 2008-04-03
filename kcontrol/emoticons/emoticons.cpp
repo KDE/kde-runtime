@@ -344,7 +344,7 @@ QStringList Emoticons::installEmoticonTheme(QWidget *parent, const QString &arch
 
     if(localThemesDir.isEmpty())
     {
-        KMessageBox::error(parent, i18n("Could not find suitable place to install emoticon theme into."));
+        KMessageBox::error(parent, i18n("Could not find a suitable place in which to install the emoticon theme."));
         return QStringList();
     }
 

@@ -254,7 +254,7 @@ void EmoticonList::installEmoticonTheme()
 
     if ( !themeURL.isLocalFile() )
     {
-        KMessageBox::queuedMessageBox( this, KMessageBox::Error, i18n("Sorry, emoticon themes must be installed from local files."),
+        KMessageBox::queuedMessageBox( this, KMessageBox::Error, i18n("Emoticon themes must be installed from local files."),
         i18n("Could Not Install Emoticon Theme") );
         return;
     }
