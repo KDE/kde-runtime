@@ -178,33 +178,33 @@ bool XineStream::xineOpen(Phonon::State newstate)
             videoPort = XineEngine::nullVideoPort();
         }
         m_deinterlacer = xine_post_init(XineEngine::xine(), "tvtime", 1, 0, &videoPort);
-        Q_ASSERT(m_deinterlacer);
-
-        // set method
-        xine_post_in_t *paraInput = xine_post_input(m_deinterlacer, "parameters");
-        Q_ASSERT(paraInput);
-        Q_ASSERT(paraInput->data);
-        xine_post_api_t *api = reinterpret_cast<xine_post_api_t *>(paraInput->data);
-        xine_post_api_descr_t *desc = api->get_param_descr();
-        char *pluginParams = static_cast<char *>(malloc(desc->struct_size));
-        api->get_parameters(m_deinterlacer, pluginParams);
-        for (int i = 0; desc->parameter[i].type != POST_PARAM_TYPE_LAST; ++i) {
-            xine_post_api_parameter_t &p = desc->parameter[i];
-            if (p.type == POST_PARAM_TYPE_INT && 0 == strcmp(p.name, "method")) {
-                int *value = reinterpret_cast<int *>(pluginParams + p.offset);
-                *value = XineEngine::deinterlaceMethod();
-                break;
+        if (m_deinterlacer) {
+            // set method
+            xine_post_in_t *paraInput = xine_post_input(m_deinterlacer, "parameters");
+            Q_ASSERT(paraInput);
+            Q_ASSERT(paraInput->data);
+            xine_post_api_t *api = reinterpret_cast<xine_post_api_t *>(paraInput->data);
+            xine_post_api_descr_t *desc = api->get_param_descr();
+            char *pluginParams = static_cast<char *>(malloc(desc->struct_size));
+            api->get_parameters(m_deinterlacer, pluginParams);
+            for (int i = 0; desc->parameter[i].type != POST_PARAM_TYPE_LAST; ++i) {
+                xine_post_api_parameter_t &p = desc->parameter[i];
+                if (p.type == POST_PARAM_TYPE_INT && 0 == strcmp(p.name, "method")) {
+                    int *value = reinterpret_cast<int *>(pluginParams + p.offset);
+                    *value = XineEngine::deinterlaceMethod();
+                    break;
+                }
             }
-        }
-        api->set_parameters(m_deinterlacer, pluginParams);
-        free(pluginParams);
+            api->set_parameters(m_deinterlacer, pluginParams);
+            free(pluginParams);
 
-        // connect to xine_stream_t
-        xine_post_in_t *x = xine_post_input(m_deinterlacer, "video");
-        Q_ASSERT(x);
-        xine_post_out_t *videoOutputPort = xine_get_video_source(m_stream);
-        Q_ASSERT(videoOutputPort);
-        xine_post_wire(videoOutputPort, x);
+            // connect to xine_stream_t
+            xine_post_in_t *x = xine_post_input(m_deinterlacer, "video");
+            Q_ASSERT(x);
+            xine_post_out_t *videoOutputPort = xine_get_video_source(m_stream);
+            Q_ASSERT(videoOutputPort);
+            xine_post_wire(videoOutputPort, x);
+        }
     } else if (m_deinterlacer) {
         xine_post_dispose(XineEngine::xine(), m_deinterlacer);
         m_deinterlacer = 0;

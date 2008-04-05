@@ -42,6 +42,7 @@ class XineOptions : public KCModule, private Ui::XineOptions
 
     private:
         KSharedConfigPtr m_config;
+        bool m_noDeinterlace;
 };
 
 #endif // PHONON_XINEOPTIONS_H
