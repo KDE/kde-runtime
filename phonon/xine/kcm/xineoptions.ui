@@ -85,7 +85,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="groupBox" >
+    <widget class="QGroupBox" name="deinterlaceGroupBox" >
      <property name="title" >
       <string>Deinterlacing</string>
      </property>
