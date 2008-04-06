@@ -165,8 +165,10 @@ void Nepomuk::ServiceController::stop()
 {
     if( isRunning() ) {
         kDebug(300002) << "Stopping" << name();
+        d->processControl->setCrashPolicy( ProcessControl::StopOnCrash );
         d->serviceControlInterface->shutdown();
         d->processControl->stop();
+        d->processControl->setCrashPolicy( ProcessControl::RestartOnCrash );
     }
 }
 
