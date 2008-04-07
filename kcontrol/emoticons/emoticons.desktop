@@ -11,6 +11,7 @@ X-KDE-System-Settings-Parent-Category=appearance
 
 Name=Emoticons
 Name[es]=Emoticonos
+Name[fi]=Hymiöt
 Name[ga]=Straoiseoga
 Name[km]=សញ្ញា​អារម្មណ៍
 Name[pt]=Ícones Emotivos
@@ -24,6 +25,7 @@ Name[zh_TW]=表情圖示
 Comment=Emoticons Themes Manager
 Comment[de]=Designverwaltung für Emoticons
 Comment[es]=Gestor de temas de emoticonos
+Comment[fi]=Hymiöteemojen hallinta
 Comment[ga]=Bainisteoir Téamaí Straoiseoige
 Comment[km]=កម្មវិធី​គ្រប់គ្រង​សញ្ញាអារម្មណ៍
 Comment[pt]=Gestor de Temas de Ícones Emotivos

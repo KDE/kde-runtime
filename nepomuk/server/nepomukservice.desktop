@@ -2,6 +2,7 @@
 Type=ServiceType
 X-KDE-ServiceType=NepomukService
 Comment=Nepomuk Service
+Comment[fi]=Nepomuk-palvelu
 Comment[ga]=Seirbhís Nepomuk
 Comment[km]=សេវា Nepomuk
 Comment[pt]=Serviço do Nepomuk
