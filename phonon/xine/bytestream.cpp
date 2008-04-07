@@ -88,7 +88,7 @@ ByteStream *ByteStream::fromMrl(const QByteArray &mrl)
 }
 
 ByteStream::ByteStream(const MediaSource &mediaSource, MediaObject *parent)
-    : QObject(0), // don't let MediaObject's ~QObject delete us - the input plugin will delete us
+    : StreamInterface2(0), // don't let MediaObject's ~QObject delete us - the input plugin will delete us
     m_mediaObject(parent),
     m_streamSize(0),
     m_currentPosition(0),
