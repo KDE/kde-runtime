@@ -55,6 +55,7 @@ public:
 protected Q_SLOTS:
   void themeSelected(QTreeWidgetItem *item);
   void installNewTheme();
+  void getNewTheme();
   void removeSelectedTheme();
 
 private:

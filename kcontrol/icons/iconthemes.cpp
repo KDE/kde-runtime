@@ -42,6 +42,8 @@
 #include <kstandarddirs.h>
 #include <kservice.h>
 #include <kconfig.h>
+#include <knewstuff2/engine.h>
+
 #undef Unsorted
 
 #include <kurlrequesterdialog.h>
@@ -70,6 +72,7 @@ IconThemesConfig::IconThemesConfig(const KComponentData &inst, QWidget *parent)
   m_preview->setMinimumHeight(80);
 
   QHBoxLayout *lh2=new QHBoxLayout( m_preview );
+  lh2->setSpacing(0);
   m_previewExec=new QLabel(m_preview);
   m_previewExec->setPixmap(DesktopIcon("system-run"));
   m_previewFolder=new QLabel(m_preview);
@@ -97,10 +100,15 @@ IconThemesConfig::IconThemesConfig(const KComponentData &inst, QWidget *parent)
   connect(m_iconThemes,SIGNAL(currentItemChanged(QTreeWidgetItem *, QTreeWidgetItem *)),
 		SLOT(themeSelected(QTreeWidgetItem *)));
 
-  QPushButton *installButton=new QPushButton( i18n("Install New Theme..."), this);
+  QPushButton *installButton=new QPushButton( KIcon("document-import"), i18n("Install Theme File..."), this);
   installButton->setObjectName("InstallNewTheme");
   connect(installButton,SIGNAL(clicked()),SLOT(installNewTheme()));
-  m_removeButton=new QPushButton( i18n("Remove Theme"), this);
+
+  QPushButton *newButton=new QPushButton( KIcon("get-hot-new-stuff"), i18n("Get New Theme..."), this);
+  newButton->setObjectName("GetNewTheme");
+  connect(newButton,SIGNAL(clicked()),SLOT(getNewTheme()));
+
+  m_removeButton=new QPushButton( KIcon("edit-delete"), i18n("Remove Theme"), this);
   m_removeButton->setObjectName("RemoveTheme");
   connect(m_removeButton,SIGNAL(clicked()),SLOT(removeSelectedTheme()));
 
@@ -112,6 +120,7 @@ IconThemesConfig::IconThemesConfig(const KComponentData &inst, QWidget *parent)
   topLayout->addItem(lg);
   lg->setSpacing(KDialog::spacingHint());
   lg->addWidget(installButton);
+  lg->addWidget(newButton);
   lg->addWidget(m_removeButton);
 
   loadThemes();
@@ -302,6 +311,38 @@ QStringList IconThemesConfig::findThemeDirs(const QString &archiveName)
   return foundThemes;
 }
 
+void IconThemesConfig::getNewTheme()
+{
+  KNS::Engine engine(this);
+  if (engine.init("icons.knsrc")) {
+    KNS::Entry::List entries = engine.downloadDialogModal(this);
+
+    for(int i = 0; i < entries.size(); i ++) {
+        if(entries.at(i)->status() == KNS::Entry::Installed) {
+            const QString themeTmpFile = entries.at(i)->installedFiles().at(0);
+            const QString name = entries.at(i)->installedFiles().at(0).section('/', -2, -2);
+            kDebug()<<"IconThemesConfig::getNewTheme() themeTmpFile="<<themeTmpFile<<"name="<<name;
+            QStringList themeNames = findThemeDirs(themeTmpFile);
+            if (themeNames.isEmpty()) {
+                //entries.at(i)->setStatus(KNS::Entry::Invalid);
+            }
+            else if (! installThemes(themeNames, themeTmpFile)) {
+                //entries.at(i)->setStatus(KNS::Entry::Invalid);
+            }
+        }
+    }
+
+    // reload the display icontheme items
+    KIconLoader::global()->newIconLoader();
+    loadThemes();
+    QTreeWidgetItem *item=iconThemeItem(KIconTheme::current());
+    if (item)
+        m_iconThemes->setCurrentItem(item);
+    updateRemoveButton();
+    load();
+  }
+}
+
 void IconThemesConfig::removeSelectedTheme()
 {
   QTreeWidgetItem *selected = m_iconThemes->currentItem();
@@ -366,12 +407,12 @@ void IconThemesConfig::updateRemoveButton()
 
 void loadPreview(QLabel *label, KIconTheme& icontheme, const QStringList& iconnames)
 {
-    const int size = icontheme.defaultSize(KIconLoader::Desktop);
+    const int size = qMin(48, icontheme.defaultSize(KIconLoader::Desktop));
     KSvgRenderer renderer;
     foreach(QString name, iconnames) {
         K3Icon icon = icontheme.iconPath(QString("%1.png").arg(name), size, KIconLoader::MatchBest);
         if (icon.isValid()) {
-            label->setPixmap(QPixmap(icon.path));
+            label->setPixmap(QPixmap(icon.path).scaled(size, size));
             return;
         }
         icon = icontheme.iconPath(QString("%1.svg").arg(name), size, KIconLoader::MatchBest);
@@ -387,7 +428,7 @@ void loadPreview(QLabel *label, KIconTheme& icontheme, const QStringList& iconna
             QPainter p(&pix);
             p.setViewport(0, 0, size, size);
             renderer.render(&p);
-            label->setPixmap(pix);
+            label->setPixmap(pix.scaled(size, size));
             return;
         }
     }
