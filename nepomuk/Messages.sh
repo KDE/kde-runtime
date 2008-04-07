@@ -1,2 +1,3 @@
 #! /usr/bin/env bash
-$XGETTEXT *.cpp -o $podir/nepomukserver.pot
+$EXTRACTRC `find . -name "*.ui"` >> rc.cpp || exit 11
+$XGETTEXT `find . -name "*.cpp"` -o $podir/nepomuk.pot
