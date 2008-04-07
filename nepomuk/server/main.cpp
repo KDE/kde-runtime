@@ -31,11 +31,30 @@
 
 #include <signal.h>
 
+namespace {
+#ifndef Q_OS_WIN
+    void signalHandler( int signal )
+    {
+        switch( signal ) {
+        case SIGHUP:
+        case SIGQUIT:
+        case SIGINT:
+            if ( qApp ) {
+                qApp->quit();
+            }
+        }
+    }
+#endif
 
-static void sighandler( int /*sig*/ )
-{
-    if ( qApp ) {
-        qApp->quit();
+    void installSignalHandler() {
+#ifndef Q_OS_WIN
+        struct sigaction sa;
+        ::memset( &sa, 0, sizeof( sa ) );
+        sa.sa_handler = signalHandler;
+        sigaction( SIGHUP, &sa, 0 );
+        sigaction( SIGINT, &sa, 0 );
+        sigaction( SIGQUIT, &sa, 0 );
+#endif
     }
 }
 
@@ -85,8 +104,7 @@ extern "C" NEPOMUK_SERVER_EXPORT int kdemain( int argc, char** argv )
         return 0;
     }
 
-    signal( SIGTERM, sighandler );
-    signal( SIGHUP, sighandler );
+    installSignalHandler();
 
     Nepomuk::ServerApplication app;
     app.setQuitOnLastWindowClosed( false );
