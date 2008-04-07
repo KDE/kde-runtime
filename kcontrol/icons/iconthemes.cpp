@@ -104,7 +104,7 @@ IconThemesConfig::IconThemesConfig(const KComponentData &inst, QWidget *parent)
   installButton->setObjectName("InstallNewTheme");
   connect(installButton,SIGNAL(clicked()),SLOT(installNewTheme()));
 
-  QPushButton *newButton=new QPushButton( KIcon("get-hot-new-stuff"), i18n("Get New Theme..."), this);
+  QPushButton *newButton=new QPushButton( KIcon("get-hot-new-stuff"), i18n("Get New Themes..."), this);
   newButton->setObjectName("GetNewTheme");
   connect(newButton,SIGNAL(clicked()),SLOT(getNewTheme()));
 
