@@ -38,9 +38,6 @@ namespace Nepomuk {
          * reimplemented from ServerCore
          */
         Soprano::Model* model( const QString& name );
-        Repository* repository( const QString& name );
-
-        QStringList allModels() const;
 
         /**
          * Open all repositories.
@@ -61,12 +58,17 @@ namespace Nepomuk {
         void slotRepositoryOpened( Repository* repo, bool success );
 
     private:
+        /**
+         * reimplemented from ServerCode
+         */
+        Soprano::Model* createModel( const QList<Soprano::BackendSetting>& settings );
         void createRepository( const QString& name );
 
         RepositoryMap m_repositories;
 
         // initialization
         QStringList m_openingRepositories;
+        QString m_currentRepoName;
     };
 }
 

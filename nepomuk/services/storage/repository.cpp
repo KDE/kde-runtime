@@ -20,7 +20,6 @@
 #include <Soprano/Global>
 #include <Soprano/StorageModel>
 #include <Soprano/Error/Error>
-#include <Soprano/Util/MutexModel>
 
 #ifdef HAVE_SOPRANO_INDEX
 #include <Soprano/Index/IndexFilterModel>
@@ -90,13 +89,6 @@ void Nepomuk::Repository::open()
         return;
     }
 
-    // protect the model against deadlocks when used by multiple clients. ServerCore is single-threaded, thus,
-    // we use MutexModel in its ReadWriteSingleThreading mode which creates local event loops instead of hard locking
-    Soprano::Util::MutexModel* mutexModel = new Soprano::Util::MutexModel( Soprano::Util::MutexModel::ReadWriteSingleThreading );
-    mutexModel->setParent( this ); // memory management
-    setParentModel( mutexModel );
-
-
     // read config
     // =================================
     KConfigGroup repoConfig = KSharedConfig::openConfig( "nepomukserverrc" )->group( name() + " Settings" );
@@ -145,7 +137,7 @@ void Nepomuk::Repository::open()
         // FIXME: find a good value here
         m_indexModel->setTransactionCacheSize( 100 );
 
-        mutexModel->setParentModel( m_indexModel );
+        setParentModel( m_indexModel );
     }
     else {
         kDebug(300002) << "Unable to open CLucene index for repo '" << name() << "': " << m_index->lastError();
@@ -159,7 +151,7 @@ void Nepomuk::Repository::open()
         return;
     }
 #else
-    mutexModel->setParentModel( m_model );
+    setParentModel( m_model );
 #endif
 
     // check if we have to convert

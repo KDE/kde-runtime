@@ -26,6 +26,8 @@
 
 #include <QtCore/QTimer>
 
+#include <Soprano/BackendSetting>
+
 
 Nepomuk::Core::Core( QObject* parent )
     : Soprano::Server::ServerCore( parent )
@@ -35,8 +37,7 @@ Nepomuk::Core::Core( QObject* parent )
 
 Nepomuk::Core::~Core()
 {
-    kDebug(300002) << "Shutting down Nepomuk core services.";
-    qDeleteAll( m_repositories );
+    kDebug(300002) << "Shutting down Nepomuk storage core.";
 }
 
 
@@ -80,10 +81,13 @@ void Nepomuk::Core::createRepository( const QString& name )
     connect( repo, SIGNAL( opened( Repository*, bool ) ),
              this, SLOT( slotRepositoryOpened( Repository*, bool ) ) );
     QTimer::singleShot( 0, repo, SLOT( open() ) );
+
+    // make sure ServerCore knows about the repo (important for memory management)
+    model( name );
 }
 
 
-void Nepomuk::Core::slotRepositoryOpened( Repository* repo, bool success )
+void Nepomuk::Core::slotRepositoryOpened( Repository* repo, bool /*success*/ )
 {
     // FIXME: do something with success
     m_openingRepositories.removeAll( repo->name() );
@@ -95,36 +99,29 @@ void Nepomuk::Core::slotRepositoryOpened( Repository* repo, bool success )
 
 Soprano::Model* Nepomuk::Core::model( const QString& name )
 {
-    return repository( name );
+    // we need the name of the model for the repository creation
+    // but on the other hand want to use the AsyncModel stuff from
+    // ServerCore. Thus, we have to hack a bit
+    m_currentRepoName = name;
+    return ServerCore::model( name );
 }
 
 
-QStringList Nepomuk::Core::allModels() const
+Soprano::Model* Nepomuk::Core::createModel( const QList<Soprano::BackendSetting>& )
 {
-    QStringList models;
-    foreach( Repository* repo, m_repositories ) {
-        models.append( repo->name() );
-    }
-    return models;
-}
-
-
-Nepomuk::Repository* Nepomuk::Core::repository( const QString& name )
-{
-    if ( !m_repositories.contains( name ) ) {
-        kDebug(300002) << "Creating new repository with name " << name;
+    // use the name we cached in model()
+    if ( !m_repositories.contains( m_currentRepoName ) ) {
+        kDebug(300002) << "Creating new repository with name " << m_currentRepoName;
 
         // FIXME: There should be no need for conversion but who knows...
-        Repository* newRepo = new Repository( name );
-        m_repositories.insert( name, newRepo );
+        Repository* newRepo = new Repository( m_currentRepoName );
+        m_repositories.insert( m_currentRepoName, newRepo );
         newRepo->open();
         return newRepo;
     }
     else {
-        return m_repositories[name];
+        return m_repositories[m_currentRepoName];
     }
 }
-
-
 
 #include "nepomukcore.moc"
