@@ -117,6 +117,13 @@ QStringList Nepomuk::ServiceController::dependencies() const
 }
 
 
+void Nepomuk::ServiceController::setAutostart( bool enable )
+{
+    KConfigGroup cg( Server::self()->config(), QString("Service-%1").arg(name()) );
+    cg.writeEntry( "autostart", enable );
+}
+
+
 bool Nepomuk::ServiceController::autostart() const
 {
     return d->autostart;

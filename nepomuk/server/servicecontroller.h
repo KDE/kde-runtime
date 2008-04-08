@@ -48,6 +48,8 @@ namespace Nepomuk {
         bool startOnDemand() const;
         bool runOnce() const;
 
+        void setAutostart( bool enable );
+
         bool start();
         void stop();
 

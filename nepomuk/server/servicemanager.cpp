@@ -412,6 +412,25 @@ bool Nepomuk::ServiceManager::isServiceInitialized( const QString& service ) con
 }
 
 
+bool Nepomuk::ServiceManager::isServiceAutostarted( const QString& name )
+{
+    if ( ServiceController* sc = d->findService( name ) ) {
+        return sc->autostart();
+    }
+    else {
+        return false;
+    }
+}
+
+
+void Nepomuk::ServiceManager::setServiceAutostarted( const QString& name, bool autostart )
+{
+    if ( ServiceController* sc = d->findService( name ) ) {
+        sc->setAutostart( autostart );
+    }
+}
+
+
 //#define MODULES_PATH "/modules/"
 
 // FIXME: Use our own system and dbus path

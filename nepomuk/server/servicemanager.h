@@ -94,6 +94,17 @@ namespace Nepomuk {
          */
         bool stopService( const QString& name );
 
+        /**
+         * \return \p true if the service indicated by \a name
+         * is started automatically.
+         */
+        bool isServiceAutostarted( const QString& name );
+
+        /**
+         * Set the service indicated by \a name to be autostarted.
+         */
+        void setServiceAutostarted( const QString& name, bool autostart );
+
     private:
         static ServiceManager* s_self;
 
