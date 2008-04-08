@@ -55,7 +55,7 @@ KCMIOSlaveInfo::KCMIOSlaveInfo(QWidget *parent, const QVariantList &)
    QVBoxLayout *layout=new QVBoxLayout(this);
    layout->setMargin(0);
 
-   setQuickHelp( i18n("<h1>IO slaves</h1> Gives you an overview of the installed ioslaves."));
+   setQuickHelp( i18n("Overview of the installed ioslaves and supported protocols."));
    setButtons( KCModule::Help );
 
    QLabel* label=new QLabel(i18n("Available IO slaves:"),this);
