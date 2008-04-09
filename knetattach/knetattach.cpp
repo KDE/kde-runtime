@@ -186,9 +186,12 @@ void KNetAttach::finished()
     url.setHost(_host->text().trimmed());
     url.setUser(_user->text().trimmed());
     QString path = _path->text().trimmed();
+#ifndef Q_WS_WIN
+    // could a relative path really be made absolute by simply prepending a '/' ?
     if (!path.startsWith('/')) {
 	path = QString("/") + path;
     }
+#endif
     url.setPath(path);
    _folderParameters->setEnabled(false);
     bool success = doConnectionTest(url);
