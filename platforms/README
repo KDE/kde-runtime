@@ -1,0 +1,2 @@
+Below this directory tools for better integration with specific platforms could be located. 
+For each platfom a separate directory like win/, mac/, opensolaris/ and so on should be used.
