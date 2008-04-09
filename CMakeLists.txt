@@ -74,6 +74,7 @@ add_subdirectory(knotify)
 add_subdirectory(kde-menu)
 add_subdirectory(doc)
 add_subdirectory( menu )
+add_subdirectory( platforms )
 
 if(Soprano_FOUND AND Nepomuk_FOUND AND STRIGI_STRIGIQTDBUSCLIENT_LIBRARY)
   macro_optional_add_subdirectory(nepomuk)
