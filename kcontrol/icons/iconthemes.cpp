@@ -102,14 +102,20 @@ IconThemesConfig::IconThemesConfig(const KComponentData &inst, QWidget *parent)
 
   QPushButton *installButton=new QPushButton( KIcon("document-import"), i18n("Install Theme File..."), this);
   installButton->setObjectName("InstallNewTheme");
+  installButton->setToolTip(i18n("Install a theme archive file you already have locally"));
+  installButton->setWhatsThis(i18n("If you already have an emoticon theme archive locally, this button will unpack it and make it available for KDE applications"));
   connect(installButton,SIGNAL(clicked()),SLOT(installNewTheme()));
 
   QPushButton *newButton=new QPushButton( KIcon("get-hot-new-stuff"), i18n("Get New Themes..."), this);
   newButton->setObjectName("GetNewTheme");
+  newButton->setToolTip(i18n("Get new themes from the Internet"));
+  newButton->setWhatsThis(i18n("You need to be connected to the Internet to use this action. A dialog will display a list of emoticon themes from the http://www.kde.org website. Clicking the Install button associated with a theme will install this theme locally."));
   connect(newButton,SIGNAL(clicked()),SLOT(getNewTheme()));
 
   m_removeButton=new QPushButton( KIcon("edit-delete"), i18n("Remove Theme"), this);
   m_removeButton->setObjectName("RemoveTheme");
+  m_removeButton->setToolTip(i18n("Remove the selected theme from your disk"));
+  m_removeButton->setWhatsThis(i18n("This will remove the selected theme from your disk."));
   connect(m_removeButton,SIGNAL(clicked()),SLOT(removeSelectedTheme()));
 
   topLayout->addWidget(
@@ -119,8 +125,8 @@ IconThemesConfig::IconThemesConfig(const KComponentData &inst, QWidget *parent)
   QHBoxLayout *lg = new QHBoxLayout();
   topLayout->addItem(lg);
   lg->setSpacing(KDialog::spacingHint());
-  lg->addWidget(installButton);
   lg->addWidget(newButton);
+  lg->addWidget(installButton);
   lg->addWidget(m_removeButton);
 
   loadThemes();
