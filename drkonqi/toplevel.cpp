@@ -83,12 +83,12 @@ Toplevel :: Toplevel(KrashConfig *krashconf, QWidget *parent)
   info->setStyleSheet(styleSheet);
   mainLayout->addWidget(info);
 
-  QCheckBox *detailsCheckBox = new QCheckBox(i18n("Show details"), this);
-  connect(detailsCheckBox, SIGNAL(toggled(bool)), SLOT(expandDetails(bool)));
-  mainLayout->addWidget(detailsCheckBox);
-
   if (m_krashconf->showBacktrace())
   {
+    QCheckBox *detailsCheckBox = new QCheckBox(i18n("Show details"), this);
+    connect(detailsCheckBox, SIGNAL(toggled(bool)), SLOT(expandDetails(bool)));
+    mainLayout->addWidget(detailsCheckBox);
+
     m_detailDescriptionLabel = new QLabel(this);
     m_detailDescriptionLabel->setText(i18n("Please attach the following information to your bug report:"));
     m_detailDescriptionLabel->setWordWrap(true);
