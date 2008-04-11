@@ -21,9 +21,9 @@ kde4_add_kcfg_files(kuiserver_KDEINIT_SRCS kuiserversettings.kcfgc)
 kde4_add_kdeinit_executable( kuiserver ${kuiserver_KDEINIT_SRCS})
 
 target_link_libraries(kdeinit_kuiserver  ${KDE4_KIO_LIBS} )
-install(TARGETS kdeinit_kuiserver DESTINATION ${INSTALL_TARGETS_DEFAULT_ARGS})
+install(TARGETS kdeinit_kuiserver ${INSTALL_TARGETS_DEFAULT_ARGS})
 
 target_link_libraries( kuiserver kdeinit_kuiserver )
-install(TARGETS kuiserver DESTINATION ${BIN_INSTALL_DIR} )
+install(TARGETS kuiserver ${INSTALL_TARGETS_DEFAULT_ARGS} )
 
 install( FILES kuiserver.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
