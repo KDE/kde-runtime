@@ -33,7 +33,7 @@
 #include <klocale.h>
 #include <kstandarddirs.h>
 
-void listAllGroups(QString &groupName=QString());
+//void listAllGroups(const QString &groupName=QString());
 
 int main(int argc, char **argv)
 {
