@@ -52,7 +52,7 @@ bool removeDirectory(const QString& aDir)
             QString path = entryInfo.absoluteFilePath();
             if (entryInfo.isDir())
             {
-                has_err = removeDirectory(QDir(path));
+                has_err = removeDirectory(path);
             }
             else
             {
