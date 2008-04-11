@@ -38,12 +38,13 @@
 #include <kconfiggroup.h>
 #include <kdesktopfile.h>
 
-bool removeDirectory(QDir &aDir)
+bool removeDirectory(const QString& aDir)
 {
+    QDir dir( aDir );
     bool has_err = false;
-    if (aDir.exists())//QDir::NoDotAndDotDot
+    if (dir.exists())//QDir::NoDotAndDotDot
     {
-        QFileInfoList entries = aDir.entryInfoList(QDir::NoDotAndDotDot | 
+        QFileInfoList entries = dir.entryInfoList(QDir::NoDotAndDotDot | 
         QDir::Dirs | QDir::Files);
         int count = entries.size();
         foreach(QFileInfo entryInfo, entries)
@@ -60,7 +61,7 @@ bool removeDirectory(QDir &aDir)
                     has_err = true;
             }
         }
-        if (!aDir.rmdir(aDir.absolutePath()))
+        if (!dir.rmdir(dir.absolutePath()))
             has_err = true;
     }
     return(has_err);
@@ -219,7 +220,7 @@ void updateStartMenuLinks()
 
 void removeStartMenuLinks()
 {
-    removeDirectory(QDir(getStartMenuPath() + "/KDE"));
+    removeDirectory(getStartMenuPath() + "/KDE");
 }
 
  // vim: ts=4 sw=4 et

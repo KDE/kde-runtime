@@ -27,7 +27,7 @@ class QDir;
 
 #include <KUrl>
 
-bool removeDirectory(QDir &aDir);
+bool removeDirectory(const QString& aDir);
 QString getStartMenuPath(bool bAllUsers=true);
 bool generateMenuEntries(QList<LinkFile> &files, KUrl &url, const QString &relPathTranslated=QString());
 void updateStartMenuLinks();

@@ -76,7 +76,7 @@ void WinStartMenuModule::databaseChanged()
 
 void WinStartMenuModule::removeStartMenuEntries()
 {
-    removeDirectory(QDir(getStartMenuPath() + "/KDE"));
+    removeDirectory(getStartMenuPath() + "/KDE");
 }
 
 void WinStartMenuModule::createStartMenuEntries()
