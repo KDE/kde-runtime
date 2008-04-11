@@ -21,7 +21,7 @@ set(kded_winstartmenu_SRCS
 
 qt4_add_dbus_adaptor(kded_winstartmenu_SRCS org.kde.WinStartMenu.xml winstartmenu.h WinStartMenuModule winstartmenu_adaptor WinStartMenuAdaptor)
 kde4_add_plugin(kded_winstartmenu ${kded_winstartmenu_SRCS})
-target_link_libraries( kded_winstartmenu ${KDE4_KIO_LIBS} )
+target_link_libraries( kded_winstartmenu ${KDE4_KIO_LIBS} ole32 uuid )
 
 ########### install ###############
 
