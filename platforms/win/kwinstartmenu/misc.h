@@ -29,7 +29,7 @@ class QDir;
 
 bool removeDirectory(const QString& aDir);
 QString getStartMenuPath(bool bAllUsers=true);
-bool generateMenuEntries(QList<LinkFile> &files, KUrl &url, const QString &relPathTranslated=QString());
+bool generateMenuEntries(QList<LinkFile> &files, const KUrl &url, const QString &relPathTranslated=QString());
 void updateStartMenuLinks();
 void removeStartMenuLinks();
 

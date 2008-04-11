@@ -123,7 +123,7 @@ KServiceGroup::Ptr findGroup(const QString &relPath)
 	return KServiceGroup::group(alreadyFound);
 }
 
-bool generateMenuEntries(QList<LinkFile> &files, KUrl &url, const QString &relPathTranslated)
+bool generateMenuEntries(QList<LinkFile> &files, const KUrl &url, const QString &relPathTranslated)
 {
     QString groupPath = url.path( KUrl::AddTrailingSlash );
   	groupPath.remove(0, 1); // remove starting '/'

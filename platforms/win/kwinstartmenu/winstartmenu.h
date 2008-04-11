@@ -60,7 +60,7 @@ private Q_SLOTS:
 
 private:
     KServiceGroup::Ptr findGroup(const QString &relPath);
-    bool createEntries(KUrl &url, const QString &relPathTranslated=QString());
+//    bool createEntries(const KUrl &url, const QString &relPathTranslated=QString());
     struct WinStartMenuModulePrivate *d;
 };
 
