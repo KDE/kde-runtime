@@ -37,7 +37,7 @@ set(winstartmenu_SRCS
 )
 
 kde4_add_executable(kwinstartmenu NOGUI ${winstartmenu_SRCS})
-target_link_libraries(kwinstartmenu ${KDE4_KIO_LIBS} )
+target_link_libraries(kwinstartmenu ${KDE4_KIO_LIBS} ole32 uuid )
 
 ########### install ###############
 

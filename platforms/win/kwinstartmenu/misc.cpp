@@ -31,7 +31,7 @@
 #include <QDir>
 #include <QFile>
 
-#include <kDebug>
+#include <KDebug>
 #include <kstandarddirs.h>
 #include <kservicegroup.h>
 // required by kdesktopfile.h -> should be in kdesktopfile.h 
