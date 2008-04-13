@@ -18,6 +18,7 @@
 
  */
 
+#include "knotify.h"
 
 // KDE headers
 #include <kapplication.h>
@@ -28,7 +29,6 @@
 
 #include <config-runtime.h>
 
-#include "knotify.h"
 #include "knotifyconfig.h"
 #include "notifybysound.h"
 #include "notifybypopup.h"

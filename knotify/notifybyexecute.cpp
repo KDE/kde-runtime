@@ -18,11 +18,11 @@
 
  */
 
+#include "notifybyexecute.h"
 
 #include <QHash>
 #include <QProcess>
 
-#include "notifybyexecute.h"
 #include "knotifyconfig.h"
 
 #include <kdebug.h>
