@@ -22,6 +22,7 @@
 #include <QtCore/QString>
 
 #include <kfilemetainfo.h>
+#include <kurl.h>
 
 class FileProps
 {

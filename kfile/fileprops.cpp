@@ -16,6 +16,8 @@
    Boston, MA 02110-1301, USA.
 */
 
+#include "fileprops.h"
+
 #include <iostream>
 
 #include <QtCore/QFile>
@@ -27,8 +29,6 @@
 #include <klocale.h>
 #include <kpropertiesdialog.h>
 #include <kdebug.h>
-
-#include "fileprops.h"
 
 #define KFILEVERSION "0.2"
 #define INDENT "\t"
