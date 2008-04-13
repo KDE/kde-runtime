@@ -1,6 +1,8 @@
 [Desktop Entry]
 Type=Service
 Name=KDED Windows Start Menu Module
+Name[ca]=Mòdul del menú d'inici del Windows del KDED
+Name[ga]=Modúl Roghchláir Tosaithe Windows KDED
 Comment=Shortcut icon support
 Comment[af]=Kortpad ikoon ondersteuning
 Comment[ar]=دعم أيقونات الإختصارات
