@@ -23,10 +23,10 @@
 #include "sopranoindexmanager.h"
 #include "sopranoindexwriter.h"
 #include "sopranoindexreader.h"
+#include "nepomukmainmodel.h"
 
 #include <strigi/strigiconfig.h>
 
-#include <Soprano/Soprano>
 #include <Soprano/Client/DBusClient>
 #include <Soprano/Index/IndexFilterModel>
 #include <Soprano/Index/CLuceneIndex>
@@ -39,35 +39,16 @@
 #include <QtCore/QString>
 
 
-namespace {
-    ::Soprano::Client::LocalSocketClient* s_sopranoSocketClient = 0;
-    ::Soprano::Client::DBusClient* s_sopranoDBusClient = 0;
-
-    QString nepomukServerSocketPath() {
-        QString kdeHome = getenv( "KDEHOME" );
-        if ( kdeHome.isEmpty() ) {
-            kdeHome = QDir::homePath() + "/.kde4";
-        }
-        return kdeHome + "/share/apps/nepomuk/socket";
-    }
-}
-
 class Strigi::Soprano::IndexManager::Private
 {
 public:
     Private()
         : repository( 0 ),
-          protectionModel( 0 ),
-          index( 0 ),
-          indexModel( 0 ),
           writer( 0 ),
           reader( 0 ) {
     }
 
     ::Soprano::Model* repository;
-    ::Soprano::Util::MutexModel* protectionModel;
-    ::Soprano::Index::CLuceneIndex* index;
-    ::Soprano::Index::IndexFilterModel* indexModel;
     IndexWriter* writer;
     IndexReader* reader;
 };
@@ -75,37 +56,14 @@ public:
 
 extern "C" {
 // we do not use REGISTER_STRIGI_INDEXMANAGER as we do have to perform some additional checks
-STRIGI_EXPORT Strigi::IndexManager* createIndexManager( const char* dir )
+STRIGI_EXPORT Strigi::IndexManager* createIndexManager( const char* )
 {
-    if ( !s_sopranoSocketClient ) {
-        s_sopranoSocketClient = new ::Soprano::Client::LocalSocketClient();
-    }
-    ::Soprano::Model* model = 0;
-    if ( !s_sopranoSocketClient->isConnected() ) {
-        QString socket = nepomukServerSocketPath();
-        if ( s_sopranoSocketClient->connect( socket ) ) {
-            model = s_sopranoSocketClient->createModel( "main" );
-        }
-        else {
-            qDebug() << "(Strigi::Soprano::IndexManager) unable to connect to nepomuks server via local socket:" << socket;
-        }
-    }
-
-    if ( !model ) {
-        if ( !s_sopranoDBusClient ) {
-            s_sopranoDBusClient = new ::Soprano::Client::DBusClient( "org.kde.nepomuk.services.nepomukstorage" );
-        }
-
-        if ( s_sopranoDBusClient->isValid() ) {
-            qDebug() << "(Strigi::Soprano::IndexManager) found Soprano server.";
-            model = s_sopranoDBusClient->createModel( "main" );
-        }
-    }
-
-    if ( model ) {
-        return new Strigi::Soprano::IndexManager( model, QString() );
+    Nepomuk::MainModel* model = new Nepomuk::MainModel();
+    if( model->isValid() ) {
+        return new Strigi::Soprano::IndexManager( model );
     }
     else {
+        delete model;
         return 0;
     }
 }
@@ -116,18 +74,10 @@ STRIGI_EXPORT void deleteIndexManager( Strigi::IndexManager* m )
 }
 }
 
-Strigi::Soprano::IndexManager::IndexManager( ::Soprano::Model* model, const QString& path )
+Strigi::Soprano::IndexManager::IndexManager( ::Soprano::Model* model )
 {
     d = new Private;
     d->repository = model;
-    if ( !path.isEmpty() ) {
-        d->index = new ::Soprano::Index::CLuceneIndex();
-        d->index->open( path, true );
-        d->indexModel = new ::Soprano::Index::IndexFilterModel( d->index, model );
-    }
-    else {
-        d->protectionModel = new ::Soprano::Util::MutexModel( ::Soprano::Util::MutexModel::ReadWriteMultiThreading, model );
-    }
 }
 
 
@@ -136,9 +86,6 @@ Strigi::Soprano::IndexManager::~IndexManager()
     qDebug() << "Cleaning up SopranoIndexManager";
     delete d->reader;
     delete d->writer;
-    delete d->indexModel;
-    delete d->index;
-    delete d->protectionModel;
     delete d->repository;
     delete d;
 }
@@ -148,10 +95,7 @@ Strigi::IndexReader* Strigi::Soprano::IndexManager::indexReader()
 {
     if ( !d->reader ) {
         qDebug() << "(Soprano::IndexManager) creating IndexReader";
-        if ( d->indexModel )
-            d->reader = new Strigi::Soprano::IndexReader( d->indexModel );
-        else
-            d->reader = new Strigi::Soprano::IndexReader( d->protectionModel );
+        d->reader = new Strigi::Soprano::IndexReader( d->repository );
     }
 
     return d->reader;
@@ -162,10 +106,7 @@ Strigi::IndexWriter* Strigi::Soprano::IndexManager::indexWriter()
 {
     if ( !d->writer ) {
         qDebug() << "(Soprano::IndexManager) creating IndexWriter";
-        if ( d->indexModel )
-            d->writer = new Strigi::Soprano::IndexWriter( d->indexModel );
-        else
-            d->writer = new Strigi::Soprano::IndexWriter( d->protectionModel );
+        d->writer = new Strigi::Soprano::IndexWriter( d->repository );
     }
 
     return d->writer;

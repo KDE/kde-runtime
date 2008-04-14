@@ -40,7 +40,7 @@ namespace Strigi {
         class IndexManager : public Strigi::IndexManager
         {
         public:
-            IndexManager( ::Soprano::Model*, const QString& );
+            IndexManager( ::Soprano::Model* );
             ~IndexManager();
 
             Strigi::IndexReader* indexReader();

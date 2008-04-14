@@ -14,6 +14,7 @@ set( strigi_soprano_indexer_SRCS
   sopranoindexwriter.cpp
   util.cpp
   tstring.cpp
+  nepomukmainmodel.cpp
 )
 
 # CLucene requires exception support
