@@ -16,6 +16,14 @@
     <method name="availableServices">
       <arg name="services" type="as" direction="out" />
     </method>
+    <method name="isServiceAutostarted">
+      <arg name="service" type="s" direction="in" />
+      <arg name="autostart" type="b" direction="out" />
+    </method>
+    <method name="setServiceAutostarted">
+      <arg name="service" type="s" direction="in" />
+      <arg name="autostart" type="b" direction="in" />
+    </method>
     <method name="isServiceInitialized">
       <arg name="name" type="s" direction="in" />
       <arg name="result" type="b" direction="out" />
