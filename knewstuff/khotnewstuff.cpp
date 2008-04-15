@@ -52,7 +52,7 @@ int main(int argc, char **argv)
             KNS::Entry::List entries = engine.downloadDialogModal();
         }
         else {
-            kDebug() << i18n("could not load %1", args->arg(0));
+            kDebug() << "could not load " << args->arg(0);
         }
     }
     else
