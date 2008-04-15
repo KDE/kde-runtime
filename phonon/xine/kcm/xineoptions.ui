@@ -48,7 +48,7 @@
       <item row="0" column="1" >
        <widget class="QCheckBox" name="m_ossCheckbox" >
         <property name="toolTip" >
-         <string>in the list of available devices show OSS devices even if ALSA is available</string>
+         <string>Show OSS devices in the list of available devices, even if ALSA is available.</string>
         </property>
        </widget>
       </item>

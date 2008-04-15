@@ -228,7 +228,7 @@ int main( int argc, char **argv )
 {
     KAboutData about(
 	  "kfile", 0, ki18n( "kfile" ), KFILEVERSION,
-	  ki18n("A commandline tool to read and modify metadata of files."),
+	  ki18n("A command-line tool to read and modify metadata of files."),
 	  KAboutData::License_LGPL, ki18n("(c) 2002, Carsten Pfeiffer"),
 	  ki18n(0 /*text*/), "http://devel-home.kde.org/~pfeiffer/",
 	  "pfeiffer@kde.org" );
