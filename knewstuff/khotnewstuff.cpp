@@ -36,7 +36,7 @@ int main(int argc, char **argv)
     KCmdLineArgs::init(argc, argv, &about);
 
     KCmdLineOptions op;
-    op.add("+filename", ki18n(".knsrc filename to read configuration from"));
+    op.add("+filename", ki18n("Name of .knsrc file to read configuration from"));
     //op.add("type <type>", ki18n("Display only media of this type"));
     //op.add("+[providerlist]", ki18n("Provider list to use"));
     KCmdLineArgs::addCmdLineOptions(op);
