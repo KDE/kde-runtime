@@ -1,5 +1,9 @@
 [Desktop Entry]
 Comment=Information about available protocols
+Comment[gu]=પ્રાપ્ત પ્રોટોકોલ્સ વિશે માહિતી
+Comment[th]=ข้อมูลเกี่ยวกับโพรโตคอลที่มีอยู่
+Comment[zh_CN]=可用协议的信息
+Comment[zh_TW]=可用協定的資訊
 X-DocPath=kinfocenter/protocols/index.html
 Exec=kcmshell4 ioslaveinfo
 Icon=help-about
