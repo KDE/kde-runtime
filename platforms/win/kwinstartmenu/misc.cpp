@@ -205,12 +205,14 @@ void updateStartMenuLinks()
     // generate list of installed linkfiles 
     QList<LinkFile> oldFiles;
     LinkFiles::scan(oldFiles, getStartMenuPath() + "/KDE");
-    kDebug() << "oldFiles" << oldFiles;
+    foreach(const LinkFile& lf, oldFiles)
+      kDebug() << "oldFile: " << lf;
 
     // create list of currently available link files 
     QList<LinkFile> newFiles;
     generateMenuEntries(newFiles,KUrl("applications:/"));
-    kDebug() << "newFiles" << newFiles;
+    foreach(const LinkFile& lf, newFiles)
+      kDebug() << "newFile: " << lf;
 
     // remove obsolate links 
     LinkFiles::cleanup(newFiles,oldFiles);
