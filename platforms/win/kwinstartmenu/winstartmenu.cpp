@@ -24,6 +24,7 @@
 #include "misc.h"
 
 #include <kconfig.h>
+#include <kconfiggroup.h>
 #include <kdebug.h>
 #include <kpluginfactory.h>
 #include <kpluginloader.h>
@@ -38,33 +39,41 @@ K_EXPORT_PLUGIN(WinStartMenuFactory("WinStartMenu"))
 
 struct WinStartMenuModulePrivate
 {
+    WinStartMenuModulePrivate()
+     : config("kwinstartmenurc")
+     , ksycoca(0)
+    {
+    }
     virtual ~WinStartMenuModulePrivate() 
     { 
-        delete config; 
         delete ksycoca;
     }
 
-    KConfig *config;
+    KConfig config;
     KSycoca *ksycoca;
 };
 
 WinStartMenuModule::WinStartMenuModule(QObject* parent, const QList<QVariant>&)
     : KDEDModule(parent)
+    , d( new WinStartMenuModulePrivate )
 {
-    QString profile = qgetenv("ALLUSERSPROFILE");
+    KConfigGroup group( &d->config, "General" );
+
+    //QString profile = qgetenv("ALLUSERSPROFILE");
     
-    d = new WinStartMenuModulePrivate;
     // not used yet
     //d->config = new KConfig(KStandardDirs::locateLocal("data", "winstartrc"));
     d->ksycoca = new KSycoca();
-    connect(d->ksycoca, SIGNAL(databaseChanged()), this, SLOT(databaseChanged()));
+    if (group.readEntry("Enabled", true))
+      connect(d->ksycoca, SIGNAL(databaseChanged()), this, SLOT(databaseChanged()));
     
     new WinStartMenuAdaptor( this );
 }
 
 WinStartMenuModule::~WinStartMenuModule()
 {
-    disconnect(d->ksycoca, SIGNAL(databaseChanged()), this, SLOT(databaseChanged()));
+    if (d->ksycoca)
+      disconnect(d->ksycoca, SIGNAL(databaseChanged()), this, SLOT(databaseChanged()));
     delete d;
 }
 
