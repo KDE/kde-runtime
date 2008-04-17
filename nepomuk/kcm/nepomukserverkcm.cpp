@@ -80,7 +80,7 @@ void Nepomuk::ServerConfigModule::load()
     }
     else {
         KMessageBox::sorry( this,
-                            i18n( "The Nepomuk Server KDED module is not running. The settings "
+                            i18n( "The Nepomuk Server is not running. The settings "
                                   "will be used the next time the server is started." ),
                             i18n( "Nepomuk server not running" ) );
 
@@ -141,7 +141,7 @@ void Nepomuk::ServerConfigModule::save()
     }
     else {
         KMessageBox::sorry( this,
-                            i18n( "The Nepomuk Server KDED module is not running. The settings have been saved "
+                            i18n( "The Nepomuk Server is not running. The settings have been saved "
                                   "and will be used the next time the server is started." ),
                             i18n( "Nepomuk server not running" ) );
     }
