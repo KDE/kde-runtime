@@ -22,6 +22,7 @@
 #include <QtCore/QObject>
 #include <KProcess>
 
+
 namespace Nepomuk {
     class StrigiController : public QObject
     {

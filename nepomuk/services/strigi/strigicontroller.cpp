@@ -32,55 +32,6 @@
 #include <KMessageBox>
 #include <KLocale>
 
-#ifndef _WIN32
-
-#include <time.h>
-#include <sys/types.h>
-#include <signal.h>
-#include <fcntl.h>
-#include <unistd.h>
-
-namespace {
-    pid_t strigidaemonPid() {
-        int fd = open( QFile::encodeName( QString( "%1/.strigi/lock" ).arg( QDir::homePath() ) ), O_WRONLY );
-        if ( fd == -1 ) {
-            kDebug(300002) << "failed to open lock";
-            return ( pid_t )-1;
-        }
-        struct flock lock;
-        lock.l_type = F_WRLCK;
-        lock.l_whence = SEEK_SET;
-        lock.l_start = 0;
-        lock.l_len = 0;
-        int r = fcntl( fd, F_GETLK, &lock );
-        if ( r == -1 ) {
-            kDebug(300002) << "failed to configure lock";
-            close(fd);
-            return ( pid_t )-1;
-        }
-        close( fd );
-        kDebug(300002) << (lock.l_type == F_WRLCK);
-        if ( lock.l_type == F_WRLCK ) {
-            return lock.l_pid;
-        }
-        else {
-            return ( pid_t )-1;
-        }
-    }
-
-    // FIXME: what if the pid is reused during the time of this calling?
-    bool waitForProcessToExit( pid_t pid, int timeout = 2 ) {
-        time_t startTime = time(0);
-        while ( time( 0 ) - startTime < timeout ) {
-            if ( kill( pid, 0 ) < 0 ) {
-                return true;
-            }
-        }
-        return false;
-    }
-}
-#endif // ifndef _WIN32
-
 
 Nepomuk::StrigiController::StrigiController( QObject* parent )
     : QObject( parent ),
@@ -149,40 +100,22 @@ bool Nepomuk::StrigiController::start()
 void Nepomuk::StrigiController::shutdown()
 {
     kDebug(300002) << "(Nepomuk::StrigiController::shutdown)";
+
+    StrigiClient strigiClient;
+
+    m_state = ShuttingDown;
+
+    if ( isRunning() ) {
+        strigiClient.stopDaemon();
+    }
+
     if ( state() == Running ) {
         kDebug(300002) << "We started Strigi ourselves. Trying to shut it down gracefully.";
-        m_state = ShuttingDown;
-        m_strigiProcess->terminate();
-        if ( !m_strigiProcess->waitForFinished() ) {
+        if ( !m_strigiProcess->waitForFinished(60000) ) {
             kDebug(300002) << "strigidaemon does not terminate properly. Killing process...";
             m_strigiProcess->kill();
         }
         m_state = Idle;
-    }
-    else {
-        // let's see if Strigi has been started by someone else
-#ifndef _WIN32
-        pid_t pid = strigidaemonPid();
-        if ( pid != ( pid_t )-1 ) {
-            kDebug(300002) << "Shutting down Strigi instance started by someone else.";
-
-            m_state = ShuttingDown;
-
-            // give Strigi the possibility to shutdown gracefully
-            kill( pid, SIGQUIT );
-
-            // wait for the Strigi process to exit
-            if ( !waitForProcessToExit( pid ) ) {
-                // kill it the hard way if it won't stop (Strigi tends to ignore the quit signal during indexing)
-                kDebug(300002) << "strigidaemon does not terminate properly. Killing process...";
-                kill( pid, SIGKILL );
-            }
-
-            m_state = Idle;
-        }
-#else
-#warning FIXME: No Strigi status support on Windows
-#endif
     }
 }
 
@@ -219,18 +152,7 @@ void Nepomuk::StrigiController::slotRunning5Minutes()
 
 bool Nepomuk::StrigiController::isRunning()
 {
-#ifndef _WIN32
-    return(  strigidaemonPid() != ( pid_t )-1 );
-#else
-#warning FIXME: No Strigi status support on Windows
-    // FIXME: this will actually start strigidaemon through DBus autostarting
-//     return( QDBusConnection::sessionBus().call( QDBusMessage::createMethodCall( "vandenoever.strigi",
-//                                                                                 "/search",
-//                                                                                 "vandenoever.strigi",
-//                                                                                 "getBackEnds" ) ).type()
-//             != QDBusMessage::ErrorMessage );
-    return false;
-#endif /* _WIN32 */
+    return QDBusConnection::sessionBus().interface()->isServiceRegistered( "vandenoever.strigi" );
 }
 
 
