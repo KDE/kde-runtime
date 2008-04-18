@@ -23,11 +23,24 @@
 #include <ksharedconfig.h>
 #include <kconfiggroup.h>
 #include <kdebug.h>
+#include <QCache>
+
+
+static KSharedConfig::Ptr retrieve_from_cache(const QString& filename, const char *resourceType="config") 
+{
+	static QCache<QString, KSharedConfig::Ptr> cache(25);
+	if (cache.contains(filename)) 
+		return *cache[filename];
+	KSharedConfig::Ptr m = KSharedConfig::openConfig (filename , KConfig::NoGlobals, resourceType );
+	cache.insert(filename, new KSharedConfig::Ptr(m));
+	return m;
+}
+
 
 KNotifyConfig::KNotifyConfig( const QString & _appname, const ContextList & _contexts, const QString & _eventid )
 	: appname (_appname),
-	eventsfile(KSharedConfig::openConfig (_appname+'/'+_appname + ".notifyrc" , KConfig::NoGlobals, "data" )),
-	configfile(KSharedConfig::openConfig (_appname+QString::fromAscii( ".notifyrc" ), KConfig::NoGlobals)),
+	eventsfile(retrieve_from_cache(_appname+'/'+_appname + ".notifyrc" , "data" )),
+	configfile(retrieve_from_cache(_appname+QString::fromAscii( ".notifyrc" ))),
 	contexts(_contexts) , eventid(_eventid)
 {
 //	kDebug(300) << appname << " , " << eventid;
