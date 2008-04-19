@@ -56,7 +56,7 @@
           <item>
            <widget class="QLabel" name="label_2" >
             <property name="text" >
-             <string>Strigi desktop search allows to search files by content instead of just by name.</string>
+             <string>Strigi desktop search allows searching for files by content instead of just by name.</string>
             </property>
             <property name="wordWrap" >
              <bool>true</bool>

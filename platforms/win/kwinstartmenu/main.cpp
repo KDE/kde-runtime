@@ -38,14 +38,14 @@
 int main(int argc, char **argv)
 {
     KAboutData about("winstartmenu", "kdebase-runtime", ki18n("winstartmenu"), "1.0",
-                     ki18n("An application to create/update or remove windows start menu entries"),
+                     ki18n("An application to create/update or remove Windows Start Menu entries"),
                      KAboutData::License_GPL,
                      ki18n("(C) 2008 Ralf Habacker"));
     KCmdLineArgs::init( argc, argv, &about);
 
     KCmdLineOptions options;
-    options.add("remove",     ki18n("remove installed start menu entries"));
-    options.add("install",     ki18n("install start menu entries (this is the default also when this option is not set)"));
+    options.add("remove",     ki18n("Remove installed Start Menu entries"));
+    options.add("install",     ki18n("Install Start Menu entries (this is also the default when this option is not used)"));
     KCmdLineArgs::addCmdLineOptions( options ); // Add my own options.
 
     KComponentData a(&about);

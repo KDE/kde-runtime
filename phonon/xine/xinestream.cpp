@@ -137,13 +137,13 @@ bool XineStream::xineOpen(Phonon::State newstate)
             // hmm?
             abort();
         case XINE_ERROR_NO_INPUT_PLUGIN:
-            error(Phonon::NormalError, i18n("cannot find input plugin for MRL [%1]", m_mrl.constData()));
+            error(Phonon::NormalError, i18n("Cannot find input plugin for MRL [%1]", m_mrl.constData()));
             break;
         case XINE_ERROR_NO_DEMUX_PLUGIN:
             if (m_mrl.startsWith("kbytestream:/")) {
-                error(Phonon::FatalError, i18n("cannot find demultiplexer plugin for the given media data"));
+                error(Phonon::FatalError, i18n("Cannot find demultiplexer plugin for the given media data"));
             } else {
-                error(Phonon::FatalError, i18n("cannot find demultiplexer plugin for MRL [%1]", m_mrl.constData()));
+                error(Phonon::FatalError, i18n("Cannot find demultiplexer plugin for MRL [%1]", m_mrl.constData()));
             }
             break;
         default:
