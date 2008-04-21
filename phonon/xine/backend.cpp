@@ -185,8 +185,8 @@ QList<int> Backend::objectDescriptionIndexes(ObjectDescriptionType type) const
     {
     case Phonon::AudioOutputDeviceType:
         return XineEngine::audioOutputIndexes();
-    //case Phonon::AudioCaptureDeviceType:
-        //break;
+    case Phonon::AudioCaptureDeviceType:
+        break;
 /*
     case Phonon::VideoOutputDeviceType:
         {
@@ -239,8 +239,8 @@ QHash<QByteArray, QVariant> Backend::objectDescriptionProperties(ObjectDescripti
     case Phonon::AudioOutputDeviceType:
         ret = XineEngine::audioOutputProperties(index);
         break;
-    //case Phonon::AudioCaptureDeviceType:
-        //break;
+    case Phonon::AudioCaptureDeviceType:
+        break;
         /*
     case Phonon::VideoOutputDeviceType:
         {

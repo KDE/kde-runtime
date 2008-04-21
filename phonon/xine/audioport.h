@@ -1,5 +1,5 @@
 /*  This file is part of the KDE project
-    Copyright (C) 2006-2007 Matthias Kretz <kretz@kde.org>
+    Copyright (C) 2006-2008 Matthias Kretz <kretz@kde.org>
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -25,6 +25,7 @@
 #include <xine.h>
 #include <QSharedData>
 #include <QObject>
+#include <Phonon/AudioOutputDevice>
 
 
 namespace Phonon
@@ -49,7 +50,7 @@ class AudioPort
     friend class EffectXT;
     public:
         AudioPort();
-        AudioPort(int deviceIndex);
+        AudioPort(const AudioOutputDevice &deviceDesc);
 
         bool isValid() const;
         bool operator==(const AudioPort &rhs) const;

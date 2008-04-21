@@ -23,8 +23,7 @@
 
 #include "xineengine.h"
 #include <QObject>
-#include <phonon/audiodevice.h>
-#include <phonon/objectdescription.h>
+#include <Phonon/ObjectDescription>
 #include <QTimer>
 
 namespace Phonon
@@ -34,17 +33,10 @@ namespace Xine
 class XineEnginePrivate : public QObject
 {
     Q_OBJECT
-    Q_CLASSINFO("D-Bus Interface", "org.kde.phonon.XineEnginePrivate")
     public:
         XineEnginePrivate();
 
         QTimer signalTimer;
-
-    public slots:
-        void devicePlugged(const Phonon::AudioDevice &);
-        void deviceUnplugged(const Phonon::AudioDevice &);
-
-        Q_SCRIPTABLE void ossSettingChanged(bool);
 
     signals:
         void objectDescriptionChanged(ObjectDescriptionType);

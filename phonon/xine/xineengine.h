@@ -101,10 +101,9 @@ class XineEngine
 
     private:
         void checkAudioOutputs();
-        void addAudioOutput(const AudioDevice &dev, const QByteArray &driver);
         void addAudioOutput(int idx, int initialPreference, const QString &n,
                 const QString &desc, const QString &ic, const QByteArray &dr,
-                const QStringList &dev, const QString &mixerDevice, bool isAdvanced = false);
+                bool isAdvanced = false);
         xine_t *m_xine;
 
         QHash<ObjectDescriptionType, QHash< int, QHash<QByteArray, QVariant> > > m_objectDescriptions;
@@ -112,15 +111,13 @@ class XineEngine
         struct AudioOutputInfo
         {
             AudioOutputInfo(int idx, int ip, const QString &n, const QString &desc, const QString &ic,
-                    const QByteArray &dr, const QStringList &dev, const QString &mdev)
-                : devices(dev), name(n), description(desc), icon(ic), mixerDevice(mdev), driver(dr),
+                    const QByteArray &dr)
+                : name(n), description(desc), icon(ic), driver(dr),
                 index(idx), initialPreference(ip), available(false), isAdvanced(false) {}
 
-            QStringList devices;
             QString name;
             QString description;
             QString icon;
-            QString mixerDevice;
             QByteArray driver;
             int index;
             int initialPreference;
@@ -133,12 +130,6 @@ class XineEngine
         QList<QObject *> m_cleanupObjects;
         KSharedConfigPtr m_config;
         int m_deinterlaceMethod : 8;
-        enum UseOss {
-            False = 0,
-            True = 1,
-            Unknown = 2
-        };
-        UseOss m_useOss : 2;
         bool m_deinterlaceDVD : 1;
         bool m_deinterlaceVCD : 1;
         bool m_deinterlaceFile : 1;

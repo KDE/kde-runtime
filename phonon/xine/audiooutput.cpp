@@ -43,8 +43,7 @@ namespace Xine
 
 #define K_XT(type) (static_cast<type *>(SinkNode::threadSafeObject().data()))
 AudioOutput::AudioOutput(QObject *parent)
-    : AbstractAudioOutput(new AudioOutputXT, parent),
-    m_device(1)
+    : AbstractAudioOutput(new AudioOutputXT, parent)
 {
 }
 
@@ -60,7 +59,7 @@ qreal AudioOutput::volume() const
 
 int AudioOutput::outputDevice() const
 {
-    return m_device;
+    return m_device.index();
 }
 
 void AudioOutput::setVolume(qreal newVolume)
@@ -84,6 +83,11 @@ AudioPort AudioOutputXT::audioPort() const
 }
 
 bool AudioOutput::setOutputDevice(int newDevice)
+{
+    return setOutputDevice(AudioOutputDevice::fromIndex(newDevice));
+}
+
+bool AudioOutput::setOutputDevice(const AudioOutputDevice &newDevice)
 {
     AudioPort newPort(newDevice);
     if (!newPort.isValid()) {

@@ -1,5 +1,5 @@
 /*  This file is part of the KDE project
-    Copyright (C) 2006-2007 Matthias Kretz <kretz@kde.org>
+    Copyright (C) 2006-2008 Matthias Kretz <kretz@kde.org>
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -98,56 +98,65 @@ AudioPort::~AudioPort()
     waitALittleWithDying(); // xine still accesses the port after a rewire :(
 }
 
-AudioPort::AudioPort(int deviceIndex)
+AudioPort::AudioPort(const AudioOutputDevice &deviceDesc)
     : d(new AudioPortData)
 {
-    QByteArray outputPlugin = XineEngine::audioDriverFor(deviceIndex);
-    //kDebug(610) << outputPlugin << alsaDevices;
-
-    if (outputPlugin == "alsa") {
-        QStringList alsaDevices = XineEngine::alsaDevicesFor(deviceIndex);
-        foreach (QString device, alsaDevices) {
-            xine_cfg_entry_t alsaDeviceConfig;
-            QByteArray deviceStr = device.toUtf8();
-            if(!xine_config_lookup_entry(XineEngine::xine(), "audio.device.alsa_default_device",
-                        &alsaDeviceConfig)) {
-                // the config key is not registered yet - it is registered when the alsa output
-                // plugin is opened. So we open the plugin and close it again, then we can set the
-                // setting. :(
-                xine_audio_port_t *port = xine_open_audio_driver(XineEngine::xine(), outputPlugin.constData(), 0);
-                if (port) {
-                    xine_close_audio_driver(XineEngine::xine(), port);
-                    // port == 0 does not have to be fatal, since it might be only the default device
-                    // that cannot be opened
-                    //kError(610) << "creating the correct ALSA output failed!";
-                    //return;
-                }
-                // now the config key should be registered
-                if(!xine_config_lookup_entry(XineEngine::xine(), "audio.device.alsa_default_device",
-                            &alsaDeviceConfig)) {
-                    kError(610) << "cannot set the ALSA device on Xine's ALSA output plugin";
-                    return;
-                }
-            }
-            Q_ASSERT(alsaDeviceConfig.type == XINE_CONFIG_TYPE_STRING);
-            alsaDeviceConfig.str_value = deviceStr.data();
-            xine_config_update_entry(XineEngine::xine(), &alsaDeviceConfig);
-
-            int err = xine_config_lookup_entry(XineEngine::xine(), "audio.device.alsa_front_device", &alsaDeviceConfig);
-            Q_ASSERT(err);
-            Q_ASSERT(alsaDeviceConfig.type == XINE_CONFIG_TYPE_STRING);
-            alsaDeviceConfig.str_value = deviceStr.data();
-            xine_config_update_entry(XineEngine::xine(), &alsaDeviceConfig);
-
-            d->port = xine_open_audio_driver(XineEngine::xine(), outputPlugin.constData(), 0);
-            if (d->port) {
-                kDebug(610) << "use ALSA device: " << device;
-                break;
-            }
-        }
-    } else {
+    QVariant v = deviceDesc.property("driver");
+    if (!v.isValid()) {
+        const QByteArray outputPlugin = XineEngine::audioDriverFor(deviceDesc.index());
         kDebug(610) << "use output plugin:" << outputPlugin;
         d->port = xine_open_audio_driver(XineEngine::xine(), outputPlugin.constData(), 0);
+    } else {
+        const QByteArray outputPlugin = v.toByteArray();
+        v = deviceDesc.property("deviceIds");
+        const QStringList deviceIds = v.toStringList();
+        if (deviceIds.isEmpty()) {
+            return;
+        }
+        //kDebug(610) << outputPlugin << alsaDevices;
+
+        if (outputPlugin == "alsa") {
+            foreach (const QString &device, deviceIds) {
+                xine_cfg_entry_t alsaDeviceConfig;
+                QByteArray deviceStr = device.toUtf8();
+                if(!xine_config_lookup_entry(XineEngine::xine(), "audio.device.alsa_default_device",
+                            &alsaDeviceConfig)) {
+                    // the config key is not registered yet - it is registered when the alsa output
+                    // plugin is opened. So we open the plugin and close it again, then we can set the
+                    // setting. :(
+                    xine_audio_port_t *port = xine_open_audio_driver(XineEngine::xine(), "alsa", 0);
+                    if (port) {
+                        xine_close_audio_driver(XineEngine::xine(), port);
+                        // port == 0 does not have to be fatal, since it might be only the default device
+                        // that cannot be opened
+                    }
+                    // now the config key should be registered
+                    if(!xine_config_lookup_entry(XineEngine::xine(), "audio.device.alsa_default_device",
+                                &alsaDeviceConfig)) {
+                        kError(610) << "cannot set the ALSA device on Xine's ALSA output plugin";
+                        return;
+                    }
+                }
+                Q_ASSERT(alsaDeviceConfig.type == XINE_CONFIG_TYPE_STRING);
+                alsaDeviceConfig.str_value = deviceStr.data();
+                xine_config_update_entry(XineEngine::xine(), &alsaDeviceConfig);
+
+                int err = xine_config_lookup_entry(XineEngine::xine(), "audio.device.alsa_front_device", &alsaDeviceConfig);
+                Q_ASSERT(err);
+                Q_ASSERT(alsaDeviceConfig.type == XINE_CONFIG_TYPE_STRING);
+                alsaDeviceConfig.str_value = deviceStr.data();
+                xine_config_update_entry(XineEngine::xine(), &alsaDeviceConfig);
+
+                d->port = xine_open_audio_driver(XineEngine::xine(), "alsa", 0);
+                if (d->port) {
+                    kDebug(610) << "use ALSA device: " << device;
+                    break;
+                }
+            }
+        } else if (outputPlugin == "oss") {
+            kDebug(610) << "use OSS output";
+            d->port = xine_open_audio_driver(XineEngine::xine(), "oss", 0);
+        }
     }
     kDebug(610) << "----------------------------------------------- audio_port created";
 }
