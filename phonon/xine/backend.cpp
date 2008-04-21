@@ -185,15 +185,9 @@ QList<int> Backend::objectDescriptionIndexes(ObjectDescriptionType type) const
     {
     case Phonon::AudioOutputDeviceType:
         return XineEngine::audioOutputIndexes();
-/*
     case Phonon::AudioCaptureDeviceType:
-        {
-            QList<AudioDevice> devlist = AudioDeviceEnumerator::availableCaptureDevices();
-            foreach (AudioDevice dev, devlist) {
-                list << dev.index();
-            }
-        }
         break;
+/*
     case Phonon::VideoOutputDeviceType:
         {
             const char *const *outputPlugins = xine_list_video_output_plugins(XineEngine::xine());
@@ -245,39 +239,9 @@ QHash<QByteArray, QVariant> Backend::objectDescriptionProperties(ObjectDescripti
     case Phonon::AudioOutputDeviceType:
         ret = XineEngine::audioOutputProperties(index);
         break;
-        /*
     case Phonon::AudioCaptureDeviceType:
-        {
-            QList<AudioDevice> devlist = AudioDeviceEnumerator::availableCaptureDevices();
-            foreach (AudioDevice dev, devlist) {
-                if (dev.index() == index) {
-                    ret.insert("name", dev.cardName());
-                    switch (dev.driver()) {
-                    case Solid::AudioInterface::Alsa:
-                        ret.insert("description", i18n("ALSA Capture Device"));
-                        break;
-                    case Solid::AudioInterface::OpenSoundSystem:
-                        ret.insert("description", i18n("OSS Capture Device"));
-                        break;
-                    case Solid::AudioInterface::UnknownAudioDriver:
-                        break;
-                    }
-                    ret.insert("icon", dev.iconName());
-                    ret.insert("available", dev.isAvailable());
-                    break;
-                }
-            }
-        }
-        switch (index) {
-        case 20000:
-            ret.insert("name", QLatin1String("Soundcard"));
-            break;
-        case 20001:
-            ret.insert("name", QLatin1String("DV"));
-            break;
-        }
-        //kDebug(610) << ret["name"];
         break;
+        /*
     case Phonon::VideoOutputDeviceType:
         {
             const char *const *outputPlugins = xine_list_video_output_plugins(XineEngine::xine());
