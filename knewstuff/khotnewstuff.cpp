@@ -30,7 +30,7 @@
 int main(int argc, char **argv)
 {
     KAboutData about("khotnewstuff", 0, ki18n("KHotNewStuff"), "0.3");
-    about.setProgramIconName("get-hot-new-stuff");
+    //about.setProgramIconName("get-hot-new-stuff");
     KCmdLineArgs *args;
 
     KCmdLineArgs::init(argc, argv, &about);
