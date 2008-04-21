@@ -463,10 +463,10 @@ namespace Xine
     {
         if (m_audioOutputInfos.isEmpty()) {
             kDebug(610) << "isEmpty";
-            QObject::connect(AudioDeviceEnumerator::self(), SIGNAL(devicePlugged(const AudioDevice &)),
-                    d, SLOT(devicePlugged(const AudioDevice &)));
-            QObject::connect(AudioDeviceEnumerator::self(), SIGNAL(deviceUnplugged(const AudioDevice &)),
-                    d, SLOT(deviceUnplugged(const AudioDevice &)));
+            QObject::connect(AudioDeviceEnumerator::self(), SIGNAL(devicePlugged(const Phonon::AudioDevice &)),
+                    d, SLOT(devicePlugged(const Phonon::AudioDevice &)));
+            QObject::connect(AudioDeviceEnumerator::self(), SIGNAL(deviceUnplugged(const Phonon::AudioDevice &)),
+                    d, SLOT(deviceUnplugged(const Phonon::AudioDevice &)));
             int nextIndex = 10000;
 //X             QStringList groups = m_config->groupList();
 //X             foreach (QString group, groups) {

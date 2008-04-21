@@ -41,8 +41,8 @@ class XineEnginePrivate : public QObject
         QTimer signalTimer;
 
     public slots:
-        void devicePlugged(const AudioDevice &);
-        void deviceUnplugged(const AudioDevice &);
+        void devicePlugged(const Phonon::AudioDevice &);
+        void deviceUnplugged(const Phonon::AudioDevice &);
 
         Q_SCRIPTABLE void ossSettingChanged(bool);
 
