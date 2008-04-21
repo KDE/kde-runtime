@@ -106,14 +106,14 @@ class XineStream : public QObject, public SourceNodeXT
         int currentAngle()      const { return m_currentAngle;      }
         int currentTitle()      const { return m_currentTitle;      }
 
-        QList<AudioStreamDescription> availableAudioStreams() const;
-        QList<SubtitleStreamDescription> availableSubtitleStreams() const;
+        QList<AudioChannelDescription> availableAudioChannels() const;
+        QList<SubtitleDescription> availableSubtitles() const;
 
-        AudioStreamDescription currentAudioStream() const;
-        SubtitleStreamDescription currentSubtitleStream() const;
+        AudioChannelDescription currentAudioChannel() const;
+        SubtitleDescription currentSubtitle() const;
 
-        void setCurrentAudioStream(const AudioStreamDescription& streamDesc);
-        void setCurrentSubtitleStream(const SubtitleStreamDescription& streamDesc);
+        void setCurrentAudioChannel(const AudioChannelDescription& streamDesc);
+        void setCurrentSubtitle(const SubtitleDescription& streamDesc);
 
         int subtitlesSize() const;
         int audioChannelsSize() const;

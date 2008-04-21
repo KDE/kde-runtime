@@ -727,11 +727,11 @@ bool XineStream::event(QEvent *ev)
                 }
             }
             {
-                int availableAudioStreams = audioChannelsSize();
-                if(availableAudioStreams != m_availableAudioChannels)
+                int availableAudioChannels = audioChannelsSize();
+                if(availableAudioChannels != m_availableAudioChannels)
                 {
-                    kDebug(610) << "available audio channels changed: " << availableAudioStreams;
-                    m_availableAudioChannels = availableAudioStreams;
+                    kDebug(610) << "available audio channels changed: " << availableAudioChannels;
+                    m_availableAudioChannels = availableAudioChannels;
                     emit availableAudioChannelsChanged();
                 }
             }
@@ -1278,30 +1278,30 @@ Phonon::ErrorType XineStream::errorType() const
     return m_errorType;
 }
 
-QList<SubtitleStreamDescription> XineStream::availableSubtitleStreams() const
+QList<SubtitleDescription> XineStream::availableSubtitles() const
 {
     uint hash = streamHash();
-    QList<SubtitleStreamDescription> subtitles;
+    QList<SubtitleDescription> subtitles;
     if( !m_stream )
         return subtitles;
     const int channels = subtitlesSize();
     for( int index = 0; index < channels; index++ )
     {
-        subtitles << streamDescription<SubtitleStreamDescription>( index, hash, SubtitleStreamType, xine_get_spu_lang );
+        subtitles << streamDescription<SubtitleDescription>( index, hash, SubtitleType, xine_get_spu_lang );
     }
     return subtitles;
 }
 
-QList<AudioStreamDescription> XineStream::availableAudioStreams() const
+QList<AudioChannelDescription> XineStream::availableAudioChannels() const
 {
     const uint hash = streamHash();
-    QList<AudioStreamDescription> audios;
+    QList<AudioChannelDescription> audios;
     if( !m_stream )
         return audios;
     const int channels = audioChannelsSize();
     for( int index = 0; index < channels; index++ )
     {
-        audios << streamDescription<AudioStreamDescription>( index, hash, AudioStreamType, xine_get_audio_lang );
+        audios << streamDescription<AudioChannelDescription>( index, hash, AudioChannelType, xine_get_audio_lang );
     }
     return audios;
 }
@@ -1316,12 +1316,12 @@ int XineStream::audioChannelsSize() const
     return xine_get_stream_info( m_stream, XINE_STREAM_INFO_MAX_AUDIO_CHANNEL );
 }
 
-void XineStream::setCurrentAudioStream(const AudioStreamDescription& streamDesc)
+void XineStream::setCurrentAudioChannel(const AudioChannelDescription& streamDesc)
 {
     xine_set_param( m_stream, XINE_PARAM_AUDIO_CHANNEL_LOGICAL, streamDesc.index() - streamHash() );
 }
 
-void XineStream::setCurrentSubtitleStream(const SubtitleStreamDescription& streamDesc)
+void XineStream::setCurrentSubtitle(const SubtitleDescription& streamDesc)
 {
     kDebug() << "setting the subtitle to: " << streamDesc.index();
     xine_set_param( m_stream, XINE_PARAM_SPU_CHANNEL, streamDesc.index() - streamHash() );
@@ -1344,16 +1344,16 @@ S XineStream::streamDescription(int index, uint hash, ObjectDescriptionType type
     return S( index + hash, properities );
 }
 
-AudioStreamDescription XineStream::currentAudioStream() const
+AudioChannelDescription XineStream::currentAudioChannel() const
 {
     const int index = xine_get_param( m_stream, XINE_PARAM_AUDIO_CHANNEL_LOGICAL );
-    return streamDescription<AudioStreamDescription>( index, streamHash(), AudioStreamType, xine_get_audio_lang );
+    return streamDescription<AudioChannelDescription>( index, streamHash(), AudioChannelType, xine_get_audio_lang );
 }
 
-SubtitleStreamDescription XineStream::currentSubtitleStream() const
+SubtitleDescription XineStream::currentSubtitle() const
 {
     int index = xine_get_param( m_stream, XINE_PARAM_SPU_CHANNEL );
-    return streamDescription<SubtitleStreamDescription>( index, streamHash(), SubtitleStreamType, xine_get_spu_lang );
+    return streamDescription<SubtitleDescription>( index, streamHash(), SubtitleType, xine_get_spu_lang );
 }
 
 

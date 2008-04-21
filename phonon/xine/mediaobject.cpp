@@ -616,32 +616,32 @@ QVariant MediaObject::interfaceCall(Interface interface, int command, const QLis
     case AddonInterface::SubtitleInterface:
         switch (static_cast<AddonInterface::SubtitleCommand>(command))
         {
-            case AddonInterface::availableSubtitleStreams:
-                return QVariant::fromValue( m_stream->availableSubtitleStreams() );
-            case AddonInterface::currentSubtitleStream:
-                return QVariant::fromValue(m_stream->currentSubtitleStream());
-            case AddonInterface::setCurrentSubtitleStream:
-                if (arguments.isEmpty() || !arguments.first().canConvert<SubtitleStreamDescription>() ) {
+            case AddonInterface::availableSubtitles:
+                return QVariant::fromValue( m_stream->availableSubtitles() );
+            case AddonInterface::currentSubtitle:
+                return QVariant::fromValue(m_stream->currentSubtitle());
+            case AddonInterface::setCurrentSubtitle:
+                if (arguments.isEmpty() || !arguments.first().canConvert<SubtitleDescription>() ) {
                     kDebug(610) << "arguments invalid";
                     return false;
                 }
-                m_stream->setCurrentSubtitleStream( arguments.first().value<SubtitleStreamDescription>() );
+                m_stream->setCurrentSubtitle( arguments.first().value<SubtitleDescription>() );
                 return true;
         }
         break;
     case AddonInterface::AudioChannelInterface:
         switch (static_cast<AddonInterface::AudioChannelCommand>(command))
         {
-            case AddonInterface::availableAudioStreams:
-                return QVariant::fromValue( m_stream->availableAudioStreams() );
-            case AddonInterface::currentAudioStream:
-                return QVariant::fromValue( m_stream->currentAudioStream() );
-            case AddonInterface::setCurrentAudioStream:
-                if (arguments.isEmpty() || !arguments.first().canConvert<AudioStreamDescription>() ) {
+            case AddonInterface::availableAudioChannels:
+                return QVariant::fromValue( m_stream->availableAudioChannels() );
+            case AddonInterface::currentAudioChannel:
+                return QVariant::fromValue( m_stream->currentAudioChannel() );
+            case AddonInterface::setCurrentAudioChannel:
+                if (arguments.isEmpty() || !arguments.first().canConvert<AudioChannelDescription>() ) {
                     kDebug(610) << "arguments invalid";
                     return false;
                 }
-                m_stream->setCurrentAudioStream( arguments.first().value<AudioStreamDescription>() );
+                m_stream->setCurrentAudioChannel( arguments.first().value<AudioChannelDescription>() );
                 return true;
          }
          break;
