@@ -75,7 +75,6 @@ class XineEngine
         static QList<int> audioOutputIndexes();
         static QHash<QByteArray, QVariant> audioOutputProperties(int audioDevice);
         static QByteArray audioDriverFor(int audioDevice);
-        static QStringList alsaDevicesFor(int audioDevice);
         static xine_audio_port_t *nullPort();
         static xine_video_port_t *nullVideoPort();
 

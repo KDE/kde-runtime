@@ -322,20 +322,6 @@ namespace Xine
         return QByteArray();
     }
 
-    QStringList XineEngine::alsaDevicesFor(int audioDevice)
-    {
-        XineEngine *that = self();
-        that->checkAudioOutputs();
-        for (int i = 0; i < that->m_audioOutputInfos.size(); ++i) {
-            if (that->m_audioOutputInfos[i].index == audioDevice) {
-                if (that->m_audioOutputInfos[i].driver == "alsa") { // only for ALSA
-                    //return that->m_audioOutputInfos[i].devices;
-                }
-            }
-        }
-        return QStringList();
-    }
-
     void XineEngine::addAudioOutput(int index, int initialPreference, const QString &name, const QString &description,
             const QString &icon, const QByteArray &driver, bool isAdvanced)
     {
