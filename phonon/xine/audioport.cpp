@@ -25,6 +25,7 @@
 #include <QByteArray>
 #include <QStringList>
 #include <xine.h>
+#include <xine/audio_out.h>
 #include <QSharedData>
 #include <kdebug.h>
 #include <QtCore/QTimerEvent>
@@ -195,14 +196,16 @@ xine_audio_port_t *AudioPort::xinePort() const
     return d->port;
 }
 
-void AudioPort::setAudioOutput(QObject *audioOutput)
+bool AudioPort::hasFailed() const
 {
-    d->audioOutput = audioOutput;
-}
-
-QObject *AudioPort::audioOutput() const
-{
-    return d->audioOutput;
+    if (!d->port) {
+        return true;
+    }
+    const uint32_t cap = d->port->get_capabilities(d->port);
+    if (cap == AO_CAP_NOCAP) {
+        return true;
+    }
+    return false;
 }
 
 } // namespace Xine

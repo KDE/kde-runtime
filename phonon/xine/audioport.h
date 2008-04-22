@@ -61,11 +61,7 @@ class AudioPort
         operator xine_audio_port_t *() const;
         xine_audio_port_t *xinePort() const;
 
-        /**
-         * used to send XINE_EVENT_AUDIO_DEVICE_FAILED to the AudioOutput
-         */
-        void setAudioOutput(QObject *audioOutput);
-        QObject *audioOutput() const;
+        bool hasFailed() const;
 
         AudioPort(const AudioPort &);
         AudioPort &operator=(const AudioPort &);

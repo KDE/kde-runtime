@@ -96,7 +96,6 @@ bool AudioOutput::setOutputDevice(const AudioOutputDevice &newDevice)
     }
     m_device = newDevice;
     K_XT(AudioOutputXT)->m_audioPort = newPort;
-    K_XT(AudioOutputXT)->m_audioPort.setAudioOutput(this);
     SourceNode *src = source();
     if (src) {
         QList<WireCall> wireCall;
@@ -130,7 +129,11 @@ bool AudioOutput::event(QEvent *ev)
     switch (ev->type()) {
     case Event::AudioDeviceFailed:
         ev->accept();
-        emit audioDeviceFailed();
+        // we don't know for sure which AudioPort failed. but the one without any
+        // capabilities must be the guilty one
+        if (K_XT(AudioOutputXT)->m_audioPort.hasFailed()) {
+            emit audioDeviceFailed();
+        }
         return true;
     default:
         return AbstractAudioOutput::event(ev);
