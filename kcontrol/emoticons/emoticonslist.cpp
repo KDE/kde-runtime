@@ -379,10 +379,25 @@ void EmoticonList::loadTheme(const QString &name)
     new QListWidgetItem(previewIcon, name, themeList);
 }
 
+void EmoticonList::removeTheme( const QString &name )
+{
+    if(name.isEmpty())
+        return;
+
+    if(emoMap.contains(name)) {
+        delete emoMap.value(name);
+        emoMap.remove(name);
+        QList<QListWidgetItem *>ls = themeList->findItems(name, Qt::MatchExactly);
+        if(ls.size()) {
+            delete ls.at(0);
+        }
+    }
+
+}
+
 void EmoticonList::getNewStuff()
 {
     KNS::Engine engine(this);
-    bool entryRemoved= false;
     if (engine.init("emoticons.knsrc")) {
         KNS::Entry::List entries = engine.downloadDialogModal(this);
 
@@ -392,14 +407,12 @@ void EmoticonList::getNewStuff()
                 loadTheme(name);
             }
             else if(entries.at( i )->status() == KNS::Entry::Deleted ) {
-                entryRemoved = true;
-                break;
+                QString name = entries.at(i)->uninstalledFiles().at(0).section('/', -2, -2);
+                removeTheme(name);
             }
 
         }
     }
-    if ( entryRemoved )
-        load();
 }
 
 // kate: space-indent on; indent-width 4; replace-tabs on;

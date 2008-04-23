@@ -69,6 +69,7 @@ private slots:
     void updateButton();
 private:
     void loadTheme(const QString &name);
+    void removeTheme( const QString &name );
     QMap<QString, Emoticons*> emoMap;
     QStringList delFiles;
 };
