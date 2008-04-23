@@ -18,8 +18,6 @@ set(kcmnepomuk_SRCS
 
 qt4_add_dbus_interface(kcmnepomuk_SRCS ../interfaces/org.kde.NepomukServer.xml nepomukserverinterface)
 
-kde4_add_kcfg_files(kcmnepomuk_SRCS ../server/nepomukserversettings.kcfgc)
-
 kde4_add_ui_files(kcmnepomuk_SRCS
   nepomukconfigwidget.ui)
 

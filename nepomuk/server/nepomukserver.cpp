@@ -76,23 +76,11 @@ void Nepomuk::Server::init()
 }
 
 
-void Nepomuk::Server::updateServiceConfig()
-{
-    // change the config so a disabled strigi is not started and stopped again
-    // but not started at all
-    KConfigGroup config( m_config, QString("Service-%1").arg(m_strigiServiceName) );
-    config.writeEntry( "autostart", NepomukServerSettings::self()->startStrigi() );
-}
-
-
 void Nepomuk::Server::enableNepomuk( bool enabled )
 {
     kDebug(300002) << "enableNepomuk" << enabled;
     if ( enabled != m_enabled ) {
         if ( enabled ) {
-            // make sure we do not start strigi unnecessarily
-            updateServiceConfig();
-
             // start all autostart services
             m_serviceManager->startAllServices();
 
@@ -136,6 +124,9 @@ void Nepomuk::Server::enableStrigi( bool enabled )
             m_serviceManager->stopService( m_strigiServiceName );
         }
     }
+
+    KConfigGroup config( m_config, QString("Service-%1").arg(m_strigiServiceName) );
+    config.writeEntry( "autostart", enabled );
 }
 
 

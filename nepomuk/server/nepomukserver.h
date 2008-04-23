@@ -59,7 +59,6 @@ namespace Nepomuk {
 
     private:
         void init();
-        void updateServiceConfig();
 
         ServiceManager* m_serviceManager;
         bool m_enabled;

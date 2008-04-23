@@ -17,7 +17,6 @@
 */
 
 #include "nepomukserverkcm.h"
-#include "nepomukserversettings.h"
 #include "nepomukserverinterface.h"
 #include "../common/strigiconfigfile.h"
 
@@ -84,8 +83,9 @@ void Nepomuk::ServerConfigModule::load()
                                   "will be used the next time the server is started." ),
                             i18n( "Nepomuk server not running" ) );
 
-        m_checkEnableStrigi->setChecked( NepomukServerSettings::self()->startStrigi() );
-        m_checkEnableNepomuk->setChecked( NepomukServerSettings::self()->startNepomuk() );
+        KConfig config( "nepomukserverrc" );
+        m_checkEnableNepomuk->setChecked( config.group( "Basic Settings" ).readEntry( "Start Nepomuk", true ) );
+        m_checkEnableStrigi->setChecked( config.group( "Service-nepomukstrigiservice" ).readEntry( "autostart", false ) );
     }
 
     if ( isStrigiRunning() ) {
@@ -115,15 +115,15 @@ void Nepomuk::ServerConfigModule::load()
 void Nepomuk::ServerConfigModule::save()
 {
     // 1. change the settings (in case the server is not running)
-    NepomukServerSettings::self()->setStartStrigi( m_checkEnableStrigi->isChecked() );
-    NepomukServerSettings::self()->setStartNepomuk( m_checkEnableNepomuk->isChecked() );
-    NepomukServerSettings::self()->writeConfig();
+    KConfig config( "nepomukserverrc" );
+    config.group( "Basic Settings" ).writeEntry( "Start Nepomuk", m_checkEnableNepomuk->isChecked() );
+    config.group( "Service-nepomukstrigiservice" ).writeEntry( "autostart", m_checkEnableStrigi->isChecked() );
 
 
     // 2. update Strigi config
     StrigiConfigFile strigiConfig( StrigiConfigFile::defaultStrigiConfigFilePath() );
     strigiConfig.load();
-    if ( NepomukServerSettings::self()->startNepomuk() ) {
+    if ( m_checkEnableNepomuk->isChecked() ) {
         strigiConfig.defaultRepository().setType( "sopranobackend" );
     }
     else {
@@ -162,9 +162,8 @@ void Nepomuk::ServerConfigModule::save()
 
 void Nepomuk::ServerConfigModule::defaults()
 {
-    NepomukServerSettings::self()->setDefaults();
-    m_checkEnableStrigi->setChecked( NepomukServerSettings::self()->startStrigi() );
-    m_checkEnableNepomuk->setChecked( NepomukServerSettings::self()->startNepomuk() );
+    m_checkEnableStrigi->setChecked( false );
+    m_checkEnableNepomuk->setChecked( true );
     // create Strigi default config
     StrigiConfigFile defaultConfig;
     m_editStrigiFolders->setItems( defaultConfig.defaultRepository().indexedDirectories() );
