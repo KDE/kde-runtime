@@ -407,8 +407,11 @@ void EmoticonList::getNewStuff()
                 loadTheme(name);
             }
             else if(entries.at( i )->status() == KNS::Entry::Deleted ) {
-                QString name = entries.at(i)->uninstalledFiles().at(0).section('/', -2, -2);
-                removeTheme(name);
+                if ( !entries.at(i)->uninstalledFiles().isEmpty() )
+                {
+                    QString name = entries.at(i)->uninstalledFiles().at(0).section('/', -2, -2);
+                    removeTheme(name);
+                }
             }
 
         }
