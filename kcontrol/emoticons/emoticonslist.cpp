@@ -382,6 +382,7 @@ void EmoticonList::loadTheme(const QString &name)
 void EmoticonList::getNewStuff()
 {
     KNS::Engine engine(this);
+    bool entryRemoved= false;
     if (engine.init("emoticons.knsrc")) {
         KNS::Entry::List entries = engine.downloadDialogModal(this);
 
@@ -390,8 +391,15 @@ void EmoticonList::getNewStuff()
                 QString name = entries.at(i)->installedFiles().at(0).section('/', -2, -2);
                 loadTheme(name);
             }
+            else if(entries.at( i )->status() == KNS::Entry::Deleted ) {
+                entryRemoved = true;
+                break;
+            }
+
         }
     }
+    if ( entryRemoved )
+        load();
 }
 
 // kate: space-indent on; indent-width 4; replace-tabs on;
