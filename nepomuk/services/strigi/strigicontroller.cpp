@@ -113,7 +113,7 @@ void Nepomuk::StrigiController::shutdown()
         kDebug(300002) << "We started Strigi ourselves. Trying to shut it down gracefully.";
         if ( !m_strigiProcess->waitForFinished(60000) ) {
             kDebug(300002) << "strigidaemon does not terminate properly. Killing process...";
-            m_strigiProcess->kill();
+            m_strigiProcess->terminate();
         }
         m_state = Idle;
     }
