@@ -54,7 +54,7 @@ void Nepomuk::Core::init()
             m_openingRepositories << "main";
         }
 
-        foreach( QString repoName, m_openingRepositories ) {
+        foreach( const QString &repoName, m_openingRepositories ) {
             createRepository( repoName );
         }
 

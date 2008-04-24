@@ -136,7 +136,7 @@ int main( int argc, char** argv )
     // Check the service dependencies
     // ====================================
     QStringList dependencies = service->property( "X-KDE-Nepomuk-dependencies", QVariant::StringList ).toStringList();
-    foreach( QString dep, dependencies ) {
+    foreach( const QString &dep, dependencies ) {
         if( !QDBusConnection::sessionBus().interface()->isServiceRegistered( dbusServiceName( dep ) ) ) {
             s << "Missing dependency " << dep << endl;
             return ErrorMissingDependency;

@@ -64,7 +64,7 @@ namespace {
             QString service = it.key();
             QStringList dependencies = it.value();
 
-            foreach( QString dep, dependencies ) {
+            foreach( const QString &dep, dependencies ) {
                 // check if the service depends on a non-existing service
                 if( !contains( dep ) ) {
                     kDebug() << "Found invalid dependency:" << service << "depends on non-existing service" << dep;
@@ -87,7 +87,7 @@ namespace {
 
     bool DependencyTree::dependsOn( const QString& service, const QString& dependency )
     {
-        foreach( QString dep, value( service ) ) {
+        foreach( const QString &dep, value( service ) ) {
             if( dep == dependency ||
                 dependsOn( dep, dependency ) ) {
                 return true;
@@ -223,7 +223,7 @@ void Nepomuk::ServiceManager::Private::startService( ServiceController* sc )
     if( !sc->isRunning() ) {
         // start dependencies if possible
         bool needToQueue = false;
-        foreach( QString dependency, dependencyTree[sc->name()] ) {
+        foreach( const QString &dependency, dependencyTree[sc->name()] ) {
             ServiceController* depSc = findService( dependency );
             if ( !depSc->isInitialized() ) {
                 kDebug() << "Queueing" << sc->name() << "due to dependency" << dependency;
@@ -248,7 +248,7 @@ void Nepomuk::ServiceManager::Private::stopService( ServiceController* sc )
 {
     if( sc->isRunning() ) {
         // shut down any service depending of this one first
-        foreach( QString dep, dependencyTree.servicesDependingOn( sc->name() ) ) {
+        foreach( const QString &dep, dependencyTree.servicesDependingOn( sc->name() ) ) {
             stopService( services[dep] );
         }
 
@@ -329,7 +329,7 @@ bool Nepomuk::ServiceManager::startService( const QString& name )
     if( ServiceController* sc = d->findService( name ) ) {
         if( !sc->isRunning() ) {
             // start dependencies if possible
-            foreach( QString dependency, d->dependencyTree[name] ) {
+            foreach( const QString &dependency, d->dependencyTree[name] ) {
                 if ( ServiceController* depSc = d->findService( dependency ) ) {
                     if( depSc->autostart() || depSc->startOnDemand() ) {
                         if ( !startService( dependency ) ) {

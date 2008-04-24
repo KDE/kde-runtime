@@ -195,7 +195,7 @@ void Nepomuk::ServerConfigModule::updateStrigiSettingsInRunningInstance()
         strigiConfig.load();
 
         QList<QPair<bool, QString> > filters;
-        foreach( QString filter, strigiConfig.excludeFilters() ) {
+        foreach( const QString &filter, strigiConfig.excludeFilters() ) {
             filters.append( qMakePair( false, filter ) );
         }
         strigiClient.setFilters( filters );

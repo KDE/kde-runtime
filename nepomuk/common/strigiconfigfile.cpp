@@ -199,7 +199,7 @@ bool Nepomuk::StrigiConfigFile::save()
     doc.appendChild( rootElement );
 
     // save repositories
-    foreach( Repository repo, m_repositories ) {
+    foreach( const Repository &repo, m_repositories ) {
         QDomElement repoElem = doc.createElement( "repository" );
         repoElem.setAttribute( "name", repo.name() );
         repoElem.setAttribute( "type", repo.type() );
@@ -209,7 +209,7 @@ bool Nepomuk::StrigiConfigFile::save()
         repoElem.setAttribute( "pollingInterval", QString::number( repo.pollingInterval() ) );
 
         // add paths
-        foreach( QString path, repo.indexedDirectories() ) {
+        foreach( const QString &path, repo.indexedDirectories() ) {
             QDomElement pathElem = doc.createElement( "path" );
             pathElem.setAttribute( "path", path );
             repoElem.appendChild( pathElem );
@@ -221,13 +221,13 @@ bool Nepomuk::StrigiConfigFile::save()
     // save filters
     QDomElement filtersElem = doc.createElement( "filters" );
     rootElement.appendChild( filtersElem );
-    foreach( QString filter, m_includeFilters ) {
+    foreach( const QString &filter, m_includeFilters ) {
         QDomElement filterElem = doc.createElement( "filter" );
         filterElem.setAttribute( "pattern", filter );
         filterElem.setAttribute( "include", "1" );
         filtersElem.appendChild( filterElem );
     }
-    foreach( QString filter, m_excludeFilters ) {
+    foreach( const QString &filter, m_excludeFilters ) {
         QDomElement filterElem = doc.createElement( "filter" );
         filterElem.setAttribute( "pattern", filter );
         filterElem.setAttribute( "include", "0" );
@@ -358,7 +358,7 @@ QTextStream& operator<<( QTextStream& s, const Nepomuk::StrigiConfigFile& scf )
 {
     s << "useDBus: " << scf.useDBus() << endl
       << "repositories:" << endl;
-    foreach( Nepomuk::StrigiConfigFile::Repository repo, scf.repositories() ) {
+    foreach( const Nepomuk::StrigiConfigFile::Repository &repo, scf.repositories() ) {
         s << "   " << repo.name() << ":" << endl
           << "      " << "type: " << repo.type() << endl
           << "      " << "indexdir: " << repo.indexDir() << endl
@@ -367,11 +367,11 @@ QTextStream& operator<<( QTextStream& s, const Nepomuk::StrigiConfigFile& scf )
           << "      " << "paths: " << repo.indexedDirectories().join( ":" ) << endl;
     }
     s << "include filters:" << endl;
-    foreach( QString filter, scf.includeFilters() ) {
+    foreach( const QString &filter, scf.includeFilters() ) {
         s << "   " << filter << endl;
     }
     s << "exclude filters:" << endl;
-    foreach( QString filter, scf.excludeFilters() ) {
+    foreach( const QString &filter, scf.excludeFilters() ) {
         s << "   " << filter << endl;
     }
     return s;

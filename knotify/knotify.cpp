@@ -211,7 +211,7 @@ int KNotifyAdaptor::event(const QString &event, const QString &fromApp, const QV
 	/* I'm not sure this is the right way to read a a(ss) type,  but it seems to work */
 	ContextList contextlist;
 	QString context_key;
-	foreach( QVariant v , contexts)
+	foreach( const QVariant &v , contexts)
 	{
 		/* this code doesn't work
 		QVariantList vl=v.toList();
@@ -238,7 +238,7 @@ void KNotifyAdaptor::reemit(int id, const QVariantList& contexts)
 {
 	ContextList contextlist;
 	QString context_key;
-	foreach( QVariant v , contexts)
+	foreach( const QVariant &v , contexts)
 	{
 		QString s=v.toString();
 		if(context_key.isEmpty())

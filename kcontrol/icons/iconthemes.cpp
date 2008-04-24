@@ -415,7 +415,7 @@ void loadPreview(QLabel *label, KIconTheme& icontheme, const QStringList& iconna
 {
     const int size = qMin(48, icontheme.defaultSize(KIconLoader::Desktop));
     KSvgRenderer renderer;
-    foreach(QString name, iconnames) {
+    foreach(const QString &name, iconnames) {
         K3Icon icon = icontheme.iconPath(QString("%1.png").arg(name), size, KIconLoader::MatchBest);
         if (icon.isValid()) {
             label->setPixmap(QPixmap(icon.path).scaled(size, size));
