@@ -141,7 +141,7 @@ Name[sr]=Програм %progname (%appname) срушио се уз сигнал
 Name[sr@latin]=Program %progname (%appname) srušio se uz signal %signum (%signame).
 Name[sv]=Programmet %progname (%appname), kraschade och orsakade signalen %signum (%signame).
 Name[te]=ఈ కార్యక్రమం %progname (%appname) క్రాష్ అయినది మరయూ %signum సిగ్నల్ నూ కలుగ చేసింది
-Name[th]=โปรแกรม %progname (%appname) ทำงานล้มเหลวและจบการทำงานกระทันหัน โดยได้รับสัญญาณ %signum (%signame)
+Name[th]=โปรแกรม %progname (%appname) ทำงานข้ดข้องและจบการทำงานกระทันหันโดยได้รับสัญญาณหมายเลข %signum (%signame)
 Name[tr]= %progname (%appname) uygulaması çöktü ve %signum (%signame) sinyali gönderdi.
 Name[uk]=Програма %progname (%appname) зазнала аварії і спричинила сигнал signal %signum (%signame).
 Name[uz]=Дастурнинг %progname (%appname) ишида хато рўй берди ва %signum (%signame) сигналига сабабчи бўлди.
@@ -173,7 +173,7 @@ Name[sl]=Pomagajte nam izboljšati program, ki ga uporabljate. Oddajte poročilo
 Name[sr]=Помогните нам да побољшамо софтвер тако што ћете испунити извештај на <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Корисни детаљи: како изазвати грешку, документи који су учитавани, итд.
 Name[sr@latin]=Pomognite nam da poboljšamo softver tako što ćete ispuniti izveštaj na <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Korisni detalji: kako izazvati grešku, dokumenti koji su učitavani, itd.
 Name[sv]=Hjälp oss att förbättra programmet du använder genom skicka in en rapport till <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Användbar information inkluderar hur felet kan återupprepas, vilka dokument som var laddade, etc.
-Name[th]=โปรดช่วยเหลือเราในการปรับปรุงซอฟต์แวร์ ด้วยการกรอกข้อมูลในรายงานที่ <a href="http://bugs.kde.org">http://bugs.kde.org</a> และโปรดกรอกรายละเอียดเกี่ยวกับวิธีการสร้างข้อผิดพลาดนี้, ได้โหลดเอกสารขึ้นมาอย่างไร เป็นต้น
+Name[th]=โปรดช่วยเหลือเราในการปรับปรุงซอฟต์แวร์ ด้วยการกรอกข้อมูลในรายงานที่ <a href="http://bugs.kde.org">http://bugs.kde.org</a> และโปรดกรอกรายละเอียด เช่น วิธีการสร้างข้อผิดพลาดนี้, ได้โหลดเอกสารตัวใดขึ้นมาบ้าง เป็นต้น รวมมาในการแจ้งข้อผิดพลาดนี้ด้วย
 Name[tr]=Bu uygulamanın gelişimine katkıda bulunmak için lütfen <a href="http://bugs.kde.org">http://bugs.kde.org</a> adresini kullanarak hata raporu gönderin. İşe yarar ayrıntılar içerisinde hatanın nasıl tekrarlanabildiği ve hata oluşurken hangi belgelerin yüklendiği gibi şeyler vardır.
 Name[uk]=Будь ласка, допоможіть нам вдосконалити ПЗ, яким ви користуєтесь - заповніть звіт на <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Включіть корисні подробиці: як повторити помилку, документи, котрі було завантажено, тощо.
 Name[x-test]=xxPlease help us improve the software you use by filing a report at <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Useful details include how to reproduce the error, documents that were loaded, etc.xx
