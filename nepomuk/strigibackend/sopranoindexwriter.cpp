@@ -27,6 +27,7 @@
 #include <Soprano/Index/IndexFilterModel>
 #include <Soprano/Index/CLuceneIndex>
 #include <Soprano/Vocabulary/RDF>
+#include <Soprano/LiteralValue>
 
 #include <QtCore/QList>
 #include <QtCore/QHash>
@@ -124,23 +125,23 @@ public:
         literalTypes[FieldRegister::datetimeType] = QVariant::DateTime; // Strigi encodes datetime as unsigned integer, i.e. addValue( ..., uint )
     }
 
-    QVariant::Type literalType( const std::string& strigiType ) {
-        QHash<std::string, QVariant::Type>::const_iterator it = literalTypes.find( strigiType );
+    QVariant::Type literalType( const Strigi::FieldProperties& strigiType ) {
+        // it looks as if the typeUri can contain arbitrary values, URIs or stuff like "string"
+        QHash<std::string, QVariant::Type>::const_iterator it = literalTypes.find( strigiType.typeUri() );
         if ( it == literalTypes.constEnd() ) {
-//            qDebug() << "Unknown field type: " << strigiType.c_str() << "falling back to string";
-            return QVariant::String;
+            return LiteralValue::typeFromDataTypeUri( QUrl::fromEncoded( strigiType.typeUri().c_str() ) );
         }
         else {
             return *it;
         }
     }
 
-    LiteralValue createLiteraValue( const std::string& strigiDataType,
+    LiteralValue createLiteraValue( const Strigi::FieldProperties& strigiDataType,
                                     const unsigned char* data,
                                     uint32_t size ) {
         QString value = QString::fromUtf8( ( const char* )data, size );
         QVariant::Type type = literalType( strigiDataType );
-        if ( type == QVariant::DateTime ) {
+        if ( type == QVariant::DateTime ) { // dataTime is stored as integer in strigi!
             return LiteralValue( QDateTime::fromTime_t( value.toUInt() ) );
         }
         else {
@@ -309,7 +310,7 @@ void Strigi::Soprano::IndexWriter::addValue( const AnalysisResult* idx, const Re
     if ( value.length() > 0 ) {
         FileMetaData* md = reinterpret_cast<FileMetaData*>( idx->writerData() );
 
-        if ( d->literalType( field->type() ) == QVariant::Invalid ) {
+        if ( d->literalType( field->properties() ) == QVariant::Invalid ) {
             // FIXME: only save it in the index: binary data (how does strigi handle that anyway??)
         }
         else if ( QString( name.c_str() ) == ::Soprano::Vocabulary::RDF::type().toString() ) {
@@ -324,13 +325,13 @@ void Strigi::Soprano::IndexWriter::addValue( const AnalysisResult* idx, const Re
                                                     md->context) );
             d->repository->addStatement( Statement( md->fileUri,
                                                     QUrl( "http://strigi.sourceforge.net/fields#rdf-string-type" ),
-                                                    d->createLiteraValue( field->type(), ( unsigned char* )value.c_str(), value.length() ),
+                                                    d->createLiteraValue( field->properties(), ( unsigned char* )value.c_str(), value.length() ),
                                                     md->context) );
         }
         else {
             d->repository->addStatement( Statement( md->fileUri,
                                                     Util::fieldUri( name ),
-                                                    d->createLiteraValue( field->type(), ( unsigned char* )value.c_str(), value.length() ),
+                                                    d->createLiteraValue( field->properties(), ( unsigned char* )value.c_str(), value.length() ),
                                                     md->context) );
         }
     }
