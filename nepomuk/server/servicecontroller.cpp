@@ -42,6 +42,7 @@ public:
     Private()
         : processControl( 0 ),
           serviceControlInterface( 0 ),
+          attached(false),
           initialized( false ) {
     }
 
@@ -52,6 +53,10 @@ public:
 
     ProcessControl* processControl;
     OrgKdeNepomukServiceControlInterface* serviceControlInterface;
+
+    // true if we attached to an already running instance instead of
+    // starting our own (in that case processControl will be 0)
+    bool attached;
 
     bool initialized;
 
@@ -148,23 +153,33 @@ bool Nepomuk::ServiceController::start()
         return true;
     }
 
-    kDebug(300002) << "Starting" << name();
-
     d->initialized = false;
 
-    if( !d->processControl ) {
-        d->processControl = new ProcessControl( this );
-        connect( d->processControl, SIGNAL( finished( bool ) ),
-                 this, SLOT( slotProcessFinished( bool ) ) );
+    // check if the service is already running, ie. has been started by someone else or by a crashed instance of the server
+    // we cannot rely on the auto-restart feature of ProcessControl here. So we handle that completely in slotServiceOwnerChanged
+    if( QDBusConnection::sessionBus().interface()->isServiceRegistered( dbusServiceName( name() ) ) ) {
+        kDebug() << "Attaching to already running service" << name();
+        d->attached = true;
+        createServiceControlInterface();
+        return true;
     }
+    else {
+        kDebug(300002) << "Starting" << name();
 
-    connect( QDBusConnection::sessionBus().interface(),
-             SIGNAL( serviceOwnerChanged( const QString&, const QString&, const QString& ) ),
-             this,
-             SLOT( slotServiceOwnerChanged( const QString&, const QString&, const QString& ) ) );
+        if( !d->processControl ) {
+            d->processControl = new ProcessControl( this );
+            connect( d->processControl, SIGNAL( finished( bool ) ),
+                     this, SLOT( slotProcessFinished( bool ) ) );
+        }
 
-    return d->processControl->start( KGlobal::dirs()->locate( "exe", "nepomukservicestub" ),
-                                     QStringList() << name() );
+        connect( QDBusConnection::sessionBus().interface(),
+                 SIGNAL( serviceOwnerChanged( const QString&, const QString&, const QString& ) ),
+                 this,
+                 SLOT( slotServiceOwnerChanged( const QString&, const QString&, const QString& ) ) );
+
+        return d->processControl->start( KGlobal::dirs()->locate( "exe", "nepomukservicestub" ),
+                                         QStringList() << name() );
+    }
 }
 
 
@@ -172,17 +187,25 @@ void Nepomuk::ServiceController::stop()
 {
     if( isRunning() ) {
         kDebug(300002) << "Stopping" << name();
-        d->processControl->setCrashPolicy( ProcessControl::StopOnCrash );
+
+        d->attached = false;
+
+        if( d->processControl ) {
+            d->processControl->setCrashPolicy( ProcessControl::StopOnCrash );
+        }
         d->serviceControlInterface->shutdown();
-        d->processControl->stop();
-        d->processControl->setCrashPolicy( ProcessControl::RestartOnCrash );
+
+        if( d->processControl ) {
+            d->processControl->stop();
+            d->processControl->setCrashPolicy( ProcessControl::RestartOnCrash );
+        }
     }
 }
 
 
 bool Nepomuk::ServiceController::isRunning() const
 {
-    return d->processControl ? d->processControl->isRunning() : false;
+    return( d->attached || ( d->processControl ? d->processControl->isRunning() : false ) );
 }
 
 
@@ -226,20 +249,38 @@ void Nepomuk::ServiceController::slotProcessFinished( bool /*clean*/ )
 
 
 void Nepomuk::ServiceController::slotServiceOwnerChanged( const QString& serviceName,
-                                                          const QString&,
+                                                          const QString& oldOwner,
                                                           const QString& newOwner )
 {
     if( !newOwner.isEmpty() && serviceName == dbusServiceName( name() ) ) {
-        d->serviceControlInterface = new OrgKdeNepomukServiceControlInterface( serviceName,
-                                                                               "/servicecontrol",
-                                                                               QDBusConnection::sessionBus(),
-                                                                               this );
-        connect( d->serviceControlInterface, SIGNAL( serviceInitialized( bool ) ),
-                 this, SLOT( slotServiceInitialized( bool ) ) );
+        createServiceControlInterface();
+    }
 
-        if ( d->serviceControlInterface->isInitialized() ) {
-            slotServiceInitialized( true );
-        }
+    // an attached service was not started through ProcessControl. Thus, we cannot rely
+    // on its restart-on-crash feature and have to do it manually. Afterwards it is back
+    // to normals
+    else if( d->attached &&
+             oldOwner == dbusServiceName( name() ) ) {
+        kDebug() << "Attached service" << name() << "went down. Restarting ourselves.";
+        d->attached = false;
+        start();
+    }
+}
+
+
+void Nepomuk::ServiceController::createServiceControlInterface()
+{
+    delete d->serviceControlInterface;
+
+    d->serviceControlInterface = new OrgKdeNepomukServiceControlInterface( dbusServiceName( name() ),
+                                                                           "/servicecontrol",
+                                                                           QDBusConnection::sessionBus(),
+                                                                           this );
+    connect( d->serviceControlInterface, SIGNAL( serviceInitialized( bool ) ),
+             this, SLOT( slotServiceInitialized( bool ) ) );
+
+    if ( d->serviceControlInterface->isInitialized() ) {
+        slotServiceInitialized( true );
     }
 }
 

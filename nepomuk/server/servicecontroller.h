@@ -50,6 +50,11 @@ namespace Nepomuk {
 
         void setAutostart( bool enable );
 
+        /**
+         * Make sure the service is running. This will attach to an already running
+         * instance or simple return \p true in case the service has been started
+         * already.
+         */
         bool start();
         void stop();
 
@@ -81,6 +86,8 @@ namespace Nepomuk {
         void slotServiceInitialized( bool success );
         
     private:
+        void createServiceControlInterface();
+
         class Private;
         Private* const d;
     };
