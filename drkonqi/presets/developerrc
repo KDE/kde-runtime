@@ -22,6 +22,7 @@ Name[km]=អ្នក​អភិវឌ្ឍន៍
 Name[ko]=개발자
 Name[lt]=Programuotojas
 Name[mk]=Развивач
+Name[ml]=രചയിതാവു്
 Name[ms]=Pemaju
 Name[nb]=Utvikler
 Name[nds]=Schriever
@@ -125,6 +126,7 @@ Name[km]=កម្មវិធី %progname (%appname) លេខ​សម្គ�
 Name[ko]=PID %pid 인 프로그램 %progname (%appname)이(가) 충돌하였고 신호 %signum(%signame)을(를) 보냈습니다.
 Name[lt]=%progname programa (%appname), pid %pid nulūžo ir gavo %signum (%signame) signalą.
 Name[mk]=Апликацијата %progname (%appname), pid %pid, падна и го предизвика сигналот %signum (%signame).
+Name[ml]=%progname (%appname), പിഐഡി %pid എന്ന പ്രയോഗം %signum (%signame) എന്ന സിഗ്നലോടുകൂടി തകര്‍ന്നിരിയ്ക്കുന്നു
 Name[ms]=Aplikasi %progname (%appname), pid %pid, musnah dan menyebabkan isyarat %signum (%signame).
 Name[nb]=Programmet  %progname (%appname), pid %pid, krasjet og ga signalet  %signum (%signame).
 Name[nds]=Dat Programm %progname (%appname) mit de Perzess-ID %pid is afstört un hett dat Signaal %signum (%signame) utlööst.
@@ -175,6 +177,7 @@ Name[km]=បើ​អ្នក​ចង់​ជួសជុល​កម្ម�
 Name[ko]=프로그램을 디버깅할 수도 있습니다. 역추적 탭을 참고하십시오.
 Name[lt]=Galite pabandyti ištaisyti savo programą. Pažiūrėkite į žiniaraščio kortelę.
 Name[mk]=Можеби ќе сакате да ја поправите вашата програма. Погледнете на ливчето со трагите.
+Name[ml]=നിങ്ങളൊരുപക്ഷേ ഇതു് ശരിയാക്കാനാഗ്രഹിയ്ക്കുന്നുണ്ടാകും. ബാക്ക്ട്രേസ് എന്ന കിളിവാതിലിലൊന്നു നോക്കൂ.
 Name[ms]=Anda mungkin mahu membaiki program anda. Lihat pada tab jejak belakang.
 Name[nb]=Programmet bør rettes. Se i fanen med tilbakesporing.
 Name[nds]=Wenn Du dat Programm richten wullt, kiek man maal op de Fehlerspoor-Siet.
@@ -253,7 +256,6 @@ Comment[zh_TW]=不合法的指令。
 [6]
 Name=SIGABRT
 Name[sr]=СИГАБРТ
-Name[th]=สัญญาณ SIGABRT
 Name[x-test]=xxSIGABRTxx
 Comment=Aborted.
 Comment[ca]=S'ha interromput.
@@ -269,6 +271,7 @@ Comment[hu]=A programfutás megszakadt.
 Comment[ja]=プロセスが中断されました。
 Comment[km]=បាន​បោះបង់ ។
 Comment[ko]=중단됨.
+Comment[ml]=പിന്തിരിഞ്ഞിരിയ്ക്കുന്നു.
 Comment[nb]=Avbrutt.
 Comment[nds]=Afbraken
 Comment[nn]=Avbrote.
@@ -411,6 +414,7 @@ Name[km]=មិនស្គាល់
 Name[ko]=알 수 없음
 Name[lt]=Nežinoma
 Name[mk]=Непознат
+Name[ml]=അപരിചിതം
 Name[ms]=Tidak Diketahui
 Name[nb]=Ukjent
 Name[nds]=Nich begäng

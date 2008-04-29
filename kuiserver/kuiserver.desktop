@@ -2,6 +2,7 @@
 Type=Service
 Name=kuiserver
 Name[hi]=केयूआईसर्वर
+Name[ml]=കെയുഐസെര്‍വര്‍
 Name[ne]=कुइसर्भर
 Name[sr]=КУИ‑сервер
 Name[sr@latin]=KUIServer
