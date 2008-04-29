@@ -136,11 +136,10 @@ public:
         }
     }
 
-    LiteralValue createLiteraValue( const Strigi::FieldProperties& strigiDataType,
-                                    const unsigned char* data,
-                                    uint32_t size ) {
+    LiteralValue createLiteralValue( QVariant::Type type,
+                                     const unsigned char* data,
+                                     uint32_t size ) {
         QString value = QString::fromUtf8( ( const char* )data, size );
-        QVariant::Type type = literalType( strigiDataType );
         if ( type == QVariant::DateTime ) { // dataTime is stored as integer in strigi!
             return LiteralValue( QDateTime::fromTime_t( value.toUInt() ) );
         }
@@ -310,10 +309,7 @@ void Strigi::Soprano::IndexWriter::addValue( const AnalysisResult* idx, const Re
     if ( value.length() > 0 ) {
         FileMetaData* md = reinterpret_cast<FileMetaData*>( idx->writerData() );
 
-        if ( d->literalType( field->properties() ) == QVariant::Invalid ) {
-            // FIXME: only save it in the index: binary data (how does strigi handle that anyway??)
-        }
-        else if ( QString( name.c_str() ) == ::Soprano::Vocabulary::RDF::type().toString() ) {
+        if ( QString( name.c_str() ) == ::Soprano::Vocabulary::RDF::type().toString() ) {
             // Strigi uses rdf:type improperly since it stores the value as a string. We have to
             // make sure it is a resource. The problem is that this results in the type not being
             // indexed properly. Thus, it cannot be searched with normal lucene queries.
@@ -325,14 +321,21 @@ void Strigi::Soprano::IndexWriter::addValue( const AnalysisResult* idx, const Re
                                                     md->context) );
             d->repository->addStatement( Statement( md->fileUri,
                                                     QUrl( "http://strigi.sourceforge.net/fields#rdf-string-type" ),
-                                                    d->createLiteraValue( field->properties(), ( unsigned char* )value.c_str(), value.length() ),
+                                                    LiteralValue( QString::fromUtf8( value.c_str() ) ),
                                                     md->context) );
         }
+
         else {
-            d->repository->addStatement( Statement( md->fileUri,
-                                                    Util::fieldUri( name ),
-                                                    d->createLiteraValue( field->properties(), ( unsigned char* )value.c_str(), value.length() ),
-                                                    md->context) );
+            QVariant::Type type = d->literalType( field->properties() );
+            if ( type != QVariant::Invalid ) {
+                d->repository->addStatement( Statement( md->fileUri,
+                                                        Util::fieldUri( name ),
+                                                        d->createLiteralValue( type, ( unsigned char* )value.c_str(), value.length() ),
+                                                        md->context) );
+            }
+            else {
+                qDebug() << "Ignoring field" << name.c_str() << "due to unknown type" << field->properties().typeUri().c_str();
+            }
         }
     }
 //    qDebug() << "IndexWriter::addValue done in thread" << QThread::currentThread();
