@@ -61,6 +61,8 @@ int main(int argc, char **argv)
         removeStartMenuLinks();
     else
         updateStartMenuLinks();
+
+    return 0;
 }
 
     
