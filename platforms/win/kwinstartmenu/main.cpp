@@ -61,8 +61,6 @@ int main(int argc, char **argv)
         removeStartMenuLinks();
     else
         updateStartMenuLinks();
-
-    return app.exec();
 }
 
     
