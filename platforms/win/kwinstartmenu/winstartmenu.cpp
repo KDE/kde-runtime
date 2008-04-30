@@ -59,10 +59,6 @@ WinStartMenuModule::WinStartMenuModule(QObject* parent, const QList<QVariant>&)
 {
     KConfigGroup group( &d->config, "General" );
 
-    //QString profile = qgetenv("ALLUSERSPROFILE");
-    
-    // not used yet
-    //d->config = new KConfig(KStandardDirs::locateLocal("data", "winstartrc"));
     d->ksycoca = new KSycoca();
     if (group.readEntry("Enabled", true))
       connect(d->ksycoca, SIGNAL(databaseChanged()), this, SLOT(databaseChanged()));

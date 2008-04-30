@@ -49,8 +49,6 @@ int main(int argc, char **argv)
     KCmdLineArgs::addCmdLineOptions( options ); // Add my own options.
 
     KComponentData a(&about);
-//  (void)KGlobal::dirs(); // trigger the creation
-//  (void)KGlobal::config();
 
     // Get application specific arguments
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
