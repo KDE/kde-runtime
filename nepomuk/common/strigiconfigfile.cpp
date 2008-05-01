@@ -294,7 +294,7 @@ Nepomuk::StrigiConfigFile::Repository& Nepomuk::StrigiConfigFile::defaultReposit
         // default filters
         if ( m_includeFilters.isEmpty() && m_excludeFilters.isEmpty() ) {
             // exclude hidden dirs and files
-            m_excludeFilters << ".*/" << ".*" << << "*~" << "*.part";
+            m_excludeFilters << ".*/" << ".*" << "*~" << "*.part";
         }
     }
 
