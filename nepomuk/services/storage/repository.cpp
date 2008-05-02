@@ -18,8 +18,10 @@
 
 #include <Soprano/Backend>
 #include <Soprano/Global>
+#include <Soprano/Version>
 #include <Soprano/StorageModel>
 #include <Soprano/Error/Error>
+#include <Soprano/Vocabulary/Xesam>
 
 #ifdef HAVE_SOPRANO_INDEX
 #include <Soprano/Index/IndexFilterModel>
@@ -136,6 +138,12 @@ void Nepomuk::Repository::open()
 
         // FIXME: find a good value here
         m_indexModel->setTransactionCacheSize( 100 );
+
+#if SOPRANO_IS_VERSION(2,0,99)
+        // no need for the whole content in the store, we only need it for searching
+        // (compare the strigi backend)
+        m_indexModel->addIndexOnlyPredicate( Soprano::Vocabulary::Xesam::asText() );
+#endif
 
         setParentModel( m_indexModel );
     }
