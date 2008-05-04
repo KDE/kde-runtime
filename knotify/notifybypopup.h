@@ -23,6 +23,7 @@
 
 #include "knotifyplugin.h"
 #include <QMap>
+#include <QHash>
 
 class KPassivePopup;
 
@@ -42,6 +43,23 @@ class NotifyByPopup : public KNotifyPlugin
 		int m_nextPosition;
 		int m_animationTimer;
 		void fillPopup(KPassivePopup *,int id,KNotifyConfig *config);
+		/**
+		 * Sends notification to DBus "/Notifications" interface.
+		 * @param id knotify-sid identifier of notification
+		 * @param replacesId knotify-side notification identifier. If not 0, will
+		 * request DBus service to replace existing notification with data in config
+		 * @param config notification data
+		 */
+		void sendNotificationDBus(int id, int replacesId, KNotifyConfig* config);
+		/**
+		 * Sends request to close Notification with id to DBus "/Notification" interface
+		 *  @param id knotify-side notification ID to close
+		 */
+		void closeNotificationDBus(int id);
+		/**
+		 * Specifies if DBus Notifications interface exists on session bus
+		 */
+		bool m_dbusServiceExists;
 		
 	protected:
 		void timerEvent(QTimerEvent *event);
@@ -49,7 +67,18 @@ class NotifyByPopup : public KNotifyPlugin
 	private Q_SLOTS:
 		void slotPopupDestroyed();
 		void slotLinkClicked(const QString & );
+		// slot to catch appearance or dissapearance of Notifications DBus service
+		void slotServiceOwnerChanged(const QString &, const QString &, const QString &);
+		// slot which gets called when DBus signals that some notification action was invoked
+		void slotDBusNotificationActionInvoked(uint, const QString&);
+		// slot which gets called when DBus signals that some notification was closed
+		void slotDBusNotificationClosed(uint, uint);
 
+        private:
+		/**
+		 * Maps knotify notification IDs to DBus notifications IDs
+		 */
+		QHash<int,uint> m_idMap;
 };
 
 #endif
