@@ -78,15 +78,23 @@ int main( int argc, char* argv[] )
   options.add("safer", ki18n("Disable arbitrary disk access"));
   KCmdLineArgs::addCmdLineOptions( options );
 
-  //KApplication::disableAutoDcopRegistration();
-
   KComponentData inst(KCmdLineArgs::aboutData());
-  KApplication a;
-  QApplication::instance()->setApplicationName(inst.componentName());
 
   KrashConfig krashconf;
 
-  Toplevel w(&krashconf);
+  QApplication *qa =
+    krashconf.safeMode() ?
+      new QApplication(KCmdLineArgs::qtArgc(), KCmdLineArgs::qtArgv()) :
+      new KApplication;
+  qa->setApplicationName(inst.componentName());
 
-  return w.exec();
+  int ret;
+  {
+    Toplevel w(&krashconf);
+    ret = w.exec();
+  }
+
+  delete qa;
+
+  return ret;
 }
