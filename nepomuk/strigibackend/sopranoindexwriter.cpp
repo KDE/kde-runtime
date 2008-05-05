@@ -1,8 +1,5 @@
 /*
-   $Id: sourceheader 511311 2006-02-19 14:51:05Z trueg $
-
-   This file is part of the Strigi project.
-   Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+   Copyright (C) 2007-2008 Sebastian Trueg <trueg@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public License as
@@ -27,6 +24,7 @@
 #include <Soprano/Index/IndexFilterModel>
 #include <Soprano/Index/CLuceneIndex>
 #include <Soprano/Vocabulary/RDF>
+#include <Soprano/Vocabulary/Xesam>
 #include <Soprano/LiteralValue>
 
 #include <QtCore/QList>
@@ -110,6 +108,20 @@ namespace {
         QUrl context;
         std::string content;
     };
+
+    class RegisteredFieldData
+    {
+    public:
+        RegisteredFieldData( const QUrl& prop, QVariant::Type t, bool r )
+            : property( prop ),
+              dataType( t ),
+              isRdfType( r ){
+        }
+
+        QUrl property;
+        QVariant::Type dataType;
+        bool isRdfType;
+    };
 }
 
 
@@ -186,7 +198,6 @@ void Strigi::Soprano::IndexWriter::deleteEntries( const std::vector<std::string>
     QString systemLocationUri = Util::fieldUri( FieldRegister::pathFieldName ).toString();
     for ( unsigned int i = 0; i < entries.size(); ++i ) {
         QString path = QString::fromUtf8( entries[i].c_str() );
-//        QString path = QString::fromUtf8( entries[i].c_str() );
         QString query = QString( "select ?g where { ?r <%1> \"%2\"^^<%3> . "
                                  "?g <http://www.strigi.org/fields#indexGraphFor> ?r . }" )
                         .arg( systemLocationUri )
@@ -237,31 +248,21 @@ void Strigi::Soprano::IndexWriter::deleteAllEntries()
 }
 
 
-// cache the field type mapping in the RegisteredFields
-void Strigi::Soprano::IndexWriter::initWriterData( const Strigi::FieldRegister& )
-{
-    // nothing to do ATM
-}
-
-
-// cleanup field type caching
-void Strigi::Soprano::IndexWriter::releaseWriterData( const Strigi::FieldRegister& )
-{
-    // nothing to do ATM
-}
-
-
 // called for each indexed file
 void Strigi::Soprano::IndexWriter::startAnalysis( const AnalysisResult* idx )
 {
+    if ( idx->depth() > 0 ) {
+        return;
+    }
+
 //    qDebug() << "IndexWriter::startAnalysis in thread" << QThread::currentThread();
     FileMetaData* data = new FileMetaData();
     data->fileUri = createResourceUri( idx );
 
     // let's check if we already have data on the file
-    StatementIterator it = d->repository->listStatements( Statement( Node(),
-                                                                     QUrl( "http://www.strigi.org/fields#indexGraphFor" ), // FIXME: put the URI somewhere else
-                                                                     data->fileUri ) );
+    StatementIterator it = d->repository->listStatements( Node(),
+                                                          QUrl::fromEncoded( "http://www.strigi.org/fields#indexGraphFor", QUrl::StrictMode ), // FIXME: put the URI somewhere else
+                                                          data->fileUri );
     if ( it.next() ) {
         data->context = it.current().subject().uri();
     }
@@ -275,41 +276,32 @@ void Strigi::Soprano::IndexWriter::startAnalysis( const AnalysisResult* idx )
 }
 
 
-// plain text accociated with the indexed file but no field name.
 void Strigi::Soprano::IndexWriter::addText( const AnalysisResult* idx, const char* text, int32_t length )
 {
+    if ( idx->depth() > 0 ) {
+        return;
+    }
+
     FileMetaData* md = reinterpret_cast<FileMetaData*>( idx->writerData() );
     md->content.append( text, length );
 }
 
 
-// convenience method for adding string fields
 void Strigi::Soprano::IndexWriter::addValue( const AnalysisResult* idx,
-                                             const RegisteredField* fieldname,
+                                             const RegisteredField* field,
                                              const std::string& value )
 {
-    addValue( idx, fieldname, ( unsigned char* )value.c_str(), value.length() );
-}
+    if ( idx->depth() > 0 ) {
+        return;
+    }
 
-
-// the main addValue method
-void Strigi::Soprano::IndexWriter::addValue( const AnalysisResult* idx,
-                                             const RegisteredField* fieldname,
-                                             const unsigned char* data,
-                                             uint32_t size )
-{
-    addValue( idx, fieldname, fieldname->key(), std::string( ( const char* )data, size ) );
-}
-
-
-void Strigi::Soprano::IndexWriter::addValue( const AnalysisResult* idx, const RegisteredField* field,
-                                             const std::string& name, const std::string& value )
-{
 //    qDebug() << "IndexWriter::addValue in thread" << QThread::currentThread();
     if ( value.length() > 0 ) {
         FileMetaData* md = reinterpret_cast<FileMetaData*>( idx->writerData() );
+        RegisteredFieldData* rfd = reinterpret_cast<RegisteredFieldData*>( field->writerData() );
 
-        if ( QString( name.c_str() ) == ::Soprano::Vocabulary::RDF::type().toString() ) {
+        if ( rfd->isRdfType ) {
+
             // Strigi uses rdf:type improperly since it stores the value as a string. We have to
             // make sure it is a resource. The problem is that this results in the type not being
             // indexed properly. Thus, it cannot be searched with normal lucene queries.
@@ -317,24 +309,23 @@ void Strigi::Soprano::IndexWriter::addValue( const AnalysisResult* idx, const Re
 
             d->repository->addStatement( Statement( md->fileUri,
                                                     ::Soprano::Vocabulary::RDF::type(),
-                                                    QUrl( QString::fromUtf8( value.c_str() ) ),
+                                                    QUrl::fromEncoded( value.c_str(), QUrl::StrictMode ), // fromEncoded is faster than the plain constructor and all Xesam URIs work here
                                                     md->context) );
             d->repository->addStatement( Statement( md->fileUri,
-                                                    QUrl( "http://strigi.sourceforge.net/fields#rdf-string-type" ),
+                                                    QUrl::fromEncoded( "http://strigi.sourceforge.net/fields#rdf-string-type", QUrl::StrictMode ),
                                                     LiteralValue( QString::fromUtf8( value.c_str() ) ),
                                                     md->context) );
         }
 
         else {
-            QVariant::Type type = d->literalType( field->properties() );
-            if ( type != QVariant::Invalid ) {
+            if ( rfd->dataType != QVariant::Invalid ) {
                 d->repository->addStatement( Statement( md->fileUri,
-                                                        Util::fieldUri( name ),
-                                                        d->createLiteralValue( type, ( unsigned char* )value.c_str(), value.length() ),
+                                                        rfd->property,
+                                                        d->createLiteralValue( rfd->dataType, ( unsigned char* )value.c_str(), value.length() ),
                                                         md->context) );
             }
             else {
-                qDebug() << "Ignoring field" << name.c_str() << "due to unknown type" << field->properties().typeUri().c_str();
+                qDebug() << "Ignoring field" << rfd->property << "due to unknown type" << field->properties().typeUri().c_str();
             }
         }
     }
@@ -342,51 +333,82 @@ void Strigi::Soprano::IndexWriter::addValue( const AnalysisResult* idx, const Re
 }
 
 
-// convenience method for adding unsigned int (or datetime!) fields
+// the main addValue method
 void Strigi::Soprano::IndexWriter::addValue( const AnalysisResult* idx,
-                                             const RegisteredField* fieldname,
+                                             const RegisteredField* field,
+                                             const unsigned char* data,
+                                             uint32_t size )
+{
+    addValue( idx, field, std::string( ( const char* )data, size ) );
+}
+
+
+void Strigi::Soprano::IndexWriter::addValue( const AnalysisResult*, const RegisteredField*,
+                                             const std::string&, const std::string& )
+{
+    // we do not support map types
+}
+
+
+void Strigi::Soprano::IndexWriter::addValue( const AnalysisResult* idx,
+                                             const RegisteredField* field,
                                              uint32_t value )
 {
+    if ( idx->depth() > 0 ) {
+        return;
+    }
+
 //    qDebug() << "IndexWriter::addValue in thread" << QThread::currentThread();
     FileMetaData* md = reinterpret_cast<FileMetaData*>( idx->writerData() );
+    RegisteredFieldData* rfd = reinterpret_cast<RegisteredFieldData*>( field->writerData() );
+
     LiteralValue val( value );
-    if ( fieldname->type() == FieldRegister::datetimeType ) {
-//        qDebug() << "(Soprano::IndexWriter) adding datetime value.";
+    if ( field->type() == FieldRegister::datetimeType ) {
         val = QDateTime::fromTime_t( value );
     }
 
     d->repository->addStatement( Statement( md->fileUri,
-                                            Util::fieldUri( fieldname->key() ),
+                                            rfd->property,
                                             val,
                                             md->context) );
 //    qDebug() << "IndexWriter::addValue done in thread" << QThread::currentThread();
 }
 
 
-// convenience method for adding int fields
 void Strigi::Soprano::IndexWriter::addValue( const AnalysisResult* idx,
-                                             const RegisteredField* fieldname,
+                                             const RegisteredField* field,
                                              int32_t value )
 {
+    if ( idx->depth() > 0 ) {
+        return;
+    }
+
 //    qDebug() << "IndexWriter::addValue in thread" << QThread::currentThread();
     FileMetaData* md = reinterpret_cast<FileMetaData*>( idx->writerData() );
+    RegisteredFieldData* rfd = reinterpret_cast<RegisteredFieldData*>( field->writerData() );
+
     d->repository->addStatement( Statement( md->fileUri,
-                                            Util::fieldUri( fieldname->key() ),
+                                            rfd->property,
                                             LiteralValue( value ),
                                             md->context) );
 //    qDebug() << "IndexWriter::addValue done in thread" << QThread::currentThread();
 }
 
 
-// convenience method for adding double fields
 void Strigi::Soprano::IndexWriter::addValue( const AnalysisResult* idx,
-                                             const RegisteredField* fieldname,
+                                             const RegisteredField* field,
                                              double value )
 {
+    if ( idx->depth() > 0 ) {
+        return;
+    }
+
 //    qDebug() << "IndexWriter::addValue in thread" << QThread::currentThread();
     FileMetaData* md = reinterpret_cast<FileMetaData*>( idx->writerData() );
+    RegisteredFieldData* rfd = reinterpret_cast<RegisteredFieldData*>( field->writerData() );
+
     d->repository->addStatement( Statement( md->fileUri,
-                                            Util::fieldUri( fieldname->key() ),
+                                            rfd->property,
                                             LiteralValue( value ),
                                             md->context) );
 //    qDebug() << "IndexWriter::addValue done in thread" << QThread::currentThread();
@@ -410,18 +432,22 @@ void Strigi::Soprano::IndexWriter::addTriplet( const std::string& subject,
 // called after each indexed file
 void Strigi::Soprano::IndexWriter::finishAnalysis( const AnalysisResult* idx )
 {
+    if ( idx->depth() > 0 ) {
+        return;
+    }
+
 //    qDebug() << "IndexWriter::finishAnalysis in thread" << QThread::currentThread();
     FileMetaData* md = static_cast<FileMetaData*>( idx->writerData() );
 
     if ( md->content.length() > 0 ) {
         d->repository->addStatement( Statement( md->fileUri,
-                                                Util::fieldUri( FieldRegister::contentFieldName ),
+                                                Vocabulary::Xesam::asText(),
                                                 LiteralValue( QString::fromUtf8( md->content.c_str() ) ),
                                                 md->context ) );
     }
 
     // Strigi only indexes files and extractors mostly (if at all) store the xesam:DataObject type (i.e. the contents)
-    // Thus, here we go the easy way and amrk each indexed file as a xesam:File.
+    // Thus, here we go the easy way and mark each indexed file as a xesam:File.
     d->repository->addStatement( Statement( md->fileUri,
                                             Vocabulary::RDF::type(),
                                             Vocabulary::Xesam::File(),
@@ -440,7 +466,7 @@ void Strigi::Soprano::IndexWriter::finishAnalysis( const AnalysisResult* idx )
                                             LiteralValue( QDateTime::currentDateTime() ),
                                             metaDataContext ) );
     d->repository->addStatement( Statement( md->context,
-                                            QUrl( "http://www.strigi.org/fields#indexGraphFor" ), // FIXME: put the URI somewhere else
+                                            QUrl::fromEncoded( "http://www.strigi.org/fields#indexGraphFor", QUrl::StrictMode ), // FIXME: put the URI somewhere else
                                             md->fileUri,
                                             metaDataContext ) );
     d->repository->addStatement( Statement( metaDataContext,
@@ -453,4 +479,26 @@ void Strigi::Soprano::IndexWriter::finishAnalysis( const AnalysisResult* idx )
     idx->setWriterData( 0 );
 
 //    qDebug() << "IndexWriter::finishAnalysis done in thread" << QThread::currentThread();
+}
+
+
+void Strigi::Soprano::IndexWriter::initWriterData( const Strigi::FieldRegister& f )
+{
+    map<string, RegisteredField*>::const_iterator i;
+    map<string, RegisteredField*>::const_iterator end = f.fields().end();
+    for (i = f.fields().begin(); i != end; ++i) {
+        i->second->setWriterData( new RegisteredFieldData( Util::fieldUri( i->second->key() ),
+                                                           d->literalType( i->second->properties() ),
+                                                           QUrl::fromEncoded( i->second->type().c_str(), QUrl::StrictMode ) == ::Soprano::Vocabulary::RDF::type() ) );
+    }
+}
+
+
+void Strigi::Soprano::IndexWriter::releaseWriterData( const Strigi::FieldRegister& f )
+{
+    map<string, RegisteredField*>::const_iterator i;
+    map<string, RegisteredField*>::const_iterator end = f.fields().end();
+    for (i = f.fields().begin(); i != end; ++i) {
+        delete static_cast<RegisteredFieldData*>( i->second->writerData() );
+    }
 }

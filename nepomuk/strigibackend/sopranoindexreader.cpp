@@ -1,7 +1,4 @@
 /*
-   $Id: sourceheader 511311 2006-02-19 14:51:05Z trueg $
-
-   This file is part of the Strigi project.
    Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
 
    This library is free software; you can redistribute it and/or
