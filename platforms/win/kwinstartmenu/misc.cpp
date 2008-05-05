@@ -37,6 +37,7 @@
 // required by kdesktopfile.h -> should be in kdesktopfile.h 
 #include <kconfiggroup.h>
 #include <kdesktopfile.h>
+#include <kdeversion.h>
 
 bool removeDirectory(const QString& aDir)
 {
@@ -80,6 +81,18 @@ QString getStartMenuPath(bool bAllUsers)
         return s;
     }
     return QString();
+}
+
+QString getKDEStartMenuPath()
+{
+	QString version = KDE::versionString();
+	QStringList versions = version.split(" "); 
+#ifdef QT_NO_DEBUG
+	QString compileMode = "Release"; 
+#else
+	QString compileMode = "Debug"; 
+#endif
+	return getStartMenuPath() + "/KDE" + " " + versions[0] + " "+ compileMode + " ";
 }
 
 KServiceGroup::Ptr findGroup(const QString &relPath)
@@ -176,7 +189,7 @@ bool generateMenuEntries(QList<LinkFile> &files, const KUrl &url, const QString 
                 continue;
             }
             
-            QString linkPath = getStartMenuPath() + "/KDE" + relPathTranslated + "/";
+            QString linkPath = getKDEStartMenuPath() + relPathTranslated + "/";
             QString linkName = s->name();
             if (!s->genericName().isEmpty() && s->genericName() != s->name()) 
                 linkName += " (" + s->genericName() + ")";
@@ -204,7 +217,7 @@ void updateStartMenuLinks()
 {
     // generate list of installed linkfiles 
     QList<LinkFile> oldFiles;
-    LinkFiles::scan(oldFiles, getStartMenuPath() + "/KDE");
+    LinkFiles::scan(oldFiles, getKDEStartMenuPath());
     foreach(const LinkFile& lf, oldFiles)
       kDebug() << "oldFile: " << lf;
 
@@ -222,7 +235,7 @@ void updateStartMenuLinks()
 
 void removeStartMenuLinks()
 {
-    removeDirectory(getStartMenuPath() + "/KDE");
+    removeDirectory(getKDEStartMenuPath());
 }
 
  // vim: ts=4 sw=4 et

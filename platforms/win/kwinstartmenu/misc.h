@@ -29,6 +29,7 @@ class QDir;
 
 bool removeDirectory(const QString& aDir);
 QString getStartMenuPath(bool bAllUsers=true);
+QString getKDEStartMenuPath();
 bool generateMenuEntries(QList<LinkFile> &files, const KUrl &url, const QString &relPathTranslated=QString());
 void updateStartMenuLinks();
 void removeStartMenuLinks();
