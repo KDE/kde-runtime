@@ -177,8 +177,10 @@ bool LinkFiles::create(QList <LinkFile> &newFiles)
     {
         if (!linkFile.exists())
         {
-            linkFile.create();
-            kDebug() << "created" << linkFile;
+            if (linkFile.create())
+				kDebug() << "created" << linkFile;
+			else
+				kDebug() << "failed to create" << linkFile;
         }
     }
     return true;
