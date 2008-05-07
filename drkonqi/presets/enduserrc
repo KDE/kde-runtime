@@ -116,7 +116,7 @@ Name[de]=Die Anwendung %progname (%appname) ist abgestürzt und hat das Signal %
 Name[el]=Η εφαρμογή %progname (%appname) κατέρρευσε και προκάλεσε το σήμα signal %signum (%signame).
 Name[eo]=La aplikaĵo %progname (%appname) kolapsis kaj kaŭzis la signalon %signum (%signame).
 Name[es]=La aplicación %progname (%appname) terminó de forma inesperada y generó la señal %signum (%signame).
-Name[et]=Rakendus %progname (%appname) astus ämbrisse põhjustatuna signaalist %signum (%signame).
+Name[et]=Rakendust %progname (%appname) tabas krahh põhjustatuna signaalist %signum (%signame).
 Name[fi]=Ohjelma %progname (%appname) kaatui ja aiheutti signaalin %signum (%signame).
 Name[ga]=Thuairteáil feidhmchlár %progname (%appname) agus thug sé comhartha %signum (%signame).
 Name[gl]=A aplicación %progname (%appname) estragou-se e provocou o sinal %signum (%signame).
@@ -163,6 +163,7 @@ Name[de]=Bitte helfen Sie uns dabei, die von Ihnen verwendeten Programme zu verb
 Name[el]=Βοηθήστε μας να βελτιώσουμε την εφαρμογή αυτή αναφέροντας αυτό το σφάλμα στο <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Χρήσιμες πληροφορίες που θα μπορούσατε να συμπεριλάβετε είναι ο τρόπος αναπαραγωγής του σφάλματος, τα έγγραφα που ήταν φορτωμένα κλπ.
 Name[eo]=Bonvolu helpi plibonigi la programon kiun vi uzas per raporti la cimon ĉe <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Utilaj detaloj inkluzivas kiel oni reproduktas la eraron, kiuj dokumentoj estis traktataj, ktp.
 Name[es]=Ayudenos a mejorar los programas generando reportes en <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Detalles útiles incluyen cómo reproducir el error, documentos cargados, etc.
+Name[et]=Palun aita meil tarkvara paremaks muuta, andes teada veast aadressil <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Kasuliku teabe hulka kuuluvad andmed, kuidas viga korrata, millised dokumendid olid laaditud jne.
 Name[fi]=Auta meitä parantamaan ohjelmistoa lähettämällä vikailmoitus osoitteessa <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Muista sisällyttää ilmoitukseen tietoja kuten kuinka toistaa ongelma, mitä dokumentteja ohjelmassa oli ladattuna ja niin edelleen, joista saattaa olla hyötyä kehittäjille.
 Name[ga]=Cabhraigh linn an bogearra seo a fheabhsú trí thuairisc a sheoladh chuig <a href="http://bugs.kde.org">http://bugs.kde.org/</a> maidir leis an earráid seo. Rudaí le cur san áireamh: conas a dhéantar an earráid, cáipéisí a bhí luchtaithe, srl.
 Name[gu]=મહેરબાની કરી અમને બગ અહેવાલ આ જગ્યા પર ભરીને <a href="http://bugs.kde.org">http://bugs.kde.org</a> સોફ્ટવેરમાં સુધારો કરવામાં મદદ કરો. ઉપયોગી માહિતીમાં જેવીકે આ ક્ષતિ ફરી કઇ રીતે ઉભી કરવી, લાવવામાં આવેલ દસ્તાવેજો વગેરે નો સમાવેશ થાય છે.
@@ -319,7 +320,7 @@ Comment[lt]=Programa dažniausiai gauna SIGFPE signalą dėl ydos programoje.  P
 Comment[lv]=Programma visbiežāk saņem SIGFPE signālu dēļ kļūdas programmā. Programmai tika prasīts saglabāt savus dokumentus.
 Comment[mk]=Апликациите најчесто го добиваат сигналот SIGFPE поради грешка во апликацијата. На апликацијата ѝ беше речено да ги сними сите свои документи.
 Comment[ms]=Aplikasi biasanya menerima isyarat SIGFPE kerana pepijat dalam aplikasi. Aplikasi telah diminta untuk menyimpan dokumennya.
-Comment[nb]=Et program mottar SIGFPE-signalet for det meste på grunn av en feil i programmet. Det ble bedt om å lagre dokumentene sinee.
+Comment[nb]=Et program mottar SIGFPE-signalet for det meste på grunn av en feil i programmet. Det ble bedt om å lagre dokumentene sine.
 Comment[nds]=En Programm kriggt dat Signaal SIGFPE tomehrst, wenn dat dor binnen en Fehler gifft. Dat Programm wöör beden, dat schull sien Dokmenten sekern.
 Comment[nn]=Eit program mottek som regel SIGFPE-signalet på grunn av ein feil i programmet. Programmet vart bedt om å lagra dokumenta sine.
 Comment[pl]=Program otrzymuje sygnał SIGFPE zazwyczaj z powodu błędu w nim samym. Nastąpiło żądanie zapisania dokumentów.
@@ -371,7 +372,7 @@ Comment[lt]=Programa dažniausiai gauna SIGSEGV signalą dėl ydos programoje.  
 Comment[lv]=Programma visbiežāk saņem SIGSEGV signālu sakarā ar kļūdu programmā. Programmai tika prasīts saglabāt savus dokumentus.
 Comment[mk]=Апликациите најчесто го добиваат сигналот SIGSEGV поради грешка во апликацијата. На апликацијата и беше речено да ги сними сите свои документи.
 Comment[ms]=Aplikasi biasanya menerima isyarat SIGSEGV kerana pepijat didalam aplikasi. Aplikasi telah diminta untuk menyimpan dokumennya.
-Comment[nb]=Et program mottar SIGFPE-signalet for det meste på grunn av en feil i programmet. Det ble bedt om å lagre dokumentene sinee.
+Comment[nb]=Et program mottar SIGFPE-signalet for det meste på grunn av en feil i programmet. Det ble bedt om å lagre dokumentene sine.
 Comment[nds]=En Programm kriggt dat Signaal SIGSEGV tomehrst, wenn dat dor binnen en Fehler gifft. Dat Programm wöör beden, dat schull sien Dokmenten sekern.
 Comment[nn]=Eit program motek som regel SIGSEGV-signalet på grunn av ein feil i programmet. Programmet vart bedt om å lagra dokumenta sine.
 Comment[pl]=Program otrzymuje sygnał SIGSEGV zazwyczaj z powodu błędu w nim samym. Nastąpiło żądanie zapisania dokumentów.

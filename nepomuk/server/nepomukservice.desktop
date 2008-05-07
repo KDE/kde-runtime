@@ -4,6 +4,7 @@ X-KDE-ServiceType=NepomukService
 Comment=Nepomuk Service
 Comment[ca]=Servei Nepomuk
 Comment[el]=Υπηρεσία Nepomuk
+Comment[et]=Nepomuki teenus
 Comment[fi]=Nepomuk-palvelu
 Comment[ga]=Seirbhís Nepomuk
 Comment[gu]=નેપોમુક સેવા
@@ -17,6 +18,7 @@ Comment[sv]=Nepomuk-tjänst
 Comment[th]=บริการ Neomuk
 Comment[tr]=Nepomuk Servisi
 Comment[uk]=Служба Nepomuk
+Comment[x-test]=xxNepomuk Servicexx
 Comment[zh_CN]=Nepomuk 服务
 Comment[zh_TW]=Nepomuk 服務
 [PropertyDef::X-KDE-Nepomuk-autostart]
