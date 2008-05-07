@@ -44,6 +44,8 @@ class KJob;
 
 namespace Nepomuk {
 
+    class CLuceneAnalyzer;
+
     class Repository : public
 #if SOPRANO_IS_VERSION(2,0,90)
         Soprano::Util::SignalCacheModel
@@ -96,6 +98,7 @@ namespace Nepomuk {
         QString m_oldStoragePath;
 
         Soprano::Model* m_model;
+        Nepomuk::CLuceneAnalyzer* m_analyzer;
         Soprano::Index::CLuceneIndex* m_index;
         Soprano::Index::IndexFilterModel* m_indexModel;
     };

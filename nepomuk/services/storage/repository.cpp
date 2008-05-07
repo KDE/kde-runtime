@@ -15,6 +15,7 @@
 #include "repository.h"
 #include "nepomukstorage-config.h"
 #include "modelcopyjob.h"
+#include "cluceneanalyzer.h"
 
 #include <Soprano/Backend>
 #include <Soprano/Global>
@@ -47,6 +48,7 @@ Nepomuk::Repository::Repository( const QString& name )
     : m_name( name ),
       m_state( CLOSED ),
       m_model( 0 ),
+      m_analyzer( 0 ),
       m_index( 0 ),
       m_indexModel( 0 )
 {
@@ -67,6 +69,10 @@ void Nepomuk::Repository::close()
         delete m_index;
         m_indexModel = 0;
         m_index = 0;
+#ifdef HAVE_CLUCENE
+        delete m_analyzer;
+        m_analyzer = 0;
+#endif
 #endif
         delete m_model;
         m_model = 0;
@@ -131,7 +137,11 @@ void Nepomuk::Repository::open()
     kDebug(300002) << "Successfully created new model for repository" << name();
 
 #ifdef HAVE_SOPRANO_INDEX
-    m_index = new Soprano::Index::CLuceneIndex();
+#ifdef HAVE_CLUCENE
+    m_analyzer = new CLuceneAnalyzer();
+#endif
+    m_index = new Soprano::Index::CLuceneIndex( m_analyzer );
+
     if ( m_index->open( indexPath, true ) ) {
         kDebug(300002) << "Successfully created new index for repository" << name();
         m_indexModel = new Soprano::Index::IndexFilterModel( m_index, m_model );
