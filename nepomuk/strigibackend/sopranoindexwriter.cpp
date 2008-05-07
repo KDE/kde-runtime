@@ -112,10 +112,10 @@ namespace {
     class RegisteredFieldData
     {
     public:
-        RegisteredFieldData( const QUrl& prop, QVariant::Type t, bool r )
+        RegisteredFieldData( const QUrl& prop, QVariant::Type t )
             : property( prop ),
               dataType( t ),
-              isRdfType( r ){
+              isRdfType( prop == Vocabulary::RDF::type() ) {
         }
 
         QUrl property;
@@ -487,9 +487,11 @@ void Strigi::Soprano::IndexWriter::initWriterData( const Strigi::FieldRegister& 
     map<string, RegisteredField*>::const_iterator i;
     map<string, RegisteredField*>::const_iterator end = f.fields().end();
     for (i = f.fields().begin(); i != end; ++i) {
-        i->second->setWriterData( new RegisteredFieldData( Util::fieldUri( i->second->key() ),
-                                                           d->literalType( i->second->properties() ),
-                                                           QUrl::fromEncoded( i->second->type().c_str(), QUrl::StrictMode ) == ::Soprano::Vocabulary::RDF::type() ) );
+        QUrl prop = Util::fieldUri( i->second->key() );
+        i->second->setWriterData( new RegisteredFieldData( prop,
+                                                           prop == Vocabulary::RDF::type()
+                                                           ? QVariant::Invalid
+                                                           : d->literalType( i->second->properties() ) ) );
     }
 }
 
@@ -500,5 +502,6 @@ void Strigi::Soprano::IndexWriter::releaseWriterData( const Strigi::FieldRegiste
     map<string, RegisteredField*>::const_iterator end = f.fields().end();
     for (i = f.fields().begin(); i != end; ++i) {
         delete static_cast<RegisteredFieldData*>( i->second->writerData() );
+        i->second->setWriterData( 0 );
     }
 }
