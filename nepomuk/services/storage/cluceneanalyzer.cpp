@@ -23,13 +23,13 @@
 
 #include "cluceneanalyzer.h"
 #include "clucenetokenizer.h"
+#include "clucenefilter.h"
 
 #include <CLucene/StdHeader.h>
 #include <CLucene/util/VoidMap.h>
 #include <CLucene/util/Reader.h>
 #include <CLucene/analysis/AnalysisHeader.h>
 #include <CLucene/analysis/Analyzers.h>
-#include <CLucene/analysis/standard/StandardFilter.h>
 
 CL_NS_USE(util)
 CL_NS_USE(analysis)
@@ -56,7 +56,7 @@ namespace Nepomuk {
 	CL_NS(analysis)::TokenStream* CLuceneAnalyzer::tokenStream(const TCHAR* fieldName, Reader* reader)
 	{
 		CL_NS(analysis)::TokenStream* ret = _CLNEW CLuceneTokenizer(reader);
-		ret = _CLNEW CL_NS2(analysis, standard)::StandardFilter(ret,true);
+		ret = _CLNEW CLuceneFilter(ret,true);
 		ret = _CLNEW CL_NS(analysis)::LowerCaseFilter(ret,true);
 		ret = _CLNEW CL_NS(analysis)::StopFilter(ret,true, &stopSet);
 		return ret;

@@ -24,6 +24,7 @@ if(CLucene_FOUND AND SopranoIndex_FOUND)
     ${storage_SRCS}
     cluceneanalyzer.cpp 
     clucenetokenizer.cpp
+    clucenefilter.cpp
     )
 
   # CLucene requires exception support and has no support for visibility=hidden

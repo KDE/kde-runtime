@@ -27,11 +27,11 @@
 #include <CLucene/clucene-config.h>
 #include <CLucene/analysis/AnalysisHeader.h>
 #include <CLucene/analysis/Analyzers.h>
-#include <CLucene/analysis/standard/StandardTokenizerConstants.h>
 #include <CLucene/util/StringBuffer.h>
 #include <CLucene/util/FastCharStream.h>
 #include <CLucene/util/Reader.h>
 
+#include "clucenetokenizerconstants.h"
 
 namespace Nepomuk {
 
@@ -94,9 +94,9 @@ namespace Nepomuk {
 
         // createToken centralizes token creation for auditing purposes.
         //Token* createToken(CL_NS(util)::StringBuffer* sb, TokenTypes tokenCode);
-        inline bool setToken(CL_NS(analysis)::Token* t, CL_NS(util)::StringBuffer* sb, CL_NS2(analysis,standard)::TokenTypes tokenCode);
+        inline bool setToken(CL_NS(analysis)::Token* t, CL_NS(util)::StringBuffer* sb, TokenTypes tokenCode);
 
-        bool ReadDotted(CL_NS(util)::StringBuffer* str, CL_NS2(analysis,standard)::TokenTypes forcedType, CL_NS(analysis)::Token* t);
+        bool ReadDotted(CL_NS(util)::StringBuffer* str, TokenTypes forcedType, CL_NS(analysis)::Token* t);
     };
 }
 

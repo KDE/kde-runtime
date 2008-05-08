@@ -145,7 +145,7 @@ namespace Nepomuk {
         rdPos--;
     }
 
-    inline bool CLuceneTokenizer::setToken(CL_NS( analysis )::Token* t, StringBuffer* sb, CL_NS2( analysis,standard )::TokenTypes tokenCode) {
+    inline bool CLuceneTokenizer::setToken(CL_NS( analysis )::Token* t, StringBuffer* sb, TokenTypes tokenCode) {
         t->setStartOffset(tokenStart);
         t->setEndOffset(tokenStart+sb->length());
         t->setType(tokenImage[tokenCode]);
@@ -188,14 +188,14 @@ namespace Nepomuk {
         ** generating a single HOST token "192.168.1.3". */
         t->growBuffer(LUCENE_MAX_WORD_LEN+1);//make sure token can hold the next word
         StringBuffer str(t->_termText,t->bufferLength(),true); //use stringbuffer to read data onto the termText
-        CL_NS2( analysis,standard )::TokenTypes tokenType;
+        TokenTypes tokenType;
         bool decExhausted;
         if (previousNumber != NULL) {
             str.prepend(previousNumber);
-            tokenType = CL_NS2(analysis,standard)::HOST;
+            tokenType = HOST;
             decExhausted = false;
         } else {
-            tokenType = CL_NS2(analysis,standard)::NUM;
+            tokenType = NUM;
             decExhausted = (prev == '.');
         }
         if (  str.len >= LUCENE_MAX_WORD_LEN ){
@@ -282,7 +282,7 @@ namespace Nepomuk {
 #if 0
                 case '.':
 					str.appendChar('.');
-					return ReadDotted(&str, CL_NS2(analysis,standard)::UNKNOWN,t);
+					return ReadDotted(&str, UNKNOWN,t);
 #endif
 				case '\'':
 					str.appendChar('\'');
@@ -297,7 +297,7 @@ namespace Nepomuk {
                 }
             }
         }
-        return setToken(t,&str,CL_NS2(analysis,standard)::ALPHANUM);
+        return setToken(t,&str,ALPHANUM);
     }
 
     bool CLuceneTokenizer::ReadCJK(const TCHAR prev, Token* t) {
@@ -309,11 +309,11 @@ namespace Nepomuk {
 
             CONSUME_CJK;
         }
-        return setToken(t,&str,CL_NS2(analysis,standard)::CJK);
+        return setToken(t,&str,CJK);
     }
 
 
-    bool CLuceneTokenizer::ReadDotted(StringBuffer* _str, CL_NS2(analysis,standard)::TokenTypes forcedType, CL_NS(analysis)::Token* t) {
+    bool CLuceneTokenizer::ReadDotted(StringBuffer* _str, TokenTypes forcedType, CL_NS(analysis)::Token* t) {
         const int32_t specialCharPos = rdPos;
         StringBuffer& str=*_str;
 
@@ -380,7 +380,7 @@ namespace Nepomuk {
                 }
                 /* If there are no dots remaining, this is a generic ALPHANUM. */
                 if (_tcschr(strBuf, '.') == NULL) {
-                    forcedType = CL_NS2(analysis,standard)::ALPHANUM;
+                    forcedType = ALPHANUM;
                 }
 
                 /* Check the token to see if it's an acronym.  An acronym must have a
@@ -399,13 +399,13 @@ namespace Nepomuk {
                     }
                 }
                 if (isAcronym) {
-                    forcedType = CL_NS2(analysis,standard)::ACRONYM;
+                    forcedType = ACRONYM;
                 } else {
                     /* If it's not an acronym, we don't want the trailing dot. */
                     SHAVE_RIGHTMOST(str);
                     /* If there are no dots remaining, this is a generic ALPHANUM. */
                     if (_tcschr(strBuf, '.') == NULL) {
-                        forcedType = CL_NS2(analysis,standard)::ALPHANUM;
+                        forcedType = ALPHANUM;
                     }
                 }
             }
@@ -420,14 +420,14 @@ namespace Nepomuk {
             }
         }
 
-        return setToken(t,&str,CL_NS2(analysis,standard)::UNKNOWN
-                        ? forcedType : CL_NS2(analysis,standard)::HOST);
+        return setToken(t,&str,UNKNOWN
+                        ? forcedType : HOST);
     }
 
     bool CLuceneTokenizer::ReadApostrophe(StringBuffer* _str, Token* t) {
         StringBuffer& str=*_str;
 
-        CL_NS2( analysis, standard )::TokenTypes tokenType = CL_NS2(analysis,standard)::APOSTROPHE;
+        TokenTypes tokenType = APOSTROPHE;
         const int32_t specialCharPos = rdPos;
         int ch=0;
 
@@ -436,7 +436,7 @@ namespace Nepomuk {
             /* After the apostrophe, no more alphanums were available within this
             ** token; shave trailing apostrophe and revert to generic ALPHANUM. */
             SHAVE_RIGHTMOST(str);
-            tokenType = CL_NS2(analysis,standard)::ALPHANUM;
+            tokenType = ALPHANUM;
         }
         if (!EOS) {
             unReadChar();
@@ -446,10 +446,10 @@ namespace Nepomuk {
     }
 
     bool CLuceneTokenizer::ReadAt(StringBuffer* str, Token* t) {
-        ReadDotted(str, CL_NS2(analysis,standard)::EMAIL,t);
+        ReadDotted(str, EMAIL,t);
         /* JLucene grammar indicates dots/digits not allowed in company name: */
         if (!CONTAINS_ANY((*str), ".0123456789")) {
-            setToken(t,str,CL_NS2(analysis,standard)::COMPANY);
+            setToken(t,str,COMPANY);
         }
         return true;
     }
@@ -467,12 +467,12 @@ namespace Nepomuk {
             SHAVE_RIGHTMOST(str);
 
 
-            return setToken(t,&str,CL_NS2(analysis,standard)::ALPHANUM);
+            return setToken(t,&str,ALPHANUM);
         }
         if (!EOS) {
             unReadChar();
         }
 
-        return setToken(t,&str,CL_NS2(analysis,standard)::COMPANY);
+        return setToken(t,&str,COMPANY);
     }
 }
