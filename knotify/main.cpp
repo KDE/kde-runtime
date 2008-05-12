@@ -52,8 +52,12 @@ int main(int argc, char **argv)
         return 0;
     }
 
+    // do not connect to ksmserver at all, knotify is launched on demand and doesn't need
+    // to know about logout, and moreover it may be ksmserver who tries to launch knotify,
+    // in which case there is a deadlock with ksmserver waiting for knotify to finish
+    // startup and knotify waiting to register with ksmserver
+    unsetenv( "SESSION_MANAGER" ); 
     KUniqueApplication app;
-    app.disableSessionManagement();
     
     /*
      * the default KMessageBoxMessageHandler will do messagesbox that notify
