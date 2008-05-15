@@ -6,8 +6,6 @@ include_directories(
   ${SOPRANO_INCLUDE_DIR}
   ${CMAKE_SOURCE_DIR}
   ${NEPOMUK_INCLUDE_DIR}
-  ${CLUCENE_INCLUDE_DIR}
-  ${CLUCENE_LIBRARY_DIR}
   )
 
 set(storage_SRCS
@@ -19,6 +17,8 @@ set(storage_SRCS
 
 if(CLucene_FOUND AND SopranoIndex_FOUND)
   set(HAVE_CLUCENE true)
+
+  include_directories(${CLUCENE_INCLUDE_DIR} ${CLUCENE_LIBRARY_DIR})
 
   set(storage_SRCS
     ${storage_SRCS}
