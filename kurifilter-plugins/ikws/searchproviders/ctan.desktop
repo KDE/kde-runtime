@@ -45,10 +45,5 @@ Name[xh]=CTAN - Enomxholo TeX Indawo yokugcina Yomsebenzi womnatha
 Name[zh_CN]=CTAN - 综合性 TeX 档案网络
 Name[zh_TW]=CTAN - 全面的 Tex 收集網路
 Query=http://ctan.org/cgi-bin/filenameSearch.py?filename=\\{@}&Search=Search
-Query[be]=http://ctan.org/cgi-bin/filenameSearch.py?filename=\\{@}&Search=Search
-Query[bg]=http://ctan.org/cgi-bin/filenameSearch.py?filename=\\{@}&Search=Search
-Query[csb]=http://ctan.org/cgi-bin/filenameSearch.py?filename=\\{@}&Search=Search
-Query[eo]=http://ctan.org/cgi-bin/filenameSearch.py?filename=\\{@}&Search=Search
-Query[x-test]=xxhttp://ctan.org/cgi-bin/filenameSearch.py?filename=\\{@}&Search=Search
 X-KDE-ServiceTypes=SearchProvider
 Type=Service
