@@ -1,6 +1,7 @@
 [Desktop Entry]
 Type=Service
 Name=kuiserver
+Name[af]=kui-bediener
 Name[hi]=केयूआईसर्वर
 Name[ml]=കെയുഐസെര്‍വര്‍
 Name[ne]=कुइसर्भर
@@ -11,6 +12,7 @@ Name[x-test]=xxkuiserverxx
 Name[zh_TW]=介面伺服器
 Exec=kuiserver
 Comment=KDE's Progress Info UI server
+Comment[af]=KDE se vordering-wys bediener
 Comment[bg]=Сървър за интерфейса на KDE
 Comment[ca]=Servidor d'interfície d'usuari d'informació de progrés del KDE
 Comment[csb]=Wiadło KDE dlô pòstãpù

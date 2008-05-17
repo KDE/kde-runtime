@@ -13,6 +13,7 @@ Name[vi]=Thông báo K
 Name[x-test]=xxKNotifyxx
 Exec=knotify4
 Comment=KDE Notification Daemon
+Comment[af]=KDE Inkennisstel-bediener
 Comment[ar]=رقيب التنبيه لـٍ كدي
 Comment[be]=Сервіс абвяшчэнняў KDE
 Comment[bg]=Демон на KDE за уведомяване

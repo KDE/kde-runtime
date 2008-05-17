@@ -3,6 +3,7 @@ Encoding=UTF-8
 Icon=applications-science
 Type=Directory
 Name=Science
+Name[af]=Wetenskap
 Name[ar]=العلوم
 Name[be]=Навука
 Name[bg]=Наука

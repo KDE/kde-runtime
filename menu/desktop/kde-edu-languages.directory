@@ -3,6 +3,7 @@ Encoding=UTF-8
 Icon=applications-education-language
 Type=Directory
 Name=Languages
+Name[af]=Tale
 Name[ar]=اللغات
 Name[be]=Мовы
 Name[bg]=Езици

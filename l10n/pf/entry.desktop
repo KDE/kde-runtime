@@ -1,6 +1,6 @@
 [KCM Locale]
 Name=French Polynesia
-Name[af]=Fraans Polynesië
+Name[af]=Frans-Polynesië
 Name[ar]=بولينسيا الفرنسية
 Name[be]=Француская Палінэзія
 Name[bg]=Полинезия
@@ -63,7 +63,8 @@ Name[tg]=Пулинезияи Фаронса
 Name[th]=ฝรั่งเศสโพลีนีเซีย
 Name[tr]=Fransız Polinezyası
 Name[uk]=Французька Полінезія
-Name[uz]=Француз Полинезия
+Name[uz]=Fransuz Polineziya
+Name[uz@cyrillic]=Француз Полинезия
 Name[vi]=Polynesia thuộc Pháp
 Name[wa]=Polinezeye francesse
 Name[x-test]=xxFrench Polynesiaxx

@@ -1,6 +1,7 @@
 [Global]
 IconName=kde
 Comment=KDE System Notifications
+Comment[af]=KDE Stelsel-boodskappe
 Comment[be]=Сістэмныя абвяшчэнні KDE
 Comment[bg]=Системно уведомяване
 Comment[ca]=Notificacions del sistema del KDE
@@ -54,6 +55,7 @@ Comment[zh_TW]=KDE 系統通知
 
 [Event/Trash: emptied]
 Name=Trash: Emptied
+Name[af]=Gemors: skoongemaak
 Name[ca]=Paperera: s'ha buidat
 Name[de]=Mülleimer: geleert
 Name[el]=Απορρίμματα: άδειασαν
@@ -62,9 +64,9 @@ Name[eo]=Rubujo: malpleniĝis
 Name[es]=Papelera: vaciada
 Name[et]=Prügikast: tühjendatud
 Name[fi]=Roskakori tyhjennetty
+Name[fr]=Corbeille : vidée
 Name[ga]=Bruscar: Folmhaithe
 Name[gu]=કચરાપેટી: ખાલી કરેલ
-Name[hu]=Szemétkosár: kiürítve
 Name[ja]=ごみ箱: 空
 Name[km]=ធុង​សំរាម ៖ បាន​សម្អាត
 Name[ko]=휴지통: 비워짐
@@ -85,6 +87,7 @@ Name[x-test]=xxTrash: Emptiedxx
 Name[zh_CN]=回收站：空的
 Name[zh_TW]=資源回收筒：已清空
 Comment=The trash has been emptied
+Comment[af]=Die asblik is leeggemaak
 Comment[bg]=Кошчето е изпразнено
 Comment[ca]=S'ha buidat la paperera
 Comment[csb]=Kòsz òstôł wëczëszczony
@@ -139,6 +142,7 @@ Sound=KDE-Sys-Trash-Emptied.ogg
 
 [Event/Textcompletion: rotation]
 Name=Textcompletion: Rotation
+Name[af]=Teksvoltooiing: rotasie
 Name[ca]=Compleció de text: rotació
 Name[de]=Textvervollständigung: Rotation
 Name[el]=Συμπλήρωση κειμένου: περιστροφή
@@ -146,9 +150,9 @@ Name[eo]=Teksta kompletado: turnado
 Name[es]=Completado de texto: rotación
 Name[et]=Tekstilõpetus: rotatsioon
 Name[fi]=Tekstin täydennys: kiertävä
+Name[fr]=Auto-complément de texte : rotation
 Name[ga]=Comhlánú téacs: Rothlú
 Name[gu]=લખાણપૂર્તિ: ફેરવો
-Name[hu]=Szövegkiegészítés: rotáció
 Name[ja]=テキスト補完: 繰り返し
 Name[km]=ការ​បំពេញ​អត្ថបទ ៖ ការ​បង្វិល
 Name[ko]=텍스트 완성: 회전
@@ -169,6 +173,7 @@ Name[x-test]=xxTextcompletion: Rotationxx
 Name[zh_CN]=文本补全：旋转
 Name[zh_TW]=文字補完：循環
 Comment=The end of the list of matches has been reached
+Comment[af]=Die einde vandie lys van passings is bereik
 Comment[ar]=وصلت إلى نهاية لائحة المطابقات
 Comment[ca]=S'ha arribat al final de la llista de coincidències
 Comment[csb]=Kùńc listë trafieniów
@@ -220,6 +225,7 @@ Sound=KDE-Sys-List-End.ogg
 
 [Event/Textcompletion: no match]
 Name=Textcompletion: No Match
+Name[af]=Teksvoltooiing: pas by geen een
 Name[ca]=Compleció de text: sense coincidència
 Name[de]=Textvervollständigung: kein Treffer
 Name[el]=Συμπλήρωση κειμένου: κανένα ταίριασμα
@@ -227,9 +233,9 @@ Name[eo]=Teksta kompletado: neniu kongruaĵo
 Name[es]=Completado de texto: sin coincidencia
 Name[et]=Tekstilõpetus: sobivused puuduvad
 Name[fi]=Tekstin täydennys: Ei sopivia
+Name[fr]=Auto-complément de texte : aucune correspondance 
 Name[ga]=Comhlánú téacs: Níl aon chomhlánú comhoiriúnach ann
 Name[gu]=લખાણપૂર્તિ: કોઇ મેળ નહીે
-Name[hu]=Szövegkiegészítés: nincs találat
 Name[ja]=テキスト補完: マッチなし
 Name[km]=ការ​បំពេញ​អត្ថបទ ៖ គ្មាន​ដំណូច
 Name[ko]=텍스트 완성: 일치하는 것 없음
@@ -250,6 +256,7 @@ Name[x-test]=xxTextcompletion: No Matchxx
 Name[zh_CN]=文本补全：没有匹配
 Name[zh_TW]=文字補完：沒有符合
 Comment=No matching completion was found
+Comment[af]=Geen voltooiing kan gevind word om by die patroon te pas nie
 Comment[ar]=لميعثر على أي تتمة مناسبة
 Comment[bg]=Не са намерени съвпадения
 Comment[ca]=No s'ha trobat cap compleció coincident
@@ -303,6 +310,7 @@ Sound=KDE-Sys-List-Match-No.ogg
 
 [Event/Textcompletion: partial match]
 Name=Textcompletion: Partial Match
+Name[af]=Teksvoltooiing: gedeeltelike passing
 Name[ca]=Compleció de text: coincidència parcial
 Name[de]=Textvervollständigung: teilweiser Treffer
 Name[el]=Συμπλήρωση κειμένου: μερικό ταίριασμα
@@ -310,9 +318,9 @@ Name[eo]=Teksta kompletado: parta kongruaĵo
 Name[es]=Completado de texto: coincidencia parcial
 Name[et]=Tekstilõpetus: osaline sobivus
 Name[fi]=Tekstin täydennys: Osittainen osuma
+Name[fr]=Auto-complément de texte : correspondance partielle
 Name[ga]=Comhlánú téacs: Comhlánú Neamhiomlán
 Name[gu]=લખાણપૂર્તિ: આંશિક મેળ
-Name[hu]=Szövegkiegészítés: részleges találat
 Name[ja]=テキスト補完: 部分的にマッチ
 Name[km]=ការ​បំពេញ​អត្ថបទ ៖ ដំណូច​​តាម​ផ្នែក
 Name[ko]=텍스트 완성: 부분적 일치
@@ -333,6 +341,7 @@ Name[x-test]=xxTextcompletion: Partial Matchxx
 Name[zh_CN]=文本补全：部分匹配
 Name[zh_TW]=文字補完：部份符合
 Comment=There is more than one possible match
+Comment[af]=Daar is meer as een moontlikheid
 Comment[bg]=Има повече от едно възможно съвпадение
 Comment[ca]=Hi ha més d'una coincidències possibles
 Comment[csb]=To dô wicy jakno jedno mòżlëwé trafienié
@@ -385,6 +394,7 @@ Sound=KDE-Sys-List-Match-Multiple.ogg
 
 [Event/fatalerror]
 Name=Fatal Error
+Name[af]=Fatale fout
 Name[be]=Зруйнавальная памылка
 Name[ca]=Error fatal
 Name[csb]=Cãżkô fela
@@ -436,6 +446,7 @@ Name[x-test]=xxFatal Errorxx
 Name[zh_CN]=致命错误
 Name[zh_TW]=嚴重錯誤
 Comment=There was a serious error causing the program to exit
+Comment[af]=Daar was 'n ernstige fout wat die program beëindig het
 Comment[ca]=Ha hagut un error seriós que ha provocat la finalització del programa
 Comment[csb]=Pòkôza sã cãżkô fela, przez jaką programa òsta zakùńczonô.
 Comment[da]=Der var en alvorlig fejl som forårsagede at programmet afsluttede
@@ -488,6 +499,7 @@ Sound=KDE-Sys-App-Error-Serious.ogg
 
 [Event/notification]
 Name=Notification
+Name[af]=Stelselboodskap
 Name[be]=Абвяшчэнні
 Name[bg]=Уведомяване
 Name[ca]=Notificació
@@ -542,6 +554,7 @@ Name[x-test]=xxNotificationxx
 Name[zh_CN]=通知
 Name[zh_TW]=通知
 Comment=Something special happened in the program
+Comment[af]=Iets buitengewoon het in die program gebeur
 Comment[bg]=Нещо специално се случи с програмата
 Comment[ca]=Quelcom especial ha passat en el programa
 Comment[csb]=W programie stało sã cos òsoblëwégò
@@ -594,6 +607,7 @@ Sound=KDE-Sys-Special.ogg
 
 [Event/warning]
 Name=Warning
+Name[af]=Waarskuwing
 Name[be]=Папярэджанне
 Name[bg]=Предупреждение
 Name[ca]=Avís
@@ -649,6 +663,7 @@ Name[x-test]=xxWarningxx
 Name[zh_CN]=警告
 Name[zh_TW]=警告
 Comment=There was an error in the program which may cause problems
+Comment[af]=Daar was 'n fout wat die program. Dit kon probleme veroorsaak het 
 Comment[bg]=Възникна грешка в програмата и това може да е причина за проблема
 Comment[ca]=Ha hagut un error en el programa que pot provocar problemes
 Comment[csb]=W programie pòkôża sã fela, jakô mògła doprowôdzëc do problemów
@@ -700,6 +715,7 @@ Sound=KDE-Sys-Error.ogg
 
 [Event/catastrophe]
 Name=Catastrophe
+Name[af]=Katastrofe
 Name[be]=Катастрофа
 Name[bg]=Катастрофа
 Name[ca]=Catàstrofe
@@ -747,6 +763,7 @@ Name[x-test]=xxCatastrophexx
 Name[zh_CN]=严重故障
 Name[zh_TW]=發生大災難
 Comment=A very serious error occurred, at least causing the program to exit
+Comment[af]=Daar was 'n baie ernstige fout. Dit het ten minste die program beëindig
 Comment[bg]=Възникна много сериозна грешка и програмата беше затворена
 Comment[ca]=Ha hagut un error molt seriós, com a mínim ha provocat la finalització del programa
 Comment[csb]=Pòkôza sã cãżkô fela, jakô przënômni nã programã zakùńcza
@@ -798,6 +815,7 @@ Sound=KDE-Sys-App-Error-Serious.ogg
 
 [Event/startkde]
 Name=Login
+Name[af]=Aanteken
 Name[be]=Уваход
 Name[bg]=Вход
 Name[ca]=Entrada
@@ -849,6 +867,7 @@ Name[x-test]=xxLoginxx
 Name[zh_CN]=登录
 Name[zh_TW]=登入
 Comment=KDE is starting up
+Comment[af]=KDE is besig om aan die gang te kom
 Comment[be]=KDE запускаецца
 Comment[bg]=Стартиране на KDE
 Comment[ca]=El KDE està engegant
@@ -903,6 +922,7 @@ Sound=KDE-Sys-Log-In-Short.ogg
 
 [Event/exitkde]
 Name=Logout
+Name[af]=Afteken
 Name[be]=Выйсці
 Name[bg]=Изход
 Name[ca]=Sortida
@@ -955,6 +975,7 @@ Name[x-test]=xxLogoutxx
 Name[zh_CN]=注销
 Name[zh_TW]=登出
 Comment=KDE is exiting
+Comment[af]=KDE is besig om uit te gaan
 Comment[be]=Выхад з KDE
 Comment[bg]=Излизане от KDE
 Comment[ca]=El KDE està finalitzant
@@ -1009,6 +1030,7 @@ Sound=KDE-Sys-Log-Out.ogg
 
 [Event/cancellogout]
 Name=Logout Canceled
+Name[af]=Afteken is gekanselleer
 Name[bg]=Отменено излизане
 Name[ca]=S'ha cancel·lat la sortida
 Name[csb]=Przerwóné wëlogòwanié
@@ -1059,6 +1081,7 @@ Name[x-test]=xxLogout Canceledxx
 Name[zh_CN]=注销取消了
 Name[zh_TW]=登出已取消
 Comment=KDE logout was canceled
+Comment[af]=KDE-afteken is gekanselleer
 Comment[bg]=Излизането от KDE беше отменено
 Comment[ca]=S'ha cancel·lat la sortida del KDE
 Comment[csb]=Wëlogòwanié z KDE òstało przerwóné
@@ -1112,6 +1135,7 @@ Action=Popup
 
 [Event/printerror]
 Name=Print Error
+Name[af]=Drukkerfout
 Name[be]=Памылка друку
 Name[bg]=Грешка при печат
 Name[ca]=Error d'impressió
@@ -1163,6 +1187,7 @@ Name[x-test]=xxPrint Errorxx
 Name[zh_CN]=打印错误
 Name[zh_TW]=列印錯誤
 Comment=A print error has occurred
+Comment[af]='n Drukkerfout het plaasgevind
 Comment[bg]=Възникна грешка при печат
 Comment[ca]=S'ha produït un error d'impressió
 Comment[csb]=Pòkôza sã fela przë drëkòwaniô
@@ -1215,6 +1240,7 @@ Sound=KDE-Sys-Error-Printing.ogg
 
 [Event/messageInformation]
 Name=Information Message
+Name[af]=Informasieboodskap
 Name[be]=Інфармацыйнае паведамленне
 Name[bg]=Съобщение
 Name[ca]=Missatge d'informació
@@ -1266,6 +1292,7 @@ Name[x-test]=xxInformation Messagexx
 Name[zh_CN]=信息消息
 Name[zh_TW]=資訊訊息
 Comment=An information message is being shown
+Comment[af]='n Informasieboodskap word vertoon
 Comment[bg]=Показано е съобщение
 Comment[ca]=Es mostra un missatge d'informació
 Comment[csb]=Pòkôże sã wëdowiédné wiadło
@@ -1320,6 +1347,7 @@ Action=Sound|Taskbar
 
 [Event/messageWarning]
 Name=Warning Message
+Name[af]=Waarskuwing
 Name[be]=Паведамленне папярэджэння
 Name[bg]=Предупреждение
 Name[ca]=Missatge d'avís
@@ -1372,6 +1400,7 @@ Name[x-test]=xxWarning Messagexx
 Name[zh_CN]=警告消息
 Name[zh_TW]=警告訊息
 Comment=A warning message is being shown
+Comment[af]='n Waarskuwing word vertoon
 Comment[ca]=Es mostra un missatge d'avís
 Comment[csb]=Pòkôże sã wiadło òstrzedżi
 Comment[da]=En advarselsbesked vises
@@ -1425,6 +1454,7 @@ Action=Sound|Taskbar
 
 [Event/messageCritical]
 Name=Critical Message
+Name[af]=Kritieke boodskap
 Name[ca]=Missatge crític
 Name[csb]=Wiadło felë
 Name[da]=Kritisk besked
@@ -1472,6 +1502,7 @@ Name[x-test]=xxCritical Messagexx
 Name[zh_CN]=严重消息
 Name[zh_TW]=嚴重訊息
 Comment=A critical message is being shown
+Comment[af]='n Kritieke boodskap word vertoon
 Comment[ca]=Es mostra un missatge crític
 Comment[csb]=Pòkôże sã kriticzné wiadło felë
 Comment[da]=En kritisk besked vises
@@ -1524,6 +1555,7 @@ Action=Sound|Taskbar
 
 [Event/messageboxQuestion]
 Name=Question
+Name[af]=Vraag
 Name[be]=Пытанне
 Name[bg]=Въпрос
 Name[ca]=Pregunta
@@ -1575,6 +1607,7 @@ Name[x-test]=xxQuestionxx
 Name[zh_CN]=问题
 Name[zh_TW]=詢問
 Comment=A question is being asked
+Comment[af]='n Vraag word gevra
 Comment[bg]=Зададен въпрос
 Comment[ca]=Es pregunta una qüestió
 Comment[csb]=Pëtanié bãdze zadóné
@@ -1630,6 +1663,7 @@ Action=Sound|Taskbar
 
 [Event/beep]
 Name=Beep
+Name[af]=Biep
 Name[be]=Гукавы сігнал
 Name[bg]=Бийп
 Name[ca]=Bip
@@ -1677,6 +1711,7 @@ Name[wa]=Bip
 Name[x-test]=xxBeepxx
 Name[zh_TW]=嗶聲
 Comment=Sound bell
+Comment[af]=Lui klokkie
 Comment[be]=Гукавы званок
 Comment[bg]=Звуков сигнал
 Comment[ca]=So de campana

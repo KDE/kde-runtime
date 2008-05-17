@@ -10,6 +10,7 @@ X-KDE-ParentApp=kcontrol
 X-KDE-System-Settings-Parent-Category=personal
 
 Name=Default Applications
+Name[af]=Verstektoepassings
 Name[ar]=التطبيقات الافتراضية
 Name[be]=Праграмы па змаўчанні
 Name[bg]=Конзолни програми
@@ -129,7 +130,8 @@ Comment[tg]=Интихоби қисматҳои асосӣ барои хизма
 Comment[th]=เลือกคอมโพเนนท์ปริยายสำหรับบริการต่าง ๆ
 Comment[tr]=Çeşitli servisler için öntanımlı bileşenleri seçin
 Comment[uk]=Вибір типових компонентів для різноманітних служб
-Comment[uz]=Турли хизматлар учун андоза компонентларни танлаш
+Comment[uz]=Turli xizmatlar uchun andoza komponentlarni tanlash
+Comment[uz@cyrillic]=Турли хизматлар учун андоза компонентларни танлаш
 Comment[vi]=Chọn các thành phần mặc định cho các dịch vụ khác nhau
 Comment[wa]=Tchoezi les prémetous compôzants po sacwants siervices
 Comment[x-test]=xxChoose the default components for various servicesxx
