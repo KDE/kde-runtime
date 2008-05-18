@@ -1,0 +1,19 @@
+[Desktop Entry]
+Exec=kcmshell4 emoticons
+Icon=face-smile
+Type=Service
+X-DocPath=kcontrol/emoticons/index.html
+
+X-KDE-ServiceTypes=KCModule,KCModuleInit
+X-KDE-Library=kcm_emoticons
+X-KDE-ParentApp=kcontrol
+X-KDE-System-Settings-Parent-Category=appearance
+
+Name=Emoticons
+Name[et]=Emotikonid
+Name[sv]=Smilisar
+Comment=Emoticons Themes Manager
+Comment[et]=Emotikonide teemahaldur
+Comment[sv]=Temahantering av smilisar
+X-KDE-Keywords=Emoticons
+X-KDE-Keywords[sv]=Smilisar
