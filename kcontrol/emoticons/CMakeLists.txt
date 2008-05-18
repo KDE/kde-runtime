@@ -1,9 +1,8 @@
-include_directories(${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} ${KDE4_INCLUDES} ../)
 set(kcmemoticons_SRCS emoticonslist.cpp)
 kde4_add_ui_files(kcmemoticons_SRCS emoticonslist.ui)
 
 kde4_add_plugin(kcm_emoticons ${kcmemoticons_SRCS})
-target_link_libraries(kcm_emoticons ${KDE4_KDEUI_LIBS} ${KDE4_KPARTS_LIBS} ${KDE4_KNEWSTUFF2_LIBS} kemoticons)
+target_link_libraries(kcm_emoticons ${KDE4_KDEUI_LIBS} ${KDE4_KPARTS_LIBS} ${KDE4_KNEWSTUFF2_LIBS} ${KDE4_KUTILS_LIBRARY})
 
 install(TARGETS kcm_emoticons  DESTINATION ${PLUGIN_INSTALL_DIR} )
 

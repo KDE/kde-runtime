@@ -290,7 +290,7 @@ void EmoticonList::addEmoticon()
     }
 
     KEmoticonsTheme theme = emoMap.value(themeList->currentItem()->text());
-    if (theme.addEmoticon(dlg->getEmoticon(), dlg->getText(), true)) {
+    if (theme.addEmoticon(dlg->getEmoticon(), dlg->getText(), KEmoticonsProvider::Copy)) {
         new QListWidgetItem(QPixmap(dlg->getEmoticon()), dlg->getText(), emoList);
         themeList->currentItem()->setIcon(QIcon(theme.emoticonsMap().keys().value(0)));
         emit changed();
@@ -338,7 +338,7 @@ void EmoticonList::editEmoticon()
         delete emoList->currentItem();
     }
 
-    if (theme.addEmoticon(emo, dlg->getText(), copy)) {
+    if (theme.addEmoticon(emo, dlg->getText(), copy ? KEmoticonsProvider::Copy : KEmoticonsProvider::DoNotCopy)) {
         new QListWidgetItem(QPixmap(emo), dlg->getText(), emoList);
     }
 
