@@ -62,6 +62,6 @@ int main(int argc, char **argv)
     //if(args->count() == 1) d.setProviderList(args->arg(0));
     // FIXME (KNS2): do we still need/want those?
 
-	return 0;
+    return 0;
 }
 
