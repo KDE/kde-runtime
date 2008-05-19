@@ -18,6 +18,7 @@ Name[gl]=Usuario final
 Name[gu]=અંત વપરાશકર્તા
 Name[hr]=Krajnji korisnik
 Name[hu]=Végfelhasználói
+Name[it]=Utilizzatore finale
 Name[ja]=エンドユーザ
 Name[ka]=საბოლოო მომხმარებელი
 Name[km]=អ្នកប្រើ​ចុងក្រោយ
@@ -69,6 +70,7 @@ Comment[gl]=Configuracións preferidas para os usuarios finais
 Comment[gu]=અંત વપરાશકર્તા માટે પસંદગીની ગોઠવણીઓ
 Comment[hr]=Postavke preporučene krajnjim korisnicima
 Comment[hu]=Végfelhasználóknak való beállítások
+Comment[it]=Impostazioni preferite per utilizzatori finali
 Comment[ja]=エンドユーザ用の設定
 Comment[ka]=პარამეტრები, საბოლო მომხმარებლისათვის
 Comment[km]=ចំណូលចិត្ត​ការ​កំណត់​សម្រាប់​អ្នកប្រើ​ចុងក្រោយ
@@ -129,6 +131,7 @@ Name[gl]=A aplicación %progname (%appname) estragou-se e provocou o sinal %sign
 Name[gu]=કાર્યક્મ %progname (%appname) બંધ થયેલ છે અને તેનાં કારણે આ સિગ્નલ થયું છે %signum (%signame).
 Name[hr]=Došlo je do rušenja aplikacije %progname (%appname), te je izazvan signal %signum (%signame).
 Name[hu]=Egy alkalmazás lefagyott. Név: %progname (%appname). Az okozott szignál: %signum (%signame).
+Name[it]=L'applicazione %progname (%appname) è andata in crash e ha restituito il segnale %signum (%signame).
 Name[ja]=アプリケーション %progname (%appname) はクラッシュし、シグナル %signum (%signame) が発生しました。
 Name[ka]=პროგრამა %progname (%appname) მოხდა ფატალური შეცდომა, რომელმაც გამოიწვია სიგნალი %signum (%signame).
 Name[km]=កម្មវិធី %progname (%appname) បានគាំង ហើយ​បង្ក​ឲ្យ​មាន​សញ្ញា %signum (%signame) ។
@@ -179,6 +182,7 @@ Name[gu]=મહેરબાની કરી અમને બગ અહેવા�
 Name[ja]=<a href="http://bugs.kde.org">http://bugs.kde.org</a> にバグを報告することで、お使いのソフトウェアを改良する手助けをしてください。バグの再現方法、読み込んだ文書などの詳細情報が役立ちます。
 Name[km]=សូម​ជួយ​យើង​បង្កើន​កម្មវិធី ដែល​អ្នក​ប្រើ​ដោយ​បំពេញ​របាយការណ៍​នៅ <a href="http://bugs.kde.org">http://bugs.kde.org</a> ។ សេចក្ដី​លម្អិត​ដ៏មាន​ប្រយោជន៍​​រួមមាន​វិធី​ត្រូវ​បង្កើត​កំហុស​ឡើ​ងវិញ ឯកសារ​ដែល​ត្រូវ​បាន​ផ្ទុក ។ល។
 Name[ko]=이 오류를 <a href="http://bugs.kde.org">http://bugs.kde.org</a>에 보고해 주셔서 프로그램이 개선될 수 있도록 도와 주십시오. 오류를 다시 일으킬 수 있는 방법이나 불러온 문서 등의 자세한 정보가 있다면 제공해 주십시오.
+Name[ml]=ദയവായി നിങ്ങളുപയോഗിയ്ക്കുന്ന സോഫ്റ്റ്‌വെയര്‍ മെച്ചപ്പെടുത്താന്‍ ഞങ്ങളെ സഹായിയ്ക്കാനായി <a href="http://bugs.kde.org">http://bugs.kde.org</a> എന്ന വിലാസത്തില്‍ രേഖപ്പെടുത്തുക. എങ്ങനെയാണു് ഈ തെറ്റു് വീണ്ടും കാണുക, ചേര്‍ത്തിരുന്ന രചനകള്‍ തുടങ്ങിയവ ഉപയോഗപ്രദമായ വിശദവിവരങ്ങളിലുള്‍പ്പെടും.
 Name[nds]=Bitte hölp uns dor bi, dat wi de Software, de Du bruukst, verbetern köönt. Du kannst en Fehlerbericht för dit Programm op <a href="http://bugs.kde.org">http://bugs.kde.org</a> afgeven. Föög em bitte so veel Informatschonen as mööglich to, villicht ok de Orginaaldokmenten. Kannst Du den Fehler wedderhalen, vertell bitte ok, wodennig dat geiht.
 Name[pt]=Por favor ajude-nos a melhor o 'software' que usa, preenchendo um relatório em <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Alguns detalhes úteis incluem a reprodução do erro, os documentos que foram carregados, etc.
 Name[pt_BR]=Por favor nos ajude a melhorar o software que você usa preenchendo um relatório em <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Detalhes úteis incluem como reproduzir o erro, documentos que foram carregados, etc.
@@ -219,6 +223,7 @@ Comment[gl]=Unha aplicación recebe o sinal SIGILL seguramente por mor dun erro 
 Comment[gu]=કાર્યક્રમ મોટાભાગે તેમાં રહેલ ક્ષતિને કારણે SIGILL સિગ્નલ મેળવે છે. કાર્યક્રમને તેનાં દસ્તાવેજો સંગ્રહવાનું કહેવામાં આવ્યું હતું.
 Comment[hr]=Aplikacija najčešće prima SIGILL signal zbog nedostatka unutar aplikacije. Od aplikacije je zatraženo da spremi svoje dokumente.
 Comment[hu]=SIGILL szignál valamilyen programhiba válthat ki. Bezáródás előtt a program jelzést kap, hogy mentse el a nyitott dokumentumokat.
+Comment[it]=Un'applicazione riceve il segnale SIGILL principalmente a causa di un errore nell'aplicazione. All'applicazione era richiesto di salvare i suoi documenti.
 Comment[ja]=アプリケーションは内部のバグにより SIGILL シグナルを受け取ります。アプリケーションは文書を保存するよう求められました。
 Comment[ka]=პროგრამა იღებს SIGILL სიგნალს პროგრამაში არსებული შეცდომის გამო. ყველა დოკუმენტი შენახული იქნება
 Comment[km]=ភាគច្រើន កម្មវិធី​ទទួល​សញ្ញា SIGILL ដោយសារ​កំហុស​នៅ​ក្នុង​កម្មវិធី ។ កម្មវិធី​ត្រូវបាន​សួរ​ឲ្យ​រក្សាទុក​ឯកសារ​របស់​វា ។
@@ -226,6 +231,7 @@ Comment[ko]=프로그램의 버그로 인해서 SIGILL 신호를 받을 수도 �
 Comment[lt]=Programa gauna SIGILL signalą paprastai dėl ydos programoje.  Programa buvo paprašyta išsaugoti savo dokumentus.
 Comment[lv]=Parasti programma saņem SIGILL signālu dēļ kļūdas pašā programmā. Programmai tika pieprasīts saglabāt savus dokumentus.
 Comment[mk]=Апликациите најчесто го добиваат сигналот SIGILL поради бубачка. На апликацијата ѝ беше речено да ги сними сите свои документи.
+Comment[ml]=പ്രയോഗത്തിലെ പിഴവു് മൂലമാണൊരു പ്രയോഗത്തിനു് കൂടുതലായും സിഗ്ഇല്‍ (SIGILL) എന്ന സിഗ്നല്‍ കിട്ടുന്നതു്. പ്രയോഗത്തോടു് അതിന്റെ രചനകള്‍ സൂക്ഷിയ്ക്കാന്‍ പറഞ്ഞിട്ടുണ്ടു്.
 Comment[ms]=Kebanyakan aplikasi menerima isyarat SIGILL disebabkan ralat di dalam aplikasi. Aplikasi hendaklah disimpan untuk mengelakkan perkara tidak diingini.
 Comment[nb]=Et program får som regel SIGILL-signalet på grunn av en feil i programmet. Det ble bedt om å lagre dokumentene sine.
 Comment[nds]=En Programm kriggt dat Signaal SIGILL tomehrst, wenn dat dor binnen en Fehler gifft. Dat Programm wöör beden, dat schull sien Dokmenten sekern.
@@ -273,6 +279,7 @@ Comment[gl]=Unha aplicación remata cun sinal SIGABRT cando detecta unha inconsi
 Comment[gu]=કાર્યક્રમ SIGABRT સિગ્નલ સાથે બંધ થાય છે જ્યારે તે કાર્યક્રમની અંદરની ક્ષતિને કારણે આંતરિક અસંગતતા મેળવે છે.
 Comment[hr]=Aplikacija prekida s radom uz SIGABRT signal kad otkrije internu nedosljednost prouzrokovanu nedostatkom unutar aplikacije.
 Comment[hu]=SIGABRT szignált akkor válthat ki egy program, ha valamilyen belső inkonzisztencia lép fel, például egy programhiba miatt.
+Comment[it]=Un'applicazione termina con un segnale SIGBART quando trova un'inconsistenza interna dovuta ad un errore nel programma.
 Comment[ja]=アプリケーションはプログラムのバグによる内部不整合が探知されたときに、SIGABRT シグナルとともに落ちます。
 Comment[ka]=პროგრამა შეწყდა SIGABRT სიგნალით, როდესაც მან შეამჩნია შიდა არამდგრადობა რომელიც პროგრამის ბზიკმა გამოიწვია.
 Comment[km]=កម្មវិធី គឺ​បិទ​ដោយ​សញ្ញា SIGABRT នៅពេល​ដែល​វា​រកឃើញ​អថេរ​ខាងក្នុង ដែល​បង្ក​ដោយ​កំហុស​ក្នុង​កម្មវិធី ។
@@ -280,6 +287,7 @@ Comment[ko]=프로그램의 버그로 인해서 내부적인 충돌이 생겨서
 Comment[lt]=Programa baigia darbą dėl SIGABRT signalo kai ji pastebi vidinį prieštaravimą dėl ydos programoje.
 Comment[lv]=Programma beidz darbu ar SIGABRT signālu, ja tiek atklāta iekšēja nekonsekvence dēļ kādas kļūdas programmā.
 Comment[mk]=Апликациите прекинуваат со сигнал SIGABRT кога ќе откријат внатрешни недоследности предизвикани од бубачка во програмата.
+Comment[ml]=ഒരു പ്രയോഗം സിഗ്അബോര്‍ട്ട് (SIGABRT) എന്ന സിഗ്നലുമായി നിന്നുപോകുന്നതു് പ്രോഗ്രാമിലെ ഒരു പിഴവു് മൂലമുണ്ടായ ആന്തരികമായ പൊരുത്തമില്ലായ്മ കണ്ടുപിടിയ്ക്കപ്പെടുമ്പോഴാണു്.
 Comment[ms]=Aplikasi dimatikan dengan isyarat SIGABRT apabila ia mengesan sesuatu yang tidak konsisten secara dalam yang disebabkan oleh pepijat dalam program.
 Comment[nb]=Et program avslutter med signalet SIGABRT når det oppdager en indre motsigelse på grunn av en feil i programmet.
 Comment[nds]=En Programm höllt mit dat Signaal SIGABRT op, wenn dat intern en Fehler opdeckt.
@@ -327,6 +335,7 @@ Comment[gl]=Unha aplicación recebe un sinal SIGFPE seguramente por mor dun erro
 Comment[gu]=કાર્યક્રમ મોટાભાગે તેમાં રહેલ ક્ષતિને કારણે SIGFPE સિગ્નલ મેળવે છે. કાર્યક્રમને તેનાં દસ્તાવેજો સંગ્રહવાનું કહેવામાં આવ્યું હતું.
 Comment[hr]=Aplikacija najčešće prima SIGFPE signal zbog nedostatka unutar aplikacije. Od aplikacije je zatraženo da spremi svoje dokumente.
 Comment[hu]=SIGFPE szignált valamilyen programhiba válthat ki. Bezáródás előtt a program jelzést kap, hogy mentse el a nyitott dokumentumokat.
+Comment[it]=Un'applicazione riceve il segnale SIGFPE principalmente a causa di un errore nell'applicazione. All'applicazione era richiesto di salvare i suoi documenti.
 Comment[ja]=アプリケーションは内部のバグにより SIGFPE シグナルを受け取ります。アプリケーションは文書を保存するよう求められました。
 Comment[ka]=პროგრამა იღებს SIGFPE სიგნალს პროგრამაში არსებული შეცდომის გამო. ყველა დოკუმენტი შენახული იქნება
 Comment[km]=ភាគច្រើន កម្មវិធី​ទទួល​សញ្ញា SIGFPE ដោយសារ​កំហុស​នៅ​ក្នុង​កម្មវិធី ។ កម្មវិធី​ត្រូវបាន​សួរ​ឲ្យ​រក្សាទុក​ឯកសារ​របស់​វា ។
@@ -334,6 +343,7 @@ Comment[ko]=프로그램의 버그로 인해서 SIGFPE 신호를 받을 수도 �
 Comment[lt]=Programa dažniausiai gauna SIGFPE signalą dėl ydos programoje.  Programa buvo paprašyta išsaugoti savo dokumentus.
 Comment[lv]=Programma visbiežāk saņem SIGFPE signālu dēļ kļūdas programmā. Programmai tika prasīts saglabāt savus dokumentus.
 Comment[mk]=Апликациите најчесто го добиваат сигналот SIGFPE поради грешка во апликацијата. На апликацијата ѝ беше речено да ги сними сите свои документи.
+Comment[ml]=പ്രയോഗത്തിലെ പിഴവു് മൂലമാണൊരു പ്രയോഗത്തിനു് കൂടുതലായും സിഗ്എഫ്‌പിഇ (SIGFPE) എന്ന സിഗ്നല്‍ കിട്ടുന്നതു്. പ്രയോഗത്തോടു് അതിന്റെ രചനകള്‍ സൂക്ഷിയ്ക്കാന്‍ പറഞ്ഞിട്ടുണ്ടു്.
 Comment[ms]=Aplikasi biasanya menerima isyarat SIGFPE kerana pepijat dalam aplikasi. Aplikasi telah diminta untuk menyimpan dokumennya.
 Comment[nb]=Et program mottar SIGFPE-signalet for det meste på grunn av en feil i programmet. Det ble bedt om å lagre dokumentene sine.
 Comment[nds]=En Programm kriggt dat Signaal SIGFPE tomehrst, wenn dat dor binnen en Fehler gifft. Dat Programm wöör beden, dat schull sien Dokmenten sekern.
@@ -381,6 +391,7 @@ Comment[gl]=Unha aplicación recebe o sinal SIGSEGV seguramente por mor dun erro
 Comment[gu]=કાર્યક્રમ મોટાભાગે તેમાં રહેલ ક્ષતિને કારણે SIGSEGV સિગ્નલ મેળવે છે. કાર્યક્રમને તેનાં દસ્તાવેજો સંગ્રહવાનું કહેવામાં આવ્યું હતું.
 Comment[hr]=Aplikacija najčešće prima SIGSEGV signal zbog nedostatka unutar aplikacije. Od aplikacije je zatraženo da spremi svoje dokumente.
 Comment[hu]=SIGSEGV szignált valamilyen programhiba válthat ki. Bezáródás előtt a program jelzést kap, hogy mentse el a nyitott dokumentumokat.
+Comment[it]=Un'applicazione riceve il segnale SIGSEGV principalmente a causa di un errore nell'applicazione. All'applicazione era richiesto di salvare i suoi documenti.
 Comment[ja]=アプリケーションは内部のバグにより SIGSEGV シグナルを受け取ります。アプリケーションは文書を保存するよう求められました。
 Comment[ka]=პროგრამა იღებს  SIGSEGV სიგნალს პროგრამაში არსებული შეცდომის გამო. ყველა დოკუმენტი შენახული იქნება
 Comment[km]=ភាគច្រើន កម្មវិធី​ទទួល​សញ្ញា SIGSEGV ដោយសារ​កំហុស​នៅ​ក្នុង​កម្មវិធី​។ កម្មវិធី​ត្រូវបាន​សួរ​ឲ្យ​រក្សាទុក​​ឯកសារ​របស់​វា ។
@@ -388,6 +399,7 @@ Comment[ko]=프로그램의 버그로 인해서 SIGSEGV 신호를 받을 수도 
 Comment[lt]=Programa dažniausiai gauna SIGSEGV signalą dėl ydos programoje.  Programos buvo paprašyta išsaugoti savo dokumentus.
 Comment[lv]=Programma visbiežāk saņem SIGSEGV signālu sakarā ar kļūdu programmā. Programmai tika prasīts saglabāt savus dokumentus.
 Comment[mk]=Апликациите најчесто го добиваат сигналот SIGSEGV поради грешка во апликацијата. На апликацијата и беше речено да ги сними сите свои документи.
+Comment[ml]=പ്രയോഗത്തിലെ പിഴവു് മൂലമാണൊരു പ്രയോഗത്തിനു് കൂടുതലായും സിഗ്സെഗ്‌വി (SIGSEGV) എന്ന സിഗ്നല്‍ കിട്ടുന്നതു്. പ്രയോഗത്തോടു് അതിന്റെ രചനകള്‍ സൂക്ഷിയ്ക്കാന്‍ പറഞ്ഞിട്ടുണ്ടു്.
 Comment[ms]=Aplikasi biasanya menerima isyarat SIGSEGV kerana pepijat didalam aplikasi. Aplikasi telah diminta untuk menyimpan dokumennya.
 Comment[nb]=Et program mottar SIGFPE-signalet for det meste på grunn av en feil i programmet. Det ble bedt om å lagre dokumentene sine.
 Comment[nds]=En Programm kriggt dat Signaal SIGSEGV tomehrst, wenn dat dor binnen en Fehler gifft. Dat Programm wöör beden, dat schull sien Dokmenten sekern.
@@ -432,6 +444,7 @@ Name[gl]=Descoñecido
 Name[gu]=અજાણ્યું
 Name[hr]=Nepoznato
 Name[hu]=Ismeretlen
+Name[it]=Sconosciuto
 Name[ja]=未知
 Name[ka]=უცნობი
 Name[km]=មិនស្គាល់
@@ -484,6 +497,7 @@ Comment[gl]=Sinto-o, este sinal é descoñecido.
 Comment[gu]=માફ કરશો, હું આ સિગ્નલ જાણતો નથી.
 Comment[hr]=Nažalost, ovaj signal nije prepoznat.
 Comment[hu]=Ez egy ismeretlen szignál.
+Comment[it]=Mi spiace, non conosco questo segnale.
 Comment[ja]=このシグナルは分かりません。
 Comment[ka]=სამწუხაროდ ამ სიგნალის შესახებ არაფერია ცნობილი
 Comment[km]=សូម​អភ័យទោស ខ្ញុំ​មិនស្គាល់​សញ្ញា​នេះ​ទេ ។

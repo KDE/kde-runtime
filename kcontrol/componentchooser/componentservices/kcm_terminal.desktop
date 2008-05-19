@@ -108,6 +108,7 @@ Comment[ko]=이 서비스에서는 기본 터미널 에뮬레이터를 설정할
 Comment[lt]=Ši tarnyba leidžia jumos nustatyti Jūsų numatytą pašto klientą. Visos KDE programos, kurios iškviečia terminalo emuliatoriaus programa, turėtų atsižvelgti į šį nustatymą.
 Comment[lv]=Šis serviss jums ļauj iestatīt noklusēto termināla emulatoru. Visas KDE programmas, kurām vajag termināla emulatoru, izmantos šo parametru.
 Comment[mk]=Овој сервис ви овозможува да го конфигурирате вашиот стандарден терминалски емулатор. Сите KDE-апликации кои стартуваат апликација во терминалски емулатор ќе ги почитуваат овие поставувања.
+Comment[ml]=നിങ്ങളുടെ സഹജമായ ടെര്‍മിനലിന്റെ അനുകരണം നിങ്ങള്‍ക്കിവിടെ ക്രമീകരിയ്ക്കാം. ടെര്‍മിനലിന്റെ അനുകരണം തുടങ്ങാന്‍ ആവശ്യമുള്ള എല്ലാ കെഡിഇ പ്രയോഗങ്ങളും ഇതു് മാനിയ്ക്കണം.
 Comment[ms]=Servis ini membolehkan anda konfigur pelagak terminal piawai. Semua aplikasi KDE yang membatalkan aplikasi pelagak terminal hendaklah menerima seting ini.
 Comment[nb]=Med denne tjenesten kan du velge hvilken terminalemulator du foretrekker. Alle KDE-program som starter en terminalemulator bør ta hensyn til disse innstillingene.
 Comment[nds]=Hier kannst Du Dien Standard-Terminalemulator angeven. All KDE- Programmen, de en Terminalemulator starten wüllt, schullen dat denn anwennen.
