@@ -92,7 +92,7 @@ QString getKDEStartMenuPath()
 #else
 	QString compileMode = "Debug"; 
 #endif
-	return getStartMenuPath() + "/KDE" + " " + versions[0] + " "+ compileMode + " ";
+	return getStartMenuPath() + "/KDE" + " " + versions[0] + " " + compileMode;
 }
 
 KServiceGroup::Ptr findGroup(const QString &relPath)
