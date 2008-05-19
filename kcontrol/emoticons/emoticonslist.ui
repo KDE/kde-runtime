@@ -60,7 +60,7 @@
         <string>Modify the selected emoticon icon or text </string>
        </property>
        <property name="whatsThis" >
-        <string>Edit the  selected emoticon to change its icon or its text</string>
+        <string>Edit the selected emoticon to change its icon or its text</string>
        </property>
        <property name="text" >
         <string>Edit...</string>
