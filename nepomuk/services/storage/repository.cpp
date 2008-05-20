@@ -15,7 +15,10 @@
 #include "repository.h"
 #include "nepomukstorage-config.h"
 #include "modelcopyjob.h"
+
+#ifdef HAVE_CLUCENE
 #include "cluceneanalyzer.h"
+#endif
 
 #include <Soprano/Backend>
 #include <Soprano/Global>
