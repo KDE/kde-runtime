@@ -27,15 +27,14 @@ if(CLucene_FOUND AND SopranoIndex_FOUND)
 
   # CLucene requires exception support and has no support for visibility=hidden
   # so we must use the default (i.e. public) value for -fvisibility
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${KDE4_ENABLE_EXCEPTIONS}")
   IF(NOT WIN32)
     include(CheckCXXCompilerFlag)
     # Only GCC supports these flags
     IF(CMAKE_COMPILER_IS_GNUCXX)
       check_cxx_compiler_flag(-fvisibility=hidden __NEPOMUK_HAVE_GCC_VISIBILITY)
       if(__NEPOMUK_HAVE_GCC_VISIBILITY)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fexceptions -fvisibility=default")
-      else(__NEPOMUK_HAVE_GCC_VISIBILITY)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fexceptions")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=default")
       endif(__NEPOMUK_HAVE_GCC_VISIBILITY)
     ENDIF(CMAKE_COMPILER_IS_GNUCXX)
   ENDIF(NOT WIN32)
