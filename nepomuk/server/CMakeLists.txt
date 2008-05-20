@@ -1,8 +1,6 @@
 project(nepomukserver)
 
 include_directories(
-  ${QT_INCLUDES}
-  ${KDE4_INCLUDES}
   ${SOPRANO_INCLUDE_DIR}
   ${CMAKE_SOURCE_DIR}
   ${NEPOMUK_INCLUDE_DIR}
@@ -40,9 +38,6 @@ qt4_add_dbus_interface(nepomukserver_SRCS
 kde4_add_kdeinit_executable(nepomukserver ${nepomukserver_SRCS})
 
 target_link_libraries(kdeinit_nepomukserver
-  ${QT_QTCORE_LIBRARY}
-  ${QT_QTDBUS_LIBRARY}
-  ${KDE4_KDECORE_LIBS}
   ${KDE4_KDEUI_LIBS}
   ${SOPRANO_LIBRARIES}
   ${SOPRANO_SERVER_LIBRARIES}
