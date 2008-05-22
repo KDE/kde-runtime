@@ -712,7 +712,7 @@ Comment[x-test]=xxThere was an error in the program which may cause problemsxx
 Comment[zh_CN]=程序中有一个错误，它可能导致一些问题
 Comment[zh_TW]=程式中發生錯誤，可能造成問題
 Action=Popup|Sound
-Sound=KDE-Sys-Error.ogg
+Sound=KDE-Sys-App-Error.ogg
 
 [Event/catastrophe]
 Name=Catastrophe
@@ -1345,7 +1345,7 @@ Comment[wa]=On messaedje d' informåcion est mostré
 Comment[x-test]=xxAn information message is being shownxx
 Comment[zh_CN]=一个信息消息正在被显示
 Comment[zh_TW]=將顯示資訊訊息
-Sound=KDE-Sys-Message.ogg
+Sound=KDE-Sys-App-Message.ogg
 Action=Sound|Taskbar
 
 [Event/messageWarning]
@@ -1553,7 +1553,7 @@ Comment[wa]=On critike messaedje est mostré
 Comment[x-test]=xxA critical message is being shownxx
 Comment[zh_CN]=一个严重消息正在被显示
 Comment[zh_TW]=將顯示嚴重訊息
-Sound=KDE-App-Error-Critical.ogg
+Sound=KDE-Sys-App-Error-Critical.ogg
 Action=Sound|Taskbar
 
 [Event/messageboxQuestion]
