@@ -24,9 +24,9 @@ as Authors, publish date, the abstract, and Keywords -->
 <author>
 &Orville.Bennett; &Orville.Bennett.mail;
 </author>
+<!-- TRANS:ROLES_OF_TRANSLATORS -->
 </authorgroup>
 
-<!-- TRANS:ROLES_OF_TRANSLATORS -->
 
 <copyright>
 <year>2005</year>
@@ -76,9 +76,9 @@ feature requests for it to the &kde; bugs website.
 <para>
 As you will see in the screenshot below, the Network Folder Wizard currently
 allows 
-you to add four types of network folders: WebDav, FTP, 
-<trademark class="registered">Microsoft</trademark> 
-<trademark class="registered">Windows</trademark> (Samba) network drives and
+you to add four types of network folders: WebDav, &FTP;, 
+<trademark class="registered">&Microsoft;</trademark> 
+<trademark class="registered">&Windows;</trademark> (Samba) network drives and
 SSH.
 
 <screenshot>
@@ -134,7 +134,7 @@ login password for the network share you've chosen to access.
 <para>
 Below is a list of the information needed by the wizard to create the network
 folders. If an option is not 
-available for a particular folder it does not have to be entered. e.g. The Samba
+available for a particular folder it does not have to be entered. &eg;. The Samba
 folders do not require a <guilabel>Port</guilabel> entry.
 </para>
 
@@ -166,8 +166,8 @@ Here you enter the port number you wish to connect to. The defaults are usually
 sufficient.
 <note>
 <para>
-Not available for <trademark class="registered">Microsoft</trademark> 
-<trademark class="registered">Windows</trademark> (Samba) folders.
+Not available for <trademark class="registered">&Microsoft;</trademark> 
+<trademark class="registered">&Windows;</trademark> (Samba) folders.
 </para>
 </note>
 </para>
@@ -228,7 +228,7 @@ blink or you might miss it.
 <para>
 Below you see the main window of the Network Folder Wizard. It is here
 that we choose what type of folder we want to add or connect to. For 
-the purposes of this walkthrough we will be using FTP. It contains most
+the purposes of this walkthrough we will be using &FTP;. It contains most
 of the options you will encounter while using the wizard.
 </para>
 
@@ -247,9 +247,9 @@ of the options you will encounter while using the wizard.
 </para>
 
 <para>
-OK, so we (as in me) have chosen to add an FTP folder. Below you see
+OK, so we (as in me) have chosen to add an &FTP; folder. Below you see
 an example of the type of information you will need to add for your particular 
-FTP server. After filling it in we press <guibutton>Save &amp;
+&FTP; server. After filling it in we press <guibutton>Save &amp;
 Connect</guibutton> 
 and wait for the magic. Oh yes, if your server requires validation of some kind
 you will be prompted at this point before being allowed to connect.
@@ -257,7 +257,7 @@ you will be prompted at this point before being allowed to connect.
 
 <para>
 <screenshot>
-<screeninfo>Screenshot showing addition of FTP Folder
+<screeninfo>Screenshot showing addition of &FTP; Folder
 using &knetattach;</screeninfo>
 <mediaobject>
 <imageobject>
@@ -276,7 +276,7 @@ So now we are all connected now and able to navigate our newly added share. Joy!
 
 <para>
 <screenshot>
-<screeninfo>Screenshot of the connected FTP folder</screeninfo>
+<screeninfo>Screenshot of the connected &FTP; folder</screeninfo>
 <mediaobject>
 <imageobject>
 <imagedata fileref="screenshot3.png" format="PNG"/>
