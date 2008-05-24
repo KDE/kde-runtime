@@ -118,6 +118,10 @@ ones are restored.</para>
 <para>Credits to Kalle Dalheimer for the original version of
 &kdebugdialog;</para>
 
+<!-- TRANS:CREDIT_FOR_TRANSLATORS -->
+
+&underFDL;
+
 </chapter>
 
 &documentation.index; 
@@ -130,5 +134,4 @@ sgml-general-insert-case: lower
 sgml-shorttag: t
 End:
 -->
-
 
