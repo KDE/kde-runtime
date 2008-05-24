@@ -161,7 +161,7 @@ named <systemitem class="systemname">turtle</systemitem>, it is a
 </sect1>
 
 <sect1 id="control-center-menus">
-<title>The &kcontrol; Menus</title>
+<title>The &kcontrolcenter; Menus</title>
 
 <para>
 This next section gives you a brief description of what each menu item
@@ -307,7 +307,7 @@ the control center.
 <title>Running Individual Modules</title>
 
 <para>
-You can run individual modules without running kcontrol using the command <command>kcmshell</command> from &konsole;. Type <userinput> <command>kcmshell</command><option> --list</option></userinput> to see a list of the available &kcontrolcenter; modules. You can also access individual &kcontrol; modules through adding the <guilabel>Preferences</guilabel> button to either &kicker; or the &kmenu; through their respective configuration dialogs.
+You can run individual modules without running kcontrol using the command <command>kcmshell</command> from &konsole;. Type <userinput> <command>kcmshell</command><option> --list</option></userinput> to see a list of the available &kcontrolcenter; modules. You can also access individual &kcontrolcenter; modules through adding the <guilabel>Preferences</guilabel> button to either &kicker; or the &kmenu; through their respective configuration dialogs.
 </para>
 
 </sect1>
@@ -317,10 +317,10 @@ You can run individual modules without running kcontrol using the command <comma
 <!--*****************************************************************-->
 
 <chapter id="module">
-<title>The &kcontrol; Modules</title>
+<title>The &kcontrolcenter; Modules</title>
 
 <para>
-In order to make it as easy as possible, the &kcontrol; has organized
+In order to make it as easy as possible, the &kcontrolcenter; has organized
 similar options into groups.  Each group is called a module.  When you
 click on the name of a module in the left window, you will be presented
 with the options of the module on the right.
@@ -597,29 +597,29 @@ class="username">root</systemitem> permissions.
 
 <itemizedlist>
 <listitem><para>Matthias Hoelzer-Kluepfel 
-<email>hoelzer@kde.org</email></para></listitem>
-<listitem><para>Matthias Elter 
-<email>elter@kde.org</email></para></listitem>
+&Matthias.Hoelzer-Kluepfel.mail;</para></listitem>
+<listitem><para>&Matthias.Elter;
+&Matthias.Elter.mail;</para></listitem>
 </itemizedlist>
 
 <para>Documentation <trademark class="copyright">copyright 2000 Michael
-McBride</trademark> <email>mpmcbride7@yahoo.com</email></para>
+McBride</trademark> &Mike.McBride.mail;</para>
 
 <para>Contributors:</para>
 
 <itemizedlist>
-<listitem><para>Paul Campbell <email>paul@taniwha.com</email></para></listitem>
-<listitem><para>Helge Deller <email>deller@kde.org</email></para></listitem>
-<listitem><para>Mark Donohoe </para></listitem>
-<listitem><para>Pat Dowler </para></listitem>
-<listitem><para>Duncan Haldane <email>duncan@kde.org</email></para></listitem>
-<listitem><para>Steffen Hansen <email>stefh@mip.ou.dk</email>.</para></listitem>
-<listitem><para>Matthias Hoelzer-Kluepfel <email>hoelzer@kde.org</email></para></listitem>
-<listitem><para>Martin Jones <email>mjones@kde.org</email></para></listitem>
-<listitem><para>Jost Schenck <email>jost@schenck.de</email></para></listitem>
-<listitem><para>Jonathan Singer <email>jsinger@leeta.net</email></para></listitem>
-<listitem><para>Thomas Tanghus <email>tanghus@earthling.net</email></para></listitem>
-<listitem><para>Krishna Tateneni <email>tateneni@pluto.njcc.com></email></para></listitem>
+<listitem><para>&Paul.Campbell; &Paul.Campbell.mail;</para></listitem>
+<listitem><para>&Helge.Deller; &Helge.Deller.mail;</para></listitem>
+<listitem><para>&Mark.Donohoe; </para></listitem>
+<listitem><para>&Patrick.Dowler; </para></listitem>
+<listitem><para>&Duncan.Haldane; <email>duncan@kde.org</email></para></listitem>
+<listitem><para>&Steffen.Hansen; <email>stefh@mip.ou.dk</email>.</para></listitem>
+<listitem><para>Matthias Hoelzer-Kluepfel &Matthias.Hoelzer-Kluepfel.mail;</para></listitem>
+<listitem><para>Martin Jones &Martin.R.Jones.mail;</para></listitem>
+<listitem><para>&Jost.Schenck; &Jost.Schenck.mail;</para></listitem>
+<listitem><para>&Jonathan.Singer; &Jonathan.Singer.mail;</para></listitem>
+<listitem><para>&Thomas.Tanghus; &Thomas.Tanghus.mail;</para></listitem>
+<listitem><para>&Krishna.Tateneni; &Krishna.Tateneni.mail;</para></listitem>
 <listitem><para>Ellis Whitehead <email>ewhitehe@uni-freiburg.de</email></para></listitem>
 
 </itemizedlist>
