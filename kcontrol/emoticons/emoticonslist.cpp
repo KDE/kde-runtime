@@ -272,7 +272,7 @@ void EmoticonList::btRemoveEmoticonClicked()
         }
 
         delete itm;
-        themeList->currentItem()->setIcon(QIcon(theme.emoticonsMap().keys().value(0)));
+        themeList->currentItem()->setIcon(QIcon(previewEmoticon(theme)));
         emit changed();
     }
 }
@@ -292,7 +292,7 @@ void EmoticonList::addEmoticon()
     KEmoticonsTheme theme = emoMap.value(themeList->currentItem()->text());
     if (theme.addEmoticon(dlg->getEmoticon(), dlg->getText(), KEmoticonsProvider::Copy)) {
         new QListWidgetItem(QPixmap(dlg->getEmoticon()), dlg->getText(), emoList);
-        themeList->currentItem()->setIcon(QIcon(theme.emoticonsMap().keys().value(0)));
+        themeList->currentItem()->setIcon(QIcon(previewEmoticon(theme)));
         emit changed();
     }
     delete dlg;
@@ -400,7 +400,7 @@ void EmoticonList::loadTheme(const QString &name)
     KEmoticonsTheme emo = kEmoticons.theme(name);
     if (!emo.isNull()) {
         emoMap[name] = emo;
-        QIcon previewIcon = QIcon(emo.emoticonsMap().keys().value(0));
+        QIcon previewIcon = QIcon(previewEmoticon(emo));
         QListWidgetItem *itm = new QListWidgetItem(previewIcon, name, themeList);
 
         if (name == kEmoticons.currentThemeName()) {
@@ -422,6 +422,15 @@ void EmoticonList::getNewStuff()
             }
         }
     }
+}
+
+QString EmoticonList::previewEmoticon(const KEmoticonsTheme &theme)
+{
+        QString path = theme.tokenize(":)")[0].picPath;
+        if (path.isEmpty()) {
+            path = theme.emoticonsMap().keys().value(0);
+        }
+        return path;
 }
 
 // kate: space-indent on; indent-width 4; replace-tabs on;
