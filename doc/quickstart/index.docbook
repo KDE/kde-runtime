@@ -393,7 +393,7 @@ using &kde;.
 </chapter>
 
 <chapter id="working-with-windows">
-<title>Working with Windows</title>
+<title>Working with &Windows;</title>
 
 <para>
 If you have not already done so, start an application using the <link 
@@ -695,7 +695,7 @@ option on the window operations menu.
 <!-- about directories on disk -->
 <para>
 A common metaphor of graphical desktops is the use of folders to
-represent directories on your hard disk. Folders contain files and
+represent folders on your hard disk. Folders contain files and
 other folders. A &kde; application called &konqueror;, the K File
 Manager, uses this metaphor to help you manage your files.
 </para>
