@@ -424,7 +424,7 @@ void EmoticonList::getNewStuff()
     }
 }
 
-QString EmoticonList::previewEmoticon(KEmoticonsTheme &theme)
+QString EmoticonList::previewEmoticon(const KEmoticonsTheme &theme)
 {
         QString path = theme.tokenize(":)")[0].picPath;
         if (path.isEmpty()) {

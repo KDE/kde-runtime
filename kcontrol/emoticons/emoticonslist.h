@@ -69,7 +69,7 @@ private slots:
     void somethingChanged();
 private:
     void loadTheme(const QString &name);
-    QString previewEmoticon(KEmoticonsTheme &theme);
+    QString previewEmoticon(const KEmoticonsTheme &theme);
     QHash<QString, KEmoticonsTheme> emoMap;
     QStringList delFiles;
     KEmoticons kEmoticons;
