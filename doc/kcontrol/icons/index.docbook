@@ -11,10 +11,11 @@
 <authorgroup>
 <author>&Mike.McBride; &Mike.McBride.mail;</author>
 <author>&Jost.Schenck; &Jost.Schenck.mail;</author>
+<author>&Anne-Marie.Mahfouf; &Anne-Marie.Mahfouf.mail;</author>
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
 </authorgroup>
 
-<date>2003-09-22</date>
+<date>2008-05-24</date>
 <releaseinfo>3.2</releaseinfo>
 
 <keywordset>
@@ -33,8 +34,23 @@
 are being used all over &kde;: the desktop, the panel, the &konqueror; file
 manager, in every toolbar of every &kde; application, etc. The icons
 control module offers you very flexible ways of customizing the way &kde;
-handles icons. You can:</para>
+handles icons. </para>
 
+<para>
+<screenshot>
+<screeninfo>Here's a screenshot of the icons themes manager</screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="main.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase>Customizing &kde; icons</phrase>
+    </textobject>
+  </mediaobject>
+</screenshot>
+</para>
+
+<para>In this module you can:</para>
 <itemizedlist>
 <listitem><para>install and choose icon themes</para></listitem>
 <listitem><para>choose different icon sizes</para></listitem>
@@ -46,14 +62,14 @@ icons will be used in: for example the desktop, toolbars &etc;
 </itemizedlist>
 
 <important><para>Please note that some of these settings may depend on
-your selected icon theme. &kde; comes with two icon themes by default,
-&kde;-Classic (HiColor) and Crystal SVG.  There is also a low color theme
-in the kdeartwork package, along with others.</para></important>
+your selected icon theme. &kde; comes with three icon themes by default,
+Oxygen, Monochrome and Crystal SVG.  There are additional color themes
+in the kdeartwork package.</para></important>
 
 </sect2>
 
 <sect2 id="icon-theme">
-<title><guilabel>Theme</guilabel></title>
+<title>Theme</title>
 
 <para>Starting at the top, you can see some example icons.  These change
 in appearance depending on the icon theme you select. Most default
