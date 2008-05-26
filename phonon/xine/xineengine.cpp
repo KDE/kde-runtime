@@ -24,8 +24,6 @@
 #include "mediaobject.h"
 #include <QCoreApplication>
 #include <QtDBus/QDBusConnection>
-#include <phonon/audiodeviceenumerator.h>
-#include <phonon/audiodevice.h>
 #include <QList>
 #include <kconfiggroup.h>
 #include <kicon.h>
