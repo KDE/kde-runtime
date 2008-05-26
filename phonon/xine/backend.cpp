@@ -44,9 +44,6 @@
 #include <QtCore/QVariant>
 #include <QtGui/QApplication>
 
-#include <phonon/audiodevice.h>
-#include <phonon/audiodeviceenumerator.h>
-
 extern "C" {
 #include <xine/xine_plugin.h>
 #include "shareddata.h"
