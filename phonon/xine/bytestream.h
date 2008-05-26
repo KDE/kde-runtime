@@ -43,7 +43,7 @@ namespace Phonon
 namespace Xine
 {
 class MediaObject;
-class ByteStream : public StreamInterface2, public QSharedData
+class ByteStream : public QObject, public StreamInterface, public QSharedData
 {
     Q_OBJECT
     public:
