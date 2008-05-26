@@ -32,7 +32,7 @@ add_subdirectory(panelappearance)
 add_subdirectory(passwords)
 add_subdirectory(performance)
 add_subdirectory(proxy)
-#add_subdirectory(spellchecking)
+add_subdirectory(spellchecking)
 add_subdirectory(windowmanagement)
 endif ( Q_WS_X11 )
 
