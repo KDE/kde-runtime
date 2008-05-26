@@ -316,6 +316,9 @@ void NotifyByPopup::slotDBusNotificationActionInvoked(uint dbus_id, const QStrin
 	kDebug(300) << "action" << actKey << "invoked for notification " << id;
 	// emulate link clicking
 	slotLinkClicked( QString("%1/%2").arg(id).arg(actKey) );
+    // now close notification - similar to popup behaviour
+    // (popups are hidden after link activation - see 'connects' of linkActivated signal above)
+    closeNotificationDBus(id);
 }
 
 void NotifyByPopup::slotDBusNotificationClosed(uint dbus_id, uint reason)
