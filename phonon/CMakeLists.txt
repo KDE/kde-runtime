@@ -17,6 +17,14 @@ OPTION(KDE4_DISABLE_MULTIMEDIA "Disable multimedia support (default: off)" OFF)
 if(KDE4_DISABLE_MULTIMEDIA)
    message(STATUS "NOTICE: Multimedia support DISABLED (KDE4_DISABLE_MULTIMEDIA == ON)")
 else(KDE4_DISABLE_MULTIMEDIA)
+   FIND_PACKAGE(Alsa)
+   ALSA_CONFIGURE_FILE(${CMAKE_CURRENT_BINARY_DIR}/config-alsa.h)
+
+   add_subdirectory(libkaudiodevicelist)
+   add_subdirectory(platform_kde)
+   add_subdirectory(tests)
+   add_subdirectory(kcm)
+
    if (NOT Q_WS_WIN) #no xine on windows to look for, and running the find breaks stuff
       macro_optional_find_package(Xine)
 
