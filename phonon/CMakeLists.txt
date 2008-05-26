@@ -20,6 +20,12 @@ else(KDE4_DISABLE_MULTIMEDIA)
    FIND_PACKAGE(Alsa)
    ALSA_CONFIGURE_FILE(${CMAKE_CURRENT_BINARY_DIR}/config-alsa.h)
 
+   if(NOT ALSA_FOUND)
+      set(ALSA_INCLUDES "")
+      set(ASOUND_LIBRARY "")
+   endif(NOT ALSA_FOUND)
+   set(KDE4_KAUDIODEVICELIST_LIBS kaudiodevicelist ${KDE4_SOLID_LIBS} ${KDE4_PHONON_LIBS} ${KDE4_KDECORE_LIBS} ${ASOUND_LIBRARY})
+
    add_subdirectory(libkaudiodevicelist)
    add_subdirectory(platform_kde)
    add_subdirectory(tests)

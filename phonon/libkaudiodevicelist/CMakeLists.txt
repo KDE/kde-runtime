@@ -10,11 +10,6 @@ if(NOT WIN32)
    macro_log_feature(HAVE_CURRENT_ALSA "ALSA" "current alsa-lib is needed for dmix and virtual device listing" "http://www.alsa-project.org/" FALSE "1.0.14a")
 endif(NOT WIN32)
 
-if(NOT ALSA_FOUND)
-   set(ALSA_INCLUDES "")
-   set(ASOUND_LIBRARY "")
-endif(NOT ALSA_FOUND)
-
 include_directories(${CMAKE_SOURCE_DIR}/solid ${CMAKE_BINARY_DIR}/solid ${ALSA_INCLUDES})
 
 set(kaudiodevicelist_LIB_SRCS
@@ -28,7 +23,7 @@ if(ALSA_FOUND)
 endif(ALSA_FOUND)
 
 kde4_add_library(kaudiodevicelist SHARED ${kaudiodevicelist_LIB_SRCS})
-target_link_libraries(kaudiodevicelist ${KDE4_SOLID_LIBS} ${KDE4_PHONON_LIBS} ${KDE4_KDECORE_LIBS} ${ASOUND_LIBRARY})
+target_link_libraries(${KDE4_KAUDIODEVICELIST_LIBS})
 
 set_target_properties(kaudiodevicelist PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION})
 
