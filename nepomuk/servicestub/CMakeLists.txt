@@ -32,4 +32,4 @@ target_link_libraries(nepomukservicestub
 
 install(
   TARGETS nepomukservicestub
-  DESTINATION ${BIN_INSTALL_DIR})
+  ${INSTALL_TARGETS_DEFAULT_ARGS})

@@ -20,7 +20,7 @@ kde4_add_executable( knotify ${knotify_SRCS})
 target_link_libraries( knotify ${KDE4_KDEUI_LIBS} ${KDE4_PHONON_LIBS})
 
 set_target_properties(knotify PROPERTIES OUTPUT_NAME knotify4 )
-install(TARGETS knotify DESTINATION ${BIN_INSTALL_DIR} )
+install(TARGETS knotify ${INSTALL_TARGETS_DEFAULT_ARGS} )
 
 ########### install files ###############
 

@@ -62,5 +62,5 @@ install(
 
 install(
   TARGETS nepomukserver
-  DESTINATION ${BIN_INSTALL_DIR})
+  ${INSTALL_TARGETS_DEFAULT_ARGS})
 # -----------------------------

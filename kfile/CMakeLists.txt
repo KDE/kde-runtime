@@ -8,4 +8,4 @@ kde4_add_executable(kfile4 NOGUI ${kfile_SRCS})
 
 target_link_libraries(kfile4 ${KDE4_KIO_LIBS} )
 
-install(TARGETS kfile4 DESTINATION ${BIN_INSTALL_DIR} )
+install(TARGETS kfile4 ${INSTALL_TARGETS_DEFAULT_ARGS} )

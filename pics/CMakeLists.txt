@@ -6,7 +6,7 @@ add_subdirectory( oxygen )
 set(ksvgtopng_SRCS ksvgtopng.cpp )
 kde4_add_executable(ksvgtopng NOGUI ${ksvgtopng_SRCS})
 target_link_libraries(ksvgtopng ${KDE4_KDEUI_LIBS})
-install(TARGETS ksvgtopng DESTINATION ${BIN_INSTALL_DIR} )
+install(TARGETS ksvgtopng ${INSTALL_TARGETS_DEFAULT_ARGS} )
 
 # create a symlink for the default icon theme,
 # so that fallbacks work even for themes that don't inherit from oxygen
