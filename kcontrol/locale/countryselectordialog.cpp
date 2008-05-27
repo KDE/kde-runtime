@@ -291,7 +291,7 @@ bool CountrySelectorDialog::editCountry(KControlLocale *locale)
 
     cm->sort();
 
-    cm->addRegion(i18nc("@item:Country", "Not set (Generic English)"), "C");
+    cm->addRegion(i18nc("@item:inlistbox Country", "Not set (Generic English)"), "C");
     if (country == "C") region = "C";
 
     lv1->setModel(cm);
