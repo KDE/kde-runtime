@@ -89,8 +89,13 @@ void NotifyByPopup::notify( int id, KNotifyConfig * config )
 	QRect screen = QApplication::desktop()->availableGeometry();
 	pop->setAutoDelete( true );
 	connect(pop, SIGNAL(destroyed()) , this, SLOT(slotPopupDestroyed()) );
-	int timeout = config->readEntry( "Timeout" ).toInt();
-	pop->setTimeout( timeout );
+
+	QString timeoutStr = config->readEntry( "Timeout" );
+	if (!timeoutStr.isEmpty())
+	{
+		pop->setTimeout( timeoutStr.toInt() );
+	}
+
 	pop->show(QPoint(screen.left() + screen.width()/2  , m_nextPosition));
 	m_nextPosition+=pop->height();
 }
