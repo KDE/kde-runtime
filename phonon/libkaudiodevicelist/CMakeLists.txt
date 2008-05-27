@@ -10,7 +10,7 @@ if(NOT WIN32)
    macro_log_feature(HAVE_CURRENT_ALSA "ALSA" "current alsa-lib is needed for dmix and virtual device listing" "http://www.alsa-project.org/" FALSE "1.0.14a")
 endif(NOT WIN32)
 
-include_directories(${CMAKE_SOURCE_DIR}/solid ${CMAKE_BINARY_DIR}/solid ${ALSA_INCLUDES})
+include_directories(${ALSA_INCLUDES})
 
 set(kaudiodevicelist_LIB_SRCS
     audiodevice.cpp

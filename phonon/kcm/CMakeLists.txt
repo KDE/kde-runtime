@@ -1,5 +1,3 @@
-include_directories(${KDE4_KIO_INCLUDES} ${CMAKE_SOURCE_DIR}/kio/kio ${CMAKE_SOURCE_DIR}/kutils ${CMAKE_SOURCE_DIR}/solid ${CMAKE_BINARY_DIR}/solid)
-
 set(kcmphonon_SRCS main.cpp devicepreference.cpp backendselection.cpp globalconfig.cpp)
 kde4_add_ui_files(kcmphonon_SRCS devicepreference.ui backendselection.ui)
 
