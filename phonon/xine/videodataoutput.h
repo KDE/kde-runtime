@@ -1,5 +1,5 @@
 /*  This file is part of the KDE project
-    Copyright (C) 2006 Matthias Kretz <kretz@kde.org>
+    Copyright (C) 2006,2008 Matthias Kretz <kretz@kde.org>
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -17,16 +17,19 @@
     Boston, MA 02110-1301, USA.
 
 */
-#ifndef Phonon_XINE_VIDEODATAOUTPUT_H
-#define Phonon_XINE_VIDEODATAOUTPUT_H
+#ifndef PHONON_XINE_VIDEODATAOUTPUT_H
+#define PHONON_XINE_VIDEODATAOUTPUT_H
 
-#include <phonon/experimental/videoframe.h>
-#include <QVector>
-#include <QByteArray>
-#include <QObject>
-#include <QSize>
-#include <QList>
 #include "sinknode.h"
+
+#include <Phonon/Experimental/VideoDataOutputInterface>
+#include <Phonon/Experimental/VideoFrame>
+
+#include <QtCore/QByteArray>
+#include <QtCore/QList>
+#include <QtCore/QObject>
+#include <QtCore/QSize>
+#include <QtCore/QVector>
 
 #include <xine.h>
 
@@ -34,40 +37,20 @@ namespace Phonon
 {
 namespace Xine
 {
-/**
- * \author Matthias Kretz <kretz@kde.org>
- */
-class VideoDataOutput : public QObject, public Phonon::Xine::SinkNode
+
+class VideoDataOutput : public QObject, public Phonon::Experimental::VideoDataOutputInterface, public Phonon::Xine::SinkNode
 {
     Q_OBJECT
-    Q_INTERFACES(Phonon::Xine::SinkNode)
+    Q_INTERFACES(Phonon::Experimental::VideoDataOutputInterface Phonon::Xine::SinkNode)
     public:
         VideoDataOutput(QObject *parent);
         ~VideoDataOutput();
 
         MediaStreamTypes inputMediaStreamTypes() const { return Phonon::Xine::Video; }
 
-    public slots:
-        int frameRate() const;
-        void setFrameRate(int frameRate);
-
-        QSize naturalFrameSize() const;
-        QSize frameSize() const;
-        void setFrameSize(const QSize &frameSize);
-
-        quint32 format() const;
-        void setFormat(quint32 fourcc);
-
-    signals:
-        void frameReady(const Phonon::Experimental::VideoFrame &frame);
-        void endOfMedia();
-
-    private:
-        quint32 m_fourcc;
-        int m_frameRate;
-        QSize m_frameSize;
+        Experimental::AbstractVideoDataOutput *frontendObject() const;
+        void setFrontendObject(Experimental::AbstractVideoDataOutput *);
 };
 }} //namespace Phonon::Xine
 
-// vim: sw=4 ts=4 tw=80
-#endif // Phonon_XINE_VIDEODATAOUTPUT_H
+#endif // PHONON_XINE_VIDEODATAOUTPUT_H

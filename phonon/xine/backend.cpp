@@ -20,6 +20,7 @@
 */
 
 #include "backend.h"
+//#include <phonon/experimental/backendinterface.h>
 #include "mediaobject.h"
 #include "effect.h"
 #include "events.h"
@@ -28,7 +29,7 @@
 #include "nullsink.h"
 #include "visualization.h"
 #include "volumefadereffect.h"
-#include "videodataoutput.h"
+//#include "videodataoutput.h"
 #include "videowidget.h"
 #include "wirecall.h"
 #include "xinethread.h"
@@ -106,8 +107,8 @@ QObject *Backend::createObject(BackendInterface::Class c, QObject *parent, const
         return new AudioDataOutput(parent);
     case VisualizationClass:
         return new Visualization(parent);
-    case VideoDataOutputClass:
-        return new VideoDataOutput(parent);
+    //case Phonon::Experimental::BackendInterface::VideoDataOutputClass:
+        //return new VideoDataOutput(parent);
     case EffectClass:
         {
             Q_ASSERT(args.size() == 1);

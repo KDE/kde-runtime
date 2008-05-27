@@ -21,6 +21,9 @@
 #include "videodataoutput.h"
 #include <kdebug.h>
 #include "sourcenode.h"
+#include <Phonon/Experimental/AbstractVideoDataOutput>
+
+#define K_XT(type) (static_cast<type *>(SinkNode::threadSafeObject().data()))
 
 namespace Phonon
 {
@@ -29,12 +32,85 @@ namespace Xine
 class VideoDataOutputXT : public SinkNodeXT
 {
     public:
+        VideoDataOutputXT();
+        ~VideoDataOutputXT();
         xine_video_port_t *videoPort() const { return m_videoPort; }
         void rewireTo(SourceNodeXT *);
 
+        Phonon::Experimental::AbstractVideoDataOutput *m_frontend;
     private:
+        struct Frame
+        {
+            int format;
+            int width;
+            int height;
+            double aspectRatio;
+            void *data0;
+            void *data1;
+            void *data2;
+        };
+        static void raw_output_cb(void *user_data, int frame_format, int frame_width,
+                int frame_height, double frame_aspect, void *data0, void *data1, void *data2);
+        static void raw_overlay_cb(void *user_data, int num_ovl, raw_overlay_t *overlay_array);
+
+#ifdef XINE_VISUAL_TYPE_RAW
+        raw_visual_t m_visual;
+#endif
         xine_video_port_t *m_videoPort;
 };
+
+void VideoDataOutputXT::raw_output_cb(void *user_data, int format, int width,
+        int height, double aspect, void *data0, void *data1, void *data2)
+{
+    VideoDataOutputXT* vw = reinterpret_cast<VideoDataOutputXT *>(user_data);
+    const Experimental::VideoFrame f = {
+        width,
+        height,
+        aspect,
+        ((format == XINE_VORAW_YV12) ? Experimental::VideoFrame::Format_YV12 :
+         (format == XINE_VORAW_YUY2) ? Experimental::VideoFrame::Format_YUY2 :
+         (format == XINE_VORAW_RGB ) ? Experimental::VideoFrame::Format_RGB888 :
+                                       Experimental::VideoFrame::Format_Invalid),
+        QByteArray::fromRawData(reinterpret_cast<const char *>(data0), ((format == XINE_VORAW_RGB) ? 3 : (format == XINE_VORAW_YUY2) ? 2 : 1) * width * height),
+        QByteArray::fromRawData(reinterpret_cast<const char *>(data1), (format == XINE_VORAW_YV12) ? (width >> 1) + (height >> 1) : 0),
+        QByteArray::fromRawData(reinterpret_cast<const char *>(data2), (format == XINE_VORAW_YV12) ? (width >> 1) + (height >> 1) : 0)
+    };
+    if (vw->m_frontend) {
+        //kDebug(610) << "send frame to frontend";
+        vw->m_frontend->frameReady(f);
+    }
+}
+
+void VideoDataOutputXT::raw_overlay_cb(void *user_data, int num_ovl, raw_overlay_t *overlay_array)
+{
+    VideoDataOutputXT* vw = reinterpret_cast<VideoDataOutputXT *>(user_data);
+    Q_UNUSED(vw);
+    Q_UNUSED(num_ovl);
+    Q_UNUSED(overlay_array);
+}
+
+VideoDataOutputXT::VideoDataOutputXT()
+    : m_frontend(0),
+    m_videoPort(0)
+{
+#ifdef XINE_VISUAL_TYPE_RAW
+    m_visual.user_data = static_cast<void *>(this);
+    m_visual.raw_output_cb = &Phonon::Xine::VideoDataOutputXT::raw_output_cb;
+    m_visual.raw_overlay_cb = &Phonon::Xine::VideoDataOutputXT::raw_overlay_cb;
+    m_visual.supported_formats = /*XINE_VORAW_YV12 | XINE_VORAW_YUY2 |*/ XINE_VORAW_RGB; // TODO
+    m_videoPort = xine_open_video_driver(XineEngine::xine(), "auto", XINE_VISUAL_TYPE_RAW, static_cast<void *>(&m_visual));
+#endif
+}
+
+VideoDataOutputXT::~VideoDataOutputXT()
+{
+    if (m_videoPort) {
+        xine_video_port_t *vp = m_videoPort;
+        m_videoPort = 0;
+
+        xine_close_video_driver(XineEngine::xine(), vp);
+    }
+}
 
 VideoDataOutput::VideoDataOutput(QObject *parent)
     : QObject(parent),
@@ -48,45 +124,24 @@ VideoDataOutput::~VideoDataOutput()
 
 void VideoDataOutputXT::rewireTo(SourceNodeXT *source)
 {
+    if (!source->videoOutputPort()) {
+        return;
+    }
     xine_post_wire_video_port(source->videoOutputPort(), videoPort());
 }
 
-quint32 VideoDataOutput::format() const
+Experimental::AbstractVideoDataOutput *VideoDataOutput::frontendObject() const
 {
-    return m_fourcc;
+    return K_XT(const VideoDataOutputXT)->m_frontend;
 }
 
-int VideoDataOutput::frameRate() const
+void VideoDataOutput::setFrontendObject(Experimental::AbstractVideoDataOutput *x)
 {
-    return m_frameRate;
-}
-
-void VideoDataOutput::setFrameRate(int frameRate)
-{
-    m_frameRate = frameRate;
-}
-
-QSize VideoDataOutput::naturalFrameSize() const
-{
-    return QSize(320, 240);
-}
-
-QSize VideoDataOutput::frameSize() const
-{
-    return m_frameSize;
-}
-
-void VideoDataOutput::setFrameSize(const QSize &frameSize)
-{
-    m_frameSize = frameSize;
-}
-
-void VideoDataOutput::setFormat(quint32 fourcc)
-{
-    m_fourcc = fourcc;
+    K_XT(VideoDataOutputXT)->m_frontend = x;
 }
 
 }} //namespace Phonon::Xine
 
+#undef K_XT
+
 #include "videodataoutput.moc"
-// vim: sw=4 ts=4
