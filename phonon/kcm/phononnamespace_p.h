@@ -21,7 +21,6 @@
 #define PHONONNAMESPACE_P_H
 
 #include <QtCore/QDebug>
-#include "phonon_export.h"
 
 QT_BEGIN_NAMESPACE
 

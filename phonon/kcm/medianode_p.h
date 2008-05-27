@@ -23,8 +23,8 @@ Boston, MA 02110-1301, USA.
 #include <QtCore/QtGlobal>
 #include <QtCore/QList>
 #include <QtCore/QObject>
-#include "path.h"
-#include "phonon_export.h"
+#include <phonon/path.h>
+#include <phonon/phonon_export.h>
 
 QT_BEGIN_NAMESPACE
 
