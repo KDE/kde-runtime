@@ -62,6 +62,7 @@ int main( int argc, char* argv[] )
                         KAboutData::License_BSD,
                         ki18n("(C) 2000-2003, Hans Petter Bieker"));
   aboutData.addAuthor(ki18n("Hans Petter Bieker"), KLocalizedString(), "bieker@kde.org");
+  aboutData.setProgramIconName("tools-report-bug");
 
   KCmdLineArgs::init(argc, argv, &aboutData);
 
