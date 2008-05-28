@@ -30,7 +30,7 @@ namespace Phonon
 
 class DeviceListing;
 
-class KdePlatformPlugin : public QObject, public Phonon::PlatformPlugin
+class KdePlatformPlugin : public QObject, public PlatformPlugin
 {
     Q_INTERFACES(Phonon::PlatformPlugin)
     Q_OBJECT
