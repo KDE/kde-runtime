@@ -27,6 +27,20 @@
 <sect2 id="icons-intro">
 <title>Introduction</title>
 
+<para>
+<screenshot>
+<screeninfo>Screenshot of the Emoticons Theme Manager</screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="emoticons.png" format="PNG"/>
+    </imageobject>
+     <textobject>
+      <phrase>The Emoticons Theme Manager</phrase>
+    </textobject>
+  </mediaobject>
+</screenshot>
+</para>
+
 <para>Emoticons can be used in several &kde; applications: &kopete;, &konversation;, &kmail;... This module offers you to easily manage your emoticons sets. You can:</para>
 
 <itemizedlist>
@@ -60,6 +74,17 @@ This section allows you to manage emoticons themes.
 </para>
 
 <variablelist>
+<varlistentry><term><guilabel>Require spaces around emoticons</guilabel></term>
+<listitem>
+<para>
+When this option is checked, you need to separate the emoticon with a white space before and after it so it is changed to an icon. If you type "Hello:-)" then this string will stay as it is while if you type "Hello :-)" you will get "Hello" followed by the :-) emoticon.
+</para>
+<para>
+When this option is not checked (default), each emoticon string will be replaced by its icon.
+</para>
+</listitem>
+</varlistentry>
+
 <varlistentry><term><guilabel>New Theme...</guilabel></term>
 <listitem>
 <para>
