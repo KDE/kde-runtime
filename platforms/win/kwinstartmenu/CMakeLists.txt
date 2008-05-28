@@ -1,9 +1,5 @@
 project(winstartmenu)
 
-find_package(KDE4 REQUIRED)
-
-include_directories(${KDE4_INCLUDES} ${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR})
-
 # use kded debug category for now
 add_definitions(-DKDE_DEFAULT_DEBUG_AREA=7020)
 
