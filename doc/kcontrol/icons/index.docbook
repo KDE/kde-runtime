@@ -156,7 +156,21 @@ will see two areas:</para>
 <listitem> 
 <para>An area labelled <guilabel>Use of Icon</guilabel>. Here you can
 choose which particular usage of icons you want to configure, for
-example <guilabel>Toolbar</guilabel> or <guilabel>Panel</guilabel>.</para> 
+example <guilabel>Toolbar</guilabel> or <guilabel>Panel</guilabel>.
+</para> 
+<para>
+<screenshot>
+<screeninfo>Choosing the icons to configure</screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="use-of-icons.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase>Choosing the icons to configure</phrase>
+    </textobject>
+  </mediaobject>
+</screenshot>
+</para>
 </listitem> 
 
 <listitem> <para>A preview area where you can see how
@@ -178,6 +192,20 @@ changes in effect.</para>
 
 <sect3 id="icons-use-size">
 <title>Icon Size</title>
+
+<para>
+<screenshot>
+<screeninfo>Setting icons sizes</screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="size.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase>Setting icons sizes</phrase>
+    </textobject>
+  </mediaobject>
+</screenshot>
+</para>
 
 <para>You have two options relating to icon sizes. First, you can choose
 from a list of icon sizes. Second, you can tell &kde; to draw all icons
@@ -220,6 +248,19 @@ are low on memory.</para>
 
 <sect3 id="icons-use-effects">
 <title>Effects</title>
+<para>
+<screenshot>
+<screeninfo>Setting icons effects</screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="effects.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase>Setting icons effects</phrase>
+    </textobject>
+  </mediaobject>
+</screenshot>
+</para>
 
 <para>Finally you can configure certain <quote>filters</quote> to be
 applied on icons which are in one of three states:</para>
