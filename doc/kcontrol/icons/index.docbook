@@ -15,7 +15,7 @@
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
 </authorgroup>
 
-<date>2008-05-24</date>
+<date>2008-05-28</date>
 <releaseinfo>3.2</releaseinfo>
 
 <keywordset>
@@ -38,7 +38,7 @@ handles icons. </para>
 
 <para>
 <screenshot>
-<screeninfo>Here's a screenshot of the icons themes manager</screeninfo>
+<screeninfo>Here's a screenshot of the icon theme manager</screeninfo>
   <mediaobject>
     <imageobject>
       <imagedata fileref="main.png" format="PNG"/>
@@ -66,20 +66,83 @@ your selected icon theme. &kde; comes with three icon themes by default,
 Oxygen, Monochrome and Crystal SVG.  There are additional color themes
 in the kdeartwork package.</para></important>
 
+<para>There are two pages in this module: <guilabel>Theme</guilabel> and <guilabel>Advanced</guilabel>. <guilabel>Theme</guilabel> manages the icon themes while <guilabel>Advanced</guilabel> lets you configure how icons will be used in &kde;.</para>
 </sect2>
 
 <sect2 id="icon-theme">
 <title>Theme</title>
 
-<para>Starting at the top, you can see some example icons.  These change
-in appearance depending on the icon theme you select. Most default
+<para>At the top is a preview of the current theme icons. Most default
 installations will have only one icon theme available, the &kde; default
-Crystal SVG theme.  There are others contained separately in the
-kdeartwork package, and you can download more from the Internet.</para>
+Oxygen theme.  There are other themes contained separately in the
+kdeartwork package, and you can also download more from the Internet from <ulink url="http://www.kde-look.org">http://www.kde-look.org</ulink>.</para>
 
-<para>Use the <guibutton>Install New Theme...</guibutton> to browse to the
-location of newly downloaded themes, and they will then become available 
-to select from above.</para>
+<variablelist>
+<varlistentry><term><guilabel>Get New Themes...</guilabel></term>
+<listitem>
+<para>
+You need to be connected to the Internet to use it. Clicking on this button will display a dialog where you can choose a new icon theme. Clicking on <guibutton>Install</guibutton> in the dialog will install the chosen icon theme and after you <guibutton>Close</guibutton>  the installer your new theme is immediately available.
+</para>
+<para>
+<screenshot>
+<screeninfo>Get New Icon Themes</screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="get-new-theme.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase>Get New Icon Themes</phrase>
+    </textobject>
+  </mediaobject>
+</screenshot>
+</para>
+</listitem>
+</varlistentry>
+<varlistentry><term><guilabel>Install Theme File...</guilabel></term>
+<listitem>
+<para>
+If you dowloaded new themes from the internet, you can use this to browse to the
+location of those newly downloaded themes. Clicking on this button will bring you a small dialog to point to the icon theme tarball you have on your disk.</para>
+<para>
+<screenshot>
+<screeninfo>Installing A New Icon Theme</screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="install-theme.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase>Installing A New Icon Theme</phrase>
+    </textobject>
+  </mediaobject>
+</screenshot>
+</para>
+<para>Clicking <guibutton>OK</guibutton> in this dialog will install the theme you pointed to and make it available in the theme list.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry><term><guilabel>Remove Theme</guilabel></term>
+<listitem>
+<para>
+Clicking this button will remove all files for this theme from your system. A confirmation message is displayed and will ask you if you are really sure you want to remove all the files for this theme.
+</para>
+<para>
+<screenshot>
+<screeninfo>Removing A Theme</screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="remove-theme.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase>Removing A Theme</phrase>
+    </textobject>
+  </mediaobject>
+</screenshot>
+</para>
+<para>Clicking <guibutton>Delete</guibutton> will remove the theme files and clicking <guibutton>Cancel</guibutton> will not delete anything and will cancel the remove action.
+</para>
+</listitem>
+</varlistentry>
+</variablelist>
 
 </sect2>
 
