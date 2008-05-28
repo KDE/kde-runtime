@@ -20,7 +20,8 @@
 #ifndef PHONON_KDEPLUGINFACTORY_H
 #define PHONON_KDEPLUGINFACTORY_H
 
-#include <Phonon/PlatformPlugin>
+#include <phonon/platformplugin.h>
+#include <phonon/objectdescription.h>
 #include <QtCore/QObject>
 #include <kservice.h>
 
@@ -29,7 +30,7 @@ namespace Phonon
 
 class DeviceListing;
 
-class KdePlatformPlugin : public QObject, public PlatformPlugin
+class KdePlatformPlugin : public QObject, public Phonon::PlatformPlugin
 {
     Q_INTERFACES(Phonon::PlatformPlugin)
     Q_OBJECT
