@@ -687,13 +687,13 @@ void OxygenStyle::drawKStylePrimitive(WidgetType widgetType, int primitive,
 
                 case MenuItem::RadioOn:
                 {
-                    renderRadioButton(p, r, pal, enabled, mouseOver, RadioButton::RadioOn, true);
+                    renderRadioButton(p, r, pal, enabled, false, mouseOver, RadioButton::RadioOn, true);
                     return;
                 }
 
                 case MenuItem::RadioOff:
                 {
-                    renderRadioButton(p, r, pal, enabled, mouseOver, RadioButton::RadioOff, true);
+                    renderRadioButton(p, r, pal, enabled, false, mouseOver, RadioButton::RadioOff, true);
                     return;
                 }
 
@@ -827,7 +827,9 @@ void OxygenStyle::drawKStylePrimitive(WidgetType widgetType, int primitive,
                 case RadioButton::RadioOn:
                 case RadioButton::RadioOff:
                 {
-                    renderRadioButton(p, r, pal, enabled, mouseOver, primitive);
+                    bool hasFocus = flags & State_HasFocus;
+
+                    renderRadioButton(p, r, pal, enabled, hasFocus, mouseOver, primitive);
                     return;
                 }
             }
@@ -2110,17 +2112,17 @@ void OxygenStyle::renderCheckBox(QPainter *p, const QRect &rect, const QPalette 
 }
 
 void OxygenStyle::renderRadioButton(QPainter *p, const QRect &r, const QPalette &pal,
-                                        bool enabled, bool mouseOver, int prim,
+                                        bool enabled, bool hasFocus, bool mouseOver, int prim,
                                    bool drawButton) const
 {
     QRect r2(r.x() + (r.width()-21)/2, r.y() + (r.height()-21)/2, 21, 21);
     int x = r2.x();
     int y = r2.y();
 
-    // TODO focus?
-    if(mouseOver)
+    if(mouseOver || hasFocus)
     {
-        QPixmap slabPixmap = _helper.roundSlabFocused(pal.color(QPalette::Button),_viewHoverBrush.brush(QPalette::Active).color(), 0.0);
+        QPixmap slabPixmap = _helper.roundSlabFocused(pal.color(QPalette::Button),
+                    (mouseOver ? _viewHoverBrush : _viewFocusBrush).brush(QPalette::Active).color(), 0.0);
         if(drawButton)
             p->drawPixmap(x, y, slabPixmap);
     }
