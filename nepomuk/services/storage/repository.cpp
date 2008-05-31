@@ -143,7 +143,7 @@ void Nepomuk::Repository::open()
 #ifdef HAVE_CLUCENE
     m_analyzer = new CLuceneAnalyzer();
 #endif
-    m_index = new Soprano::Index::CLuceneIndex( m_analyzer );
+    m_index = 0; // to make kdebase compile
 
     if ( m_index->open( indexPath, true ) ) {
         kDebug(300002) << "Successfully created new index for repository" << name();
@@ -155,7 +155,7 @@ void Nepomuk::Repository::open()
 #if SOPRANO_IS_VERSION(2,0,99)
         // no need for the whole content in the store, we only need it for searching
         // (compare the strigi backend)
-        m_indexModel->addIndexOnlyPredicate( Soprano::Vocabulary::Xesam::asText() );
+        // m_indexModel->addIndexOnlyPredicate( Soprano::Vocabulary::Xesam::asText() ); outcommented to make kdebase compile
 #endif
 
         setParentModel( m_indexModel );
