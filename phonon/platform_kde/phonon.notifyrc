@@ -1,13 +1,44 @@
 [Global]
 IconName=preferences-desktop-sound
 Comment=Phonon: KDE's Multimedia Library
+Comment[de]=Phonon: Das Multimedia-System von KDE
+Comment[gu]=ફોનોન: KDEની મલ્ટિમિડીઆ લાઇબ્રેરી
+Comment[km]=Phonon ៖ បណ្ណាល័យ​ពហុព័ត៌មាន​របស់ KDE
+Comment[nds]=Phonon: De Multimedia-Bibliotheek vun KDE
+Comment[pt]=Phonon: Biblioteca Multimédia do KDE
+Comment[pt_BR]=Phonon: Biblioteca Multimédia do KDE
+Comment[sv]=Phonon: KDE:s multimediabibliotek
+Comment[zh_TW]=Phonon：KDE 的多媒體函式庫
 
 [Context/Application]
 Name=Application
+Name[de]=Programm
+Name[gu]=કાર્યક્રમ
+Name[km]=កម្មវិធី
+Name[nds]=Programm
+Name[pt]=Aplicação
+Name[pt_BR]=Aplicação
+Name[sv]=Program
+Name[zh_TW]=應用程式
 #Comment=The name of the group of the contact
 
 [Event/AudioDeviceFallback]
 Name=Audio Device Fallback
+Name[de]=Ausweichgerät für Audio
+Name[gu]=ધ્વનિ ઉપકરણ પડતીઆધાર
+Name[km]=ឧបករណ៍​អូឌីយ៉ូ Fallback
+Name[nds]=Opback-Klangreedschap
+Name[pt]=Dispositivo Alternativo de Áudio:
+Name[pt_BR]=Dispositivo Alternativo de Áudio:
+Name[sv]=Reservenhet för ljud vald
+Name[zh_TW]=預設音效裝置
 Comment=Notification on automatic fallback if the preferred device is unavailable
+Comment[de]=Benachrichtigung bei automatischem Ausweichen, wenn das bevorzugte Gerät nicht verfügbar ist.
+Comment[km]=ជូន​ដំណឹង​ដោយ​ស្វ័យ​ប្រវត្តិ​ ប្រសិន​បើ​មិនមាន​ឧបករណ៍​ដែល​ពេញចិត្ត
+Comment[nds]=Bescheed, wenn de vörtrocken Reedschap nich verföögbor is un ansteed de Opbackreedschap bruukt warrt
+Comment[pt]=Notificação de contingência se o dispositivo preferido estiver indisponível
+Comment[pt_BR]=Notificação de contingência se o dispositivo preferido estiver indisponível
+Comment[sv]=Underrättelse vid automatisk val av reservenhet om önskad enhet inte är tillgänglig
+Comment[zh_TW]=當欲使用的裝置無法使用時，通知並自動使用預設的裝置。
 Contexts=Application
 Action=Popup
