@@ -24,11 +24,11 @@
 #include <kapplication.h>
 #include <kdebug.h>
 #include <klocale.h>
-#include <klineedit.h>
+#include <ktreewidgetsearchline.h>
 
 #include <QtDBus/QtDBus>
 #include <QLayout>
-#include <QListWidget>
+#include <QTreeWidget>
 #include <QPushButton>
 
 KListDebugDialog::KListDebugDialog( QStringList areaList, QWidget *parent, const char *name, bool modal )
@@ -41,14 +41,20 @@ KListDebugDialog::KListDebugDialog( QStringList areaList, QWidget *parent, const
   lay->setMargin( KDialog::marginHint() );
   lay->setSpacing( KDialog::spacingHint() );
 
-  m_incrSearch = new KLineEdit();
-  m_incrSearch->setClearButtonShown(true);
+  m_incrSearch = new KTreeWidgetSearchLineWidget();
+  m_incrSearch->searchLine()->setClearButtonShown(true);
   lay->addWidget( m_incrSearch );
-  connect( m_incrSearch, SIGNAL( textChanged( const QString& ) ),
-           SLOT( filterCheckBoxes( const QString& ) ) );
+//  connect( m_incrSearch, SIGNAL( textChanged( const QString& ) ),
+//           SLOT( filterCheckBoxes( const QString& ) ) );
 
-  m_areaWidget = new QListWidget();
+  m_areaWidget = new QTreeWidget();
+  m_areaWidget->setHeaderHidden(true);
+  m_areaWidget->setItemsExpandable(false);
+  m_areaWidget->setRootIsDecorated(false);
+  m_areaWidget->setUniformRowHeights(true);
   lay->addWidget(m_areaWidget);
+
+  m_incrSearch->searchLine()->addTreeWidget(m_areaWidget);
 
   generateCheckBoxes();
 
@@ -68,21 +74,6 @@ KListDebugDialog::KListDebugDialog( QStringList areaList, QWidget *parent, const
   setButtons( KDialog::NoDefault );
 }
 
-void KListDebugDialog::filterCheckBoxes( const QString & filter )
-{
-  bool doFilter = filter.length();
-
-  for (int i = 0; i < m_areaWidget->count(); ++i) {
-    QListWidgetItem* item = m_areaWidget->item(i);
-    m_areaWidget->setItemHidden(item, doFilter);
-  }
-
-  if (doFilter)
-    foreach(QListWidgetItem* item, m_areaWidget->findItems(filter, Qt::MatchContains)) {
-      m_areaWidget->setItemHidden(item, false);
-    }
-}
-
 void KListDebugDialog::generateCheckBoxes()
 {
   foreach (QString area, m_areaList) {
@@ -91,8 +82,8 @@ void KListDebugDialog::generateCheckBoxes()
     if (space == -1)
       kError() << "No space:" << data << endl;
 
-    QListWidgetItem* item = new QListWidgetItem(data, m_areaWidget);
-    item->setData(Qt::UserRole, data.left(space).toLatin1());
+    QTreeWidgetItem* item = new QTreeWidgetItem(m_areaWidget, QStringList() << data);
+    item->setData(0, Qt::UserRole, data.left(space).toLatin1());
   }
 
   load();
@@ -100,44 +91,44 @@ void KListDebugDialog::generateCheckBoxes()
 
 void KListDebugDialog::selectAll()
 {
-  for (int i = 0; i < m_areaWidget->count(); ++i) {
-    QListWidgetItem* item = m_areaWidget->item(i);
+  for (int i = 0; i < m_areaWidget->topLevelItemCount(); ++i) {
+    QTreeWidgetItem* item = m_areaWidget->topLevelItem(i);
     if (!m_areaWidget->isItemHidden(item)) {
-      item->setCheckState(Qt::Checked);
+      item->setCheckState(0, Qt::Checked);
     }
   }
 }
 
 void KListDebugDialog::deSelectAll()
 {
-  for (int i = 0; i < m_areaWidget->count(); ++i) {
-    QListWidgetItem* item = m_areaWidget->item(i);
+  for (int i = 0; i < m_areaWidget->topLevelItemCount(); ++i) {
+    QTreeWidgetItem* item = m_areaWidget->topLevelItem(i);
     if (!m_areaWidget->isItemHidden(item)) {
-      item->setCheckState(Qt::Unchecked);
+      item->setCheckState(0, Qt::Unchecked);
     }
   }
 }
 
 void KListDebugDialog::load()
 {
-  for (int i = 0; i < m_areaWidget->count(); ++i) {
-    QListWidgetItem* item = m_areaWidget->item(i);
-    KConfigGroup group = pConfig->group( item->data(Qt::UserRole).toByteArray() ); // Group name = debug area code = cb's name
+  for (int i = 0; i < m_areaWidget->topLevelItemCount(); ++i) {
+    QTreeWidgetItem* item = m_areaWidget->topLevelItem(i);
+    KConfigGroup group = pConfig->group( item->data(0, Qt::UserRole).toByteArray() ); // Group name = debug area code = cb's name
 
     int setting = group.readEntry( "InfoOutput", 2 );
 
     switch (setting) {
       case 4: // off
-        item->setCheckState(Qt::Unchecked);
+        item->setCheckState(0, Qt::Unchecked);
         break;
       case 2: //shell
-        item->setCheckState(Qt::Checked);
+        item->setCheckState(0, Qt::Checked);
         break;
       case 3: //syslog
       case 1: //msgbox
       case 0: //file
       default:
-        item->setCheckState(Qt::PartiallyChecked);
+        item->setCheckState(0, Qt::PartiallyChecked);
         /////// Uses the triState capability of checkboxes
         break;
     }
@@ -146,12 +137,12 @@ void KListDebugDialog::load()
 
 void KListDebugDialog::save()
 {
-  for (int i = 0; i < m_areaWidget->count(); ++i) {
-    QListWidgetItem* item = m_areaWidget->item(i);
-    KConfigGroup group = pConfig->group( item->data(Qt::UserRole).toByteArray() ); // Group name = debug area code = cb's name
-    if (item->checkState() != Qt::PartiallyChecked)
+  for (int i = 0; i < m_areaWidget->topLevelItemCount(); ++i) {
+    QTreeWidgetItem* item = m_areaWidget->topLevelItem(i);
+    KConfigGroup group = pConfig->group( item->data(0, Qt::UserRole).toByteArray() ); // Group name = debug area code = cb's name
+    if (item->checkState(0) != Qt::PartiallyChecked)
     {
-      int setting = (item->checkState() == Qt::Checked) ? 2 : 4;
+      int setting = (item->checkState(0) == Qt::Checked) ? 2 : 4;
       group.writeEntry( "InfoOutput", setting );
     }
   }
@@ -167,8 +158,8 @@ void KListDebugDialog::save()
 
 void KListDebugDialog::activateArea( QByteArray area, bool activate )
 {
-  foreach(QListWidgetItem* item, m_areaWidget->findItems(area, Qt::MatchContains)) {
-    item->setCheckState( activate ? Qt::Checked : Qt::Unchecked );
+  foreach(QTreeWidgetItem* item, m_areaWidget->findItems(area, Qt::MatchContains)) {
+    item->setCheckState( 0, activate ? Qt::Checked : Qt::Unchecked );
     return;
   }
 }

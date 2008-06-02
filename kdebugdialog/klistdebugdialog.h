@@ -23,8 +23,8 @@
 #include "kabstractdebugdialog.h"
 #include <QCheckBox>
 
-class KLineEdit;
-class QListWidget;
+class KTreeWidgetSearchLineWidget;
+class QTreeWidget;
 
 /**
  * Control debug output of KDE applications
@@ -50,13 +50,12 @@ protected Q_SLOTS:
   void deSelectAll();
 
   void generateCheckBoxes();
-  void filterCheckBoxes( const QString& filter );
 
 private:
   void load();
   QStringList m_areaList;
-  QListWidget* m_areaWidget;
-  KLineEdit *m_incrSearch;
+  QTreeWidget* m_areaWidget;
+  KTreeWidgetSearchLineWidget *m_incrSearch;
 };
 
 #endif
