@@ -90,11 +90,10 @@ void NotifyByPopup::notify( int id, KNotifyConfig * config )
 	pop->setAutoDelete( true );
 	connect(pop, SIGNAL(destroyed()) , this, SLOT(slotPopupDestroyed()) );
 
+	// NOTE readEntry here is not KConfigGroup::readEntry - this is a custom class
+	// It returns QString.
 	QString timeoutStr = config->readEntry( "Timeout" );
-	if (!timeoutStr.isEmpty())
-	{
-		pop->setTimeout( timeoutStr.toInt() );
-	}
+	pop->setTimeout( !timeoutStr.isEmpty() ? timeoutStr.toInt() : 0 );
 
 	pop->show(QPoint(screen.left() + screen.width()/2  , m_nextPosition));
 	m_nextPosition+=pop->height();
@@ -343,12 +342,11 @@ void NotifyByPopup::sendNotificationDBus(int id, int replacesId, KNotifyConfig* 
 {
 	QDBusMessage m = QDBusMessage::createMethodCall( dbusServiceName, dbusPath, dbusInterfaceName, "Notify" );
 
-	int timeout = 0;
+	// NOTE readEntry here is not KConfigGroup::readEntry - this is a custom class
+	// It returns QString.
 	QString timeoutStr = config->readEntry( "Timeout" );
-	if (!timeoutStr.isEmpty())
-	{
-		timeout = timeoutStr.toInt();
-	}
+	int timeout = !timeoutStr.isEmpty() ? timeoutStr.toInt() : 0;
+
 	// if timeout is still zero, try to set it to default knotify timeout
 	if (timeout == 0) {
 		// NOTE: this is a little hack. Currently there's no way to easily determine
