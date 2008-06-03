@@ -50,6 +50,8 @@ class KNotifyConfig
 		KSharedConfig::Ptr eventsfile,configfile;
 		ContextList contexts;
 		QString eventid;
+
+        static void clearCache();
 };
 
 #endif

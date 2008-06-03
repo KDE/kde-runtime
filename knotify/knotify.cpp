@@ -82,6 +82,7 @@ void KNotify::addPlugin( KNotifyPlugin * p )
 void KNotify::reconfigure()
 {
 	KGlobal::config()->reparseConfiguration();
+    KNotifyConfig::clearCache();
 	loadConfig();
 }
 

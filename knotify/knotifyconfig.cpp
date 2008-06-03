@@ -23,17 +23,25 @@
 #include <ksharedconfig.h>
 #include <kconfiggroup.h>
 #include <kdebug.h>
+#include <kglobal.h>
 #include <QCache>
 
+typedef QCache<QString, KSharedConfig::Ptr> ConfigCache;
+K_GLOBAL_STATIC_WITH_ARGS(ConfigCache , static_cache, (15))
 
 static KSharedConfig::Ptr retrieve_from_cache(const QString& filename, const char *resourceType="config") 
 {
-	static QCache<QString, KSharedConfig::Ptr> cache(25);
+	QCache<QString, KSharedConfig::Ptr> &cache = *static_cache;
 	if (cache.contains(filename)) 
 		return *cache[filename];
 	KSharedConfig::Ptr m = KSharedConfig::openConfig (filename , KConfig::NoGlobals, resourceType );
 	cache.insert(filename, new KSharedConfig::Ptr(m));
 	return m;
+}
+
+void KNotifyConfig::clearCache()
+{
+    static_cache->clear();
 }
 
 
