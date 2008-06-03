@@ -7,7 +7,9 @@ endif(SopranoIndex_FOUND)
 
 # optional Strigi backend
 # -----------------------------
-find_package(CLucene)
+macro_optional_find_package(CLucene)
+macro_log_feature(CLucene_FOUND "CLucene" "C++ search engine" "http://sourceforge.net/projects/clucene" FALSE "0.9.19" "For building the Nepomuk Strigi backend. Recommended.")
+
 if(CLucene_FOUND AND SopranoIndex_FOUND)
   set(HAVE_STRIGI_SOPRANO_BACKEND "yes")
   macro_optional_add_subdirectory(strigibackend)
