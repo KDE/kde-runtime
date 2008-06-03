@@ -238,7 +238,7 @@ void PlayerSettingsDialog::load()
 
     if ( !m_ui->cbExternal->isChecked() )
     {
-        m_ui->cbArts->setChecked( config.readEntry( "No sound", false ) );
+        m_ui->cbNone->setChecked( config.readEntry( "No sound", false ) );
     }
     m_change=false;
 }
