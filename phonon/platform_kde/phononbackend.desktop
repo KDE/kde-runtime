@@ -5,6 +5,7 @@ Name=KDE Multimedia Backend
 Name[ca]=Dorsal multimèdia del KDE
 Name[de]=KDE Multimedia-Unterstützung
 Name[el]=Σύστημα υποστήριξης πολυμέσων του KDE
+Name[ga]=Inneall Ilmheán KDE
 Name[gu]=KDE મલ્ટિમીડિઆ પાશ્વભાગ
 Name[km]=ផ្នែក​ខាង​ក្រោយ​​នៃ​ពហុព័ត៌មាន​របស់ KDE
 Name[lv]=KDE multivides aizmugure
@@ -15,6 +16,9 @@ Name[sr]=КДЕ‑ова мултимедијска позадина
 Name[sr@latin]=KDE‑ova multimedijska pozadina
 Name[sv]=KDE:s multimediagränssnitt
 Name[uk]=Сервер мультимедіа KDE
+Name[uz]=KDE multimedia xizmati
+Name[uz@cyrillic]=KDE мултимедиа хизмати
+Name[zh_CN]=KDE 多媒体后端
 Name[zh_TW]=KDE 多媒體後端介面
 
 ##

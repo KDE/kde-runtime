@@ -39,6 +39,7 @@ Name[uk]=Перевірка правопису
 Name[uz]=Imloni tekshiruvchi
 Name[uz@cyrillic]=Имлони текширувчи
 Name[xh]=Umkhangeki Wopelo
+Name[zh_CN]=拼写检查器
 Name[zh_TW]=拼字檢查器
 
 Comment=Configure the spell checker
@@ -71,6 +72,7 @@ Comment[uk]=Налаштування перевірки правопису
 Comment[uz]=Imlo tekshiruvchini moslash
 Comment[uz@cyrillic]=Имло текширувчини мослаш
 Comment[xh]=Qwalasela umkhangelo wopelo
+Comment[zh_CN]=配置拼写检查器
 Comment[zh_TW]=設定拼字檢查器
 
 X-KDE-Keywords=Spell
