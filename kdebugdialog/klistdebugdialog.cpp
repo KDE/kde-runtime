@@ -47,6 +47,8 @@ KListDebugDialog::KListDebugDialog( QStringList areaList, QWidget *parent, const
 //  connect( m_incrSearch, SIGNAL( textChanged( const QString& ) ),
 //           SLOT( filterCheckBoxes( const QString& ) ) );
 
+  //@TODO: Change back to QListWidget once Trolltech fixed the task: #214420
+  //See http://trolltech.com/developer/task-tracker/index_html?id=214420&method=entry
   m_areaWidget = new QTreeWidget();
   m_areaWidget->setHeaderHidden(true);
   m_areaWidget->setItemsExpandable(false);
