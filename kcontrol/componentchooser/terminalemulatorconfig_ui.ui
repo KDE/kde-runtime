@@ -106,7 +106,7 @@
         </size>
        </property>
        <property name="whatsThis" >
-        <string>Press this button to select your favorite terminal client. Please note that the file you select has to have the executable attribute set in order to be accepted.&lt;br> Also note that some programs that utilize Terminal Emulator will not work if you add command line arguments (Example: konsole -ls).</string>
+         <string>Press this button to select your favorite terminal client. Please note that the file you select has to have the executable attribute set in order to be accepted.&lt;br/> Also note that some programs that utilize Terminal Emulator will not work if you add command line arguments (Example: konsole -ls).</string>
        </property>
       </widget>
      </item>
