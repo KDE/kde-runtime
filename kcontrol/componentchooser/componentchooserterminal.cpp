@@ -13,9 +13,6 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <sys/types.h>
-#include <sys/stat.h>
-
 #include "componentchooserterminal.h"
 #include "componentchooserterminal.moc"
 
@@ -27,6 +24,7 @@
 #include <QLayout>
 #include <QRadioButton>
 
+#include <kdebug.h>
 #include <kapplication.h>
 #include <klocale.h>
 #include <kmessagebox.h>
@@ -39,7 +37,7 @@
 
 
 CfgTerminalEmulator::CfgTerminalEmulator(QWidget *parent):TerminalEmulatorConfig_UI(parent),CfgPlugin(){
-	connect(terminalLE,SIGNAL(textChanged(const QString &)), this, SLOT(configChanged()));
+	connect(terminalLE,SIGNAL(textChanged(QString)), this, SLOT(configChanged()));
 	connect(terminalCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
 	connect(otherCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
 	connect(btnSelectTerminal,SIGNAL(clicked()),this,SLOT(selectTerminalApp()));
@@ -56,7 +54,7 @@ void CfgTerminalEmulator::configChanged()
 
 void CfgTerminalEmulator::defaults()
 {
-    load(0L);
+	load(0);
 }
 
 
@@ -79,12 +77,13 @@ void CfgTerminalEmulator::load(KConfig *) {
 
 void CfgTerminalEmulator::save(KConfig *)
 {
-        KConfigGroup config(KSharedConfig::openConfig("kdeglobals"), "General");
-	config.writePathEntry("TerminalApplication", terminalCB->isChecked()?"konsole":terminalLE->text(), KConfig::Normal|KConfig::Global);
+	KConfigGroup config(KSharedConfig::openConfig("kdeglobals"), "General");
+	const QString terminal = terminalCB->isChecked() ? "konsole" : terminalLE->text();
+	config.writePathEntry("TerminalApplication", terminal, KConfig::Normal|KConfig::Global);
 	config.sync();
 
 	KGlobalSettings::self()->emitChange(KGlobalSettings::SettingsChanged);
-        KToolInvocation::klauncher()->reparseConfiguration();
+	KToolInvocation::klauncher()->reparseConfiguration();
 
 	emit changed(false);
 }
