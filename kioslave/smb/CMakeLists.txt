@@ -1,7 +1,5 @@
 
-
-
-add_definitions (-DQT3_SUPPORT)
+add_definitions (-DQT3_SUPPORT -D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE) # for off_t
 
 ########### next target ###############
 
