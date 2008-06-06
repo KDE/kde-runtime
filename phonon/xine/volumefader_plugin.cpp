@@ -471,7 +471,7 @@ void *init_kvolumefader_plugin (xine_t *xine, void *)
     _class->post_class.get_description = kvolumefader_get_description;
 #else
     _class->post_class.description     = PLUGIN_DESCRIPTION;
-    _class->post_class.textdomain      = "phonon-xine";
+    _class->post_class.text_domain     = "phonon-xine";
     _class->post_class.identifier      = PLUGIN_IDENTIFIER;
 #endif
     _class->post_class.dispose         = kvolumefader_class_dispose;

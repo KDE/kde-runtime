@@ -295,7 +295,7 @@ void *init_kbytestream_plugin (xine_t *xine, void *data)
     that->get_description    = kbytestream_class_get_description;
 #else
     that->description        = PLUGIN_DESCRIPTION;
-    that->textdomain         = "phonon-xine";
+    that->text_domain        = "phonon-xine";
     that->identifier         = PLUGIN_IDENTIFIER;
 #endif
     that->get_dir            = NULL;
