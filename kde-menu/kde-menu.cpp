@@ -108,7 +108,7 @@ int main(int argc, char **argv)
    "The --highlight option can be used to visually indicate to the user where\n"
    "in the KDE menu a specific application is located.");
 
-   KAboutData d(appName, "kdelibs4", ki18n("kde-menu"), appVersion,
+   KAboutData d(appName, "kde-menu", ki18n("kde-menu"), appVersion,
                 ki18n(description),
                 KAboutData::License_GPL, ki18n("(c) 2003 Waldo Bastian"));
    d.addAuthor(ki18n("Waldo Bastian"), ki18n("Author"), "bastian@kde.org");
