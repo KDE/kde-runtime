@@ -32,7 +32,7 @@
 
 
 K_PLUGIN_FACTORY( NepomukConfigModuleFactory, registerPlugin<Nepomuk::ServerConfigModule>(); )
-K_EXPORT_PLUGIN( NepomukConfigModuleFactory("kcm_nepomuk") )
+K_EXPORT_PLUGIN( NepomukConfigModuleFactory("kcm_nepomuk", "nepomuk") )
 
 
 Nepomuk::ServerConfigModule::ServerConfigModule( QWidget* parent, const QVariantList& args )
