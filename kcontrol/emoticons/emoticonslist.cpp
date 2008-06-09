@@ -99,7 +99,7 @@ void EditDialog::updateOkButton()
 }
 
 K_PLUGIN_FACTORY(EmoticonsFactory, registerPlugin<EmoticonList>();)
-K_EXPORT_PLUGIN(EmoticonsFactory("emoticons"))
+K_EXPORT_PLUGIN(EmoticonsFactory("emoticons", "kcm_emoticons"))
 
 EmoticonList::EmoticonList(QWidget *parent, const QVariantList &args)
         : KCModule(EmoticonsFactory::componentData(), parent, args)
