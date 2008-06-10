@@ -1,5 +1,6 @@
 [Icon Theme]
 Name=KDE-HiColor
+Name[cs]=KDE HiColor
 Name[el]=KDE-Πολλά χρώματα
 Name[es]=KDE-Alta-resolución
 Name[fy]=KDE Hege Kleuren
@@ -30,6 +31,7 @@ Comment=Fallback icon theme
 Comment[be]=Дадатковая тэма значак
 Comment[bg]=Тема по подразбиране
 Comment[ca]=Tema d'icones altrenatiu
+Comment[cs]=Záložní motiv ikon
 Comment[csb]=Alternatiwny zestôwk ikònów
 Comment[da]=Reserve-ikontema
 Comment[de]=Ausweich-Symbolset

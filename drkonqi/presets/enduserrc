@@ -69,7 +69,7 @@ Comment[et]=Lõppkasutajale mõeldud seadistused
 Comment[fi]=Loppukäyttäjille suositellut asetukset
 Comment[fr]=Paramètres préférés pour les utilisateurs finaux
 Comment[ga]=Socruithe is fearr le húsáideoirí deiridh
-Comment[gl]=Configuracións preferidas para os usuarios finais
+Comment[gl]=Configuración preferida para os usuarios finais
 Comment[gu]=અંત વપરાશકર્તા માટે પસંદગીની ગોઠવણીઓ
 Comment[hr]=Postavke preporučene krajnjim korisnicima
 Comment[hu]=Végfelhasználóknak való beállítások
@@ -131,7 +131,7 @@ Name[et]=Rakendust %progname (%appname) tabas krahh põhjustatuna signaalist %si
 Name[fi]=Ohjelma %progname (%appname) kaatui ja aiheutti signaalin %signum (%signame).
 Name[fr]=L'application « %progname » (%appname) s'est interrompue anormalement et a émis le signal %signum (%signame).
 Name[ga]=Thuairteáil feidhmchlár %progname (%appname) agus thug sé comhartha %signum (%signame).
-Name[gl]=A aplicación %progname (%appname) estragou-se e provocou o sinal %signum (%signame).
+Name[gl]=O programa %progname (%appname) pechouse inesperadamente e provocou o sinal %signum (%signame).
 Name[gu]=કાર્યક્મ %progname (%appname) બંધ થયેલ છે અને તેનાં કારણે આ સિગ્નલ થયું છે %signum (%signame).
 Name[hr]=Došlo je do rušenja aplikacije %progname (%appname), te je izazvan signal %signum (%signame).
 Name[hu]=Egy alkalmazás lefagyott. Név: %progname (%appname). Az okozott szignál: %signum (%signame).
@@ -183,6 +183,7 @@ Name[et]=Palun aita meil tarkvara paremaks muuta, andes teada veast aadressil <a
 Name[fi]=Auta meitä parantamaan ohjelmistoa lähettämällä vikailmoitus osoitteessa <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Muista sisällyttää ilmoitukseen tietoja kuten kuinka toistaa ongelma, mitä dokumentteja ohjelmassa oli ladattuna ja niin edelleen, joista saattaa olla hyötyä kehittäjille.
 Name[fr]=Aidez-nous à améliorer les logiciels que vous utilisez en remplissant un rapport à l'adresse <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Les détails utiles sont par exemple une marche à suivre pour reproduire l'erreur, les documents ouverts au moment de l'erreur, etc.
 Name[ga]=Cabhraigh linn an bogearra seo a fheabhsú trí thuairisc a sheoladh chuig <a href="http://bugs.kde.org">http://bugs.kde.org/</a> maidir leis an earráid seo. Rudaí le cur san áireamh: conas a dhéantar an earráid, cáipéisí a bhí luchtaithe, srl.
+Name[gl]=Por favor axúdenos a mellorar os programas que empregue enviándonos un informe de erro a <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Inclúa detalles acerca do xeito de reproducir o erro, que documentos tiña cargados, etc.
 Name[gu]=મહેરબાની કરી અમને બગ અહેવાલ આ જગ્યા પર ભરીને <a href="http://bugs.kde.org">http://bugs.kde.org</a> સોફ્ટવેરમાં સુધારો કરવામાં મદદ કરો. ઉપયોગી માહિતીમાં જેવીકે આ ક્ષતિ ફરી કઇ રીતે ઉભી કરવી, લાવવામાં આવેલ દસ્તાવેજો વગેરે નો સમાવેશ થાય છે.
 Name[ja]=<a href="http://bugs.kde.org">http://bugs.kde.org</a> にバグを報告することで、お使いのソフトウェアを改良する手助けをしてください。バグの再現方法、読み込んだ文書などの詳細情報が役立ちます。
 Name[km]=សូម​ជួយ​យើង​បង្កើន​កម្មវិធី ដែល​អ្នក​ប្រើ​ដោយ​បំពេញ​របាយការណ៍​នៅ <a href="http://bugs.kde.org">http://bugs.kde.org</a> ។ សេចក្ដី​លម្អិត​ដ៏មាន​ប្រយោជន៍​​រួមមាន​វិធី​ត្រូវ​បង្កើត​កំហុស​ឡើ​ងវិញ ឯកសារ​ដែល​ត្រូវ​បាន​ផ្ទុក ។ល។
@@ -225,7 +226,7 @@ Comment[et]=Tavaliselt saab rakendus SIGILL signaali rakenduses endas tekkinud v
 Comment[fi]=SIGILL-signaali johtuu yleensä virheestä ohjelmassa. Ohjelmaa pyydettiin tallentamaan avatut asiakirjat ennen kaatumista.
 Comment[fr]=Une application reçoit généralement le signal SIGILL a cause d'un bogue dans l'application. L'application a reçu l'instruction d'enregistrer ses documents.
 Comment[ga]=Go hiondúil, faigheann feidhmchlár comhartha SIGILL de bhrí go bhfuil fabht ann. Fiafraíodh den fheidhmchlár a chuid cáipéisí a shábháil.
-Comment[gl]=Unha aplicación recebe o sinal SIGILL seguramente por mor dun erro interno. Pediu-se-lle á aplicación que guarde os documentos.
+Comment[gl]=Os programas receben o sinal SIGILL seguramente por mor dun erro interno. Pediuselle ao programa que garde os documentos.
 Comment[gu]=કાર્યક્રમ મોટાભાગે તેમાં રહેલ ક્ષતિને કારણે SIGILL સિગ્નલ મેળવે છે. કાર્યક્રમને તેનાં દસ્તાવેજો સંગ્રહવાનું કહેવામાં આવ્યું હતું.
 Comment[hr]=Aplikacija najčešće prima SIGILL signal zbog nedostatka unutar aplikacije. Od aplikacije je zatraženo da spremi svoje dokumente.
 Comment[hu]=SIGILL szignál valamilyen programhiba válthat ki. Bezáródás előtt a program jelzést kap, hogy mentse el a nyitott dokumentumokat.
@@ -282,7 +283,7 @@ Comment[et]=Rakendus katkestab töö signaaliga SIGABRT siis, kui avastab sisemi
 Comment[fi]=SIGABRT-signaali tapahtuu, kun ohjelman sisäisessä toiminnassa löytyy epäjohdonmukaisuus, joka on yleensä ohjelmointivirheen aiheuttama.
 Comment[fr]=Une application se termine avec un signal SIGABRT lorsqu'elle détecte une incohérence interne causée par un bogue dans le programme.
 Comment[ga]=Stopann feidhmchlár le comhartha SIGABRT nuair a bhraitheann sé bunoscionntacht inmheánach agus is fabht sa ríomhchlár is cúis leis.
-Comment[gl]=Unha aplicación remata cun sinal SIGABRT cando detecta unha inconsisténcia interna causada por un erro no programa.
+Comment[gl]=Os programas rematan cun sinal SIGABRT cando detectan unha inconsistencia interna causada por un erro no programa.
 Comment[gu]=કાર્યક્રમ SIGABRT સિગ્નલ સાથે બંધ થાય છે જ્યારે તે કાર્યક્રમની અંદરની ક્ષતિને કારણે આંતરિક અસંગતતા મેળવે છે.
 Comment[hr]=Aplikacija prekida s radom uz SIGABRT signal kad otkrije internu nedosljednost prouzrokovanu nedostatkom unutar aplikacije.
 Comment[hu]=SIGABRT szignált akkor válthat ki egy program, ha valamilyen belső inkonzisztencia lép fel, például egy programhiba miatt.
@@ -339,7 +340,7 @@ Comment[et]=Tavaliselt saab rakendus SIGFPE signaali rakenduses endas tekkinud v
 Comment[fi]=SIGFPE-signaali johtuu yleensä virheestä ohjelmassa. Ohjelmaa pyydettiin tallentamaan avatut asiakirjat ennen kaatumista.
 Comment[fr]=Une application reçoit généralement le signal SIGFPE à cause d'un bug dans l'application. L'application a reçu l'instruction d'enregistrer ses documents.
 Comment[ga]=Go hiondúil, faigheann feidhmchlár comhartha SIGFPE de bhrí go bhfuil fabht ann. Fiafraíodh den fheidhmchlár a chuid cáipéisí a shábháil.
-Comment[gl]=Unha aplicación recebe un sinal SIGFPE seguramente por mor dun erro interno. Pediu-se-lle á aplicación que guarde os documentos.
+Comment[gl]=Os programas receben o sinal SIGFPE seguramente por mor dun erro interno. Pediuselle ao programa que garde os documentos.
 Comment[gu]=કાર્યક્રમ મોટાભાગે તેમાં રહેલ ક્ષતિને કારણે SIGFPE સિગ્નલ મેળવે છે. કાર્યક્રમને તેનાં દસ્તાવેજો સંગ્રહવાનું કહેવામાં આવ્યું હતું.
 Comment[hr]=Aplikacija najčešće prima SIGFPE signal zbog nedostatka unutar aplikacije. Od aplikacije je zatraženo da spremi svoje dokumente.
 Comment[hu]=SIGFPE szignált valamilyen programhiba válthat ki. Bezáródás előtt a program jelzést kap, hogy mentse el a nyitott dokumentumokat.
@@ -396,7 +397,7 @@ Comment[et]=Tavaliselt saab rakendus SIGSEGV signaali rakenduses endas tekkinud 
 Comment[fi]=SIGSEGV-signaali johtuu yleensä virheestä ohjelmassa. Ohjelmaa pyydettiin tallentamaan avatut asiakirjat ennen kaatumista.
 Comment[fr]=Une application reçoit généralement le signal SIGSEGV à cause d'un bug dans l'application. L'application a reçu l'instruction d'enregistrer ses documents.
 Comment[ga]=Go hiondúil, faigheann feidhmchlár comhartha SIGSEGV de bhrí go bhfuil fabht ann. Fiafraíodh den fheidhmchlár a chuid cáipéisí a shábháil.
-Comment[gl]=Unha aplicación recebe o sinal SIGSEGV seguramente por mor dun erro interno. Pediu-se-lle á aplicación que guarde os documentos.
+Comment[gl]=Un programa recebe o sinal SIGSEGV seguramente por mor dun erro interno. Pedíuselle ao programa que garde os documentos.
 Comment[gu]=કાર્યક્રમ મોટાભાગે તેમાં રહેલ ક્ષતિને કારણે SIGSEGV સિગ્નલ મેળવે છે. કાર્યક્રમને તેનાં દસ્તાવેજો સંગ્રહવાનું કહેવામાં આવ્યું હતું.
 Comment[hr]=Aplikacija najčešće prima SIGSEGV signal zbog nedostatka unutar aplikacije. Od aplikacije je zatraženo da spremi svoje dokumente.
 Comment[hu]=SIGSEGV szignált valamilyen programhiba válthat ki. Bezáródás előtt a program jelzést kap, hogy mentse el a nyitott dokumentumokat.
@@ -505,7 +506,7 @@ Comment[et]=Vabandust, ma ei tunne seda signaali.
 Comment[fi]=Tämä signaali on tuntematon.
 Comment[fr]=Désolé, je ne connais pas ce signal.
 Comment[ga]=Tá brón orm, níl aithne agam ar an chomhartha seo.
-Comment[gl]=Sinto-o, este sinal é descoñecido.
+Comment[gl]=Este sinal é descoñecido.
 Comment[gu]=માફ કરશો, હું આ સિગ્નલ જાણતો નથી.
 Comment[hr]=Nažalost, ovaj signal nije prepoznat.
 Comment[hu]=Ez egy ismeretlen szignál.
