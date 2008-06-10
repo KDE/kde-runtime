@@ -6,7 +6,9 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/mod
 #search packages used by KDE
 find_package(KDE4 REQUIRED)
 find_package(Strigi REQUIRED)
-find_package(KdepimLibs REQUIRED)
+# I don't see any package requiring it. please explain why this dependency
+# is necessary (dirk)
+#find_package(KdepimLibs REQUIRED)
 
 include(KDE4Defaults)
 include(MacroLibrary)
