@@ -149,6 +149,7 @@ Name[nb]=Programmet  %progname (%appname)  krasjet og ga signalet  %signum (%sig
 Name[nds]=Dat Programm %progname (%appname) is afstört un hett dat Signaal %signum (%signame) utlööst.
 Name[nl]=Het programma %progname (%appname) heeft een ongeldige bewerking veroorzaakt en activeerde daarmee het signaal %signum (%signame).
 Name[nn]=Programmet %progname (%appname) krasja, og sendte signalet %signum (%signame).
+Name[pa]=ਐਪਲੀਕੇਸ਼ਨ %progname (%appname) ਕਰੈਸ਼ ਹੋ ਗਈ ਹੈ ਅਤੇ ਸਿਗਨਲ %signum (%signame) ਦਿੱਤਾ ਹੈ।
 Name[pl]=Program %progname (%appname) uległ awarii i spowodował sygnał %signum (%signame).
 Name[pt]=A aplicação %progname (%appname) estoirou e provocou o sinal %signum (%signame).
 Name[pt_BR]=O aplicativo %progname (%appname) travou e causou o sinal %signum (%signame).
