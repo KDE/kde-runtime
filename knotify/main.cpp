@@ -27,6 +27,7 @@
 #include <klocale.h>
 #include <kmessage.h>
 #include <kpassivepopupmessagehandler.h>
+#include <kdefakes.h>
 
 #include "knotify.h"
 
