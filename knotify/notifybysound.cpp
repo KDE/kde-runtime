@@ -30,6 +30,8 @@
 
 // QT headers
 #include <QHash>
+#include <QtCore/QBasicTimer>
+#include <QtCore/QTimerEvent>
 #include <QtCore/QStack>
 #include <QSignalMapper>
 
@@ -78,6 +80,7 @@ class PlayerPool
 
 		Player *getPlayer();
 		void returnPlayer(Player *);
+		void clear();
 
 		void setVolume(float volume);
 
@@ -110,6 +113,12 @@ void PlayerPool::returnPlayer(Player *p)
 	}
 }
 
+void PlayerPool::clear()
+{
+	qDeleteAll(m_playerPool);
+	m_playerPool.clear();
+}
+
 void PlayerPool::setVolume(float v)
 {
 	m_volume = v;
@@ -128,6 +137,7 @@ class NotifyBySound::Private
 		QHash<int, Player*> playerObjects;
 		QSignalMapper *signalmapper;
 		PlayerPool playerPool;
+		QBasicTimer poolTimer;
 
 		int volume;
 
@@ -248,6 +258,15 @@ void NotifyBySound::setVolume( int volume )
 }
 
 
+void NotifyBySound::timerEvent(QTimerEvent *e)
+{
+	if (e->timerId() == d->poolTimer.timerId()) {
+		d->poolTimer.stop();
+		d->playerPool.clear();
+	}
+	KNotifyPlugin::timerEvent(e);
+}
+
 void NotifyBySound::slotSoundFinished(int id)
 {
 	kDebug(300) << id;
@@ -256,6 +275,7 @@ void NotifyBySound::slotSoundFinished(int id)
 		Player *player=d->playerObjects.take(id);
 		disconnect(player->media, SIGNAL(finished()), d->signalmapper, SLOT(map()));
 		d->playerPool.returnPlayer(player);
+		d->poolTimer.start(1000, this);
 	}
 	if(d->processes.contains(id))
 	{
@@ -273,6 +293,7 @@ void NotifyBySound::close(int id)
 		Player *p = d->playerObjects.take(id);
 		p->stop();
 		d->playerPool.returnPlayer(p);
+		d->poolTimer.start(1000, this);
 	}
 	if(d->processes.contains(id))
 	{
