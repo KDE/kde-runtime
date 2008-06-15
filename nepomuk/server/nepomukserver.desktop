@@ -7,6 +7,7 @@ X-KDE-autostart-phase=0
 Name=Nepomuk Server
 Name[bg]=Сървър Nepomuk
 Name[ca]=Servidor Nepomuk
+Name[cs]=Nepomuk server
 Name[csb]=Serwer Nepomuk
 Name[da]=Nepomuk-server
 Name[de]=Nepomuk-Serverdienst
