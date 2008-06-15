@@ -25,7 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <kgenericfactory.h>
 #include <sonnet/configwidget.h>
 
-#include <qlayout.h>
+#include <QBoxLayout>
 
 K_PLUGIN_FACTORY(SpellFactory, registerPlugin<SonnetSpellCheckingModule>();)
 K_EXPORT_PLUGIN(SpellFactory( "kcmspellchecking" ))
