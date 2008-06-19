@@ -8,6 +8,7 @@ X-KDE-ServiceTypes=KCModule,KCModuleInit
 X-KDE-Library=kcm_emoticons
 X-KDE-ParentApp=kcontrol
 X-KDE-System-Settings-Parent-Category=appearance
+X-KDE-Weight=110
 
 Name=Emoticons
 Name[af]=Emotikons

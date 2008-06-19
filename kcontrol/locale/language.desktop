@@ -9,6 +9,7 @@ X-KDE-Library=kcm_locale
 X-KDE-ParentApp=kcontrol
 
 X-KDE-System-Settings-Parent-Category=regional-and-language
+X-KDE-Weight=50
 
 Name=Country/Region & Language
 Name[af]=Land/Streek & Taal

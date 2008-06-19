@@ -9,6 +9,7 @@ X-KDE-Library=kcm_knotify
 X-KDE-ParentApp=kcontrol
 
 X-KDE-System-Settings-Parent-Category=notifications
+X-KDE-Weight=50
 
 Name=System Notifications
 Name[af]=Stelsel Inkennistelling

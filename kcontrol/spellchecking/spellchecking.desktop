@@ -9,6 +9,7 @@ X-KDE-Library=kcmspellchecking
 X-KDE-ParentApp=kcontrol
 
 X-KDE-System-Settings-Parent-Category=regional-and-language
+X-KDE-Weight=70
 
 Name=Spell Checker
 Name[bn]=বানান পরীক্ষক
