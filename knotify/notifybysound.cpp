@@ -226,6 +226,7 @@ void NotifyBySound::notify( int eventId, KNotifyConfig * config )
 	}
 
 	kDebug(300) << " going to play " << soundFile;
+	d->poolTimer.stop();
 
 	if(d->playerMode == Private::UsePhonon)
 	{
@@ -263,6 +264,7 @@ void NotifyBySound::timerEvent(QTimerEvent *e)
 	if (e->timerId() == d->poolTimer.timerId()) {
 		d->poolTimer.stop();
 		d->playerPool.clear();
+		return;
 	}
 	KNotifyPlugin::timerEvent(e);
 }
