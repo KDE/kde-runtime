@@ -161,6 +161,11 @@ void KrashDebugger :: slotSave()
 
 void KrashDebugger :: slotSomeError()
 {
+  KMessageBox::sorry(this, i18n("Unable to create a valid backtrace.") + "\n\n" 
+      + i18n("This backtrace appears to be of no use.\n"
+      "This is probably because your packages are built in a way "
+      "which prevents creation of proper backtraces, or the stack frame "
+      "was seriously corrupted in the crash.\n\n"));
   m_status->setText(i18n("Unable to create a valid backtrace."));
   m_backtrace->setPlainText(i18n("This backtrace appears to be of no use.\n"
       "This is probably because your packages are built in a way "
