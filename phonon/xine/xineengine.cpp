@@ -83,7 +83,7 @@ namespace Xine
             if (!m_thread->wait(10000)) {
                 // timed out
                 // assuming a deadlock, we better create a backtrace than block something important
-                kFatal(610) << "Xine Thread took longer than 4s to quit. Assuming a deadlock. Please report a useful backtrace (including all threads) to bugs.kde.org";
+                kFatal(610) << "Xine Thread took longer than 10s to quit. Assuming a deadlock. Please report a useful backtrace (including all threads) to bugs.kde.org";
                 // if somebody made kFatal non-fatal
                 m_thread->terminate();
             }
