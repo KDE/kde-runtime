@@ -173,7 +173,9 @@ void EmoticonList::save()
         t.save();
     }
 
-    kEmoticons.setTheme(themeList->currentItem()->text());
+    if (themeList->currentItem()) {
+        kEmoticons.setTheme(themeList->currentItem()->text());
+    }
 
     if (cbStrict->isChecked()) {
         kEmoticons.setParseMode((kEmoticons.parseMode() |= KEmoticonsTheme::StrictParse) &= ~KEmoticonsTheme::RelaxedParse);
@@ -190,7 +192,11 @@ void EmoticonList::somethingChanged()
 void EmoticonList::updateButton()
 {
     btRemoveEmoticon->setEnabled(themeList->currentItem() && emoList->selectedItems().size());
-    btRemoveTheme->setEnabled(themeList->selectedItems().size());
+    if (themeList->currentItem() && themeList->currentItem()->text() != "kde4" && themeList->count() > 1) {
+        btRemoveTheme->setEnabled(true);
+    } else {
+        btRemoveTheme->setEnabled(false);
+    }
     btEdit->setEnabled(themeList->currentItem() && emoList->selectedItems().size());
     btAdd->setEnabled(themeList->currentItem());
 }
