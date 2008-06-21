@@ -137,6 +137,10 @@ EmoticonList::~EmoticonList()
 {
 }
 
+bool caseInsensitiveLessThan(const QString &s1, const QString &s2)
+{
+    return s1.toLower() < s2.toLower();
+}
 
 void EmoticonList::load()
 {
@@ -148,6 +152,7 @@ void EmoticonList::load()
     emoList->clear();
 
     QStringList themeList = kEmoticons.themeList();
+    qSort(themeList.begin(), themeList.end(), caseInsensitiveLessThan);
 
     for (int i = 0; i < themeList.count(); i++) {
         loadTheme(themeList.at(i));
