@@ -50,6 +50,7 @@ Name[tr]=Son kullanıcı
 Name[uk]=Кінцевий користувач
 Name[uz]=Oddiy foydalanuvchi
 Name[uz@cyrillic]=Оддий фойдаланувчи
+Name[wa]=Finå uzeu
 Name[x-test]=xxEnd userxx
 Name[xh]=Umsebenzisi wokugqibela
 Name[zh_CN]=最终用户
@@ -106,6 +107,7 @@ Comment[tr]=Son kullanıcılar için tercih edilen ayarlar
 Comment[uk]=Параметри для користувачів
 Comment[uz]=Oddiy foydalanuvchilar uchun afzal moslamalar
 Comment[uz@cyrillic]=Оддий фойдаланувчилар учун афзал мосламалар
+Comment[wa]=Favoris apontiaedjes po les finås uzeus
 Comment[x-test]=xxSettings preferred for end usersxx
 Comment[xh]=Izicwangciso ezikhethwayo zomsebenzisi osekugqhibeleni
 Comment[zh_CN]=最终用户的首选设置
@@ -170,6 +172,7 @@ Name[tr]= %progname (%appname) uygulaması çöktü ve %signum (%signame) sinyal
 Name[uk]=Програма %progname (%appname) зазнала аварії і спричинила сигнал signal %signum (%signame).
 Name[uz]=Dasturning %progname (%appname) ishida xato roʻy berdi va %signum (%signame) signaliga sababchi boʻldi.
 Name[uz@cyrillic]=Дастурнинг %progname (%appname) ишида хато рўй берди ва %signum (%signame) сигналига сабабчи бўлди.
+Name[wa]=Li programe %progname (%appname) s' a spotchî eyet a fwait l' signå %signum (%signame).
 Name[x-test]=xxThe application %progname (%appname) crashed and caused the signal %signum (%signame).xx
 Name[xh]=Isicelo se %progname (%appname) ingqubekile yaze yabangela uphawu lwe %signum (%signame).
 Name[zh_CN]=应用程序 %progname (%appname) 已经崩溃并导致了信号 %signum (%signame)。
@@ -197,6 +200,7 @@ Name[ko]=이 오류를 <a href="http://bugs.kde.org">http://bugs.kde.org</a>에 
 Name[lv]=Lūdzu palīdziet mums uzlabot šo programmatūru. Nosūtiet kļūdas ziņojumu uz <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Ziņojumā iekļaujiet aprakstu kā atkārtot kļūdu, kādi dokumenti tika ielādēti un citu derīgu informāciju.
 Name[ml]=ദയവായി നിങ്ങളുപയോഗിയ്ക്കുന്ന സോഫ്റ്റ്‌വെയര്‍ മെച്ചപ്പെടുത്താന്‍ ഞങ്ങളെ സഹായിയ്ക്കാനായി <a href="http://bugs.kde.org">http://bugs.kde.org</a> എന്ന വിലാസത്തില്‍ രേഖപ്പെടുത്തുക. എങ്ങനെയാണു് ഈ തെറ്റു് വീണ്ടും കാണുക, ചേര്‍ത്തിരുന്ന രചനകള്‍ തുടങ്ങിയവ ഉപയോഗപ്രദമായ വിശദവിവരങ്ങളിലുള്‍പ്പെടും.
 Name[nds]=Bitte hölp uns dor bi, dat wi de Software, de Du bruukst, verbetern köönt. Du kannst en Fehlerbericht för dit Programm op <a href="http://bugs.kde.org">http://bugs.kde.org</a> afgeven. Föög em bitte so veel Informatschonen as mööglich to, villicht ok de Orginaaldokmenten. Kannst Du den Fehler wedderhalen, vertell bitte ok, wodennig dat geiht.
+Name[nl]=Help ons om de software te verbeteren door een rapport (in het Engels) te sturen naar <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Sluit informatie in over hoe de fout kan worden gereproduceerd, documenten die geladen waren, etc.
 Name[pa]=ਸਾਨੂੰ ਸਾਫਟਵੇਅਰ ਸੁਧਾਰਨ ਲਈ ਮੌਕਾ ਦਿਓ ਜੀ, ਇਸ ਵਾਸਤੇ ਇੱਕ ਰਿਪੋਰਟ ਜਾਣਕਾਰੀ <a href="http://bugs.kde.org">http://bugs.kde.org</a> ਉੱਤੇ ਭਰੋ ਜੀ। ਫਾਇਦੇਮੰਦ ਵੇਰਵੇ ਵਿੱਚ ਇਸ ਨੂੰਕਿਵੇਂ ਮੁੜ ਕੇ ਬਣਾਇਆ ਜਾ ਸਕਦਾ ਹੈ, ਡੌਕੂਮੈਂਟ, ਜੋ ਕਿ ਲੋਡ ਕਰਨ ਦੌਰਾਨ ਵਰਤੇ ਸਨ, ਹੋ ਸਕਦੇ ਹਨ।
 Name[pt]=Por favor ajude-nos a melhor o 'software' que usa, preenchendo um relatório em <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Alguns detalhes úteis incluem a reprodução do erro, os documentos que foram carregados, etc.
 Name[pt_BR]=Por favor nos ajude a melhorar o software que você usa preenchendo um relatório em <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Detalhes úteis incluem como reproduzir o erro, documentos que foram carregados, etc.
@@ -208,6 +212,7 @@ Name[sv]=Hjälp oss att förbättra programmet du använder genom skicka in en r
 Name[th]=โปรดช่วยเหลือเราในการปรับปรุงซอฟต์แวร์ ด้วยการกรอกข้อมูลในรายงานที่ <a href="http://bugs.kde.org">http://bugs.kde.org</a> และโปรดกรอกรายละเอียด เช่น วิธีการสร้างข้อผิดพลาดนี้, ได้โหลดเอกสารตัวใดขึ้นมาบ้าง เป็นต้น รวมมาในการแจ้งข้อผิดพลาดนี้ด้วย
 Name[tr]=Bu uygulamanın gelişimine katkıda bulunmak için lütfen <a href="http://bugs.kde.org">http://bugs.kde.org</a> adresini kullanarak hata raporu gönderin. İşe yarar ayrıntılar içerisinde hatanın nasıl tekrarlanabildiği ve hata oluşurken hangi belgelerin yüklendiği gibi şeyler vardır.
 Name[uk]=Будь ласка, допоможіть нам вдосконалити ПЗ, яким ви користуєтесь - заповніть звіт на <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Включіть корисні подробиці: як повторити помилку, документи, котрі було завантажено, тощо.
+Name[wa]=Aidîz nos s' i vs plait a -z amidrer l' programe ki vs eployîz e rimplixhant on rapoirt so <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Des ahessåves detays dijhèt comint rfé l' aroke, les documints k' ont stî tcherdîs, evnd.
 Name[x-test]=xxPlease help us improve the software you use by filing a report at <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Useful details include how to reproduce the error, documents that were loaded, etc.xx
 Name[zh_CN]=请在 <a href="http://bugs.kde.org">http://bugs.kde.org</a> 上面提交帮助我们改进这个软件的报告。有用的细节包括错误重现方式及当时载入的文档等。
 Name[zh_TW]=請到 <a href="http://bugs.kde.org">http://bugs.kde.org</a> 回報此問題，以協助我們改進此軟體。回報時請盡量將看到的資訊提供給作者，並告知如何重現此錯誤。
@@ -268,6 +273,7 @@ Comment[tr]=Uygulamadaki bir hata nedeniyle, uygulamalar çok kez SIGILL sinyali
 Comment[uk]=Найчастіше програми отримують сигнал SIGILL через вади у їх коді. До програми було надіслано запит на збереження документів, з якими вона працювала.
 Comment[uz]=Odatda, SIGILL signaliga dasturdagi xato sababchi boʻladi. Dasturdan maʼlumotlarni saqlash talab qilindi.
 Comment[uz@cyrillic]=Одатда, SIGILL сигналига дастурдаги хато сабабчи бўлади. Дастурдан маълумотларни сақлаш талаб қилинди.
+Comment[wa]=On programe riçût sortot l' signå SIGILL a cåze d' on bug dins l' programe. Dj' a dmandé å programe di schaper ses documints.
 Comment[x-test]=xxAn application mostly receives the SIGILL signal due to a bug in the application. The application was asked to save its documents.xx
 Comment[xh]=Isicelo esifumana i SIGILL uphawu enxa yegciwane kwi sicelo. Isicelo sicelwe ukuba sigcine amaxwebhu aso.
 Comment[zh_CN]=应用程序之所以收到 SIGILL 信号，大多是因为应用程序有错误。应用程序会请求保存其文档。
@@ -326,6 +332,7 @@ Comment[tr]=Bir uygulama, programdaki bir hata yüzünden bir iç tutarsızlık 
 Comment[uk]=Припинення роботи програми з сигналом SIGABRT відбувається, якщо виявлено внутрішню непослідовність, спричинену вадою у коді програми.
 Comment[uz]=Dasturning ishi SIGABRT signali bilan tugashiga uning ichki ketma-ketligini ishdan chiqargan xato sababchi boʻladi.
 Comment[uz@cyrillic]=Дастурнинг иши SIGABRT сигнали билан тугашига унинг ички кетма-кетлигини ишдан чиқарган хато сабабчи бўлади.
+Comment[wa]=On programe a fini avou on signå SIGABRT cwand il a trové ene divintrinne inconsistance a cåze d' on bug dins l' programe.
 Comment[x-test]=xxAn application terminates with a SIGABRT signal when it detects an internal inconsistency caused by a bug in the program.xx
 Comment[xh]=Isicelo sicinywa ngophawu lwe SIGABRT xa sibona ukungahambisalani kwangaphakathi okwenziwa ligciwane kwinkqubo.
 Comment[zh_CN]=应用程序以 SIGABRT 信号终止，可能是因为程序自身的错误导致了内部不一致。
@@ -385,6 +392,7 @@ Comment[tr]=Uygulamadaki bir hata nedeniyle, uygulamalar çok kez SIGEPE sinyali
 Comment[uk]=Найчастіше програми отримують сигнал SIGFPE через вади у їх коді. До програми було надіслано запит на збереження документів, з якими вона працювала.
 Comment[uz]=Odatda, SIGFPE signaliga dasturdagi xato sababchi boʻladi. Dasturdan maʼlumotlarni saqlash talab qilindi.
 Comment[uz@cyrillic]=Одатда, SIGFPE сигналига дастурдаги хато сабабчи бўлади. Дастурдан маълумотларни сақлаш талаб қилинди.
+Comment[wa]=On programe riçût sortot l' signå SIGFPE a cåze d' on bug dins l' programe. Dj' a dmandé å programe di schaper ses documints.
 Comment[x-test]=xxAn application mostly receives the SIGFPE signal due to a bug in the application. The application was asked to save its documents.xx
 Comment[xh]=Isicelo sifumana i SIGFPE uphawu ngenxa ye gciwane kwisicelo. Isicelo sicelwe ukuba sigcine amaxwebhu ayo.
 Comment[zh_CN]=应用程序之所以收到 SIGFPE 信号，大多是因为应用程序有错误。应用程序会请求保存其文档。
@@ -444,6 +452,7 @@ Comment[tr]=Uygulamadaki bir hata nedeniyle, uygulamalar çok kez SIGSEGV sinyal
 Comment[uk]=Найчастіше програми отримують сигнал SIGSEGV через вади у їх коді. До програми було надіслано запит на збереження документів, з якими вона працювала.
 Comment[uz]=Odatda, SIGSEGV signaliga dasturdagi xato sababchi boʻladi. Dasturdan maʼlumotlarni saqlash talab qilindi.
 Comment[uz@cyrillic]=Одатда, SIGSEGV сигналига дастурдаги хато сабабчи бўлади. Дастурдан маълумотларни сақлаш талаб қилинди.
+Comment[wa]=On programe riçût sortot l' signå SIGSEGV a cåze d' on bug dins l' programe. Dj' a dmandé å programe di schaper ses documints.
 Comment[x-test]=xxAn application mostly receives the SIGSEGV signal due to a bug in the application. The application was asked to save its documents.xx
 Comment[xh]=Isicelo esifumana i SIGSEGV uphawu ngenxa yegciwane. Isicelo siceliwe ukuba sigcine amaxwebhu aso.
 Comment[zh_CN]=应用程序之所以收到 SIGSEGV 信号，大多是因为应用程序有错误。应用程序会请求保存其文档。
@@ -503,6 +512,7 @@ Name[tr]=Bilinmeyen
 Name[uk]=Невідомий
 Name[uz]=Nomaʼlum
 Name[uz@cyrillic]=Номаълум
+Name[wa]=Nén cnoxhou
 Name[x-test]=xxUnknownxx
 Name[xh]=Engaziwayo
 Name[zh_CN]=未知
@@ -558,6 +568,7 @@ Comment[tr]=Üzgünüm, bu sinyali tanımıyorum.
 Comment[uk]=Вибачте, невідомий сигнал.
 Comment[uz]=Uzr, men bu signalni bilmayman.
 Comment[uz@cyrillic]=Узр, мен бу сигнални билмайман.
+Comment[wa]=Dji rgrete, dji n' conoxhe nén c' signå.
 Comment[x-test]=xxSorry, I do not know this signal.xx
 Comment[zh_CN]=抱歉，我不知道这个信号。
 Comment[zh_TW]=抱歉，我不知道這個信號是什麼。
