@@ -139,7 +139,7 @@ EmoticonList::~EmoticonList()
 
 bool caseInsensitiveLessThan(const QString &s1, const QString &s2)
 {
-    return s1.toLower() < s2.toLower();
+    return (QString::compare(s1, s2, Qt::CaseInsensitive) < 0);
 }
 
 void EmoticonList::load()
