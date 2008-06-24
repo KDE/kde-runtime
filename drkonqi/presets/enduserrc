@@ -126,6 +126,7 @@ Name[af]=Die toepassing %progname (%appname) het gestaak en veroorsaak Die sein 
 Name[bn]=%progname (%appname) প্রোগ্রামটি ক্র্যাশ করেছে এবং এই সিগনাল পাঠিয়েছে: %signum (%signame)
 Name[br]=Sac'het eo bet an arload %progname (%appname) ha bet abeg d'an arhent %signum (%signame).
 Name[ca]=L'aplicació %progname (%appname) ha fallat i ha provocat el senyal %signum (%signame).
+Name[cs]=Aplikace %progname (%appname) zhavarovala a vyvolala signál %signum (%signame).
 Name[cy]=Mae'r cymhwysiad %progname (%appname) wedi cwympo, gan achosi'r arwydd %signum (%signame).
 Name[da]=Programmet %progname (%appname) brød sammen og gav signalet %signum (%signame).
 Name[de]=Die Anwendung %progname (%appname) ist abgestürzt und hat das Signal %signum (%signame) veranlasst.
@@ -183,6 +184,7 @@ Enable=true
 Name=Please help us improve the software you use by filing a report at <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Useful details include how to reproduce the error, documents that were loaded, etc.
 Name[af]=Jy kan 'n foutrapport instuur vir die program. Kyk eers of dit by <a href=http://bugs.kde.org">http://bugs.kde.org</a> gelys is, anders kan jy die outeur direk kontak. Sluit asb. soveel inligting as moontlik in. As jy weet hoe om die probleem te reproduseer, sluit asb. ook 'n beskrywing daarvan in.
 Name[ca]=Si us plau, ajudeu-nos a millorar el programari que utilitzeu omplint un informe a <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Els detalls útils són com reproduir l'error, el documents carregats,  etc.
+Name[cs]=Prosím pomožte nám zlepšit software, který používáte tak, že vyplníte hlášení o chybě na <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Užitečnými detaily je např. postup jak chybu vyvolat, otevřené dokumenty atd.
 Name[de]=Bitte helfen Sie uns dabei, die von Ihnen verwendeten Programme zu verbessern, indem Sie unter <a href="http://bugs.kde.org">http://bugs.kde.org</a> einen Fehlerbericht schreiben. Nützliche Informationen sind z. B. wie der Fehler reproduziert werden kann, welche Dokumente geladen waren, etc.
 Name[el]=Βοηθήστε μας να βελτιώσουμε την εφαρμογή αυτή αναφέροντας αυτό το σφάλμα στο <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Χρήσιμες πληροφορίες που θα μπορούσατε να συμπεριλάβετε είναι ο τρόπος αναπαραγωγής του σφάλματος, τα έγγραφα που ήταν φορτωμένα κλπ.
 Name[eo]=Bonvolu helpi plibonigi la programon kiun vi uzas per raporti la cimon ĉe <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Utilaj detaloj inkluzivas kiel oni reproduktas la eraron, kiuj dokumentoj estis traktataj, ktp.
@@ -522,6 +524,7 @@ Comment[af]=Jammer, ek ken nie hierdie sein nie.
 Comment[bn]=দুঃখিত, এই সিগনালটি আমার অচেনা।
 Comment[br]=Ho tigarez, n'anavezan ket an arhent-mañ.
 Comment[ca]=No es coneix aquest senyal.
+Comment[cs]=Lituji, ale tento signál není známý.
 Comment[cy]=Mae'n ddrwg gennym, ni wyddom yr arwydd yma.
 Comment[da]=Jeg kender desværre ikke dette signal.
 Comment[de]=Leider ist dieses Signal nicht bekannt.
