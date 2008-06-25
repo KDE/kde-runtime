@@ -19,6 +19,7 @@ target_link_libraries(nepomukstrigiservice
   ${STRIGI_STRIGIQTDBUSCLIENT_LIBRARY}
   ${KDE4_KDEUI_LIBS}
   ${NEPOMUK_LIBRARIES}
+  ${QT_QTXML_LIBRARY}
   )
 
 install(
