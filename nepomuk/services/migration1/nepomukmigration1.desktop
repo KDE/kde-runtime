@@ -7,6 +7,7 @@ X-KDE-Nepomuk-start-on-demand=false
 X-KDE-Nepomuk-run-once=true
 Comment=Nepomuk Data Migration Level 1
 Comment[ca]=Nivell 1 de migració de dades del Nepomuk
+Comment[da]=Nepomuk datamigrering niveau 1
 Comment[de]=Nepomuk-Datenmigration Stufe 1
 Comment[el]=Επίπεδο 1 μεταφοράς δεδομένων Nepomuk
 Comment[eo]=Datuma migrado en Nepomuk, nivelo 1

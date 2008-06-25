@@ -3,6 +3,7 @@ Type=ServiceType
 X-KDE-ServiceType=PhononBackend
 Name=KDE Multimedia Backend
 Name[ca]=Dorsal multimèdia del KDE
+Name[da]=KDE multimedie-backend
 Name[de]=KDE Multimedia-Unterstützung
 Name[el]=Σύστημα υποστήριξης πολυμέσων του KDE
 Name[et]=KDE multimeedia taustaprogramm

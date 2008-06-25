@@ -2,6 +2,7 @@
 Type=Service
 Name=KDED Windows Start Menu Module
 Name[ca]=Mòdul del menú d'inici del Windows del KDED
+Name[da]=KDED-modul til Windows' startmenu
 Name[de]=Windows-Startmenü-Modul
 Name[el]=Άρθρωμα μενού έναρξης Windows KDED
 Name[eo]=KDED-modulo por la lanĉmenuo en Vindozo
