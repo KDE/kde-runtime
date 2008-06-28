@@ -366,10 +366,10 @@ std::vector<Strigi::IndexedDocument> Strigi::Soprano::IndexReader::query( const 
 void Strigi::Soprano::IndexReader::getChildren( const std::string& parent,
                                                 std::map<std::string, time_t>& children )
 {
-    qDebug() << "IndexReader::getChildren in thread" << QThread::currentThread();
+//    qDebug() << "IndexReader::getChildren in thread" << QThread::currentThread();
     QString query = QString( "select distinct ?path ?mtime where { ?r <%1> \"%2\"^^<%3> . ?r <%4> ?mtime . ?r <%5> ?path . }")
                     .arg( Util::fieldUri( FieldRegister::parentLocationFieldName ).toString() )
-                    .arg( QString::fromUtf8( parent.c_str() ) )
+                    .arg( QString::fromUtf8( parent.c_str() ).replace( '\"', "\\\"" ) )
                     .arg( Vocabulary::XMLSchema::string().toString() )
                     .arg( Util::fieldUri( FieldRegister::mtimeFieldName ).toString() )
                     .arg( Util::fieldUri( FieldRegister::pathFieldName ).toString() );
@@ -381,7 +381,7 @@ void Strigi::Soprano::IndexReader::getChildren( const std::string& parent,
     while ( result.next() ) {
         Node pathNode = result.binding( "path" );
         Node mTimeNode = result.binding( "mtime" );
-        qDebug() << "file in index: " << pathNode.toString() << "mtime:" << mTimeNode.literal().toDateTime() << "(" << mTimeNode.literal().toDateTime().toTime_t() << ")";
+//        qDebug() << "file in index: " << pathNode.toString() << "mtime:" << mTimeNode.literal().toDateTime() << "(" << mTimeNode.literal().toDateTime().toTime_t() << ")";
 
         // FIXME: Sadly in Xesam sourceModified is not typed as DateTime but defaults to an int :( We try to be compatible
         if ( mTimeNode.literal().isDateTime() ) {
@@ -419,11 +419,11 @@ int64_t Strigi::Soprano::IndexReader::indexSize()
 
 time_t Strigi::Soprano::IndexReader::mTime( const std::string& uri )
 {
-    qDebug() << "IndexReader::mTime in thread" << QThread::currentThread();
+//    qDebug() << "IndexReader::mTime in thread" << QThread::currentThread();
     QString query = QString( "select ?mtime where { ?r <%2> \"%3\"^^<%4> . ?r <%1> ?mtime . }" )
                     .arg( Util::fieldUri( FieldRegister::mtimeFieldName ).toString() )
                     .arg( Util::fieldUri( FieldRegister::pathFieldName ).toString() )
-                    .arg( QString::fromUtf8( uri.c_str() ) )
+                    .arg( QString::fromUtf8( uri.c_str() ).replace( '\"', "\\\"" ) )
                     .arg( Vocabulary::XMLSchema::string().toString() );
 
     qDebug() << "mTime( " << uri.c_str() << ") query:" << query;
