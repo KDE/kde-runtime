@@ -105,14 +105,14 @@ void KLocaleConfigNumber::save()
 
   str = entGrp.readEntry("DecimalSymbol",
 		      QString::fromLatin1("."));
-  group.deleteEntry("DecimalSymbol", KConfig::Global);
+  group.deleteEntry("DecimalSymbol", KConfig::Persistent | KConfig::Global);
   if (str != m_locale->decimalSymbol())
     group.writeEntry("DecimalSymbol",
 		       m_locale->decimalSymbol(), KConfig::Persistent|KConfig::Global);
 
   str = entGrp.readEntry("ThousandsSeparator",
 		      QString::fromLatin1(","));
-  group.deleteEntry("ThousandsSeparator", KConfig::Global);
+  group.deleteEntry("ThousandsSeparator", KConfig::Persistent | KConfig::Global);
   str.replace(QString::fromLatin1("$0"), QString());
   if (str != m_locale->thousandsSeparator())
     group.writeEntry("ThousandsSeparator",
@@ -120,12 +120,12 @@ void KLocaleConfigNumber::save()
 		       .arg(m_locale->thousandsSeparator()), KConfig::Persistent|KConfig::Global);
 
   str = entGrp.readEntry("PositiveSign");
-  group.deleteEntry("PositiveSign", KConfig::Global);
+  group.deleteEntry("PositiveSign", KConfig::Persistent | KConfig::Global);
   if (str != m_locale->positiveSign())
     group.writeEntry("PositiveSign", m_locale->positiveSign(), KConfig::Persistent|KConfig::Global);
 
   str = entGrp.readEntry("NegativeSign", QString::fromLatin1("-"));
-  group.deleteEntry("NegativeSign", KConfig::Global);
+  group.deleteEntry("NegativeSign", KConfig::Persistent | KConfig::Global);
   if (str != m_locale->negativeSign())
     group.writeEntry("NegativeSign", m_locale->negativeSign(), KConfig::Persistent|KConfig::Global);
 }
