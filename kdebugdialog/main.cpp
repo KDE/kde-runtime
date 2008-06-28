@@ -74,6 +74,7 @@ int main(int argc, char ** argv)
     "1.0", ki18n("A dialog box for setting preferences for debug output"),
     KAboutData::License_GPL, ki18n("Copyright 1999-2000, David Faure <email>faure@kde.org</email>"));
   data.addAuthor(ki18n("David Faure"), ki18n("Maintainer"), "faure@kde.org");
+  data.setProgramIconName("tools-report-bug");
   KCmdLineArgs::init( argc, argv, &data );
 
   KCmdLineOptions options;
