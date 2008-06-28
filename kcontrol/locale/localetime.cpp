@@ -278,29 +278,29 @@ void KLocaleConfigTime::save()
   QString str;
 
   str = entGrp.readEntry("CalendarSystem", QString::fromLatin1("gregorian"));
-  group.deleteEntry("CalendarSystem", KConfig::Global);
+  group.deleteEntry("CalendarSystem", KConfig::Persistent | KConfig::Global);
   if (str != m_locale->calendarType())
     group.writeEntry("CalendarSystem", m_locale->calendarType(), KConfig::Persistent|KConfig::Global);
 
   str = entGrp.readEntry("TimeFormat", QString::fromLatin1("%H:%M:%S"));
-  group.deleteEntry("TimeFormat", KConfig::Global);
+  group.deleteEntry("TimeFormat", KConfig::Persistent | KConfig::Global);
   if (str != m_locale->timeFormat())
     group.writeEntry("TimeFormat", m_locale->timeFormat(), KConfig::Persistent|KConfig::Global);
 
   str = entGrp.readEntry("DateFormat", QString::fromLatin1("%A %d %B %Y"));
-  group.deleteEntry("DateFormat", KConfig::Global);
+  group.deleteEntry("DateFormat", KConfig::Persistent | KConfig::Global);
   if (str != m_locale->dateFormat())
     group.writeEntry("DateFormat", m_locale->dateFormat(), KConfig::Persistent|KConfig::Global);
 
   str = entGrp.readEntry("DateFormatShort", QString::fromLatin1("%Y-%m-%d"));
-  group.deleteEntry("DateFormatShort", KConfig::Global);
+  group.deleteEntry("DateFormatShort", KConfig::Persistent | KConfig::Global);
   if (str != m_locale->dateFormatShort())
     group.writeEntry("DateFormatShort",
 		       m_locale->dateFormatShort(), KConfig::Persistent|KConfig::Global);
 
   int firstDay;
   firstDay = entGrp.readEntry("WeekStartDay", 1);
-  group.deleteEntry("WeekStartDay",KConfig::Global);
+  group.deleteEntry("WeekStartDay", KConfig::Persistent | KConfig::Global);
   if (firstDay != m_locale->weekStartDay())
       group.writeEntry("WeekStartDay", m_locale->weekStartDay(), KConfig::Persistent|KConfig::Global);
 
@@ -308,7 +308,7 @@ void KLocaleConfigTime::save()
   {
     bool b;
     b = entGrp.readEntry("DateMonthNamePossessive", false);
-    group.deleteEntry("DateMonthNamePossessive", KConfig::Global);
+    group.deleteEntry("DateMonthNamePossessive", KConfig::Persistent | KConfig::Global);
     if (b != m_locale->dateMonthNamePossessive())
       group.writeEntry("DateMonthNamePossessive",
 		         m_locale->dateMonthNamePossessive(), KConfig::Persistent|KConfig::Global);
