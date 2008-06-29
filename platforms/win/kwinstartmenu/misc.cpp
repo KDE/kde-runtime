@@ -31,7 +31,10 @@
 #include <QDir>
 #include <QFile>
 
+#undef KDE_NO_WARNING_OUTPUT
+#undef QT_NO_DEBUG_OUTPUT
 #include <KDebug>
+
 #include <kstandarddirs.h>
 #include <kservicegroup.h>
 // required by kdesktopfile.h -> should be in kdesktopfile.h 
@@ -192,7 +195,7 @@ bool generateMenuEntries(QList<LinkFile> &files, const KUrl &url, const QString 
             QString linkPath = getKDEStartMenuPath() + relPathTranslated + "/";
             QString linkName = s->name();
             if (!s->genericName().isEmpty() && s->genericName() != s->name()) 
-                linkName += " (" + s->genericName() + ")";
+                linkName += " (" + s->genericName().replace("/","-") + ")";
             
             QString linkFilePath = linkPath + linkName + ".lnk";
             QFileInfo fi(linkFilePath);
