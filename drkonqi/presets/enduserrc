@@ -1,6 +1,7 @@
 [General]
 Name=End user
 Name[af]=Einde gebruiker
+Name[bg]=Краен потребител
 Name[bn]=ব্যবহারকারী
 Name[br]=Implijer diwezh
 Name[ca]=Usuari final
@@ -25,6 +26,7 @@ Name[ja]=エンドユーザ
 Name[ka]=საბოლოო მომხმარებელი
 Name[km]=អ្នកប្រើ​ចុងក្រោយ
 Name[ko]=일반 사용자
+Name[ku]=Bikarhênera/ê dawî
 Name[lt]=Galutinis naudotojas
 Name[lv]=Gala lietotājs
 Name[mk]=Краен корисник
@@ -57,6 +59,7 @@ Name[zh_CN]=最终用户
 Name[zh_TW]=終端使用者
 Comment=Settings preferred for end users
 Comment[af]=Instellings verkies vir einde gebruikers
+Comment[bg]=Настройки за крайни потребители
 Comment[bn]=সাধারণ ব্যবহারকারীদের জন্যপছন্দ করা সেটিংস
 Comment[br]=Kefluniadur azas evit implijerien diwezh
 Comment[ca]=Paràmetres preferits pels usuaris finals
@@ -81,6 +84,7 @@ Comment[ja]=エンドユーザ用の設定
 Comment[ka]=პარამეტრები, საბოლო მომხმარებლისათვის
 Comment[km]=ចំណូលចិត្ត​ការ​កំណត់​សម្រាប់​អ្នកប្រើ​ចុងក្រោយ
 Comment[ko]=일반 사용자가 선호하는 설정
+Comment[ku]=Mîhengên ji bo bikarhênerên dawî pêşniyarbûyî
 Comment[lt]=Galutiniam naudotojui rekomenduojami nustatymai
 Comment[lv]=Lietotājiem ieteicamie iestatījumi
 Comment[mk]=Поставувања за крајни корисници
@@ -123,6 +127,7 @@ DisableChecks=false
 Enable=true
 Name=The application %progname (%appname) crashed and caused the signal %signum (%signame).
 Name[af]=Die toepassing %progname (%appname) het gestaak en veroorsaak Die sein %signum (%signame).
+Name[bg]=В програмата %progname (%appname) възникна фатална грешка, предизвиквайки сигнал %signum (%signame).
 Name[bn]=%progname (%appname) প্রোগ্রামটি ক্র্যাশ করেছে এবং এই সিগনাল পাঠিয়েছে: %signum (%signame)
 Name[br]=Sac'het eo bet an arload %progname (%appname) ha bet abeg d'an arhent %signum (%signame).
 Name[ca]=L'aplicació %progname (%appname) ha fallat i ha provocat el senyal %signum (%signame).
@@ -147,6 +152,7 @@ Name[ja]=アプリケーション %progname (%appname) はクラッシュし、�
 Name[ka]=პროგრამა %progname (%appname) მოხდა ფატალური შეცდომა, რომელმაც გამოიწვია სიგნალი %signum (%signame).
 Name[km]=កម្មវិធី %progname (%appname) បានគាំង ហើយ​បង្ក​ឲ្យ​មាន​សញ្ញា %signum (%signame) ។
 Name[ko]=프로그램 %progname (%appname)이(가) 충돌하였고 신호 %signum(%signame)을(를) 보냈습니다.
+Name[ku]=Sepana %progname (%appname) têk ç, û bû sedemasînyala %signum (%signame).
 Name[lt]=%progname programa (%appname) nulūžo ir gavo %signum (%signame) signalą.
 Name[lv]=Programma %progname (%appname), pid %pid, avarēja un izsauca signālu %signum (%signame).
 Name[mk]=Апликацијата %progname (%appname) падна и го предизвика сигналот %signum (%signame).
@@ -183,6 +189,7 @@ Name[zh_TW]=應用程式 %progname（%appname），行程代碼 %pid，崩潰並
 Enable=true
 Name=Please help us improve the software you use by filing a report at <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Useful details include how to reproduce the error, documents that were loaded, etc.
 Name[af]=Jy kan 'n foutrapport instuur vir die program. Kyk eers of dit by <a href=http://bugs.kde.org">http://bugs.kde.org</a> gelys is, anders kan jy die outeur direk kontak. Sluit asb. soveel inligting as moontlik in. As jy weet hoe om die probleem te reproduseer, sluit asb. ook 'n beskrywing daarvan in.
+Name[bg]=Моля, помогнете ни да подобрим софтуера като съобщите за тази грешка на <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Опишете как е възникнала грешката, кои документи са били заредени и т.н.
 Name[ca]=Si us plau, ajudeu-nos a millorar el programari que utilitzeu omplint un informe a <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Els detalls útils són com reproduir l'error, el documents carregats,  etc.
 Name[cs]=Prosím pomožte nám zlepšit software, který používáte tak, že vyplníte hlášení o chybě na <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Užitečnými detaily je např. postup jak chybu vyvolat, otevřené dokumenty atd.
 Name[da]=Hjælp os gerne med at forbedre softwaren som du bruger ved at rapportere til <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Nyttige informationer omfatter hvordan fejlen kan reproduceres, dokumenter som blev indlæst, osv.
@@ -200,6 +207,7 @@ Name[gu]=મહેરબાની કરી અમને બગ અહેવા�
 Name[ja]=<a href="http://bugs.kde.org">http://bugs.kde.org</a> にバグを報告することで、お使いのソフトウェアを改良する手助けをしてください。バグの再現方法、読み込んだ文書などの詳細情報が役立ちます。
 Name[km]=សូម​ជួយ​យើង​បង្កើន​កម្មវិធី ដែល​អ្នក​ប្រើ​ដោយ​បំពេញ​របាយការណ៍​នៅ <a href="http://bugs.kde.org">http://bugs.kde.org</a> ។ សេចក្ដី​លម្អិត​ដ៏មាន​ប្រយោជន៍​​រួមមាន​វិធី​ត្រូវ​បង្កើត​កំហុស​ឡើ​ងវិញ ឯកសារ​ដែល​ត្រូវ​បាន​ផ្ទុក ។ល។
 Name[ko]=이 오류를 <a href="http://bugs.kde.org">http://bugs.kde.org</a>에 보고해 주셔서 프로그램이 개선될 수 있도록 도와 주십시오. 오류를 다시 일으킬 수 있는 방법이나 불러온 문서 등의 자세한 정보가 있다면 제공해 주십시오.
+Name[ku]=Ji kerema xwe re ji bo rastkirina çewtiyê bi tijekirina rapora di <a href="http://bugs.kde.org">http://bugs.kde.org</a> de ji me re bibe alîkar. Di kitekitan de agahiyêm der barê wê de hene.
 Name[lv]=Lūdzu palīdziet mums uzlabot šo programmatūru. Nosūtiet kļūdas ziņojumu uz <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Ziņojumā iekļaujiet aprakstu kā atkārtot kļūdu, kādi dokumenti tika ielādēti un citu derīgu informāciju.
 Name[ml]=ദയവായി നിങ്ങളുപയോഗിയ്ക്കുന്ന സോഫ്റ്റ്‌വെയര്‍ മെച്ചപ്പെടുത്താന്‍ ഞങ്ങളെ സഹായിയ്ക്കാനായി <a href="http://bugs.kde.org">http://bugs.kde.org</a> എന്ന വിലാസത്തില്‍ രേഖപ്പെടുത്തുക. എങ്ങനെയാണു് ഈ തെറ്റു് വീണ്ടും കാണുക, ചേര്‍ത്തിരുന്ന രചനകള്‍ തുടങ്ങിയവ ഉപയോഗപ്രദമായ വിശദവിവരങ്ങളിലുള്‍പ്പെടും.
 Name[nds]=Bitte hölp uns dor bi, dat wi de Software, de Du bruukst, verbetern köönt. Du kannst en Fehlerbericht för dit Programm op <a href="http://bugs.kde.org">http://bugs.kde.org</a> afgeven. Föög em bitte so veel Informatschonen as mööglich to, villicht ok de Orginaaldokmenten. Kannst Du den Fehler wedderhalen, vertell bitte ok, wodennig dat geiht.
@@ -208,6 +216,7 @@ Name[pa]=ਸਾਨੂੰ ਸਾਫਟਵੇਅਰ ਸੁਧਾਰਨ ਲਈ ਮ�
 Name[pt]=Por favor ajude-nos a melhor o 'software' que usa, preenchendo um relatório em <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Alguns detalhes úteis incluem a reprodução do erro, os documentos que foram carregados, etc.
 Name[pt_BR]=Por favor nos ajude a melhorar o software que você usa preenchendo um relatório em <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Detalhes úteis incluem como reproduzir o erro, documentos que foram carregados, etc.
 Name[ro]=Ajutați-ne să îmbunătățim programul, completînd un raport de eroare pe <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Vă rugăm să includeți cît mai multă informație, de exemplu cum se poate reproduce eroarea, documentele încărcate, etc.
+Name[ru]=Пожалуйста, помогите нам улучшить эту программу и заполните <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Будет полезно указать, как воспроизвести эту ошибку, какие документы были загружены и т.д.
 Name[sl]=Pomagajte nam izboljšati program, ki ga uporabljate. Oddajte poročilo o napaki  na <a href="http://bugs.kde.org">bugs.kde.org</a>. Uporabni podatki so na primer koraki za povzročitev napake, odprti dokumenti in podobno.
 Name[sr]=Помогните нам да побољшамо софтвер тако што ћете испунити извештај на <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Корисни детаљи: како изазвати грешку, документи који су учитавани, итд.
 Name[sr@latin]=Pomognite nam da poboljšamo softver tako što ćete ispuniti izveštaj na <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Korisni detalji: kako izazvati grešku, dokumenti koji su učitavani, itd.
@@ -228,6 +237,7 @@ Name[sr]=СИГИЛЛ
 Name[x-test]=xxSIGILLxx
 Comment=An application mostly receives the SIGILL signal due to a bug in the application. The application was asked to save its documents.
 Comment[af]='n Toepassing ontvang meestal die SIGILL sein as gevolg van 'n fout in die toepassing. die Toepassing is gevra om sy dokumente te stoor.
+Comment[bg]=Сигналът SIGILL обикновено се получава поради грешка в самата програма. В този случай програмите имат възможност да запишат всички отворени документи и да завършат работата си по нормален начин.
 Comment[bn]=কোনো অ্যাপলিকেশন SIGILL সিগনালটি সাধারণত তখনই পায় যদি তাতে কোনো বাগ থাকে। অ্যাপলিকেশনটিকে তার সমস্ত নথী সংরক্ষণ করতে অনুরোধ করা হয়েছে।
 Comment[br]=Un arload a vez kaset an arhent SIGILL dezhañ abalamour d'un draen peurvuiañ. Goulennet eo bet d'an arload enrollañ e zeulioù.
 Comment[ca]=Bàsicament una aplicació rep el senyal SIGILL degut a un error a l'aplicació. Es demana a l'aplicació que desi els seus documents.
@@ -251,6 +261,7 @@ Comment[ja]=アプリケーションは内部のバグにより SIGILL シグナ
 Comment[ka]=პროგრამა იღებს SIGILL სიგნალს პროგრამაში არსებული შეცდომის გამო. ყველა დოკუმენტი შენახული იქნება
 Comment[km]=ភាគច្រើន កម្មវិធី​ទទួល​សញ្ញា SIGILL ដោយសារ​កំហុស​នៅ​ក្នុង​កម្មវិធី ។ កម្មវិធី​ត្រូវបាន​សួរ​ឲ្យ​រក្សាទុក​ឯកសារ​របស់​វា ។
 Comment[ko]=프로그램의 버그로 인해서 SIGILL 신호를 받을 수도 있습니다. 프로그램에서 문서를 저장하도록 요청했습니다.
+Comment[ku]=Sepanek bi piranî sînyala SIGILL heta buga rast radike. Sepanê ji bo hilanîna belgeyê pirs kir.
 Comment[lt]=Programa gauna SIGILL signalą paprastai dėl ydos programoje.  Programa buvo paprašyta išsaugoti savo dokumentus.
 Comment[lv]=Parasti programma saņem SIGILL signālu dēļ kļūdas pašā programmā. Programmai tika pieprasīts saglabāt savus dokumentus.
 Comment[mk]=Апликациите најчесто го добиваат сигналот SIGILL поради бубачка. На апликацијата ѝ беше речено да ги сними сите свои документи.
@@ -288,6 +299,7 @@ Name[sr]=СИГАБРТ
 Name[x-test]=xxSIGABRTxx
 Comment=An application terminates with a SIGABRT signal when it detects an internal inconsistency caused by a bug in the program.
 Comment[af]='n Toepassing termineer met 'n SIGABRT sein wanneer dit 'n interneinkonsekwentheid bespeur wat veroorsaak is deur 'n fout in die program.
+Comment[bg]=Програмите биват спирани със сигнал SIGABRT, когато възникне сериозна и неочаквана грешка в тях или се случи нещо непредвидено.
 Comment[bn]=কোনো অ্যাপলিকেশন SIGABRT সিগনালটি সমেত বন্ধ হয় যখন অ্যাপলিকেশনটিতে কোনো বাগ-এর ফলে সেটি একটি অভ্যন্তরীণ অসামঞ্জস্যের মুখোমুখি হয়।
 Comment[br]=Echuiñ a ra un arload gant un arhent SIGABRT p'en  deus dinoet un diglokusted diabarzh abalamour d'un draen er goulev.
 Comment[ca]=Una aplicació finalitza amb un senyal SIGABRT quan detecta una inconsistència interna causada per un error en el programa.
@@ -311,6 +323,7 @@ Comment[ja]=アプリケーションはプログラムのバグによる内部�
 Comment[ka]=პროგრამა შეწყდა SIGABRT სიგნალით, როდესაც მან შეამჩნია შიდა არამდგრადობა რომელიც პროგრამის ბზიკმა გამოიწვია.
 Comment[km]=កម្មវិធី គឺ​បិទ​ដោយ​សញ្ញា SIGABRT នៅពេល​ដែល​វា​រកឃើញ​អថេរ​ខាងក្នុង ដែល​បង្ក​ដោយ​កំហុស​ក្នុង​កម្មវិធី ។
 Comment[ko]=프로그램의 버그로 인해서 내부적인 충돌이 생겨서 SIGABRT 신호와 함께 프로그램이 종료될 수 있습니다.
+Comment[ku]=Sepanek bi sînyala SIGABRT diqede dema ku hevnegirtineke hundirîn bibîne û di bernameyê de dibe sedema bugê.
 Comment[lt]=Programa baigia darbą dėl SIGABRT signalo kai ji pastebi vidinį prieštaravimą dėl ydos programoje.
 Comment[lv]=Programma beidz darbu ar SIGABRT signālu, ja tiek atklāta iekšēja nekonsekvence dēļ kādas kļūdas programmā.
 Comment[mk]=Апликациите прекинуваат со сигнал SIGABRT кога ќе откријат внатрешни недоследности предизвикани од бубачка во програмата.
@@ -347,6 +360,7 @@ Name[sr]=СИГФПЕ
 Name[x-test]=xxSIGFPExx
 Comment=An application mostly receives the SIGFPE signal due to a bug in the application. The application was asked to save its documents.
 Comment[af]='n Toepassing ontvang meestal die SIGFPE sein as gevolg na 'n fout in die toepassing. Die toepassing is gevra om sy dokumente te stoor.
+Comment[bg]=Сигналът SIGFPE обикновено се получава поради грешка в самата програма. В този случай програмите имат възможност да запишат всички отворени документи и да завършат работата си по нормален начин.
 Comment[bn]=কোনো অ্যাপলিকেশন SIGFPE সিগনালটি সাধারণত তখনই পায় যদি তাতে কোনো বাগ থাকে। অ্যাপলিকেশনটিকে তার সমস্ত নথী সংরক্ষণ করতে অনুরোধ করা হয়েছে।
 Comment[br]=Resev a ra un arload an arhent SIGFPE abalamour d'un draen en arload, peurliesañ. Goulennet e voe d'an arload enrollañ e deulioù.
 Comment[ca]=Bàsicament una aplicació rep el senyal SIGFPE degut a un error a l'aplicació. Es demana a l'aplicació que desi els seus documents.
@@ -370,6 +384,7 @@ Comment[ja]=アプリケーションは内部のバグにより SIGFPE シグナ
 Comment[ka]=პროგრამა იღებს SIGFPE სიგნალს პროგრამაში არსებული შეცდომის გამო. ყველა დოკუმენტი შენახული იქნება
 Comment[km]=ភាគច្រើន កម្មវិធី​ទទួល​សញ្ញា SIGFPE ដោយសារ​កំហុស​នៅ​ក្នុង​កម្មវិធី ។ កម្មវិធី​ត្រូវបាន​សួរ​ឲ្យ​រក្សាទុក​ឯកសារ​របស់​វា ។
 Comment[ko]=프로그램의 버그로 인해서 SIGFPE 신호를 받을 수도 있습니다. 프로그램에서 문서를 저장하도록 요청했습니다.
+Comment[ku]=Sepanek bi piranî sînyala SIGFPE radike. Sepanê ji bo hilanîna belgeyê pirs kir.
 Comment[lt]=Programa dažniausiai gauna SIGFPE signalą dėl ydos programoje.  Programa buvo paprašyta išsaugoti savo dokumentus.
 Comment[lv]=Programma visbiežāk saņem SIGFPE signālu dēļ kļūdas programmā. Programmai tika prasīts saglabāt savus dokumentus.
 Comment[mk]=Апликациите најчесто го добиваат сигналот SIGFPE поради грешка во апликацијата. На апликацијата ѝ беше речено да ги сними сите свои документи.
@@ -407,6 +422,7 @@ Name[sr]=СИГСЕГВ
 Name[x-test]=xxSIGSEGVxx
 Comment=An application mostly receives the SIGSEGV signal due to a bug in the application. The application was asked to save its documents.
 Comment[af]='n Toepassing ontvang die SIGSEGV sein as gevolg na 'n fout in die toepassing. Die toepassing is gevra om sy dokumente te stoor.
+Comment[bg]=Сигналът SIGSEGV обикновено се получава поради грешка в самата програма. В този случай програмите имат възможност да запишат всички отворени документи и да завършат работата си по нормален начин.
 Comment[bn]=কোনো অ্যাপলিকেশন SIGSEGV সিগনালটি সাধারণত তখনই পায় যদি তাতে কোনো বাগ থাকে। অ্যাপলিকেশনটিকে তার সমস্ত নথী সংরক্ষণ করতে অনুরোধ করা হয়েছে।
 Comment[br]=Resev a ra un arload an arhent SIGSEGV abalamour d'un draen en arload, peurliesañ. Goulennet e voe d'an arload enrollañ e deulioù.
 Comment[ca]=Bàsicament una aplicació rep el senyal SIGSEGV degut a un error a l'aplicació. Es demana a l'aplicació que desi els seus documents.
@@ -430,6 +446,7 @@ Comment[ja]=アプリケーションは内部のバグにより SIGSEGV シグ�
 Comment[ka]=პროგრამა იღებს  SIGSEGV სიგნალს პროგრამაში არსებული შეცდომის გამო. ყველა დოკუმენტი შენახული იქნება
 Comment[km]=ភាគច្រើន កម្មវិធី​ទទួល​សញ្ញា SIGSEGV ដោយសារ​កំហុស​នៅ​ក្នុង​កម្មវិធី​។ កម្មវិធី​ត្រូវបាន​សួរ​ឲ្យ​រក្សាទុក​​ឯកសារ​របស់​វា ។
 Comment[ko]=프로그램의 버그로 인해서 SIGSEGV 신호를 받을 수도 있습니다. 프로그램에서 문서를 저장하도록 요청했습니다.
+Comment[ku]=Sepanek bi piranî sînyala SIGSEGV radike. Sepanê ji bo hilanîna belgeyê pirs 
 Comment[lt]=Programa dažniausiai gauna SIGSEGV signalą dėl ydos programoje.  Programos buvo paprašyta išsaugoti savo dokumentus.
 Comment[lv]=Programma visbiežāk saņem SIGSEGV signālu sakarā ar kļūdu programmā. Programmai tika prasīts saglabāt savus dokumentus.
 Comment[mk]=Апликациите најчесто го добиваат сигналот SIGSEGV поради грешка во апликацијата. На апликацијата и беше речено да ги сними сите свои документи.
@@ -464,6 +481,7 @@ Comment[zh_TW]=應用程式收到 SIGSEGV 信號，通常是因為應用程式�
 [unknown]
 Name=Unknown
 Name[af]=Onbekend
+Name[bg]=Неизвестен
 Name[bn]=অজ্ঞাত
 Name[br]=Dianav
 Name[ca]=Desconegut
@@ -488,6 +506,7 @@ Name[ja]=未知
 Name[ka]=უცნობი
 Name[km]=មិនស្គាល់
 Name[ko]=알 수 없음
+Name[ku]=nayê Zanîn
 Name[lt]=Nežinoma
 Name[lv]=Nezināms
 Name[mk]=Непознат
@@ -522,6 +541,7 @@ Name[zh_CN]=未知
 Name[zh_TW]=未知
 Comment=Sorry, I do not know this signal.
 Comment[af]=Jammer, ek ken nie hierdie sein nie.
+Comment[bg]=Неизвестен сигнал.
 Comment[bn]=দুঃখিত, এই সিগনালটি আমার অচেনা।
 Comment[br]=Ho tigarez, n'anavezan ket an arhent-mañ.
 Comment[ca]=No es coneix aquest senyal.
@@ -546,6 +566,7 @@ Comment[ja]=このシグナルは分かりません。
 Comment[ka]=სამწუხაროდ ამ სიგნალის შესახებ არაფერია ცნობილი
 Comment[km]=សូម​អភ័យទោស ខ្ញុំ​មិនស្គាល់​សញ្ញា​នេះ​ទេ ។
 Comment[ko]=죄송합니다. 이 신호를 알 수 없습니다.
+Comment[ku]=Bibore, ez nizanim ev sînyal çi ye.
 Comment[lt]=Deja, šis signalas nėra žinomas.
 Comment[lv]=Atvainojiet, šāds signāls nav zināms.
 Comment[mk]=Жал ми е, овој сигнал не ми е познат.

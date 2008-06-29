@@ -1,6 +1,7 @@
 [Global]
 IconName=preferences-desktop-sound
 Comment=Phonon: KDE's Multimedia Library
+Comment[bg]=Phonon: мултимедийната библиотека на KDE
 Comment[ca]=Phonon: biblioteca multimèdia del KDE
 Comment[cs]=Phonon: multimediální knihovna KDE
 Comment[da]=Phonon: KDE's multimediebibliotek
@@ -32,6 +33,7 @@ Comment[zh_TW]=Phonon：KDE 的多媒體函式庫
 
 [Context/Application]
 Name=Application
+Name[bg]=Програма
 Name[ca]=Aplicació
 Name[cs]=Aplikace
 Name[da]=Program
@@ -44,6 +46,7 @@ Name[gu]=કાર્યક્રમ
 Name[ja]=アプリケーション
 Name[km]=កម្មវិធី
 Name[ko]=프로그램
+Name[ku]=Sepan
 Name[lv]=Programma
 Name[nds]=Programm
 Name[nl]=Programma
@@ -69,6 +72,7 @@ Name[zh_TW]=應用程式
 
 [Event/AudioDeviceFallback]
 Name=Audio Device Fallback
+Name[bg]=Подразбиращо се аудио устройство
 Name[ca]=Dispositiu d'àudio de reserva
 Name[cs]=Záložní zvukové zařízení
 Name[da]=Reserve-lydeenhed

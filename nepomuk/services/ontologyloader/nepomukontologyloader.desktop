@@ -35,6 +35,7 @@ Name[x-test]=xxNepomuk Ontology Loaderxx
 Name[zh_CN]=Nepomuk 本体装载器
 Name[zh_TW]=Nepomuk Ontology 載入器
 Comment=Nepomuk Service which maintains the ontologies installed on the system
+Comment[bg]=Услуга, която поддържа инсталираните на компютъра онтологии
 Comment[ca]=Servei del Nepomuk que manté les ontologies instal·lades en el sistema
 Comment[da]=Nepomuk-tjeneste som vedligeholder ontologierne som er installeret på systemet
 Comment[de]=Nepomuk-Dienst zur Verwaltung der Semantikinformationen auf diesem System

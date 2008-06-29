@@ -2,6 +2,7 @@
 Type=ServiceType
 X-KDE-ServiceType=PhononBackend
 Name=KDE Multimedia Backend
+Name[bg]=Мултимедиен плеър
 Name[ca]=Dorsal multimèdia del KDE
 Name[da]=KDE multimedie-backend
 Name[de]=KDE Multimedia-Unterstützung
