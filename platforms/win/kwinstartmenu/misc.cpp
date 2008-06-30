@@ -86,7 +86,23 @@ QString getStartMenuPath(bool bAllUsers)
     return QString();
 }
 
-QString getKDEStartMenuPath()
+QStringList getInstalledKDEVersions()
+{
+    QStringList installedVersions; 
+    QDir dir(getStartMenuPath());
+    if (!dir.exists())
+        return installedVersions;
+
+    QFileInfoList entries = dir.entryInfoList(QDir::NoDotAndDotDot | QDir::Dirs );
+    int count = entries.size();
+    foreach(QFileInfo entryInfo, entries) {
+        if (entryInfo.fileName().startsWith("KDE "))
+            installedVersions << entryInfo.fileName();
+    }
+    return installedVersions;
+}
+
+QString getKDEStartMenuRootEntry()
 {
 	QString version = KDE::versionString();
 	QStringList versions = version.split(" "); 
@@ -95,7 +111,17 @@ QString getKDEStartMenuPath()
 #else
 	QString compileMode = "Debug"; 
 #endif
-	return getStartMenuPath() + "/KDE" + " " + versions[0] + " " + compileMode;
+	return "KDE " + versions[0] + " " + compileMode;
+}
+
+inline QString getWorkingDir() 
+{
+	return QDir::toNativeSeparators(KStandardDirs::installPath("exe"));
+}
+
+QString getKDEStartMenuPath()
+{
+	return getStartMenuPath() + "/" + getKDEStartMenuRootEntry();
 }
 
 KServiceGroup::Ptr findGroup(const QString &relPath)
@@ -206,7 +232,7 @@ bool generateMenuEntries(QList<LinkFile> &files, const KUrl &url, const QString 
                     continue;
                 }
             }
-            QString workingDir = QDir::toNativeSeparators(KStandardDirs::installPath("exe"));
+            QString workingDir = getWorkingDir();
             QString description = "";
 
             files.append(LinkFile(execPath,linkFilePath,description,workingDir));
@@ -216,9 +242,50 @@ bool generateMenuEntries(QList<LinkFile> &files, const KUrl &url, const QString 
     return true;
 }
 
+/**
+ check start menu for older kde installations and remove obsolate or non existing ones 
+
+ This is done by the following rules: 
+	1. If no entry in an installation points to an existing executable, this installation 
+	   is removed and could be deleted 	
+    2. if start menu entries for non current kde installation have the same working 
+	   dir as the current installation, this should be removed too
+*/
+void removeObsolateInstallations()
+{
+	kDebug() << getInstalledKDEVersions();
+	QString currentVersion = getKDEStartMenuRootEntry();
+
+	foreach(QString release,getInstalledKDEVersions()) 
+	{
+		// skip current version 
+		if (release == currentVersion)
+			continue;
+		// get all link files for a specific release
+		QList<LinkFile> allReleasesFiles;
+		LinkFiles::scan(allReleasesFiles, getStartMenuPath() + "/" + release);
+		bool available = false;
+		bool sameWorkingDir = false;
+	    foreach(LinkFile lf, allReleasesFiles) 
+		{
+			lf.read(); // this in not done by the LinkFile class by default 
+			kDebug() << release << " : " << lf;
+			QFileInfo fi(lf.execPath());
+			if (fi.exists())
+				available = true;
+			if (lf.workingDir() == getWorkingDir())
+				sameWorkingDir = true;
+		}
+		if (!available || sameWorkingDir)
+			removeDirectory(getStartMenuPath() + "/" + release);
+	}
+}
+
 void updateStartMenuLinks()
 {
-    // generate list of installed linkfiles 
+	removeObsolateInstallations();
+
+	// generate list of installed linkfiles 
     QList<LinkFile> oldFiles;
     LinkFiles::scan(oldFiles, getKDEStartMenuPath());
     foreach(const LinkFile& lf, oldFiles)
@@ -238,6 +305,7 @@ void updateStartMenuLinks()
 
 void removeStartMenuLinks()
 {
+	removeObsolateInstallations();
     removeDirectory(getKDEStartMenuPath());
 }
 

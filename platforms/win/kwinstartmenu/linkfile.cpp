@@ -124,15 +124,63 @@ bool CreateLink(const QString &_fileName, const QString &_linkName, const QStrin
     return SUCCEEDED(hres);
 }
 
+bool LinkFile::read()
+{
+    LPCWSTR szShortcutFile = (LPCWSTR)m_linkPath.utf16();
+	WCHAR szTarget[MAX_PATH];
+	WCHAR szWorkingDir[MAX_PATH];
+	WCHAR szDescription[MAX_PATH];
+
+	IShellLink*    psl     = NULL;
+    IPersistFile*  ppf     = NULL;
+    bool           bResult = false;
+
+#   if !defined(UNICODE)
+        WCHAR wsz[MAX_PATH];
+        if (0 == MultiByteToWideChar(CP_ACP, 0, szShortcutFile, -1, wsz, MAX_PATH) )
+            goto cleanup;
+#   else
+        LPCWSTR wsz = szShortcutFile;
+#   endif
+
+    if (FAILED( CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER, IID_IShellLink, (void **) &psl) ))
+        goto cleanup;
+
+    if (FAILED( psl->QueryInterface(IID_IPersistFile, (void **) &ppf) ))
+        goto cleanup;
+
+    if (FAILED( ppf->Load(wsz, STGM_READ) ))
+        goto cleanup;
+
+    if (NOERROR != psl->GetPath(szTarget, MAX_PATH, NULL, 0) )
+        goto cleanup;
+	m_execPath = QString::fromUtf16((const ushort*)szTarget);
+
+	if (NOERROR != psl->GetWorkingDirectory(szWorkingDir, MAX_PATH) )
+        goto cleanup;
+	m_workingDir = QString::fromUtf16((const ushort*)szWorkingDir);
+
+	if (NOERROR != psl->GetDescription(szDescription, MAX_PATH) )
+        goto cleanup;
+	m_description = QString::fromUtf16((const ushort*)szDescription);
+
+	bResult = true;
+
+cleanup:
+    if (ppf) ppf->Release();
+    if (psl) psl->Release();
+    return bResult;
+}
+
 bool LinkFile::create()
 {
-    return CreateLink(execPath,linkPath,description,workingDir);
+    return CreateLink(m_execPath,m_linkPath,m_description,m_workingDir);
 }
 
 bool LinkFile::remove()
 {
-    bool ret = QFile::remove(linkPath);
-    QFileInfo fi(linkPath);
+    bool ret = QFile::remove(m_linkPath);
+    QFileInfo fi(m_linkPath);
     QDir d;
     d.rmpath(fi.absolutePath());
     return ret;
@@ -140,7 +188,7 @@ bool LinkFile::remove()
 
 bool LinkFile::exists()
 {
-    return QFile::exists(linkPath);
+    return QFile::exists(m_linkPath);
 }
 
 
@@ -191,11 +239,11 @@ bool LinkFiles::cleanup(QList <LinkFile> &newFiles, QList <LinkFile> &oldFiles)
     // delete not available linkfiles 
     foreach(LinkFile oldFile, oldFiles)
     {
-        QString oldPath = QDir::fromNativeSeparators ( oldFile.linkPath.toLower() );
+        QString oldPath = QDir::fromNativeSeparators ( oldFile.linkPath().toLower() );
         bool found = false;
         foreach(LinkFile newFile, newFiles)
         {
-            QString newPath = QDir::fromNativeSeparators ( newFile.linkPath.toLower());
+            QString newPath = QDir::fromNativeSeparators ( newFile.linkPath().toLower());
             if (newPath == oldPath) 
             {
                 found = true;
@@ -213,10 +261,10 @@ bool LinkFiles::cleanup(QList <LinkFile> &newFiles, QList <LinkFile> &oldFiles)
 QDebug operator<<(QDebug out, const LinkFile &c)
 {
     out.space() << "LinkFile ("
-        << "execPath"     << c.execPath
-        << "linkPath" << c.linkPath
-        << "description"  << c.description
-        << "workingDir"   << c.workingDir
+        << "execPath"     << c.m_execPath
+        << "linkPath" << c.m_linkPath
+        << "description"  << c.m_description
+        << "workingDir"   << c.m_workingDir
         << ")";
     return out;
 }

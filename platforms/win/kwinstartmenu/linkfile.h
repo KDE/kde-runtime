@@ -25,22 +25,37 @@
 
 class LinkFile {
     public:
+		/// create instance 
         LinkFile(const QString &_execPath, const QString &_linkPath, const QString &_description, const QString &_workingDir)
         {
-            execPath     = _execPath;    
-            linkPath     = _linkPath;
-            description  = _description; 
-            workingDir   = _workingDir;  
+			m_execPath     = _execPath;    
+            m_linkPath     = _linkPath;
+            m_description  = _description; 
+            m_workingDir   = _workingDir;  
         }
-        bool exists();
+        
+		/// check if link file exists
+		bool exists();
+		/// create link file from instance data 
         bool create();
+		/// remove link file
         bool remove();
+		/// read link file content into instance 
+		bool read();
 
-        QString execPath;    
-        QString linkPath;
-        QString description; 
-        QString workingDir;  
+		QString execPath()    { return m_execPath; }    
+        QString linkPath()	 { return m_linkPath; }
+        QString description() { return m_description; }
+        QString workingDir()  { return m_workingDir; }  
+
         friend QDebug operator<<(QDebug out, const LinkFile &c);
+
+	protected:
+		QString m_execPath;    
+        QString m_linkPath;
+        QString m_description; 
+        QString m_workingDir;  
+
 };
 
 class LinkFiles {
