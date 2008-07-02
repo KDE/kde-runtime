@@ -75,7 +75,7 @@ namespace {
 
 int main( int argc, char** argv )
 {
-    KAboutData aboutData( "nepomukservicestub", 0,
+    KAboutData aboutData( "nepomukservicestub", "nepomuk",
                           ki18n("Nepomuk Service Stub"),
                           "0.1",
                           ki18n("Nepomuk Service Stub"),
