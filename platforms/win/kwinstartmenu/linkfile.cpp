@@ -137,7 +137,7 @@ bool LinkFile::read()
 
 #   if !defined(UNICODE)
         WCHAR wsz[MAX_PATH];
-        if (0 == MultiByteToWideChar(CP_ACP, 0, szShortcutFile, -1, wsz, MAX_PATH) )
+        if (0 == MultiByteToWideChar(CP_ACP, 0, (CHAR*)(szShortcutFile), -1, wsz, MAX_PATH) )
             goto cleanup;
 #   else
         LPCWSTR wsz = szShortcutFile;
@@ -152,15 +152,15 @@ bool LinkFile::read()
     if (FAILED( ppf->Load(wsz, STGM_READ) ))
         goto cleanup;
 
-    if (NOERROR != psl->GetPath(szTarget, MAX_PATH, NULL, 0) )
+    if (NOERROR != psl->GetPath((CHAR*)(szTarget), MAX_PATH, NULL, 0) )
         goto cleanup;
 	m_execPath = QString::fromUtf16((const ushort*)szTarget);
 
-	if (NOERROR != psl->GetWorkingDirectory(szWorkingDir, MAX_PATH) )
+	if (NOERROR != psl->GetWorkingDirectory((CHAR*)(szWorkingDir), MAX_PATH) )
         goto cleanup;
 	m_workingDir = QString::fromUtf16((const ushort*)szWorkingDir);
 
-	if (NOERROR != psl->GetDescription(szDescription, MAX_PATH) )
+	if (NOERROR != psl->GetDescription((CHAR*)(szDescription), MAX_PATH) )
         goto cleanup;
 	m_description = QString::fromUtf16((const ushort*)szDescription);
 
