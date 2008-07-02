@@ -83,7 +83,7 @@ namespace Nepomuk {
 
 extern "C" NEPOMUK_SERVER_EXPORT int kdemain( int argc, char** argv )
 {
-    KAboutData aboutData( "NepomukServer", 0,
+    KAboutData aboutData( "NepomukServer", "nepomuk",
                           ki18n("Nepomuk Server"),
                           "0.2",
                           ki18n("Nepomuk Server - Manages Nepomuk storage and services"),
