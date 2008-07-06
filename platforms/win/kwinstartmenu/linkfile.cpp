@@ -64,12 +64,11 @@ static QString longFileName(const QString &path)
 // linkName     - full path to the link to be created
 // description  - description of the link (for tooltip)
 
-bool CreateLink(const QString &_fileName, const QString &_linkName, const QString &description, const QString &workingDir = QString())
+bool CreateLink(const QString &fileName, const QString &_linkName, const QString &description, const QString &workingDir = QString())
 {
     HRESULT hres;
     IShellLinkW* psl;
 
-    QString fileName = _fileName;
     QString linkName = longFileName(_linkName);
 
     LPCWSTR lpszPathObj  = (LPCWSTR)fileName.utf16();

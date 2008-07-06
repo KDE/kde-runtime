@@ -41,16 +41,13 @@ struct WinStartMenuModulePrivate
 {
     WinStartMenuModulePrivate()
      : config("kwinstartmenurc")
-     , ksycoca(0)
     {
     }
     virtual ~WinStartMenuModulePrivate() 
     { 
-        delete ksycoca;
     }
 
     KConfig config;
-    KSycoca *ksycoca;
 };
 
 WinStartMenuModule::WinStartMenuModule(QObject* parent, const QList<QVariant>&)
@@ -59,17 +56,15 @@ WinStartMenuModule::WinStartMenuModule(QObject* parent, const QList<QVariant>&)
 {
     KConfigGroup group( &d->config, "General" );
 
-    d->ksycoca = new KSycoca();
     if (group.readEntry("Enabled", true))
-      connect(d->ksycoca, SIGNAL(databaseChanged()), this, SLOT(databaseChanged()));
+      connect(KSycoca::self(), SIGNAL(databaseChanged()), this, SLOT(databaseChanged()));
     
     new WinStartMenuAdaptor( this );
 }
 
 WinStartMenuModule::~WinStartMenuModule()
 {
-    if (d->ksycoca)
-      disconnect(d->ksycoca, SIGNAL(databaseChanged()), this, SLOT(databaseChanged()));
+    disconnect(KSycoca::self(), SIGNAL(databaseChanged()), this, SLOT(databaseChanged()));
     delete d;
 }
 
