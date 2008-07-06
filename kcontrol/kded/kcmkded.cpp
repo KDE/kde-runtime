@@ -401,11 +401,11 @@ void KDEDConfig::slotStartService()
 		if ( reply.value() )
 			slotServiceRunningToggled();
 		else
-			KMessageBox::error(this, "<qt>" + i18n("Unable to start server <em>service</em>.") + "</qt>");
+			KMessageBox::error(this, "<qt>" + i18n("Unable to start server <em>%1</em>.", service) + "</qt>");
 	}
 	else {
-		KMessageBox::error(this, "<qt>" + i18n("Unable to start service <em>service</em>.<br /><br /><i>Error: %1</i>",
-											reply.error().message()) + "</qt>" );
+		KMessageBox::error(this, "<qt>" + i18n("Unable to start service <em>%1</em>.<br /><br /><i>Error: %2</i>",
+											service, reply.error().message()) + "</qt>" );
 	}
 }
 
@@ -421,11 +421,11 @@ void KDEDConfig::slotStopService()
 		if ( reply.value() )
 			slotServiceRunningToggled();
 		else
-			KMessageBox::error(this, "<qt>" + i18n("Unable to stop server <em>service</em>.") + "</qt>");
+			KMessageBox::error(this, "<qt>" + i18n("Unable to stop server <em>%1</em>.", service) + "</qt>");
 	}
 	else {
-		KMessageBox::error(this, "<qt>" + i18n("Unable to stop service <em>service</em>.<br /><br /><i>Error: %1</i>",
-											reply.error().message()) + "</qt>" );
+		KMessageBox::error(this, "<qt>" + i18n("Unable to stop service <em>%1</em>.<br /><br /><i>Error: %2</i>",
+											service, reply.error().message()) + "</qt>" );
 	}
 }
 
