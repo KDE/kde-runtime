@@ -3,9 +3,9 @@ project(nepomukfilewatch)
 include_directories(
   ${QT_INCLUDES}
   ${KDE4_INCLUDES}
-  ${CMAKE_SOURCE_DIR}
   ${SOPRANO_INCLUDE_DIR}
-  ${nepomukfilewatch_BINARY_DIR}
+  ${CMAKE_SOURCE_DIR}
+  ${NEPOMUK_INCLUDE_DIR}
   )
 
 set(SRCS
