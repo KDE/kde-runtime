@@ -1,5 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2006 by Tobias Koenig <tokoe@kde.org>                   *
+ *   Copyright (C) 2008 by Sebastian Trueg <trueg@kde.org>                 *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU Library General Public License as       *
@@ -30,9 +31,9 @@
  */
 class ProcessControl : public QObject
 {
-  Q_OBJECT
+    Q_OBJECT
 
-  public:
+public:
     /**
      * Theses enums describe the behaviour when the observed
      * application crashed.
@@ -42,8 +43,8 @@ class ProcessControl : public QObject
      */
     enum CrashPolicy
     {
-      StopOnCrash,
-      RestartOnCrash
+        StopOnCrash,
+        RestartOnCrash
     };
 
     /**
@@ -62,7 +63,7 @@ class ProcessControl : public QObject
      * Starts the @p application with the given list of @p arguments.
      */
     bool start( const QString &application, const QStringList &arguments = QStringList(),
-                CrashPolicy policy = RestartOnCrash );
+                CrashPolicy policy = RestartOnCrash, int maxCrashes = 5 );
 
     /**
      * Stops the currently running application.
@@ -76,7 +77,7 @@ class ProcessControl : public QObject
 
     bool isRunning() const;
 
-  Q_SIGNALS:
+Q_SIGNALS:
     /**
      * This signal is emitted whenever the observed application
      * writes something to stderr.
@@ -87,14 +88,13 @@ class ProcessControl : public QObject
 
     void finished( bool clean );
 
-  private Q_SLOTS:
+private Q_SLOTS:
     void slotError( QProcess::ProcessError );
     void slotFinished( int, QProcess::ExitStatus );
     void slotErrorMessages();
     void slotStdoutMessages();
-    void resetCrashCount();
 
-  private:
+private:
     bool start();
 
     QProcess mProcess;

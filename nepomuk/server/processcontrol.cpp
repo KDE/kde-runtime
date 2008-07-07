@@ -42,13 +42,14 @@ ProcessControl::~ProcessControl()
     stop();
 }
 
-bool ProcessControl::start( const QString &application, const QStringList &arguments, CrashPolicy policy )
+bool ProcessControl::start( const QString &application, const QStringList &arguments, CrashPolicy policy, int maxCrash )
 {
     mFailedToStart = false;
 
     mApplication = application;
     mArguments = arguments;
     mPolicy = policy;
+    mCrashCount = maxCrash;
 
     return start();
 }
@@ -87,7 +88,8 @@ void ProcessControl::slotFinished( int exitCode, QProcess::ExitStatus exitStatus
 {
     if ( exitStatus == QProcess::CrashExit ) {
         if ( mPolicy == RestartOnCrash ) {
-            if ( !mFailedToStart ) // don't try to start an unstartable application
+             // don't try to start an unstartable application
+            if ( !mFailedToStart && --mCrashCount >= 0 )
                 start();
             else
                 emit finished(false);
@@ -127,11 +129,6 @@ void ProcessControl::slotStdoutMessages()
 {
     QString message = QString::fromUtf8( mProcess.readAllStandardOutput() );
     qDebug() << mApplication << "[out]" << message;
-}
-
-void ProcessControl::resetCrashCount()
-{
-    mCrashCount = 0;
 }
 
 bool ProcessControl::isRunning() const
