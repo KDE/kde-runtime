@@ -239,6 +239,7 @@ void Nepomuk::ServiceController::slotProcessFinished( bool /*clean*/ )
 {
     kDebug() << "Service" << name() << "went down";
     d->initialized = false;
+    d->attached = false;
     disconnect( QDBusConnection::sessionBus().interface() );
     delete d->serviceControlInterface;
     d->serviceControlInterface = 0;
