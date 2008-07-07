@@ -38,6 +38,9 @@ Nepomuk::Core::Core( QObject* parent )
 Nepomuk::Core::~Core()
 {
     kDebug(300002) << "Shutting down Nepomuk storage core.";
+
+    KSharedConfig::Ptr config = KSharedConfig::openConfig( "nepomukserverrc" );
+    config->group( "Basic Settings" ).writeEntry( "Configured repositories", m_repositories.keys() );
 }
 
 
