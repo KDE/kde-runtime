@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Service
+ServiceTypes=NepomukService
+X-KDE-Library=nepomukfilewatch
+X-KDE-Nepomuk-autostart=true
+X-KDE-Nepomuk-start-on-demand=false
+Name=NepomukFileWatch
+Comment=The Nepomuk file watch service for monitoring file changes
