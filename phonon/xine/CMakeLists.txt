@@ -42,6 +42,7 @@ else(XCB_FOUND AND XINE_XCB_FOUND)
 endif(XCB_FOUND AND XINE_XCB_FOUND)
 macro_log_feature(XCB_VIDEO "XCB" "XCB is needed for the video widget, libxine needs to be compiled with XCB" "http://xcb.freedesktop.org/")
 
+add_definitions(-DPHONON_BACKEND_VERSION_4_2)
 kde4_add_plugin(phonon_xine ${phonon_xine_PART_SRCS})
 target_link_libraries(phonon_xine ${QT_QTGUI_LIBRARY} ${KDE4_KDECORE_LIBS} ${KDE4_KDEUI_LIBS} ${KDE4_PHONON_LIBS} ${XINE_LIBRARY})
 if(XCB_FOUND AND XINE_XCB_FOUND)
