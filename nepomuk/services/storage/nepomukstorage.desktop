@@ -6,6 +6,7 @@ X-KDE-Nepomuk-autostart=true
 X-KDE-Nepomuk-start-on-demand=true
 Name=Nepomuk Data Storage
 Name[bg]=Хранилище Nepomuk
+Name[bn_IN]=Nepomuk ডাটা সংরক্ষণব্যবস্থা
 Name[ca]=Emmagatzematge de dades del Nepomuk
 Name[da]=Nepomuk datalagring
 Name[de]=Nepomuk-Datendienst

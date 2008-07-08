@@ -1,6 +1,7 @@
 [Desktop Entry]
 Type=Service
 Name=KDED Windows Start Menu Module
+Name[bn_IN]=KDED Windows Start Menu মডিউল
 Name[ca]=Mòdul del menú d'inici del Windows del KDED
 Name[da]=KDED-modul til Windows' startmenu
 Name[de]=Windows-Startmenü-Modul
@@ -42,6 +43,7 @@ Comment[ar]=دعم أيقونات الإختصارات
 Comment[be]=Падтрымка значак скаротаў
 Comment[bg]=Поддръжка на препратки с икони
 Comment[bn]=শর্টকাট আইকন সাপোর্ট
+Comment[bn_IN]=শর্ট-কাট আইকন সমর্থন
 Comment[ca]=Permet l'ús de dreceres d'icona
 Comment[cs]=Podpora ikon zkratek
 Comment[csb]=Òbsłużënk ikònów serwerów
