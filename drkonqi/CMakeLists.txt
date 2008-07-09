@@ -10,6 +10,7 @@ set(drkonqi_SRCS
    krashadaptor.cpp
    drbugreport.cpp 
    backtrace.cpp 
+   backtracegdb.cpp
    toplevel.cpp )
 
 kde4_add_executable(drkonqi ${drkonqi_SRCS})

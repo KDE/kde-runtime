@@ -2,6 +2,7 @@
  * drkonqi - The KDE Crash Handler
  *
  * Copyright (C) 2000-2003 Hans Petter Bieker <bieker@kde.org>
+ * Copyright (C) 2008 Lubos Lunak <l.lunak@kde.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,43 +26,22 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************/
 
-#ifndef BACKTRACE_H
-#define BACKTRACE_H
+#ifndef BACKTRACEGDB_H
+#define BACKTRACEGDB_H
 
-class KrashConfig;
-class KTemporaryFile;
+#include "backtrace.h"
 
-#include <KProcess>
-
-class BackTrace : public QObject
+class BackTraceGdb : public BackTrace
 {
   Q_OBJECT
 
 public:
-  BackTrace(const KrashConfig *krashconf, QObject *parent);
-  ~BackTrace();
-
-  void start();
-
-Q_SIGNALS:
-  void append(const QString &str); // Just the new text
-
-  void someError();
-  void done(const QString &); // replaces whole text
-
-protected Q_SLOTS:
-  void slotProcessExited(int exitCode, QProcess::ExitStatus exitStatus);
-  void slotReadInput();
+  BackTraceGdb(const KrashConfig *krashconf, QObject *parent);
+  ~BackTraceGdb();
 
 protected:
-  virtual QString processDebuggerOutput( QString bt ) = 0;
-  virtual bool usefulDebuggerOutput( QString bt ) = 0;
-  const KrashConfig * const m_krashconf;
-
-private:
-  KProcess *m_proc;
-  KTemporaryFile *m_temp;
-  QString m_strBt;
-  QByteArray m_output;
+  virtual QString processDebuggerOutput( QString bt );
+  virtual bool usefulDebuggerOutput( QString bt );
 };
+
 #endif
