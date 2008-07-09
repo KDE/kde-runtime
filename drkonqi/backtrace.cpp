@@ -40,7 +40,15 @@
 #include <signal.h>
 
 #include "krashconf.h"
+#include "backtracegdb.h"
 #include "backtrace.moc"
+
+BackTrace* BackTrace::create(const KrashConfig* krashconf, QObject* parent)
+{
+  if(krashconf->debuggerName() == "gdb" )
+    return new BackTraceGdb(krashconf, parent);
+  abort(); // serious misconfiguration
+}
 
 BackTrace::BackTrace(const KrashConfig *krashconf, QObject *parent)
   : QObject(parent),

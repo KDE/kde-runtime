@@ -210,14 +210,7 @@ void KrashDebugger :: startDebugger()
     return;
   }
 
-  if(m_krashconf->debuggerName() == "gdb" )
-    m_proctrace = new BackTraceGdb(m_krashconf, this);
-  else
-  {
-    m_backtrace->setPlainText( i18n( "Unknown or no debugger found." ));
-    m_status->setText( i18n( "Backtrace will not be created."));
-    return;
-  }
+  m_proctrace = BackTrace::create(m_krashconf, this);
 
   if( !msg.isEmpty())
   {
