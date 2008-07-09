@@ -42,6 +42,15 @@ public:
 protected:
   virtual QString processDebuggerOutput( QString bt );
   virtual bool usefulDebuggerOutput( QString bt );
+private:
+  void processBacktrace( int index );
+  bool usefulBacktrace( int index );
+  QStringList removeLines( QStringList list, const QRegExp& regexp );
+  QStringList removeFirstLine( QStringList list, const QRegExp& regexp );
+  bool prettyKcrashHandler( int index );
+  QStringList common; // the first part gdb output, before any backtraces
+  QList< QStringList > backtraces; // backtraces, more if there are more threads
+  int backtraceWithCrash; // index of the thread in which the crash happened
 };
 
 #endif
