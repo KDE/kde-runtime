@@ -79,7 +79,8 @@ namespace {
 
 
 Nepomuk::FileWatch::FileWatch( QObject* parent, const QList<QVariant>& )
-    : Service( parent )
+    : Service( parent ),
+      m_strigiParentUrlUri( "http://strigi.sf.net/ontologies/0.9#parentUrl" )
 {
     // monitor KIO for changes
     QDBusConnection::sessionBus().connect( QString(), QString(), "org.kde.KDirNotify", "FileMoved",
@@ -211,7 +212,12 @@ void Nepomuk::FileWatch::updateMetaData( const KUrl& from, const KUrl& to )
                                                                s.predicate(),
                                                                Soprano::LiteralValue( to.path() ),
                                                                s.context() ) );
-
+            }
+            else if ( s.predicate() == m_strigiParentUrlUri ) {
+                mainModel()->addStatement( Soprano::Statement( newResource,
+                                                               s.predicate(),
+                                                               Soprano::LiteralValue( to.directory( KUrl::IgnoreTrailingSlash ) ),
+                                                               s.context() ) );
             }
             else {
                 mainModel()->addStatement( Soprano::Statement( newResource,

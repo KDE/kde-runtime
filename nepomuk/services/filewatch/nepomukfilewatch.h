@@ -50,6 +50,8 @@ namespace Nepomuk {
     private:
         void removeMetaData( const KUrl& );
         void updateMetaData( const KUrl& from, const KUrl& to );
+
+        QUrl m_strigiParentUrlUri;
     };
 }
 
