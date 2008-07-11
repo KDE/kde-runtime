@@ -22,6 +22,7 @@
 
 #include <QList>
 #include <QString>
+#include <QStringList>
 
 class LinkFile {
     public:
@@ -29,6 +30,17 @@ class LinkFile {
         LinkFile(const QString &_execPath, const QString &_linkPath, const QString &_description, const QString &_workingDir)
         {
 			m_execPath     = _execPath;    
+			m_execParams   = QString();
+            m_linkPath     = _linkPath;
+            m_description  = _description; 
+            m_workingDir   = _workingDir;  
+        }
+        LinkFile(const QStringList &_execPath, const QString &_linkPath, const QString &_description, const QString &_workingDir)
+        {
+			if (_execPath.size() > 0)
+				m_execPath     = _execPath[0];
+			if (_execPath.size() > 1)
+				m_execParams   = _execPath[1];    
             m_linkPath     = _linkPath;
             m_description  = _description; 
             m_workingDir   = _workingDir;  
@@ -52,6 +64,7 @@ class LinkFile {
 
 	protected:
 		QString m_execPath;    
+		QString m_execParams;    
         QString m_linkPath;
         QString m_description; 
         QString m_workingDir;  

@@ -27,7 +27,6 @@
 #include <shlwapi.h>
 #include <initguid.h>
 
-#include <QString>
 #include <QDir>
 #include <QFile>
 
@@ -189,7 +188,23 @@ cleanup:
 
 bool LinkFile::create()
 {
-    return CreateLink(m_execPath,m_linkPath,m_description,m_workingDir);
+	QString execPath;
+	//  the create link api wraps the whole execpath  with '"' when there are spaces in the string, 
+	//  e.g. between the path and the first parameter. To avoid this wrapping the path with '"' is required 
+    // add parameter list to executable path 
+	// -> disabled parameter support for now, because i had no luck to figure out the rule 
+    // how to create a valid execpath *with* parameters 
+
+#ifdef ENABLE_EXECPATH_COMMANDLINE_PARAMETER
+	if (!m_execParams.isEmpty()) {
+		QString execParams = m_execParams.replace("%i","").replace("%u","").replace("%c",m_description);
+		execPath = m_execPath + " " + execParams.trimmed();
+	}
+	else
+#endif
+		execPath = m_execPath;
+
+	return CreateLink(execPath,m_linkPath,m_description,m_workingDir);
 }
 
 bool LinkFile::remove()

@@ -208,8 +208,11 @@ bool generateMenuEntries(QList<LinkFile> &files, const KUrl &url, const QString 
                 
             QString exec = df.desktopGroup().readEntry("Exec","");
             QStringList cmd = exec.split(" ");
-            if (cmd.size() >= 1)
+            if (cmd.size() >= 1) {
                 exec = cmd[0];
+                cmd.removeFirst();
+            }
+            QString execParams = cmd.join(" ");
 
             // create executable path 
             QString execPath = KStandardDirs::findExe(exec);
@@ -233,9 +236,9 @@ bool generateMenuEntries(QList<LinkFile> &files, const KUrl &url, const QString 
                 }
             }
             QString workingDir = getWorkingDir();
-            QString description = "";
+            QString description = s->genericName();
 
-            files.append(LinkFile(execPath,linkFilePath,description,workingDir));
+            files.append(LinkFile(QStringList() << execPath << execParams,linkFilePath,description,workingDir));
 		}
 		count++;
 	}
