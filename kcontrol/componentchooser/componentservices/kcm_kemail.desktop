@@ -41,6 +41,7 @@ Name[lt]=E. pašto klientas
 Name[lv]=Epasta klients
 Name[mk]=Клиент за е-пошта
 Name[ml]=ഈമെയില്‍ ക്ലയന്റ്
+Name[mr]=ईमेल क्लाएंट
 Name[ms]=Pelanggan E-mel
 Name[nb]=E-postprogram
 Name[nds]=Nettpost-Programm
@@ -110,9 +111,10 @@ Comment[km]=សេវា​នេះ​អនុញ្ញាត​ឲ្យ​�
 Comment[ko]=이 서비스에서는 기본 전자 우편 클라이언트를 설정할 수 있습니다. 전자 우편 클라이언트에 접근하려고 하는 모든 KDE 프로그램에서는 이 설정을 따라야 합니다.
 Comment[ku]=Ev xizmet destûrê dide te ku navrûyê e-peyamê ya standard mîheng bikî. Hemû sepanên KDE'yê yên ku tu dikarî hyperlînkê hilbijêrî dê vê mîhengê erê bikin.
 Comment[lt]=Ši tarnyba leidžia jums nustatyti Jūsų numatytą pašto klientą. Visos KDE programos, kurioms reikia e. pašto kliento programos, turėtų atsižvelgti į šį nustatymą.
-Comment[lv]=Šis servis ļauj jums konfigurēt noklusējuma epasta klientu. Visas KDE programmas, kurām ir nepieciešams epasts, izmantos šo parametru.
+Comment[lv]=Šeit jūs varat konfigurēt noklusējuma e-pasta klientu. Visas KDE programmas, kurām ir nepieciešams e-pasts, izmantos šo parametru.
 Comment[mk]=Овој сервис ви овозможува да го конфигурирате вашиот стандарден клиент за електронска пошта. Сите KDE-апликации на кои им е потребен пристап до електронска пошта ќе ги почитуваат овие поставувања.
 Comment[ml]=നിങ്ങളുടെ സഹജമായ ഇമെയില്‍ ക്ലയന്റ് നിങ്ങള്‍ക്കിവിടെ ക്രമീകരിയ്ക്കാം. ഇമെയില്‍ ക്ലയന്റ് ഉപയോഗിയ്ക്കാന്‍ ആവശ്യമുള്ള എല്ലാ കെഡിഇ പ്രയോഗങ്ങളും ഇതു് മാനിയ്ക്കണം.
+Comment[mr]=ही सेवा आपल्याला मुलभूत ईमेल क्लाएंट संयोजीत करण्यास सहमती सहमती देते. सर्व KDE अनुप्रयोग ज्यांस ईमेल क्लाएंट अनुप्रयोग करीता प्रवेशाची आवश्यकता असते त्यांनी ही संयोजना स्वीकारली पाहिजे.
 Comment[ms]=Servis ini membolehkan anda konfigur klien e-mel piawai anda. Semua aplikasi KDE yang perlu akses kepada aplikasi klien e-mel hendaklah menerima seting ini.
 Comment[nb]=Med denne tjenesten kan du sette opp standard-e-postprogrammet. Alle KDE-programmer som trenger tilgang til e-post bør ta hensyn til denne innstillinga.
 Comment[nds]=Hier kannst Du Dien Standard-Nettpostprogramm angeven. All KDE- Programmen, de Togang to'n Nettpostprogramm bruukt, schullen dat denn anwennen.

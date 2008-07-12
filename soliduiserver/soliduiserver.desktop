@@ -34,6 +34,8 @@ Name[km]=ម៉ាស៊ីន​បម្រើ​ចំណុច​ប្រ�
 Name[ko]=Solid 사용자 인터페이스 서버
 Name[ku]=Pêşkêşkara Navrûyê Bikarhêner ê Hişk
 Name[lv]=Solid lietotāja saskarnes serveris
+Name[ml]=സോളിഡ് യൂസര്‍ ഇന്റര്‍ഫെയിസ് സര്‍വര്‍
+Name[mr]=ठोस वापरकर्ता संवादपट सर्वर
 Name[nb]=Brukerflate-tjener for Solid
 Name[nds]=Solid-Böversietserver
 Name[ne]=ठोस प्रयोगकर्ता इन्टरफेस सर्भर
@@ -43,6 +45,7 @@ Name[pl]=Solid: serwer interfejsu użytkownika
 Name[pt]=Servidor da Interface de Utilizador para o Solid
 Name[pt_BR]=Servidor da Interface de Usuário do Solid
 Name[ro]=Server de interfață Solid
+Name[ru]=Сервер интерфейса пользователя Solid
 Name[se]=Solida geavaheaddjiláktabálvá
 Name[sl]=Strežnik uporabniškega vmesnika za Solid
 Name[sr]=Сервер корисничког сучеља за Солид
@@ -83,6 +86,7 @@ Comment[kk]=Solid деген жабдықтарды байқау жүйесі и
 Comment[km]=ម៉ាស៊ីន​បម្រើ​ចំណុច​ប្រទាក់​អ្នក​ប្រើ​សម្រាប់ Solid ប្រព័ន្ធ​រក​ឃើញ​ផ្នែក​រឹង
 Comment[ko]=하드웨어 감지 시스템 Solid의 사용자 인터페이스 서버
 Comment[lv]=Lietotāja saskarnes serveris priekš Solid, aparatūras atklāšanas sistēmas
+Comment[ml]=ഹാര്‍ഡ്‌വെയര്‍ ലഭ്യമാക്കുന്ന സംവിധാനമായ സോളിഡിനുള്ള യൂസര്‍ ഇന്റര്‍ഫെയിസ് സര്‍നവര്‍
 Comment[nb]=En brukerflate-tjener for Solid, et system for å finne maskinvare
 Comment[nds]=En Böversietserver för Solid, dat Hardware-Opdecksysteem
 Comment[ne]=ठोसका लागि एउटा प्रयोगकर्ता इन्टरफेस, हार्डवेयर पत्ता लगाउने प्रणाली
