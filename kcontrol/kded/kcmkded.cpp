@@ -123,6 +123,7 @@ KDEDConfig::KDEDConfig(QWidget* parent, const QVariantList &) :
 
 	connect(_pbStart, SIGNAL(clicked()), SLOT(slotStartService()));
 	connect(_pbStop, SIGNAL(clicked()), SLOT(slotStopService()));
+	connect(_lvLoD, SIGNAL(itemClicked(QTreeWidgetItem*, int)), SLOT(slotLodItemSelected(QTreeWidgetItem*)) );
 	connect(_lvStartup, SIGNAL(itemClicked(QTreeWidgetItem*, int)), SLOT(slotEvalItem(QTreeWidgetItem*)) );
 	connect(_lvStartup, SIGNAL(itemChanged(QTreeWidgetItem*, int)), SLOT(slotItemChecked(QTreeWidgetItem*)) );
 
@@ -368,8 +369,15 @@ void KDEDConfig::slotReload()
 
 void KDEDConfig::slotEvalItem(QTreeWidgetItem * item)
 {
-	if (!item)
+	if (!item) {
+		// Disable the buttons
+		_pbStart->setEnabled( false );
+		_pbStop->setEnabled( false );
 		return;
+	}
+
+	// Deselect a currently selected element in the "load on demand" treeview
+	_lvLoD->setCurrentItem(NULL);
 
 	if ( item->text(3) == RUNNING ) {
 		_pbStart->setEnabled( false );
@@ -386,6 +394,18 @@ void KDEDConfig::slotEvalItem(QTreeWidgetItem * item)
 	}
 
 	getServiceStatus();
+}
+
+void KDEDConfig::slotLodItemSelected(QTreeWidgetItem * item)
+{
+	if (!item)
+		return;
+
+	// Deselect a currently selected element in the "load on startup" treeview
+	_lvStartup->setCurrentItem(NULL);
+	// The above line doesn't trigger itemClicked. So call that handler
+	// ourselve
+	slotEvalItem(NULL);
 }
 
 void KDEDConfig::slotServiceRunningToggled()
