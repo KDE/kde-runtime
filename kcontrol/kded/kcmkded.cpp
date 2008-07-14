@@ -1,3 +1,4 @@
+// vim: noexpandtab shiftwidth=4 tabstop=4
 /* This file is part of the KDE project
    Copyright (C) 2002 Daniel Molkentin <molkentin@kde.org>
 
@@ -201,6 +202,9 @@ void KDEDConfig::load() {
 					treeitem->setData( 0, LibraryRole, file.desktopGroup().readEntry("X-KDE-Library") );
 				}
 				_lvLoD->addTopLevelItem( treeitem );
+			}
+			else {
+				kWarning() << "kcmkded: Module " << file.readName() << " not loaded on demand or startup! Skipping.";
 			}
 		}
 	}
