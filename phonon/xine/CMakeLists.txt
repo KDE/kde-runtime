@@ -2,9 +2,6 @@ add_subdirectory(kcm)
 
 include_directories(${XINE_INCLUDE_DIR})
 
-# xine expects off_t to be 64bits
-ADD_DEFINITIONS(-D_FILE_OFFSET_BITS=64)
-
 set(phonon_xine_PART_SRCS
    sinknode.cpp
    sourcenode.cpp

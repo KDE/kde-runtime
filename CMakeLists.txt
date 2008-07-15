@@ -29,7 +29,6 @@ check_include_files(sys/time.h HAVE_SYS_TIME_H)
 configure_file (config-runtime.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-runtime.h )
 
 add_definitions (${QT_DEFINITIONS} ${KDE4_DEFINITIONS})
-add_definitions(-D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE) # for off_t, in at least kio_trash and kio_smb
 
 include_directories (${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} ${KDE4_INCLUDES})
 
