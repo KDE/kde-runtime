@@ -38,9 +38,7 @@
 #include <cstdlib>
 #include <QObject>
 
-#if not defined _FILE_OFFSET_BITS or _FILE_OFFSET_BITS != 64
-#error "_FILE_OFFSET_BITS needs to be set to 64"
-#endif
+extern const char Error__off_t_needs_to_have_64_bits[sizeof(off_t) == 8 ? 1 : -1];
 
 namespace Phonon
 {

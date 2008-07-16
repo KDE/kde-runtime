@@ -38,10 +38,6 @@ extern "C" {
 #include "net_buf_ctrl.h"
 #undef this
 
-#if not defined _FILE_OFFSET_BITS or _FILE_OFFSET_BITS != 64
-#error "_FILE_OFFSET_BITS needs to be set to 64"
-#endif
-
 static void kbytestream_pause_cb(void *that_gen);
 static void kbytestream_normal_cb(void *that_gen);
 class KByteStreamInputPlugin : public input_plugin_t
