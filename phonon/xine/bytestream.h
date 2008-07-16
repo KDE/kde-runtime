@@ -38,6 +38,10 @@
 #include <cstdlib>
 #include <QObject>
 
+#if not defined _FILE_OFFSET_BITS or _FILE_OFFSET_BITS != 64
+#error "_FILE_OFFSET_BITS needs to be set to 64"
+#endif
+
 namespace Phonon
 {
 namespace Xine
