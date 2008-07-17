@@ -33,8 +33,11 @@ class XineStream;
 
 class XineThread : public QThread
 {
+    friend class Backend;
     Q_OBJECT
     public:
+        static XineThread *instance();
+
         XineThread();
         ~XineThread();
 

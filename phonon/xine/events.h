@@ -25,6 +25,7 @@
 #include "xinestream.h"
 
 #include <QtCore/QEvent>
+#include <QtCore/QSize>
 #include <QtCore/QPair>
 #include <QtCore/QList>
 
@@ -94,13 +95,17 @@ public:
         Reference,
         Rewire,
         HasVideo,
-        RequestFrameFormat
+        IsThereAXineEngineForMe,
+        NoThereIsNoXineEngineForYou,
+        HeresYourXineStream,
+        Cleanup
     };
 
     int ref;
 
     inline Event(Type t) : QEvent(static_cast<QEvent::Type>(t)), ref(1) {}
-    Type type() const { return static_cast<Type>(QEvent::type()); }
+
+    inline Type type() const { return static_cast<Type>(QEvent::type()); }
 }; // class Event
 
 template<typename T>
@@ -110,14 +115,15 @@ inline T *copyEvent(T *)
     return 0;
 }
 
+EVENT_CLASS1(HeresYourXineStream, QExplicitlySharedDataPointer<XineStream> s, stream(s), QExplicitlySharedDataPointer<XineStream>, stream)
 EVENT_CLASS1(HasVideo, bool v, hasVideo(v), const bool, hasVideo)
 EVENT_CLASS1(UpdateVolume, int v, volume(v), const int, volume)
-EVENT_CLASS1(Rewire, QList<WireCall> _wireCalls, wireCalls(_wireCalls), const QList<WireCall>, wireCalls)
 EVENT_CLASS1(EventSend, const xine_event_t *const e, event(e), const xine_event_t *const, event)
 EVENT_CLASS1(GaplessSwitch, const QByteArray &_mrl, mrl(_mrl), const QByteArray, mrl)
 EVENT_CLASS1(SetTickInterval, qint32 i, interval(i), const qint32, interval)
 EVENT_CLASS1(SetPrefinishMark, qint32 i, time(i), const qint32, time)
 
+EVENT_CLASS2(Rewire, QList<WireCall> _wireCalls, QList<WireCall> _unwireCalls, wireCalls(_wireCalls), unwireCalls(_unwireCalls), const QList<WireCall>, wireCalls, const QList<WireCall>, unwireCalls)
 EVENT_CLASS2(Reference, bool alt, const QByteArray &m, alternative(alt), mrl(m), const bool, alternative, const QByteArray, mrl)
 EVENT_CLASS2(Progress, const QString &d, int p, description(d), percent(p), const QString, description, const int, percent)
 EVENT_CLASS2(Error, Phonon::ErrorType t, const QString &r, type(t), reason(r), const Phonon::ErrorType, type, const QString, reason)
@@ -143,8 +149,7 @@ template <> inline FrameFormatChangeEvent *copyEvent<FrameFormatChangeEvent>(Fra
 class SeekCommandEvent : public Event
 {
     public:
-        SeekCommandEvent(qint64 t) : QEVENT(SeekCommand), valid(true), time(t) {}
-        bool valid;
+        SeekCommandEvent(qint64 t) : QEVENT(SeekCommand), time(t) {}
         const qint64 time;
 };
 template <> inline SeekCommandEvent *copyEvent<SeekCommandEvent>(SeekCommandEvent *e)

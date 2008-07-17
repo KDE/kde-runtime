@@ -25,9 +25,9 @@
 #include <QPixmap>
 #include <xine.h>
 
-#ifndef PHONON_XINE_NO_VIDEOWIDGET
+//#ifndef PHONON_XINE_NO_VIDEOWIDGET
 #include <xcb/xcb.h>
-#endif // PHONON_XINE_NO_VIDEOWIDGET
+//#endif // PHONON_XINE_NO_VIDEOWIDGET
 
 #include <Phonon/VideoWidget>
 #include <Phonon/VideoWidgetInterface>
@@ -41,6 +41,29 @@ namespace Xine
 {
 class VideoWidget;
 
+class XcbConnection : public QSharedData
+{
+    public:
+        static QExplicitlySharedDataPointer<XcbConnection> instance();
+        ~XcbConnection();
+//#ifndef PHONON_XINE_NO_VIDEOWIDGET
+        operator xcb_connection_t *() const { return m_xcbConnection; }
+        xcb_screen_t *screen() const { return m_screen; }
+        operator bool() const { return m_xcbConnection; }
+//#else // PHONON_XINE_NO_VIDEOWIDGET
+        //operator bool() const { return false; }
+//#endif // PHONON_XINE_NO_VIDEOWIDGET
+
+    private:
+        XcbConnection();
+
+    private:
+//#ifndef PHONON_XINE_NO_VIDEOWIDGET
+        xcb_connection_t *m_xcbConnection;
+        xcb_screen_t *m_screen;
+//#endif // PHONON_XINE_NO_VIDEOWIDGET
+};
+
 class VideoWidgetXT : public SinkNodeXT
 {
     friend class VideoWidget;
@@ -51,19 +74,23 @@ class VideoWidgetXT : public SinkNodeXT
 
         VideoWidget *videoWidget() const { return m_videoWidget; }
         xine_video_port_t *videoPort() const;
+        void createVideoPort();
+
     private:
-#ifndef PHONON_XINE_NO_VIDEOWIDGET
+//#ifndef PHONON_XINE_NO_VIDEOWIDGET
         xcb_visual_t m_visual;
         xcb_connection_t *m_xcbConnection;
-#endif // PHONON_XINE_NO_VIDEOWIDGET
+//#endif // PHONON_XINE_NO_VIDEOWIDGET
+        //QExplicitlySharedDataPointer<XcbConnection> m_xcbConnection;
         xine_video_port_t *m_videoPort;
         VideoWidget *m_videoWidget;
+        bool m_isValid;
 };
 
-class VideoWidget : public QWidget, public Phonon::VideoWidgetInterface, public Phonon::Xine::SinkNode, public ConnectNotificationInterface
+class VideoWidget : public QWidget, public Phonon::VideoWidgetInterface, public Phonon::Xine::SinkNode
 {
     Q_OBJECT
-    Q_INTERFACES(Phonon::VideoWidgetInterface Phonon::Xine::SinkNode Phonon::Xine::ConnectNotificationInterface)
+    Q_INTERFACES(Phonon::VideoWidgetInterface Phonon::Xine::SinkNode)
     public:
         VideoWidget(QWidget *parent = 0);
         ~VideoWidget();
@@ -95,12 +122,12 @@ class VideoWidget : public QWidget, public Phonon::VideoWidgetInterface, public 
         MediaStreamTypes inputMediaStreamTypes() const { return Phonon::Xine::Video | Phonon::Xine::Subtitle; }
         void downstreamEvent(Event *e);
 
-        void graphChanged();
-
     signals:
         void videoPortChanged();
 
     protected:
+        void aboutToChangeXineEngine();
+        void xineEngineChanged();
         //virtual void childEvent(QChildEvent *);
         virtual void resizeEvent(QResizeEvent *);
         virtual bool event(QEvent *);
@@ -118,9 +145,7 @@ class VideoWidget : public QWidget, public Phonon::VideoWidgetInterface, public 
         Phonon::VideoWidget::ScaleMode m_scaleMode;
 
         QSize m_sizeHint;
-        int m_videoWidth;
-        int m_videoHeight;
-        bool m_fullScreen;
+
         /**
          * No video should be shown, all paint events should draw black
          */

@@ -9,7 +9,6 @@ set(phonon_xine_PART_SRCS
    nullsink.cpp
     xineengine.cpp
     xinestream.cpp
-    audioport.cpp
     abstractaudiooutput.cpp
     audiodataoutput.cpp
     effect.cpp

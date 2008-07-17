@@ -25,7 +25,7 @@
 #include <QtCore/QExplicitlySharedDataPointer>
 #include <QtCore/QSet>
 #include <xine.h>
-#include "xineengine.h"
+#include "backend.h"
 #include "shareddata.h"
 
 namespace Phonon
@@ -34,11 +34,12 @@ namespace Xine
 {
 class SinkNode;
 class Event;
+class SinkNodeXT;
 
 class SourceNodeXT : virtual public SharedData
 {
     public:
-        SourceNodeXT(const char *name = "SourceNode") : className(name), deleted(false) {}
+        SourceNodeXT(const char *name = "SourceNode");
         virtual ~SourceNodeXT();
         virtual xine_post_out_t *audioOutputPort() const;
         virtual xine_post_out_t *videoOutputPort() const;
@@ -48,6 +49,9 @@ class SourceNodeXT : virtual public SharedData
 
     private:
         bool deleted;
+
+        friend class XineThread;
+        QExplicitlySharedDataPointer<SinkNodeXT> m_xtSink;
 };
 
 class SourceNode

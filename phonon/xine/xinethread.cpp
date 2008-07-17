@@ -25,11 +25,25 @@
 #include "xineengine.h"
 #include "xinestream.h"
 #include "events.h"
+#include "backend.h"
+#include <kdebug.h>
 
 namespace Phonon
 {
 namespace Xine
 {
+
+XineThread *XineThread::instance()
+{
+    Backend *const b = Backend::instance();
+    if (!b->m_thread) {
+        b->m_thread = new XineThread;
+        b->m_thread->moveToThread(b->m_thread);
+        b->m_thread->start();
+        b->m_thread->waitForEventLoop();
+    }
+    return b->m_thread;
+}
 
 XineThread::XineThread()
     : m_newStream(0),
@@ -54,7 +68,7 @@ void XineThread::waitForEventLoop()
 
 XineStream *XineThread::newStream()
 {
-    XineThread *that = XineEngine::thread();
+    XineThread *that = XineThread::instance();
 
     QMutexLocker locker(&that->m_mutex);
     Q_ASSERT(that->m_newStream == 0);
@@ -77,6 +91,15 @@ void XineThread::quit()
 bool XineThread::event(QEvent *e)
 {
     switch (e->type()) {
+    case Event::Cleanup:
+        e->accept();
+        {
+            const QList<QObject *> cleanupObjects = Backend::cleanupObjects();
+            foreach (QObject *o, cleanupObjects) {
+                delete o;
+            }
+        }
+        return true;
     case Event::NewStream:
         e->accept();
         m_mutex.lock();
@@ -91,10 +114,17 @@ bool XineThread::event(QEvent *e)
         kDebug(610) << "XineThread Rewire event:";
         {
             RewireEvent *ev = static_cast<RewireEvent *>(e);
+            foreach (WireCall unwire, ev->unwireCalls) {
+                kDebug(610) << "     " << unwire.source << " XX " << unwire.sink;
+                unwire.sink->assert();
+                unwire.source->assert();
+                unwire.source->m_xtSink = 0;
+            }
             foreach (WireCall wire, ev->wireCalls) {
                 kDebug(610) << "     " << wire.source << " -> " << wire.sink;
                 wire.sink->assert();
                 wire.source->assert();
+                wire.source->m_xtSink = wire.sink;
                 wire.sink->rewireTo(wire.source.data());
             }
         }

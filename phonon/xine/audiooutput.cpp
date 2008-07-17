@@ -33,6 +33,9 @@
 #include "wirecall.h"
 #include "xineengine.h"
 #include "xinethread.h"
+#include "keepreference.h"
+
+#include <xine/audio_out.h>
 
 #undef assert
 
@@ -41,7 +44,6 @@ namespace Phonon
 namespace Xine
 {
 
-#define K_XT(type) (static_cast<type *>(SinkNode::threadSafeObject().data()))
 AudioOutput::AudioOutput(QObject *parent)
     : AbstractAudioOutput(new AudioOutputXT, parent)
 {
@@ -50,6 +52,15 @@ AudioOutput::AudioOutput(QObject *parent)
 AudioOutput::~AudioOutput()
 {
     //kDebug(610) ;
+}
+
+AudioOutputXT::~AudioOutputXT()
+{
+    if (m_audioPort) {
+        xine_close_audio_driver(m_xine, m_audioPort);
+        m_audioPort = 0;
+        kDebug(610) << "----------------------------------------------- audio_port destroyed";
+    }
 }
 
 qreal AudioOutput::volume() const
@@ -77,9 +88,75 @@ void AudioOutput::setVolume(qreal newVolume)
     emit volumeChanged(m_volume);
 }
 
-AudioPort AudioOutputXT::audioPort() const
+xine_audio_port_t *AudioOutputXT::audioPort() const
 {
     return m_audioPort;
+}
+
+xine_audio_port_t *AudioOutput::createPort(const AudioOutputDevice &deviceDesc)
+{
+    K_XT(AudioOutput);
+    xine_audio_port_t *port = 0;
+
+    QVariant v = deviceDesc.property("driver");
+    if (!v.isValid()) {
+        const QByteArray &outputPlugin = Backend::audioDriverFor(deviceDesc.index());
+        kDebug(610) << "use output plugin:" << outputPlugin;
+        port = xine_open_audio_driver(xt->m_xine, outputPlugin.constData(), 0);
+    } else {
+        const QByteArray &outputPlugin = v.toByteArray();
+        v = deviceDesc.property("deviceIds");
+        const QStringList &deviceIds = v.toStringList();
+        if (deviceIds.isEmpty()) {
+            return 0;
+        }
+        //kDebug(610) << outputPlugin << alsaDevices;
+
+        if (outputPlugin == "alsa") {
+            foreach (const QString &device, deviceIds) {
+                xine_cfg_entry_t alsaDeviceConfig;
+                QByteArray deviceStr = device.toUtf8();
+                if(!xine_config_lookup_entry(xt->m_xine, "audio.device.alsa_default_device",
+                            &alsaDeviceConfig)) {
+                    // the config key is not registered yet - it is registered when the alsa output
+                    // plugin is opened. So we open the plugin and close it again, then we can set the
+                    // setting. :(
+                    port = xine_open_audio_driver(xt->m_xine, "alsa", 0);
+                    if (port) {
+                        xine_close_audio_driver(xt->m_xine, port);
+                        // port == 0 does not have to be fatal, since it might be only the default device
+                        // that cannot be opened
+                    }
+                    // now the config key should be registered
+                    if(!xine_config_lookup_entry(xt->m_xine, "audio.device.alsa_default_device",
+                                &alsaDeviceConfig)) {
+                        kError(610) << "cannot set the ALSA device on Xine's ALSA output plugin";
+                        return 0;
+                    }
+                }
+                Q_ASSERT(alsaDeviceConfig.type == XINE_CONFIG_TYPE_STRING);
+                alsaDeviceConfig.str_value = deviceStr.data();
+                xine_config_update_entry(xt->m_xine, &alsaDeviceConfig);
+
+                int err = xine_config_lookup_entry(xt->m_xine, "audio.device.alsa_front_device", &alsaDeviceConfig);
+                Q_ASSERT(err);
+                Q_ASSERT(alsaDeviceConfig.type == XINE_CONFIG_TYPE_STRING);
+                alsaDeviceConfig.str_value = deviceStr.data();
+                xine_config_update_entry(xt->m_xine, &alsaDeviceConfig);
+
+                port = xine_open_audio_driver(xt->m_xine, "alsa", 0);
+                if (port) {
+                    kDebug(610) << "use ALSA device: " << device;
+                    break;
+                }
+            }
+        } else if (outputPlugin == "oss") {
+            kDebug(610) << "use OSS output";
+            port = xine_open_audio_driver(xt->m_xine, "oss", 0);
+        }
+    }
+    kDebug(610) << "----------------------------------------------- audio_port created";
+    return port;
 }
 
 bool AudioOutput::setOutputDevice(int newDevice)
@@ -89,21 +166,71 @@ bool AudioOutput::setOutputDevice(int newDevice)
 
 bool AudioOutput::setOutputDevice(const AudioOutputDevice &newDevice)
 {
-    AudioPort newPort(newDevice);
-    if (!newPort.isValid()) {
+    K_XT(AudioOutput);
+    if (!xt->m_xine) {
+        // remeber the choice until we have a xine_t
+        m_device = newDevice;
+        return true;
+    }
+
+    xine_audio_port_t *port = createPort(newDevice);
+    if (!port) {
         kDebug(610) << "new audio port is invalid";
         return false;
     }
+
+    KeepReference<> *keep = new KeepReference<>;
+    keep->addObject(xt);
+    keep->ready();
+
+    AudioOutputXT *newXt = new AudioOutputXT;
+    newXt->m_audioPort = port;
+    newXt->m_xine = xt->m_xine;
+    m_threadSafeObject = newXt;
+
     m_device = newDevice;
-    K_XT(AudioOutputXT)->m_audioPort = newPort;
     SourceNode *src = source();
     if (src) {
         QList<WireCall> wireCall;
+        QList<WireCall> unwireCall;
         wireCall << WireCall(src, this);
-        QCoreApplication::postEvent(XineEngine::thread(), new RewireEvent(wireCall));
+        unwireCall << WireCall(src, QExplicitlySharedDataPointer<SinkNodeXT>(xt));
+        QCoreApplication::postEvent(XineThread::instance(), new RewireEvent(wireCall, unwireCall));
         graphChanged();
     }
     return true;
+}
+
+void AudioOutput::xineEngineChanged()
+{
+    K_XT(AudioOutput);
+    if (xt->m_xine) {
+        xine_audio_port_t *port = createPort(m_device);
+        if (!port) {
+            kDebug(610) << "stored audio port is invalid";
+            QMetaObject::invokeMethod(this, "audioDeviceFailed", Qt::QueuedConnection);
+            return;
+        }
+
+        // our XT object is in a wirecall, better not delete it
+
+        Q_ASSERT(xt->m_audioPort == 0);
+        xt->m_audioPort = port;
+    }
+}
+
+void AudioOutput::aboutToChangeXineEngine()
+{
+    K_XT(AudioOutput);
+    if (xt->m_audioPort) {
+        AudioOutputXT *xt2 = new AudioOutputXT;
+        xt2->m_xine = xt->m_xine;
+        xt2->m_audioPort = xt->m_audioPort;
+        xt->m_audioPort = 0;
+        KeepReference<> *keep = new KeepReference<>;
+        keep->addObject(xt2);
+        keep->ready();
+    }
 }
 
 void AudioOutput::downstreamEvent(Event *e)
@@ -128,11 +255,14 @@ bool AudioOutput::event(QEvent *ev)
 {
     switch (ev->type()) {
     case Event::AudioDeviceFailed:
-        ev->accept();
-        // we don't know for sure which AudioPort failed. but the one without any
-        // capabilities must be the guilty one
-        if (K_XT(AudioOutputXT)->m_audioPort.hasFailed()) {
-            emit audioDeviceFailed();
+        {
+            ev->accept();
+            // we don't know for sure which AudioPort failed. but the one without any
+            // capabilities must be the guilty one
+            K_XT(AudioOutput);
+            if (!xt->m_audioPort || xt->m_audioPort->get_capabilities(xt->m_audioPort) == AO_CAP_NOCAP) {
+                QMetaObject::invokeMethod(this, "audioDeviceFailed", Qt::QueuedConnection);
+            }
         }
         return true;
     default:
@@ -153,7 +283,6 @@ void AudioOutput::graphChanged()
     upstreamEvent(new UpdateVolumeEvent(xinevolume));
 }
 
-#undef K_XT
 }} //namespace Phonon::Xine
 
 #include "audiooutput.moc"

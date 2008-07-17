@@ -22,7 +22,6 @@
 
 #include "mediaobject.h"
 
-#include "audioport.h"
 #include "bytestream.h"
 
 #include <QEvent>
@@ -101,13 +100,6 @@ void MediaObject::syncHackSetProperty(const char *name, const QVariant &val)
     }
 }
 
-class XineStreamKeeper : public QObject
-{
-    public:
-        XineStreamKeeper(XineStream *x) : xs(x) { moveToThread(XineEngine::thread()); }
-        QExplicitlySharedDataPointer<XineStream> xs;
-};
-
 MediaObject::~MediaObject()
 {
     if (m_bytestream) {
@@ -118,15 +110,6 @@ MediaObject::~MediaObject()
         // don't delete m_bytestream - the xine input plugin owns it
     }
     m_stream->closeBlocking();
-
-    // XineStream has to be deleted in the XineThread. But in ~SourceNode threadSafeObject goes out
-    // of scope and if that's the last ref to XineStream its deleted from there (wrong thread).
-    // Thats why XineStreamKeeper (that lives in the XineThread) refs XineStream, threadSafeObject
-    // is set to 0 (to avoid a race) and then keeper is the last object with a ref and deleted from
-    // the xine thread.
-    XineStreamKeeper *keeper = new XineStreamKeeper(m_stream);
-    SourceNode::m_threadSafeObject = 0;
-    keeper->deleteLater();
 }
 
 State MediaObject::state() const
@@ -168,7 +151,7 @@ qint64 MediaObject::currentTime() const
 
 qint64 MediaObject::totalTime() const
 {
-    const qint64 ret = stream().totalTime();
+    const qint64 ret = m_stream->totalTime();
     //kDebug(610) << "returning " << ret;
     return ret;
 }
@@ -180,7 +163,7 @@ qint64 MediaObject::remainingTime() const
     case Phonon::BufferingState:
     case Phonon::PlayingState:
         {
-            const qint64 ret = stream().remainingTime();
+            const qint64 ret = m_stream->remainingTime();
             //kDebug(610) << "returning " << ret;
             return ret;
         }
@@ -322,12 +305,12 @@ void MediaObject::setTransitionTime(qint32 newTransitionTime)
     if (m_transitionTime != newTransitionTime) {
         m_transitionTime = newTransitionTime;
         if (m_transitionTime == 0) {
-            stream().useGaplessPlayback(true);
+            m_stream->useGaplessPlayback(true);
         } else if (m_transitionTime > 0) {
-            stream().useGapOf((newTransitionTime + 50) / 100); // xine-lib provides a resolution of 1/10s
+            m_stream->useGapOf((newTransitionTime + 50) / 100); // xine-lib provides a resolution of 1/10s
         } else {
             // TODO: a crossfade of milliseconds milliseconds
-            stream().useGaplessPlayback(true);
+            m_stream->useGaplessPlayback(true);
         }
     }
 }
@@ -375,8 +358,8 @@ void MediaObject::setSourceInternal(const MediaSource &source, HowToSetTheUrl ho
             m_mediaSource = MediaSource();
             kError(610) << "do not ever use kbytestream:/ URLs with MediaObject!";
             m_shouldFakeBufferingOnPlay = false;
-            stream().setMrl(QByteArray());
-            stream().setError(Phonon::NormalError, i18n("Cannot open media data at '<i>%1</i>'", source.url().toString(QUrl::RemovePassword)));
+            m_stream->setMrl(QByteArray());
+            m_stream->setError(Phonon::NormalError, i18n("Cannot open media data at '<i>%1</i>'", source.url().toString(QUrl::RemovePassword)));
             return;
         }
         switch (how) {
@@ -461,7 +444,7 @@ QByteArray MediaObject::autoplayMrlsToTitles(const char *plugin, const char *def
     const int lastSize = m_titles.size();
     m_titles.clear();
     int num = 0;
-    char **mrls = xine_get_autoplay_mrls(XineEngine::xine(), plugin, &num);
+    char **mrls = xine_get_autoplay_mrls(m_stream->xine(), plugin, &num);
     for (int i = 0; i < num; ++i) {
         if (mrls[i]) {
             kDebug(610) << mrls[i];
@@ -476,9 +459,9 @@ QByteArray MediaObject::autoplayMrlsToTitles(const char *plugin, const char *def
     }
     m_currentTitle = 1;
     if (m_autoplayTitles) {
-        stream().useGaplessPlayback(true);
+        m_stream->useGaplessPlayback(true);
     } else {
-        stream().useGaplessPlayback(false);
+        m_stream->useGaplessPlayback(false);
     }
     return m_titles.first();
 }
@@ -492,17 +475,17 @@ bool MediaObject::hasInterface(Interface interface) const
         }
         break;
     case AddonInterface::ChapterInterface:
-        if (stream().availableChapters() > 1) {
+        if (m_stream->availableChapters() > 1) {
             return true;
         }
         break;
     case AddonInterface::SubtitleInterface:
-        if (stream().subtitlesSize() > 0) { //subtitles off by default, enable if any
+        if (m_stream->subtitlesSize() > 0) { //subtitles off by default, enable if any
             return true;
         }
         break;
     case AddonInterface::AudioChannelInterface:
-        if (stream().audioChannelsSize() > 1) { //first audio channel on by default, enable if > 1
+        if (m_stream->audioChannelsSize() > 1) { //first audio channel on by default, enable if > 1
             return true;
         }
         break;
@@ -534,9 +517,9 @@ QVariant MediaObject::interfaceCall(Interface interface, int command, const QLis
     case AddonInterface::ChapterInterface:
         switch (static_cast<AddonInterface::ChapterCommand>(command)) {
         case AddonInterface::availableChapters:
-            return stream().availableChapters();
+            return m_stream->availableChapters();
         case AddonInterface::chapter:
-            return stream().currentChapter();
+            return m_stream->currentChapter();
         case AddonInterface::setChapter:
             {
                 if (arguments.isEmpty() || !arguments.first().canConvert(QVariant::Int)) {
@@ -550,7 +533,7 @@ QVariant MediaObject::interfaceCall(Interface interface, int command, const QLis
                 }
                 if (m_titles.size() > t) {
                     QByteArray mrl = m_titles[t] + '.' + QByteArray::number(c);
-                    stream().setMrl(mrl, XineStream::KeepState);
+                    m_stream->setMrl(mrl, XineStream::KeepState);
                 }
                 return true;
             }
@@ -581,8 +564,8 @@ QVariant MediaObject::interfaceCall(Interface interface, int command, const QLis
                 }
                 kDebug(610) << "change title from " << m_currentTitle << " to " << t;
                 m_currentTitle = t;
-                stream().setMrl(m_titles[t - 1],
-                                m_autoplayTitles ? XineStream::KeepState : XineStream::StoppedState);
+                m_stream->setMrl(m_titles[t - 1],
+                        m_autoplayTitles ? XineStream::KeepState : XineStream::StoppedState);
                 if (m_mediaSource.discType() == Phonon::Cd) {
                     emit titleChanged(m_currentTitle);
                 }
@@ -604,10 +587,10 @@ QVariant MediaObject::interfaceCall(Interface interface, int command, const QLis
                 m_autoplayTitles = b;
                 if (b) {
                     kDebug(610) << "setAutoplayTitles: enable autoplay";
-                    stream().useGaplessPlayback(true);
+                    m_stream->useGaplessPlayback(true);
                 } else {
                     kDebug(610) << "setAutoplayTitles: disable autoplay";
-                    stream().useGaplessPlayback(false);
+                    m_stream->useGaplessPlayback(false);
                 }
                 return true;
             }
@@ -652,7 +635,7 @@ QVariant MediaObject::interfaceCall(Interface interface, int command, const QLis
 void MediaObject::needNextUrl()
 {
     if (m_mediaSource.type() == MediaSource::Disc && m_titles.size() > m_currentTitle) {
-        stream().gaplessSwitchTo(m_titles[m_currentTitle]);
+        m_stream->gaplessSwitchTo(m_titles[m_currentTitle]);
         ++m_currentTitle;
         emit titleChanged(m_currentTitle);
         return;
@@ -663,7 +646,7 @@ void MediaObject::needNextUrl()
 void MediaObject::setPrefinishMark(qint32 newPrefinishMark)
 {
     m_prefinishMark = newPrefinishMark;
-    stream().setPrefinishMark(newPrefinishMark);
+    m_stream->setPrefinishMark(newPrefinishMark);
 }
 
 void MediaObject::handleHasVideoChanged(bool hasVideo)
@@ -675,13 +658,14 @@ void MediaObject::upstreamEvent(Event *e)
 {
     Q_ASSERT(e);
     switch (e->type()) {
+        case Event::IsThereAXineEngineForMe:
+        // yes there is
+        downstreamEvent(new HeresYourXineStreamEvent(stream()));
+        break;
     case Event::UpdateVolume:
+        kDebug() << "UpdateVolumeEvent";
         // postEvent takes ownership of the event and will delete it when done
         QCoreApplication::postEvent(m_stream, copyEvent(static_cast<UpdateVolumeEvent *>(e)));
-        break;
-    case Event::RequestFrameFormat:
-        // postEvent takes ownership of the event and will delete it when done
-        QCoreApplication::postEvent(m_stream, new Event(e->type()));
         break;
     case Event::SetParam:
         // postEvent takes ownership of the event and will delete it when done

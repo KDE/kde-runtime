@@ -26,6 +26,7 @@
 #include <phonon/addoninterface.h>
 
 #include "xineengine.h"
+#include "xinestream.h"
 
 #include <QByteArray>
 #include <QList>
@@ -71,8 +72,8 @@ class MediaObject : public QObject, public MediaObjectInterface, public AddonInt
         QString errorString() const;
         Phonon::ErrorType errorType() const;
 
-        XineStream &stream() { return *m_stream; }
-        const XineStream &stream() const { return *m_stream; }
+        QExplicitlySharedDataPointer<XineStream> stream() { return QExplicitlySharedDataPointer<XineStream>(m_stream); }
+        const QExplicitlySharedDataPointer<XineStream> stream() const { return QExplicitlySharedDataPointer<XineStream>(m_stream); }
 
         bool hasInterface(AddonInterface::Interface i) const;
         QVariant interfaceCall(AddonInterface::Interface, int, const QList<QVariant> &);

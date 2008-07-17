@@ -22,8 +22,9 @@
 
 #include "nullsink.h"
 #include "xineengine.h"
-#include "audioport.h"
 #include "sourcenode.h"
+#include "xinestream.h"
+#include "events.h"
 
 namespace Phonon
 {
@@ -42,29 +43,29 @@ void NullSinkXT::rewireTo(SourceNodeXT *source)
     }
 }
 
-AudioPort NullSinkXT::audioPort() const
+xine_audio_port_t *NullSinkXT::audioPort() const
 {
-    AudioPort ret;
-    ret.d->port = XineEngine::nullPort();
-    ret.d->dontDelete = true;
-    return ret;
+    if (!m_stream) {
+        return 0;
+    }
+    return m_stream->nullAudioPort();
 }
 
 xine_video_port_t *NullSinkXT::videoPort() const
 {
-    return XineEngine::nullVideoPort();
+    if (!m_stream) {
+        return 0;
+    }
+    return m_stream->nullVideoPort();
 }
 
-class NullSinkPrivate
+void NullSink::downstreamEvent(Event *e)
 {
-    public:
-        NullSink instance;
-};
-K_GLOBAL_STATIC(NullSinkPrivate, s_nullSinkPrivate)
-
-NullSink *NullSink::instance()
-{
-    return &s_nullSinkPrivate->instance;
+    if (e->type() == Event::HeresYourXineStream) {
+        K_XT(NullSink);
+        xt->m_stream = static_cast<HeresYourXineStreamEvent *>(e)->stream.data();
+    }
+    SinkNode::downstreamEvent(e);
 }
 
 } // namespace Xine

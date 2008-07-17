@@ -34,7 +34,7 @@ VideoEffect::VideoEffect(int effectId, QObject *parent)
     m_pluginParams(0),
     m_path(0)
 {
-    const char *const *postPlugins = xine_list_post_plugins_typed(XineEngine::xine(), XINE_POST_TYPE_VIDEO_FILTER);
+    const char *const *postPlugins = xine_list_post_plugins_typed(m_xine, XINE_POST_TYPE_VIDEO_FILTER);
     if (effectId >= 0x7F000000) {
         effectId -= 0x7F000000;
         for(int i = 0; postPlugins[i]; ++i) {
@@ -58,7 +58,7 @@ VideoEffect::VideoEffect(const char *name, QObject *parent)
 VideoEffect::~VideoEffect()
 {
     foreach (xine_post_t *post, m_plugins) {
-        xine_post_dispose(XineEngine::xine(), post);
+        xine_post_dispose(m_xine, post);
     }
     free(m_pluginParams);
 }
@@ -94,7 +94,7 @@ void VideoEffect::ensureParametersReady()
     if (m_parameterList.isEmpty() && m_plugins.isEmpty()) {
         newInstance(XineEngine::nullVideoPort());
         if (!m_plugins.isEmpty()) {
-            xine_post_dispose(XineEngine::xine(), m_plugins.first());
+            xine_post_dispose(m_xine, m_plugins.first());
             m_plugins.clear();
         }
     }
@@ -104,7 +104,7 @@ xine_post_t *VideoEffect::newInstance(xine_video_port_t *videoPort)
 {
     QMutexLocker lock(&m_mutex);
     if (m_pluginName) {
-        xine_post_t *x = xine_post_init(XineEngine::xine(), m_pluginName, 1, 0, &videoPort);
+        xine_post_t *x = xine_post_init(m_xine, m_pluginName, 1, 0, &videoPort);
         m_plugins << x;
         xine_post_in_t *paraInput = xine_post_input(x, "parameters");
         if (paraInput) {

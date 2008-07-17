@@ -33,11 +33,10 @@ class VisualizationXT : public SinkNodeXT, public SourceNodeXT
         xine_post_out_t *videoOutputPort() const;
 };
 
-#define K_XT(type) (static_cast<type *>(SinkNode::threadSafeObject().data()))
 Visualization::Visualization(QObject *parent)
     : QObject(parent),
     SinkNode(new VisualizationXT),
-    SourceNode(K_XT(VisualizationXT))
+    SourceNode(static_cast<VisualizationXT *>(SinkNode::threadSafeObject().data()))
 {
 }
 

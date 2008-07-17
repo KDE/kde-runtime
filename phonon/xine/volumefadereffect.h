@@ -51,6 +51,7 @@ class VolumeFaderEffectXT : public EffectXT
     public:
         VolumeFaderEffectXT();
         virtual void createInstance();
+        void rewireTo(SourceNodeXT *source);
 
     private:
         mutable PluginParameters m_parameters;

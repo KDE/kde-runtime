@@ -30,6 +30,9 @@ class ConnectNotificationInterface
 {
     public:
         virtual ~ConnectNotificationInterface() {}
+        /**
+         * This function is called before the xine thread is issued the rewire commands
+         */
         virtual void graphChanged() = 0;
 };
 

@@ -21,43 +21,62 @@
 #ifndef Phonon_XINE_BACKEND_H
 #define Phonon_XINE_BACKEND_H
 
-#include <QByteArray>
-#include <QHash>
-#include <QList>
-#include <QPointer>
-#include <QStringList>
-#include <QVariant>
+#include <QtCore/QList>
+#include <QtCore/QList>
+#include <QtCore/QObject>
+#include <QtCore/QPair>
+#include <QtCore/QPointer>
+#include <QtCore/QStringList>
+#include <QtCore/QTimer>
+#include <QtCore/QVariant>
 
 #include <xine.h>
 #include <xine/xineutils.h>
 
 #include "xineengine.h"
-#include <QObject>
 #include <phonon/objectdescription.h>
 #include <phonon/backendinterface.h>
-
+#include <KDE/KSharedConfig>
 
 namespace Phonon
 {
 namespace Xine
 {
+    enum MediaStreamType {
+        Audio = 1,
+        Video = 2,
+        StillImage = 4,
+        Subtitle = 8,
+        AllMedia = 0xFFFFFFFF
+    };
+    Q_DECLARE_FLAGS(MediaStreamTypes, MediaStreamType)
+} // namespace Xine
+} // namespace Phonon
+Q_DECLARE_OPERATORS_FOR_FLAGS(Phonon::Xine::MediaStreamTypes)
 
-class Backend : public QObject, public BackendInterface
+namespace Phonon
+{
+class AudioDevice;
+namespace Xine
+{
+
+class WireCall;
+class XineThread;
+
+typedef QHash< int, QHash<QByteArray, QVariant> > ChannelIndexHash;
+typedef QHash<ObjectDescriptionType, ChannelIndexHash> ObjectDescriptionHash;
+
+class Backend : public QObject, public Phonon::BackendInterface
 {
     Q_OBJECT
     Q_INTERFACES(Phonon::BackendInterface)
+    Q_CLASSINFO("D-Bus Interface", "org.kde.phonon.XineBackendInternal")
     public:
+        static Backend *instance();
         Backend(QObject *parent, const QVariantList &args);
         ~Backend();
 
         QObject *createObject(BackendInterface::Class, QObject *parent, const QList<QVariant> &args);
-
-        Q_INVOKABLE bool supportsVideo() const;
-        Q_INVOKABLE bool supportsOSD() const;
-        Q_INVOKABLE bool supportsFourcc(quint32 fourcc) const;
-        Q_INVOKABLE bool supportsSubtitles() const;
-
-        Q_INVOKABLE void freeSoundcardDevices();
 
         QList<int> objectDescriptionIndexes(ObjectDescriptionType) const;
         QHash<QByteArray, QVariant> objectDescriptionProperties(ObjectDescriptionType, int) const;
@@ -67,14 +86,83 @@ class Backend : public QObject, public BackendInterface
         bool disconnectNodes(QObject *, QObject *);
         bool endConnectionChange(QSet<QObject *>);
 
-    public slots:
         QStringList availableMimeTypes() const;
+
+    // phonon-xine internal:
+        static void addCleanupObject(QObject *o) { instance()->m_cleanupObjects << o; }
+        static void removeCleanupObject(QObject *o) { instance()->m_cleanupObjects.removeAll(o); }
+        static const QList<QObject *> &cleanupObjects() { return instance()->m_cleanupObjects; }
+
+        static bool deinterlaceDVD();
+        static bool deinterlaceVCD();
+        static bool deinterlaceFile();
+        static int deinterlaceMethod();
+
+        static bool inShutdown() { return instance()->m_inShutdown; }
+
+        static void setObjectDescriptionProperities(ObjectDescriptionType type, int index, const QHash<QByteArray, QVariant> &properities);
+        static ObjectDescriptionHash objectDescriptions() { return instance()->m_objectDescriptions; }
+
+        static QList<int> audioOutputIndexes();
+        static QHash<QByteArray, QVariant> audioOutputProperties(int audioDevice);
+
+        static QByteArray audioDriverFor(int audioDevice);
+
+        static XineEngine xine() { return instance()->m_xine; }
+        static void returnXineEngine(const XineEngine &);
+        static XineEngine xineEngineForStream();
 
     signals:
         void objectDescriptionChanged(ObjectDescriptionType);
 
+    private slots:
+        void emitAudioDeviceChange();
+
     private:
+        void checkAudioOutputs();
+        void addAudioOutput(int idx, int initialPreference, const QString &n,
+                const QString &desc, const QString &ic, const QByteArray &dr,
+                bool isAdvanced = false);
+
         mutable QStringList m_supportedMimeTypes;
+
+        QHash<ObjectDescriptionType, QHash<int, QHash<QByteArray, QVariant> > > m_objectDescriptions;
+
+        struct AudioOutputInfo
+        {
+            AudioOutputInfo(int idx, int ip, const QString &n, const QString &desc, const QString &ic,
+                    const QByteArray &dr)
+                : name(n), description(desc), icon(ic), driver(dr),
+                index(idx), initialPreference(ip), available(false), isAdvanced(false) {}
+
+            QString name;
+            QString description;
+            QString icon;
+            QByteArray driver;
+            int index;
+            int initialPreference;
+            bool available : 1;
+            bool isAdvanced : 1;
+            inline bool operator==(const AudioOutputInfo &rhs) const { return name == rhs.name && driver == rhs.driver; }
+            inline bool operator<(const AudioOutputInfo &rhs) const { return initialPreference > rhs.initialPreference; }
+        };
+        QList<AudioOutputInfo> m_audioOutputInfos;
+        QList<QObject *> m_cleanupObjects;
+        KSharedConfigPtr m_config;
+        int m_deinterlaceMethod : 8;
+        bool m_deinterlaceDVD : 1;
+        bool m_deinterlaceVCD : 1;
+        bool m_deinterlaceFile : 1;
+        bool m_inShutdown : 1;
+        XineThread *m_thread;
+        XineEngine m_xine;
+        QTimer signalTimer;
+        QList<WireCall> m_disconnections;
+
+        QList<XineEngine> m_usedEngines;
+        QList<XineEngine> m_freeEngines;
+
+        friend class XineThread;
 };
 }} // namespace Phonon::Xine
 

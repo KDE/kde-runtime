@@ -29,13 +29,18 @@ namespace Phonon
 namespace Xine
 {
 
+class XineStream;
 class NullSinkXT : public SinkNodeXT
 {
     public:
-        NullSinkXT() : SinkNodeXT("NullSink") {}
+        NullSinkXT() : SinkNodeXT("NullSink"), m_stream(0) {}
         virtual void rewireTo(SourceNodeXT *);
-        virtual AudioPort audioPort() const;
+        virtual xine_audio_port_t *audioPort() const;
         virtual xine_video_port_t *videoPort() const;
+
+    private:
+        friend class NullSink;
+        QPointer<XineStream> m_stream;
 };
 
 class NullSinkPrivate;
@@ -43,11 +48,10 @@ class NullSink : public QObject, public SinkNode
 {
     friend class NullSinkPrivate;
     Q_OBJECT
-    private:
-        NullSink(QObject *parent = 0) : QObject(parent), SinkNode(new NullSinkXT) {}
     public:
-        static NullSink *instance();
+        NullSink(QObject *parent) : QObject(parent), SinkNode(new NullSinkXT) {}
         MediaStreamTypes inputMediaStreamTypes() const { return Phonon::Xine::Audio | Phonon::Xine::Video; }
+        void downstreamEvent(Event *e);
 };
 } // namespace Xine
 } // namespace Phonon

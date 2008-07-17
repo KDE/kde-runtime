@@ -383,10 +383,10 @@ void ByteStream::setStreamSize(qint64 x)
 void ByteStream::setPauseForBuffering(bool b)
 {
     if (b) {
-        QCoreApplication::postEvent(&m_mediaObject->stream(), new QEVENT(PauseForBuffering));
+        QCoreApplication::postEvent(m_mediaObject->stream().data(), new QEVENT(PauseForBuffering));
         m_buffering = true;
     } else {
-        QCoreApplication::postEvent(&m_mediaObject->stream(), new QEVENT(UnpauseForBuffering));
+        QCoreApplication::postEvent(m_mediaObject->stream().data(), new QEVENT(UnpauseForBuffering));
         m_buffering = false;
     }
 }

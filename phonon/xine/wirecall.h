@@ -35,6 +35,7 @@ class WireCall
     public:
         WireCall() : src(0), snk(0) {}
         WireCall(SourceNode *a, SinkNode *b) : source(a->threadSafeObject()), sink(b->threadSafeObject()), src(a), snk(b) {}
+        WireCall(SourceNode *a, const QExplicitlySharedDataPointer<SinkNodeXT> &b) : source(a->threadSafeObject()), sink(b), src(a), snk(0) {}
 
         /**
          * If the two WireCalls are in separate graphs treat them as equal (returns false)
@@ -48,6 +49,9 @@ class WireCall
         bool operator<(const WireCall &rhs) const {
             if (src == rhs.src) {
                 // treat the wire calls as equal
+                return false;
+            }
+            if (!snk || !rhs.snk) {
                 return false;
             }
             SourceNode *s = src;
