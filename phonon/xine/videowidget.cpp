@@ -651,6 +651,7 @@ void VideoWidget::aboutToChangeXineEngine()
         keep->ready();
     }
 }
+
 void VideoWidget::xineEngineChanged()
 {
     kDebug();
