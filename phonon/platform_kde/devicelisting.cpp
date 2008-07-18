@@ -216,6 +216,14 @@ void DeviceListing::checkAudioOutputs()
             m_outputInfos.insert(-dev.index(), propertiesHashFor(dev));
             m_sortedOutputIndexes.insert(-m_outputInfos[-dev.index()].value("initialPreference").toInt(), -dev.index());
         }
+        if (m_outputInfos.isEmpty() && !m_useOss) {
+            // no devices available? Let's try with OSS devices enabled
+            foreach (const Phonon::AudioDevice &dev, playbackDevices) {
+                m_outputInfos.insert(-dev.index(), propertiesHashFor(dev));
+                m_sortedOutputIndexes.insert(-m_outputInfos[-dev.index()].value("initialPreference").toInt(), -dev.index());
+            }
+            m_useOss = !m_outputInfos.isEmpty();
+        }
     }
 }
 
@@ -229,6 +237,14 @@ void DeviceListing::checkAudioInputs()
             }
             m_inputInfos.insert(-dev.index(), propertiesHashFor(dev));
             m_sortedInputIndexes.insert(-m_inputInfos[-dev.index()].value("initialPreference").toInt(), -dev.index());
+        }
+        if (m_inputInfos.isEmpty() && !m_useOss) {
+            // no devices available? Let's try with OSS devices enabled
+            foreach (const Phonon::AudioDevice &dev, captureDevices) {
+                m_inputInfos.insert(-dev.index(), propertiesHashFor(dev));
+                m_sortedInputIndexes.insert(-m_inputInfos[-dev.index()].value("initialPreference").toInt(), -dev.index());
+            }
+            m_useOss = !m_inputInfos.isEmpty();
         }
     }
 }
