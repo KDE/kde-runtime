@@ -223,8 +223,9 @@ qint64 ByteStream::readFromBuffer(void *buf, size_t count)
     Q_ASSERT(m_eod);
     if (m_buffersize > 0) {
         PXINE_VDEBUG << "calling pullBuffer with m_buffersize = " << m_buffersize;
-        pullBuffer(static_cast<char *>(buf), m_buffersize);
-        m_currentPosition += m_buffersize;
+        const int len = m_buffersize;
+        pullBuffer(static_cast<char *>(buf), len);
+        m_currentPosition += len;
         PXINE_DEBUG << "returning less data than requested, the stream is at its end";
         //kDebug(610) << "UNLOCKING m_mutex: ";
         return m_buffersize;
