@@ -44,7 +44,7 @@
 namespace Phonon
 {
 
-K_GLOBAL_STATIC_WITH_ARGS(KComponentData, mainComponentData, (QCoreApplication::applicationName().toUtf8()))
+K_GLOBAL_STATIC_WITH_ARGS(KComponentData, mainComponentData, (QCoreApplication::applicationName().isEmpty() ? "Qt Application" : QCoreApplication::applicationName().toUtf8()))
 K_GLOBAL_STATIC_WITH_ARGS(KComponentData, phononComponentData, ("phonon"))
 
 static void ensureMainComponentData()
