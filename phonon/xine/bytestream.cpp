@@ -228,7 +228,7 @@ qint64 ByteStream::readFromBuffer(void *buf, size_t count)
         m_currentPosition += len;
         PXINE_DEBUG << "returning less data than requested, the stream is at its end";
         //kDebug(610) << "UNLOCKING m_mutex: ";
-        return m_buffersize;
+        return len;
     }
     PXINE_DEBUG << "return 0, the stream is at its end";
     //kDebug(610) << "UNLOCKING m_mutex: ";
