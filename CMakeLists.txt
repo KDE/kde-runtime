@@ -12,8 +12,6 @@ find_package(Strigi REQUIRED)
 
 include(KDE4Defaults)
 include(MacroLibrary)
-include(MacroOptionalFindPackage)
-include(MacroOptionalAddSubdirectory)
 include(CheckFunctionExists)
 include(CheckIncludeFiles)
 
