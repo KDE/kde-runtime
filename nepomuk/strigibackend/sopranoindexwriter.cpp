@@ -155,8 +155,12 @@ public:
         if ( type == QVariant::DateTime ) { // dataTime is stored as integer in strigi!
             return LiteralValue( QDateTime::fromTime_t( value.toUInt() ) );
         }
-        else {
+        else if ( type != QVariant::Invalid ) {
             return LiteralValue::fromString( value, type );
+        }
+        else {
+            // we default to string
+            return LiteralValue( value );
         }
     }
 
@@ -318,15 +322,10 @@ void Strigi::Soprano::IndexWriter::addValue( const AnalysisResult* idx,
         }
 
         else {
-            if ( rfd->dataType != QVariant::Invalid ) {
-                d->repository->addStatement( Statement( md->fileUri,
-                                                        rfd->property,
-                                                        d->createLiteralValue( rfd->dataType, ( unsigned char* )value.c_str(), value.length() ),
-                                                        md->context) );
-            }
-            else {
-                qDebug() << "Ignoring field" << rfd->property << "due to unknown type" << field->properties().typeUri().c_str();
-            }
+            d->repository->addStatement( Statement( md->fileUri,
+                                                    rfd->property,
+                                                    d->createLiteralValue( rfd->dataType, ( unsigned char* )value.c_str(), value.length() ),
+                                                    md->context) );
         }
     }
 //    qDebug() << "IndexWriter::addValue done in thread" << QThread::currentThread();

@@ -59,6 +59,16 @@ static lucene::search::Query* createSingleFieldQuery( const string& field,
 static lucene::search::Query* createMultiFieldQuery( const Strigi::Query& query );
 
 
+static QString luceneQueryEscape( const QString& s )
+{
+    /* Chars to escape: + - && || ! ( ) { } [ ] ^ " ~  : \ */
+
+    static QRegExp rx( "([\\-" + QRegExp::escape( "+&|!(){}[]^\"~:\\" ) + "])" );
+    QString es( s );
+    es.replace( rx, "\\\\1" );
+    return es;
+}
+
 static lucene::index::Term* createWildCardTerm( const TString& name,
                                                 const string& value )
 {
@@ -374,13 +384,13 @@ void Strigi::Soprano::IndexReader::getChildren( const std::string& parent,
 {
 //    qDebug() << "IndexReader::getChildren in thread" << QThread::currentThread();
     QString query = QString( "select distinct ?path ?mtime where { ?r <%1> \"%2\"^^<%3> . ?r <%4> ?mtime . ?r <%5> ?path . }")
-                    .arg( Util::fieldUri( FieldRegister::parentLocationFieldName ).toString() )
-                    .arg( escapeLiteralForSparqlQuery( QString::fromUtf8( parent.c_str() ) ) )
-                    .arg( Vocabulary::XMLSchema::string().toString() )
-                    .arg( Util::fieldUri( FieldRegister::mtimeFieldName ).toString() )
-                    .arg( Util::fieldUri( FieldRegister::pathFieldName ).toString() );
+                    .arg( Util::fieldUri( FieldRegister::parentLocationFieldName ).toString(),
+                          escapeLiteralForSparqlQuery( QString::fromUtf8( parent.c_str() ) ),
+                          Vocabulary::XMLSchema::string().toString(),
+                          Util::fieldUri( FieldRegister::mtimeFieldName ).toString(),
+                          Util::fieldUri( FieldRegister::pathFieldName ).toString() );
 
-    qDebug() << "running getChildren query:" << query;
+//    qDebug() << "running getChildren query:" << query;
 
     QueryResultIterator result = d->repository->executeQuery( query, ::Soprano::Query::QUERY_LANGUAGE_SPARQL );
 
@@ -427,10 +437,10 @@ time_t Strigi::Soprano::IndexReader::mTime( const std::string& uri )
 {
 //    qDebug() << "IndexReader::mTime in thread" << QThread::currentThread();
     QString query = QString( "select ?mtime where { ?r <%2> \"%3\"^^<%4> . ?r <%1> ?mtime . }" )
-                    .arg( Util::fieldUri( FieldRegister::mtimeFieldName ).toString() )
-                    .arg( Util::fieldUri( FieldRegister::pathFieldName ).toString() )
-                    .arg( escapeLiteralForSparqlQuery( QString::fromUtf8( uri.c_str() ) ) )
-                    .arg( Vocabulary::XMLSchema::string().toString() );
+                    .arg( Util::fieldUri( FieldRegister::mtimeFieldName ).toString(),
+                          Util::fieldUri( FieldRegister::pathFieldName ).toString(),
+                          escapeLiteralForSparqlQuery( QString::fromUtf8( uri.c_str() ) ),
+                          Vocabulary::XMLSchema::string().toString() );
 
     qDebug() << "mTime( " << uri.c_str() << ") query:" << query;
 
