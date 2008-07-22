@@ -38,6 +38,7 @@ namespace {
         switch( signal ) {
         case SIGHUP:
         case SIGQUIT:
+        case SIGTERM:
         case SIGINT:
             if ( qApp ) {
                 qApp->quit();
@@ -54,6 +55,7 @@ namespace {
         sigaction( SIGHUP, &sa, 0 );
         sigaction( SIGINT, &sa, 0 );
         sigaction( SIGQUIT, &sa, 0 );
+        sigaction( SIGTERM, &sa, 0 );
 #endif
     }
 }
