@@ -73,6 +73,7 @@ Comment[hu]=A Strigi szolgáltatást kezeli, amely fájlok indexelését végzi
 Comment[it]=Servizio di Nepomuk che controlla il demone strigi, cioè indicizza i file del sistema
 Comment[ja]=strigidaemon を制御する Nepomuk サービス (デスクトップ上のファイルのインデックスを作成)
 Comment[km]=សេវា Nepomuk ដែល​គ្រប់គ្រង​លើ strigidaemon មានន័យថា ឯកសារ​លិបិក្រមនៅ​លើ​ផ្ទៃ​តុ
+Comment[ko]=데스크톱의 파일을 정리하는 strigidaemon을 제어하는 Nepomuk 서비스입니다.
 Comment[lv]=Nepomuk serviss, kas kontrolē Strigi dēmoni - indeksē darbvirsmas failus
 Comment[mk]=Сервис Nepomuk што го контролира strigidaemon, т.е. ги индексира датотеките на работната површина
 Comment[ml]=strigidaemon നിയന്ത്രിക്കുന്ന Nepomuk സേവനം, i.e. പണിയിടത്തില്‍ ഫയലുകള്‍ ലഭ്യമാക്കുന്നു
