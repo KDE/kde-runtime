@@ -23,10 +23,10 @@
 #include <KService>
 #include <KServiceTypeTrader>
 #include <KDebug>
-#include <KApplication>
 #include <Nepomuk/Service>
 
 #include <QtCore/QTextStream>
+#include <QtGui/QApplication>
 #include <QtDBus/QDBusConnection>
 #include <QtDBus/QDBusConnectionInterface>
 
@@ -91,8 +91,9 @@ int main( int argc, char** argv )
 
     KCmdLineArgs::init( argc, argv, &aboutData );
 
-    KApplication app;
+    QApplication app( argc, argv );
     installSignalHandler();
+    KComponentData compData( aboutData );
     QApplication::setQuitOnLastWindowClosed( false );
 
     // FIXME: set the proper KConfig rc name using the service name
