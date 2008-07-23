@@ -104,102 +104,102 @@ QStringList getInstalledKDEVersions()
 
 QString getKDEStartMenuRootEntry()
 {
-	QString version = KDE::versionString();
-	QStringList versions = version.split(" "); 
+    QString version = KDE::versionString();
+    QStringList versions = version.split(" "); 
 #ifdef QT_NO_DEBUG
-	QString compileMode = "Release"; 
+    QString compileMode = "Release"; 
 #else
-	QString compileMode = "Debug"; 
+    QString compileMode = "Debug"; 
 #endif
-	return "KDE " + versions[0] + " " + compileMode;
+    return "KDE " + versions[0] + " " + compileMode;
 }
 
 inline QString getWorkingDir() 
 {
-	return QDir::toNativeSeparators(KStandardDirs::installPath("exe"));
+    return QDir::toNativeSeparators(KStandardDirs::installPath("exe"));
 }
 
 QString getKDEStartMenuPath()
 {
-	return getStartMenuPath() + "/" + getKDEStartMenuRootEntry();
+    return getStartMenuPath() + "/" + getKDEStartMenuRootEntry();
 }
 
 KServiceGroup::Ptr findGroup(const QString &relPath)
 {
-	QString nextPart;
-	QString alreadyFound("Settings/");
-	QStringList rest = relPath.split( '/');
+    QString nextPart;
+    QString alreadyFound("Settings/");
+    QStringList rest = relPath.split( '/');
 
-	kDebug() << "Trying harder to find group " << relPath;
-	for ( int i=0; i<rest.count(); i++)
-		kDebug() << "Item (" << rest.at(i) << ")";
+    kDebug() << "Trying harder to find group " << relPath;
+    for ( int i=0; i<rest.count(); i++)
+        kDebug() << "Item (" << rest.at(i) << ")";
 
-	while (!rest.isEmpty()) {
-		KServiceGroup::Ptr tmp = KServiceGroup::group(alreadyFound);
-		if (!tmp || !tmp->isValid())
-			return KServiceGroup::Ptr();
+    while (!rest.isEmpty()) {
+        KServiceGroup::Ptr tmp = KServiceGroup::group(alreadyFound);
+        if (!tmp || !tmp->isValid())
+            return KServiceGroup::Ptr();
 
-		bool found = false;
-		foreach (const KSycocaEntry::Ptr &e, tmp->entries(true, true)) {
-			if (e->isType(KST_KServiceGroup)) {
-			    KServiceGroup::Ptr g(KServiceGroup::Ptr::staticCast(e));
-			    if ((g->caption()==rest.front()) || (g->name()==alreadyFound+rest.front())) {
-				kDebug() << "Found group with caption " << g->caption()
-					  << " with real name: " << g->name() << endl;
-				found = true;
-				rest.erase(rest.begin());
-				alreadyFound = g->name();
-				kDebug() << "ALREADY FOUND: " << alreadyFound;
-				break;
-			    }
-			}
-		}
+        bool found = false;
+        foreach (const KSycocaEntry::Ptr &e, tmp->entries(true, true)) {
+            if (e->isType(KST_KServiceGroup)) {
+                KServiceGroup::Ptr g(KServiceGroup::Ptr::staticCast(e));
+                if ((g->caption()==rest.front()) || (g->name()==alreadyFound+rest.front())) {
+                kDebug() << "Found group with caption " << g->caption()
+                      << " with real name: " << g->name() << endl;
+                found = true;
+                rest.erase(rest.begin());
+                alreadyFound = g->name();
+                kDebug() << "ALREADY FOUND: " << alreadyFound;
+                break;
+                }
+            }
+        }
 
-		if (!found) {
-			kDebug() << "Group with caption " << rest.front() << " not found within "
-				  << alreadyFound << endl;
-			return KServiceGroup::Ptr();
-		}
+        if (!found) {
+            kDebug() << "Group with caption " << rest.front() << " not found within "
+                  << alreadyFound << endl;
+            return KServiceGroup::Ptr();
+        }
 
-	}
-	return KServiceGroup::group(alreadyFound);
+    }
+    return KServiceGroup::group(alreadyFound);
 }
 
 bool generateMenuEntries(QList<LinkFile> &files, const KUrl &url, const QString &relPathTranslated)
 {
     QString groupPath = url.path( KUrl::AddTrailingSlash );
-  	groupPath.remove(0, 1); // remove starting '/'
+      groupPath.remove(0, 1); // remove starting '/'
 
-	KServiceGroup::Ptr grp = KServiceGroup::group(groupPath);
+    KServiceGroup::Ptr grp = KServiceGroup::group(groupPath);
 
-	if (!grp || !grp->isValid()) {
-		grp = findGroup(groupPath);
-		if (!grp || !grp->isValid()) {
-		    kDebug() << "Unknown settings folder";
-		    return false;
-		}
-	}
+    if (!grp || !grp->isValid()) {
+        grp = findGroup(groupPath);
+        if (!grp || !grp->isValid()) {
+            kDebug() << "Unknown settings folder";
+            return false;
+        }
+    }
 
-	unsigned int count = 0;
+    unsigned int count = 0;
 
-	foreach (const KSycocaEntry::Ptr &e, grp->entries(true, true)) {
-		if (e->isType(KST_KServiceGroup)) {
-			KServiceGroup::Ptr g(KServiceGroup::Ptr::staticCast(e));
-			// Avoid adding empty groups.
-			KServiceGroup::Ptr subMenuRoot = KServiceGroup::group(g->relPath());
-			if (subMenuRoot->childCount() == 0)
-			    continue;
+    foreach (const KSycocaEntry::Ptr &e, grp->entries(true, true)) {
+        if (e->isType(KST_KServiceGroup)) {
+            KServiceGroup::Ptr g(KServiceGroup::Ptr::staticCast(e));
+            // Avoid adding empty groups.
+            KServiceGroup::Ptr subMenuRoot = KServiceGroup::group(g->relPath());
+            if (subMenuRoot->childCount() == 0)
+                continue;
 
-			// Ignore dotfiles.
-			if ((g->name().at(0) == '.'))
-			    continue;
+            // Ignore dotfiles.
+            if ((g->name().at(0) == '.'))
+                continue;
 
-			QString relPath = g->relPath();
+            QString relPath = g->relPath();
             KUrl a = url; 
             a.setPath("/" + relPath);
             generateMenuEntries(files,a,relPathTranslated + "/" + g->caption());
-		} else {
-			KService::Ptr s(KService::Ptr::staticCast(e));
+        } else {
+            KService::Ptr s(KService::Ptr::staticCast(e));
 
             // read exec attribute
             KDesktopFile df(KStandardDirs::locate("apps", s->entryPath()));
@@ -239,9 +239,9 @@ bool generateMenuEntries(QList<LinkFile> &files, const KUrl &url, const QString 
             QString description = s->genericName();
 
             files.append(LinkFile(QStringList() << execPath << execParams,linkFilePath,description,workingDir));
-		}
-		count++;
-	}
+        }
+        count++;
+    }
     return true;
 }
 
@@ -249,46 +249,46 @@ bool generateMenuEntries(QList<LinkFile> &files, const KUrl &url, const QString 
  check start menu for older kde installations and remove obsolate or non existing ones 
 
  This is done by the following rules: 
-	1. If no entry in an installation points to an existing executable, this installation 
-	   is removed and could be deleted 	
+    1. If no entry in an installation points to an existing executable, this installation 
+       is removed and could be deleted     
     2. if start menu entries for non current kde installation have the same working 
-	   dir as the current installation, this should be removed too
+       dir as the current installation, this should be removed too
 */
 void removeObsolateInstallations()
 {
-	kDebug() << getInstalledKDEVersions();
-	QString currentVersion = getKDEStartMenuRootEntry();
+    kDebug() << getInstalledKDEVersions();
+    QString currentVersion = getKDEStartMenuRootEntry();
 
-	foreach(QString release,getInstalledKDEVersions()) 
-	{
-		// skip current version 
-		if (release == currentVersion)
-			continue;
-		// get all link files for a specific release
-		QList<LinkFile> allReleasesFiles;
-		LinkFiles::scan(allReleasesFiles, getStartMenuPath() + "/" + release);
-		bool available = false;
-		bool sameWorkingDir = false;
-	    foreach(LinkFile lf, allReleasesFiles) 
-		{
-			lf.read(); // this in not done by the LinkFile class by default 
-			kDebug() << release << " : " << lf;
-			QFileInfo fi(lf.execPath());
-			if (fi.exists())
-				available = true;
-			if (lf.workingDir() == getWorkingDir())
-				sameWorkingDir = true;
-		}
-		if (!available || sameWorkingDir)
-			removeDirectory(getStartMenuPath() + "/" + release);
-	}
+    foreach(QString release,getInstalledKDEVersions()) 
+    {
+        // skip current version 
+        if (release == currentVersion)
+            continue;
+        // get all link files for a specific release
+        QList<LinkFile> allReleasesFiles;
+        LinkFiles::scan(allReleasesFiles, getStartMenuPath() + "/" + release);
+        bool available = false;
+        bool sameWorkingDir = false;
+        foreach(LinkFile lf, allReleasesFiles) 
+        {
+            lf.read(); // this in not done by the LinkFile class by default 
+            kDebug() << release << " : " << lf;
+            QFileInfo fi(lf.execPath());
+            if (fi.exists())
+                available = true;
+            if (lf.workingDir() == getWorkingDir())
+                sameWorkingDir = true;
+        }
+        if (!available || sameWorkingDir)
+            removeDirectory(getStartMenuPath() + "/" + release);
+    }
 }
 
 void updateStartMenuLinks()
 {
-	removeObsolateInstallations();
+    removeObsolateInstallations();
 
-	// generate list of installed linkfiles 
+    // generate list of installed linkfiles 
     QList<LinkFile> oldFiles;
     LinkFiles::scan(oldFiles, getKDEStartMenuPath());
     foreach(const LinkFile& lf, oldFiles)
@@ -308,7 +308,7 @@ void updateStartMenuLinks()
 
 void removeStartMenuLinks()
 {
-	removeObsolateInstallations();
+    removeObsolateInstallations();
     removeDirectory(getKDEStartMenuPath());
 }
 
