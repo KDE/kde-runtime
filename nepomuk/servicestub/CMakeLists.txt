@@ -25,8 +25,10 @@ kde4_add_executable(nepomukservicestub
 
 target_link_libraries(nepomukservicestub
   ${QT_QTCORE_LIBRARY}
+  ${QT_QTGUI_LIBRARY}
   ${QT_QTDBUS_LIBRARY}
   ${KDE4_KDECORE_LIBS}
+  ${KDE4_KDEUI_LIBS}
   ${NEPOMUK_LIBRARIES}
   ${SOPRANO_LIBRARIES}
   )
