@@ -26,45 +26,45 @@
 
 class LinkFile {
     public:
-		/// create instance 
+        /// create instance 
         LinkFile(const QString &_execPath, const QString &_linkPath, const QString &_description, const QString &_workingDir)
         {
-			m_execPath     = _execPath;    
-			m_execParams   = QString();
+            m_execPath     = _execPath;    
+            m_execParams   = QString();
             m_linkPath     = _linkPath;
             m_description  = _description; 
             m_workingDir   = _workingDir;  
         }
         LinkFile(const QStringList &_execPath, const QString &_linkPath, const QString &_description, const QString &_workingDir)
         {
-			if (_execPath.size() > 0)
-				m_execPath     = _execPath[0];
-			if (_execPath.size() > 1)
-				m_execParams   = _execPath[1];    
+            if (_execPath.size() > 0)
+                m_execPath     = _execPath[0];
+            if (_execPath.size() > 1)
+                m_execParams   = _execPath[1];    
             m_linkPath     = _linkPath;
             m_description  = _description; 
             m_workingDir   = _workingDir;  
         }
         
-		/// check if link file exists
-		bool exists();
-		/// create link file from instance data 
+        /// check if link file exists
+        bool exists();
+        /// create link file from instance data 
         bool create();
-		/// remove link file
+        /// remove link file
         bool remove();
-		/// read link file content into instance 
-		bool read();
+        /// read link file content into instance 
+        bool read();
 
-		QString execPath()    { return m_execPath; }    
-        QString linkPath()	 { return m_linkPath; }
+        QString execPath()    { return m_execPath; }    
+        QString linkPath()     { return m_linkPath; }
         QString description() { return m_description; }
         QString workingDir()  { return m_workingDir; }  
 
         friend QDebug operator<<(QDebug out, const LinkFile &c);
 
-	protected:
-		QString m_execPath;    
-		QString m_execParams;    
+    protected:
+        QString m_execPath;    
+        QString m_execParams;    
         QString m_linkPath;
         QString m_description; 
         QString m_workingDir;  

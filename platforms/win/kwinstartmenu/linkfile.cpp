@@ -125,11 +125,11 @@ bool CreateLink(const QString &fileName, const QString &_linkName, const QString
 bool LinkFile::read()
 {
     LPCWSTR szShortcutFile = (LPCWSTR)m_linkPath.utf16();
-	WCHAR szTarget[MAX_PATH];
-	WCHAR szWorkingDir[MAX_PATH];
-	WCHAR szDescription[MAX_PATH];
+    WCHAR szTarget[MAX_PATH];
+    WCHAR szWorkingDir[MAX_PATH];
+    WCHAR szDescription[MAX_PATH];
 
-	IShellLink*    psl     = NULL;
+    IShellLink*    psl     = NULL;
     IPersistFile*  ppf     = NULL;
     bool           bResult = false;
 
@@ -160,25 +160,25 @@ bool LinkFile::read()
     if (NOERROR != psl->GetPath(szTarget, MAX_PATH, NULL, 0) )
 #endif
         goto cleanup;
-	m_execPath = QString::fromUtf16((const ushort*)szTarget);
+    m_execPath = QString::fromUtf16((const ushort*)szTarget);
 
 #if !defined(_MSC_VER)
-	if (NOERROR != psl->GetWorkingDirectory((CHAR*)(szWorkingDir), MAX_PATH) )
+    if (NOERROR != psl->GetWorkingDirectory((CHAR*)(szWorkingDir), MAX_PATH) )
 #else
-	if (NOERROR != psl->GetWorkingDirectory(szWorkingDir, MAX_PATH) )
+    if (NOERROR != psl->GetWorkingDirectory(szWorkingDir, MAX_PATH) )
 #endif
         goto cleanup;
-	m_workingDir = QString::fromUtf16((const ushort*)szWorkingDir);
+    m_workingDir = QString::fromUtf16((const ushort*)szWorkingDir);
 
 #if !defined(_MSC_VER)
-	if (NOERROR != psl->GetDescription((CHAR*)(szDescription), MAX_PATH) )
+    if (NOERROR != psl->GetDescription((CHAR*)(szDescription), MAX_PATH) )
 #else
-	if (NOERROR != psl->GetDescription(szDescription, MAX_PATH) )
+    if (NOERROR != psl->GetDescription(szDescription, MAX_PATH) )
 #endif
         goto cleanup;
-	m_description = QString::fromUtf16((const ushort*)szDescription);
+    m_description = QString::fromUtf16((const ushort*)szDescription);
 
-	bResult = true;
+    bResult = true;
 
 cleanup:
     if (ppf) ppf->Release();
@@ -188,23 +188,23 @@ cleanup:
 
 bool LinkFile::create()
 {
-	QString execPath;
-	//  the create link api wraps the whole execpath  with '"' when there are spaces in the string, 
-	//  e.g. between the path and the first parameter. To avoid this wrapping the path with '"' is required 
+    QString execPath;
+    //  the create link api wraps the whole execpath  with '"' when there are spaces in the string, 
+    //  e.g. between the path and the first parameter. To avoid this wrapping the path with '"' is required 
     // add parameter list to executable path 
-	// -> disabled parameter support for now, because i had no luck to figure out the rule 
+    // -> disabled parameter support for now, because i had no luck to figure out the rule 
     // how to create a valid execpath *with* parameters 
 
 #ifdef ENABLE_EXECPATH_COMMANDLINE_PARAMETER
-	if (!m_execParams.isEmpty()) {
-		QString execParams = m_execParams.replace("%i","").replace("%u","").replace("%c",m_description);
-		execPath = m_execPath + " " + execParams.trimmed();
-	}
-	else
+    if (!m_execParams.isEmpty()) {
+        QString execParams = m_execParams.replace("%i","").replace("%u","").replace("%c",m_description);
+        execPath = m_execPath + " " + execParams.trimmed();
+    }
+    else
 #endif
-		execPath = m_execPath;
+        execPath = m_execPath;
 
-	return CreateLink(execPath,m_linkPath,m_description,m_workingDir);
+    return CreateLink(execPath,m_linkPath,m_description,m_workingDir);
 }
 
 bool LinkFile::remove()
@@ -256,9 +256,9 @@ bool LinkFiles::create(QList <LinkFile> &newFiles)
         if (!linkFile.exists())
         {
             if (linkFile.create())
-				kDebug() << "created" << linkFile;
-			else
-				kDebug() << "failed to create" << linkFile;
+                kDebug() << "created" << linkFile;
+            else
+                kDebug() << "failed to create" << linkFile;
         }
     }
     return true;
