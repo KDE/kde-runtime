@@ -30,20 +30,25 @@ class LinkFile {
         LinkFile(const QString &_execPath, const QString &_linkPath, const QString &_description, const QString &_workingDir)
         {
             m_execPath     = _execPath;    
-            m_execParams   = QString();
+            m_arguments    = QStringList();
             m_linkPath     = _linkPath;
             m_description  = _description; 
             m_workingDir   = _workingDir;  
         }
-        LinkFile(const QStringList &_execPath, const QString &_linkPath, const QString &_description, const QString &_workingDir)
+        /** 
+            constructs  LinkFile instance with arguments
+                    */
+        LinkFile(const QStringList &args, const QString &linkPath, const QString &description, const QString &workingDir)
         {
-            if (_execPath.size() > 0)
-                m_execPath     = _execPath[0];
-            if (_execPath.size() > 1)
-                m_execParams   = _execPath[1];    
-            m_linkPath     = _linkPath;
-            m_description  = _description; 
-            m_workingDir   = _workingDir;  
+            if (args.size() > 0)
+                m_execPath = args[0];
+            if (args.size() > 1) {
+                m_arguments = args;
+                m_arguments.removeFirst();
+            }
+            m_linkPath     = linkPath;
+            m_description  = description; 
+            m_workingDir   = workingDir;  
         }
         
         /// check if link file exists
@@ -55,20 +60,26 @@ class LinkFile {
         /// read link file content into instance 
         bool read();
 
-        QString execPath()    { return m_execPath; }    
-        QString linkPath()     { return m_linkPath; }
-        QString description() { return m_description; }
-        QString workingDir()  { return m_workingDir; }  
+        const QString &execPath()    { return m_execPath; }    
+        const QString &linkPath()    { return m_linkPath; }
+        const QString &description() { return m_description; }
+        const QString &workingDir()  { return m_workingDir; }  
+        const QStringList &arguments()   { return m_arguments; }  
+
+        void setExecPath(const QString &a)    { m_execPath = a; }    
+        void setLinkPath(const QString &a)    { m_linkPath = a; }
+        void setDescription(const QString &a) { m_description = a; }
+        void setWorkingDir(const QString &a)  { m_workingDir = a; }  
+        void setArguments(const QStringList &a)   { m_arguments = a; }  
 
         friend QDebug operator<<(QDebug out, const LinkFile &c);
 
     protected:
         QString m_execPath;    
-        QString m_execParams;    
         QString m_linkPath;
         QString m_description; 
         QString m_workingDir;  
-
+        QStringList m_arguments;    
 };
 
 class LinkFiles {

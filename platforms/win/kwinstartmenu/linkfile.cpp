@@ -59,82 +59,13 @@ static QString longFileName(const QString &path)
     return prefix + absPath;
 }
 
-// from http://msdn.microsoft.com/library/default.asp?url=/library/en-us/shellcc/platform/shell/programmersguide/shell_int/shell_int_programming/shortcuts/shortcut.asp
-// CreateLink - uses the Shell's IShellLink and IPersistFile interfaces
-//              to create and store a shortcut to the specified object.
-//
-// Returns true if link <linkName> could be created, otherwise false.
-//
-// Parameters:
-// fileName     - full path to file to create link to
-// linkName     - full path to the link to be created
-// description  - description of the link (for tooltip)
-
-bool CreateLink(const QString &fileName, const QString &_linkName, const QString &description, const QString &workingDir = QString())
-{
-    HRESULT hres;
-    IShellLinkW* psl;
-
-    QString linkName = longFileName(_linkName);
-
-    LPCWSTR lpszPathObj  = (LPCWSTR)fileName.utf16();
-    LPCWSTR lpszPathLink = (LPCWSTR)linkName.utf16();
-    LPCWSTR lpszDesc     = (LPCWSTR)description.utf16();
-    LPCWSTR lpszWorkDir  = (LPCWSTR)workingDir.utf16();
-
-    CoInitialize(NULL);
-    // Get a pointer to the IShellLink interface.
-    hres = CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_ALL, IID_IShellLinkW, (LPVOID*)&psl);
-
-    if (SUCCEEDED(hres))
-    {
-        IPersistFile* ppf;
-
-        // Set the path to the shortcut target and add the description.
-        if(!SUCCEEDED(psl->SetPath(lpszPathObj))) {
-            kDebug() << "error setting path for link to " << fileName;
-            psl->Release();
-            return false;
-        }
-        if(!SUCCEEDED(psl->SetDescription(lpszDesc))) {
-            kDebug() << "error setting description for link to " << description;
-            psl->Release();
-            return false;
-        }
-        if(!SUCCEEDED(psl->SetWorkingDirectory(lpszWorkDir))) {
-            kDebug() << "error setting working Directory for link to " << workingDir;
-            psl->Release();
-            return false;
-        }
-
-
-        // Query IShellLink for the IPersistFile interface for saving the
-        // shortcut in persistent storage.
-        hres = psl->QueryInterface(IID_IPersistFile, (LPVOID*)&ppf);
-
-        if (SUCCEEDED(hres))
-        {
-            hres = ppf->Save(lpszPathLink, TRUE);
-            // Save the link by calling IPersistFile::Save.
-            if(!SUCCEEDED(hres))
-                kDebug() << "error saving link to " << linkName;
-
-            ppf->Release();
-        }
-        psl->Release();
-    } else {
-        kDebug() << "Error: Got no pointer to the IShellLink interface.";
-    }
-    CoUninitialize(); // cleanup COM after you're done using its services
-    return SUCCEEDED(hres);
-}
-
 bool LinkFile::read()
 {
     LPCWSTR szShortcutFile = (LPCWSTR)m_linkPath.utf16();
     WCHAR szTarget[MAX_PATH];
     WCHAR szWorkingDir[MAX_PATH];
     WCHAR szDescription[MAX_PATH];
+    WCHAR szArguments[MAX_PATH];
 
     IShellLink*    psl     = NULL;
     IPersistFile*  ppf     = NULL;
@@ -169,6 +100,10 @@ bool LinkFile::read()
         goto cleanup;
     m_description = QString::fromUtf16((const ushort*)szDescription);
 
+    if (NOERROR != psl->GetArguments(MY_CAST(szArguments), MAX_PATH) )
+        goto cleanup;
+    m_arguments = QString::fromUtf16((const ushort*)szArguments).split(QLatin1Char(' '), QString::SkipEmptyParts);
+
     bResult = true;
 
 cleanup:
@@ -179,23 +114,66 @@ cleanup:
 
 bool LinkFile::create()
 {
-    QString execPath;
-    //  the create link api wraps the whole execpath  with '"' when there are spaces in the string, 
-    //  e.g. between the path and the first parameter. To avoid this wrapping the path with '"' is required 
-    // add parameter list to executable path 
-    // -> disabled parameter support for now, because i had no luck to figure out the rule 
-    // how to create a valid execpath *with* parameters 
+    HRESULT hres;
+    IShellLinkW* psl;
 
-#ifdef ENABLE_EXECPATH_COMMANDLINE_PARAMETER
-    if (!m_execParams.isEmpty()) {
-        QString execParams = m_execParams.replace("%i","").replace("%u","").replace("%c",m_description);
-        execPath = m_execPath + " " + execParams.trimmed();
+    QString linkName = longFileName(m_linkPath);
+
+    LPCWSTR lpszPathObj  = (LPCWSTR)m_execPath.utf16();
+    LPCWSTR lpszPathLink = (LPCWSTR)m_linkPath.utf16();
+    LPCWSTR lpszDesc     = (LPCWSTR)m_description.utf16();
+    LPCWSTR lpszWorkDir  = (LPCWSTR)m_workingDir.utf16();
+    LPCWSTR lpszArguments  = (LPCWSTR)m_arguments.join(QLatin1String(" ")).utf16();
+
+    CoInitialize(NULL);
+    // Get a pointer to the IShellLink interface.
+    hres = CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_ALL, IID_IShellLinkW, (LPVOID*)&psl);
+
+    if (SUCCEEDED(hres))
+    {
+        IPersistFile* ppf;
+
+        // Set the path to the shortcut target and add the description.
+        if(!SUCCEEDED(psl->SetPath(lpszPathObj))) {
+            kDebug() << "error setting path for link to " << m_execPath;
+            psl->Release();
+            return false;
+        }
+        if(!SUCCEEDED(psl->SetDescription(lpszDesc))) {
+            kDebug() << "error setting description for link to " << m_description;
+            psl->Release();
+            return false;
+        }
+        if(!SUCCEEDED(psl->SetWorkingDirectory(lpszWorkDir))) {
+            kDebug() << "error setting working Directory for link to " << m_workingDir;
+            psl->Release();
+            return false;
+        }
+        if(!m_arguments.isEmpty() && !SUCCEEDED(psl->SetArguments(lpszArguments))) {
+            kDebug() << "error setting arguments for link to " << m_arguments;
+            psl->Release();
+            return false;
+        }
+
+        // Query IShellLink for the IPersistFile interface for saving the
+        // shortcut in persistent storage.
+        hres = psl->QueryInterface(IID_IPersistFile, (LPVOID*)&ppf);
+
+        if (SUCCEEDED(hres))
+        {
+            hres = ppf->Save(lpszPathLink, TRUE);
+            // Save the link by calling IPersistFile::Save.
+            if(!SUCCEEDED(hres))
+                kDebug() << "error saving link to " << linkName;
+
+            ppf->Release();
+        }
+        psl->Release();
+    } else {
+        kDebug() << "Error: Got no pointer to the IShellLink interface.";
     }
-    else
-#endif
-        execPath = m_execPath;
-
-    return CreateLink(execPath,m_linkPath,m_description,m_workingDir);
+    CoUninitialize(); // cleanup COM after you're done using its services
+    return SUCCEEDED(hres) ? true : false;
 }
 
 bool LinkFile::remove()
