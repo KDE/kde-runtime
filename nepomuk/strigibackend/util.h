@@ -34,14 +34,20 @@ namespace Strigi {
     class Variant;
 
     namespace Soprano {
-	namespace Util {
-	    QUrl fieldUri( const std::string& s );
-	    QUrl fileUrl( const std::string& filename );
-	    std::string fieldName( const QUrl& uri );
-	    TString convertSearchField( const std::string& field );
-	    QUrl uniqueUri( const QString& ns, ::Soprano::Model* model );
-	    Strigi::Variant nodeToVariant( const ::Soprano::Node& node );
-	}
+        namespace Util {
+            QUrl fieldUri( const std::string& s );
+            QUrl fileUrl( const std::string& filename );
+            std::string fieldName( const QUrl& uri );
+            TString convertSearchField( const std::string& field );
+            QUrl uniqueUri( const QString& ns, ::Soprano::Model* model );
+            Strigi::Variant nodeToVariant( const ::Soprano::Node& node );
+
+            /**
+             * For now only stores the parentUrl property so it can be
+             * searched.
+             */
+            void storeStrigiMiniOntology( ::Soprano::Model* model );
+        }
     }
 }
 

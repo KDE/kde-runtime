@@ -179,6 +179,7 @@ Strigi::Soprano::IndexWriter::IndexWriter( ::Soprano::Model* model )
 //    qDebug() << "IndexWriter::IndexWriter in thread" << QThread::currentThread();
     d = new Private;
     d->repository = model;
+    Util::storeStrigiMiniOntology( d->repository );
 //    qDebug() << "IndexWriter::IndexWriter done in thread" << QThread::currentThread();
 }
 
@@ -447,10 +448,16 @@ void Strigi::Soprano::IndexWriter::finishAnalysis( const AnalysisResult* idx )
 
     // Strigi only indexes files and extractors mostly (if at all) store the xesam:DataObject type (i.e. the contents)
     // Thus, here we go the easy way and mark each indexed file as a xesam:File.
-    d->repository->addStatement( Statement( md->fileUri,
-                                            Vocabulary::RDF::type(),
-                                            Vocabulary::Xesam::File(),
-                                            md->context ) );
+    if ( QFileInfo( QFile::decodeName( idx->path().c_str() ) ).isDir() )
+        d->repository->addStatement( Statement( md->fileUri,
+                                                Vocabulary::RDF::type(),
+                                                Vocabulary::Xesam::Folder(),
+                                                md->context ) );
+    else
+        d->repository->addStatement( Statement( md->fileUri,
+                                                Vocabulary::RDF::type(),
+                                                Vocabulary::Xesam::File(),
+                                                md->context ) );
 
 
     // create the provedance data for the data graph

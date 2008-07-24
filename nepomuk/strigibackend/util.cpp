@@ -31,6 +31,10 @@
 #include <Soprano/Index/CLuceneIndex>
 #include <Soprano/Model>
 #include <Soprano/Vocabulary/RDF>
+#include <Soprano/Vocabulary/RDFS>
+#include <Soprano/Vocabulary/Xesam>
+#include <Soprano/Vocabulary/NRL>
+#include <Soprano/Vocabulary/XMLSchema>
 
 
 #define STRIGI_NS "http://www.strigi.org/data#"
@@ -81,7 +85,7 @@ TString Strigi::Soprano::Util::convertSearchField( const std::string& field )
         return TString::fromUtf8( field.c_str() );
     }
     else if ( QString( field.c_str() ) == ::Soprano::Vocabulary::RDF::type().toString() ) {
-        // see sopranoindexwriter:addValue for details in this conversion
+        // see sopranoindexwriter:addValue for details on this conversion
         static TString strigiType( "http://strigi.sourceforge.net/fields#rdf-string-type" );
         return strigiType;
     }
@@ -122,5 +126,43 @@ Strigi::Variant Strigi::Soprano::Util::nodeToVariant( const ::Soprano::Node& nod
     else {
         qWarning() << "(Soprano::Util::nodeToVariant) cannot convert non-literal node to variant.";
         return Strigi::Variant();
+    }
+}
+
+
+void Strigi::Soprano::Util::storeStrigiMiniOntology( ::Soprano::Model* model )
+{
+    // we use some nice URI here although we still have the STRIGI_NS for backwards comp
+    // at some point (if parentUrl will not be moved to xesam) we should move to a proper onto
+
+    QUrl graph( "http://nepomuk.kde.org/ontologies/2008/07/24/strigi/metadata" );
+    ::Soprano::Statement parentUrlProp( fieldUri( FieldRegister::parentLocationFieldName ),
+                                        ::Soprano::Vocabulary::RDF::type(),
+                                        ::Soprano::Vocabulary::RDF::Property(),
+                                        graph );
+    ::Soprano::Statement parentUrlRange( parentUrlProp.subject(),
+                                         ::Soprano::Vocabulary::RDFS::range(),
+                                         ::Soprano::Vocabulary::XMLSchema::string(),
+                                         graph );
+    ::Soprano::Statement parentUrlDomain( parentUrlProp.subject(),
+                                          ::Soprano::Vocabulary::RDFS::domain(),
+                                          ::Soprano::Vocabulary::Xesam::File(),
+                                          graph );
+    ::Soprano::Statement metaDataType( graph,
+                                       ::Soprano::Vocabulary::RDF::type(),
+                                       ::Soprano::Vocabulary::NRL::Ontology(),
+                                       graph );
+
+    if ( !model->containsStatement( parentUrlProp ) ) {
+        model->addStatement( parentUrlProp );
+    }
+    if ( !model->containsStatement( parentUrlRange ) ) {
+        model->addStatement( parentUrlRange );
+    }
+    if ( !model->containsStatement( parentUrlDomain ) ) {
+        model->addStatement( parentUrlDomain );
+    }
+    if ( !model->containsStatement( metaDataType ) ) {
+        model->addStatement( metaDataType );
     }
 }
