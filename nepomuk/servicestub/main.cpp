@@ -77,7 +77,7 @@ int main( int argc, char** argv )
 {
     KAboutData aboutData( "nepomukservicestub", "nepomuk",
                           ki18n("Nepomuk Service Stub"),
-                          "0.1",
+                          "0.2",
                           ki18n("Nepomuk Service Stub"),
                           KAboutData::License_GPL,
                           ki18n("(c) 2008, Sebastian Trüg"),
