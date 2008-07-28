@@ -2,9 +2,6 @@
  <author>Sebastian Trueg</author>
  <class>StatusWidget</class>
  <widget class="QWidget" name="StatusWidget" >
-  <property name="windowTitle" >
-   <string>Form</string>
-  </property>
   <layout class="QVBoxLayout" name="verticalLayout" >
    <item>
     <widget class="KTitleWidget" name="m_title" >
