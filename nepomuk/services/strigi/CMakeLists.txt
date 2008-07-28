@@ -30,6 +30,7 @@ target_link_libraries(nepomukstrigiservice
   ${KDE4_SOLID_LIBS}
   ${KDE4_KUTILS_LIBS}
   ${NEPOMUK_LIBRARIES}
+  ${SOPRANO_LIBRARIES}
   )
 
 install(
