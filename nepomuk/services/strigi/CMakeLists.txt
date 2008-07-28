@@ -25,6 +25,7 @@ kde4_add_plugin(nepomukstrigiservice ${strigiservice_SRCS})
 
 target_link_libraries(nepomukstrigiservice
   ${STRIGI_STREAMANALYZER_LIBRARY}
+  ${STRIGI_STREAMS_LIBRARY}
   ${KDE4_KDEUI_LIBS}
   ${KDE4_KIO_LIBS}
   ${KDE4_SOLID_LIBS}
