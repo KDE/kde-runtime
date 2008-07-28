@@ -209,14 +209,14 @@ void Strigi::Soprano::IndexWriter::deleteEntries( const std::vector<std::string>
                         .arg( path )
                         .arg( Vocabulary::XMLSchema::string().toString() );
 
-        qDebug() << "deleteEntries query:" << query;
+//        qDebug() << "deleteEntries query:" << query;
 
         QueryResultIterator result = d->repository->executeQuery( query, ::Soprano::Query::QUERY_LANGUAGE_SPARQL );
         if ( result.next() ) {
             Node indexGraph = result.binding( "g" );
             result.close();
 
-            qDebug() << "Found indexGraph to delete:" << indexGraph;
+//            qDebug() << "Found indexGraph to delete:" << indexGraph;
 
             // delete the indexed data
             d->repository->removeContext( indexGraph );
@@ -275,7 +275,7 @@ void Strigi::Soprano::IndexWriter::startAnalysis( const AnalysisResult* idx )
         data->context = Util::uniqueUri( "http://www.strigi.org/contexts/", d->repository );
     }
 
-    qDebug() << "Starting analysis for" << data->fileUri << "in thread" << QThread::currentThread();
+//    qDebug() << "Starting analysis for" << data->fileUri << "in thread" << QThread::currentThread();
 
     idx->setWriterData( data );
 }

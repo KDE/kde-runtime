@@ -276,7 +276,7 @@ int32_t Strigi::Soprano::IndexReader::countHits( const Query& query )
 
     lucene::search::Query* q = createQuery( query );
     ::Soprano::QueryResultIterator hits = d->repository->executeQuery( TString( q->toString(), true ),
-                                                                       ::Soprano::Query::QUERY_LANGUAGE_USER,
+                                                                       ::Soprano::Query::QueryLanguageUser,
                                                                        QLatin1String( "lucene" ) );
 //    Iterator< ::Soprano::Index::QueryHit> hits = d->repository->index()->search( q );
     int s = 0;
@@ -298,7 +298,7 @@ void Strigi::Soprano::IndexReader::getHits( const Strigi::Query& query,
     qDebug() << "IndexReader::getHits in thread" << QThread::currentThread();
     lucene::search::Query* bq = createQuery( query );
     ::Soprano::QueryResultIterator hits = d->repository->executeQuery( TString( bq->toString(), true ),
-                                                                       ::Soprano::Query::QUERY_LANGUAGE_USER,
+                                                                       ::Soprano::Query::QueryLanguageUser,
                                                                        QLatin1String( "lucene" ) );
 //    Iterator< ::Soprano::Index::QueryHit> hits = d->repository->index()->search( bq );
 
@@ -349,7 +349,7 @@ std::vector<Strigi::IndexedDocument> Strigi::Soprano::IndexReader::query( const 
     vector<IndexedDocument> results;
     lucene::search::Query* bq = createQuery( query );
     ::Soprano::QueryResultIterator hits = d->repository->executeQuery( TString( bq->toString(), true ),
-                                                                       ::Soprano::Query::QUERY_LANGUAGE_USER,
+                                                                       ::Soprano::Query::QueryLanguageUser,
                                                                        QLatin1String( "lucene" ) );
 //    Iterator< ::Soprano::Index::QueryHit> hits = d->repository->index()->search( bq );
 
@@ -392,7 +392,7 @@ void Strigi::Soprano::IndexReader::getChildren( const std::string& parent,
 
 //    qDebug() << "running getChildren query:" << query;
 
-    QueryResultIterator result = d->repository->executeQuery( query, ::Soprano::Query::QUERY_LANGUAGE_SPARQL );
+    QueryResultIterator result = d->repository->executeQuery( query, ::Soprano::Query::QueryLanguageSparql );
 
     while ( result.next() ) {
         Node pathNode = result.binding( "path" );
@@ -444,7 +444,7 @@ time_t Strigi::Soprano::IndexReader::mTime( const std::string& uri )
 
     qDebug() << "mTime( " << uri.c_str() << ") query:" << query;
 
-    QueryResultIterator it = d->repository->executeQuery( query, ::Soprano::Query::QUERY_LANGUAGE_SPARQL );
+    QueryResultIterator it = d->repository->executeQuery( query, ::Soprano::Query::QueryLanguageSparql );
 
     time_t mtime = 0;
     if ( it.next() ) {
@@ -469,7 +469,7 @@ std::vector<std::string> Strigi::Soprano::IndexReader::fieldNames()
     // Our list of field names (the predicates) is probably awefully long.
 
     std::vector<std::string> fields;
-    QueryResultIterator it = d->repository->executeQuery( "select distinct ?p where { ?r ?p ?o . }", ::Soprano::Query::QUERY_LANGUAGE_SPARQL );
+    QueryResultIterator it = d->repository->executeQuery( "select distinct ?p where { ?r ?p ?o . }", ::Soprano::Query::QueryLanguageSparql );
     while ( it.next() ) {
         fields.push_back( Util::fieldName( it.binding("p").uri() ) );
     }
