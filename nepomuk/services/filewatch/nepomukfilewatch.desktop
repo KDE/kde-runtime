@@ -18,6 +18,7 @@ Name[sv]=Nepomuk-filövervakning
 Name[zh_CN]=Nepomuk 文件监视
 Name[zh_TW]=Nepomuk 檔案監控
 Comment=The Nepomuk file watch service for monitoring file changes
+Comment[bg]=Услугата NepomukFileWatch  следи за промяна във файловете
 Comment[ca]=El servei de control de fitxers del Nepomuk per fer un seguiment dels canvis en fitxers
 Comment[csb]=Ùsłëżnota Nepomùka mònitorëjącô zjinaczi lopków
 Comment[da]=Nepomuk filovervågningstjeneste til overvågning af filændringer
