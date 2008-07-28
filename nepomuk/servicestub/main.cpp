@@ -93,7 +93,6 @@ int main( int argc, char** argv )
 
     QApplication app( argc, argv );
     installSignalHandler();
-    KComponentData compData( aboutData );
     QApplication::setQuitOnLastWindowClosed( false );
 
     // FIXME: set the proper KConfig rc name using the service name
@@ -106,6 +105,11 @@ int main( int argc, char** argv )
 
     QTextStream s( stderr );
 
+    QString serviceName = args->arg(0);
+
+    aboutData.setAppName( serviceName.toLocal8Bit() );
+    KComponentData compData( aboutData );
+
 
     // check if NepomukServer is running
     // ====================================
@@ -117,7 +121,6 @@ int main( int argc, char** argv )
 
     // search the service
     // ====================================
-    QString serviceName = args->arg(0);
     KService::List services = KServiceTypeTrader::self()->query( "NepomukService", "DesktopEntryName == '" + serviceName + "'" );
     if( services.isEmpty() ) {
         s << i18n( "Unknown service name:") << " " <<  serviceName << endl;
