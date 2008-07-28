@@ -16,37 +16,11 @@
    Boston, MA 02110-1301, USA.
 */
 
-#ifndef _NEPOMUK_STRIGI_SERVICE_H_
-#define _NEPOMUK_STRIGI_SERVICE_H_
+#ifndef _NEPOMUK_LINUX_PRIO_H_
+#define _NEPOMUK_LINUX_PRIO_H_
 
-#include <Nepomuk/Service>
-#include <QtCore/QTimer>
-
-namespace Strigi {
-    class IndexManager;
-}
-
-namespace Nepomuk {
-
-    class IndexScheduler;
-
-    /**
-     * Service controlling the strigidaemon
-     */
-    class StrigiService : public Nepomuk::Service
-    {
-        Q_OBJECT
-
-    public:
-        StrigiService( QObject* parent = 0, const QList<QVariant>& args = QList<QVariant>() );
-        ~StrigiService();
-
-    private:
-        void updateStrigiConfig();
-
-        Strigi::IndexManager* m_indexManager;
-        IndexScheduler* m_indexScheduler;
-    };
-}
+bool lowerIOPriority();
+bool lowerSchedulingPriority();
+bool lowerPriority();
 
 #endif

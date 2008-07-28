@@ -1,1 +1,0 @@
-#cmakedefine HAVE_STRIGI_SOPRANO_BACKEND

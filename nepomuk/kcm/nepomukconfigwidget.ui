@@ -2,14 +2,6 @@
  <author>Sebastian Trueg</author>
  <class>NepomukConfigWidget</class>
  <widget class="QWidget" name="NepomukConfigWidget" >
-  <property name="geometry" >
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>366</width>
-    <height>300</height>
-   </rect>
-  </property>
   <layout class="QVBoxLayout" >
    <item>
     <widget class="QTabWidget" name="tabWidget" >
@@ -20,7 +12,7 @@
       <attribute name="title" >
        <string>Basic Settings</string>
       </attribute>
-      <layout class="QVBoxLayout" >
+      <layout class="QVBoxLayout" name="verticalLayout_2" >
        <item>
         <widget class="QGroupBox" name="groupBox_2" >
          <property name="title" >
@@ -30,7 +22,7 @@
           <item>
            <widget class="QLabel" name="label_3" >
             <property name="text" >
-             <string>Nepomuk Semantic Desktop enables tagging and rating of files integrated with the Strigi Desktop Search.</string>
+             <string>Nepomuk Semantic Desktop enables tagging and rating of files integrated with the Desktop Search.</string>
             </property>
             <property name="wordWrap" >
              <bool>true</bool>
@@ -50,9 +42,9 @@
        <item>
         <widget class="QGroupBox" name="groupBox" >
          <property name="title" >
-          <string>Strigi Desktop Search</string>
+          <string>Strigi Desktop File Indexer</string>
          </property>
-         <layout class="QVBoxLayout" >
+         <layout class="QVBoxLayout" name="verticalLayout" >
           <item>
            <widget class="QLabel" name="label_2" >
             <property name="text" >
@@ -64,46 +56,49 @@
            </widget>
           </item>
           <item>
-           <layout class="QHBoxLayout" >
+           <widget class="QCheckBox" name="m_checkEnableStrigi" >
+            <property name="text" >
+             <string>Enable Strigi Desktop File Indexer</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout" >
             <item>
-             <widget class="QCheckBox" name="m_checkEnableStrigi" >
-              <property name="text" >
-               <string>Enable Strigi Desktop Search</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <spacer>
+             <spacer name="horizontalSpacer" >
               <property name="orientation" >
                <enum>Qt::Horizontal</enum>
               </property>
-              <property name="sizeHint" >
+              <property name="sizeType" >
+               <enum>QSizePolicy::Fixed</enum>
+              </property>
+              <property name="sizeHint" stdset="0" >
                <size>
-                <width>20</width>
-                <height>40</height>
+                <width>40</width>
+                <height>1</height>
                </size>
               </property>
              </spacer>
             </item>
             <item>
-             <layout class="QHBoxLayout" >
-              <item>
-               <widget class="KLed" native="1" name="m_strigiStatus" />
-              </item>
-              <item>
-               <widget class="QLabel" name="m_strigiStatusLabel" >
-                <property name="sizePolicy" >
-                 <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
-                  <horstretch>1</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="text" >
-                 <string>Strigi not running</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
+             <widget class="KSqueezedTextLabel" name="m_labelStrigiStatus" >
+              <property name="sizePolicy" >
+               <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+                <horstretch>1</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="font" >
+               <font>
+                <weight>75</weight>
+                <italic>true</italic>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="text" >
+               <string>KSqueezedTextLabel</string>
+              </property>
+             </widget>
             </item>
            </layout>
           </item>
@@ -115,7 +110,7 @@
          <property name="orientation" >
           <enum>Qt::Vertical</enum>
          </property>
-         <property name="sizeHint" >
+         <property name="sizeHint" stdset="0" >
           <size>
            <width>20</width>
            <height>40</height>
@@ -129,21 +124,27 @@
       <attribute name="title" >
        <string>Advanced Settings</string>
       </attribute>
-      <layout class="QVBoxLayout" >
+      <layout class="QHBoxLayout" name="horizontalLayout_2" >
        <item>
-        <widget class="KEditListBox" name="m_editStrigiFolders" >
-         <property name="toolTip" >
-          <string>The folders Strigi scans for indexable files</string>
-         </property>
-         <property name="whatsThis" >
-          <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
-p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Select the folders that Strigi should scan for files to index. The files in these folders will be searchable through Strigi Desktop Search.&lt;/p>&lt;/body>&lt;/html></string>
-         </property>
+        <widget class="QGroupBox" name="groupBox_3" >
          <property name="title" >
           <string>Strigi Index Folders</string>
          </property>
+         <layout class="QVBoxLayout" name="verticalLayout_3" >
+          <item>
+           <widget class="QLabel" name="label" >
+            <property name="text" >
+             <string>Select the local folders that contain files to be indexed for fast desktop searches</string>
+            </property>
+            <property name="wordWrap" >
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QTreeView" name="m_viewIndexFolders" />
+          </item>
+         </layout>
         </widget>
        </item>
        <item>
@@ -159,19 +160,6 @@ p, li { white-space: pre-wrap; }
          </property>
         </widget>
        </item>
-       <item>
-        <spacer>
-         <property name="orientation" >
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" >
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
       </layout>
      </widget>
     </widget>
@@ -186,15 +174,14 @@ p, li { white-space: pre-wrap; }
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>KLed</class>
-   <extends>QWidget</extends>
-   <header>kled.h</header>
+   <class>KSqueezedTextLabel</class>
+   <extends>QLabel</extends>
+   <header>ksqueezedtextlabel.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
   <tabstop>tabWidget</tabstop>
   <tabstop>m_checkEnableNepomuk</tabstop>
-  <tabstop>m_checkEnableStrigi</tabstop>
  </tabstops>
  <resources/>
  <connections>

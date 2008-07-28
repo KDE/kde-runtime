@@ -17,30 +17,65 @@
 */
 
 #include "strigiservice.h"
-#include "strigicontroller.h"
-#include "../../common/strigiconfigfile.h"
+#include "strigiserviceadaptor.h"
+#include "priority.h"
+#include "indexscheduler.h"
+#include "eventmonitor.h"
+#include "systray.h"
+#include "config.h"
+#include "statuswidget.h"
+
+#include <KDebug>
+
+#include <strigi/indexpluginloader.h>
+#include <strigi/indexmanager.h>
+
 
 Nepomuk::StrigiService::StrigiService( QObject* parent, const QList<QVariant>& )
-    : Service( parent )
+    : Service( parent, false )
 {
+    // lower process priority - we do not want to spoil KDE usage
+    // ==============================================================
+    if ( !lowerPriority() )
+        kDebug() << "Failed to lower priority.";
+    if ( !lowerSchedulingPriority() )
+        kDebug() << "Failed to lower scheduling priority.";
+    if ( !lowerIOPriority() )
+        kDebug() << "Failed to lower io priority.";
 
-    m_strigiController = new StrigiController( this );
-    updateStrigiConfig();
-    m_strigiController->start();
+
+    // setup the actual index scheduler including strigi stuff
+    // ==============================================================
+    if ( ( m_indexManager = Strigi::IndexPluginLoader::createIndexManager( "sopranobackend", 0 ) ) ) {
+        m_indexScheduler = new IndexScheduler( m_indexManager, this );
+
+        ( void )new EventMonitor( m_indexScheduler, this );
+        ( void )new StrigiServiceAdaptor( m_indexScheduler, this );
+        StatusWidget* sw = new StatusWidget( mainModel(), m_indexScheduler );
+        ( new SystemTray( m_indexScheduler, sw ) )->show();
+
+        m_indexScheduler->start();
+    }
+    else {
+        kDebug() << "Failed to load sopranobackend Strigi index manager.";
+    }
+
+
+    // service initialization done if creating a strigi index manager was successful
+    // ==============================================================
+    setServiceInitialized( m_indexManager != 0 );
 }
+
 
 Nepomuk::StrigiService::~StrigiService()
 {
+    if ( m_indexManager ) {
+        m_indexScheduler->stop();
+        m_indexScheduler->wait();
+        Strigi::IndexPluginLoader::deleteIndexManager( m_indexManager );
+    }
 }
 
-
-void Nepomuk::StrigiService::updateStrigiConfig()
-{
-    StrigiConfigFile strigiConfig ( StrigiConfigFile::defaultStrigiConfigFilePath() );
-    strigiConfig.load();
-    strigiConfig.defaultRepository().setType( "sopranobackend" );
-    strigiConfig.save();
-}
 
 #include <kpluginfactory.h>
 #include <kpluginloader.h>

@@ -1,0 +1,97 @@
+<ui version="4.0" >
+ <class>ProgressGui</class>
+ <widget class="QWidget" name="ProgressGui" >
+  <layout class="QVBoxLayout" name="verticalLayout" >
+   <item>
+    <widget class="KTitleWidget" name="m_title" >
+     <property name="text" >
+      <string>Nepomuk/Strigi Desktop Search</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="label" >
+     <property name="sizePolicy" >
+      <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+       <horstretch>0</horstretch>
+       <verstretch>1</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text" >
+      <string>(THIS IS A TEMPORARY INFO WIDGET WHICH IS SUPPOSED TO BE NON-INVASIVE. PLEASE COME UP WITH IDEAS TO IMPROVE IT: trueg@kde.org) 
+Nepomuk/Strigi is analyzing the files on your local harddisk for fast desktop search.
+The initial analyzation can take a while. Subsequent checks are much faster as only changed and new files are analyzed.
+If you do not intend to use desktop search, you can always disable Strigi or suspend it temporarily.</string>
+     </property>
+     <property name="wordWrap" >
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="Line" name="line" >
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout" >
+     <item>
+      <widget class="QCheckBox" name="m_checkDoNotShowAgain" >
+       <property name="text" >
+        <string>Do not show again</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_2" >
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0" >
+        <size>
+         <width>238</width>
+         <height>26</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="m_buttonConfigure" >
+       <property name="text" >
+        <string>Configure...</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="m_buttonDisable" >
+       <property name="text" >
+        <string>Disable</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="m_buttonSuspendResume" >
+       <property name="text" >
+        <string>Suspend</string>
+       </property>
+       <property name="checkable" >
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>KTitleWidget</class>
+   <extends>QWidget</extends>
+   <header>ktitlewidget.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

@@ -16,7 +16,6 @@ if(CLucene_FOUND AND SopranoIndex_FOUND)
 endif(CLucene_FOUND AND SopranoIndex_FOUND)
 # -----------------------------
 
-add_subdirectory(common)
 add_subdirectory(server)
 add_subdirectory(kcm)
 add_subdirectory(services)

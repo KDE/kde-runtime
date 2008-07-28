@@ -1,0 +1,22 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN"
+         "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+  <interface name="org.kde.nepomuk.Strigi">
+    <method name="isIndexing">
+      <arg type="b" direction="out" />
+    </method>
+    <method name="isSuspended">
+      <arg type="b" direction="out" />
+    </method>
+    <method name="currentFolder">
+      <arg type="s" direction="out" />
+    </method>
+    <method name="suspend" />
+    <method name="resume" />
+    <signal name="indexingStarted" />
+    <signal name="indexingStopped" />
+    <signal name="indexingFolder">
+      <arg name="path" type="s" />
+    </method>
+  </interface>
+</node>

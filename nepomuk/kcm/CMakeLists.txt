@@ -6,15 +6,15 @@ include_directories(
   ${SOPRANO_INCLUDE_DIR}
   ${CMAKE_SOURCE_DIR}
   ${NEPOMUK_INCLUDE_DIR}
-  ${nepomukcommon_BINARY_DIR}
   )
 
 set(kcmnepomuk_SRCS
-  ../common/strigiconfigfile.cpp
   nepomukserverkcm.cpp
+  folderselectionmodel.cpp
   )
 
 qt4_add_dbus_interface(kcmnepomuk_SRCS ../interfaces/org.kde.NepomukServer.xml nepomukserverinterface)
+qt4_add_dbus_interface(kcmnepomuk_SRCS ../interfaces/org.kde.nepomuk.Strigi.xml strigiserviceinterface)
 
 kde4_add_ui_files(kcmnepomuk_SRCS
   nepomukconfigwidget.ui)
@@ -22,9 +22,9 @@ kde4_add_ui_files(kcmnepomuk_SRCS
 kde4_add_plugin(kcm_nepomuk ${kcmnepomuk_SRCS})
 
 target_link_libraries(kcm_nepomuk
-  ${STRIGI_STRIGIQTDBUSCLIENT_LIBRARY}
   ${KDE4_KDEUI_LIBS}
   ${KDE4_KIO_LIBS}
+  ${SOPRANO_LIBRARIES}
   )
 # -----------------------------
 

@@ -2,7 +2,7 @@
 Type=Service
 X-KDE-ServiceTypes=NepomukService
 X-KDE-Library=nepomukstrigiservice
-X-KDE-Nepomuk-autostart=false
+X-KDE-Nepomuk-autostart=true
 X-KDE-Nepomuk-start-on-demand=false
 Name=Nepomuk Strigi Service
 Name[af]=Nepomuk Strigi diens

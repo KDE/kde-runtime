@@ -1,0 +1,23 @@
+[Global]
+IconName=nepomuk
+Comment=The Nepomuk Strigi file indexer
+
+[Event/initialIndexingStarted]
+Name=Initial Indexing started
+Comment=Strigi started the initial indexing of local files for fast desktop searches
+Action=Popup
+
+[Event/initialIndexingFinished]
+Name=Initial Indexing finished
+Comment=Strigi finished the initial indexing of local files for fast desktop searches
+Action=Popup
+
+[Event/indexingSuspended]
+Name=Indexing suspended
+Comment=Strigi file indexing has been suspended
+Action=Popup
+
+[Event/indexingResumed]
+Name=Indexing resumed
+Comment=Strigi file indexing has been resumed
+Action=Popup

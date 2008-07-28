@@ -1,5 +1,5 @@
 /* This file is part of the KDE Project
-   Copyright (c) 2007 Sebastian Trueg <trueg@kde.org>
+   Copyright (c) 2008 Sebastian Trueg <trueg@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -16,38 +16,50 @@
    Boston, MA 02110-1301, USA.
 */
 
-#ifndef _NEPOMUK_SERVER_KCM_H_
-#define _NEPOMUK_SERVER_KCM_H_
+#ifndef _STATUS_WIDGET_H_
+#define _STATUS_WIDGET_H_
 
-#include <KCModule>
-#include "ui_nepomukconfigwidget.h"
-#include "nepomukserverinterface.h"
-#include "strigiserviceinterface.h"
+#include <KDialog>
+#include "ui_statuswidget.h"
 
-class FolderSelectionModel;
+#include <QtCore/QTimer>
+
+class QShowEvent;
+class QHideEvent;
+
+namespace Soprano {
+    class Model;
+}
 
 namespace Nepomuk {
-    class ServerConfigModule : public KCModule, private Ui::NepomukConfigWidget
+
+    class IndexScheduler;
+
+    class StatusWidget : public KDialog, public Ui::StatusWidget
     {
         Q_OBJECT
 
     public:
-        ServerConfigModule( QWidget* parent, const QVariantList& args );
-        ~ServerConfigModule();
-
-    public Q_SLOTS:
-        void load();
-        void save();
-        void defaults();
+        StatusWidget( Soprano::Model* model, IndexScheduler* scheduler, QWidget* parent = 0 );
+        ~StatusWidget();
 
     private Q_SLOTS:
+        void slotConfigure();
         void slotUpdateStrigiStatus();
+        void slotUpdateStoreStatus();
+        void slotUpdateTimeout();
 
     private:
-        org::kde::NepomukServer m_serverInterface;
-        org::kde::nepomuk::Strigi m_strigiInterface;
+        void showEvent( QShowEvent* event );
+        void hideEvent( QHideEvent* event );
 
-        FolderSelectionModel* m_folderModel;
+        Soprano::Model* m_model;
+        IndexScheduler* m_indexScheduler;
+
+        bool m_connected;
+        QTimer m_updateTimer;
+        bool m_updating;
+        bool m_updateRequested;
     };
 }
 

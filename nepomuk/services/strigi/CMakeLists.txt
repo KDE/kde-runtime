@@ -1,30 +1,44 @@
-project(strigiservice)
+project(nepomukstrigiservice)
 
 include_directories(
   ${SOPRANO_INCLUDE_DIR}
   ${CMAKE_SOURCE_DIR}
   ${NEPOMUK_INCLUDE_DIR}
-  ${nepomukcommon_BINARY_DIR}
+  ${STRIGI_INCLUDE_DIR}
   )
 
 set(strigiservice_SRCS
   strigiservice.cpp
-  strigicontroller.cpp
-  ../../common/strigiconfigfile.cpp
+  strigiserviceadaptor.cpp
+  indexscheduler.cpp
+  priority.cpp
+  config.cpp
+  eventmonitor.cpp
+  systray.cpp
+  statuswidget.cpp
   )
+
+kde4_add_ui_files(strigiservice_SRCS
+  statuswidget.ui)
 
 kde4_add_plugin(nepomukstrigiservice ${strigiservice_SRCS})
 
 target_link_libraries(nepomukstrigiservice
-  ${STRIGI_STRIGIQTDBUSCLIENT_LIBRARY}
+  ${STRIGI_STREAMANALYZER_LIBRARY}
   ${KDE4_KDEUI_LIBS}
+  ${KDE4_KIO_LIBS}
+  ${KDE4_SOLID_LIBS}
+  ${KDE4_KUTILS_LIBS}
   ${NEPOMUK_LIBRARIES}
-  ${QT_QTXML_LIBRARY}
   )
 
 install(
   FILES nepomukstrigiservice.desktop
   DESTINATION ${SERVICES_INSTALL_DIR})
+
+install(
+  FILES nepomukstrigiservice.notifyrc
+  DESTINATION ${DATA_INSTALL_DIR}/nepomukstrigiservice)
 
 install(
   TARGETS nepomukstrigiservice

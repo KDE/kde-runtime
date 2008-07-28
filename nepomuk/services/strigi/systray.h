@@ -1,5 +1,5 @@
 /* This file is part of the KDE Project
-   Copyright (c) 2007 Sebastian Trueg <trueg@kde.org>
+   Copyright (c) 2008 Sebastian Trueg <trueg@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -16,46 +16,33 @@
    Boston, MA 02110-1301, USA.
 */
 
-#ifndef _NEPOMUK_STRIGI_CONTROLLER_H_
-#define _NEPOMUK_STRIGI_CONTROLLER_H_
+#ifndef _NEPOMUK_STRIGI_SYSTRAY_H_
+#define _NEPOMUK_STRIGI_SYSTRAY_H_
 
-#include <QtCore/QObject>
-#include <KProcess>
+#include <KSystemTrayIcon>
 
+class KToggleAction;
 
 namespace Nepomuk {
-    class StrigiController : public QObject
+
+    class IndexScheduler;
+
+    class SystemTray : public KSystemTrayIcon
     {
         Q_OBJECT
 
     public:
-        StrigiController( QObject* parent = 0 );
-        ~StrigiController();
-
-        enum State {
-            Idle,
-            StartingUp,
-            Running,
-            ShuttingDown
-        };
-
-        State state() const;
-
-    public Q_SLOTS:
-        bool start();
-        void shutdown();
-
-        static bool isRunning();
+        SystemTray( IndexScheduler* scheduler, QWidget* parent );
+        ~SystemTray();
 
     private Q_SLOTS:
-        void slotProcessFinished( int exitCode, QProcess::ExitStatus exitStatus );
-        void slotRunning5Minutes();
-        void slotStartStrigiIndexing();
+        void slotUpdateStrigiStatus();
+        void slotConfigure();
 
     private:
-        KProcess* m_strigiProcess;
-        bool m_running5Minutes;
-        State m_state;
+        KToggleAction* m_suspendResumeAction;
+
+        IndexScheduler* m_indexScheduler;
     };
 }
 

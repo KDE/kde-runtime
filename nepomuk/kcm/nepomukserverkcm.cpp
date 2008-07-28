@@ -18,7 +18,7 @@
 
 #include "nepomukserverkcm.h"
 #include "nepomukserverinterface.h"
-#include "../common/strigiconfigfile.h"
+#include "folderselectionmodel.h"
 
 #include <KPluginFactory>
 #include <KPluginLoader>
@@ -26,18 +26,31 @@
 #include <KSharedConfig>
 #include <KLed>
 #include <KMessageBox>
-#include <KUrlRequester>
 
-#include <strigi/qtdbus/strigiclient.h>
+#include <QtGui/QTreeView>
+
+#include <Soprano/PluginManager>
 
 
 K_PLUGIN_FACTORY( NepomukConfigModuleFactory, registerPlugin<Nepomuk::ServerConfigModule>(); )
 K_EXPORT_PLUGIN( NepomukConfigModuleFactory("kcm_nepomuk", "nepomuk") )
 
 
+namespace {
+    QStringList defaultFolders() {
+        return QStringList() << QDir::homePath();
+    }
+
+    QStringList defaultExcludeFilters() {
+        return QStringList() << ".*/" << ".*" << "*~" << "*.part";
+    }
+}
+
+
 Nepomuk::ServerConfigModule::ServerConfigModule( QWidget* parent, const QVariantList& args )
     : KCModule( NepomukConfigModuleFactory::componentData(), parent, args ),
-      m_serverInterface( "org.kde.NepomukServer", "/nepomukserver", QDBusConnection::sessionBus() )
+      m_serverInterface( "org.kde.NepomukServer", "/nepomukserver", QDBusConnection::sessionBus() ),
+      m_strigiInterface( "org.kde.nepomuk.services.nepomukstrigiservice", "/nepomukstrigiservice", QDBusConnection::sessionBus() )
 {
     KAboutData *about = new KAboutData(
         "kcm_nepomuk", 0, ki18n("Nepomuk Configuration Module"),
@@ -48,19 +61,28 @@ Nepomuk::ServerConfigModule::ServerConfigModule( QWidget* parent, const QVariant
     setButtons(Apply|Default);
     setupUi( this );
 
-    KUrlRequester* urlReq = new KUrlRequester( m_editStrigiFolders );
-    urlReq->setMode( KFile::Directory|KFile::LocalOnly|KFile::ExistingOnly );
-    KEditListBox::CustomEditor ce( urlReq, urlReq->lineEdit() );
-    m_editStrigiFolders->setCustomEditor( ce );
+    m_folderModel = new FolderSelectionModel( m_viewIndexFolders );
+    m_viewIndexFolders->setModel( m_folderModel );
+    m_viewIndexFolders->setHeaderHidden( true );
+    m_viewIndexFolders->setRootIsDecorated( true );
+    m_viewIndexFolders->setAnimated( true );
+    m_viewIndexFolders->setRootIndex( m_folderModel->setRootPath( QDir::rootPath() ) );
 
     connect( m_checkEnableStrigi, SIGNAL( toggled(bool) ),
              this, SLOT( changed() ) );
     connect( m_checkEnableNepomuk, SIGNAL( toggled(bool) ),
              this, SLOT( changed() ) );
-    connect( m_editStrigiFolders, SIGNAL( changed() ),
+    connect( m_folderModel, SIGNAL( dataChanged(const QModelIndex&, const QModelIndex&) ),
              this, SLOT( changed() ) );
     connect( m_editStrigiExcludeFilters, SIGNAL( changed() ),
              this, SLOT( changed() ) );
+
+    connect( &m_strigiInterface, SIGNAL( indexingStarted() ),
+             this, SLOT( slotUpdateStrigiStatus() ) );
+    connect( &m_strigiInterface, SIGNAL( indexingStopped() ),
+             this, SLOT( slotUpdateStrigiStatus() ) );
+    connect( &m_strigiInterface, SIGNAL( indexingFolder(QString) ),
+             this, SLOT( slotUpdateStrigiStatus() ) );
 
     load();
 }
@@ -73,7 +95,16 @@ Nepomuk::ServerConfigModule::~ServerConfigModule()
 
 void Nepomuk::ServerConfigModule::load()
 {
-    if ( m_serverInterface.isValid() ) {
+    bool sopranoBackendAvailable = !Soprano::PluginManager::instance()->allBackends().isEmpty();
+
+    m_checkEnableNepomuk->setEnabled( sopranoBackendAvailable );
+
+    if ( !sopranoBackendAvailable ) {
+        KMessageBox::sorry( this,
+                            i18n( "No Soprano Database backend available. Please check your installation." ),
+                            i18n( "Nepomuk cannot be started" ) );
+    }
+    else if ( m_serverInterface.isValid() ) {
         m_checkEnableStrigi->setChecked( m_serverInterface.isStrigiEnabled().value() );
         m_checkEnableNepomuk->setChecked( m_serverInterface.isNepomukEnabled().value() );
     }
@@ -85,30 +116,20 @@ void Nepomuk::ServerConfigModule::load()
 
         KConfig config( "nepomukserverrc" );
         m_checkEnableNepomuk->setChecked( config.group( "Basic Settings" ).readEntry( "Start Nepomuk", true ) );
-        m_checkEnableStrigi->setChecked( config.group( "Service-nepomukstrigiservice" ).readEntry( "autostart", false ) );
+        m_checkEnableStrigi->setChecked( config.group( "Service-nepomukstrigiservice" ).readEntry( "autostart", true ) );
     }
 
-    if ( isStrigiRunning() ) {
-        StrigiClient strigiClient;
-        m_editStrigiFolders->setItems( strigiClient.getIndexedDirectories() );
-        QList<QPair<bool, QString> > filters = strigiClient.getFilters();
-        m_editStrigiExcludeFilters->clear();
-        for( QList<QPair<bool, QString> >::const_iterator it = filters.constBegin();
-             it != filters.constEnd(); ++it ) {
-            if ( !it->first ) {
-                m_editStrigiExcludeFilters->insertItem( it->second );
-            }
-            // else: we simply drop include filters for now
-        }
-    }
-    else {
-        StrigiConfigFile strigiConfig( StrigiConfigFile::defaultStrigiConfigFilePath() );
-        strigiConfig.load();
-        m_editStrigiFolders->setItems( strigiConfig.defaultRepository().indexedDirectories() );
-        m_editStrigiExcludeFilters->setItems( strigiConfig.excludeFilters() );
+    KConfig strigiConfig( "nepomukstrigirc" );
+    m_folderModel->setFolders( strigiConfig.group( "General" ).readPathEntry( "folders", defaultFolders() ) );
+    m_editStrigiExcludeFilters->setItems( strigiConfig.group( "General" ).readEntry( "exclude filters", defaultExcludeFilters() ) );
+
+    // make sure that the tree is expanded to show all selected items
+    foreach( const QString& dir, m_folderModel->folders() ) {
+        QModelIndex index = m_folderModel->index( dir );
+        m_viewIndexFolders->scrollTo( index, QAbstractItemView::EnsureVisible );
     }
 
-    updateStrigiStatus();
+    slotUpdateStrigiStatus();
 }
 
 
@@ -121,17 +142,9 @@ void Nepomuk::ServerConfigModule::save()
 
 
     // 2. update Strigi config
-    StrigiConfigFile strigiConfig( StrigiConfigFile::defaultStrigiConfigFilePath() );
-    strigiConfig.load();
-    if ( m_checkEnableNepomuk->isChecked() ) {
-        strigiConfig.defaultRepository().setType( "sopranobackend" );
-    }
-    else {
-        strigiConfig.defaultRepository().setType( "clucene" );
-    }
-    strigiConfig.defaultRepository().setIndexedDirectories( m_editStrigiFolders->items() );
-    strigiConfig.setExcludeFilters( m_editStrigiExcludeFilters->items() );
-    strigiConfig.save();
+    KConfig strigiConfig( "nepomukstrigirc" );
+    strigiConfig.group( "General" ).writePathEntry( "folders", m_folderModel->folders() );
+    strigiConfig.group( "General" ).writeEntry( "exclude filters", m_editStrigiExcludeFilters->items() );
 
 
     // 3. update the current state of the nepomuk server
@@ -146,66 +159,36 @@ void Nepomuk::ServerConfigModule::save()
                             i18n( "Nepomuk server not running" ) );
     }
 
-
-    // 4. update values in the running Strigi instance
-    // TODO: there should be a dbus method to re-read the config
-    // -----------------------------
-    if ( m_checkEnableStrigi->isChecked() ) {
-        // give strigi some time to start
-        QTimer::singleShot( 2000, this, SLOT( updateStrigiSettingsInRunningInstance() ) );
-    }
-
-    // give strigi some time to start
-    QTimer::singleShot( 2000, this, SLOT( updateStrigiStatus() ) );
+    slotUpdateStrigiStatus();
 }
 
 
 void Nepomuk::ServerConfigModule::defaults()
 {
-    m_checkEnableStrigi->setChecked( false );
+    m_checkEnableStrigi->setChecked( true );
     m_checkEnableNepomuk->setChecked( true );
-    // create Strigi default config
-    StrigiConfigFile defaultConfig;
-    m_editStrigiFolders->setItems( defaultConfig.defaultRepository().indexedDirectories() );
-    m_editStrigiExcludeFilters->setItems( defaultConfig.excludeFilters() );
+    m_editStrigiExcludeFilters->setItems( defaultExcludeFilters() );
+    m_folderModel->setFolders( defaultFolders() );
 }
 
 
-void Nepomuk::ServerConfigModule::updateStrigiStatus()
+void Nepomuk::ServerConfigModule::slotUpdateStrigiStatus()
 {
-    if ( isStrigiRunning() ) {
-        m_strigiStatus->on();
-        m_strigiStatusLabel->setText( i18n( "Strigi is running" ) );
+    if ( m_strigiInterface.isValid() ) {
+        bool indexing = m_strigiInterface.isIndexing();
+        bool suspended = m_strigiInterface.isSuspended();
+        QString folder = m_strigiInterface.currentFolder();
+
+        if ( suspended )
+            m_labelStrigiStatus->setText( i18n( "File indexer is suspended" ) );
+        else if ( indexing )
+            m_labelStrigiStatus->setText( i18n( "Strigi is currently indexing files in folder %1", folder ) );
+        else
+            m_labelStrigiStatus->setText( i18n( "File indexer is idle" ) );
     }
     else {
-        m_strigiStatus->off();
-        m_strigiStatusLabel->setText( i18n( "Strigi not running" ) );
+        m_labelStrigiStatus->setText( i18n( "Strigi service not running." ) );
     }
-}
-
-
-void Nepomuk::ServerConfigModule::updateStrigiSettingsInRunningInstance()
-{
-    if ( isStrigiRunning() ) {
-        StrigiClient strigiClient;
-        strigiClient.setIndexedDirectories( m_editStrigiFolders->items() );
-
-        // FIXME: there should be a rereadConfig method in strigi
-        StrigiConfigFile strigiConfig( StrigiConfigFile::defaultStrigiConfigFilePath() );
-        strigiConfig.load();
-
-        QList<QPair<bool, QString> > filters;
-        foreach( const QString &filter, strigiConfig.excludeFilters() ) {
-            filters.append( qMakePair( false, filter ) );
-        }
-        strigiClient.setFilters( filters );
-    }
-}
-
-
-bool Nepomuk::ServerConfigModule::isStrigiRunning()
-{
-    return QDBusConnection::sessionBus().interface()->isServiceRegistered( "vandenoever.strigi" ).value();
 }
 
 #include "nepomukserverkcm.moc"
