@@ -51,6 +51,9 @@ namespace Nepomuk {
          */
         bool initialized() const;
 
+    public Q_SLOTS:
+        void optimize( const QString& repoName );
+
     Q_SIGNALS:
         void initializationDone( bool success );
 

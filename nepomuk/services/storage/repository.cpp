@@ -26,6 +26,7 @@
 #include <Soprano/StorageModel>
 #include <Soprano/Error/Error>
 #include <Soprano/Vocabulary/Xesam>
+#include <Soprano/Vocabulary/RDF>
 
 #ifdef HAVE_SOPRANO_INDEX
 #include <Soprano/Index/IndexFilterModel>
@@ -37,6 +38,8 @@
 #include <KConfigGroup>
 #include <KSharedConfig>
 #include <KLocale>
+
+#include <QtCore/QTimer>
 
 
 namespace {
@@ -271,6 +274,22 @@ void Nepomuk::Repository::copyFinished( KJob* job )
     // although converting might have failed, the new model is open anyway
     m_state = OPEN;
     emit opened( this, true );
+}
+
+
+void Nepomuk::Repository::optimize()
+{
+    QTimer::singleShot( 0, this, SLOT( slotDoOptimize() ) );
+}
+
+
+void Nepomuk::Repository::slotDoOptimize()
+{
+#ifdef HAVE_SOPRANO_INDEX
+#if SOPRANO_IS_VERSION(2,1,60)
+    m_index->optimize();
+#endif
+#endif
 }
 
 

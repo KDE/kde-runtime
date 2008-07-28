@@ -18,17 +18,7 @@
 #include <QtCore/QString>
 #include <QtCore/QMap>
 
-#include <soprano/version.h>
-
-#ifndef SOPRANO_IS_VERSION
-#define SOPRANO_IS_VERSION(a,b,c) false
-#endif
-
-#if SOPRANO_IS_VERSION(2,0,90)
 #include <Soprano/Util/SignalCacheModel>
-#else
-#include <Soprano/FilterModel>
-#endif
 
 
 namespace Soprano {
@@ -46,12 +36,7 @@ namespace Nepomuk {
 
     class CLuceneAnalyzer;
 
-    class Repository : public
-#if SOPRANO_IS_VERSION(2,0,90)
-        Soprano::Util::SignalCacheModel
-#else
-        Soprano::FilterModel
-#endif
+    class Repository : public Soprano::Util::SignalCacheModel
     {
         Q_OBJECT
 
@@ -79,11 +64,17 @@ namespace Nepomuk {
 
         void close();
 
+        /**
+         * Calls slotDoOptimize via timer for instant return.
+         */
+        void optimize();
+
     Q_SIGNALS:
         void opened( Repository*, bool success );
 
     private Q_SLOTS:
         void copyFinished( KJob* job );
+        void slotDoOptimize();
 
     private:
         QString m_name;

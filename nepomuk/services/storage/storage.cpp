@@ -70,4 +70,10 @@ void Nepomuk::Storage::slotNepomukCoreInitialized( bool success )
     setServiceInitialized( success );
 }
 
+
+void Nepomuk::Storage::optimize( const QString& repo )
+{
+    m_core->optimize( repo );
+}
+
 #include "storage.moc"
