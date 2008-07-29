@@ -329,27 +329,19 @@ bool Nepomuk::IndexScheduler::waitForContinue()
 }
 
 
-void Nepomuk::IndexScheduler::analyzeFile( const QString& file )
-{
-    Strigi::StreamAnalyzer analyzer( *m_analyzerConfig );
-    analyzer.setIndexWriter( *m_indexManager->indexWriter() );
-    QFileInfo fileInfo( file );
-    analyzeFile( fileInfo, &analyzer );
-}
-
-
-void Nepomuk::IndexScheduler::removeFile( const QString& file )
-{
-    std::vector<std::string> filesToDelete;
-    filesToDelete.push_back( QFile::encodeName( file ).data() );
-    m_indexManager->indexWriter()->deleteEntries( filesToDelete );
-}
-
-
 void Nepomuk::IndexScheduler::updateDir( const QString& path )
 {
     QMutexLocker lock( &m_dirsToUpdateMutex );
     m_dirsToUpdate << qMakePair( path, false );
+    m_dirsToUpdateWc.wakeAll();
+}
+
+
+void Nepomuk::IndexScheduler::updateAll()
+{
+    QMutexLocker lock( &m_dirsToUpdateMutex );
+    foreach( const QString& f, Config::self()->folders() )
+        m_dirsToUpdate << qMakePair( f, true );
     m_dirsToUpdateWc.wakeAll();
 }
 

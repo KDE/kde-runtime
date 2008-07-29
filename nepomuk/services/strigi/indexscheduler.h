@@ -69,23 +69,15 @@ namespace Nepomuk {
          * Slot to connect to certain event systems like KDirNotify
          * or KDirWatch
          *
-         * (Re)analyzes one certain file.
-         */
-        void analyzeFile( const QString& file );
-
-        /**
-         * Remove one file from the index.
-         */
-        void removeFile( const QString& file );
-
-        /**
-         * Slot to connect to certain event systems like KDirNotify
-         * or KDirWatch
-         *
          * Updates a complete folder (non-recursively). Makes sense for
          * signals like KDirWatch::dirty.
          */
         void updateDir( const QString& path );
+
+        /**
+         * Updates all configured folders.
+         */
+        void updateAll();
 
     Q_SIGNALS:
         void indexingStarted();

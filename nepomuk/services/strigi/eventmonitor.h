@@ -24,8 +24,8 @@
 #include <QtCore/QTimer>
 #include <QtCore/QTime>
 
-class KDirWatch;
 class KDiskFreeSpace;
+class FileSystemWatcher;
 
 namespace Nepomuk {
 
@@ -54,16 +54,15 @@ namespace Nepomuk {
 
         IndexScheduler* m_indexScheduler;
         int m_pauseState;
-        KDirWatch* m_dirWatch;
 
-        // KDirWatch does not provide a list of its watched paths!
-        QStringList m_watchedFolders;
-        bool m_watchedRecursively;
+        FileSystemWatcher* m_fsWatcher;
 
         // timer used to periodically check for available space
         QTimer m_availSpaceTimer;
 
         QTime m_initialIndexTime;
+
+        QTimer m_periodicUpdateTimer;
     };
 }
 

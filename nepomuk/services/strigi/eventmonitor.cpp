@@ -19,8 +19,8 @@
 #include "eventmonitor.h"
 #include "config.h"
 #include "indexscheduler.h"
+#include "filesystemwatcher.h"
 
-#include <KDirWatch>
 #include <KDebug>
 #include <KPassivePopup>
 #include <KLocale>
@@ -44,26 +44,29 @@ namespace {
 Nepomuk::EventMonitor::EventMonitor( IndexScheduler* scheduler, QObject* parent )
     : QObject( parent ),
       m_indexScheduler( scheduler ),
-      m_pauseState( NotPaused ),
-      m_watchedRecursively( false )
+      m_pauseState( NotPaused )
 {
-    // setup the dirwatch
-    m_dirWatch = new KDirWatch( this );
-    connect( m_dirWatch, SIGNAL( dirty( QString ) ),
-             m_indexScheduler, SLOT( updateDir( QString ) ) );
-    connect( m_dirWatch, SIGNAL( deleted( QString ) ),
+    // monitor the file system
+    m_fsWatcher = new FileSystemWatcher( this );
+    connect( m_fsWatcher, SIGNAL( dirty( QString ) ),
              m_indexScheduler, SLOT( updateDir( QString ) ) );
 
     // update the watches if the config changes
     connect( Config::self(), SIGNAL( configChanged() ),
              this, SLOT( updateWatches() ) );
 
+    // start watching the index folders
+    updateWatches();
+
+    // FileSystemWatcher does not catch changes to files, only new and removed files
+    // thus, we also do periodic updates of the whole index every half hour
+    connect( &m_periodicUpdateTimer, SIGNAL( timeout() ),
+             m_indexScheduler, SLOT( updateAll() ) );
+    m_periodicUpdateTimer.setInterval( 30*60*1000 );
+
     // monitor the powermanagement to not drain the battery
     connect( Solid::PowerManagement::notifier(), SIGNAL( appShouldConserveResourcesChanged( bool ) ),
              this, SLOT( slotPowerManagementStatusChanged( bool ) ) );
-
-    // start watching the index folders
-    updateWatches();
 
     // setup the avail disk usage monitor
     connect( &m_availSpaceTimer, SIGNAL( timeout() ),
@@ -84,6 +87,9 @@ Nepomuk::EventMonitor::EventMonitor( IndexScheduler* scheduler, QObject* parent 
         connect( m_indexScheduler, SIGNAL( indexingStopped() ),
                  this, SLOT( slotIndexingStopped() ) );
     }
+    else {
+        m_periodicUpdateTimer.start();
+    }
 }
 
 
@@ -96,16 +102,12 @@ void Nepomuk::EventMonitor::updateWatches()
 {
     // the hard way since the KDirWatch API is too simple
     QStringList folders = Config::self()->folders();
-    if ( folders != m_watchedFolders ||
-         Config::self()->recursive() != m_watchedRecursively ) {
-        foreach( const QString& folder, m_watchedFolders ) {
-            m_dirWatch->removeDir( folder );
-        }
-        m_watchedFolders = folders;
-        m_watchedRecursively = Config::self()->recursive();
-        foreach( const QString& folder, m_watchedFolders ) {
-            m_dirWatch->addDir( folder, m_watchedRecursively ? KDirWatch::WatchSubDirs : KDirWatch::WatchDirOnly );
-        }
+    if ( folders != m_fsWatcher->folders() ||
+         Config::self()->recursive() != m_fsWatcher->watchRecursively() ) {
+        m_fsWatcher->setFolders( Config::self()->folders() );
+        m_fsWatcher->setWatchRecursively( Config::self()->recursive() );
+        m_fsWatcher->setInterval( 2*60 ); // check every 2 minutes
+        m_fsWatcher->start();
     }
 }
 
@@ -167,6 +169,9 @@ void Nepomuk::EventMonitor::slotIndexingStopped()
 
         // after this much index work, it makes sense to optimize the full text index in the main model
         QDBusInterface( "org.kde.nepomuk.services.nepomukstorage", "/nepomukstorage", "org.kde.nepomuk.Storage" ).call( "optimize", "main" );
+
+
+        m_periodicUpdateTimer.start();
     }
 }
 

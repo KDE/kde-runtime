@@ -16,6 +16,7 @@ set(strigiservice_SRCS
   eventmonitor.cpp
   systray.cpp
   statuswidget.cpp
+  filesystemwatcher.cpp
   )
 
 kde4_add_ui_files(strigiservice_SRCS
