@@ -177,6 +177,7 @@ bool Nepomuk::ServiceController::start()
                  this,
                  SLOT( slotServiceOwnerChanged( const QString&, const QString&, const QString& ) ) );
 
+        d->processControl->setCrashPolicy( ProcessControl::RestartOnCrash );
         return d->processControl->start( KGlobal::dirs()->locate( "exe", "nepomukservicestub" ),
                                          QStringList() << name() );
     }
@@ -193,11 +194,13 @@ void Nepomuk::ServiceController::stop()
         if( d->processControl ) {
             d->processControl->setCrashPolicy( ProcessControl::StopOnCrash );
         }
-        d->serviceControlInterface->shutdown();
+
+        if ( waitForInitialized( 2000 ) ) {
+            d->serviceControlInterface->shutdown();
+        }
 
         if( d->processControl ) {
             d->processControl->stop();
-            d->processControl->setCrashPolicy( ProcessControl::RestartOnCrash );
         }
     }
 }
