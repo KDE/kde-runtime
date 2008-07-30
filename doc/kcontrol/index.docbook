@@ -307,7 +307,7 @@ the control center.
 <title>Running Individual Modules</title>
 
 <para>
-You can run individual modules without running kcontrol using the command <command>kcmshell</command> from &konsole;. Type <userinput> <command>kcmshell</command><option> --list</option></userinput> to see a list of the available &kcontrolcenter; modules. You can also access individual &kcontrolcenter; modules through adding the <guilabel>Preferences</guilabel> button to either &kicker; or the &kmenu; through their respective configuration dialogs.
+You can run individual modules without running kcontrol using the command <command>kcmshell4</command> from &konsole;. Type <userinput> <command>kcmshell4</command><option> --list</option></userinput> to see a list of the available &kcontrolcenter; modules. You can also access individual &kcontrolcenter; modules through adding the <guilabel>Preferences</guilabel> button to either &kicker; or the &kmenu; through their respective configuration dialogs.
 </para>
 
 </sect1>
