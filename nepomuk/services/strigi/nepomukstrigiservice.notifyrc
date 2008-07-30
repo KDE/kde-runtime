@@ -1,23 +1,50 @@
 [Global]
 IconName=nepomuk
 Comment=The Nepomuk Strigi file indexer
+Comment[pt]=O serviço de indexação de ficheiros Strigi para o Nepomuk
+Comment[pt_BR]=O serviço de indexação de ficheiros Strigi para o Nepomuk
+Comment[uk]=Служба Strigi Nepomuk для індексування файлів
 
 [Event/initialIndexingStarted]
 Name=Initial Indexing started
+Name[pt]=Início da primeira indexação
+Name[pt_BR]=Início da primeira indexação
+Name[uk]=Запущено початкове індексування
 Comment=Strigi started the initial indexing of local files for fast desktop searches
+Comment[pt]=O Strigi iniciou a primeira indexação dos ficheiros para pesquisas mais rápidas
+Comment[pt_BR]=O Strigi iniciou a primeira indexação dos ficheiros para pesquisas mais rápidas
+Comment[uk]=Програма Strigi запустила початкове індексування локальних файлів для швидкого стільничного пошуку
 Action=Popup
 
 [Event/initialIndexingFinished]
 Name=Initial Indexing finished
+Name[pt]=Fim da primeira indexação
+Name[pt_BR]=Fim da primeira indexação
+Name[uk]=Початкове індексування закінчено
 Comment=Strigi finished the initial indexing of local files for fast desktop searches
+Comment[pt]=O Strigi terminou a primeira indexação dos ficheiros para pesquisas mais rápidas
+Comment[pt_BR]=O Strigi terminou a primeira indexação dos ficheiros para pesquisas mais rápidas
+Comment[uk]=Програма Strigi завершила початкове індексування локальних файлів для швидкого стільничного пошуку
 Action=Popup
 
 [Event/indexingSuspended]
 Name=Indexing suspended
+Name[pt]=Indexação suspensa
+Name[pt_BR]=Indexação suspensa
+Name[uk]=Пауза індексування
 Comment=Strigi file indexing has been suspended
+Comment[pt]=A indexação de ficheiros do Strigi foi suspensa
+Comment[pt_BR]=A indexação de ficheiros do Strigi foi suspensa
+Comment[uk]=Пауза індексування файлів програмою Strigi
 Action=Popup
 
 [Event/indexingResumed]
 Name=Indexing resumed
+Name[pt]=Indexação prosseguida
+Name[pt_BR]=Indexação prosseguida
+Name[uk]=Продовження індексування
 Comment=Strigi file indexing has been resumed
+Comment[pt]=Prosseguiu-se com a indexação de ficheiros no Strigi
+Comment[pt_BR]=Prosseguiu-se com a indexação de ficheiros no Strigi
+Comment[uk]=Strigi продовжує індексування файлів
 Action=Popup
