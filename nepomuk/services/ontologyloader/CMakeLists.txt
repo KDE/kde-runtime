@@ -9,13 +9,20 @@ include_directories(
 set(ontologyloader_SRCS
   ontologyloader.cpp
   ontologymanagermodel.cpp
+  graphretriever.cpp
   )
+
+qt4_add_dbus_adaptor(ontologyloader_SRCS
+  ../../interfaces/org.kde.nepomuk.OntologyManager.xml
+  ontologyloader.h
+  Nepomuk::OntologyLoader)
 
 kde4_add_plugin(nepomukontologyloader ${ontologyloader_SRCS})
 
 target_link_libraries(nepomukontologyloader
   ${SOPRANO_LIBRARIES}
   ${KDE4_KDECORE_LIBS}
+  ${KDE4_KIO_LIBS}
   ${NEPOMUK_LIBRARIES}
   )
 

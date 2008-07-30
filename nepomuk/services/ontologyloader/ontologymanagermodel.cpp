@@ -340,4 +340,16 @@ QDateTime Nepomuk::OntologyManagerModel::ontoModificationDate( const QUrl& uri )
     }
 }
 
+
+QUrl Nepomuk::OntologyManagerModel::findOntologyContext( const QUrl& uri )
+{
+    QUrl dataGraphUri, metaDataGraphUri;
+    if ( findGraphUris( parentModel(), uri, dataGraphUri, metaDataGraphUri ) ) {
+        return dataGraphUri;
+    }
+    else {
+        return QUrl();
+    }
+}
+
 #include "ontologymanagermodel.moc"

@@ -83,6 +83,13 @@ namespace Nepomuk {
          */
         QDateTime ontoModificationDate( const QUrl& uri );
 
+        /**
+         * Tries to find the ontology \p uri in the local Nepomuk store.
+         * \return The context (named graph) storing the ontology's statements
+         * or an invalid URI if the ontology could not be found.
+         */
+        QUrl findOntologyContext( const QUrl& uri );
+
     private:
         class Private;
         Private* const d;
