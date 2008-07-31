@@ -23,6 +23,7 @@
 #include "knotifyconfig.h"
 
 #include <kdebug.h>
+#include <KUrl>
 #include <QDateTime>
 #include <QFile>
 #include <QTextStream>
@@ -42,7 +43,7 @@ void NotifyByLogfile::notify( int id, KNotifyConfig * config )
 {
 	QString file=config->readEntry( "Logfile" );
 
-	kDebug(300) << file;
+//	kDebug(300) << file << KUrl(file).path();
 	
     // ignore empty messages
 	if ( config->text.isEmpty() || file.isEmpty() )
@@ -52,7 +53,7 @@ void NotifyByLogfile::notify( int id, KNotifyConfig * config )
 	}
 	
     // open file in append mode
-	QFile logFile(file);
+    	QFile logFile(KUrl(file).path());
 	if ( !logFile.open(QIODevice::WriteOnly | QIODevice::Append) )
 	{
 		finish( id );
