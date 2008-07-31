@@ -287,12 +287,13 @@ qreal VideoWidget::brightness() const
     return m_brightness;
 }
 
+static const qreal ONE = 1.0;
 void VideoWidget::setBrightness(qreal newBrightness)
 {
-    newBrightness = qBound(-1.0, newBrightness, 1.0);
+    newBrightness = qBound(-ONE, newBrightness, ONE);
     if (m_brightness != newBrightness) {
         m_brightness = newBrightness;
-        upstreamEvent(new SetParamEvent(XINE_PARAM_VO_BRIGHTNESS, static_cast<int>(0x7fff * (m_brightness + 1.0))));
+        upstreamEvent(new SetParamEvent(XINE_PARAM_VO_BRIGHTNESS, static_cast<int>(0x7fff * (m_brightness + ONE))));
     }
 }
 
@@ -303,10 +304,10 @@ qreal VideoWidget::contrast() const
 
 void VideoWidget::setContrast(qreal newContrast)
 {
-    newContrast = qBound(-1.0, newContrast, 1.0);
+    newContrast = qBound(-ONE, newContrast, ONE);
     if (m_contrast != newContrast) {
         m_contrast = newContrast;
-        upstreamEvent(new SetParamEvent(XINE_PARAM_VO_CONTRAST, static_cast<int>(0x7fff * (m_contrast + 1.0))));
+        upstreamEvent(new SetParamEvent(XINE_PARAM_VO_CONTRAST, static_cast<int>(0x7fff * (m_contrast + ONE))));
     }
 }
 
@@ -317,10 +318,10 @@ qreal VideoWidget::hue() const
 
 void VideoWidget::setHue(qreal newHue)
 {
-    newHue = qBound(-1.0, newHue, 1.0);
+    newHue = qBound(-ONE, newHue, ONE);
     if (m_hue != newHue) {
         m_hue = newHue;
-        upstreamEvent(new SetParamEvent(XINE_PARAM_VO_HUE, static_cast<int>(0x7fff * (m_hue + 1.0))));
+        upstreamEvent(new SetParamEvent(XINE_PARAM_VO_HUE, static_cast<int>(0x7fff * (m_hue + ONE))));
     }
 }
 
@@ -331,10 +332,10 @@ qreal VideoWidget::saturation() const
 
 void VideoWidget::setSaturation(qreal newSaturation)
 {
-    newSaturation = qBound(-1.0, newSaturation, 1.0);
+    newSaturation = qBound(-ONE, newSaturation, ONE);
     if (m_saturation != newSaturation) {
         m_saturation = newSaturation;
-        upstreamEvent(new SetParamEvent(XINE_PARAM_VO_SATURATION, static_cast<int>(0x7fff * (m_saturation + 1.0))));
+        upstreamEvent(new SetParamEvent(XINE_PARAM_VO_SATURATION, static_cast<int>(0x7fff * (m_saturation + ONE))));
     }
 }
 
