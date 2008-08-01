@@ -26,6 +26,8 @@
 #include <KGlobal>
 #include <KStandardDirs>
 
+#include <Soprano/Backend>
+
 #include <kpluginfactory.h>
 #include <kpluginloader.h>
 
