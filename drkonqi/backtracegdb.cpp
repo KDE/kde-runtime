@@ -141,22 +141,29 @@ bool BackTraceGdb::usefulBacktrace( int index )
     int start = bt.indexOf( backtracestart );
     if( start < 0 )
         return false;
-    int frames = bt.count() - start;
+    int end = bt.count() - 1;
+    while( end >= 0 && bt[ end ].isEmpty())
+        --end;
+    int frames = end - start + 1;
     // topmost items must mean something, otherwise the backtrace is not very usable,
     // which means ok is:
     // - no ?? at all in first 3 items (or all of them, if there are less than 3 frames)
-    // - 1st item is ?? but 4 following ones are okay (can be e.g. with a jump to NULL function pointer)
-    QRegExp unknown( "#[0-9]+\\s+0x[0-9a-f]+\\s+in\\s+\?\?\\s+.*" );
+    QRegExp unknown( "#[0-9]+\\s+0x[0-9a-f]+\\s+in\\s+\\?\\?\\s+.*" );
     bool ok = false;
     if( frames >= 3 && !unknown.exactMatch( bt[ start ] ) && !unknown.exactMatch( bt[ start + 1 ] )
         && !unknown.exactMatch( bt[ start + 2 ] ))
     {
         ok = true;
     }
-    if( frames <= 2 && !unknown.exactMatch( bt[ start ] ) && !unknown.exactMatch( bt[ start + 1 ] ))
+    // - only one frame, must be valid
+    if( frames == 1 && !unknown.exactMatch( bt[ start ] ))
         ok = true;
+    // - only two frames, must be both valid
+    if( frames == 2 && !unknown.exactMatch( bt[ start ] ) && !unknown.exactMatch( bt[ start + 1 ] ))
+        ok = true;
+    // - 1st item is ?? but 4 following ones are okay (can be e.g. with a jump to NULL function pointer)
     if( frames >= 5 && unknown.exactMatch( bt[ start ] ) && !unknown.exactMatch( bt[ start + 1 ] )
-        && !unknown.exactMatch( bt[ start + 2 ] ))
+        && !unknown.exactMatch( bt[ start + 2 ] ) && !unknown.exactMatch( bt[ start + 3 ]))
     {
         ok = true;
     }
