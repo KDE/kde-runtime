@@ -255,7 +255,6 @@ void Nepomuk::Repository::copyFinished( KJob* job )
 
         // delete the old model
         ModelCopyJob* copyJob = qobject_cast<ModelCopyJob*>( job );
-        copyJob->source()->removeAllStatements();
         delete copyJob->source();
 
         // cleanup the actual data
