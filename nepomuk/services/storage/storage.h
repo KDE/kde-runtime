@@ -36,6 +36,7 @@ namespace Nepomuk {
 
     public Q_SLOTS:
         Q_SCRIPTABLE void optimize( const QString& repo );
+        Q_SCRIPTABLE QString usedSopranoBackend() const;
 
     private Q_SLOTS:
         void slotNepomukCoreInitialized( bool success );

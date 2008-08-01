@@ -76,4 +76,10 @@ void Nepomuk::Storage::optimize( const QString& repo )
     m_core->optimize( repo );
 }
 
+
+QString Nepomuk::Storage::usedSopranoBackend() const
+{
+    return Repository::activeSopranoBackend()->pluginName();
+}
+
 #include "storage.moc"
