@@ -37,6 +37,8 @@
 #include <QtCore/QThread>
 #include <QtCore/QDateTime>
 
+#include <KUrl>
+
 #include <sys/stat.h>
 #include <stdlib.h>
 #include <string.h>
@@ -76,28 +78,33 @@ namespace {
         // such as tar:/ or zip:/
         // Here we try to use KDE-compatible URIs for these indexed files the best we can
         // everything else defaults to file:/
+        QUrl uri;
         QString path = QFile::decodeName( idx->path().c_str() );
-        QUrl url = QUrl::fromLocalFile( QFileInfo( path ).absoluteFilePath() );
+        if ( KUrl::isRelativeUrl( path ) )
+            uri = QUrl::fromLocalFile( QFileInfo( path ).absoluteFilePath() );
+        else
+            uri = KUrl( path ); // try to support http and other URLs
+
         if ( idx->depth() > 0 ) {
             QString archivePath = findArchivePath( path );
             if ( QFile::exists( archivePath ) ) {
                 if ( archivePath.endsWith( QLatin1String( ".tar" ) ) ||
                      archivePath.endsWith( QLatin1String( ".tar.gz" ) ) ||
                      archivePath.endsWith( QLatin1String( ".tar.bz2" ) ) ) {
-                    url.setScheme( "tar" );
+                    uri.setScheme( "tar" );
                 }
                 else if ( archivePath.endsWith( QLatin1String( ".zip" ) ) ) {
-                    url.setScheme( "zip" );
+                    uri.setScheme( "zip" );
                 }
             }
         }
 
         // fallback for all
-        if ( url.scheme().isEmpty() ) {
-            url.setScheme( "file" );
+        if ( uri.scheme().isEmpty() ) {
+            uri.setScheme( "file" );
         }
 
-        return url;
+        return uri;
     }
 
     class FileMetaData
@@ -211,7 +218,7 @@ void Strigi::Soprano::IndexWriter::deleteEntries( const std::vector<std::string>
 
 //        qDebug() << "deleteEntries query:" << query;
 
-        QueryResultIterator result = d->repository->executeQuery( query, ::Soprano::Query::QUERY_LANGUAGE_SPARQL );
+        QueryResultIterator result = d->repository->executeQuery( query, ::Soprano::Query::QueryLanguageSparql );
         if ( result.next() ) {
             Node indexGraph = result.binding( "g" );
             result.close();

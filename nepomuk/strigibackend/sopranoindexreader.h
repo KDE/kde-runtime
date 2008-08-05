@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+   Copyright (C) 2007-2008 Sebastian Trueg <trueg@kde.org>
 
    This program is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public License as
@@ -34,41 +34,41 @@ namespace Strigi {
     class Query;
 
     namespace Soprano {
-	class IndexReader : public Strigi::IndexReader
-	{
-	public:
-	    IndexReader( ::Soprano::Model* );
-	    ~IndexReader();
+        class IndexReader : public Strigi::IndexReader
+        {
+        public:
+            IndexReader( ::Soprano::Model* );
+            ~IndexReader();
 
-	    int32_t countHits( const Query& query );
-	    std::vector<IndexedDocument> query( const Query&, int off, int max );
-	    void getHits( const Strigi::Query& query,
-			  const std::vector<std::string>& fields,
-			  const std::vector<Strigi::Variant::Type>& types,
-			  std::vector<std::vector<Strigi::Variant> >& result,
-			  int off, int max );
+            int32_t countHits( const Query& query );
+            std::vector<IndexedDocument> query( const Query&, int off, int max );
+            void getHits( const Strigi::Query& query,
+                          const std::vector<std::string>& fields,
+                          const std::vector<Strigi::Variant::Type>& types,
+                          std::vector<std::vector<Strigi::Variant> >& result,
+                          int off, int max );
 
-	    void getChildren( const std::string& parent,
-			      std::map<std::string, time_t>& children );
+            void getChildren( const std::string& parent,
+                              std::map<std::string, time_t>& children );
 
-	    int32_t countDocuments();
-	    int32_t countWords();
-	    int64_t indexSize();
-	    time_t mTime( const std::string& uri );
-	    std::vector<std::string> fieldNames();
-	    std::vector<std::pair<std::string,uint32_t> > histogram( const std::string& query,
-								     const std::string& fieldname,
-								     const std::string& labeltype );
-	    int32_t countKeywords( const std::string& keywordprefix,
-				   const std::vector<std::string>& fieldnames);
-	    std::vector<std::string> keywords( const std::string& keywordmatch,
-					       const std::vector<std::string>& fieldnames,
-					       uint32_t max, uint32_t offset );
+            int32_t countDocuments();
+            int32_t countWords();
+            int64_t indexSize();
+            time_t mTime( const std::string& uri );
+            std::vector<std::string> fieldNames();
+            std::vector<std::pair<std::string,uint32_t> > histogram( const std::string& query,
+                                                                     const std::string& fieldname,
+                                                                     const std::string& labeltype );
+            int32_t countKeywords( const std::string& keywordprefix,
+                                   const std::vector<std::string>& fieldnames);
+            std::vector<std::string> keywords( const std::string& keywordmatch,
+                                               const std::vector<std::string>& fieldnames,
+                                               uint32_t max, uint32_t offset );
 
-	private:
-	    class Private;
-	    Private* d;
-	};
+        private:
+            class Private;
+            Private* d;
+        };
     }
 }
 

@@ -43,6 +43,7 @@ target_link_libraries(sopranobackend
   ${SOPRANO_CLIENT_LIBRARIES}
   ${QT_QTCORE_LIBRARY}
   ${CLUCENE_LIBRARY}
+  ${KDE4_KDECORE_LIBS}
 )
 
 install(TARGETS sopranobackend LIBRARY DESTINATION ${LIB_INSTALL_DIR}/strigi)
