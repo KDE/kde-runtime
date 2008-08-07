@@ -30,6 +30,7 @@
 #include <kapplication.h>
 #include <kstandarddirs.h>
 #include <kdirnotify.h>
+#include <kcharsets.h>
 
 KNetAttach::KNetAttach( QWidget* parent )
     : Q3Wizard( parent ), Ui_KNetAttach()
@@ -62,6 +63,9 @@ KNetAttach::KNetAttach( QWidget* parent )
 	_recent->setEnabled(true);
 	_recentConnectionName->addItems(idx);
     }
+    _encoding->clear();
+    _encoding->addItems(KGlobal::charsets()->descriptiveEncodingNames());
+    _encoding->setCurrentIndex(0);    
 }
 
 void KNetAttach::slotHelpClicked()
@@ -174,11 +178,18 @@ void KNetAttach::finished()
 	}
 	url.setPort(_port->value());
     } else if (_type == "Fish") {
+    KConfig config("kio_fishrc");
+    KConfigGroup cg(&config, _host->text().trimmed());
+    cg.writeEntry("Charset", KGlobal::charsets()->encodingForName(_encoding->currentText()));
 	url.setProtocol("fish");
 	url.setPort(_port->value());
     } else if (_type == "FTP") {
 	url.setProtocol("ftp");
 	url.setPort(_port->value());
+    KConfig config("kio_ftprc");
+    KConfigGroup cg(&config, _host->text().trimmed());
+    cg.writeEntry("Charset", KGlobal::charsets()->encodingForName(_encoding->currentText()));
+    config.sync();
     } else if (_type == "SMB") {
 	url.setProtocol("smb");
     } else { // recent
@@ -219,6 +230,7 @@ void KNetAttach::finished()
 	desktopFile.writeEntry("Name", name);
 	desktopFile.writeEntry("Type", "Link");
 	desktopFile.writeEntry("URL", url.prettyUrl());
+    desktopFile.writeEntry("Charset", url.fileEncoding());
 	desktopFile.sync();
 	org::kde::KDirNotify::emitFilesAdded( "remote:/" );
     }
@@ -287,6 +299,8 @@ bool KNetAttach::updateForProtocol(const QString& protocol)
 	_port->show();
 	_userText->show();
 	_user->show();
+    _encodingText->hide();
+    _encoding->hide();
     } else if (protocol == "Fish") {
 	_useEncryption->hide();
 	_portText->show();
@@ -299,12 +313,16 @@ bool KNetAttach::updateForProtocol(const QString& protocol)
 	_port->show();
 	_userText->show();
 	_user->show();
+    _encodingText->show();
+    _encoding->show();
     } else if (protocol == "SMB") {
 	_useEncryption->hide();
 	_portText->hide();
 	_port->hide();
 	_userText->hide();
 	_user->hide();
+    _encodingText->hide();
+    _encoding->hide();
     } else {
 	_type = "";
 	return false;
