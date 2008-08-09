@@ -109,7 +109,7 @@ void Nepomuk::StatusWidget::slotUpdateStoreStatus()
                 QApplication::processEvents();
             ++cnt;
         }
-        m_labelFileCount->setText( i18np( "1 files in index", "%1 files in index", cnt ) );
+        m_labelFileCount->setText( i18np( "1 file in index", "%1 files in index", cnt ) );
 
         m_updating = false;
 
