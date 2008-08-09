@@ -241,6 +241,7 @@ Name[sl]=Pomagajte nam izboljšati program, ki ga uporabljate. Oddajte poročilo
 Name[sr]=Помогните нам да побољшамо софтвер тако што ћете испунити извештај на <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Корисни детаљи: како изазвати грешку, документи који су учитавани, итд.
 Name[sr@latin]=Pomognite nam da poboljšamo softver tako što ćete ispuniti izveštaj na <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Korisni detalji: kako izazvati grešku, dokumenti koji su učitavani, itd.
 Name[sv]=Hjälp oss att förbättra programmet du använder genom skicka in en rapport till <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Användbar information inkluderar hur felet kan återupprepas, vilka dokument som var laddade, etc.
+Name[te]=మీరు ఉపయోగించునటువంటి సాఫ్‍ట్‌వేర్‌ను మెరుగుపరచుటకు దయచేసి <a href="http://bugs.kde.org">http://bugs.kde.org</a> నందలి నివేదికను నింపుటద్వారా మాకు సహాయపడండి. దోషము ఎలా సంభవిస్తోంది, ఏ పత్రములు లోడవుతున్నప్పుడు అలాజరుగుతోంది మొదలగునవి, ఉపయోగమైన వివరములు.
 Name[th]=โปรดช่วยเหลือเราในการปรับปรุงซอฟต์แวร์ ด้วยการกรอกข้อมูลในรายงานที่ <a href="http://bugs.kde.org">http://bugs.kde.org</a> และโปรดกรอกรายละเอียด เช่น วิธีการสร้างข้อผิดพลาดนี้, ได้โหลดเอกสารตัวใดขึ้นมาบ้าง เป็นต้น รวมมาในการแจ้งข้อผิดพลาดนี้ด้วย
 Name[tr]=Bu uygulamanın gelişimine katkıda bulunmak için lütfen <a href="http://bugs.kde.org">http://bugs.kde.org</a> adresini kullanarak hata raporu gönderin. İşe yarar ayrıntılar içerisinde hatanın nasıl tekrarlanabildiği ve hata oluşurken hangi belgelerin yüklendiği gibi şeyler vardır.
 Name[uk]=Будь ласка, допоможіть нам вдосконалити ПЗ, яким ви користуєтесь - заповніть звіт на <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Включіть корисні подробиці: як повторити помилку, документи, котрі було завантажено, тощо.
@@ -306,6 +307,7 @@ Comment[sl]=Program večinoma prejme signal SIGILL, če vsebuje napako. Programu
 Comment[sr]=Програм обично прима сигнал СИГИЛЛ због грешке у себи. Програму је затражено да сачува текуће документе.
 Comment[sr@latin]=Program obično prima signal SIGILL zbog greške u sebi. Programu je zatraženo da sačuva tekuće dokumente.
 Comment[sv]=Signalen SIGILL orsakas oftast av ett fel i programmet. Programmet blev tillsagt att spara sina dokument.
+Comment[te]=ఒక అనువర్తనం చాలావరకు SIGILL సంకేతాన్ని అనువర్తనంనందలి దోషముకారణంగా పొందుతుంది. ఆ అనువర్తనం దాని పత్రములను దాచమని అడుగుతుంది.
 Comment[th]=โปรแกรมได้รับสัญญาณ SIGILL จำนวนมาก ซึ่งอาจจะเกิดจากบั๊กภายในของโปรแกรม  และโปรแกรมได้ถูกแจ้งให้ทำการบันทึกเอกสารของมันแล้ว
 Comment[tr]=Uygulamadaki bir hata nedeniyle, uygulamalar çok kez SIGILL sinyali alırlar. Bu durumdaki uygulamalardan belgelerini kaydetmesi istenir.
 Comment[uk]=Найчастіше програми отримують сигнал SIGILL через вади у їх коді. До програми було надіслано запит на збереження документів, з якими вона працювала.
@@ -370,6 +372,7 @@ Comment[sl]=Program se zaključi s signalom SIGABRT, ko zazna notranjo neskladno
 Comment[sr]=Програм се обуставља сигналом СИГАБРТ када открије унутрашњу неусаглашеност изазваном грешком у себи.
 Comment[sr@latin]=Program se obustavlja signalom SIGABRT kada otkrije unutrašnju neusaglašenost izazvanom greškom u sebi.
 Comment[sv]=Ett program avslutar sig självt med signalen SIGABRT när det upptäcker en intern motsägelse, vilket orsakas av ett fel i programmet.
+Comment[te]=ప్రోగ్రామ్ నందలి దోషముకారణంగా సంభవించిన అంతర్గత అస్థిరతను ఒక అనువర్తనం గుర్తించినప్పుడు అది SIGABRT సంకేతంతో మూయబడుతుంది.
 Comment[th]=โปรแกรมจบการทำงานจากการได้รับสัญญาณ SIGABRT เมื่อมันตรวจสอบพบการทำงานที่ไม่สอดคล้องกันภายใน ซึ่งอาจจะเกิดเนื่องจากบั๊กภายในตัวโปรแกรมเอง
 Comment[tr]=Bir uygulama, programdaki bir hata yüzünden bir iç tutarsızlık tespit ettiğinde SIGABRT sinyaliyle sona erer.
 Comment[uk]=Припинення роботи програми з сигналом SIGABRT відбувається, якщо виявлено внутрішню непослідовність, спричинену вадою у коді програми.
@@ -435,6 +438,7 @@ Comment[sl]=Program večinoma prejme signal SIGFPE zaradi napake v programu. Pro
 Comment[sr]=Сигнал СИГФПЕ програм најчешће добија због грешке у себи. Програму је затражено да сачува текуће документе.
 Comment[sr@latin]=Signal SIGFPE program najčešće dobija zbog greške u sebi. Programu je zatraženo da sačuva tekuće dokumente.
 Comment[sv]=Signalen SIGFPE orsakas oftast av ett fel i programmet. Programmet blev tillsagt att spara sina dokument.
+Comment[te]=అనువర్తనం సాధారణంగా SIGFPE సంకేతాన్ని దానినందలి బగ్ కారణంగానే పొందుతుంది. అనువర్తనం దాని పత్రములను దాచమని అడుగుతుంది.
 Comment[th]=โปรแกรมได้รับสัญญาณ SIGFPE จำนวนมาก ซึ่งอาจจะเกิดจากบั๊กภายในของโปรแกรม  และโปรแกรมได้ถูกแจ้งให้ทำการบันทึกเอกสารของมันแล้ว
 Comment[tr]=Uygulamadaki bir hata nedeniyle, uygulamalar çok kez SIGEPE sinyali alırlar. Bu durumdaki uygulamalardan belgelerini kaydetmesi istenir.
 Comment[uk]=Найчастіше програми отримують сигнал SIGFPE через вади у їх коді. До програми було надіслано запит на збереження документів, з якими вона працювала.
@@ -500,6 +504,7 @@ Comment[sl]=Program večinoma prejme signal SIGSEGV zaradi napake v programu. Pr
 Comment[sr]=Програм обично прима сигнал СИГСЕГВ услед грешке у себи. Програму је затражено да сачува текуће документе.
 Comment[sr@latin]=Program obično prima signal SIGSEGV usled greške u sebi. Programu je zatraženo da sačuva tekuće dokumente.
 Comment[sv]=Signalen SIGSEGV orsakas oftast av ett fel i programmet. Programmet blev tillsagt att spara sina dokument.
+Comment[te]=అనువర్తనం సాధారణంగా SIGSEGV సంకేతాన్ని దానినందలి బగ్ కారణంగానే పొందుతుంది. అనువర్తనం దాని పత్రములను దాచమని అడుగుతుంది.
 Comment[th]=โปรแกรมได้รับสัญญาณ SIGSEGV จำนวนมาก ซึ่งอาจจะเกิดจากบั๊กภายในของโปรแกรม  และโปรแกรมได้ถูกแจ้งให้ทำการบันทึกเอกสารของมันแล้ว
 Comment[tr]=Uygulamadaki bir hata nedeniyle, uygulamalar çok kez SIGSEGV sinyali alırlar. Bu durumdaki uygulamalardan belgelerini kaydetmesi istenir.
 Comment[uk]=Найчастіше програми отримують сигнал SIGSEGV через вади у їх коді. До програми було надіслано запит на збереження документів, з якими вона працювала.
