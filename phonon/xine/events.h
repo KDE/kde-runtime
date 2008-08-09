@@ -28,6 +28,7 @@
 #include <QtCore/QSize>
 #include <QtCore/QPair>
 #include <QtCore/QList>
+#include <QtGui/QImage>
 
 #define QEVENT(type) Event(Event::type)
 
@@ -98,7 +99,9 @@ public:
         IsThereAXineEngineForMe,
         NoThereIsNoXineEngineForYou,
         HeresYourXineStream,
-        Cleanup
+        Cleanup,
+        RequestSnapshot,
+        SnapshotReady
     };
 
     int ref;
@@ -115,6 +118,7 @@ inline T *copyEvent(T *)
     return 0;
 }
 
+EVENT_CLASS1(SnapshotReady, QImage i, image(i), const QImage, image)
 EVENT_CLASS1(HeresYourXineStream, QExplicitlySharedDataPointer<XineStream> s, stream(s), QExplicitlySharedDataPointer<XineStream>, stream)
 EVENT_CLASS1(HasVideo, bool v, hasVideo(v), const bool, hasVideo)
 EVENT_CLASS1(UpdateVolume, int v, volume(v), const int, volume)

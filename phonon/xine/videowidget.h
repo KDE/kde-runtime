@@ -21,6 +21,9 @@
 #define PHONON_XINE_VIDEOWIDGET_H
 
 #include <QWidget>
+#include <QtCore/QMutex>
+#include <QtGui/QImage>
+#include <QtCore/QWaitCondition>
 #include "sinknode.h"
 #include <QPixmap>
 #include <xine.h>
@@ -31,6 +34,8 @@
 
 #include <Phonon/VideoWidget>
 #include <Phonon/VideoWidgetInterface>
+//#include <Phonon/Experimental/SnapshotInterface>
+#include <phonon/experimental/snapshotinterface.h>
 #include "connectnotificationinterface.h"
 
 class QMouseEvent;
@@ -87,10 +92,10 @@ class VideoWidgetXT : public SinkNodeXT
         bool m_isValid;
 };
 
-class VideoWidget : public QWidget, public Phonon::VideoWidgetInterface, public Phonon::Xine::SinkNode
+class VideoWidget : public QWidget, public Phonon::VideoWidgetInterface, public Phonon::Xine::SinkNode, public Phonon::Experimental::SnapshotInterface
 {
     Q_OBJECT
-    Q_INTERFACES(Phonon::VideoWidgetInterface Phonon::Xine::SinkNode)
+    Q_INTERFACES(Phonon::VideoWidgetInterface Phonon::Xine::SinkNode Phonon::Experimental::SnapshotInterface)
     public:
         VideoWidget(QWidget *parent = 0);
         ~VideoWidget();
@@ -113,6 +118,8 @@ class VideoWidget : public QWidget, public Phonon::VideoWidgetInterface, public 
 
         qreal saturation() const;
         void  setSaturation(qreal);
+
+        QImage snapshot() const;
 
         void xineCallback(int &x, int &y, int &width, int &height,
                 double &ratio, int videoWidth, int videoHeight, double videoRatio, bool mayResize);
@@ -143,6 +150,10 @@ class VideoWidget : public QWidget, public Phonon::VideoWidgetInterface, public 
         void updateZoom();
         Phonon::VideoWidget::AspectRatio m_aspectRatio;
         Phonon::VideoWidget::ScaleMode m_scaleMode;
+
+        mutable QMutex m_snapshotLock;
+        mutable QWaitCondition m_snapshotWait;
+        mutable QImage m_snapshotImage;
 
         QSize m_sizeHint;
 

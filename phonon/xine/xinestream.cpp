@@ -1027,6 +1027,112 @@ bool XineStream::event(QEvent *ev)
             }
         }
         return true;
+    case Event::RequestSnapshot:
+        ev->accept();
+        if (m_stream) {
+            const int32_t w = xine_get_stream_info(m_stream, XINE_STREAM_INFO_VIDEO_WIDTH);
+            const int32_t h = xine_get_stream_info(m_stream, XINE_STREAM_INFO_VIDEO_HEIGHT);
+            kDebug(610) << "taking snapshot of" << w << h;
+            if (w > 0 && h > 0) {
+                int width, height, ratio_code, format;
+                uint8_t img[w * h * 4];
+                int success = xine_get_current_frame (m_stream, &width, &height, &ratio_code,
+                        &format, &img[0]);
+                if (!success) {
+                    return true;
+                }
+                Q_ASSERT(w * h * 2 >= width * height);
+                QImage qimg(width, height, QImage::Format_RGB32);
+                /*
+                 * Do YCbCr - sRGB conversion according to ITU-R BT.709 with Kb = 0.0722 and Kr = 0.2126
+                 *
+                 *     /   \     /                                        \     /        \
+                 *    |  R  |   |  76309.0411,      0.0,      117489.0789  |   |  Y - 16  |
+                 *    |     |   |                                          |   |          |
+                 * => |  G  | = |  76309.0411, -13975.46119, -34924.74576  | * | Cb - 128 | * 2^-16
+                 *    |     |   |                                          |   |          |
+                 *    |  B  |   |  76309.0411,  138438.3634,       0       |   | Cr - 128 |
+                 *     \   /     \                                        /     \        /
+                 */
+                switch (format) {
+                case XINE_IMGFMT_YUY2: // every four consecutive pixels Y0 Cb Y1 Cr
+                    kDebug(610) << "got a YUY2 snapshot";
+                    Q_ASSERT(width % 2 == 0);
+                    for (int row = 0; row < height; ++row) {
+                        QRgb *line = reinterpret_cast<QRgb *>(qimg.scanLine(row));
+                        const uint8_t *yuyv = &img[2 * width];
+                        for (int col = 0; col < 2 * width; col += 4) {
+                            const int y0 = (yuyv[col] - 16) * 76309;
+                            const int u  = yuyv[col + 1] - 128;
+                            const int y1 = (yuyv[col + 2] - 16) * 76309;
+                            const int v  = yuyv[col + 3] - 128;
+                            const int r  =            117489 * v + 16384;
+                            const int g  = -13975 * u -34925 * v + 16384;
+                            const int b  = 138438 * u            + 16384;
+                            line[col >> 1] = qRgb(
+                                    qBound(0, (y0 + r) >> 16, 255),
+                                    qBound(0, (y0 + g) >> 16, 255),
+                                    qBound(0, (y0 + b) >> 16, 255));
+                            line[(col >> 1) + 1] = qRgb(
+                                    qBound(0, (y1 + r) >> 16, 255),
+                                    qBound(0, (y1 + g) >> 16, 255),
+                                    qBound(0, (y1 + b) >> 16, 255));
+                        }
+                    }
+                    break;
+                case XINE_IMGFMT_YV12:
+                    kDebug(610) << "got a YV12 snapshot";
+                    Q_ASSERT(width % 2 == 0);
+                    Q_ASSERT(height % 2 == 0);
+                    {
+                        const int w2 = width >> 1;
+                        const uint8_t *yplane = &img[0];
+                        const uint8_t *uplane = &img[width * height];
+                        const uint8_t *vplane = &img[width * height + ((width * height) >> 2)];
+                        for (int row = 0; row < height; row += 2) {
+                            QRgb *line0 = reinterpret_cast<QRgb *>(qimg.scanLine(row));
+                            QRgb *line1 = reinterpret_cast<QRgb *>(qimg.scanLine(row + 1));
+                            const uint8_t *yline0 = &yplane[row * width];
+                            const uint8_t *yline1 = &yplane[(row + 1) * width];
+                            const uint8_t *uline = &uplane[(row >> 1) * w2];
+                            const uint8_t *vline = &vplane[(row >> 1) * w2];
+                            for (int col = 0; col < width; col += 2) {
+                                const int y0 = (yline0[col    ] - 16) * 76309;
+                                const int y1 = (yline0[col + 1] - 16) * 76309;
+                                const int y2 = (yline1[col    ] - 16) * 76309;
+                                const int y3 = (yline1[col + 1] - 16) * 76309;
+                                const int u  = (uline[col >> 1] - 128);
+                                const int v  = (vline[col >> 1] - 128);
+                                const int r  =            117489 * v + 16384;
+                                const int g  = -13975 * u -34925 * v + 16384;
+                                const int b  = 138438 * u            + 16384;
+                                line0[col] = qRgb(
+                                        qBound(0, (y0 + r) >> 16, 255),
+                                        qBound(0, (y0 + g) >> 16, 255),
+                                        qBound(0, (y0 + b) >> 16, 255));
+                                line0[col + 1] = qRgb(
+                                        qBound(0, (y1 + r) >> 16, 255),
+                                        qBound(0, (y1 + g) >> 16, 255),
+                                        qBound(0, (y1 + b) >> 16, 255));
+                                line1[col] = qRgb(
+                                        qBound(0, (y2 + r) >> 16, 255),
+                                        qBound(0, (y2 + g) >> 16, 255),
+                                        qBound(0, (y2 + b) >> 16, 255));
+                                line1[col + 1] = qRgb(
+                                        qBound(0, (y3 + r) >> 16, 255),
+                                        qBound(0, (y3 + g) >> 16, 255),
+                                        qBound(0, (y3 + b) >> 16, 255));
+                            }
+                        }
+                    }
+                    break;
+                default:
+                    return true;
+                }
+                handleDownstreamEvent(new SnapshotReadyEvent(qimg));
+            }
+        }
+        return true;
     case Event::MrlChanged:
         ev->accept();
         {

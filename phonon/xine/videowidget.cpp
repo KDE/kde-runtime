@@ -1,19 +1,20 @@
 /*  This file is part of the KDE project
     Copyright (C) 2006-2007 Matthias Kretz <kretz@kde.org>
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License version 2
-    as published by the Free Software Foundation.
+    This program is free software; you can redistribute it and/or
+    modify it under the terms of the GNU Library General Public
+    License as published by the Free Software Foundation; either
+    version 2 of the License, or (at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
+    This library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    Library General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
-    02110-1301, USA.
+    You should have received a copy of the GNU Library General Public License
+    along with this library; see the file COPYING.LIB.  If not, write to
+    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+    Boston, MA 02110-1301, USA.
 
 */
 
@@ -21,6 +22,7 @@
 #include "events.h"
 #include <QPalette>
 #include <QtCore/QExplicitlySharedDataPointer>
+#include <QtCore/QMutexLocker>
 #include <QtCore/QSharedData>
 #include <QImage>
 #include <QPainter>
@@ -339,6 +341,18 @@ void VideoWidget::setSaturation(qreal newSaturation)
     }
 }
 
+QImage VideoWidget::snapshot() const
+{
+    QImage img;
+    QMutexLocker lock(&m_snapshotLock);
+    const_cast<VideoWidget *>(this)->upstreamEvent(new Event(Event::RequestSnapshot));
+    if (m_snapshotWait.wait(&m_snapshotLock, 1000)) {
+        img = m_snapshotImage;
+        m_snapshotImage = QImage();
+    }
+    return img;
+}
+
 /*
 int VideoWidget::overlayCapabilities() const
 {
@@ -557,6 +571,7 @@ void VideoWidget::paintEvent(QPaintEvent *event)
         p.fillRect(rect(), Qt::black);
 //#ifndef PHONON_XINE_NO_VIDEOWIDGET
     } else if (xt->m_videoPort) {
+        //kDebug();
         const QRect &rect = event->rect();
 
         xcb_expose_event_t xcb_event;
@@ -628,6 +643,12 @@ void VideoWidget::downstreamEvent(Event *e)
                 update();
             }
         }
+        break;
+    case Event::SnapshotReady:
+        m_snapshotLock.lock();
+        m_snapshotImage = static_cast<const SnapshotReadyEvent *>(e)->image;
+        m_snapshotWait.wakeAll();
+        m_snapshotLock.unlock();
         break;
     default:
         QCoreApplication::sendEvent(this, e);
