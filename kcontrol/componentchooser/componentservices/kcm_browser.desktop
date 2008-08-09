@@ -77,6 +77,7 @@ Name[zh_CN]=Web 浏览器
 Name[zh_TW]=網頁瀏覽器
 Comment=Here you can configure your default web browser. All KDE applications in which you can select hyperlinks should honor this setting.
 Comment[af]=Hier kan jy die standaard web blaaier opstel. Al die KDE programme waarin jy hiperskakels kan kies behoort hierdie instelling te gebruik.
+Comment[ar]=هنا تستطيع اعداد المتصفح الافتراضي لكيدي كل التطبيقات ستستخدم هذا الاعداد
 Comment[be]=Тут вы можаце вызначыць для сябе стандартны вандроўнік па Сеціве. Усе праграмы KDE, у якіх вы можаце выбраць гіперспасылку, павінны выкарыстоўваць гэтае настаўленне.
 Comment[bg]=Избор на предпочитан браузър. Всички програми от KDE, които се нуждаят от достъп до уеб страници, ще ползват този компонент.
 Comment[bn]=এখানে আপনি আপনার ডিফল্ট ওয়েব ব্রাউজার  কনফিগার করতে পারেন। যে কোনো কে.ডি.ই. অ্যাপলিকেশনে একটি হাইপার-লিঙ্ক নির্বাচন করা হলে এই পছন্দটি ব্যবহার করা হবে।

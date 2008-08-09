@@ -1,6 +1,7 @@
 [Global]
 IconName=preferences-desktop-sound
 Comment=Phonon: KDE's Multimedia Library
+Comment[ar]=الصوت: مكتبة كيدي للوسائط المتعددة
 Comment[bg]=Phonon: мултимедийната библиотека на KDE
 Comment[bn_IN]=Phonon: KDE-র মাল্টিমিডিয়া লাইব্রেরি
 Comment[ca]=Phonon: biblioteca multimèdia del KDE
@@ -103,6 +104,7 @@ Name[zh_TW]=應用程式
 
 [Event/AudioDeviceFallback]
 Name=Audio Device Fallback
+Name[ar]=جهاز الصوت الاحتياطي
 Name[bg]=Подразбиращо се аудио устройство
 Name[bn_IN]=অডিও ডিভাইসের ফল-ব্যাক
 Name[ca]=Dispositiu d'àudio de reserva
@@ -146,6 +148,7 @@ Name[x-test]=xxAudio Device Fallbackxx
 Name[zh_CN]=备用音频设备
 Name[zh_TW]=預設音效裝置
 Comment=Notification on automatic fallback if the preferred device is unavailable
+Comment[ar]=التبديل الالي للجهاز الاحتياطي عند تعطل الجهااز الرئيسي
 Comment[ca]=Notificació del funcionament automàtic del de reserva si el dispositiu preferit no és disponible
 Comment[csb]=Dôwanié wiédzë ò aùtomatny zmianie zwãkòwégò ùrządzenia, czedë preferowóné je przëstspné
 Comment[da]=Bekendtgørelse om automatisk brug af reserve hvis den foretrukne enhed er utilgængelig

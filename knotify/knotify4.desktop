@@ -1,6 +1,7 @@
 [Desktop Entry]
 Type=Service
 Name=KNotify
+Name[ar]=منبه كيدي
 Name[hi]=के-नोटिफाई
 Name[kn]=ಕೆನೋಟಿಫೈ
 Name[ml]=കെനോട്ടിഫൈ
@@ -16,7 +17,7 @@ Name[x-test]=xxKNotifyxx
 Exec=knotify4
 Comment=KDE Notification Daemon
 Comment[af]=KDE Inkennisstel-bediener
-Comment[ar]=رقيب التنبيه لـٍ كدي
+Comment[ar]=تنبيه شيطان كتابة كيدي
 Comment[be]=Сервіс абвяшчэнняў KDE
 Comment[bg]=Демон на KDE за уведомяване
 Comment[bn_IN]=KDE Notification ডেমন

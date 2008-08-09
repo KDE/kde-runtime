@@ -1,6 +1,7 @@
 [General]
 Name=GNU Debugger
 Name[af]=GNU Ontfouter
+Name[ar]=فاحص اخطاء GNU
 Name[bn]=গনিউ ডিবাগার
 Name[bn_IN]=GNU ডিবাগার
 Name[br]=Dizraener GNU
@@ -58,6 +59,7 @@ Name[zh_CN]=GNU 调试器
 Name[zh_TW]=GNU 除錯器
 Comment=Text based debugger from GNU in a konsole
 Comment[af]=Teks gebaseerde ontfouter van Gnu in 'n konsole
+Comment[ar]=لصق الاخطاء من GNU إلى القائمة 
 Comment[bn_IN]=konsole-র মধ্যে GNU দ্বারা উপলব্ধ টেক্সট-ভিত্তিক ডিবাগার
 Comment[br]=Dizraener doare skrid eus GNU en ur letrin
 Comment[ca]=Depurador en mode text del GNU en una consola

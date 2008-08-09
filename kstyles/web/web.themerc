@@ -1,6 +1,7 @@
 [Misc]
 Name=Web style
 Name[af]=Webstyl
+Name[ar]=نمط الانترنت
 Name[be]=Стыль Сеціва
 Name[bg]=Уеб стил
 Name[bn_IN]=ওয়েব বিন্যাস
@@ -59,6 +60,7 @@ Name[x-test]=xxWeb stylexx
 Name[zh_CN]=网页风格
 Name[zh_TW]=網頁樣式
 Comment=Web widget style
+Comment[ar]=نمط علامات الانترنت
 Comment[be]=Стыль Сеціва
 Comment[bg]=Стил "уеб"
 Comment[bn_IN]=ওয়েব উইজেটের বিন্যাস

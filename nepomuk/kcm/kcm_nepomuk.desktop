@@ -9,6 +9,7 @@ X-KDE-ParentApp=kcontrol
 X-KDE-System-Settings-Parent-Category=advanced-user-settings
 
 Name=Nepomuk
+Name[ar]=مشروع Nepomuk
 Name[gu]=નેપોમુક
 Name[ml]=നെപ്പോമുക്
 Name[pa]=ਨਿਪੋਮੁਕ
@@ -16,6 +17,7 @@ Name[sr]=Непомук
 Name[x-test]=xxNepomukxx
 Comment=Nepomuk/Strigi Server Configuration
 Comment[af]=Nepomuk/Strigi bedienerkonfigurasie
+Comment[ar]=اعداد خدمة Nepomuk/Strigi
 Comment[bg]=Настройване на Nepomuk/Strigi
 Comment[bn_IN]=Nepomuk/Strigi সার্ভার কনফিগারেশন
 Comment[ca]=Configuració del servidor Nepomuk/Strigi

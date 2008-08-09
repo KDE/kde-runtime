@@ -76,6 +76,7 @@ Name[zh_CN]=电子邮件客户端程序
 Name[zh_TW]=電子郵件客戶端程式
 Comment=This service allows you to configure your default email client. All KDE applications which need access to an email client application should honor this setting.
 Comment[af]=Hierdie diens laat jou toe om jou standaard e-pos kliënt op te stel. Al die KDE programme wat toegang tot 'n e-pos kliënt benodig behoort hierdie instelling te gebruik.
+Comment[ar]=هذه الخدمة تسنح باعداد عميل البريد الالكتروني الافتراضي لكل تطبيقات كيدي التي تحتاج الوصول للبريد ستستخدم هذا الاعداد
 Comment[be]=Гэты сервіс дазваляе вызначыць для сябе стандартны кліент электроннай пошты. Усе праграмы KDE, у якіх вы можаце выбраць гіперспасылку, павінны выкарыстоўваць гэтае настаўленне.
 Comment[bg]=Избор на предпочитан пощенски клиент. Всички програми от KDE, които се нуждаят от достъп до електронната поща, ще ползват този компонент.
 Comment[bn]=এই সার্ভিসটির সাহায্যে আপনার ডিফল্ট ই-মেইল ক্লায়েন্ট কনফিগার করতে পারেন। যে কোনো কে.ডি.ই. অ্যাপলিকেশনের ই-মেইল ক্লায়েন্ট প্রয়োজন হলে এই নির্বাচন মানা উচিত।

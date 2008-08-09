@@ -13,6 +13,7 @@ moving=true
 Icon=folder-remote
 Description=A kioslave for the FISH protocol
 Description[af]='n Kioslave vir die FISH protokol
+Description[ar]=خادم دخل وخرج كيدي لبروتوكول السمكة
 Description[be]=Kioslave для пратакола FISH
 Description[bg]=Kioslave за протокола FISH
 Description[bn]=ফিশ (FISH) প্রোটোকল-এর জন্য একটি kioslave

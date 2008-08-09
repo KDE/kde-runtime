@@ -1,6 +1,7 @@
 [Misc]
 Name=HighContrast
 Name[af]=Hoë kontras
+Name[ar]=تباين عالي
 Name[be]=Высокі кантраст
 Name[bg]=High Contrast
 Name[bn_IN]=HighContrast (উচ্চ-বৈপরীত্য)
@@ -58,6 +59,7 @@ Name[zh_TW]=高對比
 ConfigPage=kstyle_highcontrast_config
 Comment=A style that works well with high contrast color schemes
 Comment[af]='n Styl wat goed werk saam met hoë kontras kleurskemas
+Comment[ar]=العمل بنمط بالوان عالية التباين
 Comment[be]=Стыль, які створаны для працы з высокакантрастнымі колернымі схемамі
 Comment[bg]=Стил за работа с високо контрастни схеми
 Comment[ca]=Un estil que funciona bé amb esquemes de color de contrast alt

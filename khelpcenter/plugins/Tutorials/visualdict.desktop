@@ -2,6 +2,7 @@
 [Desktop Entry]
 Name=A Visual Guide to KDE
 Name[af]='n Visuele Gids tot KDE
+Name[ar]=دليل مرئي إلى كيدي
 Name[be]=Падручнік KDE па візуальных аб'ектах
 Name[bg]=Нагледни пособия
 Name[bn]=কে.ডি.ই-র জন্য একটি ভিসুয়াল গাইড
@@ -71,6 +72,7 @@ Name[zh_CN]=KDE 可视化指南
 Name[zh_TW]=KDE 視覺指南
 Comment=Guide to KDE widgets
 Comment[af]=Gids vir KDE widgets
+Comment[ar]=دليل إلى علامات كيدي
 Comment[be]=Падручнік па віджэтах KDE
 Comment[bg]=Нагледни пособия за KDE, графични елементи, управление и пр.
 Comment[bn]=কে.ডি.ই উইজেট সম্বন্ধে জানুন

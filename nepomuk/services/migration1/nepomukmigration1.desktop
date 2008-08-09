@@ -6,6 +6,7 @@ X-KDE-Nepomuk-autostart=true
 X-KDE-Nepomuk-start-on-demand=false
 X-KDE-Nepomuk-run-once=true
 Comment=Nepomuk Data Migration Level 1
+Comment[ar]=معلومات هجرة Nepomuk المرحلة 1
 Comment[ca]=Nivell 1 de migració de dades del Nepomuk
 Comment[csb]=Migracëjô pòdôwków Nepomuk, równiô 1
 Comment[da]=Nepomuk datamigrering niveau 1
