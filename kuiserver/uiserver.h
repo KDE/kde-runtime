@@ -37,7 +37,7 @@ class ProgressListModel;
 class ProgressListDelegate;
 class JobViewServerAdaptor;
 class QToolBar;
-class QTabWidget;
+class KTabWidget;
 class KLineEdit;
 class KPushButton;
 class OrgKdeJobViewInterface;
@@ -81,7 +81,7 @@ private:
     ProgressListDelegate *progressListDelegateFinished;
     QListView *listProgress;
     QListView *listFinished;
-    QTabWidget *tabWidget;
+    KTabWidget *tabWidget;
 
     QToolBar *toolBar;
     KLineEdit *searchText;

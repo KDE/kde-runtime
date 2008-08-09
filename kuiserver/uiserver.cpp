@@ -29,7 +29,6 @@
 
 #include <QtGui/QWidget>
 #include <QtGui/QAction>
-#include <QtGui/QTabWidget>
 #include <QtGui/QBoxLayout>
 #include <QtGui/QCloseEvent>
 
@@ -43,6 +42,7 @@
 #include <kglobal.h>
 #include <klocale.h>
 #include <kpushbutton.h>
+#include <ktabwidget.h>
 #include <kstatusbar.h>
 #include <kdebug.h>
 #include <kdialog.h>
@@ -200,7 +200,7 @@ UIServer::UIServer()
     QVBoxLayout *layout = new QVBoxLayout;
     centralWidget->setLayout(layout);
 
-    tabWidget = new QTabWidget(this);
+    tabWidget = new KTabWidget(this);
 
     QString configure = i18n("Configure...");
 

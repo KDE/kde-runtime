@@ -153,15 +153,15 @@ bool ProgressListModel::insertRows(int row, int count, const QModelIndex &parent
     JobInfo newJob;
 
     newJob.jobView = 0;
-    newJob.applicationName = QString();
-    newJob.icon = QString();
-    newJob.sizeTotals = QString();
-    newJob.sizeProcessed = QString();
+    newJob.applicationName.clear();
+    newJob.icon.clear();
+    newJob.sizeTotals.clear();
+    newJob.sizeProcessed.clear();
     newJob.timeElapsed = -1;
     newJob.timeTotals = -1;
-    newJob.speed = QString();
+    newJob.speed.clear();
     newJob.percent = -1;
-    newJob.message = QString();
+    newJob.message.clear();
     newJob.progressBar = 0;
     newJob.state = JobInfo::Running;
 
