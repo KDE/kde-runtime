@@ -50,6 +50,10 @@ class VideoDataOutput : public QObject, public Phonon::Experimental::VideoDataOu
 
         Experimental::AbstractVideoDataOutput *frontendObject() const;
         void setFrontendObject(Experimental::AbstractVideoDataOutput *);
+
+    protected:
+        void aboutToChangeXineEngine();
+        void xineEngineChanged();
 };
 }} //namespace Phonon::Xine
 

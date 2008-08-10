@@ -14,7 +14,7 @@ set(phonon_xine_PART_SRCS
     effect.cpp
     audiooutput.cpp
     mediaobject.cpp
-    #videodataoutput.cpp
+   videodataoutput.cpp
     visualization.cpp
     backend.cpp
     volumefadereffect.cpp

@@ -20,7 +20,7 @@
 */
 
 #include "backend.h"
-//#include <phonon/experimental/backendinterface.h>
+#include <phonon/experimental/backendinterface.h>
 #include "mediaobject.h"
 #include "effect.h"
 #include "events.h"
@@ -29,7 +29,7 @@
 #include "nullsink.h"
 #include "visualization.h"
 #include "volumefadereffect.h"
-//#include "videodataoutput.h"
+#include "videodataoutput.h"
 #include "videowidget.h"
 #include "wirecall.h"
 #include "xinethread.h"
@@ -157,10 +157,9 @@ QObject *Backend::createObject(BackendInterface::Class c, QObject *parent, const
         return new AudioDataOutput(parent);
     case VisualizationClass:
         return new Visualization(parent);
-    case VideoDataOutputClass:
-    //case Phonon::Experimental::BackendInterface::VideoDataOutputClass:
-        //return new VideoDataOutput(parent);
-        return 0;
+    //case VideoDataOutputClass:
+    case Phonon::Experimental::BackendInterface::VideoDataOutputClass:
+        return new VideoDataOutput(parent);
     case EffectClass:
         {
             Q_ASSERT(args.size() == 1);
@@ -352,7 +351,7 @@ bool Backend::startConnectionChange(QSet<QObject *> nodes)
 
 bool Backend::connectNodes(QObject *_source, QObject *_sink)
 {
-    kDebug(610);
+    kDebug(610) << _source << "->" << _sink;
     SourceNode *source = qobject_cast<SourceNode *>(_source);
     SinkNode *sink = qobject_cast<SinkNode *>(_sink);
     if (!source || !sink) {
@@ -391,12 +390,13 @@ bool Backend::connectNodes(QObject *_source, QObject *_sink)
 
 bool Backend::disconnectNodes(QObject *_source, QObject *_sink)
 {
-    kDebug(610);
+    kDebug(610) << _source << "XX" << _sink;
     SourceNode *source = qobject_cast<SourceNode *>(_source);
     SinkNode *sink = qobject_cast<SinkNode *>(_sink);
     if (!source || !sink) {
         return false;
     }
+    kDebug(610) << source->threadSafeObject().data() << "XX" << sink->threadSafeObject().data();
     const MediaStreamTypes types = source->outputMediaStreamTypes() & sink->inputMediaStreamTypes();
     if (!source->sinks().contains(sink) || sink->source() != source) {
         return false;
@@ -464,6 +464,8 @@ bool Backend::endConnectionChange(QSet<QObject *> nodes)
                 }
             }
             sink->findXineEngine();
+        } else if (!source) {
+            kDebug(610) << q << "is neither a source nor a sink";
         }
         ConnectNotificationInterface *connectNotify = qobject_cast<ConnectNotificationInterface *>(q);
         if (connectNotify) {
