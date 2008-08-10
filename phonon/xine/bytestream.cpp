@@ -107,7 +107,7 @@ ByteStream::ByteStream(const MediaSource &mediaSource, MediaObject *parent)
     connectToSource(mediaSource);
 
     // created in the main thread
-    //m_mainThread = pthread_self();
+    m_mainThread = pthread_self();
 }
 
 void ByteStream::pullBuffer(char *buf, int len)
@@ -334,6 +334,7 @@ off_t ByteStream::currentPosition() const
 
 ByteStream::~ByteStream()
 {
+    Q_ASSERT(m_mainThread == pthread_self());
     PXINE_DEBUG;
 }
 

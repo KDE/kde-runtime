@@ -103,7 +103,7 @@ class ByteStream : public QObject, public StreamInterface, public QSharedData
         QWaitCondition m_seekWaitCondition;
         QQueue<QByteArray> m_buffers;
 
-        //pthread_t m_mainThread;
+        pthread_t m_mainThread;
         qint64 m_streamSize;
         qint64 m_currentPosition;
         size_t m_buffersize;
