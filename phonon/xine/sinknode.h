@@ -68,7 +68,7 @@ class SinkNode
         virtual void downstreamEvent(Event *);
 
         void findXineEngine();
-        QExplicitlySharedDataPointer<SinkNodeXT> threadSafeObject() const { return m_threadSafeObject; }
+        inline QExplicitlySharedDataPointer<SinkNodeXT> threadSafeObject() const { return m_threadSafeObject; }
 
     protected:
         virtual void xineEngineChanged() {}
@@ -92,7 +92,7 @@ inline QDebug operator<<(QDebug &s, const Phonon::Xine::SinkNodeXT *const node)
     if (node->className) {
         s.nospace() << node->className << '(' << static_cast<const void *>(node) << ')';
     } else {
-        s.nospace() << static_cast<const void *>(node);
+        s.nospace() << "no classname: " << static_cast<const void *>(node);
     }
     return s.space();
 }

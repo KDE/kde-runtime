@@ -69,7 +69,7 @@ class SourceNode
         virtual void upstreamEvent(Event *);
         virtual void downstreamEvent(Event *);
 
-        QExplicitlySharedDataPointer<SourceNodeXT> threadSafeObject() const { return m_threadSafeObject; }
+        inline QExplicitlySharedDataPointer<SourceNodeXT> threadSafeObject() const { return m_threadSafeObject; }
 
     protected:
         QExplicitlySharedDataPointer<SourceNodeXT> m_threadSafeObject;
@@ -86,7 +86,7 @@ inline QDebug operator<<(QDebug &s, const Phonon::Xine::SourceNodeXT *const node
     if (node->className) {
         s.nospace() << node->className << '(' << static_cast<const void *>(node) << ')';
     } else {
-        s.nospace() << static_cast<const void *>(node);
+        s.nospace() << "no classname: " << static_cast<const void *>(node);
     }
     return s.space();
 }
