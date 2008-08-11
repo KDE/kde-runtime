@@ -51,6 +51,8 @@ class SourceNodeXT : virtual public SharedData
         bool deleted;
 
         friend class XineThread;
+
+        // hold a ref to the sink that we're connected to to make 100% sure it's always valid
         QExplicitlySharedDataPointer<SinkNodeXT> m_xtSink;
 };
 
