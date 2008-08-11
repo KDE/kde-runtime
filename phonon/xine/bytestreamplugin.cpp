@@ -26,6 +26,7 @@
 
 #include <xine.h>
 #include "bytestream.h"
+#include "myshareddatapointer.h"
 
 extern "C" {
 // xine headers use the reserved keyword this:
@@ -56,7 +57,7 @@ private:
     xine_stream_t *m_stream;
     nbc_t *m_nbc;
     const QByteArray m_mrl;
-    QExplicitlySharedDataPointer<Phonon::Xine::ByteStream> m_bytestream;
+    MySharedDataPointer<Phonon::Xine::ByteStream> m_bytestream;
 };
 
 KByteStreamInputPlugin::KByteStreamInputPlugin(xine_stream_t *stream, const char *_mrl)
