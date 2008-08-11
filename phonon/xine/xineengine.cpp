@@ -22,8 +22,10 @@
 #include "xineengine.h"
 
 #include <QtCore/QByteArray>
+#include <QtCore/QFile>
 
 #include <kdebug.h>
+#include <kstandarddirs.h>
 #include <cstdlib>
 
 extern "C" {
@@ -43,11 +45,15 @@ XineEngineData::XineEngineData()
     kDebug(610) << "setting xine verbosity to" << phonon_xine_verbosity.toInt();
     xine_engine_set_param(m_xine, XINE_ENGINE_PARAM_VERBOSITY, phonon_xine_verbosity.toInt());
 
-    //char configfile[2048];
-    //sprintf(configfile, "%s%s", xine_get_homedir(), "/.xine/config");
-    //xine_config_load(m_xine, configfile);
+    const QString &configfileString = KStandardDirs::locateLocal("data", "phonon-xine/config");
+    const QByteArray &configfile = QFile::encodeName(configfileString);
+    xine_config_load(m_xine, configfile.constData());
     xine_init(m_xine);
     xine_register_plugins(m_xine, phonon_xine_plugin_info);
+    if (!QFile::exists(configfileString)) {
+        kDebug(610) << "save xine config to" << configfile.constData();
+        xine_config_save(m_xine, configfile.constData());
+    }
 }
 
 XineEngineData::~XineEngineData()
