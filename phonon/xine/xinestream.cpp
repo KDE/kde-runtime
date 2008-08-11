@@ -25,6 +25,7 @@
 #include <QEvent>
 #include <QCoreApplication>
 #include <QTimer>
+#include <QVarLengthArray>
 
 #include <klocale.h>
 #include <kurl.h>
@@ -1034,7 +1035,7 @@ bool XineStream::event(QEvent *ev)
             kDebug(610) << "taking snapshot of" << w << h;
             if (w > 0 && h > 0) {
                 int width, height, ratio_code, format;
-                uint8_t img[w * h * 4];
+                QVarLengthArray<uint8_t> img(w * h * 4);
                 int success = xine_get_current_frame (m_stream, &width, &height, &ratio_code,
                         &format, &img[0]);
                 if (!success) {
