@@ -38,6 +38,7 @@
 #include <sys/time.h>
 #include <time.h>
 #include "xineengine.h"
+#include "myshareddatapointer.h"
 
 class KUrl;
 
@@ -222,7 +223,7 @@ class XineStream : public QObject, public SourceNodeXT
         QWaitCondition m_waitingForRewire;
         QMultiMap<QString, QString> m_metaDataMap;
         QByteArray m_mrl;
-        ByteStream *m_byteStream;
+        MySharedDataPointer<ByteStream> m_byteStream;
         QTimer *m_prefinishMarkTimer;
         struct timeval m_lastTimeUpdate;
 

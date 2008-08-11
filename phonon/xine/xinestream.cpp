@@ -148,7 +148,6 @@ XineStream::XineStream()
     m_nullAudioPort(0),
     m_nullVideoPort(0),
     m_state(Phonon::LoadingState),
-    m_byteStream(0),
     m_prefinishMarkTimer(0),
     m_errorType(Phonon::NoError),
     m_lastSeekCommand(0),
@@ -1805,18 +1804,14 @@ void XineStream::setMrlInternal(const QByteArray &newMrl)
     if (newMrl != m_mrl) {
         if (m_mrl.startsWith("kbytestream:/")) {
             Q_ASSERT(m_byteStream);
-            Q_ASSERT(ByteStream::fromMrl(m_mrl) == m_byteStream);
-            if (!m_byteStream->ref.deref()) {
-                m_byteStream->deleteLater();
-            }
-            m_byteStream = 0;
+            Q_ASSERT(ByteStream::fromMrl(m_mrl) == m_byteStream.data());
+            m_byteStream.reset();
         }
         m_mrl = newMrl;
         if (m_mrl.startsWith("kbytestream:/")) {
-            Q_ASSERT(m_byteStream == 0);
+            Q_ASSERT(m_byteStream.data() == 0);
             m_byteStream = ByteStream::fromMrl(m_mrl);
             Q_ASSERT(m_byteStream);
-            m_byteStream->ref.ref();
         }
     }
 }
