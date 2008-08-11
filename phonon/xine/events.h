@@ -32,11 +32,21 @@
 
 #define QEVENT(type) Event(Event::type)
 
+#define EVENT_CLASS0(type) \
+class type##Event : public Event \
+{ \
+    public: \
+        inline type##Event() : QEVENT(type) {} \
+}; \
+template <> inline type##Event *copyEvent<type##Event>(type##Event *) \
+{ \
+    return new type##Event(); \
+}
 #define EVENT_CLASS1(type, arg1, init1, member1type, member1name) \
 class type##Event : public Event \
 { \
     public: \
-        type##Event(arg1) : QEVENT(type), init1 {} \
+        inline type##Event(arg1) : QEVENT(type), init1 {} \
         member1type member1name; \
 }; \
 template <> inline type##Event *copyEvent<type##Event>(type##Event *e) \
@@ -47,7 +57,7 @@ template <> inline type##Event *copyEvent<type##Event>(type##Event *e) \
 class type##Event : public Event \
 { \
     public: \
-        type##Event(arg1, arg2) : QEVENT(type), init1, init2 {} \
+        inline type##Event(arg1, arg2) : QEVENT(type), init1, init2 {} \
         member1type member1name; \
         member2type member2name; \
 }; \
