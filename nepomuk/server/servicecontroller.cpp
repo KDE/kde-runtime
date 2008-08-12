@@ -202,6 +202,12 @@ void Nepomuk::ServiceController::stop()
         if( d->processControl ) {
             d->processControl->stop();
         }
+
+        // make sure all loops waiting for the service to initialize
+        // are terminated.
+        foreach( QEventLoop* loop, d->loops ) {
+            loop->exit();
+        }
     }
 }
 
@@ -230,8 +236,10 @@ bool Nepomuk::ServiceController::waitForInitialized( int timeout )
         if ( timeout > 0 ) {
             QTimer::singleShot( timeout, &loop, SLOT(quit()) );
         }
+        QPointer<ServiceController> guard = this;
         loop.exec();
-        d->loops.removeAll( &loop );
+        if ( !guard.isNull() )
+            d->loops.removeAll( &loop );
     }
 
     return d->initialized;
