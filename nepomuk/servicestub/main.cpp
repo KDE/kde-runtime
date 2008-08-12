@@ -106,6 +106,7 @@ int main( int argc, char** argv )
     QTextStream s( stderr );
 
     QString serviceName = args->arg(0);
+    args->clear();
 
     aboutData.setAppName( serviceName.toLocal8Bit() );
     KComponentData compData( aboutData );
