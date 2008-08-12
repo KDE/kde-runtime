@@ -321,7 +321,7 @@ AudioDevice::AudioDevice(KConfigGroup &deviceGroup)
 {
     d->index = deviceGroup.readEntry("index", d->index);
     const QString groupName = deviceGroup.name();
-    d->uniqueId = groupName.mid(groupName.indexOf(QLatin1Char('_')));
+    d->uniqueId = groupName.mid(groupName.indexOf(QLatin1Char('_')) + 1);
     kDebug(603) << groupName << d->uniqueId;
     if (d->uniqueId.startsWith("/org/freedesktop/Hal/devices/")) {
         // old invalid group
