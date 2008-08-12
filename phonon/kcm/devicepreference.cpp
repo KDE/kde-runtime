@@ -593,7 +593,7 @@ void DevicePreference::on_removeButton_clicked()
         const Phonon::AudioOutputDevice deviceToRemove = playbackModel->modelData(idx);
         const QList<Phonon::AudioDevice> deviceList = Phonon::AudioDeviceEnumerator::availablePlaybackDevices();
         foreach (Phonon::AudioDevice dev, deviceList) {
-            if (dev.index() == deviceToRemove.index()) {
+            if (-dev.index() == deviceToRemove.index()) {
                 // remove from persistent store
                 if (dev.ceaseToExist()) {
                     // remove from all models, idx.row() is only correct for the current model
@@ -618,7 +618,7 @@ void DevicePreference::on_removeButton_clicked()
             Phonon::AudioCaptureDevice deviceToRemove = captureModel->modelData(idx);
             QList<Phonon::AudioDevice> deviceList = Phonon::AudioDeviceEnumerator::availableCaptureDevices();
             foreach (Phonon::AudioDevice dev, deviceList) {
-                if (dev.index() == deviceToRemove.index()) {
+                if (-dev.index() == deviceToRemove.index()) {
                     // remove from persistent store
                     if (dev.ceaseToExist()) {
                         m_captureModel.removeRows(idx.row(), 1);
