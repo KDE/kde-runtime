@@ -1,5 +1,6 @@
 
 add_subdirectory( componentservices ) 
+add_subdirectory( windowmanagers ) 
 
 
 
@@ -8,14 +9,15 @@ add_subdirectory( componentservices )
 set(kcm_componentchooser_PART_SRCS componentchooser.cpp kcm_componentchooser.cpp )
 
 if(NOT WIN32)
-  set(kcm_componentchooser_PART_SRCS ${kcm_componentchooser_PART_SRCS} componentchooserterminal.cpp)
+  set(kcm_componentchooser_PART_SRCS ${kcm_componentchooser_PART_SRCS}
+    componentchooserterminal.cpp componentchooserwm.cpp)
 endif(NOT WIN32)
 
 
 kde4_add_ui_files(kcm_componentchooser_PART_SRCS browserconfig_ui.ui emailclientconfig_ui.ui componentchooser_ui.ui componentconfig_ui.ui) 
 
 if(NOT WIN32)
-  kde4_add_ui_files(kcm_componentchooser_PART_SRCS terminalemulatorconfig_ui.ui)
+  kde4_add_ui_files(kcm_componentchooser_PART_SRCS terminalemulatorconfig_ui.ui wmconfig_ui.ui)
 endif(NOT WIN32)
 
 kde4_add_plugin(kcm_componentchooser ${kcm_componentchooser_PART_SRCS})

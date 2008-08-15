@@ -20,6 +20,7 @@
 #include "componentchooser.moc"
 #ifdef Q_OS_UNIX
 #include "componentchooserterminal.h"
+#include "componentchooserwm.h"
 #endif
 
 #include <QCheckBox>
@@ -382,6 +383,14 @@ void ComponentChooser::slotServiceSelected(QListWidgetItem* it) {
 		if (!(configWidget && qobject_cast<CfgTerminalEmulator*>(configWidget)))
 		{
 			newConfigWidget = new CfgTerminalEmulator(configContainer);
+		}
+
+	}
+	else if (cfgType=="internal_wm")
+	{
+		if (!(configWidget && qobject_cast<CfgWm*>(configWidget)))
+		{
+			newConfigWidget = new CfgWm(configContainer);
 		}
 
 	}

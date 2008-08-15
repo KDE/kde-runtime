@@ -1,0 +1,3 @@
+Name=Window Manager
+Comment=Here you can select the window manager to be run in your KDE session. Note that KDE settings are often not followed when not using the default KDE window manager.
+configurationType=internal_wm
