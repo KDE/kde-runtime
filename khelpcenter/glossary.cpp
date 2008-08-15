@@ -53,7 +53,8 @@ class SectionItem : public K3ListViewItem
         {
                 K3ListViewItem::setOpen(open);
 
-                setPixmap( 0, SmallIcon( QLatin1String( open ? "help-contents" : "contents2" ) ) );
+// TODO: 2nd was contents2 -> needs to be changed to help-contents-alternate or similar
+                setPixmap( 0, SmallIcon( QLatin1String( open ? "help-contents" : "help-contents" ) ) );
 
         }
 };
@@ -319,11 +320,6 @@ QString Glossary::entryToHtml( const GlossaryEntry &entry )
     QTextStream htmlStream(&htmlFile);
     return htmlStream.readAll()
            .arg( i18n( "KDE Glossary" ) )
-           .arg( entry.term() )
-           .arg( View::langLookup( QLatin1String("khelpcenter/konq.css") ) )
-           .arg( View::langLookup( QLatin1String("khelpcenter/pointers.png") ) )
-           .arg( View::langLookup( QLatin1String("khelpcenter/khelpcenter.png") ) )
-           .arg( View::langLookup( QLatin1String("khelpcenter/lines.png") ) )
            .arg( entry.term() )
            .arg( entry.definition() )
            .arg( seeAlso)
