@@ -23,12 +23,12 @@ set(phonon_xine_PART_SRCS
     net_buf_ctrl.c
     volumefader_plugin.cpp
     plugins.c
-    videowidget.cpp
    )
 
 macro_optional_find_package(XCB)
 SET(XCB_VIDEO TRUE)
 if(XCB_FOUND AND XINE_XCB_FOUND)
+  set(phonon_xine_PART_SRCS ${phonon_xine_PART_SRCS} videowidget.cpp)
   include_directories(${LIBXCB_INCLUDE_DIR})
   add_definitions(${LIBXCB_DEFINITIONS})
 else(XCB_FOUND AND XINE_XCB_FOUND)
@@ -37,6 +37,9 @@ else(XCB_FOUND AND XINE_XCB_FOUND)
   SET(XCB_VIDEO FALSE)
 endif(XCB_FOUND AND XINE_XCB_FOUND)
 macro_log_feature(XCB_VIDEO "XCB" "XCB is needed for the video widget, libxine needs to be compiled with XCB" "http://xcb.freedesktop.org/" REQUIRED)
+
+macro_bool_to_01(XINEWIDGET_FOUND XCB_VIDEO)
+configure_file(config-xine-widget.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-xine-widget.h )
 
 add_definitions(-DPHONON_BACKEND_VERSION_4_2)
 kde4_add_plugin(phonon_xine ${phonon_xine_PART_SRCS})

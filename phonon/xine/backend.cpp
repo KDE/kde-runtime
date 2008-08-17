@@ -36,6 +36,7 @@
 #include "keepreference.h"
 #include "sinknode.h"
 #include "sourcenode.h"
+#include "config-xine-widget.h"
 
 #include <kconfiggroup.h>
 #include <kicon.h>
@@ -174,11 +175,13 @@ QObject *Backend::createObject(BackendInterface::Class c, QObject *parent, const
         }
     case VideoWidgetClass:
         {
+#ifdef XINEWIDGET_FOUND 
             VideoWidget *vw = new VideoWidget(qobject_cast<QWidget *>(parent));
             if (vw->isValid()) {
                 return vw;
             }
             delete vw;
+#endif
             return 0;
         }
     }
