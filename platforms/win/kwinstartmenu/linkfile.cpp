@@ -123,7 +123,9 @@ bool LinkFile::create()
     LPCWSTR lpszPathLink = (LPCWSTR)m_linkPath.utf16();
     LPCWSTR lpszDesc     = (LPCWSTR)m_description.utf16();
     LPCWSTR lpszWorkDir  = (LPCWSTR)m_workingDir.utf16();
-    LPCWSTR lpszArguments  = (LPCWSTR)m_arguments.join(QLatin1String(" ")).utf16();
+    // casting join directly results into a wrong lpszArguments 
+    QString args = m_arguments.join(QLatin1String(" "));
+    LPCWSTR lpszArguments  = (LPCWSTR)args.utf16();
 
     CoInitialize(NULL);
     // Get a pointer to the IShellLink interface.
@@ -260,10 +262,11 @@ bool LinkFiles::cleanup(QList <LinkFile> &newFiles, QList <LinkFile> &oldFiles)
 QDebug operator<<(QDebug out, const LinkFile &c)
 {
     out.space() << "LinkFile ("
-        << "execPath"     << c.m_execPath
         << "linkPath" << c.m_linkPath
-        << "description"  << c.m_description
+        << "execPath"     << c.m_execPath
+        << "arguments"   << c.m_arguments
         << "workingDir"   << c.m_workingDir
+        << "description"  << c.m_description
         << ")";
     return out;
 }
