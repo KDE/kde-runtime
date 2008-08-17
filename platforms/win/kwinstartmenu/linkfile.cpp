@@ -27,7 +27,6 @@
 #include <shlwapi.h>
 #include <initguid.h>
 
-#include <QString>
 #include <QDir>
 #include <QFile>
 
@@ -37,6 +36,13 @@
 // required by kdesktopfile.h -> should be in kdesktopfile.h 
 #include <kconfiggroup.h>
 #include <kdesktopfile.h>
+
+#if defined(_MSC_VER)
+#define MY_CAST(a) a
+#else
+// mingw needs char cast
+#define MY_CAST(a) (CHAR *)(a)
+#endif
 
 /*
     add correct prefix for win32 filesystem functions
@@ -53,28 +59,73 @@ static QString longFileName(const QString &path)
     return prefix + absPath;
 }
 
-// from http://msdn.microsoft.com/library/default.asp?url=/library/en-us/shellcc/platform/shell/programmersguide/shell_int/shell_int_programming/shortcuts/shortcut.asp
-// CreateLink - uses the Shell's IShellLink and IPersistFile interfaces
-//              to create and store a shortcut to the specified object.
-//
-// Returns true if link <linkName> could be created, otherwise false.
-//
-// Parameters:
-// fileName     - full path to file to create link to
-// linkName     - full path to the link to be created
-// description  - description of the link (for tooltip)
+bool LinkFile::read()
+{
+    LPCWSTR szShortcutFile = (LPCWSTR)m_linkPath.utf16();
+    WCHAR szTarget[MAX_PATH];
+    WCHAR szWorkingDir[MAX_PATH];
+    WCHAR szDescription[MAX_PATH];
+    WCHAR szArguments[MAX_PATH];
 
-bool CreateLink(const QString &fileName, const QString &_linkName, const QString &description, const QString &workingDir = QString())
+    IShellLink*    psl     = NULL;
+    IPersistFile*  ppf     = NULL;
+    bool           bResult = false;
+
+#   if !defined(UNICODE)
+        WCHAR wsz[MAX_PATH];
+        if (0 == MultiByteToWideChar(CP_ACP, 0, MY_CAST(szShortcutFile), -1, wsz, MAX_PATH) )
+            goto cleanup;
+#   else
+        LPCWSTR wsz = szShortcutFile;
+#   endif
+
+    if (FAILED( CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER, IID_IShellLink, (void **) &psl) ))
+        goto cleanup;
+
+    if (FAILED( psl->QueryInterface(IID_IPersistFile, (void **) &ppf) ))
+        goto cleanup;
+
+    if (FAILED( ppf->Load(wsz, STGM_READ) ))
+        goto cleanup;
+
+    if (NOERROR != psl->GetPath(MY_CAST(szTarget), MAX_PATH, NULL, 0) )
+        goto cleanup;
+    m_execPath = QString::fromUtf16((const ushort*)szTarget);
+
+    if (NOERROR != psl->GetWorkingDirectory(MY_CAST(szWorkingDir), MAX_PATH) )
+        goto cleanup;
+    m_workingDir = QString::fromUtf16((const ushort*)szWorkingDir);
+
+    if (NOERROR != psl->GetDescription(MY_CAST(szDescription), MAX_PATH) )
+        goto cleanup;
+    m_description = QString::fromUtf16((const ushort*)szDescription);
+
+    if (NOERROR != psl->GetArguments(MY_CAST(szArguments), MAX_PATH) )
+        goto cleanup;
+    m_arguments = QString::fromUtf16((const ushort*)szArguments).split(QLatin1Char(' '), QString::SkipEmptyParts);
+
+    bResult = true;
+
+cleanup:
+    if (ppf) ppf->Release();
+    if (psl) psl->Release();
+    return bResult;
+}
+
+bool LinkFile::create()
 {
     HRESULT hres;
     IShellLinkW* psl;
 
-    QString linkName = longFileName(_linkName);
+    QString linkName = longFileName(m_linkPath);
 
-    LPCWSTR lpszPathObj  = (LPCWSTR)fileName.utf16();
-    LPCWSTR lpszPathLink = (LPCWSTR)linkName.utf16();
-    LPCWSTR lpszDesc     = (LPCWSTR)description.utf16();
-    LPCWSTR lpszWorkDir  = (LPCWSTR)workingDir.utf16();
+    LPCWSTR lpszPathObj  = (LPCWSTR)m_execPath.utf16();
+    LPCWSTR lpszPathLink = (LPCWSTR)m_linkPath.utf16();
+    LPCWSTR lpszDesc     = (LPCWSTR)m_description.utf16();
+    LPCWSTR lpszWorkDir  = (LPCWSTR)m_workingDir.utf16();
+    // casting join directly results into a wrong lpszArguments 
+    QString args = m_arguments.join(QLatin1String(" "));
+    LPCWSTR lpszArguments  = (LPCWSTR)args.utf16();
 
     CoInitialize(NULL);
     // Get a pointer to the IShellLink interface.
@@ -86,21 +137,25 @@ bool CreateLink(const QString &fileName, const QString &_linkName, const QString
 
         // Set the path to the shortcut target and add the description.
         if(!SUCCEEDED(psl->SetPath(lpszPathObj))) {
-            kDebug() << "error setting path for link to " << fileName;
+            kDebug() << "error setting path for link to " << m_execPath;
             psl->Release();
             return false;
         }
         if(!SUCCEEDED(psl->SetDescription(lpszDesc))) {
-            kDebug() << "error setting description for link to " << description;
+            kDebug() << "error setting description for link to " << m_description;
             psl->Release();
             return false;
         }
         if(!SUCCEEDED(psl->SetWorkingDirectory(lpszWorkDir))) {
-            kDebug() << "error setting working Directory for link to " << workingDir;
+            kDebug() << "error setting working Directory for link to " << m_workingDir;
             psl->Release();
             return false;
         }
-
+        if(!m_arguments.isEmpty() && !SUCCEEDED(psl->SetArguments(lpszArguments))) {
+            kDebug() << "error setting arguments for link to " << m_arguments;
+            psl->Release();
+            return false;
+        }
 
         // Query IShellLink for the IPersistFile interface for saving the
         // shortcut in persistent storage.
@@ -120,76 +175,7 @@ bool CreateLink(const QString &fileName, const QString &_linkName, const QString
         kDebug() << "Error: Got no pointer to the IShellLink interface.";
     }
     CoUninitialize(); // cleanup COM after you're done using its services
-    return SUCCEEDED(hres);
-}
-
-bool LinkFile::read()
-{
-    LPCWSTR szShortcutFile = (LPCWSTR)m_linkPath.utf16();
-	WCHAR szTarget[MAX_PATH];
-	WCHAR szWorkingDir[MAX_PATH];
-	WCHAR szDescription[MAX_PATH];
-
-	IShellLink*    psl     = NULL;
-    IPersistFile*  ppf     = NULL;
-    bool           bResult = false;
-
-#   if !defined(UNICODE)
-        WCHAR wsz[MAX_PATH];
-#   if !defined(_MSC_VER)
-        if (0 == MultiByteToWideChar(CP_ACP, 0, (CHAR*)(szShortcutFile), -1, wsz, MAX_PATH) )
-#   else
-        if (0 == MultiByteToWideChar(CP_ACP, 0, szShortcutFile, -1, wsz, MAX_PATH) )
-#endif
-            goto cleanup;
-#   else
-        LPCWSTR wsz = szShortcutFile;
-#   endif
-
-    if (FAILED( CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER, IID_IShellLink, (void **) &psl) ))
-        goto cleanup;
-
-    if (FAILED( psl->QueryInterface(IID_IPersistFile, (void **) &ppf) ))
-        goto cleanup;
-
-    if (FAILED( ppf->Load(wsz, STGM_READ) ))
-        goto cleanup;
-
-#if !defined(_MSC_VER)
-    if (NOERROR != psl->GetPath((CHAR*)(szTarget), MAX_PATH, NULL, 0) )
-#else
-    if (NOERROR != psl->GetPath(szTarget, MAX_PATH, NULL, 0) )
-#endif
-        goto cleanup;
-	m_execPath = QString::fromUtf16((const ushort*)szTarget);
-
-#if !defined(_MSC_VER)
-	if (NOERROR != psl->GetWorkingDirectory((CHAR*)(szWorkingDir), MAX_PATH) )
-#else
-	if (NOERROR != psl->GetWorkingDirectory(szWorkingDir, MAX_PATH) )
-#endif
-        goto cleanup;
-	m_workingDir = QString::fromUtf16((const ushort*)szWorkingDir);
-
-#if !defined(_MSC_VER)
-	if (NOERROR != psl->GetDescription((CHAR*)(szDescription), MAX_PATH) )
-#else
-	if (NOERROR != psl->GetDescription(szDescription, MAX_PATH) )
-#endif
-        goto cleanup;
-	m_description = QString::fromUtf16((const ushort*)szDescription);
-
-	bResult = true;
-
-cleanup:
-    if (ppf) ppf->Release();
-    if (psl) psl->Release();
-    return bResult;
-}
-
-bool LinkFile::create()
-{
-    return CreateLink(m_execPath,m_linkPath,m_description,m_workingDir);
+    return SUCCEEDED(hres) ? true : false;
 }
 
 bool LinkFile::remove()
@@ -241,9 +227,9 @@ bool LinkFiles::create(QList <LinkFile> &newFiles)
         if (!linkFile.exists())
         {
             if (linkFile.create())
-				kDebug() << "created" << linkFile;
-			else
-				kDebug() << "failed to create" << linkFile;
+                kDebug() << "created" << linkFile;
+            else
+                kDebug() << "failed to create" << linkFile;
         }
     }
     return true;
@@ -276,10 +262,11 @@ bool LinkFiles::cleanup(QList <LinkFile> &newFiles, QList <LinkFile> &oldFiles)
 QDebug operator<<(QDebug out, const LinkFile &c)
 {
     out.space() << "LinkFile ("
-        << "execPath"     << c.m_execPath
         << "linkPath" << c.m_linkPath
-        << "description"  << c.m_description
+        << "execPath"     << c.m_execPath
+        << "arguments"   << c.m_arguments
         << "workingDir"   << c.m_workingDir
+        << "description"  << c.m_description
         << ")";
     return out;
 }
