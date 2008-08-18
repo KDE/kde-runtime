@@ -43,9 +43,6 @@
 #define FIFO_PUT                   0
 #define FIFO_GET                   1
 
-/*#define streamClock(stream) stream->clock*/
-#define streamClock(stream) stream->xine->clock
-
 struct nbc_s {
 
   xine_stream_t   *stream;
@@ -104,78 +101,19 @@ static void report_progress (xine_stream_t *stream, int p) {
 
 static void nbc_set_speed_pause (void *data) {
   xine_stream_t *stream = (xine_stream_t *)data;
+
   xprintf(stream->xine, XINE_VERBOSITY_DEBUG, "\nnet_buf_ctrl: nbc_set_speed_pause\n");
   _x_set_speed (stream, XINE_SPEED_PAUSE);
-  streamClock(stream)->set_option (streamClock(stream), CLOCK_SCR_ADJUSTABLE, 0);
+  stream->xine->clock->set_option (stream->xine->clock, CLOCK_SCR_ADJUSTABLE, 0);
 }
 
 static void nbc_set_speed_normal (void *data) {
   xine_stream_t *stream = (xine_stream_t *)data;
+
   xprintf(stream->xine, XINE_VERBOSITY_DEBUG, "\nnet_buf_ctrl: nbc_set_speed_normal\n");
   _x_set_speed (stream, XINE_SPEED_NORMAL);
-  streamClock(stream)->set_option (streamClock(stream), CLOCK_SCR_ADJUSTABLE, 1);
+  stream->xine->clock->set_option (stream->xine->clock, CLOCK_SCR_ADJUSTABLE, 1);
 }
-
-int report_bufferstatus (nbc_t *this)
-{
-    int64_t progress = 0;
-    int64_t video_p = 0;
-    int64_t audio_p = 0;
-    int has_video, has_audio;
-
-    has_video = _x_stream_info_get(this->stream, XINE_STREAM_INFO_HAS_VIDEO);
-    has_audio = _x_stream_info_get(this->stream, XINE_STREAM_INFO_HAS_AUDIO);
-
-    /*  compute the buffering progress
-     *    50%: video
-     *    50%: audio */
-    video_p = ((this->video_fifo_length * 50) / this->high_water_mark);
-    if (video_p > 50) {
-        video_p = 50;
-    }
-    audio_p = ((this->audio_fifo_length * 50) / this->high_water_mark);
-    if (audio_p > 50) {
-        audio_p = 50;
-    }
-
-    if ((has_video) && (has_audio)) {
-        progress = video_p + audio_p;
-    } else if (has_video) {
-        progress = 2 * video_p;
-    } else {
-        progress = 2 * audio_p;
-    }
-
-    /* if the progress can't be computed using the fifo length,
-       use the number of buffers */
-    if (!progress) {
-        video_p = this->video_fifo_fill;
-        audio_p = this->audio_fifo_fill;
-        progress = (video_p > audio_p) ? video_p : audio_p;
-    }
-
-    return progress;
-}
-
-#if 0
-static void display_stats (nbc_t *this) {
-  printf("buff: %d, enb: %d "\
-	 "vid %3d%% %4.1fs %4" PRId64 "kbps %1d, "\
-	 "aud %3d%% %4.1fs %4" PRId64 "kbps %1d\r",
-	 this->buffering,
-	 this->enabled,
-	 this->video_fifo_fill,
-	 (float)(this->video_fifo_length / 1000),
-	 this->video_br / 1000,
-	 this->video_in_disc,
-	 this->audio_fifo_fill,
-	 (float)(this->audio_fifo_length / 1000),
-	 this->audio_br / 1000,
-	 this->audio_in_disc
-	 );
-  fflush(stdout);
-}
-#endif
 
 /*  Try to compute the length of the fifo in 1/1000 s
  *  2 methods :
@@ -384,8 +322,6 @@ static void nbc_put_cb (fifo_buffer_t *fifo,
           }
         }
       }
-      /*if(this->stream->xine->verbosity >= XINE_VERBOSITY_DEBUG)
-        display_stats(this);*/
     }
   } else {
 
@@ -503,8 +439,6 @@ static void nbc_get_cb (fifo_buffer_t *fifo,
         this->set_speed_pause(this->set_speed_pause_data);
       }
 
-      /*if(this->stream->xine->verbosity >= XINE_VERBOSITY_DEBUG)
-        display_stats(this);*/
     }
   } else {
     /* discontinuity management */
@@ -547,7 +481,7 @@ void nbc_set_normal_cb (nbc_t *this, void (*cb)(void *), void *data)
 
 nbc_t *nbc_init (xine_stream_t *stream) {
   
-  nbc_t *this = (nbc_t *) xine_xmalloc (sizeof (nbc_t));
+  nbc_t *this = calloc(1, sizeof (nbc_t));
   fifo_buffer_t *video_fifo = stream->video_fifo;
   fifo_buffer_t *audio_fifo = stream->audio_fifo;
   double video_fifo_factor, audio_fifo_factor;
@@ -613,7 +547,7 @@ void nbc_close (nbc_t *this) {
   audio_fifo->unregister_get_cb(audio_fifo, nbc_get_cb);
 
   /* now we are sure that nobody will call a callback */
-  this->streamClock(stream)->set_option (this->streamClock(stream), CLOCK_SCR_ADJUSTABLE, 1);
+  this->stream->xine->clock->set_option (this->stream->xine->clock, CLOCK_SCR_ADJUSTABLE, 1);
 
   pthread_mutex_destroy(&this->mutex);
   free (this);
