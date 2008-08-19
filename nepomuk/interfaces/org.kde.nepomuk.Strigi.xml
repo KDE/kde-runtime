@@ -13,6 +13,16 @@
     </method>
     <method name="suspend" />
     <method name="resume" />
+    <method name="analyzeResource" >
+      <arg name="uri" direction="in" type="s" />
+      <arg name="lastModificationDate" direction="in" type="u" />
+      <arg name="data" direction="in" type="ay" />
+    </method>
+    <method name="analyzeResourceFromTempFileAndDeleteTempFile" >
+      <arg name="uri" direction="in" type="s" />
+      <arg name="lastModificationDate" direction="in" type="u" />
+      <arg name="tmpFileName" direction="in" type="s" />
+    </method>
     <signal name="indexingStarted" />
     <signal name="indexingStopped" />
     <signal name="indexingFolder">

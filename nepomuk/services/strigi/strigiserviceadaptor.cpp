@@ -23,6 +23,13 @@
 #include "strigiservice.h"
 #include "indexscheduler.h"
 
+#include <QtCore/QUrl>
+#include <QtCore/QDateTime>
+#include <QtCore/QFile>
+#include <QtCore/QDataStream>
+
+#include <KDebug>
+
 
 Nepomuk::StrigiServiceAdaptor::StrigiServiceAdaptor( IndexScheduler* scheduler, StrigiService* parent )
     : QDBusAbstractAdaptor(parent),
@@ -79,4 +86,25 @@ void Nepomuk::StrigiServiceAdaptor::suspend()
 void Nepomuk::StrigiServiceAdaptor::updateFolder( const QString& path )
 {
     m_indexScheduler->updateDir( path );
+}
+
+
+void Nepomuk::StrigiServiceAdaptor::analyzeResource( const QString& uri, uint mTime, const QByteArray& data )
+{
+    QDataStream stream( data );
+    m_indexScheduler->analyzeResource( QUrl::fromEncoded( uri.toAscii() ), QDateTime::fromTime_t( mTime ), stream );
+}
+
+
+void Nepomuk::StrigiServiceAdaptor::analyzeResourceFromTempFileAndDeleteTempFile( const QString& uri, uint mTime, const QString& tmpFile )
+{
+    QFile file( tmpFile );
+    if ( file.open( QIODevice::ReadOnly ) ) {
+        QDataStream stream( &file );
+        m_indexScheduler->analyzeResource( QUrl::fromEncoded( uri.toAscii() ), QDateTime::fromTime_t( mTime ), stream );
+        file.remove();
+    }
+    else {
+        kDebug() << "Failed to open" << tmpFile;
+    }
 }

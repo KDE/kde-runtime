@@ -49,6 +49,16 @@ namespace Nepomuk {
                     "    <method name=\"updateFolder\" >\n"
                     "      <arg name=\"path\" direction=\"in\" type=\"s\" />\n"
                     "    </method>\n"
+                    "    <method name=\"analyzeResource\" >\n"
+                    "      <arg name=\"uri\" direction=\"in\" type=\"s\" />\n"
+                    "      <arg name=\"lastModificationDate\" direction=\"in\" type=\"u\" />\n"
+                    "      <arg name=\"data\" direction=\"in\" type=\"ay\" />\n"
+                    "    </method>\n"
+                    "    <method name=\"analyzeResourceFromTempFileAndDeleteTempFile\" >\n"
+                    "      <arg name=\"uri\" direction=\"in\" type=\"s\" />\n"
+                    "      <arg name=\"lastModificationDate\" direction=\"in\" type=\"u\" />\n"
+                    "      <arg name=\"tmpFileName\" direction=\"in\" type=\"s\" />\n"
+                    "    </method>\n"
                     "    <signal name=\"indexingStarted\" />\n"
                     "    <signal name=\"indexingStopped\" />\n"
                     "    <signal name=\"indexingFolder\" >\n"
@@ -68,6 +78,8 @@ namespace Nepomuk {
         void resume();
         void suspend();
         void updateFolder( const QString& path );
+        void analyzeResource( const QString& uri, uint mTime, const QByteArray& data );
+        void analyzeResourceFromTempFileAndDeleteTempFile( const QString& uri, uint mTime, const QString& tmpFile );
 
     Q_SIGNALS:
         void indexingFolder( const QString& path );

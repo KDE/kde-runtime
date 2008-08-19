@@ -32,6 +32,10 @@ namespace Strigi {
 
 class StoppableConfiguration;
 class QFileInfo;
+class QUrl;
+class QDateTime;
+class QByteArray;
+
 
 namespace Nepomuk {
     /**
@@ -78,6 +82,16 @@ namespace Nepomuk {
          * Updates all configured folders.
          */
         void updateAll();
+
+        /**
+         * Analyze a resource that is not read from the local harddisk.
+         *
+         * \param uri The resource URI to identify the resource.
+         * \param modificationTime The modification date of the resource. Used to determine if
+         *        an actual update is necessary.
+         * \data The data to analyze, ie. the contents of the resource.
+         */
+        void analyzeResource( const QUrl& uri, const QDateTime& modificationTime, QDataStream& data );
 
     Q_SIGNALS:
         void indexingStarted();

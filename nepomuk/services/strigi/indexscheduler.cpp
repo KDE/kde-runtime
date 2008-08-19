@@ -28,8 +28,11 @@
 #include <QtCore/QFileInfo>
 #include <QtCore/QDirIterator>
 #include <QtCore/QDateTime>
+#include <QtCore/QByteArray>
+#include <QtCore/QUrl>
 
 #include <KDebug>
+#include <KTemporaryFile>
 
 #include <map>
 #include <vector>
@@ -367,6 +370,61 @@ void Nepomuk::IndexScheduler::readConfig()
         foreach( const QString& f, Config::self()->folders() )
             m_dirsToUpdate << qMakePair( f, Config::self()->recursive() );
         m_dirsToUpdateWc.wakeAll();
+    }
+}
+
+
+namespace {
+    class QDataStreamStrigiBufferedStream : public Strigi::BufferedStream<char>
+    {
+    public:
+        QDataStreamStrigiBufferedStream( QDataStream& stream )
+            : m_stream( stream ) {
+        }
+
+        int32_t fillBuffer( char* start, int32_t space ) {
+            int r = m_stream.readRawData( start, space );
+            if ( r == 0 ) {
+                // Strigi's API is so weird!
+                return -1;
+            }
+            else if ( r < 0 ) {
+                // Again: weird API. m_status is a protected member of StreamBaseBase (yes, 2x Base)
+                m_status = Strigi::Error;
+                return -1;
+            }
+            else {
+                return r;
+            }
+        }
+
+    private:
+        QDataStream& m_stream;
+    };
+}
+
+
+void Nepomuk::IndexScheduler::analyzeResource( const QUrl& uri, const QDateTime& modificationTime, QDataStream& data )
+{
+    QDateTime existingMTime = QDateTime::fromTime_t( m_indexManager->indexReader()->mTime( uri.toEncoded().data() ) );
+    if ( existingMTime < modificationTime ) {
+        // remove the old data
+        std::vector<std::string> entries;
+        entries.push_back( uri.toEncoded().data() );
+        m_indexManager->indexWriter()->deleteEntries( entries );
+
+        // create the new
+        Strigi::StreamAnalyzer analyzer( *m_analyzerConfig );
+        analyzer.setIndexWriter( *m_indexManager->indexWriter() );
+        Strigi::AnalysisResult analysisresult( uri.toEncoded().data(),
+                                               modificationTime.toTime_t(),
+                                               *m_indexManager->indexWriter(),
+                                               analyzer );
+        QDataStreamStrigiBufferedStream stream( data );
+        analysisresult.index( &stream );
+    }
+    else {
+        kDebug() << uri << "up to date";
     }
 }
 
