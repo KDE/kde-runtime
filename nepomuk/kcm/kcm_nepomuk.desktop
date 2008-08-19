@@ -8,12 +8,7 @@ X-KDE-Library=kcm_nepomuk
 X-KDE-ParentApp=kcontrol
 X-KDE-System-Settings-Parent-Category=advanced-user-settings
 
-Name=Nepomuk
-Name[gu]=નેપોમુક
-Name[ml]=നെപ്പോമുക്
-Name[pa]=ਨਿਪੋਮੁਕ
-Name[sr]=Непомук
-Name[x-test]=xxNepomukxx
+Name=Desktop Search
 Comment=Nepomuk/Strigi Server Configuration
 Comment[af]=Nepomuk/Strigi bedienerkonfigurasie
 Comment[bg]=Настройване на Nepomuk/Strigi
