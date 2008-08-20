@@ -104,7 +104,7 @@ class KNotifyAdaptor : public QDBusAbstractAdaptor
 							"<arg type=\"i\" direction=\"out\"/>"
 							"<arg name=\"event\" type=\"s\" direction=\"in\"/>"
 							"<arg name=\"fromApp\" type=\"s\" direction=\"in\"/>"
-							"<arg name=\"contexts\" type=\"a(ss)\" direction=\"in\"/>"
+							"<arg name=\"contexts\" type=\"av\" direction=\"in\"/>"
 							"<arg name=\"text\" type=\"s\" direction=\"in\"/>"
 							"<arg name=\"pixmap\" type=\"ay\" direction=\"in\"/>"
 							"<arg name=\"actions\" type=\"as\" direction=\"in\"/>"
@@ -118,7 +118,7 @@ class KNotifyAdaptor : public QDBusAbstractAdaptor
 						"</method>"
 						"<method name=\"reemit\">"
 							"<arg name=\"id\" type=\"i\" direction=\"in\"/>"
-							"<arg name=\"contexts\" type=\"a(ss)\" direction=\"in\"/>"
+							"<arg name=\"contexts\" type=\"av\" direction=\"in\"/>"
 						"</method>"
 
 					"</interface>" )
