@@ -5,6 +5,7 @@ include_directories(
   ${CMAKE_SOURCE_DIR}
   ${NEPOMUK_INCLUDE_DIR}
   ${STRIGI_INCLUDE_DIR}
+  ${nepomukstrigiservice_BUILD_DIR}
   )
 
 set(strigiservice_SRCS
@@ -18,6 +19,8 @@ set(strigiservice_SRCS
   statuswidget.cpp
   filesystemwatcher.cpp
   )
+
+qt4_add_dbus_interface(strigiservice_SRCS ../../interfaces/org.kde.nepomuk.Storage.xml nepomukstorageinterface)
 
 kde4_add_ui_files(strigiservice_SRCS
   statuswidget.ui)

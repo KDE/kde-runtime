@@ -24,6 +24,7 @@
 #include "systray.h"
 #include "config.h"
 #include "statuswidget.h"
+#include "nepomukstorageinterface.h"
 
 #include <KDebug>
 
@@ -32,7 +33,7 @@
 
 
 Nepomuk::StrigiService::StrigiService( QObject* parent, const QList<QVariant>& )
-    : Service( parent, false )
+    : Service( parent, true )
 {
     // lower process priority - we do not want to spoil KDE usage
     // ==============================================================
@@ -43,27 +44,38 @@ Nepomuk::StrigiService::StrigiService( QObject* parent, const QList<QVariant>& )
     if ( !lowerIOPriority() )
         kDebug() << "Failed to lower io priority.";
 
-
-    // setup the actual index scheduler including strigi stuff
+    // Using Strigi with the redland backend is torture.
+    // Thus we simply fail initialization if it is used
     // ==============================================================
-    if ( ( m_indexManager = Strigi::IndexPluginLoader::createIndexManager( "sopranobackend", 0 ) ) ) {
-        m_indexScheduler = new IndexScheduler( m_indexManager, this );
+    if ( org::kde::nepomuk::Storage( "org.kde.NepomukStorage",
+                                     "/nepomukstorage",
+                                     QDBusConnection::sessionBus() )
+         .usedSopranoBackend().value() != QString::fromLatin1( "redland" ) ) {
+        // setup the actual index scheduler including strigi stuff
+        // ==============================================================
+        if ( ( m_indexManager = Strigi::IndexPluginLoader::createIndexManager( "sopranobackend", 0 ) ) ) {
+            m_indexScheduler = new IndexScheduler( m_indexManager, this );
 
-        ( void )new EventMonitor( m_indexScheduler, this );
-        ( void )new StrigiServiceAdaptor( m_indexScheduler, this );
-        StatusWidget* sw = new StatusWidget( mainModel(), m_indexScheduler );
-        ( new SystemTray( m_indexScheduler, sw ) )->show();
+            ( void )new EventMonitor( m_indexScheduler, this );
+            ( void )new StrigiServiceAdaptor( m_indexScheduler, this );
+            StatusWidget* sw = new StatusWidget( mainModel(), m_indexScheduler );
+            ( new SystemTray( m_indexScheduler, sw ) )->show();
 
-        m_indexScheduler->start();
+            m_indexScheduler->start();
+        }
+        else {
+            kDebug() << "Failed to load sopranobackend Strigi index manager.";
+        }
+
+
+        // service initialization done if creating a strigi index manager was successful
+        // ==============================================================
+        setServiceInitialized( m_indexManager != 0 );
     }
     else {
-        kDebug() << "Failed to load sopranobackend Strigi index manager.";
+        kDebug() << "Will not start when using redland Soprano backend due to horrible performance.";
+        setServiceInitialized( false );
     }
-
-
-    // service initialization done if creating a strigi index manager was successful
-    // ==============================================================
-    setServiceInitialized( m_indexManager != 0 );
 }
 
 

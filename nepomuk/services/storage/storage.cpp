@@ -81,6 +81,8 @@ void Nepomuk::Storage::optimize( const QString& repo )
 
 QString Nepomuk::Storage::usedSopranoBackend() const
 {
+    // FIXME: this is only partly true. It is perfectly possible to change the backend only
+    //        for the main repo in the config file
     return Repository::activeSopranoBackend()->pluginName();
 }
 

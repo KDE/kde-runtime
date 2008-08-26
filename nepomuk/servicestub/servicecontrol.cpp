@@ -17,12 +17,18 @@
 */
 
 #include "servicecontrol.h"
+#include "servicecontroladaptor.h"
 
 #include <QtCore/QCoreApplication>
+#include <QtCore/QTextStream>
+
+#include <Nepomuk/Service>
 
 
-Nepomuk::ServiceControl::ServiceControl( QObject* parent )
+Nepomuk::ServiceControl::ServiceControl( const QString& serviceName, const KService::Ptr& service, QObject* parent )
     : QObject( parent ),
+      m_serviceName( serviceName ),
+      m_service( service ),
       m_initialized( false )
 {
 }
@@ -35,7 +41,7 @@ Nepomuk::ServiceControl::~ServiceControl()
 
 void Nepomuk::ServiceControl::setServiceInitialized( bool success )
 {
-    m_initialized = true;
+    m_initialized = success;
     emit serviceInitialized( success );
 }
 
@@ -46,9 +52,56 @@ bool Nepomuk::ServiceControl::isInitialized() const
 }
 
 
+void Nepomuk::ServiceControl::start()
+{
+    QTextStream s( stderr );
+
+    // register the service interface
+    // We need to do this before creating the module to ensure that
+    // the server can catch the serviceInitialized signal
+    // ====================================
+    (void)new ServiceControlAdaptor( this );
+    if( !QDBusConnection::sessionBus().registerObject( "/servicecontrol", this ) ) {
+        s << "Failed to register dbus service " << dbusServiceName( m_serviceName ) << "." << endl;
+        qApp->exit( ErrorFailedToStart );
+        return;
+    }
+
+    if( !QDBusConnection::sessionBus().registerService( dbusServiceName( m_serviceName ) ) ) {
+        s << "Failed to register dbus service " << dbusServiceName( m_serviceName ) << "." << endl;
+        qApp->exit( ErrorFailedToStart );
+        return;
+    }
+
+
+    // start the service
+    // ====================================
+    Nepomuk::Service* module = m_service->createInstance<Nepomuk::Service>( this );
+    if( !module ) {
+        s << "Failed to start service " << m_serviceName << "." << endl;
+        qApp->exit( ErrorFailedToStart );
+        return;
+    }
+
+    // register the service
+    // ====================================
+    QDBusConnection::sessionBus().registerObject( '/' + m_serviceName,
+                                                  module,
+                                                  QDBusConnection::ExportScriptableSlots |
+                                                  QDBusConnection::ExportScriptableProperties |
+                                                  QDBusConnection::ExportAdaptors);
+}
+
+
 void Nepomuk::ServiceControl::shutdown()
 {
     QCoreApplication::quit();
+}
+
+
+QString Nepomuk::ServiceControl::dbusServiceName( const QString& serviceName )
+{
+    return QString("org.kde.nepomuk.services.%1").arg(serviceName);
 }
 
 #include "servicecontrol.moc"

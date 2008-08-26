@@ -42,8 +42,9 @@ public:
     Private()
         : processControl( 0 ),
           serviceControlInterface( 0 ),
-          attached(false),
-          initialized( false ) {
+          attached( false ),
+          initialized( false ),
+          failedToInitialize( false ) {
     }
 
     KService::Ptr service;
@@ -59,6 +60,7 @@ public:
     bool attached;
 
     bool initialized;
+    bool failedToInitialize;
 
     // list of loops waiting for the service to become initialized
     QList<QEventLoop*> loops;
@@ -154,6 +156,7 @@ bool Nepomuk::ServiceController::start()
     }
 
     d->initialized = false;
+    d->failedToInitialize = false;
 
     // check if the service is already running, ie. has been started by someone else or by a crashed instance of the server
     // we cannot rely on the auto-restart feature of ProcessControl here. So we handle that completely in slotServiceOwnerChanged
@@ -195,7 +198,9 @@ void Nepomuk::ServiceController::stop()
             d->processControl->setCrashPolicy( ProcessControl::StopOnCrash );
         }
 
-        if ( waitForInitialized( 2000 ) ) {
+        if ( d->serviceControlInterface ||
+             ( !QCoreApplication::closingDown() &&
+               waitForInitialized( 2000 ) ) ) {
             d->serviceControlInterface->shutdown();
         }
 
@@ -230,7 +235,7 @@ bool Nepomuk::ServiceController::waitForInitialized( int timeout )
         return false;
     }
 
-    if( !d->initialized ) {
+    if( !d->initialized && !d->failedToInitialize ) {
         QEventLoop loop;
         d->loops.append( &loop );
         if ( timeout > 0 ) {
@@ -300,14 +305,21 @@ void Nepomuk::ServiceController::createServiceControlInterface()
 void Nepomuk::ServiceController::slotServiceInitialized( bool success )
 {
     if ( !d->initialized ) {
-        kDebug() << "Service" << name() << "initialized:" << success;
-        d->initialized = true;
-        emit serviceInitialized( this );
+        if ( success ) {
+            kDebug() << "Service" << name() << "initialized";
+            d->initialized = true;
+            emit serviceInitialized( this );
 
-        if ( runOnce() ) {
-            // we have been run once. Do not autostart next time
-            KConfigGroup cg( Server::self()->config(), QString("Service-%1").arg(name()) );
-            cg.writeEntry( "autostart", false );
+            if ( runOnce() ) {
+                // we have been run once. Do not autostart next time
+                KConfigGroup cg( Server::self()->config(), QString("Service-%1").arg(name()) );
+                cg.writeEntry( "autostart", false );
+            }
+        }
+        else {
+            d->failedToInitialize = true;
+            kDebug() << "Failed to initialize service" << name();
+            stop();
         }
     }
 

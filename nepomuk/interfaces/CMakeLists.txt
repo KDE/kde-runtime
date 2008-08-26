@@ -4,5 +4,6 @@ install(FILES
   org.kde.nepomuk.ServiceManager.xml
   org.kde.nepomuk.Strigi.xml
   org.kde.nepomuk.OntologyManager.xml
+  org.kde.nepomuk.Storage.xml
   DESTINATION ${DBUS_INTERFACES_INSTALL_DIR}
   )

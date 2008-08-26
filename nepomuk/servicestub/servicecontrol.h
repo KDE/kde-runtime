@@ -21,6 +21,7 @@
 
 #include <QtCore/QObject>
 
+#include <KService>
 
 namespace Nepomuk {
     class ServiceControl : public QObject
@@ -28,18 +29,30 @@ namespace Nepomuk {
         Q_OBJECT
 
     public:
-        ServiceControl( QObject* parent = 0 );
+        ServiceControl( const QString& serviceName, const KService::Ptr& service, QObject* parent = 0 );
         ~ServiceControl();
 
+        static QString dbusServiceName( const QString& serviceName );
+
+        enum Errors {
+            ErrorUnknownServiceName = -9,
+            ErrorServiceAlreadyRunning = -10,
+            ErrorFailedToStart = -11,
+            ErrorMissingDependency = -12
+        };
+
     Q_SIGNALS:
-        void serviceInitialized( bool );
+        void serviceInitialized( bool success );
 
     public Q_SLOTS:
-        void setServiceInitialized( bool );
+        void start();
+        void setServiceInitialized( bool success );
         bool isInitialized() const;
         void shutdown();
 
     private:
+        QString m_serviceName;
+        KService::Ptr m_service;
         bool m_initialized;
     };
 }

@@ -23,9 +23,9 @@
 #include <KService>
 #include <KServiceTypeTrader>
 #include <KDebug>
-#include <Nepomuk/Service>
 
 #include <QtCore/QTextStream>
+#include <QtCore/QTimer>
 #include <QtGui/QApplication>
 #include <QtDBus/QDBusConnection>
 #include <QtDBus/QDBusConnectionInterface>
@@ -34,20 +34,8 @@
 #include <stdio.h>
 
 #include "servicecontrol.h"
-#include "servicecontroladaptor.h"
 
 namespace {
-    QString dbusServiceName( const QString& serviceName ) {
-        return QString("org.kde.nepomuk.services.%1").arg(serviceName);
-    }
-
-    enum Errors {
-        ErrorUnknownServiceName = -9,
-        ErrorServiceAlreadyRunning = -10,
-        ErrorFailedToStart = -11,
-        ErrorMissingDependency = -12
-    };
-
 #ifndef Q_OS_WIN
     void signalHandler( int signal )
     {
@@ -125,16 +113,16 @@ int main( int argc, char** argv )
     KService::List services = KServiceTypeTrader::self()->query( "NepomukService", "DesktopEntryName == '" + serviceName + "'" );
     if( services.isEmpty() ) {
         s << i18n( "Unknown service name:") << " " <<  serviceName << endl;
-        return ErrorUnknownServiceName;
+        return Nepomuk::ServiceControl::ErrorUnknownServiceName;
     }
     KService::Ptr service = services.first();
 
 
     // Check if this service is already running
     // ====================================
-    if( QDBusConnection::sessionBus().interface()->isServiceRegistered( dbusServiceName( serviceName ) ) ) {
+    if( QDBusConnection::sessionBus().interface()->isServiceRegistered( Nepomuk::ServiceControl::dbusServiceName( serviceName ) ) ) {
         s << "Service " << serviceName << " already running." << endl;
-        return ErrorServiceAlreadyRunning;
+        return Nepomuk::ServiceControl::ErrorServiceAlreadyRunning;
     }
 
 
@@ -142,42 +130,21 @@ int main( int argc, char** argv )
     // ====================================
     QStringList dependencies = service->property( "X-KDE-Nepomuk-dependencies", QVariant::StringList ).toStringList();
     foreach( const QString &dep, dependencies ) {
-        if( !QDBusConnection::sessionBus().interface()->isServiceRegistered( dbusServiceName( dep ) ) ) {
+        if( !QDBusConnection::sessionBus().interface()->isServiceRegistered( Nepomuk::ServiceControl::dbusServiceName( dep ) ) ) {
             s << "Missing dependency " << dep << endl;
-            return ErrorMissingDependency;
+            return Nepomuk::ServiceControl::ErrorMissingDependency;
         }
     }
 
 
     // register the service control
     // ====================================
-    Nepomuk::ServiceControl* control = new Nepomuk::ServiceControl( &app );
-    (void)new ServiceControlAdaptor( control );
-    if( !QDBusConnection::sessionBus().registerObject( "/servicecontrol", control ) ) {
-        s << "Failed to register dbus service " << dbusServiceName( serviceName ) << "." << endl;
-        return ErrorFailedToStart;
-    }
+    Nepomuk::ServiceControl* control = new Nepomuk::ServiceControl( serviceName, service, &app );
 
-    // start the service
+
+    // start the service (queued since we need an event loop)
     // ====================================
-    Nepomuk::Service* module = service->createInstance<Nepomuk::Service>( control );
-    if( !module ) {
-        s << "Failed to start service " << serviceName << "." << endl;
-        return ErrorFailedToStart;
-    }
-
-    // register the service interface
-    // ====================================
-    if( !QDBusConnection::sessionBus().registerService( dbusServiceName( serviceName ) ) ) {
-        s << "Failed to register dbus service " << dbusServiceName( serviceName ) << "." << endl;
-        return ErrorFailedToStart;
-    }
-
-    QDBusConnection::sessionBus().registerObject( '/' + serviceName,
-                                                  module,
-                                                  QDBusConnection::ExportScriptableSlots |
-                                                  QDBusConnection::ExportScriptableProperties |
-                                                  QDBusConnection::ExportAdaptors);
+    QTimer::singleShot( 0, control, SLOT( start() ) );
 
     return app.exec();
 }
