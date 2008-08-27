@@ -62,12 +62,12 @@ void OxygenHelper::reloadConfig()
         invalidateCaches(); // contrast changed, invalidate our caches
 }
 
-void OxygenHelper::renderWindowBackground(QPainter *p, const QRect &clipRect, const QWidget *widget, const QPalette & pal)
+void OxygenHelper::renderWindowBackground(QPainter *p, const QRect &clipRect, const QWidget *widget, const QPalette & pal, int y_shift)
 {
     const QWidget* window = widget->window();
     // get coordinates relative to the client area
     const QWidget* w = widget;
-    int x = 0, y = 0;
+    int x = 0, y = -y_shift;
     while (!w->isWindow()) {
         x += w->geometry().x();
         y += w->geometry().y();
@@ -86,17 +86,17 @@ void OxygenHelper::renderWindowBackground(QPainter *p, const QRect &clipRect, co
     QPixmap tile = verticalGradient(color, splitY);
     p->drawTiledPixmap(upperRect, tile);
 
-    QRect lowerRect = QRect(-x, splitY-y, r.width(), r.height() - splitY);
+    QRect lowerRect = QRect(-x, splitY-y, r.width(), r.height() - splitY-y_shift);
     p->fillRect(lowerRect, backgroundBottomColor(color));
 
     int radialW = qMin(600, r.width());
-    int frameH = 32; // on first paint the frame may not have been done yet, so just fixate it
+    int frameH = 10; // on first paint the frame may not have been done yet, so just fixate it
     QRect radialRect = QRect((r.width() - radialW) / 2-x, -y, radialW, 64-frameH);
     if (clipRect.intersects(radialRect))
     {
         tile = radialGradient(color, radialW);
-        p->drawPixmap(radialRect, tile, QRect(0, frameH, radialW, 64-frameH));
-    }
+        p->drawPixmap(radialRect, tile);
+     }
 
     if (clipRect.isValid())
         p->restore();
@@ -295,43 +295,38 @@ QPixmap OxygenHelper::windecoButton(const QColor &color, bool pressed, int size)
         QPainter p(pixmap);
         p.setRenderHints(QPainter::Antialiasing);
         p.setPen(Qt::NoPen);
-        p.setWindow(0,0,21,21);
 
-        QColor light = alphaColor(calcLightColor(color), 0.2);
-        QColor dark = alphaColor(calcShadowColor(color), 0.2);
+        double u = size/21.0;
 
-        // penWidth should always be 1px;
-        int penWidth = 1 / (size / 21.0);
+        QColor light = calcLightColor(color);
+        QColor dark = alphaColor(calcShadowColor(color), 0.6);
 
-        // inside
-        QLinearGradient innerGradient(0, 0, 0, 21);
-        if (!pressed) {
-            innerGradient.setColorAt(0.0, Qt::transparent);
-            innerGradient.setColorAt(1.0, alphaColor(color, 0.1));
-        } else {
-            innerGradient.setColorAt(0.0, alphaColor(color, 0.1));
-            innerGradient.setColorAt(1.0, Qt::transparent);
-        }
-        p.setBrush(innerGradient);
-        p.drawEllipse(QRectF(3.0,3.0,15.0,15.0));
+        QRectF rect(0.0, 0.0, size, size);
+        QRectF buttonRect = rect.adjusted(3*u,3*u,-3*u,-3*u);
 
-        // grove
-        QLinearGradient darklg(QPoint(0,0), QPoint(21,0));
-        darklg.setColorAt(0.0, Qt::transparent);
-        darklg.setColorAt(0.5, dark);
-        darklg.setColorAt(1.0, Qt::transparent);
+        p.setBrush(color);
+        p.drawEllipse(buttonRect);
+        p.setBrush(Qt::NoBrush);
 
-        QLinearGradient lightlg(QPoint(0,0), QPoint(21,0));
-        lightlg.setColorAt(0.0, Qt::transparent);
-        lightlg.setColorAt(0.5, light);
-        lightlg.setColorAt(1.0, Qt::transparent);
+        QLinearGradient darkgr(QPointF(1.0*u, 0.0),
+                QPointF(20.0*u, 0.0));
+        darkgr.setColorAt(0.0, Qt::transparent);
+        darkgr.setColorAt(0.5, dark);
+        darkgr.setColorAt(1.0, Qt::transparent);
 
-        p.setPen(QPen(darklg, 1.5*penWidth));
-        for(int i = 0; i < 2; ++i)
-            p.drawEllipse(QRectF(3.0,2.7,15.0,15.0));
-        p.setPen(QPen(lightlg, 1.0*penWidth));
-        for(int i = 0; i < 8; ++i)
-            p.drawEllipse(QRectF(3.0,4.0,15.0,15.0));
+        QLinearGradient lightgr(QPointF(1.0*u, 0.0),
+                QPointF(20.0*u, 0.0));
+        lightgr.setColorAt(0.0, Qt::transparent);
+        lightgr.setColorAt(0.5, light);
+        lightgr.setColorAt(1.0, Qt::transparent);
+
+        p.setPen(QPen(darkgr, 1.5));
+        p.drawEllipse(buttonRect);
+        p.setPen(QPen(lightgr, 1.5));
+        if (!pressed)
+            p.drawEllipse(buttonRect.adjusted(0.0, 1.0, 0.0, 1.0));
+        else
+            p.drawEllipse(buttonRect.adjusted(1.0, 1.5, -1.0, 1.0));
 
         m_windecoButtonCache.insert(key, pixmap);
     }
@@ -435,3 +430,58 @@ void OxygenHelper::drawFloatFrame(QPainter *p, const QRect r, const QColor &colo
 
     return;
 }
+
+void OxygenHelper::drawSeparator(QPainter *p, const QRect &rect, const QColor &color, Qt::Orientation orientation) const
+{
+    QColor light = calcLightColor(color);
+    QColor dark = calcDarkColor(color);
+
+    bool antialias = p->testRenderHint(QPainter::Antialiasing);
+    p->setRenderHint(QPainter::Antialiasing,false);
+
+    QPoint start,end,offset;
+
+    if (orientation == Qt::Horizontal) {
+        start = QPoint(rect.x(),rect.y()+rect.height()/2-1);
+        end = QPoint(rect.right(),rect.y()+rect.height()/2-1);
+        offset = QPoint(0,1);
+    } else {
+        start = QPoint(rect.x()+rect.width()/2-1,rect.y());
+        end = QPoint(rect.x()+rect.width()/2-1,rect.bottom());
+        offset = QPoint(1,0);
+        light.setAlpha(150);
+    }
+
+    QLinearGradient lg(start,end);
+    lg.setColorAt(0.3, dark);
+    lg.setColorAt(0.7, dark);
+    dark.setAlpha(0);
+    lg.setColorAt(0.0, dark);
+    lg.setColorAt(1.0, dark);
+    p->setPen(QPen(lg,1));
+
+    if (orientation == Qt::Horizontal)
+        p->drawLine(start,end);
+    else
+        p->drawLine(start+offset,end+offset);
+
+    lg = QLinearGradient(start,end);
+    lg.setColorAt(0.3, light);
+    lg.setColorAt(0.7, light);
+    light.setAlpha(0);
+    lg.setColorAt(0.0, light);
+    lg.setColorAt(1.0, light);
+    p->setPen(QPen(lg,1));
+
+
+    if (orientation == Qt::Horizontal)
+        p->drawLine(start+offset,end+offset);
+    else
+    {
+        p->drawLine(start,end);
+        p->drawLine(start+offset*2,end+offset*2);
+    }
+
+    p->setRenderHint(QPainter::Antialiasing, antialias);
+}
+
