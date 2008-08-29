@@ -15,4 +15,4 @@ Name[te]=ఒపెన్ బాక్స్
 Name[x-test]=xxOpenboxxx
 Exec=openbox
 TryExec=openbox
-
+X-KDE-WindowManagerRestartArgument=--replace

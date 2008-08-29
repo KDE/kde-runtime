@@ -16,12 +16,21 @@
 #include "componentchooserwm.h"
 #include "componentchooserwm.moc"
 
+#include <kdebug.h>
 #include <kdesktopfile.h>
 #include <kmessagebox.h>
 #include <kprocess.h>
+#include <kshell.h>
 #include <kstandarddirs.h>
+#include <ktimerdialog.h>
+#include <qdbusinterface.h>
+#include <qdbusconnectioninterface.h>
 
-CfgWm::CfgWm(QWidget *parent):WmConfig_UI(parent),CfgPlugin()
+CfgWm::CfgWm(QWidget *parent)
+: WmConfig_UI(parent)
+, CfgPlugin()
+, wmLaunchingState( WmNone )
+, wmProcess( NULL )
 {
     connect(wmCombo,SIGNAL(activated(int)), this, SLOT(configChanged()));
     connect(kwinRB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
@@ -63,22 +72,141 @@ void CfgWm::save(KConfig *)
     c.writeEntry("windowManager", currentWm());
     emit changed(false);
     if( oldwm != currentWm())
-    { // TODO switch it already in the session instead and tell ksmserver
-        KMessageBox::information( this,
-            i18n( "The new window manager will be used when KDE is started the next time." ),
-            i18n( "Window manager change" ), "windowmanagerchange" );
+    {
+        QString restartArgument = currentWmData().restartArgument;
+        if( restartArgument.isEmpty())
+        {
+            KMessageBox::information( this,
+                i18n( "The new window manager will be used when KDE is started the next time." ),
+                i18n( "Window manager change" ), "windowmanagerchange" );
+            oldwm = currentWm();
+        }
+        else
+        {
+            if( tryWmLaunch())
+            {
+                oldwm = currentWm();
+                cfg.sync();
+                QDBusInterface ksmserver("org.kde.ksmserver", "/KSMServer" );
+                ksmserver.call( QDBus::NoBlock, "wmChanged" );
+                KMessageBox::information( window(),
+                    i18n( "A new window manager is running.\n"
+                        "It is still recommended to restart this KDE session to make sure "
+                        "all running applications adjust for this change." ),
+                        i18n( "Window Manager Replaced" ), "restartafterwmchange" );
+            }
+            else
+            { // revert config
+                emit changed(true);
+                c.writeEntry("windowManager", oldwm);
+                if( oldwm == "kwin" )
+                {
+                    kwinRB->setChecked( true );
+                    wmCombo->setEnabled( false );
+                }
+                else
+                {
+                    differentRB->setChecked( true );
+                    wmCombo->setEnabled( true );
+                    for( QHash< QString, WmData >::ConstIterator it = wms.begin();
+                         it != wms.end();
+                         ++it )
+                    {
+                        if( (*it).internalName == oldwm ) // make it selected
+                            wmCombo->setCurrentIndex( wmCombo->findText( it.key()));
+                    }
+                }
+            }
+        }
     }
+}
+
+bool CfgWm::tryWmLaunch()
+{
+    if( currentWm() == "kwin" && QDBusConnection::sessionBus().interface()->isServiceRegistered( "org.kde.kwin" ))
+        return true; // it is already running, don't necessarily restart e.g. after a failure with other WM
+    wmLaunchingState = WmLaunching;
+    wmProcess = new KProcess;
+    *wmProcess << KShell::splitArgs( currentWmData().exec ) << currentWmData().restartArgument;
+    connect( wmProcess, SIGNAL( error( QProcess::ProcessError )), this, SLOT( wmLaunchError()));
+    connect( wmProcess, SIGNAL( finished( int, QProcess::ExitStatus )),
+        this, SLOT( wmLaunchFinished( int, QProcess::ExitStatus )));
+    wmProcess->start();
+    wmDialog = new KTimerDialog( 20000, KTimerDialog::CountDown, window(), i18n( "Config Window Manager Change" ),
+        KTimerDialog::Ok | KTimerDialog::Cancel, KTimerDialog::Cancel );
+    wmDialog->setButtonGuiItem( KDialog::Ok, KGuiItem( i18n( "&Accept Change" ), "dialog-ok" ));
+    wmDialog->setButtonGuiItem( KDialog::Cancel, KGuiItem( i18n( "&Revert to Previous" ), "dialog-cancel" ));
+    QLabel *label = new QLabel(
+        i18n( "The newly configured window manager has been launched.\n"
+            "Please check it has started properly and confirm the change.\n"
+            "The launch will be automatically reverted in 20 seconds." ), wmDialog );
+    label->setWordWrap( true );
+    wmDialog->setMainWidget( label );
+    if( wmDialog->exec() == QDialog::Accepted ) // the user confirmed
+        wmLaunchingState = WmOk;
+    else // cancelled for some reason
+        {
+        if( wmLaunchingState == WmLaunching )
+            { // time out
+            wmLaunchingState = WmFailed;
+            KProcess::startDetached( "kwin", QStringList() << "--replace" );
+            // Let's hope KWin never fails.
+            KMessageBox::sorry( window(),
+                i18n( "The running window manager has been reverted to the default KDE window manager KWin." ));
+            }
+        else if( wmLaunchingState == WmFailed )
+            {
+            KProcess::startDetached( "kwin", QStringList() << "--replace" );
+            // Let's hope KWin never fails.
+            KMessageBox::sorry( window(),
+                i18n( "The new window manager has failed to start.\n"
+                    "The running window manager has been reverted to the default KDE window manager KWin." ));
+            }
+        }
+    bool ret = ( wmLaunchingState == WmOk );
+    wmLaunchingState = WmNone;
+    delete wmDialog;
+    wmDialog = NULL;
+    // delete wmProcess; - it is intentionally leaked, since there is no KProcess:detach()
+    wmProcess = NULL;
+    return ret;
+}
+
+void CfgWm::wmLaunchError()
+{
+    if( wmLaunchingState != WmLaunching || sender() != wmProcess )
+        return;
+    wmLaunchingState = WmFailed;
+    wmDialog->reject();
+}
+
+
+void CfgWm::wmLaunchFinished( int exitcode, QProcess::ExitStatus exitstatus )
+{
+    if( wmLaunchingState != WmLaunching || sender() != wmProcess )
+        return;
+    if( exitstatus == QProcess::NormalExit && exitcode == 0 )
+        { // assume it's forked into background
+        wmLaunchingState = WmOk;
+        return;
+        }
+    // otherwise it's a failure
+    wmLaunchingState = WmFailed;
+    wmDialog->reject();
 }
 
 void CfgWm::loadWMs( const QString& current )
 {
     WmData kwin;
     kwin.internalName = "kwin";
-    kwin.configureCommand = ""; // shouldn't be used anyway
+    kwin.exec = "kwin";
+    kwin.configureCommand = "";
+    kwin.restartArgument = "--replace";
     wms[ "KWin" ] = kwin;
     oldwm = "kwin";
     kwinRB->setChecked( true );
     wmCombo->setEnabled( false );
+    
     QStringList list = KGlobal::dirs()->findAllResources( "windowmanagers", QString(), KStandardDirs::NoDuplicates );
     QRegExp reg( ".*/([^/\\.]*)\\.[^/\\.]*" );
     foreach( const QString& wmfile, list )
@@ -106,7 +234,11 @@ void CfgWm::loadWMs( const QString& current )
             continue;
         WmData data;
         data.internalName = wm;
+        data.exec = file.desktopGroup().readEntry( "Exec" );
+        if( data.exec.isEmpty())
+            continue;
         data.configureCommand = file.desktopGroup().readEntry( "X-KDE-WindowManagerConfigure" );
+        data.restartArgument = file.desktopGroup().readEntry( "X-KDE-WindowManagerRestartArgument" );
         wms[ name ] = data;
         wmCombo->addItem( name );
         if( wms[ name ].internalName == current ) // make it selected
@@ -115,25 +247,28 @@ void CfgWm::loadWMs( const QString& current )
             oldwm = wm;
             differentRB->setChecked( true );
             wmCombo->setEnabled( true );
-            checkConfigureWm();
         }
     }
+    checkConfigureWm();
+}
+
+CfgWm::WmData CfgWm::currentWmData() const
+{
+    return kwinRB->isChecked() ? wms[ "KWin" ] : wms[ wmCombo->currentText() ];
 }
 
 QString CfgWm::currentWm() const
 {
-    return kwinRB->isChecked() ? "kwin" : wms[ wmCombo->currentText() ].internalName;
+    return currentWmData().internalName;
 }
 
 void CfgWm::checkConfigureWm()
 {
-    configureButton->setEnabled( differentRB->isChecked()
-        && !wms[ wmCombo->currentText() ].configureCommand.isEmpty());
+    configureButton->setEnabled( !currentWmData().configureCommand.isEmpty());
 }
 
 void CfgWm::configureWm()
 {
-    if( !KProcess::startDetached( wms[ wmCombo->currentText() ].configureCommand ))
+    if( !KProcess::startDetached( currentWmData().configureCommand ))
         KMessageBox::sorry( window(), i18n( "Running the configuration tool failed" ));
 }
-

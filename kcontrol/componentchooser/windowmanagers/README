@@ -21,3 +21,8 @@ X-KDE-WindowManagerId - optional, the name under which the window manager
 
 X-KDE-WindowManagerConfigure - optional, the command to run to configure
     the window manager
+
+X-KDE-WindowManagerRestartArgument - optional, the argument to pass
+    to the window manager to restart it directly in the running KDE
+    session; if not present, KDE restart is required (which is generally
+    a good idea anyway, but this can be useful for e.g. checking)

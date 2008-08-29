@@ -10,7 +10,7 @@ set(kcm_componentchooser_PART_SRCS componentchooser.cpp kcm_componentchooser.cpp
 
 if(NOT WIN32)
   set(kcm_componentchooser_PART_SRCS ${kcm_componentchooser_PART_SRCS}
-    componentchooserterminal.cpp componentchooserwm.cpp)
+    componentchooserterminal.cpp componentchooserwm.cpp ktimerdialog.cpp)
 endif(NOT WIN32)
 
 

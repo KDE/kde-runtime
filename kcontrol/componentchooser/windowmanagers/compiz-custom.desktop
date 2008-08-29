@@ -39,3 +39,4 @@ Name[zh_TW]=Compiz 自訂（建立外包文稿 compiz-kde-launcher 來啟動）
 Exec=compiz-kde-launcher
 TryExec=compiz
 X-KDE-WindowManagerId=compiz
+X-KDE-WindowManagerRestartArgument=--replace

@@ -18,7 +18,11 @@
 
 #include "ui_wmconfig_ui.h"
 #include "componentchooser.h"
+
+#include <kprocess.h>
+
 class KConfig;
+class KTimerDialog;
 class CfgPlugin;
 
 class WmConfig_UI : public QWidget, public Ui::WmConfig_UI
@@ -43,19 +47,35 @@ protected Q_SLOTS:
     void configChanged();
     void configureWm();
     void checkConfigureWm();
+    void wmLaunchError();
+    void wmLaunchFinished( int exitcode, QProcess::ExitStatus exitstatus );
 
 Q_SIGNALS:
     void changed(bool);
 private:
+    bool tryWmLaunch();
     void loadWMs( const QString& current );
     QString currentWm() const;
     struct WmData
         {
         QString internalName;
+        QString exec;
         QString configureCommand;
+        QString restartArgument;
         };
+    WmData currentWmData() const;
     QHash< QString, WmData > wms; // i18n text -> data
     QString oldwm; // the original value
+    enum Launch
+    {
+        WmNone, // not trying to launch any WM at the moment
+        WmLaunching, // launching
+        WmOk, // was successful
+        WmFailed // it failed
+    };
+    Launch wmLaunchingState;
+    KTimerDialog* wmDialog;
+    KProcess* wmProcess;
 };
 
 #endif
