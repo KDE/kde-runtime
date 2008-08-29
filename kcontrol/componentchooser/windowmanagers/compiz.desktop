@@ -9,3 +9,4 @@ Name[sr]=Компиз
 Name[x-test]=xxCompizxx
 Exec=compiz ccp
 TryExec=compiz
+X-KDE-WindowManagerConfigure=simple-ccsm

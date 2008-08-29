@@ -26,6 +26,9 @@ CfgWm::CfgWm(QWidget *parent):WmConfig_UI(parent),CfgPlugin()
     connect(wmCombo,SIGNAL(activated(int)), this, SLOT(configChanged()));
     connect(kwinRB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
     connect(differentRB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
+    connect(differentRB,SIGNAL(toggled(bool)),this,SLOT(checkConfigureWm()));
+    connect(wmCombo,SIGNAL(activated(int)),this,SLOT(checkConfigureWm()));
+    connect(configureButton,SIGNAL(clicked()),this,SLOT(configureWm()));
 
     KGlobal::dirs()->addResourceType( "windowmanagers", "data", "ksmserver/windowmanagers" );
 }
@@ -57,9 +60,9 @@ void CfgWm::save(KConfig *)
 {
     KConfig cfg("ksmserverrc", KConfig::NoGlobals);
     KConfigGroup c( &cfg, "General");
-    c.writeEntry("windowManager", currentWM());
+    c.writeEntry("windowManager", currentWm());
     emit changed(false);
-    if( oldwm != currentWM())
+    if( oldwm != currentWm())
     { // TODO switch it already in the session instead and tell ksmserver
         KMessageBox::information( this,
             i18n( "The new window manager will be used when KDE is started the next time." ),
@@ -69,7 +72,10 @@ void CfgWm::save(KConfig *)
 
 void CfgWm::loadWMs( const QString& current )
 {
-    wms[ "KWin" ] = "kwin";
+    WmData kwin;
+    kwin.internalName = "kwin";
+    kwin.configureCommand = ""; // shouldn't be used anyway
+    wms[ "KWin" ] = kwin;
     oldwm = "kwin";
     kwinRB->setChecked( true );
     wmCombo->setEnabled( false );
@@ -96,21 +102,38 @@ void CfgWm::loadWMs( const QString& current )
         if( !reg.exactMatch( wmfile ))
             continue;
         QString wm = reg.cap( 1 );
-        if( wms.values().contains( wm ))
+        if( wms.contains( name ))
             continue;
-        wms[ name ] = wm;
+        WmData data;
+        data.internalName = wm;
+        data.configureCommand = file.desktopGroup().readEntry( "X-KDE-WindowManagerConfigure" );
+        wms[ name ] = data;
         wmCombo->addItem( name );
-        if( wms[ name ] == current ) // make it selected
+        if( wms[ name ].internalName == current ) // make it selected
         {
             wmCombo->setCurrentIndex( wmCombo->count() - 1 );
             oldwm = wm;
             differentRB->setChecked( true );
             wmCombo->setEnabled( true );
+            checkConfigureWm();
         }
     }
 }
 
-QString CfgWm::currentWM() const
+QString CfgWm::currentWm() const
 {
-    return kwinRB->isChecked() ? "kwin" : wms[ wmCombo->currentText() ];
+    return kwinRB->isChecked() ? "kwin" : wms[ wmCombo->currentText() ].internalName;
 }
+
+void CfgWm::checkConfigureWm()
+{
+    configureButton->setEnabled( differentRB->isChecked()
+        && !wms[ wmCombo->currentText() ].configureCommand.isEmpty());
+}
+
+void CfgWm::configureWm()
+{
+    if( !KProcess::startDetached( wms[ wmCombo->currentText() ].configureCommand ))
+        KMessageBox::sorry( window(), i18n( "Running the configuration tool failed" ));
+}
+

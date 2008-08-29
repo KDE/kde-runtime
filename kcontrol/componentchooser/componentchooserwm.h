@@ -41,13 +41,20 @@ public:
 
 protected Q_SLOTS:
     void configChanged();
+    void configureWm();
+    void checkConfigureWm();
 
 Q_SIGNALS:
     void changed(bool);
 private:
     void loadWMs( const QString& current );
-    QString currentWM() const;
-    QHash< QString, QString > wms; // i18n text -> internal name
+    QString currentWm() const;
+    struct WmData
+        {
+        QString internalName;
+        QString configureCommand;
+        };
+    QHash< QString, WmData > wms; // i18n text -> data
     QString oldwm; // the original value
 };
 
