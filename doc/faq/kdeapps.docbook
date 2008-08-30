@@ -92,8 +92,8 @@ actually defined there.</para></listitem>
 <varlistentry>
 <term>How do I page-up or page-down?</term>
 <listitem><para>Use <keycombo action="simul">
-<keycap>Shift</keycap><keycap>Page Up</keycap></keycombo>
-and <keycombo action="simul"><keycap>Shift</keycap><keycap>Pg
+&Shift;<keycap>Page Up</keycap></keycombo>
+and <keycombo action="simul">&Shift;<keycap>Pg
 Dn</keycap></keycombo>.
 </para></listitem>
 </varlistentry>

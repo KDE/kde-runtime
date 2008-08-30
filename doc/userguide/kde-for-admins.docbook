@@ -956,7 +956,7 @@ applications or services via the <varname>X-KDE-Init</varname> line:</para>
 <programlisting>
 [Desktop Entry]
 Encoding=UTF-8
-Exec=kcmshell energy
+Exec=kcmshell4 energy
 Icon=energy_star
 Type=Application
 X-KDE-Library=energy
@@ -2257,13 +2257,13 @@ as part of the <guilabel>Configure Konqueror</guilabel> dialog in
 &konqueror;</para>
 
 <para>Individual configuration modules can be started with
-<command>kcmshell</command> <replaceable>module</replaceable></para>
+<command>kcmshell4</command> <replaceable>module</replaceable></para>
 
 <para>To start the Proxy module use:</para>
 <itemizedlist>
-<listitem><para><command>kcmshell</command>
+<listitem><para><command>kcmshell4</command>
 <filename>kde-proxy.desktop</filename></para></listitem>
-<listitem><para><command>kcmshell</command> proxy</para></listitem>
+<listitem><para><command>kcmshell4</command> proxy</para></listitem>
 </itemizedlist>
 
 <para><note><para>Not all applications use configuration modules, often the
