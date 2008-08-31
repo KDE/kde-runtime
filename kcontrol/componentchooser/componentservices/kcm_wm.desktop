@@ -15,4 +15,7 @@ Name[tr]=Pencere Yöneticisi
 Name[uk]=Віконний менеджер
 Name[zh_TW]=視窗管理員
 Comment=Here you can select the window manager to be run in your KDE session.
+Comment[gl]=Aquí pode escoller a xestor de fiestrar a executar na sesión de KDE.
+Comment[sv]=Här kan du välja fönsterhanterare som ska köras i KDE-sessionen.
+Comment[uk]=Тут ви можете обрати засіб керування вікнами, який буде запущено у вашому сеансі KDE.
 configurationType=internal_wm
