@@ -2128,10 +2128,6 @@ void OxygenStyle::drawKStylePrimitive(WidgetType widgetType, int primitive,
                 p->setPen(pen);
                 p->drawRect(r.adjusted(0,0,-1,-1));
             }
-            else
-            {
-                p->drawPoint(r.topLeft());
-            }
             // we don't want the stippled focus indicator in oxygen
             return;
         }
