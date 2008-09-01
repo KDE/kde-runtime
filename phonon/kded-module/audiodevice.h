@@ -44,8 +44,12 @@ struct AudioDeviceKey
     QString uniqueId;
     int cardNumber;
     int deviceNumber;
-    inline bool operator==(const AudioDeviceKey &rhs) const { return uniqueId == rhs.uniqueId &&
-        cardNumber == rhs.cardNumber && deviceNumber == rhs.deviceNumber; }
+    inline bool operator==(const AudioDeviceKey &rhs) const {
+        if (uniqueId.isNull() || rhs.uniqueId.isNull()) {
+            return cardNumber == rhs.cardNumber && deviceNumber == rhs.deviceNumber;
+        }
+        return uniqueId == rhs.uniqueId && cardNumber == rhs.cardNumber && deviceNumber == rhs.deviceNumber;
+    }
 };
 class AudioDevice
 {
@@ -92,6 +96,8 @@ class AudioDevice
         inline const QList<AudioDeviceAccess> &accessList() const { return m_accessList; }
 
         void syncWithCache(const KSharedConfigPtr &config);
+
+        inline const AudioDeviceKey &key() const { return m_key; }
 
     private:
         void applyHardwareDatabaseOverrides();
