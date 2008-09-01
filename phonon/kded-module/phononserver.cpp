@@ -288,7 +288,7 @@ static void removeOssOnlyDevices(QList<PS::AudioDevice> *list)
 class PulseDetectionUserData
 {
     public:
-        PulseDetectionUserData(PhononServer *p, pa_mainloop_api *api)
+        inline PulseDetectionUserData(PhononServer *p, pa_mainloop_api *api)
             : phononServer(p), mainloopApi(api), ready(2),
             alsaHandleMatches(QLatin1String(".*\\s(hw|front|surround\\d\\d):(\\d+)\\s.*")),
             captureNameMatches(QLatin1String(".*_sound_card_(\\d+)_.*_(?:playback|capture)_(\\d+)(\\.monitor)?")),
@@ -299,7 +299,8 @@ class PulseDetectionUserData
         QList<QPair<PS::AudioDeviceKey, PS::AudioDeviceAccess> > sinks;
         QList<QPair<PS::AudioDeviceKey, PS::AudioDeviceAccess> > sources;
 
-        void eol() { if (--ready == 0) { mainloopApi->quit(mainloopApi, 0); } }
+        inline void eol() { if (--ready == 0) { quit(); } }
+        inline void quit() { mainloopApi->quit(mainloopApi, 0); }
     private:
         pa_mainloop_api *const mainloopApi;
         int ready;
@@ -388,9 +389,19 @@ static void pulseSourceInfoListCallback(pa_context *, const pa_source_info *i, i
 
 static void pulseContextStateCallback(pa_context *context, void *userdata)
 {
-    if (pa_context_get_state(context) == PA_CONTEXT_READY) {
+    switch (pa_context_get_state(context)) {
+    case PA_CONTEXT_READY:
         /*pa_operation *op1 =*/ pa_context_get_sink_info_list(context, &pulseSinkInfoListCallback, userdata);
         /*pa_operation *op2 =*/ pa_context_get_source_info_list(context, &pulseSourceInfoListCallback, userdata);
+        break;
+    case PA_CONTEXT_FAILED:
+        {
+            PulseDetectionUserData *d = reinterpret_cast<PulseDetectionUserData *>(userdata);
+            d->quit();
+        }
+        break;
+    default:
+        break;
     }
 }
 #endif // HAVE_PULSEAUDIO
