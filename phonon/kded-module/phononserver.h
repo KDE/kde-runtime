@@ -53,6 +53,7 @@ class PhononServer : public KDEDModule
 
     private:
         void findDevices();
+        void findVirtualDevices();
         void updateAudioDevicesCache();
 
         KSharedConfigPtr m_config;
