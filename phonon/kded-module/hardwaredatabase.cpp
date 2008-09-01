@@ -41,7 +41,7 @@ static const char CACHE_MAGIC[] = "PHwdbC";
 static const quint32 CACHE_VERSION = 2;
 static const quint32 HEADER_LENGTH = 14;
 
-namespace Phonon
+namespace PS
 {
 namespace HardwareDatabase
 {
@@ -278,4 +278,4 @@ Entry entryFor(const QString &uniqueId)
 }
 
 } // namespace HardwareDatabase
-} // namespace Phonon
+} // namespace PS

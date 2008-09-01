@@ -18,12 +18,12 @@
 
 */
 
-#ifndef PHONON_HARDWAREDATABASE_P_H
-#define PHONON_HARDWAREDATABASE_P_H
+#ifndef PS_HARDWAREDATABASE_H
+#define PS_HARDWAREDATABASE_H
 
 #include <QtCore/QString>
 
-namespace Phonon
+namespace PS
 {
 
 namespace HardwareDatabase
@@ -51,5 +51,5 @@ namespace HardwareDatabase
     };
 } // namespace HardwareDatabase
 
-} // namespace Phonon
-#endif // PHONON_HARDWAREDATABASE_P_H
+} // namespace PS
+#endif // PS_HARDWAREDATABASE_H
