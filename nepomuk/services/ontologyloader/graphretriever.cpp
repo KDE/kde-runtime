@@ -50,7 +50,6 @@ public:
 
     QUrl url;
     QHash<int, QByteArray>     m_data;
-    QByteArray                 m_currentData;
     unsigned int               m_idleCount;
     unsigned int               m_timeoutThreshold;
 };
@@ -65,18 +64,15 @@ Nepomuk::GraphRetriever::Private::Private( Nepomuk::GraphRetriever* qq )
 
 void Nepomuk::GraphRetriever::Private::get( const QUrl& url )
 {
-    KIO::TransferJob* job = KIO::get( url, KIO::Reload, KIO::HideProgressInfo );
+    KIO::StoredTransferJob* job = KIO::storedGet( url, KIO::Reload, KIO::HideProgressInfo );
     job->addMetaData( "accept",
                         QString( "%1;q=0.2, %2" )
                         .arg( Soprano::serializationMimeType( Soprano::SerializationRdfXml ) )
                         .arg( Soprano::serializationMimeType( Soprano::SerializationTrig ) ) );
     job->addMetaData( "Charsets", "utf-8" );
 
-    connect( job, SIGNAL(data(KIO::Job*,QByteArray)),
-             q, SLOT(httpData(KIO::Job*,QByteArray)));
     connect( job, SIGNAL(result(KJob*)),
              q, SLOT(httpRequestFinished(KJob*)));
-    m_currentData.clear();
 }
 
 
@@ -146,15 +142,9 @@ Soprano::StatementIterator Nepomuk::GraphRetriever::statements() const
 }
 
 
-void Nepomuk::GraphRetriever::httpData( KIO::Job*, const QByteArray& data )
-{
-    d->m_currentData += data;
-}
-
-
 void Nepomuk::GraphRetriever::httpRequestFinished( KJob* job )
 {
-    KIO::TransferJob* tj = static_cast<KIO::TransferJob*>( job );
+    KIO::StoredTransferJob* tj = static_cast<KIO::StoredTransferJob*>( job );
 
     // reset idle counter every time a request is finished
     d->m_idleCount = 0;
@@ -166,9 +156,7 @@ void Nepomuk::GraphRetriever::httpRequestFinished( KJob* job )
         serialization = Soprano::SerializationRdfXml;
     }
     if ( serialization != Soprano::SerializationUser )
-        d->m_data[( int )serialization] = d->m_currentData;
-
-    d->m_currentData.clear();
+        d->m_data[( int )serialization] = tj->data();
 
     emitResult();
 }

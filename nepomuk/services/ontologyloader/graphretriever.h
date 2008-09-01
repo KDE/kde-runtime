@@ -98,11 +98,6 @@ namespace Nepomuk
          */
         void httpRequestFinished( KJob* );
 
-        /**
-         * @internal
-         */
-        void httpData( KIO::Job*, const QByteArray& );
-
     private:
         class Private;
         Private* const d;
