@@ -28,8 +28,6 @@
 #include <QtCore/QTextStream>
 #include <QtCore/QTimer>
 #include <QtCore/QUrl>
-#include <QtNetwork/QHttp>
-#include <QtNetwork/QHttpRequestHeader>
 
 #include <Soprano/Model>
 #include <Soprano/Global>
@@ -39,6 +37,7 @@
 
 #include <KDebug>
 #include <KLocale>
+#include <kio/job.h>
 
 
 const unsigned int Nepomuk::GraphRetriever::s_defaultTimeoutThreshold = 8;
@@ -46,21 +45,26 @@ const unsigned int Nepomuk::GraphRetriever::s_defaultTimeoutThreshold = 8;
 class Nepomuk::GraphRetriever::Private
 {
 public:
-    Private();
+    Private(Nepomuk::GraphRetriever *qq);
 
     void get( const QUrl& url );
 
+    Nepomuk::GraphRetriever*   q;
+
     QUrl url;
-    QHttp                      m_connection;
     QHash<int, QByteArray>     m_data;
+    QByteArray                 m_currentData;
+    KIO::TransferJob*          m_job;
     QTimer*                    m_timer;
     unsigned int               m_idleCount;
     unsigned int               m_timeoutThreshold;
 };
 
 
-Nepomuk::GraphRetriever::Private::Private()
-    : m_timer( 0 ),
+Nepomuk::GraphRetriever::Private::Private(Nepomuk::GraphRetriever *qq)
+    : q(qq),
+      m_job( 0 ),
+      m_timer( 0 ),
       m_idleCount( 0 ),
       m_timeoutThreshold( s_defaultTimeoutThreshold )
 {
@@ -69,32 +73,25 @@ Nepomuk::GraphRetriever::Private::Private()
 
 void Nepomuk::GraphRetriever::Private::get( const QUrl& url )
 {
-    m_connection.setHost( url.host(), url.port( 80 ) );
-    m_connection.setUser( url.userName(), url.password() );
+    m_job = KIO::get( url );
+    m_job->addMetaData( "accept",
+                        QString( "%1;q=0.2, %2" )
+                        .arg( Soprano::serializationMimeType( Soprano::SerializationRdfXml ) )
+                        .arg( Soprano::serializationMimeType( Soprano::SerializationTrig ) ) );
+    m_job->addMetaData( "Charsets", "utf-8" );
 
-    // create the header
-    QHttpRequestHeader header( "GET", url.path() );
-    header.setValue( "Host", url.host() );
-    header.setValue( "Accept",
-                     QString( "%1;q=0.2, %2" )
-                     .arg( Soprano::serializationMimeType( Soprano::SerializationRdfXml ) )
-                     .arg( Soprano::serializationMimeType( Soprano::SerializationTrig ) ) );
-    header.setValue( "Accept-Charset", "utf-8" );
-
-    // get a QHttp object for the request and queue it
-    int requestId = m_connection.request( header );
+    connect( m_job, SIGNAL(data(KIO::Job*,QByteArray)),
+             q, SLOT(httpData(KIO::Job*,QByteArray)));
+    connect( m_job, SIGNAL(finished(KJob*)),
+             q, SLOT(httpRequestFinished()));
+    m_currentData.clear();
 }
 
 
 Nepomuk::GraphRetriever::GraphRetriever( QObject* parent )
     : KJob( parent ),
-      d( new Private() )
+      d( new Private(this) )
 {
-    connect( &d->m_connection, SIGNAL( requestFinished( int, bool ) ),
-             this, SLOT( httpRequestFinished( int, bool ) ) );
-    connect( &d->m_connection, SIGNAL( done( bool ) ),
-             this, SLOT( httpDone( bool ) ) );
-
     d->m_timer = new QTimer( this );
     connect( d->m_timer, SIGNAL( timeout() ), this, SLOT( timeout() ) );
 }
@@ -158,54 +155,27 @@ Soprano::StatementIterator Nepomuk::GraphRetriever::statements() const
     }
 }
 
+void Nepomuk::GraphRetriever::httpData(KIO::Job *, const QByteArray &data)
+{
+    d->m_currentData += data;
+}
 
-void Nepomuk::GraphRetriever::httpRequestFinished( int id, bool error )
+void Nepomuk::GraphRetriever::httpRequestFinished()
 {
     // reset idle counter every time a request is finished
     d->m_idleCount = 0;
 
-    const QHttpResponseHeader response = d->m_connection.lastResponse();
-
-    switch ( response.statusCode() ) {
-    case 200: { // OK
-        kDebug() << response.contentType();
-        Soprano::RdfSerialization serialization = Soprano::mimeTypeToSerialization( response.contentType() );
-        if ( serialization == Soprano::SerializationUser &&
-             response.contentType().contains( "xml", Qt::CaseInsensitive ) ) {
-            serialization = Soprano::SerializationRdfXml;
-        }
-        if ( serialization != Soprano::SerializationUser )
-            d->m_data[( int )serialization] = d->m_connection.readAll();
-        break;
+    QString mimetype = d->m_job->mimetype();
+    Soprano::RdfSerialization serialization = Soprano::mimeTypeToSerialization( mimetype );
+    if ( serialization == Soprano::SerializationUser &&
+         mimetype.contains( "xml", Qt::CaseInsensitive ) ) {
+        serialization = Soprano::SerializationRdfXml;
     }
+    if ( serialization != Soprano::SerializationUser )
+        d->m_data[( int )serialization] = d->m_currentData;
 
-    case 301:  // Moved Permanently
-    case 302:  // Found
-    case 303:  // See Other
-    case 307:  // Temporary Redirect
-        // follow redirects
-        d->get( QUrl( response.value( "Location" ) ) );
-        break;
-
-    default:
-        // consider it an error
-        d->m_data.clear();
-    }
-}
-
-
-void Nepomuk::GraphRetriever::httpDone( bool error )
-{
-    d->m_timer->stop();
-
-    if ( hasTimedOut() ) {
-        setError( -1 );
-        setErrorText( i18n( "Timeout" ) );
-    }
-    else if ( error ) {
-        setError( ( int )d->m_connection.error() );
-        setErrorText( d->m_connection.errorString() );
-    }
+    d->m_currentData.clear();
+    d->m_job = 0;
 
     emitResult();
 }

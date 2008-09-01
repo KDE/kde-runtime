@@ -30,6 +30,9 @@ namespace Soprano {
     class Model;
     class StatementIterator;
 }
+namespace KIO {
+    class Job;
+}
 
 namespace Nepomuk
 {
@@ -108,19 +111,14 @@ namespace Nepomuk
 
     private Q_SLOTS:
         /**
-         * Slot for QHttp requestFinished signal.
-         *
-         * @param id Identifies the request that has been finished.
-         * @param error Indicates whether an error occured or not.
+         * @internal
          */
-        void httpRequestFinished( int id, bool error );
+        void httpRequestFinished();
 
         /**
-         * Slot for QHttp done signal.
-         *
-         * @param error Indicates whether an error occured or not.
+         * @internal
          */
-        void httpDone( bool error );
+        void httpData(KIO::Job*, const QByteArray &);
 
         /**
          * Slot for QTimer timeout signal.
