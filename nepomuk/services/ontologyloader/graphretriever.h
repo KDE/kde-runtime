@@ -92,42 +92,18 @@ namespace Nepomuk
 
         Soprano::StatementIterator statements() const;
 
-        /**
-         * Sets the timeout threshold. If no request finished for this amount
-         * of time after calling model() or serialization(), the action will
-         * abort with a timeout. A value of 0 will restore the default (8).
-         *
-         * @param timeoutThreshold The timeout threshold in seconds.
-         */
-        void setTimeoutThreshold( unsigned int timeoutThreshold );
-
-        /**
-         * Returns whether any requests were aborted due to timeouts.
-         *
-         * @return True if a timeout occured, false otherwise.
-         */
-        bool hasTimedOut() const;
-
-
     private Q_SLOTS:
         /**
          * @internal
          */
-        void httpRequestFinished();
+        void httpRequestFinished( KJob* );
 
         /**
          * @internal
          */
-        void httpData(KIO::Job*, const QByteArray &);
-
-        /**
-         * Slot for QTimer timeout signal.
-         */
-        void timeout();
+        void httpData( KIO::Job*, const QByteArray& );
 
     private:
-        static const unsigned int s_defaultTimeoutThreshold;
-
         class Private;
         Private* const d;
     };

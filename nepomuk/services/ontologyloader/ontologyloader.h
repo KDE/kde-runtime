@@ -48,12 +48,14 @@ namespace Nepomuk {
         QString findOntologyContext( const QString& uri );
 
         /**
-         * Update all installed ontologies and install dir watches
-         * to monitor newly installed and changed ontologies.
-         *
-         * This should also be called for initialization
+         * Update all installed ontologies that changed since the last update.
          */
         void updateLocalOntologies();
+
+        /**
+         * Update all installed ontologies, independant of their status.
+         */
+        void updateAllLocalOntologies();
 
         /**
          * Try to retrieve an ontology from the web.

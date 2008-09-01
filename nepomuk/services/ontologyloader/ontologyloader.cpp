@@ -51,12 +51,14 @@ class Nepomuk::OntologyLoader::Private
 {
 public:
     Private( OntologyLoader* p )
-        : q( p ) {
+        : forceOntologyUpdate( false ),
+          q( p ) {
     }
 
     OntologyManagerModel* model;
 
     QTimer updateTimer;
+    bool forceOntologyUpdate;
     QStringList desktopFilesToUpdate;
 
     void updateOntology( const QString& filename );
@@ -74,10 +76,22 @@ void Nepomuk::OntologyLoader::Private::updateOntology( const QString& filename )
     // ------------------------------------
     QFileInfo ontoFileInf( df.readPath() );
     QDateTime ontoLastModified = model->ontoModificationDate( df.readUrl() );
+    bool update = false;
+
     if ( ontoLastModified < ontoFileInf.lastModified() ) {
-
         kDebug() << "Ontology" << df.readUrl() << "needs updating.";
+        update = true;
+    }
+    else {
+        kDebug() << "Ontology" << df.readUrl() << "up to date.";
+    }
 
+    if( !update && forceOntologyUpdate ) {
+        kDebug() << "Ontology update forced.";
+        update = true;
+    }
+
+    if( update ) {
         QString mimeType = df.desktopGroup().readEntry( "MimeType", QString() );
 
         const Soprano::Parser* parser
@@ -102,9 +116,6 @@ void Nepomuk::OntologyLoader::Private::updateOntology( const QString& filename )
             emit q->ontologyUpdateFailed( df.readUrl(), i18n( "Parsing of file %1 failed (%2)", df.readPath(), parser->lastError().message() ) );
         }
     }
-    else {
-        kDebug() << "Ontology" << df.readUrl() << "up to date.";
-    }
 }
 
 
@@ -117,6 +128,8 @@ Nepomuk::OntologyLoader::OntologyLoader( QObject* parent, const QList<QVariant>&
 
     d->model = new OntologyManagerModel( mainModel(), this );
     connect( &d->updateTimer, SIGNAL(timeout()), this, SLOT(updateNextOntology()) );
+
+    // only update changed ontologies
     updateLocalOntologies();
 
     // watch both the global and local ontology folder for changes
@@ -141,14 +154,15 @@ Nepomuk::OntologyLoader::~OntologyLoader()
 
 void Nepomuk::OntologyLoader::updateLocalOntologies()
 {
-    if ( !d->model ) {
-        kDebug() << "No Nepomuk Model. Cannot update ontologies.";
-        return;
-    }
-
-    // update all installed ontologies
     d->desktopFilesToUpdate = KGlobal::dirs()->findAllResources( "data", "nepomuk/ontologies/*.desktop" );
     d->updateTimer.start(0);
+}
+
+
+void Nepomuk::OntologyLoader::updateAllLocalOntologies()
+{
+    d->forceOntologyUpdate = true;
+    updateLocalOntologies();
 }
 
 
@@ -158,6 +172,7 @@ void Nepomuk::OntologyLoader::updateNextOntology()
         d->updateOntology( d->desktopFilesToUpdate.takeFirst() );
     }
     else {
+        d->forceOntologyUpdate = false;
         d->updateTimer.stop();
     }
 }

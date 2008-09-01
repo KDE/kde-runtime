@@ -193,9 +193,18 @@ Nepomuk::OntologyManagerModel::~OntologyManagerModel()
 }
 
 
+void Nepomuk::OntologyManagerModel::setParentModel( Soprano::Model* parentModel )
+{
+    FilterModel::setParentModel( parentModel );
+}
+
+
 bool Nepomuk::OntologyManagerModel::updateOntology( Soprano::StatementIterator data, const QUrl& ns )
 {
     clearError();
+
+    QTime timer;
+    timer.start();
 
     // Create temp memory model
     // ------------------------------------
@@ -290,7 +299,7 @@ bool Nepomuk::OntologyManagerModel::updateOntology( Soprano::StatementIterator d
             }
         }
 
-        kDebug() << "Successfully updated ontology" << ontoUri;
+        kDebug() << "Successfully updated ontology" << ontoUri << QString("(%1ms)").arg(timer.elapsed());
         return true;
     }
     else {

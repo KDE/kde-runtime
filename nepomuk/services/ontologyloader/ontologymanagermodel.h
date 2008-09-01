@@ -46,6 +46,11 @@ namespace Nepomuk {
          * Destructor
          */
         ~OntologyManagerModel();
+
+        /**
+         * Reimplemented from FilterModel. The API is not affected.
+         */
+        void setParentModel( Soprano::Model* parentModel );
         
         /**
          * Update an ontology.
