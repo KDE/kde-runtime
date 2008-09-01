@@ -35,7 +35,7 @@ QDebug PS::operator<<(QDebug &s, const AudioDeviceAccess &a)
     return s;
 }
 
-QString PS::AudioDeviceAccess::driverName() const
+const QString PS::AudioDeviceAccess::driverName() const
 {
     switch (m_driver) {
     case InvalidDriver:

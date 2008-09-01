@@ -56,15 +56,28 @@ class AudioDeviceAccess
                 && m_playback == rhs.m_playback; }
         inline bool operator!=(const AudioDeviceAccess &rhs) const { return !operator==(rhs); }
 
+        /**
+         * UDI to identify which device was removed
+         */
+        inline const QString &udi() const { return m_udi; }
+
         AudioDriver driver() const { return m_driver; }
-        QString driverName() const;
-        QStringList deviceIds() const { return m_deviceIds; }
-        int accessPreference() const { return m_accessPreference; }
-        bool isCapture() const { return m_capture; }
-        bool isPlayback() const { return m_playback; }
+
+        const QString driverName() const;
+
+        inline const QStringList &deviceIds() const { return m_deviceIds; }
+
+        inline int accessPreference() const { return m_accessPreference; }
+
+        inline bool isCapture() const { return m_capture; }
+
+        inline bool isPlayback() const { return m_playback; }
 
     private:
         friend QDebug operator<<(QDebug &, const AudioDeviceAccess &);
+
+        // the udi is needed to identify a removed device
+        QString m_udi;
 
         QStringList m_deviceIds;
         int m_accessPreference;
