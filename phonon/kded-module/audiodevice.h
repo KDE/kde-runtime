@@ -34,6 +34,7 @@ unsigned int qHash(const PS::AudioDevice &a);
 #include <QtCore/QList>
 #include <QtCore/QString>
 #include "audiodeviceaccess.h"
+#include <ksharedconfig.h>
 
 namespace PS
 {
@@ -58,13 +59,42 @@ class AudioDevice
         { return m_initialPreference > rhs.m_initialPreference; }
         inline bool operator==(const AudioDevice &rhs) const { return m_key == rhs.m_key; }
 
-        inline void setCardName(const QString &name) { m_cardName = name; }
+        /**
+         * Returns the user visible name of the device
+         */
+        inline const QString &name() const { return m_cardName; }
 
-        inline const QString udi() const { return m_udi; }
-        QString description() const;
-        inline const QList<AudioDeviceAccess> accessList() const { return m_accessList; }
+        inline void setPreferredName(const QString &name) { if (!m_dbNameOverrideFound) { m_cardName = name; } }
+
+        inline void setUseCache(bool c) { m_useCache = c; }
+
+        /**
+         * Valid indexes are negative
+         */
+        inline int index() const { return m_index; }
+
+        /**
+         * UDI to identify which device was removed
+         */
+        //inline const QString &udi() const { return m_udi; }
+
+        /**
+         * User visible string to describe the device in detail
+         */
+        const QString description() const;
+
+        const QString &icon() const { return m_icon; }
+
+        inline bool isAvailable() const { return m_isAvailable; }
+        inline bool isAdvanced() const { return m_isAdvanced; }
+        inline int initialPreference() const { return m_initialPreference; }
+        inline int deviceNumber() const { return m_key.deviceNumber; }
+        inline const QList<AudioDeviceAccess> &accessList() const { return m_accessList; }
+
+        void syncWithCache(const KSharedConfigPtr &config);
 
     private:
+        void applyHardwareDatabaseOverrides();
         friend uint qHash(const AudioDevice &);
         friend QDebug operator<<(QDebug &, const AudioDevice &);
 
@@ -72,13 +102,13 @@ class AudioDevice
         QString m_cardName;
         QString m_icon;
 
-        // the udi is needed to identify a removed device
-        QString m_udi;
-
         AudioDeviceKey m_key;
+        int m_index;
         int m_initialPreference;
-        bool m_available : 1;
+        bool m_isAvailable : 1;
         bool m_isAdvanced : 1;
+        bool m_dbNameOverrideFound : 1;
+        bool m_useCache : 1;
 };
 
 inline QDebug operator<<(QDebug &s, const PS::AudioDeviceKey &k)
@@ -94,9 +124,11 @@ inline QDebug operator<<(QDebug &s, const PS::AudioDevice &a)
     s.nospace() << "\n- " << a.m_cardName
         << ", icon: " << a.m_icon
         << a.m_key
-        << "\n  initialPreference: " << a.m_initialPreference
-        << ", available: " << a.m_available
+        << "\n  index: " << a.m_index
+        << ", initialPreference: " << a.m_initialPreference
+        << ", available: " << a.m_isAvailable
         << ", advanced: " << a.m_isAdvanced
+        << ", DB name override: " << a.m_dbNameOverrideFound
         << "\n  description: " << a.description()
         << "\n  access: " << a.m_accessList;
     return s;
