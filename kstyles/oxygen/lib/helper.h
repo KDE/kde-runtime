@@ -41,7 +41,7 @@ public:
     KSharedConfigPtr config() const;
     void reloadConfig();
 
-    void renderWindowBackground(QPainter *p, const QRect &clipRect, const QWidget *widget, const QPalette & pal);
+    void renderWindowBackground(QPainter *p, const QRect &clipRect, const QWidget *widget, const QPalette & pal, int y_shift=-23 /* shift the background gradient upwards, to fit with the windec */);
     virtual void invalidateCaches();
 
     static bool lowThreshold(const QColor &color);
@@ -66,6 +66,8 @@ public:
     QPixmap windecoButton(const QColor &color, bool pressed, int size = 21);
 
     void drawFloatFrame(QPainter *p, const QRect r, const QColor &color) const;
+
+    void drawSeparator(QPainter *p, const QRect &r, const QColor &color, Qt::Orientation orientation) const;
 
 protected:
     void drawShadow(QPainter&, const QColor&, int size) const;
