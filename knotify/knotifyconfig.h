@@ -30,8 +30,8 @@
 typedef QList< QPair<QString,QString> > ContextList;
 
 /**
- * Represent the config for an event
-	@author Olivier Goffart <ogoffart@kde.org>
+ * Represent the configuration for an event
+ * @author Olivier Goffart <ogoffart@kde.org>
 */
 class KNotifyConfig
 {
@@ -39,18 +39,53 @@ class KNotifyConfig
 		KNotifyConfig(const QString &appname, const ContextList &_contexts , const QString &_eventid);
 		~KNotifyConfig();
 	
+		/**
+		 * @return entry from the knotifyrc file
+		 * 
+		 * This will return the configuration from the user for the given key.
+		 * It first look into the user config file, and then in the global config file.
+		 * 
+		 * return a null string if the entry doesn't exist
+		 */
 		QString readEntry(const QString& entry , bool path=false);
 		
+		/**
+		 * the text of the notification
+		 */
 		QString text;
+		/**
+		 * the pixmap to put on the notification
+		 */
 		QPixmap pix;
+		/**
+		 * The windowsID of the window that initiated the notification
+		 * (it is a window in the client)
+		 */
 		WId winId;
+		/**
+		 * the user-readable list of action.
+		 */
 		QStringList actions;
+		
+		/**
+		 * the name of the application that triggered the notification
+		 */
 		QString appname;
 
+		/**
+		 * @internal
+		 */
 		KSharedConfig::Ptr eventsfile,configfile;
 		ContextList contexts;
+		
+		/**
+		 * the name of the notification
+		 */
 		QString eventid;
 
+		/**
+		 * clear the config cache.  to be used when the config may have changed
+		 */
         static void clearCache();
 };
 
