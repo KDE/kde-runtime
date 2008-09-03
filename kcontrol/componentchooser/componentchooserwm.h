@@ -63,6 +63,7 @@ private:
         QString exec;
         QString configureCommand;
         QString restartArgument;
+        QString parentArgument;
         };
     WmData currentWmData() const;
     QHash< QString, WmData > wms; // i18n text -> data

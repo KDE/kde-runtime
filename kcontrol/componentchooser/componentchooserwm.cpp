@@ -216,6 +216,7 @@ void CfgWm::loadWMs( const QString& current )
     kwin.exec = "kwin";
     kwin.configureCommand = "";
     kwin.restartArgument = "--replace";
+    kwin.parentArgument = "";
     wms[ "KWin" ] = kwin;
     oldwm = "kwin";
     kwinRB->setChecked( true );
@@ -253,6 +254,7 @@ void CfgWm::loadWMs( const QString& current )
             continue;
         data.configureCommand = file.desktopGroup().readEntry( "X-KDE-WindowManagerConfigure" );
         data.restartArgument = file.desktopGroup().readEntry( "X-KDE-WindowManagerRestartArgument" );
+        data.parentArgument = file.desktopGroup().readEntry( "X-KDE-WindowManagerConfigureParentArgument" );
         wms[ name ] = data;
         wmCombo->addItem( name );
         if( wms[ name ].internalName == current ) // make it selected
@@ -288,6 +290,9 @@ void CfgWm::configureWm()
     {
         return;
     }
-    if( !KProcess::startDetached( currentWmData().configureCommand ))
+    QStringList args;
+    if( !currentWmData().parentArgument.isEmpty())
+        args << currentWmData().parentArgument << QString::number( window()->winId());
+    if( !KProcess::startDetached( currentWmData().configureCommand, args ))
         KMessageBox::sorry( window(), i18n( "Running the configuration tool failed" ));
 }

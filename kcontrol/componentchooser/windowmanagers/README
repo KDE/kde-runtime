@@ -26,3 +26,8 @@ X-KDE-WindowManagerRestartArgument - optional, the argument to pass
     to the window manager to restart it directly in the running KDE
     session; if not present, KDE restart is required (which is generally
     a good idea anyway, but this can be useful for e.g. checking)
+
+X-KDE-WindowManagerConfigureParentArgument - option, if present, this
+    argument and the X window id of the configuration dialog will be passed
+    to the configuration command (e.g. '--parent 13254543'). The configuration
+    tool may specify this window as the parent of its window.
