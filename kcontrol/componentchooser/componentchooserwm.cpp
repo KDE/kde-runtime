@@ -25,6 +25,8 @@
 #include <ktimerdialog.h>
 #include <qdbusinterface.h>
 #include <qdbusconnectioninterface.h>
+#include <netwm.h>
+#include <qx11info_x11.h>
 
 CfgWm::CfgWm(QWidget *parent)
 : WmConfig_UI(parent)
@@ -130,10 +132,13 @@ bool CfgWm::saveAndConfirm()
 
 bool CfgWm::tryWmLaunch()
 {
-    if( currentWm() == "kwin" && QDBusConnection::sessionBus().interface()->isServiceRegistered( "org.kde.kwin" ))
+    if( currentWm() == "kwin"
+        && qstrcmp( NETRootInfo( QX11Info::display(), NET::SupportingWMCheck ).wmName(), "KWin" ) == 0 )
+    {
         return true; // it is already running, don't necessarily restart e.g. after a failure with other WM
-    KMessageBox::information( window(), i18n( "Your running window manager will be now replaced with the newly "
-        "configured one." ), i18n( "Window manager change" ), "windowmanagerchange" );
+    }
+    KMessageBox::information( window(), i18n( "Your running window manager will be now replaced with "
+        "the configured one." ), i18n( "Window manager change" ), "windowmanagerchange" );
     wmLaunchingState = WmLaunching;
     wmProcess = new KProcess;
     *wmProcess << KShell::splitArgs( currentWmData().exec ) << currentWmData().restartArgument;
@@ -146,7 +151,7 @@ bool CfgWm::tryWmLaunch()
     wmDialog->setButtonGuiItem( KDialog::Ok, KGuiItem( i18n( "&Accept Change" ), "dialog-ok" ));
     wmDialog->setButtonGuiItem( KDialog::Cancel, KGuiItem( i18n( "&Revert to Previous" ), "dialog-cancel" ));
     QLabel *label = new QLabel(
-        i18n( "The newly configured window manager has been launched.\n"
+        i18n( "The configured window manager has been launched.\n"
             "Please check it has started properly and confirm the change.\n"
             "The launch will be automatically reverted in 20 seconds." ), wmDialog );
     label->setWordWrap( true );
