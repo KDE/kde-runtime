@@ -67,56 +67,63 @@ void CfgWm::load(KConfig *)
 
 void CfgWm::save(KConfig *)
 {
+    saveAndConfirm();
+}
+
+bool CfgWm::saveAndConfirm()
+{
     KConfig cfg("ksmserverrc", KConfig::NoGlobals);
     KConfigGroup c( &cfg, "General");
     c.writeEntry("windowManager", currentWm());
     emit changed(false);
-    if( oldwm != currentWm())
+    if( oldwm == currentWm())
+        return true;
+    QString restartArgument = currentWmData().restartArgument;
+    if( restartArgument.isEmpty())
     {
-        QString restartArgument = currentWmData().restartArgument;
-        if( restartArgument.isEmpty())
+        KMessageBox::information( this,
+            i18n( "The new window manager will be used when KDE is started the next time." ),
+            i18n( "Window manager change" ), "windowmanagerchange" );
+        oldwm = currentWm();
+        return true;
+    }
+    else
+    {
+        if( tryWmLaunch())
         {
-            KMessageBox::information( this,
-                i18n( "The new window manager will be used when KDE is started the next time." ),
-                i18n( "Window manager change" ), "windowmanagerchange" );
             oldwm = currentWm();
+            cfg.sync();
+            QDBusInterface ksmserver("org.kde.ksmserver", "/KSMServer" );
+            ksmserver.call( QDBus::NoBlock, "wmChanged" );
+            KMessageBox::information( window(),
+                i18n( "A new window manager is running.\n"
+                    "It is still recommended to restart this KDE session to make sure "
+                    "all running applications adjust for this change." ),
+                    i18n( "Window Manager Replaced" ), "restartafterwmchange" );
+            return true;
         }
         else
-        {
-            if( tryWmLaunch())
+        { // revert config
+            emit changed(true);
+            c.writeEntry("windowManager", oldwm);
+            if( oldwm == "kwin" )
             {
-                oldwm = currentWm();
-                cfg.sync();
-                QDBusInterface ksmserver("org.kde.ksmserver", "/KSMServer" );
-                ksmserver.call( QDBus::NoBlock, "wmChanged" );
-                KMessageBox::information( window(),
-                    i18n( "A new window manager is running.\n"
-                        "It is still recommended to restart this KDE session to make sure "
-                        "all running applications adjust for this change." ),
-                        i18n( "Window Manager Replaced" ), "restartafterwmchange" );
+                kwinRB->setChecked( true );
+                wmCombo->setEnabled( false );
             }
             else
-            { // revert config
-                emit changed(true);
-                c.writeEntry("windowManager", oldwm);
-                if( oldwm == "kwin" )
+            {
+                differentRB->setChecked( true );
+                wmCombo->setEnabled( true );
+                for( QHash< QString, WmData >::ConstIterator it = wms.begin();
+                     it != wms.end();
+                     ++it )
                 {
-                    kwinRB->setChecked( true );
-                    wmCombo->setEnabled( false );
-                }
-                else
-                {
-                    differentRB->setChecked( true );
-                    wmCombo->setEnabled( true );
-                    for( QHash< QString, WmData >::ConstIterator it = wms.begin();
-                         it != wms.end();
-                         ++it )
-                    {
-                        if( (*it).internalName == oldwm ) // make it selected
-                            wmCombo->setCurrentIndex( wmCombo->findText( it.key()));
-                    }
+                    if( (*it).internalName == oldwm ) // make it selected
+                        wmCombo->setCurrentIndex( wmCombo->findText( it.key()));
                 }
             }
+            return false;
         }
     }
 }
@@ -125,6 +132,8 @@ bool CfgWm::tryWmLaunch()
 {
     if( currentWm() == "kwin" && QDBusConnection::sessionBus().interface()->isServiceRegistered( "org.kde.kwin" ))
         return true; // it is already running, don't necessarily restart e.g. after a failure with other WM
+    KMessageBox::information( window(), i18n( "Your running window manager will be now replaced with the newly "
+        "configured one." ), i18n( "Window manager change" ), "windowmanagerchange" );
     wmLaunchingState = WmLaunching;
     wmProcess = new KProcess;
     *wmProcess << KShell::splitArgs( currentWmData().exec ) << currentWmData().restartArgument;
@@ -269,6 +278,11 @@ void CfgWm::checkConfigureWm()
 
 void CfgWm::configureWm()
 {
+    if( oldwm != currentWm() // needs switching first
+        && !saveAndConfirm())
+    {
+        return;
+    }
     if( !KProcess::startDetached( currentWmData().configureCommand ))
         KMessageBox::sorry( window(), i18n( "Running the configuration tool failed" ));
 }

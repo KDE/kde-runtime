@@ -56,6 +56,7 @@ private:
     bool tryWmLaunch();
     void loadWMs( const QString& current );
     QString currentWm() const;
+    bool saveAndConfirm();
     struct WmData
         {
         QString internalName;
