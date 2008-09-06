@@ -1,6 +1,7 @@
 [Global]
 IconName=nepomuk
 Comment=The Nepomuk Strigi file indexer
+Comment[el]=Υπηρεσία ευρετηρίου αρχείων Strigi του Nepomuk
 Comment[et]=Nepomuki Strigi failide indekseerija
 Comment[gl]=O indexador de ficheiros Strigi para Nepomuk
 Comment[gu]=નેપોમુક સ્ટ્રિગિ ફાઇલ ઇન્ડેક્સર
@@ -19,6 +20,7 @@ Comment[zh_TW]=Nepomuk Strigi 檔案索引服務
 
 [Event/initialIndexingStarted]
 Name=Initial Indexing started
+Name[el]=Έναρξη αρχικού ευρετηρίου
 Name[et]=Esmaindekseerimine on käivitatud
 Name[gl]=Iniciouse a indexación inicial
 Name[gu]=શરૂઆતનું ઇન્ડેક્સીંગ શરૂ થયેલ છે
@@ -36,6 +38,7 @@ Name[tr]=Temel İndeksleme başladı
 Name[uk]=Запущено початкове індексування
 Name[zh_TW]=初始化索引已開始
 Comment=Strigi started the initial indexing of local files for fast desktop searches
+Comment[el]=Το Strigi εκίνησε το αρχικό ευρετήριο τοπικών αρχείων για γρήγορες αναζητήσεις επιφάνειας εργασίας
 Comment[et]=Strigi alustas kohalike failide esimest indekseerimist kiire töölauaotsingu võimaldamiseks
 Comment[gl]=Strigi comezou a indexación inicial dos ficheiros locais para facer procuras rápidas no escritorio
 Comment[gu]=સ્ટ્રીગીએ ઝડપી ડેસ્કટોપ શોધ માટે સ્થાનિક ફાઇલોનું શરૂઆતી ઇન્ડેક્સીંગ ચાલુ કર્યું છે
@@ -56,6 +59,7 @@ Action=Popup
 
 [Event/initialIndexingFinished]
 Name=Initial Indexing finished
+Name[el]=Τέλος αρχικού ευρετηρίου
 Name[et]=Esmaindekseerimine on lõpetatud
 Name[gl]=Rematou a indexación inicial
 Name[gu]=શરૂઆતનું ઇન્ડેક્સીંગ પૂર્ણ થયેલ છે
@@ -73,6 +77,7 @@ Name[tr]=Temel İndeksleme tamamlandı
 Name[uk]=Початкове індексування закінчено
 Name[zh_TW]=初始化索引已完成
 Comment=Strigi finished the initial indexing of local files for fast desktop searches
+Comment[el]=Το Strigi ολοκλήρωσε το αρχικό ευρετήριο για γρήγορες αναζητήσεις επιφάνειας εργασίας
 Comment[et]=Strigi lõpetas kohalike failide esimese indekseerimise kiire töölauaotsingu võimaldamiseks
 Comment[gl]=Strigi rematou a indexación inicial dos ficheiros locais para facer procuras rápidas no escritorio
 Comment[gu]=સ્ટ્રીગીએ ઝડપી ડેસ્કટોપ શોધ માટે સ્થાનિક ફાઇલોનું શરૂઆતી ઇન્ડેક્સીંગ પૂર્ણ કર્યું છે
@@ -93,6 +98,7 @@ Action=Popup
 
 [Event/indexingSuspended]
 Name=Indexing suspended
+Name[el]=Αναστολή ευρετηρίου
 Name[et]=Indekseerimine on peatatud
 Name[gl]=Suspendeuse a indexación
 Name[gu]=ઇન્ડેક્સીંગ બંધ કરવામાં આવ્યું
@@ -110,6 +116,7 @@ Name[tr]=İndeksleme beklemeye alındı
 Name[uk]=Пауза індексування
 Name[zh_TW]=索引暫停
 Comment=Strigi file indexing has been suspended
+Comment[el]=Το ευρετήριο αρχείων Strigi είναι σε αναστολή
 Comment[et]=Strigi failide indekseerimine on peatatud
 Comment[gl]=A indexación de ficheiros con Strigi suspendeuse
 Comment[gu]=સ્ટ્રીગીએ ફાઇલ ઇન્ડેક્સીંગ બંધ કરવામાં આવ્યું છે
@@ -130,6 +137,7 @@ Action=Popup
 
 [Event/indexingResumed]
 Name=Indexing resumed
+Name[el]=Συνέχιση ευρετηρίου
 Name[et]=Indekseerimine jätkub
 Name[gl]=Continuouse a indexación
 Name[gu]=ઇન્ડેક્સીંગ પુન: શરૂ કરવામાં આવ્યું
@@ -147,6 +155,7 @@ Name[tr]=İndeksleme çalışmaya devam ettirildi
 Name[uk]=Продовження індексування
 Name[zh_TW]=索引回復
 Comment=Strigi file indexing has been resumed
+Comment[el]=Το ευρετήριο αρχείων Strigi συνέχισε τη λειτουργία του
 Comment[et]=Strigi failide indekseerimine jätkub
 Comment[gl]=Continúase a indexación de ficheiros con Strigi
 Comment[gu]=સ્ટ્રીગીએ ફાઇલ ઇન્ડેક્સીંગ પુન: શરૂ કરવામાં આવ્યું છે

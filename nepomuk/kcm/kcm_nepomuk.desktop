@@ -9,6 +9,7 @@ X-KDE-ParentApp=kcontrol
 X-KDE-System-Settings-Parent-Category=advanced-user-settings
 
 Name=Desktop Search
+Name[el]=Αναζήτηση επιφάνειας εργασίας
 Name[et]=Töölauaotsing
 Name[ga]=Cuardach Deisce
 Name[gl]=Procura do escritorio
