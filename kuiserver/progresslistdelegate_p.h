@@ -62,14 +62,12 @@ public:
     int getPercent(const QModelIndex &index) const;
     QString getMessage(const QModelIndex &index) const;
     QString getProgressMessage(const QModelIndex &index) const;
-    QStyleOptionProgressBarV2 *getProgressBar(const QModelIndex &index) const;
     int getCurrentLeftMargin(int fontHeight) const;
 
 public:
     int separatorPixels;
     int leftMargin;
     int rightMargin;
-    int progressBarHeight;
     int minimumItemHeight;
     int minimumContentWidth;
     int editorHeight;

@@ -28,7 +28,6 @@
 #include <kio/global.h>
 #include <kio/jobclasses.h>
 
-class QStyleOptionProgressBarV2;
 class KWidgetJobTracker;
 
 struct JobInfo
@@ -52,7 +51,6 @@ struct JobInfo
     int percent;                ///< The current percent of the progress
     QString message;            ///< The information message to be shown
     QHash<uint, QPair<QString, QString> > descFields; ///< Description fields
-    QStyleOptionProgressBarV2 *progressBar;           ///< The progress bar to be shown
     State state;                ///< The state of the job
 };
 
@@ -152,14 +150,6 @@ public:
     void clearDescriptionField(const QModelIndex &index, uint id);
 
     JobInfo::State state(const QModelIndex &index) const;
-
-    /**
-      * Returns the progress bar for the given @p index
-      *
-      * @param index    the index we want to retrieve the progress bar
-      * @return         the progress bar for the given @p index. Might return 0 if no progress was set
-      */
-    QStyleOptionProgressBarV2 *progressBar(const QModelIndex &index) const;
 
 private:
     /**

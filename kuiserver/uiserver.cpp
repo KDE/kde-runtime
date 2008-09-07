@@ -236,7 +236,6 @@ UIServer::UIServer()
     progressListDelegate->setSeparatorPixels(10);
     progressListDelegate->setLeftMargin(10);
     progressListDelegate->setRightMargin(10);
-    progressListDelegate->setProgressBarHeight(20);
     progressListDelegate->setMinimumItemHeight(100);
     progressListDelegate->setMinimumContentWidth(300);
     progressListDelegate->setEditorHeight(20);
@@ -246,7 +245,6 @@ UIServer::UIServer()
     progressListDelegateFinished->setSeparatorPixels(10);
     progressListDelegateFinished->setLeftMargin(10);
     progressListDelegateFinished->setRightMargin(10);
-    progressListDelegateFinished->setProgressBarHeight(20);
     progressListDelegateFinished->setMinimumItemHeight(100);
     progressListDelegateFinished->setMinimumContentWidth(300);
     progressListDelegateFinished->setEditorHeight(20);
@@ -329,37 +327,6 @@ void UIServer::slotServiceOwnerChanged(const QString &name, const QString &oldOw
 {
     kDebug() << "dbus name: " << name << " oldowner: " << oldOwner << " newowner: " << newOwner;
 }
-
-// void UIServer::slotCancelClicked()
-// {
-//     if (listProgress->currentIndex().isValid())
-//     {
-//         JobView *jobView = m_progressListModel->jobView(listProgress->currentIndex());
-// 
-//         emit jobView->cancelRequested();
-//     }
-// }
-/*
-void UIServer::slotPauseResumeClicked()
-{
-    if (listProgress->currentIndex().isValid())
-    {
-        JobView *jobView = m_progressListModel->jobView(listProgress->currentIndex());
-
-        if (s_uiserver->m_progressListModel->state(listProgress->currentIndex()) == JobInfo::Running)
-        {
-            emit jobView->suspendRequested();
-            pauseResumeButton->setText(i18n("Resume"));
-            pauseResumeButton->setIcon(KIcon("media-playback-start"));
-        }
-        else
-        {
-            emit jobView->resumeRequested();
-            pauseResumeButton->setText(i18n("Pause"));
-            pauseResumeButton->setIcon(KIcon("media-playback-pause"));
-        }
-    }
-}*/
 
 
 /// ===========================================================

@@ -42,7 +42,6 @@ public:
     void setSeparatorPixels(int separatorPixels);
     void setLeftMargin(int leftMargin);
     void setRightMargin(int rightMargin);
-    void setProgressBarHeight(int progressBarHeight);
     void setMinimumItemHeight(int minimumItemHeight);
     void setMinimumContentWidth(int minimumContentWidth);
     void setEditorHeight(int editorHeight);

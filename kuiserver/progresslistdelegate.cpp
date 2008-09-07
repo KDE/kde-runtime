@@ -24,7 +24,6 @@
 #include <QApplication>
 #include <QPushButton>
 #include <QPainter>
-#include <QStyleOptionProgressBarV2>
 #include <QHash>
 #include <QFontMetrics>
 #include <QListView>
@@ -81,13 +80,6 @@ int ProgressListDelegate::Private::getPercent(const QModelIndex &index) const
 QString ProgressListDelegate::Private::getMessage(const QModelIndex &index) const
 {
     return index.model()->data(index, ProgressListModel::Message).toString();
-}
-
-QStyleOptionProgressBarV2 *ProgressListDelegate::Private::getProgressBar(const QModelIndex &index) const
-{
-    const ProgressListModel *progressListModel = static_cast<const ProgressListModel*>(index.model());
-
-    return progressListModel->progressBar(index);
 }
 
 int ProgressListDelegate::Private::getCurrentLeftMargin(int fontHeight) const
@@ -187,15 +179,6 @@ void ProgressListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
         coordY += d->separatorPixels + textHeight;
     }
 
-    if (d->getPercent(index) > -1)
-    {
-        QStyleOptionProgressBarV2 *progressBarModel = d->getProgressBar(index);
-
-        progressBarModel->rect = QRect(d->getCurrentLeftMargin(textHeight) + option.rect.left(), coordY, canvas.width() - d->getCurrentLeftMargin(textHeight) - d->rightMargin - iconWidth - d->separatorPixels, d->progressBarHeight);
-
-        QApplication::style()->drawControl(QStyle::CE_ProgressBar, progressBarModel, painter);
-    }
-
     painter->restore();
 
     KWidgetItemDelegate::paintWidgets(painter, option, index);
@@ -224,9 +207,6 @@ QSize ProgressListDelegate::sizeHint(const QStyleOptionViewItem &option, const Q
         itemHeight += textSize;
     }
 
-    if (d->getPercent(index) > -1)
-        itemHeight += d->progressBarHeight + d->separatorPixels;
-
     if (d->editorHeight > 0)
         itemHeight += d->editorHeight + d->separatorPixels;
 
@@ -251,11 +231,6 @@ void ProgressListDelegate::setLeftMargin(int leftMargin)
 void ProgressListDelegate::setRightMargin(int rightMargin)
 {
     d->rightMargin = rightMargin;
-}
-
-void ProgressListDelegate::setProgressBarHeight(int progressBarHeight)
-{
-    d->progressBarHeight = progressBarHeight;
 }
 
 void ProgressListDelegate::setMinimumItemHeight(int minimumItemHeight)
