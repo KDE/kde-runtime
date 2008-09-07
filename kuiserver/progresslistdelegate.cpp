@@ -28,6 +28,7 @@
 #include <QFontMetrics>
 #include <QListView>
 #include <QHBoxLayout>
+#include <QProgressBar>
 
 #include <kdebug.h>
 #include <kicon.h>
@@ -254,6 +255,7 @@ QList<QWidget*> ProgressListDelegate::createItemWidgets() const
 
     KPushButton *pauseResumeButton = new KPushButton(KIcon("media-playback-pause"), i18n("Pause"));
     KPushButton *cancelButton = new KPushButton(KIcon("media-playback-stop"), i18n("Cancel"));
+    QProgressBar *progressBar = new QProgressBar();
 
     connect(pauseResumeButton, SIGNAL(clicked(bool)), this, SLOT(slotPauseResumeClicked()));
     connect(cancelButton, SIGNAL(clicked(bool)), this, SLOT(slotCancelClicked()));
@@ -263,7 +265,7 @@ QList<QWidget*> ProgressListDelegate::createItemWidgets() const
     setBlockedEventTypes(cancelButton, QList<QEvent::Type>() << QEvent::MouseButtonPress
                             << QEvent::MouseButtonRelease << QEvent::MouseButtonDblClick);
 
-    widgetList << pauseResumeButton << cancelButton;
+    widgetList << pauseResumeButton << cancelButton << progressBar;
 
     return widgetList;
 }
@@ -278,6 +280,7 @@ void ProgressListDelegate::updateItemWidgets(const QList<QWidget*> widgets,
 
     KPushButton *cancelButton = static_cast<KPushButton*>(widgets[1]);
     KPushButton *pauseResumeButton = static_cast<KPushButton*>(widgets[0]);
+    QProgressBar *progressBar = static_cast<QProgressBar*>(widgets[2]);
 
     KJob::Capabilities capabilities = (KJob::Capabilities) index.model()->data(index, ProgressListModel::Capabilities).toInt();
     cancelButton->setEnabled(capabilities & KJob::Killable);
@@ -302,6 +305,10 @@ void ProgressListDelegate::updateItemWidgets(const QList<QWidget*> widgets,
     QSize pauseResumeButtonSizeHint = pauseResumeButton->sizeHint();
     pauseResumeButton->resize(pauseResumeButtonSizeHint);
     pauseResumeButton->move(option.rect.width() - MARGIN * 2 - pauseResumeButtonSizeHint.width() - cancelButtonSizeHint.width(), option.rect.height() - MARGIN - pauseResumeButtonSizeHint.height());
+
+    QSize progressBarSizeHint = progressBar->sizeHint();
+    progressBar->resize(QSize(option.rect.width() - MARGIN * 2, progressBarSizeHint.height() / 2));
+    progressBar->move(MARGIN, option.rect.height() - MARGIN * 2 - pauseResumeButtonSizeHint.height() - progressBarSizeHint.height() / 2);
 }
 
 void ProgressListDelegate::slotPauseResumeClicked()
