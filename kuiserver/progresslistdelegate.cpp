@@ -35,7 +35,6 @@
 #include <klocale.h>
 #include <kpushbutton.h>
 
-#define MARGIN 5
 #define MIN_CONTENT_PIXELS 100
 
 QString ProgressListDelegate::Private::getApplicationName(const QModelIndex &index) const
@@ -101,6 +100,10 @@ ProgressListDelegate::~ProgressListDelegate()
 
 void ProgressListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
+    if (!index.isValid()) {
+        return;
+    }
+
     QFontMetrics fontMetrics = painter->fontMetrics();
     int textHeight = fontMetrics.height();
 

@@ -211,8 +211,9 @@ void ProgressListModel::finishJob(UIServer::JobView *jobView)
 
     QModelIndex indexToRemove = indexForJob(jobView);
 
-    if (indexToRemove.isValid())
+    if (indexToRemove.isValid()) {
         jobInfoMap.remove(jobView);
+    }
 
     endRemoveRows();
 }
