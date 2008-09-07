@@ -12,6 +12,7 @@ X-KDE-Weight=110
 
 Name=Emoticons
 Name[af]=Emotikons
+Name[be@latin]=Smajliki
 Name[bg]=Емоции
 Name[bn_IN]=ইমোআইকন
 Name[ca]=Emoticones
@@ -64,6 +65,7 @@ Name[zh_CN]=表情
 Name[zh_TW]=表情圖示
 Comment=Emoticons Themes Manager
 Comment[af]=Emotikon temabestuurder
+Comment[be@latin]=Kiraŭnik matyvaŭ smajlikaŭ
 Comment[bg]=Мениджър на теми с емоции
 Comment[bn_IN]=ইমোআইকন থিম পরিচালন ব্যবস্থা
 Comment[ca]=Gestor de temes d'emoticones

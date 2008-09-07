@@ -1,4 +1,5 @@
 Name=Window Manager
+Name[be@latin]=Akońnik
 Name[el]=Διαχειριστής παραθύρων
 Name[et]=Aknahaldur
 Name[ga]=Bainisteoir Fuinneog
@@ -16,6 +17,7 @@ Name[tr]=Pencere Yöneticisi
 Name[uk]=Віконний менеджер
 Name[zh_TW]=視窗管理員
 Comment=Here you can select the window manager to be run in your KDE session.
+Comment[be@latin]=Tut možna vybrać akońnika, jaki ŭklučajecca pry ŭvachodzie ŭ KDE.
 Comment[el]=Εδώ μπορείτε να επιλέξετε τον διαχειριστή παραθύρων που θα εκτελείται κατά την KDE συνεδρία σας.
 Comment[et]=Siin saab valida KDE seansis kasutatava aknahalduri.
 Comment[gl]=Aquí pode escoller a xestor de fiestrar a executar na sesión de KDE.
