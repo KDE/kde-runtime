@@ -160,6 +160,6 @@ private:
     QMap<UIServer::JobView*, JobInfo> jobInfoMap; /// @internal
 };
 
-Q_DECLARE_METATYPE(UIServer::JobView*);
+Q_DECLARE_METATYPE(UIServer::JobView*)
 
 #endif // PROGRESSLISTMODEL_H
