@@ -27,6 +27,7 @@
 
 #include <QtGui/QListView>
 #include <QtGui/QPushButton>
+#include <QtGui/QProgressBar>
 
 class QModelIndex;
 class QString;
@@ -36,11 +37,13 @@ class ProgressListDelegate::Private
 public:
     Private(QListView *listView)
         : listView(listView)
+        , progressBar(new QProgressBar(0))
     {
     }
 
     ~Private()
     {
+        delete progressBar;
     }
 
     QString getApplicationInternalName(const QModelIndex &index) const;
@@ -73,6 +76,7 @@ public:
     int editorHeight;
     int iconWidth;
     QListView *listView;
+    QProgressBar *progressBar;
 };
 
 #endif // PROGRESSLISTDELEGATE_P_H

@@ -57,7 +57,6 @@ public:
     QDBusObjectPath requestView(const QString &appName, const QString &appIconName, int capabilities);
 
 public Q_SLOTS:
-    void slotRemoveSystemTrayIcon();
     void updateConfiguration();
     void applySettings();
 

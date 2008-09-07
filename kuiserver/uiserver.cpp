@@ -233,7 +233,7 @@ UIServer::UIServer()
     listFinished->setModel(m_progressListFinishedModel);
 
     progressListDelegate = new ProgressListDelegate(this, listProgress);
-    progressListDelegate->setSeparatorPixels(10);
+    progressListDelegate->setSeparatorPixels(5);
     progressListDelegate->setLeftMargin(10);
     progressListDelegate->setRightMargin(10);
     progressListDelegate->setMinimumItemHeight(100);
@@ -242,7 +242,7 @@ UIServer::UIServer()
     listProgress->setItemDelegate(progressListDelegate);
 
     progressListDelegateFinished = new ProgressListDelegate(this, listFinished);
-    progressListDelegateFinished->setSeparatorPixels(10);
+    progressListDelegateFinished->setSeparatorPixels(5);
     progressListDelegateFinished->setLeftMargin(10);
     progressListDelegateFinished->setRightMargin(10);
     progressListDelegateFinished->setMinimumItemHeight(100);
@@ -277,14 +277,6 @@ QDBusObjectPath UIServer::requestView(const QString &appName, const QString &app
     JobView *jobView = m_progressListModel->newJob(appName, appIconName, capabilities);
 
     return jobView->objectPath();
-}
-
-void UIServer::slotRemoveSystemTrayIcon()
-{
-#ifdef __GNUC__
-    #warning implement me (ereslibre)
-#endif
-    return;
 }
 
 void UIServer::updateConfiguration()

@@ -208,6 +208,10 @@ QSize ProgressListDelegate::sizeHint(const QStyleOptionViewItem &option, const Q
         itemHeight += textSize;
     }
 
+    if (d->getPercent(index)) {
+        itemHeight += d->progressBar->sizeHint().height() + d->separatorPixels;
+    }
+
     if (d->editorHeight > 0)
         itemHeight += d->editorHeight + d->separatorPixels;
 
@@ -298,17 +302,20 @@ void ProgressListDelegate::updateItemWidgets(const QList<QWidget*> widgets,
             break;
     }
 
+    progressBar->setValue(d->getPercent(index));
+
     QSize cancelButtonSizeHint = cancelButton->sizeHint();
     cancelButton->resize(cancelButtonSizeHint);
-    cancelButton->move(option.rect.width() - MARGIN - cancelButtonSizeHint.width(), option.rect.height() - MARGIN - cancelButtonSizeHint.height());
+    cancelButton->move(option.rect.width() - d->separatorPixels - cancelButtonSizeHint.width(), option.rect.height() - d->separatorPixels - cancelButtonSizeHint.height());
 
     QSize pauseResumeButtonSizeHint = pauseResumeButton->sizeHint();
     pauseResumeButton->resize(pauseResumeButtonSizeHint);
-    pauseResumeButton->move(option.rect.width() - MARGIN * 2 - pauseResumeButtonSizeHint.width() - cancelButtonSizeHint.width(), option.rect.height() - MARGIN - pauseResumeButtonSizeHint.height());
+    pauseResumeButton->move(option.rect.width() - d->separatorPixels * 2 - pauseResumeButtonSizeHint.width() - cancelButtonSizeHint.width(), option.rect.height() - d->separatorPixels - pauseResumeButtonSizeHint.height());
 
+    QFontMetrics fm(QApplication::font());
     QSize progressBarSizeHint = progressBar->sizeHint();
-    progressBar->resize(QSize(option.rect.width() - MARGIN * 2, progressBarSizeHint.height() / 2));
-    progressBar->move(MARGIN, option.rect.height() - MARGIN * 2 - pauseResumeButtonSizeHint.height() - progressBarSizeHint.height() / 2);
+    progressBar->resize(QSize(option.rect.width() - d->getCurrentLeftMargin(fm.height()) - d->rightMargin, progressBarSizeHint.height()));
+    progressBar->move(d->getCurrentLeftMargin(fm.height()), option.rect.height() - d->separatorPixels * 2 - pauseResumeButtonSizeHint.height() - progressBarSizeHint.height());
 }
 
 void ProgressListDelegate::slotPauseResumeClicked()
