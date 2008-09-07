@@ -84,10 +84,10 @@ void UIServer::JobView::terminate(const QString &errorMessage)
 
 void UIServer::JobView::setSuspended(bool suspended)
 {
-    QModelIndex currentIndex = s_uiserver->listProgress->currentIndex();
+    QModelIndex index = s_uiserver->m_progressListModel->indexForJob(this);
 
-    s_uiserver->m_progressListModel->setData(currentIndex, suspended ? JobInfo::Suspended
-                                                                     : JobInfo::Running, ProgressListModel::State);
+    s_uiserver->m_progressListModel->setData(index, suspended ? JobInfo::Suspended
+                                                              : JobInfo::Running, ProgressListModel::State);
 }
 
 void UIServer::JobView::setTotalAmount(qlonglong amount, const QString &unit)
