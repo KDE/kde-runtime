@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>460</width>
-    <height>433</height>
+    <width>576</width>
+    <height>366</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" >
@@ -67,145 +67,151 @@
     </layout>
    </item>
    <item>
-    <widget class="QGroupBox" name="m_positiveGB" >
-     <property name="title" >
-      <string>Positive</string>
-     </property>
-     <layout class="QVBoxLayout" >
-      <item>
-       <widget class="QCheckBox" name="m_chMonPosPreCurSym" >
-        <property name="text" >
-         <string>Prefix currency symbol</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" >
+    <layout class="QHBoxLayout" name="horizontalLayout" >
+     <item>
+      <widget class="QGroupBox" name="m_positiveGB" >
+       <property name="title" >
+        <string>Positive</string>
+       </property>
+       <layout class="QVBoxLayout" >
         <item>
-         <widget class="QLabel" name="m_labMonPosMonSignPos" >
+         <widget class="QCheckBox" name="m_chMonPosPreCurSym" >
           <property name="text" >
-           <string>Sign position:</string>
+           <string>Prefix currency symbol</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QComboBox" name="m_cmbMonPosMonSignPos" >
+         <layout class="QHBoxLayout" >
           <item>
-           <property name="text" >
-            <string>Parentheses Around</string>
-           </property>
+           <widget class="QLabel" name="m_labMonPosMonSignPos" >
+            <property name="text" >
+             <string>Sign position:</string>
+            </property>
+           </widget>
           </item>
           <item>
-           <property name="text" >
-            <string>Before Quantity Money</string>
-           </property>
+           <widget class="QComboBox" name="m_cmbMonPosMonSignPos" >
+            <item>
+             <property name="text" >
+              <string>Parentheses Around</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>Before Quantity Money</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>After Quantity Money</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>Before Money</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>After Money</string>
+             </property>
+            </item>
+           </widget>
           </item>
           <item>
-           <property name="text" >
-            <string>After Quantity Money</string>
-           </property>
+           <spacer name="horizontalSpacer" >
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0" >
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
           </item>
-          <item>
-           <property name="text" >
-            <string>Before Money</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>After Money</string>
-           </property>
-          </item>
-         </widget>
-        </item>
-        <item>
-         <spacer name="horizontalSpacer" >
-          <property name="orientation" >
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0" >
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
+         </layout>
         </item>
        </layout>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
-    <widget class="QGroupBox" name="m_negativeGB" >
-     <property name="title" >
-      <string>Negative</string>
-     </property>
-     <layout class="QVBoxLayout" >
-      <item>
-       <widget class="QCheckBox" name="m_chMonNegPreCurSym" >
-        <property name="text" >
-         <string>Prefix currency symbol</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" >
+       <zorder>m_chMonPosPreCurSym</zorder>
+       <zorder>m_negativeGB</zorder>
+      </widget>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="m_negativeGB" >
+       <property name="title" >
+        <string>Negative</string>
+       </property>
+       <layout class="QVBoxLayout" >
         <item>
-         <widget class="QLabel" name="m_labMonNegMonSignPos" >
+         <widget class="QCheckBox" name="m_chMonNegPreCurSym" >
           <property name="text" >
-           <string>Sign position:</string>
+           <string>Prefix currency symbol</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QComboBox" name="m_cmbMonNegMonSignPos" >
+         <layout class="QHBoxLayout" >
           <item>
-           <property name="text" >
-            <string>Parentheses Around</string>
-           </property>
+           <widget class="QLabel" name="m_labMonNegMonSignPos" >
+            <property name="text" >
+             <string>Sign position:</string>
+            </property>
+           </widget>
           </item>
           <item>
-           <property name="text" >
-            <string>Before Quantity Money</string>
-           </property>
+           <widget class="QComboBox" name="m_cmbMonNegMonSignPos" >
+            <item>
+             <property name="text" >
+              <string>Parentheses Around</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>Before Quantity Money</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>After Quantity Money</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>Before Money</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>After Money</string>
+             </property>
+            </item>
+           </widget>
           </item>
           <item>
-           <property name="text" >
-            <string>After Quantity Money</string>
-           </property>
+           <spacer name="horizontalSpacer_2" >
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0" >
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
           </item>
-          <item>
-           <property name="text" >
-            <string>Before Money</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>After Money</string>
-           </property>
-          </item>
-         </widget>
-        </item>
-        <item>
-         <spacer name="horizontalSpacer_2" >
-          <property name="orientation" >
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0" >
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
+         </layout>
         </item>
        </layout>
-      </item>
-     </layout>
-    </widget>
+      </widget>
+     </item>
+    </layout>
    </item>
    <item>
-    <spacer>
+    <spacer name="verticalSpacer" >
      <property name="orientation" >
       <enum>Qt::Vertical</enum>
      </property>
