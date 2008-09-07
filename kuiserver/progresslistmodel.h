@@ -62,11 +62,25 @@ class ProgressListModel
     Q_OBJECT
 
 public:
+    enum ExtraModelRole
+    {
+        Capabilities = 33,
+        ApplicationName,
+        Icon,
+        SizeTotals,
+        SizeProcessed,
+        TimeTotals,
+        TimeElapsed,
+        Speed,
+        Percent,
+        Message,
+        DescFields,
+        State,
+        JobViewRole
+    };
+
     ProgressListModel(QObject *parent = 0);
-
     ~ProgressListModel();
-
-    UIServer::JobView *jobView(const QModelIndex &index) const;
 
     QModelIndex parent(const QModelIndex&) const;
 
@@ -117,10 +131,6 @@ public:
       */
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
 
-    virtual bool insertRows(int row, int count, const QModelIndex &parent = QModelIndex());
-
-    virtual bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex());
-
     /**
       * Sets the data contained on @p value to the given @p index and @p role
       *
@@ -131,7 +141,7 @@ public:
       */
     bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
 
-    void newJob(const QString &appName, const QString &appIcon, int capabilities, UIServer::JobView *jobView);
+    UIServer::JobView* newJob(const QString &appName, const QString &appIcon, int capabilities);
 
     void finishJob(UIServer::JobView *jobView);
 
@@ -157,7 +167,9 @@ private:
       */
     bool setData(int row, const QVariant &value, int role = Qt::EditRole);
 
-    QList<JobInfo> jobInfoList; /// @internal
+    QMap<UIServer::JobView*, JobInfo> jobInfoMap; /// @internal
 };
+
+Q_DECLARE_METATYPE(UIServer::JobView*);
 
 #endif // PROGRESSLISTMODEL_H

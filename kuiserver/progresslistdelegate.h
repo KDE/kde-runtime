@@ -20,36 +20,23 @@
 #ifndef PROGRESSLISTDELEGATE_H
 #define PROGRESSLISTDELEGATE_H
 
-#include <QItemDelegate>
 #include <QModelIndex>
+
+#include <kwidgetitemdelegate.h>
 
 class QListView;
 
 class ProgressListDelegate
-    : public QItemDelegate
+    : public KWidgetItemDelegate
 {
     Q_OBJECT
     Q_ENUMS(ProgressItemRole)
 
 public:
-    /**
-      * @brief Constructor for the progress delegate.
-      */
     explicit ProgressListDelegate(QObject *parent = 0, QListView *listView = 0);
-
-    /**
-     * @brief Destructor for the progress delegate.
-     */
     ~ProgressListDelegate();
 
-    /**
-      * @brief Paints the progress delegate.
-      */
     void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
-
-    /**
-      * @brief Gets the size of the progress delegate.
-      */
     QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
     void setSeparatorPixels(int separatorPixels);
@@ -60,21 +47,15 @@ public:
     void setMinimumContentWidth(int minimumContentWidth);
     void setEditorHeight(int editorHeight);
 
-    enum ProgressItemRole
-    {
-        Capabilities = 33,
-        ApplicationName,
-        Icon,
-        SizeTotals,
-        SizeProcessed,
-        TimeTotals,
-        TimeElapsed,
-        Speed,
-        Percent,
-        Message,
-        DescFields,
-        State
-    };
+protected:
+    virtual QList<QWidget*> createItemWidgets() const;
+    virtual void updateItemWidgets(const QList<QWidget*> widgets,
+                                   const QStyleOptionViewItem &option,
+                                   const QPersistentModelIndex &index) const;
+
+private Q_SLOTS:
+    void slotPauseResumeClicked();
+    void slotCancelClicked();
 
 private:
     class Private;

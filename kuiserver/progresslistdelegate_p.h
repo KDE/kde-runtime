@@ -32,14 +32,10 @@ class QModelIndex;
 class QString;
 
 class ProgressListDelegate::Private
-    : public QObject
 {
-    Q_OBJECT
-
 public:
-    Private(QObject *parent, QListView *listView)
-        : QObject(parent)
-        , listView(listView)
+    Private(QListView *listView)
+        : listView(listView)
     {
     }
 

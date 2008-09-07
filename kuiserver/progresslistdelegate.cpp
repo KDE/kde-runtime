@@ -33,52 +33,54 @@
 #include <kdebug.h>
 #include <kicon.h>
 #include <klocale.h>
+#include <kpushbutton.h>
 
+#define MARGIN 5
 #define MIN_CONTENT_PIXELS 100
 
 QString ProgressListDelegate::Private::getApplicationName(const QModelIndex &index) const
 {
-    return index.model()->data(index, ApplicationName).toString();
+    return index.model()->data(index, ProgressListModel::ApplicationName).toString();
 }
 
 QString ProgressListDelegate::Private::getIcon(const QModelIndex &index) const
 {
-    return index.model()->data(index, Icon).toString();
+    return index.model()->data(index, ProgressListModel::Icon).toString();
 }
 
 QString ProgressListDelegate::Private::getSizeTotals(const QModelIndex &index) const
 {
-    return index.model()->data(index, SizeTotals).toString();
+    return index.model()->data(index, ProgressListModel::SizeTotals).toString();
 }
 
 QString ProgressListDelegate::Private::getSizeProcessed(const QModelIndex &index) const
 {
-    return index.model()->data(index, SizeProcessed).toString();
+    return index.model()->data(index, ProgressListModel::SizeProcessed).toString();
 }
 
 qlonglong ProgressListDelegate::Private::getTimeTotals(const QModelIndex &index) const
 {
-    return index.model()->data(index, TimeTotals).toLongLong();
+    return index.model()->data(index, ProgressListModel::TimeTotals).toLongLong();
 }
 
 qlonglong ProgressListDelegate::Private::getTimeProcessed(const QModelIndex &index) const
 {
-    return index.model()->data(index, TimeElapsed).toLongLong();
+    return index.model()->data(index, ProgressListModel::TimeElapsed).toLongLong();
 }
 
 QString ProgressListDelegate::Private::getSpeed(const QModelIndex &index) const
 {
-    return index.model()->data(index, Speed).toString();
+    return index.model()->data(index, ProgressListModel::Speed).toString();
 }
 
 int ProgressListDelegate::Private::getPercent(const QModelIndex &index) const
 {
-    return index.model()->data(index, Percent).toInt();
+    return index.model()->data(index, ProgressListModel::Percent).toInt();
 }
 
 QString ProgressListDelegate::Private::getMessage(const QModelIndex &index) const
 {
-    return index.model()->data(index, Message).toString();
+    return index.model()->data(index, ProgressListModel::Message).toString();
 }
 
 QStyleOptionProgressBarV2 *ProgressListDelegate::Private::getProgressBar(const QModelIndex &index) const
@@ -94,8 +96,8 @@ int ProgressListDelegate::Private::getCurrentLeftMargin(int fontHeight) const
 }
 
 ProgressListDelegate::ProgressListDelegate(QObject *parent, QListView *listView)
-    : QItemDelegate(parent)
-    , d(new Private(parent, listView))
+    : KWidgetItemDelegate(listView, parent)
+    , d(new Private(listView))
 {
 }
 
@@ -195,6 +197,8 @@ void ProgressListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
     }
 
     painter->restore();
+
+    KWidgetItemDelegate::paintWidgets(painter, option, index);
 }
 
 QSize ProgressListDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
@@ -269,5 +273,89 @@ void ProgressListDelegate::setEditorHeight(int editorHeight)
     d->editorHeight = editorHeight;
 }
 
+QList<QWidget*> ProgressListDelegate::createItemWidgets() const
+{
+    QList<QWidget*> widgetList;
+
+    KPushButton *pauseResumeButton = new KPushButton(KIcon("media-playback-pause"), i18n("Pause"));
+    KPushButton *cancelButton = new KPushButton(KIcon("media-playback-stop"), i18n("Cancel"));
+
+    connect(pauseResumeButton, SIGNAL(clicked(bool)), this, SLOT(slotPauseResumeClicked()));
+    connect(cancelButton, SIGNAL(clicked(bool)), this, SLOT(slotCancelClicked()));
+
+    setBlockedEventTypes(pauseResumeButton, QList<QEvent::Type>() << QEvent::MouseButtonPress
+                            << QEvent::MouseButtonRelease << QEvent::MouseButtonDblClick);
+    setBlockedEventTypes(cancelButton, QList<QEvent::Type>() << QEvent::MouseButtonPress
+                            << QEvent::MouseButtonRelease << QEvent::MouseButtonDblClick);
+
+    widgetList << pauseResumeButton << cancelButton;
+
+    return widgetList;
+}
+
+void ProgressListDelegate::updateItemWidgets(const QList<QWidget*> widgets,
+                                             const QStyleOptionViewItem &option,
+                                             const QPersistentModelIndex &index) const
+{
+    if (!index.isValid()) {
+        return;
+    }
+
+    KPushButton *cancelButton = static_cast<KPushButton*>(widgets[1]);
+    KPushButton *pauseResumeButton = static_cast<KPushButton*>(widgets[0]);
+
+    KJob::Capabilities capabilities = (KJob::Capabilities) index.model()->data(index, ProgressListModel::Capabilities).toInt();
+    cancelButton->setEnabled(capabilities & KJob::Killable);
+    pauseResumeButton->setEnabled(capabilities & KJob::Suspendable);
+
+    JobInfo::State state = (JobInfo::State) index.model()->data(index, ProgressListModel::State).toInt();
+    switch (state) {
+        case JobInfo::Running:
+            pauseResumeButton->setText(i18n("Pause"));
+            pauseResumeButton->setIcon(KIcon("media-playback-pause"));
+            break;
+        case JobInfo::Suspended:
+            pauseResumeButton->setText(i18n("Resume"));
+            pauseResumeButton->setIcon(KIcon("media-playback-start"));
+            break;
+    }
+
+    QSize cancelButtonSizeHint = cancelButton->sizeHint();
+    cancelButton->resize(cancelButtonSizeHint);
+    cancelButton->move(option.rect.width() - MARGIN - cancelButtonSizeHint.width(), option.rect.height() - MARGIN - cancelButtonSizeHint.height());
+
+    QSize pauseResumeButtonSizeHint = pauseResumeButton->sizeHint();
+    pauseResumeButton->resize(pauseResumeButtonSizeHint);
+    pauseResumeButton->move(option.rect.width() - MARGIN * 2 - pauseResumeButtonSizeHint.width() - cancelButtonSizeHint.width(), option.rect.height() - MARGIN - pauseResumeButtonSizeHint.height());
+}
+
+void ProgressListDelegate::slotPauseResumeClicked()
+{
+    const QModelIndex index = focusedIndex();
+    UIServer::JobView *jobView = index.model()->data(index, ProgressListModel::JobViewRole).value<UIServer::JobView*>();
+    JobInfo::State state = (JobInfo::State) index.model()->data(index, ProgressListModel::State).toInt();
+    if (jobView) {
+        switch (state) {
+            case JobInfo::Running:
+                emit jobView->suspendRequested();
+                break;
+            case JobInfo::Suspended:
+                emit jobView->resumeRequested();
+                break;
+            default:
+                Q_ASSERT(0); // this point should have never been reached
+                break;
+        }
+    }
+}
+
+void ProgressListDelegate::slotCancelClicked()
+{
+    const QModelIndex index = focusedIndex();
+    UIServer::JobView *jobView = index.model()->data(index, ProgressListModel::JobViewRole).value<UIServer::JobView*>();
+    if (jobView) {
+        emit jobView->cancelRequested();
+    }
+}
+
 #include "progresslistdelegate.moc"
-#include "progresslistdelegate_p.moc"

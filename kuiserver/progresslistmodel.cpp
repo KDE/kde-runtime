@@ -18,7 +18,6 @@
   */
 
 #include "progresslistmodel.h"
-#include "progresslistdelegate.h"
 
 #include <QStyleOptionProgressBarV2>
 
@@ -31,18 +30,10 @@ ProgressListModel::ProgressListModel(QObject *parent)
 
 ProgressListModel::~ProgressListModel()
 {
-    foreach (const JobInfo &it, jobInfoList)
+    foreach (const JobInfo &it, jobInfoMap.values())
     {
         delete it.progressBar;
     }
-}
-
-UIServer::JobView *ProgressListModel::jobView(const QModelIndex &index) const
-{
-    if (!index.isValid())
-        return 0;
-
-    return jobInfoList[index.row()].jobView;
 }
 
 QModelIndex ProgressListModel::parent(const QModelIndex&) const
@@ -59,41 +50,44 @@ QVariant ProgressListModel::data(const QModelIndex &index, int role) const
 
     switch (role)
     {
-        case ProgressListDelegate::Capabilities:
-            result = jobInfoList[index.row()].capabilities;
+        case Capabilities:
+            result = jobInfoMap[static_cast<UIServer::JobView*>(index.internalPointer())].capabilities;
             break;
-        case ProgressListDelegate::ApplicationName:
-            result = jobInfoList[index.row()].applicationName;
+        case ApplicationName:
+            result = jobInfoMap[static_cast<UIServer::JobView*>(index.internalPointer())].applicationName;
             break;
-        case ProgressListDelegate::Icon:
-            result = jobInfoList[index.row()].icon;
+        case Icon:
+            result = jobInfoMap[static_cast<UIServer::JobView*>(index.internalPointer())].icon;
             break;
-        case ProgressListDelegate::SizeTotals:
-            result = jobInfoList[index.row()].sizeTotals;
+        case SizeTotals:
+            result = jobInfoMap[static_cast<UIServer::JobView*>(index.internalPointer())].sizeTotals;
             break;
-        case ProgressListDelegate::SizeProcessed:
-            result = jobInfoList[index.row()].sizeProcessed;
+        case SizeProcessed:
+            result = jobInfoMap[static_cast<UIServer::JobView*>(index.internalPointer())].sizeProcessed;
             break;
-        case ProgressListDelegate::TimeTotals:
-            result = jobInfoList[index.row()].timeTotals;
+        case TimeTotals:
+            result = jobInfoMap[static_cast<UIServer::JobView*>(index.internalPointer())].timeTotals;
             break;
-        case ProgressListDelegate::TimeElapsed:
-            result = jobInfoList[index.row()].timeElapsed;
+        case TimeElapsed:
+            result = jobInfoMap[static_cast<UIServer::JobView*>(index.internalPointer())].timeElapsed;
             break;
-        case ProgressListDelegate::Speed:
-            result = jobInfoList[index.row()].speed;
+        case Speed:
+            result = jobInfoMap[static_cast<UIServer::JobView*>(index.internalPointer())].speed;
             break;
-        case ProgressListDelegate::Percent:
-            result = jobInfoList[index.row()].percent;
+        case Percent:
+            result = jobInfoMap[static_cast<UIServer::JobView*>(index.internalPointer())].percent;
             break;
-        case ProgressListDelegate::Message:
-            result = jobInfoList[index.row()].message;
+        case Message:
+            result = jobInfoMap[static_cast<UIServer::JobView*>(index.internalPointer())].message;
             break;
-        case ProgressListDelegate::State:
-            result = jobInfoList[index.row()].state;
+        case State:
+            result = jobInfoMap[static_cast<UIServer::JobView*>(index.internalPointer())].state;
+            break;
+        case JobViewRole:
+            result = QVariant::fromValue<UIServer::JobView*>(jobInfoMap[static_cast<UIServer::JobView*>(index.internalPointer())].jobView);
             break;
         default:
-            return result;
+            break;
     }
 
     return result;
@@ -120,7 +114,7 @@ QModelIndex ProgressListModel::index(int row, int column, const QModelIndex &par
 QModelIndex ProgressListModel::indexForJob(UIServer::JobView *jobView) const
 {
     int i = 0;
-    foreach (const JobInfo &it, jobInfoList)
+    foreach (const JobInfo &it, jobInfoMap.values())
     {
         if (it.jobView == jobView)
             return createIndex(i, 0, 0);
@@ -140,53 +134,7 @@ int ProgressListModel::columnCount(const QModelIndex &parent) const
 
 int ProgressListModel::rowCount(const QModelIndex &parent) const
 {
-    return parent.isValid() ? 0 : jobInfoList.count();
-}
-
-bool ProgressListModel::insertRows(int row, int count, const QModelIndex &parent)
-{
-    Q_UNUSED(count);
-    Q_UNUSED(parent);
-
-    beginInsertRows(QModelIndex(), row, row);
-
-    JobInfo newJob;
-
-    newJob.jobView = 0;
-    newJob.applicationName.clear();
-    newJob.icon.clear();
-    newJob.sizeTotals.clear();
-    newJob.sizeProcessed.clear();
-    newJob.timeElapsed = -1;
-    newJob.timeTotals = -1;
-    newJob.speed.clear();
-    newJob.percent = -1;
-    newJob.message.clear();
-    newJob.progressBar = 0;
-    newJob.state = JobInfo::Running;
-
-    jobInfoList.append(newJob);
-
-    endInsertRows();
-
-    return true;
-}
-
-bool ProgressListModel::removeRows(int row, int count, const QModelIndex &parent)
-{
-    Q_UNUSED(count);
-    Q_UNUSED(parent);
-
-    if (row >= rowCount())
-        return false;
-
-    beginRemoveRows(QModelIndex(), row, row);
-
-    jobInfoList.removeAt(row);
-
-    endRemoveRows();
-
-    return true;
+    return parent.isValid() ? 0 : jobInfoMap.count();
 }
 
 bool ProgressListModel::setData(const QModelIndex &index, const QVariant &value, int role)
@@ -196,48 +144,48 @@ bool ProgressListModel::setData(const QModelIndex &index, const QVariant &value,
 
     switch (role)
     {
-        case ProgressListDelegate::Capabilities:
-            jobInfoList[index.row()].capabilities = value.toInt();
+        case Capabilities:
+            jobInfoMap[static_cast<UIServer::JobView*>(index.internalPointer())].capabilities = value.toInt();
             break;
-        case ProgressListDelegate::ApplicationName:
-            jobInfoList[index.row()].applicationName = value.toString();
+        case ApplicationName:
+            jobInfoMap[static_cast<UIServer::JobView*>(index.internalPointer())].applicationName = value.toString();
             break;
-        case ProgressListDelegate::Icon:
-            jobInfoList[index.row()].icon = value.toString();
+        case Icon:
+            jobInfoMap[static_cast<UIServer::JobView*>(index.internalPointer())].icon = value.toString();
             break;
-        case ProgressListDelegate::SizeTotals:
-            jobInfoList[index.row()].sizeTotals = value.toString();
+        case SizeTotals:
+            jobInfoMap[static_cast<UIServer::JobView*>(index.internalPointer())].sizeTotals = value.toString();
             break;
-        case ProgressListDelegate::SizeProcessed:
-            jobInfoList[index.row()].sizeProcessed = value.toString();
+        case SizeProcessed:
+            jobInfoMap[static_cast<UIServer::JobView*>(index.internalPointer())].sizeProcessed = value.toString();
             break;
-        case ProgressListDelegate::TimeTotals:
-            jobInfoList[index.row()].timeTotals = value.toLongLong();
+        case TimeTotals:
+            jobInfoMap[static_cast<UIServer::JobView*>(index.internalPointer())].timeTotals = value.toLongLong();
             break;
-        case ProgressListDelegate::TimeElapsed:
-            jobInfoList[index.row()].timeElapsed = value.toLongLong();
+        case TimeElapsed:
+            jobInfoMap[static_cast<UIServer::JobView*>(index.internalPointer())].timeElapsed = value.toLongLong();
             break;
-        case ProgressListDelegate::Speed:
-            jobInfoList[index.row()].speed = value.toString();
+        case Speed:
+            jobInfoMap[static_cast<UIServer::JobView*>(index.internalPointer())].speed = value.toString();
             break;
-        case ProgressListDelegate::Percent:
-            if (!jobInfoList[index.row()].progressBar)
+        case Percent:
+            if (!jobInfoMap[static_cast<UIServer::JobView*>(index.internalPointer())].progressBar)
             {
-                jobInfoList[index.row()].progressBar = new QStyleOptionProgressBarV2();
-                jobInfoList[index.row()].progressBar->maximum = 100;
-                jobInfoList[index.row()].progressBar->minimum = 0;
+                jobInfoMap[static_cast<UIServer::JobView*>(index.internalPointer())].progressBar = new QStyleOptionProgressBarV2();
+                jobInfoMap[static_cast<UIServer::JobView*>(index.internalPointer())].progressBar->maximum = 100;
+                jobInfoMap[static_cast<UIServer::JobView*>(index.internalPointer())].progressBar->minimum = 0;
             }
-            jobInfoList[index.row()].percent = value.toInt();
-            if (jobInfoList[index.row()].progressBar)
+            jobInfoMap[static_cast<UIServer::JobView*>(index.internalPointer())].percent = value.toInt();
+            if (jobInfoMap[static_cast<UIServer::JobView*>(index.internalPointer())].progressBar)
             {
-                jobInfoList[index.row()].progressBar->progress = jobInfoList[index.row()].percent;
+                jobInfoMap[static_cast<UIServer::JobView*>(index.internalPointer())].progressBar->progress = jobInfoMap[static_cast<UIServer::JobView*>(index.internalPointer())].percent;
             }
             break;
-        case ProgressListDelegate::Message:
-            jobInfoList[index.row()].message = value.toString();
+        case Message:
+            jobInfoMap[static_cast<UIServer::JobView*>(index.internalPointer())].message = value.toString();
             break;
-        case ProgressListDelegate::State:
-            jobInfoList[index.row()].state = (JobInfo::State) value.toInt();
+        case State:
+            jobInfoMap[static_cast<UIServer::JobView*>(index.internalPointer())].state = (JobInfo::State) value.toInt();
             break;
         default:
             return false;
@@ -249,32 +197,47 @@ bool ProgressListModel::setData(const QModelIndex &index, const QVariant &value,
     return true;
 }
 
-void ProgressListModel::newJob(const QString &appName, const QString &appIcon, int capabilities, UIServer::JobView *jobView)
+UIServer::JobView* ProgressListModel::newJob(const QString &appName, const QString &appIcon, int capabilities)
 {
-    int newRow = rowCount();
-
     insertRow(rowCount());
-    setData(newRow, appName, ProgressListDelegate::ApplicationName);
-    setData(newRow, appIcon, ProgressListDelegate::Icon);
-    setData(newRow, capabilities, ProgressListDelegate::Capabilities);
-    jobInfoList[newRow].jobView = jobView;
+
+    JobInfo newJob;
+    newJob.jobView = new UIServer::JobView();
+    newJob.applicationName.clear();
+    newJob.icon.clear();
+    newJob.sizeTotals.clear();
+    newJob.sizeProcessed.clear();
+    newJob.timeElapsed = -1;
+    newJob.timeTotals = -1;
+    newJob.speed.clear();
+    newJob.percent = -1;
+    newJob.message.clear();
+    newJob.progressBar = 0;
+    newJob.state = JobInfo::Running;
+    jobInfoMap.insert(newJob.jobView, newJob);
+
+    return newJob.jobView;
 }
 
 
 void ProgressListModel::finishJob(UIServer::JobView *jobView)
 {
+    beginRemoveRows(QModelIndex(), rowCount() - 1, rowCount() - 1);
+
     QModelIndex indexToRemove = indexForJob(jobView);
 
     if (indexToRemove.isValid())
-        removeRow(indexToRemove.row());
+        jobInfoMap.remove(jobView);
+
+    endRemoveRows();
 }
 
 QPair<QString, QString> ProgressListModel::getDescriptionField(const QModelIndex &index, uint id)
 {
-    if (!index.isValid() || !jobInfoList[index.row()].descFields.contains(id))
+    if (!index.isValid() || !jobInfoMap[static_cast<UIServer::JobView*>(index.internalPointer())].descFields.contains(id))
         return QPair<QString, QString>(QString(), QString());
 
-    return jobInfoList[index.row()].descFields[id];
+    return jobInfoMap[static_cast<UIServer::JobView*>(index.internalPointer())].descFields[id];
 }
 
 bool ProgressListModel::setDescriptionField(const QModelIndex &index, uint id, const QString &name, const QString &value)
@@ -282,15 +245,15 @@ bool ProgressListModel::setDescriptionField(const QModelIndex &index, uint id, c
     if (!index.isValid())
         return false;
 
-    if (jobInfoList[index.row()].descFields.contains(id))
+    if (jobInfoMap[static_cast<UIServer::JobView*>(index.internalPointer())].descFields.contains(id))
     {
-        jobInfoList[index.row()].descFields[id].first = name;
-        jobInfoList[index.row()].descFields[id].second = value;
+        jobInfoMap[static_cast<UIServer::JobView*>(index.internalPointer())].descFields[id].first = name;
+        jobInfoMap[static_cast<UIServer::JobView*>(index.internalPointer())].descFields[id].second = value;
     }
     else
     {
         QPair<QString, QString> descField(name, value);
-        jobInfoList[index.row()].descFields.insert(id, descField);
+        jobInfoMap[static_cast<UIServer::JobView*>(index.internalPointer())].descFields.insert(id, descField);
     }
 
     return true;
@@ -301,16 +264,16 @@ void ProgressListModel::clearDescriptionField(const QModelIndex &index, uint id)
     if (!index.isValid())
         return;
 
-    if (jobInfoList[index.row()].descFields.contains(id))
+    if (jobInfoMap[static_cast<UIServer::JobView*>(index.internalPointer())].descFields.contains(id))
     {
-        jobInfoList[index.row()].descFields.remove(id);
+        jobInfoMap[static_cast<UIServer::JobView*>(index.internalPointer())].descFields.remove(id);
     }
 }
 
 JobInfo::State ProgressListModel::state(const QModelIndex &index) const
 {
     if (index.isValid()) {
-        return ((JobInfo::State) data(index, ProgressListDelegate::State).toInt());
+        return ((JobInfo::State) data(index, State).toInt());
     }
 
     return JobInfo::InvalidState;
@@ -318,7 +281,7 @@ JobInfo::State ProgressListModel::state(const QModelIndex &index) const
 
 QStyleOptionProgressBarV2 *ProgressListModel::progressBar(const QModelIndex &index) const
 {
-    return jobInfoList[index.row()].progressBar;
+    return jobInfoMap[static_cast<UIServer::JobView*>(index.internalPointer())].progressBar;
 }
 
 bool ProgressListModel::setData(int row, const QVariant &value, int role)

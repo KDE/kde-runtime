@@ -67,9 +67,6 @@ protected:
 private Q_SLOTS:
     void showConfigurationDialog();
     void slotServiceOwnerChanged(const QString &name, const QString &oldOwner, const QString &newOwner);
-    void slotCancelClicked();
-    void slotPauseResumeClicked();
-    void slotSelectionChanged(const QItemSelection &selection);
 
 private:
     UIServer();
@@ -85,9 +82,6 @@ private:
 
     QToolBar *toolBar;
     KLineEdit *searchText;
-
-    KPushButton *cancelButton;
-    KPushButton *pauseResumeButton;
 
     static uint s_jobId;
     static UIServer *s_uiserver;
@@ -124,7 +118,7 @@ Q_SIGNALS:
 private:
     QDBusObjectPath m_objectPath;
 
-    friend class UIServer;
+    friend class ProgressListDelegate;
 };
 
 #endif // UISERVER_H

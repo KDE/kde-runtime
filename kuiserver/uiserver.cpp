@@ -68,14 +68,13 @@ void UIServer::JobView::terminate(const QString &errorMessage)
 {
     QModelIndex index = s_uiserver->m_progressListModel->indexForJob(this);
 
-    s_uiserver->m_progressListModel->setData(index, JobInfo::Cancelled, ProgressListDelegate::State);
+    s_uiserver->m_progressListModel->setData(index, JobInfo::Cancelled, ProgressListModel::State);
 
     if (errorMessage.isNull())
     {
-        s_uiserver->m_progressListFinishedModel->newJob(s_uiserver->m_progressListModel->data(index, ProgressListDelegate::ApplicationName).toString(),
-                                                        s_uiserver->m_progressListModel->data(index, ProgressListDelegate::Icon).toString(),
-                                                        s_uiserver->m_progressListModel->data(index, ProgressListDelegate::Capabilities).toInt(),
-                                                        0);
+        s_uiserver->m_progressListFinishedModel->newJob(s_uiserver->m_progressListModel->data(index, ProgressListModel::ApplicationName).toString(),
+                                                        s_uiserver->m_progressListModel->data(index, ProgressListModel::Icon).toString(),
+                                                        s_uiserver->m_progressListModel->data(index, ProgressListModel::Capabilities).toInt());
     }
 
     s_uiserver->m_progressListModel->finishJob(this);
@@ -88,24 +87,7 @@ void UIServer::JobView::setSuspended(bool suspended)
     QModelIndex currentIndex = s_uiserver->listProgress->currentIndex();
 
     s_uiserver->m_progressListModel->setData(currentIndex, suspended ? JobInfo::Suspended
-                                                                     : JobInfo::Running, ProgressListDelegate::State);
-
-    if (currentIndex.isValid() &&
-        s_uiserver->listProgress->selectionModel()->isSelected(currentIndex))
-    {
-        JobView *jobView = s_uiserver->m_progressListModel->jobView(currentIndex);
-
-        if (s_uiserver->m_progressListModel->state(currentIndex) == JobInfo::Running)
-        {
-            s_uiserver->pauseResumeButton->setText(i18n("Pause"));
-            s_uiserver->pauseResumeButton->setIcon(KIcon("media-playback-pause"));
-        }
-        else
-        {
-            s_uiserver->pauseResumeButton->setText(i18n("Resume"));
-            s_uiserver->pauseResumeButton->setIcon(KIcon("media-playback-start"));
-        }
-    }
+                                                                     : JobInfo::Running, ProgressListModel::State);
 }
 
 void UIServer::JobView::setTotalAmount(qlonglong amount, const QString &unit)
@@ -114,13 +96,13 @@ void UIServer::JobView::setTotalAmount(qlonglong amount, const QString &unit)
 
     if (unit == "bytes") {
         s_uiserver->m_progressListModel->setData(index, amount ? KGlobal::locale()->formatByteSize(amount)
-                                                               : QString(), ProgressListDelegate::SizeTotals);
+                                                               : QString(), ProgressListModel::SizeTotals);
     } else if (unit == "files") {
         s_uiserver->m_progressListModel->setData(index, amount ? i18np("%1 file", "%1 files", amount)
-                                                               : QString(), ProgressListDelegate::SizeTotals);
+                                                               : QString(), ProgressListModel::SizeTotals);
     } else if (unit == "dirs") {
         s_uiserver->m_progressListModel->setData(index, amount ? i18np("%1 folder", "%1 folders", amount)
-                                                               : QString(), ProgressListDelegate::SizeTotals);
+                                                               : QString(), ProgressListModel::SizeTotals);
     }
 }
 
@@ -130,13 +112,13 @@ void UIServer::JobView::setProcessedAmount(qlonglong amount, const QString &unit
 
     if (unit == "bytes") {
         s_uiserver->m_progressListModel->setData(index, amount ? KGlobal::locale()->formatByteSize(amount)
-                                                               : QString(), ProgressListDelegate::SizeProcessed);
+                                                               : QString(), ProgressListModel::SizeProcessed);
     } else if (unit == "files") {
         s_uiserver->m_progressListModel->setData(index, amount ? i18np("%1 file", "%1 files", amount)
-                                                               : QString(), ProgressListDelegate::SizeProcessed);
+                                                               : QString(), ProgressListModel::SizeProcessed);
     } else if (unit == "dirs") {
         s_uiserver->m_progressListModel->setData(index, amount ? i18np("%1 folder", "%1 folders", amount)
-                                                               : QString(), ProgressListDelegate::SizeProcessed);
+                                                               : QString(), ProgressListModel::SizeProcessed);
     }
 }
 
@@ -145,7 +127,7 @@ void UIServer::JobView::setPercent(uint percent)
     QModelIndex index = s_uiserver->m_progressListModel->indexForJob(this);
 
     if (index.isValid())
-        s_uiserver->m_progressListModel->setData(index, percent, ProgressListDelegate::Percent);
+        s_uiserver->m_progressListModel->setData(index, percent, ProgressListModel::Percent);
 }
 
 void UIServer::JobView::setSpeed(qlonglong bytesPerSecond)
@@ -154,7 +136,7 @@ void UIServer::JobView::setSpeed(qlonglong bytesPerSecond)
 
     if (index.isValid())
         s_uiserver->m_progressListModel->setData(index, bytesPerSecond ? KGlobal::locale()->formatByteSize(bytesPerSecond)
-                                                                       : QString(), ProgressListDelegate::Speed);
+                                                                       : QString(), ProgressListModel::Speed);
 }
 
 void UIServer::JobView::setInfoMessage(const QString &infoMessage)
@@ -162,7 +144,7 @@ void UIServer::JobView::setInfoMessage(const QString &infoMessage)
     QModelIndex index = s_uiserver->m_progressListModel->indexForJob(this);
 
     if (index.isValid())
-        s_uiserver->m_progressListModel->setData(index, infoMessage, ProgressListDelegate::Message);
+        s_uiserver->m_progressListModel->setData(index, infoMessage, ProgressListModel::Message);
 }
 
 bool UIServer::JobView::setDescriptionField(uint number, const QString &name, const QString &value)
@@ -239,24 +221,6 @@ UIServer::UIServer()
 
     layout->addWidget(listProgress);
 
-    QHBoxLayout *horizLayout = new QHBoxLayout;
-
-    cancelButton = new KPushButton(KIcon("media-playback-stop"), i18n("Cancel"), this);
-    pauseResumeButton = new KPushButton(KIcon("media-playback-pause"), i18n("Pause"), this);
-
-    connect(cancelButton, SIGNAL(clicked(bool)), this, SLOT(slotCancelClicked()));
-    connect(pauseResumeButton, SIGNAL(clicked(bool)), this, SLOT(slotPauseResumeClicked()));
-
-    cancelButton->setEnabled(false);
-    pauseResumeButton->setEnabled(false);
-
-    horizLayout->addStretch();
-    horizLayout->addWidget(pauseResumeButton);
-    horizLayout->addSpacing(KDialog::spacingHint());
-    horizLayout->addWidget(cancelButton);
-
-    layout->addLayout(horizLayout);
-
     tabWidget->addTab(centralWidget, i18n("In Progress"));
     //tabWidget->addTab(listFinished, i18n("Finished"));
 
@@ -289,11 +253,6 @@ UIServer::UIServer()
     listFinished->setItemDelegate(progressListDelegateFinished);
 
     applySettings();
-
-    connect(listProgress->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&,const QItemSelection&)), this,
-            SLOT(slotSelectionChanged(const QItemSelection&)));
-
-    hide();
 }
 
 UIServer::~UIServer()
@@ -317,9 +276,7 @@ QDBusObjectPath UIServer::requestView(const QString &appName, const QString &app
     // reporting problems.
     if (!s_jobId) s_jobId++;
 
-    JobView *jobView = new JobView();
-
-    m_progressListModel->newJob(appName, appIconName, capabilities, jobView);
+    JobView *jobView = m_progressListModel->newJob(appName, appIconName, capabilities);
 
     return jobView->objectPath();
 }
@@ -340,7 +297,7 @@ void UIServer::updateConfiguration()
 void UIServer::applySettings()
 {
      KSystemTrayIcon *m_systemTray = new KSystemTrayIcon(this);
-     m_systemTray->setIcon(KSystemTrayIcon::loadIcon("display")); // found something better ? (ereslibre)
+     m_systemTray->setIcon(KSystemTrayIcon::loadIcon("display"));
      m_systemTray->show();
 }
 
@@ -373,16 +330,16 @@ void UIServer::slotServiceOwnerChanged(const QString &name, const QString &oldOw
     kDebug() << "dbus name: " << name << " oldowner: " << oldOwner << " newowner: " << newOwner;
 }
 
-void UIServer::slotCancelClicked()
-{
-    if (listProgress->currentIndex().isValid())
-    {
-        JobView *jobView = m_progressListModel->jobView(listProgress->currentIndex());
-
-        emit jobView->cancelRequested();
-    }
-}
-
+// void UIServer::slotCancelClicked()
+// {
+//     if (listProgress->currentIndex().isValid())
+//     {
+//         JobView *jobView = m_progressListModel->jobView(listProgress->currentIndex());
+// 
+//         emit jobView->cancelRequested();
+//     }
+// }
+/*
 void UIServer::slotPauseResumeClicked()
 {
     if (listProgress->currentIndex().isValid())
@@ -402,43 +359,7 @@ void UIServer::slotPauseResumeClicked()
             pauseResumeButton->setIcon(KIcon("media-playback-pause"));
         }
     }
-}
-
-void UIServer::slotSelectionChanged(const QItemSelection &selection)
-{
-    bool enableCancelButton = false;
-    bool enableResumeButton = false;
-
-    if (selection.indexes().count())
-    {
-        JobView *jobView = m_progressListModel->jobView(listProgress->currentIndex());
-
-        if ((m_progressListModel->state(listProgress->currentIndex()) == JobInfo::Running) &&
-            ((m_progressListModel->data(listProgress->currentIndex(), ProgressListDelegate::Capabilities).toInt() &
-              KJob::Suspendable)))
-        {
-            pauseResumeButton->setText(i18n("Pause"));
-            pauseResumeButton->setIcon(KIcon("media-playback-pause"));
-            enableResumeButton = true;
-        }
-        else if ((m_progressListModel->data(listProgress->currentIndex(), ProgressListDelegate::Capabilities).toInt() &
-                  KJob::Suspendable))
-        {
-            pauseResumeButton->setText(i18n("Resume"));
-            pauseResumeButton->setIcon(KIcon("media-playback-start"));
-            enableResumeButton = true;
-        }
-
-        if ((m_progressListModel->data(listProgress->currentIndex(), ProgressListDelegate::Capabilities).toInt() &
-             KJob::Killable))
-        {
-            enableCancelButton = true;
-        }
-    }
-
-    cancelButton->setEnabled(enableCancelButton);
-    pauseResumeButton->setEnabled(enableResumeButton);
-}
+}*/
 
 
 /// ===========================================================
