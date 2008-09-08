@@ -151,7 +151,7 @@ bool CfgWm::tryWmLaunch()
     wmDialog->setButtonGuiItem( KDialog::Ok, KGuiItem( i18n( "&Accept Change" ), "dialog-ok" ));
     wmDialog->setButtonGuiItem( KDialog::Cancel, KGuiItem( i18n( "&Revert to Previous" ), "dialog-cancel" ));
     QLabel *label = new QLabel(
-        i18n( "The configured window manager has been launched.\n"
+        i18n( "The configured window manager is being launched.\n"
             "Please check it has started properly and confirm the change.\n"
             "The launch will be automatically reverted in 20 seconds." ), wmDialog );
     label->setWordWrap( true );
