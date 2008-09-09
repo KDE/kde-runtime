@@ -21,6 +21,7 @@ Name[te]=Nepomukఫైల్ వాచ్
 Name[zh_CN]=Nepomuk 文件监视
 Name[zh_TW]=Nepomuk 檔案監控
 Comment=The Nepomuk file watch service for monitoring file changes
+Comment[be@latin]=Słužba „Nepomuk”, jakaja naziraje za źmienami ŭ fajłach
 Comment[bg]=Услугата NepomukFileWatch  следи за промяна във файловете
 Comment[ca]=El servei de control de fitxers del Nepomuk per fer un seguiment dels canvis en fitxers
 Comment[csb]=Ùsłëżnota Nepomùka mònitorëjącô zjinaczi lopków

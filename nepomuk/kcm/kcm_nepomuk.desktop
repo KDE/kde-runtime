@@ -9,6 +9,7 @@ X-KDE-ParentApp=kcontrol
 X-KDE-System-Settings-Parent-Category=advanced-user-settings
 
 Name=Desktop Search
+Name[be@latin]=Pošuk
 Name[el]=Αναζήτηση επιφάνειας εργασίας
 Name[et]=Töölauaotsing
 Name[ga]=Cuardach Deisce
@@ -30,6 +31,7 @@ Name[uk]=Стільничний пошук
 Name[zh_TW]=桌面搜尋
 Comment=Nepomuk/Strigi Server Configuration
 Comment[af]=Nepomuk/Strigi bedienerkonfigurasie
+Comment[be@latin]=Nałady servera „Nepomuk”/„Strigi”
 Comment[bg]=Настройване на Nepomuk/Strigi
 Comment[bn_IN]=Nepomuk/Strigi সার্ভার কনফিগারেশন
 Comment[ca]=Configuració del servidor Nepomuk/Strigi

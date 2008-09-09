@@ -1,6 +1,7 @@
 [Global]
 IconName=preferences-desktop-sound
 Comment=Phonon: KDE's Multimedia Library
+Comment[be@latin]=Phonon: multymedyjnaja biblijateka systemy KDE
 Comment[bg]=Phonon: мултимедийната библиотека на KDE
 Comment[bn_IN]=Phonon: KDE-র মাল্টিমিডিয়া লাইব্রেরি
 Comment[ca]=Phonon: biblioteca multimèdia del KDE
@@ -50,6 +51,7 @@ Comment[zh_TW]=Phonon：KDE 的多媒體函式庫
 
 [Context/Application]
 Name=Application
+Name[be@latin]=Aplikacyja
 Name[bg]=Програма
 Name[bn_IN]=অ্যাপ্লিকেশন
 Name[ca]=Aplicació
