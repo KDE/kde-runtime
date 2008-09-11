@@ -15,7 +15,7 @@ endif(NOT WIN32)
 
 if(NOT APPLE)
   set(kcm_componentchooser_PART_SRCS ${kcm_componentchooser_PART_SRCS}
-     componentchooser_wm.cpp )
+     componentchooserwm.cpp )
 endif(NOT APPLE)
 
 
