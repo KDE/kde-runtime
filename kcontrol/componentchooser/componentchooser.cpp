@@ -20,6 +20,8 @@
 #include "componentchooser.moc"
 #ifdef Q_OS_UNIX
 #include "componentchooserterminal.h"
+#endif
+#ifndef Q_WS_X11
 #include "componentchooserwm.h"
 #endif
 
@@ -386,6 +388,7 @@ void ComponentChooser::slotServiceSelected(QListWidgetItem* it) {
 		}
 
 	}
+#ifndef Q_WS_MAC
 	else if (cfgType=="internal_wm")
 	{
 		if (!(configWidget && qobject_cast<CfgWm*>(configWidget)))
@@ -394,6 +397,7 @@ void ComponentChooser::slotServiceSelected(QListWidgetItem* it) {
 		}
 
 	}
+#endif
 #endif
 	else if (cfgType=="internal_browser")
 	{

@@ -10,8 +10,13 @@ set(kcm_componentchooser_PART_SRCS componentchooser.cpp kcm_componentchooser.cpp
 
 if(NOT WIN32)
   set(kcm_componentchooser_PART_SRCS ${kcm_componentchooser_PART_SRCS}
-    componentchooserterminal.cpp componentchooserwm.cpp ktimerdialog.cpp)
+    componentchooserterminal.cpp ktimerdialog.cpp)
 endif(NOT WIN32)
+
+if(NOT APPLE)
+  set(kcm_componentchooser_PART_SRCS ${kcm_componentchooser_PART_SRCS}
+     componentchooser_wm.cpp )
+endif(NOT APPLE)
 
 
 kde4_add_ui_files(kcm_componentchooser_PART_SRCS browserconfig_ui.ui emailclientconfig_ui.ui componentchooser_ui.ui componentconfig_ui.ui) 
