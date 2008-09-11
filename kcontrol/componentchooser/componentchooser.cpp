@@ -21,7 +21,7 @@
 #ifdef Q_OS_UNIX
 #include "componentchooserterminal.h"
 #endif
-#ifndef Q_WS_X11
+#ifdef Q_WS_X11
 #include "componentchooserwm.h"
 #endif
 
