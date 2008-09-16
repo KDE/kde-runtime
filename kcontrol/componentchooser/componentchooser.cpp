@@ -52,8 +52,11 @@ public:
 
 //BEGIN  General kpart based Component selection
 
-CfgComponent::CfgComponent(QWidget *parent):ComponentConfig_UI(parent),CfgPlugin(){
-	connect(ComponentSelector,SIGNAL(activated(const QString&)),this,SLOT(slotComponentChanged(const QString&)));
+CfgComponent::CfgComponent(QWidget *parent)
+    : QWidget(parent), Ui::ComponentConfig_UI(), CfgPlugin()
+{
+    setupUi( this );
+    connect(ComponentSelector,SIGNAL(activated(const QString&)),this,SLOT(slotComponentChanged(const QString&)));
 }
 
 CfgComponent::~CfgComponent()
@@ -130,10 +133,13 @@ void CfgComponent::defaults()
 
 //BEGIN Browser Configuration
 
-CfgBrowser::CfgBrowser(QWidget *parent) : BrowserConfig_UI(parent),CfgPlugin(){
-        connect(lineExec,SIGNAL(textChanged(const QString &)),this,SLOT(configChanged()));
-	connect(radioKIO,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
-	connect(radioExec,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
+CfgBrowser::CfgBrowser(QWidget *parent)
+    : QWidget(parent), Ui::BrowserConfig_UI(),CfgPlugin()
+{
+    setupUi(this);
+    connect(lineExec,SIGNAL(textChanged(const QString &)),this,SLOT(configChanged()));
+    connect(radioKIO,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
+    connect(radioExec,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
     connect(btnSelectBrowser,SIGNAL(clicked()),this, SLOT(selectBrowser()));
 }
 
@@ -220,8 +226,9 @@ void CfgBrowser::selectBrowser()
 //END Terminal Emulator Configuration
 
 ComponentChooser::ComponentChooser(QWidget *parent):
-	ComponentChooser_UI(parent), configWidget(0) {
-
+    QWidget(parent), Ui::ComponentChooser_UI(), configWidget(0)
+{
+	setupUi(this);
 	static_cast<QGridLayout*>(layout())->setRowStretch(1, 1);
 	somethingChanged=false;
 	latestEditedService="";

@@ -36,7 +36,10 @@
 #include <kconfiggroup.h>
 
 
-CfgTerminalEmulator::CfgTerminalEmulator(QWidget *parent):TerminalEmulatorConfig_UI(parent),CfgPlugin(){
+CfgTerminalEmulator::CfgTerminalEmulator(QWidget *parent)
+    : QWidget(parent), Ui::TerminalEmulatorConfig_UI(), CfgPlugin()
+{
+	setupUi(this);
 	connect(terminalLE,SIGNAL(textChanged(QString)), this, SLOT(configChanged()));
 	connect(terminalCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
 	connect(otherCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));

@@ -21,17 +21,9 @@
 class KConfig;
 class CfgPlugin;
 
-class TerminalEmulatorConfig_UI : public QWidget, public Ui::TerminalEmulatorConfig_UI
+class CfgTerminalEmulator: public QWidget, public Ui::TerminalEmulatorConfig_UI, public CfgPlugin
 {
-public:
-  TerminalEmulatorConfig_UI( QWidget *parent ) : QWidget( parent ) {
-    setupUi( this );
-  }
-};
-
-class CfgTerminalEmulator: public TerminalEmulatorConfig_UI,public CfgPlugin
-{
-Q_OBJECT
+    Q_OBJECT
 public:
 	CfgTerminalEmulator(QWidget *parent);
 	virtual ~CfgTerminalEmulator();

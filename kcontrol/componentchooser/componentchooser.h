@@ -42,34 +42,7 @@ public:
 	virtual void defaults()=0;
 };
 
-class BrowserConfig_UI : public QWidget, public Ui::BrowserConfig_UI
-{
-public:
-  BrowserConfig_UI( QWidget *parent ) : QWidget( parent ) {
-    setupUi( this );
-  }
-};
-
-class ComponentConfig_UI : public QWidget, public Ui::ComponentConfig_UI
-{
-public:
-  ComponentConfig_UI( QWidget *parent ) : QWidget( parent ) {
-    setupUi( this );
-  }
-};
-
-
-class ComponentChooser_UI : public QWidget, public Ui::ComponentChooser_UI
-{
-public:
-  ComponentChooser_UI( QWidget *parent ) : QWidget( parent ) {
-    setupUi( this );
-  }
-};
-
-
-
-class CfgComponent: public ComponentConfig_UI,public CfgPlugin
+class CfgComponent: public QWidget, public Ui::ComponentConfig_UI, public CfgPlugin
 {
 Q_OBJECT
 public:
@@ -89,7 +62,7 @@ Q_SIGNALS:
 };
 
 
-class CfgBrowser: public BrowserConfig_UI,public CfgPlugin
+class CfgBrowser: public QWidget, public Ui::BrowserConfig_UI, public CfgPlugin
 {
 Q_OBJECT
 public:
@@ -111,7 +84,7 @@ private:
 };
 
 
-class ComponentChooser : public ComponentChooser_UI
+class ComponentChooser : public QWidget, public Ui::ComponentChooser_UI
 {
 
 Q_OBJECT
