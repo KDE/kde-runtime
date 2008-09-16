@@ -9,6 +9,7 @@ add_subdirectory( windowmanagers )
 set(kcm_componentchooser_SRCS
   componentchooser.cpp
   componentchooserbrowser.cpp
+  componentchooserfilemanager.cpp
   componentchooseremail.cpp
   kcm_componentchooser.cpp
 )
@@ -24,7 +25,13 @@ if(NOT APPLE AND NOT WIN32)
 endif(NOT APPLE AND NOT WIN32)
 
 
-kde4_add_ui_files(kcm_componentchooser_SRCS browserconfig_ui.ui emailclientconfig_ui.ui componentchooser_ui.ui componentconfig_ui.ui) 
+kde4_add_ui_files(kcm_componentchooser_SRCS 
+  browserconfig_ui.ui
+  filemanagerconfig_ui.ui
+  emailclientconfig_ui.ui
+  componentchooser_ui.ui
+  componentconfig_ui.ui
+)
 
 if(NOT WIN32)
   kde4_add_ui_files(kcm_componentchooser_SRCS terminalemulatorconfig_ui.ui wmconfig_ui.ui)

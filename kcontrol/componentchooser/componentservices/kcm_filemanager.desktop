@@ -1,0 +1,3 @@
+Name=File Manager
+Comment=Here you can configure your default file manager. The entries in the K menu and all KDE applications in which you can open folders will use this file manager.
+configurationType=internal_filemanager

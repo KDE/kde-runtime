@@ -40,7 +40,5 @@ private:
 	KService::Ptr m_browserService;
 };
 
-
-
 #endif /* COMPONENTCHOOSERBROWSER_H */
 
