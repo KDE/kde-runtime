@@ -13,8 +13,10 @@ set(storage_SRCS
   repository.cpp
   )
 
+set(HAVE_CLUCENE ${CLucene_FOUND})
+set(HAVE_SOPRANO_INDEX ${SopranoIndex_FOUND})
+
 if(CLucene_FOUND AND SopranoIndex_FOUND)
-  set(HAVE_CLUCENE true)
 
   include_directories(${CLUCENE_INCLUDE_DIR} ${CLUCENE_LIBRARY_DIR})
 

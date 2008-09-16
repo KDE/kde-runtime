@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Service
+ServiceTypes=NepomukService
+X-KDE-Library=nepomukqueryservice
+X-KDE-Nepomuk-autostart=true
+X-KDE-Nepomuk-start-on-demand=false
+Name=NepomukQueryService
+Name[et]=Nepomuki päringuteenus
+Name[sv]=Nepomuk söktjänst
+Comment=The Nepomuk Query Service provides an interface for persistent query folders
+Comment[et]=Nepomuki päringuteenus tagab püsipäringute kaustade liidese
+Comment[sv]=Nepomuks frågetjänst tillhandahåller ett gränssnitt för bestående frågekataloger

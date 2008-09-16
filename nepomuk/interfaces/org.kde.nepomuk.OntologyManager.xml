@@ -10,6 +10,7 @@
       <arg name="uri" type="s" direction="in" />
     </method>
     <method name="updateLocalOntologies" />
+    <method name="updateAllLocalOntologies" />
     <signal name="ontologyUpdated">
       <arg name="uri" type="s" />
     </signal>
