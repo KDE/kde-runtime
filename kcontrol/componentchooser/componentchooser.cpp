@@ -16,6 +16,7 @@
 #include "componentchooser.h"
 #include "componentchooser.moc"
 
+#include "componentchooserbrowser.h"
 #include "componentchooseremail.h"
 #ifdef Q_OS_UNIX
 #include "componentchooserterminal.h"
@@ -31,7 +32,6 @@
 
 #include <klocale.h>
 #include <kmessagebox.h>
-#include <kopenwithdialog.h>
 #include <kconfig.h>
 #include <kstandarddirs.h>
 #include <kmimetypetrader.h>
@@ -44,9 +44,9 @@
 class MyListBoxItem: public QListWidgetItem
 {
 public:
-	MyListBoxItem(const QString& text, const QString &file):QListWidgetItem(text),File(file){}
-	virtual ~MyListBoxItem(){;}
-	QString File;
+	MyListBoxItem(const QString& text, const QString &file):QListWidgetItem(text),mFile(file){}
+	virtual ~MyListBoxItem(){}
+	QString mFile;
 };
 
 
@@ -131,100 +131,6 @@ void CfgComponent::defaults()
 
 
 
-//BEGIN Browser Configuration
-
-CfgBrowser::CfgBrowser(QWidget *parent)
-    : QWidget(parent), Ui::BrowserConfig_UI(),CfgPlugin()
-{
-    setupUi(this);
-    connect(lineExec,SIGNAL(textChanged(const QString &)),this,SLOT(configChanged()));
-    connect(radioKIO,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
-    connect(radioExec,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
-    connect(btnSelectBrowser,SIGNAL(clicked()),this, SLOT(selectBrowser()));
-}
-
-CfgBrowser::~CfgBrowser() {
-}
-
-void CfgBrowser::configChanged()
-{
-	emit changed(true);
-}
-
-void CfgBrowser::defaults()
-{
-	load(0);
-}
-
-
-void CfgBrowser::load(KConfig *) {
-	KConfigGroup config(KSharedConfig::openConfig("kdeglobals"), "General");
-	QString exec = config.readEntry("BrowserApplication");
-	if (exec.isEmpty())
-	{
-	   radioKIO->setChecked(true);
-	   m_browserExec = exec;
-	   m_browserService = 0;
-	}
-	else
-	{
-	   radioExec->setChecked(true);
-	   if (exec.startsWith('!'))
-	   {
-	      m_browserExec = exec.mid(1);
-	      m_browserService = 0;
-	   }
-	   else
-	   {
-	      m_browserService = KService::serviceByStorageId( exec );
-	      if (m_browserService)
-  	         m_browserExec = m_browserService->desktopEntryName();
-  	      else
-  	         m_browserExec.clear();
-	   }
-	}
-
-	lineExec->setText(m_browserExec);
-
-	emit changed(false);
-}
-
-void CfgBrowser::save(KConfig *)
-{
-        KConfigGroup config(KSharedConfig::openConfig("kdeglobals"), "General");
-	QString exec;
-	if (radioExec->isChecked())
-	{
-	   exec = lineExec->text();
-	   if (m_browserService && (exec == m_browserExec))
-	      exec = m_browserService->storageId(); // Use service
-	   else
-	      exec = '!' + exec; // Literal command
-	}
-	config.writePathEntry("BrowserApplication", exec, KConfig::Normal|KConfig::Global);
-	config.sync();
-
-	KGlobalSettings::self()->emitChange(KGlobalSettings::SettingsChanged);
-
-	emit changed(false);
-}
-
-void CfgBrowser::selectBrowser()
-{
-	KUrl::List urlList;
-	KOpenWithDialog dlg(urlList, i18n("Select preferred Web browser application:"), QString(), this);
-	if (dlg.exec() != QDialog::Accepted) return;
-	m_browserService = dlg.service();
-	if (m_browserService)
-	   m_browserExec = m_browserService->desktopEntryName();
-	else
-	   m_browserExec = dlg.text();
-
-	lineExec->setText(m_browserExec);
-}
-
-//END Terminal Emulator Configuration
-
 ComponentChooser::ComponentChooser(QWidget *parent):
     QWidget(parent), Ui::ComponentChooser_UI(), configWidget(0)
 {
@@ -256,7 +162,7 @@ void ComponentChooser::slotServiceSelected(QListWidgetItem* it) {
 	if (somethingChanged) {
 		if (KMessageBox::questionYesNo(this,i18n("<qt>You changed the default component of your choice, do want to save that change now ?</qt>"),QString(),KStandardGuiItem::save(),KStandardGuiItem::discard())==KMessageBox::Yes) save();
 	}
-	KConfig cfg(static_cast<MyListBoxItem*>(it)->File, KConfig::SimpleConfig);
+	KConfig cfg(static_cast<MyListBoxItem*>(it)->mFile, KConfig::SimpleConfig);
 
 	ComponentDescription->setText(cfg.group("").readEntry("Comment",i18n("No description available")));
 	ComponentDescription->setMinimumSize(ComponentDescription->sizeHint());
@@ -294,7 +200,7 @@ void ComponentChooser::slotServiceSelected(QListWidgetItem* it) {
 		}
 
 	}
-#ifndef Q_WS_MAC
+#ifdef Q_WS_X11
 	else if (cfgType=="internal_wm")
 	{
 		if (!(configWidget && qobject_cast<CfgWm*>(configWidget)))
@@ -329,7 +235,7 @@ void ComponentChooser::slotServiceSelected(QListWidgetItem* it) {
 		dynamic_cast<CfgPlugin*>(configWidget)->load(&cfg);
 
         emitChanged(false);
-	latestEditedService=static_cast<MyListBoxItem*>(it)->File;
+	latestEditedService=static_cast<MyListBoxItem*>(it)->mFile;
 }
 
 

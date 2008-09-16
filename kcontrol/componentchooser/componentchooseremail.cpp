@@ -1,5 +1,5 @@
 /***************************************************************************
-                          componentchooser.cpp  -  description
+                          componentchooseremail.cpp
                              -------------------
     copyright            : (C) 2002 by Joseph Wenninger
     email                : jowenn@kde.org

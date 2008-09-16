@@ -1,5 +1,5 @@
 /***************************************************************************
-                          componentchooseremail.h
+                          componentchooserbrowser.h
                              -------------------
     copyright            : (C) 2002 by Joseph Wenninger
     email                : jowenn@kde.org
@@ -13,32 +13,34 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef COMPONENTCHOOSEREMAIL_H
-#define COMPONENTCHOOSEREMAIL_H
+#ifndef COMPONENTCHOOSERBROWSER_H
+#define COMPONENTCHOOSERBROWSER_H
 
-class KEMailSettings;
-
-#include "ui_emailclientconfig_ui.h"
+#include "ui_browserconfig_ui.h"
 #include "componentchooser.h"
 
-class CfgEmailClient: public QWidget, public Ui::EmailClientConfig_UI, public CfgPlugin
+class CfgBrowser: public QWidget, public Ui::BrowserConfig_UI, public CfgPlugin
 {
-    Q_OBJECT
+Q_OBJECT
 public:
-    CfgEmailClient(QWidget *parent);
-    virtual ~CfgEmailClient();
-    virtual void load(KConfig *cfg);
-    virtual void save(KConfig *cfg);
-    virtual void defaults();
-
-private:
-    KEMailSettings *pSettings;
+	CfgBrowser(QWidget *parent);
+	virtual ~CfgBrowser();
+	virtual void load(KConfig *cfg);
+	virtual void save(KConfig *cfg);
+	virtual void defaults();
 
 protected Q_SLOTS:
-    void selectEmailClient();
-    void configChanged();
+	void selectBrowser();
+	void configChanged();
+
 Q_SIGNALS:
-    void changed(bool);
+	void changed(bool);
+private:
+	QString m_browserExec;
+	KService::Ptr m_browserService;
 };
 
-#endif
+
+
+#endif /* COMPONENTCHOOSERBROWSER_H */
+
