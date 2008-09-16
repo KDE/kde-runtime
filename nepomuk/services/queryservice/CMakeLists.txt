@@ -17,7 +17,7 @@ set(queryservice_SRCS
   lib/query.cpp
   lib/term.cpp
   lib/queryparser.cpp
-  lib/dbusopertors.cpp
+  lib/dbusoperators.cpp
 )
 
 qt4_add_dbus_adaptor(queryservice_SRCS
