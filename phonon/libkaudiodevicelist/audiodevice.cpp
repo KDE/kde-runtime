@@ -322,13 +322,13 @@ AudioDevice::AudioDevice(KConfigGroup &deviceGroup)
     d->index = deviceGroup.readEntry("index", d->index);
     const QString groupName = deviceGroup.name();
     d->uniqueId = groupName.mid(groupName.indexOf(QLatin1Char('_')) + 1);
+    d->udi = deviceGroup.readEntry("udi", d->udi);
     kDebug(603) << groupName << d->uniqueId;
     if (d->uniqueId.startsWith("/org/freedesktop/Hal/devices/")) {
         // old invalid group
         d->valid = false;
         return;
     }
-    d->udi = deviceGroup.readEntry("udi", d->udi);
     d->cardName = deviceGroup.readEntry("cardName", d->cardName);
     d->icon = deviceGroup.readEntry("icon", d->icon);
     d->driver = static_cast<Solid::AudioInterface::AudioDriver>(deviceGroup.readEntry("driver", static_cast<int>(d->driver)));
