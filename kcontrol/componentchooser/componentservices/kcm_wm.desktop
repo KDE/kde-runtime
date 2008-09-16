@@ -28,6 +28,7 @@ Comment[pt]=Aqui poderá seleccionar o gestor de janelas a executar na sua sess�
 Comment[pt_BR]=Aqui poderá seleccionar o gestor de janelas a executar na sua sessão do KDE.
 Comment[sl]=Tu lahko izberete upravljalnika oken, ki bo v uporabi v KDE.
 Comment[sv]=Här kan du välja fönsterhanterare som ska köras i KDE-sessionen.
+Comment[tr]=Buradan KDE oturumunuzda çalıştırmak istediğiniz pencere yöneticisini seçebilirsiniz.
 Comment[uk]=Тут ви можете обрати засіб керування вікнами, який буде запущено у вашому сеансі KDE.
 Comment[zh_TW]=您可以在此選擇 KDE 工作階段執行的視窗管理員。
 configurationType=internal_wm
