@@ -35,7 +35,7 @@
 #include <klocale.h>
 #include <kpushbutton.h>
 
-#define MIN_CONTENT_PIXELS 100
+#define MIN_CONTENT_PIXELS 50
 
 QString ProgressListDelegate::Private::getApplicationName(const QModelIndex &index) const
 {
@@ -100,6 +100,8 @@ ProgressListDelegate::~ProgressListDelegate()
 
 void ProgressListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
+    QApplication::style()->drawPrimitive(QStyle::PE_PanelItemViewItem, &option, painter, 0);
+
     if (!index.isValid()) {
         return;
     }
@@ -161,7 +163,7 @@ void ProgressListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
 
         painter->drawText(d->getCurrentLeftMargin(textHeight) + option.rect.left(), coordY, fontMetrics.width(textToShow), textHeight, Qt::AlignLeft, textToShow);
 
-        coordY += d->separatorPixels + textHeight;
+        coordY += textHeight;
     }
 
     if (!d->getSizeProcessed(index).isEmpty() || !d->getSizeTotals(index).isEmpty() || !d->getSpeed(index).isEmpty())
@@ -180,7 +182,7 @@ void ProgressListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
 
         painter->drawText(d->getCurrentLeftMargin(textHeight) + option.rect.left(), coordY, fontMetrics.width(textToShow), textHeight, Qt::AlignLeft, textToShow);
 
-        coordY += d->separatorPixels + textHeight;
+        coordY += textHeight;
     }
 
     painter->restore();
@@ -196,27 +198,27 @@ QSize ProgressListDelegate::sizeHint(const QStyleOptionViewItem &option, const Q
     int itemWidth = d->leftMargin + d->rightMargin + d->iconWidth + d->separatorPixels * 2 +
                     fontMetrics.height();
 
-    int textSize = fontMetrics.height() + d->separatorPixels;
+    int textSize = fontMetrics.height();
 
     if (!d->getMessage(index).isEmpty())
     {
-        textSize = fontMetrics.size(Qt::TextSingleLine, d->getMessage(index)).height() + d->separatorPixels;
+        textSize = fontMetrics.size(Qt::TextSingleLine, d->getMessage(index)).height();
         itemHeight += textSize;
     }
 
     if (!d->getSizeProcessed(index).isEmpty() || !d->getSpeed(index).isEmpty() ||
         !d->getSizeTotals(index).isEmpty())
     {
-        textSize = fontMetrics.size(Qt::TextSingleLine, d->getSizeProcessed(index)).height() + d->separatorPixels;
+        textSize = fontMetrics.size(Qt::TextSingleLine, d->getSizeProcessed(index)).height();
         itemHeight += textSize;
     }
 
     if (d->getPercent(index)) {
-        itemHeight += d->progressBar->sizeHint().height() + d->separatorPixels;
+        itemHeight += d->progressBar->sizeHint().height();
     }
 
     if (d->editorHeight > 0)
-        itemHeight += d->editorHeight + d->separatorPixels;
+        itemHeight += d->editorHeight;
 
     if (itemHeight + d->separatorPixels >= d->minimumItemHeight)
         itemHeight += d->separatorPixels;
