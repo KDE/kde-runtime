@@ -18,7 +18,6 @@
 
 #include "ui_componentchooser_ui.h"
 #include "ui_componentconfig_ui.h"
-#include "ui_emailclientconfig_ui.h"
 #include "ui_browserconfig_ui.h"
 #include <QHash>
 
@@ -28,7 +27,6 @@
 #include <kservice.h>
 
 class QListWidgetItem;
-class KEMailSettings;
 class KConfig;
 
 /* The CfgPlugin  class is an exception. It is LGPL. It will be parted of the plugin interface
@@ -48,14 +46,6 @@ class BrowserConfig_UI : public QWidget, public Ui::BrowserConfig_UI
 {
 public:
   BrowserConfig_UI( QWidget *parent ) : QWidget( parent ) {
-    setupUi( this );
-  }
-};
-
-class EmailClientConfig_UI : public QWidget, public Ui::EmailClientConfig_UI
-{
-public:
-  EmailClientConfig_UI( QWidget *parent ) : QWidget( parent ) {
     setupUi( this );
   }
 };
@@ -98,26 +88,6 @@ Q_SIGNALS:
 	void changed(bool);
 };
 
-
-class CfgEmailClient: public EmailClientConfig_UI,public CfgPlugin
-{
-Q_OBJECT
-public:
-	CfgEmailClient(QWidget *parent);
-	virtual ~CfgEmailClient();
-	virtual void load(KConfig *cfg);
-	virtual void save(KConfig *cfg);
-	virtual void defaults();
-
-private:
-	KEMailSettings *pSettings;
-
-protected Q_SLOTS:
-	void selectEmailClient();
-	void configChanged();
-Q_SIGNALS:
-	void changed(bool);
-};
 
 class CfgBrowser: public BrowserConfig_UI,public CfgPlugin
 {

@@ -29,11 +29,13 @@
 #include <qx11info_x11.h>
 
 CfgWm::CfgWm(QWidget *parent)
-: WmConfig_UI(parent)
+: QWidget(parent)
+, Ui::WmConfig_UI()
 , CfgPlugin()
 , wmLaunchingState( WmNone )
 , wmProcess( NULL )
 {
+    setupUi(this);
     connect(wmCombo,SIGNAL(activated(int)), this, SLOT(configChanged()));
     connect(kwinRB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
     connect(differentRB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
@@ -221,7 +223,7 @@ void CfgWm::loadWMs( const QString& current )
     oldwm = "kwin";
     kwinRB->setChecked( true );
     wmCombo->setEnabled( false );
-    
+
     QStringList list = KGlobal::dirs()->findAllResources( "windowmanagers", QString(), KStandardDirs::NoDuplicates );
     QRegExp reg( ".*/([^/\\.]*)\\.[^/\\.]*" );
     foreach( const QString& wmfile, list )

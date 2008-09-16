@@ -13,11 +13,10 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <sys/types.h>
-#include <sys/stat.h>
-
 #include "componentchooser.h"
 #include "componentchooser.moc"
+
+#include "componentchooseremail.h"
 #ifdef Q_OS_UNIX
 #include "componentchooserterminal.h"
 #endif
@@ -30,10 +29,6 @@
 #include <QLayout>
 #include <QRadioButton>
 
-#include <QtDBus/QtDBus>
-
-#include <kapplication.h>
-#include <kemailsettings.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kopenwithdialog.h>
@@ -133,102 +128,6 @@ void CfgComponent::defaults()
 
 
 
-//BEGIN Email client config
-CfgEmailClient::CfgEmailClient(QWidget *parent):EmailClientConfig_UI(parent),CfgPlugin(){
-	pSettings = new KEMailSettings();
-
-	connect(kmailCB, SIGNAL(toggled(bool)), SLOT(configChanged()) );
-	connect(txtEMailClient, SIGNAL(textChanged(const QString&)), SLOT(configChanged()) );
-#ifndef Q_OS_UNIX
-	connect(chkRunTerminal, SIGNAL(clicked()), SLOT(configChanged()) );
-#else
-    chkRunTerminal->hide();
-#endif
-    connect(btnSelectEmail, SIGNAL(clicked()), SLOT(selectEmailClient()) );
-}
-
-CfgEmailClient::~CfgEmailClient() {
-	delete pSettings;
-}
-
-void CfgEmailClient::defaults()
-{
-    load(0L);
-}
-
-void CfgEmailClient::load(KConfig *)
-{
-	QString emailClient = pSettings->getSetting(KEMailSettings::ClientProgram);
-	bool useKMail = (emailClient.isEmpty());
-
-	kmailCB->setChecked(useKMail);
-	otherCB->setChecked(!useKMail);
-	txtEMailClient->setText(emailClient);
-	txtEMailClient->setFixedHeight(txtEMailClient->sizeHint().height());
-	chkRunTerminal->setChecked((pSettings->getSetting(KEMailSettings::ClientTerminal) == "true"));
-
-	emit changed(false);
-
-}
-
-void CfgEmailClient::configChanged()
-{
-	emit changed(true);
-}
-
-void CfgEmailClient::selectEmailClient()
-{
-	KUrl::List urlList;
-	KOpenWithDialog dlg(urlList, i18n("Select preferred email client:"), QString(), this);
-	// hide "Do not &close when command exits" here, we don't need it for a mail client
-	dlg.hideNoCloseOnExit();
-	if (dlg.exec() != QDialog::Accepted) return;
-	QString client = dlg.text();
-
-	// get the preferred Terminal Application
-	KConfigGroup confGroup( KGlobal::config(), QLatin1String("General") );
-	QString preferredTerminal = confGroup.readPathEntry("TerminalApplication", QLatin1String("konsole"));
-	preferredTerminal += QLatin1String(" -e ");
-
-	int len = preferredTerminal.length();
-	bool b = client.left(len) == preferredTerminal;
-	if (b) client = client.mid(len);
-	if (!client.isEmpty())
-	{
-		chkRunTerminal->setChecked(b);
-		txtEMailClient->setText(client);
-	}
-}
-
-
-void CfgEmailClient::save(KConfig *)
-{
-	if (kmailCB->isChecked())
-	{
-		pSettings->setSetting(KEMailSettings::ClientProgram, QString());
-		pSettings->setSetting(KEMailSettings::ClientTerminal, "false");
-	}
-	else
-	{
-		pSettings->setSetting(KEMailSettings::ClientProgram, txtEMailClient->text());
-		pSettings->setSetting(KEMailSettings::ClientTerminal, (chkRunTerminal->isChecked()) ? "true" : "false");
-	}
-
-	// insure proper permissions -- contains sensitive data
-	QString cfgName(KGlobal::dirs()->findResource("config", "emails"));
-	if (!cfgName.isEmpty())
-		::chmod(QFile::encodeName(cfgName), 0600);
-	QDBusMessage message = QDBusMessage::createSignal("/Component", "org.kde.Kcontrol", "KDE_emailSettingsChanged" );
-	QDBusConnection::sessionBus().send(message);
-	emit changed(false);
-}
-
-
-//END Email client config
-
-
-
-
 //BEGIN Browser Configuration
 
 CfgBrowser::CfgBrowser(QWidget *parent) : BrowserConfig_UI(parent),CfgPlugin(){
@@ -248,7 +147,7 @@ void CfgBrowser::configChanged()
 
 void CfgBrowser::defaults()
 {
-	load(0L);
+	load(0);
 }
 
 

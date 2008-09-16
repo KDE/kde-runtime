@@ -21,19 +21,9 @@
 
 #include <kprocess.h>
 
-class KConfig;
 class KTimerDialog;
-class CfgPlugin;
 
-class WmConfig_UI : public QWidget, public Ui::WmConfig_UI
-{
-public:
-  WmConfig_UI( QWidget *parent ) : QWidget( parent ) {
-    setupUi( this );
-  }
-};
-
-class CfgWm: public WmConfig_UI,public CfgPlugin
+class CfgWm: public QWidget, public Ui::WmConfig_UI, public CfgPlugin
 {
 Q_OBJECT
 public:
