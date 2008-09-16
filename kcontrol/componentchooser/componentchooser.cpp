@@ -45,7 +45,6 @@ class MyListBoxItem: public QListWidgetItem
 {
 public:
 	MyListBoxItem(const QString& text, const QString &file):QListWidgetItem(text),mFile(file){}
-	virtual ~MyListBoxItem(){}
 	QString mFile;
 };
 
@@ -61,10 +60,6 @@ CfgComponent::CfgComponent(QWidget *parent)
 
 CfgComponent::~CfgComponent()
 {
-    qDeleteAll(m_lookupDict);
-    m_lookupDict.clear();
-    qDeleteAll(m_revLookupDict);
-    m_revLookupDict.clear();
 }
 
 void CfgComponent::slotComponentChanged(const QString&) {
@@ -73,16 +68,16 @@ void CfgComponent::slotComponentChanged(const QString&) {
 
 void CfgComponent::save(KConfig *cfg) {
 		// yes, this can happen if there are NO KTrader offers for this component
-		if (!m_lookupDict[ComponentSelector->currentText()])
+		if (!m_lookupDict.contains(ComponentSelector->currentText()))
 			return;
 
-		QString ServiceTypeToConfigure=cfg->group("").readEntry("ServiceTypeToConfigure");
-		KConfig *store = new KConfig(cfg->group("").readPathEntry("storeInFile","null"));
-		KConfigGroup cg(store,cfg->group("").readEntry("valueSection"));
-//		store->setGroup(cfg->group("").readEntry("valueSection"));
-		cg.writePathEntry(cfg->group("").readEntry("valueName","kcm_componenchooser_null"),*m_lookupDict[ComponentSelector->currentText()]);
-		store->sync();
-		delete store;
+		KConfigGroup mainGroup = cfg->group("");
+		QString serviceTypeToConfigure=mainGroup.readEntry("ServiceTypeToConfigure");
+		KConfig store(mainGroup.readPathEntry("storeInFile", "null"));
+		KConfigGroup cg(&store, mainGroup.readEntry("valueSection"));
+		cg.writePathEntry(mainGroup.readEntry("valueName", "kcm_componenchooser_null"),
+                                  m_lookupDict.value(ComponentSelector->currentText()));
+		store.sync();
 		emit changed(false);
 }
 
@@ -92,30 +87,32 @@ void CfgComponent::load(KConfig *cfg) {
 	m_lookupDict.clear();
 	m_revLookupDict.clear();
 
-	QString ServiceTypeToConfigure=cfg->group("").readEntry("ServiceTypeToConfigure");
+	const KConfigGroup mainGroup = cfg->group("");
+	const QString serviceTypeToConfigure = mainGroup.readEntry("ServiceTypeToConfigure");
 
-	KService::List offers = KServiceTypeTrader::self()->query(ServiceTypeToConfigure);
+	const KService::List offers = KServiceTypeTrader::self()->query(serviceTypeToConfigure);
 
-	for (KService::List::Iterator tit = offers.begin(); tit != offers.end(); ++tit)
-        {
+	for (KService::List::const_iterator tit = offers.begin(); tit != offers.end(); ++tit) {
 		ComponentSelector->addItem((*tit)->name());
-		m_lookupDict.insert((*tit)->name(),new QString((*tit)->desktopEntryName()));
-		m_revLookupDict.insert((*tit)->desktopEntryName(),new QString((*tit)->name()));
+		m_lookupDict.insert((*tit)->name(), (*tit)->desktopEntryName());
+		m_revLookupDict.insert((*tit)->desktopEntryName(), (*tit)->name());
 	}
 
-	KConfig *store = new KConfig(cfg->group("").readPathEntry("storeInFile","null"));
-        KConfigGroup group(store, cfg->group("").readEntry("valueSection"));
-	QString setting=group.readEntry(cfg->group("").readEntry("valueName","kcm_componenchooser_null"), QString());
-        delete store;
-	if (setting.isEmpty()) setting=cfg->group("").readEntry("defaultImplementation", QString());
-	QString *tmp=m_revLookupDict[setting];
-	if (tmp)
+	KConfig store(mainGroup.readPathEntry("storeInFile","null"));
+        const KConfigGroup group(&store, mainGroup.readEntry("valueSection"));
+	QString setting = group.readEntry(mainGroup.readEntry("valueName","kcm_componenchooser_null"), QString());
+
+	if (setting.isEmpty())
+            setting = mainGroup.readEntry("defaultImplementation", QString());
+	QString tmp = m_revLookupDict.value(setting);
+	if (!tmp.isEmpty()) {
 		for (int i=0;i<ComponentSelector->count();i++)
-			if ((*tmp)==ComponentSelector->itemText(i))
+			if (tmp==ComponentSelector->itemText(i))
 			{
 				ComponentSelector->setCurrentIndex(i);
 				break;
 			}
+        }
 	emit changed(false);
 }
 
@@ -142,7 +139,7 @@ ComponentChooser::ComponentChooser(QWidget *parent):
 	QStringList dummy;
 	QStringList services=KGlobal::dirs()->findAllResources( "data","kcm_componentchooser/*.desktop",
 															KStandardDirs::NoDuplicates, dummy );
-	for (QStringList::Iterator it=services.begin();it!=services.end();++it)
+	for (QStringList::const_iterator it=services.begin(); it!=services.end(); ++it)
 	{
 		KConfig cfg(*it, KConfig::SimpleConfig);
 		ServiceChooser->addItem(new MyListBoxItem(cfg.group("").readEntry("Name",i18n("Unknown")),(*it)));

@@ -52,7 +52,7 @@ public:
 	virtual void defaults();
 
 protected:
-	QHash<QString, QString*>  m_lookupDict,m_revLookupDict;
+	QHash<QString, QString>  m_lookupDict,m_revLookupDict;
 
 protected Q_SLOTS:
 	void slotComponentChanged(const QString&);
