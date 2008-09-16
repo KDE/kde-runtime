@@ -21,7 +21,7 @@ set(queryservice_SRCS
 )
 
 qt4_add_dbus_adaptor(queryservice_SRCS
-  ../interfaces/org.kde.nepomuk.Query.xml
+  ../../interfaces/org.kde.nepomuk.Query.xml
   folderconnection.h
   Nepomuk::Search::FolderConnection)
 
