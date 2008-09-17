@@ -1,3 +1,5 @@
+project(nepomuk_interfaces)
+
 install(FILES
   org.kde.NepomukServer.xml
   org.kde.nepomuk.ServiceControl.xml
