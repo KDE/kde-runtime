@@ -160,7 +160,7 @@ void IconThemesConfig::loadThemes()
   QStringList themelist(KIconTheme::list());
   QString name;
   QString tname;
-  QStringList::Iterator it;
+  QStringList::const_iterator it;
   QMap <QString, QString> themeNames;
   for (it=themelist.begin(); it != themelist.end(); ++it)
   {
@@ -301,7 +301,7 @@ QStringList IconThemesConfig::findThemeDirs(const QString &archiveName)
 
   // iterate all the dirs looking for an index.theme or index.desktop file
   QStringList entries = themeDir->entries();
-  for (QStringList::Iterator it = entries.begin();
+  for (QStringList::const_iterator it = entries.begin();
        it != entries.end();
        ++it) {
     possibleDir = const_cast<KArchiveEntry*>(themeDir->entry(*it));
