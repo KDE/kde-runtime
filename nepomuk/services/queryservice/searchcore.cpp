@@ -139,19 +139,19 @@ QList<Nepomuk::Search::Result> Nepomuk::Search::SearchCore::blockingQuery( const
     kDebug();
 
     // cancel previous search
-//     if( d->eventLoop != 0 ) {
-//         kDebug() << "Killing previous search";
-//         QEventLoop* loop = d->eventLoop;
-//         d->eventLoop = 0;
-//         d->searchThread->cancel();
-//         loop->exit();
-//     }
+    if( d->eventLoop != 0 ) {
+        kDebug() << "Killing previous search";
+        QEventLoop* loop = d->eventLoop;
+        d->eventLoop = 0;
+        d->searchThread->cancel();
+        loop->exit();
+    }
 
-//     QEventLoop loop;
+    QEventLoop loop;
+    d->eventLoop = &loop;
     query( q );
-//     d->eventLoop = &loop;
-//     loop.exec();
-//     d->eventLoop = 0;
+    loop.exec();
+    d->eventLoop = 0;
     kDebug() << "done";
     return lastResults();
 }
