@@ -90,6 +90,8 @@ Nepomuk::EventMonitor::EventMonitor( IndexScheduler* scheduler, QObject* parent 
     else {
         m_periodicUpdateTimer.start();
     }
+
+    slotPowerManagementStatusChanged( Solid::PowerManagement::appShouldConserveResources() );
 }
 
 
