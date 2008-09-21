@@ -853,7 +853,7 @@ QHash<QUrl, Nepomuk::Search::Result> Nepomuk::Search::SearchThread::luceneQuery(
             results.insert( hitUri, result );
         }
         else {
-            kDebug() << "Score to low:" << hitUri << hitScore;
+            kDebug() << "Score too low:" << hitUri << hitScore;
         }
     }
 
