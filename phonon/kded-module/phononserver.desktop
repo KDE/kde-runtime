@@ -19,6 +19,7 @@ Name[sl]=Strežnik za ravnanje z zvokom
 Name[sv]=Ljudpolicyserver
 Name[tr]=Ses Politikası Sunucu
 Name[uk]=Сервер правил звуку
+Name[x-test]=xxSound Policy Serverxx
 Name[zh_TW]=音效政策程式
 Comment=A server to centralize decisions and data of applications using Phonon
 Comment[be@latin]=Server, jaki pastanaŭlaje, što rabić ź źviestkami ad aplikacyjaŭ dla systemy „Phonon”
@@ -33,5 +34,6 @@ Comment[pt_BR]=Um servidor para centralizar as decisões e os dados das aplicaç
 Comment[sv]=En server för att centralisera beslut och programdata vid användning av Phonon
 Comment[tr]=Phonon kullanan uygulamaların verilerini ve bu uygulamalara ilişkin kararları merkezileştirmek için bir sunucu
 Comment[uk]=Сервер для централізації рішень і даних програм, які використовують Phonon
+Comment[x-test]=xxA server to centralize decisions and data of applications using Phononxx
 Comment[zh_TW]=將使用 Phonon 的應用程式的資料集中處理的伺服器
 
