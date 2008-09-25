@@ -407,7 +407,7 @@ window.</para>
 
 <para>To move a user from one listbox to another you click on the
 username in the listbox and click <guibutton>&gt;&gt;</guibutton> to
-move the user from the leftmost box the the rightmost box or
+move the user from the leftmost box to the rightmost box or
 <guibutton>&lt;&lt;</guibutton> to move the user from the rightmost box
 to the leftmost box.</para>
 
