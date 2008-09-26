@@ -6,6 +6,7 @@ Comment[el]=Υπηρεσία ευρετηρίου αρχείων Strigi του N
 Comment[et]=Nepomuki Strigi failide indekseerija
 Comment[gl]=O indexador de ficheiros Strigi para Nepomuk
 Comment[gu]=નેપોમુક સ્ટ્રિગિ ફાઇલ ઇન્ડેક્સર
+Comment[kk]=Nepomuk Strigi файл индекстегіш
 Comment[km]=កម្មវិធី​បង្កើត​លិបិក្រម​ឯកសារ​របស់ Nepomuk Strigi
 Comment[nb]=Nepomuk Strigi filindekseringen
 Comment[nds]=De Nepomuk-Dateiindizeerdeenst Strigi
@@ -27,6 +28,7 @@ Name[el]=Έναρξη αρχικού ευρετηρίου
 Name[et]=Esmaindekseerimine on käivitatud
 Name[gl]=Iniciouse a indexación inicial
 Name[gu]=શરૂઆતનું ઇન્ડેક્સીંગ શરૂ થયેલ છે
+Name[kk]=Бастапқы индекстеу басталды
 Name[km]=បាន​ចាប់ផ្ដើម​ការ​បង្កើត​លិបិក្រម​​ដំបូង
 Name[ko]=초기 인덱싱 시작됨
 Name[nb]=Første indeksering har startet
@@ -47,6 +49,7 @@ Comment[el]=Το Strigi εκίνησε το αρχικό ευρετήριο το
 Comment[et]=Strigi alustas kohalike failide esimest indekseerimist kiire töölauaotsingu võimaldamiseks
 Comment[gl]=Strigi comezou a indexación inicial dos ficheiros locais para facer procuras rápidas no escritorio
 Comment[gu]=સ્ટ્રીગીએ ઝડપી ડેસ્કટોપ શોધ માટે સ્થાનિક ફાઇલોનું શરૂઆતી ઇન્ડેક્સીંગ ચાલુ કર્યું છે
+Comment[kk]=Іздеуді тездету үшін Strigi жергілікті файлдарды индекстеуін бастады
 Comment[km]=បាន​ចាប់ផ្ដើម​ការ​បង្កើត​លិបិក្រម​ដំបូង​របស់ Strigi នៃ​ឯកសារ​មូលដ្ឋាន​សម្រាប់​ការ​ស្វែងរក​ផ្ទៃតុ​រហ័ស
 Comment[ko]=Strigi에서 빠른 데스크톱 검색을 위한 로컬 파일의 초기 인덱싱을 시작함
 Comment[nb]=Strigi startet den første indekseringen av lokale filer som vil gjøre søk raskere
@@ -70,6 +73,7 @@ Name[el]=Τέλος αρχικού ευρετηρίου
 Name[et]=Esmaindekseerimine on lõpetatud
 Name[gl]=Rematou a indexación inicial
 Name[gu]=શરૂઆતનું ઇન્ડેક્સીંગ પૂર્ણ થયેલ છે
+Name[kk]=Бастапқы индекстеу аяқталды
 Name[km]=បាន​បញ្ចប់​កា​របង្កើត​លិបិក្រម​ដំបូង
 Name[ko]=초기 인덱싱 완료됨
 Name[nb]=Første indeksering er ferdig
@@ -90,6 +94,7 @@ Comment[el]=Το Strigi ολοκλήρωσε το αρχικό ευρετήρι�
 Comment[et]=Strigi lõpetas kohalike failide esimese indekseerimise kiire töölauaotsingu võimaldamiseks
 Comment[gl]=Strigi rematou a indexación inicial dos ficheiros locais para facer procuras rápidas no escritorio
 Comment[gu]=સ્ટ્રીગીએ ઝડપી ડેસ્કટોપ શોધ માટે સ્થાનિક ફાઇલોનું શરૂઆતી ઇન્ડેક્સીંગ પૂર્ણ કર્યું છે
+Comment[kk]=Іздеуді тездету үшін Strigi жергілікті файлдарды индекстеуін аяқтады
 Comment[km]=បានបញ្ចប់​ក​ការ​បង្កើត​លិបិក្រម​របស់ Strigi នៃ​ឯកសារ​មូលដ្ឋាន​សម្រាប់​ការ​ស្វែងរក​ផ្ទៃតុ​រហ័ស
 Comment[ko]=Strigi에서 빠른 데스크톱 검색을 위한 로컬 파일의 초기 인덱싱을 완료함
 Comment[nb]=Strigi gjorde ferdig første indeksering av lokale filer som vil gjøre søk raskere
@@ -112,6 +117,7 @@ Name[el]=Αναστολή ευρετηρίου
 Name[et]=Indekseerimine on peatatud
 Name[gl]=Suspendeuse a indexación
 Name[gu]=ઇન્ડેક્સીંગ બંધ કરવામાં આવ્યું
+Name[kk]=Индекстеу аялдатылды
 Name[km]=បាន​ផ្អាក​ការ​ដាក់​លិបិក្រម
 Name[ko]=인덱싱 중지됨
 Name[lt]=Indeksavimas pristabdytas
@@ -132,6 +138,7 @@ Comment[el]=Το ευρετήριο αρχείων Strigi είναι σε ανα
 Comment[et]=Strigi failide indekseerimine on peatatud
 Comment[gl]=A indexación de ficheiros con Strigi suspendeuse
 Comment[gu]=સ્ટ્રીગીએ ફાઇલ ઇન્ડેક્સીંગ બંધ કરવામાં આવ્યું છે
+Comment[kk]=Strigi файл индекстеуі аялдатылды
 Comment[km]=បានផ្អាក​ការ​បង្កើត​លិបិក្រម​​ឯកសារ​របស់ Strigi
 Comment[ko]=Strigi 파일 인덱싱 중지됨
 Comment[nb]=Strigi filindeksering har blitt stoppet midlertidig
@@ -154,6 +161,7 @@ Name[el]=Συνέχιση ευρετηρίου
 Name[et]=Indekseerimine jätkub
 Name[gl]=Continuouse a indexación
 Name[gu]=ઇન્ડેક્સીંગ પુન: શરૂ કરવામાં આવ્યું
+Name[kk]=Индекстеу жалғастырылды
 Name[km]=បាន​បន្ត​ការ​បង្កើត​លិបិក្រម
 Name[ko]=인덱싱 다시 시작됨
 Name[nb]=Indekseringen fortsetter
@@ -173,6 +181,7 @@ Comment[el]=Το ευρετήριο αρχείων Strigi συνέχισε τη 
 Comment[et]=Strigi failide indekseerimine jätkub
 Comment[gl]=Continúase a indexación de ficheiros con Strigi
 Comment[gu]=સ્ટ્રીગીએ ફાઇલ ઇન્ડેક્સીંગ પુન: શરૂ કરવામાં આવ્યું છે
+Comment[kk]=Strigi файл индекстеуі жалғастырылды
 Comment[km]=បាន​បន្ត​ការ​បង្កើត​លិបិក្រម​ឯកសារ​របស់ Strigi
 Comment[ko]=Strigi 파일 인덱싱 다시 시작됨
 Comment[nb]=Strigi filindeksering er gjenopptatt
