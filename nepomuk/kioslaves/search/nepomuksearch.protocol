@@ -1,0 +1,15 @@
+[Protocol]
+exec=kio_nepomuksearch
+protocol=nepomuksearch
+input=none
+output=filesystem
+reading=true
+writing=false
+deleting=false
+linking=false
+makedir=false
+moving=false
+listing=Name,Type,Size,Date,AccessDate,Access,Owner,Group,Link
+source=false
+Icon=nepomuk
+Class=:local

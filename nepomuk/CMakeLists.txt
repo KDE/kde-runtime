@@ -16,11 +16,13 @@ if(SopranoIndex_FOUND)
   include_directories(${STRIGI_INCLUDE_DIR})
 endif(SopranoIndex_FOUND)
 
+add_subdirectory(libnepomukquery)
 add_subdirectory(ontologies)
 add_subdirectory(server)
 add_subdirectory(kcm)
 add_subdirectory(services)
 add_subdirectory(servicestub)
+add_subdirectory(kioslaves)
 add_subdirectory(interfaces)
 
 #add_subdirectory(test)

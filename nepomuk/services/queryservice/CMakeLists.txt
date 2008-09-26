@@ -4,7 +4,7 @@ include_directories(
   ${QT_INCLUDES}
   ${KDE4_INCLUDES}
   ${NEPOMUK_INCLUDES}
-  ${CMAKE_CURRENT_SOURCE_DIR}/lib
+  ${nepomuk_SOURCE_DIR}/libnepomukquery
 )
 
 set(queryservice_SRCS
@@ -13,11 +13,11 @@ set(queryservice_SRCS
   searchthread.cpp
   folder.cpp
   folderconnection.cpp
-  lib/result.cpp
-  lib/query.cpp
-  lib/term.cpp
-  lib/queryparser.cpp
-  lib/dbusoperators.cpp
+  ${nepomuk_SOURCE_DIR}/libnepomukquery/result.cpp
+  ${nepomuk_SOURCE_DIR}/libnepomukquery/query.cpp
+  ${nepomuk_SOURCE_DIR}/libnepomukquery/term.cpp
+  ${nepomuk_SOURCE_DIR}/libnepomukquery/queryparser.cpp
+  ${nepomuk_SOURCE_DIR}/libnepomukquery/dbusoperators.cpp
 )
 
 qt4_add_dbus_adaptor(queryservice_SRCS

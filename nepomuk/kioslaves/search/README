@@ -1,0 +1,15 @@
+A search ioslave that is intended to list search results in a folder structure which
+can be configured, maybe through a query parameter (categorize by).
+The idea is that apps use this protocol but never show the url to the user since it will
+look weird.
+
+nepomuksearch:/<thequerystring>
+
+This should allow something like the search on MAC.
+
+The plain nepomuksearch:/ URL could provide some actions for:
+- predefined searches (like on mac)
+- create a new search -> starts a little dialog which writes a new default search into
+  some config file
+- last searches
+
