@@ -18,10 +18,11 @@
 
 #include "searchfolder.h"
 
+#include "queryserviceclient.h"
+
 #include <Soprano/Vocabulary/Xesam>
 
 #include <Nepomuk/Variant>
-#include <nepomuk/queryserviceclient.h>
 
 #include <QtCore/QMutexLocker>
 

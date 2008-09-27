@@ -26,9 +26,9 @@
 #include <QtCore/QQueue>
 #include <QtCore/QMutex>
 
-#include <nepomuk/term.h>
-#include <nepomuk/result.h>
-#include <nepomuk/query.h>
+#include "term.h"
+#include "result.h"
+#include "query.h"
 
 #include <kio/udsentry.h>
 #include <kio/slavebase.h>

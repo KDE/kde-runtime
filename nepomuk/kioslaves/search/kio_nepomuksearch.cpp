@@ -33,7 +33,7 @@
 #include <Nepomuk/Resource>
 #include <Nepomuk/ResourceManager>
 #include <Nepomuk/Variant>
-#include <nepomuk/queryparser.h>
+#include "queryparser.h"
 
 #include <Soprano/Vocabulary/RDF>
 #include <Soprano/Vocabulary/Xesam>
