@@ -362,7 +362,7 @@ different language).</para>
 </step>
 <step>
 <para>Now move to <guilabel>Resource folder are in account</guilabel> and
-select the the <guilabel>Inbox</guilabel> subfolder of the
+select the <guilabel>Inbox</guilabel> subfolder of the
 <guilabel>office_gwdata</guilabel> folder.</para>
 <para>Leave <guilabel>Hide groupware folders</guilabel> unchecked for now,
 so we can see that happens. You can return here and check it once everything
