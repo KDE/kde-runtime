@@ -111,6 +111,7 @@ Comment[ja]=デフォルトで使用するターミナルエミュレータを�
 Comment[ka]=Comment=აქ შეიძლება სტანდარტული ტერმინალის ემულატორის დაკონფიგურირება. KDE-ს ყველა პროგრამა, ვისაც სჭირდება ფოსტა, გაითვალისწინებენ ამ პარამეტრს
 Comment[kk]=Мұнда Сіз әдетті терминал эмуляторын таңдай аласыз. Бүкіл KDE қолданбаларда терминал эмуляторы керек болғанда осы таңдау қолданылады.
 Comment[km]=សេវា​នេះ​អនុញ្ញាត​ឲ្យ​អ្នក​កំណត់​រចនាសម្ព័ន្ធ​កម្មវិធី​ត្រាប់តាម​ស្ថានីយ​លំនាំដើម​របស់​អ្នក ។ កម្មវិធី KDE ទាំង​អស់​ដែល​ហៅ​កម្មវិធី​ត្រាប់​តាម​ស្ថានីយ​គួរ​គោរព​តាម​ការ​កំណត់​នេះ ។
+Comment[kn]=ಈ ಸೇವೆಯು ನಿನ್ನ ಪೂರ್ವನಿಯೋಜಿತ  ಆದೇಶತೆರೆ ಅನುವರ್ತಕವನ್ನು (ಎಮುಲೇಟರ್) ಸಂರಚಿಸಲು ಅನುವುಮಾಡಿಕೊಡುತ್ತದೆ. ಆದೇಶತೆರೆ ಅನುವರ್ತಕವನ್ನು  ಕೋರುವ ಎಲ್ಲಾ ಕೆಡಿಇ ಅನ್ವಯಗಳೂ ಈ ಸಂಯೋಜನೆಗಳನ್ನು ಗೌರವಿಸಬೇಕಾಗುತ್ತದೆ.
 Comment[ko]=이 서비스에서는 기본 터미널 에뮬레이터를 설정할 수 있습니다. 터미널 에뮬레이터에 접근하려고 하는 모든 KDE 프로그램에서는 이 설정을 따라야 합니다.
 Comment[ku]=Ev xizmet destûrê dide te ku amulatora termînalê ya standard mîheng bikî. Hemû sepanên KDE'yê yên ku tu dikarî hyperlînkê hilbijêrî dê vê mîhengê erê bikin.
 Comment[lt]=Ši tarnyba leidžia jumos nustatyti Jūsų numatytą pašto klientą. Visos KDE programos, kurios iškviečia terminalo emuliatoriaus programa, turėtų atsižvelgti į šį nustatymą.
