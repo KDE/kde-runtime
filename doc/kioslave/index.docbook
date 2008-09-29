@@ -1,6 +1,7 @@
 <?xml version="1.0" ?>
 <!DOCTYPE part PUBLIC "-//KDE//DTD DocBook XML V4.2-Based Variant V1.1//EN" 
 "dtd/kdex.dtd" [
+<!ENTITY kio-bookmarks SYSTEM "bookmarks.docbook">
 <!ENTITY kio-bzip SYSTEM "bzip.docbook">
 <!ENTITY kio-bzip2 SYSTEM "bzip2.docbook">
 <!ENTITY kio-cgi SYSTEM "cgi.docbook">
@@ -48,6 +49,7 @@
 
 <part lang="&language;">
 <title>IO-Slaves</title>
+&kio-bookmarks;
 &kio-bzip;
 &kio-bzip2;
 &kio-cgi;
