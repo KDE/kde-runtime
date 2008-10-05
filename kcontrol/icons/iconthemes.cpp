@@ -136,8 +136,6 @@ IconThemesConfig::IconThemesConfig(const KComponentData &inst, QWidget *parent)
     m_iconThemes->setCurrentItem(m_defaultTheme);
   updateRemoveButton();
 
-  load();
-
   m_iconThemes->setFocus();
 }
 

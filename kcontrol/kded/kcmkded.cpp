@@ -144,7 +144,6 @@ KDEDConfig::KDEDConfig(QWidget* parent, const QVariantList &) :
 	connect(_lvStartup, SIGNAL(itemClicked(QTreeWidgetItem*, int)), SLOT(slotEvalItem(QTreeWidgetItem*)) );
 	connect(_lvStartup, SIGNAL(itemChanged(QTreeWidgetItem*, int)), SLOT(slotItemChecked(QTreeWidgetItem*)) );
 
-	load();
 }
 
 QString setModuleGroup(const QString &filename)

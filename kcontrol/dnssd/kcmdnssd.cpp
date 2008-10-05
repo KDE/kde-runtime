@@ -60,7 +60,6 @@ KCMDnssd::KCMDnssd(QWidget *parent, const QVariantList&)
 	                            ki18n("(C) 2004-2007 Jakub Stachowski")));
     setQuickHelp(i18n("Setup services browsing with ZeroConf"));
     addConfig(DNSSD::Configuration::self(),this);
-    load();
     setButtons( Default|Apply );
 }
 

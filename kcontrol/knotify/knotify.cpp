@@ -111,8 +111,6 @@ K_EXPORT_PLUGIN( NotifyFactory("kcmnotify") )
 	       "charles@altair.dhs.org" );
     setAboutData( ab );
 
-    load();
-
     if ( m_appNames.count() > 0 )
         m_notifyWidget->setApplication( m_appNames.at( 0 ) );
 }
@@ -144,7 +142,6 @@ void KCMKNotify::defaults()
 {
 //    m_notifyWidget->resetDefaults( true ); // ask user
 }
-
 void KCMKNotify::load()
 {
     //setEnabled( false );
