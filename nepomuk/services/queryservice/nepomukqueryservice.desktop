@@ -6,6 +6,7 @@ X-KDE-Nepomuk-autostart=true
 X-KDE-Nepomuk-start-on-demand=false
 Name=NepomukQueryService
 Name[be@latin]=Słužba „NepomukQueryService”
+Name[el]=Υπηρεσία ερωτήματος Nepomuk
 Name[gu]=નેપોમુકપ્રશ્નસેવા
 Name[kn]=ನೆಪೋಮುಕ್ ವಿಚಾರಣಾ ಸೇವೆ
 Name[nds]=Nepomuk-Affraagdeenst
