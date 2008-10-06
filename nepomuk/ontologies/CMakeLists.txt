@@ -10,6 +10,7 @@ configure_file(dcq.desktop.cmake ${CMAKE_CURRENT_BINARY_DIR}/dcq.desktop)
 configure_file(dctype.desktop.cmake ${CMAKE_CURRENT_BINARY_DIR}/dctype.desktop)
 configure_file(dces.desktop.cmake ${CMAKE_CURRENT_BINARY_DIR}/dces.desktop)
 configure_file(xesam.desktop.cmake ${CMAKE_CURRENT_BINARY_DIR}/xesam.desktop)
+configure_file(pimo.desktop.cmake ${CMAKE_CURRENT_BINARY_DIR}/pimo.desktop)
 #configure_file(nmisc.desktop.cmake ${CMAKE_CURRENT_BINARY_DIR}/nmisc.desktop)
 
 install(FILES
@@ -21,6 +22,8 @@ install(FILES
   ${CMAKE_CURRENT_BINARY_DIR}/nie.desktop
   nfo.trig
   ${CMAKE_CURRENT_BINARY_DIR}/nfo.desktop
+  pimo.trig
+  ${CMAKE_CURRENT_BINARY_DIR}/pimo.desktop
 #  nmisc.trig
 #  ${CMAKE_CURRENT_BINARY_DIR}/nmisc.desktop
   rdf.rdfs
