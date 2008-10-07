@@ -19,7 +19,7 @@
 #include "kio_nepomuksearch.h"
 #include "searchfolder.h"
 
-#include <QtCore/QTimer>
+#include <QtCore/QFile>
 
 #include <KUser>
 #include <KDebug>
@@ -353,22 +353,16 @@ extern "C"
 {
     KDE_EXPORT int kdemain( int argc, char **argv )
     {
-        KAboutData about( "kio_nepomuksearch", 0, ki18n("kio_nepomuksearch"), 0);
-        KCmdLineArgs::init( &about );
-
-        KApplication app;
-
-        kDebug(7102) << "Starting nepomuksearch slave " << getpid();
-
-        if (argc != 4) {
-            kError() << "Usage: kio_nepomuksearch protocol domain-socket1 domain-socket2";
-            exit(-1);
-        }
+        // necessary to use other kio slaves
+        KComponentData( "kio_nepomuksearch" );
+        QCoreApplication app( argc, argv );
 
         if ( Nepomuk::ResourceManager::instance()->init() ) {
             kError() << "Unable to initialized Nepomuk.";
-            exit( -1 );
+            return -1;
         }
+
+        kDebug(7102) << "Starting nepomuksearch slave " << getpid();
 
         Nepomuk::SearchProtocol slave( argv[2], argv[3] );
         slave.dispatchLoop();
