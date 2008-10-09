@@ -3,14 +3,15 @@
 @prefix nrl:     <http://www.semanticdesktop.org/ontologies/2007/08/15/nrl#> .
 @prefix nfo:     <http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#> .
 @prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+@prefix tmo:     <http://www.semanticdesktop.org/ontologies/2008/05/20/tmo#> .
 @prefix protege:  <http://protege.stanford.edu/system#> .
 @prefix nmo:     <http://www.semanticdesktop.org/ontologies/2007/03/22/nmo#> .
 @prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix nexif:   <http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#> .
 @prefix ncal:    <http://www.semanticdesktop.org/ontologies/2007/04/02/ncal#> .
+@prefix pimo:    <http://www.semanticdesktop.org/ontologies/2007/11/01/pimo#> .
 @prefix dcterms:  <http://purl.org/dc/terms/> .
 @prefix nao:     <http://www.semanticdesktop.org/ontologies/2007/08/15/nao#> .
-@prefix pimo:    <http://www.semanticdesktop.org/ontologies/2007/11/01/pimo#> .
 @prefix geo:     <http://www.w3.org/2003/01/geo/wgs84_pos#> .
 @prefix dc:      <http://purl.org/dc/elements/1.1/> .
 @prefix nie:     <http://www.semanticdesktop.org/ontologies/2007/01/19/nie#> .
@@ -147,6 +148,12 @@ nfo: {nfo:MediaList
           rdfs:label "EmbeddedFileDataObject" ;
           rdfs:subClassOf nfo:FileDataObject .
 
+    nfo:Archive
+          a       rdfs:Class ;
+          rdfs:comment "A compressed file. May contain other files or folder inside. " ;
+          rdfs:label "Archive" ;
+          rdfs:subClassOf nfo:DataContainer .
+
     nfo:count
           a       rdf:Property ;
           rdfs:comment "A common superproperty for all properties signifying the amount of atomic media data units. Examples of subproperties may include sampleCount and frameCount." ;
@@ -154,11 +161,11 @@ nfo: {nfo:MediaList
           rdfs:label "count" ;
           rdfs:range xsd:integer .
 
-    nfo:Archive
+    nfo:BookmarkFolder
           a       rdfs:Class ;
-          rdfs:comment "A compressed file. May contain other files or folder inside. " ;
-          rdfs:label "Archive" ;
-          rdfs:subClassOf nfo:DataContainer .
+          rdfs:comment "A folder with bookmarks of a webbrowser. Use nfo:containsBookmark to relate Bookmarks. Folders can contain subfolders, use containsBookmarkFolder to relate them." ;
+          rdfs:label "Bookmark Folder" ;
+          rdfs:subClassOf nie:InformationElement .
 
     nfo:hasMediaFileListEntry
           a       rdf:Property ;
@@ -253,6 +260,14 @@ nfo: {nfo:MediaList
           a       nfo:CompressionType ;
           rdfs:label "lossyCompressionType" .
 
+    nfo:containsBookmarkFolder
+          a       rdf:Property ;
+          rdfs:comment "The folder contains a bookmark folder." ;
+          rdfs:domain nfo:BookmarkFolder ;
+          rdfs:label "contains folder" ;
+          rdfs:range nfo:BookmarkFolder ;
+          rdfs:subPropertyOf nie:hasLogicalPart .
+
     nfo:rate
           a       rdf:Property ;
           rdfs:comment "A common superproperty for all properties specifying the media rate. Examples of subproperties may include frameRate for video and sampleRate for audio. This property is expressed in units per second." ;
@@ -306,6 +321,14 @@ nfo: {nfo:MediaList
           rdfs:label "fileLastModified" ;
           rdfs:range xsd:dateTime ;
           rdfs:subPropertyOf dc:date .
+
+    nfo:containsBookmark
+          a       rdf:Property ;
+          rdfs:comment "The folder contains a bookmark." ;
+          rdfs:domain nfo:BookmarkFolder ;
+          rdfs:label "contains bookmark" ;
+          rdfs:range nfo:Bookmark ;
+          rdfs:subPropertyOf nie:hasLogicalPart .
 
     nfo:MindMap
           a       rdfs:Class ;
@@ -486,6 +509,12 @@ nfo: {nfo:MediaList
           rdfs:comment "An image of a filesystem. Instances of this class may include CD images, DVD images or hard disk partition images created by various pieces of software (e.g. Norton Ghost)" ;
           rdfs:label "FilesystemImage" ;
           rdfs:subClassOf nfo:Filesystem .
+
+    nfo:Bookmark
+          a       rdfs:Class ;
+          rdfs:comment "A bookmark of a webbrowser. Use nie:title for the name/label, nie:contentCreated to represent the date when the user added the bookmark, and nie:contentLastModified for modifications. nfo:bookmarks to store the link." ;
+          rdfs:label "Bookmark" ;
+          rdfs:subClassOf nie:InformationElement .
 
     nfo:Media
           a       rdfs:Class ;
@@ -670,6 +699,14 @@ nfo: {nfo:MediaList
           rdfs:label "deletionDate" ;
           rdfs:range xsd:dateTime .
 
+    nfo:bookmarks
+          a       rdf:Property ;
+          rdfs:comment "The address of the linked object. Usually a web URI." ;
+          rdfs:domain nfo:Bookmark ;
+          rdfs:label "link" ;
+          rdfs:range nie:DataObject ;
+          rdfs:subPropertyOf nie:links .
+
     nfo:rearChannels
           a       rdf:Property ;
           rdfs:comment "Number of rear channels." ;
@@ -714,7 +751,7 @@ nfo: {nfo:MediaList
                   "http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#" ;
           nao:hasDefaultNamespaceAbbreviation
                   "nfo" ;
-          nao:lastModified "2008-02-06T14:12:23.812Z" ;
+          nao:lastModified "2008-10-05T19:45:53.500Z" ;
           nao:status "Unstable" ;
           nao:updatable "0 " ;
           nao:version "Revision-8" .
