@@ -22,6 +22,38 @@
           rdfs:label "symbol" ;
           rdfs:subClassOf rdfs:Resource .
 
+    <http://www.semanticdesktop.org/ontologies/2007/08/15/nao#FreeDesktopIcon>
+          a       rdfs:Class ;
+          rdfs:comment "Represents a desktop icon as defined in the FreeDesktop Icon Naming Standard" ;
+          rdfs:label "freedesktopicon" ;
+          rdfs:subClassOf nao:Symbol .
+
+    <http://www.semanticdesktop.org/ontologies/2007/08/15/nao#iconName>
+          a       rdf:Property ;
+          rdfs:comment "Defines a name for a FreeDesktop Icon as defined in the FreeDesktop Icon Naming Standard" ;
+          rdfs:domain nao:FreeDesktopIcon ;
+          rdfs:label "iconname" ;
+          rdfs:range rdfs:Literal ;
+          rdfs:subPropertyOf <http://www.semanticdesktop.org/ontologies/2007/08/15/nao#identifier> ;
+          nrl:minCardinality "1"^^xsd:nonNegativeInteger .
+
+    <http://www.semanticdesktop.org/ontologies/2007/08/15/nao#score>
+          a       rdf:Property ;
+          rdfs:comment "An authorative score for an item valued between 0 and 1" ;
+          rdfs:domain rdfs:Resource ;
+          rdfs:label "score" ;
+          rdfs:range xsd:float ;
+          rdfs:subPropertyOf <http://www.semanticdesktop.org/ontologies/2007/08/15/nao#annotation> .
+
+    <http://www.semanticdesktop.org/ontologies/2007/08/15/nao#scoreParameter>
+          a       rdf:Property ;
+          rdfs:comment "A marker property to mark selected properties which are input to a mathematical algorithm to generate scores for resources. Properties are marked by being defined as subproperties of this property" ;
+          rdfs:domain rdfs:Resource ;
+          rdfs:label "scoreparameter" ;
+          rdfs:range xsd:float ;
+          rdfs:subPropertyOf <http://www.semanticdesktop.org/ontologies/2007/08/15/nao#annotation> .
+
+
     <http://www.semanticdesktop.org/ontologies/2007/08/15/nao#isTopicOf>
           a       rdf:Property ;
           rdfs:comment "Defines a relationship between two resources, where the subject is a topic of the object" ;
@@ -117,11 +149,12 @@
 
     <http://www.semanticdesktop.org/ontologies/2007/08/15/nao#numericRating>
           a       rdf:Property ;
-          rdfs:subPropertyOf <http://www.semanticdesktop.org/ontologies/2007/08/15/nao#rating> ;
-          rdfs:comment "Annotation for a resource in the form of a numeric decimal rating" ;
+          rdfs:subPropertyOf <http://www.semanticdesktop.org/ontologies/2007/08/15/nao#rating> ,
+ 				     <http://www.semanticdesktop.org/ontologies/2007/08/15/nao#scoreParameter> ;
+          rdfs:comment " Annotation for a resource in the form of a numeric rating (float value), allowed values are between 1 and 10 whereas 0 is interpreted as not set" ;
           rdfs:domain rdfs:Resource ;
           rdfs:label "numeric rating" ;
-          rdfs:range xsd:decimal ;
+          rdfs:range xsd:float ;
 	    nrl:maxCardinality "1"^^xsd:nonNegativeInteger .
 
     <http://www.semanticdesktop.org/ontologies/2007/08/15/nao#Tag>
@@ -203,6 +236,13 @@
           rdfs:range rdfs:Literal ;
           rdfs:subPropertyOf rdfs:label .
 
+    <http://www.semanticdesktop.org/ontologies/2007/08/15/nao#pluralPrefLabel>
+          a       rdf:Property ;
+          rdfs:comment "The plural form of the preferred label for a resource" ;
+          rdfs:label "preferred label plural form" ;
+          rdfs:range rdfs:Literal ;
+          rdfs:subPropertyOf rdfs:label .
+
     <http://www.semanticdesktop.org/ontologies/2007/08/15/nao#engineeringTool>
           a       rdf:Property ;
           rdfs:comment "Specifies the engineering tool used to generate the graph" ;
@@ -251,10 +291,10 @@
           a       nrl:Ontology , nrl:DocumentGraph ;
           nao:hasDefaultNamespace "http://www.semanticdesktop.org/ontologies/2007/08/15/nao#" ;
           nao:hasDefaultNamespaceAbbreviation "nao" ;
-          nao:lastModified "2007-08-22T17:35:34.881Z" ;
+          nao:lastModified "2008-09-03T18:34:34.881Z" ;
           nao:serializationLanguage "TriG" ;
           nao:status "Unstable" ;
           nrl:updatable "0" ;
-          nao:version "1" .
+          nao:version "2" .
 }
 
