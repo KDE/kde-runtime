@@ -281,7 +281,7 @@ void AudioDeviceEnumeratorPrivate::renameDevices(QList<AudioDevice> *devicelist)
     // This looks horrible but allows us to quickly find out which
     // AudioDevices have duplicate names with the scope of an AudioDriver
     QHash<Solid::AudioInterface::AudioDriver, QHash<QString, int> > cardNames;
-    foreach (AudioDevice dev, *devicelist) {
+    foreach (const AudioDevice &dev, *devicelist) {
         cardNames[dev.d->driver][dev.d->cardName]++;
     }
 
