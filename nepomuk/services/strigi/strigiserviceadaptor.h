@@ -49,6 +49,7 @@ namespace Nepomuk {
                     "    <method name=\"updateFolder\" >\n"
                     "      <arg name=\"path\" direction=\"in\" type=\"s\" />\n"
                     "    </method>\n"
+                    "    <method name=\"updateAllFolders\" />\n"
                     "    <method name=\"analyzeResource\" >\n"
                     "      <arg name=\"uri\" direction=\"in\" type=\"s\" />\n"
                     "      <arg name=\"lastModificationDate\" direction=\"in\" type=\"u\" />\n"
@@ -78,6 +79,7 @@ namespace Nepomuk {
         void resume();
         void suspend();
         void updateFolder( const QString& path );
+        void updateAllFolders();
         void analyzeResource( const QString& uri, uint mTime, const QByteArray& data );
         void analyzeResourceFromTempFileAndDeleteTempFile( const QString& uri, uint mTime, const QString& tmpFile );
 

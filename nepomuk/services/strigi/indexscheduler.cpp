@@ -363,14 +363,12 @@ void Nepomuk::IndexScheduler::readConfig()
     }
     m_analyzerConfig->setFilters(filters);
 
-    // if the recursion setting changed, update everything again
+    // update everything again in case the folders changed
     // FIXME: this does not really help if the new value is false!
-    if ( m_startedRecursive != Config::self()->recursive() ) {
-        QMutexLocker lock( &m_dirsToUpdateMutex );
-        foreach( const QString& f, Config::self()->folders() )
-            m_dirsToUpdate << qMakePair( f, Config::self()->recursive() );
-        m_dirsToUpdateWc.wakeAll();
-    }
+    QMutexLocker lock( &m_dirsToUpdateMutex );
+    foreach( const QString& f, Config::self()->folders() )
+        m_dirsToUpdate << qMakePair( f, Config::self()->recursive() );
+    m_dirsToUpdateWc.wakeAll();
 }
 
 

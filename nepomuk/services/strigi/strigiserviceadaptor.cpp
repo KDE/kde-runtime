@@ -89,6 +89,12 @@ void Nepomuk::StrigiServiceAdaptor::updateFolder( const QString& path )
 }
 
 
+void Nepomuk::StrigiServiceAdaptor::updateAllFolders()
+{
+    m_indexScheduler->updateAll();
+}
+
+
 void Nepomuk::StrigiServiceAdaptor::analyzeResource( const QString& uri, uint mTime, const QByteArray& data )
 {
     QDataStream stream( data );
