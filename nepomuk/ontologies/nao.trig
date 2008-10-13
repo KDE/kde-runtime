@@ -151,11 +151,11 @@
           a       rdf:Property ;
           rdfs:subPropertyOf <http://www.semanticdesktop.org/ontologies/2007/08/15/nao#rating> ,
  				     <http://www.semanticdesktop.org/ontologies/2007/08/15/nao#scoreParameter> ;
-          rdfs:comment " Annotation for a resource in the form of a numeric rating (float value), allowed values are between 1 and 10 whereas 0 is interpreted as not set" ;
+          rdfs:comment "Annotation for a resource in the form of a numeric rating, allowed values are between 1 and 10 whereas 0 is interpreted as not set" ;
           rdfs:domain rdfs:Resource ;
           rdfs:label "numeric rating" ;
-          rdfs:range xsd:float ;
-	    nrl:maxCardinality "1"^^xsd:nonNegativeInteger .
+          rdfs:range xsd:unsignedInt ;
+          nrl:maxCardinality "1"^^xsd:nonNegativeInteger .
 
     <http://www.semanticdesktop.org/ontologies/2007/08/15/nao#Tag>
           a       rdfs:Class ;
