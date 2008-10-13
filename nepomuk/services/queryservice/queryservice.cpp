@@ -32,6 +32,8 @@
 #include <KPluginFactory>
 #include <KDebug>
 
+#include <Nepomuk/ResourceManager>
+
 
 NEPOMUK_EXPORT_SERVICE( Nepomuk::Search::QueryService, "nepomukqueryservice" )
 
@@ -42,6 +44,9 @@ Nepomuk::Search::QueryService::QueryService( QObject* parent, const QVariantList
     : Service( parent ),
       m_folderConnectionCnt( 0 )
 {
+    // only so ResourceManager won't open yet another connection to the nepomuk server
+    ResourceManager::instance()->setOverrideMainModel( mainModel() );
+
     Nepomuk::Search::registerDBusTypes();
 
     s_instance = this;
