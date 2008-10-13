@@ -26,6 +26,7 @@ SET(TRIAL_LIBRARY_PATHS
   /usr/local/lib${LIB_SUFFIX}
   /usr/lib${LIB_SUFFIX}
   /sw/lib${LIB_SUFFIX}
+  /usr/pkg/lib${LIB_SUFFIX}
   )
 SET(TRIAL_INCLUDE_PATHS
   $ENV{CLUCENE_HOME}/include
@@ -33,6 +34,7 @@ SET(TRIAL_INCLUDE_PATHS
   /usr/local/include
   /usr/include
   /sw/include
+  /usr/pkg/include
   )
 FIND_LIBRARY_WITH_DEBUG(CLUCENE_LIBRARY
   WIN32_DEBUG_POSTFIX d
