@@ -267,6 +267,7 @@ void CfgWm::loadWMs( const QString& current )
             wmCombo->setEnabled( true );
         }
     }
+    differentRB->setEnabled( wmCombo->count()>0 );
     checkConfigureWm();
 }
 
