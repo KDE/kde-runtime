@@ -85,6 +85,7 @@ Comment[x-test]=xxFallback icon themexx
 Comment[zh_CN]=Fallback 图标主题
 Comment[zh_TW]=最後圖示主題
 DisplayDepth=32
+Inherits=kdeclassic
 Example=exec
 LinkOverlay=link
 LockOverlay=lockoverlay

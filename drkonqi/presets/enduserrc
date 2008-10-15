@@ -28,6 +28,7 @@ Name[is]=Almennur notandi
 Name[it]=Utilizzatore finale
 Name[ja]=エンドユーザ
 Name[ka]=საბოლოო მომხმარებელი
+Name[kk]=Қатарлы пайдаланушы
 Name[km]=អ្នកប្រើ​ចុងក្រោយ
 Name[ko]=일반 사용자
 Name[ku]=Bikarhênera/ê dawî
@@ -92,6 +93,7 @@ Comment[is]=Stillingar fyrir almenna notendur
 Comment[it]=Impostazioni preferite per utilizzatori finali
 Comment[ja]=エンドユーザ用の設定
 Comment[ka]=პარამეტრები, საბოლო მომხმარებლისათვის
+Comment[kk]=Қатарлы пайдаланушыға ыңғайлы параметрлері
 Comment[km]=ចំណូលចិត្ត​ការ​កំណត់​សម្រាប់​អ្នកប្រើ​ចុងក្រោយ
 Comment[ko]=일반 사용자가 선호하는 설정
 Comment[ku]=Mîhengên ji bo bikarhênerên dawî pêşniyarbûyî
@@ -165,6 +167,7 @@ Name[is]=Forritið %progname (%appname) hrundi og setti af stað merkið %signum
 Name[it]=L'applicazione %progname (%appname) è andata in crash e ha restituito il segnale %signum (%signame).
 Name[ja]=アプリケーション %progname (%appname) はクラッシュし、シグナル %signum (%signame) が発生しました。
 Name[ka]=პროგრამა %progname (%appname) მოხდა ფატალური შეცდომა, რომელმაც გამოიწვია სიგნალი %signum (%signame).
+Name[kk]=%progname (%appname) бағдарламасы қирап %signum (%signame) сигналын жіберді.
 Name[km]=កម្មវិធី %progname (%appname) បានគាំង ហើយ​បង្ក​ឲ្យ​មាន​សញ្ញា %signum (%signame) ។
 Name[ko]=프로그램 %progname (%appname)이(가) 충돌하였고 신호 %signum(%signame)을(를) 보냈습니다.
 Name[ku]=Sepana %progname (%appname) têk ç, û bû sedemasînyala %signum (%signame).
@@ -210,7 +213,7 @@ Name[ca]=Si us plau, ajudeu-nos a millorar el programari que utilitzeu omplint u
 Name[cs]=Prosím pomožte nám zlepšit software, který používáte tak, že vyplníte hlášení o chybě na <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Užitečnými detaily je např. postup jak chybu vyvolat, otevřené dokumenty atd.
 Name[csb]=Proszëmë pòmòżë nama zlepszac softwôrã jaką brëkùjesz, przez sélanié nama ze starnë <a href="http://bugs.kde.org">http://bugs.kde.org</a> rapòrtów ò felach. Dodôwnô akùratnô wëdowiédzô pòmòże nama rëmac felë, z przerôbianëch dokùmentów.
 Name[da]=Hjælp os gerne med at forbedre softwaren som du bruger ved at rapportere til <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Nyttige informationer omfatter hvordan fejlen kan reproduceres, dokumenter som blev indlæst, osv.
-Name[de]=Bitte helfen Sie uns dabei, die von Ihnen verwendeten Programme zu verbessern, indem Sie unter <a href="http://bugs.kde.org">http://bugs.kde.org</a> einen Fehlerbericht schreiben. Nützliche Informationen sind z. B. wie der Fehler reproduziert werden kann, welche Dokumente geladen waren, etc.
+Name[de]=Bitte helfen Sie uns dabei, die von Ihnen verwendeten Programme zu verbessern, indem Sie unter <a href="http://bugs.kde.org">http://bugs.kde.org</a> einen Fehlerbericht schreiben. Nützliche Informationen sind z. B. wie der Fehler reproduziert werden kann, welche Dokumente geladen waren usw.
 Name[el]=Βοηθήστε μας να βελτιώσουμε την εφαρμογή αυτή αναφέροντας αυτό το σφάλμα στο <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Χρήσιμες πληροφορίες που θα μπορούσατε να συμπεριλάβετε είναι ο τρόπος αναπαραγωγής του σφάλματος, τα έγγραφα που ήταν φορτωμένα κλπ.
 Name[eo]=Bonvolu helpi plibonigi la programon kiun vi uzas per raporti la cimon ĉe <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Utilaj detaloj inkluzivas kiel oni reproduktas la eraron, kiuj dokumentoj estis traktataj, ktp.
 Name[es]=Ayudenos a mejorar los programas generando reportes en <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Detalles útiles incluyen cómo reproducir el error, documentos cargados, etc.
@@ -225,9 +228,11 @@ Name[hr]=Pomozite nam u poboljšavaju softvera koji koristite. Ispunite izvješt
 Name[hu]=Kérjük segítse a munkánkat és jelentse be a hibát itt: <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Célszerű megadni a hiba reprodukálásának módját (angolul), a betöltött dokumentumok listáját stb.
 Name[it]=Per piacere, aiutaci a migliorare i programmi che usi segnalando gli errori su <a href="http://bugs.kde.org">http://bugs.kde.org</a>. I dettagli utili includono come riprodurre l'errore, i documenti caricati, eccetera.
 Name[ja]=<a href="http://bugs.kde.org">http://bugs.kde.org</a> にバグを報告することで、お使いのソフトウェアを改良する手助けをしてください。バグの再現方法、読み込んだ文書などの詳細情報が役立ちます。
+Name[kk]=Пайдаланатын бағдаламамызды <a href=http://bugs.kde.org">http://bugs.kde.org</a> сайты арқылы есеп беру пішінді толтырып, жетілдіруге көмектесуді сұраймыз. Керек егжей-тегжейлері - қандай жағдайда қате қайталанады, ол кезде қандай құжаттар ашылып тұрды және т.б.
 Name[km]=សូម​ជួយ​យើង​បង្កើន​កម្មវិធី ដែល​អ្នក​ប្រើ​ដោយ​បំពេញ​របាយការណ៍​នៅ <a href="http://bugs.kde.org">http://bugs.kde.org</a> ។ សេចក្ដី​លម្អិត​ដ៏មាន​ប្រយោជន៍​​រួមមាន​វិធី​ត្រូវ​បង្កើត​កំហុស​ឡើ​ងវិញ ឯកសារ​ដែល​ត្រូវ​បាន​ផ្ទុក ។ល។
 Name[ko]=이 오류를 <a href="http://bugs.kde.org">http://bugs.kde.org</a>에 보고해 주셔서 프로그램이 개선될 수 있도록 도와 주십시오. 오류를 다시 일으킬 수 있는 방법이나 불러온 문서 등의 자세한 정보가 있다면 제공해 주십시오.
 Name[ku]=Ji kerema xwe re ji bo rastkirina çewtiyê bi tijekirina rapora di <a href="http://bugs.kde.org">http://bugs.kde.org</a> de ji me re bibe alîkar. Di kitekitan de agahiyêm der barê wê de hene.
+Name[lt]=Prašome padėti mums patobulinti šią programą. Užpildykite ir išsiųskite klaidos pranešimą svetainėje <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Prašome pateikti naudingų detalių: aprašykite, kaip atkartoti klaidą, pridėkite dokumentus, kuriuos apdorojant programa lūžo ir pan.
 Name[lv]=Lūdzu palīdziet mums uzlabot šo programmatūru. Nosūtiet kļūdas ziņojumu uz <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Ziņojumā iekļaujiet aprakstu kā atkārtot kļūdu, kādi dokumenti tika ielādēti un citu derīgu informāciju.
 Name[mk]=Ве молиме да ни помогнете да го усовршиме софтверот што го користите, така што ќе поднесете извештај на <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Вклучете колку што е можно повеќе информации како да се репродуцира грешката, вчитаните документи итн.
 Name[ml]=ദയവായി നിങ്ങളുപയോഗിയ്ക്കുന്ന സോഫ്റ്റ്‌വെയര്‍ മെച്ചപ്പെടുത്താന്‍ ഞങ്ങളെ സഹായിയ്ക്കാനായി <a href="http://bugs.kde.org">http://bugs.kde.org</a> എന്ന വിലാസത്തില്‍ രേഖപ്പെടുത്തുക. എങ്ങനെയാണു് ഈ തെറ്റു് വീണ്ടും കാണുക, ചേര്‍ത്തിരുന്ന രചനകള്‍ തുടങ്ങിയവ ഉപയോഗപ്രദമായ വിശദവിവരങ്ങളിലുള്‍പ്പെടും.
@@ -288,6 +293,7 @@ Comment[is]=Forrit fær oftast SIGILL merkið vegna villu í forritinu. Forriti�
 Comment[it]=Un'applicazione riceve il segnale SIGILL principalmente a causa di un errore nell'applicazione. È stato richiesto all'applicazione di salvare i suoi documenti.
 Comment[ja]=アプリケーションは内部のバグにより SIGILL シグナルを受け取ります。アプリケーションは文書を保存するよう求められました。
 Comment[ka]=პროგრამა იღებს SIGILL სიგნალს პროგრამაში არსებული შეცდომის გამო. ყველა დოკუმენტი შენახული იქნება
+Comment[kk]=Бағдарлама  SIGILL сигналын көбінде өзіндегі қатенің себебінен алады. Бағдарламадан құжаттарын сақтау сұралды.
 Comment[km]=ភាគច្រើន កម្មវិធី​ទទួល​សញ្ញា SIGILL ដោយសារ​កំហុស​នៅ​ក្នុង​កម្មវិធី ។ កម្មវិធី​ត្រូវបាន​សួរ​ឲ្យ​រក្សាទុក​ឯកសារ​របស់​វា ។
 Comment[ko]=프로그램의 버그로 인해서 SIGILL 신호를 받을 수도 있습니다. 프로그램에서 문서를 저장하도록 요청했습니다.
 Comment[ku]=Sepanek bi piranî sînyala SIGILL heta buga rast radike. Sepanê ji bo hilanîna belgeyê pirs kir.
@@ -355,6 +361,7 @@ Comment[is]=Forrit lokast með SIGABRT merki þegar það skynjar innra ósamræ
 Comment[it]=Un'applicazione termina con un segnale SIGBART quando trova un'inconsistenza interna dovuta ad un errore nel programma.
 Comment[ja]=アプリケーションはプログラムのバグによる内部不整合が探知されたときに、SIGABRT シグナルとともに落ちます。
 Comment[ka]=პროგრამა შეწყდა SIGABRT სიგნალით, როდესაც მან შეამჩნია შიდა არამდგრადობა რომელიც პროგრამის ბზიკმა გამოიწვია.
+Comment[kk]=Бағдарлама өзіндегі қатенің салдарынан пайда болған бір ішкі қайшылыққа ұшырап, SIGABRT сигналды беріп аяқталды.
 Comment[km]=កម្មវិធី គឺ​បិទ​ដោយ​សញ្ញា SIGABRT នៅពេល​ដែល​វា​រកឃើញ​អថេរ​ខាងក្នុង ដែល​បង្ក​ដោយ​កំហុស​ក្នុង​កម្មវិធី ។
 Comment[ko]=프로그램의 버그로 인해서 내부적인 충돌이 생겨서 SIGABRT 신호와 함께 프로그램이 종료될 수 있습니다.
 Comment[ku]=Sepanek bi sînyala SIGABRT diqede dema ku hevnegirtineke hundirîn bibîne û di bernameyê de dibe sedema bugê.
@@ -421,6 +428,7 @@ Comment[is]=Forrit fær oftast SIGFPE merkið vegna villu í forritinu. Forriti�
 Comment[it]=Un'applicazione riceve il segnale SIGFPE principalmente a causa di un errore nell'applicazione. All'applicazione era richiesto di salvare i suoi documenti.
 Comment[ja]=アプリケーションは内部のバグにより SIGFPE シグナルを受け取ります。アプリケーションは文書を保存するよう求められました。
 Comment[ka]=პროგრამა იღებს SIGFPE სიგნალს პროგრამაში არსებული შეცდომის გამო. ყველა დოკუმენტი შენახული იქნება
+Comment[kk]=Бағдарлама SIGFPE сигналын көбінде өзіндегі қатенің себебінен алады. Бағдарламадан құжаттарын сақтау сұралды.
 Comment[km]=ភាគច្រើន កម្មវិធី​ទទួល​សញ្ញា SIGFPE ដោយសារ​កំហុស​នៅ​ក្នុង​កម្មវិធី ។ កម្មវិធី​ត្រូវបាន​សួរ​ឲ្យ​រក្សាទុក​ឯកសារ​របស់​វា ។
 Comment[ko]=프로그램의 버그로 인해서 SIGFPE 신호를 받을 수도 있습니다. 프로그램에서 문서를 저장하도록 요청했습니다.
 Comment[ku]=Sepanek bi piranî sînyala SIGFPE radike. Sepanê ji bo hilanîna belgeyê pirs kir.
@@ -488,6 +496,7 @@ Comment[is]=Forrit fær oftast SIGSEGV merkið vegna villu í forritinu. Forriti
 Comment[it]=Un'applicazione riceve il segnale SIGSEGV principalmente a causa di un errore nell'applicazione. All'applicazione era richiesto di salvare i suoi documenti.
 Comment[ja]=アプリケーションは内部のバグにより SIGSEGV シグナルを受け取ります。アプリケーションは文書を保存するよう求められました。
 Comment[ka]=პროგრამა იღებს  SIGSEGV სიგნალს პროგრამაში არსებული შეცდომის გამო. ყველა დოკუმენტი შენახული იქნება
+Comment[kk]=Бағдарлама SIGSEGV сигналын көбінде өзіндегі қатенің себебінен алады. Бағдарламадан құжаттарын сақтау сұралды.
 Comment[km]=ភាគច្រើន កម្មវិធី​ទទួល​សញ្ញា SIGSEGV ដោយសារ​កំហុស​នៅ​ក្នុង​កម្មវិធី​។ កម្មវិធី​ត្រូវបាន​សួរ​ឲ្យ​រក្សាទុក​​ឯកសារ​របស់​វា ។
 Comment[ko]=프로그램의 버그로 인해서 SIGSEGV 신호를 받을 수도 있습니다. 프로그램에서 문서를 저장하도록 요청했습니다.
 Comment[ku]=Sepanek bi piranî sînyala SIGSEGV radike. Sepanê ji bo hilanîna belgeyê pirs 
@@ -553,6 +562,7 @@ Name[is]=Óþekkt
 Name[it]=Sconosciuto
 Name[ja]=未知
 Name[ka]=უცნობი
+Name[kk]=Беймәлім
 Name[km]=មិនស្គាល់
 Name[ko]=알 수 없음
 Name[ku]=nayê Zanîn
@@ -618,6 +628,7 @@ Comment[is]=Sorrý, þetta merki er ekki þekkt
 Comment[it]=Mi spiace, non conosco questo segnale.
 Comment[ja]=このシグナルは分かりません。
 Comment[ka]=სამწუხაროდ ამ სიგნალის შესახებ არაფერია ცნობილი
+Comment[kk]=Кешіріңіз, танымайтын сигнал.
 Comment[km]=សូម​អភ័យទោស ខ្ញុំ​មិនស្គាល់​សញ្ញា​នេះ​ទេ ។
 Comment[ko]=죄송합니다. 이 신호를 알 수 없습니다.
 Comment[ku]=Bibore, ez nizanim ev sînyal çi ye.

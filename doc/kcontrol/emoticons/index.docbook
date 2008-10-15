@@ -11,8 +11,8 @@
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
 </authorgroup>
 
-<date>2008-05-28</date>
-<releaseinfo>1.0</releaseinfo>
+<date>2008-09-12</date>
+<releaseinfo>&kde; 4.1.2</releaseinfo>
 
 <keywordset>
 <keyword>KDE</keyword>
@@ -95,7 +95,7 @@ You can create your own new theme from scratch. Clicking on this button brings a
 <varlistentry><term><guilabel>Get New Themes...</guilabel></term>
 <listitem>
 <para>
-You need to be connected to the internet to use this action. A dialog displays a list of emoticons themes from <ulink url="http://www.kde-look.org">http://www.kde-look.org</ulink> and directly install them. The dialog displays a list of themes and you can install one by clicking the <guibutton>Install</guibutton> button under the theme preview.
+You need to be connected to the Internet to use this action. A dialog displays a list of emoticons themes from <ulink url="http://www.kde-look.org">http://www.kde-look.org</ulink> and you can install one by clicking the <guibutton>Install</guibutton> button on the right side of the theme description in the list.
 </para>
 </listitem>
 </varlistentry>
@@ -136,14 +136,14 @@ This button allows you to add an emoticon to the selected theme. The dialog asks
 <varlistentry><term><guilabel>Edit...</guilabel></term>
 <listitem>
 <para>
-The <guibutton>Edit...</guibutton> button allows you to change either the icon or the text of the selected emoticon. You need to click the <guibutton>Apply</guibutton> button to validate this action.
+The <guibutton>Edit...</guibutton> button allows you to change either the icon or the text of the selected emoticon. You need to click the <guibutton>OK</guibutton> button to validate this action.
 </para>
 </listitem>
 </varlistentry>
 <varlistentry><term><guilabel>Remove</guilabel></term>
 <listitem>
 <para>
-This will remove the selected emoticon from the selected theme. You need to click the <guibutton>Apply</guibutton> button to validate this action.
+This will remove the selected emoticon from the selected theme. You need to click the <guibutton>Yes</guibutton> button to validate this action.
 </para>
 </listitem>
 </varlistentry>

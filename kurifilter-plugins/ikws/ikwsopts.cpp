@@ -342,6 +342,7 @@ void FilterOptions::setWebShortcutState()
 void FilterOptions::addSearchProvider()
 {
   SearchProviderDialog dlg(0, this);
+
   if (dlg.exec())
   {
       m_dlg->lvSearchProviders->setCurrentItem(displaySearchProvider(dlg.provider()));

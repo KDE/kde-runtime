@@ -74,7 +74,7 @@ text fields below.</para>
 
 <para>If you enable <guilabel>Mouse wheel over desktop switches
 desktop</guilabel> then scrolling the wheel over an empty space on the
-desktop will change the the next virtual desktop numerically, in the
+desktop will change to the next virtual desktop numerically, in the
 direction you scrolled (either up or down).</para>
 
 </sect2>
