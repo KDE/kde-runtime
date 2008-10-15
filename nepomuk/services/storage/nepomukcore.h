@@ -72,6 +72,9 @@ namespace Nepomuk {
         // initialization
         QStringList m_openingRepositories;
         QString m_currentRepoName;
+
+        // true if one of the repos could not be opened
+        bool m_failedToOpenRepository;
     };
 }
 

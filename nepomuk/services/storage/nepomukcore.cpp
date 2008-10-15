@@ -46,7 +46,9 @@ Nepomuk::Core::~Core()
 
 void Nepomuk::Core::init()
 {
-    // FIXME: export the main model on org.kde.NepomukRepository via Soprano::Server::DBusExportModel
+    // TODO: export the main model on org.kde.NepomukRepository via Soprano::Server::DBusExportModel
+
+    m_failedToOpenRepository = false;
 
     KSharedConfig::Ptr config = KSharedConfig::openConfig( "nepomukserverrc" );
 
@@ -62,7 +64,7 @@ void Nepomuk::Core::init()
         }
 
         if ( m_openingRepositories.isEmpty() ) {
-            emit initializationDone( true );
+            emit initializationDone( !m_failedToOpenRepository );
         }
     }
     else {
@@ -90,12 +92,12 @@ void Nepomuk::Core::createRepository( const QString& name )
 }
 
 
-void Nepomuk::Core::slotRepositoryOpened( Repository* repo, bool /*success*/ )
+void Nepomuk::Core::slotRepositoryOpened( Repository* repo, bool success )
 {
-    // FIXME: do something with success
+    m_failedToOpenRepository = m_failedToOpenRepository && !success;
     m_openingRepositories.removeAll( repo->name() );
     if ( m_openingRepositories.isEmpty() ) {
-        emit initializationDone( true );
+        emit initializationDone( !m_failedToOpenRepository );
     }
 }
 
