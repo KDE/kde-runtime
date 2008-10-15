@@ -89,6 +89,7 @@ Comment[nds]=Hier kannst Du Dien Standard-Dateipleger angeven. De Indrääg binn
 Comment[pt]=Aqui poderá configurar o seu navegador Web predefinido. Todas as aplicações do KDE onde possa seleccionar hiperligações deverão respeitar esta configuração.
 Comment[pt_BR]=Aqui poderá configurar o seu navegador Web predefinido. Todas as aplicações do KDE onde possa seleccionar hiperligações deverão respeitar esta configuração.
 Comment[sv]=Här kan du anpassa förvald filhanterare. Alternativen i K-menyn och alla KDE-program där du kan öppna kataloger kommer att använda den här filhanteraren.
+Comment[tr]=Buradan öntanımlı dosya yöneticinizi yapılandırabilirsiniz. K menüsünde ve KDE uygulamalarında bulunan tüm dizin açan uygulamalar için bu uygulama kullanılacaktır.
 Comment[uk]=Тут можна налаштувати ваш типовий інструмент для роботи з файлами. Всі пункти інструменту для запуску програм і всі програми KDE, у яких ви можете відкривати теки, використовуватимуть саме цей інструмент.
 Comment[x-test]=xxHere you can configure your default file manager. The entries in the K menu and all KDE applications in which you can open folders will use this file manager.xx
 Comment[zh_TW]=您可以在這裡設定您的預設檔案管理員。在 K 選單中的項目，以及所有可以開啟資料夾的 KDE 應用程式都應該遵從這個設定。
