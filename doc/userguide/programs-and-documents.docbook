@@ -68,7 +68,7 @@ launch (remembering that <application>bash</application>, the command language i
 <keycap>Enter</keycap>. If you are unsure about the name of a program, type
 the first few letters then press the &Tab; key on your keyboard. By pressing
 &Tab;, <application>bash</application> (through &konsole;) will try to guess the name of the program you wish to
-launch. If it finds more then one matching program, a list of
+launch. If it finds more than one matching program, a list of
  matching programs will be printed on the screen. Type the name of the
  program from the list and press <keycap>Enter</keycap> to launch.</para>
 
