@@ -207,7 +207,7 @@ screen.</para></listitem>
 buttons).  &kde; will then start with the color selected by <guilabel>Color
 1</guilabel> in each corner of the screen, and slowly transform into the color
 selected by <guilabel>Color 2</guilabel> as it moves to the center of the
-screen. The <quote>shape</quote> of this gradient is  different then the pyramid
+screen. The <quote>shape</quote> of this gradient is  different than the pyramid
 gradient.</para></listitem>
 </varlistentry>
 <varlistentry>
