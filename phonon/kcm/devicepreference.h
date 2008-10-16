@@ -56,8 +56,11 @@ class DevicePreference : public QWidget, private Ui::DevicePreference
         void updateAudioCaptureDevices();
 
     private:
+        template<Phonon::ObjectDescriptionType T> void removeDevice(const Phonon::ObjectDescription<T> &deviceToRemove,
+                QMap<int, Phonon::ObjectDescriptionModel<T> *> *modelMap);
         QList<Phonon::AudioOutputDevice> availableAudioOutputDevices() const;
         QList<Phonon::AudioCaptureDevice> availableAudioCaptureDevices() const;
+        QList<int> m_removeOnApply;
         QMap<int, Phonon::AudioOutputDeviceModel *> m_outputModel;
         QMap<int, Phonon::AudioCaptureDeviceModel *> m_captureModel;
         QStandardItemModel m_categoryModel;

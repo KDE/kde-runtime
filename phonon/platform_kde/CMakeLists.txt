@@ -1,11 +1,16 @@
-include_directories(${KDE4_KIO_INCLUDES} ${CMAKE_SOURCE_DIR}/solid ${CMAKE_BINARY_DIR}/solid)
+include_directories(${KDE4_KIO_INCLUDES} ${ALSA_INCLUDES})
 set(kde_PART_SRCS
 	kdepluginfactory.cpp
 	kiomediastream.cpp
    devicelisting.cpp
 	)
+
+if(ALSA_FOUND)
+   qt4_add_resources(kde_PART_SRCS resources.qrc)
+endif(ALSA_FOUND)
+
 kde4_add_plugin(kde ${kde_PART_SRCS})
-target_link_libraries(kde ${KDE4_PHONON_LIBS} ${KDE4_KIO_LIBS} ${KDE4_KAUDIODEVICELIST_LIBS})
+target_link_libraries(kde ${KDE4_PHONON_LIBS} ${KDE4_KIO_LIBS} ${ASOUND_LIBRARY})
 if(NOT WIN32)
   set_target_properties(kde PROPERTIES
                             INSTALL_RPATH_USE_LINK_PATH TRUE

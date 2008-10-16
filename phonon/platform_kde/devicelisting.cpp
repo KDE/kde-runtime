@@ -20,8 +20,8 @@
 
 #include "devicelisting.h"
 
-#include "../libkaudiodevicelist/audiodeviceenumerator.h"
-#include "../libkaudiodevicelist/audiodevice.h"
+#include <QtCore/QFile>
+#include <QtDBus/QDBusReply>
 #include <QtCore/QMutableHashIterator>
 #include <QtCore/QTimerEvent>
 #include <kconfiggroup.h>
@@ -29,170 +29,110 @@
 #include <klocale.h>
 #include <ksharedconfig.h>
 
+#include <../config-alsa.h>
+#ifdef HAVE_ALSA_ASOUNDLIB_H
+#include <alsa/asoundlib.h>
+#endif // HAVE_ALSA_ASOUNDLIB_H
+
+typedef QList<QPair<QByteArray, QString> > PhononDeviceAccessList;
+Q_DECLARE_METATYPE(PhononDeviceAccessList)
+
+static void installAlsaPhononDeviceHandle()
+{
+#ifdef HAVE_LIBASOUND2
+    // after recreating the global configuration we can go and install custom configuration
+    snd_config_update_free_global();
+    snd_config_update();
+    Q_ASSERT(snd_config);
+
+    // x-phonon: device
+    QFile phononDefinition(":/phonon/phonondevice.alsa");
+    phononDefinition.open(QIODevice::ReadOnly);
+    const QByteArray &phononDefinitionData = phononDefinition.readAll();
+
+    snd_input_t *sndInput = 0;
+    if (0 == snd_input_buffer_open(&sndInput, phononDefinitionData.constData(), phononDefinitionData.size())) {
+        Q_ASSERT(sndInput);
+        snd_config_load(snd_config, sndInput);
+        snd_input_close(sndInput);
+    }
+
+#if 0
+    // phonon_softvol: device
+    QFile softvolDefinition(":/phonon/softvol.alsa");
+    softvolDefinition.open(QIODevice::ReadOnly);
+    const QByteArray softvolDefinitionData = softvolDefinition.readAll();
+
+    sndInput = 0;
+    if (0 == snd_input_buffer_open(&sndInput, softvolDefinitionData.constData(), softvolDefinitionData.size())) {
+        Q_ASSERT(sndInput);
+        snd_config_load(snd_config, sndInput);
+        snd_input_close(sndInput);
+    }
+#endif
+#endif // HAVE_LIBASOUND2
+}
+
 namespace Phonon
 {
 
 QList<int> DeviceListing::objectDescriptionIndexes(Phonon::ObjectDescriptionType type)
 {
-    switch (type) {
-    case Phonon::AudioOutputDeviceType:
-        checkAudioOutputs();
-        return m_sortedOutputIndexes.values();
-    case Phonon::AudioCaptureDeviceType:
-        checkAudioInputs();
-        return m_sortedInputIndexes.values();
-    default:
-        Q_ASSERT(false);
-        return QList<int>();
+    QList<int> r;
+    if (type != Phonon::AudioOutputDeviceType && type != Phonon::AudioCaptureDeviceType) {
+        return r;
     }
+    QDBusReply<QByteArray> reply = m_phononServer.call(QLatin1String("audioDevicesIndexes"), static_cast<int>(type));
+    if (!reply.isValid()) {
+        kError(600) << reply.error();
+        return r;
+    }
+    QDataStream stream(reply.value());
+    stream >> r;
+    return r;
 }
 
 QHash<QByteArray, QVariant> DeviceListing::objectDescriptionProperties(Phonon::ObjectDescriptionType type, int index)
 {
-    QHash<QByteArray, QVariant> ret;
-    switch (type) {
-    case Phonon::AudioOutputDeviceType:
-        checkAudioOutputs();
-        if (m_outputInfos.contains(index)) {
-            ret = m_outputInfos.value(index);
-            if (m_useOss) {
-                const QVariant driver = ret.value("driver");
-                if (driver == QLatin1String("oss")) {
-                    ret["name"] = i18n("%1 (OSS)", ret.value("name").toString());
-                } else if (driver == QLatin1String("alsa")) {
-                    ret["name"] = i18n("%1 (ALSA)", ret.value("name").toString());
-                }
-            }
-            return ret;
-        }
-        break;
-    case Phonon::AudioCaptureDeviceType:
-        checkAudioInputs();
-        if (m_inputInfos.contains(index)) {
-            ret = m_inputInfos.value(index);
-            if (m_useOss) {
-                const QVariant driver = ret.value("driver");
-                if (driver == QLatin1String("oss")) {
-                    ret["name"] = i18n("%1 (OSS)", ret.value("name").toString());
-                } else if (driver == QLatin1String("alsa")) {
-                    ret["name"] = i18n("%1 (ALSA)", ret.value("name").toString());
-                }
-            }
-            return ret;
-        }
-        break;
-    default:
-        Q_ASSERT(false);
-        break;
+    QHash<QByteArray, QVariant> r;
+    if (type != Phonon::AudioOutputDeviceType && type != Phonon::AudioCaptureDeviceType) {
+        return r;
     }
-    ret.insert("name", QString());
-    ret.insert("description", QString());
-    ret.insert("available", false);
-    ret.insert("initialPreference", 0);
-    ret.insert("isAdvanced", false);
-    return ret;
-}
-
-static QHash<QByteArray, QVariant> propertiesHashFor(const Phonon::AudioDevice &dev)
-{
-    QHash<QByteArray, QVariant> deviceData;
-    QString mixerDevice;
-    int initialPreference = dev.initialPreference();
-    switch (dev.driver()) {
-        case Solid::AudioInterface::Alsa:
-            deviceData.insert("driver", "alsa");
-            initialPreference += 100;
-            // guess the associated mixer device id (we use the knowledge about how
-            // libkaudiodevicelist constructs ALSA device ids
-            foreach (QString id, dev.deviceIds()) {
-                const int idx = id.indexOf(QLatin1String("CARD="));
-                if (idx > 0) {
-                    id = id.mid(idx + 5);
-                    const int commaidx = id.indexOf(QLatin1Char(','));
-                    if (commaidx > 0) {
-                        id = id.left(commaidx);
-                    }
-                    deviceData.insert("mixerDeviceId", QLatin1String("hw:") + id);
-                    break;
-                }
-                deviceData.insert("mixerDeviceId", id);
-            }
-            break;
-        case Solid::AudioInterface::OpenSoundSystem:
-            deviceData.insert("driver", "oss");
-            // fall through
-        case Solid::AudioInterface::UnknownAudioDriver:
-            initialPreference += 50;
-            if (!dev.deviceIds().isEmpty()) {
-                deviceData.insert("mixerDeviceId", dev.deviceIds().first());
-            }
-            break;
+    QDBusReply<QByteArray> reply = m_phononServer.call(QLatin1String("audioDevicesProperties"), index);
+    if (!reply.isValid()) {
+        kError(600) << reply.error();
+        return r;
     }
-    // TODO add PulseAudio logic
-    const QString description = dev.deviceIds().isEmpty() ?
-        i18n("<html>This device is currently not available (either it is unplugged or the "
-                "driver is not loaded).</html>") :
-        i18n("<html>This will try the following devices and use the first that works: "
-                "<ol><li>%1</li></ol></html>", dev.deviceIds().join("</li><li>"));
-    deviceData.insert("name", dev.cardName());
-    // TODO add OSS/ALSA postfix
-    deviceData.insert("description", description);
-    if (!dev.iconName().isEmpty()) {
-        deviceData.insert("icon", dev.iconName());
-    }
-    deviceData.insert("available", dev.isAvailable());
-    deviceData.insert("initialPreference", initialPreference);
-    deviceData.insert("isAdvanced", dev.isAdvancedDevice());
-    deviceData.insert("deviceIds", dev.deviceIds());
-    return deviceData;
-}
-
-void DeviceListing::ossSettingChanged(bool useOss)
-{
-    if (useOss == m_useOss) {
-        return;
-    }
-    m_useOss = useOss;
-    if (useOss) {
-        // add OSS devices
-        QList<Phonon::AudioDevice> audioDevices = Phonon::AudioDeviceEnumerator::availablePlaybackDevices();
-        if (!m_outputInfos.isEmpty()) {
-            foreach (const Phonon::AudioDevice &dev, audioDevices) {
-                if (dev.driver() == Solid::AudioInterface::OpenSoundSystem) {
-                    m_outputInfos.insert(-dev.index(), propertiesHashFor(dev));
-                    m_sortedOutputIndexes.insert(-m_outputInfos[-dev.index()].value("initialPreference").toInt(), -dev.index());
-                }
-            }
-        }
-    } else {
-        // remove all OSS devices
-        QMutableHashIterator<int, QHash<QByteArray, QVariant> > it(m_outputInfos);
-        while (it.hasNext()) {
-            it.next();
-            if (it.value().value("driver") == QLatin1String("oss")) {
-                const int initialPreference = it.value().value("initialPreference").toInt();
-                m_sortedOutputIndexes.remove(-initialPreference, it.key());
-                it.remove();
-            }
-        }
-    }
-    m_signalTimer.start(0, this);
+    QDataStream stream(reply.value());
+    stream >> r;
+    return r;
 }
 
 DeviceListing::DeviceListing()
+    : m_phononServer(
+            QLatin1String("org.kde.kded"),
+            QLatin1String("/modules/phononserver"),
+            QLatin1String("org.kde.PhononServer"))
 {
+    qRegisterMetaType<PhononDeviceAccessList>();
+    qRegisterMetaTypeStreamOperators<PhononDeviceAccessList>("PhononDeviceAccessList");
+
     KSharedConfigPtr config;
     config = KSharedConfig::openConfig("phonon_platform_kde");
-    m_useOss = KConfigGroup(config, "Settings").readEntry("showOssDevices", false);
+    installAlsaPhononDeviceHandle();
 
-    connect(Phonon::AudioDeviceEnumerator::self(), SIGNAL(devicePlugged(const Phonon::AudioDevice &)),
-            this, SLOT(devicePlugged(const Phonon::AudioDevice &)));
-    connect(Phonon::AudioDeviceEnumerator::self(), SIGNAL(deviceUnplugged(const Phonon::AudioDevice &)),
-            this, SLOT(deviceUnplugged(const Phonon::AudioDevice &)));
+    QDBusConnection::sessionBus().connect(QLatin1String("org.kde.kded"), QLatin1String("/modules/phononserver"), QLatin1String("org.kde.PhononServer"),
+            QLatin1String("audioDevicesChanged"), QString(), this, SLOT(audioDevicesChanged()));
 }
 
 DeviceListing::~DeviceListing()
 {
+}
+
+void DeviceListing::audioDevicesChanged()
+{
+    kDebug(600);
+    m_signalTimer.start(0, this);
 }
 
 void DeviceListing::timerEvent(QTimerEvent *e)
@@ -202,99 +142,6 @@ void DeviceListing::timerEvent(QTimerEvent *e)
         kDebug(600) << "emitting objectDescriptionChanged for AudioOutputDeviceType and AudioCaptureDeviceType";
         emit objectDescriptionChanged(Phonon::AudioOutputDeviceType);
         emit objectDescriptionChanged(Phonon::AudioCaptureDeviceType);
-    }
-}
-
-void DeviceListing::checkAudioOutputs()
-{
-    if (m_outputInfos.isEmpty()) {
-        QList<Phonon::AudioDevice> playbackDevices = Phonon::AudioDeviceEnumerator::availablePlaybackDevices();
-        foreach (const Phonon::AudioDevice &dev, playbackDevices) {
-            if (!m_useOss && dev.driver() == Solid::AudioInterface::OpenSoundSystem) {
-                continue;
-            }
-            m_outputInfos.insert(-dev.index(), propertiesHashFor(dev));
-            m_sortedOutputIndexes.insert(-m_outputInfos[-dev.index()].value("initialPreference").toInt(), -dev.index());
-        }
-        if (m_outputInfos.isEmpty() && !m_useOss) {
-            // no devices available? Let's try with OSS devices enabled
-            foreach (const Phonon::AudioDevice &dev, playbackDevices) {
-                m_outputInfos.insert(-dev.index(), propertiesHashFor(dev));
-                m_sortedOutputIndexes.insert(-m_outputInfos[-dev.index()].value("initialPreference").toInt(), -dev.index());
-            }
-            m_useOss = !m_outputInfos.isEmpty();
-        }
-    }
-}
-
-void DeviceListing::checkAudioInputs()
-{
-    if (m_inputInfos.isEmpty()) {
-        QList<Phonon::AudioDevice> captureDevices = Phonon::AudioDeviceEnumerator::availableCaptureDevices();
-        foreach (const Phonon::AudioDevice &dev, captureDevices) {
-            if (!m_useOss && dev.driver() == Solid::AudioInterface::OpenSoundSystem) {
-                continue;
-            }
-            m_inputInfos.insert(-dev.index(), propertiesHashFor(dev));
-            m_sortedInputIndexes.insert(-m_inputInfos[-dev.index()].value("initialPreference").toInt(), -dev.index());
-        }
-        if (m_inputInfos.isEmpty() && !m_useOss) {
-            // no devices available? Let's try with OSS devices enabled
-            foreach (const Phonon::AudioDevice &dev, captureDevices) {
-                m_inputInfos.insert(-dev.index(), propertiesHashFor(dev));
-                m_sortedInputIndexes.insert(-m_inputInfos[-dev.index()].value("initialPreference").toInt(), -dev.index());
-            }
-            m_useOss = !m_inputInfos.isEmpty();
-        }
-    }
-}
-
-void DeviceListing::devicePlugged(const Phonon::AudioDevice &dev)
-{
-    kDebug(600) << dev.cardName();
-    if (dev.isPlaybackDevice()) {
-        m_outputInfos.insert(-dev.index(), propertiesHashFor(dev));
-        const int initialPreference = m_outputInfos[-dev.index()].value("initialPreference").toInt();
-        if (!m_sortedOutputIndexes.contains(-initialPreference, -dev.index())) {
-            m_sortedOutputIndexes.insert(-initialPreference, -dev.index());
-        }
-        m_signalTimer.start(0, this);
-    }
-    if (dev.isCaptureDevice()) {
-        m_inputInfos.insert(-dev.index(), propertiesHashFor(dev));
-        const int initialPreference = m_inputInfos[-dev.index()].value("initialPreference").toInt();
-        if (!m_sortedInputIndexes.contains(-initialPreference, -dev.index())) {
-            m_sortedInputIndexes.insert(-initialPreference, -dev.index());
-        }
-        m_signalTimer.start(0, this);
-    }
-}
-
-static bool markAsUnavailable(QHash<int, QHash<QByteArray, QVariant> > &infos, int index)
-{
-    QHash<int, QHash<QByteArray, QVariant> >::iterator it = infos.find(index);
-    if (it != infos.end()) {
-        it.value().insert("description", i18n("<html>This device is currently not available "
-                    "(either it is unplugged or the driver is not loaded).</html>"));
-        it.value().insert("available", false);
-        it.value().insert("deviceIds", QStringList());
-        return true;
-    }
-    return false;
-}
-
-void DeviceListing::deviceUnplugged(const Phonon::AudioDevice &dev)
-{
-    kDebug(600) << dev.cardName();
-    if (dev.isPlaybackDevice()) {
-        if (markAsUnavailable(m_outputInfos, -dev.index())) {
-            m_signalTimer.start(0, this);
-        }
-    }
-    if (dev.isCaptureDevice()) {
-        if (markAsUnavailable(m_inputInfos, -dev.index())) {
-            m_signalTimer.start(0, this);
-        }
     }
 }
 

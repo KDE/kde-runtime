@@ -22,18 +22,15 @@
 #define DEVICELISTING_H
 
 #include <QtCore/QBasicTimer>
+#include <QtDBus/QDBusInterface>
 #include <QtCore/QByteArray>
 #include <QtCore/QHash>
-#include <QtCore/QMap>
-#include <QtCore/QMultiMap>
 #include <QtCore/QObject>
 #include <QtCore/QVariant>
 #include <Phonon/ObjectDescription>
 
 namespace Phonon
 {
-
-class AudioDevice;
 
 class DeviceListing : public QObject
 {
@@ -45,9 +42,6 @@ class DeviceListing : public QObject
         QList<int> objectDescriptionIndexes(Phonon::ObjectDescriptionType type);
         QHash<QByteArray, QVariant> objectDescriptionProperties(Phonon::ObjectDescriptionType type, int index);
 
-    public slots:
-        Q_SCRIPTABLE void ossSettingChanged(bool useOss);
-
     signals:
         void objectDescriptionChanged(ObjectDescriptionType);
 
@@ -55,18 +49,11 @@ class DeviceListing : public QObject
         void timerEvent(QTimerEvent *e);
 
     private slots:
-        void devicePlugged(const Phonon::AudioDevice &);
-        void deviceUnplugged(const Phonon::AudioDevice &);
+        void audioDevicesChanged();
 
     private:
-        void checkAudioOutputs();
-        void checkAudioInputs();
-        QMultiMap<int, int> m_sortedOutputIndexes;
-        QMultiMap<int, int> m_sortedInputIndexes;
-        QHash<int, QHash<QByteArray, QVariant> > m_outputInfos;
-        QHash<int, QHash<QByteArray, QVariant> > m_inputInfos;
         QBasicTimer m_signalTimer;
-        bool m_useOss : 1;
+        QDBusInterface m_phononServer;
 };
 
 } // namespace Phonon

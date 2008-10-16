@@ -21,6 +21,10 @@
 #include "devicepreference.h"
 
 #include <QtCore/QList>
+#include <QtDBus/QDBusConnection>
+#include <QtDBus/QDBusReply>
+#include <QtDBus/QDBusInterface>
+#include <QtDBus/QDBusMessage>
 #include <QtGui/QApplication>
 #include <QtGui/QPainter>
 #include <QtGui/QItemDelegate>
@@ -31,8 +35,6 @@
 #include <phonon/backendcapabilities.h>
 #include <phonon/objectdescription.h>
 #include <phonon/phononnamespace.h>
-#include "../libkaudiodevicelist/audiodeviceenumerator.h"
-#include "../libkaudiodevicelist/audiodevice.h"
 #include "qsettingsgroup_p.h"
 #include "globalconfig_p.h"
 #include <kfadewidgeteffect.h>
@@ -331,8 +333,42 @@ void DevicePreference::updateDeviceList()
 
 void DevicePreference::updateAudioCaptureDevices()
 {
-    //TODO
-    kFatal() << "not implemented";
+    kDebug();
+    const QList<Phonon::AudioCaptureDevice> list = availableAudioCaptureDevices();
+    QHash<int, Phonon::AudioCaptureDevice> hash;
+    foreach (const Phonon::AudioCaptureDevice &dev, list) {
+        hash.insert(dev.index(), dev);
+    }
+    for (int ii = 0; ii < captureCategoriesCount; ++ii) {
+        const int i = captureCategories[ii];
+        Phonon::AudioCaptureDeviceModel *model = m_captureModel.value(i);
+        Q_ASSERT(model);
+
+        QHash<int, Phonon::AudioCaptureDevice> hashCopy(hash);
+        QList<Phonon::AudioCaptureDevice> orderedList;
+        if (model->rowCount() > 0) {
+            QList<int> order = model->tupleIndexOrder();
+            foreach (int idx, order) {
+                if (hashCopy.contains(idx)) {
+                    orderedList << hashCopy.take(idx);
+                }
+            }
+            if (hashCopy.size() > 1) {
+                // keep the order of the original list
+                foreach (const Phonon::AudioCaptureDevice &dev, list) {
+                    if (hashCopy.contains(dev.index())) {
+                        orderedList << hashCopy.take(dev.index());
+                    }
+                }
+            } else if (hashCopy.size() == 1) {
+                orderedList += hashCopy.values();
+            }
+            model->setModelData(orderedList);
+        } else {
+            model->setModelData(list);
+        }
+    }
+    deviceList->resizeColumnToContents(0);
 }
 
 void DevicePreference::updateAudioOutputDevices()
@@ -492,6 +528,13 @@ void DevicePreference::save()
         QSettingsGroup generalGroup(&config, QLatin1String("General"));
         generalGroup.setValue(QLatin1String("HideAdvancedDevices"), !showCheckBox->isChecked());
     }
+    if (!m_removeOnApply.isEmpty()) {
+        QDBusMessage msg = QDBusMessage::createMethodCall("org.kde.kded", "/modules/phononserver",
+                "org.kde.PhononServer", "removeAudioDevices");
+        msg << QVariant::fromValue(m_removeOnApply);
+        QDBusConnection::sessionBus().send(msg);
+        m_removeOnApply.clear();
+    }
     {
         QSettingsGroup globalGroup(&config, QLatin1String("AudioOutputDevice"));
         const QList<int> noCategoryOrder = m_outputModel.value(Phonon::NoCategory)->tupleIndexOrder();
@@ -583,6 +626,36 @@ void DevicePreference::on_deferButton_clicked()
     }
 }
 
+template<Phonon::ObjectDescriptionType T>
+void DevicePreference::removeDevice(const Phonon::ObjectDescription<T> &deviceToRemove,
+        QMap<int, Phonon::ObjectDescriptionModel<T> *> *modelMap)
+{
+    QDBusInterface phononServer(QLatin1String("org.kde.kded"), QLatin1String("/modules/phononserver"),
+            QLatin1String("org.kde.PhononServer"));
+    QDBusReply<bool> reply = phononServer.call(QLatin1String("isAudioDeviceRemovable"), deviceToRemove.index());
+    if (!reply.isValid()) {
+        kError(600) << reply.error();
+        return;
+    }
+    if (!reply.value()) {
+        return;
+    }
+    m_removeOnApply << deviceToRemove.index();
+
+    // remove from all models, idx.row() is only correct for the current model
+    foreach (Phonon::ObjectDescriptionModel<T> *model, *modelMap) {
+        QList<Phonon::ObjectDescription<T> > data = model->modelData();
+        for (int row = 0; row < data.size(); ++row) {
+            if (data[row] == deviceToRemove) {
+                model->removeRows(row, 1);
+                break;
+            }
+        }
+    }
+    updateButtonsEnabled();
+    emit changed();
+};
+
 void DevicePreference::on_removeButton_clicked()
 {
     const QModelIndex idx = deviceList->currentIndex();
@@ -590,45 +663,12 @@ void DevicePreference::on_removeButton_clicked()
     QAbstractItemModel *model = deviceList->model();
     Phonon::AudioOutputDeviceModel *playbackModel = qobject_cast<Phonon::AudioOutputDeviceModel *>(model);
     if (playbackModel && idx.isValid()) {
-        const Phonon::AudioOutputDevice deviceToRemove = playbackModel->modelData(idx);
-        const QList<Phonon::AudioDevice> deviceList = Phonon::AudioDeviceEnumerator::availablePlaybackDevices();
-        foreach (Phonon::AudioDevice dev, deviceList) {
-            if (-dev.index() == deviceToRemove.index()) {
-                // remove from persistent store
-                if (dev.ceaseToExist()) {
-                    // remove from all models, idx.row() is only correct for the current model
-                    foreach (Phonon::AudioOutputDeviceModel *model, m_outputModel) {
-                        QList<Phonon::AudioOutputDevice> data = model->modelData();
-                        for (int row = 0; row < data.size(); ++row) {
-                            if (data[row] == deviceToRemove) {
-                                model->removeRows(row, 1);
-                                break;
-                            }
-                        }
-                    }
-                    updateButtonsEnabled();
-                    emit changed();
-                }
-            }
-        }
-        /*
+        removeDevice(playbackModel->modelData(idx), &m_outputModel);
     } else {
         Phonon::AudioCaptureDeviceModel *captureModel = qobject_cast<Phonon::AudioCaptureDeviceModel *>(model);
         if (captureModel && idx.isValid()) {
-            Phonon::AudioCaptureDevice deviceToRemove = captureModel->modelData(idx);
-            QList<Phonon::AudioDevice> deviceList = Phonon::AudioDeviceEnumerator::availableCaptureDevices();
-            foreach (Phonon::AudioDevice dev, deviceList) {
-                if (-dev.index() == deviceToRemove.index()) {
-                    // remove from persistent store
-                    if (dev.ceaseToExist()) {
-                        m_captureModel.removeRows(idx.row(), 1);
-                        updateButtonsEnabled();
-                        emit changed();
-                    }
-                }
-            }
+            removeDevice(captureModel->modelData(idx), &m_captureModel);
         }
-        */
     }
 
     deviceList->resizeColumnToContents(0);
