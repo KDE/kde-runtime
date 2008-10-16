@@ -654,7 +654,7 @@ void DevicePreference::removeDevice(const Phonon::ObjectDescription<T> &deviceTo
     }
     updateButtonsEnabled();
     emit changed();
-};
+}
 
 void DevicePreference::on_removeButton_clicked()
 {
