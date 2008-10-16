@@ -29,13 +29,13 @@ PHONON_EXECUTABLE_TESTS(
 	)
 
 PHONON_UNIT_TESTS(
-	audiodevicelisttest
+   #audiodevicelisttest
 	)
 
 PHONON_UNIT_TESTS_FAKE(
 )
 
-target_link_libraries(audiodevicelisttest ${KDE4_KAUDIODEVICELIST_LIBS})
+#target_link_libraries(audiodevicelisttest ${KDE4_KAUDIODEVICELIST_LIBS})
 target_link_libraries(mediaplayer ${KDE4_KIO_LIBS})
 
 SET(backendtester_SRCS backendtester.cpp)
