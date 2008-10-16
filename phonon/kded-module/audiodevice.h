@@ -70,7 +70,7 @@ class AudioDevice
 
         inline void setPreferredName(const QString &name) { if (!m_dbNameOverrideFound) { m_cardName = name; } }
 
-        inline void setUseCache(bool c) { m_useCache = c; }
+        //inline void setUseCache(bool c) { m_useCache = c; }
 
         /**
          * Valid indexes are negative
@@ -95,6 +95,7 @@ class AudioDevice
         inline int deviceNumber() const { return m_key.deviceNumber; }
         inline const QList<AudioDeviceAccess> &accessList() const { return m_accessList; }
 
+        void removeFromCache(const KSharedConfigPtr &config) const;
         void syncWithCache(const KSharedConfigPtr &config);
 
         inline const AudioDeviceKey &key() const { return m_key; }
@@ -114,7 +115,7 @@ class AudioDevice
         bool m_isAvailable : 1;
         bool m_isAdvanced : 1;
         bool m_dbNameOverrideFound : 1;
-        bool m_useCache : 1;
+        //bool m_useCache : 1;
 };
 
 inline QDebug operator<<(QDebug &s, const PS::AudioDeviceKey &k)
@@ -152,14 +153,14 @@ inline uint qHash(const AudioDevice &a)
 
 } // namespace PS
 
-inline uint qHash(const PS::AudioDeviceKey &k)
-{
-    return PS::qHash(k);
-}
-
-inline uint qHash(const PS::AudioDevice &a)
-{
-    return PS::qHash(a);
-}
+//X inline uint qHash(const PS::AudioDeviceKey &k)
+//X {
+//X     return PS::qHash(k);
+//X }
+//X 
+//X inline uint qHash(const PS::AudioDevice &a)
+//X {
+//X     return PS::qHash(a);
+//X }
 
 #endif // AUDIODEVICE_H

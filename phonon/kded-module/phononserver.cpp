@@ -27,6 +27,10 @@
 #include <KPluginFactory>
 #include <KPluginLoader>
 #include <QtCore/QRegExp>
+#include <QtCore/QTimerEvent>
+#include <QtDBus/QDBusConnection>
+#include <QtDBus/QDBusMessage>
+#include <QtDBus/QDBusMetaType>
 #include <QtCore/QVariant>
 #include <Solid/AudioInterface>
 #include <Solid/GenericInterface>
@@ -47,16 +51,8 @@ K_PLUGIN_FACTORY(PhononServerFactory,
         )
 K_EXPORT_PLUGIN(PhononServerFactory("phononserver"))
 
-Q_DECLARE_METATYPE(QList<int>)
-
-typedef QHash<QByteArray, QVariant> ObjectDescriptionHash;
-Q_DECLARE_METATYPE(ObjectDescriptionHash)
-
-typedef QHash<QByteArray, int> ObjectDescriptionHashDummy;
-Q_DECLARE_METATYPE(ObjectDescriptionHashDummy)
-
-typedef QList<QPair<QByteArray, QString> > DeviceAccessList;
-Q_DECLARE_METATYPE(DeviceAccessList)
+typedef QList<QPair<QByteArray, QString> > PhononDeviceAccessList;
+Q_DECLARE_METATYPE(PhononDeviceAccessList)
 
 PhononServer::PhononServer(QObject *parent, const QList<QVariant> &)
     : KDEDModule(parent),
@@ -65,6 +61,8 @@ PhononServer::PhononServer(QObject *parent, const QList<QVariant> &)
     findDevices();
     connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceAdded(const QString &)), SLOT(deviceAdded(const QString &)));
     connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceRemoved(const QString &)), SLOT(deviceRemoved(const QString &)));
+    qRegisterMetaType<PhononDeviceAccessList>();
+    qRegisterMetaTypeStreamOperators<PhononDeviceAccessList>("PhononDeviceAccessList");
 }
 
 PhononServer::~PhononServer()
@@ -187,7 +185,7 @@ void PhononServer::findVirtualDevices()
     foreach (const DeviceHint &deviceHint, deviceHints) {
         const QString &alsaDeviceName = deviceHint.name;
         const QString &description = deviceHint.description;
-        const QString &uniqueId = alsaDeviceName;
+        const QString &uniqueId = description;
         //const QString &udi = alsaDeviceName;
         const QStringList &lines = description.split("\n");
         bool isAdvanced = false;
@@ -245,15 +243,19 @@ void PhononServer::findVirtualDevices()
             }
         }
 
-        const PS::AudioDeviceKey key = { uniqueId, -1, -1 };
-        PS::AudioDevice dev(cardName, iconName, key, initialPreference, isAdvanced);
-        dev.setUseCache(false);
-        dev.addAccess(PS::AudioDeviceAccess(QStringList(alsaDeviceName), 0, PS::AudioDeviceAccess::AlsaDriver,
-                    captureDevice, playbackDevice));
+        const PS::AudioDeviceAccess access(QStringList(alsaDeviceName), 0, PS::AudioDeviceAccess::AlsaDriver,
+                captureDevice, playbackDevice);
+        //dev.setUseCache(false);
         if (playbackDevice) {
+            const PS::AudioDeviceKey key = { uniqueId + QLatin1String("_playback"), -1, -1 };
+            PS::AudioDevice dev(cardName, iconName, key, initialPreference, isAdvanced);
+            dev.addAccess(access);
             m_audioOutputDevices << dev;
         }
         if (captureDevice) {
+            const PS::AudioDeviceKey key = { uniqueId + QLatin1String("_capture"), -1, -1 };
+            PS::AudioDevice dev(cardName, iconName, key, initialPreference, isAdvanced);
+            dev.addAccess(access);
             m_audioCaptureDevices << dev;
         } else {
             if (!playbackDevice) {
@@ -410,8 +412,8 @@ void PhononServer::findDevices()
 {
     QHash<PS::AudioDeviceKey, PS::AudioDevice> playbackDevices;
     QHash<PS::AudioDeviceKey, PS::AudioDevice> captureDevices;
-    QSet<QString> alreadyFoundCards;
     bool haveAlsaDevices = false;
+    QHash<QString, QList<int> > listOfCardNumsPerUniqueId;
 
     KConfigGroup globalConfigGroup(m_config, "Globals");
     //const int cacheVersion = globalConfigGroup.readEntry("CacheVersion", 0);
@@ -499,20 +501,37 @@ void PhononServer::findDevices()
             continue;
         }
 
+        m_udisOfAudioDevices.append(hwDevice.udi());
+
         const PS::AudioDeviceAccess devAccess(deviceIds, accessPreference, driver, capture,
                 playback);
         int initialPreference = 36 - deviceNum;
 
-        const QString uniqueIdPrefix = uniqueId(hwDevice, deviceNum);
+        QString uniqueIdPrefix = uniqueId(hwDevice, deviceNum);
+        // "fix" cards that have the same identifiers, i.e. there's no way for the computer to tell
+        // them apart.
+        // We see that there's a problematic case if the same uniqueIdPrefix has been used for a
+        // different cardNum before. In that case we need to append another number to the
+        // uniqueIdPrefix. The first different cardNum gets a :i1, the second :i2, and so on.
+        QList<int> &cardsForUniqueId = listOfCardNumsPerUniqueId[uniqueIdPrefix];
+        if (cardsForUniqueId.isEmpty()) {
+            cardsForUniqueId << cardNum;
+        } else if (!cardsForUniqueId.contains(cardNum)) {
+            cardsForUniqueId << cardNum;
+            uniqueIdPrefix += QString(":i%1").arg(cardsForUniqueId.size() - 1);
+        } else if (cardsForUniqueId.size() > 1) {
+            const int listIndex = cardsForUniqueId.indexOf(cardNum);
+            if (listIndex > 0) {
+                uniqueIdPrefix += QString(":i%1").arg(listIndex);
+            }
+        }
         const PS::AudioDeviceKey pkey = {
             uniqueIdPrefix + QLatin1String(":playback"), cardNum, deviceNum
         };
-        alreadyFoundCards.insert(QLatin1String("AudioDevice_") + pkey.uniqueId);
         const bool needNewPlaybackDevice = playback && !playbackDevices.contains(pkey);
         const PS::AudioDeviceKey ckey = {
             uniqueIdPrefix + QLatin1String(":capture"), cardNum, deviceNum
         };
-        alreadyFoundCards.insert(QLatin1String("AudioDevice_") + ckey.uniqueId);
         const bool needNewCaptureDevice = capture && !captureDevices.contains(ckey);
         if (needNewPlaybackDevice || needNewCaptureDevice) {
             const QString &icon = hwDevice.icon();
@@ -599,11 +618,9 @@ void PhononServer::findDevices()
                     pair.second.deviceIds().first() + QLatin1String("playback"),
                     -1, --uniqueDeviceNumber
                 };
-                // TODO: fix icon
-                PS::AudioDevice dev(pair.first.uniqueId, QLatin1String("pulseaudio"), key, 0, true);
+                PS::AudioDevice dev(pair.first.uniqueId, QLatin1String("audio-backend-pulseaudio"), key, 0, true);
                 dev.addAccess(pair.second);
                 m_audioOutputDevices.append(dev);
-                alreadyFoundCards.insert(QLatin1String("AudioDevice_") + key.uniqueId);
             }
         }
         it = m_audioCaptureDevices;
@@ -623,11 +640,9 @@ void PhononServer::findDevices()
                     pair.second.deviceIds().first() + QLatin1String("capture"),
                     -1, --uniqueDeviceNumber
                 };
-                // TODO: fix icon
-                PS::AudioDevice dev(pair.first.uniqueId, QLatin1String("pulseaudio"), key, 0, true);
+                PS::AudioDevice dev(pair.first.uniqueId, QLatin1String("audio-backend-pulseaudio"), key, 0, true);
                 dev.addAccess(pair.second);
                 m_audioCaptureDevices.append(dev);
-                alreadyFoundCards.insert(QLatin1String("AudioDevice_") + key.uniqueId);
             }
         }
     }
@@ -641,6 +656,13 @@ void PhononServer::findDevices()
         removeOssOnlyDevices(&m_audioCaptureDevices);
     }
 
+    QSet<QString> alreadyFoundCards;
+    foreach (const PS::AudioDevice &dev, m_audioOutputDevices) {
+        alreadyFoundCards.insert(QLatin1String("AudioDevice_") + dev.key().uniqueId);
+    }
+    foreach (const PS::AudioDevice &dev, m_audioCaptureDevices) {
+        alreadyFoundCards.insert(QLatin1String("AudioDevice_") + dev.key().uniqueId);
+    }
     // now look in the config file for disconnected devices
     const QStringList &groupList = m_config->groupList();
     foreach (const QString &groupName, groupList) {
@@ -649,6 +671,9 @@ void PhononServer::findDevices()
         }
 
         const KConfigGroup cGroup(m_config, groupName);
+        if (cGroup.readEntry("deleted", false)) {
+            continue;
+        }
         const QString &cardName = cGroup.readEntry("cardName", QString());
         const QString &iconName = cGroup.readEntry("iconName", QString());
         const int initialPreference = cGroup.readEntry("initialPreference", 0);
@@ -684,14 +709,15 @@ void PhononServer::findDevices()
         it.next().syncWithCache(m_config);
     }
 
+    m_config->sync();
+
     kDebug(601) << "Playback Devices:" << m_audioOutputDevices;
     kDebug(601) << "Capture Devices:" << m_audioCaptureDevices;
 }
 
-QDBusVariant PhononServer::audioDevicesIndexes(int type)
+QByteArray PhononServer::audioDevicesIndexes(int type)
 {
-    kDebug(601);
-    QVariant *v;
+    QByteArray *v;
     switch (type) {
     case Phonon::AudioOutputDeviceType:
         v = &m_audioOutputDevicesIndexesCache;
@@ -700,38 +726,54 @@ QDBusVariant PhononServer::audioDevicesIndexes(int type)
         v = &m_audioCaptureDevicesIndexesCache;
         break;
     default:
-        return QDBusVariant(QVariant::fromValue(QList<int>()));
+        return QByteArray();
     }
-    if (!v->isValid()) {
+    if (v->isEmpty()) {
         updateAudioDevicesCache();
     }
-    return QDBusVariant(*v);
+    return *v;
 }
 
-QDBusVariant PhononServer::audioDevicesProperties(int type, int index)
+QByteArray PhononServer::audioDevicesProperties(int index)
 {
-    kDebug(601);
-    QVariant *v;
-    QHash<int, QVariant> *h;
-    switch (type) {
-    case Phonon::AudioOutputDeviceType:
-        v = &m_audioOutputDevicesIndexesCache;
-        h = &m_audioOutputDevicesPropertiesCache;
-        break;
-    case Phonon::AudioCaptureDeviceType:
-        v = &m_audioCaptureDevicesIndexesCache;
-        h = &m_audioCaptureDevicesPropertiesCache;
-        break;
-    default:
-        return QDBusVariant(QVariant::fromValue(0));
-    }
-    if (!v->isValid()) {
+    if (m_audioOutputDevicesIndexesCache.isEmpty() || m_audioCaptureDevicesIndexesCache.isEmpty()) {
         updateAudioDevicesCache();
     }
-    if (h->contains(index)) {
-        return QDBusVariant(h->value(index));
+    if (m_audioDevicesPropertiesCache.contains(index)) {
+        return m_audioDevicesPropertiesCache.value(index);
     }
-    return QDBusVariant(QVariant::fromValue(0));
+    return QByteArray();
+}
+
+bool PhononServer::isAudioDeviceRemovable(int index) const
+{
+    if (!m_audioDevicesPropertiesCache.contains(index)) {
+        return false;
+    }
+    const QList<PS::AudioDevice> &deviceList = m_audioOutputDevices + m_audioCaptureDevices;
+    foreach (const PS::AudioDevice &dev, deviceList) {
+        if (dev.index() == index) {
+            return !dev.isAvailable();
+        }
+    }
+    return false;
+}
+
+void PhononServer::removeAudioDevices(const QList<int> &indexes)
+{
+    const QList<PS::AudioDevice> &deviceList = m_audioOutputDevices + m_audioCaptureDevices;
+    foreach (int index, indexes) {
+        foreach (const PS::AudioDevice &dev, deviceList) {
+            if (dev.index() == index) {
+                if (!dev.isAvailable()) {
+                    dev.removeFromCache(m_config);
+                }
+                break;
+            }
+        }
+    }
+    m_config->sync();
+    m_updateDeviceListing.start(50, this);
 }
 
 static inline QByteArray nameForDriver(PS::AudioDeviceAccess::AudioDriver d)
@@ -756,6 +798,15 @@ static inline QByteArray nameForDriver(PS::AudioDeviceAccess::AudioDriver d)
     return "";
 }
 
+template<class T>
+inline static QByteArray streamToByteArray(const T &data)
+{
+    QByteArray r;
+    QDataStream stream(&r, QIODevice::WriteOnly);
+    stream << data;
+    return r;
+}
+
 void PhononServer::updateAudioDevicesCache()
 {
     QList<int> indexList;
@@ -767,7 +818,7 @@ void PhononServer::updateAudioDevicesCache()
         properties.insert("initialPreference", dev.initialPreference());
         properties.insert("isAdvanced", dev.isAdvanced());
         properties.insert("icon", dev.icon());
-        DeviceAccessList deviceAccessList;
+        PhononDeviceAccessList deviceAccessList;
         bool first = true;
         QStringList oldDeviceIds;
         PS::AudioDeviceAccess::AudioDriver driverId = PS::AudioDeviceAccess::InvalidDriver;
@@ -792,9 +843,9 @@ void PhononServer::updateAudioDevicesCache()
         properties.insert("deviceIds", oldDeviceIds);
 
         indexList << dev.index();
-        m_audioOutputDevicesPropertiesCache.insert(dev.index(), QVariant::fromValue(properties));
+        m_audioDevicesPropertiesCache.insert(dev.index(), streamToByteArray(properties));
     }
-    m_audioOutputDevicesIndexesCache = QVariant::fromValue(indexList);
+    m_audioOutputDevicesIndexesCache = streamToByteArray(indexList);
 
     indexList.clear();
     foreach (const PS::AudioDevice &dev, m_audioCaptureDevices) {
@@ -805,7 +856,7 @@ void PhononServer::updateAudioDevicesCache()
         properties.insert("initialPreference", dev.initialPreference());
         properties.insert("isAdvanced", dev.isAdvanced());
         properties.insert("icon", dev.icon());
-        DeviceAccessList deviceAccessList;
+        PhononDeviceAccessList deviceAccessList;
         foreach (const PS::AudioDeviceAccess &access, dev.accessList()) {
             const QByteArray &driver = nameForDriver(access.driver());
             foreach (const QString &deviceId, access.deviceIds()) {
@@ -817,9 +868,9 @@ void PhononServer::updateAudioDevicesCache()
         // capture
 
         indexList << dev.index();
-        m_audioCaptureDevicesPropertiesCache.insert(dev.index(), QVariant::fromValue(properties));
+        m_audioDevicesPropertiesCache.insert(dev.index(), streamToByteArray(properties));
     }
-    m_audioCaptureDevicesIndexesCache = QVariant::fromValue(indexList);
+    m_audioCaptureDevicesIndexesCache = streamToByteArray(indexList);
 }
 
 void PhononServer::deviceAdded(const QString &udi)
@@ -829,17 +880,28 @@ void PhononServer::deviceAdded(const QString &udi)
     if (!audiohw || 0 == (audiohw->deviceType() & (Solid::AudioInterface::AudioInput | Solid::AudioInterface::AudioOutput))) {
         return;
     }
-    m_audioOutputDevicesIndexesCache = QVariant();
-    m_audioCaptureDevicesIndexesCache = QVariant();
+    m_updateDeviceListing.start(50, this);
+}
+
+void PhononServer::timerEvent(QTimerEvent *e)
+{
+    if (e->timerId() == m_updateDeviceListing.timerId()) {
+        m_updateDeviceListing.stop();
+        m_audioOutputDevices.clear();
+        m_audioCaptureDevices.clear();
+        m_udisOfAudioDevices.clear();
+        findDevices();
+        m_audioOutputDevicesIndexesCache.clear();
+        m_audioCaptureDevicesIndexesCache.clear();
+
+        QDBusMessage signal = QDBusMessage::createSignal("/modules/phononserver", "org.kde.PhononServer", "audioDevicesChanged");
+        QDBusConnection::sessionBus().send(signal);
+    }
 }
 
 void PhononServer::deviceRemoved(const QString &udi)
 {
-    Solid::Device device(udi);
-    Solid::AudioInterface *audiohw = device.as<Solid::AudioInterface>();
-    if (!audiohw || 0 == (audiohw->deviceType() & (Solid::AudioInterface::AudioInput | Solid::AudioInterface::AudioOutput))) {
-        return;
+    if (m_udisOfAudioDevices.contains(udi)) {
+        m_updateDeviceListing.start(50, this);
     }
-    m_audioOutputDevicesIndexesCache = QVariant();
-    m_audioCaptureDevicesIndexesCache = QVariant();
 }

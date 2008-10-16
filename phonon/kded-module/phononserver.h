@@ -24,6 +24,7 @@
 #include <kdedmodule.h>
 #include <ksharedconfig.h>
 #include <Phonon/ObjectDescription>
+#include <QtCore/QBasicTimer>
 #include <QtCore/QHash>
 #include <QtCore/QVector>
 #include <QtCore/QList>
@@ -39,12 +40,13 @@ class PhononServer : public KDEDModule
         ~PhononServer();
 
     public slots:
-        Q_SCRIPTABLE QDBusVariant audioDevicesIndexes(int type);
-        Q_SCRIPTABLE QDBusVariant audioDevicesProperties(int type, int index);
+        Q_SCRIPTABLE QByteArray audioDevicesIndexes(int type);
+        Q_SCRIPTABLE QByteArray audioDevicesProperties(int index);
+        Q_SCRIPTABLE bool isAudioDeviceRemovable(int index) const;
+        Q_SCRIPTABLE void removeAudioDevices(const QList<int> &indexes);
 
-    signals:
-        Q_SCRIPTABLE void audioOutputDevicesChanged(const QDBusVariant &devicesMap);
-        Q_SCRIPTABLE void audioCaptureDevicesChanged(const QDBusVariant &devicesMap);
+    protected:
+        void timerEvent(QTimerEvent *e);
 
     private slots:
         void deviceAdded(const QString &udi);
@@ -57,16 +59,18 @@ class PhononServer : public KDEDModule
         void updateAudioDevicesCache();
 
         KSharedConfigPtr m_config;
+        QBasicTimer m_updateDeviceListing;
 
         // cache
-        QVariant m_audioOutputDevicesIndexesCache;
-        QVariant m_audioCaptureDevicesIndexesCache;
-        QHash<int, QVariant> m_audioOutputDevicesPropertiesCache;
-        QHash<int, QVariant> m_audioCaptureDevicesPropertiesCache;
+        QByteArray m_audioOutputDevicesIndexesCache;
+        QByteArray m_audioCaptureDevicesIndexesCache;
+        QHash<int, QByteArray> m_audioDevicesPropertiesCache;
 
         // devices ordered by preference
         QList<PS::AudioDevice> m_audioOutputDevices;
         QList<PS::AudioDevice> m_audioCaptureDevices;
+
+        QStringList m_udisOfAudioDevices;
 };
 
 #endif // PHONONSERVER_H

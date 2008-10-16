@@ -27,7 +27,7 @@
 
 PS::AudioDevice::AudioDevice()
     : m_index(0), m_initialPreference(0), m_isAvailable(false), m_isAdvanced(true),
-    m_dbNameOverrideFound(false), m_useCache(true)
+    m_dbNameOverrideFound(false)//, m_useCache(true)
 {
 }
 
@@ -40,8 +40,8 @@ PS::AudioDevice::AudioDevice(const QString &cardName, const QString &icon,
     m_initialPreference(pref),
     m_isAvailable(false),
     m_isAdvanced(adv),
-    m_dbNameOverrideFound(false),
-    m_useCache(true)
+    m_dbNameOverrideFound(false)
+    //m_useCache(true)
 {
     applyHardwareDatabaseOverrides();
 }
@@ -93,11 +93,19 @@ void PS::AudioDevice::applyHardwareDatabaseOverrides()
     }
 }
 
+void PS::AudioDevice::removeFromCache(const KSharedConfigPtr &config) const
+{
+    //if (m_useCache) {
+        KConfigGroup cGroup(config, QLatin1String("AudioDevice_") + m_key.uniqueId);
+        cGroup.writeEntry("deleted", true);
+    //}
+}
+
 void PS::AudioDevice::syncWithCache(const KSharedConfigPtr &config)
 {
-    if (!m_useCache) {
-        return;
-    }
+    //if (!m_useCache) {
+        //return;
+    //}
     KConfigGroup cGroup(config, QLatin1String("AudioDevice_") + m_key.uniqueId);
     if (cGroup.exists()) {
         m_index = cGroup.readEntry("index", 0);
@@ -116,4 +124,5 @@ void PS::AudioDevice::syncWithCache(const KSharedConfigPtr &config)
     cGroup.writeEntry("initialPreference", m_initialPreference);
     cGroup.writeEntry("isAdvanced", m_isAdvanced);
     cGroup.writeEntry("deviceNumber", m_key.deviceNumber);
+    cGroup.writeEntry("deleted", false);
 }
