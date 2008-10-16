@@ -33,6 +33,7 @@
 #include <Soprano/Vocabulary/NRL>
 #include <Soprano/Vocabulary/NAO>
 #include <Soprano/Vocabulary/XMLSchema>
+#include <Soprano/Vocabulary/OWL>
 
 #include <KDebug>
 
@@ -117,6 +118,71 @@ namespace {
         return true;
     }
 
+
+    /**
+     * Try to guess the ontoloy type from the contents of the model:
+     * a nrl:Ontology or a nrl:KnowledgeBase or a pure nrl:InstanceBase
+     */
+    QUrl guessOntologyType( Soprano::Model* tmpModel )
+    {
+        static QList<QUrl> propertyClasses;
+        if ( propertyClasses.isEmpty() )
+            propertyClasses << Soprano::Vocabulary::RDFS::Class()
+                            << Soprano::Vocabulary::OWL::Class()
+                            << Soprano::Vocabulary::RDF::Property()
+                            << Soprano::Vocabulary::RDFS::ContainerMembershipProperty()
+                            << Soprano::Vocabulary::OWL::ObjectProperty()
+                            << Soprano::Vocabulary::OWL::DatatypeProperty()
+                            << Soprano::Vocabulary::OWL::AnnotationProperty()
+                            << Soprano::Vocabulary::OWL::FunctionalProperty()
+                            << Soprano::Vocabulary::OWL::DeprecatedProperty()
+                            << Soprano::Vocabulary::OWL::OntologyProperty()
+                            << Soprano::Vocabulary::OWL::TransitiveProperty()
+                            << Soprano::Vocabulary::OWL::SymmetricProperty()
+                            << Soprano::Vocabulary::OWL::InverseFunctionalProperty()
+                            << Soprano::Vocabulary::NRL::TransitiveProperty()
+                            << Soprano::Vocabulary::NRL::SymmetricProperty()
+                            << Soprano::Vocabulary::NRL::AsymmetricProperty()
+                            << Soprano::Vocabulary::NRL::InverseFunctionalProperty()
+                            << Soprano::Vocabulary::NRL::FunctionalProperty()
+                            << Soprano::Vocabulary::NRL::ReflexiveProperty();
+
+        // check for classes and properties
+        QStringList classesOrPropertiesSubQueries;
+        foreach( const QUrl& uri, propertyClasses ) {
+            classesOrPropertiesSubQueries << QString( "?type = <%1>" ).arg( uri.toString() );
+        }
+
+        // we cannot use UNION here because redland does not support it!
+        bool haveClassesOrProperties = tmpModel->executeQuery( QString( "ask where { "
+                                                                        "?r a ?type . "
+                                                                        "FILTER(%1) . }" )
+                                                               .arg( classesOrPropertiesSubQueries.join( " || " ) ),
+                                                               Soprano::Query::QueryLanguageSparql ).boolValue();
+
+        // check for anything that is not a class or property
+        classesOrPropertiesSubQueries.clear();
+        foreach( const QUrl& uri, propertyClasses ) {
+            classesOrPropertiesSubQueries << QString( "?type != <%1>" ).arg( uri.toString() );
+        }
+        // owl:Ontologys do not have any influce on our descision
+        classesOrPropertiesSubQueries << QString( "?type != <%1>" ).arg( Soprano::Vocabulary::OWL::Ontology().toString() );
+
+        bool haveInstances = tmpModel->executeQuery( QString( "ask where { "
+                                                              "?r a ?type . "
+                                                              "FILTER(%1) . }" )
+                                                     .arg( classesOrPropertiesSubQueries.join( " && " ) ),
+                                                     Soprano::Query::QueryLanguageSparql ).boolValue();
+
+        if ( haveClassesOrProperties && !haveInstances )
+            return Soprano::Vocabulary::NRL::Ontology();
+        else if ( !haveClassesOrProperties && haveInstances )
+            return Soprano::Vocabulary::NRL::InstanceBase();
+        else
+            return Soprano::Vocabulary::NRL::KnowledgeBase();
+    }
+
+
     /**
      * Create the necessary NRL graphs and metadata for an ontology to pass ensureDataLayout.
      *
@@ -138,10 +204,19 @@ namespace {
             tmpModel->addStatement( s );
         }
 
+        QUrl graphType = guessOntologyType( tmpModel );
+
+        kDebug() << "guessed onto type:" << graphType;
+
         // add the metadata
         tmpModel->addStatement( Soprano::Statement( metaDataGraphUri, Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::NRL::GraphMetadata(), metaDataGraphUri ) );
         tmpModel->addStatement( Soprano::Statement( metaDataGraphUri, Soprano::Vocabulary::NRL::coreGraphMetadataFor(), dataGraphUri, metaDataGraphUri ) );
-        tmpModel->addStatement( Soprano::Statement( dataGraphUri, Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::NRL::Ontology(), metaDataGraphUri ) );
+        tmpModel->addStatement( Soprano::Statement( dataGraphUri, Soprano::Vocabulary::RDF::type(), graphType, metaDataGraphUri ) );
+        if ( graphType == Soprano::Vocabulary::NRL::KnowledgeBase() ) {
+            // we do not have inference in Nepomuk yet and this way libnepomuk does not get confused when reading types
+            tmpModel->addStatement( Soprano::Statement( dataGraphUri, Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::NRL::Ontology(), metaDataGraphUri ) );
+            tmpModel->addStatement( Soprano::Statement( dataGraphUri, Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::NRL::InstanceBase(), metaDataGraphUri ) );
+        }
         tmpModel->addStatement( Soprano::Statement( dataGraphUri, Soprano::Vocabulary::NAO::hasDefaultNamespace(), LiteralValue( ns.toString() ), metaDataGraphUri ) );
     }
 
