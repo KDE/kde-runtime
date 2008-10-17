@@ -312,7 +312,7 @@ class PulseDetectionUserData
         QRegExp playbackNameMatches;
 };
 
-static void pulseSinkInfoListCallback(pa_context *, const pa_sink_info *i, int eol, void *userdata)
+static void pulseSinkInfoListCallback(pa_context *context, const pa_sink_info *i, int eol, void *userdata)
 {
     PulseDetectionUserData *d = reinterpret_cast<PulseDetectionUserData *>(userdata);
     if (eol) {
@@ -340,12 +340,12 @@ static void pulseSinkInfoListCallback(pa_context *, const pa_sink_info *i, int e
         const int cardNumber = m ? d->alsaHandleMatches.cap(2).toInt() : d->playbackNameMatches.cap(1).toInt();
         const int deviceNumber = d->playbackNameMatches.cap(2).toInt();
         const PS::AudioDeviceKey key = { QString(), cardNumber, deviceNumber };
-        const PS::AudioDeviceAccess access(QStringList(handle), 30, PS::AudioDeviceAccess::PulseAudioDriver, false, true);
+        const PS::AudioDeviceAccess access(QStringList(QString::fromUtf8(pa_context_get_server(context)) + QLatin1Char(':') + handle), 30, PS::AudioDeviceAccess::PulseAudioDriver, false, true);
         d->sinks << QPair<PS::AudioDeviceKey, PS::AudioDeviceAccess>(key, access);
     }
 }
 
-static void pulseSourceInfoListCallback(pa_context *, const pa_source_info *i, int eol, void *userdata)
+static void pulseSourceInfoListCallback(pa_context *context, const pa_source_info *i, int eol, void *userdata)
 {
     PulseDetectionUserData *d = reinterpret_cast<PulseDetectionUserData *>(userdata);
     if (eol) {
@@ -377,13 +377,13 @@ static void pulseSourceInfoListCallback(pa_context *, const pa_source_info *i, i
             const PS::AudioDeviceKey key = {
                 d->captureNameMatches.cap(3).isEmpty() ? QString() : handle, cardNumber, deviceNumber
             };
-            const PS::AudioDeviceAccess access(QStringList(handle), 30, PS::AudioDeviceAccess::PulseAudioDriver, true, false);
+            const PS::AudioDeviceAccess access(QStringList(QString::fromUtf8(pa_context_get_server(context)) + QLatin1Char(':') + handle), 30, PS::AudioDeviceAccess::PulseAudioDriver, true, false);
             d->sources << QPair<PS::AudioDeviceKey, PS::AudioDeviceAccess>(key, access);
         } else {
             const PS::AudioDeviceKey key = {
                 QString::fromUtf8(i->description), -2, -2
             };
-            const PS::AudioDeviceAccess access(QStringList(handle), 30, PS::AudioDeviceAccess::PulseAudioDriver, true, false);
+            const PS::AudioDeviceAccess access(QStringList(QString::fromUtf8(pa_context_get_server(context)) + QLatin1Char(':') + handle), 30, PS::AudioDeviceAccess::PulseAudioDriver, true, false);
             d->sources << QPair<PS::AudioDeviceKey, PS::AudioDeviceAccess>(key, access);
         }
     }
