@@ -401,7 +401,7 @@ if (!mLocalZone.isEmpty()) kDebug(1221)<<"/etc/default/init: "<<mLocalZone;
         int bestOffset = INT_MAX;
         KSystemTimeZoneSource::startParseBlock();
         const KTimeZones::ZoneMap zmap = mZones.zones();
-        for (KTimeZones::ZoneMap::ConstIterator it = zmap.begin(), end = zmap.end();  it != end;  ++it)
+        for (KTimeZones::ZoneMap::ConstIterator it = zmap.constBegin(), end = zmap.constEnd();  it != end;  ++it)
         {
             KTimeZone zone = it.value();
             int candidateOffset = qAbs(zone.currentOffset(Qt::LocalTime));
@@ -678,7 +678,7 @@ bool KTimeZoned::matchZoneFile(const QString &path)
              */
             QString country = KGlobal::locale()->country().toUpper();
             const KTimeZones::ZoneMap zmap = mZones.zones();
-            for (KTimeZones::ZoneMap::ConstIterator zit = zmap.begin(), zend = zmap.end();  zit != zend;  ++zit)
+            for (KTimeZones::ZoneMap::ConstIterator zit = zmap.constBegin(), zend = zmap.constEnd();  zit != zend;  ++zit)
             {
                 KTimeZone tzone = zit.value();
                 if (tzone.countryCode() == country)
@@ -697,7 +697,7 @@ bool KTimeZoned::matchZoneFile(const QString &path)
         {
             // Look for a checksum match with the cached checksum values
             MD5Map oldChecksums = mMd5Sums;   // save a copy of the existing checksums
-            for (it5 = mMd5Sums.begin(), end5 = mMd5Sums.end();  it5 != end5;  ++it5)
+            for (it5 = mMd5Sums.constBegin(), end5 = mMd5Sums.constEnd();  it5 != end5;  ++it5)
             {
                 if (it5.value() == referenceMd5Sum)
                 {
@@ -720,7 +720,7 @@ bool KTimeZoned::matchZoneFile(const QString &path)
                 // Continue building missing entries in the cache on the assumption that
                 // we haven't previously looked at the zoneinfo file which matches.
                 const KTimeZones::ZoneMap zmap = mZones.zones();
-                for (KTimeZones::ZoneMap::ConstIterator zit = zmap.begin(), zend = zmap.end();  zit != zend;  ++zit)
+                for (KTimeZones::ZoneMap::ConstIterator zit = zmap.constBegin(), zend = zmap.constEnd();  zit != zend;  ++zit)
                 {
                     KTimeZone zone = zit.value();
                     zoneName = zone.name();
@@ -742,12 +742,12 @@ bool KTimeZoned::matchZoneFile(const QString &path)
                 // Didn't find the file, so presumably a previously cached checksum must
                 // have changed. Delete all the old checksums.
                 MD5Map::ConstIterator mit;
-                MD5Map::ConstIterator mend = oldChecksums.end();
-                for (mit = oldChecksums.begin();  mit != mend;  ++mit)
+                MD5Map::ConstIterator mend = oldChecksums.constEnd();
+                for (mit = oldChecksums.constBegin();  mit != mend;  ++mit)
                     mMd5Sums.remove(mit.key());
 
                 // And recalculate the old checksums
-                for (mit = oldChecksums.begin(); mit != mend; ++mit)
+                for (mit = oldChecksums.constBegin(); mit != mend; ++mit)
                 {
                     zoneName = mit.key();
                     QString candidateMd5Sum = calcChecksum(zoneName, referenceSize);
@@ -832,7 +832,7 @@ bool KTimeZoned::checkDefaultInit()
 KTimeZone KTimeZoned::compareChecksum(const KTimeZone &zone, const QString &referenceMd5Sum, qlonglong size)
 {
     MD5Map::ConstIterator it5 = mMd5Sums.find(zone.name());
-    if (it5 == mMd5Sums.end())
+    if (it5 == mMd5Sums.constEnd())
     {
         // No checksum has been computed yet for this zone file.
         // Compute it now.
