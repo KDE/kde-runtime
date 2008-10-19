@@ -118,6 +118,7 @@ Action=Popup
 
 [Event/indexingSuspended]
 Name=Indexing suspended
+Name[be@latin]=Indeksavańnie spynienaje
 Name[el]=Αναστολή ευρετηρίου
 Name[et]=Indekseerimine on peatatud
 Name[gl]=Suspendeuse a indexación
@@ -140,6 +141,7 @@ Name[uk]=Пауза індексування
 Name[x-test]=xxIndexing suspendedxx
 Name[zh_TW]=索引暫停
 Comment=Strigi file indexing has been suspended
+Comment[be@latin]=Słužba „Strigi” pierapyniła indeksavańnie fajłaŭ.
 Comment[el]=Το ευρετήριο αρχείων Strigi είναι σε αναστολή
 Comment[et]=Strigi failide indekseerimine on peatatud
 Comment[gl]=A indexación de ficheiros con Strigi suspendeuse
@@ -164,6 +166,7 @@ Action=Popup
 
 [Event/indexingResumed]
 Name=Indexing resumed
+Name[be@latin]=Indeksavańnie praciahnutaje
 Name[el]=Συνέχιση ευρετηρίου
 Name[et]=Indekseerimine jätkub
 Name[gl]=Continuouse a indexación
@@ -185,6 +188,7 @@ Name[uk]=Продовження індексування
 Name[x-test]=xxIndexing resumedxx
 Name[zh_TW]=索引回復
 Comment=Strigi file indexing has been resumed
+Comment[be@latin]=Słužba „Strigi” praciahnuła indeksavańnie fajłaŭ.
 Comment[el]=Το ευρετήριο αρχείων Strigi συνέχισε τη λειτουργία του
 Comment[et]=Strigi failide indekseerimine jätkub
 Comment[gl]=Continúase a indexación de ficheiros con Strigi
