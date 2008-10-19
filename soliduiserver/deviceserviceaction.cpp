@@ -60,7 +60,7 @@ DeviceServiceAction::DeviceServiceAction()
     : DeviceAction()
 {
     DeviceAction::setIconName("dialog-cancel");
-    DeviceAction::setLabel(i18nc("A default name for an action without proper labl", "Unknown"));
+    DeviceAction::setLabel(i18nc("A default name for an action without proper label", "Unknown"));
 }
 
 QString DeviceServiceAction::id() const
