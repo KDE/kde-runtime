@@ -21,8 +21,6 @@
 
 #include "kkeyserver_win.h"
 
-#include <config.h>
-
 #include <QtGui/QWidgetList>
 #ifdef Q_WS_WIN
 

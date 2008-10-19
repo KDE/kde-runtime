@@ -19,8 +19,6 @@
 
 #include "kglobalaccel_x11.h"
 
-#include <config.h>
-
 #include <QtGui/QWidgetList>
 
 #include "kaction.h"
