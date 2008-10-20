@@ -67,9 +67,8 @@ KdeDGlobalAccel::Component *GlobalShortcutsRegistry::addComponent(KdeDGlobalAcce
     _components.insert(component->uniqueName(), component);
     QDBusConnection conn(QDBusConnection::sessionBus());
 
-    QDBusObjectPath dbusPath(_dbusPath + "/component/" + component->dbusName());
     conn.registerObject(
-            dbusPath.path(),
+            component->dbusPath().path(),
             component,
             QDBusConnection::ExportScriptableContents);
     return component;
@@ -79,6 +78,12 @@ KdeDGlobalAccel::Component *GlobalShortcutsRegistry::addComponent(KdeDGlobalAcce
 QList<KdeDGlobalAccel::Component*> GlobalShortcutsRegistry::allMainComponents() const
     {
     return _components.values();
+    }
+
+
+QDBusObjectPath GlobalShortcutsRegistry::dbusPath() const
+    {
+    return _dbusPath;
     }
 
 
@@ -257,7 +262,7 @@ void GlobalShortcutsRegistry::setAccelManager(KGlobalAccelImpl *manager)
     }
 
 
-void GlobalShortcutsRegistry::setDBusPath(const QString &path)
+void GlobalShortcutsRegistry::setDBusPath(const QDBusObjectPath &path)
     {
     _dbusPath = path;
     }
@@ -279,7 +284,7 @@ void GlobalShortcutsRegistry::setInactive()
 KdeDGlobalAccel::Component *GlobalShortcutsRegistry::takeComponent(KdeDGlobalAccel::Component *component)
     {
     QDBusConnection conn(QDBusConnection::sessionBus());
-    conn.unregisterObject(_dbusPath + "/component/" + component->uniqueName());
+    conn.unregisterObject(component->dbusPath().path());
     return _components.take(component->uniqueName());
     }
 

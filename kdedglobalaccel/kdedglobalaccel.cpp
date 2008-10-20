@@ -28,7 +28,7 @@
 #include <QtCore/QTimer>
 #include <QtCore/QMetaMethod>
 #include <QtDBus/QDBusMetaType>
-
+#include <QtDBus/QDBusObjectPath>
 
 #include "kdedglobalaccel.h"
 #include "kglobalaccel.h"
@@ -50,12 +50,12 @@ struct KdedGlobalAccelPrivate
     KdeDGlobalAccel::Component *component(const QStringList &actionId) const;
     QTimer writeoutTimer;
 
-    void _k_initializeDBus(const QString &path);
+    void _k_initializeDBus(const QDBusObjectPath &path);
 };
 
-void KdedGlobalAccelPrivate::_k_initializeDBus(const QString &path)
+void KdedGlobalAccelPrivate::_k_initializeDBus(const QDBusObjectPath &path)
     {
-    GlobalShortcutsRegistry::self()->setDBusPath(path);
+    GlobalShortcutsRegistry::self()->setDBusPath(QDBusObjectPath(path));
     GlobalShortcutsRegistry::self()->loadSettings();
     }
 
@@ -110,17 +110,18 @@ GlobalShortcut *KdedGlobalAccelPrivate::addAction(const QStringList &actionId)
             component->currentContext());
 }
 
+//    Q_DECLARE_METATYPE(QList<int>) // from kglobalshortcutinfo_p.h
+//    Q_DECLARE_METATYPE(QList<QStringList> // from kglobalshortcutinfo_p.h)
+Q_DECLARE_METATYPE(QStringList)
 
 KdedGlobalAccel::KdedGlobalAccel(QObject* parent, const QList<QVariant>&)
  : KDEDModule(parent),
    d(new KdedGlobalAccelPrivate)
 {
+    qDBusRegisterMetaType<QList<int> >();
+    qDBusRegisterMetaType<QList<QDBusObjectPath> >();
     qDBusRegisterMetaType<QList<QStringList> >();
     qDBusRegisterMetaType<QStringList>();
-    qDBusRegisterMetaType<QList<int> >();
-    qDBusRegisterMetaType<QList<KGlobalShortcutInfo> >();
-
-    qDBusRegisterMetaType<KGlobalShortcutInfo>();
 
     GlobalShortcutsRegistry *reg = GlobalShortcutsRegistry::self();
     Q_ASSERT(reg);
@@ -128,8 +129,8 @@ KdedGlobalAccel::KdedGlobalAccel(QObject* parent, const QList<QVariant>&)
     connect(&d->writeoutTimer, SIGNAL(timeout()),
             reg, SLOT(writeSettings()));
 
-    connect(this, SIGNAL(moduleRegistered(const QString &)),
-            this, SLOT(_k_initializeDBus(const QString &)));
+    connect(this, SIGNAL(moduleRegistered(const QDBusObjectPath &)),
+            this, SLOT(_k_initializeDBus(const QDBusObjectPath &)));
 
     d->writeoutTimer.setSingleShot(true);
     connect(this, SIGNAL(moduleDeleted(KDEDModule *)),

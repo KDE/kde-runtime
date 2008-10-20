@@ -26,6 +26,7 @@
 #include "kaction.h"
 #include <QtCore/QStringList>
 #include <QtCore/QList>
+#include <QtDBus/QDBusObjectPath>
 
 class KdedGlobalAccelPrivate;
 
@@ -106,7 +107,7 @@ Q_SIGNALS:
 
 private:
 
-    Q_PRIVATE_SLOT(d, void _k_initializeDBus(const QString&))
+    Q_PRIVATE_SLOT(d, void _k_initializeDBus(const QDBusObjectPath&))
 
     void scheduleWriteSettings() const;
 

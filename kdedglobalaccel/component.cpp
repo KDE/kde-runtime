@@ -173,7 +173,7 @@ GlobalShortcutContext *Component::currentContext()
     }
 
 
-QString Component::dbusName() const
+QDBusObjectPath Component::dbusPath() const
     {
     QString dbusPath = _uniqueName;
     // Clean up for dbus usage: any non-alphanumeric char should be turned into '_'
@@ -183,8 +183,8 @@ QString Component::dbusName() const
         if ( !dbusPath[i].isLetterOrNumber() )
             dbusPath[i] = QLatin1Char('_');
         }
-    kDebug() << dbusPath;
-    return dbusPath;
+    // QDBusObjectPath could be a little bit easier to handle :-)
+    return QDBusObjectPath( _registry->dbusPath().path()  + "/component/" + dbusPath);
     }
 
 

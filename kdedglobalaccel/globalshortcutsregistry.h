@@ -22,6 +22,7 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QHash>
+#include <QtDBus/QDBusObjectPath>
 
 
 class GlobalShortcut;
@@ -31,7 +32,6 @@ namespace KdeDGlobalAccel
     {
     class Component;
     }
-
 
 /**
  * Global Shortcut Registry.
@@ -59,11 +59,18 @@ public:
     QList<KdeDGlobalAccel::Component *> allMainComponents() const;
 
     /**
+     * Return the root dbus path for the registry.
+     */
+    QDBusObjectPath dbusPath() const;
+
+    /**
      * Get the shortcut corresponding to key. Only active shortcut are
      * considered.
      */
     GlobalShortcut *getActiveShortcutByKey(int key) const;
 
+    /**
+     */
     KdeDGlobalAccel::Component *getComponent(const QString &uniqueName);
 
     /**
@@ -97,7 +104,7 @@ public:
 
     void setAccelManager(KGlobalAccelImpl *manager);
 
-    void setDBusPath(const QString &path);
+    void setDBusPath(const QDBusObjectPath &path);
 
     void setInactive();
 
@@ -136,7 +143,7 @@ private:
 
     mutable KConfig _config;
 
-    QString _dbusPath;
+    QDBusObjectPath _dbusPath;
     };
 
 
