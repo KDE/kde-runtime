@@ -46,6 +46,7 @@ class Component : public QObject
 
     Q_SCRIPTABLE Q_PROPERTY( QString friendlyName READ friendlyName )
     Q_SCRIPTABLE Q_PROPERTY( QString uniqueName READ uniqueName )
+    Q_SCRIPTABLE Q_PROPERTY( QString dbusName READ dbusName)
 
 public:
 
@@ -70,6 +71,9 @@ public:
 
     //! Return the current context
     GlobalShortcutContext* currentContext();
+
+    //! Return uniqueName converted to a valid dbus path
+    QString dbusName() const;
 
     //! Deactivate all currently active shortcuts
     void deactivateShortcuts();

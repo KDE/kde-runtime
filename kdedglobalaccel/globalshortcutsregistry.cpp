@@ -66,9 +66,10 @@ KdeDGlobalAccel::Component *GlobalShortcutsRegistry::addComponent(KdeDGlobalAcce
 
     _components.insert(component->uniqueName(), component);
     QDBusConnection conn(QDBusConnection::sessionBus());
-    kDebug() << _dbusPath + "/component/" + component->uniqueName();
+
+    QDBusObjectPath dbusPath(_dbusPath + "/component/" + component->dbusName());
     conn.registerObject(
-            _dbusPath + "/component/" + component->uniqueName(),
+            dbusPath.path(),
             component,
             QDBusConnection::ExportScriptableContents);
     return component;
@@ -174,13 +175,14 @@ void GlobalShortcutsRegistry::loadSettings()
     {
     foreach (const QString &groupName, _config.groupList())
         {
-        kDebug() << "Loading group " << groupName;
 
         // Skip the subgroups [Friendly Name] and contexts
         if (groupName.indexOf('\x1d')!=-1)
             {
             continue;
             }
+
+        kDebug() << "Loading group " << groupName;
 
         // loadSettings isn't designed to be called in between. Only at the
         // beginning.
