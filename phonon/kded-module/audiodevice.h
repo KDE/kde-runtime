@@ -26,7 +26,7 @@ namespace PS
     struct AudioDeviceKey;
     struct AudioDevice;
 } // namespace PS
-#ifndef _MSC_VER
+#ifndef Q_OS_WIN32
 unsigned int qHash(const PS::AudioDeviceKey &k);
 #endif
 unsigned int qHash(const PS::AudioDevice &a);
