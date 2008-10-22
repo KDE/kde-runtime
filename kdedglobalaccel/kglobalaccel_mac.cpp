@@ -20,8 +20,6 @@
 
 #include "kglobalaccel_mac.h"
 
-#include <config.h>
-
 #include <kdebug.h>
 
 #ifdef Q_WS_MAC
@@ -29,7 +27,6 @@
 #include <QMultiMap>
 #include <QList>
 
-#include "kglobalaccel.h"
 #include "globalshortcutsregistry.h"
 #include "kkeyserver.h"
 

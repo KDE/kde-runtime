@@ -23,6 +23,9 @@
 #include <QtGui/QWidget>
 
 #include "kshortcut.h"
+/* including kglobalaccel.h here because Carbon.h includes AssertMacros.h which 
+   defines check(assertion) as nothing and breaks compilation */
+#include "kglobalaccel.h"
 
 #include <Carbon/Carbon.h>
 
