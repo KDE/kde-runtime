@@ -75,7 +75,6 @@ Toplevel :: Toplevel(KrashConfig *krashconf, QWidget *parent)
   info->setMinimumSize(width, info->heightForWidth(width));
   info->setAlignment(Qt::AlignJustify);
   QString styleSheet = QString("QLabel {"
-                       "padding: 10px;"
                        "background-image: url(%1);"
                        "background-repeat: no-repeat;"
                        "background-position: right;"
