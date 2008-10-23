@@ -277,7 +277,7 @@ bool Nepomuk::IndexScheduler::updateDir( const QString& dir, Strigi::StreamAnaly
     // remove all files that need updating or have been removed
     m_indexManager->indexWriter()->deleteEntries( filesToDelete );
 
-    // analyse all files that are new or need updating
+    // analyze all files that are new or need updating
     foreach( const QFileInfo& file, filesToIndex ) {
 
         analyzeFile( file, analyzer );

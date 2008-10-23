@@ -39,7 +39,7 @@ namespace Nepomuk {
         static Config* self();
 
         /**
-         * The folders to search for files to analyse
+         * The folders to search for files to analyze
          */
         QStringList folders() const;
 

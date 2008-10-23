@@ -211,7 +211,7 @@ bool generateMenuEntries(QList<LinkFile> &files, const KUrl &url, const QString 
             QString exec = cmd[0];
             QStringList arguments;
             if (cmd.size() > 1) {
-                // ignore arguments completly when they contain a variable
+                // ignore arguments completely when they contain a variable
                 if (!(_exec.contains("%i") || _exec.contains("%u") || _exec.contains("%c"))) {
                     arguments = cmd;
                     arguments.removeFirst();

@@ -53,7 +53,7 @@ namespace Nepomuk {
         void updateLocalOntologies();
 
         /**
-         * Update all installed ontologies, independant of their status.
+         * Update all installed ontologies, independently of their status.
          */
         void updateAllLocalOntologies();
 

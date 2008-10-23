@@ -297,7 +297,7 @@ bool Nepomuk::OntologyManagerModel::updateOntology( Soprano::StatementIterator d
         return false;
     }
 
-    // so we dont have to care about deleting out tmpModel anymore.
+    // so we do not have to care about deleting out tmpModel anymore.
     ObjectGarbageCollector modelGarbageCollector( tmpModel );
 
     // import the data into our tmp model

@@ -72,7 +72,7 @@ namespace Nepomuk {
          * \param ns The namespace of the ontology.
          *
          * \return \p true if the ontology was found and successfully removed.
-         * \p false in case the ontology was not found or an error occured.
+         * \p false in case the ontology was not found or an error occurred.
          */
         bool removeOntology( const QUrl& ns );
 
