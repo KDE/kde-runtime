@@ -51,6 +51,13 @@ public:
 
 public Q_SLOTS:
 
+    /**
+     * Get the dbus path for all known components.
+     *
+     * The returned path is absolute. No need to prepend anything.
+     */
+    Q_SCRIPTABLE QList<QDBusObjectPath> allComponents() const;
+
     Q_SCRIPTABLE QList<QStringList> allMainComponents() const;
 
     Q_SCRIPTABLE QList<QStringList> allActionsForComponent(const QStringList &actionId) const;
@@ -86,7 +93,7 @@ public Q_SLOTS:
     /**
      * Returns the shortcuts registered for @p key.
      *
-     * If there is more that one shortcut they are guaranteed to be from the
+     * If there is more than one shortcut they are guaranteed to be from the
      * same component but different contexts. All shortcuts are searched.
      */
     Q_SCRIPTABLE QList<KGlobalShortcutInfo> getGlobalShortcutsByKey(int key) const;

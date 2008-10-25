@@ -65,16 +65,26 @@ GlobalShortcut *KdedGlobalAccelPrivate::findAction(const QStringList &actionId) 
     // Check if actionId is valid
     if (actionId.size() != 4)
         {
-        kDebug() << "Skipped because of invalid actionId";
+        kDebug() << "Invalid! '" << actionId << "'";
         return NULL;
         }
 
-    //! Get the component
+    QString componentUnique = actionId.at(KGlobalAccel::ComponentUnique);
+    QString contextUnique = "default";
+
+    if (componentUnique.indexOf("|")!=-1) {
+        QStringList tmp = componentUnique.split("|");
+        Q_ASSERT(tmp.size()==2);
+        componentUnique = tmp.at(0);
+        contextUnique = tmp.at(1);
+    }
+
+    // Get the component
     KdeDGlobalAccel::Component *component = GlobalShortcutsRegistry::self()->getComponent(
-            actionId.at(KGlobalAccel::ComponentUnique));
+            componentUnique);
 
     return component
-        ? component->getShortcutByName(actionId.at(KGlobalAccel::ActionUnique))
+        ? component->getShortcutByName(actionId.at(KGlobalAccel::ActionUnique), contextUnique)
         : NULL;
     }
 
@@ -99,29 +109,48 @@ GlobalShortcut *KdedGlobalAccelPrivate::addAction(const QStringList &actionId)
 {
     Q_ASSERT(actionId.size() >= 4);
 
-    KdeDGlobalAccel::Component *component = this->component(actionId);
+    QString componentUnique = actionId.at(KGlobalAccel::ComponentUnique);
+    QString contextUnique = "default";
+
+    if (componentUnique.indexOf("|")!=-1) {
+        QStringList tmp = componentUnique.split("|");
+        Q_ASSERT(tmp.size()==2);
+        componentUnique = tmp.at(0);
+        contextUnique = tmp.at(1);
+    }
+
+    QStringList actionIdTmp = actionId;
+    actionIdTmp.replace(KGlobalAccel::ComponentUnique, componentUnique);
+
+    // Create the component if necessary
+    KdeDGlobalAccel::Component *component = this->component(actionIdTmp);
     Q_ASSERT(component);
 
-    Q_ASSERT(!component->getShortcutByName(actionId.at(KGlobalAccel::ActionUnique)));
+    // Create the context if necessary
+    if (component->getShortcutContexts().count(contextUnique)==0) {
+        component->createGlobalShortcutContext(contextUnique);
+    }
+
+    Q_ASSERT(!component->getShortcutByName(componentUnique, contextUnique));
 
     return new GlobalShortcut(
             actionId.at(KGlobalAccel::ActionUnique),
             actionId.at(KGlobalAccel::ActionFriendly),
-            component->currentContext());
+            component->shortcutContext(contextUnique));
 }
 
-//    Q_DECLARE_METATYPE(QList<int>) // from kglobalshortcutinfo_p.h
-//    Q_DECLARE_METATYPE(QList<QStringList> // from kglobalshortcutinfo_p.h)
 Q_DECLARE_METATYPE(QStringList)
 
 KdedGlobalAccel::KdedGlobalAccel(QObject* parent, const QList<QVariant>&)
  : KDEDModule(parent),
    d(new KdedGlobalAccelPrivate)
 {
-    qDBusRegisterMetaType<QList<int> >();
-    qDBusRegisterMetaType<QList<QDBusObjectPath> >();
-    qDBusRegisterMetaType<QList<QStringList> >();
+    qDBusRegisterMetaType< QList<int> >();
+    qDBusRegisterMetaType< QList<QDBusObjectPath> >();
+    qDBusRegisterMetaType< QList<QStringList> >();
     qDBusRegisterMetaType<QStringList>();
+    qDBusRegisterMetaType<KGlobalShortcutInfo>();
+    qDBusRegisterMetaType< QList<KGlobalShortcutInfo> >();
 
     GlobalShortcutsRegistry *reg = GlobalShortcutsRegistry::self();
     Q_ASSERT(reg);
@@ -224,6 +253,20 @@ void KdedGlobalAccel::activateGlobalShortcutContext(
 }
 
 
+QList<QDBusObjectPath> KdedGlobalAccel::allComponents() const
+    {
+    QList<QDBusObjectPath> allComp;
+
+    Q_FOREACH (const KdeDGlobalAccel::Component *component,
+               GlobalShortcutsRegistry::self()->allMainComponents())
+        {
+        allComp.append(component->dbusPath());
+        }
+
+    return allComp;
+    }
+
+
 QList<int> KdedGlobalAccel::shortcut(const QStringList &action) const
 {
     GlobalShortcut *shortcut = d->findAction(action);
@@ -279,15 +322,6 @@ QList<KGlobalShortcutInfo> KdedGlobalAccel::getGlobalShortcutsByKey(int key) con
         rc.append(static_cast<KGlobalShortcutInfo>(*sc));
         }
 
-    Q_FOREACH(KGlobalShortcutInfo inf, rc)
-        {
-        kDebug() << inf.uniqueName();
-        kDebug() << inf.friendlyName();
-        kDebug() << inf.contextFriendlyName();
-        kDebug() << inf.contextUniqueName();
-        kDebug() << inf.componentUniqueName();
-        kDebug() << inf.componentFriendlyName();
-        }
     return rc;
     }
 
