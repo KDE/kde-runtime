@@ -115,11 +115,6 @@ public Q_SLOTS:
     //! Returns all shortcut in context @context
     Q_SCRIPTABLE QList<KGlobalShortcutInfo> allShortcutInfos(const QString &context = "default") const;
 
-#if 0
-    //! Returns all shortcut in context @context
-    Q_SCRIPTABLE KGlobalShortcutInfo shortcutInfo(const QString &name, const QString &context = "default") const;
-#endif
-
     //! Returns the shortcut contexts available for the component.
     Q_SCRIPTABLE QStringList getShortcutContexts() const;
 
