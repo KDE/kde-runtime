@@ -29,7 +29,7 @@
 
 GlobalShortcut::GlobalShortcut()
         :   _isPresent(false)
-            ,_isFresh(false)
+            ,_isFresh(true)
             ,_context(NULL)
             ,_uniqueName()
             ,_friendlyName()
@@ -57,7 +57,7 @@ GlobalShortcut::GlobalShortcut(
 GlobalShortcut::~GlobalShortcut()
     {
     setInactive();
-    context()->takeShortcut(this);
+    _context->takeShortcut(this);
     }
 
 
