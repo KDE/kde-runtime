@@ -70,8 +70,14 @@ GlobalShortcut::operator KGlobalShortcutInfo () const
     info.d->contextFriendlyName = context()->friendlyName();
     info.d->componentUniqueName = context()->component()->uniqueName();
     info.d->componentFriendlyName = context()->component()->friendlyName();
-    //info.d->keys = _keys;
-    //info.d->defaultKeys = _defaultKeys;
+    Q_FOREACH (int key, _keys)
+        {
+        info.d->keys.append(QKeySequence(key));
+        }
+    Q_FOREACH (int key, _defaultKeys)
+        {
+        info.d->defaultKeys.append(QKeySequence(key));
+        }
     return info;
     }
 
