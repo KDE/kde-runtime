@@ -1,5 +1,8 @@
 [KCM Locale]
 Name=Ecuador
+Name[nl]=Equador
+Name[pt]=Equador
+Name[pt_BR]=Equador
 Name[uk]=Еквадор
 Region=southamerica
 Languages=es
