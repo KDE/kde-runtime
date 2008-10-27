@@ -21,6 +21,7 @@
 #include "queryserviceclient.h"
 
 #include <Soprano/Vocabulary/Xesam>
+#include <Soprano/Vocabulary/NAO>
 
 #include <Nepomuk/Variant>
 
@@ -68,6 +69,8 @@ Nepomuk::SearchEntry::SearchEntry( const QUrl& res,
 
 Nepomuk::SearchFolder::SearchFolder()
 {
+    // try to force clients to invalidate their cache
+    org::kde::KDirNotify::emitFilesAdded( "nepomuksearch:/" + m_name );
 }
 
 
@@ -412,8 +415,7 @@ Nepomuk::SearchEntry* Nepomuk::SearchFolder::statResult( const Search::Result& r
             uds.insert( KIO::UDSEntry::UDS_ICON_NAME, icon );
         }
 
-        // FIXME: add this once we have the data
-        //   uds.insert( KIO::UDS_CREATION_TIME, date );
+        uds.insert( KIO::UDSEntry::UDS_CREATION_TIME, res.property( Soprano::Vocabulary::NAO::created() ).toDateTime().toTime_t() );
 
         uds.insert( KIO::UDSEntry::UDS_ACCESS, 0700 );
         uds.insert( KIO::UDSEntry::UDS_USER, KUser().loginName() );
