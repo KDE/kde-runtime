@@ -222,7 +222,8 @@ void GlobalShortcutsRegistry::loadSettings()
             if (context=="Friendly Name") continue;
 
             KConfigGroup contextGroup(&configGroup, context);
-            component->createGlobalShortcutContext(context, "TODO2");
+            QString contextFriendlyName = contextGroup.readEntry("_k_friendly_name");
+            component->createGlobalShortcutContext(context, contextFriendlyName);
             component->activateGlobalShortcutContext(context);
             component->loadSettings(contextGroup);
             }

@@ -350,8 +350,6 @@ void Component::writeSettings(KConfigGroup& configGroup) const
     // registrations will never not deleted after forgetGlobalShortcut()
     configGroup.deleteGroup();
 
-    // Write the friendly name
-    configGroup.writeEntry("_k_friendly_name", friendlyName());
 
     // Now wrote all contexts
     Q_FOREACH( GlobalShortcutContext *context, _contexts)
@@ -361,10 +359,14 @@ void Component::writeSettings(KConfigGroup& configGroup) const
         if (context->uniqueName() == "default")
             {
             contextGroup = configGroup;
+            // Write the friendly name
+            contextGroup.writeEntry("_k_friendly_name", friendlyName());
             }
         else
             {
             contextGroup = KConfigGroup(&configGroup, context->uniqueName());
+            // Write the friendly name
+            contextGroup.writeEntry("_k_friendly_name", context->friendlyName());
             }
 
         // kDebug() << "writing group " << _uniqueName << ":" << context->uniqueName();
