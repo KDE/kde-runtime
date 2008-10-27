@@ -166,7 +166,11 @@ void Nepomuk::EventMonitor::slotIndexingStopped()
     // inform the user about the end of initial indexing. This will only be called once
     if ( !m_indexScheduler->isSuspended() ) {
         kDebug() << "initial indexing took" << m_initialIndexTime.elapsed();
-        sendEvent( "initialIndexingFinished", i18n( "Strigi file indexing finished. Elapsed time: %1", m_initialIndexTime.toString() ), "nepomuk" );
+        sendEvent( "initialIndexingFinished",
+                   i18nc( "@info %1 is a duration formatted using KLocale::formatDuration",
+                          "Initial Desktop Search file indexing finished in %1",
+                          KGlobal::locale()->formatDuration( m_initialIndexTime.elapsed() ) ),
+                   "nepomuk" );
         m_indexScheduler->disconnect( this );
 
         // after this much index work, it makes sense to optimize the full text index in the main model
