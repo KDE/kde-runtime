@@ -770,9 +770,9 @@ QList<QUrl> Nepomuk::Search::SearchThread::matchFieldName( const QString& field 
 QString Nepomuk::Search::SearchThread::createSparqlQuery( const Nepomuk::Search::SearchNode& node )
 {
     int varCnt = 0;
-    return QString( "select distinct ?r %1 where { graph ?g { ?r a ?type . } . ?g a %2 . %3 %4 }" )
+    return QString( "select distinct ?r %1 where { graph ?g { ?r a ?type . } . ?g a <%2> . %3 %4 }" )
         .arg( buildRequestPropertyVariableList() )
-        .arg( Soprano::Node( Soprano::Vocabulary::NRL::InstanceBase() ).toN3() )
+        .arg( Soprano::Vocabulary::NRL::InstanceBase().toString() )
         .arg( createGraphPattern( node, varCnt ) )
         .arg( buildRequestPropertyPatterns() );
 }
