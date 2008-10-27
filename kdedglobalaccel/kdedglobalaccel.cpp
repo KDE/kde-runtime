@@ -50,6 +50,18 @@ struct KdedGlobalAccelPrivate
     KdeDGlobalAccel::Component *component(const QStringList &actionId) const;
     QTimer writeoutTimer;
 
+    void splitComponent(QString &component, QString &context) const
+        {
+        context = "default";
+        if (component.indexOf('|')!=-1)
+            {
+            QStringList tmp = component.split("|");
+            Q_ASSERT(tmp.size()==2);
+            component= tmp.at(0);
+            context= tmp.at(1);
+            }
+        }
+
     void _k_initializeDBus(const QDBusObjectPath &path);
 };
 
@@ -71,13 +83,7 @@ GlobalShortcut *KdedGlobalAccelPrivate::findAction(const QStringList &actionId) 
 
     QString componentUnique = actionId.at(KGlobalAccel::ComponentUnique);
     QString contextUnique = "default";
-
-    if (componentUnique.indexOf("|")!=-1) {
-        QStringList tmp = componentUnique.split("|");
-        Q_ASSERT(tmp.size()==2);
-        componentUnique = tmp.at(0);
-        contextUnique = tmp.at(1);
-    }
+    splitComponent(componentUnique, contextUnique);
 
     // Get the component
     KdeDGlobalAccel::Component *component = GlobalShortcutsRegistry::self()->getComponent(
@@ -328,7 +334,10 @@ QList<KGlobalShortcutInfo> KdedGlobalAccel::getGlobalShortcutsByKey(int key) con
 
 bool KdedGlobalAccel::isGlobalShortcutAvailable(int shortcut, const QString &component) const
     {
-    return GlobalShortcutsRegistry::self()->isShortcutAvailable(shortcut, component);
+    QString realComponent = component;
+    QString context;
+    d->splitComponent(realComponent, context);
+    return GlobalShortcutsRegistry::self()->isShortcutAvailable(shortcut, realComponent);
     }
 
 

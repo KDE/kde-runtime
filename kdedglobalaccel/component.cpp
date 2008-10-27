@@ -240,6 +240,8 @@ QStringList Component::getShortcutContexts() const
 
 bool Component::isShortcutAvailable(int key, const QString &component) const
     {
+    kDebug() << QKeySequence(key).toString() << component;
+
     // if this component asks for the key. only check the active keys
     if (component==uniqueName())
         {
