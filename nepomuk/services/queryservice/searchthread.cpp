@@ -27,6 +27,7 @@
 #include <Nepomuk/Types/Class>
 #include <Nepomuk/Types/Literal>
 
+#include <Soprano/Version>
 #include <Soprano/Model>
 #include <Soprano/QueryResultIterator>
 #include <Soprano/Node>
@@ -38,6 +39,7 @@
 #include <Soprano/Vocabulary/NRL>
 #include <Soprano/Vocabulary/NAO>
 #include <Soprano/Vocabulary/XMLSchema>
+#include <Soprano/Vocabulary/OWL>
 
 #include <KDebug>
 
@@ -79,6 +81,8 @@ namespace {
         }
     }
 
+    // This is a copy of Soprano::Index::IndexFilterModel::encodeStringForLuceneQuery
+    // which we do not use to prevent linking to sopranoindex
     QString luceneQueryEscape( const QString& s ) {
         /* Chars to escape: + - && || ! ( ) { } [ ] ^ " ~  : \ */
 
@@ -86,6 +90,10 @@ namespace {
         QString es( s );
         es.replace( rx, "\\\\1" );
         return es;
+    }
+
+    QString luceneQueryEscape( const QUrl& s ) {
+        return luceneQueryEscape( QString::fromAscii( s.toEncoded() ) );
     }
 
     QString createLuceneLiteralQuery( const QString& escaped ) {
@@ -102,7 +110,7 @@ namespace {
             return createLuceneLiteralQuery( luceneQueryEscape( node.term.value().toString() ) );
         }
         else if ( node.term.type() == Nepomuk::Search::Term::ComparisonTerm ) {
-            return luceneQueryEscape( node.term.property().toString() ) + ':' + createLuceneLiteralQuery( luceneQueryEscape( node.term.subTerms().first().value().toString() ) );
+            return luceneQueryEscape( node.term.property() ) + ':' + createLuceneLiteralQuery( luceneQueryEscape( node.term.subTerms().first().value().toString() ) );
         }
         else {
             Q_ASSERT( node.term.type() == Nepomuk::Search::Term::AndTerm ||
@@ -146,7 +154,6 @@ namespace {
     }
 
 
-    // FIXME: handle graphs
     QString createGraphPattern( const Nepomuk::Search::SearchNode& node, int& varCnt, const QString& varName = QString( "?r" ) )
     {
         switch( node.term.type() ) {
@@ -430,10 +437,10 @@ Nepomuk::Search::Term Nepomuk::Search::SearchThread::resolveValues( const Term& 
                 // TODO: without being able to query the resource type simple searching for term.value() is waaaaay to slow
                 //QString query = QString( "%1:\"%2\"^4 \"%2\"" )
                 QString query = QString( "%1:\"%2\" OR %3:\"%2\" OR %4:\"%2\"" )
-                                .arg( luceneQueryEscape( Soprano::Vocabulary::RDFS::label().toString() ) )
+                                .arg( luceneQueryEscape( Soprano::Vocabulary::RDFS::label() ) )
                                 .arg( term.subTerms().first().value().toString() )
-                                .arg( luceneQueryEscape( Soprano::Vocabulary::NAO::prefLabel().toString() ) )
-                                .arg( luceneQueryEscape( Soprano::Vocabulary::NAO::identifier().toString() ) );
+                                .arg( luceneQueryEscape( Soprano::Vocabulary::NAO::prefLabel() ) )
+                                .arg( luceneQueryEscape( Soprano::Vocabulary::NAO::identifier() ) );
                 Soprano::QueryResultIterator hits = ResourceManager::instance()->mainModel()->executeQuery( query,
                                                                                                             Soprano::Query::QueryLanguageUser,
                                                                                                             "lucene" );
@@ -763,8 +770,9 @@ QList<QUrl> Nepomuk::Search::SearchThread::matchFieldName( const QString& field 
 QString Nepomuk::Search::SearchThread::createSparqlQuery( const Nepomuk::Search::SearchNode& node )
 {
     int varCnt = 0;
-    return QString( "select distinct ?r %1 where { %2 %3 }" )
+    return QString( "select distinct ?r %1 where { graph ?g { ?r a ?type . } . ?g a %2 . %3 %4 }" )
         .arg( buildRequestPropertyVariableList() )
+        .arg( Soprano::Node( Soprano::Vocabulary::NRL::InstanceBase() ).toN3() )
         .arg( createGraphPattern( node, varCnt ) )
         .arg( buildRequestPropertyPatterns() );
 }
@@ -805,9 +813,27 @@ QHash<QUrl, Nepomuk::Search::Result> Nepomuk::Search::SearchThread::sparqlQuery(
 
 QHash<QUrl, Nepomuk::Search::Result> Nepomuk::Search::SearchThread::luceneQuery( const QString& query, double baseScore, bool reportResults )
 {
-    kDebug() << query;
+    QString finalQuery( query );
 
-    Soprano::QueryResultIterator hits = ResourceManager::instance()->mainModel()->executeQuery( query,
+    // if Soprano is 2.1.64 or newer the storage service does force the indexing or rdf:type which means that
+    // we can query it via lucene queries
+    // normally for completeness we would have to exclude all the owl and nrl properties but that would make
+    // for way to long queries and this should cover most cases anyway
+    // since we do not have inference we even need to check subclasses
+#if SOPRANO_IS_VERSION(2,1,64)
+    finalQuery += QString(" AND NOT %1:%2 AND NOT %1:%3 AND NOT %1:%4 AND NOT %1:%5 AND NOT %1:%6 AND NOT %1:%7")
+                  .arg( luceneQueryEscape(Soprano::Vocabulary::RDF::type()) )
+                  .arg( luceneQueryEscape(Soprano::Vocabulary::RDF::Property()) )
+                  .arg( luceneQueryEscape(Soprano::Vocabulary::RDFS::Class()) )
+                  .arg( luceneQueryEscape(Soprano::Vocabulary::OWL::Class()) )
+                  .arg( luceneQueryEscape(Soprano::Vocabulary::NRL::InstanceBase()) )
+                  .arg( luceneQueryEscape(Soprano::Vocabulary::NRL::Ontology()) )
+                  .arg( luceneQueryEscape(Soprano::Vocabulary::NRL::KnowledgeBase()) );
+#endif
+
+    kDebug() << finalQuery;
+
+    Soprano::QueryResultIterator hits = ResourceManager::instance()->mainModel()->executeQuery( finalQuery,
                                                                                                 Soprano::Query::QueryLanguageUser,
                                                                                                 "lucene" );
     QHash<QUrl, Result> results;
@@ -817,18 +843,6 @@ QHash<QUrl, Nepomuk::Search::Result> Nepomuk::Search::SearchThread::luceneQuery(
 
         QUrl hitUri = hits.binding( 0 ).uri();
         double hitScore = hits.binding( 1 ).literal().toDouble() * baseScore;
-
-#if 0
-        // we only want results from knowledgebases (this check means a big slowdown)
-        if ( !ResourceManager::instance()->mainModel()->executeQuery( QString( "ask where { graph ?g { <%1> ?p ?o . } . { ?g <%2> <%3> . } . }" )
-                                                                      .arg( QString::fromAscii( hitUri.toEncoded() ) )
-                                                                      .arg( Soprano::Vocabulary::RDF::type().toString() )
-                                                                      .arg( Soprano::Vocabulary::NRL::InstanceBase().toString() ),
-                                                                      Soprano::Query::QueryLanguageSparql ).boolValue() ) {
-            kDebug() << "Not an instancebase hit" << hitUri;
-            continue;
-        }
-#endif
 
         if ( hitScore >= cutOffScore() ) {
             Result result( hitUri, hitScore );
