@@ -51,6 +51,7 @@ target_link_libraries(nepomukstorage
   ${SOPRANO_LIBRARIES}
   ${SOPRANO_SERVER_LIBRARIES}
   ${KDE4_KDECORE_LIBS}
+  ${KDE4_KDEUI_LIBS}
   ${NEPOMUK_LIBRARIES}
   )
 
@@ -64,6 +65,10 @@ endif(SopranoIndex_FOUND)
 install(
   FILES nepomukstorage.desktop
   DESTINATION ${SERVICES_INSTALL_DIR})
+
+install(
+  FILES nepomukstorage.notifyrc
+  DESTINATION ${DATA_INSTALL_DIR}/nepomukstorage)
 
 install(
   TARGETS nepomukstorage

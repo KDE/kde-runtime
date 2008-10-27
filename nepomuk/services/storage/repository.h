@@ -74,9 +74,16 @@ namespace Nepomuk {
 
     private Q_SLOTS:
         void copyFinished( KJob* job );
+        void rebuildingIndexFinished();
         void slotDoOptimize();
 
     private:
+        /**
+         * \return true if the index needs to be rebuilt and the method
+         * took over initialization.
+         */
+        bool rebuildIndexIfNecessary();
+
         QString m_name;
         State m_state;
 

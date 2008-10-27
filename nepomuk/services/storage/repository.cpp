@@ -38,8 +38,12 @@
 #include <KConfigGroup>
 #include <KSharedConfig>
 #include <KLocale>
+#include <KNotification>
+#include <KIcon>
 
 #include <QtCore/QTimer>
+#include <QtCore/QThread>
+#include <QtCore/QCoreApplication>
 
 
 namespace {
@@ -47,6 +51,21 @@ namespace {
     {
         return KStandardDirs::locateLocal( "data", "nepomuk/repository/" + repositoryId + "/" );
     }
+
+    class RebuildIndexThread : public QThread
+    {
+    public:
+        RebuildIndexThread( Soprano::Index::IndexFilterModel* model )
+            : m_model( model ) {
+        }
+
+        void run() {
+            m_model->rebuildIndex();
+        }
+
+    private:
+        Soprano::Index::IndexFilterModel* m_model;
+    };
 }
 
 
@@ -109,7 +128,6 @@ void Nepomuk::Repository::open()
     QString oldBackendName = repoConfig.readEntry( "Used Soprano Backend", backend->pluginName() );
     QString oldBasePath = repoConfig.readPathEntry( "Storage Dir", QString() ); // backward comp: empty string means old storage path
 
-
     // If possible we want to keep the old storage path. exception: oldStoragePath is empty. In that case we stay backwards
     // compatible and convert the data to the new default location createStoragePath( name ) + "data/" + backend->pluginName()
     //
@@ -157,6 +175,9 @@ void Nepomuk::Repository::open()
         // no need for the whole content in the store, we only need it for searching
         // (compare the strigi backend)
         m_indexModel->addIndexOnlyPredicate( Soprano::Vocabulary::Xesam::asText() );
+#endif
+#if SOPRANO_IS_VERSION(2,1,64)
+        m_indexModel->addForceIndexPredicate( Soprano::Vocabulary::RDF::type() );
 #endif
 
         setParentModel( m_indexModel );
@@ -218,22 +239,18 @@ void Nepomuk::Repository::open()
             }
             else {
                 m_state = OPEN;
-                emit opened( this, true );
             }
         }
         else {
             // FIXME: inform the user
             kDebug( 300002 ) << "Unable to convert old model.";
             m_state = OPEN;
-            emit opened( this, true );
         }
     }
     else {
         kDebug() << "no need to convert" << name();
         m_state = OPEN;
-        emit opened( this, true );
     }
-
 
     // save the settings
     // =================================
@@ -243,17 +260,55 @@ void Nepomuk::Repository::open()
         repoConfig.writeEntry( "Used Soprano Backend", backend->pluginName() );
         repoConfig.writePathEntry( "Storage Dir", m_basePath );
         repoConfig.sync(); // even if we crash the model has been created
+
+        if( m_state == OPEN ) {
+            if ( !rebuildIndexIfNecessary() ) {
+                emit opened( this, true );
+            }
+        }
     }
+    else {
+        KNotification::event( "convertingNepomukData",
+                              i18nc("@info - notification message",
+                                    "Converting Nepomuk data to a new backend. This might take a while."),
+                                    KIcon( "nepomuk" ).pixmap( 32, 32 ) );
+    }
+}
+
+
+void Nepomuk::Repository::rebuildingIndexFinished()
+{
+    KNotification::event( "rebuldingNepomukIndexDone",
+                          i18nc("@info - notification message",
+                                "Rebuilding Nepomuk full text search index for new features done."),
+                          KIcon( "nepomuk" ).pixmap( 32, 32 ) );
+
+    // save our new settings
+    KConfigGroup repoConfig = KSharedConfig::openConfig( "nepomukserverrc" )->group( name() + " Settings" );
+    repoConfig.writeEntry( "rebuilt index for type indexing", true );
+
+    // inform that we are open and done
+    m_state = OPEN;
+    emit opened( this, true );
 }
 
 
 void Nepomuk::Repository::copyFinished( KJob* job )
 {
     if ( job->error() ) {
-        // FIXME: inform the user
+        KNotification::event( "convertingNepomukDataFailed",
+                              i18nc("@info - notification message",
+                                    "Converting Nepomuk data to the new backend failed. Data may still be recovered manually though."),
+                                    KIcon( "nepomuk" ).pixmap( 32, 32 ) );
+
         kDebug( 300002 ) << "Converting old model failed.";
     }
     else {
+        KNotification::event( "convertingNepomukDataDone",
+                              i18nc("@info - notification message",
+                                    "Successfully converted Nepomuk data to the new backend."),
+                                    KIcon( "nepomuk" ).pixmap( 32, 32 ) );
+
         kDebug() << "Successfully converted model data for repo" << name();
 
         // delete the old model
@@ -268,6 +323,11 @@ void Nepomuk::Repository::copyFinished( KJob* job )
         repoConfig.writeEntry( "Used Soprano Backend", activeSopranoBackend()->pluginName() );
         repoConfig.writePathEntry( "Storage Dir", m_basePath );
         repoConfig.sync();
+
+        if ( rebuildIndexIfNecessary() ) {
+            // opened will be emitted in rebuildingIndexFinished
+            return;
+        }
     }
 
     // although converting might have failed, the new model is open anyway
@@ -289,6 +349,26 @@ void Nepomuk::Repository::slotDoOptimize()
     m_index->optimize();
 #endif
 #endif
+}
+
+
+bool Nepomuk::Repository::rebuildIndexIfNecessary()
+{
+#if defined(HAVE_SOPRANO_INDEX) && defined(HAVE_CLUCENE) && SOPRANO_IS_VERSION(2,1,64)
+    KConfigGroup repoConfig = KSharedConfig::openConfig( "nepomukserverrc" )->group( name() + " Settings" );
+    if( !repoConfig.readEntry( "rebuilt index for type indexing", false ) ) {
+        KNotification::event( "rebuldingNepomukIndex",
+                              i18nc("@info - notification message",
+                                    "Rebuilding Nepomuk full text search index for new features. This will only be done once and might take a while."),
+                                    KIcon( "nepomuk" ).pixmap( 32, 32 ) );
+        RebuildIndexThread* rit = new RebuildIndexThread( m_indexModel );
+        connect( rit, SIGNAL( finished() ), this, SLOT( rebuildingIndexFinished() ) );
+        connect( rit, SIGNAL( finished() ), rit, SLOT( deleteLater() ) );
+        rit->start();
+        return true;
+    }
+#endif
+    return false;
 }
 
 

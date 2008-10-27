@@ -1,0 +1,29 @@
+[Global]
+IconName=nepomuk
+Name=Nepomuk Data Storage
+Comment=The Nepomuk Storage Service
+
+[Event/rebuldingNepomukIndex]
+Name=Rebuilding Nepomuk Index
+Comment=The Nepomuk full text search index is rebuilt for new features
+Action=Popup
+
+[Event/rebuldingNepomukIndexDone]
+Name=Rebuilding Nepomuk Index
+Comment=The rebuilding of the Nepomuk full text search index is done.
+Action=Popup
+
+[Event/convertingNepomukData]
+Name=Converting Nepomuk data
+Comment=All Nepomuk data is converted to a new storage backend
+Action=Popup
+
+[Event/convertingNepomukDataFailed]
+Name=Converting Nepomuk data
+Comment=Converting Nepomuk data to a new backend failed
+Action=Popup
+
+[Event/convertingNepomukDataDone]
+Name=Converting Nepomuk data
+Comment=Successfully converted Nepomuk data to new backend
+Action=Popup
