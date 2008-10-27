@@ -21,7 +21,7 @@
 
 #include <QtCore/QObject>
 
-#include <nepomuk/nepomuk_export.h>
+#include "nepomukqueryclient_export.h"
 
 class QUrl;
 
@@ -46,7 +46,7 @@ namespace Nepomuk {
          *
          * \author Sebastian Trueg <trueg@kde.org>
          */
-        class NEPOMUK_EXPORT QueryServiceClient : public QObject
+        class NEPOMUKQUERYCLIENT_EXPORT QueryServiceClient : public QObject
         {
             Q_OBJECT
 
@@ -61,6 +61,14 @@ namespace Nepomuk {
              */
             ~QueryServiceClient();
 
+            /**
+             * Check if the service is running.
+             * \return \p true if the Nepomuk query service is running and could
+             * be contacted via DBus, \p false otherwise
+             */
+            static bool serviceAvailable();
+
+        public Q_SLOTS:
             /**
              * Start a query using the Nepomuk user query language.
              *
@@ -86,9 +94,36 @@ namespace Nepomuk {
             bool query( const Query& query );
 
             /**
+             * Start a query using the Nepomuk user query language.
+             *
+             * Results will be reported as with query(const QString&)
+             * but a local event loop will be started to block the method
+             * call until all results have been listed.
+             *
+             * The client will be closed after the initial listing. Thus,
+             * changes to results will not be reported as it is the case
+             * with the non-blocking methods.
+             *
+             * \return \p true if the query service was found and the query
+             * was started. \p false otherwise.
+             * 
+             * \sa query(const QString&), close()
+             */
+            bool blockingQuery( const QString& query );
+
+            /**
+             * \overload
+             *
+             * \sa query(const Query&)
+             */
+            bool blockingQuery( const Query& query );
+
+            /**
              * Close the client, thus stop to monitor the query
              * for changes. Without closing the client it will continue
              * signalling changes to the results.
+             *
+             * This will also make any blockingQuery return immediately.
              */
             void close();
 
@@ -118,6 +153,7 @@ namespace Nepomuk {
             Private* const d;
 
             Q_PRIVATE_SLOT( d, void _k_entriesRemoved( const QStringList& ) )
+            Q_PRIVATE_SLOT( d, void _k_finishedListing() )
         };
     }
 }
