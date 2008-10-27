@@ -448,7 +448,7 @@ file associations and default applications.</para>
 <listitem><para>The component chooser allows you to select the default
 applications you would like to use for various services. Here you can define
 what Email Client, Embedded Text Editor, Instant Messenger, Terminal
-Emulator and Web Browser to use. If you prefer to use
+Emulator, File Manager and Web Browser to use. If you prefer to use
 <application>Xterm</application>, <application>Vim</application> or
 <application>Mozilla</application>, this is the place to specify those
 preferences.</para>
