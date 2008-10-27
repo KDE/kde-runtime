@@ -1,9 +1,13 @@
 [KCM Locale]
 Name=Ecuador
+Name[ca]=Equador
+Name[lv]=Ekvadora
 Name[nl]=Equador
+Name[pl]=Ekwador
 Name[pt]=Equador
 Name[pt_BR]=Equador
 Name[uk]=Еквадор
+Name[zh_TW]=厄瓜多
 Region=southamerica
 Languages=es
 DecimalSymbol=,
