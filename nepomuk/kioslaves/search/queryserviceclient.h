@@ -21,8 +21,6 @@
 
 #include <QtCore/QObject>
 
-#include "nepomukqueryclient_export.h"
-
 class QUrl;
 
 namespace Nepomuk {
@@ -46,7 +44,7 @@ namespace Nepomuk {
          *
          * \author Sebastian Trueg <trueg@kde.org>
          */
-        class NEPOMUKQUERYCLIENT_EXPORT QueryServiceClient : public QObject
+        class QueryServiceClient : public QObject
         {
             Q_OBJECT
 
