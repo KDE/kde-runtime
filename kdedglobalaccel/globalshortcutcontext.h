@@ -18,6 +18,8 @@
    Boston, MA 02110-1301, USA.
 */
 
+#include "kglobalshortcutinfo.h"
+
 #include <QtCore/QString>
 #include <QtCore/QHash>
 
@@ -50,6 +52,9 @@ public:
     //! Adds @p shortcut to the context
     void addShortcut(GlobalShortcut *shortcut);
 
+    //! Return KGlobalShortcutInfos for all shortcuts
+    QList<KGlobalShortcutInfo> allShortcutInfos() const;
+
     /**
      * Get the name for the context
      */
@@ -58,6 +63,9 @@ public:
 
     KdeDGlobalAccel::Component *component();
     KdeDGlobalAccel::Component const *component() const;
+
+    //! Get shortcut for @p key or NULL
+    GlobalShortcut *getShortcutByKey(int key) const;
 
     //! Remove @p shortcut from the context. The shortcut is not deleted.
     GlobalShortcut *takeShortcut(GlobalShortcut *shortcut);

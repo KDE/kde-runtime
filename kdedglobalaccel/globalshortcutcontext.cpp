@@ -20,6 +20,7 @@
 
 #include "globalshortcut.h"
 
+#include "kdebug.h"
 
 GlobalShortcutContext::GlobalShortcutContext(
         const QString &uniqueName,
@@ -34,13 +35,23 @@ GlobalShortcutContext::GlobalShortcutContext(
 
 
 GlobalShortcutContext::~GlobalShortcutContext()
-    {
-    }
+    {}
 
 
 void GlobalShortcutContext::addShortcut(GlobalShortcut *shortcut)
     {
     _actions.insert(shortcut->uniqueName(), shortcut);
+    }
+
+
+QList<KGlobalShortcutInfo> GlobalShortcutContext::allShortcutInfos() const
+    {
+    QList<KGlobalShortcutInfo> rc;
+    Q_FOREACH (GlobalShortcut *shortcut, _actions)
+        {
+        rc.append(static_cast<KGlobalShortcutInfo>(*shortcut));
+        }
+    return rc;
     }
 
 
@@ -62,15 +73,21 @@ QString GlobalShortcutContext::friendlyName() const
     }
 
 
+GlobalShortcut *GlobalShortcutContext::getShortcutByKey(int key) const
+    {
+    Q_FOREACH(GlobalShortcut *sc, _actions)
+        {
+        if (sc->keys().contains(key)) return sc;
+        }
+    return NULL;
+    }
+
+
 GlobalShortcut *GlobalShortcutContext::takeShortcut(GlobalShortcut *shortcut)
     {
     // Try to take the shortcut. Result could be null if the shortcut doesn't
     // belong ti this component.
-    return _actions.take(shortcut->uniqueName());
-    }
+    return _actions.take(shortcut->uniqueName()); }
 
 
-QString GlobalShortcutContext::uniqueName() const
-    {
-    return _uniqueName;
-    }
+QString GlobalShortcutContext::uniqueName() const { return _uniqueName; }

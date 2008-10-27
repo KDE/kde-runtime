@@ -149,12 +149,9 @@ QList<KGlobalShortcutInfo> Component::allShortcutInfos(const QString &contextNam
         return rc;
         }
 
-    Q_FOREACH (GlobalShortcut *shortcut, context->_actions.values())
-        {
-        rc.append(static_cast<KGlobalShortcutInfo>(*shortcut));
-        }
-    return rc;
+    return context->allShortcutInfos();
     }
+
 
 bool Component::createGlobalShortcutContext(
         const QString &uniqueName,
@@ -208,11 +205,7 @@ QString Component::friendlyName() const
 
 GlobalShortcut *Component::getShortcutByKey(int key) const
     {
-    Q_FOREACH(GlobalShortcut *sc, _current->_actions)
-        {
-        if (sc->keys().contains(key)) return sc;
-        }
-    return NULL;
+    return _current->getShortcutByKey(key);
     }
 
 
@@ -221,13 +214,8 @@ QList<GlobalShortcut *> Component::getShortcutsByKey(int key) const
     QList <GlobalShortcut *> rc;
     Q_FOREACH(GlobalShortcutContext *context, _contexts)
         {
-        Q_FOREACH(GlobalShortcut *sc, context->_actions)
-            {
-            if (sc->keys().contains(key))
-                {
-                rc.append(sc);
-                }
-            }
+        GlobalShortcut *sc = context->getShortcutByKey(key);
+        if (sc) rc.append(sc);
         }
     return rc;
     }
