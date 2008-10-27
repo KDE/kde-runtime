@@ -181,11 +181,14 @@ void GlobalShortcutsRegistry::loadSettings()
     foreach (const QString &groupName, _config.groupList())
         {
 
+        Q_ASSERT(groupName.indexOf('\x1d')==-1);
+#if 0
         // Skip the subgroups [Friendly Name] and contexts
         if (groupName.indexOf('\x1d')!=-1)
             {
             continue;
             }
+#endif
 
         kDebug() << "Loading group " << groupName;
 
