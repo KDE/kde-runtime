@@ -53,28 +53,61 @@ Name[x-test]=xxNepomuk Data Storagexx
 Name[zh_CN]=Nepomuk 数据存储
 Name[zh_TW]=Nepomuk 資料儲存
 Comment=The Nepomuk Storage Service
+Comment[pt]=O Serviço de Armazenamento do Nepomuk
+Comment[pt_BR]=O Serviço de Armazenamento do Nepomuk
+Comment[uk]=Служба зберігання Nepomuk
 
 [Event/rebuldingNepomukIndex]
 Name=Rebuilding Nepomuk Index
+Name[pt]=A Reconstruir o Índice do Nepomuk
+Name[pt_BR]=A Reconstruir o Índice do Nepomuk
+Name[uk]=Повторна побудова покажчика Nepomuk
 Comment=The Nepomuk full text search index is rebuilt for new features
+Comment[pt]=O índice de pesquisa por texto completo do Nepomuk está a ser reconstruído devido às novas funcionalidades
+Comment[pt_BR]=O índice de pesquisa por texto completo do Nepomuk está a ser reconstruído devido às novas funcionalidades
+Comment[uk]=Покажчик повнотекстового пошуку Nepomuk перебудовується для реалізації нових можливостей
 Action=Popup
 
 [Event/rebuldingNepomukIndexDone]
 Name=Rebuilding Nepomuk Index
+Name[pt]=A Reconstruir o Índice do Nepomuk
+Name[pt_BR]=A Reconstruir o Índice do Nepomuk
+Name[uk]=Повторна побудова покажчика Nepomuk
 Comment=The rebuilding of the Nepomuk full text search index is done.
+Comment[pt]=A reconstrução do índice de pesquisa por texto completo terminou.
+Comment[pt_BR]=A reconstrução do índice de pesquisa por texto completo terminou.
+Comment[uk]=Повторну побудову повнотекстового покажчика Nepomuk завершено.
 Action=Popup
 
 [Event/convertingNepomukData]
 Name=Converting Nepomuk data
+Name[pt]=A converter os dados do Nepomuk
+Name[pt_BR]=A converter os dados do Nepomuk
+Name[uk]=Перетворення даних Nepomuk
 Comment=All Nepomuk data is converted to a new storage backend
+Comment[pt]=Todos os dados do Nepomuk foram convertidos para uma nova infra-estrutura de armazenamento
+Comment[pt_BR]=Todos os dados do Nepomuk foram convertidos para uma nova infra-estrutura de armazenamento
+Comment[uk]=Всі дані Nepomuk перетворено для нового сервера зберігання
 Action=Popup
 
 [Event/convertingNepomukDataFailed]
 Name=Converting Nepomuk data
+Name[pt]=A converter os dados do Nepomuk
+Name[pt_BR]=A converter os dados do Nepomuk
+Name[uk]=Перетворення даних Nepomuk
 Comment=Converting Nepomuk data to a new backend failed
+Comment[pt]=A conversão dos dados do Nepomuk para uma nova infra-estrutura foi mal-sucedida
+Comment[pt_BR]=A conversão dos dados do Nepomuk para uma nova infra-estrutura foi mal-sucedida
+Comment[uk]=Спроба перетворення даних Nepomuk для нового сервера зазнала невдачі
 Action=Popup
 
 [Event/convertingNepomukDataDone]
 Name=Converting Nepomuk data
+Name[pt]=A converter os dados do Nepomuk
+Name[pt_BR]=A converter os dados do Nepomuk
+Name[uk]=Перетворення даних Nepomuk
 Comment=Successfully converted Nepomuk data to new backend
+Comment[pt]=Os dados do Nepomuk foram convertidos com sucesso para a infra-estrutura nova
+Comment[pt_BR]=Os dados do Nepomuk foram convertidos com sucesso para a infra-estrutura nova
+Comment[uk]=Дані Nepomuk успішно перетворено для нового сервера
 Action=Popup
