@@ -9,7 +9,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
    macro_log_feature(HAVE_CURRENT_ALSA "ALSA" "current alsa-lib is needed for dmix and virtual device listing" "http://www.alsa-project.org/" TRUE "1.0.14a")
 endif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 
-find_package(PulseAudio)
+macro_optional_find_package(PulseAudio)
 macro_log_feature(PULSEAUDIO_FOUND "PulseAudio" "libpulse is needed to allow audio playback via the PulseAudio soundserver when it is running" "http://www.pulseaudio.org/" FALSE)
 
 if(PULSEAUDIO_FOUND)
