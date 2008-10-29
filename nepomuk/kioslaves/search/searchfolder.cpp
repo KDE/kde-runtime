@@ -368,7 +368,7 @@ Nepomuk::SearchEntry* Nepomuk::SearchFolder::statResult( const Search::Result& r
         url = result.resourceUri();
     }
     bool isFile = false;
-    if ( !url.isEmpty() ) {
+    if ( !url.isEmpty() && url.scheme() != "akonadi" ) { // do not stat akonadi resouces here, way too slow, even hangs if akonadi is not running
         kDebug() << "listing file" << url;
         if ( KIO::StatJob* job = KIO::stat( url, KIO::HideProgressInfo ) ) {
             job->setAutoDelete( false );
