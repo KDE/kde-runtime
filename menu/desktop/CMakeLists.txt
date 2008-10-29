@@ -18,6 +18,7 @@
    kde-games-kids.directory
    kde-games-roguelikes.directory
    kde-games-strategy.directory
+   kde-games-logic.directory
    kde-graphics.directory
    kde-internet.directory
    kde-internet-terminal.directory
