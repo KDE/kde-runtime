@@ -2,6 +2,5 @@
 Encoding=UTF-8
 Type=Directory
 Name=Logic Games
-Name[de]=Logikspiele
 Icon=applications-games-logic
 X-KDE-SuppressGenericNames=Game,Logic Game
