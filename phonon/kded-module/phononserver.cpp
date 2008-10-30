@@ -683,8 +683,7 @@ void PhononServer::findDevices()
         const PS::AudioDevice dev(cardName, iconName, key, initialPreference, isAdvanced);
         if (groupName.endsWith(QLatin1String("playback"))) {
             m_audioOutputDevices << dev;
-        } else {
-            Q_ASSERT(groupName.endsWith(QLatin1String("capture")));
+        } else if (groupName.endsWith(QLatin1String("capture"))) {
             m_audioCaptureDevices << dev;
         }
         alreadyFoundCards.insert(groupName);
