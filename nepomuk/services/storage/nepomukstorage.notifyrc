@@ -53,6 +53,8 @@ Name[x-test]=xxNepomuk Data Storagexx
 Name[zh_CN]=Nepomuk 数据存储
 Name[zh_TW]=Nepomuk 資料儲存
 Comment=The Nepomuk Storage Service
+Comment[el]=Υπηρεσία αποθήκης του Nepomuk
+Comment[gu]=નેપોમુક સંગ્રહ સેવા
 Comment[nds]=De Nepomuk-Wohrdeenst
 Comment[pt]=O Serviço de Armazenamento do Nepomuk
 Comment[pt_BR]=O Serviço de Armazenamento do Nepomuk
@@ -63,6 +65,8 @@ Comment[zh_TW]=Nepomuk 儲存服務
 
 [Event/rebuldingNepomukIndex]
 Name=Rebuilding Nepomuk Index
+Name[el]=Ανακατασκευή ευρετηρίου Nepomuk
+Name[gu]=નેપોમુક અનુક્રમ ફરી બનાવે છે
 Name[nds]=Nepomuk-Index warrt nieg opstellt
 Name[pt]=A Reconstruir o Índice do Nepomuk
 Name[pt_BR]=A Reconstruir o Índice do Nepomuk
@@ -71,6 +75,7 @@ Name[tr]=Nepomuk İndeksi Yeniden Oluşturuluyor
 Name[uk]=Повторна побудова покажчика Nepomuk
 Name[zh_TW]=重建 Nepomuk 索引
 Comment=The Nepomuk full text search index is rebuilt for new features
+Comment[el]=Το ευρετήριο αναζήτησης πλήρους κειμένου του Nepomuk ανακατασκευάστηκε για υποστήριξη νέων χαρακτηριστικών
 Comment[nds]=De Heeltext-Söökindex vun Nepomuk warrt för niege Funkschonen nieg opbuut
 Comment[pt]=O índice de pesquisa por texto completo do Nepomuk está a ser reconstruído devido às novas funcionalidades
 Comment[pt_BR]=O índice de pesquisa por texto completo do Nepomuk está a ser reconstruído devido às novas funcionalidades
@@ -82,6 +87,8 @@ Action=Popup
 
 [Event/rebuldingNepomukIndexDone]
 Name=Rebuilding Nepomuk Index
+Name[el]=Ανακατασκευή ευρετηρίου Nepomuk
+Name[gu]=નેપોમુક અનુક્રમ ફરી બનાવે છે
 Name[nds]=Nepomuk-Index warrt nieg opstellt
 Name[pt]=A Reconstruir o Índice do Nepomuk
 Name[pt_BR]=A Reconstruir o Índice do Nepomuk
@@ -90,6 +97,7 @@ Name[tr]=Nepomuk İndeksi Yeniden Oluşturuluyor
 Name[uk]=Повторна побудова покажчика Nepomuk
 Name[zh_TW]=重建 Nepomuk 索引
 Comment=The rebuilding of the Nepomuk full text search index is done.
+Comment[el]=Η ανακατασκευή του ευρετηρίου αναζήτησης πλήρους κειμένου του Nepomuk ολοκληρώθηκε.
 Comment[nds]=Dat Niegopbuen vun Nepomuk sien Heeltext-Söökindex is afslaten.
 Comment[pt]=A reconstrução do índice de pesquisa por texto completo terminou.
 Comment[pt_BR]=A reconstrução do índice de pesquisa por texto completo terminou.
@@ -101,6 +109,8 @@ Action=Popup
 
 [Event/convertingNepomukData]
 Name=Converting Nepomuk data
+Name[el]=Μετατροπή δεδομένων Nepomuk
+Name[gu]=નેપોમુક માહિતી ફેરવે છે
 Name[nds]=Nepomuk-Daten warrt ümwannelt
 Name[pt]=A converter os dados do Nepomuk
 Name[pt_BR]=A converter os dados do Nepomuk
@@ -109,6 +119,8 @@ Name[tr]=Nepomuk verileri dönüştürülüyor
 Name[uk]=Перетворення даних Nepomuk
 Name[zh_TW]=轉換 Nepomuk 資料中...
 Comment=All Nepomuk data is converted to a new storage backend
+Comment[el]=Όλα τα δεδομένα Nepomuk μετατράπηκαν στο νέο σύστημα αποθήκης
+Comment[gu]=બધી નેપોમુક માહિતી નવાં સંગ્રહ બેકએન્ડમાં ફેરવાઇ ગઇ છે
 Comment[nds]=All Nepomuk-Daten warrt för en nieg Hülpprogramm ümwannelt
 Comment[pt]=Todos os dados do Nepomuk foram convertidos para uma nova infra-estrutura de armazenamento
 Comment[pt_BR]=Todos os dados do Nepomuk foram convertidos para uma nova infra-estrutura de armazenamento
@@ -120,6 +132,8 @@ Action=Popup
 
 [Event/convertingNepomukDataFailed]
 Name=Converting Nepomuk data
+Name[el]=Μετατροπή δεδομένων Nepomuk
+Name[gu]=નેપોમુક માહિતી ફેરવે છે
 Name[nds]=Nepomuk-Daten warrt ümwannelt
 Name[pt]=A converter os dados do Nepomuk
 Name[pt_BR]=A converter os dados do Nepomuk
@@ -128,6 +142,8 @@ Name[tr]=Nepomuk verileri dönüştürülüyor
 Name[uk]=Перетворення даних Nepomuk
 Name[zh_TW]=轉換 Nepomuk 資料中...
 Comment=Converting Nepomuk data to a new backend failed
+Comment[el]=Αποτυχία μετατροπής δεδομένων Nepomuk στο νέο σύστημα υποστήριξης
+Comment[gu]=નેપોમુક માહિતીને નવાં બેકએન્ડમાં ફેરવવાનું નિષ્ફળ ગયું
 Comment[nds]=Ümwanneln vun Nepomuk-Daten för en nieg Hülpprogramm fehlslaan
 Comment[pt]=A conversão dos dados do Nepomuk para uma nova infra-estrutura foi mal-sucedida
 Comment[pt_BR]=A conversão dos dados do Nepomuk para uma nova infra-estrutura foi mal-sucedida
@@ -139,6 +155,8 @@ Action=Popup
 
 [Event/convertingNepomukDataDone]
 Name=Converting Nepomuk data
+Name[el]=Μετατροπή δεδομένων Nepomuk
+Name[gu]=નેપોમુક માહિતી ફેરવે છે
 Name[nds]=Nepomuk-Daten warrt ümwannelt
 Name[pt]=A converter os dados do Nepomuk
 Name[pt_BR]=A converter os dados do Nepomuk
@@ -147,6 +165,8 @@ Name[tr]=Nepomuk verileri dönüştürülüyor
 Name[uk]=Перетворення даних Nepomuk
 Name[zh_TW]=轉換 Nepomuk 資料中...
 Comment=Successfully converted Nepomuk data to new backend
+Comment[el]=Επιτυχία μετατροπής δεδομένων Nepomuk στο νέο σύστημα υποστήριξης
+Comment[gu]=નેપોમુક માહિતીને નવા બેકએન્ડમાં સફળતાપૂર્વક ફેરવી દેવામાં આવી
 Comment[nds]=Nepomuk-Daten mit Spood för nieg Hülpprogramm ümwannelt
 Comment[pt]=Os dados do Nepomuk foram convertidos com sucesso para a infra-estrutura nova
 Comment[pt_BR]=Os dados do Nepomuk foram convertidos com sucesso para a infra-estrutura nova
