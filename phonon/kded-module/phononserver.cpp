@@ -22,6 +22,8 @@
 #include "audiodevice.h"
 
 #include <kconfiggroup.h>
+#include <kstandarddirs.h>
+#include <kmessagebox.h>
 #include <klocale.h>
 #include <kdebug.h>
 #include <KPluginFactory>
@@ -683,7 +685,18 @@ void PhononServer::findDevices()
         const PS::AudioDevice dev(cardName, iconName, key, initialPreference, isAdvanced);
         if (groupName.endsWith(QLatin1String("playback"))) {
             m_audioOutputDevices << dev;
-        } else if (groupName.endsWith(QLatin1String("capture"))) {
+        } else if (!groupName.endsWith(QLatin1String("capture"))) {
+            static bool alreadyShown = false;
+            if (!alreadyShown) {
+                alreadyShown = true;
+                KMessageBox::queuedMessageBox(0, KMessageBox::Error,
+                        QString("Something went wrong with your audio devices cache. "
+                            "Please attach the file %1 to the bug report at "
+                            "http://bugs.kde.org/show_bug.cgi?id=173163")
+                        .arg(KStandardDirs::locateLocal("config", "phonondevicesrc")),
+                        QString(), KMessageBox::AllowLink);
+            }
+        } else {
             m_audioCaptureDevices << dev;
         }
         alreadyFoundCards.insert(groupName);

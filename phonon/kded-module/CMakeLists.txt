@@ -29,7 +29,7 @@ set(kded_phonon_SRCS
    )
 
 kde4_add_plugin(kded_phononserver ${kded_phonon_SRCS})
-target_link_libraries(kded_phononserver ${KDE4_KDECORE_LIBS} ${KDE4_PHONON_LIBS} ${KDE4_SOLID_LIBS} ${ASOUND_LIBRARY} ${PULSEAUDIO_LIBRARY})
+target_link_libraries(kded_phononserver ${KDE4_KDEUI_LIBS} ${KDE4_PHONON_LIBS} ${KDE4_SOLID_LIBS} ${ASOUND_LIBRARY} ${PULSEAUDIO_LIBRARY})
 install(TARGETS kded_phononserver  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 install(FILES phononserver.desktop DESTINATION ${SERVICES_INSTALL_DIR}/kded)
