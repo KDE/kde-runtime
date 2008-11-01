@@ -39,7 +39,7 @@ int main(int argc, char **argv)
     // 4. remove udi key
     // 5. remove driver key
     // 6. add deviceNumber key
-    KConfig kconfig("phonondevicesrc", KConfig::NoGlobals);
+    KConfig kconfig("phonondevicesrc", KConfig::SimpleConfig);
     KConfigGroup globalGroup(&kconfig, "Globals");
     int nextIndex = globalGroup.readEntry("nextIndex", 1);
 

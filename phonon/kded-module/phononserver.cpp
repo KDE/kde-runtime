@@ -58,7 +58,7 @@ Q_DECLARE_METATYPE(PhononDeviceAccessList)
 
 PhononServer::PhononServer(QObject *parent, const QList<QVariant> &)
     : KDEDModule(parent),
-    m_config(KSharedConfig::openConfig("phonondevicesrc", KConfig::NoGlobals))
+    m_config(KSharedConfig::openConfig("phonondevicesrc", KConfig::SimpleConfig))
 {
     findDevices();
     connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceAdded(const QString &)), SLOT(deviceAdded(const QString &)));
