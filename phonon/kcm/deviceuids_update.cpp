@@ -71,13 +71,25 @@ int main(int argc, char **argv)
 
         if (group.startsWith(QLatin1String("AudioOutputDevice_"))) {
             const QString &deviceNumberString = group.right(group.length() - group.lastIndexOf(QLatin1Char(':')) - 1);
-            deviceNumber = deviceNumberString.toInt();
+            bool ok = false;
+            deviceNumber = deviceNumberString.toInt(&ok);
+            if (!ok) {
+                // It's probably a fallback UniqueID. Let's get rid of it.
+                kconfig.deleteGroup(group);
+                continue;
+            }
             newGroup = QLatin1String("AudioDevice_") +
                 group.mid(18, group.indexOf(QLatin1String(":playback")) - 17) +
                 deviceNumberString + QLatin1String(":playback");
         } else if (group.startsWith(QLatin1String("AudioCaptureDevice_"))) {
             const QString &deviceNumberString = group.right(group.length() - group.lastIndexOf(QLatin1Char(':')) - 1);
-            deviceNumber = deviceNumberString.toInt();
+            bool ok = false;
+            deviceNumber = deviceNumberString.toInt(&ok);
+            if (!ok) {
+                // It's probably a fallback UniqueID. Let's get rid of it.
+                kconfig.deleteGroup(group);
+                continue;
+            }
             newGroup = QLatin1String("AudioDevice_") +
                 group.mid(19, group.indexOf(QLatin1String(":capture")) - 18) +
                 deviceNumberString + QLatin1String(":capture");
@@ -93,7 +105,13 @@ int main(int argc, char **argv)
                 continue;
             }
             const QString &deviceNumberString = group.right(group.length() - group.lastIndexOf(QLatin1Char(':')) - 1);
-            deviceNumber = deviceNumberString.toInt();
+            bool ok = false;
+            deviceNumber = deviceNumberString.toInt(&ok);
+            if (!ok) {
+                // It's probably a fallback UniqueID. Let's get rid of it.
+                kconfig.deleteGroup(group);
+                continue;
+            }
             newGroup = QLatin1String("AudioDevice_") +
                 group.mid(19, group.indexOf(QLatin1String(":both")) - 18) + deviceNumberString;
 
@@ -115,6 +133,7 @@ int main(int argc, char **argv)
                 newConfigGroup.writeEntry("deviceNumber", deviceNumber);
             }
             kconfig.deleteGroup(group);
+            continue;
         } else {
             kWarning() << "found unknown/unhandled group:" << group << ". Removing.";
             kconfig.deleteGroup(group);
