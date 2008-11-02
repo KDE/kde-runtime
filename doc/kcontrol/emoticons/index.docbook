@@ -128,7 +128,7 @@ This section allows you to manage emoticons within the selected theme. The list 
 <varlistentry><term><guilabel>Add...</guilabel></term>
 <listitem>
 <para>
-This button allows you to add an emoticon to the selected theme. The dialog asks you to choose an icon for your emticon and to enter the corresponding ASCII symbol or text attached to it. After that, clicking <guibutton>OK</guibutton> will add your new emoticon in the emoticon list, you will see the icon and the corresponding text displayed. If you want to modify either the icon or the text, you can use the <guibutton>Edit...</guibutton> button described below.
+This button allows you to add an emoticon to the selected theme. The dialog asks you to choose an icon for your emoticon and to enter the corresponding ASCII symbol or text attached to it. After that, clicking <guibutton>OK</guibutton> will add your new emoticon in the emoticon list, you will see the icon and the corresponding text displayed. If you want to modify either the icon or the text, you can use the <guibutton>Edit...</guibutton> button described below.
 </para>
 </listitem>
 </varlistentry>
