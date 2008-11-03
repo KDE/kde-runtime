@@ -294,7 +294,7 @@ class PulseDetectionUserData
     public:
         inline PulseDetectionUserData(PhononServer *p, pa_mainloop_api *api)
             : phononServer(p), mainloopApi(api), ready(2),
-            alsaHandleMatches(QLatin1String(".*\\s(hw|front|surround\\d\\d):(\\d+)\\s.*")),
+            alsaHandleMatches(QLatin1String(".*\\s(plughw|hw|front|surround\\d\\d):(\\d+)\\s.*")),
             captureNameMatches(QLatin1String(".*_sound_card_(\\d+)_.*_(?:playback|capture)_(\\d+)(\\.monitor)?")),
             playbackNameMatches(QLatin1String(".*_sound_card_(\\d+)_.*_playback_(\\d+)"))
         {}
@@ -339,7 +339,7 @@ static void pulseSinkInfoListCallback(pa_context *context, const pa_sink_info *i
     if (d->playbackNameMatches.exactMatch(handle)) {
         const QString &description = QString::fromUtf8(i->description);
         const bool m = d->alsaHandleMatches.exactMatch(description);
-        const int cardNumber = m ? d->alsaHandleMatches.cap(2).toInt() : d->playbackNameMatches.cap(1).toInt();
+        const int cardNumber = m ? d->alsaHandleMatches.cap(2).toInt() : -1; // card_name_X in the name always has X == 0 ;( so we can't use d->playbackNameMatches.cap(1).toInt();
         const int deviceNumber = d->playbackNameMatches.cap(2).toInt();
         const PS::AudioDeviceKey key = { QString(), cardNumber, deviceNumber };
         const PS::AudioDeviceAccess access(QStringList(QString::fromUtf8(pa_context_get_server(context)) + QLatin1Char(':') + handle), 30, PS::AudioDeviceAccess::PulseAudioDriver, false, true);
@@ -686,6 +686,8 @@ void PhononServer::findDevices()
         if (groupName.endsWith(QLatin1String("playback"))) {
             m_audioOutputDevices << dev;
         } else if (!groupName.endsWith(QLatin1String("capture"))) {
+            // this entry shouldn't be here
+            //m_config->deleteGroup(groupName);
             static bool alreadyShown = false;
             if (!alreadyShown) {
                 alreadyShown = true;
