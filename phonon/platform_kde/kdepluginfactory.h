@@ -54,6 +54,8 @@ class KdePlatformPlugin : public QObject, public PlatformPlugin
         virtual QList<int> objectDescriptionIndexes(ObjectDescriptionType type) const;
         virtual QHash<QByteArray, QVariant> objectDescriptionProperties(ObjectDescriptionType type, int index) const;
 
+        virtual QList<QPair<QByteArray, QString> > deviceAccessListFor(const Phonon::AudioOutputDevice &) const;
+
     signals:
         void objectDescriptionChanged(ObjectDescriptionType);
 

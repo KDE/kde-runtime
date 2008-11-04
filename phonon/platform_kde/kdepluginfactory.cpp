@@ -41,6 +41,10 @@
 #include <kstandarddirs.h>
 #include "devicelisting.h"
 
+typedef QPair<QByteArray, QString> PhononDeviceAccess;
+typedef QList<PhononDeviceAccess> PhononDeviceAccessList;
+Q_DECLARE_METATYPE(PhononDeviceAccessList)
+
 namespace Phonon
 {
 
@@ -289,6 +293,24 @@ QHash<QByteArray, QVariant> KdePlatformPlugin::objectDescriptionProperties(Objec
     default:
         return QHash<QByteArray, QVariant>();
     }
+}
+
+QList<QPair<QByteArray, QString> > KdePlatformPlugin::deviceAccessListFor(const Phonon::AudioOutputDevice &deviceDesc) const
+{
+    const QVariant &deviceAccessListVariant = deviceDesc.property("deviceAccessList");
+    if (deviceAccessListVariant.isValid()) {
+        return qvariant_cast<PhononDeviceAccessList>(deviceAccessListVariant);
+    }
+    PhononDeviceAccessList ret;
+    const QVariant &v = deviceDesc.property("driver");
+    if (v.isValid()) {
+        const QByteArray &driver = v.toByteArray();
+        const QStringList &deviceIds = deviceDesc.property("deviceIds").toStringList();
+        foreach (const QString &deviceId, deviceIds) {
+            ret << QPair<QByteArray, QString>(driver, deviceId);
+        }
+    }
+    return ret;
 }
 
 } // namespace Phonon
