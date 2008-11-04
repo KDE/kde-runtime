@@ -96,7 +96,10 @@ public:
      * It is available if not used by another component in any context or used
      * by @p component only in not active contexts.
      */
-    bool isShortcutAvailable(int shortcut, const QString &component) const;
+    bool isShortcutAvailable(
+            int shortcut,
+            const QString &component,
+            const QString &context) const;
 
     static GlobalShortcutsRegistry *self();
 

@@ -238,14 +238,18 @@ QStringList Component::getShortcutContexts() const
     }
 
 
-bool Component::isShortcutAvailable(int key, const QString &component) const
+bool Component::isShortcutAvailable(
+        int key,
+        const QString &component,
+        const QString &context) const
     {
     kDebug() << QKeySequence(key).toString() << component;
 
-    // if this component asks for the key. only check the active keys
+    // if this component asks for the key. only check the keys in the same
+    // context
     if (component==uniqueName())
         {
-        Q_FOREACH(GlobalShortcut *sc, _current->_actions)
+        Q_FOREACH(GlobalShortcut *sc, shortcutContext(context)->_actions)
             {
             if (sc->keys().contains(key)) return false;
             }
@@ -314,6 +318,10 @@ GlobalShortcutContext *Component::shortcutContext( const QString &contextName )
     return _contexts.value(contextName);
     }
 
+GlobalShortcutContext const *Component::shortcutContext( const QString &contextName ) const
+    {
+    return _contexts.value(contextName);
+    }
 
 QStringList Component::shortcutNames( const QString &contextName) const
     {

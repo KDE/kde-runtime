@@ -83,6 +83,7 @@ public:
 
     //! Returns the shortcut context @p name or NULL
     GlobalShortcutContext *shortcutContext(const QString &name);
+    GlobalShortcutContext const *shortcutContext(const QString &name) const;
 
     /**
      * Returns the list of shortcuts (different context) registered with @p
@@ -92,12 +93,17 @@ public:
 
     //! Returns the shortcut by unique name. Only the active context is
     //! searched.
-    GlobalShortcut *getShortcutByName(const QString &uniqueName, const QString &context = "default") const;
+    GlobalShortcut *getShortcutByName(
+            const QString &uniqueName,
+            const QString &context = "default") const;
 
     /**
      * Check if @a key is available for component @p component
      */
-    bool isShortcutAvailable(int key, const QString &component) const;
+    bool isShortcutAvailable(
+            int key,
+            const QString &component,
+            const QString &context) const;
 
     //! Load the settings from config group @p config
     void loadSettings(KConfigGroup &config);

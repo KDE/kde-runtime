@@ -123,11 +123,14 @@ QList<GlobalShortcut*> GlobalShortcutsRegistry::getShortcutsByKey(int key) const
     }
 
 
-bool GlobalShortcutsRegistry::isShortcutAvailable(int shortcut, const QString &componentName) const
+bool GlobalShortcutsRegistry::isShortcutAvailable(
+        int shortcut,
+        const QString &componentName,
+        const QString &contextName) const
     {
     Q_FOREACH (KdeDGlobalAccel::Component *component, _components)
         {
-        if (!component->isShortcutAvailable(shortcut, componentName))
+        if (!component->isShortcutAvailable(shortcut, componentName, contextName))
             return false;
         }
     return true;

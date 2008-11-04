@@ -363,7 +363,7 @@ bool KdedGlobalAccel::isGlobalShortcutAvailable(int shortcut, const QString &com
     QString realComponent = component;
     QString context;
     d->splitComponent(realComponent, context);
-    return GlobalShortcutsRegistry::self()->isShortcutAvailable(shortcut, realComponent);
+    return GlobalShortcutsRegistry::self()->isShortcutAvailable(shortcut, realComponent, context);
     }
 
 
