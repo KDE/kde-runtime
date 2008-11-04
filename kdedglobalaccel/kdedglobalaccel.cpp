@@ -82,16 +82,42 @@ GlobalShortcut *KdedGlobalAccelPrivate::findAction(const QStringList &actionId) 
         }
 
     QString componentUnique = actionId.at(KGlobalAccel::ComponentUnique);
-    QString contextUnique = "default";
-    splitComponent(componentUnique, contextUnique);
 
-    // Get the component
-    KdeDGlobalAccel::Component *component = GlobalShortcutsRegistry::self()->getComponent(
-            componentUnique);
+    KdeDGlobalAccel::Component *component;
+    QString contextUnique;
+    if (componentUnique.indexOf('|')==-1)
+        {
+        component = GlobalShortcutsRegistry::self()->getComponent( componentUnique);
+        contextUnique = component->currentContext()->uniqueName();
+        }
+    else
+        {
+        splitComponent(componentUnique, contextUnique);
+        component = GlobalShortcutsRegistry::self()->getComponent( componentUnique);
+        }
 
-    return component
+
+    if (!component)
+        {
+        kDebug() << componentUnique << "not found";
+        return NULL;
+        }
+
+    GlobalShortcut *shortcut = component
         ? component->getShortcutByName(actionId.at(KGlobalAccel::ActionUnique), contextUnique)
         : NULL;
+
+    if (shortcut)
+        {
+        kDebug() << componentUnique
+                 << contextUnique
+                 << shortcut->uniqueName();
+        }
+    else
+        {
+        kDebug() << "No match";
+        }
+    return shortcut;
     }
 
 
