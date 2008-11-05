@@ -99,7 +99,9 @@ GlobalShortcut *KdedGlobalAccelPrivate::findAction(const QStringList &actionId) 
 
     if (!component)
         {
+#ifdef KDEDGLOBALACCEL_TRACE
         kDebug() << componentUnique << "not found";
+#endif
         return NULL;
         }
 
@@ -107,6 +109,7 @@ GlobalShortcut *KdedGlobalAccelPrivate::findAction(const QStringList &actionId) 
         ? component->getShortcutByName(actionId.at(KGlobalAccel::ActionUnique), contextUnique)
         : NULL;
 
+#ifdef KDEDGLOBALACCEL_TRACE
     if (shortcut)
         {
         kDebug() << componentUnique
@@ -115,8 +118,9 @@ GlobalShortcut *KdedGlobalAccelPrivate::findAction(const QStringList &actionId) 
         }
     else
         {
-        kDebug() << "No match";
+        kDebug() << "No match for" << actionId;
         }
+#endif
     return shortcut;
     }
 
@@ -321,6 +325,12 @@ QList<int> KdedGlobalAccel::defaultShortcut(const QStringList &action) const
 // later.
 void KdedGlobalAccel::doRegister(const QStringList &actionId)
 {
+#ifdef KDEDGLOBALACCEL_TRACE
+    kDebug() << actionId;
+#endif
+
+    // Check because we would not want to add a action for an invalid
+    // actionId. findAction returns NULL in that case.
     if (actionId.size() < 4) {
         return;
     }
@@ -369,6 +379,10 @@ bool KdedGlobalAccel::isGlobalShortcutAvailable(int shortcut, const QString &com
 
 void KdedGlobalAccel::setInactive(const QStringList &actionId)
     {
+#ifdef KDEDGLOBALACCEL_TRACE
+    kDebug() << actionId;
+#endif
+
     GlobalShortcut *shortcut = d->findAction(actionId);
     if (shortcut)
         shortcut->setInactive();
@@ -377,6 +391,10 @@ void KdedGlobalAccel::setInactive(const QStringList &actionId)
 
 void KdedGlobalAccel::unRegister(const QStringList &actionId)
 {
+#ifdef KDEDGLOBALACCEL_TRACE
+    kDebug() << actionId;
+#endif
+
     // Stop grabbing the key
     GlobalShortcut *shortcut = d->findAction(actionId);
     if (shortcut) {
@@ -440,6 +458,10 @@ QList<int> KdedGlobalAccel::setShortcut(const QStringList &actionId,
 
 void KdedGlobalAccel::setForeignShortcut(const QStringList &actionId, const QList<int> &keys)
 {
+#ifdef KDEDGLOBALACCEL_TRACE
+    kDebug() << actionId;
+#endif
+
     GlobalShortcut *shortcut = d->findAction(actionId);
     if (!shortcut)
         return;
