@@ -179,15 +179,19 @@ void Nepomuk::ServerConfigModule::slotUpdateStrigiStatus()
         bool suspended = m_strigiInterface.isSuspended();
         QString folder = m_strigiInterface.currentFolder();
 
-        if ( suspended )
-            m_labelStrigiStatus->setText( i18n( "File indexer is suspended" ) );
+        if ( m_strigiInterface.lastError().isValid() )
+            m_labelStrigiStatus->setText( i18nc( "@info:status %1 is an error message returned by a dbus interface.",
+                                                 "Failed to contact Strigi indexer (%1)",
+                                                 m_strigiInterface.lastError().message() ) );
+        else if ( suspended )
+            m_labelStrigiStatus->setText( i18nc( "@info_status", "File indexer is suspended" ) );
         else if ( indexing )
-            m_labelStrigiStatus->setText( i18n( "Strigi is currently indexing files in folder %1", folder ) );
+            m_labelStrigiStatus->setText( i18nc( "@info_status", "Strigi is currently indexing files in folder %1", folder ) );
         else
-            m_labelStrigiStatus->setText( i18n( "File indexer is idle" ) );
+            m_labelStrigiStatus->setText( i18nc( "@info_status", "File indexer is idle" ) );
     }
     else {
-        m_labelStrigiStatus->setText( i18n( "Strigi service not running." ) );
+        m_labelStrigiStatus->setText( i18nc( "@info_status", "Strigi service not running." ) );
     }
 }
 
