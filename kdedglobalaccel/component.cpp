@@ -375,7 +375,7 @@ void Component::writeSettings(KConfigGroup& configGroup) const
 
             // We do not write fresh shortcuts.
             // We do not write session shortcuts
-            if (shortcut->isFresh() || shortcut->uniqueName().startsWith("_k_session:"))
+            if (shortcut->isFresh() || shortcut->isSessionShortcut())
                 {
                 continue;
                 }

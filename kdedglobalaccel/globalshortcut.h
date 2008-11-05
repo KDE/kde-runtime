@@ -61,6 +61,9 @@ public:
     //! Check if the shortcut is fresh/new. Is an internal state
     bool isFresh() const;
 
+    //! Returns true if the shortcut is a session shortcut
+    bool isSessionShortcut() const;
+
     //! Returns a list of keys associated with this shortcut.
     QList<int> keys() const;
 

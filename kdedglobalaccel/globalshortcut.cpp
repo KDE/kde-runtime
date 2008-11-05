@@ -81,9 +81,16 @@ GlobalShortcut::operator KGlobalShortcutInfo () const
     return info;
     }
 
+
 bool GlobalShortcut::isFresh() const
     {
     return _isFresh;
+    }
+
+
+bool GlobalShortcut::isSessionShortcut() const
+    {
+    return uniqueName().startsWith("_k_session:");
     }
 
 
