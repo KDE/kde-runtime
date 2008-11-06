@@ -342,7 +342,7 @@ static void pulseSinkInfoListCallback(pa_context *context, const pa_sink_info *i
         const int cardNumber = m ? d->alsaHandleMatches.cap(2).toInt() : -1; // card_name_X in the name always has X == 0 ;( so we can't use d->playbackNameMatches.cap(1).toInt();
         const int deviceNumber = d->playbackNameMatches.cap(2).toInt();
         const PS::AudioDeviceKey key = { QString(), cardNumber, deviceNumber };
-        const PS::AudioDeviceAccess access(QStringList(QString::fromUtf8(pa_context_get_server(context)) + QLatin1Char(':') + handle), 30, PS::AudioDeviceAccess::PulseAudioDriver, false, true);
+        const PS::AudioDeviceAccess access(QStringList(QString::fromUtf8(pa_context_get_server(context)) + QLatin1Char('\n') + handle), 30, PS::AudioDeviceAccess::PulseAudioDriver, false, true);
         d->sinks << QPair<PS::AudioDeviceKey, PS::AudioDeviceAccess>(key, access);
     }
 }
