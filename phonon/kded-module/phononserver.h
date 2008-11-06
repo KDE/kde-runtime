@@ -53,6 +53,8 @@ class PhononServer : public KDEDModule
         void deviceRemoved(const QString &udi);
         // TODO add callbacks for Pulse, Jack, asoundrc changes and whatever else, if somehow possible
 
+        void askToRemoveDevices(const QStringList &, const QList<int> &indexes);
+
     private:
         void findDevices();
         void findVirtualDevices();

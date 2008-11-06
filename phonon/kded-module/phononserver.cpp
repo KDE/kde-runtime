@@ -22,10 +22,12 @@
 #include "audiodevice.h"
 
 #include <kconfiggroup.h>
+#include <kprocess.h>
 #include <kstandarddirs.h>
 #include <kmessagebox.h>
 #include <klocale.h>
 #include <kdebug.h>
+#include <kdialog.h>
 #include <KPluginFactory>
 #include <KPluginLoader>
 #include <QtCore/QRegExp>
@@ -671,6 +673,8 @@ void PhononServer::findDevices()
     }
     // now look in the config file for disconnected devices
     const QStringList &groupList = m_config->groupList();
+    QStringList askToRemove;
+    QList<int> askToRemoveIndexes;
     foreach (const QString &groupName, groupList) {
         if (alreadyFoundCards.contains(groupName) || !groupName.startsWith(QLatin1String("AudioDevice_"))) {
             continue;
@@ -682,12 +686,19 @@ void PhononServer::findDevices()
         }
         const QString &cardName = cGroup.readEntry("cardName", QString());
         const QString &iconName = cGroup.readEntry("iconName", QString());
+        const bool hotpluggable = cGroup.readEntry("hotpluggable", true);
         const int initialPreference = cGroup.readEntry("initialPreference", 0);
         const int isAdvanced = cGroup.readEntry("isAdvanced", true);
         const int deviceNumber = cGroup.readEntry("deviceNumber", -1);
         const PS::AudioDeviceKey key = { groupName.mid(12), -1, deviceNumber };
         const PS::AudioDevice dev(cardName, iconName, key, initialPreference, isAdvanced);
-        if (groupName.endsWith(QLatin1String("playback"))) {
+        const bool isPlayback = groupName.endsWith(QLatin1String("playback"));
+        if (!hotpluggable) {
+            askToRemove << (isPlayback ? i18n("Output: %1", cardName) :
+                    i18n("Capture: %1", cardName));
+            askToRemoveIndexes << cGroup.readEntry("index", 0);
+        }
+        if (isPlayback) {
             m_audioOutputDevices << dev;
         } else if (!groupName.endsWith(QLatin1String("capture"))) {
             // this entry shouldn't be here
@@ -706,6 +717,11 @@ void PhononServer::findDevices()
             m_audioCaptureDevices << dev;
         }
         alreadyFoundCards.insert(groupName);
+    }
+    if (!askToRemove.isEmpty()) {
+        qSort(askToRemove);
+        QMetaObject::invokeMethod(this, "askToRemoveDevices", Qt::QueuedConnection,
+                Q_ARG(QStringList, askToRemove), Q_ARG(QList<int>, askToRemoveIndexes));
     }
 
     renameDevices(&m_audioOutputDevices);
@@ -917,5 +933,71 @@ void PhononServer::deviceRemoved(const QString &udi)
 {
     if (m_udisOfAudioDevices.contains(udi)) {
         m_updateDeviceListing.start(50, this);
+    }
+}
+
+void PhononServer::askToRemoveDevices(const QStringList &devList, const QList<int> &indexes)
+{
+    const QString &dontAskAgainName = QLatin1String("phonon_forget_devices_") +
+        devList.join(QLatin1String("_"));
+    KMessageBox::ButtonCode result;
+    if (!KMessageBox::shouldBeShownYesNo(dontAskAgainName, result)) {
+        if (result == KMessageBox::Yes) {
+            kDebug() << "removeAudioDevices" << indexes;
+            removeAudioDevices(indexes);
+        }
+        return;
+    }
+
+    class MyDialog: public KDialog
+    {
+        public:
+            MyDialog() : KDialog(0, Qt::Dialog) {}
+
+        protected:
+            virtual void slotButtonClicked(int button)
+            {
+                if (button == KDialog::User1) {
+                    kDebug() << "start kcm_phonon";
+                    KProcess::startDetached(QLatin1String("kcmshell4"), QStringList(QLatin1String("kcm_phonon")));
+                    reject();
+                } else {
+                    KDialog::slotButtonClicked(button);
+                }
+            }
+    } *dialog = new MyDialog;
+    dialog->setPlainCaption(i18n("Removed Sound Devices"));
+    dialog->setButtons(KDialog::Yes | KDialog::No | KDialog::User1);
+    KIcon icon("audio-card");
+    dialog->setWindowIcon(icon);
+    dialog->setModal(false);
+    KGuiItem yes(KStandardGuiItem::yes());
+    yes.setToolTip(i18n("Forget about the sound devices."));
+    dialog->setButtonGuiItem(KDialog::Yes, yes);
+    dialog->setButtonGuiItem(KDialog::No, KStandardGuiItem::no());
+    dialog->setButtonGuiItem(KDialog::User1, KGuiItem(i18nc("short string for a button, it opens "
+                    "the Phonon page of System Settings", "Manage Devices"),
+                KIcon("preferences-system"),
+                i18n("Open the System Settings page for sound device configuration where you can "
+                    "manually remove disconnected devices from the cache.")));
+    dialog->setEscapeButton(KDialog::No);
+    dialog->setDefaultButton(KDialog::User1);
+
+    bool checkboxResult = false;
+    int res = KMessageBox::createKMessageBox(dialog, icon,
+            i18n("<html><p>KDE detected that one or more internal sound devices were removed.</p>"
+                "<p><b>Do you want KDE to permanently forget about these devices?</b></p>"
+                "<p>This is the list of devices KDE thinks can be removed:<ul><li>%1</li></ul></p></html>",
+            devList.join(QLatin1String("</li><li>"))),
+            QStringList(),
+            i18n("Do not ask again for these devices"),
+            &checkboxResult, KMessageBox::Notify);
+    result = (res == KDialog::Yes ? KMessageBox::Yes : KMessageBox::No);
+    if (result == KMessageBox::Yes) {
+        kDebug() << "removeAudioDevices" << indexes;
+        removeAudioDevices(indexes);
+    }
+    if (checkboxResult) {
+        KMessageBox::saveDontShowAgainYesNo(dontAskAgainName, result);
     }
 }
