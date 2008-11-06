@@ -658,6 +658,10 @@ void PhononServer::findDevices()
         removeOssOnlyDevices(&m_audioCaptureDevices);
     }
 
+    // now that we know about the hardware let's see what virtual devices we can find in
+    // ~/.asoundrc and /etc/asound.conf
+    findVirtualDevices();
+
     QSet<QString> alreadyFoundCards;
     foreach (const PS::AudioDevice &dev, m_audioOutputDevices) {
         alreadyFoundCards.insert(QLatin1String("AudioDevice_") + dev.key().uniqueId);
@@ -703,10 +707,6 @@ void PhononServer::findDevices()
         }
         alreadyFoundCards.insert(groupName);
     }
-
-    // now that we know about the hardware let's see what virtual devices we can find in
-    // ~/.asoundrc and /etc/asound.conf
-    findVirtualDevices();
 
     renameDevices(&m_audioOutputDevices);
     renameDevices(&m_audioCaptureDevices);
