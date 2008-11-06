@@ -83,7 +83,8 @@ KLocaleConfigMoney::KLocaleConfigMoney(KLocale *locale,
   connect( m_cmbMonNegMonSignPos, SIGNAL( activated(int) ),
            SLOT( slotMonNegMonSignPosChanged(int) ) );
 
-  m_inMonFraDig->setRange(0, 10, 1, false);
+  m_inMonFraDig->setRange(0, 10, 1);
+  m_inMonFraDig->setSliderEnabled(false);
 }
 
 KLocaleConfigMoney::~KLocaleConfigMoney()
