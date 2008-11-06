@@ -60,7 +60,9 @@ namespace {
         }
 
         void run() {
+#ifdef HAVE_SOPRANO_INDEX
             m_model->rebuildIndex();
+#endif
         }
 
     private:
