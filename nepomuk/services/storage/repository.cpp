@@ -52,6 +52,7 @@ namespace {
         return KStandardDirs::locateLocal( "data", "nepomuk/repository/" + repositoryId + "/" );
     }
 
+#if defined(HAVE_SOPRANO_INDEX) && defined(HAVE_CLUCENE) && SOPRANO_IS_VERSION(2,1,64)
     class RebuildIndexThread : public QThread
     {
     public:
@@ -60,14 +61,13 @@ namespace {
         }
 
         void run() {
-#ifdef HAVE_SOPRANO_INDEX
             m_model->rebuildIndex();
-#endif
         }
 
     private:
         Soprano::Index::IndexFilterModel* m_model;
     };
+#endif
 }
 
 
