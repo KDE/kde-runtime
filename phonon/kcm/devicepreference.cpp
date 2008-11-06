@@ -32,6 +32,8 @@
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QHeaderView>
 
+#include <Phonon/AudioOutput>
+#include <Phonon/MediaObject>
 #include <phonon/backendcapabilities.h>
 #include <phonon/objectdescription.h>
 #include <phonon/phononnamespace.h>
@@ -203,9 +205,14 @@ void DevicePreference::changeEvent(QEvent *e)
 
 DevicePreference::DevicePreference(QWidget *parent)
     : QWidget(parent),
-    m_headerModel(0, 1, 0)
+    m_headerModel(0, 1, 0),
+    m_showingOutputModel(true),
+    m_media(0), m_output(0)
 {
     setupUi(this);
+    testPlaybackButton->setIcon(KIcon("media-playback-start"));
+    testPlaybackButton->setEnabled(false);
+    testPlaybackButton->setToolTip(i18n("play a test sound on the selected device"));
     deviceList->setItemDelegate(new DeviceTreeDelegate(deviceList));
     removeButton->setIcon(KIcon("list-remove"));
     deferButton->setIcon(KIcon("go-down"));
@@ -303,6 +310,7 @@ void DevicePreference::updateDeviceList()
         } else {
             deviceList->setModel(m_captureModel[cat]);
         }
+        m_showingOutputModel = catItem->isOutputItem;
         if (cat == Phonon::NoCategory) {
             if (catItem->isOutputItem) {
                 m_headerModel.setHeaderData(0, Qt::Horizontal, i18n("Default Output Device Preference:"), Qt::DisplayRole);
@@ -317,6 +325,7 @@ void DevicePreference::updateDeviceList()
             }
         }
     } else {
+        m_showingOutputModel = false;
         m_headerModel.setHeaderData(0, Qt::Horizontal, QString(), Qt::DisplayRole);
         deviceList->setModel(0);
     }
@@ -797,6 +806,36 @@ void DevicePreference::on_showCheckBox_toggled()
     deviceList->resizeColumnToContents(0);
 }
 
+void DevicePreference::on_testPlaybackButton_toggled(bool down)
+{
+    if (down) {
+        QModelIndex idx = deviceList->currentIndex();
+        if (!idx.isValid() || !m_showingOutputModel) {
+            return;
+        }
+        const Phonon::AudioOutputDeviceModel *model = static_cast<const Phonon::AudioOutputDeviceModel *>(idx.model());
+        const Phonon::AudioOutputDevice &device = model->modelData(idx);
+        m_media = new Phonon::MediaObject(this);
+        m_output = new Phonon::AudioOutput(this);
+        m_output->setOutputDevice(device);
+
+        // just to be very sure that nothing messes our test sound up
+        m_output->setVolume(1.0);
+        m_output->setMuted(false);
+
+        Phonon::createPath(m_media, m_output);
+        connect(m_media, SIGNAL(finished()), testPlaybackButton, SLOT(toggle()));
+        m_media->setCurrentSource(KStandardDirs::locate("sound", "KDE-Sys-Log-In.ogg"));
+        m_media->play();
+    } else {
+        disconnect(m_media, SIGNAL(finished()), testPlaybackButton, SLOT(toggle()));
+        delete m_media;
+        m_media = 0;
+        delete m_output;
+        m_output = 0;
+    }
+}
+
 void DevicePreference::updateButtonsEnabled()
 {
     //kDebug() ;
@@ -805,11 +844,14 @@ void DevicePreference::updateButtonsEnabled()
         QModelIndex idx = deviceList->currentIndex();
         preferButton->setEnabled(idx.isValid() && idx.row() > 0);
         deferButton->setEnabled(idx.isValid() && idx.row() < deviceList->model()->rowCount() - 1);
-        removeButton->setEnabled(idx.isValid() && !(idx.flags()  & Qt::ItemIsEnabled));
+        removeButton->setEnabled(idx.isValid() && !(idx.flags() & Qt::ItemIsEnabled));
+        testPlaybackButton->setEnabled(m_showingOutputModel && idx.isValid() &&
+                (idx.flags() & Qt::ItemIsEnabled));
     } else {
         preferButton->setEnabled(false);
         deferButton->setEnabled(false);
         removeButton->setEnabled(false);
+        testPlaybackButton->setEnabled(false);
     }
 }
 

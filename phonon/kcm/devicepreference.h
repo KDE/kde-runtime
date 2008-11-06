@@ -29,6 +29,12 @@
 #include <QtCore/QList>
 class QLabel;
 
+namespace Phonon
+{
+    class MediaObject;
+    class AudioOutput;
+} // namespace Phonon
+
 class DevicePreference : public QWidget, private Ui::DevicePreference
 {
     Q_OBJECT
@@ -50,6 +56,7 @@ class DevicePreference : public QWidget, private Ui::DevicePreference
         void on_removeButton_clicked();
         void on_showCheckBox_toggled();
         void on_applyPreferencesButton_clicked();
+        void on_testPlaybackButton_toggled(bool down);
         void updateButtonsEnabled();
         void updateDeviceList();
         void updateAudioOutputDevices();
@@ -65,7 +72,10 @@ class DevicePreference : public QWidget, private Ui::DevicePreference
         QMap<int, Phonon::AudioCaptureDeviceModel *> m_captureModel;
         QStandardItemModel m_categoryModel;
         QStandardItemModel m_headerModel;
-        bool m_noCategoryChangeEventQueued;
+        bool m_showingOutputModel;
+
+        Phonon::MediaObject *m_media;
+        Phonon::AudioOutput *m_output;
 };
 
 #endif // DEVICEPREFERENCE_H_STUPID_UIC
