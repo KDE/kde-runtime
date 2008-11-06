@@ -125,4 +125,7 @@ void PS::AudioDevice::syncWithCache(const KSharedConfigPtr &config)
     cGroup.writeEntry("isAdvanced", m_isAdvanced);
     cGroup.writeEntry("deviceNumber", m_key.deviceNumber);
     cGroup.writeEntry("deleted", false);
+    // hack: only internal soundcards should get the icon audio-card. All others, we assume, are
+    // hotpluggable
+    cGroup.writeEntry("hotpluggable", m_icon != QLatin1String("audio-card"));
 }
