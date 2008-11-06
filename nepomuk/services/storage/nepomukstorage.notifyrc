@@ -96,7 +96,7 @@ Comment[zh_TW]=Nepomuk 全文檢索索引已重建以支援新功能
 Action=Popup
 
 [Event/rebuldingNepomukIndexDone]
-Name=Rebuilding Nepomuk Index
+Name=Rebuilding Nepomuk Index done
 Name[ca]=S'està reconstruint l'índex del Nepomuk
 Name[el]=Ανακατασκευή ευρετηρίου Nepomuk
 Name[gu]=નેપોમુક અનુક્રમ ફરી બનાવે છે
@@ -151,7 +151,7 @@ Comment[zh_TW]=Nepomuk 資料將被轉換到新的儲存後端介面。
 Action=Popup
 
 [Event/convertingNepomukDataFailed]
-Name=Converting Nepomuk data
+Name=Converting Nepomuk data failed
 Name[el]=Μετατροπή δεδομένων Nepomuk
 Name[gu]=નેપોમુક માહિતી ફેરવે છે
 Name[hsb]=Konwertěruju Nepomukowe daty
@@ -178,7 +178,7 @@ Comment[zh_TW]=轉換 Nepomuk 資料到新的後端介面時失敗。
 Action=Popup
 
 [Event/convertingNepomukDataDone]
-Name=Converting Nepomuk data
+Name=Converting Nepomuk data done
 Name[el]=Μετατροπή δεδομένων Nepomuk
 Name[gu]=નેપોમુક માહિતી ફેરવે છે
 Name[hsb]=Konwertěruju Nepomukowe daty
