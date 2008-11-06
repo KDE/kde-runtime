@@ -2,8 +2,10 @@
 Encoding=UTF-8
 Type=Directory
 Name=Logic Games
+Name[ca]=Joc de lògica
 Name[el]=Παιχνίδια λογικής
 Name[gu]=તાર્કિક રમતો
+Name[hsb]=Logikowe hry
 Name[kk]=Логикалық ойындар
 Name[nds]=Logikspelen
 Name[pt]=Jogos de Lógica
