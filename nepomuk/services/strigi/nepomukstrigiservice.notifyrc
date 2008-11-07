@@ -2,6 +2,7 @@
 IconName=nepomuk
 Comment=The Nepomuk Strigi file indexer
 Comment[be@latin]=Słužba „Nepomuk”/„Strigi” dla indeksacyi fajłaŭ
+Comment[de]=Nepomuk-Strigi-Dateiindexer
 Comment[el]=Υπηρεσία ευρετηρίου αρχείων Strigi του Nepomuk
 Comment[et]=Nepomuki Strigi failide indekseerija
 Comment[gl]=O indexador de ficheiros Strigi para Nepomuk
@@ -27,6 +28,7 @@ Comment[zh_TW]=Nepomuk Strigi 檔案索引服務
 [Event/initialIndexingStarted]
 Name=Initial Indexing started
 Name[be@latin]=Pačałosia pačatkovaje indeksavańnie.
+Name[de]=Erstindizierung gestartet
 Name[el]=Έναρξη αρχικού ευρετηρίου
 Name[et]=Esmaindekseerimine on käivitatud
 Name[gl]=Iniciouse a indexación inicial

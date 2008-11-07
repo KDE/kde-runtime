@@ -55,6 +55,7 @@ Name[zh_CN]=Nepomuk 数据存储
 Name[zh_TW]=Nepomuk 資料儲存
 Comment=The Nepomuk Storage Service
 Comment[ca]=Servei d'emmagatzematge del Nepomuk
+Comment[de]=Nepomuk-Ablagedienst
 Comment[el]=Υπηρεσία αποθήκης του Nepomuk
 Comment[gu]=નેપોમુક સંગ્રહ સેવા
 Comment[hsb]=Nepomuk Storage Service
@@ -70,6 +71,7 @@ Comment[zh_TW]=Nepomuk 儲存服務
 [Event/rebuldingNepomukIndex]
 Name=Rebuilding Nepomuk Index
 Name[ca]=S'està reconstruint l'índex del Nepomuk
+Name[de]=Nepomuk-Index wird neu erstellt.
 Name[el]=Ανακατασκευή ευρετηρίου Nepomuk
 Name[gu]=નેપોમુક અનુક્રમ ફરી બનાવે છે
 Name[hsb]=Indeks za Nepomuk znowa natwarjam
@@ -82,6 +84,7 @@ Name[tr]=Nepomuk İndeksi Yeniden Oluşturuluyor
 Name[uk]=Повторна побудова покажчика Nepomuk
 Name[zh_TW]=重建 Nepomuk 索引
 Comment=The Nepomuk full text search index is rebuilt for new features
+Comment[de]=Der Nepomuk-Volltextindex wird zur Aktivierung neuer Funktionen neu aufgebaut.
 Comment[el]=Το ευρετήριο αναζήτησης πλήρους κειμένου του Nepomuk ανακατασκευάστηκε για υποστήριξη νέων χαρακτηριστικών
 Comment[gu]=નવી લાક્ષણિકતાઓ માટે નેપોમુક પૂર્ણ લખાણ શોધ અનુક્રમણિકા ફરી બની રહી છે
 Comment[hsb]=Nepomukowy indeks za  połnotekstowe pytanje so znowa natwarja za instalowanje nowych móžnosćow
@@ -97,19 +100,8 @@ Action=Popup
 
 [Event/rebuldingNepomukIndexDone]
 Name=Rebuilding Nepomuk Index done
-Name[ca]=S'està reconstruint l'índex del Nepomuk
-Name[el]=Ανακατασκευή ευρετηρίου Nepomuk
-Name[gu]=નેપોમુક અનુક્રમ ફરી બનાવે છે
-Name[hsb]=Indeks za Nepomuk znowa natwarjam
-Name[kk]=Nepomuk индексін қайта құру
-Name[nds]=Nepomuk-Index warrt nieg opstellt
-Name[pt]=A Reconstruir o Índice do Nepomuk
-Name[pt_BR]=A Reconstruir o Índice do Nepomuk
-Name[sv]=Bygger om Nepomuks index
-Name[tr]=Nepomuk İndeksi Yeniden Oluşturuluyor
-Name[uk]=Повторна побудова покажчика Nepomuk
-Name[zh_TW]=重建 Nepomuk 索引
 Comment=The rebuilding of the Nepomuk full text search index is done.
+Comment[de]=Der Neuaufbau des Nepomuk-Volltextindex ist abgeschlossen.
 Comment[el]=Η ανακατασκευή του ευρετηρίου αναζήτησης πλήρους κειμένου του Nepomuk ολοκληρώθηκε.
 Comment[gu]=નેપોમુક પૂર્ણ લખાણ શોધ અનુક્રમણિકા બનાવવાનું પૂર્ણ થયેલ છે.
 Comment[hsb]=Nepomukowy indeks za  połnotekstowe pytanje je donatwarjeny
@@ -125,6 +117,7 @@ Action=Popup
 
 [Event/convertingNepomukData]
 Name=Converting Nepomuk data
+Name[de]=Nepomuk-Daten werden umgewandelt.
 Name[el]=Μετατροπή δεδομένων Nepomuk
 Name[gu]=નેપોમુક માહિતી ફેરવે છે
 Name[hsb]=Konwertěruju Nepomukowe daty
@@ -137,6 +130,7 @@ Name[tr]=Nepomuk verileri dönüştürülüyor
 Name[uk]=Перетворення даних Nepomuk
 Name[zh_TW]=轉換 Nepomuk 資料中...
 Comment=All Nepomuk data is converted to a new storage backend
+Comment[de]=Alle Nepomuk-Daten wurden in das neue Speicherformat umgewandelt.
 Comment[el]=Όλα τα δεδομένα Nepomuk μετατράπηκαν στο νέο σύστημα αποθήκης
 Comment[gu]=બધી નેપોમુક માહિતી નવાં સંગ્રહ બેકએન્ડમાં ફેરવાઇ ગઇ છે
 Comment[hsb]=Wšě Nepomukowe daty buchu za nowy składowanski backend konwertěrowane
@@ -152,17 +146,6 @@ Action=Popup
 
 [Event/convertingNepomukDataFailed]
 Name=Converting Nepomuk data failed
-Name[el]=Μετατροπή δεδομένων Nepomuk
-Name[gu]=નેપોમુક માહિતી ફેરવે છે
-Name[hsb]=Konwertěruju Nepomukowe daty
-Name[kk]=Nepomuk деректерін аудару
-Name[nds]=Nepomuk-Daten warrt ümwannelt
-Name[pt]=A converter os dados do Nepomuk
-Name[pt_BR]=A converter os dados do Nepomuk
-Name[sv]=Konverterar Nepomuks data
-Name[tr]=Nepomuk verileri dönüştürülüyor
-Name[uk]=Перетворення даних Nepomuk
-Name[zh_TW]=轉換 Nepomuk 資料中...
 Comment=Converting Nepomuk data to a new backend failed
 Comment[el]=Αποτυχία μετατροπής δεδομένων Nepomuk στο νέο σύστημα υποστήριξης
 Comment[gu]=નેપોમુક માહિતીને નવાં બેકએન્ડમાં ફેરવવાનું નિષ્ફળ ગયું
@@ -179,17 +162,6 @@ Action=Popup
 
 [Event/convertingNepomukDataDone]
 Name=Converting Nepomuk data done
-Name[el]=Μετατροπή δεδομένων Nepomuk
-Name[gu]=નેપોમુક માહિતી ફેરવે છે
-Name[hsb]=Konwertěruju Nepomukowe daty
-Name[kk]=Nepomuk деректерін аудару
-Name[nds]=Nepomuk-Daten warrt ümwannelt
-Name[pt]=A converter os dados do Nepomuk
-Name[pt_BR]=A converter os dados do Nepomuk
-Name[sv]=Konverterar Nepomuks data
-Name[tr]=Nepomuk verileri dönüştürülüyor
-Name[uk]=Перетворення даних Nepomuk
-Name[zh_TW]=轉換 Nepomuk 資料中...
 Comment=Successfully converted Nepomuk data to new backend
 Comment[el]=Επιτυχία μετατροπής δεδομένων Nepomuk στο νέο σύστημα υποστήριξης
 Comment[gu]=નેપોમુક માહિતીને નવા બેકએન્ડમાં સફળતાપૂર્વક ફેરવી દેવામાં આવી
