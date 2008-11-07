@@ -31,6 +31,7 @@
 #include <KPluginFactory>
 #include <KPluginLoader>
 #include <QtCore/QRegExp>
+#include <QtCore/QSettings>
 #include <QtCore/QTimerEvent>
 #include <QtDBus/QDBusConnection>
 #include <QtDBus/QDBusMessage>
@@ -694,9 +695,16 @@ void PhononServer::findDevices()
         const PS::AudioDevice dev(cardName, iconName, key, initialPreference, isAdvanced);
         const bool isPlayback = groupName.endsWith(QLatin1String("playback"));
         if (!hotpluggable) {
-            askToRemove << (isPlayback ? i18n("Output: %1", cardName) :
-                    i18n("Capture: %1", cardName));
-            askToRemoveIndexes << cGroup.readEntry("index", 0);
+            const QSettings phononSettings(QLatin1String("kde.org"), QLatin1String("libphonon"));
+            if (isAdvanced &&
+                    phononSettings.value(QLatin1String("General/HideAdvancedDevices"), true).toBool()) {
+                dev.removeFromCache(m_config);
+                continue;
+            } else {
+                askToRemove << (isPlayback ? i18n("Output: %1", cardName) :
+                        i18n("Capture: %1", cardName));
+                askToRemoveIndexes << cGroup.readEntry("index", 0);
+            }
         }
         if (isPlayback) {
             m_audioOutputDevices << dev;
