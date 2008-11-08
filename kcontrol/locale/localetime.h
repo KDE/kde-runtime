@@ -2,6 +2,7 @@
  * localetime.h
  *
  * Copyright (c) 1999-2003 Hans Petter Bieker <bieker@kde.org>
+ * Copyright (c) 2008 John Layt <john@layt.net>
  *
  * Requires the Qt widget libraries, available at no cost at
  * http://www.troll.no/
@@ -67,6 +68,9 @@ private Q_SLOTS:
   void slotDateFmtChanged(const QString &t);
   void slotDateFmtShortChanged(const QString &t);
   void slotWeekStartDayChanged(int firstDay);
+  void slotWorkingWeekStartDayChanged(int startDay);
+  void slotWorkingWeekEndDayChanged(int endDay);
+  void slotWeekDayOfPrayChanged(int weekDay);
   void slotDateMonthNamePossChanged();
   void slotCalendarSystemChanged(int calendarSystem);
 
@@ -93,6 +97,12 @@ private:
   QComboBox * m_comboDateFmtShort;
   QLabel * m_labWeekStartDay;
   QComboBox * m_comboWeekStartDay;
+  QLabel * m_labWorkingWeekStartDay;
+  QComboBox * m_comboWorkingWeekStartDay;
+  QLabel * m_labWorkingWeekEndDay;
+  QComboBox * m_comboWorkingWeekEndDay;
+  QLabel * m_labWeekDayOfPray;
+  QComboBox * m_comboWeekDayOfPray;
   QCheckBox *m_chDateMonthNamePossessive;
   QLabel * m_labCalendarSystem;
   QComboBox * m_comboCalendarSystem;

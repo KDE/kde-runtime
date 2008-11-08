@@ -192,6 +192,25 @@ between the entry name and the value.
 
 	Default: 1
 
+* WorkingWeekStartDay
+	This defines which day is the first working day of the week. Accepted
+	value is an integer number where 1 means Monday, 2 Tuesday, and so on.
+
+	Default: 1
+
+* WorkingWeekEndDay
+	This defines which day is the last working day of the week. Accepted
+	value is an integer number where 1 means Monday, 2 Tuesday, and so on.
+
+	Default: 5
+
+* WeekDayOfPray
+	This defines which day is the day of the week for religious observance.
+	Accepted value is an integer number where 1 means Monday, 2 Tuesday,
+	and so on. A special value of 0 means no day of religious observance.
+
+	Default: 5
+
 * MeasureSystem
 	This defines which measure system we should use. There are two
 	values here, 0 for Metric and 1 for Imperial. Metric would give
@@ -229,3 +248,4 @@ between the entry name and the value.
 
 Hans Petter Bieker <bieker@kde.org>
 Lukas Tinkl <lukas@kde.org>
+John Layt <john@layt.net>

@@ -2,6 +2,7 @@
  * localetime.cpp
  *
  * Copyright (c) 1999-2003 Hans Petter Bieker <bieker@kde.org>
+ * Copyright (c) 2008 John Layt <john@layt.net>
  *
  * Requires the Qt widget libraries, available at no cost at
  * http://www.troll.no/
@@ -249,11 +250,38 @@ KLocaleConfigTime::KLocaleConfigTime(KLocale *_locale,
   connect (m_comboWeekStartDay, SIGNAL(activated(int)),
            this, SLOT(slotWeekStartDayChanged(int)));
 
+  m_labWorkingWeekStartDay = new QLabel(this);
+  lay->addWidget(m_labWorkingWeekStartDay, 5, 0);
+  m_labWorkingWeekStartDay->setObjectName( I18N_NOOP("First working day of the week:") );
+  m_comboWorkingWeekStartDay = new QComboBox(this);
+  lay->addWidget(m_comboWorkingWeekStartDay, 5, 1);
+  m_comboWorkingWeekStartDay->setEditable(false);
+  connect (m_comboWorkingWeekStartDay, SIGNAL(activated(int)),
+           this, SLOT(slotWorkingWeekStartDayChanged(int)));
+
+  m_labWorkingWeekEndDay = new QLabel(this);
+  lay->addWidget(m_labWorkingWeekEndDay, 6, 0);
+  m_labWorkingWeekEndDay->setObjectName( I18N_NOOP("Last working day of the week:") );
+  m_comboWorkingWeekEndDay = new QComboBox(this);
+  lay->addWidget(m_comboWorkingWeekEndDay, 6, 1);
+  m_comboWorkingWeekEndDay->setEditable(false);
+  connect (m_comboWorkingWeekEndDay, SIGNAL(activated(int)),
+           this, SLOT(slotWorkingWeekEndDayChanged(int)));
+
+  m_labWeekDayOfPray = new QLabel(this);
+  lay->addWidget(m_labWeekDayOfPray, 7, 0);
+  m_labWeekDayOfPray->setObjectName( I18N_NOOP("Day of the week for religious observance:") );
+  m_comboWeekDayOfPray = new QComboBox(this);
+  lay->addWidget(m_comboWeekDayOfPray, 7, 1);
+  m_comboWeekDayOfPray->setEditable(false);
+  connect (m_comboWeekDayOfPray, SIGNAL(activated(int)),
+           this, SLOT(slotWeekDayOfPrayChanged(int)));
+
   updateWeekDayNames();
 
   m_chDateMonthNamePossessive = new QCheckBox(this);
   m_chDateMonthNamePossessive->setObjectName(I18N_NOOP("Use declined form of month name"));
-  lay->addWidget(m_chDateMonthNamePossessive, 5, 0, 1, 2);
+  lay->addWidget(m_chDateMonthNamePossessive, 8, 0, 1, 2);
   connect( m_chDateMonthNamePossessive, SIGNAL( clicked() ),
 	     SLOT( slotDateMonthNamePossChanged() ) );
 
@@ -299,10 +327,28 @@ void KLocaleConfigTime::save()
 		       m_locale->dateFormatShort(), KConfig::Persistent|KConfig::Global);
 
   int firstDay;
-  firstDay = entGrp.readEntry("WeekStartDay", 1);
+  firstDay = entGrp.readEntry("WeekStartDay", 1);  //default to Monday
   group.deleteEntry("WeekStartDay", KConfig::Persistent | KConfig::Global);
   if (firstDay != m_locale->weekStartDay())
       group.writeEntry("WeekStartDay", m_locale->weekStartDay(), KConfig::Persistent|KConfig::Global);
+
+  int firstWorkingDay;
+  firstWorkingDay = entGrp.readEntry("WorkingWeekStartDay", 1);  //default to Monday
+  group.deleteEntry("WorkingWeekStartDay", KConfig::Persistent | KConfig::Global);
+  if (firstWorkingDay != m_locale->workingWeekStartDay())
+      group.writeEntry("WorkingWeekStartDay", m_locale->workingWeekStartDay(), KConfig::Persistent|KConfig::Global);
+
+  int lastWorkingDay;
+  lastWorkingDay = entGrp.readEntry("WorkingWeekEndDay", 5);  //default to Friday
+  group.deleteEntry("WorkingWeekEndDay", KConfig::Persistent | KConfig::Global);
+  if (lastWorkingDay != m_locale->workingWeekEndDay())
+      group.writeEntry("WorkingWeekEndDay", m_locale->workingWeekEndDay(), KConfig::Persistent|KConfig::Global);
+
+  int prayDay;
+  prayDay = entGrp.readEntry("WeekDayOfPray", 7);  //default to Sunday
+  group.deleteEntry("WeekDayOfPray", KConfig::Persistent | KConfig::Global);
+  if (prayDay != m_locale->weekDayOfPray())
+      group.writeEntry("WeekDayOfPray", m_locale->weekDayOfPray(), KConfig::Persistent|KConfig::Global);
 
   if ( m_locale->nounDeclension() )
   {
@@ -378,6 +424,9 @@ calendarType);
   m_comboDateFmtShort->setEditText( storeToUser( dateMap(),
 					  m_locale->dateFormatShort() ) );
   m_comboWeekStartDay->setCurrentIndex( m_locale->weekStartDay() - 1 );
+  m_comboWorkingWeekStartDay->setCurrentIndex( m_locale->workingWeekStartDay() - 1 );
+  m_comboWorkingWeekEndDay->setCurrentIndex( m_locale->workingWeekEndDay() - 1 );
+  m_comboWeekDayOfPray->setCurrentIndex( m_locale->weekDayOfPray() );  // First option is None=0
 
   if ( m_locale->nounDeclension() )
     m_chDateMonthNamePossessive->setChecked( m_locale->dateMonthNamePossessive() );
@@ -415,6 +464,24 @@ void KLocaleConfigTime::slotDateFmtShortChanged(const QString &t)
 void KLocaleConfigTime::slotWeekStartDayChanged(int firstDay) {
     kDebug(173) << "first day is now: " << firstDay;
     m_locale->setWeekStartDay(m_comboWeekStartDay->currentIndex() + 1);
+    emit localeChanged();
+}
+
+void KLocaleConfigTime::slotWorkingWeekStartDayChanged(int startDay) {
+    kDebug(173) << "first working day is now: " << startDay;
+    m_locale->setWorkingWeekStartDay(m_comboWorkingWeekStartDay->currentIndex() + 1);
+    emit localeChanged();
+}
+
+void KLocaleConfigTime::slotWorkingWeekEndDayChanged(int endDay) {
+    kDebug(173) << "last working day is now: " << endDay;
+    m_locale->setWorkingWeekEndDay(m_comboWorkingWeekEndDay->currentIndex() + 1);
+    emit localeChanged();
+}
+
+void KLocaleConfigTime::slotWeekDayOfPrayChanged(int prayDay) {
+    kDebug(173) << "day of pray is now: " << prayDay;
+    m_locale->setWeekDayOfPray(m_comboWeekDayOfPray->currentIndex());  // First option is None=0
     emit localeChanged();
 }
 
@@ -537,6 +604,21 @@ void KLocaleConfigTime::slotTranslate()
      "the first one of the week.</p>").toString(m_locale);
   m_comboWeekStartDay->setWhatsThis(  str );
 
+  str = ki18n
+    ("<p>This option determines which day will be considered as "
+     "the first working day of the week.</p>").toString(m_locale);
+  m_comboWorkingWeekStartDay->setWhatsThis(  str );
+
+  str = ki18n
+    ("<p>This option determines which day will be considered as "
+     "the last working day of the week.</p>").toString(m_locale);
+  m_comboWorkingWeekEndDay->setWhatsThis(  str );
+
+  str = ki18n
+    ("<p>This option determines which day will be considered as "
+     "the day of the week for religious observance.</p>").toString(m_locale);
+  m_comboWeekDayOfPray->setWhatsThis(  str );
+
   if ( m_locale->nounDeclension() )
   {
     str = ki18n
@@ -549,23 +631,28 @@ void KLocaleConfigTime::slotTranslate()
 void KLocaleConfigTime::updateWeekDayNames()
 {
   const KCalendarSystem * calendar = m_locale->calendar();
+  int daysInWeek = calendar->daysInWeek(QDate::currentDate());
+  QString weekDayName = i18nc("Day name list, option for no day of religious observance", "None");
 
-  for ( int i = 1; ; ++i )
+  m_comboWeekStartDay->clear();
+  m_comboWorkingWeekStartDay->clear();
+  m_comboWorkingWeekEndDay->clear();
+  m_comboWeekDayOfPray->clear();
+
+  m_comboWeekDayOfPray->insertItem(0, weekDayName);
+
+  for ( int i = 1; i <= daysInWeek; ++i )
   {
-    QString str = calendar->weekDayName(i);
-    bool outsideComboList = m_comboWeekStartDay->count() < i;
-
-    if ( str.isNull() )
-    {
-      if ( outsideComboList )
-        break;
-      else
-        m_comboWeekStartDay->removeItem(i - 1);
-    }
-
-    if ( outsideComboList )
-      m_comboWeekStartDay->insertItem(i - 1, str);
-    else
-      m_comboWeekStartDay->setItemText(i - 1, str);
+    weekDayName = calendar->weekDayName(i);
+    m_comboWeekStartDay->insertItem(i - 1, weekDayName);
+    m_comboWorkingWeekStartDay->insertItem(i - 1, weekDayName);
+    m_comboWorkingWeekEndDay->insertItem(i - 1, weekDayName);
+    m_comboWeekDayOfPray->insertItem(i, weekDayName);
   }
+
+  m_comboWeekStartDay->setCurrentIndex( m_locale->weekStartDay() - 1 );
+  m_comboWorkingWeekStartDay->setCurrentIndex( m_locale->workingWeekStartDay() - 1 );
+  m_comboWorkingWeekEndDay->setCurrentIndex( m_locale->workingWeekEndDay() - 1 );
+  m_comboWeekDayOfPray->setCurrentIndex( m_locale->weekDayOfPray() );  // First option is None=0
+
 }
