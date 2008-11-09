@@ -87,8 +87,8 @@ GlobalShortcut *KdedGlobalAccelPrivate::findAction(const QStringList &actionId) 
     QString contextUnique;
     if (componentUnique.indexOf('|')==-1)
         {
-        component = GlobalShortcutsRegistry::self()->getComponent( componentUnique);
-        contextUnique = component->currentContext()->uniqueName();
+        if ( component = GlobalShortcutsRegistry::self()->getComponent( componentUnique) )
+            contextUnique = component->currentContext()->uniqueName();
         }
     else
         {
