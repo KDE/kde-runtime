@@ -92,6 +92,7 @@ PositivePrefixCurrencySymbol=true
 NegativePrefixCurrencySymbol=true
 PositiveMonetarySignPosition=1
 NegativeMonetarySignPosition=1
+DateFormat=%A %e. %B %Y
 DateFormat[nb]=%A %e. %B %Y
 DateFormat[nn]=%A %e. %B %Y
 DateFormat[eo]=%A, la %ea de %B %Y
