@@ -23,7 +23,8 @@
 #define KDEDGLOBALACCEL_H
 
 #include <kdedmodule.h>
-#include "kaction.h"
+#include <kglobalshortcutinfo.h>
+
 #include <QtCore/QStringList>
 #include <QtCore/QList>
 #include <QtDBus/QDBusObjectPath>
@@ -111,6 +112,10 @@ Q_SIGNALS:
     Q_SCRIPTABLE void invokeAction(const QStringList &actionId, qlonglong timestamp);
 
     Q_SCRIPTABLE void yourShortcutGotChanged(const QStringList &actionId, const QList<int> &newKeys);
+
+private Q_SLOTS:
+
+    void blockGlobalShortcuts(int);
 
 private:
 

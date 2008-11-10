@@ -20,6 +20,8 @@
     Boston, MA 02110-1301, USA.
 */
 
+#include "kdedglobalaccel.h"
+
 #include "component.h"
 #include "globalshortcut.h"
 #include "globalshortcutcontext.h"
@@ -30,9 +32,8 @@
 #include <QtDBus/QDBusMetaType>
 #include <QtDBus/QDBusObjectPath>
 
-#include "kdedglobalaccel.h"
 #include "kglobalaccel.h"
-#include "kglobalshortcutinfo_p.h"
+#include "kglobalsettings.h"
 #include "kdebug.h"
 
 #include "kpluginfactory.h"
@@ -87,15 +88,14 @@ GlobalShortcut *KdedGlobalAccelPrivate::findAction(const QStringList &actionId) 
     QString contextUnique;
     if (componentUnique.indexOf('|')==-1)
         {
-        if ( component = GlobalShortcutsRegistry::self()->getComponent( componentUnique) )
-            contextUnique = component->currentContext()->uniqueName();
+        component = GlobalShortcutsRegistry::self()->getComponent( componentUnique);
+        if (component) contextUnique = component->currentContext()->uniqueName();
         }
     else
         {
         splitComponent(componentUnique, contextUnique);
         component = GlobalShortcutsRegistry::self()->getComponent( componentUnique);
         }
-
 
     if (!component)
         {
@@ -202,7 +202,10 @@ KdedGlobalAccel::KdedGlobalAccel(QObject* parent, const QList<QVariant>&)
             reg, SLOT(writeSettings()));
 
     connect(reg, SIGNAL(invokeAction(const QStringList &, qlonglong)),
-            this, SIGNAL(invokeAction(const QStringList &, qlonglong)));
+            SIGNAL(invokeAction(const QStringList &, qlonglong)));
+
+    connect(KGlobalSettings::self(), SIGNAL(blockShortcuts(int)),
+            SLOT(blockGlobalShortcuts(int)));
 }
 
 
@@ -303,6 +306,17 @@ QList<QDBusObjectPath> KdedGlobalAccel::allComponents() const
     }
 
 
+void KdedGlobalAccel::blockGlobalShortcuts(int block)
+    {
+#ifdef KDEDGLOBALACCEL_TRACE
+    kDebug() << block;
+#endif
+    block
+        ? GlobalShortcutsRegistry::self()->deactivateShortcuts()
+        : GlobalShortcutsRegistry::self()->activateShortcuts();
+    }
+
+
 QList<int> KdedGlobalAccel::shortcut(const QStringList &action) const
 {
     GlobalShortcut *shortcut = d->findAction(action);
@@ -385,7 +399,7 @@ void KdedGlobalAccel::setInactive(const QStringList &actionId)
 
     GlobalShortcut *shortcut = d->findAction(actionId);
     if (shortcut)
-        shortcut->setInactive();
+        shortcut->setIsPresent(false);
     }
 
 
@@ -430,8 +444,8 @@ QList<int> KdedGlobalAccel::setShortcut(const QStringList &actionId,
     if (isAutoloading && !shortcut->isFresh()) {
         //the trivial and common case - synchronize the action from our data
         //and exit.
-        if (!shortcut->isActive() && setPresent) {
-            shortcut->setActive();
+        if (!shortcut->isPresent() && setPresent) {
+            shortcut->setIsPresent(true);
         }
         // We are finished here. Return the list of current active keys.
         return shortcut->keys();
@@ -441,7 +455,7 @@ QList<int> KdedGlobalAccel::setShortcut(const QStringList &actionId,
     shortcut->setKeys(keys);
 
     if (setPresent) {
-        shortcut->setActive();
+        shortcut->setIsPresent(true);
     }
 
     //maybe isFresh should really only be set if setPresent, but only two things should use !setPresent:

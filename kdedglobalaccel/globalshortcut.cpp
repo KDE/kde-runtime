@@ -29,6 +29,7 @@
 
 GlobalShortcut::GlobalShortcut()
         :   _isPresent(false)
+            ,_isRegistered(false)
             ,_isFresh(true)
             ,_context(NULL)
             ,_uniqueName()
@@ -43,6 +44,7 @@ GlobalShortcut::GlobalShortcut(
         const QString &friendlyName,
         GlobalShortcutContext *context)
             :   _isPresent(false)
+                ,_isRegistered(false)
                 ,_isFresh(true)
                 ,_context(context)
                 ,_uniqueName(uniqueName)
@@ -82,9 +84,21 @@ GlobalShortcut::operator KGlobalShortcutInfo () const
     }
 
 
+bool GlobalShortcut::isActive() const
+    {
+    return _isRegistered;
+    }
+
+
 bool GlobalShortcut::isFresh() const
     {
     return _isFresh;
+    }
+
+
+bool GlobalShortcut::isPresent() const
+    {
+    return _isPresent;
     }
 
 
@@ -97,6 +111,16 @@ bool GlobalShortcut::isSessionShortcut() const
 void GlobalShortcut::setIsFresh(bool value)
     {
     _isFresh = value;
+    }
+
+
+void GlobalShortcut::setIsPresent(bool value)
+    {
+    // (de)activate depending on old/new value
+    _isPresent = value;
+    value
+        ? setActive()
+        : setInactive();
     }
 
 
@@ -138,7 +162,7 @@ QList<int> GlobalShortcut::keys() const
 
 void GlobalShortcut::setKeys(const QList<int> newKeys)
     {
-    bool active = _isPresent;
+    bool active = _isRegistered;
     if (active)
         {
         setInactive();
@@ -180,12 +204,12 @@ void GlobalShortcut::setDefaultKeys(const QList<int> newKeys)
 
 void GlobalShortcut::setActive()
     {
-    if (_isPresent)
+    if (!_isPresent || _isRegistered)
         {
+        // The corresponding application is not present or the keys are
+        // already grabbed
         return;
         }
-
-    _isPresent = true;
 
     Q_FOREACH( int key, _keys)
         {
@@ -194,17 +218,18 @@ void GlobalShortcut::setActive()
             kDebug() << uniqueName() << ": Failed to register " << QKeySequence(key).toString();
             }
         }
+
+    _isRegistered = true;
     }
 
 
 void GlobalShortcut::setInactive()
     {
-    if (!_isPresent)
+    if (!_isRegistered)
         {
+        // The keys are not grabbed currently
         return;
         }
-
-    _isPresent = false;
 
     Q_FOREACH( int key, _keys)
         {
@@ -213,5 +238,7 @@ void GlobalShortcut::setInactive()
             kDebug() << uniqueName() << ": Failed to unregister " << QKeySequence(key).toString();
             }
         }
+
+    _isRegistered = false;
     }
 

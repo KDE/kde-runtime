@@ -56,10 +56,13 @@ public:
     QString friendlyName() const;
 
     //! Check if the shortcut is active. It's keys are grabbed
-    bool isActive() const { return _isPresent;  }
+    bool isActive() const;
 
     //! Check if the shortcut is fresh/new. Is an internal state
     bool isFresh() const;
+
+    //! Check if the shortcut is present. It application is running.
+    bool isPresent() const;
 
     //! Returns true if the shortcut is a session shortcut
     bool isSessionShortcut() const;
@@ -79,6 +82,7 @@ public:
     //! Sets the shortcut inactive. No longer grabs the keys.
     void setInactive();
 
+    void setIsPresent(bool);
     void setIsFresh(bool);
 
     //! Sets the keys activated with this shortcut. The old keys are freed.
@@ -91,8 +95,11 @@ public:
 
 private:
 
-    //! means the associated application is active.
+    //! means the associated application is present.
     bool _isPresent:1;
+
+    //! means the shortcut is registered with GlobalShortcutsRegistry
+    bool _isRegistered:1;
 
     //! means the shortcut is new
     bool _isFresh:1;

@@ -56,12 +56,26 @@ class GlobalShortcutsRegistry : public QObject
 
 public:
 
+    /**
+     * Activate all shortcuts having their application present.
+     */
+    void activateShortcuts();
+
+    /**
+     * Return a list of all main components
+     */
     QList<KdeDGlobalAccel::Component *> allMainComponents() const;
 
     /**
      * Return the root dbus path for the registry.
      */
     QDBusObjectPath dbusPath() const;
+
+    /**
+     * Deactivate all currently active shortcuts.
+     */
+    void deactivateShortcuts();
+
 
     /**
      * Get the shortcut corresponding to key. Only active shortcut are

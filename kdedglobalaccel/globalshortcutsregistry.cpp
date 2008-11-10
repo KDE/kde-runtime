@@ -75,6 +75,15 @@ KdeDGlobalAccel::Component *GlobalShortcutsRegistry::addComponent(KdeDGlobalAcce
     }
 
 
+void GlobalShortcutsRegistry::activateShortcuts()
+    {
+    Q_FOREACH (KdeDGlobalAccel::Component *component, _components)
+        {
+        component->activateShortcuts();
+        }
+    }
+
+
 QList<KdeDGlobalAccel::Component*> GlobalShortcutsRegistry::allMainComponents() const
     {
     return _components.values();
@@ -84,6 +93,15 @@ QList<KdeDGlobalAccel::Component*> GlobalShortcutsRegistry::allMainComponents() 
 QDBusObjectPath GlobalShortcutsRegistry::dbusPath() const
     {
     return _dbusPath;
+    }
+
+
+void GlobalShortcutsRegistry::deactivateShortcuts()
+    {
+    Q_FOREACH (KdeDGlobalAccel::Component *component, _components)
+        {
+        component->deactivateShortcuts();
+        }
     }
 
 
@@ -151,6 +169,9 @@ bool GlobalShortcutsRegistry::keyPressed(int keyQt)
     GlobalShortcut *shortcut = getShortcutByKey(keyQt);
     if (!shortcut || !shortcut->isActive())
         {
+        // We ungrab keys when deactivating shortcuts.
+        Q_ASSERT(shortcut->isActive());
+
         // Not one of ours. Or one of ours but not active. It's meant for some
         // other kded module most likely.
         return false;
