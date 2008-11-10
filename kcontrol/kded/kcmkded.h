@@ -44,7 +44,7 @@ protected Q_SLOTS:
 	void slotServiceRunningToggled();
 	void slotEvalItem(QTreeWidgetItem *item);
 	void slotLodItemSelected(QTreeWidgetItem *item);
-	void slotItemChecked(QTreeWidgetItem *item);
+	void slotItemChecked(QTreeWidgetItem *item, int column);
 	void getServiceStatus();
 
         bool autoloadEnabled(KConfig *config, const QString &filename);

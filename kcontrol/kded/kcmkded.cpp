@@ -142,7 +142,7 @@ KDEDConfig::KDEDConfig(QWidget* parent, const QVariantList &) :
 	connect(_pbStop, SIGNAL(clicked()), SLOT(slotStopService()));
 	connect(_lvLoD, SIGNAL(itemClicked(QTreeWidgetItem*, int)), SLOT(slotLodItemSelected(QTreeWidgetItem*)) );
 	connect(_lvStartup, SIGNAL(itemClicked(QTreeWidgetItem*, int)), SLOT(slotEvalItem(QTreeWidgetItem*)) );
-	connect(_lvStartup, SIGNAL(itemChanged(QTreeWidgetItem*, int)), SLOT(slotItemChecked(QTreeWidgetItem*)) );
+	connect(_lvStartup, SIGNAL(itemChanged(QTreeWidgetItem*, int)), SLOT(slotItemChecked(QTreeWidgetItem*, int)) );
 
 }
 
@@ -234,6 +234,8 @@ void KDEDConfig::load() {
 	_lvLoD->resizeColumnToContents(OnDemandStatus);
 
 	getServiceStatus();
+
+	emit changed(false);
 }
 
 void KDEDConfig::save() {
@@ -271,6 +273,8 @@ void KDEDConfig::save() {
 	}
 	kdedrc.sync();
 
+	emit changed(false);
+
 	QDBusInterface kdedInterface( "org.kde.kded", "/kded", "org.kde.kded" );
 	kdedInterface.call( "reconfigure" );
 	QTimer::singleShot(0, this, SLOT(slotServiceRunningToggled()));
@@ -286,6 +290,8 @@ void KDEDConfig::defaults()
 	}
 
 	getServiceStatus();
+
+	emit changed(false);
 }
 
 
@@ -364,6 +370,7 @@ void KDEDConfig::getServiceStatus()
 		}
 
 	}
+
 }
 
 void KDEDConfig::slotReload()
@@ -473,8 +480,11 @@ void KDEDConfig::slotStopService()
 	}
 }
 
-void KDEDConfig::slotItemChecked(QTreeWidgetItem*)
+void KDEDConfig::slotItemChecked(QTreeWidgetItem*, int column)
 {
-	emit changed(true);
+	// We only listen to changes the user did.
+	if (column==StartupUse) {
+		emit changed(true);
+	}
 }
 
