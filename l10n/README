@@ -209,7 +209,7 @@ between the entry name and the value.
 	Accepted value is an integer number where 1 means Monday, 2 Tuesday,
 	and so on. A special value of 0 means no day of religious observance.
 
-	Default: 5
+	Default: 7
 
 * MeasureSystem
 	This defines which measure system we should use. There are two
