@@ -331,7 +331,7 @@ void Nepomuk::SearchProtocol::listQuery( const QString& query )
 void Nepomuk::SearchProtocol::listDefaultSearches()
 {
     for ( QHash<QString, Nepomuk::Search::Query>::const_iterator it = m_defaultSearches.constBegin();
-          it != m_defaultSearches.end(); ++it ) {
+          it != m_defaultSearches.constEnd(); ++it ) {
         listEntry( statDefaultSearchFolder( it.key() ), false );
     }
 }

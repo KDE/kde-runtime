@@ -58,9 +58,9 @@ static void error(int exitCode, const QString &txt)
 
 static void findMenuEntry(KServiceGroup::Ptr parent, const QString &name, const QString &menuId)
 {
-   KServiceGroup::List list = parent->entries(true, true, false);
-   KServiceGroup::List::ConstIterator it = list.begin();
-   for (; it != list.end(); ++it)
+   const KServiceGroup::List list = parent->entries(true, true, false);
+   KServiceGroup::List::ConstIterator it = list.constBegin();
+   for (; it != list.constEnd(); ++it)
    {
       KSycocaEntry::Ptr e = (*it);
 

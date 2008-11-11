@@ -173,8 +173,8 @@ void NotifyBySound::loadConfig()
 		if ( d->externalPlayer.isEmpty() ) {
 			QStringList players;
 			players << "wavplay" << "aplay" << "auplay" << "artsplay" << "akodeplay";
-			QStringList::const_iterator it = players.begin();
-			while ( d->externalPlayer.isEmpty() && it != players.end() ) {
+			QStringList::const_iterator it = players.constBegin();
+			while ( d->externalPlayer.isEmpty() && it != players.constEnd() ) {
 				d->externalPlayer = KStandardDirs::findExe( *it );
 				++it;
 			}

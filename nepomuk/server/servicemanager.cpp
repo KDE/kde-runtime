@@ -178,8 +178,8 @@ private:
 void Nepomuk::ServiceManager::Private::buildServiceMap()
 {
     if( !m_initialized ) {
-        KService::List modules = KServiceTypeTrader::self()->query( "NepomukService" );
-        for( KService::List::ConstIterator it = modules.begin(); it != modules.end(); ++it ) {
+        const KService::List modules = KServiceTypeTrader::self()->query( "NepomukService" );
+        for( KService::List::ConstIterator it = modules.constBegin(); it != modules.constEnd(); ++it ) {
             KService::Ptr service = *it;
             QStringList deps = service->property( "X-KDE-Nepomuk-dependencies", QVariant::StringList ).toStringList();
             if ( deps.isEmpty() ) {
@@ -191,7 +191,7 @@ void Nepomuk::ServiceManager::Private::buildServiceMap()
 
         dependencyTree.cleanup();
 
-        for( KService::List::ConstIterator it = modules.begin(); it != modules.end(); ++it ) {
+        for( KService::List::ConstIterator it = modules.constBegin(); it != modules.constEnd(); ++it ) {
             KService::Ptr service = *it;
             if( dependencyTree.contains( service->desktopEntryName() ) ) {
                 ServiceController* sc = new ServiceController( service, q );

@@ -146,7 +146,7 @@ public:
 
     QVariant::Type literalType( const Strigi::FieldProperties& strigiType ) {
         // it looks as if the typeUri can contain arbitrary values, URIs or stuff like "string"
-        QHash<std::string, QVariant::Type>::const_iterator it = literalTypes.find( strigiType.typeUri() );
+        QHash<std::string, QVariant::Type>::const_iterator it = literalTypes.constFind( strigiType.typeUri() );
         if ( it == literalTypes.constEnd() ) {
             return LiteralValue::typeFromDataTypeUri( QUrl::fromEncoded( strigiType.typeUri().c_str() ) );
         }

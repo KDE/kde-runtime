@@ -635,7 +635,7 @@ QHash<QUrl, Nepomuk::Search::Result> Nepomuk::Search::SearchThread::andSearch( c
             QHash<QUrl, Result>::iterator it = results.begin();
             while ( it != results.end() ) {
                 if ( m_canceled ) break;
-                QHash<QUrl, Result>::const_iterator termIt = termResults.find( it.key() );
+                QHash<QUrl, Result>::const_iterator termIt = termResults.constFind( it.key() );
                 if ( termIt != termResults.constEnd() ) {
                     // update score
                     it.value().setScore( it.value().score() + termIt.value().score() );
