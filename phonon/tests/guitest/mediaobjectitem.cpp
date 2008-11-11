@@ -24,6 +24,7 @@
 #include <QtGui/QPushButton>
 #include <QtGui/QVBoxLayout>
 #include <kdebug.h>
+#include <kurl.h>
 #include <kurlcompletion.h>
 #include <kmessagebox.h>
 #include <kicon.h>
@@ -192,7 +193,7 @@ MediaObjectItem::MediaObjectItem(const QPoint &pos, QGraphicsView *widget)
 
 void MediaObjectItem::loadUrl(const QString &url)
 {
-    m_media.setCurrentSource(QUrl(url));
+    m_media.setCurrentSource(KUrl(url));
 }
 
 void MediaObjectItem::updateMetaData()
