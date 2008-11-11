@@ -287,6 +287,8 @@ DevicePreference::DevicePreference(QWidget *parent)
     connect(showCheckBox, SIGNAL(stateChanged (int)), this, SIGNAL(changed()));
     connect(Phonon::BackendCapabilities::notifier(), SIGNAL(availableAudioOutputDevicesChanged()), SLOT(updateAudioOutputDevices()));
     connect(Phonon::BackendCapabilities::notifier(), SIGNAL(availableAudioCaptureDevicesChanged()), SLOT(updateAudioCaptureDevices()));
+    connect(Phonon::BackendCapabilities::notifier(), SIGNAL(capabilitiesChanged()), SLOT(updateAudioOutputDevices()));
+    connect(Phonon::BackendCapabilities::notifier(), SIGNAL(capabilitiesChanged()), SLOT(updateAudioCaptureDevices()));
 
     if (!categoryTree->currentIndex().isValid()) {
         categoryTree->setCurrentIndex(m_categoryModel.index(0, 0).child(1, 0));
