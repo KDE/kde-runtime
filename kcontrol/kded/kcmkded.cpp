@@ -184,7 +184,7 @@ void KDEDConfig::load() {
 			files );
 
 	QTreeWidgetItem* treeitem = 0L;
-	for ( QStringList::ConstIterator it = files.begin(); it != files.end(); ++it ) {
+	for ( QStringList::ConstIterator it = files.constBegin(); it != files.constEnd(); ++it ) {
         kDebug() << *it;
 
 		if ( KDesktopFile::isDesktopFile( *it ) ) {
@@ -247,7 +247,7 @@ void KDEDConfig::save() {
 
 	KConfig kdedrc("kdedrc", KConfig::NoGlobals);
 
-	for ( QStringList::ConstIterator it = files.begin(); it != files.end(); ++it ) {
+	for ( QStringList::ConstIterator it = files.constBegin(); it != files.constEnd(); ++it ) {
 
 		if ( KDesktopFile::isDesktopFile( *it ) ) {
 

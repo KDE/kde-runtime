@@ -119,8 +119,8 @@ bool CfgWm::saveAndConfirm()
             {
                 differentRB->setChecked( true );
                 wmCombo->setEnabled( true );
-                for( QHash< QString, WmData >::ConstIterator it = wms.begin();
-                     it != wms.end();
+                for( QHash< QString, WmData >::ConstIterator it = wms.constBegin();
+                     it != wms.constEnd();
                      ++it )
                 {
                     if( (*it).internalName == oldwm ) // make it selected

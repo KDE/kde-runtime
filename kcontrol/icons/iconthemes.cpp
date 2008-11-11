@@ -155,12 +155,12 @@ QTreeWidgetItem *IconThemesConfig::iconThemeItem(const QString &name)
 void IconThemesConfig::loadThemes()
 {
   m_iconThemes->clear();
-  QStringList themelist(KIconTheme::list());
+  const QStringList themelist(KIconTheme::list());
   QString name;
   QString tname;
   QStringList::const_iterator it;
   QMap <QString, QString> themeNames;
-  for (it=themelist.begin(); it != themelist.end(); ++it)
+  for (it=themelist.constBegin(); it != themelist.constEnd(); ++it)
   {
     KIconTheme icontheme(*it);
     if (!icontheme.isValid()) kDebug() << "notvalid\n";
@@ -299,8 +299,8 @@ QStringList IconThemesConfig::findThemeDirs(const QString &archiveName)
 
   // iterate all the dirs looking for an index.theme or index.desktop file
   QStringList entries = themeDir->entries();
-  for (QStringList::const_iterator it = entries.begin();
-       it != entries.end();
+  for (QStringList::const_iterator it = entries.constBegin();
+       it != entries.constEnd();
        ++it) {
     possibleDir = const_cast<KArchiveEntry*>(themeDir->entry(*it));
     if (possibleDir->isDirectory()) {

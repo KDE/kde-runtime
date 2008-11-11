@@ -138,9 +138,9 @@ ComponentChooser::ComponentChooser(QWidget *parent):
 	latestEditedService="";
 
 	QStringList dummy;
-	QStringList services=KGlobal::dirs()->findAllResources( "data","kcm_componentchooser/*.desktop",
+	const QStringList services=KGlobal::dirs()->findAllResources( "data","kcm_componentchooser/*.desktop",
 															KStandardDirs::NoDuplicates, dummy );
-	for (QStringList::const_iterator it=services.begin(); it!=services.end(); ++it)
+	for (QStringList::const_iterator it=services.constBegin(); it!=services.constEnd(); ++it)
 	{
 		KConfig cfg(*it, KConfig::SimpleConfig);
 		ServiceChooser->addItem(new MyListBoxItem(cfg.group("").readEntry("Name",i18n("Unknown")),(*it)));

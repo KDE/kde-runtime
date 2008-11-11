@@ -179,7 +179,7 @@ void KIconConfig::initDefaults()
 
     KIconLoader::Group i;
     QStringList::ConstIterator it;
-    for(it=mGroups.begin(), i=KIconLoader::FirstGroup; it!=mGroups.end(); ++it, i++)
+    for(it=mGroups.constBegin(), i=KIconLoader::FirstGroup; it!=mGroups.constEnd(); ++it, i++)
     {
 	mbDP[i] = false;
 	mbChanged[i] = true;
@@ -241,7 +241,7 @@ void KIconConfig::read()
 
     int i, j, effect;
     QStringList::ConstIterator it, it2;
-    for (it=mGroups.begin(), i=0; it!=mGroups.end(); ++it, i++)
+    for (it=mGroups.constBegin(), i=0; it!=mGroups.constEnd(); ++it, i++)
     {
         mbChanged[i] = false;
 
@@ -250,7 +250,7 @@ void KIconConfig::read()
 	mbDP[i] = iconGroup.readEntry("DoublePixels", mbDP[i]);
 	mbAnimated[i] = iconGroup.readEntry("Animated", mbAnimated[i]);
 
-	for (it2=mStates.begin(), j=0; it2!=mStates.end(); ++it2, j++)
+	for (it2=mStates.constBegin(), j=0; it2!=mStates.constEnd(); ++it2, j++)
 	{
 	    QString tmp = iconGroup.readEntry(*it2 + "Effect", QString());
 	    if (tmp == "togray")
@@ -350,13 +350,13 @@ void KIconConfig::save()
 {
     int i, j;
     QStringList::ConstIterator it, it2;
-    for (it=mGroups.begin(), i=0; it!=mGroups.end(); ++it, i++)
+    for (it=mGroups.constBegin(), i=0; it!=mGroups.constEnd(); ++it, i++)
     {
 	KConfigGroup cg(mpConfig, *it + "Icons");
 	cg.writeEntry("Size", mSizes[i], KConfig::Normal|KConfig::Global);
 	cg.writeEntry("DoublePixels", mbDP[i], KConfig::Normal|KConfig::Global);
 	cg.writeEntry("Animated", mbAnimated[i], KConfig::Normal|KConfig::Global);
-	for (it2=mStates.begin(), j=0; it2!=mStates.end(); ++it2, j++)
+	for (it2=mStates.constBegin(), j=0; it2!=mStates.constEnd(); ++it2, j++)
 	{
 	    QString tmp;
 	    switch (mEffects[i][j].type)

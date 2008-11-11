@@ -831,7 +831,7 @@ bool KTimeZoned::checkDefaultInit()
 // Check whether the checksum for a time zone matches a given saved checksum.
 KTimeZone KTimeZoned::compareChecksum(const KTimeZone &zone, const QString &referenceMd5Sum, qlonglong size)
 {
-    MD5Map::ConstIterator it5 = mMd5Sums.find(zone.name());
+    MD5Map::ConstIterator it5 = mMd5Sums.constFind(zone.name());
     if (it5 == mMd5Sums.constEnd())
     {
         // No checksum has been computed yet for this zone file.
