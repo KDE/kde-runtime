@@ -52,6 +52,7 @@ Comment[zh_TW]=Phonon：KDE 的多媒體函式庫
 
 [Context/Application]
 Name=Application
+Name[ar]=تطبيق
 Name[bg]=Програма
 Name[bn_IN]=অ্যাপ্লিকেশন
 Name[ca]=Aplicació

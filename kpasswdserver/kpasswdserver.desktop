@@ -2,6 +2,7 @@
 Type=Service
 Name=KDED Password Module
 Name[af]=KDED Wagwoordmodule
+Name[ar]=وحدة كلمة سر KDED
 Name[be]=Модуль паролю KDED
 Name[bg]=KDED - модул за пароли
 Name[bn_IN]=KDED পাসওয়ার্ড মডিউল
