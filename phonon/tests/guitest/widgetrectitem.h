@@ -25,15 +25,14 @@
 #include <QtCore/QPoint>
 #include <QtGui/QGraphicsRectItem>
 #include <QtGui/QGraphicsView>
+class PathItem;
 
-class WidgetRectItem : public QObject, public QGraphicsRectItem
+class WidgetRectItem : public QGraphicsRectItem
 {
-    Q_OBJECT
-    protected:
-        WidgetRectItem(QGraphicsItem *parent, QGraphicsView *widget);
-        WidgetRectItem(const QPoint &pos, QGraphicsView *widget);
-
     public:
+        //WidgetRectItem(QGraphicsItem *parent);
+        WidgetRectItem(const QPointF &pos, const QColor &color, const QString &title);
+
         ~WidgetRectItem();
 
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
@@ -41,23 +40,16 @@ class WidgetRectItem : public QObject, public QGraphicsRectItem
         enum { Type = UserType + 1 };
         int type() const { return Type; }
 
-        QObject *qObject() { return this; }
-        const QObject *qObject() const { return this; }
-
-        bool eventFilter(QObject *obj, QEvent *e);
-
-    signals:
-        void itemMoved(const QRectF &newSceneCenterPos);
+        void addPath(PathItem *p);
+        void removePath(PathItem *p);
 
     protected:
-        void setTitle(const QString &title);
-
         QVariant itemChange(GraphicsItemChange change, const QVariant &value);
-        QWidget *m_frame;
 
     private:
-        QGraphicsView *m_view;
         QString m_title;
+        QList<PathItem *> m_paths;
+        QSizeF m_lastSize;
 };
 
 #endif // WIDGETRECTITEM_H

@@ -17,8 +17,11 @@
 
 */
 
+#include <QtCore/QPair>
+#include <QtOpenGL/QGLWidget>
 #include <QtCore/QSignalMapper>
 #include <QtGui/QAction>
+#include <QtGui/QGraphicsProxyWidget>
 #include <QtGui/QGraphicsView>
 #include <QtGui/QMainWindow>
 #include <QtGui/QMenu>
@@ -150,10 +153,14 @@ bool PathWidget::connectInput(MediaObject *m)
 MainWindow::MainWindow()
 {
     m_scene = new MyGraphicsScene(this);
-    m_view = new QGraphicsView(m_scene);
+    QGLWidget *glWidget = new QGLWidget;
+    QHBoxLayout *l = new QHBoxLayout(glWidget);
+    l->setContentsMargins(0, 0, 0, 0);
+    m_view = new QGraphicsView(m_scene, glWidget);
+    l->addWidget(m_view);
     m_scene->setView(m_view);
-    //m_view->setRenderHints(QPainter::Antialiasing);
-    setCentralWidget(m_view);
+    m_view->setRenderHints(QPainter::Antialiasing);
+    setCentralWidget(glWidget);
     QAction *action;
     action = new QAction(i18n("add MediaObject"), m_view);
     connect(action, SIGNAL(triggered()), SLOT(addMediaObject()));
@@ -184,36 +191,72 @@ MainWindow::MainWindow()
     QMetaObject::invokeMethod(this, "init", Qt::QueuedConnection);
 }
 
+typedef QPair<MediaObjectItem *, WidgetRectItem *> MediaItemPair;
+typedef QPair<AudioOutputItem *, WidgetRectItem *> AudioItemPair;
+
+static MediaItemPair addMediaObject(const QPoint &pos, QGraphicsView *view, QGraphicsScene *scene)
+{
+    WidgetRectItem *rect = new WidgetRectItem(view->mapToScene(pos),
+            QColor(255, 100, 100, 150), QLatin1String("Media Object"));
+    scene->addItem(rect);
+    QGraphicsProxyWidget *proxy = new QGraphicsProxyWidget(rect);
+    MediaObjectItem *m = new MediaObjectItem;
+    proxy->setWidget(m);
+    proxy->setPos(16.0, 17.0);
+    return MediaItemPair(m, rect);
+}
+
+static AudioItemPair addAudioOutput(const QPoint &pos, QGraphicsView *view, QGraphicsScene *scene)
+{
+    WidgetRectItem *rect = new WidgetRectItem(view->mapToScene(pos),
+            QColor(100, 255, 100, 150), QLatin1String("Audio Output"));
+    scene->addItem(rect);
+    QGraphicsProxyWidget *proxy = new QGraphicsProxyWidget(rect);
+    AudioOutputItem *a = new AudioOutputItem;
+    proxy->setWidget(a);
+    proxy->setPos(16.0, 17.0);
+    return AudioItemPair(a, rect);
+}
+
 void MainWindow::init()
 {
-    MediaObjectItem *source;
-    AudioOutputItem *sink;
-    m_scene->addItem(source = new MediaObjectItem(QPoint(200,50), m_view));
-    m_scene->addItem(sink = new AudioOutputItem(QPoint(700,350), m_view));
-    Phonon::Path p = Phonon::createPath(source->mediaNode(), sink->mediaNode());
+    MediaItemPair source = ::addMediaObject(QPoint(200, 50), m_view, m_scene);
+    AudioItemPair sink = ::addAudioOutput(QPoint(700, 350), m_view, m_scene);
+    Phonon::Path p = Phonon::createPath(source.first->mediaNode(), sink.first->mediaNode());
     if (p.isValid()) {
-        m_scene->addItem(new PathItem(source, sink, p));
+        m_scene->addItem(new PathItem(source.second, sink.second, p));
     }
 }
 
 void MainWindow::addMediaObject()
 {
-    m_scene->addItem(new MediaObjectItem(QCursor::pos(), m_view));
+    ::addMediaObject(QCursor::pos(), m_view, m_scene);
 }
 
 void MainWindow::addEffect(int effectIndex)
 {
-    m_scene->addItem(new EffectItem(EffectDescription::fromIndex(effectIndex), QCursor::pos(), m_view));
+    const EffectDescription &desc = EffectDescription::fromIndex(effectIndex);
+    QGraphicsRectItem *rect = new WidgetRectItem(m_view->mapToScene(QCursor::pos()),
+            QColor(255, 200, 0, 150), desc.name());
+    m_scene->addItem(rect);
+    QGraphicsProxyWidget *proxy = new QGraphicsProxyWidget(rect);
+    proxy->setWidget(new EffectItem(desc));
+    proxy->setPos(16.0, 17.0);
 }
 
 void MainWindow::addAudioOutput()
 {
-    m_scene->addItem(new AudioOutputItem(QCursor::pos(), m_view));
+    ::addAudioOutput(QCursor::pos(), m_view, m_scene);
 }
 
 void MainWindow::addVideoWidget()
 {
-    m_scene->addItem(new VideoWidgetItem(QCursor::pos(), m_view));
+    QGraphicsRectItem *rect = new WidgetRectItem(m_view->mapToScene(QCursor::pos()),
+            QColor(100, 100, 255, 150), "Video Widget");
+    m_scene->addItem(rect);
+    QGraphicsProxyWidget *proxy = new QGraphicsProxyWidget(rect);
+    proxy->setWidget(new VideoWidgetItem);
+    proxy->setPos(16.0, 17.0);
 }
 
 int main(int argc, char **argv)

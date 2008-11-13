@@ -36,7 +36,7 @@ class AudioOutputItem : public SinkItem
 {
     Q_OBJECT
     public:
-        AudioOutputItem(const QPoint &pos, QGraphicsView *widget);
+        AudioOutputItem();
 
         //enum { Type = UserType + 4 };
         //int type() const { return Type; }

@@ -30,27 +30,23 @@
 #include <kicon.h>
 #include <klineedit.h>
 
-MediaObjectItem::MediaObjectItem(const QPoint &pos, QGraphicsView *widget)
-    : WidgetRectItem(pos, widget),
-    m_length(-1),
+MediaObjectItem::MediaObjectItem()
+    : m_length(-1),
     m_titleWidget(0),
     m_chapterWidget(0),
     m_angleWidget(0),
     m_navigationWidget(0)
 {
-    setBrush(QColor(255, 100, 100, 150));
-    setTitle("Media Object");
-
-    QVBoxLayout *topLayout = new QVBoxLayout(m_frame);
+    QVBoxLayout *topLayout = new QVBoxLayout(this);
     topLayout->setMargin(0);
 
     // as wide as possible:
-    KLineEdit *file = new KLineEdit(m_frame);
+    KLineEdit *file = new KLineEdit(this);
     file->setCompletionObject(new KUrlCompletion(KUrlCompletion::FileCompletion));
     connect(file, SIGNAL(returnPressed(const QString &)), SLOT(loadUrl(const QString &)));
     topLayout->addWidget(file);
 
-    m_seekslider = new SeekSlider(m_frame);
+    m_seekslider = new SeekSlider(this);
     topLayout->addWidget(m_seekslider);
 
     // not much need for horizontal space:
@@ -64,14 +60,14 @@ MediaObjectItem::MediaObjectItem(const QPoint &pos, QGraphicsView *widget)
     mediaLayout->setSpacing(4);
     subLayout->addLayout(mediaLayout);
 
-    QToolButton *audiocdButton = new QToolButton(m_frame);
+    QToolButton *audiocdButton = new QToolButton(this);
     audiocdButton->setIconSize(QSize(32, 32));
     audiocdButton->setToolTip("CD");
     audiocdButton->setIcon(KIcon("media-optical-audio"));
     mediaLayout->addWidget(audiocdButton);
     connect(audiocdButton, SIGNAL(clicked()), SLOT(openCD()));
 
-    QToolButton *dvdButton = new QToolButton(m_frame);
+    QToolButton *dvdButton = new QToolButton(this);
     dvdButton->setIconSize(QSize(32, 32));
     dvdButton->setToolTip("DVD");
     dvdButton->setIcon(KIcon("media-optical-dvd"));
@@ -91,40 +87,40 @@ MediaObjectItem::MediaObjectItem(const QPoint &pos, QGraphicsView *widget)
     buttonLayout->addLayout(mediaControlsLayout);
 
     // playback controls
-    m_play = new QToolButton(m_frame);
+    m_play = new QToolButton(this);
     m_play->setIconSize(QSize(32, 32));
     m_play->setFixedSize(36, 36);
     m_play->setToolTip("play");
     m_play->setIcon(KIcon("media-playback-start"));
     mediaControlsLayout->addWidget(m_play);
 
-    m_pause = new QToolButton(m_frame);
+    m_pause = new QToolButton(this);
     m_pause->setIconSize(QSize(32, 32));
     m_pause->setFixedSize(36, 36);
     m_pause->setToolTip("pause");
     m_pause->setIcon(KIcon("media-playback-pause"));
     mediaControlsLayout->addWidget(m_pause);
 
-    m_stop = new QToolButton(m_frame);
+    m_stop = new QToolButton(this);
     m_stop->setIconSize(QSize(32, 32));
     m_stop->setFixedSize(36, 36);
     m_stop->setToolTip("stop");
     m_stop->setIcon(KIcon("media-playback-stop"));
     mediaControlsLayout->addWidget(m_stop);
 
-    m_titleButton = new QPushButton(m_frame);
+    m_titleButton = new QPushButton(this);
     m_titleButton->setText("Title");
     m_titleButton->setCheckable(true);
     buttonLayout->addWidget(m_titleButton);
-    m_chapterButton = new QPushButton(m_frame);
+    m_chapterButton = new QPushButton(this);
     m_chapterButton->setText("Chapter");
     m_chapterButton->setCheckable(true);
     buttonLayout->addWidget(m_chapterButton);
-    m_angleButton = new QPushButton(m_frame);
+    m_angleButton = new QPushButton(this);
     m_angleButton->setText("Angle");
     m_angleButton->setCheckable(true);
     buttonLayout->addWidget(m_angleButton);
-    m_navigationButton = new QPushButton(m_frame);
+    m_navigationButton = new QPushButton(this);
     m_navigationButton->setText("Navigation");
     m_navigationButton->setCheckable(true);
     buttonLayout->addWidget(m_navigationButton);
@@ -139,28 +135,28 @@ MediaObjectItem::MediaObjectItem(const QPoint &pos, QGraphicsView *widget)
     subLayout->addLayout(infoLayout);
 
     // state label
-    m_statelabel = new QLabel(m_frame);
+    m_statelabel = new QLabel(this);
     infoLayout->addWidget(m_statelabel);
 
     // buffer progressbar
-    m_bufferProgress = new QProgressBar(m_frame);
+    m_bufferProgress = new QProgressBar(this);
     m_bufferProgress->setMaximumSize(100, 16);
     m_bufferProgress->setTextVisible(false);
     infoLayout->addWidget(m_bufferProgress);
 
     // time info
-    m_totaltime = new QLabel(m_frame);
+    m_totaltime = new QLabel(this);
     infoLayout->addWidget(m_totaltime);
 
-    m_currenttime = new QLabel(m_frame);
+    m_currenttime = new QLabel(this);
     infoLayout->addWidget(m_currenttime);
 
-    m_remainingtime = new QLabel(m_frame);
+    m_remainingtime = new QLabel(this);
     infoLayout->addWidget(m_remainingtime);
     infoLayout->addStretch();
 
     // meta data
-    m_metaDataLabel = new QLabel(m_frame);
+    m_metaDataLabel = new QLabel(this);
     m_metaDataLabel->setAlignment(Qt::AlignLeft | Qt::AlignTop);
     m_metaDataLabel->setWordWrap(true);
     {
@@ -240,9 +236,9 @@ void MediaObjectItem::stateChanged(Phonon::State newstate, Phonon::State oldstat
         {
             QString text = m_media.errorString();
             if (text.isEmpty()) {
-                KMessageBox::error(m_frame, "reached error state but the backend did not report an errorString");
+                KMessageBox::error(this, "reached error state but the backend did not report an errorString");
             } else {
-                KMessageBox::error(m_frame, text);
+                KMessageBox::error(this, text);
             }
         }
         break;

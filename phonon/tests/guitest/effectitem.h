@@ -34,11 +34,8 @@ class EffectItem : public SinkItem
 {
     Q_OBJECT
     public:
-        EffectItem(const EffectDescription &, PathItem *pathItem, QGraphicsView *widget);
-        EffectItem(const EffectDescription &, const QPoint &pos, QGraphicsView *widget);
-
-        enum { Type = UserType + 10 };
-        int type() const { return Type; }
+        EffectItem(const EffectDescription &, PathItem *pathItem);
+        EffectItem(const EffectDescription &);
 
         virtual MediaNode *mediaNode() { return &m_effect; }
         virtual const MediaNode *mediaNode() const { return &m_effect; }

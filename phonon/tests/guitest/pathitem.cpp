@@ -23,7 +23,7 @@
 #include <QtGui/QPen>
 
 PathItem::PathItem(WidgetRectItem *start, WidgetRectItem *end, const Path &_path)
-    : m_path(_path)
+    : m_path(_path), m_startItem(start), m_endItem(end)
 {
     m_startPos.setX(start->sceneBoundingRect().right());
     m_startPos.setY(start->sceneBoundingRect().center().y());
@@ -32,21 +32,19 @@ PathItem::PathItem(WidgetRectItem *start, WidgetRectItem *end, const Path &_path
     updatePainterPath();
 
     setZValue(-1.0);
-    connect(start->qObject(), SIGNAL(itemMoved(const QRectF &)), SLOT(startMoved(const QRectF &)));
-    connect(end->qObject(), SIGNAL(itemMoved(const QRectF &)), SLOT(endMoved(const QRectF &)));
+    start->addPath(this);
+    end->addPath(this);
 }
 
-void PathItem::startMoved(const QRectF &pos)
+void PathItem::endPointMoved(const WidgetRectItem *item)
 {
-    m_startPos.setX(pos.right());
-    m_startPos.setY(pos.center().y());
-    updatePainterPath();
-}
-
-void PathItem::endMoved(const QRectF &pos)
-{
-    m_endPos.setX(pos.left());
-    m_endPos.setY(pos.center().y());
+    if (item == m_startItem) {
+        m_startPos.setX(item->sceneBoundingRect().right());
+        m_startPos.setY(item->sceneBoundingRect().center().y());
+    } else if (item == m_endItem) {
+        m_endPos.setX(item->sceneBoundingRect().left());
+        m_endPos.setY(item->sceneBoundingRect().center().y());
+    }
     updatePainterPath();
 }
 

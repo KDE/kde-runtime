@@ -38,18 +38,19 @@ class PathItem : public QObject, public QGraphicsPathItem
 
         Path path() const { return m_path; }
 
+        void endPointMoved(const WidgetRectItem *item);
+
     public slots:
         void updateChildrenPositions();
-
-    private slots:
-        void startMoved(const QRectF &pos);
-        void endMoved(const QRectF &pos);
 
     private:
         void updatePainterPath();
 
         Path m_path;
-        QPointF m_startPos, m_endPos;
+        WidgetRectItem *m_startItem;
+        WidgetRectItem *m_endItem;
+        QPointF m_startPos;
+        QPointF m_endPos;
 };
 
 #endif // PATHITEM_H

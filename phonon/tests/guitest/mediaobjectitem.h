@@ -20,7 +20,6 @@
 #ifndef MEDIAOBJECTITEM_H
 #define MEDIAOBJECTITEM_H
 
-#include "widgetrectitem.h"
 #include "titlewidget.h"
 #include "chapterwidget.h"
 #include "anglewidget.h"
@@ -38,14 +37,11 @@ using Phonon::MediaNode;
 using Phonon::SeekSlider;
 using Phonon::MediaObject;
 
-class MediaObjectItem : public WidgetRectItem
+class MediaObjectItem : public QWidget
 {
     Q_OBJECT
     public:
-        MediaObjectItem(const QPoint &pos, QGraphicsView *widget);
-
-        enum { Type = UserType + 2 };
-        int type() const { return Type; }
+        MediaObjectItem();
 
         MediaNode *mediaNode() { return &m_media; }
         const MediaNode *mediaNode() const { return &m_media; }

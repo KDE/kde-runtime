@@ -28,19 +28,15 @@
 
 using Phonon::AudioOutputDevice;
 
-AudioOutputItem::AudioOutputItem(const QPoint &pos, QGraphicsView *widget)
-    : SinkItem(pos, widget),
-    m_output(Phonon::MusicCategory)
+AudioOutputItem::AudioOutputItem()
+    : m_output(Phonon::MusicCategory)
 {
-    setBrush(QColor(100, 255, 100, 150));
-    setTitle("Audio Output");
-
     m_output.setName("GUI-Test");
 
-    QHBoxLayout *hlayout = new QHBoxLayout(m_frame);
+    QHBoxLayout *hlayout = new QHBoxLayout(this);
     hlayout->setMargin(0);
 
-    m_deviceListView = new QListView(m_frame);
+    m_deviceListView = new QListView(this);
     hlayout->addWidget(m_deviceListView);
     QList<AudioOutputDevice> deviceList = Phonon::BackendCapabilities::availableAudioOutputDevices();
     m_model = new AudioOutputDeviceModel(deviceList, m_deviceListView);
@@ -48,7 +44,7 @@ AudioOutputItem::AudioOutputItem(const QPoint &pos, QGraphicsView *widget)
     m_deviceListView->setCurrentIndex(m_model->index(deviceList.indexOf(m_output.outputDevice()), 0));
     connect(m_deviceListView, SIGNAL(activated(const QModelIndex &)), SLOT(deviceChange(const QModelIndex &)));
 
-    m_volslider = new VolumeSlider(m_frame);
+    m_volslider = new VolumeSlider(this);
     m_volslider->setOrientation(Qt::Vertical);
     m_volslider->setAudioOutput(&m_output);
     hlayout->addWidget(m_volslider);
@@ -71,3 +67,6 @@ void AudioOutputItem::deviceChange(const QModelIndex &modelIndex)
     AudioOutputDevice device = m_model->modelData(modelIndex);
     m_output.setOutputDevice(device);
 }
+
+#include "moc_audiooutputitem.cpp"
+#include "moc_sinkitem.cpp"

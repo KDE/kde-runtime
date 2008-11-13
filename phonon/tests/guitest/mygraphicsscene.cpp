@@ -25,6 +25,7 @@
 #include "pathitem.h"
 #include "effectitem.h"
 
+#include <QtGui/QGraphicsProxyWidget>
 #include <QtGui/QMenu>
 
 #include <Phonon/BackendCapabilities>
@@ -42,6 +43,56 @@ void MyGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent)
     QGraphicsScene::mouseMoveEvent(mouseEvent);
 }
 
+static inline MediaObjectItem *mediaObjectItem(WidgetRectItem *item)
+{
+    if (item && item->childItems().size() == 1) {
+        QGraphicsProxyWidget *proxy = qgraphicsitem_cast<QGraphicsProxyWidget *>(
+                item->childItems().first());
+        return qobject_cast<MediaObjectItem *>(proxy->widget());
+    }
+    return 0;
+}
+
+static inline EffectItem *effectItem(WidgetRectItem *item)
+{
+    if (item && item->childItems().size() == 1) {
+        QGraphicsProxyWidget *proxy = qgraphicsitem_cast<QGraphicsProxyWidget *>(
+                item->childItems().first());
+        return qobject_cast<EffectItem *>(proxy->widget());
+    }
+    return 0;
+}
+
+static inline SinkItem *sinkItem(WidgetRectItem *item)
+{
+    if (item && item->childItems().size() == 1) {
+        QGraphicsProxyWidget *proxy = qgraphicsitem_cast<QGraphicsProxyWidget *>(
+                item->childItems().first());
+        return qobject_cast<SinkItem *>(proxy->widget());
+    }
+    return 0;
+}
+
+//X static inline AudioOutputItem *audioOutputItem(WidgetRectItem *item)
+//X {
+//X     if (item && item->childItems().size() == 1) {
+//X         QGraphicsProxyWidget *proxy = qgraphicsitem_cast<QGraphicsProxyWidget *>(
+//X                 item->childItems().first());
+//X         return qobject_cast<AudioOutputItem *>(proxy->widget());
+//X     }
+//X     return 0;
+//X }
+//X 
+//X static inline VideoWidgetItem *videoWidgetItem(WidgetRectItem *item)
+//X {
+//X     if (item && item->childItems().size() == 1) {
+//X         QGraphicsProxyWidget *proxy = qgraphicsitem_cast<QGraphicsProxyWidget *>(
+//X                 item->childItems().first());
+//X         return qobject_cast<VideoWidgetItem *>(proxy->widget());
+//X     }
+//X     return 0;
+//X }
+
 void MyGraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
     kDebug() << mouseEvent->button() << mouseEvent->scenePos();
@@ -56,11 +107,8 @@ void MyGraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
                 startItems = items(QRectF(mouseEvent->scenePos() - offset, mouseEvent->scenePos() + offset));
             }
             if (startItems.size() == 1) {
-                m_startItem = qgraphicsitem_cast<MediaObjectItem *>(startItems.first());
-                if (!m_startItem) {
-                    m_startItem = qgraphicsitem_cast<EffectItem *>(startItems.first());
-                }
-                if (m_startItem) {
+                m_startItem = qgraphicsitem_cast<WidgetRectItem *>(startItems.first());
+                if (mediaObjectItem(m_startItem) || effectItem(m_startItem)) {
                     m_lineItem = new QGraphicsLineItem(QLineF(mouseEvent->scenePos(), mouseEvent->scenePos()));
                     addItem(m_lineItem);
                     return;
@@ -92,7 +140,7 @@ void MyGraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
                 if (actionHash.contains(triggeredAction)) {
                     EffectDescription d = actionHash[triggeredAction];
                     Q_ASSERT(m_view);
-                    new EffectItem(d, pathItem, m_view);
+                    new EffectItem(d, pathItem);
                 } else {
                     // disconnect
                     Q_ASSERT(triggeredAction == disconnectAction); Q_UNUSED(disconnectAction);
@@ -124,39 +172,33 @@ void MyGraphicsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
             }
         }
         if (endItems.size() == 1 && endItems.first() != m_startItem) {
-            QGraphicsItem *endItem = endItems.first();
+            WidgetRectItem *endItem = qgraphicsitem_cast<WidgetRectItem *>(endItems.first());
             MediaNode *sourceNode = 0;
             MediaNode *sinkNode = 0;
-            WidgetRectItem *sourceItem = 0;
-            WidgetRectItem *sinkItem = 0;
 
-            MediaObjectItem *source = qgraphicsitem_cast<MediaObjectItem *>(m_startItem);
+            MediaObjectItem *source = mediaObjectItem(m_startItem);
             if (source) {
                 sourceNode = source->mediaNode();
-                sourceItem = source;
             } else {
-                EffectItem *source= qgraphicsitem_cast<EffectItem *>(m_startItem);
+                EffectItem *source= effectItem(m_startItem);
                 if (source) {
                     sourceNode = source->mediaNode();
-                    sourceItem = source;
                 }
             }
-            if (sourceItem && sourceNode) {
-                SinkItem *sink = qgraphicsitem_cast<SinkItem *>(endItem);
+            if (sourceNode) {
+                SinkItem *sink = sinkItem(endItem);
                 if (sink) {
                     sinkNode = sink->mediaNode();
-                    sinkItem = sink;
                 } else {
-                    EffectItem *sink = qgraphicsitem_cast<EffectItem *>(endItem);
+                    EffectItem *sink = effectItem(endItem);
                     if (sink) {
                         sinkNode = sink->mediaNode();
-                        sinkItem = sink;
                     }
                 }
-                if (sinkItem && sinkNode) {
+                if (sinkNode) {
                     Path p = Phonon::createPath(sourceNode, sinkNode);
                     if (p.isValid()) {
-                        addItem(new PathItem(sourceItem, sinkItem, p));
+                        addItem(new PathItem(m_startItem, endItem, p));
                         m_startItem = 0;
                         return;
                     }

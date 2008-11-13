@@ -13,4 +13,4 @@ kde4_add_executable(guitest TEST
    titlewidget.cpp
    widgetrectitem.cpp
    )
-target_link_libraries(guitest ${KDE4_PHONON_LIBS} ${KDE4_KIO_LIBS})
+target_link_libraries(guitest ${KDE4_PHONON_LIBS} ${KDE4_KIO_LIBS} ${QT_QTOPENGL_LIBRARY})

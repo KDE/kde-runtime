@@ -29,21 +29,14 @@ using Phonon::VideoWidget;
 class VideoWidgetItem : public SinkItem
 {
     public:
-        VideoWidgetItem(const QPoint &pos, QGraphicsView *widget)
-            : SinkItem(pos, widget)
+        VideoWidgetItem()
         {
-            setBrush(QColor(100, 100, 255, 150));
-            setTitle("Video Widget");
-
-            QVBoxLayout *layout = new QVBoxLayout(m_frame);
+            QVBoxLayout *layout = new QVBoxLayout(this);
             layout->setMargin(0);
-            m_videoWidget = new VideoWidget(m_frame);
+            m_videoWidget = new VideoWidget(this);
             m_videoWidget->setMinimumSize(160, 90);
             layout->addWidget(m_videoWidget);
         }
-
-        //enum { Type = UserType + 5 };
-        //int type() const { return Type; }
 
         virtual MediaNode *mediaNode() { return m_videoWidget; }
         virtual const MediaNode *mediaNode() const { return m_videoWidget; }
