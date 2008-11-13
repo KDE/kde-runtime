@@ -153,14 +153,11 @@ bool PathWidget::connectInput(MediaObject *m)
 MainWindow::MainWindow()
 {
     m_scene = new MyGraphicsScene(this);
-    QGLWidget *glWidget = new QGLWidget;
-    QHBoxLayout *l = new QHBoxLayout(glWidget);
-    l->setContentsMargins(0, 0, 0, 0);
-    m_view = new QGraphicsView(m_scene, glWidget);
-    l->addWidget(m_view);
+    m_view = new QGraphicsView(m_scene);
+    m_view->setViewport(new QGLWidget);
     m_scene->setView(m_view);
     m_view->setRenderHints(QPainter::Antialiasing);
-    setCentralWidget(glWidget);
+    setCentralWidget(m_view);
     QAction *action;
     action = new QAction(i18n("add MediaObject"), m_view);
     connect(action, SIGNAL(triggered()), SLOT(addMediaObject()));
