@@ -73,7 +73,7 @@ public:
     QDBusObjectPath dbusPath() const;
 
     //! Deactivate all currently active shortcuts
-    void deactivateShortcuts();
+    void deactivateShortcuts(bool temporarily=false);
 
     //! Returns the friendly name
     QString friendlyName() const;

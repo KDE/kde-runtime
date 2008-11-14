@@ -312,7 +312,7 @@ void KdedGlobalAccel::blockGlobalShortcuts(int block)
     kDebug() << block;
 #endif
     block
-        ? GlobalShortcutsRegistry::self()->deactivateShortcuts()
+        ? GlobalShortcutsRegistry::self()->deactivateShortcuts(true)
         : GlobalShortcutsRegistry::self()->activateShortcuts();
     }
 

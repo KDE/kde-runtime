@@ -96,11 +96,11 @@ QDBusObjectPath GlobalShortcutsRegistry::dbusPath() const
     }
 
 
-void GlobalShortcutsRegistry::deactivateShortcuts()
+void GlobalShortcutsRegistry::deactivateShortcuts(bool temporarily)
     {
     Q_FOREACH (KdeDGlobalAccel::Component *component, _components)
         {
-        component->deactivateShortcuts();
+        component->deactivateShortcuts(temporarily);
         }
     }
 

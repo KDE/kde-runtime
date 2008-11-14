@@ -74,7 +74,7 @@ public:
     /**
      * Deactivate all currently active shortcuts.
      */
-    void deactivateShortcuts();
+    void deactivateShortcuts(bool temporarily=false);
 
 
     /**
