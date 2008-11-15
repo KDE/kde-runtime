@@ -212,7 +212,7 @@ DevicePreference::DevicePreference(QWidget *parent)
     setupUi(this);
     testPlaybackButton->setIcon(KIcon("media-playback-start"));
     testPlaybackButton->setEnabled(false);
-    testPlaybackButton->setToolTip(i18n("play a test sound on the selected device"));
+    testPlaybackButton->setToolTip(i18n("Play a test sound on the selected device"));
     deviceList->setItemDelegate(new DeviceTreeDelegate(deviceList));
     removeButton->setIcon(KIcon("list-remove"));
     deferButton->setIcon(KIcon("go-down"));
