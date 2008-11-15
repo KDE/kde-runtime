@@ -196,7 +196,7 @@ void PhononServer::findVirtualDevices()
         bool isAdvanced = false;
         QString cardName = lines.first();
         if (lines.size() > 1) {
-            cardName = i18n("%1 (%2)", cardName, lines[1]);
+            cardName = i18nc("%1 is the sound card name, %2 is the description in case it exists", "%1 (%2)", cardName, lines[1]);
         }
         if (alsaDeviceName.startsWith("front:") ||
                 alsaDeviceName.startsWith("rear:") ||
