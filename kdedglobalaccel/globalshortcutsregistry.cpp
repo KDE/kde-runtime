@@ -170,7 +170,10 @@ bool GlobalShortcutsRegistry::keyPressed(int keyQt)
     if (!shortcut || !shortcut->isActive())
         {
         // We ungrab keys when deactivating shortcuts.
-        Q_ASSERT(shortcut->isActive());
+        if (shortcut)
+            {
+            Q_ASSERT(shortcut->isActive());
+            }
 
         // Not one of ours. Or one of ours but not active. It's meant for some
         // other kded module most likely.
