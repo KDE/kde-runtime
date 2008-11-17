@@ -44,6 +44,13 @@ namespace {
     QStringList defaultExcludeFilters() {
         return QStringList() << ".*/" << ".*" << "*~" << "*.part";
     }
+
+    void expandRecursively( const QModelIndex& index, QTreeView* view ) {
+        if ( index.isValid() ) {
+            view->expand( index );
+            expandRecursively( index.parent(), view );
+        }
+    }
 }
 
 
@@ -120,13 +127,13 @@ void Nepomuk::ServerConfigModule::load()
     }
 
     KConfig strigiConfig( "nepomukstrigirc" );
-    m_folderModel->setFolders( strigiConfig.group( "General" ).readPathEntry( "folders", defaultFolders() ) );
+    m_folderModel->setFolders( strigiConfig.group( "General" ).readPathEntry( "folders", defaultFolders() ),
+                               strigiConfig.group( "General" ).readPathEntry( "exclude folders", QStringList() ) );
     m_editStrigiExcludeFilters->setItems( strigiConfig.group( "General" ).readEntry( "exclude filters", defaultExcludeFilters() ) );
 
     // make sure that the tree is expanded to show all selected items
-    foreach( const QString& dir, m_folderModel->folders() ) {
-        QModelIndex index = m_folderModel->index( dir );
-        m_viewIndexFolders->scrollTo( index, QAbstractItemView::EnsureVisible );
+    foreach( const QString& dir, m_folderModel->includeFolders() + m_folderModel->excludeFolders() ) {
+        expandRecursively( m_folderModel->index( dir ), m_viewIndexFolders );
     }
 
     slotUpdateStrigiStatus();
@@ -143,7 +150,8 @@ void Nepomuk::ServerConfigModule::save()
 
     // 2. update Strigi config
     KConfig strigiConfig( "nepomukstrigirc" );
-    strigiConfig.group( "General" ).writePathEntry( "folders", m_folderModel->folders() );
+    strigiConfig.group( "General" ).writePathEntry( "folders", m_folderModel->includeFolders() );
+    strigiConfig.group( "General" ).writePathEntry( "exclude folders", m_folderModel->excludeFolders() );
     strigiConfig.group( "General" ).writeEntry( "exclude filters", m_editStrigiExcludeFilters->items() );
 
 
@@ -168,7 +176,7 @@ void Nepomuk::ServerConfigModule::defaults()
     m_checkEnableStrigi->setChecked( true );
     m_checkEnableNepomuk->setChecked( true );
     m_editStrigiExcludeFilters->setItems( defaultExcludeFilters() );
-    m_folderModel->setFolders( defaultFolders() );
+    m_folderModel->setFolders( defaultFolders(), QStringList() );
 }
 
 

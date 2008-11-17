@@ -44,10 +44,11 @@ namespace Nepomuk {
         QStringList folders() const;
 
         /**
-         * Recurse into subdirs
+         * The folders that should be excluded.
+         * It is perfectly possible to include subfolders again.
          */
-        bool recursive() const;
-        
+        QStringList excludeFolders() const;
+
         QStringList excludeFilters() const;
         QStringList includeFilters() const;
 
@@ -65,6 +66,12 @@ namespace Nepomuk {
          * tampering with the config.
          */
         bool isInitialRun() const;
+
+        /**
+         * Check if the folder should be indexed based on 
+         * folders() and excludeFolders()
+         */
+        bool shouldFolderBeIndex( const QString& );
 
     Q_SIGNALS:
         void configChanged();

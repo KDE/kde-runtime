@@ -44,6 +44,7 @@ namespace Nepomuk {
         void updateWatches();
         void slotCheckAvailableSpace();
         void slotIndexingStopped();
+        void slotDirDirty( const QString& );
 
     private:
         enum {

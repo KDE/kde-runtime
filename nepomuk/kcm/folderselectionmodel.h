@@ -6,6 +6,7 @@
    (C) 2004 Max Howell <max.howell@methylblue.com>
    (C) 2004 Mark Kretschmann <markey@web.de>
    (C) 2008 Seb Ruiz <ruiz@kde.org>
+   (C) 2008 Sebastian Trueg <trueg@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -37,25 +38,46 @@ public:
     FolderSelectionModel( QObject* parent = 0 );
     virtual ~FolderSelectionModel();
 
+    enum IncludeState {
+        StateNone,
+        StateInclude,
+        StateExclude,
+        StateIncludeInherited,
+        StateExcludeInherited
+    };
+
+    enum CustomRoles {
+        IncludeStateRole = 7777
+    };
+    
     Qt::ItemFlags flags( const QModelIndex &index ) const;
     QVariant data( const QModelIndex& index, int role = Qt::DisplayRole ) const;
     bool setData( const QModelIndex& index, const QVariant& value, int role = Qt::EditRole );
 
-    void setFolders( const QStringList &dirs ); // will clear m_checked before inserting new directories
-    QStringList folders() const;
+    void setFolders( const QStringList& includeDirs, const QStringList& exclude );
+    QStringList includeFolders() const;
+    QStringList excludeFolders() const;
+
+    /**
+     * Include the specified path. All subdirs will be reset.
+     */
+    void includePath( const QString& );
+
+    /**
+     * Exclude the specified path. All subdirs will be reset.
+     */
+    void excludePath( const QString& );
 
     int columnCount( const QModelIndex& ) const { return 1; }
 
-    bool recursive() const;
-    void setRecursive( bool r );
+    IncludeState includeState( const QModelIndex& ) const;
+    IncludeState includeState( const QString& path ) const;
 
 private:
-    bool ancestorChecked( const QString& path ) const;
-    bool descendantChecked( const QString& path ) const;
     bool isForbiddenPath( const QString& path ) const;
 
-    QSet<QString> m_checked;
-    bool m_recursive;
+    QSet<QString> m_included;
+    QSet<QString> m_excluded;
 };
 
 #endif

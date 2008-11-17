@@ -116,19 +116,14 @@ namespace Nepomuk {
         bool m_stopped;
         bool m_indexing;
 
-        // true if recursion was configured at start
-        // if this differs from the new value when the
-        // config changes, all folders are updated again
-        bool m_startedRecursive;
-
         QMutex m_resumeStopMutex;
         QWaitCondition m_resumeStopWc;
 
         StoppableConfiguration* m_analyzerConfig;
         Strigi::IndexManager* m_indexManager;
 
-        // set of folders to update (+recursive flag) - changed by updateDir
-        QSet<QPair<QString, bool> > m_dirsToUpdate;
+        // set of folders to update (+flags defined in the source file) - changed by updateDir
+        QSet<QPair<QString, int> > m_dirsToUpdate;
 
         QMutex m_dirsToUpdateMutex;
         QWaitCondition m_dirsToUpdateWc;

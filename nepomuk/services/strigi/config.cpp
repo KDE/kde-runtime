@@ -58,9 +58,9 @@ QStringList Nepomuk::Config::folders() const
 }
 
 
-bool Nepomuk::Config::recursive() const
+QStringList Nepomuk::Config::excludeFolders() const
 {
-    return m_config.group( "General" ).readEntry( "recursive", true );
+    return m_config.group( "General" ).readPathEntry( "exclude folders", QStringList() );
 }
 
 
@@ -105,6 +105,29 @@ void Nepomuk::Config::setShowGui( bool showGui )
 bool Nepomuk::Config::isInitialRun() const
 {
     return m_config.group( "General" ).readEntry( "first run", true );
+}
+
+
+bool Nepomuk::Config::shouldFolderBeIndex( const QString& path )
+{
+    QStringList inDirs = folders();
+    QStringList exDirs = excludeFolders();
+
+    if( inDirs.contains( path ) ) {
+        return true;
+    }
+    else if( exDirs.contains( path ) ) {
+        return false;
+    }
+    else {
+        QString parent = path.section( QDir::separator(), 0, -2, QString::SectionSkipEmpty|QString::SectionIncludeLeadingSep );
+        if( parent.isEmpty() ) {
+            return false;
+        }
+        else {
+            return shouldFolderBeIndex( parent );
+        }
+    }
 }
 
 #include "config.moc"

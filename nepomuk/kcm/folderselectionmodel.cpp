@@ -6,6 +6,7 @@
    (C) 2004 Max Howell <max.howell@methylblue.com>
    (C) 2004 Mark Kretschmann <markey@web.de>
    (C) 2008 Seb Ruiz <ruiz@kde.org>
+   (C) 2008 Sebastian Trueg <trueg@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -25,11 +26,18 @@
 #include "folderselectionmodel.h"
 
 #include <QtCore/QDir>
+#include <QtCore/QFileInfo>
+#include <QtGui/QColor>
+#include <QtGui/QBrush>
+#include <QtGui/QPalette>
+
+#include <KDebug>
+#include <KIcon>
+#include <KLocale>
 
 
 FolderSelectionModel::FolderSelectionModel( QObject* parent )
-    : QFileSystemModel( parent ),
-      m_recursive( true )
+    : QFileSystemModel( parent )
 {
     setFilter( QDir::AllDirs | QDir::NoDotAndDotDot );
 }
@@ -43,74 +51,166 @@ FolderSelectionModel::~FolderSelectionModel()
 Qt::ItemFlags FolderSelectionModel::flags( const QModelIndex &index ) const
 {
     Qt::ItemFlags flags = QFileSystemModel::flags( index );
-    const QString path = filePath( index );
-    if( ( recursive() && ancestorChecked( path ) ) || isForbiddenPath( path ) )
-        flags ^= Qt::ItemIsEnabled; //disabled!
-
     flags |= Qt::ItemIsUserCheckable;
-
+    if( isForbiddenPath( filePath( index ) ) )
+        flags ^= Qt::ItemIsEnabled; //disabled!
     return flags;
 }
 
 
 QVariant FolderSelectionModel::data( const QModelIndex& index, int role ) const
 {
-    if( index.isValid() && index.column() == 0 && role == Qt::CheckStateRole )
-    {
-        const QString path = filePath( index );
-        if( recursive() && ancestorChecked( path ) )
-            return Qt::Checked; // always set children of recursively checked parents to checked
-        if( isForbiddenPath( path ) )
-            return Qt::Unchecked; // forbidden paths can never be checked
-        if ( !m_checked.contains( path ) && descendantChecked( path ) )
-            return Qt::PartiallyChecked;
-        return m_checked.contains( path ) ? Qt::Checked : Qt::Unchecked;
+    if( index.isValid() && index.column() == 0 ) {
+        if( role == Qt::CheckStateRole ) {
+            const IncludeState state = includeState( index );
+            switch( state ) {
+            case StateNone:
+            case StateExclude:
+            case StateExcludeInherited:
+                return Qt::Unchecked;
+            case StateInclude:
+            case StateIncludeInherited:
+                return Qt::Checked;
+            }
+        }
+        else if( role == IncludeStateRole ) {
+            return includeState( index );
+        }
+        else if( role == Qt::ForegroundRole ) {
+            IncludeState state = includeState( index );
+            QBrush brush = QFileSystemModel::data( index, role ).value<QBrush>();
+            switch( state ) {
+            case StateInclude:
+            case StateIncludeInherited:
+//                brush = QPalette().brush( QPalette::Disabled, QPalette::Foreground );
+                break;
+            case StateNone:
+            case StateExclude:
+            case StateExcludeInherited:
+                brush = QPalette().brush( QPalette::Disabled, QPalette::Foreground );
+                break;
+            }
+            return QVariant::fromValue( brush );
+        }
+        else if ( role == Qt::ToolTipRole ) {
+            IncludeState state = includeState( index );
+            if ( state == StateInclude || state == StateIncludeInherited ) {
+                return i18nc( "@info:tooltip %1 is the path of the folder in a listview",
+                              "<filename>%1</filename><nl/>(will be indexed for desktop search)", filePath( index ) );
+            }
+            else {
+                return i18nc( "@info:tooltip %1 is the path of the folder in a listview",
+                              "<filename>%1</filename><nl/> (will <emphasis>not</emphasis> be indexed for desktop search)", filePath( index ) );
+            }
+        }
+        else if ( role == Qt::DecorationRole ) {
+            if ( filePath( index ) == QDir::homePath() ) {
+                return KIcon( "user-home" );
+            }
+        }
     }
+
     return QFileSystemModel::data( index, role );
 }
 
 
 bool FolderSelectionModel::setData( const QModelIndex& index, const QVariant& value, int role )
 {
-    if( index.isValid() && index.column() == 0 && role == Qt::CheckStateRole )
-    {
-        QString path = filePath( index );
-        // store checked paths, remove unchecked paths
-        if( value.toInt() == Qt::Checked )
-            m_checked.insert( path );
-        else
-            m_checked.remove( path );
-        return true;
+    if( index.isValid() && index.column() == 0 && role == Qt::CheckStateRole ) {
+        const QString path = filePath( index );
+        const IncludeState state = includeState( path );
+
+        // here we ignore the check value, we treat it as a toggle
+        // This is due to our using the Qt checking system in a virtual way
+        if( state == StateInclude ||
+            state == StateIncludeInherited ) {
+            excludePath( path );
+            return true;
+        }
+        else {
+            includePath( path );
+            return true;
+        }
+        return false;
     }
+
     return QFileSystemModel::setData( index, value, role );
 }
 
 
-void FolderSelectionModel::setFolders( const QStringList &dirs )
+namespace {
+    void removeSubDirs( const QString& path, QSet<QString>& set ) {
+        QSet<QString>::iterator it = set.begin();
+        while( it != set.end() ) {
+            if( it->startsWith( path ) )
+                it = set.erase( it );
+            else
+                ++it;
+        }
+    }
+
+    QModelIndex findLastLeaf( const QModelIndex& index, FolderSelectionModel* model ) {
+        int rows = model->rowCount( index );
+        if( rows > 0 ) {
+            return findLastLeaf( model->index( rows-1, 0, index ), model );
+        }
+        else {
+            return index;
+        }
+    }
+}
+
+void FolderSelectionModel::includePath( const QString& path )
 {
-    m_checked.clear();
-    foreach( const QString& dir, dirs ) {
-        m_checked.insert( dir );
+    if( !m_included.contains( path ) ) {
+        // remove all subdirs
+        removeSubDirs( path, m_included );
+        removeSubDirs( path, m_excluded );
+        m_excluded.remove( path );
+
+        // only really include if the parent is not already included
+        if( includeState( path ) != StateIncludeInherited ) {
+            m_included.insert( path );
+        }
+        emit dataChanged( index( path ), findLastLeaf( index( path ), this ) );
     }
 }
 
 
-QStringList FolderSelectionModel::folders() const
+void FolderSelectionModel::excludePath( const QString& path )
 {
-    QStringList dirs = m_checked.toList();
+    if( !m_excluded.contains( path ) ) {
+        // remove all subdirs
+        removeSubDirs( path, m_included );
+        removeSubDirs( path, m_excluded );
+        m_included.remove( path );
 
-    qSort( dirs.begin(), dirs.end() );
-
-    // we need to remove any children of selected items as
-    // they are redundant when recursive mode is chosen
-    if( recursive() ) {
-        foreach( const QString& dir, dirs ) {
-            if( ancestorChecked( dir ) )
-                dirs.removeAll( dir );
+        // only really exclude the path if a parent is included
+        if( includeState( path ) == StateIncludeInherited ) {
+            m_excluded.insert( path );
         }
+        emit dataChanged( index( path ), findLastLeaf( index( path ), this ) );
     }
+}
 
-    return dirs;
+
+void FolderSelectionModel::setFolders( const QStringList& includeDirs, const QStringList& excludeDirs )
+{
+    m_included = QSet<QString>::fromList( includeDirs );
+    m_excluded = QSet<QString>::fromList( excludeDirs );
+    reset();
+}
+
+
+QStringList FolderSelectionModel::includeFolders() const
+{
+    return m_included.toList();
+}
+
+
+QStringList FolderSelectionModel::excludeFolders() const
+{
+    return m_excluded.toList();
 }
 
 
@@ -118,39 +218,44 @@ inline bool FolderSelectionModel::isForbiddenPath( const QString& path ) const
 {
     // we need the trailing slash otherwise we could forbid "/dev-music" for example
     QString _path = path.endsWith( "/" ) ? path : path + "/";
-    return _path.startsWith( "/proc/" ) || _path.startsWith( "/dev/" ) || _path.startsWith( "/sys/" );
+    QFileInfo fi( _path );
+    return( _path.startsWith( "/proc/" ) ||
+            _path.startsWith( "/dev/" ) ||
+            _path.startsWith( "/sys/" ) ||
+            !fi.isReadable() ||
+            !fi.isExecutable() );
 }
 
 
-bool FolderSelectionModel::ancestorChecked( const QString& path ) const
+FolderSelectionModel::IncludeState FolderSelectionModel::includeState( const QModelIndex& index ) const
 {
-    foreach( const QString& element, m_checked ) {
-        if( path.startsWith( element ) && element != path )
-            return true;
+    return includeState( filePath( index ) );
+}
+
+
+FolderSelectionModel::IncludeState FolderSelectionModel::includeState( const QString& path ) const
+{
+    if( m_included.contains( path ) ) {
+        return StateInclude;
     }
-    return false;
-}
-
-
-bool FolderSelectionModel::descendantChecked( const QString& path ) const
-{
-    foreach( const QString& element, m_checked ) {
-        if ( element.startsWith( path ) && element != path )
-            return true;
+    else if( m_excluded.contains( path ) ) {
+        return StateExclude;
     }
-    return false;
-}
-
-
-bool FolderSelectionModel::recursive() const
-{
-    return m_recursive;
-}
-
-
-void FolderSelectionModel::setRecursive( bool r )
-{
-    m_recursive = r;
+    else {
+        QString parent = path.section( QDir::separator(), 0, -2, QString::SectionSkipEmpty|QString::SectionIncludeLeadingSep );
+        if( parent.isEmpty() ) {
+            return StateNone;
+        }
+        else {
+            IncludeState state = includeState( parent );
+            if( state == StateNone )
+                return StateNone;
+            else if( state == StateInclude || state == StateIncludeInherited )
+                return StateIncludeInherited;
+            else
+                return StateExcludeInherited;
+        }
+    }
 }
 
 #include "folderselectionmodel.moc"

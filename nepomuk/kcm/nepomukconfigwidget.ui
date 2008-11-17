@@ -5,9 +5,6 @@
   <layout class="QVBoxLayout" >
    <item>
     <widget class="QTabWidget" name="tabWidget" >
-     <property name="currentIndex" >
-      <number>0</number>
-     </property>
      <widget class="QWidget" name="tab" >
       <attribute name="title" >
        <string>Basic Settings</string>
@@ -124,8 +121,8 @@
       <attribute name="title" >
        <string>Advanced Settings</string>
       </attribute>
-      <layout class="QHBoxLayout" name="horizontalLayout_2" >
-       <item>
+      <layout class="QGridLayout" name="gridLayout" >
+       <item rowspan="2" row="0" column="0" >
         <widget class="QGroupBox" name="groupBox_3" >
          <property name="title" >
           <string>Strigi Index Folders</string>
@@ -147,7 +144,7 @@
          </layout>
         </widget>
        </item>
-       <item>
+       <item row="0" column="1" >
         <widget class="KEditListBox" name="m_editStrigiExcludeFilters" >
          <property name="toolTip" >
           <string>Filters which define the files that Strigi should ignore</string>

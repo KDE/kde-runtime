@@ -48,8 +48,9 @@ Nepomuk::EventMonitor::EventMonitor( IndexScheduler* scheduler, QObject* parent 
 {
     // monitor the file system
     m_fsWatcher = new FileSystemWatcher( this );
+    m_fsWatcher->setWatchRecursively( true );
     connect( m_fsWatcher, SIGNAL( dirty( QString ) ),
-             m_indexScheduler, SLOT( updateDir( QString ) ) );
+             this, SLOT( slotDirDirty( QString ) ) );
 
     // update the watches if the config changes
     connect( Config::self(), SIGNAL( configChanged() ),
@@ -104,12 +105,18 @@ void Nepomuk::EventMonitor::updateWatches()
 {
     // the hard way since the KDirWatch API is too simple
     QStringList folders = Config::self()->folders();
-    if ( folders != m_fsWatcher->folders() ||
-         Config::self()->recursive() != m_fsWatcher->watchRecursively() ) {
+    if ( folders != m_fsWatcher->folders() ) {
         m_fsWatcher->setFolders( Config::self()->folders() );
-        m_fsWatcher->setWatchRecursively( Config::self()->recursive() );
         m_fsWatcher->setInterval( 2*60 ); // check every 2 minutes
         m_fsWatcher->start();
+    }
+}
+
+
+void Nepomuk::EventMonitor::slotDirDirty( const QString& path )
+{
+    if ( !Config::self()->shouldFolderBeIndex( path ) ) {
+        m_indexScheduler->updateDir( path );
     }
 }
 

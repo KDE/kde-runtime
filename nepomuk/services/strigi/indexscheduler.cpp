@@ -68,6 +68,27 @@ private:
 };
 
 
+namespace {
+    enum UpdateDirFlags {
+        /**
+         * No flags, only used to make code more readable
+         */
+        NoUpdateFlags = 0x0,
+
+        /**
+         * The folder should be updated recursive
+         */
+        UpdateRecursive = 0x1,
+
+        /**
+         * The folder has been scheduled to update by the
+         * update system, not by a call to updateDir
+         */
+        AutoUpdateFolder = 0x2
+    };
+}
+
+
 Nepomuk::IndexScheduler::IndexScheduler( Strigi::IndexManager* manager, QObject* parent )
     : QThread( parent ),
       m_suspended( false ),
@@ -178,9 +199,7 @@ void Nepomuk::IndexScheduler::run()
     // do the actual indexing
     m_dirsToUpdate.clear();
     foreach( const QString& f, Config::self()->folders() )
-        m_dirsToUpdate << qMakePair( f, Config::self()->recursive() );
-
-    m_startedRecursive = Config::self()->recursive();
+        m_dirsToUpdate << qMakePair( f, UpdateRecursive|AutoUpdateFolder );
 
     while ( 1 ) {
         // wait for more dirs to analyze in case the initial
@@ -203,12 +222,12 @@ void Nepomuk::IndexScheduler::run()
 
         // get the next folder
         m_dirsToUpdateMutex.lock();
-        QPair<QString, bool> dir = *m_dirsToUpdate.begin();
+        QPair<QString, int> dir = *m_dirsToUpdate.begin();
         m_dirsToUpdate.erase( m_dirsToUpdate.begin() );
         m_dirsToUpdateMutex.unlock();
 
         // update until stopped
-        if ( !updateDir( dir.first, &analyzer, dir.second ) ) {
+        if ( !updateDir( dir.first, &analyzer, dir.second & UpdateRecursive ) ) {
             break;
         }
         m_currentFolder.clear();
@@ -291,7 +310,8 @@ bool Nepomuk::IndexScheduler::updateDir( const QString& dir, Strigi::StreamAnaly
     // compare m_currentFolder)
     if ( recursive ) {
         foreach( const QString& folder, subFolders ) {
-            if ( !updateDir( folder, analyzer, true ) )
+            if ( !Config::self()->excludeFolders().contains( folder ) &&
+                 !updateDir( folder, analyzer, true ) )
                 return false;
         }
     }
@@ -335,7 +355,7 @@ bool Nepomuk::IndexScheduler::waitForContinue()
 void Nepomuk::IndexScheduler::updateDir( const QString& path )
 {
     QMutexLocker lock( &m_dirsToUpdateMutex );
-    m_dirsToUpdate << qMakePair( path, false );
+    m_dirsToUpdate << qMakePair( path, ( int )NoUpdateFlags );
     m_dirsToUpdateWc.wakeAll();
 }
 
@@ -343,8 +363,21 @@ void Nepomuk::IndexScheduler::updateDir( const QString& path )
 void Nepomuk::IndexScheduler::updateAll()
 {
     QMutexLocker lock( &m_dirsToUpdateMutex );
+
+    // remove previously added folders to not index stuff we are not supposed to
+    // (FIXME: this does not include currently being indexed folders)
+    QSet<QPair<QString, int> >::iterator it = m_dirsToUpdate.begin();
+    while ( it != m_dirsToUpdate.end() ) {
+        if ( it->second & AutoUpdateFolder )
+            it = m_dirsToUpdate.erase( it );
+        else
+            ++it;
+    }
+
+    // update everything again in case the folders changed
     foreach( const QString& f, Config::self()->folders() )
-        m_dirsToUpdate << qMakePair( f, true );
+        m_dirsToUpdate << qMakePair( f, UpdateRecursive|AutoUpdateFolder );
+
     m_dirsToUpdateWc.wakeAll();
 }
 
@@ -362,13 +395,7 @@ void Nepomuk::IndexScheduler::readConfig()
         filters.push_back( std::make_pair<bool, std::string>( true, filter.toUtf8().data() ) );
     }
     m_analyzerConfig->setFilters(filters);
-
-    // update everything again in case the folders changed
-    // FIXME: this does not really help if the new value is false!
-    QMutexLocker lock( &m_dirsToUpdateMutex );
-    foreach( const QString& f, Config::self()->folders() )
-        m_dirsToUpdate << qMakePair( f, Config::self()->recursive() );
-    m_dirsToUpdateWc.wakeAll();
+    updateAll();
 }
 
 
