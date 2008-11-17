@@ -56,6 +56,7 @@ public:
     ~EmoticonList();
     void load();
     void save();
+    virtual void defaults();
 private slots:
     void installEmoticonTheme();
     void btRemoveThemeClicked();
@@ -69,6 +70,7 @@ private slots:
     void somethingChanged();
 private:
     void loadTheme(const QString &name);
+    void initDefaults();
     QString previewEmoticon(const KEmoticonsTheme &theme);
     QHash<QString, KEmoticonsTheme> emoMap;
     QStringList delFiles;

@@ -106,7 +106,7 @@ EmoticonList::EmoticonList(QWidget *parent, const QVariantList &args)
 {
     KAboutData *about = new KAboutData("kcm_emoticons", 0, ki18n("Emoticons"), "1.0");
     setAboutData(about);
-    setButtons(Apply | Help);
+//     setButtons(Apply | Help);
     setupUi(this);
     btAdd->setIcon(KIcon("list-add"));
     btEdit->setIcon(KIcon("edit-rename"));
@@ -208,6 +208,9 @@ void EmoticonList::updateButton()
 
 void EmoticonList::selectTheme()
 {
+
+    kDebug() << "current_item: " << themeList->currentItem();
+
     updateButton();
     if (!themeList->currentItem()) {
         emoList->clear();
@@ -231,7 +234,7 @@ void EmoticonList::selectTheme()
                 text += ' ' + it.value().at(i);
             }
         }
-//         kDebug() << "icon: "<<it.key()<<"text: "<<text<<"\n\r";
+
         new QListWidgetItem(QIcon(it.key()), text, emoList);
     }
     emit changed();
@@ -442,6 +445,26 @@ QString EmoticonList::previewEmoticon(const KEmoticonsTheme &theme)
             path = theme.emoticonsMap().keys().value(0);
         }
         return path;
+}
+
+
+
+
+void EmoticonList::initDefaults()
+{
+    
+    QList<QListWidgetItem *>ls = themeList->findItems("kde4", Qt::MatchExactly);
+    themeList->setCurrentItem( ls.first() );
+
+    cbStrict->setChecked(false);
+}
+
+
+void EmoticonList::defaults()
+{
+    initDefaults();
+    selectTheme();
+    emit changed(true);
 }
 
 // kate: space-indent on; indent-width 4; replace-tabs on;
