@@ -87,7 +87,7 @@ bool CfgWm::saveAndConfirm()
     {
         KMessageBox::information( this,
             i18n( "The new window manager will be used when KDE is started the next time." ),
-            i18n( "Window manager change" ), "windowmanagerchange" );
+            i18n( "Window Manager Change" ), "windowmanagerchange" );
         oldwm = currentWm();
         return true;
     }
@@ -140,7 +140,7 @@ bool CfgWm::tryWmLaunch()
         return true; // it is already running, don't necessarily restart e.g. after a failure with other WM
     }
     KMessageBox::information( window(), i18n( "Your running window manager will be now replaced with "
-        "the configured one." ), i18n( "Window manager change" ), "windowmanagerchange" );
+        "the configured one." ), i18n( "Window Manager Change" ), "windowmanagerchange" );
     wmLaunchingState = WmLaunching;
     wmProcess = new KProcess;
     *wmProcess << KShell::splitArgs( currentWmData().exec ) << currentWmData().restartArgument;

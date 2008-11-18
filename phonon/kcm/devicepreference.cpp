@@ -315,15 +315,15 @@ void DevicePreference::updateDeviceList()
         m_showingOutputModel = catItem->isOutputItem;
         if (cat == Phonon::NoCategory) {
             if (catItem->isOutputItem) {
-                m_headerModel.setHeaderData(0, Qt::Horizontal, i18n("Default Output Device Preference:"), Qt::DisplayRole);
+                m_headerModel.setHeaderData(0, Qt::Horizontal, i18n("Default Output Device Preference"), Qt::DisplayRole);
             } else {
-                m_headerModel.setHeaderData(0, Qt::Horizontal, i18n("Default Capture Device Preference:"), Qt::DisplayRole);
+                m_headerModel.setHeaderData(0, Qt::Horizontal, i18n("Default Capture Device Preference"), Qt::DisplayRole);
             }
         } else {
             if (catItem->isOutputItem) {
-                m_headerModel.setHeaderData(0, Qt::Horizontal, i18n("Output Device Preference for the '%1' Category:", Phonon::categoryToString(cat)), Qt::DisplayRole);
+                m_headerModel.setHeaderData(0, Qt::Horizontal, i18n("Output Device Preference for the '%1' Category", Phonon::categoryToString(cat)), Qt::DisplayRole);
             } else {
-                m_headerModel.setHeaderData(0, Qt::Horizontal, i18n("Capture Device Preference for the '%1' Category:", Phonon::categoryToString(cat)), Qt::DisplayRole);
+                m_headerModel.setHeaderData(0, Qt::Horizontal, i18n("Capture Device Preference for the '%1' Category", Phonon::categoryToString(cat)), Qt::DisplayRole);
             }
         }
     } else {

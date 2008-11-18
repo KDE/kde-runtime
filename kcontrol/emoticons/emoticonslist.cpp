@@ -296,7 +296,7 @@ void EmoticonList::addEmoticon()
     if (!themeList->currentItem())
         return;
 
-    EditDialog *dlg = new EditDialog(this, i18n("Add emoticon"));
+    EditDialog *dlg = new EditDialog(this, i18n("Add Emoticon"));
 
     if (dlg->exec() == QDialog::Rejected) {
         delete dlg;
@@ -320,7 +320,7 @@ void EmoticonList::editEmoticon()
     KEmoticonsTheme theme = emoMap.value(themeList->currentItem()->text());
     QString path = theme.emoticonsMap().key(emoList->currentItem()->text().split(' '));
     QString f = QFileInfo(path).baseName();
-    EditDialog *dlg = new EditDialog(this, i18n("Edit emoticon"), emoList->currentItem(), path);
+    EditDialog *dlg = new EditDialog(this, i18n("Edit Emoticon"), emoList->currentItem(), path);
 
     if (dlg->exec() == QDialog::Rejected) {
         delete dlg;
@@ -362,7 +362,7 @@ void EmoticonList::editEmoticon()
 
 void EmoticonList::newTheme()
 {
-    QString name = KInputDialog::getText(i18n("New Emoticon Theme"), i18n("Enter the name of the new emoticon theme"));
+    QString name = KInputDialog::getText(i18n("New Emoticon Theme"), i18n("Enter the name of the new emoticon theme:"));
     if (name.isEmpty())
         return;
     QString path = KGlobal::dirs()->saveLocation("emoticons", name, false);

@@ -43,7 +43,7 @@
        <item>
         <widget class="QCheckBox" name="showCheckBox" >
          <property name="text" >
-          <string>Show Advanced Devices</string>
+          <string>Show advanced devices</string>
          </property>
         </widget>
        </item>
