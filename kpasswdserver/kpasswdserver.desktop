@@ -2,6 +2,7 @@
 Type=Service
 Name=KDED Password Module
 Name[af]=KDED Wagwoordmodule
+Name[ar]=وحدة كلمة سر KDED
 Name[be]=Модуль паролю KDED
 Name[bg]=KDED - модул за пароли
 Name[bn_IN]=KDED পাসওয়ার্ড মডিউল
@@ -81,6 +82,7 @@ Comment[fy]=Wachtwurd caching stype
 Comment[ga]=Tacaíocht le taisce focal faire
 Comment[gl]=Soporte de caché de contrasinais
 Comment[gu]=પાસવર્ડ કેશિંગ આધાર
+Comment[hr]=Podrška za lokalno pohranjivanje lozinke
 Comment[hu]=Jelszómentési támogatás
 Comment[is]=Skyndiminni fyrir lykilorð
 Comment[it]=Gestione della memorizzazione delle password

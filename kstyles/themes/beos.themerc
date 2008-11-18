@@ -1,6 +1,5 @@
 [Misc]
 Name=BeOS
-Name[ar]=نظام التشغيل BeOS
 Name[hi]=बीई-ओएस
 Name[ml]=ബിഇഒഎസ്
 Name[sr]=БеОС
@@ -9,7 +8,7 @@ Name[th]=รูปแบบ BeOS
 Name[x-test]=xxBeOSxx
 Comment=Unthemed BeOS-like style
 Comment[af]=BeOS-tipe styl sonder temas
-Comment[ar]=لم يختار ثيم BeOS مثل نمط
+Comment[ar]=نمط شبيه BeOS بدون سمة
 Comment[be]=Стыль BeOS
 Comment[bg]=Стил BeOS
 Comment[bn_IN]=থিমবিহীন BeOS-র অনুরূপ বিন্যাস
@@ -42,7 +41,7 @@ Comment[lt]=Betemis BeOS tipo stilius
 Comment[lv]=BeOS-līdzīgs stils, bez tēmām
 Comment[mk]=Стил како BeOS без тема
 Comment[ml]=രംഗവിതാനമൊന്നും തെരഞ്ഞെടുക്കാത്ത ബിഇഒഎസ്-പോലുള്ള രീതി
-Comment[nb]=BeOS-aktig stil uten drakt
+Comment[nb]=BeOS-aktig stil uten tema
 Comment[nds]=En Stil liek to BeOS ahn Muster
 Comment[ne]=ढँचाबद्ध नगरिएको BeOS-प्रकारको शैली
 Comment[nl]=Themaloze BeOS-achtige stijl
