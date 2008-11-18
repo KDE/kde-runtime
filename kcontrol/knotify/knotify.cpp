@@ -141,6 +141,7 @@ void KCMKNotify::slotPlayerSettings()
 void KCMKNotify::defaults()
 {
 //    m_notifyWidget->resetDefaults( true ); // ask user
+    m_playerSettings->defaults();
 }
 void KCMKNotify::load()
 {
@@ -264,6 +265,13 @@ void PlayerSettingsDialog::save()
 
 void PlayerSettingsDialog::slotChanged()
 {
+    m_change=true;
+    emit changed(true);
+}
+
+void PlayerSettingsDialog::defaults()
+{
+    m_ui->cbArts->setChecked(true);
     m_change=true;
     emit changed(true);
 }

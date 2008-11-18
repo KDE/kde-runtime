@@ -80,6 +80,7 @@ public:
 	~PlayerSettingsDialog();
     void load();
     void save();
+    void defaults();
 
 protected Q_SLOTS:
     void externalToggled( bool on );
@@ -88,7 +89,7 @@ protected Q_SLOTS:
     signals:
     void changed(bool);
 private:
-	Ui::PlayerSettingsUI* m_ui;
+    Ui::PlayerSettingsUI* m_ui;
     bool m_change;
 };
 
