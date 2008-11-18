@@ -130,7 +130,6 @@ void KCMKNotify::slotAppActivated( int index )
         text=m_appNames[index];
     m_notifyWidget->save();
     m_notifyWidget->setApplication( text );
-    emit changed(true);
 }
 
 void KCMKNotify::slotPlayerSettings()
