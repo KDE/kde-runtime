@@ -1,11 +1,11 @@
 
 GENERAL
 =======
-In KDE 2 we added support for localization of dates, time, numbers and
+In KDE we support localization of calendars, dates, time, numbers and
 money. KDE will use this when displaying such information, giving you
 a feeling that KDE was written to fit your national standards. To make
 this possible, we need to gather some information on your national
-standards. Currently there is over 220 countries supported. If your
+standards. Currently there are some 228 countries supported. If your
 country is missing, please let us know.
 
 HOW TO ADD INFORMATION
@@ -19,7 +19,8 @@ You will need a nice flag for your country. The size should be 21x14
 pixels, and it should be called "flag.png".
 
 To add your information, we need a two letter country code for you country.
-Use http://www.tu-berlin.de/zrz/dienste/netz/mail/iso-3166.html as a guide.
+Use http://www.iso.org/iso/country_codes/ or teh entities.csv document in
+this folder as a guide.
 
 Now you are done, and you can submit the files to KDE project by
 sending a mail to Hans Petter Bieker <bieker@kde.org>. The files will
@@ -45,19 +46,31 @@ between the entry name and the value.
 	Default: blank
 
 * Region
-	Defines which submenu the country belongs to. Currently there are
-	19 different regions:
-        centralasia (Central Asia), eastasia (East Asia),
-        southasia (South Asia), southeastasia(South-East Asia),
-        middleeast (Middle-East/West Asia)
-        centralafrica (Central Africa), northafrica (Northern Africa),
-        southafrica (Southern Africa), westafrica (Western Africa),
-        easteurope (Eastern Europe), westeurope (Western Europe),
-        southeurope (Southern Europe), northeurope (Northern Europe),
-        centraleurope (Central Europe),
-        northamerica (North America), southamerica (South America),
-        centralemarica (Central America), caribbean (Caribbean)
-        and oceania (Oceania).
+
+    Defines which submenu the country belongs to. Currently there are 20 different regions
+    conforming to the United Nations statistical regions, excluding the Oceania sub-divisions,
+    but adding Central Europe. See http://unstats.un.org/unsd/methods/m49/m49regin.htm for details.
+
+        centralasia    (Central Asia)
+        eastasia       (East Asia)
+        southasia      (South Asia)
+        southeastasia  (South-East Asia)
+        middleeast     (Middle-East/West Asia)
+        centralafrica  (Central Africa)
+        northafrica    (Northern Africa)
+        southafrica    (Southern Africa)
+        westafrica     (Western Africa)
+        eastafrica     (Eastern Africa)
+        easteurope     (Eastern Europe)
+        westeurope     (Western Europe)
+        southeurope    (Southern Europe)
+        northeurope    (Northern Europe)
+        centraleurope  (Central Europe)
+        northamerica   (North America)
+        southamerica   (South America)
+        centralemarica (Central America)
+        caribbean      (Caribbean)
+        oceania        (Oceania)
 
 	Default: blank
 
@@ -231,11 +244,12 @@ between the entry name and the value.
 	Default: 0
 
 * CalendarSystem
-	This defines which calendar system should use. This is currently not
-	supported by the KDE internals. Here are some values:
+	This defines which calendar system to use. Available systems are:
 
 	gregorian
+	hebrew
 	hijri
+	jalali
 
 	Default: gregorian
 

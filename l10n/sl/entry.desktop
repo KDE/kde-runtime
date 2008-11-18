@@ -1,0 +1,12 @@
+[KCM Locale]
+Name=Sierra Leone
+Region=westafrica
+Languages=en_GB,en
+CurrencySymbol=Le
+NegativeMonetarySignPosition=1
+DateFormat[en_GB]=%A %d %b %Y
+DateFormat[en]=%A %d %b %Y
+DateFormat[eo]=%A, la %ea de %B %Y
+DateFormatShort=%d/%m/%Y
+PageSize=0
+WeekStartDay=7
