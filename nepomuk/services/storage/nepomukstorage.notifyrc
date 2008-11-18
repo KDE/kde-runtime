@@ -54,6 +54,7 @@ Name[x-test]=xxNepomuk Data Storagexx
 Name[zh_CN]=Nepomuk 数据存储
 Name[zh_TW]=Nepomuk 資料儲存
 Comment=The Nepomuk Storage Service
+Comment[be@latin]=Słužba zachoŭvańnia źviestak „Nepomuk”
 Comment[ca]=Servei d'emmagatzematge del Nepomuk
 Comment[de]=Nepomuk-Ablagedienst
 Comment[el]=Υπηρεσία αποθήκης του Nepomuk
@@ -74,6 +75,7 @@ Comment[zh_TW]=Nepomuk 儲存服務
 
 [Event/rebuldingNepomukIndex]
 Name=Rebuilding Nepomuk Index
+Name[be@latin]=Stvareńnie indeksu „Nepomuk” nanoŭ
 Name[ca]=S'està reconstruint l'índex del Nepomuk
 Name[de]=Nepomuk-Index wird neu erstellt.
 Name[el]=Ανακατασκευή ευρετηρίου Nepomuk
@@ -92,6 +94,7 @@ Name[uk]=Повторна побудова покажчика Nepomuk
 Name[x-test]=xxRebuilding Nepomuk Indexxx
 Name[zh_TW]=重建 Nepomuk 索引
 Comment=The Nepomuk full text search index is rebuilt for new features
+Comment[be@latin]=Indeks „Nepomuk” dla pošuku va ŭsim tekście stvarajecca nanoŭ, dziela novych mahčymaściaŭ.
 Comment[ca]=S'està reconstruint l'índex de cerca per text complet del Nepomuk amb les noves funcionalitats
 Comment[de]=Der Nepomuk-Volltextindex wird zur Aktivierung neuer Funktionen neu aufgebaut.
 Comment[el]=Το ευρετήριο αναζήτησης πλήρους κειμένου του Nepomuk ανακατασκευάστηκε για υποστήριξη νέων χαρακτηριστικών
@@ -113,7 +116,9 @@ Action=Popup
 
 [Event/rebuldingNepomukIndexDone]
 Name=Rebuilding Nepomuk Index done
+Name[be@latin]=Stvareńnie indeksu „Nepomuk” nanoŭ skončanaje.
 Name[ca]=S'ha reconstruït l'índex del Nepomuk
+Name[de]=Der Neuaufbau des Nepomuk-Index ist abgeschlossen
 Name[el]=Ολοκλήρωση ανακατασκευής ευρετηρίου Nepomuk
 Name[gu]=નેપોમુક અનુક્રમ ફરી બનાવવાનું પૂર્ણ
 Name[ja]=Nepomuk インデックスの再構築完了
@@ -128,6 +133,7 @@ Name[uk]=Повторну побудову покажчика Nepomuk завер
 Name[x-test]=xxRebuilding Nepomuk Index donexx
 Name[zh_TW]=重建 Nepomuk 索引完成
 Comment=The rebuilding of the Nepomuk full text search index is done.
+Comment[be@latin]=Stvareńnie nanoŭ indeksu „Nepomuk” dla pošuku va ŭsim tekście skončanaje.
 Comment[ca]=S'ha reconstruït l'índex de cerca per text complet del Nepomuk.
 Comment[de]=Der Neuaufbau des Nepomuk-Volltextindex ist abgeschlossen.
 Comment[el]=Η ανακατασκευή του ευρετηρίου αναζήτησης πλήρους κειμένου του Nepomuk ολοκληρώθηκε.
@@ -149,6 +155,7 @@ Action=Popup
 
 [Event/convertingNepomukData]
 Name=Converting Nepomuk data
+Name[be@latin]=Pieraŭtvareńnie źviestak „Nepomuk”
 Name[ca]=S'està convertint les dades del Nepomuk
 Name[de]=Nepomuk-Daten werden umgewandelt.
 Name[el]=Μετατροπή δεδομένων Nepomuk
@@ -167,6 +174,7 @@ Name[uk]=Перетворення даних Nepomuk
 Name[x-test]=xxConverting Nepomuk dataxx
 Name[zh_TW]=轉換 Nepomuk 資料中...
 Comment=All Nepomuk data is converted to a new storage backend
+Comment[be@latin]=Usie źviestki „Nepomuk” pieraŭtvoranyja dla novaha schovišča.
 Comment[ca]=S'està convertint totes les dades del Nepumuk a un nou dorsal d'emmagatzematge
 Comment[de]=Alle Nepomuk-Daten wurden in das neue Speicherformat umgewandelt.
 Comment[el]=Όλα τα δεδομένα Nepomuk μετατράπηκαν στο νέο σύστημα αποθήκης
@@ -188,7 +196,9 @@ Action=Popup
 
 [Event/convertingNepomukDataFailed]
 Name=Converting Nepomuk data failed
+Name[be@latin]=Nie ŭdałosia pieraŭtvaryć źviestki „Nepomuk”.
 Name[ca]=La conversió de dades del Nepomuk ha fallat
+Name[de]=Die Nepomuk-Daten-Umwandlung ist fehlgeschlagen
 Name[el]=Αποτυχία μετατροπής δεδομένων Nepomuk
 Name[gu]=નેપોમુક માહિતી ફેરવવાનું નિષ્ફળ
 Name[ja]=Nepomuk データの変換失敗
@@ -203,7 +213,9 @@ Name[uk]=Спроба перетворення даних Nepomuk заверши
 Name[x-test]=xxConverting Nepomuk data failedxx
 Name[zh_TW]=轉換 Nepomuk 資料失敗
 Comment=Converting Nepomuk data to a new backend failed
+Comment[be@latin]=Nie ŭdałosia pieraŭtvaryć źviestki „Nepomuk” dla novaha schovišča.
 Comment[ca]=La conversió de dades del Nepomuk a un dorsal nou ha fallat
+Comment[de]=Die Nepomuk-Daten-Umwandlung für den neuen Treiber ist fehlgeschlagen.
 Comment[el]=Αποτυχία μετατροπής δεδομένων Nepomuk στο νέο σύστημα υποστήριξης
 Comment[gu]=નેપોમુક માહિતીને નવાં બેકએન્ડમાં ફેરવવાનું નિષ્ફળ ગયું
 Comment[hsb]=Konwertěrowanje Nepomukowych datow za nowy backend je zwrěšćiło.
@@ -223,7 +235,9 @@ Action=Popup
 
 [Event/convertingNepomukDataDone]
 Name=Converting Nepomuk data done
+Name[be@latin]=Pieraŭtvareńnie źviestak „Nepomuk” skončanaje.
 Name[ca]=S'ha fet la conversió de dades del Nepomuk
+Name[de]=Nepomuk-Daten-Umwandlung
 Name[el]=Ολοκλήρωση μετατροπής δεδομένων Nepomuk
 Name[gu]=નેપોમુક માહિતી ફેરવવાનું પૂર્ણ
 Name[ja]=Nepomuk データの変換完了
@@ -238,7 +252,9 @@ Name[uk]=Перетворення даних Nepomuk завершено
 Name[x-test]=xxConverting Nepomuk data donexx
 Name[zh_TW]=轉換 Nepomuk 資料完成
 Comment=Successfully converted Nepomuk data to new backend
+Comment[be@latin]=Pieraŭtvareńnie źviestak „Nepomuk” dla novaj versii paśpiachova skončanaje.
 Comment[ca]=Les dades del Nepomuk s'han convertit correctament a un dorsal nou
+Comment[de]=Die Nepomuk-Daten-Umwandlung für den neuen Treiber ist abgeschlossen.
 Comment[el]=Επιτυχία μετατροπής δεδομένων Nepomuk στο νέο σύστημα υποστήριξης
 Comment[gu]=નેપોમુક માહિતીને નવા બેકએન્ડમાં સફળતાપૂર્વક ફેરવી દેવામાં આવી
 Comment[hsb]=Konwertěrowanje Nepomukowych datow za nowy backend wuspěšne.

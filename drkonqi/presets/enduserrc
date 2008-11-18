@@ -215,6 +215,7 @@ Name[zh_TW]=應用程式 %progname（%appname），行程代碼 %pid，崩潰並
 Enable=true
 Name=Please help us improve the software you use by filing a report at <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Useful details include how to reproduce the error, documents that were loaded, etc.
 Name[af]=Jy kan 'n foutrapport instuur vir die program. Kyk eers of dit by <a href=http://bugs.kde.org">http://bugs.kde.org</a> gelys is, anders kan jy die outeur direk kontak. Sluit asb. soveel inligting as moontlik in. As jy weet hoe om die probleem te reproduseer, sluit asb. ook 'n beskrywing daarvan in.
+Name[be@latin]=Kali łaska, dapamažy nam udaskanalić hetuju prahramu - paviedam nam pra hetuju chibu na staroncy: <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Dobra, kali ty paviedamiš nam pra sposab, u jaki možna paŭtaryć hetuju pamyłku, układzieš u paviedamleńnie dakumenty, ź jakimi ŭ toj momant pracavaŭ itp.
 Name[bg]=Моля, помогнете ни да подобрим софтуера като съобщите за тази грешка на <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Опишете как е възникнала грешката, кои документи са били заредени и т.н.
 Name[ca]=Si us plau, ajudeu-nos a millorar el programari que utilitzeu omplint un informe a <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Els detalls útils són com reproduir l'error, el documents carregats,  etc.
 Name[cs]=Prosím pomožte nám zlepšit software, který používáte tak, že vyplníte hlášení o chybě na <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Užitečnými detaily je např. postup jak chybu vyvolat, otevřené dokumenty atd.
@@ -276,6 +277,7 @@ Name[sr]=СИГИЛЛ
 Name[x-test]=xxSIGILLxx
 Comment=An application mostly receives the SIGILL signal due to a bug in the application. The application was asked to save its documents.
 Comment[af]='n Toepassing ontvang meestal die SIGILL sein as gevolg van 'n fout in die toepassing. die Toepassing is gevra om sy dokumente te stoor.
+Comment[be@latin]=Chutčej za ŭsio, kali aplikacyja atrymvaje syhnał „SIGILL”, značyć, u joj jość chiba. Aplikacyja atrymała zahad zapisać svaje dakumenty.
 Comment[bg]=Сигналът SIGILL обикновено се получава поради грешка в самата програма. В този случай програмите имат възможност да запишат всички отворени документи и да завършат работата си по нормален начин.
 Comment[bn]=কোনো অ্যাপলিকেশন SIGILL সিগনালটি সাধারণত তখনই পায় যদি তাতে কোনো বাগ থাকে। অ্যাপলিকেশনটিকে তার সমস্ত নথী সংরক্ষণ করতে অনুরোধ করা হয়েছে।
 Comment[bn_IN]=কোনো অ্যাপলিকেশন SIGILL সিগনালটি সাধারণত তখনই পায় যদি তাতে কোনো বাগ থাকে। অ্যাপলিকেশনটিকে তার সমস্ত নথী সংরক্ষণ করতে অনুরোধ করা হয়েছে।
@@ -345,6 +347,7 @@ Name[sr]=СИГАБРТ
 Name[x-test]=xxSIGABRTxx
 Comment=An application terminates with a SIGABRT signal when it detects an internal inconsistency caused by a bug in the program.
 Comment[af]='n Toepassing termineer met 'n SIGABRT sein wanneer dit 'n interneinkonsekwentheid bespeur wat veroorsaak is deur 'n fout in die program.
+Comment[be@latin]=Aplikacyja zakončvaje pracavać z syhnałam „SIGABRT”, kali znachodzić u sabie niaŭzhodnienaść, jakaja vynikaje z nutranoj chiby ŭ prahramnym kodzie.
 Comment[bg]=Програмите биват спирани със сигнал SIGABRT, когато възникне сериозна и неочаквана грешка в тях или се случи нещо непредвидено.
 Comment[bn]=কোনো অ্যাপলিকেশন SIGABRT সিগনালটি সমেত বন্ধ হয় যখন অ্যাপলিকেশনটিতে কোনো বাগ-এর ফলে সেটি একটি অভ্যন্তরীণ অসামঞ্জস্যের মুখোমুখি হয়।
 Comment[bn_IN]=কোনো অ্যাপলিকেশন SIGABRT সিগনালটি সমেত বন্ধ হয় যখন অ্যাপলিকেশনটিতে কোনো বাগ-এর ফলে সেটি একটি অভ্যন্তরীণ অসামঞ্জস্যের মুখোমুখি হয়।
@@ -413,6 +416,7 @@ Name[sr]=СИГФПЕ
 Name[x-test]=xxSIGFPExx
 Comment=An application mostly receives the SIGFPE signal due to a bug in the application. The application was asked to save its documents.
 Comment[af]='n Toepassing ontvang meestal die SIGFPE sein as gevolg na 'n fout in die toepassing. Die toepassing is gevra om sy dokumente te stoor.
+Comment[be@latin]=Chutčej za ŭsio, kali aplikacyja atrymvaje syhnał „SIGFPE”, značyć, u joj jość chiba. Aplikacyja atrymała zahad zapisać svaje dakumenty.
 Comment[bg]=Сигналът SIGFPE обикновено се получава поради грешка в самата програма. В този случай програмите имат възможност да запишат всички отворени документи и да завършат работата си по нормален начин.
 Comment[bn]=কোনো অ্যাপলিকেশন SIGFPE সিগনালটি সাধারণত তখনই পায় যদি তাতে কোনো বাগ থাকে। অ্যাপলিকেশনটিকে তার সমস্ত নথী সংরক্ষণ করতে অনুরোধ করা হয়েছে।
 Comment[bn_IN]=কোনো অ্যাপলিকেশন SIGFPE সিগনালটি সাধারণত তখনই পায় যদি তাতে কোনো বাগ থাকে। অ্যাপলিকেশনটিকে তার সমস্ত নথী সংরক্ষণ করতে অনুরোধ করা হয়েছে।
@@ -482,6 +486,7 @@ Name[sr]=СИГСЕГВ
 Name[x-test]=xxSIGSEGVxx
 Comment=An application mostly receives the SIGSEGV signal due to a bug in the application. The application was asked to save its documents.
 Comment[af]='n Toepassing ontvang die SIGSEGV sein as gevolg na 'n fout in die toepassing. Die toepassing is gevra om sy dokumente te stoor.
+Comment[be@latin]=Chutčej za ŭsio, kali aplikacyja atrymvaje syhnał „SIGSEGV”, značyć, u joj jość chiba. Aplikacyja atrymała zahad zapisać svaje dakumenty.
 Comment[bg]=Сигналът SIGSEGV обикновено се получава поради грешка в самата програма. В този случай програмите имат възможност да запишат всички отворени документи и да завършат работата си по нормален начин.
 Comment[bn]=কোনো অ্যাপলিকেশন SIGSEGV সিগনালটি সাধারণত তখনই পায় যদি তাতে কোনো বাগ থাকে। অ্যাপলিকেশনটিকে তার সমস্ত নথী সংরক্ষণ করতে অনুরোধ করা হয়েছে।
 Comment[bn_IN]=কোনো অ্যাপলিকেশন SIGSEGV সিগনালটি সাধারণত তখনই পায় যদি তাতে কোনো বাগ থাকে। অ্যাপলিকেশনটিকে তার সমস্ত নথী সংরক্ষণ করতে অনুরোধ করা হয়েছে।
