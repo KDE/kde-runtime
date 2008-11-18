@@ -190,7 +190,7 @@ void KCMKNotify::load()
 
 	m_playerSettings->load();
 
-	emit changed(true);
+	emit changed(false);
 
 }
 
@@ -238,6 +238,7 @@ void PlayerSettingsDialog::load()
     {
         m_ui->cbNone->setChecked( config.readEntry( "No sound", false ) );
     }
+    emit changed( false );
     m_change=false;
 }
 
