@@ -1,8 +1,5 @@
 [KCM Locale]
 Name=Timor-Leste
-Name[gl]=Timor do Leste
-Name[pt]=Timor-Leste
-Name[pt_BR]=Timor-Leste
 Region=southeastasia
 Languages=pt,en_GB,id
 #DecimalSymbol=,
