@@ -20,7 +20,6 @@
 #include "sopranoindexmanager.h"
 #include "sopranoindexwriter.h"
 #include "sopranoindexreader.h"
-#include "nepomukmainmodel.h"
 
 #include <strigi/strigiconfig.h>
 
@@ -35,17 +34,17 @@
 #include <QtCore/QDebug>
 #include <QtCore/QString>
 
+#include <Nepomuk/ResourceManager>
+
 
 class Strigi::Soprano::IndexManager::Private
 {
 public:
     Private()
-        : repository( 0 ),
-          writer( 0 ),
+        : writer( 0 ),
           reader( 0 ) {
     }
 
-    ::Soprano::Model* repository;
     IndexWriter* writer;
     IndexReader* reader;
 };
@@ -55,12 +54,10 @@ extern "C" {
 // we do not use REGISTER_STRIGI_INDEXMANAGER as we do have to perform some additional checks
 STRIGI_EXPORT Strigi::IndexManager* createIndexManager( const char* )
 {
-    Nepomuk::MainModel* model = new Nepomuk::MainModel();
-    if( model->isValid() ) {
-        return new Strigi::Soprano::IndexManager( model );
+    if( Nepomuk::ResourceManager::instance()->init() == 0 ) {
+        return new Strigi::Soprano::IndexManager();
     }
     else {
-        delete model;
         return 0;
     }
 }
@@ -71,10 +68,9 @@ STRIGI_EXPORT void deleteIndexManager( Strigi::IndexManager* m )
 }
 }
 
-Strigi::Soprano::IndexManager::IndexManager( ::Soprano::Model* model )
+Strigi::Soprano::IndexManager::IndexManager()
 {
     d = new Private;
-    d->repository = model;
 }
 
 
@@ -83,7 +79,6 @@ Strigi::Soprano::IndexManager::~IndexManager()
     qDebug() << "Cleaning up SopranoIndexManager";
     delete d->reader;
     delete d->writer;
-    delete d->repository;
     delete d;
 }
 
@@ -92,7 +87,7 @@ Strigi::IndexReader* Strigi::Soprano::IndexManager::indexReader()
 {
     if ( !d->reader ) {
         qDebug() << "(Soprano::IndexManager) creating IndexReader";
-        d->reader = new Strigi::Soprano::IndexReader( d->repository );
+        d->reader = new Strigi::Soprano::IndexReader( Nepomuk::ResourceManager::instance()->mainModel() );
     }
 
     return d->reader;
@@ -103,7 +98,7 @@ Strigi::IndexWriter* Strigi::Soprano::IndexManager::indexWriter()
 {
     if ( !d->writer ) {
         qDebug() << "(Soprano::IndexManager) creating IndexWriter";
-        d->writer = new Strigi::Soprano::IndexWriter( d->repository );
+        d->writer = new Strigi::Soprano::IndexWriter( Nepomuk::ResourceManager::instance()->mainModel() );
     }
 
     return d->writer;

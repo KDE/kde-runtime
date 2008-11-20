@@ -21,8 +21,6 @@
 #include "util.h"
 
 #include <Soprano/Soprano>
-#include <Soprano/Index/IndexFilterModel>
-#include <Soprano/Index/CLuceneIndex>
 #include <Soprano/Vocabulary/RDF>
 #include <Soprano/Vocabulary/Xesam>
 #include <Soprano/LiteralValue>
@@ -171,7 +169,6 @@ public:
         }
     }
 
-//    ::Soprano::Index::IndexFilterModel* repository;
     ::Soprano::Model* repository;
     int indexTransactionID;
 

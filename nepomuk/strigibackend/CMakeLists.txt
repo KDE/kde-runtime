@@ -13,7 +13,6 @@ set( strigi_soprano_indexer_SRCS
   sopranoindexwriter.cpp
   util.cpp
   tstring.cpp
-  nepomukmainmodel.cpp
 )
 
 # CLucene requires exception support
@@ -38,9 +37,10 @@ set_target_properties(sopranobackend PROPERTIES PREFIX ${prefix})
 
 target_link_libraries(sopranobackend
   ${STRIGI_STREAMANALYZER_LIBRARY}
+  ${NEPOMUK_LIBRARIES}
   ${SOPRANO_LIBRARIES}
-  ${SOPRANO_INDEX_LIBRARIES}
   ${SOPRANO_CLIENT_LIBRARIES}
+  ${SOPRANO_INDEX_LIBRARIES}
   ${QT_QTCORE_LIBRARY}
   ${CLUCENE_LIBRARY}
   ${KDE4_KDECORE_LIBS}

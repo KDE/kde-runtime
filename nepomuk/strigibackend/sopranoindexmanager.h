@@ -24,10 +24,6 @@
 
 class QString;
 
-namespace Soprano {
-    class Model;
-}
-
 namespace Strigi {
 
     class IndexReader;
@@ -37,7 +33,7 @@ namespace Strigi {
         class IndexManager : public Strigi::IndexManager
         {
         public:
-            IndexManager( ::Soprano::Model* );
+            IndexManager();
             ~IndexManager();
 
             Strigi::IndexReader* indexReader();
