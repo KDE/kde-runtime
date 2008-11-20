@@ -94,13 +94,10 @@ KIconConfig::KIconConfig(const KComponentData &inst, QWidget *parent)
     lbl->setBuddy(mpSizeBox);
     grid->addWidget(mpSizeBox, 0, 1, Qt::AlignLeft);
 
-    mpDPCheck = new QCheckBox(i18n("Double-sized pixels"), m_pTab1);
-    connect(mpDPCheck, SIGNAL(toggled(bool)), SLOT(slotDPCheck(bool)));
-    grid->addWidget(mpDPCheck, 1, 0, 1, 2, Qt::AlignLeft);
-
     mpAnimatedCheck = new QCheckBox(i18n("Animate icons"), m_pTab1);
     connect(mpAnimatedCheck, SIGNAL(toggled(bool)), SLOT(slotAnimatedCheck(bool)));
     grid->addWidget(mpAnimatedCheck, 2, 0, 1, 2, Qt::AlignLeft);
+    grid->setRowStretch(3, 10);
 
     top->activate();
 
@@ -181,7 +178,6 @@ void KIconConfig::initDefaults()
     QStringList::ConstIterator it;
     for(it=mGroups.constBegin(), i=KIconLoader::FirstGroup; it!=mGroups.constEnd(); ++it, i++)
     {
-	mbDP[i] = false;
 	mbChanged[i] = true;
 	mbAnimated[i] = false;
 	if (mpLoader->theme())
@@ -247,7 +243,6 @@ void KIconConfig::read()
 
         KConfigGroup iconGroup(mpConfig, *it + "Icons");
 	mSizes[i] = iconGroup.readEntry("Size", mSizes[i]);
-	mbDP[i] = iconGroup.readEntry("DoublePixels", mbDP[i]);
 	mbAnimated[i] = iconGroup.readEntry("Animated", mbAnimated[i]);
 
 	for (it2=mStates.constBegin(), j=0; it2!=mStates.constEnd(); ++it2, j++)
@@ -300,7 +295,6 @@ void KIconConfig::apply()
             mpSizeBox->setCurrentIndex(index);
             mSizes[mUsage] = size; // best or exact match
         }
-        mpDPCheck->setChecked(mbDP[mUsage]);
         mpAnimatedCheck->setChecked(mbAnimated[mUsage]);
     }
 }
@@ -314,11 +308,6 @@ void KIconConfig::preview(int i)
 
     QPixmap pm = mpLoader->loadIcon(mExample, KIconLoader::NoGroup, mSizes[viewedGroup]);
     QImage img = pm.toImage();
-    if (mbDP[viewedGroup])
-    {
-	int w = img.width() * 2;
-	img = img.scaled(w, w, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-    }
 
     Effect &effect = mEffects[viewedGroup][i];
 
@@ -354,7 +343,6 @@ void KIconConfig::save()
     {
 	KConfigGroup cg(mpConfig, *it + "Icons");
 	cg.writeEntry("Size", mSizes[i], KConfig::Normal|KConfig::Global);
-	cg.writeEntry("DoublePixels", mbDP[i], KConfig::Normal|KConfig::Global);
 	cg.writeEntry("Animated", mbAnimated[i], KConfig::Normal|KConfig::Global);
 	for (it2=mStates.constBegin(), j=0; it2!=mStates.constEnd(); ++it2, j++)
 	{
@@ -420,13 +408,11 @@ void KIconConfig::slotUsage(int index)
     if ( mUsage == KIconLoader::Panel || mUsage == KIconLoader::LastGroup )
     {
         mpSizeBox->setEnabled(false);
-        mpDPCheck->setEnabled(false);
 	mpAnimatedCheck->setEnabled( mUsage == KIconLoader::Panel );
     }
     else
     {
         mpSizeBox->setEnabled(true);
-        mpDPCheck->setEnabled(true);
 	mpAnimatedCheck->setEnabled( mUsage == KIconLoader::Desktop );
     }
 
@@ -440,11 +426,6 @@ void KIconConfig::EffectSetup(int state)
 
     QPixmap pm = mpLoader->loadIcon(mExample, KIconLoader::NoGroup, mSizes[viewedGroup]);
     QImage img = pm.toImage();
-    if (mbDP[viewedGroup])
-    {
-	int w = img.width() * 2;
-	img = img.scaled(w, w, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-    }
 
     QString caption;
     switch (state)
@@ -487,19 +468,6 @@ void KIconConfig::slotSize(int index)
     preview();
     emit changed(true);
     mbChanged[mUsage] = true;
-}
-
-void KIconConfig::slotDPCheck(bool check)
-{
-    Q_ASSERT(mUsage < KIconLoader::LastGroup);
-    if (mbDP[mUsage] != check)
-    {
-        mbDP[mUsage] = check;
-        emit changed(true);
-        mbChanged[mUsage] = true;
-    }
-    preview();
-
 }
 
 void KIconConfig::slotAnimatedCheck(bool check)

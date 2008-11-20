@@ -69,7 +69,6 @@ private Q_SLOTS:
 
     void slotUsage(int index);
     void slotSize(int index);
-    void slotDPCheck(bool check);
     void slotAnimatedCheck(bool check);
 
 private:
@@ -82,7 +81,7 @@ private:
     void apply();
 
 
-    bool mbDP[6], mbChanged[6], mbAnimated[6];
+    bool mbChanged[6], mbAnimated[6];
     int mSizes[6];
     QList<int> mAvSizes[6];
 
@@ -101,7 +100,7 @@ private:
 
     QListWidget *mpUsageList;
     QComboBox *mpSizeBox;
-    QCheckBox *mpDPCheck, *wordWrapCB, *underlineCB, *mpAnimatedCheck;
+    QCheckBox *wordWrapCB, *underlineCB, *mpAnimatedCheck;
     QTabWidget *m_pTabWidget;
     QWidget *m_pTab1;
 };
