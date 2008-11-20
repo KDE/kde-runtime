@@ -12,6 +12,7 @@ X-KDE-System-Settings-Parent-Category=regional-and-language
 X-KDE-Weight=70
 
 Name=Spell Checker
+Name[ar]=مدقق إملائي
 Name[be@latin]=Spraŭdžvańnie pravapisu
 Name[bg]=Проверка на правописа
 Name[bn]=বানান পরীক্ষক
@@ -80,6 +81,7 @@ Name[zh_CN]=拼写检查器
 Name[zh_TW]=拼字檢查器
 
 Comment=Configure the spell checker
+Comment[ar]=أعدّ المصحح الإملائي
 Comment[be@latin]=Naładź spraŭdžvańnie pravapisu
 Comment[bg]=Настройване проверката на правописа
 Comment[bn]=বানান পরীক্ষক কনফিগার করুন

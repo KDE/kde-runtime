@@ -1,6 +1,7 @@
 [General]
 Name=Developer
 Name[af]=Ontwikkeling
+Name[ar]=المطوّر
 Name[be@latin]=Raspracoŭnik
 Name[bg]=Разработка
 Name[bn]=ডেভেলপার
@@ -71,6 +72,7 @@ Name[zh_CN]=开发者
 Name[zh_TW]=開發者
 Comment=Settings preferred for developers
 Comment[af]=Instellings verkies vir ontwikkelaars
+Comment[ar]=الاعدادات المفضلة للمطورين
 Comment[be@latin]=Nałady, ułaścivyja raspracoŭnikam
 Comment[bg]=Настройки за разработчици
 Comment[bn]=ডেভেলপারদের পছন্দের সেটিং
@@ -149,6 +151,7 @@ DisableChecks=true
 Enable=true
 Name=The application %progname (%appname), pid %pid, crashed and caused the signal %signum (%signame).
 Name[af]=Die toepassing %progname (%appname), pid %pid, het gestaak en veroorsaak Die sein %signum (%signame).
+Name[ar]=التطبيق انهار بسبب اشارة
 Name[be@latin]=Aplikacyja %progname (%appname), PID %pid, źniščyłasia, padaŭšy syhnał %signum (%signame).
 Name[bg]=В програмата %progname (%appname) с номер (pid) %pid възникна фатална грешка, предизвиквайки сигнал %signum (%signame).
 Name[bn]=%progname (%appname) প্রোগ্রামটি, pid %pid, ক্র্যাশ করেছে এবং এই সিগনাল পাঠিয়েছে: %signum (%signame)
@@ -218,6 +221,7 @@ Name[zh_TW]=應用程式 %progname（%appname），行程代碼 %pid，崩潰並
 Enable=true
 Name=You might want to fix your program. Take a look at the backtrace tab.
 Name[af]=Jy dalk wil hê na regmaak jou program. Neem 'n kyk na die terugsoektog oortjie.
+Name[ar]=ربما تريد ان تصلح برنامجك.هل تريد القاء نظرة على جدول التتبع؟
 Name[be@latin]=Kali ty chočaš vypravić hetuju prahramu, možaš pahladzieć u źmieściva „backtrace”.
 Name[bg]=За допълнителна информация погледнете описанието на грешката.
 Name[bn]=আপনার প্রোগ্রামে সম্ভবত কিছু গণ্ডগোল আছে। backtrace ট্যাব দেখুন।
@@ -290,6 +294,7 @@ Name[sr]=СИГИЛЛ
 Name[x-test]=xxSIGILLxx
 Comment=Illegal instruction.
 Comment[af]=Onwettige instruksie.
+Comment[ar]=تنصيب غير قانوني
 Comment[be@latin]=Niapravilnaja instrukcyja.
 Comment[bg]=Недопустима инструкция.
 Comment[bn]=অবৈধ আজ্ঞা
@@ -358,10 +363,12 @@ Comment[zh_TW]=不合法的指令。
 
 [6]
 Name=SIGABRT
+Name[ar]=ارسل البرنامج اشارة لافشال العملية
 Name[sr]=СИГАБРТ
 Name[x-test]=xxSIGABRTxx
 Comment=Aborted.
 Comment[af]=Opgegee
+Comment[ar]=الغي
 Comment[be@latin]=Pierarvana.
 Comment[bg]=Прекъснато.
 Comment[bn_IN]=পরিত্যক্ত।
@@ -424,10 +431,12 @@ Comment[zh_TW]=被中止。
 
 [8]
 Name=SIGFPE
+Name[ar]=ارسل البرنامج رسالة مشوهة
 Name[sr]=СИГФПЕ
 Name[x-test]=xxSIGFPExx
 Comment=Floating point exception.
 Comment[af]=Wissel punt uitsondering.
+Comment[ar]=استثناء النقط العائمة
 Comment[be@latin]=Niaŭdałaja aperacyja ź niezafiksavanym punktam.
 Comment[bg]=Грешка при изчисления с плаваща запетая.
 Comment[bn_IN]=ফ্লোটিং পয়েন্ট এক্সেপশন।
@@ -490,10 +499,12 @@ Comment[zh_TW]=浮點運算出現錯誤。
 
 [11]
 Name=SIGSEGV
+Name[ar]=ارسل البرنامج اشارة ذاكرة غير صحيحة
 Name[sr]=СИГСЕГВ
 Name[x-test]=xxSIGSEGVxx
 Comment=Invalid memory reference.
 Comment[af]=Ongeldige geheue verwysing.
+Comment[ar]=اشارة ذاكرة خاطئة
 Comment[be@latin]=Niapravilnaja spasyłańnie ŭ pamiać.
 Comment[bg]=Невалидно обръщане към паметта.
 Comment[bn]=অবৈধ মেমরি রেফারেন্স
@@ -560,6 +571,7 @@ Comment[zh_TW]=記憶體區段錯誤。
 [unknown]
 Name=Unknown
 Name[af]=Onbekend
+Name[ar]=مجهول
 Name[be@latin]=Nieviadomy
 Name[bg]=Неизвестен
 Name[bn]=অজ্ঞাত
@@ -630,6 +642,7 @@ Name[zh_CN]=未知
 Name[zh_TW]=未知
 Comment=This signal is unknown.
 Comment[af]=Hierdie sein is onbekende.
+Comment[ar]=هذه الرسالة مجهولة
 Comment[be@latin]=Hety syhnał nieviadomy.
 Comment[bg]=Сигналът е непознат.
 Comment[bn]=অজ্ঞাত সংকেত

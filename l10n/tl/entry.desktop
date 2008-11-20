@@ -1,5 +1,10 @@
 [KCM Locale]
 Name=Timor-Leste
+Name[el]=Τιμόρ-Λέστε
+Name[it]=Timor Est
+Name[kk]=Тимор-Лесте
+Name[sv]=Östtimor
+Name[uk]=Східний Тимор
 Region=southeastasia
 Languages=pt,en_GB,id
 #DecimalSymbol=,

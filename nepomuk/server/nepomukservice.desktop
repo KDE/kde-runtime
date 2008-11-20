@@ -3,6 +3,7 @@ Type=ServiceType
 X-KDE-ServiceType=NepomukService
 Comment=Nepomuk Service
 Comment[af]=Nepomuk diens
+Comment[ar]=خادم Nepomuk
 Comment[be@latin]=Słužba „Nepomuk”
 Comment[bg]=Услуга Nepomuk
 Comment[bn_IN]=Nepomuk পরিসেবা
