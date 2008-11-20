@@ -118,7 +118,7 @@ currency symbol appears after the numeric value.</para>
 <para>There are five choices for the way in which the sign of the
 currency value is handled:</para>
 <itemizedlist>
-<listitem><para>The <guilabel>Parens around</guilabel>
+<listitem><para>The <guilabel>Parentheses around</guilabel>
 option displays the numeric value within a pair of
 parentheses.</para></listitem>
 <listitem><para>The <guilabel>Before quantity money</guilabel>
