@@ -1,6 +1,6 @@
 include_directories(${KDE4_KIO_INCLUDES} ${ALSA_INCLUDES})
 set(kde_PART_SRCS
-	kdepluginfactory.cpp
+	kdeplatformplugin.cpp
 	kiomediastream.cpp
    devicelisting.cpp
 	)

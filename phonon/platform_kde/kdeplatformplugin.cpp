@@ -17,7 +17,7 @@
 
 */
 
-#include "kdepluginfactory.h"
+#include "kdeplatformplugin.h"
 #include "kiomediastream.h"
 
 #include <QtCore/QDir>
@@ -317,5 +317,5 @@ QList<QPair<QByteArray, QString> > KdePlatformPlugin::deviceAccessListFor(const 
 
 Q_EXPORT_PLUGIN2(phonon_platform_kde, Phonon::KdePlatformPlugin)
 
-#include "kdepluginfactory.moc"
+#include "kdeplatformplugin.moc"
 // vim: sw=4 sts=4 et tw=100
