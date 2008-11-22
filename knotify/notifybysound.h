@@ -49,6 +49,7 @@ class NotifyBySound : public KNotifyPlugin
 
 	private Q_SLOTS:
 		void slotSoundFinished(int id);
+		void closeNow();
 };
 
 #endif

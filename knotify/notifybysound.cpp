@@ -31,6 +31,8 @@
 // QT headers
 #include <QHash>
 #include <QtCore/QBasicTimer>
+#include <QtCore/QQueue>
+#include <QtCore/QTimer>
 #include <QtCore/QTimerEvent>
 #include <QtCore/QStack>
 #include <QSignalMapper>
@@ -138,6 +140,7 @@ class NotifyBySound::Private
 		QSignalMapper *signalmapper;
 		PlayerPool playerPool;
 		QBasicTimer poolTimer;
+		QQueue<int> closeQueue;
 
 		int volume;
 
@@ -287,9 +290,17 @@ void NotifyBySound::slotSoundFinished(int id)
 	finish(id);
 }
 
-
 void NotifyBySound::close(int id)
 {
+	// close in 1 min - ugly workaround for sounds getting cut off because the close call in kdelibs
+	// is hardcoded to 6 seconds
+	d->closeQueue.enqueue(id);
+	QTimer::singleShot(60000, this, SLOT(closeNow()));
+}
+
+void NotifyBySound::closeNow()
+{
+	const int id = d->closeQueue.dequeue();
 	if(d->playerObjects.contains(id))
 	{
 		Player *p = d->playerObjects.take(id);
