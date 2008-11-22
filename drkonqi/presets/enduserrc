@@ -170,6 +170,7 @@ Name[fy]=De applikaasje %progname (%appname) is ferûngelike en aktivearre it si
 Name[ga]=Thuairteáil feidhmchlár %progname (%appname) agus thug sé comhartha %signum (%signame).
 Name[gl]=O programa %progname (%appname) pechouse inesperadamente e provocou o sinal %signum (%signame).
 Name[gu]=કાર્યક્મ %progname (%appname) બંધ થયેલ છે અને તેનાં કારણે આ સિગ્નલ થયું છે %signum (%signame).
+Name[he]=היישום %progname ‏(%appname) קרס וגרם לסיגנל %signum ‏(%signame).
 Name[hr]=Došlo je do rušenja aplikacije %progname (%appname), te je izazvan signal %signum (%signame).
 Name[hsb]=Aplikacija %progname (%appname) je so pójsnyła a signal %signum (%signame) zawiniła.
 Name[hu]=Egy alkalmazás lefagyott. Név: %progname (%appname). Az okozott szignál: %signum (%signame).
@@ -236,6 +237,7 @@ Name[fy]=Help ús om de sêftguod te ferbetterjen troch it ynfoljen fan in rapor
 Name[ga]=Cabhraigh linn an bogearra seo a fheabhsú trí thuairisc a sheoladh chuig <a href="http://bugs.kde.org">http://bugs.kde.org/</a> maidir leis an earráid seo. Rudaí le cur san áireamh: conas a dhéantar an earráid, cáipéisí a bhí luchtaithe, srl.
 Name[gl]=Por favor axúdenos a mellorar os programas que empregue enviándonos un informe de erro a <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Inclúa detalles acerca do xeito de reproducir o erro, que documentos tiña cargados, etc.
 Name[gu]=મહેરબાની કરી અમને બગ અહેવાલ આ જગ્યા પર ભરીને <a href="http://bugs.kde.org">http://bugs.kde.org</a> સોફ્ટવેરમાં સુધારો કરવામાં મદદ કરો. ઉપયોગી માહિતીમાં જેવીકે આ ક્ષતિ ફરી કઇ રીતે ઉભી કરવી, લાવવામાં આવેલ દસ્તાવેજો વગેરે નો સમાવેશ થાય છે.
+Name[he]=עזור לנו לשפר את התוכנה על ידי מילוי של טופס שגיאה בכתובת (אנגלית בלבד, אלא אם כן קשור לתרגום עברי) <a href="http://bugs.kde.org">http://bugs.kde.org</a>. פרטים מועילים כוללים הוראות לשחזור השגיאה, מסמכים שנפתחו וכו'.
 Name[hr]=Pomozite nam u poboljšavaju softvera koji koristite. Ispunite izvještaj na adresi <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Upišite detalje kao što su način reprodiciranja pogreške, učitana dokumentacija itd.
 Name[hsb]=Prošu pomhajće nam program, kotryž wužiwaće, zlěpšić a rozprawće wo zmylku pola <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Wužitna informacija je, kak so zmylk wuwoła, dokumenty, kotrež běchu začitane, etc.
 Name[hu]=Kérjük segítse a munkánkat és jelentse be a hibát itt: <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Célszerű megadni a hiba reprodukálásának módját (angolul), a betöltött dokumentumok listáját stb.
@@ -302,6 +304,7 @@ Comment[fy]=In applikaasje ûntfangt meastentiids it SIGILL-sinjaal fanwege in b
 Comment[ga]=Go hiondúil, faigheann feidhmchlár comhartha SIGILL de bhrí go bhfuil fabht ann. Fiafraíodh den fheidhmchlár a chuid cáipéisí a shábháil.
 Comment[gl]=Os programas receben o sinal SIGILL seguramente por mor dun erro interno. Pediuselle ao programa que garde os documentos.
 Comment[gu]=કાર્યક્રમ મોટાભાગે તેમાં રહેલ ક્ષતિને કારણે SIGILL સિગ્નલ મેળવે છે. કાર્યક્રમને તેનાં દસ્તાવેજો સંગ્રહવાનું કહેવામાં આવ્યું હતું.
+Comment[he]=יישום לרב מקבל את הסיגנל SIGKILL בגלל באג ביישום. היישום מתבקש לשמור את המסמכים שלו.
 Comment[hr]=Aplikacija najčešće prima SIGILL signal zbog nedostatka unutar aplikacije. Od aplikacije je zatraženo da spremi svoje dokumente.
 Comment[hsb]=Aplikacija dóstanje signal SIGKILL zwjetša dla programowanskeho zmylka. Aplikacija je najskerje swoje dokumenty zawěsćiła.
 Comment[hu]=SIGILL szignál valamilyen programhiba válthat ki. Bezáródás előtt a program jelzést kap, hogy mentse el a nyitott dokumentumokat.
@@ -374,6 +377,7 @@ Comment[fy]=In applikaasje wurdt ôfsluten mei in SIGABRT-sinjaal as it in ynter
 Comment[ga]=Stopann feidhmchlár le comhartha SIGABRT nuair a bhraitheann sé bunoscionntacht inmheánach agus is fabht sa ríomhchlár is cúis leis.
 Comment[gl]=Os programas rematan cun sinal SIGABRT cando detectan unha inconsistencia interna causada por un erro no programa.
 Comment[gu]=કાર્યક્રમ SIGABRT સિગ્નલ સાથે બંધ થાય છે જ્યારે તે કાર્યક્રમની અંદરની ક્ષતિને કારણે આંતરિક અસંગતતા મેળવે છે.
+Comment[he]=יישום מסתיים בסיגנל SIGABRT כאשר הוא מזהה חוסר עקבעיות הנגרם בגלל באג ביישום.
 Comment[hr]=Aplikacija prekida s radom uz SIGABRT signal kad otkrije internu nedosljednost prouzrokovanu nedostatkom unutar aplikacije.
 Comment[hsb]=Aplikacija so skónči ze signalom SIGABRT, hdyž so zwěsći nutřkowna njekonsistenca, zawinjena přez zmylk w programje.
 Comment[hu]=SIGABRT szignált akkor válthat ki egy program, ha valamilyen belső inkonzisztencia lép fel, például egy programhiba miatt.
@@ -445,6 +449,7 @@ Comment[fy]=In applikaasje ûntfangt meastentiids it SIGFPE -sinjaal fanwege in 
 Comment[ga]=Go hiondúil, faigheann feidhmchlár comhartha SIGFPE de bhrí go bhfuil fabht ann. Fiafraíodh den fheidhmchlár a chuid cáipéisí a shábháil.
 Comment[gl]=Os programas receben o sinal SIGFPE seguramente por mor dun erro interno. Pediuselle ao programa que garde os documentos.
 Comment[gu]=કાર્યક્રમ મોટાભાગે તેમાં રહેલ ક્ષતિને કારણે SIGFPE સિગ્નલ મેળવે છે. કાર્યક્રમને તેનાં દસ્તાવેજો સંગ્રહવાનું કહેવામાં આવ્યું હતું.
+Comment[he]=יישום לרב מקבל את הסיגנל מסוג SIGFPE בגלל באגים ביישום. היישום מתבקש לשמור את המסמכים שלו.
 Comment[hr]=Aplikacija najčešće prima SIGFPE signal zbog nedostatka unutar aplikacije. Od aplikacije je zatraženo da spremi svoje dokumente.
 Comment[hsb]=Aplikacija dóstanje signal SIGFPE přez zmylk w programje. Aplikacija je najskerje swoje dokumenty zawěsćiła.
 Comment[hu]=SIGFPE szignált valamilyen programhiba válthat ki. Bezáródás előtt a program jelzést kap, hogy mentse el a nyitott dokumentumokat.
@@ -517,6 +522,7 @@ Comment[fy]=In applikaasje ûntfangt meastentiids it SIGSEGV -sinjaal fanwege in
 Comment[ga]=Go hiondúil, faigheann feidhmchlár comhartha SIGSEGV de bhrí go bhfuil fabht ann. Fiafraíodh den fheidhmchlár a chuid cáipéisí a shábháil.
 Comment[gl]=Un programa recebe o sinal SIGSEGV seguramente por mor dun erro interno. Pedíuselle ao programa que garde os documentos.
 Comment[gu]=કાર્યક્રમ મોટાભાગે તેમાં રહેલ ક્ષતિને કારણે SIGSEGV સિગ્નલ મેળવે છે. કાર્યક્રમને તેનાં દસ્તાવેજો સંગ્રહવાનું કહેવામાં આવ્યું હતું.
+Comment[he]=יישום מסתיים בסיגנל SIGSEGV כאשר הוא מזהה חוסר עקבעיות הנגרם בגלל באג ביישום. היישום מתבקש לשמור את המסמכים שלו.
 Comment[hr]=Aplikacija najčešće prima SIGSEGV signal zbog nedostatka unutar aplikacije. Od aplikacije je zatraženo da spremi svoje dokumente.
 Comment[hsb]=Aplikacija dóstanje signal SIGSEGV přez zmylk w programje. Aplikacija je najskerje swoje dokumenty zawěsćiła.
 Comment[hu]=SIGSEGV szignált valamilyen programhiba válthat ki. Bezáródás előtt a program jelzést kap, hogy mentse el a nyitott dokumentumokat.
@@ -657,6 +663,7 @@ Comment[fy]=Sorry, ik wit net hokker sinjaal dit is.
 Comment[ga]=Tá brón orm, níl aithne agam ar an chomhartha seo.
 Comment[gl]=Este sinal é descoñecido.
 Comment[gu]=માફ કરશો, હું આ સિગ્નલ જાણતો નથી.
+Comment[he]=מצטער, הסיגנל לא מוכר.
 Comment[hr]=Nažalost, ovaj signal nije prepoznat.
 Comment[hsb]=Je mi žel, tutón signal njeznaju.
 Comment[hu]=Ez egy ismeretlen szignál.
