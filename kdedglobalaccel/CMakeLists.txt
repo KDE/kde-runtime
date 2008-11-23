@@ -37,3 +37,4 @@ endif(Q_WS_MAC)
 install( TARGETS kded_globalaccel DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 install( FILES kdedglobalaccel.desktop DESTINATION ${SERVICES_INSTALL_DIR}/kded )
+install( FILES kconf/kdedglobalaccel_kde42.upd DESTINATION ${DATA_INSTALL_DIR}/kconf_update)
