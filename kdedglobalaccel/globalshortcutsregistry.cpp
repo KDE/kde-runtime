@@ -344,7 +344,16 @@ void GlobalShortcutsRegistry::writeSettings() const
             GlobalShortcutsRegistry::self()->allMainComponents())
         {
         KConfigGroup configGroup(&_config, component->uniqueName());
-        component->writeSettings(configGroup);
+        if (component->allShortcuts().count() > 0)
+            {
+            component->writeSettings(configGroup);
+            }
+        else
+            {
+            qDebug() << "removing component " << component->uniqueName();
+            configGroup.deleteGroup();
+            delete component;
+            }
         }
 
     _config.sync();
