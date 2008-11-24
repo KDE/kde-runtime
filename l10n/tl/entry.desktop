@@ -1,5 +1,6 @@
 [KCM Locale]
 Name=Timor-Leste
+Name[de]=Osttimor
 Name[el]=Τιμόρ-Λέστε
 Name[gu]=તિમોર-લેસ્તે
 Name[it]=Timor Est
@@ -7,6 +8,7 @@ Name[kk]=Тимор-Лесте
 Name[lv]=Austrumtimora
 Name[nds]=Oost-Timor
 Name[sv]=Östtimor
+Name[th]=ติมอร์ตะวันออก
 Name[uk]=Східний Тимор
 Name[zh_CN]=东帝汶
 Region=southeastasia
