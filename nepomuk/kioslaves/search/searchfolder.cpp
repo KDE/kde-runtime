@@ -83,7 +83,7 @@ Nepomuk::SearchFolder::SearchFolder( const QString& name, const Search::Query& q
       m_listEntries( false ),
       m_statingStarted( false )
 {
-    kDebug() << QThread::currentThread();
+    kDebug() << name << QThread::currentThread();
     Q_ASSERT( !name.isEmpty() );
 
     qRegisterMetaType<QList<QUrl> >();
@@ -92,7 +92,7 @@ Nepomuk::SearchFolder::SearchFolder( const QString& name, const Search::Query& q
 
 Nepomuk::SearchFolder::~SearchFolder()
 {
-    kDebug() << m_name;
+    kDebug() << m_name << QThread::currentThread();
 
     // properly shut down the search thread
     quit();
@@ -104,7 +104,8 @@ Nepomuk::SearchFolder::~SearchFolder()
 
 void Nepomuk::SearchFolder::run()
 {
-    kDebug() << QThread::currentThread();
+    kDebug() << m_name << QThread::currentThread();
+
     m_client = new Nepomuk::Search::QueryServiceClient();
 
     // results signals are connected directly to update the results cache m_results
@@ -118,33 +119,28 @@ void Nepomuk::SearchFolder::run()
              this, SLOT( slotEntriesRemoved( const QList<QUrl>& ) ),
              Qt::DirectConnection );
 
-    SearchFolderHelper helper( this );
-
-    // finished signal is connected queued since it triggers the wrap method
-    // which calls SlaveBase methods like listEntry and it is only called once
-    // while we still have the event loop -> no problems there
+    // slotFinishedListing needs to be called in the GUi thread
     connect( m_client, SIGNAL( finishedListing() ),
-             &helper, SLOT( slotFinishedListing() ),
+             this, SLOT( slotFinishedListing() ),
              Qt::QueuedConnection );
 
     m_client->query( m_query );
     exec();
     delete m_client;
-    kDebug() << "done";
+
+    kDebug() << m_name << "done";
 }
 
 
 void Nepomuk::SearchFolder::list()
 {
-    kDebug();
+    kDebug() << m_name << QThread::currentThread();
 
     m_listEntries = !m_initialListingFinished;
     m_statEntry = false;
 
     if ( !isRunning() ) {
         start();
-        // we get queued signals from m_client, thus we need to be in the same thread
-//        moveToThread( this );
     }
     else {
         // list all cached entries
@@ -169,7 +165,7 @@ void Nepomuk::SearchFolder::list()
         if ( !m_statingStarted ) {
             QTimer::singleShot( 0, this, SLOT( slotStatNextResult() ) );
         }
-        kDebug() << "entering loop";
+        kDebug() << "entering loop" << m_name << QThread::currentThread();
         m_loop.exec();
     }
 }
@@ -191,8 +187,6 @@ void Nepomuk::SearchFolder::stat( const QString& name )
 
         if ( !isRunning() ) {
             start();
-            // we get queued signals from m_client, thus we need to be in the same thread
-//            moveToThread( this );
         }
 
         if ( !m_statingStarted ) {
@@ -232,7 +226,7 @@ Nepomuk::SearchEntry* Nepomuk::SearchFolder::findEntry( const KUrl& url ) const
 // always called in search thread
 void Nepomuk::SearchFolder::slotNewEntries( const QList<Nepomuk::Search::Result>& results )
 {
-    kDebug() << QThread::currentThread();
+    kDebug() << m_name << QThread::currentThread();
 
     m_resultMutex.lock();
     m_results += results;
@@ -267,10 +261,10 @@ void Nepomuk::SearchFolder::slotEntriesRemoved( const QList<QUrl>& entries )
 }
 
 
-// always called in main thread
+// always called in search thread
 void Nepomuk::SearchFolder::slotFinishedListing()
 {
-    kDebug() << QThread::currentThread();
+    kDebug() << m_name << QThread::currentThread();
     m_initialListingFinished = true;
     wrap();
 }
@@ -328,6 +322,8 @@ void Nepomuk::SearchFolder::slotStatNextResult()
 // always called in main thread
 void Nepomuk::SearchFolder::wrap()
 {
+    kDebug() << m_name << QThread::currentThread();
+
     if ( m_results.isEmpty() &&
          m_initialListingFinished &&
          m_loop.isRunning() ) {
@@ -350,7 +346,7 @@ void Nepomuk::SearchFolder::wrap()
         m_statingStarted = false;
         m_listEntries = false;
         m_statEntry = false;
-        kDebug() << "exiting loop";
+        kDebug() << m_name << QThread::currentThread() << "exiting loop";
         m_loop.exit();
     }
 }
@@ -389,7 +385,7 @@ Nepomuk::SearchEntry* Nepomuk::SearchFolder::statResult( const Search::Result& r
     //
     // The nepomuk resource listing is the same as in the nepomuk kio slave.
     // So either only depend on that or let the nepomuk kio slave fail on each
-    // stat.
+    // stat. (the latter means that we need the nepomuk kio slave in kdebase)
     //
     if ( !isFile ) {
         kDebug() << "listing resource" << result.resourceUri();

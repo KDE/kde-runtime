@@ -142,33 +142,6 @@ namespace Nepomuk {
 
         // mutex to protect the results
         QMutex m_resultMutex;
-
-        friend class SearchFolderHelper;
-    };
-
-    /**
-     * This class has only one purpose: catch the finished
-     * signal from the QueryServiceClient and forward it to
-     * the folder. We need this class since Qt cannot send
-     * events between different threads and we need a queued
-     * connection.
-     */
-    class SearchFolderHelper : public QObject
-    {
-        Q_OBJECT
-
-    public:
-        SearchFolderHelper( SearchFolder* folder )
-            : QObject( 0 ),
-            m_folder(folder) {}
-
-    private Q_SLOTS:
-        void slotFinishedListing() {
-            m_folder->slotFinishedListing();
-        }
-
-    private:
-        SearchFolder* m_folder;
     };
 }
 
