@@ -246,7 +246,7 @@ void GlobalShortcutsRegistry::loadSettings()
                 this);
 
         // Now load the contexts
-        Q_FOREACH(QString context, configGroup.groupList())
+        Q_FOREACH(const QString& context, configGroup.groupList())
             {
             // Skip the friendly name group
             if (context=="Friendly Name") continue;
