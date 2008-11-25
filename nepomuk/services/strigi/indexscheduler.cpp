@@ -37,6 +37,7 @@
 #include <map>
 #include <vector>
 
+#include <strigi/strigiconfig.h>
 #include <strigi/indexwriter.h>
 #include <strigi/indexmanager.h>
 #include <strigi/indexreader.h>
@@ -49,6 +50,9 @@ class StoppableConfiguration : public Strigi::AnalyzerConfiguration {
 public:
     StoppableConfiguration()
         : m_stop(false) {
+#if STRIGI_IS_VERSION( 0, 6, 1 )
+        setIndexArchiveContents( false );
+#endif
     }
 
     bool indexMore() const {
