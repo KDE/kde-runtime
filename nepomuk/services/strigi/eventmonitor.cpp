@@ -115,7 +115,7 @@ void Nepomuk::EventMonitor::updateWatches()
 
 void Nepomuk::EventMonitor::slotDirDirty( const QString& path )
 {
-    if ( Config::self()->shouldFolderBeIndex( path ) ) {
+    if ( Config::self()->shouldFolderBeIndexed( path ) ) {
         m_indexScheduler->updateDir( path );
     }
 }

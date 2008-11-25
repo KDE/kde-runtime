@@ -71,7 +71,7 @@ namespace Nepomuk {
          * Check if the folder should be indexed based on 
          * folders() and excludeFolders()
          */
-        bool shouldFolderBeIndex( const QString& );
+        bool shouldFolderBeIndexed( const QString& );
 
     Q_SIGNALS:
         void configChanged();

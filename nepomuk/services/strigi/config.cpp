@@ -108,7 +108,7 @@ bool Nepomuk::Config::isInitialRun() const
 }
 
 
-bool Nepomuk::Config::shouldFolderBeIndex( const QString& path )
+bool Nepomuk::Config::shouldFolderBeIndexed( const QString& path )
 {
     QStringList inDirs = folders();
     QStringList exDirs = excludeFolders();
@@ -125,7 +125,7 @@ bool Nepomuk::Config::shouldFolderBeIndex( const QString& path )
             return false;
         }
         else {
-            return shouldFolderBeIndex( parent );
+            return shouldFolderBeIndexed( parent );
         }
     }
 }
