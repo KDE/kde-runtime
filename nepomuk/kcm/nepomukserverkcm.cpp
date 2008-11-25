@@ -137,6 +137,7 @@ void Nepomuk::ServerConfigModule::load()
     }
 
     slotUpdateStrigiStatus();
+    emit changed(false);
 }
 
 
@@ -168,6 +169,7 @@ void Nepomuk::ServerConfigModule::save()
     }
 
     slotUpdateStrigiStatus();
+    emit changed(false);
 }
 
 
