@@ -123,8 +123,6 @@ public:
 
     void setDBusPath(const QDBusObjectPath &path);
 
-    void setInactive();
-
     bool unregisterKey(int key, GlobalShortcut *shortcut);
 
 Q_SIGNALS:

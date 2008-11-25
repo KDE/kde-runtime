@@ -213,7 +213,7 @@ KdedGlobalAccel::~KdedGlobalAccel()
 {
     // Unregister all currently registered actions. Enables the module to be
     // loaded / unloaded by kded.
-    GlobalShortcutsRegistry::self()->setInactive();
+    GlobalShortcutsRegistry::self()->deactivateShortcuts();
     delete d;
 }
 

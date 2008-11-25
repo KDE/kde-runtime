@@ -299,19 +299,6 @@ void GlobalShortcutsRegistry::setDBusPath(const QDBusObjectPath &path)
     }
 
 
-void GlobalShortcutsRegistry::setInactive()
-    {
-    kDebug();
-
-    // Unregister all currently registered actions. Enables the module to be
-    // loaded / unloaded by kded.
-    Q_FOREACH (KdeDGlobalAccel::Component *component, _components)
-        {
-        component->activateShortcuts();
-        }
-    }
-
-
 KdeDGlobalAccel::Component *GlobalShortcutsRegistry::takeComponent(KdeDGlobalAccel::Component *component)
     {
     QDBusConnection conn(QDBusConnection::sessionBus());
