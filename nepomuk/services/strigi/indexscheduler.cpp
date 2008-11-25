@@ -50,8 +50,10 @@ class StoppableConfiguration : public Strigi::AnalyzerConfiguration {
 public:
     StoppableConfiguration()
         : m_stop(false) {
+#if defined(STRIGI_IS_VERSION) 
 #if STRIGI_IS_VERSION( 0, 6, 1 )
         setIndexArchiveContents( false );
+#endif
 #endif
     }
 
