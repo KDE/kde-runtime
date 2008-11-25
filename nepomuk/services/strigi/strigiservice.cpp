@@ -31,10 +31,15 @@
 #include <strigi/indexpluginloader.h>
 #include <strigi/indexmanager.h>
 
+#include <nepomuk/resourcemanager.h>
+
 
 Nepomuk::StrigiService::StrigiService( QObject* parent, const QList<QVariant>& )
     : Service( parent, true )
 {
+    // only so ResourceManager won't open yet another connection to the nepomuk server
+    ResourceManager::instance()->setOverrideMainModel( mainModel() );
+
     // lower process priority - we do not want to spoil KDE usage
     // ==============================================================
     if ( !lowerPriority() )
