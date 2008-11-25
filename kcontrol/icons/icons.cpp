@@ -67,11 +67,11 @@ KIconConfig::KIconConfig(const KComponentData &inst, QWidget *parent)
 
     QPushButton *push;
 
-    push = addPreviewIcon(0, i18n("Default"), this, g_lay);
+    push = addPreviewIcon(0, i18nc("@label The icon rendered by default", "Default"), this, g_lay);
     connect(push, SIGNAL(clicked()), SLOT(slotEffectSetup0()));
-    push = addPreviewIcon(1, i18n("Active"), this, g_lay);
+    push = addPreviewIcon(1, i18nc("@label The icon rendered as active", "Active"), this, g_lay);
     connect(push, SIGNAL(clicked()), SLOT(slotEffectSetup1()));
-    push = addPreviewIcon(2, i18n("Disabled"), this, g_lay);
+    push = addPreviewIcon(2, i18nc("@label The icon rendered as disabled", "Disabled"), this, g_lay);
     connect(push, SIGNAL(clicked()), SLOT(slotEffectSetup2()));
 
     m_pTab1 = new QWidget(this);
