@@ -46,11 +46,13 @@
 #include <strigi/analyzerconfiguration.h>
 
 
+// FIXME: remove all files from the datastore which are in folders not supposed to be indexed
+
 class StoppableConfiguration : public Strigi::AnalyzerConfiguration {
 public:
     StoppableConfiguration()
         : m_stop(false) {
-#if defined(STRIGI_IS_VERSION) 
+#if defined(STRIGI_IS_VERSION)
 #if STRIGI_IS_VERSION( 0, 6, 1 )
         setIndexArchiveContents( false );
 #endif
@@ -267,6 +269,8 @@ bool Nepomuk::IndexScheduler::updateDir( const QString& dir, Strigi::StreamAnaly
 
         QFileInfo fileInfo = dirIt.fileInfo();
 
+        bool indexFile = m_analyzerConfig->indexFile( QFile::encodeName( path ), QFile::encodeName( fileInfo.fileName() ) );
+
         // check if this file is new by looking it up in the store
         std::map<std::string, time_t>::iterator filesInStoreIt = filesInStore.find( QFile::encodeName( path ).data() );
         bool newFile = ( filesInStoreIt == filesInStoreEnd );
@@ -274,17 +278,17 @@ bool Nepomuk::IndexScheduler::updateDir( const QString& dir, Strigi::StreamAnaly
         // do we need to update? Did the file change?
         bool fileChanged = !newFile && fileInfo.lastModified().toTime_t() != filesInStoreIt->second;
 
-        if ( newFile || fileChanged )
+        if ( indexFile && ( newFile || fileChanged ) )
             filesToIndex << fileInfo;
 
-        if ( !newFile && fileChanged )
+        if ( !newFile && ( fileChanged || !indexFile ) )
             filesToDelete.push_back( filesInStoreIt->first );
 
         // cleanup a bit for faster lookups
         if ( !newFile )
             filesInStore.erase( filesInStoreIt );
 
-        if ( recursive && fileInfo.isDir() && !fileInfo.isSymLink() )
+        if ( indexFile && recursive && fileInfo.isDir() && !fileInfo.isSymLink() )
             subFolders << path;
     }
 
@@ -305,11 +309,11 @@ bool Nepomuk::IndexScheduler::updateDir( const QString& dir, Strigi::StreamAnaly
     // analyze all files that are new or need updating
     foreach( const QFileInfo& file, filesToIndex ) {
 
-        analyzeFile( file, analyzer );
-
         // wait if we are suspended or return if we are stopped
         if ( !waitForContinue() )
             return false;
+
+        analyzeFile( file, analyzer );
     }
 
     // recurse into subdirs (we do this in a separate loop to always keep a proper state:
