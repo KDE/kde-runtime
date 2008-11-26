@@ -42,10 +42,11 @@ namespace Nepomuk {
 
     private Q_SLOTS:
         void slotUpdateStrigiStatus();
+        void recreateStrigiInterface();
 
     private:
         org::kde::NepomukServer m_serverInterface;
-        org::kde::nepomuk::Strigi m_strigiInterface;
+        org::kde::nepomuk::Strigi* m_strigiInterface;
 
         FolderSelectionModel* m_folderModel;
     };
