@@ -57,8 +57,9 @@ public Q_SLOTS:
   void registerDebuggingApplication(const QString& launchName);
 
 public:
-  QString debugger() const { return m_debugger; }
-  QString debuggerBatch() const { return m_debuggerBatch; }
+  QString debuggerName() const { return m_debuggerName; }
+  QString debuggerCommand() const { return m_debuggerCommand; }
+  QString debuggerBatchCommand() const { return m_debuggerBatchCommand; }
   QString tryExec() const { return m_tryExec; }
   QString backtraceCommand() const { return m_backtraceCommand; }
   QString removeFromBacktraceRegExp() const { return m_removeFromBacktraceRegExp; }
@@ -67,7 +68,7 @@ public:
   QString neededInValidBacktraceRegExp() const { return m_neededInValidBacktraceRegExp; }
   QString kcrashRegExp() const { return m_kcrashRegExp; }
   bool showBacktrace() const { return m_showbacktrace; }
-  bool showDebugger() const { return m_showdebugger && !m_debugger.isNull(); }
+  bool showDebugger() const { return m_showdebugger && !m_debuggerCommand.isNull(); }
   bool showBugReport() const { return m_showbugreport; }
   bool disableChecks() const { return m_disablechecks; }
   const KAboutData *aboutData() const { return m_aboutData; }
@@ -105,8 +106,9 @@ private:
   QString m_errorDescriptionText;
   QString m_execname;
 
-  QString m_debugger;
-  QString m_debuggerBatch;
+  QString m_debuggerName;
+  QString m_debuggerCommand;
+  QString m_debuggerBatchCommand;
   QString m_tryExec;
   QString m_backtraceCommand;
   QString m_removeFromBacktraceRegExp;

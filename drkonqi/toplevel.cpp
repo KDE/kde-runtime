@@ -36,7 +36,7 @@
 #include <kmessagebox.h>
 #include <kapplication.h>
 
-#include "backtrace.h"
+#include "backtracegdb.h"
 #include "drbugreport.h"
 #include "debugger.h"
 #include "krashconf.h"
@@ -181,7 +181,11 @@ void Toplevel :: slotUser1()
     QApplication::setOverrideCursor ( Qt::WaitCursor );
 
     // generate the backtrace
-    BackTrace *backtrace = new BackTrace(m_krashconf, this);
+    BackTrace *backtrace;
+    if(m_krashconf->debuggerName() == "gdb" )
+        backtrace = new BackTraceGdb(m_krashconf, this);
+    else
+        return;
     connect(backtrace, SIGNAL(someError()), SLOT(slotBacktraceSomeError()));
     connect(backtrace, SIGNAL(done(const QString &)),
             SLOT(slotBacktraceDone(const QString &)));
@@ -200,7 +204,7 @@ void Toplevel :: slotUser1()
 
 void Toplevel :: slotUser2()
 {
-  QString str = m_krashconf->debugger();
+  QString str = m_krashconf->debuggerCommand();
   m_krashconf->expandString(str, KrashConfig::ExpansionUsageShell);
 
   KProcess proc;
