@@ -62,12 +62,14 @@ Comment[el]=Υπηρεσία αποθήκης του Nepomuk
 Comment[es]=Servicio Nepomuk de almacenamiento
 Comment[et]=Nepomuki salvestiteenus
 Comment[gu]=નેપોમુક સંગ્રહ સેવા
+Comment[he]=שירותי האחסון המידע של Nepomuk
 Comment[hsb]=Nepomuk Storage Service
 Comment[it]=Il servizio di archiviazione di Nepomuk
 Comment[ja]=Nepomuk ストレージサービス
 Comment[kk]=Nepomuk сақтау қызметі
 Comment[km]=សេវា​ផ្ទុក​របស់ Nepomuk
 Comment[lv]=Nepomuk glabāšanas serviss
+Comment[ml]=നെപോമുക് സൂക്ഷിപ്പു് സേവനം
 Comment[nb]=Nepomuk lagringstjeneste
 Comment[nds]=De Nepomuk-Wohrdeenst
 Comment[nl]=De Nepomuk-opslagdienst
@@ -90,12 +92,14 @@ Name[el]=Ανακατασκευή ευρετηρίου Nepomuk
 Name[es]=Reconstruyendo el índice de Nepomuk
 Name[et]=Nepomuki indeksi taasloomine
 Name[gu]=નેપોમુક અનુક્રમ ફરી બનાવે છે
+Name[he]=בונה מחדש את האינדקס של Neapomuk
 Name[hsb]=Indeks za Nepomuk znowa natwarjam
 Name[it]=Ricostruzione dell'indice di Nepomuk
 Name[ja]=Nepomuk インデックスを再構築
 Name[kk]=Nepomuk индексін қайта құру
 Name[km]=ស្ថាបនា​លិបិក្រម Nepomuk ឡើង​វិញ
 Name[lv]=Pārbūvē Nepomuk indeksu
+Name[ml]=നെപോമുക് സൂചിക വിണ്ടും ഉണ്ടാക്കിക്കൊണ്ടിരിയ്ക്കുന്നു
 Name[nb]=Bygger om Nepomuk-registeret
 Name[nds]=Nepomuk-Index warrt nieg opstellt
 Name[nl]=Nepomuk-index opnieuw bouwen
@@ -121,6 +125,7 @@ Comment[ja]=新しい機能のために Nepomuk の全文検索インデック�
 Comment[kk]=Nepomuk толық мәтінді іздеу индексі жаңа мүмкіндіктермен қайта құрылды
 Comment[km]=លិបិក្រម​​អត្ថបទ​ពេញលេញរបស់ Nepomuk ត្រូ​វបាន​ស្ថាបនា​សម្រាប់​លក្ខណៈ​ពិសេស​ថ្មីៗ
 Comment[lv]=Nepomuk meklēšanas indekss tiek pārbūvēts, lai iekļautu jaunas iespējas
+Comment[ml]=പുതിയ കഴിവുകള്‍ക്കായി നെപോമുക്കിന്റം മുഴുവന്‍ പദാവലിയുടേയും സൂചിക വീണ്ടും ഉണ്ടാക്കിക്കൊണ്ടിരിയ്ക്കുന്നു
 Comment[nb]=Nepomuks register for fulltekst-søk blir bygget på nytt for nye muligheter
 Comment[nds]=De Heeltext-Söökindex vun Nepomuk warrt för niege Funkschonen nieg opbuut
 Comment[nl]=De Nepomuk-zoekindex wordt opnieuw gebouwd voor nieuwe functionaliteit
@@ -149,6 +154,7 @@ Name[ja]=Nepomuk インデックスの再構築完了
 Name[kk]=Nepomuk индексі қайта құрылды
 Name[km]=ការ​ស្ថាបនា​លិបិក្រម Nepomuk បាន​ធ្វើ​រួច
 Name[lv]=Nepomuk indeksa pārbūvēšana pabeigta
+Name[ml]=നെപോമുക് സൂചിക വിണ്ടും ഉണ്ടാക്കുന്നതു് തീര്‍ന്നു
 Name[nb]=Nepomuk-registeret er ferdig ombygget
 Name[nds]=Niegopstellen vun Nepomuk-Index afslaten
 Name[nl]=Opnieuw bouwen van Nepomuk-index is voltooid
@@ -174,6 +180,7 @@ Comment[ja]=Nepomuk の全文検索インデックスの再構築が完了しま
 Comment[kk]=Nepomuk толық мәтінді іздеу индексі қайта құрылды.
 Comment[km]=ការ​ស្ថាបនាលិបិក្រម​ស្វែងរក​អត្ថបទ​ពេញលេញរបស់ Nepomuk ត្រូវ​បាន​ធ្វើ​រួច ។
 Comment[lv]=Pabeigta Nepomuk pilnas teksta meklēšanas indeksa pārbūve.
+Comment[ml]=പുതിയ കഴിവുകള്‍ക്കായി നെപോമുക്കിന്റം മുഴുവന്‍ പദാവലിയുടേയും സൂചിക വീണ്ടും ഉണ്ടാക്കുന്നതു് തീര്‍ന്നു.
 Comment[nb]=Nepomuks register for fulltekst-søk er ferdig bygget på nytt.
 Comment[nds]=Dat Niegopbuen vun Nepomuk sien Heeltext-Söökindex is afslaten.
 Comment[nl]=Het opnieuw bouwen van de Nepomuk-zoekindex is voltooid.
@@ -202,6 +209,7 @@ Name[ja]=Nepomuk データを変換
 Name[kk]=Nepomuk деректерін аудару
 Name[km]=បម្លែង​ទិន្នន័យ Nepomuk
 Name[lv]=Konvertē Nepomuk datus
+Name[ml]=നെപോമുക് ഡാറ്റ മാറ്റിക്കൊണ്ടിരിയ്ക്കുന്നു
 Name[nb]=Konvertering av Nepomuk-data
 Name[nds]=Nepomuk-Daten warrt ümwannelt
 Name[nl]=Nepomuk-gegevens converteren
@@ -226,6 +234,7 @@ Comment[ja]=すべての Nepomuk データを新しいストレージバック�
 Comment[kk]=Nepomuk деректері жаңа сақтау тетігіне арнап аударылды
 Comment[km]=ទិន្នន័យ Nepomuk ទាំង​អស់​ត្រូ​វបាន​បម្លែង​ទៅ​កម្មវិធី​ផ្នែក​ខាង​ក្រោយ​ផ្នុក​ថ្មី
 Comment[lv]=Visi Nepomuk dati ir konvertēti uz jaunu glabāšanas aizmuguri
+Comment[ml]=പുതിയ സൂക്ഷിപ്പു് സംവിധാനത്തിലേയ്ക്കു് എല്ലാ നെപോമുക് ഡാറ്റയും മാറ്റിക്കഴിഞ്ഞു
 Comment[nb]=Alle Nepomuk-data er konvertert til et nytt lagringsbakstykke
 Comment[nds]=All Nepomuk-Daten warrt för en nieg Hülpprogramm ümwannelt
 Comment[nl]=Alle Nepomuk-gegevens zijn geconverteerd naar de nieuwe opslagbackend
@@ -253,6 +262,7 @@ Name[ja]=Nepomuk データの変換失敗
 Name[kk]=Nepomuk деректерін аудару жаңылысы
 Name[km]=បាន​បរាជ័យ​ក្នុងកា​របម្លែង​ទិន្នន័យ Nepomuk
 Name[lv]=Neizdevās konvertēt Nepomuk datus
+Name[ml]=നെപോമുക് ഡാറ്റ മാറ്റുന്നതു് പരാജയപ്പെട്ടു
 Name[nb]=Konvertering av Nepomuk-databasen mislyktes
 Name[nds]=Ümwanneln vun Nepomuk-Daten fehlslaan
 Name[nl]=Converteren van Nepomuk-gegevens is mislukt
@@ -277,6 +287,7 @@ Comment[ja]=Nepomuk のデータを新しいバックエンド用に変換でき
 Comment[kk]=Nepomuk деректері жаңа сақтау тетігіне аудару жаңылды
 Comment[km]=បាន​បរាជ័យ​ក្នុងការ​បម្លែង​ទិន្នន័យ Nepomuk ទៅ​ជា​កម្មវិធី​ផ្នែក​ខាង​ក្រោយ​ថ្មី
 Comment[lv]=Neizdevās konvertēt Nepomuk datus uz jaunu aizmuguri
+Comment[ml]=പുതിയ സൂക്ഷിപ്പു് സംവിധാനത്തിലേയ്ക്കു് നെപോമുക് ഡാറ്റ മാറ്റുന്നതു് പരാജയപ്പെട്ടു
 Comment[nb]=Konvertering av Nepomuk-data til et nytt bakstykke lyktes ikke
 Comment[nds]=Ümwanneln vun Nepomuk-Daten för en nieg Hülpprogramm fehlslaan
 Comment[nl]=Het converteren van de Nepomuk-gegevens naar een nieuwe backend is mislukt
@@ -304,6 +315,7 @@ Name[ja]=Nepomuk データの変換完了
 Name[kk]=Nepomuk деректері аударылды
 Name[km]=បម្លែង​ទិន្នន័យ Nepomuk បាន​ធ្វើ​រួច
 Name[lv]=Pabeigta Nepomuk datu konvertēšana
+Name[ml]=നെപോമുക് ഡാറ്റ മാറ്റുന്നതു് തീര്‍ന്നു
 Name[nb]=Konvertering av Nepomuk-data ferdig
 Name[nds]=Ümwanneln vun Nepomuk-Daten afslaten
 Name[nl]=Converteren van Nepomuk-gegevens voltooid
@@ -328,6 +340,7 @@ Comment[ja]=Nepomuk のデータを新しいバックエンド用に変換しま
 Comment[kk]=Nepomuk деректері жаңа сақтау тетігіне аудару сәтті өтті
 Comment[km]=បាន​បម្លែង​ទិន្នន័យ Nepomuk ដោយ​ជោគជ័យ​ទៅ​កម្មវិធី​ផ្នែក​ខាង​ក្រោយ​ថ្មី
 Comment[lv]=Nepomuk dati veiksmīgi konvertēti uz jaunu aizmuguri
+Comment[ml]=പുതിയ സൂക്ഷിപ്പു് സംവിധാനത്തിലേയ്ക്കു് എല്ലാ നെപോമുക് ഡാറ്റയും വിജയകരമായി മാറ്റിക്കഴിഞ്ഞു
 Comment[nb]=Fullført konvertering av Nepomuk-data til et nytt bakstykke
 Comment[nds]=Nepomuk-Daten mit Spood för nieg Hülpprogramm ümwannelt
 Comment[nl]=De Nepomuk-gegevens zijn succesvol geconverteerd naar de nieuwe backend
