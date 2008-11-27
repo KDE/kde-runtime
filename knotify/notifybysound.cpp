@@ -61,7 +61,7 @@ struct Player
 		Phonon::createPath(media, output);
 	}
 
-	inline void play(const QString &file) { media->setCurrentSource(file); media->play(); }
+	inline void play(const QString &file) { media->setCurrentSource(file); media->enqueue(Phonon::MediaSource()); media->play(); }
 	inline void stop() { media->stop(); }
 	inline void setVolume(float volume) { output->setVolume(volume); }
 
@@ -78,7 +78,7 @@ struct Player
 class PlayerPool
 {
 	public:
-		PlayerPool() : m_volume(1.0) {}
+		PlayerPool() : m_idlePlayer(0), m_volume(1.0) {}
 
 		Player *getPlayer();
 		void returnPlayer(Player *);
@@ -87,7 +87,7 @@ class PlayerPool
 		void setVolume(float volume);
 
 	private:
-		QStack<Player *> m_playerPool;
+		Player *m_idlePlayer;
 		QList<Player *> m_playersInUse;
 		float m_volume;
 };
@@ -95,10 +95,11 @@ class PlayerPool
 Player *PlayerPool::getPlayer()
 {
 	Player *p = 0;
-	if (m_playerPool.isEmpty()) {
+	if (!m_idlePlayer) {
 		p = new Player;
 	} else {
-		p = m_playerPool.pop();
+		p = m_idlePlayer;
+		m_idlePlayer = 0;
 	}
 	p->setVolume(m_volume);
 	m_playersInUse << p;
@@ -108,17 +109,17 @@ Player *PlayerPool::getPlayer()
 void PlayerPool::returnPlayer(Player *p)
 {
 	m_playersInUse.removeAll(p);
-	if (m_playerPool.size() > 2) {
+	if (m_idlePlayer) {
 		delete p;
 	} else {
-		m_playerPool.push(p);
+		m_idlePlayer = p;
 	}
 }
 
 void PlayerPool::clear()
 {
-	qDeleteAll(m_playerPool);
-	m_playerPool.clear();
+	delete m_idlePlayer;
+	m_idlePlayer = 0;
 }
 
 void PlayerPool::setVolume(float v)
@@ -280,7 +281,7 @@ void NotifyBySound::slotSoundFinished(int id)
 		Player *player=d->playerObjects.take(id);
 		disconnect(player->media, SIGNAL(finished()), d->signalmapper, SLOT(map()));
 		d->playerPool.returnPlayer(player);
-		d->poolTimer.start(1000, this);
+		//d->poolTimer.start(1000, this);
 	}
 	if(d->processes.contains(id))
 	{
@@ -306,7 +307,7 @@ void NotifyBySound::closeNow()
 		Player *p = d->playerObjects.take(id);
 		p->stop();
 		d->playerPool.returnPlayer(p);
-		d->poolTimer.start(1000, this);
+		//d->poolTimer.start(1000, this);
 	}
 	if(d->processes.contains(id))
 	{
