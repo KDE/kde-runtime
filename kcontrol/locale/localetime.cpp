@@ -350,15 +350,12 @@ void KLocaleConfigTime::save()
   if (prayDay != m_locale->weekDayOfPray())
       group.writeEntry("WeekDayOfPray", m_locale->weekDayOfPray(), KConfig::Persistent|KConfig::Global);
 
-  if ( m_locale->nounDeclension() )
-  {
-    bool b;
-    b = entGrp.readEntry("DateMonthNamePossessive", false);
-    group.deleteEntry("DateMonthNamePossessive", KConfig::Persistent | KConfig::Global);
-    if (b != m_locale->dateMonthNamePossessive())
+  bool b;
+  b = entGrp.readEntry("DateMonthNamePossessive", false);
+  group.deleteEntry("DateMonthNamePossessive", KConfig::Persistent | KConfig::Global);
+  if (b != m_locale->dateMonthNamePossessive())
       group.writeEntry("DateMonthNamePossessive",
-		         m_locale->dateMonthNamePossessive(), KConfig::Persistent|KConfig::Global);
-  }
+                       m_locale->dateMonthNamePossessive(), KConfig::Persistent|KConfig::Global);
 
   group.sync();
 }
