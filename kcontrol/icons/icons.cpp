@@ -369,7 +369,7 @@ void KIconConfig::save()
 		break;
 	    }
 	    cg.writeEntry(*it2 + "Effect", tmp, KConfig::Normal|KConfig::Global);
-	    cg.writeEntry(*it2 + "Value", int(mEffects[i][j].value), KConfig::Normal|KConfig::Global);
+	    cg.writeEntry(*it2 + "Value", mEffects[i][j].value, KConfig::Normal|KConfig::Global);
             cg.writeEntry(*it2 + "Color", mEffects[i][j].color, KConfig::Normal|KConfig::Global);
             cg.writeEntry(*it2 + "Color2", mEffects[i][j].color2, KConfig::Normal|KConfig::Global);
             cg.writeEntry(*it2 + "SemiTransparent", mEffects[i][j].transparent, KConfig::Normal|KConfig::Global);
