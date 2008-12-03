@@ -316,7 +316,7 @@ every package you want to install.</para></step>
 <term>Installation of the source <filename>.tar.bz2</filename> files</term>
 <listitem>
 <para>Since there are always changes and updates to the way &kde; is compiled, please
-refer to <ulink url="http://developer.kde.org/build/index.html">Download and Install from Source</ulink> for the most up to date installation instructions for the source packages. 
+refer to <ulink url="http://techbase.kde.org/Getting_Started/Build">Download and Install from Source</ulink> for the most up to date installation instructions for the source packages.
 </para>
 <para>The general approach should work in most cases though.
 </para>

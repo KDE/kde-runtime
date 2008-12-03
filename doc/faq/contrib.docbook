@@ -117,8 +117,8 @@ core parts of the software.  Usually, when you have changed one of the
 parts (&eg; fixed a bug), and you want to commit this change, the best
 way is to create a patch against a current snapshot and send this
 patch to the developer/maintainer of the respective program.</para>
-<para>If you are doing this more or less regularly, there are instructions here on how to get write access to the <acronym>SVN</acronym> repository: <ulink url="http://developer.kde.org/documentation/other/developer-faq.html#q1.8">
-http://developer.kde.org/documentation/other/developer-faq.html#q1.8</ulink>.  But be aware that more users will slow
+<para>If you are doing this more or less regularly, there are instructions here on how to get write access to the <acronym>SVN</acronym> repository: <ulink url="http://techbase.kde.org/Contribute/Get_a_SVN_Account">
+http://techbase.kde.org/Contribute/Get_a_SVN_Account</ulink>.  But be aware that more users will slow
 down <acronym>SVN</acronym> access for all developers, so we want to
 keep the number of people with direct <acronym>SVN</acronym> access
 reasonably small.  But feel free to ask!</para>
@@ -130,8 +130,8 @@ reasonably small.  But feel free to ask!</para>
 <para>Can I have read-only access to the <acronym>SVN</acronym> repository?</para>
 </question>
 <answer>
-<para>Yes. Instructions on how to get anonymous, read-only <acronym>SVN</acronym> access are here: <ulink url="http://developer.kde.org/source/anonsvn.html">
-http://developer.kde.org/source/anonsvn.html</ulink>
+<para>Yes. Instructions on how to get anonymous, read-only <acronym>SVN</acronym> access are here: <ulink url="http://techbase.kde.org/Getting_Started/Sources/Anonymous_SVN">
+http://techbase.kde.org/Getting_Started/Sources/Anonymous_SVN</ulink>
 </para>
 </answer>
 </qandaentry>

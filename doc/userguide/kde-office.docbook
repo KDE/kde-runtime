@@ -312,8 +312,8 @@ capabilities are probably very interesting in business environments to
 make &koffice; meet individual requirements. You can either take a look
 at existing plugins or read a general introduction at
 <ulink url="http://developer.kde.org/documentation/tutorials/developing-a-plugin-structure/index.html">
-the developer's site</ulink>. The general KDE developers website is available
-at <ulink url="http://developer.kde.org/">http://developer.kde.org</ulink>.
+the developer's site</ulink>. The general KDE TechBase is available
+at <ulink url="http://developer.kde.org/">http://techbase.kde.org</ulink>.
 </para>
 </sect1>
 
