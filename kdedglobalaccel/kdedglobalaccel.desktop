@@ -8,6 +8,7 @@ X-KDE-Kded-autoload=false
 X-KDE-Kded-load-on-demand=true
 
 Name=KDED Global Shortcuts Server
+Name[ar]=خادم الاختصارات العالمية
 Name[be@latin]=Słužba paŭsiudnych klavijaturnych skarotaŭ dla „KDE”
 Name[ca]=Servidor KDED de dreceres globals
 Name[de]=KDED-Server für globale Tastenkürzel
@@ -17,6 +18,7 @@ Name[et]=KDE globaalsete kiirklahvide server
 Name[gl]=Servidor de atallos de teclado globais de KDED
 Name[gu]=KDED વૈશ્વીક ટૂંકાણો સર્વર
 Name[he]=שרת הקיצורי מקשים גלובליים KDED
+Name[hi]=केडीईडी ग्लोबल शॉर्टकट सर्वर
 Name[hsb]=Serwer za globalne KDE-skrótšenki
 Name[it]=Server KDED di scorciatoie globali
 Name[ja]=KDED グローバルショートカットサーバ

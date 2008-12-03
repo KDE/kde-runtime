@@ -1,6 +1,6 @@
 [Desktop Entry]
 Name=Compiz custom (create wrapper script 'compiz-kde-launcher' to launch it)
-Name[ar]=اعداد كومبيز ( إنشاء سكربت الوصول لغلاف كمبيز-كيدي)
+Name[ar]=تخصيص كومبيز ( إنشاء سكربت الوصول لغلاف كمبيز-كيدي)
 Name[be@latin]=Ułasny „Compiz” (stvary skrypt „compiz-kde-launcher”)
 Name[ca]=Compiz personalitzat (crea un script embolcall 'compiz-kde-launcher' per a engegar-lo)
 Name[da]=Brugerdefineret Compiz (opret wrapper-scriptet 'compiz-kde-launcher' for at starte den)
@@ -14,6 +14,7 @@ Name[fy]=Compiz oanpast (wrapper script 'compiz-kde-launcher' oanmeitsje om it �
 Name[gl]=Compiz personalizado (crea un script "compiz-kde-launcher" para executalo)
 Name[gu]=પોતાનું કોમ્પિઝ (તેને શરૂ કરવા માટે 'compiz-kde-launcher' સ્ક્રિપ્ટ બનાવો)
 Name[he]=Compiz מותאם אישית (צור תסריט מעטפת בשם "compiz-kde-launcher" כדי להפעיל אותו)
+Name[hi]=मनमाफ़िक कॉम्पिज़ (रैपर स्क्रिप्ट 'compiz-kde-launcher' चलाने के लिए बनाएं)
 Name[hsb]=Compizowe wašnje (napišće wobalkowy skript 'compiz-kde-launcher' za wuwjedźenje)
 Name[hu]=Egyedi Compiz (indításához egy "compiz-kde-launcher" nevű szkript szükséges)
 Name[it]=Compiz personalizzato (per lanciarlo crea uno script «compiz-kde-launcher» che prepara l'ambiente)

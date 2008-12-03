@@ -9,7 +9,7 @@ X-KDE-Kded-load-on-demand=true
 
 Name=KDE Time Zone Daemon
 Name[af]=KDE tydzone-bediener
-Name[ar]=رقيب النطاق الزمني لـ كدي
+Name[ar]=رقيب النطاق الزمني للكيدي
 Name[be]=Сервіс часавых зон KDE
 Name[be@latin]=Słužba časavych pajasoŭ KDE
 Name[bn_IN]=KDE Time Zone ডেমন
@@ -74,7 +74,7 @@ Name[zh_CN]=KDE 时区守护程序
 Name[zh_TW]=KDE 時區伺服程式
 Comment=Time zone daemon for KDE
 Comment[af]=Tydsone-bediener vir KDE
-Comment[ar]=رقيب النطاق الزمني لـ كدي
+Comment[ar]=رقيب النطاق الزمني للكيدي
 Comment[be@latin]=Słužba časavych pajasoŭ dla KDE
 Comment[bg]=Демон на KDE за времевите зони
 Comment[bn_IN]=KDE-র টাইম-জোন ডেমন

@@ -1,5 +1,6 @@
 [KCM Locale]
 Name=Africa, Eastern
+Name[ar]=شرق أفريقيا
 Name[be@latin]=Uschodniaja Afryka
 Name[ca]=Àfrica Oriental
 Name[de]=Afrika, Östliches
@@ -9,6 +10,7 @@ Name[et]=Ida-Aafrika
 Name[gl]=África, Leste
 Name[gu]=આફિક્રા, પૂર્વીય
 Name[he]=אפריקה, מזרח
+Name[hi]=पूर्वी अफ्रीका
 Name[hsb]=Afrika, Wuchodna
 Name[it]=Africa orientale
 Name[ja]=東アフリカ
@@ -21,6 +23,7 @@ Name[nds]=Afrika, Oost-
 Name[pa]=ਅਫਰੀਕਾ, ਪੂਰਬੀ
 Name[pt]=África, Oriental
 Name[pt_BR]=África, Oriental
+Name[ro]=Africa de Est
 Name[sv]=Afrika, östra
 Name[th]=แอฟริกาตะวันออก
 Name[tr]=Afrika, Doğu
