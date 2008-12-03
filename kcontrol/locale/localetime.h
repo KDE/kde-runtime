@@ -95,16 +95,16 @@ private:
   QComboBox * m_comboDateFmt;
   QLabel *m_labDateFmtShort;
   QComboBox * m_comboDateFmtShort;
-  QLabel * m_labWeekStartDay;
+//   QLabel * m_labWeekStartDay;
   QComboBox * m_comboWeekStartDay;
-  QLabel * m_labWorkingWeekStartDay;
+//   QLabel * m_labWorkingWeekStartDay;
   QComboBox * m_comboWorkingWeekStartDay;
-  QLabel * m_labWorkingWeekEndDay;
+//   QLabel * m_labWorkingWeekEndDay;
   QComboBox * m_comboWorkingWeekEndDay;
-  QLabel * m_labWeekDayOfPray;
+//   QLabel * m_labWeekDayOfPray;
   QComboBox * m_comboWeekDayOfPray;
   QCheckBox *m_chDateMonthNamePossessive;
-  QLabel * m_labCalendarSystem;
+//   QLabel * m_labCalendarSystem;
   QComboBox * m_comboCalendarSystem;
 };
 

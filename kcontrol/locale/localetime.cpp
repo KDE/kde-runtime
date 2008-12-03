@@ -25,8 +25,10 @@
 #include <QCheckBox>
 #include <QLabel>
 #include <QLayout>
+#include <QFormLayout>
 
 #include <QComboBox>
+#include <QGroupBox>
 
 #include <KDialog>
 #include <KConfig>
@@ -196,15 +198,14 @@ KLocaleConfigTime::KLocaleConfigTime(KLocale *_locale,
    m_locale(_locale)
 {
   // Time
-  QGridLayout *lay = new QGridLayout( this );
+  QFormLayout *lay = new QFormLayout( this );
   lay->setMargin( KDialog::marginHint() );
   lay->setSpacing( KDialog::spacingHint());
 
-  m_labCalendarSystem = new QLabel(this);
-  lay->addWidget(m_labCalendarSystem, 0, 0);
-  m_labCalendarSystem->setObjectName( I18N_NOOP("Calendar system:") );
+  QLabel* labCalendarSystem = new QLabel(this);
+  labCalendarSystem->setObjectName( I18N_NOOP("Calendar system:") );
   m_comboCalendarSystem = new QComboBox(this);
-  lay->addWidget(m_comboCalendarSystem, 0, 1);
+  lay->addRow(labCalendarSystem, m_comboCalendarSystem);
   m_comboCalendarSystem->setEditable(false);
   connect(m_comboCalendarSystem, SIGNAL(activated(int)),
 	  this, SLOT(slotCalendarSystemChanged(int)));
@@ -212,11 +213,13 @@ KLocaleConfigTime::KLocaleConfigTime(KLocale *_locale,
   tmpCalendars << QString() << QString();
   m_comboCalendarSystem->addItems(tmpCalendars);
 
+  QGroupBox *fGr = new QGroupBox(/*("Format"),*/this);
+  QFormLayout *fLay = new QFormLayout( fGr );
+
   m_labTimeFmt = new QLabel(this);
-  lay->addWidget(m_labTimeFmt, 1, 0);
   m_labTimeFmt->setObjectName( I18N_NOOP("Time format:") );
   m_comboTimeFmt = new QComboBox(this);
-  lay->addWidget(m_comboTimeFmt, 1, 1);
+  fLay->addRow(m_labTimeFmt,m_comboTimeFmt);
   m_comboTimeFmt->setEditable(true);
   //m_edTimeFmt = m_comboTimeFmt->lineEdit();
   //m_edTimeFmt = new QLineEdit(this);
@@ -224,70 +227,70 @@ KLocaleConfigTime::KLocaleConfigTime(KLocale *_locale,
 	   this, SLOT( slotTimeFmtChanged(const QString &) ) );
 
   m_labDateFmt = new QLabel(this);
-  lay->addWidget(m_labDateFmt, 2, 0);
   m_labDateFmt->setObjectName( I18N_NOOP("Date format:") );
   m_comboDateFmt = new QComboBox(this);
-  lay->addWidget(m_comboDateFmt, 2, 1);
+  fLay->addRow(m_labDateFmt,m_comboDateFmt);
   m_comboDateFmt->setEditable(true);
   connect( m_comboDateFmt, SIGNAL( editTextChanged(const QString &) ),
 	   this, SLOT( slotDateFmtChanged(const QString &) ) );
 
   m_labDateFmtShort = new QLabel(this);
-  lay->addWidget(m_labDateFmtShort, 3, 0);
   m_labDateFmtShort->setObjectName( I18N_NOOP("Short date format:") );
   m_comboDateFmtShort = new QComboBox(this);
-  lay->addWidget(m_comboDateFmtShort, 3, 1);
+  fLay->addRow(m_labDateFmtShort,m_comboDateFmtShort);
   m_comboDateFmtShort->setEditable(true);
   connect( m_comboDateFmtShort, SIGNAL( editTextChanged(const QString &) ),
 	   this, SLOT( slotDateFmtShortChanged(const QString &) ) );
 
-  m_labWeekStartDay = new QLabel(this);
-  lay->addWidget(m_labWeekStartDay, 4, 0);
-  m_labWeekStartDay->setObjectName( I18N_NOOP("First day of the week:") );
+  m_chDateMonthNamePossessive = new QCheckBox(this);
+  m_chDateMonthNamePossessive->setObjectName(I18N_NOOP("Use declined form of month name"));
+  fLay->addWidget(m_chDateMonthNamePossessive);
+  connect( m_chDateMonthNamePossessive, SIGNAL(clicked()),
+	     SLOT(slotDateMonthNamePossChanged()));
+
+
+  QGroupBox *wGr = new QGroupBox(/*("Week"),*/this);
+  QFormLayout *wLay = new QFormLayout( wGr );
+
+  QLabel* labWeekStartDay = new QLabel(this);
+  labWeekStartDay->setObjectName( I18N_NOOP("First day of the week:") );
   m_comboWeekStartDay = new QComboBox(this);
-  lay->addWidget(m_comboWeekStartDay, 4, 1);
+  wLay->addRow(labWeekStartDay,m_comboWeekStartDay);
   m_comboWeekStartDay->setEditable(false);
   connect (m_comboWeekStartDay, SIGNAL(activated(int)),
            this, SLOT(slotWeekStartDayChanged(int)));
 
-  m_labWorkingWeekStartDay = new QLabel(this);
-  lay->addWidget(m_labWorkingWeekStartDay, 5, 0);
-  m_labWorkingWeekStartDay->setObjectName( I18N_NOOP("First working day of the week:") );
+  QLabel* labWorkingWeekStartDay = new QLabel(this);
+  labWorkingWeekStartDay->setObjectName( I18N_NOOP("First working day of the week:") );
   m_comboWorkingWeekStartDay = new QComboBox(this);
-  lay->addWidget(m_comboWorkingWeekStartDay, 5, 1);
+  wLay->addRow(labWorkingWeekStartDay,m_comboWorkingWeekStartDay);
   m_comboWorkingWeekStartDay->setEditable(false);
   connect (m_comboWorkingWeekStartDay, SIGNAL(activated(int)),
            this, SLOT(slotWorkingWeekStartDayChanged(int)));
 
-  m_labWorkingWeekEndDay = new QLabel(this);
-  lay->addWidget(m_labWorkingWeekEndDay, 6, 0);
-  m_labWorkingWeekEndDay->setObjectName( I18N_NOOP("Last working day of the week:") );
+  QLabel* labWorkingWeekEndDay = new QLabel(this);
+  labWorkingWeekEndDay->setObjectName( I18N_NOOP("Last working day of the week:") );
   m_comboWorkingWeekEndDay = new QComboBox(this);
-  lay->addWidget(m_comboWorkingWeekEndDay, 6, 1);
+  wLay->addRow(labWorkingWeekEndDay,m_comboWorkingWeekEndDay);
   m_comboWorkingWeekEndDay->setEditable(false);
   connect (m_comboWorkingWeekEndDay, SIGNAL(activated(int)),
            this, SLOT(slotWorkingWeekEndDayChanged(int)));
 
-  m_labWeekDayOfPray = new QLabel(this);
-  lay->addWidget(m_labWeekDayOfPray, 7, 0);
-  m_labWeekDayOfPray->setObjectName( I18N_NOOP("Day of the week for religious observance:") );
+
+  QLabel* labWeekDayOfPray = new QLabel(this);
+  labWeekDayOfPray->setObjectName( I18N_NOOP("Day of the week for religious observance:") );
   m_comboWeekDayOfPray = new QComboBox(this);
-  lay->addWidget(m_comboWeekDayOfPray, 7, 1);
+  wLay->addRow(labWeekDayOfPray,m_comboWeekDayOfPray);
   m_comboWeekDayOfPray->setEditable(false);
   connect (m_comboWeekDayOfPray, SIGNAL(activated(int)),
            this, SLOT(slotWeekDayOfPrayChanged(int)));
 
+
+  lay->addRow(fGr,wGr);
+
   updateWeekDayNames();
-
-  m_chDateMonthNamePossessive = new QCheckBox(this);
-  m_chDateMonthNamePossessive->setObjectName(I18N_NOOP("Use declined form of month name"));
-  lay->addWidget(m_chDateMonthNamePossessive, 8, 0, 1, 2);
-  connect( m_chDateMonthNamePossessive, SIGNAL( clicked() ),
-	     SLOT( slotDateMonthNamePossChanged() ) );
-
-  lay->setColumnStretch(1, 1);
-  lay->setRowStretch(6, 1);
 }
+
 
 KLocaleConfigTime::~KLocaleConfigTime()
 {
