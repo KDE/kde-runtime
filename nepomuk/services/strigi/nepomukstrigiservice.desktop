@@ -99,6 +99,7 @@ Comment[nn]=Nepomuk-teneste som kontrollerer strigidaemon, som indekserer filer 
 Comment[pl]=Usługa Nepomuka, która zarządza demonem strigi, tzn. indeksuje pliki na pulpicie
 Comment[pt]=Um serviço do Nepomuk que controla o 'strigidaemon'; i.e. indexa os ficheiros no ambiente de trabalho
 Comment[pt_BR]=Serviço do Nepomuk que controla o strigidaemon, i.e. indexa arquivos no ambiente de trabalho
+Comment[ro]=Serviciu Nepomuk ce controlează demonul Strigi, adică indexează fișierele de pe birou
 Comment[sl]=Nepomukova storitev, ki nadzira pritajeni program Strigi, ki gradi kazala do datotek
 Comment[sr]=Сервис Непомука за управљање демоном Стригија, тј. индексирање фајлова
 Comment[sr@latin]=Servis Nepomuka za upravljanje demonom Strigija, tj. indeksiranje fajlova
