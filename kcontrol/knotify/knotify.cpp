@@ -110,9 +110,6 @@ K_EXPORT_PLUGIN( NotifyFactory("kcmnotify") )
     ab->addCredit( ki18n("Charles Samuels"), ki18n("Original implementation"),
 	       "charles@altair.dhs.org" );
     setAboutData( ab );
-
-    if ( m_appNames.count() > 0 )
-        m_notifyWidget->setApplication( m_appNames.at( 0 ) );
 }
 
 KCMKNotify::~KCMKNotify()
@@ -188,6 +185,9 @@ void KCMKNotify::load()
 	*/
 
 	m_playerSettings->load();
+
+    if ( m_appNames.count() > 0 )
+        m_notifyWidget->setApplication( m_appNames.at( 0 ) );
 
 	emit changed(false);
 
