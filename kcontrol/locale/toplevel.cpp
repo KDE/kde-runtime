@@ -160,7 +160,6 @@ KLocaleApplication::KLocaleApplication(QWidget *parent,
   connect(m_localeother, SIGNAL(localeChanged()),
           SLOT(slotChanged()));
 
-  load();
 }
 
 KLocaleApplication::~KLocaleApplication()

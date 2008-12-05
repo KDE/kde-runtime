@@ -116,8 +116,6 @@ EmoticonList::EmoticonList(QWidget *parent, const QVariantList &args)
     btInstall->setIcon(KIcon("document-import"));
     btRemoveTheme->setIcon(KIcon("edit-delete"));
 
-    load();
-
     connect(themeList, SIGNAL(itemSelectionChanged()), this, SLOT(selectTheme()));
     connect(themeList, SIGNAL(itemSelectionChanged()), this, SLOT(updateButton()));
     connect(btRemoveTheme, SIGNAL(clicked()), this, SLOT(btRemoveThemeClicked()));
