@@ -50,19 +50,26 @@ else:
 
 # Parse current timezones into dictionary zone->[comments].
 ifs = codecs.open(timezone_path, "r", "UTF-8")
-tzone_rx = re.compile(r"i18n\(\"(.*?)\"\)")
+message_rx = re.compile(r"i18n\(\"(.*?)\"\)")
+tzcomment_rx = re.compile(r"^// i18n:.*comment")
+tzcomment_follows = False
 current_timezones = {}
 for line in ifs:
-    m = tzone_rx.search(line)
-    if m:
-        tzone = m.group(1)
-        if tzone not in current_timezones:
-            current_timezones[tzone] = []
-        m = tzone_rx.search(line, m.end())
+    if tzcomment_rx.search(line):
+        tzcomment_follows = True
+    else:
+        m = message_rx.search(line)
         if m:
-            tzcomment = m.group(1)
-            if tzcomment not in current_timezones[tzone]:
-                current_timezones[tzone].append(tzcomment)
+            message = m.group(1)
+            if not tzcomment_follows:
+                tzone = message
+                if tzone not in current_timezones:
+                    current_timezones[tzone] = []
+            else:
+                tzcomment = message
+                if tzcomment not in current_timezones[tzone]:
+                    current_timezones[tzone].append(tzcomment)
+                tzcomment_follows = False
 ifs.close()
 
 # Parse system timezones into same form.
