@@ -6,7 +6,7 @@
 #
 # Timezones read from zone.tab are only added into TIMEZONES,
 # no timezone (or timezone comment) is removed from TIMEZONES.
-# This in order not to loose i18n for timezones and comments
+# This in order not to lose i18n for timezones and comments
 # found on various newer and older systems.
 #
 # Chusslove Illich (Часлав Илић) <caslav.ilic@gmx.net>
