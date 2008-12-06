@@ -99,12 +99,13 @@ for tzone, tzcomments in system_timezones.items():
 
 if num_new_tzones or num_new_tzcomments:
     tzlines = []
-    for tzone, tzcomments in current_timezones.items():
-        tzline_els = ["i18n(\"%s\");" % tzone]
-        for tzcomment in tzcomments:
-            tzline_els.append("i18n(\"%s\");" % tzcomment)
-        tzlines.append(" ".join(tzline_els) + "\n")
-    tzlines.sort()
+    tzones = current_timezones.keys()
+    tzones.sort()
+    for tzone in tzones:
+        tzlines.append("i18n(\"%s\");\n" % tzone);
+        for tzcomment in current_timezones[tzone]:
+            tzlines.append("// i18n: comment to the previous timezone\n")
+            tzlines.append("i18n(\"%s\");\n" % tzcomment)
     ofs = codecs.open(timezone_path, "w", "UTF-8")
     ofs.writelines(tzlines)
     ofs.close()
