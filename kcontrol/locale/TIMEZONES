@@ -86,6 +86,8 @@ i18n("America/Argentina/ComodRivadavia");
 i18n("America/Argentina/Cordoba");
 // i18n: comment to the previous timezone
 i18n("most locations (CB, CC, CN, ER, FM, LP, MN, NQ, RN, SA, SE, SF)");
+// i18n: comment to the previous timezone
+i18n("most locations (CB, CC, CN, ER, FM, MN, SE, SF)");
 i18n("America/Argentina/Jujuy");
 // i18n: comment to the previous timezone
 i18n("Jujuy (JY)");
@@ -98,6 +100,9 @@ i18n("Mendoza (MZ)");
 i18n("America/Argentina/Rio_Gallegos");
 // i18n: comment to the previous timezone
 i18n("Santa Cruz (SC)");
+i18n("America/Argentina/Salta");
+// i18n: comment to the previous timezone
+i18n("(SA, LP, NQ, RN)");
 i18n("America/Argentina/San_Juan");
 // i18n: comment to the previous timezone
 i18n("San Juan (SJ)");
@@ -215,12 +220,16 @@ i18n("Eastern Time - Indiana - most locations");
 i18n("America/Indiana/Knox");
 // i18n: comment to the previous timezone
 i18n("Eastern Time - Indiana - Starke County");
+// i18n: comment to the previous timezone
+i18n("Central Time - Indiana - Starke County");
 i18n("America/Indiana/Marengo");
 // i18n: comment to the previous timezone
 i18n("Eastern Time - Indiana - Crawford County");
 i18n("America/Indiana/Petersburg");
 // i18n: comment to the previous timezone
 i18n("Central Time - Indiana - Pike County");
+// i18n: comment to the previous timezone
+i18n("Eastern Time - Indiana - Pike County");
 i18n("America/Indiana/Tell_City");
 // i18n: comment to the previous timezone
 i18n("Central Time - Indiana - Perry County");
