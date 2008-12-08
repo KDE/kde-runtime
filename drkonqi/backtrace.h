@@ -38,7 +38,7 @@ class BackTrace : public QObject
   Q_OBJECT
 
 public:
-  BackTrace(const KrashConfig *krashconf, QObject *parent);
+  static BackTrace* create(const KrashConfig* krashconf, QObject* parent);
   ~BackTrace();
 
   void start();
@@ -54,6 +54,7 @@ protected Q_SLOTS:
   void slotReadInput();
 
 protected:
+  BackTrace(const KrashConfig *krashconf, QObject *parent);
   virtual QString processDebuggerOutput( QString bt ) = 0;
   virtual bool usefulDebuggerOutput( QString bt ) = 0;
   const KrashConfig * const m_krashconf;

@@ -181,11 +181,7 @@ void Toplevel :: slotUser1()
     QApplication::setOverrideCursor ( Qt::WaitCursor );
 
     // generate the backtrace
-    BackTrace *backtrace;
-    if(m_krashconf->debuggerName() == "gdb" )
-        backtrace = new BackTraceGdb(m_krashconf, this);
-    else
-        return;
+    BackTrace *backtrace = BackTrace::create( m_krashconf, this );
     connect(backtrace, SIGNAL(someError()), SLOT(slotBacktraceSomeError()));
     connect(backtrace, SIGNAL(done(const QString &)),
             SLOT(slotBacktraceDone(const QString &)));
