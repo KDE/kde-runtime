@@ -60,10 +60,10 @@ Nepomuk::EventMonitor::EventMonitor( IndexScheduler* scheduler, QObject* parent 
     updateWatches();
 
     // FileSystemWatcher does not catch changes to files, only new and removed files
-    // thus, we also do periodic updates of the whole index every half hour
+    // thus, we also do periodic updates of the whole index every two hours
     connect( &m_periodicUpdateTimer, SIGNAL( timeout() ),
              m_indexScheduler, SLOT( updateAll() ) );
-    m_periodicUpdateTimer.setInterval( 30*60*1000 );
+    m_periodicUpdateTimer.setInterval( 2*60*60*1000 );
 
     // monitor the powermanagement to not drain the battery
     connect( Solid::PowerManagement::notifier(), SIGNAL( appShouldConserveResourcesChanged( bool ) ),

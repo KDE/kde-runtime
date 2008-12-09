@@ -250,6 +250,9 @@ bool Nepomuk::IndexScheduler::updateDir( const QString& dir, Strigi::StreamAnaly
 {
 //    kDebug() << dir << analyzer << recursive;
 
+    // inform interested clients
+    emit indexingFolder( dir );
+
     m_currentFolder = dir;
 
     // get a map of all indexed files from the dir including their stored mtime
@@ -298,10 +301,6 @@ bool Nepomuk::IndexScheduler::updateDir( const QString& dir, Strigi::StreamAnaly
           it != filesInStoreEnd; ++it ) {
         filesToDelete.push_back( it->first );
     }
-
-    // inform interested clients
-    if ( !filesToIndex.isEmpty() || !filesToDelete.empty() )
-        emit indexingFolder( dir );
 
     // remove all files that need updating or have been removed
     m_indexManager->indexWriter()->deleteEntries( filesToDelete );
