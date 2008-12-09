@@ -34,6 +34,7 @@
 #include <QtCore/QDebug>
 #include <QtCore/QThread>
 #include <QtCore/QDateTime>
+#include <QtCore/QUuid>
 
 #include <KUrl>
 
@@ -103,6 +104,10 @@ namespace {
         }
 
         return uri;
+    }
+
+    QUrl createGraphUri() {
+        return QUrl( "urn:nepomuk:local:" + QUuid::createUuid().toString().remove( QRegExp( "[\\{\\}]" ) ) );
     }
 
     class FileMetaData
@@ -207,26 +212,32 @@ void Strigi::Soprano::IndexWriter::deleteEntries( const std::vector<std::string>
     QString systemLocationUri = Util::fieldUri( FieldRegister::pathFieldName ).toString();
     for ( unsigned int i = 0; i < entries.size(); ++i ) {
         QString path = QString::fromUtf8( entries[i].c_str() );
-        QString query = QString( "select ?g where { ?r <%1> \"%2\"^^<%3> . "
-                                 "?g <http://www.strigi.org/fields#indexGraphFor> ?r . }" )
+        QString query = QString( "select ?g ?mg where { "
+                                 "?r <%1> \"%2\"^^<%3> . "
+                                 "?g <http://www.strigi.org/fields#indexGraphFor> ?r . "
+                                 "OPTIONAL { ?mg <%4> ?g . } }" )
                         .arg( systemLocationUri )
                         .arg( path )
-                        .arg( Vocabulary::XMLSchema::string().toString() );
+                        .arg( Vocabulary::XMLSchema::string().toString() )
+                        .arg( Vocabulary::NRL::coreGraphMetadataFor().toString() );
 
 //        qDebug() << "deleteEntries query:" << query;
 
         QueryResultIterator result = d->repository->executeQuery( query, ::Soprano::Query::QueryLanguageSparql );
         if ( result.next() ) {
             Node indexGraph = result.binding( "g" );
-            result.close();
+            Node metaDataGraph = result.binding( "mg" );
 
-//            qDebug() << "Found indexGraph to delete:" << indexGraph;
+            result.close();
 
             // delete the indexed data
             d->repository->removeContext( indexGraph );
 
-            // delete the metadata
-            d->repository->removeAllStatements( Statement( indexGraph, Node(), Node() ) );
+            // delete the metadata (backwards compatible)
+            if ( metaDataGraph.isValid() )
+                d->repository->removeContext( metaDataGraph );
+            else
+                d->repository->removeAllStatements( Statement( indexGraph, Node(), Node() ) );
         }
     }
 }
@@ -276,7 +287,7 @@ void Strigi::Soprano::IndexWriter::startAnalysis( const AnalysisResult* idx )
         data->context = it.current().subject().uri();
     }
     else {
-        data->context = Util::uniqueUri( "http://www.strigi.org/contexts/", d->repository );
+        data->context = createGraphUri();
     }
 
 //    qDebug() << "Starting analysis for" << data->fileUri << "in thread" << QThread::currentThread();
@@ -466,7 +477,7 @@ void Strigi::Soprano::IndexWriter::finishAnalysis( const AnalysisResult* idx )
 
     // create the provedance data for the data graph
     // TODO: add more data at some point when it becomes of interest
-    QUrl metaDataContext = Util::uniqueUri( "http://www.strigi.org/graphMetaData/", d->repository );
+    QUrl metaDataContext = md->context.toString() + "-metadata";
     d->repository->addStatement( Statement( md->context,
                                             Vocabulary::RDF::type(),
                                             Vocabulary::NRL::InstanceBase(),
@@ -483,6 +494,10 @@ void Strigi::Soprano::IndexWriter::finishAnalysis( const AnalysisResult* idx )
                                             Vocabulary::RDF::type(),
                                             Vocabulary::NRL::GraphMetadata(),
                                             metaDataContext ) );
+    d->repository->addStatement( metaDataContext,
+                                 Vocabulary::NRL::coreGraphMetadataFor(),
+                                 md->context,
+                                 metaDataContext );
 
     // cleanup
     delete md;
