@@ -325,7 +325,7 @@ Comment[wa]=Dj' a arivé al difén del djivêye des mots ki pôrént aler.
 Comment[x-test]=xxThe end of the list of matches has been reachedxx
 Comment[zh_CN]=已经到达匹配列表的末尾
 Comment[zh_TW]=到達符合清單的尾端
-Action=Sound
+Action=
 Sound=KDE-Sys-List-End.ogg
 
 [Event/Textcompletion: no match]
@@ -450,7 +450,7 @@ Comment[wa]=Pont d' completaedje ki va n' a stî trové
 Comment[x-test]=xxNo matching completion was foundxx
 Comment[zh_CN]=没有发现匹配的补全
 Comment[zh_TW]=找不到符合的補完清單
-Action=Sound
+Action=
 Sound=KDE-Sys-List-Match-No.ogg
 
 [Event/Textcompletion: partial match]
@@ -575,7 +575,7 @@ Comment[wa]=I gn a pus k' on seu mot ki pôrént aler
 Comment[x-test]=xxThere is more than one possible matchxx
 Comment[zh_CN]=有超过一个可能的匹配
 Comment[zh_TW]=有一個以上符合
-Action=Sound
+Action=
 Sound=KDE-Sys-List-Match-Multiple.ogg
 
 [Event/fatalerror]
