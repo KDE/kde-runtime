@@ -41,57 +41,40 @@ KLocaleSample::KLocaleSample(KLocale *locale, QWidget *parent)
 {
   QGridLayout *lay = new QGridLayout(this);
 
-  // Whatever the color scheme is, we want black text
-  QPalette pal = palette();
-  pal.setColor(QPalette::Disabled, QPalette::WindowText, Qt::black);
-  pal.setColor(QPalette::Active, QPalette::WindowText, Qt::black);
-  pal.setColor(QPalette::Inactive, QPalette::WindowText, Qt::black);
-  setPalette(pal);
-
   m_labNumber = new QLabel(this);
   lay->addWidget(m_labNumber, 0, 0);
   m_labNumber->setObjectName( I18N_NOOP("Numbers:") );
   m_labNumber->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-  m_labNumber->setPalette(pal);
   m_numberSample = new QLabel(this);
-  m_numberSample->setPalette(pal);
   lay->addWidget(m_numberSample, 0, 1);
 
   m_labMoney = new QLabel(this);
   lay->addWidget(m_labMoney, 1, 0);
   m_labMoney->setObjectName( I18N_NOOP("Money:") );
   m_labMoney->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-  m_labMoney->setPalette(pal);
   m_moneySample = new QLabel(this);
-  m_moneySample->setPalette(pal);
   lay->addWidget(m_moneySample, 1, 1);
 
   m_labDate = new QLabel(this);
   lay->addWidget(m_labDate, 2, 0);
   m_labDate->setObjectName( I18N_NOOP("Date:") );
   m_labDate->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-  m_labDate->setPalette(pal);
   m_dateSample = new QLabel(this);
-  m_dateSample->setPalette(pal);
   lay->addWidget(m_dateSample, 2, 1);
 
   m_labDateShort = new QLabel(this);
   lay->addWidget(m_labDateShort, 3, 0);
   m_labDateShort->setObjectName( I18N_NOOP("Short date:") );
   m_labDateShort->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-  m_labDateShort->setPalette(pal);
   m_dateShortSample = new QLabel(this);
-  m_dateShortSample->setPalette(pal);
   lay->addWidget(m_dateShortSample, 3, 1);
 
   m_labTime = new QLabel(this);
   lay->addWidget(m_labTime, 4, 0);
   m_labTime->setObjectName( I18N_NOOP("Time:") );
   m_labTime->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-  m_labTime->setPalette(pal);
   m_timeSample = new QLabel(this);
   lay->addWidget(m_timeSample, 4, 1);
-  m_timeSample->setPalette(pal);
 
   lay->setColumnStretch(1, 3);
 
