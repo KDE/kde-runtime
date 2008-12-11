@@ -51,6 +51,7 @@ KLocaleSample::KLocaleSample(KLocale *locale, QWidget *parent)
   m_labNumber = new QLabel(this);
   lay->addWidget(m_labNumber, 0, 0);
   m_labNumber->setObjectName( I18N_NOOP("Numbers:") );
+  m_labNumber->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
   m_labNumber->setPalette(pal);
   m_numberSample = new QLabel(this);
   m_numberSample->setPalette(pal);
@@ -59,6 +60,7 @@ KLocaleSample::KLocaleSample(KLocale *locale, QWidget *parent)
   m_labMoney = new QLabel(this);
   lay->addWidget(m_labMoney, 1, 0);
   m_labMoney->setObjectName( I18N_NOOP("Money:") );
+  m_labMoney->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
   m_labMoney->setPalette(pal);
   m_moneySample = new QLabel(this);
   m_moneySample->setPalette(pal);
@@ -67,6 +69,7 @@ KLocaleSample::KLocaleSample(KLocale *locale, QWidget *parent)
   m_labDate = new QLabel(this);
   lay->addWidget(m_labDate, 2, 0);
   m_labDate->setObjectName( I18N_NOOP("Date:") );
+  m_labDate->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
   m_labDate->setPalette(pal);
   m_dateSample = new QLabel(this);
   m_dateSample->setPalette(pal);
@@ -75,6 +78,7 @@ KLocaleSample::KLocaleSample(KLocale *locale, QWidget *parent)
   m_labDateShort = new QLabel(this);
   lay->addWidget(m_labDateShort, 3, 0);
   m_labDateShort->setObjectName( I18N_NOOP("Short date:") );
+  m_labDateShort->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
   m_labDateShort->setPalette(pal);
   m_dateShortSample = new QLabel(this);
   m_dateShortSample->setPalette(pal);
@@ -83,6 +87,7 @@ KLocaleSample::KLocaleSample(KLocale *locale, QWidget *parent)
   m_labTime = new QLabel(this);
   lay->addWidget(m_labTime, 4, 0);
   m_labTime->setObjectName( I18N_NOOP("Time:") );
+  m_labTime->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
   m_labTime->setPalette(pal);
   m_timeSample = new QLabel(this);
   lay->addWidget(m_timeSample, 4, 1);
