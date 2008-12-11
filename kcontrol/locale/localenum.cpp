@@ -47,6 +47,7 @@ KLocaleConfigNumber::KLocaleConfigNumber(KLocale *locale,
   m_labDecSym = new QLabel(this);
   lay->addWidget(m_labDecSym, 0, 0);
   m_labDecSym->setObjectName( I18N_NOOP("&Decimal symbol:") );
+  m_labDecSym->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
   m_edDecSym = new QLineEdit(this);
   lay->addWidget(m_edDecSym, 0, 1);
   connect( m_edDecSym, SIGNAL( textChanged(const QString &) ),
@@ -56,6 +57,7 @@ KLocaleConfigNumber::KLocaleConfigNumber(KLocale *locale,
   m_labThoSep = new QLabel(this);
   lay->addWidget(m_labThoSep, 1, 0);
   m_labThoSep->setObjectName( I18N_NOOP("Tho&usands separator:") );
+  m_labThoSep->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
   m_edThoSep = new QLineEdit(this);
   lay->addWidget(m_edThoSep, 1, 1);
   connect( m_edThoSep, SIGNAL( textChanged(const QString &) ),
@@ -65,6 +67,7 @@ KLocaleConfigNumber::KLocaleConfigNumber(KLocale *locale,
   m_labMonPosSign = new QLabel(this);
   lay->addWidget(m_labMonPosSign, 2, 0);
   m_labMonPosSign->setObjectName( I18N_NOOP("Positive si&gn:") );
+  m_labMonPosSign->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
   m_edMonPosSign = new QLineEdit(this);
   lay->addWidget(m_edMonPosSign, 2, 1);
   connect( m_edMonPosSign, SIGNAL( textChanged(const QString &) ),
@@ -74,6 +77,7 @@ KLocaleConfigNumber::KLocaleConfigNumber(KLocale *locale,
   m_labMonNegSign = new QLabel(this);
   lay->addWidget(m_labMonNegSign, 3, 0);
   m_labMonNegSign->setObjectName( I18N_NOOP("&Negative sign:") );
+  m_labMonNegSign->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
   m_edMonNegSign = new QLineEdit(this);
   lay->addWidget(m_edMonNegSign, 3, 1);
   connect( m_edMonNegSign, SIGNAL( textChanged(const QString &) ),
