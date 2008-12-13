@@ -1,3 +1,5 @@
+add_subdirectory(xine)
+
 set(kcmphonon_SRCS main.cpp devicepreference.cpp backendselection.cpp globalconfig.cpp)
 kde4_add_ui_files(kcmphonon_SRCS devicepreference.ui backendselection.ui)
 
