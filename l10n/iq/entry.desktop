@@ -78,3 +78,6 @@ DecimalSymbol=,
 CurrencySymbol=IQD
 FracDigits=2
 DateFormatShort=%y/%m/%d
+WeekStartDay=7
+WorkingWeekStartDay=4
+WorkingWeekEndDay=5

@@ -70,3 +70,7 @@ TimeFormat=%H:%M:%S
 MeasureSystem=0
 PageSize=0
 WeekStartDay=6
+WorkingWeekStartDay=6
+WorkingWeekEndDay=4
+WeekDayOfPray=5
+CalendarSystem=jalali
