@@ -74,3 +74,6 @@ DecimalSymbol=,
 CurrencySymbol=DZD
 FracDigits=2
 DateFormatShort=%y/%m/%d
+WorkingWeekStartDay=6
+WorkingWeekEndDay=3
+WeekDayOfPray=7

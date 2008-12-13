@@ -22,6 +22,9 @@
 #DateFormatShort=
 #TimeFormat=
 #WeekStartDay=
+#WorkingWeekStartDay=
+#WorkingWeekEndDay=
+#WeekDayOfPray=
 #PageSize=
 #MeasureSystem=
 #CalendarSystem=

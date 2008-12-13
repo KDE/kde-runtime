@@ -75,10 +75,12 @@ DateFormat[eo]=%A, la %ea de %B %Y
 DateFormatShort=%e/%n/%Y
 TimeFormat=%H:%M:%S
 WeekStartDay=7
+WorkingWeekStartDay=7
+WorkingWeekEndDay=4
+WeekDayOfPray=6
 #PageSize=
 #MeasureSystem=
-# FIXME HPB: I somewhere read that the hebrew calendar was the official
-#            calendar in Israel
-CalendarSystem=gregorian
+#Civil calendar is Gregorian, religious is Hebrew
+#CalendarSystem=gregorian
 AddressFormat=%0(%n\n)%0(%cm\n)%0(ת.ד. %p\n)%0(%s\n)%0(%l%w%z)
 AddressCountryPosition=BELOW

@@ -64,3 +64,6 @@ DateFormatShort=%d/%m/%Y
 TimeFormat=%l:%M:%S %p
 PageSize=0
 MeasureSystem=1
+WorkingWeekStartDay=7
+WorkingWeekEndDay=4
+WeekDayOfPray=5
