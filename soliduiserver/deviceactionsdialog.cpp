@@ -71,6 +71,7 @@ void DeviceActionsDialog::setDevice(const Solid::Device &device)
     
     m_view.iconLabel->setPixmap(KIcon(device.icon()).pixmap(64));
     m_view.descriptionLabel->setText(device.vendor()+' '+device.product());
+    setWindowIcon(KIcon(device.icon()));
 }
 
 Solid::Device DeviceActionsDialog::device() const
