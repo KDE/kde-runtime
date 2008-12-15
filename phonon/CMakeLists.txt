@@ -9,11 +9,7 @@ OPTION(KDE4_DISABLE_MULTIMEDIA "Disable multimedia support (default: off)" OFF)
 if(KDE4_DISABLE_MULTIMEDIA)
    message(STATUS "NOTICE: Multimedia support DISABLED (KDE4_DISABLE_MULTIMEDIA == ON)")
 else(KDE4_DISABLE_MULTIMEDIA)
-   if(NOT PHONON_VERSION)
-      # TODO: remove this line next monday
-      set(PHONON_VERSION "4.2.70")
-   endif(NOT PHONON_VERSION)
-   set(PHONON_MIN_VERSION "4.2.70")
+   set(PHONON_MIN_VERSION "4.2.80")
    macro_ensure_version("${PHONON_MIN_VERSION}" "${PHONON_VERSION}" _phonon_version_ok)
    macro_log_feature(_phonon_version_ok "Phonon" "Phonon library" "svn.kde.org/home/kde/trunk/kdesupport/phonon" TRUE "${PHONON_MIN_VERSION}")
 
