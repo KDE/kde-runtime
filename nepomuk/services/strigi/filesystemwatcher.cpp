@@ -24,6 +24,10 @@
 #include <QtCore/QStringList>
 #include <QtCore/QDirIterator>
 #include <QtCore/QFileInfo>
+#include <QtCore/QThread>
+#include <QtCore/QWaitCondition>
+#include <QtCore/QMutex>
+#include <QtCore/QMutexLocker>
 
 #include <KDebug>
 
@@ -45,7 +49,7 @@ namespace {
     };
 }
 
-class FileSystemWatcher::Private
+class FileSystemWatcher::Private : public QThread
 {
 public:
     Private( FileSystemWatcher* parent )
@@ -59,7 +63,9 @@ public:
     bool recursive;
     int interval;
 
-    QTimer timer;
+    void start( const QDateTime& startTime );
+    void stop();
+    void run();
 
     void buildFolderCache( uint mTime );
     void checkFolders();
@@ -68,8 +74,53 @@ private:
     void updateChildrenCache( const QString& parentPath, FolderEntry& parentEntry, bool signalNewEntries );
     void checkFolder( const QString& path, FolderEntry& folder );
 
+    QDateTime m_startTime;
+    QWaitCondition m_updateWaiter;
+    QMutex m_stoppedMutex;
+    bool m_stopped;
+
     FileSystemWatcher* q;
 };
+
+
+void FileSystemWatcher::Private::start( const QDateTime& startTime )
+{
+    m_stopped = false;
+    m_startTime = startTime;
+    QThread::start();
+}
+
+
+void FileSystemWatcher::Private::stop()
+{
+    QMutexLocker lock( &m_stoppedMutex );
+    m_stopped = true;
+    m_updateWaiter.wakeAll();
+}
+
+
+void FileSystemWatcher::Private::run()
+{
+    buildFolderCache( m_startTime.toTime_t() );
+
+    while ( 1 ) {
+        // wait for the next update or stop
+        QMutex mutex;
+        mutex.lock();
+        if ( m_updateWaiter.wait( &mutex, interval ) ) {
+            // canceled
+            return;
+        }
+
+        // check all folders
+        checkFolders();
+
+        // check if we have been stopped
+        QMutexLocker lock( &m_stoppedMutex );
+        if ( m_stopped )
+            return;
+    }
+}
 
 
 void FileSystemWatcher::Private::buildFolderCache( uint mTime )
@@ -149,13 +200,12 @@ FileSystemWatcher::FileSystemWatcher( QObject* parent )
     : QObject( parent ),
       d( new Private( this ) )
 {
-    connect( &d->timer, SIGNAL( timeout() ),
-             this, SLOT( checkFolders() ) );
 }
 
 
 FileSystemWatcher::~FileSystemWatcher()
 {
+    stop();
     delete d;
 }
 
@@ -163,14 +213,14 @@ FileSystemWatcher::~FileSystemWatcher()
 void FileSystemWatcher::start( const QDateTime& startTime )
 {
     stop();
-    d->buildFolderCache( startTime.toTime_t() );
-    d->timer.start( d->interval*1000 );
+    d->start( startTime );
 }
 
 
 void FileSystemWatcher::stop()
 {
-    d->timer.stop();
+    d->stop();
+    d->wait();
 }
 
 
