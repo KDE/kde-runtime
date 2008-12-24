@@ -2,6 +2,7 @@
 Type=Service
 Name=KNotify
 Name[ar]=منبه كيدي
+Name[bn]=কে-নোটিফাই
 Name[hi]=के-नोटिफाई
 Name[kn]=ಕೆನೋಟಿಫೈ
 Name[ml]=കെനോട്ടിഫൈ
@@ -21,6 +22,7 @@ Comment[ar]=مراقب تنبيهات الكيدي
 Comment[be]=Сервіс абвяшчэнняў KDE
 Comment[be@latin]=Słužba infarmavańnia KDE
 Comment[bg]=Демон на KDE за уведомяване
+Comment[bn]=কে.ডি.ই. বিজ্ঞপ্তি ডিমন
 Comment[bn_IN]=KDE Notification ডেমন
 Comment[ca]=Dimoni de notificacions del KDE
 Comment[cs]=Upozorňovací démon KDE
