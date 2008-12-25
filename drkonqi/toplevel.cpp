@@ -71,8 +71,9 @@ Toplevel :: Toplevel(KrashConfig *krashconf, QWidget *parent)
         (info->fontMetrics().width(m_krashconf->errorDescriptionText()) / 3 * 2) + (2 * marginHint() + 20)
         : info->sizeHint().width() + 100;
   // ... but try to make sure the dialog fits on an 800x600 screen
-  int width = qMin(suggestedWidth, 750);
-  info->setMinimumSize(width, info->heightForWidth(width));
+  const int width = qMin(suggestedWidth, 750);
+  const int height = qMax(info->heightForWidth(width), 128); // background image is 128px
+  info->setMinimumSize(width, height);
   info->setAlignment(Qt::AlignJustify);
   QString styleSheet = QString("QLabel {"
                        "background-image: url(%1);"
