@@ -16,7 +16,7 @@ set(kcm_locale_PART_SRCS
    localetime.cpp 
    localeother.cpp )
 
-kde4_add_ui_files(kcm_locale_PART_SRCS localemon.ui language.ui )
+kde4_add_ui_files(kcm_locale_PART_SRCS localemon.ui language.ui localetime.ui )
 
 kde4_add_plugin(kcm_locale ${kcm_locale_PART_SRCS})
 

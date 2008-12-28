@@ -197,98 +197,65 @@ KLocaleConfigTime::KLocaleConfigTime(KLocale *_locale,
  : QWidget(parent),
    m_locale(_locale)
 {
-  // Time
-  QFormLayout *lay = new QFormLayout( this );
-  lay->setMargin( KDialog::marginHint() );
-  lay->setSpacing( KDialog::spacingHint());
+    // Time
 
-  QLabel* labCalendarSystem = new QLabel(this);
-  labCalendarSystem->setObjectName( I18N_NOOP("Calendar system:") );
-  m_comboCalendarSystem = new QComboBox(this);
-  lay->addRow(labCalendarSystem, m_comboCalendarSystem);
-  m_comboCalendarSystem->setEditable(false);
-  connect(m_comboCalendarSystem, SIGNAL(activated(int)),
-	  this, SLOT(slotCalendarSystemChanged(int)));
-  QStringList tmpCalendars;
-  tmpCalendars << QString() << QString();
-  m_comboCalendarSystem->addItems(tmpCalendars);
-
-  QGroupBox *fGr = new QGroupBox(/*("Format"),*/this);
-  QFormLayout *fLay = new QFormLayout( fGr );
-
-  m_labTimeFmt = new QLabel(this);
-  m_labTimeFmt->setObjectName( I18N_NOOP("Time format:") );
-  m_comboTimeFmt = new QComboBox(this);
-  fLay->addRow(m_labTimeFmt,m_comboTimeFmt);
-  m_comboTimeFmt->setEditable(true);
-  //m_edTimeFmt = m_comboTimeFmt->lineEdit();
-  //m_edTimeFmt = new QLineEdit(this);
-  connect( m_comboTimeFmt, SIGNAL( editTextChanged(const QString &) ),
-	   this, SLOT( slotTimeFmtChanged(const QString &) ) );
-
-  m_labDateFmt = new QLabel(this);
-  m_labDateFmt->setObjectName( I18N_NOOP("Date format:") );
-  m_comboDateFmt = new QComboBox(this);
-  fLay->addRow(m_labDateFmt,m_comboDateFmt);
-  m_comboDateFmt->setEditable(true);
-  connect( m_comboDateFmt, SIGNAL( editTextChanged(const QString &) ),
-	   this, SLOT( slotDateFmtChanged(const QString &) ) );
-
-  m_labDateFmtShort = new QLabel(this);
-  m_labDateFmtShort->setObjectName( I18N_NOOP("Short date format:") );
-  m_comboDateFmtShort = new QComboBox(this);
-  fLay->addRow(m_labDateFmtShort,m_comboDateFmtShort);
-  m_comboDateFmtShort->setEditable(true);
-  connect( m_comboDateFmtShort, SIGNAL( editTextChanged(const QString &) ),
-	   this, SLOT( slotDateFmtShortChanged(const QString &) ) );
-
-  m_chDateMonthNamePossessive = new QCheckBox(this);
-  m_chDateMonthNamePossessive->setObjectName(I18N_NOOP("Use declined form of month name"));
-  fLay->addWidget(m_chDateMonthNamePossessive);
-  connect( m_chDateMonthNamePossessive, SIGNAL(clicked()),
-	     SLOT(slotDateMonthNamePossChanged()));
+    setupUi(this);
 
 
-  QGroupBox *wGr = new QGroupBox(/*("Week"),*/this);
-  QFormLayout *wLay = new QFormLayout( wGr );
 
-  QLabel* labWeekStartDay = new QLabel(this);
-  labWeekStartDay->setObjectName( I18N_NOOP("First day of the week:") );
-  m_comboWeekStartDay = new QComboBox(this);
-  wLay->addRow(labWeekStartDay,m_comboWeekStartDay);
-  m_comboWeekStartDay->setEditable(false);
-  connect (m_comboWeekStartDay, SIGNAL(activated(int)),
-           this, SLOT(slotWeekStartDayChanged(int)));
+    m_groupFormat->setObjectName( I18N_NOOP("") );
+    m_groupWeek->setObjectName( I18N_NOOP("") );
 
-  QLabel* labWorkingWeekStartDay = new QLabel(this);
-  labWorkingWeekStartDay->setObjectName( I18N_NOOP("First working day of the week:") );
-  m_comboWorkingWeekStartDay = new QComboBox(this);
-  wLay->addRow(labWorkingWeekStartDay,m_comboWorkingWeekStartDay);
-  m_comboWorkingWeekStartDay->setEditable(false);
-  connect (m_comboWorkingWeekStartDay, SIGNAL(activated(int)),
-           this, SLOT(slotWorkingWeekStartDayChanged(int)));
+    labCalendarSystem->setObjectName( I18N_NOOP("Calendar system:") );
+    m_comboCalendarSystem->setEditable(false);
+    connect(m_comboCalendarSystem, SIGNAL(activated(int)),
+      this, SLOT(slotCalendarSystemChanged(int)));
+    QStringList tmpCalendars;
+    tmpCalendars << QString() << QString();
+    m_comboCalendarSystem->addItems(tmpCalendars);
 
-  QLabel* labWorkingWeekEndDay = new QLabel(this);
-  labWorkingWeekEndDay->setObjectName( I18N_NOOP("Last working day of the week:") );
-  m_comboWorkingWeekEndDay = new QComboBox(this);
-  wLay->addRow(labWorkingWeekEndDay,m_comboWorkingWeekEndDay);
-  m_comboWorkingWeekEndDay->setEditable(false);
-  connect (m_comboWorkingWeekEndDay, SIGNAL(activated(int)),
-           this, SLOT(slotWorkingWeekEndDayChanged(int)));
+    m_labTimeFmt->setObjectName( I18N_NOOP("Time format:") );
+    m_comboTimeFmt->setEditable(true);
+    connect( m_comboTimeFmt, SIGNAL( editTextChanged(const QString &) ),
+      this, SLOT( slotTimeFmtChanged(const QString &) ) );
 
+    m_labDateFmt->setObjectName( I18N_NOOP("Date format:") );
+    m_comboDateFmt->setEditable(true);
+    connect( m_comboDateFmt, SIGNAL( editTextChanged(const QString &) ),
+      this, SLOT( slotDateFmtChanged(const QString &) ) );
 
-  QLabel* labWeekDayOfPray = new QLabel(this);
-  labWeekDayOfPray->setObjectName( I18N_NOOP("Day of the week for religious observance:") );
-  m_comboWeekDayOfPray = new QComboBox(this);
-  wLay->addRow(labWeekDayOfPray,m_comboWeekDayOfPray);
-  m_comboWeekDayOfPray->setEditable(false);
-  connect (m_comboWeekDayOfPray, SIGNAL(activated(int)),
-           this, SLOT(slotWeekDayOfPrayChanged(int)));
+    m_labDateFmtShort->setObjectName( I18N_NOOP("Short date format:") );
+    m_comboDateFmtShort->setEditable(true);
+    connect( m_comboDateFmtShort, SIGNAL( editTextChanged(const QString &) ),
+      this, SLOT( slotDateFmtShortChanged(const QString &) ) );
+
+    m_chDateMonthNamePossessive->setObjectName(I18N_NOOP("Use declined form of month name"));
+    connect( m_chDateMonthNamePossessive, SIGNAL(clicked()),
+        SLOT(slotDateMonthNamePossChanged()));
 
 
-  lay->addRow(fGr,wGr);
+    labWeekStartDay->setObjectName( I18N_NOOP("First day of the week:") );
+    m_comboWeekStartDay->setEditable(false);
+    connect (m_comboWeekStartDay, SIGNAL(activated(int)),
+            this, SLOT(slotWeekStartDayChanged(int)));
 
-  updateWeekDayNames();
+    labWorkingWeekStartDay->setObjectName( I18N_NOOP("First working day of the week:") );
+    m_comboWorkingWeekStartDay->setEditable(false);
+    connect (m_comboWorkingWeekStartDay, SIGNAL(activated(int)),
+            this, SLOT(slotWorkingWeekStartDayChanged(int)));
+
+    labWorkingWeekEndDay->setObjectName( I18N_NOOP("Last working day of the week:") );
+    m_comboWorkingWeekEndDay->setEditable(false);
+    connect (m_comboWorkingWeekEndDay, SIGNAL(activated(int)),
+            this, SLOT(slotWorkingWeekEndDayChanged(int)));
+
+    labWeekDayOfPray->setObjectName( I18N_NOOP("Day of the week for religious observance:") );
+    m_comboWeekDayOfPray->setEditable(false);
+    connect (m_comboWeekDayOfPray, SIGNAL(activated(int)),
+            this, SLOT(slotWeekDayOfPrayChanged(int)));
+
+
+    updateWeekDayNames();
 }
 
 
@@ -298,167 +265,162 @@ KLocaleConfigTime::~KLocaleConfigTime()
 
 void KLocaleConfigTime::save()
 {
-  KSharedConfig::Ptr config = KGlobal::config();
-  KConfigGroup group(config, "Locale");
-  KConfig ent(KStandardDirs::locate("locale",
-			   QString::fromLatin1("l10n/%1/entry.desktop")
-			   .arg(m_locale->country())));
-  ent.setLocale(m_locale->language());
-  KConfigGroup entGrp = ent.group("KCM Locale");
+    KSharedConfig::Ptr config = KGlobal::config();
+    KConfigGroup group(config, "Locale");
+    KConfig ent(KStandardDirs::locate("locale",
+        QString::fromLatin1("l10n/%1/entry.desktop")
+        .arg(m_locale->country())));
+    ent.setLocale(m_locale->language());
+    KConfigGroup entGrp = ent.group("KCM Locale");
 
-  QString str;
+    QString str;
 
-  str = entGrp.readEntry("CalendarSystem", QString::fromLatin1("gregorian"));
-  group.deleteEntry("CalendarSystem", KConfig::Persistent | KConfig::Global);
-  if (str != m_locale->calendarType())
-    group.writeEntry("CalendarSystem", m_locale->calendarType(), KConfig::Persistent|KConfig::Global);
+    str = entGrp.readEntry("CalendarSystem", QString::fromLatin1("gregorian"));
+    group.deleteEntry("CalendarSystem", KConfig::Persistent | KConfig::Global);
+    if (str != m_locale->calendarType())
+      group.writeEntry("CalendarSystem", m_locale->calendarType(), KConfig::Persistent|KConfig::Global);
 
-  str = entGrp.readEntry("TimeFormat", QString::fromLatin1("%H:%M:%S"));
-  group.deleteEntry("TimeFormat", KConfig::Persistent | KConfig::Global);
-  if (str != m_locale->timeFormat())
-    group.writeEntry("TimeFormat", m_locale->timeFormat(), KConfig::Persistent|KConfig::Global);
+    str = entGrp.readEntry("TimeFormat", QString::fromLatin1("%H:%M:%S"));
+    group.deleteEntry("TimeFormat", KConfig::Persistent | KConfig::Global);
+    if (str != m_locale->timeFormat())
+      group.writeEntry("TimeFormat", m_locale->timeFormat(), KConfig::Persistent|KConfig::Global);
 
-  str = entGrp.readEntry("DateFormat", QString::fromLatin1("%A %d %B %Y"));
-  group.deleteEntry("DateFormat", KConfig::Persistent | KConfig::Global);
-  if (str != m_locale->dateFormat())
-    group.writeEntry("DateFormat", m_locale->dateFormat(), KConfig::Persistent|KConfig::Global);
+    str = entGrp.readEntry("DateFormat", QString::fromLatin1("%A %d %B %Y"));
+    group.deleteEntry("DateFormat", KConfig::Persistent | KConfig::Global);
+    if (str != m_locale->dateFormat())
+      group.writeEntry("DateFormat", m_locale->dateFormat(), KConfig::Persistent|KConfig::Global);
 
-  str = entGrp.readEntry("DateFormatShort", QString::fromLatin1("%Y-%m-%d"));
-  group.deleteEntry("DateFormatShort", KConfig::Persistent | KConfig::Global);
-  if (str != m_locale->dateFormatShort())
-    group.writeEntry("DateFormatShort",
-		       m_locale->dateFormatShort(), KConfig::Persistent|KConfig::Global);
+    str = entGrp.readEntry("DateFormatShort", QString::fromLatin1("%Y-%m-%d"));
+    group.deleteEntry("DateFormatShort", KConfig::Persistent | KConfig::Global);
+    if (str != m_locale->dateFormatShort())
+      group.writeEntry("DateFormatShort",
+            m_locale->dateFormatShort(), KConfig::Persistent|KConfig::Global);
 
-  int firstDay;
-  firstDay = entGrp.readEntry("WeekStartDay", 1);  //default to Monday
-  group.deleteEntry("WeekStartDay", KConfig::Persistent | KConfig::Global);
-  if (firstDay != m_locale->weekStartDay())
-      group.writeEntry("WeekStartDay", m_locale->weekStartDay(), KConfig::Persistent|KConfig::Global);
+    int firstDay;
+    firstDay = entGrp.readEntry("WeekStartDay", 1);  //default to Monday
+    group.deleteEntry("WeekStartDay", KConfig::Persistent | KConfig::Global);
+    if (firstDay != m_locale->weekStartDay())
+        group.writeEntry("WeekStartDay", m_locale->weekStartDay(), KConfig::Persistent|KConfig::Global);
 
-  int firstWorkingDay;
-  firstWorkingDay = entGrp.readEntry("WorkingWeekStartDay", 1);  //default to Monday
-  group.deleteEntry("WorkingWeekStartDay", KConfig::Persistent | KConfig::Global);
-  if (firstWorkingDay != m_locale->workingWeekStartDay())
-      group.writeEntry("WorkingWeekStartDay", m_locale->workingWeekStartDay(), KConfig::Persistent|KConfig::Global);
+    int firstWorkingDay;
+    firstWorkingDay = entGrp.readEntry("WorkingWeekStartDay", 1);  //default to Monday
+    group.deleteEntry("WorkingWeekStartDay", KConfig::Persistent | KConfig::Global);
+    if (firstWorkingDay != m_locale->workingWeekStartDay())
+        group.writeEntry("WorkingWeekStartDay", m_locale->workingWeekStartDay(), KConfig::Persistent|KConfig::Global);
 
-  int lastWorkingDay;
-  lastWorkingDay = entGrp.readEntry("WorkingWeekEndDay", 5);  //default to Friday
-  group.deleteEntry("WorkingWeekEndDay", KConfig::Persistent | KConfig::Global);
-  if (lastWorkingDay != m_locale->workingWeekEndDay())
-      group.writeEntry("WorkingWeekEndDay", m_locale->workingWeekEndDay(), KConfig::Persistent|KConfig::Global);
+    int lastWorkingDay;
+    lastWorkingDay = entGrp.readEntry("WorkingWeekEndDay", 5);  //default to Friday
+    group.deleteEntry("WorkingWeekEndDay", KConfig::Persistent | KConfig::Global);
+    if (lastWorkingDay != m_locale->workingWeekEndDay())
+        group.writeEntry("WorkingWeekEndDay", m_locale->workingWeekEndDay(), KConfig::Persistent|KConfig::Global);
 
-  int prayDay;
-  prayDay = entGrp.readEntry("WeekDayOfPray", 7);  //default to Sunday
-  group.deleteEntry("WeekDayOfPray", KConfig::Persistent | KConfig::Global);
-  if (prayDay != m_locale->weekDayOfPray())
-      group.writeEntry("WeekDayOfPray", m_locale->weekDayOfPray(), KConfig::Persistent|KConfig::Global);
+    int prayDay;
+    prayDay = entGrp.readEntry("WeekDayOfPray", 7);  //default to Sunday
+    group.deleteEntry("WeekDayOfPray", KConfig::Persistent | KConfig::Global);
+    if (prayDay != m_locale->weekDayOfPray())
+        group.writeEntry("WeekDayOfPray", m_locale->weekDayOfPray(), KConfig::Persistent|KConfig::Global);
 
-  bool b;
-  b = entGrp.readEntry("DateMonthNamePossessive", false);
-  group.deleteEntry("DateMonthNamePossessive", KConfig::Persistent | KConfig::Global);
-  if (b != m_locale->dateMonthNamePossessive())
-      group.writeEntry("DateMonthNamePossessive",
-                       m_locale->dateMonthNamePossessive(), KConfig::Persistent|KConfig::Global);
+    bool b;
+    b = entGrp.readEntry("DateMonthNamePossessive", false);
+    group.deleteEntry("DateMonthNamePossessive", KConfig::Persistent | KConfig::Global);
+    if (b != m_locale->dateMonthNamePossessive())
+        group.writeEntry("DateMonthNamePossessive",
+                        m_locale->dateMonthNamePossessive(), KConfig::Persistent|KConfig::Global);
 
-  group.sync();
+    group.sync();
 }
 
 void KLocaleConfigTime::showEvent( QShowEvent *e )
 {
-  // This option makes sense only for languages where nouns are declined
-   if ( !m_locale->nounDeclension() )
-    m_chDateMonthNamePossessive->hide();
-   QWidget::showEvent( e );
+    // This option makes sense only for languages where nouns are declined
+    if ( !m_locale->nounDeclension() )
+        m_chDateMonthNamePossessive->hide();
+    QWidget::showEvent( e );
 }
 
 void KLocaleConfigTime::slotCalendarSystemChanged(int calendarSystem)
 {
-  kDebug() << "CalendarSystem: " << calendarSystem;
+    kDebug() << "CalendarSystem: " << calendarSystem;
 
-  typedef QVector<QString> CalendarVector;
-  CalendarVector calendars(4);
-  calendars[0] = "gregorian";
-  calendars[1] = "hijri";
-  calendars[2] = "hebrew";
-  calendars[3] = "jalali";
+    typedef QVector<QString> CalendarVector;
+    CalendarVector calendars(4);
+    calendars[0] = "gregorian";
+    calendars[1] = "hijri";
+    calendars[2] = "hebrew";
+    calendars[3] = "jalali";
 
-  QString calendarType;
-  if( calendarSystem >= calendars.size())
-	  calendarType = calendars.first();
-  else
-  	calendarType = calendars.at(calendarSystem);
+    QString calendarType;
+    if( calendarSystem >= calendars.size())
+        calendarType = calendars.first();
+    else
+        calendarType = calendars.at(calendarSystem);
 
-  m_locale->setCalendar(calendarType);
+    m_locale->setCalendar(calendarType);
 
-  updateWeekDayNames();
-  emit localeChanged();
+    updateWeekDayNames();
+    emit localeChanged();
 }
 
 void KLocaleConfigTime::slotLocaleChanged()
 {
-  typedef QVector<QString> CalendarVector;
-  CalendarVector calendars(4);
-  calendars[0] = "gregorian";
-  calendars[1] = "hijri";
-  calendars[2] = "hebrew";
-  calendars[3] = "jalali";
+    typedef QVector<QString> CalendarVector;
+    CalendarVector calendars(4);
+    calendars[0] = "gregorian";
+    calendars[1] = "hijri";
+    calendars[2] = "hebrew";
+    calendars[3] = "jalali";
 
-  QString calendarType = m_locale->calendarType();
-  int calendarSystem = 0;
+    QString calendarType = m_locale->calendarType();
+    int calendarSystem = 0;
 
-  CalendarVector::iterator it = qFind(calendars.begin(), calendars.end(),
-calendarType);
-  if ( it != calendars.end() )
-    calendarSystem = it - calendars.begin();
+    CalendarVector::iterator it = qFind(calendars.begin(), calendars.end(),
+        calendarType);
+    if ( it != calendars.end() )
+        calendarSystem = it - calendars.begin();
 
-  kDebug() << "calSys: " << calendarSystem << ": " << calendarType;
-  m_comboCalendarSystem->setCurrentIndex( calendarSystem );
+    kDebug() << "calSys: " << calendarSystem << ": " << calendarType;
+    m_comboCalendarSystem->setCurrentIndex( calendarSystem );
 
-  //  m_edTimeFmt->setText( m_locale->timeFormat() );
-  m_comboTimeFmt->setEditText( storeToUser( timeMap(),
-					    m_locale->timeFormat() ) );
-  // m_edDateFmt->setText( m_locale->dateFormat() );
-  m_comboDateFmt->setEditText( storeToUser( dateMap(),
-					    m_locale->dateFormat() ) );
-  //m_edDateFmtShort->setText( m_locale->dateFormatShort() );
-  m_comboDateFmtShort->setEditText( storeToUser( dateMap(),
-					  m_locale->dateFormatShort() ) );
-  m_comboWeekStartDay->setCurrentIndex( m_locale->weekStartDay() - 1 );
-  m_comboWorkingWeekStartDay->setCurrentIndex( m_locale->workingWeekStartDay() - 1 );
-  m_comboWorkingWeekEndDay->setCurrentIndex( m_locale->workingWeekEndDay() - 1 );
-  m_comboWeekDayOfPray->setCurrentIndex( m_locale->weekDayOfPray() );  // First option is None=0
+    //  m_edTimeFmt->setText( m_locale->timeFormat() );
+    m_comboTimeFmt->setEditText( storeToUser( timeMap(), m_locale->timeFormat() ) );
+    // m_edDateFmt->setText( m_locale->dateFormat() );
+    m_comboDateFmt->setEditText( storeToUser( dateMap(), m_locale->dateFormat() ) );
+    //m_edDateFmtShort->setText( m_locale->dateFormatShort() );
+    m_comboDateFmtShort->setEditText( storeToUser( dateMap(), m_locale->dateFormatShort() ) );
+    m_comboWeekStartDay->setCurrentIndex( m_locale->weekStartDay() - 1 );
+    m_comboWorkingWeekStartDay->setCurrentIndex( m_locale->workingWeekStartDay() - 1 );
+    m_comboWorkingWeekEndDay->setCurrentIndex( m_locale->workingWeekEndDay() - 1 );
+    m_comboWeekDayOfPray->setCurrentIndex( m_locale->weekDayOfPray() );  // First option is None=0
 
-  if ( m_locale->nounDeclension() )
-    m_chDateMonthNamePossessive->setChecked( m_locale->dateMonthNamePossessive() );
+    if ( m_locale->nounDeclension() )
+        m_chDateMonthNamePossessive->setChecked( m_locale->dateMonthNamePossessive() );
 
-  kDebug(173) << "converting: " << m_locale->timeFormat();
-  kDebug(173) << storeToUser(timeMap(),
-			   m_locale->timeFormat()) << endl;
-  kDebug(173) << userToStore(timeMap(),
-			   QString::fromLatin1("HH:MM:SS AMPM test")) << endl;
+    kDebug(173) << "converting: " << m_locale->timeFormat();
+    kDebug(173) << storeToUser(timeMap(), m_locale->timeFormat()) << endl;
+    kDebug(173) << userToStore(timeMap(), QString::fromLatin1("HH:MM:SS AMPM test")) << endl;
 
 }
 
 void KLocaleConfigTime::slotTimeFmtChanged(const QString &t)
 {
   //  m_locale->setTimeFormat(t);
-  m_locale->setTimeFormat( userToStore( timeMap(), t ) );
+    m_locale->setTimeFormat( userToStore( timeMap(), t ) );
 
-  emit localeChanged();
+    emit localeChanged();
 }
 
 void KLocaleConfigTime::slotDateFmtChanged(const QString &t)
 {
-  // m_locale->setDateFormat(t);
-  m_locale->setDateFormat( userToStore( dateMap(), t ) );
-  emit localeChanged();
+    // m_locale->setDateFormat(t);
+    m_locale->setDateFormat( userToStore( dateMap(), t ) );
+    emit localeChanged();
 }
 
 void KLocaleConfigTime::slotDateFmtShortChanged(const QString &t)
 {
-  //m_locale->setDateFormatShort(t);
-  m_locale->setDateFormatShort( userToStore( dateMap(), t ) );
-  emit localeChanged();
+    //m_locale->setDateFormatShort(t);
+    m_locale->setDateFormatShort( userToStore( dateMap(), t ) );
+    emit localeChanged();
 }
 
 void KLocaleConfigTime::slotWeekStartDayChanged(int firstDay) {
@@ -487,11 +449,11 @@ void KLocaleConfigTime::slotWeekDayOfPrayChanged(int prayDay) {
 
 void KLocaleConfigTime::slotDateMonthNamePossChanged()
 {
-  if (m_locale->nounDeclension())
-  {
-    m_locale->setDateMonthNamePossessive(m_chDateMonthNamePossessive->isChecked());
-    emit localeChanged();
-  }
+    if (m_locale->nounDeclension())
+    {
+      m_locale->setDateMonthNamePossessive(m_chDateMonthNamePossessive->isChecked());
+      emit localeChanged();
+    }
 }
 
 void KLocaleConfigTime::slotTranslate()
