@@ -459,6 +459,9 @@ void IconThemesConfig::themeSelected(QTreeWidgetItem *item)
 
 void IconThemesConfig::load()
 {
+  m_defaultTheme=iconThemeItem(KIconTheme::current());
+  if (m_defaultTheme)
+    m_iconThemes->setCurrentItem(m_defaultTheme);
   emit changed(false);
   m_bChanged = false;
 }
