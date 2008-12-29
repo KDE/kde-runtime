@@ -203,8 +203,8 @@ KLocaleConfigTime::KLocaleConfigTime(KLocale *_locale,
 
 
 
-    m_groupFormat->setObjectName( I18N_NOOP("") );
-    m_groupWeek->setObjectName( I18N_NOOP("") );
+    m_groupFormat->setObjectName( QString() );
+    m_groupWeek->setObjectName( QString() );
 
     labCalendarSystem->setObjectName( I18N_NOOP("Calendar system:") );
     m_comboCalendarSystem->setEditable(false);
