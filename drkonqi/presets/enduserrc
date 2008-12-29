@@ -193,6 +193,7 @@ Name[lt]=%progname programa (%appname) nulūžo ir gavo %signum (%signame) signa
 Name[lv]=Programma %progname (%appname), pid %pid, avarēja un izsauca signālu %signum (%signame).
 Name[mk]=Апликацијата %progname (%appname) падна и го предизвика сигналот %signum (%signame).
 Name[ml]=%progname (%appname) എന്ന പ്രയോഗം %signum (%signame) എന്ന സിഗ്നലോടുകൂടി തകര്‍ന്നിരിയ്ക്കുന്നു
+Name[mr]=अनुप्रयोग %progname (%appname) क्रॅश झाले व संकेत %signum (%signame) निर्माण करण्यास कारणीभूत ठरले.
 Name[ms]=Aplikasi %progname (%appname) musnah dan menyebabkan isyarat %signum (%signame).
 Name[nb]=Programmet  %progname (%appname)  krasjet og ga signalet  %signum (%signame).
 Name[nds]=Dat Programm %progname (%appname) is afstört un hett dat Signaal %signum (%signame) utlööst.
@@ -258,6 +259,7 @@ Name[ku]=Ji kerema xwe re ji bo rastkirina çewtiyê bi tijekirina rapora di <a 
 Name[lv]=Lūdzu palīdziet mums uzlabot šo programmatūru. Nosūtiet kļūdas ziņojumu uz <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Ziņojumā iekļaujiet aprakstu kā atkārtot kļūdu, kādi dokumenti tika ielādēti un citu derīgu informāciju.
 Name[mk]=Ве молиме да ни помогнете да го усовршиме софтверот што го користите, така што ќе поднесете извештај на <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Вклучете колку што е можно повеќе информации како да се репродуцира грешката, вчитаните документи итн.
 Name[ml]=ദയവായി നിങ്ങളുപയോഗിയ്ക്കുന്ന സോഫ്റ്റ്‌വെയര്‍ മെച്ചപ്പെടുത്താന്‍ ഞങ്ങളെ സഹായിയ്ക്കാനായി <a href="http://bugs.kde.org">http://bugs.kde.org</a> എന്ന വിലാസത്തില്‍ രേഖപ്പെടുത്തുക. എങ്ങനെയാണു് ഈ തെറ്റു് വീണ്ടും കാണുക, ചേര്‍ത്തിരുന്ന രചനകള്‍ തുടങ്ങിയവ ഉപയോഗപ്രദമായ വിശദവിവരങ്ങളിലുള്‍പ്പെടും.
+Name[mr]= <a href="http://bugs.kde.org">http://bugs.kde.org</a> येथे अहवाल सादर करून कृपया सॉफ्टवेअर सुधारीत करण्यास मदत करा. वापरण्याजोगी माहिती अंतर्गत त्रुटी कशी दर्शवायची, दाखलकरण्याजोगी दस्तऐवज, इत्यादी समाविष्टीत आहे.
 Name[nb]=Vennligst hjelp oss med å forbedre programvaren du benytter ved å fylle ut en rapport hos <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Detaljer som er nyttige kan være hvordan feilen reproduseres, informasjon om dokumenter som ble åpnet , osv.
 Name[nds]=Bitte hölp uns dor bi, dat wi de Software, de Du bruukst, verbetern köönt. Du kannst en Fehlerbericht för dit Programm op <a href="http://bugs.kde.org">http://bugs.kde.org</a> afgeven. Föög em bitte so veel Informatschonen as mööglich to, villicht ok de Orginaaldokmenten. Kannst Du den Fehler wedderhalen, vertell bitte ok, wodennig dat geiht.
 Name[nl]=Help ons om de software te verbeteren door een rapport (in het Engels) te sturen naar <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Sluit informatie in over hoe de fout kan worden gereproduceerd, documenten die geladen waren, etc.
@@ -330,6 +332,7 @@ Comment[lt]=Programa gauna SIGILL signalą paprastai dėl ydos programoje.  Prog
 Comment[lv]=Parasti programma saņem SIGILL signālu dēļ kļūdas pašā programmā. Programmai tika pieprasīts saglabāt savus dokumentus.
 Comment[mk]=Апликациите најчесто го добиваат сигналот SIGILL поради бубачка. На апликацијата ѝ беше речено да ги сними сите свои документи.
 Comment[ml]=പ്രയോഗത്തിലെ പിഴവു് മൂലമാണൊരു പ്രയോഗത്തിനു് കൂടുതലായും സിഗ്ഇല്‍ (SIGILL) എന്ന സിഗ്നല്‍ കിട്ടുന്നതു്. പ്രയോഗത്തോടു് അതിന്റെ രചനകള്‍ സൂക്ഷിയ്ക്കാന്‍ പറഞ്ഞിട്ടുണ്ടു്.
+Comment[mr]=अनुप्रयोग अंतर्गत बग असल्यास अनुप्रयोग सहसा SIGILL संकेत प्राप्त करतो. अनुप्रयोगला दस्तऐवज संचयीत करण्यास विनंतीकृत केले गेले आहे.
 Comment[ms]=Kebanyakan aplikasi menerima isyarat SIGILL disebabkan ralat di dalam aplikasi. Aplikasi hendaklah disimpan untuk mengelakkan perkara tidak diingini.
 Comment[nb]=Et program får som regel SIGILL-signalet på grunn av en feil i programmet. Det ble bedt om å lagre dokumentene sine.
 Comment[nds]=En Programm kriggt dat Signaal SIGILL tomehrst, wenn dat dor binnen en Fehler gifft. Dat Programm wöör beden, dat schull sien Dokmenten sekern.
@@ -404,6 +407,7 @@ Comment[lt]=Programa baigia darbą dėl SIGABRT signalo kai ji pastebi vidinį p
 Comment[lv]=Programma beidz darbu ar SIGABRT signālu, ja tiek atklāta iekšēja nekonsekvence dēļ kādas kļūdas programmā.
 Comment[mk]=Апликациите прекинуваат со сигнал SIGABRT кога ќе откријат внатрешни недоследности предизвикани од бубачка во програмата.
 Comment[ml]=ഒരു പ്രയോഗം സിഗ്അബോര്‍ട്ട് (SIGABRT) എന്ന സിഗ്നലുമായി നിന്നുപോകുന്നതു് പ്രോഗ്രാമിലെ ഒരു പിഴവു് മൂലമുണ്ടായ ആന്തരികമായ പൊരുത്തമില്ലായ്മ കണ്ടുപിടിയ്ക്കപ്പെടുമ്പോഴാണു്.
+Comment[mr]=कार्यक्रमातील बगमुळे आंतरीक अस्थीरता आढळल्यास अनुप्रयोग त्यास SIGABRT संकेतसह समाप्त करतो.
 Comment[ms]=Aplikasi dimatikan dengan isyarat SIGABRT apabila ia mengesan sesuatu yang tidak konsisten secara dalam yang disebabkan oleh pepijat dalam program.
 Comment[nb]=Et program avslutter med signalet SIGABRT når det oppdager en indre motsigelse på grunn av en feil i programmet.
 Comment[nds]=En Programm höllt mit dat Signaal SIGABRT op, wenn dat intern en Fehler opdeckt.
@@ -478,6 +482,7 @@ Comment[lt]=Programa dažniausiai gauna SIGFPE signalą dėl ydos programoje.  P
 Comment[lv]=Programma visbiežāk saņem SIGFPE signālu dēļ kļūdas programmā. Programmai tika prasīts saglabāt savus dokumentus.
 Comment[mk]=Апликациите најчесто го добиваат сигналот SIGFPE поради грешка во апликацијата. На апликацијата ѝ беше речено да ги сними сите свои документи.
 Comment[ml]=പ്രയോഗത്തിലെ പിഴവു് മൂലമാണൊരു പ്രയോഗത്തിനു് കൂടുതലായും സിഗ്എഫ്‌പിഇ (SIGFPE) എന്ന സിഗ്നല്‍ കിട്ടുന്നതു്. പ്രയോഗത്തോടു് അതിന്റെ രചനകള്‍ സൂക്ഷിയ്ക്കാന്‍ പറഞ്ഞിട്ടുണ്ടു്.
+Comment[mr]=अनुप्रोयग अंतर्गत बगमुळे अनुप्रयोग सहसा SIGFPE संकेत प्राप्त करतो. अनुप्रयोगला दस्तऐवज संचयीत करण्यास विनंतीकृत केले गेले आहे.
 Comment[ms]=Aplikasi biasanya menerima isyarat SIGFPE kerana pepijat dalam aplikasi. Aplikasi telah diminta untuk menyimpan dokumennya.
 Comment[nb]=Et program mottar SIGFPE-signalet for det meste på grunn av en feil i programmet. Det ble bedt om å lagre dokumentene sine.
 Comment[nds]=En Programm kriggt dat Signaal SIGFPE tomehrst, wenn dat dor binnen en Fehler gifft. Dat Programm wöör beden, dat schull sien Dokmenten sekern.
