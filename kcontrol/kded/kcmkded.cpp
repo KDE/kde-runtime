@@ -102,8 +102,8 @@ KDEDConfig::KDEDConfig(QWidget* parent, const QVariantList &) :
 	_lvLoD = new QTreeWidget( gb );
 	QStringList cols;
 	cols.append( i18n("Service") );
-	cols.append( i18n("Description") );
 	cols.append( i18n("Status") );
+	cols.append( i18n("Description") );
 	_lvLoD->setHeaderLabels( cols );
 	_lvLoD->setAllColumnsShowFocus(true);
 	_lvLoD->setRootIsDecorated( false );
