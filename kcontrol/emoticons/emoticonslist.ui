@@ -35,14 +35,11 @@
    </item>
    <item rowspan="2" row="0" column="2" >
     <layout class="QVBoxLayout" >
-     <property name="spacing" >
-      <number>6</number>
-     </property>
      <property name="margin" >
       <number>0</number>
      </property>
      <item>
-      <widget class="QPushButton" name="btAdd" >
+      <widget class="KPushButton" name="btAdd" >
        <property name="toolTip" >
         <string>Create a new emoticon</string>
        </property>
@@ -55,7 +52,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="btEdit" >
+      <widget class="KPushButton" name="btEdit" >
        <property name="toolTip" >
         <string>Modify the selected emoticon icon or text </string>
        </property>
@@ -68,7 +65,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="btRemoveEmoticon" >
+      <widget class="KPushButton" name="btRemoveEmoticon" >
        <property name="toolTip" >
         <string>Remove the selected emoticon</string>
        </property>
@@ -105,7 +102,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="btNew" >
+      <widget class="KPushButton" name="btNew" >
        <property name="toolTip" >
         <string>Design a new emoticon theme</string>
        </property>
@@ -118,7 +115,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="btGetNew" >
+      <widget class="KPushButton" name="btGetNew" >
        <property name="toolTip" >
         <string>Get new themes from the Internet</string>
        </property>
@@ -131,7 +128,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="btInstall" >
+      <widget class="KPushButton" name="btInstall" >
        <property name="toolTip" >
         <string>Install a theme archive file you already have locally</string>
        </property>
@@ -144,7 +141,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="btRemoveTheme" >
+      <widget class="KPushButton" name="btRemoveTheme" >
        <property name="toolTip" >
         <string>Remove the selected theme from your disk</string>
        </property>
@@ -160,6 +157,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>KPushButton</class>
+   <extends>QPushButton</extends>
+   <header>kpushbutton.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
