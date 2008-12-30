@@ -26,7 +26,7 @@
 //Added by qt3to4:
 #include <QLabel>
 
-class QPushButton;
+class KPushButton;
 class QStringList;
 class QTreeWidget;
 class QTreeWidgetItem;
@@ -62,7 +62,7 @@ private:
   QTreeWidgetItem *iconThemeItem(const QString &name);
 
   QTreeWidget *m_iconThemes;
-  QPushButton *m_removeButton;
+  KPushButton *m_removeButton;
 
   QLabel *m_previewExec;
   QLabel *m_previewFolder;
