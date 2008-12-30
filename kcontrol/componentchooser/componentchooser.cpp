@@ -146,7 +146,7 @@ ComponentChooser::ComponentChooser(QWidget *parent):
 		ServiceChooser->addItem(new MyListBoxItem(cfg.group("").readEntry("Name",i18n("Unknown")),(*it)));
 
 	}
-	ServiceChooser->setFixedWidth(ServiceChooser->sizeHint().width());
+	ServiceChooser->setFixedWidth(ServiceChooser->sizeHintForColumn(0) + 20);
 	ServiceChooser->model()->sort(0);
 	connect(ServiceChooser,SIGNAL(currentItemChanged(QListWidgetItem*, QListWidgetItem*)),this,SLOT(slotServiceSelected(QListWidgetItem*)));
 	ServiceChooser->item(0)->setSelected(true);
