@@ -34,7 +34,7 @@ CfgEmailClient::CfgEmailClient(QWidget *parent)
 
     connect(kmailCB, SIGNAL(toggled(bool)), SLOT(configChanged()) );
     connect(txtEMailClient, SIGNAL(textChanged(const QString&)), SLOT(configChanged()) );
-#ifndef Q_OS_UNIX
+#ifdef Q_OS_UNIX
     connect(chkRunTerminal, SIGNAL(clicked()), SLOT(configChanged()) );
 #else
     chkRunTerminal->hide();
