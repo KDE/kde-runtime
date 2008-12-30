@@ -1,148 +1,93 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>TerminalEmulatorConfig_UI</class>
- <widget class="QWidget" name="TerminalEmulatorConfig_UI" >
-  <property name="geometry" >
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>263</width>
-    <height>188</height>
-   </rect>
-  </property>
-  <property name="sizePolicy" >
-   <sizepolicy vsizetype="MinimumExpanding" hsizetype="MinimumExpanding" >
-    <horstretch>0</horstretch>
-    <verstretch>0</verstretch>
-   </sizepolicy>
-  </property>
-  <layout class="QGridLayout" >
-   <property name="leftMargin" >
+ <widget class="QWidget" name="TerminalEmulatorConfig_UI">
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="margin">
     <number>0</number>
    </property>
-   <property name="topMargin" >
-    <number>0</number>
-   </property>
-   <property name="rightMargin" >
-    <number>0</number>
-   </property>
-   <property name="bottomMargin" >
-    <number>0</number>
-   </property>
-   <item row="3" column="1" >
-    <spacer>
-     <property name="orientation" >
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeType" >
-      <enum>QSizePolicy::Expanding</enum>
-     </property>
-     <property name="sizeHint" >
-      <size>
-       <width>0</width>
-       <height>87</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="1" column="0" colspan="2" >
-    <widget class="QRadioButton" name="otherCB" >
-     <property name="text" >
-      <string>Use a different &amp;terminal program:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="0" >
-    <spacer>
-     <property name="orientation" >
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeType" >
-      <enum>QSizePolicy::Fixed</enum>
-     </property>
-     <property name="sizeHint" >
-      <size>
-       <width>20</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="0" column="0" colspan="2" >
-    <widget class="QRadioButton" name="terminalCB" >
-     <property name="text" >
+   <item>
+    <widget class="QRadioButton" name="terminalCB">
+     <property name="text">
       <string>&amp;Use Konsole as terminal application</string>
      </property>
     </widget>
    </item>
-   <item row="2" column="1" >
-    <layout class="QHBoxLayout" >
-     <property name="leftMargin" >
-      <number>0</number>
+   <item>
+    <widget class="QRadioButton" name="otherCB">
+     <property name="text">
+      <string>Use a different &amp;terminal program:</string>
      </property>
-     <property name="topMargin" >
-      <number>0</number>
-     </property>
-     <property name="rightMargin" >
-      <number>0</number>
-     </property>
-     <property name="bottomMargin" >
-      <number>0</number>
-     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout">
      <item>
-      <widget class="QLineEdit" name="terminalLE" >
-       <property name="enabled" >
-        <bool>false</bool>
+      <spacer>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizePolicy" >
-        <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
-         <horstretch>1</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
+       <property name="sizeType">
+        <enum>QSizePolicy::Fixed</enum>
        </property>
-       <property name="minimumSize" >
+       <property name="sizeHint" stdset="0">
         <size>
-         <width>0</width>
+         <width>20</width>
          <height>0</height>
         </size>
        </property>
-       <property name="whatsThis" >
-         <string>Press this button to select your favorite terminal client. Please note that the file you select has to have the executable attribute set in order to be accepted.&lt;br/> Also note that some programs that utilize Terminal Emulator will not work if you add command line arguments (Example: konsole -ls).</string>
+      </spacer>
+     </item>
+     <item>
+      <widget class="KLineEdit" name="terminalLE">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="whatsThis">
+        <string>Press this button to select your favorite terminal client. Please note that the file you select has to have the executable attribute set in order to be accepted.&lt;br/&gt; Also note that some programs that utilize Terminal Emulator will not work if you add command line arguments (Example: konsole -ls).</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="btnSelectTerminal" >
-       <property name="enabled" >
+      <widget class="QToolButton" name="btnSelectTerminal">
+       <property name="enabled">
         <bool>false</bool>
        </property>
-       <property name="sizePolicy" >
-        <sizepolicy vsizetype="Minimum" hsizetype="Minimum" >
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="whatsThis" >
+       <property name="whatsThis">
         <string>Click here to browse for terminal program.</string>
        </property>
-       <property name="text" >
+       <property name="text">
         <string>...</string>
        </property>
       </widget>
      </item>
     </layout>
    </item>
+   <item>
+    <spacer>
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType">
+      <enum>QSizePolicy::Expanding</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>0</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
   </layout>
  </widget>
- <layoutdefault spacing="3" margin="6" />
- <layoutfunction spacing="KDialog::spacingHint" margin="KDialog::marginHint" />
- <tabstops>
-  <tabstop>terminalCB</tabstop>
-  <tabstop>otherCB</tabstop>
-  <tabstop>terminalLE</tabstop>
- </tabstops>
- <includes>
-  <include location="local" >kdialog.h</include>
- </includes>
+ <customwidgets>
+  <customwidget>
+   <class>KLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header location="global">KDE/KLineEdit</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
   <connection>
@@ -151,11 +96,11 @@
    <receiver>terminalLE</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>20</x>
      <y>20</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -167,11 +112,11 @@
    <receiver>btnSelectTerminal</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>20</x>
      <y>20</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>

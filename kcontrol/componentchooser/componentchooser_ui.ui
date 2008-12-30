@@ -1,124 +1,70 @@
-<ui version="4.0" stdsetdef="1" >
-  <author></author>
-  <comment></comment>
-  <exportmacro></exportmacro>
-  <class>ComponentChooser_UI</class>
-  <widget class="QWidget" name="ComponentChooser_UI" >
-    <property name="geometry" >
-      <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>482</width>
-        <height>451</height>
-      </rect>
-    </property>
-    <property name="sizePolicy" >
-      <sizepolicy>
-        <hsizetype>5</hsizetype>
-        <vsizetype>5</vsizetype>
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-      </sizepolicy>
-    </property>
-    <layout class="QGridLayout" >
-      <property name="margin" >
-        <number>0</number>
-      </property>
-      <item row="1" column="1" >
-        <widget class="QGroupBox" name="GroupBox1" >
-          <property name="sizePolicy" >
-            <sizepolicy>
-              <hsizetype>1</hsizetype>
-              <vsizetype>1</vsizetype>
-              <horstretch>1</horstretch>
-              <verstretch>0</verstretch>
-            </sizepolicy>
-          </property>
-          <property name="title" >
-            <string>Default Component</string>
-          </property>
-          <property name="whatsThis" stdset="0" >
-            <string>Here you can change the component program. Components are programs that handle basic tasks, like the terminal emulator, the text editor and the email client. Different KDE applications sometimes need to invoke a console emulator, send a mail or display some text. To do so consistently, these applications always call the same components. You can choose here which programs these components are.</string>
-          </property>
-          <layout class="QVBoxLayout" >
-            <property name="margin" >
-              <number>11</number>
-            </property>
-            <item>
-              <widget class="QStackedWidget" name="configContainer" />
-            </item>
-          </layout>
-        </widget>
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ComponentChooser_UI</class>
+ <widget class="QWidget" name="ComponentChooser_UI">
+  <layout class="QGridLayout">
+   <property name="margin">
+    <number>0</number>
+   </property>
+   <item row="1" column="1">
+    <widget class="QGroupBox" name="GroupBox1">
+     <property name="whatsThis">
+      <string>Here you can change the component program. Components are programs that handle basic tasks, like the terminal emulator, the text editor and the email client. Different KDE applications sometimes need to invoke a console emulator, send a mail or display some text. To do so consistently, these applications always call the same components. You can choose here which programs these components are.</string>
+     </property>
+     <property name="title">
+      <string>Default Component</string>
+     </property>
+     <layout class="QVBoxLayout">
+      <item>
+       <widget class="QStackedWidget" name="configContainer"/>
       </item>
-      <item row="0" column="1" >
-        <widget class="QGroupBox" name="GroupBox2" >
-          <property name="sizePolicy" >
-            <sizepolicy>
-              <hsizetype>1</hsizetype>
-              <vsizetype>1</vsizetype>
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-            </sizepolicy>
-          </property>
-          <property name="title" >
-            <string>Component Description</string>
-          </property>
-          <property name="whatsThis" stdset="0" >
-            <string>Here you can read a small description of the currently selected component. To change the selected component, click on the list to the left. To change the component program,  please choose it below.</string>
-          </property>
-          <layout class="QVBoxLayout" >
-            <property name="margin" >
-              <number>11</number>
-            </property>
-            <item>
-              <widget class="QLabel" name="ComponentDescription" >
-                <property name="text" >
-                  <string/>
-                </property>
-                <property name="alignment" >
-                  <set>Qt::AlignTop</set>
-                </property>
-                <property name="wordWrap" >
-                  <bool>true</bool>
-                </property>
-              </widget>
-            </item>
-          </layout>
-        </widget>
+     </layout>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QGroupBox" name="GroupBox2">
+     <property name="whatsThis">
+      <string>Here you can read a small description of the currently selected component. To change the selected component, click on the list to the left. To change the component program,  please choose it below.</string>
+     </property>
+     <property name="title">
+      <string>Component Description</string>
+     </property>
+     <layout class="QVBoxLayout">
+      <item>
+       <widget class="QLabel" name="ComponentDescription">
+        <property name="alignment">
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
       </item>
-      <item rowspan="2" row="0" column="0" colspan="1" >
-        <widget class="KListWidget" name="ServiceChooser" >
-          <property name="sizePolicy" >
-            <sizepolicy>
-              <hsizetype>5</hsizetype>
-              <vsizetype>3</vsizetype>
-              <horstretch>1</horstretch>
-              <verstretch>0</verstretch>
-            </sizepolicy>
-          </property>
-          <property name="currentRow" >
-            <number>-1</number>
-          </property>
-          <property name="whatsThis" stdset="0" >
-            <string>&lt;qt>
-&lt;p>This list shows the configurable component types. Click the component you want to configure.&lt;/p>
-&lt;p>In this dialog you can change KDE default components. Components are programs that handle basic tasks, like the terminal emulator, the text editor and the email client. Different KDE applications sometimes need to invoke a console emulator, send a mail or display some text. To do so consistently, these applications always call the same components. Here you can select which programs these components are.&lt;/p>
-&lt;/qt></string>
-          </property>
-        </widget>
-      </item>
-    </layout>
-  </widget>
-  <layoutdefault spacing="3" margin="6" />
-  <layoutfunction spacing="KDialog::spacingHint" margin="KDialog::marginHint" />
-  <customwidgets>
-    <customwidget>
-      <class>KListWidget</class>
-      <extends>QListWidget</extends>
-      <header>klistwidget.h</header>
-    </customwidget>
-  </customwidgets>
-  <includes>
-    <include location="local" >kdialog.h</include>
-  </includes>
+     </layout>
+    </widget>
+   </item>
+   <item row="0" column="0" rowspan="2">
+    <widget class="KListWidget" name="ServiceChooser">
+     <property name="whatsThis">
+      <string>&lt;qt&gt;
+&lt;p&gt;This list shows the configurable component types. Click the component you want to configure.&lt;/p&gt;
+&lt;p&gt;In this dialog you can change KDE default components. Components are programs that handle basic tasks, like the terminal emulator, the text editor and the email client. Different KDE applications sometimes need to invoke a console emulator, send a mail or display some text. To do so consistently, these applications always call the same components. Here you can select which programs these components are.&lt;/p&gt;
+&lt;/qt&gt;</string>
+     </property>
+     <property name="uniformItemSizes">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>KListWidget</class>
+   <extends>QListWidget</extends>
+   <header location="global">KDE/KListWidget</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
 </ui>

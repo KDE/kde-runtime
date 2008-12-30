@@ -59,18 +59,15 @@ void CfgFileManager::load(KConfig *) {
     bool first = true;
     Q_FOREACH(const KService::Ptr& service, apps)
     {
-        QHBoxLayout* hBox = new QHBoxLayout();
-        hBox->addSpacing(20);
         QRadioButton* button = new QRadioButton(service->name(), this);
         connect(button,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
         button->setProperty("storageId", service->storageId());
-        hBox->addWidget(button);
-        radioLayout->addLayout(hBox);
+        radioLayout->addWidget(button);
         if (first) {
             button->setChecked(true);
             first = false;
         }
-        mDynamicWidgets << hBox << button;
+        mDynamicWidgets << button;
     }
 
     emit changed(false);
