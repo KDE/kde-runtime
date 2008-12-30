@@ -87,109 +87,6 @@ class CategoryItem : public QStandardItem {
         Phonon::Category m_cat;
 };
 
-class DeviceTreeDelegate : public QItemDelegate
-{
-    public:
-        DeviceTreeDelegate(QObject *parent = 0);
-        QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
-        void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
-};
-
-DeviceTreeDelegate::DeviceTreeDelegate(QObject *parent)
-    : QItemDelegate(parent)
-{
-}
-
-QSize DeviceTreeDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
-{
-    QVariant value = index.data(Qt::SizeHintRole);
-    if (value.isValid()) {
-        return qvariant_cast<QSize>(value);
-    }
-
-    QRect iconRect;
-    value = index.data(Qt::DecorationRole);
-    if (value.type() == QVariant::Icon) {
-        QIcon icon = qvariant_cast<QIcon>(value);
-        iconRect = QRect(QPoint(0, 0), icon.actualSize(option.decorationSize));
-    }
-
-    QRect textRect;
-    value = index.data(Qt::DisplayRole);
-    if (value.isValid()) {
-        QString text = value.toString();
-        const QSize size = option.fontMetrics.size(Qt::TextSingleLine, text);
-        const int textMargin = QApplication::style()->pixelMetric(QStyle::PM_FocusFrameHMargin) + 1;
-        textRect = QRect(0, 0, size.width() + 2 * textMargin, size.height());
-    }
-    QRect checkRect = rect(option, index, Qt::CheckStateRole);
-
-    doLayout(option, &checkRect, &iconRect, &textRect, true);
-
-    return (iconRect | textRect | checkRect).size();
-}
-
-void DeviceTreeDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
-{
-    QStyleOptionViewItemV3 opt = setOptions(index, option);
-
-    const QStyleOptionViewItemV2 *v2 = qstyleoption_cast<const QStyleOptionViewItemV2 *>(&option);
-    const QStyleOptionViewItemV3 *v3 = qstyleoption_cast<const QStyleOptionViewItemV3 *>(&option);
-    opt.features = v2 ? v2->features : QStyleOptionViewItemV2::ViewItemFeatures(QStyleOptionViewItemV2::None);
-    opt.locale   = v3 ? v3->locale   : QLocale();
-    opt.widget   = v3 ? v3->widget   : 0;
-
-    painter->save();
-    // clip painter to the actual item - i.e. don't paint outside
-    painter->setClipRect(opt.rect);
-
-    QIcon icon;
-    QIcon::Mode mode = QIcon::Normal;
-    QIcon::State state = QIcon::Off;
-    QRect iconRect;
-    QVariant value = index.data(Qt::DecorationRole);
-    if (value.type() == QVariant::Icon) {
-        icon = qvariant_cast<QIcon>(value);
-        if (!(option.state & QStyle::State_Enabled)) {
-            mode = QIcon::Disabled;
-        } else if (option.state & QStyle::State_Selected) {
-            mode = QIcon::Selected;
-        }
-        if (option.state & QStyle::State_Open) {
-            state = QIcon::On;
-        }
-        iconRect = QRect(QPoint(0, 0), icon.actualSize(option.decorationSize, mode, state));
-    }
-
-    QString text;
-    QRect textRect;
-    value = index.data(Qt::DisplayRole);
-    if (value.isValid()) {
-        text = value.toString();
-        const QSize size = opt.fontMetrics.size(Qt::TextSingleLine, text);
-        const int textMargin = QApplication::style()->pixelMetric(QStyle::PM_FocusFrameHMargin) + 1;
-        textRect = QRect(0, 0, size.width() + 2 * textMargin, size.height());
-    }
-
-    QRect checkRect;
-    Qt::CheckState checkState = Qt::Unchecked;
-    value = index.data(Qt::CheckStateRole);
-    if (value.isValid()) {
-        checkState = static_cast<Qt::CheckState>(value.toInt());
-        checkRect = check(opt, opt.rect, value);
-    }
-
-    doLayout(opt, &checkRect, &iconRect, &textRect, false);
-
-    drawBackground(painter, opt, index);
-    drawCheck(painter, opt, checkRect, checkState);
-    icon.paint(painter, iconRect, option.decorationAlignment, mode, state);
-    drawDisplay(painter, opt, textRect, text);
-    drawFocus(painter, opt, textRect);
-
-    painter->restore();
-}
-
 /**
  * Need this to change the colors of the ListView if the Palette changed. With CSS set this won't
  * change automatically
@@ -213,7 +110,6 @@ DevicePreference::DevicePreference(QWidget *parent)
     testPlaybackButton->setIcon(KIcon("media-playback-start"));
     testPlaybackButton->setEnabled(false);
     testPlaybackButton->setToolTip(i18n("Play a test sound on the selected device"));
-    deviceList->setItemDelegate(new DeviceTreeDelegate(deviceList));
     removeButton->setIcon(KIcon("list-remove"));
     deferButton->setIcon(KIcon("go-down"));
     preferButton->setIcon(KIcon("go-up"));
