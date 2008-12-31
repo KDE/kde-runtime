@@ -201,6 +201,10 @@ KLocaleConfigTime::KLocaleConfigTime(KLocale *_locale,
 
     setupUi(this);
 
+    m_groupFormat->setObjectName( QString() );
+    m_groupWeek->setObjectName( QString() );
+
+    labCalendarSystem->setObjectName( I18N_NOOP("Calendar system:") );
     m_comboCalendarSystem->setEditable(false);
     connect(m_comboCalendarSystem, SIGNAL(activated(int)),
       this, SLOT(slotCalendarSystemChanged(int)));
@@ -208,34 +212,41 @@ KLocaleConfigTime::KLocaleConfigTime(KLocale *_locale,
     tmpCalendars << QString() << QString();
     m_comboCalendarSystem->addItems(tmpCalendars);
 
+    m_labTimeFmt->setObjectName( I18N_NOOP("Time format:") );
     m_comboTimeFmt->setEditable(true);
     connect( m_comboTimeFmt, SIGNAL( editTextChanged(const QString &) ),
       this, SLOT( slotTimeFmtChanged(const QString &) ) );
 
+    m_labDateFmt->setObjectName( I18N_NOOP("Date format:") );
     m_comboDateFmt->setEditable(true);
     connect( m_comboDateFmt, SIGNAL( editTextChanged(const QString &) ),
       this, SLOT( slotDateFmtChanged(const QString &) ) );
 
+    m_labDateFmtShort->setObjectName( I18N_NOOP("Short date format:") );
     m_comboDateFmtShort->setEditable(true);
     connect( m_comboDateFmtShort, SIGNAL( editTextChanged(const QString &) ),
       this, SLOT( slotDateFmtShortChanged(const QString &) ) );
 
+    m_chDateMonthNamePossessive->setObjectName(I18N_NOOP("Use declined form of month name"));
     connect( m_chDateMonthNamePossessive, SIGNAL(clicked()),
         SLOT(slotDateMonthNamePossChanged()));
 
-
+    labWeekStartDay->setObjectName( I18N_NOOP("First day of the week:") );
     m_comboWeekStartDay->setEditable(false);
     connect (m_comboWeekStartDay, SIGNAL(activated(int)),
             this, SLOT(slotWeekStartDayChanged(int)));
 
+    labWorkingWeekStartDay->setObjectName( I18N_NOOP("First working day of the week:") );
     m_comboWorkingWeekStartDay->setEditable(false);
     connect (m_comboWorkingWeekStartDay, SIGNAL(activated(int)),
             this, SLOT(slotWorkingWeekStartDayChanged(int)));
 
+    labWorkingWeekEndDay->setObjectName( I18N_NOOP("Last working day of the week:") );
     m_comboWorkingWeekEndDay->setEditable(false);
     connect (m_comboWorkingWeekEndDay, SIGNAL(activated(int)),
             this, SLOT(slotWorkingWeekEndDayChanged(int)));
 
+    labWeekDayOfPray->setObjectName( I18N_NOOP("Day of the week for religious observance:") );
     m_comboWeekDayOfPray->setEditable(false);
     connect (m_comboWeekDayOfPray, SIGNAL(activated(int)),
             this, SLOT(slotWeekDayOfPrayChanged(int)));
