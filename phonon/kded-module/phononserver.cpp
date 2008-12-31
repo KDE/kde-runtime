@@ -30,6 +30,9 @@
 #include <kdialog.h>
 #include <KPluginFactory>
 #include <KPluginLoader>
+#include <QtCore/QDir>
+#include <QtCore/QFile>
+#include <QtCore/QFileSystemWatcher>
 #include <QtCore/QRegExp>
 #include <QtCore/QSettings>
 #include <QtCore/QTimerEvent>
@@ -144,15 +147,25 @@ struct DeviceHint
     QString description;
 };
 
+static inline QDebug operator<<(QDebug &d, const DeviceHint &h)
+{
+    d.nospace() << h.name << " (" << h.description << ")";
+    return d;
+}
+
 void PhononServer::findVirtualDevices()
 {
 #ifdef HAVE_LIBASOUND2
     QList<DeviceHint> deviceHints;
 
+    // update config to the changes on disc
+    snd_config_update_free_global();
+    snd_config_update();
+
     void **hints;
     //snd_config_update();
     if (snd_device_name_hint(-1, "pcm", &hints) < 0) {
-        kDebug(603) << "snd_device_name_hint failed for 'pcm'";
+        kDebug(601) << "snd_device_name_hint failed for 'pcm'";
         return;
     }
 
@@ -183,6 +196,7 @@ void PhononServer::findVirtualDevices()
         deviceHints << nextHint;
     }
     snd_device_name_free_hint(hints);
+    kDebug(601) << deviceHints;
 
     snd_config_update_free_global();
     snd_config_update();
@@ -268,7 +282,36 @@ void PhononServer::findVirtualDevices()
             }
         }
     }
+
+    const QString etcFile(QLatin1String("/etc/asound.conf"));
+    const QString homeFile(QDir::homePath() + QLatin1String("/.asoundrc"));
+    const bool etcExists = QFile::exists(etcFile);
+    const bool homeExists = QFile::exists(homeFile);
+    if (etcExists || homeExists) {
+        static QFileSystemWatcher *watcher = 0;
+        if (!watcher) {
+            watcher = new QFileSystemWatcher(this);
+            connect(watcher, SIGNAL(fileChanged(QString)), SLOT(alsaConfigChanged()));
+        }
+        // QFileSystemWatcher stops monitoring after a file got removed. Many editors save files by
+        // writing to a temp file and moving it over the other one. QFileSystemWatcher seems to
+        // interpret that as removing and stops watching a file after it got modified by an editor.
+        if (etcExists && !watcher->files().contains(etcFile)) {
+            kDebug(601) << "setup QFileSystemWatcher for" << etcFile;
+            watcher->addPath(etcFile);
+        }
+        if (homeExists && !watcher->files().contains(homeFile)) {
+            kDebug(601) << "setup QFileSystemWatcher for" << homeFile;
+            watcher->addPath(homeFile);
+        }
+    }
 #endif // HAVE_LIBASOUND2
+}
+
+void PhononServer::alsaConfigChanged()
+{
+    kDebug(601);
+    m_updateDeviceListing.start(50, this);
 }
 
 static void removeOssOnlyDevices(QList<PS::AudioDevice> *list)
@@ -602,8 +645,8 @@ void PhononServer::findDevices()
         pa_mainloop_run(mainloop, NULL);
         pa_context_disconnect(context);
         pa_mainloop_free(mainloop);
-        kDebug(601) << userData.sources;
-        kDebug(601) << userData.sinks;
+        kDebug(601) << "pulse sources:" << userData.sources;
+        kDebug(601) << "pulse sinks:  " << userData.sinks;
         QMutableListIterator<PS::AudioDevice> it(m_audioOutputDevices);
         typedef QPair<PS::AudioDeviceKey, PS::AudioDeviceAccess> MyPair;
         static int uniqueDeviceNumber = -2;
@@ -941,7 +984,7 @@ void PhononServer::askToRemoveDevices(const QStringList &devList, const QList<in
     KMessageBox::ButtonCode result;
     if (!KMessageBox::shouldBeShownYesNo(dontAskAgainName, result)) {
         if (result == KMessageBox::Yes) {
-            kDebug() << "removeAudioDevices" << indexes;
+            kDebug(601) << "removeAudioDevices" << indexes;
             removeAudioDevices(indexes);
         }
         return;
@@ -956,7 +999,7 @@ void PhononServer::askToRemoveDevices(const QStringList &devList, const QList<in
             virtual void slotButtonClicked(int button)
             {
                 if (button == KDialog::User1) {
-                    kDebug() << "start kcm_phonon";
+                    kDebug(601) << "start kcm_phonon";
                     KProcess::startDetached(QLatin1String("kcmshell4"), QStringList(QLatin1String("kcm_phonon")));
                     reject();
                 } else {
@@ -992,7 +1035,7 @@ void PhononServer::askToRemoveDevices(const QStringList &devList, const QList<in
             &checkboxResult, KMessageBox::Notify);
     result = (res == KDialog::Yes ? KMessageBox::Yes : KMessageBox::No);
     if (result == KMessageBox::Yes) {
-        kDebug() << "removeAudioDevices" << indexes;
+        kDebug(601) << "removeAudioDevices" << indexes;
         removeAudioDevices(indexes);
     }
     if (checkboxResult) {

@@ -218,7 +218,7 @@ Entry *HardwareDatabasePrivate::readEntry(const QString &uniqueId)
     m_cacheFile->seek(hashTableOffset + (h % hashTableBuckets) * sizeof(quint32));
     quint32 offset;
     cacheStream >> offset;
-    //kDebug(603) << hashTableOffset << hashTableBuckets << uniqueId << h << offset;
+    //kDebug(601) << hashTableOffset << hashTableBuckets << uniqueId << h << offset;
     if (0 == offset) {
         return 0;
     }
