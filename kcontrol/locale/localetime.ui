@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>677</width>
-    <height>532</height>
+    <height>293</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -42,6 +42,12 @@
    </item>
    <item row="1" column="0" >
     <widget class="QGroupBox" name="m_groupFormat" >
+     <property name="sizePolicy" >
+      <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="title" >
       <string/>
      </property>

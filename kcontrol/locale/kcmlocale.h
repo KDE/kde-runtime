@@ -30,7 +30,6 @@
 
 class KControlLocale;
 
-
 class KLocaleConfig : public QWidget, public Ui_Language
 {
   Q_OBJECT
@@ -58,17 +57,16 @@ private Q_SLOTS:
   void changeCountry();
 
   void changedCountry(const QString & code);
-  void readLocale(const QString &path, QString &name,
-                  const QString &sub) const;
 
+  void slotCheckButtons();
   void slotAddLanguage(const QString & id);
   void slotRemoveLanguage();
   void slotLanguageUp();
   void slotLanguageDown();
-  void slotCheckButtons();
-
 private:
-  QStringList languageList() const;
+  enum Direction {Up,Down};
+  void languageMove(Direction direcition);
+
 
   // NOTE: we need to mantain our own language list instead of using KLocale's
   // because KLocale does not add a language if there is no translation

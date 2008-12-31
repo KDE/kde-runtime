@@ -41,6 +41,33 @@
 #include "countryselectordialog.h"
 #include "kcontrollocale.h"
 
+static QStringList languageList(const QString& country)
+{
+  QString fileName = KStandardDirs::locate("locale",
+                            QString::fromLatin1("l10n/%1/entry.desktop")
+                            .arg(country));
+
+  KConfig _entry( fileName, KConfig::SimpleConfig );
+  KConfigGroup entry(&_entry, "KCM Locale");
+
+  return entry.readEntry("Languages", QStringList());
+}
+
+static QString readLocale(const QString &language, const QString &path, const QString &sub=QString())
+{
+  // read the name
+  QString filepath = QString::fromLatin1("%1%2/entry.desktop")
+    .arg(sub)
+    .arg(path);
+
+  KConfig entry(KStandardDirs::locate("locale", filepath));
+  entry.setLocale(language);
+  KConfigGroup entryGroup = entry.group("KCM Locale");
+  return entryGroup.readEntry("Name");
+}
+
+
+
 KLocaleConfig::KLocaleConfig(KControlLocale *locale, QWidget *parent)
   : QWidget (parent),
     m_locale(locale)
@@ -71,7 +98,7 @@ KLocaleConfig::KLocaleConfig(KControlLocale *locale, QWidget *parent)
     languageAdd->loadAllLanguages();
     
     KConfigGroup configGroup = KGlobal::config()->group("Locale");
-    m_languageList = configGroup.readEntry("Language").split(":");
+    m_languageList = configGroup.readEntry("Language").split(':',QString::SkipEmptyParts);
 }
 
 void KLocaleConfig::slotAddLanguage(const QString & code)
@@ -113,12 +140,12 @@ void KLocaleConfig::slotRemoveLanguage()
   }
 }
 
-void KLocaleConfig::slotLanguageUp()
+void KLocaleConfig::languageMove(Direction direcition)
 {
   int pos = m_languages->currentRow();
 
-  QStringList::Iterator it1 = m_languageList.begin() + pos - 1;
-  QStringList::Iterator it2 = m_languageList.begin() + pos;
+  QStringList::Iterator it1 = m_languageList.begin() + pos - 1*(direcition==Up);
+  QStringList::Iterator it2 = m_languageList.begin() + pos + 1*(direcition==Down);
 
   if ( it1 != m_languageList.end() && it2 != m_languageList.end()  )
   {
@@ -129,30 +156,19 @@ void KLocaleConfig::slotLanguageUp()
     m_locale->setLanguage( m_languageList );
 
     emit localeChanged();
-    if ( pos == 1 ) // at the lang before the top
+    if ( pos == 1*(direcition==Up) ) //Up: at the top, Down: at the lang before the top
       emit languageChanged();
   }
 }
 
+void KLocaleConfig::slotLanguageUp()
+{
+  languageMove(Up);
+}
+
 void KLocaleConfig::slotLanguageDown()
 {
-  int pos = m_languages->currentRow();
-
-  QStringList::Iterator it1 = m_languageList.begin() + pos;
-  QStringList::Iterator it2 = m_languageList.begin() + pos + 1;
-
-  if ( it1 != m_languageList.end() && it2 != m_languageList.end()  )
-    {
-      QString str = *it1;
-      *it1 = *it2;
-      *it2 = str;
-
-      m_locale->setLanguage( m_languageList );
-
-      emit localeChanged();
-      if ( pos == 0 ) // at the top
-        emit languageChanged();
-    }
+  languageMove(Down);
 }
 
 void KLocaleConfig::changeCountry()
@@ -162,19 +178,6 @@ void KLocaleConfig::changeCountry()
   delete csd;
 }
 
-void KLocaleConfig::readLocale(const QString &path, QString &name,
-                               const QString &sub) const
-{
-  // read the name
-  QString filepath = QString::fromLatin1("%1%2/entry.desktop")
-    .arg(sub)
-    .arg(path);
-
-  KConfig entry(KStandardDirs::locate("locale", filepath));
-  entry.setLocale(m_locale->language());
-  KConfigGroup entryGroup = entry.group("KCM Locale");
-  name = entryGroup.readEntry("Name");
-}
 
 void KLocaleConfig::save()
 {
@@ -201,15 +204,8 @@ void KLocaleConfig::slotLocaleChanged()
 {
   // update language widget
   m_languages->clear();
-  for ( QStringList::Iterator it = m_languageList.begin();
-        it != m_languageList.end();
-        ++it )
-  {
-    QString name;
-    readLocale(*it, name, QString());
-
-    m_languages->addItem(name);
-  }
+  foreach (const QString& langCode, m_languageList)
+    m_languages->addItem(readLocale(m_locale->language(),langCode));
   slotCheckButtons();
 
   QString country = m_locale->countryCodeToName(m_locale->country());
@@ -259,34 +255,18 @@ void KLocaleConfig::slotTranslate()
   languageRemove->setWhatsThis( str );
 }
 
-QStringList KLocaleConfig::languageList() const
-{
-  QString fileName = KStandardDirs::locate("locale",
-                            QString::fromLatin1("l10n/%1/entry.desktop")
-                            .arg(m_locale->country()));
-
-  KConfig _entry( fileName, KConfig::SimpleConfig );
-  KConfigGroup entry(&_entry, "KCM Locale");
-
-  return entry.readEntry("Languages", QStringList());
-}
 
 void KLocaleConfig::changedCountry(const QString & code)
 {
   m_locale->setCountry(code);
 
   // change to the preferred languages in that country, installed only
-  QStringList languages = languageList();
+  QStringList languages = languageList(m_locale->country());
   QStringList newLanguageList;
-  for ( QStringList::Iterator it = languages.begin();
-        it != languages.end();
-        ++it )
+  foreach (const QString& langCode, languages)
   {
-    QString name;
-    readLocale(*it, name, QString());
-
-    if (!name.isEmpty())
-      newLanguageList += *it;
+    if (!readLocale(m_locale->language(),langCode).isEmpty())
+      newLanguageList += langCode;
   }
   m_locale->setLanguage( newLanguageList );
 
