@@ -122,8 +122,8 @@ KDEDConfig::KDEDConfig(QWidget* parent, const QVariantList &) :
 	cols.clear();
 	cols.append( i18n("Use") );
 	cols.append( i18n("Service") );
-	cols.append( i18n("Description") );
 	cols.append( i18n("Status") );
+	cols.append( i18n("Description") );
 	_lvStartup->setHeaderLabels( cols );
 	_lvStartup->setAllColumnsShowFocus(true);
 	_lvStartup->setRootIsDecorated( false );
