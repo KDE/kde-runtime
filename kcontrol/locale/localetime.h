@@ -25,8 +25,6 @@
 #ifndef LOCALETIME_H
 #define LOCALETIME_H
 
-#include "ui_localetime.h"
-
 #include <QWidget>
 
 #include <QMap>
@@ -38,7 +36,7 @@ class KLocale;
 
 class StringPair;
 
-class KLocaleConfigTime : public QWidget, Ui::localetime
+class KLocaleConfigTime : public QWidget
 {
   Q_OBJECT
 
@@ -89,6 +87,25 @@ private:
   StringPair buildStringPair(const QChar &storeName, const QString &userName) const;
 
   KLocale *m_locale;
+
+  // Time & dates
+  QLabel *m_labTimeFmt;
+  QComboBox *m_comboTimeFmt;
+  QLabel *m_labDateFmt;
+  QComboBox * m_comboDateFmt;
+  QLabel *m_labDateFmtShort;
+  QComboBox * m_comboDateFmtShort;
+//   QLabel * m_labWeekStartDay;
+  QComboBox * m_comboWeekStartDay;
+//   QLabel * m_labWorkingWeekStartDay;
+  QComboBox * m_comboWorkingWeekStartDay;
+//   QLabel * m_labWorkingWeekEndDay;
+  QComboBox * m_comboWorkingWeekEndDay;
+//   QLabel * m_labWeekDayOfPray;
+  QComboBox * m_comboWeekDayOfPray;
+  QCheckBox *m_chDateMonthNamePossessive;
+//   QLabel * m_labCalendarSystem;
+  QComboBox * m_comboCalendarSystem;
 
 };
 
