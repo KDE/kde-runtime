@@ -84,3 +84,6 @@ DateFormat[ko]=%Y %B %e %A
 DateFormat[eo]=%A, la %ea de %B %Y
 #DateFormatShort=
 TimeFormat=%H:%M:%S
+#WorkingWeekStartDay=
+#WorkingWeekEndDay=
+WeekDayOfPray=0

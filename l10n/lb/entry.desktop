@@ -82,3 +82,6 @@ DecimalSymbol=,
 CurrencySymbol=LBP
 FracDigits=2
 DateFormatShort=%y/%m/%d
+#WorkingWeekStartDay=
+#WorkingWeekEndDay=
+WeekDayOfPray=5

@@ -66,3 +66,6 @@ DecimalSymbol=,
 CurrencySymbol=KWD
 FracDigits=2
 DateFormatShort=%y/%m/%d
+WorkingWeekStartDay=7
+WorkingWeekEndDay=4
+WeekDayOfPray=5

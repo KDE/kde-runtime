@@ -94,3 +94,6 @@ NegativeMonetarySignPosition=1
 DateFormat=%Y년 %B %e일 %A
 DateFormatShort=%Y. %n. %e
 TimeFormat=%p %l:%M:%S
+#WorkingWeekStartDay=
+#WorkingWeekEndDay=
+WeekDayOfPray=0
