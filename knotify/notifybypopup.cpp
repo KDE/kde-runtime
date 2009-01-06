@@ -195,12 +195,11 @@ void NotifyByPopup::update(int id, KNotifyConfig * config)
 
 void NotifyByPopup::fillPopup(KPassivePopup *pop,int id,KNotifyConfig * config)
 {
-        QString appCaption = config->appname;
-        QString iconName = config->appname;
-        getAppCaptionAndIconName(config, appCaption, iconName);
+	QString appCaption, iconName;
+	getAppCaptionAndIconName(config, &appCaption, &iconName);
 
-        KIconLoader iconLoader(iconName);
-        QPixmap appIcon = iconLoader.loadIcon( iconName, KIconLoader::Small );
+	KIconLoader iconLoader(iconName);
+	QPixmap appIcon = iconLoader.loadIcon( iconName, KIconLoader::Small );
 
 	KVBox *vb = pop->standardView( appCaption , config->pix.isNull() ? config->text : QString() , appIcon );
 	KVBox *vb2 = vb;
@@ -338,11 +337,11 @@ void NotifyByPopup::slotDBusNotificationClosed(uint dbus_id, uint reason)
 	finished(id);
 }
 
-void NotifyByPopup::getAppCaptionAndIconName(KNotifyConfig *config, QString &appCaption, QString &iconName)
+void NotifyByPopup::getAppCaptionAndIconName(KNotifyConfig *config, QString *appCaption, QString *iconName)
 {
-    KConfigGroup globalgroup(&(*config->eventsfile), "Global");
-    appCaption = globalgroup.readEntry("Name", config->appname);
-    iconName = globalgroup.readEntry("IconName", iconName);
+	KConfigGroup globalgroup(&(*config->eventsfile), "Global");
+	*appCaption = globalgroup.readEntry("Comment", globalgroup.readEntry("Name", config->appname));
+	*iconName = globalgroup.readEntry("IconName", config->appname);
 }
 
 void NotifyByPopup::sendNotificationDBus(int id, int replacesId, KNotifyConfig* config)
@@ -375,9 +374,8 @@ void NotifyByPopup::sendNotificationDBus(int id, int replacesId, KNotifyConfig* 
 	    dbus_replaces_id = m_idMap.value(replacesId, 0);
 	}
 
-        QString appCaption = config->appname;
-        QString iconName = config->appname;
-        getAppCaptionAndIconName(config, appCaption, iconName);
+	QString appCaption, iconName;
+	getAppCaptionAndIconName(config, &appCaption, &iconName);
 
 	args.append( appCaption ); // app_name
 	args.append( dbus_replaces_id ); // replaces_id

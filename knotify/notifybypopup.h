@@ -64,7 +64,7 @@ class NotifyByPopup : public KNotifyPlugin
 		/**
 		 * Find the caption and the icon name of the application
 		 */
-		void getAppCaptionAndIconName(KNotifyConfig *config, QString &appCaption, QString &iconName);
+		void getAppCaptionAndIconName(KNotifyConfig *config, QString *appCaption, QString *iconName);
 		
 	protected:
 		void timerEvent(QTimerEvent *event);
