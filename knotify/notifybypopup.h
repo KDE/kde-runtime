@@ -61,6 +61,10 @@ class NotifyByPopup : public KNotifyPlugin
 		 * Specifies if DBus Notifications interface exists on session bus
 		 */
 		bool m_dbusServiceExists;
+		/**
+		 * Find the caption and the icon name of the application
+		 */
+		void getAppCaptionAndIconName(KNotifyConfig *config, QString &appCaption, QString &iconName);
 		
 	protected:
 		void timerEvent(QTimerEvent *event);

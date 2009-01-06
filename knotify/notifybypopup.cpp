@@ -27,6 +27,7 @@
 #include <kdialog.h>
 #include <khbox.h>
 #include <kvbox.h>
+
 #include <QLabel>
 #include <QTextDocument>
 #include <QApplication>
@@ -194,13 +195,12 @@ void NotifyByPopup::update(int id, KNotifyConfig * config)
 
 void NotifyByPopup::fillPopup(KPassivePopup *pop,int id,KNotifyConfig * config)
 {
-	const QString &appname=config->appname;
-	
-	KConfigGroup globalgroup( &(*config->eventsfile), "Global" );
-	QString iconName = globalgroup.readEntry( "IconName", appname );
-	KIconLoader iconLoader( appname );
-	QPixmap appIcon = iconLoader.loadIcon( iconName, KIconLoader::Small );
-	QString appCaption = globalgroup.readEntry( "Name", appname );
+        QString appCaption = config->appname;
+        QString iconName = config->appname;
+        getAppCaptionAndIconName(config, appCaption, iconName);
+
+        KIconLoader iconLoader(iconName);
+        QPixmap appIcon = iconLoader.loadIcon( iconName, KIconLoader::Small );
 
 	KVBox *vb = pop->standardView( appCaption , config->pix.isNull() ? config->text : QString() , appIcon );
 	KVBox *vb2 = vb;
@@ -338,6 +338,13 @@ void NotifyByPopup::slotDBusNotificationClosed(uint dbus_id, uint reason)
 	finished(id);
 }
 
+void NotifyByPopup::getAppCaptionAndIconName(KNotifyConfig *config, QString &appCaption, QString &iconName)
+{
+    KConfigGroup globalgroup(&(*config->eventsfile), "Global");
+    appCaption = globalgroup.readEntry("Name", config->appname);
+    iconName = globalgroup.readEntry("IconName", iconName);
+}
+
 void NotifyByPopup::sendNotificationDBus(int id, int replacesId, KNotifyConfig* config)
 {
 	QDBusMessage m = QDBusMessage::createMethodCall( dbusServiceName, dbusPath, dbusInterfaceName, "Notify" );
@@ -367,10 +374,15 @@ void NotifyByPopup::sendNotificationDBus(int id, int replacesId, KNotifyConfig* 
 	if (replacesId != 0 ) {
 	    dbus_replaces_id = m_idMap.value(replacesId, 0);
 	}
-	args.append( config->appname ); // app_name
+
+        QString appCaption = config->appname;
+        QString iconName = config->appname;
+        getAppCaptionAndIconName(config, appCaption, iconName);
+
+	args.append( appCaption ); // app_name
 	args.append( dbus_replaces_id ); // replaces_id
 	args.append( config->eventid ); // event_id
-	args.append( config->appname ); // app_icon
+	args.append( iconName ); // app_icon
 	args.append( QString()); // summary
 	args.append( config->text ); // body
 	// galago spec defines action list to be list like
