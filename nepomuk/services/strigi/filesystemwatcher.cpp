@@ -107,7 +107,7 @@ void FileSystemWatcher::Private::run()
         // wait for the next update or stop
         QMutex mutex;
         mutex.lock();
-        if ( m_updateWaiter.wait( &mutex, interval ) ) {
+        if ( m_updateWaiter.wait( &mutex, interval*1000 ) ) {
             // canceled
             return;
         }
