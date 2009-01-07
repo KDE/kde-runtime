@@ -11,11 +11,8 @@
 	 xmlns:xss="&xss;"
 	 xmlns:xsd="&xsd;"
 	 xmlns:rdfs="&rdfs;">
-
-
-
 <rdfs:Class rdf:about="&xesam;DataObject">
-	<rdfs:label>DataObject</rdfs:label>
+	<rdfs:label>data object</rdfs:label>
 	<rdfs:comment>Generic data object. Unites form and essense aspects represented by Content and Source. Used to aggreate properties that may be extracted from both content and source.</rdfs:comment>
 </rdfs:Class>
 
@@ -27,6 +24,7 @@
 </rdf:Property>
 
 <rdf:Property rdf:about="&xesam;comment">
+	<!-- trueg: Why is this not a subproperty of rdfs:comment? -->
 	<rdfs:label>comment</rdfs:label>
 	<rdfs:domain rdf:resource="&xesam;DataObject"/>
 	<rdfs:range rdf:resource="&xsd;string"/>
@@ -34,22 +32,15 @@
 </rdf:Property>
 
 <rdf:Property rdf:about="&xesam;isEncrypted">
-	<rdfs:label>isEncrypted</rdfs:label>
+	<rdfs:label>is encrypted</rdfs:label>
 	<rdfs:domain rdf:resource="&xesam;DataObject"/>
 	<rdfs:range rdf:resource="&xsd;boolean"/>
 	<rdfs:comment>Is Object or part of it encrypted?</rdfs:comment>
 </rdf:Property>
 
-
-
-
-
-
-
-
 <rdfs:Class rdf:about="&xesam;Content">
 	<rdfs:subClassOf rdf:resource="&xesam;DataObject"/>
-	<rdfs:label>Content</rdfs:label>
+	<rdfs:label>content</rdfs:label>
 	<rdfs:comment>Generic content</rdfs:comment>
 </rdfs:Class>
 
@@ -60,21 +51,21 @@
 </rdf:Property>
 
 <rdf:Property rdf:about="&xesam;sha1Hash">
-	<rdfs:label>sha1Hash</rdfs:label>
+	<rdfs:label>SHA1 hash</rdfs:label>
 	<rdfs:subPropertyOf rdf:resource="&xesam;fingerprint"/>
 	<rdfs:domain rdf:resource="&xesam;Content"/>
 	<rdfs:comment>SHA1 hash</rdfs:comment>
 </rdf:Property>
 
 <rdf:Property rdf:about="&xesam;md5Hash">
-	<rdfs:label>md5Hash</rdfs:label>
+	<rdfs:label>MD5 hash</rdfs:label>
 	<rdfs:subPropertyOf rdf:resource="&xesam;fingerprint"/>
 	<rdfs:domain rdf:resource="&xesam;Content"/>
 	<rdfs:comment>MD5 hash</rdfs:comment>
 </rdf:Property>
 
 <rdf:Property rdf:about="&xesam;isContentEncrypted">
-	<rdfs:label>isContentEncrypted</rdfs:label>
+	<rdfs:label>is content encrypted</rdfs:label>
 	<rdfs:domain rdf:resource="&xesam;Content"/>
 	<rdfs:range rdf:resource="&xsd;boolean"/>
 	<rdfs:comment>Is some portion of content encrypted? Setting this field doesn't imply that all data is encrypted.</rdfs:comment>
@@ -119,7 +110,7 @@
 
 
 <rdf:Property rdf:about="&xesam;legal">
-	<rdfs:label>legal</rdfs:label>
+	<rdfs:label>legal notice</rdfs:label>
 	<rdfs:domain rdf:resource="&xesam;Content"/>
 	<rdfs:range rdf:resource="&xsd;string"/>
 	<rdfs:comment>Abstract content legal notice.</rdfs:comment>
@@ -150,7 +141,7 @@
 </rdf:Property>
 
 <rdf:Property rdf:about="&xesam;licenseType">
-	<rdfs:label>licenseType</rdfs:label>
+	<rdfs:label>license type</rdfs:label>
 	<rdfs:subPropertyOf rdf:resource="&xesam;legal"/>
 	<rdfs:domain rdf:resource="&xesam;Content"/>
 	<rdfs:range rdf:resource="&xsd;string"/>
@@ -175,7 +166,7 @@
 </rdf:Property>
 
 <rdf:Property rdf:about="&xesam;depends">
-	<rdfs:label>depends</rdfs:label>
+	<rdfs:label>depends on</rdfs:label>
 	<rdfs:domain rdf:resource="&xesam;Content"/>
 	<rdfs:range rdf:resource="&xss;Uri"/>
 	<rdfs:subPropertyOf rdf:resource="&xesam;related"/>
@@ -183,7 +174,7 @@
 </rdf:Property>
 
 <rdf:Property rdf:about="&xesam;links">
-	<rdfs:label>links</rdfs:label>
+	<rdfs:label>links to</rdfs:label>
 	<rdfs:domain rdf:resource="&xesam;Content"/>
 	<rdfs:range rdf:resource="&xss;Uri"/>
 	<rdfs:subPropertyOf rdf:resource="&xesam;related"/>
@@ -191,7 +182,7 @@
 </rdf:Property>
 
 <rdf:Property rdf:about="&xesam;derivedFrom">
-	<rdfs:label>derivedFrom</rdfs:label>
+	<rdfs:label>derived from</rdfs:label>
 	<rdfs:domain rdf:resource="&xesam;Content"/>
 	<rdfs:range rdf:resource="&xss;Uri"/>
 	<rdfs:subPropertyOf rdf:resource="&xesam;links"/>
@@ -206,14 +197,14 @@
 </rdf:Property>
 
 <rdf:Property rdf:about="&xesam;generatorOptions">
-	<rdfs:label>generatorOptions</rdfs:label>
+	<rdfs:label>generator options</rdfs:label>
 	<rdfs:domain rdf:resource="&xesam;Content"/>
 	<rdfs:range rdf:resource="&xsd;string"/>
 	<rdfs:comment>Generator software options</rdfs:comment>
 </rdf:Property>
 
 <rdf:Property rdf:about="&xesam;formatSubtype">
-	<rdfs:label>formatSubtype</rdfs:label>
+	<rdfs:label>format sub type</rdfs:label>
 	<rdfs:domain rdf:resource="&xesam;Content"/>
 	<rdfs:range rdf:resource="&xsd;string"/>
 	<rdfs:comment>Format subtype. Use to indicate format extensions/specifics</rdfs:comment>
@@ -248,7 +239,7 @@
 </rdf:Property>
 
 <rdf:Property rdf:about="&xesam;contentComment">
-	<rdfs:label>contentComment</rdfs:label>
+	<rdfs:label>comment</rdfs:label>
 	<rdfs:subPropertyOf rdf:resource="&xesam;comment"/>
 	<rdfs:domain rdf:resource="&xesam;Content"/>
 	<rdfs:range rdf:resource="&xsd;string"/>
@@ -256,7 +247,7 @@
 </rdf:Property>
 
 <rdf:Property rdf:about="&xesam;contentKeyword">
-	<rdfs:label>contentKeyword</rdfs:label>
+	<rdfs:label>keyword</rdfs:label>
 	<rdfs:subPropertyOf rdf:resource="&xesam;keyword"/>
 	<rdfs:domain rdf:resource="&xesam;Content"/>
 	<rdfs:range rdf:resource="&xsd;string"/>
@@ -278,28 +269,28 @@
 </rdf:Property>
 
 <rdf:Property rdf:about="&xesam;contentCreated">
-	<rdfs:label>contentCreated</rdfs:label>
+	<rdfs:label>created at</rdfs:label>
 	<rdfs:domain rdf:resource="&xesam;Content"/>
 	<rdfs:range rdf:resource="&xsd;dateTime"/>
 	<rdfs:comment>Content creation time</rdfs:comment>
 </rdf:Property>
 
 <rdf:Property rdf:about="&xesam;contentModified">
-	<rdfs:label>contentModified</rdfs:label>
+	<rdfs:label>modified at</rdfs:label>
 	<rdfs:domain rdf:resource="&xesam;Content"/>
 	<rdfs:range rdf:resource="&xsd;dateTime"/>
 	<rdfs:comment>Content last modification time</rdfs:comment>
 </rdf:Property>
 
 <rdf:Property rdf:about="&xesam;asText">
-	<rdfs:label>asText</rdfs:label>
+	<rdfs:label>text representation</rdfs:label>
 	<rdfs:domain rdf:resource="&xesam;Content"/>
 	<rdfs:range rdf:resource="&xsd;string"/>
 	<rdfs:comment>Content plain-text representation for indexing purposes</rdfs:comment>
 </rdf:Property>
 
 <rdf:Property rdf:about="&xesam;mimeType">
-	<rdfs:label>mimeType</rdfs:label>
+	<rdfs:label>mime type</rdfs:label>
 	<rdfs:domain rdf:resource="&xesam;Content"/>
 	<rdfs:range rdf:resource="&xsd;string"/>
 	<rdfs:comment>Content mime-type</rdfs:comment>
@@ -325,12 +316,12 @@
 
 <rdfs:Class rdf:about="&xesam;Archive">
 	<rdfs:subClassOf rdf:resource="&xesam;Content"/>
-	<rdfs:label>Archive</rdfs:label>
+	<rdfs:label>archive</rdfs:label>
 	<rdfs:comment>Generic archive</rdfs:comment>
 </rdfs:Class>
 
 <rdf:Property rdf:about="&xesam;totalUncompressedSize">
-	<rdfs:label>totalUncompressedSize</rdfs:label>
+	<rdfs:label>total uncompressed size</rdfs:label>
 	<rdfs:domain rdf:resource="&xesam;Archive"/>
 	<rdfs:range rdf:resource="&xsd;integer"/>
 	<rdfs:comment>Archive total uncompressed size</rdfs:comment>
@@ -343,50 +334,50 @@
 
 <rdfs:Class rdf:about="&xesam;Annotation">
 	<rdfs:subClassOf rdf:resource="&xesam;Content"/>
-	<rdfs:label>Annotation</rdfs:label>
+	<rdfs:label>annotation</rdfs:label>
 	<rdfs:comment>Generic annotation. Annotation provides a set of document description properties(like subject, title, description) for a list of objects it links to. It can link to other annotations, however interpretation of this may differ between specific annotation classes..</rdfs:comment>
 </rdfs:Class>
 
 
 <rdfs:Class rdf:about="&xesam;Folder">
 	<rdfs:subClassOf rdf:resource="&xesam;Annotation"/>
-	<rdfs:label>Folder</rdfs:label>
+	<rdfs:label>folder</rdfs:label>
 	<rdfs:comment>Generic folder. In general, folders represent a tree-like structure(taxonomy), however on occasion this rule may violated in cases like symlinks.</rdfs:comment>
 </rdfs:Class>
 
 <rdfs:Class rdf:about="&xesam;Project">
 	<rdfs:subClassOf rdf:resource="&xesam;Annotation"/>
-	<rdfs:label>Project</rdfs:label>
+	<rdfs:label>project</rdfs:label>
 	<rdfs:comment>Generic project</rdfs:comment>
 </rdfs:Class>
 
 <rdfs:Class rdf:about="&xesam;MediaList">
 	<rdfs:subClassOf rdf:resource="&xesam;Annotation"/>
-	<rdfs:label>MediaList</rdfs:label>
+	<rdfs:label>media list</rdfs:label>
 	<rdfs:comment>Generic media content list(playlist). Linking to other content types is forbidden</rdfs:comment>
 </rdfs:Class>
 
 <rdfs:Class rdf:about="&xesam;AudioList">
 	<rdfs:subClassOf rdf:resource="&xesam;MediaList"/>
-	<rdfs:label>AudioList</rdfs:label>
+	<rdfs:label>audio list</rdfs:label>
 	<rdfs:comment>Generic audio list(playlist). Linking to other content types is forbidden</rdfs:comment>
 </rdfs:Class>
 
 <rdfs:Class rdf:about="&xesam;Tag">
 	<rdfs:subClassOf rdf:resource="&xesam;Annotation"/>
-	<rdfs:label>Tag</rdfs:label>
+	<rdfs:label>tag</rdfs:label>
 	<rdfs:comment>Tag/keyword. As opposed to folders, there are no limitations on the structure of tags and arbitrary overlaps are possible.</rdfs:comment>
 </rdfs:Class>
 
 <rdfs:Class rdf:about="&xesam;Bookmark">
 	<rdfs:subClassOf rdf:resource="&xesam;Annotation"/>
-	<rdfs:label>Bookmark</rdfs:label>
+	<rdfs:label>bookmark</rdfs:label>
 	<rdfs:comment>Bookmark. Currently there's nothing that would distinguish bookmarks and tags</rdfs:comment>
 </rdfs:Class>
 
 <rdfs:Class rdf:about="&xesam;RevisionControlledRepository">
 	<rdfs:subClassOf rdf:resource="&xesam;Content"/>
-	<rdfs:label>RevisionControlledRepository</rdfs:label>
+	<rdfs:label>revision controlled repository</rdfs:label>
 	<rdfs:comment>Revision-controlled repository. In case of distributed repositories, those must be linked with derivation relations.</rdfs:comment>
 </rdfs:Class>
 
@@ -397,7 +388,7 @@
 
 <rdfs:Class rdf:about="&xesam;ContactGroup">
 	<rdfs:subClassOf rdf:resource="&xesam;Content"/>
-	<rdfs:label>ContactGroup</rdfs:label>
+	<rdfs:label>contact group</rdfs:label>
 	<rdfs:comment>ContactGroup</rdfs:comment>
 </rdfs:Class>
 
@@ -407,12 +398,12 @@
 
 <rdfs:Class rdf:about="&xesam;CommunicationChannel">
 	<rdfs:subClassOf rdf:resource="&xesam;Content"/>
-	<rdfs:label>CommunicationChannel</rdfs:label>
+	<rdfs:label>communication channel</rdfs:label>
 	<rdfs:comment>Communication channel</rdfs:comment>
 </rdfs:Class>
 
 <rdf:Property rdf:about="&xesam;isPublicChannel">
-	<rdfs:label>isPublicChannel</rdfs:label>
+	<rdfs:label>is public channel</rdfs:label>
 	<rdfs:domain rdf:resource="&xesam;CommunicationChannel"/>
 	<rdfs:range rdf:resource="&xsd;boolean"/>
 	<rdfs:comment>Is channel public?</rdfs:comment>
@@ -421,13 +412,13 @@
 <rdfs:Class rdf:about="&xesam;MailingList">
 	<rdfs:subClassOf rdf:resource="&xesam;CommunicationChannel"/>
 	<rdfs:subClassOf rdf:resource="&xesam;ContactGroup"/>
-	<rdfs:label>MailingList</rdfs:label>
+	<rdfs:label>mailing list</rdfs:label>
 	<rdfs:comment>Mailing list</rdfs:comment>
 </rdfs:Class>
 
 <rdfs:Class rdf:about="&xesam;NewsGroup">
 	<rdfs:subClassOf rdf:resource="&xesam;CommunicationChannel"/>
-	<rdfs:label>NewsGroup</rdfs:label>
+	<rdfs:label>news group</rdfs:label>
 	<rdfs:comment>News group</rdfs:comment>
 </rdfs:Class>
 
@@ -444,12 +435,12 @@
 
 <rdfs:Class rdf:about="&xesam;Message">
 	<rdfs:subClassOf rdf:resource="&xesam;Content"/>
-	<rdfs:label>Message</rdfs:label>
+	<rdfs:label>message</rdfs:label>
 	<rdfs:comment>Generic message</rdfs:comment>
 </rdfs:Class>
 
 <rdf:Property rdf:about="&xesam;receptionTime">
-	<rdfs:label>receptionTime</rdfs:label>
+	<rdfs:label>received at</rdfs:label>
 	<rdfs:domain rdf:resource="&xesam;Message"/>
 	<rdfs:range rdf:resource="&xsd;dateTime"/>
 	<rdfs:comment>Message reception time</rdfs:comment>
@@ -464,7 +455,7 @@
 </rdf:Property>
 
 <rdf:Property rdf:about="&xesam;primaryRecipient">
-	<rdfs:label>primaryRecipient</rdfs:label>
+	<rdfs:label>primary recipient</rdfs:label>
 	<rdfs:subPropertyOf rdf:resource="&xesam;recipient"/>
 	<rdfs:domain rdf:resource="&xesam;Message"/>
 	<rdfs:range rdf:resource="&xsd;string"/>
@@ -472,7 +463,7 @@
 </rdf:Property>
 
 <rdf:Property rdf:about="&xesam;secondaryRecipient">
-	<rdfs:label>secondaryRecipient</rdfs:label>
+	<rdfs:label>secondary recipient</rdfs:label>
 	<rdfs:subPropertyOf rdf:resource="&xesam;recipient"/>
 	<rdfs:domain rdf:resource="&xesam;Message"/>
 	<rdfs:range rdf:resource="&xsd;string"/>
@@ -480,7 +471,7 @@
 </rdf:Property>
 
 <rdf:Property rdf:about="&xesam;communicationChannel">
-	<rdfs:label>communicationChannel</rdfs:label>
+	<rdfs:label>communication channel</rdfs:label>
 	<rdfs:domain rdf:resource="&xesam;Message"/>
 	<rdfs:range rdf:resource="&xsd;string"/>
 	<rdfs:comment>Message communication channel like chatroom name or mailing list</rdfs:comment>
@@ -510,12 +501,12 @@
 
 <rdfs:Class rdf:about="&xesam;IMMessage">
 	<rdfs:subClassOf rdf:resource="&xesam;Message"/>
-	<rdfs:label>IMMessage</rdfs:label>
+	<rdfs:label>IM message</rdfs:label>
 	<rdfs:comment>Generic Instant Messaging message</rdfs:comment>
 </rdfs:Class>
 
 <rdf:Property rdf:about="&xesam;chatRoom">
-	<rdfs:label>chatRoom</rdfs:label>
+	<rdfs:label>chat room</rdfs:label>
 	<rdfs:subPropertyOf rdf:resource="&xesam;communicationChannel"/>
 	<rdfs:domain rdf:resource="&xesam;IMMessage"/>
 	<rdfs:range rdf:resource="&xsd;string"/>
@@ -531,7 +522,7 @@
 
 <rdfs:Class rdf:about="&xesam;Email">
 	<rdfs:subClassOf rdf:resource="&xesam;Message"/>
-	<rdfs:label>Email</rdfs:label>
+	<rdfs:label>email</rdfs:label>
 	<rdfs:comment>Email message</rdfs:comment>
 </rdfs:Class>
 
@@ -560,21 +551,21 @@
 </rdf:Property>
 
 <rdf:Property rdf:about="&xesam;replyTo">
-	<rdfs:label>replyTo</rdfs:label>
+	<rdfs:label>reply to</rdfs:label>
 	<rdfs:domain rdf:resource="&xesam;Email"/>
 	<rdfs:range rdf:resource="&xsd;string"/>
 	<rdfs:comment>ReplyTo:</rdfs:comment>
 </rdf:Property>
 
 <rdf:Property rdf:about="&xesam;contentType">
-	<rdfs:label>contentType</rdfs:label>
+	<rdfs:label>content type</rdfs:label>
 	<rdfs:domain rdf:resource="&xesam;Email"/>
 	<rdfs:range rdf:resource="&xsd;string"/>
 	<rdfs:comment>Email content mime type/charset</rdfs:comment>
 </rdf:Property>
 
 <rdf:Property rdf:about="&xesam;inReplyTo">
-	<rdfs:label>inReplyTo</rdfs:label>
+	<rdfs:label>in reply to</rdfs:label>
 	<rdfs:subPropertyOf rdf:resource="&xesam;derivedFrom"/>
 	<rdfs:domain rdf:resource="&xesam;Email"/>
 	<rdfs:range rdf:resource="&xsd;string"/>
@@ -588,7 +579,7 @@
 
 <rdfs:Class rdf:about="&xesam;PersonalEmail">
 	<rdfs:subClassOf rdf:resource="&xesam;Email"/>
-	<rdfs:label>PersonalEmail</rdfs:label>
+	<rdfs:label>personal email</rdfs:label>
 	<rdfs:comment>Personal email message(not related to a mailing list or discussion group)</rdfs:comment>
 </rdfs:Class>
 
@@ -598,12 +589,12 @@
 
 <rdfs:Class rdf:about="&xesam;MailingListEmail">
 	<rdfs:subClassOf rdf:resource="&xesam;Email"/>
-	<rdfs:label>MailingListEmail</rdfs:label>
+	<rdfs:label>mailing list email</rdfs:label>
 	<rdfs:comment>Email message addressed at/received from a mailing list</rdfs:comment>
 </rdfs:Class>
 
 <rdf:Property rdf:about="&xesam;mailingList">
-	<rdfs:label>mailingList</rdfs:label>
+	<rdfs:label>mailing list</rdfs:label>
 	<rdfs:subPropertyOf rdf:resource="&xesam;communicationChannel"/>
 	<rdfs:domain rdf:resource="&xesam;MailingListEmail"/>
 	<rdfs:range rdf:resource="&xsd;string"/>
@@ -616,12 +607,12 @@
 
 <rdfs:Class rdf:about="&xesam;NewsGroupEmail">
 	<rdfs:subClassOf rdf:resource="&xesam;Email"/>
-	<rdfs:label>NewsGroupEmail</rdfs:label>
+	<rdfs:label>news group email</rdfs:label>
 	<rdfs:comment>Email message addressed at/received from a news group</rdfs:comment>
 </rdfs:Class>
 
 <rdf:Property rdf:about="&xesam;newsGroup">
-	<rdfs:label>newsGroup</rdfs:label>
+	<rdfs:label>news group</rdfs:label>
 	<rdfs:subPropertyOf rdf:resource="&xesam;communicationChannel"/>
 	<rdfs:domain rdf:resource="&xesam;NewsGroupEmail"/>
 	<rdfs:range rdf:resource="&xsd;string"/>
@@ -640,14 +631,14 @@
 </rdfs:Class>
 
 <rdf:Property rdf:about="&xesam;usesNamespace">
-        <rdfs:label>usesNamespace</rdfs:label>
+        <rdfs:label>uses namespace</rdfs:label>
         <rdfs:domain rdf:resource="&xesam;XML"/>
 	<rdfs:range rdf:resource="&xsd;string"/>
         <rdfs:comment>Namespace refereced by the XML</rdfs:comment>
 </rdf:Property>
 
 <rdf:Property rdf:about="&xesam;markupCharacterCount">
-	<rdfs:label>markupCharacterCount</rdfs:label>
+	<rdfs:label>markup character count</rdfs:label>
 	<rdfs:domain rdf:resource="&xesam;XML"/>
 	<rdfs:range rdf:resource="&xsd;integer"/>
 	<rdfs:comment>XML markup character count</rdfs:comment>
@@ -664,12 +655,12 @@
 
 <rdfs:Class rdf:about="&xesam;SoftwarePackage">
 	<rdfs:subClassOf rdf:resource="&xesam;Content"/>
-	<rdfs:label>SoftwarePackage</rdfs:label>
+	<rdfs:label>software package</rdfs:label>
 	<rdfs:comment>Software distribution package</rdfs:comment>
 </rdfs:Class>
 
 <rdf:Property rdf:about="&xesam;conflicts">
-	<rdfs:label>conflicts</rdfs:label>
+	<rdfs:label>conflicts with</rdfs:label>
 	<rdfs:subPropertyOf rdf:resource="&xesam;related"/>
 	<rdfs:domain rdf:resource="&xesam;SoftwarePackage"/>
 	<rdfs:range rdf:resource="&xss;Uri"/>
@@ -709,26 +700,26 @@
 
 <rdfs:Class rdf:about="&xesam;Text">
 	<rdfs:subClassOf rdf:resource="&xesam;Content"/>
-	<rdfs:label>Text</rdfs:label>
+	<rdfs:label>text</rdfs:label>
 	<rdfs:comment>Defines a textual aspect of content. Properties represent only actual content intended for the user, not markup. Other parts of content like markup should be described using other clsses. Abstract class.</rdfs:comment>
 </rdfs:Class>
 
 <rdf:Property rdf:about="&xesam;characterCount">
-	<rdfs:label>characterCount</rdfs:label>
+	<rdfs:label>character count</rdfs:label>
 	<rdfs:domain rdf:resource="&xesam;Text"/>
 	<rdfs:range rdf:resource="&xsd;integer"/>
 	<rdfs:comment>Text character count</rdfs:comment>
 </rdf:Property>
 
 <rdf:Property rdf:about="&xesam;lineCount">
-	<rdfs:label>lineCount</rdfs:label>
+	<rdfs:label>line count</rdfs:label>
 	<rdfs:domain rdf:resource="&xesam;Text"/>
 	<rdfs:range rdf:resource="&xsd;integer"/>
 	<rdfs:comment>Text line count</rdfs:comment>
 </rdf:Property>
 
 <rdf:Property rdf:about="&xesam;wordCount">
-	<rdfs:label>wordCount</rdfs:label>
+	<rdfs:label>word count</rdfs:label>
 	<rdfs:domain rdf:resource="&xesam;Text"/>
 	<rdfs:range rdf:resource="&xsd;integer"/>
 	<rdfs:comment>Text word count</rdfs:comment>
@@ -744,7 +735,7 @@
 
 <rdfs:Class rdf:about="&xesam;UncategorizedText">
 	<rdfs:subClassOf rdf:resource="&xesam;Text"/>
-	<rdfs:label>UncategorizedText</rdfs:label>
+	<rdfs:label>uncategorized text</rdfs:label>
 	<rdfs:comment>Text content which doesn't fit any other text-based classes. Corresponds to Tracker's Text category.</rdfs:comment>
 </rdfs:Class>
 
@@ -760,13 +751,13 @@
 
 <rdfs:Class rdf:about="&xesam;Document">
 	<rdfs:subClassOf rdf:resource="&xesam;Text"/>
-	<rdfs:label>Document</rdfs:label>
+	<rdfs:label>document</rdfs:label>
 	<rdfs:comment>Document is an arrangement of various atomic data types with text being the primary data type.</rdfs:comment>
 </rdfs:Class>
 
 
 <rdf:Property rdf:about="&xesam;documentCategory">
-	<rdfs:label>documentCategory</rdfs:label>
+	<rdfs:label>document category</rdfs:label>
 	<rdfs:domain rdf:resource="&xesam;Document"/>
 	<rdfs:range rdf:resource="&xsd;string"/>
 	<rdfs:comment>Document category: book, article, flyer, pamphlet whatever</rdfs:comment>
@@ -774,14 +765,14 @@
 
 
 <rdf:Property rdf:about="&xesam;pageCount">
-	<rdfs:label>pageCount</rdfs:label>
+	<rdfs:label>page count</rdfs:label>
 	<rdfs:domain rdf:resource="&xesam;Document"/>
 	<rdfs:range rdf:resource="&xsd;integer"/>
 	<rdfs:comment>Document page count. Slide count for presentations</rdfs:comment>
 </rdf:Property>
 
 <rdf:Property rdf:about="&xesam;paragraphCount">
-	<rdfs:label>paragrapCount</rdfs:label>
+	<rdfs:label>paragraph count</rdfs:label>
 	<rdfs:domain rdf:resource="&xesam;Document"/>
 	<rdfs:range rdf:resource="&xsd;integer"/>
 	<rdfs:comment>Document paragraph count</rdfs:comment>
@@ -791,7 +782,7 @@
 
 <rdfs:Class rdf:about="&xesam;Documentation">
 	<rdfs:subClassOf rdf:resource="&xesam;Document"/>
-	<rdfs:label>Documentation</rdfs:label>
+	<rdfs:label>documentation</rdfs:label>
 	<rdfs:comment>Documentation is a document containing help, manuals, guides.</rdfs:comment>
 </rdfs:Class>
 
@@ -800,12 +791,12 @@
 
 <rdfs:Class rdf:about="&xesam;Spreadsheet">
 	<rdfs:subClassOf rdf:resource="&xesam;Document"/>
-	<rdfs:label>Spreadsheet</rdfs:label>
+	<rdfs:label>spreadsheet</rdfs:label>
 	<rdfs:comment>Spreadsheet document</rdfs:comment>
 </rdfs:Class>
 
 <rdf:Property rdf:about="&xesam;rowCount">
-	<rdfs:label>rowCount</rdfs:label>
+	<rdfs:label>row count</rdfs:label>
 	<rdfs:subPropertyOf rdf:resource="&xesam;lineCount"/>
 	<rdfs:domain rdf:resource="&xesam;Spreadsheet"/>
 	<rdfs:range rdf:resource="&xsd;integer"/>
@@ -813,7 +804,7 @@
 </rdf:Property>
 
 <rdf:Property rdf:about="&xesam;columnCount">
-	<rdfs:label>columnCount</rdfs:label>
+	<rdfs:label>column count</rdfs:label>
 	<rdfs:domain rdf:resource="&xesam;Spreadsheet"/>
 	<rdfs:range rdf:resource="&xsd;integer"/>
 	<rdfs:comment>Spreadsheet column count</rdfs:comment>
@@ -826,7 +817,7 @@
 
 <rdfs:Class rdf:about="&xesam;Presentation">
 	<rdfs:subClassOf rdf:resource="&xesam;Document"/>
-	<rdfs:label>Presentation</rdfs:label>
+	<rdfs:label>presentation</rdfs:label>
 	<rdfs:comment>Presentation document</rdfs:comment>
 </rdfs:Class>
 
@@ -841,7 +832,7 @@
 
 <rdfs:Class rdf:about="&xesam;TextDocument">
 	<rdfs:subClassOf rdf:resource="&xesam;Document"/>
-	<rdfs:label>TextDocument</rdfs:label>
+	<rdfs:label>text document</rdfs:label>
 	<rdfs:comment>Text document. For word processing apps.</rdfs:comment>
 </rdfs:Class>
 
@@ -854,40 +845,40 @@
 
 <rdfs:Class rdf:about="&xesam;SourceCode">
 	<rdfs:subClassOf rdf:resource="&xesam;Text"/>
-	<rdfs:label>SourceCode</rdfs:label>
+	<rdfs:label>source code</rdfs:label>
 	<rdfs:comment>Source Code</rdfs:comment>
 </rdfs:Class>
 
 <rdf:Property rdf:about="&xesam;programmingLanguage">
-	<rdfs:label>programmingLanguage</rdfs:label>
+	<rdfs:label>programming language</rdfs:label>
 	<rdfs:domain rdf:resource="&xesam;SourceCode"/>
 	<rdfs:range rdf:resource="&xsd;string"/>
 	<rdfs:comment>Source code programming language</rdfs:comment>
 </rdf:Property>
 
 <rdf:Property rdf:about="&xesam;commentCharacterCount">
-	<rdfs:label>commentCharacterCount</rdfs:label>
+	<rdfs:label>comment character count</rdfs:label>
 	<rdfs:domain rdf:resource="&xesam;SourceCode"/>
 	<rdfs:range rdf:resource="&xsd;integer"/>
 	<rdfs:comment>Source code comment character count</rdfs:comment>
 </rdf:Property>
 
 <rdf:Property rdf:about="&xesam;definesFunction">
-	<rdfs:label>definesFunction</rdfs:label>
+	<rdfs:label>defines function</rdfs:label>
 	<rdfs:domain rdf:resource="&xesam;SourceCode"/>
 	<rdfs:range rdf:resource="&xsd;string"/>
 	<rdfs:comment>Source code defines function</rdfs:comment>
 </rdf:Property>
 
 <rdf:Property rdf:about="&xesam;definesClass">
-	<rdfs:label>definesClass</rdfs:label>
+	<rdfs:label>defines class</rdfs:label>
 	<rdfs:domain rdf:resource="&xesam;SourceCode"/>
 	<rdfs:range rdf:resource="&xsd;string"/>
 	<rdfs:comment>Source code defines class</rdfs:comment>
 </rdf:Property>
 
 <rdf:Property rdf:about="&xesam;definesGlobalVariable">
-	<rdfs:label>definesGlobalVariable</rdfs:label>
+	<rdfs:label>defines global variable</rdfs:label>
 	<rdfs:domain rdf:resource="&xesam;SourceCode"/>
 	<rdfs:range rdf:resource="&xsd;string"/>
 	<rdfs:comment>Source code defines global variable</rdfs:comment>
@@ -903,7 +894,7 @@
 
 <rdfs:Class rdf:about="&xesam;Media">
 	<rdfs:subClassOf rdf:resource="&xesam;Content"/>
-	<rdfs:label>Media</rdfs:label>
+	<rdfs:label>media</rdfs:label>
 	<rdfs:comment>Generic raster/sampled media is considered consisting of Sets of Samples being reproduced(played/shown) at once. We describe: sample data type(int/float), data bit depth,configuration(color space for images, channel count for audio); set configuration(pixel dimensions for image); set count and rate.</rdfs:comment>
 </rdfs:Class>
 
@@ -922,14 +913,14 @@
 </rdf:Property>
 
 <rdf:Property rdf:about="&xesam;sampleDataBitDepth">
-	<rdfs:label>sampleBitDepth</rdfs:label>
+	<rdfs:label>sample bit depth</rdfs:label>
 	<rdfs:domain rdf:resource="&xesam;Media"/>
 	<rdfs:range rdf:resource="&xsd;integer"/>
 	<rdfs:comment>Media sample data bit depth: 8, 16, 24, 32 etc</rdfs:comment>
 </rdf:Property>
 
 <rdf:Property rdf:about="&xesam;sampleDataType">
-	<rdfs:label>sampleDataType</rdfs:label>
+	<rdfs:label>sample data type</rdfs:label>
 	<rdfs:domain rdf:resource="&xesam;Media"/>
 	<rdfs:range rdf:resource="&xsd;string"/>
 	<rdfs:comment>Media sample data type: int, float</rdfs:comment>
@@ -1146,7 +1137,7 @@
 <rdf:Property rdf:about="&xesam;exposureTime">
 	<rdfs:label>exposureTime</rdfs:label>
 	<rdfs:domain rdf:resource="&xesam;Photo"/>
-	<rdfs:range rdf:resource="&xsd;dateTime"/>
+	<rdfs:range rdf:resource="&xsd;string"/>
 	<rdfs:comment>Photo exposure time</rdfs:comment>
 </rdf:Property>
 
