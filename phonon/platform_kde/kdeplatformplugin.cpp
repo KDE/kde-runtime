@@ -43,8 +43,9 @@
 
 typedef QPair<QByteArray, QString> PhononDeviceAccess;
 typedef QList<PhononDeviceAccess> PhononDeviceAccessList;
+#ifndef KDE_USE_FINAL
 Q_DECLARE_METATYPE(PhononDeviceAccessList)
-
+#endif
 namespace Phonon
 {
 
