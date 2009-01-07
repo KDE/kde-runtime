@@ -34,6 +34,7 @@
 #include <QtCore/QDebug>
 #include <QtCore/QThread>
 #include <QtCore/QDateTime>
+#include <QtCore/QByteArray>
 #include <QtCore/QUuid>
 
 #include <KUrl>
@@ -213,15 +214,17 @@ void Strigi::Soprano::IndexWriter::deleteEntries( const std::vector<std::string>
     for ( unsigned int i = 0; i < entries.size(); ++i ) {
         QString path = QString::fromUtf8( entries[i].c_str() );
         QString query = QString( "select ?g ?mg where { "
-                                 "?r <%1> \"%2\"^^<%3> . "
-                                 "?g <http://www.strigi.org/fields#indexGraphFor> ?r . "
-                                 "OPTIONAL { ?mg <%4> ?g . } }" )
+                                 "{ { ?r <%1> \"%2\"^^<%3> . } UNION { ?r <%1> %6 . } } . "
+                                 "?g <%4> ?r . "
+                                 "OPTIONAL { ?mg <%5> ?g . } }" )
                         .arg( systemLocationUri )
                         .arg( path )
                         .arg( Vocabulary::XMLSchema::string().toString() )
-                        .arg( Vocabulary::NRL::coreGraphMetadataFor().toString() );
+                        .arg( Strigi::Ontology::indexGraphFor().toString() )
+                        .arg( Vocabulary::NRL::coreGraphMetadataFor().toString() )
+                        .arg( Node( QUrl::fromLocalFile( path ) ).toN3() );
 
-//        qDebug() << "deleteEntries query:" << query;
+        qDebug() << "deleteEntries query:" << query;
 
         QueryResultIterator result = d->repository->executeQuery( query, ::Soprano::Query::QueryLanguageSparql );
         if ( result.next() ) {
@@ -248,7 +251,7 @@ void Strigi::Soprano::IndexWriter::deleteAllEntries()
 //    qDebug() << "IndexWriter::deleteAllEntries in thread" << QThread::currentThread();
 
     // query all index graphs (FIXME: would a type derived from nrl:Graph be better than only the predicate?)
-    QString query = QString( "select ?g where { ?g <http://www.strigi.org/fields#indexGraphFor> ?r . }" );
+    QString query = QString( "select ?g where { ?g <%1> ?r . }" ).arg( Strigi::Ontology::indexGraphFor().toString() );
 
     qDebug() << "deleteAllEntries query:" << query;
 
@@ -281,7 +284,7 @@ void Strigi::Soprano::IndexWriter::startAnalysis( const AnalysisResult* idx )
 
     // let's check if we already have data on the file
     StatementIterator it = d->repository->listStatements( Node(),
-                                                          QUrl::fromEncoded( "http://www.strigi.org/fields#indexGraphFor", QUrl::StrictMode ), // FIXME: put the URI somewhere else
+                                                          Strigi::Ontology::indexGraphFor(),
                                                           data->fileUri );
     if ( it.next() ) {
         data->context = it.current().subject().uri();
@@ -320,29 +323,33 @@ void Strigi::Soprano::IndexWriter::addValue( const AnalysisResult* idx,
         FileMetaData* md = reinterpret_cast<FileMetaData*>( idx->writerData() );
         RegisteredFieldData* rfd = reinterpret_cast<RegisteredFieldData*>( field->writerData() );
 
+        // Strigi uses rdf:type improperly since it stores the value as a string. We have to
+        // make sure it is a resource.
         if ( rfd->isRdfType ) {
-
-            // Strigi uses rdf:type improperly since it stores the value as a string. We have to
-            // make sure it is a resource. The problem is that this results in the type not being
-            // indexed properly. Thus, it cannot be searched with normal lucene queries.
-            // That is why we need to introduce a stringType property
-
-            d->repository->addStatement( Statement( md->fileUri,
-                                                    ::Soprano::Vocabulary::RDF::type(),
-                                                    QUrl::fromEncoded( value.c_str(), QUrl::StrictMode ), // fromEncoded is faster than the plain constructor and all Xesam URIs work here
-                                                    md->context) );
-            d->repository->addStatement( Statement( md->fileUri,
-                                                    QUrl::fromEncoded( "http://strigi.sourceforge.net/fields#rdf-string-type", QUrl::StrictMode ),
-                                                    LiteralValue( QString::fromUtf8( value.c_str() ) ),
-                                                    md->context) );
+            d->repository->addStatement( md->fileUri,
+                                         ::Soprano::Vocabulary::RDF::type(),
+                                         QUrl::fromEncoded( value.c_str(), QUrl::StrictMode ),
+                                         md->context );
         }
-
         else {
-            d->repository->addStatement( Statement( md->fileUri,
-                                                    rfd->property,
-                                                    d->createLiteralValue( rfd->dataType, ( unsigned char* )value.c_str(), value.length() ),
-                                                    md->context) );
+            // we bend the plain strigi properties into something nicer, also because we do not want paths to be indexed, way too many false positives
+            // in standard desktop searches
+            if ( field->key() == FieldRegister::pathFieldName ||
+                 field->key() == FieldRegister::parentLocationFieldName ) {
+                d->repository->addStatement( md->fileUri,
+                                             rfd->property,
+                                             QUrl::fromLocalFile( QFile::decodeName( QByteArray::fromRawData( value.c_str(), value.length() ) ) ),
+                                             md->context );
+            }
+            else {
+                d->repository->addStatement( Statement( md->fileUri,
+                                                        rfd->property,
+                                                        d->createLiteralValue( rfd->dataType, ( unsigned char* )value.c_str(), value.length() ),
+                                                        md->context) );
+            }
         }
+        if ( d->repository->lastError() )
+            qDebug() << "Failed to add value" << value.c_str();
     }
 //    qDebug() << "IndexWriter::addValue done in thread" << QThread::currentThread();
 }
@@ -459,6 +466,8 @@ void Strigi::Soprano::IndexWriter::finishAnalysis( const AnalysisResult* idx )
                                                 Vocabulary::Xesam::asText(),
                                                 LiteralValue( QString::fromUtf8( md->content.c_str() ) ),
                                                 md->context ) );
+        if ( d->repository->lastError() )
+            qDebug() << "Failed to add" << md->fileUri << "as text" << QString::fromUtf8( md->content.c_str() );
     }
 
     // Strigi only indexes files and extractors mostly (if at all) store the xesam:DataObject type (i.e. the contents)
@@ -487,7 +496,7 @@ void Strigi::Soprano::IndexWriter::finishAnalysis( const AnalysisResult* idx )
                                             LiteralValue( QDateTime::currentDateTime() ),
                                             metaDataContext ) );
     d->repository->addStatement( Statement( md->context,
-                                            QUrl::fromEncoded( "http://www.strigi.org/fields#indexGraphFor", QUrl::StrictMode ), // FIXME: put the URI somewhere else
+                                            Strigi::Ontology::indexGraphFor(),
                                             md->fileUri,
                                             metaDataContext ) );
     d->repository->addStatement( Statement( metaDataContext,
