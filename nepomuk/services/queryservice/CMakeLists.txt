@@ -1,5 +1,7 @@
 project(queryservice)
 
+KDE4_NO_ENABLE_FINAL(nepomuk-queryservice)
+
 include_directories(
   ${QT_INCLUDES}
   ${KDE4_INCLUDES}
