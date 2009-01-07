@@ -84,11 +84,6 @@ TString Strigi::Soprano::Util::convertSearchField( const std::string& field )
     if ( QString::fromUtf8( field.c_str() ) == ::Soprano::Index::CLuceneIndex::defaultSearchField() ) {
         return TString::fromUtf8( field.c_str() );
     }
-    else if ( QString( field.c_str() ) == ::Soprano::Vocabulary::RDF::type().toString() ) {
-        // see sopranoindexwriter:addValue for details on this conversion
-        static TString strigiType( "http://strigi.sourceforge.net/fields#rdf-string-type" );
-        return strigiType;
-    }
     else {
         return fieldUri( field ).toString();
     }
@@ -165,4 +160,10 @@ void Strigi::Soprano::Util::storeStrigiMiniOntology( ::Soprano::Model* model )
     if ( !model->containsStatement( metaDataType ) ) {
         model->addStatement( metaDataType );
     }
+}
+
+
+QUrl Strigi::Ontology::indexGraphFor()
+{
+    return QUrl::fromEncoded( "http://www.strigi.org/fields#indexGraphFor", QUrl::StrictMode );
 }

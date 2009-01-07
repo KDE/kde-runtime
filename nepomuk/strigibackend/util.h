@@ -49,6 +49,10 @@ namespace Strigi {
             void storeStrigiMiniOntology( ::Soprano::Model* model );
         }
     }
+
+    namespace Ontology {
+        QUrl indexGraphFor();
+    }
 }
 
 #endif

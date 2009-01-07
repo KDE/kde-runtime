@@ -40,6 +40,7 @@
 #include <QtCore/QDebug>
 #include <QtCore/QString>
 #include <QtCore/QLatin1String>
+#include <QtCore/QFile>
 
 
 using namespace Soprano;
@@ -58,7 +59,7 @@ static lucene::search::Query* createSingleFieldQuery( const string& field,
                                                       const Strigi::Query& query );
 static lucene::search::Query* createMultiFieldQuery( const Strigi::Query& query );
 
-
+#if 0
 static QString luceneQueryEscape( const QString& s )
 {
     /* Chars to escape: + - && || ! ( ) { } [ ] ^ " ~  : \ */
@@ -68,6 +69,7 @@ static QString luceneQueryEscape( const QString& s )
     es.replace( rx, "\\\\1" );
     return es;
 }
+#endif
 
 static lucene::index::Term* createWildCardTerm( const TString& name,
                                                 const string& value )
@@ -383,12 +385,17 @@ void Strigi::Soprano::IndexReader::getChildren( const std::string& parent,
                                                 std::map<std::string, time_t>& children )
 {
 //    qDebug() << "IndexReader::getChildren in thread" << QThread::currentThread();
-    QString query = QString( "select distinct ?path ?mtime where { ?r <%1> \"%2\"^^<%3> . ?r <%4> ?mtime . ?r <%5> ?path . }")
+    QString query = QString( "select distinct ?path ?mtime where { "
+                             "{ { ?r <%1> \"%2\"^^<%3> . } UNION { ?r <%1> %6 . } } . "
+                             "?r <%4> ?mtime . "
+                             "?r <%5> ?path . "
+                             "}")
                     .arg( Util::fieldUri( FieldRegister::parentLocationFieldName ).toString(),
                           escapeLiteralForSparqlQuery( QString::fromUtf8( parent.c_str() ) ),
                           Vocabulary::XMLSchema::string().toString(),
                           Util::fieldUri( FieldRegister::mtimeFieldName ).toString(),
-                          Util::fieldUri( FieldRegister::pathFieldName ).toString() );
+                          Util::fieldUri( FieldRegister::pathFieldName ).toString(),
+                          Node( QUrl::fromLocalFile( QFile::decodeName( parent.c_str() ) ) ).toN3() );
 
 //    qDebug() << "running getChildren query:" << query;
 
@@ -399,12 +406,19 @@ void Strigi::Soprano::IndexReader::getChildren( const std::string& parent,
         Node mTimeNode = result.binding( "mtime" );
 //        qDebug() << "file in index: " << pathNode.toString() << "mtime:" << mTimeNode.literal().toDateTime() << "(" << mTimeNode.literal().toDateTime().toTime_t() << ")";
 
-        // FIXME: Sadly in Xesam sourceModified is not typed as DateTime but defaults to an int :( We try to be compatible
+        // be backwards compatible in case there are paths left encoded as literals
+        std::string path;
+        if ( pathNode.isLiteral() )
+            path = pathNode.toString().toUtf8().data();
+        else
+            path = QFile::encodeName( pathNode.uri().toLocalFile() ).data();
+
+        // Sadly in Xesam sourceModified is not typed as DateTime but defaults to an int :( We try to be compatible
         if ( mTimeNode.literal().isDateTime() ) {
-            children[std::string( pathNode.toString().toUtf8().data() )] = mTimeNode.literal().toDateTime().toTime_t();
+            children[path] = mTimeNode.literal().toDateTime().toTime_t();
         }
         else {
-            children[std::string( pathNode.toString().toUtf8().data() )] = mTimeNode.literal().toUnsignedInt();
+            children[path] = mTimeNode.literal().toUnsignedInt();
         }
     }
 }
