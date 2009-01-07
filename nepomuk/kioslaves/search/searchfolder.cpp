@@ -33,12 +33,7 @@
 #include <KIO/NetAccess>
 #include <KUser>
 #include <kdirnotify.h>
-
-uint qHash( const QUrl& url )
-{
-    return qHash( url.toString() );
-}
-
+#include <qurlhash.h>
 
 namespace {
     QString addCounterToFileName( const QString& name, int i )
