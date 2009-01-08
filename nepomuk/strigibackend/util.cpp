@@ -137,8 +137,12 @@ void Strigi::Soprano::Util::storeStrigiMiniOntology( ::Soprano::Model* model )
                                         graph );
     ::Soprano::Statement parentUrlRange( parentUrlProp.subject(),
                                          ::Soprano::Vocabulary::RDFS::range(),
-                                         ::Soprano::Vocabulary::XMLSchema::string(),
+                                         ::Soprano::Vocabulary::RDFS::Resource(),
                                          graph );
+    ::Soprano::Statement oldParentUrlRange( parentUrlProp.subject(),
+                                            ::Soprano::Vocabulary::RDFS::range(),
+                                            ::Soprano::Vocabulary::XMLSchema::string(),
+                                            graph );
     ::Soprano::Statement parentUrlDomain( parentUrlProp.subject(),
                                           ::Soprano::Vocabulary::RDFS::domain(),
                                           ::Soprano::Vocabulary::Xesam::File(),
@@ -152,6 +156,7 @@ void Strigi::Soprano::Util::storeStrigiMiniOntology( ::Soprano::Model* model )
         model->addStatement( parentUrlProp );
     }
     if ( !model->containsStatement( parentUrlRange ) ) {
+        model->removeStatement( oldParentUrlRange );
         model->addStatement( parentUrlRange );
     }
     if ( !model->containsStatement( parentUrlDomain ) ) {
