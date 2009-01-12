@@ -340,7 +340,7 @@ void NotifyByPopup::slotDBusNotificationClosed(uint dbus_id, uint reason)
 void NotifyByPopup::getAppCaptionAndIconName(KNotifyConfig *config, QString *appCaption, QString *iconName)
 {
 	KConfigGroup globalgroup(&(*config->eventsfile), "Global");
-	*appCaption = globalgroup.readEntry("Comment", globalgroup.readEntry("Name", config->appname));
+	*appCaption = globalgroup.readEntry("Name", globalgroup.readEntry("Comment", config->appname));
 	*iconName = globalgroup.readEntry("IconName", config->appname);
 }
 
