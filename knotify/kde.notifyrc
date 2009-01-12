@@ -896,7 +896,7 @@ Comment[wa]=Ene sacwè di speciåle s' a passé dins l' programe
 Comment[x-test]=xxSomething special happened in the programxx
 Comment[zh_CN]=这个程序中发生了特殊的事情
 Comment[zh_TW]=程式中發生了特殊事件
-Action=Sound
+Action=Sound|Popup
 Sound=KDE-Sys-Special.ogg
 
 [Event/warning]
