@@ -49,7 +49,7 @@ static const int COL_FILENAME = 1;
 K_PLUGIN_FACTORY( NotifyFactory, registerPlugin<KCMKNotify>(); )
 K_EXPORT_PLUGIN( NotifyFactory("kcmnotify") )
 
-		KCMKNotify::KCMKNotify(QWidget *parent, const QVariantList & )
+KCMKNotify::KCMKNotify(QWidget *parent, const QVariantList & )
     : KCModule(NotifyFactory::componentData(), parent/*, name*/),
       m_playerSettings( 0L )
 {
@@ -66,36 +66,36 @@ K_EXPORT_PLUGIN( NotifyFactory("kcmnotify") )
                 "any additional visual or audible alert.</li>"
                 "</ul>"));
 
-	QVBoxLayout *layout = new QVBoxLayout( this );
-	layout->setMargin( 0 );
-	layout->setSpacing( KDialog::spacingHint() );
-	QTabWidget *tab = new QTabWidget(this);
-	layout->addWidget(tab);
+    QVBoxLayout *layout = new QVBoxLayout( this );
+    layout->setMargin( 0 );
+    layout->setSpacing( KDialog::spacingHint() );
+    QTabWidget *tab = new QTabWidget(this);
+    layout->addWidget(tab);
 
-	QWidget * app_tab = new QWidget(tab);
-	QVBoxLayout *app_layout = new QVBoxLayout( app_tab );
+    QWidget * app_tab = new QWidget(tab);
+    QVBoxLayout *app_layout = new QVBoxLayout( app_tab );
 
-	QLabel *label = new QLabel( i18n( "Event source:" ), app_tab );
-	m_appCombo = new KComboBox( false, app_tab );
-	m_appCombo->setObjectName( "app combo" );
-	QHBoxLayout *hbox = new QHBoxLayout();
-	hbox->setSpacing( KDialog::spacingHint() );
-	app_layout->addItem( hbox );
-	hbox->addWidget( label );
-	hbox->addWidget( m_appCombo, 10 );
+    QLabel *label = new QLabel( i18n( "Event source:" ), app_tab );
+    m_appCombo = new KComboBox( false, app_tab );
+    m_appCombo->setObjectName( "app combo" );
+    QHBoxLayout *hbox = new QHBoxLayout();
+    hbox->setSpacing( KDialog::spacingHint() );
+    app_layout->addItem( hbox );
+    hbox->addWidget( label );
+    hbox->addWidget( m_appCombo, 10 );
 
-	m_notifyWidget = new KNotifyConfigWidget( app_tab );
-	app_layout->addWidget( m_notifyWidget );
+    m_notifyWidget = new KNotifyConfigWidget( app_tab );
+    app_layout->addWidget( m_notifyWidget );
 
-	connect( m_notifyWidget, SIGNAL(changed(bool)), this,  SIGNAL(changed(bool)));
+    connect( m_notifyWidget, SIGNAL(changed(bool)), this,  SIGNAL(changed(bool)));
 
-	m_playerSettings = new PlayerSettingsDialog(tab);
+    m_playerSettings = new PlayerSettingsDialog(tab);
     connect(m_playerSettings, SIGNAL(changed(bool)) , this, SIGNAL(changed(bool)));
 
-/*	general->layout()->setMargin( KDialog::marginHint() );
-	hardware->layout()->setMargin( KDialog::marginHint() );*/
-	tab->addTab(app_tab, i18n("&Applications"));
-	tab->addTab(m_playerSettings, i18n("&Player Settings"));
+/*  general->layout()->setMargin( KDialog::marginHint() );
+    hardware->layout()->setMargin( KDialog::marginHint() );*/
+    tab->addTab(app_tab, i18n("&Applications"));
+    tab->addTab(m_playerSettings, i18n("&Player Settings"));
 
     connect( m_appCombo, SIGNAL( activated( int ) ),
              SLOT( slotAppActivated( int )) );
@@ -105,10 +105,10 @@ K_EXPORT_PLUGIN( NotifyFactory("kcmnotify") )
         ki18n("System Notification Control Panel Module"),
         KAboutData::License_GPL, ki18n("(c) 2002-2006 KDE Team"));
 
-	ab->addAuthor( ki18n("Olivier Goffart"), KLocalizedString(), "ogoffart@kde.org" );
+    ab->addAuthor( ki18n("Olivier Goffart"), KLocalizedString(), "ogoffart@kde.org" );
     ab->addAuthor( ki18n("Carsten Pfeiffer"), KLocalizedString(), "pfeiffer@kde.org" );
     ab->addCredit( ki18n("Charles Samuels"), ki18n("Original implementation"),
-	       "charles@altair.dhs.org" );
+        "charles@altair.dhs.org" );
     setAboutData( ab );
 }
 
@@ -182,14 +182,14 @@ void KCMKNotify::load()
     // unsetCursor(); // unsetting doesn't work. sigh.
     setEnabled( true );
     emit changed( false );
-	*/
+    */
 
-	m_playerSettings->load();
+    m_playerSettings->load();
 
     if ( m_appNames.count() > 0 )
         m_notifyWidget->setApplication( m_appNames.at( 0 ) );
 
-	emit changed(false);
+    emit changed(false);
 
 }
 
@@ -207,7 +207,7 @@ void KCMKNotify::save()
 ///////////////////////////////////////////////////////////////////
 
 PlayerSettingsDialog::PlayerSettingsDialog( QWidget *parent )
-	: QWidget(parent), m_change(false)
+    : QWidget(parent), m_change(false)
 {
 
     m_ui = new Ui::PlayerSettingsUI();
