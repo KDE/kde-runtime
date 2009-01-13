@@ -90,7 +90,7 @@ Toplevel :: Toplevel(KrashConfig *krashconf, QWidget *parent)
     mainLayout->addWidget(detailsCheckBox);
 
     m_detailDescriptionLabel = new QLabel(this);
-    m_detailDescriptionLabel->setText(i18n("Please include the following information to your bug report, after your description of the steps to reproduce the crash."));
+    m_detailDescriptionLabel->setText(i18n("Please include the following information in your bug report, after your description of the steps to reproduce the crash."));
     m_detailDescriptionLabel->setWordWrap(true);
     m_detailDescriptionLabel->setTextInteractionFlags(Qt::TextBrowserInteraction);
     m_detailDescriptionLabel->setAlignment(Qt::AlignJustify);
