@@ -84,9 +84,14 @@ Nepomuk::FileWatch::FileWatch( QObject* parent, const QList<QVariant>& )
 {
     // monitor KIO for changes
     QDBusConnection::sessionBus().connect( QString(), QString(), "org.kde.KDirNotify", "FileMoved",
-                                           this, SLOT( slotFileMoved( const QString&, const QString& ) ) );
+                                           this, SIGNAL( fileMoved( const QString&, const QString& ) ) );
     QDBusConnection::sessionBus().connect( QString(), QString(), "org.kde.KDirNotify", "FilesRemoved",
-                                           this, SLOT( slotFilesDeleted( const QStringList& ) ) );
+                                           this, SIGNAL( filesDeleted( const QStringList& ) ) );
+
+    // async connection to the actual slots
+    // FIXME: is the signal delivery order guranteed? If not, we need a queue!
+    connect( this, SIGNAL( fileMoved( QString, QString ) ), this, SLOT( slotFileMoved( QString, QString ) ), Qt::QueuedConnection );
+    connect( this, SIGNAL( filesDeleted( QStringList ) ), this, SLOT( slotFilesDeleted( QStringList ) ), Qt::QueuedConnection );
 }
 
 
