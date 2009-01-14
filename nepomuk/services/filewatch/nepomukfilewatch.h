@@ -42,6 +42,11 @@ namespace Nepomuk {
         FileWatch( QObject* parent, const QVariantList& );
         ~FileWatch();
 
+    Q_SIGNALS:
+        // helper signals for async dbus connections
+        void fileMoved( const QString& from, const QString& to );
+        void filesDeleted( const QStringList& path );
+
     private Q_SLOTS:
         void slotFileMoved( const QString& from, const QString& to );
         void slotFileDeleted( const QString& path );
