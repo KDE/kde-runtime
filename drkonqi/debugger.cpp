@@ -43,7 +43,7 @@
 #include <ktextbrowser.h>
 #include <ktemporaryfile.h>
 
-#include "backtrace.h"
+#include "backtracegdb.h"
 #include "krashconf.h"
 #include "debugger.moc"
 
@@ -209,14 +209,15 @@ void KrashDebugger :: startDebugger()
     m_status->setText( i18n( "Backtrace will not be created."));
     return;
   }
+
+  m_proctrace = BackTrace::create(m_krashconf, this);
+
   if( !msg.isEmpty())
   {
     m_prependText += msg + '\n';
     m_backtrace->setPlainText( m_prependText );
   }
   m_status->setText(i18n("Loading symbols..."));
-
-  m_proctrace = new BackTrace(m_krashconf, this);
 
   connect(m_proctrace, SIGNAL(append(const QString &)),
           SLOT(slotAppend(const QString &)));

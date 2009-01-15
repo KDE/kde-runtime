@@ -101,15 +101,15 @@ void KrashConfig :: readConfig()
   QString configname = config.readEntry("ConfigName",
                                         QString("enduser"));
 
-  QString debuggername = config.readEntry("Debugger",
+  m_debuggerName = config.readEntry("Debugger",
                                            QString("gdb"));
 
-  KConfig debuggers(QString::fromLatin1("debuggers/%1rc").arg(debuggername),
+  KConfig debuggers(QString::fromLatin1("debuggers/%1rc").arg(m_debuggerName),
                     KConfig::NoGlobals, "appdata" );
   const KConfigGroup generalGroup = debuggers.group("General");
 
-  m_debugger = generalGroup.readPathEntry("Exec", QString());
-  m_debuggerBatch = generalGroup.readPathEntry("ExecBatch", QString());
+  m_debuggerCommand = generalGroup.readPathEntry("Exec", QString());
+  m_debuggerBatchCommand = generalGroup.readPathEntry("ExecBatch", QString());
   m_tryExec = generalGroup.readPathEntry("TryExec", QString());
   m_backtraceCommand = generalGroup.readEntry("BacktraceCommand");
   m_removeFromBacktraceRegExp = generalGroup.readEntry("RemoveFromBacktraceRegExp");

@@ -40,13 +40,22 @@
 #include <signal.h>
 
 #include "krashconf.h"
+#include "backtracegdb.h"
 #include "backtrace.moc"
+
+BackTrace* BackTrace::create(const KrashConfig* krashconf, QObject* parent)
+{
+  if(krashconf->debuggerName() == "gdb" )
+    return new BackTraceGdb(krashconf, parent);
+  abort(); // serious misconfiguration
+}
 
 BackTrace::BackTrace(const KrashConfig *krashconf, QObject *parent)
   : QObject(parent),
     m_krashconf(krashconf), m_temp(0)
 {
   m_proc = new KProcess;
+  m_proc->setEnv( "LC_ALL", "C" ); // force C locale
 }
 
 BackTrace::~BackTrace()
@@ -83,7 +92,7 @@ void BackTrace::start()
   m_temp->flush();
 
   // start the debugger
-  QString str = m_krashconf->debuggerBatch();
+  QString str = m_krashconf->debuggerBatchCommand();
   m_krashconf->expandString(str, KrashConfig::ExpansionUsageShell, m_temp->fileName());
 
   *m_proc << KShell::splitArgs(str);
@@ -122,60 +131,14 @@ void BackTrace::slotProcessExited(int exitCode, QProcess::ExitStatus exitStatus)
   // start it again
   ::kill(m_krashconf->pid(), SIGCONT);
 
-  if (((exitStatus == QProcess::NormalExit) && (exitCode == 0)) &&
-      usefulBacktrace())
+  if (exitStatus != QProcess::NormalExit || exitCode != 0)
   {
-    processBacktrace();
-    emit done(m_strBt);
+    emit someError();
+    return;
   }
+  m_strBt = processDebuggerOutput( m_strBt );
+  if( m_krashconf->disableChecks() || usefulDebuggerOutput( m_strBt ))
+    emit done(m_strBt);
   else
     emit someError();
-}
-
-// analyze backtrace for usefulness
-bool BackTrace::usefulBacktrace()
-{
-  // remove crap
-  if( !m_krashconf->removeFromBacktraceRegExp().isEmpty())
-    m_strBt.replace(QRegExp( m_krashconf->removeFromBacktraceRegExp()), QString());
-
-  if( m_krashconf->disableChecks())
-      return true;
-  // prepend and append newline, so that regexps like '\nwhatever\n' work on all lines
-  QString strBt = '\n' + m_strBt + '\n';
-  // how many " ?? " in the bt ?
-  int unknown = 0;
-  if( !m_krashconf->invalidStackFrameRegExp().isEmpty())
-    unknown = strBt.count( QRegExp( m_krashconf->invalidStackFrameRegExp()));
-  // how many stack frames in the bt ?
-  int frames = 0;
-  if( !m_krashconf->frameRegExp().isEmpty())
-    frames = strBt.count( QRegExp( m_krashconf->frameRegExp()));
-  else
-    frames = strBt.count('\n');
-  bool tooShort = false;
-  if( !m_krashconf->neededInValidBacktraceRegExp().isEmpty())
-    tooShort = ( strBt.indexOf( QRegExp( m_krashconf->neededInValidBacktraceRegExp())) == -1 );
-  return !m_strBt.isNull() && !tooShort && (unknown < frames);
-}
-
-// remove stack frames added because of KCrash
-void BackTrace::processBacktrace()
-{
-  if( !m_krashconf->kcrashRegExp().isEmpty())
-    {
-    QRegExp kcrashregexp( m_krashconf->kcrashRegExp());
-    int pos = kcrashregexp.indexIn( m_strBt );
-    if( pos >= 0 )
-      {
-      int len = kcrashregexp.matchedLength();
-      if( m_strBt[ pos ] == '\n' )
-        {
-        ++pos;
-        --len;
-        }
-      m_strBt.remove( pos, len );
-      m_strBt.insert( pos, QLatin1String( "[KCrash handler]\n" ));
-      }
-    }
 }
