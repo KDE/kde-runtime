@@ -135,6 +135,10 @@ void Strigi::Soprano::Util::storeStrigiMiniOntology( ::Soprano::Model* model )
                                         ::Soprano::Vocabulary::RDF::type(),
                                         ::Soprano::Vocabulary::RDF::Property(),
                                         graph );
+    ::Soprano::Statement depthProp( fieldUri( FieldRegister::embeddepthFieldName ),
+                                        ::Soprano::Vocabulary::RDF::type(),
+                                        ::Soprano::Vocabulary::RDF::Property(),
+                                        graph );
     ::Soprano::Statement parentUrlRange( parentUrlProp.subject(),
                                          ::Soprano::Vocabulary::RDFS::range(),
                                          ::Soprano::Vocabulary::RDFS::Resource(),
@@ -147,6 +151,14 @@ void Strigi::Soprano::Util::storeStrigiMiniOntology( ::Soprano::Model* model )
                                           ::Soprano::Vocabulary::RDFS::domain(),
                                           ::Soprano::Vocabulary::Xesam::File(),
                                           graph );
+    ::Soprano::Statement parentUrlHiding( parentUrlProp.subject(),
+                                          QUrl::fromEncoded( "http://nepomuk.kde.org/ontologies/2009/01/14/nrdo#hideFromGUI", QUrl::StrictMode ),
+                                          ::Soprano::LiteralValue( true ),
+                                          graph );
+    ::Soprano::Statement depthHiding( depthProp.subject(),
+                                      QUrl::fromEncoded( "http://nepomuk.kde.org/ontologies/2009/01/14/nrdo#hideFromGUI", QUrl::StrictMode ),
+                                      ::Soprano::LiteralValue( true ),
+                                      graph );
     ::Soprano::Statement metaDataType( graph,
                                        ::Soprano::Vocabulary::RDF::type(),
                                        ::Soprano::Vocabulary::NRL::Ontology(),
@@ -161,6 +173,15 @@ void Strigi::Soprano::Util::storeStrigiMiniOntology( ::Soprano::Model* model )
     }
     if ( !model->containsStatement( parentUrlDomain ) ) {
         model->addStatement( parentUrlDomain );
+    }
+    if ( !model->containsStatement( parentUrlHiding ) ) {
+        model->addStatement( parentUrlHiding );
+    }
+    if ( !model->containsStatement( depthProp ) ) {
+        model->addStatement( depthProp );
+    }
+    if ( !model->containsStatement( depthHiding ) ) {
+        model->addStatement( depthHiding );
     }
     if ( !model->containsStatement( metaDataType ) ) {
         model->addStatement( metaDataType );
