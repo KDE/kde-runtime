@@ -39,7 +39,7 @@ Nepomuk::StatusWidget::StatusWidget( Soprano::Model* model, IndexScheduler* sche
       m_model( model ),
       m_indexScheduler( scheduler ),
       m_connected( false ),
-      m_updating( false ),
+      m_updatingJobCnt( 0 ),
       m_updateRequested( false )
 {
     setupUi( mainWidget() );
@@ -96,7 +96,7 @@ namespace {
                 lastCnt = m_cnt;
                 Soprano::QueryResultIterator it
                     = m_model->executeQuery( QString( "select distinct ?r where { ?r a <%1> . } "
-                                                      "OFFSET %2 LIMIT 100" )
+                                                      "OFFSET %2 LIMIT 500" )
                                              .arg( Soprano::Vocabulary::Xesam::File().toString() )
                                              .arg( m_cnt ),
                                              Soprano::Query::QueryLanguageSparql );
@@ -118,36 +118,52 @@ namespace {
 
 void Nepomuk::StatusWidget::slotUpdateStoreStatus()
 {
-    if ( !m_updating && !m_updateTimer.isActive() ) {
-        m_updating = true;
+    if ( !m_updatingJobCnt && !m_updateTimer.isActive() ) {
+        m_updatingJobCnt = 2;
 
         // update storage size
         // ========================================
         QString path = KStandardDirs::locateLocal( "data", "nepomuk/repository/main/", false );
         KIO::DirectorySizeJob* job = KIO::directorySize( path );
-        if ( KIO::NetAccess::synchronousRun( job, this ) )
-            m_labelStoreSize->setText( KIO::convertSize( job->totalSize() ) );
-        else
-            m_labelStoreSize->setText( i18n( "Calculation failed" ) );
-
+        connect( job, SIGNAL( result( KJob* ) ), this, SLOT( slotStoreSizeCalculated( KJob* ) ) );
+        job->start();
 
         // update file count the stupid way while trying not to block the store for too long
         // ========================================
-        FileCountThread fct( m_model );
-        QEventLoop loop;
-        connect( &fct, SIGNAL( finished() ), &loop, SLOT( quit() ) );
-        fct.start();
-        loop.exec();
-
-        m_labelFileCount->setText( i18np( "1 file in index", "%1 files in index", fct.count() ) );
-
-        m_updating = false;
-
-        // start the timer to avoid too many updates
-        m_updateTimer.start();
+        FileCountThread* fct = new FileCountThread( m_model );
+        connect( fct, SIGNAL( finished() ), this, SLOT( slotFileCountFinished() ) );
+        fct->start();
     }
     else {
         m_updateRequested = true;
+    }
+}
+
+
+void Nepomuk::StatusWidget::slotStoreSizeCalculated( KJob* job )
+{
+    KIO::DirectorySizeJob* dirJob = static_cast<KIO::DirectorySizeJob*>( job );
+    if ( !job->error() )
+        m_labelStoreSize->setText( KIO::convertSize( dirJob->totalSize() ) );
+    else
+        m_labelStoreSize->setText( i18n( "Calculation failed" ) );
+
+    if ( !--m_updatingJobCnt ) {
+        // start the timer to avoid too many updates
+        m_updateTimer.start();
+    }
+}
+
+
+void Nepomuk::StatusWidget::slotFileCountFinished()
+{
+    FileCountThread* fct = static_cast<FileCountThread*>( sender() );
+    m_labelFileCount->setText( i18np( "1 file in index", "%1 files in index", fct->count() ) );
+    delete fct;
+
+    if ( !--m_updatingJobCnt ) {
+        // start the timer to avoid too many updates
+        m_updateTimer.start();
     }
 }
 
