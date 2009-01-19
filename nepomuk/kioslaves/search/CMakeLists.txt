@@ -1,5 +1,4 @@
 project(kioslave_nepomuksearch)
-KDE4_NO_ENABLE_FINAL(kioslave_nepomuksearch)
 
 include_directories(
   ${QT_INCLUDES}

@@ -22,6 +22,7 @@
 
 #include <Soprano/Vocabulary/Xesam>
 #include <Soprano/Vocabulary/NAO>
+#include <Soprano/Node> // for qHash( QUrl )
 
 #include <Nepomuk/Variant>
 
@@ -33,7 +34,7 @@
 #include <KIO/NetAccess>
 #include <KUser>
 #include <kdirnotify.h>
-#include <qurlhash.h>
+
 
 namespace {
     QString addCounterToFileName( const QString& name, int i )
