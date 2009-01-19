@@ -470,18 +470,18 @@ void Nepomuk::IndexScheduler::analyzeResource( const QUrl& uri, const QDateTime&
 
 void Nepomuk::IndexScheduler::deleteEntries( const std::vector<std::string>& entries )
 {
-    std::vector<std::string> filesToDelete;
+    // recurse into subdirs
     for ( int i = 0; i < entries.size(); ++i ) {
-        filesToDelete.push_back( entries[i] );
-        //        QString path = QFile::decodeName( entries[i].c_str() );
         std::map<std::string, time_t> filesInStore;
         m_indexManager->indexReader()->getChildren( entries[i], filesInStore );
+        std::vector<std::string> filesToDelete;
         for ( std::map<std::string, time_t>::const_iterator it = filesInStore.begin();
               it != filesInStore.end(); ++it ) {
             filesToDelete.push_back( it->first );
         }
+        deleteEntries( filesToDelete );
     }
-    m_indexManager->indexWriter()->deleteEntries( filesToDelete );
+    m_indexManager->indexWriter()->deleteEntries( entries );
 }
 
 #include "indexscheduler.moc"
