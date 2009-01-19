@@ -18,11 +18,11 @@
  */
 
 #include "result.h"
-#include "qurlhash.h"
 
 #include <QtCore/QSharedData>
 #include <QtCore/QHash>
 
+#include <Soprano/Node> // for qHash( QUrl() )
 
 class Nepomuk::Search::Result::Private : public QSharedData
 {
