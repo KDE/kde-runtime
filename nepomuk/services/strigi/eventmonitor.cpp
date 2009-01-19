@@ -85,8 +85,11 @@ Nepomuk::EventMonitor::EventMonitor( IndexScheduler* scheduler, QObject* parent 
                    "nepomuk" );
 
         // connect to get the end of initial indexing
+        // (make it a queued connection since KNotification does not like multithreading
+        // (mostly because it uses dialogs)
         connect( m_indexScheduler, SIGNAL( indexingStopped() ),
-                 this, SLOT( slotIndexingStopped() ) );
+                 this, SLOT( slotIndexingStopped() ),
+                 Qt::QueuedConnection );
     }
     else {
         m_periodicUpdateTimer.start();
