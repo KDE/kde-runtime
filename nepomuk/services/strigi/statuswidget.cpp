@@ -81,6 +81,41 @@ void Nepomuk::StatusWidget::slotUpdateStrigiStatus()
 }
 
 
+namespace {
+    class FileCountThread : public QThread
+    {
+    public:
+        FileCountThread( Soprano::Model* model ) {
+            m_model = model;
+        }
+
+        void run() {
+            m_cnt = 0;
+            int lastCnt = -1;
+            while ( m_cnt != lastCnt ) {
+                lastCnt = m_cnt;
+                Soprano::QueryResultIterator it
+                    = m_model->executeQuery( QString( "select distinct ?r where { ?r a <%1> . } "
+                                                      "OFFSET %2 LIMIT 100" )
+                                             .arg( Soprano::Vocabulary::Xesam::File().toString() )
+                                             .arg( m_cnt ),
+                                             Soprano::Query::QueryLanguageSparql );
+                while ( it.next() ) {
+                    ++m_cnt;
+                }
+            }
+        }
+
+        int count() {
+            return m_cnt;
+        }
+
+    private:
+        Soprano::Model* m_model;
+        int m_cnt;
+    };
+}
+
 void Nepomuk::StatusWidget::slotUpdateStoreStatus()
 {
     if ( !m_updating && !m_updateTimer.isActive() ) {
@@ -96,20 +131,15 @@ void Nepomuk::StatusWidget::slotUpdateStoreStatus()
             m_labelStoreSize->setText( i18n( "Calculation failed" ) );
 
 
-        // update file count
+        // update file count the stupid way while trying not to block the store for too long
         // ========================================
-        Soprano::QueryResultIterator it = m_model->executeQuery( QString( "select distinct ?r where { ?r a <%1> . }" )
-                                                                 .arg( Soprano::Vocabulary::Xesam::File().toString() ),
-                                                                 Soprano::Query::QueryLanguageSparql );
-        int cnt = 0;
-        while ( it.next() ) {
-            // a bit of hacking to keep the GUI responsive
-            // TODO: if we don't get aggregate functions in SPARQL soon, use a thread
-            if ( cnt % 100 == 0 )
-                QApplication::processEvents();
-            ++cnt;
-        }
-        m_labelFileCount->setText( i18np( "1 file in index", "%1 files in index", cnt ) );
+        FileCountThread fct( m_model );
+        QEventLoop loop;
+        connect( &fct, SIGNAL( finished() ), &loop, SLOT( quit() ) );
+        fct.start();
+        loop.exec();
+
+        m_labelFileCount->setText( i18np( "1 file in index", "%1 files in index", fct.count() ) );
 
         m_updating = false;
 
