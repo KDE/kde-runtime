@@ -10,6 +10,7 @@ include_directories(
 
 set(SRCS
   nepomukfilewatch.cpp
+  metadatamover.cpp
   )
 
 kde4_add_plugin(nepomukfilewatch ${SRCS})

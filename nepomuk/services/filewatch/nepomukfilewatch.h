@@ -34,18 +34,20 @@ namespace Soprano {
 class KUrl;
 
 namespace Nepomuk {
+
+    class MetadataMover;
+
     class FileWatch : public Service
     {
         Q_OBJECT
+        Q_CLASSINFO( "D-Bus Interface", "org.kde.nepomuk.FileWatch" )
 
     public:
         FileWatch( QObject* parent, const QVariantList& );
         ~FileWatch();
 
-    Q_SIGNALS:
-        // helper signals for async dbus connections
-        void fileMoved( const QString& from, const QString& to );
-        void filesDeleted( const QStringList& path );
+    public Q_SLOTS:
+        Q_SCRIPTABLE void moveFileMetadata( const QString& from, const QString& to );
 
     private Q_SLOTS:
         void slotFileMoved( const QString& from, const QString& to );
@@ -53,10 +55,7 @@ namespace Nepomuk {
         void slotFilesDeleted( const QStringList& path );
 
     private:
-        void removeMetaData( const KUrl& );
-        void updateMetaData( const KUrl& from, const KUrl& to );
-
-        QUrl m_strigiParentUrlUri;
+        MetadataMover* m_metadataMover;
     };
 }
 
