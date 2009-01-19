@@ -24,6 +24,8 @@
 #include <QtCore/QWaitCondition>
 #include <QtCore/QSet>
 
+#include <vector>
+#include <string>
 
 namespace Strigi {
     class StreamAnalyzer;
@@ -107,6 +109,12 @@ namespace Nepomuk {
         bool waitForContinue();
         bool updateDir( const QString& dir, Strigi::StreamAnalyzer* analyzer, bool recursive );
         void analyzeFile( const QFileInfo& file, Strigi::StreamAnalyzer* analyzer );
+
+        /**
+         * Deletes all indexed information about entries and all subfolders and files
+         * from the store
+         */
+        void deleteEntries( const std::vector<std::string>& entries );
         
         // emits indexingStarted or indexingStopped based on parameter. Makes sure
         // no signal is emitted twice
