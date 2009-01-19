@@ -26,6 +26,7 @@
 
 class QShowEvent;
 class QHideEvent;
+class KJob;
 
 namespace Soprano {
     class Model;
@@ -47,6 +48,8 @@ namespace Nepomuk {
         void slotConfigure();
         void slotUpdateStrigiStatus();
         void slotUpdateStoreStatus();
+        void slotStoreSizeCalculated( KJob* job );
+        void slotFileCountFinished();
         void slotUpdateTimeout();
 
     private:
@@ -58,7 +61,7 @@ namespace Nepomuk {
 
         bool m_connected;
         QTimer m_updateTimer;
-        bool m_updating;
+        int m_updatingJobCnt;
         bool m_updateRequested;
     };
 }
