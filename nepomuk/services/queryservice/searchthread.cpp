@@ -1,6 +1,6 @@
 /*
   This file is part of the Nepomuk KDE project.
-  Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+  Copyright (C) 2007-2009 Sebastian Trueg <trueg@kde.org>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Library General Public
@@ -19,7 +19,6 @@
 
 #include "searchthread.h"
 #include "term.h"
-#include "qurlhash.h"
 
 #include <Nepomuk/ResourceManager>
 #include <Nepomuk/Resource>
@@ -40,6 +39,7 @@
 #include <Soprano/Vocabulary/NAO>
 #include <Soprano/Vocabulary/XMLSchema>
 #include <Soprano/Vocabulary/OWL>
+#include <Soprano/Vocabulary/Xesam>
 
 #include <KDebug>
 
@@ -435,12 +435,14 @@ Nepomuk::Search::Term Nepomuk::Search::SearchThread::resolveValues( const Term& 
 
                 // rdfs:label has a higher priority than any other property
                 // TODO: without being able to query the resource type simple searching for term.value() is waaaaay to slow
+                // FIXME: We CAN query the type now!
                 //QString query = QString( "%1:\"%2\"^4 \"%2\"" )
-                QString query = QString( "%1:\"%2\" OR %3:\"%2\" OR %4:\"%2\"" )
+                QString query = QString( "%1:\"%2\" OR %3:\"%2\" OR %4:\"%2\" OR %5:\"%2\"" )
                                 .arg( luceneQueryEscape( Soprano::Vocabulary::RDFS::label() ) )
                                 .arg( term.subTerms().first().value().toString() )
                                 .arg( luceneQueryEscape( Soprano::Vocabulary::NAO::prefLabel() ) )
-                                .arg( luceneQueryEscape( Soprano::Vocabulary::NAO::identifier() ) );
+                                .arg( luceneQueryEscape( Soprano::Vocabulary::NAO::identifier() ) )
+                                .arg( luceneQueryEscape( Soprano::Vocabulary::Xesam::name() ) );
                 Soprano::QueryResultIterator hits = ResourceManager::instance()->mainModel()->executeQuery( query,
                                                                                                             Soprano::Query::QueryLanguageUser,
                                                                                                             "lucene" );

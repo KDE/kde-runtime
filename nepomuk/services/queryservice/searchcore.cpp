@@ -1,6 +1,6 @@
 /*
    This file is part of the Nepomuk KDE project.
-   Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+   Copyright (C) 2007-2009 Sebastian Trueg <trueg@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -19,10 +19,11 @@
 
 #include "searchcore.h"
 #include "searchthread.h"
-#include "qurlhash.h"
 
 #include <QtCore/QEventLoop>
 #include <QtCore/QPointer>
+
+#include <Soprano/Node>
 
 #include <KDebug>
 

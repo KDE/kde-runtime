@@ -1,5 +1,5 @@
 /*
-   Copyright (c) 2008 Sebastian Trueg <trueg@kde.org>
+   Copyright (c) 2008-2009 Sebastian Trueg <trueg@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -19,9 +19,9 @@
 #include "folder.h"
 #include "folderconnection.h"
 #include "queryservice.h"
-#include "qurlhash.h"
 
 #include <Soprano/Model>
+#include <Soprano/Node>
 
 #include <KDebug>
 

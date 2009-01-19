@@ -1,7 +1,5 @@
 project(queryservice)
 
-KDE4_NO_ENABLE_FINAL(nepomuk-queryservice)
-
 include_directories(
   ${QT_INCLUDES}
   ${KDE4_INCLUDES}
@@ -43,3 +41,5 @@ install(
 install(
   TARGETS nepomukqueryservice
   DESTINATION ${PLUGIN_INSTALL_DIR})
+
+#add_subdirectory(test)
