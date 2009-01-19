@@ -245,7 +245,7 @@ void Nepomuk::IndexScheduler::run()
 }
 
 
-// this method should be thread-safe ("should" because of the indexreader and -writer)
+// this method should be thread-safe ("should" because of the unknown situation with indexreader and -writer)
 bool Nepomuk::IndexScheduler::updateDir( const QString& dir, Strigi::StreamAnalyzer* analyzer, bool recursive )
 {
 //    kDebug() << dir << analyzer << recursive;
@@ -262,7 +262,7 @@ bool Nepomuk::IndexScheduler::updateDir( const QString& dir, Strigi::StreamAnaly
 
     QList<QFileInfo> filesToIndex;
     QList<QString> subFolders;
-    std::vector<std::string> filesToDelete;
+    std::vector<std::string> filesToUpdate, filesToDelete;
 
     // iterate over all files in the dir
     // and select the ones we need to add or delete from the store
@@ -284,7 +284,9 @@ bool Nepomuk::IndexScheduler::updateDir( const QString& dir, Strigi::StreamAnaly
         if ( indexFile && ( newFile || fileChanged ) )
             filesToIndex << fileInfo;
 
-        if ( !newFile && ( fileChanged || !indexFile ) )
+        if ( !newFile && fileChanged )
+            filesToUpdate.push_back( filesInStoreIt->first );
+        else if ( !newFile && !indexFile )
             filesToDelete.push_back( filesInStoreIt->first );
 
         // cleanup a bit for faster lookups
@@ -302,8 +304,11 @@ bool Nepomuk::IndexScheduler::updateDir( const QString& dir, Strigi::StreamAnaly
         filesToDelete.push_back( it->first );
     }
 
-    // remove all files that need updating or have been removed
-    m_indexManager->indexWriter()->deleteEntries( filesToDelete );
+    // remove all files non-recursively that need updating
+    m_indexManager->indexWriter()->deleteEntries( filesToUpdate );
+
+    // remove all files that have been removed recursively
+    deleteEntries( filesToDelete );
 
     // analyze all files that are new or need updating
     foreach( const QFileInfo& file, filesToIndex ) {
@@ -460,6 +465,23 @@ void Nepomuk::IndexScheduler::analyzeResource( const QUrl& uri, const QDateTime&
     else {
         kDebug() << uri << "up to date";
     }
+}
+
+
+void Nepomuk::IndexScheduler::deleteEntries( const std::vector<std::string>& entries )
+{
+    std::vector<std::string> filesToDelete;
+    for ( int i = 0; i < entries.size(); ++i ) {
+        filesToDelete.push_back( entries[i] );
+        //        QString path = QFile::decodeName( entries[i].c_str() );
+        std::map<std::string, time_t> filesInStore;
+        m_indexManager->indexReader()->getChildren( entries[i], filesInStore );
+        for ( std::map<std::string, time_t>::const_iterator it = filesInStore.begin();
+              it != filesInStore.end(); ++it ) {
+            filesToDelete.push_back( it->first );
+        }
+    }
+    m_indexManager->indexWriter()->deleteEntries( filesToDelete );
 }
 
 #include "indexscheduler.moc"
