@@ -159,7 +159,7 @@ void Nepomuk::StatusWidget::slotFileCountFinished()
 {
     FileCountThread* fct = static_cast<FileCountThread*>( sender() );
     m_labelFileCount->setText( i18np( "1 file in index", "%1 files in index", fct->count() ) );
-    delete fct;
+    fct->deleteLater();
 
     if ( !--m_updatingJobCnt ) {
         // start the timer to avoid too many updates
