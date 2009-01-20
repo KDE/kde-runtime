@@ -69,7 +69,7 @@ QString BackTraceGdb::processDebuggerOutput( QString bt )
     // current gdb seems to have a bug in 'thread apply all bt' in that the backtrace
     // has the '#0 ...' frame again appended, so when the backtraces have thread headings,
     // do not use '#0 ...' for detecting the start of a backtrace at all
-    bool hasthreadheadings = threadheading.exactMatch( lines.first());
+    bool hasthreadheadings = !lines.isEmpty() ? threadheading.exactMatch( lines.first()) : false;
     // read backtraces per thread
     while( !lines.isEmpty())
     {
