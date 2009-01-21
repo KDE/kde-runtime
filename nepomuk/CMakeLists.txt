@@ -16,6 +16,8 @@ if(SopranoIndex_FOUND)
   include_directories(${STRIGI_INCLUDE_DIR})
 endif(SopranoIndex_FOUND)
 
+include_directories(${SOPRANO_INCLUDE_DIR})
+
 add_subdirectory(libnepomukquery)
 add_subdirectory(ontologies)
 add_subdirectory(server)
