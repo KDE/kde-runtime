@@ -56,6 +56,8 @@ BackTraceGdb::~BackTraceGdb()
 QString BackTraceGdb::processDebuggerOutput( QString bt )
 {
     QStringList lines = bt.split( '\n' );
+    if( lines.isEmpty())
+        return QString();
     // read the common part until backtraces are found (either line starting with
     // something like 'Thread 1 (Thread 0xb5d3f8e0 (LWP 25088)):' or directly the first
     // backtrace line like '#0  0xffffe430 in __kernel_vsyscall ()'
@@ -69,7 +71,7 @@ QString BackTraceGdb::processDebuggerOutput( QString bt )
     // current gdb seems to have a bug in 'thread apply all bt' in that the backtrace
     // has the '#0 ...' frame again appended, so when the backtraces have thread headings,
     // do not use '#0 ...' for detecting the start of a backtrace at all
-    bool hasthreadheadings = !lines.isEmpty() ? threadheading.exactMatch( lines.first()) : false;
+    bool hasthreadheadings = threadheading.exactMatch( lines.first());
     // read backtraces per thread
     while( !lines.isEmpty())
     {
