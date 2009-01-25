@@ -28,6 +28,7 @@
 #include <QtGui/QListWidget>
 #include <kapplication.h>
 #include <kicon.h>
+#include <kiconloader.h>
 #include <QtCore/QList>
 #include <QtDBus/QtDBus>
 #include <kcmoduleproxy.h>
@@ -172,7 +173,15 @@ void BackendSelection::selectionChanged()
         m_down->setEnabled(m_select->row(item) < m_select->count() - 1);
         service = m_services[item->text()];
         Q_ASSERT(service);
-        m_icon->setPixmap(KIcon(service->icon()).pixmap(128));
+
+        // Have some icon other than "unknown" for backends which don't install an icon.
+        QPixmap iconPixmap = KIconLoader::global()->loadIcon(service->icon(), KIconLoader::NoGroup, 128,
+                                                             KIconLoader::DefaultState, QStringList(), 0L,
+                                                             true /* return null */);
+        if(iconPixmap.isNull())
+            iconPixmap = KIconLoader::global()->loadIcon("preferences-desktop-sound", KIconLoader::NoGroup, 128);
+
+        m_icon->setPixmap(iconPixmap);
         m_name->setText(QString());//service->name());
         m_comment->setText(service->comment());
         const QString website = service->property("X-KDE-PhononBackendInfo-Website").toString();
