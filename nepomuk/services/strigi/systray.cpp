@@ -24,6 +24,7 @@
 #include <KLocale>
 #include <KCMultiDialog>
 #include <KIcon>
+#include <KToolInvocation>
 
 
 
@@ -84,9 +85,9 @@ void Nepomuk::SystemTray::slotUpdateStrigiStatus()
 
 void Nepomuk::SystemTray::slotConfigure()
 {
-    KCMultiDialog dlg;
-    dlg.addModule( "kcm_nepomuk" );
-    dlg.exec();
+    QStringList args;
+    args << "kcm_nepomuk";
+    KToolInvocation::kdeinitExec("kcmshell4", args);
 }
 
 #include "systray.moc"
