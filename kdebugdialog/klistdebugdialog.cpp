@@ -117,7 +117,7 @@ void KListDebugDialog::load()
     QTreeWidgetItem* item = m_areaWidget->topLevelItem(i);
     KConfigGroup group = pConfig->group( item->data(0, Qt::UserRole).toByteArray() ); // Group name = debug area code = cb's name
 
-    int setting = group.readEntry( "InfoOutput", 2 );
+    int setting = group.readEntry("InfoOutput", -1);
 
     switch (setting) {
       case 4: // off
