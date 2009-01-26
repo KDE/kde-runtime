@@ -19,7 +19,7 @@
 #include "statuswidget.h"
 #include "indexscheduler.h"
 
-#include <KCMultiDialog>
+#include <KToolInvocation>
 #include <KIcon>
 #include <KLocale>
 #include <KTitleWidget>
@@ -179,9 +179,9 @@ void Nepomuk::StatusWidget::slotUpdateTimeout()
 
 void Nepomuk::StatusWidget::slotConfigure()
 {
-    KCMultiDialog dlg;
-    dlg.addModule( "kcm_nepomuk" );
-    dlg.exec();
+    QStringList args;
+    args << "kcm_nepomuk";
+    KToolInvocation::kdeinitExec("kcmshell4", args);
 }
 
 #include <QApplication>
