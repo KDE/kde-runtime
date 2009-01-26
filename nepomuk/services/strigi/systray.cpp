@@ -22,7 +22,6 @@
 #include <KMenu>
 #include <KToggleAction>
 #include <KLocale>
-#include <KCMultiDialog>
 #include <KIcon>
 #include <KToolInvocation>
 
