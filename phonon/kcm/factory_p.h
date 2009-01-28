@@ -28,15 +28,12 @@
 QT_BEGIN_HEADER
 QT_BEGIN_NAMESPACE
 
-class QUrl;
-class QIcon;
 
 namespace Phonon
 {
     class PlatformPlugin;
     class MediaNodePrivate;
-    class AbstractMediaStream;
-
+    
 /**
  * \internal
  * \brief Factory to access the preferred Backend.

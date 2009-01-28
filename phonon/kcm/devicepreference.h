@@ -27,7 +27,6 @@
 #include <QtGui/QStandardItem>
 #include <QtCore/QMap>
 #include <QtCore/QList>
-class QLabel;
 
 namespace Phonon
 {
