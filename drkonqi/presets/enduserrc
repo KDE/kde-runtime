@@ -245,7 +245,7 @@ Name[fi]=Auta meitä parantamaan ohjelmistoa lähettämällä vikailmoitus osoit
 Name[fr]=Aidez-nous à améliorer les logiciels que vous utilisez en remplissant un rapport à l'adresse <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Les renseignements utiles sont par exemple une marche à suivre pour reproduire l'erreur, les documents ouverts au moment de l'erreur, etc.
 Name[fy]=Help ús om de sêftguod te ferbetterjen troch it ynfoljen fan in raport op <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Brûkbere details binne, it reprodusearjen fan de flater, en hokfoar dokuminten binne laden, ensfh. 
 Name[ga]=Cabhraigh linn an bogearra seo a fheabhsú trí thuairisc a sheoladh chuig <a href="http://bugs.kde.org">http://bugs.kde.org/</a> maidir leis an earráid seo. Rudaí le cur san áireamh: conas a dhéantar an earráid, cáipéisí a bhí luchtaithe, srl.
-Name[gl]=Por favor axúdenos a mellorar os programas que empregue enviándonos un informe de erro a <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Inclúa detalles acerca do xeito de reproducir o erro, que documentos tiña cargados, etc.
+Name[gl]=Por favor axúdenos a mellorar os programas que empregue enviándonos un informe de erro a <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Inclúa detalles acerca do xeito de reproducir o erro, que documentos tiña cargados etc.
 Name[gu]=મહેરબાની કરી અમને બગ અહેવાલ આ જગ્યા પર ભરીને <a href="http://bugs.kde.org">http://bugs.kde.org</a> સોફ્ટવેરમાં સુધારો કરવામાં મદદ કરો. ઉપયોગી માહિતીમાં જેવીકે આ ક્ષતિ ફરી કઇ રીતે ઉભી કરવી, લાવવામાં આવેલ દસ્તાવેજો વગેરે નો સમાવેશ થાય છે.
 Name[he]=עזור לנו לשפר את התוכנה על ידי מילוי של טופס שגיאה בכתובת (אנגלית בלבד, אלא אם כן קשור לתרגום עברי) <a href="http://bugs.kde.org">http://bugs.kde.org</a>. פרטים מועילים כוללים הוראות לשחזור השגיאה, מסמכים שנפתחו וכו'.
 Name[hr]=Pomozite nam u poboljšavaju softvera koji koristite. Ispunite izvještaj na adresi <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Upišite detalje kao što su način reprodiciranja pogreške, učitana dokumentacija itd.
@@ -316,7 +316,7 @@ Comment[fi]=SIGILL-signaali johtuu yleensä virheestä ohjelmassa. Ohjelmaa pyyd
 Comment[fr]=Une application reçoit généralement le signal SIGILL a cause d'un bogue dans l'application. L'application a reçu l'instruction d'enregistrer ses documents.
 Comment[fy]=In applikaasje ûntfangt meastentiids it SIGILL-sinjaal fanwege in brek yn it programma. De applikaasje sil frege wurde om de dokuminten te bewarjen.
 Comment[ga]=Go hiondúil, faigheann feidhmchlár comhartha SIGILL de bhrí go bhfuil fabht ann. Fiafraíodh den fheidhmchlár a chuid cáipéisí a shábháil.
-Comment[gl]=Os programas receben o sinal SIGILL seguramente por mor dun erro interno. Pediuselle ao programa que garde os documentos.
+Comment[gl]=Os programas receben o sinal SIGILL seguramente por mor dun erro interno. Pedíuselle ao programa que garde os documentos.
 Comment[gu]=કાર્યક્રમ મોટાભાગે તેમાં રહેલ ક્ષતિને કારણે SIGILL સિગ્નલ મેળવે છે. કાર્યક્રમને તેનાં દસ્તાવેજો સંગ્રહવાનું કહેવામાં આવ્યું હતું.
 Comment[he]=יישום לרב מקבל את הסיגנל SIGKILL בגלל באג ביישום. היישום מתבקש לשמור את המסמכים שלו.
 Comment[hi]=एक अनुप्रयोग प्रायः उस अनुप्रयोग में बग होने पर SIGILL संकेत प्राप्त करता है. अनुप्रयोग को इसका दस्तावेज़ सहेजने के लिए कहा गया है.
@@ -466,7 +466,7 @@ Comment[fi]=SIGFPE-signaali johtuu yleensä virheestä ohjelmassa. Ohjelmaa pyyd
 Comment[fr]=Une application reçoit généralement le signal SIGFPE à cause d'un bogue dans l'application. L'application a reçu l'instruction d'enregistrer ses documents.
 Comment[fy]=In applikaasje ûntfangt meastentiids it SIGFPE -sinjaal fanwege in brek yn it programma. De applikaasje sil frege wurde om de dokuminten te bewarjen.
 Comment[ga]=Go hiondúil, faigheann feidhmchlár comhartha SIGFPE de bhrí go bhfuil fabht ann. Fiafraíodh den fheidhmchlár a chuid cáipéisí a shábháil.
-Comment[gl]=Os programas receben o sinal SIGFPE seguramente por mor dun erro interno. Pediuselle ao programa que garde os documentos.
+Comment[gl]=Os programas receben o sinal SIGFPE seguramente por mor dun erro interno. Pedíuselle ao programa que garde os documentos.
 Comment[gu]=કાર્યક્રમ મોટાભાગે તેમાં રહેલ ક્ષતિને કારણે SIGFPE સિગ્નલ મેળવે છે. કાર્યક્રમને તેનાં દસ્તાવેજો સંગ્રહવાનું કહેવામાં આવ્યું હતું.
 Comment[he]=יישום לרב מקבל את הסיגנל מסוג SIGFPE בגלל באגים ביישום. היישום מתבקש לשמור את המסמכים שלו.
 Comment[hi]=एक अनुप्रयोग प्रायः उस अनुप्रयोग में बग होने पर SIGFPE संकेत प्राप्त करता है. अनुप्रयोग को इसका दस्तावेज़ सहेजने के लिए कहा गया है.
@@ -633,6 +633,7 @@ Name[ko]=알 수 없음
 Name[ku]=nayê Zanîn
 Name[lt]=Nežinoma
 Name[lv]=Nezināms
+Name[mai]=अज्ञात
 Name[mk]=Непознат
 Name[ml]=അപരിചിതം
 Name[mr]=अपरिचीत
