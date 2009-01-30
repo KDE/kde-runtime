@@ -4,7 +4,7 @@
  <widget class="QWidget" name="NepomukConfigWidget" >
   <layout class="QVBoxLayout" >
    <item>
-    <widget class="QTabWidget" name="tabWidget" >
+    <widget class="KTabWidget" name="tabWidget" >
      <widget class="QWidget" name="tab" >
       <attribute name="title" >
        <string>Basic Settings</string>

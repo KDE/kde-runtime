@@ -217,11 +217,11 @@ QStringList FolderSelectionModel::excludeFolders() const
 inline bool FolderSelectionModel::isForbiddenPath( const QString& path ) const
 {
     // we need the trailing slash otherwise we could forbid "/dev-music" for example
-    QString _path = path.endsWith( "/" ) ? path : path + "/";
+    QString _path = path.endsWith( '/' ) ? path : path + '/';
     QFileInfo fi( _path );
-    return( _path.startsWith( "/proc/" ) ||
-            _path.startsWith( "/dev/" ) ||
-            _path.startsWith( "/sys/" ) ||
+    return( _path.startsWith( QLatin1String( "/proc/" ) ) ||
+            _path.startsWith( QLatin1String( "/dev/" ) ) ||
+            _path.startsWith( QLatin1String( "/sys/" ) ) ||
             !fi.isReadable() ||
             !fi.isExecutable() );
 }
