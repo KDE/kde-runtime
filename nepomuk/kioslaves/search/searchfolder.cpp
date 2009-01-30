@@ -290,7 +290,7 @@ void Nepomuk::SearchFolder::slotStatNextResult()
                 else if ( m_statEntry ) {
                     if ( m_nameToStat == entry->entry().stringValue( KIO::UDSEntry::UDS_NAME ) ) {
                         kDebug() << "stating" << entry->resource();
-                        m_nameToStat = QString();
+                        m_nameToStat.clear();
                         m_slave->statEntry( entry->entry() );
                     }
                 }
@@ -333,7 +333,7 @@ void Nepomuk::SearchFolder::wrap()
                 // if m_nameToStat is not empty the name was not found during listing which means that
                 // it does not exist
                 m_slave->error( KIO::ERR_DOES_NOT_EXIST, "nepomuksearch:/" + m_name + '/' + m_nameToStat );
-                m_nameToStat = QString();
+                m_nameToStat.clear();
             }
             else
                 m_slave->finished();
