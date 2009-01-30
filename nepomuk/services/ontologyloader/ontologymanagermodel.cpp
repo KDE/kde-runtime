@@ -199,7 +199,7 @@ namespace {
         // set proper context on all data statements (This is a bit ugly but we cannot iterate and modify at the same time!)
         QList<Statement> allStatements = tmpModel->listStatements().allStatements();
         tmpModel->removeAllStatements();
-        foreach( Statement s, allStatements ) {
+        foreach( Statement s, allStatements ) { // krazy:exclude=foreach
             s.setContext( dataGraphUri );
             tmpModel->addStatement( s );
         }
