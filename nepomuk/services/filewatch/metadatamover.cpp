@@ -125,7 +125,7 @@ void Nepomuk::MetadataMover::run()
                 removeMetadata( url );
 
                 // remove child annotations in case it is a local folder
-                foreach( Soprano::Node node, queryChildren( m_model, url.path() ).iterateBindings( 0 ).allNodes() ) {
+                foreach( const Soprano::Node& node, queryChildren( m_model, url.path() ).iterateBindings( 0 ).allNodes() ) {
                     m_model->removeAllStatements( node, Soprano::Node(), Soprano::Node() );
                 }
             }
@@ -212,7 +212,7 @@ void Nepomuk::MetadataMover::updateMetadata( const KUrl& from, const KUrl& to )
         QList<Soprano::Statement> sl = m_model->listStatements( Soprano::Statement( oldResource,
                                                                                     Soprano::Node(),
                                                                                     Soprano::Node() ) ).allStatements();
-        Q_FOREACH( Soprano::Statement s, sl ) {
+        Q_FOREACH( const Soprano::Statement& s, sl ) {
             if ( s.predicate() == Soprano::Vocabulary::Xesam::url() ) {
                 m_model->addStatement( Soprano::Statement( newResource,
                                                            s.predicate(),
@@ -242,7 +242,7 @@ void Nepomuk::MetadataMover::updateMetadata( const KUrl& from, const KUrl& to )
         sl = m_model->listStatements( Soprano::Node(),
                                       Soprano::Node(),
                                       oldResource ).allStatements();
-        Q_FOREACH( Soprano::Statement s, sl ) {
+        Q_FOREACH( const Soprano::Statement& s, sl ) {
             m_model->addStatement( s.subject(),
                                    s.predicate(),
                                    newResource,
