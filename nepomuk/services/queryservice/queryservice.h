@@ -16,8 +16,8 @@
    Boston, MA 02110-1301, USA.
 */
 
-#ifndef _NEPOMUK_VIRTUAL_FOLDER_SERVICE_H_
-#define _NEPOMUK_VIRTUAL_FOLDER_SERVICE_H_
+#ifndef _NEPOMUK_QUERY_SERVICE_H_
+#define _NEPOMUK_QUERY_SERVICE_H_
 
 #include <Nepomuk/Service>
 

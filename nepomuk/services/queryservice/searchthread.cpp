@@ -50,7 +50,7 @@
 // FIXME: With our cutoff score we might miss results that are hit multiple times and thus, would get their
 //        score increased
 
-#warning Make query optimization methods return an invalid term if the query cannot be resolved and handle this as no results
+// FIXME: Make query optimization methods return an invalid term if the query cannot be resolved and handle this as no results
 
 using namespace Soprano;
 

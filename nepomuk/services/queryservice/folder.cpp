@@ -95,8 +95,9 @@ void Nepomuk::Search::Folder::slotSearchNewResult( const Nepomuk::Search::Result
 
 void Nepomuk::Search::Folder::slotSearchScoreChanged( const Nepomuk::Search::Result& )
 {
+    // TODO: implement this
     if ( m_initialListingDone ) {
-#warning FIXME: handle scoreChanged
+
     }
     else {
 
