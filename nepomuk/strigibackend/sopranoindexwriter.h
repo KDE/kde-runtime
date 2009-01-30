@@ -17,8 +17,8 @@
    Boston, MA 02110-1301, USA.
  */
 
-#ifndef _SOPRANO_STRIGI_INDEXER_H_
-#define _SOPRANO_STRIGI_INDEXER_H_
+#ifndef _SOPRANO_STRIGI_INDEX_WRITER_H_
+#define _SOPRANO_STRIGI_INDEX_WRITER_H_
 
 #include <strigi/indexwriter.h>
 #include <strigi/analysisresult.h>

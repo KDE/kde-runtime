@@ -19,8 +19,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef _W_STRING_H_
-#define _W_STRING_H_
+#ifndef _T_STRING_H_
+#define _T_STRING_H_
 
 #include <QtCore/QString>
 #include <QtCore/QSharedDataPointer>
