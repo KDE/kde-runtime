@@ -110,7 +110,7 @@ int main( int argc, char** argv )
 
     // search the service
     // ====================================
-    KService::List services = KServiceTypeTrader::self()->query( "NepomukService", "DesktopEntryName == '" + serviceName + "'" );
+    KService::List services = KServiceTypeTrader::self()->query( "NepomukService", "DesktopEntryName == '" + serviceName + '\'' );
     if( services.isEmpty() ) {
         s << i18n( "Unknown service name:") << " " <<  serviceName << endl;
         return Nepomuk::ServiceControl::ErrorUnknownServiceName;
