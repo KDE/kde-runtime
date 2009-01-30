@@ -1,5 +1,5 @@
 /* This file is part of the KDE Project
-   Copyright (c) 2008 Sebastian Trueg <trueg@kde.org>
+   Copyright (c) 2008-2009 Sebastian Trueg <trueg@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -16,8 +16,8 @@
    Boston, MA 02110-1301, USA.
 */
 
-#ifndef _NEPOMUK_STRIGI_CONFIG_H_
-#define _NEPOMUK_STRIGI_CONFIG_H_
+#ifndef _NEPOMUK_STRIGI_SERVICE_CONFIG_H_
+#define _NEPOMUK_STRIGI_SERVICE_CONFIG_H_
 
 #include <QtCore/QObject>
 
@@ -30,13 +30,13 @@ namespace Nepomuk {
      * Active config class which emits signals if the config
      * was changed, for example if the KCM saved the config file.
      */
-    class Config : public QObject
+    class StrigiServiceConfig : public QObject
     {
         Q_OBJECT
 
     public:
-        ~Config();
-        static Config* self();
+        ~StrigiServiceConfig();
+        static StrigiServiceConfig* self();
 
         /**
          * The folders to search for files to analyze
@@ -80,7 +80,7 @@ namespace Nepomuk {
         void slotConfigDirty();
 
     private:
-        Config();
+        StrigiServiceConfig();
 
         KConfig m_config;
     };

@@ -127,7 +127,7 @@ void FileSystemWatcher::Private::buildFolderCache( uint mTime )
 {
     cache.clear();
 
-    foreach( QString folder, folders ) {
+    foreach( QString folder, folders ) { // krazy:exclude=foreach
         if ( folder.endsWith( '/' ) )
             folder.truncate( folder.length()-1 );
         FolderEntry entry( mTime );

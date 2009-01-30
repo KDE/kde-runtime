@@ -22,7 +22,7 @@
 #include "indexscheduler.h"
 #include "eventmonitor.h"
 #include "systray.h"
-#include "config.h"
+#include "strigiserviceconfig.h"
 #include "statuswidget.h"
 #include "nepomukstorageinterface.h"
 

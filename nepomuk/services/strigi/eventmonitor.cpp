@@ -17,7 +17,7 @@
 */
 
 #include "eventmonitor.h"
-#include "config.h"
+#include "strigiserviceconfig.h"
 #include "indexscheduler.h"
 #include "filesystemwatcher.h"
 
@@ -53,7 +53,7 @@ Nepomuk::EventMonitor::EventMonitor( IndexScheduler* scheduler, QObject* parent 
              this, SLOT( slotDirDirty( QString ) ) );
 
     // update the watches if the config changes
-    connect( Config::self(), SIGNAL( configChanged() ),
+    connect( StrigiServiceConfig::self(), SIGNAL( configChanged() ),
              this, SLOT( updateWatches() ) );
 
     // start watching the index folders
@@ -74,7 +74,7 @@ Nepomuk::EventMonitor::EventMonitor( IndexScheduler* scheduler, QObject* parent 
              this, SLOT( slotCheckAvailableSpace() ) );
     m_availSpaceTimer.start( 20*1000 ); // every 20 seconds should be enough
 
-    if ( Config::self()->isInitialRun() ) {
+    if ( StrigiServiceConfig::self()->isInitialRun() ) {
         // TODO: add actions to this notification
 
         m_initialIndexTime.start();
@@ -107,9 +107,9 @@ Nepomuk::EventMonitor::~EventMonitor()
 void Nepomuk::EventMonitor::updateWatches()
 {
     // the hard way since the KDirWatch API is too simple
-    QStringList folders = Config::self()->folders();
+    QStringList folders = StrigiServiceConfig::self()->folders();
     if ( folders != m_fsWatcher->folders() ) {
-        m_fsWatcher->setFolders( Config::self()->folders() );
+        m_fsWatcher->setFolders( StrigiServiceConfig::self()->folders() );
         m_fsWatcher->setInterval( 2*60 ); // check every 2 minutes
         m_fsWatcher->start();
     }
@@ -118,7 +118,7 @@ void Nepomuk::EventMonitor::updateWatches()
 
 void Nepomuk::EventMonitor::slotDirDirty( const QString& path )
 {
-    if ( Config::self()->shouldFolderBeIndexed( path ) ) {
+    if ( StrigiServiceConfig::self()->shouldFolderBeIndexed( path ) ) {
         m_indexScheduler->updateDir( path );
     }
 }
@@ -146,7 +146,7 @@ void Nepomuk::EventMonitor::slotCheckAvailableSpace()
 {
     KDiskFreeSpaceInfo info = KDiskFreeSpaceInfo::freeSpaceInfo( KStandardDirs::locateLocal( "data", "nepomuk/repository/", false ) );
     if ( info.isValid() ) {
-        if ( info.available() <= Config::self()->minDiskSpace() ) {
+        if ( info.available() <= StrigiServiceConfig::self()->minDiskSpace() ) {
             if ( m_indexScheduler->isRunning() &&
                 !m_indexScheduler->isSuspended() ) {
                 m_pauseState = PausedDueToAvailSpace;

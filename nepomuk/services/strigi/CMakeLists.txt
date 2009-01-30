@@ -13,7 +13,7 @@ set(strigiservice_SRCS
   strigiserviceadaptor.cpp
   indexscheduler.cpp
   priority.cpp
-  config.cpp
+  strigiserviceconfig.cpp
   eventmonitor.cpp
   systray.cpp
   statuswidget.cpp

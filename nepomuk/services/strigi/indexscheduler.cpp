@@ -20,7 +20,7 @@
 */
 
 #include "indexscheduler.h"
-#include "config.h"
+#include "strigiserviceconfig.h"
 
 #include <QtCore/QMutexLocker>
 #include <QtCore/QList>
@@ -106,7 +106,7 @@ Nepomuk::IndexScheduler::IndexScheduler( Strigi::IndexManager* manager, QObject*
 {
     m_analyzerConfig = new StoppableConfiguration;
 
-    connect( Config::self(), SIGNAL( configChanged() ),
+    connect( StrigiServiceConfig::self(), SIGNAL( configChanged() ),
              this, SLOT( readConfig() ) );
 }
 
@@ -206,7 +206,7 @@ void Nepomuk::IndexScheduler::run()
 
     // do the actual indexing
     m_dirsToUpdate.clear();
-    foreach( const QString& f, Config::self()->folders() )
+    foreach( const QString& f, StrigiServiceConfig::self()->folders() )
         m_dirsToUpdate << qMakePair( f, UpdateRecursive|AutoUpdateFolder );
 
     while ( 1 ) {
@@ -324,7 +324,7 @@ bool Nepomuk::IndexScheduler::updateDir( const QString& dir, Strigi::StreamAnaly
     // compare m_currentFolder)
     if ( recursive ) {
         foreach( const QString& folder, subFolders ) {
-            if ( !Config::self()->excludeFolders().contains( folder ) &&
+            if ( !StrigiServiceConfig::self()->excludeFolders().contains( folder ) &&
                  !updateDir( folder, analyzer, true ) )
                 return false;
         }
@@ -389,7 +389,7 @@ void Nepomuk::IndexScheduler::updateAll()
     }
 
     // update everything again in case the folders changed
-    foreach( const QString& f, Config::self()->folders() )
+    foreach( const QString& f, StrigiServiceConfig::self()->folders() )
         m_dirsToUpdate << qMakePair( f, UpdateRecursive|AutoUpdateFolder );
 
     m_dirsToUpdateWc.wakeAll();
@@ -400,8 +400,8 @@ void Nepomuk::IndexScheduler::readConfig()
 {
     // load Strigi configuration
     std::vector<std::pair<bool, std::string> > filters;
-    QStringList excludeFilters = Config::self()->excludeFilters();
-    QStringList includeFilters = Config::self()->includeFilters();
+    QStringList excludeFilters = StrigiServiceConfig::self()->excludeFilters();
+    QStringList includeFilters = StrigiServiceConfig::self()->includeFilters();
     foreach( const QString& filter, excludeFilters ) {
         filters.push_back( std::make_pair<bool, std::string>( false, filter.toUtf8().data() ) );
     }
