@@ -16,8 +16,8 @@
    Boston, MA 02110-1301, USA.
 */
 
-#ifndef _NEPOMUK_MIGRATION_SERVICE_LEVEL_1_H_
-#define _NEPOMUK_MIGRATION_SERVICE_LEVEL_1_H_
+#ifndef _NEPOMUK_MIGRATION_1_H_
+#define _NEPOMUK_MIGRATION_1_H_
 
 #include <Nepomuk/Service>
 

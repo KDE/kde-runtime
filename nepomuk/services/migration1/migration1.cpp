@@ -59,7 +59,7 @@ Nepomuk::Migration1::Migration1( QObject* parent, const QList<QVariant>& )
 
     // update the data
     // (keep all metametadata like graphs and creation dates since the actual data does not change)
-    foreach( Soprano::Statement s, oldRatingStatements ) {
+    foreach( Soprano::Statement s, oldRatingStatements ) { // krazy:exclude=foreach
         s.setPredicate( Soprano::Vocabulary::NAO::numericRating() );
         mainModel()->addStatement( s );
     }
