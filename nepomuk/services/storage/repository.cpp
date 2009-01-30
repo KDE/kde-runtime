@@ -49,7 +49,7 @@
 namespace {
     QString createStoragePath( const QString& repositoryId )
     {
-        return KStandardDirs::locateLocal( "data", "nepomuk/repository/" + repositoryId + "/" );
+        return KStandardDirs::locateLocal( "data", "nepomuk/repository/" + repositoryId + '/' );
     }
 
 #if defined(HAVE_SOPRANO_INDEX) && defined(HAVE_CLUCENE) && SOPRANO_IS_VERSION(2,1,64)

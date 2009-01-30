@@ -1,3 +1,4 @@
+//krazy:skip
 /*
  * Modified version of StandardTokenizer.h for Nepomuk mostly to optimize for filename indexing
  * Copyright (C) 2008 Sebastian Trueg <trueg@kde.org>
