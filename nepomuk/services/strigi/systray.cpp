@@ -35,7 +35,7 @@ Nepomuk::SystemTray::SystemTray( IndexScheduler* scheduler, QWidget* parent )
     menu->addTitle( i18n( "Strigi File Indexing" ) );
 
     m_suspendResumeAction = new KToggleAction( i18n( "Suspend Strigi Indexing" ), menu );
-    m_suspendResumeAction->setCheckedState( KGuiItem( i18n( "Resume Strigi Indexing" ) ) );
+    m_suspendResumeAction->setCheckedState( KGuiItem( i18n( "Suspend Strigi Indexing" ) ) );
     m_suspendResumeAction->setToolTip( i18n( "Suspend or resume the Strigi file indexer manually" ) );
     connect( m_suspendResumeAction, SIGNAL( toggled( bool ) ),
              m_indexScheduler, SLOT( setSuspended( bool ) ) );
