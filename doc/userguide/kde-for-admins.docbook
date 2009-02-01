@@ -828,7 +828,7 @@ Reset - <filename>/etc/X11/xdm/Xreset</filename> - after session finished
 
 <para>The &kde; startup sequence starts with the
 <filename>startkde</filename> script. In most cases this script gets called
-from the display manager (&kdm;) once the user has been authenticated. Their
+from the display manager (&kdm;) once the user has been authenticated. There
 are two very important lines in the <filename>startkde</filename>
 script:</para>
 
@@ -2029,7 +2029,7 @@ url="http://www.kde.org/areas/sysadmin/">http://www.kde.org/areas/sysadmin/</uli
 <variablelist>
 <varlistentry>
 <term><option>action/options_configure</option></term>
-<listitem><para>The <guimenuitem>Configure</guimenuitem> option form the
+<listitem><para>The <guimenuitem>Configure</guimenuitem> option from the
 <guimenu>Settings</guimenu> menu</para></listitem>
 </varlistentry>
 <varlistentry>

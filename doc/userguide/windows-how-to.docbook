@@ -334,7 +334,7 @@ applications into your &kde; desktop.</para>
 
 <sect3 id="special-window-settings">
 <title>Other Special Window Settings</title>
-<para>While you can use &kstart; to assign particular window settings, &kde; also allows you to alter these -- as well as other similar settings -- from the program window itself. Simply select the leftmost button in the window titlebar (or just hit <keycombo action="simul">&Alt;<keycap>F3</keycap></keycombo> once the window is focued), and then go to <menuchoice><guisubmenu>Advanced</guisubmenu><guimenuitem>Special Window Settings...</guimenuitem></menuchoice>. As you can see, from here you change various things from its geometry upon startup, to whether it should have a border or not.</para>
+<para>While you can use &kstart; to assign particular window settings, &kde; also allows you to alter these -- as well as other similar settings -- from the program window itself. Simply select the leftmost button in the window titlebar (or just hit <keycombo action="simul">&Alt;<keycap>F3</keycap></keycombo> once the window is focused), and then go to <menuchoice><guisubmenu>Advanced</guisubmenu><guimenuitem>Special Window Settings...</guimenuitem></menuchoice>. As you can see, from here you change various things from its geometry upon startup, to whether it should have a border or not.</para>
 </sect3>
 
 <sect3 id="system-tray">
