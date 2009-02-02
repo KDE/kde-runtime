@@ -241,6 +241,7 @@ Name[el]=Βοηθήστε μας να βελτιώσουμε την εφαρμο
 Name[eo]=Bonvolu helpi plibonigi la programon kiun vi uzas per raporti la cimon ĉe <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Utilaj detaloj inkluzivas kiel oni reproduktas la eraron, kiuj dokumentoj estis traktataj, ktp.
 Name[es]=Ayudenos a mejorar los programas generando reportes en <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Detalles útiles incluyen cómo reproducir el error, documentos cargados, etc.
 Name[et]=Palun aita meil tarkvara paremaks muuta, andes teada veast aadressil <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Kasuliku teabe hulka kuuluvad andmed, kuidas viga korrata, millised dokumendid olid laaditud jne.
+Name[eu]=Mesedez lagundu iezaguzu erabiltzen duzun softwarea hobetzen <a href="http://bugs.kde.org">http://bugs.kde.org</a>-en txosten bat betez. Xehetasun erabilgarriak dira akatsa nola birsortu, zamatu ziren dokumentuak, etab.
 Name[fi]=Auta meitä parantamaan ohjelmistoa lähettämällä vikailmoitus osoitteessa <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Muista sisällyttää ilmoitukseen tietoja kuten kuinka toistaa ongelma, mitä dokumentteja ohjelmassa oli ladattuna ja niin edelleen, joista saattaa olla hyötyä kehittäjille.
 Name[fr]=Aidez-nous à améliorer les logiciels que vous utilisez en remplissant un rapport à l'adresse <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Les renseignements utiles sont par exemple une marche à suivre pour reproduire l'erreur, les documents ouverts au moment de l'erreur, etc.
 Name[fy]=Help ús om de sêftguod te ferbetterjen troch it ynfoljen fan in raport op <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Brûkbere details binne, it reprodusearjen fan de flater, en hokfoar dokuminten binne laden, ensfh. 
@@ -387,6 +388,7 @@ Comment[el]=Μια εφαρμογή τερματίζει με σήμα SIGABRT �
 Comment[eo]=Aplikaĵo fermas pro SIGABRT-signalo kiam estas interna nekohero kaŭzita de cimo en la programo.
 Comment[es]=Una aplicación termina con la señal SIGABRT cuando detecta una inconsistencia causada por un error en el programa.
 Comment[et]=Rakendus katkestab töö signaaliga SIGABRT siis, kui avastab sisemise ebakõla, mis on põhjustatud veast rakenduses.
+Comment[eu]=Aplikazio bat SIGABRT seinalearekin amaitzen da programaren akats batek sortutako barneko kontraesan bat aurkitzen duenean.
 Comment[fi]=SIGABRT-signaali tapahtuu, kun ohjelman sisäisessä toiminnassa löytyy epäjohdonmukaisuus, joka on yleensä ohjelmointivirheen aiheuttama.
 Comment[fr]=Une application se termine avec un signal SIGABRT lorsqu'elle détecte une incohérence interne causée par un bogue dans le programme.
 Comment[fy]=In applikaasje wurdt ôfsluten mei in SIGABRT-sinjaal as it in ynterne ynkonsekwintens tsjinkomt dy troch in brek yn it programma feroarsake wurdt.
