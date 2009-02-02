@@ -2254,6 +2254,7 @@ void OxygenStyle::unpolish(QWidget* widget)
         case Qt::Window:
         case Qt::Dialog:
             widget->removeEventFilter(this);
+            widget->setAttribute(Qt::WA_StyledBackground, false);
             break;
         default:
             break;
