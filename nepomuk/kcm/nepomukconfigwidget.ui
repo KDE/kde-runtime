@@ -1,34 +1,46 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <author>Sebastian Trueg</author>
  <class>NepomukConfigWidget</class>
- <widget class="QWidget" name="NepomukConfigWidget" >
-  <layout class="QVBoxLayout" >
+ <widget class="QWidget" name="NepomukConfigWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>759</width>
+    <height>394</height>
+   </rect>
+  </property>
+  <layout class="QVBoxLayout">
    <item>
-    <widget class="KTabWidget" name="tabWidget" >
-     <widget class="QWidget" name="tab" >
-      <attribute name="title" >
+    <widget class="KTabWidget" name="tabWidget">
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="tab">
+      <attribute name="title">
        <string>Basic Settings</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_2" >
+      <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
-        <widget class="QGroupBox" name="groupBox_2" >
-         <property name="title" >
+        <widget class="QGroupBox" name="groupBox_2">
+         <property name="title">
           <string>Nepomuk Semantic Desktop</string>
          </property>
-         <layout class="QVBoxLayout" >
+         <layout class="QVBoxLayout">
           <item>
-           <widget class="QLabel" name="label_3" >
-            <property name="text" >
+           <widget class="QLabel" name="label_3">
+            <property name="text">
              <string>Nepomuk Semantic Desktop enables tagging and rating of files integrated with the Desktop Search.</string>
             </property>
-            <property name="wordWrap" >
+            <property name="wordWrap">
              <bool>true</bool>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="m_checkEnableNepomuk" >
-            <property name="text" >
+           <widget class="QCheckBox" name="m_checkEnableNepomuk">
+            <property name="text">
              <string>Enable Nepomuk Semantic Desktop</string>
             </property>
            </widget>
@@ -37,39 +49,39 @@
         </widget>
        </item>
        <item>
-        <widget class="QGroupBox" name="groupBox" >
-         <property name="title" >
+        <widget class="QGroupBox" name="groupBox">
+         <property name="title">
           <string>Strigi Desktop File Indexer</string>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout" >
+         <layout class="QVBoxLayout" name="verticalLayout">
           <item>
-           <widget class="QLabel" name="label_2" >
-            <property name="text" >
+           <widget class="QLabel" name="label_2">
+            <property name="text">
              <string>Strigi desktop search allows searching for files by content instead of just by name.</string>
             </property>
-            <property name="wordWrap" >
+            <property name="wordWrap">
              <bool>true</bool>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="m_checkEnableStrigi" >
-            <property name="text" >
+           <widget class="QCheckBox" name="m_checkEnableStrigi">
+            <property name="text">
              <string>Enable Strigi Desktop File Indexer</string>
             </property>
            </widget>
           </item>
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout" >
+           <layout class="QHBoxLayout" name="horizontalLayout">
             <item>
-             <spacer name="horizontalSpacer" >
-              <property name="orientation" >
+             <spacer name="horizontalSpacer">
+              <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
-              <property name="sizeType" >
+              <property name="sizeType">
                <enum>QSizePolicy::Fixed</enum>
               </property>
-              <property name="sizeHint" stdset="0" >
+              <property name="sizeHint" stdset="0">
                <size>
                 <width>40</width>
                 <height>1</height>
@@ -78,22 +90,22 @@
              </spacer>
             </item>
             <item>
-             <widget class="KSqueezedTextLabel" name="m_labelStrigiStatus" >
-              <property name="sizePolicy" >
-               <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+             <widget class="KSqueezedTextLabel" name="m_labelStrigiStatus">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                 <horstretch>1</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="font" >
+              <property name="font">
                <font>
                 <weight>75</weight>
                 <italic>true</italic>
                 <bold>true</bold>
                </font>
               </property>
-              <property name="text" >
-               <string comment="KDE::DoNotExtract" >KSqueezedTextLabel</string>
+              <property name="text">
+               <string comment="KDE::DoNotExtract">KSqueezedTextLabel</string>
               </property>
              </widget>
             </item>
@@ -104,10 +116,10 @@
        </item>
        <item>
         <spacer>
-         <property name="orientation" >
+         <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
-         <property name="sizeHint" stdset="0" >
+         <property name="sizeHint" stdset="0">
           <size>
            <width>20</width>
            <height>40</height>
@@ -117,42 +129,42 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab_2" >
-      <attribute name="title" >
+     <widget class="QWidget" name="tab_2">
+      <attribute name="title">
        <string>Advanced Settings</string>
       </attribute>
-      <layout class="QGridLayout" name="gridLayout" >
-       <item rowspan="2" row="0" column="0" >
-        <widget class="QGroupBox" name="groupBox_3" >
-         <property name="title" >
+      <layout class="QFormLayout" name="formLayout">
+       <item row="0" column="0">
+        <widget class="QGroupBox" name="groupBox_3">
+         <property name="title">
           <string>Strigi Index Folders</string>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout_3" >
+         <layout class="QVBoxLayout" name="verticalLayout_3">
           <item>
-           <widget class="QLabel" name="label" >
-            <property name="text" >
+           <widget class="QLabel" name="label">
+            <property name="text">
              <string>Select the local folders that contain files to be indexed for fast desktop searches</string>
             </property>
-            <property name="wordWrap" >
+            <property name="wordWrap">
              <bool>true</bool>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QTreeView" name="m_viewIndexFolders" />
+           <widget class="QTreeView" name="m_viewIndexFolders"/>
           </item>
          </layout>
         </widget>
        </item>
-       <item row="0" column="1" >
-        <widget class="KEditListBox" name="m_editStrigiExcludeFilters" >
-         <property name="toolTip" >
+       <item row="0" column="1">
+        <widget class="KEditListBox" name="m_editStrigiExcludeFilters">
+         <property name="toolTip">
           <string>Filters which define the files that Strigi should ignore</string>
          </property>
-         <property name="whatsThis" >
+         <property name="whatsThis">
           <string/>
          </property>
-         <property name="title" >
+         <property name="title">
           <string>Strigi Index Exclude Filters</string>
          </property>
         </widget>
@@ -175,6 +187,12 @@
    <extends>QLabel</extends>
    <header>ksqueezedtextlabel.h</header>
   </customwidget>
+  <customwidget>
+   <class>KTabWidget</class>
+   <extends>QTabWidget</extends>
+   <header>ktabwidget.h</header>
+   <container>1</container>
+  </customwidget>
  </customwidgets>
  <tabstops>
   <tabstop>tabWidget</tabstop>
@@ -188,11 +206,11 @@
    <receiver>groupBox</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>20</x>
      <y>20</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
