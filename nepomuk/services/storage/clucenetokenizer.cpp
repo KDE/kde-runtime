@@ -201,7 +201,7 @@ namespace Nepomuk {
         }
         if (  str.len >= LUCENE_MAX_WORD_LEN ){
             //if a number is too long, i would say there is no point
-            //storing it, because its going to be the wrong number anyway?
+            //storing it, because it is going to be the wrong number anyway?
             //what do people think?
             return false;
         }
