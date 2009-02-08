@@ -235,7 +235,7 @@ Name[zh_TW]=應用程式 %progname（%appname），行程代碼 %pid，崩潰並
 
 [WhatToDoHint]
 Enable=true
-Name=You might want to fix your program. Take a look at the backtrace tab.
+Name=You might want to fix your program. Take a look at the backtrace below.
 Name[af]=Jy dalk wil hê na regmaak jou program. Neem 'n kyk na die terugsoektog oortjie.
 Name[ar]=ربما تريد ان تصلح برنامجك.هل تريد إلقاء نظرة على جدول التتبع؟
 Name[be@latin]=Kali ty chočaš vypravić hetuju prahramu, možaš pahladzieć u źmieściva „backtrace”.
