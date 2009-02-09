@@ -1,5 +1,8 @@
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR})
-add_subdirectory(guitest)
+
+if (OPENGL_FOUND)
+	add_subdirectory(guitest)
+endif (OPENGL_FOUND)
 
 MACRO(PHONON_UNIT_TESTS)
 	FOREACH(_testname ${ARGN})
