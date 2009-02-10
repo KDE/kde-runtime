@@ -236,6 +236,13 @@ Name[zh_TW]=應用程式 %progname（%appname），行程代碼 %pid，崩潰並
 [WhatToDoHint]
 Enable=true
 Name=You might want to fix your program. Take a look at the backtrace below.
+Name[et]=Kui soovid rakendust parandada, siis vaata ka tagasijälituse kaarti.
+Name[ga]=Ba chóir duit do chlár a dheisiú. Féach ar an gcúl-lorg thíos.
+Name[pt]=Poderá querer corrigir o seu programa. Dê uma vista de olhos no registo de chamadas.
+Name[pt_BR]=Poderá querer corrigir o seu programa. Dê uma vista de olhos no registo de chamadas.
+Name[sv]=Du kanske vill korrigera ditt program. Ta en titt på bakåtspårningen nedan.
+Name[uk]=Полагодьте вашу програму. Загляньте на дані зворотного трасування, показані нижче.
+Name[zh_TW]=您可能要修正您的程式。請參考一下底下的回溯資訊。
 
 [4]
 Name=SIGILL
