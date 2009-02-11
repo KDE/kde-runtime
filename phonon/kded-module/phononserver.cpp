@@ -640,10 +640,11 @@ void PhononServer::findDevices()
         // and sinks...
         pa_context *context = pa_context_new(mainloopApi, "KDE");
         // XXX stupid cast. report a bug about a missing enum value
-        pa_context_connect(context, NULL, static_cast<pa_context_flags_t>(0), 0);
-        pa_context_set_state_callback(context, &pulseContextStateCallback, &userData);
-        pa_mainloop_run(mainloop, NULL);
-        pa_context_disconnect(context);
+        if (pa_context_connect(context, NULL, static_cast<pa_context_flags_t>(0), 0) >= 0) {
+            pa_context_set_state_callback(context, &pulseContextStateCallback, &userData);
+            pa_mainloop_run(mainloop, NULL);
+            pa_context_disconnect(context);
+        }
         pa_mainloop_free(mainloop);
         kDebug(601) << "pulse sources:" << userData.sources;
         kDebug(601) << "pulse sinks:  " << userData.sinks;
