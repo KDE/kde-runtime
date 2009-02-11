@@ -23,6 +23,7 @@
 #include "ui_nepomukconfigwidget.h"
 #include "nepomukserverinterface.h"
 #include "strigiserviceinterface.h"
+#include "nepomukservicemanagerinterface.h"
 
 class FolderSelectionModel;
 
@@ -46,6 +47,7 @@ namespace Nepomuk {
 
     private:
         org::kde::NepomukServer m_serverInterface;
+        org::kde::nepomuk::ServiceManager m_serviceManagerInterface;
         org::kde::nepomuk::Strigi* m_strigiInterface;
 
         FolderSelectionModel* m_folderModel;

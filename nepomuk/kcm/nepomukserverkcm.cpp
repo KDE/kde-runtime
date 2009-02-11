@@ -57,6 +57,7 @@ namespace {
 Nepomuk::ServerConfigModule::ServerConfigModule( QWidget* parent, const QVariantList& args )
     : KCModule( NepomukConfigModuleFactory::componentData(), parent, args ),
       m_serverInterface( "org.kde.NepomukServer", "/nepomukserver", QDBusConnection::sessionBus() ),
+      m_serviceManagerInterface( "org.kde.NepomukServer", "/servicemanager", QDBusConnection::sessionBus() ),
       m_strigiInterface( 0 )
 {
     KAboutData *about = new KAboutData(
@@ -187,21 +188,26 @@ void Nepomuk::ServerConfigModule::defaults()
 
 void Nepomuk::ServerConfigModule::slotUpdateStrigiStatus()
 {
-    if ( m_strigiInterface->isValid() ) {
-        bool indexing = m_strigiInterface->isIndexing();
-        bool suspended = m_strigiInterface->isSuspended();
-        QString folder = m_strigiInterface->currentFolder();
+    if ( m_serviceManagerInterface.runningServices().value().contains( "nepomukstrigiservice") ) {
+        if ( m_serviceManagerInterface.isServiceInitialized( "nepomukstrigiservice") ) {
+            bool indexing = m_strigiInterface->isIndexing();
+            bool suspended = m_strigiInterface->isSuspended();
+            QString folder = m_strigiInterface->currentFolder();
 
-        if ( m_strigiInterface->lastError().isValid() )
-            m_labelStrigiStatus->setText( i18nc( "@info:status %1 is an error message returned by a dbus interface.",
-                                                 "Failed to contact Strigi indexer (%1)",
-                                                 m_strigiInterface->lastError().message() ) );
-        else if ( suspended )
-            m_labelStrigiStatus->setText( i18nc( "@info_status", "File indexer is suspended" ) );
-        else if ( indexing )
-            m_labelStrigiStatus->setText( i18nc( "@info_status", "Strigi is currently indexing files in folder %1", folder ) );
-        else
-            m_labelStrigiStatus->setText( i18nc( "@info_status", "File indexer is idle" ) );
+            if ( m_strigiInterface->lastError().isValid() )
+                m_labelStrigiStatus->setText( i18nc( "@info:status %1 is an error message returned by a dbus interface.",
+                                                     "Failed to contact Strigi indexer (%1)",
+                                                     m_strigiInterface->lastError().message() ) );
+            else if ( suspended )
+                m_labelStrigiStatus->setText( i18nc( "@info_status", "File indexer is suspended" ) );
+            else if ( indexing )
+                m_labelStrigiStatus->setText( i18nc( "@info_status", "Strigi is currently indexing files in folder %1", folder ) );
+            else
+                m_labelStrigiStatus->setText( i18nc( "@info_status", "File indexer is idle" ) );
+        }
+        else {
+            m_labelStrigiStatus->setText( i18nc( "@info_status", "Strigi service failed to initialize, most likely due to an installation problem." ) );
+        }
     }
     else {
         m_labelStrigiStatus->setText( i18nc( "@info_status", "Strigi service not running." ) );
