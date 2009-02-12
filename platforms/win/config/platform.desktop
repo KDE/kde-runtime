@@ -1,0 +1,42 @@
+[Desktop Entry]
+Exec=kcmshell4 platform
+Icon=face-smile
+Type=Service
+X-DocPath=kcontrol/platform/index.html
+
+X-KDE-ServiceTypes=KCModule,KCModuleInit
+X-KDE-Library=kcm_platform
+X-KDE-ParentApp=kcontrol
+X-KDE-System-Settings-Parent-Category=advanced-user-settings
+X-KDE-Weight=110
+
+Name=Platform
+Name[de]=Plattform
+Name[el]=Πλατφόρμα
+Name[et]=Platvorm
+Name[fr]=Platforme
+Name[gl]=Plataforma
+Name[km]=វេទិកា
+Name[nds]=Ünnerbuu
+Name[pa]=ਪਲੇਟਫਾਰਮ
+Name[pt]=Plataforma
+Name[pt_BR]=Plataforma
+Name[ro]=Platformă
+Name[sv]=Plattform
+Name[uk]=Платформа
+Name[x-test]=xxPlatformxx
+Comment=Windows Platform Manager
+Comment[el]=Διαχειριστής πλατφόρμας Windows
+Comment[et]=Windowsi platvormi haldur
+Comment[fr]=Gestionnaire de plateforme Windows
+Comment[gl]=Xestor da plataforma Windows
+Comment[km]=កម្មវិធី​គ្រប់គ្រង​វេទិកា​បង្អួច
+Comment[nds]=Windows-Ünnerbuu-Pleger
+Comment[pa]=ਵਿੰਡੋਜ਼ ਪਲੇਟਫਾਰਮ ਮੈਨੇਜਰ
+Comment[pt]=Gestor da Plataforma Windows
+Comment[pt_BR]=Gestor da Plataforma Windows
+Comment[sv]=Windows plattformshanterare
+Comment[tr]=Windows Platform Yöneticisi
+Comment[uk]=Інструмент керування платформами Windows
+Comment[x-test]=xxWindows Platform Managerxx
+X-KDE-Keywords=Platform,Windows
