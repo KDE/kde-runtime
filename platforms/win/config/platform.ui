@@ -31,7 +31,7 @@
       </size>
      </property>
      <property name="title" >
-      <string>Windows Desktop Shell</string>
+      <string comment="'Windows' means the OS" >Windows Desktop Shell</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_2" >
       <item row="0" column="0" >
