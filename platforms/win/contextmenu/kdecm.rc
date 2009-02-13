@@ -1,0 +1,3 @@
+#include "resource.h"
+
+IDB_SCITE               BITMAP  DISCARDABLE     "kde.bmp"
