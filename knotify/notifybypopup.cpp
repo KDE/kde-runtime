@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2005-2006 by Olivier Goffart <ogoffart at kde.org>
+   Copyright (C) 2005-2009 by Olivier Goffart <ogoffart at kde.org>
    Copyright (C) 2008 by Dmitry Suzdalev <dimsuz@gmail.com>
 
    This program is free software; you can redistribute it and/or modify
@@ -96,7 +96,8 @@ void NotifyByPopup::notify( int id, KNotifyConfig * config )
 	QString timeoutStr = config->readEntry( "Timeout" );
 	pop->setTimeout( !timeoutStr.isEmpty() ? timeoutStr.toInt() : 0 );
 
-	pop->show(QPoint(screen.left() + screen.width()/2  , m_nextPosition));
+	pop->adjustSize();
+	pop->show(QPoint(screen.left() + screen.width()/2 - pop->width()/2  , m_nextPosition));
 	m_nextPosition+=pop->height();
 }
 
