@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2005-2006 by Olivier Goffart <ogoffart at kde.org>
+   Copyright (C) 2005-2009 by Olivier Goffart <ogoffart at kde.org>
 
 
    This program is free software; you can redistribute it and/or modify
@@ -110,7 +110,7 @@ void KNotify::closeNotification(int id)
 	delete e;
 }
 
-int KNotify::event( const QString & event, const QString & appname, const ContextList & contexts, const QString & text, const QPixmap & pixmap, const QStringList & actions, WId winId )
+int KNotify::event( const QString & event, const QString & appname, const ContextList & contexts, const QString & text, const KNotifyImage & image, const QStringList & actions, WId winId )
 {
 	m_counter++;
 	Event *e=new Event(appname , contexts , event );
@@ -119,7 +119,7 @@ int KNotify::event( const QString & event, const QString & appname, const Contex
 
 	e->config.text=text;
 	e->config.actions=actions;
-	e->config.pix=pixmap;
+	e->config.image=image;
 	e->config.winId=(WId)winId;
 	
 	m_notifications.insert(m_counter,e);
@@ -136,7 +136,7 @@ int KNotify::event( const QString & event, const QString & appname, const Contex
 	return m_counter;
 }
 
-void KNotify::update(int id, const QString &text, const QPixmap& pixmap,  const QStringList& actions)
+void KNotify::update(int id, const QString &text, const KNotifyImage& image,  const QStringList& actions)
 {
 	if(!m_notifications.contains(id))
 		return;
@@ -144,7 +144,7 @@ void KNotify::update(int id, const QString &text, const QPixmap& pixmap,  const 
 	Event *e=m_notifications[id];
 	
 	e->config.text=text;
-	e->config.pix = pixmap;
+	e->config.image = image;
 	e->config.actions = actions;
 	
 	foreach(KNotifyPlugin *p, m_plugins)
@@ -229,10 +229,7 @@ int KNotifyAdaptor::event(const QString &event, const QString &fromApp, const QV
 			contextlist << qMakePair(context_key , s);
 	}
 	
-	QPixmap pixmap;
-	QDataStream in(image);
-	in >> pixmap;
-	return static_cast<KNotify *>(parent())->event(event, fromApp, contextlist, text, pixmap, actions, WId(winId));
+	return static_cast<KNotify *>(parent())->event(event, fromApp, contextlist, text, image, actions, WId(winId));
 }
 
 void KNotifyAdaptor::reemit(int id, const QVariantList& contexts)
@@ -253,9 +250,7 @@ void KNotifyAdaptor::reemit(int id, const QVariantList& contexts)
 
 void KNotifyAdaptor::update(int id, const QString &text, const QByteArray& image,  const QStringList& actions )
 {
-	QPixmap pixmap;
-	pixmap.loadFromData(image);
-	static_cast<KNotify *>(parent())->update(id, text, pixmap, actions);
+	static_cast<KNotify *>(parent())->update(id, text, image, actions);
 }
 
 #include "knotify.moc"

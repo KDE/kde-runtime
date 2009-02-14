@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2005-2006 by Olivier Goffart <ogoffart at kde.org>
+   Copyright (C) 2005-2009 by Olivier Goffart <ogoffart at kde.org>
 
 
    This program is free software; you can redistribute it and/or modify
@@ -22,7 +22,6 @@
 #define KNOTIFY_H
 
 #include <QObject>
-#include <QPixmap>
 #include <QHash>
 
 
@@ -53,9 +52,9 @@ class KNotify : public QObject
 		void closeNotification( int id);
 		
 		int event(const QString &event, const QString &fromApp, const ContextList& contexts ,
-				   const QString &text, const QPixmap& pixmap,  const QStringList& actions , WId winId = 0);
+				   const QString &text, const KNotifyImage& image,  const QStringList& actions , WId winId = 0);
 		
-		void update(int id, const QString &text, const QPixmap& pixmap,  const QStringList& actions);
+		void update(int id, const QString &text, const KNotifyImage& image,  const QStringList& actions);
 		void reemit(int id, const ContextList& contexts);
 	Q_SIGNALS:
 		void notificationClosed( int id);

@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2005-2006 by Olivier Goffart <ogoffart at kde.org>
+   Copyright (C) 2005-2009 by Olivier Goffart <ogoffart at kde.org>
 
 
    This program is free software; you can redistribute it and/or modify
@@ -30,6 +30,25 @@
 typedef QList< QPair<QString,QString> > ContextList;
 
 /**
+ * An image with lazy loading from the byte array
+ */
+class KNotifyImage
+{
+	public:
+		KNotifyImage() : dirty(false) {}
+		KNotifyImage(const QByteArray &data) : source(data), dirty(true) {}
+		QImage toImage();
+		bool isNull() {
+			return dirty ? source.isEmpty() : image.isNull();
+		}
+	private:
+		QByteArray source;
+		QImage image;
+		bool dirty;
+};
+
+
+/**
  * Represent the configuration for an event
  * @author Olivier Goffart <ogoffart@kde.org>
 */
@@ -56,7 +75,7 @@ class KNotifyConfig
 		/**
 		 * the pixmap to put on the notification
 		 */
-		QPixmap pix;
+		KNotifyImage image;
 		/**
 		 * The windowsID of the window that initiated the notification
 		 * (it is a window in the client)

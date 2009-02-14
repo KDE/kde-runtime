@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2005-2006 by Olivier Goffart <ogoffart at kde.org>
+   Copyright (C) 2005-2009 by Olivier Goffart <ogoffart at kde.org>
 
 
    This program is free software; you can redistribute it and/or modify
@@ -25,6 +25,7 @@
 #include <kdebug.h>
 #include <kglobal.h>
 #include <QCache>
+#include <QDataStream>
 
 typedef QCache<QString, KSharedConfig::Ptr> ConfigCache;
 K_GLOBAL_STATIC_WITH_ARGS(ConfigCache , static_cache, (15))
@@ -94,3 +95,12 @@ QString KNotifyConfig::readEntry( const QString & entry, bool path )
 	return QString();
 }
 
+QImage KNotifyImage::toImage() 
+{
+	if (dirty) {
+		QDataStream in(source);
+		in >> image;
+		dirty = false;
+	}
+	return image;
+}

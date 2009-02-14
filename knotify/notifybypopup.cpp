@@ -202,16 +202,16 @@ void NotifyByPopup::fillPopup(KPassivePopup *pop,int id,KNotifyConfig * config)
 	KIconLoader iconLoader(iconName);
 	QPixmap appIcon = iconLoader.loadIcon( iconName, KIconLoader::Small );
 
-	KVBox *vb = pop->standardView( appCaption , config->pix.isNull() ? config->text : QString() , appIcon );
+	KVBox *vb = pop->standardView( appCaption , config->image.isNull() ? config->text : QString() , appIcon );
 	KVBox *vb2 = vb;
 
-	if(!config->pix.isNull())
+	if(!config->image.isNull())
 	{
-		const QPixmap &pix=config->pix;
+		QPixmap pix = QPixmap::fromImage(config->image.toImage());
 		KHBox *hb = new KHBox(vb);
 		hb->setSpacing(KDialog::spacingHint());
 		QLabel *pil=new QLabel(hb);
-		pil->setPixmap( config->pix );
+		pil->setPixmap( pix );
 		pil->setScaledContents(true);
 		if(pix.height() > 80 && pix.height() > pix.width() )
 		{
