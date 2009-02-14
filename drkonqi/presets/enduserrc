@@ -55,7 +55,7 @@ Name[pl]=Użytkownik końcowy
 Name[pt]=Utilizador
 Name[pt_BR]=Usuário
 Name[ro]=Utilizator obișnuit
-Name[ru]=Конечный пользователь
+Name[ru]=Обычный пользователь
 Name[sk]=Používateľ
 Name[sl]=Končni uporabnik
 Name[sr]=Крајњи корисник
@@ -128,7 +128,7 @@ Comment[pl]=Ustawienia dla użytkowników końcowych
 Comment[pt]=Configuração preferida para os utilizadores
 Comment[pt_BR]=Configurações preferidas por usuários
 Comment[ro]=Setări preferate pentru utilizatorii obișnuiți
-Comment[ru]=Настройки, предпочтительные для конечных пользователей
+Comment[ru]=Параметры, предпочтительные для обычных пользователей
 Comment[sk]=Preferované nastavenia pre používateľov
 Comment[sl]=Nastavitve, ki so primerne za končnega uporabnika
 Comment[sr]=Поставке пригодне крајњим корисницима
@@ -210,7 +210,7 @@ Name[pl]=Program %progname (%appname) uległ awarii i spowodował sygnał %signu
 Name[pt]=A aplicação %progname (%appname) estoirou e provocou o sinal %signum (%signame).
 Name[pt_BR]=O aplicativo %progname (%appname) travou e causou o sinal %signum (%signame).
 Name[ro]=Aplicația %progname (%appname) s-a prăbușit și a generat semnalul %signum (%signame).
-Name[ru]=В приложении %progname (%appname) произошёл фатальный сбой, вызвавший сигнал %signum (%signame).
+Name[ru]=В приложении %progname (%appname, процесс %pid) произошёл сбой работы. Работа приложения прекращена с сигналом %signum (%signame).
 Name[sk]=Aplikácia %progname (%appname) spadla a spôsobila signál %signum (%signame).
 Name[sl]=Program %progname (%appname) se je sesul in je sprožil signal %signum (%signame).
 Name[sr]=Програм %progname (%appname) срушио се уз сигнал %signum (%signame).
@@ -278,7 +278,7 @@ Name[pl]=Raporty o błędach wysyłane ze strony <a href="http://bugs.kde.org">h
 Name[pt]=Por favor ajude-nos a melhor o 'software' que usa, preenchendo um relatório em <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Alguns detalhes úteis incluem a reprodução do erro, os documentos que foram carregados, etc.
 Name[pt_BR]=Por favor nos ajude a melhorar o software que você usa preenchendo um relatório em <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Detalhes úteis incluem como reproduzir o erro, documentos que foram carregados, etc.
 Name[ro]=Ajutați-ne să îmbunătățim programul, completînd un raport de eroare pe <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Vă rugăm să includeți cît mai multă informație, de exemplu cum se poate reproduce eroarea, documentele încărcate, etc.
-Name[ru]=Пожалуйста, помогите нам улучшить эту программу и заполните <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Будет полезно указать, как воспроизвести эту ошибку, какие документы были загружены и т.д.
+Name[ru]=Пожалуйста, помогите нам улучшить эту программу. Напишите отчёт на <a href="http://bugs.kde.org">http://bugs.kde.org</a>, включив в него сведения о ситуации, вызвавшей ошибку, загруженные документы и так далее.
 Name[sk]=Prosím pomôžte nám vylepšit softvér vyplnením protokolu o chybe na <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Medzi užitočné detaily patria napríklad informácie o tom ako reprodukovať chybu, dokumenty, ktoré boli načítané, atď.
 Name[sl]=Pomagajte nam izboljšati program, ki ga uporabljate. Oddajte poročilo o napaki  na <a href="http://bugs.kde.org">bugs.kde.org</a>. Uporabni podatki so na primer koraki za povzročitev napake, odprti dokumenti in podobno.
 Name[sr]=Помогните нам да побољшамо софтвер тако што ћете испунити извештај на <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Корисни детаљи: како изазвати грешку, документи који су учитавани, итд.
@@ -661,7 +661,7 @@ Name[pl]=Nieznany
 Name[pt]=Desconhecido
 Name[pt_BR]=Desconhecido
 Name[ro]=Necunoscut
-Name[ru]=Неизвестный
+Name[ru]=неизвестный
 Name[sk]=Neznámy
 Name[sl]=Neznano
 Name[sr]=непознат
