@@ -15,6 +15,8 @@ notifybyktts.cpp
 )
 
 
+kde4_add_app_icon(knotify_SRCS "${CMAKE_SOURCE_DIR}/pics/oxygen/*/apps/preferences-desktop-notification.png")
+
 kde4_add_executable( knotify ${knotify_SRCS})
 
 target_link_libraries( knotify ${KDE4_KDEUI_LIBS} ${KDE4_PHONON_LIBS})
