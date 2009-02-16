@@ -35,8 +35,8 @@ endif(Q_WS_MAC)
 target_link_libraries(kglobalaccel kdeinit_kglobalaccel)
 
 # Install application and configuration
-install( TARGETS kdeinit_kglobalaccel DESTINATION ${INSTALL_TARGETS_DEFAULT_ARGS} )
-install( TARGETS kglobalaccel DESTINATION ${INSTALL_TARGETS_DEFAULT_ARGS} )
+install( TARGETS kdeinit_kglobalaccel ${INSTALL_TARGETS_DEFAULT_ARGS} )
+install( TARGETS kglobalaccel ${INSTALL_TARGETS_DEFAULT_ARGS} )
 install( FILES kglobalaccel.desktop DESTINATION ${AUTOSTART_INSTALL_DIR})
 
 # Install some update file (not yet working)
