@@ -24,13 +24,25 @@
 #include <kuniqueapplication.h>
 #include <kaboutdata.h>
 #include <kcmdlineargs.h>
+#include <kcrash.h>
+#include <kde_file.h>
 #include <kdebug.h>
+
+#include <signal.h>
 
 static bool isEnabled()
     {
     // TODO: Check if kglobalaccel can be disabled
     return true;
     }
+
+
+static void sighandler(int /*sig*/)
+{
+    if (qApp)
+       qApp->quit();
+}
+
 
 extern "C" KDE_EXPORT int kdemain(int argc, char **argv)
     {
@@ -67,6 +79,13 @@ extern "C" KDE_EXPORT int kdemain(int argc, char **argv)
         kDebug() << "kglobalaccel is already running!";
         return (0);
         }
+
+    // Stop gracefully
+    KDE_signal(SIGTERM, sighandler);
+    KDE_signal(SIGHUP, sighandler);
+
+    // Restart on a crash
+    KCrash::setFlags(KCrash::AutoRestart);
 
     KGlobalAccelD globalaccel;
     int res = app.exec();
