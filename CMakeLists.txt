@@ -40,7 +40,7 @@ add_subdirectory(cmake)
 
 # Background processes
 add_subdirectory(kpasswdserver)
-add_subdirectory(kdedglobalaccel)
+add_subdirectory(kglobalaccel)
 add_subdirectory(knotify)
 add_subdirectory(ktimezoned)
 add_subdirectory(kuiserver)

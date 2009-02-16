@@ -19,22 +19,21 @@
     the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
     Boston, MA 02110-1301, USA.
 */
-#ifndef KDEDGLOBALACCEL_H
-#define KDEDGLOBALACCEL_H
+#ifndef KGLOBALACCELD_H
+#define KGLOBALACCELD_H
 
-#include <kdedmodule.h>
 #include <kglobalshortcutinfo.h>
 
 #include <QtCore/QStringList>
 #include <QtCore/QList>
-#include <QtDBus/QDBusObjectPath>
+#include <QtDBus/QtDBus>
 
-class KdedGlobalAccelPrivate;
+class KGlobalAccelDPrivate;
 
-class KdedGlobalAccel : public KDEDModule
+class KGlobalAccelD : public QObject, protected QDBusContext
 {
     Q_OBJECT
-    Q_CLASSINFO("D-Bus Interface", "org.kde.KdedGlobalAccel")
+    Q_CLASSINFO("D-Bus Interface", "org.kde.KGlobalAccel")
     Q_ENUMS(SetShortcutFlag)
 
 public:
@@ -47,8 +46,8 @@ public:
     };
     Q_FLAGS(SetShortcutFlags)
 
-    KdedGlobalAccel(QObject*, const QList<QVariant>&);
-    ~KdedGlobalAccel();
+    KGlobalAccelD(QObject* parent = NULL);
+    ~KGlobalAccelD();
 
 public Q_SLOTS:
 
@@ -119,11 +118,9 @@ private Q_SLOTS:
 
 private:
 
-    Q_PRIVATE_SLOT(d, void _k_initializeDBus(const QDBusObjectPath&))
-
     void scheduleWriteSettings() const;
 
-    KdedGlobalAccelPrivate *const d;
+    KGlobalAccelDPrivate *const d;
 };
 
-#endif //KDEDGLOBALACCEL_H
+#endif //KGLOBALACCELD_H

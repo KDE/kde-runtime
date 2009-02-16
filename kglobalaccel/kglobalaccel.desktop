@@ -1,11 +1,11 @@
 [Desktop Entry]
 Type=Service
 
-X-KDE-ServiceTypes=KDEDModule
-X-KDE-Library=globalaccel
-X-KDE-DBus-ModuleName=kdedglobalaccel
-X-KDE-Kded-autoload=false
-X-KDE-Kded-load-on-demand=true
+Exec=kglobalaccel
+X-KDE-autostart-phase=1
+X-DBUS-StartupType=Unique
+X-KDE-ServiceTypes=
+X-KDE-StartupNotify=false
 
 Name=KDED Global Shortcuts Server
 Name[ar]=خادم الاختصارات العالمية

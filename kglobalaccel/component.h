@@ -40,7 +40,7 @@ class Component : public QObject
     {
     Q_OBJECT
 
-    Q_CLASSINFO("D-Bus Interface", "org.kde.kdedglobalaccel.Component")
+    Q_CLASSINFO("D-Bus Interface", "org.kde.kglobalaccel.Component")
 
     Q_SCRIPTABLE Q_PROPERTY( QString friendlyName READ friendlyName )
     Q_SCRIPTABLE Q_PROPERTY( QString uniqueName READ uniqueName )
