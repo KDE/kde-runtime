@@ -41,7 +41,7 @@ public:
   static BackTrace* create(const KrashConfig* krashconf, QObject* parent);
   ~BackTrace();
 
-  void start();
+  bool start();
 
 Q_SIGNALS:
   void append(const QString &str); // Just the new text

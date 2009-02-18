@@ -1,3 +1,16 @@
+project( DRKONQUING )
+
+find_package(KDE4 REQUIRED)
+
+include(KDE4Defaults)
+include(MacroLibrary)
+include(CheckFunctionExists)
+include(CheckIncludeFiles)
+
+configure_file (config-runtime.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-runtime.h )
+add_definitions (${QT_DEFINITIONS} ${KDE4_DEFINITIONS})
+include_directories (${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} ${KDE4_INCLUDES})
+
 add_subdirectory( presets ) 
 add_subdirectory( pics ) 
 add_subdirectory( debuggers ) 
@@ -5,13 +18,20 @@ add_subdirectory( tests )
 
 set(drkonqi_SRCS 
    main.cpp 
-   debugger.cpp 
    krashconf.cpp 
    krashadaptor.cpp
    drbugreport.cpp 
+   drkonqidialog.cpp
+   crashinfo.cpp
+   aboutbugreportingdialog.cpp
+   drkonqiassistantpages.cpp
+   drkonqibugreport.cpp
+   usefulnessmeter.cpp
+   getbacktracewidget.cpp
+   backtraceinfo.cpp
    backtrace.cpp 
    backtracegdb.cpp
-   toplevel.cpp )
+)
 
 kde4_add_executable(drkonqi ${drkonqi_SRCS})
 

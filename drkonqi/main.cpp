@@ -37,7 +37,8 @@
 #include <kdefakes.h>
 
 #include "krashconf.h"
-#include "toplevel.h"
+//#include "toplevel.h"
+#include "drkonqidialog.h"
 
 static const char version[] = "1.0";
 static const char description[] = I18N_NOOP( "KDE crash handler gives the user feedback if a program crashed" );
@@ -91,8 +92,10 @@ int main( int argc, char* argv[] )
 
   int ret;
   {
-    Toplevel w(&krashconf);
-    ret = w.exec();
+    //Toplevel w(&krashconf);
+    DrKonqiDialog w(&krashconf);
+    w.show();
+    ret = qa->exec();
   }
 
   delete qa;

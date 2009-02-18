@@ -72,19 +72,12 @@ BackTrace::~BackTrace()
   delete m_temp;
 }
 
-void BackTrace::start()
+bool BackTrace::start()
 {
   QString exec = m_krashconf->tryExec();
   if ( !exec.isEmpty() && KStandardDirs::findExe(exec).isEmpty() )
-  {
-    QObject * o = parent();
+    return false;
 
-    QWidget* w = o ? qobject_cast<QWidget*>( o ) : 0;
-
-    KMessageBox::error( w,
-			i18n("Could not generate a backtrace as the debugger '%1' was not found.", exec));
-    return;
-  }
   m_temp = new KTemporaryFile;
   m_temp->open();
   m_temp->write(m_krashconf->backtraceCommand().toLatin1());
@@ -106,8 +99,10 @@ void BackTrace::start()
   m_proc->start();
   if (!m_proc->waitForStarted())
   {
-    emit someError();
+        emit someError();
+        return false;
   }
+  return true;
 }
 
 void BackTrace::slotReadInput()
