@@ -81,6 +81,7 @@ extern "C" KDE_EXPORT int kdemain(int argc, char **argv)
         }
 
     // Stop gracefully
+    KDE_signal(SIGINT, sighandler);
     KDE_signal(SIGTERM, sighandler);
     KDE_signal(SIGHUP, sighandler);
 
