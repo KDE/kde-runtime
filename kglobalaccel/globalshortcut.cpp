@@ -59,7 +59,6 @@ GlobalShortcut::GlobalShortcut(
 GlobalShortcut::~GlobalShortcut()
     {
     setInactive();
-    _context->takeShortcut(this);
     }
 
 
@@ -139,6 +138,12 @@ GlobalShortcutContext const *GlobalShortcut::context() const
 QString GlobalShortcut::uniqueName() const
     {
     return _uniqueName;
+    }
+
+
+void GlobalShortcut::unRegister()
+    {
+    return _context->component()->unregisterShortcut(uniqueName());
     }
 
 

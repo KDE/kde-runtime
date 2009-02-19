@@ -348,6 +348,19 @@ QString Component::uniqueName() const
     }
 
 
+void Component::unregisterShortcut(const QString &uniqueName)
+    {
+    // Now wrote all contexts
+    Q_FOREACH( GlobalShortcutContext *context, _contexts)
+        {
+        if (context->_actions.value(uniqueName))
+            {
+            delete context->takeShortcut(context->_actions.value(uniqueName));
+            }
+        }
+    }
+
+
 void Component::writeSettings(KConfigGroup& configGroup) const
     {
     // If we don't delete the current content global shortcut

@@ -405,10 +405,10 @@ void KGlobalAccelD::unRegister(const QStringList &actionId)
     // Stop grabbing the key
     GlobalShortcut *shortcut = d->findAction(actionId);
     if (shortcut) {
-        delete shortcut;
+        shortcut->unRegister();
+        scheduleWriteSettings();
     }
 
-    scheduleWriteSettings();
 }
 
 

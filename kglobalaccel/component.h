@@ -113,6 +113,9 @@ public:
 
     QString uniqueName() const;
 
+    //! Unregister @a shortcut. This will remove its siblings from all contexts
+    void unregisterShortcut(const QString &uniqueName);
+
     void writeSettings(KConfigGroup &config) const;
 
 public Q_SLOTS:

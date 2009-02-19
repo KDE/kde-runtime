@@ -93,6 +93,9 @@ public:
 
     operator KGlobalShortcutInfo () const;
 
+    //! Remove this shortcut and it's siblings
+    void unRegister();
+
 private:
 
     //! means the associated application is present.
