@@ -245,6 +245,8 @@ void Nepomuk::IndexScheduler::run()
 }
 
 
+// FIXME: the folders in StrigiServiceConfig::self()->folders() themselves are not indexed.
+
 // this method should be thread-safe ("should" because of the unknown situation with indexreader and -writer)
 bool Nepomuk::IndexScheduler::updateDir( const QString& dir, Strigi::StreamAnalyzer* analyzer, bool recursive )
 {
@@ -266,7 +268,8 @@ bool Nepomuk::IndexScheduler::updateDir( const QString& dir, Strigi::StreamAnaly
 
     // iterate over all files in the dir
     // and select the ones we need to add or delete from the store
-    QDirIterator dirIt( dir, QDir::NoDotAndDotDot|QDir::Readable|QDir::Files|QDir::Dirs );
+    QDir::Filters dirFilter = QDir::NoDotAndDotDot|QDir::Readable|QDir::Files|QDir::Dirs;
+    QDirIterator dirIt( dir, dirFilter );
     while ( dirIt.hasNext() ) {
         QString path = dirIt.next();
 
@@ -471,7 +474,7 @@ void Nepomuk::IndexScheduler::analyzeResource( const QUrl& uri, const QDateTime&
 void Nepomuk::IndexScheduler::deleteEntries( const std::vector<std::string>& entries )
 {
     // recurse into subdirs
-    for ( int i = 0; i < entries.size(); ++i ) {
+    for ( unsigned int i = 0; i < entries.size(); ++i ) {
         std::map<std::string, time_t> filesInStore;
         m_indexManager->indexReader()->getChildren( entries[i], filesInStore );
         std::vector<std::string> filesToDelete;

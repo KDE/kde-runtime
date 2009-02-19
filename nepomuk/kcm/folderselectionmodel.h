@@ -6,7 +6,7 @@
    (C) 2004 Max Howell <max.howell@methylblue.com>
    (C) 2004 Mark Kretschmann <markey@web.de>
    (C) 2008 Seb Ruiz <ruiz@kde.org>
-   (C) 2008 Sebastian Trueg <trueg@kde.org>
+   (C) 2008-2009 Sebastian Trueg <trueg@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -72,6 +72,9 @@ public:
 
     IncludeState includeState( const QModelIndex& ) const;
     IncludeState includeState( const QString& path ) const;
+
+public Q_SLOTS:
+    void setHiddenFoldersShown( bool shown );
 
 private:
     bool isForbiddenPath( const QString& path ) const;

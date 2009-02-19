@@ -76,6 +76,12 @@ QStringList Nepomuk::StrigiServiceConfig::includeFilters() const
 }
 
 
+bool Nepomuk::StrigiServiceConfig::indexHiddenFolders() const
+{
+    return m_config.group( "General" ).readEntry( "index hidden folders", false );
+}
+
+
 KIO::filesize_t Nepomuk::StrigiServiceConfig::minDiskSpace() const
 {
     // default: 200 MB
@@ -87,18 +93,6 @@ void Nepomuk::StrigiServiceConfig::slotConfigDirty()
 {
     m_config.reparseConfiguration();
     emit configChanged();
-}
-
-
-bool Nepomuk::StrigiServiceConfig::showGui() const
-{
-    return m_config.group( "General" ).readEntry( "show gui", true );
-}
-
-
-void Nepomuk::StrigiServiceConfig::setShowGui( bool showGui )
-{
-    m_config.group( "General" ).writeEntry( "show gui", showGui );
 }
 
 

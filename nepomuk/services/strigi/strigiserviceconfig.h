@@ -52,8 +52,7 @@ namespace Nepomuk {
         QStringList excludeFilters() const;
         QStringList includeFilters() const;
 
-        bool showGui() const;
-        void setShowGui( bool showGui );
+        bool indexHiddenFolders() const;
 
         /**
          * The minimal available disk space. If it drops below

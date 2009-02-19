@@ -6,7 +6,7 @@
    (C) 2004 Max Howell <max.howell@methylblue.com>
    (C) 2004 Mark Kretschmann <markey@web.de>
    (C) 2008 Seb Ruiz <ruiz@kde.org>
-   (C) 2008 Sebastian Trueg <trueg@kde.org>
+   (C) 2008-2009 Sebastian Trueg <trueg@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -39,12 +39,21 @@
 FolderSelectionModel::FolderSelectionModel( QObject* parent )
     : QFileSystemModel( parent )
 {
-    setFilter( QDir::AllDirs | QDir::NoDotAndDotDot );
+    setHiddenFoldersShown( false );
 }
 
 
 FolderSelectionModel::~FolderSelectionModel()
 {
+}
+
+
+void FolderSelectionModel::setHiddenFoldersShown( bool shown )
+{
+    if ( shown )
+        setFilter( QDir::AllDirs | QDir::NoDotAndDotDot | QDir::Hidden );
+    else
+        setFilter( QDir::AllDirs | QDir::NoDotAndDotDot );
 }
 
 
@@ -244,6 +253,10 @@ FolderSelectionModel::IncludeState FolderSelectionModel::includeState( const QSt
     else {
         QString parent = path.section( QDir::separator(), 0, -2, QString::SectionSkipEmpty|QString::SectionIncludeLeadingSep );
         if( parent.isEmpty() ) {
+            return StateNone;
+        }
+        else if ( QFileInfo( path ).isHidden() ) {
+            // we treat hidden files special - they are disabled by default
             return StateNone;
         }
         else {

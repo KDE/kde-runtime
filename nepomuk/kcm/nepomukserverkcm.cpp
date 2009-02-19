@@ -80,10 +80,14 @@ Nepomuk::ServerConfigModule::ServerConfigModule( QWidget* parent, const QVariant
              this, SLOT( changed() ) );
     connect( m_checkEnableNepomuk, SIGNAL( toggled(bool) ),
              this, SLOT( changed() ) );
+    connect( m_checkShowHiddenFolders, SLOT( toggled(bool) ),
+             this, SLOT( changed() ) );
     connect( m_folderModel, SIGNAL( dataChanged(const QModelIndex&, const QModelIndex&) ),
              this, SLOT( changed() ) );
     connect( m_editStrigiExcludeFilters, SIGNAL( changed() ),
              this, SLOT( changed() ) );
+    connect( m_checkShowHiddenFolders, SIGNAL( toggled( bool ) ),
+             m_folderModel, SLOT( setHiddenFoldersShown( bool ) ) );
 
     connect( QDBusConnection::sessionBus().interface(),
              SIGNAL( serviceOwnerChanged( const QString&, const QString&, const QString& ) ),
@@ -128,6 +132,7 @@ void Nepomuk::ServerConfigModule::load()
     }
 
     KConfig strigiConfig( "nepomukstrigirc" );
+    m_checkShowHiddenFolders->setChecked( strigiConfig.group( "General" ).readEntry( "index hidden folders", false ) );
     m_folderModel->setFolders( strigiConfig.group( "General" ).readPathEntry( "folders", defaultFolders() ),
                                strigiConfig.group( "General" ).readPathEntry( "exclude folders", QStringList() ) );
     m_editStrigiExcludeFilters->setItems( strigiConfig.group( "General" ).readEntry( "exclude filters", defaultExcludeFilters() ) );
@@ -156,6 +161,7 @@ void Nepomuk::ServerConfigModule::save()
     strigiConfig.group( "General" ).writePathEntry( "folders", m_folderModel->includeFolders() );
     strigiConfig.group( "General" ).writePathEntry( "exclude folders", m_folderModel->excludeFolders() );
     strigiConfig.group( "General" ).writeEntry( "exclude filters", m_editStrigiExcludeFilters->items() );
+    strigiConfig.group( "General" ).writeEntry( "index hidden folders", m_checkShowHiddenFolders->isChecked() );
 
 
     // 3. update the current state of the nepomuk server
@@ -181,6 +187,7 @@ void Nepomuk::ServerConfigModule::defaults()
 {
     m_checkEnableStrigi->setChecked( true );
     m_checkEnableNepomuk->setChecked( true );
+    m_checkShowHiddenFolders->setChecked( false );
     m_editStrigiExcludeFilters->setItems( defaultExcludeFilters() );
     m_folderModel->setFolders( defaultFolders(), QStringList() );
 }
