@@ -30,6 +30,9 @@
 
 class KGlobalAccelDPrivate;
 
+/**
+ * @todo get rid of all of those QStringList parameters.
+ */
 class KGlobalAccelD : public QObject, protected QDBusContext
 {
     Q_OBJECT
@@ -83,7 +86,8 @@ public Q_SLOTS:
 
     Q_SCRIPTABLE void doRegister(const QStringList &actionId);
 
-    Q_SCRIPTABLE void unRegister(const QStringList &actionId);
+    //! @see unregister
+    Q_SCRIPTABLE KDE_DEPRECATED void unRegister(const QStringList &actionId);
 
     Q_SCRIPTABLE void activateGlobalShortcutContext(
             const QString &component,
