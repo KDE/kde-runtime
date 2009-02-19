@@ -20,6 +20,7 @@
 #include "usefulnessmeter.h"
 
 #include <QtGui/QPainter>
+#include <QtGui/QPixmap>
 
 #include <kicon.h>
 

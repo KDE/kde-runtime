@@ -1,0 +1,16 @@
+#Assigned
+# Who / What
+
+##Unassigned
+
+Add Translation i18n (with contexts)
+Finish about bug reporting steps
+Check leaks, crashes
+Add BugzillaLib + reporting steps to assistant
+implement save report
+Use KGUIItem to create KPushButton
+Set help for gui items, whats this,
+Enable help button on assistant ?
+Relayout getBacktraceWidget buttons/labels , layouts
+
+Fix backtraceinfo logic (backtrace parsing to get its usefulness)

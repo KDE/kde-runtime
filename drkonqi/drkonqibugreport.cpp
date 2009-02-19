@@ -19,13 +19,7 @@
 
 #include "drkonqibugreport.h"
 
-#include <QtGui>
-#include <QtDebug>
-
-//#include <kiconloader.h>
 #include "drkonqiassistantpages.h"
-
-//#include <QMessageBox>
 
 DrKonqiBugReport::DrKonqiBugReport( CrashInfo * crash, QWidget * parent ) : 
     KAssistantDialog(parent),

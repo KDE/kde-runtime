@@ -20,12 +20,11 @@
 #ifndef DRKONQIBUGREPORT__H
 #define DRKONQIBUGREPORT__H
 
-#include <QtGui>
-
-//#include "krashconf.h"
-#include "crashinfo.h"
+#include <QtGui/QWidget>
 
 #include <kassistantdialog.h>
+
+#include "crashinfo.h"
 
 class IntroductionPage;
 class CrashInformationPage;

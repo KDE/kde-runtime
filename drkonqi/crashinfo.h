@@ -69,6 +69,7 @@ class CrashInfo : public QObject
     
   Q_SIGNALS:
     void backtraceGenerated();
+    void backtraceNewData( QString );
   
   private Q_SLOTS:
     void backtraceGeneratorFinished( const QString & );

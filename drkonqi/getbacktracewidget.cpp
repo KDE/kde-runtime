@@ -40,14 +40,12 @@ GetBacktraceWidget::GetBacktraceWidget( CrashInfo * info ) : QWidget()
     crashInfo = info;
     connect( crashInfo, SIGNAL(backtraceGenerated()) , this, SLOT(backtraceGenerated()) );
     
-    //QLabel * subTitle = new QLabel( "This page will fetch some useful information about the crash and your system to generate a better bug report" );
-    //subTitle->setWordWrap( true ); 
-    //subTitle->setAlignment( Qt::AlignHCenter );
-  
     backtraceEdit = new QTextEdit();
     backtraceEdit->setText("Loading ...");
     backtraceEdit->setReadOnly( true );
-     
+    
+    connect( crashInfo, SIGNAL(backtraceNewData(QString)) , backtraceEdit, SLOT(append(QString)) );
+    
     statusLabel = new QLabel("Loading ...");
     usefulnessMeter = new UsefulnessMeter( this );
 
@@ -91,7 +89,7 @@ GetBacktraceWidget::GetBacktraceWidget( CrashInfo * info ) : QWidget()
     headerLayout->addWidget( usefulnessMeter ); 
     
     QVBoxLayout *layout = new QVBoxLayout;
-    layout->setSpacing( 4 );
+    layout->setSpacing( 2 );
     layout->addLayout( headerLayout );
     layout->addWidget( backtraceEdit );
     layout->addLayout( backtraceButtons );

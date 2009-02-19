@@ -18,8 +18,9 @@
 ******************************************************************/
 
 #include "crashinfo.h"
+
 #include <QtDebug>
-#include <QProcess>
+#include <QtCore/QProcess>
 
 CrashInfo::CrashInfo( KrashConfig * cfg )
 {
@@ -67,7 +68,7 @@ void CrashInfo::generateBacktrace()
 
 void CrashInfo::backtraceGeneratorAppend( const QString & data )
 {
-    Q_UNUSED( data );
+    emit backtraceNewData( data.trimmed() );
 }
 
 void CrashInfo::backtraceGeneratorFinished( const QString & data )

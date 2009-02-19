@@ -20,11 +20,14 @@
 #ifndef DRKONQIASSISTANTPAGES__H
 #define DRKONQIASSISTANTPAGES__H
 
-#include <QtGui> //TODO include single classes
-#include <KPushButton>
+#include <QtGui/QWidget>
 
 #include "getbacktracewidget.h"
 #include "crashinfo.h"
+
+class KPushButton;
+class QLabel;
+class QTextEdit;
 
 //Introduction assistant page --------------
 class IntroductionPage: public QWidget

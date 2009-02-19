@@ -20,7 +20,7 @@
 #ifndef ABOUTBUGREPORTINGDIALOG__H
 #define ABOUTBUGREPORTINGDIALOG__H
 
-#include <QWidget>
+#include <QtGui/QWidget>
 
 #include <kdialog.h>
 

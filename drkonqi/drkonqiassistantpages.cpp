@@ -19,23 +19,24 @@
 
 #include "drkonqiassistantpages.h"
 
-#include <QtGui/QLabel>
-#include <QtGui/QVBoxLayout>
+//#include <QtCore/QRegExpValidator>
+//#include <QtCore/QFile> 
 
-//TODO
-#include <QApplication>
-#include "kdeversion.h"
+#include <QtGui/QApplication>
+#include <QtGui/QLabel>
+#include <QtGui/QTextEdit>
+#include <QtGui/QVBoxLayout>
+#include <QtGui/QHBoxLayout>
+#include <QtGui/QCheckBox>
+#include <QtGui/QGroupBox>
+
+#include <kpushbutton.h>
 #include <kinputdialog.h>
-#include <QRegExpValidator>
-#include <QDesktopServices>
 #include <krun.h>
 #include <ktoolinvocation.h>
-#include <QFile>
-#include <kpushbutton.h>
 #include <kicon.h>
-#include <kmessagebox.h>
-#include <kfiledialog.h>
-#include <ktemporaryfile.h>
+//#include <kfiledialog.h>
+//#include <ktemporaryfile.h>
 
 
 //Introduction page
@@ -201,7 +202,7 @@ void  ConclusionPage::reportButtonClicked()
             "Please, introduce at least four words to describe the crash. This is needed in order to search for"
             " similar crashes already reported in the bug tracker","", &ok, this);
         
-        int words = keywords.trimmed().split(' ').size();
+        //int words = keywords.trimmed().split(' ').size();
         
         if( ok )
         {

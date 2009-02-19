@@ -20,11 +20,12 @@
 #ifndef USEFULNESSMETER__H
 #define USEFULNESSMETER__H
 
-#include <QtGui/QPixmap>
 #include <QtGui/QWidget>
 
 #include "backtraceinfo.h"
 #include "crashinfo.h"
+
+class QPixmap;
 
 class UsefulnessMeter: public QWidget
 {
