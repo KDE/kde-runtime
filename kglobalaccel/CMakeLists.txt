@@ -8,7 +8,7 @@ include_directories( ${KDE4_KDEUI_INCLUDES} )
 
 set(kglobalaccel_SRCS
     main.cpp
-    kglobalaccel.cpp
+    kglobalacceld.cpp
     component.cpp
     globalshortcut.cpp
     globalshortcutsregistry.cpp
@@ -48,13 +48,13 @@ find_file(
     kdedglobalaccel.desktop
     PATHS ${SERVICES_INSTALL_DIR}/kded
     NO_DEFAULT_PATH)
-message(${KDEBASE_KGLOBALACCEL_REMOVE_OBSOLETE_KDED_DESKTOP_FILE})
+# message(${KDEBASE_KGLOBALACCEL_REMOVE_OBSOLETE_KDED_DESKTOP_FILE})
 find_file(
     KDEBASE_KGLOBALACCEL_REMOVE_OBSOLETE_KDED_PLUGIN
     kded_globalaccel.so
     PATHS ${PLUGIN_INSTALL_DIR}
     NO_DEFAULT_PATH)
-message(${KDEBASE_KGLOBALACCEL_REMOVE_OBSOLETE_KDED_PLUGIN})
+# message(${KDEBASE_KGLOBALACCEL_REMOVE_OBSOLETE_KDED_PLUGIN})
 
 # Remove old kdedglobalaccel files
 if(KDEBASE_KGLOBALACCEL_REMOVE_OBSOLETE_KDED_DESKTOP_FILE)
