@@ -153,6 +153,30 @@ QList<KGlobalShortcutInfo> Component::allShortcutInfos(const QString &contextNam
     }
 
 
+bool Component::cleanUp()
+    {
+    bool changed = false;;
+
+    Q_FOREACH (GlobalShortcut *shortcut, _current->_actions)
+        {
+        kDebug() << _current->_actions.size();
+        if (!shortcut->isPresent())
+            {
+            changed = true;
+            shortcut->unRegister();
+            }
+        }
+
+    if (changed)
+        {
+        _registry->writeSettings();
+        // We could be destroyed after this call!
+        }
+
+    return changed;
+    }
+
+
 bool Component::createGlobalShortcutContext(
         const QString &uniqueName,
         const QString &friendlyName)

@@ -119,8 +119,22 @@ public:
     void writeSettings(KConfigGroup &config) const;
 
 public Q_SLOTS:
+
     // For dbus Q_SCRIPTABLE has to be on slots. Scriptable methods are not
     // exported.
+
+    /**
+     * Remove all currently not used global shortcuts registrations for this
+     * component and if nothing is left the component too.
+     *
+     * If the method returns true consider all information previously aquired
+     * from this component as void.
+     *
+     * The method will cleanup in all contexts.
+     *
+     * @return @c true if a change was made, @c false if not.
+     */
+    Q_SCRIPTABLE bool cleanUp();
 
     Q_SCRIPTABLE QStringList shortcutNames(const QString &context = "default") const;
 
