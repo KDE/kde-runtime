@@ -348,10 +348,12 @@ GlobalShortcutContext *Component::shortcutContext( const QString &contextName )
     return _contexts.value(contextName);
     }
 
+
 GlobalShortcutContext const *Component::shortcutContext( const QString &contextName ) const
     {
     return _contexts.value(contextName);
     }
+
 
 QStringList Component::shortcutNames( const QString &contextName) const
     {
@@ -392,7 +394,7 @@ void Component::writeSettings(KConfigGroup& configGroup) const
     configGroup.deleteGroup();
 
 
-    // Now wrote all contexts
+    // Now write all contexts
     Q_FOREACH( GlobalShortcutContext *context, _contexts)
         {
         KConfigGroup contextGroup;

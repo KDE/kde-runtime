@@ -88,8 +88,12 @@ GlobalShortcut *GlobalShortcutContext::getShortcutByKey(int key) const
 GlobalShortcut *GlobalShortcutContext::takeShortcut(GlobalShortcut *shortcut)
     {
     // Try to take the shortcut. Result could be null if the shortcut doesn't
-    // belong ti this component.
-    return _actions.take(shortcut->uniqueName()); }
+    // belong to this component.
+    return _actions.take(shortcut->uniqueName());
+    }
 
 
-QString GlobalShortcutContext::uniqueName() const { return _uniqueName; }
+QString GlobalShortcutContext::uniqueName() const
+    {
+    return _uniqueName;
+    }

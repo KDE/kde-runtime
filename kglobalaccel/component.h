@@ -136,9 +136,10 @@ public Q_SLOTS:
      */
     Q_SCRIPTABLE bool cleanUp();
 
+    //! Get all shortcutnames living in @a context
     Q_SCRIPTABLE QStringList shortcutNames(const QString &context = "default") const;
 
-    //! Returns all shortcut in context @context
+    //! Returns all shortcut in @a context
     Q_SCRIPTABLE QList<KGlobalShortcutInfo> allShortcutInfos(const QString &context = "default") const;
 
     //! Returns the shortcut contexts available for the component.
