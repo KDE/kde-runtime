@@ -200,10 +200,6 @@ KGlobalAccelD::KGlobalAccelD(QObject* parent)
     connect(&d->writeoutTimer, SIGNAL(timeout()),
             reg, SLOT(writeSettings()));
 
-    connect(this, SIGNAL(moduleRegistered(const QDBusObjectPath &)),
-            this, SLOT(_k_initializeDBus(const QDBusObjectPath &)));
-
-
     QDBusConnection::sessionBus().registerService(QLatin1String("org.kde.kglobalaccel"));
     QDBusConnection::sessionBus().registerObject(
             QLatin1String("/kglobalaccel"),
