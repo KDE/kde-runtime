@@ -34,7 +34,7 @@ class DrKonqiDialog: public KDialog
     Q_OBJECT
     
     public:
-        DrKonqiDialog(KrashConfig * conf, QWidget * parent = 0);
+        explicit DrKonqiDialog(KrashConfig * conf, QWidget * parent = 0);
         ~DrKonqiDialog();
     
     private Q_SLOTS:

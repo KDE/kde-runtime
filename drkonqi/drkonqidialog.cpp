@@ -28,6 +28,7 @@
 #include <kpushbutton.h>
 #include <ktextbrowser.h>
 #include <kstandarddirs.h>
+#include <klocale.h>
 
 #include "krashconf.h"
 #include "crashinfo.h"
@@ -43,11 +44,11 @@ DrKonqiDialog::DrKonqiDialog(KrashConfig * conf, QWidget * parent) :
 {
     crashInfo = new CrashInfo(conf);
     
-    setCaption("An Error Ocurred");
+    setCaption( i18n("An Error Ocurred") );
     setWindowIcon( KIcon("tools-report-bug") );
 
     //GUI
-    QLabel * title = new QLabel("<strong>An Error Ocurred and the Application Closed</strong>");
+    QLabel * title = new QLabel( i18n("<strong>An Error Ocurred and the Application Closed</strong>") );
     title->setWordWrap( true ); 
     
     QLabel * pixmap = new QLabel("");
@@ -61,13 +62,14 @@ DrKonqiDialog::DrKonqiDialog(KrashConfig * conf, QWidget * parent) :
     QLabel * crashTitle = new QLabel( crashInfo->getCrashTitle() );
     crashTitle->setWordWrap( true ); 
     
-    QLabel * info = new QLabel("This probably happened because there is a bug in the application."
-    "<br />[Signal Explanation]"
-    "<br /><br />You can help us to improve the software you use reporting this bug."
-    );
+    QLabel * info = new QLabel( i18nc("Small explanation of the crash cause",
+    "<para>This probably happened because there is a bug in the application.</para><nl />"
+    "<para>[Signal Explanation]</para><nl />"
+    "<nl /><para>You can help us to improve the software you use reporting this bug.</para>"
+    ) );
     info->setWordWrap( true ); 
 
-    aboutBugReportingButton = new KPushButton( KGuiItem( "Learn more about bug reporting", KIcon("help-hint"), "Foo bar"  ) ); //TODO
+    aboutBugReportingButton = new KPushButton( KGuiItem( i18nc("button action", "Learn more about bug reporting") , KIcon("help-hint"),  i18nc("help text", "Get help in order to know how to file an useful bug report") ) ); //TODO
     aboutBugReportingButton->setSizePolicy( QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed) );
     connect( aboutBugReportingButton, SIGNAL(clicked()), this, SLOT(aboutBugReporting()) );
 
@@ -107,12 +109,13 @@ DrKonqiDialog::DrKonqiDialog(KrashConfig * conf, QWidget * parent) :
     //Set kdialog buttons
     setButtons( KDialog::User1 | KDialog::User2 | KDialog::User3 | KDialog::Close );
     
-    setButtonGuiItem( KDialog::User3, KGuiItem("Show Backtrace (Advanced)", KIcon("document-new"), "Generate the backtrace (crash information)" ) );
+    setButtonGuiItem( KDialog::User3, KGuiItem( i18nc("Button action","Show Backtrace (Advanced)"), KIcon("document-new"), i18nc("help text","Generate the backtrace (crash information)") ) );
     connect( this, SIGNAL(user3Clicked()), this, SLOT(toggleBacktrace()) );
-    setButtonGuiItem( KDialog::User2, KGuiItem("Start Debugger", KIcon("document-edit"), "Starts the configured application to debug crashes" ) );
-    setButtonGuiItem( KDialog::User1, KGuiItem("Report Bug", KIcon("tools-report-bug"), "Starts the bug report assistant" ) );
+    setButtonGuiItem( KDialog::User2, KGuiItem( i18nc("Button action", "Start Debugger") , KIcon("document-edit"), i18nc("help text", "Starts the configured application to debug crashes" )) );
+    setButtonGuiItem( KDialog::User1, KGuiItem( i18nc("Button action", "Report Bug"), KIcon("tools-report-bug"), i18nc("help text", "Starts the bug report assistant" )) );
     connect( this, SIGNAL(user1Clicked()), this, SLOT(reportBugAssistant()) );
-    setButtonToolTip( KDialog::Close, "Close this dialog (you will lose the crash information)");
+    
+    setButtonToolTip( KDialog::Close, i18nc("help text", "Close this dialog (you will lose the crash information)") );
     
     enableButton( KDialog::User2, false );
     
@@ -144,13 +147,13 @@ void DrKonqiDialog::toggleBacktrace()
         backtraceWidget->generateBacktrace();
         stackedWidget->setCurrentWidget( backtraceWidget );
         
-        setButtonGuiItem( KDialog::User3, KGuiItem("Show Introduction", KIcon("help-contextual"), "Show the Crash Dialog introduction page" ) );
+        setButtonGuiItem( KDialog::User3, KGuiItem(i18nc("button action", "Show Introduction"), KIcon("help-contextual"), i18nc("help text", "Show the Crash Dialog introduction page" )) );
     }
     else
     {
         stackedWidget->setCurrentWidget( introWidget );
         
-        setButtonGuiItem( KDialog::User3, KGuiItem("Show Backtrace (Advanced)", KIcon("document-new"), "Generate and show the backtrace (crash information)" ) );
+        setButtonGuiItem( KDialog::User3, KGuiItem(i18nc("button action", "Show Backtrace (Advanced)"), KIcon("document-new"), i18nc("help text", "Generate and show the backtrace (crash information)" )) );
     }
 }
 

@@ -1,9 +1,11 @@
 #Assigned
 # Who / What
 
+Dario / Add Translation i18n (with contexts)
+    ( http://techbase.kde.org/Development/Tutorials/Localization/i18n_Semantics )
+    
+    
 ##Unassigned
-
-Add Translation i18n (with contexts)
 Finish about bug reporting steps
 Check leaks, crashes
 Add BugzillaLib + reporting steps to assistant
@@ -14,3 +16,7 @@ Enable help button on assistant ?
 Relayout getBacktraceWidget buttons/labels , layouts
 
 Fix backtraceinfo logic (backtrace parsing to get its usefulness)
+
+krazy2 checks (partially done)
+
+#Done

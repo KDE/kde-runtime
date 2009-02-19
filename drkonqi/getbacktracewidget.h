@@ -24,7 +24,7 @@
 #include <QtGui/QWidget>
 
 class CrashInfo;
-class QTextEdit;
+class KTextEdit;
 class QLabel;
 class KPushButton;
 class UsefulnessMeter;
@@ -49,7 +49,7 @@ class GetBacktraceWidget: public QWidget
   
     private:
         
-        QTextEdit * backtraceEdit;
+        KTextEdit * backtraceEdit;
         
         QLabel * statusLabel;
         UsefulnessMeter * usefulnessMeter;

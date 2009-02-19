@@ -27,7 +27,7 @@
 
 class KPushButton;
 class QLabel;
-class QTextEdit;
+class KTextEdit;
 
 //Introduction assistant page --------------
 class IntroductionPage: public QWidget
@@ -96,7 +96,7 @@ class ConclusionPage : public QWidget
     private:
     
         QLabel * conclusionLabel;
-        QTextEdit * reportEdit;
+        KTextEdit * reportEdit;
 
         KPushButton * reportButton;
         KPushButton * saveReportButton;

@@ -24,13 +24,13 @@
 
 #include <QtGui/QApplication>
 #include <QtGui/QLabel>
-#include <QtGui/QTextEdit>
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QHBoxLayout>
 #include <QtGui/QCheckBox>
 #include <QtGui/QGroupBox>
 
 #include <kpushbutton.h>
+#include <ktextedit.h>
 #include <kinputdialog.h>
 #include <krun.h>
 #include <ktoolinvocation.h>
@@ -156,7 +156,7 @@ ConclusionPage::ConclusionPage(CrashInfo * info) : QWidget(), crashInfo(info)
 
     conclusionLabel = new QLabel("Conclusions: ");
 
-    reportEdit = new QTextEdit();
+    reportEdit = new KTextEdit();
     reportEdit->setReadOnly( true );
 
     saveReportButton = new KPushButton( KIcon("document-save-as"), "Save to File"  );

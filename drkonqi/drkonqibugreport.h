@@ -38,7 +38,7 @@ class DrKonqiBugReport: public KAssistantDialog
   //enum{ Page_Intro, Page_FetchInformation, Page_BugAwareness, Page_Result };
   
   public:
-    DrKonqiBugReport( CrashInfo *, QWidget * parent = 0);
+    explicit DrKonqiBugReport( CrashInfo *, QWidget * parent = 0);
     ~DrKonqiBugReport();
     
   private:

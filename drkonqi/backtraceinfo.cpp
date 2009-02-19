@@ -17,8 +17,13 @@
 * 
 ******************************************************************/
 
-#include <QtCore>
 #include "backtraceinfo.h"
+
+#include <QtCore/QByteArray>
+#include <QtCore/QString>
+#include <QtCore/QStringList>
+#include <QtCore/QTextStream>
+#include <QtCore/QFileInfo>
 
 static const int desiredFunctionCountSymbols = 4;
 
@@ -60,7 +65,7 @@ void BacktraceInfo::fixLines()
     {
         line = ts.readLine().toLocal8Bit();
         
-        if( line.startsWith("#") ){
+        if( line.startsWith('#') ){
             data.append('\n' + line);
         } else {
             data.append("  " + line);

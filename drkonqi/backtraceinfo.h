@@ -20,7 +20,13 @@
 #ifndef BACKTRACEINFO__H
 #define BACKTRACEINFO__H
 
-#include <QtCore>
+#include <QtCore/QObject>
+#include <QtCore/QHash>
+#include <QtCore/QMap>
+
+class QString;
+class QStringList;
+class QByteArray;
 
 class BacktraceInfo : public QObject
 {

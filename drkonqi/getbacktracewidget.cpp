@@ -22,15 +22,16 @@
 
 #include <QtGui/QApplication>
 #include <QtGui/QLabel>
-#include <QtGui/QTextEdit>
 #include <QtGui/QHBoxLayout>
 #include <QtGui/QVBoxLayout>
 
 #include <kpushbutton.h>
+#include <ktextedit.h>
 #include <kicon.h>
 #include <kfiledialog.h>
 #include <kmessagebox.h>
 #include <ktemporaryfile.h>
+#include <klocale.h>
 
 #include "crashinfo.h"
 #include "usefulnessmeter.h"
@@ -40,13 +41,13 @@ GetBacktraceWidget::GetBacktraceWidget( CrashInfo * info ) : QWidget()
     crashInfo = info;
     connect( crashInfo, SIGNAL(backtraceGenerated()) , this, SLOT(backtraceGenerated()) );
     
-    backtraceEdit = new QTextEdit();
-    backtraceEdit->setText("Loading ...");
+    backtraceEdit = new KTextEdit();
+    backtraceEdit->setText( i18nc("loading information, waiting", "Loading ..." ) );
     backtraceEdit->setReadOnly( true );
     
     connect( crashInfo, SIGNAL(backtraceNewData(QString)) , backtraceEdit, SLOT(append(QString)) );
     
-    statusLabel = new QLabel("Loading ...");
+    statusLabel = new QLabel( i18nc("loading information, waiting", "Loading ..." ) );
     usefulnessMeter = new UsefulnessMeter( this );
 
     extraDetailsLabel = new QLabel();
@@ -55,20 +56,20 @@ GetBacktraceWidget::GetBacktraceWidget( CrashInfo * info ) : QWidget()
     
     extraDetailsLabel->setVisible( false );
     
-    installDebugButton =  new KPushButton( KIcon("list-add"), "&Install Missing Packages" );
+    installDebugButton =  new KPushButton( KIcon("list-add"), i18nc("button action", "&Install Missing Packages" ) );
     installDebugButton->setSizePolicy( QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed) );
     installDebugButton->setVisible( false );
     
-    reloadBacktraceButton = new KPushButton( KIcon("view-refresh"), "&Reload Crash Information" );
+    reloadBacktraceButton = new KPushButton( KIcon("view-refresh"), i18nc("button action", "&Reload Crash Information" ) );
     reloadBacktraceButton->setSizePolicy( QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed) );
     reloadBacktraceButton->setVisible( false );
     connect( reloadBacktraceButton, SIGNAL(clicked()), this, SLOT(regenerateBacktrace()) );
 
-    copyButton = new KPushButton( KIcon("edit-copy") ,"&Copy" );
+    copyButton = new KPushButton( KIcon("edit-copy") ,i18nc("button action", "&Copy" ));
     connect( copyButton, SIGNAL(clicked()) , this, SLOT(copyClicked()) );
     copyButton->setEnabled( false );
 
-    saveButton = new KPushButton( KIcon("document-save-as"), "&Save" );
+    saveButton = new KPushButton( KIcon("document-save-as"), i18nc("button action", "&Save" ));
     connect( saveButton, SIGNAL(clicked()) , this, SLOT(saveClicked()) );
     saveButton->setEnabled( false );
     
@@ -101,10 +102,10 @@ GetBacktraceWidget::GetBacktraceWidget( CrashInfo * info ) : QWidget()
 
 void GetBacktraceWidget::regenerateBacktrace()
 {
-    backtraceEdit->setText( "Loading ... " );
+    backtraceEdit->setText( i18nc("loading information, wait", "Loading ... " ));
     backtraceEdit->setEnabled( false );
     
-    statusLabel->setText( "Loading crash information ... (this will take some time)" );
+    statusLabel->setText( i18nc("loading information, wait", "Loading crash information ... (this will take some time)" ));
     usefulnessMeter->setUsefulness( BacktraceInfo::Unuseful );
     usefulnessMeter->setState( CrashInfo::Loading );
     
@@ -156,13 +157,13 @@ void GetBacktraceWidget::backtraceGenerated()
         if( btInfo->getUsefulness() != BacktraceInfo::ReallyUseful )
         {
             extraDetailsLabel->setVisible( true );
-            extraDetailsLabel->setText("The crash information lacks of some important details.<br />You may need to read <a href=\"http://techbase.kde.org/Development/Tutorials/Debugging/How_to_create_useful_crash_reports\">How to create useful crash reports</a> in order to know how to get an useful backtrace.<br />After you install the needed packages you can click the \"Reload Crash Information\" button ");
+            extraDetailsLabel->setText( i18n("The crash information lacks of some important details.<br />You may need to read <a href=\"http://techbase.kde.org/Development/Tutorials/Debugging/How_to_create_useful_crash_reports\">How to create useful crash reports</a> in order to know how to get an useful backtrace.<br />After you install the needed packages you can click the \"Reload Crash Information\" button "));
             reloadBacktraceButton->setVisible( true );
             //installDebugButton->setVisible( true );
             
             if (!missingSymbols.isEmpty() ) //Detected missing symbols
             {
-                QString details = "You need to install the debug symbols for the following package(s):";
+                QString details = i18nc("order", "You need to install the debug symbols for the following package(s):");
                 Q_FOREACH( const QString & pkg, missingSymbols)
                 {
                     details += "<i>"+ pkg + "</i> ";
@@ -179,12 +180,12 @@ void GetBacktraceWidget::backtraceGenerated()
         //usefulnessMeter->setError( true );
         usefulnessMeter->setUsefulness( BacktraceInfo::Unuseful );
         
-        statusLabel->setText( "The crash information could not be generated" );
+        statusLabel->setText( i18n("The crash information could not be generated" ) );
         
-        backtraceEdit->setText( "The crash information could not be generated" );
+        backtraceEdit->setText( i18n("The crash information could not be generated" ) );
         
         extraDetailsLabel->setVisible( true );
-        extraDetailsLabel->setText("You need to install the debug symbols package for this application<br />Please read <a href=\"http://techbase.kde.org/Development/Tutorials/Debugging/How_to_create_useful_crash_reports\">How to create useful crash reports</a> in order to know how to get an useful backtrace.<br />After you install the needed packages you can click the \"Reload Crash Information\" button ");
+        extraDetailsLabel->setText( i18n("You need to install the debug symbols package for this application<br />Please read <a href=\"http://techbase.kde.org/Development/Tutorials/Debugging/How_to_create_useful_crash_reports\">How to create useful crash reports</a> in order to know how to get an useful backtrace.<br />After you install the needed packages you can click the \"Reload Crash Information\" button ") );
         reloadBacktraceButton->setVisible( true );
         //TODO
         //labelUsefulness->setText("The backtrace lacks some important information.<br /><br />You need to install the following packages:<br /><i>libqt4-dbg kdelibs5-dbg kdebase-workspace-dbg</i>");
@@ -197,10 +198,10 @@ void GetBacktraceWidget::backtraceGenerated()
         //usefulnessMeter->setError( true );
         usefulnessMeter->setUsefulness( BacktraceInfo::Unuseful );
         
-        statusLabel->setText( "The debugger application is missing or could not be launched" );
-        backtraceEdit->setText( "The crash information could not be generated" );
+        statusLabel->setText( i18n("The debugger application is missing or could not be launched" ));
+        backtraceEdit->setText( i18n("The crash information could not be generated" ));
         extraDetailsLabel->setVisible( true );
-        extraDetailsLabel->setText("You need to install the debugger package (<i>" + crashInfo->getDebugger() + "</i>) and click the \"Reload Crash Information\" button ");
+        extraDetailsLabel->setText( i18n("You need to install the debugger package (<i>%1</i>) and click the \"Reload Crash Information\" button", crashInfo->getDebugger() ) );
         reloadBacktraceButton->setVisible( true );
     }
     
