@@ -35,7 +35,9 @@ GlobalShortcutContext::GlobalShortcutContext(
 
 
 GlobalShortcutContext::~GlobalShortcutContext()
-    {}
+    {
+    qDeleteAll(_actions); _actions.clear();
+    }
 
 
 void GlobalShortcutContext::addShortcut(GlobalShortcut *shortcut)
