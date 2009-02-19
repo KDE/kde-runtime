@@ -105,6 +105,21 @@ public Q_SLOTS:
             int key,
             const QString &component) const;
 
+    /**
+     * Delete the shortcut with @a component and @name.
+     *
+     * The shortcut is removed from the registry even if it is currently
+     * present. It is removed from all contexts.
+     *
+     * @param componentUnique the component id
+     * @param shortcutUnique the shortcut id
+     *
+     * @return @c true if the shortcuts was deleted, @c false if it didn't * exist.
+     */
+    Q_SCRIPTABLE bool unregister(
+            const QString &componentUnique,
+            const QString &shortcutUnique);
+
 Q_SIGNALS:
 
     // this is qlonglong because manually written adaptor is used and just long doesn't work

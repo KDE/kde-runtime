@@ -40,6 +40,16 @@
 struct KGlobalAccelDPrivate
     {
     GlobalShortcut *findAction(const QStringList &actionId) const;
+
+    /**
+     * Find the action @a shortcutUnique in @a componentUnique.
+     *
+     * @return the action or @c null if doesn't exist
+     */
+    GlobalShortcut *findAction(
+            const QString &componentUnique,
+            const QString &shortcutUnique) const;
+
     GlobalShortcut *addAction(const QStringList &actionId);
     KdeDGlobalAccel::Component *component(const QStringList &actionId) const;
     QTimer writeoutTimer;
@@ -104,6 +114,53 @@ GlobalShortcut *KGlobalAccelDPrivate::findAction(const QStringList &actionId) co
     else
         {
         kDebug() << "No match for" << actionId;
+        }
+#endif
+    return shortcut;
+    }
+
+
+GlobalShortcut *KGlobalAccelDPrivate::findAction(
+        const QString &_componentUnique,
+        const QString &shortcutUnique) const
+    {
+    QString componentUnique = _componentUnique;
+
+    KdeDGlobalAccel::Component *component;
+    QString contextUnique;
+    if (componentUnique.indexOf('|')==-1)
+        {
+        component = GlobalShortcutsRegistry::self()->getComponent( componentUnique);
+        if (component) contextUnique = component->currentContext()->uniqueName();
+        }
+    else
+        {
+        splitComponent(componentUnique, contextUnique);
+        component = GlobalShortcutsRegistry::self()->getComponent( componentUnique);
+        }
+
+    if (!component)
+        {
+#ifdef KDEDGLOBALACCEL_TRACE
+        kDebug() << componentUnique << "not found";
+#endif
+        return NULL;
+        }
+
+    GlobalShortcut *shortcut = component
+        ? component->getShortcutByName(shortcutUnique, contextUnique)
+        : NULL;
+
+#ifdef KDEDGLOBALACCEL_TRACE
+    if (shortcut)
+        {
+        kDebug() << componentUnique
+                 << contextUnique
+                 << shortcut->uniqueName();
+        }
+    else
+        {
+        kDebug() << "No match for" << shortcutUnique;
         }
 #endif
     return shortcut;
@@ -394,6 +451,24 @@ void KGlobalAccelD::setInactive(const QStringList &actionId)
     if (shortcut)
         shortcut->setIsPresent(false);
     }
+
+
+bool KGlobalAccelD::unregister(const QString &componentUnique, const QString &shortcutUnique)
+{
+#ifdef KDEDGLOBALACCEL_TRACE
+    kDebug() << componentUnique << shortcutUnique;
+#endif
+
+    // Stop grabbing the key
+    GlobalShortcut *shortcut = d->findAction(componentUnique, shortcutUnique);
+    if (shortcut) {
+        shortcut->unRegister();
+        scheduleWriteSettings();
+    }
+
+    return shortcut;
+
+}
 
 
 void KGlobalAccelD::unRegister(const QStringList &actionId)
