@@ -260,9 +260,6 @@ KGlobalAccelD::KGlobalAccelD(QObject* parent)
 
 KGlobalAccelD::~KGlobalAccelD()
 {
-    kDebug();
-    // Unregister all currently registered actions. Enables the module to be
-    // loaded / unloaded
     GlobalShortcutsRegistry::self()->deactivateShortcuts();
     delete d;
 }
