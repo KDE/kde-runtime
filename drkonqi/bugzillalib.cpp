@@ -4,7 +4,9 @@ static const char columns[] = "bug_severity,priority,bug_status,product,short_de
 
 BugzillaManager::BugzillaManager()
 {
-    qDebug() << "col" << QString(columns);
+    logged = false;
+    username.clear();
+    password.clear();
     manager = new QNetworkAccessManager();
     connect(manager, SIGNAL(finished(QNetworkReply*)),
          this, SLOT(replyFinished(QNetworkReply*)));

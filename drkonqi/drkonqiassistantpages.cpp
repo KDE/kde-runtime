@@ -463,6 +463,7 @@ void BugzillaLoginPage::loginClicked()
     m_passwordEdit->setEnabled( false );
     
     BugzillaManager * bz = crashInfo->getBZ();
+    
     connect( bz, SIGNAL(loginFinished(bool)), this, SLOT(loginFinished(bool)));
     bz->setLoginData( m_userEdit->text(), m_passwordEdit->text() );
     bz->tryLogin();    

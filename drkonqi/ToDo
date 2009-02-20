@@ -19,5 +19,9 @@ Fix backtraceinfo logic (backtrace parsing to get its usefulness)
 
 krazy2 checks (partially done)
 
+const pointers ?
+
+QNetworkAccessManager -> KIO
+
 #Done
 #implement save report
