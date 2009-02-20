@@ -1,8 +1,17 @@
 #ifndef BUGZILLALIB__H
 #define BUGZILLALIB__H
 
-#include <QtNetwork>
-#include <QtXml>
+#include <QtCore/QObject>
+#include <QtCore/QMap>
+#include <QtCore/QList>
+
+#include <QtXml/QDomDocument>
+
+#include <kio/job.h>
+
+class KJob;
+class QString;
+class QByteArray;
 
 class BugList: public QObject
 {
@@ -59,14 +68,16 @@ class BugzillaManager : public QObject
         QString getUsername() { return username; }
         
     private:
-        QNetworkAccessManager *manager;
-        
+
         QString username;
         QString password;
         bool logged;
 
     private Q_SLOTS:
-        void replyFinished(QNetworkReply*);
+    
+        void loginDone(KJob*);
+        void fetchBugReportDone(KJob*);
+        void searchBugsDone(KJob*);
         
     Q_SIGNALS:
         void bugReportFetched( BugReport* );

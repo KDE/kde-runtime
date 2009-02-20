@@ -63,6 +63,7 @@ DrKonqiBugReport::DrKonqiBugReport( CrashInfo * crash, QWidget * parent ) :
     bugzillaLoginPage->setHeader( "KDE Bugtracker Login" );
     bugzillaLoginPage->setIcon( KIcon("tools-report-bug") );
     
+    
     addPage( introPage );
     addPage( backtracePage );
     addPage( awarenessPage );

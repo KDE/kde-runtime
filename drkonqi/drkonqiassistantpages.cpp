@@ -49,7 +49,7 @@ IntroductionPage::IntroductionPage() : QWidget()
 {
     QLabel * subTitle = new QLabel(
     "This assistant will guide your through the bug reporting process"
-    "<br />"
+    "<br />More text here? [Learn about bug reporting button?]"
     );
     
     QVBoxLayout * layout = new QVBoxLayout( this );
@@ -247,6 +247,7 @@ void ConclusionPage::saveReport()
 
 void ConclusionPage::reportButtonClicked()
 {
+    /*
     if ( crashInfo->isKDEBugzilla() )
     {
         QString reportLink =
@@ -273,23 +274,23 @@ void ConclusionPage::reportButtonClicked()
         }
         
         //delete validator;
-        
-    } else {
     
-        if( crashInfo->isReportMail() )
-        {
-            QString reportLink = QString("mailto:%1");
-            new KRun( KUrl( reportLink ), this );
-            emit setFinishButton( true );
-            //invokeMailer ???
-        }
-        else
-        {
-            KToolInvocation::invokeBrowser( crashInfo->getReportLink() );
-            emit setFinishButton( true );
-        }
-        
+    } else {
+    */
+    if( crashInfo->isReportMail() )
+    {
+        QString reportLink = QString("mailto:%1");
+        //TODO
+        new KRun( KUrl( reportLink ), this );
+        emit setFinishButton( true );
+        //invokeMailer ???
     }
+    else
+    {
+        KToolInvocation::invokeBrowser( crashInfo->getReportLink() );
+        emit setFinishButton( true );
+    }
+        
 }
 
 void  ConclusionPage::generateResult()
@@ -358,7 +359,7 @@ void  ConclusionPage::generateResult()
             }
             else
             {
-                explanationLabel->setText( "This application isn't supported in the KDE Bugtracker, you need to report the bug to the maintainter");
+                explanationLabel->setText( "This application isn't supported in the KDE Bugtracker, you need to report the bug to the maintainer");
                 reportButton->setEnabled( true );
             }
             
@@ -381,6 +382,8 @@ BugzillaLoginPage::BugzillaLoginPage( CrashInfo * info) :
     QWidget(),
     crashInfo(info)
 {
+    crashInfo->getBZ()->fetchBugReport( 174380 );
+    
     QVBoxLayout * layout = new QVBoxLayout();
     
     m_subTitle = new QLabel(

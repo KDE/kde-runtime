@@ -1,12 +1,16 @@
 #Assigned
 # Who / What
+--------------
 
 Dario / Add Translation i18n (with contexts) . change HTML tags
     ( http://techbase.kde.org/Development/Tutorials/Localization/i18n_Semantics )
     
     
 ##Unassigned
-Finish about bug reporting steps
+-------------
+
+Finish "about bug reporting steps" (guide)
+
 Check leaks, crashes
 Add BugzillaLib + reporting steps to assistant
 Use KGUIItem to create KPushButton
@@ -21,7 +25,11 @@ krazy2 checks (partially done)
 
 const pointers ?
 
-QNetworkAccessManager -> KIO
+validate KJob result state;
 
 #Done
+---------
+
 #implement save report
+QNetworkAccessManager -> KIO
+http://api.kde.org/4.x-api/kdelibs-apidocs/kio/html/classKIO_1_1TransferJob-members.html

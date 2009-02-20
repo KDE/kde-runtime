@@ -1,5 +1,20 @@
 #include "bugzillalib.h"
 
+#include <QtCore/QTextStream>
+#include <QtCore/QByteArray>
+#include <QtCore/QString>
+
+#include <QtXml/QDomNode>
+#include <QtXml/QDomNodeList>
+#include <QtXml/QDomElement>
+#include <QtXml/QDomNamedNodeMap>
+
+#include <QtDebug>
+
+#include <kio/job.h>
+#include <kio/jobclasses.h>
+#include <kurl.h>
+
 static const char columns[] = "bug_severity,priority,bug_status,product,short_desc"; //resolution,
 
 BugzillaManager::BugzillaManager()
@@ -7,9 +22,6 @@ BugzillaManager::BugzillaManager()
     logged = false;
     username.clear();
     password.clear();
-    manager = new QNetworkAccessManager();
-    connect(manager, SIGNAL(finished(QNetworkReply*)),
-         this, SLOT(replyFinished(QNetworkReply*)));
 }
 
 void BugzillaManager::setLoginData( QString _username, QString _password )
@@ -21,10 +33,49 @@ void BugzillaManager::setLoginData( QString _username, QString _password )
 
 void BugzillaManager::tryLogin()
 {
-    QByteArray postData("GoAheadAndLogIn=1&Bugzilla_login=USERNAME&Bugzilla_password=PASSWORD&log_in=Log+in");
-    postData.replace( QByteArray("USERNAME"), username.toLocal8Bit() );
-    postData.replace( QByteArray("PASSWORD"), password.toLocal8Bit() );
-    manager->post(QNetworkRequest(QUrl("https://bugs.kde.org/index.cgi")) , postData );
+    if ( !logged )
+    {
+        QByteArray postData("GoAheadAndLogIn=1&Bugzilla_login=USERNAME&Bugzilla_password=PASSWORD&log_in=Log+in");
+        postData.replace( QByteArray("USERNAME"), username.toLocal8Bit() );
+        postData.replace( QByteArray("PASSWORD"), password.toLocal8Bit() );
+        
+        KIO::StoredTransferJob * loginJob = KIO::storedHttpPost( postData, KUrl("https://bugs.kde.org/index.cgi"), KIO::HideProgressInfo );
+        connect( loginJob, SIGNAL( finished(KJob*)) , this, SLOT( loginDone(KJob*)));
+        loginJob->addMetaData("content-type", "Content-Type: application/x-www-form-urlencoded");
+        loginJob->start();
+    }
+}
+
+void BugzillaManager::loginDone( KJob* job )
+{
+    KIO::StoredTransferJob * loginJob = (KIO::StoredTransferJob *)job;
+    QByteArray response = loginJob->data();
+    
+    if( !response.contains( QByteArray("The username or password you entered is not valid") ) )
+        logged = true;
+    else
+        logged = false;
+    emit loginFinished( logged );
+}
+
+void BugzillaManager::fetchBugReport( int bugnumber )
+{
+    qDebug() << "fetch report";
+    
+    KIO::StoredTransferJob * fetchBugJob = KIO::storedGet( KUrl( QString("https://bugs.kde.org/show_bug.cgi?id=%1&ctype=xml").arg( bugnumber ) ) , KIO::Reload, KIO::HideProgressInfo);
+    connect( fetchBugJob, SIGNAL( finished(KJob*)) , this, SLOT( fetchBugReportDone(KJob*)));
+    
+}
+
+void BugzillaManager::fetchBugReportDone( KJob* job )
+{
+    qDebug() << "fetch report done";
+    KIO::StoredTransferJob * fetchBugJob = (KIO::StoredTransferJob *)job;
+    
+    QByteArray response = fetchBugJob->data();
+    
+    BugReport * report = new BugReport( response );
+    emit bugReportFetched( report );
 }
 
 void BugzillaManager::searchBugs( QString words, QString product, QString severity, QString date_start, QString date_end, QString comment )
@@ -36,47 +87,23 @@ void BugzillaManager::searchBugs( QString words, QString product, QString severi
     QString url = QString("https://bugs.kde.org/buglist.cgi?query_format=advanced&short_desc_type=anywordssubstr&short_desc=%1&product=%2&long_desc_type=anywordssubstr&long_desc=%3&bug_file_loc_type=allwordssubstr&bug_file_loc=&keywords_type=allwords&keywords=&emailtype1=substring&email1=&emailtype2=substring&email2=&bugidtype=include&bug_id=&votes=&chfieldfrom=%4&chfieldto=%5&chfield=[Bug+creation]&chfieldvalue=&cmdtype=doit&field0-0-0=noop&type0-0-0=noop&value0-0-0=&bug_severity=%6&order=Importance&columnlist=%7&ctype=csv")
         .arg( words, product, comment, date_start,  date_end, severity, QString(columns));
     
-    manager->get(QNetworkRequest(QUrl(url)));
-}
-
-void BugzillaManager::fetchBugReport( int bugnumber )
-{
-    qDebug() << "fetch report";
-    manager->get(QNetworkRequest(QUrl("https://bugs.kde.org/show_bug.cgi?id=" + QString::number(bugnumber) + "&ctype=xml")));
-}
-
-void BugzillaManager::replyFinished(QNetworkReply* rep)
-{
-    QByteArray repData = rep->readAll();
+    KIO::StoredTransferJob * searchBugsJob = KIO::storedGet( KUrl(url) , KIO::Reload, KIO::HideProgressInfo);
+    connect( searchBugsJob, SIGNAL( finished(KJob*)) , this, SLOT( searchBugsDone(KJob*)));
     
-    qDebug() << "finished for URL:" << rep->url();
-    
-    //Get bug info
-    if( rep->url().path().contains( QByteArray("show_bug.cgi") ) )
-    {
-        BugReport * report = new BugReport( repData );
-        emit bugReportFetched( report );
-    }
-    //Login 
-    else if ( rep->url().path().contains( QByteArray("index.cgi") ) )
-    {
-        //qDebug() << repData;
-        if( !repData.contains( QByteArray("The username or password you entered is not valid") ) )
-            logged = true;
-        else
-            logged = false;
-        emit loginFinished( logged );
-    }
-    //Bug list
-    else if ( rep->url().path().contains( QByteArray("buglist.cgi") ) )
-    {
-        BugList * list = new BugList( repData );
-        emit bugList( list );
-        
-    }
 }
 
-BugList::BugList( QByteArray data)
+void BugzillaManager::searchBugsDone( KJob * job )
+{
+    qDebug() << "search bugs done";
+    KIO::StoredTransferJob * searchBugsJob = (KIO::StoredTransferJob *)job;
+    
+    QByteArray response = searchBugsJob->data();
+    
+    BugList * list = new BugList( response );
+    emit bugList( list );
+}
+
+BugList::BugList( QByteArray data )
 {
     QTextStream ts(&data);
     ts.readLine(); //Discard headers
@@ -142,7 +169,7 @@ BugReport::BugReport( QByteArray data )
             dataMap.insert( QLatin1String("priority"), getSimpleValue( "priority" ) );
             dataMap.insert( QLatin1String("severity"), getSimpleValue( "bug_severity" ) );
             
-            //qDebug() << dataMap;
+            qDebug() << dataMap;
             
             parseComments();
         }
