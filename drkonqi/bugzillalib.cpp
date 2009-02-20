@@ -200,3 +200,9 @@ QString BugReport::getSimpleValue( QString name )
     }
     return ret;
 }
+
+FutureReport::FutureReport( QString app, QString ver )
+{
+    m_application = app;
+    m_version = ver;
+}

@@ -25,6 +25,8 @@
 #include <QtCore/QTextStream>
 #include <QtCore/QFileInfo>
 
+#include <QtDebug>
+
 static const int desiredFunctionCountSymbols = 4;
 
 BacktraceInfo::BacktraceInfo()
@@ -105,6 +107,7 @@ void BacktraceInfo::parse()
                 
                 firstGoodFound = true;
                 validSymbolsCount++;
+                addValidFunction( line );
                 rating.insert(number, Good);
                 //qDebug() << "agregando buena" << line;
                 number++;
@@ -132,6 +135,7 @@ void BacktraceInfo::parse()
                           else 
                           {
                                 //qDebug() << "agregando medio" << file << line;
+                                addValidFunction( line );
                                 rating.insert(number, MissingNumber);
                           }
                           number++;
@@ -150,8 +154,8 @@ void BacktraceInfo::parse()
                         //Missing filename ?
                         if ( line.contains("()") )
                         {
-                            number++;
                             rating.insert(number, MissingNumber);
+                            number++;
                         }   
                  
                   }
@@ -304,6 +308,17 @@ void BacktraceInfo::calculateUsefulness()
         usefulness = Unuseful;
     }
       
+}
+
+void BacktraceInfo::addValidFunction( QString f )
+{
+    // , " ("
+    QString functionName = f.mid(f.indexOf(" in ")+4);
+    functionName = functionName.left( functionName.indexOf("(") );
+    functionName = functionName.trimmed();
+    
+    if( firstValidFunctions.split(' ').count() < 3 )
+        firstValidFunctions.append( QLatin1String(" ") + functionName );
 }
 
 /*

@@ -125,8 +125,11 @@ DrKonqiDialog::DrKonqiDialog(KrashConfig * conf, QWidget * parent) :
 
 void DrKonqiDialog::reportBugAssistant()
 {
+    crashInfo->stopBacktrace(); //Stop current backtrace generation (if there is one )
+    
     DrKonqiBugReport * assistant = new DrKonqiBugReport( crashInfo );
     assistant->show();
+    
     close();
 }
 

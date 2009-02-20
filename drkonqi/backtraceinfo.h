@@ -50,9 +50,12 @@ class BacktraceInfo : public QObject
     
     //int getUsefulnessValue();
     
+    QString getFirstValidFunctions() { return firstValidFunctions; }
     
   private:
 
+    void addValidFunction( QString );
+    
     void calculateUsefulness();
     bool usefulFile( QString );
     bool falsePositive ( QString );
@@ -76,6 +79,7 @@ class BacktraceInfo : public QObject
     
     Usefulness usefulness;
     
+    QString firstValidFunctions;
     
     QMap<int, LineRating> rating;
 };

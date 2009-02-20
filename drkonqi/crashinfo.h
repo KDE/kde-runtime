@@ -41,6 +41,7 @@ class CrashInfo : public QObject
     const QString getCrashTitle();
     
     void generateBacktrace();
+    void stopBacktrace();
     
     BacktraceInfo * getBacktraceInfo() { return m_backtraceInfo; }
     const QString getBacktraceOutput() { return m_backtraceOutput; } 
@@ -69,6 +70,10 @@ class CrashInfo : public QObject
     QString generateReportTemplate();
     
     BugzillaManager * getBZ() { return m_bugzilla; };
+    FutureReport * getFutureReport() { return m_futureReport; } //??
+    
+    void setWords( QString words ){ m_words = words; }
+    QString getWords() { return m_words; }
     
   Q_SIGNALS:
     void backtraceGenerated();
@@ -88,6 +93,8 @@ class CrashInfo : public QObject
     QString             m_backtraceOutput;
     BacktraceGenState   m_backtraceState;
     
+    QString             m_words;
+    
     bool                m_userCanDetail;
     bool                m_userCanReproduce;
     bool                m_userGetCompromise;
@@ -95,6 +102,7 @@ class CrashInfo : public QObject
     QString             m_OS;
     
     BugzillaManager *   m_bugzilla;
+    FutureReport    *   m_futureReport;
 };
 
 #endif

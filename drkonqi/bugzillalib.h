@@ -85,4 +85,24 @@ class BugzillaManager : public QObject
         void bugList( BugList* );
 };
 
+class FutureReport
+{
+    public:
+    
+        FutureReport( QString app, QString ver);
+        
+        void setWords( QString words ){ m_words = words; }
+        void setFullDescription( QString desc ){ m_fullDescription = desc; }
+        
+        QString getWords() { return m_words; }
+        QString getProduct() { return m_application; }
+    private:
+    
+        QString m_application;
+        QString m_version;
+        QString m_words;
+        QString m_fullDescription;
+
+};
+
 #endif

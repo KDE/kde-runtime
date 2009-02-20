@@ -116,7 +116,6 @@ class ConclusionPage : public QWidget
 };
 
 //Bugzilla Login
-
 class BugzillaLoginPage: public QWidget
 {
     Q_OBJECT
@@ -147,6 +146,54 @@ class BugzillaLoginPage: public QWidget
         KLineEdit * m_passwordEdit;
         
         QProgressDialog * m_progressDialog;
+        CrashInfo * crashInfo;
+};
+
+
+class BugzillaKeywordsPage : public QWidget
+{
+    Q_OBJECT
+    
+    public:
+    
+        BugzillaKeywordsPage( CrashInfo* );
+        void aboutToShow();
+        
+    private Q_SLOTS:
+        void textEdited( QString );
+        
+    private:
+    
+        KLineEdit * m_keywordsEdit;
+        CrashInfo * crashInfo;
+        
+    Q_SIGNALS:
+        
+        void setNextButton( bool );
+};
+        
+
+class BugzillaDuplicatesPage : public QWidget
+{
+    Q_OBJECT
+    
+    public:
+        BugzillaDuplicatesPage(CrashInfo*);
+        void searchDuplicates();
+        
+    private Q_SLOTS:
+        
+        void searchFinished(BugList*);
+        void performSearch( QString, QString );
+        
+    private:
+    
+        
+        bool searching;
+        
+        QLabel * m_searchingLabel;
+        
+        KTextEdit * m_duplicateList;
         CrashInfo * crashInfo;
 };
 

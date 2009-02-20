@@ -32,6 +32,7 @@ CrashInfo::CrashInfo( KrashConfig * cfg )
     m_userCanReproduce = false;
     m_userGetCompromise = false;
     m_bugzilla = new BugzillaManager();
+    m_futureReport = new FutureReport( getProductName(), getProductVersion() );
 }
 
 CrashInfo::~CrashInfo()
@@ -51,8 +52,12 @@ const QString CrashInfo::getCrashTitle()
 void CrashInfo::generateBacktrace()
 {
     if( m_backtraceGenerator )
+    {
+        disconnect( m_backtraceGenerator );
         delete m_backtraceGenerator;
-        
+        m_backtraceGenerator = 0;
+    }   
+    
     m_backtraceGenerator = BackTrace::create( m_crashConfig, 0 );
     connect(m_backtraceGenerator, SIGNAL(done(QString)), this, SLOT(backtraceGeneratorFinished(QString)));
     connect(m_backtraceGenerator, SIGNAL(someError()), this, SLOT(backtraceGeneratorFailed()));
@@ -65,6 +70,19 @@ void CrashInfo::generateBacktrace()
         m_backtraceState = DebuggerFailed;
         emit backtraceGenerated();
     }
+}
+
+void CrashInfo::stopBacktrace()
+{
+    if( m_backtraceGenerator )
+    {
+        disconnect( m_backtraceGenerator );
+        delete m_backtraceGenerator;
+        m_backtraceGenerator = 0;
+    }
+    
+    m_backtraceOutput.clear();
+    m_backtraceState = NonLoaded;
 }
 
 void CrashInfo::backtraceGeneratorAppend( const QString & data )

@@ -351,7 +351,8 @@ void  ConclusionPage::generateResult()
             bool isBKO = crashInfo->isKDEBugzilla();
             
             reportButton->setVisible( ! isBKO );
-            emit setNextButton( isBKO );
+            //emit setNextButton( isBKO ); //TODO remember to change
+            emit setNextButton( true );
             
             if ( isBKO )
             {
@@ -493,6 +494,118 @@ void BugzillaLoginPage::loginFinished( bool logged )
 }
 
 
+BugzillaKeywordsPage::BugzillaKeywordsPage(CrashInfo * info) : 
+    QWidget(),
+    crashInfo(info)
+{
+ 
+    QVBoxLayout * layout = new QVBoxLayout();
+    
+    QLabel * detailsLabel = new QLabel(
+    "Please, enter at least 4 (four) words to describe the crash. This is needed in order to find for similar already reported bugs (duplicates)"
+    );
+    detailsLabel->setWordWrap( true );
+    
+    m_keywordsEdit = new KLineEdit();
+    connect( m_keywordsEdit, SIGNAL(textEdited(QString)), this, SLOT(textEdited(QString)) );
+    
+    layout->addWidget( detailsLabel );
+    layout->addWidget( m_keywordsEdit );
+    layout->addStretch();
+    
+    setLayout( layout );
+
+}
+
+void BugzillaKeywordsPage::textEdited( QString newText )
+{
+    //better way to do this?
+    QStringList list = newText.split(' ', QString::SkipEmptyParts);
+    if( list.count() >= 4 ) //4 words?
+    {
+        crashInfo->setWords( newText );
+        emit setNextButton( true );    
+    }
+    else
+    {
+        emit setNextButton( false );
+    }
+}
+
+void BugzillaKeywordsPage::aboutToShow()
+{
+    textEdited( m_keywordsEdit->text() );
+}
+
+
+BugzillaDuplicatesPage::BugzillaDuplicatesPage(CrashInfo * info):
+    QWidget(),
+    crashInfo(info)
+{
+    searching = false;
+    
+    connect( crashInfo->getBZ(), SIGNAL( bugList(BugList*) ), this, SLOT( searchFinished(BugList*) ) );
+        
+    QVBoxLayout * layout = new QVBoxLayout();
+    
+    m_searchingLabel = new QLabel("Searching for duplicates ...");
+    
+    m_duplicateList = new KTextEdit();
+    m_duplicateList->setReadOnly( true );
+    
+    layout->addWidget( m_searchingLabel );
+    layout->addWidget( m_duplicateList );
+    setLayout( layout );
+    
+}
+
+void BugzillaDuplicatesPage::searchDuplicates()
+{
+    
+    if( !searching )
+    {
+        m_duplicateList->clear();
+        m_searchingLabel->setText("Searching for duplicates ...");
+        
+        qDebug() << "starting search";
+        performSearch( "2008-01-01", "Now" );
+    } 
+    
+}
+
+void BugzillaDuplicatesPage::performSearch( QString dateStart , QString dateEnd )
+{
+    searching = true;
+    crashInfo->getBZ()->searchBugs( crashInfo->getWords(), crashInfo->getProductName(), "crash", dateStart, dateEnd , crashInfo->getBacktraceInfo()->getFirstValidFunctions() );
+}
+
+void BugzillaDuplicatesPage::searchFinished( BugList* list )
+{
+    searching = false;
+    QList< QMap<QString, QString> > entries = list->getList();
+    int results = entries.count();
+    if( results > 0)
+    {
+        m_searchingLabel->setText("Search Finished");
+        
+        for(int i = 0; i< results; i++)
+        {
+            QMap<QString, QString> bug = entries.at(i);
+            m_duplicateList->append( bug["bug_id"] + QLatin1String(" :: ") + bug["short_desc"] );
+        }
+        
+    } else {
+
+        m_searchingLabel->setText("No results found (needs more searching)" );
+        //TODO
+        //perform search with another date
+    
+    }
+    
+    
+    delete list;
+
+}
 /*
 IntroWizardPage::IntroWizardPage( CrashInfo * info) : QWidget()
 {

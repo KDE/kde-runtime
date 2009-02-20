@@ -63,12 +63,26 @@ DrKonqiBugReport::DrKonqiBugReport( CrashInfo * crash, QWidget * parent ) :
     bugzillaLoginPage->setHeader( "KDE Bugtracker Login" );
     bugzillaLoginPage->setIcon( KIcon("tools-report-bug") );
     
+    //Bugzilla keywords
+    bugzillaKeywords =  new BugzillaKeywordsPage( crashInfo );
+    connect( bugzillaKeywords, SIGNAL(setNextButton(bool)), this, SLOT(enableNextButton(bool)) );
+    bugzillaKeywordsPage = new KPageWidgetItem( bugzillaKeywords, "BugzillaKeywords");
+    bugzillaKeywordsPage->setHeader( "Bug Report Keywords" );
+    bugzillaKeywordsPage->setIcon( KIcon("tools-report-bug") );
+    
+    //Bugzilla duplicates
+    bugzillaDuplicates =  new BugzillaDuplicatesPage( crashInfo );
+    bugzillaDuplicatesPage = new KPageWidgetItem( bugzillaDuplicates, "BugzillaDuplicates");
+    bugzillaDuplicatesPage->setHeader( "Bug Report Duplicate Listing" );
+    bugzillaDuplicatesPage->setIcon( KIcon("tools-report-bug") );
     
     addPage( introPage );
     addPage( backtracePage );
     addPage( awarenessPage );
     addPage( conclusionsPage );
     addPage( bugzillaLoginPage );
+    addPage( bugzillaKeywordsPage );
+    addPage( bugzillaDuplicatesPage );    
     
     KPageWidgetItem * dummy = new KPageWidgetItem( new QWidget() );
     dummy->setHeader( "Dummy Last Page" );
@@ -104,6 +118,15 @@ void DrKonqiBugReport::currentPageChanged_slot(KPageWidgetItem * current , KPage
     if( current->name() == "Backtrace" )
     {
         backtrace->loadBacktrace();
+    }
+    else if( current->name() == "BugzillaDuplicates" )
+    {
+        bugzillaDuplicates->searchDuplicates();
+    }
+    else if( current->name() == "BugzillaKeywords" )
+    {
+        enableNextButton( false );
+        bugzillaKeywords->aboutToShow();
     }
     else if( current->name() == "BugzillaLogin" )
     {
