@@ -30,6 +30,7 @@ class IntroductionPage;
 class CrashInformationPage;
 class BugAwarenessPage;
 class ConclusionPage;
+class BugzillaLoginPage;
 
 class DrKonqiBugReport: public KAssistantDialog
 {
@@ -47,16 +48,18 @@ class DrKonqiBugReport: public KAssistantDialog
     CrashInformationPage * backtrace;
     BugAwarenessPage * awareness;
     ConclusionPage * conclusions;
+    BugzillaLoginPage * bugzillaLogin;
     
     KPageWidgetItem * introPage;
     KPageWidgetItem * backtracePage;
     KPageWidgetItem * awarenessPage;
     KPageWidgetItem * conclusionsPage;
+    KPageWidgetItem * bugzillaLoginPage;
     
     CrashInfo * crashInfo;
     
   private Q_SLOTS:
-  
+    
     void currentPageChanged_slot(KPageWidgetItem *, KPageWidgetItem *);  
     
     void enableNextButton( bool );

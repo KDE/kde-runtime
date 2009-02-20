@@ -27,8 +27,10 @@
 #include <QtGui/QLabel>
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QHBoxLayout>
+#include <QtGui/QFormLayout>
 #include <QtGui/QCheckBox>
 #include <QtGui/QGroupBox>
+#include <QtGui/QProgressDialog>
 
 #include <kpushbutton.h>
 #include <ktextedit.h>
@@ -40,7 +42,7 @@
 #include <ksavefile.h>
 #include <ktemporaryfile.h>
 #include <kmessagebox.h>
-
+#include <klineedit.h>
 
 //Introduction page
 IntroductionPage::IntroductionPage() : QWidget()
@@ -162,18 +164,17 @@ ConclusionPage::ConclusionPage(CrashInfo * info) : QWidget(), crashInfo(info)
     reportEdit = new KTextEdit();
     reportEdit->setReadOnly( true );
 
-    saveReportButton = new KPushButton( KIcon("document-save-as"), "Save to File"  );
+    saveReportButton = new KPushButton( KIcon("document-save-as"), "&Save Report to File"  );
     saveReportButton->setEnabled( false );
     connect( saveReportButton, SIGNAL(clicked()), this, SLOT(saveReport()) );
     
-    reportButton = new KPushButton( KIcon("document-new"), "File a new bug report" );
+    reportButton = new KPushButton( KIcon("document-new"), "&Report bug to the application maintainer" );
     reportButton->setEnabled( false );
     connect( reportButton, SIGNAL(clicked()), this , SLOT(reportButtonClicked()) );
 
-    noticeLabel = new QLabel("<strong>Notice:</strong> You need a user account at <a href=\"https://bugs.kde.org/\">bugs.kde.org</a> in order to file a bug report. This is necessary as we may need to contact you later for requesting further information.");
-    noticeLabel->setWordWrap( true );
-    noticeLabel->setOpenExternalLinks( true );
-
+    explanationLabel = new QLabel();
+    explanationLabel->setWordWrap( true );
+    
     QHBoxLayout *bLayout = new QHBoxLayout();
     bLayout->addWidget( saveReportButton );
     bLayout->addWidget( reportButton );
@@ -182,8 +183,8 @@ ConclusionPage::ConclusionPage(CrashInfo * info) : QWidget(), crashInfo(info)
     layout->setSpacing( 10 );
     layout->addWidget( conclusionLabel );
     layout->addWidget( reportEdit );
+    layout->addWidget( explanationLabel );
     layout->addLayout( bLayout );
-    layout->addWidget( noticeLabel );
 
     setLayout( layout );
 
@@ -338,8 +339,6 @@ void  ConclusionPage::generateResult()
             report += "<br />* You can reproduce the crash at will and you can provide steps or a testcase";
            
         saveReportButton->setEnabled( needToReport );
-        reportButton->setEnabled( needToReport );
-        noticeLabel->setEnabled( needToReport );
         
         if ( needToReport )
         {
@@ -348,7 +347,21 @@ void  ConclusionPage::generateResult()
             report += "<br /><strong>The crash is worth reporting</strong><br /><br />You need to file a new bug report with the following information:<br />--------<br /><br />";
             report += crashInfo->generateReportTemplate();
             
-            emit setFinishButton( false );
+            bool isBKO = crashInfo->isKDEBugzilla();
+            
+            reportButton->setVisible( ! isBKO );
+            emit setNextButton( isBKO );
+            
+            if ( isBKO )
+            {
+                explanationLabel->setText( "This application is supported in the KDE Bugtracker, press Next to start the report");
+            }
+            else
+            {
+                explanationLabel->setText( "This application isn't supported in the KDE Bugtracker, you need to report the bug to the maintainter");
+                reportButton->setEnabled( true );
+            }
+            
         }
         else
         {
@@ -356,7 +369,7 @@ void  ConclusionPage::generateResult()
             
             report += "<br /><strong>The crash is not worth reporting</strong>";
             
-            emit setFinishButton( true );
+            emit setNextButton( false );
         }
         
         reportEdit->setHtml( report );
@@ -364,11 +377,116 @@ void  ConclusionPage::generateResult()
 }
 
 
+BugzillaLoginPage::BugzillaLoginPage( CrashInfo * info) : 
+    QWidget(),
+    crashInfo(info)
+{
+    QVBoxLayout * layout = new QVBoxLayout();
+    
+    m_subTitle = new QLabel(
+    "You need to log-in in your bugs.kde.org account in order to proceed"
+    );
+    
+    m_loginButton = new KPushButton( "Login in" );
+    connect( m_loginButton, SIGNAL(clicked()) , this, SLOT(loginClicked()) );
+    
+    m_userEdit = new KLineEdit();
+    connect( m_userEdit, SIGNAL(returnPressed()) , this, SLOT(loginClicked()) );
+    
+    m_passwordEdit = new KLineEdit();
+    m_passwordEdit->setEchoMode( QLineEdit::Password );
+    connect( m_passwordEdit, SIGNAL(returnPressed()) , this, SLOT(loginClicked()) );
+    
+    m_form = new QFormLayout();
+    m_form->addRow( "Username:" , m_userEdit );
+    m_form->addRow( "Password:" , m_passwordEdit );
+    
+    m_loginLabel = new QLabel();
+    m_loginLabel->setMargin(10);
+    
+    QLabel * noticeLabel = new QLabel("<strong>Notice:</strong> You need a user account at <a href=\"https://bugs.kde.org/\">bugs.kde.org</a> in order to file a bug report because we may need to contact you later for requesting further information. <br />If you don't have one you can <a href=\"https://bugs.kde.org/createaccount.cgi\">freely create one here</a>");
+    noticeLabel->setWordWrap( true );
+    noticeLabel->setOpenExternalLinks( true );
+    
+    layout->addWidget( m_subTitle );
+    layout->addLayout( m_form );
+    layout->addWidget( m_loginLabel );
+    layout->addWidget( m_loginButton );
+    layout->addWidget( noticeLabel );
+    layout->addStretch();
+    
+    m_progressDialog = new QProgressDialog( "Login", "", 0 ,0 ,this );
+    // ?
+    
+    
+    setLayout( layout );
+}
 
+void BugzillaLoginPage::aboutToShow()
+{
+    if( crashInfo->getBZ()->getLogged() )
+    {
+        m_loginButton->setEnabled( false );
+    
+        m_userEdit->setEnabled( false );
+        m_userEdit->setText("");
+        m_passwordEdit->setEnabled( false );
+        m_passwordEdit->setText("");
+        
+        m_subTitle->setVisible( false );
+        m_loginButton->setVisible( false );
+        m_userEdit->setVisible( false );
+        m_passwordEdit->setVisible( false );
+        m_form->labelForField(m_userEdit)->setVisible( false );
+        m_form->labelForField(m_passwordEdit)->setVisible( false );
+        
+        m_loginLabel->setText( "Logged at KDE Bugtracker (bugs.kde.org) as: " + crashInfo->getBZ()->getUsername() );
+        
+        emit setNextButton( true );
+    }
+    else
+    {
+        emit setNextButton( false );
+    }
+    
+}
 
+void BugzillaLoginPage::loginClicked()
+{
+    QApplication::setOverrideCursor(Qt::BusyCursor);
 
+    m_loginLabel->setText( "Performing Bugzilla Login ..." );
+    
+    m_loginButton->setEnabled( false );
+    
+    m_userEdit->setEnabled( false );
+    m_passwordEdit->setEnabled( false );
+    
+    BugzillaManager * bz = crashInfo->getBZ();
+    connect( bz, SIGNAL(loginFinished(bool)), this, SLOT(loginFinished(bool)));
+    bz->setLoginData( m_userEdit->text(), m_passwordEdit->text() );
+    bz->tryLogin();    
+}
 
+void BugzillaLoginPage::loginFinished( bool logged )
+{
+    QApplication::restoreOverrideCursor();
+    if( logged )
+    {
+        m_loginLabel->setText( "Login succesfully" );
+        aboutToShow();
+        
+    } else {
 
+        m_loginButton->setEnabled( true );
+    
+        m_userEdit->setEnabled( true );
+        m_passwordEdit->setEnabled( true );
+        
+        m_loginLabel->setText( "Invalid username or password" );
+
+    }
+}
 
 
 /*

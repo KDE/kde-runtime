@@ -21,6 +21,7 @@
 #define CRASHINFO__H
 
 #include "backtraceinfo.h"
+#include "bugzillalib.h"
 #include "krashconf.h"
 #include "backtrace.h"
 #include <kdeversion.h>
@@ -67,6 +68,8 @@ class CrashInfo : public QObject
     
     QString generateReportTemplate();
     
+    BugzillaManager * getBZ() { return m_bugzilla; };
+    
   Q_SIGNALS:
     void backtraceGenerated();
     void backtraceNewData( QString );
@@ -90,6 +93,8 @@ class CrashInfo : public QObject
     bool                m_userGetCompromise;
   
     QString             m_OS;
+    
+    BugzillaManager *   m_bugzilla;
 };
 
 #endif

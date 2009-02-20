@@ -21,6 +21,7 @@ set(drkonqi_SRCS
    krashconf.cpp 
    krashadaptor.cpp
    drbugreport.cpp 
+   bugzillalib.cpp
    drkonqidialog.cpp
    crashinfo.cpp
    aboutbugreportingdialog.cpp

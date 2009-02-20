@@ -32,34 +32,46 @@ DrKonqiBugReport::DrKonqiBugReport( CrashInfo * crash, QWidget * parent ) :
     
     //Introduction Page
     intro = new IntroductionPage();
-    KPageWidgetItem * introPage = new KPageWidgetItem( intro, "Intro" );
+    introPage = new KPageWidgetItem( intro, "Intro" );
     introPage->setHeader( "Introduction" );
     introPage->setIcon( KIcon("tools-report-bug") );
     
     //Crash Information Page
     backtrace = new CrashInformationPage( crashInfo );
     connect( backtrace, SIGNAL(setNextButton(bool)), this, SLOT(enableNextButton(bool)) );
-    KPageWidgetItem * crashPage = new KPageWidgetItem( backtrace , "Backtrace" );
-    crashPage->setHeader( "Crash Information (Backtrace)" );
-    crashPage->setIcon( KIcon("tools-report-bug") );
+    backtracePage = new KPageWidgetItem( backtrace , "Backtrace" );
+    backtracePage->setHeader( "Crash Information (Backtrace)" );
+    backtracePage->setIcon( KIcon("tools-report-bug") );
 
     //Bug Awareness Page
     awareness = new BugAwarenessPage( crashInfo );
-    KPageWidgetItem * awarenessPage = new KPageWidgetItem( awareness, "Awareness" );
+    awarenessPage = new KPageWidgetItem( awareness, "Awareness" );
     awarenessPage->setHeader( "What do you know about the crash ?" );
     awarenessPage->setIcon( KIcon("tools-report-bug") );
 
     //Results Page
     conclusions = new ConclusionPage( crashInfo );
-    //connect( result, SIGNAL(setFinishButton(bool)), this, SLOT(enableFinishButton(bool)) );
-    KPageWidgetItem * resultPage = new KPageWidgetItem( conclusions , "Results" );
-    resultPage->setHeader( "Results" );
-    resultPage->setIcon( KIcon("tools-report-bug") );
+    connect( conclusions, SIGNAL(setNextButton(bool)), this, SLOT(enableNextButton(bool)) );
+    conclusionsPage = new KPageWidgetItem( conclusions , "Results" );
+    conclusionsPage->setHeader( "Results" );
+    conclusionsPage->setIcon( KIcon("tools-report-bug") );
+    
+    //Bugzilla Login
+    bugzillaLogin =  new BugzillaLoginPage( crashInfo );
+    connect( bugzillaLogin, SIGNAL(setNextButton(bool)), this, SLOT(enableNextButton(bool)) );
+    bugzillaLoginPage = new KPageWidgetItem( bugzillaLogin, "BugzillaLogin");
+    bugzillaLoginPage->setHeader( "KDE Bugtracker Login" );
+    bugzillaLoginPage->setIcon( KIcon("tools-report-bug") );
     
     addPage( introPage );
-    addPage( crashPage );
+    addPage( backtracePage );
     addPage( awarenessPage );
-    addPage( resultPage );
+    addPage( conclusionsPage );
+    addPage( bugzillaLoginPage );
+    
+    KPageWidgetItem * dummy = new KPageWidgetItem( new QWidget() );
+    dummy->setHeader( "Dummy Last Page" );
+    addPage( dummy );
     
     setMinimumSize( QSize(600,400) );
     resize( QSize(600,400) );
@@ -92,11 +104,14 @@ void DrKonqiBugReport::currentPageChanged_slot(KPageWidgetItem * current , KPage
     {
         backtrace->loadBacktrace();
     }
-    else  if( current->name() == "Results" )
+    else if( current->name() == "BugzillaLogin" )
     {
-        //Disable finish button
-        enableButton( KDialog::User1, false );
-        
+        enableNextButton( false );
+        bugzillaLogin->aboutToShow();
+    }
+    else if( current->name() == "Results" )
+    {
+        enableNextButton( false );
         conclusions->generateResult();
     }
 }

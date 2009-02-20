@@ -25,9 +25,12 @@
 #include "getbacktracewidget.h"
 #include "crashinfo.h"
 
+class QFormLayout;
+class KLineEdit;
 class KPushButton;
 class QLabel;
 class KTextEdit;
+class QProgressDialog;
 
 //Introduction assistant page --------------
 class IntroductionPage: public QWidget
@@ -97,18 +100,54 @@ class ConclusionPage : public QWidget
     private:
     
         QLabel * conclusionLabel;
+        QLabel * explanationLabel;
         KTextEdit * reportEdit;
 
         KPushButton * reportButton;
         KPushButton * saveReportButton;
-        QLabel * noticeLabel;
 
         CrashInfo * crashInfo;
       
     Q_SIGNALS:
     
         void setFinishButton( bool );
+        void setNextButton( bool );
   
+};
+
+//Bugzilla Login
+
+class BugzillaLoginPage: public QWidget
+{
+    Q_OBJECT
+    
+    public: 
+
+        BugzillaLoginPage(CrashInfo*);
+        void aboutToShow();
+        
+    private Q_SLOTS:
+        
+        void loginClicked();
+        void loginFinished( bool );
+        
+    Q_SIGNALS:
+    
+        void setNextButton( bool );
+        void loginOk();
+        
+    private:
+    
+        QFormLayout * m_form;
+        
+        QLabel * m_subTitle;
+        QLabel * m_loginLabel;
+        KPushButton * m_loginButton;
+        KLineEdit * m_userEdit;
+        KLineEdit * m_passwordEdit;
+        
+        QProgressDialog * m_progressDialog;
+        CrashInfo * crashInfo;
 };
 
 #endif

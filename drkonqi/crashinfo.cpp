@@ -31,6 +31,7 @@ CrashInfo::CrashInfo( KrashConfig * cfg )
     m_userCanDetail = false;
     m_userCanReproduce = false;
     m_userGetCompromise = false;
+    m_bugzilla = new BugzillaManager();
 }
 
 CrashInfo::~CrashInfo()

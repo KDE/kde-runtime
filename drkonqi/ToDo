@@ -13,6 +13,7 @@ Use KGUIItem to create KPushButton
 Set help for gui items, whats this,
 Enable help button on assistant ?
 Relayout getBacktraceWidget buttons/labels , layouts
+Rework Bug awareness text
 
 Fix backtraceinfo logic (backtrace parsing to get its usefulness)
 
