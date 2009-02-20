@@ -79,7 +79,7 @@ class BugAwarenessPage: public QWidget
     CrashInfo * crashInfo;
 };
 
-//Results page
+//Conclusions/Result page
 class ConclusionPage : public QWidget
 {
     Q_OBJECT
@@ -92,6 +92,7 @@ class ConclusionPage : public QWidget
     private Q_SLOTS:
     
         void reportButtonClicked();
+        void saveReport();
         
     private:
     

@@ -26,7 +26,7 @@
 #include <QtGui/QVBoxLayout>
 
 #include <kpushbutton.h>
-#include <ktextedit.h>
+#include <ktextbrowser.h>
 #include <kicon.h>
 #include <kfiledialog.h>
 #include <kmessagebox.h>
@@ -41,9 +41,8 @@ GetBacktraceWidget::GetBacktraceWidget( CrashInfo * info ) : QWidget()
     crashInfo = info;
     connect( crashInfo, SIGNAL(backtraceGenerated()) , this, SLOT(backtraceGenerated()) );
     
-    backtraceEdit = new KTextEdit();
+    backtraceEdit = new KTextBrowser();
     backtraceEdit->setText( i18nc("loading information, waiting", "Loading ..." ) );
-    backtraceEdit->setReadOnly( true );
     
     connect( crashInfo, SIGNAL(backtraceNewData(QString)) , backtraceEdit, SLOT(append(QString)) );
     

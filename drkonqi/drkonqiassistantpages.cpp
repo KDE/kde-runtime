@@ -1,6 +1,7 @@
 /*******************************************************************
 * drkonqiassistantpages.cpp
-* Copyright 2009    Dario Andres Rodriguez <andresbajotierra@gmail.com>
+* Copyright 2000-2003 Hans Petter Bieker <bieker@kde.org>     
+*           2009    Dario Andres Rodriguez <andresbajotierra@gmail.com>
 * 
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License as
@@ -35,8 +36,10 @@
 #include <krun.h>
 #include <ktoolinvocation.h>
 #include <kicon.h>
-//#include <kfiledialog.h>
-//#include <ktemporaryfile.h>
+#include <kfiledialog.h>
+#include <ksavefile.h>
+#include <ktemporaryfile.h>
+#include <kmessagebox.h>
 
 
 //Introduction page
@@ -161,7 +164,8 @@ ConclusionPage::ConclusionPage(CrashInfo * info) : QWidget(), crashInfo(info)
 
     saveReportButton = new KPushButton( KIcon("document-save-as"), "Save to File"  );
     saveReportButton->setEnabled( false );
-
+    connect( saveReportButton, SIGNAL(clicked()), this, SLOT(saveReport()) );
+    
     reportButton = new KPushButton( KIcon("document-new"), "File a new bug report" );
     reportButton->setEnabled( false );
     connect( reportButton, SIGNAL(clicked()), this , SLOT(reportButtonClicked()) );
@@ -185,7 +189,62 @@ ConclusionPage::ConclusionPage(CrashInfo * info) : QWidget(), crashInfo(info)
 
 }
 
-void  ConclusionPage::reportButtonClicked()
+void ConclusionPage::saveReport()
+{
+    if (crashInfo->getCrashConfig()->safeMode())
+    {
+        KTemporaryFile tf;
+        tf.setPrefix("/tmp/");
+        tf.setSuffix(".report");
+        tf.setAutoRemove(false);
+        
+        if (tf.open())
+        {
+            QTextStream textStream( &tf );
+            textStream << reportEdit->toPlainText();
+            textStream.flush();
+            KMessageBox::information(this, i18n("Report saved to <filename>%1</filename>.", tf.fileName()));
+        }
+        else
+        {
+            KMessageBox::sorry(this, i18n("Cannot create a file to save the report in"));
+        }
+    }
+    else
+    {
+        QString defname = crashInfo->getCrashConfig()->execName() + ".report";
+        if( defname.contains( '/' ))
+            defname = defname.mid( defname.lastIndexOf( '/' ) + 1 );
+        QString filename = KFileDialog::getSaveFileName( defname, QString(), this, i18n("Select Filename"));
+        if (!filename.isEmpty())
+        {
+            QFile f(filename);
+
+            if (f.exists()) {
+                if (KMessageBox::Cancel ==
+                    KMessageBox::warningContinueCancel( 0,
+                        i18n( "A file named <filename>%1</filename> already exists. "
+                                "Are you sure you want to overwrite it?", filename ),
+                        i18n( "Overwrite File?" ),
+                    KGuiItem( i18n( "&Overwrite" ) ) ))
+                    return;
+            }
+
+            if (f.open(QIODevice::WriteOnly))
+            {
+                QTextStream ts(&f);
+                ts << reportEdit->toPlainText();
+                f.close();
+            }
+            else
+            {
+                KMessageBox::sorry(this, i18n("Cannot open file <filename>%1</filename> for writing.", filename));
+            }
+        }
+    }
+}
+
+void ConclusionPage::reportButtonClicked()
 {
     if ( crashInfo->isKDEBugzilla() )
     {

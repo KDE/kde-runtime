@@ -1,7 +1,7 @@
 #Assigned
 # Who / What
 
-Dario / Add Translation i18n (with contexts)
+Dario / Add Translation i18n (with contexts) . change HTML tags
     ( http://techbase.kde.org/Development/Tutorials/Localization/i18n_Semantics )
     
     
@@ -9,7 +9,6 @@ Dario / Add Translation i18n (with contexts)
 Finish about bug reporting steps
 Check leaks, crashes
 Add BugzillaLib + reporting steps to assistant
-implement save report
 Use KGUIItem to create KPushButton
 Set help for gui items, whats this,
 Enable help button on assistant ?
@@ -20,3 +19,4 @@ Fix backtraceinfo logic (backtrace parsing to get its usefulness)
 krazy2 checks (partially done)
 
 #Done
+#implement save report
