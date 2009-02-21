@@ -14,6 +14,8 @@
 ##Unassigned
 -------------
 
+Extract interfaces to .UI files
+
 Add Translation i18n (with contexts) . change HTML tags (are they invalid when using i18n???)
 http://techbase.kde.org/Development/Tutorials/Localization/i18n_Semantics
 

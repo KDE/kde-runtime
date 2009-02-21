@@ -34,6 +34,8 @@ set(drkonqi_SRCS
    backtracegdb.cpp
 )
 
+kde4_add_ui_files(drkonqi_SRCS getbacktracewidget.ui)
+
 kde4_add_executable(drkonqi ${drkonqi_SRCS})
 
 target_link_libraries(drkonqi ${KDE4_KIO_LIBS})

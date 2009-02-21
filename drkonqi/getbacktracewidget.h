@@ -23,6 +23,8 @@
 
 #include <QtGui/QWidget>
 
+#include "ui_getbacktracewidget.h"
+
 class CrashInfo;
 class KTextBrowser;
 class QLabel;
@@ -34,38 +36,20 @@ class GetBacktraceWidget: public QWidget
     Q_OBJECT
   
     public:
-    
         GetBacktraceWidget( CrashInfo* );
         
         void generateBacktrace();
 
     Q_SIGNALS:
-    
         void setNextButton( bool );
         
-    private Q_SLOTS:
-    
-        void regenerateBacktrace();
-  
     private:
-        
-        KTextBrowser * backtraceEdit;
-        
-        QLabel * statusLabel;
-        UsefulnessMeter * usefulnessMeter;
-        
-        QLabel * extraDetailsLabel;
-        
-        KPushButton * installDebugButton;
-        KPushButton * reloadBacktraceButton;
-        KPushButton * copyButton;
-        KPushButton * saveButton;
-
         CrashInfo * crashInfo;
+        Ui::Form    ui;
         
     private Q_SLOTS:
-    
         void backtraceGenerated();
+        void regenerateBacktrace();
         void saveClicked();
         void copyClicked();
 
