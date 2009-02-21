@@ -13,19 +13,11 @@ class KJob;
 class QString;
 class QByteArray;
 
-class BugList: public QObject
-{
-    Q_OBJECT
-    
-    public:
-        BugList( QByteArray );
-        QList< QMap<QString, QString> > getList() { return list; }
+//Typedefs for Bug Report Listing
+typedef QMap<QString,QString>   BugMap; //Report basic fields map
+typedef QList<BugMap>           BugMapList; //List of reports
 
-    private:
-        QList< QMap<QString, QString> > list;
-
-};
-
+//Main bug report data, full fields + comments
 class BugReport: public QObject
 {
     Q_OBJECT
@@ -34,21 +26,20 @@ class BugReport: public QObject
     
         BugReport(QByteArray);
         
-        QString getData( QString key ) { return dataMap.value(key); }
-        QStringList getComments() { return commentList; }
+        QString getData( QString key ) { return m_dataMap.value(key); }
+        QString getDescription() { return m_commentList.at(0); }
+        QStringList getComments() { return m_commentList; }
         
     private:
         
-        bool isValid;
+        bool        m_isValid;
         
-        QMap<QString, QString> dataMap;
-        QStringList commentList;
+        BugMap      m_dataMap;
+        QStringList m_commentList;
         
-        QDomDocument xml;
-        
+        QDomDocument m_xml;
         //Helper functions
         QString getSimpleValue( QString );
-        void parseComments();
 };
 
 
@@ -58,33 +49,34 @@ class BugzillaManager : public QObject
     
     public:
         BugzillaManager();
+        
         void setLoginData( QString, QString );
         void tryLogin();
         
         void fetchBugReport( int );
         void searchBugs( QString words, QString product, QString severity, QString date_start, QString date_end , QString comment);
         
-        bool getLogged() { return logged; }
-        QString getUsername() { return username; }
+        bool getLogged() { return m_logged; }
+        QString getUsername() { return m_username; }
         
-    private:
-
-        QString username;
-        QString password;
-        bool logged;
-
     private Q_SLOTS:
-    
         void loginDone(KJob*);
         void fetchBugReportDone(KJob*);
         void searchBugsDone(KJob*);
         
     Q_SIGNALS:
-        void bugReportFetched( BugReport* );
         void loginFinished( bool );
-        void bugList( BugList* );
+        void bugReportFetched( BugReport* );
+        void searchFinished( BugMapList );
+
+    private:
+        QString     m_username;
+        QString     m_password;
+        bool        m_logged;
+
 };
 
+//?? To set future reports fields and commit ????
 class FutureReport
 {
     public:

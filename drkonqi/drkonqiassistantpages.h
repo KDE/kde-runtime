@@ -31,6 +31,7 @@ class KPushButton;
 class QLabel;
 class KTextEdit;
 class QProgressDialog;
+class QDate;
 
 //Introduction assistant page --------------
 class IntroductionPage: public QWidget
@@ -52,14 +53,14 @@ class CrashInformationPage: public QWidget
     public:
     
         CrashInformationPage( CrashInfo * );
-        void loadBacktrace() { backtraceWidget->generateBacktrace(); }
+        void loadBacktrace() { m_backtraceWidget->generateBacktrace(); }
         
     Q_SIGNALS:
         void setNextButton(bool);
         
     private:
     
-        GetBacktraceWidget * backtraceWidget;
+        GetBacktraceWidget * m_backtraceWidget;
 };
 
 //Bug Awareness Page ---------------
@@ -79,7 +80,7 @@ class BugAwarenessPage: public QWidget
     
   private:
   
-    CrashInfo * crashInfo;
+    CrashInfo * m_crashInfo;
 };
 
 //Conclusions/Result page
@@ -99,14 +100,14 @@ class ConclusionPage : public QWidget
         
     private:
     
-        QLabel * conclusionLabel;
-        QLabel * explanationLabel;
-        KTextEdit * reportEdit;
+        QLabel *        m_conclusionLabel;
+        QLabel *        m_explanationLabel;
+        KTextEdit *     m_reportEdit;
 
-        KPushButton * reportButton;
-        KPushButton * saveReportButton;
+        KPushButton *   m_reportButton;
+        KPushButton *   m_saveReportButton;
 
-        CrashInfo * crashInfo;
+        CrashInfo * m_crashInfo;
       
     Q_SIGNALS:
     
@@ -137,16 +138,16 @@ class BugzillaLoginPage: public QWidget
         
     private:
     
-        QFormLayout * m_form;
+        QFormLayout *   m_form;
         
-        QLabel * m_subTitle;
-        QLabel * m_loginLabel;
-        KPushButton * m_loginButton;
-        KLineEdit * m_userEdit;
-        KLineEdit * m_passwordEdit;
+        QLabel *        m_subTitle;
+        QLabel *        m_loginLabel;
+        KPushButton *   m_loginButton;
+        KLineEdit *     m_userEdit;
+        KLineEdit *     m_passwordEdit;
         
-        QProgressDialog * m_progressDialog;
-        CrashInfo * crashInfo;
+        //QProgressDialog * m_progressDialog;
+        CrashInfo * m_crashInfo;
 };
 
 
@@ -165,7 +166,7 @@ class BugzillaKeywordsPage : public QWidget
     private:
     
         KLineEdit * m_keywordsEdit;
-        CrashInfo * crashInfo;
+        CrashInfo * m_crashInfo;
         
     Q_SIGNALS:
         
@@ -183,18 +184,24 @@ class BugzillaDuplicatesPage : public QWidget
         
     private Q_SLOTS:
         
-        void searchFinished(BugList*);
-        void performSearch( QString, QString );
+        void searchFinished( const BugMapList& );
+        
+        void searchMore();
+        void performSearch();
+        
         
     private:
-    
+
+        bool            m_searching;
         
-        bool searching;
+        QLabel *        m_searchingLabel;
         
-        QLabel * m_searchingLabel;
+        QDate           m_startDate;
+        QDate           m_endDate;
         
-        KTextEdit * m_duplicateList;
-        CrashInfo * crashInfo;
+        KPushButton *   m_searchMoreButton;
+        KTextEdit *     m_duplicateList;
+        CrashInfo *     m_crashInfo;
 };
 
 #endif

@@ -23,7 +23,7 @@
 
 DrKonqiBugReport::DrKonqiBugReport( CrashInfo * crash, QWidget * parent ) : 
     KAssistantDialog(parent),
-    crashInfo( crash )
+    m_crashInfo( crash )
 {
     setWindowTitle( "Crash Reporting Assistant" );
     setWindowIcon( KIcon("tools-report-bug") );
@@ -31,61 +31,61 @@ DrKonqiBugReport::DrKonqiBugReport( CrashInfo * crash, QWidget * parent ) :
     connect( this, SIGNAL(currentPageChanged(KPageWidgetItem *, KPageWidgetItem *)), this, SLOT(currentPageChanged_slot(KPageWidgetItem *, KPageWidgetItem *)));  
     
     //Introduction Page
-    intro = new IntroductionPage();
-    introPage = new KPageWidgetItem( intro, "Intro" );
-    introPage->setHeader( "Introduction" );
-    introPage->setIcon( KIcon("tools-report-bug") );
+    m_intro = new IntroductionPage();
+    m_introPage = new KPageWidgetItem( m_intro, "Intro" );
+    m_introPage->setHeader( "Introduction" );
+    m_introPage->setIcon( KIcon("tools-report-bug") );
     
     //Crash Information Page
-    backtrace = new CrashInformationPage( crashInfo );
-    connect( backtrace, SIGNAL(setNextButton(bool)), this, SLOT(enableNextButton(bool)) );
-    backtracePage = new KPageWidgetItem( backtrace , "Backtrace" );
-    backtracePage->setHeader( "Crash Information (Backtrace)" );
-    backtracePage->setIcon( KIcon("tools-report-bug") );
+    m_backtrace = new CrashInformationPage( m_crashInfo );
+    connect( m_backtrace, SIGNAL(setNextButton(bool)), this, SLOT(enableNextButton(bool)) );
+    m_backtracePage = new KPageWidgetItem( m_backtrace , "Backtrace" );
+    m_backtracePage->setHeader( "Crash Information (Backtrace)" );
+    m_backtracePage->setIcon( KIcon("tools-report-bug") );
 
     //Bug Awareness Page
-    awareness = new BugAwarenessPage( crashInfo );
-    awarenessPage = new KPageWidgetItem( awareness, "Awareness" );
-    awarenessPage->setHeader( "What do you know about the crash ?" );
-    awarenessPage->setIcon( KIcon("tools-report-bug") );
+    m_awareness = new BugAwarenessPage( m_crashInfo );
+    m_awarenessPage = new KPageWidgetItem( m_awareness, "Awareness" );
+    m_awarenessPage->setHeader( "What do you know about the crash ?" );
+    m_awarenessPage->setIcon( KIcon("tools-report-bug") );
 
     //Results Page
-    conclusions = new ConclusionPage( crashInfo );
-    connect( conclusions, SIGNAL(setNextButton(bool)), this, SLOT(enableNextButton(bool)) );
-    conclusionsPage = new KPageWidgetItem( conclusions , "Results" );
-    conclusionsPage->setHeader( "Results" );
-    conclusionsPage->setIcon( KIcon("tools-report-bug") );
+    m_conclusions = new ConclusionPage( m_crashInfo );
+    connect( m_conclusions, SIGNAL(setNextButton(bool)), this, SLOT(enableNextButton(bool)) );
+    m_conclusionsPage = new KPageWidgetItem( m_conclusions , "Results" );
+    m_conclusionsPage->setHeader( "Crash Analysis Results" );
+    m_conclusionsPage->setIcon( KIcon("tools-report-bug") );
     
     //Bugzilla Login
-    bugzillaLogin =  new BugzillaLoginPage( crashInfo );
-    connect( bugzillaLogin, SIGNAL(setNextButton(bool)), this, SLOT(enableNextButton(bool)) );
-    bugzillaLoginPage = new KPageWidgetItem( bugzillaLogin, "BugzillaLogin");
-    bugzillaLoginPage->setHeader( "KDE Bugtracker Login" );
-    bugzillaLoginPage->setIcon( KIcon("tools-report-bug") );
+    m_bugzillaLogin =  new BugzillaLoginPage( m_crashInfo );
+    connect( m_bugzillaLogin, SIGNAL(setNextButton(bool)), this, SLOT(enableNextButton(bool)) );
+    m_bugzillaLoginPage = new KPageWidgetItem( m_bugzillaLogin, "BugzillaLogin");
+    m_bugzillaLoginPage->setHeader( "KDE Bugtracker Login" );
+    m_bugzillaLoginPage->setIcon( KIcon("tools-report-bug") );
     
     //Bugzilla keywords
-    bugzillaKeywords =  new BugzillaKeywordsPage( crashInfo );
-    connect( bugzillaKeywords, SIGNAL(setNextButton(bool)), this, SLOT(enableNextButton(bool)) );
-    bugzillaKeywordsPage = new KPageWidgetItem( bugzillaKeywords, "BugzillaKeywords");
-    bugzillaKeywordsPage->setHeader( "Bug Report Keywords" );
-    bugzillaKeywordsPage->setIcon( KIcon("tools-report-bug") );
+    m_bugzillaKeywords =  new BugzillaKeywordsPage( m_crashInfo );
+    connect( m_bugzillaKeywords, SIGNAL(setNextButton(bool)), this, SLOT(enableNextButton(bool)) );
+    m_bugzillaKeywordsPage = new KPageWidgetItem( m_bugzillaKeywords, "BugzillaKeywords");
+    m_bugzillaKeywordsPage->setHeader( "Bug Report Keywords" );
+    m_bugzillaKeywordsPage->setIcon( KIcon("tools-report-bug") );
     
     //Bugzilla duplicates
-    bugzillaDuplicates =  new BugzillaDuplicatesPage( crashInfo );
-    bugzillaDuplicatesPage = new KPageWidgetItem( bugzillaDuplicates, "BugzillaDuplicates");
-    bugzillaDuplicatesPage->setHeader( "Bug Report Duplicate Listing" );
-    bugzillaDuplicatesPage->setIcon( KIcon("tools-report-bug") );
+    m_bugzillaDuplicates =  new BugzillaDuplicatesPage( m_crashInfo );
+    m_bugzillaDuplicatesPage = new KPageWidgetItem( m_bugzillaDuplicates, "BugzillaDuplicates");
+    m_bugzillaDuplicatesPage->setHeader( "Bug Report Duplicate Listing" );
+    m_bugzillaDuplicatesPage->setIcon( KIcon("tools-report-bug") );
     
-    addPage( introPage );
-    addPage( backtracePage );
-    addPage( awarenessPage );
-    addPage( conclusionsPage );
-    addPage( bugzillaLoginPage );
-    addPage( bugzillaKeywordsPage );
-    addPage( bugzillaDuplicatesPage );    
+    addPage( m_introPage );
+    addPage( m_backtracePage );
+    addPage( m_awarenessPage );
+    addPage( m_conclusionsPage );
+    addPage( m_bugzillaLoginPage );
+    addPage( m_bugzillaKeywordsPage );
+    addPage( m_bugzillaDuplicatesPage );    
     
     KPageWidgetItem * dummy = new KPageWidgetItem( new QWidget() );
-    dummy->setHeader( "Dummy Last Page" );
+    dummy->setHeader( "Dummy Last Page :)" );
     addPage( dummy );
     
     setMinimumSize( QSize(600,400) );
@@ -98,17 +98,9 @@ void DrKonqiBugReport::enableNextButton( bool enabled)
     enableButton( KDialog::User2, enabled );
 }
 
-/*
-void DrKonqui::enableFinishButton( bool enabled )
-{
-    enableButton( KDialog::User1, enabled );
-}
-
-*/
-
 DrKonqiBugReport::~DrKonqiBugReport()
 {
-    delete crashInfo;
+    delete m_crashInfo;
 }
 
 void DrKonqiBugReport::currentPageChanged_slot(KPageWidgetItem * current , KPageWidgetItem * before)  
@@ -117,25 +109,25 @@ void DrKonqiBugReport::currentPageChanged_slot(KPageWidgetItem * current , KPage
     
     if( current->name() == "Backtrace" )
     {
-        backtrace->loadBacktrace();
+        m_backtrace->loadBacktrace();
     }
     else if( current->name() == "BugzillaDuplicates" )
     {
-        bugzillaDuplicates->searchDuplicates();
+        m_bugzillaDuplicates->searchDuplicates();
     }
     else if( current->name() == "BugzillaKeywords" )
     {
         enableNextButton( false );
-        bugzillaKeywords->aboutToShow();
+        m_bugzillaKeywords->aboutToShow();
     }
     else if( current->name() == "BugzillaLogin" )
     {
         enableNextButton( false );
-        bugzillaLogin->aboutToShow();
+        m_bugzillaLogin->aboutToShow();
     }
     else if( current->name() == "Results" )
     {
         enableNextButton( false );
-        conclusions->generateResult();
+        m_conclusions->generateResult();
     }
 }

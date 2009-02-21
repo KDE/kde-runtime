@@ -26,19 +26,19 @@
 
 UsefulnessMeter::UsefulnessMeter(QWidget * parent) : 
     QWidget(parent),
-    state(CrashInfo::NonLoaded),
-    star1(false),
-    star2(false),
-    star3(false)
+    m_state(CrashInfo::NonLoaded),
+    m_star1(false),
+    m_star2(false),
+    m_star3(false)
 {
     setMinimumSize( 105, 24 );
     
-    starPixmap = KIcon("favorites").pixmap( QSize(22,22) );
-    disabledStarPixmap = KIcon("favorites").pixmap( QSize(22,22), QIcon::Disabled );
+    m_starPixmap = KIcon("favorites").pixmap( QSize(22,22) );
+    m_disabledStarPixmap = KIcon("favorites").pixmap( QSize(22,22), QIcon::Disabled );
     
-    errorPixmap = KIcon("dialog-error").pixmap( QSize(22,22) );
-    loadedPixmap = KIcon("dialog-ok-apply").pixmap( QSize(22,22) );
-    loadingPixmap = KIcon("chronometer").pixmap( QSize(22,22) ); //user-away
+    m_errorPixmap = KIcon("dialog-error").pixmap( QSize(22,22) );
+    m_loadedPixmap = KIcon("dialog-ok-apply").pixmap( QSize(22,22) );
+    m_loadingPixmap = KIcon("chronometer").pixmap( QSize(22,22) ); //user-away
 }
 
 void UsefulnessMeter::setUsefulness( BacktraceInfo::Usefulness usefulness )
@@ -47,30 +47,30 @@ void UsefulnessMeter::setUsefulness( BacktraceInfo::Usefulness usefulness )
     {
         case BacktraceInfo::ReallyUseful:
         {
-            star1 = true; 
-            star2 = true; 
-            star3 = true; 
+            m_star1 = true; 
+            m_star2 = true; 
+            m_star3 = true; 
             break;
         }
         case BacktraceInfo::MayBeUseful:
         {
-            star1 = true; 
-            star2 = true; 
-            star3 = false; 
+            m_star1 = true; 
+            m_star2 = true; 
+            m_star3 = false; 
             break;
         }
         case BacktraceInfo::ProbablyUnuseful:
         {
-            star1 = true; 
-            star2 = false; 
-            star3 = false; 
+            m_star1 = true; 
+            m_star2 = false; 
+            m_star3 = false; 
             break;
         }
         case BacktraceInfo::Unuseful:
         {
-            star1 = false; 
-            star2 = false; 
-            star3 = false; 
+            m_star1 = false; 
+            m_star2 = false; 
+            m_star3 = false; 
             break;
         }
     }
@@ -84,27 +84,27 @@ void UsefulnessMeter::paintEvent( QPaintEvent * event )
     
     QPainter p(this);
 
-    p.drawPixmap( QPoint(30,1) , star1 ? starPixmap: disabledStarPixmap );
-    p.drawPixmap( QPoint(55,1) , star2 ? starPixmap: disabledStarPixmap );
-    p.drawPixmap( QPoint(80,1) , star3 ? starPixmap: disabledStarPixmap );
+    p.drawPixmap( QPoint(30,1) , m_star1 ? m_starPixmap: m_disabledStarPixmap );
+    p.drawPixmap( QPoint(55,1) , m_star2 ? m_starPixmap: m_disabledStarPixmap );
+    p.drawPixmap( QPoint(80,1) , m_star3 ? m_starPixmap: m_disabledStarPixmap );
 
-    switch( state )
+    switch( m_state )
     {
         case CrashInfo::Loaded:
         {
-            if( star1 && star2 && star3 )
-                p.drawPixmap( QPoint(0,1) , loadedPixmap );
+            if( m_star1 && m_star2 && m_star3 )
+                p.drawPixmap( QPoint(0,1) , m_loadedPixmap );
             break;
         }
         case CrashInfo::Failed:
         case CrashInfo::DebuggerFailed:
         {
-            p.drawPixmap( QPoint(0,1) , errorPixmap );
+            p.drawPixmap( QPoint(0,1) , m_errorPixmap );
             break;
         }
         case CrashInfo::Loading:
         {
-            p.drawPixmap( QPoint(0,1) , loadingPixmap );
+            p.drawPixmap( QPoint(0,1) , m_loadingPixmap );
         }
         default: 
             break;

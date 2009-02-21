@@ -45,14 +45,14 @@ class DrKonqiDialog: public KDialog
         
     private:
     
-        AboutBugReportingDialog *       aboutBugReportingDialog;
+        AboutBugReportingDialog *       m_aboutBugReportingDialog;
         
-        QStackedWidget *        stackedWidget;
-        QWidget *               introWidget;
-        GetBacktraceWidget * backtraceWidget;
+        QStackedWidget *                m_stackedWidget;
+        QWidget *                       m_introWidget;
+        GetBacktraceWidget *            m_backtraceWidget;
         
-        KPushButton *   aboutBugReportingButton;
-        CrashInfo *     crashInfo;
+        KPushButton *                   m_aboutBugReportingButton;
+        CrashInfo *                     m_crashInfo;
     
 };
 

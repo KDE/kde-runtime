@@ -39,10 +39,10 @@
 
 DrKonqiDialog::DrKonqiDialog(KrashConfig * conf, QWidget * parent) : 
     KDialog(parent), 
-    aboutBugReportingDialog(0),
-    backtraceWidget(0)
+    m_aboutBugReportingDialog(0),
+    m_backtraceWidget(0)
 {
-    crashInfo = new CrashInfo(conf);
+    m_crashInfo = new CrashInfo(conf);
     
     setCaption( i18n("An Error Ocurred") );
     setWindowIcon( KIcon("tools-report-bug") );
@@ -51,15 +51,7 @@ DrKonqiDialog::DrKonqiDialog(KrashConfig * conf, QWidget * parent) :
     QLabel * title = new QLabel( i18n("<strong>An Error Ocurred and the Application Closed</strong>") );
     title->setWordWrap( true ); 
     
-    QLabel * pixmap = new QLabel("");
-    pixmap->setPixmap( KIcon("application-exit").pixmap( QSize(40,40) ) );
-    pixmap->setSizePolicy( QSizePolicy( QSizePolicy::Maximum, QSizePolicy::Preferred ) );
-    
-    QHBoxLayout * layoutTitle = new QHBoxLayout();
-    layoutTitle->addWidget( title );
-    //layoutTitle->addWidget( pixmap );
-    
-    QLabel * crashTitle = new QLabel( crashInfo->getCrashTitle() );
+    QLabel * crashTitle = new QLabel( m_crashInfo->getCrashTitle() );
     crashTitle->setWordWrap( true ); 
     
     QLabel * info = new QLabel( i18nc("Small explanation of the crash cause",
@@ -69,42 +61,42 @@ DrKonqiDialog::DrKonqiDialog(KrashConfig * conf, QWidget * parent) :
     ) );
     info->setWordWrap( true ); 
 
-    aboutBugReportingButton = new KPushButton( KGuiItem( i18nc("button action", "Learn more about bug reporting") , KIcon("help-hint"),  i18nc("help text", "Get help in order to know how to file an useful bug report") ) ); //TODO
-    aboutBugReportingButton->setSizePolicy( QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed) );
-    connect( aboutBugReportingButton, SIGNAL(clicked()), this, SLOT(aboutBugReporting()) );
+    m_aboutBugReportingButton = new KPushButton( KGuiItem( i18nc("button action", "Learn more about bug reporting") , KIcon("help-hint"),  i18nc("help text", "Get help in order to know how to file an useful bug report") ) ); //TODO
+    m_aboutBugReportingButton->setSizePolicy( QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed) );
+    connect( m_aboutBugReportingButton, SIGNAL(clicked()), this, SLOT(aboutBugReporting()) );
 
     //Introduction widget layout
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setSpacing( 5 );
-    layout->addLayout( layoutTitle );
+    layout->addWidget( title );
     layout->addSpacing( 15 );
     layout->addWidget( crashTitle );
     layout->addSpacing( 15 );
     layout->addWidget( info );
-    layout->addWidget( aboutBugReportingButton );
+    layout->addWidget( m_aboutBugReportingButton );
     layout->addStretch();
     
     //Introduction widget
-    introWidget = new QWidget();
-    introWidget->setLayout( layout );
-    introWidget->setMinimumSize( QSize(550, 250) );
+    m_introWidget = new QWidget();
+    m_introWidget->setLayout( layout );
+    m_introWidget->setMinimumSize( QSize(550, 250) );
     
     QString styleSheet = QString(".QWidget {"
                        "background-image: url(%1);"
                        "background-repeat: no-repeat;"
                        "background-position: right;"
                        "}").arg(KStandardDirs::locate("appdata", QLatin1String("pics/konqi.png")));
-    introWidget->setStyleSheet(styleSheet);
+    m_introWidget->setStyleSheet(styleSheet);
     
     //Backtrace Widget
-    backtraceWidget = new GetBacktraceWidget( crashInfo );
-    backtraceWidget->setMinimumSize( QSize(550, 250) );
+    m_backtraceWidget = new GetBacktraceWidget( m_crashInfo );
+    m_backtraceWidget->setMinimumSize( QSize(550, 250) );
 
     //Stacked main widget
-    stackedWidget = new QStackedWidget();
-    stackedWidget->addWidget( introWidget );
-    stackedWidget->addWidget( backtraceWidget );
-    setMainWidget( stackedWidget );
+    m_stackedWidget = new QStackedWidget();
+    m_stackedWidget->addWidget( m_introWidget );
+    m_stackedWidget->addWidget( m_backtraceWidget );
+    setMainWidget( m_stackedWidget );
     
     //Set kdialog buttons
     setButtons( KDialog::User1 | KDialog::User2 | KDialog::User3 | KDialog::Close );
@@ -125,36 +117,37 @@ DrKonqiDialog::DrKonqiDialog(KrashConfig * conf, QWidget * parent) :
 
 void DrKonqiDialog::reportBugAssistant()
 {
-    crashInfo->stopBacktrace(); //Stop current backtrace generation (if there is one )
+    m_crashInfo->stopBacktrace(); //Stop current backtrace generation (if there is one )
     
-    DrKonqiBugReport * assistant = new DrKonqiBugReport( crashInfo );
+    DrKonqiBugReport * assistant = new DrKonqiBugReport( m_crashInfo );
     assistant->show();
     
+    //Those the first dialog (this)
     close();
 }
 
 void DrKonqiDialog::aboutBugReporting()
 {
-    if ( !aboutBugReportingDialog )
+    if ( !m_aboutBugReportingDialog )
     {
-        aboutBugReportingDialog = new AboutBugReportingDialog( this );
+        m_aboutBugReportingDialog = new AboutBugReportingDialog( this );
     }
     
-    aboutBugReportingDialog->show();
+    m_aboutBugReportingDialog->show();
 }
 
 void DrKonqiDialog::toggleBacktrace()
 {
-    if( stackedWidget->currentWidget() == introWidget )
+    if( m_stackedWidget->currentWidget() == m_introWidget )
     {
-        backtraceWidget->generateBacktrace();
-        stackedWidget->setCurrentWidget( backtraceWidget );
+        m_backtraceWidget->generateBacktrace();
+        m_stackedWidget->setCurrentWidget( m_backtraceWidget );
         
         setButtonGuiItem( KDialog::User3, KGuiItem(i18nc("button action", "Show Introduction"), KIcon("help-contextual"), i18nc("help text", "Show the Crash Dialog introduction page" )) );
     }
     else
     {
-        stackedWidget->setCurrentWidget( introWidget );
+        m_stackedWidget->setCurrentWidget( m_introWidget );
         
         setButtonGuiItem( KDialog::User3, KGuiItem(i18nc("button action", "Show Backtrace (Advanced)"), KIcon("document-new"), i18nc("help text", "Generate and show the backtrace (crash information)" )) );
     }
@@ -162,8 +155,8 @@ void DrKonqiDialog::toggleBacktrace()
 
 DrKonqiDialog::~DrKonqiDialog()
 {
-    delete crashInfo;
-    delete aboutBugReportingDialog;
-    delete backtraceWidget;
-    delete stackedWidget;
+    delete m_crashInfo;
+    delete m_aboutBugReportingDialog;
+    delete m_backtraceWidget;
+    delete m_stackedWidget;
 }

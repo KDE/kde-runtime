@@ -35,7 +35,7 @@ class UsefulnessMeter: public QWidget
         
         UsefulnessMeter(QWidget *);
         void setUsefulness( BacktraceInfo::Usefulness );
-        void setState( CrashInfo::BacktraceGenState s ) { state = s; update(); }
+        void setState( CrashInfo::BacktraceGenState s ) { m_state = s; update(); }
         
     protected:
         
@@ -43,18 +43,18 @@ class UsefulnessMeter: public QWidget
         
     private:
     
-        CrashInfo::BacktraceGenState state;
+        CrashInfo::BacktraceGenState    m_state;
         
-        bool star1;
-        bool star2;
-        bool star3;
+        bool                            m_star1;
+        bool                            m_star2;
+        bool                            m_star3;
         
-        QPixmap errorPixmap;
-        QPixmap loadedPixmap;
-        QPixmap loadingPixmap;
+        QPixmap                         m_errorPixmap;
+        QPixmap                         m_loadedPixmap;
+        QPixmap                         m_loadingPixmap;
         
-        QPixmap starPixmap;
-        QPixmap disabledStarPixmap;
+        QPixmap                         m_starPixmap;
+        QPixmap                         m_disabledStarPixmap;
 };
 
 #endif

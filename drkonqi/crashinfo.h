@@ -70,7 +70,7 @@ class CrashInfo : public QObject
     QString generateReportTemplate();
     
     BugzillaManager * getBZ() { return m_bugzilla; };
-    FutureReport * getFutureReport() { return m_futureReport; } //??
+    //FutureReport * getFutureReport() { return m_futureReport; } //??
     
     void setWords( QString words ){ m_words = words; }
     QString getWords() { return m_words; }
@@ -102,7 +102,7 @@ class CrashInfo : public QObject
     QString             m_OS;
     
     BugzillaManager *   m_bugzilla;
-    FutureReport    *   m_futureReport;
+    //FutureReport    *   m_futureReport;
 };
 
 #endif

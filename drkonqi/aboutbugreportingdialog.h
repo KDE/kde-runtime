@@ -36,7 +36,7 @@ class AboutBugReportingDialog: public KDialog
 
     private:
     
-        KTextBrowser * textBrowser;
+        KTextBrowser * m_textBrowser;
 };
 
 #endif

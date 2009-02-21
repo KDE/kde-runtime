@@ -32,12 +32,13 @@ CrashInfo::CrashInfo( KrashConfig * cfg )
     m_userCanReproduce = false;
     m_userGetCompromise = false;
     m_bugzilla = new BugzillaManager();
-    m_futureReport = new FutureReport( getProductName(), getProductVersion() );
+    //m_futureReport = new FutureReport( getProductName(), getProductVersion() );
 }
 
 CrashInfo::~CrashInfo()
 {
     delete m_backtraceInfo;
+    delete m_bugzilla;
     if( m_backtraceGenerator )
         delete m_backtraceGenerator;
 }
@@ -74,15 +75,19 @@ void CrashInfo::generateBacktrace()
 
 void CrashInfo::stopBacktrace()
 {
-    if( m_backtraceGenerator )
+    //Don't remove already (completely) loaded backtrace
+    if( m_backtraceState != Loaded )
     {
-        disconnect( m_backtraceGenerator );
-        delete m_backtraceGenerator;
-        m_backtraceGenerator = 0;
-    }
+        if( m_backtraceGenerator )
+        {
+            disconnect( m_backtraceGenerator );
+            delete m_backtraceGenerator;
+            m_backtraceGenerator = 0;
+        }
     
-    m_backtraceOutput.clear();
-    m_backtraceState = NonLoaded;
+        m_backtraceOutput.clear();
+        m_backtraceState = NonLoaded;   
+    }
 }
 
 void CrashInfo::backtraceGeneratorAppend( const QString & data )
@@ -124,7 +129,7 @@ bool CrashInfo::isKDEBugzilla()
 bool CrashInfo::isReportMail()
 {
     QString link = getReportLink();
-    return  link.contains('@') && link != QLatin1String( "submit@bugs.kde.org" );
+    return link.contains('@') && link != QLatin1String( "submit@bugs.kde.org" );
 }
 
 QString CrashInfo::getProductName()
@@ -139,7 +144,7 @@ QString CrashInfo::getProductVersion()
 
 QString CrashInfo::getOS()
 {
-    if( m_OS.isEmpty() )
+    if( m_OS.isEmpty() ) //Fetch OS name & ver
     {
         QProcess process;
         process.start("uname -srom");
@@ -177,7 +182,6 @@ QString CrashInfo::generateReportTemplate()
         
         report.append( QString("<br />Backtrace:<br />----<br /><br />%1<br />--------").arg(formattedBacktrace) );
     }
-
 
     return report;
 }

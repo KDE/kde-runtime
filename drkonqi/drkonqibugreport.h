@@ -46,33 +46,29 @@ class DrKonqiBugReport: public KAssistantDialog
     
   private:
     
-    IntroductionPage * intro;
-    CrashInformationPage * backtrace;
-    BugAwarenessPage * awareness;
-    ConclusionPage * conclusions;
-    BugzillaLoginPage * bugzillaLogin;
-    BugzillaKeywordsPage * bugzillaKeywords;
-    BugzillaDuplicatesPage * bugzillaDuplicates;
+    IntroductionPage *          m_intro;
+    CrashInformationPage *      m_backtrace;
+    BugAwarenessPage *          m_awareness;
+    ConclusionPage *            m_conclusions;
+    BugzillaLoginPage *         m_bugzillaLogin;
+    BugzillaKeywordsPage *      m_bugzillaKeywords;
+    BugzillaDuplicatesPage *    m_bugzillaDuplicates;
     
-    KPageWidgetItem * introPage;
-    KPageWidgetItem * backtracePage;
-    KPageWidgetItem * awarenessPage;
-    KPageWidgetItem * conclusionsPage;
-    KPageWidgetItem * bugzillaLoginPage;
-    KPageWidgetItem * bugzillaKeywordsPage;
-    KPageWidgetItem * bugzillaDuplicatesPage;
+    KPageWidgetItem *           m_introPage;
+    KPageWidgetItem *           m_backtracePage;
+    KPageWidgetItem *           m_awarenessPage;
+    KPageWidgetItem *           m_conclusionsPage;
+    KPageWidgetItem *           m_bugzillaLoginPage;
+    KPageWidgetItem *           m_bugzillaKeywordsPage;
+    KPageWidgetItem *           m_bugzillaDuplicatesPage;
     
-    CrashInfo * crashInfo;
+    CrashInfo *                 m_crashInfo;
     
   private Q_SLOTS:
     
     void currentPageChanged_slot(KPageWidgetItem *, KPageWidgetItem *);  
     
     void enableNextButton( bool );
-    
-    /*
-    void enableFinishButton( bool );
-        */
 
 };
 
