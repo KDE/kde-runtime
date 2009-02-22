@@ -25,6 +25,8 @@
 #include "getbacktracewidget.h"
 #include "crashinfo.h"
 
+#include <kwallet.h>
+
 class QFormLayout;
 class KLineEdit;
 class KPushButton;
@@ -124,6 +126,8 @@ class BugzillaLoginPage: public QWidget
     public: 
 
         BugzillaLoginPage(CrashInfo*);
+        ~BugzillaLoginPage();
+        
         void aboutToShow();
         
     private Q_SLOTS:
@@ -147,6 +151,7 @@ class BugzillaLoginPage: public QWidget
         KLineEdit *     m_passwordEdit;
         
         //QProgressDialog * m_progressDialog;
+        KWallet::Wallet *   m_wallet;
         CrashInfo * m_crashInfo;
 };
 

@@ -352,8 +352,7 @@ void  ConclusionPage::generateResult()
             bool isBKO = m_crashInfo->isKDEBugzilla();
             
             m_reportButton->setVisible( ! isBKO );
-            //emit setNextButton( isBKO ); //TODO remember to change
-            emit setNextButton( true );
+            emit setNextButton( isBKO ); //TODO remember to change
             
             if ( isBKO )
             {
@@ -386,6 +385,8 @@ BugzillaLoginPage::BugzillaLoginPage( CrashInfo * info) :
     QWidget(),
     m_crashInfo(info)
 {
+    m_wallet = 0;
+    
     QVBoxLayout * layout = new QVBoxLayout();
     
     m_subTitle = new QLabel(
@@ -429,10 +430,14 @@ BugzillaLoginPage::BugzillaLoginPage( CrashInfo * info) :
     
     
     setLayout( layout );
+    
 }
 
 void BugzillaLoginPage::aboutToShow()
 {
+    if( !m_wallet )
+        m_wallet = KWallet::Wallet::openWallet("drkonqi", 0 );
+        
     if( m_crashInfo->getBZ()->getLogged() )
     {
         m_loginButton->setEnabled( false );
@@ -455,6 +460,19 @@ void BugzillaLoginPage::aboutToShow()
     }
     else
     {
+        //Use wallet data to try login
+        QByteArray username;
+        m_wallet->readEntry("username", username);
+        QString password;
+        m_wallet->readPassword("password", password);
+        
+        if( !username.isEmpty() && !password.isEmpty() )
+        {
+            m_userEdit->setText( QString(username) );
+            m_passwordEdit->setText( password );
+            loginClicked();
+        }
+        
         emit setNextButton( false );
     }
     
@@ -471,6 +489,12 @@ void BugzillaLoginPage::loginClicked()
     m_userEdit->setEnabled( false );
     m_passwordEdit->setEnabled( false );
     
+    if( m_wallet )
+    {
+        m_wallet->writeEntry( "username", m_userEdit->text().toLocal8Bit() );
+        m_wallet->writePassword( "password", m_passwordEdit->text() );
+    }
+    
     connect( m_crashInfo->getBZ(), SIGNAL(loginFinished(bool)), this, SLOT(loginFinished(bool)));
     m_crashInfo->getBZ()->setLoginData( m_userEdit->text(), m_passwordEdit->text() );
     m_crashInfo->getBZ()->tryLogin();    
@@ -482,8 +506,10 @@ void BugzillaLoginPage::loginFinished( bool logged )
     
     if( logged )
     {
-        m_loginLabel->setText( "Login succesfully" );
         aboutToShow();
+        if( m_wallet )
+            if( m_wallet->isOpen() )
+                m_wallet->lockWallet();
     } 
     else
     {
@@ -498,6 +524,11 @@ void BugzillaLoginPage::loginFinished( bool logged )
     }
 }
 
+BugzillaLoginPage::~BugzillaLoginPage()
+{
+    if( m_wallet )
+        delete m_wallet;
+}
 
 BugzillaKeywordsPage::BugzillaKeywordsPage(CrashInfo * info) : 
     QWidget(),

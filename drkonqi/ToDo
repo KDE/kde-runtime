@@ -3,32 +3,34 @@
 --------------
 
     #Use m_varName scheme, order header files
-    #drkonqiassistantpages
-    #aboutbugreportingdialog
-    #bugzillalib
-    #drkonqidialog
-    #drkonqibugreport
-    #crashinfo
-    #usefulnessmeter
+        #drkonqiassistantpages
+        #aboutbugreportingdialog
+        #bugzillalib
+        #drkonqidialog
+        #drkonqibugreport
+        #crashinfo
+        #usefulnessmeter
     
+    #Extract interfaces to .UI files
+        #getbacktracewidget
+        
 ##Unassigned
 -------------
 
-Extract interfaces to .UI files
+Discuss , when to launch the kWallet dialog..........
+
 
 Add Translation i18n (with contexts) . change HTML tags (are they invalid when using i18n???)
 http://techbase.kde.org/Development/Tutorials/Localization/i18n_Semantics
 
 Finish "about bug reporting steps" (guide)
 
-KWallet integration
-
 Check leaks, crashes
 Add reporting steps to assistant
 Use KGUIItem to create KPushButton
 Set help for gui items, whats this,
 Enable help button on assistant ?
-Relayout getBacktraceWidget buttons/labels , layouts
+
 
 Rework Bug awareness text
 
@@ -42,6 +44,9 @@ validate KJob result state;
 
 #Done
 ---------
+
 #implement save report
 #QNetworkAccessManager -> KIO
     http://api.kde.org/4.x-api/kdelibs-apidocs/kio/html/classKIO_1_1TransferJob-members.html
+#KWallet integration
+#Relayout getBacktraceWidget buttons/labels , layouts
