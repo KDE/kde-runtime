@@ -85,14 +85,19 @@ K_GLOBAL_STATIC_WITH_ARGS(OxygenStyleHelper, globalHelper, ("oxygen"))
 
 static const int gw = 2; // ie glowwidth which we want to un-reserve space for in the tabs
 
+static void cleanupBefore()
+{
+    OxygenStyleHelper *h = globalHelper;
+    h->invalidateCaches();
+}
+
 OxygenStyle::OxygenStyle() :
     KStyle(),
-//     kickerMode(false),
-//     kornMode(false),
-    flatMode(false),
     _helper(*globalHelper)
 {
     _config = _helper.config();
+
+    qAddPostRoutine(cleanupBefore);
 
     // connect to KGlobalSettings signals so we will be notified when the
     // system palette (in particular, the contrast) is changed
@@ -181,7 +186,7 @@ OxygenStyle::OxygenStyle() :
     setWidgetLayoutProp(WT_SpinBox, SpinBox::FrameWidth, 4);
     setWidgetLayoutProp(WT_SpinBox, SpinBox::ContentsMargin, 0);
     setWidgetLayoutProp(WT_SpinBox, SpinBox::ContentsMargin + Left, 1);
-    setWidgetLayoutProp(WT_SpinBox, SpinBox::ContentsMargin + Right, 4);
+    setWidgetLayoutProp(WT_SpinBox, SpinBox::ContentsMargin + Right, 0);
     setWidgetLayoutProp(WT_SpinBox, SpinBox::ContentsMargin + Top, 0);
     setWidgetLayoutProp(WT_SpinBox, SpinBox::ContentsMargin + Bot, 0);
     setWidgetLayoutProp(WT_SpinBox, SpinBox::ButtonWidth, 19);
@@ -195,7 +200,7 @@ OxygenStyle::OxygenStyle() :
     setWidgetLayoutProp(WT_ComboBox, ComboBox::FrameWidth, 4);
     setWidgetLayoutProp(WT_ComboBox, ComboBox::ContentsMargin, 0);
     setWidgetLayoutProp(WT_ComboBox, ComboBox::ContentsMargin + Left, 1);
-    setWidgetLayoutProp(WT_ComboBox, ComboBox::ContentsMargin + Right, 4);
+    setWidgetLayoutProp(WT_ComboBox, ComboBox::ContentsMargin + Right, 0);
     setWidgetLayoutProp(WT_ComboBox, ComboBox::ContentsMargin + Top, 0);
     setWidgetLayoutProp(WT_ComboBox, ComboBox::ContentsMargin + Bot, 0);
     setWidgetLayoutProp(WT_ComboBox, ComboBox::ButtonWidth, 19);
@@ -1789,7 +1794,7 @@ void OxygenStyle::drawKStylePrimitive(WidgetType widgetType, int primitive,
                         }
                         else
                         {
-                            p->fillRect(r.adjusted(2,2,-2,-1), inputBrush);
+                            p->fillRect(r.adjusted(2,2,-2,-2), inputBrush);
                         }
                     }
                 }
@@ -2201,7 +2206,7 @@ void OxygenStyle::polish(QWidget* widget)
     }
     else if (qobject_cast<QDockWidget*>(widget))
     {
-        widget->setContentsMargins(4,3,4,4);
+        widget->setContentsMargins(3,0,3,3);
         widget->installEventFilter(this);
     }
     else if (qobject_cast<QToolBox*>(widget))
@@ -2233,6 +2238,17 @@ void OxygenStyle::polish(QWidget* widget)
 
 void OxygenStyle::unpolish(QWidget* widget)
 {
+
+    switch (widget->windowFlags() & Qt::WindowType_Mask) {
+        case Qt::Window:
+        case Qt::Dialog:
+            widget->removeEventFilter(this);
+            break;
+        default:
+            break;
+    }
+
+
     if ( qobject_cast<QProgressBar*>(widget) )
     {
         progAnimWidgets.remove(widget);
@@ -2257,6 +2273,8 @@ void OxygenStyle::unpolish(QWidget* widget)
         || qobject_cast<QToolBox*>(widget))
     {
         widget->setBackgroundRole(QPalette::Button);
+        widget->removeEventFilter(this);
+        widget->clearMask();
     }
 
     if (qobject_cast<QScrollBar*>(widget))
@@ -2266,6 +2284,7 @@ void OxygenStyle::unpolish(QWidget* widget)
     else if (qobject_cast<QDockWidget*>(widget))
     {
         widget->setContentsMargins(0,0,0,0);
+        widget->clearMask();
     }
     else if (qobject_cast<QToolBox*>(widget))
     {
@@ -2278,6 +2297,7 @@ void OxygenStyle::unpolish(QWidget* widget)
         widget->setAttribute(Qt::WA_PaintOnScreen, false);
         widget->setAttribute(Qt::WA_NoSystemBackground, false);
         widget->removeEventFilter(this);
+        widget->clearMask();
     }
     else if (qobject_cast<QFrame*>(widget)
             || qobject_cast<QMdiSubWindow*>(widget))
@@ -3044,6 +3064,9 @@ QRect OxygenStyle::subControlRect(ComplexControl control, const QStyleOptionComp
             }
             break;
         }
+        case CC_ComboBox:
+            if(subControl == SC_ComboBoxListBoxPopup)
+                return r.adjusted(0,0,8,0); // add the same width as we do in eventFilter
         default:
             break;
     }
@@ -3413,9 +3436,12 @@ bool OxygenStyle::eventFilter(QObject *obj, QEvent *ev)
             QRect r = tb->rect();
             StyleOptions opts = NoFill;
 
-            QPainter p(tb);
-            p.setClipRegion(((QPaintEvent*)ev)->region());
-            renderSlab(&p, r, tb->palette().color(QPalette::Button), opts);
+            if(tb->frameShape() != QFrame::NoFrame) {
+                QPainter p(tb);
+                p.setClipRegion(((QPaintEvent*)ev)->region());
+
+                renderSlab(&p, r, tb->palette().color(QPalette::Button), opts);
+            }
         }
         return false;
     }
