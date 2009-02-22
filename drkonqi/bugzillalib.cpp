@@ -9,7 +9,7 @@
 #include <QtXml/QDomElement>
 #include <QtXml/QDomNamedNodeMap>
 
-#include <QtDebug>
+//#include <QtDebug>
 
 #include <kio/job.h>
 #include <kio/jobclasses.h>
@@ -63,7 +63,7 @@ void BugzillaManager::loginDone( KJob* job )
 
 void BugzillaManager::fetchBugReport( int bugnumber )
 {
-    qDebug() << "fetch report";
+    //qDebug() << "fetch report";
     
     KIO::StoredTransferJob * fetchBugJob = 
         KIO::storedGet( KUrl( QString("https://bugs.kde.org/show_bug.cgi?id=%1&ctype=xml").arg( bugnumber ) ) , KIO::Reload, KIO::HideProgressInfo);
@@ -73,7 +73,7 @@ void BugzillaManager::fetchBugReport( int bugnumber )
 
 void BugzillaManager::fetchBugReportDone( KJob* job )
 {
-    qDebug() << "fetch report done";
+    //qDebug() << "fetch report done";
     KIO::StoredTransferJob * fetchBugJob = (KIO::StoredTransferJob *)job;
     
     QByteArray response = fetchBugJob->data();
@@ -83,7 +83,7 @@ void BugzillaManager::fetchBugReportDone( KJob* job )
 
 void BugzillaManager::searchBugs( QString words, QString product, QString severity, QString date_start, QString date_end, QString comment )
 {
-    qDebug() << "search bugs";
+    //qDebug() << "search bugs";
     
     QString url = QString("https://bugs.kde.org/buglist.cgi?query_format=advanced&short_desc_type=anywordssubstr&short_desc=%1&product=%2&long_desc_type=anywordssubstr&long_desc=%3&bug_file_loc_type=allwordssubstr&bug_file_loc=&keywords_type=allwords&keywords=&emailtype1=substring&email1=&emailtype2=substring&email2=&bugidtype=include&bug_id=&votes=&chfieldfrom=%4&chfieldto=%5&chfield=[Bug+creation]&chfieldvalue=&cmdtype=doit&field0-0-0=noop&type0-0-0=noop&value0-0-0=&bug_severity=%6&order=Importance&columnlist=%7&ctype=csv")
         .arg( words.replace(' ' , '+'), product, comment, date_start,  date_end, severity, QString(columns));
@@ -95,7 +95,7 @@ void BugzillaManager::searchBugs( QString words, QString product, QString severi
 
 void BugzillaManager::searchBugsDone( KJob * job )
 {
-    qDebug() << "search bugs done";
+    //qDebug() << "search bugs done";
     KIO::StoredTransferJob * searchBugsJob = (KIO::StoredTransferJob *)job;
     
     QByteArray response = searchBugsJob->data();

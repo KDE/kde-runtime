@@ -28,7 +28,9 @@ class BugReport: public QObject
         
         QString getData( QString key ) { return m_dataMap.value(key); }
         QString getDescription() { return m_commentList.at(0); }
-        QStringList getComments() { return m_commentList; }
+        QStringList getComments() { return m_commentList.mid(1); }
+        
+        bool isValid() { return m_isValid; }
         
     private:
         

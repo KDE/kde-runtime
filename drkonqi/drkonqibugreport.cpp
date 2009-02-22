@@ -82,7 +82,7 @@ DrKonqiBugReport::DrKonqiBugReport( CrashInfo * crash, QWidget * parent ) :
     addPage( m_conclusionsPage );
     addPage( m_bugzillaLoginPage );
     addPage( m_bugzillaKeywordsPage );
-    addPage( m_bugzillaDuplicatesPage );    
+    addPage( m_bugzillaDuplicatesPage );
     
     KPageWidgetItem * dummy = new KPageWidgetItem( new QWidget() );
     dummy->setHeader( "Dummy Last Page :)" );

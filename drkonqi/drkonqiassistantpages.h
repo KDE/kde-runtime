@@ -34,6 +34,8 @@ class QLabel;
 class KTextEdit;
 class QProgressDialog;
 class QDate;
+class QTreeWidget;
+class QTreeWidgetItem;
 
 //Introduction assistant page --------------
 class IntroductionPage: public QWidget
@@ -185,11 +187,17 @@ class BugzillaDuplicatesPage : public QWidget
     
     public:
         BugzillaDuplicatesPage(CrashInfo*);
+        ~BugzillaDuplicatesPage();
+        
         void searchDuplicates();
         
     private Q_SLOTS:
         
         void searchFinished( const BugMapList& );
+        
+        void itemClicked( QTreeWidgetItem *, int );
+        
+        void bugFetchFinished( BugReport * );
         
         void searchMore();
         void performSearch();
@@ -205,8 +213,14 @@ class BugzillaDuplicatesPage : public QWidget
         QDate           m_endDate;
         
         KPushButton *   m_searchMoreButton;
-        KTextEdit *     m_duplicateList;
+        QTreeWidget *   m_bugListWidget;
+
+        KDialog *       m_infoDialog;
+        KTextBrowser *  m_infoDialogBrowser;
+        QLabel *        m_infoDialogLink;
+        
         CrashInfo *     m_crashInfo;
 };
+
 
 #endif
