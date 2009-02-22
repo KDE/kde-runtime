@@ -72,6 +72,8 @@ void BacktraceInfoTest::btInfoTest()
     QFETCH(QByteArray, backtrace);
     QFETCH(Usefulness, result);
     QVERIFY2(result != InvalidUsefulnessValue, "Invalid usefulness. There is an error in the " MAP_FILE " file");
+    //qDebug() << runBacktraceInfo(backtrace); 
+    //qDebug() << result;
     QCOMPARE(runBacktraceInfo(backtrace), result);
 }
 

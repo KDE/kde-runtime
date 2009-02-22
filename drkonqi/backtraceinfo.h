@@ -36,7 +36,7 @@ class BacktraceInfo : public QObject
   public:
 
     enum Usefulness { ReallyUseful = 0, MayBeUseful=1, ProbablyUnuseful=2, Unuseful = 3 };
-    enum LineRating { Good = 2, MissingNumber = 1, Missing = 0 };
+    enum LineRating { Good = 3, MissingNumber = 2, Missing = 1 };
     
     BacktraceInfo();
     
@@ -57,12 +57,12 @@ class BacktraceInfo : public QObject
     void addValidFunction( QString );
     
     void calculateUsefulness();
-    bool usefulFile( QString );
-    bool falsePositive ( QString );
+    bool isUsefulFile( QString );
+    bool isQtFile ( QString );
     
     bool isQtMeta( QString );
     bool isCrashHandler ( QString );
-    bool isUnuseful ( QString );
+    bool isUnusefulLine ( QString );
     //bool nonImportantFile( QString );
     
     int guessStartPosition();

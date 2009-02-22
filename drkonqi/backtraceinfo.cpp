@@ -25,6 +25,8 @@
 #include <QtCore/QTextStream>
 #include <QtCore/QFileInfo>
 
+//#define DEBUG
+
 #include <QtDebug>
 
 static const int desiredFunctionCountSymbols = 4;
@@ -96,9 +98,9 @@ void BacktraceInfo::parse()
               
               line = ts.readLine();
 
-              //qDebug() << "linea" << line;
+              //qDebug() << "line" << line;
 
-              if( isQtMeta(line) || isCrashHandler(line) || isUnuseful(line) )
+              if( isQtMeta(line) || isCrashHandler(line) || isUnusefulLine(line) )
                 continue;
 
               //Line contains symbols ?
@@ -109,7 +111,10 @@ void BacktraceInfo::parse()
                 validSymbolsCount++;
                 addValidFunction( line );
                 rating.insert(number, Good);
-                //qDebug() << "agregando buena" << line;
+                
+                #ifdef DEBUG
+                    qDebug() << "Good line" << line;
+                #endif
                 number++;
                 //importance--;
               }
@@ -124,17 +129,21 @@ void BacktraceInfo::parse()
                   {
                       //qDebug() << "la";
                       //Avoid qt basic functions that may be before the first important (valid) line
-                      if( !(!firstGoodFound && falsePositive(file) ) && usefulFile( file ) ) //  &&  || !nonImportant(file)
+                      if( !(!firstGoodFound && isQtFile(file) ) && isUsefulFile( file ) ) //  &&  || !nonImportant(file)
                       {
                           
                           if( line.contains("??") )
                           {
-                              //qDebug() << "agregando malo" << file << line;
+                                #ifdef DEBUG
+                                    qDebug() << "Bad line" << file << line;
+                                #endif
                               rating.insert(number, Missing);
                           } 
                           else 
                           {
-                                //qDebug() << "agregando medio" << file << line;
+                                #ifdef DEBUG
+                                qDebug() << "Medium line" << file << line;
+                                #endif
                                 addValidFunction( line );
                                 rating.insert(number, MissingNumber);
                           }
@@ -149,13 +158,28 @@ void BacktraceInfo::parse()
                           }
                     
                       }
+                      
                   } else {
                         
                         //Missing filename ?
                         if ( line.contains("()") )
                         {
-                            rating.insert(number, MissingNumber);
-                            number++;
+                            if ( !line.contains("??") )
+                            {
+                                #ifdef DEBUG
+                                qDebug() << "Medium line" << line;
+                                #endif
+                                rating.insert(number, MissingNumber);
+                                number++;
+                            }
+                            else
+                            {
+                                #ifdef DEBUG
+                                qDebug() << "Bad line" << line;
+                                #endif
+                                rating.insert(number, Missing);
+                                number++;
+                            }
                         }   
                  
                   }
@@ -188,10 +212,12 @@ bool BacktraceInfo::isCrashHandler( QString line )
     return ( line.contains("(no debugging symbols found)") || 
       line.contains("KCrash::defaultCrashHandler") || 
       line.contains("<signal handler called>") || 
-      line.contains("KCrash::startDrKonqi") );
+      line.contains("KCrash::startDrKonqi") ||
+      line.contains("KCrash handler")
+    );
 }
 
-bool BacktraceInfo::isUnuseful( QString line )
+bool BacktraceInfo::isUnusefulLine( QString line )
 {
     return line.contains( "__kernel_vsyscall"  );
 }
@@ -202,46 +228,39 @@ QStringList BacktraceInfo::usefulFilesWithMissingSymbols()
     Q_FOREACH( const QString &key, missingSymbols.keys() )
     {
         if( missingSymbols.value( key ) < desiredFunctionCountSymbols )
-                if( usefulFile( key ) ){
+                if( isUsefulFile( key ) ){
                     list.append( key );
                   }
     }
     return list;
 }
 
-bool BacktraceInfo::usefulFile( QString file )
+bool BacktraceInfo::isUsefulFile( QString file )
 {
-    //KDE+qt
     QFileInfo fI(file);
     file = fI.fileName();
+
+    //unsefulFileList
+    QStringList unusefulFiles;
+    unusefulFiles << "libc";
+    unusefulFiles << "libstdc++";
+    unusefulFiles << "ld-linux";
+    unusefulFiles << "libdl";
+    unusefulFiles << "libGL";
     
-    QStringList usefulFiles;
-    usefulFiles << "libkhtml.so.5";
-    usefulFiles << "kdecore.so.4";
-    usefulFiles << "libkdeui.so.5";
-    usefulFiles << "libQtCore.so.4";
-    usefulFiles << "libQtGui.so.4";
-    usefulFiles << "libQtNetwork.so.4";
-    usefulFiles << "kopete_wlm.so";
-    usefulFiles << "katepart.so";
-    usefulFiles << "libgwenviewlib.so.4";
-    usefulFiles << "plasma_applet_folderview.so";
-    usefulFiles << "libkio.so.5";
-    usefulFiles << "libtaskmanager.so.4";
-    usefulFiles << "kcm_kgamma.so";
-    usefulFiles << "libkmailprivate.so.4";
-    usefulFiles << "libsoprano.so.4";
-    usefulFiles << "libplasma.so.3";
-    usefulFiles << "libplasma.so.2";
-    usefulFiles << "plasma_applet_systemtray.so";
+    bool useful = true;
+    Q_FOREACH( const QString & filePattern , unusefulFiles)
+    {
+        if (file.contains(filePattern))
+            useful = false;
+    }
     
-    return usefulFiles.contains(file);
-    
+    return useful;
 }
 
-bool BacktraceInfo::falsePositive( QString file )
+bool BacktraceInfo::isQtFile( QString file )
 {
-    //Non-kde files
+    //Qt files
     QFileInfo fI(file);
     file = fI.fileName();
     
@@ -249,12 +268,7 @@ bool BacktraceInfo::falsePositive( QString file )
     falseP << "libQtCore.so.4";
     falseP << "libQtGui.so.4";
     falseP << "libQtNetwork.so.4";
-    falseP << "libc.so.6";
-    falseP << "libstdc++.so.6";
-    falseP << "libstdc++.so.5";
-    falseP << "ld-linux.so.2";
-    falseP << "libdl.so.2";
-    
+        
     return falseP.contains(file);
   
 }
@@ -272,17 +286,24 @@ void BacktraceInfo::calculateUsefulness()
         {
             rat += rating.value( keys.at( i ) ) * (linesCount-i+1);
         }
-        //qDebug() << "rating" << rat;
+        
+        #ifdef DEBUG
+        qDebug() << "rating" << rat;
+        #endif
         //qDebug() << "a" << linesCount * Missing;
         //qDebug() << "b" << linesCount * MissingNumber;
 
-        //Calculate best rating
+        //Calculate best (possible) rating
         int bestRating = 0;
         for(int i=2; i <= linesCount +1; i++)
             bestRating += Good*i;
-            
-        int maybeUsefulRating = ((int)bestRating/3.0)*2;
-        int probablyUnusefulRating = (int)bestRating/3.0;
+        
+        //qDebug() << "best" << bestRating;
+        
+        int maybeUsefulRating = ((int)bestRating/4.0)*3;
+        int probablyUnusefulRating = (int)(bestRating/4.0*1.8);
+        
+        //qDebug() << "prob-un" << probablyUnusefulRating;
         
         if(rat == bestRating)
         {
@@ -293,7 +314,7 @@ void BacktraceInfo::calculateUsefulness()
             usefulness = MayBeUseful;
         } 
         
-        else if(rat > probablyUnusefulRating && rat <= maybeUsefulRating)
+        else if(rat >= probablyUnusefulRating && rat <= maybeUsefulRating)
         {
             usefulness = ProbablyUnuseful;
         }
@@ -320,25 +341,6 @@ void BacktraceInfo::addValidFunction( QString f )
     if( firstValidFunctions.split(' ').count() < 3 )
         firstValidFunctions.append( QLatin1String(" ") + functionName );
 }
-
-/*
-int BacktraceInfo::getUsefulnessValue()
-{
-    int val = 0;
-    switch(usefulness){
-        case ReallyUseful:
-            val = 100;break;
-        case MayBeUseful:
-            val = 60;break;
-        case ProbablyUnuseful:
-            val = 30;break;
-        case Unuseful:
-            val = 0;break;
-    }
-    return val;
-
-}
-*/
 
 QString BacktraceInfo::getUsefulnessString()
 {
