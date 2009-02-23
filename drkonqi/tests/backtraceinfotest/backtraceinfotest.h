@@ -33,6 +33,8 @@ public:
 private slots:
     void btInfoTest_data();
     void btInfoTest();
+    void btInfoBenchmark_data();
+    void btInfoBenchmark();
 
 private:
     Usefulness runBacktraceInfo(const QByteArray & data);

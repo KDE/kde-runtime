@@ -85,5 +85,23 @@ BacktraceInfoTest::Usefulness BacktraceInfoTest::runBacktraceInfo(const QByteArr
     return (Usefulness) info.getUsefulness();
 }
 
+void BacktraceInfoTest::btInfoBenchmark_data()
+{
+    btInfoTest_data(); //use the same data for the benchmark
+}
+
+void BacktraceInfoTest::btInfoBenchmark()
+{
+    QFETCH(QByteArray, backtrace);
+    QFETCH(Usefulness, result);
+    QVERIFY2(result != InvalidUsefulnessValue, "Invalid usefulness. There is an error in the " MAP_FILE " file");
+
+    BacktraceInfo info;
+    info.setBacktraceData(backtrace);
+    QBENCHMARK {
+        info.parse();
+    }
+}
+
 QTEST_MAIN(BacktraceInfoTest);
 #include "backtraceinfotest.moc"
