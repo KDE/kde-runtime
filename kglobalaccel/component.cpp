@@ -268,6 +268,18 @@ QStringList Component::getShortcutContexts() const
     }
 
 
+bool Component::isActive() const
+    {
+    // The component is active if at least one of it's global shortcuts is
+    // present.
+    Q_FOREACH (GlobalShortcut *shortcut, _current->_actions)
+        {
+        if (shortcut->isPresent()) return true;
+        }
+    return false;
+    }
+
+
 bool Component::isShortcutAvailable(
         int key,
         const QString &component,

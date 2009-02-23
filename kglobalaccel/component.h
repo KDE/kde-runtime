@@ -136,6 +136,14 @@ public Q_SLOTS:
      */
     Q_SCRIPTABLE bool cleanUp();
 
+    /**
+     * Check if the component is currently active.
+     *
+     * A component is active if at least one of it's global shortcuts is
+     * currently present.
+     */
+    Q_SCRIPTABLE bool isActive() const;
+
     //! Get all shortcutnames living in @a context
     Q_SCRIPTABLE QStringList shortcutNames(const QString &context = "default") const;
 
