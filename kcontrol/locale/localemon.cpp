@@ -117,7 +117,7 @@ void KLocaleConfigMoney::save()
                        m_locale->monetaryDecimalSymbol(), KConfig::Persistent|KConfig::Global);
 
   str = entGrp.readEntry("MonetaryThousandsSeparator", QString::fromLatin1(","));
-  str.replace(QString::fromLatin1("$0"), QString());
+  str.remove(QString::fromLatin1("$0"));
   group.deleteEntry("MonetaryThousandsSeparator", KConfig::Persistent | KConfig::Global);
   if (str != m_locale->monetaryThousandsSeparator())
     group.writeEntry("MonetaryThousandsSeparator",
