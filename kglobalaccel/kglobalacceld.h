@@ -73,6 +73,15 @@ public Q_SLOTS:
     //to be called by main components not owning the action
     Q_SCRIPTABLE QList<int> defaultShortcut(const QStringList &actionId) const;
 
+    /**
+     * Get the dbus path for @ componentUnique
+     *
+     * @param componentUnique the components unique identifier
+     *
+     * @return the absolute dbus path
+     */
+    Q_SCRIPTABLE QDBusObjectPath getComponent(const QString &componentUnique) const;
+
     //to be called by main components owning the action
     Q_SCRIPTABLE QList<int> setShortcut(const QStringList &actionId,
                            const QList<int> &keys, uint flags);
@@ -115,7 +124,7 @@ public Q_SLOTS:
      * The shortcut is removed from the registry even if it is currently
      * present. It is removed from all contexts.
      *
-     * @param componentUnique the component id
+     * @param componentUnique the components unique identifier
      * @param shortcutUnique the shortcut id
      *
      * @return @c true if the shortcuts was deleted, @c false if it didn't * exist.

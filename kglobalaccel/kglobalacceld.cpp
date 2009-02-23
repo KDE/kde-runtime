@@ -373,6 +373,26 @@ void KGlobalAccelD::doRegister(const QStringList &actionId)
 }
 
 
+QDBusObjectPath KGlobalAccelD::getComponent(const QString &componentUnique) const
+    {
+#ifdef KDEDGLOBALACCEL_TRACE
+    kDebug() << componentUnique;
+#endif
+
+    KdeDGlobalAccel::Component *component =
+        GlobalShortcutsRegistry::self()->getComponent(componentUnique);
+
+    if (component)
+        {
+        return component->dbusPath();
+        }
+    else
+        {
+        return QDBusObjectPath();
+        }
+    }
+
+
 QList<KGlobalShortcutInfo> KGlobalAccelD::getGlobalShortcutsByKey(int key) const
     {
     QList<GlobalShortcut*> shortcuts =
