@@ -59,7 +59,7 @@ void CrashInfo::generateBacktrace()
         m_backtraceGenerator = 0;
     }   
     
-    m_backtraceGenerator = BackTrace::create( m_crashConfig, 0 );
+    m_backtraceGenerator = new BackTrace( m_crashConfig, 0 );
     connect(m_backtraceGenerator, SIGNAL(done(QString)), this, SLOT(backtraceGeneratorFinished(QString)));
     connect(m_backtraceGenerator, SIGNAL(someError()), this, SLOT(backtraceGeneratorFailed()));
     connect(m_backtraceGenerator, SIGNAL(append(QString)), this, SLOT(backtraceGeneratorAppend(QString)));

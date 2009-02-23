@@ -13,6 +13,8 @@
     
     #Extract interfaces to .UI files
         #getbacktracewidget
+
+    gkiagia: Fix backtraceinfo logic (backtrace parsing to get its usefulness)
         
 ##Unassigned
 -------------
@@ -31,16 +33,15 @@ Use KGUIItem to create KPushButton
 Set help for gui items, whats this,
 Enable help button on assistant ?
 
-
 Rework Bug awareness text
-
-Fix backtraceinfo logic (backtrace parsing to get its usefulness)
 
 krazy2 checks (partially done)
 
 const pointers ?
 
 validate KJob result state;
+
+check what all the options in KrashConf are meant to do and use them appropriately or drop them (i.e review options)
 
 #Done
 ---------

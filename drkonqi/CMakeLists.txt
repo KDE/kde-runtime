@@ -31,7 +31,7 @@ set(drkonqi_SRCS
    getbacktracewidget.cpp
    backtraceinfo.cpp
    backtrace.cpp 
-   backtracegdb.cpp
+   #backtracegdb.cpp
 )
 
 kde4_add_ui_files(drkonqi_SRCS getbacktracewidget.ui)

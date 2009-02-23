@@ -38,28 +38,22 @@ class BackTrace : public QObject
   Q_OBJECT
 
 public:
-  static BackTrace* create(const KrashConfig* krashconf, QObject* parent);
+  BackTrace(const KrashConfig *krashconf, QObject *parent);
   ~BackTrace();
 
   bool start();
 
 Q_SIGNALS:
   void append(const QString &str); // Just the new text
-
   void someError();
   void done(const QString &); // replaces whole text
 
-protected Q_SLOTS:
+private Q_SLOTS:
   void slotProcessExited(int exitCode, QProcess::ExitStatus exitStatus);
   void slotReadInput();
 
-protected:
-  BackTrace(const KrashConfig *krashconf, QObject *parent);
-  virtual QString processDebuggerOutput( QString bt ) = 0;
-  virtual bool usefulDebuggerOutput( QString bt ) = 0;
-  const KrashConfig * const m_krashconf;
-
 private:
+  const KrashConfig * const m_krashconf;
   KProcess *m_proc;
   KTemporaryFile *m_temp;
   QString m_strBt;

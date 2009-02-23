@@ -27,28 +27,17 @@
 
 #include "backtrace.h"
 
-#include <QRegExp>
-
-#include <KProcess>
 #include <KDebug>
 #include <KStandardDirs>
 #include <KMessageBox>
 #include <KLocale>
-#include <ktemporaryfile.h>
+#include <KTemporaryFile>
 #include <KShell>
 
 #include <signal.h>
 
 #include "krashconf.h"
-#include "backtracegdb.h"
 #include "backtrace.moc"
-
-BackTrace* BackTrace::create(const KrashConfig* krashconf, QObject* parent)
-{
-  if(krashconf->debuggerName() == "gdb" )
-    return new BackTraceGdb(krashconf, parent);
-  abort(); // serious misconfiguration
-}
 
 BackTrace::BackTrace(const KrashConfig *krashconf, QObject *parent)
   : QObject(parent),
@@ -131,9 +120,6 @@ void BackTrace::slotProcessExited(int exitCode, QProcess::ExitStatus exitStatus)
     emit someError();
     return;
   }
-  m_strBt = processDebuggerOutput( m_strBt );
-  if( m_krashconf->disableChecks() || usefulDebuggerOutput( m_strBt ))
-    emit done(m_strBt);
-  else
-    emit someError();
+
+  emit done(m_strBt);
 }
