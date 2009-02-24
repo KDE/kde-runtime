@@ -63,7 +63,7 @@ GetBacktraceWidget::GetBacktraceWidget( CrashInfo * info ) :
 void GetBacktraceWidget::regenerateBacktrace()
 {
     ui.m_backtraceEdit->setText( i18nc("loading information, wait", "Loading ... " ));
-    ui.m_backtraceEdit->setEnabled( false );
+    //ui.m_backtraceEdit->setEnabled( false );
     
     ui.m_statusLabel->setText( i18nc("loading information, wait", "Loading crash information ... (this will take some time)" ));
     ui.m_usefulnessMeter->setUsefulness( BacktraceInfo::Unuseful );
@@ -115,7 +115,7 @@ void GetBacktraceWidget::backtraceGenerated()
         if( btInfo->getUsefulness() != BacktraceInfo::ReallyUseful )
         {
             ui.m_extraDetailsLabel->setVisible( true );
-            ui.m_extraDetailsLabel->setText( QString("The crash information lacks of some important details.<br />You may need to read <a href=\"http://techbase.kde.org/Development/Tutorials/Debugging/How_to_create_useful_crash_reports\">How to create useful crash reports</a> in order to know how to get an useful backtrace.<br />After you install the needed packages you can click the \"Reload Crash Information\" button "));
+            ui.m_extraDetailsLabel->setText( QString("The crash information lacks of some important details.<br />Please read <a href=\"http://techbase.kde.org/Development/Tutorials/Debugging/How_to_create_useful_crash_reports\">How to create useful crash reports</a> in order to know how to get an useful backtrace.<br />After you install the needed packages you can click the \"Reload Crash Information\" button "));
             ui.m_reloadBacktraceButton->setEnabled( true );
             
             if (!missingSymbols.isEmpty() ) //Detected missing symbols
@@ -171,7 +171,7 @@ void GetBacktraceWidget::copyClicked()
 
 void GetBacktraceWidget::saveClicked()
 {
-    if (crashInfo->getCrashConfig()->safeMode())
+    if ( crashInfo->getCrashConfig()->safeMode() )
     {
         KTemporaryFile tf;
         tf.setPrefix("/tmp/");
@@ -192,7 +192,7 @@ void GetBacktraceWidget::saveClicked()
     }
     else
     {
-        QString defname = crashInfo->getCrashConfig()->execName() + ".kcrash";
+        QString defname = crashInfo->getCrashConfig()->execName() + "-" + QDate::currentDate().toString("yyyyMMdd") + ".kcrash";
         if( defname.contains( '/' ))
             defname = defname.mid( defname.lastIndexOf( '/' ) + 1 );
         QString filename = KFileDialog::getSaveFileName( defname, QString(), this, i18n("Select Filename"));

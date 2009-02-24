@@ -79,7 +79,7 @@ DrKonqiDialog::DrKonqiDialog(KrashConfig * conf, QWidget * parent) :
     //Introduction widget
     m_introWidget = new QWidget();
     m_introWidget->setLayout( layout );
-    m_introWidget->setMinimumSize( QSize(550, 250) );
+    m_introWidget->setMinimumSize( QSize(600, 220) );
     
     QString styleSheet = QString(".QWidget {"
                        "background-image: url(%1);"
@@ -90,7 +90,7 @@ DrKonqiDialog::DrKonqiDialog(KrashConfig * conf, QWidget * parent) :
     
     //Backtrace Widget
     m_backtraceWidget = new GetBacktraceWidget( m_crashInfo );
-    m_backtraceWidget->setMinimumSize( QSize(550, 250) );
+    m_backtraceWidget->setMinimumSize( QSize(600, 220) );
 
     //Stacked main widget
     m_stackedWidget = new QStackedWidget();

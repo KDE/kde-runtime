@@ -20,7 +20,9 @@
 -------------
 
 Discuss , when to launch the kWallet dialog..........
-
+( currently, if the wallet doesn't exist, it prompts to create it when the login 
+information is entered the first time. If the wallet exists, it prompts for password when
+showing the login page, and it allows autocomplete the data )
 
 Add Translation i18n (with contexts) . change HTML tags (are they invalid when using i18n???)
 http://techbase.kde.org/Development/Tutorials/Localization/i18n_Semantics

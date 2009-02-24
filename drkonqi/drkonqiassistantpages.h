@@ -36,6 +36,7 @@ class QProgressDialog;
 class QDate;
 class QTreeWidget;
 class QTreeWidgetItem;
+class QCheckBox;
 
 //Introduction assistant page --------------
 class IntroductionPage: public QWidget
@@ -106,12 +107,12 @@ class ConclusionPage : public QWidget
     
         QLabel *        m_conclusionLabel;
         QLabel *        m_explanationLabel;
-        KTextEdit *     m_reportEdit;
+        KTextBrowser *  m_reportEdit;
 
         KPushButton *   m_reportButton;
         KPushButton *   m_saveReportButton;
 
-        CrashInfo * m_crashInfo;
+        CrashInfo *     m_crashInfo;
       
     Q_SIGNALS:
     
@@ -208,6 +209,8 @@ class BugzillaDuplicatesPage : public QWidget
         bool            m_searching;
         
         QLabel *        m_searchingLabel;
+        
+        QCheckBox *     m_foundDuplicateCheckBox;
         
         QDate           m_startDate;
         QDate           m_endDate;

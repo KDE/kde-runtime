@@ -32,7 +32,7 @@ CrashInfo::CrashInfo( KrashConfig * cfg )
     m_userCanReproduce = false;
     m_userGetCompromise = false;
     m_bugzilla = new BugzillaManager();
-    //m_futureReport = new FutureReport( getProductName(), getProductVersion() );
+    m_report = new BugReport();
 }
 
 CrashInfo::~CrashInfo()
@@ -184,4 +184,9 @@ QString CrashInfo::generateReportTemplate()
     }
 
     return report;
+}
+
+void CrashInfo::commitBugReport()
+{
+    //Commit
 }

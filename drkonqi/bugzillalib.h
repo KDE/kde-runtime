@@ -18,18 +18,49 @@ typedef QMap<QString,QString>   BugMap; //Report basic fields map
 typedef QList<BugMap>           BugMapList; //List of reports
 
 //Main bug report data, full fields + comments
-class BugReport: public QObject
+class BugReport
 {
-    Q_OBJECT
-    
     public:
     
-        BugReport(QByteArray);
+        BugReport();
         
-        QString getData( QString key ) { return m_dataMap.value(key); }
+        void setBugNumber( QString value ) { setData("bug_id", value); }
+        QString bugNumber() { return getData("bug_id"); }
+        
+        void setShortDescription( QString value ) { setData("short_desc", value); }
+        QString shortDescription() { return getData("short_desc"); }
+        
+        void setProduct( QString value ) { setData("product", value); }
+        QString product() { return getData("product"); }
+        
+        void setComponent( QString value ) { setData("component", value); }
+        QString component() { return getData("component"); }
+        
+        void setVersion( QString value ) { setData("version", value); }
+        QString version() { return getData("version"); }
+        
+        void setOperatingSystem( QString value ) { setData("op_sys", value); }
+        QString operatingSystem() { return getData("op_sys"); }
+        
+        void setBugStatus( QString value ) { setData("bug_status", value); }
+        QString bugStatus() { return getData("bug_status"); }
+        
+        void setResolution( QString value ) { setData("resolution", value); }
+        QString resolution() { return getData("resolution"); }
+        
+        void setPriority( QString value ) { setData("priority", value); }
+        QString priority() { return getData("priority"); }
+        
+        void setBugSeverity( QString value ) { setData("bug_severity", value); }
+        QString bugSeverity() { return getData("bug_severity"); }
+        
+        void setDescription( QString desc ) { m_commentList.insert(0, desc); }
         QString getDescription() { return m_commentList.at(0); }
+        
+        void setComments( QStringList comm) { m_commentList.append( comm ); }
         QStringList getComments() { return m_commentList.mid(1); }
         
+        void setValid( bool valid ) { m_isValid = valid; }
         bool isValid() { return m_isValid; }
         
     private:
@@ -39,11 +70,35 @@ class BugReport: public QObject
         BugMap      m_dataMap;
         QStringList m_commentList;
         
-        QDomDocument m_xml;
-        //Helper functions
-        QString getSimpleValue( QString );
+        void setData( QString key, QString val ) { m_dataMap.insert(key,val); }
+        QString getData( QString key ) { return m_dataMap.value(key); }
+        
+        
 };
 
+//XML parser that creates a BugReport object
+class BugReportXMLParser
+{
+    public:
+        BugReportXMLParser( QByteArray );
+        BugReport * parse();
+        
+    private:
+        bool            m_valid;
+        QDomDocument    m_xml;
+        QString getSimpleValue( QString );
+    
+};
+
+class BugListCSVParser
+{
+    public:
+        BugListCSVParser( QByteArray );
+        BugMapList parse();
+        
+    private:
+        QByteArray  m_data;
+};
 
 class BugzillaManager : public QObject
 {
@@ -75,27 +130,6 @@ class BugzillaManager : public QObject
         QString     m_username;
         QString     m_password;
         bool        m_logged;
-
-};
-
-//?? To set future reports fields and commit ????
-class FutureReport
-{
-    public:
-    
-        FutureReport( QString app, QString ver);
-        
-        void setWords( QString words ){ m_words = words; }
-        void setFullDescription( QString desc ){ m_fullDescription = desc; }
-        
-        QString getWords() { return m_words; }
-        QString getProduct() { return m_application; }
-    private:
-    
-        QString m_application;
-        QString m_version;
-        QString m_words;
-        QString m_fullDescription;
 
 };
 
