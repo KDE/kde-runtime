@@ -105,7 +105,6 @@ void BackTrace::slotReadInput()
         QString line = QString::fromLocal8Bit(m_output, pos + 1);
         m_output.remove(0, pos + 1);
 
-        m_strBt.append(line);
         emit append(line);
     }
 }
@@ -121,5 +120,5 @@ void BackTrace::slotProcessExited(int exitCode, QProcess::ExitStatus exitStatus)
     return;
   }
 
-  emit done(m_strBt);
+  emit done();
 }

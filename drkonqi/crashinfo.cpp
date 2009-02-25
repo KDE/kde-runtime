@@ -26,7 +26,7 @@ CrashInfo::CrashInfo( KrashConfig * cfg )
 {
     m_crashConfig = cfg;
     m_backtraceState = NonLoaded;
-    m_backtraceInfo = new BacktraceInfo();
+    m_backtraceParser = BacktraceParser::newParser(cfg->debuggerName());
     m_backtraceGenerator = 0;
     m_userCanDetail = false;
     m_userCanReproduce = false;
@@ -37,7 +37,7 @@ CrashInfo::CrashInfo( KrashConfig * cfg )
 
 CrashInfo::~CrashInfo()
 {
-    delete m_backtraceInfo;
+    delete m_backtraceParser;
     delete m_bugzilla;
     if( m_backtraceGenerator )
         delete m_backtraceGenerator;
@@ -60,7 +60,8 @@ void CrashInfo::generateBacktrace()
     }   
     
     m_backtraceGenerator = new BackTrace( m_crashConfig, 0 );
-    connect(m_backtraceGenerator, SIGNAL(done(QString)), this, SLOT(backtraceGeneratorFinished(QString)));
+    m_backtraceParser->connectToDebugger(m_backtraceGenerator);
+    connect(m_backtraceParser, SIGNAL(done(QString)), this, SLOT(backtraceGeneratorFinished(QString)));
     connect(m_backtraceGenerator, SIGNAL(someError()), this, SLOT(backtraceGeneratorFailed()));
     connect(m_backtraceGenerator, SIGNAL(append(QString)), this, SLOT(backtraceGeneratorAppend(QString)));
     m_backtraceOutput.clear();
@@ -102,11 +103,7 @@ void CrashInfo::backtraceGeneratorFinished( const QString & data )
     
     m_backtraceOutput = tmp + data;
     m_backtraceState = Loaded;
-    
-    //Parse backtrace to get its information
-    m_backtraceInfo->setBacktraceData( data.toLocal8Bit() );
-    m_backtraceInfo->parse();
-    
+
     emit backtraceGenerated();
 }
 
@@ -195,7 +192,7 @@ QString CrashInfo::generateReportTemplate()
         
     report.append( QString("<br />") ) ;
     
-    if( m_backtraceInfo->getUsefulness() != BacktraceInfo::Unuseful )
+    if( m_backtraceParser->backtraceUsefulness() != BacktraceParser::Useless )
     {
         QString formattedBacktrace = m_backtraceOutput;
         formattedBacktrace.replace('\n', "<br />");

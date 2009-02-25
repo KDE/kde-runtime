@@ -22,7 +22,7 @@
 
 #include <QtGui/QWidget>
 
-#include "backtraceinfo.h"
+#include "backtraceparser.h"
 #include "crashinfo.h"
 
 class QPixmap;
@@ -34,7 +34,7 @@ class UsefulnessMeter: public QWidget
     public:
         
         UsefulnessMeter(QWidget *);
-        void setUsefulness( BacktraceInfo::Usefulness );
+        void setUsefulness( BacktraceParser::Usefulness );
         void setState( CrashInfo::BacktraceGenState s ) { m_state = s; update(); }
         
     protected:

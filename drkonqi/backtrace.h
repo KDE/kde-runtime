@@ -44,9 +44,9 @@ public:
   bool start();
 
 Q_SIGNALS:
-  void append(const QString &str); // Just the new text
+  void append(const QString &str); // emited for every line
   void someError();
-  void done(const QString &); // replaces whole text
+  void done();
 
 private Q_SLOTS:
   void slotProcessExited(int exitCode, QProcess::ExitStatus exitStatus);
@@ -56,7 +56,6 @@ private:
   const KrashConfig * const m_krashconf;
   KProcess *m_proc;
   KTemporaryFile *m_temp;
-  QString m_strBt;
   QByteArray m_output;
 };
 #endif

@@ -252,32 +252,32 @@ void  ConclusionPage::aboutToShow()
     
     bool needToReport = false;
     
-    BacktraceInfo::Usefulness use = m_crashInfo->getBacktraceInfo()->getUsefulness();
+    BacktraceParser::Usefulness use = m_crashInfo->getBacktraceParser()->backtraceUsefulness();
     bool canDetails = m_crashInfo->getUserCanDetail();
     bool canReproduce = m_crashInfo->getUserCanReproduce();
     bool getCompromise = m_crashInfo->getUserGetCompromise();
     
     switch( use )
     {
-        case BacktraceInfo::ReallyUseful:
+        case BacktraceParser::ReallyUseful:
         {
             needToReport = canDetails; //true ?
             report = "* The crash information is really useful and worth reporting";
             break;
         }
-        case BacktraceInfo::MayBeUseful:
+        case BacktraceParser::MayBeUseful:
         {
             needToReport = ( canReproduce || canDetails || getCompromise );
             report = "* The crash information lacks some details but may be useful";
             break;
         }
-        case BacktraceInfo::ProbablyUnuseful:
+        case BacktraceParser::ProbablyUseless:
         {
             needToReport = ( canReproduce || ( canDetails && getCompromise ) );
-            report = "* The crash information lacks a lot of important details and it is probably unuseful";
+            report = "* The crash information lacks a lot of important details and it is probably useless";
             break;
         }           
-        case BacktraceInfo::Unuseful:
+        case BacktraceParser::Useless:
         {
             needToReport = ( canReproduce || ( canDetails && getCompromise ) );
             report = "* The crash information is completely useless";
@@ -777,7 +777,7 @@ void BugzillaDuplicatesPage::performSearch()
     
     m_searchingLabel->setText( QString("Searching for duplicates (from %1 to %2) ...").arg( startDateStr, endDateStr ) );
     
-    m_crashInfo->getBZ()->searchBugs( m_crashInfo->getReport()->shortDescription(), m_crashInfo->getProductName(), "crash", startDateStr, endDateStr , m_crashInfo->getBacktraceInfo()->getFirstValidFunctions() );
+    m_crashInfo->getBZ()->searchBugs( m_crashInfo->getReport()->shortDescription(), m_crashInfo->getProductName(), "crash", startDateStr, endDateStr , m_crashInfo->getBacktraceParser()->firstValidFunctions() );
    
    //Test search TODO change to original 
    //m_crashInfo->getBZ()->searchBugs( "plasma crash folder view", "plasma", "crash", startDateStr, endDateStr , "labelRectangle" );

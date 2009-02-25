@@ -20,7 +20,7 @@
 #ifndef CRASHINFO__H
 #define CRASHINFO__H
 
-#include "backtraceinfo.h"
+#include "backtraceparser.h"
 #include "bugzillalib.h"
 #include "krashconf.h"
 #include "backtrace.h"
@@ -43,7 +43,7 @@ class CrashInfo : public QObject
     void generateBacktrace();
     void stopBacktrace();
     
-    BacktraceInfo * getBacktraceInfo() { return m_backtraceInfo; }
+    BacktraceParser * getBacktraceParser() { return m_backtraceParser; }
     const QString getBacktraceOutput() { return m_backtraceOutput; } 
     BacktraceGenState getBacktraceState() { return m_backtraceState; }
     
@@ -96,7 +96,7 @@ class CrashInfo : public QObject
     KrashConfig *       m_crashConfig;
     
     BackTrace *         m_backtraceGenerator;
-    BacktraceInfo *     m_backtraceInfo;
+    BacktraceParser *   m_backtraceParser;
     QString             m_backtraceOutput;
     BacktraceGenState   m_backtraceState;
     

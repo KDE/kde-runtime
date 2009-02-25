@@ -66,7 +66,7 @@ void GetBacktraceWidget::regenerateBacktrace()
     //ui.m_backtraceEdit->setEnabled( false );
     
     ui.m_statusLabel->setText( i18nc("loading information, wait", "Loading crash information ... (this will take some time)" ));
-    ui.m_usefulnessMeter->setUsefulness( BacktraceInfo::Unuseful );
+    ui.m_usefulnessMeter->setUsefulness( BacktraceParser::Useless );
     ui.m_usefulnessMeter->setState( CrashInfo::Loading );
     
     ui.m_extraDetailsLabel->setVisible( false );
@@ -106,19 +106,20 @@ void GetBacktraceWidget::backtraceGenerated()
     {
         ui.m_backtraceEdit->setEnabled( true );
         ui.m_backtraceEdit->setText( crashInfo->getBacktraceOutput() );
-        BacktraceInfo * btInfo = crashInfo->getBacktraceInfo();
+        BacktraceParser * btParser = crashInfo->getBacktraceParser();
         
-        ui.m_usefulnessMeter->setUsefulness( btInfo->getUsefulness() );
-        ui.m_statusLabel->setText( btInfo->getUsefulnessString() );
+        ui.m_usefulnessMeter->setUsefulness( btParser->backtraceUsefulness() );
+        ui.m_statusLabel->setText( "This backtrace is useful" ); //FIXME dummy string.
         
-        QStringList missingSymbols = btInfo->usefulFilesWithMissingSymbols();
+        //QStringList missingSymbols = QStringList() << btInfo->usefulFilesWithMissingSymbols();
         
-        if( btInfo->getUsefulness() != BacktraceInfo::ReallyUseful )
+        if( btParser->backtraceUsefulness() != BacktraceParser::ReallyUseful )
         {
             ui.m_extraDetailsLabel->setVisible( true );
             ui.m_extraDetailsLabel->setText( QString("The crash information lacks of some important details.<br />Please read <a href=\"http://techbase.kde.org/Development/Tutorials/Debugging/How_to_create_useful_crash_reports\">How to create useful crash reports</a> in order to know how to get an useful backtrace.<br />After you install the needed packages you can click the \"Reload Crash Information\" button "));
             ui.m_reloadBacktraceButton->setEnabled( true );
-            
+
+            #if 0
             if (!missingSymbols.isEmpty() ) //Detected missing symbols
             {
                 QString details = i18nc("order", "You need to install the debug symbols for the following package(s):");
@@ -128,6 +129,7 @@ void GetBacktraceWidget::backtraceGenerated()
                 }
                 ui.m_extraDetailsLabel->setText( ui.m_extraDetailsLabel->text() + "<br /><br />" + details );
             }
+            #endif
         }
         
         ui.m_copyButton->setEnabled( true );
@@ -135,7 +137,7 @@ void GetBacktraceWidget::backtraceGenerated()
     }
     else if( crashInfo->getBacktraceState() == CrashInfo::Failed )
     {
-        ui.m_usefulnessMeter->setUsefulness( BacktraceInfo::Unuseful );
+        ui.m_usefulnessMeter->setUsefulness( BacktraceParser::Useless );
         
         ui.m_statusLabel->setText( i18n("The crash information could not be generated" ) );
         
@@ -151,7 +153,7 @@ void GetBacktraceWidget::backtraceGenerated()
     }
     else if( crashInfo->getBacktraceState() == CrashInfo::DebuggerFailed )
     {
-        ui.m_usefulnessMeter->setUsefulness( BacktraceInfo::Unuseful );
+        ui.m_usefulnessMeter->setUsefulness( BacktraceParser::Useless );
         
         ui.m_statusLabel->setText( i18n("The debugger application is missing or could not be launched" ));
         ui.m_backtraceEdit->setText( i18n("The crash information could not be generated" ));

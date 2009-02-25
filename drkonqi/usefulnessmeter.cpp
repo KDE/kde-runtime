@@ -41,32 +41,32 @@ UsefulnessMeter::UsefulnessMeter(QWidget * parent) :
     m_loadingPixmap = KIcon("chronometer").pixmap( QSize(22,22) ); //user-away
 }
 
-void UsefulnessMeter::setUsefulness( BacktraceInfo::Usefulness usefulness )
+void UsefulnessMeter::setUsefulness( BacktraceParser::Usefulness usefulness )
 {
     switch( usefulness )
     {
-        case BacktraceInfo::ReallyUseful:
+        case BacktraceParser::ReallyUseful:
         {
             m_star1 = true; 
             m_star2 = true; 
             m_star3 = true; 
             break;
         }
-        case BacktraceInfo::MayBeUseful:
+        case BacktraceParser::MayBeUseful:
         {
             m_star1 = true; 
             m_star2 = true; 
             m_star3 = false; 
             break;
         }
-        case BacktraceInfo::ProbablyUnuseful:
+        case BacktraceParser::ProbablyUseless:
         {
             m_star1 = true; 
             m_star2 = false; 
             m_star3 = false; 
             break;
         }
-        case BacktraceInfo::Unuseful:
+        case BacktraceParser::Useless:
         {
             m_star1 = false; 
             m_star2 = false; 

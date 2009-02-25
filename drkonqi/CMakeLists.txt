@@ -29,9 +29,10 @@ set(drkonqi_SRCS
    drkonqibugreport.cpp
    usefulnessmeter.cpp
    getbacktracewidget.cpp
-   backtraceinfo.cpp
+   #backtraceinfo.cpp
    backtrace.cpp 
    #backtracegdb.cpp
+   backtraceparser.cpp
 )
 
 kde4_add_ui_files(drkonqi_SRCS getbacktracewidget.ui)
