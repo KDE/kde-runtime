@@ -15,11 +15,16 @@
         #getbacktracewidget
 
     gkiagia: Fix backtraceinfo logic (backtrace parsing to get its usefulness)
+
+    #Add reporting steps to assistant
+        need permission about bugstest.kde.org to play with commits
+            
+    #validate KJob result state;
+        #done for fetchBugReport and searchBugs .. (error signals added)
+        needed for login, and commit
         
 ##Unassigned
 -------------
-
-Each page widget should emit setNextButton() on aboutToShow() (when needed by the widget)
 
 Discuss , when to launch the kWallet dialog..........
 ( currently, if the wallet doesn't exist, it prompts to create it when the login 
@@ -32,9 +37,11 @@ http://techbase.kde.org/Development/Tutorials/Localization/i18n_Semantics
 Finish "about bug reporting steps" (guide)
 
 Check leaks, crashes
-Add reporting steps to assistant
+
 Use KGUIItem to create KPushButton
+
 Set help for gui items, whats this,
+
 Enable help button on assistant ?
 
 Rework Bug awareness text
@@ -42,8 +49,6 @@ Rework Bug awareness text
 krazy2 checks (partially done)
 
 const pointers ?
-
-validate KJob result state;
 
 check what all the options in KrashConf are meant to do and use them appropriately or drop them (i.e review options)
 
@@ -55,3 +60,6 @@ check what all the options in KrashConf are meant to do and use them appropriate
     http://api.kde.org/4.x-api/kdelibs-apidocs/kio/html/classKIO_1_1TransferJob-members.html
 #KWallet integration
 #Relayout getBacktraceWidget buttons/labels , layouts
+
+#Each page widget should emit setNextButton() on aboutToShow() (when needed by the widget)
+#Remember to connect the setNextButton signal

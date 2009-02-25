@@ -9,7 +9,7 @@
 #include <QtXml/QDomElement>
 #include <QtXml/QDomNamedNodeMap>
 
-//#include <QtDebug>
+#include <QtDebug>
 
 #include <kio/job.h>
 #include <kio/jobclasses.h>
@@ -18,7 +18,7 @@
 static const char columns[] = "bug_severity,priority,bug_status,product,short_desc"; //resolution,
 
 //BKO URLs
-static const char bugtrackerBaseUrl[] = "https://bugs.kde.org/";
+static const char bugtrackerBaseUrl[] = "https://bugs.kde.org/"; //TODO change to correct HTTPS
 
 static const char loginUrl[] = "index.cgi";
 static const char loginParams[] = "GoAheadAndLogIn=1&Bugzilla_login=%1&Bugzilla_password=%2&log_in=Log+in";
@@ -30,7 +30,8 @@ static const char fetchBugUrl[] = "show_bug.cgi?id=%1&ctype=xml";
 
 BugzillaManager::BugzillaManager():
     QObject(),
-    m_logged(false)
+    m_logged(false),
+    fetchBugJob(0)
 {
 }
 
@@ -45,7 +46,6 @@ void BugzillaManager::tryLogin()
 {
     if ( !m_logged )
     {
-        
         QString params = QString( loginParams ).arg( m_username, m_password );
         QByteArray postData = params.toLatin1();
         
@@ -76,21 +76,42 @@ void BugzillaManager::fetchBugReport( int bugnumber )
 {
     KUrl url = KUrl( QString(bugtrackerBaseUrl) + QString(fetchBugUrl).arg( bugnumber ) );
     
-    KIO::StoredTransferJob * fetchBugJob = KIO::storedGet( url, KIO::Reload, KIO::HideProgressInfo);
-        
+    if ( fetchBugJob ) //Stop previous fetchBugJob
+    {
+        disconnect( fetchBugJob );
+        fetchBugJob->kill();
+        fetchBugJob = 0;
+    }
+
+    fetchBugJob = KIO::storedGet( url, KIO::Reload, KIO::HideProgressInfo);
     connect( fetchBugJob, SIGNAL(finished(KJob*)) , this, SLOT(fetchBugReportDone(KJob*)) );
 }
 
 void BugzillaManager::fetchBugReportDone( KJob* job )
 {
-    KIO::StoredTransferJob * fetchBugJob = (KIO::StoredTransferJob *)job;
+    if( !job->error() )
+    {
+        KIO::StoredTransferJob * fetchBugJob = (KIO::StoredTransferJob *)job;
+        
+        BugReportXMLParser * parser = new BugReportXMLParser( fetchBugJob->data() );
+        BugReport * report = parser->parse();
+        
+        if( parser->isValid() )
+        {
+            emit bugReportFetched( report );
+        } else {
+            emit bugReportError( QString( "Invalid bug report: corrupted data" ) );
+        }
+        
+        delete parser;
+    }
+    else
+    {
+        emit bugReportError( job->errorString() );
+    }
     
-    BugReportXMLParser * parser = new BugReportXMLParser( fetchBugJob->data() );
-    BugReport * report = parser->parse();
-    
-    emit bugReportFetched( report );
-    
-    delete parser;
+    //delete fetchBugJob;
+    fetchBugJob = 0;
 }
 
 void BugzillaManager::searchBugs( QString words, QString product, QString severity, QString date_start, QString date_end, QString comment )
@@ -103,14 +124,24 @@ void BugzillaManager::searchBugs( QString words, QString product, QString severi
 
 void BugzillaManager::searchBugsDone( KJob * job )
 {
-    KIO::StoredTransferJob * searchBugsJob = (KIO::StoredTransferJob *)job;
-    
-    BugListCSVParser * parser = new BugListCSVParser( searchBugsJob->data() );
-    BugMapList list = parser->parse();
+    if( !job->error() )
+    {
+        KIO::StoredTransferJob * searchBugsJob = (KIO::StoredTransferJob *)job;
+        
+        BugListCSVParser * parser = new BugListCSVParser( searchBugsJob->data() );
+        BugMapList list = parser->parse();
 
-    emit searchFinished( list );
-    
-    delete parser;
+        if( parser->isValid() )
+            emit searchFinished( list );
+        else
+            emit searchError( "Invalid bug list: corrupted data" );
+        
+        delete parser;
+    }
+    else
+    {
+        emit searchError( job->errorString() );
+    }
 }
 
 void BugzillaManager::commitReport( BugReport * report )
@@ -129,6 +160,7 @@ void BugzillaManager::commitReport( BugReport * report )
 BugListCSVParser::BugListCSVParser( QByteArray data )
 {
     m_data = data;
+    m_isValid = false;
 }
 
 BugMapList BugListCSVParser::parse()
@@ -139,34 +171,40 @@ BugMapList BugListCSVParser::parse()
     {
         //Parse buglist CSV
         QTextStream ts( &m_data );
-        ts.readLine(); //Discard headers
-        QStringList headers = QString(columns).split(',');
-        int headersCount = headers.count();
-        
-        while( !ts.atEnd() )
+        QString headersLine = ts.readLine().remove( QLatin1Char('\"') ) ; //Discard headers
+        QString expectedHeadersLine = QString(columns);
+      
+        if( headersLine == (QString("bug_id,") + expectedHeadersLine) )
         {
-            BugMap bug; //bug report data map
+            QStringList headers = expectedHeadersLine.split(',');
+            int headersCount = headers.count();
             
-            QString line = ts.readLine();
-
-            //Get bug_id (always at first column)
-            int bug_id_index = line.indexOf(',');
-            QString bug_id = line.left( bug_id_index );
-            bug.insert( "bug_id", bug_id);
-            
-            line = line.mid( bug_id_index + 2 );
-            
-            QStringList fields = line.split(",\"");
-            
-            for(int i = 0; i< headersCount ; i++)
+            while( !ts.atEnd() )
             {
-                QString field = fields.at(i);
-                field = field.left( field.size() - 1 ) ; //Remove trailing "
-                bug.insert( headers.at(i), field );
+                BugMap bug; //bug report data map
+                
+                QString line = ts.readLine();
+
+                //Get bug_id (always at first column)
+                int bug_id_index = line.indexOf(',');
+                QString bug_id = line.left( bug_id_index );
+                bug.insert( "bug_id", bug_id);
+                
+                line = line.mid( bug_id_index + 2 );
+                
+                QStringList fields = line.split(",\"");
+                
+                for(int i = 0; i< headersCount ; i++)
+                {
+                    QString field = fields.at(i);
+                    field = field.left( field.size() - 1 ) ; //Remove trailing "
+                    bug.insert( headers.at(i), field );
+                }
+                
+                list.append( bug );
             }
             
-            list.append( bug );
-            
+            m_isValid = true;
         }
     }
     
@@ -193,6 +231,7 @@ BugReport * BugReportXMLParser::parse()
         
         if( m_valid )
         {
+            m_valid = true;
             report->setValid( true );
             
             //Get basic fields
@@ -240,4 +279,16 @@ QString BugReportXMLParser::getSimpleValue( QString name ) //Extract an unique t
 BugReport::BugReport()
 {
     m_isValid = false;
+}
+
+QString BugReport::toHtml()
+{
+    QString html;
+    Q_FOREACH( const QString & key, m_dataMap.keys() )
+    {
+        html.append( QString("<strong>%1:</strong> %2<br />").arg( key, m_dataMap.value(key) ) );
+    }
+    
+    html.append( QString("<br />Description:<br /><br />%1").arg( getDescription() ) );
+    return html;
 }

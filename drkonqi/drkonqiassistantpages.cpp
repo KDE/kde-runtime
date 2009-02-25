@@ -31,7 +31,7 @@
 #include <QtGui/QFormLayout>
 #include <QtGui/QCheckBox>
 #include <QtGui/QGroupBox>
-//#include <QtGui/QProgressDialog>
+
 #include <QtGui/QTreeWidget>
 #include <QtGui/QHeaderView>
 
@@ -58,7 +58,6 @@ IntroductionPage::IntroductionPage() : DrKonqiAssistantPage()
     QVBoxLayout * layout = new QVBoxLayout( this );
     layout->addWidget( subTitle );
     layout->addStretch();
-
     setLayout( layout );
 }
 
@@ -67,7 +66,10 @@ CrashInformationPage::CrashInformationPage( CrashInfo * crashInfo)
     : DrKonqiAssistantPage()
 {
     m_backtraceWidget = new GetBacktraceWidget( crashInfo );
-    connect( m_backtraceWidget, SIGNAL(setNextButton(bool)) , this, SIGNAL(setNextButton(bool)) );
+    
+    //connect backtraceWidget signals
+    connect( m_backtraceWidget, SIGNAL(setBusy()) , this, SLOT(setBusy()) );
+    connect( m_backtraceWidget, SIGNAL(setIdle(bool)) , this, SLOT(setIdle(bool)) );
     
     QLabel * subTitle = new QLabel(
         "This page will fetch some useful information about the crash and your system to generate a better bug report" 
@@ -78,7 +80,6 @@ CrashInformationPage::CrashInformationPage( CrashInfo * crashInfo)
     QVBoxLayout * layout = new QVBoxLayout( this );
     layout->addWidget( subTitle );
     layout->addWidget( m_backtraceWidget );
-    
     setLayout( layout );    
 }
 
@@ -96,7 +97,6 @@ BugAwarenessPage::BugAwarenessPage(CrashInfo * info)
         "<i>* Actions you were taking on the application and on the whole system</i><br />"
         "<i>* Documents you were using in the application (or a reference to them and their type)</i>"
         "(<strong>Note:</strong> you can attach files in the bug report once it is filed )");
-    
     detailLabel->setWordWrap( true );
 
     m_canDetailCheckBox = new QCheckBox( "I can detail what I was doing when the application crashed" );
@@ -115,23 +115,22 @@ BugAwarenessPage::BugAwarenessPage(CrashInfo * info)
     
     //Reproduce
     QGroupBox * canReproduceBox = new QGroupBox("Advanced Users Only");
+    
     QVBoxLayout * canReproduceLayout = new QVBoxLayout();
-    canReproduceBox->setLayout( canReproduceLayout );
-  
+    
     m_canReproduceCheckBox = new QCheckBox( "I can reproduce the crash and I can provide steps or a testcase" );
-  
     canReproduceLayout->addWidget( m_canReproduceCheckBox);
     
-    QVBoxLayout * l = new QVBoxLayout();
-    l->addWidget( detailLabel );
-    l->addWidget( m_canDetailCheckBox );
-    l->addWidget( compromiseLabel );
-    l->addWidget( m_compromiseCheckBox );
-    l->addStretch();
-    l->addWidget( canReproduceBox );
-
-    l->setSpacing( 6 );
-    setLayout( l );
+    canReproduceBox->setLayout( canReproduceLayout );
+    
+    QVBoxLayout * layout = new QVBoxLayout();
+    layout->addWidget( detailLabel );
+    layout->addWidget( m_canDetailCheckBox );
+    layout->addWidget( compromiseLabel );
+    layout->addWidget( m_compromiseCheckBox );
+    layout->addStretch();
+    layout->addWidget( canReproduceBox );
+    setLayout( layout );
 
 }
 
@@ -144,13 +143,10 @@ void BugAwarenessPage::aboutToHide()
 }
 
 //Results page
-
 ConclusionPage::ConclusionPage(CrashInfo * info) 
     : DrKonqiAssistantPage(),
     m_crashInfo(info)
 {
-    m_conclusionLabel = new QLabel("Conclusions: ");
-
     m_reportEdit = new KTextBrowser();
     m_reportEdit->setReadOnly( true );
 
@@ -171,11 +167,9 @@ ConclusionPage::ConclusionPage(CrashInfo * info)
 
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setSpacing( 10 );
-    //layout->addWidget( m_conclusionLabel );
     layout->addWidget( m_reportEdit );
     layout->addWidget( m_explanationLabel );
     layout->addLayout( bLayout );
-
     setLayout( layout );
 
 }
@@ -242,124 +236,116 @@ void ConclusionPage::reportButtonClicked()
         QString subject = "Automatic crash report created by DrKonqi for " + m_crashInfo->getProductName();
         QString body = m_crashInfo->generateReportTemplate();
         KToolInvocation::invokeMailer( m_crashInfo->getReportLink(), "","" ,subject, body);
-        emit setFinishButton( true );
+        //setFinishButton( true );
     }
     else
     {
         KToolInvocation::invokeBrowser( m_crashInfo->getReportLink() );
-        emit setFinishButton( true );
+        //setFinishButton( true );
     }
         
 }
 
 void  ConclusionPage::aboutToShow()
 {
-    if ( true )
+    QString report;
+    
+    bool needToReport = false;
+    
+    BacktraceInfo::Usefulness use = m_crashInfo->getBacktraceInfo()->getUsefulness();
+    bool canDetails = m_crashInfo->getUserCanDetail();
+    bool canReproduce = m_crashInfo->getUserCanReproduce();
+    bool getCompromise = m_crashInfo->getUserGetCompromise();
+    
+    switch( use )
     {
-        QString report;
-        
-        bool needToReport = false;
-        
-        BacktraceInfo::Usefulness use = m_crashInfo->getBacktraceInfo()->getUsefulness();
-        bool canDetails = m_crashInfo->getUserCanDetail();
-        bool canReproduce = m_crashInfo->getUserCanReproduce();
-        bool getCompromise = m_crashInfo->getUserGetCompromise();
-        
-        switch( use )
+        case BacktraceInfo::ReallyUseful:
         {
-            case BacktraceInfo::ReallyUseful:
-            {
-                needToReport = canDetails; //true ?
-                report = "* The crash information is really useful and worth reporting";
-                break;
-            }
-            case BacktraceInfo::MayBeUseful:
-            {
-                needToReport = ( canReproduce || canDetails || getCompromise );
-                report = "* The crash information lacks some details but may be useful";
-                break;
-            }
-            case BacktraceInfo::ProbablyUnuseful:
-            {
-                needToReport = ( canReproduce || ( canDetails && getCompromise ) );
-                report = "* The crash information lacks a lot of important details and it is probably unuseful";
-                break;
-            }           
-            case BacktraceInfo::Unuseful:
-            {
-                needToReport = ( canReproduce || ( canDetails && getCompromise ) );
-                report = "* The crash information is completely useless";
-                break;
-            }
+            needToReport = canDetails; //true ?
+            report = "* The crash information is really useful and worth reporting";
+            break;
         }
-        
-        if( canDetails )
-            report += "<br />* You can detail what were you doing when the application crashed";
-        else
-            report += "<br />* You can't detail what were you doing when the application crashed";
-        
-        if( canReproduce )
-            report += "<br />* You can reproduce the crash at will and you can provide steps or a testcase";
-        else
-            report += "<br />* You can't reproduce the crash at will and you can provide steps or a testcase";
-           
-        if ( needToReport )
+        case BacktraceInfo::MayBeUseful:
         {
-            m_conclusionLabel->setText("<strong>Conclusions:</strong> Please report this crash");
-            
-            report += "<br /><strong>The crash is worth reporting</strong><br /><br />You need to file a new bug report with the following information:<br />--------<br /><br />";
-            report += m_crashInfo->generateReportTemplate();
-            
-            bool isBKO = m_crashInfo->isKDEBugzilla();
-            
-            m_reportButton->setVisible( !isBKO );
-            emit setNextButton( isBKO );
-            
-            if ( isBKO )
-            {
-                m_explanationLabel->setText( "This application is supported in the KDE Bugtracker, press Next to start the report");
-            }
-            else
-            {
-                m_explanationLabel->setText( "<strong>Notice:</strong> This application isn't supported in the KDE Bugtracker, you need to report the bug to the maintainer");
-            }
-            
+            needToReport = ( canReproduce || canDetails || getCompromise );
+            report = "* The crash information lacks some details but may be useful";
+            break;
         }
-        else
+        case BacktraceInfo::ProbablyUnuseful:
         {
-            m_reportButton->setVisible( false );
-            
-            m_conclusionLabel->setText("<strong>Conclusions:</strong> The crash is not worth reporting");
-            
-            report += "<br /><strong>The crash is not worth reporting</strong><br /><br />However you can report it on your own if you want, using the following information:<br />--------<br /><br />";
-            report += m_crashInfo->generateReportTemplate();
-            
-            if ( m_crashInfo->isKDEBugzilla() )
-            {
-                report += "<br /><br />Report to http://bugs.kde.org";
-                m_explanationLabel->setText( "This application is supported in the KDE Bugtracker, you can report this bug at https://bugs.kde.org");
-            }
-            else
-            {
-                report += "<br /><br />Report to " + m_crashInfo->getReportLink();
-                m_explanationLabel->setText( QString("This application isn't supported in the KDE Bugtracker, you need to report the bug to the maintainer : <i>%1</i>").arg( m_crashInfo->getReportLink() ) );
-            }
-            
-            emit setNextButton( false );
+            needToReport = ( canReproduce || ( canDetails && getCompromise ) );
+            report = "* The crash information lacks a lot of important details and it is probably unuseful";
+            break;
+        }           
+        case BacktraceInfo::Unuseful:
+        {
+            needToReport = ( canReproduce || ( canDetails && getCompromise ) );
+            report = "* The crash information is completely useless";
+            break;
         }
-        
-        m_reportEdit->setHtml( report );
     }
+    
+    if( canDetails )
+        report += "<br />* You can detail what were you doing when the application crashed";
+    else
+        report += "<br />* You can't detail what were you doing when the application crashed";
+    
+    if( canReproduce )
+        report += "<br />* You can reproduce the crash at will and you can provide steps or a testcase";
+    else
+        report += "<br />* You can't reproduce the crash at will and you can provide steps or a testcase";
+        
+    if ( needToReport )
+    {
+        report += "<br /><strong>The crash is worth reporting</strong><br /><br />You need to file a new bug report with the following information:<br />--------<br /><br />";
+        report += m_crashInfo->generateReportTemplate();
+        
+        bool isBKO = m_crashInfo->isKDEBugzilla();
+        
+        m_reportButton->setVisible( !isBKO );
+        setNextButton( isBKO );
+        
+        if ( isBKO )
+        {
+            m_explanationLabel->setText( "This application is supported in the KDE Bugtracker, press Next to start the report");
+        }
+        else
+        {
+            m_explanationLabel->setText( "<strong>Notice:</strong> This application isn't supported in the KDE Bugtracker, you need to report the bug to the maintainer");
+        }
+        
+    }
+    else
+    {
+        m_reportButton->setVisible( false );
+        
+        report += "<br /><strong>The crash is not worth reporting</strong><br /><br />However you can report it on your own if you want, using the following information:<br />--------<br /><br />";
+        report += m_crashInfo->generateReportTemplate();
+        
+        if ( m_crashInfo->isKDEBugzilla() )
+        {
+            report += "<br /><br />Report to http://bugs.kde.org";
+            m_explanationLabel->setText( "This application is supported in the KDE Bugtracker, you can report this bug at https://bugs.kde.org");
+        }
+        else
+        {
+            report += "<br /><br />Report to " + m_crashInfo->getReportLink();
+            m_explanationLabel->setText( QString("This application isn't supported in the KDE Bugtracker, you need to report the bug to the maintainer : <i>%1</i>").arg( m_crashInfo->getReportLink() ) );
+        }
+        
+        setNextButton( false );
+    }
+    
+    m_reportEdit->setHtml( report );
 }
 
 
 BugzillaLoginPage::BugzillaLoginPage( CrashInfo * info) : 
     DrKonqiAssistantPage(),
+    m_wallet(0),
     m_crashInfo(info)
 {
-    m_wallet = 0;
-    
-    QVBoxLayout * layout = new QVBoxLayout();
+    connect( m_crashInfo->getBZ(), SIGNAL(loginFinished(bool)), this, SLOT(loginFinished(bool)));
     
     m_subTitle = new QLabel(
     "You need to log-in in your bugs.kde.org account in order to proceed"
@@ -389,20 +375,15 @@ BugzillaLoginPage::BugzillaLoginPage( CrashInfo * info) :
     QHBoxLayout * buttonLayout = new QHBoxLayout();
     buttonLayout->addStretch();
     buttonLayout->addWidget( m_loginButton);
-    
+
+    QVBoxLayout * layout = new QVBoxLayout();
     layout->addWidget( m_subTitle );
     layout->addLayout( m_form );
     layout->addWidget( m_loginLabel );
     layout->addLayout( buttonLayout );
-    //layout->addWidget( noticeLabel );
+    layout->addWidget( noticeLabel );
     layout->addStretch();
-    
-    //m_progressDialog = new QProgressDialog( "Login", "", 0 ,0 ,this );
-    // ?
-    
     setLayout( layout );
-
-    connect( m_crashInfo->getBZ(), SIGNAL(loginFinished(bool)), this, SLOT(loginFinished(bool)));
 }
 
 void BugzillaLoginPage::aboutToShow()
@@ -425,42 +406,48 @@ void BugzillaLoginPage::aboutToShow()
         
         m_loginLabel->setText( "Logged at KDE Bugtracker (bugs.kde.org) as: " + m_crashInfo->getBZ()->getUsername() );
         
-        emit setNextButton( true );
+        setIdle( true );
+        
     }
     else
     {
+        setIdle( false );
+        bool login = false;
         if ( !m_wallet )
         {
             if( KWallet::Wallet::walletList().contains("drkonqi") ) //Do not create the wallet on the first login
             {
                 m_wallet = KWallet::Wallet::openWallet("drkonqi", 0 );
                 
-                //Use wallet data to try login
-                
-                QByteArray username;
-                m_wallet->readEntry("username", username);
-                QString password;
-                m_wallet->readPassword("password", password);
-                
-                if( !username.isEmpty() && !password.isEmpty() )
+                if( m_wallet )
                 {
-                    m_userEdit->setText( QString(username) );
-                    m_passwordEdit->setText( password );
-                    loginClicked();
+                    //Use wallet data to try login
+                    QByteArray username;
+                    m_wallet->readEntry("username", username);
+                    QString password;
+                    m_wallet->readPassword("password", password);
+                    
+                    if( !username.isEmpty() && !password.isEmpty() )
+                    {
+                        login = true;
+                        m_userEdit->setText( QString(username) );
+                        m_passwordEdit->setText( password );
+                        loginClicked();
+                    }
                 }
             }
         }
-        
-        emit setNextButton( false );
+        //if( !login )
+            
     }
-    
 }
 
 void BugzillaLoginPage::loginClicked()
 {
-    QApplication::setOverrideCursor(Qt::BusyCursor);
     if( !( m_userEdit->text().isEmpty() && m_passwordEdit->text().isEmpty() ) )
     {
+        setBusy();
+        
         m_loginLabel->setText( "Performing Bugzilla Login ..." );
         
         m_loginButton->setEnabled( false );
@@ -489,8 +476,6 @@ void BugzillaLoginPage::loginClicked()
 
 void BugzillaLoginPage::loginFinished( bool logged )
 {
-    QApplication::restoreOverrideCursor();
-    
     if( logged )
     {
         aboutToShow();
@@ -500,6 +485,8 @@ void BugzillaLoginPage::loginFinished( bool logged )
     } 
     else
     {
+        setIdle( false );
+        
         m_loginLabel->setText( "Invalid username or password" );
         
         m_loginButton->setEnabled( true );
@@ -521,8 +508,6 @@ BugzillaKeywordsPage::BugzillaKeywordsPage(CrashInfo * info) :
     DrKonqiAssistantPage(),
     m_crashInfo(info)
 {
-    QVBoxLayout * layout = new QVBoxLayout();
-    
     QLabel * detailsLabel = new QLabel(
     "Please, enter at least 4 (four) words to describe the crash. This is needed in order to find for similar already reported bugs (duplicates)"
     );
@@ -531,54 +516,51 @@ BugzillaKeywordsPage::BugzillaKeywordsPage(CrashInfo * info) :
     m_keywordsEdit = new KLineEdit();
     connect( m_keywordsEdit, SIGNAL(textEdited(QString)), this, SLOT(textEdited(QString)) );
     
+    QVBoxLayout * layout = new QVBoxLayout();
     layout->addWidget( detailsLabel );
     layout->addWidget( m_keywordsEdit );
     layout->addStretch();
-    
     setLayout( layout );
 }
 
 void BugzillaKeywordsPage::textEdited( QString newText )
 {
-    //better way to do this?
     QStringList list = newText.split(' ', QString::SkipEmptyParts);
-    qDebug() << "pepe" << list;
     bool e = (list.count() >= 4);
-    qDebug() << e;
-    emit setNextButton( e );
+    //Check words size??
+    
+    setNextButton( e );
 }
 
 void BugzillaKeywordsPage::aboutToShow()
 {
-    qDebug() << "about to show";
     textEdited( m_keywordsEdit->text() );
-    qDebug() << "about to show2";
 }
 
 void BugzillaKeywordsPage::aboutToHide()
 {
     //Save keywords (short description)
     m_crashInfo->getReport()->setShortDescription( m_keywordsEdit->text() );
-    qDebug() << "about to hide fin";
 }
 
 BugzillaDuplicatesPage::BugzillaDuplicatesPage(CrashInfo * info):
     DrKonqiAssistantPage(),
+    m_searching(false),
+    m_infoDialog(0),
+    m_infoDialogBrowser(0),
+    m_infoDialogLink(0),
+    m_mineMayBeDuplicateButton(0),
+    m_currentBugNumber(0),
     m_crashInfo(info)
 {
-    m_searching = false;
-    m_infoDialog = 0;
-    m_infoDialogBrowser = 0;
-    m_infoDialogLink = 0;
-    
     m_endDate = QDate::currentDate();
     m_startDate = m_endDate.addYears( -1 );
     
     connect( m_crashInfo->getBZ(), SIGNAL( searchFinished(BugMapList) ), this, SLOT( searchFinished(BugMapList) ) );
+    connect( m_crashInfo->getBZ(), SIGNAL( searchError(QString) ), this, SLOT( searchError(QString) ) );
     connect( m_crashInfo->getBZ(), SIGNAL( bugReportFetched(BugReport*) ), this, SLOT( bugFetchFinished(BugReport*) ) );
+    connect( m_crashInfo->getBZ(), SIGNAL( bugReportError(QString) ), this, SLOT( bugFetchError(QString) ) );
         
-    QVBoxLayout * layout = new QVBoxLayout();
-    
     m_searchingLabel = new QLabel("Searching for duplicates ...");
     
     m_bugListWidget = new QTreeWidget();
@@ -601,24 +583,24 @@ BugzillaDuplicatesPage::BugzillaDuplicatesPage(CrashInfo * info):
     buttonLayout->addStretch();
     buttonLayout->addWidget( m_searchMoreButton );
     
-    QGroupBox * box = new QGroupBox("Found Duplicates:") ;
+    m_foundDuplicateCheckBox = new QCheckBox("My crash may be a duplicate of bug number:");
+    connect( m_foundDuplicateCheckBox , SIGNAL(stateChanged(int)), this, SLOT(checkBoxChanged(int)) );
     
+    m_possibleDuplicateEdit = new KLineEdit();
+    m_possibleDuplicateEdit->setInputMask( "000000" );
+    m_possibleDuplicateEdit->setEnabled( false );
+
     QHBoxLayout * lay = new QHBoxLayout();
-    box->setLayout( lay );
-    
-    m_foundDuplicateCheckBox = new QCheckBox("I have found an already reported crash that is the same as mine at report N°");
-    
-    QLineEdit * e = new QLineEdit();
-    
     lay->addWidget( m_foundDuplicateCheckBox );
-    lay->addWidget( e );
+    lay->addStretch(); 
+    lay->addWidget( m_possibleDuplicateEdit );
     
+    QVBoxLayout * layout = new QVBoxLayout();
     layout->addWidget( new QLabel("Needed explanation about this step") ); //TODO
     layout->addWidget( m_searchingLabel );
     layout->addWidget( m_bugListWidget );
     layout->addLayout( buttonLayout );
-    layout->addWidget( box );
-    
+    layout->addLayout( lay );
     setLayout( layout );
     
 }
@@ -630,6 +612,46 @@ BugzillaDuplicatesPage::~BugzillaDuplicatesPage()
         delete m_infoDialog;
         delete m_infoDialogBrowser;
     }
+}
+
+void BugzillaDuplicatesPage::enableControls( bool enable )
+{
+    m_bugListWidget->setEnabled( enable );
+    m_searchMoreButton->setEnabled( enable );
+    m_foundDuplicateCheckBox->setEnabled( enable );
+    m_possibleDuplicateEdit->setEnabled( enable );
+    if ( enable )
+        checkBoxChanged( m_foundDuplicateCheckBox->checkState() );
+}
+
+void BugzillaDuplicatesPage::searchError( QString err )
+{
+    //TODO check this
+    enableControls( true );
+    
+    m_searchingLabel->setText( "Error fetching the bug report list" );
+    m_searching = false;
+    setIdle( true );
+    
+    KMessageBox::error( this , QString( "Error fetching the bug report list<br />" + err + "<br />Please, wait some time and try again" ) );
+}
+
+void BugzillaDuplicatesPage::bugFetchError( QString err )
+{
+    if( m_infoDialog )
+    {
+        if ( m_infoDialog->isVisible() )
+        {
+            KMessageBox::error( this , QString( "Error fetching the bug report<br />" + err + "<br />Please, wait some time and try again" ) );
+            m_mineMayBeDuplicateButton->setEnabled( false );
+            m_infoDialogBrowser->setText( "Error fetching the bug report" );
+        }
+    }
+}
+
+void BugzillaDuplicatesPage::checkBoxChanged( int newState )
+{
+    m_possibleDuplicateEdit->setEnabled( newState == Qt::Checked );
 }
 
 void BugzillaDuplicatesPage::itemClicked( QTreeWidgetItem * item, int col )
@@ -649,27 +671,36 @@ void BugzillaDuplicatesPage::itemClicked( QTreeWidgetItem * item, int col )
         m_infoDialogLink = new QLabel();
         m_infoDialogLink->setOpenExternalLinks( true );
         
-        KPushButton * m_mineIsDuplicateButton = new KPushButton( "My report is a duplicate of this" );
+        m_mineMayBeDuplicateButton = new KPushButton( "My crash may be a duplicate of this report" );
+        connect( m_mineMayBeDuplicateButton, SIGNAL(clicked()) , this, SLOT(mayBeDuplicateClicked()) );
         
         QWidget * widget = new QWidget( m_infoDialog );
         QVBoxLayout * layout = new QVBoxLayout();
         layout->addWidget( m_infoDialogBrowser );
         layout->addWidget( m_infoDialogLink );
-        layout->addWidget( m_mineIsDuplicateButton );
+        layout->addWidget( m_mineMayBeDuplicateButton );
         widget->setMinimumSize( QSize(400,300) );
         widget->setLayout( layout );
         
         m_infoDialog->setMainWidget( widget );
     }
     
-    int bug_number = item->text(0).toInt();
+    m_currentBugNumber = item->text(0).toInt();
     
-    m_crashInfo->getBZ()->fetchBugReport( bug_number );
-    
-    m_infoDialogBrowser->setText( QString("Loading information about bug %1 from bugs.kde.org ...").arg( bug_number ) );
-    m_infoDialogLink->setText( QString("<a href=\"%1\">%2</a>").arg( "https://bugs.kde.org/" + QString::number(bug_number), "Bug report page at KDE Bugtracker" ) );
+    m_crashInfo->getBZ()->fetchBugReport( m_currentBugNumber );
+
+    m_mineMayBeDuplicateButton->setEnabled( false );
+    m_infoDialogBrowser->setText( QString("Loading information about bug %1 from bugs.kde.org ...").arg( m_currentBugNumber ) );
+    m_infoDialogLink->setText( QString("<a href=\"%1\">%2</a>").arg( "https://bugs.kde.org/" + QString::number(m_currentBugNumber), "Bug report page at KDE Bugtracker" ) );
     
     m_infoDialog->show();
+}
+
+void BugzillaDuplicatesPage::mayBeDuplicateClicked()
+{
+    m_foundDuplicateCheckBox->setCheckState( Qt::Checked );
+    m_possibleDuplicateEdit->setText( QString::number( m_currentBugNumber ) );
+    m_infoDialog->close();
 }
 
 void BugzillaDuplicatesPage::bugFetchFinished( BugReport* report )
@@ -678,30 +709,34 @@ void BugzillaDuplicatesPage::bugFetchFinished( BugReport* report )
     {
         if( m_infoDialog )
         {
-            QString comments;
-            QStringList commentList = report->getComments();
-            for(int i = 0;i < commentList.count(); i++)
+            if ( m_infoDialog->isVisible() )
             {
-                QString comment = commentList.at(i);
-                comment.replace('\n', "<br />");
-                comments += "<br /><strong>----</strong><br />" + comment;
+                QString comments;
+                QStringList commentList = report->getComments();
+                for(int i = 0;i < commentList.count(); i++)
+                {
+                    QString comment = commentList.at(i);
+                    comment.replace('\n', "<br />");
+                    comments += "<br /><strong>----</strong><br />" + comment;
+                }
+                
+                QString text = 
+                QString("<strong>Bug ID:</strong> %1<br /><strong>Product:</strong> %2/%3<br />"
+                "<strong>Short Description:</strong> %4<br /><strong>Status:</strong> %5<br />"
+                "<strong>Resolution:</strong> %6<br /><strong>Full Description:</strong><br /> %7<br /><br />"
+                "<strong>Comments:</strong> %8")
+                .arg( report->bugNumber(), report->product(), report->component(),
+                report->shortDescription(), report->bugStatus(),
+                report->resolution(), report->getDescription().replace('\n',"<br />"), comments );
+                
+                m_infoDialogBrowser->setText( text );
+                m_mineMayBeDuplicateButton->setEnabled( true );
             }
-            
-            QString text = 
-            QString("<strong>Bug ID:</strong> %1<br /><strong>Product:</strong> %2/%3<br />"
-            "<strong>Short Description:</strong> %4<br /><strong>Status:</strong> %5<br />"
-            "<strong>Resolution:</strong> %6<br /><strong>Full Description:</strong><br /> %7<br /><br />"
-            "<strong>Comments:</strong> %8")
-            .arg( report->bugNumber(), report->product(), report->component(),
-            report->shortDescription(), report->bugStatus(),
-            report->resolution(), report->getDescription().replace('\n',"<br />"), comments );
-            
-            m_infoDialogBrowser->setText( text );
         }
     }
     else
     {
-        m_infoDialogBrowser->setText( "Error on fetching bug report" );
+        bugFetchError( QString("Invalid report") );
     }
     
     delete report;
@@ -709,31 +744,44 @@ void BugzillaDuplicatesPage::bugFetchFinished( BugReport* report )
 
 void BugzillaDuplicatesPage::aboutToShow()
 {
-    if( !m_searching )
-    {
-        m_bugListWidget->clear();
-        qDebug() << "starting search";
+    //This shouldn't happen as I can't move page when I'm searching
+    Q_ASSERT( !m_searching );
+    
+    //If I never searched before, performSearch
+    if ( m_bugListWidget->topLevelItemCount() == 0)
         performSearch();
-    } 
+    else
+        setIdle( true );
+}
+
+void BugzillaDuplicatesPage::aboutToHide()
+{
+    if( (m_foundDuplicateCheckBox->checkState() == Qt::Checked)
+        && !m_possibleDuplicateEdit->text().isEmpty() ) 
+    {
+        m_crashInfo->setPossibleDuplicate( m_possibleDuplicateEdit->text() );
+    }
+
 }
 
 void BugzillaDuplicatesPage::performSearch()
 {
-    emit setNextButton( false );
-    
+    setBusy(); //Don't allow go back/next
+
     m_searching = true;
-    m_bugListWidget->setEnabled( false );
+
+    enableControls( false );
     
     QString startDateStr = m_startDate.toString("yyyy-MM-dd");
     QString endDateStr = m_endDate.toString("yyyy-MM-dd");
     
     m_searchingLabel->setText( QString("Searching for duplicates (from %1 to %2) ...").arg( startDateStr, endDateStr ) );
-    m_searchMoreButton->setEnabled( false );
     
-   m_crashInfo->getBZ()->searchBugs( m_crashInfo->getReport()->shortDescription(), m_crashInfo->getProductName(), "crash", startDateStr, endDateStr , m_crashInfo->getBacktraceInfo()->getFirstValidFunctions() );
+    m_crashInfo->getBZ()->searchBugs( m_crashInfo->getReport()->shortDescription(), m_crashInfo->getProductName(), "crash", startDateStr, endDateStr , m_crashInfo->getBacktraceInfo()->getFirstValidFunctions() );
    
-   //Test search
+   //Test search TODO change to original 
    //m_crashInfo->getBZ()->searchBugs( "plasma crash folder view", "plasma", "crash", startDateStr, endDateStr , "labelRectangle" );
+   
 }
 
 void BugzillaDuplicatesPage::searchMore()
@@ -748,8 +796,6 @@ void BugzillaDuplicatesPage::searchMore()
 void BugzillaDuplicatesPage::searchFinished( const BugMapList & list )
 {
     m_searching = false;
-    m_bugListWidget->setEnabled( true );
-    emit setNextButton( true );
     
     int results = list.count();
     if( results > 0 )
@@ -765,21 +811,29 @@ void BugzillaDuplicatesPage::searchFinished( const BugMapList & list )
         }
         
         m_bugListWidget->sortItems( 0 , Qt::DescendingOrder );
+
+        enableControls( true );
         
-        if( m_startDate.year() > 1996 )
-            m_searchMoreButton->setEnabled( true );
+        if( m_startDate.year() < 2002 )
+            m_searchMoreButton->setEnabled( false );
+        
+        setIdle( true );
         
     } else {
 
-        if( m_startDate.year() > 1996 )
+        if( m_startDate.year() > 2002 )
         {
+            setIdle( false );
             searchMore();
         }
         else
         {
+            setIdle( true );
             m_searchingLabel->setText("Search Finished. No more possible date ranges to search"); //???TODO
+            
+            enableControls( true );
+            m_searchMoreButton->setEnabled( false );
         }
-    
     }
 }
 
@@ -789,7 +843,7 @@ BugzillaInformationPage::BugzillaInformationPage( CrashInfo * info )
 {
     m_titleLabel = new QLabel("Title of the bug report");
     m_titleEdit = new KLineEdit();
-    connect( m_titleEdit, SIGNAL(textChanged()), this, SLOT(checkTexts()) );
+    connect( m_titleEdit, SIGNAL(textChanged(QString)), this, SLOT(checkTexts()) );
     
     m_detailsLabel = new QLabel( "Details of the crash situation" );
     m_detailsEdit = new KTextEdit();
@@ -800,7 +854,6 @@ BugzillaInformationPage::BugzillaInformationPage( CrashInfo * info )
     connect( m_reproduceEdit, SIGNAL(textChanged()), this, SLOT(checkTexts()) );
 
     QVBoxLayout * layout = new QVBoxLayout();
-    
     layout->addWidget( new QLabel( "Some explanation about this step ??" ) );
     layout->addWidget( m_titleLabel );
     layout->addWidget( m_titleEdit );
@@ -841,7 +894,7 @@ void BugzillaInformationPage::checkTexts()
     //TODO check texts lenght ?
     // discuss lenghts
     
-    emit setNextButton( !empty );
+    setNextButton( !empty );
 }
 
 void BugzillaInformationPage::aboutToHide()
@@ -873,6 +926,9 @@ void BugzillaCommitPage::aboutToShow()
     m_statusBrowser->setText("Commiting report");
     m_crashInfo->commitBugReport();
     m_statusBrowser->setText("NOT YET!! :( . Press Cancel");
+    
+    
+    m_statusBrowser->setText( "This is the result report:<br /><br />" + m_crashInfo->getReport()->toHtml() );
 }
 
 void BugzillaCommitPage::commited()

@@ -63,6 +63,8 @@ class BugReport
         void setValid( bool valid ) { m_isValid = valid; }
         bool isValid() { return m_isValid; }
         
+        QString toHtml();
+        
     private:
         
         bool        m_isValid;
@@ -82,6 +84,7 @@ class BugReportXMLParser
     public:
         BugReportXMLParser( QByteArray );
         BugReport * parse();
+        bool isValid() { return m_valid; }
         
     private:
         bool            m_valid;
@@ -94,9 +97,11 @@ class BugListCSVParser
 {
     public:
         BugListCSVParser( QByteArray );
+        bool isValid() { return m_isValid; }
         BugMapList parse();
         
     private:
+        bool m_isValid;
         QByteArray  m_data;
 };
 
@@ -129,11 +134,18 @@ class BugzillaManager : public QObject
         void bugReportFetched( BugReport* );
         void searchFinished( BugMapList );
         void reportCommited( ); //???RESULT ?
+        
+        void searchError( QString );
+        void bugReportError( QString );
 
     private:
+    
         QString     m_username;
         QString     m_password;
         bool        m_logged;
+        
+        KJob *  fetchBugJob;
+
 
 };
 

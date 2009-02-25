@@ -71,13 +71,15 @@ class CrashInfo : public QObject
     
     BugzillaManager * getBZ() { return m_bugzilla; };
     
-    //Future bug report data
+    //Future bug report data & functions
     BugReport * getReport() { return m_report; }
     
     void setDetailText( QString text ) { m_userDetailText = text; }
     void setReproduceText( QString text ) { m_userReproduceText = text; }
+    void setPossibleDuplicate( QString bug ) { m_possibleDuplicate = bug; }
     
     void fillReportFields();
+    
     void commitBugReport();
     
   Q_SIGNALS:
@@ -109,6 +111,7 @@ class CrashInfo : public QObject
     
     QString             m_userDetailText;
     QString             m_userReproduceText;
+    QString             m_possibleDuplicate;
 };
 
 #endif

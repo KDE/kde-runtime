@@ -81,7 +81,8 @@ void GetBacktraceWidget::regenerateBacktrace()
     
     crashInfo->generateBacktrace();
     
-    emit setNextButton( crashInfo->getBacktraceState() != CrashInfo::NonLoaded &&  crashInfo->getBacktraceState() != CrashInfo::Loading );
+    // bool canChangePage = crashInfo->getBacktraceState() != CrashInfo::NonLoaded &&  crashInfo->getBacktraceState() != CrashInfo::Loading;
+    emit setBusy();
 }
 
 void GetBacktraceWidget::generateBacktrace()
@@ -159,8 +160,10 @@ void GetBacktraceWidget::backtraceGenerated()
         ui.m_reloadBacktraceButton->setEnabled( true );
     }
     
-    emit setNextButton( crashInfo->getBacktraceState() != CrashInfo::NonLoaded &&  
-        crashInfo->getBacktraceState() != CrashInfo::Loading );
+    bool canChange = crashInfo->getBacktraceState() != CrashInfo::NonLoaded &&  
+        crashInfo->getBacktraceState() != CrashInfo::Loading;
+    
+    emit setIdle( canChange );
 }
 
 void GetBacktraceWidget::copyClicked()

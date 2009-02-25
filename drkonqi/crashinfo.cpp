@@ -176,18 +176,22 @@ QString CrashInfo::generateReportTemplate()
     if( m_userCanDetail )
         report.append( QString("<br />What I was doing when the application crashed:<br />") );
         if( !m_userDetailText.isEmpty() )
+        {
             report.append( m_userDetailText );
-        else
+        } else {
             report.append( QString("[Insert the details here]") );
+        }
 
     report.append( QString("<br />") ) ;
     
     if( m_userCanReproduce )
         report.append( QString("<br />How to reproduce the crash:<br />") );
         if( !m_userReproduceText.isEmpty() )
+        {
             report.append( m_userReproduceText );
-        else
+        } else {
             report.append( QString("[Insert the steps here]") );
+        }
         
     report.append( QString("<br />") ) ;
     
@@ -200,6 +204,9 @@ QString CrashInfo::generateReportTemplate()
         report.append( QString("<br />Backtrace:<br />----<br /><br />%1<br />--------").arg(formattedBacktrace) );
     }
 
+    if( !m_possibleDuplicate.isEmpty() )
+        report.append( "<br /><br />This bug may be duplicate/related to bug " + m_possibleDuplicate );
+        
     return report;
 }
 
@@ -220,4 +227,6 @@ void CrashInfo::fillReportFields()
     m_report->setBugSeverity( QLatin1String("crash") );
     m_report->setDescription( generateReportTemplate() );
     m_report->setValid( true );
+    
+    
 }

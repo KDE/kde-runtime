@@ -26,6 +26,8 @@
 
 #include "crashinfo.h"
 
+class DrKonqiAssistantPage;
+
 class IntroductionPage;
 class CrashInformationPage;
 class BugAwarenessPage;
@@ -38,44 +40,36 @@ class BugzillaCommitPage;
 
 class DrKonqiBugReport: public KAssistantDialog
 {
-  Q_OBJECT
+    Q_OBJECT
 
-  //enum{ Page_Intro, Page_FetchInformation, Page_BugAwareness, Page_Result };
-  
-  public:
-    explicit DrKonqiBugReport( CrashInfo *, QWidget * parent = 0);
-    ~DrKonqiBugReport();
+    public:
+        explicit DrKonqiBugReport( CrashInfo *, QWidget * parent = 0);
+        ~DrKonqiBugReport();
+        
+    private:
+        
+        //Page widgets
+        IntroductionPage *          m_intro;
+        CrashInformationPage *      m_backtrace;
+        BugAwarenessPage *          m_awareness;
+        ConclusionPage *            m_conclusions;
+        BugzillaLoginPage *         m_bugzillaLogin;
+        BugzillaKeywordsPage *      m_bugzillaKeywords;
+        BugzillaDuplicatesPage *    m_bugzillaDuplicates;
+        BugzillaInformationPage *   m_bugzillaInformation;
+        BugzillaCommitPage *        m_bugzillaCommit;
+        
+        CrashInfo *                 m_crashInfo;
+        
+    private Q_SLOTS:
+        void currentPageChanged_slot(KPageWidgetItem *, KPageWidgetItem *);  
+        
+        void enableNextButton( bool );
+        void enableBackButton( bool );
+        
+    private:
     
-  private:
-    
-    IntroductionPage *          m_intro;
-    CrashInformationPage *      m_backtrace;
-    BugAwarenessPage *          m_awareness;
-    ConclusionPage *            m_conclusions;
-    BugzillaLoginPage *         m_bugzillaLogin;
-    BugzillaKeywordsPage *      m_bugzillaKeywords;
-    BugzillaDuplicatesPage *    m_bugzillaDuplicates;
-    BugzillaInformationPage *   m_bugzillaInformation;
-    BugzillaCommitPage *        m_bugzillaCommit;
-    
-    KPageWidgetItem *           m_introPage;
-    KPageWidgetItem *           m_backtracePage;
-    KPageWidgetItem *           m_awarenessPage;
-    KPageWidgetItem *           m_conclusionsPage;
-    KPageWidgetItem *           m_bugzillaLoginPage;
-    KPageWidgetItem *           m_bugzillaKeywordsPage;
-    KPageWidgetItem *           m_bugzillaDuplicatesPage;
-    KPageWidgetItem *           m_bugzillaInformationPage;
-    KPageWidgetItem *           m_bugzillaCommitPage;
-    
-    CrashInfo *                 m_crashInfo;
-    
-  private Q_SLOTS:
-    
-    void currentPageChanged_slot(KPageWidgetItem *, KPageWidgetItem *);  
-    
-    void enableNextButton( bool );
-
+        void connectSignals( DrKonqiAssistantPage * );
 };
 
 #endif

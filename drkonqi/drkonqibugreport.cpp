@@ -32,66 +32,68 @@ DrKonqiBugReport::DrKonqiBugReport( CrashInfo * crash, QWidget * parent ) :
     
     //Introduction Page
     m_intro = new IntroductionPage();
-    m_introPage = new KPageWidgetItem( m_intro, "Intro" );
+    connectSignals( m_intro );
+    KPageWidgetItem * m_introPage = new KPageWidgetItem( m_intro, "Intro" );
     m_introPage->setHeader( "Introduction" );
     m_introPage->setIcon( KIcon("tools-report-bug") );
     
     //Crash Information Page
     m_backtrace = new CrashInformationPage( m_crashInfo );
-    connect( m_backtrace, SIGNAL(setNextButton(bool)), this, SLOT(enableNextButton(bool)) );
-    m_backtracePage = new KPageWidgetItem( m_backtrace , "Backtrace" );
+    connectSignals( m_backtrace );
+    KPageWidgetItem * m_backtracePage = new KPageWidgetItem( m_backtrace , "Backtrace" );
     m_backtracePage->setHeader( "Crash Information (Backtrace)" );
     m_backtracePage->setIcon( KIcon("tools-report-bug") );
 
     //Bug Awareness Page
     m_awareness = new BugAwarenessPage( m_crashInfo );
-    m_awarenessPage = new KPageWidgetItem( m_awareness, "Awareness" );
+    connectSignals( m_awareness );
+    KPageWidgetItem * m_awarenessPage = new KPageWidgetItem( m_awareness, "Awareness" );
     m_awarenessPage->setHeader( "What do you know about the crash ?" );
     m_awarenessPage->setIcon( KIcon("tools-report-bug") );
 
     //Results Page
     m_conclusions = new ConclusionPage( m_crashInfo );
-    connect( m_conclusions, SIGNAL(setNextButton(bool)), this, SLOT(enableNextButton(bool)) );
-    m_conclusionsPage = new KPageWidgetItem( m_conclusions , "Results" );
+    connectSignals( m_conclusions );
+    KPageWidgetItem * m_conclusionsPage = new KPageWidgetItem( m_conclusions , "Results" );
     m_conclusionsPage->setHeader( "Crash Analysis Results" );
     m_conclusionsPage->setIcon( KIcon("tools-report-bug") );
     
     //Bugzilla Login
     m_bugzillaLogin =  new BugzillaLoginPage( m_crashInfo );
-    connect( m_bugzillaLogin, SIGNAL(setNextButton(bool)), this, SLOT(enableNextButton(bool)) );
-    m_bugzillaLoginPage = new KPageWidgetItem( m_bugzillaLogin, "BugzillaLogin");
+    connectSignals( m_bugzillaLogin );
+    KPageWidgetItem * m_bugzillaLoginPage = new KPageWidgetItem( m_bugzillaLogin, "BugzillaLogin");
     m_bugzillaLoginPage->setHeader( "KDE Bugtracker Login" );
     m_bugzillaLoginPage->setIcon( KIcon("tools-report-bug") );
     
     //Bugzilla keywords
     m_bugzillaKeywords =  new BugzillaKeywordsPage( m_crashInfo );
-    connect( m_bugzillaKeywords, SIGNAL(setNextButton(bool)), this, SLOT(enableNextButton(bool)) );
-    m_bugzillaKeywordsPage = new KPageWidgetItem( m_bugzillaKeywords, "BugzillaKeywords");
+    connectSignals( m_bugzillaKeywords ); 
+    KPageWidgetItem * m_bugzillaKeywordsPage = new KPageWidgetItem( m_bugzillaKeywords, "BugzillaKeywords");
     m_bugzillaKeywordsPage->setHeader( "Bug Report Keywords" );
     m_bugzillaKeywordsPage->setIcon( KIcon("tools-report-bug") );
     
     //Bugzilla duplicates
     m_bugzillaDuplicates =  new BugzillaDuplicatesPage( m_crashInfo );
-    connect( m_bugzillaDuplicates, SIGNAL(setNextButton(bool)), this, SLOT(enableNextButton(bool)) );
-    m_bugzillaDuplicatesPage = new KPageWidgetItem( m_bugzillaDuplicates, "BugzillaDuplicates");
+    connectSignals( m_bugzillaDuplicates );
+    KPageWidgetItem * m_bugzillaDuplicatesPage = new KPageWidgetItem( m_bugzillaDuplicates, "BugzillaDuplicates");
     m_bugzillaDuplicatesPage->setHeader( "Bug Report Duplicate Listing" );
     m_bugzillaDuplicatesPage->setIcon( KIcon("tools-report-bug") );
  
     //Bugzilla information
     m_bugzillaInformation =  new BugzillaInformationPage( m_crashInfo );
-    connect( m_bugzillaInformation, SIGNAL(setNextButton(bool)), this, SLOT(enableNextButton(bool)) );
-    m_bugzillaInformationPage = new KPageWidgetItem( m_bugzillaInformation, "BugzillaInformation");
+    connectSignals( m_bugzillaInformation );
+    KPageWidgetItem * m_bugzillaInformationPage = new KPageWidgetItem( m_bugzillaInformation, "BugzillaInformation");
     m_bugzillaInformationPage->setHeader( "Details of the Bug Report" );
     m_bugzillaInformationPage->setIcon( KIcon("tools-report-bug") );
 
     //Bugzilla commit
     m_bugzillaCommit =  new BugzillaCommitPage( m_crashInfo );
     //connect( m_bugzillaInformation, SIGNAL(setNextButton(bool)), this, SLOT(enableNextButton(bool)) );
-    m_bugzillaCommitPage = new KPageWidgetItem( m_bugzillaCommit, "BugzillaCommit");
+    KPageWidgetItem * m_bugzillaCommitPage = new KPageWidgetItem( m_bugzillaCommit, "BugzillaCommit");
     m_bugzillaCommitPage->setHeader( "Commit Page" ); //TODO better name ?
     m_bugzillaCommitPage->setIcon( KIcon("tools-report-bug") );
     
-    //TODO reorder
+    //TODO remember to get ordered
     addPage( m_introPage );
     addPage( m_backtracePage );
     addPage( m_awarenessPage );
@@ -111,14 +113,25 @@ DrKonqiBugReport::DrKonqiBugReport( CrashInfo * crash, QWidget * parent ) :
     
 }
 
-void DrKonqiBugReport::enableNextButton( bool enabled)
+DrKonqiBugReport::~DrKonqiBugReport()
+{
+    delete m_crashInfo;
+}
+
+void DrKonqiBugReport::connectSignals( DrKonqiAssistantPage * page )
+{
+    connect( page, SIGNAL(enableNextButton(bool)), this, SLOT(enableNextButton(bool)) );
+    connect( page, SIGNAL(enableBackButton(bool)), this, SLOT(enableBackButton(bool)) );
+}
+
+void DrKonqiBugReport::enableNextButton( bool enabled )
 {
     enableButton( KDialog::User2, enabled );
 }
 
-DrKonqiBugReport::~DrKonqiBugReport()
+void DrKonqiBugReport::enableBackButton( bool enabled )
 {
-    delete m_crashInfo;
+    enableButton( KDialog::User3, enabled );
 }
 
 void DrKonqiBugReport::currentPageChanged_slot(KPageWidgetItem * current , KPageWidgetItem * before)  
@@ -128,11 +141,11 @@ void DrKonqiBugReport::currentPageChanged_slot(KPageWidgetItem * current , KPage
     if(current)
         (dynamic_cast<DrKonqiAssistantPage*>(current->widget()))->aboutToShow();
     
-    else if( current->name() == "BugzillaCommit" )
+    if( current->name() == "BugzillaCommit" )
     {
         //Disable all buttons
         enableNextButton( false );
+        enableBackButton( false );
         enableButton( KDialog::User1, false );
-        enableButton( KDialog::User3, false );
     }
 }
