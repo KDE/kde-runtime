@@ -60,6 +60,11 @@ IntroductionPage::IntroductionPage() : DrKonqiAssistantPage()
     layout->addStretch();
     setLayout( layout );
 }
+void IntroductionPage::aboutToShow()
+{
+    setBackButton( false );
+    setNextButton( true );
+}
 
 //Backtrace page
 CrashInformationPage::CrashInformationPage( CrashInfo * crashInfo) 
@@ -417,6 +422,8 @@ void BugzillaLoginPage::aboutToShow()
         {
             if( KWallet::Wallet::walletList().contains("drkonqi") ) //Do not create the wallet on the first login
             {
+                setBackButton( false );
+                
                 m_wallet = KWallet::Wallet::openWallet("drkonqi", 0 );
                 
                 if( m_wallet )
@@ -434,6 +441,10 @@ void BugzillaLoginPage::aboutToShow()
                         m_passwordEdit->setText( password );
                         loginClicked();
                     }
+                }
+                else
+                {
+                    setBackButton( true );
                 }
             }
         }
@@ -901,8 +912,8 @@ void BugzillaInformationPage::aboutToHide()
 {
     //Save fields data
     m_crashInfo->getReport()->setShortDescription( m_titleEdit->text() );
-    m_crashInfo->setDetailText( m_detailsEdit->toHtml() );
-    m_crashInfo->setReproduceText( m_reproduceEdit->toHtml() );
+    m_crashInfo->setDetailText( m_detailsEdit->toPlainText() );
+    m_crashInfo->setReproduceText( m_reproduceEdit->toPlainText() );
 }
 
 
@@ -910,7 +921,7 @@ BugzillaCommitPage::BugzillaCommitPage( CrashInfo * info )
     : DrKonqiAssistantPage(),
     m_crashInfo( info )
 {
-    connect( m_crashInfo->getBZ(), SIGNAL(reportCommited()), this, SLOT(commited()) );
+    connect( m_crashInfo->getBZ(), SIGNAL(reportCommited(int)), this, SLOT(commited(int)) );
     
     m_statusBrowser = new KTextBrowser();
     
@@ -923,17 +934,13 @@ void BugzillaCommitPage::aboutToShow()
 {
     m_statusBrowser->setText("Generating report");
     m_crashInfo->fillReportFields();
-    m_statusBrowser->setText("Commiting report");
+    m_statusBrowser->setText("Commiting report...");
     m_crashInfo->commitBugReport();
-    m_statusBrowser->setText("NOT YET!! :( . Press Cancel");
-    
-    
-    m_statusBrowser->setText( "This is the result report:<br /><br />" + m_crashInfo->getReport()->toHtml() );
 }
 
-void BugzillaCommitPage::commited()
+void BugzillaCommitPage::commited( int bug_id )
 {
-    m_statusBrowser->setText("Report commited !!!");
+    m_statusBrowser->setText("Report commited at :: " + QString::number( bug_id ) );
     //TODO show url
     // enable finish button
 }

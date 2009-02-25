@@ -127,13 +127,13 @@ class BugzillaManager : public QObject
         void loginDone(KJob*);
         void fetchBugReportDone(KJob*);
         void searchBugsDone(KJob*);
-        void commitReportDone(KJob*){} //TODO
+        void commitReportDone(KJob*);
         
     Q_SIGNALS:
         void loginFinished( bool );
         void bugReportFetched( BugReport* );
         void searchFinished( BugMapList );
-        void reportCommited( ); //???RESULT ?
+        void reportCommited( int ); //???RESULT ?
         
         void searchError( QString );
         void bugReportError( QString );

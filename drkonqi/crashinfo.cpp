@@ -153,25 +153,46 @@ QString CrashInfo::getOS()
     return m_OS;
 }
 
+QString CrashInfo::getBaseOS()
+{
+    if( m_baseOS.isEmpty() ) //Fetch OS name (for bug report)
+    {
+        QProcess process;
+        process.start("uname -s");
+        process.waitForFinished(-1);
+        QByteArray os = process.readAllStandardOutput();
+        os.chop(1);
+        m_baseOS = QString(os);
+    }
+    return m_baseOS;
+}
+
 QString CrashInfo::getDebugger()
 {
     return m_crashConfig->tryExec();
 }
 
-QString CrashInfo::generateReportTemplate()
+QString CrashInfo::generateReportTemplate( bool bugzilla )
 {
+    QString lineBreak = QLatin1String("<br />");
+    if ( bugzilla )
+        lineBreak = QLatin1String("\n");
+        
     QString report;
     
-    report.append( QString("KDE Version: %1<br />Qt Version: %2<br />Operating System: %3<br />Application that crashed: %4"
-    "<br />Version of the application: %5").arg( getKDEVersion(), getQtVersion(), getOS(), getProductName(), getProductVersion() )  );
+    report.append( QString("KDE Version: %1").arg( getKDEVersion() ) + lineBreak);
+    report.append( QString("Qt Version: %1").arg( getQtVersion() ) + lineBreak );
+    report.append( QString("Operating System: %1").arg( getOS() ) + lineBreak );
+    report.append( QString("Application that crashed: %1").arg( getProductName() ) + lineBreak );
+    report.append( QString("Version of the application: %1").arg( getProductVersion() ) + lineBreak );
     
     if ( !m_report->shortDescription().isEmpty() )
-        report.append( QString("<br /><br />Title: %1").arg( m_report->shortDescription() ) );
+        report.append( lineBreak + lineBreak + QString("Title: %1").arg( m_report->shortDescription() ) );
     
-    report.append( QString("<br /><br />") );
+    report.append( lineBreak );
     
     if( m_userCanDetail )
-        report.append( QString("<br />What I was doing when the application crashed:<br />") );
+        report.append( lineBreak + QString("What I was doing when the application crashed:") + lineBreak);
         if( !m_userDetailText.isEmpty() )
         {
             report.append( m_userDetailText );
@@ -179,10 +200,10 @@ QString CrashInfo::generateReportTemplate()
             report.append( QString("[Insert the details here]") );
         }
 
-    report.append( QString("<br />") ) ;
+    report.append( lineBreak ) ;
     
     if( m_userCanReproduce )
-        report.append( QString("<br />How to reproduce the crash:<br />") );
+        report.append( lineBreak + QString("How to reproduce the crash:") + lineBreak);
         if( !m_userReproduceText.isEmpty() )
         {
             report.append( m_userReproduceText );
@@ -190,19 +211,21 @@ QString CrashInfo::generateReportTemplate()
             report.append( QString("[Insert the steps here]") );
         }
         
-    report.append( QString("<br />") ) ;
+    report.append( lineBreak ) ;
     
     if( m_backtraceParser->backtraceUsefulness() != BacktraceParser::Useless )
     {
         QString formattedBacktrace = m_backtraceOutput;
-        formattedBacktrace.replace('\n', "<br />");
+        if (!bugzilla)
+            formattedBacktrace.replace('\n', "<br />");
         formattedBacktrace = formattedBacktrace.trimmed();
         
-        report.append( QString("<br />Backtrace:<br />----<br /><br />%1<br />--------").arg(formattedBacktrace) );
+        report.append( lineBreak + QString("Backtrace:") + lineBreak + QString("----") 
+        + lineBreak + lineBreak + formattedBacktrace + lineBreak + QString("----") );
     }
 
     if( !m_possibleDuplicate.isEmpty() )
-        report.append( "<br /><br />This bug may be duplicate/related to bug " + m_possibleDuplicate );
+        report.append( lineBreak + lineBreak + QString("This bug may be duplicate/related to bug %1").arg(m_possibleDuplicate) );
         
     return report;
 }
@@ -210,7 +233,7 @@ QString CrashInfo::generateReportTemplate()
 void CrashInfo::commitBugReport()
 {
     //Commit
-    //m_bugzillaManager->commitReport( m_report, getKDEVersion() );
+    m_bugzilla->commitReport( m_report );
 }
 
 void CrashInfo::fillReportFields()
@@ -218,11 +241,11 @@ void CrashInfo::fillReportFields()
     m_report->setProduct( getProductName() );
     m_report->setComponent( QLatin1String("general") );
     m_report->setVersion( getProductVersion() );
-    m_report->setOperatingSystem( getOS() );
+    m_report->setOperatingSystem( getBaseOS() );
     m_report->setBugStatus( QLatin1String("UNCONFIRMED") );
     m_report->setPriority( QLatin1String("NOR") );
     m_report->setBugSeverity( QLatin1String("crash") );
-    m_report->setDescription( generateReportTemplate() );
+    m_report->setDescription( generateReportTemplate( true ) );
     m_report->setValid( true );
     
     

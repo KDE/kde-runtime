@@ -44,6 +44,10 @@ DrKonqiDialog::DrKonqiDialog(KrashConfig * conf, QWidget * parent) :
 {
     m_crashInfo = new CrashInfo(conf);
     
+    //connect( m_crashInfo->getBZ(), SIGNAL(loginFinished(bool)), this, SLOT(fin(bool)) );
+    //m_crashInfo->getBZ()->setLoginData( "", "" );
+    //m_crashInfo->getBZ()->tryLogin();
+    
     setCaption( i18n("An Error Ocurred") );
     setWindowIcon( KIcon("tools-report-bug") );
 
@@ -114,6 +118,29 @@ DrKonqiDialog::DrKonqiDialog(KrashConfig * conf, QWidget * parent) :
     setDefaultButton( KDialog::Close );
     setButtonFocus( KDialog::Close );    
 }
+
+void DrKonqiDialog::fin( bool log )
+{
+    if(log)
+    {
+        qDebug() << "commit";
+            
+        BugReport * m_report = new BugReport();
+        m_report->setProduct( QLatin1String("konqueror") );
+        m_report->setComponent( QLatin1String("general") );
+        m_report->setVersion( QLatin1String("4.1.5") );
+        m_report->setOperatingSystem( QLatin1String("Linux") );
+        m_report->setBugStatus( QLatin1String("UNCONFIRMED") );
+        m_report->setPriority( QLatin1String("NOR") );
+        m_report->setBugSeverity( QLatin1String("crash") );
+        m_report->setShortDescription( QLatin1String( "some test report" ) );
+        m_report->setDescription( QLatin1String("Testtttttttttt") );
+        m_report->setValid( true );
+        m_crashInfo->getBZ()->commitReport( m_report );
+    }
+
+}
+
 
 void DrKonqiDialog::reportBugAssistant()
 {

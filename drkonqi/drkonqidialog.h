@@ -43,6 +43,7 @@ class DrKonqiDialog: public KDialog
         void toggleBacktrace();
         void reportBugAssistant();
         
+        void fin(bool);
     private:
     
         AboutBugReportingDialog *       m_aboutBugReportingDialog;

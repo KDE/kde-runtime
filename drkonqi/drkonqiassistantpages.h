@@ -83,6 +83,11 @@ class DrKonqiAssistantPage: public QWidget
             emit enableNextButton( showNext );
         }
         
+        void setBackButton( bool showBack )
+        {
+            emit enableBackButton( showBack );
+        }
+        
     Q_SIGNALS:
         //Enable/disable buttons on the assistant based on the widget state
         void enableNextButton( bool );
@@ -103,7 +108,7 @@ class IntroductionPage: public DrKonqiAssistantPage
     public:
         IntroductionPage( );
         
-        void aboutToShow() {}
+        void aboutToShow();
         void aboutToHide() {}
 };
 
@@ -304,7 +309,7 @@ class BugzillaCommitPage : public DrKonqiAssistantPage
         void aboutToHide() {}
         
     private Q_SLOTS:
-        void commited();
+        void commited(int);
         
     private:
         

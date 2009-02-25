@@ -62,12 +62,13 @@ class CrashInfo : public QObject
     QString getKDEVersion() { return KDE_VERSION_STRING; } 
     QString getQtVersion() { return QT_VERSION_STR; }
     QString getOS();
+    QString getBaseOS();
     QString getProductName();
     QString getProductVersion();
     
     QString getDebugger();
     
-    QString generateReportTemplate();
+    QString generateReportTemplate( bool bugzilla = false );
     
     BugzillaManager * getBZ() { return m_bugzilla; };
     
@@ -105,6 +106,7 @@ class CrashInfo : public QObject
     bool                m_userGetCompromise;
   
     QString             m_OS;
+    QString             m_baseOS;
     
     BugzillaManager *   m_bugzilla;
     BugReport *         m_report;

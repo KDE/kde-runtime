@@ -18,7 +18,7 @@
 static const char columns[] = "bug_severity,priority,bug_status,product,short_desc"; //resolution,
 
 //BKO URLs
-static const char bugtrackerBaseUrl[] = "https://bugs.kde.org/"; //TODO change to correct HTTPS
+static const char bugtrackerBaseUrl[] = "http://bugstest.kde.org/"; //TODO change to correct HTTPS BKO
 
 static const char loginUrl[] = "index.cgi";
 static const char loginParams[] = "GoAheadAndLogIn=1&Bugzilla_login=%1&Bugzilla_password=%2&log_in=Log+in";
@@ -27,6 +27,10 @@ static const char searchUrl[] = "buglist.cgi?query_format=advanced&short_desc_ty
 // short_desc, product, long_desc(possible backtraces lines), searchFrom, searchTo, severity, columnList
 
 static const char fetchBugUrl[] = "show_bug.cgi?id=%1&ctype=xml";
+
+static const char commitReportUrl[] = "post_bug.cgi";
+static const char commitReportParams[] = "product=%1&component=%2&bug_severity=%3&rep_platform=%4&op_sys=%5&priority=%6&bug_status=%7&short_desc=%8&comment=%9";
+//version=%3&
 
 BugzillaManager::BugzillaManager():
     QObject(),
@@ -47,7 +51,7 @@ void BugzillaManager::tryLogin()
     if ( !m_logged )
     {
         QString params = QString( loginParams ).arg( m_username, m_password );
-        QByteArray postData = params.toLatin1();
+        QByteArray postData = params.toUtf8();
         
         KIO::StoredTransferJob * loginJob = 
             KIO::storedHttpPost( postData, KUrl( QString(bugtrackerBaseUrl) + QString(loginUrl) ), KIO::HideProgressInfo );
@@ -146,16 +150,69 @@ void BugzillaManager::searchBugsDone( KJob * job )
 
 void BugzillaManager::commitReport( BugReport * report )
 {
-    Q_UNUSED( report );
-
-    QByteArray postData;
-    QString url = "";
+    QString postDataStr = QString( commitReportParams );
+    postDataStr = postDataStr.arg( report->product(), report->component(), report->bugSeverity(),
+        QString("Unlisted Binaries"), report->operatingSystem(), report->priority(), report->bugStatus(), report->shortDescription(),
+        report->getDescription() );
+        
+    //QString("unspecified"), 
+    
+    /*
+    postData.replace( QByteArray("%1"), report->product().toUtf8() );
+    postData.replace( QByteArray("%2"), report->component().toUtf8() );
+    postData.replace( QByteArray("%3"), QString("unspecified").toUtf8() ); //way to get valid versions
+    postData.replace( QByteArray("%4"), report->bugSeverity().toUtf8() );
+    postData.replace( QByteArray("%5"), QString("Unlisted Binaries").toUtf8() ); // detect distro ?
+    postData.replace( QByteArray("%6"), report->operatingSystem().toUtf8() );
+    postData.replace( QByteArray("%7"), report->priority().toUtf8() );
+    postData.replace( QByteArray("%8"), report->bugStatus().toUtf8() );
+    postData.replace( QByteArray("%9"), report->shortDescription().toUtf8() );
+    postData.replace( QByteArray("%D"), report->getDescription().toUtf8() );
+    */
+    
+    QByteArray postData = postDataStr.toUtf8();
+    
+    QString url = QString( bugtrackerBaseUrl ) + QString( commitReportUrl );
     
     KIO::StoredTransferJob * commitJob = 
             KIO::storedHttpPost( postData, KUrl( url ), KIO::HideProgressInfo );
             
+    commitJob->addMetaData("content-type", "Content-Type: application/x-www-form-urlencoded");
+    commitJob->start();
+    
     connect( commitJob, SIGNAL(finished(KJob*)) , this, SLOT(commitReportDone(KJob*)) );
 }
+
+
+void BugzillaManager::commitReportDone( KJob * job )
+{
+    qDebug() << "done";
+    if( !job->error() )
+    {
+        KIO::StoredTransferJob * commitJob = (KIO::StoredTransferJob *)job;
+        QString response = commitJob->data();
+  
+        qDebug() << response;
+        
+        if( response.contains("<title>Bug ") )
+        {
+            QString string1 = QLatin1String("<title>Bug ");
+            QString string2 = QLatin1String(" Submitted</title>");
+            int index1 = response.indexOf( string1 );
+            QString number = response.mid( index1+string1.size()   );
+            number = number.mid(0, number.indexOf( string2 ) );
+            
+            int bug_id = number.toInt();
+            
+            emit reportCommited( bug_id );
+        }
+        else
+        {
+            qDebug() << "err";
+        }
+    }
+}
+
 
 BugListCSVParser::BugListCSVParser( QByteArray data )
 {
