@@ -2,4 +2,12 @@
 Encoding=UTF-8
 Type=Directory
 Name=File download and sharing
+Name[et]=Failide allalaadimine ja jagamine
+Name[ga]=Íosluchtú agus comhroinnt
+Name[nds]=Dateien daalladen un delen
+Name[pt]=Recepção e partilha de ficheiros
+Name[pt_BR]=Download e compartilhamento de arquivos
+Name[sv]=Filnerladdning och delning
+Name[uk]=Звантаження і спільне використання файлів
+Name[zh_TW]=檔案下載與分享
 Icon=ktorrent

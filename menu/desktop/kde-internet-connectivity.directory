@@ -2,5 +2,13 @@
 Encoding=UTF-8
 Type=Directory
 Name=Connectivity
+Name[et]=Võrk
+Name[ga]=Comhcheangailteacht
+Name[nds]=Verbinnen
+Name[pt]=Conectividade
+Name[pt_BR]=Conectividade
+Name[sv]=Anslutningar
+Name[uk]=З'єднання
+Name[zh_TW]=連線
 Icon=krdc
 Version=1.0

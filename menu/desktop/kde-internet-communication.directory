@@ -2,4 +2,12 @@
 Encoding=UTF-8
 Type=Directory
 Name=Communication
+Name[et]=Suhtlemine
+Name[ga]=Cumarsáid
+Name[nds]=Snacken
+Name[pt]=Comunicação
+Name[pt_BR]=Comunicação
+Name[sv]=Kommunikation
+Name[uk]=Обмін даними
+Name[zh_TW]=通訊
 Icon=preferences-contact-list

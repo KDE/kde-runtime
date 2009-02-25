@@ -82,7 +82,7 @@ Comment[bn_IN]=ব্যবহারকারীদের জন্য পছন
 Comment[br]=Kefluniadur azas evit implijerien diwezh
 Comment[ca]=Paràmetres preferits pels usuaris finals
 Comment[ca@valencia]=Paràmetres preferits pels usuaris finals
-Comment[cs]=Nastavení pro koncového uživatele.
+Comment[cs]=Nastavení pro koncového uživatele
 Comment[csb]=Nastôw dlô kùńcowich brëkòwników
 Comment[cy]=Gosodiadau hoffiannus i  ddefnyddwyr diwedd
 Comment[da]=Indstillinger foretrukket for slutbrugere
@@ -237,7 +237,7 @@ Name[be@latin]=Kali łaska, dapamažy nam udaskanalić hetuju prahramu - pavieda
 Name[bg]=Моля, помогнете ни да подобрим софтуера като съобщите за тази грешка на <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Опишете как е възникнала грешката, кои документи са били заредени и т.н.
 Name[ca]=Si us plau, ajudeu-nos a millorar el programari que utilitzeu omplint un informe a <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Els detalls útils són com reproduir l'error, el documents carregats,  etc.
 Name[ca@valencia]=Per favor, ajudeu-nos a millorar el programari que utilitzeu omplint un informe a <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Els detalls útils són com reproduir l'error, el documents carregats,  etc.
-Name[cs]=Prosím pomožte nám zlepšit software, který používáte tak, že vyplníte hlášení o chybě na <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Užitečnými detaily je např. postup jak chybu vyvolat, otevřené dokumenty atd.
+Name[cs]=Pomozte nám, prosím, zlepšit software, který používáte, tak, že vyplníte hlášení o chybě na <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Užitečnými detaily je např. postup, jak chybu vyvolat, otevřené dokumenty atd.
 Name[csb]=Proszëmë pòmòżë nama zlepszac softwôrã jaką brëkùjesz, przez sélanié nama ze starnë <a href="http://bugs.kde.org">http://bugs.kde.org</a> rapòrtów ò felach. Dodôwnô akùratnô wëdowiédzô pòmòże nama rëmac felë, z przerôbianëch dokùmentów.
 Name[da]=Hjælp os gerne med at forbedre softwaren som du bruger ved at rapportere til <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Nyttige informationer omfatter hvordan fejlen kan reproduceres, dokumenter som blev indlæst, osv.
 Name[de]=Bitte helfen Sie uns dabei, die von Ihnen verwendeten Programme zu verbessern, indem Sie unter <a href="http://bugs.kde.org">http://bugs.kde.org</a> einen Fehlerbericht schreiben. Nützliche Informationen sind z. B. wie der Fehler reproduziert werden kann, welche Dokumente geladen waren usw.
@@ -309,6 +309,7 @@ Comment[bn_IN]=কোনো অ্যাপলিকেশন SIGILL সিগ�
 Comment[br]=Un arload a vez kaset an arhent SIGILL dezhañ abalamour d'un draen peurvuiañ. Goulennet eo bet d'an arload enrollañ e zeulioù.
 Comment[ca]=Bàsicament una aplicació rep el senyal SIGILL degut a un error a l'aplicació. Es demana a l'aplicació que desi els seus documents.
 Comment[ca@valencia]=Bàsicament una aplicació rep el senyal SIGILL degut a un error a l'aplicació. Es demana a l'aplicació que desi els seus documents.
+Comment[cs]=Aplikace obvykle obdrží signál SIGILL, protože je v ní nebo jiné aplikaci chyba. Aplikace byla požádána o uložení svých dokumentů.
 Comment[csb]=Programa dostôwô zwëczajno sygnal SIGILL z przëczënë felë w ni sómy. Wësłóno żądanié zapisania dokùmentów.
 Comment[cy]=Derbyna cymhwysiad yr arwydd SIGILL gan amlaf o achos nam yn y cymhwysiad. Gofynnwyd i'r cymhwysiad gadw ei ddogfennau.
 Comment[da]=Et program modtager som regel SIGILL-signalet når der er en fejl i programmet. Programmet blev bedt om at gemme sine dokumenter.
@@ -386,6 +387,7 @@ Comment[bn_IN]=কোনো অ্যাপলিকেশন SIGABRT সিগ�
 Comment[br]=Echuiñ a ra un arload gant un arhent SIGABRT p'en  deus dinoet un diglokusted diabarzh abalamour d'un draen er goulev.
 Comment[ca]=Una aplicació finalitza amb un senyal SIGABRT quan detecta una inconsistència interna causada per un error en el programa.
 Comment[ca@valencia]=Una aplicació finalitza amb un senyal SIGABRT quan detecta una inconsistència interna causada per un error en el programa.
+Comment[cs]=Aplikace se ukončí signálem SIGABRT, pokud zjistí vnitřní nekonzistenci způsobenou chybou v programu.
 Comment[csb]=Programa kùńczy dzejanié z sygnalã SIGABRT pò wëkrëcô bënowi niéspójnotë jakô pòwsta z przëczënë felë w ti programie.
 Comment[cy]=Terfyna cymhwysiad â'r arwydd SIGABRT pan ganfydda anghysondeb mewnol a achoswyd gan nam yn y rhaglen.
 Comment[da]=Et program afbryder med et SIGABRT-signal når det finder en intern inkonsistens forårsaget af en fejl i programmet.
@@ -462,6 +464,7 @@ Comment[bn_IN]=কোনো অ্যাপলিকেশন SIGFPE সিগ�
 Comment[br]=Resev a ra un arload an arhent SIGFPE abalamour d'un draen en arload, peurliesañ. Goulennet e voe d'an arload enrollañ e deulioù.
 Comment[ca]=Bàsicament una aplicació rep el senyal SIGFPE degut a un error a l'aplicació. Es demana a l'aplicació que desi els seus documents.
 Comment[ca@valencia]=Bàsicament una aplicació rep el senyal SIGFPE degut a un error a l'aplicació. Es demana a l'aplicació que desi els seus documents.
+Comment[cs]=Aplikace obvykle obdrží signál SIGFPE kvůli chybě v programu. Je také požádána, aby uložila své dokumenty.
 Comment[csb]=Programa dostôwô zwëczajno sygnal SIGFPE z przëczënë felë w ni sómy. Wësłóno żądanié zapisania dokùmentów.
 Comment[cy]=Derbyna cymhwysiad yr arwydd SIGFPE gan amlaf o achos nam yn y cymhwysiad. Gofynnwyd i'r cymhwysiad gadw ei ddogfennau.
 Comment[da]=Et program modtager som regel SIGFPE-signalet når der er en fejl i programmet. Programmet blev bedt om at gemme sine dokumenter.
@@ -539,6 +542,7 @@ Comment[bn_IN]=কোনো অ্যাপলিকেশন SIGSEGV সিগ�
 Comment[br]=Resev a ra un arload an arhent SIGSEGV abalamour d'un draen en arload, peurliesañ. Goulennet e voe d'an arload enrollañ e deulioù.
 Comment[ca]=Bàsicament una aplicació rep el senyal SIGSEGV degut a un error a l'aplicació. Es demana a l'aplicació que desi els seus documents.
 Comment[ca@valencia]=Bàsicament una aplicació rep el senyal SIGSEGV degut a un error a l'aplicació. Es demana a l'aplicació que desi els seus documents.
+Comment[cs]=Aplikace obvykle obdrží signál SIGSEGV kvůli chybě v programu. Je také požádána, aby uložila své dokumenty.
 Comment[csb]=Programa dostôwô zwëczajno sygnal SIGSEGV z przëczënë felë w ni sómy. Wësłóno żądanié zapisania dokùmentów.
 Comment[cy]=Derbyna cymhwysiad yr arwydd SIGSEGV gan amlaf o achos nam yn y cymhwysiad. Gofynnwyd i'r cymhwysiad gadw ei ddogfennau.
 Comment[da]=Et program modtager som regel SIGSEGV-signalet når der er en fejl i programmet. Programmet blev bedt om at gemme sine dokumenter.
