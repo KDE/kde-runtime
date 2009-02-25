@@ -70,9 +70,14 @@ class CrashInfo : public QObject
     QString generateReportTemplate();
     
     BugzillaManager * getBZ() { return m_bugzilla; };
+    
     //Future bug report data
     BugReport * getReport() { return m_report; }
     
+    void setDetailText( QString text ) { m_userDetailText = text; }
+    void setReproduceText( QString text ) { m_userReproduceText = text; }
+    
+    void fillReportFields();
     void commitBugReport();
     
   Q_SIGNALS:
@@ -101,6 +106,9 @@ class CrashInfo : public QObject
     
     BugzillaManager *   m_bugzilla;
     BugReport *         m_report;
+    
+    QString             m_userDetailText;
+    QString             m_userReproduceText;
 };
 
 #endif

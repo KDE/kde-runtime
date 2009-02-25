@@ -33,6 +33,8 @@ class ConclusionPage;
 class BugzillaLoginPage;
 class BugzillaKeywordsPage;
 class BugzillaDuplicatesPage;
+class BugzillaInformationPage;
+class BugzillaCommitPage;
 
 class DrKonqiBugReport: public KAssistantDialog
 {
@@ -53,6 +55,8 @@ class DrKonqiBugReport: public KAssistantDialog
     BugzillaLoginPage *         m_bugzillaLogin;
     BugzillaKeywordsPage *      m_bugzillaKeywords;
     BugzillaDuplicatesPage *    m_bugzillaDuplicates;
+    BugzillaInformationPage *   m_bugzillaInformation;
+    BugzillaCommitPage *        m_bugzillaCommit;
     
     KPageWidgetItem *           m_introPage;
     KPageWidgetItem *           m_backtracePage;
@@ -61,6 +65,8 @@ class DrKonqiBugReport: public KAssistantDialog
     KPageWidgetItem *           m_bugzillaLoginPage;
     KPageWidgetItem *           m_bugzillaKeywordsPage;
     KPageWidgetItem *           m_bugzillaDuplicatesPage;
+    KPageWidgetItem *           m_bugzillaInformationPage;
+    KPageWidgetItem *           m_bugzillaCommitPage;
     
     CrashInfo *                 m_crashInfo;
     

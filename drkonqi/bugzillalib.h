@@ -113,6 +113,8 @@ class BugzillaManager : public QObject
         void fetchBugReport( int );
         void searchBugs( QString words, QString product, QString severity, QString date_start, QString date_end , QString comment);
         
+        void commitReport( BugReport * );
+        
         bool getLogged() { return m_logged; }
         QString getUsername() { return m_username; }
         
@@ -120,11 +122,13 @@ class BugzillaManager : public QObject
         void loginDone(KJob*);
         void fetchBugReportDone(KJob*);
         void searchBugsDone(KJob*);
+        void commitReportDone(KJob*){} //TODO
         
     Q_SIGNALS:
         void loginFinished( bool );
         void bugReportFetched( BugReport* );
         void searchFinished( BugMapList );
+        void reportCommited( ); //???RESULT ?
 
     private:
         QString     m_username;

@@ -18,13 +18,15 @@
 static const char columns[] = "bug_severity,priority,bug_status,product,short_desc"; //resolution,
 
 //BKO URLs
-static const char loginUrl[] = "https://bugs.kde.org/index.cgi";
-static const char loginParams[] = "GoAheadAndLogIn=1&Bugzilla_login=%%USERNAME%%&Bugzilla_password=%%PASSWORD%%&log_in=Log+in";
+static const char bugtrackerBaseUrl[] = "https://bugs.kde.org/";
 
-static const char searchUrl[] = "https://bugs.kde.org/buglist.cgi?query_format=advanced&short_desc_type=anywordssubstr&short_desc=%1&product=%2&long_desc_type=anywordssubstr&long_desc=%3&bug_file_loc_type=allwordssubstr&bug_file_loc=&keywords_type=allwords&keywords=&emailtype1=substring&email1=&emailtype2=substring&email2=&bugidtype=include&bug_id=&votes=&chfieldfrom=%4&chfieldto=%5&chfield=[Bug+creation]&chfieldvalue=&cmdtype=doit&field0-0-0=noop&type0-0-0=noop&value0-0-0=&bug_severity=%6&order=Importance&columnlist=%7&ctype=csv";
+static const char loginUrl[] = "index.cgi";
+static const char loginParams[] = "GoAheadAndLogIn=1&Bugzilla_login=%1&Bugzilla_password=%2&log_in=Log+in";
+
+static const char searchUrl[] = "buglist.cgi?query_format=advanced&short_desc_type=anywordssubstr&short_desc=%1&product=%2&long_desc_type=anywordssubstr&long_desc=%3&bug_file_loc_type=allwordssubstr&bug_file_loc=&keywords_type=allwords&keywords=&emailtype1=substring&email1=&emailtype2=substring&email2=&bugidtype=include&bug_id=&votes=&chfieldfrom=%4&chfieldto=%5&chfield=[Bug+creation]&chfieldvalue=&cmdtype=doit&field0-0-0=noop&type0-0-0=noop&value0-0-0=&bug_severity=%6&order=Importance&columnlist=%7&ctype=csv";
 // short_desc, product, long_desc(possible backtraces lines), searchFrom, searchTo, severity, columnList
 
-static const char fetchBugUrl[] = "https://bugs.kde.org/show_bug.cgi?id=%1&ctype=xml";
+static const char fetchBugUrl[] = "show_bug.cgi?id=%1&ctype=xml";
 
 BugzillaManager::BugzillaManager():
     QObject(),
@@ -43,12 +45,12 @@ void BugzillaManager::tryLogin()
 {
     if ( !m_logged )
     {
-        QByteArray postData( loginParams );
-        postData.replace( QByteArray("%%USERNAME%%"), m_username.toLocal8Bit() );
-        postData.replace( QByteArray("%%PASSWORD%%"), m_password.toLocal8Bit() );
+        
+        QString params = QString( loginParams ).arg( m_username, m_password );
+        QByteArray postData = params.toLatin1();
         
         KIO::StoredTransferJob * loginJob = 
-            KIO::storedHttpPost( postData, KUrl( loginUrl ), KIO::HideProgressInfo );
+            KIO::storedHttpPost( postData, KUrl( QString(bugtrackerBaseUrl) + QString(loginUrl) ), KIO::HideProgressInfo );
             
         connect( loginJob, SIGNAL(finished(KJob*)) , this, SLOT(loginDone(KJob*)) );
         
@@ -72,7 +74,7 @@ void BugzillaManager::loginDone( KJob* job )
 
 void BugzillaManager::fetchBugReport( int bugnumber )
 {
-    KUrl url = KUrl( QString(fetchBugUrl).arg( bugnumber ) );
+    KUrl url = KUrl( QString(bugtrackerBaseUrl) + QString(fetchBugUrl).arg( bugnumber ) );
     
     KIO::StoredTransferJob * fetchBugJob = KIO::storedGet( url, KIO::Reload, KIO::HideProgressInfo);
         
@@ -93,7 +95,7 @@ void BugzillaManager::fetchBugReportDone( KJob* job )
 
 void BugzillaManager::searchBugs( QString words, QString product, QString severity, QString date_start, QString date_end, QString comment )
 {
-    QString url = QString(searchUrl).arg( words.replace(' ' , '+'), product, comment, date_start,  date_end, severity, QString(columns));
+    QString url = QString(bugtrackerBaseUrl) + QString(searchUrl).arg( words.replace(' ' , '+'), product, comment, date_start,  date_end, severity, QString(columns));
     
     KIO::StoredTransferJob * searchBugsJob = KIO::storedGet( KUrl(url) , KIO::Reload, KIO::HideProgressInfo);
     connect( searchBugsJob, SIGNAL(finished(KJob*)) , this, SLOT(searchBugsDone(KJob*)) );
@@ -109,6 +111,19 @@ void BugzillaManager::searchBugsDone( KJob * job )
     emit searchFinished( list );
     
     delete parser;
+}
+
+void BugzillaManager::commitReport( BugReport * report )
+{
+    Q_UNUSED( report );
+
+    QByteArray postData;
+    QString url = "";
+    
+    KIO::StoredTransferJob * commitJob = 
+            KIO::storedHttpPost( postData, KUrl( url ), KIO::HideProgressInfo );
+            
+    connect( commitJob, SIGNAL(finished(KJob*)) , this, SLOT(commitReportDone(KJob*)) );
 }
 
 BugListCSVParser::BugListCSVParser( QByteArray data )

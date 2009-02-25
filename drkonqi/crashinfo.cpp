@@ -166,14 +166,31 @@ QString CrashInfo::generateReportTemplate()
     QString report;
     
     report.append( QString("KDE Version: %1<br />Qt Version: %2<br />Operating System: %3<br />Application that crashed: %4"
-    "<br />Version of the application: %5<br />").arg( getKDEVersion(), getQtVersion(), getOS(), getProductName(), getProductVersion() )  );
+    "<br />Version of the application: %5").arg( getKDEVersion(), getQtVersion(), getOS(), getProductName(), getProductVersion() )  );
+    
+    if ( !m_report->shortDescription().isEmpty() )
+        report.append( QString("<br /><br />Title: %1").arg( m_report->shortDescription() ) );
+    
+    report.append( QString("<br /><br />") );
     
     if( m_userCanDetail )
-        report.append( QString("<br />What I was doing when the application crashed:<br />[Insert the details here]<br />") );
+        report.append( QString("<br />What I was doing when the application crashed:<br />") );
+        if( !m_userDetailText.isEmpty() )
+            report.append( m_userDetailText );
+        else
+            report.append( QString("[Insert the details here]") );
 
+    report.append( QString("<br />") ) ;
+    
     if( m_userCanReproduce )
-        report.append( QString("<br />How to reproduce the crash:<br />[Insert the steps here]<br />") );
+        report.append( QString("<br />How to reproduce the crash:<br />") );
+        if( !m_userReproduceText.isEmpty() )
+            report.append( m_userReproduceText );
+        else
+            report.append( QString("[Insert the steps here]") );
         
+    report.append( QString("<br />") ) ;
+    
     if( m_backtraceInfo->getUsefulness() != BacktraceInfo::Unuseful )
     {
         QString formattedBacktrace = m_backtraceOutput;
@@ -189,4 +206,18 @@ QString CrashInfo::generateReportTemplate()
 void CrashInfo::commitBugReport()
 {
     //Commit
+    //m_bugzillaManager->commitReport( m_report, getKDEVersion() );
+}
+
+void CrashInfo::fillReportFields()
+{
+    m_report->setProduct( getProductName() );
+    m_report->setComponent( QLatin1String("general") );
+    m_report->setVersion( getProductVersion() );
+    m_report->setOperatingSystem( getOS() );
+    m_report->setBugStatus( QLatin1String("UNCONFIRMED") );
+    m_report->setPriority( QLatin1String("NOR") );
+    m_report->setBugSeverity( QLatin1String("crash") );
+    m_report->setDescription( generateReportTemplate() );
+    m_report->setValid( true );
 }

@@ -72,10 +72,26 @@ DrKonqiBugReport::DrKonqiBugReport( CrashInfo * crash, QWidget * parent ) :
     
     //Bugzilla duplicates
     m_bugzillaDuplicates =  new BugzillaDuplicatesPage( m_crashInfo );
+    connect( m_bugzillaDuplicates, SIGNAL(setNextButton(bool)), this, SLOT(enableNextButton(bool)) );
     m_bugzillaDuplicatesPage = new KPageWidgetItem( m_bugzillaDuplicates, "BugzillaDuplicates");
     m_bugzillaDuplicatesPage->setHeader( "Bug Report Duplicate Listing" );
     m_bugzillaDuplicatesPage->setIcon( KIcon("tools-report-bug") );
+ 
+    //Bugzilla information
+    m_bugzillaInformation =  new BugzillaInformationPage( m_crashInfo );
+    connect( m_bugzillaInformation, SIGNAL(setNextButton(bool)), this, SLOT(enableNextButton(bool)) );
+    m_bugzillaInformationPage = new KPageWidgetItem( m_bugzillaInformation, "BugzillaInformation");
+    m_bugzillaInformationPage->setHeader( "Details of the Bug Report" );
+    m_bugzillaInformationPage->setIcon( KIcon("tools-report-bug") );
+
+    //Bugzilla commit
+    m_bugzillaCommit =  new BugzillaCommitPage( m_crashInfo );
+    //connect( m_bugzillaInformation, SIGNAL(setNextButton(bool)), this, SLOT(enableNextButton(bool)) );
+    m_bugzillaCommitPage = new KPageWidgetItem( m_bugzillaCommit, "BugzillaCommit");
+    m_bugzillaCommitPage->setHeader( "Commit Page" ); //TODO better name ?
+    m_bugzillaCommitPage->setIcon( KIcon("tools-report-bug") );
     
+    //TODO reorder
     addPage( m_introPage );
     addPage( m_backtracePage );
     addPage( m_awarenessPage );
@@ -83,10 +99,12 @@ DrKonqiBugReport::DrKonqiBugReport( CrashInfo * crash, QWidget * parent ) :
     addPage( m_bugzillaLoginPage );
     addPage( m_bugzillaKeywordsPage );
     addPage( m_bugzillaDuplicatesPage );
+    addPage( m_bugzillaInformationPage );
+    addPage( m_bugzillaCommitPage );
     
-    KPageWidgetItem * dummy = new KPageWidgetItem( new QWidget() );
-    dummy->setHeader( "Dummy Last Page :)" );
-    addPage( dummy );
+    //KPageWidgetItem * dummy = new KPageWidgetItem( new QWidget() );
+    //dummy->setHeader( "Dummy Last Page :)" );
+    //addPage( dummy );
     
     setMinimumSize( QSize(600,400) );
     resize( QSize(600,400) );
@@ -105,29 +123,16 @@ DrKonqiBugReport::~DrKonqiBugReport()
 
 void DrKonqiBugReport::currentPageChanged_slot(KPageWidgetItem * current , KPageWidgetItem * before)  
 {
-    Q_UNUSED( before );
+    if(before)
+        (dynamic_cast<DrKonqiAssistantPage*>(before->widget()))->aboutToHide();
+    if(current)
+        (dynamic_cast<DrKonqiAssistantPage*>(current->widget()))->aboutToShow();
     
-    if( current->name() == "Backtrace" )
+    else if( current->name() == "BugzillaCommit" )
     {
-        m_backtrace->loadBacktrace();
-    }
-    else if( current->name() == "BugzillaDuplicates" )
-    {
-        m_bugzillaDuplicates->searchDuplicates();
-    }
-    else if( current->name() == "BugzillaKeywords" )
-    {
+        //Disable all buttons
         enableNextButton( false );
-        m_bugzillaKeywords->aboutToShow();
-    }
-    else if( current->name() == "BugzillaLogin" )
-    {
-        enableNextButton( false );
-        m_bugzillaLogin->aboutToShow();
-    }
-    else if( current->name() == "Results" )
-    {
-        enableNextButton( false );
-        m_conclusions->generateResult();
+        enableButton( KDialog::User1, false );
+        enableButton( KDialog::User3, false );
     }
 }
