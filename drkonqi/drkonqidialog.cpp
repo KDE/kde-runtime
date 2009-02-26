@@ -144,13 +144,11 @@ void DrKonqiDialog::fin( bool log )
 
 void DrKonqiDialog::reportBugAssistant()
 {
-    m_crashInfo->stopBacktrace(); //Stop current backtrace generation (if there is one )
-    
     DrKonqiBugReport * assistant = new DrKonqiBugReport( m_crashInfo );
     assistant->show();
     
-    //Those the first dialog (this)
-    close();
+    //Hide the first dialog (this) // or close??
+    hide();
 }
 
 void DrKonqiDialog::aboutBugReporting()

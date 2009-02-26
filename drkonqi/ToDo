@@ -26,6 +26,8 @@
 ##Unassigned
 -------------
 
+better logic to determine if the bug was commited (better html parsing?)
+
 Discuss , when to launch the kWallet dialog..........
 ( currently, if the wallet doesn't exist, it prompts to create it when the login 
 information is entered the first time. If the wallet exists, it prompts for password when

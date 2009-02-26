@@ -60,10 +60,10 @@ GetBacktraceWidget::GetBacktraceWidget( CrashInfo * info ) :
     
 }
 
-void GetBacktraceWidget::regenerateBacktrace()
+void GetBacktraceWidget::setAsLoading()
 {
     ui.m_backtraceEdit->setText( i18nc("loading information, wait", "Loading ... " ));
-    //ui.m_backtraceEdit->setEnabled( false );
+    ui.m_backtraceEdit->setEnabled( false );
     
     ui.m_statusLabel->setText( i18nc("loading information, wait", "Loading crash information ... (this will take some time)" ));
     ui.m_usefulnessMeter->setUsefulness( BacktraceParser::Useless );
@@ -79,10 +79,14 @@ void GetBacktraceWidget::regenerateBacktrace()
                 
     QApplication::setOverrideCursor(Qt::BusyCursor);
     
-    crashInfo->generateBacktrace();
-    
     // bool canChangePage = crashInfo->getBacktraceState() != CrashInfo::NonLoaded &&  crashInfo->getBacktraceState() != CrashInfo::Loading;
     emit setBusy();
+}
+
+void GetBacktraceWidget::regenerateBacktrace()
+{
+    setAsLoading();
+    crashInfo->generateBacktrace();
 }
 
 void GetBacktraceWidget::generateBacktrace()
@@ -91,7 +95,11 @@ void GetBacktraceWidget::generateBacktrace()
     {
         regenerateBacktrace();
     }
-    else if ( crashInfo->getBacktraceState() != CrashInfo::Loading )
+    else if ( crashInfo->getBacktraceState() == CrashInfo::Loading )
+    {
+        setAsLoading(); //Set in loading state, the widget will catch the backtrace events anyway
+    }
+    else //*Finished* states
     {
         backtraceGenerated(); //Load already gathered information
     }
@@ -101,10 +109,11 @@ void GetBacktraceWidget::backtraceGenerated()
 {
     QApplication::restoreOverrideCursor();
     ui.m_usefulnessMeter->setState( crashInfo->getBacktraceState() );
+    ui.m_backtraceEdit->setEnabled( true );
     
     if( crashInfo->getBacktraceState() == CrashInfo::Loaded )
     {
-        ui.m_backtraceEdit->setEnabled( true );
+        
         ui.m_backtraceEdit->setText( crashInfo->getBacktraceOutput() );
         BacktraceParser * btParser = crashInfo->getBacktraceParser();
         

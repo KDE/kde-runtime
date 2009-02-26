@@ -50,7 +50,10 @@ class GetBacktraceWidget: public QWidget
         
     private Q_SLOTS:
         void backtraceGenerated();
+        
+        void setAsLoading();
         void regenerateBacktrace();
+        
         void saveClicked();
         void copyClicked();
 
