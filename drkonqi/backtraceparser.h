@@ -19,7 +19,7 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QStringList>
-class BackTrace; //TODO rename me!
+class BacktraceGenerator;
 
 class BacktraceParser : public QObject
 {
@@ -32,7 +32,7 @@ public:
     explicit BacktraceParser(QObject *parent = 0);
     virtual ~BacktraceParser();
 
-    void connectToDebugger(BackTrace *debugger);
+    void connectToGenerator(BacktraceGenerator *generator);
 
     virtual QString parsedBacktrace() const = 0;
     virtual Usefulness backtraceUsefulness() const = 0;
@@ -44,7 +44,7 @@ Q_SIGNALS:
 protected Q_SLOTS:
     virtual void resetState() = 0;
     virtual void parseLine(const QString & lineStr) = 0;
-    virtual void debuggerFinished();
+    virtual void generatorFinished();
 };
 
 class BacktraceParserGdb : public BacktraceParser

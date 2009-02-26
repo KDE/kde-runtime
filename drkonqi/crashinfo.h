@@ -23,7 +23,7 @@
 #include "backtraceparser.h"
 #include "bugzillalib.h"
 #include "krashconf.h"
-#include "backtrace.h"
+#include "backtracegenerator.h"
 #include <kdeversion.h>
 
 class CrashInfo : public QObject
@@ -96,7 +96,7 @@ class CrashInfo : public QObject
   
     KrashConfig *       m_crashConfig;
     
-    BackTrace *         m_backtraceGenerator;
+    BacktraceGenerator *m_backtraceGenerator;
     BacktraceParser *   m_backtraceParser;
     QString             m_backtraceOutput;
     BacktraceGenState   m_backtraceState;

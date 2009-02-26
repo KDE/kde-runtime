@@ -15,7 +15,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "backtraceparser.h"
-#include "backtrace.h" //TODO rename me!
+#include "backtracegenerator.h"
 
 #include <QtCore/QRegExp>
 #include <QtCore/QSharedData>
@@ -41,14 +41,14 @@ BacktraceParser *BacktraceParser::newParser(const QString & debuggerName, QObjec
 BacktraceParser::BacktraceParser(QObject *parent) : QObject(parent) {}
 BacktraceParser::~BacktraceParser() {}
 
-void BacktraceParser::connectToDebugger(BackTrace *debugger)
+void BacktraceParser::connectToGenerator(BacktraceGenerator *generator)
 {
-    connect(debugger, SIGNAL(starting()), this, SLOT(resetState()) );
-    connect(debugger, SIGNAL(newLine(QString)), this, SLOT(parseLine(QString)) );
-    connect(debugger, SIGNAL(done()), this, SLOT(debuggerFinished()) );
+    connect(generator, SIGNAL(starting()), this, SLOT(resetState()) );
+    connect(generator, SIGNAL(newLine(QString)), this, SLOT(parseLine(QString)) );
+    connect(generator, SIGNAL(done()), this, SLOT(generatorFinished()) );
 }
 
-void BacktraceParser::debuggerFinished()
+void BacktraceParser::generatorFinished()
 {
     emit done(parsedBacktrace());
 }

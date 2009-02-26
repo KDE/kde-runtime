@@ -29,9 +29,7 @@ set(drkonqi_SRCS
    drkonqibugreport.cpp
    usefulnessmeter.cpp
    getbacktracewidget.cpp
-   #backtraceinfo.cpp
-   backtrace.cpp 
-   #backtracegdb.cpp
+   backtracegenerator.cpp 
    backtraceparser.cpp
 )
 

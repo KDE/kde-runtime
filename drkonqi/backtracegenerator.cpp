@@ -25,7 +25,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************/
 
-#include "backtrace.h"
+#include "backtracegenerator.h"
 
 #include <KDebug>
 #include <KStandardDirs>
@@ -37,20 +37,19 @@
 #include <signal.h>
 
 #include "krashconf.h"
-#include "backtrace.moc"
 
-BackTrace::BackTrace(const KrashConfig *krashconf, QObject *parent)
+BacktraceGenerator::BacktraceGenerator(const KrashConfig *krashconf, QObject *parent)
   : QObject(parent),
     m_krashconf(krashconf), m_proc(NULL), m_temp(NULL)
 {
 }
 
-BackTrace::~BackTrace()
+BacktraceGenerator::~BacktraceGenerator()
 {
   stop();
 }
 
-bool BackTrace::start()
+bool BacktraceGenerator::start()
 {
   Q_ASSERT(m_proc == NULL && m_temp == NULL); //they should always be null before entering this function.
 
@@ -96,7 +95,7 @@ bool BackTrace::start()
   return true;
 }
 
-void BackTrace::stop()
+void BacktraceGenerator::stop()
 {
     if (m_proc && m_proc->state() == QProcess::Running)
     {
@@ -116,7 +115,7 @@ void BackTrace::stop()
     }
 }
 
-void BackTrace::slotReadInput()
+void BacktraceGenerator::slotReadInput()
 {
     // we do not know if the output array ends in the middle of an utf-8 sequence
     m_output += m_proc->readAllStandardOutput();
@@ -131,7 +130,7 @@ void BackTrace::slotReadInput()
     }
 }
 
-void BackTrace::slotProcessExited(int exitCode, QProcess::ExitStatus exitStatus)
+void BacktraceGenerator::slotProcessExited(int exitCode, QProcess::ExitStatus exitStatus)
 {
   // start it again
   ::kill(m_krashconf->pid(), SIGCONT);
@@ -150,3 +149,5 @@ void BackTrace::slotProcessExited(int exitCode, QProcess::ExitStatus exitStatus)
 
   emit done();
 }
+
+#include "backtracegenerator.moc"

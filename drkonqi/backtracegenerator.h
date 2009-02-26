@@ -25,21 +25,21 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************/
 
-#ifndef BACKTRACE_H
-#define BACKTRACE_H
+#ifndef BACKTRACEGENERATOR_H
+#define BACKTRACEGENERATOR_H
 
 class KrashConfig;
 class KTemporaryFile;
 
 #include <KProcess>
 
-class BackTrace : public QObject
+class BacktraceGenerator : public QObject
 {
   Q_OBJECT
 
 public:
-  BackTrace(const KrashConfig *krashconf, QObject *parent);
-  ~BackTrace();
+  BacktraceGenerator(const KrashConfig *krashconf, QObject *parent);
+  ~BacktraceGenerator();
 
 public Q_SLOTS:
   bool start();

@@ -27,14 +27,14 @@ CrashInfo::CrashInfo( KrashConfig * cfg )
     m_crashConfig = cfg;
     m_backtraceState = NonLoaded;
     m_backtraceParser = BacktraceParser::newParser( cfg->debuggerName(), this );
-    m_backtraceGenerator = new BackTrace( cfg, this );
+    m_backtraceGenerator = new BacktraceGenerator( cfg, this );
     m_userCanDetail = false;
     m_userCanReproduce = false;
     m_userGetCompromise = false;
     m_bugzilla = new BugzillaManager();
     m_report = new BugReport();
 
-    m_backtraceParser->connectToDebugger(m_backtraceGenerator);
+    m_backtraceParser->connectToGenerator(m_backtraceGenerator);
     connect(m_backtraceParser, SIGNAL(done(QString)), this, SLOT(backtraceGeneratorFinished(QString)));
     connect(m_backtraceGenerator, SIGNAL(someError()), this, SLOT(backtraceGeneratorFailed()));
     connect(m_backtraceGenerator, SIGNAL(newLine(QString)), this, SLOT(backtraceGeneratorAppend(QString)));
