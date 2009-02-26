@@ -41,10 +41,13 @@ public:
   BackTrace(const KrashConfig *krashconf, QObject *parent);
   ~BackTrace();
 
+public Q_SLOTS:
   bool start();
+  void stop();
 
 Q_SIGNALS:
-  void append(const QString &str); // emited for every line
+  void starting();
+  void newLine(const QString &str); // emited for every line
   void someError();
   void done();
 

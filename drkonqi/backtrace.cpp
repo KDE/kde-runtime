@@ -41,31 +41,27 @@
 
 BackTrace::BackTrace(const KrashConfig *krashconf, QObject *parent)
   : QObject(parent),
-    m_krashconf(krashconf), m_temp(0)
+    m_krashconf(krashconf), m_proc(NULL), m_temp(NULL)
 {
-  m_proc = new KProcess;
-  m_proc->setEnv( "LC_ALL", "C" ); // force C locale
 }
 
 BackTrace::~BackTrace()
 {
-  // Do not touch it if we never ran backtrace.
-  if (m_proc->state() == QProcess::Running)
-  {
-    m_proc->kill();
-    m_proc->waitForFinished();
-    ::kill(m_krashconf->pid(), SIGCONT);
-  }
-
-  delete m_proc;
-  delete m_temp;
+  stop();
 }
 
 bool BackTrace::start()
 {
+  Q_ASSERT(m_proc == NULL && m_temp == NULL); //they should always be null before entering this function.
+
   QString exec = m_krashconf->tryExec();
   if ( !exec.isEmpty() && KStandardDirs::findExe(exec).isEmpty() )
     return false;
+
+  emit starting();
+
+  m_proc = new KProcess;
+  m_proc->setEnv( "LC_ALL", "C" ); // force C locale
 
   m_temp = new KTemporaryFile;
   m_temp->open();
@@ -88,10 +84,36 @@ bool BackTrace::start()
   m_proc->start();
   if (!m_proc->waitForStarted())
   {
-        emit someError();
-        return false;
+      //we mustn't keep these around...
+      m_proc->deleteLater();
+      m_temp->deleteLater();
+      m_proc = NULL;
+      m_temp = NULL;
+
+      emit someError();
+      return false;
   }
   return true;
+}
+
+void BackTrace::stop()
+{
+    if (m_proc && m_proc->state() == QProcess::Running)
+    {
+        m_proc->kill();
+        m_proc->waitForFinished();
+        ::kill(m_krashconf->pid(), SIGCONT);
+    }
+
+    if ( m_proc ) {
+        m_proc->deleteLater();
+        m_proc = NULL;
+    }
+
+    if ( m_temp ) {
+        m_temp->deleteLater();
+        m_temp = NULL;
+    }
 }
 
 void BackTrace::slotReadInput()
@@ -105,7 +127,7 @@ void BackTrace::slotReadInput()
         QString line = QString::fromLocal8Bit(m_output, pos + 1);
         m_output.remove(0, pos + 1);
 
-        emit append(line);
+        emit newLine(line);
     }
 }
 
@@ -113,6 +135,12 @@ void BackTrace::slotProcessExited(int exitCode, QProcess::ExitStatus exitStatus)
 {
   // start it again
   ::kill(m_krashconf->pid(), SIGCONT);
+
+  //these are useless now
+  m_proc->deleteLater();
+  m_temp->deleteLater();
+  m_proc = NULL;
+  m_temp = NULL;
 
   if (exitStatus != QProcess::NormalExit || exitCode != 0)
   {

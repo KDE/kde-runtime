@@ -43,7 +43,8 @@ BacktraceParser::~BacktraceParser() {}
 
 void BacktraceParser::connectToDebugger(BackTrace *debugger)
 {
-    connect(debugger, SIGNAL(append(QString)), this, SLOT(parseLine(QString)) );
+    connect(debugger, SIGNAL(starting()), this, SLOT(resetState()) );
+    connect(debugger, SIGNAL(newLine(QString)), this, SLOT(parseLine(QString)) );
     connect(debugger, SIGNAL(done()), this, SLOT(debuggerFinished()) );
 }
 
@@ -238,13 +239,20 @@ struct BacktraceParserGdb::Private
 };
 
 BacktraceParserGdb::BacktraceParserGdb(QObject *parent)
-    : BacktraceParser(parent), d(new Private)
+    : BacktraceParser(parent), d(NULL)
 {
 }
 
 BacktraceParserGdb::~BacktraceParserGdb()
 {
     delete d;
+}
+
+void BacktraceParserGdb::resetState()
+{
+    //reset the state of the parser by getting a new instance of Private
+    delete d;
+    d = new Private;
 }
 
 void BacktraceParserGdb::parseLine(const QString & lineStr)
@@ -295,6 +303,11 @@ void BacktraceParserGdb::parseLine(const QString & lineStr)
 QString BacktraceParserGdb::parsedBacktrace() const
 {
     QString result;
+
+    //if there is no d, the debugger has not run, so we return an empty string.
+    if ( !d )
+        return result;
+
     QList<BacktraceLineGdb>::const_iterator i;
     for(i = d->m_linesList.constBegin(); i != d->m_linesList.constEnd(); ++i)
     {
@@ -327,6 +340,11 @@ QString BacktraceParserNull::parsedBacktrace() const
 BacktraceParser::Usefulness BacktraceParserNull::backtraceUsefulness() const
 {
     return MayBeUseful;
+}
+
+void BacktraceParserNull::resetState()
+{
+    m_lines.clear();
 }
 
 void BacktraceParserNull::parseLine(const QString & lineStr)

@@ -26,21 +26,23 @@ CrashInfo::CrashInfo( KrashConfig * cfg )
 {
     m_crashConfig = cfg;
     m_backtraceState = NonLoaded;
-    m_backtraceParser = BacktraceParser::newParser(cfg->debuggerName());
-    m_backtraceGenerator = 0;
+    m_backtraceParser = BacktraceParser::newParser( cfg->debuggerName(), this );
+    m_backtraceGenerator = new BackTrace( cfg, this );
     m_userCanDetail = false;
     m_userCanReproduce = false;
     m_userGetCompromise = false;
     m_bugzilla = new BugzillaManager();
     m_report = new BugReport();
+
+    m_backtraceParser->connectToDebugger(m_backtraceGenerator);
+    connect(m_backtraceParser, SIGNAL(done(QString)), this, SLOT(backtraceGeneratorFinished(QString)));
+    connect(m_backtraceGenerator, SIGNAL(someError()), this, SLOT(backtraceGeneratorFailed()));
+    connect(m_backtraceGenerator, SIGNAL(newLine(QString)), this, SLOT(backtraceGeneratorAppend(QString)));
 }
 
 CrashInfo::~CrashInfo()
 {
-    delete m_backtraceParser;
     delete m_bugzilla;
-    if( m_backtraceGenerator )
-        delete m_backtraceGenerator;
 }
 
 const QString CrashInfo::getCrashTitle()
@@ -52,18 +54,6 @@ const QString CrashInfo::getCrashTitle()
 
 void CrashInfo::generateBacktrace()
 {
-    if( m_backtraceGenerator )
-    {
-        disconnect( m_backtraceGenerator );
-        delete m_backtraceGenerator;
-        m_backtraceGenerator = 0;
-    }   
-    
-    m_backtraceGenerator = new BackTrace( m_crashConfig, 0 );
-    m_backtraceParser->connectToDebugger(m_backtraceGenerator);
-    connect(m_backtraceParser, SIGNAL(done(QString)), this, SLOT(backtraceGeneratorFinished(QString)));
-    connect(m_backtraceGenerator, SIGNAL(someError()), this, SLOT(backtraceGeneratorFailed()));
-    connect(m_backtraceGenerator, SIGNAL(append(QString)), this, SLOT(backtraceGeneratorAppend(QString)));
     m_backtraceOutput.clear();
     m_backtraceState = Loading;
     bool result = m_backtraceGenerator->start();
@@ -79,13 +69,7 @@ void CrashInfo::stopBacktrace()
     //Don't remove already (completely) loaded backtrace
     if( m_backtraceState != Loaded )
     {
-        if( m_backtraceGenerator )
-        {
-            disconnect( m_backtraceGenerator );
-            delete m_backtraceGenerator;
-            m_backtraceGenerator = 0;
-        }
-    
+        m_backtraceGenerator->stop();
         m_backtraceOutput.clear();
         m_backtraceState = NonLoaded;   
     }

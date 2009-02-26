@@ -42,8 +42,9 @@ Q_SIGNALS:
     void done(const QString & backtrace);
 
 protected Q_SLOTS:
-    void debuggerFinished();
+    virtual void resetState() = 0;
     virtual void parseLine(const QString & lineStr) = 0;
+    virtual void debuggerFinished();
 };
 
 class BacktraceParserGdb : public BacktraceParser
@@ -57,11 +58,12 @@ public:
     virtual Usefulness backtraceUsefulness() const;
 
 protected Q_SLOTS:
+    virtual void resetState();
     virtual void parseLine(const QString & lineStr);
 
 private:
     class Private;
-    Private * const d;
+    Private *d;
 };
 
 class BacktraceParserNull : public BacktraceParser
@@ -75,6 +77,7 @@ public:
     virtual Usefulness backtraceUsefulness() const;
 
 protected Q_SLOTS:
+    virtual void resetState();
     virtual void parseLine(const QString & lineStr);
 
 private:
