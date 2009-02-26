@@ -186,7 +186,7 @@ void RegistryManager::installCPlEntry() const
 	if (!isCPlEntryInstalled()){
 		qDebug() << "There's no Control Panel entry now, installing";
 		settingsHKLM.setValue("SOFTWARE/Microsoft/Windows/CurrentVersion/Explorer/ControlPanel/NameSpace/{FADD6487-C270-4fae-A6C5-7BCF90E47C56}/Default", "KDE systemsettings");
-		settingsHKCR.setValue("CLSID/{FADD6487-C270-4fae-A6C5-7BCF90E47C56}/Default", "KDE systemsettings");
+		settingsHKCR.setValue("CLSID/{FADD6487-C270-4fae-A6C5-7BCF90E47C56}/Default", "KDE System Settings");
 		settingsHKCR.setValue("CLSID/{FADD6487-C270-4fae-A6C5-7BCF90E47C56}/LocalizedString", i18n("KDE systemsettings"));
 		settingsHKCR.setValue("CLSID/{FADD6487-C270-4fae-A6C5-7BCF90E47C56}/InfoTip", i18n("All KDE settings in one place"));
 		settingsHKCR.setValue("CLSID/{FADD6487-C270-4fae-A6C5-7BCF90E47C56}/System.ApplicationName", "KDE.systemsettings");
