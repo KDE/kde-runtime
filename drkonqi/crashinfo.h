@@ -59,8 +59,8 @@ class CrashInfo : public QObject
     bool isReportMail();
     QString getReportLink();
     
-    QString getKDEVersion() { return KDE_VERSION_STRING; } 
-    QString getQtVersion() { return QT_VERSION_STR; }
+    QString getKDEVersion() { return KDE::versionString(); } 
+    QString getQtVersion() { return qVersion(); }
     QString getOS();
     QString getBaseOS();
     QString getProductName();

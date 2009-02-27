@@ -26,6 +26,8 @@
 ##Unassigned
 -------------
 
+detect if the pid isn't set (?) 
+
 better logic to determine if the bug was commited (better html parsing?)
 
 Discuss , when to launch the kWallet dialog..........

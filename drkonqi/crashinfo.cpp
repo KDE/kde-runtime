@@ -176,6 +176,7 @@ QString CrashInfo::generateReportTemplate( bool bugzilla )
     report.append( lineBreak );
     
     if( m_userCanDetail )
+    {
         report.append( lineBreak + QString("What I was doing when the application crashed:") + lineBreak);
         if( !m_userDetailText.isEmpty() )
         {
@@ -183,10 +184,12 @@ QString CrashInfo::generateReportTemplate( bool bugzilla )
         } else {
             report.append( QString("[Insert the details here]") );
         }
+    }
 
     report.append( lineBreak ) ;
     
     if( m_userCanReproduce )
+    {
         report.append( lineBreak + QString("How to reproduce the crash:") + lineBreak);
         if( !m_userReproduceText.isEmpty() )
         {
@@ -194,6 +197,7 @@ QString CrashInfo::generateReportTemplate( bool bugzilla )
         } else {
             report.append( QString("[Insert the steps here]") );
         }
+    }
         
     report.append( lineBreak ) ;
     
@@ -231,6 +235,4 @@ void CrashInfo::fillReportFields()
     m_report->setBugSeverity( QLatin1String("crash") );
     m_report->setDescription( generateReportTemplate( true ) );
     m_report->setValid( true );
-    
-    
 }

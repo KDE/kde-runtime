@@ -310,6 +310,7 @@ class BugzillaCommitPage : public DrKonqiAssistantPage
         
     private Q_SLOTS:
         void commited(int);
+        void commitError( QString );
         
     private:
         

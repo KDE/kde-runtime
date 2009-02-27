@@ -922,6 +922,7 @@ BugzillaCommitPage::BugzillaCommitPage( CrashInfo * info )
     m_crashInfo( info )
 {
     connect( m_crashInfo->getBZ(), SIGNAL(reportCommited(int)), this, SLOT(commited(int)) );
+    connect( m_crashInfo->getBZ(), SIGNAL(commitReportError(QString)), this, SLOT(commitError(QString)) );
     
     m_statusBrowser = new KTextBrowser();
     
@@ -943,4 +944,9 @@ void BugzillaCommitPage::commited( int bug_id )
     m_statusBrowser->setText("Report commited at :: " + QString::number( bug_id ) );
     //TODO show url
     // enable finish button
+}
+
+void BugzillaCommitPage::commitError( QString err )
+{
+    m_statusBrowser->setText( "Error" + err );
 }

@@ -37,6 +37,7 @@
 #include <kdefakes.h>
 
 #include "krashconf.h"
+#include "crashinfo.h"
 //#include "toplevel.h"
 #include "drkonqidialog.h"
 
@@ -46,59 +47,60 @@ static const char description[] = I18N_NOOP( "KDE crash handler gives the user f
 int main( int argc, char* argv[] )
 {
 #ifndef Q_OS_WIN //krazy:exclude=cpp
-  // Drop privs.
-  setgid(getgid());
-  if (setuid(getuid()) < 0 && geteuid() != getuid())
-     exit (255);
+// Drop privs.
+setgid(getgid());
+if (setuid(getuid()) < 0 && geteuid() != getuid())
+    exit (255);
 #endif
 
-  // Make sure that DrKonqi doesn't start DrKonqi when it crashes :-]
-  setenv("KDE_DEBUG", "true", 1);
-  unsetenv("SESSION_MANAGER");
+    // Make sure that DrKonqi doesn't start DrKonqi when it crashes :-]
+    setenv("KDE_DEBUG", "true", 1);
+    unsetenv("SESSION_MANAGER");
 
-  KAboutData aboutData( "drkonqi", 0,
-                        ki18n("The KDE Crash Handler"),
-                        version,
-                        ki18n(description),
-                        KAboutData::License_BSD,
-                        ki18n("(C) 2000-2003, Hans Petter Bieker"));
-  aboutData.addAuthor(ki18n("Hans Petter Bieker"), KLocalizedString(), "bieker@kde.org");
-  aboutData.setProgramIconName("tools-report-bug");
+    KAboutData aboutData( "drkonqi", 0,
+                            ki18n("The KDE Crash Handler"),
+                            version,
+                            ki18n(description),
+                            KAboutData::License_BSD,
+                            ki18n("(C) 2000-2003, Hans Petter Bieker"));
+    aboutData.addAuthor(ki18n("Hans Petter Bieker"), KLocalizedString(), "bieker@kde.org");
+    aboutData.setProgramIconName("tools-report-bug");
 
-  KCmdLineArgs::init(argc, argv, &aboutData);
+    KCmdLineArgs::init(argc, argv, &aboutData);
 
-  KCmdLineOptions options;
-  options.add("signal <number>", ki18n("The signal number that was caught"));
-  options.add("appname <name>", ki18n("Name of the program"));
-  options.add("apppath <path>", ki18n("Path to the executable"));
-  options.add("appversion <version>", ki18n("The version of the program"));
-  options.add("bugaddress <address>", ki18n("The bug address to use"));
-  options.add("programname <name>", ki18n("Translated name of the program"));
-  options.add("pid <pid>", ki18n("The PID of the program"));
-  options.add("startupid <id>", ki18n("Startup ID of the program"));
-  options.add("kdeinit", ki18n("The program was started by kdeinit"));
-  options.add("safer", ki18n("Disable arbitrary disk access"));
-  KCmdLineArgs::addCmdLineOptions( options );
+    KCmdLineOptions options;
+    options.add("signal <number>", ki18n("The signal number that was caught"));
+    options.add("appname <name>", ki18n("Name of the program"));
+    options.add("apppath <path>", ki18n("Path to the executable"));
+    options.add("appversion <version>", ki18n("The version of the program"));
+    options.add("bugaddress <address>", ki18n("The bug address to use"));
+    options.add("programname <name>", ki18n("Translated name of the program"));
+    options.add("pid <pid>", ki18n("The PID of the program"));
+    options.add("startupid <id>", ki18n("Startup ID of the program"));
+    options.add("kdeinit", ki18n("The program was started by kdeinit"));
+    options.add("safer", ki18n("Disable arbitrary disk access"));
+    KCmdLineArgs::addCmdLineOptions( options );
 
-  KComponentData inst(KCmdLineArgs::aboutData());
+    KComponentData inst(KCmdLineArgs::aboutData());
 
-  KrashConfig krashconf;
+    KrashConfig krashconf;
+    CrashInfo crashInfo( &krashconf );
+    
+    QApplication *qa =
+        krashconf.safeMode() ?
+        new QApplication(KCmdLineArgs::qtArgc(), KCmdLineArgs::qtArgv()) :
+        new KApplication;
+    qa->setApplicationName(inst.componentName());
 
-  QApplication *qa =
-    krashconf.safeMode() ?
-      new QApplication(KCmdLineArgs::qtArgc(), KCmdLineArgs::qtArgv()) :
-      new KApplication;
-  qa->setApplicationName(inst.componentName());
+    int ret;
+    {
+        //Toplevel w(&krashconf);
+        DrKonqiDialog w( &crashInfo );
+        w.show();
+        ret = qa->exec();
+    }
 
-  int ret;
-  {
-    //Toplevel w(&krashconf);
-    DrKonqiDialog w(&krashconf);
-    w.show();
-    ret = qa->exec();
-  }
+    delete qa;
 
-  delete qa;
-
-  return ret;
+    return ret;
 }

@@ -29,7 +29,7 @@ static const char searchUrl[] = "buglist.cgi?query_format=advanced&short_desc_ty
 static const char fetchBugUrl[] = "show_bug.cgi?id=%1&ctype=xml";
 
 static const char commitReportUrl[] = "post_bug.cgi";
-static const char commitReportParams[] = "product=%1&component=%2&bug_severity=%3&rep_platform=%4&op_sys=%5&priority=%6&bug_status=%7&short_desc=%8&comment=%9";
+static const char commitReportParams[] = "product=%1&version=unspecified&component=%2&bug_severity=%3&rep_platform=%4&op_sys=%5&priority=%6&bug_status=%7&short_desc=%8&comment=%9";
 //version=%3&
 
 BugzillaManager::BugzillaManager():
@@ -208,9 +208,14 @@ void BugzillaManager::commitReportDone( KJob * job )
         }
         else
         {
-            qDebug() << "err";
+            emit commitReportError( "There was some error during the report commit. Response:: " + response);
         }
     }
+    else
+    {
+        emit commitReportError( job->errorString() );
+    }
+    
 }
 
 

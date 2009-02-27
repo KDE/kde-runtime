@@ -23,7 +23,6 @@
 #include <kdialog.h>
 
 class QStackedWidget;
-class KrashConfig;
 class CrashInfo;
 class GetBacktraceWidget;
 class KPushButton;
@@ -34,7 +33,7 @@ class DrKonqiDialog: public KDialog
     Q_OBJECT
     
     public:
-        explicit DrKonqiDialog(KrashConfig * conf, QWidget * parent = 0);
+        explicit DrKonqiDialog( CrashInfo * info, QWidget * parent = 0);
         ~DrKonqiDialog();
     
     private Q_SLOTS:

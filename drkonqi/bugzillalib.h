@@ -137,6 +137,7 @@ class BugzillaManager : public QObject
         
         void searchError( QString );
         void bugReportError( QString );
+        void commitReportError( QString );
 
     private:
     

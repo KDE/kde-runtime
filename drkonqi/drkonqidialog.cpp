@@ -30,20 +30,18 @@
 #include <kstandarddirs.h>
 #include <klocale.h>
 
-#include "krashconf.h"
 #include "crashinfo.h"
 
 #include "getbacktracewidget.h"
 #include "drkonqibugreport.h"
 #include "aboutbugreportingdialog.h"
 
-DrKonqiDialog::DrKonqiDialog(KrashConfig * conf, QWidget * parent) : 
+DrKonqiDialog::DrKonqiDialog( CrashInfo * info, QWidget * parent ) : 
     KDialog(parent), 
     m_aboutBugReportingDialog(0),
-    m_backtraceWidget(0)
+    m_backtraceWidget(0),
+    m_crashInfo(info)
 {
-    m_crashInfo = new CrashInfo(conf);
-    
     //connect( m_crashInfo->getBZ(), SIGNAL(loginFinished(bool)), this, SLOT(fin(bool)) );
     //m_crashInfo->getBZ()->setLoginData( "", "" );
     //m_crashInfo->getBZ()->tryLogin();
@@ -58,12 +56,12 @@ DrKonqiDialog::DrKonqiDialog(KrashConfig * conf, QWidget * parent) :
     QLabel * crashTitle = new QLabel( m_crashInfo->getCrashTitle() );
     crashTitle->setWordWrap( true ); 
     
-    QLabel * info = new QLabel( i18nc("Small explanation of the crash cause",
+    QLabel * infoLabel = new QLabel( i18nc("Small explanation of the crash cause",
     "<para>This probably happened because there is a bug in the application.</para><nl />"
     "<para>[Signal Explanation]</para><nl />"
     "<nl /><para>You can help us to improve the software you use reporting this bug.</para>"
     ) );
-    info->setWordWrap( true ); 
+    infoLabel->setWordWrap( true ); 
 
     m_aboutBugReportingButton = new KPushButton( KGuiItem( i18nc("button action", "Learn more about bug reporting") , KIcon("help-hint"),  i18nc("help text", "Get help in order to know how to file an useful bug report") ) ); //TODO
     m_aboutBugReportingButton->setSizePolicy( QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed) );
@@ -76,7 +74,7 @@ DrKonqiDialog::DrKonqiDialog(KrashConfig * conf, QWidget * parent) :
     layout->addSpacing( 15 );
     layout->addWidget( crashTitle );
     layout->addSpacing( 15 );
-    layout->addWidget( info );
+    layout->addWidget( infoLabel );
     layout->addWidget( m_aboutBugReportingButton );
     layout->addStretch();
     
@@ -144,10 +142,7 @@ void DrKonqiDialog::fin( bool log )
 
 void DrKonqiDialog::reportBugAssistant()
 {
-    DrKonqiBugReport * assistant = new DrKonqiBugReport( m_crashInfo );
-    assistant->show();
-    
-    //Hide the first dialog (this) // or close??
+    (new DrKonqiBugReport( m_crashInfo ))->show();
     hide();
 }
 
@@ -180,7 +175,6 @@ void DrKonqiDialog::toggleBacktrace()
 
 DrKonqiDialog::~DrKonqiDialog()
 {
-    delete m_crashInfo;
     delete m_aboutBugReportingDialog;
     delete m_backtraceWidget;
     delete m_stackedWidget;

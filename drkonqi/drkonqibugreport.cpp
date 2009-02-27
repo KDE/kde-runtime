@@ -115,7 +115,7 @@ DrKonqiBugReport::DrKonqiBugReport( CrashInfo * crash, QWidget * parent ) :
 
 DrKonqiBugReport::~DrKonqiBugReport()
 {
-    delete m_crashInfo;
+    //delete m_crashInfo;
 }
 
 void DrKonqiBugReport::connectSignals( DrKonqiAssistantPage * page )
