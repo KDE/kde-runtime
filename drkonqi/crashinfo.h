@@ -114,6 +114,10 @@ class CrashInfo : public QObject
     QString             m_userDetailText;
     QString             m_userReproduceText;
     QString             m_possibleDuplicate;
+
+#ifdef BACKTRACE_PARSER_DEBUG
+    BacktraceParser *   m_debugParser;
+#endif
 };
 
 #endif

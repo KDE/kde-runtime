@@ -34,6 +34,11 @@ CrashInfo::CrashInfo( KrashConfig * cfg )
     m_bugzilla = new BugzillaManager();
     m_report = new BugReport();
 
+#ifdef BACKTRACE_PARSER_DEBUG
+    m_debugParser = BacktraceParser::newParser( QString(), this ); //uses the null parser
+    m_debugParser->connectToGenerator(m_backtraceGenerator);
+#endif
+
     m_backtraceParser->connectToGenerator(m_backtraceGenerator);
     connect(m_backtraceParser, SIGNAL(done(QString)), this, SLOT(backtraceGeneratorFinished(QString)));
     connect(m_backtraceGenerator, SIGNAL(someError()), this, SLOT(backtraceGeneratorFailed()));
@@ -87,6 +92,12 @@ void CrashInfo::backtraceGeneratorFinished( const QString & data )
     
     m_backtraceOutput = tmp + data;
     m_backtraceState = Loaded;
+
+#ifdef BACKTRACE_PARSER_DEBUG
+    //append the raw unparsed backtrace
+    m_backtraceOutput += "\n------------ Unparsed Backtrace ------------\n";
+    m_backtraceOutput += m_debugParser->parsedBacktrace(); //it's not really parsed, it's from the null parser.
+#endif
 
     emit backtraceGenerated();
 }
