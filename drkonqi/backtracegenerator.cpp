@@ -42,11 +42,16 @@ BacktraceGenerator::BacktraceGenerator(const KrashConfig *krashconf, QObject *pa
   : QObject(parent),
     m_krashconf(krashconf), m_proc(NULL), m_temp(NULL)
 {
+  //stop the process to avoid high cpu usage by other threads (bug 175362)
+  ::kill(m_krashconf->pid(), SIGSTOP);
 }
 
 BacktraceGenerator::~BacktraceGenerator()
 {
   stop();
+
+  //let the app continue, so that it can kill itself when drkonqi exits.
+  ::kill(m_krashconf->pid(), SIGCONT);
 }
 
 bool BacktraceGenerator::start()
@@ -80,6 +85,9 @@ bool BacktraceGenerator::start()
   connect(m_proc, SIGNAL(finished(int, QProcess::ExitStatus)),
           SLOT(slotProcessExited(int, QProcess::ExitStatus)));
 
+  //continue running the process so that gdb can inspect it.
+  ::kill(m_krashconf->pid(), SIGCONT);
+
   m_proc->start();
   if (!m_proc->waitForStarted())
   {
@@ -88,6 +96,9 @@ bool BacktraceGenerator::start()
       m_temp->deleteLater();
       m_proc = NULL;
       m_temp = NULL;
+
+      //stop the process again, as gdb is not running
+      ::kill(m_krashconf->pid(), SIGSTOP);
 
       emit someError();
       return false;
@@ -101,7 +112,7 @@ void BacktraceGenerator::stop()
     {
         m_proc->kill();
         m_proc->waitForFinished();
-        ::kill(m_krashconf->pid(), SIGCONT);
+        ::kill(m_krashconf->pid(), SIGSTOP);
     }
 
     if ( m_proc ) {
@@ -132,8 +143,8 @@ void BacktraceGenerator::slotReadInput()
 
 void BacktraceGenerator::slotProcessExited(int exitCode, QProcess::ExitStatus exitStatus)
 {
-  // start it again
-  ::kill(m_krashconf->pid(), SIGCONT);
+  //stop the process again.
+  ::kill(m_krashconf->pid(), SIGSTOP);
 
   //these are useless now
   m_proc->deleteLater();
