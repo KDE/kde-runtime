@@ -148,8 +148,8 @@ void BacktraceLineGdb::parse()
     }
 
     regExp.setPattern(".*\\(no debugging symbols found\\).*|"
-                      "\\[Thread debugging using libthread_db enabled\\]\n|"
-                      "\\[New Thread 0x[0-9a-f]+\\s+\\(LWP [0-9]+\\)\\]\n|"
+                      ".*\\[Thread debugging using libthread_db enabled\\].*|"
+                      ".*\\[New Thread 0x[0-9a-f]+\\s+\\(.*\\)\\].*|"
                 // remove the line that shows where the process is at the moment '0xffffe430 in __kernel_vsyscall ()',
                 // gdb prints that automatically, but it will be later visible again in the backtrace
                       "0x[0-9a-f]+\\s+in .*");
@@ -159,14 +159,16 @@ void BacktraceLineGdb::parse()
         return;
     }
 
-    regExp.setPattern( "Thread [0-9]+\\s+\\(Thread 0x[0-9a-f]+\\s+\\(LWP [0-9]+\\)\\):\n" );
+    regExp.setPattern( "Thread [0-9]+\\s+\\(Thread 0x[0-9a-f]+\\s+\\(.*\\)\\):\n" );
     if ( regExp.exactMatch(d->m_line) ) {
+        kDebug() << "thread start detected:" << d->m_line;
         d->m_type = ThreadStart;
         return;
     }
 
-    regExp.setPattern( "\\[Current thread is [0-9]+ \\(process [0-9]+\\)\\]\n" );
+    regExp.setPattern( "\\[Current thread is [0-9]+ \\(.*\\)\\]\n" );
     if ( regExp.exactMatch(d->m_line) ) {
+        kDebug() << "thread indicator detected:" << d->m_line;
         d->m_type = ThreadIndicator;
         return;
     }
@@ -179,15 +181,14 @@ void BacktraceLineGdb::parse()
                      "\\)([\\s]+" //matches ") "
                      "(from|at)[\\s]+" //matches "from " or "at "
                      "([\\w\\W]+)" //matches the filename (source file or shared library file)
-                     "(:([0-9]+))?" //matches the line number (if any)
-                     "[\\s]*)?$"); //matches trailing whitespace (if any).
+                     ")?\n$"); //matches trailing newline.
                                 //the )? at the end closes the parenthesis before [\\s]+(from|at) and
                                 //notes that the whole expression from there is optional.
     if ( regExp.exactMatch(d->m_line) ) {
         d->m_type = StackFrame;
         d->m_stackFrameNumber = regExp.cap(1).toInt();
         d->m_functionName = regExp.cap(3);
-        d->m_functionArguments = regExp.cap(4);
+        d->m_functionArguments = regExp.cap(4).remove('\n'); //remove \n because arguments may be split in two lines
         d->m_hasFileInfo = (regExp.pos(5) != -1);
         d->m_hasSourceFile = d->m_hasFileInfo ? (regExp.cap(6) == "at") : false;
         d->m_file = d->m_hasFileInfo ? regExp.cap(7) : QString();
@@ -302,8 +303,13 @@ void BacktraceParserGdb::parseLine(const QString & lineStr)
                 //Here we workaround this by joining the two lines when such a scenario is detected.
                 BacktraceLineGdb lastLine = d->m_linesList.at(d->m_linesList.size() - 1);
                 if ( lineStr.startsWith(' ') &&    //gdb always adds some whitespace to the second line
-                    lastLine.toString().startsWith('#') &&
-                    lastLine.type() == BacktraceLineGdb::Unknown )
+                    lastLine.toString().startsWith('#') && //last line must be a stack frame
+                    //the previous line either is Unknown or is a StackFrame that misses
+                    //the whole part after (from|at), so it has MissingLibrary or MissingEverything rating.
+                    (lastLine.type() == BacktraceLineGdb::Unknown ||
+                     lastLine.rating() == BacktraceLineGdb::MissingLibrary ||
+                     lastLine.rating() == BacktraceLineGdb::MissingEverything)
+                   )
                 {
                     BacktraceLineGdb newLine(lastLine.toString() + lineStr);
                     d->m_linesList[d->m_linesList.size() - 1] = newLine; //replace the last line with the new one
