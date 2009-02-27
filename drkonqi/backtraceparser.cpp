@@ -294,6 +294,25 @@ void BacktraceParserGdb::parseLine(const QString & lineStr)
             }
             d->m_linesList.append(line);
             break;
+        case BacktraceLineGdb::Unknown:
+            if ( !d->m_linesList.isEmpty() )
+            {
+                //when the line is too long, gdb splits it into two lines.
+                //This breaks parsing and results in two Unknown lines instead of a StackFrame one.
+                //Here we workaround this by joining the two lines when such a scenario is detected.
+                BacktraceLineGdb lastLine = d->m_linesList.at(d->m_linesList.size() - 1);
+                if ( lineStr.startsWith(' ') &&    //gdb always adds some whitespace to the second line
+                    lastLine.toString().startsWith('#') &&
+                    lastLine.type() == BacktraceLineGdb::Unknown )
+                {
+                    BacktraceLineGdb newLine(lastLine.toString() + lineStr);
+                    d->m_linesList[d->m_linesList.size() - 1] = newLine; //replace the last line with the new one
+                    break;
+                }
+            }
+            //in all other cases of Unknown lines, just append them to the backtrace.
+            d->m_linesList.append(line);
+            break;
         default:
             d->m_linesList.append(line);
             break;
