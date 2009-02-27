@@ -81,6 +81,7 @@ Comment[csb]=Ùsłëznota Nepomuka, jakô sprôwiô demonã strigi, to òznôcz�
 Comment[da]=Nepomuk-tjeneste som styrer strigi-dæmonen, dvs. indekserer filer på desktop-computeren
 Comment[de]=Nepomuk-Dienst zur Steuerung von Strigi, z. B. zur Indizierung von Dateien
 Comment[el]=Υπηρεσία Nepomuk η οποία ελέγχει το δαίμονα strigi, δηλαδή δημιουργία ευρετηρίων αρχείων στην επιφάνεια εργασίας
+Comment[en_GB]=Nepomuk Service which controls the strigidæmon, i.e. indexes files on the desktop
 Comment[eo]=Nepomuk-servo kiu gvidas la strigi-demonon, la demono kiu indeksas viajn dosierojn
 Comment[es]=Servicio Nepomuk que controla el strigidaemon, ej. Indexa archivos del escritorio
 Comment[et]=Nepomuki teenus, mis kontrollib Strigi deemonit, s.t indekseerib töölaua faile.
