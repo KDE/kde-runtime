@@ -32,8 +32,9 @@
 #include <kcmdlineargs.h>
 #include <kdebug.h>
 #include <assert.h>
+#include <QtConcurrentMap>
 
-enum CrashType { Crash, Malloc, Div0, Assert };
+enum CrashType { Crash, Malloc, Div0, Assert, Threads };
 
 void do_crash()
 {
@@ -60,6 +61,19 @@ void do_assert()
   assert(false);
 }
 
+void map_function(const QString & s)
+{
+    while ( s != "thread 4" ) {}
+    do_crash();
+}
+
+void do_threads()
+{
+    QStringList foo;
+    foo << "thread 1" << "thread 2" << "thread 3" << "thread 4" << "thread 5";
+    QtConcurrent::blockingMap(foo, map_function);
+}
+
 void level4(int t)
 {
   if (t == Malloc)
@@ -68,6 +82,8 @@ void level4(int t)
     do_div0();
   else if (t == Assert)
     do_assert();
+  else if (t == Threads)
+    do_threads();
   else
     do_crash();
 }
@@ -98,7 +114,7 @@ int main(int argc, char *argv[])
   KCmdLineArgs::init(argc, argv, &aboutData);
 
   KCmdLineOptions options;
-  options.add("+crash|malloc|div0|assert", ki18n("Type of crash."));
+  options.add("+crash|malloc|div0|assert|threads", ki18n("Type of crash."));
   KCmdLineArgs::addCmdLineOptions(options);
 
   KApplication app(false);
@@ -111,6 +127,8 @@ int main(int argc, char *argv[])
     crashtype = Div0;
   else if (type == "assert")
     crashtype = Assert;
+  else if (type == "threads")
+    crashtype = Threads;
   level1(crashtype);
   return app.exec();
 }
