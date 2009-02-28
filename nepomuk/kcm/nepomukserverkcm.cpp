@@ -80,7 +80,7 @@ Nepomuk::ServerConfigModule::ServerConfigModule( QWidget* parent, const QVariant
              this, SLOT( changed() ) );
     connect( m_checkEnableNepomuk, SIGNAL( toggled(bool) ),
              this, SLOT( changed() ) );
-    connect( m_checkShowHiddenFolders, SLOT( toggled(bool) ),
+    connect( m_checkShowHiddenFolders, SIGNAL( toggled(bool) ),
              this, SLOT( changed() ) );
     connect( m_folderModel, SIGNAL( dataChanged(const QModelIndex&, const QModelIndex&) ),
              this, SLOT( changed() ) );
