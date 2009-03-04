@@ -20,14 +20,13 @@
 #ifndef DRKONQIBUGREPORT__H
 #define DRKONQIBUGREPORT__H
 
-#include <QtGui/QWidget>
-
 #include <kassistantdialog.h>
 
 #include "crashinfo.h"
 
 class DrKonqiAssistantPage;
 
+class QWidget;
 class IntroductionPage;
 class CrashInformationPage;
 class BugAwarenessPage;

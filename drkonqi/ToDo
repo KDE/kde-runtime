@@ -1,54 +1,33 @@
 #Assigned
 # Who / What
 --------------
-
-    #Use m_varName scheme, order header files
-        #drkonqiassistantpages
-        #aboutbugreportingdialog
-        #bugzillalib
-        #drkonqidialog
-        #drkonqibugreport
-        #crashinfo
-        #usefulnessmeter
-    
     #Extract interfaces to .UI files
         #getbacktracewidget
 
     gkiagia: Fix backtraceinfo logic (backtrace parsing to get its usefulness)
 
-    #Add reporting steps to assistant
-        need permission about bugstest.kde.org to play with commits
-            
-    #validate KJob result state;
-        #done for fetchBugReport and searchBugs .. (error signals added)
-        needed for login, and commit
+    Dario: 
+        Add Translation i18n (with contexts) . change HTML tags (are they invalid when using i18n???)
+        http://techbase.kde.org/Development/Tutorials/Localization/i18n_Semantics
         
 ##Unassigned
 -------------
+
+add warns about we want text in english !!
 
 detect if the pid isn't set (?) 
 
 better logic to determine if the bug was commited (better html parsing?)
 
-Discuss , when to launch the kWallet dialog..........
-( currently, if the wallet doesn't exist, it prompts to create it when the login 
-information is entered the first time. If the wallet exists, it prompts for password when
-showing the login page, and it allows autocomplete the data )
-
-Add Translation i18n (with contexts) . change HTML tags (are they invalid when using i18n???)
-http://techbase.kde.org/Development/Tutorials/Localization/i18n_Semantics
-
+Rework Bug awareness text
 Finish "about bug reporting steps" (guide)
 
 Check leaks, crashes
 
-Use KGUIItem to create KPushButton
-
-Set help for gui items, whats this,
+//Use KGUIItem to create KPushButton
+//Set help for gui items, whats this,
 
 Enable help button on assistant ?
-
-Rework Bug awareness text
 
 krazy2 checks (partially done)
 
@@ -67,3 +46,24 @@ check what all the options in KrashConf are meant to do and use them appropriate
 
 #Each page widget should emit setNextButton() on aboutToShow() (when needed by the widget)
 #Remember to connect the setNextButton signal
+
+#Discuss , when to launch the kWallet dialog..........
+( currently, if the wallet doesn't exist, it prompts to create it when the login 
+information is entered the first time. If the wallet exists, it prompts for password when
+showing the login page, and it allows autocomplete the data )
+
+#Add reporting steps to assistant
+    need permission about bugstest.kde.org to play with commits
+    
+#validate KJob result state;
+    #done for fetchBugReport and searchBugs .. (error signals added)
+    needed for login, and commit
+    
+#Use m_varName scheme, order header files
+    #drkonqiassistantpages
+    #aboutbugreportingdialog
+    #bugzillalib
+    #drkonqidialog
+    #drkonqibugreport
+    #crashinfo
+    #usefulnessmeter

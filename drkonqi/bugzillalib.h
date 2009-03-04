@@ -1,3 +1,22 @@
+/*******************************************************************
+* bugzillalib.h
+* Copyright 2000-2003 Hans Petter Bieker <bieker@kde.org>     
+*           2009    Dario Andres Rodriguez <andresbajotierra@gmail.com>
+* 
+* This program is free software; you can redistribute it and/or
+* modify it under the terms of the GNU General Public License as
+* published by the Free Software Foundation; either version 2 of 
+* the License, or (at your option) any later version.
+* 
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+* 
+* You should have received a copy of the GNU General Public License
+* along with this program.  If not, see <http://www.gnu.org/licenses/>.
+* 
+******************************************************************/
 #ifndef BUGZILLALIB__H
 #define BUGZILLALIB__H
 
@@ -55,10 +74,10 @@ class BugReport
         QString bugSeverity() { return getData("bug_severity"); }
         
         void setDescription( QString desc ) { m_commentList.insert(0, desc); }
-        QString getDescription() { return m_commentList.at(0); }
+        QString description() { return m_commentList.at(0); }
         
         void setComments( QStringList comm) { m_commentList.append( comm ); }
-        QStringList getComments() { return m_commentList.mid(1); }
+        QStringList comments() { return m_commentList.mid(1); }
         
         void setValid( bool valid ) { m_isValid = valid; }
         bool isValid() { return m_isValid; }
@@ -123,6 +142,8 @@ class BugzillaManager : public QObject
         bool getLogged() { return m_logged; }
         QString getUsername() { return m_username; }
         
+        QString urlForBug( int bug_number );
+        
     private Q_SLOTS:
         void loginDone(KJob*);
         void fetchBugReportDone(KJob*);
@@ -135,6 +156,7 @@ class BugzillaManager : public QObject
         void searchFinished( BugMapList );
         void reportCommited( int ); //???RESULT ?
         
+        void loginError( QString );
         void searchError( QString );
         void bugReportError( QString );
         void commitReportError( QString );
@@ -147,8 +169,6 @@ class BugzillaManager : public QObject
         
         KJob *  fetchBugJob;
 
-
 };
 
 #endif
-

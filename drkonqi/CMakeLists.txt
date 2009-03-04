@@ -25,7 +25,8 @@ set(drkonqi_SRCS
    drkonqidialog.cpp
    crashinfo.cpp
    aboutbugreportingdialog.cpp
-   drkonqiassistantpages.cpp
+   drkonqiassistantpages_base.cpp
+   drkonqiassistantpages_bugzilla.cpp
    drkonqibugreport.cpp
    usefulnessmeter.cpp
    getbacktracewidget.cpp

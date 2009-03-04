@@ -14,22 +14,13 @@
    <string>Form</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_3">
-   <property name="leftMargin">
-    <number>5</number>
-   </property>
-   <property name="topMargin">
-    <number>5</number>
-   </property>
-   <property name="rightMargin">
-    <number>5</number>
-   </property>
-   <property name="bottomMargin">
-    <number>10</number>
+   <property name="margin">
+    <number>0</number>
    </property>
    <item>
     <layout class="QVBoxLayout" name="verticalLayout">
      <property name="spacing">
-      <number>2</number>
+      <number>1</number>
      </property>
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout">
@@ -107,8 +98,8 @@
        </property>
        <item>
         <widget class="QLabel" name="m_extraDetailsLabel">
-         <property name="text">
-          <string>ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. ui. . ui. ui. ui. ui. ui. ui. ui. ui. </string>
+         <property name="textFormat">
+          <enum>Qt::RichText</enum>
          </property>
          <property name="wordWrap">
           <bool>true</bool>

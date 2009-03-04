@@ -1,5 +1,5 @@
 /*******************************************************************
-* drkonqiassistantpages.h
+* drkonqiassistantpages_base.h
 * Copyright 2009    Dario Andres Rodriguez <andresbajotierra@gmail.com>
 * 
 * This program is free software; you can redistribute it and/or
@@ -25,19 +25,10 @@
 #include "getbacktracewidget.h"
 #include "crashinfo.h"
 
-#include <QtDebug>
-
-#include <kwallet.h>
-
-class QFormLayout;
-class KLineEdit;
+class AboutBugReportingDialog;
 class KPushButton;
 class QLabel;
-class KTextEdit;
-class QProgressDialog;
-class QDate;
-class QTreeWidget;
-class QTreeWidgetItem;
+class KTextBrowser;
 class QCheckBox;
 
 //BASE interface which implements some signals, and aboutTo + setBusy/setIdle functions
@@ -95,7 +86,6 @@ class DrKonqiAssistantPage: public QWidget
         void enableFinishButton( bool );
         
     private:
-    
         bool isBusy;
 
 };
@@ -106,10 +96,18 @@ class IntroductionPage: public DrKonqiAssistantPage
     Q_OBJECT
     
     public:
-        IntroductionPage( );
+        IntroductionPage();
+        ~IntroductionPage();
         
         void aboutToShow();
-        void aboutToHide() {}
+        
+    private Q_SLOTS:
+        void showAboutBugReporting();
+        
+    private:
+    
+        AboutBugReportingDialog *   m_aboutBugReportingDialog;
+        KPushButton *               m_showAboutReportingButton;
 };
 
 //Backtrace Page ---------------------------
@@ -122,7 +120,6 @@ class CrashInformationPage: public DrKonqiAssistantPage
         CrashInformationPage( CrashInfo * );
         
         void aboutToShow() { m_backtraceWidget->generateBacktrace(); }
-        void aboutToHide() {}
         
     private:
         GetBacktraceWidget * m_backtraceWidget;
@@ -136,7 +133,6 @@ class BugAwarenessPage: public DrKonqiAssistantPage
     public:
         BugAwarenessPage(CrashInfo*);
         
-        void aboutToShow() {}
         void aboutToHide();
        
     private:
@@ -156,7 +152,6 @@ class ConclusionPage : public DrKonqiAssistantPage
         ConclusionPage( CrashInfo* );
         
         void aboutToShow();
-        void aboutToHide() {}
         
     private Q_SLOTS:
         void reportButtonClicked();
@@ -172,150 +167,4 @@ class ConclusionPage : public DrKonqiAssistantPage
         CrashInfo *     m_crashInfo;
 };
 
-//Bugzilla Login
-class BugzillaLoginPage: public DrKonqiAssistantPage
-{
-    Q_OBJECT
-    
-    public: 
-        BugzillaLoginPage(CrashInfo*);
-        ~BugzillaLoginPage();
-        
-        void aboutToShow();
-        void aboutToHide() {}
-        
-    private Q_SLOTS:
-        void loginClicked();
-        void loginFinished( bool );
-        
-    private:
-        QFormLayout *   m_form;
-        
-        QLabel *        m_subTitle;
-        QLabel *        m_loginLabel;
-        KPushButton *   m_loginButton;
-        KLineEdit *     m_userEdit;
-        KLineEdit *     m_passwordEdit;
-        
-        //QProgressDialog * m_progressDialog;
-        KWallet::Wallet *   m_wallet;
-        CrashInfo * m_crashInfo;
-};
-
-
-class BugzillaKeywordsPage : public DrKonqiAssistantPage
-{
-    Q_OBJECT
-    
-    public:
-        BugzillaKeywordsPage( CrashInfo* );
-        
-        void aboutToShow();
-        void aboutToHide();
-        
-    private Q_SLOTS:
-        void textEdited( QString );
-        
-    private:
-        KLineEdit * m_keywordsEdit;
-        CrashInfo * m_crashInfo;
-};
-        
-
-class BugzillaDuplicatesPage : public DrKonqiAssistantPage
-{
-    Q_OBJECT
-    
-    public:
-        BugzillaDuplicatesPage(CrashInfo*);
-        ~BugzillaDuplicatesPage();
-        
-        void aboutToShow();
-        void aboutToHide();
-        
-    private Q_SLOTS:
-        void searchFinished( const BugMapList& );
-        void searchError( QString );
-        
-        void itemClicked( QTreeWidgetItem *, int );
-        
-        void bugFetchFinished( BugReport * );
-        void bugFetchError( QString );
-        
-        void searchMore();
-        void performSearch();
-        
-        void checkBoxChanged(int);
-        void mayBeDuplicateClicked();
-        
-        void enableControls( bool );
-        
-    private:
-        bool            m_searching;
-        
-        QLabel *        m_searchingLabel;
-        
-        QDate           m_startDate;
-        QDate           m_endDate;
-        
-        KPushButton *   m_searchMoreButton;
-        QTreeWidget *   m_bugListWidget;
-
-        KDialog *       m_infoDialog;
-        KTextBrowser *  m_infoDialogBrowser;
-        QLabel *        m_infoDialogLink;
-        
-        QCheckBox *     m_foundDuplicateCheckBox;
-        KLineEdit *     m_possibleDuplicateEdit;
-        KPushButton *   m_mineMayBeDuplicateButton;
-        
-        int             m_currentBugNumber;
-        
-        CrashInfo *     m_crashInfo;
-};
-
-class BugzillaInformationPage : public DrKonqiAssistantPage
-{
-    Q_OBJECT
-    
-    public:
-        BugzillaInformationPage( CrashInfo * );
-        
-        void aboutToShow();
-        void aboutToHide();
-        
-    private Q_SLOTS:
-        void checkTexts();
-        
-    private:
-        QLabel *        m_titleLabel;
-        KLineEdit *     m_titleEdit;
-        QLabel *        m_detailsLabel;
-        KTextEdit *     m_detailsEdit;
-        QLabel *        m_reproduceLabel;
-        KTextEdit *     m_reproduceEdit;
-        
-        CrashInfo * m_crashInfo;
-};
-
-class BugzillaCommitPage : public DrKonqiAssistantPage
-{
-    Q_OBJECT
-    
-    public:
-        BugzillaCommitPage( CrashInfo * );
-        
-        void aboutToShow();
-        void aboutToHide() {}
-        
-    private Q_SLOTS:
-        void commited(int);
-        void commitError( QString );
-        
-    private:
-        
-        KTextBrowser *  m_statusBrowser;
-        CrashInfo *  m_crashInfo;
-
-};
 #endif

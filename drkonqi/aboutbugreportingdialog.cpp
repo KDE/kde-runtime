@@ -25,8 +25,8 @@
 AboutBugReportingDialog::AboutBugReportingDialog(QWidget * parent):
     KDialog(parent)
 {
-    setWindowIcon( KIcon("help-hint") );
-    setCaption( i18n("About Bug Reporting") );
+    setWindowIcon( KIcon( "help-hint" ) );
+    setCaption( i18nc( "title", "About Bug Reporting" ) );
     setModal( true );
     
     setButtons( KDialog::Close );
@@ -36,12 +36,15 @@ AboutBugReportingDialog::AboutBugReportingDialog(QWidget * parent):
     m_textBrowser->setMinimumSize( QSize(500,300) );
 
     QString text =
-    i18n("You can help us to improve this software filing a bug report.<br /><br />"
-    "In order to generate an useful bug report we need to fetch some information about the crash and your system.<br /><br />"
-    "We also need you to specify some information about the crash.<br /><br />"
-    "<strong>Notice:</strong> You are not forced to file a bug report if you don't want to.<br />If you have never seen this dialog before and you don't know what to do you can close it"
-    "<br /><br />ToDo - Bug Reporting Assistant Steps Guide")
-    ;
+    
+    i18n("<para>You can help us to improve this software filing a bug report.</para>"
+    "<para>In order to generate an useful bug report we need to fetch some information about the crash and your system.</para>"
+    "<para>We also need you to specify some information about the crash.</para>"
+    "<para>Notice: You are not forced to file a bug report if you don't want to.</para>"
+    "<para>If you have never seen this dialog before and you don't know what to do you can close it.</para>"
+    "<title>Bug Reporting Assistant Steps Guide</title>"
+    "<para></para>"
+    );
         
     m_textBrowser->setText( text );
     

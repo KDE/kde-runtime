@@ -1,3 +1,22 @@
+/*******************************************************************
+* bugzillalib.cpp
+* Copyright 2000-2003 Hans Petter Bieker <bieker@kde.org>     
+*           2009    Dario Andres Rodriguez <andresbajotierra@gmail.com>
+* 
+* This program is free software; you can redistribute it and/or
+* modify it under the terms of the GNU General Public License as
+* published by the Free Software Foundation; either version 2 of 
+* the License, or (at your option) any later version.
+* 
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+* 
+* You should have received a copy of the GNU General Public License
+* along with this program.  If not, see <http://www.gnu.org/licenses/>.
+* 
+******************************************************************/
 #include "bugzillalib.h"
 
 #include <QtCore/QTextStream>
@@ -14,12 +33,13 @@
 #include <kio/job.h>
 #include <kio/jobclasses.h>
 #include <kurl.h>
+#include <klocale.h>
+
+static const char bugtrackerBaseUrl[] = "http://bugstest.kde.org/"; //TODO change to correct HTTPS BKO
 
 static const char columns[] = "bug_severity,priority,bug_status,product,short_desc"; //resolution,
 
 //BKO URLs
-static const char bugtrackerBaseUrl[] = "http://bugstest.kde.org/"; //TODO change to correct HTTPS BKO
-
 static const char loginUrl[] = "index.cgi";
 static const char loginParams[] = "GoAheadAndLogIn=1&Bugzilla_login=%1&Bugzilla_password=%2&log_in=Log+in";
 
@@ -65,15 +85,24 @@ void BugzillaManager::tryLogin()
 
 void BugzillaManager::loginDone( KJob* job )
 {
-    KIO::StoredTransferJob * loginJob = (KIO::StoredTransferJob *)job;
-    QByteArray response = loginJob->data();
-    
-    if( !response.contains( QByteArray("The username or password you entered is not valid") ) )
-        m_logged = true;
-    else
-        m_logged = false;
+    if( !job->error() )
+    {
+        KIO::StoredTransferJob * loginJob = (KIO::StoredTransferJob *)job;
+        QByteArray response = loginJob->data();
+        
+        //TODO detect errors here ?
+        
+        if( !response.contains( QByteArray("The username or password you entered is not valid") ) )
+            m_logged = true;
+        else
+            m_logged = false;
 
-    emit loginFinished( m_logged );
+        emit loginFinished( m_logged );
+    }
+    else
+    {
+        emit loginError( job->errorString() );
+    }
 }
 
 void BugzillaManager::fetchBugReport( int bugnumber )
@@ -104,7 +133,7 @@ void BugzillaManager::fetchBugReportDone( KJob* job )
         {
             emit bugReportFetched( report );
         } else {
-            emit bugReportError( QString( "Invalid bug report: corrupted data" ) );
+            emit bugReportError( i18n( "Invalid bug report: corrupted data" ) );
         }
         
         delete parser;
@@ -138,7 +167,7 @@ void BugzillaManager::searchBugsDone( KJob * job )
         if( parser->isValid() )
             emit searchFinished( list );
         else
-            emit searchError( "Invalid bug list: corrupted data" );
+            emit searchError( i18n( "Invalid bug list: corrupted data" ) );
         
         delete parser;
     }
@@ -153,7 +182,7 @@ void BugzillaManager::commitReport( BugReport * report )
     QString postDataStr = QString( commitReportParams );
     postDataStr = postDataStr.arg( report->product(), report->component(), report->bugSeverity(),
         QString("Unlisted Binaries"), report->operatingSystem(), report->priority(), report->bugStatus(), report->shortDescription(),
-        report->getDescription() );
+        report->description() );
         
     //QString("unspecified"), 
     
@@ -194,6 +223,7 @@ void BugzillaManager::commitReportDone( KJob * job )
   
         qDebug() << response;
         
+        //TODO improve  this detection
         if( response.contains("<title>Bug ") )
         {
             QString string1 = QLatin1String("<title>Bug ");
@@ -208,7 +238,8 @@ void BugzillaManager::commitReportDone( KJob * job )
         }
         else
         {
-            emit commitReportError( "There was some error during the report commit. Response:: " + response);
+            emit commitReportError( i18n( "There was some error during the report commit. Response:: %1", response ) ); 
+            //TODO don't show html, show error (requires parsing)
         }
     }
     else
@@ -218,6 +249,10 @@ void BugzillaManager::commitReportDone( KJob * job )
     
 }
 
+QString BugzillaManager::urlForBug( int bug_number )
+{
+    return QString(bugtrackerBaseUrl) + QString::number( bug_number );
+}
 
 BugListCSVParser::BugListCSVParser( QByteArray data )
 {
@@ -350,7 +385,7 @@ QString BugReport::toHtml()
     {
         html.append( QString("<strong>%1:</strong> %2<br />").arg( key, m_dataMap.value(key) ) );
     }
-    
-    html.append( QString("<br />Description:<br /><br />%1").arg( getDescription() ) );
+    html.append( "<br />" );
+    html.append( i18n("Description:<br /><br />%1", description() ) );
     return html;
 }

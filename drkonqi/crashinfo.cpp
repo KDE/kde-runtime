@@ -48,6 +48,7 @@ CrashInfo::CrashInfo( KrashConfig * cfg )
 CrashInfo::~CrashInfo()
 {
     delete m_bugzilla;
+    delete m_report;
 }
 
 const QString CrashInfo::getCrashTitle()
@@ -175,17 +176,19 @@ QString CrashInfo::generateReportTemplate( bool bugzilla )
         
     QString report;
     
+    //Program name and versions 
     report.append( QString("KDE Version: %1").arg( getKDEVersion() ) + lineBreak);
     report.append( QString("Qt Version: %1").arg( getQtVersion() ) + lineBreak );
     report.append( QString("Operating System: %1").arg( getOS() ) + lineBreak );
     report.append( QString("Application that crashed: %1").arg( getProductName() ) + lineBreak );
     report.append( QString("Version of the application: %1").arg( getProductVersion() ) + lineBreak );
     
+    //Description (title)
     if ( !m_report->shortDescription().isEmpty() )
         report.append( lineBreak + lineBreak + QString("Title: %1").arg( m_report->shortDescription() ) );
     
+    //Details of the crash situation
     report.append( lineBreak );
-    
     if( m_userCanDetail )
     {
         report.append( lineBreak + QString("What I was doing when the application crashed:") + lineBreak);
@@ -193,12 +196,12 @@ QString CrashInfo::generateReportTemplate( bool bugzilla )
         {
             report.append( m_userDetailText );
         } else {
-            report.append( QString("[Insert the details here]") );
+            report.append( i18n("[[ Insert the details of what were you doing when the application crashed (in ENGLISH) here ]]") );
         }
     }
 
+    //Steps to reproduce the crash
     report.append( lineBreak ) ;
-    
     if( m_userCanReproduce )
     {
         report.append( lineBreak + QString("How to reproduce the crash:") + lineBreak);
@@ -206,12 +209,12 @@ QString CrashInfo::generateReportTemplate( bool bugzilla )
         {
             report.append( m_userReproduceText );
         } else {
-            report.append( QString("[Insert the steps here]") );
+            report.append( i18n("[[ Insert the steps to reproduce the crash (in ENGLISH) here ]]") );
         }
     }
         
+    //Backtrace
     report.append( lineBreak ) ;
-    
     if( m_backtraceParser->backtraceUsefulness() != BacktraceParser::Useless )
     {
         QString formattedBacktrace = m_backtraceOutput;
@@ -223,6 +226,7 @@ QString CrashInfo::generateReportTemplate( bool bugzilla )
         + lineBreak + lineBreak + formattedBacktrace + lineBreak + QString("----") );
     }
 
+    //Possible duplicate
     if( !m_possibleDuplicate.isEmpty() )
         report.append( lineBreak + lineBreak + QString("This bug may be duplicate/related to bug %1").arg(m_possibleDuplicate) );
         

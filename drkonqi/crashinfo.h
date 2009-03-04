@@ -43,6 +43,8 @@ class CrashInfo : public QObject
     void generateBacktrace();
     void stopBacktrace();
     
+    void startCustomDebugger(){ m_crashConfig->acceptDebuggingApp(); }
+    
     BacktraceParser * getBacktraceParser() { return m_backtraceParser; }
     const QString getBacktraceOutput() { return m_backtraceOutput; } 
     BacktraceGenState getBacktraceState() { return m_backtraceState; }
@@ -54,6 +56,8 @@ class CrashInfo : public QObject
     bool getUserCanDetail() { return m_userCanDetail; }
     bool getUserCanReproduce() { return m_userCanReproduce; }
     bool getUserGetCompromise() { return m_userGetCompromise; }
+    
+    QString getApplicationCommand() { return m_crashConfig->execName(); }
     
     bool isKDEBugzilla();
     bool isReportMail();
