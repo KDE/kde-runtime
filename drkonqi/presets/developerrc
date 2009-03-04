@@ -242,6 +242,7 @@ Name[ga]=Ba chóir duit do chlár a dheisiú. Féach ar an gcúl-lorg thíos.
 Name[gl]=Pode querer arranxar o programa. Bote unha ollada en baixo á traza.
 Name[nb]=Programmet bør rettes. Se tilbakesporingen nedenfor.
 Name[nds]=Wenn Du dat Programm richten wullt, kiek man nerrn maal de Fehlerspoor an.
+Name[nl]=Als u dit programma wilt repareren, bekijk dan de uitvoer bij de 'backtrace' hieronder.
 Name[pt]=Poderá querer corrigir o seu programa. Dê uma vista de olhos no registo de chamadas.
 Name[pt_BR]=Você pode querer corrigir seu programa. Dê uma olhada no backtrace abaixo.
 Name[ro]=S-ar putea să fie nevoie de repararea programului. Uitați-vă la backtrace-ul de mai jos.
