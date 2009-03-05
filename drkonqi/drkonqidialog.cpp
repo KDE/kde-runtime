@@ -50,7 +50,7 @@ DrKonqiDialog::DrKonqiDialog( CrashInfo * info, QWidget * parent ) :
     setWindowIcon( KIcon("tools-report-bug") );
 
     //GUI
-    QLabel * title = new QLabel( i18n("<strong>The application closed unexpectedly</strong>") );
+    QLabel * title = new QLabel( i18n("<title>The application closed unexpectedly</title>") );
     title->setWordWrap( true ); 
     
     QLabel * crashTitle = new QLabel( m_crashInfo->getCrashTitle() );

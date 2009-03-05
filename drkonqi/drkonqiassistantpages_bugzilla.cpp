@@ -667,6 +667,7 @@ BugzillaCommitPage::BugzillaCommitPage( CrashInfo * info )
     m_statusLabel = new QLabel();
     m_statusLabel->setWordWrap( true );
     m_statusLabel->setOpenExternalLinks( true );
+    m_statusLabel->setTextFormat( Qt::RichText );
     
     //TODO button to retry on error ?
     

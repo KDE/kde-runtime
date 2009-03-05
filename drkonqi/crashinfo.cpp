@@ -185,7 +185,7 @@ QString CrashInfo::generateReportTemplate( bool bugzilla )
     
     //Description (title)
     if ( !m_report->shortDescription().isEmpty() )
-        report.append( lineBreak + lineBreak + QString("Title: %1").arg( m_report->shortDescription() ) );
+        report.append( lineBreak + QString("Title: %1").arg( m_report->shortDescription() ) );
     
     //Details of the crash situation
     report.append( lineBreak );

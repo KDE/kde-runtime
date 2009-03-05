@@ -47,6 +47,7 @@ static const char loginParams[] = "GoAheadAndLogIn=1&Bugzilla_login=%1&Bugzilla_
 static const char searchUrl[] = "buglist.cgi?query_format=advanced&short_desc_type=anywordssubstr&short_desc=%1&product=%2&long_desc_type=anywordssubstr&long_desc=%3&bug_file_loc_type=allwordssubstr&bug_file_loc=&keywords_type=allwords&keywords=&emailtype1=substring&email1=&emailtype2=substring&email2=&bugidtype=include&bug_id=&votes=&chfieldfrom=%4&chfieldto=%5&chfield=[Bug+creation]&chfieldvalue=&cmdtype=doit&field0-0-0=noop&type0-0-0=noop&value0-0-0=&bug_severity=%6&order=Importance&columnlist=%7&ctype=csv";
 // short_desc, product, long_desc(possible backtraces lines), searchFrom, searchTo, severity, columnList
 
+static const char showBugUrl[] = "show_bug.cgi?id=%1";
 static const char fetchBugUrl[] = "show_bug.cgi?id=%1&ctype=xml";
 
 static const char commitReportUrl[] = "post_bug.cgi";
@@ -252,7 +253,7 @@ void BugzillaManager::commitReportDone( KJob * job )
 
 QString BugzillaManager::urlForBug( int bug_number )
 {
-    return QString(bugtrackerBaseUrl) + QString::number( bug_number );
+    return QString(bugtrackerBaseUrl) + QString(showBugUrl).arg( bug_number );
 }
 
 BugListCSVParser::BugListCSVParser( QByteArray data )

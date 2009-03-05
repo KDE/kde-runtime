@@ -41,6 +41,10 @@ check what all the options in KrashConf are meant to do and use them appropriate
 #Done
 ---------
 
+way to get graphical feedback of KToolInvocation:invokeMailer
+
+extract methods from crashInfo to SystemInfo (?) (like getOS, getKDE .. )
+
 #implement save report
 #QNetworkAccessManager -> KIO
     http://api.kde.org/4.x-api/kdelibs-apidocs/kio/html/classKIO_1_1TransferJob-members.html
