@@ -64,6 +64,8 @@ if (setuid(getuid()) < 0 && geteuid() != getuid())
                             KAboutData::License_BSD,
                             ki18n("(C) 2000-2003, Hans Petter Bieker"));
     aboutData.addAuthor(ki18n("Hans Petter Bieker"), KLocalizedString(), "bieker@kde.org");
+    aboutData.addAuthor(ki18n("Dario Andres Rodriguez"), KLocalizedString(), "andresbajotierra@gmail.com");
+    aboutData.addAuthor(ki18n("George Kiagiadakis"), KLocalizedString(), "gkiagia@users.sourceforge.net");
     aboutData.setProgramIconName("tools-report-bug");
 
     KCmdLineArgs::init(argc, argv, &aboutData);

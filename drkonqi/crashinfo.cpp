@@ -88,7 +88,7 @@ void CrashInfo::backtraceGeneratorAppend( const QString & data )
 
 void CrashInfo::backtraceGeneratorFinished( const QString & data )
 {
-    QString tmp = i18n( "Application: %progname (%execname), signal %signame" ) + '\n';
+    QString tmp = i18n( "Application: %progname (%execname), signal %signame" ) + "\n\n";
     m_crashConfig->expandString( tmp, KrashConfig::ExpansionUsagePlainText );
     
     m_backtraceOutput = tmp + data;
