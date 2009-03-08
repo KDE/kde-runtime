@@ -92,7 +92,7 @@ class CrashInfo : public QObject
     void backtraceNewData( QString );
   
   private Q_SLOTS:
-    void backtraceGeneratorFinished( const QString & );
+    void backtraceGeneratorFinished();
     void backtraceGeneratorAppend( const QString & );
     void backtraceGeneratorFailed();
     

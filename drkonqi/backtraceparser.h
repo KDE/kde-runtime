@@ -39,13 +39,9 @@ public:
     virtual Usefulness backtraceUsefulness() const = 0;
     virtual QString firstValidFunctions() const { return QString(); } //TODO dummy
 
-Q_SIGNALS:
-    void done(const QString & backtrace);
-
 protected Q_SLOTS:
     virtual void resetState() = 0;
     virtual void parseLine(const QString & lineStr) = 0;
-    virtual void generatorFinished();
 };
 
 class BacktraceParserGdb : public BacktraceParser

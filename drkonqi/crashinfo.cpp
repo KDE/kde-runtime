@@ -40,7 +40,7 @@ CrashInfo::CrashInfo( KrashConfig * cfg )
 #endif
 
     m_backtraceParser->connectToGenerator(m_backtraceGenerator);
-    connect(m_backtraceParser, SIGNAL(done(QString)), this, SLOT(backtraceGeneratorFinished(QString)));
+    connect(m_backtraceGenerator, SIGNAL(done()), this, SLOT(backtraceGeneratorFinished()));
     connect(m_backtraceGenerator, SIGNAL(someError()), this, SLOT(backtraceGeneratorFailed()));
     connect(m_backtraceGenerator, SIGNAL(newLine(QString)), this, SLOT(backtraceGeneratorAppend(QString)));
 }
@@ -86,12 +86,12 @@ void CrashInfo::backtraceGeneratorAppend( const QString & data )
     emit backtraceNewData( data.trimmed() );
 }
 
-void CrashInfo::backtraceGeneratorFinished( const QString & data )
+void CrashInfo::backtraceGeneratorFinished()
 {
     QString tmp = i18n( "Application: %progname (%execname), signal %signame" ) + "\n\n";
     m_crashConfig->expandString( tmp, KrashConfig::ExpansionUsagePlainText );
     
-    m_backtraceOutput = tmp + data;
+    m_backtraceOutput = tmp + m_backtraceParser->parsedBacktrace();
     m_backtraceState = Loaded;
 
 #ifdef BACKTRACE_PARSER_DEBUG

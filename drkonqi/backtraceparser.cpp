@@ -46,12 +46,6 @@ void BacktraceParser::connectToGenerator(BacktraceGenerator *generator)
 {
     connect(generator, SIGNAL(starting()), this, SLOT(resetState()) );
     connect(generator, SIGNAL(newLine(QString)), this, SLOT(parseLine(QString)) );
-    connect(generator, SIGNAL(done()), this, SLOT(generatorFinished()) );
-}
-
-void BacktraceParser::generatorFinished()
-{
-    emit done(parsedBacktrace());
 }
 
 //END BacktraceParser
