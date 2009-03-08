@@ -46,7 +46,6 @@ GetBacktraceWidget::GetBacktraceWidget( CrashInfo * info ) :
     connect( crashInfo, SIGNAL(backtraceNewData(QString)) , ui.m_backtraceEdit, SLOT(append(QString)) );
     
     ui.m_extraDetailsLabel->setVisible( false );
-    
     ui.m_reloadBacktraceButton->setGuiItem( KGuiItem( i18nc("button action", "&Reload Crash Information" ),KIcon("view-refresh"), i18nc( "button explanation", "Use this button to reload the crash information (backtrace). This is useful when you have installed the proper debug symbols packages and you want to obtain a better backtrace" ), i18nc( "button explanation", "Use this button to reload the crash information (backtrace). This is useful when you have installed the proper debug symbols packages and you want to obtain a better backtrace" ) )  );
     connect( ui.m_reloadBacktraceButton, SIGNAL(clicked()), this, SLOT(regenerateBacktrace()) );
 
@@ -121,11 +120,10 @@ void GetBacktraceWidget::backtraceGenerated()
         ui.m_statusLabel->setText( "This backtrace is useful" ); //FIXME dummy string.
         
         //QStringList missingSymbols = QStringList() << btInfo->usefulFilesWithMissingSymbols();
-        
         if( btParser->backtraceUsefulness() != BacktraceParser::ReallyUseful )
         {
             ui.m_extraDetailsLabel->setVisible( true );
-            ui.m_extraDetailsLabel->setText( i18n( "The crash information lacks of some important details.<br />Please read <link url=\"%1\">How to create useful crash reports</link> in order to know how to get an useful backtrace.<br />After you install the needed packages you can click the \"Reload Crash Information\" button ", "http://techbase.kde.org/Development/Tutorials/Debugging/How_to_create_useful_crash_reports" ) );
+            ui.m_extraDetailsLabel->setText( i18n( "The crash information lacks of some important details.<br />Please read <link url=\"%1\">How to create useful crash reports</link> in order to know how to get an useful backtrace.<br />After you install the needed packages you can click the \"Reload Crash Information\" button ", QLatin1String("http://techbase.kde.org/Development/Tutorials/Debugging/How_to_create_useful_crash_reports") ) );
             ui.m_reloadBacktraceButton->setEnabled( true );
 
             #if 0

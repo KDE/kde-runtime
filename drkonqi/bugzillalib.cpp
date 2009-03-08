@@ -77,7 +77,6 @@ void BugzillaManager::tryLogin()
         
         KIO::StoredTransferJob * loginJob = 
             KIO::storedHttpPost( postData, KUrl( QString(bugtrackerBaseUrl) + QString(loginUrl) ), KIO::HideProgressInfo );
-            
         connect( loginJob, SIGNAL(finished(KJob*)) , this, SLOT(loginDone(KJob*)) );
         
         loginJob->addMetaData("content-type", "Content-Type: application/x-www-form-urlencoded");

@@ -83,12 +83,12 @@ DrKonqiDialog::DrKonqiDialog( CrashInfo * info, QWidget * parent ) :
     m_introWidget->setLayout( introLayout );
     //m_introWidget->setMinimumSize( QSize(500, 220) );
     
-    QString styleSheet = QString(".QWidget {"
+    QString styleSheet = QString( ".QWidget {"
                        "background-image: url(%1);"
                        "background-repeat: no-repeat;"
                        "background-position: right;"
-                       "}").arg(KStandardDirs::locate("appdata", QLatin1String("pics/konqi.png")));
-    m_introWidget->setStyleSheet(styleSheet);
+                       "} ").arg( KStandardDirs::locate( "appdata", QLatin1String( "pics/konqi.png" ) ) );
+    m_introWidget->setStyleSheet( styleSheet );
     
     //Backtrace Widget
     m_backtraceWidget = new GetBacktraceWidget( m_crashInfo );
@@ -113,7 +113,7 @@ DrKonqiDialog::DrKonqiDialog( CrashInfo * info, QWidget * parent ) :
     setButtonGuiItem( KDialog::Help, m_guiItemShowBacktrace );
     connect( this, SIGNAL(helpClicked()), this, SLOT(toggleBacktrace()) );
     
-    //Default debugger button and menu
+    //Default debugger button and menu (only for developer mode)
     setButtonGuiItem( KDialog::User2, KGuiItem( i18nc("Button action", "Debug") , KIcon("document-edit"), i18nc("help text", "Starts a program to debug the crashed application" ), i18nc("help text", "Starts a program to debug the crashed application" ) ) );
     showButton( KDialog::User2, m_crashInfo->getCrashConfig()->showDebugger() );
     
@@ -126,6 +126,7 @@ DrKonqiDialog::DrKonqiDialog( CrashInfo * info, QWidget * parent ) :
     m_customDebugAction = new QAction( KIcon("document-edit"), "Debug in custom application", m_debugMenu );
     connect( m_customDebugAction, SIGNAL(triggered()), this, SLOT(startCustomDebugger()) );
     m_customDebugAction->setEnabled( false );
+    m_customDebugAction->setVisible( false );
     
     m_debugMenu->addAction( m_defaultDebugAction );
     m_debugMenu->addAction( m_customDebugAction );
@@ -204,6 +205,7 @@ void DrKonqiDialog::restartApplication()
 
 void DrKonqiDialog::slotNewDebuggingApp( const QString & app )
 {
+    m_customDebugAction->setVisible( true );
     m_customDebugAction->setEnabled( true );
     m_customDebugAction->setText( app );
 }

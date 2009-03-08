@@ -125,24 +125,26 @@ void BugzillaLoginPage::aboutToShow()
         bool login = false;
         if ( !m_wallet )
         {
-            if( KWallet::Wallet::walletList().contains("drkonqi") ) //Do not create the wallet on the first login
+            setBackButton( false );
+            
+            if ( !KWallet::Wallet::keyDoesNotExist( KWallet::Wallet::NetworkWallet(), KWallet::Wallet::FormDataFolder(), QLatin1String( "drkonqi_bugzilla" ) ) ) //Key exists!
             {
-                setBackButton( false );
-                
-                m_wallet = KWallet::Wallet::openWallet("drkonqi", 0 );
+                m_wallet = KWallet::Wallet::openWallet( KWallet::Wallet::NetworkWallet(), 0 );
                 
                 if( m_wallet )
                 {
+                    m_wallet->setFolder( KWallet::Wallet::FormDataFolder() );
+                    
                     //Use wallet data to try login
-                    QByteArray username;
-                    m_wallet->readEntry("username", username);
-                    QString password;
-                    m_wallet->readPassword("password", password);
+                    QMap<QString, QString> values;
+                    m_wallet->readMap( QLatin1String( "drkonqi_bugzilla" ), values);
+                    QString username = values.value( QLatin1String( "username" ) );
+                    QString password = values.value( QLatin1String( "password" ) );
                     
                     if( !username.isEmpty() && !password.isEmpty() )
                     {
                         login = true;
-                        m_userEdit->setText( QString(username) );
+                        m_userEdit->setText( username );
                         m_passwordEdit->setText( password );
                         loginClicked();
                     }
@@ -170,15 +172,20 @@ void BugzillaLoginPage::loginClicked()
         
         //If the wallet wasn't initialized at startup, launch it now to save the data
         if( !m_wallet )
-            m_wallet = KWallet::Wallet::openWallet("drkonqi", 0 );
+        {
+            m_wallet = KWallet::Wallet::openWallet( KWallet::Wallet::NetworkWallet(), 0 );
+            m_wallet->setFolder( KWallet::Wallet::FormDataFolder() );
+        }
             
         m_userEdit->setEnabled( false );
         m_passwordEdit->setEnabled( false );
         
         if( m_wallet )
         {
-            m_wallet->writeEntry( "username", m_userEdit->text().toLocal8Bit() );
-            m_wallet->writePassword( "password", m_passwordEdit->text() );
+            QMap<QString,QString> values;
+            values.insert( QLatin1String( "username" ), m_userEdit->text() );
+            values.insert( QLatin1String( "password" ), m_passwordEdit->text() );
+            m_wallet->writeMap( QLatin1String( "drkonqi_bugzilla" ), values );
         }
         
         m_crashInfo->getBZ()->setLoginData( m_userEdit->text(), m_passwordEdit->text() );
