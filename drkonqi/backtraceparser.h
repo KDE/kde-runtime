@@ -26,7 +26,7 @@ class BacktraceParser : public QObject
 {
     Q_OBJECT
 public:
-    enum Usefulness { ReallyUseful, MayBeUseful, ProbablyUseless, Useless };
+    enum Usefulness { InvalidUsefulness, ReallyUseful, MayBeUseful, ProbablyUseless, Useless };
 
     static BacktraceParser *newParser(const QString & debuggerName, QObject *parent = 0);
 

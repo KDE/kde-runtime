@@ -1,5 +1,6 @@
 /*
     Copyright (C) 2009  George Kiagiadakis <gkiagia@users.sourceforge.net>
+    Copyright (C) 2009  Dario Andres Rodriguez <andresbajotierra@gmail.com>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,13 +21,9 @@
 
 #include <QtCore/QRegExp>
 #include <QtCore/QSharedData>
-
-#ifndef QT_ONLY
-# include <KDebug>
-#else
-# include <QtCore/QDebug>
-# define kDebug qDebug
-#endif
+#include <QtCore/QSet>
+#include <KGlobal>
+#include <KDebug>
 
 //BEGIN BacktraceParser
 
@@ -97,17 +94,21 @@ public:
         InvalidRating = -1 // (dummy invalid value)
     };
 
+    static const LineRating BestRating = Good;
+
     BacktraceLineGdb(const QString & line);
 
     QString toString() const { return d->m_line; }
     LineType type() const { return (LineType) d->m_type; }
-    LineRating rating() const { return (LineRating) d->m_rating; }
+    LineRating rating() const { Q_ASSERT(d->m_rating >= 0); return (LineRating) d->m_rating; }
 
     int frameNumber() const { return d->m_stackFrameNumber; }
     QString functionName() const { return d->m_functionName; }
     QString functionArgs() const { return d->m_functionArguments; }
     QString fileName() const { return d->m_hasSourceFile ? d->m_file : QString(); }
     QString libraryName() const { return d->m_hasSourceFile ? QString() : d->m_file; }
+
+    bool operator==(const BacktraceLineGdb & other) const { return d == other.d; }
 
 private:
     void parse();
@@ -224,15 +225,25 @@ void BacktraceLineGdb::rate()
 
 struct BacktraceParserGdb::Private
 {
-    Private() : m_possibleKCrashStart(0), m_lineBelowSigHandlerCounter(0), m_threadsCount(0),
-                m_frameZeroAppeared(false) {}
+    Private() : m_possibleKCrashStart(0), m_threadsCount(0),
+                m_isBelowSignalHandler(false), m_frameZeroAppeared(false),
+                m_cachedUsefulness(BacktraceParser::InvalidUsefulness) {}
 
     QList<BacktraceLineGdb> m_linesList;
+    QList<BacktraceLineGdb> m_usefulLinesList;
     int m_possibleKCrashStart;
-    int m_lineBelowSigHandlerCounter;
     int m_threadsCount;
+    bool m_isBelowSignalHandler;
     bool m_frameZeroAppeared;
+
+    mutable BacktraceParser::Usefulness m_cachedUsefulness;
 };
+
+K_GLOBAL_STATIC_WITH_ARGS(const QSet<QString>, blacklistedFunctions, (
+    QSet<QString>() << "raise" << "abort" << "_start" << "__libc_start_main"
+                    << "__assert_fail" << "do_assert" << "qt_message_output"
+                    << "qFatal" << "clone" << "start_thread"
+));
 
 BacktraceParserGdb::BacktraceParserGdb(QObject *parent)
     : BacktraceParser(parent), d(NULL)
@@ -262,21 +273,17 @@ void BacktraceParserGdb::parseLine(const QString & lineStr)
             d->m_linesList.append(line);
             d->m_possibleKCrashStart = d->m_linesList.size();
             d->m_threadsCount++;
-            d->m_lineBelowSigHandlerCounter = 0; //reset the counter
-            d->m_frameZeroAppeared = false; //reset this flag too (gdb bug workaround flag, see below)
+            //reset the state of the flags that need to be per-thread
+            d->m_isBelowSignalHandler = false;
+            d->m_frameZeroAppeared = false; // gdb bug workaround flag, see below
             break;
         case BacktraceLineGdb::SignalHandlerStart:
             //replace the stack frames of KCrash with a nice message
             d->m_linesList.erase( d->m_linesList.begin() + d->m_possibleKCrashStart, d->m_linesList.end() );
             d->m_linesList.insert( d->m_possibleKCrashStart, BacktraceLineGdb("[KCrash Handler]\n") );
-            d->m_lineBelowSigHandlerCounter = 1; //next line is the first below the signal handler
+            d->m_isBelowSignalHandler = true; //next line is the first below the signal handler
             break;
         case BacktraceLineGdb::StackFrame:
-            //TODO fix rating
-
-            if ( d->m_lineBelowSigHandlerCounter > 0 )
-                d->m_lineBelowSigHandlerCounter++;
-
             // gdb workaround - (v6.8 at least) - 'thread apply all bt' writes
             // the #0 stack frame again at the end.
             // Here we ignore this frame by using a flag that tells us whether
@@ -288,6 +295,11 @@ void BacktraceParserGdb::parseLine(const QString & lineStr)
                 else
                     d->m_frameZeroAppeared = true;
             }
+
+            //rate the stack frame if we are below the signal handler and the function is not blacklisted.
+            if ( d->m_isBelowSignalHandler && !blacklistedFunctions->contains(line.functionName()) )
+                d->m_usefulLinesList.append(line);
+
             d->m_linesList.append(line);
             break;
         case BacktraceLineGdb::Unknown:
@@ -306,8 +318,13 @@ void BacktraceParserGdb::parseLine(const QString & lineStr)
                      lastLine.rating() == BacktraceLineGdb::MissingEverything)
                    )
                 {
-                    BacktraceLineGdb newLine(lastLine.toString() + lineStr);
-                    d->m_linesList[d->m_linesList.size() - 1] = newLine; //replace the last line with the new one
+                    //remove the last line from the cache.
+                    d->m_linesList.removeLast();
+                    //if m_usefulLinesList also contains this line, remove it from there too.
+                    if ( !d->m_usefulLinesList.isEmpty() && d->m_usefulLinesList.last() == lastLine)
+                        d->m_usefulLinesList.removeLast();
+                    //parse again the two lines joined together.
+                    parseLine(lastLine.toString() + lineStr);
                     break;
                 }
             }
@@ -342,7 +359,51 @@ QString BacktraceParserGdb::parsedBacktrace() const
 
 BacktraceParser::Usefulness BacktraceParserGdb::backtraceUsefulness() const
 {
-    return ReallyUseful; //TODO implement me
+    //if there is no d, the debugger has not run,
+    //so we can say that the (inexistent) backtrace Useless.
+    if ( !d )
+        return Useless;
+
+    //cache the usefulness value because this function will probably be called many times
+    if ( d->m_cachedUsefulness != InvalidUsefulness )
+        return d->m_cachedUsefulness;
+
+    uint rating = 0, bestPossibleRating = 0, counter = 0;
+    QList<BacktraceLineGdb>::const_iterator i;
+    for(i = d->m_usefulLinesList.constBegin(); i != d->m_usefulLinesList.constEnd(); ++i)
+    {
+       uint multiplier = d->m_usefulLinesList.size() - counter; //give weight to the first lines
+       rating += static_cast<uint>((*i).rating()) * multiplier;
+       bestPossibleRating += static_cast<uint>(BacktraceLineGdb::BestRating) * multiplier;
+       counter++;
+
+       kDebug() << (*i).rating() << (*i).toString();
+    }
+
+    kDebug() << "Rating:" << rating << "out of" << bestPossibleRating;
+
+    uint usefulRating = bestPossibleRating*0.90;
+    uint maybeUsefulRating = bestPossibleRating*0.70;
+    uint probablyUselessRating = bestPossibleRating*0.35;
+    Usefulness usefulness = Useless;
+
+    if(rating >= usefulRating)
+    {
+        usefulness = ReallyUseful;
+    }
+    else if (rating >= maybeUsefulRating)
+    {
+        usefulness = MayBeUseful;
+    }
+    else if (rating >= probablyUselessRating)
+    {
+        usefulness = ProbablyUseless;
+    }
+
+    kDebug() << bestPossibleRating << usefulRating << maybeUsefulRating << probablyUselessRating << usefulness;
+
+    d->m_cachedUsefulness = usefulness;
+    return usefulness;
 }
 
 //END BacktraceParserGdb
