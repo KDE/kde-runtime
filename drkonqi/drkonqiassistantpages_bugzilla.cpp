@@ -525,7 +525,7 @@ void BugzillaDuplicatesPage::performSearch()
     
     m_searchingLabel->setText( i18n( "Searching for duplicates (from %1 to %2) ...", startDateStr, endDateStr ) );
     
-    m_crashInfo->getBZ()->searchBugs( m_crashInfo->getReport()->shortDescription(), m_crashInfo->getProductName(), "crash", startDateStr, endDateStr , m_crashInfo->getBacktraceParser()->firstValidFunctions() );
+    m_crashInfo->getBZ()->searchBugs( m_crashInfo->getReport()->shortDescription(), m_crashInfo->getProductName(), "crash", startDateStr, endDateStr , m_crashInfo->getBacktraceParser()->firstValidFunctions().join(" ") );
    
    //Test search
    //m_crashInfo->getBZ()->searchBugs( "plasma crash folder view", "plasma", "crash", startDateStr, endDateStr , "labelRectangle" );

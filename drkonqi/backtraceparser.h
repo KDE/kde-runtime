@@ -37,7 +37,7 @@ public:
 
     virtual QString parsedBacktrace() const = 0;
     virtual Usefulness backtraceUsefulness() const = 0;
-    virtual QString firstValidFunctions() const { return QString(); } //TODO dummy
+    virtual QStringList firstValidFunctions() const = 0;
 
 protected Q_SLOTS:
     virtual void resetState() = 0;
@@ -53,6 +53,7 @@ public:
 
     virtual QString parsedBacktrace() const;
     virtual Usefulness backtraceUsefulness() const;
+    virtual QStringList firstValidFunctions() const;
 
 protected Q_SLOTS:
     virtual void resetState();
@@ -69,9 +70,10 @@ class BacktraceParserNull : public BacktraceParser
 public:
     explicit BacktraceParserNull(QObject *parent = 0);
     virtual ~BacktraceParserNull();
-    
+
     virtual QString parsedBacktrace() const;
     virtual Usefulness backtraceUsefulness() const;
+    virtual QStringList firstValidFunctions() const;
 
 protected Q_SLOTS:
     virtual void resetState();

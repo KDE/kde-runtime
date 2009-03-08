@@ -406,6 +406,25 @@ BacktraceParser::Usefulness BacktraceParserGdb::backtraceUsefulness() const
     return usefulness;
 }
 
+QStringList BacktraceParserGdb::firstValidFunctions() const
+{
+    //if there is no d, the debugger has not run, so we have no functions to return.
+    if ( !d )
+        return QStringList();
+
+    QStringList result;
+    QList<BacktraceLineGdb>::const_iterator i;
+
+    //get only the first three valid functions that are encountered
+    for(i = d->m_usefulLinesList.constBegin(); i != d->m_usefulLinesList.constEnd() || result.size() < 3; ++i)
+    {
+        if ( (*i).functionName() != "??" )
+            result.append((*i).functionName());
+    }
+
+    return result;
+}
+
 //END BacktraceParserGdb
 
 //BEGIN BacktraceParserNull
@@ -421,6 +440,11 @@ QString BacktraceParserNull::parsedBacktrace() const
 BacktraceParser::Usefulness BacktraceParserNull::backtraceUsefulness() const
 {
     return MayBeUseful;
+}
+
+QStringList BacktraceParserNull::firstValidFunctions() const
+{
+    return QStringList();
 }
 
 void BacktraceParserNull::resetState()
