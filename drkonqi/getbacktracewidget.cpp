@@ -117,8 +117,25 @@ void GetBacktraceWidget::backtraceGenerated()
         BacktraceParser * btParser = crashInfo->getBacktraceParser();
         
         ui.m_usefulnessMeter->setUsefulness( btParser->backtraceUsefulness() );
-        ui.m_statusLabel->setText( "This backtrace is useful" ); //FIXME dummy string.
-        
+
+        QString usefulnessText;
+        switch( btParser->backtraceUsefulness() ) {
+            case BacktraceParser::ReallyUseful:
+                usefulnessText = i18nc("backtrace rating description", "This crash information is useful");break;
+            case BacktraceParser::MayBeUseful:
+                usefulnessText = i18nc("backtrace rating description", "This crash information may be useful");break;
+            case BacktraceParser::ProbablyUseless:
+                usefulnessText = i18nc("backtrace rating description", "This crash information is probably useless");break;
+            case BacktraceParser::Useless:
+                usefulnessText = i18nc("backtrace rating description", "The crash information is useless");break;
+            default:
+                //let's hope nobody will ever see this... ;)
+                usefulnessText = i18nc("backtrace rating description that should never appear",
+                        "The rating of this crash information is invalid. This is a bug in drkonqi itself.");
+                break;
+        }
+        ui.m_statusLabel->setText( usefulnessText );
+
         //QStringList missingSymbols = QStringList() << btInfo->usefulFilesWithMissingSymbols();
         if( btParser->backtraceUsefulness() != BacktraceParser::ReallyUseful )
         {
