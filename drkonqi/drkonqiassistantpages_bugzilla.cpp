@@ -71,7 +71,7 @@ BugzillaLoginPage::BugzillaLoginPage( CrashInfo * info) :
     m_loginLabel = new QLabel();
     m_loginLabel->setMargin(10);
     
-    QLabel * noticeLabel = new QLabel( i18n("<strong>Notice:</strong> You need a user account at the <link url=\"%1\">KDE BugTracker</link> in order to file a bug report because we may need to contact you later for requesting further information. <br />If you don't have one you can freely <link=\"%2\">create one here</link>", "http://bugs.kde.org", "https://bugs.kde.org/createaccount.cgi"));
+    QLabel * noticeLabel = new QLabel( i18n("<strong>Notice:</strong> You need a user account at the <link url=\"%1\">KDE BugTracker</link> in order to file a bug report because we may need to contact you later for requesting further information. <br />If you don't have one you can freely <link=\"%2\">create one here</link>", QLatin1String("http://bugs.kde.org"), "https://bugs.kde.org/createaccount.cgi"));
     
     noticeLabel->setWordWrap( true );
     noticeLabel->setOpenExternalLinks( true );
