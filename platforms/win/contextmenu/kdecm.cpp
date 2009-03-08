@@ -17,6 +17,7 @@
 
 #include <windows.h>
 #include <windowsx.h>
+#include <shellapi.h>
 #include <shlobj.h>
 #include <stdio.h>
 
@@ -45,19 +46,19 @@ HINSTANCE _hModule = NULL; // DLL Module.
 
 typedef struct{
   HKEY  hRootKey;
-  LPTSTR szSubKey;
-  LPTSTR lpszValueName;
-  LPTSTR szData;
+  LPCWSTR szSubKey;
+  LPCWSTR lpszValueName;
+  LPCWSTR szData;
 } DOREGSTRUCT, *LPDOREGSTRUCT;
 
-char szSciTEName[] = "kate.exe";
-char szShellExtensionTitle[] = "kate";
+WCHAR szSciTEName[] = L"kate.exe";
+WCHAR szShellExtensionTitle[] = L"kate";
 
-BOOL RegisterServer(CLSID, LPTSTR);
-BOOL UnregisterServer(CLSID, LPTSTR);
-void MsgBox(LPTSTR);
-void MsgBoxDebug(LPTSTR);
-void MsgBoxError(LPTSTR);
+BOOL RegisterServer(CLSID, LPCWSTR);
+BOOL UnregisterServer(CLSID, LPCWSTR);
+void MsgBox(LPCWSTR);
+void MsgBoxDebug(LPCWSTR);
+void MsgBoxError(LPCWSTR);
 
 #define EXPORT __declspec(dllexport)
 #ifdef _MSC_VER
@@ -115,18 +116,18 @@ STDAPI_EXPORTED DllUnregisterServer(void) {
 // CheckSciTE
 //---------------------------------------------------------------------------
 BOOL CheckSciTE() {
-  TCHAR szModuleFullName[MAX_PATH];
-  TCHAR szExeFullName[MAX_PATH];
+  WCHAR szModuleFullName[MAX_PATH];
+  WCHAR szExeFullName[MAX_PATH];
   int nLenPath = 0;
-  TCHAR* pDest;
-  LPTSTR *lpFilePart = NULL;
+  WCHAR* pDest;
+  LPWSTR *lpFilePart = NULL;
 
-  GetModuleFileName(_hModule, szModuleFullName, MAX_PATH);
-  pDest = strrchr(szModuleFullName, '\\' );
+  GetModuleFileNameW(_hModule, szModuleFullName, MAX_PATH);
+  pDest = wcsrchr(szModuleFullName, '\\' );
   pDest++;
   pDest[0] = 0;
 
-  DWORD dw = SearchPath(NULL, szShellExtensionTitle, ".exe", MAX_PATH, szExeFullName, lpFilePart);
+  DWORD dw = SearchPath(NULL, szShellExtensionTitle, L".exe", MAX_PATH, szExeFullName, lpFilePart);
 
   return (dw ? TRUE : FALSE);
 }
@@ -134,28 +135,24 @@ BOOL CheckSciTE() {
 //---------------------------------------------------------------------------
 // RegisterServer
 //---------------------------------------------------------------------------
-BOOL RegisterServer(CLSID clsid, LPTSTR lpszTitle) {
+BOOL RegisterServer(CLSID clsid, LPCWSTR lpszTitle) {
   int      i;
   HKEY     hKey;
   LRESULT  lResult;
   DWORD    dwDisp;
-  TCHAR    szSubKey[MAX_PATH];
-  TCHAR    szCLSID[MAX_PATH];
-  TCHAR    szModule[MAX_PATH];
+  WCHAR    szSubKey[MAX_PATH];
+  WCHAR    szCLSID[MAX_PATH];
+  WCHAR    szModule[MAX_PATH];
   LPWSTR   pwsz;
 
   if (!CheckSciTE()) {
-    MsgBoxError("To register the Kate context menu extension,\r\ninstall kdecm.dll in the same directory than kate.exe.");
+    MsgBoxError(L"To register the Kate context menu extension,\r\ninstall kdecm.dll in the same directory than kate.exe.");
     return FALSE;
   }
 
   StringFromIID(clsid, &pwsz);
   if(pwsz) {
-#ifdef UNICODE
     lstrcpy(szCLSID, pwsz);
-#else
-    WideCharToMultiByte(CP_ACP, 0, pwsz, -1, szCLSID, ARRAYSIZE(szCLSID), NULL, NULL);
-#endif
     //free the string
     LPMALLOC pMalloc;
     CoGetMalloc(1, &pMalloc);
@@ -164,7 +161,7 @@ BOOL RegisterServer(CLSID clsid, LPTSTR lpszTitle) {
   }
 
   //get this app's path and file name
-  GetModuleFileName(_hModule, szModule, MAX_PATH);
+  GetModuleFileNameW(_hModule, szModule, MAX_PATH);
 
   DOREGSTRUCT ClsidEntries[] = {
     HKEY_CLASSES_ROOT,   TEXT("CLSID\\%s"),                              NULL,                   lpszTitle,
@@ -180,10 +177,10 @@ BOOL RegisterServer(CLSID clsid, LPTSTR lpszTitle) {
     wsprintf(szSubKey, ClsidEntries[i].szSubKey, szCLSID);
     lResult = RegCreateKeyEx(ClsidEntries[i].hRootKey, szSubKey, 0, NULL, REG_OPTION_NON_VOLATILE, KEY_WRITE, NULL, &hKey, &dwDisp);
     if(NOERROR == lResult) {
-      TCHAR szData[MAX_PATH];
+      WCHAR szData[MAX_PATH];
       // If necessary, create the value string
       wsprintf(szData, ClsidEntries[i].szData, szModule);
-      lResult = RegSetValueEx(hKey, ClsidEntries[i].lpszValueName, 0, REG_SZ, (LPBYTE)szData, (lstrlen(szData) + 1) * sizeof(TCHAR));
+      lResult = RegSetValueEx(hKey, ClsidEntries[i].lpszValueName, 0, REG_SZ, (LPBYTE)szData, (lstrlen(szData) + 1) * sizeof(WCHAR));
       RegCloseKey(hKey);
     }
     else
@@ -195,10 +192,10 @@ BOOL RegisterServer(CLSID clsid, LPTSTR lpszTitle) {
 //---------------------------------------------------------------------------
 // UnregisterServer
 //---------------------------------------------------------------------------
-BOOL UnregisterServer(CLSID clsid, LPTSTR lpszTitle) {
-  TCHAR szCLSID[GUID_SIZE + 1];
-  TCHAR szCLSIDKey[GUID_SIZE + 32];
-  TCHAR szKeyTemp[MAX_PATH + GUID_SIZE];
+BOOL UnregisterServer(CLSID clsid, LPCWSTR lpszTitle) {
+  WCHAR szCLSID[GUID_SIZE + 1];
+  WCHAR szCLSIDKey[GUID_SIZE + 32];
+  WCHAR szKeyTemp[MAX_PATH + GUID_SIZE];
   LPWSTR pwsz;
 
   StringFromIID(clsid, &pwsz);
@@ -231,30 +228,30 @@ BOOL UnregisterServer(CLSID clsid, LPTSTR lpszTitle) {
 //---------------------------------------------------------------------------
 // MsgBoxDebug
 //---------------------------------------------------------------------------
-void MsgBoxDebug(LPTSTR lpszMsg) {
+void MsgBoxDebug(LPCWSTR lpszMsg) {
   MessageBox(NULL,
              lpszMsg,
-             "DEBUG",
+             L"DEBUG",
              MB_OK);
 }
 
 //---------------------------------------------------------------------------
 // MsgBox
 //---------------------------------------------------------------------------
-void MsgBox(LPTSTR lpszMsg) {
+void MsgBox(LPCWSTR lpszMsg) {
   MessageBox(NULL,
              lpszMsg,
-             "Kate Extension",
+             L"Kate Extension",
              MB_OK);
 }
 
 //---------------------------------------------------------------------------
 // MsgBoxError
 //---------------------------------------------------------------------------
-void MsgBoxError(LPTSTR lpszMsg) {
+void MsgBoxError(LPCWSTR lpszMsg) {
   MessageBox(NULL,
              lpszMsg,
-             "Kate Extension",
+             L"Kate Extension",
              MB_OK | MB_ICONSTOP);
 }
 
@@ -314,11 +311,17 @@ CShellExt::CShellExt() {
   m_pDataObj = NULL;
   _cRef++;
   m_hSciteBmp = LoadBitmap(_hModule, MAKEINTRESOURCE(IDB_SCITE));
-  LPCSTR msgBuf;
-  FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER|FORMAT_MESSAGE_FROM_SYSTEM|FORMAT_MESSAGE_IGNORE_INSERTS, NULL, GetLastError(), 0,(LPSTR)&msgBuf, 0, NULL);
+  LPWSTR msgBuf;
+  FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER|FORMAT_MESSAGE_FROM_SYSTEM|FORMAT_MESSAGE_IGNORE_INSERTS,
+                NULL,
+                GetLastError(),
+                0,
+                (LPWSTR)&msgBuf,
+                0,
+                NULL);
   MessageBox(NULL,
                msgBuf,
-               "Kate Extension",
+               L"Kate Extension",
                MB_OK);
   HRESULT hr;
   hr = SHGetMalloc(&m_pAlloc);
@@ -373,7 +376,7 @@ STDMETHODIMP CShellExt::Initialize(LPCITEMIDLIST pIDFolder, LPDATAOBJECT pDataOb
 STDMETHODIMP CShellExt::QueryContextMenu(HMENU hMenu, UINT indexMenu, UINT idCmdFirst, UINT idCmdLast, UINT uFlags) {
   UINT idCmd = idCmdFirst;
   BOOL bAppendItems=TRUE;
-  char szItemSciTE[]="Edit with Kate";
+  WCHAR szItemSciTE[]=L"Edit with Kate";
 
   FORMATETC fmte = {
     CF_HDROP,
@@ -416,32 +419,32 @@ STDMETHODIMP CShellExt::InvokeCommand(LPCMINVOKECOMMANDINFO lpcmi) {
 
 STDMETHODIMP CShellExt::GetCommandString(UINT_PTR idCmd, UINT uFlags, UINT FAR *reserved, LPSTR pszName, UINT cchMax) {
   if (uFlags == GCS_HELPTEXT && cchMax > 35)
-    lstrcpy(pszName, "Edits the selected file(s) with Kate");
+    lstrcpy((WCHAR*)pszName, L"Edits the selected file(s) with Kate");
   return NOERROR;
 }
 
-static void getSciTEName(char *name) {
-  TCHAR szModuleFullName[MAX_PATH];
+static void getSciTEName(WCHAR *name) {
+  WCHAR szModuleFullName[MAX_PATH];
   int nLenPath = 0;
-  TCHAR* pDest;
+  WCHAR* pDest;
 
   name[0] = 0;
   GetModuleFileName(_hModule, szModuleFullName, MAX_PATH);
-  pDest = strrchr(szModuleFullName, '\\' );
+  pDest = wcsrchr(szModuleFullName, '\\' );
   pDest++;
   pDest[0] = 0;
-  strncpy(name, szModuleFullName, MAX_PATH);
-  strncat(name, szSciTEName, MAX_PATH);
+  wcsncpy(name, szModuleFullName, MAX_PATH);
+  wcsncat(name, szSciTEName, MAX_PATH);
 
   if (name[0] == 0)
-    strncpy(name, szSciTEName, MAX_PATH);
+    wcsncpy(name, szSciTEName, MAX_PATH);
 
-  strncat(name, " -u", MAX_PATH);
+  wcsncat(name, L" -u", MAX_PATH);
 }
 
 STDMETHODIMP CShellExt::InvokeSciTE(HWND hParent, LPCSTR pszWorkingDir, LPCSTR pszCmd, LPCSTR pszParam, int iShowCmd) {
-  TCHAR szFileUserClickedOn[MAX_PATH];
-  LPTSTR pszCommand;
+  WCHAR szFileUserClickedOn[MAX_PATH];
+  LPWSTR pszCommand;
   UINT nSizeCommand;
   UINT i;
 
@@ -453,21 +456,21 @@ STDMETHODIMP CShellExt::InvokeSciTE(HWND hParent, LPCSTR pszWorkingDir, LPCSTR p
     TYMED_HGLOBAL
   };
 
-  nSizeCommand = MAX_PATH * (m_cbFiles + 1) * sizeof(TCHAR);
-  pszCommand = (LPTSTR)m_pAlloc->Alloc(nSizeCommand);
+  nSizeCommand = MAX_PATH * (m_cbFiles + 1) * sizeof(WCHAR);
+  pszCommand = (LPWSTR)m_pAlloc->Alloc(nSizeCommand);
 
   if (pszCommand)
     getSciTEName(pszCommand);
   else {
-    MsgBoxError("Insufficient memory available.");
+    MsgBoxError(L"Insufficient memory available.");
     return E_FAIL;
   }
 
   for (i = 0; i < m_cbFiles; i++) {
     DragQueryFile((HDROP)m_stgMedium.hGlobal, i, szFileUserClickedOn, MAX_PATH);
-    strncat(pszCommand, " \"", nSizeCommand);
-    strncat(pszCommand, szFileUserClickedOn, nSizeCommand);
-    strncat(pszCommand, "\"", nSizeCommand);
+    wcsncat(pszCommand, L" \"", nSizeCommand);
+    wcsncat(pszCommand, szFileUserClickedOn, nSizeCommand);
+    wcsncat(pszCommand, L"\"", nSizeCommand);
   }
 
   STARTUPINFO si;
@@ -478,8 +481,8 @@ STDMETHODIMP CShellExt::InvokeSciTE(HWND hParent, LPCSTR pszWorkingDir, LPCSTR p
   si.wShowWindow = SW_RESTORE;
   if (!CreateProcess (NULL, pszCommand, NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi)) {
     MessageBox(hParent,
-               "Error creating process: kdecm.dll needs to be in the same directory as kate.exe",
-               "Kate Extension",
+               L"Error creating process: kdecm.dll needs to be in the same directory as kate.exe",
+               L"Kate Extension",
                MB_OK);
   }
 
