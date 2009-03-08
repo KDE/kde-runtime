@@ -67,7 +67,7 @@ it. The backup is better stored outside any
 (or the corresponding $<envar>KDEHOME</envar> directory). Backups are anyway
 a good idea in case of a major failure of &kde; that would
 destroy important configuration files (for example your &kmail;  settings,
-which are in in the file <filename>kmailrc</filename>).
+which are in the file <filename>kmailrc</filename>).
 (Such a major failure should not happen but it still can happen.)</para>
 </sect2>
 
