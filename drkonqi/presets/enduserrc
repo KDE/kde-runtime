@@ -27,6 +27,7 @@ Name[gl]=Usuario final
 Name[gu]=અંત વપરાશકર્તા
 Name[he]=משתמש קצה
 Name[hi]=अंतिम उपयोक्ता
+Name[hne]=उपयोग करइया
 Name[hr]=Krajnji korisnik
 Name[hsb]=Wužiwar
 Name[hu]=Végfelhasználói
@@ -100,6 +101,7 @@ Comment[gl]=Configuración preferida para os usuarios finais
 Comment[gu]=અંત વપરાશકર્તા માટે પસંદગીની ગોઠવણીઓ
 Comment[he]=הגדרות מועדפות למשתמשי קצה
 Comment[hi]=विन्यास की प्राथमिकता अंतिम उपयोक्ता के लिए
+Comment[hne]=उपयोग करइया बर पसंद के सेटिंग
 Comment[hr]=Postavke preporučene krajnjim korisnicima
 Comment[hsb]=Nastajenja za wužiwarja
 Comment[hu]=Végfelhasználóknak való beállítások
@@ -182,6 +184,7 @@ Name[gl]=O programa %progname (%appname) pechouse inesperadamente e provocou o s
 Name[gu]=કાર્યક્મ %progname (%appname) બંધ થયેલ છે અને તેનાં કારણે આ સિગ્નલ થયું છે %signum (%signame).
 Name[he]=היישום %progname ‏(%appname) קרס וגרם לסיגנל %signum ‏(%signame).
 Name[hi]=अनुप्रयोग %progname (%appname) क्रैश हो गया है तथा संकेत उत्पन्न किया %signum (%signame).
+Name[hne]=अनुपरयोग %progname (%appname) क्रेस होगे अउ सिगनल देवत हे %signum (%signame).
 Name[hr]=Došlo je do rušenja aplikacije %progname (%appname), te je izazvan signal %signum (%signame).
 Name[hsb]=Aplikacija %progname (%appname) je so pójsnyła a signal %signum (%signame) zawiniła.
 Name[hu]=Egy alkalmazás lefagyott. Név: %progname (%appname). Az okozott szignál: %signum (%signame).
@@ -253,6 +256,7 @@ Name[ga]=Cabhraigh linn an bogearra seo a fheabhsú trí thuairisc a sheoladh ch
 Name[gl]=Por favor axúdenos a mellorar os programas que empregue enviándonos un informe de erro a <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Inclúa detalles acerca do xeito de reproducir o erro, que documentos tiña cargados etc.
 Name[gu]=મહેરબાની કરી અમને બગ અહેવાલ આ જગ્યા પર ભરીને <a href="http://bugs.kde.org">http://bugs.kde.org</a> સોફ્ટવેરમાં સુધારો કરવામાં મદદ કરો. ઉપયોગી માહિતીમાં જેવીકે આ ક્ષતિ ફરી કઇ રીતે ઉભી કરવી, લાવવામાં આવેલ દસ્તાવેજો વગેરે નો સમાવેશ થાય છે.
 Name[he]=עזור לנו לשפר את התוכנה על ידי מילוי של טופס שגיאה בכתובת (אנגלית בלבד, אלא אם כן קשור לתרגום עברי) <a href="http://bugs.kde.org">http://bugs.kde.org</a>. פרטים מועילים כוללים הוראות לשחזור השגיאה, מסמכים שנפתחו וכו'.
+Name[hne]=इहां <a href="http://bugs.kde.org">http://bugs.kde.org</a> बग रिपोर्ट करके हमन ल ए साफ्टवेयर ल सुधार करे मं मदद करव. उपयोगी विवरन होही कि कइसन गलती ल बनाय जा सकही अउ का कागद लोड होय रहीस आदि.
 Name[hr]=Pomozite nam u poboljšavaju softvera koji koristite. Ispunite izvještaj na adresi <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Upišite detalje kao što su način reprodiciranja pogreške, učitana dokumentacija itd.
 Name[hsb]=Prošu pomhajće nam program, kotryž wužiwaće, zlěpšić a rozprawće wo zmylku pola <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Wužitna informacija je, kak so zmylk wuwoła, dokumenty, kotrež běchu začitane, etc.
 Name[hu]=Kérjük segítse a munkánkat és jelentse be a hibát itt: <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Célszerű megadni a hiba reprodukálásának módját (angolul), a betöltött dokumentumok listáját stb.
@@ -297,6 +301,7 @@ Name[zh_TW]=請到 <a href="http://bugs.kde.org">http://bugs.kde.org</a> 回報�
 Name=SIGILL
 Name[af]=SIGILL 
 Name[csb]=SGILL
+Name[hne]=सिगिल
 Name[hu]=SIGKILL
 Name[sr]=СИГИЛЛ
 Name[x-test]=xxSIGILLxx
@@ -376,6 +381,7 @@ Comment[zh_TW]=應用程式收到 SIGILL 信號，通常是因為應用程式的
 [6]
 Name=SIGABRT
 Name[ar]=ارسل البرنامج اشارة لافشال العملية
+Name[hne]=सिगार्ट
 Name[sr]=СИГАБРТ
 Name[x-test]=xxSIGABRTxx
 Comment=An application terminates with a SIGABRT signal when it detects an internal inconsistency caused by a bug in the program.
@@ -453,6 +459,7 @@ Comment[zh_TW]=應用程式收到 SIGABRT 而結束，通常是因為應用程�
 [8]
 Name=SIGFPE
 Name[ar]=ارسل البرنامج رسالة مشوهة
+Name[hne]=सिगफे
 Name[sr]=СИГФПЕ
 Name[x-test]=xxSIGFPExx
 Comment=An application mostly receives the SIGFPE signal due to a bug in the application. The application was asked to save its documents.
@@ -531,6 +538,7 @@ Comment[zh_TW]=應用程式收到 SIGFPE 信號，通常是因為應用程式的
 [11]
 Name=SIGSEGV
 Name[ar]=ارسل البرنامج إشارة ذاكرة غير صحيحة
+Name[hne]=सिगसेव
 Name[sr]=СИГСЕГВ
 Name[x-test]=xxSIGSEGVxx
 Comment=An application mostly receives the SIGSEGV signal due to a bug in the application. The application was asked to save its documents.
@@ -635,6 +643,7 @@ Name[gl]=Descoñecido
 Name[gu]=અજાણ્યું
 Name[he]=לא ידוע
 Name[hi]=अज्ञात
+Name[hne]=अग्यात
 Name[hr]=Nepoznato
 Name[hsb]=Njeznate
 Name[hu]=Ismeretlen
@@ -712,6 +721,7 @@ Comment[gl]=Este sinal é descoñecido.
 Comment[gu]=માફ કરશો, હું આ સિગ્નલ જાણતો નથી.
 Comment[he]=מצטער, הסיגנל לא מוכר.
 Comment[hi]=माफ करें, मैं इस सिग्नल को नहीं जानता.
+Comment[hne]=माफी देव, मं हर ये सिगनल न नइ जानंव.
 Comment[hr]=Nažalost, ovaj signal nije prepoznat.
 Comment[hsb]=Je mi žel, tutón signal njeznaju.
 Comment[hu]=Ez egy ismeretlen szignál.
