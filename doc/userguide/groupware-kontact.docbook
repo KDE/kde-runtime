@@ -497,11 +497,6 @@ Mail</guimenuitem></menuchoice>) and you will also have an
 <para>Now enable &kmail; groupware functionality, and in <guilabel>Resource
 folders are subfolders of</guilabel> put the
 <guimenuitem>inbox</guimenuitem> that is subfolder of
-<quote>office_gwdata</quote>.</para>
-
-<para>Now enable &kmail; groupware functionality, and in <guilabel>Resource
-folders are subfolders of</guilabel> put the
-<guimenuitem>inbox</guimenuitem> that is subfolder of
 <guisubmenu>office_gwdata</guisubmenu>.</para>
   
 <para>Now you have two branches of folder under

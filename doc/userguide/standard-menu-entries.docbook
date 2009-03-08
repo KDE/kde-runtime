@@ -117,8 +117,8 @@ World!</quote>.
 </shortcut><guimenuitem>Print...</guimenuitem>
 </menuchoice></term>
 <listitem><para>This menu entry displays the &kde;
-<quote>Print</quote> dialog, read to print the current
-document. Youcan find more information about the options available in
+<quote>Print</quote> dialog, ready to print the current
+document. You can find more information about the options available in
 this dialog in <xref linkend="printing-from-apps"/>.</para>
 </listitem>
 </varlistentry>
