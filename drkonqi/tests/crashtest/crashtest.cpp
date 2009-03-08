@@ -34,7 +34,7 @@
 #include <assert.h>
 #include <QtConcurrentMap>
 
-enum CrashType { Crash, Malloc, Div0, Assert, Threads };
+enum CrashType { Crash, Malloc, Div0, Assert, QAssert, Threads };
 
 void do_crash()
 {
@@ -61,6 +61,11 @@ void do_assert()
   assert(false);
 }
 
+void do_qassert()
+{
+  Q_ASSERT(false);
+}
+
 void map_function(const QString & s)
 {
     while ( s != "thread 4" ) {}
@@ -82,6 +87,8 @@ void level4(int t)
     do_div0();
   else if (t == Assert)
     do_assert();
+  else if (t == QAssert)
+    do_qassert();
   else if (t == Threads)
     do_threads();
   else
@@ -127,6 +134,8 @@ int main(int argc, char *argv[])
     crashtype = Div0;
   else if (type == "assert")
     crashtype = Assert;
+  else if (type == "qassert")
+    crashtype = QAssert;
   else if (type == "threads")
     crashtype = Threads;
   level1(crashtype);
