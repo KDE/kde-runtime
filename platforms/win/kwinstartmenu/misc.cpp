@@ -96,7 +96,7 @@ QStringList getInstalledKDEVersions()
     QFileInfoList entries = dir.entryInfoList(QDir::NoDotAndDotDot | QDir::Dirs );
     int count = entries.size();
     foreach(QFileInfo entryInfo, entries) {
-        if (entryInfo.fileName().startsWith("KDE "))
+        if (entryInfo.fileName().startsWith(QLatin1String("KDE ")))
             installedVersions << entryInfo.fileName();
     }
     return installedVersions;
@@ -105,13 +105,13 @@ QStringList getInstalledKDEVersions()
 QString getKDEStartMenuRootEntry()
 {
     QString version = KDE::versionString();
-    QStringList versions = version.split(" "); 
+    QStringList versions = version.split(' '); 
 #ifdef QT_NO_DEBUG
     QString compileMode = "Release"; 
 #else
     QString compileMode = "Debug"; 
 #endif
-    return "KDE " + versions[0] + " " + compileMode;
+    return "KDE " + versions[0] + ' ' + compileMode;
 }
 
 inline QString getWorkingDir() 
@@ -121,14 +121,14 @@ inline QString getWorkingDir()
 
 QString getKDEStartMenuPath()
 {
-    return getStartMenuPath() + "/" + getKDEStartMenuRootEntry();
+    return getStartMenuPath() + '/' + getKDEStartMenuRootEntry();
 }
 
 KServiceGroup::Ptr findGroup(const QString &relPath)
 {
     QString nextPart;
     QString alreadyFound("Settings/");
-    QStringList rest = relPath.split( '/');
+    QStringList rest = relPath.split('/');
 
     kDebug() << "Trying harder to find group " << relPath;
     for ( int i=0; i<rest.count(); i++)
@@ -196,8 +196,8 @@ bool generateMenuEntries(QList<LinkFile> &files, const KUrl &url, const QString 
 
             QString relPath = g->relPath();
             KUrl a = url; 
-            a.setPath("/" + relPath);
-            generateMenuEntries(files,a,relPathTranslated + "/" + g->caption());
+            a.setPath('/' + relPath);
+            generateMenuEntries(files,a,relPathTranslated + '/' + g->caption());
         } else {
             KService::Ptr s(KService::Ptr::staticCast(e));
 
@@ -207,7 +207,7 @@ bool generateMenuEntries(QList<LinkFile> &files, const KUrl &url, const QString 
                 continue;
                 
             QString _exec = df.desktopGroup().readEntry("Exec","");
-            QStringList cmd = _exec.split(" ");
+            QStringList cmd = _exec.split(' ');
             QString exec = cmd[0];
             QStringList arguments;
             if (cmd.size() > 1) {
@@ -265,14 +265,14 @@ void removeObsolateInstallations()
     kDebug() << "installed releases" << installedReleases;
     QFileInfo currentWorkDir(getWorkingDir());
 
-    foreach(QString release,installedReleases) 
+    foreach(const QString &release,installedReleases) 
     {
         // skip current version 
         if (release == currentVersion)
             continue;
         // get all link files for a specific release
         QList<LinkFile> allReleasesFiles;
-        LinkFiles::scan(allReleasesFiles, getStartMenuPath() + "/" + release);
+        LinkFiles::scan(allReleasesFiles, getStartMenuPath() + '/' + release);
         bool available = false;
         bool sameWorkingDir = false;
         foreach(LinkFile lf, allReleasesFiles) 
@@ -288,8 +288,8 @@ void removeObsolateInstallations()
         }
         if (!available || sameWorkingDir)
         {
-            kDebug() << "removing obsolate installation" << getStartMenuPath() + "/" + release;
-            removeDirectory(getStartMenuPath() + "/" + release);
+            kDebug() << "removing obsolate installation" << getStartMenuPath() + '/' + release;
+            removeDirectory(getStartMenuPath() + '/' + release);
         }
     }
 }

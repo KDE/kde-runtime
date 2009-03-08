@@ -37,7 +37,7 @@ class LinkFile {
         }
         /** 
             constructs  LinkFile instance with arguments
-                    */
+          */
         LinkFile(const QStringList &args, const QString &linkPath, const QString &description, const QString &workingDir)
         {
             if (args.size() > 0)
@@ -52,7 +52,7 @@ class LinkFile {
         }
         
         /// check if link file exists
-        bool exists();
+        bool exists() const;
         /// create link file from instance data 
         bool create();
         /// remove link file
@@ -60,11 +60,11 @@ class LinkFile {
         /// read link file content into instance 
         bool read();
 
-        const QString &execPath()    { return m_execPath; }    
-        const QString &linkPath()    { return m_linkPath; }
-        const QString &description() { return m_description; }
-        const QString &workingDir()  { return m_workingDir; }  
-        const QStringList &arguments()   { return m_arguments; }  
+        const QString &execPath() const      { return m_execPath; }    
+        const QString &linkPath() const      { return m_linkPath; }
+        const QString &description() const   { return m_description; }
+        const QString &workingDir() const    { return m_workingDir; }  
+        const QStringList &arguments() const { return m_arguments; }  
 
         void setExecPath(const QString &a)    { m_execPath = a; }    
         void setLinkPath(const QString &a)    { m_linkPath = a; }
