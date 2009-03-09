@@ -50,7 +50,7 @@
 # include "backtracegenerator.h"
 # include <KDebug>
 #else
-# include "tests/backtraceinfotest/backtraceinfotest.h"
+# include "tests/backtraceparsertest/backtraceparsertest.h"
 # include <QDebug>
 # define kDebug qDebug
 #endif

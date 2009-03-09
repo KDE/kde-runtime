@@ -14,8 +14,8 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BACKTRACEINFOTEST_H
-#define BACKTRACEINFOTEST_H
+#ifndef BACKTRACEPARSERTEST_H
+#define BACKTRACEPARSERTEST_H
 
 #include <QtTest>
 #include "../../backtraceparser.h"
@@ -32,12 +32,11 @@ signals:
     void newLine(const QString & line);
 };
 
-class BacktraceInfoTest : public QObject
+class BacktraceParserTest : public QObject
 {
     Q_OBJECT
-    Q_ENUMS(Usefulness)
 public:
-    BacktraceInfoTest(QObject *parent = 0);
+    BacktraceParserTest(QObject *parent = 0);
 
 private slots:
     void btParserTest_data();

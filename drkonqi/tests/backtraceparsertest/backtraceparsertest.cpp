@@ -14,7 +14,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "backtraceinfotest.h"
+#include "backtraceparsertest.h"
 #include <QDirIterator>
 #include <QFileInfo>
 #include <QFile>
@@ -22,7 +22,7 @@
 #include <QDebug>
 #include <QSharedPointer>
 
-#define DATA_DIR "backtraceinfotest_data"
+#define DATA_DIR "backtraceparsertest_data"
 #define TEST_PREFIX "test_"
 #define MAP_FILE "usefulness_map"
 
@@ -38,12 +38,12 @@ void BacktraceGenerator::sendData(const QString & filename)
     }
 }
 
-BacktraceInfoTest::BacktraceInfoTest(QObject *parent)
+BacktraceParserTest::BacktraceParserTest(QObject *parent)
     : QObject(parent), m_generator(new BacktraceGenerator(this))
 {
 }
 
-void BacktraceInfoTest::readMap(QHash<QByteArray, BacktraceParser::Usefulness> & map)
+void BacktraceParserTest::readMap(QHash<QByteArray, BacktraceParser::Usefulness> & map)
 {
     QMetaEnum metaUsefulness = BacktraceParser::staticMetaObject.enumerator(staticMetaObject.indexOfEnumerator("Usefulness"));
 
@@ -61,7 +61,7 @@ void BacktraceInfoTest::readMap(QHash<QByteArray, BacktraceParser::Usefulness> &
     }
 }
 
-void BacktraceInfoTest::btParserTest_data()
+void BacktraceParserTest::btParserTest_data()
 {
     QTest::addColumn<QString>("filename");
     QTest::addColumn<BacktraceParser::Usefulness>("result");
@@ -82,7 +82,7 @@ void BacktraceInfoTest::btParserTest_data()
     }
 }
 
-void BacktraceInfoTest::btParserTest()
+void BacktraceParserTest::btParserTest()
 {
     QFETCH(QString, filename);
     QFETCH(BacktraceParser::Usefulness, result);
@@ -95,12 +95,12 @@ void BacktraceInfoTest::btParserTest()
     QCOMPARE(parser->backtraceUsefulness(), result);
 }
 
-void BacktraceInfoTest::btParserBenchmark_data()
+void BacktraceParserTest::btParserBenchmark_data()
 {
     btParserTest_data(); //use the same data for the benchmark
 }
 
-void BacktraceInfoTest::btParserBenchmark()
+void BacktraceParserTest::btParserBenchmark()
 {
     QFETCH(QString, filename);
     QFETCH(BacktraceParser::Usefulness, result);
@@ -114,5 +114,5 @@ void BacktraceInfoTest::btParserBenchmark()
     }
 }
 
-QTEST_MAIN(BacktraceInfoTest);
-#include "backtraceinfotest.moc"
+QTEST_MAIN(BacktraceParserTest);
+#include "backtraceparsertest.moc"
