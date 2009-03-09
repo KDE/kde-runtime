@@ -45,7 +45,8 @@ BacktraceParserTest::BacktraceParserTest(QObject *parent)
 
 void BacktraceParserTest::readMap(QHash<QByteArray, BacktraceParser::Usefulness> & map)
 {
-    QMetaEnum metaUsefulness = BacktraceParser::staticMetaObject.enumerator(staticMetaObject.indexOfEnumerator("Usefulness"));
+    QMetaEnum metaUsefulness = BacktraceParser::staticMetaObject.enumerator(
+                                    BacktraceParser::staticMetaObject.indexOfEnumerator("Usefulness"));
 
     QFile mapFile(DATA_DIR "/" MAP_FILE);
     if ( !mapFile.open(QIODevice::ReadOnly | QIODevice::Text) ) {
@@ -88,10 +89,17 @@ void BacktraceParserTest::btParserTest()
     QFETCH(BacktraceParser::Usefulness, result);
     QVERIFY2(result != BacktraceParser::InvalidUsefulness, "Invalid usefulness. There is an error in the " MAP_FILE " file");
 
+    QMetaEnum metaUsefulness = BacktraceParser::staticMetaObject.enumerator(
+                                    BacktraceParser::staticMetaObject.indexOfEnumerator("Usefulness"));
+
     QSharedPointer<BacktraceParser> parser = QSharedPointer<BacktraceParser>(BacktraceParser::newParser("gdb"));
     parser->connectToGenerator(m_generator);
     m_generator->sendData(filename);
-    //qDebug() << parser->backtraceUsefulness();
+
+    QTextStream(stdout) << "\n(" << QFileInfo(filename).fileName() << "): Received: "
+                        << metaUsefulness.valueToKey(parser->backtraceUsefulness())
+                        << " Expected: " << metaUsefulness.valueToKey(result) << endl;
+
     QCOMPARE(parser->backtraceUsefulness(), result);
 }
 
