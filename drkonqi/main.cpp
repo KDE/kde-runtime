@@ -38,10 +38,9 @@
 
 #include "krashconf.h"
 #include "crashinfo.h"
-//#include "toplevel.h"
 #include "drkonqidialog.h"
 
-static const char version[] = "1.0";
+static const char version[] = "1.9";
 static const char description[] = I18N_NOOP( "KDE crash handler gives the user feedback if a program crashed" );
 
 int main( int argc, char* argv[] )
@@ -61,8 +60,8 @@ if (setuid(getuid()) < 0 && geteuid() != getuid())
                             ki18n("The KDE Crash Handler"),
                             version,
                             ki18n(description),
-                            KAboutData::License_BSD,
-                            ki18n("(C) 2000-2003, Hans Petter Bieker"));
+                            KAboutData::License_GPL,
+                            ki18n("(C) 2000-2009, The DrKonqi Authors"));
     aboutData.addAuthor(ki18n("Hans Petter Bieker"), KLocalizedString(), "bieker@kde.org");
     aboutData.addAuthor(ki18n("Dario Andres Rodriguez"), KLocalizedString(), "andresbajotierra@gmail.com");
     aboutData.addAuthor(ki18n("George Kiagiadakis"), KLocalizedString(), "gkiagia@users.sourceforge.net");
@@ -96,7 +95,6 @@ if (setuid(getuid()) < 0 && geteuid() != getuid())
 
     int ret;
     {
-        //Toplevel w(&krashconf);
         DrKonqiDialog w( &crashInfo );
         w.show();
         ret = qa->exec();

@@ -2,6 +2,7 @@
  * drkonqi - The KDE Crash Handler
  *
  * Copyright (C) 2000-2003 Hans Petter Bieker <bieker@kde.org>
+ * Copyright (C) 2009  George Kiagiadakis <gkiagia@users.sourceforge.net>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
