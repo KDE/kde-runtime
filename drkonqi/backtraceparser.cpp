@@ -45,13 +45,20 @@
 */
 
 #include "backtraceparser.h"
-#include "backtracegenerator.h"
+
+#ifndef BACKTRACEPARSER_TEST
+# include "backtracegenerator.h"
+# include <KDebug>
+#else
+# include "tests/backtraceinfotest/backtraceinfotest.h"
+# include <QDebug>
+# define kDebug qDebug
+#endif
 
 #include <QtCore/QRegExp>
 #include <QtCore/QSharedData>
 #include <QtCore/QSet>
 #include <KGlobal>
-#include <KDebug>
 
 //BEGIN BacktraceParser
 

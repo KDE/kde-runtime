@@ -20,14 +20,32 @@
 #include <QFile>
 #include <QMetaEnum>
 #include <QDebug>
+#include <QSharedPointer>
 
 #define DATA_DIR "backtraceinfotest_data"
 #define TEST_PREFIX "test_"
 #define MAP_FILE "usefulness_map"
 
-void BacktraceInfoTest::readMap(QHash<QByteArray, BacktraceInfoTest::Usefulness> & map)
+void BacktraceGenerator::sendData(const QString & filename)
 {
-    QMetaEnum metaUsefulness = staticMetaObject.enumerator(staticMetaObject.indexOfEnumerator("Usefulness"));
+    QFile file(filename);
+    file.open(QIODevice::ReadOnly | QIODevice::Text);
+    QTextStream stream(&file);
+
+    emit starting();
+    while (!stream.atEnd()) {
+        emit newLine(stream.readLine() + '\n');
+    }
+}
+
+BacktraceInfoTest::BacktraceInfoTest(QObject *parent)
+    : QObject(parent), m_generator(new BacktraceGenerator(this))
+{
+}
+
+void BacktraceInfoTest::readMap(QHash<QByteArray, BacktraceParser::Usefulness> & map)
+{
+    QMetaEnum metaUsefulness = BacktraceParser::staticMetaObject.enumerator(staticMetaObject.indexOfEnumerator("Usefulness"));
 
     QFile mapFile(DATA_DIR "/" MAP_FILE);
     if ( !mapFile.open(QIODevice::ReadOnly | QIODevice::Text) ) {
@@ -39,67 +57,60 @@ void BacktraceInfoTest::readMap(QHash<QByteArray, BacktraceInfoTest::Usefulness>
         if ( line.isEmpty() ) continue;
         QList<QByteArray> tokens = line.split(':');
         Q_ASSERT(tokens.size() == 2);
-        map.insert( tokens[0].trimmed(), (Usefulness) metaUsefulness.keyToValue(tokens[1].trimmed().constData()) );
+        map.insert( tokens[0].trimmed(), (BacktraceParser::Usefulness) metaUsefulness.keyToValue(tokens[1].trimmed().constData()) );
     }
 }
 
-void BacktraceInfoTest::btInfoTest_data()
+void BacktraceInfoTest::btParserTest_data()
 {
-    QTest::addColumn<QByteArray>("backtrace");
-    QTest::addColumn<Usefulness>("result");
+    QTest::addColumn<QString>("filename");
+    QTest::addColumn<BacktraceParser::Usefulness>("result");
 
     if ( !QFileInfo(DATA_DIR).isDir() ) {
         qFatal("Could not find the \"" DATA_DIR "\" directory in the current directory.");
     }
 
-    QHash<QByteArray, Usefulness> map;
+    QHash<QByteArray, BacktraceParser::Usefulness> map;
     readMap(map);
 
     QDirIterator it(DATA_DIR, QStringList() << TEST_PREFIX"*", QDir::Files|QDir::Readable);
     while (it.hasNext()) {
-        QFile file(it.next());
-        file.open(QIODevice::ReadOnly);
-        QByteArray fileName = it.fileName().toAscii();
-
-        QTest::newRow(fileName.constData())
-            << file.readAll()
-            << map.value(fileName, InvalidUsefulnessValue);
+        it.next();
+        QTest::newRow(it.fileName().toLocal8Bit().constData())
+            << it.filePath()
+            << map.value(it.fileName().toLocal8Bit(), BacktraceParser::InvalidUsefulness);
     }
 }
 
-void BacktraceInfoTest::btInfoTest()
+void BacktraceInfoTest::btParserTest()
 {
-    QFETCH(QByteArray, backtrace);
-    QFETCH(Usefulness, result);
-    QVERIFY2(result != InvalidUsefulnessValue, "Invalid usefulness. There is an error in the " MAP_FILE " file");
-    //qDebug() << runBacktraceInfo(backtrace); 
-    //qDebug() << result;
-    QCOMPARE(runBacktraceInfo(backtrace), result);
+    QFETCH(QString, filename);
+    QFETCH(BacktraceParser::Usefulness, result);
+    QVERIFY2(result != BacktraceParser::InvalidUsefulness, "Invalid usefulness. There is an error in the " MAP_FILE " file");
+
+    QSharedPointer<BacktraceParser> parser = QSharedPointer<BacktraceParser>(BacktraceParser::newParser("gdb"));
+    parser->connectToGenerator(m_generator);
+    m_generator->sendData(filename);
+    //qDebug() << parser->backtraceUsefulness();
+    QCOMPARE(parser->backtraceUsefulness(), result);
 }
 
-BacktraceInfoTest::Usefulness BacktraceInfoTest::runBacktraceInfo(const QByteArray & data)
+void BacktraceInfoTest::btParserBenchmark_data()
 {
-    BacktraceInfo info;
-    info.setBacktraceData(data);
-    info.parse();
-    return (Usefulness) info.getUsefulness();
+    btParserTest_data(); //use the same data for the benchmark
 }
 
-void BacktraceInfoTest::btInfoBenchmark_data()
+void BacktraceInfoTest::btParserBenchmark()
 {
-    btInfoTest_data(); //use the same data for the benchmark
-}
+    QFETCH(QString, filename);
+    QFETCH(BacktraceParser::Usefulness, result);
+    QVERIFY2(result != BacktraceParser::InvalidUsefulness, "Invalid usefulness. There is an error in the " MAP_FILE " file");
 
-void BacktraceInfoTest::btInfoBenchmark()
-{
-    QFETCH(QByteArray, backtrace);
-    QFETCH(Usefulness, result);
-    QVERIFY2(result != InvalidUsefulnessValue, "Invalid usefulness. There is an error in the " MAP_FILE " file");
+    QSharedPointer<BacktraceParser> parser = QSharedPointer<BacktraceParser>(BacktraceParser::newParser("gdb"));
+    parser->connectToGenerator(m_generator);
 
-    BacktraceInfo info;
-    info.setBacktraceData(backtrace);
     QBENCHMARK {
-        info.parse();
+        m_generator->sendData(filename);
     }
 }
 

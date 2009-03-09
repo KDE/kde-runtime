@@ -18,29 +18,37 @@
 #define BACKTRACEINFOTEST_H
 
 #include <QtTest>
-#include "../../backtraceinfo.h"
+#include "../../backtraceparser.h"
+
+class BacktraceGenerator : public QObject
+{
+    Q_OBJECT
+public:
+    BacktraceGenerator(QObject *parent = 0) : QObject(parent) {}
+    void sendData(const QString & filename);
+
+signals:
+    void starting();
+    void newLine(const QString & line);
+};
 
 class BacktraceInfoTest : public QObject
 {
     Q_OBJECT
     Q_ENUMS(Usefulness)
-
 public:
-    /* ### These HAVE TO match BacktraceInfo::Usefulness in value
-        (but not necessarily in name), except the invalid value */
-    enum Usefulness { InvalidUsefulnessValue = -1, ReallyUseful = 0, MayBeUseful=1, ProbablyUseless=2, Useless = 3 };
+    BacktraceInfoTest(QObject *parent = 0);
 
 private slots:
-    void btInfoTest_data();
-    void btInfoTest();
-    void btInfoBenchmark_data();
-    void btInfoBenchmark();
+    void btParserTest_data();
+    void btParserTest();
+    void btParserBenchmark_data();
+    void btParserBenchmark();
 
 private:
-    Usefulness runBacktraceInfo(const QByteArray & data);
-    void readMap(QHash<QByteArray, BacktraceInfoTest::Usefulness> & map);
-};
+    void readMap(QHash<QByteArray, BacktraceParser::Usefulness> & map);
 
-Q_DECLARE_METATYPE(BacktraceInfoTest::Usefulness)
+    BacktraceGenerator *m_generator;
+};
 
 #endif

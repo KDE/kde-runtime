@@ -20,11 +20,13 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QStringList>
+#include <QtCore/QMetaType>
 class BacktraceGenerator;
 
 class BacktraceParser : public QObject
 {
     Q_OBJECT
+    Q_ENUMS(Usefulness)
 public:
     enum Usefulness { InvalidUsefulness, ReallyUseful, MayBeUseful, ProbablyUseless, Useless };
 
@@ -82,5 +84,7 @@ protected Q_SLOTS:
 private:
     QStringList m_lines;
 };
+
+Q_DECLARE_METATYPE(BacktraceParser::Usefulness)
 
 #endif
