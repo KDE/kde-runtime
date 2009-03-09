@@ -205,13 +205,15 @@ void BacktraceLineGdb::parse()
     }
 
     regExp.setPattern("^#([0-9]+)" //matches the stack frame number, ex. "#0"
-                     "[\\s]+(0x[0-9a-fA-F]+[\\s]+in[\\s]+)?" // matches " 0x0000dead in " (optionally)
-                     "([\\w\\W]+)" //matches the function name
+                     "[\\s]+(0x[0-9a-f]+[\\s]+in[\\s]+)?" // matches " 0x0000dead in " (optionally)
+                     "([^\\(]+)" //matches the function name (anything except left parenthesis,
+                                 // which is the start of the arguments section)
+                     "(\\(.*\\))?" //matches the function arguments (when the app doesn't have debugging symbols)
                      "[\\s]+\\(" //matches " ("
-                     "(.*)" //matches the arguments of the function
+                     "(.*)" //matches the arguments of the function with their values (when the app has debugging symbols)
                      "\\)([\\s]+" //matches ") "
                      "(from|at)[\\s]+" //matches "from " or "at "
-                     "([\\w\\W]+)" //matches the filename (source file or shared library file)
+                     "(.+)" //matches the filename (source file or shared library file)
                      ")?\n$"); //matches trailing newline.
                                 //the )? at the end closes the parenthesis before [\\s]+(from|at) and
                                 //notes that the whole expression from there is optional.
@@ -219,10 +221,10 @@ void BacktraceLineGdb::parse()
         d->m_type = StackFrame;
         d->m_stackFrameNumber = regExp.cap(1).toInt();
         d->m_functionName = regExp.cap(3);
-        d->m_functionArguments = regExp.cap(4).remove('\n'); //remove \n because arguments may be split in two lines
-        d->m_hasFileInfo = (regExp.pos(5) != -1);
-        d->m_hasSourceFile = d->m_hasFileInfo ? (regExp.cap(6) == "at") : false;
-        d->m_file = d->m_hasFileInfo ? regExp.cap(7) : QString();
+        d->m_functionArguments = regExp.cap(5).remove('\n'); //remove \n because arguments may be split in two lines
+        d->m_hasFileInfo = !regExp.cap(6).isEmpty();
+        d->m_hasSourceFile = d->m_hasFileInfo ? (regExp.cap(7) == "at") : false;
+        d->m_file = d->m_hasFileInfo ? regExp.cap(8) : QString();
 
         kDebug() << d->m_stackFrameNumber << d->m_functionName << d->m_functionArguments
                  << d->m_hasFileInfo << d->m_hasSourceFile << d->m_file;
@@ -402,6 +404,9 @@ BacktraceParser::Usefulness BacktraceParserGdb::backtraceUsefulness() const
     //cache the usefulness value because this function will probably be called many times
     if ( d->m_cachedUsefulness != InvalidUsefulness )
         return d->m_cachedUsefulness;
+
+    if ( d->m_usefulLinesList.isEmpty() )
+        return Useless;
 
     uint rating = 0, bestPossibleRating = 0, counter = 0;
     QList<BacktraceLineGdb>::const_iterator i;
