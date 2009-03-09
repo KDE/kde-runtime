@@ -1,6 +1,8 @@
 set( backtraceparsertest_SRCS backtraceparsertest.cpp ../../backtraceparser.cpp )
 
 add_definitions( -DBACKTRACEPARSER_TEST )
+
+#comment this out to see kDebug() messages from BacktraceParser
 add_definitions( -DQT_NO_DEBUG_OUTPUT )
 
 kde4_add_unit_test( backtraceparsertest ${backtraceparsertest_SRCS} )

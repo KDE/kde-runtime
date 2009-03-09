@@ -1,11 +1,17 @@
-Application: Kopete (kopete), signal SIGSEGV
 (no debugging symbols found)
 [Thread debugging using libthread_db enabled]
 [New Thread 0x7f085740d780 (LWP 11923)]
 [New Thread 0x4275c950 (LWP 11931)]
-[KCrash handler]
+0x00007fdda985f5b5 in waitpid () from /lib/libpthread.so.0
+[Current thread is 0 (process 12545)]
+
+Thread 1 (Thread 0x7fddaac76740 (LWP 12545)):
+#0  0x00007fdda985f5b5 in waitpid () from /lib/libpthread.so.0
+#1  0x00007fddaa7e660d in KCrash::startDirectly (argv=0x7fffb2db2800) at /home/gkiagia/kde/src/KDE/kdelibs/kdeui/util/kcrash.cpp:436
+#2  0x00007fddaa7e7581 in KCrash::defaultCrashHandler (sig=11) at /home/gkiagia/kde/src/KDE/kdelibs/kdeui/util/kcrash.cpp:340
+#3  <signal handler called>
 #5  0x00007f0856662a3c in Kopete::MetaContact::metaContactId ()
-   from /usr/lib/libkopete.so.4
+    from /usr/lib/libkopete.so.4
 #6  0x00007f0842c975cc in ?? () from /usr/lib/kde4/kopete_statistics.so
 #7  0x00007f0842c97944 in ?? () from /usr/lib/kde4/kopete_statistics.so
 #8  0x00007f0842c88a61 in ?? () from /usr/lib/kde4/kopete_statistics.so
