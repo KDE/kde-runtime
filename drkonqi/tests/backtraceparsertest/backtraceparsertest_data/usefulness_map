@@ -1,6 +1,6 @@
-test_kopete.kcrash_probablyuseless: ProbablyUseless
 test_a: Useless
 test_b: ProbablyUseless
 test_c: ProbablyUseless
 test_d: ReallyUseful
 test_e: ProbablyUseless
+test_f: ProbablyUseless
