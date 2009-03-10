@@ -395,12 +395,18 @@ QDBusObjectPath KGlobalAccelD::getComponent(const QString &componentUnique) cons
 
 QList<KGlobalShortcutInfo> KGlobalAccelD::getGlobalShortcutsByKey(int key) const
     {
+#ifdef KDEDGLOBALACCEL_TRACE
+    kDebug() << key;
+#endif
     QList<GlobalShortcut*> shortcuts =
         GlobalShortcutsRegistry::self()->getShortcutsByKey(key);
 
     QList<KGlobalShortcutInfo> rc;
     Q_FOREACH(GlobalShortcut const*sc, shortcuts)
         {
+#ifdef KDEDGLOBALACCEL_TRACE
+    kDebug() << sc->context()->uniqueName() << sc->uniqueName();
+#endif
         rc.append(static_cast<KGlobalShortcutInfo>(*sc));
         }
 
