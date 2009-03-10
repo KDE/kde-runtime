@@ -58,6 +58,7 @@
 #include <QtCore/QRegExp>
 #include <QtCore/QSharedData>
 #include <QtCore/QSet>
+#include <QtCore/QMetaEnum> //used for a kDebug() in BacktraceParserGdb::backtraceUsefulness()
 #include <KGlobal>
 
 //BEGIN BacktraceParser
@@ -88,11 +89,11 @@ class BacktraceLineGdbData : public QSharedData
 {
 public:
     BacktraceLineGdbData()
-        : m_parsed(false), m_stackFrameNumber(-1), m_functionName("??"),
-          m_hasFileInfo(false), m_hasSourceFile(false), m_type(0), m_rating(-1) {}
+        : m_stackFrameNumber(-1), m_functionName("??"),
+          m_hasFileInfo(false), m_hasSourceFile(false),
+          m_type(0), m_rating(-1) {}
 
     QString m_line;
-    bool m_parsed;
     int m_stackFrameNumber;
     QString m_functionName;
     QString m_functionArguments;
@@ -164,9 +165,6 @@ void BacktraceLineGdb::parse()
 {
     QRegExp regExp;
 
-    Q_ASSERT(!d->m_parsed);
-    d->m_parsed = true;
-
     if ( d->m_line == "\n" ) {
         d->m_type = EmptyLine;
         return;
@@ -175,32 +173,6 @@ void BacktraceLineGdb::parse()
         return;
     } else if ( d->m_line.contains("<signal handler called>") ) {
         d->m_type = SignalHandlerStart;
-        return;
-    }
-
-    regExp.setPattern(".*\\(no debugging symbols found\\).*|"
-                      ".*\\[Thread debugging using libthread_db enabled\\].*|"
-                      ".*\\[New Thread 0x[0-9a-f]+\\s+\\(.*\\)\\].*|"
-                // remove the line that shows where the process is at the moment '0xffffe430 in __kernel_vsyscall ()',
-                // gdb prints that automatically, but it will be later visible again in the backtrace
-                      "0x[0-9a-f]+\\s+in .*");
-    if ( regExp.exactMatch(d->m_line) ) {
-        kDebug() << "crap detected:" << d->m_line;
-        d->m_type = Crap;
-        return;
-    }
-
-    regExp.setPattern( "Thread [0-9]+\\s+\\(Thread 0x[0-9a-f]+\\s+\\(.*\\)\\):\n" );
-    if ( regExp.exactMatch(d->m_line) ) {
-        kDebug() << "thread start detected:" << d->m_line;
-        d->m_type = ThreadStart;
-        return;
-    }
-
-    regExp.setPattern( "\\[Current thread is [0-9]+ \\(.*\\)\\]\n" );
-    if ( regExp.exactMatch(d->m_line) ) {
-        kDebug() << "thread indicator detected:" << d->m_line;
-        d->m_type = ThreadIndicator;
         return;
     }
 
@@ -228,6 +200,32 @@ void BacktraceLineGdb::parse()
 
         kDebug() << d->m_stackFrameNumber << d->m_functionName << d->m_functionArguments
                  << d->m_hasFileInfo << d->m_hasSourceFile << d->m_file;
+        return;
+    }
+
+    regExp.setPattern(".*\\(no debugging symbols found\\).*|"
+                      ".*\\[Thread debugging using libthread_db enabled\\].*|"
+                      ".*\\[New Thread 0x[0-9a-f]+\\s+\\(.*\\)\\].*|"
+                // remove the line that shows where the process is at the moment '0xffffe430 in __kernel_vsyscall ()',
+                // gdb prints that automatically, but it will be later visible again in the backtrace
+                      "0x[0-9a-f]+\\s+in .*");
+    if ( regExp.exactMatch(d->m_line) ) {
+        kDebug() << "crap detected:" << d->m_line;
+        d->m_type = Crap;
+        return;
+    }
+
+    regExp.setPattern( "Thread [0-9]+\\s+\\(Thread 0x[0-9a-f]+\\s+\\(.*\\)\\):\n" );
+    if ( regExp.exactMatch(d->m_line) ) {
+        kDebug() << "thread start detected:" << d->m_line;
+        d->m_type = ThreadStart;
+        return;
+    }
+
+    regExp.setPattern( "\\[Current thread is [0-9]+ \\(.*\\)\\]\n" );
+    if ( regExp.exactMatch(d->m_line) ) {
+        kDebug() << "thread indicator detected:" << d->m_line;
+        d->m_type = ThreadIndicator;
         return;
     }
 
@@ -264,6 +262,7 @@ struct BacktraceParserGdb::Private
 {
     Private() : m_possibleKCrashStart(0), m_threadsCount(0),
                 m_isBelowSignalHandler(false), m_frameZeroAppeared(false),
+                m_qtInternalStackStartEncountered(false),
                 m_cachedUsefulness(BacktraceParser::InvalidUsefulness) {}
 
     QList<BacktraceLineGdb> m_linesList;
@@ -272,14 +271,18 @@ struct BacktraceParserGdb::Private
     int m_threadsCount;
     bool m_isBelowSignalHandler;
     bool m_frameZeroAppeared;
+    bool m_qtInternalStackStartEncountered;
 
     mutable BacktraceParser::Usefulness m_cachedUsefulness;
 };
 
+//HACK for better rating. These functions are useless functions that should
+//not be taken into account by the backtrace rating algorithm.
 K_GLOBAL_STATIC_WITH_ARGS(const QSet<QString>, blacklistedFunctions, (
     QSet<QString>() << "raise" << "abort" << "_start" << "__libc_start_main"
                     << "__assert_fail" << "do_assert" << "qt_message_output"
-                    << "qFatal" << "clone" << "start_thread"
+                    << "qFatal" << "clone" << "start_thread" << "QMetaObject::activate"
+                    << "__kernel_vsyscall"
 ));
 
 BacktraceParserGdb::BacktraceParserGdb(QObject *parent)
@@ -334,8 +337,20 @@ void BacktraceParserGdb::parseLine(const QString & lineStr)
             }
 
             //rate the stack frame if we are below the signal handler and the function is not blacklisted.
-            if ( d->m_isBelowSignalHandler && !blacklistedFunctions->contains(line.functionName()) )
-                d->m_usefulLinesList.append(line);
+            if ( d->m_isBelowSignalHandler && !d->m_qtInternalStackStartEncountered
+                    && !blacklistedFunctions->contains(line.functionName()) )
+            {
+                //HACK for better rating. we ignore all stack frames below any function that matches
+                //the following regular expression. The functions that match this expression are usually
+                //"QApplicationPrivate::notify_helper", "QApplication::notify" and similar, which
+                //are used to send any kind of event to the Qt application. All stack frames below this,
+                //with or without debug symbols, are useless to KDE developers, so we ignore them.
+                QRegExp exp("(Q|K)(Core)?Application(Private)?::notify.*");
+                if ( exp.exactMatch(line.functionName()) )
+                    d->m_qtInternalStackStartEncountered = true;
+                else
+                    d->m_usefulLinesList.append(line);
+            }
 
             d->m_linesList.append(line);
             break;
@@ -420,27 +435,15 @@ BacktraceParser::Usefulness BacktraceParserGdb::backtraceUsefulness() const
        kDebug() << (*i).rating() << (*i).toString();
     }
 
-    kDebug() << "Rating:" << rating << "out of" << bestPossibleRating;
-
-    uint usefulRating = bestPossibleRating*0.90;
-    uint maybeUsefulRating = bestPossibleRating*0.70;
-    uint probablyUselessRating = bestPossibleRating*0.35;
     Usefulness usefulness = Useless;
+    if (rating >= (bestPossibleRating*0.90)) usefulness = ReallyUseful;
+    else if (rating >= (bestPossibleRating*0.70)) usefulness = MayBeUseful;
+    else if (rating >= (bestPossibleRating*0.40)) usefulness = ProbablyUseless;
 
-    if(rating >= usefulRating)
-    {
-        usefulness = ReallyUseful;
-    }
-    else if (rating >= maybeUsefulRating)
-    {
-        usefulness = MayBeUseful;
-    }
-    else if (rating >= probablyUselessRating)
-    {
-        usefulness = ProbablyUseless;
-    }
-
-    kDebug() << bestPossibleRating << usefulRating << maybeUsefulRating << probablyUselessRating << usefulness;
+    kDebug() << "Rating:" << rating << "out of" << bestPossibleRating << "Usefulness:"
+             << staticMetaObject.enumerator(staticMetaObject.indexOfEnumerator("Usefulness")).valueToKey(usefulness);
+    kDebug() << "90%:" << (bestPossibleRating*0.90) << "70%:" << (bestPossibleRating*0.70)
+             << "40%:" <<(bestPossibleRating*0.40);
 
     d->m_cachedUsefulness = usefulness;
     return usefulness;
