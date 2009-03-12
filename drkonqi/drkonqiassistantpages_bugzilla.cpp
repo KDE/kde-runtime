@@ -71,7 +71,8 @@ BugzillaLoginPage::BugzillaLoginPage( CrashInfo * info) :
     m_loginLabel = new QLabel();
     m_loginLabel->setMargin(10);
     
-    QLabel * noticeLabel = new QLabel( i18n("<strong>Notice:</strong> You need a user account at the <link url=\"%1\">KDE BugTracker</link> in order to file a bug report because we may need to contact you later for requesting further information. <br />If you don't have one you can freely <link=\"%2\">create one here</link>", QLatin1String("http://bugs.kde.org"), "https://bugs.kde.org/createaccount.cgi"));
+    QString url = QString("http://bugs.kde.org");
+    QLabel * noticeLabel = new QLabel( i18n("<strong>Notice:</strong> You need a user account at the <link url='%1'>KDE BugTracker</link> in order to file a bug report because we may need to contact you later for requesting further information. <br />If you don't have one: you can freely <link url='%2'>create one here</link>", QLatin1String("http://bugs.kde.org"), QLatin1String("https://bugs.kde.org/createaccount.cgi") ));
     
     noticeLabel->setWordWrap( true );
     noticeLabel->setOpenExternalLinks( true );
@@ -114,7 +115,7 @@ void BugzillaLoginPage::aboutToShow()
         m_form->labelForField(m_userEdit)->setVisible( false );
         m_form->labelForField(m_passwordEdit)->setVisible( false );
         
-        m_loginLabel->setText( i18n( "Logged at KDE Bugtracker (bugs.kde.org) as: %1", m_crashInfo->getBZ()->getUsername() ) );
+        m_loginLabel->setText( i18nc( "the user is logged at the bugtracker site as USERNAME", "Logged at KDE Bugtracker (bugs.kde.org) as: %1", m_crashInfo->getBZ()->getUsername() ) );
         
         setIdle( true );
         
@@ -122,41 +123,44 @@ void BugzillaLoginPage::aboutToShow()
     else
     {
         setIdle( false );
-        bool login = false;
-        if ( !m_wallet )
+        QTimer::singleShot( 100, this, SLOT(walletLogin())); //Show wallet dialog once this dialog is shown
+    }
+}
+
+void BugzillaLoginPage::walletLogin()
+{
+    bool login = false;
+    if ( !m_wallet )
+    {
+        setBackButton( false );
+        
+        if ( !KWallet::Wallet::keyDoesNotExist( KWallet::Wallet::NetworkWallet(), KWallet::Wallet::FormDataFolder(), QLatin1String( "drkonqi_bugzilla" ) ) ) //Key exists!
         {
-            setBackButton( false );
+            m_wallet = KWallet::Wallet::openWallet( KWallet::Wallet::NetworkWallet(), 0 );
             
-            if ( !KWallet::Wallet::keyDoesNotExist( KWallet::Wallet::NetworkWallet(), KWallet::Wallet::FormDataFolder(), QLatin1String( "drkonqi_bugzilla" ) ) ) //Key exists!
+            if( m_wallet )
             {
-                m_wallet = KWallet::Wallet::openWallet( KWallet::Wallet::NetworkWallet(), 0 );
+                m_wallet->setFolder( KWallet::Wallet::FormDataFolder() );
                 
-                if( m_wallet )
+                //Use wallet data to try login
+                QMap<QString, QString> values;
+                m_wallet->readMap( QLatin1String( "drkonqi_bugzilla" ), values);
+                QString username = values.value( QLatin1String( "username" ) );
+                QString password = values.value( QLatin1String( "password" ) );
+                
+                if( !username.isEmpty() && !password.isEmpty() )
                 {
-                    m_wallet->setFolder( KWallet::Wallet::FormDataFolder() );
-                    
-                    //Use wallet data to try login
-                    QMap<QString, QString> values;
-                    m_wallet->readMap( QLatin1String( "drkonqi_bugzilla" ), values);
-                    QString username = values.value( QLatin1String( "username" ) );
-                    QString password = values.value( QLatin1String( "password" ) );
-                    
-                    if( !username.isEmpty() && !password.isEmpty() )
-                    {
-                        login = true;
-                        m_userEdit->setText( username );
-                        m_passwordEdit->setText( password );
-                        loginClicked();
-                    }
-                }
-                else
-                {
-                    setBackButton( true );
+                    login = true;
+                    m_userEdit->setText( username );
+                    m_passwordEdit->setText( password );
+                    loginClicked();
                 }
             }
+            else
+            {
+                setBackButton( true );
+            }
         }
-        //if( !login )
-            
     }
 }
 
@@ -261,6 +265,7 @@ void BugzillaKeywordsPage::textEdited( QString newText )
     bool ok = (list.count() >= 4); //At least four (valid) words
     
     //Check words size
+    /* FIXME, some words can be short, like version numbers
     if ( ok )
     {
         Q_FOREACH( const QString & word, list)
@@ -269,6 +274,7 @@ void BugzillaKeywordsPage::textEdited( QString newText )
                 ok = false;
         }
     }
+    */
     
     setNextButton( ok );
 }
@@ -490,6 +496,11 @@ void BugzillaDuplicatesPage::bugFetchFinished( BugReport* report )
     delete report;
 }
 
+bool BugzillaDuplicatesPage::canSearchMore()
+{
+    return ( m_startDate.year() >= 2002 );
+}
+
 void BugzillaDuplicatesPage::aboutToShow()
 {
     //This shouldn't happen as I can't move page when I'm searching
@@ -497,7 +508,8 @@ void BugzillaDuplicatesPage::aboutToShow()
     
     //If I never searched before, performSearch
     if ( m_bugListWidget->topLevelItemCount() == 0)
-        performSearch();
+        if ( canSearchMore() )
+            performSearch();
     else
         setIdle( true );
 }
@@ -562,14 +574,14 @@ void BugzillaDuplicatesPage::searchFinished( const BugMapList & list )
 
         enableControls( true );
         
-        if( m_startDate.year() < 2002 )
+        if( !canSearchMore() )
             m_searchMoreButton->setEnabled( false );
         
         setIdle( true );
         
     } else {
 
-        if( m_startDate.year() > 2002 )
+        if( canSearchMore() )
         {
             setIdle( false );
             searchMore();
@@ -579,8 +591,8 @@ void BugzillaDuplicatesPage::searchFinished( const BugMapList & list )
             setIdle( true );
             m_searchingLabel->setText( i18n( "Search Finished. No more possible date ranges to search" ) );
             
-            enableControls( true );
-            m_searchMoreButton->setEnabled( false );
+            enableControls( false );
+            //m_searchMoreButton->setEnabled( false );
         }
     }
 }
@@ -680,6 +692,7 @@ BugzillaCommitPage::BugzillaCommitPage( CrashInfo * info )
     
     QVBoxLayout * layout = new QVBoxLayout();
     layout->addWidget( m_statusLabel );
+    layout->addStretch();
     setLayout( layout );
 }
 
@@ -696,7 +709,7 @@ void BugzillaCommitPage::aboutToShow()
 
 void BugzillaCommitPage::commited( int bug_id )
 {
-    m_statusLabel->setText( i18n("Report commited!<br />Bug Number :: %1<br />Link :: <link url=\"%2\">%2</link>", bug_id, m_crashInfo->getBZ()->urlForBug( bug_id ) ));
+    m_statusLabel->setText( i18n("Report commited!<br />Bug Number :: %1<br />Link :: <link>%2</link>", bug_id, m_crashInfo->getBZ()->urlForBug( bug_id ) ));
     
     setIdle( false );
     //TODO enable finish button ??

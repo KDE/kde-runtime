@@ -102,7 +102,7 @@ DrKonqiBugReport::DrKonqiBugReport( CrashInfo * crash, QWidget * parent ) :
     m_bugzillaCommitPage->setHeader( i18n( "Commit Page" ) ); //TODO better name ?
     m_bugzillaCommitPage->setIcon( KIcon("tools-report-bug") );
     
-    //TODO remember to maintain ordered
+    //TODO remember to keep ordered
     addPage( m_introPage );
     addPage( m_backtracePage );
     addPage( m_awarenessPage );

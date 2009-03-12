@@ -52,6 +52,8 @@ class BugzillaLoginPage: public DrKonqiAssistantPage
         void loginFinished( bool );
         void loginError( QString );
         
+        void walletLogin();
+        
     private:
         QFormLayout *   m_form;
         
@@ -113,6 +115,8 @@ class BugzillaDuplicatesPage : public DrKonqiAssistantPage
         void mayBeDuplicateClicked();
         
         void enableControls( bool );
+        
+        bool canSearchMore();
         
     private:
         bool            m_searching;

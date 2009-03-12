@@ -199,7 +199,7 @@ void DrKonqiDialog::restartApplication()
     enableButton( KDialog::User3, false );
     
     KProcess proc;
-    proc.setShellCommand( m_crashInfo->getApplicationCommand() );
+    proc.setProgram( m_crashInfo->getApplicationCommand() );
     proc.startDetached();
 }
 
@@ -215,4 +215,5 @@ DrKonqiDialog::~DrKonqiDialog()
     delete m_aboutBugReportingDialog;
     delete m_backtraceWidget;
     delete m_stackedWidget;
+    delete m_debugMenu;
 }
