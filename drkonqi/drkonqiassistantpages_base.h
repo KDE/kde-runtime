@@ -25,7 +25,6 @@
 #include "getbacktracewidget.h"
 #include "crashinfo.h"
 
-class AboutBugReportingDialog;
 class KPushButton;
 class QLabel;
 class KTextBrowser;
@@ -47,43 +46,33 @@ class DrKonqiAssistantPage: public QWidget
         //aboutToHide may save the widget data to crashInfo, to continue
         virtual void aboutToHide() {}
         
+        virtual bool isComplete() { return true; }
+        
     public Q_SLOTS:
+        
         //Set the page as busy and doesn't allow to change.
         void setBusy()
         {
             if( !isBusy )
             {
                 isBusy = true;
-                QApplication::setOverrideCursor(Qt::BusyCursor);
-                setNextButton( false );
-                emit enableBackButton( false );
+                emitCompleteChanged(); //Probably
             }
         }
         
-        //Set the page as idle and allow to go back, but only to go forward if showNext==true
-        void setIdle( bool showNext )
+        void setIdle()
         {
             isBusy = false;
-            QApplication::restoreOverrideCursor();
-            setNextButton( showNext );
-            emit enableBackButton( true );
+            emitCompleteChanged(); //Probably
         }
         
-        void setNextButton( bool showNext )
+        void emitCompleteChanged()
         {
-            emit enableNextButton( showNext );
-        }
-        
-        void setBackButton( bool showBack )
-        {
-            emit enableBackButton( showBack );
+            emit completeChanged( this, isComplete() );
         }
         
     Q_SIGNALS:
-        //Enable/disable buttons on the assistant based on the widget state
-        void enableNextButton( bool );
-        void enableBackButton( bool );
-        void enableFinishButton( bool );
+        void completeChanged( DrKonqiAssistantPage*, bool );
         
     private:
         bool isBusy;
@@ -97,17 +86,6 @@ class IntroductionPage: public DrKonqiAssistantPage
     
     public:
         IntroductionPage();
-        ~IntroductionPage();
-        
-        void aboutToShow();
-        
-    private Q_SLOTS:
-        void showAboutBugReporting();
-        
-    private:
-    
-        AboutBugReportingDialog *   m_aboutBugReportingDialog;
-        KPushButton *               m_showAboutReportingButton;
 };
 
 //Backtrace Page ---------------------------
@@ -119,10 +97,12 @@ class CrashInformationPage: public DrKonqiAssistantPage
     public:
         CrashInformationPage( CrashInfo * );
         
-        void aboutToShow() { m_backtraceWidget->generateBacktrace(); }
+        void aboutToShow(); 
+        bool isComplete();
         
     private:
         GetBacktraceWidget * m_backtraceWidget;
+        CrashInfo*           m_crashInfo;
 };
 
 //Bug Awareness Page ---------------
@@ -153,6 +133,8 @@ class ConclusionPage : public DrKonqiAssistantPage
         
         void aboutToShow();
         
+        bool isComplete();
+        
     private Q_SLOTS:
         void reportButtonClicked();
         void saveReport();
@@ -165,6 +147,9 @@ class ConclusionPage : public DrKonqiAssistantPage
         KPushButton *   m_saveReportButton;
 
         CrashInfo *     m_crashInfo;
+        
+        bool isBKO;
+        bool needToReport;
 };
 
 #endif

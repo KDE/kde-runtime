@@ -20,7 +20,6 @@ set(drkonqi_SRCS
    main.cpp 
    krashconf.cpp 
    krashadaptor.cpp
-   drbugreport.cpp 
    bugzillalib.cpp
    drkonqidialog.cpp
    crashinfo.cpp

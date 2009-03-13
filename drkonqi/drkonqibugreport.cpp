@@ -21,16 +21,19 @@
 
 #include "drkonqiassistantpages_base.h"
 #include "drkonqiassistantpages_bugzilla.h"
+#include "aboutbugreportingdialog.h"
 
 DrKonqiBugReport::DrKonqiBugReport( CrashInfo * crash, QWidget * parent ) : 
     KAssistantDialog(parent),
-    m_crashInfo( crash )
+    m_crashInfo( crash ),
+    m_aboutBugReportingDialog(0)
 {
     setWindowTitle( i18n( "Crash Reporting Assistant" ) );
     setWindowIcon( KIcon( "tools-report-bug" ) );
     
     connect( this, SIGNAL(currentPageChanged(KPageWidgetItem *, KPageWidgetItem *)), this, SLOT(currentPageChanged_slot(KPageWidgetItem *, KPageWidgetItem *)));  
     
+    connect( this, SIGNAL(helpClicked()), this, SLOT(showHelp()) );
     //Introduction Page
     m_intro = new IntroductionPage();
     connectSignals( m_intro );
@@ -120,21 +123,29 @@ DrKonqiBugReport::DrKonqiBugReport( CrashInfo * crash, QWidget * parent ) :
 
 DrKonqiBugReport::~DrKonqiBugReport()
 {
+    if ( m_aboutBugReportingDialog )
+        delete m_aboutBugReportingDialog;
 }
 
 void DrKonqiBugReport::connectSignals( DrKonqiAssistantPage * page )
 {
-    connect( page, SIGNAL(enableNextButton(bool)), this, SLOT(enableNextButton(bool)) );
-    connect( page, SIGNAL(enableBackButton(bool)), this, SLOT(enableBackButton(bool)) );
+    connect( page, SIGNAL(completeChanged(DrKonqiAssistantPage*, bool)), this, SLOT(completeChanged(DrKonqiAssistantPage*, bool)) );
 }
 
 void DrKonqiBugReport::currentPageChanged_slot(KPageWidgetItem * current , KPageWidgetItem * before)  
 {
-    if(before)
+    if( before )
+    {
         (dynamic_cast<DrKonqiAssistantPage*>(before->widget()))->aboutToHide();
-    if(current)
-        (dynamic_cast<DrKonqiAssistantPage*>(current->widget()))->aboutToShow();
+    }
     
+    if ( current )
+    {
+        DrKonqiAssistantPage* currentPage = dynamic_cast<DrKonqiAssistantPage*>(current->widget());
+        enableNextButton( currentPage->isComplete() );
+        currentPage->aboutToShow();
+    }
+        
     if( current->name() == "BugzillaCommit" )
     {
         //Disable all buttons
@@ -142,6 +153,23 @@ void DrKonqiBugReport::currentPageChanged_slot(KPageWidgetItem * current , KPage
         enableBackButton( false );
         enableButton( KDialog::User1, false );
     }
+}
+
+void DrKonqiBugReport::completeChanged( DrKonqiAssistantPage* page, bool isComplete )
+{
+    if ( page == dynamic_cast<DrKonqiAssistantPage*>(currentPage()->widget()) )
+    {
+        enableNextButton( isComplete );
+    }
+}
+
+void DrKonqiBugReport::showHelp()
+{
+    if ( !m_aboutBugReportingDialog )
+    {
+        m_aboutBugReportingDialog = new AboutBugReportingDialog( this );
+    }
+    m_aboutBugReportingDialog->show();
 }
 
 void DrKonqiBugReport::enableNextButton( bool enabled )

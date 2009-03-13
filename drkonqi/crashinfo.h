@@ -32,6 +32,7 @@ class CrashInfo : public QObject
     
   public:
     
+    //Backtrace generation state enumeration
     enum BacktraceGenState { DebuggerFailed, NonLoaded, Loading, Loaded, Failed };
     
     CrashInfo( KrashConfig* );
@@ -43,12 +44,13 @@ class CrashInfo : public QObject
     void generateBacktrace();
     void stopBacktrace();
     
-    void startCustomDebugger(){ m_crashConfig->acceptDebuggingApp(); }
-    
     BacktraceParser * getBacktraceParser() { return m_backtraceParser; }
     const QString getBacktraceOutput() { return m_backtraceOutput; } 
     BacktraceGenState getBacktraceState() { return m_backtraceState; }
     
+    void startCustomDebugger(){ m_crashConfig->acceptDebuggingApp(); }
+    
+    //Information about the user condition
     void setUserCanDetail( bool canDetail ) { m_userCanDetail = canDetail; }
     void setUserCanReproduce ( bool canReproduce ) { m_userCanReproduce = canReproduce; }
     void setUserGetCompromise ( bool getCompromise ) { m_userGetCompromise = getCompromise; }
@@ -57,11 +59,8 @@ class CrashInfo : public QObject
     bool getUserCanReproduce() { return m_userCanReproduce; }
     bool getUserGetCompromise() { return m_userGetCompromise; }
     
+    //Information about the crashed app and OS
     QString getApplicationCommand() { return m_crashConfig->execName(); }
-    
-    bool isKDEBugzilla();
-    bool isReportMail();
-    QString getReportLink();
     
     QString getKDEVersion() { return KDE::versionString(); } 
     QString getQtVersion() { return qVersion(); }
@@ -71,6 +70,10 @@ class CrashInfo : public QObject
     QString getProductVersion();
     
     QString getDebugger();
+    
+    bool isKDEBugzilla();
+    bool isReportMail();
+    QString getReportLink();
     
     QString generateReportTemplate( bool bugzilla = false );
     

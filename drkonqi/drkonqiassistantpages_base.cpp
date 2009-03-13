@@ -20,8 +20,6 @@
 
 #include "drkonqiassistantpages_base.h"
 
-#include "aboutbugreportingdialog.h"
-
 #include <QtGui/QLabel>
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QHBoxLayout>
@@ -41,49 +39,17 @@
 //BEGIN IntroductionPage
 
 IntroductionPage::IntroductionPage() : 
-    DrKonqiAssistantPage(),
-    m_aboutBugReportingDialog(0)
+    DrKonqiAssistantPage()
 {
-    QLabel * subTitle = new QLabel(
-        i18n("<para>This assistant will analyse the crash information and guide your through the bug reporting process</para>")
+    QLabel * mainLabel = new QLabel(
+        i18n("<para>This assistant will analyse the crash information and guide your through the bug reporting process</para><para>You can get help about this bug reporting assistant clicking thw \"Help\" button</para><para>To start gathering the crash information press the \"Next\" button</para>")
     );
-    subTitle->setWordWrap( true );
-    
-    QLabel * startLabel = new QLabel(
-        i18n("<para>To start gathering the crash information press the \"Next\" button</para>")
-    );
-    
-    m_showAboutReportingButton = new KPushButton( KGuiItem( i18nc("button action", "Learn more about bug reporting") , KIcon("help-hint"),  i18nc("help text", "Get help in order to know how to file an useful bug report"),  i18nc("help text", "Get help in order to know how to file an useful bug report") ) );
-    m_showAboutReportingButton->setSizePolicy( QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed) );
-    connect( m_showAboutReportingButton, SIGNAL(clicked()), this, SLOT(showAboutBugReporting()) );
-    
+    mainLabel->setWordWrap( true );
+
     QVBoxLayout * layout = new QVBoxLayout( this );
-    layout->addWidget( subTitle );
-    layout->addWidget( m_showAboutReportingButton );
-    layout->addWidget( startLabel );
+    layout->addWidget( mainLabel );
     layout->addStretch();
     setLayout( layout );
-}
-
-IntroductionPage::~IntroductionPage()
-{
-    if ( m_aboutBugReportingDialog )
-        delete m_aboutBugReportingDialog;
-}
-
-void IntroductionPage::aboutToShow()
-{
-    setBackButton( false );
-    setNextButton( true );
-}
-
-void IntroductionPage::showAboutBugReporting()
-{
-    if ( !m_aboutBugReportingDialog )
-    {
-        m_aboutBugReportingDialog = new AboutBugReportingDialog( this );
-    }
-    m_aboutBugReportingDialog->show();
 }
 
 //END IntroductionPage
@@ -91,13 +57,13 @@ void IntroductionPage::showAboutBugReporting()
 //BEGIN CrashInformationPage
 
 CrashInformationPage::CrashInformationPage( CrashInfo * crashInfo) 
-    : DrKonqiAssistantPage()
+    : DrKonqiAssistantPage(),
+    m_crashInfo( crashInfo )
 {
-    m_backtraceWidget = new GetBacktraceWidget( crashInfo );
+    m_backtraceWidget = new GetBacktraceWidget( m_crashInfo );
     
     //connect backtraceWidget signals
-    connect( m_backtraceWidget, SIGNAL(setBusy()) , this, SLOT(setBusy()) );
-    connect( m_backtraceWidget, SIGNAL(setIdle(bool)) , this, SLOT(setIdle(bool)) );
+    connect( m_backtraceWidget, SIGNAL(stateChanged()) , this, SLOT(emitCompleteChanged()) );
     
     QLabel * subTitle = new QLabel(
         i18n( "This page will fetch some useful information about the crash to generate a better bug report" )
@@ -109,6 +75,18 @@ CrashInformationPage::CrashInformationPage( CrashInfo * crashInfo)
     layout->addWidget( subTitle );
     layout->addWidget( m_backtraceWidget );
     setLayout( layout );    
+}
+
+void CrashInformationPage::aboutToShow()
+{ 
+    m_backtraceWidget->generateBacktrace(); 
+    emitCompleteChanged();
+}
+
+bool CrashInformationPage::isComplete()
+{
+    return ( m_crashInfo->getBacktraceState() != CrashInfo::NonLoaded &&  
+        m_crashInfo->getBacktraceState() != CrashInfo::Loading );
 }
 
 //END CrashInformationPage
@@ -160,7 +138,6 @@ BugAwarenessPage::BugAwarenessPage(CrashInfo * info)
     getCompromiseLayout->addWidget( compromiseLabel );
     getCompromiseLayout->addWidget( m_compromiseCheckBox );
     
-    
     //Reproduce
     m_canReproduceCheckBox = new QCheckBox( i18n( "I can reproduce the crash and I can provide steps or a testcase" ) );
     
@@ -193,7 +170,9 @@ void BugAwarenessPage::aboutToHide()
 
 ConclusionPage::ConclusionPage(CrashInfo * info) 
     : DrKonqiAssistantPage(),
-    m_crashInfo(info)
+    m_crashInfo(info),
+    isBKO(false),
+    needToReport(false)
 {
     m_reportEdit = new KTextBrowser();
     m_reportEdit->setReadOnly( true );
@@ -219,7 +198,6 @@ ConclusionPage::ConclusionPage(CrashInfo * info)
     layout->addWidget( m_explanationLabel );
     layout->addLayout( bLayout );
     setLayout( layout );
-
 }
 
 void ConclusionPage::saveReport()
@@ -296,9 +274,11 @@ void ConclusionPage::reportButtonClicked()
 
 void ConclusionPage::aboutToShow()
 {
-    QString report;
+    isBKO = false;
+    needToReport = false;
+    emitCompleteChanged();
     
-    bool needToReport = false;
+    QString report;
     
     BacktraceParser::Usefulness use = m_crashInfo->getBacktraceParser()->backtraceUsefulness();
     bool canDetails = m_crashInfo->getUserCanDetail();
@@ -326,6 +306,7 @@ void ConclusionPage::aboutToShow()
             break;
         }           
         case BacktraceParser::Useless:
+        case BacktraceParser::InvalidUsefulness:
         {
             needToReport = ( canReproduce || ( canDetails && getCompromise ) );
             report = i18n( "* The crash information is completely useless" ) ;
@@ -349,13 +330,13 @@ void ConclusionPage::aboutToShow()
     {
         report += QString("<br /><strong>%1</strong><br />%2<br /><br />--------<br /><br />%3").arg( i18n( "The crash is worth reporting" ), i18n( "You need to file a new bug report with the following information:" ), m_crashInfo->generateReportTemplate() );
         
-        bool isBKO = m_crashInfo->isKDEBugzilla();
+        isBKO = m_crashInfo->isKDEBugzilla();
         
         m_reportButton->setVisible( !isBKO );
-        setNextButton( isBKO );
         
         if ( isBKO )
         {
+            emitCompleteChanged();
             m_explanationLabel->setText( i18n( "This application is supported in the KDE Bugtracker, press Next to start the report" ) );
         }
         else
@@ -381,11 +362,14 @@ void ConclusionPage::aboutToShow()
             report += i18nc( "address to report the bug", "Report to %1", m_crashInfo->getReportLink() );
             m_explanationLabel->setText( i18n( "This application isn't supported in the KDE Bugtracker, you need to report the bug to the maintainer : <i>%1</i>", m_crashInfo->getReportLink() ) );
         }
-        
-        setNextButton( false );
     }
     
     m_reportEdit->setHtml( report );
+}
+
+bool ConclusionPage::isComplete()
+{
+    return ( isBKO && needToReport );
 }
 
 //END ConclusionPage

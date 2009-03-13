@@ -20,7 +20,6 @@
 
 #include "getbacktracewidget.h"
 
-#include <QtGui/QApplication>
 #include <QtGui/QLabel>
 #include <QtGui/QHBoxLayout>
 #include <QtGui/QVBoxLayout>
@@ -57,6 +56,7 @@ GetBacktraceWidget::GetBacktraceWidget( CrashInfo * info ) :
     connect( ui.m_saveButton, SIGNAL(clicked()) , this, SLOT(saveClicked()) );
     ui.m_saveButton->setEnabled( false );
     
+    ui.m_progressBar->setVisible( false );
 }
 
 void GetBacktraceWidget::setAsLoading()
@@ -76,10 +76,9 @@ void GetBacktraceWidget::setAsLoading()
     ui.m_copyButton->setEnabled( false );
     ui.m_saveButton->setEnabled( false );
                 
-    QApplication::setOverrideCursor(Qt::BusyCursor);
+    ui.m_progressBar->setVisible( true );
     
-    // bool canChangePage = crashInfo->getBacktraceState() != CrashInfo::NonLoaded &&  crashInfo->getBacktraceState() != CrashInfo::Loading;
-    emit setBusy();
+    emit stateChanged();
 }
 
 void GetBacktraceWidget::regenerateBacktrace()
@@ -107,7 +106,8 @@ void GetBacktraceWidget::generateBacktrace()
  
 void GetBacktraceWidget::backtraceGenerated()
 {
-    QApplication::restoreOverrideCursor();
+    ui.m_progressBar->setVisible( false );
+    
     ui.m_usefulnessMeter->setState( crashInfo->getBacktraceState() );
     ui.m_backtraceEdit->setEnabled( true );
     
@@ -182,10 +182,7 @@ void GetBacktraceWidget::backtraceGenerated()
         ui.m_reloadBacktraceButton->setEnabled( true );
     }
     
-    bool canChange = crashInfo->getBacktraceState() != CrashInfo::NonLoaded &&  
-        crashInfo->getBacktraceState() != CrashInfo::Loading;
-    
-    emit setIdle( canChange );
+    emit stateChanged();
 }
 
 void GetBacktraceWidget::copyClicked()

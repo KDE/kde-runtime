@@ -41,8 +41,7 @@ class GetBacktraceWidget: public QWidget
         void generateBacktrace();
 
     Q_SIGNALS:
-        void setBusy();
-        void setIdle( bool );
+        void stateChanged();
         
     private:
         CrashInfo * crashInfo;

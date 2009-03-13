@@ -13,9 +13,13 @@
 ##Unassigned
 -------------
 
+busy cursor -> progressbar 
+#"busy" progressbar for getbacktracewidgets
+# kio progressbar for bugzilla related operations (only for post operations.. login and commit )
+
 fix kwallet... ? use konqueror bko logic
 
-merge crashinfo  + krashconf ??
+### merge crashinfo  + krashconf ?? LATER
 
 //add warns about we want text in english !!
     Partially done 
@@ -39,6 +43,9 @@ krazy2 checks (partially done)
 const pointers ?
 
 check what all the options in KrashConf are meant to do and use them appropriately or drop them (i.e review options)
+
+
+
 
 #Done
 ---------

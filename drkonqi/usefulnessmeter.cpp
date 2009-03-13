@@ -67,6 +67,7 @@ void UsefulnessMeter::setUsefulness( BacktraceParser::Usefulness usefulness )
             break;
         }
         case BacktraceParser::Useless:
+        case BacktraceParser::InvalidUsefulness:
         {
             m_star1 = false; 
             m_star2 = false; 

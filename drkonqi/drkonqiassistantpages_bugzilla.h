@@ -35,6 +35,7 @@ class QDate;
 class QTreeWidget;
 class QTreeWidgetItem;
 class QCheckBox;
+class KComboBox;
 
 //Bugzilla Login
 class BugzillaLoginPage: public DrKonqiAssistantPage
@@ -46,6 +47,7 @@ class BugzillaLoginPage: public DrKonqiAssistantPage
         ~BugzillaLoginPage();
         
         void aboutToShow();
+        bool isComplete();
         
     private Q_SLOTS:
         void loginClicked();
@@ -53,6 +55,8 @@ class BugzillaLoginPage: public DrKonqiAssistantPage
         void loginError( QString );
         
         void walletLogin();
+        
+        void progress( KJob*, unsigned long );
         
     private:
         QFormLayout *   m_form;
@@ -79,12 +83,15 @@ class BugzillaKeywordsPage : public DrKonqiAssistantPage
         void aboutToShow();
         void aboutToHide();
         
+        bool isComplete();
+        
     private Q_SLOTS:
         void textEdited( QString );
         
     private:
         KLineEdit * m_keywordsEdit;
         CrashInfo * m_crashInfo;
+        bool    m_keywordsOK;
 };
         
 
@@ -152,6 +159,8 @@ class BugzillaInformationPage : public DrKonqiAssistantPage
         void aboutToShow();
         void aboutToHide();
         
+        bool isComplete();
+        
     private Q_SLOTS:
         void checkTexts();
         
@@ -163,7 +172,12 @@ class BugzillaInformationPage : public DrKonqiAssistantPage
         QLabel *        m_reproduceLabel;
         KTextEdit *     m_reproduceEdit;
         
+        QLabel *        m_distributionLabel;
+        KComboBox *     m_distributionCombo;
+        
         CrashInfo * m_crashInfo;
+        
+        bool m_textsOK;
 };
 
 class BugzillaCommitPage : public DrKonqiAssistantPage

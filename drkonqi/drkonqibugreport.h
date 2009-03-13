@@ -36,6 +36,7 @@ class BugzillaKeywordsPage;
 class BugzillaDuplicatesPage;
 class BugzillaInformationPage;
 class BugzillaCommitPage;
+class AboutBugReportingDialog;
 
 class DrKonqiBugReport: public KAssistantDialog
 {
@@ -63,12 +64,17 @@ class DrKonqiBugReport: public KAssistantDialog
     private Q_SLOTS:
         void currentPageChanged_slot(KPageWidgetItem *, KPageWidgetItem *);  
         
+        void completeChanged(DrKonqiAssistantPage*, bool);
+        
         void enableNextButton( bool );
         void enableBackButton( bool );
+        
+        void showHelp();
         
     private:
     
         void connectSignals( DrKonqiAssistantPage * );
+        AboutBugReportingDialog *   m_aboutBugReportingDialog;
 };
 
 #endif

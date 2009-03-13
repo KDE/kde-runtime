@@ -78,9 +78,8 @@ void BugzillaManager::tryLogin()
         KIO::StoredTransferJob * loginJob = 
             KIO::storedHttpPost( postData, KUrl( QString(bugtrackerBaseUrl) + QString(loginUrl) ), KIO::HideProgressInfo );
         connect( loginJob, SIGNAL(finished(KJob*)) , this, SLOT(loginDone(KJob*)) );
-        
+
         loginJob->addMetaData("content-type", "Content-Type: application/x-www-form-urlencoded");
-        loginJob->start();
     }
 }
 
@@ -144,14 +143,13 @@ void BugzillaManager::fetchBugReportDone( KJob* job )
         emit bugReportError( job->errorString() );
     }
     
-    //delete fetchBugJob;
     fetchBugJob = 0;
 }
 
 void BugzillaManager::searchBugs( QString words, QString product, QString severity, QString date_start, QString date_end, QString comment )
 {
     QString url = QString(bugtrackerBaseUrl) + QString(searchUrl).arg( words.replace(' ' , '+'), product, comment, date_start,  date_end, severity, QString(columns));
-    
+
     KIO::StoredTransferJob * searchBugsJob = KIO::storedGet( KUrl(url) , KIO::Reload, KIO::HideProgressInfo);
     connect( searchBugsJob, SIGNAL(finished(KJob*)) , this, SLOT(searchBugsDone(KJob*)) );
 }
@@ -184,21 +182,6 @@ void BugzillaManager::commitReport( BugReport * report )
     postDataStr = postDataStr.arg( report->product(), report->component(), report->bugSeverity(),
         QString("Unlisted Binaries"), report->operatingSystem(), report->priority(), report->bugStatus(), report->shortDescription(),
         report->description() );
-        
-    //QString("unspecified"), 
-    
-    /*
-    postData.replace( QByteArray("%1"), report->product().toUtf8() );
-    postData.replace( QByteArray("%2"), report->component().toUtf8() );
-    postData.replace( QByteArray("%3"), QString("unspecified").toUtf8() ); //way to get valid versions
-    postData.replace( QByteArray("%4"), report->bugSeverity().toUtf8() );
-    postData.replace( QByteArray("%5"), QString("Unlisted Binaries").toUtf8() ); // detect distro ?
-    postData.replace( QByteArray("%6"), report->operatingSystem().toUtf8() );
-    postData.replace( QByteArray("%7"), report->priority().toUtf8() );
-    postData.replace( QByteArray("%8"), report->bugStatus().toUtf8() );
-    postData.replace( QByteArray("%9"), report->shortDescription().toUtf8() );
-    postData.replace( QByteArray("%D"), report->getDescription().toUtf8() );
-    */
     
     QByteArray postData = postDataStr.toUtf8();
     

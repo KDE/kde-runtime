@@ -39,6 +39,7 @@
 #include <kicon.h>
 #include <kmessagebox.h>
 #include <klineedit.h>
+#include <kcombobox.h>
 
 //BEGIN BugzillaLoginPage
 
@@ -91,6 +92,17 @@ BugzillaLoginPage::BugzillaLoginPage( CrashInfo * info) :
     setLayout( layout );
 }
 
+bool BugzillaLoginPage::isComplete()
+{
+    return m_crashInfo->getBZ()->getLogged();
+}
+
+void BugzillaLoginPage::progress( KJob*, unsigned long percent )
+{
+    qDebug() << "progress" << percent;
+    m_loginLabel->setText( QString::number( percent ) );
+}
+
 void BugzillaLoginPage::loginError( QString err )
 {
     loginFinished( false );
@@ -117,13 +129,11 @@ void BugzillaLoginPage::aboutToShow()
         
         m_loginLabel->setText( i18nc( "the user is logged at the bugtracker site as USERNAME", "Logged at KDE Bugtracker (bugs.kde.org) as: %1", m_crashInfo->getBZ()->getUsername() ) );
         
-        setIdle( true );
-        
     }
     else
     {
-        setIdle( false );
-        QTimer::singleShot( 100, this, SLOT(walletLogin())); //Show wallet dialog once this dialog is shown
+        //Try to show wallet dialog once this dialog is shown
+        QTimer::singleShot( 100, this, SLOT(walletLogin())); 
     }
 }
 
@@ -132,12 +142,10 @@ void BugzillaLoginPage::walletLogin()
     bool login = false;
     if ( !m_wallet )
     {
-        setBackButton( false );
-        
         if ( !KWallet::Wallet::keyDoesNotExist( KWallet::Wallet::NetworkWallet(), KWallet::Wallet::FormDataFolder(), QLatin1String( "drkonqi_bugzilla" ) ) ) //Key exists!
         {
             m_wallet = KWallet::Wallet::openWallet( KWallet::Wallet::NetworkWallet(), 0 );
-            
+            //Was the wallet opened?
             if( m_wallet )
             {
                 m_wallet->setFolder( KWallet::Wallet::FormDataFolder() );
@@ -156,10 +164,6 @@ void BugzillaLoginPage::walletLogin()
                     loginClicked();
                 }
             }
-            else
-            {
-                setBackButton( true );
-            }
         }
     }
 }
@@ -173,19 +177,20 @@ void BugzillaLoginPage::loginClicked()
         m_loginLabel->setText( i18n( "Performing Bugzilla Login ..." ) );
         
         m_loginButton->setEnabled( false );
-        
+
+        m_userEdit->setEnabled( false );
+        m_passwordEdit->setEnabled( false );
+
         //If the wallet wasn't initialized at startup, launch it now to save the data
         if( !m_wallet )
         {
             m_wallet = KWallet::Wallet::openWallet( KWallet::Wallet::NetworkWallet(), 0 );
-            m_wallet->setFolder( KWallet::Wallet::FormDataFolder() );
         }
-            
-        m_userEdit->setEnabled( false );
-        m_passwordEdit->setEnabled( false );
-        
+        //Got wallet open ?
         if( m_wallet )
         {
+            m_wallet->setFolder( KWallet::Wallet::FormDataFolder() );
+            
             QMap<QString,QString> values;
             values.insert( QLatin1String( "username" ), m_userEdit->text() );
             values.insert( QLatin1String( "password" ), m_passwordEdit->text() );
@@ -205,6 +210,8 @@ void BugzillaLoginPage::loginFinished( bool logged )
 {
     if( logged )
     {
+        emitCompleteChanged();
+        
         aboutToShow();
         if( m_wallet )
             if( m_wallet->isOpen() )
@@ -212,8 +219,6 @@ void BugzillaLoginPage::loginFinished( bool logged )
     } 
     else
     {
-        setIdle( false );
-        
         m_loginLabel->setText( i18n( "Invalid username or password" ) );
         
         m_loginButton->setEnabled( true );
@@ -241,7 +246,8 @@ BugzillaLoginPage::~BugzillaLoginPage()
 
 BugzillaKeywordsPage::BugzillaKeywordsPage(CrashInfo * info) : 
     DrKonqiAssistantPage(),
-    m_crashInfo(info)
+    m_crashInfo(info),
+    m_keywordsOK(false)
 {
     QLabel * detailsLabel = new QLabel(
     i18n( "Please, enter at least 4 (four) words to describe the crash. This is needed in order to find for similar already reported bugs (duplicates)" ) //TODO rewrite this text
@@ -276,7 +282,16 @@ void BugzillaKeywordsPage::textEdited( QString newText )
     }
     */
     
-    setNextButton( ok );
+    if ( ok != m_keywordsOK )
+    {
+        m_keywordsOK = ok;
+        emitCompleteChanged();
+    }
+}
+
+bool BugzillaKeywordsPage::isComplete()
+{
+    return m_keywordsOK;
 }
 
 void BugzillaKeywordsPage::aboutToShow()
@@ -353,7 +368,6 @@ BugzillaDuplicatesPage::BugzillaDuplicatesPage(CrashInfo * info):
     layout->addLayout( buttonLayout );
     layout->addLayout( lay );
     setLayout( layout );
-    
 }
 
 BugzillaDuplicatesPage::~BugzillaDuplicatesPage()
@@ -381,7 +395,7 @@ void BugzillaDuplicatesPage::searchError( QString err )
     
     m_searchingLabel->setText( i18n( "Error fetching the bug report list" ) );
     m_searching = false;
-    setIdle( true );
+    setIdle();
     
     //1 year forward
     m_startDate = m_endDate;
@@ -507,11 +521,10 @@ void BugzillaDuplicatesPage::aboutToShow()
     Q_ASSERT( !m_searching );
     
     //If I never searched before, performSearch
-    if ( m_bugListWidget->topLevelItemCount() == 0)
-        if ( canSearchMore() )
-            performSearch();
+    if ( m_bugListWidget->topLevelItemCount() == 0 && canSearchMore())
+        performSearch();
     else
-        setIdle( true );
+        setIdle();
 }
 
 void BugzillaDuplicatesPage::aboutToHide()
@@ -577,22 +590,21 @@ void BugzillaDuplicatesPage::searchFinished( const BugMapList & list )
         if( !canSearchMore() )
             m_searchMoreButton->setEnabled( false );
         
-        setIdle( true );
+        setIdle();
         
     } else {
 
         if( canSearchMore() )
         {
-            setIdle( false );
+            setIdle();
             searchMore();
         }
         else
         {
-            setIdle( true );
+            setIdle();
             m_searchingLabel->setText( i18n( "Search Finished. No more possible date ranges to search" ) );
             
             enableControls( false );
-            //m_searchMoreButton->setEnabled( false );
         }
     }
 }
@@ -604,7 +616,8 @@ void BugzillaDuplicatesPage::searchFinished( const BugMapList & list )
 
 BugzillaInformationPage::BugzillaInformationPage( CrashInfo * info )
     : DrKonqiAssistantPage(),
-    m_crashInfo( info )
+    m_crashInfo( info ),
+    m_textsOK( false )
 {
     m_titleLabel = new QLabel( i18n( "Title of the bug report" ) );
     m_titleEdit = new KLineEdit();
@@ -618,6 +631,45 @@ BugzillaInformationPage::BugzillaInformationPage( CrashInfo * info )
     m_reproduceEdit = new KTextEdit();
     connect( m_reproduceEdit, SIGNAL(textChanged()), this, SLOT(checkTexts()) );
 
+    m_distributionLabel = new QLabel( i18n( "Distribution method you use:" ) );
+    m_distributionCombo = new KComboBox( false, this );
+    
+    QHBoxLayout * distributionLayout = new QHBoxLayout();
+    distributionLayout->addWidget( m_distributionLabel );
+    distributionLayout->addWidget( m_distributionCombo );
+    
+    m_distributionCombo->addItem( i18n("Unlisted Binaries"), "Unlisted Binaries" );
+    m_distributionCombo->addItem( i18n("Compiled Sources"), "Compiled Sources" );
+    m_distributionCombo->addItem( i18n("Debian stable"), "Debian stable" );
+    m_distributionCombo->addItem( i18n("Debian testing"), "Debian testing" );
+    m_distributionCombo->addItem( i18n("Debian unstable"), "Debian unstable" );
+    m_distributionCombo->addItem( i18n("Gentoo Packages"), "Gentoo Packages" );
+    m_distributionCombo->addItem( i18n("Mandrake RPMs"), "Mandrake RPMs" );
+    m_distributionCombo->addItem( i18n("Mandriva RPMs"), "Mandriva RPMs" );
+    m_distributionCombo->addItem( i18n("Slackware Packages"), "Slackware Packages" );
+    m_distributionCombo->addItem( i18n("SuSE RPMs"), "SuSE RPMs" );
+        
+    /*
+      <option value="RedHat RPMs">RedHat RPMs</option>
+      <option value="Fedora RPMs">Fedora RPMs</option>
+      <option value="Ubuntu Packages">Ubuntu Packages</option>
+      <option value="Pardus Packages">Pardus Packages</option>
+      <option value="FreeBSD Ports">FreeBSD Ports</option>
+      <option value="NetBSD pkgsrc">NetBSD pkgsrc</option>
+
+      <option value="OpenBSD Packages">OpenBSD Packages</option>
+      <option value="Fink Packages">Fink Packages</option>
+      <option value="MacPorts Packages">MacPorts Packages</option>
+      <option value="Mac OS X Disk Images">Mac OS X Disk Images</option>
+      <option value="Solaris Packages">Solaris Packages</option>
+      <option value="Tru64 Unix Packages">Tru64 Unix Packages</option>
+
+      <option value="AIX Packages">AIX Packages</option>
+      <option value="MS Windows">MS Windows</option>
+      <option value="unspecified">unspecified</option>
+
+*/
+
     QVBoxLayout * layout = new QVBoxLayout();
     layout->addWidget( new QLabel( "Some explanation about this step ??" ) ); //TODO rewrite // text lenght?
     layout->addWidget( m_titleLabel );
@@ -626,6 +678,7 @@ BugzillaInformationPage::BugzillaInformationPage( CrashInfo * info )
     layout->addWidget( m_detailsEdit );
     layout->addWidget( m_reproduceLabel );
     layout->addWidget( m_reproduceEdit );
+    layout->addLayout( distributionLayout );
     layout->addStretch();
     layout->addWidget( new QLabel( i18n( "<strong>Notice:</strong> The crash information will be automatically integrated into the bug report" ) ) );
     
@@ -647,7 +700,7 @@ void BugzillaInformationPage::aboutToShow()
     m_reproduceLabel->setVisible( canReproduce );
     m_reproduceEdit->setVisible( canReproduce );
     
-    checkTexts();
+    checkTexts(); //May be the options (canDetail|Reproduce) changed and we need to recheck
 }
     
 void BugzillaInformationPage::checkTexts()
@@ -657,11 +710,21 @@ void BugzillaInformationPage::checkTexts()
     bool ok = !(m_titleEdit->text().isEmpty() || detailsEmpty || reproduceEmpty );
     
     //Check title, details and steps text lenghts.... TODO discuss the exact lenght
+    //FIXME fix this logic
     if ( ok )
-        if ( m_titleEdit->text().size() < 20 && m_reproduceEdit->toPlainText().size() < 30 && m_detailsEdit->toPlainText().size() < 30)
+        if ( m_titleEdit->text().size() < 20 || (reproduceEmpty && m_reproduceEdit->toPlainText().size() < 30 ) || ( detailsEmpty && m_detailsEdit->toPlainText().size() < 30) )
             ok = false;
     
-    setNextButton( ok );
+    if( ok != m_textsOK )
+    {
+        m_textsOK = ok;
+        emitCompleteChanged();
+    }
+}
+
+bool BugzillaInformationPage::isComplete()
+{
+    return m_textsOK;
 }
 
 void BugzillaInformationPage::aboutToHide()
@@ -711,7 +774,7 @@ void BugzillaCommitPage::commited( int bug_id )
 {
     m_statusLabel->setText( i18n("Report commited!<br />Bug Number :: %1<br />Link :: <link>%2</link>", bug_id, m_crashInfo->getBZ()->urlForBug( bug_id ) ));
     
-    setIdle( false );
+    setIdle();
     //TODO enable finish button ??
 }
 
@@ -719,7 +782,7 @@ void BugzillaCommitPage::commitError( QString errorString )
 {
     m_statusLabel->setText( i18n( "Error on commiting bug report %1", errorString ) );
     
-    setIdle( false );
+    setIdle();
 }
 
 //END BugzillaCommitPage
