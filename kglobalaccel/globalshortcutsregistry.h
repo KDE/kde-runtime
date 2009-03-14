@@ -131,9 +131,18 @@ Q_SIGNALS:
 
 public Q_SLOTS:
 
+    void clear();
+
     void loadSettings();
 
     void writeSettings() const;
+
+    /**
+     * Renews the grabs.
+     *
+     * This is called after the user changed something with xmodmap.
+     */
+    void regrabKeys();
 
 private:
 

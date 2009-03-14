@@ -172,7 +172,7 @@ void KGlobalAccelImpl::x11MappingNotify()
 	KKeyServer::initializeMods();
 	calculateGrabMasks();
 	// Do new XGrabKey()s.
-	m_owner->regrabKeys();
+    m_owner->regrabKeys();
 
 }
 

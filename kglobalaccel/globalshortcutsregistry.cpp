@@ -53,6 +53,7 @@ GlobalShortcutsRegistry::GlobalShortcutsRegistry()
 GlobalShortcutsRegistry::~GlobalShortcutsRegistry()
     {
     _manager->setEnabled(false);
+    clear();
     }
 
 
@@ -87,6 +88,19 @@ void GlobalShortcutsRegistry::activateShortcuts()
 QList<KdeDGlobalAccel::Component*> GlobalShortcutsRegistry::allMainComponents() const
     {
     return _components.values();
+    }
+
+
+void GlobalShortcutsRegistry::clear()
+    {
+    Q_FOREACH(KdeDGlobalAccel::Component *component, _components)
+        {
+        delete component;
+        }
+    _components.clear();
+
+    // The shortcuts should have deregistered themselves
+    Q_ASSERT(_active_keys.isEmpty());
     }
 
 
@@ -248,6 +262,16 @@ void GlobalShortcutsRegistry::loadSettings()
         component->activateGlobalShortcutContext("default");
         component->loadSettings(configGroup);
         }
+    }
+
+
+void GlobalShortcutsRegistry::regrabKeys()
+    {
+    deactivateShortcuts();
+    // We store the keys as qt keycodes. Those stay the same. activateShortcut
+    // will translates to the corresponding x11 shortcut. So just activate
+    // again.
+    activateShortcuts();
     }
 
 
