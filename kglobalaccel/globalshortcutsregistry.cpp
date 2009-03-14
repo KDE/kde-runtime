@@ -164,24 +164,17 @@ GlobalShortcutsRegistry * GlobalShortcutsRegistry::self()
 
 bool GlobalShortcutsRegistry::keyPressed(int keyQt)
     {
-    // Check if keyQt is one of out global shortcuts. Because other kded
-    // modules could receive key events too that is not guaranteed.
     GlobalShortcut *shortcut = getShortcutByKey(keyQt);
     if (!shortcut || !shortcut->isActive())
         {
-        // We ungrab keys when deactivating shortcuts.
-        if (shortcut)
-            {
-            Q_ASSERT(shortcut->isActive());
-            }
+        // We are a standalone module. All pressed keys should be known.
+        Q_ASSERT(shortcut);
+        Q_ASSERT(shortcut->isActive());
 
-        // Not one of ours. Or one of ours but not active. It's meant for some
-        // other kded module most likely.
+        // In production mode just do nothing.
         return false;
         }
 
-    // Never print out the received key if it is not one of our active global
-    // shortcuts. We could end up printing out kpasswdservers password.
     kDebug() << QKeySequence(keyQt).toString() << "=" << shortcut->uniqueName();
 
     QStringList data(shortcut->context()->component()->uniqueName());
@@ -191,9 +184,10 @@ bool GlobalShortcutsRegistry::keyPressed(int keyQt)
 #ifdef Q_WS_X11
     // pass X11 timestamp
     long timestamp = QX11Info::appTime();
-    // Make sure kded has ungrabbed the keyboard after receiving the keypress,
-    // otherwise actions in application that try to grab the keyboard (e.g. in kwin)
-    // may fail to do so. There is still a small race condition with this being out-of-process.
+    // Make sure kglobalacceld has ungrabbed the keyboard after receiving the
+    // keypress, otherwise actions in application that try to grab the
+    // keyboard (e.g. in kwin) may fail to do so. There is still a small race
+    // condition with this being out-of-process.
     qApp->syncX();
 #else
     long timestamp = 0;

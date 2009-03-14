@@ -153,7 +153,7 @@ bool KGlobalAccelImpl::x11Event( XEvent* event )
 		case MappingNotify:
 			XRefreshKeyboardMapping(&event->xmapping);
 			x11MappingNotify();
-			return true;
+            return true;
 
 		 case XKeyPress:
 			if( x11KeyPress( event ) )
@@ -171,32 +171,15 @@ void KGlobalAccelImpl::x11MappingNotify()
 
 	KKeyServer::initializeMods();
 	calculateGrabMasks();
-	
-#if 0   //### investigate!
-	if (oldKeyModMaskXAccel != g_keyModMaskXAccel || oldKeyModMaskXOnOrOff != g_keyModMaskXOnOrOff)
-		// Do new XGrabKey()s.
-		m_owner->regrabKeys();
-#endif
+	// Do new XGrabKey()s.
+	m_owner->regrabKeys();
+
 }
 
 bool KGlobalAccelImpl::x11KeyPress( const XEvent *pEvent )
 {
-    // ATTENTION: SECURITY
-    //
-    // This method should NEVER EVER print out the key it received as debug
-    // output. kpwasswdserver is a kded module too. So we get key events from
-    // it too. Which means we would print out all passwords.
-    //
-    // We are only allowed to print out the key received AFTER we made sure
-    // it is a global shortcut. KGlobalAccelImpl cannot check this.
-    // GlobalShortcutsRegistry will do that.
-
-    // Keyboard needs to be ungrabed after XGrabKey() activates the grab, otherwise
-    // it becomes frozen. There is a chance this will ungrab even when it should
-    // not, if some code calls XGrabKeyboard() directly, but doing so in kded
-    // should be very unlikely, and probably stupid.
-    // If this code is again moved out of kded for some reason, this needs
-    // to be revisited (I'm pretty sure this used to break KWin).
+    // Keyboard needs to be ungrabed after XGrabKey() activates the grab,
+    // otherwise it becomes frozen.
 	if( !QWidget::keyboardGrabber() && !QApplication::activePopupWidget()) {
 		XUngrabKeyboard( QX11Info::display(), pEvent->xkey.time );
 		XFlush( QX11Info::display()); // avoid X(?) bug
