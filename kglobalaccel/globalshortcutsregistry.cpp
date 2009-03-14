@@ -207,17 +207,9 @@ void GlobalShortcutsRegistry::loadSettings()
     {
     foreach (const QString &groupName, _config.groupList())
         {
+        kDebug() << "Loading group " << groupName;
 
         Q_ASSERT(groupName.indexOf('\x1d')==-1);
-#if 0
-        // Skip the subgroups [Friendly Name] and contexts
-        if (groupName.indexOf('\x1d')!=-1)
-            {
-            continue;
-            }
-#endif
-
-        kDebug() << "Loading group " << groupName;
 
         // loadSettings isn't designed to be called in between. Only at the
         // beginning.
