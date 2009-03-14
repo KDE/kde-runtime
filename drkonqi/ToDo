@@ -13,10 +13,6 @@
 ##Unassigned
 -------------
 
-change "report to maintainer" to "send email to maintainer" / "open maintainer web page"
-
-fix kwallet... ? use konqueror bko logic
-
 //add warns about we want text in english !!
     Partially done 
 
@@ -38,8 +34,12 @@ const pointers ?
 
 check what all the options in KrashConf are meant to do and use them appropriately or drop them (i.e review options)
 
+//fix kwallet... ? use konqueror bko logic LATER
+
 #Done
 ---------
+
+change "report to maintainer" to "send email to maintainer" / "open maintainer web page"
 
 Enable help button on assistant ?
 ### merge crashinfo  + krashconf ?? LATER

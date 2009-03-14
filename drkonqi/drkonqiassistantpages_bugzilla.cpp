@@ -468,7 +468,7 @@ void BugzillaDuplicatesPage::itemClicked( QTreeWidgetItem * item, int col )
     m_infoDialogBrowser->setText( i18n("Loading ... " ) );
     m_infoDialogLink->setText( QString("<a href=\"%1\">%2</a>").arg( m_crashInfo->getBZ()->urlForBug(m_currentBugNumber), i18n("Bug report page at KDE Bugtracker") ) );
     
-    m_infoDialogStatusWidget->setBusy( i18n("Loading information about bug %1 from bugs.kde.org ...", m_currentBugNumber ) );
+    m_infoDialogStatusWidget->setBusy( i18n("Loading information about bug %1 from bugs.kde.org ...", QString::number(m_currentBugNumber) ) );
     
     m_infoDialogBrowser->setEnabled( false );
     
@@ -511,7 +511,7 @@ void BugzillaDuplicatesPage::bugFetchFinished( BugReport* report )
                 m_infoDialogBrowser->setText( text );
                 m_mineMayBeDuplicateButton->setEnabled( true );
                 
-                m_infoDialogStatusWidget->setIdle( i18n("Showing report %1", report->bugNumber().toInt() ) );
+                m_infoDialogStatusWidget->setIdle( i18n("Showing report %1", report->bugNumber() ) );
                 m_infoDialogBrowser->setEnabled( true );
             }
         }
@@ -560,10 +560,10 @@ void BugzillaDuplicatesPage::performSearch()
     
     m_statusWidget->setBusy( i18n( "Searching for duplicates (from %1 to %2) ...", startDateStr, endDateStr ) );
     
-    //m_crashInfo->getBZ()->searchBugs( m_crashInfo->getReport()->shortDescription(), m_crashInfo->getProductName(), "crash", startDateStr, endDateStr , m_crashInfo->getBacktraceParser()->firstValidFunctions().join(" ") );
+    m_crashInfo->getBZ()->searchBugs( m_crashInfo->getReport()->shortDescription(), m_crashInfo->getProductName(), "crash", startDateStr, endDateStr , m_crashInfo->getBacktraceParser()->firstValidFunctions().join(" ") );
    
    //Test search FIXME
-   m_crashInfo->getBZ()->searchBugs( "konqueror crash toggle mode", "konqueror", "crash", startDateStr, endDateStr , "caret" );
+   //m_crashInfo->getBZ()->searchBugs( "konqueror crash toggle mode", "konqueror", "crash", startDateStr, endDateStr , "caret" );
    
 }
 

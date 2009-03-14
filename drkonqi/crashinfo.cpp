@@ -239,9 +239,9 @@ QString CrashInfo::generateReportTemplate( bool bugzilla )
     }
         
     //Backtrace
+    report.append( lineBreak );
     if( m_backtraceParser->backtraceUsefulness() != BacktraceParser::Useless )
     {
-        report.append( lineBreak );
         QString formattedBacktrace = m_backtraceOutput;
         if (!bugzilla)
             formattedBacktrace.replace('\n', "<br />");

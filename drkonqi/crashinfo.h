@@ -72,6 +72,7 @@ class CrashInfo : public QObject
     
     QString getDebugger();
     
+    //Information and methods about a possible bug reporting
     bool isKDEBugzilla();
     bool isReportMail();
     QString getReportLink();
