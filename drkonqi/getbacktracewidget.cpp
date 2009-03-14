@@ -55,18 +55,23 @@ GetBacktraceWidget::GetBacktraceWidget( CrashInfo * info ) :
     ui.m_saveButton->setGuiItem( KGuiItem( i18nc("button action", "&Save to File" ), KIcon("document-save"), i18nc("button explanation", "Use this button to save the crash information (backtrace) to a file. This is useful if you want to take a look on it or to report the bug later" ), i18nc("button explanation", "Use this button to save the crash information (backtrace) to a file. This is useful if you want to take a look on it or to report the bug later" ) ) );
     connect( ui.m_saveButton, SIGNAL(clicked()) , this, SLOT(saveClicked()) );
     ui.m_saveButton->setEnabled( false );
+
+    //StatusWidget
     
-    ui.m_progressBar->setVisible( false );
+    m_usefulnessMeter = new UsefulnessMeter( ui.m_statusWidget );
+    ui.m_statusWidget->addCustomStatusWidget( m_usefulnessMeter );
+    
+    ui.m_statusWidget->setIdle( QString() );
 }
 
 void GetBacktraceWidget::setAsLoading()
 {
     ui.m_backtraceEdit->setText( i18nc("loading information, wait", "Loading ... " ));
     ui.m_backtraceEdit->setEnabled( false );
-    
-    ui.m_statusLabel->setText( i18nc("loading information, wait", "Loading crash information ... (this will take some time)" ));
-    ui.m_usefulnessMeter->setUsefulness( BacktraceParser::Useless );
-    ui.m_usefulnessMeter->setState( CrashInfo::Loading );
+
+    ui.m_statusWidget->setBusy( i18nc("loading information, wait", "Loading crash information ... (this will take some time)" ) );
+    m_usefulnessMeter->setUsefulness( BacktraceParser::Useless );
+    m_usefulnessMeter->setState( CrashInfo::Loading );
     
     ui.m_extraDetailsLabel->setVisible( false );
     ui.m_extraDetailsLabel->setText( "" );
@@ -76,8 +81,6 @@ void GetBacktraceWidget::setAsLoading()
     ui.m_copyButton->setEnabled( false );
     ui.m_saveButton->setEnabled( false );
                 
-    ui.m_progressBar->setVisible( true );
-    
     emit stateChanged();
 }
 
@@ -106,17 +109,15 @@ void GetBacktraceWidget::generateBacktrace()
  
 void GetBacktraceWidget::backtraceGenerated()
 {
-    ui.m_progressBar->setVisible( false );
-    
-    ui.m_usefulnessMeter->setState( crashInfo->getBacktraceState() );
-    ui.m_backtraceEdit->setEnabled( true );
+    m_usefulnessMeter->setState( crashInfo->getBacktraceState() );
     
     if( crashInfo->getBacktraceState() == CrashInfo::Loaded )
     {
+        ui.m_backtraceEdit->setEnabled( true );
         ui.m_backtraceEdit->setPlainText( crashInfo->getBacktraceOutput() );
         BacktraceParser * btParser = crashInfo->getBacktraceParser();
         
-        ui.m_usefulnessMeter->setUsefulness( btParser->backtraceUsefulness() );
+        m_usefulnessMeter->setUsefulness( btParser->backtraceUsefulness() );
 
         QString usefulnessText;
         switch( btParser->backtraceUsefulness() ) {
@@ -134,7 +135,7 @@ void GetBacktraceWidget::backtraceGenerated()
                         "The rating of this crash information is invalid. This is a bug in drkonqi itself.");
                 break;
         }
-        ui.m_statusLabel->setText( usefulnessText );
+        ui.m_statusWidget->setIdle( usefulnessText );
 
         //QStringList missingSymbols = QStringList() << btInfo->usefulFilesWithMissingSymbols();
         if( btParser->backtraceUsefulness() != BacktraceParser::ReallyUseful )
@@ -161,9 +162,9 @@ void GetBacktraceWidget::backtraceGenerated()
     }
     else if( crashInfo->getBacktraceState() == CrashInfo::Failed )
     {
-        ui.m_usefulnessMeter->setUsefulness( BacktraceParser::Useless );
+        m_usefulnessMeter->setUsefulness( BacktraceParser::Useless );
         
-        ui.m_statusLabel->setText( i18n("The crash information could not be generated" ) );
+        ui.m_statusWidget->setIdle( i18n("The crash information could not be generated" ) );
         
         ui.m_backtraceEdit->setPlainText( i18n("The crash information could not be generated" ) );
         
@@ -173,9 +174,10 @@ void GetBacktraceWidget::backtraceGenerated()
     }
     else if( crashInfo->getBacktraceState() == CrashInfo::DebuggerFailed )
     {
-        ui.m_usefulnessMeter->setUsefulness( BacktraceParser::Useless );
+        m_usefulnessMeter->setUsefulness( BacktraceParser::Useless );
         
-        ui.m_statusLabel->setText( i18n("The debugger application is missing or could not be launched" ));
+        ui.m_statusWidget->setIdle( i18n("The debugger application is missing or could not be launched" ));
+        
         ui.m_backtraceEdit->setPlainText( i18n("The crash information could not be generated" ));
         ui.m_extraDetailsLabel->setVisible( true );
         ui.m_extraDetailsLabel->setText( i18n("You need to install the debugger package (<i>%1</i>) and click the \"Reload Crash Information\" button", crashInfo->getDebugger() ) );

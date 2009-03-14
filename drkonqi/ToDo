@@ -13,13 +13,9 @@
 ##Unassigned
 -------------
 
-busy cursor -> progressbar 
-#"busy" progressbar for getbacktracewidgets
-# kio progressbar for bugzilla related operations (only for post operations.. login and commit )
+change "report to maintainer" to "send email to maintainer" / "open maintainer web page"
 
 fix kwallet... ? use konqueror bko logic
-
-### merge crashinfo  + krashconf ?? LATER
 
 //add warns about we want text in english !!
     Partially done 
@@ -36,19 +32,23 @@ Check leaks, crashes
 //Use KGUIItem to create KPushButton
 //Set help for gui items, whats this,
 
-Enable help button on assistant ?
-
 krazy2 checks (partially done)
 
 const pointers ?
 
 check what all the options in KrashConf are meant to do and use them appropriately or drop them (i.e review options)
 
-
-
-
 #Done
 ---------
+
+Enable help button on assistant ?
+### merge crashinfo  + krashconf ?? LATER
+
+#busy cursor -> progressbar 
+#"busy" progressbar for getbacktracewidgets
+# kio progressbar for bugzilla related operations (only for post operations.. login and commit )
+( using StatusWidget for status + busy state )
+
 
 way to get graphical feedback of KToolInvocation:invokeMailer
 

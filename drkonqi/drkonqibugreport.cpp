@@ -106,6 +106,7 @@ DrKonqiBugReport::DrKonqiBugReport( CrashInfo * crash, QWidget * parent ) :
     m_bugzillaCommitPage->setIcon( KIcon("tools-report-bug") );
     
     //TODO remember to keep ordered
+    
     addPage( m_introPage );
     addPage( m_backtracePage );
     addPage( m_awarenessPage );

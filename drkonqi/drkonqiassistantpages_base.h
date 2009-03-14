@@ -21,6 +21,7 @@
 #define DRKONQIASSISTANTPAGES__H
 
 #include <QtGui/QWidget>
+#include <QtCore/QFlags>
 
 #include "getbacktracewidget.h"
 #include "crashinfo.h"
@@ -36,11 +37,8 @@ class DrKonqiAssistantPage: public QWidget
     Q_OBJECT
     
     public:
-        DrKonqiAssistantPage()
-        {
-            isBusy = false;
-        }
-    
+        DrKonqiAssistantPage() {}
+
         //aboutToShow may load the widget data if empty
         virtual void aboutToShow() {}
         //aboutToHide may save the widget data to crashInfo, to continue
@@ -50,22 +48,6 @@ class DrKonqiAssistantPage: public QWidget
         
     public Q_SLOTS:
         
-        //Set the page as busy and doesn't allow to change.
-        void setBusy()
-        {
-            if( !isBusy )
-            {
-                isBusy = true;
-                emitCompleteChanged(); //Probably
-            }
-        }
-        
-        void setIdle()
-        {
-            isBusy = false;
-            emitCompleteChanged(); //Probably
-        }
-        
         void emitCompleteChanged()
         {
             emit completeChanged( this, isComplete() );
@@ -73,9 +55,6 @@ class DrKonqiAssistantPage: public QWidget
         
     Q_SIGNALS:
         void completeChanged( DrKonqiAssistantPage*, bool );
-        
-    private:
-        bool isBusy;
 
 };
 

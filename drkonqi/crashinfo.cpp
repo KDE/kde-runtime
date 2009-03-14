@@ -141,7 +141,7 @@ QString CrashInfo::getOS()
     {
         QProcess process;
         process.start("uname -srom");
-        process.waitForFinished(-1);
+        process.waitForFinished( 5000 );
         QByteArray os = process.readAllStandardOutput();
         os.chop(1);
         m_OS = QString(os);
@@ -149,18 +149,37 @@ QString CrashInfo::getOS()
     return m_OS;
 }
 
-QString CrashInfo::getBaseOS()
+QString CrashInfo::getLSBRelease()
 {
-    if( m_baseOS.isEmpty() ) //Fetch OS name (for bug report)
+    if( m_LSBRelease.isEmpty() )
     {
-        QProcess process;
-        process.start("uname -s");
-        process.waitForFinished(-1);
-        QByteArray os = process.readAllStandardOutput();
+        //Get base OS
+        QProcess processOS;
+        processOS.start("uname -s");
+        processOS.waitForFinished( 5000 );
+        QByteArray os = processOS.readAllStandardOutput();
         os.chop(1);
-        m_baseOS = QString(os);
+        
+        if( QString(os) == QLatin1String( "Linux" ) )
+        {
+            QProcess process;
+            process.start("lsb_release -a");
+            process.waitForFinished( 5000 );
+            QByteArray lsb = process.readAllStandardOutput();
+            if ( !lsb.isEmpty() )
+            {   
+                lsb.chop(1);
+                m_LSBRelease = QString(lsb);
+            } else {
+                m_LSBRelease = i18n( "LSB Release information not found ( no lsb_release command found )" );
+            }
+        } 
+        else 
+        {
+            m_LSBRelease = i18n( "Not a GNU/Linux system. LSB Release Information not available" );
+        }
     }
-    return m_baseOS;
+    return m_LSBRelease;
 }
 
 QString CrashInfo::getDebugger()
@@ -176,6 +195,7 @@ QString CrashInfo::generateReportTemplate( bool bugzilla )
         
     QString report;
     
+    report.append( i18n( "Application and System information ----- ::" ) + lineBreak + lineBreak );
     //Program name and versions 
     report.append( QString("KDE Version: %1").arg( getKDEVersion() ) + lineBreak);
     report.append( QString("Qt Version: %1").arg( getQtVersion() ) + lineBreak );
@@ -183,14 +203,19 @@ QString CrashInfo::generateReportTemplate( bool bugzilla )
     report.append( QString("Application that crashed: %1").arg( getProductName() ) + lineBreak );
     report.append( QString("Version of the application: %1").arg( getProductVersion() ) + lineBreak );
     
+    //LSB output
+    QString lsb = getLSBRelease();
+    if (!bugzilla) lsb.replace('\n', "<br />");
+    report.append( QString(" ----- ") + lineBreak + lsb + lineBreak  + QString("-----") + lineBreak );
+    
     //Description (title)
     if ( !m_report->shortDescription().isEmpty() )
         report.append( lineBreak + QString("Title: %1").arg( m_report->shortDescription() ) );
     
     //Details of the crash situation
-    report.append( lineBreak );
     if( m_userCanDetail )
     {
+        report.append( lineBreak );
         report.append( lineBreak + QString("What I was doing when the application crashed:") + lineBreak);
         if( !m_userDetailText.isEmpty() )
         {
@@ -201,9 +226,9 @@ QString CrashInfo::generateReportTemplate( bool bugzilla )
     }
 
     //Steps to reproduce the crash
-    report.append( lineBreak ) ;
     if( m_userCanReproduce )
     {
+        report.append( lineBreak );
         report.append( lineBreak + QString("How to reproduce the crash:") + lineBreak);
         if( !m_userReproduceText.isEmpty() )
         {
@@ -214,9 +239,9 @@ QString CrashInfo::generateReportTemplate( bool bugzilla )
     }
         
     //Backtrace
-    report.append( lineBreak ) ;
     if( m_backtraceParser->backtraceUsefulness() != BacktraceParser::Useless )
     {
+        report.append( lineBreak );
         QString formattedBacktrace = m_backtraceOutput;
         if (!bugzilla)
             formattedBacktrace.replace('\n', "<br />");
@@ -224,6 +249,10 @@ QString CrashInfo::generateReportTemplate( bool bugzilla )
         
         report.append( lineBreak + QString("Backtrace:") + lineBreak + QString("----") 
         + lineBreak + lineBreak + formattedBacktrace + lineBreak + QString("----") );
+    }
+    else
+    {
+        report.append( lineBreak + QString("Useless backtrace generated") + lineBreak );
     }
 
     //Possible duplicate
@@ -244,7 +273,7 @@ void CrashInfo::fillReportFields()
     m_report->setProduct( getProductName() );
     m_report->setComponent( QLatin1String("general") );
     m_report->setVersion( getProductVersion() );
-    m_report->setOperatingSystem( getBaseOS() );
+    m_report->setOperatingSystem( QLatin1String("unspecified") );
     m_report->setBugStatus( QLatin1String("UNCONFIRMED") );
     m_report->setPriority( QLatin1String("NOR") );
     m_report->setBugSeverity( QLatin1String("crash") );

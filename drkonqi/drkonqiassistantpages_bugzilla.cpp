@@ -33,6 +33,8 @@
 #include <QtGui/QTreeWidget>
 #include <QtGui/QHeaderView>
 
+#include <QtGui/QStackedWidget>
+
 #include <kpushbutton.h>
 #include <ktextbrowser.h>
 #include <ktextedit.h>
@@ -40,6 +42,8 @@
 #include <kmessagebox.h>
 #include <klineedit.h>
 #include <kcombobox.h>
+
+#include "statuswidget.h"
 
 //BEGIN BugzillaLoginPage
 
@@ -51,9 +55,8 @@ BugzillaLoginPage::BugzillaLoginPage( CrashInfo * info) :
     connect( m_crashInfo->getBZ(), SIGNAL(loginFinished(bool)), this, SLOT(loginFinished(bool)));
     connect( m_crashInfo->getBZ(), SIGNAL(loginError(QString)), this, SLOT(loginError(QString)));
     
-    m_subTitle = new QLabel(
-        i18n( "You need to log-in in your bugs.kde.org account in order to proceed" )
-    );
+    m_statusWidget = new StatusWidget();
+    m_statusWidget->setIdle( i18n( "You need to log-in in your bugs.kde.org account in order to proceed" ) );
     
     m_loginButton = new KPushButton( KGuiItem( i18nc( "button action", "Login in" ), KIcon( "network-connect" ), i18nc( "button explanation", "Use this button to try to login to a bugs.kde.org Bugzilla account using the provided username and password"),  i18nc( "button explanation", "Use this button to try to login to a bugs.kde.org Bugzilla account using the provided username and password") ) );
     connect( m_loginButton, SIGNAL(clicked()) , this, SLOT(loginClicked()) );
@@ -68,10 +71,7 @@ BugzillaLoginPage::BugzillaLoginPage( CrashInfo * info) :
     m_form = new QFormLayout();
     m_form->addRow( i18nc( "label for username lineedit input", "Username:" ) , m_userEdit );
     m_form->addRow( i18nc( "label for password lineedit input", "Password:" ) , m_passwordEdit );
-    
-    m_loginLabel = new QLabel();
-    m_loginLabel->setMargin(10);
-    
+
     QString url = QString("http://bugs.kde.org");
     QLabel * noticeLabel = new QLabel( i18n("<strong>Notice:</strong> You need a user account at the <link url='%1'>KDE BugTracker</link> in order to file a bug report because we may need to contact you later for requesting further information. <br />If you don't have one: you can freely <link url='%2'>create one here</link>", QLatin1String("http://bugs.kde.org"), QLatin1String("https://bugs.kde.org/createaccount.cgi") ));
     
@@ -83,9 +83,8 @@ BugzillaLoginPage::BugzillaLoginPage( CrashInfo * info) :
     buttonLayout->addWidget( m_loginButton);
 
     QVBoxLayout * layout = new QVBoxLayout();
-    layout->addWidget( m_subTitle );
+    layout->addWidget( m_statusWidget );
     layout->addLayout( m_form );
-    layout->addWidget( m_loginLabel );
     layout->addLayout( buttonLayout );
     layout->addWidget( noticeLabel );
     layout->addStretch();
@@ -97,16 +96,16 @@ bool BugzillaLoginPage::isComplete()
     return m_crashInfo->getBZ()->getLogged();
 }
 
+/*
 void BugzillaLoginPage::progress( KJob*, unsigned long percent )
 {
-    qDebug() << "progress" << percent;
-    m_loginLabel->setText( QString::number( percent ) );
+    //qDebug() << "progress" << percent;
 }
-
+*/
 void BugzillaLoginPage::loginError( QString err )
 {
     loginFinished( false );
-    m_loginLabel->setText( i18n("Error when trying to login: %1", err ) );
+    m_statusWidget->setIdle( i18n("Error when trying to login: %1", err ) );
 }
 
 void BugzillaLoginPage::aboutToShow()
@@ -120,14 +119,13 @@ void BugzillaLoginPage::aboutToShow()
         m_passwordEdit->setEnabled( false );
         m_passwordEdit->setText("");
         
-        m_subTitle->setVisible( false );
         m_loginButton->setVisible( false );
         m_userEdit->setVisible( false );
         m_passwordEdit->setVisible( false );
         m_form->labelForField(m_userEdit)->setVisible( false );
         m_form->labelForField(m_passwordEdit)->setVisible( false );
         
-        m_loginLabel->setText( i18nc( "the user is logged at the bugtracker site as USERNAME", "Logged at KDE Bugtracker (bugs.kde.org) as: %1", m_crashInfo->getBZ()->getUsername() ) );
+        m_statusWidget->setIdle( i18nc( "the user is logged at the bugtracker site as USERNAME", "Logged at KDE Bugtracker (bugs.kde.org) as: %1", m_crashInfo->getBZ()->getUsername() ) );
         
     }
     else
@@ -172,10 +170,6 @@ void BugzillaLoginPage::loginClicked()
 {
     if( !( m_userEdit->text().isEmpty() && m_passwordEdit->text().isEmpty() ) )
     {
-        setBusy();
-        
-        m_loginLabel->setText( i18n( "Performing Bugzilla Login ..." ) );
-        
         m_loginButton->setEnabled( false );
 
         m_userEdit->setEnabled( false );
@@ -196,6 +190,8 @@ void BugzillaLoginPage::loginClicked()
             values.insert( QLatin1String( "password" ), m_passwordEdit->text() );
             m_wallet->writeMap( QLatin1String( "drkonqi_bugzilla" ), values );
         }
+
+        m_statusWidget->setBusy( i18n( "Performing bugs.kde.org login as %1 ...", m_userEdit->text() ) );
         
         m_crashInfo->getBZ()->setLoginData( m_userEdit->text(), m_passwordEdit->text() );
         m_crashInfo->getBZ()->tryLogin();    
@@ -219,7 +215,7 @@ void BugzillaLoginPage::loginFinished( bool logged )
     } 
     else
     {
-        m_loginLabel->setText( i18n( "Invalid username or password" ) );
+        m_statusWidget->setIdle( i18n( "Invalid username or password" ) );
         
         m_loginButton->setEnabled( true );
     
@@ -250,7 +246,7 @@ BugzillaKeywordsPage::BugzillaKeywordsPage(CrashInfo * info) :
     m_keywordsOK(false)
 {
     QLabel * detailsLabel = new QLabel(
-    i18n( "Please, enter at least 4 (four) words to describe the crash. This is needed in order to find for similar already reported bugs (duplicates)" ) //TODO rewrite this text
+    i18n( "Please, enter at least 4 (four) words to describe the crash. This is needed in order to find for similar already reported bugs (possible duplicates)" ) //TODO rewrite this text
     );
     detailsLabel->setWordWrap( true );
     
@@ -301,7 +297,7 @@ void BugzillaKeywordsPage::aboutToShow()
 
 void BugzillaKeywordsPage::aboutToHide()
 {
-    //Save keywords (short description)
+    //Save keywords (as short description of the future report)
     m_crashInfo->getReport()->setShortDescription( m_keywordsEdit->text() );
 }
 
@@ -315,6 +311,7 @@ BugzillaDuplicatesPage::BugzillaDuplicatesPage(CrashInfo * info):
     m_infoDialog(0),
     m_infoDialogBrowser(0),
     m_infoDialogLink(0),
+    m_infoDialogStatusWidget(0),
     m_mineMayBeDuplicateButton(0),
     m_currentBugNumber(0),
     m_crashInfo(info)
@@ -327,7 +324,7 @@ BugzillaDuplicatesPage::BugzillaDuplicatesPage(CrashInfo * info):
     connect( m_crashInfo->getBZ(), SIGNAL( bugReportFetched(BugReport*) ), this, SLOT( bugFetchFinished(BugReport*) ) );
     connect( m_crashInfo->getBZ(), SIGNAL( bugReportError(QString) ), this, SLOT( bugFetchError(QString) ) );
         
-    m_searchingLabel = new QLabel( i18n( "Searching for duplicates ..." ) );
+    m_statusWidget = new StatusWidget();
     
     m_bugListWidget = new QTreeWidget();
     m_bugListWidget->setRootIsDecorated( false );
@@ -363,7 +360,7 @@ BugzillaDuplicatesPage::BugzillaDuplicatesPage(CrashInfo * info):
     
     QVBoxLayout * layout = new QVBoxLayout();
     layout->addWidget( new QLabel("Needed explanation about this step") ); //TODO rewrite this
-    layout->addWidget( m_searchingLabel );
+    layout->addWidget( m_statusWidget );
     layout->addWidget( m_bugListWidget );
     layout->addLayout( buttonLayout );
     layout->addLayout( lay );
@@ -393,9 +390,9 @@ void BugzillaDuplicatesPage::searchError( QString err )
 {
     enableControls( true );
     
-    m_searchingLabel->setText( i18n( "Error fetching the bug report list" ) );
+    m_statusWidget->setIdle( i18n( "Error fetching the bug report list" ) ); 
+    
     m_searching = false;
-    setIdle();
     
     //1 year forward
     m_startDate = m_endDate;
@@ -413,6 +410,7 @@ void BugzillaDuplicatesPage::bugFetchError( QString err )
             KMessageBox::error( this , i18n( "Error fetching the bug report<br />%1<br />Please, wait some time and try again", err ) );
             m_mineMayBeDuplicateButton->setEnabled( false );
             m_infoDialogBrowser->setText( i18n( "Error fetching the bug report" ) );
+            m_infoDialogStatusWidget->setIdle( i18n( "Error fetching the bug report" ) );
         }
     }
 }
@@ -434,6 +432,8 @@ void BugzillaDuplicatesPage::itemClicked( QTreeWidgetItem * item, int col )
         m_infoDialog->setCaption( i18n("Bug Description") );
         m_infoDialog->setModal( true );
         
+        m_infoDialogStatusWidget = new StatusWidget();
+        
         m_infoDialogBrowser = new KTextBrowser(); 
         
         m_infoDialogLink = new QLabel();
@@ -444,9 +444,15 @@ void BugzillaDuplicatesPage::itemClicked( QTreeWidgetItem * item, int col )
         
         QWidget * widget = new QWidget( m_infoDialog );
         QVBoxLayout * layout = new QVBoxLayout();
+        layout->addWidget( m_infoDialogStatusWidget );
         layout->addWidget( m_infoDialogBrowser );
-        layout->addWidget( m_infoDialogLink );
-        layout->addWidget( m_mineMayBeDuplicateButton );
+        
+        QHBoxLayout * inLayout = new QHBoxLayout();
+        inLayout->addWidget( m_infoDialogLink );
+        inLayout->addWidget( m_mineMayBeDuplicateButton );
+        
+        layout->addLayout( inLayout );
+        
         widget->setMinimumSize( QSize(400,300) );
         widget->setLayout( layout );
         
@@ -458,8 +464,13 @@ void BugzillaDuplicatesPage::itemClicked( QTreeWidgetItem * item, int col )
     m_crashInfo->getBZ()->fetchBugReport( m_currentBugNumber );
 
     m_mineMayBeDuplicateButton->setEnabled( false );
-    m_infoDialogBrowser->setText( i18n("Loading information about bug %1 from bugs.kde.org ...", m_currentBugNumber ) );
+    
+    m_infoDialogBrowser->setText( i18n("Loading ... " ) );
     m_infoDialogLink->setText( QString("<a href=\"%1\">%2</a>").arg( m_crashInfo->getBZ()->urlForBug(m_currentBugNumber), i18n("Bug report page at KDE Bugtracker") ) );
+    
+    m_infoDialogStatusWidget->setBusy( i18n("Loading information about bug %1 from bugs.kde.org ...", m_currentBugNumber ) );
+    
+    m_infoDialogBrowser->setEnabled( false );
     
     m_infoDialog->show();
 }
@@ -499,6 +510,9 @@ void BugzillaDuplicatesPage::bugFetchFinished( BugReport* report )
                 
                 m_infoDialogBrowser->setText( text );
                 m_mineMayBeDuplicateButton->setEnabled( true );
+                
+                m_infoDialogStatusWidget->setIdle( i18n("Showing report %1", report->bugNumber().toInt() ) );
+                m_infoDialogBrowser->setEnabled( true );
             }
         }
     }
@@ -523,8 +537,6 @@ void BugzillaDuplicatesPage::aboutToShow()
     //If I never searched before, performSearch
     if ( m_bugListWidget->topLevelItemCount() == 0 && canSearchMore())
         performSearch();
-    else
-        setIdle();
 }
 
 void BugzillaDuplicatesPage::aboutToHide()
@@ -539,21 +551,19 @@ void BugzillaDuplicatesPage::aboutToHide()
 
 void BugzillaDuplicatesPage::performSearch()
 {
-    setBusy(); //Don't allow go back/next
-
     m_searching = true;
 
     enableControls( false );
-    
+
     QString startDateStr = m_startDate.toString("yyyy-MM-dd");
     QString endDateStr = m_endDate.toString("yyyy-MM-dd");
     
-    m_searchingLabel->setText( i18n( "Searching for duplicates (from %1 to %2) ...", startDateStr, endDateStr ) );
+    m_statusWidget->setBusy( i18n( "Searching for duplicates (from %1 to %2) ...", startDateStr, endDateStr ) );
     
-    m_crashInfo->getBZ()->searchBugs( m_crashInfo->getReport()->shortDescription(), m_crashInfo->getProductName(), "crash", startDateStr, endDateStr , m_crashInfo->getBacktraceParser()->firstValidFunctions().join(" ") );
+    //m_crashInfo->getBZ()->searchBugs( m_crashInfo->getReport()->shortDescription(), m_crashInfo->getProductName(), "crash", startDateStr, endDateStr , m_crashInfo->getBacktraceParser()->firstValidFunctions().join(" ") );
    
-   //Test search
-   //m_crashInfo->getBZ()->searchBugs( "plasma crash folder view", "plasma", "crash", startDateStr, endDateStr , "labelRectangle" );
+   //Test search FIXME
+   m_crashInfo->getBZ()->searchBugs( "konqueror crash toggle mode", "konqueror", "crash", startDateStr, endDateStr , "caret" );
    
 }
 
@@ -573,7 +583,7 @@ void BugzillaDuplicatesPage::searchFinished( const BugMapList & list )
     int results = list.count();
     if( results > 0 )
     {
-        m_searchingLabel->setText( i18n( "Search Finished (results from %1 to %2)", m_startDate.toString("yyyy-MM-dd"), QDate::currentDate().toString("yyyy-MM-dd") ) );
+        m_statusWidget->setIdle( i18n( "Showing results from %1 to %2", m_startDate.toString("yyyy-MM-dd"), QDate::currentDate().toString("yyyy-MM-dd") ) );
         
         for(int i = 0; i< results; i++)
         {
@@ -590,19 +600,15 @@ void BugzillaDuplicatesPage::searchFinished( const BugMapList & list )
         if( !canSearchMore() )
             m_searchMoreButton->setEnabled( false );
         
-        setIdle();
-        
     } else {
 
         if( canSearchMore() )
         {
-            setIdle();
             searchMore();
         }
         else
         {
-            setIdle();
-            m_searchingLabel->setText( i18n( "Search Finished. No more possible date ranges to search" ) );
+            m_statusWidget->setIdle( i18n( "Search Finished. No more possible date ranges to search" ) );
             
             enableControls( false );
         }
@@ -631,45 +637,6 @@ BugzillaInformationPage::BugzillaInformationPage( CrashInfo * info )
     m_reproduceEdit = new KTextEdit();
     connect( m_reproduceEdit, SIGNAL(textChanged()), this, SLOT(checkTexts()) );
 
-    m_distributionLabel = new QLabel( i18n( "Distribution method you use:" ) );
-    m_distributionCombo = new KComboBox( false, this );
-    
-    QHBoxLayout * distributionLayout = new QHBoxLayout();
-    distributionLayout->addWidget( m_distributionLabel );
-    distributionLayout->addWidget( m_distributionCombo );
-    
-    m_distributionCombo->addItem( i18n("Unlisted Binaries"), "Unlisted Binaries" );
-    m_distributionCombo->addItem( i18n("Compiled Sources"), "Compiled Sources" );
-    m_distributionCombo->addItem( i18n("Debian stable"), "Debian stable" );
-    m_distributionCombo->addItem( i18n("Debian testing"), "Debian testing" );
-    m_distributionCombo->addItem( i18n("Debian unstable"), "Debian unstable" );
-    m_distributionCombo->addItem( i18n("Gentoo Packages"), "Gentoo Packages" );
-    m_distributionCombo->addItem( i18n("Mandrake RPMs"), "Mandrake RPMs" );
-    m_distributionCombo->addItem( i18n("Mandriva RPMs"), "Mandriva RPMs" );
-    m_distributionCombo->addItem( i18n("Slackware Packages"), "Slackware Packages" );
-    m_distributionCombo->addItem( i18n("SuSE RPMs"), "SuSE RPMs" );
-        
-    /*
-      <option value="RedHat RPMs">RedHat RPMs</option>
-      <option value="Fedora RPMs">Fedora RPMs</option>
-      <option value="Ubuntu Packages">Ubuntu Packages</option>
-      <option value="Pardus Packages">Pardus Packages</option>
-      <option value="FreeBSD Ports">FreeBSD Ports</option>
-      <option value="NetBSD pkgsrc">NetBSD pkgsrc</option>
-
-      <option value="OpenBSD Packages">OpenBSD Packages</option>
-      <option value="Fink Packages">Fink Packages</option>
-      <option value="MacPorts Packages">MacPorts Packages</option>
-      <option value="Mac OS X Disk Images">Mac OS X Disk Images</option>
-      <option value="Solaris Packages">Solaris Packages</option>
-      <option value="Tru64 Unix Packages">Tru64 Unix Packages</option>
-
-      <option value="AIX Packages">AIX Packages</option>
-      <option value="MS Windows">MS Windows</option>
-      <option value="unspecified">unspecified</option>
-
-*/
-
     QVBoxLayout * layout = new QVBoxLayout();
     layout->addWidget( new QLabel( "Some explanation about this step ??" ) ); //TODO rewrite // text lenght?
     layout->addWidget( m_titleLabel );
@@ -678,7 +645,6 @@ BugzillaInformationPage::BugzillaInformationPage( CrashInfo * info )
     layout->addWidget( m_detailsEdit );
     layout->addWidget( m_reproduceLabel );
     layout->addWidget( m_reproduceEdit );
-    layout->addLayout( distributionLayout );
     layout->addStretch();
     layout->addWidget( new QLabel( i18n( "<strong>Notice:</strong> The crash information will be automatically integrated into the bug report" ) ) );
     
@@ -746,43 +712,37 @@ BugzillaCommitPage::BugzillaCommitPage( CrashInfo * info )
     connect( m_crashInfo->getBZ(), SIGNAL(reportCommited(int)), this, SLOT(commited(int)) );
     connect( m_crashInfo->getBZ(), SIGNAL(commitReportError(QString)), this, SLOT(commitError(QString)) );
     
-    m_statusLabel = new QLabel();
-    m_statusLabel->setWordWrap( true );
-    m_statusLabel->setOpenExternalLinks( true );
-    m_statusLabel->setTextFormat( Qt::RichText );
+    m_statusWidget = new StatusWidget();
+    m_statusWidget->setStatusLabelWordWrap( true );
     
     //TODO button to retry on error ?
     
     QVBoxLayout * layout = new QVBoxLayout();
-    layout->addWidget( m_statusLabel );
+    layout->addWidget( m_statusWidget );
     layout->addStretch();
     setLayout( layout );
 }
 
 void BugzillaCommitPage::aboutToShow()
 {
-    m_statusLabel->setText( i18n( "Generating report ..." ) );
+    m_statusWidget->setBusy( i18n( "Generating report ..." ) );
     m_crashInfo->fillReportFields();
     
-    m_statusLabel->setText( i18n( "Posting report ..." ) );
+    m_statusWidget->setBusy( i18n( "Posting report ... ( please wait )" ) );
     m_crashInfo->commitBugReport();
-    
-    setBusy();
 }
 
 void BugzillaCommitPage::commited( int bug_id )
 {
-    m_statusLabel->setText( i18n("Report commited!<br />Bug Number :: %1<br />Link :: <link>%2</link>", bug_id, m_crashInfo->getBZ()->urlForBug( bug_id ) ));
+    m_statusWidget->setIdle( i18n("Report commited!<br />Bug Number :: %1<br />Link :: <link>%2</link>", bug_id, m_crashInfo->getBZ()->urlForBug( bug_id ) ));
     
-    setIdle();
     //TODO enable finish button ??
 }
 
 void BugzillaCommitPage::commitError( QString errorString )
 {
-    m_statusLabel->setText( i18n( "Error on commiting bug report %1", errorString ) );
-    
-    setIdle();
+    m_statusWidget->setIdle( i18n( "Error on commiting bug report %1", errorString ) );
+    //TODO retry button ?
 }
 
 //END BugzillaCommitPage

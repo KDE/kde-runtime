@@ -46,6 +46,7 @@ class GetBacktraceWidget: public QWidget
     private:
         CrashInfo * crashInfo;
         Ui::Form    ui;
+        UsefulnessMeter *   m_usefulnessMeter;
         
     private Q_SLOTS:
         void backtraceGenerated();

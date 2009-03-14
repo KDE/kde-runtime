@@ -35,7 +35,8 @@ class QDate;
 class QTreeWidget;
 class QTreeWidgetItem;
 class QCheckBox;
-class KComboBox;
+
+class StatusWidget;
 
 //Bugzilla Login
 class BugzillaLoginPage: public DrKonqiAssistantPage
@@ -56,18 +57,17 @@ class BugzillaLoginPage: public DrKonqiAssistantPage
         
         void walletLogin();
         
-        void progress( KJob*, unsigned long );
+        //void progress( KJob*, unsigned long );
         
     private:
         QFormLayout *   m_form;
         
-        QLabel *        m_subTitle;
-        QLabel *        m_loginLabel;
         KPushButton *   m_loginButton;
         KLineEdit *     m_userEdit;
         KLineEdit *     m_passwordEdit;
+                
+        StatusWidget *  m_statusWidget;
         
-        //QProgressDialog * m_progressDialog;
         KWallet::Wallet *   m_wallet;
         CrashInfo * m_crashInfo;
 };
@@ -128,7 +128,7 @@ class BugzillaDuplicatesPage : public DrKonqiAssistantPage
     private:
         bool            m_searching;
         
-        QLabel *        m_searchingLabel;
+        StatusWidget *  m_statusWidget;
         
         QDate           m_startDate;
         QDate           m_endDate;
@@ -139,6 +139,7 @@ class BugzillaDuplicatesPage : public DrKonqiAssistantPage
         KDialog *       m_infoDialog;
         KTextBrowser *  m_infoDialogBrowser;
         QLabel *        m_infoDialogLink;
+        StatusWidget *  m_infoDialogStatusWidget;
         
         QCheckBox *     m_foundDuplicateCheckBox;
         KLineEdit *     m_possibleDuplicateEdit;
@@ -172,9 +173,6 @@ class BugzillaInformationPage : public DrKonqiAssistantPage
         QLabel *        m_reproduceLabel;
         KTextEdit *     m_reproduceEdit;
         
-        QLabel *        m_distributionLabel;
-        KComboBox *     m_distributionCombo;
-        
         CrashInfo * m_crashInfo;
         
         bool m_textsOK;
@@ -194,7 +192,7 @@ class BugzillaCommitPage : public DrKonqiAssistantPage
         void commitError( QString );
         
     private:
-        QLabel *  m_statusLabel;
+        StatusWidget * m_statusWidget;
         CrashInfo *  m_crashInfo;
 
 };

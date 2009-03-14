@@ -13,47 +13,17 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
+  <layout class="QVBoxLayout" name="verticalLayout_4">
    <property name="margin">
-    <number>0</number>
+    <number>2</number>
    </property>
-   <property name="spacing">
-    <number>0</number>
-   </property>
-   <item row="0" column="0">
+   <item>
     <layout class="QVBoxLayout" name="verticalLayout">
      <property name="spacing">
-      <number>1</number>
+      <number>4</number>
      </property>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout">
-       <property name="spacing">
-        <number>2</number>
-       </property>
-       <item>
-        <widget class="QLabel" name="m_statusLabel">
-         <property name="text">
-          <string>Loading backtrace (...)</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer name="horizontalSpacer">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item>
-        <widget class="UsefulnessMeter" name="m_usefulnessMeter" native="true"/>
-       </item>
-      </layout>
+      <widget class="StatusWidget" name="m_statusWidget" native="true"/>
      </item>
      <item>
       <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -62,16 +32,6 @@
        </property>
        <item>
         <widget class="KTextBrowser" name="m_backtraceEdit"/>
-       </item>
-       <item>
-        <widget class="QProgressBar" name="m_progressBar">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-         <property name="maximum">
-          <number>0</number>
-         </property>
-        </widget>
        </item>
       </layout>
      </item>
@@ -147,9 +107,9 @@
    <header>ktextbrowser.h</header>
   </customwidget>
   <customwidget>
-   <class>UsefulnessMeter</class>
+   <class>StatusWidget</class>
    <extends>QWidget</extends>
-   <header>usefulnessmeter.h</header>
+   <header>statuswidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
