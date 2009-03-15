@@ -153,6 +153,9 @@ void BacktraceGenerator::slotProcessExited(int exitCode, QProcess::ExitStatus ex
   m_proc = NULL;
   m_temp = NULL;
 
+  //mark the end of the backtrace for the parser
+  emit newLine(QString());
+
   if (exitStatus != QProcess::NormalExit || exitCode != 0)
   {
     emit someError();

@@ -43,7 +43,7 @@ public:
 
 protected Q_SLOTS:
     virtual void resetState() = 0;
-    virtual void parseLine(const QString & lineStr) = 0;
+    virtual void newLine(const QString & lineStr) = 0;
 };
 
 class BacktraceParserGdb : public BacktraceParser
@@ -59,9 +59,11 @@ public:
 
 protected Q_SLOTS:
     virtual void resetState();
-    virtual void parseLine(const QString & lineStr);
+    virtual void newLine(const QString & lineStr);
 
 private:
+    void parseLine(const QString & lineStr);
+
     class Private;
     Private *d;
 };
@@ -79,7 +81,7 @@ public:
 
 protected Q_SLOTS:
     virtual void resetState();
-    virtual void parseLine(const QString & lineStr);
+    virtual void newLine(const QString & lineStr);
 
 private:
     QStringList m_lines;

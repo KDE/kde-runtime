@@ -78,7 +78,7 @@ BacktraceParser::~BacktraceParser() {}
 void BacktraceParser::connectToGenerator(BacktraceGenerator *generator)
 {
     connect(generator, SIGNAL(starting()), this, SLOT(resetState()) );
-    connect(generator, SIGNAL(newLine(QString)), this, SLOT(parseLine(QString)) );
+    connect(generator, SIGNAL(newLine(QString)), this, SLOT(newLine(QString)) );
 }
 
 //END BacktraceParser
@@ -265,6 +265,7 @@ struct BacktraceParserGdb::Private
                 m_qtInternalStackStartEncountered(false),
                 m_cachedUsefulness(BacktraceParser::InvalidUsefulness) {}
 
+    QString m_lineInputBuffer;
     QList<BacktraceLineGdb> m_linesList;
     QList<BacktraceLineGdb> m_usefulLinesList;
     int m_possibleKCrashStart;
@@ -300,6 +301,22 @@ void BacktraceParserGdb::resetState()
     //reset the state of the parser by getting a new instance of Private
     delete d;
     d = new Private;
+}
+
+void BacktraceParserGdb::newLine(const QString & lineStr)
+{
+    //when the line is too long, gdb splits it into two lines.
+    //This breaks parsing and results in two Unknown lines instead of a StackFrame one.
+    //Here we workaround this by joining the two lines when such a scenario is detected.
+    if ( d->m_lineInputBuffer.isEmpty() )
+        d->m_lineInputBuffer = lineStr;
+    else if ( lineStr.startsWith(" ") || lineStr.startsWith("\t") )
+        //gdb always adds some whitespace at the beginning of the second line
+        d->m_lineInputBuffer.append(lineStr);
+    else {
+        parseLine(d->m_lineInputBuffer);
+        d->m_lineInputBuffer = lineStr;
+    }
 }
 
 void BacktraceParserGdb::parseLine(const QString & lineStr)
@@ -352,37 +369,7 @@ void BacktraceParserGdb::parseLine(const QString & lineStr)
                     d->m_usefulLinesList.append(line);
             }
 
-            d->m_linesList.append(line);
-            break;
-        case BacktraceLineGdb::Unknown:
-            if ( !d->m_linesList.isEmpty() )
-            {
-                //when the line is too long, gdb splits it into two lines.
-                //This breaks parsing and results in two Unknown lines instead of a StackFrame one.
-                //Here we workaround this by joining the two lines when such a scenario is detected.
-                BacktraceLineGdb lastLine = d->m_linesList.at(d->m_linesList.size() - 1);
-                if ( lineStr.startsWith(' ') &&    //gdb always adds some whitespace to the second line
-                    lastLine.toString().startsWith('#') && //last line must be a stack frame
-                    //the previous line either is Unknown or is a StackFrame that misses
-                    //the whole part after (from|at), so it has MissingLibrary or MissingEverything rating.
-                    (lastLine.type() == BacktraceLineGdb::Unknown ||
-                     lastLine.rating() == BacktraceLineGdb::MissingLibrary ||
-                     lastLine.rating() == BacktraceLineGdb::MissingEverything)
-                   )
-                {
-                    //remove the last line from the cache.
-                    d->m_linesList.removeLast();
-                    //if m_usefulLinesList also contains this line, remove it from there too.
-                    if ( !d->m_usefulLinesList.isEmpty() && d->m_usefulLinesList.last() == lastLine)
-                        d->m_usefulLinesList.removeLast();
-                    //parse again the two lines joined together.
-                    parseLine(lastLine.toString() + lineStr);
-                    break;
-                }
-            }
-            //in all other cases of Unknown lines, just append them to the backtrace.
-            d->m_linesList.append(line);
-            break;
+            //fall through and append the line to the list
         default:
             d->m_linesList.append(line);
             break;
@@ -495,7 +482,7 @@ void BacktraceParserNull::resetState()
     m_lines.clear();
 }
 
-void BacktraceParserNull::parseLine(const QString & lineStr)
+void BacktraceParserNull::newLine(const QString & lineStr)
 {
     m_lines.append(lineStr);
 }

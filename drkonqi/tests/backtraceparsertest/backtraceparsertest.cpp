@@ -36,6 +36,7 @@ void BacktraceGenerator::sendData(const QString & filename)
     while (!stream.atEnd()) {
         emit newLine(stream.readLine() + '\n');
     }
+    emit newLine(QString());
 }
 
 BacktraceParserTest::BacktraceParserTest(QObject *parent)
@@ -92,7 +93,7 @@ void BacktraceParserTest::btParserTest()
     QMetaEnum metaUsefulness = BacktraceParser::staticMetaObject.enumerator(
                                     BacktraceParser::staticMetaObject.indexOfEnumerator("Usefulness"));
 
-    QSharedPointer<BacktraceParser> parser = QSharedPointer<BacktraceParser>(BacktraceParser::newParser("gdb"));
+    QSharedPointer<BacktraceParser> parser(BacktraceParser::newParser("gdb"));
     parser->connectToGenerator(m_generator);
     m_generator->sendData(filename);
 
@@ -114,7 +115,7 @@ void BacktraceParserTest::btParserBenchmark()
     QFETCH(BacktraceParser::Usefulness, result);
     QVERIFY2(result != BacktraceParser::InvalidUsefulness, "Invalid usefulness. There is an error in the " MAP_FILE " file");
 
-    QSharedPointer<BacktraceParser> parser = QSharedPointer<BacktraceParser>(BacktraceParser::newParser("gdb"));
+    QSharedPointer<BacktraceParser> parser(BacktraceParser::newParser("gdb"));
     parser->connectToGenerator(m_generator);
 
     QBENCHMARK {
