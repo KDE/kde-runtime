@@ -1,6 +1,7 @@
 test_a: Useless
-test_b: ProbablyUseless
-test_c: ProbablyUseless
+test_b: MayBeUseful
+test_c: MayBeUseful
 test_d: ReallyUseful
 test_e: ProbablyUseless
 test_f: ProbablyUseless
+test_g: ReallyUseful
