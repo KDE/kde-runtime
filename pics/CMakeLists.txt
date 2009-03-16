@@ -1,7 +1,7 @@
 
 add_subdirectory( hicolor )
 add_subdirectory( emoticons )
-add_subdirectory( oxygen )
+#add_subdirectory( oxygen )
 
 set(ksvgtopng_SRCS ksvgtopng.cpp )
 kde4_add_executable(ksvgtopng NOGUI ${ksvgtopng_SRCS})
