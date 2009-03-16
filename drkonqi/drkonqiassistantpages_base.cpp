@@ -42,7 +42,7 @@ IntroductionPage::IntroductionPage() :
     DrKonqiAssistantPage()
 {
     QLabel * mainLabel = new QLabel(
-        i18n("<para>This assistant will analyse the crash information and guide your through the bug reporting process</para><para>You can get help about this bug reporting assistant clicking thw \"Help\" button</para><para>To start gathering the crash information press the \"Next\" button</para>")
+        i18n("<para>This assistant will analyse the crash information and guide you through the bug reporting process</para><para>You can get help about this bug reporting assistant clicking the \"Help\" button</para><para>To start gathering the crash information press the \"Next\" button</para>")
     );
     mainLabel->setWordWrap( true );
 
@@ -101,10 +101,11 @@ BugAwarenessPage::BugAwarenessPage(CrashInfo * info)
     QLabel * detailLabel = 
         new QLabel(
         i18n(
-        "<para>Including in your bug report what were you doing when the application crashed would help the developers "
-        "to reproduce the situation and fix the bug. <i>( Important details are: Actions you were taking on the application and documents you were using )</i></para>" ) );
+        "<para>Including in your bug report what were you doing when the application crashed will help the developers "
+        "reproduce and fix the bug. <i>( Important details are: what you were doing in the application and documents you were using )</i></para>" ) );
         
-        /*"<para>Important details are:<br />"
+        /* mention subapplications? sites you were using?
+        "<para>Important details are:<br />"
         "<i>* Actions you were taking on the application and on the whole system</i><br />"
         "<i>* Documents you were using in the application (or a reference to them and their type)</i>"
         " ( you can attach files in the bug report once it is filed )</para>" ) );
@@ -112,9 +113,9 @@ BugAwarenessPage::BugAwarenessPage(CrashInfo * info)
         
     detailLabel->setWordWrap( true );
 
-    m_canDetailCheckBox = new QCheckBox( i18n( "I can detail what I was doing when the application crashed" ) );
+    m_canDetailCheckBox = new QCheckBox( i18n( "I can give detailed information about what I was doing when the application crashed" ) );
   
-    QGroupBox * canDetailBox = new QGroupBox( i18n( "Can you detail what were you doing when the application crashed ?" ) );
+    QGroupBox * canDetailBox = new QGroupBox( i18n( "Can you give detailed information about what were you doing when the application crashed ?" ) );
     QVBoxLayout * canDetailLayout = new QVBoxLayout();
     canDetailBox->setLayout( canDetailLayout );
     canDetailLayout->addWidget( detailLabel );
@@ -123,16 +124,16 @@ BugAwarenessPage::BugAwarenessPage(CrashInfo * info)
     //Compromise
     QLabel * compromiseLabel = 
         new QLabel(
-        i18n( "Sometimes the developers need more information from the reporter in order to triage the bug." )
+        i18n( "Sometimes the developers need more information from the reporter in order to fix the bug." )
         );
     compromiseLabel->setWordWrap( true );
     
     m_compromiseCheckBox = 
         new QCheckBox(
-        i18n( "I get compromise to help the developers to triage the bug providing further information" )
+        i18n( "I am willing to help the developers by providing further information" )
         );
     
-    QGroupBox * getCompromiseBox = new QGroupBox( i18n( "Do you get compromise to help the developers ?" ) );
+    QGroupBox * getCompromiseBox = new QGroupBox( i18n( "Are you willing to help the developers?" ) );
     QVBoxLayout * getCompromiseLayout = new QVBoxLayout();
     getCompromiseBox->setLayout( getCompromiseLayout );
     getCompromiseLayout->addWidget( compromiseLabel );
@@ -309,21 +310,23 @@ void ConclusionPage::aboutToShow()
         {
             needToReport = ( canReproduce || ( canDetails && getCompromise ) );
             report = i18n( "* The crash information is completely useless" ) ;
-            break;
+     break;
         }
     }
     
     report.append( QLatin1String( "<br />" ) );
     if( canDetails )
-        report += i18n( "* You can detail what were you doing when the application crashed" );
+        report += i18n( "* You can explain in detail what were you doing when the application crashed" );
     else
-        report += i18n( "* You can't detail what were you doing when the application crashed" ) ;
+            report += i18n( "* You aren't sure what were you doing when the application crashed" ) ;
+       /*        report += i18n( "* You can't say what were you doing when the application crashed" ) ;
+        There's something between "very detailed" and "no clue"... */
     
     report.append( QLatin1String( "<br />" ) );
     if( canReproduce )
         report += i18n( "* You can reproduce the crash at will and you can provide steps or a testcase" );
     else
-        report += i18n( "* You can't reproduce the crash at will and you can provide steps or a testcase" );
+        report += i18n( "* You can't reproduce the crash at will, but you can provide steps or a testcase" ); // is that possible for newbies?
         
     if ( needToReport )
     {

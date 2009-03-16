@@ -37,11 +37,10 @@ AboutBugReportingDialog::AboutBugReportingDialog(QWidget * parent):
 
     QString text =
     
-    i18n("<para>You can help us to improve this software filing a bug report.</para>"
-    "<para>In order to generate an useful bug report we need to fetch some information about the crash and your system.</para>"
-    "<para>We also need you to specify some information about the crash.</para>"
-    "<para>Notice: You are not forced to file a bug report if you don't want to.</para>"
-    "<para>If you have never seen this dialog before and you don't know what to do you can close it.</para>"
+    i18n("<para>You can help us improve this software by filing a bug report.</para>"
+    "<para>Note: It is safe to close this dialog. If you do not want to, you do not have to file a bug report.</para>"
+    "<para>In order to generate a useful bug report we need some information about both the crash and your system.</para>"
+
     "<title>Bug Reporting Assistant Steps Guide</title>"
     "<para></para>"
     );

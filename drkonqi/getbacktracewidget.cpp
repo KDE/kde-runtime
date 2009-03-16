@@ -52,7 +52,7 @@ GetBacktraceWidget::GetBacktraceWidget( CrashInfo * info ) :
     connect( ui.m_copyButton, SIGNAL(clicked()) , this, SLOT(copyClicked()) );
     ui.m_copyButton->setEnabled( false );
 
-    ui.m_saveButton->setGuiItem( KGuiItem( i18nc("button action", "&Save to File" ), KIcon("document-save"), i18nc("button explanation", "Use this button to save the crash information (backtrace) to a file. This is useful if you want to take a look on it or to report the bug later" ), i18nc("button explanation", "Use this button to save the crash information (backtrace) to a file. This is useful if you want to take a look on it or to report the bug later" ) ) );
+    ui.m_saveButton->setGuiItem( KGuiItem( i18nc("button action", "&Save to File" ), KIcon("document-save"), i18nc("button explanation", "Use this button to save the crash information (backtrace) to a file. This is useful if you want to take a look at it or to report the bug later" ), i18nc("button explanation", "Use this button to save the crash information (backtrace) to a file. This is useful if you want to take a look at it or to report the bug later" ) ) );
     connect( ui.m_saveButton, SIGNAL(clicked()) , this, SLOT(saveClicked()) );
     ui.m_saveButton->setEnabled( false );
 
@@ -128,7 +128,7 @@ void GetBacktraceWidget::backtraceGenerated()
             case BacktraceParser::ProbablyUseless:
                 usefulnessText = i18nc("backtrace rating description", "This crash information is probably useless");break;
             case BacktraceParser::Useless:
-                usefulnessText = i18nc("backtrace rating description", "The crash information is useless");break;
+                usefulnessText = i18nc("backtrace rating description", "This crash information is useless");break;
             default:
                 //let's hope nobody will ever see this... ;)
                 usefulnessText = i18nc("backtrace rating description that should never appear",
@@ -141,7 +141,7 @@ void GetBacktraceWidget::backtraceGenerated()
         if( btParser->backtraceUsefulness() != BacktraceParser::ReallyUseful )
         {
             ui.m_extraDetailsLabel->setVisible( true );
-            ui.m_extraDetailsLabel->setText( i18n( "The crash information lacks of some important details.<br />Please read <link url='%1'>How to create useful crash reports</link> in order to know how to get an useful backtrace.<br />After you install the needed packages you can click the \"Reload Crash Information\" button ", QLatin1String("http://techbase.kde.org/Development/Tutorials/Debugging/How_to_create_useful_crash_reports") ) );
+            ui.m_extraDetailsLabel->setText( i18n( "The crash information lacks some important details.<br />Please read <link url='%1'>How to create useful crash reports</link> to learn how to get a useful backtrace.<br />After you install the needed packages you can click the \"Reload Crash Information\" button ", QLatin1String("http://techbase.kde.org/Development/Tutorials/Debugging/How_to_create_useful_crash_reports") ) );
             ui.m_reloadBacktraceButton->setEnabled( true );
 
             #if 0
@@ -169,7 +169,7 @@ void GetBacktraceWidget::backtraceGenerated()
         ui.m_backtraceEdit->setPlainText( i18n("The crash information could not be generated" ) );
         
         ui.m_extraDetailsLabel->setVisible( true );
-        ui.m_extraDetailsLabel->setText( i18n( "You need to install the debug symbols package for this application<br />Please read <link url='%1'>How to create useful crash reports</link> in order to know how to get an useful backtrace.<br />After you install the needed packages you can click the \"Reload Crash Information\" button ", QLatin1String("http://techbase.kde.org/Development/Tutorials/Debugging/How_to_create_useful_crash_reports") ) );
+        ui.m_extraDetailsLabel->setText( i18n( "You need to install the debug symbols package for this application<br />Please read <link url='%1'>How to create useful crash reports</link> to learn how to get a useful backtrace.<br />After you install the needed packages you can click the \"Reload Crash Information\" button ", QLatin1String("http://techbase.kde.org/Development/Tutorials/Debugging/How_to_create_useful_crash_reports") ) );
         ui.m_reloadBacktraceButton->setEnabled( true );
     }
     else if( crashInfo->getBacktraceState() == CrashInfo::DebuggerFailed )

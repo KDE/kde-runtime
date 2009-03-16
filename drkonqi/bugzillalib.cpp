@@ -222,7 +222,7 @@ void BugzillaManager::commitReportDone( KJob * job )
         }
         else
         {
-            emit commitReportError( i18n( "There was some error during the report commit. Response:: %1", response ) ); 
+            emit commitReportError( i18n( "There was an error in submitting the report. Response:: %1", response ) );
             //TODO don't show html, show error (requires parsing)
         }
     }

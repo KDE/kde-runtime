@@ -61,7 +61,7 @@ DrKonqiDialog::DrKonqiDialog( CrashInfo * info, QWidget * parent ) :
     , m_crashInfo->getCrashConfig()->signalName(), m_crashInfo->getCrashConfig()->signalText() ) );
     infoLabel->setWordWrap( true ); 
 
-    QLabel * whatToDoLabel = new QLabel( i18n( "You can help us to improve the software reporting this bug." ) );
+    QLabel * whatToDoLabel = new QLabel( i18n( "You can help us improve the software by reporting this bug." ) );
     
     m_aboutBugReportingButton = new KPushButton( KGuiItem( i18nc("button action", "Learn more about bug reporting") , KIcon("help-hint"),  i18nc("help text", "Get help in order to know how to file an useful bug report"), i18nc("help text", "Get help in order to know how to file an useful bug report") ) ); //TODO rewrite text?
     
