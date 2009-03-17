@@ -50,8 +50,7 @@ class UsefulnessMeter: public QWidget
         bool                            m_star3;
         
         QPixmap                         m_errorPixmap;
-        QPixmap                         m_loadedPixmap;
-        QPixmap                         m_loadingPixmap;
+        QPixmap                         m_perfectPixmap;
         
         QPixmap                         m_starPixmap;
         QPixmap                         m_disabledStarPixmap;

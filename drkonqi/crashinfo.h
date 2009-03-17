@@ -100,6 +100,7 @@ class CrashInfo : public QObject
     void backtraceGeneratorFinished();
     void backtraceGeneratorAppend( const QString & );
     void backtraceGeneratorFailed();
+    void backtraceGeneratorFailedToStart();
     
   private:
   

@@ -42,6 +42,7 @@ CrashInfo::CrashInfo( KrashConfig * cfg )
     m_backtraceParser->connectToGenerator(m_backtraceGenerator);
     connect(m_backtraceGenerator, SIGNAL(done()), this, SLOT(backtraceGeneratorFinished()));
     connect(m_backtraceGenerator, SIGNAL(someError()), this, SLOT(backtraceGeneratorFailed()));
+    connect(m_backtraceGenerator, SIGNAL(failedToStart()), this, SLOT(backtraceGeneratorFailedToStart()) );
     connect(m_backtraceGenerator, SIGNAL(newLine(QString)), this, SLOT(backtraceGeneratorAppend(QString)));
 }
 
@@ -106,6 +107,12 @@ void CrashInfo::backtraceGeneratorFinished()
 void CrashInfo::backtraceGeneratorFailed()
 {
     m_backtraceState = Failed;
+    emit backtraceGenerated();
+}
+
+void CrashInfo::backtraceGeneratorFailedToStart()
+{
+    m_backtraceState = DebuggerFailed;
     emit backtraceGenerated();
 }
 

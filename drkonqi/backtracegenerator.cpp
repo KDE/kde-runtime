@@ -144,25 +144,35 @@ void BacktraceGenerator::slotReadInput()
 
 void BacktraceGenerator::slotProcessExited(int exitCode, QProcess::ExitStatus exitStatus)
 {
-  //stop the process again.
-  ::kill(m_krashconf->pid(), SIGSTOP);
+    //stop the process again.
+    ::kill(m_krashconf->pid(), SIGSTOP);
 
-  //these are useless now
-  m_proc->deleteLater();
-  m_temp->deleteLater();
-  m_proc = NULL;
-  m_temp = NULL;
+    QProcess::ProcessError error = m_proc->error();
+    
+    //these are useless now
+    m_proc->deleteLater();
+    m_temp->deleteLater();
+    m_proc = NULL;
+    m_temp = NULL;
 
-  //mark the end of the backtrace for the parser
-  emit newLine(QString());
+    //mark the end of the backtrace for the parser
+    emit newLine(QString());
 
-  if (exitStatus != QProcess::NormalExit || exitCode != 0)
-  {
-    emit someError();
-    return;
-  }
+    if (exitStatus != QProcess::NormalExit || exitCode != 0)
+    {
+        if( error == QProcess::FailedToStart )
+        {
+            emit failedToStart();
+        }
+        else
+        {
+            emit someError();
+        }
+        
+        return;
+    }
 
-  emit done();
+    emit done();
 }
 
 #include "backtracegenerator.moc"

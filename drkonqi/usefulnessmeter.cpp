@@ -37,8 +37,7 @@ UsefulnessMeter::UsefulnessMeter(QWidget * parent) :
     m_disabledStarPixmap = KIcon("favorites").pixmap( QSize(22,22), QIcon::Disabled );
     
     m_errorPixmap = KIcon("dialog-error").pixmap( QSize(22,22) );
-    m_loadedPixmap = KIcon("dialog-ok-apply").pixmap( QSize(22,22) );
-    m_loadingPixmap = KIcon("chronometer").pixmap( QSize(22,22) ); //user-away
+    m_perfectPixmap = KIcon("dialog-ok-apply").pixmap( QSize(22,22) );
 }
 
 void UsefulnessMeter::setUsefulness( BacktraceParser::Usefulness usefulness )
@@ -94,7 +93,7 @@ void UsefulnessMeter::paintEvent( QPaintEvent * event )
         case CrashInfo::Loaded:
         {
             if( m_star1 && m_star2 && m_star3 )
-                p.drawPixmap( QPoint(0,1) , m_loadedPixmap );
+                p.drawPixmap( QPoint(0,1) , m_perfectPixmap );
             break;
         }
         case CrashInfo::Failed:
@@ -104,9 +103,6 @@ void UsefulnessMeter::paintEvent( QPaintEvent * event )
             break;
         }
         case CrashInfo::Loading:
-        {
-            p.drawPixmap( QPoint(0,1) , m_loadingPixmap );
-        }
         default: 
             break;
     }
