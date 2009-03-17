@@ -104,12 +104,12 @@ QModelIndex ProgressListModel::index(int row, int column, const QModelIndex &par
         return QModelIndex();
 
     int i = 0;
-    UIServer::JobView *jobView;
+    UIServer::JobView *jobView = 0;
     foreach (UIServer::JobView *jv, jobInfoMap.keys()) {
         jobView = jv;
         if (i == row)
             break;
-        i++;
+        ++i;
     }
 
     return createIndex(row, column, jobView);
@@ -121,7 +121,7 @@ QModelIndex ProgressListModel::indexForJob(UIServer::JobView *jobView) const
     foreach (UIServer::JobView *jv, jobInfoMap.keys()) {
         if (jv == jobView)
             return createIndex(i, 0, jv);
-        i++;
+        ++i;
     }
 
     return QModelIndex();
