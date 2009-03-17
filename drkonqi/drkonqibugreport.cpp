@@ -65,6 +65,7 @@ DrKonqiBugReport::DrKonqiBugReport( CrashInfo * crash, QWidget * parent ) :
     KPageWidgetItem * m_conclusionsPage = new KPageWidgetItem( m_conclusions , "Results" );
     m_conclusionsPage->setHeader( i18n( "Crash Analysis Results" ) );
     m_conclusionsPage->setIcon( KIcon("tools-report-bug") );
+    connect( m_conclusions, SIGNAL(finished()), this, SLOT(assistantFinished()) );
     
     //Bugzilla Login
     m_bugzillaLogin =  new BugzillaLoginPage( m_crashInfo );
@@ -100,13 +101,13 @@ DrKonqiBugReport::DrKonqiBugReport( CrashInfo * crash, QWidget * parent ) :
 
     //Bugzilla commit
     m_bugzillaCommit =  new BugzillaCommitPage( m_crashInfo );
-    
+
     KPageWidgetItem * m_bugzillaCommitPage = new KPageWidgetItem( m_bugzillaCommit, "BugzillaCommit");
     m_bugzillaCommitPage->setHeader( i18n( "Commit Page" ) ); //TODO better name ?
     m_bugzillaCommitPage->setIcon( KIcon("tools-report-bug") );
+    connect( m_bugzillaCommit, SIGNAL(finished()), this, SLOT(assistantFinished()) );
     
     //TODO remember to keep ordered
-    
     addPage( m_introPage );
     addPage( m_backtracePage );
     addPage( m_awarenessPage );
@@ -162,6 +163,13 @@ void DrKonqiBugReport::completeChanged( DrKonqiAssistantPage* page, bool isCompl
     {
         enableNextButton( isComplete );
     }
+}
+
+void DrKonqiBugReport::assistantFinished()
+{
+    enableNextButton( false );
+    enableBackButton( false );
+    enableButton( KDialog::User1, true );
 }
 
 void DrKonqiBugReport::showHelp()

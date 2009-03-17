@@ -191,9 +191,16 @@ class BugzillaCommitPage : public DrKonqiAssistantPage
         void commited(int);
         void commitError( QString );
         
+        void retryClicked();
+        
     private:
+        KPushButton *   m_retryButton;
         StatusWidget * m_statusWidget;
         CrashInfo *  m_crashInfo;
+        
+    Q_SIGNALS:
+    
+        void finished();
 
 };
 

@@ -23,6 +23,7 @@
 #include <QtCore/QTextStream>
 #include <QtCore/QByteArray>
 #include <QtCore/QString>
+#include <QtCore/QRegExp>
 
 #include <QtXml/QDomNode>
 #include <QtXml/QDomNodeList>
@@ -90,14 +91,28 @@ void BugzillaManager::loginDone( KJob* job )
         KIO::StoredTransferJob * loginJob = (KIO::StoredTransferJob *)job;
         QByteArray response = loginJob->data();
         
-        //TODO detect errors here ?
-        
-        if( !response.contains( QByteArray("The username or password you entered is not valid") ) )
-            m_logged = true;
-        else
+        bool error = false;
+        if( response.contains( QByteArray("The username or password you entered is not valid") ) )
+        {
             m_logged = false;
-
-        emit loginFinished( m_logged );
+        }
+        else
+        {
+            if ( response.contains( QByteArray("Managing Your Account") ) && response.contains( QByteArray("Log out") ) )
+            {
+                m_logged = true;
+            }
+            else
+            {
+                m_logged = false;
+                error = true;
+            }
+        }
+        
+        if( error )
+            emit loginError( i18n( "Unknown response from the server" ) );
+        else
+            emit loginFinished( m_logged );
     }
     else
     {
@@ -199,31 +214,30 @@ void BugzillaManager::commitReport( BugReport * report )
 
 void BugzillaManager::commitReportDone( KJob * job )
 {
-    qDebug() << "done";
     if( !job->error() )
     {
         KIO::StoredTransferJob * commitJob = (KIO::StoredTransferJob *)job;
         QString response = commitJob->data();
-  
-        qDebug() << response;
-        
-        //TODO improve  this detection
-        if( response.contains("<title>Bug ") )
+
+        QRegExp reg("<title>Bug (\\d+) Submitted</title>");
+        int pos = reg.indexIn( response );
+        if( pos != -1 )
         {
-            QString string1 = QLatin1String("<title>Bug ");
-            QString string2 = QLatin1String(" Submitted</title>");
-            int index1 = response.indexOf( string1 );
-            QString number = response.mid( index1+string1.size()   );
-            number = number.mid(0, number.indexOf( string2 ) );
-            
-            int bug_id = number.toInt();
-            
+            int bug_id = reg.cap(1).toInt();
             emit reportCommited( bug_id );
         }
         else
         {
-            emit commitReportError( i18n( "There was an error in submitting the report. Response:: %1", response ) );
-            //TODO don't show html, show error (requires parsing)
+            QString error;
+            
+            QRegExp reg("<td id=\"error_msg\" class=\"throw_error\">(.+)</td>");
+            pos = reg.indexIn( response.replace("\r","").replace("\n","") );
+            if( pos != -1 )
+                error = reg.cap(1).trimmed();
+            else
+                error = i18n( "Unknown error" );
+            
+            emit commitReportError( error );
         }
     }
     else

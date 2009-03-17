@@ -47,7 +47,6 @@ class DrKonqiAssistantPage: public QWidget
         virtual bool isComplete() { return true; }
         
     public Q_SLOTS:
-        
         void emitCompleteChanged()
         {
             emit completeChanged( this, isComplete() );
@@ -55,7 +54,6 @@ class DrKonqiAssistantPage: public QWidget
         
     Q_SIGNALS:
         void completeChanged( DrKonqiAssistantPage*, bool );
-
 };
 
 //Introduction assistant page --------------
@@ -129,6 +127,9 @@ class ConclusionPage : public DrKonqiAssistantPage
         
         bool isBKO;
         bool needToReport;
+        
+    Q_SIGNALS:
+        void finished();
 };
 
 #endif

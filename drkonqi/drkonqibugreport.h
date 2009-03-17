@@ -65,6 +65,7 @@ class DrKonqiBugReport: public KAssistantDialog
         void currentPageChanged_slot(KPageWidgetItem *, KPageWidgetItem *);  
         
         void completeChanged(DrKonqiAssistantPage*, bool);
+        void assistantFinished();
         
         void enableNextButton( bool );
         void enableBackButton( bool );

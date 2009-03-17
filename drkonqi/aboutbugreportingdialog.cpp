@@ -37,12 +37,16 @@ AboutBugReportingDialog::AboutBugReportingDialog(QWidget * parent):
 
     QString text =
     
-    i18n("<para>You can help us improve this software by filing a bug report.</para>"
+    i18n(
+    "<title>Information about bug reporting</title>"
+    "<para>You can help us improve this software by filing a bug report.</para>"
     "<para>Note: It is safe to close this dialog. If you do not want to, you do not have to file a bug report.</para>"
     "<para>In order to generate a useful bug report we need some information about both the crash and your system.</para>"
-
     "<title>Bug Reporting Assistant Steps Guide</title>"
-    "<para></para>"
+    "<subtitle>Crash Information</subtitle>"
+    "<subtitle>What do you know about the crash?</subtitle>"
+    "<subtitle>Conclusions</subtitle>"
+    "<title>Reporting to bugs.kde.org</title>"
     );
         
     m_textBrowser->setText( text );

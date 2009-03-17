@@ -1,38 +1,24 @@
 #Assigned
 # Who / What
 --------------
-    #Extract interfaces to .UI files
-        #getbacktracewidget
 
     gkiagia: Fix backtraceinfo logic (backtrace parsing to get its usefulness)
-
-    Dario: 
-        Add Translation i18n (with contexts) . change HTML tags (are they invalid when using i18n???)
-        http://techbase.kde.org/Development/Tutorials/Localization/i18n_Semantics
         
 ##Unassigned
 -------------
 
-fix awarenesspage layout
-
-//add warns about we want text in english !!
-    Partially done 
-
+fix crashed app getting lost/close, so the backtrace isn't generated and the duplicates page crash on invalid firstValidFunctions()
 detect if the pid isn't set (?) 
 
-better logic to determine if the bug was commited (better html parsing?)
+fix awarenesspage layout
 
-Rework Bug awareness text
-Finish "about bug reporting steps" (guide)
+add warns about we want text in english !! (partly done)
+
+Finish "about bug reporting steps" (guide)  (documentation format ?)
 
 Check leaks, crashes
 
-//Use KGUIItem to create KPushButton
-//Set help for gui items, whats this,
-
 krazy2 checks (partially done)
-
-const pointers ?
 
 check what all the options in KrashConf are meant to do and use them appropriately or drop them (i.e review options)
 
@@ -40,6 +26,18 @@ check what all the options in KrashConf are meant to do and use them appropriate
 
 #Done
 ---------
+
+#Extract interfaces to .UI files
+    #getbacktracewidget
+
+Add Translation i18n (with contexts) . change HTML tags (are they invalid when using i18n???)
+http://techbase.kde.org/Development/Tutorials/Localization/i18n_Semantics
+        
+#Rework Bug awareness text
+// const pointers ? LATER
+//Use KGUIItem to create KPushButton
+//Set help for gui items, whats this,
+#better logic to determine if the bug was commited (better html parsing?) DONE using regexp
 
 change "report to maintainer" to "send email to maintainer" / "open maintainer web page"
 

@@ -246,7 +246,7 @@ BugzillaKeywordsPage::BugzillaKeywordsPage(CrashInfo * info) :
     m_keywordsOK(false)
 {
     QLabel * detailsLabel = new QLabel(
-    i18n( "Please, enter at least 4 (four) words to describe the crash. This is needed in order to find for similar already reported bugs (possible duplicates)" ) //TODO rewrite this text
+    i18n( "Enter at least four words to describe the crash. You can enter the application name or another keyword that could describe the crash situation. This keywords will be used to search for already reported bugs that could be the same (possible duplicates)" ) //TODO rewrite native-english
     );
     detailsLabel->setWordWrap( true );
     
@@ -359,7 +359,7 @@ BugzillaDuplicatesPage::BugzillaDuplicatesPage(CrashInfo * info):
     lay->addWidget( m_possibleDuplicateEdit );
     
     QVBoxLayout * layout = new QVBoxLayout();
-    layout->addWidget( new QLabel("Needed explanation about this step") ); //TODO rewrite this
+    layout->addWidget( new QLabel("This is an optional step when you can try to find an already reported bug that could match the crash you got. If there are search results you can double click some list item and compare the situations. Then , you can suggest that your crash could be a duplicate of that report.") ); //TODO native-english
     layout->addWidget( m_statusWidget );
     layout->addWidget( m_bugListWidget );
     layout->addLayout( buttonLayout );
@@ -638,7 +638,8 @@ BugzillaInformationPage::BugzillaInformationPage( CrashInfo * info )
     connect( m_reproduceEdit, SIGNAL(textChanged()), this, SLOT(checkTexts()) );
 
     QVBoxLayout * layout = new QVBoxLayout();
-    layout->addWidget( new QLabel( "Some explanation about this step ??" ) ); //TODO rewrite // text lenght?
+    layout->addWidget( new QLabel( "Complete the bug report fields in order to properly submit it. All the fields should be at least 20 characters" ) ); //TODO native-rewrite (text lenght?)
+    
     layout->addWidget( m_titleLabel );
     layout->addWidget( m_titleEdit );
     layout->addWidget( m_detailsLabel );
@@ -715,12 +716,25 @@ BugzillaCommitPage::BugzillaCommitPage( CrashInfo * info )
     m_statusWidget = new StatusWidget();
     m_statusWidget->setStatusLabelWordWrap( true );
     
-    //TODO button to retry on error ?
+    m_retryButton = new KPushButton(  KGuiItem( i18nc("button action", "Retry ...") , KIcon("view-refresh"),  i18nc("help text", "Use this button to retry submitting the bug report if it failed before"), i18nc("help text", "Use this button to retry submitting the bug report if it failed before") ) );
+    
+    m_retryButton->setVisible( false );
+    connect( m_retryButton, SIGNAL(clicked()), this , SLOT(retryClicked()) );
+    QHBoxLayout * buttonLayout = new QHBoxLayout();
+    buttonLayout->addStretch();
+    buttonLayout->addWidget( m_retryButton );
     
     QVBoxLayout * layout = new QVBoxLayout();
     layout->addWidget( m_statusWidget );
+    layout->addLayout( buttonLayout );
     layout->addStretch();
     setLayout( layout );
+}
+
+void BugzillaCommitPage::retryClicked()
+{
+    m_retryButton->setEnabled( false );
+    aboutToShow();
 }
 
 void BugzillaCommitPage::aboutToShow()
@@ -736,13 +750,18 @@ void BugzillaCommitPage::commited( int bug_id )
 {
     m_statusWidget->setIdle( i18n("Report commited!<br />Bug Number :: %1<br />Link :: <link>%2</link>", bug_id, m_crashInfo->getBZ()->urlForBug( bug_id ) ));
     
-    //TODO enable finish button ??
+    m_retryButton->setEnabled( false );
+    m_retryButton->setVisible( false );
+    
+    emit finished();
 }
 
 void BugzillaCommitPage::commitError( QString errorString )
 {
-    m_statusWidget->setIdle( i18n( "Error on commiting bug report %1", errorString ) );
-    //TODO retry button ?
+    m_statusWidget->setIdle( i18n( "Error on commiting bug report:  %1", errorString ) );
+
+    m_retryButton->setEnabled( true );
+    m_retryButton->setVisible( true );
 }
 
 //END BugzillaCommitPage
