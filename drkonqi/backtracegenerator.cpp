@@ -79,7 +79,7 @@ bool BacktraceGenerator::start()
   m_krashconf->expandString(str, KrashConfig::ExpansionUsageShell, m_temp->fileName());
 
   *m_proc << KShell::splitArgs(str);
-  m_proc->setOutputChannelMode(KProcess::SeparateChannels); // Drop stderr
+  m_proc->setOutputChannelMode(KProcess::OnlyStdoutChannel);
   m_proc->setNextOpenMode(QIODevice::ReadWrite | QIODevice::Text);
   connect(m_proc, SIGNAL(readyReadStandardOutput()),
           SLOT(slotReadInput()));
