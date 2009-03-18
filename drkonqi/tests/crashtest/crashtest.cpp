@@ -28,6 +28,7 @@
 
 // Let's crash.
 #include <kapplication.h>
+#include <kcrash.h>
 #include <kaboutdata.h>
 #include <kcmdlineargs.h>
 #include <kdebug.h>
@@ -125,6 +126,9 @@ int main(int argc, char *argv[])
   KCmdLineArgs::addCmdLineOptions(options);
 
   KApplication app(false);
+  //start drkonqi directly so that drkonqi's output goes to the console
+  KCrash::setFlags(KCrash::AlwaysDirectly);
+
   KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
   QByteArray type = args->count() ? args->arg(0).toUtf8() : "";
   int crashtype = Crash;
