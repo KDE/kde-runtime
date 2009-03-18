@@ -52,13 +52,13 @@
 #else
 # include "tests/backtraceparsertest/backtraceparsertest.h"
 # include <QDebug>
-# define qDebug qDebug
+# define kDebug qDebug
 #endif
 
 #include <QtCore/QRegExp>
 #include <QtCore/QSharedData>
 #include <QtCore/QSet>
-#include <QtCore/QMetaEnum> //used for a qDebug() in BacktraceParserGdb::backtraceUsefulness()
+#include <QtCore/QMetaEnum> //used for a kDebug() in BacktraceParserGdb::backtraceUsefulness()
 #include <KGlobal>
 
 //BEGIN BacktraceParser
@@ -198,7 +198,7 @@ void BacktraceLineGdb::parse()
         d->m_hasSourceFile = d->m_hasFileInfo ? (regExp.cap(7) == "at") : false;
         d->m_file = d->m_hasFileInfo ? regExp.cap(8) : QString();
 
-        qDebug() << d->m_stackFrameNumber << d->m_functionName << d->m_functionArguments
+        kDebug() << d->m_stackFrameNumber << d->m_functionName << d->m_functionArguments
                  << d->m_hasFileInfo << d->m_hasSourceFile << d->m_file;
         return;
     }
@@ -210,26 +210,26 @@ void BacktraceLineGdb::parse()
                 // gdb prints that automatically, but it will be later visible again in the backtrace
                       "0x[0-9a-f]+\\s+in .*");
     if ( regExp.exactMatch(d->m_line) ) {
-        qDebug() << "crap detected:" << d->m_line;
+        kDebug() << "crap detected:" << d->m_line;
         d->m_type = Crap;
         return;
     }
 
     regExp.setPattern( "Thread [0-9]+\\s+\\(Thread 0x[0-9a-f]+\\s+\\(.*\\)\\):\n" );
     if ( regExp.exactMatch(d->m_line) ) {
-        qDebug() << "thread start detected:" << d->m_line;
+        kDebug() << "thread start detected:" << d->m_line;
         d->m_type = ThreadStart;
         return;
     }
 
     regExp.setPattern( "\\[Current thread is [0-9]+ \\(.*\\)\\]\n" );
     if ( regExp.exactMatch(d->m_line) ) {
-        qDebug() << "thread indicator detected:" << d->m_line;
+        kDebug() << "thread indicator detected:" << d->m_line;
         d->m_type = ThreadIndicator;
         return;
     }
 
-    qDebug() << "line" << d->m_line << "did not match";
+    kDebug() << "line" << d->m_line << "did not match";
 }
 
 void BacktraceLineGdb::rate()
@@ -419,7 +419,7 @@ BacktraceParser::Usefulness BacktraceParserGdb::backtraceUsefulness() const
        bestPossibleRating += static_cast<uint>(BacktraceLineGdb::BestRating) * multiplier;
        counter++;
 
-       qDebug() << (*i).rating() << (*i).toString();
+       kDebug() << (*i).rating() << (*i).toString();
     }
 
     Usefulness usefulness = Useless;
@@ -427,9 +427,9 @@ BacktraceParser::Usefulness BacktraceParserGdb::backtraceUsefulness() const
     else if (rating >= (bestPossibleRating*0.70)) usefulness = MayBeUseful;
     else if (rating >= (bestPossibleRating*0.40)) usefulness = ProbablyUseless;
 
-    qDebug() << "Rating:" << rating << "out of" << bestPossibleRating << "Usefulness:"
+    kDebug() << "Rating:" << rating << "out of" << bestPossibleRating << "Usefulness:"
              << staticMetaObject.enumerator(staticMetaObject.indexOfEnumerator("Usefulness")).valueToKey(usefulness);
-    qDebug() << "90%:" << (bestPossibleRating*0.90) << "70%:" << (bestPossibleRating*0.70)
+    kDebug() << "90%:" << (bestPossibleRating*0.90) << "70%:" << (bestPossibleRating*0.70)
              << "40%:" <<(bestPossibleRating*0.40);
 
     d->m_cachedUsefulness = usefulness;

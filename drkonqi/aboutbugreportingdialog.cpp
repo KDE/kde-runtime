@@ -37,6 +37,7 @@ AboutBugReportingDialog::AboutBugReportingDialog(QWidget * parent):
 
     QString text =
     
+    //TODO write this and divide it to small i18n calls
     i18n(
     "<title>Information about bug reporting</title>"
     "<para>You can help us improve this software by filing a bug report.</para>"
