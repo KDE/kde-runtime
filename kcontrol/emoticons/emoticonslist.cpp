@@ -84,7 +84,7 @@ void EditDialog::btnIconClicked()
     if (!url.isLocalFile())
         return;
 
-    emoticon = url.path();
+    emoticon = url.toLocalFile();
 
     if (emoticon.isEmpty())
         return;
@@ -263,7 +263,7 @@ void EmoticonList::installEmoticonTheme()
                                       i18n("Could Not Install Emoticon Theme"));
         return;
     }
-    QStringList installed = kEmoticons.installTheme(themeURL.path());
+    QStringList installed = kEmoticons.installTheme(themeURL.toLocalFile());
     for (int i = 0; i < installed.size(); i++)
         loadTheme(installed.at(i));
 }

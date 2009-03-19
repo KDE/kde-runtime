@@ -42,7 +42,7 @@ AudioPreview::AudioPreview( QWidget *parent, const KUrl &url, const QString &mim
   description = 0;
   setSpacing( 0 );
   if( url.isValid() && url.isLocalFile() ) {
-    m_localFile = url.path();
+    m_localFile = url.toLocalFile();
     pic = new QLabel(this);
     pic->setPixmap(KIO::pixmapForUrl( url ));
     pic->adjustSize();

@@ -220,7 +220,7 @@ bool MediaPlayer::setNextSource()
 
     if (dvdButton->isChecked()) {
         if (url.isLocalFile()) {
-            m_media->setCurrentSource(MediaSource(Phonon::Dvd, url.path()));
+            m_media->setCurrentSource(MediaSource(Phonon::Dvd, url.toLocalFile()));
         } else {
             m_media->setCurrentSource(Phonon::Dvd);
         }
