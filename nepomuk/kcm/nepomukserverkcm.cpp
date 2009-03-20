@@ -90,7 +90,6 @@ Nepomuk::ServerConfigModule::ServerConfigModule( QWidget* parent, const QVariant
              SLOT( slotUpdateStrigiStatus() ) );
 
     recreateStrigiInterface();
-    load();
 }
 
 
