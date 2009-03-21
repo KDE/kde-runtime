@@ -7,7 +7,7 @@
 #cmakedefine HAVE_GETPEEREID 1
 
 /* Define if you have long long as datatype */
-#define HAVE_LONG_LONG 1
+#cmakedefine HAVE_LONG_LONG 1
 
 /* Define to 1 if you have the `nice' function. */
 #cmakedefine HAVE_NICE 1
