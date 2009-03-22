@@ -3,12 +3,29 @@
 --------------
 
     gkiagia: Fix backtraceinfo logic (backtrace parsing to get its usefulness)
+    gkiagia: fix crashed app getting lost/close, so the backtrace isn't generated and the duplicates page crash on invalid firstValidFunctions()
+
         
 ##Unassigned
 -------------
 
-fix crashed app getting lost/close, so the backtrace isn't generated and the duplicates page crash on invalid firstValidFunctions()
-detect if the pid isn't set (?) 
+--------
+AppName crashed
+
+Probably bug. 
+You can help
+
+Learn about --- Report Bug
+
+--- Restart Debug ShowBacktrace Close
+-------
+signal information under Advanced
+
+
+waiting for productName()->product/component mapping (custom cgi file at BKO)
+( if no combination is found, revert to "kde" product )
+
+
 
 fix awarenesspage layout
 
@@ -22,10 +39,15 @@ krazy2 checks (partially done)
 
 check what all the options in KrashConf are meant to do and use them appropriately or drop them (i.e review options)
 
-//fix kwallet... ? use konqueror bko logic LATER
-
 #Done
 ---------
+
+detect if the pid isn't set (?) 
+
+improve "restart application" using the original command line options
+(this needs modify kdelibs/kcrash to pass the whole arguments list to drkonqi)
+
+//fix kwallet... ? use konqueror bko logic LATER
 
 #Extract interfaces to .UI files
     #getbacktracewidget

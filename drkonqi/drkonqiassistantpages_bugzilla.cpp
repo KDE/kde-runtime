@@ -128,7 +128,7 @@ void BugzillaLoginPage::aboutToShow()
         m_form->labelForField(m_userEdit)->setVisible( false );
         m_form->labelForField(m_passwordEdit)->setVisible( false );
         
-        m_statusWidget->setIdle( i18nc( "the user is logged at the bugtracker site as USERNAME", "Logged at KDE Bugtracker (bugs.kde.org) as: %1", m_crashInfo->getBZ()->getUsername() ) );
+        m_statusWidget->setIdle( i18nc( "the user is logged at the bugtracker site as USERNAME", "Logged in at KDE Bugtracker (bugs.kde.org) as: %1", m_crashInfo->getBZ()->getUsername() ) );
         
     }
     else
@@ -361,8 +361,11 @@ BugzillaDuplicatesPage::BugzillaDuplicatesPage(CrashInfo * info):
     lay->addStretch(); 
     lay->addWidget( m_possibleDuplicateEdit );
     
+    QLabel * explanationLabel = new QLabel("This is an optional step when you can try to find an already reported bug that could match the crash you got. If there are search results you can double click some list item and compare the situations. Then , you can suggest that your crash could be a duplicate of that report."); //TODO native-english
+    explanationLabel->setWordWrap( true );
+    
     QVBoxLayout * layout = new QVBoxLayout();
-    layout->addWidget( new QLabel("This is an optional step when you can try to find an already reported bug that could match the crash you got. If there are search results you can double click some list item and compare the situations. Then , you can suggest that your crash could be a duplicate of that report.") ); //TODO native-english
+    layout->addWidget( explanationLabel ); 
     layout->addWidget( m_statusWidget );
     layout->addWidget( m_bugListWidget );
     layout->addLayout( buttonLayout );
@@ -641,7 +644,11 @@ BugzillaInformationPage::BugzillaInformationPage( CrashInfo * info )
     connect( m_reproduceEdit, SIGNAL(textChanged()), this, SLOT(checkTexts()) );
 
     QVBoxLayout * layout = new QVBoxLayout();
-    layout->addWidget( new QLabel( "Complete the bug report fields in order to properly submit it. All the fields should be at least 20 characters" ) ); //TODO native-rewrite (text lenght?)
+    
+    QLabel * explanationLabel = new QLabel( "Complete the bug report fields in order to properly submit it. All the fields should be at least 20 characters. All the texts should be written in english." ); //TODO native-rewrite (text lenght?)
+    explanationLabel->setWordWrap( true );
+    
+    layout->addWidget( explanationLabel ); 
     
     layout->addWidget( m_titleLabel );
     layout->addWidget( m_titleEdit );
@@ -679,16 +686,55 @@ void BugzillaInformationPage::checkTexts()
     bool reproduceEmpty = m_reproduceEdit->isVisible() ? m_reproduceEdit->toPlainText().isEmpty() : false;
     bool ok = !(m_titleEdit->text().isEmpty() || detailsEmpty || reproduceEmpty );
     
-    //Check title, details and steps text lenghts.... TODO discuss the exact lenght
-    //FIXME fix this logic
-    if ( ok )
-        if ( m_titleEdit->text().size() < 20 || (reproduceEmpty && m_reproduceEdit->toPlainText().size() < 30 ) || ( detailsEmpty && m_detailsEdit->toPlainText().size() < 30) )
-            ok = false;
-    
     if( ok != m_textsOK )
     {
         m_textsOK = ok;
         emitCompleteChanged();
+    }
+}
+
+bool BugzillaInformationPage::showNextPage()
+{
+    checkTexts(); //FIXME , reproduce shouldn't be used anymore
+    if( m_textsOK ) //not empty
+    {
+        bool titleShort = m_titleEdit->text().size() < 50;
+        bool reproduceShort = !( m_reproduceEdit && m_reproduceEdit->toPlainText().size() < 150 );
+        bool detailsShort = ( m_detailsEdit->isVisible() && m_detailsEdit->toPlainText().size() < 150);
+        
+        if ( titleShort || reproduceShort || detailsShort )
+        {
+            QString message;
+            
+            if( titleShort && !detailsShort )
+            {
+                message = i18n("The title is too short");
+            }
+            else if ( detailsShort && !titleShort )
+            {
+                message = i18n("The description about the crash details is too short");
+            }
+            else
+            {
+                message = i18n("Both the title and the description about the crash details are too short");
+            }
+            
+            //The user input is less than we want.... encourage to write more
+            if( KMessageBox::questionYesNo( this, message,
+                i18n("Fields lenght too short") ) == KMessageBox::Yes )
+            {
+                return false; //Cancel show next, to allow the user to write more
+            } else {
+                return true; //Allow to continue
+            }
+        }
+        
+        
+        else {
+            return true;
+        }
+    } else {
+        return false;
     }
 }
 

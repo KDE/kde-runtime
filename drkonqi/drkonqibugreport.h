@@ -24,9 +24,9 @@
 
 #include "crashinfo.h"
 
-class DrKonqiAssistantPage;
-
 class QWidget;
+
+class DrKonqiAssistantPage;
 class IntroductionPage;
 class CrashInformationPage;
 class BugAwarenessPage;
@@ -36,6 +36,7 @@ class BugzillaKeywordsPage;
 class BugzillaDuplicatesPage;
 class BugzillaInformationPage;
 class BugzillaCommitPage;
+
 class AboutBugReportingDialog;
 
 class DrKonqiBugReport: public KAssistantDialog
@@ -72,8 +73,9 @@ class DrKonqiBugReport: public KAssistantDialog
         
         void showHelp();
         
+        void next();
+        
     private:
-    
         void connectSignals( DrKonqiAssistantPage * );
         AboutBugReportingDialog *   m_aboutBugReportingDialog;
 };

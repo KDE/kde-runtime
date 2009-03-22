@@ -24,8 +24,7 @@
 #include <QtGui/QHBoxLayout>
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QStackedWidget>
-
-#include <QMenu>
+#include <QtGui/QMenu>
 
 #include <kicon.h>
 #include <kpushbutton.h>
@@ -47,42 +46,43 @@ DrKonqiDialog::DrKonqiDialog( CrashInfo * info, QWidget * parent ) :
 {
     connect( m_crashInfo->getCrashConfig(), SIGNAL(newDebuggingApplication(QString)), SLOT(slotNewDebuggingApp(QString)));
     
-    setCaption( m_crashInfo->getProductName() );
+    //Setting dialog title and icon
+    setCaption( DrKonqi::instance()->krashConfig()->programName() );
     setWindowIcon( KIcon("tools-report-bug") );
 
-    //GUI
-    QLabel * title = new QLabel( i18n("<title>The application closed unexpectedly</title>") );
+    //Main widget components
+    QLabel * title = new QLabel( i18nc( "applicationName closed", "<title>%1 closed unexpectedly</title>", DrKonqi::instance()->krashConfig()->programName() ) );
     title->setWordWrap( true ); 
     
-    QLabel * crashTitle = new QLabel( m_crashInfo->getCrashTitle() );
-    crashTitle->setWordWrap( true ); 
-    
     QLabel * infoLabel = new QLabel( i18nc("Small explanation of the crash cause",
-    "This probably happened because there is a bug in the application.<nl />Signal: %1 (%2)"
-    , m_crashInfo->getCrashConfig()->signalName(), m_crashInfo->getCrashConfig()->signalText() ) );
+    "<para>This probably happened because there is a bug in the application.</para><para>You can help us improve KDE by reporting this bug.</para>" ) );
     infoLabel->setWordWrap( true ); 
-
-    QLabel * whatToDoLabel = new QLabel( i18n( "You can help us improve the software by reporting this bug." ) );
     
     m_aboutBugReportingButton = new KPushButton( KGuiItem( i18nc("button action", "Learn more about bug reporting") , KIcon("help-hint"),  i18nc("help text", "Get help in order to know how to file an useful bug report"), i18nc("help text", "Get help in order to know how to file an useful bug report") ) ); //TODO rewrite text?
-    
     m_aboutBugReportingButton->setSizePolicy( QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed) );
     connect( m_aboutBugReportingButton, SIGNAL(clicked()), this, SLOT(aboutBugReporting()) );
 
-    //Introduction widget layout
+    m_reportBugButton = new KPushButton( KGuiItem( i18nc("Button action", "Report Bug"), KIcon("tools-report-bug"), i18nc("help text", "Starts the bug report assistant" ), i18nc("help text", "Starts the bug report assistant" ) ) );
+    m_reportBugButton->setSizePolicy( QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed) );
+    connect( m_reportBugButton, SIGNAL(clicked()), this,  SLOT(reportBugAssistant()) );
+    
+    QHBoxLayout * buttonLayout = new QHBoxLayout();
+    buttonLayout->addWidget( m_aboutBugReportingButton );
+    buttonLayout->addWidget( m_reportBugButton );
+    buttonLayout->addStretch();
+    
+    //Main widget layout
     QVBoxLayout * introLayout = new QVBoxLayout;
     introLayout->setSpacing( 10 );
     introLayout->addWidget( title );
-    introLayout->addWidget( crashTitle );
     introLayout->addWidget( infoLabel );
-    introLayout->addWidget( whatToDoLabel );
-    introLayout->addWidget( m_aboutBugReportingButton );
+    introLayout->addLayout( buttonLayout );
     introLayout->addStretch();
     
     //Introduction widget
-    m_introWidget = new QWidget();
+    m_introWidget = new QWidget( this );
     m_introWidget->setLayout( introLayout );
-    //m_introWidget->setMinimumSize( QSize(500, 220) );
+    m_introWidget->setMinimumSize( QSize(550, 220) );
     
     QString styleSheet = QString( ".QWidget {"
                        "background-image: url(%1);"
@@ -91,32 +91,40 @@ DrKonqiDialog::DrKonqiDialog( CrashInfo * info, QWidget * parent ) :
                        "} ").arg( KStandardDirs::locate( "appdata", QLatin1String( "pics/konqi.png" ) ) );
     m_introWidget->setStyleSheet( styleSheet );
     
-    //Backtrace Widget
+    //Advanced Widget
+    m_advancedWidget = new QWidget( this );
+    
+    QVBoxLayout * advancedLayout = new QVBoxLayout();
+    
     m_backtraceWidget = new GetBacktraceWidget(DrKonqi::instance()->backtraceGenerator());
-    m_backtraceWidget->setMinimumSize( QSize(500, 10) );
-
+    m_backtraceWidget->setMinimumSize( QSize(550, 220) );
+    advancedLayout->addWidget( m_backtraceWidget );
+    m_advancedWidget->setLayout( advancedLayout );
+    
     //Stacked main widget
     m_stackedWidget = new QStackedWidget();
     m_stackedWidget->addWidget( m_introWidget );
-    m_stackedWidget->addWidget( m_backtraceWidget );
+    m_stackedWidget->addWidget( m_advancedWidget );
     setMainWidget( m_stackedWidget );
     
+    //KDialog default buttons
+    
     //Show backtrace/introduction
-    m_guiItemShowBacktrace = KGuiItem(i18nc("button action", "Show Backtrace (Advanced)"), KIcon("document-new"), i18nc("help text", "Generate and show the backtrace (crash information)" ), i18nc("help text", "Generate and show the backtrace (crash information)" ) );
+    m_guiItemShowBacktrace = KGuiItem(i18nc("button action", "Advanced ( Show Backtrace )"), KIcon("document-new"), i18nc("help text", "Generate and show the backtrace and the crash details" ), i18nc("help text", "Generate and show the backtrace and the crash details" ) );
     
     m_guiItemShowIntroduction = KGuiItem(i18nc("button action", "Show Introduction"), KIcon("help-contextual"), i18nc("help text", "Show the Crash Dialog introduction page" ), i18nc("help text", "Show the Crash Dialog introduction page" ) );
     
     //Set kdialog buttons
     showButtonSeparator( true );
-    setButtons( KDialog::Help | KDialog::User1 | KDialog::User2 | KDialog::User3 | KDialog::Close );
+    setButtons( KDialog::User1 | KDialog::User2 | KDialog::User3 | KDialog::Close );
     
-    //Show backtrace (toggle) button
-    setButtonGuiItem( KDialog::Help, m_guiItemShowBacktrace );
-    connect( this, SIGNAL(helpClicked()), this, SLOT(toggleBacktrace()) );
+    //Toggle to advanced mode button
+    setButtonGuiItem( KDialog::User1, m_guiItemShowBacktrace );
+    connect( this, SIGNAL(user1Clicked()), this, SLOT(toggleBacktrace()) );
     
     //Default debugger button and menu (only for developer mode)
     setButtonGuiItem( KDialog::User2, KGuiItem( i18nc("Button action", "Debug") , KIcon("document-edit"), i18nc("help text", "Starts a program to debug the crashed application" ), i18nc("help text", "Starts a program to debug the crashed application" ) ) );
-    showButton( KDialog::User2, m_crashInfo->getCrashConfig()->showDebugger() );
+    showButton( KDialog::User2, DrKonqi::instance()->krashConfig()->showDebugger() );
     
     m_debugMenu = new QMenu();
     setButtonMenu( KDialog::User2, m_debugMenu );
@@ -136,15 +144,13 @@ DrKonqiDialog::DrKonqiDialog( CrashInfo * info, QWidget * parent ) :
     setButtonGuiItem( KDialog::User3, KGuiItem( i18nc( "button action", "Restart Application" ) , KIcon("system-restart") , i18nc( "button help", "Use this button to restart the crashed application"), i18nc( "button help", "Use this button to restart the crashed application") ) );
     connect( this, SIGNAL(user3Clicked()), this, SLOT(restartApplication()) );
     
-    //Report bug button
-    setButtonGuiItem( KDialog::User1, KGuiItem( i18nc("Button action", "Report Bug"), KIcon("tools-report-bug"), i18nc("help text", "Starts the bug report assistant" ), i18nc("help text", "Starts the bug report assistant" ) ) );
-    connect( this, SIGNAL(user1Clicked()), this, SLOT(reportBugAssistant()) );
-    
     //Close button
     setButtonToolTip( KDialog::Close, i18nc("help text", "Close this dialog (you will lose the crash information)") );
     setButtonWhatsThis( KDialog::Close, i18nc("help text", "Close this dialog (you will lose the crash information)") );
     setDefaultButton( KDialog::Close );
     setButtonFocus( KDialog::Close );    
+    
+    resize( QSize(550, 220) );
 }
 
 void DrKonqiDialog::reportBugAssistant()
@@ -157,9 +163,7 @@ void DrKonqiDialog::reportBugAssistant()
 void DrKonqiDialog::aboutBugReporting()
 {
     if ( !m_aboutBugReportingDialog )
-    {
         m_aboutBugReportingDialog = new AboutBugReportingDialog( this );
-    }
     m_aboutBugReportingDialog->show();
 }
 
@@ -168,15 +172,15 @@ void DrKonqiDialog::toggleBacktrace()
     if( m_stackedWidget->currentWidget() == m_introWidget )
     {
         m_backtraceWidget->generateBacktrace();
-        m_stackedWidget->setCurrentWidget( m_backtraceWidget );
+        m_stackedWidget->setCurrentWidget( m_advancedWidget );
         
-        setButtonGuiItem( KDialog::Help, m_guiItemShowIntroduction );
+        setButtonGuiItem( KDialog::User1, m_guiItemShowIntroduction );
     }
     else
     {
         m_stackedWidget->setCurrentWidget( m_introWidget );
         
-        setButtonGuiItem( KDialog::Help, m_guiItemShowBacktrace );
+        setButtonGuiItem( KDialog::User1, m_guiItemShowBacktrace );
     }
 }
 

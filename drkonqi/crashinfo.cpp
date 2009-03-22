@@ -30,7 +30,7 @@ CrashInfo::CrashInfo()
 {
     m_userCanDetail = false;
     m_userCanReproduce = false;
-    m_userGetCompromise = false;
+    m_userIsWillingToHelp = false;
     m_bugzilla = new BugzillaManager();
     m_report = new BugReport();
 }

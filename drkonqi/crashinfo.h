@@ -40,11 +40,11 @@ class CrashInfo : public QObject
     //Information about the user condition
     void setUserCanDetail( bool canDetail ) { m_userCanDetail = canDetail; }
     void setUserCanReproduce ( bool canReproduce ) { m_userCanReproduce = canReproduce; }
-    void setUserGetCompromise ( bool getCompromise ) { m_userGetCompromise = getCompromise; }
+    void setUserIsWillingToHelp ( bool isWillingToHelp ) { m_userIsWillingToHelp = isWillingToHelp; }
     
     bool getUserCanDetail() { return m_userCanDetail; }
     bool getUserCanReproduce() { return m_userCanReproduce; }
-    bool getUserGetCompromise() { return m_userGetCompromise; }
+    bool getUserIsWillingToHelp() { return m_userIsWillingToHelp; }
     
     //Information about the crashed app and OS
     QString getKDEVersion() { return KDE::versionString(); } 
@@ -79,7 +79,7 @@ class CrashInfo : public QObject
 
     bool                m_userCanDetail;
     bool                m_userCanReproduce;
-    bool                m_userGetCompromise;
+    bool                m_userIsWillingToHelp;
   
     QString             m_OS;
     QString             m_LSBRelease;

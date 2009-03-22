@@ -81,29 +81,31 @@ void GetBacktraceWidget::setAsLoading()
 
     ui.m_copyButton->setEnabled( false );
     ui.m_saveButton->setEnabled( false );
-                
-    emit stateChanged();
 }
 
+//Force backtrace generation
 void GetBacktraceWidget::regenerateBacktrace()
 {
     setAsLoading();
     m_btGenerator->start();
+    emit stateChanged();
 }
 
 void GetBacktraceWidget::generateBacktrace()
 {
     if ( m_btGenerator->state() == BacktraceGenerator::NotLoaded )
-    {
+    {   //First backtrace generation
         regenerateBacktrace();
     }
     else if ( m_btGenerator->state() == BacktraceGenerator::Loading )
     {
         setAsLoading(); //Set in loading state, the widget will catch the backtrace events anyway
+        emit stateChanged();
     }
     else //*Finished* states
     {
         setAsLoading();
+        emit stateChanged();
         backtraceGenerated(); //Load already gathered information
     }
 }

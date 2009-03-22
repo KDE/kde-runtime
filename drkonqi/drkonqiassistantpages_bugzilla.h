@@ -161,6 +161,7 @@ class BugzillaInformationPage : public DrKonqiAssistantPage
         void aboutToHide();
         
         bool isComplete();
+        bool showNextPage();
         
     private Q_SLOTS:
         void checkTexts();

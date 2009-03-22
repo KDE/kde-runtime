@@ -55,9 +55,8 @@ IntroductionPage::IntroductionPage() :
 
 //BEGIN CrashInformationPage
 
-CrashInformationPage::CrashInformationPage( CrashInfo * crashInfo) 
+CrashInformationPage::CrashInformationPage() 
     : DrKonqiAssistantPage(),
-    m_crashInfo( crashInfo )
 {
     m_backtraceWidget = new GetBacktraceWidget(DrKonqi::instance()->backtraceGenerator());
     
@@ -96,72 +95,81 @@ BugAwarenessPage::BugAwarenessPage(CrashInfo * info)
     : DrKonqiAssistantPage(),
     m_crashInfo(info)
 {
-    //Details
+    //Details groupbox
+    //QGroupBox * canDetailBox = new QGroupBox();
+    //canDetailBox->setFlat( true );
+    
+    QVBoxLayout * canDetailLayout = new QVBoxLayout( );
+    //canDetailBox->setLayout( canDetailLayout );
+    
+    QLabel * detailQuestionLabel = new QLabel( QString("<strong>%1</strong>").arg( i18n( "Can you give detailed information about what were you doing when the application crashed ?" ) ) );
+    detailQuestionLabel->setWordWrap( true );
+    canDetailLayout->addWidget( detailQuestionLabel );
+    
     QLabel * detailLabel = 
         new QLabel(
         i18n(
-        "<para>Including in your bug report what were you doing when the application crashed will help the developers "
-        "reproduce and fix the bug. <i>( Important details are: what you were doing in the application and documents you were using )</i></para>" ) );
-        
-        /* mention subapplications? sites you were using?
-        "<para>Important details are:<br />"
-        "<i>* Actions you were taking on the application and on the whole system</i><br />"
-        "<i>* Documents you were using in the application (or a reference to them and their type)</i>"
-        " ( you can attach files in the bug report once it is filed )</para>" ) );
-        */
+        "Including in your bug report what were you doing when the application crashed will help the developers "
+        "reproduce and fix the bug. <i>( Important details are: what you were doing in the application and documents you were using )</i>. If you have found a common patterns which causes a crash you can try to write steps to help the developers try to reproduce it." ) );
         
     detailLabel->setWordWrap( true );
-
-    m_canDetailCheckBox = new QCheckBox( i18n( "I can give detailed information about what I was doing when the application crashed" ) );
-  
-    QGroupBox * canDetailBox = new QGroupBox( i18n( "Can you give detailed information about what were you doing when the application crashed ?" ) );
-    QVBoxLayout * canDetailLayout = new QVBoxLayout();
-    canDetailBox->setLayout( canDetailLayout );
     canDetailLayout->addWidget( detailLabel );
+    
+    m_canDetailCheckBox = new QCheckBox( i18n( "Yes, I can give information about the crash" ) );
     canDetailLayout->addWidget( m_canDetailCheckBox );
     
-    //Compromise
+    //Compromise groupbox
+    //QGroupBox * getCompromiseBox = new QGroupBox( i18n( "Are you willing to help the developers? and and and and and and and and and and and and and and and and and and and and and and and" ) );
+    
+    QVBoxLayout * getCompromiseLayout = new QVBoxLayout();
+    //getCompromiseBox->setLayout( getCompromiseLayout );
+    
+    QLabel * l2 = new QLabel( i18n( "<strong>Are you willing to help the developers?</strong>" ) );
+    getCompromiseLayout->addWidget( l2 );
+    
     QLabel * compromiseLabel = 
         new QLabel(
-        i18n( "Sometimes the developers need more information from the reporter in order to fix the bug." )
+        i18n( "Sometimes once the report is created and being investigated, the developers need more information from the reporter in order to fix the bug." )
         );
     compromiseLabel->setWordWrap( true );
-    
-    m_compromiseCheckBox = 
-        new QCheckBox(
-        i18n( "I am willing to help the developers by providing further information" )
-        );
-    
-    QGroupBox * getCompromiseBox = new QGroupBox( i18n( "Are you willing to help the developers?" ) );
-    QVBoxLayout * getCompromiseLayout = new QVBoxLayout();
-    getCompromiseBox->setLayout( getCompromiseLayout );
     getCompromiseLayout->addWidget( compromiseLabel );
-    getCompromiseLayout->addWidget( m_compromiseCheckBox );
     
-    //Reproduce
-    m_canReproduceCheckBox = new QCheckBox( i18n( "I can reproduce the crash and I can provide steps or a testcase" ) );
+    m_willingToHelpCheckBox = 
+        new QCheckBox(
+        i18n( "Yes, I am willing to help the developers" )
+        );
+    getCompromiseLayout->addWidget( m_willingToHelpCheckBox );
     
+    //Reproduce groupbox
+    
+    
+    /*
     QGroupBox * canReproduceBox = new QGroupBox( i18n( "Advanced Usage" ) );
-    QVBoxLayout * canReproduceLayout = new QVBoxLayout();
+    QVBoxLayout * canReproduceLayout = new QVBoxLayout( canReproduceBox );
     canReproduceBox->setLayout( canReproduceLayout );
+    
+    m_canReproduceCheckBox = new QCheckBox( i18n( "I can reproduce the crash and I can provide steps or a testcase and and and and and and and and and and and" ), canReproduceBox );
     canReproduceLayout->addWidget( m_canReproduceCheckBox);
-
+    */
+    
     //Main layout
     QVBoxLayout * layout = new QVBoxLayout();
-    layout->addWidget( canDetailBox );
-    layout->addWidget( getCompromiseBox );
+    layout->setSpacing( 10 );
+    //layout->addWidget( canDetailBox );
+    layout->addLayout( canDetailLayout );
+    //layout->addWidget( getCompromiseBox );
+    layout->addLayout( getCompromiseLayout );
     layout->addStretch();
-    layout->addWidget( canReproduceBox );
+    //layout->addWidget( canReproduceBox );
     setLayout( layout );
-
 }
 
 void BugAwarenessPage::aboutToHide()
 {
     //Save data
     m_crashInfo->setUserCanDetail( m_canDetailCheckBox->checkState() == Qt::Checked );
-    m_crashInfo->setUserCanReproduce( m_canReproduceCheckBox->checkState() == Qt::Checked );
-    m_crashInfo->setUserGetCompromise( m_compromiseCheckBox->checkState() == Qt::Checked );
+    //m_crashInfo->setUserCanReproduce( m_canReproduceCheckBox->checkState() == Qt::Checked );
+    m_crashInfo->setUserIsWillingToHelp( m_willingToHelpCheckBox->checkState() == Qt::Checked );
 }
 
 //END BugAwarenessPage
@@ -231,33 +239,33 @@ void ConclusionPage::aboutToShow()
     
     BacktraceParser::Usefulness use = DrKonqi::instance()->backtraceGenerator()->parser()->backtraceUsefulness();
     bool canDetails = m_crashInfo->getUserCanDetail();
-    bool canReproduce = m_crashInfo->getUserCanReproduce();
-    bool getCompromise = m_crashInfo->getUserGetCompromise();
+    //bool canReproduce = m_crashInfo->getUserCanReproduce();
+    bool willingToHelp = m_crashInfo->getUserIsWillingToHelp();
     
     switch( use )
     {
         case BacktraceParser::ReallyUseful:
         {
-            needToReport = ( canDetails || canReproduce ); //TODO discuss: always true ?
+            needToReport = ( canDetails ); //TODO discuss: always true ?
             report = i18n( "* The crash information is really useful and worth reporting" );
             break;
         }
         case BacktraceParser::MayBeUseful:
         {
-            needToReport = ( canReproduce || canDetails || getCompromise );
+            needToReport = ( canDetails || willingToHelp );
             report = i18n( "* The crash information lacks some details but may be useful" ) ;
             break;
         }
         case BacktraceParser::ProbablyUseless:
         {
-            needToReport = ( canReproduce || ( canDetails && getCompromise ) );
+            needToReport = ( canDetails && willingToHelp );
             report = i18n( "* The crash information lacks a lot of important details and it is probably useless" );
             break;
         }           
         case BacktraceParser::Useless:
         case BacktraceParser::InvalidUsefulness:
         {
-            needToReport = ( canReproduce || ( canDetails && getCompromise ) );
+            needToReport =  ( canDetails && willingToHelp );
             report = i18n( "* The crash information is completely useless" ) ;
      break;
         }
@@ -271,11 +279,19 @@ void ConclusionPage::aboutToShow()
        /*        report += i18n( "* You can't say what were you doing when the application crashed" ) ;
         There's something between "very detailed" and "no clue"... */
     
+    /* FIXME
     report.append( QLatin1String( "<br />" ) );
     if( canReproduce )
         report += i18n( "* You can reproduce the crash at will and you can provide steps or a testcase" );
     else
         report += i18n( "* You can't reproduce the crash at will, but you can provide steps or a testcase" ); // is that possible for newbies?
+    */  
+    
+    report.append( QLatin1String( "<br />" ) );
+    if( willingToHelp )
+        report += i18n( "* You are willing to help the developers" );
+    else
+        report += i18n( "* You are not willing to help the developers" );
         
     if ( needToReport )
     {

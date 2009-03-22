@@ -46,6 +46,8 @@ class DrKonqiAssistantPage: public QWidget
         
         virtual bool isComplete() { return true; }
         
+        virtual bool showNextPage() { return true; }
+
     public Q_SLOTS:
         void emitCompleteChanged()
         {
@@ -72,14 +74,13 @@ class CrashInformationPage: public DrKonqiAssistantPage
     Q_OBJECT
     
     public:
-        CrashInformationPage( CrashInfo * );
+        CrashInformationPage();
         
         void aboutToShow(); 
         bool isComplete();
         
     private:
         GetBacktraceWidget * m_backtraceWidget;
-        CrashInfo*           m_crashInfo;
 };
 
 //Bug Awareness Page ---------------
@@ -94,8 +95,8 @@ class BugAwarenessPage: public DrKonqiAssistantPage
        
     private:
         QCheckBox * m_canDetailCheckBox;
-        QCheckBox * m_compromiseCheckBox;
-        QCheckBox * m_canReproduceCheckBox;
+        QCheckBox * m_willingToHelpCheckBox;
+        //QCheckBox * m_canReproduceCheckBox;
         
         CrashInfo * m_crashInfo;
 };

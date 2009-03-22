@@ -53,9 +53,11 @@ class DrKonqiDialog: public KDialog
         
         QStackedWidget *                m_stackedWidget;
         QWidget *                       m_introWidget;
+        QWidget *                       m_advancedWidget;
         GetBacktraceWidget *            m_backtraceWidget;
         
         KPushButton *                   m_aboutBugReportingButton;
+        KPushButton *                   m_reportBugButton;
 
         KGuiItem                        m_guiItemShowBacktrace;
         KGuiItem                        m_guiItemShowIntroduction;
