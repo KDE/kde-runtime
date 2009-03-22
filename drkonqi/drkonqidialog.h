@@ -43,9 +43,6 @@ class DrKonqiDialog: public KDialog
         void toggleBacktrace();
         void reportBugAssistant();
         
-        void startDefaultDebugger();
-        void startCustomDebugger();
-        
         void restartApplication();
         
         //New debugger detected

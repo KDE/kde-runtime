@@ -36,7 +36,7 @@
 #include <klocale.h>
 #include <kdefakes.h>
 
-#include "krashconf.h"
+#include "drkonqi.h"
 #include "crashinfo.h"
 #include "drkonqidialog.h"
 
@@ -54,12 +54,9 @@ if (setuid(getuid()) < 0 && geteuid() != getuid())
 
     // Make sure that DrKonqi doesn't start DrKonqi when it crashes :-]
     setenv("KDE_DEBUG", "true", 1);
-    unsetenv("SESSION_MANAGER");
 
-    KAboutData aboutData( "drkonqi", 0,
-                            ki18n("The KDE Crash Handler"),
-                            version,
-                            ki18n(description),
+    KAboutData aboutData( "drkonqi", 0, ki18n("The KDE Crash Handler"),
+                            version, ki18n(description),
                             KAboutData::License_GPL,
                             ki18n("(C) 2000-2009, The DrKonqi Authors"));
     aboutData.addAuthor(ki18n("Hans Petter Bieker"), KLocalizedString(), "bieker@kde.org");
@@ -83,24 +80,24 @@ if (setuid(getuid()) < 0 && geteuid() != getuid())
     KCmdLineArgs::addCmdLineOptions( options );
 
     KComponentData inst(KCmdLineArgs::aboutData());
-
-    KrashConfig krashconf;
-    CrashInfo crashInfo( &krashconf );
-    
     QApplication *qa =
-        krashconf.safeMode() ?
+        KCmdLineArgs::parsedArgs()->isSet("safer") ?
         new QApplication(KCmdLineArgs::qtArgc(), KCmdLineArgs::qtArgv()) :
         new KApplication;
     qa->setApplicationName(inst.componentName());
 
+    if ( !DrKonqi::instance()->init() )
+        return 1;
+
     int ret;
     {
+        CrashInfo crashInfo;
         DrKonqiDialog w( &crashInfo );
         w.show();
         ret = qa->exec();
     }
 
+    DrKonqi::instance()->cleanup();
     delete qa;
-
     return ret;
 }

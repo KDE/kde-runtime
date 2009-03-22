@@ -26,7 +26,7 @@
 
 UsefulnessMeter::UsefulnessMeter(QWidget * parent) : 
     QWidget(parent),
-    m_state(CrashInfo::NonLoaded),
+    m_state(BacktraceGenerator::NotLoaded),
     m_star1(false),
     m_star2(false),
     m_star3(false)
@@ -90,19 +90,19 @@ void UsefulnessMeter::paintEvent( QPaintEvent * event )
 
     switch( m_state )
     {
-        case CrashInfo::Loaded:
+        case BacktraceGenerator::Loaded:
         {
             if( m_star1 && m_star2 && m_star3 )
                 p.drawPixmap( QPoint(0,1) , m_perfectPixmap );
             break;
         }
-        case CrashInfo::Failed:
-        case CrashInfo::DebuggerFailed:
+        case BacktraceGenerator::Failed:
+        case BacktraceGenerator::FailedToStart:
         {
             p.drawPixmap( QPoint(0,1) , m_errorPixmap );
             break;
         }
-        case CrashInfo::Loading:
+        case BacktraceGenerator::Loading:
         default: 
             break;
     }

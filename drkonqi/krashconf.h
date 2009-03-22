@@ -39,7 +39,7 @@ class KrashConfig : public QObject
   Q_OBJECT
 
 public:
-  KrashConfig();
+  KrashConfig(QObject *parent);
   virtual ~KrashConfig();
 
 public Q_SLOTS:

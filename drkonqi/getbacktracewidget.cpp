@@ -19,6 +19,11 @@
 ******************************************************************/
 
 #include "getbacktracewidget.h"
+#include "usefulnessmeter.h"
+#include "drkonqi.h"
+#include "backtracegenerator.h"
+#include "backtraceparser.h"
+#include "krashconf.h"
 
 #include <QtGui/QLabel>
 #include <QtGui/QHBoxLayout>
@@ -27,22 +32,18 @@
 #include <kpushbutton.h>
 #include <ktextbrowser.h>
 #include <kicon.h>
-#include <kfiledialog.h>
-#include <kmessagebox.h>
-#include <ktemporaryfile.h>
 #include <klocale.h>
 
-#include "crashinfo.h"
-#include "usefulnessmeter.h"
-
-GetBacktraceWidget::GetBacktraceWidget( CrashInfo * info ) : 
+GetBacktraceWidget::GetBacktraceWidget( BacktraceGenerator * generator ) :
     QWidget(),
-    crashInfo(info)
+    m_btGenerator(generator)
 {
     ui.setupUi(this);
-    
-    connect( crashInfo, SIGNAL(backtraceGenerated()) , this, SLOT(backtraceGenerated()) );
-    connect( crashInfo, SIGNAL(backtraceNewData(QString)) , ui.m_backtraceEdit, SLOT(append(QString)) );
+
+    connect( m_btGenerator, SIGNAL(done()) , this, SLOT(backtraceGenerated()) );
+    connect( m_btGenerator, SIGNAL(someError()) , this, SLOT(backtraceGenerated()) );
+    connect( m_btGenerator, SIGNAL(failedToStart()) , this, SLOT(backtraceGenerated()) );
+    connect( m_btGenerator, SIGNAL(newLine(QString)) , this, SLOT(backtraceNewLine(QString)) );
     
     ui.m_extraDetailsLabel->setVisible( false );
     ui.m_reloadBacktraceButton->setGuiItem( KGuiItem( i18nc("button action", "&Reload Crash Information" ),KIcon("view-refresh"), i18nc( "button explanation", "Use this button to reload the crash information (backtrace). This is useful when you have installed the proper debug symbols packages and you want to obtain a better backtrace" ), i18nc( "button explanation", "Use this button to reload the crash information (backtrace). This is useful when you have installed the proper debug symbols packages and you want to obtain a better backtrace" ) )  );
@@ -71,7 +72,7 @@ void GetBacktraceWidget::setAsLoading()
 
     ui.m_statusWidget->setBusy( i18nc("loading information, wait", "Loading crash information ... (this will take some time)" ) );
     m_usefulnessMeter->setUsefulness( BacktraceParser::Useless );
-    m_usefulnessMeter->setState( CrashInfo::Loading );
+    m_usefulnessMeter->setState( BacktraceGenerator::Loading );
     
     ui.m_extraDetailsLabel->setVisible( false );
     ui.m_extraDetailsLabel->setText( "" );
@@ -87,16 +88,16 @@ void GetBacktraceWidget::setAsLoading()
 void GetBacktraceWidget::regenerateBacktrace()
 {
     setAsLoading();
-    crashInfo->generateBacktrace();
+    m_btGenerator->start();
 }
 
 void GetBacktraceWidget::generateBacktrace()
 {
-    if ( crashInfo->getBacktraceState() == CrashInfo::NonLoaded )
+    if ( m_btGenerator->state() == BacktraceGenerator::NotLoaded )
     {
         regenerateBacktrace();
     }
-    else if ( crashInfo->getBacktraceState() == CrashInfo::Loading )
+    else if ( m_btGenerator->state() == BacktraceGenerator::Loading )
     {
         setAsLoading(); //Set in loading state, the widget will catch the backtrace events anyway
     }
@@ -109,14 +110,14 @@ void GetBacktraceWidget::generateBacktrace()
  
 void GetBacktraceWidget::backtraceGenerated()
 {
-    m_usefulnessMeter->setState( crashInfo->getBacktraceState() );
+    m_usefulnessMeter->setState( m_btGenerator->state() );
     
-    if( crashInfo->getBacktraceState() == CrashInfo::Loaded )
+    if( m_btGenerator->state() == BacktraceGenerator::Loaded )
     {
         ui.m_backtraceEdit->setEnabled( true );
-        ui.m_backtraceEdit->setPlainText( crashInfo->getBacktraceOutput() );
-        BacktraceParser * btParser = crashInfo->getBacktraceParser();
-        
+        ui.m_backtraceEdit->setPlainText( m_btGenerator->backtrace() );
+
+        BacktraceParser * btParser = m_btGenerator->parser();
         m_usefulnessMeter->setUsefulness( btParser->backtraceUsefulness() );
 
         QString usefulnessText;
@@ -160,7 +161,7 @@ void GetBacktraceWidget::backtraceGenerated()
         ui.m_copyButton->setEnabled( true );
         ui.m_saveButton->setEnabled( true );
     }
-    else if( crashInfo->getBacktraceState() == CrashInfo::Failed )
+    else if( m_btGenerator->state() == BacktraceGenerator::Failed )
     {
         m_usefulnessMeter->setUsefulness( BacktraceParser::Useless );
         
@@ -172,7 +173,7 @@ void GetBacktraceWidget::backtraceGenerated()
         ui.m_extraDetailsLabel->setText( i18n( "You need to install the debug symbols package for this application<br />Please read <link url='%1'>How to create useful crash reports</link> to learn how to get a useful backtrace.<br />After you install the needed packages you can click the \"Reload Crash Information\" button ", QLatin1String("http://techbase.kde.org/Development/Tutorials/Debugging/How_to_create_useful_crash_reports") ) );
         ui.m_reloadBacktraceButton->setEnabled( true );
     }
-    else if( crashInfo->getBacktraceState() == CrashInfo::DebuggerFailed )
+    else if( m_btGenerator->state() == BacktraceGenerator::FailedToStart )
     {
         m_usefulnessMeter->setUsefulness( BacktraceParser::Useless );
         
@@ -180,11 +181,16 @@ void GetBacktraceWidget::backtraceGenerated()
         
         ui.m_backtraceEdit->setPlainText( i18n("The crash information could not be generated" ));
         ui.m_extraDetailsLabel->setVisible( true );
-        ui.m_extraDetailsLabel->setText( i18n("You need to install the debugger package (<i>%1</i>) and click the \"Reload Crash Information\" button", crashInfo->getDebugger() ) );
+        ui.m_extraDetailsLabel->setText( i18n("You need to install the debugger package (<i>%1</i>) and click the \"Reload Crash Information\" button", DrKonqi::instance()->krashConfig()->debuggerName() ) );
         ui.m_reloadBacktraceButton->setEnabled( true );
     }
     
     emit stateChanged();
+}
+
+void GetBacktraceWidget::backtraceNewLine(const QString & line)
+{
+    ui.m_backtraceEdit->append(line.trimmed());
 }
 
 void GetBacktraceWidget::copyClicked()
@@ -195,56 +201,5 @@ void GetBacktraceWidget::copyClicked()
 
 void GetBacktraceWidget::saveClicked()
 {
-    if ( crashInfo->getCrashConfig()->safeMode() )
-    {
-        KTemporaryFile tf;
-        tf.setPrefix("/tmp/");
-        tf.setSuffix(".kcrash");
-        tf.setAutoRemove(false);
-        
-        if (tf.open())
-        {
-            QTextStream textStream( &tf );
-            textStream << crashInfo->getBacktraceOutput();
-            textStream.flush();
-            KMessageBox::information(this, i18n("Backtrace saved to <filename>%1</filename>.", tf.fileName()));
-        }
-        else
-        {
-            KMessageBox::sorry(this, i18n("Cannot create a file to save the backtrace in"));
-        }
-    }
-    else
-    {
-        QString defname = crashInfo->getCrashConfig()->execName() + '-' + QDate::currentDate().toString("yyyyMMdd") + ".kcrash";
-        if( defname.contains( '/' ))
-            defname = defname.mid( defname.lastIndexOf( '/' ) + 1 );
-        QString filename = KFileDialog::getSaveFileName( defname, QString(), this, i18n("Select Filename"));
-        if (!filename.isEmpty())
-        {
-            QFile f(filename);
-
-            if (f.exists()) {
-                if (KMessageBox::Cancel ==
-                    KMessageBox::warningContinueCancel( 0,
-                        i18n( "A file named <filename>%1</filename> already exists. "
-                                "Are you sure you want to overwrite it?", filename ),
-                        i18n( "Overwrite File?" ),
-                    KGuiItem( i18n( "&Overwrite" ), KIcon("document-save-as"), i18nc( "button explanation", "Use this button to overwrite the current file" ), i18nc( "button explanation", "Use this button to overwrite the current file" ) ) ) )
-                    return;
-            }
-
-            if (f.open(QIODevice::WriteOnly))
-            {
-                QTextStream ts(&f);
-                ts << crashInfo->getBacktraceOutput();
-                f.close();
-            }
-            else
-            {
-                KMessageBox::sorry(this, i18n("Cannot open file <filename>%1</filename> for writing.", filename));
-            }
-        }
-    }
-  
+    DrKonqi::saveReport(m_btGenerator->backtrace(), this);
 }

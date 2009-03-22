@@ -28,22 +28,28 @@
 #ifndef BACKTRACEGENERATOR_H
 #define BACKTRACEGENERATOR_H
 
+#include <KProcess>
+
 class KrashConfig;
 class KTemporaryFile;
-
-#include <KProcess>
+class BacktraceParser;
 
 class BacktraceGenerator : public QObject
 {
   Q_OBJECT
 
 public:
+  enum State { NotLoaded, Loading, Loaded, Failed, FailedToStart };
+
   BacktraceGenerator(const KrashConfig *krashconf, QObject *parent);
   ~BacktraceGenerator();
 
+  State state() const { return m_state; }
+  BacktraceParser *parser() const { return m_parser; }
+  QString backtrace() const { return m_parsedBacktrace; }
+
 public Q_SLOTS:
   bool start();
-  void stop();
 
 Q_SIGNALS:
   void starting();
@@ -58,8 +64,15 @@ private Q_SLOTS:
 
 private:
   const KrashConfig * const m_krashconf;
-  KProcess *m_proc;
-  KTemporaryFile *m_temp;
-  QByteArray m_output;
+  KProcess *        m_proc;
+  KTemporaryFile *  m_temp;
+  QByteArray        m_output;
+  State             m_state;
+  BacktraceParser * m_parser;
+  QString           m_parsedBacktrace;
+
+#ifdef BACKTRACE_PARSER_DEBUG
+  BacktraceParser * m_debugParser;
+#endif
 };
 #endif

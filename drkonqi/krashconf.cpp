@@ -40,7 +40,8 @@
 #include <QHash>
 #include <QtDBus/QtDBus>
 
-KrashConfig :: KrashConfig()
+KrashConfig :: KrashConfig(QObject *parent)
+    : QObject(parent)
 {
   QDBusConnection::sessionBus().registerObject("/krashinfo", this);
   new KrashAdaptor(this);

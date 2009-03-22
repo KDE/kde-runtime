@@ -19,6 +19,9 @@
 ******************************************************************/
 
 #include "drkonqiassistantpages_bugzilla.h"
+#include "drkonqi.h"
+#include "backtraceparser.h"
+#include "backtracegenerator.h"
 
 #include <QtCore/QDate>
 
@@ -560,7 +563,7 @@ void BugzillaDuplicatesPage::performSearch()
     
     m_statusWidget->setBusy( i18n( "Searching for duplicates (from %1 to %2) ...", startDateStr, endDateStr ) );
     
-    m_crashInfo->getBZ()->searchBugs( m_crashInfo->getReport()->shortDescription(), m_crashInfo->getProductName(), "crash", startDateStr, endDateStr , m_crashInfo->getBacktraceParser()->firstValidFunctions().join(" ") );
+    m_crashInfo->getBZ()->searchBugs( m_crashInfo->getReport()->shortDescription(), m_crashInfo->getProductName(), "crash", startDateStr, endDateStr , DrKonqi::instance()->backtraceGenerator()->parser()->firstValidFunctions().join(" ") );
    
     //Test search
     //m_crashInfo->getBZ()->searchBugs( "konqueror crash toggle mode", "konqueror", "crash", startDateStr, endDateStr , "caret" );

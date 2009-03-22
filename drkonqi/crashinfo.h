@@ -20,10 +20,8 @@
 #ifndef CRASHINFO__H
 #define CRASHINFO__H
 
-#include "backtraceparser.h"
-#include "bugzillalib.h"
 #include "krashconf.h"
-#include "backtracegenerator.h"
+#include "bugzillalib.h"
 #include <kdeversion.h>
 
 class CrashInfo : public QObject
@@ -32,23 +30,12 @@ class CrashInfo : public QObject
     
   public:
     
-    //Backtrace generation state enumeration
-    enum BacktraceGenState { DebuggerFailed, NonLoaded, Loading, Loaded, Failed };
-    
-    CrashInfo( KrashConfig* );
+    CrashInfo();
     ~CrashInfo();
-    
-    const KrashConfig * getCrashConfig() { return m_crashConfig; }
+
+    const KrashConfig * getCrashConfig(); //TODO remove me
+
     const QString getCrashTitle();
-    
-    void generateBacktrace();
-    void stopBacktrace();
-    
-    BacktraceParser * getBacktraceParser() { return m_backtraceParser; }
-    const QString getBacktraceOutput() { return m_backtraceOutput; } 
-    BacktraceGenState getBacktraceState() { return m_backtraceState; }
-    
-    void startCustomDebugger(){ m_crashConfig->acceptDebuggingApp(); }
     
     //Information about the user condition
     void setUserCanDetail( bool canDetail ) { m_userCanDetail = canDetail; }
@@ -60,8 +47,6 @@ class CrashInfo : public QObject
     bool getUserGetCompromise() { return m_userGetCompromise; }
     
     //Information about the crashed app and OS
-    QString getApplicationCommand() { return m_crashConfig->execName(); }
-    
     QString getKDEVersion() { return KDE::versionString(); } 
     QString getQtVersion() { return qVersion(); }
     QString getOS();
@@ -69,8 +54,6 @@ class CrashInfo : public QObject
     
     QString getProductName();
     QString getProductVersion();
-    
-    QString getDebugger();
     
     //Information and methods about a possible bug reporting
     bool isKDEBugzilla();
@@ -92,25 +75,8 @@ class CrashInfo : public QObject
     
     void commitBugReport();
     
-  Q_SIGNALS:
-    void backtraceGenerated();
-    void backtraceNewData( QString );
-  
-  private Q_SLOTS:
-    void backtraceGeneratorFinished();
-    void backtraceGeneratorAppend( const QString & );
-    void backtraceGeneratorFailed();
-    void backtraceGeneratorFailedToStart();
-    
   private:
-  
-    KrashConfig *       m_crashConfig;
-    
-    BacktraceGenerator *m_backtraceGenerator;
-    BacktraceParser *   m_backtraceParser;
-    QString             m_backtraceOutput;
-    BacktraceGenState   m_backtraceState;
-    
+
     bool                m_userCanDetail;
     bool                m_userCanReproduce;
     bool                m_userGetCompromise;
@@ -124,10 +90,6 @@ class CrashInfo : public QObject
     QString             m_userDetailText;
     QString             m_userReproduceText;
     QString             m_possibleDuplicate;
-
-#ifdef BACKTRACE_PARSER_DEBUG
-    BacktraceParser *   m_debugParser;
-#endif
 };
 
 #endif

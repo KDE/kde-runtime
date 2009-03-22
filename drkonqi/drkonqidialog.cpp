@@ -18,6 +18,7 @@
 ******************************************************************/
 
 #include "drkonqidialog.h"
+#include "drkonqi.h"
 
 #include <QtGui/QLabel>
 #include <QtGui/QHBoxLayout>
@@ -91,7 +92,7 @@ DrKonqiDialog::DrKonqiDialog( CrashInfo * info, QWidget * parent ) :
     m_introWidget->setStyleSheet( styleSheet );
     
     //Backtrace Widget
-    m_backtraceWidget = new GetBacktraceWidget( m_crashInfo );
+    m_backtraceWidget = new GetBacktraceWidget(DrKonqi::instance()->backtraceGenerator());
     m_backtraceWidget->setMinimumSize( QSize(500, 10) );
 
     //Stacked main widget
@@ -121,10 +122,10 @@ DrKonqiDialog::DrKonqiDialog( CrashInfo * info, QWidget * parent ) :
     setButtonMenu( KDialog::User2, m_debugMenu );
     
     m_defaultDebugAction = new QAction( KIcon("document-edit"), "Debug in default application", m_debugMenu );
-    connect( m_defaultDebugAction, SIGNAL(triggered()), this, SLOT(startDefaultDebugger()) );
+    connect( m_defaultDebugAction, SIGNAL(triggered()), DrKonqi::instance(), SLOT(startDefaultExternalDebugger()) );
     
     m_customDebugAction = new QAction( KIcon("document-edit"), "Debug in custom application", m_debugMenu );
-    connect( m_customDebugAction, SIGNAL(triggered()), this, SLOT(startCustomDebugger()) );
+    connect( m_customDebugAction, SIGNAL(triggered()), DrKonqi::instance(), SLOT(startCustomExternalDebugger()) );
     m_customDebugAction->setEnabled( false );
     m_customDebugAction->setVisible( false );
     
@@ -179,28 +180,10 @@ void DrKonqiDialog::toggleBacktrace()
     }
 }
 
-void DrKonqiDialog::startDefaultDebugger()
-{
-    QString str = m_crashInfo->getCrashConfig()->debuggerCommand();
-    m_crashInfo->getCrashConfig()->expandString(str, KrashConfig::ExpansionUsageShell);
-
-    KProcess proc;
-    proc.setShellCommand(str);
-    proc.startDetached();
-}
-
-void DrKonqiDialog::startCustomDebugger()
-{
-    m_crashInfo->startCustomDebugger();
-}
-
 void DrKonqiDialog::restartApplication()
 {
     enableButton( KDialog::User3, false );
-    
-    KProcess proc;
-    proc.setProgram( m_crashInfo->getApplicationCommand() );
-    proc.startDetached();
+    DrKonqi::instance()->restartCrashedApplication();
 }
 
 void DrKonqiDialog::slotNewDebuggingApp( const QString & app )

@@ -32,6 +32,8 @@ set(drkonqi_SRCS
    getbacktracewidget.cpp
    backtracegenerator.cpp 
    backtraceparser.cpp
+   drkonqi.cpp
+   detachedprocessmonitor.cpp
 )
 
 kde4_add_ui_files(drkonqi_SRCS getbacktracewidget.ui)

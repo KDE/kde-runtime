@@ -19,6 +19,9 @@
 ******************************************************************/
 
 #include "drkonqiassistantpages_base.h"
+#include "drkonqi.h"
+#include "backtraceparser.h"
+#include "backtracegenerator.h"
 
 #include <QtGui/QLabel>
 #include <QtGui/QVBoxLayout>
@@ -30,10 +33,6 @@
 #include <ktextbrowser.h>
 #include <ktoolinvocation.h>
 #include <kicon.h>
-#include <kfiledialog.h>
-#include <ksavefile.h>
-#include <ktemporaryfile.h>
-#include <kmessagebox.h>
 #include <klocale.h>
 
 //BEGIN IntroductionPage
@@ -60,7 +59,7 @@ CrashInformationPage::CrashInformationPage( CrashInfo * crashInfo)
     : DrKonqiAssistantPage(),
     m_crashInfo( crashInfo )
 {
-    m_backtraceWidget = new GetBacktraceWidget( m_crashInfo );
+    m_backtraceWidget = new GetBacktraceWidget(DrKonqi::instance()->backtraceGenerator());
     
     //connect backtraceWidget signals
     connect( m_backtraceWidget, SIGNAL(stateChanged()) , this, SLOT(emitCompleteChanged()) );
@@ -85,8 +84,8 @@ void CrashInformationPage::aboutToShow()
 
 bool CrashInformationPage::isComplete()
 {
-    return ( m_crashInfo->getBacktraceState() != CrashInfo::NonLoaded &&  
-        m_crashInfo->getBacktraceState() != CrashInfo::Loading );
+    return ( DrKonqi::instance()->backtraceGenerator()->state() != BacktraceGenerator::NotLoaded &&
+        DrKonqi::instance()->backtraceGenerator()->state() != BacktraceGenerator::Loading );
 }
 
 //END CrashInformationPage
@@ -203,57 +202,7 @@ ConclusionPage::ConclusionPage(CrashInfo * info)
 
 void ConclusionPage::saveReport()
 {
-    if ( m_crashInfo->getCrashConfig()->safeMode() )
-    {
-        KTemporaryFile tf;
-        tf.setPrefix("/tmp/");
-        tf.setSuffix(".report");
-        tf.setAutoRemove(false);
-        
-        if (tf.open())
-        {
-            QTextStream textStream( &tf );
-            textStream << m_reportEdit->toPlainText();
-            textStream.flush();
-            KMessageBox::information(this, i18n("Report saved to <filename>%1</filename>.", tf.fileName()));
-        }
-        else
-        {
-            KMessageBox::sorry(this, i18n("Cannot create a file to save the report in"));
-        }
-    }
-    else
-    {
-        QString defname = m_crashInfo->getCrashConfig()->execName() + '-' + QDate::currentDate().toString("yyyyMMdd") + ".report";
-        if( defname.contains( '/' ))
-            defname = defname.mid( defname.lastIndexOf( '/' ) + 1 );
-        QString filename = KFileDialog::getSaveFileName( defname, QString(), this, i18n("Select Filename"));
-        if (!filename.isEmpty())
-        {
-            QFile f(filename);
-
-            if (f.exists()) {
-                if (KMessageBox::Cancel ==
-                    KMessageBox::warningContinueCancel( 0,
-                        i18n( "A file named <filename>%1</filename> already exists. "
-                                "Are you sure you want to overwrite it?", filename ),
-                        i18n( "Overwrite File?" ),
-                    KGuiItem( i18n( "&Overwrite" ), KIcon("document-save-as"), i18nc( "button explanation", "Use this button to overwrite the current file" ), i18nc( "button explanation", "Use this button to overwrite the current file" ) ) ) )
-                    return;
-            }
-
-            if (f.open(QIODevice::WriteOnly))
-            {
-                QTextStream ts(&f);
-                ts << m_reportEdit->toPlainText();
-                f.close();
-            }
-            else
-            {
-                KMessageBox::sorry(this, i18n("Cannot open file <filename>%1</filename> for writing.", filename));
-            }
-        }
-    }
+    DrKonqi::saveReport(m_reportEdit->toPlainText(), this);
 }
 
 void ConclusionPage::reportButtonClicked()
@@ -280,7 +229,7 @@ void ConclusionPage::aboutToShow()
     
     QString report;
     
-    BacktraceParser::Usefulness use = m_crashInfo->getBacktraceParser()->backtraceUsefulness();
+    BacktraceParser::Usefulness use = DrKonqi::instance()->backtraceGenerator()->parser()->backtraceUsefulness();
     bool canDetails = m_crashInfo->getUserCanDetail();
     bool canReproduce = m_crashInfo->getUserCanReproduce();
     bool getCompromise = m_crashInfo->getUserGetCompromise();

@@ -27,6 +27,8 @@
  *****************************************************************/
 
 #include "backtracegenerator.h"
+#include "backtraceparser.h"
+#include "krashconf.h"
 
 #include <KDebug>
 #include <KStandardDirs>
@@ -35,33 +37,46 @@
 #include <KTemporaryFile>
 #include <KShell>
 
-#include <signal.h>
-
-#include "krashconf.h"
-
 BacktraceGenerator::BacktraceGenerator(const KrashConfig *krashconf, QObject *parent)
   : QObject(parent),
-    m_krashconf(krashconf), m_proc(NULL), m_temp(NULL)
+    m_krashconf(krashconf), m_proc(NULL), m_temp(NULL), m_state(NotLoaded)
 {
-  //stop the process to avoid high cpu usage by other threads (bug 175362)
-  ::kill(m_krashconf->pid(), SIGSTOP);
+    m_parser = BacktraceParser::newParser( krashconf->debuggerName(), this );
+    m_parser->connectToGenerator(this);
+
+#ifdef BACKTRACE_PARSER_DEBUG
+    m_debugParser = BacktraceParser::newParser( QString(), this ); //uses the null parser
+    m_debugParser->connectToGenerator(this);
+#endif
 }
 
 BacktraceGenerator::~BacktraceGenerator()
 {
-  stop();
-
-  //let the app continue, so that it can kill itself when drkonqi exits.
-  ::kill(m_krashconf->pid(), SIGCONT);
+    if (m_proc && m_proc->state() == QProcess::Running)
+    {
+        kWarning() << "Killing running debugger instance";
+        m_proc->terminate();
+        if ( !m_proc->waitForFinished(10000) ) {
+            m_proc->kill();
+            m_proc->waitForFinished();
+        }
+    }
 }
 
 bool BacktraceGenerator::start()
 {
   Q_ASSERT(m_proc == NULL && m_temp == NULL); //they should always be null before entering this function.
 
+  m_parsedBacktrace.clear();
+  m_state = Loading;
+
   QString exec = m_krashconf->tryExec();
   if ( !exec.isEmpty() && KStandardDirs::findExe(exec).isEmpty() )
+  {
+    m_state = FailedToStart;
+    emit failedToStart();
     return false;
+  }
 
   emit starting();
 
@@ -86,9 +101,6 @@ bool BacktraceGenerator::start()
   connect(m_proc, SIGNAL(finished(int, QProcess::ExitStatus)),
           SLOT(slotProcessExited(int, QProcess::ExitStatus)));
 
-  //continue running the process so that gdb can inspect it.
-  ::kill(m_krashconf->pid(), SIGCONT);
-
   m_proc->start();
   if (!m_proc->waitForStarted())
   {
@@ -98,33 +110,12 @@ bool BacktraceGenerator::start()
       m_proc = NULL;
       m_temp = NULL;
 
-      //stop the process again, as gdb is not running
-      ::kill(m_krashconf->pid(), SIGSTOP);
-
-      emit someError();
+      m_state = FailedToStart;
+      emit failedToStart();
       return false;
   }
+
   return true;
-}
-
-void BacktraceGenerator::stop()
-{
-    if (m_proc && m_proc->state() == QProcess::Running)
-    {
-        m_proc->kill();
-        m_proc->waitForFinished();
-        ::kill(m_krashconf->pid(), SIGSTOP);
-    }
-
-    if ( m_proc ) {
-        m_proc->deleteLater();
-        m_proc = NULL;
-    }
-
-    if ( m_temp ) {
-        m_temp->deleteLater();
-        m_temp = NULL;
-    }
 }
 
 void BacktraceGenerator::slotReadInput()
@@ -144,11 +135,6 @@ void BacktraceGenerator::slotReadInput()
 
 void BacktraceGenerator::slotProcessExited(int exitCode, QProcess::ExitStatus exitStatus)
 {
-    //stop the process again.
-    ::kill(m_krashconf->pid(), SIGSTOP);
-
-    QProcess::ProcessError error = m_proc->error();
-    
     //these are useless now
     m_proc->deleteLater();
     m_temp->deleteLater();
@@ -160,17 +146,22 @@ void BacktraceGenerator::slotProcessExited(int exitCode, QProcess::ExitStatus ex
 
     if (exitStatus != QProcess::NormalExit || exitCode != 0)
     {
-        if( error == QProcess::FailedToStart )
-        {
-            emit failedToStart();
-        }
-        else
-        {
-            emit someError();
-        }
-        
+        m_state = Failed;
+        emit someError();
         return;
     }
+
+    QString tmp = i18n( "Application: %progname (%execname), signal %signame" ) + "\n\n";
+    m_krashconf->expandString( tmp, KrashConfig::ExpansionUsagePlainText );
+
+    m_parsedBacktrace = tmp + m_parser->parsedBacktrace();
+    m_state = Loaded;
+
+#ifdef BACKTRACE_PARSER_DEBUG
+    //append the raw unparsed backtrace
+    m_parsedBacktrace += "\n------------ Unparsed Backtrace ------------\n";
+    m_parsedBacktrace += m_debugParser->parsedBacktrace(); //it's not really parsed, it's from the null parser.
+#endif
 
     emit done();
 }

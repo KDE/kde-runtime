@@ -18,32 +18,21 @@
 ******************************************************************/
 
 #include "crashinfo.h"
+#include "drkonqi.h"
+#include "krashconf.h"
+#include "backtracegenerator.h"
+#include "backtraceparser.h"
 
 #include <QtDebug>
 #include <QtCore/QProcess>
 
-CrashInfo::CrashInfo( KrashConfig * cfg )
+CrashInfo::CrashInfo()
 {
-    m_crashConfig = cfg;
-    m_backtraceState = NonLoaded;
-    m_backtraceParser = BacktraceParser::newParser( cfg->debuggerName(), this );
-    m_backtraceGenerator = new BacktraceGenerator( cfg, this );
     m_userCanDetail = false;
     m_userCanReproduce = false;
     m_userGetCompromise = false;
     m_bugzilla = new BugzillaManager();
     m_report = new BugReport();
-
-#ifdef BACKTRACE_PARSER_DEBUG
-    m_debugParser = BacktraceParser::newParser( QString(), this ); //uses the null parser
-    m_debugParser->connectToGenerator(m_backtraceGenerator);
-#endif
-
-    m_backtraceParser->connectToGenerator(m_backtraceGenerator);
-    connect(m_backtraceGenerator, SIGNAL(done()), this, SLOT(backtraceGeneratorFinished()));
-    connect(m_backtraceGenerator, SIGNAL(someError()), this, SLOT(backtraceGeneratorFailed()));
-    connect(m_backtraceGenerator, SIGNAL(failedToStart()), this, SLOT(backtraceGeneratorFailedToStart()) );
-    connect(m_backtraceGenerator, SIGNAL(newLine(QString)), this, SLOT(backtraceGeneratorAppend(QString)));
 }
 
 CrashInfo::~CrashInfo()
@@ -52,73 +41,21 @@ CrashInfo::~CrashInfo()
     delete m_report;
 }
 
+const KrashConfig * CrashInfo::getCrashConfig()
+{
+    return DrKonqi::instance()->krashConfig();
+}
+
 const QString CrashInfo::getCrashTitle()
 {
-    QString title = m_crashConfig->errorDescriptionText();
-    m_crashConfig->expandString( title, KrashConfig::ExpansionUsageRichText );
+    QString title = DrKonqi::instance()->krashConfig()->errorDescriptionText();
+    DrKonqi::instance()->krashConfig()->expandString( title, KrashConfig::ExpansionUsageRichText );
     return title;
-}
-
-void CrashInfo::generateBacktrace()
-{
-    m_backtraceOutput.clear();
-    m_backtraceState = Loading;
-    bool result = m_backtraceGenerator->start();
-    if (!result) //Debugger not found or couldn't be launched
-    {
-        m_backtraceState = DebuggerFailed;
-        emit backtraceGenerated();
-    }
-}
-
-void CrashInfo::stopBacktrace()
-{
-    //Don't remove already (completely) loaded backtrace
-    if( m_backtraceState != Loaded )
-    {
-        m_backtraceGenerator->stop();
-        m_backtraceOutput.clear();
-        m_backtraceState = NonLoaded;   
-    }
-}
-
-void CrashInfo::backtraceGeneratorAppend( const QString & data )
-{
-    emit backtraceNewData( data.trimmed() );
-}
-
-void CrashInfo::backtraceGeneratorFinished()
-{
-    QString tmp = i18n( "Application: %progname (%execname), signal %signame" ) + "\n\n";
-    m_crashConfig->expandString( tmp, KrashConfig::ExpansionUsagePlainText );
-    
-    m_backtraceOutput = tmp + m_backtraceParser->parsedBacktrace();
-    m_backtraceState = Loaded;
-
-#ifdef BACKTRACE_PARSER_DEBUG
-    //append the raw unparsed backtrace
-    m_backtraceOutput += "\n------------ Unparsed Backtrace ------------\n";
-    m_backtraceOutput += m_debugParser->parsedBacktrace(); //it's not really parsed, it's from the null parser.
-#endif
-
-    emit backtraceGenerated();
-}
-
-void CrashInfo::backtraceGeneratorFailed()
-{
-    m_backtraceState = Failed;
-    emit backtraceGenerated();
-}
-
-void CrashInfo::backtraceGeneratorFailedToStart()
-{
-    m_backtraceState = DebuggerFailed;
-    emit backtraceGenerated();
 }
 
 QString CrashInfo::getReportLink()
 {
-    return m_crashConfig->aboutData()->bugAddress();
+    return DrKonqi::instance()->krashConfig()->aboutData()->bugAddress();
 }
 
 bool CrashInfo::isKDEBugzilla()
@@ -134,12 +71,12 @@ bool CrashInfo::isReportMail()
 
 QString CrashInfo::getProductName()
 {
-    return m_crashConfig->aboutData()->productName();
+    return DrKonqi::instance()->krashConfig()->aboutData()->productName();
 }
 
 QString CrashInfo::getProductVersion()
 {
-    return m_crashConfig->aboutData()->version();
+    return DrKonqi::instance()->krashConfig()->aboutData()->version();
 }
 
 QString CrashInfo::getOS()
@@ -187,11 +124,6 @@ QString CrashInfo::getLSBRelease()
         }
     }
     return m_LSBRelease;
-}
-
-QString CrashInfo::getDebugger()
-{
-    return m_crashConfig->tryExec();
 }
 
 QString CrashInfo::generateReportTemplate( bool bugzilla )
@@ -247,9 +179,9 @@ QString CrashInfo::generateReportTemplate( bool bugzilla )
         
     //Backtrace
     report.append( lineBreak );
-    if( m_backtraceParser->backtraceUsefulness() != BacktraceParser::Useless )
+    if( DrKonqi::instance()->backtraceGenerator()->parser()->backtraceUsefulness() != BacktraceParser::Useless )
     {
-        QString formattedBacktrace = m_backtraceOutput;
+        QString formattedBacktrace = DrKonqi::instance()->backtraceGenerator()->backtrace();
         if (!bugzilla)
             formattedBacktrace.replace('\n', "<br />");
         formattedBacktrace = formattedBacktrace.trimmed();

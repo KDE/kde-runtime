@@ -25,18 +25,18 @@
 
 #include "ui_getbacktracewidget.h"
 
-class CrashInfo;
 class KTextBrowser;
 class QLabel;
 class KPushButton;
 class UsefulnessMeter;
+class BacktraceGenerator;
 
 class GetBacktraceWidget: public QWidget
 {
     Q_OBJECT
   
     public:
-        GetBacktraceWidget( CrashInfo* );
+        GetBacktraceWidget( BacktraceGenerator * );
         
         void generateBacktrace();
 
@@ -44,12 +44,13 @@ class GetBacktraceWidget: public QWidget
         void stateChanged();
         
     private:
-        CrashInfo * crashInfo;
+        BacktraceGenerator * m_btGenerator;
         Ui::Form    ui;
         UsefulnessMeter *   m_usefulnessMeter;
         
     private Q_SLOTS:
         void backtraceGenerated();
+        void backtraceNewLine(const QString &);
         
         void setAsLoading();
         void regenerateBacktrace();
