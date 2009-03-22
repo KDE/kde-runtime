@@ -19,6 +19,10 @@
 
 #include "drkonqidialog.h"
 #include "drkonqi.h"
+#include "getbacktracewidget.h"
+#include "drkonqibugreport.h"
+#include "aboutbugreportingdialog.h"
+#include "krashconf.h"
 
 #include <QtGui/QLabel>
 #include <QtGui/QHBoxLayout>
@@ -32,22 +36,16 @@
 #include <kstandarddirs.h>
 #include <klocale.h>
 
-#include "crashinfo.h"
-
-#include "getbacktracewidget.h"
-#include "drkonqibugreport.h"
-#include "aboutbugreportingdialog.h"
-
-DrKonqiDialog::DrKonqiDialog( CrashInfo * info, QWidget * parent ) : 
+DrKonqiDialog::DrKonqiDialog( QWidget * parent ) :
     KDialog(parent), 
     m_aboutBugReportingDialog(0),
-    m_backtraceWidget(0),
-    m_crashInfo(info)
+    m_backtraceWidget(0)
 {
-    connect( m_crashInfo->getCrashConfig(), SIGNAL(newDebuggingApplication(QString)), SLOT(slotNewDebuggingApp(QString)));
+    KrashConfig * krashConfig = DrKonqi::instance()->krashConfig();
+    //connect( krashConfig, SIGNAL(newDebuggingApplication(QString)), SLOT(slotNewDebuggingApp(QString))); //FIXME
     
     //Setting dialog title and icon
-    setCaption( DrKonqi::instance()->krashConfig()->programName() );
+    setCaption( krashConfig->programName() );
     setWindowIcon( KIcon("tools-report-bug") );
 
     //Main widget components
@@ -124,7 +122,7 @@ DrKonqiDialog::DrKonqiDialog( CrashInfo * info, QWidget * parent ) :
     
     //Default debugger button and menu (only for developer mode)
     setButtonGuiItem( KDialog::User2, KGuiItem( i18nc("Button action", "Debug") , KIcon("document-edit"), i18nc("help text", "Starts a program to debug the crashed application" ), i18nc("help text", "Starts a program to debug the crashed application" ) ) );
-    showButton( KDialog::User2, DrKonqi::instance()->krashConfig()->showDebugger() );
+    showButton( KDialog::User2, krashConfig->showDebugger() );
     
     m_debugMenu = new QMenu();
     setButtonMenu( KDialog::User2, m_debugMenu );
@@ -155,7 +153,7 @@ DrKonqiDialog::DrKonqiDialog( CrashInfo * info, QWidget * parent ) :
 
 void DrKonqiDialog::reportBugAssistant()
 {
-    DrKonqiBugReport * m_bugReportAssistant = new DrKonqiBugReport( m_crashInfo );
+    DrKonqiBugReport * m_bugReportAssistant = new DrKonqiBugReport();
     hide();
     m_bugReportAssistant->show();
 }

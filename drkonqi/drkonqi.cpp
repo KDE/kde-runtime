@@ -188,7 +188,7 @@ void DrKonqi::saveReport(const QString & reportText, QWidget *parent)
     }
     else
     {
-        QString defname = krashConfig->execName() + '-' + QDate::currentDate().toString("yyyyMMdd") + ".kcrash";
+        QString defname = krashConfig->appName() + '-' + QDate::currentDate().toString("yyyyMMdd") + ".kcrash";
         if( defname.contains( '/' ))
             defname = defname.mid( defname.lastIndexOf( '/' ) + 1 );
         QString filename = KFileDialog::getSaveFileName( defname, QString(), parent, i18n("Select Filename"));
@@ -222,7 +222,7 @@ void DrKonqi::saveReport(const QString & reportText, QWidget *parent)
 
 void DrKonqi::restartCrashedApplication()
 {
-    QString executable = KStandardDirs::findExe( d->m_krashConfig->execName() );
+    QString executable = KStandardDirs::findExe( d->m_krashConfig->executableName() );
     kDebug() << "Restarting application" << executable;
 
     //start the application via kdeinit, as it needs to have a pristine environment and
@@ -234,7 +234,7 @@ void DrKonqi::startDefaultExternalDebugger()
 {
     Q_ASSERT( d->m_state != DebuggerRunning );
 
-    QString str = d->m_krashConfig->debuggerCommand();
+    QString str = d->m_krashConfig->externalDebuggerCommand();
     d->m_krashConfig->expandString(str, KrashConfig::ExpansionUsageShell);
 
     KProcess proc;

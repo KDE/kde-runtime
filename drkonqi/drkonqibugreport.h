@@ -22,46 +22,20 @@
 
 #include <kassistantdialog.h>
 
-#include "crashinfo.h"
-
-class QWidget;
-
 class DrKonqiAssistantPage;
-class IntroductionPage;
-class CrashInformationPage;
-class BugAwarenessPage;
-class ConclusionPage;
-class BugzillaLoginPage;
-class BugzillaKeywordsPage;
-class BugzillaDuplicatesPage;
-class BugzillaInformationPage;
-class BugzillaCommitPage;
-
 class AboutBugReportingDialog;
+class ReportInfo;
 
 class DrKonqiBugReport: public KAssistantDialog
 {
     Q_OBJECT
 
     public:
-        explicit DrKonqiBugReport( CrashInfo *, QWidget * parent = 0);
+        explicit DrKonqiBugReport( QWidget * parent = 0);
         ~DrKonqiBugReport();
-        
-    private:
-        
-        //Page widgets
-        IntroductionPage *          m_intro;
-        CrashInformationPage *      m_backtrace;
-        BugAwarenessPage *          m_awareness;
-        ConclusionPage *            m_conclusions;
-        BugzillaLoginPage *         m_bugzillaLogin;
-        BugzillaKeywordsPage *      m_bugzillaKeywords;
-        BugzillaDuplicatesPage *    m_bugzillaDuplicates;
-        BugzillaInformationPage *   m_bugzillaInformation;
-        BugzillaCommitPage *        m_bugzillaCommit;
-        
-        CrashInfo *                 m_crashInfo;
-        
+
+        ReportInfo *reportInfo() const { return m_reportInfo; }
+
     private Q_SLOTS:
         void currentPageChanged_slot(KPageWidgetItem *, KPageWidgetItem *);  
         
@@ -77,7 +51,9 @@ class DrKonqiBugReport: public KAssistantDialog
         
     private:
         void connectSignals( DrKonqiAssistantPage * );
+
         AboutBugReportingDialog *   m_aboutBugReportingDialog;
+        ReportInfo *                m_reportInfo;
 };
 
 #endif

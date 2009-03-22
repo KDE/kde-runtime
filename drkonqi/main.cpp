@@ -37,7 +37,6 @@
 #include <kdefakes.h>
 
 #include "drkonqi.h"
-#include "crashinfo.h"
 #include "drkonqidialog.h"
 
 static const char version[] = "1.9";
@@ -91,8 +90,7 @@ if (setuid(getuid()) < 0 && geteuid() != getuid())
 
     int ret;
     {
-        CrashInfo crashInfo;
-        DrKonqiDialog w( &crashInfo );
+        DrKonqiDialog w;
         w.show();
         ret = qa->exec();
     }

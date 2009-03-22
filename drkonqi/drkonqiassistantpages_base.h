@@ -24,7 +24,7 @@
 #include <QtCore/QFlags>
 
 #include "getbacktracewidget.h"
-#include "crashinfo.h"
+#include "drkonqibugreport.h"
 
 class KPushButton;
 class QLabel;
@@ -37,7 +37,8 @@ class DrKonqiAssistantPage: public QWidget
     Q_OBJECT
     
     public:
-        DrKonqiAssistantPage() {}
+        DrKonqiAssistantPage( DrKonqiBugReport * parent ) :
+            QWidget(parent), m_assistant(parent) {}
 
         //aboutToShow may load the widget data if empty
         virtual void aboutToShow() {}
@@ -45,7 +46,9 @@ class DrKonqiAssistantPage: public QWidget
         virtual void aboutToHide() {}
         
         virtual bool isComplete() { return true; }
-        
+
+        ReportInfo * reportInfo() const { return m_assistant->reportInfo(); }
+
         virtual bool showNextPage() { return true; }
 
     public Q_SLOTS:
@@ -56,6 +59,9 @@ class DrKonqiAssistantPage: public QWidget
         
     Q_SIGNALS:
         void completeChanged( DrKonqiAssistantPage*, bool );
+
+    private:
+        DrKonqiBugReport * const m_assistant;
 };
 
 //Introduction assistant page --------------
@@ -64,7 +70,7 @@ class IntroductionPage: public DrKonqiAssistantPage
     Q_OBJECT
     
     public:
-        IntroductionPage();
+        IntroductionPage( DrKonqiBugReport * );
 };
 
 //Backtrace Page ---------------------------
@@ -74,7 +80,7 @@ class CrashInformationPage: public DrKonqiAssistantPage
     Q_OBJECT
     
     public:
-        CrashInformationPage();
+        CrashInformationPage( DrKonqiBugReport * );
         
         void aboutToShow(); 
         bool isComplete();
@@ -89,7 +95,7 @@ class BugAwarenessPage: public DrKonqiAssistantPage
     Q_OBJECT
     
     public:
-        BugAwarenessPage(CrashInfo*);
+        BugAwarenessPage( DrKonqiBugReport * );
         
         void aboutToHide();
        
@@ -97,8 +103,6 @@ class BugAwarenessPage: public DrKonqiAssistantPage
         QCheckBox * m_canDetailCheckBox;
         QCheckBox * m_willingToHelpCheckBox;
         //QCheckBox * m_canReproduceCheckBox;
-        
-        CrashInfo * m_crashInfo;
 };
 
 //Conclusions/Result page
@@ -107,7 +111,7 @@ class ConclusionPage : public DrKonqiAssistantPage
     Q_OBJECT
     
     public:
-        ConclusionPage( CrashInfo* );
+        ConclusionPage( DrKonqiBugReport * );
         
         void aboutToShow();
         
@@ -124,8 +128,6 @@ class ConclusionPage : public DrKonqiAssistantPage
         KPushButton *   m_reportButton;
         KPushButton *   m_saveReportButton;
 
-        CrashInfo *     m_crashInfo;
-        
         bool isBKO;
         bool needToReport;
         

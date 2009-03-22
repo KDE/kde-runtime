@@ -20,10 +20,10 @@
 #ifndef DRKONQIASSISTANTPAGESBUGZILLA__H
 #define DRKONQIASSISTANTPAGESBUGZILLA__H
 
-#include "crashinfo.h"
 #include <kwallet.h>
 
 #include "drkonqiassistantpages_base.h"
+#include "bugzillalib.h"
 
 class QFormLayout;
 class KLineEdit;
@@ -44,7 +44,7 @@ class BugzillaLoginPage: public DrKonqiAssistantPage
     Q_OBJECT
     
     public: 
-        BugzillaLoginPage(CrashInfo*);
+        BugzillaLoginPage( DrKonqiBugReport * );
         ~BugzillaLoginPage();
         
         void aboutToShow();
@@ -69,7 +69,6 @@ class BugzillaLoginPage: public DrKonqiAssistantPage
         StatusWidget *  m_statusWidget;
         
         KWallet::Wallet *   m_wallet;
-        CrashInfo * m_crashInfo;
 };
 
 
@@ -78,7 +77,7 @@ class BugzillaKeywordsPage : public DrKonqiAssistantPage
     Q_OBJECT
     
     public:
-        BugzillaKeywordsPage( CrashInfo* );
+        BugzillaKeywordsPage( DrKonqiBugReport * );
         
         void aboutToShow();
         void aboutToHide();
@@ -90,7 +89,6 @@ class BugzillaKeywordsPage : public DrKonqiAssistantPage
         
     private:
         KLineEdit * m_keywordsEdit;
-        CrashInfo * m_crashInfo;
         bool    m_keywordsOK;
 };
         
@@ -100,7 +98,7 @@ class BugzillaDuplicatesPage : public DrKonqiAssistantPage
     Q_OBJECT
     
     public:
-        BugzillaDuplicatesPage(CrashInfo*);
+        BugzillaDuplicatesPage( DrKonqiBugReport * );
         ~BugzillaDuplicatesPage();
         
         void aboutToShow();
@@ -146,8 +144,6 @@ class BugzillaDuplicatesPage : public DrKonqiAssistantPage
         KPushButton *   m_mineMayBeDuplicateButton;
         
         int             m_currentBugNumber;
-        
-        CrashInfo *     m_crashInfo;
 };
 
 class BugzillaInformationPage : public DrKonqiAssistantPage
@@ -155,7 +151,7 @@ class BugzillaInformationPage : public DrKonqiAssistantPage
     Q_OBJECT
     
     public:
-        BugzillaInformationPage( CrashInfo * );
+        BugzillaInformationPage( DrKonqiBugReport * );
         
         void aboutToShow();
         void aboutToHide();
@@ -174,8 +170,6 @@ class BugzillaInformationPage : public DrKonqiAssistantPage
         QLabel *        m_reproduceLabel;
         KTextEdit *     m_reproduceEdit;
         
-        CrashInfo * m_crashInfo;
-        
         bool m_textsOK;
 };
 
@@ -184,7 +178,7 @@ class BugzillaCommitPage : public DrKonqiAssistantPage
     Q_OBJECT
     
     public:
-        BugzillaCommitPage( CrashInfo * );
+        BugzillaCommitPage( DrKonqiBugReport * );
         
         void aboutToShow();
         
@@ -197,7 +191,6 @@ class BugzillaCommitPage : public DrKonqiAssistantPage
     private:
         KPushButton *   m_retryButton;
         StatusWidget * m_statusWidget;
-        CrashInfo *  m_crashInfo;
         
     Q_SIGNALS:
     

@@ -85,7 +85,7 @@ bool BacktraceGenerator::start()
 
   m_temp = new KTemporaryFile;
   m_temp->open();
-  m_temp->write(m_krashconf->backtraceCommand().toLatin1());
+  m_temp->write(m_krashconf->backtraceBatchCommands().toLatin1());
   m_temp->write("\n", 1);
   m_temp->flush();
 

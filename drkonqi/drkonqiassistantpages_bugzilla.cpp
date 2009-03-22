@@ -20,10 +20,14 @@
 
 #include "drkonqiassistantpages_bugzilla.h"
 #include "drkonqi.h"
+#include "reportinfo.h"
+#include "krashconf.h"
 #include "backtraceparser.h"
 #include "backtracegenerator.h"
+#include "statuswidget.h"
 
 #include <QtCore/QDate>
+#include <QtCore/QTimer>
 
 #include <QtGui/QApplication>
 #include <QtGui/QLabel>
@@ -32,10 +36,8 @@
 #include <QtGui/QFormLayout>
 #include <QtGui/QCheckBox>
 #include <QtGui/QGroupBox>
-
 #include <QtGui/QTreeWidget>
 #include <QtGui/QHeaderView>
-
 #include <QtGui/QStackedWidget>
 
 #include <kpushbutton.h>
@@ -46,17 +48,14 @@
 #include <klineedit.h>
 #include <kcombobox.h>
 
-#include "statuswidget.h"
-
 //BEGIN BugzillaLoginPage
 
-BugzillaLoginPage::BugzillaLoginPage( CrashInfo * info) : 
-    DrKonqiAssistantPage(),
-    m_wallet(0),
-    m_crashInfo(info)
+BugzillaLoginPage::BugzillaLoginPage( DrKonqiBugReport * parent ) : 
+    DrKonqiAssistantPage(parent),
+    m_wallet(0)
 {
-    connect( m_crashInfo->getBZ(), SIGNAL(loginFinished(bool)), this, SLOT(loginFinished(bool)));
-    connect( m_crashInfo->getBZ(), SIGNAL(loginError(QString)), this, SLOT(loginError(QString)));
+    connect( reportInfo()->getBZ(), SIGNAL(loginFinished(bool)), this, SLOT(loginFinished(bool)));
+    connect( reportInfo()->getBZ(), SIGNAL(loginError(QString)), this, SLOT(loginError(QString)));
     
     m_statusWidget = new StatusWidget();
     m_statusWidget->setIdle( i18n( "You need to log-in in your bugs.kde.org account in order to proceed" ) );
@@ -96,7 +95,7 @@ BugzillaLoginPage::BugzillaLoginPage( CrashInfo * info) :
 
 bool BugzillaLoginPage::isComplete()
 {
-    return m_crashInfo->getBZ()->getLogged();
+    return reportInfo()->getBZ()->getLogged();
 }
 
 /*
@@ -113,7 +112,7 @@ void BugzillaLoginPage::loginError( QString err )
 
 void BugzillaLoginPage::aboutToShow()
 {
-    if( m_crashInfo->getBZ()->getLogged() )
+    if( reportInfo()->getBZ()->getLogged() )
     {
         m_loginButton->setEnabled( false );
     
@@ -128,8 +127,7 @@ void BugzillaLoginPage::aboutToShow()
         m_form->labelForField(m_userEdit)->setVisible( false );
         m_form->labelForField(m_passwordEdit)->setVisible( false );
         
-        m_statusWidget->setIdle( i18nc( "the user is logged at the bugtracker site as USERNAME", "Logged in at KDE Bugtracker (bugs.kde.org) as: %1", m_crashInfo->getBZ()->getUsername() ) );
-        
+        m_statusWidget->setIdle( i18nc( "the user is logged at the bugtracker site as USERNAME", "Logged in at KDE Bugtracker (bugs.kde.org) as: %1", reportInfo()->getBZ()->getUsername() ) );
     }
     else
     {
@@ -196,8 +194,8 @@ void BugzillaLoginPage::loginClicked()
 
         m_statusWidget->setBusy( i18n( "Performing bugs.kde.org login as %1 ...", m_userEdit->text() ) );
         
-        m_crashInfo->getBZ()->setLoginData( m_userEdit->text(), m_passwordEdit->text() );
-        m_crashInfo->getBZ()->tryLogin();    
+        reportInfo()->getBZ()->setLoginData( m_userEdit->text(), m_passwordEdit->text() );
+        reportInfo()->getBZ()->tryLogin();
     }
     else
     {
@@ -243,9 +241,8 @@ BugzillaLoginPage::~BugzillaLoginPage()
 
 //BEGIN BugzillaKeywordsPage
 
-BugzillaKeywordsPage::BugzillaKeywordsPage(CrashInfo * info) : 
-    DrKonqiAssistantPage(),
-    m_crashInfo(info),
+BugzillaKeywordsPage::BugzillaKeywordsPage( DrKonqiBugReport * parent ) : 
+    DrKonqiAssistantPage(parent),
     m_keywordsOK(false)
 {
     QLabel * detailsLabel = new QLabel(
@@ -301,31 +298,30 @@ void BugzillaKeywordsPage::aboutToShow()
 void BugzillaKeywordsPage::aboutToHide()
 {
     //Save keywords (as short description of the future report)
-    m_crashInfo->getReport()->setShortDescription( m_keywordsEdit->text() );
+    reportInfo()->getReport()->setShortDescription( m_keywordsEdit->text() );
 }
 
 //END BugzillaKeywordsPage
 
 //BEGIN BugzillaDuplicatesPage
 
-BugzillaDuplicatesPage::BugzillaDuplicatesPage(CrashInfo * info):
-    DrKonqiAssistantPage(),
+BugzillaDuplicatesPage::BugzillaDuplicatesPage( DrKonqiBugReport * parent ):
+    DrKonqiAssistantPage(parent),
     m_searching(false),
     m_infoDialog(0),
     m_infoDialogBrowser(0),
     m_infoDialogLink(0),
     m_infoDialogStatusWidget(0),
     m_mineMayBeDuplicateButton(0),
-    m_currentBugNumber(0),
-    m_crashInfo(info)
+    m_currentBugNumber(0)
 {
     m_endDate = QDate::currentDate();
     m_startDate = m_endDate.addYears( -1 );
-    
-    connect( m_crashInfo->getBZ(), SIGNAL( searchFinished(BugMapList) ), this, SLOT( searchFinished(BugMapList) ) );
-    connect( m_crashInfo->getBZ(), SIGNAL( searchError(QString) ), this, SLOT( searchError(QString) ) );
-    connect( m_crashInfo->getBZ(), SIGNAL( bugReportFetched(BugReport*) ), this, SLOT( bugFetchFinished(BugReport*) ) );
-    connect( m_crashInfo->getBZ(), SIGNAL( bugReportError(QString) ), this, SLOT( bugFetchError(QString) ) );
+
+    connect( reportInfo()->getBZ(), SIGNAL( searchFinished(BugMapList) ), this, SLOT( searchFinished(BugMapList) ) );
+    connect( reportInfo()->getBZ(), SIGNAL( searchError(QString) ), this, SLOT( searchError(QString) ) );
+    connect( reportInfo()->getBZ(), SIGNAL( bugReportFetched(BugReport*) ), this, SLOT( bugFetchFinished(BugReport*) ) );
+    connect( reportInfo()->getBZ(), SIGNAL( bugReportError(QString) ), this, SLOT( bugFetchError(QString) ) );
         
     m_statusWidget = new StatusWidget();
     
@@ -375,11 +371,8 @@ BugzillaDuplicatesPage::BugzillaDuplicatesPage(CrashInfo * info):
 
 BugzillaDuplicatesPage::~BugzillaDuplicatesPage()
 {
-    if( m_infoDialog )
-    {
-        delete m_infoDialog;
-        delete m_infoDialogBrowser;
-    }
+    delete m_infoDialog;
+    delete m_infoDialogBrowser;
 }
 
 void BugzillaDuplicatesPage::enableControls( bool enable )
@@ -467,12 +460,12 @@ void BugzillaDuplicatesPage::itemClicked( QTreeWidgetItem * item, int col )
     
     m_currentBugNumber = item->text(0).toInt();
     
-    m_crashInfo->getBZ()->fetchBugReport( m_currentBugNumber );
+    reportInfo()->getBZ()->fetchBugReport( m_currentBugNumber );
 
     m_mineMayBeDuplicateButton->setEnabled( false );
     
     m_infoDialogBrowser->setText( i18n("Loading ... " ) );
-    m_infoDialogLink->setText( QString("<a href=\"%1\">%2</a>").arg( m_crashInfo->getBZ()->urlForBug(m_currentBugNumber), i18n("Bug report page at KDE Bugtracker") ) );
+    m_infoDialogLink->setText( QString("<a href=\"%1\">%2</a>").arg( reportInfo()->getBZ()->urlForBug(m_currentBugNumber), i18n("Bug report page at KDE Bugtracker") ) );
     
     m_infoDialogStatusWidget->setBusy( i18n("Loading information about bug %1 from bugs.kde.org ...", QString::number(m_currentBugNumber) ) );
     
@@ -550,7 +543,7 @@ void BugzillaDuplicatesPage::aboutToHide()
     if( (m_foundDuplicateCheckBox->checkState() == Qt::Checked)
         && !m_possibleDuplicateEdit->text().isEmpty() ) 
     {
-        m_crashInfo->setPossibleDuplicate( m_possibleDuplicateEdit->text() );
+        reportInfo()->setPossibleDuplicate( m_possibleDuplicateEdit->text() );
     }
 
 }
@@ -565,8 +558,11 @@ void BugzillaDuplicatesPage::performSearch()
     QString endDateStr = m_endDate.toString("yyyy-MM-dd");
     
     m_statusWidget->setBusy( i18n( "Searching for duplicates (from %1 to %2) ...", startDateStr, endDateStr ) );
-    
-    m_crashInfo->getBZ()->searchBugs( m_crashInfo->getReport()->shortDescription(), m_crashInfo->getProductName(), "crash", startDateStr, endDateStr , DrKonqi::instance()->backtraceGenerator()->parser()->firstValidFunctions().join(" ") );
+
+    KrashConfig *krashConfig = DrKonqi::instance()->krashConfig();
+    BacktraceParser *btParser = DrKonqi::instance()->backtraceGenerator()->parser();
+
+   reportInfo()->getBZ()->searchBugs( reportInfo()->getReport()->shortDescription(), krashConfig->productName(), "crash", startDateStr, endDateStr , btParser->firstValidFunctions().join(" ") );
    
     //Test search
     //m_crashInfo->getBZ()->searchBugs( "konqueror crash toggle mode", "konqueror", "crash", startDateStr, endDateStr , "caret" );
@@ -626,9 +622,8 @@ void BugzillaDuplicatesPage::searchFinished( const BugMapList & list )
 
 //BEGIN BugzillaInformationPage
 
-BugzillaInformationPage::BugzillaInformationPage( CrashInfo * info )
-    : DrKonqiAssistantPage(),
-    m_crashInfo( info ),
+BugzillaInformationPage::BugzillaInformationPage( DrKonqiBugReport * parent )
+    : DrKonqiAssistantPage(parent),
     m_textsOK( false )
 {
     m_titleLabel = new QLabel( i18n( "Title of the bug report" ) );
@@ -665,14 +660,14 @@ BugzillaInformationPage::BugzillaInformationPage( CrashInfo * info )
 void BugzillaInformationPage::aboutToShow()
 {
     if( m_titleEdit->text().isEmpty() )
-        m_titleEdit->setText( m_crashInfo->getReport()->shortDescription() );
+        m_titleEdit->setText( reportInfo()->getReport()->shortDescription() );
         
-    bool canDetail = m_crashInfo->getUserCanDetail();
+    bool canDetail = reportInfo()->getUserCanDetail();
     
     m_detailsLabel->setVisible( canDetail );
     m_detailsEdit->setVisible( canDetail );
     
-    bool canReproduce = m_crashInfo->getUserCanReproduce();
+    bool canReproduce = reportInfo()->getUserCanReproduce();
     
     m_reproduceLabel->setVisible( canReproduce );
     m_reproduceEdit->setVisible( canReproduce );
@@ -746,21 +741,20 @@ bool BugzillaInformationPage::isComplete()
 void BugzillaInformationPage::aboutToHide()
 {
     //Save fields data
-    m_crashInfo->getReport()->setShortDescription( m_titleEdit->text() );
-    m_crashInfo->setDetailText( m_detailsEdit->toPlainText() );
-    m_crashInfo->setReproduceText( m_reproduceEdit->toPlainText() );
+    reportInfo()->getReport()->setShortDescription( m_titleEdit->text() );
+    reportInfo()->setDetailText( m_detailsEdit->toPlainText() );
+    reportInfo()->setReproduceText( m_reproduceEdit->toPlainText() );
 }
 
 //END BugzillaInformationPage
 
 //BEGIN BugzillaCommitPage
 
-BugzillaCommitPage::BugzillaCommitPage( CrashInfo * info )
-    : DrKonqiAssistantPage(),
-    m_crashInfo( info )
+BugzillaCommitPage::BugzillaCommitPage( DrKonqiBugReport * parent )
+    : DrKonqiAssistantPage(parent)
 {
-    connect( m_crashInfo->getBZ(), SIGNAL(reportCommited(int)), this, SLOT(commited(int)) );
-    connect( m_crashInfo->getBZ(), SIGNAL(commitReportError(QString)), this, SLOT(commitError(QString)) );
+    connect( reportInfo()->getBZ(), SIGNAL(reportCommited(int)), this, SLOT(commited(int)) );
+    connect( reportInfo()->getBZ(), SIGNAL(commitReportError(QString)), this, SLOT(commitError(QString)) );
     
     m_statusWidget = new StatusWidget();
     m_statusWidget->setStatusLabelWordWrap( true );
@@ -789,15 +783,15 @@ void BugzillaCommitPage::retryClicked()
 void BugzillaCommitPage::aboutToShow()
 {
     m_statusWidget->setBusy( i18n( "Generating report ..." ) );
-    m_crashInfo->fillReportFields();
+    reportInfo()->fillReportFields();
     
     m_statusWidget->setBusy( i18n( "Posting report ... ( please wait )" ) );
-    m_crashInfo->commitBugReport();
+    reportInfo()->commitBugReport();
 }
 
 void BugzillaCommitPage::commited( int bug_id )
 {
-    m_statusWidget->setIdle( i18n("Report commited!<br />Bug Number :: %1<br />Link :: <link>%2</link>", bug_id, m_crashInfo->getBZ()->urlForBug( bug_id ) ));
+    m_statusWidget->setIdle( i18n("Report commited!<br />Bug Number :: %1<br />Link :: <link>%2</link>", bug_id, reportInfo()->getBZ()->urlForBug( bug_id ) ));
     
     m_retryButton->setEnabled( false );
     m_retryButton->setVisible( false );

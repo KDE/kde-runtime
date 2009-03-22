@@ -23,7 +23,7 @@ set(drkonqi_SRCS
    bugzillalib.cpp
    drkonqidialog.cpp
    statuswidget.cpp
-   crashinfo.cpp
+   reportinfo.cpp
    aboutbugreportingdialog.cpp
    drkonqiassistantpages_base.cpp
    drkonqiassistantpages_bugzilla.cpp

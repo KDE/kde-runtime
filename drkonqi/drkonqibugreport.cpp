@@ -24,11 +24,12 @@
 #include "drkonqiassistantpages_base.h"
 #include "drkonqiassistantpages_bugzilla.h"
 #include "aboutbugreportingdialog.h"
+#include "reportinfo.h"
 
-DrKonqiBugReport::DrKonqiBugReport( CrashInfo * crash, QWidget * parent ) : 
+DrKonqiBugReport::DrKonqiBugReport( QWidget * parent ) :
     KAssistantDialog(parent),
-    m_crashInfo( crash ),
-    m_aboutBugReportingDialog(0)
+    m_aboutBugReportingDialog(0),
+    m_reportInfo(new ReportInfo)
 {
     setWindowTitle( i18n( "Crash Reporting Assistant" ) );
     setWindowIcon( KIcon( "tools-report-bug" ) );
@@ -37,7 +38,7 @@ DrKonqiBugReport::DrKonqiBugReport( CrashInfo * crash, QWidget * parent ) :
     connect( this, SIGNAL(helpClicked()), this, SLOT(showHelp()) );
     
     //Introduction Page
-    m_intro = new IntroductionPage();
+    IntroductionPage * m_intro = new IntroductionPage( this );
     connectSignals( m_intro );
     
     KPageWidgetItem * m_introPage = new KPageWidgetItem( m_intro, "Intro" );
@@ -45,7 +46,7 @@ DrKonqiBugReport::DrKonqiBugReport( CrashInfo * crash, QWidget * parent ) :
     m_introPage->setIcon( KIcon("tools-report-bug") );
     
     //Crash Information Page
-    m_backtrace = new CrashInformationPage();
+    CrashInformationPage * m_backtrace = new CrashInformationPage( this );
     connectSignals( m_backtrace );
     
     KPageWidgetItem * m_backtracePage = new KPageWidgetItem( m_backtrace , "Backtrace" );
@@ -53,7 +54,7 @@ DrKonqiBugReport::DrKonqiBugReport( CrashInfo * crash, QWidget * parent ) :
     m_backtracePage->setIcon( KIcon("tools-report-bug") );
 
     //Bug Awareness Page
-    m_awareness = new BugAwarenessPage( m_crashInfo );
+    BugAwarenessPage * m_awareness = new BugAwarenessPage( this );
     connectSignals( m_awareness );
     
     KPageWidgetItem * m_awarenessPage = new KPageWidgetItem( m_awareness, "Awareness" );
@@ -61,7 +62,7 @@ DrKonqiBugReport::DrKonqiBugReport( CrashInfo * crash, QWidget * parent ) :
     m_awarenessPage->setIcon( KIcon("tools-report-bug") );
 
     //Results Page
-    m_conclusions = new ConclusionPage( m_crashInfo );
+    ConclusionPage * m_conclusions = new ConclusionPage( this );
     connectSignals( m_conclusions );
     
     KPageWidgetItem * m_conclusionsPage = new KPageWidgetItem( m_conclusions , "Results" );
@@ -70,7 +71,7 @@ DrKonqiBugReport::DrKonqiBugReport( CrashInfo * crash, QWidget * parent ) :
     connect( m_conclusions, SIGNAL(finished()), this, SLOT(assistantFinished()) );
     
     //Bugzilla Login
-    m_bugzillaLogin =  new BugzillaLoginPage( m_crashInfo );
+    BugzillaLoginPage * m_bugzillaLogin =  new BugzillaLoginPage( this );
     connectSignals( m_bugzillaLogin );
     
     KPageWidgetItem * m_bugzillaLoginPage = new KPageWidgetItem( m_bugzillaLogin, "BugzillaLogin");
@@ -78,7 +79,7 @@ DrKonqiBugReport::DrKonqiBugReport( CrashInfo * crash, QWidget * parent ) :
     m_bugzillaLoginPage->setIcon( KIcon("tools-report-bug") );
     
     //Bugzilla keywords
-    m_bugzillaKeywords =  new BugzillaKeywordsPage( m_crashInfo );
+    BugzillaKeywordsPage * m_bugzillaKeywords =  new BugzillaKeywordsPage( this );
     connectSignals( m_bugzillaKeywords ); 
     
     KPageWidgetItem * m_bugzillaKeywordsPage = new KPageWidgetItem( m_bugzillaKeywords, "BugzillaKeywords");
@@ -86,7 +87,7 @@ DrKonqiBugReport::DrKonqiBugReport( CrashInfo * crash, QWidget * parent ) :
     m_bugzillaKeywordsPage->setIcon( KIcon("tools-report-bug") );
     
     //Bugzilla duplicates
-    m_bugzillaDuplicates =  new BugzillaDuplicatesPage( m_crashInfo );
+    BugzillaDuplicatesPage * m_bugzillaDuplicates =  new BugzillaDuplicatesPage( this );
     connectSignals( m_bugzillaDuplicates );
     
     KPageWidgetItem * m_bugzillaDuplicatesPage = new KPageWidgetItem( m_bugzillaDuplicates, "BugzillaDuplicates");
@@ -94,7 +95,7 @@ DrKonqiBugReport::DrKonqiBugReport( CrashInfo * crash, QWidget * parent ) :
     m_bugzillaDuplicatesPage->setIcon( KIcon("tools-report-bug") );
  
     //Bugzilla information
-    m_bugzillaInformation =  new BugzillaInformationPage( m_crashInfo );
+    BugzillaInformationPage * m_bugzillaInformation =  new BugzillaInformationPage( this );
     connectSignals( m_bugzillaInformation );
     
     KPageWidgetItem * m_bugzillaInformationPage = new KPageWidgetItem( m_bugzillaInformation, "BugzillaInformation");
@@ -102,7 +103,7 @@ DrKonqiBugReport::DrKonqiBugReport( CrashInfo * crash, QWidget * parent ) :
     m_bugzillaInformationPage->setIcon( KIcon("tools-report-bug") );
 
     //Bugzilla commit
-    m_bugzillaCommit =  new BugzillaCommitPage( m_crashInfo );
+    BugzillaCommitPage * m_bugzillaCommit =  new BugzillaCommitPage( this );
 
     KPageWidgetItem * m_bugzillaCommitPage = new KPageWidgetItem( m_bugzillaCommit, "BugzillaCommit");
     m_bugzillaCommitPage->setHeader( i18n( "Commit Page" ) ); //TODO better name ?
@@ -126,8 +127,8 @@ DrKonqiBugReport::DrKonqiBugReport( CrashInfo * crash, QWidget * parent ) :
 
 DrKonqiBugReport::~DrKonqiBugReport()
 {
-    if ( m_aboutBugReportingDialog )
-        delete m_aboutBugReportingDialog;
+    delete m_aboutBugReportingDialog;
+    delete m_reportInfo;
 }
 
 void DrKonqiBugReport::connectSignals( DrKonqiAssistantPage * page )

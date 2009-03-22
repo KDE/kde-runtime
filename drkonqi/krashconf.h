@@ -28,11 +28,10 @@
 #ifndef KRASHCONF_H
 #define KRASHCONF_H
 
-#include <kaboutdata.h>
-
 #include <QObject>
+#include <KAboutData>
 
-#include "krashadaptor.h"
+//#include "krashadaptor.h"
 
 class KrashConfig : public QObject
 {
@@ -42,64 +41,84 @@ public:
   KrashConfig(QObject *parent);
   virtual ~KrashConfig();
 
-public Q_SLOTS:
-  QString programName() const { return m_aboutData->programName(); }
-  QString appName() const { return m_aboutData->appName(); }
-  int signalNumber() const { return m_signalnum; }
-  int pid() const { return m_pid; }
-  bool startedByKdeinit() const { return m_startedByKdeinit; }
-  bool safeMode() const { return m_safeMode; }
-  QString signalName() const { return m_signalName; }
-  QString signalText() const { return m_signalText; }
-  QString whatToDoText() const { return m_whatToDoText; }
-  QString errorDescriptionText() const { return m_errorDescriptionText; }
-
-  void registerDebuggingApplication(const QString& launchName);
-
 public:
-  QString debuggerName() const { return m_debuggerName; }
-  QString debuggerCommand() const { return m_debuggerCommand; }
-  QString debuggerBatchCommand() const { return m_debuggerBatchCommand; }
-  QString tryExec() const { return m_tryExec; }
-  QString backtraceCommand() const { return m_backtraceCommand; }
-  QString removeFromBacktraceRegExp() const { return m_removeFromBacktraceRegExp; }
-  QString invalidStackFrameRegExp() const { return m_invalidStackFrameRegExp; }
-  QString frameRegExp() const { return m_frameRegExp; }
-  QString neededInValidBacktraceRegExp() const { return m_neededInValidBacktraceRegExp; }
-  QString kcrashRegExp() const { return m_kcrashRegExp; }
-  bool showBacktrace() const { return m_showbacktrace; }
-  bool showDebugger() const { return m_showdebugger && !m_debuggerCommand.isNull(); }
-  bool showBugReport() const { return m_showbugreport; }
-  bool disableChecks() const { return m_disablechecks; }
-  const KAboutData *aboutData() const { return m_aboutData; }
-  QString execName() const { return m_execname; }
 
-  enum ExpandStringUsage {
-    ExpansionUsagePlainText,
-    ExpansionUsageRichText,
-    ExpansionUsageShell
-  };
-  void expandString(QString &str, ExpandStringUsage usage, const QString &tempFile = QString()) const;
+    //Infromation about the crashed application
+    /** Returns the crashed program's long name (ex. "The KDE crash handler") */
+    QString programName() const { return m_aboutData->programName(); }
+    /** Returns the crashed program's internal name (ex. "drkonqi") */
+    QString appName() const { return m_aboutData->appName(); }
+    /** As in KAboutData: "Returns the application's product name, which will be used in KBugReport dialog.
+     * By default it returns appName(), otherwise the one which is set with setProductName()" */
+    QString productName() { return m_aboutData->productName(); }
+    /** Returns the version of the crashed program */
+    QString productVersion() { return m_aboutData->version(); }
+    /** Returns the executable's name (with path to it, optionally) */
+    QString executableName() const { return m_execname; }
+    /** Returns the signal number that the crashed program recieved */
+    int signalNumber() const { return m_signalnum; }
+    /** Returns the pid of the crashed program */
+    int pid() const { return m_pid; }
+    /** Returns true if the crashed program was started by kdeinit */ //FIXME do we need that?
+    bool startedByKdeinit() const { return m_startedByKdeinit; }
 
+    //Texts that are loaded from config files //FIXME why load them from config files???
+    QString signalName() const { return m_signalName; }
+    QString signalText() const { return m_signalText; }
+    QString whatToDoText() const { return m_whatToDoText; }
+    QString errorDescriptionText() const { return m_errorDescriptionText; }
+
+    //drkonqi options
+    /** Returns true if drkonqi should not allow arbitary disk write access */
+    bool safeMode() const { return m_safeMode; }
+    /** Returns whether the advanced option to start an external instance of the debugger should be enabled or not */
+    bool showDebugger() const { return m_showdebugger && !m_debuggerCommand.isNull(); }
+
+    //Information about the debugger
+    /** Returns the internal name of the debugger (eg. "gdb") */
+    QString debuggerName() const { return m_debuggerName; }
+    /** Returns the command that should be run to get an instance of the debugger running externally */
+    QString externalDebuggerCommand() const { return m_debuggerCommand; }
+    /** Returns the batch command that should be run to get a backtrace for use in drkonqi */
+    QString debuggerBatchCommand() const { return m_debuggerBatchCommand; }
+    /** Returns the commands that should be given to the debugger when run in batch mode in order to generate a backtrace */
+    QString backtraceBatchCommands() const { return m_backtraceCommand; }
+    /** Returns the executable name that drkonqi should check if it exists to determine if the debugger is installed */
+    QString tryExec() const { return m_tryExec; }
+
+    //Information and methods about a possible bug reporting
+    bool isKDEBugzilla();
+    bool isReportMail();
+    QString getReportLink() { return m_aboutData->bugAddress(); }
+
+    //Utility methods
+    enum ExpandStringUsage {
+        ExpansionUsagePlainText,
+        ExpansionUsageRichText,
+        ExpansionUsageShell
+    };
+    void expandString(QString &str, ExpandStringUsage usage, const QString &tempFile = QString()) const;
+
+
+#if 0 //TODO move to DrKonqi and fix adaptor
+public Q_SLOTS:
+  void registerDebuggingApplication(const QString& launchName);
+public:
   void acceptDebuggingApp();
-
 Q_SIGNALS:
   void newDebuggingApplication(const QString& launchName);
   void acceptDebuggingApplication();
+#endif
 
 private:
   void readConfig();
 
-private:
   KAboutData *m_aboutData;
   int m_pid;
   int m_signalnum;
   bool m_showdebugger;
-  bool m_showbacktrace;
-  bool m_showbugreport;
   bool m_startedByKdeinit;
   bool m_safeMode;
-  bool m_disablechecks;
   QString m_signalName;
   QString m_signalText;
   QString m_whatToDoText;
@@ -111,11 +130,6 @@ private:
   QString m_debuggerBatchCommand;
   QString m_tryExec;
   QString m_backtraceCommand;
-  QString m_removeFromBacktraceRegExp;
-  QString m_invalidStackFrameRegExp;
-  QString m_frameRegExp;
-  QString m_neededInValidBacktraceRegExp;
-  QString m_kcrashRegExp;
 };
 
 #endif

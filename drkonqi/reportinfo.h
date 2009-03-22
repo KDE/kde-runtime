@@ -1,5 +1,5 @@
 /*******************************************************************
-* crashinfo.h
+* reportinfo.h
 * Copyright 2009    Dario Andres Rodriguez <andresbajotierra@gmail.com>
 * 
 * This program is free software; you can redistribute it and/or
@@ -17,76 +17,56 @@
 * 
 ******************************************************************/
 
-#ifndef CRASHINFO__H
-#define CRASHINFO__H
+#ifndef REPORTINFO__H
+#define REPORTINFO__H
 
-#include "krashconf.h"
-#include "bugzillalib.h"
-#include <kdeversion.h>
+#include <QtCore/QString>
 
-class CrashInfo : public QObject
+class BugzillaManager;
+class BugReport;
+
+class ReportInfo
 {
-    Q_OBJECT
-    
   public:
-    
-    CrashInfo();
-    ~CrashInfo();
+    ReportInfo();
+    ~ReportInfo();
 
-    const KrashConfig * getCrashConfig(); //TODO remove me
-
-    const QString getCrashTitle();
-    
-    //Information about the user condition
     void setUserCanDetail( bool canDetail ) { m_userCanDetail = canDetail; }
     void setUserCanReproduce ( bool canReproduce ) { m_userCanReproduce = canReproduce; }
     void setUserIsWillingToHelp ( bool isWillingToHelp ) { m_userIsWillingToHelp = isWillingToHelp; }
     
-    bool getUserCanDetail() { return m_userCanDetail; }
-    bool getUserCanReproduce() { return m_userCanReproduce; }
-    bool getUserIsWillingToHelp() { return m_userIsWillingToHelp; }
+    bool getUserCanDetail() const { return m_userCanDetail; }
+    bool getUserCanReproduce() const { return m_userCanReproduce; }
+    bool getUserIsWillingToHelp() const { return m_userIsWillingToHelp; }
     
-    //Information about the crashed app and OS
-    QString getKDEVersion() { return KDE::versionString(); } 
-    QString getQtVersion() { return qVersion(); }
-    QString getOS();
-    QString getLSBRelease();
-    
-    QString getProductName();
-    QString getProductVersion();
-    
-    //Information and methods about a possible bug reporting
-    bool isKDEBugzilla();
-    bool isReportMail();
-    QString getReportLink();
-    
-    QString generateReportTemplate( bool bugzilla = false );
-    
-    BugzillaManager * getBZ() { return m_bugzilla; };
-    
-    //Future bug report data & functions
-    BugReport * getReport() { return m_report; }
-    
-    void setDetailText( QString text ) { m_userDetailText = text; }
-    void setReproduceText( QString text ) { m_userReproduceText = text; }
-    void setPossibleDuplicate( QString bug ) { m_possibleDuplicate = bug; }
-    
-    void fillReportFields();
-    
+    BugzillaManager * getBZ() const { return m_bugzilla; }
+    BugReport * getReport() const { return m_report; }
+
+    void setDetailText( const QString & text ) { m_userDetailText = text; }
+    void setReproduceText( const QString & text ) { m_userReproduceText = text; }
+    void setPossibleDuplicate( const QString & bug ) { m_possibleDuplicate = bug; }
+
+    QString generateReportTemplate( bool bugzilla = false ) const;
     void commitBugReport();
-    
+    void fillReportFields();
+
   private:
+    //Information about libraries and OS
+    QString getKDEVersion() const;
+    QString getQtVersion() const;
+    QString getOS() const;
+    QString getLSBRelease() const;
+
+    mutable QString     m_OS;
+    mutable QString     m_LSBRelease;
 
     bool                m_userCanDetail;
     bool                m_userCanReproduce;
     bool                m_userIsWillingToHelp;
-  
-    QString             m_OS;
-    QString             m_LSBRelease;
     
     BugzillaManager *   m_bugzilla;
     BugReport *         m_report;
-    
+
     QString             m_userDetailText;
     QString             m_userReproduceText;
     QString             m_possibleDuplicate;

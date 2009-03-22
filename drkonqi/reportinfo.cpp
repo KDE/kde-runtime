@@ -1,5 +1,5 @@
 /*******************************************************************
-* crashinfo.cpp
+* reportinfo.cpp
 * Copyright 2009    Dario Andres Rodriguez <andresbajotierra@gmail.com>
 * 
 * This program is free software; you can redistribute it and/or
@@ -17,16 +17,17 @@
 * 
 ******************************************************************/
 
-#include "crashinfo.h"
+#include "reportinfo.h"
 #include "drkonqi.h"
 #include "krashconf.h"
 #include "backtracegenerator.h"
 #include "backtraceparser.h"
+#include "bugzillalib.h"
 
-#include <QtDebug>
 #include <QtCore/QProcess>
+#include <kdeversion.h>
 
-CrashInfo::CrashInfo()
+ReportInfo::ReportInfo()
 {
     m_userCanDetail = false;
     m_userCanReproduce = false;
@@ -35,51 +36,16 @@ CrashInfo::CrashInfo()
     m_report = new BugReport();
 }
 
-CrashInfo::~CrashInfo()
+ReportInfo::~ReportInfo()
 {
     delete m_bugzilla;
     delete m_report;
 }
 
-const KrashConfig * CrashInfo::getCrashConfig()
-{
-    return DrKonqi::instance()->krashConfig();
-}
+QString ReportInfo::getKDEVersion() const { return KDE::versionString(); }
+QString ReportInfo::getQtVersion() const { return qVersion(); }
 
-const QString CrashInfo::getCrashTitle()
-{
-    QString title = DrKonqi::instance()->krashConfig()->errorDescriptionText();
-    DrKonqi::instance()->krashConfig()->expandString( title, KrashConfig::ExpansionUsageRichText );
-    return title;
-}
-
-QString CrashInfo::getReportLink()
-{
-    return DrKonqi::instance()->krashConfig()->aboutData()->bugAddress();
-}
-
-bool CrashInfo::isKDEBugzilla()
-{
-    return getReportLink() == QLatin1String( "submit@bugs.kde.org" );
-}
-
-bool CrashInfo::isReportMail()
-{
-    QString link = getReportLink();
-    return link.contains('@') && link != QLatin1String( "submit@bugs.kde.org" );
-}
-
-QString CrashInfo::getProductName()
-{
-    return DrKonqi::instance()->krashConfig()->aboutData()->productName();
-}
-
-QString CrashInfo::getProductVersion()
-{
-    return DrKonqi::instance()->krashConfig()->aboutData()->version();
-}
-
-QString CrashInfo::getOS()
+QString ReportInfo::getOS() const
 {
     if( m_OS.isEmpty() ) //Fetch OS name & ver
     {
@@ -93,7 +59,7 @@ QString CrashInfo::getOS()
     return m_OS;
 }
 
-QString CrashInfo::getLSBRelease()
+QString ReportInfo::getLSBRelease() const
 {
     if( m_LSBRelease.isEmpty() )
     {
@@ -103,7 +69,7 @@ QString CrashInfo::getLSBRelease()
         processOS.waitForFinished( 5000 );
         QByteArray os = processOS.readAllStandardOutput();
         os.chop(1);
-        
+
         if( QString(os) == QLatin1String( "Linux" ) )
         {
             QProcess process;
@@ -111,14 +77,14 @@ QString CrashInfo::getLSBRelease()
             process.waitForFinished( 5000 );
             QByteArray lsb = process.readAllStandardOutput();
             if ( !lsb.isEmpty() )
-            {   
+            {
                 lsb.chop(1);
                 m_LSBRelease = QString(lsb);
             } else {
                 m_LSBRelease = i18n( "LSB Release information not found ( no lsb_release command found )" );
             }
-        } 
-        else 
+        }
+        else
         {
             m_LSBRelease = i18n( "Not a GNU/Linux system. LSB Release Information not available" );
         }
@@ -126,21 +92,22 @@ QString CrashInfo::getLSBRelease()
     return m_LSBRelease;
 }
 
-QString CrashInfo::generateReportTemplate( bool bugzilla )
+QString ReportInfo::generateReportTemplate( bool bugzilla ) const
 {
     QString lineBreak = QLatin1String("<br />");
     if ( bugzilla )
         lineBreak = QLatin1String("\n");
         
     QString report;
+    KrashConfig * krashConfig = DrKonqi::instance()->krashConfig();
     
     report.append( i18n( "Application and System information ----- ::" ) + lineBreak + lineBreak );
     //Program name and versions 
     report.append( QString("KDE Version: %1").arg( getKDEVersion() ) + lineBreak);
     report.append( QString("Qt Version: %1").arg( getQtVersion() ) + lineBreak );
     report.append( QString("Operating System: %1").arg( getOS() ) + lineBreak );
-    report.append( QString("Application that crashed: %1").arg( getProductName() ) + lineBreak );
-    report.append( QString("Version of the application: %1").arg( getProductVersion() ) + lineBreak );
+    report.append( QString("Application that crashed: %1").arg( krashConfig->productName() ) + lineBreak );
+    report.append( QString("Version of the application: %1").arg( krashConfig->productVersion() ) + lineBreak );
     
     //LSB output
     QString lsb = getLSBRelease();
@@ -201,17 +168,18 @@ QString CrashInfo::generateReportTemplate( bool bugzilla )
     return report;
 }
 
-void CrashInfo::commitBugReport()
+void ReportInfo::commitBugReport()
 {
     //Commit
     m_bugzilla->commitReport( m_report );
 }
 
-void CrashInfo::fillReportFields()
+void ReportInfo::fillReportFields()
 {
-    m_report->setProduct( getProductName() );
+    KrashConfig * krashConfig = DrKonqi::instance()->krashConfig();
+    m_report->setProduct( krashConfig->productName() );
     m_report->setComponent( QLatin1String("general") );
-    m_report->setVersion( getProductVersion() );
+    m_report->setVersion( krashConfig->productVersion() );
     m_report->setOperatingSystem( QLatin1String("unspecified") );
     m_report->setBugStatus( QLatin1String("UNCONFIRMED") );
     m_report->setPriority( QLatin1String("NOR") );

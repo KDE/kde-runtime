@@ -43,8 +43,10 @@
 KrashConfig :: KrashConfig(QObject *parent)
     : QObject(parent)
 {
+#if 0
   QDBusConnection::sessionBus().registerObject("/krashinfo", this);
   new KrashAdaptor(this);
+#endif
   readConfig();
 }
 
@@ -53,6 +55,7 @@ KrashConfig :: ~KrashConfig()
   delete m_aboutData;
 }
 
+#if 0
 void KrashConfig :: registerDebuggingApplication(const QString& launchName)
 {
   emit newDebuggingApplication( launchName );
@@ -62,6 +65,7 @@ void KrashConfig :: acceptDebuggingApp()
 {
   emit acceptDebuggingApplication();
 }
+#endif
 
 void KrashConfig :: readConfig()
 {
@@ -96,15 +100,12 @@ void KrashConfig :: readConfig()
 #endif
   }
 
+  //load user settings
   KConfigGroup config(KGlobal::config(), "drkonqi");
+  QString configname = config.readEntry("ConfigName", QString("enduser"));
+  m_debuggerName = config.readEntry("Debugger", QString("gdb"));
 
-  // maybe we should check if it's relative?
-  QString configname = config.readEntry("ConfigName",
-                                        QString("enduser"));
-
-  m_debuggerName = config.readEntry("Debugger",
-                                           QString("gdb"));
-
+  //load debugger information from config file
   KConfig debuggers(QString::fromLatin1("debuggers/%1rc").arg(m_debuggerName),
                     KConfig::NoGlobals, "appdata" );
   const KConfigGroup generalGroup = debuggers.group("General");
@@ -113,17 +114,13 @@ void KrashConfig :: readConfig()
   m_debuggerBatchCommand = generalGroup.readPathEntry("ExecBatch", QString());
   m_tryExec = generalGroup.readPathEntry("TryExec", QString());
   m_backtraceCommand = generalGroup.readEntry("BacktraceCommand");
-  m_removeFromBacktraceRegExp = generalGroup.readEntry("RemoveFromBacktraceRegExp");
-  m_invalidStackFrameRegExp = generalGroup.readEntry("InvalidStackFrameRegExp");
-  m_frameRegExp = generalGroup.readEntry("FrameRegExp");
-  m_neededInValidBacktraceRegExp = generalGroup.readEntry("NeededInValidBacktraceRegExp");
-  m_kcrashRegExp = generalGroup.readEntry("KCrashRegExp");
 
+  //load configuration information from presets
   KConfig preset(QString::fromLatin1("presets/%1rc").arg(configname),
                  KConfig::NoGlobals, "appdata" );
 
   const KConfigGroup errorDescrGroup = preset.group("ErrorDescription");
-  if (errorDescrGroup.readEntry("Enable", false), true)
+  if (errorDescrGroup.readEntry("Enable", false))
     m_errorDescriptionText = errorDescrGroup.readEntry("Name");
 
   const KConfigGroup whatToDoGroup = preset.group("WhatToDoHint");
@@ -131,14 +128,7 @@ void KrashConfig :: readConfig()
     m_whatToDoText = whatToDoGroup.readEntry("Name");
 
   const KConfigGroup presetGeneralGroup = preset.group("General");
-  m_showbugreport = presetGeneralGroup.readEntry("ShowBugReportButton", false);
-  m_showdebugger = m_showbacktrace = m_pid != 0;
-  if (m_showbacktrace)
-  {
-    m_showbacktrace = presetGeneralGroup.readEntry("ShowBacktraceButton", true);
-    m_showdebugger = presetGeneralGroup.readEntry("ShowDebugButton", true);
-  }
-  m_disablechecks = presetGeneralGroup.readEntry("DisableChecks", false);
+  m_showdebugger = presetGeneralGroup.readEntry("ShowDebugButton", true);
 
   bool b = presetGeneralGroup.readEntry("SignalDetails", true);
 
@@ -150,6 +140,17 @@ void KrashConfig :: readConfig()
   m_signalName = signalGroup.readEntry("Name");
   if (b)
     m_signalText = signalGroup.readEntry("Comment");
+}
+
+bool KrashConfig::isKDEBugzilla()
+{
+    return getReportLink() == QLatin1String( "submit@bugs.kde.org" );
+}
+
+bool KrashConfig::isReportMail()
+{
+    QString link = getReportLink();
+    return link.contains('@') && link != QLatin1String( "submit@bugs.kde.org" );
 }
 
 // replace some of the strings
