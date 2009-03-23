@@ -169,7 +169,6 @@ ConclusionPage::ConclusionPage( DrKonqiBugReport * parent )
     needToReport(false)
 {
     isBKO = DrKonqi::instance()->krashConfig()->isKDEBugzilla();
-    isBKO = true; //FIXME
     
     m_reportEdit = new KTextBrowser();
     m_reportEdit->setReadOnly( true );

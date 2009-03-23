@@ -28,6 +28,7 @@ class KPushButton;
 class AboutBugReportingDialog;
 class DrKonqiBugReport;
 class KGuiItem;
+class KrashConfig;
 
 class DrKonqiDialog: public KDialog
 {
@@ -39,13 +40,18 @@ class DrKonqiDialog: public KDialog
     
     private Q_SLOTS:
         void aboutBugReporting();
-        void toggleBacktrace();
+        void toggleMode();
         void reportBugAssistant();
         
         void restartApplication();
         
         //New debugger detected
         void slotNewDebuggingApp( const QString & );
+        
+        //GUI
+        void buildMainWidget();
+        void buildAdvancedWidget();
+        void buildDialogOptions();
         
     private:
         AboutBugReportingDialog *       m_aboutBugReportingDialog;
@@ -58,8 +64,8 @@ class DrKonqiDialog: public KDialog
         KPushButton *                   m_aboutBugReportingButton;
         KPushButton *                   m_reportBugButton;
 
-        KGuiItem                        m_guiItemShowBacktrace;
         KGuiItem                        m_guiItemShowIntroduction;
+        KGuiItem                        m_guiItemShowAdvanced;
         
         QMenu *                         m_debugMenu;
         QAction *                       m_defaultDebugAction;
