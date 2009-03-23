@@ -1,6 +1,6 @@
 /*******************************************************************
 * bugzillalib.h
-* Copyright 2009    Dario Andres Rodriguez <andresbajotierra@gmail.com>
+* Copyright  2009    Dario Andres Rodriguez <andresbajotierra@gmail.com>
 * 
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License as
@@ -154,12 +154,13 @@ class BugzillaManager : public QObject
         void loginFinished( bool );
         void bugReportFetched( BugReport* );
         void searchFinished( BugMapList );
-        void reportCommited( int ); //???RESULT ?
+        void reportCommited( int );
         
         void loginError( QString );
         void searchError( QString );
         void bugReportError( QString );
         void commitReportError( QString );
+        void commitReportErrorWrongProduct(); //To use "kde" product
 
     private:
     

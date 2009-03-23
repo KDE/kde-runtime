@@ -38,6 +38,9 @@ class StatusWidget: public QStackedWidget
         void setStatusLabelWordWrap( bool );
         
     private:
+        void setBusyCursor();
+        void setIdleCursor();
+        
         QLabel *            m_statusLabel;
         
         QProgressBar *      m_progressBar;

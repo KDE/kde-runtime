@@ -47,8 +47,10 @@ class ReportInfo
     void setPossibleDuplicate( const QString & bug ) { m_possibleDuplicate = bug; }
 
     QString generateReportTemplate( bool bugzilla = false ) const;
-    void commitBugReport();
     void fillReportFields();
+    void setDefaultProductComponent();
+    
+    void commitBugReport();
 
   private:
     //Information about libraries and OS

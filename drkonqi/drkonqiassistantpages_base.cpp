@@ -42,7 +42,7 @@ IntroductionPage::IntroductionPage( DrKonqiBugReport * parent ) :
     DrKonqiAssistantPage(parent)
 {
     QLabel * mainLabel = new QLabel(
-        i18n("<para>This assistant will analyse the crash information and guide you through the bug reporting process</para><para>You can get help about this bug reporting assistant clicking the \"Help\" button</para><para>To start gathering the crash information press the \"Next\" button</para>")
+        i18n("<para>This assistant will analyze the crash information and guide you through the bug reporting process</para><para>You can get help about this bug reporting assistant clicking the \"Help\" button</para><para>To start gathering the crash information press the \"Next\" button</para>")
     );
     mainLabel->setWordWrap( true );
 
@@ -94,7 +94,7 @@ bool CrashInformationPage::isComplete()
 //BEGIN BugAwarenessPage
 
 BugAwarenessPage::BugAwarenessPage( DrKonqiBugReport * parent ) 
-    : DrKonqiAssistantPage(parent)
+    : DrKonqiAssistantPage(parent) //FIXME fix layouting of this MESS
 {
     //Details groupbox
     //QGroupBox * canDetailBox = new QGroupBox();
@@ -141,18 +141,6 @@ BugAwarenessPage::BugAwarenessPage( DrKonqiBugReport * parent )
         );
     getCompromiseLayout->addWidget( m_willingToHelpCheckBox );
     
-    //Reproduce groupbox
-    
-    
-    /*
-    QGroupBox * canReproduceBox = new QGroupBox( i18n( "Advanced Usage" ) );
-    QVBoxLayout * canReproduceLayout = new QVBoxLayout( canReproduceBox );
-    canReproduceBox->setLayout( canReproduceLayout );
-    
-    m_canReproduceCheckBox = new QCheckBox( i18n( "I can reproduce the crash and I can provide steps or a testcase and and and and and and and and and and and" ), canReproduceBox );
-    canReproduceLayout->addWidget( m_canReproduceCheckBox);
-    */
-    
     //Main layout
     QVBoxLayout * layout = new QVBoxLayout();
     layout->setSpacing( 10 );
@@ -169,7 +157,6 @@ void BugAwarenessPage::aboutToHide()
 {
     //Save data
     reportInfo()->setUserCanDetail( m_canDetailCheckBox->checkState() == Qt::Checked );
-    //reportInfo()->setUserCanReproduce( m_canReproduceCheckBox->checkState() == Qt::Checked );
     reportInfo()->setUserIsWillingToHelp( m_willingToHelpCheckBox->checkState() == Qt::Checked );
 }
 
@@ -179,9 +166,11 @@ void BugAwarenessPage::aboutToHide()
 
 ConclusionPage::ConclusionPage( DrKonqiBugReport * parent ) 
     : DrKonqiAssistantPage(parent),
-    isBKO(false),
     needToReport(false)
 {
+    isBKO = DrKonqi::instance()->krashConfig()->isKDEBugzilla();
+    isBKO = true; //FIXME
+    
     m_reportEdit = new KTextBrowser();
     m_reportEdit->setReadOnly( true );
 
@@ -233,17 +222,17 @@ void ConclusionPage::reportButtonClicked()
 
 void ConclusionPage::aboutToShow()
 {
-    isBKO = false;
     needToReport = false;
     emitCompleteChanged();
 
     QString report;
+    
     KrashConfig * krashConfig = DrKonqi::instance()->krashConfig();
     BacktraceParser::Usefulness use = DrKonqi::instance()->backtraceGenerator()->parser()->backtraceUsefulness();
     bool canDetails = reportInfo()->getUserCanDetail();
-    //bool canReproduce = reportInfo()->getUserCanReproduce();
     bool willingToHelp = reportInfo()->getUserIsWillingToHelp();
     
+    // Estimate needToReport
     switch( use )
     {
         case BacktraceParser::ReallyUseful:
@@ -273,22 +262,14 @@ void ConclusionPage::aboutToShow()
         }
     }
     
+    //User can provide details
     report.append( QLatin1String( "<br />" ) );
     if( canDetails )
         report += i18n( "* You can explain in detail what were you doing when the application crashed" );
     else
-            report += i18n( "* You aren't sure what were you doing when the application crashed" ) ;
-       /*        report += i18n( "* You can't say what were you doing when the application crashed" ) ;
-        There's something between "very detailed" and "no clue"... */
-    
-    /* FIXME
-    report.append( QLatin1String( "<br />" ) );
-    if( canReproduce )
-        report += i18n( "* You can reproduce the crash at will and you can provide steps or a testcase" );
-    else
-        report += i18n( "* You can't reproduce the crash at will, but you can provide steps or a testcase" ); // is that possible for newbies?
-    */  
-    
+        report += i18n( "* You aren't sure what were you doing when the application crashed" ) ;
+        
+    //User is willing to help
     report.append( QLatin1String( "<br />" ) );
     if( willingToHelp )
         report += i18n( "* You are willing to help the developers" );
@@ -300,7 +281,6 @@ void ConclusionPage::aboutToShow()
         QString reportMethod;
         QString reportLink;
         
-        isBKO = krashConfig->isKDEBugzilla();
         m_reportButton->setVisible( !isBKO );
         if ( isBKO )
         {

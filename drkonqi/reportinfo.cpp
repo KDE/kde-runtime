@@ -101,7 +101,7 @@ QString ReportInfo::generateReportTemplate( bool bugzilla ) const
     QString report;
     KrashConfig * krashConfig = DrKonqi::instance()->krashConfig();
     
-    report.append( i18n( "Application and System information ----- ::" ) + lineBreak + lineBreak );
+    report.append( i18n( "Application and System information -----" ) + lineBreak + lineBreak );
     //Program name and versions 
     report.append( QString("KDE Version: %1").arg( getKDEVersion() ) + lineBreak);
     report.append( QString("Qt Version: %1").arg( getQtVersion() ) + lineBreak );
@@ -170,8 +170,13 @@ QString ReportInfo::generateReportTemplate( bool bugzilla ) const
 
 void ReportInfo::commitBugReport()
 {
-    //Commit
     m_bugzilla->commitReport( m_report );
+}
+
+void ReportInfo::setDefaultProductComponent()
+{
+    m_report->setProduct( QLatin1String("kde") );
+    m_report->setComponent( QLatin1String("general") );
 }
 
 void ReportInfo::fillReportFields()

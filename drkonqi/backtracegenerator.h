@@ -53,7 +53,7 @@ public Q_SLOTS:
 
 Q_SIGNALS:
   void starting();
-  void newLine(const QString &str); // emited for every line
+  void newLine(const QString &str); // emitted for every line
   void someError();
   void failedToStart();
   void done();

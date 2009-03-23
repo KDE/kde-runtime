@@ -21,7 +21,7 @@ signal information under Advanced
 
 waiting for productName()->product/component mapping (custom cgi file at BKO)
 ( if no combination is found, revert to "kde" product )
-
+//currently bugzillalib detects unexistent products to later use the "kde" product
 
 
 fix awarenesspage layout

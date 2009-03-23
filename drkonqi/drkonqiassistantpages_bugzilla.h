@@ -38,7 +38,7 @@ class QCheckBox;
 
 class StatusWidget;
 
-//Bugzilla Login
+/** Bugs.kde.org login **/
 class BugzillaLoginPage: public DrKonqiAssistantPage
 {
     Q_OBJECT
@@ -57,8 +57,6 @@ class BugzillaLoginPage: public DrKonqiAssistantPage
         
         void walletLogin();
         
-        //void progress( KJob*, unsigned long );
-        
     private:
         QFormLayout *   m_form;
         
@@ -71,7 +69,7 @@ class BugzillaLoginPage: public DrKonqiAssistantPage
         KWallet::Wallet *   m_wallet;
 };
 
-
+/** Enter keywords page **/
 class BugzillaKeywordsPage : public DrKonqiAssistantPage
 {
     Q_OBJECT
@@ -92,7 +90,7 @@ class BugzillaKeywordsPage : public DrKonqiAssistantPage
         bool    m_keywordsOK;
 };
         
-
+/** Searching for duplicates and showing report information page**/
 class BugzillaDuplicatesPage : public DrKonqiAssistantPage
 {
     Q_OBJECT
@@ -146,6 +144,7 @@ class BugzillaDuplicatesPage : public DrKonqiAssistantPage
         int             m_currentBugNumber;
 };
 
+/** Title and details page **/
 class BugzillaInformationPage : public DrKonqiAssistantPage
 {
     Q_OBJECT
@@ -173,6 +172,7 @@ class BugzillaInformationPage : public DrKonqiAssistantPage
         bool m_textsOK;
 };
 
+/** Commit page **/
 class BugzillaCommitPage : public DrKonqiAssistantPage
 {
     Q_OBJECT
@@ -187,10 +187,11 @@ class BugzillaCommitPage : public DrKonqiAssistantPage
         void commitError( QString );
         
         void retryClicked();
+        void commitUsingDefaults();
         
     private:
         KPushButton *   m_retryButton;
-        StatusWidget * m_statusWidget;
+        StatusWidget *  m_statusWidget;
         
     Q_SIGNALS:
     

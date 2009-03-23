@@ -499,7 +499,7 @@ void BugzillaDuplicatesPage::bugFetchFinished( BugReport* report )
                 
                 QString text = 
                 QString( "<strong>%1:</strong> %2<br />" ).arg( i18n("Bug ID"), report->bugNumber() ) +
-                QString( "<strong>%1:</strong> %2/%3<br />" ).arg( i18n("Product"), report->product(), report->component() ) +
+                QString( "<strong>%1:</strong> %2/%3<br />" ).arg( i18nc("Product name at bugzilla","Product"), report->product(), report->component() ) +
                 QString( "<strong>%1:</strong> %2<br />" ).arg( i18n("Short Description"), report->shortDescription() ) +
                 QString( "<strong>%1:</strong> %2<br />" ).arg( i18n("Status"), report->bugStatus() ) +
                 QString( "<strong>%1:</strong> %2<br />" ).arg( i18n("Resolution"), report->resolution() ) +
@@ -561,10 +561,10 @@ void BugzillaDuplicatesPage::performSearch()
     KrashConfig *krashConfig = DrKonqi::instance()->krashConfig();
     BacktraceParser *btParser = DrKonqi::instance()->backtraceGenerator()->parser();
 
-   reportInfo()->getBZ()->searchBugs( reportInfo()->getReport()->shortDescription(), krashConfig->productName(), "crash", startDateStr, endDateStr , btParser->firstValidFunctions().join(" ") );
+    reportInfo()->getBZ()->searchBugs( reportInfo()->getReport()->shortDescription(), krashConfig->productName(), "crash", startDateStr, endDateStr , btParser->firstValidFunctions().join(" ") );
    
     //Test search
-    //m_crashInfo->getBZ()->searchBugs( "konqueror crash toggle mode", "konqueror", "crash", startDateStr, endDateStr , "caret" );
+    //reportInfo()->getBZ()->searchBugs( "konqueror crash toggle mode", "konqueror", "crash", startDateStr, endDateStr , "caret" );
    
 }
 
@@ -639,7 +639,7 @@ BugzillaInformationPage::BugzillaInformationPage( DrKonqiBugReport * parent )
 
     QVBoxLayout * layout = new QVBoxLayout();
     
-    QLabel * explanationLabel = new QLabel( "Complete the bug report fields in order to properly submit it. All the fields should be at least 20 characters. All the texts should be written in english." ); //TODO native-rewrite (text lenght?)
+    QLabel * explanationLabel = new QLabel( "Complete the bug report fields in order to properly submit it. All the fields should be at least 20 characters. All the texts should be written in english." ); //TODO native-rewrite (text length?)
     explanationLabel->setWordWrap( true );
     
     layout->addWidget( explanationLabel ); 
@@ -702,20 +702,22 @@ bool BugzillaInformationPage::showNextPage()
             
             if( titleShort && !detailsShort )
             {
-                message = i18n("The title is too short");
+                message = i18n("The title is too short.");
             }
             else if ( detailsShort && !titleShort )
             {
-                message = i18n("The description about the crash details is too short");
+                message = i18n("The description about the crash details is too short.");
             }
             else
             {
-                message = i18n("Both the title and the description about the crash details are too short");
+                message = i18n("Both the title and the description about the crash details are too short.");
             }
+            
+            message += i18n(" Can you write a bit more ?"); //FIXME rewrite this
             
             //The user input is less than we want.... encourage to write more
             if( KMessageBox::questionYesNo( this, message,
-                i18n("Fields lenght too short") ) == KMessageBox::Yes )
+                i18n("Fields length too short") ) == KMessageBox::Yes )
             {
                 return false; //Cancel show next, to allow the user to write more
             } else {
@@ -754,7 +756,7 @@ BugzillaCommitPage::BugzillaCommitPage( DrKonqiBugReport * parent )
 {
     connect( reportInfo()->getBZ(), SIGNAL(reportCommited(int)), this, SLOT(commited(int)) );
     connect( reportInfo()->getBZ(), SIGNAL(commitReportError(QString)), this, SLOT(commitError(QString)) );
-    
+    connect( reportInfo()->getBZ(), SIGNAL(commitReportErrorWrongProduct()), this, SLOT(commitUsingDefaults()) );
     m_statusWidget = new StatusWidget();
     m_statusWidget->setStatusLabelWordWrap( true );
     
@@ -806,4 +808,9 @@ void BugzillaCommitPage::commitError( QString errorString )
     m_retryButton->setVisible( true );
 }
 
+void BugzillaCommitPage::commitUsingDefaults()
+{
+    reportInfo()->setDefaultProductComponent();
+    reportInfo()->commitBugReport();
+}
 //END BugzillaCommitPage

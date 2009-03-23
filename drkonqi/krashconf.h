@@ -55,7 +55,7 @@ public:
     QString productVersion() { return m_aboutData->version(); }
     /** Returns the executable's name (with path to it, optionally) */
     QString executableName() const { return m_execname; }
-    /** Returns the signal number that the crashed program recieved */
+    /** Returns the signal number that the crashed program received */
     int signalNumber() const { return m_signalnum; }
     /** Returns the pid of the crashed program */
     int pid() const { return m_pid; }
@@ -69,7 +69,7 @@ public:
     QString errorDescriptionText() const { return m_errorDescriptionText; }
 
     //drkonqi options
-    /** Returns true if drkonqi should not allow arbitary disk write access */
+    /** Returns true if drkonqi should not allow arbitrary disk write access */
     bool safeMode() const { return m_safeMode; }
     /** Returns whether the advanced option to start an external instance of the debugger should be enabled or not */
     bool showDebugger() const { return m_showdebugger && !m_debuggerCommand.isNull(); }

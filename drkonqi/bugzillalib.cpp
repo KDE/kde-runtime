@@ -1,6 +1,6 @@
 /*******************************************************************
 * bugzillalib.cpp
-* Copyright 2009    Dario Andres Rodriguez <andresbajotierra@gmail.com>
+* Copyright  2009    Dario Andres Rodriguez <andresbajotierra@gmail.com>
 * 
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License as
@@ -230,13 +230,19 @@ void BugzillaManager::commitReportDone( KJob * job )
             QString error;
             
             QRegExp reg("<td id=\"error_msg\" class=\"throw_error\">(.+)</td>");
-            pos = reg.indexIn( response.replace("\r","").replace("\n","") );
+            pos = reg.indexIn( response.replace('\r',QChar()).replace('\n',QChar()) );
             if( pos != -1 )
                 error = reg.cap(1).trimmed();
             else
                 error = i18n( "Unknown error" );
             
-            emit commitReportError( error );
+            qDebug() << error;
+            if( error.contains( QLatin1String("does not exist or you aren't authorized to") ) )
+            {
+                emit commitReportErrorWrongProduct();
+            } else {
+                emit commitReportError( error );
+            }
         }
     }
     else

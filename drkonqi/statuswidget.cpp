@@ -18,8 +18,8 @@
 ******************************************************************/
 #include "statuswidget.h"
 
+#include <QtGui/QApplication>
 #include <QtGui/QSizePolicy>
-
 #include <QtGui/QProgressBar>
 #include <QtGui/QLabel>
 #include <QtGui/QHBoxLayout>
@@ -52,8 +52,7 @@ StatusWidget::StatusWidget( QWidget * parent ) :
     m_progressBar = new QProgressBar();
     m_progressBar->setRange( 0, 0 );
     
-    m_busyLabel = new QLabel( i18n( "Busy ...") );
-    //m_label->setWordWrap( true );
+    m_busyLabel = new QLabel();
     
     QHBoxLayout * busyLayout = new QHBoxLayout();
     busyLayout->setContentsMargins( 0,0,0,0 );
@@ -72,6 +71,7 @@ void StatusWidget::setBusy( QString busyMessage )
     m_statusLabel->setText( QString() );
     m_busyLabel->setText( busyMessage );
     setCurrentIndex( 1 );
+    setBusyCursor();
 }
 
 void StatusWidget::setIdle( QString idleMessage )
@@ -79,6 +79,7 @@ void StatusWidget::setIdle( QString idleMessage )
     m_busyLabel->setText( QString() );
     m_statusLabel->setText( idleMessage );
     setCurrentIndex( 0 );
+    setIdleCursor();
 }
 
 void StatusWidget::addCustomStatusWidget( QWidget * widget )
@@ -92,4 +93,15 @@ void StatusWidget::addCustomStatusWidget( QWidget * widget )
 void StatusWidget::setStatusLabelWordWrap( bool ww )
 {
     m_statusLabel->setWordWrap( ww );
+}
+
+void StatusWidget::setBusyCursor()
+{
+    QApplication::setOverrideCursor( Qt::WaitCursor );
+}
+
+void StatusWidget::setIdleCursor()
+{
+    while( QApplication::overrideCursor() )
+        QApplication::restoreOverrideCursor();
 }

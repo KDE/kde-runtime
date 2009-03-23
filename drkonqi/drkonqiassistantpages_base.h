@@ -31,7 +31,8 @@ class QLabel;
 class KTextBrowser;
 class QCheckBox;
 
-//BASE interface which implements some signals, and aboutTo + setBusy/setIdle functions
+/** BASE interface which implements some signal, and 
+**  aboutTo + setBusy/setIdle functions **/
 class DrKonqiAssistantPage: public QWidget
 {
     Q_OBJECT
@@ -40,16 +41,15 @@ class DrKonqiAssistantPage: public QWidget
         DrKonqiAssistantPage( DrKonqiBugReport * parent ) :
             QWidget(parent), m_assistant(parent) {}
 
-        //aboutToShow may load the widget data if empty
+        /** Load the widget data if empty **/
         virtual void aboutToShow() {}
-        //aboutToHide may save the widget data to crashInfo, to continue
+        /** Save the widget data to ReportInfo **/
         virtual void aboutToHide() {}
-        
+        /** Tells the KAssistantDialog to enable the Next button **/
         virtual bool isComplete() { return true; }
-
-        ReportInfo * reportInfo() const { return m_assistant->reportInfo(); }
-
+        /** Last time checks to see if you can turn the page **/
         virtual bool showNextPage() { return true; }
+        ReportInfo * reportInfo() const { return m_assistant->reportInfo(); }
 
     public Q_SLOTS:
         void emitCompleteChanged()
@@ -58,13 +58,14 @@ class DrKonqiAssistantPage: public QWidget
         }
         
     Q_SIGNALS:
+        /** Tells the KAssistantDialog that the isComplete function changed value **/
         void completeChanged( DrKonqiAssistantPage*, bool );
 
     private:
         DrKonqiBugReport * const m_assistant;
 };
 
-//Introduction assistant page --------------
+/** Dummy Introduction page **/
 class IntroductionPage: public DrKonqiAssistantPage
 {
     Q_OBJECT
@@ -73,7 +74,7 @@ class IntroductionPage: public DrKonqiAssistantPage
         IntroductionPage( DrKonqiBugReport * );
 };
 
-//Backtrace Page ---------------------------
+/** Backtrace page **/
 class CrashInformationPage: public DrKonqiAssistantPage
 {
 
@@ -89,7 +90,7 @@ class CrashInformationPage: public DrKonqiAssistantPage
         GetBacktraceWidget * m_backtraceWidget;
 };
 
-//Bug Awareness Page ---------------
+/** Bug Awareness page **/
 class BugAwarenessPage: public DrKonqiAssistantPage
 {
     Q_OBJECT
@@ -102,10 +103,9 @@ class BugAwarenessPage: public DrKonqiAssistantPage
     private:
         QCheckBox * m_canDetailCheckBox;
         QCheckBox * m_willingToHelpCheckBox;
-        //QCheckBox * m_canReproduceCheckBox;
 };
 
-//Conclusions/Result page
+/** Conclusions page **/
 class ConclusionPage : public DrKonqiAssistantPage
 {
     Q_OBJECT

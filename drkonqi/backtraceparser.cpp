@@ -309,7 +309,7 @@ void BacktraceParserGdb::newLine(const QString & lineStr)
     //Here we workaround this by joining the two lines when such a scenario is detected.
     if ( d->m_lineInputBuffer.isEmpty() )
         d->m_lineInputBuffer = lineStr;
-    else if ( lineStr.startsWith(" ") || lineStr.startsWith("\t") )
+    else if ( lineStr.startsWith( QLatin1Char(' ') ) || lineStr.startsWith( QLatin1Char('\t') ) )
         //gdb always adds some whitespace at the beginning of the second line
         d->m_lineInputBuffer.append(lineStr);
     else {

@@ -42,7 +42,7 @@ DrKonqiBugReport::DrKonqiBugReport( QWidget * parent ) :
     connectSignals( m_intro );
     
     KPageWidgetItem * m_introPage = new KPageWidgetItem( m_intro, "Intro" );
-    m_introPage->setHeader( i18n( "Introduction" ) );
+    m_introPage->setHeader( i18nc( "the Introduction page", "Introduction" ) );
     m_introPage->setIcon( KIcon("tools-report-bug") );
     
     //Crash Information Page
