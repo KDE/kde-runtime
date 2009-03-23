@@ -445,7 +445,7 @@ QStringList BacktraceParserGdb::firstValidFunctions() const
     QList<BacktraceLineGdb>::const_iterator i;
 
     //get only the first three valid functions that are encountered
-    for(i = d->m_usefulLinesList.constBegin(); i != d->m_usefulLinesList.constEnd() || result.size() < 3; ++i)
+    for(i = d->m_usefulLinesList.constBegin(); i != d->m_usefulLinesList.constEnd() && result.size() < 3; ++i)
     {
         if ( (*i).functionName() != "??" )
             result.append((*i).functionName());
