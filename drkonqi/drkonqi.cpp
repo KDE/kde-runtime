@@ -54,6 +54,7 @@
 #include <KFileDialog>
 #include <KTemporaryFile>
 #include <KToolInvocation>
+#include <KIO/NetAccess>
 
 #include <cstdlib>
 #include <cerrno>
@@ -191,30 +192,36 @@ void DrKonqi::saveReport(const QString & reportText, QWidget *parent)
         QString defname = krashConfig->appName() + '-' + QDate::currentDate().toString("yyyyMMdd") + ".kcrash";
         if( defname.contains( '/' ))
             defname = defname.mid( defname.lastIndexOf( '/' ) + 1 );
-        QString filename = KFileDialog::getSaveFileName( defname, QString(), parent, i18n("Select Filename"));
-        if (!filename.isEmpty())
+        KUrl fileUrl = KFileDialog::getSaveUrl( defname, QString(), parent, i18n("Select Filename"));
+        if (fileUrl.isValid())
         {
-            QFile f(filename);
-
-            if (f.exists()) {
+            KIO::UDSEntry udsEntry;
+            if ( KIO::NetAccess::stat(fileUrl, udsEntry, parent) ) {
                 if (KMessageBox::Cancel ==
                     KMessageBox::warningContinueCancel( 0,
                         i18n( "A file named <filename>%1</filename> already exists. "
-                                "Are you sure you want to overwrite it?", filename ),
+                                "Are you sure you want to overwrite it?", fileUrl.fileName() ),
                         i18n( "Overwrite File?" ),
                     KGuiItem( i18n( "&Overwrite" ), KIcon("document-save-as"), i18nc( "button explanation", "Use this button to overwrite the current file" ), i18nc( "button explanation", "Use this button to overwrite the current file" ) ) ) )
                     return;
             }
 
-            if (f.open(QIODevice::WriteOnly))
+            KTemporaryFile tf;
+            if (tf.open())
             {
-                QTextStream ts(&f);
+                QTextStream ts(&tf);
                 ts << reportText;
-                f.close();
+                ts.flush();
             }
             else
             {
-                KMessageBox::sorry(parent, i18n("Cannot open file <filename>%1</filename> for writing.", filename));
+                KMessageBox::sorry(parent, i18n("Cannot open file <filename>%1</filename> for writing.", tf.fileName()));
+                return;
+            }
+
+            if ( !KIO::NetAccess::upload(tf.fileName(), fileUrl, parent) )
+            {
+                KMessageBox::sorry(parent, KIO::NetAccess::lastErrorString());
             }
         }
     }
