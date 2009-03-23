@@ -205,9 +205,8 @@ void BacktraceLineGdb::parse()
     regExp.setPattern(".*\\(no debugging symbols found\\).*|"
                       ".*\\[Thread debugging using libthread_db enabled\\].*|"
                       ".*\\[New Thread 0x[0-9a-f]+\\s+\\(.*\\)\\].*|"
-                // remove the line that shows where the process is at the moment '0xffffe430 in __kernel_vsyscall ()',
-                // gdb prints that automatically, but it will be later visible again in the backtrace
-                      "0x[0-9a-f]+\\s+in .*");
+                      "0x[0-9a-f]+.*|"
+                      "Current language:.*");
     if ( regExp.exactMatch(d->m_line) ) {
         kDebug() << "crap detected:" << d->m_line;
         d->m_type = Crap;
