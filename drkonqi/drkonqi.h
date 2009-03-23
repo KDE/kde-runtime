@@ -32,7 +32,7 @@ public:
     void cleanup();
 
     State currentState() const;
-    KrashConfig *krashConfig() const; //TODO const-ify
+    const KrashConfig *krashConfig() const;
     BacktraceGenerator *backtraceGenerator() const;
 
     static void saveReport(const QString & reportText, QWidget *parent = 0);

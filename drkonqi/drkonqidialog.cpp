@@ -41,7 +41,7 @@ DrKonqiDialog::DrKonqiDialog( QWidget * parent ) :
     m_aboutBugReportingDialog(0),
     m_backtraceWidget(0)
 {
-    KrashConfig * krashConfig = DrKonqi::instance()->krashConfig();
+    const KrashConfig * krashConfig = DrKonqi::instance()->krashConfig();
     //connect( krashConfig, SIGNAL(newDebuggingApplication(QString)), SLOT(slotNewDebuggingApp(QString))); //FIXME
     
     //Setting dialog title and icon

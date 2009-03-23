@@ -558,7 +558,7 @@ void BugzillaDuplicatesPage::performSearch()
     
     m_statusWidget->setBusy( i18n( "Searching for duplicates (from %1 to %2) ...", startDateStr, endDateStr ) );
 
-    KrashConfig *krashConfig = DrKonqi::instance()->krashConfig();
+    const KrashConfig *krashConfig = DrKonqi::instance()->krashConfig();
     BacktraceParser *btParser = DrKonqi::instance()->backtraceGenerator()->parser();
 
     reportInfo()->getBZ()->searchBugs( reportInfo()->getReport()->shortDescription(), krashConfig->productName(), "crash", startDateStr, endDateStr , btParser->firstValidFunctions().join(" ") );

@@ -142,12 +142,12 @@ void KrashConfig :: readConfig()
     m_signalText = signalGroup.readEntry("Comment");
 }
 
-bool KrashConfig::isKDEBugzilla()
+bool KrashConfig::isKDEBugzilla() const
 {
     return getReportLink() == QLatin1String( "submit@bugs.kde.org" );
 }
 
-bool KrashConfig::isReportMail()
+bool KrashConfig::isReportMail() const
 {
     QString link = getReportLink();
     return link.contains('@') && link != QLatin1String( "submit@bugs.kde.org" );

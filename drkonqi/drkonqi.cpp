@@ -151,7 +151,7 @@ DrKonqi::State DrKonqi::currentState() const
     return d->m_state;
 }
 
-KrashConfig *DrKonqi::krashConfig() const
+const KrashConfig *DrKonqi::krashConfig() const
 {
     Q_ASSERT(d->m_krashConfig != NULL);
     return d->m_krashConfig;
@@ -166,7 +166,7 @@ BacktraceGenerator *DrKonqi::backtraceGenerator() const
 //static
 void DrKonqi::saveReport(const QString & reportText, QWidget *parent)
 {
-    KrashConfig *krashConfig = instance()->krashConfig();
+    const KrashConfig *krashConfig = instance()->krashConfig();
     if ( krashConfig->safeMode() )
     {
         KTemporaryFile tf;

@@ -204,7 +204,7 @@ void ConclusionPage::saveReport()
 
 void ConclusionPage::reportButtonClicked()
 {
-    KrashConfig * krashConfig = DrKonqi::instance()->krashConfig();
+    const KrashConfig * krashConfig = DrKonqi::instance()->krashConfig();
 
     if( krashConfig->isReportMail() )
     {
@@ -227,7 +227,7 @@ void ConclusionPage::aboutToShow()
 
     QString report;
     
-    KrashConfig * krashConfig = DrKonqi::instance()->krashConfig();
+    const KrashConfig * krashConfig = DrKonqi::instance()->krashConfig();
     BacktraceParser::Usefulness use = DrKonqi::instance()->backtraceGenerator()->parser()->backtraceUsefulness();
     bool canDetails = reportInfo()->getUserCanDetail();
     bool willingToHelp = reportInfo()->getUserIsWillingToHelp();

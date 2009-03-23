@@ -50,9 +50,9 @@ public:
     QString appName() const { return m_aboutData->appName(); }
     /** As in KAboutData: "Returns the application's product name, which will be used in KBugReport dialog.
      * By default it returns appName(), otherwise the one which is set with setProductName()" */
-    QString productName() { return m_aboutData->productName(); }
+    QString productName() const { return m_aboutData->productName(); }
     /** Returns the version of the crashed program */
-    QString productVersion() { return m_aboutData->version(); }
+    QString productVersion() const { return m_aboutData->version(); }
     /** Returns the executable's name (with path to it, optionally) */
     QString executableName() const { return m_execname; }
     /** Returns the signal number that the crashed program received */
@@ -87,9 +87,9 @@ public:
     QString tryExec() const { return m_tryExec; }
 
     //Information and methods about a possible bug reporting
-    bool isKDEBugzilla();
-    bool isReportMail();
-    QString getReportLink() { return m_aboutData->bugAddress(); }
+    bool isKDEBugzilla() const;
+    bool isReportMail() const;
+    QString getReportLink() const { return m_aboutData->bugAddress(); }
 
     //Utility methods
     enum ExpandStringUsage {

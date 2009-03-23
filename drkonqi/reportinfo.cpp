@@ -99,7 +99,7 @@ QString ReportInfo::generateReportTemplate( bool bugzilla ) const
         lineBreak = QLatin1String("\n");
         
     QString report;
-    KrashConfig * krashConfig = DrKonqi::instance()->krashConfig();
+    const KrashConfig * krashConfig = DrKonqi::instance()->krashConfig();
     
     report.append( i18n( "Application and System information -----" ) + lineBreak + lineBreak );
     //Program name and versions 
@@ -181,7 +181,7 @@ void ReportInfo::setDefaultProductComponent()
 
 void ReportInfo::fillReportFields()
 {
-    KrashConfig * krashConfig = DrKonqi::instance()->krashConfig();
+    const KrashConfig * krashConfig = DrKonqi::instance()->krashConfig();
     m_report->setProduct( krashConfig->productName() );
     m_report->setComponent( QLatin1String("general") );
     m_report->setVersion( krashConfig->productVersion() );
