@@ -757,6 +757,7 @@ BugzillaCommitPage::BugzillaCommitPage( DrKonqiBugReport * parent )
     connect( reportInfo()->getBZ(), SIGNAL(reportCommited(int)), this, SLOT(commited(int)) );
     connect( reportInfo()->getBZ(), SIGNAL(commitReportError(QString)), this, SLOT(commitError(QString)) );
     connect( reportInfo()->getBZ(), SIGNAL(commitReportErrorWrongProduct()), this, SLOT(commitUsingDefaults()) );
+    
     m_statusWidget = new StatusWidget();
     m_statusWidget->setStatusLabelWordWrap( true );
     
@@ -813,4 +814,5 @@ void BugzillaCommitPage::commitUsingDefaults()
     reportInfo()->setDefaultProductComponent();
     reportInfo()->commitBugReport();
 }
+
 //END BugzillaCommitPage

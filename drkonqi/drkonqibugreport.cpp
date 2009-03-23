@@ -181,7 +181,8 @@ void DrKonqiBugReport::showHelp()
     m_aboutBugReportingDialog->show();
 }
 
-void DrKonqiBugReport::next()
+//Override KAssistantDialog "next" page implementation
+void DrKonqiBugReport::next() 
 {
     DrKonqiAssistantPage * page = dynamic_cast<DrKonqiAssistantPage*>(currentPage()->widget());
     if( page )

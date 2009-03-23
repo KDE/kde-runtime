@@ -6,23 +6,14 @@
 ##Unassigned
 -------------
 
---------
-AppName crashed
-
-Probably bug. 
-You can help
-
-Learn about --- Report Bug
-
---- Restart Debug ShowBacktrace Close
--------
-signal information under Advanced
-
+Relayout the main dialog (where to put the advanced thing, below or over another widget in the stack? )
 
 waiting for productName()->product/component mapping (custom cgi file at BKO)
 ( if no combination is found, revert to "kde" product )
-//currently bugzillalib detects unexistent products to later use the "kde" product
+[[ currently bugzillalib detects unexistent products to later use the "kde" product ]]
 
+Remove strings from profiles-rc. Use strings i18n when needed
+The signal explanations aren't required... as we use it only for devs.. and they already know..
 
 fix awarenesspage layout
 

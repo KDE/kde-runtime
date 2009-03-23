@@ -49,7 +49,7 @@ DrKonqiDialog::DrKonqiDialog( QWidget * parent ) :
     setWindowIcon( KIcon("tools-report-bug") );
 
     //Main widget components
-    QLabel * title = new QLabel( i18nc( "applicationName closed", "<title>%1 closed unexpectedly</title>", DrKonqi::instance()->krashConfig()->programName() ) );
+    QLabel * title = new QLabel( i18nc( "applicationName closed unexpectedly", "<title>%1 closed unexpectedly</title>", DrKonqi::instance()->krashConfig()->programName() ) );
     title->setWordWrap( true ); 
     
     QLabel * infoLabel = new QLabel( i18nc("Small explanation of the crash cause",
@@ -89,11 +89,13 @@ DrKonqiDialog::DrKonqiDialog( QWidget * parent ) :
                        "} ").arg( KStandardDirs::locate( "appdata", QLatin1String( "pics/konqi.png" ) ) );
     m_introWidget->setStyleSheet( styleSheet );
     
-    //Advanced Widget
+    //Advanced Widget  FIXME discuss
     m_advancedWidget = new QWidget( this );
     
     QVBoxLayout * advancedLayout = new QVBoxLayout();
-    
+
+    advancedLayout->addWidget( new QLabel( i18n( "Application: %1 , PID: %2 , Signal: %3 (%4)", krashConfig->appName(), QString::number(krashConfig->pid()), krashConfig->signalNumber(), krashConfig->signalName() ) ) );
+
     m_backtraceWidget = new GetBacktraceWidget(DrKonqi::instance()->backtraceGenerator());
     m_backtraceWidget->setMinimumSize( QSize(550, 220) );
     advancedLayout->addWidget( m_backtraceWidget );
