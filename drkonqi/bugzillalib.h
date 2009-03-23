@@ -1,7 +1,6 @@
 /*******************************************************************
 * bugzillalib.h
-* Copyright 2000-2003 Hans Petter Bieker <bieker@kde.org>     
-*           2009    Dario Andres Rodriguez <andresbajotierra@gmail.com>
+* Copyright 2009    Dario Andres Rodriguez <andresbajotierra@gmail.com>
 * 
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License as

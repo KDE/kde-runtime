@@ -2,9 +2,6 @@
 # Who / What
 --------------
 
-    gkiagia: Fix backtraceinfo logic (backtrace parsing to get its usefulness)
-    gkiagia: fix crashed app getting lost/close, so the backtrace isn't generated and the duplicates page crash on invalid firstValidFunctions()
-
         
 ##Unassigned
 -------------
