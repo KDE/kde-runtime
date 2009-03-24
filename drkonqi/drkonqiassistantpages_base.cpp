@@ -216,7 +216,7 @@ void ConclusionPage::reportButtonClicked()
         KToolInvocation::invokeBrowser( krashConfig->getReportLink() );
     }
     
-    emit finished();
+    emit finished(false);
 }
 
 void ConclusionPage::aboutToShow()
@@ -328,7 +328,7 @@ void ConclusionPage::aboutToShow()
             m_explanationLabel->setText( i18n( "This application isn't supported in the KDE Bugtracker, you can report thia bug to its maintainer : <i>%1</i>", krashConfig->getReportLink() ) );
         }
         
-        emit finished();
+        emit finished(true);
     }
     
     m_reportEdit->setHtml( report );

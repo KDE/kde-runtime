@@ -132,7 +132,7 @@ class ConclusionPage : public DrKonqiAssistantPage
         bool needToReport;
         
     Q_SIGNALS:
-        void finished();
+        void finished(bool);
 };
 
 #endif

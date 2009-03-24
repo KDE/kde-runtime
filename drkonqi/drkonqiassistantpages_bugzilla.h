@@ -195,7 +195,7 @@ class BugzillaCommitPage : public DrKonqiAssistantPage
         
     Q_SIGNALS:
     
-        void finished();
+        void finished(bool);
 
 };
 

@@ -798,7 +798,7 @@ void BugzillaCommitPage::commited( int bug_id )
     m_retryButton->setEnabled( false );
     m_retryButton->setVisible( false );
     
-    emit finished();
+    emit finished(false);
 }
 
 void BugzillaCommitPage::commitError( QString errorString )

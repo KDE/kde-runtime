@@ -6,6 +6,19 @@
 ##Unassigned
 -------------
 
+Disable DEBUG menu-button when GDB is running on the process
+GetBacktraceWidget... don't start the dbg if the there is another debugger running
+((
+[18:23:59] <gkiagia> Dario_Andres: check if the BacktraceParser is in Loading state
+[18:24:25] <gkiagia> if it is, the debugger running is BacktraceParser, otherwise it's some external one
+[18:24:41] <Dario_Andres> gkiagia: ok... so if not Loading I should check for the debuggerrunning
+[18:24:42] <gkiagia> BacktraceGenerator I mean
+[18:24:54] <gkiagia> yes
+))
+
+Use - Send/Sending/Sent Bug report for last page
+Allow to go back on Conclusions pages to change checkboxes...
+
 Relayout the main dialog (where to put the advanced thing, below or over another widget in the stack? )
 
 waiting for productName()->product/component mapping (custom cgi file at BKO)

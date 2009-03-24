@@ -68,7 +68,7 @@ DrKonqiBugReport::DrKonqiBugReport( QWidget * parent ) :
     KPageWidgetItem * m_conclusionsPage = new KPageWidgetItem( m_conclusions , "Results" );
     m_conclusionsPage->setHeader( i18n( "Crash Analysis Results" ) );
     m_conclusionsPage->setIcon( KIcon("tools-report-bug") );
-    connect( m_conclusions, SIGNAL(finished()), this, SLOT(assistantFinished()) );
+    connect( m_conclusions, SIGNAL(finished(bool)), this, SLOT(assistantFinished(bool)) );
     
     //Bugzilla Login
     BugzillaLoginPage * m_bugzillaLogin =  new BugzillaLoginPage( this );
@@ -108,7 +108,7 @@ DrKonqiBugReport::DrKonqiBugReport( QWidget * parent ) :
     KPageWidgetItem * m_bugzillaCommitPage = new KPageWidgetItem( m_bugzillaCommit, "BugzillaCommit");
     m_bugzillaCommitPage->setHeader( i18n( "Commit Page" ) ); //TODO better name ?
     m_bugzillaCommitPage->setIcon( KIcon("tools-report-bug") );
-    connect( m_bugzillaCommit, SIGNAL(finished()), this, SLOT(assistantFinished()) );
+    connect( m_bugzillaCommit, SIGNAL(finished(bool)), this, SLOT(assistantFinished(bool)) );
     
     //TODO remember to keep ordered
     addPage( m_introPage );
@@ -167,10 +167,10 @@ void DrKonqiBugReport::completeChanged( DrKonqiAssistantPage* page, bool isCompl
     }
 }
 
-void DrKonqiBugReport::assistantFinished()
+void DrKonqiBugReport::assistantFinished( bool showBack )
 {
     enableNextButton( false );
-    enableBackButton( false );
+    enableBackButton( showBack );
     enableButton( KDialog::User1, true );
 }
 
