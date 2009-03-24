@@ -94,14 +94,10 @@ bool CrashInformationPage::isComplete()
 //BEGIN BugAwarenessPage
 
 BugAwarenessPage::BugAwarenessPage( DrKonqiBugReport * parent ) 
-    : DrKonqiAssistantPage(parent) //FIXME fix layouting of this MESS
+    : DrKonqiAssistantPage(parent)
 {
-    //Details groupbox
-    //QGroupBox * canDetailBox = new QGroupBox();
-    //canDetailBox->setFlat( true );
-    
+    //User can detail layout
     QVBoxLayout * canDetailLayout = new QVBoxLayout( );
-    //canDetailBox->setLayout( canDetailLayout );
     
     QLabel * detailQuestionLabel = new QLabel( QString("<strong>%1</strong>").arg( i18n( "Can you give detailed information about what were you doing when the application crashed ?" ) ) );
     detailQuestionLabel->setWordWrap( true );
@@ -109,8 +105,7 @@ BugAwarenessPage::BugAwarenessPage( DrKonqiBugReport * parent )
     
     QLabel * detailLabel = 
         new QLabel(
-        i18n(
-        "Including in your bug report what were you doing when the application crashed will help the developers "
+        i18n( "Including in your bug report what were you doing when the application crashed will help the developers "
         "reproduce and fix the bug. <i>( Important details are: what you were doing in the application and documents you were using )</i>. If you have found a common patterns which causes a crash you can try to write steps to help the developers try to reproduce it." ) );
         
     detailLabel->setWordWrap( true );
@@ -119,37 +114,26 @@ BugAwarenessPage::BugAwarenessPage( DrKonqiBugReport * parent )
     m_canDetailCheckBox = new QCheckBox( i18n( "Yes, I can give information about the crash" ) );
     canDetailLayout->addWidget( m_canDetailCheckBox );
     
-    //Compromise groupbox
-    //QGroupBox * getCompromiseBox = new QGroupBox( i18n( "Are you willing to help the developers? and and and and and and and and and and and and and and and and and and and and and and and" ) );
+    //User is willing to help layout
+    QVBoxLayout * willingToHelpLayout = new QVBoxLayout();
     
-    QVBoxLayout * getCompromiseLayout = new QVBoxLayout();
-    //getCompromiseBox->setLayout( getCompromiseLayout );
+    QLabel * willingToHelpQuestionLabel = new QLabel( i18n( "<strong>Are you willing to help the developers?</strong>" ) );
+    willingToHelpLayout->addWidget( willingToHelpQuestionLabel );
     
-    QLabel * l2 = new QLabel( i18n( "<strong>Are you willing to help the developers?</strong>" ) );
-    getCompromiseLayout->addWidget( l2 );
+    QLabel * willingToHelpLabel = 
+        new QLabel( i18n( "Sometimes once the report is created and being investigated, the developers need more information from the reporter in order to fix the bug." ) );
+    willingToHelpLabel->setWordWrap( true );
+    willingToHelpLayout->addWidget( willingToHelpLabel );
     
-    QLabel * compromiseLabel = 
-        new QLabel(
-        i18n( "Sometimes once the report is created and being investigated, the developers need more information from the reporter in order to fix the bug." )
-        );
-    compromiseLabel->setWordWrap( true );
-    getCompromiseLayout->addWidget( compromiseLabel );
-    
-    m_willingToHelpCheckBox = 
-        new QCheckBox(
-        i18n( "Yes, I am willing to help the developers" )
-        );
-    getCompromiseLayout->addWidget( m_willingToHelpCheckBox );
+    m_willingToHelpCheckBox = new QCheckBox( i18n( "Yes, I am willing to help the developers" ) );
+    willingToHelpLayout->addWidget( m_willingToHelpCheckBox );
     
     //Main layout
     QVBoxLayout * layout = new QVBoxLayout();
-    layout->setSpacing( 10 );
-    //layout->addWidget( canDetailBox );
+    layout->setSpacing( 8 );
     layout->addLayout( canDetailLayout );
-    //layout->addWidget( getCompromiseBox );
-    layout->addLayout( getCompromiseLayout );
+    layout->addLayout( willingToHelpLayout );
     layout->addStretch();
-    //layout->addWidget( canReproduceBox );
     setLayout( layout );
 }
 
@@ -169,6 +153,7 @@ ConclusionPage::ConclusionPage( DrKonqiBugReport * parent )
     needToReport(false)
 {
     isBKO = DrKonqi::instance()->krashConfig()->isKDEBugzilla();
+    isBKO = true ; //FIXME
     
     m_reportEdit = new KTextBrowser();
     m_reportEdit->setReadOnly( true );
@@ -236,7 +221,7 @@ void ConclusionPage::aboutToShow()
     {
         case BacktraceParser::ReallyUseful:
         {
-            needToReport = ( canDetails ); //TODO discuss: always true ?
+            needToReport = ( canDetails );
             report = i18n( "* The crash information is really useful and worth reporting" );
             break;
         }

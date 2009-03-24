@@ -32,25 +32,22 @@ class ReportInfo
     ~ReportInfo();
 
     void setUserCanDetail( bool canDetail ) { m_userCanDetail = canDetail; }
-    void setUserCanReproduce ( bool canReproduce ) { m_userCanReproduce = canReproduce; }
     void setUserIsWillingToHelp ( bool isWillingToHelp ) { m_userIsWillingToHelp = isWillingToHelp; }
     
     bool getUserCanDetail() const { return m_userCanDetail; }
-    bool getUserCanReproduce() const { return m_userCanReproduce; }
     bool getUserIsWillingToHelp() const { return m_userIsWillingToHelp; }
     
     BugzillaManager * getBZ() const { return m_bugzilla; }
     BugReport * getReport() const { return m_report; }
 
     void setDetailText( const QString & text ) { m_userDetailText = text; }
-    void setReproduceText( const QString & text ) { m_userReproduceText = text; }
     void setPossibleDuplicate( const QString & bug ) { m_possibleDuplicate = bug; }
 
     QString generateReportTemplate( bool bugzilla = false ) const;
     void fillReportFields();
     void setDefaultProductComponent();
     
-    void commitBugReport();
+    void sendBugReport();
 
   private:
     //Information about libraries and OS
@@ -63,14 +60,12 @@ class ReportInfo
     mutable QString     m_LSBRelease;
 
     bool                m_userCanDetail;
-    bool                m_userCanReproduce;
     bool                m_userIsWillingToHelp;
     
     BugzillaManager *   m_bugzilla;
     BugReport *         m_report;
 
     QString             m_userDetailText;
-    QString             m_userReproduceText;
     QString             m_possibleDuplicate;
 };
 

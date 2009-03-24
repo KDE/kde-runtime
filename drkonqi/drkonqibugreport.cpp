@@ -103,23 +103,25 @@ DrKonqiBugReport::DrKonqiBugReport( QWidget * parent ) :
     m_bugzillaInformationPage->setIcon( KIcon("tools-report-bug") );
 
     //Bugzilla commit
-    BugzillaCommitPage * m_bugzillaCommit =  new BugzillaCommitPage( this );
+    BugzillaSendPage * m_bugzillaSend =  new BugzillaSendPage( this );
 
-    KPageWidgetItem * m_bugzillaCommitPage = new KPageWidgetItem( m_bugzillaCommit, "BugzillaCommit");
-    m_bugzillaCommitPage->setHeader( i18n( "Commit Page" ) ); //TODO better name ?
-    m_bugzillaCommitPage->setIcon( KIcon("tools-report-bug") );
-    connect( m_bugzillaCommit, SIGNAL(finished(bool)), this, SLOT(assistantFinished(bool)) );
+    KPageWidgetItem * m_bugzillaSendPage = new KPageWidgetItem( m_bugzillaSend, "BugzillaSend");
+    m_bugzillaSendPage->setHeader( i18n( "Send Crash Report" ) ); //TODO better name ?
+    m_bugzillaSendPage->setIcon( KIcon("tools-report-bug") );
+    connect( m_bugzillaSend, SIGNAL(finished(bool)), this, SLOT(assistantFinished(bool)) );
     
     //TODO remember to keep ordered
+    addPage( m_bugzillaLoginPage );
+    
     addPage( m_introPage );
     addPage( m_backtracePage );
     addPage( m_awarenessPage );
     addPage( m_conclusionsPage );
-    addPage( m_bugzillaLoginPage );
+    
     addPage( m_bugzillaKeywordsPage );
     addPage( m_bugzillaDuplicatesPage );
     addPage( m_bugzillaInformationPage );
-    addPage( m_bugzillaCommitPage );
+    addPage( m_bugzillaSendPage );
     
     setMinimumSize( QSize(600,400) );
     resize( QSize(600,400) );
@@ -151,7 +153,7 @@ void DrKonqiBugReport::currentPageChanged_slot(KPageWidgetItem * current , KPage
         currentPage->aboutToShow();
     }
         
-    if( current->name() == "BugzillaCommit" ) //Disable all buttons on last page
+    if( current->name() == "BugzillaSend" ) //Disable all buttons on last page
     {
         enableNextButton( false );
         enableBackButton( false );

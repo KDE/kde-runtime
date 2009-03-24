@@ -50,8 +50,8 @@ static const char searchUrl[] = "buglist.cgi?query_format=advanced&short_desc_ty
 static const char showBugUrl[] = "show_bug.cgi?id=%1";
 static const char fetchBugUrl[] = "show_bug.cgi?id=%1&ctype=xml";
 
-static const char commitReportUrl[] = "post_bug.cgi";
-static const char commitReportParams[] = "product=%1&version=unspecified&component=%2&bug_severity=%3&rep_platform=%4&op_sys=%5&priority=%6&bug_status=%7&short_desc=%8&comment=%9";
+static const char sendReportUrl[] = "post_bug.cgi";
+static const char sendReportParams[] = "product=%1&version=unspecified&component=%2&bug_severity=%3&rep_platform=%4&op_sys=%5&priority=%6&bug_status=%7&short_desc=%8&comment=%9";
 //version=%3&
 
 BugzillaManager::BugzillaManager():
@@ -190,40 +190,40 @@ void BugzillaManager::searchBugsDone( KJob * job )
     }
 }
 
-void BugzillaManager::commitReport( BugReport * report )
+void BugzillaManager::sendReport( BugReport * report )
 {
-    QString postDataStr = QString( commitReportParams );
+    QString postDataStr = QString( sendReportParams );
     postDataStr = postDataStr.arg( report->product(), report->component(), report->bugSeverity(),
         QString("Unlisted Binaries"), report->operatingSystem(), report->priority(), report->bugStatus(), report->shortDescription(),
         report->description() );
     
     QByteArray postData = postDataStr.toUtf8();
     
-    QString url = QString( bugtrackerBaseUrl ) + QString( commitReportUrl );
+    QString url = QString( bugtrackerBaseUrl ) + QString( sendReportUrl );
     
-    KIO::StoredTransferJob * commitJob = 
+    KIO::StoredTransferJob * sendJob = 
             KIO::storedHttpPost( postData, KUrl( url ), KIO::HideProgressInfo );
             
-    commitJob->addMetaData("content-type", "Content-Type: application/x-www-form-urlencoded");
-    commitJob->start();
+    sendJob->addMetaData("content-type", "Content-Type: application/x-www-form-urlencoded");
+    sendJob->start();
     
-    connect( commitJob, SIGNAL(finished(KJob*)) , this, SLOT(commitReportDone(KJob*)) );
+    connect( sendJob, SIGNAL(finished(KJob*)) , this, SLOT(sendReportDone(KJob*)) );
 }
 
 
-void BugzillaManager::commitReportDone( KJob * job )
+void BugzillaManager::sendReportDone( KJob * job )
 {
     if( !job->error() )
     {
-        KIO::StoredTransferJob * commitJob = (KIO::StoredTransferJob *)job;
-        QString response = commitJob->data();
+        KIO::StoredTransferJob * sendJob = (KIO::StoredTransferJob *)job;
+        QString response = sendJob->data();
 
         QRegExp reg("<title>Bug (\\d+) Submitted</title>");
         int pos = reg.indexIn( response );
         if( pos != -1 )
         {
             int bug_id = reg.cap(1).toInt();
-            emit reportCommited( bug_id );
+            emit reportSent( bug_id );
         }
         else
         {
@@ -239,15 +239,15 @@ void BugzillaManager::commitReportDone( KJob * job )
             qDebug() << error;
             if( error.contains( QLatin1String("does not exist or you aren't authorized to") ) )
             {
-                emit commitReportErrorWrongProduct();
+                emit sendReportErrorWrongProduct();
             } else {
-                emit commitReportError( error );
+                emit sendReportError( error );
             }
         }
     }
     else
     {
-        emit commitReportError( job->errorString() );
+        emit sendReportError( job->errorString() );
     }
     
 }

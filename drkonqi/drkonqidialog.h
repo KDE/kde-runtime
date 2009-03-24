@@ -30,6 +30,8 @@ class DrKonqiBugReport;
 class KGuiItem;
 class KrashConfig;
 
+class QResizeEvent;
+
 class DrKonqiDialog: public KDialog
 {
     Q_OBJECT
@@ -48,10 +50,14 @@ class DrKonqiDialog: public KDialog
         //New debugger detected
         void slotNewDebuggingApp( const QString & );
         
+        void enableDebugMenu( bool );
+        
         //GUI
         void buildMainWidget();
         void buildAdvancedWidget();
         void buildDialogOptions();
+        
+        void aboutToShowDetails_slot();
         
     private:
         AboutBugReportingDialog *       m_aboutBugReportingDialog;

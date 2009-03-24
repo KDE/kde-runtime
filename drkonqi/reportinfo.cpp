@@ -30,7 +30,6 @@
 ReportInfo::ReportInfo()
 {
     m_userCanDetail = false;
-    m_userCanReproduce = false;
     m_userIsWillingToHelp = false;
     m_bugzilla = new BugzillaManager();
     m_report = new BugReport();
@@ -131,19 +130,6 @@ QString ReportInfo::generateReportTemplate( bool bugzilla ) const
         }
     }
 
-    //Steps to reproduce the crash
-    if( m_userCanReproduce )
-    {
-        report.append( lineBreak );
-        report.append( lineBreak + QString("How to reproduce the crash:") + lineBreak);
-        if( !m_userReproduceText.isEmpty() )
-        {
-            report.append( m_userReproduceText );
-        } else {
-            report.append( i18n("[[ Insert the steps to reproduce the crash (in ENGLISH) here ]]") );
-        }
-    }
-        
     //Backtrace
     report.append( lineBreak );
     if( DrKonqi::instance()->backtraceGenerator()->parser()->backtraceUsefulness() != BacktraceParser::Useless )
@@ -168,9 +154,9 @@ QString ReportInfo::generateReportTemplate( bool bugzilla ) const
     return report;
 }
 
-void ReportInfo::commitBugReport()
+void ReportInfo::sendBugReport()
 {
-    m_bugzilla->commitReport( m_report );
+    m_bugzilla->sendReport( m_report );
 }
 
 void ReportInfo::setDefaultProductComponent()

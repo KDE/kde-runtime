@@ -142,7 +142,7 @@ void BugzillaLoginPage::walletLogin()
     {
         if ( !KWallet::Wallet::keyDoesNotExist( KWallet::Wallet::NetworkWallet(), KWallet::Wallet::FormDataFolder(), QLatin1String( "drkonqi_bugzilla" ) ) ) //Key exists!
         {
-            m_wallet = KWallet::Wallet::openWallet( KWallet::Wallet::NetworkWallet(), 0 );
+            m_wallet = KWallet::Wallet::openWallet( KWallet::Wallet::NetworkWallet(), this->winId() );
             //Was the wallet opened?
             if( m_wallet )
             {
@@ -178,7 +178,7 @@ void BugzillaLoginPage::loginClicked()
         //If the wallet wasn't initialized at startup, launch it now to save the data
         if( !m_wallet )
         {
-            m_wallet = KWallet::Wallet::openWallet( KWallet::Wallet::NetworkWallet(), 0 );
+            m_wallet = KWallet::Wallet::openWallet( KWallet::Wallet::NetworkWallet(), this->winId() );
         }
         //Got wallet open ?
         if( m_wallet )
@@ -245,7 +245,7 @@ BugzillaKeywordsPage::BugzillaKeywordsPage( DrKonqiBugReport * parent ) :
     m_keywordsOK(false)
 {
     QLabel * detailsLabel = new QLabel(
-    i18n( "Enter at least four words to describe the crash. You can enter the application name or another keyword that could describe the crash situation. This keywords will be used to search for already reported bugs that could be the same (possible duplicates)" ) //TODO rewrite native-english
+    i18n( "Enter at least four words to describe the crash. You can enter the application name or another keyword that could describe the crash situation. This keywords will be used to search for already reported bugs that could be the same (possible duplicates). <strong>Notice:</strong> you must use English words" ) //TODO rewrite native-english
     );
     detailsLabel->setWordWrap( true );
     
@@ -356,7 +356,7 @@ BugzillaDuplicatesPage::BugzillaDuplicatesPage( DrKonqiBugReport * parent ):
     lay->addStretch(); 
     lay->addWidget( m_possibleDuplicateEdit );
     
-    QLabel * explanationLabel = new QLabel("This is an optional step when you can try to find an already reported bug that could match the crash you got. If there are search results you can double click some list item and compare the situations. Then , you can suggest that your crash could be a duplicate of that report."); //TODO native-english
+    QLabel * explanationLabel = new QLabel("This is an optional step when you can try to find an already reported bug that could match the crash you got. If there are search results you can double click some list item and compare the situations. Then, you can suggest that your crash could be a duplicate of that report."); //TODO native-english
     explanationLabel->setWordWrap( true );
     
     QVBoxLayout * layout = new QVBoxLayout();
@@ -632,14 +632,10 @@ BugzillaInformationPage::BugzillaInformationPage( DrKonqiBugReport * parent )
     m_detailsLabel = new QLabel( i18n( "Details of the crash situation" ) );
     m_detailsEdit = new KTextEdit();
     connect( m_detailsEdit, SIGNAL(textChanged()), this, SLOT(checkTexts()) );
-    
-    m_reproduceLabel = new QLabel( i18n( "Steps to reproduce" ) );
-    m_reproduceEdit = new KTextEdit();
-    connect( m_reproduceEdit, SIGNAL(textChanged()), this, SLOT(checkTexts()) );
 
     QVBoxLayout * layout = new QVBoxLayout();
     
-    QLabel * explanationLabel = new QLabel( "Complete the bug report fields in order to properly submit it. All the fields should be at least 20 characters. All the texts should be written in english." ); //TODO native-rewrite (text length?)
+    QLabel * explanationLabel = new QLabel( "Complete the bug report fields in order to properly submit it. All the fields should be at least 20 characters. <strong>Notice:</strong> All the texts should be written in english." ); //TODO native-rewrite (text length?)
     explanationLabel->setWordWrap( true );
     
     layout->addWidget( explanationLabel ); 
@@ -648,8 +644,6 @@ BugzillaInformationPage::BugzillaInformationPage( DrKonqiBugReport * parent )
     layout->addWidget( m_titleEdit );
     layout->addWidget( m_detailsLabel );
     layout->addWidget( m_detailsEdit );
-    layout->addWidget( m_reproduceLabel );
-    layout->addWidget( m_reproduceEdit );
     layout->addStretch();
     layout->addWidget( new QLabel( i18n( "<strong>Notice:</strong> The crash information will be automatically integrated into the bug report" ) ) );
     
@@ -666,19 +660,13 @@ void BugzillaInformationPage::aboutToShow()
     m_detailsLabel->setVisible( canDetail );
     m_detailsEdit->setVisible( canDetail );
     
-    bool canReproduce = reportInfo()->getUserCanReproduce();
-    
-    m_reproduceLabel->setVisible( canReproduce );
-    m_reproduceEdit->setVisible( canReproduce );
-    
-    checkTexts(); //May be the options (canDetail|Reproduce) changed and we need to recheck
+    checkTexts(); //May be the options (canDetail) changed and we need to recheck
 }
     
 void BugzillaInformationPage::checkTexts()
 {
     bool detailsEmpty = m_detailsEdit->isVisible() ? m_detailsEdit->toPlainText().isEmpty() : false;
-    bool reproduceEmpty = m_reproduceEdit->isVisible() ? m_reproduceEdit->toPlainText().isEmpty() : false;
-    bool ok = !(m_titleEdit->text().isEmpty() || detailsEmpty || reproduceEmpty );
+    bool ok = !(m_titleEdit->text().isEmpty() || detailsEmpty );
     
     if( ok != m_textsOK )
     {
@@ -689,14 +677,13 @@ void BugzillaInformationPage::checkTexts()
 
 bool BugzillaInformationPage::showNextPage()
 {
-    checkTexts(); //FIXME , reproduce shouldn't be used anymore
+    checkTexts();
     if( m_textsOK ) //not empty
     {
         bool titleShort = m_titleEdit->text().size() < 50;
-        bool reproduceShort = !( m_reproduceEdit && m_reproduceEdit->toPlainText().size() < 150 );
         bool detailsShort = ( m_detailsEdit->isVisible() && m_detailsEdit->toPlainText().size() < 150);
         
-        if ( titleShort || reproduceShort || detailsShort )
+        if ( titleShort || detailsShort )
         {
             QString message;
             
@@ -744,27 +731,27 @@ void BugzillaInformationPage::aboutToHide()
     //Save fields data
     reportInfo()->getReport()->setShortDescription( m_titleEdit->text() );
     reportInfo()->setDetailText( m_detailsEdit->toPlainText() );
-    reportInfo()->setReproduceText( m_reproduceEdit->toPlainText() );
 }
 
 //END BugzillaInformationPage
 
-//BEGIN BugzillaCommitPage
+//BEGIN BugzillaSendPage
 
-BugzillaCommitPage::BugzillaCommitPage( DrKonqiBugReport * parent )
+BugzillaSendPage::BugzillaSendPage( DrKonqiBugReport * parent )
     : DrKonqiAssistantPage(parent)
 {
-    connect( reportInfo()->getBZ(), SIGNAL(reportCommited(int)), this, SLOT(commited(int)) );
-    connect( reportInfo()->getBZ(), SIGNAL(commitReportError(QString)), this, SLOT(commitError(QString)) );
-    connect( reportInfo()->getBZ(), SIGNAL(commitReportErrorWrongProduct()), this, SLOT(commitUsingDefaults()) );
+    connect( reportInfo()->getBZ(), SIGNAL(reportSent(int)), this, SLOT(sent(int)) );
+    connect( reportInfo()->getBZ(), SIGNAL(sendReportError(QString)), this, SLOT(sendError(QString)) );
+    connect( reportInfo()->getBZ(), SIGNAL(sendReportErrorWrongProduct()), this, SLOT(sendUsingDefaults()) );
     
     m_statusWidget = new StatusWidget();
     m_statusWidget->setStatusLabelWordWrap( true );
     
-    m_retryButton = new KPushButton(  KGuiItem( i18nc("button action", "Retry ...") , KIcon("view-refresh"),  i18nc("help text", "Use this button to retry submitting the bug report if it failed before"), i18nc("help text", "Use this button to retry submitting the bug report if it failed before") ) );
+    m_retryButton = new KPushButton(  KGuiItem( i18nc("button action", "Retry ...") , KIcon("view-refresh"),  i18nc("help text", "Use this button to retry sending the crash report if it failed before"), i18nc("help text", "Use this button to retry sending the crash report if it failed before") ) );
     
     m_retryButton->setVisible( false );
     connect( m_retryButton, SIGNAL(clicked()), this , SLOT(retryClicked()) );
+    
     QHBoxLayout * buttonLayout = new QHBoxLayout();
     buttonLayout->addStretch();
     buttonLayout->addWidget( m_retryButton );
@@ -776,24 +763,22 @@ BugzillaCommitPage::BugzillaCommitPage( DrKonqiBugReport * parent )
     setLayout( layout );
 }
 
-void BugzillaCommitPage::retryClicked()
+void BugzillaSendPage::retryClicked()
 {
     m_retryButton->setEnabled( false );
     aboutToShow();
 }
 
-void BugzillaCommitPage::aboutToShow()
+void BugzillaSendPage::aboutToShow()
 {
-    m_statusWidget->setBusy( i18n( "Generating report ..." ) );
+    m_statusWidget->setBusy( i18n( "Sending crash report ... ( please wait )" ) );
     reportInfo()->fillReportFields();
-    
-    m_statusWidget->setBusy( i18n( "Posting report ... ( please wait )" ) );
-    reportInfo()->commitBugReport();
+    reportInfo()->sendBugReport();
 }
 
-void BugzillaCommitPage::commited( int bug_id )
+void BugzillaSendPage::sent( int bug_id )
 {
-    m_statusWidget->setIdle( i18n("Report commited!<br />Bug Number :: %1<br />Link :: <link>%2</link>", bug_id, reportInfo()->getBZ()->urlForBug( bug_id ) ));
+    m_statusWidget->setIdle( i18n("Crash report sent!<br />Bug Number :: %1<br />Link :: <link>%2</link><br />Thanks for contributing with KDE", bug_id, reportInfo()->getBZ()->urlForBug( bug_id ) )); //FIXME text
     
     m_retryButton->setEnabled( false );
     m_retryButton->setVisible( false );
@@ -801,18 +786,18 @@ void BugzillaCommitPage::commited( int bug_id )
     emit finished(false);
 }
 
-void BugzillaCommitPage::commitError( QString errorString )
+void BugzillaSendPage::sendError( QString errorString )
 {
-    m_statusWidget->setIdle( i18n( "Error on commiting bug report:  %1", errorString ) );
+    m_statusWidget->setIdle( i18n( "Error sending the crash report:  %1", errorString ) );
 
     m_retryButton->setEnabled( true );
     m_retryButton->setVisible( true );
 }
 
-void BugzillaCommitPage::commitUsingDefaults()
+void BugzillaSendPage::sendUsingDefaults()
 {
     reportInfo()->setDefaultProductComponent();
-    reportInfo()->commitBugReport();
+    reportInfo()->sendBugReport();
 }
 
-//END BugzillaCommitPage
+//END BugzillaSendPage

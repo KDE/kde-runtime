@@ -3,16 +3,9 @@ Discussions:
 
 - Texts needs review/rewrite (TODO tag..)
 
-- The "needToReport" estimation logic: (drkonqiassistantpages_base.cpp:235)
-Always true if the backtrace is perfect.. or we still require the details ?
-[[ From pinotree approach, even with a perfect backtrace we still need some context about the crash to consider it useful ]]
-
 - Layouting of the Main/Advanced widget on the First dialog
 (( Need to discuss if use separate widgets on a QStackedWidget with the Toggle button,
 or use the old approach: basic info is always show, backtracewidget visibility can be toggled ))
-
-- Layouting of the bug awareness page (now that we merged the "I can reproduce" option with the "details" one )
-(( This should be simple as we removed and cutted some texts ))
 
 - BugzillaKeywordsPage word filtering (and minimum length) criteria (drkonqiassistantpages_bugzilla.cpp:269)
 (( check at least X words, with Y of them with a minimum of Z chars ..? ))
@@ -20,3 +13,14 @@ or use the old approach: basic info is always show, backtracewidget visibility c
 - Rewrite text (drkonqiassistantpages_bugzilla.cpp:716)
 
 - Rewire criteria of minimum chars/words to use in the Title and Details fields  (drkonqiassistantpages_bugzilla.cpp:690)
+
+#DONE
+
+- The "needToReport" estimation logic: (drkonqiassistantpages_base.cpp:235)
+Always true if the backtrace is perfect.. or we still require the details ?
+[[ From pinotree approach, even with a perfect backtrace we still need some context about the crash to consider it useful ]]
+Use pino approach
+
+- Layouting of the bug awareness page (now that we merged the "I can reproduce" option with the "details" one )
+(( This should be simple as we removed and cutted some texts ))
+It's OK the current one

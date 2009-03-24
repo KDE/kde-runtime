@@ -166,28 +166,26 @@ class BugzillaInformationPage : public DrKonqiAssistantPage
         KLineEdit *     m_titleEdit;
         QLabel *        m_detailsLabel;
         KTextEdit *     m_detailsEdit;
-        QLabel *        m_reproduceLabel;
-        KTextEdit *     m_reproduceEdit;
         
         bool m_textsOK;
 };
 
-/** Commit page **/
-class BugzillaCommitPage : public DrKonqiAssistantPage
+/** Send crash report page **/
+class BugzillaSendPage : public DrKonqiAssistantPage
 {
     Q_OBJECT
     
     public:
-        BugzillaCommitPage( DrKonqiBugReport * );
+        BugzillaSendPage( DrKonqiBugReport * );
         
         void aboutToShow();
         
     private Q_SLOTS:
-        void commited(int);
-        void commitError( QString );
+        void sent(int);
+        void sendError( QString );
         
         void retryClicked();
-        void commitUsingDefaults();
+        void sendUsingDefaults();
         
     private:
         KPushButton *   m_retryButton;

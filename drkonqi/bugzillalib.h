@@ -137,7 +137,7 @@ class BugzillaManager : public QObject
         void fetchBugReport( int );
         void searchBugs( QString words, QString product, QString severity, QString date_start, QString date_end , QString comment);
         
-        void commitReport( BugReport * );
+        void sendReport( BugReport * );
         
         bool getLogged() { return m_logged; }
         QString getUsername() { return m_username; }
@@ -148,19 +148,19 @@ class BugzillaManager : public QObject
         void loginDone(KJob*);
         void fetchBugReportDone(KJob*);
         void searchBugsDone(KJob*);
-        void commitReportDone(KJob*);
+        void sendReportDone(KJob*);
         
     Q_SIGNALS:
         void loginFinished( bool );
         void bugReportFetched( BugReport* );
         void searchFinished( BugMapList );
-        void reportCommited( int );
+        void reportSent( int );
         
         void loginError( QString );
         void searchError( QString );
         void bugReportError( QString );
-        void commitReportError( QString );
-        void commitReportErrorWrongProduct(); //To use "kde" product
+        void sendReportError( QString );
+        void sendReportErrorWrongProduct(); //To use "kde" product
 
     private:
     

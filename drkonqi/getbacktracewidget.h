@@ -37,6 +37,7 @@ class GetBacktraceWidget: public QWidget
     public:
         GetBacktraceWidget( BacktraceGenerator * );
         
+    public Q_SLOTS:
         void generateBacktrace();
 
     Q_SIGNALS:
@@ -57,6 +58,7 @@ class GetBacktraceWidget: public QWidget
         void saveClicked();
         void copyClicked();
 
+        void anotherDebuggerRunning();
 };
 
 #endif

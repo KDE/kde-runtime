@@ -5,19 +5,9 @@
         
 ##Unassigned
 -------------
+http://kde.pastebin.com/d502b5d8c
 
-Disable DEBUG menu-button when GDB is running on the process
-GetBacktraceWidget... don't start the dbg if the there is another debugger running
-((
-[18:23:59] <gkiagia> Dario_Andres: check if the BacktraceParser is in Loading state
-[18:24:25] <gkiagia> if it is, the debugger running is BacktraceParser, otherwise it's some external one
-[18:24:41] <Dario_Andres> gkiagia: ok... so if not Loading I should check for the debuggerrunning
-[18:24:42] <gkiagia> BacktraceGenerator I mean
-[18:24:54] <gkiagia> yes
-))
-
-Use - Send/Sending/Sent Bug report for last page
-Allow to go back on Conclusions pages to change checkboxes...
+show reason for opening wallet ?
 
 Relayout the main dialog (where to put the advanced thing, below or over another widget in the stack? )
 
@@ -28,20 +18,27 @@ waiting for productName()->product/component mapping (custom cgi file at BKO)
 Remove strings from profiles-rc. Use strings i18n when needed
 The signal explanations aren't required... as we use it only for devs.. and they already know..
 
-fix awarenesspage layout
-
-add warns about we want text in english !! (partly done)
-
 Finish "about bug reporting steps" (guide)  (documentation format ?)
 
 Check leaks, crashes
 
 krazy2 checks (partially done)
 
-check what all the options in KrashConf are meant to do and use them appropriately or drop them (i.e review options)
-
 #Done
 ---------
+
+Fix KWallet valid WiD...   
+
+check what all the options in KrashConf are meant to do and use them appropriately or drop them (i.e review options)
+
+add warns about we want text in english !! (partly done)
+fix awarenesspage layout
+
+Use - Send/Sending/Sent Bug report for last page
+
+Disable DEBUG menu-button when GDB is running on the process
+GetBacktraceWidget... don't start the dbg if the there is another debugger running
+Allow to go back on Conclusions pages to change checkboxes...
 
 detect if the pid isn't set (?) 
 

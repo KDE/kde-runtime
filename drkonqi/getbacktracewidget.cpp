@@ -86,15 +86,20 @@ void GetBacktraceWidget::setAsLoading()
 void GetBacktraceWidget::regenerateBacktrace()
 {
     setAsLoading();
-    m_btGenerator->start();
+    
+    if( DrKonqi::instance()->currentState() != DrKonqi::DebuggerRunning )
+        m_btGenerator->start();
+    else
+        anotherDebuggerRunning();
+        
     emit stateChanged();
 }
 
 void GetBacktraceWidget::generateBacktrace()
 {
     if ( m_btGenerator->state() == BacktraceGenerator::NotLoaded )
-    {   //First backtrace generation
-        regenerateBacktrace();
+    {
+        regenerateBacktrace();    //First backtrace generation
     }
     else if ( m_btGenerator->state() == BacktraceGenerator::Loading )
     {
@@ -109,6 +114,18 @@ void GetBacktraceWidget::generateBacktrace()
     }
 }
  
+void GetBacktraceWidget::anotherDebuggerRunning()
+{
+    ui.m_backtraceEdit->setEnabled( false );
+    ui.m_backtraceEdit->setPlainText( i18n("Another debugger is currently running. The crash information could not be fetched") );
+    m_usefulnessMeter->setState( BacktraceGenerator::Failed );
+    m_usefulnessMeter->setUsefulness( BacktraceParser::Useless );
+    ui.m_statusWidget->setIdle( i18n("The crash information could not be fetched") );
+    ui.m_extraDetailsLabel->setVisible( true );
+    ui.m_extraDetailsLabel->setText( i18n("Another debugging process is attached to the crashed application. The DrKonqi debugger can't fetch the backtrace. Close the process and click \"Reload Crash Information\" to get it.") );
+    ui.m_reloadBacktraceButton->setEnabled( true );
+}
+
 void GetBacktraceWidget::backtraceGenerated()
 {
     m_usefulnessMeter->setState( m_btGenerator->state() );
@@ -144,7 +161,6 @@ void GetBacktraceWidget::backtraceGenerated()
         {
             ui.m_extraDetailsLabel->setVisible( true );
             ui.m_extraDetailsLabel->setText( i18n( "The crash information lacks some important details.<br />Please read <link url='%1'>How to create useful crash reports</link> to learn how to get a useful backtrace.<br />After you install the needed packages you can click the \"Reload Crash Information\" button ", QLatin1String("http://techbase.kde.org/Development/Tutorials/Debugging/How_to_create_useful_crash_reports") ) );
-            ui.m_reloadBacktraceButton->setEnabled( true );
 
             #if 0
             if (!missingSymbols.isEmpty() ) //Detected missing symbols
@@ -172,7 +188,6 @@ void GetBacktraceWidget::backtraceGenerated()
         
         ui.m_extraDetailsLabel->setVisible( true );
         ui.m_extraDetailsLabel->setText( i18n( "You need to install the debug symbols package for this application<br />Please read <link url='%1'>How to create useful crash reports</link> to learn how to get a useful backtrace.<br />After you install the needed packages you can click the \"Reload Crash Information\" button ", QLatin1String("http://techbase.kde.org/Development/Tutorials/Debugging/How_to_create_useful_crash_reports") ) );
-        ui.m_reloadBacktraceButton->setEnabled( true );
     }
     else if( m_btGenerator->state() == BacktraceGenerator::FailedToStart )
     {
@@ -183,9 +198,9 @@ void GetBacktraceWidget::backtraceGenerated()
         ui.m_backtraceEdit->setPlainText( i18n("The crash information could not be generated" ));
         ui.m_extraDetailsLabel->setVisible( true );
         ui.m_extraDetailsLabel->setText( i18n("You need to install the debugger package (<i>%1</i>) and click the \"Reload Crash Information\" button", DrKonqi::instance()->krashConfig()->debuggerName() ) );
-        ui.m_reloadBacktraceButton->setEnabled( true );
     }
     
+    ui.m_reloadBacktraceButton->setEnabled( true );
     emit stateChanged();
 }
 
