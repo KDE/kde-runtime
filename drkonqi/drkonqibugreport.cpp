@@ -176,6 +176,7 @@ void DrKonqiBugReport::assistantFinished( bool showBack )
     enableNextButton( false );
     enableBackButton( showBack );
     enableButton( KDialog::User1, true );
+    enableButton( KDialog::Cancel, false );
     m_canClose = true;
 }
 

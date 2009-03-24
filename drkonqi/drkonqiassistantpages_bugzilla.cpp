@@ -679,18 +679,12 @@ void BugzillaInformationPage::aboutToShow()
     if( m_titleEdit->text().isEmpty() )
         m_titleEdit->setText( reportInfo()->getReport()->shortDescription() );
         
-    bool canDetail = reportInfo()->getUserCanDetail();
-    
-    m_detailsLabel->setVisible( canDetail );
-    m_detailsEdit->setVisible( canDetail );
-    
     checkTexts(); //May be the options (canDetail) changed and we need to recheck
 }
     
 void BugzillaInformationPage::checkTexts()
 {
-    bool detailsEmpty = m_detailsEdit->isVisible() ? m_detailsEdit->toPlainText().isEmpty() : false;
-    bool ok = !(m_titleEdit->text().isEmpty() || detailsEmpty );
+    bool ok = !(m_titleEdit->text().isEmpty() || m_detailsEdit->toPlainText().isEmpty() );
     
     if( ok != m_textsOK )
     {
@@ -705,7 +699,7 @@ bool BugzillaInformationPage::showNextPage()
     if( m_textsOK ) //not empty
     {
         bool titleShort = m_titleEdit->text().size() < 50;
-        bool detailsShort = ( m_detailsEdit->isVisible() && m_detailsEdit->toPlainText().size() < 150);
+        bool detailsShort = m_detailsEdit->toPlainText().size() < 150;
         
         if ( titleShort || detailsShort )
         {
