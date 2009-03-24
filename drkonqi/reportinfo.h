@@ -31,12 +31,12 @@ class ReportInfo
     ReportInfo();
     ~ReportInfo();
 
-    void setUserCanDetail( bool canDetail ) { m_userCanDetail = canDetail; }
-    void setUserIsWillingToHelp ( bool isWillingToHelp ) { m_userIsWillingToHelp = isWillingToHelp; }
-    
     bool getUserCanDetail() const { return m_userCanDetail; }
-    bool getUserIsWillingToHelp() const { return m_userIsWillingToHelp; }
+    void setUserCanDetail( bool canDetail ) { m_userCanDetail = canDetail; }
     
+    bool getUserIsWillingToHelp() const { return m_userIsWillingToHelp; }
+    void setUserIsWillingToHelp ( bool isWillingToHelp ) { m_userIsWillingToHelp = isWillingToHelp; }
+
     BugzillaManager * getBZ() const { return m_bugzilla; }
     BugReport * getReport() const { return m_report; }
 

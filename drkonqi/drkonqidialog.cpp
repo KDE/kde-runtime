@@ -190,6 +190,5 @@ DrKonqiDialog::~DrKonqiDialog()
 {
     delete m_aboutBugReportingDialog;
     delete m_backtraceWidget;
-    delete m_stackedWidget;
     delete m_debugMenu;
 }

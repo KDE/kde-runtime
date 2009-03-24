@@ -19,7 +19,10 @@
 
 #include "drkonqibugreport.h"
 
+#include <QtGui/QCloseEvent>
+
 #include <kdebug.h>
+#include <kmessagebox.h>
 
 #include "drkonqiassistantpages_base.h"
 #include "drkonqiassistantpages_bugzilla.h"
@@ -29,7 +32,8 @@
 DrKonqiBugReport::DrKonqiBugReport( QWidget * parent ) :
     KAssistantDialog(parent),
     m_aboutBugReportingDialog(0),
-    m_reportInfo(new ReportInfo)
+    m_reportInfo(new ReportInfo),
+    m_canClose(false)
 {
     setWindowTitle( i18n( "Crash Reporting Assistant" ) );
     setWindowIcon( KIcon( "tools-report-bug" ) );
@@ -172,6 +176,7 @@ void DrKonqiBugReport::assistantFinished( bool showBack )
     enableNextButton( false );
     enableBackButton( showBack );
     enableButton( KDialog::User1, true );
+    m_canClose = true;
 }
 
 void DrKonqiBugReport::showHelp()
@@ -204,4 +209,25 @@ void DrKonqiBugReport::enableNextButton( bool enabled )
 void DrKonqiBugReport::enableBackButton( bool enabled )
 {
     enableButton( KDialog::User3, enabled );
+}
+
+void DrKonqiBugReport::reject()
+{
+    close();
+}
+
+void DrKonqiBugReport::closeEvent( QCloseEvent * event )
+{
+    if( !m_canClose )
+    {
+        if (KMessageBox::questionYesNo( this, i18n("Do you really want to close the bug assistant without sending the bug report?"),
+                i18n("Close Crash Reporting Assistant") ) == KMessageBox::Yes )
+        {
+            event->accept();
+        } else {
+            event->ignore();
+        }
+    } else {
+        event->accept();
+    }
 }

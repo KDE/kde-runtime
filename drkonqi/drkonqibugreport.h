@@ -25,6 +25,7 @@
 class DrKonqiAssistantPage;
 class AboutBugReportingDialog;
 class ReportInfo;
+class QCloseEvent;
 
 class DrKonqiBugReport: public KAssistantDialog
 {
@@ -49,11 +50,16 @@ class DrKonqiBugReport: public KAssistantDialog
         
         void next();
         
+        //Override default reject method
+        void reject();
     private:
         void connectSignals( DrKonqiAssistantPage * );
-
+        void closeEvent(QCloseEvent*);
+        
         AboutBugReportingDialog *   m_aboutBugReportingDialog;
         ReportInfo *                m_reportInfo;
+        
+        bool                        m_canClose;
 };
 
 #endif

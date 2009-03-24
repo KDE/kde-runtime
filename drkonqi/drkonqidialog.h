@@ -22,12 +22,9 @@
 
 #include <kdialog.h>
 
-class QStackedWidget;
 class GetBacktraceWidget;
-class KPushButton;
 class AboutBugReportingDialog;
 class DrKonqiBugReport;
-class KGuiItem;
 class KrashConfig;
 class KTabWidget;
 
@@ -61,12 +58,8 @@ class DrKonqiDialog: public KDialog
         
         AboutBugReportingDialog *       m_aboutBugReportingDialog;
         
-        QStackedWidget *                m_stackedWidget;
         QWidget *                       m_introWidget;
         GetBacktraceWidget *            m_backtraceWidget;
-        
-        KGuiItem                        m_guiItemShowIntroduction;
-        KGuiItem                        m_guiItemShowAdvanced;
         
         QMenu *                         m_debugMenu;
         QAction *                       m_defaultDebugAction;
