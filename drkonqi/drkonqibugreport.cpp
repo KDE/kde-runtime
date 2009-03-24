@@ -111,13 +111,11 @@ DrKonqiBugReport::DrKonqiBugReport( QWidget * parent ) :
     connect( m_bugzillaSend, SIGNAL(finished(bool)), this, SLOT(assistantFinished(bool)) );
     
     //TODO remember to keep ordered
-    addPage( m_bugzillaLoginPage );
-    
     addPage( m_introPage );
     addPage( m_backtracePage );
     addPage( m_awarenessPage );
     addPage( m_conclusionsPage );
-    
+    addPage( m_bugzillaLoginPage );
     addPage( m_bugzillaKeywordsPage );
     addPage( m_bugzillaDuplicatesPage );
     addPage( m_bugzillaInformationPage );

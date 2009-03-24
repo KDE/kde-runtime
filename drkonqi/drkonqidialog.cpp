@@ -65,7 +65,6 @@ DrKonqiDialog::DrKonqiDialog( QWidget * parent ) :
     setDetailsWidget( m_advancedWidget );
     
     kDebug() << connect( this, SIGNAL(aboutToShowDetails()), this, SLOT(aboutToShowDetails_slot()) );
-    
     buildDialogOptions();
 }
 
@@ -73,6 +72,7 @@ void DrKonqiDialog::aboutToShowDetails_slot()
 {
     m_backtraceWidget->generateBacktrace();
 }
+
 void DrKonqiDialog::buildMainWidget()
 {
     const KrashConfig * krashConfig = DrKonqi::instance()->krashConfig();
