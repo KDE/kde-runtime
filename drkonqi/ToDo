@@ -7,11 +7,7 @@
 -------------
 http://kde.pastebin.com/d502b5d8c
 
-ASK on close the assistant
-
-show reason for opening wallet ?
-
-Relayout the main dialog (where to put the advanced thing, below or over another widget in the stack? )
+!! Debug in default doesn't work
 
 waiting for productName()->product/component mapping (custom cgi file at BKO)
 ( if no combination is found, revert to "kde" product )
@@ -28,6 +24,12 @@ krazy2 checks (partially done)
 
 #Done
 ---------
+
+Relayout the main dialog (where to put the advanced thing, below or over another widget in the stack? )
+
+show reason for opening wallet ?
+
+ASK on close the assistant
 
 Text gets chopped on BKO report sometimes (encoding issue)???
 

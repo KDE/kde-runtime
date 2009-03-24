@@ -23,6 +23,8 @@
 
 class QLabel;
 class QProgressBar;
+class QShowEvent;
+class QHideEvent;
 
 class StatusWidget: public QStackedWidget
 {

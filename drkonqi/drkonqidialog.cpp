@@ -31,6 +31,8 @@
 #include <QtGui/QTreeWidget>
 #include <QtGui/QMenu>
 
+#include <QPalette>
+
 #include <kicon.h>
 #include <kpushbutton.h>
 #include <ktextbrowser.h>
@@ -83,7 +85,7 @@ void DrKonqiDialog::buildMainWidget()
     title->setWordWrap( true ); 
     
     QLabel * infoLabel = new QLabel( i18nc("Small explanation of the crash cause",
-    "<para>This probably happened because there is a bug in the application.</para><para>You can help us improve KDE by reporting this crash. <link url=\"#aboutbugreporting\">Learn more about bug reporting</link>.</para><para><strong>Note:</strong> It is safe to close this dialog. If you do not want to, you do not have to file a bug report.</para>" ) );
+    "<para>This probably happened because there is a bug in the application.</para><para>You can help us improve KDE by reporting this crash.<nl /><link url=\"#aboutbugreporting\">Learn more about bug reporting</link>.</para><para><strong>Note:</strong> It is safe to close this dialog. If you do not want to, you do not have to file a bug report.</para>" ) );
     connect( infoLabel, SIGNAL(linkActivated(QString)), this, SLOT(aboutBugReporting(QString)));
     infoLabel->setWordWrap( true ); 
     
@@ -91,8 +93,25 @@ void DrKonqiDialog::buildMainWidget()
     QVBoxLayout * introLayout = new QVBoxLayout;
     introLayout->setSpacing( 10 );
     introLayout->setContentsMargins( 10, 10, 10, 10 );
-    introLayout->addWidget( title );
-    introLayout->addWidget( infoLabel );
+    
+    //FIXME fix this, choose better icon
+    QHBoxLayout * l1 = new QHBoxLayout();
+    
+    QVBoxLayout * l2 = new QVBoxLayout();
+    l2->addWidget( title );
+    l2->addWidget( infoLabel );
+    
+    l1->addLayout( l2 );
+    
+    QLabel * l = new QLabel();
+    l->setSizePolicy( QSizePolicy::Maximum, QSizePolicy::Maximum );
+    
+    l->setPixmap( KIcon("dialog-error").pixmap( QSize(64,64) ) ); 
+    //QPixmap(KStandardDirs::locate( "appdata", QLatin1String( "pics/konqi.png" ) )))
+    
+    l1->addWidget( l );
+    
+    introLayout->addLayout( l1 );
     introLayout->addStretch();
 
     //Details
@@ -103,12 +122,15 @@ void DrKonqiDialog::buildMainWidget()
     m_introWidget = new QWidget( this );
     m_introWidget->setLayout( introLayout );
     
+    //Old background image
+    /*
     QString styleSheet = QString( ".QWidget {"
                        "background-image: url(%1);"
                        "background-repeat: no-repeat;"
                        "background-position: right;"
                        "} ").arg( KStandardDirs::locate( "appdata", QLatin1String( "pics/konqi.png" ) ) );
-    //m_introWidget->setStyleSheet( styleSheet );
+    m_introWidget->setStyleSheet( styleSheet );
+    */
 }
 
 void DrKonqiDialog::buildDialogOptions()

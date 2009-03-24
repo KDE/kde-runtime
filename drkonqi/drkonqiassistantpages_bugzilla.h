@@ -106,7 +106,9 @@ class BugzillaDuplicatesPage : public DrKonqiAssistantPage
         void searchFinished( const BugMapList& );
         void searchError( QString );
         
+        void openSelectedReport();
         void itemClicked( QTreeWidgetItem *, int );
+        void itemSelectionChanged();
         
         void bugFetchFinished( BugReport * );
         void bugFetchError( QString );
@@ -130,6 +132,7 @@ class BugzillaDuplicatesPage : public DrKonqiAssistantPage
         QDate           m_endDate;
         
         KPushButton *   m_searchMoreButton;
+        KPushButton *   m_openReportButton;
         QTreeWidget *   m_bugListWidget;
 
         KDialog *       m_infoDialog;

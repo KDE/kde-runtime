@@ -163,7 +163,8 @@ class BugzillaManager : public QObject
         void sendReportErrorWrongProduct(); //To use "kde" product
 
     private:
-    
+        QByteArray generatePostDataForReport(BugReport*);
+        
         QString     m_username;
         QString     m_password;
         bool        m_logged;

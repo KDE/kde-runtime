@@ -71,7 +71,7 @@ void StatusWidget::setBusy( QString busyMessage )
     m_statusLabel->setText( QString() );
     m_busyLabel->setText( busyMessage );
     setCurrentIndex( 1 );
-    setBusyCursor();
+    //setBusyCursor();
 }
 
 void StatusWidget::setIdle( QString idleMessage )
@@ -79,7 +79,7 @@ void StatusWidget::setIdle( QString idleMessage )
     m_busyLabel->setText( QString() );
     m_statusLabel->setText( idleMessage );
     setCurrentIndex( 0 );
-    setIdleCursor();
+    //setIdleCursor();
 }
 
 void StatusWidget::addCustomStatusWidget( QWidget * widget )

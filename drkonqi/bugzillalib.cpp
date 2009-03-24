@@ -192,8 +192,7 @@ void BugzillaManager::searchBugsDone( KJob * job )
 
 void BugzillaManager::sendReport( BugReport * report )
 {
-    QByteArray postData = QByteArray("product=") + QUrl::toPercentEncoding(report->product()) + QByteArray("&version=unspecified&component=") +  QUrl::toPercentEncoding(report->component()) 
-    + QByteArray("&bug_severity=") + QUrl::toPercentEncoding(report->bugSeverity()) + QByteArray("&rep_platform=") +  QUrl::toPercentEncoding(QString("Unlisted Binaries")) + QByteArray("&op_sys=") + QUrl::toPercentEncoding(report->operatingSystem()) + QByteArray("&priority=") + QUrl::toPercentEncoding(report->priority()) + QByteArray("&bug_status=") + QUrl::toPercentEncoding(report->bugStatus()) + QByteArray("&short_desc=") + QUrl::toPercentEncoding(report->shortDescription()) + QByteArray("&comment=") + QUrl::toPercentEncoding(report->description());
+    QByteArray postData = generatePostDataForReport( report );
     
     QString url = QString( bugtrackerBaseUrl ) + QString( sendReportUrl );
     
@@ -206,6 +205,30 @@ void BugzillaManager::sendReport( BugReport * report )
     sendJob->start();
 }
 
+QByteArray BugzillaManager::generatePostDataForReport( BugReport * report )
+{
+    QByteArray postData = 
+        QByteArray("product=") + 
+        QUrl::toPercentEncoding(report->product()) + 
+        QByteArray("&version=unspecified&component=") +  
+        QUrl::toPercentEncoding(report->component()) +
+        QByteArray("&bug_severity=") +
+        QUrl::toPercentEncoding(report->bugSeverity()) + 
+        QByteArray("&rep_platform=") +  
+        QUrl::toPercentEncoding(QString("Unlisted Binaries")) + 
+        QByteArray("&op_sys=") + 
+        QUrl::toPercentEncoding(report->operatingSystem()) + 
+        QByteArray("&priority=") + 
+        QUrl::toPercentEncoding(report->priority()) + 
+        QByteArray("&bug_status=") + 
+        QUrl::toPercentEncoding(report->bugStatus()) + 
+        QByteArray("&short_desc=") + 
+        QUrl::toPercentEncoding(report->shortDescription()) + 
+        QByteArray("&comment=") + 
+        QUrl::toPercentEncoding(report->description());
+    
+    return postData;
+}
 
 void BugzillaManager::sendReportDone( KJob * job )
 {

@@ -330,6 +330,7 @@ BugzillaDuplicatesPage::BugzillaDuplicatesPage( DrKonqiBugReport * parent ):
     m_bugListWidget->setAlternatingRowColors( true );
     
     connect( m_bugListWidget, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT(itemClicked(QTreeWidgetItem*,int)) );
+    connect( m_bugListWidget, SIGNAL(itemSelectionChanged()), this, SLOT(itemSelectionChanged()) );
     
     QHeaderView * header = m_bugListWidget->header();
     header->setResizeMode( 0, QHeaderView::ResizeToContents );
@@ -339,8 +340,12 @@ BugzillaDuplicatesPage::BugzillaDuplicatesPage( DrKonqiBugReport * parent ):
     connect( m_searchMoreButton, SIGNAL(clicked()), this, SLOT(searchMore()) );
     m_searchMoreButton->setEnabled( false );
     
+    m_openReportButton = new KPushButton( KGuiItem( i18nc( "button action","Open selected report"), KIcon("document-preview"), i18nc("help", "Use this button to view the information of the selected bug report"), i18nc("help", "Use this button to view the information of the selected bug report") ) );
+    connect( m_openReportButton, SIGNAL(clicked()), this, SLOT(openSelectedReport()) );
+    
     QHBoxLayout * buttonLayout = new QHBoxLayout();
     buttonLayout->addStretch();
+    buttonLayout->addWidget( m_openReportButton );
     buttonLayout->addWidget( m_searchMoreButton );
     
     m_foundDuplicateCheckBox = new QCheckBox( i18n( "My crash may be a duplicate of bug number:" ) );
@@ -373,6 +378,18 @@ BugzillaDuplicatesPage::~BugzillaDuplicatesPage()
     delete m_infoDialogBrowser;
 }
 
+void BugzillaDuplicatesPage::itemSelectionChanged()
+{
+    m_openReportButton->setEnabled( m_bugListWidget->selectedItems().count() == 1 );
+}
+
+void BugzillaDuplicatesPage::openSelectedReport()
+{
+    QList<QTreeWidgetItem*> selected = m_bugListWidget->selectedItems();
+    if( selected.count() == 1 )
+        itemClicked( selected.at(0), 0 );
+}
+
 void BugzillaDuplicatesPage::enableControls( bool enable )
 {
     m_bugListWidget->setEnabled( enable );
@@ -380,7 +397,15 @@ void BugzillaDuplicatesPage::enableControls( bool enable )
     m_foundDuplicateCheckBox->setEnabled( enable );
     m_possibleDuplicateEdit->setEnabled( enable );
     if ( enable )
+    {
         checkBoxChanged( m_foundDuplicateCheckBox->checkState() );
+        itemSelectionChanged();
+    }
+    else
+    {
+        m_openReportButton->setEnabled( false );
+    }
+        
 }
 
 void BugzillaDuplicatesPage::searchError( QString err )
