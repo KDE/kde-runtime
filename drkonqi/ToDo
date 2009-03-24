@@ -7,8 +7,6 @@
 -------------
 http://kde.pastebin.com/d502b5d8c
 
-Text gets chopped on BKO report sometimes (encoding issue)???
-
 show reason for opening wallet ?
 
 Relayout the main dialog (where to put the advanced thing, below or over another widget in the stack? )
@@ -28,6 +26,8 @@ krazy2 checks (partially done)
 
 #Done
 ---------
+
+Text gets chopped on BKO report sometimes (encoding issue)???
 
 Fix KWallet valid WiD...   
 

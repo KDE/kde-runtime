@@ -39,9 +39,9 @@ GetBacktraceWidget::GetBacktraceWidget( BacktraceGenerator * generator ) :
 {
     ui.setupUi(this);
 
-    connect( m_btGenerator, SIGNAL(done()) , this, SLOT(backtraceGenerated()) );
-    connect( m_btGenerator, SIGNAL(someError()) , this, SLOT(backtraceGenerated()) );
-    connect( m_btGenerator, SIGNAL(failedToStart()) , this, SLOT(backtraceGenerated()) );
+    connect( m_btGenerator, SIGNAL(done()) , this, SLOT(loadData()) );
+    connect( m_btGenerator, SIGNAL(someError()) , this, SLOT(loadData()) );
+    connect( m_btGenerator, SIGNAL(failedToStart()) , this, SLOT(loadData()) );
     connect( m_btGenerator, SIGNAL(newLine(QString)) , this, SLOT(backtraceNewLine(QString)) );
     
     ui.m_extraDetailsLabel->setVisible( false );
@@ -74,7 +74,7 @@ void GetBacktraceWidget::setAsLoading()
     m_usefulnessMeter->setState( BacktraceGenerator::Loading );
     
     ui.m_extraDetailsLabel->setVisible( false );
-    ui.m_extraDetailsLabel->setText( "" );
+    ui.m_extraDetailsLabel->clear();
     
     ui.m_reloadBacktraceButton->setEnabled( false );
 
@@ -110,7 +110,7 @@ void GetBacktraceWidget::generateBacktrace()
     {
         setAsLoading();
         emit stateChanged();
-        backtraceGenerated(); //Load already gathered information
+        loadData(); //Load already gathered information
     }
 }
  
@@ -126,7 +126,7 @@ void GetBacktraceWidget::anotherDebuggerRunning()
     ui.m_reloadBacktraceButton->setEnabled( true );
 }
 
-void GetBacktraceWidget::backtraceGenerated()
+void GetBacktraceWidget::loadData()
 {
     m_usefulnessMeter->setState( m_btGenerator->state() );
     
@@ -160,7 +160,7 @@ void GetBacktraceWidget::backtraceGenerated()
         if( btParser->backtraceUsefulness() != BacktraceParser::ReallyUseful )
         {
             ui.m_extraDetailsLabel->setVisible( true );
-            ui.m_extraDetailsLabel->setText( i18n( "The crash information lacks some important details.<br />Please read <link url='%1'>How to create useful crash reports</link> to learn how to get a useful backtrace.<br />After you install the needed packages you can click the \"Reload Crash Information\" button ", QLatin1String("http://techbase.kde.org/Development/Tutorials/Debugging/How_to_create_useful_crash_reports") ) );
+            ui.m_extraDetailsLabel->setText( i18n( "Please read <link url='%1'>How to create useful crash reports</link> to learn how to get a useful backtrace.<br />After you install the needed packages you can click the \"Reload Crash Information\" button ", QLatin1String("http://techbase.kde.org/Development/Tutorials/Debugging/How_to_create_useful_crash_reports") ) );
 
             #if 0
             if (!missingSymbols.isEmpty() ) //Detected missing symbols

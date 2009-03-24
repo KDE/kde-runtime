@@ -25,9 +25,10 @@
 #include "krashconf.h"
 
 #include <QtGui/QLabel>
+#include <QtGui/QGroupBox>
 #include <QtGui/QHBoxLayout>
 #include <QtGui/QVBoxLayout>
-#include <QtGui/QStackedWidget>
+#include <QtGui/QTreeWidget>
 #include <QtGui/QMenu>
 
 #include <kicon.h>
@@ -35,7 +36,7 @@
 #include <ktextbrowser.h>
 #include <kstandarddirs.h>
 #include <klocale.h>
-#include <kdebug.h>
+#include <ktabwidget.h>
 
 DrKonqiDialog::DrKonqiDialog( QWidget * parent ) :
     KDialog(parent), 
@@ -49,28 +50,28 @@ DrKonqiDialog::DrKonqiDialog( QWidget * parent ) :
     setCaption( DrKonqi::instance()->krashConfig()->programName() );
     setWindowIcon( KIcon("tools-report-bug") );
 
+    m_tabWidget = new KTabWidget( this );
+    m_tabWidget->setMinimumSize( QSize(600, 300) );
+    setMainWidget( m_tabWidget );
+    
+    connect( m_tabWidget, SIGNAL(currentChanged(int)), this, SLOT(tabIndexChanged(int)) );
+    
     buildMainWidget();
-    buildAdvancedWidget();
+    m_tabWidget->addTab( m_introWidget, "General" );
     
-    //Stacked main widget (toggle approach)
-    /*
-    m_stackedWidget = new QStackedWidget();
-    m_stackedWidget->addWidget( m_introWidget );
-    m_stackedWidget->addWidget( m_advancedWidget );
-    setMainWidget( m_stackedWidget );
-    */
-
-    //Toggle visibility approach
-    setMainWidget( m_introWidget );
-    setDetailsWidget( m_advancedWidget );
+    m_backtraceWidget = new GetBacktraceWidget(DrKonqi::instance()->backtraceGenerator());
+    m_backtraceWidget->layout()->setContentsMargins( 5,5,5,5 );
+    m_tabWidget->addTab( m_backtraceWidget, "Advanced (Backtrace)" );
     
-    kDebug() << connect( this, SIGNAL(aboutToShowDetails()), this, SLOT(aboutToShowDetails_slot()) );
     buildDialogOptions();
+    
+    resize( minimumSize() );
 }
 
-void DrKonqiDialog::aboutToShowDetails_slot()
+void DrKonqiDialog::tabIndexChanged( int index )
 {
-    m_backtraceWidget->generateBacktrace();
+    if( index == 1 )
+        m_backtraceWidget->generateBacktrace();
 }
 
 void DrKonqiDialog::buildMainWidget()
@@ -82,34 +83,25 @@ void DrKonqiDialog::buildMainWidget()
     title->setWordWrap( true ); 
     
     QLabel * infoLabel = new QLabel( i18nc("Small explanation of the crash cause",
-    "<para>This probably happened because there is a bug in the application.</para><para>You can help us improve KDE by reporting this bug.</para>" ) );
+    "<para>This probably happened because there is a bug in the application.</para><para>You can help us improve KDE by reporting this crash. <link url=\"#aboutbugreporting\">Learn more about bug reporting</link>.</para><para><strong>Note:</strong> It is safe to close this dialog. If you do not want to, you do not have to file a bug report.</para>" ) );
+    connect( infoLabel, SIGNAL(linkActivated(QString)), this, SLOT(aboutBugReporting(QString)));
     infoLabel->setWordWrap( true ); 
-    
-    m_aboutBugReportingButton = new KPushButton( KGuiItem( i18nc("button action", "Learn more about bug reporting") , KIcon("help-hint"),  i18nc("help text", "Get help in order to know how to file an useful bug report"), i18nc("help text", "Get help in order to know how to file an useful bug report") ) ); //TODO rewrite text?
-    m_aboutBugReportingButton->setSizePolicy( QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed) );
-    connect( m_aboutBugReportingButton, SIGNAL(clicked()), this, SLOT(aboutBugReporting()) );
-
-    m_reportBugButton = new KPushButton( KGuiItem( i18nc("Button action", "Report Bug"), KIcon("tools-report-bug"), i18nc("help text", "Starts the bug report assistant" ), i18nc("help text", "Starts the bug report assistant" ) ) );
-    m_reportBugButton->setSizePolicy( QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed) );
-    connect( m_reportBugButton, SIGNAL(clicked()), this,  SLOT(reportBugAssistant()) );
-    
-    QHBoxLayout * buttonLayout = new QHBoxLayout();
-    buttonLayout->addWidget( m_aboutBugReportingButton );
-    buttonLayout->addWidget( m_reportBugButton );
-    buttonLayout->addStretch();
     
     //Main widget layout
     QVBoxLayout * introLayout = new QVBoxLayout;
     introLayout->setSpacing( 10 );
+    introLayout->setContentsMargins( 10, 10, 10, 10 );
     introLayout->addWidget( title );
     introLayout->addWidget( infoLabel );
-    introLayout->addLayout( buttonLayout );
     introLayout->addStretch();
+
+    //Details
+    introLayout->addWidget( new QLabel("<strong>Details:</strong>") );
+    introLayout->addWidget( new QLabel(  i18n( "<ul><li>Executable: %1</li><li>PID: %2</li><li>Signal: %3 (%4)</li></ul>",krashConfig->appName(),QString::number(krashConfig->pid() ), krashConfig->signalNumber(), krashConfig->signalName() ) ) );
     
     //Introduction widget
     m_introWidget = new QWidget( this );
     m_introWidget->setLayout( introLayout );
-    //m_introWidget->setMinimumSize( QSize(600,200) );
     
     QString styleSheet = QString( ".QWidget {"
                        "background-image: url(%1);"
@@ -119,50 +111,16 @@ void DrKonqiDialog::buildMainWidget()
     m_introWidget->setStyleSheet( styleSheet );
 }
 
-void DrKonqiDialog::buildAdvancedWidget()
-{
-    const KrashConfig * krashConfig = DrKonqi::instance()->krashConfig();
-    
-    //Advanced Widget  FIXME discuss
-    m_advancedWidget = new QWidget( this );
-    
-    QVBoxLayout * advancedLayout = new QVBoxLayout();
-
-    QHBoxLayout * infoLayout = new QHBoxLayout();
-    infoLayout->addWidget( new QLabel( i18n( "<strong>Application:</strong> %1" , krashConfig->appName() ) ) );
-    infoLayout->addWidget( new QLabel( i18n( "<strong>PID:</strong> %1" ,QString::number(krashConfig->pid() ) ) ) );
-    infoLayout->addWidget( new QLabel( i18n( "<strong>Signal:</strong> %1 (%2)" , krashConfig->signalNumber(), krashConfig->signalName() ) ) );
-    advancedLayout->addLayout( infoLayout );
-    
-    m_backtraceWidget = new GetBacktraceWidget(DrKonqi::instance()->backtraceGenerator());
-    advancedLayout->addWidget( m_backtraceWidget );
-    m_advancedWidget->setLayout( advancedLayout );
-    
-    m_backtraceWidget->setMinimumSize( QSize(600, 250) );
-}
-
 void DrKonqiDialog::buildDialogOptions()
 {
     const KrashConfig * krashConfig = DrKonqi::instance()->krashConfig();
     
-    //Show backtrace/introduction
-    /*
-    m_guiItemShowAdvanced = KGuiItem(i18nc("button action", "Advanced ( Backtrace )"), KIcon("document-preview"), i18nc("help text", "Generate and show the backtrace and the crash details" ), i18nc("help text", "Generate and show the backtrace and the crash details" ) );
-    
-    m_guiItemShowIntroduction = KGuiItem(i18nc("button action", "Show Introduction"), KIcon("help-contextual"), i18nc("help text", "Show the Crash Dialog introduction page" ), i18nc("help text", "Show the Crash Dialog introduction page" ) );
-    */
-    
-    m_guiItemShowAdvanced = KGuiItem(i18nc("button action", "Show Details"), KIcon("arrow-down"), i18nc("help text", "Generate and show the backtrace and the crash details" ), i18nc("help text", "Generate and show the backtrace and the crash details" ) );
-    
-    m_guiItemShowIntroduction = KGuiItem(i18nc("button action", "Hide Details"), KIcon("arrow-up"), i18nc("help text", "Show the Crash Dialog introduction page" ), i18nc("help text", "Show the Crash Dialog introduction page" ) );
-    
     //Set kdialog buttons
-    showButtonSeparator( true );
-    setButtons( KDialog::Details | KDialog::User2 | KDialog::User3 | KDialog::Close );
+    setButtons( KDialog::User1 | KDialog::User2 | KDialog::User3 | KDialog::Close );
     
-    //Toggle to advanced mode button
-    setButtonGuiItem( KDialog::User1, m_guiItemShowAdvanced );
-    connect( this, SIGNAL(user1Clicked()), this, SLOT(toggleMode()) );
+    //Report bug button button
+    setButtonGuiItem( KDialog::User1, KGuiItem( i18nc("Button action", "Report Bug"), KIcon("tools-report-bug"), i18nc("help text", "Starts the bug report assistant" ), i18nc("help text", "Starts the bug report assistant" ) ) );
+    connect( this, SIGNAL(user1Clicked()), this, SLOT(reportBugAssistant()) );
     
     //Default debugger button and menu (only for developer mode)
     setButtonGuiItem( KDialog::User2, KGuiItem( i18nc("Button action", "Debug") , KIcon("applications-development"), i18nc("help text", "Starts a program to debug the crashed application" ), i18nc("help text", "Starts a program to debug the crashed application" ) ) );
@@ -191,6 +149,7 @@ void DrKonqiDialog::buildDialogOptions()
     setButtonWhatsThis( KDialog::Close, i18nc("help text", "Close this dialog (you will lose the crash information)") );
     setDefaultButton( KDialog::Close );
     setButtonFocus( KDialog::Close );
+    
 }
 
 void DrKonqiDialog::enableDebugMenu( bool debuggerRunning )
@@ -207,53 +166,11 @@ void DrKonqiDialog::reportBugAssistant()
     m_bugReportAssistant->show();
 }
 
-void DrKonqiDialog::aboutBugReporting()
+void DrKonqiDialog::aboutBugReporting(QString)
 {
     if ( !m_aboutBugReportingDialog )
         m_aboutBugReportingDialog = new AboutBugReportingDialog( this );
     m_aboutBugReportingDialog->show();
-}
-
-void DrKonqiDialog::toggleMode()
-{
-    //Toggle approach
-    /*
-    if( m_stackedWidget->currentWidget() == m_introWidget )
-    {
-        m_backtraceWidget->generateBacktrace();
-        m_stackedWidget->setCurrentWidget( m_advancedWidget );
-        
-        setButtonGuiItem( KDialog::User1, m_guiItemShowIntroduction );
-    }
-    else
-    {
-        m_stackedWidget->setCurrentWidget( m_introWidget );
-        
-        setButtonGuiItem( KDialog::User1, m_guiItemShowAdvanced );
-    }
-    */
-    
-    //Toggle visibility
-    bool isVisible = m_advancedWidget->isVisible();
-    m_advancedWidget->setVisible( !isVisible );
-    if( !isVisible )
-    {
-        //m_backtraceWidget->generateBacktrace();
-        //mainWidget()->setMinimumSize( QSize(600,450) );
-        //setMinimumSize( m_introWidget->minimumSize() + m_advancedWidget->minimumSize() );
-        setButtonGuiItem( KDialog::User1, m_guiItemShowIntroduction );
-    } else {
-        //mainWidget()->setMinimumSize( QSize(600,150) );
-        //setMinimumSize( m_introWidget->minimumSize() );
-        setButtonGuiItem( KDialog::User1, m_guiItemShowAdvanced );
-    }
-    
-    kDebug() << minimumSize();
-    kDebug() << mainWidget()->minimumSize();
-    kDebug() << mainWidget()->layout()->contentsRect();
-    
-    //resize( minimumSize() );
-    
 }
 
 void DrKonqiDialog::restartApplication()

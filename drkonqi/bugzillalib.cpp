@@ -23,6 +23,9 @@
 #include <QtCore/QByteArray>
 #include <QtCore/QString>
 #include <QtCore/QRegExp>
+#include <QtCore/QUrl>
+
+#include <QtGui/QTextDocument>
 
 #include <QtXml/QDomNode>
 #include <QtXml/QDomNodeList>
@@ -34,6 +37,7 @@
 #include <kio/job.h>
 #include <kio/jobclasses.h>
 #include <kurl.h>
+#include <kdebug.h>
 #include <klocale.h>
 
 static const char bugtrackerBaseUrl[] = "http://bugstest.kde.org/"; //TODO change to correct HTTPS BKO
@@ -42,7 +46,6 @@ static const char columns[] = "bug_severity,priority,bug_status,product,short_de
 
 //BKO URLs
 static const char loginUrl[] = "index.cgi";
-static const char loginParams[] = "GoAheadAndLogIn=1&Bugzilla_login=%1&Bugzilla_password=%2&log_in=Log+in";
 
 static const char searchUrl[] = "buglist.cgi?query_format=advanced&short_desc_type=anywordssubstr&short_desc=%1&product=%2&long_desc_type=anywordssubstr&long_desc=%3&bug_file_loc_type=allwordssubstr&bug_file_loc=&keywords_type=allwords&keywords=&emailtype1=substring&email1=&emailtype2=substring&email2=&bugidtype=include&bug_id=&votes=&chfieldfrom=%4&chfieldto=%5&chfield=[Bug+creation]&chfieldvalue=&cmdtype=doit&field0-0-0=noop&type0-0-0=noop&value0-0-0=&bug_severity=%6&order=Importance&columnlist=%7&ctype=csv";
 // short_desc, product, long_desc(possible backtraces lines), searchFrom, searchTo, severity, columnList
@@ -51,8 +54,6 @@ static const char showBugUrl[] = "show_bug.cgi?id=%1";
 static const char fetchBugUrl[] = "show_bug.cgi?id=%1&ctype=xml";
 
 static const char sendReportUrl[] = "post_bug.cgi";
-static const char sendReportParams[] = "product=%1&version=unspecified&component=%2&bug_severity=%3&rep_platform=%4&op_sys=%5&priority=%6&bug_status=%7&short_desc=%8&comment=%9";
-//version=%3&
 
 BugzillaManager::BugzillaManager():
     QObject(),
@@ -72,8 +73,7 @@ void BugzillaManager::tryLogin()
 {
     if ( !m_logged )
     {
-        QString params = QString( loginParams ).arg( m_username, m_password );
-        QByteArray postData = params.toUtf8();
+        QByteArray postData = QByteArray("GoAheadAndLogIn=1&Bugzilla_login=") + QUrl::toPercentEncoding(m_username) + QByteArray("&Bugzilla_password=") + QUrl::toPercentEncoding(m_password) + QByteArray("&log_in=Log+in");
         
         KIO::StoredTransferJob * loginJob = 
             KIO::storedHttpPost( postData, KUrl( QString(bugtrackerBaseUrl) + QString(loginUrl) ), KIO::HideProgressInfo );
@@ -192,22 +192,18 @@ void BugzillaManager::searchBugsDone( KJob * job )
 
 void BugzillaManager::sendReport( BugReport * report )
 {
-    QString postDataStr = QString( sendReportParams );
-    postDataStr = postDataStr.arg( report->product(), report->component(), report->bugSeverity(),
-        QString("Unlisted Binaries"), report->operatingSystem(), report->priority(), report->bugStatus(), report->shortDescription(),
-        report->description() );
-    
-    QByteArray postData = postDataStr.toUtf8();
+    QByteArray postData = QByteArray("product=") + QUrl::toPercentEncoding(report->product()) + QByteArray("&version=unspecified&component=") +  QUrl::toPercentEncoding(report->component()) 
+    + QByteArray("&bug_severity=") + QUrl::toPercentEncoding(report->bugSeverity()) + QByteArray("&rep_platform=") +  QUrl::toPercentEncoding(QString("Unlisted Binaries")) + QByteArray("&op_sys=") + QUrl::toPercentEncoding(report->operatingSystem()) + QByteArray("&priority=") + QUrl::toPercentEncoding(report->priority()) + QByteArray("&bug_status=") + QUrl::toPercentEncoding(report->bugStatus()) + QByteArray("&short_desc=") + QUrl::toPercentEncoding(report->shortDescription()) + QByteArray("&comment=") + QUrl::toPercentEncoding(report->description());
     
     QString url = QString( bugtrackerBaseUrl ) + QString( sendReportUrl );
     
     KIO::StoredTransferJob * sendJob = 
             KIO::storedHttpPost( postData, KUrl( url ), KIO::HideProgressInfo );
-            
-    sendJob->addMetaData("content-type", "Content-Type: application/x-www-form-urlencoded");
-    sendJob->start();
     
     connect( sendJob, SIGNAL(finished(KJob*)) , this, SLOT(sendReportDone(KJob*)) );
+    
+    sendJob->addMetaData("content-type", "Content-Type: application/x-www-form-urlencoded");
+    sendJob->start();
 }
 
 
@@ -235,8 +231,7 @@ void BugzillaManager::sendReportDone( KJob * job )
                 error = reg.cap(1).trimmed();
             else
                 error = i18n( "Unknown error" );
-            
-            qDebug() << error;
+
             if( error.contains( QLatin1String("does not exist or you aren't authorized to") ) )
             {
                 emit sendReportErrorWrongProduct();

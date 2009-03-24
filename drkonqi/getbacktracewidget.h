@@ -49,7 +49,7 @@ class GetBacktraceWidget: public QWidget
         UsefulnessMeter *   m_usefulnessMeter;
         
     private Q_SLOTS:
-        void backtraceGenerated();
+        void loadData();
         void backtraceNewLine(const QString &);
         
         void setAsLoading();

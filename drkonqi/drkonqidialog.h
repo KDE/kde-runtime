@@ -29,8 +29,7 @@ class AboutBugReportingDialog;
 class DrKonqiBugReport;
 class KGuiItem;
 class KrashConfig;
-
-class QResizeEvent;
+class KTabWidget;
 
 class DrKonqiDialog: public KDialog
 {
@@ -41,8 +40,7 @@ class DrKonqiDialog: public KDialog
         ~DrKonqiDialog();
     
     private Q_SLOTS:
-        void aboutBugReporting();
-        void toggleMode();
+        void aboutBugReporting(QString);
         void reportBugAssistant();
         
         void restartApplication();
@@ -54,22 +52,19 @@ class DrKonqiDialog: public KDialog
         
         //GUI
         void buildMainWidget();
-        void buildAdvancedWidget();
         void buildDialogOptions();
         
-        void aboutToShowDetails_slot();
+        void tabIndexChanged(int);
         
     private:
+        KTabWidget *                    m_tabWidget;
+        
         AboutBugReportingDialog *       m_aboutBugReportingDialog;
         
         QStackedWidget *                m_stackedWidget;
         QWidget *                       m_introWidget;
-        QWidget *                       m_advancedWidget;
         GetBacktraceWidget *            m_backtraceWidget;
         
-        KPushButton *                   m_aboutBugReportingButton;
-        KPushButton *                   m_reportBugButton;
-
         KGuiItem                        m_guiItemShowIntroduction;
         KGuiItem                        m_guiItemShowAdvanced;
         

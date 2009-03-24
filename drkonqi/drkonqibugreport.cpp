@@ -106,7 +106,7 @@ DrKonqiBugReport::DrKonqiBugReport( QWidget * parent ) :
     BugzillaSendPage * m_bugzillaSend =  new BugzillaSendPage( this );
 
     KPageWidgetItem * m_bugzillaSendPage = new KPageWidgetItem( m_bugzillaSend, "BugzillaSend");
-    m_bugzillaSendPage->setHeader( i18n( "Send Crash Report" ) ); //TODO better name ?
+    m_bugzillaSendPage->setHeader( i18n( "Send Crash Report" ) );
     m_bugzillaSendPage->setIcon( KIcon("tools-report-bug") );
     connect( m_bugzillaSend, SIGNAL(finished(bool)), this, SLOT(assistantFinished(bool)) );
     
