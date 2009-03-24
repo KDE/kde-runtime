@@ -108,7 +108,7 @@ void DrKonqiDialog::buildMainWidget()
                        "background-repeat: no-repeat;"
                        "background-position: right;"
                        "} ").arg( KStandardDirs::locate( "appdata", QLatin1String( "pics/konqi.png" ) ) );
-    m_introWidget->setStyleSheet( styleSheet );
+    //m_introWidget->setStyleSheet( styleSheet );
 }
 
 void DrKonqiDialog::buildDialogOptions()
