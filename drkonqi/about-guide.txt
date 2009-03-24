@@ -7,6 +7,7 @@ In order to generate a useful bug report we need some information about both the
 -- Bug Reporting Assistant Steps Guide --
 
 This assistant will guide you through the crash reporting process of the Bug Reports Database Site of KDE
+All the information you enter to the bug report must be in ENGLISH as KDE is an international software
 
 - Crash Information -
 
@@ -36,6 +37,7 @@ The KWallet dialog may appear when pressing Login to save your password in the K
 - Bug Report Keywords -
 
 In this step you need to write at least four(4) words to identify the crash. You can use the application name, or write a little sentence about the crash or the context. This text will be used to search similar crashes already reported in the database, so you can look at them later. Also, this text can be used as the title of the future bug report (you can change this later)
+You should write the words in English
 
 - Bug Report Possible Duplicate list -
 

@@ -159,7 +159,6 @@ void BugzillaLoginPage::walletLogin()
                     login = true;
                     m_userEdit->setText( username );
                     m_passwordEdit->setText( password );
-                    loginClicked();
                 }
             }
         }
@@ -778,7 +777,7 @@ void BugzillaSendPage::aboutToShow()
 
 void BugzillaSendPage::sent( int bug_id )
 {
-    m_statusWidget->setIdle( i18n("Crash report sent!<br />Bug Number :: %1<br />Link :: <link>%2</link><br />Thanks for contributing with KDE", bug_id, reportInfo()->getBZ()->urlForBug( bug_id ) )); //FIXME text
+    m_statusWidget->setIdle( i18n("Crash report sent!<br />Bug Number :: %1<br />URL :: <link>%2</link><br />Thanks for contributing with KDE. You can close this window", bug_id, reportInfo()->getBZ()->urlForBug( bug_id ) )); //FIXME text
     
     m_retryButton->setEnabled( false );
     m_retryButton->setVisible( false );
