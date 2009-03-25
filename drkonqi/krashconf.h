@@ -62,11 +62,8 @@ public:
     /** Returns true if the crashed program was started by kdeinit */ //FIXME do we need that?
     bool startedByKdeinit() const { return m_startedByKdeinit; }
 
-    //Texts that are loaded from config files //FIXME why load them from config files???
-    QString signalName() const { return m_signalName; }
-    QString signalText() const { return m_signalText; }
-    QString whatToDoText() const { return m_whatToDoText; }
-    QString errorDescriptionText() const { return m_errorDescriptionText; }
+    /** Returns the name of the signal (ex. SIGSEGV) */
+    QString signalName() const;
 
     //drkonqi options
     /** Returns true if drkonqi should not allow arbitrary disk write access */
@@ -119,10 +116,6 @@ private:
   bool m_showdebugger;
   bool m_startedByKdeinit;
   bool m_safeMode;
-  QString m_signalName;
-  QString m_signalText;
-  QString m_whatToDoText;
-  QString m_errorDescriptionText;
   QString m_execname;
 
   QString m_debuggerName;

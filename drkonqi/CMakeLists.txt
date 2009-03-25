@@ -11,7 +11,6 @@ configure_file (config-runtime.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-runtim
 add_definitions (${QT_DEFINITIONS} ${KDE4_DEFINITIONS})
 include_directories (${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} ${KDE4_INCLUDES})
 
-add_subdirectory( presets ) 
 add_subdirectory( pics ) 
 add_subdirectory( debuggers ) 
 add_subdirectory( tests ) 
