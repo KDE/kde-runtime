@@ -72,7 +72,7 @@ QString ReportInfo::getLSBRelease() const
         if( QString(os) == QLatin1String( "Linux" ) )
         {
             QProcess process;
-            process.start("lsb_release -a");
+            process.start("lsb_release -idrc");
             process.waitForFinished( 5000 );
             QByteArray lsb = process.readAllStandardOutput();
             if ( !lsb.isEmpty() )
