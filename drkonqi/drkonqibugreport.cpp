@@ -79,7 +79,7 @@ DrKonqiBugReport::DrKonqiBugReport( QWidget * parent ) :
     connectSignals( m_bugzillaLogin );
     
     KPageWidgetItem * m_bugzillaLoginPage = new KPageWidgetItem( m_bugzillaLogin, "BugzillaLogin");
-    m_bugzillaLoginPage->setHeader( i18n( "KDE Bugtracker Login" ) );
+    m_bugzillaLoginPage->setHeader( i18n( "KDE Bug Tracking System Login" ) );
     m_bugzillaLoginPage->setIcon( KIcon("tools-report-bug") );
     
     //Bugzilla keywords

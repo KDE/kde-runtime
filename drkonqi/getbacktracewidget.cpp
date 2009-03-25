@@ -23,6 +23,7 @@
 #include "backtracegenerator.h"
 #include "backtraceparser.h"
 #include "krashconf.h"
+#include "drkonqi_globals.h"
 
 #include <QtGui/QLabel>
 #include <QtGui/QHBoxLayout>
@@ -45,14 +46,14 @@ GetBacktraceWidget::GetBacktraceWidget( BacktraceGenerator * generator ) :
     connect( m_btGenerator, SIGNAL(newLine(QString)) , this, SLOT(backtraceNewLine(QString)) );
     
     ui.m_extraDetailsLabel->setVisible( false );
-    ui.m_reloadBacktraceButton->setGuiItem( KGuiItem( i18nc("button action", "&Reload Crash Information" ),KIcon("view-refresh"), i18nc( "button explanation", "Use this button to reload the crash information (backtrace). This is useful when you have installed the proper debug symbols packages and you want to obtain a better backtrace" ), i18nc( "button explanation", "Use this button to reload the crash information (backtrace). This is useful when you have installed the proper debug symbols packages and you want to obtain a better backtrace" ) )  );
+    ui.m_reloadBacktraceButton->setGuiItem( KGuiItem2( i18nc("button action", "&Reload Crash Information" ),KIcon("view-refresh"), i18nc( "button explanation", "Use this button to reload the crash information (backtrace). This is useful when you have installed the proper debug symbols packages and you want to obtain a better backtrace" ) )  );
     connect( ui.m_reloadBacktraceButton, SIGNAL(clicked()), this, SLOT(regenerateBacktrace()) );
 
-    ui.m_copyButton->setGuiItem( KGuiItem( i18nc("button action", "&Copy" ), KIcon("edit-copy"), i18nc( "button explanation", "Use this button to copy the crash information (backtrace) to the clipboard" ), i18nc( "button explanation", "Use this button to copy the crash information (backtrace) to the clipboard" ) ) );
+    ui.m_copyButton->setGuiItem( KGuiItem2( i18nc("button action", "&Copy" ), KIcon("edit-copy"), i18nc( "button explanation", "Use this button to copy the crash information (backtrace) to the clipboard" ) ) );
     connect( ui.m_copyButton, SIGNAL(clicked()) , this, SLOT(copyClicked()) );
     ui.m_copyButton->setEnabled( false );
 
-    ui.m_saveButton->setGuiItem( KGuiItem( i18nc("button action", "&Save to File" ), KIcon("document-save"), i18nc("button explanation", "Use this button to save the crash information (backtrace) to a file. This is useful if you want to take a look at it or to report the bug later" ), i18nc("button explanation", "Use this button to save the crash information (backtrace) to a file. This is useful if you want to take a look at it or to report the bug later" ) ) );
+    ui.m_saveButton->setGuiItem( KGuiItem2( i18nc("button action", "&Save to File" ), KIcon("document-save"), i18nc("button explanation", "Use this button to save the crash information (backtrace) to a file. This is useful if you want to take a look at it or to report the bug later" ) ) );
     connect( ui.m_saveButton, SIGNAL(clicked()) , this, SLOT(saveClicked()) );
     ui.m_saveButton->setEnabled( false );
 
@@ -122,7 +123,7 @@ void GetBacktraceWidget::anotherDebuggerRunning()
     m_usefulnessMeter->setUsefulness( BacktraceParser::Useless );
     ui.m_statusWidget->setIdle( i18n("The crash information could not be fetched") );
     ui.m_extraDetailsLabel->setVisible( true );
-    ui.m_extraDetailsLabel->setText( i18n("Another debugging process is attached to the crashed application. The DrKonqi debugger can not fetch the backtrace. Close the process and click \"Reload Crash Information\" to get it.") );
+    ui.m_extraDetailsLabel->setText( i18n("Another debugging process is attached to the crashed application. The DrKonqi debugger can not fetch the backtrace. Close that process and click \"Reload Crash Information\" to get it.") );
     ui.m_reloadBacktraceButton->setEnabled( true );
 }
 
@@ -160,7 +161,7 @@ void GetBacktraceWidget::loadData()
         if( btParser->backtraceUsefulness() != BacktraceParser::ReallyUseful )
         {
             ui.m_extraDetailsLabel->setVisible( true );
-            ui.m_extraDetailsLabel->setText( i18n( "Please read <link url='%1'>How to create useful crash reports</link> to learn how to get a useful backtrace.<br />After you install the needed packages you can click the \"Reload Crash Information\" button ", QLatin1String("http://techbase.kde.org/Development/Tutorials/Debugging/How_to_create_useful_crash_reports") ) );
+            ui.m_extraDetailsLabel->setText( i18n( "Please read <link url='%1'>How to create useful crash reports</link> to learn how to get a useful backtrace.<br />After you install the needed packages you can click the \"Reload Crash Information\" button ", QLatin1String(TECHBASE_HOWTO_DOC) ) );
 
             #if 0
             if (!missingSymbols.isEmpty() ) //Detected missing symbols
@@ -187,7 +188,7 @@ void GetBacktraceWidget::loadData()
         ui.m_backtraceEdit->setPlainText( i18n("The crash information could not be generated" ) );
         
         ui.m_extraDetailsLabel->setVisible( true );
-        ui.m_extraDetailsLabel->setText( i18n( "You need to install the debug symbols package for this application<br />Please read <link url='%1'>How to create useful crash reports</link> to learn how to get a useful backtrace.<br />After you install the needed packages you can click the \"Reload Crash Information\" button ", QLatin1String("http://techbase.kde.org/Development/Tutorials/Debugging/How_to_create_useful_crash_reports") ) );
+        ui.m_extraDetailsLabel->setText( i18n( "You need to install the debug symbols package for this application<br />Please read <link url='%1'>How to create useful crash reports</link> to learn how to get a useful backtrace.<br />After you install the needed packages you can click the \"Reload Crash Information\" button ", QLatin1String(TECHBASE_HOWTO_DOC) ) );
     }
     else if( m_btGenerator->state() == BacktraceGenerator::FailedToStart )
     {

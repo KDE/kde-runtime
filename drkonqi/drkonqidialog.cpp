@@ -23,6 +23,7 @@
 #include "drkonqibugreport.h"
 #include "aboutbugreportingdialog.h"
 #include "krashconf.h"
+#include "drkonqi_globals.h"
 
 #include <QtGui/QLabel>
 #include <QtGui/QGroupBox>
@@ -59,11 +60,11 @@ DrKonqiDialog::DrKonqiDialog( QWidget * parent ) :
     connect( m_tabWidget, SIGNAL(currentChanged(int)), this, SLOT(tabIndexChanged(int)) );
     
     buildMainWidget();
-    m_tabWidget->addTab( m_introWidget, "General" );
+    m_tabWidget->addTab( m_introWidget, i18nc("tab header", "General") );
     
     m_backtraceWidget = new GetBacktraceWidget(DrKonqi::instance()->backtraceGenerator());
     m_backtraceWidget->layout()->setContentsMargins( 5,5,5,5 );
-    m_tabWidget->addTab( m_backtraceWidget, "Advanced (Backtrace)" );
+    m_tabWidget->addTab( m_backtraceWidget, i18nc("tab header", "Advanced (Backtrace)") );
     
     buildDialogOptions();
     
@@ -141,20 +142,21 @@ void DrKonqiDialog::buildDialogOptions()
     setButtons( KDialog::User1 | KDialog::User2 | KDialog::User3 | KDialog::Close );
     
     //Report bug button button
-    setButtonGuiItem( KDialog::User1, KGuiItem( i18nc("Button action", "Report Bug"), KIcon("tools-report-bug"), i18nc("help text", "Starts the bug report assistant" ), i18nc("help text", "Starts the bug report assistant" ) ) );
+    setButtonGuiItem( KDialog::User1, KGuiItem2( i18nc("Button action", "Report Bug"), KIcon("tools-report-bug"), i18nc("help text", "Starts the bug report assistant" ) ) );
     connect( this, SIGNAL(user1Clicked()), this, SLOT(reportBugAssistant()) );
     
     //Default debugger button and menu (only for developer mode)
-    setButtonGuiItem( KDialog::User2, KGuiItem( i18nc("Button action", "Debug") , KIcon("applications-development"), i18nc("help text", "Starts a program to debug the crashed application" ), i18nc("help text", "Starts a program to debug the crashed application" ) ) );
+    setButtonGuiItem( KDialog::User2, KGuiItem2( i18nc("Button action", "Debug") , KIcon("applications-development"), i18nc("help text", "Starts a program to debug the crashed application" ) ) );
     showButton( KDialog::User2, krashConfig->showDebugger() );
     
     m_debugMenu = new QMenu();
     setButtonMenu( KDialog::User2, m_debugMenu );
     
-    m_defaultDebugAction = new QAction( KIcon("applications-development"), "Debug in default application", m_debugMenu );
+    m_defaultDebugAction = new QAction( KIcon("applications-development"),
+                i18nc("action. 1 is the debugger name", "Debug using %1", krashConfig->debuggerName()), m_debugMenu );
     connect( m_defaultDebugAction, SIGNAL(triggered()), DrKonqi::instance(), SLOT(startDefaultExternalDebugger()) );
     
-    m_customDebugAction = new QAction( KIcon("applications-development"), "Debug in custom application", m_debugMenu );
+    m_customDebugAction = new QAction( KIcon("applications-development"), i18n("Debug in custom application"), m_debugMenu );
     connect( m_customDebugAction, SIGNAL(triggered()), DrKonqi::instance(), SLOT(startCustomExternalDebugger()) );
     m_customDebugAction->setEnabled( false );
     m_customDebugAction->setVisible( false );
@@ -163,7 +165,7 @@ void DrKonqiDialog::buildDialogOptions()
     m_debugMenu->addAction( m_customDebugAction );
     
     //Restart application button
-    setButtonGuiItem( KDialog::User3, KGuiItem( i18nc( "button action", "Restart Application" ) , KIcon("system-restart") , i18nc( "button help", "Use this button to restart the crashed application"), i18nc( "button help", "Use this button to restart the crashed application") ) );
+    setButtonGuiItem( KDialog::User3, KGuiItem2( i18nc( "button action", "Restart Application" ) , KIcon("system-restart") , i18nc( "button help", "Use this button to restart the crashed application") ) );
     connect( this, SIGNAL(user3Clicked()), this, SLOT(restartApplication()) );
     
     //Close button

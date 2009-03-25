@@ -23,6 +23,7 @@
 #include "reportinfo.h"
 #include "backtraceparser.h"
 #include "backtracegenerator.h"
+#include "drkonqi_globals.h"
 
 #include <QtGui/QLabel>
 #include <QtGui/QVBoxLayout>
@@ -105,8 +106,8 @@ BugAwarenessPage::BugAwarenessPage( DrKonqiBugReport * parent )
     
     QLabel * detailLabel = 
         new QLabel(
-        i18n( "Including in your bug report what were you doing when the application crashed will help the developers "
-        "reproduce and fix the bug. <i>( Important details are: what you were doing in the application and documents you were using )</i>. If you have found a common patterns which causes a crash you can try to write steps to help the developers try to reproduce it." ) );
+        i18n( "Including in your bug report what you were doing when the application crashed will help the developers "
+        "reproduce and fix the bug. <i>( Important details are: what you were doing in the application and documents you were using )</i>. If you have found a common pattern which causes this crash, you can try to write the steps to help the developers reproduce it and fix it." ) );
         
     detailLabel->setWordWrap( true );
     canDetailLayout->addWidget( detailLabel );
@@ -121,7 +122,7 @@ BugAwarenessPage::BugAwarenessPage( DrKonqiBugReport * parent )
     willingToHelpLayout->addWidget( willingToHelpQuestionLabel );
     
     QLabel * willingToHelpLabel = 
-        new QLabel( i18n( "Sometimes once the report is created and being investigated, the developers need more information from the reporter in order to fix the bug." ) );
+        new QLabel( i18n( "Sometimes, while the report is being investigated, the developers need more information from the reporter in order to fix the bug." ) );
     willingToHelpLabel->setWordWrap( true );
     willingToHelpLayout->addWidget( willingToHelpLabel );
     
@@ -157,10 +158,10 @@ ConclusionPage::ConclusionPage( DrKonqiBugReport * parent )
     m_reportEdit = new KTextBrowser();
     m_reportEdit->setReadOnly( true );
 
-    m_saveReportButton = new KPushButton( KGuiItem( i18nc( "Button action", "&Save to File" ), KIcon("document-save"), i18nc("button explanation", "Use this button to save the generated report and conclusions about this crash to a file. You can use this option to report the bug later."), i18nc("button explanation", "Use this button to save the generated report and conclusions about this crash to a file. You can use this option to report the bug later.") ) );
+    m_saveReportButton = new KPushButton( KGuiItem2( i18nc( "Button action", "&Save to File" ), KIcon("document-save"), i18nc("button explanation", "Use this button to save the generated report and conclusions about this crash to a file. You can use this option to report the bug later.") ) );
     connect(m_saveReportButton, SIGNAL(clicked()), this, SLOT(saveReport()) );
     
-    m_reportButton = new KPushButton( KGuiItem( i18nc( "button action", "&Report bug to the application maintainer" ), KIcon("document-new"), i18nc( "button explanation", "Use this button to report this bug to the application maintainer. This will launch the browser or the mail client using the assigned bug report address" ), i18nc( "button explanation", "Use this button to report this bug to the application maintainer. This will launch the browser or the mail client using the assigned bug report address" ) ) );
+    m_reportButton = new KPushButton( KGuiItem2( i18nc( "button action", "&Report bug to the application maintainer" ), KIcon("document-new"), i18nc( "button explanation", "Use this button to report this bug to the application maintainer. This will launch the browser or the mail client using the assigned bug report address" ) ) );
     m_reportButton->setVisible( false );
     connect( m_reportButton, SIGNAL(clicked()), this , SLOT(reportButtonClicked()) );
 
@@ -268,29 +269,29 @@ void ConclusionPage::aboutToShow()
         if ( isBKO )
         {
             emitCompleteChanged();
-            m_explanationLabel->setText( i18n( "This application is supported in the KDE Bugtracker, press Next to start the report assistant" ) );
+            m_explanationLabel->setText( i18n( "This application is supported in the KDE bug tracking system, press Next to start the report assistant" ) );
             
             reportMethod = i18n( "You need to file a new bug report, press Next to start the report assistant" );
-            reportLink = i18nc( "address to report the bug", "Report at http://bugs.kde.org" );
+            reportLink = i18nc( "address to report the bug", "Report at %1", QLatin1String(KDE_BUGZILLA_URL) );
         }
         else
         {
             m_explanationLabel->setText( i18n( "<strong>Notice:</strong> This application is not supported in the KDE Bugtracker, you need to report the bug to the maintainer" ) );
             
             reportMethod = i18n( "You need to file a new bug report with the following information:" );
-            reportLink =  i18nc( "address(mail or web) to report the bug", "Report to %1", krashConfig->getReportLink() );
+            reportLink =  i18nc( "address(mail or web) to report the bug", "Report at %1", krashConfig->getReportLink() );
             
             if( krashConfig->isReportMail() )
             {
-                m_reportButton->setGuiItem( KGuiItem( i18n("Send a mail to the application maintainer" ), KIcon("mail-message-new"), i18n( "Launches the mail client to send an email to the application maintainer with the crash information" ) , i18n( "Launch the mail client to send an email to the application maintainer with the crash information" ) ) ) ;
+                m_reportButton->setGuiItem( KGuiItem2( i18n("Send an e-mail to the application maintainer" ), KIcon("mail-message-new"), i18n( "Launches the mail client to send an e-mail to the application maintainer with the crash information" ) ) ) ;
             }
             else
             {
-                m_reportButton->setGuiItem( KGuiItem( i18n("Open the application maintainer web site" ), KIcon("internet-web-browser"), i18n( "Launches the web browser showing the application web page in order to contact the maintainer" ) , i18n( "Launches the web browser showing the application web page in order to contact the maintainer" ) ) ) ;
+                m_reportButton->setGuiItem( KGuiItem2( i18n("Open the application maintainer's web site" ), KIcon("internet-web-browser"), i18n( "Launches the web browser showing the application's web site in order to contact the maintainer" ) ) ) ;
             }
         }
         
-        report += QString("<br /><strong>%1</strong><br />%2<br /><br />--------<br /><br />%3").arg( i18n( "The crash is worth reporting" ), reportMethod, reportInfo()->generateReportTemplate() );
+        report += QString("<br /><strong>%1</strong><br />%2<br /><br />--------<br /><br />%3").arg( i18n( "This crash is worth reporting" ), reportMethod, reportInfo()->generateReportTemplate() );
         
         report += QString("<br /><br />") + reportLink;
     }
@@ -298,18 +299,18 @@ void ConclusionPage::aboutToShow()
     {
         m_reportButton->setVisible( false );
         
-        report += QString("<br /><strong>%1</strong><br />%2<br />--------<br /><br />%3").arg( i18n( "The crash is not worth reporting" ), i18n( "However you can report it on your own if you want, using the following information:" ), reportInfo()->generateReportTemplate() );
+        report += QString("<br /><strong>%1</strong><br />%2<br />--------<br /><br />%3").arg( i18n( "This crash is not worth reporting" ), i18n( "However, you can report it on your own if you want, using the following information:" ), reportInfo()->generateReportTemplate() );
         
         report.append( QString( "<br /><br />" ) );
         if ( krashConfig->isKDEBugzilla() )
         {
-            report += i18nc( "address to report the bug", "Report at http://bugs.kde.org" );
-            m_explanationLabel->setText( i18n( "This application is supported in the KDE Bugtracker, you can report this bug at https://bugs.kde.org" ) );
+            report += i18nc( "address to report the bug", "Report at %1", QLatin1String(KDE_BUGZILLA_URL) );
+            m_explanationLabel->setText( i18n( "This application is supported in the KDE bug tracking system. You can report this bug at %1",  QLatin1String(KDE_BUGZILLA_URL) ) );
         }
         else
         {
-            report += i18nc( "address(mail or web) to report the bug", "Report to %1", krashConfig->getReportLink() );
-            m_explanationLabel->setText( i18n( "This application is not supported in the KDE Bugtracker, you can report thia bug to its maintainer : <i>%1</i>", krashConfig->getReportLink() ) );
+            report += i18nc( "address(mail or web) to report the bug", "Report at %1", krashConfig->getReportLink() );
+            m_explanationLabel->setText( i18n( "This application is not supported in the KDE bug tracking system. You can report this bug to its maintainer : <i>%1</i>", krashConfig->getReportLink() ) );
         }
         
         emit finished(true);
