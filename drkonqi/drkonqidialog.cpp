@@ -95,24 +95,19 @@ void DrKonqiDialog::buildMainWidget()
     introLayout->setSpacing( 10 );
     introLayout->setContentsMargins( 10, 10, 10, 10 );
     
-    //FIXME fix this, choose better icon
-    QHBoxLayout * l1 = new QHBoxLayout();
+    QHBoxLayout * horizontalLayout = new QHBoxLayout();
     
-    QVBoxLayout * l2 = new QVBoxLayout();
-    l2->addWidget( title );
-    l2->addWidget( infoLabel );
+    QVBoxLayout * verticalTextLayout = new QVBoxLayout();
+    verticalTextLayout->addWidget( title );
+    verticalTextLayout->addWidget( infoLabel );
+    horizontalLayout->addLayout( verticalTextLayout );
     
-    l1->addLayout( l2 );
+    QLabel * iconLabel = new QLabel();
+    iconLabel->setSizePolicy( QSizePolicy::Maximum, QSizePolicy::Maximum );
+    iconLabel->setPixmap( KIcon("dialog-error").pixmap( QSize(64,64) ) ); //TODO choose better icon
+    horizontalLayout->addWidget( iconLabel );
     
-    QLabel * l = new QLabel();
-    l->setSizePolicy( QSizePolicy::Maximum, QSizePolicy::Maximum );
-    
-    l->setPixmap( KIcon("dialog-error").pixmap( QSize(64,64) ) ); 
-    //QPixmap(KStandardDirs::locate( "appdata", QLatin1String( "pics/konqi.png" ) )))
-    
-    l1->addWidget( l );
-    
-    introLayout->addLayout( l1 );
+    introLayout->addLayout( horizontalLayout );
     introLayout->addStretch();
 
     //Details
@@ -122,16 +117,6 @@ void DrKonqiDialog::buildMainWidget()
     //Introduction widget
     m_introWidget = new QWidget( this );
     m_introWidget->setLayout( introLayout );
-    
-    //Old background image
-    /*
-    QString styleSheet = QString( ".QWidget {"
-                       "background-image: url(%1);"
-                       "background-repeat: no-repeat;"
-                       "background-position: right;"
-                       "} ").arg( KStandardDirs::locate( "appdata", QLatin1String( "pics/konqi.png" ) ) );
-    m_introWidget->setStyleSheet( styleSheet );
-    */
 }
 
 void DrKonqiDialog::buildDialogOptions()

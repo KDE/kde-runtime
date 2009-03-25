@@ -568,7 +568,6 @@ void BugzillaDuplicatesPage::aboutToHide()
     {
         reportInfo()->setPossibleDuplicate( m_possibleDuplicateEdit->text() );
     }
-
 }
 
 void BugzillaDuplicatesPage::performSearch()
@@ -589,7 +588,6 @@ void BugzillaDuplicatesPage::performSearch()
    
     //Test search
     //reportInfo()->getBZ()->searchBugs( "konqueror crash toggle mode", "konqueror", "crash", startDateStr, endDateStr , "caret" );
-   
 }
 
 void BugzillaDuplicatesPage::searchMore()
