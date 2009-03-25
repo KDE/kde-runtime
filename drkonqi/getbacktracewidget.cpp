@@ -122,7 +122,7 @@ void GetBacktraceWidget::anotherDebuggerRunning()
     m_usefulnessMeter->setUsefulness( BacktraceParser::Useless );
     ui.m_statusWidget->setIdle( i18n("The crash information could not be fetched") );
     ui.m_extraDetailsLabel->setVisible( true );
-    ui.m_extraDetailsLabel->setText( i18n("Another debugging process is attached to the crashed application. The DrKonqi debugger can't fetch the backtrace. Close the process and click \"Reload Crash Information\" to get it.") );
+    ui.m_extraDetailsLabel->setText( i18n("Another debugging process is attached to the crashed application. The DrKonqi debugger can not fetch the backtrace. Close the process and click \"Reload Crash Information\" to get it.") );
     ui.m_reloadBacktraceButton->setEnabled( true );
 }
 
@@ -145,9 +145,9 @@ void GetBacktraceWidget::loadData()
             case BacktraceParser::MayBeUseful:
                 usefulnessText = i18nc("backtrace rating description", "This crash information may be useful");break;
             case BacktraceParser::ProbablyUseless:
-                usefulnessText = i18nc("backtrace rating description", "This crash information is probably useless");break;
+                usefulnessText = i18nc("backtrace rating description", "This crash information is probably not really useful");break;
             case BacktraceParser::Useless:
-                usefulnessText = i18nc("backtrace rating description", "This crash information is useless");break;
+                usefulnessText = i18nc("backtrace rating description", "This crash information is not really useful");break;
             default:
                 //let's hope nobody will ever see this... ;)
                 usefulnessText = i18nc("backtrace rating description that should never appear",

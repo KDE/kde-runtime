@@ -233,14 +233,14 @@ void ConclusionPage::aboutToShow()
         case BacktraceParser::ProbablyUseless:
         {
             needToReport = ( canDetails && willingToHelp );
-            report = i18n( "* The crash information lacks a lot of important details and it is probably useless" );
+            report = i18n( "* The crash information lacks a lot of important details and it is probably not really useful" );
             break;
         }           
         case BacktraceParser::Useless:
         case BacktraceParser::InvalidUsefulness:
         {
             needToReport =  ( canDetails && willingToHelp );
-            report = i18n( "* The crash information is completely useless" ) ;
+            report = i18n( "* The crash information is not really useful" ) ;
      break;
         }
     }
@@ -250,7 +250,7 @@ void ConclusionPage::aboutToShow()
     if( canDetails )
         report += i18n( "* You can explain in detail what were you doing when the application crashed" );
     else
-        report += i18n( "* You aren't sure what were you doing when the application crashed" ) ;
+        report += i18n( "* You are not sure what were you doing when the application crashed" ) ;
         
     //User is willing to help
     report.append( QLatin1String( "<br />" ) );
@@ -275,7 +275,7 @@ void ConclusionPage::aboutToShow()
         }
         else
         {
-            m_explanationLabel->setText( i18n( "<strong>Notice:</strong> This application isn't supported in the KDE Bugtracker, you need to report the bug to the maintainer" ) );
+            m_explanationLabel->setText( i18n( "<strong>Notice:</strong> This application is not supported in the KDE Bugtracker, you need to report the bug to the maintainer" ) );
             
             reportMethod = i18n( "You need to file a new bug report with the following information:" );
             reportLink =  i18nc( "address(mail or web) to report the bug", "Report to %1", krashConfig->getReportLink() );
@@ -309,7 +309,7 @@ void ConclusionPage::aboutToShow()
         else
         {
             report += i18nc( "address(mail or web) to report the bug", "Report to %1", krashConfig->getReportLink() );
-            m_explanationLabel->setText( i18n( "This application isn't supported in the KDE Bugtracker, you can report thia bug to its maintainer : <i>%1</i>", krashConfig->getReportLink() ) );
+            m_explanationLabel->setText( i18n( "This application is not supported in the KDE Bugtracker, you can report thia bug to its maintainer : <i>%1</i>", krashConfig->getReportLink() ) );
         }
         
         emit finished(true);
