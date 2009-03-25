@@ -1925,7 +1925,6 @@ void OxygenStyle::drawKStylePrimitive(WidgetType widgetType, int primitive,
                                 default:
                                     break;
                             }
-                            int gw=2;
                             if (horizontal)
                             {
                                 if (northOrEast) // north
