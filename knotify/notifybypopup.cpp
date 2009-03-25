@@ -28,6 +28,8 @@
 #include <khbox.h>
 #include <kvbox.h>
 
+#include <QBuffer>
+#include <QImage>
 #include <QLabel>
 #include <QTextDocument>
 #include <QApplication>
@@ -398,7 +400,21 @@ void NotifyByPopup::sendNotificationDBus(int id, int replacesId, KNotifyConfig* 
 	}
 
 	args.append( actionList ); // actions
-	args.append( QVariantMap() ); // hints - unused atm
+
+        QVariantMap map;
+
+        // let's see if we've got an image, and store the image in the hints map
+        QImage image = config->image.toImage();
+        if (!image.isNull()) {
+            QByteArray imageData;
+            QBuffer buffer(&imageData);
+            buffer.open(QIODevice::WriteOnly);
+            image.save(&buffer, "PNG");
+
+            map["image_data"] = imageData;
+        }
+
+	args.append( map ); // hints - unused atm
 	args.append( timeout ); // expire timout
 
 	m.setArguments( args );
