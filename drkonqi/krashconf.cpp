@@ -26,6 +26,7 @@
  *****************************************************************/
 
 #include "krashconf.h"
+#include "config-drkonqi.h"
 
 #include <kconfig.h>
 #include <kconfiggroup.h>
@@ -39,6 +40,11 @@
 
 #include <QHash>
 #include <QtDBus/QtDBus>
+
+#ifdef HAVE_STRSIGNAL
+# include <clocale>
+# include <cstring>
+#endif
 
 KrashConfig :: KrashConfig(QObject *parent)
     : QObject(parent)
@@ -126,6 +132,12 @@ void KrashConfig :: readConfig()
 
 QString KrashConfig::signalName() const
 {
+#ifdef HAVE_STRSIGNAL
+    const char * oldLocale = std::setlocale(LC_MESSAGES, "C");
+    const char *name = strsignal(m_signalnum);
+    std::setlocale(LC_MESSAGES, oldLocale);
+    return QString::fromLocal8Bit(name != NULL ? name : "Unknown");
+#else
     switch(m_signalnum) {
         case 4: return QString("SIGILL");
         case 6: return QString("SIGABRT");
@@ -133,6 +145,7 @@ QString KrashConfig::signalName() const
         case 11: return QString("SIGSEGV");
         default: return QString("Unknown");
     }
+#endif
 }
 
 bool KrashConfig::isKDEBugzilla() const
