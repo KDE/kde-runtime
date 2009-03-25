@@ -142,6 +142,9 @@ void DrKonqiBugReport::connectSignals( DrKonqiAssistantPage * page )
 
 void DrKonqiBugReport::currentPageChanged_slot(KPageWidgetItem * current , KPageWidgetItem * before)  
 {
+    enableButton( KDialog::Cancel, true );
+    m_canClose = false;
+    
     if( before )
     {
         DrKonqiAssistantPage* beforePage = dynamic_cast<DrKonqiAssistantPage*>(before->widget());

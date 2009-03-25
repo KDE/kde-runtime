@@ -172,7 +172,6 @@ void ReportInfo::fillReportFields()
     m_report->setComponent( QLatin1String("general") );
     m_report->setVersion( krashConfig->productVersion() );
     m_report->setOperatingSystem( QLatin1String("unspecified") );
-    m_report->setBugStatus( QLatin1String("UNCONFIRMED") );
     m_report->setPriority( QLatin1String("NOR") );
     m_report->setBugSeverity( QLatin1String("crash") );
     m_report->setDescription( generateReportTemplate( true ) );
