@@ -1,0 +1,770 @@
+[General]
+Name=End user
+Name[af]=Einde gebruiker
+Name[ar]=المستخدم النهائي
+Name[be@latin]=Karystańnik
+Name[bg]=Краен потребител
+Name[bn]=ব্যবহারকারী
+Name[bn_IN]=ব্যবহারকারী
+Name[br]=Implijer diwezh
+Name[ca]=Usuari final
+Name[ca@valencia]=Usuari final
+Name[cs]=Koncový uživatel
+Name[csb]=Kùńcowi brëkòwnik
+Name[cy]=Defnyddiwr Diwedd
+Name[da]=Slutbruger
+Name[de]=Endbenutzer
+Name[el]=Τελικός χρήστης
+Name[eo]=Uzanto
+Name[es]=Usuario final
+Name[et]=Lõppkasutaja
+Name[eu]=Bukaerako erabitzailea
+Name[fi]=Loppukäyttäjä
+Name[fr]=Utilisateur final
+Name[fy]=Einbrûker
+Name[ga]=Gnáthúsáideoir
+Name[gl]=Usuario final
+Name[gu]=અંત વપરાશકર્તા
+Name[he]=משתמש קצה
+Name[hi]=अंतिम उपयोक्ता
+Name[hne]=उपयोग करइया
+Name[hr]=Krajnji korisnik
+Name[hsb]=Wužiwar
+Name[hu]=Végfelhasználói
+Name[is]=Almennur notandi
+Name[it]=Utilizzatore finale
+Name[ja]=エンドユーザ
+Name[ka]=საბოლოო მომხმარებელი
+Name[kk]=Қатарлы пайдаланушы
+Name[km]=អ្នកប្រើ​ចុងក្រោយ
+Name[kn]=ಅಂತ್ಯ ಬಳಕೆದಾರ
+Name[ko]=일반 사용자
+Name[ku]=Bikarhênera/ê dawî
+Name[lt]=Galutinis naudotojas
+Name[lv]=Gala lietotājs
+Name[mk]=Краен корисник
+Name[ml]=ഉപയോഗിക്കുന്ന ആള്‍
+Name[mr]=वापरकर्ता
+Name[ms]=Pengguna akhir
+Name[nb]=Sluttbruker
+Name[nds]=Bruker
+Name[nl]=Eindgebruiker
+Name[nn]=Sluttbrukar
+Name[or]=ଚାଳକ
+Name[pa]=ਅੰਤ ਯੂਜ਼ਰ
+Name[pl]=Użytkownik końcowy
+Name[pt]=Utilizador
+Name[pt_BR]=Usuário
+Name[ro]=Utilizator obișnuit
+Name[ru]=Обычный пользователь
+Name[si]=අවසාන පරිශීලක
+Name[sk]=Používateľ
+Name[sl]=Končni uporabnik
+Name[sr]=Крајњи корисник
+Name[sr@latin]=Krajnji korisnik
+Name[sv]=Slutanvändare
+Name[te]=చివరి యూజర్
+Name[th]=ผู้ใช้ระดับสูง
+Name[tr]=Son kullanıcı
+Name[uk]=Кінцевий користувач
+Name[uz]=Oddiy foydalanuvchi
+Name[uz@cyrillic]=Оддий фойдаланувчи
+Name[wa]=Finå uzeu
+Name[x-test]=xxEnd userxx
+Name[xh]=Umsebenzisi wokugqibela
+Name[zh_CN]=最终用户
+Name[zh_TW]=終端使用者
+Comment=Settings preferred for end users
+Comment[af]=Instellings verkies vir einde gebruikers
+Comment[ar]=الاعداد المفضل للمستخدم النهائي
+Comment[be@latin]=Nałady, ułaścivyja zvyčajnamu karystańniku
+Comment[bg]=Настройки за крайни потребители
+Comment[bn]=সাধারণ ব্যবহারকারীদের জন্যপছন্দ করা সেটিংস
+Comment[bn_IN]=ব্যবহারকারীদের জন্য পছন্দসই বৈশিষ্ট্য
+Comment[br]=Kefluniadur azas evit implijerien diwezh
+Comment[ca]=Paràmetres preferits pels usuaris finals
+Comment[ca@valencia]=Paràmetres preferits pels usuaris finals
+Comment[cs]=Nastavení pro koncového uživatele
+Comment[csb]=Nastôw dlô kùńcowich brëkòwników
+Comment[cy]=Gosodiadau hoffiannus i  ddefnyddwyr diwedd
+Comment[da]=Indstillinger foretrukket for slutbrugere
+Comment[de]=Bevorzugte Einstellungen für Endbenutzer
+Comment[el]=Ρυθμίσεις προτιμώμενες για τους τελικούς χρήστες
+Comment[eo]=Preferataj agordoj de uzantoj
+Comment[es]=Configuraciones preferidas por los usuarios
+Comment[et]=Lõppkasutajale mõeldud seadistused
+Comment[eu]=Bukaerako erabitzaileek hobetsitako ezarpenak
+Comment[fi]=Loppukäyttäjille suositellut asetukset
+Comment[fr]=Configuration privilégiée pour les utilisateurs finaux
+Comment[fy]=De foarkar ynstellings foar einbrûkers
+Comment[ga]=Socruithe is fearr le haghaidh gnáthúsáideoirí
+Comment[gl]=Configuración preferida para os usuarios finais
+Comment[gu]=અંત વપરાશકર્તા માટે પસંદગીની ગોઠવણીઓ
+Comment[he]=הגדרות מועדפות למשתמשי קצה
+Comment[hi]=विन्यास की प्राथमिकता अंतिम उपयोक्ता के लिए
+Comment[hne]=उपयोग करइया बर पसंद के सेटिंग
+Comment[hr]=Postavke preporučene krajnjim korisnicima
+Comment[hsb]=Nastajenja za wužiwarja
+Comment[hu]=Végfelhasználóknak való beállítások
+Comment[is]=Stillingar fyrir almenna notendur
+Comment[it]=Impostazioni preferite per utilizzatori finali
+Comment[ja]=エンドユーザ用の設定
+Comment[ka]=პარამეტრები, საბოლო მომხმარებლისათვის
+Comment[kk]=Қатарлы пайдаланушыға ыңғайлы параметрлері
+Comment[km]=ចំណូលចិត្ត​ការ​កំណត់​សម្រាប់​អ្នកប្រើ​ចុងក្រោយ
+Comment[kn]=ಅಂತ್ಯ ಬಳಕೆದಾರರಿಗೆ ಐಚ್ಛಿಕ ಸಂಯೋಜನೆಗಳು
+Comment[ko]=일반 사용자가 선호하는 설정
+Comment[ku]=Mîhengên ji bo bikarhênerên dawî pêşniyarbûyî
+Comment[lt]=Galutiniam naudotojui rekomenduojami nustatymai
+Comment[lv]=Lietotājiem ieteicamie iestatījumi
+Comment[mk]=Поставувања за крајни корисници
+Comment[ml]=സാധാരണ ഉപയോക്താക്കള്‍ക്കു് ചേരുന്ന സജ്ജീകരണങ്ങള്‍
+Comment[mr]=वापरकर्ता करीता सूचविलेले संयोजना
+Comment[ms]=Tetapan diutamakan untuk pengguna akhir
+Comment[nb]=Innstillinger foretrukket for sluttbrukere
+Comment[nds]=Instellen för normaal Brukers
+Comment[nl]=Instellingen voor eindgebruikers
+Comment[nn]=Innstillingar føretrekt av sluttbrukarar
+Comment[or]=ଚାଳକ ପାଇଁ ସନ୍ଦର୍ଭ ପ୍ରାପ୍ତ ସେଟିଙ୍ଗଗୁଡ଼ିକ
+Comment[pa]=ਯੂਜ਼ਰਾਂ ਲਈ ਪਸੰਦੀਦਾ ਸੈਟਿੰਗ ਹੈ।
+Comment[pl]=Ustawienia dla użytkowników końcowych
+Comment[pt]=Configuração preferida para os utilizadores
+Comment[pt_BR]=Configurações preferidas por usuários
+Comment[ro]=Setări preferate pentru utilizatorii obișnuiți
+Comment[ru]=Параметры, предпочтительные для обычных пользователей
+Comment[sk]=Preferované nastavenia pre používateľov
+Comment[sl]=Nastavitve, ki so primerne za končnega uporabnika
+Comment[sr]=Поставке пригодне крајњим корисницима
+Comment[sr@latin]=Postavke prigodne krajnjim korisnicima
+Comment[sv]=Rekommenderade inställningar för slutanvändare
+Comment[te]=చివరి యూజర్లకు ఇష్టమైన అమరికలు
+Comment[th]=ตั้งค่าที่ควรใช้สำหรับผู้ใช้ระดับสูง
+Comment[tr]=Son kullanıcılar için tercih edilen ayarlar
+Comment[uk]=Параметри для користувачів
+Comment[uz]=Oddiy foydalanuvchilar uchun afzal moslamalar
+Comment[uz@cyrillic]=Оддий фойдаланувчилар учун афзал мосламалар
+Comment[wa]=Favoris apontiaedjes po les finås uzeus
+Comment[x-test]=xxSettings preferred for end usersxx
+Comment[xh]=Izicwangciso ezikhethwayo zomsebenzisi osekugqhibeleni
+Comment[zh_CN]=最终用户的首选设置
+Comment[zh_TW]=終端使用者設定
+
+SignalDetails=true
+ShowBacktraceButton=true
+ShowBugReportButton=false
+ShowDebugButton=false
+DisableChecks=false
+
+[ErrorDescription]
+Enable=true
+Name=The application %progname (%appname) crashed and caused the signal %signum (%signame).
+Name[af]=Die toepassing %progname (%appname) het gestaak en veroorsaak Die sein %signum (%signame).
+Name[ar]=التطبيق انهار بسبب اشارة
+Name[be@latin]=Aplikacyja %progname (%appname) źniščyłasia j padała syhnał %signum (%signame).
+Name[bg]=В програмата %progname (%appname) възникна фатална грешка, предизвиквайки сигнал %signum (%signame).
+Name[bn]=%progname (%appname) প্রোগ্রামটি ক্র্যাশ করেছে এবং এই সিগনাল পাঠিয়েছে: %signum (%signame)
+Name[bn_IN]=%progname (%appname) প্রোগ্রামটি ক্র্যাশ করেছে এবং এই সিগনাল পাঠিয়েছে: %signum (%signame)
+Name[br]=Sac'het eo bet an arload %progname (%appname) ha bet abeg d'an arhent %signum (%signame).
+Name[ca]=L'aplicació %progname (%appname) ha fallat i ha provocat el senyal %signum (%signame).
+Name[ca@valencia]=L'aplicació %progname (%appname) ha fallat i ha provocat el senyal %signum (%signame).
+Name[cs]=Aplikace %progname (%appname) zhavarovala a vyvolala signál %signum (%signame).
+Name[csb]=Programa %progname (%appname) załama sã ë doprowôdza do sygnalë %signum (%signame).
+Name[cy]=Mae'r cymhwysiad %progname (%appname) wedi cwympo, gan achosi'r arwydd %signum (%signame).
+Name[da]=Programmet %progname (%appname) brød sammen og gav signalet %signum (%signame).
+Name[de]=Die Anwendung %progname (%appname) ist abgestürzt und hat das Signal %signum (%signame) veranlasst.
+Name[el]=Η εφαρμογή %progname (%appname) κατέρρευσε και προκάλεσε το σήμα signal %signum (%signame).
+Name[eo]=La aplikaĵo %progname (%appname) kolapsis kaj kaŭzis la signalon %signum (%signame).
+Name[es]=La aplicación %progname (%appname) terminó de forma inesperada y generó la señal %signum (%signame).
+Name[et]=Rakendust %progname (%appname) tabas krahh põhjustatuna signaalist %signum (%signame).
+Name[eu]=%progname (%appname) aplikazioak kraskatu egin du %signum (%signame) seinalea sortuz.
+Name[fi]=Ohjelma %progname (%appname) kaatui ja aiheutti signaalin %signum (%signame).
+Name[fr]=L'application « %progname » (%appname) s'est interrompue anormalement et a émis le signal %signum (%signame).
+Name[fy]=De applikaasje %progname (%appname) is ferûngelike en aktivearre it sinjaal %signum (%signame).
+Name[ga]=Thuairteáil feidhmchlár %progname (%appname) agus thug sé comhartha %signum (%signame).
+Name[gl]=O programa %progname (%appname) pechouse inesperadamente e provocou o sinal %signum (%signame).
+Name[gu]=કાર્યક્મ %progname (%appname) બંધ થયેલ છે અને તેનાં કારણે આ સિગ્નલ થયું છે %signum (%signame).
+Name[he]=היישום %progname ‏(%appname) קרס וגרם לסיגנל %signum ‏(%signame).
+Name[hi]=अनुप्रयोग %progname (%appname) क्रैश हो गया है तथा संकेत उत्पन्न किया %signum (%signame).
+Name[hne]=अनुपरयोग %progname (%appname) क्रेस होगे अउ सिगनल देवत हे %signum (%signame).
+Name[hr]=Došlo je do rušenja aplikacije %progname (%appname), te je izazvan signal %signum (%signame).
+Name[hsb]=Aplikacija %progname (%appname) je so pójsnyła a signal %signum (%signame) zawiniła.
+Name[hu]=Egy alkalmazás lefagyott. Név: %progname (%appname). Az okozott szignál: %signum (%signame).
+Name[is]=Forritið %progname (%appname) hrundi og setti af stað merkið %signum (%signame).
+Name[it]=L'applicazione %progname (%appname) è andata in crash e ha restituito il segnale %signum (%signame).
+Name[ja]=アプリケーション %progname (%appname) はクラッシュし、シグナル %signum (%signame) が発生しました。
+Name[ka]=პროგრამა %progname (%appname) მოხდა ფატალური შეცდომა, რომელმაც გამოიწვია სიგნალი %signum (%signame).
+Name[kk]=%progname (%appname) бағдарламасы қирап %signum (%signame) сигналын жіберді.
+Name[km]=កម្មវិធី %progname (%appname) បានគាំង ហើយ​បង្ក​ឲ្យ​មាន​សញ្ញា %signum (%signame) ។
+Name[kn]=ಅನ್ವಯ %progname (%appname) ನೆಲಕಚ್ಚಿತು (ಕ್ರಾಷ್) ಹಾಗೂ %signum (%signame) ಸಂಜ್ಞೆ ಮೂಡುವಂತೆ ಮಾಡಿತು.
+Name[ko]=프로그램 %progname (%appname)이(가) 충돌하였고 신호 %signum(%signame)을(를) 보냈습니다.
+Name[ku]=Sepana %progname (%appname) têk ç, û bû sedemasînyala %signum (%signame).
+Name[lt]=%progname programa (%appname) nulūžo ir gavo %signum (%signame) signalą.
+Name[lv]=Programma %progname (%appname), pid %pid, avarēja un izsauca signālu %signum (%signame).
+Name[mk]=Апликацијата %progname (%appname) падна и го предизвика сигналот %signum (%signame).
+Name[ml]=%progname (%appname) എന്ന പ്രയോഗം %signum (%signame) എന്ന സിഗ്നലോടുകൂടി തകര്‍ന്നിരിയ്ക്കുന്നു
+Name[mr]=अनुप्रयोग %progname (%appname) क्रॅश झाले व संकेत %signum (%signame) निर्माण करण्यास कारणीभूत ठरले.
+Name[ms]=Aplikasi %progname (%appname) musnah dan menyebabkan isyarat %signum (%signame).
+Name[nb]=Programmet  %progname (%appname)  krasjet og ga signalet  %signum (%signame).
+Name[nds]=Dat Programm %progname (%appname) is afstört un hett dat Signaal %signum (%signame) utlööst.
+Name[nl]=Het programma %progname (%appname) heeft een ongeldige bewerking veroorzaakt en activeerde daarmee het signaal %signum (%signame).
+Name[nn]=Programmet %progname (%appname) krasja, og sendte signalet %signum (%signame).
+Name[or]=ପ୍ରୟୋଗ %progname (%appname) ନଷ୍ଟହୋଇଛି ଏବଂ ସଂକେତ ଘଟାଇଛି %signum (%signame)।
+Name[pa]=ਐਪਲੀਕੇਸ਼ਨ %progname (%appname) ਕਰੈਸ਼ ਹੋ ਗਈ ਹੈ ਅਤੇ ਸਿਗਨਲ %signum (%signame) ਦਿੱਤਾ ਹੈ।
+Name[pl]=Program %progname (%appname) uległ awarii i spowodował sygnał %signum (%signame).
+Name[pt]=A aplicação %progname (%appname) estoirou e provocou o sinal %signum (%signame).
+Name[pt_BR]=O aplicativo %progname (%appname) travou e causou o sinal %signum (%signame).
+Name[ro]=Aplicația %progname (%appname) s-a prăbușit și a generat semnalul %signum (%signame).
+Name[ru]=В приложении %progname (%appname, процесс %pid) произошёл сбой работы. Работа приложения прекращена с сигналом %signum (%signame).
+Name[sk]=Aplikácia %progname (%appname) spadla a spôsobila signál %signum (%signame).
+Name[sl]=Program %progname (%appname) se je sesul in je sprožil signal %signum (%signame).
+Name[sr]=Програм %progname (%appname) срушио се уз сигнал %signum (%signame).
+Name[sr@latin]=Program %progname (%appname) srušio se uz signal %signum (%signame).
+Name[sv]=Programmet %progname (%appname), kraschade och orsakade signalen %signum (%signame).
+Name[te]=ఈ కార్యక్రమం %progname (%appname) క్రాష్ అయినది మరయూ %signum సిగ్నల్ నూ కలుగ చేసింది
+Name[th]=โปรแกรม %progname (%appname) ทำงานข้ดข้องและจบการทำงานกระทันหันโดยได้รับสัญญาณหมายเลข %signum (%signame)
+Name[tr]= %progname (%appname) uygulaması çöktü ve %signum (%signame) sinyali gönderdi.
+Name[uk]=Програма %progname (%appname) зазнала аварії і спричинила сигнал signal %signum (%signame).
+Name[uz]=Dasturning %progname (%appname) ishida xato roʻy berdi va %signum (%signame) signaliga sababchi boʻldi.
+Name[uz@cyrillic]=Дастурнинг %progname (%appname) ишида хато рўй берди ва %signum (%signame) сигналига сабабчи бўлди.
+Name[wa]=Li programe %progname (%appname) s' a spotchî eyet a fwait l' signå %signum (%signame).
+Name[x-test]=xxThe application %progname (%appname) crashed and caused the signal %signum (%signame).xx
+Name[xh]=Isicelo se %progname (%appname) ingqubekile yaze yabangela uphawu lwe %signum (%signame).
+Name[zh_CN]=应用程序 %progname (%appname) 已经崩溃并导致了信号 %signum (%signame)。
+Name[zh_TW]=應用程式 %progname（%appname），行程代碼 %pid，崩潰並引發信號 %signum（%signame）。
+
+[WhatToDoHint]
+Enable=true
+Name=Please help us improve the software you use by filing a report at <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Useful details include how to reproduce the error, documents that were loaded, etc.
+Name[af]=Jy kan 'n foutrapport instuur vir die program. Kyk eers of dit by <a href=http://bugs.kde.org">http://bugs.kde.org</a> gelys is, anders kan jy die outeur direk kontak. Sluit asb. soveel inligting as moontlik in. As jy weet hoe om die probleem te reproduseer, sluit asb. ook 'n beskrywing daarvan in.
+Name[ar]=المرجو مساعدتنا على تحسين هذا البرنامج بالتقرير عن العلل عبر <a href="http://bugs.kde.org">http://bugs.kde.org</a>. من التفاصيل المفيدة كيفية تكرار الخطأ، والوثائق المحمّلة، إلخ.
+Name[be@latin]=Kali łaska, dapamažy nam udaskanalić hetuju prahramu - paviedam nam pra hetuju chibu na staroncy: <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Dobra, kali ty paviedamiš nam pra sposab, u jaki možna paŭtaryć hetuju pamyłku, układzieš u paviedamleńnie dakumenty, ź jakimi ŭ toj momant pracavaŭ itp.
+Name[bg]=Моля, помогнете ни да подобрим софтуера като съобщите за тази грешка на <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Опишете как е възникнала грешката, кои документи са били заредени и т.н.
+Name[ca]=Si us plau, ajudeu-nos a millorar el programari que utilitzeu omplint un informe a <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Els detalls útils són com reproduir l'error, el documents carregats,  etc.
+Name[ca@valencia]=Per favor, ajudeu-nos a millorar el programari que utilitzeu omplint un informe a <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Els detalls útils són com reproduir l'error, el documents carregats,  etc.
+Name[cs]=Pomozte nám, prosím, zlepšit software, který používáte, tak, že vyplníte hlášení o chybě na <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Užitečnými detaily je např. postup, jak chybu vyvolat, otevřené dokumenty atd.
+Name[csb]=Proszëmë pòmòżë nama zlepszac softwôrã jaką brëkùjesz, przez sélanié nama ze starnë <a href="http://bugs.kde.org">http://bugs.kde.org</a> rapòrtów ò felach. Dodôwnô akùratnô wëdowiédzô pòmòże nama rëmac felë, z przerôbianëch dokùmentów.
+Name[da]=Hjælp os gerne med at forbedre softwaren som du bruger ved at rapportere til <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Nyttige informationer omfatter hvordan fejlen kan reproduceres, dokumenter som blev indlæst, osv.
+Name[de]=Bitte helfen Sie uns dabei, die von Ihnen verwendeten Programme zu verbessern, indem Sie unter <a href="http://bugs.kde.org">http://bugs.kde.org</a> einen Fehlerbericht schreiben. Nützliche Informationen sind z. B. wie der Fehler reproduziert werden kann, welche Dokumente geladen waren usw.
+Name[el]=Βοηθήστε μας να βελτιώσουμε την εφαρμογή αυτή αναφέροντας αυτό το σφάλμα στο <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Χρήσιμες πληροφορίες που θα μπορούσατε να συμπεριλάβετε είναι ο τρόπος αναπαραγωγής του σφάλματος, τα έγγραφα που ήταν φορτωμένα κλπ.
+Name[eo]=Bonvolu helpi plibonigi la programon kiun vi uzas per raporti la cimon ĉe <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Utilaj detaloj inkluzivas kiel oni reproduktas la eraron, kiuj dokumentoj estis traktataj, ktp.
+Name[es]=Ayudenos a mejorar los programas generando reportes en <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Detalles útiles incluyen cómo reproducir el error, documentos cargados, etc.
+Name[et]=Palun aita meil tarkvara paremaks muuta, andes teada veast aadressil <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Kasuliku teabe hulka kuuluvad andmed, kuidas viga korrata, millised dokumendid olid laaditud jne.
+Name[eu]=Mesedez lagundu iezaguzu erabiltzen duzun softwarea hobetzen <a href="http://bugs.kde.org">http://bugs.kde.org</a>-en txosten bat betez. Xehetasun erabilgarriak dira akatsa nola birsortu, zamatu ziren dokumentuak, etab.
+Name[fi]=Auta meitä parantamaan ohjelmistoa lähettämällä vikailmoitus osoitteessa <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Muista sisällyttää ilmoitukseen tietoja kuten kuinka toistaa ongelma, mitä dokumentteja ohjelmassa oli ladattuna ja niin edelleen, joista saattaa olla hyötyä kehittäjille.
+Name[fr]=Aidez-nous à améliorer les logiciels que vous utilisez en remplissant un rapport à l'adresse <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Les renseignements utiles sont par exemple une marche à suivre pour reproduire l'erreur, les documents ouverts au moment de l'erreur, etc.
+Name[fy]=Help ús om de sêftguod te ferbetterjen troch it ynfoljen fan in raport op <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Brûkbere details binne, it reprodusearjen fan de flater, en hokfoar dokuminten binne laden, ensfh. 
+Name[ga]=Cabhraigh linn an bogearra seo a fheabhsú trí thuairisc a sheoladh chuig <a href="http://bugs.kde.org">http://bugs.kde.org/</a> maidir leis an earráid seo. Rudaí le cur san áireamh: conas a dhéantar an earráid, cáipéisí a bhí luchtaithe, srl.
+Name[gl]=Por favor axúdenos a mellorar os programas que empregue enviándonos un informe de erro a <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Inclúa detalles acerca do xeito de reproducir o erro, que documentos tiña cargados etc.
+Name[gu]=મહેરબાની કરી અમને બગ અહેવાલ આ જગ્યા પર ભરીને <a href="http://bugs.kde.org">http://bugs.kde.org</a> સોફ્ટવેરમાં સુધારો કરવામાં મદદ કરો. ઉપયોગી માહિતીમાં જેવીકે આ ક્ષતિ ફરી કઇ રીતે ઉભી કરવી, લાવવામાં આવેલ દસ્તાવેજો વગેરે નો સમાવેશ થાય છે.
+Name[he]=עזור לנו לשפר את התוכנה על ידי מילוי של טופס שגיאה בכתובת (אנגלית בלבד, אלא אם כן קשור לתרגום עברי) <a href="http://bugs.kde.org">http://bugs.kde.org</a>. פרטים מועילים כוללים הוראות לשחזור השגיאה, מסמכים שנפתחו וכו'.
+Name[hne]=इहां <a href="http://bugs.kde.org">http://bugs.kde.org</a> बग रिपोर्ट करके हमन ल ए साफ्टवेयर ल सुधार करे मं मदद करव. उपयोगी विवरन होही कि कइसन गलती ल बनाय जा सकही अउ का कागद लोड होय रहीस आदि.
+Name[hr]=Pomozite nam u poboljšavaju softvera koji koristite. Ispunite izvještaj na adresi <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Upišite detalje kao što su način reprodiciranja pogreške, učitana dokumentacija itd.
+Name[hsb]=Prošu pomhajće nam program, kotryž wužiwaće, zlěpšić a rozprawće wo zmylku pola <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Wužitna informacija je, kak so zmylk wuwoła, dokumenty, kotrež běchu začitane, etc.
+Name[hu]=Kérjük segítse a munkánkat és jelentse be a hibát itt: <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Célszerű megadni a hiba reprodukálásának módját (angolul), a betöltött dokumentumok listáját stb.
+Name[is]=Endilega hjálpaðu okkur að bæta hugbúnaðinn með því að senda villuskýrslu á <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Meðal nytsamlegra upplýsinga gæti verið hvernig hægt sé að endurtaka villuna, skrár í notkun, og ekki gleyma hvaða útgáfur forrita og stýrikerfa.
+Name[it]=Per piacere, aiutaci a migliorare i programmi che usi segnalando gli errori su <a href="http://bugs.kde.org">http://bugs.kde.org</a>. I dettagli utili includono come riprodurre l'errore, i documenti caricati, eccetera.
+Name[ja]=<a href="http://bugs.kde.org">http://bugs.kde.org</a> にバグを報告することで、お使いのソフトウェアを改良する手助けをしてください。バグの再現方法、読み込んだ文書などの詳細情報が役立ちます。
+Name[kk]=Пайдаланатын бағдаламамызды <a href="http://bugs.kde.org">http://bugs.kde.org</a> сайты арқылы есеп беру пішінді толтырып, жетілдіруге көмектесуді сұраймыз. Керек егжей-тегжейлері - қандай жағдайда қате қайталанады, ол кезде қандай құжаттар ашылып тұрды және т.б.
+Name[km]=សូម​ជួយ​យើង​បង្កើន​កម្មវិធី ដែល​អ្នក​ប្រើ​ដោយ​បំពេញ​របាយការណ៍​នៅ <a href="http://bugs.kde.org">http://bugs.kde.org</a> ។ សេចក្ដី​លម្អិត​ដ៏មាន​ប្រយោជន៍​​រួមមាន​វិធី​ត្រូវ​បង្កើត​កំហុស​ឡើ​ងវិញ ឯកសារ​ដែល​ត្រូវ​បាន​ផ្ទុក ។ល។
+Name[kn]=ನೀನು ಬಳಸುವ ತಂತ್ರಜ್ಞಾನದ ಗುಣಮಟ್ಟವನ್ನು ಸುಧಾರಿಸಲು ಒಂದು ವರದಿಯನ್ನು ಇಲ್ಲಿಗೆ ನೀಡು <a href="http://bugs.kde.org">http://bugs.kde.org</a>. ದೋಷವನ್ನು ಮರುಸೃಷ್ಟಿಸಲು ಅಗತ್ಯವಾದ ಹಂತಗಳು ಹಾಗೂ ಉತ್ಥಾಪಿಸಲಾಗಿದ್ದ ದಸ್ತಾವೇಜುಗಳಂತಹ ಮಾಹಿತಿಗಳು ಉಪಯುಕ್ತವಾಗುತ್ತವೆ.
+Name[ko]=이 오류를 <a href="http://bugs.kde.org">http://bugs.kde.org</a>에 보고해 주셔서 프로그램이 개선될 수 있도록 도와 주십시오. 오류를 다시 일으킬 수 있는 방법이나 불러온 문서 등의 자세한 정보가 있다면 제공해 주십시오.
+Name[ku]=Ji kerema xwe re ji bo rastkirina çewtiyê bi tijekirina rapora di <a href="http://bugs.kde.org">http://bugs.kde.org</a> de ji me re bibe alîkar. Di kitekitan de agahiyêm der barê wê de hene.
+Name[lt]=Prašome padėti mums patobulinti šią programą. Užpildykite ir išsiųskite klaidos pranešimą svetainėje <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Prašome pateikti naudingų detalių: aprašykite, kaip atkartoti klaidą, pridėkite dokumentus, kuriuos apdorojant programa lūžo ir pan.
+Name[lv]=Lūdzu palīdziet mums uzlabot šo programmatūru. Nosūtiet kļūdas ziņojumu uz <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Ziņojumā iekļaujiet aprakstu kā atkārtot kļūdu, kādi dokumenti tika ielādēti un citu derīgu informāciju.
+Name[mk]=Ве молиме да ни помогнете да го усовршиме софтверот што го користите, така што ќе поднесете извештај на <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Вклучете колку што е можно повеќе информации како да се репродуцира грешката, вчитаните документи итн.
+Name[ml]=ദയവായി നിങ്ങളുപയോഗിയ്ക്കുന്ന സോഫ്റ്റ്‌വെയര്‍ മെച്ചപ്പെടുത്താന്‍ ഞങ്ങളെ സഹായിയ്ക്കാനായി <a href="http://bugs.kde.org">http://bugs.kde.org</a> എന്ന വിലാസത്തില്‍ രേഖപ്പെടുത്തുക. എങ്ങനെയാണു് ഈ തെറ്റു് വീണ്ടും കാണുക, ചേര്‍ത്തിരുന്ന രചനകള്‍ തുടങ്ങിയവ ഉപയോഗപ്രദമായ വിശദവിവരങ്ങളിലുള്‍പ്പെടും.
+Name[mr]= <a href="http://bugs.kde.org">http://bugs.kde.org</a> येथे अहवाल सादर करून कृपया सॉफ्टवेअर सुधारीत करण्यास मदत करा. वापरण्याजोगी माहिती अंतर्गत त्रुटी कशी दर्शवायची, दाखलकरण्याजोगी दस्तऐवज, इत्यादी समाविष्टीत आहे.
+Name[nb]=Vennligst hjelp oss med å forbedre programvaren du benytter ved å fylle ut en rapport hos <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Detaljer som er nyttige kan være hvordan feilen reproduseres, informasjon om dokumenter som ble åpnet , osv.
+Name[nds]=Bitte hölp uns dor bi, dat wi de Software, de Du bruukst, verbetern köönt. Du kannst en Fehlerbericht för dit Programm op <a href="http://bugs.kde.org">http://bugs.kde.org</a> afgeven. Föög em bitte so veel Informatschonen as mööglich to, villicht ok de Orginaaldokmenten. Kannst Du den Fehler wedderhalen, vertell bitte ok, wodennig dat geiht.
+Name[nl]=Help ons om de software te verbeteren door een rapport (in het Engels) te sturen naar <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Sluit informatie in over hoe de fout kan worden gereproduceerd, documenten die geladen waren, etc.
+Name[nn]=Hjelp oss å forbetra programvaren du brukar ved å fylla ut ein feilrapport på <a href="http://bugs.kde.org">http://bugs.kde.org/</a>. Nyttig informasjon er blant anna korleis me kan reprodusera feilen og dokument som vart opna.
+Name[pa]=ਸਾਨੂੰ ਸਾਫਟਵੇਅਰ ਸੁਧਾਰਨ ਲਈ ਮੌਕਾ ਦਿਓ ਜੀ, ਇਸ ਵਾਸਤੇ ਇੱਕ ਰਿਪੋਰਟ ਜਾਣਕਾਰੀ <a href="http://bugs.kde.org">http://bugs.kde.org</a> ਉੱਤੇ ਭਰੋ ਜੀ। ਫਾਇਦੇਮੰਦ ਵੇਰਵੇ ਵਿੱਚ ਇਸ ਨੂੰਕਿਵੇਂ ਮੁੜ ਕੇ ਬਣਾਇਆ ਜਾ ਸਕਦਾ ਹੈ, ਡੌਕੂਮੈਂਟ, ਜੋ ਕਿ ਲੋਡ ਕਰਨ ਦੌਰਾਨ ਵਰਤੇ ਸਨ, ਹੋ ਸਕਦੇ ਹਨ।
+Name[pl]=Raporty o błędach wysyłane ze strony <a href="http://bugs.kde.org">http://bugs.kde.org</a> pomagają nam ulepszać oprogramowanie. Użyteczne informacje dodatkowe to metoda na powtórzenie błędu, przetwarzane dokumenty itp.
+Name[pt]=Por favor ajude-nos a melhor o 'software' que usa, preenchendo um relatório em <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Alguns detalhes úteis incluem a reprodução do erro, os documentos que foram carregados, etc.
+Name[pt_BR]=Por favor nos ajude a melhorar o software que você usa preenchendo um relatório em <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Detalhes úteis incluem como reproduzir o erro, documentos que foram carregados, etc.
+Name[ro]=Ajutați-ne să îmbunătățim programul, completînd un raport de eroare pe <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Vă rugăm să includeți cît mai multă informație, de exemplu cum se poate reproduce eroarea, documentele încărcate, etc.
+Name[ru]=Пожалуйста, помогите нам улучшить эту программу. Напишите отчёт на <a href="http://bugs.kde.org">http://bugs.kde.org</a>, включив в него сведения о ситуации, вызвавшей ошибку, загруженные документы и так далее.
+Name[sk]=Prosím pomôžte nám vylepšit softvér vyplnením protokolu o chybe na <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Medzi užitočné detaily patria napríklad informácie o tom ako reprodukovať chybu, dokumenty, ktoré boli načítané, atď.
+Name[sl]=Pomagajte nam izboljšati program, ki ga uporabljate. Oddajte poročilo o napaki  na <a href="http://bugs.kde.org">bugs.kde.org</a>. Uporabni podatki so na primer koraki za povzročitev napake, odprti dokumenti in podobno.
+Name[sr]=Помогните нам да побољшамо софтвер тако што ћете испунити извештај на <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Корисни детаљи: како изазвати грешку, документи који су учитавани, итд.
+Name[sr@latin]=Pomognite nam da poboljšamo softver tako što ćete ispuniti izveštaj na <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Korisni detalji: kako izazvati grešku, dokumenti koji su učitavani, itd.
+Name[sv]=Hjälp oss att förbättra programmet du använder genom skicka in en rapport till <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Användbar information inkluderar hur felet kan återupprepas, vilka dokument som var laddade, etc.
+Name[te]=మీరు ఉపయోగించునటువంటి సాఫ్‍ట్‌వేర్‌ను మెరుగుపరచుటకు దయచేసి <a href="http://bugs.kde.org">http://bugs.kde.org</a> నందలి నివేదికను నింపుటద్వారా మాకు సహాయపడండి. దోషము ఎలా సంభవిస్తోంది, ఏ పత్రములు లోడవుతున్నప్పుడు అలాజరుగుతోంది మొదలగునవి, ఉపయోగమైన వివరములు.
+Name[th]=โปรดช่วยเหลือเราในการปรับปรุงซอฟต์แวร์ ด้วยการกรอกข้อมูลในรายงานที่ <a href="http://bugs.kde.org">http://bugs.kde.org</a> และโปรดกรอกรายละเอียด เช่น วิธีการสร้างข้อผิดพลาดนี้, ได้โหลดเอกสารตัวใดขึ้นมาบ้าง เป็นต้น รวมมาในการแจ้งข้อผิดพลาดนี้ด้วย
+Name[tr]=Bu uygulamanın gelişimine katkıda bulunmak için lütfen <a href="http://bugs.kde.org">http://bugs.kde.org</a> adresini kullanarak hata raporu gönderin. İşe yarar ayrıntılar içerisinde hatanın nasıl tekrarlanabildiği ve hata oluşurken hangi belgelerin yüklendiği gibi şeyler vardır.
+Name[uk]=Будь ласка, допоможіть нам вдосконалити ПЗ, яким ви користуєтесь - заповніть звіт на <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Включіть корисні подробиці: як повторити помилку, документи, котрі було завантажено, тощо.
+Name[wa]=Aidîz nos s' i vs plait a -z amidrer l' programe ki vs eployîz e rimplixhant on rapoirt so <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Des ahessåves detays dijhèt comint rfé l' aroke, les documints k' ont stî tcherdîs, evnd.
+Name[x-test]=xxPlease help us improve the software you use by filing a report at <a href="http://bugs.kde.org">http://bugs.kde.org</a>. Useful details include how to reproduce the error, documents that were loaded, etc.xx
+Name[zh_CN]=请在 <a href="http://bugs.kde.org">http://bugs.kde.org</a> 上面提交帮助我们改进这个软件的报告。有用的细节包括错误重现方式及当时载入的文档等。
+Name[zh_TW]=請到 <a href="http://bugs.kde.org">http://bugs.kde.org</a> 回報此問題，以協助我們改進此軟體。回報時請盡量將看到的資訊提供給作者，並告知如何重現此錯誤。
+
+[4]
+Name=SIGILL
+Name[af]=SIGILL 
+Name[csb]=SGILL
+Name[hne]=सिगिल
+Name[hu]=SIGKILL
+Name[sr]=СИГИЛЛ
+Name[x-test]=xxSIGILLxx
+Comment=An application mostly receives the SIGILL signal due to a bug in the application. The application was asked to save its documents.
+Comment[af]='n Toepassing ontvang meestal die SIGILL sein as gevolg van 'n fout in die toepassing. die Toepassing is gevra om sy dokumente te stoor.
+Comment[ar]=تلقى البرنامج إشارة sigill بسبب خلل في التطبيق. وطلب حفظ الملف
+Comment[be@latin]=Chutčej za ŭsio, kali aplikacyja atrymvaje syhnał „SIGILL”, značyć, u joj jość chiba. Aplikacyja atrymała zahad zapisać svaje dakumenty.
+Comment[bg]=Сигналът SIGILL обикновено се получава поради грешка в самата програма. В този случай програмите имат възможност да запишат всички отворени документи и да завършат работата си по нормален начин.
+Comment[bn]=কোনো অ্যাপলিকেশন SIGILL সিগনালটি সাধারণত তখনই পায় যদি তাতে কোনো বাগ থাকে। অ্যাপলিকেশনটিকে তার সমস্ত নথী সংরক্ষণ করতে অনুরোধ করা হয়েছে।
+Comment[bn_IN]=কোনো অ্যাপলিকেশন SIGILL সিগনালটি সাধারণত তখনই পায় যদি তাতে কোনো বাগ থাকে। অ্যাপলিকেশনটিকে তার সমস্ত নথী সংরক্ষণ করতে অনুরোধ করা হয়েছে।
+Comment[br]=Un arload a vez kaset an arhent SIGILL dezhañ abalamour d'un draen peurvuiañ. Goulennet eo bet d'an arload enrollañ e zeulioù.
+Comment[ca]=Bàsicament una aplicació rep el senyal SIGILL degut a un error a l'aplicació. Es demana a l'aplicació que desi els seus documents.
+Comment[ca@valencia]=Bàsicament una aplicació rep el senyal SIGILL degut a un error a l'aplicació. Es demana a l'aplicació que desi els seus documents.
+Comment[cs]=Aplikace obvykle obdrží signál SIGILL, protože je v ní nebo jiné aplikaci chyba. Aplikace byla požádána o uložení svých dokumentů.
+Comment[csb]=Programa dostôwô zwëczajno sygnal SIGILL z przëczënë felë w ni sómy. Wësłóno żądanié zapisania dokùmentów.
+Comment[cy]=Derbyna cymhwysiad yr arwydd SIGILL gan amlaf o achos nam yn y cymhwysiad. Gofynnwyd i'r cymhwysiad gadw ei ddogfennau.
+Comment[da]=Et program modtager som regel SIGILL-signalet når der er en fejl i programmet. Programmet blev bedt om at gemme sine dokumenter.
+Comment[de]=Wenn eine Anwendung das Signal SIGILL erhält, weist dies oft auf einen Programmierfehler hin. Die Anwendung wurde angewiesen, alle Dokumente zu speichern.
+Comment[el]=Μια εφαρμογή συνήθως λαμβάνει το σήμα SIGILL εξαιτίας σφάλματος στην εφαρμογή. Ζητήθηκε από την εφαρμογή η αποθήκευση των εγγράφων.
+Comment[eo]=Aplikaĵo kutime ricevas la SIGILL-signalon pro cimo en la aplikaĵo. La aplikaĵo estis petita konservi la dokumentojn.
+Comment[es]=Una aplicación recibe la señal SIGILL sobretodo debido a un error en la misma aplicación. La aplicación ha solicitado que se guarden sus documentos.
+Comment[et]=Tavaliselt saab rakendus SIGILL signaali rakenduses endas tekkinud vea tõttu. Rakendusel paluti avatud dokumendid salvestada.
+Comment[eu]=Aplikazio batek SIGILL seinalea jasotzen du aplikazioaren programa-errore batengatik normalean. Aplikazioak dokumentuak gordetzeko eskatu zaio.
+Comment[fi]=SIGILL-signaali johtuu yleensä virheestä ohjelmassa. Ohjelmaa pyydettiin tallentamaan avatut asiakirjat ennen kaatumista.
+Comment[fr]=Une application reçoit généralement le signal SIGILL a cause d'un bogue dans l'application. L'application a reçu l'instruction d'enregistrer ses documents.
+Comment[fy]=In applikaasje ûntfangt meastentiids it SIGILL-sinjaal fanwege in brek yn it programma. De applikaasje sil frege wurde om de dokuminten te bewarjen.
+Comment[ga]=Go hiondúil, faigheann feidhmchlár comhartha SIGILL de bhrí go bhfuil fabht ann. Fiafraíodh den fheidhmchlár a chuid cáipéisí a shábháil.
+Comment[gl]=Os programas receben o sinal SIGILL seguramente por mor dun erro interno. Pedíuselle ao programa que garde os documentos.
+Comment[gu]=કાર્યક્રમ મોટાભાગે તેમાં રહેલ ક્ષતિને કારણે SIGILL સિગ્નલ મેળવે છે. કાર્યક્રમને તેનાં દસ્તાવેજો સંગ્રહવાનું કહેવામાં આવ્યું હતું.
+Comment[he]=יישום לרב מקבל את הסיגנל SIGKILL בגלל באג ביישום. היישום מתבקש לשמור את המסמכים שלו.
+Comment[hi]=एक अनुप्रयोग प्रायः उस अनुप्रयोग में बग होने पर SIGILL संकेत प्राप्त करता है. अनुप्रयोग को इसका दस्तावेज़ सहेजने के लिए कहा गया है.
+Comment[hr]=Aplikacija najčešće prima SIGILL signal zbog nedostatka unutar aplikacije. Od aplikacije je zatraženo da spremi svoje dokumente.
+Comment[hsb]=Aplikacija dóstanje signal SIGKILL zwjetša dla programowanskeho zmylka. Aplikacija je najskerje swoje dokumenty zawěsćiła.
+Comment[hu]=SIGILL szignál valamilyen programhiba válthat ki. Bezáródás előtt a program jelzést kap, hogy mentse el a nyitott dokumentumokat.
+Comment[is]=Forrit fær oftast SIGILL merkið vegna villu í forritinu. Forritið var beðið um að vista skjölin sín.
+Comment[it]=Un'applicazione riceve il segnale SIGILL principalmente a causa di un errore nell'applicazione. È stato richiesto all'applicazione di salvare i suoi documenti.
+Comment[ja]=アプリケーションは内部のバグにより SIGILL シグナルを受け取ります。アプリケーションは文書を保存するよう求められました。
+Comment[ka]=პროგრამა იღებს SIGILL სიგნალს პროგრამაში არსებული შეცდომის გამო. ყველა დოკუმენტი შენახული იქნება
+Comment[kk]=Бағдарлама  SIGILL сигналын көбінде өзіндегі қатенің себебінен алады. Бағдарламадан құжаттарын сақтау сұралды.
+Comment[km]=ភាគច្រើន កម្មវិធី​ទទួល​សញ្ញា SIGILL ដោយសារ​កំហុស​នៅ​ក្នុង​កម្មវិធី ។ កម្មវិធី​ត្រូវបាន​សួរ​ឲ្យ​រក្សាទុក​ឯកសារ​របស់​វា ។
+Comment[kn]=ಒಂದು ಅನ್ವಯವು SIGILL ಸಂಜ್ಞೆಯನ್ನು ಪಡೆಯಲು ಅದರಲ್ಲಿರುವ ದೋಷವೇ ಬಹುಪಾಲು ಕಾರಣ. ಅನ್ವಯವು ತನ್ನ ದಸ್ತಾವೇಜುಗಳನ್ನು ಉಳಿಸುವಂತೆ ಕೋರಲಾಯಿತು.
+Comment[ko]=프로그램의 버그로 인해서 SIGILL 신호를 받을 수도 있습니다. 프로그램에서 문서를 저장하도록 요청했습니다.
+Comment[ku]=Sepanek bi piranî sînyala SIGILL heta buga rast radike. Sepanê ji bo hilanîna belgeyê pirs kir.
+Comment[lt]=Programa gauna SIGILL signalą paprastai dėl ydos programoje.  Programa buvo paprašyta išsaugoti savo dokumentus.
+Comment[lv]=Parasti programma saņem SIGILL signālu dēļ kļūdas pašā programmā. Programmai tika pieprasīts saglabāt savus dokumentus.
+Comment[mk]=Апликациите најчесто го добиваат сигналот SIGILL поради бубачка. На апликацијата ѝ беше речено да ги сними сите свои документи.
+Comment[ml]=പ്രയോഗത്തിലെ പിഴവു് മൂലമാണൊരു പ്രയോഗത്തിനു് കൂടുതലായും സിഗ്ഇല്‍ (SIGILL) എന്ന സിഗ്നല്‍ കിട്ടുന്നതു്. പ്രയോഗത്തോടു് അതിന്റെ രചനകള്‍ സൂക്ഷിയ്ക്കാന്‍ പറഞ്ഞിട്ടുണ്ടു്.
+Comment[mr]=अनुप्रयोग अंतर्गत बग असल्यास अनुप्रयोग सहसा SIGILL संकेत प्राप्त करतो. अनुप्रयोगला दस्तऐवज संचयीत करण्यास विनंतीकृत केले गेले आहे.
+Comment[ms]=Kebanyakan aplikasi menerima isyarat SIGILL disebabkan ralat di dalam aplikasi. Aplikasi hendaklah disimpan untuk mengelakkan perkara tidak diingini.
+Comment[nb]=Et program får som regel SIGILL-signalet på grunn av en feil i programmet. Det ble bedt om å lagre dokumentene sine.
+Comment[nds]=En Programm kriggt dat Signaal SIGILL tomehrst, wenn dat dor binnen en Fehler gifft. Dat Programm wöör beden, dat schull sien Dokmenten sekern.
+Comment[nl]=Een programma ontvangt meestal het SIGILL-signaal vanwege een programmafout. Het programma zal worden gevraagd om diens documenten op te slaan.
+Comment[nn]=Eit program får som regel SIGILL-signalet på grunn av ein feil i programmet. Programmet vart bedt om å lagra dokumenta sine.
+Comment[pa]=ਇੱਕ ਐਪਲੀਕੇਸ਼ਨ ਅਕਸਰ SIGILL ਸਿਗਨਲ ਐਪਲੀਕੇਸ਼ਨ ਵਿੱਚ ਬੱਗ ਹੋਣ ਕਰਕੇ ਲੈਂਦੀ ਹੈ। ਐਪਲੀਕੇਸ਼ਨ ਨੂੰ ਇਸ ਦੇ ਡੌਕੂਮੈਂਟ ਸੰਭਾਲਣ ਲਈ ਪੁੱਛਿਆ ਗਿਆ ਸੀ।
+Comment[pl]=Program zazwyczaj otrzymuje sygnał SIGILL z powodu błędu w nim samym. Wysłano żądanie zapisania dokumentów.
+Comment[pt]=Uma aplicação normalmente recebe o sinal SIGILL devido a um erro na aplicação. Foi pedido à aplicação para gravar os seus documentos.
+Comment[pt_BR]=Um aplicativo normalmente recebe o sinal SIGILL devido a um erro no aplicativo. Foi solicitado ao aplicativo para salvar seus documentos.
+Comment[ro]=În general o aplicație primește semnalul SIGILL datorită unei erori interne. Aplicației i s-a cerut să își salveze documentele.
+Comment[ru]=Приложение получает сигнал SIGILL чаще всего из-за ошибки в программе. Данные приложения будут сохранены.
+Comment[sk]=Aplikácia väčšinou dostane SIGILL signál kvôli chybe v aplikácii. Aplikácia bola požiadaná, aby si uložila svoje dokumenty.
+Comment[sl]=Program večinoma prejme signal SIGILL, če vsebuje napako. Programu je bilo naročeno naj shrani dokumente.
+Comment[sr]=Програм обично прима сигнал СИГИЛЛ због грешке у себи. Програму је затражено да сачува текуће документе.
+Comment[sr@latin]=Program obično prima signal SIGILL zbog greške u sebi. Programu je zatraženo da sačuva tekuće dokumente.
+Comment[sv]=Signalen SIGILL orsakas oftast av ett fel i programmet. Programmet blev tillsagt att spara sina dokument.
+Comment[te]=ఒక అనువర్తనం చాలావరకు SIGILL సంకేతాన్ని అనువర్తనంనందలి దోషముకారణంగా పొందుతుంది. ఆ అనువర్తనం దాని పత్రములను దాచమని అడుగుతుంది.
+Comment[th]=โปรแกรมได้รับสัญญาณ SIGILL จำนวนมาก ซึ่งอาจจะเกิดจากบั๊กภายในของโปรแกรม  และโปรแกรมได้ถูกแจ้งให้ทำการบันทึกเอกสารของมันแล้ว
+Comment[tr]=Uygulamadaki bir hata nedeniyle, uygulamalar çok kez SIGILL sinyali alırlar. Bu durumdaki uygulamalardan belgelerini kaydetmesi istenir.
+Comment[uk]=Найчастіше програми отримують сигнал SIGILL через вади у їх коді. До програми було надіслано запит на збереження документів, з якими вона працювала.
+Comment[uz]=Odatda, SIGILL signaliga dasturdagi xato sababchi boʻladi. Dasturdan maʼlumotlarni saqlash talab qilindi.
+Comment[uz@cyrillic]=Одатда, SIGILL сигналига дастурдаги хато сабабчи бўлади. Дастурдан маълумотларни сақлаш талаб қилинди.
+Comment[wa]=On programe riçût sortot l' signå SIGILL a cåze d' on bug dins l' programe. Dj' a dmandé å programe di schaper ses documints.
+Comment[x-test]=xxAn application mostly receives the SIGILL signal due to a bug in the application. The application was asked to save its documents.xx
+Comment[xh]=Isicelo esifumana i SIGILL uphawu enxa yegciwane kwi sicelo. Isicelo sicelwe ukuba sigcine amaxwebhu aso.
+Comment[zh_CN]=应用程序之所以收到 SIGILL 信号，大多是因为应用程序有错误。应用程序会请求保存其文档。
+Comment[zh_TW]=應用程式收到 SIGILL 信號，通常是因為應用程式的錯誤。此應用程式已被要求儲存其文件。
+
+[6]
+Name=SIGABRT
+Name[ar]=ارسل البرنامج اشارة لافشال العملية
+Name[hne]=सिगार्ट
+Name[sr]=СИГАБРТ
+Name[x-test]=xxSIGABRTxx
+Comment=An application terminates with a SIGABRT signal when it detects an internal inconsistency caused by a bug in the program.
+Comment[af]='n Toepassing termineer met 'n SIGABRT sein wanneer dit 'n interneinkonsekwentheid bespeur wat veroorsaak is deur 'n fout in die program.
+Comment[ar]=التطبيق انتهى برسالة SIG عند تلقيه خطاء داخلي في البرنامج 
+Comment[be@latin]=Aplikacyja zakončvaje pracavać z syhnałam „SIGABRT”, kali znachodzić u sabie niaŭzhodnienaść, jakaja vynikaje z nutranoj chiby ŭ prahramnym kodzie.
+Comment[bg]=Програмите биват спирани със сигнал SIGABRT, когато възникне сериозна и неочаквана грешка в тях или се случи нещо непредвидено.
+Comment[bn]=কোনো অ্যাপলিকেশন SIGABRT সিগনালটি সমেত বন্ধ হয় যখন অ্যাপলিকেশনটিতে কোনো বাগ-এর ফলে সেটি একটি অভ্যন্তরীণ অসামঞ্জস্যের মুখোমুখি হয়।
+Comment[bn_IN]=কোনো অ্যাপলিকেশন SIGABRT সিগনালটি সমেত বন্ধ হয় যখন অ্যাপলিকেশনটিতে কোনো বাগ-এর ফলে সেটি একটি অভ্যন্তরীণ অসামঞ্জস্যের মুখোমুখি হয়।
+Comment[br]=Echuiñ a ra un arload gant un arhent SIGABRT p'en  deus dinoet un diglokusted diabarzh abalamour d'un draen er goulev.
+Comment[ca]=Una aplicació finalitza amb un senyal SIGABRT quan detecta una inconsistència interna causada per un error en el programa.
+Comment[ca@valencia]=Una aplicació finalitza amb un senyal SIGABRT quan detecta una inconsistència interna causada per un error en el programa.
+Comment[cs]=Aplikace se ukončí signálem SIGABRT, pokud zjistí vnitřní nekonzistenci způsobenou chybou v programu.
+Comment[csb]=Programa kùńczy dzejanié z sygnalã SIGABRT pò wëkrëcô bënowi niéspójnotë jakô pòwsta z przëczënë felë w ti programie.
+Comment[cy]=Terfyna cymhwysiad â'r arwydd SIGABRT pan ganfydda anghysondeb mewnol a achoswyd gan nam yn y rhaglen.
+Comment[da]=Et program afbryder med et SIGABRT-signal når det finder en intern inkonsistens forårsaget af en fejl i programmet.
+Comment[de]=Wenn eine Anwendung mit dem Signal SIGABRT beendet wird, weist dies auf eine interne Inkonsistenz und damit auf einen Programmierfehler hin.
+Comment[el]=Μια εφαρμογή τερματίζει με σήμα SIGABRT όταν ανιχνεύει μια εσωτερική ασυνέπεια λόγω ενός σφάλματος στο πρόγραμμα.
+Comment[eo]=Aplikaĵo fermas pro SIGABRT-signalo kiam estas interna nekohero kaŭzita de cimo en la programo.
+Comment[es]=Una aplicación termina con la señal SIGABRT cuando detecta una inconsistencia causada por un error en el programa.
+Comment[et]=Rakendus katkestab töö signaaliga SIGABRT siis, kui avastab sisemise ebakõla, mis on põhjustatud veast rakenduses.
+Comment[eu]=Aplikazio bat SIGABRT seinalearekin amaitzen da programaren akats batek sortutako barneko kontraesan bat aurkitzen duenean.
+Comment[fi]=SIGABRT-signaali tapahtuu, kun ohjelman sisäisessä toiminnassa löytyy epäjohdonmukaisuus, joka on yleensä ohjelmointivirheen aiheuttama.
+Comment[fr]=Une application se termine avec un signal SIGABRT lorsqu'elle détecte une incohérence interne causée par un bogue dans le programme.
+Comment[fy]=In applikaasje wurdt ôfsluten mei in SIGABRT-sinjaal as it in ynterne ynkonsekwintens tsjinkomt dy troch in brek yn it programma feroarsake wurdt.
+Comment[ga]=Stopann feidhmchlár le comhartha SIGABRT nuair a bhraitheann sé bunoscionntacht inmheánach agus is fabht sa ríomhchlár is cúis leis.
+Comment[gl]=Os programas rematan cun sinal SIGABRT cando detectan unha inconsistencia interna causada por un erro no programa.
+Comment[gu]=કાર્યક્રમ SIGABRT સિગ્નલ સાથે બંધ થાય છે જ્યારે તે કાર્યક્રમની અંદરની ક્ષતિને કારણે આંતરિક અસંગતતા મેળવે છે.
+Comment[he]=יישום מסתיים בסיגנל SIGABRT כאשר הוא מזהה חוסר עקבעיות הנגרם בגלל באג ביישום.
+Comment[hi]=एक अनुप्रयोग एक SIGABRT संकेत के साथ तब बन्द होता है जब यह प्रोग्राम के बग के कारण उत्पन्न आंतरिक असंगति का पता लगाता है.
+Comment[hr]=Aplikacija prekida s radom uz SIGABRT signal kad otkrije internu nedosljednost prouzrokovanu nedostatkom unutar aplikacije.
+Comment[hsb]=Aplikacija so skónči ze signalom SIGABRT, hdyž so zwěsći nutřkowna njekonsistenca, zawinjena přez zmylk w programje.
+Comment[hu]=SIGABRT szignált akkor válthat ki egy program, ha valamilyen belső inkonzisztencia lép fel, például egy programhiba miatt.
+Comment[is]=Forrit lokast með SIGABRT merki þegar það skynjar innra ósamræmi vegna villu í forritinu.
+Comment[it]=Un'applicazione termina con un segnale SIGBART quando trova un'inconsistenza interna dovuta ad un errore nel programma.
+Comment[ja]=アプリケーションはプログラムのバグによる内部不整合が探知されたときに、SIGABRT シグナルとともに落ちます。
+Comment[ka]=პროგრამა შეწყდა SIGABRT სიგნალით, როდესაც მან შეამჩნია შიდა არამდგრადობა რომელიც პროგრამის ბზიკმა გამოიწვია.
+Comment[kk]=Бағдарлама өзіндегі қатенің салдарынан пайда болған бір ішкі қайшылыққа ұшырап, SIGABRT сигналды беріп аяқталды.
+Comment[km]=កម្មវិធី គឺ​បិទ​ដោយ​សញ្ញា SIGABRT នៅពេល​ដែល​វា​រកឃើញ​អថេរ​ខាងក្នុង ដែល​បង្ក​ដោយ​កំហុស​ក្នុង​កម្មវិធី ។
+Comment[kn]=ಒಂದು ಅನ್ವಯವು SIGABRT ಸಂಜ್ಞೆಯೊಂದಿಗೆ  ಸಮಾಪ್ತಿಗೊಳ್ಳಲು ತನ್ನಲ್ಲಿರುವ ದೋಷದಿಂದಾಗಿ ಉಂಟಾಗುವ ಆಂತರಿಕ ಅಸ್ಥಿರತೆಯೇ ಕಾರಣ.
+Comment[ko]=프로그램의 버그로 인해서 내부적인 충돌이 생겨서 SIGABRT 신호와 함께 프로그램이 종료될 수 있습니다.
+Comment[ku]=Sepanek bi sînyala SIGABRT diqede dema ku hevnegirtineke hundirîn bibîne û di bernameyê de dibe sedema bugê.
+Comment[lt]=Programa baigia darbą dėl SIGABRT signalo kai ji pastebi vidinį prieštaravimą dėl ydos programoje.
+Comment[lv]=Programma beidz darbu ar SIGABRT signālu, ja tiek atklāta iekšēja nekonsekvence dēļ kādas kļūdas programmā.
+Comment[mk]=Апликациите прекинуваат со сигнал SIGABRT кога ќе откријат внатрешни недоследности предизвикани од бубачка во програмата.
+Comment[ml]=ഒരു പ്രയോഗം സിഗ്അബോര്‍ട്ട് (SIGABRT) എന്ന സിഗ്നലുമായി നിന്നുപോകുന്നതു് പ്രോഗ്രാമിലെ ഒരു പിഴവു് മൂലമുണ്ടായ ആന്തരികമായ പൊരുത്തമില്ലായ്മ കണ്ടുപിടിയ്ക്കപ്പെടുമ്പോഴാണു്.
+Comment[mr]=कार्यक्रमातील बगमुळे आंतरीक अस्थीरता आढळल्यास अनुप्रयोग त्यास SIGABRT संकेतसह समाप्त करतो.
+Comment[ms]=Aplikasi dimatikan dengan isyarat SIGABRT apabila ia mengesan sesuatu yang tidak konsisten secara dalam yang disebabkan oleh pepijat dalam program.
+Comment[nb]=Et program avslutter med signalet SIGABRT når det oppdager en indre motsigelse på grunn av en feil i programmet.
+Comment[nds]=En Programm höllt mit dat Signaal SIGABRT op, wenn dat intern en Fehler opdeckt.
+Comment[nl]=Een programma wordt afgesloten met een SIGABRT-signaal als het een interne inconsistentie tegenkomt die door een programmafout wordt veroorzaakt.
+Comment[nn]=Eit program avsluttar med SIGABRT-signalet når det oppdagar ein indre inkonsistens som kjem av ein feil i programmet.
+Comment[pl]=Program kończy działanie z SIGABRT po wykryciu wewnętrznej niespójności powstałej w wyniku błędu w tym programie.
+Comment[pt]=Uma aplicação termina com um sinal SIGABRT quando detecta uma inconsistência interna provocada por um erro no programa.
+Comment[pt_BR]=Um aplicativo termina com um sinal SIGABRT quando ele detecta uma inconsistência interna causada por um erro no programa.
+Comment[ro]=În general o aplicație se termină cu semnalul SIGABRT cînd detectează o inconsistență internă cauzată de o eroare în program.
+Comment[ru]=Приложение завершается сигналом SIGABRT, когда внутри него возникает сбой, вызванный ошибкой в программе.
+Comment[sk]=Aplikácia je ukončená SIGABRT signálom, keď detekuje internú nezhodu spôsobenú chybou v programe.
+Comment[sl]=Program se zaključi s signalom SIGABRT, ko zazna notranjo neskladnost, ki je posledica napake v programu.
+Comment[sr]=Програм се обуставља сигналом СИГАБРТ када открије унутрашњу неусаглашеност изазваном грешком у себи.
+Comment[sr@latin]=Program se obustavlja signalom SIGABRT kada otkrije unutrašnju neusaglašenost izazvanom greškom u sebi.
+Comment[sv]=Ett program avslutar sig självt med signalen SIGABRT när det upptäcker en intern motsägelse, vilket orsakas av ett fel i programmet.
+Comment[te]=ప్రోగ్రామ్ నందలి దోషముకారణంగా సంభవించిన అంతర్గత అస్థిరతను ఒక అనువర్తనం గుర్తించినప్పుడు అది SIGABRT సంకేతంతో మూయబడుతుంది.
+Comment[th]=โปรแกรมจบการทำงานจากการได้รับสัญญาณ SIGABRT เมื่อมันตรวจสอบพบการทำงานที่ไม่สอดคล้องกันภายใน ซึ่งอาจจะเกิดเนื่องจากบั๊กภายในตัวโปรแกรมเอง
+Comment[tr]=Bir uygulama, programdaki bir hata yüzünden bir iç tutarsızlık tespit ettiğinde SIGABRT sinyaliyle sona erer.
+Comment[uk]=Припинення роботи програми з сигналом SIGABRT відбувається, якщо виявлено внутрішню непослідовність, спричинену вадою у коді програми.
+Comment[uz]=Dasturning ishi SIGABRT signali bilan tugashiga uning ichki ketma-ketligini ishdan chiqargan xato sababchi boʻladi.
+Comment[uz@cyrillic]=Дастурнинг иши SIGABRT сигнали билан тугашига унинг ички кетма-кетлигини ишдан чиқарган хато сабабчи бўлади.
+Comment[wa]=On programe a fini avou on signå SIGABRT cwand il a trové ene divintrinne inconsistance a cåze d' on bug dins l' programe.
+Comment[x-test]=xxAn application terminates with a SIGABRT signal when it detects an internal inconsistency caused by a bug in the program.xx
+Comment[xh]=Isicelo sicinywa ngophawu lwe SIGABRT xa sibona ukungahambisalani kwangaphakathi okwenziwa ligciwane kwinkqubo.
+Comment[zh_CN]=应用程序以 SIGABRT 信号终止，可能是因为程序自身的错误导致了内部不一致。
+Comment[zh_TW]=應用程式收到 SIGABRT 而結束，通常是因為應用程式的問題，讓它偵測到內部資料有不相符的地方。
+
+[8]
+Name=SIGFPE
+Name[ar]=ارسل البرنامج رسالة مشوهة
+Name[hne]=सिगफे
+Name[sr]=СИГФПЕ
+Name[x-test]=xxSIGFPExx
+Comment=An application mostly receives the SIGFPE signal due to a bug in the application. The application was asked to save its documents.
+Comment[af]='n Toepassing ontvang meestal die SIGFPE sein as gevolg na 'n fout in die toepassing. Die toepassing is gevra om sy dokumente te stoor.
+Comment[ar]=التطبيق انتهى برسالة SIG مشوهة عند تلقيه خطاء في البرنامج . التطبيق يطلب حفظ الملف
+Comment[be@latin]=Chutčej za ŭsio, kali aplikacyja atrymvaje syhnał „SIGFPE”, značyć, u joj jość chiba. Aplikacyja atrymała zahad zapisać svaje dakumenty.
+Comment[bg]=Сигналът SIGFPE обикновено се получава поради грешка в самата програма. В този случай програмите имат възможност да запишат всички отворени документи и да завършат работата си по нормален начин.
+Comment[bn]=কোনো অ্যাপলিকেশন SIGFPE সিগনালটি সাধারণত তখনই পায় যদি তাতে কোনো বাগ থাকে। অ্যাপলিকেশনটিকে তার সমস্ত নথী সংরক্ষণ করতে অনুরোধ করা হয়েছে।
+Comment[bn_IN]=কোনো অ্যাপলিকেশন SIGFPE সিগনালটি সাধারণত তখনই পায় যদি তাতে কোনো বাগ থাকে। অ্যাপলিকেশনটিকে তার সমস্ত নথী সংরক্ষণ করতে অনুরোধ করা হয়েছে।
+Comment[br]=Resev a ra un arload an arhent SIGFPE abalamour d'un draen en arload, peurliesañ. Goulennet e voe d'an arload enrollañ e deulioù.
+Comment[ca]=Bàsicament una aplicació rep el senyal SIGFPE degut a un error a l'aplicació. Es demana a l'aplicació que desi els seus documents.
+Comment[ca@valencia]=Bàsicament una aplicació rep el senyal SIGFPE degut a un error a l'aplicació. Es demana a l'aplicació que desi els seus documents.
+Comment[cs]=Aplikace obvykle obdrží signál SIGFPE kvůli chybě v programu. Je také požádána, aby uložila své dokumenty.
+Comment[csb]=Programa dostôwô zwëczajno sygnal SIGFPE z przëczënë felë w ni sómy. Wësłóno żądanié zapisania dokùmentów.
+Comment[cy]=Derbyna cymhwysiad yr arwydd SIGFPE gan amlaf o achos nam yn y cymhwysiad. Gofynnwyd i'r cymhwysiad gadw ei ddogfennau.
+Comment[da]=Et program modtager som regel SIGFPE-signalet når der er en fejl i programmet. Programmet blev bedt om at gemme sine dokumenter.
+Comment[de]=Wenn eine Anwendung das Signal SIGFPE erhält, weist dies oft auf einen Programmierfehler hin. Die Anwendung wurde angewiesen, alle Dokumente zu speichern.
+Comment[el]=Μια εφαρμογή συνήθως λαμβάνει το σήμα SIGFPE εξαιτίας σφάλματος στην εφαρμογή. Ζητήθηκε από την εφαρμογή η αποθήκευση των εγγράφων.
+Comment[eo]=Precipe, aplikaĵo ricevas SIGFPE-signalon pro cimo en la aplikaĵo. La aplikaĵo estis petita konservi la dokumentojn.
+Comment[es]=Una aplicación recibe la señal SIGFPE sobretodo debido a un error en la aplicación. La aplicación solicitó que se guarden sus documentos.
+Comment[et]=Tavaliselt saab rakendus SIGFPE signaali rakenduses endas tekkinud vea tõttu. Rakendusel paluti avatud dokumendid salvestada.
+Comment[eu]=Aplikazio batek SIGFPE seinalea jasotzen du aplikazioaren programa-errore batengatik normalean. Aplikazioak dokumentuak gordetzeko eskatu zaio.
+Comment[fi]=SIGFPE-signaali johtuu yleensä virheestä ohjelmassa. Ohjelmaa pyydettiin tallentamaan avatut asiakirjat ennen kaatumista.
+Comment[fr]=Une application reçoit généralement le signal SIGFPE à cause d'un bogue dans l'application. L'application a reçu l'instruction d'enregistrer ses documents.
+Comment[fy]=In applikaasje ûntfangt meastentiids it SIGFPE -sinjaal fanwege in brek yn it programma. De applikaasje sil frege wurde om de dokuminten te bewarjen.
+Comment[ga]=Go hiondúil, faigheann feidhmchlár comhartha SIGFPE de bhrí go bhfuil fabht ann. Fiafraíodh den fheidhmchlár a chuid cáipéisí a shábháil.
+Comment[gl]=Os programas receben o sinal SIGFPE seguramente por mor dun erro interno. Pedíuselle ao programa que garde os documentos.
+Comment[gu]=કાર્યક્રમ મોટાભાગે તેમાં રહેલ ક્ષતિને કારણે SIGFPE સિગ્નલ મેળવે છે. કાર્યક્રમને તેનાં દસ્તાવેજો સંગ્રહવાનું કહેવામાં આવ્યું હતું.
+Comment[he]=יישום לרב מקבל את הסיגנל מסוג SIGFPE בגלל באגים ביישום. היישום מתבקש לשמור את המסמכים שלו.
+Comment[hi]=एक अनुप्रयोग प्रायः उस अनुप्रयोग में बग होने पर SIGFPE संकेत प्राप्त करता है. अनुप्रयोग को इसका दस्तावेज़ सहेजने के लिए कहा गया है.
+Comment[hr]=Aplikacija najčešće prima SIGFPE signal zbog nedostatka unutar aplikacije. Od aplikacije je zatraženo da spremi svoje dokumente.
+Comment[hsb]=Aplikacija dóstanje signal SIGFPE přez zmylk w programje. Aplikacija je najskerje swoje dokumenty zawěsćiła.
+Comment[hu]=SIGFPE szignált valamilyen programhiba válthat ki. Bezáródás előtt a program jelzést kap, hogy mentse el a nyitott dokumentumokat.
+Comment[is]=Forrit fær oftast SIGFPE merkið vegna villu í forritinu. Forritið var beðið um að vista skjölin sín.
+Comment[it]=Un'applicazione riceve il segnale SIGFPE principalmente a causa di un errore nell'applicazione. All'applicazione era richiesto di salvare i suoi documenti.
+Comment[ja]=アプリケーションは内部のバグにより SIGFPE シグナルを受け取ります。アプリケーションは文書を保存するよう求められました。
+Comment[ka]=პროგრამა იღებს SIGFPE სიგნალს პროგრამაში არსებული შეცდომის გამო. ყველა დოკუმენტი შენახული იქნება
+Comment[kk]=Бағдарлама SIGFPE сигналын көбінде өзіндегі қатенің себебінен алады. Бағдарламадан құжаттарын сақтау сұралды.
+Comment[km]=ភាគច្រើន កម្មវិធី​ទទួល​សញ្ញា SIGFPE ដោយសារ​កំហុស​នៅ​ក្នុង​កម្មវិធី ។ កម្មវិធី​ត្រូវបាន​សួរ​ឲ្យ​រក្សាទុក​ឯកសារ​របស់​វា ។
+Comment[kn]=ಒಂದು ಅನ್ವಯವು SIGFPE ಸಂಜ್ಞೆಯನ್ನು ಪಡೆಯಲು ಅದರಲ್ಲಿರುವ ದೋಷವೇ ಬಹುಪಾಲು ಕಾರಣ. ಅನ್ವಯವು ತನ್ನ ದಸ್ತಾವೇಜುಗಳನ್ನು ಉಳಿಸುವಂತೆ ಕೋರಲಾಯಿತು.
+Comment[ko]=프로그램의 버그로 인해서 SIGFPE 신호를 받을 수도 있습니다. 프로그램에서 문서를 저장하도록 요청했습니다.
+Comment[ku]=Sepanek bi piranî sînyala SIGFPE radike. Sepanê ji bo hilanîna belgeyê pirs kir.
+Comment[lt]=Programa dažniausiai gauna SIGFPE signalą dėl ydos programoje.  Programa buvo paprašyta išsaugoti savo dokumentus.
+Comment[lv]=Programma visbiežāk saņem SIGFPE signālu dēļ kļūdas programmā. Programmai tika prasīts saglabāt savus dokumentus.
+Comment[mk]=Апликациите најчесто го добиваат сигналот SIGFPE поради грешка во апликацијата. На апликацијата ѝ беше речено да ги сними сите свои документи.
+Comment[ml]=പ്രയോഗത്തിലെ പിഴവു് മൂലമാണൊരു പ്രയോഗത്തിനു് കൂടുതലായും സിഗ്എഫ്‌പിഇ (SIGFPE) എന്ന സിഗ്നല്‍ കിട്ടുന്നതു്. പ്രയോഗത്തോടു് അതിന്റെ രചനകള്‍ സൂക്ഷിയ്ക്കാന്‍ പറഞ്ഞിട്ടുണ്ടു്.
+Comment[mr]=अनुप्रोयग अंतर्गत बगमुळे अनुप्रयोग सहसा SIGFPE संकेत प्राप्त करतो. अनुप्रयोगला दस्तऐवज संचयीत करण्यास विनंतीकृत केले गेले आहे.
+Comment[ms]=Aplikasi biasanya menerima isyarat SIGFPE kerana pepijat dalam aplikasi. Aplikasi telah diminta untuk menyimpan dokumennya.
+Comment[nb]=Et program mottar SIGFPE-signalet for det meste på grunn av en feil i programmet. Det ble bedt om å lagre dokumentene sine.
+Comment[nds]=En Programm kriggt dat Signaal SIGFPE tomehrst, wenn dat dor binnen en Fehler gifft. Dat Programm wöör beden, dat schull sien Dokmenten sekern.
+Comment[nl]=Een programma ontvangt meestal het SIGFPE-signaal vanwege een programmafout. Het programma is gevraagd om zijn documenten op te slaan.
+Comment[nn]=Eit program tek imot som regel SIGFPE-signalet på grunn av ein feil i programmet. Programmet vart bedt om å lagra dokumenta sine.
+Comment[pa]=ਇੱਕ ਐਪਲੀਕੇਸ਼ਨ ਅਕਸਰ SIGFPE ਸਿਗਨਲ ਐਪਲੀਕੇਸ਼ਨ ਵਿੱਚ ਬੱਗ ਹੋਣ ਕਰਕੇ ਲੈਂਦੀ ਹੈ। ਐਪਲੀਕੇਸ਼ਨ ਨੂੰ ਇਸ ਦੇ ਡੌਕੂਮੈਂਟ ਸੰਭਾਲਣ ਲਈ ਪੁੱਛਿਆ ਗਿਆ ਸੀ।
+Comment[pl]=Program otrzymuje sygnał SIGFPE zazwyczaj z powodu błędu w nim samym. Nastąpiło żądanie zapisania dokumentów.
+Comment[pt]=Uma aplicação recebe normalmente o sinal SIGFPE devido a um erro na aplicação. Foi pedido à mesma para gravar os seus documentos.
+Comment[pt_BR]=Um aplicativo normalmente recebe um sinal SIGFPE devido a um erro no aplicativo. Foi solicitado ao aplicativo para salvar seus documentos.
+Comment[ro]=În general o aplicație primește semnalul SIGFPE datorită unei erori interne. Aplicației i s-a cerut să își salveze documentele.
+Comment[ru]=Приложение получает сигнал SIGFPE чаще всего из-за ошибки в программе. Данные приложения будут сохранены.
+Comment[sk]=Aplikácia väčšinou dostane SIGFPE signál kvôli chybe v aplikácii. Aplikácia bola požiadaná, aby si uložila svoje dokumenty.
+Comment[sl]=Program večinoma prejme signal SIGFPE zaradi napake v programu. Programu je bilo naročeno naj shrani dokumente.
+Comment[sr]=Сигнал СИГФПЕ програм најчешће добија због грешке у себи. Програму је затражено да сачува текуће документе.
+Comment[sr@latin]=Signal SIGFPE program najčešće dobija zbog greške u sebi. Programu je zatraženo da sačuva tekuće dokumente.
+Comment[sv]=Signalen SIGFPE orsakas oftast av ett fel i programmet. Programmet blev tillsagt att spara sina dokument.
+Comment[te]=అనువర్తనం సాధారణంగా SIGFPE సంకేతాన్ని దానినందలి బగ్ కారణంగానే పొందుతుంది. అనువర్తనం దాని పత్రములను దాచమని అడుగుతుంది.
+Comment[th]=โปรแกรมได้รับสัญญาณ SIGFPE จำนวนมาก ซึ่งอาจจะเกิดจากบั๊กภายในของโปรแกรม  และโปรแกรมได้ถูกแจ้งให้ทำการบันทึกเอกสารของมันแล้ว
+Comment[tr]=Uygulamadaki bir hata nedeniyle, uygulamalar çok kez SIGEPE sinyali alırlar. Bu durumdaki uygulamalardan belgelerini kaydetmesi istenir.
+Comment[uk]=Найчастіше програми отримують сигнал SIGFPE через вади у їх коді. До програми було надіслано запит на збереження документів, з якими вона працювала.
+Comment[uz]=Odatda, SIGFPE signaliga dasturdagi xato sababchi boʻladi. Dasturdan maʼlumotlarni saqlash talab qilindi.
+Comment[uz@cyrillic]=Одатда, SIGFPE сигналига дастурдаги хато сабабчи бўлади. Дастурдан маълумотларни сақлаш талаб қилинди.
+Comment[wa]=On programe riçût sortot l' signå SIGFPE a cåze d' on bug dins l' programe. Dj' a dmandé å programe di schaper ses documints.
+Comment[x-test]=xxAn application mostly receives the SIGFPE signal due to a bug in the application. The application was asked to save its documents.xx
+Comment[xh]=Isicelo sifumana i SIGFPE uphawu ngenxa ye gciwane kwisicelo. Isicelo sicelwe ukuba sigcine amaxwebhu ayo.
+Comment[zh_CN]=应用程序之所以收到 SIGFPE 信号，大多是因为应用程序有错误。应用程序会请求保存其文档。
+Comment[zh_TW]=應用程式收到 SIGFPE 信號，通常是因為應用程式的錯誤。此應用程式已被要求儲存其文件。
+
+[11]
+Name=SIGSEGV
+Name[ar]=ارسل البرنامج إشارة ذاكرة غير صحيحة
+Name[hne]=सिगसेव
+Name[sr]=СИГСЕГВ
+Name[x-test]=xxSIGSEGVxx
+Comment=An application mostly receives the SIGSEGV signal due to a bug in the application. The application was asked to save its documents.
+Comment[af]='n Toepassing ontvang die SIGSEGV sein as gevolg na 'n fout in die toepassing. Die toepassing is gevra om sy dokumente te stoor.
+Comment[ar]=التطبيق انتهى برسالة SIG غير صحيحة عند تلقيه خطاء في البرنامج . التطبيق يطلب حفظ الملف
+Comment[be@latin]=Chutčej za ŭsio, kali aplikacyja atrymvaje syhnał „SIGSEGV”, značyć, u joj jość chiba. Aplikacyja atrymała zahad zapisać svaje dakumenty.
+Comment[bg]=Сигналът SIGSEGV обикновено се получава поради грешка в самата програма. В този случай програмите имат възможност да запишат всички отворени документи и да завършат работата си по нормален начин.
+Comment[bn]=কোনো অ্যাপলিকেশন SIGSEGV সিগনালটি সাধারণত তখনই পায় যদি তাতে কোনো বাগ থাকে। অ্যাপলিকেশনটিকে তার সমস্ত নথী সংরক্ষণ করতে অনুরোধ করা হয়েছে।
+Comment[bn_IN]=কোনো অ্যাপলিকেশন SIGSEGV সিগনালটি সাধারণত তখনই পায় যদি তাতে কোনো বাগ থাকে। অ্যাপলিকেশনটিকে তার সমস্ত নথী সংরক্ষণ করতে অনুরোধ করা হয়েছে।
+Comment[br]=Resev a ra un arload an arhent SIGSEGV abalamour d'un draen en arload, peurliesañ. Goulennet e voe d'an arload enrollañ e deulioù.
+Comment[ca]=Bàsicament una aplicació rep el senyal SIGSEGV degut a un error a l'aplicació. Es demana a l'aplicació que desi els seus documents.
+Comment[ca@valencia]=Bàsicament una aplicació rep el senyal SIGSEGV degut a un error a l'aplicació. Es demana a l'aplicació que desi els seus documents.
+Comment[cs]=Aplikace obvykle obdrží signál SIGSEGV kvůli chybě v programu. Je také požádána, aby uložila své dokumenty.
+Comment[csb]=Programa dostôwô zwëczajno sygnal SIGSEGV z przëczënë felë w ni sómy. Wësłóno żądanié zapisania dokùmentów.
+Comment[cy]=Derbyna cymhwysiad yr arwydd SIGSEGV gan amlaf o achos nam yn y cymhwysiad. Gofynnwyd i'r cymhwysiad gadw ei ddogfennau.
+Comment[da]=Et program modtager som regel SIGSEGV-signalet når der er en fejl i programmet. Programmet blev bedt om at gemme sine dokumenter.
+Comment[de]=Wenn eine Anwendung das Signal SIGSEGV erhält, weist dies oft auf einen Programmierfehler hin. Die Anwendung wurde angewiesen, alle Dokumente zu speichern.
+Comment[el]=Μια εφαρμογή συνήθως λαμβάνει το σήμα SIGSEGV εξαιτίας σφάλματος στην εφαρμογή. Ζητήθηκε από την εφαρμογή η αποθήκευση των εγγράφων.
+Comment[eo]=Precipe, aplikaĵo ricevas SIGSEGV-signalon pro cimo en la aplikaĵo. La aplikaĵo estis petita konservi la dokumentojn.
+Comment[es]=Una aplicación recibe la señal SIGSEGV sobretodo debido a un error en la aplicación. La aplicación ha solicitado que se guarden sus documentos.
+Comment[et]=Tavaliselt saab rakendus SIGSEGV signaali rakenduses endas tekkinud vea tõttu. Rakendusel paluti avatud dokumendid salvestada.
+Comment[eu]=Aplikazio batek SIGSEGV seinalea jasotzen du aplikazioaren programa-errore batengatik normalean. Aplikazioak dokumentuak gordetzeko eskatu zaio.
+Comment[fi]=SIGSEGV-signaali johtuu yleensä virheestä ohjelmassa. Ohjelmaa pyydettiin tallentamaan avatut asiakirjat ennen kaatumista.
+Comment[fr]=Une application reçoit généralement le signal SIGSEGV à cause d'un bogue dans l'application. L'application a reçu l'instruction d'enregistrer ses documents.
+Comment[fy]=In applikaasje ûntfangt meastentiids it SIGSEGV -sinjaal fanwege in brek yn it  programma. De applikaasje sil frege wurde om de dokuminten te bewarjen.
+Comment[ga]=Go hiondúil, faigheann feidhmchlár comhartha SIGSEGV de bhrí go bhfuil fabht ann. Fiafraíodh den fheidhmchlár a chuid cáipéisí a shábháil.
+Comment[gl]=Un programa recebe o sinal SIGSEGV seguramente por mor dun erro interno. Pedíuselle ao programa que garde os documentos.
+Comment[gu]=કાર્યક્રમ મોટાભાગે તેમાં રહેલ ક્ષતિને કારણે SIGSEGV સિગ્નલ મેળવે છે. કાર્યક્રમને તેનાં દસ્તાવેજો સંગ્રહવાનું કહેવામાં આવ્યું હતું.
+Comment[he]=יישום מסתיים בסיגנל SIGSEGV כאשר הוא מזהה חוסר עקבעיות הנגרם בגלל באג ביישום. היישום מתבקש לשמור את המסמכים שלו.
+Comment[hi]=एक अनुप्रयोग प्रायः उस अनुप्रयोग में बग होने पर SIGSEGV संकेत प्राप्त करता है. अनुप्रयोग को इसका दस्तावेज़ सहेजने के लिए कहा गया है.
+Comment[hr]=Aplikacija najčešće prima SIGSEGV signal zbog nedostatka unutar aplikacije. Od aplikacije je zatraženo da spremi svoje dokumente.
+Comment[hsb]=Aplikacija dóstanje signal SIGSEGV přez zmylk w programje. Aplikacija je najskerje swoje dokumenty zawěsćiła.
+Comment[hu]=SIGSEGV szignált valamilyen programhiba válthat ki. Bezáródás előtt a program jelzést kap, hogy mentse el a nyitott dokumentumokat.
+Comment[is]=Forrit fær oftast SIGSEGV merkið vegna villu í forritinu. Forritið var beðið um að vista skjölin sín.
+Comment[it]=Un'applicazione riceve il segnale SIGSEGV principalmente a causa di un errore nell'applicazione. All'applicazione era richiesto di salvare i suoi documenti.
+Comment[ja]=アプリケーションは内部のバグにより SIGSEGV シグナルを受け取ります。アプリケーションは文書を保存するよう求められました。
+Comment[ka]=პროგრამა იღებს  SIGSEGV სიგნალს პროგრამაში არსებული შეცდომის გამო. ყველა დოკუმენტი შენახული იქნება
+Comment[kk]=Бағдарлама SIGSEGV сигналын көбінде өзіндегі қатенің себебінен алады. Бағдарламадан құжаттарын сақтау сұралды.
+Comment[km]=ភាគច្រើន កម្មវិធី​ទទួល​សញ្ញា SIGSEGV ដោយសារ​កំហុស​នៅ​ក្នុង​កម្មវិធី​។ កម្មវិធី​ត្រូវបាន​សួរ​ឲ្យ​រក្សាទុក​​ឯកសារ​របស់​វា ។
+Comment[kn]=ಒಂದು ಅನ್ವಯವು SIGSEGV ಸಂಜ್ಞೆಯನ್ನು ಪಡೆಯಲು ಅದರಲ್ಲಿರುವ ದೋಷವೇ ಬಹುಪಾಲು ಕಾರಣ. ಅನ್ವಯವು ತನ್ನ ದಸ್ತಾವೇಜುಗಳನ್ನು ಉಳಿಸುವಂತೆ ಕೋರಲಾಯಿತು.
+Comment[ko]=프로그램의 버그로 인해서 SIGSEGV 신호를 받을 수도 있습니다. 프로그램에서 문서를 저장하도록 요청했습니다.
+Comment[ku]=Sepanek bi piranî sînyala SIGSEGV radike. Sepanê ji bo hilanîna belgeyê pirs 
+Comment[lt]=Programa dažniausiai gauna SIGSEGV signalą dėl ydos programoje.  Programos buvo paprašyta išsaugoti savo dokumentus.
+Comment[lv]=Programma visbiežāk saņem SIGSEGV signālu sakarā ar kļūdu programmā. Programmai tika prasīts saglabāt savus dokumentus.
+Comment[mk]=Апликациите најчесто го добиваат сигналот SIGSEGV поради грешка во апликацијата. На апликацијата и беше речено да ги сними сите свои документи.
+Comment[ml]=പ്രയോഗത്തിലെ പിഴവു് മൂലമാണൊരു പ്രയോഗത്തിനു് കൂടുതലായും സിഗ്സെഗ്‌വി (SIGSEGV) എന്ന സിഗ്നല്‍ കിട്ടുന്നതു്. പ്രയോഗത്തോടു് അതിന്റെ രചനകള്‍ സൂക്ഷിയ്ക്കാന്‍ പറഞ്ഞിട്ടുണ്ടു്.
+Comment[ms]=Aplikasi biasanya menerima isyarat SIGSEGV kerana pepijat didalam aplikasi. Aplikasi telah diminta untuk menyimpan dokumennya.
+Comment[nb]=Et program mottar SIGFPE-signalet for det meste på grunn av en feil i programmet. Det ble bedt om å lagre dokumentene sine.
+Comment[nds]=En Programm kriggt dat Signaal SIGSEGV tomehrst, wenn dat dor binnen en Fehler gifft. Dat Programm wöör beden, dat schull sien Dokmenten sekern.
+Comment[nl]=Een programma ontvangt meestal het SIGSEGV-signaal vanwege een programmafout. Het programma is gevraagd om zijn documenten op te slaan.
+Comment[nn]=Eit program motek som regel SIGSEGV-signalet på grunn av ein feil i programmet. Programmet vart bedt om å lagra dokumenta sine.
+Comment[pa]=ਇੱਕ ਐਪਲੀਕੇਸ਼ਨ ਅਕਸਰ SIGSEGV ਸਿਗਨਲ ਐਪਲੀਕੇਸ਼ਨ ਵਿੱਚ ਬੱਗ ਹੋਣ ਕਰਕੇ ਲੈਂਦੀ ਹੈ। ਐਪਲੀਕੇਸ਼ਨ ਨੂੰ ਇਸ ਦੇ ਡੌਕੂਮੈਂਟ ਸੰਭਾਲਣ ਲਈ ਪੁੱਛਿਆ ਗਿਆ ਸੀ।
+Comment[pl]=Program otrzymuje sygnał SIGSEGV zazwyczaj z powodu błędu w nim samym. Nastąpiło żądanie zapisania dokumentów.
+Comment[pt]=Uma aplicação recebe normalmente o sinal SIGSEGV devido a um erro na aplicação. Foi pedido à mesma para gravar os seus documentos.
+Comment[pt_BR]=Um aplicativo normalmente recebe um sinal SIGSEGV devido a um erro no aplicativo. Foi solicitado ao aplicativo para salvar seus documentos.
+Comment[ro]=În general o aplicație primește semnalul SIGSEGV datorită unei erori interne. Aplicației i s-a cerut să își salveze documentele.
+Comment[ru]=Приложение получает сигнал SIGSEGV чаще всего из-за ошибки в программе. Данные приложения будут сохранены.
+Comment[sk]=Aplikácia väčšinou dostane SIGSEGV signál kvôli chybe v aplikácii. Aplikácia bola požiadaná, aby si uložila svoje dokumenty.
+Comment[sl]=Program večinoma prejme signal SIGSEGV zaradi napake v programu. Programu je bilo naročeno naj shrani dokumente.
+Comment[sr]=Програм обично прима сигнал СИГСЕГВ услед грешке у себи. Програму је затражено да сачува текуће документе.
+Comment[sr@latin]=Program obično prima signal SIGSEGV usled greške u sebi. Programu je zatraženo da sačuva tekuće dokumente.
+Comment[sv]=Signalen SIGSEGV orsakas oftast av ett fel i programmet. Programmet blev tillsagt att spara sina dokument.
+Comment[te]=అనువర్తనం సాధారణంగా SIGSEGV సంకేతాన్ని దానినందలి బగ్ కారణంగానే పొందుతుంది. అనువర్తనం దాని పత్రములను దాచమని అడుగుతుంది.
+Comment[th]=โปรแกรมได้รับสัญญาณ SIGSEGV จำนวนมาก ซึ่งอาจจะเกิดจากบั๊กภายในของโปรแกรม  และโปรแกรมได้ถูกแจ้งให้ทำการบันทึกเอกสารของมันแล้ว
+Comment[tr]=Uygulamadaki bir hata nedeniyle, uygulamalar çok kez SIGSEGV sinyali alırlar. Bu durumdaki uygulamalardan belgelerini kaydetmesi istenir.
+Comment[uk]=Найчастіше програми отримують сигнал SIGSEGV через вади у їх коді. До програми було надіслано запит на збереження документів, з якими вона працювала.
+Comment[uz]=Odatda, SIGSEGV signaliga dasturdagi xato sababchi boʻladi. Dasturdan maʼlumotlarni saqlash talab qilindi.
+Comment[uz@cyrillic]=Одатда, SIGSEGV сигналига дастурдаги хато сабабчи бўлади. Дастурдан маълумотларни сақлаш талаб қилинди.
+Comment[wa]=On programe riçût sortot l' signå SIGSEGV a cåze d' on bug dins l' programe. Dj' a dmandé å programe di schaper ses documints.
+Comment[x-test]=xxAn application mostly receives the SIGSEGV signal due to a bug in the application. The application was asked to save its documents.xx
+Comment[xh]=Isicelo esifumana i SIGSEGV uphawu ngenxa yegciwane. Isicelo siceliwe ukuba sigcine amaxwebhu aso.
+Comment[zh_CN]=应用程序之所以收到 SIGSEGV 信号，大多是因为应用程序有错误。应用程序会请求保存其文档。
+Comment[zh_TW]=應用程式收到 SIGSEGV 信號，通常是因為應用程式的錯誤。此應用程式已被要求儲存其文件。
+
+[unknown]
+Name=Unknown
+Name[af]=Onbekend
+Name[ar]=مجهول
+Name[as]=অজ্ঞাত
+Name[be@latin]=Nieviadomy
+Name[bg]=Неизвестен
+Name[bn]=অজ্ঞাত
+Name[bn_IN]=অজানা
+Name[br]=Dianav
+Name[ca]=Desconegut
+Name[ca@valencia]=Desconegut
+Name[cs]=Neznámý
+Name[csb]=Nieznóny
+Name[cy]=Anhysbys
+Name[da]=Ukendt
+Name[de]=Unbekannt
+Name[el]=Άγνωστο
+Name[eo]=Nekonata
+Name[es]=Desconocido
+Name[et]=Tundmatu
+Name[eu]=Ezezaguna
+Name[fi]=Tuntematon
+Name[fr]=Inconnu
+Name[fy]=Unbekend
+Name[ga]=Anaithnid
+Name[gl]=Descoñecido
+Name[gu]=અજાણ્યું
+Name[he]=לא ידוע
+Name[hi]=अज्ञात
+Name[hne]=अग्यात
+Name[hr]=Nepoznato
+Name[hsb]=Njeznate
+Name[hu]=Ismeretlen
+Name[is]=Óþekkt
+Name[it]=Sconosciuto
+Name[ja]=未知
+Name[ka]=უცნობი
+Name[kk]=Беймәлім
+Name[km]=មិនស្គាល់
+Name[kn]=ಅಜ್ಞಾತ
+Name[ko]=알 수 없음
+Name[ku]=nayê Zanîn
+Name[lt]=Nežinoma
+Name[lv]=Nezināms
+Name[mai]=अज्ञात
+Name[mk]=Непознат
+Name[ml]=അപരിചിതം
+Name[mr]=अपरिचीत
+Name[ms]=Tidak Diketahui
+Name[nb]=Ukjent
+Name[nds]=Nich begäng
+Name[nl]=Onbekend
+Name[nn]=Ukjend
+Name[oc]=Desconegut
+Name[or]=ଅଜଣା
+Name[pa]=ਅਣਜਾਣ
+Name[pl]=Nieznany
+Name[pt]=Desconhecido
+Name[pt_BR]=Desconhecido
+Name[ro]=Necunoscut
+Name[ru]=неизвестный
+Name[si]=නොදන්නා
+Name[sk]=Neznámy
+Name[sl]=Neznano
+Name[sr]=непознат
+Name[sr@latin]=nepoznat
+Name[sv]=Okänd
+Name[ta]=தெரியாத
+Name[te]=తెలియని
+Name[tg]=Номуайян
+Name[th]=ไม่รู้จัก
+Name[tr]=Bilinmeyen
+Name[uk]=Невідомий
+Name[uz]=Nomaʼlum
+Name[uz@cyrillic]=Номаълум
+Name[wa]=Nén cnoxhou
+Name[x-test]=xxUnknownxx
+Name[xh]=Engaziwayo
+Name[zh_CN]=未知
+Name[zh_TW]=未知
+Comment=Sorry, I do not know this signal.
+Comment[af]=Jammer, ek ken nie hierdie sein nie.
+Comment[ar]=آسف لا اعرف هذه الإشارة
+Comment[be@latin]=Hety syhnał nieviadomy dla prahramy.
+Comment[bg]=Неизвестен сигнал.
+Comment[bn]=দুঃখিত, এই সিগনালটি আমার অচেনা।
+Comment[bn_IN]=দুঃখিত, এই সিগন্যালটি পরিচিত নয়।
+Comment[br]=Ho tigarez, n'anavezan ket an arhent-mañ.
+Comment[ca]=No es coneix aquest senyal.
+Comment[ca@valencia]=No es coneix este senyal.
+Comment[cs]=Lituji, ale tento signál není známý.
+Comment[csb]=Wëbôczë, nié znajã tegò sygnala.
+Comment[cy]=Mae'n ddrwg gennym, ni wyddom yr arwydd yma.
+Comment[da]=Jeg kender desværre ikke dette signal.
+Comment[de]=Leider ist dieses Signal nicht bekannt.
+Comment[el]=Δυστυχώς, το σήμα αυτό είναι άγνωστο.
+Comment[eo]=Bedaŭrinde, mi ne konas ĉi tiun signalon.
+Comment[es]=No conozco esta señal.
+Comment[et]=Vabandust, ma ei tunne seda signaali.
+Comment[eu]=Barkatu, ez dut seinale hau ezagutzen.
+Comment[fi]=Tämä signaali on tuntematon.
+Comment[fr]=Désolé, je ne connais pas ce signal.
+Comment[fy]=Sorry, ik wit net hokker sinjaal dit is.
+Comment[ga]=Tá brón orm, níl aithne agam ar an chomhartha seo.
+Comment[gl]=Este sinal é descoñecido.
+Comment[gu]=માફ કરશો, હું આ સિગ્નલ જાણતો નથી.
+Comment[he]=מצטער, הסיגנל לא מוכר.
+Comment[hi]=माफ करें, मैं इस सिग्नल को नहीं जानता.
+Comment[hne]=माफी देव, मं हर ये सिगनल न नइ जानंव.
+Comment[hr]=Nažalost, ovaj signal nije prepoznat.
+Comment[hsb]=Je mi žel, tutón signal njeznaju.
+Comment[hu]=Ez egy ismeretlen szignál.
+Comment[is]=Sorrý, þetta merki er ekki þekkt
+Comment[it]=Mi spiace, non conosco questo segnale.
+Comment[ja]=このシグナルは分かりません。
+Comment[ka]=სამწუხაროდ ამ სიგნალის შესახებ არაფერია ცნობილი
+Comment[kk]=Кешіріңіз, танымайтын сигнал.
+Comment[km]=សូម​អភ័យទោស ខ្ញុំ​មិនស្គាល់​សញ្ញា​នេះ​ទេ ។
+Comment[kn]=ಕ್ಷಮಿಸು, ಈ ಸಂಜ್ಞೆ (ಸಿಗ್ನಲ್) ನನಗೆ ತಿಳಿಯದು.
+Comment[ko]=죄송합니다. 이 신호를 알 수 없습니다.
+Comment[ku]=Bibore, ez nizanim ev sînyal çi ye.
+Comment[lt]=Deja, šis signalas nėra žinomas.
+Comment[lv]=Atvainojiet, šāds signāls nav zināms.
+Comment[mk]=Жал ми е, овој сигнал не ми е познат.
+Comment[ml]=ക്ഷമിയ്ക്കണം, എനിയ്ക്കു് ഈ സിഗ്നല്‍ അറിയില്ല.
+Comment[mr]=माफ करा, हे संकेत माहित नाही.
+Comment[ms]=Maaf, saya tidak mengenali isyarat ini.
+Comment[nb]=Dette signalet er ukjent.
+Comment[nds]=Dit Signaal is leider nich begäng.
+Comment[nl]=Helaas, dit signaal is onbekend.
+Comment[nn]=Dette signalet er ukjent.
+Comment[or]=ଏହି ସଂକେତକୁ ଜାଣିନଥିବାରୁ ମୁଁ ଦୁଖିତ।
+Comment[pa]=ਅਫਸੋਸ, ਮੈਂ ਇਹ ਸਿਗਨਲ ਬਾਰੇ ਨਹੀਂ ਜਾਣਦਾ ਹਾਂ।
+Comment[pl]=Niestety, ten sygnał nie jest znany.
+Comment[pt]=Infelizmente, este sinal é desconhecido.
+Comment[pt_BR]=Desculpe, eu não conheço este sinal.
+Comment[ro]=Nu cunosc acest tip de semnal.
+Comment[ru]=Извините, об этом сигнале ничего не известно.
+Comment[sk]=Ľutujem, nepoznám tento signál.
+Comment[sl]=Na žalost ta signal ni znan.
+Comment[sr]=Извините, овај сигнал није познат.
+Comment[sr@latin]=Izvinite, ovaj signal nije poznat.
+Comment[sv]=Känner tyvärr inte till den här signalen.
+Comment[te]=క్షమించండి, నాకు ఈ సిగ్నల్ తెలియదు
+Comment[th]=ขออภัย ไม่รู้จักสัญญาณนี้
+Comment[tr]=Üzgünüm, bu sinyali tanımıyorum.
+Comment[uk]=Вибачте, невідомий сигнал.
+Comment[uz]=Uzr, men bu signalni bilmayman.
+Comment[uz@cyrillic]=Узр, мен бу сигнални билмайман.
+Comment[wa]=Dji rgrete, dji n' conoxhe nén c' signå.
+Comment[x-test]=xxSorry, I do not know this signal.xx
+Comment[zh_CN]=抱歉，我不知道这个信号。
+Comment[zh_TW]=抱歉，我不知道這個信號是什麼。
