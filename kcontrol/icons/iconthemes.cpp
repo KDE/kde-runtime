@@ -322,7 +322,8 @@ void IconThemesConfig::getNewTheme()
     KNS::Entry::List entries = engine.downloadDialogModal(this);
 
     for(int i = 0; i < entries.size(); i ++) {
-        if(entries.at(i)->status() == KNS::Entry::Installed) {
+        if(entries.at(i)->status() == KNS::Entry::Installed
+           && !entries.at(i)->installedFiles().isEmpty()) {
             const QString themeTmpFile = entries.at(i)->installedFiles().at(0);
             const QString name = entries.at(i)->installedFiles().at(0).section('/', -2, -2);
             kDebug()<<"IconThemesConfig::getNewTheme() themeTmpFile="<<themeTmpFile<<"name="<<name;
