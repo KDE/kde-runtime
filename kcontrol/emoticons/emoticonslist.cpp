@@ -428,7 +428,8 @@ void EmoticonList::getNewStuff()
         KNS::Entry::List entries = engine.downloadDialogModal(this);
 
         for (int i = 0; i < entries.size(); i ++) {
-            if (entries.at(i)->status() == KNS::Entry::Installed) {
+            if (entries.at(i)->status() == KNS::Entry::Installed
+                && !entries.at(i)->installedFiles().isEmpty()) {
                 QString name = entries.at(i)->installedFiles().at(0).section('/', -2, -2);
                 loadTheme(name);
             }
