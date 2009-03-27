@@ -221,7 +221,7 @@ void ConclusionPage::aboutToShow()
     {
         case BacktraceParser::ReallyUseful:
         {
-            needToReport = ( canDetails );
+            needToReport = ( canDetails || willingToHelp );
             report = i18n( "* The crash information is really useful and worth reporting" );
             break;
         }
@@ -240,7 +240,7 @@ void ConclusionPage::aboutToShow()
         case BacktraceParser::Useless:
         case BacktraceParser::InvalidUsefulness:
         {
-            needToReport =  ( canDetails && willingToHelp );
+            needToReport =  ( canDetails && willingToHelp ); //TODO always false  ?
             report = i18n( "* The crash information is not really useful" ) ;
      break;
         }
@@ -272,14 +272,14 @@ void ConclusionPage::aboutToShow()
             m_explanationLabel->setText( i18n( "This application is supported in the KDE bug tracking system, press Next to start the report assistant" ) );
             
             reportMethod = i18n( "You need to file a new bug report, press Next to start the report assistant" );
-            reportLink = i18nc( "address to report the bug", "Report at %1", QLatin1String(KDE_BUGZILLA_URL) );
+            reportLink = i18nc( "address to report the bug", "You can manually report at %1", QLatin1String(KDE_BUGZILLA_URL) );
         }
         else
         {
             m_explanationLabel->setText( i18n( "<strong>Notice:</strong> This application is not supported in the KDE Bugtracker, you need to report the bug to the maintainer" ) );
             
             reportMethod = i18n( "You need to file a new bug report with the following information:" );
-            reportLink =  i18nc( "address(mail or web) to report the bug", "Report at %1", krashConfig->getReportLink() );
+            reportLink =  i18nc( "address(mail or web) to report the bug", "You can manually report at %1", krashConfig->getReportLink() );
             
             if( krashConfig->isReportMail() )
             {

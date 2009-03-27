@@ -136,7 +136,6 @@ class BugzillaManager : public QObject
         
         void fetchBugReport( int );
         void searchBugs( QString words, QString product, QString severity, QString date_start, QString date_end , QString comment);
-        
         void sendReport( BugReport * );
         
         bool getLogged() { return m_logged; }
@@ -157,8 +156,8 @@ class BugzillaManager : public QObject
         void reportSent( int );
         
         void loginError( QString );
-        void searchError( QString );
         void bugReportError( QString );
+        void searchError( QString );
         void sendReportError( QString );
         void sendReportErrorWrongProduct(); //To use "kde" product
 
