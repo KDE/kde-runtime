@@ -144,7 +144,7 @@ QString ReportInfo::generateReportTemplate( bool bugzilla ) const
     }
     else
     {
-        report.append( lineBreak + QString("A useful backtrace could not be generated") + lineBreak );
+        report.append( lineBreak + QString("An useful backtrace could not be generated") + lineBreak );
     }
 
     //Possible duplicate

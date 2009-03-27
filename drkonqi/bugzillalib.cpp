@@ -249,13 +249,14 @@ void BugzillaManager::sendReportDone( KJob * job )
             QString error;
             
             QRegExp reg("<td id=\"error_msg\" class=\"throw_error\">(.+)</td>");
-            pos = reg.indexIn( response.replace('\r',QChar()).replace('\n',QChar()) );
+            response.remove('\r');response.remove('\n');
+            pos = reg.indexIn( response );
             if( pos != -1 )
                 error = reg.cap(1).trimmed();
             else
                 error = i18n( "Unknown error" );
 
-            if( error.contains( QLatin1String("does not exist or you aren't authorized to") ) )
+            if( error.contains( QLatin1String("does not exist or you aren't authorized to") ) || error.contains( QLatin1String("There is no component named 'general'") ) )
             {
                 emit sendReportErrorWrongProduct();
             } else {
