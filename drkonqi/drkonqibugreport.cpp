@@ -41,6 +41,9 @@ DrKonqiBugReport::DrKonqiBugReport( QWidget * parent ) :
     connect( this, SIGNAL(currentPageChanged(KPageWidgetItem *, KPageWidgetItem *)), this, SLOT(currentPageChanged_slot(KPageWidgetItem *, KPageWidgetItem *)));  
     connect( this, SIGNAL(helpClicked()), this, SLOT(showHelp()) );
     
+    /*Every PageWidgetItem has a title (second arg of the constructor
+    which is used to scroll the help text, remember to not change.*/
+    
     //Introduction Page
     IntroductionPage * m_intro = new IntroductionPage( this );
     connectSignals( m_intro );
