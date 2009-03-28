@@ -141,7 +141,7 @@ void BugzillaManager::fetchBugReportDone( KJob* job )
         KIO::StoredTransferJob * fetchBugJob = (KIO::StoredTransferJob *)job;
         
         BugReportXMLParser * parser = new BugReportXMLParser( fetchBugJob->data() );
-        BugReport * report = parser->parse();
+        BugReport report = parser->parse();
         
         if( parser->isValid() )
         {
@@ -190,7 +190,7 @@ void BugzillaManager::searchBugsDone( KJob * job )
     }
 }
 
-void BugzillaManager::sendReport( BugReport * report )
+void BugzillaManager::sendReport( BugReport report )
 {
     QByteArray postData = generatePostDataForReport( report );
     
@@ -205,27 +205,27 @@ void BugzillaManager::sendReport( BugReport * report )
     sendJob->start();
 }
 
-QByteArray BugzillaManager::generatePostDataForReport( BugReport * report )
+QByteArray BugzillaManager::generatePostDataForReport( BugReport report )
 {
     QByteArray postData = 
         QByteArray("product=") + 
-        QUrl::toPercentEncoding(report->product()) + 
+        QUrl::toPercentEncoding(report.product()) + 
         QByteArray("&version=unspecified&component=") +  
-        QUrl::toPercentEncoding(report->component()) +
+        QUrl::toPercentEncoding(report.component()) +
         QByteArray("&bug_severity=") +
-        QUrl::toPercentEncoding(report->bugSeverity()) + 
+        QUrl::toPercentEncoding(report.bugSeverity()) + 
         QByteArray("&rep_platform=") +  
         QUrl::toPercentEncoding(QString("Unlisted Binaries")) + 
         QByteArray("&op_sys=") + 
-        QUrl::toPercentEncoding(report->operatingSystem()) + 
+        QUrl::toPercentEncoding(report.operatingSystem()) + 
         QByteArray("&priority=") + 
-        QUrl::toPercentEncoding(report->priority()) + 
+        QUrl::toPercentEncoding(report.priority()) + 
         QByteArray("&bug_status=") + 
-        QUrl::toPercentEncoding(report->bugStatus()) + 
+        QUrl::toPercentEncoding(report.bugStatus()) + 
         QByteArray("&short_desc=") + 
-        QUrl::toPercentEncoding(report->shortDescription()) + 
+        QUrl::toPercentEncoding(report.shortDescription()) + 
         QByteArray("&comment=") + 
-        QUrl::toPercentEncoding(report->description());
+        QUrl::toPercentEncoding(report.description());
     
     return postData;
 }
@@ -335,9 +335,9 @@ BugReportXMLParser::BugReportXMLParser( QByteArray data )
     m_valid = m_xml.setContent( data, true );
 }
 
-BugReport * BugReportXMLParser::parse()
+BugReport BugReportXMLParser::parse()
 {
-    BugReport * report = new BugReport(); //creates an invalid and empty report object
+    BugReport report; //creates an invalid and empty report object
     
     if ( m_valid )
     {
@@ -351,19 +351,19 @@ BugReport * BugReportXMLParser::parse()
         if( m_valid )
         {
             m_valid = true;
-            report->setValid( true );
+            report.setValid( true );
             
             //Get basic fields
-            report->setBugNumber( getSimpleValue( "bug_id" ) );
-            report->setShortDescription( getSimpleValue( "short_desc" ) ); 
-            report->setProduct( getSimpleValue( "product" ) );
-            report->setComponent( getSimpleValue( "component" ) );
-            report->setVersion( getSimpleValue( "version" ) );
-            report->setOperatingSystem( getSimpleValue( "op_sys" ) );
-            report->setBugStatus( getSimpleValue( "bug_status" ) );
-            report->setResolution( getSimpleValue( "resolution" ) );
-            report->setPriority( getSimpleValue( "priority" ) );
-            report->setBugSeverity( getSimpleValue( "bug_severity" ) );
+            report.setBugNumber( getSimpleValue( "bug_id" ) );
+            report.setShortDescription( getSimpleValue( "short_desc" ) ); 
+            report.setProduct( getSimpleValue( "product" ) );
+            report.setComponent( getSimpleValue( "component" ) );
+            report.setVersion( getSimpleValue( "version" ) );
+            report.setOperatingSystem( getSimpleValue( "op_sys" ) );
+            report.setBugStatus( getSimpleValue( "bug_status" ) );
+            report.setResolution( getSimpleValue( "resolution" ) );
+            report.setPriority( getSimpleValue( "priority" ) );
+            report.setBugSeverity( getSimpleValue( "bug_severity" ) );
             
             //Parse full content + comments
             QStringList m_commentList;
@@ -374,7 +374,7 @@ BugReport * BugReportXMLParser::parse()
                 m_commentList << element.text();
             }
             
-            report->setComments( m_commentList );
+            report.setComments( m_commentList );
             
         } //isValid
     } //isValid

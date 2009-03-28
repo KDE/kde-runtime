@@ -33,9 +33,9 @@ class AboutBugReportingDialog: public KDialog
     public:
         AboutBugReportingDialog(QWidget * parent = 0);
         ~AboutBugReportingDialog();
-
+        void showSection(QString);
+        
     private:
-    
         KTextBrowser * m_textBrowser;
 };
 

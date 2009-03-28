@@ -32,13 +32,11 @@ ReportInfo::ReportInfo()
     m_userCanDetail = false;
     m_userIsWillingToHelp = false;
     m_bugzilla = new BugzillaManager();
-    m_report = new BugReport();
 }
 
 ReportInfo::~ReportInfo()
 {
     delete m_bugzilla;
-    delete m_report;
 }
 
 QString ReportInfo::getKDEVersion() const { return KDE::versionString(); }
@@ -114,8 +112,8 @@ QString ReportInfo::generateReportTemplate( bool bugzilla ) const
     report.append( QString(" ----- ") + lineBreak + lsb + lineBreak  + QString("-----") + lineBreak );
     
     //Description (title)
-    if ( !m_report->shortDescription().isEmpty() )
-        report.append( lineBreak + QString("Title: %1").arg( m_report->shortDescription() ) );
+    if ( !m_report.shortDescription().isEmpty() )
+        report.append( lineBreak + QString("Title: %1").arg( m_report.shortDescription() ) );
     
     //Details of the crash situation
     if( m_userCanDetail )
@@ -162,19 +160,19 @@ void ReportInfo::sendBugReport()
 
 void ReportInfo::setDefaultProductComponent()
 {
-    m_report->setProduct( QLatin1String("kde") );
-    m_report->setComponent( QLatin1String("general") );
+    m_report.setProduct( QLatin1String("kde") );
+    m_report.setComponent( QLatin1String("general") );
 }
 
 void ReportInfo::fillReportFields()
 {
     const KrashConfig * krashConfig = DrKonqi::instance()->krashConfig();
-    m_report->setProduct( krashConfig->productName() );
-    m_report->setComponent( QLatin1String("general") );
-    m_report->setVersion( krashConfig->productVersion() );
-    m_report->setOperatingSystem( QLatin1String("unspecified") );
-    m_report->setPriority( QLatin1String("NOR") );
-    m_report->setBugSeverity( QLatin1String("crash") );
-    m_report->setDescription( generateReportTemplate( true ) );
-    m_report->setValid( true );
+    m_report.setProduct( krashConfig->productName() );
+    m_report.setComponent( QLatin1String("general") );
+    m_report.setVersion( krashConfig->productVersion() );
+    m_report.setOperatingSystem( QLatin1String("unspecified") );
+    m_report.setPriority( QLatin1String("NOR") );
+    m_report.setBugSeverity( QLatin1String("crash") );
+    m_report.setDescription( generateReportTemplate( true ) );
+    m_report.setValid( true );
 }

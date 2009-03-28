@@ -13,14 +13,16 @@ waiting for productName()->product/component mapping (custom cgi file at BKO)
 ( if no combination is found, revert to "kde" product )
 [[ currently bugzillalib detects unexistent products to later use the "kde" product ]]
 
-Finish "about bug reporting steps" (guide)  (documentation format ?)
+Review texts
 
 Check leaks, crashes
 
-krazy2 checks (partially done)
+krazy2 checks (mostly done)
 
 #Done
 ---------
+
+Finish "about bug reporting steps" (guide)  (documentation format ?)
 
 If the backtrace isn't perfect, we can encourage the user to install debug symbols... 
 However the user could not find all the necesary packages and therefore never achieve a perfect backtrace

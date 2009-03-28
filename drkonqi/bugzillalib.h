@@ -44,43 +44,44 @@ class BugReport
         BugReport();
         
         void setBugNumber( QString value ) { setData("bug_id", value); }
-        QString bugNumber() { return getData("bug_id"); }
+        QString bugNumber() const { return getData("bug_id"); }
+        int bugNumberAsInt() const { return getData("bug_id").toInt(); }
         
         void setShortDescription( QString value ) { setData("short_desc", value); }
-        QString shortDescription() { return getData("short_desc"); }
+        QString shortDescription() const { return getData("short_desc"); }
         
         void setProduct( QString value ) { setData("product", value); }
-        QString product() { return getData("product"); }
+        QString product() const { return getData("product"); }
         
         void setComponent( QString value ) { setData("component", value); }
-        QString component() { return getData("component"); }
+        QString component() const { return getData("component"); }
         
         void setVersion( QString value ) { setData("version", value); }
-        QString version() { return getData("version"); }
+        QString version() const { return getData("version"); }
         
         void setOperatingSystem( QString value ) { setData("op_sys", value); }
-        QString operatingSystem() { return getData("op_sys"); }
+        QString operatingSystem() const { return getData("op_sys"); }
         
         void setBugStatus( QString value ) { setData("bug_status", value); }
-        QString bugStatus() { return getData("bug_status"); }
+        QString bugStatus() const { return getData("bug_status"); }
         
         void setResolution( QString value ) { setData("resolution", value); }
-        QString resolution() { return getData("resolution"); }
+        QString resolution() const { return getData("resolution"); }
         
         void setPriority( QString value ) { setData("priority", value); }
-        QString priority() { return getData("priority"); }
+        QString priority() const { return getData("priority"); }
         
         void setBugSeverity( QString value ) { setData("bug_severity", value); }
-        QString bugSeverity() { return getData("bug_severity"); }
+        QString bugSeverity() const { return getData("bug_severity"); }
         
         void setDescription( QString desc ) { m_commentList.insert(0, desc); }
-        QString description() { return m_commentList.at(0); }
+        QString description() const { return m_commentList.at(0); }
         
         void setComments( QStringList comm) { m_commentList.append( comm ); }
-        QStringList comments() { return m_commentList.mid(1); }
+        QStringList comments() const { return m_commentList.mid(1); }
         
         void setValid( bool valid ) { m_isValid = valid; }
-        bool isValid() { return m_isValid; }
+        bool isValid() const { return m_isValid; }
         
         QString toHtml();
         
@@ -92,7 +93,7 @@ class BugReport
         QStringList m_commentList;
         
         void setData( QString key, QString val ) { m_dataMap.insert(key,val); }
-        QString getData( QString key ) { return m_dataMap.value(key); }
+        QString getData( QString key ) const { return m_dataMap.value(key); }
         
         
 };
@@ -102,7 +103,7 @@ class BugReportXMLParser
 {
     public:
         BugReportXMLParser( QByteArray );
-        BugReport * parse();
+        BugReport parse();
         bool isValid() { return m_valid; }
         
     private:
@@ -136,7 +137,7 @@ class BugzillaManager : public QObject
         
         void fetchBugReport( int );
         void searchBugs( QString words, QString product, QString severity, QString date_start, QString date_end , QString comment);
-        void sendReport( BugReport * );
+        void sendReport( BugReport );
         
         bool getLogged() { return m_logged; }
         QString getUsername() { return m_username; }
@@ -151,7 +152,7 @@ class BugzillaManager : public QObject
         
     Q_SIGNALS:
         void loginFinished( bool );
-        void bugReportFetched( BugReport* );
+        void bugReportFetched( BugReport );
         void searchFinished( BugMapList );
         void reportSent( int );
         
@@ -162,7 +163,7 @@ class BugzillaManager : public QObject
         void sendReportErrorWrongProduct(); //To use "kde" product
 
     private:
-        QByteArray generatePostDataForReport(BugReport*);
+        QByteArray generatePostDataForReport(BugReport);
         
         QString     m_username;
         QString     m_password;

@@ -296,7 +296,7 @@ void BugzillaKeywordsPage::aboutToShow()
 void BugzillaKeywordsPage::aboutToHide()
 {
     //Save keywords (as short description of the future report)
-    reportInfo()->getReport()->setShortDescription( m_keywordsEdit->text() );
+    reportInfo()->getReport().setShortDescription( m_keywordsEdit->text() );
 }
 
 //END BugzillaKeywordsPage
@@ -318,7 +318,7 @@ BugzillaDuplicatesPage::BugzillaDuplicatesPage( DrKonqiBugReport * parent ):
 
     connect( reportInfo()->getBZ(), SIGNAL( searchFinished(BugMapList) ), this, SLOT( searchFinished(BugMapList) ) );
     connect( reportInfo()->getBZ(), SIGNAL( searchError(QString) ), this, SLOT( searchError(QString) ) );
-    connect( reportInfo()->getBZ(), SIGNAL( bugReportFetched(BugReport*) ), this, SLOT( bugFetchFinished(BugReport*) ) );
+    connect( reportInfo()->getBZ(), SIGNAL( bugReportFetched(BugReport) ), this, SLOT( bugFetchFinished(BugReport) ) );
     connect( reportInfo()->getBZ(), SIGNAL( bugReportError(QString) ), this, SLOT( bugFetchError(QString) ) );
         
     m_statusWidget = new StatusWidget();
@@ -504,16 +504,16 @@ void BugzillaDuplicatesPage::mayBeDuplicateClicked()
     m_infoDialog->close();
 }
 
-void BugzillaDuplicatesPage::bugFetchFinished( BugReport* report )
+void BugzillaDuplicatesPage::bugFetchFinished( BugReport report )
 {
-    if( report->isValid() )
+    if( report.isValid() )
     {
         if( m_infoDialog )
         {
             if ( m_infoDialog->isVisible() )
             {
                 QString comments;
-                QStringList commentList = report->comments();
+                QStringList commentList = report.comments();
                 for(int i = 0;i < commentList.count(); i++)
                 {
                     QString comment = commentList.at(i);
@@ -522,28 +522,26 @@ void BugzillaDuplicatesPage::bugFetchFinished( BugReport* report )
                 }
                 
                 QString text = 
-                QString( "<strong>%1:</strong> %2<br />" ).arg( i18n("Bug ID"), report->bugNumber() ) +
-                QString( "<strong>%1:</strong> %2/%3<br />" ).arg( i18nc("Product name at bugzilla","Product"), report->product(), report->component() ) +
-                QString( "<strong>%1:</strong> %2<br />" ).arg( i18n("Short Description"), report->shortDescription() ) +
-                QString( "<strong>%1:</strong> %2<br />" ).arg( i18n("Status"), report->bugStatus() ) +
-                QString( "<strong>%1:</strong> %2<br />" ).arg( i18n("Resolution"), report->resolution() ) +
-                QString( "<strong>%1:</strong><br />%2" ).arg( i18n("Full Description:"), report->description().replace('\n',"<br />") ) +
+                QString( "<strong>%1:</strong> %2<br />" ).arg( i18n("Bug ID"), report.bugNumberAsInt() ) +
+                QString( "<strong>%1:</strong> %2/%3<br />" ).arg( i18nc("Product name at bugzilla","Product"), report.product(), report.component() ) +
+                QString( "<strong>%1:</strong> %2<br />" ).arg( i18n("Short Description"), report.shortDescription() ) +
+                QString( "<strong>%1:</strong> %2<br />" ).arg( i18n("Status"), report.bugStatus() ) +
+                QString( "<strong>%1:</strong> %2<br />" ).arg( i18n("Resolution"), report.resolution() ) +
+                QString( "<strong>%1:</strong><br />%2" ).arg( i18n("Full Description:"), report.description().replace('\n',"<br />") ) +
                 QString( "<br /><br /><strong>%1:</strong> %2" ).arg( i18n("Comments"), comments );
                 
                 m_infoDialogBrowser->setText( text );
                 m_mineMayBeDuplicateButton->setEnabled( true );
                 
-                m_infoDialogStatusWidget->setIdle( i18n("Showing report %1", report->bugNumber() ) );
+                m_infoDialogStatusWidget->setIdle( i18n("Showing report %1", report.bugNumberAsInt() ) );
                 m_infoDialogBrowser->setEnabled( true );
             }
         }
     }
     else
     {
-        bugFetchError( i18n( "Invalid report" ) );
+        bugFetchError( i18n( "Invalid report data" ) );
     }
-    
-    delete report;
 }
 
 bool BugzillaDuplicatesPage::canSearchMore()
@@ -584,7 +582,7 @@ void BugzillaDuplicatesPage::performSearch()
     const KrashConfig *krashConfig = DrKonqi::instance()->krashConfig();
     BacktraceParser *btParser = DrKonqi::instance()->backtraceGenerator()->parser();
 
-    reportInfo()->getBZ()->searchBugs( reportInfo()->getReport()->shortDescription(), krashConfig->productName(), "crash", startDateStr, endDateStr , btParser->firstValidFunctions().join(" ") );
+    reportInfo()->getBZ()->searchBugs( reportInfo()->getReport().shortDescription(), krashConfig->productName(), "crash", startDateStr, endDateStr , btParser->firstValidFunctions().join(" ") );
    
     //Test search
     //reportInfo()->getBZ()->searchBugs( "konqueror crash toggle mode", "konqueror", "crash", startDateStr, endDateStr , "caret" );
@@ -675,7 +673,7 @@ BugzillaInformationPage::BugzillaInformationPage( DrKonqiBugReport * parent )
 void BugzillaInformationPage::aboutToShow()
 {
     if( m_titleEdit->text().isEmpty() )
-        m_titleEdit->setText( reportInfo()->getReport()->shortDescription() );
+        m_titleEdit->setText( reportInfo()->getReport().shortDescription() );
         
     checkTexts(); //May be the options (canDetail) changed and we need to recheck
 }
@@ -745,7 +743,7 @@ bool BugzillaInformationPage::isComplete()
 void BugzillaInformationPage::aboutToHide()
 {
     //Save fields data
-    reportInfo()->getReport()->setShortDescription( m_titleEdit->text() );
+    reportInfo()->getReport().setShortDescription( m_titleEdit->text() );
     reportInfo()->setDetailText( m_detailsEdit->toPlainText() );
 }
 

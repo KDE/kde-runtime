@@ -188,6 +188,8 @@ void DrKonqiBugReport::showHelp()
     if ( !m_aboutBugReportingDialog )
         m_aboutBugReportingDialog = new AboutBugReportingDialog( this );
     m_aboutBugReportingDialog->show();
+    m_aboutBugReportingDialog->showSection( QString("Begin") );
+    m_aboutBugReportingDialog->showSection( currentPage()->name() );
 }
 
 //Override KAssistantDialog "next" page implementation

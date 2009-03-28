@@ -21,9 +21,9 @@
 #define REPORTINFO__H
 
 #include <QtCore/QString>
+#include "bugzillalib.h"
 
 class BugzillaManager;
-class BugReport;
 
 class ReportInfo
 {
@@ -38,7 +38,7 @@ class ReportInfo
     void setUserIsWillingToHelp ( bool isWillingToHelp ) { m_userIsWillingToHelp = isWillingToHelp; }
 
     BugzillaManager * getBZ() const { return m_bugzilla; }
-    BugReport * getReport() const { return m_report; }
+    BugReport getReport() const { return m_report; }
 
     void setDetailText( const QString & text ) { m_userDetailText = text; }
     void setPossibleDuplicate( const QString & bug ) { m_possibleDuplicate = bug; }
@@ -63,7 +63,7 @@ class ReportInfo
     bool                m_userIsWillingToHelp;
     
     BugzillaManager *   m_bugzilla;
-    BugReport *         m_report;
+    BugReport           m_report;
 
     QString             m_userDetailText;
     QString             m_possibleDuplicate;

@@ -110,7 +110,7 @@ class BugzillaDuplicatesPage : public DrKonqiAssistantPage
         void itemClicked( QTreeWidgetItem *, int );
         void itemSelectionChanged();
         
-        void bugFetchFinished( BugReport * );
+        void bugFetchFinished( BugReport );
         void bugFetchError( QString );
         
         void searchMore();

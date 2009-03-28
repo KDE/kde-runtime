@@ -45,6 +45,6 @@ kde4_add_ui_files(drkonqi_SRCS getbacktracewidget.ui)
 
 kde4_add_executable(drkonqi ${drkonqi_SRCS})
 
-target_link_libraries(drkonqi ${KDE4_KIO_LIBS})
+target_link_libraries(drkonqi ${KDE4_KIO_LIBS} ${KDE4_KHTML_LIBS})
 
 install(TARGETS drkonqi DESTINATION ${LIBEXEC_INSTALL_DIR})
