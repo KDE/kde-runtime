@@ -2,19 +2,17 @@ Discussions:
 -----------
 
 - Texts needs review/rewrite (TODO tag..)
+- Rewrite text (drkonqiassistantpages_bugzilla.cpp:716)
+
+- BugzillaKeywordsPage word filtering (and minimum length) criteria (drkonqiassistantpages_bugzilla.cpp:269)
+(( check at least X words, with Y of them with a minimum of Z chars ..? ))
+- Rewire criteria of minimum chars/words to use in the Title and Details fields  (drkonqiassistantpages_bugzilla.cpp:690)
+
+#DONE
 
 - Layouting of the Main/Advanced widget on the First dialog
 (( Need to discuss if use separate widgets on a QStackedWidget with the Toggle button,
 or use the old approach: basic info is always show, backtracewidget visibility can be toggled ))
-
-- BugzillaKeywordsPage word filtering (and minimum length) criteria (drkonqiassistantpages_bugzilla.cpp:269)
-(( check at least X words, with Y of them with a minimum of Z chars ..? ))
-
-- Rewrite text (drkonqiassistantpages_bugzilla.cpp:716)
-
-- Rewire criteria of minimum chars/words to use in the Title and Details fields  (drkonqiassistantpages_bugzilla.cpp:690)
-
-#DONE
 
 - The "needToReport" estimation logic: (drkonqiassistantpages_base.cpp:235)
 Always true if the backtrace is perfect.. or we still require the details ?

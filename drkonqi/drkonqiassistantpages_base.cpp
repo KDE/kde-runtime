@@ -35,6 +35,7 @@
 #include <ktextbrowser.h>
 #include <ktoolinvocation.h>
 #include <kicon.h>
+#include <kmessagebox.h>
 #include <klocale.h>
 
 //BEGIN IntroductionPage
@@ -88,6 +89,24 @@ bool CrashInformationPage::isComplete()
     BacktraceGenerator *generator = DrKonqi::instance()->backtraceGenerator();
     return ( generator->state() != BacktraceGenerator::NotLoaded &&
              generator->state() != BacktraceGenerator::Loading );
+}
+
+bool CrashInformationPage::showNextPage()
+{
+    BacktraceParser::Usefulness use = DrKonqi::instance()->backtraceGenerator()->parser()->backtraceUsefulness();
+    
+    if( use == BacktraceParser::InvalidUsefulness || use == BacktraceParser::ProbablyUseless
+        || use == BacktraceParser::Useless )
+    {
+        if( KMessageBox::questionYesNo( this, i18n( "The crash information is not useful enought, do you want to try to improve it?" ), i18n("Crash Information is not useful enought") ) == KMessageBox::Yes )
+        {
+            return false; //Cancel show next, to allow the user to write more
+        } else {
+            return true; //Allow to continue
+        }
+    } else {
+        return true;
+    }
 }
 
 //END CrashInformationPage
@@ -240,7 +259,7 @@ void ConclusionPage::aboutToShow()
         case BacktraceParser::Useless:
         case BacktraceParser::InvalidUsefulness:
         {
-            needToReport =  ( canDetails && willingToHelp ); //TODO always false  ?
+            needToReport =  false;
             report = i18n( "* The crash information is not really useful" ) ;
      break;
         }

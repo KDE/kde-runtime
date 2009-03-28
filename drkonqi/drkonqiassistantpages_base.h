@@ -85,6 +85,7 @@ class CrashInformationPage: public DrKonqiAssistantPage
         
         void aboutToShow(); 
         bool isComplete();
+        bool showNextPage();
         
     private:
         GetBacktraceWidget * m_backtraceWidget;
