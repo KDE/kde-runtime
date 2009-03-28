@@ -26,7 +26,7 @@
  *****************************************************************/
 
 #include "krashconf.h"
-#include "config-drkonqi.h"
+#include <config-drkonqi.h>
 
 #include <kconfig.h>
 #include <kconfiggroup.h>

@@ -490,7 +490,7 @@ void BugzillaDuplicatesPage::itemClicked( QTreeWidgetItem * item, int col )
     m_infoDialogBrowser->setText( i18n("Loading ... " ) );
     m_infoDialogLink->setText( QString("<a href=\"%1\">%2</a>").arg( reportInfo()->getBZ()->urlForBug(m_currentBugNumber), i18n("Bug report page at the KDE bug tracking system") ) );
     
-    m_infoDialogStatusWidget->setBusy( i18n("Loading information about bug %1 from %2 ...", QString::number(m_currentBugNumber), QLatin1String(KDE_BUGZILLA_SHORT_URL) ) );
+    m_infoDialogStatusWidget->setBusy( i18n("Loading information about bug %1 from %2 ...", m_currentBugNumber, QLatin1String(KDE_BUGZILLA_SHORT_URL) ) );
     
     m_infoDialogBrowser->setEnabled( false );
     

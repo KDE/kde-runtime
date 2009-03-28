@@ -98,7 +98,7 @@ bool CrashInformationPage::showNextPage()
     if( use == BacktraceParser::InvalidUsefulness || use == BacktraceParser::ProbablyUseless
         || use == BacktraceParser::Useless )
     {
-        if( KMessageBox::questionYesNo( this, i18n( "The crash information is not useful enought, do you want to try to improve it?" ), i18n("Crash Information is not useful enought") ) == KMessageBox::Yes )
+        if( KMessageBox::questionYesNo( this, i18n( "The crash information is not useful enough, do you want to try to improve it?" ), i18n("Crash Information is not useful enough") ) == KMessageBox::Yes )
         {
             return false; //Cancel show next, to allow the user to write more
         } else {

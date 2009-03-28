@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string notr="true" extracomment="This is an internal name that is never shown...">GetBacktraceWidget</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_4">
    <property name="margin">

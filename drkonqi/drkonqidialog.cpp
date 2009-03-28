@@ -112,7 +112,7 @@ void DrKonqiDialog::buildMainWidget()
 
     //Details
     introLayout->addWidget( new QLabel("<strong>Details:</strong>") );
-    introLayout->addWidget( new QLabel(  i18n( "<ul><li>Executable: %1</li><li>PID: %2</li><li>Signal: %3 (%4)</li></ul>",krashConfig->appName(),QString::number(krashConfig->pid() ), krashConfig->signalNumber(), krashConfig->signalName() ) ) );
+    introLayout->addWidget( new QLabel(  i18n( "<ul><li>Executable: %1</li><li>PID: %2</li><li>Signal: %3 (%4)</li></ul>",krashConfig->appName(), krashConfig->pid(), krashConfig->signalNumber(), krashConfig->signalName() ) ) );
     
     //Introduction widget
     m_introWidget = new QWidget( this );
