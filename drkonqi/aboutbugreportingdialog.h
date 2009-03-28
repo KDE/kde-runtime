@@ -20,8 +20,6 @@
 #ifndef ABOUTBUGREPORTINGDIALOG__H
 #define ABOUTBUGREPORTINGDIALOG__H
 
-#include <QtGui/QWidget>
-
 #include <kdialog.h>
 
 class KTextBrowser;
@@ -32,7 +30,6 @@ class AboutBugReportingDialog: public KDialog
 
     public:
         AboutBugReportingDialog(QWidget * parent = 0);
-        ~AboutBugReportingDialog();
         void showSection(QString);
         
     private:

@@ -18,6 +18,7 @@
 ******************************************************************/
 
 #include "aboutbugreportingdialog.h"
+#include "drkonqi_globals.h"
 
 #include <klocale.h>
 #include <ktextbrowser.h>
@@ -41,7 +42,7 @@ AboutBugReportingDialog::AboutBugReportingDialog(QWidget * parent):
     QString( "<p>%1</p><p>%2</p><p>%3</p>" ).arg( 
         Qt::escape( i18n("You can help us improve this software by filing a bug report.") ), 
         Qt::escape( i18n("Note: It is safe to close this dialog. If you do not want to, you do not have to file a bug report.") ), 
-        Qt::escape( i18n("In order to generate a useful bug report we need some information about both the crash and your system. ( Also, You may need to install some packages )") ) ) +
+        Qt::escape( i18n("In order to generate a useful bug report we need some information about both the crash and your system. ( Also, you may need to install some packages )") ) ) +
         
     QString( "<h1>%1</h1>").arg( Qt::escape( i18n("Bug Reporting Assistant Steps Guide") ) ) +
     QString( "<p>%1</p>" ).arg( Qt::escape( i18n("This assistant will guide you through the crash reporting process of the Bug Reports Database Site of KDE. All the information you enter to the bug report must be in ENGLISH as KDE is an international software") ) ) +
@@ -49,7 +50,7 @@ AboutBugReportingDialog::AboutBugReportingDialog(QWidget * parent):
     QString( "<a name=\"Backtrace\" /><h2>%1</h2>" ).arg( Qt::escape( i18n("Crash Information") ) ) + 
     QString( "<p>%1<a href=\"%2\">%2</a></p><p>%3</p>" ).arg( 
         Qt::escape( i18n("This page will generate the trace of the crash. This information is really useful to know where and why the application crashed. If the crash information isn't useful enough, you may need to install some packages and reload it. You can find more information about the traces of a crash on ") ),
-        QString("http://techbase.kde.org/Development/Tutorials/Debugging/How_to_create_useful_crash_reports"), Qt::escape( i18n("Once you get an useful trace (or if you don't want to install the missing packages) you can continue.")) ) +
+        QString(TECHBASE_HOWTO_DOC), Qt::escape( i18n("Once you get an useful trace (or if you don't want to install the missing packages) you can continue.")) ) +
         
     QString( "<a name=\"Awareness\" /><h2>%1</h2>" ).arg( Qt::escape( i18n("What do you know about the crash") ) ) +
     QString( "<p>%1</p><p>%2</p>" ).arg( 
@@ -59,13 +60,13 @@ AboutBugReportingDialog::AboutBugReportingDialog(QWidget * parent):
     QString( "<a name=\"Results\" /><h2>%1</h2>" ).arg( Qt::escape( i18n("Conclusions") ) ) +
     QString( "<p>%1</p><p>%2</p><p>%3</p>" ).arg( 
         Qt::escape( i18n("Using the usefulness of the crash information gathered previously , and your answers on the previous page, the assistant will tell you if the crash is worth reporting or not.") ), 
-        Qt::escape( i18n("If the crash is worth reporting, and the application is supported in the KDE Bug Report Database, you can click next. However if it's not supported you will need to contact the maintainer of the application.")), 
+        Qt::escape( i18n("If the crash is worth reporting, and the application is supported in the KDE bug tracking system, you can click next. However if it's not supported you will need to contact the maintainer of the application.")),
         Qt::escape( i18n("If the crash is not worth reporting, you can still manually report the bug if you really want to.")) ) +
         
-    QString( "<a name=\"BugzillaLogin\" /><h2>%1</h2>" ).arg( Qt::escape( i18n("KDE Bugtracker Login") ) ) +
+    QString( "<a name=\"BugzillaLogin\" /><h2>%1</h2>" ).arg( Qt::escape( i18n("KDE Bug Tracking System Login") ) ) +
     QString( "<p>%1<a href=\"%2\">%2</a></p><p>%3</p><p>%4</p>" ).arg( 
-        Qt::escape( i18n("As we may need to contact you in the future to ask further information and we need to keep record of the bug reports, you need to have a bugs.kde.org account. If you don't have one, you can freely create it here: ")),
-        QString("http://bugs.kde.org/createaccount.cgi"),
+        Qt::escape( i18n("As we may need to contact you in the future to ask further information and we need to keep record of the bug reports, you need to have an account on the KDE bug tracking system. If you don't have one, you can freely create it here: ")),
+        QString(KDE_BUGZILLA_CREATE_ACCOUNT_URL),
         Qt::escape( i18n("Then you can write your username and password and press the Login button. Once you are autenticated, you can press Next to continue.")),
         Qt::escape( i18n("The KWallet dialog may appear when pressing Login to save your password in the KWallet password system. Also, it will prompt you for the KWallet password on loading to autocomplete the data if you use this assistant again.") )) +    
     
@@ -77,7 +78,7 @@ AboutBugReportingDialog::AboutBugReportingDialog(QWidget * parent):
     QString( "<a name=\"BugzillaDuplicates\" /><h2>%1</h2>" ).arg( Qt::escape( i18n("Bug Report Possible Duplicate list") ) ) +    
     QString( "<p>%1</p><p>%2</p><p>%3</p><p>%4</p>" ).arg( 
         Qt::escape( i18n("This is an optional step") ), 
-        Qt::escape( i18n("This page will search at the bug report database for similar crashes (possible duplicates). If there are some bug report found, you can double click on them to show their details. Then, reading the current bug report information you can check if the situations were similar and you can tentatively mark your crash as a duplicate of that report.") ),
+        Qt::escape( i18n("This page will search at the bug report database for similar crashes (possible duplicates). If there are some bug reports found, you can double click on them to show their details. Then, reading the current bug report information you can check if the situations were similar and you can tentatively mark your crash as a duplicate of that report.") ),
         Qt::escape( i18n("If the listed possible duplicates aren't enough (or you didn't found a similar report) you can force the search of more bug reports (only if the date range is not reached)") ),
         Qt::escape( i18n("Don't worry if you can't find a similar bug report or you don't know what to look at. The bug report database maintainers will look at it later") ) ) +
         
@@ -88,8 +89,8 @@ AboutBugReportingDialog::AboutBugReportingDialog(QWidget * parent):
     
     QString( "<a name=\"BugzillaSend\" /><h2>%1</h2>" ).arg( Qt::escape( i18n("Send Crash Report") ) ) +   
     QString( "<p>%1</p><p>%2</p>" ).arg( 
-        Qt::escape( i18n("This page will send the bug report to the database and it will notify you when it's done. Then you have the URL of the bug report in the KDE database to look at it.") ),
-        Qt::escape( i18n("If the process failed, you can click Retry to try sending the bug report Again.") ));
+        Qt::escape( i18n("This page will send the bug report to the bug tracking system and it will notify you when it is done. Then it will show the URL of the bug report in the KDE bug tracking system, so that you can look at the report.") ),
+        Qt::escape( i18n("If the process fails, you can click Retry to try sending the bug report again.") ));
     
     m_textBrowser->setText( text );
     
@@ -101,7 +102,3 @@ void AboutBugReportingDialog::showSection( QString anchor )
     m_textBrowser->scrollToAnchor( anchor );
 }
 
-AboutBugReportingDialog::~AboutBugReportingDialog()
-{
-    delete m_textBrowser;
-}
