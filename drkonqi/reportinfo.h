@@ -38,7 +38,7 @@ class ReportInfo
     void setUserIsWillingToHelp ( bool isWillingToHelp ) { m_userIsWillingToHelp = isWillingToHelp; }
 
     BugzillaManager * getBZ() const { return m_bugzilla; }
-    BugReport getReport() const { return m_report; }
+    BugReport * getReport() { return &m_report; }
 
     void setDetailText( const QString & text ) { m_userDetailText = text; }
     void setPossibleDuplicate( const QString & bug ) { m_possibleDuplicate = bug; }

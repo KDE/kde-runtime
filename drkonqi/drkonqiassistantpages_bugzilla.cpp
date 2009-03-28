@@ -296,7 +296,7 @@ void BugzillaKeywordsPage::aboutToShow()
 void BugzillaKeywordsPage::aboutToHide()
 {
     //Save keywords (as short description of the future report)
-    reportInfo()->getReport().setShortDescription( m_keywordsEdit->text() );
+    reportInfo()->getReport()->setShortDescription( m_keywordsEdit->text() );
 }
 
 //END BugzillaKeywordsPage
@@ -582,7 +582,7 @@ void BugzillaDuplicatesPage::performSearch()
     const KrashConfig *krashConfig = DrKonqi::instance()->krashConfig();
     BacktraceParser *btParser = DrKonqi::instance()->backtraceGenerator()->parser();
 
-    reportInfo()->getBZ()->searchBugs( reportInfo()->getReport().shortDescription(), krashConfig->productName(), "crash", startDateStr, endDateStr , btParser->firstValidFunctions().join(" ") );
+    reportInfo()->getBZ()->searchBugs( reportInfo()->getReport()->shortDescription(), krashConfig->productName(), "crash", startDateStr, endDateStr , btParser->firstValidFunctions().join(" ") );
    
     //Test search
     //reportInfo()->getBZ()->searchBugs( "konqueror crash toggle mode", "konqueror", "crash", startDateStr, endDateStr , "caret" );
@@ -673,7 +673,7 @@ BugzillaInformationPage::BugzillaInformationPage( DrKonqiBugReport * parent )
 void BugzillaInformationPage::aboutToShow()
 {
     if( m_titleEdit->text().isEmpty() )
-        m_titleEdit->setText( reportInfo()->getReport().shortDescription() );
+        m_titleEdit->setText( reportInfo()->getReport()->shortDescription() );
         
     checkTexts(); //May be the options (canDetail) changed and we need to recheck
 }
@@ -743,7 +743,7 @@ bool BugzillaInformationPage::isComplete()
 void BugzillaInformationPage::aboutToHide()
 {
     //Save fields data
-    reportInfo()->getReport().setShortDescription( m_titleEdit->text() );
+    reportInfo()->getReport()->setShortDescription( m_titleEdit->text() );
     reportInfo()->setDetailText( m_detailsEdit->toPlainText() );
 }
 
