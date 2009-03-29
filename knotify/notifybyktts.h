@@ -29,15 +29,17 @@
 #include <QDBusInterface>
 
 class NotifyByKTTS : public KNotifyPlugin
-{ Q_OBJECT
-	public:
-		NotifyByKTTS(QObject *parent=0l);
-		virtual ~NotifyByKTTS();
-		
-		virtual QString optionName() { return "KTTS"; }
-		virtual void notify(int id , KNotifyConfig *config);
-	private:
-		QDBusInterface kspeech;
+{
+    Q_OBJECT
+public:
+    NotifyByKTTS(QObject *parent=0l);
+    virtual ~NotifyByKTTS();
+
+    virtual QString optionName() { return "KTTS"; }
+    virtual void notify(int id , KNotifyConfig *config);
+private:
+    QDBusInterface kspeech;
+    bool tryToStartKttsd;
 };
 
 #endif
