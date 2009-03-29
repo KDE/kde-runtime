@@ -17,16 +17,18 @@
    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
  */
-#include "notifybyktts.h" 
+#include "notifybyktts.h"
 #include <QtDBus/QtDBus>
 #include <QHash>
-
+#include <ktoolinvocation.h>
+#include <kmessagebox.h>
 #include <kmacroexpander.h>
-
+#include <klocale.h>
 #include "knotifyconfig.h"
 
-NotifyByKTTS::NotifyByKTTS(QObject *parent) : KNotifyPlugin(parent) , kspeech("org.kde.kttsd", "/KSpeech", "org.kde.KSpeech")
+NotifyByKTTS::NotifyByKTTS(QObject *parent) : KNotifyPlugin(parent),kspeech("org.kde.kttsd", "/KSpeech", "org.kde.KSpeech"), tryToStartKttsd( false )
 {
+    if( kspeech.isValid())
 	kspeech.call("setApplicationName", "KNotify");
 }
 
@@ -37,8 +39,26 @@ NotifyByKTTS::~NotifyByKTTS()
 
 void NotifyByKTTS::notify( int id, KNotifyConfig * config )
 {
-	QString say = config->readEntry( "KTTS" );
-	
+        if( !kspeech.isValid())
+        {
+            if (  tryToStartKttsd ) //don't try to restart it all the time.
+                return;
+            // If KTTSD not running, start it.
+            if (!QDBusConnection::sessionBus().interface()->isServiceRegistered("org.kde.kttsd"))
+            {
+                QString error;
+                if (KToolInvocation::startServiceByDesktopName("kttsd", QStringList(), &error))
+                {
+                    KMessageBox::error(0, i18n( "Starting KTTSD Failed"), error );
+                    tryToStartKttsd = true;
+                    return;
+                }
+                kspeech.call("setApplicationName", "KNotify");
+            }
+        }
+
+        QString say = config->readEntry( "KTTS" );
+
 	if (!say.isEmpty()) {
 		QHash<QChar,QString> subst;
 		subst.insert( 'e', config->eventid );
@@ -49,10 +69,10 @@ void NotifyByKTTS::notify( int id, KNotifyConfig * config )
 		subst.insert( 'm', config->text );
 		say = KMacroExpander::expandMacrosShellQuote( say, subst );
 	}
-	
+
 	if ( say.isEmpty() )
 		say = config->text; // fallback
-	
+
 	kspeech.call(QDBus::NoBlock, "say", say, 0);
 
 	finished(id);
