@@ -2,12 +2,26 @@
 <ui version="4.0">
  <class>ComponentChooser_UI</class>
  <widget class="QWidget" name="ComponentChooser_UI">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>427</width>
+    <height>192</height>
+   </rect>
+  </property>
   <layout class="QGridLayout">
    <property name="margin">
     <number>0</number>
    </property>
-   <item row="1" column="1">
+   <item row="2" column="1">
     <widget class="QGroupBox" name="GroupBox1">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="whatsThis">
       <string>Here you can change the component program. Components are programs that handle basic tasks, like the terminal emulator, the text editor and the email client. Different KDE applications sometimes need to invoke a console emulator, send a mail or display some text. To do so consistently, these applications always call the same components. You can choose here which programs these components are.</string>
      </property>
@@ -21,29 +35,7 @@
      </layout>
     </widget>
    </item>
-   <item row="0" column="1">
-    <widget class="QGroupBox" name="GroupBox2">
-     <property name="whatsThis">
-      <string>Here you can read a small description of the currently selected component. To change the selected component, click on the list to the left. To change the component program,  please choose it below.</string>
-     </property>
-     <property name="title">
-      <string>Component Description</string>
-     </property>
-     <layout class="QVBoxLayout">
-      <item>
-       <widget class="QLabel" name="ComponentDescription">
-        <property name="alignment">
-         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-        </property>
-        <property name="wordWrap">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item row="0" column="0" rowspan="2">
+   <item row="0" column="0" rowspan="3">
     <widget class="KListWidget" name="ServiceChooser">
      <property name="whatsThis">
       <string>&lt;qt&gt;
@@ -56,13 +48,29 @@
      </property>
     </widget>
    </item>
+   <item row="1" column="1">
+    <widget class="QLabel" name="ComponentDescription">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
  <customwidgets>
   <customwidget>
    <class>KListWidget</class>
    <extends>QListWidget</extends>
-   <header location="global">KDE/KListWidget</header>
+   <header>klistwidget.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
