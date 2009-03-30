@@ -32,6 +32,8 @@
 #include <kdirnotify.h>
 #include <kcharsets.h>
 
+#include <KRun>
+
 KNetAttach::KNetAttach( QWidget* parent )
     : Q3Wizard( parent ), Ui_KNetAttach()
 {
@@ -215,7 +217,7 @@ void KNetAttach::finished()
 	return;
     }
 
-    KToolInvocation::invokeBrowser(url.url());
+    KRun::runUrl(url, "inode/directory", this);
 
     QString name = _connectionName->text().trimmed();
 
