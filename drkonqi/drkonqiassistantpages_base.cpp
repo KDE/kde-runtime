@@ -67,7 +67,7 @@ CrashInformationPage::CrashInformationPage( DrKonqiBugReport * parent )
     connect( m_backtraceWidget, SIGNAL(stateChanged()) , this, SLOT(emitCompleteChanged()) );
     
     QLabel * subTitle = new QLabel(
-        i18n( "This page will fetch some useful information about the crash to generate a better bug report" )
+        i18n( "This page will generate some useful information about your crash. Developers need this in a bug report that is a crash." )
     );
     subTitle->setWordWrap( true ); 
     subTitle->setAlignment( Qt::AlignHCenter );
@@ -125,8 +125,8 @@ BugAwarenessPage::BugAwarenessPage( DrKonqiBugReport * parent )
     
     QLabel * detailLabel = 
         new QLabel(
-        i18n( "Including in your bug report what you were doing when the application crashed will help the developers "
-        "reproduce and fix the bug. <i>( Important details are: what you were doing in the application and documents you were using )</i>. If you have found a common pattern which causes this crash, you can try to write the steps to help the developers reproduce it and fix it." ) );
+        i18n( "If you can, that will help the developers "
+        "reproduce and fix the bug. <i>Examples of Details: Steps to take to reproduce the crash. Or what you were doing in the application. Does it happen every time? Does it crash on a particular url or document?</i>." ) );
         
     detailLabel->setWordWrap( true );
     canDetailLayout->addWidget( detailLabel );
@@ -241,26 +241,27 @@ void ConclusionPage::aboutToShow()
         case BacktraceParser::ReallyUseful:
         {
             needToReport = ( canDetails || willingToHelp );
-            report = i18n( "* The crash information is really useful and worth reporting" );
+            report = i18n( "* The generated crash information is very useful" );
             break;
         }
         case BacktraceParser::MayBeUseful:
         {
             needToReport = ( canDetails || willingToHelp );
-            report = i18n( "* The crash information lacks some details but may be useful" ) ;
+            report = i18n( "* The generated crash information lacks some details but may be still be useful" ) ;
             break;
         }
         case BacktraceParser::ProbablyUseless:
         {
             needToReport = ( canDetails && willingToHelp );
-            report = i18n( "* The crash information lacks a lot of important details and it is probably not really useful" );
+            report = i18n( "* The generated crash information lacks a lot of important details and it is probably not useful" ); //should we add "use your judgement"?
             break;
         }           
         case BacktraceParser::Useless:
         case BacktraceParser::InvalidUsefulness:
         {
             needToReport =  false;
-            report = i18n( "* The crash information is not really useful" ) ;
+            report = i18n( "* The generated crash information is not useful" ) ;
+	    /* TODO: Tell the user they can improve it, and offer a clear way for the user to go back to where they can reload the backtrace. This might be the only clear part of the bug report they can give after all. They should be encouraged to read the help, probably. This is all UI... */
      break;
         }
     }
@@ -288,7 +289,7 @@ void ConclusionPage::aboutToShow()
         if ( isBKO )
         {
             emitCompleteChanged();
-            m_explanationLabel->setText( i18n( "This application is supported in the KDE bug tracking system, press Next to start the report assistant" ) );
+            m_explanationLabel->setText( i18n( "This application's bugs are reported to the KDE bug tracker: press Next to start the report assistant" ) ); // string needs work: what assistant were they in, then? 
             
             reportMethod = i18n( "You need to file a new bug report, press Next to start the report assistant" );
             reportLink = i18nc( "address to report the bug", "You can manually report at %1", QLatin1String(KDE_BUGZILLA_URL) );
