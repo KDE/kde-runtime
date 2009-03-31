@@ -21,7 +21,7 @@
 #include "notifybyexecute.h"
 
 #include <QHash>
-#include <QProcess>
+#include <KProcess>
 
 #include "knotifyconfig.h"
 
@@ -59,8 +59,10 @@ void NotifyByExecute::notify( int id, KNotifyConfig * config )
 		QString execLine = KMacroExpander::expandMacrosShellQuote( command, subst );
 		if ( execLine.isEmpty() )
 			execLine = command; // fallback
-                //TODO fixme on WIN32
-		QProcess::startDetached( "/bin/sh", QStringList() << "-c" << execLine );
+                KProcess proc;
+		proc.setShellCommand(execLine.trimmed());
+		if(!proc.startDetached())
+			kDebug(300)<<"KNotify: Could not start process!";
 	}
 	
 	finish( id );
