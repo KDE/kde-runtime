@@ -58,7 +58,7 @@ const char ZONE_TAB_CACHE[] = "ZonetabCache";  // type of cached simulated zone.
 const char LOCAL_ZONE[]     = "LocalZone";     // name of local time zone
 
 
-KTimeZoned::KTimeZoned(QObject* parent, const QList<QVariant>&, l)
+KTimeZoned::KTimeZoned(QObject* parent, const QList<QVariant>& l)
   : KTimeZoneDBase(parent, l),
     mSource(0),
     mZonetabWatch(0),
