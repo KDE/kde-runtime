@@ -20,6 +20,7 @@
 */
 
 #include "ktimezoned.moc"
+#include "ktimezonedbase.moc"
 
 #include <climits>
 #include <cstdlib>
@@ -44,10 +45,6 @@
 #include <kpluginfactory.h>
 #include <kpluginloader.h>
 
-#ifdef Q_OS_WIN
-#include <Windows.h>
-#endif
-
 K_PLUGIN_FACTORY(KTimeZonedFactory,
                  registerPlugin<KTimeZoned>();
     )
@@ -62,7 +59,7 @@ const char LOCAL_ZONE[]     = "LocalZone";     // name of local time zone
 
 
 KTimeZoned::KTimeZoned(QObject* parent, const QList<QVariant>&)
-  : KDEDModule(parent),
+  : KTimeZoneDBase(parent),
     mSource(0),
     mZonetabWatch(0),
     mDirWatch(0)
@@ -78,14 +75,6 @@ KTimeZoned::~KTimeZoned()
     mZonetabWatch = 0;
     delete mDirWatch;
     mDirWatch = 0;
-}
-
-void KTimeZoned::initialize(bool reinit)
-{
-    // If we reach here, the module has already been constructed and therefore
-    // initialized. So only do anything if reinit is true.
-    if (reinit)
-        init(true);
 }
 
 void KTimeZoned::init(bool restart)
@@ -111,19 +100,7 @@ void KTimeZoned::init(bool restart)
     QString ztc      = group.readEntry(ZONE_TAB_CACHE, QString());
     mZoneTabCache    = (ztc == "Solaris") ? Solaris : NoCache;
 
-#ifdef Q_OS_WIN
-    // On Windows, HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Time Zones
-    // holds the time zone database. The TZI binary value is the TIME_ZONE_INFORMATION structure.
-
-    TIME_ZONE_INFORMATION tzinfo;
-    DWORD res =  GetTimeZoneInformation(&tzinfo);
-    if (res == TIME_ZONE_ID_INVALID) return; // hm
-    mLocalZone = QString::fromWCharArray(tzinfo.StandardName);
-    updateLocalZone();
-
-#else
     // For Unix, read zone.tab.
-
 
     QString oldZoneinfoDir = mZoneinfoDir;
     QString oldZoneTab     = mZoneTab;
@@ -181,7 +158,6 @@ void KTimeZoned::init(bool restart)
 
     // Find the local system time zone and set up file monitors to detect changes
     findLocalZone();
-#endif
 }
 
 // Check if the local zone has been updated, and if so, write the new
