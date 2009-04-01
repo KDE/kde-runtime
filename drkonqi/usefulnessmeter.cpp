@@ -35,9 +35,7 @@ UsefulnessMeter::UsefulnessMeter(QWidget * parent) :
     
     m_starPixmap = KIcon("favorites").pixmap( QSize(22,22) );
     m_disabledStarPixmap = KIcon("favorites").pixmap( QSize(22,22), QIcon::Disabled );
-    
     m_errorPixmap = KIcon("dialog-error").pixmap( QSize(22,22) );
-    m_perfectPixmap = KIcon("dialog-ok-apply").pixmap( QSize(22,22) );
 }
 
 void UsefulnessMeter::setUsefulness( BacktraceParser::Usefulness usefulness )
@@ -90,12 +88,6 @@ void UsefulnessMeter::paintEvent( QPaintEvent * event )
 
     switch( m_state )
     {
-        case BacktraceGenerator::Loaded:
-        {
-            if( m_star1 && m_star2 && m_star3 )
-                p.drawPixmap( QPoint(0,1) , m_perfectPixmap );
-            break;
-        }
         case BacktraceGenerator::Failed:
         case BacktraceGenerator::FailedToStart:
         {
@@ -103,6 +95,7 @@ void UsefulnessMeter::paintEvent( QPaintEvent * event )
             break;
         }
         case BacktraceGenerator::Loading:
+        case BacktraceGenerator::Loaded:
         default: 
             break;
     }
