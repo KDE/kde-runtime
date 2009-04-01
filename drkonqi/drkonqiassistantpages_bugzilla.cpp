@@ -668,6 +668,8 @@ BugzillaInformationPage::BugzillaInformationPage( DrKonqiBugReport * parent )
     layout->addWidget( new QLabel( i18n( "<strong>Notice:</strong> The crash information will be automatically integrated into the bug report" ) ) );
     
     setLayout( layout );
+    
+    checkTexts();
 }
 
 void BugzillaInformationPage::aboutToShow()
@@ -675,12 +677,17 @@ void BugzillaInformationPage::aboutToShow()
     if( m_titleEdit->text().isEmpty() )
         m_titleEdit->setText( reportInfo()->getReport()->shortDescription() );
         
+    bool showDetails = reportInfo()->getUserCanDetail();
+    m_detailsLabel->setVisible( showDetails );
+    m_detailsEdit->setVisible( showDetails );
+    
     checkTexts(); //May be the options (canDetail) changed and we need to recheck
 }
     
 void BugzillaInformationPage::checkTexts()
 {
-    bool ok = !(m_titleEdit->text().isEmpty() || m_detailsEdit->toPlainText().isEmpty() );
+    bool detailsNotOk = m_detailsEdit->isVisible() ? m_detailsEdit->toPlainText().isEmpty() : false;
+    bool ok = !(m_titleEdit->text().isEmpty() || detailsNotOk);
     
     if( ok != m_textsOK )
     {
@@ -695,7 +702,7 @@ bool BugzillaInformationPage::showNextPage()
     if( m_textsOK ) //not empty
     {
         bool titleShort = m_titleEdit->text().size() < 50;
-        bool detailsShort = m_detailsEdit->toPlainText().size() < 150;
+        bool detailsShort = m_detailsEdit->isVisible() ? (m_detailsEdit->toPlainText().size() < 150) : false;
         
         if ( titleShort || detailsShort )
         {
