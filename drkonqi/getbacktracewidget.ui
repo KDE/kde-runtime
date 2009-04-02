@@ -14,13 +14,16 @@
    <string notr="true" extracomment="This is an internal name that is never shown...">GetBacktraceWidget</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_4">
+   <property name="spacing">
+    <number>0</number>
+   </property>
    <property name="margin">
     <number>2</number>
    </property>
    <item>
     <layout class="QVBoxLayout" name="verticalLayout">
      <property name="spacing">
-      <number>4</number>
+      <number>0</number>
      </property>
      <item>
       <widget class="StatusWidget" name="m_statusWidget" native="true"/>
@@ -38,7 +41,7 @@
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_2">
        <property name="spacing">
-        <number>2</number>
+        <number>0</number>
        </property>
        <item>
         <widget class="KPushButton" name="m_reloadBacktraceButton">
@@ -70,6 +73,9 @@
      </item>
      <item>
       <layout class="QVBoxLayout" name="verticalLayout_2">
+       <property name="spacing">
+        <number>0</number>
+       </property>
        <property name="topMargin">
         <number>5</number>
        </property>
