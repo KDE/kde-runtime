@@ -27,43 +27,43 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************/
 
-#ifndef KRASHADAPTOR_H
-#define KRASHADAPTOR_H
+#ifndef DRKONQIADAPTOR__H
+#define DRKONQIADAPTOR__H
 
-#include <kaboutdata.h>
+#include <QtDBus/QDBusAbstractAdaptor>
 
-#include <QtDBus/QtDBus>
+class DrKonqi;
 
 /**
  * Provides information about a crashed process over dbus.
  *
  * @author Hamish Rodda <rodda@kde.org>
  */
-class KrashAdaptor : public QDBusAbstractAdaptor
+class DrKonqiAdaptor : public QDBusAbstractAdaptor
 {
-  Q_OBJECT
-  Q_CLASSINFO("D-Bus Interface", "org.kde.Krash")
+    Q_OBJECT
+    Q_CLASSINFO("D-Bus Interface", "org.kde.Krash")
 
-  public:
-    KrashAdaptor(QObject *parent);
-    virtual ~KrashAdaptor();
+    public:
+        DrKonqiAdaptor(QObject *parent);
+        virtual ~DrKonqiAdaptor();
 
-  public slots:
-    QString programName();
-    QByteArray appName();
-    int signalNumber();
-    int pid();
-    bool startedByKdeinit();
-    bool safeMode();
-    QString signalName();
-    QString signalText();
-    QString whatToDoText();
-    QString errorDescriptionText();
+    public slots:
+        QString programName();
+        QString appName();
+        int signalNumber();
+        int pid();
+        bool startedByKdeinit();
+        bool safeMode();
+        QString signalName();
 
-    Q_NOREPLY void registerDebuggingApplication(const QString& launchName);
+        Q_NOREPLY void registerDebuggingApplication(const QString& launchName);
 
-  signals:
-    void acceptDebuggingApplication();
+    signals:
+        void acceptDebuggingApplication();
+        
+    private:
+        DrKonqi *   m_drkonqiInstance;
 };
 
-#endif // KRASHADAPTOR_H
+#endif // DRKONQIADAPTOR__H

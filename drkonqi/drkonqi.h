@@ -39,11 +39,14 @@ public:
 
 signals:
     void debuggerRunning(bool running);
+    void newDebuggingApplication(const QString&);
+    void acceptDebuggingApplication();
 
 public slots:
     void restartCrashedApplication();
     void startDefaultExternalDebugger();
     void startCustomExternalDebugger();
+    void registerDebuggingApplication(const QString&);
 
 private slots:
     void stopAttachedProcess();

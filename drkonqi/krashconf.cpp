@@ -26,6 +26,7 @@
  *****************************************************************/
 
 #include "krashconf.h"
+
 #include <config-drkonqi.h>
 
 #include <kconfig.h>
@@ -49,10 +50,6 @@
 KrashConfig :: KrashConfig(QObject *parent)
     : QObject(parent)
 {
-#if 0
-  QDBusConnection::sessionBus().registerObject("/krashinfo", this);
-  new KrashAdaptor(this);
-#endif
   readConfig();
 }
 
@@ -60,18 +57,6 @@ KrashConfig :: ~KrashConfig()
 {
   delete m_aboutData;
 }
-
-#if 0
-void KrashConfig :: registerDebuggingApplication(const QString& launchName)
-{
-  emit newDebuggingApplication( launchName );
-}
-
-void KrashConfig :: acceptDebuggingApp()
-{
-  emit acceptDebuggingApplication();
-}
-#endif
 
 void KrashConfig :: readConfig()
 {

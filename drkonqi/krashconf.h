@@ -31,8 +31,6 @@
 #include <QObject>
 #include <KAboutData>
 
-//#include "krashadaptor.h"
-
 class KrashConfig : public QObject
 {
   Q_OBJECT
@@ -95,17 +93,6 @@ public:
         ExpansionUsageShell
     };
     void expandString(QString &str, ExpandStringUsage usage, const QString &tempFile = QString()) const;
-
-
-#if 0 //TODO move to DrKonqi and fix adaptor
-public Q_SLOTS:
-  void registerDebuggingApplication(const QString& launchName);
-public:
-  void acceptDebuggingApp();
-Q_SIGNALS:
-  void newDebuggingApplication(const QString& launchName);
-  void acceptDebuggingApplication();
-#endif
 
 private:
   void readConfig();

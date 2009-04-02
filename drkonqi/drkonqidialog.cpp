@@ -47,14 +47,15 @@ DrKonqiDialog::DrKonqiDialog( QWidget * parent ) :
     m_backtraceWidget(0)
 {
     connect( DrKonqi::instance(), SIGNAL(debuggerRunning(bool)), this, SLOT(enableDebugMenu(bool)) );
-    //connect( krashConfig, SIGNAL(newDebuggingApplication(QString)), SLOT(slotNewDebuggingApp(QString))); //FIXME
+    connect( DrKonqi::instance(), SIGNAL(newDebuggingApplication(QString)), SLOT(slotNewDebuggingApp(QString)));
     
     //Setting dialog title and icon
     setCaption( DrKonqi::instance()->krashConfig()->programName() );
     setWindowIcon( KIcon("tools-report-bug") );
 
     m_tabWidget = new KTabWidget( this );
-    m_tabWidget->setMinimumSize( QSize(600, 300) );
+    //m_tabWidget->setMinimumSize( QSize(600, 300) );
+    //m_tabWidget->setTabPosition( QTabWidget::South );
     setMainWidget( m_tabWidget );
     
     connect( m_tabWidget, SIGNAL(currentChanged(int)), this, SLOT(tabIndexChanged(int)) );
@@ -63,10 +64,12 @@ DrKonqiDialog::DrKonqiDialog( QWidget * parent ) :
     m_tabWidget->addTab( m_introWidget, i18nc("tab header", "General") );
     
     m_backtraceWidget = new GetBacktraceWidget(DrKonqi::instance()->backtraceGenerator());
+    m_backtraceWidget->setMinimumSize( QSize(575,240) );
     m_backtraceWidget->layout()->setContentsMargins( 5,5,5,5 );
-    m_tabWidget->addTab( m_backtraceWidget, i18nc("tab header", "Advanced (Backtrace)") );
+    m_tabWidget->addTab( m_backtraceWidget, i18nc("tab header", "Developer Information") );
     
     buildDialogOptions();
+    //setButtonsOrientation( Qt::Vertical );
     
     resize( minimumSize() );
 }
@@ -82,18 +85,18 @@ void DrKonqiDialog::buildMainWidget()
     const KrashConfig * krashConfig = DrKonqi::instance()->krashConfig();
     
     //Main widget components
-    QLabel * title = new QLabel( i18nc( "applicationName closed unexpectedly", "<title>%1 closed unexpectedly</title>", krashConfig->programName() ) );
+    QLabel * title = new QLabel( i18nc( "applicationName closed unexpectedly", "<para>We are sorry, %1 closed unexpectedly.</para>", krashConfig->programName() ) );
     title->setWordWrap( true ); 
     
     QLabel * infoLabel = new QLabel( i18nc("Small explanation of the crash cause",
-    "<para>This probably happened because there is a bug in the application.</para><para>You can help us improve KDE by reporting this crash.<nl /><link url=\"#aboutbugreporting\">Learn more about bug reporting</link>.</para><para><strong>Note:</strong> It is safe to close this dialog. If you do not want to, you do not have to file a bug report.</para>" ) );
+    "<para>You can help us improve KDE by reporting this error.<nl /><a href=\"#aboutbugreporting\">Learn more about bug reporting</a></para><para>It is safe to close this dialog if you do not want to report</para>" ) );
     connect( infoLabel, SIGNAL(linkActivated(QString)), this, SLOT(aboutBugReporting(QString)));
     infoLabel->setWordWrap( true ); 
     
     //Main widget layout
     QVBoxLayout * introLayout = new QVBoxLayout;
     introLayout->setSpacing( 10 );
-    introLayout->setContentsMargins( 10, 10, 10, 10 );
+    introLayout->setContentsMargins( 8,8,8,8 );
     
     QHBoxLayout * horizontalLayout = new QHBoxLayout();
     
@@ -104,7 +107,7 @@ void DrKonqiDialog::buildMainWidget()
     
     QLabel * iconLabel = new QLabel();
     iconLabel->setSizePolicy( QSizePolicy::Maximum, QSizePolicy::Maximum );
-    iconLabel->setPixmap( KIcon("dialog-error").pixmap( QSize(64,64) ) ); //TODO choose better icon
+    iconLabel->setPixmap( QPixmap( KStandardDirs::locate("appdata", QLatin1String("pics/crash.png")) ) ); //TODO choose better icon
     horizontalLayout->addWidget( iconLabel );
     
     introLayout->addLayout( horizontalLayout );
@@ -112,7 +115,7 @@ void DrKonqiDialog::buildMainWidget()
 
     //Details
     introLayout->addWidget( new QLabel("<strong>Details:</strong>") );
-    introLayout->addWidget( new QLabel(  i18n( "<ul><li>Executable: %1</li><li>PID: %2</li><li>Signal: %3 (%4)</li></ul>",krashConfig->appName(), krashConfig->pid(), krashConfig->signalNumber(), krashConfig->signalName() ) ) );
+    introLayout->addWidget( new QLabel(  i18n( "<para>Executable: %1 PID: %2 Signal: %3 (%4)</para>",krashConfig->appName(), krashConfig->pid(), krashConfig->signalNumber(), krashConfig->signalName() ) ) );
     
     //Introduction widget
     m_introWidget = new QWidget( this );

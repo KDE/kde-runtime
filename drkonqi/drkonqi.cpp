@@ -40,9 +40,13 @@
     * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 #include "drkonqi.h"
+
 #include "krashconf.h"
+#include "drkonqiadaptor.h"
 #include "detachedprocessmonitor.h"
 #include "backtracegenerator.h"
+
+#include <QtDBus/QDBusConnection>
 
 #include <QTimer>
 
@@ -74,6 +78,8 @@ struct DrKonqi::Private
 DrKonqi::DrKonqi()
     : QObject(), d(new Private)
 {
+    QDBusConnection::sessionBus().registerObject("/krashinfo", this);
+    new DrKonqiAdaptor(this);
 }
 
 DrKonqi::~DrKonqi()
@@ -254,7 +260,7 @@ void DrKonqi::startDefaultExternalDebugger()
 
 void DrKonqi::startCustomExternalDebugger()
 {
-    //TODO
+    emit acceptDebuggingApplication();
 }
 
 void DrKonqi::stopAttachedProcess()
@@ -285,6 +291,11 @@ void DrKonqi::debuggerStopped()
     d->m_state = ProcessRunning;
     stopAttachedProcess();
     emit debuggerRunning(false);
+}
+
+void DrKonqi::registerDebuggingApplication(const QString& launchName)
+{
+    emit newDebuggingApplication( launchName );
 }
 
 #include "drkonqi.moc"
