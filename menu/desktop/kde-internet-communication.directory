@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Type=Directory
 Name=Communication
+Name[el]=Επικοινωνίες
 Name[et]=Suhtlemine
 Name[ga]=Cumarsáid
 Name[ja]=コミュニケーション
