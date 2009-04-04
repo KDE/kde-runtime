@@ -61,12 +61,12 @@ DrKonqiDialog::DrKonqiDialog( QWidget * parent ) :
     connect( m_tabWidget, SIGNAL(currentChanged(int)), this, SLOT(tabIndexChanged(int)) );
     
     buildMainWidget();
-    m_tabWidget->addTab( m_introWidget, i18nc("tab header", "General") );
+    m_tabWidget->addTab( m_introWidget, i18nc("tab header", "&General") );
     
     m_backtraceWidget = new GetBacktraceWidget(DrKonqi::instance()->backtraceGenerator());
     m_backtraceWidget->setMinimumSize( QSize(575,240) );
     m_backtraceWidget->layout()->setContentsMargins( 5,5,5,5 );
-    m_tabWidget->addTab( m_backtraceWidget, i18nc("tab header", "Developer Information") );
+    m_tabWidget->addTab( m_backtraceWidget, i18nc("tab header", "&Developer Information") );
     
     buildDialogOptions();
     //setButtonsOrientation( Qt::Vertical );

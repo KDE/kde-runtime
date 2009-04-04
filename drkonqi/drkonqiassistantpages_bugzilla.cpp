@@ -522,7 +522,7 @@ void BugzillaDuplicatesPage::bugFetchFinished( BugReport report )
                 }
                 
                 QString text = 
-                QString( "<strong>%1:</strong> %2<br />" ).arg( i18n("Bug ID"), report.bugNumberAsInt() ) +
+                QString( "<strong>%1:</strong> %2<br />" ).arg( i18n("Bug ID"), report.bugNumber() ) +
                 QString( "<strong>%1:</strong> %2/%3<br />" ).arg( i18nc("Product name at bugzilla","Product"), report.product(), report.component() ) +
                 QString( "<strong>%1:</strong> %2<br />" ).arg( i18n("Short Description"), report.shortDescription() ) +
                 QString( "<strong>%1:</strong> %2<br />" ).arg( i18n("Status"), report.bugStatus() ) +
