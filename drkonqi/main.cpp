@@ -25,7 +25,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************/
 
-//#include <config-runtime.h>
+#include <config-runtime.h>
 
 #include <stdlib.h>
 #include <unistd.h>
@@ -35,67 +35,79 @@
 #include <kaboutdata.h>
 #include <klocale.h>
 #include <kdefakes.h>
+#include <kstartupinfo.h>
 
-#include "drkonqi.h"
-#include "drkonqidialog.h"
+#include "krashconf.h"
+#include "toplevel.h"
 
-static const char version[] = "1.9";
+static const char version[] = "1.0";
 static const char description[] = I18N_NOOP( "KDE crash handler gives the user feedback if a program crashed" );
 
 int main( int argc, char* argv[] )
 {
 #ifndef Q_OS_WIN //krazy:exclude=cpp
-// Drop privs.
-setgid(getgid());
-if (setuid(getuid()) < 0 && geteuid() != getuid())
-    exit (255);
+  // Drop privs.
+  setgid(getgid());
+  if (setuid(getuid()) < 0 && geteuid() != getuid())
+     exit (255);
 #endif
 
-    // Make sure that DrKonqi doesn't start DrKonqi when it crashes :-]
-    setenv("KDE_DEBUG", "true", 1);
+  // Make sure that DrKonqi doesn't start DrKonqi when it crashes :-]
+  setenv("KDE_DEBUG", "true", 1);
+  unsetenv("SESSION_MANAGER");
 
-    KAboutData aboutData( "drkonqi", 0, ki18n("The KDE Crash Handler"),
-                            version, ki18n(description),
-                            KAboutData::License_GPL,
-                            ki18n("(C) 2000-2009, The DrKonqi Authors"));
-    aboutData.addAuthor(ki18n("Hans Petter Bieker"), KLocalizedString(), "bieker@kde.org");
-    aboutData.addAuthor(ki18n("Dario Andres Rodriguez"), KLocalizedString(), "andresbajotierra@gmail.com");
-    aboutData.addAuthor(ki18n("George Kiagiadakis"), KLocalizedString(), "gkiagia@users.sourceforge.net");
-    aboutData.setProgramIconName("tools-report-bug");
+  KAboutData aboutData( "drkonqi", 0,
+                        ki18n("The KDE Crash Handler"),
+                        version,
+                        ki18n(description),
+                        KAboutData::License_BSD,
+                        ki18n("(C) 2000-2003, Hans Petter Bieker"));
+  aboutData.addAuthor(ki18n("Hans Petter Bieker"), KLocalizedString(), "bieker@kde.org");
+  aboutData.setProgramIconName("tools-report-bug");
 
-    KCmdLineArgs::init(argc, argv, &aboutData);
+  KCmdLineArgs::init(argc, argv, &aboutData);
 
-    KCmdLineOptions options;
-    options.add("signal <number>", ki18n("The signal number that was caught"));
-    options.add("appname <name>", ki18n("Name of the program"));
-    options.add("apppath <path>", ki18n("Path to the executable"));
-    options.add("appversion <version>", ki18n("The version of the program"));
-    options.add("bugaddress <address>", ki18n("The bug address to use"));
-    options.add("programname <name>", ki18n("Translated name of the program"));
-    options.add("pid <pid>", ki18n("The PID of the program"));
-    options.add("startupid <id>", ki18n("Startup ID of the program"));
-    options.add("kdeinit", ki18n("The program was started by kdeinit"));
-    options.add("safer", ki18n("Disable arbitrary disk access"));
-    KCmdLineArgs::addCmdLineOptions( options );
+  KCmdLineOptions options;
+  options.add("signal <number>", ki18n("The signal number that was caught"));
+  options.add("appname <name>", ki18n("Name of the program"));
+  options.add("apppath <path>", ki18n("Path to the executable"));
+  options.add("appversion <version>", ki18n("The version of the program"));
+  options.add("bugaddress <address>", ki18n("The bug address to use"));
+  options.add("programname <name>", ki18n("Translated name of the program"));
+  options.add("pid <pid>", ki18n("The PID of the program"));
+  options.add("startupid <id>", ki18n("Startup ID of the program"));
+  options.add("kdeinit", ki18n("The program was started by kdeinit"));
+  options.add("safer", ki18n("Disable arbitrary disk access"));
+  KCmdLineArgs::addCmdLineOptions( options );
 
-    KComponentData inst(KCmdLineArgs::aboutData());
-    QApplication *qa =
-        KCmdLineArgs::parsedArgs()->isSet("safer") ?
-        new QApplication(KCmdLineArgs::qtArgc(), KCmdLineArgs::qtArgv()) :
-        new KApplication;
-    qa->setApplicationName(inst.componentName());
+  KComponentData inst(KCmdLineArgs::aboutData());
 
-    if ( !DrKonqi::instance()->init() )
-        return 1;
+  KrashConfig krashconf;
 
-    int ret;
-    {
-        DrKonqiDialog w;
-        w.show();
-        ret = qa->exec();
-    }
+  QApplication *qa =
+    krashconf.safeMode() ?
+      new QApplication(KCmdLineArgs::qtArgc(), KCmdLineArgs::qtArgv()) :
+      new KApplication;
+  qa->setApplicationName(inst.componentName());
 
-    DrKonqi::instance()->cleanup();
-    delete qa;
-    return ret;
+  KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
+  QString startup_id( args->getOption( "startupid" ));
+  if (!startup_id.isEmpty())
+  { // stop startup notification
+#ifdef Q_WS_X11
+    KStartupInfoId id;
+    id.initId( startup_id.toLocal8Bit() );
+    KStartupInfo::sendFinish( id );
+#endif
+  }
+
+  int ret;
+  {
+    Toplevel w(&krashconf);
+    ret = w.exec();
+  }
+
+  delete qa;
+
+  return ret;
 }

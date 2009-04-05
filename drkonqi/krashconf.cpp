@@ -27,8 +27,6 @@
 
 #include "krashconf.h"
 
-#include <config-drkonqi.h>
-
 #include <kconfig.h>
 #include <kconfiggroup.h>
 #include <kglobal.h>
@@ -36,26 +34,31 @@
 #include <kcmdlineargs.h>
 #include <klocale.h>
 #include <kdebug.h>
-#include <kstartupinfo.h>
 #include <kmacroexpander.h>
 
 #include <QHash>
 #include <QtDBus/QtDBus>
 
-#ifdef HAVE_STRSIGNAL
-# include <clocale>
-# include <cstring>
-#endif
-
-KrashConfig :: KrashConfig(QObject *parent)
-    : QObject(parent)
+KrashConfig :: KrashConfig()
 {
+  QDBusConnection::sessionBus().registerObject("/krashinfo", this);
+  new KrashAdaptor(this);
   readConfig();
 }
 
 KrashConfig :: ~KrashConfig()
 {
   delete m_aboutData;
+}
+
+void KrashConfig :: registerDebuggingApplication(const QString& launchName)
+{
+  emit newDebuggingApplication( launchName );
+}
+
+void KrashConfig :: acceptDebuggingApp()
+{
+  emit acceptDebuggingApplication();
 }
 
 void KrashConfig :: readConfig()
@@ -81,30 +84,15 @@ void KrashConfig :: readConfig()
                                KLocalizedString(), KLocalizedString(), 0,
                                args->getOption("bugaddress").toUtf8());
 
-  QString startup_id( args->getOption( "startupid" ));
-  if (!startup_id.isEmpty())
-  { // stop startup notification
-#ifdef Q_WS_X11
-    KStartupInfoId id;
-    id.initId( startup_id.toLocal8Bit() );
-    KStartupInfo::sendFinish( id );
-#endif
-  }
-
-  //load user settings
   KConfigGroup config(KGlobal::config(), "drkonqi");
-  m_showdebugger = config.readEntry("ShowDebugButton", false);
-  m_debuggerName = config.readEntry("Debugger", QString("gdb"));
 
-  //for compatibility with drkonqi 1.0, if "ShowDebugButton" is not specified in the config
-  //and the old "ConfigName" key exists and is set to "developer", we show the debug button.
-  if (!config.hasKey("ShowDebugButton") &&
-      config.readEntry("ConfigName") == "developer")
-  {
-      m_showdebugger = true;
-  }
+  // maybe we should check if it's relative?
+  QString configname = config.readEntry("ConfigName",
+                                        QString("enduser"));
 
-  //load debugger information from config file
+  m_debuggerName = config.readEntry("Debugger",
+                                           QString("gdb"));
+
   KConfig debuggers(QString::fromLatin1("debuggers/%1rc").arg(m_debuggerName),
                     KConfig::NoGlobals, "appdata" );
   const KConfigGroup generalGroup = debuggers.group("General");
@@ -113,35 +101,43 @@ void KrashConfig :: readConfig()
   m_debuggerBatchCommand = generalGroup.readPathEntry("ExecBatch", QString());
   m_tryExec = generalGroup.readPathEntry("TryExec", QString());
   m_backtraceCommand = generalGroup.readEntry("BacktraceCommand");
-}
+  m_removeFromBacktraceRegExp = generalGroup.readEntry("RemoveFromBacktraceRegExp");
+  m_invalidStackFrameRegExp = generalGroup.readEntry("InvalidStackFrameRegExp");
+  m_frameRegExp = generalGroup.readEntry("FrameRegExp");
+  m_neededInValidBacktraceRegExp = generalGroup.readEntry("NeededInValidBacktraceRegExp");
+  m_kcrashRegExp = generalGroup.readEntry("KCrashRegExp");
 
-QString KrashConfig::signalName() const
-{
-#ifdef HAVE_STRSIGNAL
-    const char * oldLocale = std::setlocale(LC_MESSAGES, "C");
-    const char *name = strsignal(m_signalnum);
-    std::setlocale(LC_MESSAGES, oldLocale);
-    return QString::fromLocal8Bit(name != NULL ? name : "Unknown");
-#else
-    switch(m_signalnum) {
-        case 4: return QString("SIGILL");
-        case 6: return QString("SIGABRT");
-        case 8: return QString("SIGFPE");
-        case 11: return QString("SIGSEGV");
-        default: return QString("Unknown");
-    }
-#endif
-}
+  KConfig preset(QString::fromLatin1("presets/%1rc").arg(configname),
+                 KConfig::NoGlobals, "appdata" );
 
-bool KrashConfig::isKDEBugzilla() const
-{
-    return getReportLink() == QLatin1String( "submit@bugs.kde.org" );
-}
+  const KConfigGroup errorDescrGroup = preset.group("ErrorDescription");
+  if (errorDescrGroup.readEntry("Enable", false), true)
+    m_errorDescriptionText = errorDescrGroup.readEntry("Name");
 
-bool KrashConfig::isReportMail() const
-{
-    QString link = getReportLink();
-    return link.contains('@') && link != QLatin1String( "submit@bugs.kde.org" );
+  const KConfigGroup whatToDoGroup = preset.group("WhatToDoHint");
+  if (whatToDoGroup.readEntry("Enable", false))
+    m_whatToDoText = whatToDoGroup.readEntry("Name");
+
+  const KConfigGroup presetGeneralGroup = preset.group("General");
+  m_showbugreport = presetGeneralGroup.readEntry("ShowBugReportButton", false);
+  m_showdebugger = m_showbacktrace = m_pid != 0;
+  if (m_showbacktrace)
+  {
+    m_showbacktrace = presetGeneralGroup.readEntry("ShowBacktraceButton", true);
+    m_showdebugger = presetGeneralGroup.readEntry("ShowDebugButton", true);
+  }
+  m_disablechecks = presetGeneralGroup.readEntry("DisableChecks", false);
+
+  bool b = presetGeneralGroup.readEntry("SignalDetails", true);
+
+  QString str = QString::number(m_signalnum);
+  // use group unknown if signal not found
+  if (!preset.hasGroup(str))
+    str = QLatin1String("unknown");
+  const KConfigGroup signalGroup = preset.group(str);
+  m_signalName = signalGroup.readEntry("Name");
+  if (b)
+    m_signalText = signalGroup.readEntry("Comment");
 }
 
 // replace some of the strings
