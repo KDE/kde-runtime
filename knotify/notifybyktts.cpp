@@ -1,5 +1,6 @@
 /*
    Copyright (C) 2007 by Olivier Goffart <ogoffart at kde.org>
+   Copyright (C) 2009 by Laurent Montel <montel@kde.org>
 
 
    This program is free software; you can redistribute it and/or modify
@@ -26,10 +27,8 @@
 #include <klocale.h>
 #include "knotifyconfig.h"
 
-NotifyByKTTS::NotifyByKTTS(QObject *parent) : KNotifyPlugin(parent),kspeech("org.kde.kttsd", "/KSpeech", "org.kde.KSpeech"), tryToStartKttsd( false )
+NotifyByKTTS::NotifyByKTTS(QObject *parent) : KNotifyPlugin(parent),m_kspeech(0), tryToStartKttsd( false )
 {
-    if( kspeech.isValid())
-	kspeech.call("setApplicationName", "KNotify");
 }
 
 
@@ -37,9 +36,18 @@ NotifyByKTTS::~NotifyByKTTS()
 {
 }
 
+void NotifyByKTTS::setupKttsd()
+{
+    m_kspeech = new org::kde::KSpeech("org.kde.kttsd", "/KSpeech", QDBusConnection::sessionBus());
+    m_kspeech->setParent(this);
+    m_kspeech->setApplicationName("KNotify");
+    connect( QDBusConnection::sessionBus().interface(), SIGNAL( serviceUnregistered( const QString & ) ), this, SLOT( slotServiceUnregistered( const QString & ) ) );
+    connect( QDBusConnection::sessionBus().interface(), SIGNAL( serviceOwnerChanged( const QString &, const QString &, const QString & ) ), this, SLOT( slotServiceOwnerChanged( const QString &, const QString &, const QString & ) ) );
+}
+
 void NotifyByKTTS::notify( int id, KNotifyConfig * config )
 {
-        if( !kspeech.isValid())
+        if( !m_kspeech)
         {
             if (  tryToStartKttsd ) //don't try to restart it all the time.
                 return;
@@ -53,8 +61,8 @@ void NotifyByKTTS::notify( int id, KNotifyConfig * config )
                     tryToStartKttsd = true;
                     return;
                 }
-                kspeech.call("setApplicationName", "KNotify");
             }
+            setupKttsd();
         }
 
         QString say = config->readEntry( "KTTS" );
@@ -73,9 +81,37 @@ void NotifyByKTTS::notify( int id, KNotifyConfig * config )
 	if ( say.isEmpty() )
 		say = config->text; // fallback
 
-	kspeech.call(QDBus::NoBlock, "say", say, 0);
+	m_kspeech->call(QDBus::NoBlock, "say", say, 0);
 
 	finished(id);
+}
+
+
+void NotifyByKTTS::slotServiceUnregistered( const QString &service )
+{
+  if ( service == QLatin1String( "org.kde.kttsd" ) )
+  {
+    removeSpeech();
+  }
+
+}
+
+void NotifyByKTTS::slotServiceOwnerChanged( const QString &service, const QString &, const QString &newOwner )
+{
+  if ( service == QLatin1String( "org.kde.kttsd" ) && newOwner.isEmpty() )
+  {
+    removeSpeech();
+  }
+}
+
+void NotifyByKTTS::removeSpeech()
+{
+    tryToStartKttsd = false;
+    disconnect( QDBusConnection::sessionBus().interface(), 0, this, 0 );
+
+    delete m_kspeech;
+    m_kspeech = 0;
+
 }
 
 #include "notifybyktts.moc"

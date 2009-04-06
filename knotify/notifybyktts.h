@@ -1,6 +1,6 @@
 /*
    Copyright (C) 2007 by Olivier Goffart <ogoffart at kde.org>
-
+   Copyright (C) 2009 by Laurent Montel <montel@kde.org>
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -25,8 +25,7 @@
 
 #include "knotifyplugin.h"
 
-
-#include <QDBusInterface>
+#include "kspeechinterface.h"
 
 class NotifyByKTTS : public KNotifyPlugin
 {
@@ -37,8 +36,14 @@ public:
 
     virtual QString optionName() { return "KTTS"; }
     virtual void notify(int id , KNotifyConfig *config);
+private slots:
+    void slotServiceUnregistered( const QString & );
+    void slotServiceOwnerChanged( const QString &, const QString &, const QString & );
 private:
-    QDBusInterface kspeech;
+    void removeSpeech();
+    void setupKttsd();
+private:
+    org::kde::KSpeech *m_kspeech;
     bool tryToStartKttsd;
 };
 
