@@ -37,7 +37,6 @@ public:
     virtual QString optionName() { return "KTTS"; }
     virtual void notify(int id , KNotifyConfig *config);
 private slots:
-    void slotServiceUnregistered( const QString & );
     void slotServiceOwnerChanged( const QString &, const QString &, const QString & );
 private:
     void removeSpeech();

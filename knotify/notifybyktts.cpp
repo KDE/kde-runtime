@@ -41,7 +41,6 @@ void NotifyByKTTS::setupKttsd()
     m_kspeech = new org::kde::KSpeech("org.kde.kttsd", "/KSpeech", QDBusConnection::sessionBus());
     m_kspeech->setParent(this);
     m_kspeech->setApplicationName("KNotify");
-    connect( QDBusConnection::sessionBus().interface(), SIGNAL( serviceUnregistered( const QString & ) ), this, SLOT( slotServiceUnregistered( const QString & ) ) );
     connect( QDBusConnection::sessionBus().interface(), SIGNAL( serviceOwnerChanged( const QString &, const QString &, const QString & ) ), this, SLOT( slotServiceOwnerChanged( const QString &, const QString &, const QString & ) ) );
 }
 
@@ -86,15 +85,6 @@ void NotifyByKTTS::notify( int id, KNotifyConfig * config )
 	finished(id);
 }
 
-
-void NotifyByKTTS::slotServiceUnregistered( const QString &service )
-{
-  if ( service == QLatin1String( "org.kde.kttsd" ) )
-  {
-    removeSpeech();
-  }
-
-}
 
 void NotifyByKTTS::slotServiceOwnerChanged( const QString &service, const QString &, const QString &newOwner )
 {
