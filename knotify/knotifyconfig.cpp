@@ -101,23 +101,7 @@ QImage KNotifyImage::toImage()
 	{
 		if (source.size() > 4) // no way an image can fit in less than 4 bytes
 		{
-			//Compatibility with KDE <= 4.2   find the 'magic' QDataStream image header
-			const char *data = source.constData();
-			if(data[0] == 0 && data[1] == 0 && data[2] == 0 && data[3] == 0)
-			{
-				//null image
-				image = QImage();
-			}
-			else  if(data[0] == 0 && data[1] == 0 && data[2] == 0 && data[3] == 1)
-			{
-				//KDE <= 4.2 compatibility   the data used to be streamed in a datastream
-				QDataStream in(source);
-				in >> image;
-			}
-			else
-			{
-				image.loadFromData(source);
-			}
+			image.loadFromData(source);
 		}
 		dirty = false;
 	}
