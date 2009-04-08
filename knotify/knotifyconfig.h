@@ -41,6 +41,15 @@ class KNotifyImage
 		bool isNull() {
 			return dirty ? source.isEmpty() : image.isNull();
 		}
+		QByteArray data() {
+			if (source.size() > 4) {
+				//compatibility with KDE <= 4.2,  the data used to be streamed with a QDataStream
+				const char *data = source.constData();
+				if(data[0] == 0 && data[1] == 0 && data[2] == 0 && data[3] == 1)
+					return source.mid(4); //skip the first quint32 header.
+			}
+			return source;
+		}
 	private:
 		QByteArray source;
 		QImage image;

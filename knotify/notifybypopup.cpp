@@ -401,20 +401,12 @@ void NotifyByPopup::sendNotificationDBus(int id, int replacesId, KNotifyConfig* 
 
 	args.append( actionList ); // actions
 
-        QVariantMap map;
+	QVariantMap map;
+	// let's see if we've got an image, and store the image in the hints map
+	if (!config->image.isNull())
+		map["image_data"] = config->image.data();
 
-        // let's see if we've got an image, and store the image in the hints map
-        QImage image = config->image.toImage();
-        if (!image.isNull()) {
-            QByteArray imageData;
-            QBuffer buffer(&imageData);
-            buffer.open(QIODevice::WriteOnly);
-            image.save(&buffer, "PNG");
-
-            map["image_data"] = imageData;
-        }
-
-	args.append( map ); // hints - unused atm
+	args.append( map ); // hints
 	args.append( timeout ); // expire timout
 
 	m.setArguments( args );
