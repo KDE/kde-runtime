@@ -103,7 +103,7 @@ class BugAwarenessPage: public DrKonqiAssistantPage
        
     private:
         QCheckBox * m_canDetailCheckBox;
-        QCheckBox * m_willingToHelpCheckBox;
+        QCheckBox * m_developersCanContactReporterCheckBox;
 };
 
 /** Conclusions page **/

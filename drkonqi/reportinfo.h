@@ -34,8 +34,8 @@ class ReportInfo
     bool getUserCanDetail() const { return m_userCanDetail; }
     void setUserCanDetail( bool canDetail ) { m_userCanDetail = canDetail; }
     
-    bool getUserIsWillingToHelp() const { return m_userIsWillingToHelp; }
-    void setUserIsWillingToHelp ( bool isWillingToHelp ) { m_userIsWillingToHelp = isWillingToHelp; }
+    bool getDevelopersCanContactReporter() const { return m_developersCanContactReporter; }
+    void setDevelopersCanContactReporter ( bool canContact ) { m_developersCanContactReporter = canContact; }
 
     BugzillaManager * getBZ() const { return m_bugzilla; }
     BugReport * getReport() { return &m_report; }
@@ -60,7 +60,7 @@ class ReportInfo
     mutable QString     m_LSBRelease;
 
     bool                m_userCanDetail;
-    bool                m_userIsWillingToHelp;
+    bool                m_developersCanContactReporter;
     
     BugzillaManager *   m_bugzilla;
     BugReport           m_report;

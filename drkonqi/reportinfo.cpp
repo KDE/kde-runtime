@@ -30,7 +30,7 @@
 ReportInfo::ReportInfo()
 {
     m_userCanDetail = false;
-    m_userIsWillingToHelp = false;
+    m_developersCanContactReporter = false;
     m_bugzilla = new BugzillaManager();
 }
 

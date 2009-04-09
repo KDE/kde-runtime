@@ -73,7 +73,12 @@ void BugzillaManager::tryLogin()
 {
     if ( !m_logged )
     {
-        QByteArray postData = QByteArray("GoAheadAndLogIn=1&Bugzilla_login=") + QUrl::toPercentEncoding(m_username) + QByteArray("&Bugzilla_password=") + QUrl::toPercentEncoding(m_password) + QByteArray("&log_in=Log+in");
+        QByteArray postData = 
+            QByteArray("GoAheadAndLogIn=1&Bugzilla_login=") + 
+            QUrl::toPercentEncoding(m_username) + 
+            QByteArray("&Bugzilla_password=") + 
+            QUrl::toPercentEncoding(m_password) + 
+            QByteArray("&log_in=Log+in");
         
         KIO::StoredTransferJob * loginJob = 
             KIO::storedHttpPost( postData, KUrl( QString(bugtrackerBaseUrl) + QString(loginUrl) ), KIO::HideProgressInfo );

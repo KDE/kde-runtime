@@ -1,7 +1,7 @@
 /*****************************************************************
  * drkonqi - The KDE Crash Handler
  *
- * krashdcopinterface.h
+ * drkonqiadaptor.h
  *
  * Copyright (C) 2003 Hamish Rodda <rodda@kde.org>
  *

@@ -135,24 +135,24 @@ BugAwarenessPage::BugAwarenessPage( DrKonqiBugReport * parent )
     canDetailLayout->addWidget( m_canDetailCheckBox );
     
     //User is willing to help layout
-    QVBoxLayout * willingToHelpLayout = new QVBoxLayout();
+    QVBoxLayout * developersCanContactReporterLayout = new QVBoxLayout();
     
-    QLabel * willingToHelpQuestionLabel = new QLabel( i18n( "<strong>Are you willing to help the developers?</strong>" ) );
-    willingToHelpLayout->addWidget( willingToHelpQuestionLabel );
+    QLabel * developersCanContactReporterQuestionLabel = new QLabel( i18n( "<strong>Can the developers contact you for more information if required</strong>" ) );
+    developersCanContactReporterLayout->addWidget( developersCanContactReporterQuestionLabel );
     
-    QLabel * willingToHelpLabel = 
-        new QLabel( i18n( "Sometimes, while the report is being investigated, the developers need more information from the reporter in order to fix the bug." ) );
-    willingToHelpLabel->setWordWrap( true );
-    willingToHelpLayout->addWidget( willingToHelpLabel );
+    QLabel * developersCanContactReporterLabel = 
+        new QLabel( i18n( "Sometimes, while the bug is being investigated, the developers need more information from the reporter in order to fix the bug." ) );
+    developersCanContactReporterLabel->setWordWrap( true );
+    developersCanContactReporterLayout->addWidget( developersCanContactReporterLabel );
     
-    m_willingToHelpCheckBox = new QCheckBox( i18n( "Yes, I am willing to help the developers" ) );
-    willingToHelpLayout->addWidget( m_willingToHelpCheckBox );
+    m_developersCanContactReporterCheckBox = new QCheckBox( i18n( "Yes, developers can contact me for more information if required" ) );
+    developersCanContactReporterLayout->addWidget( m_developersCanContactReporterCheckBox );
     
     //Main layout
     QVBoxLayout * layout = new QVBoxLayout();
     layout->setSpacing( 8 );
     layout->addLayout( canDetailLayout );
-    layout->addLayout( willingToHelpLayout );
+    layout->addLayout( developersCanContactReporterLayout );
     layout->addStretch();
     setLayout( layout );
 }
@@ -161,7 +161,7 @@ void BugAwarenessPage::aboutToHide()
 {
     //Save data
     reportInfo()->setUserCanDetail( m_canDetailCheckBox->checkState() == Qt::Checked );
-    reportInfo()->setUserIsWillingToHelp( m_willingToHelpCheckBox->checkState() == Qt::Checked );
+    reportInfo()->setDevelopersCanContactReporter( m_developersCanContactReporterCheckBox->checkState() == Qt::Checked );
 }
 
 //END BugAwarenessPage
@@ -228,66 +228,82 @@ void ConclusionPage::aboutToShow()
     needToReport = false;
     emitCompleteChanged();
 
-    QString report;
+    QString conclusionsHTML;
     
     const KrashConfig * krashConfig = DrKonqi::instance()->krashConfig();
     BacktraceParser::Usefulness use = DrKonqi::instance()->backtraceGenerator()->parser()->backtraceUsefulness();
     bool canDetails = reportInfo()->getUserCanDetail();
-    bool willingToHelp = reportInfo()->getUserIsWillingToHelp();
+    bool developersCanContactReporter = reportInfo()->getDevelopersCanContactReporter();
     
-    // Estimate needToReport
+    // Calculate needToReport
     switch( use )
     {
         case BacktraceParser::ReallyUseful:
         {
-            needToReport = ( canDetails || willingToHelp );
-            report = i18n( "* The generated crash information is very useful" );
+            needToReport = ( canDetails || developersCanContactReporter );
+            conclusionsHTML = i18n( "* The automatically generated crash information is very useful." );
             break;
         }
         case BacktraceParser::MayBeUseful:
         {
-            needToReport = ( canDetails || willingToHelp );
-            report = i18n( "* The generated crash information lacks some details but may be still be useful" ) ;
+            needToReport = ( canDetails || developersCanContactReporter );
+            conclusionsHTML = i18n( "* The automatically generated crash information lacks some details but may be still be useful." ) ;
             break;
         }
         case BacktraceParser::ProbablyUseless:
         {
-            needToReport = ( canDetails && willingToHelp );
-            report = i18n( "* The generated crash information lacks a lot of important details and it is probably not useful" ); //should we add "use your judgement"?
+            needToReport = ( canDetails && developersCanContactReporter );
+            conclusionsHTML = i18n( "* The automatically generated crash information lacks a lot of important details and it is probably not useful." ); //should we add "use your judgement"?
             break;
         }           
         case BacktraceParser::Useless:
         case BacktraceParser::InvalidUsefulness:
         {
             needToReport =  false;
-            report = i18n( "* The generated crash information is not useful" ) ;
-	    /* TODO: Tell the user they can improve it, and offer a clear way for the user to go back to where they can reload the backtrace. This might be the only clear part of the bug report they can give after all. They should be encouraged to read the help, probably. This is all UI... */
-     break;
+            conclusionsHTML = i18n( "* The automatically generated crash information is not useful." ) ;
+            /* TODO: Tell the user they can improve it, and offer a clear way for the user to go back to where they can reload the backtrace. This might be the only clear part of the bug report they can give after all. They should be encouraged to read the help, probably. This is all UI... */
+            break;
         }
     }
     
-    //User can provide details
-    report.append( QLatin1String( "<br />" ) );
+    //"Can the developers contact you for more information if required"
+    
+    //User can provide details / is Willing to help
+    conclusionsHTML.append( QLatin1String( "<br />" ) );
     if( canDetails )
-        report += i18n( "* You can explain in detail what were you doing when the application crashed" );
+    {
+        if( developersCanContactReporter )
+        {
+            conclusionsHTML += i18n( "You can explain in detail what were you doing when the application crashed and the developers can contact you for more information if required." );
+        }
+        else
+        {
+            conclusionsHTML += i18n( "You can explain in detail what were you doing when the application crashed but the developers can not contact you for more information if required" );
+        }
+    }
     else
-        report += i18n( "* You are not sure what were you doing when the application crashed" ) ;
-        
-    //User is willing to help
-    report.append( QLatin1String( "<br />" ) );
-    if( willingToHelp )
-        report += i18n( "* You are willing to help the developers" );
-    else
-        report += i18n( "* You are not willing to help the developers" );
-        
+    {
+        if( developersCanContactReporter )
+        {
+            conclusionsHTML += i18n( "You are not sure what were you doing when the application crashed but the developers can contact you for more information if required." ) ;
+        }
+        else
+        {
+            conclusionsHTML += i18n( "You are not sure what were you doing when the application crashed and the developers can not contact you for more information if required." ) ;
+        }
+    }
+    
     if ( needToReport )
     {
+        conclusionsHTML += QString("<br /><strong>%1</strong>").arg( i18n( "This is considered helpful for the application developer" ) );
+        
         QString reportMethod;
         QString reportLink;
         
-        m_reportButton->setVisible( !isBKO );
         if ( isBKO )
         {
+            m_reportButton->setVisible( false );
+            
             emitCompleteChanged();
             m_explanationLabel->setText( i18n( "This application's bugs are reported to the KDE bug tracker: press Next to start the report assistant" ) ); // string needs work: what assistant were they in, then? 
             
@@ -296,6 +312,8 @@ void ConclusionPage::aboutToShow()
         }
         else
         {
+            m_reportButton->setVisible( true );
+            
             m_explanationLabel->setText( i18n( "<strong>Notice:</strong> This application is not supported in the KDE Bugtracker, you need to report the bug to the maintainer" ) );
             
             reportMethod = i18n( "You need to file a new bug report with the following information:" );
@@ -311,32 +329,35 @@ void ConclusionPage::aboutToShow()
             }
         }
         
-        report += QString("<br /><strong>%1</strong><br />%2<br /><br />--------<br /><br />%3").arg( i18n( "This crash is worth reporting" ), reportMethod, reportInfo()->generateReportTemplate() );
+        conclusionsHTML += QString("<br />%1").arg( reportMethod );
+        conclusionsHTML += QString("<br /><br />--------<br /><br />%1").arg( reportInfo()->generateReportTemplate() );
         
-        report += QString("<br /><br />") + reportLink;
+        conclusionsHTML += QString("<br /><br />") + reportLink;
     }
-    else
+    else // (needToReport)
     {
         m_reportButton->setVisible( false );
         
-        report += QString("<br /><strong>%1</strong><br />%2<br />--------<br /><br />%3").arg( i18n( "This crash is not worth reporting" ), i18n( "However, you can report it on your own if you want, using the following information:" ), reportInfo()->generateReportTemplate() );
+        conclusionsHTML += QString("<br /><strong>%1</strong>").arg( i18n( "This is not considered helpful for the application developer and therefore the automated bug reporting process is not enabled for this crash. However, you can report it on your own if you want, using the following information: " ) );
         
-        report.append( QString( "<br /><br />" ) );
+        conclusionsHTML += QString("<br />--------<br /><br />%1").arg( reportInfo()->generateReportTemplate() );
+        
+        conclusionsHTML.append( QString( "<br /><br />" ) );
         if ( krashConfig->isKDEBugzilla() )
         {
-            report += i18nc( "address to report the bug", "Report at %1", QLatin1String(KDE_BUGZILLA_URL) );
+            conclusionsHTML += i18nc( "address to report the bug", "Report at %1", QLatin1String(KDE_BUGZILLA_URL) );
             m_explanationLabel->setText( i18n( "This application is supported in the KDE bug tracking system. You can report this bug at %1",  QLatin1String(KDE_BUGZILLA_URL) ) );
         }
         else
         {
-            report += i18nc( "address(mail or web) to report the bug", "Report at %1", krashConfig->getReportLink() );
+            conclusionsHTML += i18nc( "address(mail or web) to report the bug", "Report at %1", krashConfig->getReportLink() );
             m_explanationLabel->setText( i18n( "This application is not supported in the KDE bug tracking system. You can report this bug to its maintainer : <i>%1</i>", krashConfig->getReportLink() ) );
         }
         
         emit finished(true);
     }
     
-    m_reportEdit->setHtml( report );
+    m_reportEdit->setHtml( conclusionsHTML );
 }
 
 bool ConclusionPage::isComplete()
