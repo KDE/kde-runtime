@@ -44,9 +44,10 @@ void CfgBrowser::defaults()
 }
 
 
-void CfgBrowser::load(KConfig *) {
-    KConfigGroup config(KSharedConfig::openConfig("kdeglobals"), "General");
-    QString exec = config.readEntry("BrowserApplication");
+void CfgBrowser::load(KConfig *) 
+{
+    KConfigGroup config(KSharedConfig::openConfig("kdeglobals"), QLatin1String("General") );
+    QString exec = config.readPathEntry( QLatin1String("BrowserApplication"), QString("") );
     if (exec.isEmpty())
     {
         radioKIO->setChecked(true);
@@ -78,7 +79,7 @@ void CfgBrowser::load(KConfig *) {
 
 void CfgBrowser::save(KConfig *)
 {
-    KConfigGroup config(KSharedConfig::openConfig("kdeglobals"), "General");
+    KConfigGroup config(KSharedConfig::openConfig("kdeglobals"), QLatin1String("General") );
     QString exec;
     if (radioExec->isChecked())
     {
@@ -88,7 +89,7 @@ void CfgBrowser::save(KConfig *)
         else
             exec = '!' + exec; // Literal command
     }
-    config.writePathEntry("BrowserApplication", exec, KConfig::Normal|KConfig::Global);
+    config.writePathEntry( QLatin1String("BrowserApplication"), exec); // KConfig::Normal|KConfig::Global
     config.sync();
 
     KGlobalSettings::self()->emitChange(KGlobalSettings::SettingsChanged);
