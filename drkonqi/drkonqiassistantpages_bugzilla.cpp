@@ -97,12 +97,6 @@ bool BugzillaLoginPage::isComplete()
     return reportInfo()->getBZ()->getLogged();
 }
 
-/*
-void BugzillaLoginPage::progress( KJob*, unsigned long percent )
-{
-    //qDebug() << "progress" << percent;
-}
-*/
 void BugzillaLoginPage::loginError( QString err )
 {
     loginFinished( false );
@@ -732,8 +726,6 @@ bool BugzillaInformationPage::showNextPage()
                 return true; //Allow to continue
             }
         }
-        
-        
         else {
             return true;
         }

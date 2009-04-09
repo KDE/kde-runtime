@@ -274,28 +274,28 @@ void ConclusionPage::aboutToShow()
     {
         if( developersCanContactReporter )
         {
-            conclusionsHTML += i18n( "You can explain in detail what were you doing when the application crashed and the developers can contact you for more information if required." );
+            conclusionsHTML += i18n( "* You can explain in detail what were you doing when the application crashed and the developers can contact you for more information if required." );
         }
         else
         {
-            conclusionsHTML += i18n( "You can explain in detail what were you doing when the application crashed but the developers can not contact you for more information if required" );
+            conclusionsHTML += i18n( "* You can explain in detail what were you doing when the application crashed but the developers can not contact you for more information if required." );
         }
     }
     else
     {
         if( developersCanContactReporter )
         {
-            conclusionsHTML += i18n( "You are not sure what were you doing when the application crashed but the developers can contact you for more information if required." ) ;
+            conclusionsHTML += i18n( "* You are not sure what were you doing when the application crashed but the developers can contact you for more information if required." ) ;
         }
         else
         {
-            conclusionsHTML += i18n( "You are not sure what were you doing when the application crashed and the developers can not contact you for more information if required." ) ;
+            conclusionsHTML += i18n( "* You are not sure what were you doing when the application crashed and the developers can not contact you for more information if required." ) ;
         }
     }
     
     if ( needToReport )
     {
-        conclusionsHTML += QString("<br /><strong>%1</strong>").arg( i18n( "This is considered helpful for the application developer" ) );
+        conclusionsHTML += QString("<br /><strong>%1</strong>").arg( i18n( "This is considered helpful for the application developer." ) );
         
         QString reportMethod;
         QString reportLink;
@@ -305,16 +305,16 @@ void ConclusionPage::aboutToShow()
             m_reportButton->setVisible( false );
             
             emitCompleteChanged();
-            m_explanationLabel->setText( i18n( "This application's bugs are reported to the KDE bug tracker: press Next to start the report assistant" ) ); // string needs work: what assistant were they in, then? 
+            m_explanationLabel->setText( i18n( "This application's bugs are reported to the KDE bug tracker: press Next to start the report assistant." ) ); // string needs work: what assistant were they in, then? 
             
-            reportMethod = i18n( "You need to file a new bug report, press Next to start the report assistant" );
+            reportMethod = i18n( "You need to file a new bug report, press Next to start the report assistant." );
             reportLink = i18nc( "address to report the bug", "You can manually report at %1", QLatin1String(KDE_BUGZILLA_URL) );
         }
         else
         {
             m_reportButton->setVisible( true );
             
-            m_explanationLabel->setText( i18n( "<strong>Notice:</strong> This application is not supported in the KDE Bugtracker, you need to report the bug to the maintainer" ) );
+            m_explanationLabel->setText( i18n( "<strong>Notice:</strong> This application is not supported in the KDE Bugtracker, you need to report the bug to the maintainer." ) );
             
             reportMethod = i18n( "You need to file a new bug report with the following information:" );
             reportLink =  i18nc( "address(mail or web) to report the bug", "You can manually report at %1", krashConfig->getReportLink() );
