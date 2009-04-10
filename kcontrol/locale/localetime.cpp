@@ -285,7 +285,11 @@ KLocaleConfigTime::KLocaleConfigTime(KLocale *_locale,
     connect (m_comboWeekDayOfPray, SIGNAL(activated(int)),
              this, SLOT(slotWeekDayOfPrayChanged(int)));
 
-    lay->addRow(fGr,wGr);
+    QHBoxLayout * horizontalLayout = new QHBoxLayout();
+    horizontalLayout->addWidget( fGr );
+    horizontalLayout->addWidget( wGr );
+    
+    lay->addRow( horizontalLayout );
 
     updateWeekDayNames();
 }
