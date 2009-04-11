@@ -12,16 +12,19 @@ if(MINGW)
         DEPENDS ${WINDRES_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/kdecm.rc
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     )
-else(MINGW)
-    set(contextsrc ${contextsrc} kdecm.rc kdecm.def)
-endif(MINGW)
 
+    add_definitions(-DUNICODE)
+else(MINGW)
+    set(contextsrc ${contextsrc} kdecm.rc)
+endif(MINGW)
+set(contextsrc ${contextsrc} kdecm.def)
 add_library( kdecm SHARED ${contextsrc} )
 
 if(MINGW)
     set_target_properties(kdecm PROPERTIES LINK_FLAGS "-Wl,--kill-at")
 endif(MINGW)
 
-target_link_libraries(kdecm ole32 comctl32 uuid)
 
-install(TARGETS kdecm ${INSTALL_TARGETS_DEFAULT_ARGS})
+target_link_libraries(kdecm ole32 comctl32 uuid ${QT_QTCORE_LIBRARY} ${QT_QTDBUS_LIBRARY} ${KDE4_KDECORE_LIBS})
+
+install(TARGETS kdecm DESTINATION bin)

@@ -1,16 +1,16 @@
 //---------------------------------------------------------------------------
 // Copyright 2002-2008 Andre Burgaud <andre@burgaud.com>
-// See license.txt
-// $Id: kdecm.h 497 2008-12-07 03:17:37Z andre $
+// Copyright 2009 Patrick Spendrin <ps_ml@gmx.de>
 //---------------------------------------------------------------------------
 
 //---------------------------------------------------------------------------
 // kdecm.h
 //---------------------------------------------------------------------------
 
-//{e625d5d9-f8d4-470e-8050-1dca2665c01a}
+//{72619BBF-9859-4015-B0B3-84D7A0363F00}
+
 DEFINE_GUID(CLSID_ShellExtension,
-            0xe625d5d9, 0xf8d4, 0x470e, 0x80, 0x50, 0x1d, 0xca, 0x26, 0x65, 0xc0, 0x1a);
+            0x72619BBF, 0x9859, 0x4015, 0xB0, 0xB3, 0x84, 0xD7, 0xA0, 0x36, 0x3F, 0x00);
 
 class CShellExtClassFactory : public IClassFactory {
 protected:
@@ -32,18 +32,10 @@ class CShellExt : public IContextMenu, IShellExtInit {
 public:
 protected:
   ULONG m_cRef;
+  HBITMAP m_hKdeLogoBmp;
   UINT m_cbFiles;
   STGMEDIUM m_stgMedium;
   LPDATAOBJECT m_pDataObj;
-  HBITMAP m_hSciteBmp;
-  LPMALLOC m_pAlloc;
-  TCHAR m_szDllDir [MAX_PATH];
-
-  STDMETHODIMP InvokeSciTE(HWND hParent,
-    LPCSTR pszWorkingDir,
-    LPCSTR pszCmd,
-    LPCSTR pszParam,
-    int iShowCmd);
 
 public:
   CShellExt();
