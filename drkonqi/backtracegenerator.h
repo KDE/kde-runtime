@@ -36,43 +36,49 @@ class BacktraceParser;
 
 class BacktraceGenerator : public QObject
 {
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-  enum State { NotLoaded, Loading, Loaded, Failed, FailedToStart };
+    enum State { NotLoaded, Loading, Loaded, Failed, FailedToStart };
 
-  BacktraceGenerator(const KrashConfig *krashconf, QObject *parent);
-  ~BacktraceGenerator();
+    BacktraceGenerator(const KrashConfig *krashconf, QObject *parent);
+    ~BacktraceGenerator();
 
-  State state() const { return m_state; }
-  BacktraceParser *parser() const { return m_parser; }
-  QString backtrace() const { return m_parsedBacktrace; }
+    State state() const {
+        return m_state;
+    }
+    BacktraceParser *parser() const {
+        return m_parser;
+    }
+    QString backtrace() const {
+        return m_parsedBacktrace;
+    }
 
 public Q_SLOTS:
-  bool start();
+    bool start();
 
 Q_SIGNALS:
-  void starting();
-  void newLine(const QString &str); // emitted for every line
-  void someError();
-  void failedToStart();
-  void done();
+    void starting();
+    void newLine(const QString &str); // emitted for every line
+    void someError();
+    void failedToStart();
+    void done();
 
 private Q_SLOTS:
-  void slotProcessExited(int exitCode, QProcess::ExitStatus exitStatus);
-  void slotReadInput();
+    void slotProcessExited(int exitCode, QProcess::ExitStatus exitStatus);
+    void slotReadInput();
 
 private:
-  const KrashConfig * const m_krashconf;
-  KProcess *        m_proc;
-  KTemporaryFile *  m_temp;
-  QByteArray        m_output;
-  State             m_state;
-  BacktraceParser * m_parser;
-  QString           m_parsedBacktrace;
+    const KrashConfig * const m_krashconf;
+    KProcess *        m_proc;
+    KTemporaryFile *  m_temp;
+    QByteArray        m_output;
+    State             m_state;
+    BacktraceParser * m_parser;
+    QString           m_parsedBacktrace;
 
 #ifdef BACKTRACE_PARSER_DEBUG
-  BacktraceParser * m_debugParser;
+    BacktraceParser * m_debugParser;
 #endif
 };
 #endif

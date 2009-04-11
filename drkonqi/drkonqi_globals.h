@@ -26,7 +26,7 @@ class KGuiItem2 : public KGuiItem
 {
 public:
     inline KGuiItem2(const QString &text, const KIcon &icon, const QString &toolTip)
-        : KGuiItem(text,icon,toolTip,toolTip) {}
+            : KGuiItem(text, icon, toolTip, toolTip) {}
 };
 
 /* Urls are defined globally here, so that they can change easily */

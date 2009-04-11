@@ -1,20 +1,20 @@
 /*******************************************************************
 * bugzillalib.cpp
 * Copyright  2009    Dario Andres Rodriguez <andresbajotierra@gmail.com>
-* 
+*
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License as
-* published by the Free Software Foundation; either version 2 of 
+* published by the Free Software Foundation; either version 2 of
 * the License, or (at your option) any later version.
-* 
+*
 * This program is distributed in the hope that it will be useful,
 * but WITHOUT ANY WARRANTY; without even the implied warranty of
 * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 * GNU General Public License for more details.
-* 
+*
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-* 
+*
 ******************************************************************/
 
 #include "bugzillalib.h"
@@ -56,13 +56,13 @@ static const char fetchBugUrl[] = "show_bug.cgi?id=%1&ctype=xml";
 static const char sendReportUrl[] = "post_bug.cgi";
 
 BugzillaManager::BugzillaManager():
-    QObject(),
-    m_logged(false),
-    fetchBugJob(0)
+        QObject(),
+        m_logged(false),
+        fetchBugJob(0)
 {
 }
 
-void BugzillaManager::setLoginData( QString _username, QString _password )
+void BugzillaManager::setLoginData(QString _username, QString _password)
 {
     m_username = _username;
     m_password = _password;
@@ -71,217 +71,192 @@ void BugzillaManager::setLoginData( QString _username, QString _password )
 
 void BugzillaManager::tryLogin()
 {
-    if ( !m_logged )
-    {
-        QByteArray postData = 
-            QByteArray("GoAheadAndLogIn=1&Bugzilla_login=") + 
-            QUrl::toPercentEncoding(m_username) + 
-            QByteArray("&Bugzilla_password=") + 
-            QUrl::toPercentEncoding(m_password) + 
+    if (!m_logged) {
+        QByteArray postData =
+            QByteArray("GoAheadAndLogIn=1&Bugzilla_login=") +
+            QUrl::toPercentEncoding(m_username) +
+            QByteArray("&Bugzilla_password=") +
+            QUrl::toPercentEncoding(m_password) +
             QByteArray("&log_in=Log+in");
-        
-        KIO::StoredTransferJob * loginJob = 
-            KIO::storedHttpPost( postData, KUrl( QString(bugtrackerBaseUrl) + QString(loginUrl) ), KIO::HideProgressInfo );
-        connect( loginJob, SIGNAL(finished(KJob*)) , this, SLOT(loginDone(KJob*)) );
+
+        KIO::StoredTransferJob * loginJob =
+            KIO::storedHttpPost(postData, KUrl(QString(bugtrackerBaseUrl) + QString(loginUrl)), KIO::HideProgressInfo);
+        connect(loginJob, SIGNAL(finished(KJob*)) , this, SLOT(loginDone(KJob*)));
 
         loginJob->addMetaData("content-type", "Content-Type: application/x-www-form-urlencoded");
     }
 }
 
-void BugzillaManager::loginDone( KJob* job )
+void BugzillaManager::loginDone(KJob* job)
 {
-    if( !job->error() )
-    {
+    if (!job->error()) {
         KIO::StoredTransferJob * loginJob = (KIO::StoredTransferJob *)job;
         QByteArray response = loginJob->data();
-        
+
         bool error = false;
-        if( response.contains( QByteArray("The username or password you entered is not valid") ) )
-        {
+        if (response.contains(QByteArray("The username or password you entered is not valid"))) {
             m_logged = false;
-        }
-        else
-        {
-            if ( response.contains( QByteArray("Managing Your Account") ) && response.contains( QByteArray("Log out") ) )
-            {
+        } else {
+            if (response.contains(QByteArray("Managing Your Account")) && response.contains(QByteArray("Log out"))) {
                 m_logged = true;
-            }
-            else
-            {
+            } else {
                 m_logged = false;
                 error = true;
             }
         }
-        
-        if( error )
-            emit loginError( i18n( "Unknown response from the server" ) );
+
+        if (error)
+            emit loginError(i18n("Unknown response from the server"));
         else
-            emit loginFinished( m_logged );
-    }
-    else
-    {
-        emit loginError( job->errorString() );
+            emit loginFinished(m_logged);
+    } else {
+        emit loginError(job->errorString());
     }
 }
 
-void BugzillaManager::fetchBugReport( int bugnumber )
+void BugzillaManager::fetchBugReport(int bugnumber)
 {
-    KUrl url = KUrl( QString(bugtrackerBaseUrl) + QString(fetchBugUrl).arg( bugnumber ) );
-    
-    if ( fetchBugJob ) //Stop previous fetchBugJob
-    {
-        disconnect( fetchBugJob );
+    KUrl url = KUrl(QString(bugtrackerBaseUrl) + QString(fetchBugUrl).arg(bugnumber));
+
+    if (fetchBugJob) { //Stop previous fetchBugJob
+        disconnect(fetchBugJob);
         fetchBugJob->kill();
         fetchBugJob = 0;
     }
 
-    fetchBugJob = KIO::storedGet( url, KIO::Reload, KIO::HideProgressInfo);
-    connect( fetchBugJob, SIGNAL(finished(KJob*)) , this, SLOT(fetchBugReportDone(KJob*)) );
+    fetchBugJob = KIO::storedGet(url, KIO::Reload, KIO::HideProgressInfo);
+    connect(fetchBugJob, SIGNAL(finished(KJob*)) , this, SLOT(fetchBugReportDone(KJob*)));
 }
 
-void BugzillaManager::fetchBugReportDone( KJob* job )
+void BugzillaManager::fetchBugReportDone(KJob* job)
 {
-    if( !job->error() )
-    {
+    if (!job->error()) {
         KIO::StoredTransferJob * fetchBugJob = (KIO::StoredTransferJob *)job;
-        
-        BugReportXMLParser * parser = new BugReportXMLParser( fetchBugJob->data() );
+
+        BugReportXMLParser * parser = new BugReportXMLParser(fetchBugJob->data());
         BugReport report = parser->parse();
-        
-        if( parser->isValid() )
-        {
-            emit bugReportFetched( report );
+
+        if (parser->isValid()) {
+            emit bugReportFetched(report);
         } else {
-            emit bugReportError( i18n( "Invalid bug report: corrupted data" ) );
+            emit bugReportError(i18n("Invalid bug report: corrupted data"));
         }
-        
+
         delete parser;
+    } else {
+        emit bugReportError(job->errorString());
     }
-    else
-    {
-        emit bugReportError( job->errorString() );
-    }
-    
+
     fetchBugJob = 0;
 }
 
-void BugzillaManager::searchBugs( QString words, QString product, QString severity, QString date_start, QString date_end, QString comment )
+void BugzillaManager::searchBugs(QString words, QString product, QString severity, QString date_start, QString date_end, QString comment)
 {
-    QString url = QString(bugtrackerBaseUrl) + QString(searchUrl).arg( words.replace(' ' , '+'), product, comment, date_start,  date_end, severity, QString(columns));
+    QString url = QString(bugtrackerBaseUrl) + QString(searchUrl).arg(words.replace(' ' , '+'), product, comment, date_start,  date_end, severity, QString(columns));
 
-    KIO::StoredTransferJob * searchBugsJob = KIO::storedGet( KUrl(url) , KIO::Reload, KIO::HideProgressInfo);
-    connect( searchBugsJob, SIGNAL(finished(KJob*)) , this, SLOT(searchBugsDone(KJob*)) );
+    KIO::StoredTransferJob * searchBugsJob = KIO::storedGet(KUrl(url) , KIO::Reload, KIO::HideProgressInfo);
+    connect(searchBugsJob, SIGNAL(finished(KJob*)) , this, SLOT(searchBugsDone(KJob*)));
 }
 
-void BugzillaManager::searchBugsDone( KJob * job )
+void BugzillaManager::searchBugsDone(KJob * job)
 {
-    if( !job->error() )
-    {
+    if (!job->error()) {
         KIO::StoredTransferJob * searchBugsJob = (KIO::StoredTransferJob *)job;
-        
-        BugListCSVParser * parser = new BugListCSVParser( searchBugsJob->data() );
+
+        BugListCSVParser * parser = new BugListCSVParser(searchBugsJob->data());
         BugMapList list = parser->parse();
 
-        if( parser->isValid() )
-            emit searchFinished( list );
+        if (parser->isValid())
+            emit searchFinished(list);
         else
-            emit searchError( i18n( "Invalid bug list: corrupted data" ) );
-        
+            emit searchError(i18n("Invalid bug list: corrupted data"));
+
         delete parser;
-    }
-    else
-    {
-        emit searchError( job->errorString() );
+    } else {
+        emit searchError(job->errorString());
     }
 }
 
-void BugzillaManager::sendReport( BugReport report )
+void BugzillaManager::sendReport(BugReport report)
 {
-    QByteArray postData = generatePostDataForReport( report );
-    
-    QString url = QString( bugtrackerBaseUrl ) + QString( sendReportUrl );
-    
-    KIO::StoredTransferJob * sendJob = 
-            KIO::storedHttpPost( postData, KUrl( url ), KIO::HideProgressInfo );
-    
-    connect( sendJob, SIGNAL(finished(KJob*)) , this, SLOT(sendReportDone(KJob*)) );
-    
+    QByteArray postData = generatePostDataForReport(report);
+
+    QString url = QString(bugtrackerBaseUrl) + QString(sendReportUrl);
+
+    KIO::StoredTransferJob * sendJob =
+        KIO::storedHttpPost(postData, KUrl(url), KIO::HideProgressInfo);
+
+    connect(sendJob, SIGNAL(finished(KJob*)) , this, SLOT(sendReportDone(KJob*)));
+
     sendJob->addMetaData("content-type", "Content-Type: application/x-www-form-urlencoded");
     sendJob->start();
 }
 
-QByteArray BugzillaManager::generatePostDataForReport( BugReport report )
+QByteArray BugzillaManager::generatePostDataForReport(BugReport report)
 {
-    QByteArray postData = 
-        QByteArray("product=") + 
-        QUrl::toPercentEncoding(report.product()) + 
-        QByteArray("&version=unspecified&component=") +  
+    QByteArray postData =
+        QByteArray("product=") +
+        QUrl::toPercentEncoding(report.product()) +
+        QByteArray("&version=unspecified&component=") +
         QUrl::toPercentEncoding(report.component()) +
         QByteArray("&bug_severity=") +
-        QUrl::toPercentEncoding(report.bugSeverity()) + 
-        QByteArray("&rep_platform=") +  
-        QUrl::toPercentEncoding(QString("Unlisted Binaries")) + 
-        QByteArray("&op_sys=") + 
-        QUrl::toPercentEncoding(report.operatingSystem()) + 
-        QByteArray("&priority=") + 
-        QUrl::toPercentEncoding(report.priority()) + 
-        QByteArray("&bug_status=") + 
-        QUrl::toPercentEncoding(report.bugStatus()) + 
-        QByteArray("&short_desc=") + 
-        QUrl::toPercentEncoding(report.shortDescription()) + 
-        QByteArray("&comment=") + 
+        QUrl::toPercentEncoding(report.bugSeverity()) +
+        QByteArray("&rep_platform=") +
+        QUrl::toPercentEncoding(QString("Unlisted Binaries")) +
+        QByteArray("&op_sys=") +
+        QUrl::toPercentEncoding(report.operatingSystem()) +
+        QByteArray("&priority=") +
+        QUrl::toPercentEncoding(report.priority()) +
+        QByteArray("&bug_status=") +
+        QUrl::toPercentEncoding(report.bugStatus()) +
+        QByteArray("&short_desc=") +
+        QUrl::toPercentEncoding(report.shortDescription()) +
+        QByteArray("&comment=") +
         QUrl::toPercentEncoding(report.description());
-    
+
     return postData;
 }
 
-void BugzillaManager::sendReportDone( KJob * job )
+void BugzillaManager::sendReportDone(KJob * job)
 {
-    if( !job->error() )
-    {
+    if (!job->error()) {
         KIO::StoredTransferJob * sendJob = (KIO::StoredTransferJob *)job;
         QString response = sendJob->data();
 
         QRegExp reg("<title>Bug (\\d+) Submitted</title>");
-        int pos = reg.indexIn( response );
-        if( pos != -1 )
-        {
+        int pos = reg.indexIn(response);
+        if (pos != -1) {
             int bug_id = reg.cap(1).toInt();
-            emit reportSent( bug_id );
-        }
-        else
-        {
+            emit reportSent(bug_id);
+        } else {
             QString error;
-            
+
             QRegExp reg("<td id=\"error_msg\" class=\"throw_error\">(.+)</td>");
-            response.remove('\r');response.remove('\n');
-            pos = reg.indexIn( response );
-            if( pos != -1 )
+            response.remove('\r'); response.remove('\n');
+            pos = reg.indexIn(response);
+            if (pos != -1)
                 error = reg.cap(1).trimmed();
             else
-                error = i18n( "Unknown error" );
+                error = i18n("Unknown error");
 
-            if( error.contains( QLatin1String("does not exist or you aren't authorized to") ) || error.contains( QLatin1String("There is no component named 'general'") ) )
-            {
+            if (error.contains(QLatin1String("does not exist or you aren't authorized to")) || error.contains(QLatin1String("There is no component named 'general'"))) {
                 emit sendReportErrorWrongProduct();
             } else {
-                emit sendReportError( error );
+                emit sendReportError(error);
             }
         }
+    } else {
+        emit sendReportError(job->errorString());
     }
-    else
-    {
-        emit sendReportError( job->errorString() );
-    }
-    
+
 }
 
-QString BugzillaManager::urlForBug( int bug_number )
+QString BugzillaManager::urlForBug(int bug_number)
 {
-    return QString(bugtrackerBaseUrl) + QString(showBugUrl).arg( bug_number );
+    return QString(bugtrackerBaseUrl) + QString(showBugUrl).arg(bug_number);
 }
 
-BugListCSVParser::BugListCSVParser( QByteArray data )
+BugListCSVParser::BugListCSVParser(QByteArray data)
 {
     m_data = data;
     m_isValid = false;
@@ -290,110 +265,102 @@ BugListCSVParser::BugListCSVParser( QByteArray data )
 BugMapList BugListCSVParser::parse()
 {
     BugMapList list;
-    
-    if( !m_data.isEmpty() )
-    {
+
+    if (!m_data.isEmpty()) {
         //Parse buglist CSV
-        QTextStream ts( &m_data );
-        QString headersLine = ts.readLine().remove( QLatin1Char('\"') ) ; //Discard headers
+        QTextStream ts(&m_data);
+        QString headersLine = ts.readLine().remove(QLatin1Char('\"')) ;   //Discard headers
         QString expectedHeadersLine = QString(columns);
-      
-        if( headersLine == (QString("bug_id,") + expectedHeadersLine) )
-        {
+
+        if (headersLine == (QString("bug_id,") + expectedHeadersLine)) {
             QStringList headers = expectedHeadersLine.split(',');
             int headersCount = headers.count();
-            
-            while( !ts.atEnd() )
-            {
+
+            while (!ts.atEnd()) {
                 BugMap bug; //bug report data map
-                
+
                 QString line = ts.readLine();
 
                 //Get bug_id (always at first column)
                 int bug_id_index = line.indexOf(',');
-                QString bug_id = line.left( bug_id_index );
-                bug.insert( "bug_id", bug_id);
-                
-                line = line.mid( bug_id_index + 2 );
-                
+                QString bug_id = line.left(bug_id_index);
+                bug.insert("bug_id", bug_id);
+
+                line = line.mid(bug_id_index + 2);
+
                 QStringList fields = line.split(",\"");
-                
-                for(int i = 0; i< headersCount ; i++)
-                {
+
+                for (int i = 0; i < headersCount ; i++) {
                     QString field = fields.at(i);
-                    field = field.left( field.size() - 1 ) ; //Remove trailing "
-                    bug.insert( headers.at(i), field );
+                    field = field.left(field.size() - 1) ;   //Remove trailing "
+                    bug.insert(headers.at(i), field);
                 }
-                
-                list.append( bug );
+
+                list.append(bug);
             }
-            
+
             m_isValid = true;
         }
     }
-    
+
     return list;
 }
-    
-BugReportXMLParser::BugReportXMLParser( QByteArray data )
+
+BugReportXMLParser::BugReportXMLParser(QByteArray data)
 {
-    m_valid = m_xml.setContent( data, true );
+    m_valid = m_xml.setContent(data, true);
 }
 
 BugReport BugReportXMLParser::parse()
 {
     BugReport report; //creates an invalid and empty report object
-    
-    if ( m_valid )
-    {
+
+    if (m_valid) {
         //Check bug notfound
-        QDomNodeList bug_number = m_xml.elementsByTagName( "bug" );
+        QDomNodeList bug_number = m_xml.elementsByTagName("bug");
         QDomNode d = bug_number.at(0);
         QDomNamedNodeMap a = d.attributes();
         QDomNode d2 = a.namedItem("error");
         m_valid = d2.isNull();
-        
-        if( m_valid )
-        {
+
+        if (m_valid) {
             m_valid = true;
-            report.setValid( true );
-            
+            report.setValid(true);
+
             //Get basic fields
-            report.setBugNumber( getSimpleValue( "bug_id" ) );
-            report.setShortDescription( getSimpleValue( "short_desc" ) ); 
-            report.setProduct( getSimpleValue( "product" ) );
-            report.setComponent( getSimpleValue( "component" ) );
-            report.setVersion( getSimpleValue( "version" ) );
-            report.setOperatingSystem( getSimpleValue( "op_sys" ) );
-            report.setBugStatus( getSimpleValue( "bug_status" ) );
-            report.setResolution( getSimpleValue( "resolution" ) );
-            report.setPriority( getSimpleValue( "priority" ) );
-            report.setBugSeverity( getSimpleValue( "bug_severity" ) );
-            
+            report.setBugNumber(getSimpleValue("bug_id"));
+            report.setShortDescription(getSimpleValue("short_desc"));
+            report.setProduct(getSimpleValue("product"));
+            report.setComponent(getSimpleValue("component"));
+            report.setVersion(getSimpleValue("version"));
+            report.setOperatingSystem(getSimpleValue("op_sys"));
+            report.setBugStatus(getSimpleValue("bug_status"));
+            report.setResolution(getSimpleValue("resolution"));
+            report.setPriority(getSimpleValue("priority"));
+            report.setBugSeverity(getSimpleValue("bug_severity"));
+
             //Parse full content + comments
             QStringList m_commentList;
-            QDomNodeList comments = m_xml.elementsByTagName( "long_desc" );
-            for( int i = 0; i< comments.count(); i++)
-            {
+            QDomNodeList comments = m_xml.elementsByTagName("long_desc");
+            for (int i = 0; i < comments.count(); i++) {
                 QDomElement element = comments.at(i).firstChildElement("thetext");
                 m_commentList << element.text();
             }
-            
-            report.setComments( m_commentList );
-            
+
+            report.setComments(m_commentList);
+
         } //isValid
     } //isValid
 
     return report;
 }
 
-QString BugReportXMLParser::getSimpleValue( QString name ) //Extract an unique tag from XML
+QString BugReportXMLParser::getSimpleValue(QString name)   //Extract an unique tag from XML
 {
     QString ret;
-    
-    QDomNodeList bug_number = m_xml.elementsByTagName( name );
-    if (bug_number.count() == 1)
-    {
+
+    QDomNodeList bug_number = m_xml.elementsByTagName(name);
+    if (bug_number.count() == 1) {
         QDomNode node = bug_number.at(0);
         ret = node.toElement().text();
     }
@@ -408,11 +375,10 @@ BugReport::BugReport()
 QString BugReport::toHtml()
 {
     QString html;
-    Q_FOREACH( const QString & key, m_dataMap.keys() )
-    {
-        html.append( QString("<strong>%1:</strong> %2<br />").arg( key, m_dataMap.value(key) ) );
+    Q_FOREACH(const QString & key, m_dataMap.keys()) {
+        html.append(QString("<strong>%1:</strong> %2<br />").arg(key, m_dataMap.value(key)));
     }
-    html.append( "<br />" );
-    html.append( i18n("Description:<br /><br />%1", description() ) );
+    html.append("<br />");
+    html.append(i18n("Description:<br /><br />%1", description()));
     return html;
 }

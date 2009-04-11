@@ -38,25 +38,24 @@
 #include <KShell>
 
 BacktraceGenerator::BacktraceGenerator(const KrashConfig *krashconf, QObject *parent)
-  : QObject(parent),
-    m_krashconf(krashconf), m_proc(NULL), m_temp(NULL), m_state(NotLoaded)
+        : QObject(parent),
+        m_krashconf(krashconf), m_proc(NULL), m_temp(NULL), m_state(NotLoaded)
 {
-    m_parser = BacktraceParser::newParser( krashconf->debuggerName(), this );
+    m_parser = BacktraceParser::newParser(krashconf->debuggerName(), this);
     m_parser->connectToGenerator(this);
 
 #ifdef BACKTRACE_PARSER_DEBUG
-    m_debugParser = BacktraceParser::newParser( QString(), this ); //uses the null parser
+    m_debugParser = BacktraceParser::newParser(QString(), this);   //uses the null parser
     m_debugParser->connectToGenerator(this);
 #endif
 }
 
 BacktraceGenerator::~BacktraceGenerator()
 {
-    if (m_proc && m_proc->state() == QProcess::Running)
-    {
+    if (m_proc && m_proc->state() == QProcess::Running) {
         kWarning() << "Killing running debugger instance";
         m_proc->terminate();
-        if ( !m_proc->waitForFinished(10000) ) {
+        if (!m_proc->waitForFinished(10000)) {
             m_proc->kill();
             m_proc->waitForFinished();
         }
@@ -65,57 +64,55 @@ BacktraceGenerator::~BacktraceGenerator()
 
 bool BacktraceGenerator::start()
 {
-  Q_ASSERT(m_proc == NULL && m_temp == NULL); //they should always be null before entering this function.
+    Q_ASSERT(m_proc == NULL && m_temp == NULL); //they should always be null before entering this function.
 
-  m_parsedBacktrace.clear();
-  m_state = Loading;
+    m_parsedBacktrace.clear();
+    m_state = Loading;
 
-  QString exec = m_krashconf->tryExec();
-  if ( !exec.isEmpty() && KStandardDirs::findExe(exec).isEmpty() )
-  {
-    m_state = FailedToStart;
-    emit failedToStart();
-    return false;
-  }
+    QString exec = m_krashconf->tryExec();
+    if (!exec.isEmpty() && KStandardDirs::findExe(exec).isEmpty()) {
+        m_state = FailedToStart;
+        emit failedToStart();
+        return false;
+    }
 
-  emit starting();
+    emit starting();
 
-  m_proc = new KProcess;
-  m_proc->setEnv( "LC_ALL", "C" ); // force C locale
+    m_proc = new KProcess;
+    m_proc->setEnv("LC_ALL", "C");   // force C locale
 
-  m_temp = new KTemporaryFile;
-  m_temp->open();
-  m_temp->write(m_krashconf->backtraceBatchCommands().toLatin1());
-  m_temp->write("\n", 1);
-  m_temp->flush();
+    m_temp = new KTemporaryFile;
+    m_temp->open();
+    m_temp->write(m_krashconf->backtraceBatchCommands().toLatin1());
+    m_temp->write("\n", 1);
+    m_temp->flush();
 
-  // start the debugger
-  QString str = m_krashconf->debuggerBatchCommand();
-  m_krashconf->expandString(str, KrashConfig::ExpansionUsageShell, m_temp->fileName());
+    // start the debugger
+    QString str = m_krashconf->debuggerBatchCommand();
+    m_krashconf->expandString(str, KrashConfig::ExpansionUsageShell, m_temp->fileName());
 
-  *m_proc << KShell::splitArgs(str);
-  m_proc->setOutputChannelMode(KProcess::OnlyStdoutChannel);
-  m_proc->setNextOpenMode(QIODevice::ReadWrite | QIODevice::Text);
-  connect(m_proc, SIGNAL(readyReadStandardOutput()),
-          SLOT(slotReadInput()));
-  connect(m_proc, SIGNAL(finished(int, QProcess::ExitStatus)),
-          SLOT(slotProcessExited(int, QProcess::ExitStatus)));
+    *m_proc << KShell::splitArgs(str);
+    m_proc->setOutputChannelMode(KProcess::OnlyStdoutChannel);
+    m_proc->setNextOpenMode(QIODevice::ReadWrite | QIODevice::Text);
+    connect(m_proc, SIGNAL(readyReadStandardOutput()),
+            SLOT(slotReadInput()));
+    connect(m_proc, SIGNAL(finished(int, QProcess::ExitStatus)),
+            SLOT(slotProcessExited(int, QProcess::ExitStatus)));
 
-  m_proc->start();
-  if (!m_proc->waitForStarted())
-  {
-      //we mustn't keep these around...
-      m_proc->deleteLater();
-      m_temp->deleteLater();
-      m_proc = NULL;
-      m_temp = NULL;
+    m_proc->start();
+    if (!m_proc->waitForStarted()) {
+        //we mustn't keep these around...
+        m_proc->deleteLater();
+        m_temp->deleteLater();
+        m_proc = NULL;
+        m_temp = NULL;
 
-      m_state = FailedToStart;
-      emit failedToStart();
-      return false;
-  }
+        m_state = FailedToStart;
+        emit failedToStart();
+        return false;
+    }
 
-  return true;
+    return true;
 }
 
 void BacktraceGenerator::slotReadInput()
@@ -124,8 +121,7 @@ void BacktraceGenerator::slotReadInput()
     m_output += m_proc->readAllStandardOutput();
 
     int pos;
-    while ((pos = m_output.indexOf('\n')) != -1)
-    {
+    while ((pos = m_output.indexOf('\n')) != -1) {
         QString line = QString::fromLocal8Bit(m_output, pos + 1);
         m_output.remove(0, pos + 1);
 
@@ -144,15 +140,14 @@ void BacktraceGenerator::slotProcessExited(int exitCode, QProcess::ExitStatus ex
     //mark the end of the backtrace for the parser
     emit newLine(QString());
 
-    if (exitStatus != QProcess::NormalExit || exitCode != 0)
-    {
+    if (exitStatus != QProcess::NormalExit || exitCode != 0) {
         m_state = Failed;
         emit someError();
         return;
     }
 
-    QString tmp = i18n( "Application: %progname (%execname), signal %signame" ) + "\n\n";
-    m_krashconf->expandString( tmp, KrashConfig::ExpansionUsagePlainText );
+    QString tmp = i18n("Application: %progname (%execname), signal %signame") + "\n\n";
+    m_krashconf->expandString(tmp, KrashConfig::ExpansionUsagePlainText);
 
     m_parsedBacktrace = tmp + m_parser->parsedBacktrace();
     m_state = Loaded;

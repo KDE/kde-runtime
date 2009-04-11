@@ -65,8 +65,7 @@
 #include <sys/types.h>
 #include <signal.h>
 
-struct DrKonqi::Private
-{
+struct DrKonqi::Private {
     Private() : m_state(ProcessRunning), m_krashConfig(NULL), m_btGenerator(NULL) {}
 
     DrKonqi::State         m_state;
@@ -76,7 +75,7 @@ struct DrKonqi::Private
 };
 
 DrKonqi::DrKonqi()
-    : QObject(), d(new Private)
+        : QObject(), d(new Private)
 {
     QDBusConnection::sessionBus().registerObject("/krashinfo", this);
     new DrKonqiAdaptor(this);
@@ -91,7 +90,7 @@ DrKonqi::~DrKonqi()
 DrKonqi *DrKonqi::instance()
 {
     static DrKonqi *drKonqiInstance = NULL;
-    if ( !drKonqiInstance )
+    if (!drKonqiInstance)
         drKonqiInstance = new DrKonqi();
     return drKonqiInstance;
 }
@@ -112,21 +111,21 @@ bool DrKonqi::init()
     d->m_krashConfig = new KrashConfig(this);
 
     //check whether the attached process exists and whether we have permissions to inspect it
-    if ( d->m_krashConfig->pid() <= 0 ) {
+    if (d->m_krashConfig->pid() <= 0) {
         kError() << "Invalid pid specified";
         return false;
     }
 
-    if ( ::kill(d->m_krashConfig->pid(), 0) < 0 ) {
-        switch(errno) {
-            case EPERM:
-                kError() << "DrKonqi doesn't have permissions to inspect the specified process";
-                break;
-            case ESRCH:
-                kError() << "The specified process does not exist.";
-                break;
-            default:
-                break;
+    if (::kill(d->m_krashConfig->pid(), 0) < 0) {
+        switch (errno) {
+        case EPERM:
+            kError() << "DrKonqi doesn't have permissions to inspect the specified process";
+            break;
+        case ESRCH:
+            kError() << "The specified process does not exist.";
+            break;
+        default:
+            break;
         }
         return false;
     }
@@ -174,59 +173,48 @@ BacktraceGenerator *DrKonqi::backtraceGenerator() const
 void DrKonqi::saveReport(const QString & reportText, QWidget *parent)
 {
     const KrashConfig *krashConfig = instance()->krashConfig();
-    if ( krashConfig->safeMode() )
-    {
+    if (krashConfig->safeMode()) {
         KTemporaryFile tf;
         tf.setPrefix("/tmp/");
         tf.setSuffix(".kcrash");
         tf.setAutoRemove(false);
 
-        if (tf.open())
-        {
-            QTextStream textStream( &tf );
+        if (tf.open()) {
+            QTextStream textStream(&tf);
             textStream << reportText;
             textStream.flush();
             KMessageBox::information(parent, i18n("Report saved to <filename>%1</filename>.", tf.fileName()));
-        }
-        else
-        {
+        } else {
             KMessageBox::sorry(parent, i18n("Could not create a file to save the report in"));
         }
-    }
-    else
-    {
+    } else {
         QString defname = krashConfig->appName() + '-' + QDate::currentDate().toString("yyyyMMdd") + ".kcrash";
-        if( defname.contains( '/' ))
-            defname = defname.mid( defname.lastIndexOf( '/' ) + 1 );
-        KUrl fileUrl = KFileDialog::getSaveUrl( defname, QString(), parent, i18n("Select Filename"));
-        if (fileUrl.isValid())
-        {
+        if (defname.contains('/'))
+            defname = defname.mid(defname.lastIndexOf('/') + 1);
+        KUrl fileUrl = KFileDialog::getSaveUrl(defname, QString(), parent, i18n("Select Filename"));
+        if (fileUrl.isValid()) {
             KIO::UDSEntry udsEntry;
-            if ( KIO::NetAccess::stat(fileUrl, udsEntry, parent) ) {
+            if (KIO::NetAccess::stat(fileUrl, udsEntry, parent)) {
                 if (KMessageBox::Cancel ==
-                    KMessageBox::warningContinueCancel( 0,
-                        i18n( "A file named <filename>%1</filename> already exists. "
-                                "Are you sure you want to overwrite it?", fileUrl.fileName() ),
-                        i18n( "Overwrite File?" ),
-                    KGuiItem( i18n( "&Overwrite" ), KIcon("document-save-as"), i18nc( "button explanation", "Use this button to overwrite the current file" ), i18nc( "button explanation", "Use this button to overwrite the current file" ) ) ) )
+                        KMessageBox::warningContinueCancel(0,
+                                                           i18n("A file named <filename>%1</filename> already exists. "
+                                                                "Are you sure you want to overwrite it?", fileUrl.fileName()),
+                                                           i18n("Overwrite File?"),
+                                                           KGuiItem(i18n("&Overwrite"), KIcon("document-save-as"), i18nc("button explanation", "Use this button to overwrite the current file"), i18nc("button explanation", "Use this button to overwrite the current file"))))
                     return;
             }
 
             KTemporaryFile tf;
-            if (tf.open())
-            {
+            if (tf.open()) {
                 QTextStream ts(&tf);
                 ts << reportText;
                 ts.flush();
-            }
-            else
-            {
+            } else {
                 KMessageBox::sorry(parent, i18n("Cannot open file <filename>%1</filename> for writing.", tf.fileName()));
                 return;
             }
 
-            if ( !KIO::NetAccess::upload(tf.fileName(), fileUrl, parent) )
-            {
+            if (!KIO::NetAccess::upload(tf.fileName(), fileUrl, parent)) {
                 KMessageBox::sorry(parent, KIO::NetAccess::lastErrorString());
             }
         }
@@ -235,7 +223,7 @@ void DrKonqi::saveReport(const QString & reportText, QWidget *parent)
 
 void DrKonqi::restartCrashedApplication()
 {
-    QString executable = KStandardDirs::findExe( d->m_krashConfig->executableName() );
+    QString executable = KStandardDirs::findExe(d->m_krashConfig->executableName());
     kDebug() << "Restarting application" << executable;
 
     //start the application via kdeinit, as it needs to have a pristine environment and
@@ -245,7 +233,7 @@ void DrKonqi::restartCrashedApplication()
 
 void DrKonqi::startDefaultExternalDebugger()
 {
-    Q_ASSERT( d->m_state != DebuggerRunning );
+    Q_ASSERT(d->m_state != DebuggerRunning);
 
     QString str = d->m_krashConfig->externalDebuggerCommand();
     d->m_krashConfig->expandString(str, KrashConfig::ExpansionUsageShell);
@@ -265,7 +253,7 @@ void DrKonqi::startCustomExternalDebugger()
 
 void DrKonqi::stopAttachedProcess()
 {
-    if ( d->m_state == ProcessRunning ) {
+    if (d->m_state == ProcessRunning) {
         ::kill(d->m_krashConfig->pid(), SIGSTOP);
         d->m_state = ProcessStopped;
     }
@@ -273,7 +261,7 @@ void DrKonqi::stopAttachedProcess()
 
 void DrKonqi::continueAttachedProcess()
 {
-    if ( d->m_state == ProcessStopped ) {
+    if (d->m_state == ProcessStopped) {
         ::kill(d->m_krashConfig->pid(), SIGCONT);
         d->m_state = ProcessRunning;
     }
@@ -295,7 +283,7 @@ void DrKonqi::debuggerStopped()
 
 void DrKonqi::registerDebuggingApplication(const QString& launchName)
 {
-    emit newDebuggingApplication( launchName );
+    emit newDebuggingApplication(launchName);
 }
 
 #include "drkonqi.moc"

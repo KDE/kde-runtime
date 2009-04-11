@@ -44,26 +44,26 @@ class DrKonqiAdaptor : public QDBusAbstractAdaptor
     Q_OBJECT
     Q_CLASSINFO("D-Bus Interface", "org.kde.Krash")
 
-    public:
-        DrKonqiAdaptor(QObject *parent);
-        virtual ~DrKonqiAdaptor();
+public:
+    DrKonqiAdaptor(QObject *parent);
+    virtual ~DrKonqiAdaptor();
 
-    public slots:
-        QString programName();
-        QString appName();
-        int signalNumber();
-        int pid();
-        bool startedByKdeinit();
-        bool safeMode();
-        QString signalName();
+public slots:
+    QString programName();
+    QString appName();
+    int signalNumber();
+    int pid();
+    bool startedByKdeinit();
+    bool safeMode();
+    QString signalName();
 
-        Q_NOREPLY void registerDebuggingApplication(const QString& launchName);
+    Q_NOREPLY void registerDebuggingApplication(const QString& launchName);
 
-    signals:
-        void acceptDebuggingApplication();
-        
-    private:
-        DrKonqi *   m_drkonqiInstance;
+signals:
+    void acceptDebuggingApplication();
+
+private:
+    DrKonqi *   m_drkonqiInstance;
 };
 
 #endif // DRKONQIADAPTOR__H
