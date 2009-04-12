@@ -38,9 +38,9 @@
 #include <QDBusConnectionInterface>
 #include <kconfiggroup.h>
 
-static const char* dbusServiceName = "org.kde.VisualNotifications";
-static const char* dbusInterfaceName = "org.kde.VisualNotifications";
-static const char* dbusPath = "/VisualNotifications";
+static const char dbusServiceName[] = "org.kde.VisualNotifications";
+static const char dbusInterfaceName[] = "org.kde.VisualNotifications";
+static const char dbusPath[] = "/VisualNotifications";
 
 NotifyByPopup::NotifyByPopup(QObject *parent) 
   : KNotifyPlugin(parent) , m_animationTimer(0), m_dbusServiceExists(false)
