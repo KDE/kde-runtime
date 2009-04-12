@@ -21,10 +21,12 @@
 
 #include <QtGui/QStackedWidget>
 
-class QLabel;
+#include <QtGui/QLabel>
+#include <QtCore/QEvent>
+#include <QtGui/QTextDocument>
+
+class WrapLabel;
 class QProgressBar;
-class QShowEvent;
-class QHideEvent;
 
 class StatusWidget: public QStackedWidget
 {
@@ -36,20 +38,48 @@ public:
     void setIdle(QString);
 
     void addCustomStatusWidget(QWidget *);
-
-    void setStatusLabelWordWrap(bool);
-
+   
 private:
     void setBusyCursor();
     void setIdleCursor();
 
-    QLabel *            m_statusLabel;
+    WrapLabel *         m_statusLabel;
 
     QProgressBar *      m_progressBar;
-    QLabel *            m_busyLabel;
+    WrapLabel *         m_busyLabel;
 
     QWidget *           m_statusPage;
     QWidget *           m_busyPage;
+};
+
+//Dummy class to avoid a QLabel+wordWrap height bug
+class WrapLabel: public QLabel
+{
+    Q_OBJECT
+public:
+    WrapLabel(QWidget * parent = 0) : QLabel(parent){
+        setWordWrap(true);
+    }
+    
+    void setText(const QString & text) {
+        QLabel::setText(text);
+        adjustHeight();
+    }
+    
+    bool event(QEvent * e) {
+        if (e->type() == QEvent::ApplicationFontChange || e->type() == QEvent::Resize) {
+            adjustHeight();
+        }
+        return QLabel::event(e);
+    }
+    
+private:
+    void adjustHeight() {
+        QTextDocument document(text());
+        document.setTextWidth(width());
+        setMaximumHeight(document.size().height());
+    }
+    
 };
 
 #endif

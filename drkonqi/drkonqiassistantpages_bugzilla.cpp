@@ -713,7 +713,6 @@ BugzillaSendPage::BugzillaSendPage(DrKonqiBugReport * parent)
     connect(reportInfo()->getBZ(), SIGNAL(sendReportErrorWrongProduct()), this, SLOT(sendUsingDefaults()));
 
     m_statusWidget = new StatusWidget();
-    m_statusWidget->setStatusLabelWordWrap(true);
 
     m_retryButton = new KPushButton(KGuiItem2(i18nc("button action", "Retry ...") , KIcon("view-refresh"),  i18nc("help text", "Use this button to retry sending the crash report if it failed before")));
 

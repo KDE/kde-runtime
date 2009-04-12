@@ -21,7 +21,6 @@
 #include <QtGui/QApplication>
 #include <QtGui/QSizePolicy>
 #include <QtGui/QProgressBar>
-#include <QtGui/QLabel>
 #include <QtGui/QHBoxLayout>
 
 #include <klocale.h>
@@ -29,18 +28,21 @@
 StatusWidget::StatusWidget(QWidget * parent) :
         QStackedWidget(parent)
 {
+    setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed));
+    
     //Main layout
     m_statusPage = new QWidget(this);
     m_busyPage = new QWidget(this);
 
-    insertWidget(0, m_statusPage);
-    insertWidget(1, m_busyPage);
+    addWidget(m_statusPage);
+    addWidget(m_busyPage);
 
     //Status widget
-    m_statusLabel = new QLabel();
+    m_statusLabel = new WrapLabel();
     m_statusLabel->setOpenExternalLinks(true);
     m_statusLabel->setTextFormat(Qt::RichText);
-
+    //m_statusLabel->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum));
+    
     QHBoxLayout * statusLayout = new QHBoxLayout();
     statusLayout->setContentsMargins(0, 0, 0, 0);
     statusLayout->setSpacing(2);
@@ -51,34 +53,36 @@ StatusWidget::StatusWidget(QWidget * parent) :
     //Busy widget
     m_progressBar = new QProgressBar();
     m_progressBar->setRange(0, 0);
-
-    m_busyLabel = new QLabel();
-
+    m_progressBar->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
+    
+    m_busyLabel = new WrapLabel();
+    //m_busyLabel->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum));
+    
     QHBoxLayout * busyLayout = new QHBoxLayout();
     busyLayout->setContentsMargins(0, 0, 0, 0);
     busyLayout->setSpacing(2);
     m_busyPage->setLayout(busyLayout);
 
     busyLayout->addWidget(m_busyLabel);
-    busyLayout->addStretch();
     busyLayout->addWidget(m_progressBar);
-
-    setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum));
+    busyLayout->setAlignment(m_progressBar,Qt::AlignVCenter);
+    
+    
 }
 
 void StatusWidget::setBusy(QString busyMessage)
 {
-    m_statusLabel->setText(QString());
+    m_statusLabel->clear();
     m_busyLabel->setText(busyMessage);
-    setCurrentIndex(1);
+    setCurrentWidget(m_busyPage);
     //setBusyCursor();
 }
 
 void StatusWidget::setIdle(QString idleMessage)
 {
-    m_busyLabel->setText(QString());
+    m_busyLabel->clear();
     m_statusLabel->setText(idleMessage);
-    setCurrentIndex(0);
+    setCurrentWidget(m_statusPage);
     //setIdleCursor();
 }
 
@@ -86,13 +90,9 @@ void StatusWidget::addCustomStatusWidget(QWidget * widget)
 {
     QVBoxLayout * statusLayout = static_cast<QVBoxLayout*>(m_statusPage->layout());
 
-    statusLayout->addStretch();
     statusLayout->addWidget(widget);
-}
-
-void StatusWidget::setStatusLabelWordWrap(bool ww)
-{
-    m_statusLabel->setWordWrap(ww);
+    statusLayout->setAlignment(widget,Qt::AlignVCenter);
+    widget->setSizePolicy(QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed));
 }
 
 void StatusWidget::setBusyCursor()
