@@ -51,7 +51,7 @@ NotifyByPopup::NotifyByPopup(QObject *parent)
 	m_dbusServiceExists = interface && interface->isServiceRegistered(dbusServiceName);
 
 	if( m_dbusServiceExists )
-		kDebug(300) << "using" << dbusServiceName << "for popups";
+		slotServiceOwnerChanged(dbusServiceName, QString(), "_"); //connect signals
 
 	// to catch register/unregister events from service in runtime
 	connect(interface, SIGNAL(serviceOwnerChanged(const QString&, const QString&, const QString&)),
