@@ -745,8 +745,16 @@ void BugzillaSendPage::aboutToShow()
 
 void BugzillaSendPage::sent(int bug_id)
 {
-    m_statusWidget->setIdle(i18n("Crash report sent!<br />Bug Number :: %1<br />URL :: <link>%2</link><br />Thanks for contributing to KDE. You can now close this window.", bug_id, reportInfo()->getBZ()->urlForBug(bug_id)));     //FIXME text
-
+    m_statusWidget->setVisible(false);
+    
+    QLabel * finishedLabel = new QLabel(i18n("Crash report sent!<br />Bug Number :: %1<br />URL :: <link>%2</link><br />Thanks for contributing to KDE. You can now close this window.", bug_id, reportInfo()->getBZ()->urlForBug(bug_id)));
+    finishedLabel->setWordWrap(true);
+    finishedLabel->setOpenExternalLinks(true);
+    finishedLabel->setTextFormat(Qt::RichText);
+    
+    QVBoxLayout * vLayout = static_cast<QVBoxLayout*>(layout());
+    vLayout->insertWidget(0,finishedLabel);
+    
     m_retryButton->setEnabled(false);
     m_retryButton->setVisible(false);
 
