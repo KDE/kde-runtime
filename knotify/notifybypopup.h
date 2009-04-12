@@ -50,8 +50,9 @@ class NotifyByPopup : public KNotifyPlugin
 		 * @param replacesId knotify-side notification identifier. If not 0, will
 		 * request DBus service to replace existing notification with data in config
 		 * @param config notification data
+		 * @return true for success or false if there was an error.
 		 */
-		void sendNotificationDBus(int id, int replacesId, KNotifyConfig* config);
+		bool sendNotificationDBus(int id, int replacesId, KNotifyConfig* config);
 		/**
 		 * Sends request to close Notification with id to DBus "/Notification" interface
 		 *  @param id knotify-side notification ID to close

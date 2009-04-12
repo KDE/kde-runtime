@@ -82,7 +82,8 @@ void NotifyByPopup::notify( int id, KNotifyConfig * config )
 	// it'll be used instead
 	if(m_dbusServiceExists)
 	{
-		sendNotificationDBus(id, 0, config);
+		if(!sendNotificationDBus(id, 0, config))
+			finish(id); //an error ocurred.
 		return;
 	}
 
@@ -332,14 +333,14 @@ void NotifyByPopup::getAppCaptionAndIconName(KNotifyConfig *config, QString *app
 	*iconName = globalgroup.readEntry("IconName", config->appname);
 }
 
-void NotifyByPopup::sendNotificationDBus(int id, int replacesId, KNotifyConfig* config)
+bool NotifyByPopup::sendNotificationDBus(int id, int replacesId, KNotifyConfig* config)
 {
 	// figure out dbus id to replace if needed
 	uint dbus_replaces_id = 0;
 	if (replacesId != 0 ) {
 		dbus_replaces_id = m_idMap.value(replacesId, 0);
 		if (!dbus_replaces_id)
-			return;  //the popup has been closed, there is nothing to replace.
+			return false;  //the popup has been closed, there is nothing to replace.
 	}
 
 	QDBusMessage m = QDBusMessage::createMethodCall( dbusServiceName, dbusPath, dbusInterfaceName, "Notify" );
@@ -401,6 +402,13 @@ void NotifyByPopup::sendNotificationDBus(int id, int replacesId, KNotifyConfig* 
 	if(replyMsg.type() == QDBusMessage::ReplyMessage) {
 		if (!replyMsg.arguments().isEmpty()) {
 			uint dbus_id = replyMsg.arguments().at(0).toUInt();
+			if (dbus_id == 0)
+			{
+				kDebug(300) << "error: dbus_id is null";
+				return false;
+			}
+			if (dbus_replaces_id && dbus_id == dbus_replaces_id) 
+				return true;
 #if 1
 			int oldId = m_idMap.key(dbus_id, 0);
 			if (oldId != 0) {
@@ -411,17 +419,16 @@ void NotifyByPopup::sendNotificationDBus(int id, int replacesId, KNotifyConfig* 
 #endif
 			m_idMap.insert(id, dbus_id);
 			kDebug(300) << "mapping knotify id to dbus id:"<< id << "=>" << dbus_id;
+			return true;
 		} else {
 			kDebug(300) << "error: received reply with no arguments";
-			finish(id);
 		}
 	} else if (replyMsg.type() == QDBusMessage::ErrorMessage) {
 		kDebug(300) << "error: failed to send dbus message";
-		finish(id);
 	} else {
 		kDebug(300) << "unexpected reply type";
-		finish(id);
 	}
+	return false;
 }
 
 void NotifyByPopup::closeNotificationDBus(int id)
