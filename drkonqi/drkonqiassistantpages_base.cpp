@@ -244,19 +244,17 @@ void ConclusionPage::aboutToShow()
     }
     case BacktraceParser::ProbablyUseless: {
         needToReport = (canDetails && developersCanContactReporter);
-        conclusionsHTML = i18n("* The automatically generated crash information lacks a lot of important details and it is probably not useful.");   //should we add "use your judgement"?
+        conclusionsHTML = i18n("* The automatically generated crash information lacks important details and it is probably not useful.");   //should we add "use your judgement"?
         break;
     }
     case BacktraceParser::Useless:
     case BacktraceParser::InvalidUsefulness: {
         needToReport =  false;
         conclusionsHTML = i18n("* The automatically generated crash information is not useful.") ;
-        /* TODO: Tell the user they can improve it, and offer a clear way for the user to go back to where they can reload the backtrace. This might be the only clear part of the bug report they can give after all. They should be encouraged to read the help, probably. This is all UI... */
+        conclusionsHTML += i18n("<br /><strong>Note:</strong> You can try to improve this by installing some packages and reloading the information in the Crash Information page. You can read the Bug Reporting Guide clicking on \"Help\".");
         break;
     }
     }
-
-    //"Can the developers contact you for more information if required"
 
     //User can provide details / is Willing to help
     conclusionsHTML.append(QLatin1String("<br />"));
@@ -275,7 +273,7 @@ void ConclusionPage::aboutToShow()
     }
 
     if (needToReport) {
-        conclusionsHTML += QString("<br /><strong>%1</strong>").arg(i18n("This is considered helpful for the application developer."));
+        conclusionsHTML += QString("<br /><strong>%1</strong>").arg(i18n("This is considered helpful for the application developers."));
 
         QString reportMethod;
         QString reportLink;
@@ -284,14 +282,14 @@ void ConclusionPage::aboutToShow()
             m_reportButton->setVisible(false);
 
             emitCompleteChanged();
-            m_explanationLabel->setText(i18n("This application's bugs are reported to the KDE bug tracker: press Next to start the report assistant."));     // string needs work: what assistant were they in, then?
+            m_explanationLabel->setText(i18n("This application's bugs are reported to the KDE bug tracker: press Next to start the reporting process."));     // string needs work: what assistant were they in, then?
 
             reportMethod = i18n("You need to file a new bug report, press Next to start the report assistant.");
             reportLink = i18nc("address to report the bug", "You can manually report at %1", QLatin1String(KDE_BUGZILLA_URL));
         } else {
             m_reportButton->setVisible(true);
 
-            m_explanationLabel->setText(i18n("<strong>Notice:</strong> This application is not supported in the KDE Bugtracker, you need to report the bug to the maintainer."));
+            m_explanationLabel->setText(i18n("This application is not supported in the KDE bug tracking system. You can report this bug to its maintainer at <i>%1</i>", krashConfig->getReportLink()));
 
             reportMethod = i18n("You need to file a new bug report with the following information:");
             reportLink =  i18nc("address(mail or web) to report the bug", "You can manually report at %1", krashConfig->getReportLink());
@@ -304,13 +302,13 @@ void ConclusionPage::aboutToShow()
         }
 
         conclusionsHTML += QString("<br />%1").arg(reportMethod);
-        conclusionsHTML += QString("<br /><br />--------<br /><br />%1").arg(reportInfo()->generateReportTemplate());
+        conclusionsHTML += QString("<br />--------<br /><br />%1").arg(reportInfo()->generateReportTemplate());
 
         conclusionsHTML += QString("<br /><br />") + reportLink;
     } else { // (needToReport)
         m_reportButton->setVisible(false);
 
-        conclusionsHTML += QString("<br /><strong>%1</strong>").arg(i18n("This is not considered helpful for the application developer and therefore the automated bug reporting process is not enabled for this crash. However, you can report it on your own if you want, using the following information: "));
+        conclusionsHTML += QString("<br /><strong>%1</strong>").arg(i18n("This is not considered helpful for the application developers and therefore the automated bug reporting process is not enabled for this crash. If you change your mind you can go back and review the assistant questions. Also, you can manually report it on your own if you want, using the following information: "));
 
         conclusionsHTML += QString("<br />--------<br /><br />%1").arg(reportInfo()->generateReportTemplate());
 
@@ -320,7 +318,7 @@ void ConclusionPage::aboutToShow()
             m_explanationLabel->setText(i18n("This application is supported in the KDE bug tracking system. You can report this bug at %1",  QLatin1String(KDE_BUGZILLA_URL)));
         } else {
             conclusionsHTML += i18nc("address(mail or web) to report the bug", "Report at %1", krashConfig->getReportLink());
-            m_explanationLabel->setText(i18n("This application is not supported in the KDE bug tracking system. You can report this bug to its maintainer : <i>%1</i>", krashConfig->getReportLink()));
+            m_explanationLabel->setText(i18n("This application is not supported in the KDE bug tracking system. You can report this bug to its maintainer  <i>%1</i>", krashConfig->getReportLink()));
         }
 
         emit finished(true);

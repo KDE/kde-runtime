@@ -91,6 +91,7 @@ QString ReportInfo::getLSBRelease() const
 
 QString ReportInfo::generateReportTemplate(bool bugzilla) const
 {
+    QString dottedLine = QString("------");
     QString lineBreak = QLatin1String("<br />");
     if (bugzilla)
         lineBreak = QLatin1String("\n");
@@ -98,7 +99,7 @@ QString ReportInfo::generateReportTemplate(bool bugzilla) const
     QString report;
     const KrashConfig * krashConfig = DrKonqi::instance()->krashConfig();
 
-    report.append(QString("Application and System information :") + lineBreak + lineBreak);
+    report.append(QString("Application and System information :") + lineBreak + dottedLine + lineBreak);
     //Program name and versions
     report.append(QString("KDE Version: %1").arg(getKDEVersion()) + lineBreak);
     report.append(QString("Qt Version: %1").arg(getQtVersion()) + lineBreak);
@@ -109,7 +110,7 @@ QString ReportInfo::generateReportTemplate(bool bugzilla) const
     //LSB output
     QString lsb = getLSBRelease();
     if (!bugzilla) lsb.replace('\n', "<br />");
-    report.append(QString(" ----- ") + lineBreak + lsb + lineBreak  + QString("-----") + lineBreak);
+    report.append(dottedLine + lineBreak + lsb + lineBreak  + dottedLine);
 
     //Description (title)
     if (!m_report.shortDescription().isEmpty())
@@ -127,7 +128,7 @@ QString ReportInfo::generateReportTemplate(bool bugzilla) const
     }
 
     //Backtrace
-    report.append(lineBreak);
+    report.append(lineBreak + lineBreak);
     BacktraceParser::Usefulness use = DrKonqi::instance()->backtraceGenerator()->parser()->backtraceUsefulness();
     if (use != BacktraceParser::Useless && use != BacktraceParser::InvalidUsefulness) {
         QString formattedBacktrace = DrKonqi::instance()->backtraceGenerator()->backtrace();
@@ -135,10 +136,10 @@ QString ReportInfo::generateReportTemplate(bool bugzilla) const
             formattedBacktrace.replace('\n', "<br />");
         formattedBacktrace = formattedBacktrace.trimmed();
 
-        report.append(lineBreak + QString("Backtrace:") + lineBreak + QString("----")
-                      + lineBreak + lineBreak + formattedBacktrace + lineBreak + QString("----"));
+        report.append(QString("Backtrace:") + lineBreak + dottedLine
+                      + lineBreak + formattedBacktrace + dottedLine);
     } else {
-        report.append(lineBreak + QString("An useful backtrace could not be generated") + lineBreak);
+        report.append(QString("An useful backtrace could not be generated"));
     }
 
     //Possible duplicate

@@ -73,7 +73,7 @@ AboutBugReportingDialog::AboutBugReportingDialog(QWidget * parent):
         QString("<a name=\"BugzillaKeywords\" /><h2>%1</h2>").arg(Qt::escape(i18n("Bug Report Keywords"))) +
         QString("<p>%1</p><p>%2</p>").arg(
             Qt::escape(i18n("In this step you need to write at least four(4) words to identify the crash. You can use the application name, or write a little sentence about the crash or the context. This text will be used to search similar crashes already reported in the database, so you can look at them later. Also, this text can be used as the title of the future bug report (you can change this later)")),
-            Qt::escape(i18n("You should write the words in English"))) +
+            Qt::escape(i18n("You should write in English"))) +
 
         QString("<a name=\"BugzillaDuplicates\" /><h2>%1</h2>").arg(Qt::escape(i18n("Bug Report Possible Duplicate list"))) +
         QString("<p>%1</p><p>%2</p><p>%3</p><p>%4</p>").arg(
@@ -85,7 +85,7 @@ AboutBugReportingDialog::AboutBugReportingDialog(QWidget * parent):
         QString("<a name=\"BugzillaInformation\" /><h2>%1</h2>").arg(Qt::escape(i18n("Details of the Bug report"))) +
         QString("<p>%1</p><p>%2</p>").arg(
             Qt::escape(i18n("In this case you need to write a title and description of the crash context. Explain the best you can.")),
-            Qt::escape(i18n("You should write the words in English"))) +
+            Qt::escape(i18n("You should write in English"))) +
 
         QString("<a name=\"BugzillaSend\" /><h2>%1</h2>").arg(Qt::escape(i18n("Send Crash Report"))) +
         QString("<p>%1</p><p>%2</p>").arg(
