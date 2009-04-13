@@ -20,10 +20,10 @@
 #ifndef USEFULNESSMETER__H
 #define USEFULNESSMETER__H
 
-#include <QtGui/QWidget>
-
 #include "backtraceparser.h"
 #include "backtracegenerator.h"
+
+#include <QtGui/QWidget>
 
 class QPixmap;
 

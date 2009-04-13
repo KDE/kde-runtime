@@ -22,11 +22,9 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QMap>
-#include <QtCore/QList>
+#include <QtCore/QStringList>
 
 #include <QtXml/QDomDocument>
-
-#include <kio/job.h>
 
 class KJob;
 class QString;
@@ -198,7 +196,8 @@ public:
     void tryLogin();
 
     void fetchBugReport(int);
-    void searchBugs(QString words, QString product, QString severity, QString date_start, QString date_end , QString comment);
+    void searchBugs(QString words, QString product, QString severity,
+                    QString date_start, QString date_end , QString comment);
     void sendReport(BugReport);
 
     bool getLogged() {

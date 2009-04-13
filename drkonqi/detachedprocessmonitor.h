@@ -17,7 +17,7 @@
 #ifndef DETACHEDPROCESSMONITOR_H
 #define DETACHEDPROCESSMONITOR_H
 
-#include <QObject>
+#include <QtCore/QObject>
 
 class DetachedProcessMonitor : public QObject
 {

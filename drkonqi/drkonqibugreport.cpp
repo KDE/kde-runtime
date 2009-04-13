@@ -18,16 +18,13 @@
 ******************************************************************/
 
 #include "drkonqibugreport.h"
-
-#include <QtGui/QCloseEvent>
-
-#include <kdebug.h>
-#include <kmessagebox.h>
-
 #include "drkonqiassistantpages_base.h"
 #include "drkonqiassistantpages_bugzilla.h"
 #include "aboutbugreportingdialog.h"
 #include "reportinfo.h"
+
+#include <QtGui/QCloseEvent>
+#include <KMessageBox>
 
 DrKonqiBugReport::DrKonqiBugReport(QWidget * parent) :
         KAssistantDialog(parent),
@@ -38,7 +35,8 @@ DrKonqiBugReport::DrKonqiBugReport(QWidget * parent) :
     setWindowTitle(i18n("Crash Reporting Assistant"));
     setWindowIcon(KIcon("tools-report-bug"));
 
-    connect(this, SIGNAL(currentPageChanged(KPageWidgetItem *, KPageWidgetItem *)), this, SLOT(currentPageChanged_slot(KPageWidgetItem *, KPageWidgetItem *)));
+    connect(this, SIGNAL(currentPageChanged(KPageWidgetItem *, KPageWidgetItem *)),
+            this, SLOT(currentPageChanged_slot(KPageWidgetItem *, KPageWidgetItem *)));
     connect(this, SIGNAL(helpClicked()), this, SLOT(showHelp()));
 
     /*Every PageWidgetItem has a title (second arg of the constructor
@@ -97,7 +95,8 @@ DrKonqiBugReport::DrKonqiBugReport(QWidget * parent) :
     BugzillaDuplicatesPage * m_bugzillaDuplicates =  new BugzillaDuplicatesPage(this);
     connectSignals(m_bugzillaDuplicates);
 
-    KPageWidgetItem * m_bugzillaDuplicatesPage = new KPageWidgetItem(m_bugzillaDuplicates, "BugzillaDuplicates");
+    KPageWidgetItem * m_bugzillaDuplicatesPage =
+                                    new KPageWidgetItem(m_bugzillaDuplicates, "BugzillaDuplicates");
     m_bugzillaDuplicatesPage->setHeader(i18n("Bug Report Possible Duplicates List"));
     m_bugzillaDuplicatesPage->setIcon(KIcon("tools-report-bug"));
 
@@ -105,7 +104,8 @@ DrKonqiBugReport::DrKonqiBugReport(QWidget * parent) :
     BugzillaInformationPage * m_bugzillaInformation =  new BugzillaInformationPage(this);
     connectSignals(m_bugzillaInformation);
 
-    KPageWidgetItem * m_bugzillaInformationPage = new KPageWidgetItem(m_bugzillaInformation, "BugzillaInformation");
+    KPageWidgetItem * m_bugzillaInformationPage =
+                                    new KPageWidgetItem(m_bugzillaInformation, "BugzillaInformation");
     m_bugzillaInformationPage->setHeader(i18n("Details of the Bug Report"));
     m_bugzillaInformationPage->setIcon(KIcon("tools-report-bug"));
 
@@ -184,8 +184,9 @@ void DrKonqiBugReport::assistantFinished(bool showBack)
 
 void DrKonqiBugReport::showHelp()
 {
-    if (!m_aboutBugReportingDialog)
+    if (!m_aboutBugReportingDialog) {
         m_aboutBugReportingDialog = new AboutBugReportingDialog(this);
+    }
     m_aboutBugReportingDialog->show();
     m_aboutBugReportingDialog->showSection(QString("Begin"));
     m_aboutBugReportingDialog->showSection(currentPage()->name());
@@ -222,7 +223,8 @@ void DrKonqiBugReport::reject()
 void DrKonqiBugReport::closeEvent(QCloseEvent * event)
 {
     if (!m_canClose) {
-        if (KMessageBox::questionYesNo(this, i18n("Do you really want to close the bug assistant without sending the bug report?"),
+        if (KMessageBox::questionYesNo(this, i18n("Do you really want to close the bug assistant "
+                                                  "without sending the bug report?"),
                                        i18n("Close Crash Reporting Assistant")) == KMessageBox::Yes) {
             event->accept();
         } else {

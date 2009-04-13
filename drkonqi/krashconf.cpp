@@ -29,17 +29,16 @@
 
 #include <config-drkonqi.h>
 
-#include <kconfig.h>
-#include <kconfiggroup.h>
-#include <kglobal.h>
-#include <kaboutdata.h>
-#include <kcmdlineargs.h>
-#include <klocale.h>
-#include <kdebug.h>
-#include <kstartupinfo.h>
+#include <KConfig>
+#include <KConfigGroup>
+#include <KGlobal>
+#include <KCmdLineArgs>
+#include <KLocalizedString>
+#include <KDebug>
+#include <KStartupInfo>
 #include <kmacroexpander.h>
 
-#include <QHash>
+#include <QtCore/QHash>
 #include <QtDBus/QtDBus>
 
 #ifdef HAVE_STRSIGNAL
@@ -66,12 +65,14 @@ void KrashConfig :: readConfig()
     m_startedByKdeinit = args->isSet("kdeinit");
     m_safeMode = args->isSet("safer");
     m_execname = args->getOption("appname");
-    if (!args->getOption("apppath").isEmpty())
+    if (!args->getOption("apppath").isEmpty()) {
         m_execname.prepend(args->getOption("apppath") + '/');
+    }
 
     QString programname = args->getOption("programname");
-    if (programname.isEmpty())
+    if (programname.isEmpty()) {
         programname = I18N_NOOP2("unknown application", "unknown");
+    }
     m_aboutData = new KAboutData(args->getOption("appname").toUtf8(),
                                  0,
                                  ki18nc("unknown application", programname.toUtf8()),
@@ -168,10 +169,11 @@ void KrashConfig :: expandString(QString &str, ExpandStringUsage usage, const QS
                                      i18n("<filename>%1</filename>", tempFile) :
                                      tempFile;
 
-    if (usage == ExpansionUsageShell)
+    if (usage == ExpansionUsageShell) {
         str = KMacroExpander::expandMacrosShellQuote(str, map);
-    else
+    } else {
         str = KMacroExpander::expandMacros(str, map);
+    }
 }
 
 #include "krashconf.moc"

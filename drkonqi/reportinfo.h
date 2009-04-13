@@ -20,10 +20,8 @@
 #ifndef REPORTINFO__H
 #define REPORTINFO__H
 
-#include <QtCore/QString>
 #include "bugzillalib.h"
-
-class BugzillaManager;
+#include <QtCore/QString>
 
 class ReportInfo
 {

@@ -18,13 +18,11 @@
 ******************************************************************/
 
 #include "drkonqiadaptor.h"
-
-#include <QtCore/QString>
-
-#include <QtDebug>
-
 #include "krashconf.h"
 #include "drkonqi.h"
+
+#include <QtCore/QString>
+#include <KDebug>
 
 DrKonqiAdaptor::DrKonqiAdaptor(QObject *parent)
         : QDBusAbstractAdaptor(parent)
@@ -58,7 +56,7 @@ QString DrKonqiAdaptor::programName()
 void DrKonqiAdaptor::registerDebuggingApplication(const QString &launchName)
 {
     // handle method call org.kde.Krash.registerDebuggingApplication
-    qDebug() << "la" << launchName;
+    kDebug() << "la" << launchName;
     m_drkonqiInstance->registerDebuggingApplication(launchName);
 }
 

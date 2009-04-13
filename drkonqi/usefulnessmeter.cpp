@@ -22,7 +22,7 @@
 #include <QtGui/QPainter>
 #include <QtGui/QPixmap>
 
-#include <kicon.h>
+#include <KIcon>
 
 UsefulnessMeter::UsefulnessMeter(QWidget * parent) :
         QWidget(parent),

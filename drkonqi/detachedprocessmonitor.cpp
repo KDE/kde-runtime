@@ -15,7 +15,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "detachedprocessmonitor.h"
-#include <QTimerEvent>
+#include <QtCore/QTimerEvent>
 #include <KDebug>
 #include <signal.h>
 

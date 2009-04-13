@@ -40,15 +40,14 @@
     * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 #include "drkonqi.h"
-
+#include "drkonqi_globals.h"
 #include "krashconf.h"
 #include "drkonqiadaptor.h"
 #include "detachedprocessmonitor.h"
 #include "backtracegenerator.h"
 
 #include <QtDBus/QDBusConnection>
-
-#include <QTimer>
+#include <QtCore/QTimer>
 
 #include <KGlobal>
 #include <KProcess>
@@ -90,8 +89,9 @@ DrKonqi::~DrKonqi()
 DrKonqi *DrKonqi::instance()
 {
     static DrKonqi *drKonqiInstance = NULL;
-    if (!drKonqiInstance)
+    if (!drKonqiInstance) {
         drKonqiInstance = new DrKonqi();
+    }
     return drKonqiInstance;
 }
 
@@ -189,19 +189,24 @@ void DrKonqi::saveReport(const QString & reportText, QWidget *parent)
         }
     } else {
         QString defname = krashConfig->appName() + '-' + QDate::currentDate().toString("yyyyMMdd") + ".kcrash";
-        if (defname.contains('/'))
+        if (defname.contains('/')) {
             defname = defname.mid(defname.lastIndexOf('/') + 1);
+        }
         KUrl fileUrl = KFileDialog::getSaveUrl(defname, QString(), parent, i18n("Select Filename"));
         if (fileUrl.isValid()) {
             KIO::UDSEntry udsEntry;
             if (KIO::NetAccess::stat(fileUrl, udsEntry, parent)) {
                 if (KMessageBox::Cancel ==
                         KMessageBox::warningContinueCancel(0,
-                                                           i18n("A file named <filename>%1</filename> already exists. "
-                                                                "Are you sure you want to overwrite it?", fileUrl.fileName()),
-                                                           i18n("Overwrite File?"),
-                                                           KGuiItem(i18n("&Overwrite"), KIcon("document-save-as"), i18nc("button explanation", "Use this button to overwrite the current file"), i18nc("button explanation", "Use this button to overwrite the current file"))))
+                                i18n("A file named <filename>%1</filename> already exists. "
+                                     "Are you sure you want to overwrite it?", fileUrl.fileName()),
+                                i18n("Overwrite File?"),
+                                KGuiItem2(i18n("&Overwrite"), KIcon("document-save-as"),
+                                    i18nc("button explanation", "Use this button to overwrite the current file"))
+                        )
+                    ) {
                     return;
+                }
             }
 
             KTemporaryFile tf;

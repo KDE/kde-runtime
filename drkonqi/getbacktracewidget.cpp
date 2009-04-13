@@ -29,10 +29,8 @@
 #include <QtGui/QHBoxLayout>
 #include <QtGui/QVBoxLayout>
 
-#include <kpushbutton.h>
-#include <ktextbrowser.h>
-#include <kicon.h>
-#include <klocale.h>
+#include <KIcon>
+#include <KLocale>
 
 GetBacktraceWidget::GetBacktraceWidget(BacktraceGenerator * generator) :
         QWidget(),
@@ -46,14 +44,26 @@ GetBacktraceWidget::GetBacktraceWidget(BacktraceGenerator * generator) :
     connect(m_btGenerator, SIGNAL(newLine(QString)) , this, SLOT(backtraceNewLine(QString)));
 
     ui.m_extraDetailsLabel->setVisible(false);
-    ui.m_reloadBacktraceButton->setGuiItem(KGuiItem2(i18nc("button action", "&Reload Crash Information"), KIcon("view-refresh"), i18nc("button explanation", "Use this button to reload the crash information (backtrace). This is useful when you have installed the proper debug symbols packages and you want to obtain a better backtrace")));
+    ui.m_reloadBacktraceButton->setGuiItem(
+                KGuiItem2(i18nc("button action", "&Reload Crash Information"),
+                          KIcon("view-refresh"), i18nc("button explanation", "Use this button to "
+                          "reload the crash information (backtrace). This is useful when you have "
+                          "installed the proper debug symbols packages and you want to obtain "
+                          "a better backtrace")));
     connect(ui.m_reloadBacktraceButton, SIGNAL(clicked()), this, SLOT(regenerateBacktrace()));
 
-    ui.m_copyButton->setGuiItem(KGuiItem2(i18nc("button action", "&Copy"), KIcon("edit-copy"), i18nc("button explanation", "Use this button to copy the crash information (backtrace) to the clipboard")));
+    ui.m_copyButton->setGuiItem(KGuiItem2(i18nc("button action", "&Copy"), KIcon("edit-copy"),
+                                          i18nc("button explanation", "Use this button to copy the "
+                                                "crash information (backtrace) to the clipboard")));
     connect(ui.m_copyButton, SIGNAL(clicked()) , this, SLOT(copyClicked()));
     ui.m_copyButton->setEnabled(false);
 
-    ui.m_saveButton->setGuiItem(KGuiItem2(i18nc("button action", "&Save to File"), KIcon("document-save"), i18nc("button explanation", "Use this button to save the crash information (backtrace) to a file. This is useful if you want to take a look at it or to report the bug later")));
+    ui.m_saveButton->setGuiItem(KGuiItem2(i18nc("button action", "&Save to File"),
+                                          KIcon("document-save"),
+                                          i18nc("button explanation", "Use this button to save the "
+                                          "crash information (backtrace) to a file. This is useful "
+                                          "if you want to take a look at it or to report the bug "
+                                          "later")));
     connect(ui.m_saveButton, SIGNAL(clicked()) , this, SLOT(saveClicked()));
     ui.m_saveButton->setEnabled(false);
 
@@ -70,7 +80,8 @@ void GetBacktraceWidget::setAsLoading()
     ui.m_backtraceEdit->setText(i18nc("loading information, wait", "Loading ... "));
     ui.m_backtraceEdit->setEnabled(false);
 
-    ui.m_statusWidget->setBusy(i18nc("loading information, wait", "Loading crash information ... (this will take some time)"));
+    ui.m_statusWidget->setBusy(i18nc("loading information, wait",
+                                     "Loading crash information ... (this will take some time)"));
     m_usefulnessMeter->setUsefulness(BacktraceParser::Useless);
     m_usefulnessMeter->setState(BacktraceGenerator::Loading);
 
@@ -88,10 +99,11 @@ void GetBacktraceWidget::regenerateBacktrace()
 {
     setAsLoading();
 
-    if (DrKonqi::instance()->currentState() != DrKonqi::DebuggerRunning)
+    if (DrKonqi::instance()->currentState() != DrKonqi::DebuggerRunning) {
         m_btGenerator->start();
-    else
+    } else {
         anotherDebuggerRunning();
+    }
 
     emit stateChanged();
 }
@@ -113,12 +125,16 @@ void GetBacktraceWidget::generateBacktrace()
 void GetBacktraceWidget::anotherDebuggerRunning()
 {
     ui.m_backtraceEdit->setEnabled(false);
-    ui.m_backtraceEdit->setPlainText(i18n("Another debugger is currently running. The crash information could not be fetched"));
+    ui.m_backtraceEdit->setPlainText(i18n("Another debugger is currently debugging the same "
+                                    "application. The crash information could not be fetched"));
     m_usefulnessMeter->setState(BacktraceGenerator::Failed);
     m_usefulnessMeter->setUsefulness(BacktraceParser::Useless);
     ui.m_statusWidget->setIdle(i18n("The crash information could not be fetched"));
     ui.m_extraDetailsLabel->setVisible(true);
-    ui.m_extraDetailsLabel->setText(i18n("Another debugging process is attached to the crashed application. The DrKonqi debugger can not fetch the backtrace. Close that process and click \"Reload Crash Information\" to get it."));
+    ui.m_extraDetailsLabel->setText(i18n("Another debugging process is attached to the crashed "
+                                    "application. Therefore, the DrKonqi debugger can not fetch the "
+                                    "backtrace. Please close the other debugger and click \"Reload "
+                                    "Crash Information\"."));
     ui.m_reloadBacktraceButton->setEnabled(true);
 }
 
@@ -136,17 +152,26 @@ void GetBacktraceWidget::loadData()
         QString usefulnessText;
         switch (btParser->backtraceUsefulness()) {
         case BacktraceParser::ReallyUseful:
-            usefulnessText = i18nc("backtrace rating description", "This crash information is useful"); break;
+            usefulnessText = i18nc("backtrace rating description",
+                                   "This crash information is useful");
+            break;
         case BacktraceParser::MayBeUseful:
-            usefulnessText = i18nc("backtrace rating description", "This crash information may be useful"); break;
+            usefulnessText = i18nc("backtrace rating description",
+                                   "This crash information may be useful");
+            break;
         case BacktraceParser::ProbablyUseless:
-            usefulnessText = i18nc("backtrace rating description", "This crash information is probably not really useful"); break;
+            usefulnessText = i18nc("backtrace rating description",
+                                   "This crash information is probably not really useful");
+            break;
         case BacktraceParser::Useless:
-            usefulnessText = i18nc("backtrace rating description", "This crash information is not really useful"); break;
+            usefulnessText = i18nc("backtrace rating description",
+                                   "This crash information is not really useful");
+            break;
         default:
             //let's hope nobody will ever see this... ;)
             usefulnessText = i18nc("backtrace rating description that should never appear",
-                                   "The rating of this crash information is invalid. This is a bug in drkonqi itself.");
+                                   "The rating of this crash information is invalid. "
+                                   "This is a bug in drkonqi itself.");
             break;
         }
         ui.m_statusWidget->setIdle(usefulnessText);
@@ -154,7 +179,10 @@ void GetBacktraceWidget::loadData()
         //QStringList missingSymbols = QStringList() << btInfo->usefulFilesWithMissingSymbols();
         if (btParser->backtraceUsefulness() != BacktraceParser::ReallyUseful) {
             ui.m_extraDetailsLabel->setVisible(true);
-            ui.m_extraDetailsLabel->setText(i18n("Please read <link url='%1'>How to create useful crash reports</link> to learn how to get a useful backtrace.<br />After you install the needed packages you can click the \"Reload Crash Information\" button ", QLatin1String(TECHBASE_HOWTO_DOC)));
+            ui.m_extraDetailsLabel->setText(i18n("Please read <link url='%1'>How to create useful "
+                        "crash reports</link> to learn how to get a useful backtrace.<br />"
+                        "After you install the needed packages you can click the "
+                        "\"Reload Crash Information\" button ", QLatin1String(TECHBASE_HOWTO_DOC)));
 
 #if 0
             if (!missingSymbols.isEmpty()) { //Detected missing symbols
@@ -177,15 +205,22 @@ void GetBacktraceWidget::loadData()
         ui.m_backtraceEdit->setPlainText(i18n("The crash information could not be generated"));
 
         ui.m_extraDetailsLabel->setVisible(true);
-        ui.m_extraDetailsLabel->setText(i18n("You need to install the debug symbols package for this application<br />Please read <link url='%1'>How to create useful crash reports</link> to learn how to get a useful backtrace.<br />After you install the needed packages you can click the \"Reload Crash Information\" button ", QLatin1String(TECHBASE_HOWTO_DOC)));
+        ui.m_extraDetailsLabel->setText(i18n("You need to install the debug symbols package for this "
+                        "application<br />Please read <link url='%1'>How to create useful crash "
+                        "reports</link> to learn how to get a useful backtrace.<br />After you "
+                        "install the needed packages you can click the \"Reload Crash Information\" "
+                        "button ", QLatin1String(TECHBASE_HOWTO_DOC)));
     } else if (m_btGenerator->state() == BacktraceGenerator::FailedToStart) {
         m_usefulnessMeter->setUsefulness(BacktraceParser::Useless);
 
-        ui.m_statusWidget->setIdle(i18n("The debugger application is missing or could not be launched"));
+        ui.m_statusWidget->setIdle(i18n("The debugger application is missing or "
+                                        "could not be launched"));
 
         ui.m_backtraceEdit->setPlainText(i18n("The crash information could not be generated"));
         ui.m_extraDetailsLabel->setVisible(true);
-        ui.m_extraDetailsLabel->setText(i18n("You need to install the debugger package (<i>%1</i>) and click the \"Reload Crash Information\" button", DrKonqi::instance()->krashConfig()->debuggerName()));
+        ui.m_extraDetailsLabel->setText(i18n("You need to install the debugger package (<i>%1</i>) "
+                                             "and click the \"Reload Crash Information\" button",
+                                             DrKonqi::instance()->krashConfig()->debuggerName()));
     }
 
     ui.m_reloadBacktraceButton->setEnabled(true);

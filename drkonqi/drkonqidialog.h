@@ -20,7 +20,7 @@
 #ifndef DRKONQIDIALOG__H
 #define DRKONQIDIALOG__H
 
-#include <kdialog.h>
+#include <KDialog>
 
 class GetBacktraceWidget;
 class AboutBugReportingDialog;
@@ -37,7 +37,7 @@ public:
     ~DrKonqiDialog();
 
 private Q_SLOTS:
-    void aboutBugReporting(QString);
+    void aboutBugReporting();
     void reportBugAssistant();
 
     void restartApplication();

@@ -65,10 +65,11 @@
 //factory
 BacktraceParser *BacktraceParser::newParser(const QString & debuggerName, QObject *parent)
 {
-    if (debuggerName == "gdb")
+    if (debuggerName == "gdb") {
         return new BacktraceParserGdb(parent);
-    else
+    } else {
         return new BacktraceParserNull(parent);
+    }
 }
 
 BacktraceParser::BacktraceParser(QObject *parent) : QObject(parent) {}
@@ -174,8 +175,9 @@ BacktraceLineGdb::BacktraceLineGdb(const QString & lineStr)
 {
     d->m_line = lineStr;
     parse();
-    if (d->m_type == StackFrame)
+    if (d->m_type == StackFrame) {
         rate();
+    }
 }
 
 void BacktraceLineGdb::parse()
@@ -256,15 +258,17 @@ void BacktraceLineGdb::rate()
     if (!fileName().isEmpty()) {
         r = Good;
     } else if (!libraryName().isEmpty()) {
-        if (functionName() == "??")
+        if (functionName() == "??") {
             r = MissingFunction;
-        else
+        } else {
             r = MissingSourceFile;
+        }
     } else {
-        if (functionName() == "??")
+        if (functionName() == "??") {
             r = MissingEverything;
-        else
+        } else {
             r = MissingLibrary;
+        }
     }
 
     d->m_rating = r;
@@ -323,12 +327,12 @@ void BacktraceParserGdb::newLine(const QString & lineStr)
     //when the line is too long, gdb splits it into two lines.
     //This breaks parsing and results in two Unknown lines instead of a StackFrame one.
     //Here we workaround this by joining the two lines when such a scenario is detected.
-    if (d->m_lineInputBuffer.isEmpty())
+    if (d->m_lineInputBuffer.isEmpty()) {
         d->m_lineInputBuffer = lineStr;
-    else if (lineStr.startsWith(QLatin1Char(' ')) || lineStr.startsWith(QLatin1Char('\t')))
+    } else if (lineStr.startsWith(QLatin1Char(' ')) || lineStr.startsWith(QLatin1Char('\t'))) {
         //gdb always adds some whitespace at the beginning of the second line
         d->m_lineInputBuffer.append(lineStr);
-    else {
+    } else {
         parseLine(d->m_lineInputBuffer);
         d->m_lineInputBuffer = lineStr;
     }
@@ -361,10 +365,11 @@ void BacktraceParserGdb::parseLine(const QString & lineStr)
         // this is the first or the second time that the #0 frame appears in this thread.
         // The flag is cleared on each thread start.
         if (line.frameNumber() == 0) {
-            if (d->m_frameZeroAppeared)
+            if (d->m_frameZeroAppeared) {
                 break; //break from the switch so that the frame is not added to the list.
-            else
+            } else {
                 d->m_frameZeroAppeared = true;
+            }
         }
 
         //rate the stack frame if we are below the signal handler and the function is not blacklisted.
@@ -376,10 +381,11 @@ void BacktraceParserGdb::parseLine(const QString & lineStr)
             //are used to send any kind of event to the Qt application. All stack frames below this,
             //with or without debug symbols, are useless to KDE developers, so we ignore them.
             QRegExp exp("(Q|K)(Core)?Application(Private)?::notify.*");
-            if (exp.exactMatch(line.functionName()))
+            if (exp.exactMatch(line.functionName())) {
                 d->m_qtInternalStackStartEncountered = true;
-            else
+            } else {
                 d->m_usefulLinesList.append(line);
+            }
         }
 
         //fall through and append the line to the list
@@ -394,14 +400,16 @@ QString BacktraceParserGdb::parsedBacktrace() const
     QString result;
 
     //if there is no d, the debugger has not run, so we return an empty string.
-    if (!d)
+    if (!d) {
         return result;
+    }
 
     QList<BacktraceLineGdb>::const_iterator i;
     for (i = d->m_linesList.constBegin(); i != d->m_linesList.constEnd(); ++i) {
         //if there is only one thread, we can omit the thread indicator, the thread header and all the empty lines.
         if (d->m_threadsCount == 1 && ((*i).type() == BacktraceLineGdb::ThreadIndicator
-                                       || (*i).type() == BacktraceLineGdb::ThreadStart || (*i).type() == BacktraceLineGdb::EmptyLine))
+                                       || (*i).type() == BacktraceLineGdb::ThreadStart
+                                       || (*i).type() == BacktraceLineGdb::EmptyLine))
             continue;
         result += (*i).toString();
     }
@@ -412,15 +420,18 @@ BacktraceParser::Usefulness BacktraceParserGdb::backtraceUsefulness() const
 {
     //if there is no d, the debugger has not run,
     //so we can say that the (inexistent) backtrace Useless.
-    if (!d)
+    if (!d) {
         return Useless;
+    }
 
     //cache the usefulness value because this function will probably be called many times
-    if (d->m_cachedUsefulness != InvalidUsefulness)
+    if (d->m_cachedUsefulness != InvalidUsefulness) {
         return d->m_cachedUsefulness;
+    }
 
-    if (d->m_usefulLinesList.isEmpty())
+    if (d->m_usefulLinesList.isEmpty()) {
         return Useless;
+    }
 
     uint rating = 0, bestPossibleRating = 0, counter = 0;
     QList<BacktraceLineGdb>::const_iterator i;
@@ -434,9 +445,13 @@ BacktraceParser::Usefulness BacktraceParserGdb::backtraceUsefulness() const
     }
 
     Usefulness usefulness = Useless;
-    if (rating >= (bestPossibleRating*0.90)) usefulness = ReallyUseful;
-    else if (rating >= (bestPossibleRating*0.70)) usefulness = MayBeUseful;
-    else if (rating >= (bestPossibleRating*0.40)) usefulness = ProbablyUseless;
+    if (rating >= (bestPossibleRating*0.90)) {
+        usefulness = ReallyUseful;
+    } else if (rating >= (bestPossibleRating*0.70)) {
+        usefulness = MayBeUseful;
+    } else if (rating >= (bestPossibleRating*0.40)) {
+        usefulness = ProbablyUseless;
+    }
 
     kDebug() << "Rating:" << rating << "out of" << bestPossibleRating << "Usefulness:"
     << staticMetaObject.enumerator(staticMetaObject.indexOfEnumerator("Usefulness")).valueToKey(usefulness);
@@ -450,16 +465,18 @@ BacktraceParser::Usefulness BacktraceParserGdb::backtraceUsefulness() const
 QStringList BacktraceParserGdb::firstValidFunctions() const
 {
     //if there is no d, the debugger has not run, so we have no functions to return.
-    if (!d)
+    if (!d) {
         return QStringList();
+    }
 
     QStringList result;
     QList<BacktraceLineGdb>::const_iterator i;
 
     //get only the first three valid functions that are encountered
     for (i = d->m_usefulLinesList.constBegin(); i != d->m_usefulLinesList.constEnd() && result.size() < 3; ++i) {
-        if ((*i).functionName() != "??")
+        if ((*i).functionName() != "??") {
             result.append((*i).functionName());
+        }
     }
 
     return result;

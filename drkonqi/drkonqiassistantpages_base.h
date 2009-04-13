@@ -20,9 +20,6 @@
 #ifndef DRKONQIASSISTANTPAGES__H
 #define DRKONQIASSISTANTPAGES__H
 
-#include <QtGui/QWidget>
-#include <QtCore/QFlags>
-
 #include "getbacktracewidget.h"
 #include "drkonqibugreport.h"
 

@@ -25,30 +25,30 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************/
 
-//#include <config-runtime.h>
-
-#include <stdlib.h>
-#include <unistd.h>
-
-#include <kapplication.h>
-#include <kcmdlineargs.h>
-#include <kaboutdata.h>
-#include <klocale.h>
-#include <kdefakes.h>
-
 #include "drkonqi.h"
 #include "drkonqidialog.h"
 
+#include <KApplication>
+#include <KCmdLineArgs>
+#include <KAboutData>
+#include <KLocalizedString>
+#include <kdefakes.h>
+
+#include <cstdlib>
+#include <unistd.h>
+
 static const char version[] = "1.9";
-static const char description[] = I18N_NOOP("KDE crash handler gives the user feedback if a program crashed");
+static const char description[] = I18N_NOOP("The KDE crash handler gives the user feedback "
+                                            "if a program has crashed");
 
 int main(int argc, char* argv[])
 {
 #ifndef Q_OS_WIN //krazy:exclude=cpp
 // Drop privs.
     setgid(getgid());
-    if (setuid(getuid()) < 0 && geteuid() != getuid())
+    if (setuid(getuid()) < 0 && geteuid() != getuid()) {
         exit(255);
+    }
 #endif
 
     // Make sure that DrKonqi doesn't start DrKonqi when it crashes :-]
@@ -59,8 +59,10 @@ int main(int argc, char* argv[])
                          KAboutData::License_GPL,
                          ki18n("(C) 2000-2009, The DrKonqi Authors"));
     aboutData.addAuthor(ki18n("Hans Petter Bieker"), KLocalizedString(), "bieker@kde.org");
-    aboutData.addAuthor(ki18n("Dario Andres Rodriguez"), KLocalizedString(), "andresbajotierra@gmail.com");
-    aboutData.addAuthor(ki18n("George Kiagiadakis"), KLocalizedString(), "gkiagia@users.sourceforge.net");
+    aboutData.addAuthor(ki18n("Dario Andres Rodriguez"), KLocalizedString(),
+                         "andresbajotierra@gmail.com");
+    aboutData.addAuthor(ki18n("George Kiagiadakis"), KLocalizedString(),
+                         "gkiagia@users.sourceforge.net");
     aboutData.setProgramIconName("tools-report-bug");
 
     KCmdLineArgs::init(argc, argv, &aboutData);
@@ -85,8 +87,9 @@ int main(int argc, char* argv[])
         new KApplication;
     qa->setApplicationName(inst.componentName());
 
-    if (!DrKonqi::instance()->init())
+    if (!DrKonqi::instance()->init()) {
         return 1;
+    }
 
     int ret;
     {

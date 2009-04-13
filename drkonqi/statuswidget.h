@@ -19,10 +19,9 @@
 #ifndef STATUSWIDGET__H
 #define STATUSWIDGET__H
 
-#include <QtGui/QStackedWidget>
-
-#include <QtGui/QLabel>
 #include <QtCore/QEvent>
+#include <QtGui/QStackedWidget>
+#include <QtGui/QLabel>
 #include <QtGui/QTextDocument>
 
 class WrapLabel;

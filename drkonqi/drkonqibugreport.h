@@ -20,7 +20,7 @@
 #ifndef DRKONQIBUGREPORT__H
 #define DRKONQIBUGREPORT__H
 
-#include <kassistantdialog.h>
+#include <KAssistantDialog>
 
 class DrKonqiAssistantPage;
 class AboutBugReportingDialog;

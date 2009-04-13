@@ -20,11 +20,10 @@
 #ifndef DRKONQIASSISTANTPAGESBUGZILLA__H
 #define DRKONQIASSISTANTPAGESBUGZILLA__H
 
-#include <kwallet.h>
-
 #include "drkonqiassistantpages_base.h"
 #include "bugzillalib.h"
 
+namespace KWallet { class Wallet; }
 class QFormLayout;
 class KLineEdit;
 class KPushButton;

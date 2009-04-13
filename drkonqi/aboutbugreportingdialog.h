@@ -20,7 +20,7 @@
 #ifndef ABOUTBUGREPORTINGDIALOG__H
 #define ABOUTBUGREPORTINGDIALOG__H
 
-#include <kdialog.h>
+#include <KDialog>
 
 class KTextBrowser;
 

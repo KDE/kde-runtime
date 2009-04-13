@@ -23,22 +23,15 @@
 #include <QtCore/QByteArray>
 #include <QtCore/QString>
 #include <QtCore/QRegExp>
-#include <QtCore/QUrl>
-
-#include <QtGui/QTextDocument>
 
 #include <QtXml/QDomNode>
 #include <QtXml/QDomNodeList>
 #include <QtXml/QDomElement>
 #include <QtXml/QDomNamedNodeMap>
 
-#include <QtDebug>
-
-#include <kio/job.h>
-#include <kio/jobclasses.h>
-#include <kurl.h>
-#include <kdebug.h>
-#include <klocale.h>
+#include <KIO/Job>
+#include <KUrl>
+#include <KLocale>
 
 static const char bugtrackerBaseUrl[] = "http://bugstest.kde.org/"; //TODO change to correct HTTPS BKO "https://bugs.kde.org/";
 
@@ -47,7 +40,14 @@ static const char columns[] = "bug_severity,priority,bug_status,product,short_de
 //BKO URLs
 static const char loginUrl[] = "index.cgi";
 
-static const char searchUrl[] = "buglist.cgi?query_format=advanced&short_desc_type=anywordssubstr&short_desc=%1&product=%2&long_desc_type=anywordssubstr&long_desc=%3&bug_file_loc_type=allwordssubstr&bug_file_loc=&keywords_type=allwords&keywords=&emailtype1=substring&email1=&emailtype2=substring&email2=&bugidtype=include&bug_id=&votes=&chfieldfrom=%4&chfieldto=%5&chfield=[Bug+creation]&chfieldvalue=&cmdtype=doit&field0-0-0=noop&type0-0-0=noop&value0-0-0=&bug_severity=%6&order=Importance&columnlist=%7&ctype=csv";
+static const char searchUrl[] = "buglist.cgi?query_format=advanced&short_desc_type=anywordssubstr"
+                            "&short_desc=%1&product=%2&long_desc_type=anywordssubstr&long_desc=%3"
+                            "&bug_file_loc_type=allwordssubstr&bug_file_loc=&keywords_type=allwords"
+                            "&keywords=&emailtype1=substring&email1=&emailtype2=substring"
+                            "&email2=&bugidtype=include&bug_id=&votes=&chfieldfrom=%4&chfieldto=%5"
+                            "&chfield=[Bug+creation]&chfieldvalue=&cmdtype=doit&field0-0-0=noop"
+                            "&type0-0-0=noop&value0-0-0=&bug_severity=%6&order=Importance"
+                            "&columnlist=%7&ctype=csv";
 // short_desc, product, long_desc(possible backtraces lines), searchFrom, searchTo, severity, columnList
 
 static const char showBugUrl[] = "show_bug.cgi?id=%1";
@@ -97,7 +97,8 @@ void BugzillaManager::loginDone(KJob* job)
         if (response.contains(QByteArray("The username or password you entered is not valid"))) {
             m_logged = false;
         } else {
-            if (response.contains(QByteArray("Managing Your Account")) && response.contains(QByteArray("Log out"))) {
+            if (response.contains(QByteArray("Managing Your Account"))
+                && response.contains(QByteArray("Log out"))) {
                 m_logged = true;
             } else {
                 m_logged = false;
@@ -105,10 +106,11 @@ void BugzillaManager::loginDone(KJob* job)
             }
         }
 
-        if (error)
+        if (error) {
             emit loginError(i18n("Unknown response from the server"));
-        else
+        } else {
             emit loginFinished(m_logged);
+        }
     } else {
         emit loginError(job->errorString());
     }
@@ -150,9 +152,12 @@ void BugzillaManager::fetchBugReportDone(KJob* job)
     fetchBugJob = 0;
 }
 
-void BugzillaManager::searchBugs(QString words, QString product, QString severity, QString date_start, QString date_end, QString comment)
+void BugzillaManager::searchBugs(QString words, QString product, QString severity,
+                                 QString date_start, QString date_end, QString comment)
 {
-    QString url = QString(bugtrackerBaseUrl) + QString(searchUrl).arg(words.replace(' ' , '+'), product, comment, date_start,  date_end, severity, QString(columns));
+    QString url = QString(bugtrackerBaseUrl) +
+                  QString(searchUrl).arg(words.replace(' ' , '+'), product, comment, date_start,
+                                         date_end, severity, QString(columns));
 
     KIO::StoredTransferJob * searchBugsJob = KIO::storedGet(KUrl(url) , KIO::Reload, KIO::HideProgressInfo);
     connect(searchBugsJob, SIGNAL(finished(KJob*)) , this, SLOT(searchBugsDone(KJob*)));
@@ -166,10 +171,11 @@ void BugzillaManager::searchBugsDone(KJob * job)
         BugListCSVParser * parser = new BugListCSVParser(searchBugsJob->data());
         BugMapList list = parser->parse();
 
-        if (parser->isValid())
+        if (parser->isValid()) {
             emit searchFinished(list);
-        else
+        } else {
             emit searchError(i18n("Invalid bug list: corrupted data"));
+        }
 
         delete parser;
     } else {
@@ -234,12 +240,14 @@ void BugzillaManager::sendReportDone(KJob * job)
             QRegExp reg("<td id=\"error_msg\" class=\"throw_error\">(.+)</td>");
             response.remove('\r'); response.remove('\n');
             pos = reg.indexIn(response);
-            if (pos != -1)
+            if (pos != -1) {
                 error = reg.cap(1).trimmed();
-            else
+            } else {
                 error = i18n("Unknown error");
+            }
 
-            if (error.contains(QLatin1String("does not exist or you aren't authorized to")) || error.contains(QLatin1String("There is no component named 'general'"))) {
+            if (error.contains(QLatin1String("does not exist or you aren't authorized to"))
+                || error.contains(QLatin1String("There is no component named 'general'"))) {
                 emit sendReportErrorWrongProduct();
             } else {
                 emit sendReportError(error);

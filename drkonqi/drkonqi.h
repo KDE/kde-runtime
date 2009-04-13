@@ -17,7 +17,7 @@
 #ifndef DRKONQI_H
 #define DRKONQI_H
 
-#include <QObject>
+#include <QtCore/QObject>
 class KrashConfig;
 class BacktraceGenerator;
 

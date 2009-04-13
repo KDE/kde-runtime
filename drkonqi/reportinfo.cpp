@@ -24,7 +24,7 @@
 #include "backtraceparser.h"
 #include "bugzillalib.h"
 
-#include <QtCore/QProcess>
+#include <KProcess>
 #include <kdeversion.h>
 
 ReportInfo::ReportInfo()
@@ -51,12 +51,14 @@ QString ReportInfo::getQtVersion() const
 QString ReportInfo::getOS() const
 {
     if (m_OS.isEmpty()) { //Fetch OS name & ver
-        QProcess process;
-        process.start("uname -srom");
-        process.waitForFinished(5000);
+        KProcess process;
+        process.setOutputChannelMode(KProcess::OnlyStdoutChannel);
+        process.setEnv("LC_ALL", "C");
+        process << "uname" <<  "-srom";
+        process.execute(5000);
         QByteArray os = process.readAllStandardOutput();
         os.chop(1);
-        m_OS = QString(os);
+        m_OS = QString::fromLocal8Bit(os);
     }
     return m_OS;
 }
@@ -65,22 +67,25 @@ QString ReportInfo::getLSBRelease() const
 {
     if (m_LSBRelease.isEmpty()) {
         //Get base OS
-        QProcess processOS;
-        processOS.start("uname -s");
-        processOS.waitForFinished(5000);
-        QByteArray os = processOS.readAllStandardOutput();
+        KProcess process;
+        process.setOutputChannelMode(KProcess::OnlyStdoutChannel);
+        process.setEnv("LC_ALL", "C");
+        process << "uname" << "-s";
+        process.execute(5000);
+        QByteArray os = process.readAllStandardOutput();
         os.chop(1);
 
-        if (QString(os) == QLatin1String("Linux")) {
-            QProcess process;
-            process.start("lsb_release -idrc");
-            process.waitForFinished(5000);
+        if (QString::fromLocal8Bit(os) == QLatin1String("Linux")) {
+            process.clearProgram();
+            process << "lsb_release" << "-idrc";
+            process.execute(5000);
             QByteArray lsb = process.readAllStandardOutput();
             if (!lsb.isEmpty()) {
                 lsb.chop(1);
-                m_LSBRelease = QString(lsb);
+                m_LSBRelease = QString::fromLocal8Bit(lsb);
             } else {
-                m_LSBRelease = i18n("LSB Release information not found ( no lsb_release command found )");
+                m_LSBRelease = i18n("LSB Release information not found "
+                                    "( no lsb_release command found )");
             }
         } else {
             m_LSBRelease = i18n("Not a GNU/Linux system. LSB Release Information not available");
@@ -91,49 +96,62 @@ QString ReportInfo::getLSBRelease() const
 
 QString ReportInfo::generateReportTemplate(bool bugzilla) const
 {
+    //Note: no translations must be done in this function's strings
     QString dottedLine = QString("------");
     QString lineBreak = QLatin1String("<br />");
-    if (bugzilla)
+    if (bugzilla) {
         lineBreak = QLatin1String("\n");
+    }
 
     QString report;
     const KrashConfig * krashConfig = DrKonqi::instance()->krashConfig();
 
-    report.append(QString("Application and System information :") + lineBreak + dottedLine + lineBreak);
+    report.append(QString("Application and System information :")
+                    + lineBreak + dottedLine + lineBreak);
     //Program name and versions
     report.append(QString("KDE Version: %1").arg(getKDEVersion()) + lineBreak);
     report.append(QString("Qt Version: %1").arg(getQtVersion()) + lineBreak);
     report.append(QString("Operating System: %1").arg(getOS()) + lineBreak);
-    report.append(QString("Application that crashed: %1").arg(krashConfig->productName()) + lineBreak);
-    report.append(QString("Version of the application: %1").arg(krashConfig->productVersion()) + lineBreak);
+    report.append(QString("Application that crashed: %1").arg(krashConfig->productName())
+                    + lineBreak);
+    report.append(QString("Version of the application: %1").arg(krashConfig->productVersion())
+                    + lineBreak);
 
     //LSB output
     QString lsb = getLSBRelease();
-    if (!bugzilla) lsb.replace('\n', "<br />");
+    if (!bugzilla) {
+        lsb.replace('\n', "<br />");
+    }
     report.append(dottedLine + lineBreak + lsb + lineBreak  + dottedLine);
 
     //Description (title)
-    if (!m_report.shortDescription().isEmpty())
+    if (!m_report.shortDescription().isEmpty()) {
         report.append(lineBreak + QString("Title: %1").arg(m_report.shortDescription()));
+    }
 
     //Details of the crash situation
     if (m_userCanDetail) {
         report.append(lineBreak);
-        report.append(lineBreak + QString("What I was doing when the application crashed:") + lineBreak);
+        report.append(lineBreak + QString("What I was doing when the application crashed:")
+                        + lineBreak);
         if (!m_userDetailText.isEmpty()) {
             report.append(m_userDetailText);
         } else {
-            report.append(i18n("[[ Insert the details of what were you doing when the application crashed (in ENGLISH) here ]]"));
+            report.append(i18n("[[ Insert the details of what were you doing when the "
+                                "application crashed (in ENGLISH) here ]]"));
         }
     }
 
     //Backtrace
     report.append(lineBreak + lineBreak);
-    BacktraceParser::Usefulness use = DrKonqi::instance()->backtraceGenerator()->parser()->backtraceUsefulness();
+    BacktraceParser::Usefulness use =
+            DrKonqi::instance()->backtraceGenerator()->parser()->backtraceUsefulness();
+
     if (use != BacktraceParser::Useless && use != BacktraceParser::InvalidUsefulness) {
         QString formattedBacktrace = DrKonqi::instance()->backtraceGenerator()->backtrace();
-        if (!bugzilla)
+        if (!bugzilla) {
             formattedBacktrace.replace('\n', "<br />");
+        }
         formattedBacktrace = formattedBacktrace.trimmed();
 
         report.append(QString("Backtrace:") + lineBreak + dottedLine
@@ -143,8 +161,10 @@ QString ReportInfo::generateReportTemplate(bool bugzilla) const
     }
 
     //Possible duplicate
-    if (!m_possibleDuplicate.isEmpty())
-        report.append(lineBreak + lineBreak + QString("This bug may be duplicate/related to bug %1").arg(m_possibleDuplicate));
+    if (!m_possibleDuplicate.isEmpty()) {
+        report.append(lineBreak + lineBreak + QString("This bug may be duplicate/related "
+                                                      "to bug %1").arg(m_possibleDuplicate));
+    }
 
     return report;
 }

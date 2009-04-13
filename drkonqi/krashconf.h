@@ -28,7 +28,7 @@
 #ifndef KRASHCONF_H
 #define KRASHCONF_H
 
-#include <QObject>
+#include <QtCore/QObject>
 #include <KAboutData>
 
 class KrashConfig : public QObject

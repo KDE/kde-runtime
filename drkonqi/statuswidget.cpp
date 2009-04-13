@@ -23,8 +23,6 @@
 #include <QtGui/QProgressBar>
 #include <QtGui/QHBoxLayout>
 
-#include <klocale.h>
-
 StatusWidget::StatusWidget(QWidget * parent) :
         QStackedWidget(parent)
 {
@@ -66,8 +64,6 @@ StatusWidget::StatusWidget(QWidget * parent) :
     busyLayout->addWidget(m_busyLabel);
     busyLayout->addWidget(m_progressBar);
     busyLayout->setAlignment(m_progressBar,Qt::AlignVCenter);
-    
-    
 }
 
 void StatusWidget::setBusy(QString busyMessage)
@@ -102,6 +98,7 @@ void StatusWidget::setBusyCursor()
 
 void StatusWidget::setIdleCursor()
 {
-    while (QApplication::overrideCursor())
+    while (QApplication::overrideCursor()) {
         QApplication::restoreOverrideCursor();
+    }
 }
