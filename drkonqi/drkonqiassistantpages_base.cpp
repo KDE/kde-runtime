@@ -244,7 +244,7 @@ void ConclusionPage::aboutToShow()
     }
     case BacktraceParser::ProbablyUseless: {
         needToReport = (canDetails && developersCanContactReporter);
-        conclusionsHTML = i18n("* The automatically generated crash information lacks important details and it is probably not useful.");   //should we add "use your judgement"?
+        conclusionsHTML = i18n("* The automatically generated crash information lacks important details and it is probably not useful.");   //should we add "use your judgment"?
         break;
     }
     case BacktraceParser::Useless:
