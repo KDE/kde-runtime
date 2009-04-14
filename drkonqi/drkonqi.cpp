@@ -187,7 +187,7 @@ void DrKonqi::saveReport(const QString & reportText, QWidget *parent)
                                                    "Report saved to <filename>%1</filename>.",
                                                    tf.fileName()));
         } else {
-            KMessageBox::sorry(parent, i18nc("@info","Could not create a file to save the report in"));
+            KMessageBox::sorry(parent, i18nc("@info","Could not create a file in which to save the report."));
         }
     } else {
         QString defname = krashConfig->appName() + '-'
@@ -208,7 +208,7 @@ void DrKonqi::saveReport(const QString & reportText, QWidget *parent)
                                 KGuiItem2(i18nc("@action:button","&Overwrite"),
                                           KIcon("document-save-as"),
                                           i18nc("@info:tooltip",
-                                                "Use this button to overwrite the current file"))
+                                                "Use this button to overwrite the current file."))
                         )
                     ) {
                     return;

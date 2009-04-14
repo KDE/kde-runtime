@@ -59,14 +59,14 @@ BugzillaLoginPage::BugzillaLoginPage(DrKonqiBugReport * parent) :
 
     m_statusWidget = new StatusWidget();
     m_statusWidget->setIdle(i18nc("@info:status '1' is replaced with \"bugs.kde.org\"",
-                                   "You need to login with your %1 account in order to proceed",
+                                   "You need to login with your %1 account in order to proceed.",
                                    QLatin1String(KDE_BUGZILLA_SHORT_URL)));
 
     m_loginButton = new KPushButton(KGuiItem2(i18nc("@action:button", "Login"),
                                               KIcon("network-connect"),
                                               i18nc("@info:tooltip", "Use this button to login "
                                               "to the KDE bug tracking system using the provided "
-                                              "username and password")));
+                                              "username and password.")));
     connect(m_loginButton, SIGNAL(clicked()) , this, SLOT(loginClicked()));
 
     m_userEdit = new KLineEdit();
@@ -83,9 +83,9 @@ BugzillaLoginPage::BugzillaLoginPage(DrKonqiBugReport * parent) :
     QLabel * noticeLabel = new QLabel(
                         i18nc("@info/rich","<note>You need a user account on the "
                             "<link url='%1'>KDE bug tracking system</link> in order to "
-                            "file a bug report because we may need to contact you later "
-                            "for requesting further information. <nl />If you don't have "
-                            "one, you can freely <link url='%2'>create one here</link></note>",
+                            "file a bug report, because we may need to contact you later "
+                            "for requesting further information. <nl />If you do not have "
+                            "one, you can freely <link url='%2'>create one here</link>.</note>",
                             QLatin1String(KDE_BUGZILLA_URL),
                             QLatin1String(KDE_BUGZILLA_CREATE_ACCOUNT_URL)));
 
@@ -114,7 +114,7 @@ void BugzillaLoginPage::loginError(QString err)
 {
     loginFinished(false);
     m_statusWidget->setIdle(i18nc("@info:status","Error when trying to login: "
-                                                 "<message>%1</message>", err));
+                                                 "<message>%1.</message>", err));
 }
 
 void BugzillaLoginPage::aboutToShow()
@@ -134,7 +134,7 @@ void BugzillaLoginPage::aboutToShow()
         m_form->labelForField(m_passwordEdit)->setVisible(false);
 
         m_statusWidget->setIdle(i18nc("@info:status the user is logged at the bugtracker site as USERNAME",
-                                      "Logged in at the KDE bug tracking system (%1) as: %2",
+                                      "Logged in at the KDE bug tracking system (%1) as: %2.",
                                       QLatin1String(KDE_BUGZILLA_SHORT_URL),
                                       reportInfo()->getBZ()->getUsername()));
     } else {
@@ -194,7 +194,7 @@ void BugzillaLoginPage::loginClicked()
         }
 
         m_statusWidget->setBusy(i18nc("@info:status '1' is a url, '2' the username",
-                                      "Performing login at %1 as %2 ...",
+                                      "Performing login at %1 as %2...",
                                       QLatin1String(KDE_BUGZILLA_SHORT_URL), m_userEdit->text()));
 
         reportInfo()->getBZ()->setLoginData(m_userEdit->text(), m_passwordEdit->text());
@@ -252,7 +252,7 @@ BugzillaKeywordsPage::BugzillaKeywordsPage(DrKonqiBugReport * parent) :
                                             "situation. These keywords will be used to search for "
                                             "already reported bugs that could be the same "
                                             "(possible duplicates). <note>You must use English "
-                                            "words</note>"));
+                                            "words.</note>"));
     detailsLabel->setWordWrap(true);
 
     m_keywordsEdit = new KLineEdit();
@@ -347,18 +347,18 @@ BugzillaDuplicatesPage::BugzillaDuplicatesPage(DrKonqiBugReport * parent):
     header->setResizeMode(0, QHeaderView::ResizeToContents);
     header->setResizeMode(1, QHeaderView::Interactive);
 
-    m_searchMoreButton = new KPushButton(KGuiItem2(i18nc("@action:button", "Search more reports"),
+    m_searchMoreButton = new KPushButton(KGuiItem2(i18nc("@action:button", "Search for more reports"),
                                                    KIcon("edit-find"),
                                                    i18nc("@info:tooltip", "Use this button to "
-                                                        "search more similar bug reports on an "
-                                                        "earlier date")));
+                                                        "search for more similar bug reports on an "
+                                                        "earlier date.")));
     connect(m_searchMoreButton, SIGNAL(clicked()), this, SLOT(searchMore()));
     m_searchMoreButton->setEnabled(false);
 
     m_openReportButton = new KPushButton(KGuiItem2(i18nc("@action:button", "Open selected report"),
                                                    KIcon("document-preview"),
                                                    i18nc("@info:tooltip", "Use this button to view "
-                                                   "the information of the selected bug report")));
+                                                   "the information of the selected bug report.")));
     connect(m_openReportButton, SIGNAL(clicked()), this, SLOT(openSelectedReport()));
 
     QHBoxLayout * buttonLayout = new QHBoxLayout();
@@ -443,8 +443,8 @@ void BugzillaDuplicatesPage::searchError(QString err)
     m_endDate = m_startDate.addYears(1);
 
     KMessageBox::error(this , i18nc("@info/rich","Error fetching the bug report list<nl/>"
-                                                 "<message>%1</message><nl/>"
-                                                 "Please, wait some time and try again", err));
+                                                 "<message>%1.</message><nl/>"
+                                                 "Please wait some time and try again.", err));
 }
 
 void BugzillaDuplicatesPage::bugFetchError(QString err)
@@ -452,8 +452,8 @@ void BugzillaDuplicatesPage::bugFetchError(QString err)
     if (m_infoDialog) {
         if (m_infoDialog->isVisible()) {
             KMessageBox::error(this , i18nc("@info/rich","Error fetching the bug report<nl/>"
-                                            "<message>%1</message><nl/>"
-                                            "Please, wait some time and try again", err));
+                                            "<message>%1.</message><nl/>"
+                                            "Please wait some time and try again.", err));
             m_mineMayBeDuplicateButton->setEnabled(false);
             m_infoDialogBrowser->setText(i18nc("@info","Error fetching the bug report"));
             m_infoDialogStatusWidget->setIdle(i18nc("@info:status","Error fetching the bug report"));
@@ -514,13 +514,13 @@ void BugzillaDuplicatesPage::itemClicked(QTreeWidgetItem * item, int col)
 
     m_mineMayBeDuplicateButton->setEnabled(false);
 
-    m_infoDialogBrowser->setText(i18nc("@info:status","Loading ... "));
+    m_infoDialogBrowser->setText(i18nc("@info:status","Loading..."));
     m_infoDialogLink->setText(i18nc("@info","<link url='%1'>Bug report page at the KDE bug "
                                               "tracking system</link>",
                                     reportInfo()->getBZ()->urlForBug(m_currentBugNumber)));
 
     m_infoDialogStatusWidget->setBusy(i18nc("@info:status","Loading information about bug "
-                                                           "<numid>%1</numid> from %2 ...",
+                                                           "<numid>%1</numid> from %2....",
                                             m_currentBugNumber,
                                             QLatin1String(KDE_BUGZILLA_SHORT_URL)));
 
@@ -608,7 +608,7 @@ void BugzillaDuplicatesPage::performSearch()
     QString startDateStr = m_startDate.toString("yyyy-MM-dd");
     QString endDateStr = m_endDate.toString("yyyy-MM-dd");
 
-    m_statusWidget->setBusy(i18nc("@info:status","Searching for duplicates (from %1 to %2) ...",
+    m_statusWidget->setBusy(i18nc("@info:status","Searching for duplicates (from %1 to %2)...",
                                    startDateStr, endDateStr));
 
     const KrashConfig *krashConfig = DrKonqi::instance()->krashConfig();
@@ -662,7 +662,7 @@ void BugzillaDuplicatesPage::searchFinished(const BugMapList & list)
             searchMore();
         } else {
             m_statusWidget->setIdle(i18nc("@info:status","Search Finished. "
-                                                         "No more possible date ranges to search"));
+                                                         "No more possible date ranges to search."));
 
             enableControls(false);
         }
@@ -690,8 +690,8 @@ BugzillaInformationPage::BugzillaInformationPage(DrKonqiBugReport * parent)
 
     //TODO native-rewrite (text length?)
     QLabel * explanationLabel = new QLabel(i18nc("@info/rich","Complete the bug report fields in "
-                                                "order to properly submit it. <note>All the texts "
-                                                "should be written in english.</note>"));
+                                                "order to properly submit it. <note>All the text "
+                                                "should be written in English.</note>"));
     explanationLabel->setWordWrap(true);
 
     layout->addWidget(explanationLabel);
@@ -702,7 +702,7 @@ BugzillaInformationPage::BugzillaInformationPage(DrKonqiBugReport * parent)
     layout->addWidget(m_detailsEdit);
     layout->addStretch();
     layout->addWidget(new QLabel(i18nc("@info/rich","<note>The crash information will be "
-                                      "automatically integrated into the bug report</note>")));
+                                      "automatically integrated into the bug report.</note>")));
 
     setLayout(layout);
 
@@ -800,7 +800,7 @@ BugzillaSendPage::BugzillaSendPage(DrKonqiBugReport * parent)
     m_retryButton = new KPushButton(KGuiItem2(i18nc("@action:button", "Retry ..."),
                                               KIcon("view-refresh"),
                                               i18nc("@info:tooltip", "Use this button to retry "
-                                                  "sending the crash report if it failed before")));
+                                                  "sending the crash report if it failed before.")));
 
     m_retryButton->setVisible(false);
     connect(m_retryButton, SIGNAL(clicked()), this , SLOT(retryClicked()));
@@ -824,7 +824,7 @@ void BugzillaSendPage::retryClicked()
 
 void BugzillaSendPage::aboutToShow()
 {
-    m_statusWidget->setBusy(i18nc("@info:status","Sending crash report ... ( please wait )"));
+    m_statusWidget->setBusy(i18nc("@info:status","Sending crash report... (please wait)"));
     reportInfo()->fillReportFields();
     reportInfo()->sendBugReport();
 }
@@ -833,7 +833,7 @@ void BugzillaSendPage::sent(int bug_id)
 {
     m_statusWidget->setVisible(false);
     
-    QLabel * finishedLabel = new QLabel(i18nc("@info/rich","Crash report sent!<nl/>"
+    QLabel * finishedLabel = new QLabel(i18nc("@info/rich","Crash report sent.<nl/>"
                                              "Bug Number :: <numid>%1</numid><nl/>"
                                              "URL :: <link>%2</link><nl/>"
                                              "Thanks for contributing to KDE. "
@@ -855,7 +855,7 @@ void BugzillaSendPage::sent(int bug_id)
 void BugzillaSendPage::sendError(QString errorString)
 {
     m_statusWidget->setIdle(i18nc("@info:status","Error sending the crash report:  "
-                                  "<message>%1</message>", errorString));
+                                  "<message>%1.</message>", errorString));
 
     m_retryButton->setEnabled(true);
     m_retryButton->setVisible(true);

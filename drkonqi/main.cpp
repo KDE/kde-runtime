@@ -39,7 +39,7 @@
 
 static const char version[] = "2.0";
 static const char description[] = I18N_NOOP("The KDE crash handler gives the user feedback "
-                                            "if a program has crashed");
+                                            "if a program has crashed.");
 
 int main(int argc, char* argv[])
 {

@@ -63,7 +63,7 @@ DrKonqiBugReport::DrKonqiBugReport(QWidget * parent) :
     connectSignals(m_awareness);
 
     KPageWidgetItem * m_awarenessPage = new KPageWidgetItem(m_awareness, "Awareness");
-    m_awarenessPage->setHeader(i18nc("@title","What do you know about the crash ?"));
+    m_awarenessPage->setHeader(i18nc("@title","What do you know about the crash?"));
     m_awarenessPage->setIcon(KIcon("tools-report-bug"));
 
     //Results Page

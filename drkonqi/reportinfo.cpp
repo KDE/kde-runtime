@@ -193,7 +193,7 @@ QString ReportInfo::generateReportHtml() const
         report.append(QString("What I was doing when the application crashed:"));
         report.append(lineBreak);
         report.append(i18nc("@info","<placeholder>Insert the details of what were you doing when "
-                                "the application crashed (in ENGLISH) here</placeholder>"));
+                                "the application crashed (in ENGLISH) here.</placeholder>"));
         report.append(QLatin1String("</p>"));
     }
 
