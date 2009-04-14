@@ -135,8 +135,6 @@ public:
         return m_isValid;
     }
 
-    QString toHtml();
-
 private:
 
     bool        m_isValid;

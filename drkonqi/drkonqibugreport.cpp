@@ -32,7 +32,7 @@ DrKonqiBugReport::DrKonqiBugReport(QWidget * parent) :
         m_reportInfo(new ReportInfo),
         m_canClose(false)
 {
-    setWindowTitle(i18n("Crash Reporting Assistant"));
+    setWindowTitle(i18nc("@title:window","Crash Reporting Assistant"));
     setWindowIcon(KIcon("tools-report-bug"));
 
     connect(this, SIGNAL(currentPageChanged(KPageWidgetItem *, KPageWidgetItem *)),
@@ -47,7 +47,7 @@ DrKonqiBugReport::DrKonqiBugReport(QWidget * parent) :
     connectSignals(m_intro);
 
     KPageWidgetItem * m_introPage = new KPageWidgetItem(m_intro, "Intro");
-    m_introPage->setHeader(i18nc("the Introduction page", "Introduction"));
+    m_introPage->setHeader(i18nc("@title the Introduction page", "Introduction"));
     m_introPage->setIcon(KIcon("tools-report-bug"));
 
     //Crash Information Page
@@ -55,7 +55,7 @@ DrKonqiBugReport::DrKonqiBugReport(QWidget * parent) :
     connectSignals(m_backtrace);
 
     KPageWidgetItem * m_backtracePage = new KPageWidgetItem(m_backtrace , "Backtrace");
-    m_backtracePage->setHeader(i18n("Crash Information (Backtrace)"));
+    m_backtracePage->setHeader(i18nc("@title","Crash Information (Backtrace)"));
     m_backtracePage->setIcon(KIcon("tools-report-bug"));
 
     //Bug Awareness Page
@@ -63,7 +63,7 @@ DrKonqiBugReport::DrKonqiBugReport(QWidget * parent) :
     connectSignals(m_awareness);
 
     KPageWidgetItem * m_awarenessPage = new KPageWidgetItem(m_awareness, "Awareness");
-    m_awarenessPage->setHeader(i18n("What do you know about the crash ?"));
+    m_awarenessPage->setHeader(i18nc("@title","What do you know about the crash ?"));
     m_awarenessPage->setIcon(KIcon("tools-report-bug"));
 
     //Results Page
@@ -71,7 +71,7 @@ DrKonqiBugReport::DrKonqiBugReport(QWidget * parent) :
     connectSignals(m_conclusions);
 
     KPageWidgetItem * m_conclusionsPage = new KPageWidgetItem(m_conclusions , "Results");
-    m_conclusionsPage->setHeader(i18n("Crash Analysis Results"));
+    m_conclusionsPage->setHeader(i18nc("@title","Crash Analysis Results"));
     m_conclusionsPage->setIcon(KIcon("tools-report-bug"));
     connect(m_conclusions, SIGNAL(finished(bool)), this, SLOT(assistantFinished(bool)));
 
@@ -80,7 +80,7 @@ DrKonqiBugReport::DrKonqiBugReport(QWidget * parent) :
     connectSignals(m_bugzillaLogin);
 
     KPageWidgetItem * m_bugzillaLoginPage = new KPageWidgetItem(m_bugzillaLogin, "BugzillaLogin");
-    m_bugzillaLoginPage->setHeader(i18n("KDE Bug Tracking System Login"));
+    m_bugzillaLoginPage->setHeader(i18nc("@title","KDE Bug Tracking System Login"));
     m_bugzillaLoginPage->setIcon(KIcon("tools-report-bug"));
 
     //Bugzilla keywords
@@ -88,7 +88,7 @@ DrKonqiBugReport::DrKonqiBugReport(QWidget * parent) :
     connectSignals(m_bugzillaKeywords);
 
     KPageWidgetItem * m_bugzillaKeywordsPage = new KPageWidgetItem(m_bugzillaKeywords, "BugzillaKeywords");
-    m_bugzillaKeywordsPage->setHeader(i18n("Bug Report Keywords"));
+    m_bugzillaKeywordsPage->setHeader(i18nc("@title","Bug Report Keywords"));
     m_bugzillaKeywordsPage->setIcon(KIcon("tools-report-bug"));
 
     //Bugzilla duplicates
@@ -97,7 +97,7 @@ DrKonqiBugReport::DrKonqiBugReport(QWidget * parent) :
 
     KPageWidgetItem * m_bugzillaDuplicatesPage =
                                     new KPageWidgetItem(m_bugzillaDuplicates, "BugzillaDuplicates");
-    m_bugzillaDuplicatesPage->setHeader(i18n("Bug Report Possible Duplicates List"));
+    m_bugzillaDuplicatesPage->setHeader(i18nc("@title","Bug Report Possible Duplicates List"));
     m_bugzillaDuplicatesPage->setIcon(KIcon("tools-report-bug"));
 
     //Bugzilla information
@@ -106,14 +106,14 @@ DrKonqiBugReport::DrKonqiBugReport(QWidget * parent) :
 
     KPageWidgetItem * m_bugzillaInformationPage =
                                     new KPageWidgetItem(m_bugzillaInformation, "BugzillaInformation");
-    m_bugzillaInformationPage->setHeader(i18n("Details of the Bug Report"));
+    m_bugzillaInformationPage->setHeader(i18nc("@title","Details of the Bug Report"));
     m_bugzillaInformationPage->setIcon(KIcon("tools-report-bug"));
 
     //Bugzilla commit
     BugzillaSendPage * m_bugzillaSend =  new BugzillaSendPage(this);
 
     KPageWidgetItem * m_bugzillaSendPage = new KPageWidgetItem(m_bugzillaSend, "BugzillaSend");
-    m_bugzillaSendPage->setHeader(i18n("Send Crash Report"));
+    m_bugzillaSendPage->setHeader(i18nc("@title","Send Crash Report"));
     m_bugzillaSendPage->setIcon(KIcon("tools-report-bug"));
     connect(m_bugzillaSend, SIGNAL(finished(bool)), this, SLOT(assistantFinished(bool)));
 
@@ -223,9 +223,9 @@ void DrKonqiBugReport::reject()
 void DrKonqiBugReport::closeEvent(QCloseEvent * event)
 {
     if (!m_canClose) {
-        if (KMessageBox::questionYesNo(this, i18n("Do you really want to close the bug assistant "
+        if (KMessageBox::questionYesNo(this, i18nc("@info","Do you really want to close the bug assistant "
                                                   "without sending the bug report?"),
-                                       i18n("Close Crash Reporting Assistant")) == KMessageBox::Yes) {
+                                       i18nc("@title:window","Close Crash Reporting Assistant")) == KMessageBox::Yes) {
             event->accept();
         } else {
             event->ignore();

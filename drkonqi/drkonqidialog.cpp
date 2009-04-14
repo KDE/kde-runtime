@@ -58,12 +58,12 @@ DrKonqiDialog::DrKonqiDialog(QWidget * parent) :
     connect(m_tabWidget, SIGNAL(currentChanged(int)), this, SLOT(tabIndexChanged(int)));
 
     buildMainWidget();
-    m_tabWidget->addTab(m_introWidget, i18nc("tab header", "&General"));
+    m_tabWidget->addTab(m_introWidget, i18nc("@title:tab general information", "&General"));
 
     m_backtraceWidget = new GetBacktraceWidget(DrKonqi::instance()->backtraceGenerator());
     m_backtraceWidget->setMinimumSize(QSize(575, 240));
     m_backtraceWidget->layout()->setContentsMargins(5, 5, 5, 5);
-    m_tabWidget->addTab(m_backtraceWidget, i18nc("tab header", "&Developer Information"));
+    m_tabWidget->addTab(m_backtraceWidget, i18nc("@title:tab", "&Developer Information"));
 
     buildDialogOptions();
     //setButtonsOrientation( Qt::Vertical );
@@ -82,16 +82,16 @@ void DrKonqiDialog::buildMainWidget()
     const KrashConfig * krashConfig = DrKonqi::instance()->krashConfig();
 
     //Main widget components
-    QLabel * title = new QLabel(i18nc("applicationName closed unexpectedly",
-                                      "<para>We are sorry, %1 closed unexpectedly.</para>",
+    QLabel * title = new QLabel(i18nc("@title applicationName closed unexpectedly, it needs not to be a <title>",
+                                      "<para>We are sorry, <application>%1</application> closed unexpectedly.</para>",
                                       krashConfig->programName()));
     title->setWordWrap(true);
 
-    QLabel * infoLabel = new QLabel(i18nc("Small explanation of the crash cause",
+    QLabel * infoLabel = new QLabel(i18nc("@info/rich Small explanation of the crash cause",
                                           "<para>You can help us improve KDE by reporting this "
-                                          "error.<nl /><a href=\"#aboutbugreporting\">Learn more "
-                                          "about bug reporting</a></para><para>It is safe to close "
-                                          "this dialog if you do not want to report</para>"));
+                                          "error.<nl /><link url='#aboutbugreporting'>Learn more "
+                                          "about bug reporting</link></para><para><note>It is safe to close "
+                                          "this dialog if you do not want to report</note></para>"));
     connect(infoLabel, SIGNAL(linkActivated(QString)), this, SLOT(aboutBugReporting()));
     infoLabel->setWordWrap(true);
 
@@ -116,10 +116,15 @@ void DrKonqiDialog::buildMainWidget()
     introLayout->addStretch();
 
     //Details
-    introLayout->addWidget(new QLabel("<strong>Details:</strong>"));
-    introLayout->addWidget(new QLabel(i18n("<para>Executable: %1 PID: %2 Signal: %3 (%4)</para>",
-                                           krashConfig->appName(), krashConfig->pid(),
-                                           krashConfig->signalNumber(), krashConfig->signalName())));
+    introLayout->addWidget(new QLabel(QString("<strong>%1:</strong>").arg(i18nc("@info this is alabel,more detailed information"
+                                            "is shown below","Details"))));
+                                            
+    QLabel * detailsLabel = new QLabel(i18nc("@info/rich","<para>Executable: <command>%1</command> "
+                                            "PID: <numid>%2</numid> Signal: %3 (%4)</para>",
+                                            krashConfig->appName(), krashConfig->pid(),
+                                            krashConfig->signalNumber(), krashConfig->signalName()));
+    detailsLabel->setTextInteractionFlags(Qt::TextBrowserInteraction);
+    introLayout->addWidget(detailsLabel);
 
     //Introduction widget
     m_introWidget = new QWidget(this);
@@ -134,15 +139,15 @@ void DrKonqiDialog::buildDialogOptions()
     setButtons(KDialog::User1 | KDialog::User2 | KDialog::User3 | KDialog::Close);
 
     //Report bug button button
-    setButtonGuiItem(KDialog::User1, KGuiItem2(i18nc("Button action", "Report Bug"),
+    setButtonGuiItem(KDialog::User1, KGuiItem2(i18nc("@action:button", "Report Bug"),
                                               KIcon("tools-report-bug"),
-                                              i18nc("help text", "Starts the bug report assistant")));
+                                              i18nc("@info:tooltip", "Starts the bug report assistant")));
     connect(this, SIGNAL(user1Clicked()), this, SLOT(reportBugAssistant()));
 
     //Default debugger button and menu (only for developer mode)
-    setButtonGuiItem(KDialog::User2, KGuiItem2(i18nc("Button action", "Debug"),
+    setButtonGuiItem(KDialog::User2, KGuiItem2(i18nc("@action:button debug menubutton, shows the possible debug options", "Debug"),
                                                KIcon("applications-development"),
-                                               i18nc("help text", "Starts a program to debug "
+                                               i18nc("@info:tooltip", "Starts a program to debug "
                                                      "the crashed application")));
     showButton(KDialog::User2, krashConfig->showDebugger());
 
@@ -150,13 +155,13 @@ void DrKonqiDialog::buildDialogOptions()
     setButtonMenu(KDialog::User2, m_debugMenu);
 
     m_defaultDebugAction = new QAction(KIcon("applications-development"),
-                                       i18nc("action. 1 is the debugger name", "Debug using %1",
+                                       i18nc("@action:inmenu. 1 is the debugger name", "Debug using %1",
                                               krashConfig->debuggerName()), m_debugMenu);
     connect(m_defaultDebugAction, SIGNAL(triggered()),
             DrKonqi::instance(), SLOT(startDefaultExternalDebugger()));
 
     m_customDebugAction = new QAction(KIcon("applications-development"),
-                                      i18n("Debug in custom application"), m_debugMenu);
+                                      i18nc("@action:inmenu", "Debug in custom application"), m_debugMenu);
     connect(m_customDebugAction, SIGNAL(triggered()),
             DrKonqi::instance(), SLOT(startCustomExternalDebugger()));
     m_customDebugAction->setEnabled(false);
@@ -166,14 +171,14 @@ void DrKonqiDialog::buildDialogOptions()
     m_debugMenu->addAction(m_customDebugAction);
 
     //Restart application button
-    setButtonGuiItem(KDialog::User3, KGuiItem2(i18nc("button action", "Restart Application"),
+    setButtonGuiItem(KDialog::User3, KGuiItem2(i18nc("@action:button", "Restart Application"),
                                                KIcon("system-restart"),
-                                               i18nc("button help", "Use this button to restart "
+                                               i18nc("@info:tooltip", "Use this button to restart "
                                                      "the crashed application")));
     connect(this, SIGNAL(user3Clicked()), this, SLOT(restartApplication()));
 
     //Close button
-    QString tooltipText = i18nc("close button tooltip text",
+    QString tooltipText = i18nc("@info:tooltip",
                                 "Close this dialog (you will lose the crash information)");
     setButtonToolTip(KDialog::Close, tooltipText);
     setButtonWhatsThis(KDialog::Close, tooltipText);

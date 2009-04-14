@@ -1,4 +1,5 @@
 #Assigned
+
 # Who / What
 --------------
 
@@ -12,14 +13,15 @@ waiting for productName()->product/component mapping (custom cgi file at BKO)
 ( if no combination is found, revert to "kde" product )
 [[ currently bugzillalib detects unexistent products to later use the "kde" product ]]
 
-Review texts
-
-Check leaks, crashes
-
-krazy2 checks (mostly done)
+- Side by side backtrace comparison on "Show report information" (duplicates step)
+- Ask for saving the report information to file when exiting the report assistant without reporting
 
 #Done
 ---------
+
+Review texts
+Check leaks, crashes
+krazy2 checks (mostly done)
 
 Finish "about bug reporting steps" (guide)  (documentation format ?)
 

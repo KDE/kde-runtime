@@ -107,7 +107,7 @@ void BugzillaManager::loginDone(KJob* job)
         }
 
         if (error) {
-            emit loginError(i18n("Unknown response from the server"));
+            emit loginError(i18nc("@info","Unknown response from the server"));
         } else {
             emit loginFinished(m_logged);
         }
@@ -141,7 +141,7 @@ void BugzillaManager::fetchBugReportDone(KJob* job)
         if (parser->isValid()) {
             emit bugReportFetched(report);
         } else {
-            emit bugReportError(i18n("Invalid bug report: corrupted data"));
+            emit bugReportError(i18nc("@info","Invalid bug report: corrupted data"));
         }
 
         delete parser;
@@ -174,7 +174,7 @@ void BugzillaManager::searchBugsDone(KJob * job)
         if (parser->isValid()) {
             emit searchFinished(list);
         } else {
-            emit searchError(i18n("Invalid bug list: corrupted data"));
+            emit searchError(i18nc("@info","Invalid bug list: corrupted data"));
         }
 
         delete parser;
@@ -243,7 +243,7 @@ void BugzillaManager::sendReportDone(KJob * job)
             if (pos != -1) {
                 error = reg.cap(1).trimmed();
             } else {
-                error = i18n("Unknown error");
+                error = i18nc("@info","Unknown error");
             }
 
             if (error.contains(QLatin1String("does not exist or you aren't authorized to"))
@@ -378,15 +378,4 @@ QString BugReportXMLParser::getSimpleValue(QString name)   //Extract an unique t
 BugReport::BugReport()
 {
     m_isValid = false;
-}
-
-QString BugReport::toHtml()
-{
-    QString html;
-    Q_FOREACH(const QString & key, m_dataMap.keys()) {
-        html.append(QString("<strong>%1:</strong> %2<br />").arg(key, m_dataMap.value(key)));
-    }
-    html.append("<br />");
-    html.append(i18n("Description:<br /><br />%1", description()));
-    return html;
 }

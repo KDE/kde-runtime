@@ -58,26 +58,26 @@ int main(int argc, char* argv[])
                          version, ki18n(description),
                          KAboutData::License_GPL,
                          ki18n("(C) 2000-2009, The DrKonqi Authors"));
-    aboutData.addAuthor(ki18n("Hans Petter Bieker"), KLocalizedString(), "bieker@kde.org");
-    aboutData.addAuthor(ki18n("Dario Andres Rodriguez"), KLocalizedString(),
+    aboutData.addAuthor(ki18nc("@info:credit","Hans Petter Bieker"), KLocalizedString(), "bieker@kde.org");
+    aboutData.addAuthor(ki18nc("@info:credit","Dario Andres Rodriguez"), KLocalizedString(),
                          "andresbajotierra@gmail.com");
-    aboutData.addAuthor(ki18n("George Kiagiadakis"), KLocalizedString(),
+    aboutData.addAuthor(ki18nc("@info:credit","George Kiagiadakis"), KLocalizedString(),
                          "gkiagia@users.sourceforge.net");
     aboutData.setProgramIconName("tools-report-bug");
 
     KCmdLineArgs::init(argc, argv, &aboutData);
 
     KCmdLineOptions options;
-    options.add("signal <number>", ki18n("The signal number that was caught"));
-    options.add("appname <name>", ki18n("Name of the program"));
-    options.add("apppath <path>", ki18n("Path to the executable"));
-    options.add("appversion <version>", ki18n("The version of the program"));
-    options.add("bugaddress <address>", ki18n("The bug address to use"));
-    options.add("programname <name>", ki18n("Translated name of the program"));
-    options.add("pid <pid>", ki18n("The PID of the program"));
-    options.add("startupid <id>", ki18n("Startup ID of the program"));
-    options.add("kdeinit", ki18n("The program was started by kdeinit"));
-    options.add("safer", ki18n("Disable arbitrary disk access"));
+    options.add("signal <number>", ki18nc("@info:shell","The signal number that was caught"));
+    options.add("appname <name>", ki18nc("@info:shell","Name of the program"));
+    options.add("apppath <path>", ki18nc("@info:shell","Path to the executable"));
+    options.add("appversion <version>", ki18nc("@info:shell","The version of the program"));
+    options.add("bugaddress <address>", ki18nc("@info:shell","The bug address to use"));
+    options.add("programname <name>", ki18nc("@info:shell","Translated name of the program"));
+    options.add("pid <pid>", ki18nc("@info:shell","The PID of the program"));
+    options.add("startupid <id>", ki18nc("@info:shell","Startup ID of the program"));
+    options.add("kdeinit", ki18nc("@info:shell","The program was started by kdeinit"));
+    options.add("safer", ki18nc("@info:shell","Disable arbitrary disk access"));
     KCmdLineArgs::addCmdLineOptions(options);
 
     KComponentData inst(KCmdLineArgs::aboutData());

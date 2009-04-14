@@ -183,26 +183,26 @@ void DrKonqi::saveReport(const QString & reportText, QWidget *parent)
             QTextStream textStream(&tf);
             textStream << reportText;
             textStream.flush();
-            KMessageBox::information(parent, i18n("Report saved to <filename>%1</filename>.", tf.fileName()));
+            KMessageBox::information(parent, i18nc("@info/rich","Report saved to <filename>%1</filename>.", tf.fileName()));
         } else {
-            KMessageBox::sorry(parent, i18n("Could not create a file to save the report in"));
+            KMessageBox::sorry(parent, i18nc("@info","Could not create a file to save the report in"));
         }
     } else {
         QString defname = krashConfig->appName() + '-' + QDate::currentDate().toString("yyyyMMdd") + ".kcrash";
         if (defname.contains('/')) {
             defname = defname.mid(defname.lastIndexOf('/') + 1);
         }
-        KUrl fileUrl = KFileDialog::getSaveUrl(defname, QString(), parent, i18n("Select Filename"));
+        KUrl fileUrl = KFileDialog::getSaveUrl(defname, QString(), parent, i18nc("@title:window","Select Filename"));
         if (fileUrl.isValid()) {
             KIO::UDSEntry udsEntry;
             if (KIO::NetAccess::stat(fileUrl, udsEntry, parent)) {
                 if (KMessageBox::Cancel ==
                         KMessageBox::warningContinueCancel(0,
-                                i18n("A file named <filename>%1</filename> already exists. "
+                                i18nc("@info","A file named <filename>%1</filename> already exists. "
                                      "Are you sure you want to overwrite it?", fileUrl.fileName()),
-                                i18n("Overwrite File?"),
-                                KGuiItem2(i18n("&Overwrite"), KIcon("document-save-as"),
-                                    i18nc("button explanation", "Use this button to overwrite the current file"))
+                                i18nc("@title:window","Overwrite File?"),
+                                KGuiItem2(i18nc("@action:button","&Overwrite"), KIcon("document-save-as"),
+                                    i18nc("@info:tooltip", "Use this button to overwrite the current file"))
                         )
                     ) {
                     return;
@@ -215,7 +215,7 @@ void DrKonqi::saveReport(const QString & reportText, QWidget *parent)
                 ts << reportText;
                 ts.flush();
             } else {
-                KMessageBox::sorry(parent, i18n("Cannot open file <filename>%1</filename> for writing.", tf.fileName()));
+                KMessageBox::sorry(parent, i18nc("@info/rich","Cannot open file <filename>%1</filename> for writing.", tf.fileName()));
                 return;
             }
 

@@ -71,7 +71,7 @@ void KrashConfig :: readConfig()
 
     QString programname = args->getOption("programname");
     if (programname.isEmpty()) {
-        programname = I18N_NOOP2("unknown application", "unknown");
+        programname = I18N_NOOP2("@info unknown application", "unknown");
     }
     m_aboutData = new KAboutData(args->getOption("appname").toUtf8(),
                                  0,
@@ -148,25 +148,25 @@ void KrashConfig :: expandString(QString &str, ExpandStringUsage usage, const QS
 {
     QHash<QString, QString> map;
     map[QLatin1String("appname")] = (usage == ExpansionUsageRichText) ?
-                                    i18n("<application>%1</application>", appName()) :
+                                    i18nc("@info/rich","<application>%1</application>", appName()) :
                                     appName();
 
     QString execname = startedByKdeinit() ? QLatin1String("kdeinit") : m_execname;
     map[QLatin1String("execname")] = (usage == ExpansionUsageRichText) ?
-                                     i18n("<command>%1</command>", execname) :
+                                     i18nc("@info/rich","<command>%1</command>", execname) :
                                      execname;
 
     map[QLatin1String("signum")] = QString::number(signalNumber());
     map[QLatin1String("signame")] = signalName();
 
     map[QLatin1String("progname")] = (usage == ExpansionUsageRichText) ?
-                                     i18n("<command>%1</command>", programName()) :
+                                     i18nc("@info/rich","<command>%1</command>", programName()) :
                                      programName();
 
     map[QLatin1String("pid")] = QString::number(pid());
 
     map[QLatin1String("tempfile")] = (usage == ExpansionUsageRichText) ?
-                                     i18n("<filename>%1</filename>", tempFile) :
+                                     i18nc("@info/rich","<filename>%1</filename>", tempFile) :
                                      tempFile;
 
     if (usage == ExpansionUsageShell) {

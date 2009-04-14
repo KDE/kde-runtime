@@ -182,7 +182,7 @@ void GetBacktraceWidget::loadData()
 
 #if 0
             if (!missingSymbols.isEmpty()) { //Detected missing symbols
-                QString details = i18nc("order", "You need to install the debug symbols for the following package(s):");
+                QString details = i18nc("@info order", "You need to install the debug symbols for the following package(s):");
                 Q_FOREACH(const QString & pkg, missingSymbols) {
                     details += "<i>" + pkg + "</i> ";
                 }

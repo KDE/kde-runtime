@@ -146,7 +146,7 @@ void BacktraceGenerator::slotProcessExited(int exitCode, QProcess::ExitStatus ex
         return;
     }
 
-    QString tmp = i18n("Application: %progname (%execname), signal %signame") + "\n\n";
+    QString tmp = i18nc("@info/plain","Application: %progname (%execname), signal %signame") + "\n\n";
     m_krashconf->expandString(tmp, KrashConfig::ExpansionUsagePlainText);
 
     m_parsedBacktrace = tmp + m_parser->parsedBacktrace();

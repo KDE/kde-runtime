@@ -84,11 +84,11 @@ QString ReportInfo::getLSBRelease() const
                 lsb.chop(1);
                 m_LSBRelease = QString::fromLocal8Bit(lsb);
             } else {
-                m_LSBRelease = i18n("LSB Release information not found "
+                m_LSBRelease = i18nc("@info","LSB Release information not found "
                                     "( no lsb_release command found )");
             }
         } else {
-            m_LSBRelease = i18n("Not a GNU/Linux system. LSB Release Information not available");
+            m_LSBRelease = i18nc("@info","Not a GNU/Linux system. LSB Release Information not available");
         }
     }
     return m_LSBRelease;
@@ -137,8 +137,8 @@ QString ReportInfo::generateReportTemplate(bool bugzilla) const
         if (!m_userDetailText.isEmpty()) {
             report.append(m_userDetailText);
         } else {
-            report.append(i18n("[[ Insert the details of what were you doing when the "
-                                "application crashed (in ENGLISH) here ]]"));
+            report.append(i18nc("@info","<placeholder>[[ Insert the details of what were you doing when the "
+                                "application crashed (in ENGLISH) here ]]</placeholder>"));
         }
     }
 
