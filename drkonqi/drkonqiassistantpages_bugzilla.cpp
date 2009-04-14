@@ -570,12 +570,11 @@ bool BugzillaDuplicatesPage::canSearchMore()
 
 void BugzillaDuplicatesPage::aboutToShow()
 {
-    //This shouldn't happen as I can't move page when I'm searching
-    Q_ASSERT(!m_searching);
-
-    //If I never searched before, performSearch
-    if (m_bugListWidget->topLevelItemCount() == 0 && canSearchMore()) {
-        performSearch();
+    if (!m_searching) {
+        //If I never searched before, performSearch
+        if (m_bugListWidget->topLevelItemCount() == 0 && canSearchMore()) {
+            performSearch();
+        }
     }
 }
 
