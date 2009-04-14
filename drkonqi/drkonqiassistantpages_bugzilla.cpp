@@ -508,7 +508,7 @@ void BugzillaDuplicatesPage::itemClicked(QTreeWidgetItem * item, int col)
                                     reportInfo()->getBZ()->urlForBug(m_currentBugNumber),
                                     i18nc("@info","Bug report page at the KDE bug tracking system")));
 
-    m_infoDialogStatusWidget->setBusy(i18nc("@info:status","Loading information about bug %1 from %2 ...",
+    m_infoDialogStatusWidget->setBusy(i18nc("@info:status","Loading information about bug <numid>%1</numid> from %2 ...",
                                         m_currentBugNumber, QLatin1String(KDE_BUGZILLA_SHORT_URL)));
 
     m_infoDialogBrowser->setEnabled(false);
@@ -554,7 +554,7 @@ void BugzillaDuplicatesPage::bugFetchFinished(BugReport report)
                 m_infoDialogBrowser->setText(text);
                 m_mineMayBeDuplicateButton->setEnabled(true);
 
-                m_infoDialogStatusWidget->setIdle(i18nc("@info:status","Showing report %1", report.bugNumberAsInt()));
+                m_infoDialogStatusWidget->setIdle(i18nc("@info:status","Showing report <numid>%1</numid>", report.bugNumberAsInt()));
                 m_infoDialogBrowser->setEnabled(true);
             }
         }
@@ -819,7 +819,7 @@ void BugzillaSendPage::sent(int bug_id)
     m_statusWidget->setVisible(false);
     
     QLabel * finishedLabel = new QLabel(i18nc("@info/rich","Crash report sent!<nl/>"
-                                             "Bug Number :: %1<nl/>"
+                                             "Bug Number :: <numid>%1</numid><nl/>"
                                              "URL :: <link>%2</link><nl/>"
                                              "Thanks for contributing to KDE. "
                                              "You can now close this window.", bug_id,
