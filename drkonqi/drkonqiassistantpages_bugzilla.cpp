@@ -515,7 +515,7 @@ void BugzillaDuplicatesPage::itemClicked(QTreeWidgetItem * item, int col)
     m_mineMayBeDuplicateButton->setEnabled(false);
 
     m_infoDialogBrowser->setText(i18nc("@info:status","Loading ... "));
-    m_infoDialogLink->setText(i18nc("@action","<link url='%1'>Bug report page at the KDE bug "
+    m_infoDialogLink->setText(i18nc("@info","<link url='%1'>Bug report page at the KDE bug "
                                               "tracking system</link>",
                                     reportInfo()->getBZ()->urlForBug(m_currentBugNumber)));
 
