@@ -1,6 +1,6 @@
-How to activate the developer mode for DrKonqi:
+How to activate the debug button for DrKonqi:
 
 $KDEHOME/share/config/drkonqirc:
 
 [drkonqi]
-ConfigName=developer
+ShowDebugButton=true
