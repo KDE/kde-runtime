@@ -106,7 +106,7 @@ QString ReportInfo::generateReportBugzilla() const
 
     QString report;
     
-    report.append(QString("Application and System information ::"));
+    report.append(QString("Application and System information:"));
     report.append(lineBreak + dottedLine + lineBreak);
     //Program name and versions
     report.append(QString("KDE Version: %1").arg(getKDEVersion()) + lineBreak);
@@ -140,7 +140,7 @@ QString ReportInfo::generateReportBugzilla() const
     if (use != BacktraceParser::Useless && use != BacktraceParser::InvalidUsefulness) {
         QString formattedBacktrace = DrKonqi::instance()->backtraceGenerator()->backtrace();
         formattedBacktrace = formattedBacktrace.trimmed();
-        report.append(QString("Backtrace ::") + lineBreak + dottedLine + lineBreak
+        report.append(QString("Backtrace:") + lineBreak + dottedLine + lineBreak
                         + formattedBacktrace + lineBreak +dottedLine);
     } else {
         report.append(QString("An useful backtrace could not be generated"));
@@ -168,7 +168,7 @@ QString ReportInfo::generateReportHtml() const
     report.append(QLatin1String("<hr />"));
     
     report.append(QLatin1String("<p>"));
-    report.append(QString("Application and System information ::"));
+    report.append(QString("Application and System information:"));
     
     report.append(lineBreak + dottedLine + lineBreak);
     
@@ -206,7 +206,7 @@ QString ReportInfo::generateReportHtml() const
         QString formattedBacktrace = DrKonqi::instance()->backtraceGenerator()->backtrace();
         formattedBacktrace = formattedBacktrace.mid(0, formattedBacktrace.length()-1).trimmed();
         formattedBacktrace.replace('\n', "<br />");
-        report.append(QString("Backtrace ::") + lineBreak + dottedLine + lineBreak
+        report.append(QString("Backtrace:") + lineBreak + dottedLine + lineBreak
                         + formattedBacktrace);
     } else {
         report.append(QString("An useful backtrace could not be generated"));

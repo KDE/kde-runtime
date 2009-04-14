@@ -690,9 +690,8 @@ BugzillaInformationPage::BugzillaInformationPage(DrKonqiBugReport * parent)
 
     //TODO native-rewrite (text length?)
     QLabel * explanationLabel = new QLabel(i18nc("@info/rich","Complete the bug report fields in "
-                                                "order to properly submit it. All the fields "
-                                                "should be at least 20 characters. <note>"
-                                                "All texts should be written in english.</note>"));
+                                                "order to properly submit it. <note>All the texts "
+                                                "should be written in english.</note>"));
     explanationLabel->setWordWrap(true);
 
     layout->addWidget(explanationLabel);
@@ -746,19 +745,20 @@ bool BugzillaInformationPage::showNextPage()
             QString message;
 
             if (titleShort && !detailsShort) {
-                message = i18nc("@info","The title is too short.");
+                message = i18nc("@info","The title does not provide enought information.");
             } else if (detailsShort && !titleShort) {
-                message = i18nc("@info","The description about the crash details is too short.");
+                message = i18nc("@info","The description about the crash details does not provide "
+                                        "enought information.");
             } else {
                 message = i18nc("@info","Both the title and the description about the crash "
-                                        "details are too short.");
+                                        "details do not provide enought information.");
             }
 
-            message += ' ' + i18nc("@info","Could you write a bit more ?"); //FIXME rewrite this
+            message += ' ' + i18nc("@info","Can you tell us more?");
 
             //The user input is less than we want.... encourage to write more
             if (KMessageBox::questionYesNo(this, message,
-                                           i18nc("@title:window","Fields length too short"))
+                                           i18nc("@title:window","We need more information"))
                                             == KMessageBox::Yes) {
                 return false; //Cancel show next, to allow the user to write more
             } else {
