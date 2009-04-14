@@ -90,7 +90,8 @@ void DrKonqiDialog::buildMainWidget()
     QLabel * infoLabel = new QLabel(i18nc("@info", "<para>You can help us improve KDE by reporting "
                                           "this error.<nl /><link url='#aboutbugreporting'>Learn "
                                           "more about bug reporting</link></para><para><note>It is "
-                                          "safe to close this dialog if you do not want to report"
+                                          "safe to close this dialog if you do not want to report a
+bug."
                                           "</note></para>"));
     connect(infoLabel, SIGNAL(linkActivated(QString)), this, SLOT(aboutBugReporting()));
     infoLabel->setWordWrap(true);
@@ -163,7 +164,7 @@ void DrKonqiDialog::buildDialogOptions()
             DrKonqi::instance(), SLOT(startDefaultExternalDebugger()));
 
     //FIXME "Debug in custom application" is not so user friendly. it could show the name of the app
-    //(at least kdevelop reports its name trough dbus)
+    //(at least kdevelop reports its name through dbus)
     m_customDebugAction = new QAction(KIcon("applications-development"),
                                       i18nc("@action:inmenu", "Debug in custom application"),
                                       m_debugMenu);
