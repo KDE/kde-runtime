@@ -165,6 +165,8 @@ void DrKonqiDialog::buildDialogOptions()
 
     //FIXME "Debug in custom application" is not so user friendly. it could show the name of the app
     //(at least kdevelop reports its name through dbus)
+    //FIXME-README! This is the default name which is never shown.. I guess this string could be
+    //removed, to leave an empty action. (This menu entry is only shown when KDevelop appears)
     m_customDebugAction = new QAction(KIcon("applications-development"),
                                       i18nc("@action:inmenu", "Debug in custom application"),
                                       m_debugMenu);
