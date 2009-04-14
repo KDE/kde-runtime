@@ -80,7 +80,8 @@ void BugzillaManager::tryLogin()
             QByteArray("&log_in=Log+in");
 
         KIO::StoredTransferJob * loginJob =
-            KIO::storedHttpPost(postData, KUrl(QString(bugtrackerBaseUrl) + QString(loginUrl)), KIO::HideProgressInfo);
+            KIO::storedHttpPost(postData, KUrl(QString(bugtrackerBaseUrl) + QString(loginUrl)),
+                                KIO::HideProgressInfo);
         connect(loginJob, SIGNAL(finished(KJob*)) , this, SLOT(loginDone(KJob*)));
 
         loginJob->addMetaData("content-type", "Content-Type: application/x-www-form-urlencoded");
@@ -159,7 +160,8 @@ void BugzillaManager::searchBugs(QString words, QString product, QString severit
                   QString(searchUrl).arg(words.replace(' ' , '+'), product, comment, date_start,
                                          date_end, severity, QString(columns));
 
-    KIO::StoredTransferJob * searchBugsJob = KIO::storedGet(KUrl(url) , KIO::Reload, KIO::HideProgressInfo);
+    KIO::StoredTransferJob * searchBugsJob = KIO::storedGet(KUrl(url) , KIO::Reload,
+                                                            KIO::HideProgressInfo);
     connect(searchBugsJob, SIGNAL(finished(KJob*)) , this, SLOT(searchBugsDone(KJob*)));
 }
 

@@ -47,7 +47,7 @@ DrKonqiBugReport::DrKonqiBugReport(QWidget * parent) :
     connectSignals(m_intro);
 
     KPageWidgetItem * m_introPage = new KPageWidgetItem(m_intro, "Intro");
-    m_introPage->setHeader(i18nc("@title the Introduction page", "Introduction"));
+    m_introPage->setHeader(i18nc("@title", "Introduction"));
     m_introPage->setIcon(KIcon("tools-report-bug"));
 
     //Crash Information Page
@@ -87,7 +87,8 @@ DrKonqiBugReport::DrKonqiBugReport(QWidget * parent) :
     BugzillaKeywordsPage * m_bugzillaKeywords =  new BugzillaKeywordsPage(this);
     connectSignals(m_bugzillaKeywords);
 
-    KPageWidgetItem * m_bugzillaKeywordsPage = new KPageWidgetItem(m_bugzillaKeywords, "BugzillaKeywords");
+    KPageWidgetItem * m_bugzillaKeywordsPage =
+                                new KPageWidgetItem(m_bugzillaKeywords, "BugzillaKeywords");
     m_bugzillaKeywordsPage->setHeader(i18nc("@title","Bug Report Keywords"));
     m_bugzillaKeywordsPage->setIcon(KIcon("tools-report-bug"));
 
@@ -96,7 +97,7 @@ DrKonqiBugReport::DrKonqiBugReport(QWidget * parent) :
     connectSignals(m_bugzillaDuplicates);
 
     KPageWidgetItem * m_bugzillaDuplicatesPage =
-                                    new KPageWidgetItem(m_bugzillaDuplicates, "BugzillaDuplicates");
+                                new KPageWidgetItem(m_bugzillaDuplicates, "BugzillaDuplicates");
     m_bugzillaDuplicatesPage->setHeader(i18nc("@title","Bug Report Possible Duplicates List"));
     m_bugzillaDuplicatesPage->setIcon(KIcon("tools-report-bug"));
 
@@ -105,7 +106,7 @@ DrKonqiBugReport::DrKonqiBugReport(QWidget * parent) :
     connectSignals(m_bugzillaInformation);
 
     KPageWidgetItem * m_bugzillaInformationPage =
-                                    new KPageWidgetItem(m_bugzillaInformation, "BugzillaInformation");
+                                new KPageWidgetItem(m_bugzillaInformation, "BugzillaInformation");
     m_bugzillaInformationPage->setHeader(i18nc("@title","Details of the Bug Report"));
     m_bugzillaInformationPage->setIcon(KIcon("tools-report-bug"));
 
@@ -223,9 +224,10 @@ void DrKonqiBugReport::reject()
 void DrKonqiBugReport::closeEvent(QCloseEvent * event)
 {
     if (!m_canClose) {
-        if (KMessageBox::questionYesNo(this, i18nc("@info","Do you really want to close the bug assistant "
-                                                  "without sending the bug report?"),
-                                       i18nc("@title:window","Close Crash Reporting Assistant")) == KMessageBox::Yes) {
+        if (KMessageBox::questionYesNo(this, i18nc("@info","Do you really want to close the bug "
+                                                   "assistant without sending the bug report?"),
+                                       i18nc("@title:window","Close Crash Reporting Assistant"))
+                                        == KMessageBox::Yes) {
             event->accept();
         } else {
             event->ignore();

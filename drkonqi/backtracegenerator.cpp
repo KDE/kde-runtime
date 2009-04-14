@@ -64,7 +64,8 @@ BacktraceGenerator::~BacktraceGenerator()
 
 bool BacktraceGenerator::start()
 {
-    Q_ASSERT(m_proc == NULL && m_temp == NULL); //they should always be null before entering this function.
+    //they should always be null before entering this function.
+    Q_ASSERT(m_proc == NULL && m_temp == NULL);
 
     m_parsedBacktrace.clear();
     m_state = Loading;
@@ -146,7 +147,8 @@ void BacktraceGenerator::slotProcessExited(int exitCode, QProcess::ExitStatus ex
         return;
     }
 
-    QString tmp = i18nc("@info/plain","Application: %progname (%execname), signal %signame") + "\n\n";
+    //no translation, string appears in the report
+    QString tmp("Application: %progname (%execname), signal: %signame\n");
     m_krashconf->expandString(tmp, KrashConfig::ExpansionUsagePlainText);
 
     m_parsedBacktrace = tmp + m_parser->parsedBacktrace();

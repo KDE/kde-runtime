@@ -58,7 +58,8 @@ int main(int argc, char* argv[])
                          version, ki18n(description),
                          KAboutData::License_GPL,
                          ki18n("(C) 2000-2009, The DrKonqi Authors"));
-    aboutData.addAuthor(ki18nc("@info:credit","Hans Petter Bieker"), KLocalizedString(), "bieker@kde.org");
+    aboutData.addAuthor(ki18nc("@info:credit","Hans Petter Bieker"), KLocalizedString(),
+                         "bieker@kde.org");
     aboutData.addAuthor(ki18nc("@info:credit","Dario Andres Rodriguez"), KLocalizedString(),
                          "andresbajotierra@gmail.com");
     aboutData.addAuthor(ki18nc("@info:credit","George Kiagiadakis"), KLocalizedString(),

@@ -112,11 +112,14 @@ public:
     enum LineType {
         Unknown, //unknown type. the default
         EmptyLine, //line is empty
-        Crap, //line is gdb's crap (like "(no debugging symbols found)", "[New Thread 0x4275c950 (LWP 11931)]", etc...
+        Crap, //line is gdb's crap (like "(no debugging symbols found)",
+              //"[New Thread 0x4275c950 (LWP 11931)]", etc...)
         KCrash, //line is "[KCrash Handler]"
-        ThreadIndicator, //line indicates the current thread, ex. "[Current thread is 0 (process 11313)]"
+        ThreadIndicator, //line indicates the current thread,
+                         //ex. "[Current thread is 0 (process 11313)]"
         ThreadStart, //line indicates the start of a thread's stack.
-        SignalHandlerStart, //line indicates the signal handler start (contains "<signal handler called>")
+        SignalHandlerStart, //line indicates the signal handler start
+                            //(contains "<signal handler called>")
         StackFrame //line is a normal stack frame
     };
 
@@ -199,20 +202,24 @@ void BacktraceLineGdb::parse()
                       "[\\s]+(0x[0-9a-f]+[\\s]+in[\\s]+)?" // matches " 0x0000dead in " (optionally)
                       "([^\\(]+)" //matches the function name (anything except left parenthesis,
                       // which is the start of the arguments section)
-                      "(\\(.*\\))?" //matches the function arguments (when the app doesn't have debugging symbols)
+                      "(\\(.*\\))?" //matches the function arguments
+                                    //(when the app doesn't have debugging symbols)
                       "[\\s]+\\(" //matches " ("
-                      "(.*)" //matches the arguments of the function with their values (when the app has debugging symbols)
+                      "(.*)" //matches the arguments of the function with their values
+                             //(when the app has debugging symbols)
                       "\\)([\\s]+" //matches ") "
                       "(from|at)[\\s]+" //matches "from " or "at "
                       "(.+)" //matches the filename (source file or shared library file)
                       ")?\n$"); //matches trailing newline.
-    //the )? at the end closes the parenthesis before [\\s]+(from|at) and
-    //notes that the whole expression from there is optional.
+                    //the )? at the end closes the parenthesis before [\\s]+(from|at) and
+                    //notes that the whole expression from there is optional.
+
     if (regExp.exactMatch(d->m_line)) {
         d->m_type = StackFrame;
         d->m_stackFrameNumber = regExp.cap(1).toInt();
         d->m_functionName = regExp.cap(3);
-        d->m_functionArguments = regExp.cap(5).remove('\n'); //remove \n because arguments may be split in two lines
+        //remove \n because arguments may be split in two lines
+        d->m_functionArguments = regExp.cap(5).remove('\n');
         d->m_hasFileInfo = !regExp.cap(6).isEmpty();
         d->m_hasSourceFile = d->m_hasFileInfo ? (regExp.cap(7) == "at") : false;
         d->m_file = d->m_hasFileInfo ? regExp.cap(8) : QString();
@@ -299,7 +306,7 @@ struct BacktraceParserGdb::Private {
 //HACK for better rating. These functions are useless functions that should
 //not be taken into account by the backtrace rating algorithm.
 K_GLOBAL_STATIC_WITH_ARGS(const QSet<QString>, blacklistedFunctions, (
-                              QSet<QString>() << "raise" << "abort" << "_start" << "__libc_start_main"
+                          QSet<QString>() << "raise" << "abort" << "_start" << "__libc_start_main"
                               << "__assert_fail" << "do_assert" << "qt_message_output"
                               << "qFatal" << "clone" << "start_thread" << "QMetaObject::activate"
                               << "__kernel_vsyscall"
@@ -406,7 +413,8 @@ QString BacktraceParserGdb::parsedBacktrace() const
 
     QList<BacktraceLineGdb>::const_iterator i;
     for (i = d->m_linesList.constBegin(); i != d->m_linesList.constEnd(); ++i) {
-        //if there is only one thread, we can omit the thread indicator, the thread header and all the empty lines.
+        //if there is only one thread, we can omit the thread indicator,
+        //the thread header and all the empty lines.
         if (d->m_threadsCount == 1 && ((*i).type() == BacktraceLineGdb::ThreadIndicator
                                        || (*i).type() == BacktraceLineGdb::ThreadStart
                                        || (*i).type() == BacktraceLineGdb::EmptyLine))
@@ -470,10 +478,10 @@ QStringList BacktraceParserGdb::firstValidFunctions() const
     }
 
     QStringList result;
-    QList<BacktraceLineGdb>::const_iterator i;
+    QList<BacktraceLineGdb>::const_iterator i = d->m_usefulLinesList.constBegin();
 
     //get only the first three valid functions that are encountered
-    for (i = d->m_usefulLinesList.constBegin(); i != d->m_usefulLinesList.constEnd() && result.size() < 3; ++i) {
+    for (; i != d->m_usefulLinesList.constEnd() && result.size() < 3; ++i) {
         if ((*i).functionName() != "??") {
             result.append((*i).functionName());
         }

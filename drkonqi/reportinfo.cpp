@@ -84,11 +84,13 @@ QString ReportInfo::getLSBRelease() const
                 lsb.chop(1);
                 m_LSBRelease = QString::fromLocal8Bit(lsb);
             } else {
-                m_LSBRelease = i18nc("@info","LSB Release information not found "
-                                    "( no lsb_release command found )");
+                //no translation, string appears in the report
+                m_LSBRelease = QString("LSB Release information not found "
+                                       "( no lsb_release command found )");
             }
         } else {
-            m_LSBRelease = i18nc("@info","Not a GNU/Linux system. LSB Release Information not available");
+            //no translation, string appears in the report
+            m_LSBRelease = QString("Not a GNU/Linux system. LSB Release Information not available");
         }
     }
     return m_LSBRelease;
@@ -138,8 +140,8 @@ QString ReportInfo::generateReportBugzilla() const
     if (use != BacktraceParser::Useless && use != BacktraceParser::InvalidUsefulness) {
         QString formattedBacktrace = DrKonqi::instance()->backtraceGenerator()->backtrace();
         formattedBacktrace = formattedBacktrace.trimmed();
-        report.append(QString("Backtrace ::") + lineBreak + dottedLine + lineBreak + formattedBacktrace 
-                    + lineBreak +dottedLine);
+        report.append(QString("Backtrace ::") + lineBreak + dottedLine + lineBreak
+                        + formattedBacktrace + lineBreak +dottedLine);
     } else {
         report.append(QString("An useful backtrace could not be generated"));
     }
@@ -190,8 +192,8 @@ QString ReportInfo::generateReportHtml() const
         report.append(QLatin1String("<p>"));
         report.append(QString("What I was doing when the application crashed:"));
         report.append(lineBreak);
-        report.append(i18nc("@info","<placeholder>Insert the details of what were you doing when the "
-                                "application crashed (in ENGLISH) here</placeholder>"));
+        report.append(i18nc("@info","<placeholder>Insert the details of what were you doing when "
+                                "the application crashed (in ENGLISH) here</placeholder>"));
         report.append(QLatin1String("</p>"));
     }
 
@@ -204,7 +206,8 @@ QString ReportInfo::generateReportHtml() const
         QString formattedBacktrace = DrKonqi::instance()->backtraceGenerator()->backtrace();
         formattedBacktrace = formattedBacktrace.mid(0, formattedBacktrace.length()-1).trimmed();
         formattedBacktrace.replace('\n', "<br />");
-        report.append(QString("Backtrace ::") + lineBreak + dottedLine + lineBreak + formattedBacktrace);
+        report.append(QString("Backtrace ::") + lineBreak + dottedLine + lineBreak
+                        + formattedBacktrace);
     } else {
         report.append(QString("An useful backtrace could not be generated"));
     }

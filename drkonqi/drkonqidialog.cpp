@@ -82,16 +82,16 @@ void DrKonqiDialog::buildMainWidget()
     const KrashConfig * krashConfig = DrKonqi::instance()->krashConfig();
 
     //Main widget components
-    QLabel * title = new QLabel(i18nc("@title applicationName closed unexpectedly, it needs not to be a <title>",
-                                      "<para>We are sorry, <application>%1</application> closed unexpectedly.</para>",
+    QLabel * title = new QLabel(i18nc("@info", "<para>We are sorry, <application>%1</application> "
+                                                "closed unexpectedly.</para>",
                                       krashConfig->programName()));
     title->setWordWrap(true);
 
-    QLabel * infoLabel = new QLabel(i18nc("@info/rich Small explanation of the crash cause",
-                                          "<para>You can help us improve KDE by reporting this "
-                                          "error.<nl /><link url='#aboutbugreporting'>Learn more "
-                                          "about bug reporting</link></para><para><note>It is safe to close "
-                                          "this dialog if you do not want to report</note></para>"));
+    QLabel * infoLabel = new QLabel(i18nc("@info", "<para>You can help us improve KDE by reporting "
+                                          "this error.<nl /><link url='#aboutbugreporting'>Learn "
+                                          "more about bug reporting</link></para><para><note>It is "
+                                          "safe to close this dialog if you do not want to report"
+                                          "</note></para>"));
     connect(infoLabel, SIGNAL(linkActivated(QString)), this, SLOT(aboutBugReporting()));
     infoLabel->setWordWrap(true);
 
@@ -116,10 +116,9 @@ void DrKonqiDialog::buildMainWidget()
     introLayout->addStretch();
 
     //Details
-    introLayout->addWidget(new QLabel(QString("<strong>%1:</strong>").arg(i18nc("@info this is alabel,more detailed information"
-                                            "is shown below","Details"))));
-                                            
-    QLabel * detailsLabel = new QLabel(i18nc("@info/rich","<para>Executable: <command>%1</command> "
+    introLayout->addWidget(new QLabel(QString("<strong>%1</strong>").arg(i18nc("@label","Details:"))));
+
+    QLabel * detailsLabel = new QLabel(i18nc("@info","<para>Executable: <command>%1</command> "
                                             "PID: <numid>%2</numid> Signal: %3 (%4)</para>",
                                             krashConfig->appName(), krashConfig->pid(),
                                             krashConfig->signalNumber(), krashConfig->signalName()));
@@ -140,12 +139,13 @@ void DrKonqiDialog::buildDialogOptions()
 
     //Report bug button button
     setButtonGuiItem(KDialog::User1, KGuiItem2(i18nc("@action:button", "Report Bug"),
-                                              KIcon("tools-report-bug"),
-                                              i18nc("@info:tooltip", "Starts the bug report assistant")));
+                                               KIcon("tools-report-bug"),
+                                               i18nc("@info:tooltip",
+                                                     "Starts the bug report assistant")));
     connect(this, SIGNAL(user1Clicked()), this, SLOT(reportBugAssistant()));
 
     //Default debugger button and menu (only for developer mode)
-    setButtonGuiItem(KDialog::User2, KGuiItem2(i18nc("@action:button debug menubutton, shows the possible debug options", "Debug"),
+    setButtonGuiItem(KDialog::User2, KGuiItem2(i18nc("@action:button", "Debug"),
                                                KIcon("applications-development"),
                                                i18nc("@info:tooltip", "Starts a program to debug "
                                                      "the crashed application")));
@@ -155,13 +155,18 @@ void DrKonqiDialog::buildDialogOptions()
     setButtonMenu(KDialog::User2, m_debugMenu);
 
     m_defaultDebugAction = new QAction(KIcon("applications-development"),
-                                       i18nc("@action:inmenu. 1 is the debugger name", "Debug using %1",
-                                              krashConfig->debuggerName()), m_debugMenu);
+                                       i18nc("@action:inmenu 1 is the debugger name",
+                                             "Debug using <application>%1</application>",
+                                              krashConfig->debuggerName()),
+                                       m_debugMenu);
     connect(m_defaultDebugAction, SIGNAL(triggered()),
             DrKonqi::instance(), SLOT(startDefaultExternalDebugger()));
 
+    //FIXME "Debug in custom application" is not so user friendly. it could show the name of the app
+    //(at least kdevelop reports its name trough dbus)
     m_customDebugAction = new QAction(KIcon("applications-development"),
-                                      i18nc("@action:inmenu", "Debug in custom application"), m_debugMenu);
+                                      i18nc("@action:inmenu", "Debug in custom application"),
+                                      m_debugMenu);
     connect(m_customDebugAction, SIGNAL(triggered()),
             DrKonqi::instance(), SLOT(startCustomExternalDebugger()));
     m_customDebugAction->setEnabled(false);
