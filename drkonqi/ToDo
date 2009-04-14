@@ -6,120 +6,31 @@
 ##Unassigned
 -------------
 
-We need a new icon/image :)
-
-waiting for productName()->product/component mapping (custom cgi file at BKO)
-( if no combination is found, revert to "kde" product )
-[[ currently bugzillalib detects unexistent products to later use the "kde" product ]]
+- We need a new icon/image :)
 
 - Side by side backtrace comparison on "Show report information" (duplicates step)
 - Ask for saving the report information to file when exiting the report assistant without reporting
 
-Avoid LSB messages at all if no found
-Use Qt::escape() on the conclusions i18n call and .. reportInfo generateHTML i18n ?
-WordWrap aboutbugreporting
-        
-#Done
+- Avoid LSB messages at all if no found
+- Use Qt::escape() on the conclusions i18n call and .. reportInfo generateHTML i18n ?
+- WordWrap aboutbugreporting
+
+- Recheck KDevelop integration (currently it seems disabled on KDevelop side)
+
+#ToDiscuss
+--------
+
+- Rewrite text (drkonqiassistantpages_bugzilla.cpp:757)
+
+- BugzillaKeywordsPage word filtering (and minimum length) criteria (drkonqiassistantpages_bugzilla.cpp:269)
+(( check at least X words, with Y of them with a minimum of Z chars ..? ))
+- Rewire criteria of minimum chars/words to use in the Title and Details fields  (drkonqiassistantpages_bugzilla.cpp:737)
+
+#Done/Later
 ---------
 
-Review texts
-Check leaks, crashes
-krazy2 checks (mostly done)
+//Use Konqueror logic for KWallet integration [LATER]
 
-Finish "about bug reporting steps" (guide)  (documentation format ?)
-
-If the backtrace isn't perfect, we can encourage the user to install debug symbols... 
-However the user could not find all the necesary packages and therefore never achieve a perfect backtrace
-When we should show him/her the message "Press Next to continue" ?
-
-criteria for useless backtraces
-
-Remove strings from profiles-rc. Use strings i18n when needed
-The signal explanations aren't required... as we use it only for devs.. and they already know..
-#Profiles removed!
-
-less harsh texts? ("useless")
-Relayout the main dialog (where to put the advanced thing, below or over another widget in the stack? )
-
-show reason for opening wallet ?
-
-ASK on close the assistant
-
-Text gets chopped on BKO report sometimes (encoding issue)???
-
-Fix KWallet valid WiD...   
-
-check what all the options in KrashConf are meant to do and use them appropriately or drop them (i.e review options)
-
-add warns about we want text in english !! (partly done)
-fix awarenesspage layout
-
-Use - Send/Sending/Sent Bug report for last page
-
-Disable DEBUG menu-button when GDB is running on the process
-GetBacktraceWidget... don't start the dbg if the there is another debugger running
-Allow to go back on Conclusions pages to change checkboxes...
-
-detect if the pid isn't set (?) 
-
-improve "restart application" using the original command line options
-(this needs modify kdelibs/kcrash to pass the whole arguments list to drkonqi)
-
-//fix kwallet... ? use konqueror bko logic LATER
-
-#Extract interfaces to .UI files
-    #getbacktracewidget
-
-Add Translation i18n (with contexts) . change HTML tags (are they invalid when using i18n???)
-http://techbase.kde.org/Development/Tutorials/Localization/i18n_Semantics
-        
-#Rework Bug awareness text
-// const pointers ? LATER
-//Use KGUIItem to create KPushButton
-//Set help for gui items, whats this,
-#better logic to determine if the bug was commited (better html parsing?) DONE using regexp
-
-change "report to maintainer" to "send email to maintainer" / "open maintainer web page"
-
-Enable help button on assistant ?
-### merge crashinfo  + krashconf ?? LATER
-
-#busy cursor -> progressbar 
-#"busy" progressbar for getbacktracewidgets
-# kio progressbar for bugzilla related operations (only for post operations.. login and commit )
-( using StatusWidget for status + busy state )
-
-
-way to get graphical feedback of KToolInvocation:invokeMailer
-
-extract methods from crashInfo to SystemInfo (?) (like getOS, getKDE .. )
-
-#implement save report
-#QNetworkAccessManager -> KIO
-    http://api.kde.org/4.x-api/kdelibs-apidocs/kio/html/classKIO_1_1TransferJob-members.html
-#KWallet integration
-#Relayout getBacktraceWidget buttons/labels , layouts
-
-#Each page widget should emit setNextButton() on aboutToShow() (when needed by the widget)
-#Remember to connect the setNextButton signal
-
-#Discuss , when to launch the kWallet dialog..........
-( currently, if the wallet doesn't exist, it prompts to create it when the login 
-information is entered the first time. If the wallet exists, it prompts for password when
-showing the login page, and it allows autocomplete the data )
-
-#Add reporting steps to assistant
-    need permission about bugstest.kde.org to play with commits
-    
-#validate KJob result state;
-    #done for fetchBugReport and searchBugs .. (error signals added)
-    needed for login, and commit
-    
-#Use m_varName scheme, order header files
-    #drkonqiassistantpages
-    #aboutbugreportingdialog
-    #bugzillalib
-    #drkonqidialog
-    #drkonqibugreport
-    #crashinfo
-    #usefulnessmeter
+//waiting for productName()->product/component mapping (custom cgi file at BKO)
+( if no combination is found, revert to "kde" product )
+[[ currently bugzillalib detects unexistent products to later use the "kde" product ]] [LATER]
