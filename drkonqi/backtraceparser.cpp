@@ -310,7 +310,7 @@ K_GLOBAL_STATIC_WITH_ARGS(const QSet<QString>, blacklistedFunctions, (
                               << "__assert_fail" << "do_assert" << "qt_message_output"
                               << "qFatal" << "clone" << "start_thread" << "QMetaObject::activate"
                               << "__kernel_vsyscall"
-                          ));
+                          ))
 
 BacktraceParserGdb::BacktraceParserGdb(QObject *parent)
         : BacktraceParser(parent), d(NULL)
