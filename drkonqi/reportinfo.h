@@ -57,7 +57,9 @@ public:
         m_possibleDuplicate = bug;
     }
 
-    QString generateReportTemplate(bool bugzilla = false) const;
+    QString generateReportBugzilla() const;
+    QString generateReportHtml() const;
+    
     void fillReportFields();
     void setDefaultProductComponent();
 

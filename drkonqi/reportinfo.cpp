@@ -94,52 +94,40 @@ QString ReportInfo::getLSBRelease() const
     return m_LSBRelease;
 }
 
-QString ReportInfo::generateReportTemplate(bool bugzilla) const
+QString ReportInfo::generateReportBugzilla() const
 {
     //Note: no translations must be done in this function's strings
-    QString dottedLine = QString("------");
-    QString lineBreak = QLatin1String("<br />");
-    if (bugzilla) {
-        lineBreak = QLatin1String("\n");
-    }
+    QString dottedLine = QLatin1String("------");
+    QString lineBreak = QLatin1String("\n");
 
-    QString report;
     const KrashConfig * krashConfig = DrKonqi::instance()->krashConfig();
 
-    report.append(QString("Application and System information :")
-                    + lineBreak + dottedLine + lineBreak);
+    QString report;
+    
+    report.append(QString("Application and System information ::"));
+    report.append(lineBreak + dottedLine + lineBreak);
     //Program name and versions
     report.append(QString("KDE Version: %1").arg(getKDEVersion()) + lineBreak);
     report.append(QString("Qt Version: %1").arg(getQtVersion()) + lineBreak);
     report.append(QString("Operating System: %1").arg(getOS()) + lineBreak);
     report.append(QString("Application that crashed: %1").arg(krashConfig->productName())
                     + lineBreak);
-    report.append(QString("Version of the application: %1").arg(krashConfig->productVersion())
-                    + lineBreak);
-
+    report.append(QString("Version of the application: %1").arg(krashConfig->productVersion()));
+    
     //LSB output
-    QString lsb = getLSBRelease();
-    if (!bugzilla) {
-        lsb.replace('\n', "<br />");
-    }
-    report.append(dottedLine + lineBreak + lsb + lineBreak  + dottedLine);
+    report.append(lineBreak + dottedLine + lineBreak);
+    report.append(getLSBRelease());
+    report.append(lineBreak + dottedLine + lineBreak);
 
     //Description (title)
-    if (!m_report.shortDescription().isEmpty()) {
-        report.append(lineBreak + QString("Title: %1").arg(m_report.shortDescription()));
-    }
-
+    report.append(lineBreak + QString("Title: %1").arg(m_report.shortDescription()));
+    
     //Details of the crash situation
     if (m_userCanDetail) {
+        report.append(lineBreak + lineBreak);
+        report.append(QString("What I was doing when the application crashed:"));
         report.append(lineBreak);
-        report.append(lineBreak + QString("What I was doing when the application crashed:")
-                        + lineBreak);
-        if (!m_userDetailText.isEmpty()) {
-            report.append(m_userDetailText);
-        } else {
-            report.append(i18nc("@info","<placeholder>[[ Insert the details of what were you doing when the "
-                                "application crashed (in ENGLISH) here ]]</placeholder>"));
-        }
+        report.append(m_userDetailText);
     }
 
     //Backtrace
@@ -149,13 +137,9 @@ QString ReportInfo::generateReportTemplate(bool bugzilla) const
 
     if (use != BacktraceParser::Useless && use != BacktraceParser::InvalidUsefulness) {
         QString formattedBacktrace = DrKonqi::instance()->backtraceGenerator()->backtrace();
-        if (!bugzilla) {
-            formattedBacktrace.replace('\n', "<br />");
-        }
         formattedBacktrace = formattedBacktrace.trimmed();
-
-        report.append(QString("Backtrace:") + lineBreak + dottedLine
-                      + lineBreak + formattedBacktrace + dottedLine);
+        report.append(QString("Backtrace ::") + lineBreak + dottedLine + lineBreak + formattedBacktrace 
+                    + lineBreak +dottedLine);
     } else {
         report.append(QString("An useful backtrace could not be generated"));
     }
@@ -168,6 +152,69 @@ QString ReportInfo::generateReportTemplate(bool bugzilla) const
 
     return report;
 }
+
+QString ReportInfo::generateReportHtml() const
+{
+    //Note: no translations must be done in this function's strings (except the placeholder)
+    QString dottedLine = QLatin1String("------");
+    QString lineBreak = QLatin1String("<br />");
+
+    const KrashConfig * krashConfig = DrKonqi::instance()->krashConfig();
+
+    QString report;
+    
+    report.append(QLatin1String("<hr />"));
+    
+    report.append(QLatin1String("<p>"));
+    report.append(QString("Application and System information ::"));
+    
+    report.append(lineBreak + dottedLine + lineBreak);
+    
+    //Program name and versions
+    report.append(QString("KDE Version: %1").arg(getKDEVersion()) + lineBreak);
+    report.append(QString("Qt Version: %1").arg(getQtVersion()) + lineBreak);
+    report.append(QString("Operating System: %1").arg(getOS()) + lineBreak);
+    report.append(QString("Application that crashed: %1").arg(krashConfig->productName())
+                    + lineBreak);
+    report.append(QString("Version of the application: %1").arg(krashConfig->productVersion()));
+    
+    //LSB output
+    report.append(lineBreak + dottedLine + lineBreak);
+    report.append(getLSBRelease().replace('\n', "<br />"));
+    report.append(lineBreak + dottedLine);
+    
+    report.append(QLatin1String("</p>"));
+    
+    //Details of the crash situation
+    if (m_userCanDetail) {
+        report.append(QLatin1String("<p>"));
+        report.append(QString("What I was doing when the application crashed:"));
+        report.append(lineBreak);
+        report.append(i18nc("@info","<placeholder>Insert the details of what were you doing when the "
+                                "application crashed (in ENGLISH) here</placeholder>"));
+        report.append(QLatin1String("</p>"));
+    }
+
+    //Backtrace
+    report.append(QLatin1String("<p>"));
+    BacktraceParser::Usefulness use =
+            DrKonqi::instance()->backtraceGenerator()->parser()->backtraceUsefulness();
+
+    if (use != BacktraceParser::Useless && use != BacktraceParser::InvalidUsefulness) {
+        QString formattedBacktrace = DrKonqi::instance()->backtraceGenerator()->backtrace();
+        formattedBacktrace = formattedBacktrace.mid(0, formattedBacktrace.length()-1).trimmed();
+        formattedBacktrace.replace('\n', "<br />");
+        report.append(QString("Backtrace ::") + lineBreak + dottedLine + lineBreak + formattedBacktrace);
+    } else {
+        report.append(QString("An useful backtrace could not be generated"));
+    }
+    report.append(QLatin1String("</p>"));
+    
+    report.append(QLatin1String("<hr />"));
+    
+    return report;
+}
+
 
 void ReportInfo::sendBugReport()
 {
@@ -189,6 +236,6 @@ void ReportInfo::fillReportFields()
     m_report.setOperatingSystem(QLatin1String("unspecified"));
     m_report.setPriority(QLatin1String("NOR"));
     m_report.setBugSeverity(QLatin1String("crash"));
-    m_report.setDescription(generateReportTemplate(true));
+    m_report.setDescription(generateReportBugzilla());
     m_report.setValid(true);
 }
