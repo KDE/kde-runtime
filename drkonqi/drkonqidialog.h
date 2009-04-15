@@ -27,6 +27,7 @@ class AboutBugReportingDialog;
 class DrKonqiBugReport;
 class KrashConfig;
 class KTabWidget;
+class KMenu;
 
 class DrKonqiDialog: public KDialog
 {
@@ -61,7 +62,7 @@ private:
     QWidget *                       m_introWidget;
     GetBacktraceWidget *            m_backtraceWidget;
 
-    QMenu *                         m_debugMenu;
+    KMenu *                         m_debugMenu;
     QAction *                       m_defaultDebugAction;
     QAction *                       m_customDebugAction;
 };

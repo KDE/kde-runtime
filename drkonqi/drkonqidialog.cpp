@@ -30,8 +30,8 @@
 #include <QtGui/QHBoxLayout>
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QTreeWidget>
-#include <QtGui/QMenu>
 
+#include <KMenu>
 #include <KIcon>
 #include <KStandardDirs>
 #include <KLocale>
@@ -51,8 +51,6 @@ DrKonqiDialog::DrKonqiDialog(QWidget * parent) :
     setWindowIcon(KIcon("tools-report-bug"));
 
     m_tabWidget = new KTabWidget(this);
-    //m_tabWidget->setMinimumSize( QSize(600, 300) );
-    //m_tabWidget->setTabPosition( QTabWidget::South );
     setMainWidget(m_tabWidget);
 
     connect(m_tabWidget, SIGNAL(currentChanged(int)), this, SLOT(tabIndexChanged(int)));
@@ -66,7 +64,6 @@ DrKonqiDialog::DrKonqiDialog(QWidget * parent) :
     m_tabWidget->addTab(m_backtraceWidget, i18nc("@title:tab", "&Developer Information"));
 
     buildDialogOptions();
-    //setButtonsOrientation( Qt::Vertical );
 
     resize(minimumSize());
 }
@@ -151,7 +148,7 @@ void DrKonqiDialog::buildDialogOptions()
                                                      "the crashed application.")));
     showButton(KDialog::User2, krashConfig->showDebugger());
 
-    m_debugMenu = new QMenu();
+    m_debugMenu = new KMenu();
     setButtonMenu(KDialog::User2, m_debugMenu);
 
     m_defaultDebugAction = new QAction(KIcon("applications-development"),
@@ -162,13 +159,7 @@ void DrKonqiDialog::buildDialogOptions()
     connect(m_defaultDebugAction, SIGNAL(triggered()),
             DrKonqi::instance(), SLOT(startDefaultExternalDebugger()));
 
-    //FIXME "Debug in custom application" is not so user friendly. it could show the name of the app
-    //(at least kdevelop reports its name through dbus)
-    //FIXME-README! This is the default name which is never shown.. I guess this string could be
-    //removed, to leave an empty action. (This menu entry is only shown when KDevelop appears)
-    m_customDebugAction = new QAction(KIcon("applications-development"),
-                                      i18nc("@action:inmenu", "Debug in custom application"),
-                                      m_debugMenu);
+    m_customDebugAction = new QAction(m_debugMenu); //Default null (disabled) action
     connect(m_customDebugAction, SIGNAL(triggered()),
             DrKonqi::instance(), SLOT(startCustomExternalDebugger()));
     m_customDebugAction->setEnabled(false);
