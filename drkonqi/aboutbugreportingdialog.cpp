@@ -38,7 +38,8 @@ AboutBugReportingDialog::AboutBugReportingDialog(QWidget * parent):
 
     QString text =
 
-        QString("<a name=\"Begin\" /><h1>%1</h1>").arg(
+        //Introduction
+        QString("<a name=\"%1\" /><h1>%2</h1>").arg(QLatin1String(PAGE_HELP_BEGIN_ID),
                                 Qt::escape(i18nc("@title","Information about bug reporting"))) +
         QString("<p>%1</p><p>%2</p><p>%3</p>").arg(
             Qt::escape(i18nc("@info/plain", "You can help us improve this software by filing "
@@ -48,15 +49,15 @@ AboutBugReportingDialog::AboutBugReportingDialog(QWidget * parent):
             Qt::escape(i18nc("@info/plain","In order to generate a useful bug report we need some "
                             "information about both the crash and your system. (Also, you may need "
                             "to install some debug packages.)"))) +
-
+        //Sub-introduction
         QString("<h1>%1</h1>").arg(Qt::escape(i18nc("@title","Bug Reporting Assistant Steps Guide"))) +
         QString("<p>%1</p>").arg(
             Qt::escape(i18nc("@info/plain","This assistant will guide you through the crash "
                             "reporting process of the KDE Bug Reports Database Site. All the "
                             "information you enter to the bug report must be in English, if "
                             "possible, as KDE is developed internationally."))) +
-
-        QString("<a name=\"Backtrace\" /><h2>%1</h2>").arg(
+        //Crash Information Page
+        QString("<a name=\"%1\" /><h2>%2</h2>").arg(QLatin1String(PAGE_CRASHINFORMATION_ID),
                                 Qt::escape(i18nc("@title","Crash Information"))) +
         QString("<p>%1 <a href=\"%2\">%2</a></p><p>%3</p>").arg(
             Qt::escape(i18nc("@info/plain","This page will generate a backtrace of the crash. This "
@@ -68,8 +69,8 @@ AboutBugReportingDialog::AboutBugReportingDialog(QWidget * parent):
             QString(TECHBASE_HOWTO_DOC),
             Qt::escape(i18nc("@info/plain","Once you get a useful trace (or if you do not want to "
                             "install the missing packages) you can continue."))) +
-
-        QString("<a name=\"Awareness\" /><h2>%1</h2>").arg(
+        //Bug Awareness Page
+        QString("<a name=\"%1\" /><h2>%2</h2>").arg(QLatin1String(PAGE_AWARENESS_ID),
                                 Qt::escape(i18nc("@title","What do you know about the crash"))) +
         QString("<p>%1</p><p>%2</p>").arg(
             Qt::escape(i18nc("@info/plain","In this page you need to answer some questions about "
@@ -82,8 +83,9 @@ AboutBugReportingDialog::AboutBugReportingDialog(QWidget * parent):
                             "were taking in or outside the application, web sites you were "
                             "browsing, other strange things you noticed before or after the crash, "
                             "and so on."))) +
-
-        QString("<a name=\"Results\" /><h2>%1</h2>").arg(Qt::escape(i18nc("@title","Conclusions"))) +
+        //Conclusions Page
+        QString("<a name=\"%1\" /><h2>%2</h2>").arg(QLatin1String(PAGE_CONCLUSIONS_ID),
+                                Qt::escape(i18nc("@title","Conclusions"))) +
         QString("<p>%1</p><p>%2</p><p>%3</p>").arg(
             Qt::escape(i18nc("@info/plain","Using the quality of the crash information gathered "
                             "previously, and your answers on the previous page, the assistant will "
@@ -94,8 +96,8 @@ AboutBugReportingDialog::AboutBugReportingDialog(QWidget * parent):
                             "need to directly contact the maintainer of the application.")),
             Qt::escape(i18nc("@info/plain","If the crash is listed as being not worth reporting, "
                              "you can still manually report the bug if you want to."))) +
-
-        QString("<a name=\"BugzillaLogin\" /><h2>%1</h2>").arg(
+        //Bugzilla Login Page
+        QString("<a name=\"%1\" /><h2>%2</h2>").arg(QLatin1String(PAGE_BZLOGIN_ID),
                                     Qt::escape(i18nc("@title","KDE Bug Tracking System Login"))) +
         QString("<p>%1 <a href=\"%2\">%2</a></p><p>%3</p><p>%4</p>").arg(
             Qt::escape(i18nc("@info/plain","As we may need to contact you in the future to ask for "
@@ -110,8 +112,8 @@ AboutBugReportingDialog::AboutBugReportingDialog(QWidget * parent):
                             "save your password in the KWallet password system. Also, it will "
                             "prompt you for the KWallet password upon loading to autocomplete the "
                             "data if you use this assistant again."))) +
-
-        QString("<a name=\"BugzillaKeywords\" /><h2>%1</h2>").arg(
+        //Bugzilla Keywords Page
+        QString("<a name=\"%1\" /><h2>%2</h2>").arg(QLatin1String(PAGE_BZKEYWORDS_ID),
                                         Qt::escape(i18nc("@title","Bug Report Keywords"))) +
         QString("<p>%1</p><p>%2</p>").arg(
             Qt::escape(i18nc("@info/plain","In this step you need to write at least four (4) words "
@@ -121,11 +123,11 @@ AboutBugReportingDialog::AboutBugReportingDialog(QWidget * parent):
                             "to help you and others find them later. Also, this text can be used as "
                             "the title of the future bug report. You can change this title later.")),
             Qt::escape(i18nc("@info/plain","You should write in English."))) +
-
-        QString("<a name=\"BugzillaDuplicates\" /><h2>%1</h2>").arg(
+        //Bugzilla Duplicates Page
+        QString("<a name=\"%1\" /><h2>%2</h2>").arg(QLatin1String(PAGE_BZDUPLICATES_ID),
                                 Qt::escape(i18nc("@title","Bug Report Possible Duplicate list"))) +
         QString("<p>%1</p><p>%2</p><p>%3</p><p>%4</p>").arg(
-//needs some more string cleanup below
+        //needs some more string cleanup below
             Qt::escape(i18nc("@info/plain","This is an optional step.")),
             Qt::escape(i18nc("@info/plain","This page will search the bug report database for "
                             "similar crashes which are possibly duplicates of your bug. If there "
@@ -140,15 +142,15 @@ AboutBugReportingDialog::AboutBugReportingDialog(QWidget * parent):
                             "or you do not know what to look at. The bug report database "
                             "maintainers will look at it later. It is better to file a duplicate "
                             "then to not file at all."))) +
-
-        QString("<a name=\"BugzillaInformation\" /><h2>%1</h2>").arg(
+        //Bugzilla Crash Information - Details Page
+        QString("<a name=\"%1\" /><h2>%2</h2>").arg(QLatin1String(PAGE_BZDETAILS_ID),
                                         Qt::escape(i18nc("@title","Details of the Bug report"))) +
         QString("<p>%1</p><p>%2</p>").arg(
             Qt::escape(i18nc("@info/plain","In this case you need to write a title and description "
                             "of the crash context. Explain as best you can.")),
             Qt::escape(i18nc("@info/plain","You should write in English."))) +
-
-        QString("<a name=\"BugzillaSend\" /><h2>%1</h2>").arg(
+        //Bugzilla Send Page
+        QString("<a name=\"%1\" /><h2>%2</h2>").arg(QLatin1String(PAGE_BZSEND_ID),
                                         Qt::escape(i18nc("@title","Send Crash Report"))) +
         QString("<p>%1</p><p>%2</p>").arg(
             Qt::escape(i18nc("@info/plain","This page will send the bug report to the bug tracking "

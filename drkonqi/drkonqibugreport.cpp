@@ -22,6 +22,7 @@
 #include "drkonqiassistantpages_bugzilla.h"
 #include "aboutbugreportingdialog.h"
 #include "reportinfo.h"
+#include "drkonqi_globals.h"
 
 #include <QtGui/QCloseEvent>
 #include <KMessageBox>
@@ -39,14 +40,11 @@ DrKonqiBugReport::DrKonqiBugReport(QWidget * parent) :
             this, SLOT(currentPageChanged_slot(KPageWidgetItem *, KPageWidgetItem *)));
     connect(this, SIGNAL(helpClicked()), this, SLOT(showHelp()));
 
-    /*Every PageWidgetItem has a title (second arg of the constructor
-    which is used to scroll the help text, remember to not change.*/
-
     //Introduction Page
     IntroductionPage * m_intro = new IntroductionPage(this);
     connectSignals(m_intro);
 
-    KPageWidgetItem * m_introPage = new KPageWidgetItem(m_intro, "Intro");
+    KPageWidgetItem * m_introPage = new KPageWidgetItem(m_intro, QLatin1String(PAGE_INTRODUCTION_ID));
     m_introPage->setHeader(i18nc("@title", "Introduction"));
     m_introPage->setIcon(KIcon("tools-report-bug"));
 
@@ -54,7 +52,8 @@ DrKonqiBugReport::DrKonqiBugReport(QWidget * parent) :
     CrashInformationPage * m_backtrace = new CrashInformationPage(this);
     connectSignals(m_backtrace);
 
-    KPageWidgetItem * m_backtracePage = new KPageWidgetItem(m_backtrace , "Backtrace");
+    KPageWidgetItem * m_backtracePage = new KPageWidgetItem(m_backtrace, 
+                                                        QLatin1String(PAGE_CRASHINFORMATION_ID));
     m_backtracePage->setHeader(i18nc("@title","Crash Information (Backtrace)"));
     m_backtracePage->setIcon(KIcon("tools-report-bug"));
 
@@ -62,7 +61,8 @@ DrKonqiBugReport::DrKonqiBugReport(QWidget * parent) :
     BugAwarenessPage * m_awareness = new BugAwarenessPage(this);
     connectSignals(m_awareness);
 
-    KPageWidgetItem * m_awarenessPage = new KPageWidgetItem(m_awareness, "Awareness");
+    KPageWidgetItem * m_awarenessPage = new KPageWidgetItem(m_awareness, 
+                                                                QLatin1String(PAGE_AWARENESS_ID));
     m_awarenessPage->setHeader(i18nc("@title","What do you know about the crash?"));
     m_awarenessPage->setIcon(KIcon("tools-report-bug"));
 
@@ -70,7 +70,8 @@ DrKonqiBugReport::DrKonqiBugReport(QWidget * parent) :
     ConclusionPage * m_conclusions = new ConclusionPage(this);
     connectSignals(m_conclusions);
 
-    KPageWidgetItem * m_conclusionsPage = new KPageWidgetItem(m_conclusions , "Results");
+    KPageWidgetItem * m_conclusionsPage = new KPageWidgetItem(m_conclusions,
+                                                                QLatin1String(PAGE_CONCLUSIONS_ID));
     m_conclusionsPage->setHeader(i18nc("@title","Crash Analysis Results"));
     m_conclusionsPage->setIcon(KIcon("tools-report-bug"));
     connect(m_conclusions, SIGNAL(finished(bool)), this, SLOT(assistantFinished(bool)));
@@ -79,7 +80,8 @@ DrKonqiBugReport::DrKonqiBugReport(QWidget * parent) :
     BugzillaLoginPage * m_bugzillaLogin =  new BugzillaLoginPage(this);
     connectSignals(m_bugzillaLogin);
 
-    KPageWidgetItem * m_bugzillaLoginPage = new KPageWidgetItem(m_bugzillaLogin, "BugzillaLogin");
+    KPageWidgetItem * m_bugzillaLoginPage = new KPageWidgetItem(m_bugzillaLogin,
+                                                                QLatin1String(PAGE_BZLOGIN_ID));
     m_bugzillaLoginPage->setHeader(i18nc("@title","KDE Bug Tracking System Login"));
     m_bugzillaLoginPage->setIcon(KIcon("tools-report-bug"));
 
@@ -87,8 +89,8 @@ DrKonqiBugReport::DrKonqiBugReport(QWidget * parent) :
     BugzillaKeywordsPage * m_bugzillaKeywords =  new BugzillaKeywordsPage(this);
     connectSignals(m_bugzillaKeywords);
 
-    KPageWidgetItem * m_bugzillaKeywordsPage =
-                                new KPageWidgetItem(m_bugzillaKeywords, "BugzillaKeywords");
+    KPageWidgetItem * m_bugzillaKeywordsPage =  new KPageWidgetItem(m_bugzillaKeywords, 
+                                                                QLatin1String(PAGE_BZKEYWORDS_ID));
     m_bugzillaKeywordsPage->setHeader(i18nc("@title","Bug Report Keywords"));
     m_bugzillaKeywordsPage->setIcon(KIcon("tools-report-bug"));
 
@@ -96,8 +98,8 @@ DrKonqiBugReport::DrKonqiBugReport(QWidget * parent) :
     BugzillaDuplicatesPage * m_bugzillaDuplicates =  new BugzillaDuplicatesPage(this);
     connectSignals(m_bugzillaDuplicates);
 
-    KPageWidgetItem * m_bugzillaDuplicatesPage =
-                                new KPageWidgetItem(m_bugzillaDuplicates, "BugzillaDuplicates");
+    KPageWidgetItem * m_bugzillaDuplicatesPage = new KPageWidgetItem(m_bugzillaDuplicates, 
+                                                            QLatin1String(PAGE_BZDUPLICATES_ID));
     m_bugzillaDuplicatesPage->setHeader(i18nc("@title","Bug Report Possible Duplicates List"));
     m_bugzillaDuplicatesPage->setIcon(KIcon("tools-report-bug"));
 
@@ -105,20 +107,22 @@ DrKonqiBugReport::DrKonqiBugReport(QWidget * parent) :
     BugzillaInformationPage * m_bugzillaInformation =  new BugzillaInformationPage(this);
     connectSignals(m_bugzillaInformation);
 
-    KPageWidgetItem * m_bugzillaInformationPage =
-                                new KPageWidgetItem(m_bugzillaInformation, "BugzillaInformation");
+    KPageWidgetItem * m_bugzillaInformationPage = new KPageWidgetItem(m_bugzillaInformation, 
+                                                                QLatin1String(PAGE_BZDETAILS_ID));
     m_bugzillaInformationPage->setHeader(i18nc("@title","Details of the Bug Report"));
     m_bugzillaInformationPage->setIcon(KIcon("tools-report-bug"));
 
     //Bugzilla commit
     BugzillaSendPage * m_bugzillaSend =  new BugzillaSendPage(this);
 
-    KPageWidgetItem * m_bugzillaSendPage = new KPageWidgetItem(m_bugzillaSend, "BugzillaSend");
+    KPageWidgetItem * m_bugzillaSendPage = new KPageWidgetItem(m_bugzillaSend, 
+                                                                    QLatin1String(PAGE_BZSEND_ID));
     m_bugzillaSendPage->setHeader(i18nc("@title","Send Crash Report"));
     m_bugzillaSendPage->setIcon(KIcon("tools-report-bug"));
     connect(m_bugzillaSend, SIGNAL(finished(bool)), this, SLOT(assistantFinished(bool)));
 
     //TODO remember to keep ordered
+
     addPage(m_introPage);
     addPage(m_backtracePage);
     addPage(m_awarenessPage);
@@ -146,6 +150,12 @@ void DrKonqiBugReport::connectSignals(DrKonqiAssistantPage * page)
 
 void DrKonqiBugReport::currentPageChanged_slot(KPageWidgetItem * current , KPageWidgetItem * before)
 {
+    //Reset standard buttons state
+    //setButtonGuiItem(KDialog::User1,m_finishButtonItem);
+    
+    //showButton(KDialog::Close, true);
+    //enableButton(KDialog::Close, true);
+    
     enableButton(KDialog::Cancel, true);
     m_canClose = false;
 
@@ -159,8 +169,9 @@ void DrKonqiBugReport::currentPageChanged_slot(KPageWidgetItem * current , KPage
         enableNextButton(currentPage->isComplete());
         currentPage->aboutToShow();
     }
-
-    if (current->name() == "BugzillaSend") { //Disable all buttons on last page
+        
+    //Disable all buttons on the bugzilla send page (until we get the send result)
+    if (current->name() == QLatin1String(PAGE_BZSEND_ID)) { 
         enableNextButton(false);
         enableBackButton(false);
         enableButton(KDialog::User1, false);
@@ -180,6 +191,17 @@ void DrKonqiBugReport::assistantFinished(bool showBack)
     enableBackButton(showBack);
     enableButton(KDialog::User1, true);
     enableButton(KDialog::Cancel, false);
+    
+    /*
+    showButton(KDialog::Cancel, false);
+    showButton(KDialog::User1, false);
+    showButton(KDialog::Close, true);
+    enableButton(KDialog::Close, true);
+    */
+    
+    //Show close instead of finish
+    //setButtonGuiItem(KDialog::User1,m_closeButtonItem);
+    
     m_canClose = true;
 }
 
@@ -189,7 +211,7 @@ void DrKonqiBugReport::showHelp()
         m_aboutBugReportingDialog = new AboutBugReportingDialog(this);
     }
     m_aboutBugReportingDialog->show();
-    m_aboutBugReportingDialog->showSection(QString("Begin"));
+    m_aboutBugReportingDialog->showSection(QLatin1String(PAGE_HELP_BEGIN_ID));
     m_aboutBugReportingDialog->showSection(currentPage()->name());
 }
 
