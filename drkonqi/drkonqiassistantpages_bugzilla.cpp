@@ -839,7 +839,7 @@ BugzillaSendPage::BugzillaSendPage(DrKonqiBugReport * parent)
 
     m_statusWidget = new StatusWidget();
 
-    m_retryButton = new KPushButton(KGuiItem2(i18nc("@action:button", "Retry ..."),
+    m_retryButton = new KPushButton(KGuiItem2(i18nc("@action:button", "Retry..."),
                                               KIcon("view-refresh"),
                                               i18nc("@info:tooltip", "Use this button to retry "
                                                   "sending the crash report if it failed before.")));

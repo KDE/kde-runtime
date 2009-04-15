@@ -125,7 +125,7 @@ BugAwarenessPage::BugAwarenessPage(DrKonqiBugReport * parent)
     QLabel * detailQuestionLabel = new QLabel(QString("<strong>%1</strong>").arg(
                                               i18nc("@info","Can you give detailed information "
                                                             "about what you were doing when the "
-                                                            "application crashed ?")));
+                                                            "application crashed?")));
     detailQuestionLabel->setWordWrap(true);
     canDetailLayout->addWidget(detailQuestionLabel);
 
