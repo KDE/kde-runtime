@@ -42,6 +42,9 @@ DrKonqiDialog::DrKonqiDialog(QWidget * parent) :
         m_aboutBugReportingDialog(0),
         m_backtraceWidget(0)
 {
+    KGlobal::ref();
+    setAttribute(Qt::WA_DeleteOnClose, true);
+
     connect(DrKonqi::instance(), SIGNAL(debuggerRunning(bool)), this, SLOT(enableDebugMenu(bool)));
     connect(DrKonqi::instance(), SIGNAL(newDebuggingApplication(QString)),
             this, SLOT(slotNewDebuggingApp(QString)));
@@ -58,7 +61,7 @@ DrKonqiDialog::DrKonqiDialog(QWidget * parent) :
     buildMainWidget();
     m_tabWidget->addTab(m_introWidget, i18nc("@title:tab general information", "&General"));
 
-    m_backtraceWidget = new GetBacktraceWidget(DrKonqi::instance()->backtraceGenerator());
+    m_backtraceWidget = new GetBacktraceWidget(DrKonqi::instance()->backtraceGenerator(), this);
     m_backtraceWidget->setMinimumSize(QSize(575, 240));
     m_backtraceWidget->layout()->setContentsMargins(5, 5, 5, 5);
     m_tabWidget->addTab(m_backtraceWidget, i18nc("@title:tab", "&Developer Information"));
@@ -70,8 +73,9 @@ DrKonqiDialog::DrKonqiDialog(QWidget * parent) :
 
 void DrKonqiDialog::tabIndexChanged(int index)
 {
-    if (index == 1)
+    if (index == 1) {
         m_backtraceWidget->generateBacktrace();
+    }
 }
 
 void DrKonqiDialog::buildMainWidget()
@@ -148,25 +152,25 @@ void DrKonqiDialog::buildDialogOptions()
                                                      "the crashed application.")));
     showButton(KDialog::User2, krashConfig->showDebugger());
 
-    m_debugMenu = new KMenu();
-    setButtonMenu(KDialog::User2, m_debugMenu);
+    KMenu *debugMenu = new KMenu(this);
+    setButtonMenu(KDialog::User2, debugMenu);
 
     m_defaultDebugAction = new QAction(KIcon("applications-development"),
                                        i18nc("@action:inmenu 1 is the debugger name",
                                              "Debug using <application>%1</application>",
                                               krashConfig->debuggerName()),
-                                       m_debugMenu);
+                                       debugMenu);
     connect(m_defaultDebugAction, SIGNAL(triggered()),
             DrKonqi::instance(), SLOT(startDefaultExternalDebugger()));
 
-    m_customDebugAction = new QAction(m_debugMenu); //Default null (disabled) action
+    m_customDebugAction = new QAction(debugMenu); //Default null (disabled) action
     connect(m_customDebugAction, SIGNAL(triggered()),
             DrKonqi::instance(), SLOT(startCustomExternalDebugger()));
     m_customDebugAction->setEnabled(false);
     m_customDebugAction->setVisible(false);
 
-    m_debugMenu->addAction(m_defaultDebugAction);
-    m_debugMenu->addAction(m_customDebugAction);
+    debugMenu->addAction(m_defaultDebugAction);
+    debugMenu->addAction(m_customDebugAction);
 
     //Restart application button
     setButtonGuiItem(KDialog::User3, KGuiItem2(i18nc("@action:button", "Restart Application"),
@@ -222,7 +226,5 @@ void DrKonqiDialog::slotNewDebuggingApp(const QString & app)
 
 DrKonqiDialog::~DrKonqiDialog()
 {
-    delete m_aboutBugReportingDialog;
-    delete m_backtraceWidget;
-    delete m_debugMenu;
+    KGlobal::deref();
 }

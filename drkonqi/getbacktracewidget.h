@@ -35,7 +35,7 @@ class GetBacktraceWidget: public QWidget
     Q_OBJECT
 
 public:
-    GetBacktraceWidget(BacktraceGenerator *);
+    GetBacktraceWidget(BacktraceGenerator *generator, QWidget *parent = 0);
 
 public Q_SLOTS:
     void generateBacktrace();

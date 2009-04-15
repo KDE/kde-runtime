@@ -32,8 +32,8 @@
 #include <KIcon>
 #include <KLocale>
 
-GetBacktraceWidget::GetBacktraceWidget(BacktraceGenerator * generator) :
-        QWidget(),
+GetBacktraceWidget::GetBacktraceWidget(BacktraceGenerator *generator, QWidget *parent) :
+        QWidget(parent),
         m_btGenerator(generator)
 {
     ui.setupUi(this);

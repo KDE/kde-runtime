@@ -62,7 +62,6 @@ private:
     QWidget *                       m_introWidget;
     GetBacktraceWidget *            m_backtraceWidget;
 
-    KMenu *                         m_debugMenu;
     QAction *                       m_defaultDebugAction;
     QAction *                       m_customDebugAction;
 };

@@ -92,8 +92,11 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    DrKonqiDialog w;
-    w.show();
+    qa->setQuitOnLastWindowClosed(false);
+    KGlobal::setAllowQuit(true);
+
+    DrKonqiDialog *w = new DrKonqiDialog();
+    w->show();
     int ret = qa->exec();
 
     DrKonqi::instance()->cleanup();

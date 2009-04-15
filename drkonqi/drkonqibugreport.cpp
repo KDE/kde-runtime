@@ -33,6 +33,9 @@ DrKonqiBugReport::DrKonqiBugReport(QWidget * parent) :
         m_reportInfo(new ReportInfo),
         m_canClose(false)
 {
+    KGlobal::ref();
+    setAttribute(Qt::WA_DeleteOnClose, true);
+
     setWindowTitle(i18nc("@title:window","Crash Reporting Assistant"));
     setWindowIcon(KIcon("tools-report-bug"));
 
@@ -139,13 +142,14 @@ DrKonqiBugReport::DrKonqiBugReport(QWidget * parent) :
 
 DrKonqiBugReport::~DrKonqiBugReport()
 {
-    delete m_aboutBugReportingDialog;
     delete m_reportInfo;
+    KGlobal::deref();
 }
 
 void DrKonqiBugReport::connectSignals(DrKonqiAssistantPage * page)
 {
-    connect(page, SIGNAL(completeChanged(DrKonqiAssistantPage*, bool)), this, SLOT(completeChanged(DrKonqiAssistantPage*, bool)));
+    connect(page, SIGNAL(completeChanged(DrKonqiAssistantPage*, bool)),
+             this, SLOT(completeChanged(DrKonqiAssistantPage*, bool)));
 }
 
 void DrKonqiBugReport::currentPageChanged_slot(KPageWidgetItem * current , KPageWidgetItem * before)
