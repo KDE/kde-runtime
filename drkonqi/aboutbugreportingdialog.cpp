@@ -163,7 +163,7 @@ AboutBugReportingDialog::AboutBugReportingDialog(QWidget * parent):
     setMainWidget(m_textBrowser);
 }
 
-void AboutBugReportingDialog::showSection(QString anchor)
+void AboutBugReportingDialog::showSection(const QString& anchor)
 {
     m_textBrowser->scrollToAnchor(anchor);
 }
