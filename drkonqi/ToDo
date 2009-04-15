@@ -8,12 +8,13 @@
 
 - We need a new icon/image :)
 
+- KWallet integration polish
+
 - Side by side backtrace comparison on "Show report information" (duplicates step)
 - Ask for saving the report information to file when exiting the report assistant without reporting
 
 - Avoid LSB messages at all if no found
 - Use Qt::escape() on the conclusions i18n call and .. reportInfo generateHTML i18n ?
-- WordWrap aboutbugreporting
 
 - Recheck KDevelop integration (currently it seems disabled on KDevelop side)
 
@@ -34,3 +35,20 @@
 //waiting for productName()->product/component mapping (custom cgi file at BKO)
 ( if no combination is found, revert to "kde" product )
 [[ currently bugzillalib detects unexistent products to later use the "kde" product ]] [LATER]
+
+
+- WordWrap aboutbugreporting
+
+-------
+#More information (IRC)
+
+<lemma> Dario_Andres: I think it might be better if the report usefulness would be separate from the textbrowser on the "crash analysis results" page. users who report crashes often might overlook that the crash is not useful (this time) and press finish accidentally
+<lemma> Dario_Andres: maybe one line above the qtextbrowser saying "this crash is useful" or "this crash is not useful" with the stars as a visual indicator.
+<lemma> Dario_Andres: if the crash is not useful the "Finish" button might also be replaced by a "Close" button (with this red icon as a visual indication)
+<Dario_Andres> what is the matter about they pressing the Finish button (it will close the button )
+<-- twolfy (n=twolfy@e181204038.adsl.alicedsl.de) has quit ("Got to go")
+<lemma> Dario_Andres: it closes the dialog without being able to report - and it might be done accidentally.
+<Dario_Andres> mh, it could be done
+<lemma> Dario_Andres: the green checkmark is an indication that "everything is alright".
+<Dario_Andres> I can try to modify the buttons (trying to not mess with the KDialog buttons... I will take a look to it )
+<lemma> Dario_Andres: maybe you could just disable the Finish button and replace Cancel with Close in this case.
