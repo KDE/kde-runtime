@@ -139,7 +139,7 @@ BugAwarenessPage::BugAwarenessPage(DrKonqiBugReport * parent)
     canDetailLayout->addWidget(detailLabel);
 
     m_canDetailCheckBox = new QCheckBox(i18nc("@option:check",
-                                              "Yes, I can give information about the crash"));
+                                              "Yes, I can give information about the crash."));
     canDetailLayout->addWidget(m_canDetailCheckBox);
 
     //User is willing to help layout
@@ -148,7 +148,7 @@ BugAwarenessPage::BugAwarenessPage(DrKonqiBugReport * parent)
     QLabel * developersCanContactReporterQuestionLabel =
                     new QLabel(QString("<strong>%1</strong>").arg(
                                         i18nc("@info", "Can the developers contact you for more "
-                                                        "information if required ?")));
+                                                        "information?")));
     developersCanContactReporterLayout->addWidget(developersCanContactReporterQuestionLabel);
 
     QLabel * developersCanContactReporterLabel =
@@ -160,7 +160,7 @@ BugAwarenessPage::BugAwarenessPage(DrKonqiBugReport * parent)
 
     m_developersCanContactReporterCheckBox = new QCheckBox(i18nc("@option:check",
                                                                "Yes, developers can contact me "
-                                                               "for more information if required"));
+                                                               "for more information if required."));
     developersCanContactReporterLayout->addWidget(m_developersCanContactReporterCheckBox);
 
     //Main layout
@@ -289,12 +289,13 @@ void ConclusionPage::aboutToShow()
     case BacktraceParser::InvalidUsefulness: {
         needToReport =  false;
         conclusionsHTML += QString("<li>%1</li>").arg(i18nc("@info","The automatically generated "
-                                                               "crash information is not useful."));
+                                                               "crash information is not useful enough."));
         conclusionsHTML += QLatin1String("<br />");
         conclusionsHTML += i18nc("@info","<note>You can try to improve this by installing some "
-                                "packages and reloading the information in the Crash Information "
+                                "packages and reloading the information on the Crash Information "
                                 "page. You can read the Bug Reporting Guide by clicking on the "
                                 "<interface>Help</interface> button.</note>");
+                                //but this guide doesn't mention bt packages? that's techbase
         break;
     }
     }
@@ -384,12 +385,12 @@ void ConclusionPage::aboutToShow()
         m_reportButton->setVisible(false);
 
         conclusionsHTML += QString("<p><strong>%1</strong><br />%2</p>").arg(
-                            i18nc("@info","This is not considered helpful for the application "
+                            i18nc("@info","This is not considered helpful enough for the application "
                             "developers and therefore the automated bug reporting process is not "
                             "enabled for this crash."),
                             i18nc("@info","If you change your mind, you can go back and review the "
                             "assistant questions. Also, you can manually report it on your own if "
-                            "you want, using the following information: "));
+                            "you would like to. Include the following information: "));
 
         conclusionsHTML += QString("<p>%1</p>").arg(reportInfo()->generateReportHtml());
 
