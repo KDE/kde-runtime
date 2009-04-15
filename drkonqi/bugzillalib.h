@@ -232,7 +232,8 @@ private:
     QString     m_password;
     bool        m_logged;
 
-    KJob *  fetchBugJob;
+    KJob *  m_fetchBugJob;
+    KJob *  m_searchJob;
 
 };
 

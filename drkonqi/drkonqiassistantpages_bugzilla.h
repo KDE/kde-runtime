@@ -127,6 +127,8 @@ private Q_SLOTS:
     bool canSearchMore();
 
 private:
+    void resetDates();
+    
     bool            m_searching;
 
     StatusWidget *  m_statusWidget;
@@ -148,6 +150,7 @@ private:
     KPushButton *   m_mineMayBeDuplicateButton;
 
     int             m_currentBugNumber;
+    QString         m_currentKeywords;
 };
 
 /** Title and details page **/

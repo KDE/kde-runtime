@@ -58,7 +58,8 @@ static const char sendReportUrl[] = "post_bug.cgi";
 BugzillaManager::BugzillaManager():
         QObject(),
         m_logged(false),
-        fetchBugJob(0)
+        m_fetchBugJob(0),
+        m_searchJob(0)
 {
 }
 
@@ -121,14 +122,14 @@ void BugzillaManager::fetchBugReport(int bugnumber)
 {
     KUrl url = KUrl(QString(bugtrackerBaseUrl) + QString(fetchBugUrl).arg(bugnumber));
 
-    if (fetchBugJob) { //Stop previous fetchBugJob
-        disconnect(fetchBugJob);
-        fetchBugJob->kill();
-        fetchBugJob = 0;
+    if (m_fetchBugJob) { //Stop previous fetchBugJob
+        disconnect(m_fetchBugJob);
+        m_fetchBugJob->kill();
+        m_fetchBugJob = 0;
     }
 
-    fetchBugJob = KIO::storedGet(url, KIO::Reload, KIO::HideProgressInfo);
-    connect(fetchBugJob, SIGNAL(finished(KJob*)) , this, SLOT(fetchBugReportDone(KJob*)));
+    m_fetchBugJob = KIO::storedGet(url, KIO::Reload, KIO::HideProgressInfo);
+    connect(m_fetchBugJob, SIGNAL(finished(KJob*)) , this, SLOT(fetchBugReportDone(KJob*)));
 }
 
 void BugzillaManager::fetchBugReportDone(KJob* job)
@@ -150,7 +151,7 @@ void BugzillaManager::fetchBugReportDone(KJob* job)
         emit bugReportError(job->errorString());
     }
 
-    fetchBugJob = 0;
+    m_fetchBugJob = 0;
 }
 
 void BugzillaManager::searchBugs(QString words, QString product, QString severity,
@@ -160,9 +161,15 @@ void BugzillaManager::searchBugs(QString words, QString product, QString severit
                   QString(searchUrl).arg(words.replace(' ' , '+'), product, comment, date_start,
                                          date_end, severity, QString(columns));
 
-    KIO::StoredTransferJob * searchBugsJob = KIO::storedGet(KUrl(url) , KIO::Reload,
+    if (m_searchJob) { //Stop previous searchJob
+        disconnect(m_searchJob);
+        m_searchJob->kill();
+        m_searchJob = 0;
+    }
+    
+    m_searchJob = KIO::storedGet(KUrl(url) , KIO::Reload,
                                                             KIO::HideProgressInfo);
-    connect(searchBugsJob, SIGNAL(finished(KJob*)) , this, SLOT(searchBugsDone(KJob*)));
+    connect(m_searchJob, SIGNAL(finished(KJob*)) , this, SLOT(searchBugsDone(KJob*)));
 }
 
 void BugzillaManager::searchBugsDone(KJob * job)
@@ -183,6 +190,8 @@ void BugzillaManager::searchBugsDone(KJob * job)
     } else {
         emit searchError(job->errorString());
     }
+    
+    m_searchJob = 0;
 }
 
 void BugzillaManager::sendReport(BugReport report)

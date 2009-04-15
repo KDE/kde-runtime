@@ -348,8 +348,7 @@ BugzillaDuplicatesPage::BugzillaDuplicatesPage(DrKonqiBugReport * parent):
         m_mineMayBeDuplicateButton(0),
         m_currentBugNumber(0)
 {
-    m_endDate = QDate::currentDate();
-    m_startDate = m_endDate.addYears(-1);
+    resetDates();
 
     connect(reportInfo()->getBZ(), SIGNAL(searchFinished(BugMapList)),
              this, SLOT(searchFinished(BugMapList)));
@@ -610,12 +609,26 @@ bool BugzillaDuplicatesPage::canSearchMore()
     return (m_startDate.year() >= 2002);
 }
 
+void BugzillaDuplicatesPage::resetDates()
+{
+    m_endDate = QDate::currentDate();
+    m_startDate = m_endDate.addYears(-1);
+}
+
 void BugzillaDuplicatesPage::aboutToShow()
 {
-    if (!m_searching) {
-        //If I never searched before, performSearch
-        if (m_bugListWidget->topLevelItemCount() == 0 && canSearchMore()) {
-            performSearch();
+    if (m_currentKeywords != reportInfo()->getReport()->shortDescription()) { //Keywords changed
+        m_currentKeywords = reportInfo()->getReport()->shortDescription();
+        //Clear list and retrieve new reports
+        m_bugListWidget->clear();
+        resetDates();
+        performSearch();
+    } else {
+        if (!m_searching) {
+            //If I never searched before, performSearch
+            if (m_bugListWidget->topLevelItemCount() == 0 && canSearchMore()) {
+                performSearch();
+            }
         }
     }
 }
@@ -643,7 +656,7 @@ void BugzillaDuplicatesPage::performSearch()
     const KrashConfig *krashConfig = DrKonqi::instance()->krashConfig();
     BacktraceParser *btParser = DrKonqi::instance()->backtraceGenerator()->parser();
 
-    reportInfo()->getBZ()->searchBugs(reportInfo()->getReport()->shortDescription(),
+    reportInfo()->getBZ()->searchBugs(m_currentKeywords,
                                       krashConfig->productName(), "crash", startDateStr,
                                       endDateStr , btParser->firstValidFunctions().join(" "));
 
