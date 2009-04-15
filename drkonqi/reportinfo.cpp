@@ -148,7 +148,7 @@ QString ReportInfo::generateReportBugzilla() const
 
     //Possible duplicate
     if (!m_possibleDuplicate.isEmpty()) {
-        report.append(lineBreak + lineBreak + QString("This bug may be duplicate/related "
+        report.append(lineBreak + lineBreak + QString("This bug may be a duplicate of or related "
                                                       "to bug %1").arg(m_possibleDuplicate));
     }
 
@@ -192,8 +192,8 @@ QString ReportInfo::generateReportHtml() const
         report.append(QLatin1String("<p>"));
         report.append(QString("What I was doing when the application crashed:"));
         report.append(lineBreak);
-        report.append(i18nc("@info","<placeholder>Insert the details of what were you doing when "
-                                "the application crashed (in ENGLISH) here.</placeholder>"));
+        report.append(i18nc("@info","<placeholder>In detail, tell us what were you doing when "
+                                "the application crashed.</placeholder>"));
         report.append(QLatin1String("</p>"));
     }
 
