@@ -48,6 +48,10 @@
 #include <KLineEdit>
 #include <kwallet.h>
 
+static const char kWalletEntryName[] = "drkonqi_bugzilla";
+static const char kWalletEntryUsername[] = "username";
+static const char kWalletEntryPassword[] = "password";
+
 //BEGIN BugzillaLoginPage
 
 BugzillaLoginPage::BugzillaLoginPage(DrKonqiBugReport * parent) :
@@ -92,6 +96,9 @@ BugzillaLoginPage::BugzillaLoginPage(DrKonqiBugReport * parent) :
     noticeLabel->setWordWrap(true);
     noticeLabel->setOpenExternalLinks(true);
 
+    m_savePasswordCheckBox = new QCheckBox( i18nc("@option:check", "Save login information using "
+                                            "the KDE Wallet system") );
+                                                                   
     QHBoxLayout * buttonLayout = new QHBoxLayout();
     buttonLayout->addStretch();
     buttonLayout->addWidget(m_loginButton);
@@ -99,6 +106,7 @@ BugzillaLoginPage::BugzillaLoginPage(DrKonqiBugReport * parent) :
     QVBoxLayout * layout = new QVBoxLayout();
     layout->addWidget(m_statusWidget);
     layout->addLayout(m_form);
+    layout->addWidget(m_savePasswordCheckBox);
     layout->addLayout(buttonLayout);
     layout->addWidget(noticeLabel);
     layout->addStretch();
@@ -133,6 +141,8 @@ void BugzillaLoginPage::aboutToShow()
         m_form->labelForField(m_userEdit)->setVisible(false);
         m_form->labelForField(m_passwordEdit)->setVisible(false);
 
+        m_savePasswordCheckBox->setVisible(false);
+        
         m_statusWidget->setIdle(i18nc("@info:status the user is logged at the bugtracker site as USERNAME",
                                       "Logged in at the KDE bug tracking system (%1) as: %2.",
                                       QLatin1String(KDE_BUGZILLA_SHORT_URL),
@@ -143,23 +153,35 @@ void BugzillaLoginPage::aboutToShow()
     }
 }
 
+bool BugzillaLoginPage::kWalletEntryExists()
+{
+    return !KWallet::Wallet::keyDoesNotExist(KWallet::Wallet::NetworkWallet(),
+                                               KWallet::Wallet::FormDataFolder(),
+                                               QLatin1String(kWalletEntryName));
+}
+
+void BugzillaLoginPage::openWallet()
+{
+    m_wallet = KWallet::Wallet::openWallet(KWallet::Wallet::NetworkWallet(), 
+                                    static_cast<QWidget*>(this->parent())->winId());
+}
+
 void BugzillaLoginPage::walletLogin()
 {
     bool login = false;
     if (!m_wallet) {
-        if ( !KWallet::Wallet::keyDoesNotExist(KWallet::Wallet::NetworkWallet(),
-                                               KWallet::Wallet::FormDataFolder(),
-                                               QLatin1String("drkonqi_bugzilla")) ) {  //Key exists!
-            m_wallet = KWallet::Wallet::openWallet(KWallet::Wallet::NetworkWallet(), this->winId());
+        if (kWalletEntryExists()) {  //Key exists!
+            m_savePasswordCheckBox->setCheckState(Qt::Checked);
+            openWallet();
             //Was the wallet opened?
             if (m_wallet) {
                 m_wallet->setFolder(KWallet::Wallet::FormDataFolder());
 
                 //Use wallet data to try login
                 QMap<QString, QString> values;
-                m_wallet->readMap(QLatin1String("drkonqi_bugzilla"), values);
-                QString username = values.value(QLatin1String("username"));
-                QString password = values.value(QLatin1String("password"));
+                m_wallet->readMap(QLatin1String(kWalletEntryName), values);
+                QString username = values.value(QLatin1String(kWalletEntryUsername));
+                QString password = values.value(QLatin1String(kWalletEntryPassword));
 
                 if (!username.isEmpty() && !password.isEmpty()) {
                     login = true;
@@ -178,19 +200,25 @@ void BugzillaLoginPage::loginClicked()
 
         m_userEdit->setEnabled(false);
         m_passwordEdit->setEnabled(false);
-
+        m_savePasswordCheckBox->setEnabled(false);
+        
         //If the wallet wasn't initialized at startup, launch it now to save the data
         if (!m_wallet) {
-            m_wallet = KWallet::Wallet::openWallet(KWallet::Wallet::NetworkWallet(), this->winId());
+            openWallet();
+            
         }
         //Got wallet open ?
         if (m_wallet) {
             m_wallet->setFolder(KWallet::Wallet::FormDataFolder());
-
-            QMap<QString, QString> values;
-            values.insert(QLatin1String("username"), m_userEdit->text());
-            values.insert(QLatin1String("password"), m_passwordEdit->text());
-            m_wallet->writeMap(QLatin1String("drkonqi_bugzilla"), values);
+            
+            if (m_savePasswordCheckBox->checkState()==Qt::Checked) { //Wants to save data
+                QMap<QString, QString> values;
+                values.insert(QLatin1String(kWalletEntryUsername), m_userEdit->text());
+                values.insert(QLatin1String(kWalletEntryPassword), m_passwordEdit->text());
+                m_wallet->writeMap(QLatin1String(kWalletEntryName), values);
+            } else {
+                m_wallet->removeEntry(QLatin1String(kWalletEntryName));
+            }
         }
 
         m_statusWidget->setBusy(i18nc("@info:status '1' is a url, '2' the username",
@@ -222,7 +250,8 @@ void BugzillaLoginPage::loginFinished(bool logged)
 
         m_userEdit->setEnabled(true);
         m_passwordEdit->setEnabled(true);
-
+        m_savePasswordCheckBox->setEnabled(true);
+        
         m_userEdit->setFocus(Qt::OtherFocusReason);
     }
 }

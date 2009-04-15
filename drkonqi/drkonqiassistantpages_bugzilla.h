@@ -57,12 +57,16 @@ private Q_SLOTS:
     void walletLogin();
 
 private:
+    bool kWalletEntryExists();
+    void openWallet();
+    
     QFormLayout *   m_form;
 
     KPushButton *   m_loginButton;
     KLineEdit *     m_userEdit;
     KLineEdit *     m_passwordEdit;
-
+    QCheckBox   *   m_savePasswordCheckBox;
+    
     StatusWidget *  m_statusWidget;
 
     KWallet::Wallet *   m_wallet;
