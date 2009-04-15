@@ -92,12 +92,9 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    int ret;
-    {
-        DrKonqiDialog w;
-        w.show();
-        ret = qa->exec();
-    }
+    DrKonqiDialog w;
+    w.show();
+    int ret = qa->exec();
 
     DrKonqi::instance()->cleanup();
     delete qa;
