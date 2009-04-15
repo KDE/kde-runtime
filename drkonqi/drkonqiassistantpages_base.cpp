@@ -45,7 +45,7 @@ IntroductionPage::IntroductionPage(DrKonqiBugReport * parent) :
 {
     QLabel * mainLabel = new QLabel(i18nc("@info","<para>This assistant will analyze the crash "
             "information and guide you through the bug reporting process.</para><para>You can get "
-            "help about this bug reporting assistant clicking the <interface>Help</interface> "
+            "help on this bug reporting assistant by clicking the <interface>Help</interface> "
             "button.</para><para>To start gathering the crash information press the "
             "<interface>Next</interface> button.</para>"));
     mainLabel->setWordWrap(true);
@@ -68,8 +68,8 @@ CrashInformationPage::CrashInformationPage(DrKonqiBugReport * parent)
     //connect backtraceWidget signals
     connect(m_backtraceWidget, SIGNAL(stateChanged()) , this, SLOT(emitCompleteChanged()));
 
-    QLabel * subTitle = new QLabel(i18nc("@info","This page will generate some useful information "
-                                      "about your crash. Developers need this in a crash report."));
+    QLabel * subTitle = new QLabel(i18nc("@info","This page will generate some information "
+                                      "about your crash. Developers need this in a bug report about crashes."));
     subTitle->setWordWrap(true);
     subTitle->setAlignment(Qt::AlignHCenter);
 
@@ -281,7 +281,7 @@ void ConclusionPage::aboutToShow()
         needToReport = (canDetails && developersCanContactReporter);
         conclusionsHTML += QString("<li>%1</li>").arg(i18nc("@info","The automatically generated "
                                                         "crash information lacks important details "
-                                                        "and it is probably not useful."));
+                                                        "and it is probably not very useful."));
                                                         //should we add "use your judgment"?
         break;
     }
