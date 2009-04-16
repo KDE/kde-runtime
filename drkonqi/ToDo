@@ -3,6 +3,9 @@
 # Who / What
 --------------
 
+gkiakia is working on a SystemInfo class
+- Avoid LSB messages at all if no found
+
 ##Unassigned
 -------------
 
@@ -12,9 +15,6 @@
 
 - Side by side backtrace comparison on "Show report information" (duplicates step)
 - Ask for saving the report information to file when exiting the report assistant without reporting
-
-- Avoid LSB messages at all if no found
-- Use Qt::escape() on the conclusions i18n call and .. reportInfo generateHTML i18n ?
 
 - Recheck KDevelop integration (currently it seems disabled on KDevelop side)
 
@@ -36,8 +36,8 @@
 ( if no combination is found, revert to "kde" product )
 [[ currently bugzillalib detects unexistent products to later use the "kde" product ]] [LATER]
 
-
 - WordWrap aboutbugreporting
+- Removed Qt::escape calls
 
 -------
 #More information (IRC)

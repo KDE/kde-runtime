@@ -176,7 +176,6 @@ BugAwarenessPage::BugAwarenessPage(DrKonqiBugReport * parent)
 
     //Main layout
     QVBoxLayout * layout = new QVBoxLayout();
-    layout->setSpacing(8);
     layout->addLayout(canDetailLayout);
     layout->addLayout(developersCanContactReporterLayout);
     layout->addStretch();
@@ -230,7 +229,6 @@ ConclusionPage::ConclusionPage(DrKonqiBugReport * parent)
     bLayout->addWidget(m_reportButton);
 
     QVBoxLayout *layout = new QVBoxLayout;
-    layout->setSpacing(10);
     layout->addWidget(m_reportEdit);
     layout->addWidget(m_explanationLabel);
     layout->addLayout(bLayout);

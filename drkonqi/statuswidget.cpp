@@ -42,8 +42,7 @@ StatusWidget::StatusWidget(QWidget * parent) :
     //m_statusLabel->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum));
     
     QHBoxLayout * statusLayout = new QHBoxLayout();
-    statusLayout->setContentsMargins(0, 0, 0, 0);
-    statusLayout->setSpacing(2);
+    statusLayout->setContentsMargins(0,0,0,0);
     m_statusPage->setLayout(statusLayout);
 
     statusLayout->addWidget(m_statusLabel);
@@ -57,8 +56,7 @@ StatusWidget::StatusWidget(QWidget * parent) :
     //m_busyLabel->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum));
     
     QHBoxLayout * busyLayout = new QHBoxLayout();
-    busyLayout->setContentsMargins(0, 0, 0, 0);
-    busyLayout->setSpacing(2);
+    busyLayout->setContentsMargins(0,0,0,0);
     m_busyPage->setLayout(busyLayout);
 
     busyLayout->addWidget(m_busyLabel);

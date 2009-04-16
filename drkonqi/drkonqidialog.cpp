@@ -63,7 +63,6 @@ DrKonqiDialog::DrKonqiDialog(QWidget * parent) :
 
     m_backtraceWidget = new GetBacktraceWidget(DrKonqi::instance()->backtraceGenerator(), this);
     m_backtraceWidget->setMinimumSize(QSize(575, 240));
-    m_backtraceWidget->layout()->setContentsMargins(5, 5, 5, 5);
     m_tabWidget->addTab(m_backtraceWidget, i18nc("@title:tab", "&Developer Information"));
 
     buildDialogOptions();
@@ -98,8 +97,6 @@ void DrKonqiDialog::buildMainWidget()
 
     //Main widget layout
     QVBoxLayout * introLayout = new QVBoxLayout;
-    introLayout->setSpacing(10);
-    introLayout->setContentsMargins(8, 8, 8, 8);
 
     QHBoxLayout * horizontalLayout = new QHBoxLayout();
 
