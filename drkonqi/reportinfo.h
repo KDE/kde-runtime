@@ -1,6 +1,7 @@
 /*******************************************************************
 * reportinfo.h
 * Copyright 2009    Dario Andres Rodriguez <andresbajotierra@gmail.com>
+* Copyright 2009    George Kiagiadakis <gkiagia@users.sourceforge.net>
 *
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License as
@@ -20,69 +21,55 @@
 #ifndef REPORTINFO__H
 #define REPORTINFO__H
 
-#include "bugzillalib.h"
-#include <QtCore/QString>
+#include <QtCore/QObject>
+#include <QtCore/QStringList>
+class BugzillaManager;
+class BugReport;
 
-class ReportInfo
+class ReportInfo : public QObject
 {
+    Q_OBJECT
 public:
-    ReportInfo();
-    ~ReportInfo();
+    ReportInfo(QObject *parent = 0);
 
-    bool getUserCanDetail() const {
-        return m_userCanDetail;
-    }
-    void setUserCanDetail(bool canDetail) {
-        m_userCanDetail = canDetail;
-    }
+    bool userCanDetail() const;
+    void setUserCanDetail(bool canDetail);
 
-    bool getDevelopersCanContactReporter() const {
-        return m_developersCanContactReporter;
-    }
-    void setDevelopersCanContactReporter(bool canContact) {
-        m_developersCanContactReporter = canContact;
-    }
+    bool developersCanContactReporter() const;
+    void setDevelopersCanContactReporter(bool canContact);
 
-    BugzillaManager * getBZ() const {
-        return m_bugzilla;
-    }
-    BugReport * getReport() {
-        return &m_report;
-    }
+    QString reportKeywords() const;
+    void setReportKeywords(const QString & keywords);
 
-    void setDetailText(const QString & text) {
-        m_userDetailText = text;
-    }
-    void setPossibleDuplicate(const QString & bug) {
-        m_possibleDuplicate = bug;
-    }
+    QStringList firstBacktraceFunctions() const;
+    void setFirstBacktraceFunctions(const QStringList & functions);
+
+    void setBacktrace(const QString & backtrace);
+    void setDetailText(const QString & text);
+    void setPossibleDuplicate(const QString & bug);
 
     QString generateReportBugzilla() const;
     QString generateReportHtml() const;
-    
-    void fillReportFields();
-    void setDefaultProductComponent();
 
-    void sendBugReport();
+    BugReport newBugReportTemplate() const;
+    void sendBugReport(BugzillaManager *bzManager) const;
+
+private slots:
+    void sendUsingDefaultProduct() const;
+    void lsbReleaseFinished();
 
 private:
-    //Information about libraries and OS
-    QString getKDEVersion() const;
-    QString getQtVersion() const;
-    QString getOS() const;
-    QString getLSBRelease() const;
+    QString osString() const;
 
-    mutable QString     m_OS;
-    mutable QString     m_LSBRelease;
+    bool        m_userCanDetail;
+    bool        m_developersCanContactReporter;
+    QString     m_reportKeywords;
+    QString     m_backtrace;
+    QStringList m_firstBacktraceFunctions;
+    QString     m_userDetailText;
+    QString     m_possibleDuplicate;
 
-    bool                m_userCanDetail;
-    bool                m_developersCanContactReporter;
-
-    BugzillaManager *   m_bugzilla;
-    BugReport           m_report;
-
-    QString             m_userDetailText;
-    QString             m_possibleDuplicate;
+    QString     m_lsbRelease;
 };
 
 #endif

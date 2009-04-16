@@ -7,6 +7,7 @@ include(MacroLibrary)
 include(CheckFunctionExists)
 
 check_function_exists("strsignal" HAVE_STRSIGNAL)
+check_function_exists("uname" HAVE_UNAME)
 configure_file (config-drkonqi.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-drkonqi.h )
 
 add_definitions (${QT_DEFINITIONS} ${KDE4_DEFINITIONS})

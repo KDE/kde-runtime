@@ -53,6 +53,9 @@ public:
     ReportInfo * reportInfo() const {
         return m_assistant->reportInfo();
     }
+    BugzillaManager *bugzillaManager() const {
+        return m_assistant->bugzillaManager();
+    }
 
 public Q_SLOTS:
     void emitCompleteChanged() {
@@ -86,6 +89,7 @@ public:
     CrashInformationPage(DrKonqiBugReport *);
 
     void aboutToShow();
+    void aboutToHide();
     bool isComplete();
     bool showNextPage();
 

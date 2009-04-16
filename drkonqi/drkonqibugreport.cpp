@@ -30,7 +30,8 @@
 DrKonqiBugReport::DrKonqiBugReport(QWidget * parent) :
         KAssistantDialog(parent),
         m_aboutBugReportingDialog(0),
-        m_reportInfo(new ReportInfo),
+        m_reportInfo(new ReportInfo(this)),
+        m_bugzillaManager(new BugzillaManager(this)),
         m_canClose(false)
 {
     KGlobal::ref();
@@ -142,7 +143,6 @@ DrKonqiBugReport::DrKonqiBugReport(QWidget * parent) :
 
 DrKonqiBugReport::~DrKonqiBugReport()
 {
-    delete m_reportInfo;
     KGlobal::deref();
 }
 

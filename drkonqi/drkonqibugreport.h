@@ -26,6 +26,7 @@ class DrKonqiAssistantPage;
 class AboutBugReportingDialog;
 class ReportInfo;
 class QCloseEvent;
+class BugzillaManager;
 
 class DrKonqiBugReport: public KAssistantDialog
 {
@@ -37,6 +38,10 @@ public:
 
     ReportInfo *reportInfo() const {
         return m_reportInfo;
+    }
+
+    BugzillaManager *bugzillaManager() const {
+        return m_bugzillaManager;
     }
 
 private Q_SLOTS:
@@ -61,6 +66,7 @@ private:
 
     AboutBugReportingDialog *   m_aboutBugReportingDialog;
     ReportInfo *                m_reportInfo;
+    BugzillaManager *           m_bugzillaManager;
 
     bool                        m_canClose;
     

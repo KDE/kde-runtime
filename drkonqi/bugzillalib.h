@@ -188,7 +188,7 @@ class BugzillaManager : public QObject
     Q_OBJECT
 
 public:
-    BugzillaManager();
+    BugzillaManager(QObject *parent = 0);
 
     void setLoginData(QString, QString);
     void tryLogin();

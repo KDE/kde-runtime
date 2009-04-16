@@ -55,8 +55,8 @@ static const char fetchBugUrl[] = "show_bug.cgi?id=%1&ctype=xml";
 
 static const char sendReportUrl[] = "post_bug.cgi";
 
-BugzillaManager::BugzillaManager():
-        QObject(),
+BugzillaManager::BugzillaManager(QObject *parent):
+        QObject(parent),
         m_logged(false),
         m_fetchBugJob(0),
         m_searchJob(0)
@@ -167,8 +167,7 @@ void BugzillaManager::searchBugs(QString words, QString product, QString severit
         m_searchJob = 0;
     }
     
-    m_searchJob = KIO::storedGet(KUrl(url) , KIO::Reload,
-                                                            KIO::HideProgressInfo);
+    m_searchJob = KIO::storedGet(KUrl(url) , KIO::Reload, KIO::HideProgressInfo);
     connect(m_searchJob, SIGNAL(finished(KJob*)) , this, SLOT(searchBugsDone(KJob*)));
 }
 

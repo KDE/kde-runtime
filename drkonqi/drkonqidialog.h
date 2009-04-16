@@ -27,7 +27,6 @@ class AboutBugReportingDialog;
 class DrKonqiBugReport;
 class KrashConfig;
 class KTabWidget;
-class KMenu;
 
 class DrKonqiDialog: public KDialog
 {

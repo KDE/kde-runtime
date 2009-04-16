@@ -85,6 +85,17 @@ void CrashInformationPage::aboutToShow()
     emitCompleteChanged();
 }
 
+void CrashInformationPage::aboutToHide()
+{
+    BacktraceGenerator *btGenerator = DrKonqi::instance()->backtraceGenerator();
+    BacktraceParser::Usefulness use = btGenerator->parser()->backtraceUsefulness();
+
+    if (use != BacktraceParser::Useless && use != BacktraceParser::InvalidUsefulness) {
+        reportInfo()->setBacktrace(btGenerator->backtrace());
+    }
+    reportInfo()->setFirstBacktraceFunctions(btGenerator->parser()->firstValidFunctions());
+}
+
 bool CrashInformationPage::isComplete()
 {
     BacktraceGenerator *generator = DrKonqi::instance()->backtraceGenerator();
@@ -257,8 +268,8 @@ void ConclusionPage::aboutToShow()
     const KrashConfig * krashConfig = DrKonqi::instance()->krashConfig();
     BacktraceParser::Usefulness use =
                 DrKonqi::instance()->backtraceGenerator()->parser()->backtraceUsefulness();
-    bool canDetails = reportInfo()->getUserCanDetail();
-    bool developersCanContactReporter = reportInfo()->getDevelopersCanContactReporter();
+    bool canDetails = reportInfo()->userCanDetail();
+    bool developersCanContactReporter = reportInfo()->developersCanContactReporter();
 
     // Calculate needToReport
     conclusionsHTML = QLatin1String("<ul>");

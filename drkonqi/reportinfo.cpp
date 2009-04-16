@@ -1,6 +1,7 @@
 /*******************************************************************
 * reportinfo.cpp
 * Copyright 2009    Dario Andres Rodriguez <andresbajotierra@gmail.com>
+* Copyright 2009    George Kiagiadakis <gkiagia@users.sourceforge.net>
 *
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License as
@@ -20,82 +21,120 @@
 #include "reportinfo.h"
 #include "drkonqi.h"
 #include "krashconf.h"
-#include "backtracegenerator.h"
-#include "backtraceparser.h"
 #include "bugzillalib.h"
 
 #include <KProcess>
+#include <KStandardDirs>
+#include <KDebug>
 #include <kdeversion.h>
 
-ReportInfo::ReportInfo()
+#include <config-drkonqi.h>
+#ifdef HAVE_UNAME
+# include <sys/utsname.h>
+#endif
+
+ReportInfo::ReportInfo(QObject *parent)
+    : QObject(parent)
 {
     m_userCanDetail = false;
     m_developersCanContactReporter = false;
-    m_bugzilla = new BugzillaManager();
-}
 
-ReportInfo::~ReportInfo()
-{
-    delete m_bugzilla;
-}
-
-QString ReportInfo::getKDEVersion() const
-{
-    return KDE::versionString();
-}
-QString ReportInfo::getQtVersion() const
-{
-    return qVersion();
-}
-
-QString ReportInfo::getOS() const
-{
-    if (m_OS.isEmpty()) { //Fetch OS name & ver
-        KProcess process;
-        process.setOutputChannelMode(KProcess::OnlyStdoutChannel);
-        process.setEnv("LC_ALL", "C");
-        process << "uname" <<  "-srom";
-        process.execute(5000);
-        QByteArray os = process.readAllStandardOutput();
-        os.chop(1);
-        m_OS = QString::fromLocal8Bit(os);
+    //if lsb_release needs to run, start it asynchronously because it takes much time...
+    QString lsb_release = KStandardDirs::findExe(QLatin1String("lsb_release"));
+    if ( !lsb_release.isEmpty() ) {
+        kDebug() << "found lsb_release";
+        KProcess *process = new KProcess();
+        process->setOutputChannelMode(KProcess::OnlyStdoutChannel);
+        process->setEnv("LC_ALL", "C");
+        *process << lsb_release << "-sd";
+        connect(process, SIGNAL(finished(int, QProcess::ExitStatus)), SLOT(lsbReleaseFinished()));
+        process->start();
     }
-    return m_OS;
 }
 
-QString ReportInfo::getLSBRelease() const
+void ReportInfo::lsbReleaseFinished()
 {
-    if (m_LSBRelease.isEmpty()) {
-        //Get base OS
-        KProcess process;
-        process.setOutputChannelMode(KProcess::OnlyStdoutChannel);
-        process.setEnv("LC_ALL", "C");
-        process << "uname" << "-s";
-        process.execute(5000);
-        QByteArray os = process.readAllStandardOutput();
-        os.chop(1);
-
-        if (QString::fromLocal8Bit(os) == QLatin1String("Linux")) {
-            process.clearProgram();
-            process << "lsb_release" << "-idrc";
-            process.execute(5000);
-            QByteArray lsb = process.readAllStandardOutput();
-            if (!lsb.isEmpty()) {
-                lsb.chop(1);
-                m_LSBRelease = QString::fromLocal8Bit(lsb);
-            } else {
-                //no translation, string appears in the report
-                m_LSBRelease = QString("LSB Release information not found "
-                                       "( no lsb_release command found )");
-            }
-        } else {
-            //no translation, string appears in the report
-            m_LSBRelease = QString("Not a GNU/Linux system. LSB Release Information not available");
-        }
-    }
-    return m_LSBRelease;
+    KProcess *process = qobject_cast<KProcess*>(sender());
+    Q_ASSERT(process);
+    m_lsbRelease = QString::fromLocal8Bit(process->readAllStandardOutput().trimmed());
+    process->deleteLater();
 }
 
+bool ReportInfo::userCanDetail() const
+{
+    return m_userCanDetail;
+}
+
+void ReportInfo::setUserCanDetail(bool canDetail)
+{
+    m_userCanDetail = canDetail;
+}
+
+bool ReportInfo::developersCanContactReporter() const
+{
+    return m_developersCanContactReporter;
+}
+
+void ReportInfo::setDevelopersCanContactReporter(bool canContact)
+{
+    m_developersCanContactReporter = canContact;
+}
+
+QString ReportInfo::reportKeywords() const
+{
+    return m_reportKeywords;
+}
+
+void ReportInfo::setReportKeywords(const QString & keywords)
+{
+    m_reportKeywords = keywords;
+}
+
+void ReportInfo::setBacktrace(const QString & backtrace)
+{
+    m_backtrace = backtrace;
+}
+
+QStringList ReportInfo::firstBacktraceFunctions() const
+{
+    return m_firstBacktraceFunctions;
+}
+
+void ReportInfo::setFirstBacktraceFunctions(const QStringList & functions)
+{
+    m_firstBacktraceFunctions = functions;
+}
+
+void ReportInfo::setDetailText(const QString & text)
+{
+    m_userDetailText = text;
+}
+
+void ReportInfo::setPossibleDuplicate(const QString & bug)
+{
+    m_possibleDuplicate = bug;
+}
+
+QString ReportInfo::osString() const
+{
+    //FIXME what if we don't have uname?
+    QString result;
+#ifdef HAVE_UNAME
+    struct utsname buf;
+    if (uname(&buf) == -1) {
+        kDebug() << "call to uname failed" << perror;
+        return QString();
+    }
+    result += QString::fromLocal8Bit(buf.sysname);
+    result += " ";
+    result += QString::fromLocal8Bit(buf.release);
+    result += " ";
+    result += QString::fromLocal8Bit(buf.machine);
+#endif
+    return result;
+}
+
+//FIXME code duplication...
 QString ReportInfo::generateReportBugzilla() const
 {
     //Note: no translations must be done in this function's strings
@@ -109,20 +148,22 @@ QString ReportInfo::generateReportBugzilla() const
     report.append(QString("Application and System information:"));
     report.append(lineBreak + dottedLine + lineBreak);
     //Program name and versions
-    report.append(QString("KDE Version: %1").arg(getKDEVersion()) + lineBreak);
-    report.append(QString("Qt Version: %1").arg(getQtVersion()) + lineBreak);
-    report.append(QString("Operating System: %1").arg(getOS()) + lineBreak);
+    report.append(QString("KDE Version: %1").arg(KDE::versionString()) + lineBreak);
+    report.append(QString("Qt Version: %1").arg(qVersion()) + lineBreak);
+    report.append(QString("Operating System: %1").arg(osString()) + lineBreak);
     report.append(QString("Application that crashed: %1").arg(krashConfig->productName())
                     + lineBreak);
-    report.append(QString("Version of the application: %1").arg(krashConfig->productVersion()));
+    report.append(QString("Version of the application: %1").arg(krashConfig->productVersion())
+                    + lineBreak);
     
     //LSB output
-    report.append(lineBreak + dottedLine + lineBreak);
-    report.append(getLSBRelease());
-    report.append(lineBreak + dottedLine + lineBreak);
+    if ( !m_lsbRelease.isEmpty() ) {
+        report.append(QString("Distribution: %1").arg(m_lsbRelease) + lineBreak);
+    }
+    report.append(dottedLine + lineBreak);
 
     //Description (title)
-    report.append(lineBreak + QString("Title: %1").arg(m_report.shortDescription()));
+    report.append(lineBreak + QString("Title: %1").arg(m_reportKeywords));
     
     //Details of the crash situation
     if (m_userCanDetail) {
@@ -134,12 +175,9 @@ QString ReportInfo::generateReportBugzilla() const
 
     //Backtrace
     report.append(lineBreak + lineBreak);
-    BacktraceParser::Usefulness use =
-            DrKonqi::instance()->backtraceGenerator()->parser()->backtraceUsefulness();
 
-    if (use != BacktraceParser::Useless && use != BacktraceParser::InvalidUsefulness) {
-        QString formattedBacktrace = DrKonqi::instance()->backtraceGenerator()->backtrace();
-        formattedBacktrace = formattedBacktrace.trimmed();
+    if (!m_backtrace.isEmpty()) {
+        QString formattedBacktrace = m_backtrace.trimmed();
         report.append(QString("Backtrace:") + lineBreak + dottedLine + lineBreak
                         + formattedBacktrace + lineBreak +dottedLine);
     } else {
@@ -173,17 +211,20 @@ QString ReportInfo::generateReportHtml() const
     report.append(lineBreak + dottedLine + lineBreak);
     
     //Program name and versions
-    report.append(QString("KDE Version: %1").arg(getKDEVersion()) + lineBreak);
-    report.append(QString("Qt Version: %1").arg(getQtVersion()) + lineBreak);
-    report.append(QString("Operating System: %1").arg(getOS()) + lineBreak);
+    report.append(QString("KDE Version: %1").arg(KDE::versionString()) + lineBreak);
+    report.append(QString("Qt Version: %1").arg(qVersion()) + lineBreak);
+    report.append(QString("Operating System: %1").arg(osString()) + lineBreak);
     report.append(QString("Application that crashed: %1").arg(krashConfig->productName())
                     + lineBreak);
-    report.append(QString("Version of the application: %1").arg(krashConfig->productVersion()));
+    report.append(QString("Version of the application: %1").arg(krashConfig->productVersion())
+                    + lineBreak);
     
     //LSB output
-    report.append(lineBreak + dottedLine + lineBreak);
-    report.append(getLSBRelease().replace('\n', "<br />"));
-    report.append(lineBreak + dottedLine);
+    if ( !m_lsbRelease.isEmpty() ) {
+        report.append(QString("Distribution: %1").arg(QString(m_lsbRelease).replace('\n', "<br />")));
+        report.append(lineBreak);
+    }
+    report.append(dottedLine);
     
     report.append(QLatin1String("</p>"));
     
@@ -199,12 +240,9 @@ QString ReportInfo::generateReportHtml() const
 
     //Backtrace
     report.append(QLatin1String("<p>"));
-    BacktraceParser::Usefulness use =
-            DrKonqi::instance()->backtraceGenerator()->parser()->backtraceUsefulness();
 
-    if (use != BacktraceParser::Useless && use != BacktraceParser::InvalidUsefulness) {
-        QString formattedBacktrace = DrKonqi::instance()->backtraceGenerator()->backtrace();
-        formattedBacktrace = formattedBacktrace.mid(0, formattedBacktrace.length()-1).trimmed();
+    if (!m_backtrace.isEmpty()) {
+        QString formattedBacktrace = m_backtrace.trimmed();
         formattedBacktrace.replace('\n', "<br />");
         report.append(QString("Backtrace:") + lineBreak + dottedLine + lineBreak
                         + formattedBacktrace);
@@ -218,27 +256,39 @@ QString ReportInfo::generateReportHtml() const
     return report;
 }
 
-
-void ReportInfo::sendBugReport()
+BugReport ReportInfo::newBugReportTemplate() const
 {
-    m_bugzilla->sendReport(m_report);
-}
-
-void ReportInfo::setDefaultProductComponent()
-{
-    m_report.setProduct(QLatin1String("kde"));
-    m_report.setComponent(QLatin1String("general"));
-}
-
-void ReportInfo::fillReportFields()
-{
+    BugReport report;
     const KrashConfig * krashConfig = DrKonqi::instance()->krashConfig();
-    m_report.setProduct(krashConfig->productName());
-    m_report.setComponent(QLatin1String("general"));
-    m_report.setVersion(krashConfig->productVersion());
-    m_report.setOperatingSystem(QLatin1String("unspecified"));
-    m_report.setPriority(QLatin1String("NOR"));
-    m_report.setBugSeverity(QLatin1String("crash"));
-    m_report.setDescription(generateReportBugzilla());
-    m_report.setValid(true);
+    report.setProduct(krashConfig->productName());
+    report.setComponent(QLatin1String("general"));
+    report.setVersion(krashConfig->productVersion());
+    report.setOperatingSystem(QLatin1String("unspecified"));
+    report.setPriority(QLatin1String("NOR"));
+    report.setBugSeverity(QLatin1String("crash"));
+    report.setShortDescription(m_reportKeywords);
+    return report;
 }
+
+void ReportInfo::sendBugReport(BugzillaManager *bzManager) const
+{
+    BugReport report = newBugReportTemplate();
+    report.setDescription(generateReportBugzilla());
+    report.setValid(true);
+    connect(bzManager, SIGNAL(sendReportErrorWrongProduct()), this, SLOT(sendUsingDefaultProduct()));
+    bzManager->sendReport(report);
+}
+
+void ReportInfo::sendUsingDefaultProduct() const
+{
+    BugzillaManager *bzManager = qobject_cast<BugzillaManager*>(sender());
+    Q_ASSERT(bzManager);
+    BugReport report = newBugReportTemplate();
+    report.setProduct(QLatin1String("kde"));
+    report.setComponent(QLatin1String("general"));
+    report.setDescription(generateReportBugzilla());
+    report.setValid(true);
+    bzManager->sendReport(report);
+}
+
+#include "reportinfo.moc"

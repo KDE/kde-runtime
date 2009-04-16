@@ -194,7 +194,6 @@ private Q_SLOTS:
     void sendError(QString);
 
     void retryClicked();
-    void sendUsingDefaults();
 
 private:
     KPushButton *   m_retryButton;
