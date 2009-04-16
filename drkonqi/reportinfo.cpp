@@ -256,6 +256,39 @@ QString ReportInfo::generateReportHtml() const
     return report;
 }
 
+//this function maps the operating system to an OS value that is accepted by bugs.kde.org.
+//if the values change on the server side, they need to be updated here as well.
+static inline QString bugzillaOs()
+{
+#if defined(Q_OS_LINUX)
+    return QLatin1String("Linux");
+#elif defined(Q_OS_FREEBSD)
+    return QLatin1String("FreeBSD");
+#elif defined(Q_OS_NETBSD)
+    return QLatin1String("NetBSD");
+#elif defined(Q_OS_OPENBSD)
+    return QLatin1String("OpenBSD");
+#elif defined(Q_OS_AIX)
+    return QLatin1String("AIX");
+#elif defined(Q_OS_HPUX)
+    return QLatin1String("HP-UX");
+#elif defined(Q_OS_IRIX)
+    return QLatin1String("IRIX");
+#elif defined(Q_OS_OSF)
+    return QLatin1String("Tru64");
+#elif defined(Q_OS_SOLARIS)
+    return QLatin1String("Solaris");
+#elif defined(Q_OS_CYGWIN)
+    return QLatin1String("Cygwin");
+#elif defined(Q_OS_DARWIN)
+    return QLatin1String("OS X");
+#elif defined(Q_OS_WIN32)
+    return QLatin1String("MS Windows");
+#else
+    return QLatin1String("unspecified");
+#endif
+}
+
 BugReport ReportInfo::newBugReportTemplate() const
 {
     BugReport report;
@@ -263,7 +296,7 @@ BugReport ReportInfo::newBugReportTemplate() const
     report.setProduct(krashConfig->productName());
     report.setComponent(QLatin1String("general"));
     report.setVersion(krashConfig->productVersion());
-    report.setOperatingSystem(QLatin1String("unspecified"));
+    report.setOperatingSystem(bugzillaOs());
     report.setPriority(QLatin1String("NOR"));
     report.setBugSeverity(QLatin1String("crash"));
     report.setShortDescription(m_reportKeywords);
