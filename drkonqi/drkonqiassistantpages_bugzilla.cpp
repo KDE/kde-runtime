@@ -782,13 +782,13 @@ bool BugzillaInformationPage::showNextPage()
             QString message;
 
             if (titleShort && !detailsShort) {
-                message = i18nc("@info","The title does not provide enought information.");
+                message = i18nc("@info","The title does not provide enough information.");
             } else if (detailsShort && !titleShort) {
                 message = i18nc("@info","The description about the crash details does not provide "
-                                        "enought information.");
+                                        "enough information.");
             } else {
                 message = i18nc("@info","Both the title and the description about the crash "
-                                        "details do not provide enought information.");
+                                        "details do not provide enough information.");
             }
 
             message += ' ' + i18nc("@info","Can you tell us more?");
