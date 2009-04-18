@@ -44,6 +44,7 @@ MenuManager::MenuManager() : d( new MenuManagerPrivate )
 
 MenuManager::~MenuManager()
 {
+    delete d->config;
     delete d;
 }
 
@@ -71,6 +72,6 @@ void MenuManager::setMenuCreationEnabled(bool menu)
         kDebug() << "Group is immutable!!!";
     d->config->sync();
     interface->call("loadModule", QString("winstartmenu"));
-    
+    delete interface; 
 }
 
