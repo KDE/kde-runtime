@@ -497,16 +497,16 @@ STDMETHODIMP CShellExt::InvokeCommand(LPCMINVOKECOMMANDINFO lpcmi)
             if(lst.size() > 0)
             {
                 QString exec = lst.at(0)->exec();
-                if( -1 != exec.indexOf(' ') ) exec.left(exec.indexOf(' '));
-                
-                qDebug() << exec;
+                if( -1 != exec.indexOf("%u", 0, Qt::CaseInsensitive) )
+                {
+                    exec = exec.left(exec.indexOf("%u", 0, Qt::CaseInsensitive));
+                }            
                 command += exec;
             }
         };
         
-        command += "\"" + path + "\" ";
+        command += "\"" + path + "\"";
     }
-    qDebug() << "command to open:" << command;
 
     STARTUPINFO si;
     PROCESS_INFORMATION pi;
