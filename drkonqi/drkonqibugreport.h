@@ -59,8 +59,8 @@ private Q_SLOTS:
 
     //Override default reject method
     void reject();
+    
 private:
-    //void
     void connectSignals(DrKonqiAssistantPage *);
     void closeEvent(QCloseEvent*);
 
@@ -69,9 +69,6 @@ private:
     BugzillaManager *           m_bugzillaManager;
 
     bool                        m_canClose;
-    
-    //KGuiItem                    m_finishButtonItem;
-    //KGuiItem                    m_closeButtonItem;
 };
 
 #endif

@@ -43,7 +43,7 @@ DrKonqiBugReport::DrKonqiBugReport(QWidget * parent) :
     connect(this, SIGNAL(currentPageChanged(KPageWidgetItem *, KPageWidgetItem *)),
             this, SLOT(currentPageChanged_slot(KPageWidgetItem *, KPageWidgetItem *)));
     connect(this, SIGNAL(helpClicked()), this, SLOT(showHelp()));
-
+    
     //Introduction Page
     IntroductionPage * m_intro = new IntroductionPage(this);
     connectSignals(m_intro);
@@ -126,7 +126,6 @@ DrKonqiBugReport::DrKonqiBugReport(QWidget * parent) :
     connect(m_bugzillaSend, SIGNAL(finished(bool)), this, SLOT(assistantFinished(bool)));
 
     //TODO remember to keep ordered
-
     addPage(m_introPage);
     addPage(m_backtracePage);
     addPage(m_awarenessPage);
@@ -154,12 +153,6 @@ void DrKonqiBugReport::connectSignals(DrKonqiAssistantPage * page)
 
 void DrKonqiBugReport::currentPageChanged_slot(KPageWidgetItem * current , KPageWidgetItem * before)
 {
-    //Reset standard buttons state
-    //setButtonGuiItem(KDialog::User1,m_finishButtonItem);
-    
-    //showButton(KDialog::Close, true);
-    //enableButton(KDialog::Close, true);
-    
     enableButton(KDialog::Cancel, true);
     m_canClose = false;
 
@@ -195,16 +188,6 @@ void DrKonqiBugReport::assistantFinished(bool showBack)
     enableBackButton(showBack);
     enableButton(KDialog::User1, true);
     enableButton(KDialog::Cancel, false);
-    
-    /*
-    showButton(KDialog::Cancel, false);
-    showButton(KDialog::User1, false);
-    showButton(KDialog::Close, true);
-    enableButton(KDialog::Close, true);
-    */
-    
-    //Show close instead of finish
-    //setButtonGuiItem(KDialog::User1,m_closeButtonItem);
     
     m_canClose = true;
 }

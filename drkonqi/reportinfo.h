@@ -48,8 +48,7 @@ public:
     void setDetailText(const QString & text);
     void setPossibleDuplicate(const QString & bug);
 
-    QString generateReportBugzilla() const;
-    QString generateReportHtml() const;
+    QString generateReport() const;
 
     BugReport newBugReportTemplate() const;
     void sendBugReport(BugzillaManager *bzManager) const;

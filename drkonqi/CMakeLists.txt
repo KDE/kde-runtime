@@ -37,7 +37,12 @@ set(drkonqi_SRCS
    detachedprocessmonitor.cpp
 )
 
-kde4_add_ui_files(drkonqi_SRCS getbacktracewidget.ui)
+kde4_add_ui_files(drkonqi_SRCS ui/getbacktracewidget.ui
+ui/assistantpage_introduction.ui ui/assistantpage_crashinfo.ui ui/assistantpage_bugawareness.ui
+ui/assistantpage_conclusions.ui  ui/assistantpage_conclusions_dialog.ui
+ui/assistantpage_bugzilla_login.ui ui/assistantpage_bugzilla_keywords.ui
+ui/assistantpage_bugzilla_duplicates.ui ui/assistantpage_bugzilla_duplicates_dialog.ui
+ui/assistantpage_bugzilla_information.ui ui/assistantpage_bugzilla_send.ui)
 
 # if BACKTRACE_PARSER_DEBUG is enabled, it will show both the
 # parsed and the unparsed backtrace in the backtrace widget.

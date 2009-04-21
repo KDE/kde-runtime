@@ -134,8 +134,7 @@ QString ReportInfo::osString() const
     return result;
 }
 
-//FIXME code duplication...
-QString ReportInfo::generateReportBugzilla() const
+QString ReportInfo::generateReport() const
 {
     //Note: no translations must be done in this function's strings
     QString dottedLine = QLatin1String("------");
@@ -163,14 +162,21 @@ QString ReportInfo::generateReportBugzilla() const
     report.append(dottedLine + lineBreak);
 
     //Description (title)
-    report.append(lineBreak + QString("Title: %1").arg(m_reportKeywords));
+    if (!m_reportKeywords.isEmpty()) {
+        report.append(lineBreak + QString("Title: %1").arg(m_reportKeywords));
+    }
     
     //Details of the crash situation
     if (m_userCanDetail) {
         report.append(lineBreak + lineBreak);
         report.append(QString("What I was doing when the application crashed:"));
         report.append(lineBreak);
-        report.append(m_userDetailText);
+        if (!m_userDetailText.isEmpty()) {
+            report.append(m_userDetailText);
+        } else {
+            report.append(i18nc("@info/plain","<placeholder>In detail, tell us what were you doing when "
+                                "the application crashed.</placeholder>"));
+        }
     }
 
     //Backtrace
@@ -190,69 +196,6 @@ QString ReportInfo::generateReportBugzilla() const
                                                       "to bug %1").arg(m_possibleDuplicate));
     }
 
-    return report;
-}
-
-QString ReportInfo::generateReportHtml() const
-{
-    //Note: no translations must be done in this function's strings (except the placeholder)
-    QString dottedLine = QLatin1String("------");
-    QString lineBreak = QLatin1String("<br />");
-
-    const KrashConfig * krashConfig = DrKonqi::instance()->krashConfig();
-
-    QString report;
-    
-    report.append(QLatin1String("<hr />"));
-    
-    report.append(QLatin1String("<p>"));
-    report.append(QString("Application and System information:"));
-    
-    report.append(lineBreak + dottedLine + lineBreak);
-    
-    //Program name and versions
-    report.append(QString("KDE Version: %1").arg(KDE::versionString()) + lineBreak);
-    report.append(QString("Qt Version: %1").arg(qVersion()) + lineBreak);
-    report.append(QString("Operating System: %1").arg(osString()) + lineBreak);
-    report.append(QString("Application that crashed: %1").arg(krashConfig->productName())
-                    + lineBreak);
-    report.append(QString("Version of the application: %1").arg(krashConfig->productVersion())
-                    + lineBreak);
-    
-    //LSB output
-    if ( !m_lsbRelease.isEmpty() ) {
-        report.append(QString("Distribution: %1").arg(QString(m_lsbRelease).replace('\n', "<br />")));
-        report.append(lineBreak);
-    }
-    report.append(dottedLine);
-    
-    report.append(QLatin1String("</p>"));
-    
-    //Details of the crash situation
-    if (m_userCanDetail) {
-        report.append(QLatin1String("<p>"));
-        report.append(QString("What I was doing when the application crashed:"));
-        report.append(lineBreak);
-        report.append(i18nc("@info","<placeholder>In detail, tell us what were you doing when "
-                                "the application crashed.</placeholder>"));
-        report.append(QLatin1String("</p>"));
-    }
-
-    //Backtrace
-    report.append(QLatin1String("<p>"));
-
-    if (!m_backtrace.isEmpty()) {
-        QString formattedBacktrace = m_backtrace.trimmed();
-        formattedBacktrace.replace('\n', "<br />");
-        report.append(QString("Backtrace:") + lineBreak + dottedLine + lineBreak
-                        + formattedBacktrace);
-    } else {
-        report.append(QString("An useful backtrace could not be generated"));
-    }
-    report.append(QLatin1String("</p>"));
-    
-    report.append(QLatin1String("<hr />"));
-    
     return report;
 }
 
@@ -306,7 +249,7 @@ BugReport ReportInfo::newBugReportTemplate() const
 void ReportInfo::sendBugReport(BugzillaManager *bzManager) const
 {
     BugReport report = newBugReportTemplate();
-    report.setDescription(generateReportBugzilla());
+    report.setDescription(generateReport());
     report.setValid(true);
     connect(bzManager, SIGNAL(sendReportErrorWrongProduct()), this, SLOT(sendUsingDefaultProduct()));
     bzManager->sendReport(report);
@@ -319,7 +262,7 @@ void ReportInfo::sendUsingDefaultProduct() const
     BugReport report = newBugReportTemplate();
     report.setProduct(QLatin1String("kde"));
     report.setComponent(QLatin1String("general"));
-    report.setDescription(generateReportBugzilla());
+    report.setDescription(generateReport());
     report.setValid(true);
     bzManager->sendReport(report);
 }

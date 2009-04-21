@@ -23,13 +23,14 @@
 #include "getbacktracewidget.h"
 #include "drkonqibugreport.h"
 
-class KPushButton;
-class QLabel;
-class KTextBrowser;
-class QCheckBox;
+#include "ui_assistantpage_introduction.h"
+#include "ui_assistantpage_crashinfo.h"
+#include "ui_assistantpage_bugawareness.h"
+#include "ui_assistantpage_conclusions.h"
+#include "ui_assistantpage_conclusions_dialog.h"
 
-/** BASE interface which implements some signal, and
-**  aboutTo + setBusy/setIdle functions **/
+/** BASE interface which implements some signals, and
+**  aboutTo(Show|Hide) functions (also reimplements QWizard behaviour) **/
 class DrKonqiAssistantPage: public QWidget
 {
     Q_OBJECT
@@ -50,11 +51,15 @@ public:
     virtual bool showNextPage() {
         return true;
     }
+    
     ReportInfo * reportInfo() const {
         return m_assistant->reportInfo();
     }
     BugzillaManager *bugzillaManager() const {
         return m_assistant->bugzillaManager();
+    }
+    DrKonqiBugReport * assistant() const {
+        return m_assistant;
     }
 
 public Q_SLOTS:
@@ -77,6 +82,9 @@ class IntroductionPage: public DrKonqiAssistantPage
 
 public:
     IntroductionPage(DrKonqiBugReport *);
+    
+private:
+    Ui::AssistantPageIntroduction   ui;
 };
 
 /** Backtrace page **/
@@ -94,7 +102,8 @@ public:
     bool showNextPage();
 
 private:
-    GetBacktraceWidget * m_backtraceWidget;
+    Ui::AssistantPageCrashInfo  ui;
+    GetBacktraceWidget *        m_backtraceWidget;
 };
 
 /** Bug Awareness page **/
@@ -108,8 +117,7 @@ public:
     void aboutToHide();
 
 private:
-    QCheckBox * m_canDetailCheckBox;
-    QCheckBox * m_developersCanContactReporterCheckBox;
+    Ui::AssistantPageBugAwareness   ui;
 };
 
 /** Conclusions page **/
@@ -119,24 +127,25 @@ class ConclusionPage : public DrKonqiAssistantPage
 
 public:
     ConclusionPage(DrKonqiBugReport *);
-
+    ~ConclusionPage();
+    
     void aboutToShow();
 
     bool isComplete();
 
 private Q_SLOTS:
-    void reportButtonClicked();
+    void launchManualReport();
+    void openReportInformation();
     void saveReport();
 
 private:
-    QLabel *        m_explanationLabel;
-    KTextBrowser *  m_reportEdit;
-
-    KPushButton *   m_reportButton;
-    KPushButton *   m_saveReportButton;
-
-    bool isBKO;
-    bool needToReport;
+    Ui::AssistantPageConclusions            ui;
+    
+    Ui::AssistantPageConclusionsDialog      dialogUi;
+    KDialog     *                           m_infoDialog;
+    
+    bool                                    isBKO;
+    bool                                    needToReport;
 
 Q_SIGNALS:
     void finished(bool);

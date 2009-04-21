@@ -23,19 +23,16 @@
 #include "drkonqiassistantpages_base.h"
 #include "bugzillalib.h"
 
-namespace KWallet { class Wallet; }
-class QFormLayout;
-class KLineEdit;
-class KPushButton;
-class QLabel;
-class KTextBrowser;
-class KTextEdit;
-class QDate;
-class QTreeWidget;
-class QTreeWidgetItem;
-class QCheckBox;
+#include "ui_assistantpage_bugzilla_login.h"
+#include "ui_assistantpage_bugzilla_keywords.h"
+#include "ui_assistantpage_bugzilla_duplicates.h"
+#include "ui_assistantpage_bugzilla_duplicates_dialog.h"
+#include "ui_assistantpage_bugzilla_information.h"
+#include "ui_assistantpage_bugzilla_send.h"
 
-class StatusWidget;
+namespace KWallet { class Wallet; }
+class QDate;
+class QTreeWidgetItem;
 
 /** Bugs.kde.org login **/
 class BugzillaLoginPage: public DrKonqiAssistantPage
@@ -60,16 +57,9 @@ private:
     bool kWalletEntryExists();
     void openWallet();
     
-    QFormLayout *   m_form;
+    Ui::AssistantPageBugzillaLogin      ui;
 
-    KPushButton *   m_loginButton;
-    KLineEdit *     m_userEdit;
-    KLineEdit *     m_passwordEdit;
-    QCheckBox   *   m_savePasswordCheckBox;
-    
-    StatusWidget *  m_statusWidget;
-
-    KWallet::Wallet *   m_wallet;
+    KWallet::Wallet *                   m_wallet;
 };
 
 /** Enter keywords page **/
@@ -89,8 +79,8 @@ private Q_SLOTS:
     void textEdited(QString);
 
 private:
-    KLineEdit * m_keywordsEdit;
-    bool    m_keywordsOK;
+    Ui::AssistantPageBugzillaKeywords   ui;
+    bool                                m_keywordsOK;
 };
 
 /** Searching for duplicates and showing report information page**/
@@ -129,28 +119,17 @@ private Q_SLOTS:
 private:
     void resetDates();
     
-    bool            m_searching;
+    bool                                        m_searching;
 
-    StatusWidget *  m_statusWidget;
-
-    QDate           m_startDate;
-    QDate           m_endDate;
-
-    KPushButton *   m_searchMoreButton;
-    KPushButton *   m_openReportButton;
-    QTreeWidget *   m_bugListWidget;
-
-    KDialog *       m_infoDialog;
-    KTextBrowser *  m_infoDialogBrowser;
-    QLabel *        m_infoDialogLink;
-    StatusWidget *  m_infoDialogStatusWidget;
-
-    QCheckBox *     m_foundDuplicateCheckBox;
-    KLineEdit *     m_possibleDuplicateEdit;
-    KPushButton *   m_mineMayBeDuplicateButton;
-
-    int             m_currentBugNumber;
-    QString         m_currentKeywords;
+    Ui::AssistantPageBugzillaDuplicates         ui;
+    
+    KDialog *                                   m_infoDialog;
+    Ui::AssistantPageBugzillaDuplicatesDialog   dialogUi;
+    
+    QDate                                       m_startDate;
+    QDate                                       m_endDate;
+    int                                         m_currentBugNumber;
+    QString                                     m_currentKeywords;
 };
 
 /** Title and details page **/
@@ -171,12 +150,9 @@ private Q_SLOTS:
     void checkTexts();
 
 private:
-    QLabel *        m_titleLabel;
-    KLineEdit *     m_titleEdit;
-    QLabel *        m_detailsLabel;
-    KTextEdit *     m_detailsEdit;
+    Ui::AssistantPageBugzillaInformation    ui;
 
-    bool m_textsOK;
+    bool                                    m_textsOK;
 };
 
 /** Send crash report page **/
@@ -196,11 +172,9 @@ private Q_SLOTS:
     void retryClicked();
 
 private:
-    KPushButton *   m_retryButton;
-    StatusWidget *  m_statusWidget;
+    Ui::AssistantPageBugzillaSend        ui;
 
 Q_SIGNALS:
-
     void finished(bool);
 
 };
