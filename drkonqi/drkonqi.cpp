@@ -260,7 +260,7 @@ void DrKonqi::startDefaultExternalDebugger()
 
 void DrKonqi::startCustomExternalDebugger()
 {
-    //FIXME continueAttachedProcess()...
+    debuggerStarting();
     emit acceptDebuggingApplication();
 }
 
