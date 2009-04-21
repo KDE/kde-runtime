@@ -221,7 +221,6 @@ so on.</string>
    </item>
   </layout>
  </widget>
- <layoutfunction spacing="KDialog::spacingHint" margin="KDialog::marginHint" />
  <includes>
   <include location="global" >kdialog.h</include>
  </includes>
