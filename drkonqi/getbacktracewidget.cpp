@@ -125,7 +125,7 @@ void GetBacktraceWidget::generateBacktrace()
 void GetBacktraceWidget::anotherDebuggerRunning()
 {
     ui.m_backtraceEdit->setEnabled(false);
-    ui.m_backtraceEdit->setPlainText(i18nc("@info", "Another debugger is currently debugging the "
+    ui.m_backtraceEdit->setText(i18nc("@info", "Another debugger is currently debugging the "
                                    "same application. The crash information could not be fetched."));
     m_usefulnessMeter->setState(BacktraceGenerator::Failed);
     m_usefulnessMeter->setUsefulness(BacktraceParser::Useless);
