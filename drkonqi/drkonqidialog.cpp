@@ -154,13 +154,14 @@ void DrKonqiDialog::buildDialogOptions()
 
     m_defaultDebugAction = new QAction(KIcon("applications-development"),
                                        i18nc("@action:inmenu 1 is the debugger name",
-                                             "Debug using <application>%1</application>",
+                                             "Debug in <application>%1</application>",
                                               krashConfig->debuggerName()),
                                        debugMenu);
     connect(m_defaultDebugAction, SIGNAL(triggered()),
             DrKonqi::instance(), SLOT(startDefaultExternalDebugger()));
 
-    m_customDebugAction = new QAction(debugMenu); //Default null (disabled) action
+    m_customDebugAction = new QAction(KIcon("applications-development"),
+                                      QString(), debugMenu); //Default null (disabled) action
     connect(m_customDebugAction, SIGNAL(triggered()),
             DrKonqi::instance(), SLOT(startCustomExternalDebugger()));
     m_customDebugAction->setEnabled(false);
