@@ -137,6 +137,9 @@ private:
     bool m_safeMode;
     QString m_execname;
 
+    bool    m_isKDEBugzilla;
+    bool    m_isReportMail;
+    
     QString m_debuggerName;
     QString m_debuggerCommand;
     QString m_debuggerBatchCommand;

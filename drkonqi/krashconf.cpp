@@ -112,6 +112,9 @@ void KrashConfig :: readConfig()
     m_debuggerBatchCommand = generalGroup.readPathEntry("ExecBatch", QString());
     m_tryExec = generalGroup.readPathEntry("TryExec", QString());
     m_backtraceCommand = generalGroup.readEntry("BacktraceCommand");
+    
+    m_isKDEBugzilla = (m_aboutData->bugAddress() == QLatin1String("submit@bugs.kde.org"));
+    m_isReportMail = (m_aboutData->bugAddress().contains('@') && !m_isKDEBugzilla);
 }
 
 QString KrashConfig::signalName() const
@@ -134,13 +137,12 @@ QString KrashConfig::signalName() const
 
 bool KrashConfig::isKDEBugzilla() const
 {
-    return getReportLink() == QLatin1String("submit@bugs.kde.org");
+    return m_isKDEBugzilla;
 }
 
 bool KrashConfig::isReportMail() const
 {
-    QString link = getReportLink();
-    return link.contains('@') && link != QLatin1String("submit@bugs.kde.org");
+    return m_isReportMail;
 }
 
 // replace some of the strings
