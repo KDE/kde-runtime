@@ -161,12 +161,14 @@ void TrashConfigModule::trashChanged( int value )
         const ConfigEntry entry = mConfigMap[ mCurrentTrash ];
         mUseTimeLimit->setChecked( entry.useTimeLimit );
         mDays->setValue( entry.days );
+        updateSpinBoxSuffix( entry.days );
         mUseSizeLimit->setChecked( entry.useSizeLimit );
         mPercent->setValue( entry.percent );
         mLimitReachedAction->setCurrentIndex( entry.actionType );
     } else {
         mUseTimeLimit->setChecked( false );
         mDays->setValue( 7 );
+        updateSpinBoxSuffix( 7 );
         mUseSizeLimit->setChecked( true );
         mPercent->setValue( 10.0 );
         mLimitReachedAction->setCurrentIndex( 0 );
@@ -264,9 +266,11 @@ void TrashConfigModule::setupGui()
     mUseTimeLimit = new QCheckBox( i18n( "Delete files older than:" ), this );
     daysLayout->addWidget( mUseTimeLimit );
     mDays = new QSpinBox( this );
+    connect( mDays, SIGNAL( valueChanged( int ) ), this, SLOT( updateSpinBoxSuffix( int ) ) );
+    
     mDays->setRange( 1, 365 );
     mDays->setSingleStep( 1 );
-    mDays->setSuffix( " days" );
+    mDays->setSuffix( QString(" ") + i18np("day", "days", mDays->value()) );
     daysLayout->addWidget( mDays );
 
     QGridLayout *sizeLayout = new QGridLayout();
@@ -306,6 +310,11 @@ void TrashConfigModule::setupGui()
     sizeWidgetLayout->addWidget( mLimitReachedAction, 1, 1, 1, 2 );
 
     layout->addStretch();
+}
+
+void TrashConfigModule::updateSpinBoxSuffix( int interval )
+{
+    mDays->setSuffix( QString(" ") + i18np( "day", "days", interval ) );
 }
 
 #include "kcmtrash.moc"
