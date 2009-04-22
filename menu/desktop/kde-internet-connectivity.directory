@@ -2,11 +2,13 @@
 Encoding=UTF-8
 Type=Directory
 Name=Connectivity
+Name[de]=Verbindungen
 Name[el]=Συνδεσιμότητα
 Name[et]=Võrk
 Name[ga]=Comhcheangailteacht
 Name[gu]=જોડાણ
 Name[ja]=接続性
+Name[km]=ការតភ្ជាប់
 Name[ko]=연결
 Name[nb]=Tilkoblinger
 Name[nds]=Verbinnen
