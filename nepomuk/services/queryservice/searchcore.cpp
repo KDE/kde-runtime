@@ -19,7 +19,6 @@
 
 #include "searchcore.h"
 #include "searchthread.h"
-#include "qurlhash.h"
 
 #include <QtCore/QEventLoop>
 #include <QtCore/QPointer>

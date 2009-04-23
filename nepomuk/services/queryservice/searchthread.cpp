@@ -19,7 +19,6 @@
 
 #include "searchthread.h"
 #include "term.h"
-#include "qurlhash.h"
 
 #include <Nepomuk/ResourceManager>
 #include <Nepomuk/Resource>

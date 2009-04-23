@@ -19,7 +19,6 @@
 #include "folder.h"
 #include "folderconnection.h"
 #include "queryservice.h"
-#include "qurlhash.h"
 
 #include <Soprano/Model>
 
