@@ -372,7 +372,7 @@ bool NotifyByPopup::sendNotificationDBus(int id, int replacesId, KNotifyConfig* 
 	args.append( dbus_replaces_id ); // replaces_id
 	args.append( config->eventid ); // event_id
 	args.append( iconName ); // app_icon
-	args.append( QString()); // summary
+	args.append( config->title ); // summary
 	args.append( config->text ); // body
 	// galago spec defines action list to be list like
 	// (act_id1, action1, act_id2, action2, ...)

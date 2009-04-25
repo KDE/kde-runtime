@@ -52,9 +52,9 @@ class KNotify : public QObject
 		void closeNotification( int id);
 		
 		int event(const QString &event, const QString &fromApp, const ContextList& contexts ,
-				   const QString &text, const KNotifyImage& image,  const QStringList& actions , WId winId = 0);
+				const QString &title, const QString &text, const KNotifyImage& image,  const QStringList& actions , WId winId = 0);
 		
-		void update(int id, const QString &text, const KNotifyImage& image,  const QStringList& actions);
+		void update(int id, const QString &title, const QString &text, const KNotifyImage& image,  const QStringList& actions);
 		void reemit(int id, const ContextList& contexts);
 	Q_SIGNALS:
 		void notificationClosed( int id);
@@ -104,6 +104,7 @@ class KNotifyAdaptor : public QDBusAbstractAdaptor
 							"<arg name=\"event\" type=\"s\" direction=\"in\"/>"
 							"<arg name=\"fromApp\" type=\"s\" direction=\"in\"/>"
 							"<arg name=\"contexts\" type=\"av\" direction=\"in\"/>"
+							"<arg name=\"title\" type=\"s\" direction=\"in\"/>"
 							"<arg name=\"text\" type=\"s\" direction=\"in\"/>"
 							"<arg name=\"pixmap\" type=\"ay\" direction=\"in\"/>"
 							"<arg name=\"actions\" type=\"as\" direction=\"in\"/>"
@@ -111,6 +112,7 @@ class KNotifyAdaptor : public QDBusAbstractAdaptor
 						"</method>"
 						"<method name=\"update\">"
 							"<arg name=\"id\" type=\"i\" direction=\"in\"/>"
+							"<arg name=\"title\" type=\"s\" direction=\"in\"/>"
 							"<arg name=\"text\" type=\"s\" direction=\"in\"/>"
 							"<arg name=\"pixmap\" type=\"ay\" direction=\"in\"/>"
 							"<arg name=\"actions\" type=\"as\" direction=\"in\"/>"
@@ -132,10 +134,10 @@ class KNotifyAdaptor : public QDBusAbstractAdaptor
 		void closeNotification( int id);
 		
 		int event(const QString &event, const QString &fromApp, const QVariantList& contexts ,
-								const QString &text, const QByteArray& pixmap,  const QStringList& actions , qlonglong winId );
+								const QString &title, const QString &text, const QByteArray& pixmap,  const QStringList& actions , qlonglong winId );
 		
 		void reemit(int id, const QVariantList& contexts);
-		void update(int id, const QString &text, const QByteArray& pixmap,  const QStringList& actions );
+		void update(int id, const QString &title, const QString &text, const QByteArray& pixmap,  const QStringList& actions );
 
 	Q_SIGNALS:
 		void notificationClosed( int id);

@@ -72,6 +72,10 @@ class KNotifyConfig
 		QString readEntry(const QString& entry , bool path=false);
 		
 		/**
+		 * the title of the notification
+		 */
+		QString title;
+		/**
 		 * the text of the notification
 		 */
 		QString text;
