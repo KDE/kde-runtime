@@ -26,6 +26,7 @@
 
 class WrapLabel;
 class QProgressBar;
+class QHideEvent;
 
 class StatusWidget: public QStackedWidget
 {
@@ -39,6 +40,9 @@ public:
     void addCustomStatusWidget(QWidget *);
    
 private:
+    void showEvent(QShowEvent *);
+    void hideEvent(QHideEvent *);
+    
     void setBusyCursor();
     void setIdleCursor();
 
@@ -49,6 +53,9 @@ private:
 
     QWidget *           m_statusPage;
     QWidget *           m_busyPage;
+    
+    int                 m_cursorStackCount;
+    bool                m_busy;
 };
 
 //Dummy class to avoid a QLabel+wordWrap height bug

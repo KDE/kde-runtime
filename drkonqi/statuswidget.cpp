@@ -24,7 +24,9 @@
 #include <QtGui/QHBoxLayout>
 
 StatusWidget::StatusWidget(QWidget * parent) :
-        QStackedWidget(parent)
+        QStackedWidget(parent),
+        m_cursorStackCount(0),
+        m_busy(false)
 {
     setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed));
     
@@ -69,7 +71,8 @@ void StatusWidget::setBusy(QString busyMessage)
     m_statusLabel->clear();
     m_busyLabel->setText(busyMessage);
     setCurrentWidget(m_busyPage);
-    //setBusyCursor();
+    setBusyCursor();
+    m_busy = true;
 }
 
 void StatusWidget::setIdle(QString idleMessage)
@@ -77,7 +80,8 @@ void StatusWidget::setIdle(QString idleMessage)
     m_busyLabel->clear();
     m_statusLabel->setText(idleMessage);
     setCurrentWidget(m_statusPage);
-    //setIdleCursor();
+    setIdleCursor();
+    m_busy = false;
 }
 
 void StatusWidget::addCustomStatusWidget(QWidget * widget)
@@ -92,11 +96,27 @@ void StatusWidget::addCustomStatusWidget(QWidget * widget)
 void StatusWidget::setBusyCursor()
 {
     QApplication::setOverrideCursor(Qt::WaitCursor);
+    m_cursorStackCount++;
 }
 
 void StatusWidget::setIdleCursor()
 {
-    while (QApplication::overrideCursor()) {
+    while (m_cursorStackCount!=0) {
         QApplication::restoreOverrideCursor();
+        m_cursorStackCount--;
+    }
+}
+
+void StatusWidget::hideEvent(QHideEvent *)
+{
+    if (m_busy) {
+        setIdleCursor();
+    }
+}
+
+void StatusWidget::showEvent(QShowEvent *)
+{
+    if (m_busy) {
+        setBusyCursor();
     }
 }
