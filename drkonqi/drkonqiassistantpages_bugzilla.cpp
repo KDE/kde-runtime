@@ -601,25 +601,17 @@ void BugzillaReportInformationDialog::bugFetchFinished(BugReport report)
             }
 
             QString text =
-                QString("<strong>%1:</strong> %2<br />").arg( 
-                    i18nc("@info bug report number", "Bug ID"), report.bugNumber()) +
-                QString("<strong>%1:</strong> %2/%3<br />").arg(
-                    i18nc("@info bugzilla product name", "Product"), report.product(),
+                i18n("<strong>Bug ID:</strong> %1<br />", report.bugNumber()) +
+                i18n("<strong>Product:</strong> %1/%2<br />", report.product(),
                                                                 report.component()) +
-                QString("<strong>%1:</strong> %2<br />").arg(
-                    i18nc("@info bugzilla report title", "Short Description"),
+                i18n("<strong>Short Description:</strong> %1<br />",
                                                                 report.shortDescription()) +
-                QString("<strong>%1:</strong> %2<br />").arg(
-                    i18nc("@info bug report status", "Status"), report.bugStatus()) +
-                QString("<strong>%1:</strong> %2<br />").arg(
-                    i18nc("@info bug report possible resolution", "Resolution"),
-                                                                report.resolution()) +
-                QString("<strong>%1:</strong><br />%2").arg(
-                    i18nc("@info detailed bug report description", "Full Description"),
-                                                    report.description().replace('\n', "<br />")) +
+                i18n("<strong>Status:</strong> %1<br />", report.bugStatus()) +
+                i18n("<strong>Resolution:</strong> %1<br />", report.resolution()) +
+                i18n("<strong>Full Description:</strong><br />%1",
+                                                report.description().replace('\n', "<br />")) +
                 QLatin1String("<br /><br />") +
-                QString("<strong>%1:</strong> %2").arg(
-                    i18nc("@info bug report comments", "Comments"), comments);
+                i18n("<strong>Comments:</strong> %1", comments);
 
             ui.m_infoBrowser->setText(text);
             ui.m_infoBrowser->setEnabled(true);
