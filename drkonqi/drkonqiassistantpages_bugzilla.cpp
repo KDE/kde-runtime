@@ -128,7 +128,6 @@ void BugzillaLoginPage::openWallet()
 
 void BugzillaLoginPage::walletLogin()
 {
-    bool login = false;
     if (!m_wallet) {
         if (kWalletEntryExists()) {  //Key exists!
             ui.m_savePasswordCheckBox->setCheckState(Qt::Checked);
@@ -144,7 +143,6 @@ void BugzillaLoginPage::walletLogin()
                 QString password = values.value(QLatin1String(kWalletEntryPassword));
 
                 if (!username.isEmpty() && !password.isEmpty()) {
-                    login = true;
                     ui.m_userEdit->setText(username);
                     ui.m_passwordEdit->setText(password);
                 }
