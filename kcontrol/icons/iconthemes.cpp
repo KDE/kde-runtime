@@ -65,8 +65,6 @@ IconThemesConfig::IconThemesConfig(const KComponentData &inst, QWidget *parent)
   : KCModule(inst, parent)
 {
   QVBoxLayout *topLayout = new QVBoxLayout(this);
-  topLayout->setMargin(KDialog::marginHint());
-  topLayout->setSpacing(KDialog::spacingHint());
 
   QFrame *m_preview=new QFrame(this);
   m_preview->setMinimumHeight(80);
@@ -123,11 +121,11 @@ IconThemesConfig::IconThemesConfig(const KComponentData &inst, QWidget *parent)
   topLayout->addWidget(m_preview);
   topLayout->addWidget(m_iconThemes);
   QHBoxLayout *lg = new QHBoxLayout();
-  topLayout->addItem(lg);
-  lg->setSpacing(KDialog::spacingHint());
   lg->addWidget(newButton);
+  lg->addStretch(0);
   lg->addWidget(installButton);
   lg->addWidget(m_removeButton);
+  topLayout->addLayout(lg);
 
   loadThemes();
 

@@ -15,6 +15,7 @@
 #include <QComboBox>
 #include <QLabel>
 #include <QLayout>
+#include <QFormLayout>
 #include <QSlider>
 #include <QGroupBox>
 //Added by qt3to4:
@@ -42,8 +43,6 @@ KIconConfig::KIconConfig(const KComponentData &inst, QWidget *parent)
 {
 
     QGridLayout *top = new QGridLayout(this );
-    top->setMargin( KDialog::marginHint() );
-    top->setSpacing( KDialog::spacingHint() );
     top->setColumnStretch(0, 1);
     top->setColumnStretch(1, 1);
 
@@ -51,7 +50,6 @@ KIconConfig::KIconConfig(const KComponentData &inst, QWidget *parent)
     QGroupBox *gbox = new QGroupBox(i18n("Use of Icon"), this);
     top->addWidget(gbox, 0, 0, 2, 1);
     QBoxLayout *g_vlay = new QVBoxLayout(gbox);
-    g_vlay->setSpacing(KDialog::spacingHint());
     mpUsageList = new QListWidget(gbox);
     connect(mpUsageList, SIGNAL(currentRowChanged(int)), SLOT(slotUsage(int)));
     g_vlay->addWidget(mpUsageList);
@@ -60,7 +58,6 @@ KIconConfig::KIconConfig(const KComponentData &inst, QWidget *parent)
     top->addWidget(sep, 1, 1);
     // Preview at (2,0) - (2, 1)
     QGridLayout *g_lay = new QGridLayout();
-    g_lay->setMargin( KDialog::marginHint() );
     g_lay->setSpacing( 0);
     top->addLayout(g_lay, 2, 0, 1, 2 );
     g_lay->addItem(new QSpacerItem(0, fontMetrics().lineSpacing()), 0, 0);
@@ -79,8 +76,6 @@ KIconConfig::KIconConfig(const KComponentData &inst, QWidget *parent)
     top->addWidget(m_pTab1, 0, 1);
 
     QGridLayout *grid = new QGridLayout(m_pTab1);
-    grid->setSpacing(10);
-    grid->setMargin(10);
     grid->setColumnStretch(1, 1);
     grid->setColumnStretch(2, 1);
 
@@ -506,15 +501,12 @@ KIconEffectSetupDialog::KIconEffectSetupDialog(const Effect &effect,
     setMainWidget(page);
 
     QGridLayout *top = new QGridLayout(page);
-    top->setSpacing(spacingHint());
     top->setMargin(0);
     top->setColumnStretch(0,1);
-    top->addItem(new QSpacerItem(10, 0), 0, 1);
-    top->setColumnStretch(2,2);
+    top->setColumnStretch(1,2);
     top->setRowStretch(1,1);
 
     lbl = new QLabel(i18n("&Effect:"), page);
-    lbl->setFixedSize(lbl->sizeHint());
     top->addWidget(lbl, 0, 0, Qt::AlignLeft);
     mpEffectBox = new QListWidget(page);
     mpEffectBox->addItem(i18n("No Effect"));
@@ -523,7 +515,6 @@ KIconEffectSetupDialog::KIconEffectSetupDialog(const Effect &effect,
     mpEffectBox->addItem(i18n("Gamma"));
     mpEffectBox->addItem(i18n("Desaturate"));
     mpEffectBox->addItem(i18n("To Monochrome"));
-    mpEffectBox->setMinimumWidth( 100 );
     connect(mpEffectBox, SIGNAL(currentRowChanged(int)), SLOT(slotEffectType(int)));
     top->addWidget(mpEffectBox, 1, 0, 2, 1, Qt::AlignLeft);
     lbl->setBuddy(mpEffectBox);
@@ -535,8 +526,6 @@ KIconEffectSetupDialog::KIconEffectSetupDialog(const Effect &effect,
     frame = new QGroupBox(i18n("Preview"), page);
     top->addWidget(frame, 0, 1, 2, 1);
     grid = new QGridLayout(frame);
-    grid->setSpacing(spacingHint());
-    grid->setMargin(marginHint());
     grid->addItem(new QSpacerItem(0, fontMetrics().lineSpacing()), 0, 0);
     grid->setRowStretch(1, 1);
 
@@ -547,36 +536,27 @@ KIconEffectSetupDialog::KIconEffectSetupDialog(const Effect &effect,
 
     mpEffectGroup = new QGroupBox(i18n("Effect Parameters"), page);
     top->addWidget(mpEffectGroup, 2, 1, 2, 1);
-    grid = new QGridLayout(mpEffectGroup);
-    grid->setSpacing(spacingHint());
-    grid->setMargin(marginHint());
-    grid->addItem(new QSpacerItem(0, fontMetrics().lineSpacing()), 0, 0);
+    QFormLayout *form = new QFormLayout(mpEffectGroup);
 
-    mpEffectLabel = new QLabel(i18n("&Amount:"), mpEffectGroup);
-    grid->addWidget(mpEffectLabel, 1, 0);
     mpEffectSlider = new QSlider(Qt::Horizontal, mpEffectGroup);
     mpEffectSlider->setMinimum(0);
     mpEffectSlider->setMaximum(100);
     mpEffectSlider->setPageStep(5);
-    mpEffectLabel->setBuddy( mpEffectSlider );
     connect(mpEffectSlider, SIGNAL(valueChanged(int)), SLOT(slotEffectValue(int)));
-    grid->addWidget(mpEffectSlider, 1, 1);
+    form->addRow(i18n("&Amount:"), mpEffectSlider);
+    mpEffectLabel = static_cast<QLabel *>(form->labelForField(mpEffectSlider));
 
-    mpEffectColor = new QLabel(i18n("Co&lor:"), mpEffectGroup);
-    grid->addWidget(mpEffectColor, 2, 0);
     mpEColButton = new KColorButton(mpEffectGroup);
-    mpEffectColor->setBuddy( mpEColButton );
     connect(mpEColButton, SIGNAL(changed(const QColor &)),
 		SLOT(slotEffectColor(const QColor &)));
-    grid->addWidget(mpEColButton, 2, 1);
+    form->addRow(i18n("Co&lor:"), mpEColButton);
+    mpEffectColor = static_cast<QLabel *>(form->labelForField(mpEColButton));
 
-    mpEffectColor2 = new QLabel(i18n("&Second color:"), mpEffectGroup);
-    grid->addWidget(mpEffectColor2, 3, 0);
     mpECol2Button = new KColorButton(mpEffectGroup);
-    mpEffectColor2->setBuddy( mpECol2Button );
     connect(mpECol2Button, SIGNAL(changed(const QColor &)),
 		SLOT(slotEffectColor2(const QColor &)));
-    grid->addWidget(mpECol2Button, 3, 1);
+    form->addRow(i18n("&Second color:"), mpECol2Button);
+    mpEffectColor2 = static_cast<QLabel *>(form->labelForField(mpECol2Button));
 
     init();
     preview();
