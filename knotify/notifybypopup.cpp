@@ -350,19 +350,6 @@ bool NotifyByPopup::sendNotificationDBus(int id, int replacesId, KNotifyConfig* 
 	QString timeoutStr = config->readEntry( "Timeout" );
 	int timeout = !timeoutStr.isEmpty() ? timeoutStr.toInt() : 0;
 
-	// if timeout is still zero, try to set it to default knotify timeout
-	if (timeout == 0) {
-		// NOTE: this is a little hack. Currently there's no way to easily determine
-		// if KNotify will close notification after certain timeout or if it's persistent.
-		// The only thing that comes to mind is to check Persistent option in config and
-		// if it's absent, use default timeout that KNotify uses for non-persistent popups
-		bool persistent = (config->readEntry("Persistent") == "true" ||
-						   config->readEntry("Persistant") == "true");
-		if (!persistent) {
-			timeout = 6*1000;
-		}
-    }
-
 	QList<QVariant> args;
 
 	QString appCaption, iconName;
