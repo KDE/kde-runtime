@@ -133,7 +133,7 @@
          </size>
         </property>
         <property name="text" >
-         <string>Enable automatic regeneration of Start menu entries</string>
+         <string>Enable automatic regeneration of start menu entries</string>
         </property>
        </widget>
       </item>
@@ -153,7 +153,7 @@
          </size>
         </property>
         <property name="text" >
-         <string>Install as Control Panel element</string>
+         <string>Install as control panel element</string>
         </property>
        </widget>
       </item>

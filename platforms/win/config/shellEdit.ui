@@ -25,7 +25,7 @@
       <enum>Qt::RightToLeft</enum>
      </property>
      <property name="text" >
-      <string>Name</string>
+      <string>Name:</string>
      </property>
     </widget>
    </item>
@@ -45,7 +45,7 @@
       <enum>Qt::RightToLeft</enum>
      </property>
      <property name="text" >
-      <string>Command</string>
+      <string>Command:</string>
      </property>
     </widget>
    </item>
@@ -58,7 +58,7 @@
       <enum>Qt::RightToLeft</enum>
      </property>
      <property name="text" >
-      <string>Description</string>
+      <string>Description:</string>
      </property>
     </widget>
    </item>
