@@ -351,26 +351,28 @@ void BugzillaDuplicatesPage::openSelectedReport()
     }
 }
 
-void BugzillaDuplicatesPage::enableControls(bool enable)
+void BugzillaDuplicatesPage::markAsSearching(bool searching)
 {
-    ui.m_bugListWidget->setEnabled(enable);
-    ui.m_searchMoreButton->setEnabled(enable);
-    ui.m_stopSearchButton->setEnabled(!enable);
-    ui.m_foundDuplicateCheckBox->setEnabled(enable);
-    ui.m_possibleDuplicateEdit->setEnabled(enable);
-    if (enable) {
+    m_searching = searching;
+    
+    ui.m_bugListWidget->setEnabled(!searching);
+    ui.m_searchMoreButton->setEnabled(!searching);
+    ui.m_stopSearchButton->setEnabled(searching);
+    
+    ui.m_foundDuplicateCheckBox->setEnabled(!searching);
+    ui.m_possibleDuplicateEdit->setEnabled(!searching);
+    
+    if (!searching) {
         checkBoxChanged(ui.m_foundDuplicateCheckBox->checkState());
         itemSelectionChanged();
     } else {
         ui.m_openReportButton->setEnabled(false);
     }
-
 }
 
 void BugzillaDuplicatesPage::searchError(QString err)
 {
-    m_searching = false;
-    enableControls(true);
+    markAsSearching(false);
 
     ui.m_statusWidget->setIdle(i18nc("@info:status","Error fetching the bug report list"));
 
@@ -450,8 +452,8 @@ void BugzillaDuplicatesPage::stopCurrentSearch()
     if (m_searching) {
         bugzillaManager()->stopCurrentSearch(); 
         
-        m_searching = false;
-        enableControls(true);
+        markAsSearching(false);
+        
         if (ui.m_bugListWidget->topLevelItemCount() == 0) { //No results at all
             ui.m_statusWidget->setIdle(i18nc("@info:status","Search stopped."));
         } else {
@@ -464,9 +466,7 @@ void BugzillaDuplicatesPage::stopCurrentSearch()
 
 void BugzillaDuplicatesPage::performSearch()
 {
-    m_searching = true;
-    
-    enableControls(false);
+    markAsSearching(true);
 
     QString startDateStr = m_searchingStartDate.toString("yyyy-MM-dd");
     QString endDateStr = m_searchingEndDate.toString("yyyy-MM-dd");
@@ -476,10 +476,9 @@ void BugzillaDuplicatesPage::performSearch()
     BugReport report = reportInfo()->newBugReportTemplate();
     bugzillaManager()->searchBugs(m_currentKeywords, report.product(), report.bugSeverity(),
                                     startDateStr, endDateStr, reportInfo()->firstBacktraceFunctions().join(" "));
-
     //Test search
     /*
-    bugzillaManager()->searchBugs( "konqueror crash toggle mode", "konqueror", "crash", 
+    bugzillaManager()->searchBugs( "konqueror crash toggle mode", "konqueror", "crash",  
                 startDateStr, endDateStr , "caret" );
     */
 }
@@ -495,7 +494,7 @@ void BugzillaDuplicatesPage::searchMore()
 
 void BugzillaDuplicatesPage::searchFinished(const BugMapList & list)
 {
-    m_searching = false;
+    markAsSearching(false);
     
     m_startDate = m_searchingStartDate;
     
@@ -514,8 +513,6 @@ void BugzillaDuplicatesPage::searchFinished(const BugMapList & list)
 
         ui.m_bugListWidget->sortItems(0 , Qt::DescendingOrder);
 
-        enableControls(true);
-
         if (!canSearchMore()) {
             ui.m_searchMoreButton->setEnabled(false);
         }
@@ -527,8 +524,11 @@ void BugzillaDuplicatesPage::searchFinished(const BugMapList & list)
         } else {
             ui.m_statusWidget->setIdle(i18nc("@info:status","Search Finished. "
                                                          "No more possible date ranges to search."));
-
-            enableControls(false);
+            ui.m_searchMoreButton->setEnabled(false);
+            if (ui.m_bugListWidget->topLevelItemCount() == 0) {
+                //No reports to mark as possible duplicate
+                ui.m_foundDuplicateCheckBox->setEnabled(false);
+            }
         }
     }
 }

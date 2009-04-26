@@ -113,8 +113,8 @@ private Q_SLOTS:
 
     void checkBoxChanged(int);
 
-    void enableControls(bool);
-
+    void markAsSearching(bool);
+    
     bool canSearchMore();
 
 private:
