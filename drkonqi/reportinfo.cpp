@@ -137,63 +137,55 @@ QString ReportInfo::osString() const
 QString ReportInfo::generateReport() const
 {
     //Note: no translations must be done in this function's strings
-    QString dottedLine = QLatin1String("------");
-    QString lineBreak = QLatin1String("\n");
-
     const KrashConfig * krashConfig = DrKonqi::instance()->krashConfig();
 
     QString report;
-    
-    report.append(QString("Application and System information:"));
-    report.append(lineBreak + dottedLine + lineBreak);
-    //Program name and versions
-    report.append(QString("KDE Version: %1").arg(KDE::versionString()) + lineBreak);
-    report.append(QString("Qt Version: %1").arg(qVersion()) + lineBreak);
-    report.append(QString("Operating System: %1").arg(osString()) + lineBreak);
-    report.append(QString("Application that crashed: %1").arg(krashConfig->productName())
-                    + lineBreak);
-    report.append(QString("Version of the application: %1").arg(krashConfig->productVersion())
-                    + lineBreak);
-    
-    //LSB output
-    if ( !m_lsbRelease.isEmpty() ) {
-        report.append(QString("Distribution: %1").arg(m_lsbRelease) + lineBreak);
-    }
-    report.append(dottedLine + lineBreak);
 
     //Description (title)
     if (!m_reportKeywords.isEmpty()) {
-        report.append(lineBreak + QString("Title: %1").arg(m_reportKeywords));
+        report.append(QString("Title: %1\n\n").arg(m_reportKeywords));
     }
-    
+
     //Details of the crash situation
     if (m_userCanDetail) {
-        report.append(lineBreak + lineBreak);
-        report.append(QString("What I was doing when the application crashed:"));
-        report.append(lineBreak);
+        report.append(QString("What I was doing when the application crashed:\n"));
         if (!m_userDetailText.isEmpty()) {
             report.append(m_userDetailText);
         } else {
-            report.append(i18nc("@info/plain","<placeholder>In detail, tell us what were you doing when "
-                                "the application crashed.</placeholder>"));
+            report.append(i18nc("@info/plain","<placeholder>In detail, tell us what you were doing "
+                                              " when the application crashed.</placeholder>"));
         }
+        report.append(QLatin1String("\n\n"));
     }
 
-    //Backtrace
-    report.append(lineBreak + lineBreak);
+    //Program name and versions
+    report.append(QString(" -- Application and System information:\n"));
+    report.append(QString("Application that crashed: %1\n").arg(krashConfig->productName()));
+    report.append(QString("Version of the application: %1\n").arg(krashConfig->productVersion()));
+    report.append(QString("KDE Version: %1\n").arg(KDE::versionString()));
+    report.append(QString("Qt Version: %1\n").arg(qVersion()));
+    report.append(QString("Operating System: %1\n").arg(osString()));
 
+    //LSB output
+    if ( !m_lsbRelease.isEmpty() ) {
+        report.append(QString("Distribution: %1\n").arg(m_lsbRelease));
+    }
+    report.append(QLatin1String("\n"));
+
+    //Backtrace
+    report.append(QString(" -- Backtrace:\n"));
     if (!m_backtrace.isEmpty()) {
         QString formattedBacktrace = m_backtrace.trimmed();
-        report.append(QString("Backtrace:") + lineBreak + dottedLine + lineBreak
-                        + formattedBacktrace + lineBreak +dottedLine);
+        report.append(formattedBacktrace + QLatin1String("\n"));
     } else {
-        report.append(QString("An useful backtrace could not be generated"));
+        report.append(QString("An useful backtrace could not be generated\n"));
     }
 
     //Possible duplicate
     if (!m_possibleDuplicate.isEmpty()) {
-        report.append(lineBreak + lineBreak + QString("This bug may be a duplicate of or related "
-                                                      "to bug %1").arg(m_possibleDuplicate));
+        report.append(QLatin1String("\n"));
+        report.append(QString("This bug may be a duplicate of or related to bug %1")
+                        .arg(m_possibleDuplicate));
     }
 
     return report;
