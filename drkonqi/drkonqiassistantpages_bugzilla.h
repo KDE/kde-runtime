@@ -170,10 +170,12 @@ private Q_SLOTS:
     void sendError(QString);
 
     void retryClicked();
+    void finishClicked();
 
 private:
-    Ui::AssistantPageBugzillaSend        ui;
-
+    Ui::AssistantPageBugzillaSend           ui;
+    QString                                 reportUrl;
+    
 Q_SIGNALS:
     void finished(bool);
 

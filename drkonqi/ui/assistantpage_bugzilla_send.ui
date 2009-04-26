@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
+    <width>476</width>
     <height>300</height>
    </rect>
   </property>
@@ -47,6 +47,13 @@
      </property>
      <property name="openExternalLinks">
       <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="m_launchPageOnFinish">
+     <property name="text">
+      <string comment="@option:check">Open the bug report page when clicking the &lt;interface&gt;Finish&lt;/interface&gt; button</string>
      </property>
     </widget>
    </item>

@@ -32,6 +32,7 @@
 
 #include <KIcon>
 #include <KMessageBox>
+#include <KToolInvocation>
 #include <KWallet/Wallet>
 
 static const char kWalletEntryName[] = "drkonqi_bugzilla";
@@ -710,6 +711,10 @@ BugzillaSendPage::BugzillaSendPage(DrKonqiBugReport * parent)
                                                   "sending the crash report if it failed before.")));
     ui.m_retryButton->setVisible(false);
     connect(ui.m_retryButton, SIGNAL(clicked()), this , SLOT(retryClicked()));
+    
+    ui.m_launchPageOnFinish->setVisible(false);
+    
+    connect(assistant(), SIGNAL(user1Clicked()), this, SLOT(finishClicked()));
 }
 
 void BugzillaSendPage::retryClicked()
@@ -730,12 +735,15 @@ void BugzillaSendPage::sent(int bug_id)
     ui.m_retryButton->setEnabled(false);
     ui.m_retryButton->setVisible(false);
     
+    ui.m_launchPageOnFinish->setVisible(true);
+    
+    reportUrl = bugzillaManager()->urlForBug(bug_id);
     ui.m_finishedLabel->setText(i18nc("@info/rich","Crash report sent.<nl/>"
                                              "Bug Number :: <numid>%1</numid><nl/>"
                                              "URL :: <link>%2</link><nl/>"
                                              "Thanks for contributing to KDE. "
                                              "You can now close this window.", bug_id,
-                                              bugzillaManager()->urlForBug(bug_id)));
+                                              reportUrl));
     
     emit finished(false);
 }
@@ -747,6 +755,13 @@ void BugzillaSendPage::sendError(QString errorString)
 
     ui.m_retryButton->setEnabled(true);
     ui.m_retryButton->setVisible(true);
+}
+
+void BugzillaSendPage::finishClicked()
+{
+    if (ui.m_launchPageOnFinish->checkState()==Qt::Checked && !reportUrl.isEmpty()) {
+        KToolInvocation::invokeBrowser(reportUrl);
+    }
 }
 
 //END BugzillaSendPage
