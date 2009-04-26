@@ -126,9 +126,9 @@ QString ReportInfo::osString() const
         return QString();
     }
     result += QString::fromLocal8Bit(buf.sysname);
-    result += " ";
+    result += ' ';
     result += QString::fromLocal8Bit(buf.release);
-    result += " ";
+    result += ' ';
     result += QString::fromLocal8Bit(buf.machine);
 #endif
     return result;

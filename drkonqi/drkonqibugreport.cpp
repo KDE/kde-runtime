@@ -49,7 +49,7 @@ DrKonqiBugReport::DrKonqiBugReport(QWidget * parent) :
     connectSignals(m_intro);
 
     KPageWidgetItem * m_introPage = new KPageWidgetItem(m_intro, QLatin1String(PAGE_INTRODUCTION_ID));
-    m_introPage->setHeader(i18nc("@title", "Introduction"));
+    m_introPage->setHeader(i18nc("@title the introduction page", "Introduction"));
     m_introPage->setIcon(KIcon("tools-report-bug"));
 
     //Crash Information Page

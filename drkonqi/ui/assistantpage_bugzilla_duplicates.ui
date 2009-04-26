@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>492</width>
-    <height>442</height>
+    <height>439</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
@@ -113,7 +113,7 @@
         <bool>false</bool>
        </property>
        <property name="inputMask">
-        <string>000000; </string>
+        <string notr="true" comment="@info krazy2complains">000000; </string>
        </property>
       </widget>
      </item>

@@ -145,8 +145,9 @@ void DrKonqiDialog::buildDialogOptions()
     connect(this, SIGNAL(user1Clicked()), this, SLOT(reportBugAssistant()));
 
     //Default debugger button and menu (only for developer mode)
-    setButtonGuiItem(KDialog::User2, KGuiItem2(i18nc("@action:button", "Debug"),
-                                               KIcon("applications-development"),
+    setButtonGuiItem(KDialog::User2, KGuiItem2(i18nc("@action:button this is the debug menu button "
+                                               "label which contains the debugging applications", 
+                                               "Debug"), KIcon("applications-development"),
                                                i18nc("@info:tooltip", "Starts a program to debug "
                                                      "the crashed application.")));
     showButton(KDialog::User2, krashConfig->showDebugger());

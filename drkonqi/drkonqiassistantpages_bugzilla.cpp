@@ -601,26 +601,33 @@ void BugzillaReportInformationDialog::bugFetchFinished(BugReport report)
             }
 
             QString text =
-                i18n("<strong>Bug ID:</strong> %1<br />", report.bugNumber()) +
-                i18n("<strong>Product:</strong> %1/%2<br />", report.product(),
+                QString("<strong>%1:</strong> %2<br />").arg( 
+                    i18nc("@info bug report number", "Bug ID"), report.bugNumber()) +
+                QString("<strong>%1:</strong> %2/%3<br />").arg(
+                    i18nc("@info bugzilla product name", "Product"), report.product(),
                                                                 report.component()) +
-                i18n("<strong>Short Description:</strong> %1<br />",
+                QString("<strong>%1:</strong> %2<br />").arg(
+                    i18nc("@info bugzilla report title", "Short Description"),
                                                                 report.shortDescription()) +
-                i18n("<strong>Status:</strong> %1<br />", report.bugStatus()) +
-                i18n("<strong>Resolution:</strong> %1<br />", report.resolution()) +
-                i18n("<strong>Full Description:</strong><br />%1",
-                                                report.description().replace('\n', "<br />")) +
+                QString("<strong>%1:</strong> %2<br />").arg(
+                    i18nc("@info bug report status", "Status"), report.bugStatus()) +
+                QString("<strong>%1:</strong> %2<br />").arg(
+                    i18nc("@info bug report possible resolution", "Resolution"),
+                                                                report.resolution()) +
+                QString("<strong>%1:</strong><br />%2").arg(
+                    i18nc("@info detailed bug report description", "Full Description"),
+                                                    report.description().replace('\n', "<br />")) +
                 QLatin1String("<br /><br />") +
-                i18n("<strong>Comments:</strong> %1", comments);
+                QString("<strong>%1:</strong> %2").arg(
+                    i18nc("@info bug report comments", "Comments"), comments);
 
             ui.m_infoBrowser->setText(text);
             ui.m_infoBrowser->setEnabled(true);
             
             button(KDialog::User1)->setEnabled(true);
 
-            ui.m_statusWidget->setIdle(i18nc("@info:status",
-                                                    "Showing report <numid>%1</numid>",
-                                                    report.bugNumberAsInt()));
+            ui.m_statusWidget->setIdle(i18nc("@info:status", "Showing report <numid>%1</numid>",
+                                                            report.bugNumberAsInt()));
         }
     } else {
         bugFetchError(i18nc("@info","Invalid report data"));
