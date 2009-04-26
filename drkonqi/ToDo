@@ -3,9 +3,6 @@
 # Who / What
 --------------
 
-gkiakia is working on a SystemInfo class
-- Avoid LSB messages at all if no found
-
 ##Unassigned
 -------------
 
@@ -16,7 +13,7 @@ gkiakia is working on a SystemInfo class
 - Side by side backtrace comparison on "Show report information" (duplicates step)
 - Ask for saving the report information to file when exiting the report assistant without reporting
 
-- Recheck KDevelop integration (currently it seems disabled on KDevelop side)
+- Add checkbox on the last page "launch browser on report URI when finished".
 
 #ToDiscuss
 --------
@@ -29,7 +26,7 @@ gkiakia is working on a SystemInfo class
 
 #Done/Later
 ---------
-
+- Recheck KDevelop integration (currently it seems disabled on KDevelop side)
 //Use Konqueror logic for KWallet integration [LATER]
 
 //waiting for productName()->product/component mapping (custom cgi file at BKO)
@@ -38,6 +35,8 @@ gkiakia is working on a SystemInfo class
 
 - WordWrap aboutbugreporting
 - Removed Qt::escape calls
+gkiakia is working on a SystemInfo class
+- Avoid LSB messages at all if no found
 
 -------
 #More information (IRC)

@@ -68,6 +68,8 @@ DrKonqiDialog::DrKonqiDialog(QWidget * parent) :
     buildDialogOptions();
 
     resize(minimumSize());
+    KConfigGroup config(KGlobal::config(), "General");
+    restoreDialogSize(config);
 }
 
 void DrKonqiDialog::tabIndexChanged(int index)
@@ -116,9 +118,9 @@ void DrKonqiDialog::buildMainWidget()
     //Details
     introLayout->addWidget(new QLabel(QString("<strong>%1</strong>").arg(i18nc("@label","Details:"))));
 
-    QLabel * detailsLabel = new QLabel(i18nc("@info","<para>Executable: <command>%1</command> "
-                                            "PID: <numid>%2</numid> Signal: %3 (%4)</para>",
-                                            krashConfig->appName(), krashConfig->pid(),
+    QLabel * detailsLabel = new QLabel(i18nc("@info","<para>Executable: <application>%1"
+                                            "</application> PID: <numid>%2</numid> Signal: %3 (%4)"
+                                            "</para>", krashConfig->appName(), krashConfig->pid(),
                                             krashConfig->signalNumber(), krashConfig->signalName()));
     detailsLabel->setTextInteractionFlags(Qt::TextBrowserInteraction);
     introLayout->addWidget(detailsLabel);
@@ -224,5 +226,8 @@ void DrKonqiDialog::slotNewDebuggingApp(const QString & app)
 
 DrKonqiDialog::~DrKonqiDialog()
 {
+    KConfigGroup config(KGlobal::config(), "General");
+    saveDialogSize(config);
+    
     KGlobal::deref();
 }
