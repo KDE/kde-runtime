@@ -159,7 +159,7 @@ void ConclusionPage::launchManualReport()
 
 void ConclusionPage::aboutToShow()
 {
-    disconnect(assistant(), SIGNAL(user1Clicked()));
+    assistant()->disconnect(SIGNAL(user1Clicked()), this, SLOT(launchManualReport()));
     
     needToReport = false;
     emitCompleteChanged();

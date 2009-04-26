@@ -196,6 +196,8 @@ public:
     void fetchBugReport(int);
     void searchBugs(QString words, QString product, QString severity,
                     QString date_start, QString date_end , QString comment);
+    void stopCurrentSearch();
+    
     void sendReport(BugReport);
 
     bool getLogged() {

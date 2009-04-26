@@ -79,6 +79,13 @@
        </property>
       </widget>
      </item>
+     <item>
+      <widget class="KPushButton" name="m_stopSearchButton">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
    <item>

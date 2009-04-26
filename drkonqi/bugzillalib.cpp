@@ -123,7 +123,7 @@ void BugzillaManager::fetchBugReport(int bugnumber)
     KUrl url = KUrl(QString(bugtrackerBaseUrl) + QString(fetchBugUrl).arg(bugnumber));
 
     if (m_fetchBugJob) { //Stop previous fetchBugJob
-        disconnect(m_fetchBugJob);
+        m_fetchBugJob->disconnect();
         m_fetchBugJob->kill();
         m_fetchBugJob = 0;
     }
@@ -161,14 +161,19 @@ void BugzillaManager::searchBugs(QString words, QString product, QString severit
                   QString(searchUrl).arg(words.replace(' ' , '+'), product, comment, date_start,
                                          date_end, severity, QString(columns));
 
-    if (m_searchJob) { //Stop previous searchJob
-        disconnect(m_searchJob);
-        m_searchJob->kill();
-        m_searchJob = 0;
-    }
+    stopCurrentSearch();
     
     m_searchJob = KIO::storedGet(KUrl(url) , KIO::Reload, KIO::HideProgressInfo);
     connect(m_searchJob, SIGNAL(finished(KJob*)) , this, SLOT(searchBugsDone(KJob*)));
+}
+
+void BugzillaManager::stopCurrentSearch()
+{
+    if (m_searchJob) { //Stop previous searchJob
+        m_searchJob->disconnect();
+        m_searchJob->kill();
+        m_searchJob = 0;
+    }
 }
 
 void BugzillaManager::searchBugsDone(KJob * job)

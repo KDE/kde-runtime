@@ -292,8 +292,7 @@ void BugzillaKeywordsPage::aboutToHide()
 BugzillaDuplicatesPage::BugzillaDuplicatesPage(DrKonqiBugReport * parent):
         DrKonqiAssistantPage(parent),
         m_searching(false),
-        m_infoDialog(0),
-        m_currentBugNumber(0)
+        m_infoDialog(0)
 {
     resetDates();
 
@@ -301,10 +300,6 @@ BugzillaDuplicatesPage::BugzillaDuplicatesPage(DrKonqiBugReport * parent):
              this, SLOT(searchFinished(BugMapList)));
     connect(bugzillaManager(), SIGNAL(searchError(QString)),
              this, SLOT(searchError(QString)));
-    connect(bugzillaManager(), SIGNAL(bugReportFetched(BugReport)),
-             this, SLOT(bugFetchFinished(BugReport)));
-    connect(bugzillaManager(), SIGNAL(bugReportError(QString)),
-             this, SLOT(bugFetchError(QString)));
 
     ui.setupUi(this);
 
@@ -329,6 +324,12 @@ BugzillaDuplicatesPage::BugzillaDuplicatesPage(DrKonqiBugReport * parent):
                                                    "the information of the selected bug report.")));
     connect(ui.m_openReportButton, SIGNAL(clicked()), this, SLOT(openSelectedReport()));
 
+    ui.m_stopSearchButton->setGuiItem(KGuiItem2(i18nc("@action:button", "Stop searching"),
+                                                   KIcon("process-stop"),
+                                                   i18nc("@info:tooltip", "Use this button to stop "
+                                                   "the current search.")));
+    connect(ui.m_stopSearchButton, SIGNAL(clicked()), this, SLOT(stopCurrentSearch()));
+                                                   
     connect(ui.m_foundDuplicateCheckBox , SIGNAL(stateChanged(int)), this, SLOT(checkBoxChanged(int)));
 }
 
@@ -354,6 +355,7 @@ void BugzillaDuplicatesPage::enableControls(bool enable)
 {
     ui.m_bugListWidget->setEnabled(enable);
     ui.m_searchMoreButton->setEnabled(enable);
+    ui.m_stopSearchButton->setEnabled(!enable);
     ui.m_foundDuplicateCheckBox->setEnabled(enable);
     ui.m_possibleDuplicateEdit->setEnabled(enable);
     if (enable) {
@@ -367,33 +369,14 @@ void BugzillaDuplicatesPage::enableControls(bool enable)
 
 void BugzillaDuplicatesPage::searchError(QString err)
 {
+    m_searching = false;
     enableControls(true);
 
     ui.m_statusWidget->setIdle(i18nc("@info:status","Error fetching the bug report list"));
 
-    m_searching = false;
-
-    //1 year forward
-    m_startDate = m_endDate;
-    m_endDate = m_startDate.addYears(1);
-
     KMessageBox::error(this , i18nc("@info/rich","Error fetching the bug report list<nl/>"
                                                  "<message>%1.</message><nl/>"
                                                  "Please wait some time and try again.", err));
-}
-
-void BugzillaDuplicatesPage::bugFetchError(QString err)
-{
-    if (m_infoDialog) {
-        if (m_infoDialog->isVisible()) {
-            KMessageBox::error(this , i18nc("@info/rich","Error fetching the bug report<nl/>"
-                                            "<message>%1.</message><nl/>"
-                                            "Please wait some time and try again.", err));
-            m_infoDialog->button(KDialog::User1)->setEnabled(false);
-            dialogUi.m_infoBrowser->setText(i18nc("@info","Error fetching the bug report"));
-            dialogUi.m_statusWidget->setIdle(i18nc("@info:status","Error fetching the bug report"));
-        }
-    }
 }
 
 void BugzillaDuplicatesPage::checkBoxChanged(int newState)
@@ -404,92 +387,21 @@ void BugzillaDuplicatesPage::checkBoxChanged(int newState)
 void BugzillaDuplicatesPage::itemClicked(QTreeWidgetItem * item, int col)
 {
     Q_UNUSED(col);
-
-    if (!m_infoDialog) { //Build info dialog
-        m_infoDialog = new KDialog(this);
-        m_infoDialog->setButtons(KDialog::Close | KDialog::User1);
-        m_infoDialog->setDefaultButton(KDialog::Close);
-        m_infoDialog->setCaption(i18nc("@title:window","Bug Description"));
-        m_infoDialog->setModal(true);
-
-        QWidget * widget = new QWidget(m_infoDialog);
-        dialogUi.setupUi(widget);
-        m_infoDialog->setMainWidget(widget);
-        
-        m_infoDialog->setButtonGuiItem(KDialog::User1, 
-                    KGuiItem2(i18nc("@action:button", "My crash may be a duplicate of this report"),
-                        KIcon("document-import"), i18nc("@info:tooltip", "Use this button to mark your "
-                        "crash as related to the currently shown bug report. This will help "
-                        "the KDE developers to determine whether they are duplicates or not.")));
-        connect(m_infoDialog, SIGNAL(user1Clicked()) , this, SLOT(mayBeDuplicateClicked()));
-    }
-
-    m_currentBugNumber = item->text(0).toInt();
-
-    bugzillaManager()->fetchBugReport(m_currentBugNumber);
-
-    m_infoDialog->button(KDialog::User1)->setEnabled(false);
-
-    dialogUi.m_infoBrowser->setText(i18nc("@info:status","Loading..."));
-    dialogUi.m_infoBrowser->setEnabled(false);
     
-    dialogUi.m_linkLabel->setText(i18nc("@info","<link url='%1'>Bug report page at the KDE bug "
-                                              "tracking system</link>",
-                                    bugzillaManager()->urlForBug(m_currentBugNumber)));
-
-    dialogUi.m_statusWidget->setBusy(i18nc("@info:status","Loading information about bug "
-                                                           "<numid>%1</numid> from %2....",
-                                            m_currentBugNumber,
-                                            QLatin1String(KDE_BUGZILLA_SHORT_URL)));
-    m_infoDialog->show();
+    int bugNumber = item->text(0).toInt();
+    if (bugNumber <= 0) {
+        return;
+    }
+    if (!m_infoDialog) {
+        m_infoDialog = new BugzillaReportInformationDialog(this);
+    }
+    m_infoDialog->showBugReport(bugNumber);
 }
 
-void BugzillaDuplicatesPage::mayBeDuplicateClicked()
+void BugzillaDuplicatesPage::setPossibleDuplicateNumber(int bugNumber)
 {
     ui.m_foundDuplicateCheckBox->setCheckState(Qt::Checked);
-    ui.m_possibleDuplicateEdit->setText(QString::number(m_currentBugNumber));
-    m_infoDialog->close();
-}
-
-void BugzillaDuplicatesPage::bugFetchFinished(BugReport report)
-{
-    if (report.isValid()) {
-        if (m_infoDialog) {
-            if (m_infoDialog->isVisible()) {
-                QString comments;
-                QStringList commentList = report.comments();
-                for (int i = 0; i < commentList.count(); i++) {
-                    QString comment = commentList.at(i);
-                    comment.replace('\n', "<br />");
-                    comments += "<br /><strong>----</strong><br />" + comment;
-                }
-
-                QString text =
-                    i18n("<strong>Bug ID:</strong> %1<br />", report.bugNumber()) +
-                    i18n("<strong>Product:</strong> %1/%2<br />", report.product(),
-                                                                  report.component()) +
-                    i18n("<strong>Short Description:</strong> %1<br />",
-                                                                  report.shortDescription()) +
-                    i18n("<strong>Status:</strong> %1<br />", report.bugStatus()) +
-                    i18n("<strong>Resolution:</strong> %1<br />", report.resolution()) +
-                    i18n("<strong>Full Description:</strong><br />%1",
-                                                    report.description().replace('\n', "<br />")) +
-                    QLatin1String("<br /><br />") +
-                    i18n("<strong>Comments:</strong> %1", comments);
-
-                dialogUi.m_infoBrowser->setText(text);
-                dialogUi.m_infoBrowser->setEnabled(true);
-                
-                m_infoDialog->button(KDialog::User1)->setEnabled(true);
-
-                dialogUi.m_statusWidget->setIdle(i18nc("@info:status",
-                                                        "Showing report <numid>%1</numid>",
-                                                        report.bugNumberAsInt()));
-            }
-        }
-    } else {
-        bugFetchError(i18nc("@info","Invalid report data"));
-    }
+    ui.m_possibleDuplicateEdit->setText(QString::number(bugNumber));
 }
 
 bool BugzillaDuplicatesPage::canSearchMore()
@@ -500,7 +412,7 @@ bool BugzillaDuplicatesPage::canSearchMore()
 void BugzillaDuplicatesPage::resetDates()
 {
     m_endDate = QDate::currentDate();
-    m_startDate = m_endDate.addYears(-1);
+    m_startDate = m_endDate;
 }
 
 void BugzillaDuplicatesPage::aboutToShow()
@@ -510,12 +422,12 @@ void BugzillaDuplicatesPage::aboutToShow()
         //Clear list and retrieve new reports
         ui.m_bugListWidget->clear();
         resetDates();
-        performSearch();
+        searchMore();
     } else {
         if (!m_searching) {
             //If I never searched before, performSearch
             if (ui.m_bugListWidget->topLevelItemCount() == 0 && canSearchMore()) {
-                performSearch();
+                searchMore();
             }
         }
     }
@@ -523,6 +435,8 @@ void BugzillaDuplicatesPage::aboutToShow()
 
 void BugzillaDuplicatesPage::aboutToHide()
 {
+    stopCurrentSearch();
+    
     if ((ui.m_foundDuplicateCheckBox->checkState() == Qt::Checked)
             && !ui.m_possibleDuplicateEdit->text().isEmpty()) {
         reportInfo()->setPossibleDuplicate(ui.m_possibleDuplicateEdit->text());
@@ -531,20 +445,38 @@ void BugzillaDuplicatesPage::aboutToHide()
     }
 }
 
+void BugzillaDuplicatesPage::stopCurrentSearch()
+{
+    if (m_searching) {
+        bugzillaManager()->stopCurrentSearch(); 
+        
+        m_searching = false;
+        enableControls(true);
+        if (ui.m_bugListWidget->topLevelItemCount() == 0) { //No results at all
+            ui.m_statusWidget->setIdle(i18nc("@info:status","Search stopped."));
+        } else {
+            ui.m_statusWidget->setIdle(i18nc("@info:status","Search stopped. Showing results from "
+                                        "%1 to %2", m_startDate.toString("yyyy-MM-dd"),
+                                        m_endDate.toString("yyyy-MM-dd")));
+        }
+    }
+}
+
 void BugzillaDuplicatesPage::performSearch()
 {
     m_searching = true;
-
+    
     enableControls(false);
 
-    QString startDateStr = m_startDate.toString("yyyy-MM-dd");
-    QString endDateStr = m_endDate.toString("yyyy-MM-dd");
+    QString startDateStr = m_searchingStartDate.toString("yyyy-MM-dd");
+    QString endDateStr = m_searchingEndDate.toString("yyyy-MM-dd");
 
     ui.m_statusWidget->setBusy(i18nc("@info:status","Searching for duplicates (from %1 to %2)...",
                                    startDateStr, endDateStr));
     BugReport report = reportInfo()->newBugReportTemplate();
     bugzillaManager()->searchBugs(m_currentKeywords, report.product(), report.bugSeverity(),
                                     startDateStr, endDateStr, reportInfo()->firstBacktraceFunctions().join(" "));
+
     //Test search
     /*
     bugzillaManager()->searchBugs( "konqueror crash toggle mode", "konqueror", "crash", 
@@ -555,8 +487,8 @@ void BugzillaDuplicatesPage::performSearch()
 void BugzillaDuplicatesPage::searchMore()
 {
     //1 year back
-    m_endDate = m_startDate;
-    m_startDate = m_endDate.addYears(-1);
+    m_searchingEndDate = m_startDate;
+    m_searchingStartDate = m_searchingEndDate.addYears(-1);
 
     performSearch();
 }
@@ -564,12 +496,14 @@ void BugzillaDuplicatesPage::searchMore()
 void BugzillaDuplicatesPage::searchFinished(const BugMapList & list)
 {
     m_searching = false;
-
+    
+    m_startDate = m_searchingStartDate;
+    
     int results = list.count();
     if (results > 0) {
         ui.m_statusWidget->setIdle(i18nc("@info:status","Showing results from %1 to %2",
                                      m_startDate.toString("yyyy-MM-dd"),
-                                     QDate::currentDate().toString("yyyy-MM-dd")));
+                                     m_endDate.toString("yyyy-MM-dd")));
 
         for (int i = 0; i < results; i++) {
             BugMap bug = list.at(i);
@@ -601,6 +535,117 @@ void BugzillaDuplicatesPage::searchFinished(const BugMapList & list)
 
 //END BugzillaDuplicatesPage
 
+//BEGIN BugzillaReportInformationDialog
+
+BugzillaReportInformationDialog::BugzillaReportInformationDialog(BugzillaDuplicatesPage * parent) :
+        KDialog(parent),
+        m_bugNumber(0)
+{
+    m_parent = parent;
+    
+    //Create the GUI
+    setButtons(KDialog::Close | KDialog::User1);
+    setDefaultButton(KDialog::Close);
+    setCaption(i18nc("@title:window","Bug Description"));
+    setModal(true);
+    
+    QWidget * widget = new QWidget(this);
+    ui.setupUi(widget);
+    setMainWidget(widget);
+        
+    setButtonGuiItem(KDialog::User1, 
+                KGuiItem2(i18nc("@action:button", "My crash may be a duplicate of this report"),
+                    KIcon("document-import"), i18nc("@info:tooltip", "Use this button to mark your "
+                    "crash as related to the currently shown bug report. This will help "
+                    "the KDE developers to determine whether they are duplicates or not.")));
+    connect(this, SIGNAL(user1Clicked()) , this, SLOT(mayBeDuplicateClicked()));
+
+    //Connect bugzillalib signals
+    connect(m_parent->bugzillaManager(), SIGNAL(bugReportFetched(BugReport)),
+             this, SLOT(bugFetchFinished(BugReport)));
+    connect(m_parent->bugzillaManager(), SIGNAL(bugReportError(QString)),
+             this, SLOT(bugFetchError(QString)));
+}
+
+void BugzillaReportInformationDialog::showBugReport(int bugNumber)
+{
+    m_bugNumber = bugNumber;
+    m_parent->bugzillaManager()->fetchBugReport(m_bugNumber);
+
+    button(KDialog::User1)->setEnabled(false);
+
+    ui.m_infoBrowser->setText(i18nc("@info:status","Loading..."));
+    ui.m_infoBrowser->setEnabled(false);
+    
+    ui.m_linkLabel->setText(i18nc("@info","<link url='%1'>Bug report page at the KDE bug "
+                                              "tracking system</link>",
+                                    m_parent->bugzillaManager()->urlForBug(m_bugNumber)));
+
+    ui.m_statusWidget->setBusy(i18nc("@info:status","Loading information about bug "
+                                                           "<numid>%1</numid> from %2....",
+                                            m_bugNumber,
+                                            QLatin1String(KDE_BUGZILLA_SHORT_URL)));
+    show();
+}
+
+void BugzillaReportInformationDialog::bugFetchFinished(BugReport report)
+{
+    if (report.isValid()) {
+        if (isVisible()) {
+            QString comments;
+            QStringList commentList = report.comments();
+            for (int i = 0; i < commentList.count(); i++) {
+                QString comment = commentList.at(i);
+                comment.replace('\n', "<br />");
+                comments += "<br /><strong>----</strong><br />" + comment;
+            }
+
+            QString text =
+                i18n("<strong>Bug ID:</strong> %1<br />", report.bugNumber()) +
+                i18n("<strong>Product:</strong> %1/%2<br />", report.product(),
+                                                                report.component()) +
+                i18n("<strong>Short Description:</strong> %1<br />",
+                                                                report.shortDescription()) +
+                i18n("<strong>Status:</strong> %1<br />", report.bugStatus()) +
+                i18n("<strong>Resolution:</strong> %1<br />", report.resolution()) +
+                i18n("<strong>Full Description:</strong><br />%1",
+                                                report.description().replace('\n', "<br />")) +
+                QLatin1String("<br /><br />") +
+                i18n("<strong>Comments:</strong> %1", comments);
+
+            ui.m_infoBrowser->setText(text);
+            ui.m_infoBrowser->setEnabled(true);
+            
+            button(KDialog::User1)->setEnabled(true);
+
+            ui.m_statusWidget->setIdle(i18nc("@info:status",
+                                                    "Showing report <numid>%1</numid>",
+                                                    report.bugNumberAsInt()));
+        }
+    } else {
+        bugFetchError(i18nc("@info","Invalid report data"));
+    }
+}
+
+void BugzillaReportInformationDialog::mayBeDuplicateClicked()
+{
+    m_parent->setPossibleDuplicateNumber(m_bugNumber);
+    hide();
+}
+
+void BugzillaReportInformationDialog::bugFetchError(QString err)
+{
+    if (isVisible()) {
+        KMessageBox::error(this , i18nc("@info/rich","Error fetching the bug report<nl/>"
+                                        "<message>%1.</message><nl/>"
+                                        "Please wait some time and try again.", err));
+        button(KDialog::User1)->setEnabled(false);
+        ui.m_infoBrowser->setText(i18nc("@info","Error fetching the bug report"));
+        ui.m_statusWidget->setIdle(i18nc("@info:status","Error fetching the bug report"));
+    }
+}
+
+//END BugzillaReportInformationDialog
 
 //BEGIN BugzillaInformationPage
 
@@ -711,7 +756,7 @@ BugzillaSendPage::BugzillaSendPage(DrKonqiBugReport * parent)
     connect(ui.m_retryButton, SIGNAL(clicked()), this , SLOT(retryClicked()));
     
     ui.m_launchPageOnFinish->setVisible(false);
-    
+
     connect(assistant(), SIGNAL(user1Clicked()), this, SLOT(finishClicked()));
 }
 

@@ -33,6 +33,7 @@
 namespace KWallet { class Wallet; }
 class QDate;
 class QTreeWidgetItem;
+class BugzillaReportInformationDialog;
 
 /** Bugs.kde.org login **/
 class BugzillaLoginPage: public DrKonqiAssistantPage
@@ -95,22 +96,22 @@ public:
     void aboutToShow();
     void aboutToHide();
 
+    void setPossibleDuplicateNumber(int);
+    
 private Q_SLOTS:
     void searchFinished(const BugMapList&);
     void searchError(QString);
-
+    
+    void stopCurrentSearch();
+    
     void openSelectedReport();
     void itemClicked(QTreeWidgetItem *, int);
     void itemSelectionChanged();
-
-    void bugFetchFinished(BugReport);
-    void bugFetchError(QString);
 
     void searchMore();
     void performSearch();
 
     void checkBoxChanged(int);
-    void mayBeDuplicateClicked();
 
     void enableControls(bool);
 
@@ -123,13 +124,39 @@ private:
 
     Ui::AssistantPageBugzillaDuplicates         ui;
     
-    KDialog *                                   m_infoDialog;
-    Ui::AssistantPageBugzillaDuplicatesDialog   dialogUi;
+    BugzillaReportInformationDialog *           m_infoDialog;
     
+    //Dates of current Results
     QDate                                       m_startDate;
     QDate                                       m_endDate;
-    int                                         m_currentBugNumber;
+    //Dates of searching process
+    QDate                                       m_searchingStartDate;
+    QDate                                       m_searchingEndDate;
+    
     QString                                     m_currentKeywords;
+};
+
+/** Internal bug-info dialog **/
+class BugzillaReportInformationDialog : public KDialog
+{
+    Q_OBJECT
+
+public:
+    BugzillaReportInformationDialog(BugzillaDuplicatesPage*parent=0);
+    
+    void showBugReport(int bugNumber);
+
+private Q_SLOTS:
+    void bugFetchFinished(BugReport);
+    void bugFetchError(QString);
+    
+    void mayBeDuplicateClicked();
+    
+private:
+    Ui::AssistantPageBugzillaDuplicatesDialog   ui;
+    BugzillaDuplicatesPage *                      m_parent;
+    int                                         m_bugNumber;
+    
 };
 
 /** Title and details page **/
