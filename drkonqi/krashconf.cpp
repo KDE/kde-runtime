@@ -41,7 +41,7 @@
 #include <QtCore/QHash>
 #include <QtDBus/QtDBus>
 
-#ifdef HAVE_STRSIGNAL
+#ifdef HAVE_STRSIGNAL //krazy:exclude=cpp
 # include <clocale>
 # include <cstring>
 #endif
@@ -119,7 +119,7 @@ void KrashConfig :: readConfig()
 
 QString KrashConfig::signalName() const
 {
-#ifdef HAVE_STRSIGNAL
+#ifdef HAVE_STRSIGNAL //krazy:exclude=cpp
     const char * oldLocale = std::setlocale(LC_MESSAGES, "C");
     const char *name = strsignal(m_signalnum);
     std::setlocale(LC_MESSAGES, oldLocale);

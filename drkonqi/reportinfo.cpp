@@ -29,7 +29,7 @@
 #include <kdeversion.h>
 
 #include <config-drkonqi.h>
-#ifdef HAVE_UNAME
+#ifdef HAVE_UNAME //krazy:excludeall=cpp
 # include <sys/utsname.h>
 #endif
 
