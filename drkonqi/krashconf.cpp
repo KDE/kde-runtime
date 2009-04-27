@@ -41,7 +41,7 @@
 #include <QtCore/QHash>
 #include <QtDBus/QtDBus>
 
-#ifdef HAVE_STRSIGNAL //krazy:exclude=cpp
+#ifdef HAVE_STRSIGNAL
 # include <clocale>
 # include <cstring>
 #endif
