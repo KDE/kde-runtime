@@ -175,7 +175,6 @@ void DrKonqi::saveReport(const QString & reportText, QWidget *parent)
     const KrashConfig *krashConfig = instance()->krashConfig();
     if (krashConfig->safeMode()) {
         KTemporaryFile tf;
-        tf.setPrefix(QDir::tempPath() + QDir::separator());
         tf.setSuffix(".kcrash");
         tf.setAutoRemove(false);
 
