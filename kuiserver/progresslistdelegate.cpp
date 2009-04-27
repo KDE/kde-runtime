@@ -213,7 +213,7 @@ QSize ProgressListDelegate::sizeHint(const QStyleOptionViewItem &option, const Q
         itemHeight += textSize;
     }
 
-    if (d->getPercent(index)) {
+    if (d->getPercent(index) > 0) {
         itemHeight += d->progressBar->sizeHint().height();
     }
 

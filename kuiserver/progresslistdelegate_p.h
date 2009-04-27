@@ -36,8 +36,15 @@ class ProgressListDelegate::Private
 {
 public:
     Private(QListView *listView)
-        : listView(listView)
-        , progressBar(new QProgressBar(0))
+        : listView(listView),
+          progressBar(new QProgressBar(0)),
+          separatorPixels(0),
+          leftMargin(0),
+          rightMargin(0),
+          minimumItemHeight(0),
+          minimumContentWidth(0),
+          editorHeight(0),
+          iconWidth(0)
     {
     }
 

@@ -54,32 +54,43 @@
 #include <kjob.h>
 
 UIServer *UIServer::s_uiserver = 0;
+uint UIServer::s_jobId = 1;
 
 UIServer::JobView::JobView(QObject *parent)
     : QObject(parent)
 {
-    m_objectPath.setPath(QString("/JobViewServer/JobView_%1").arg(s_jobId));
+    if (s_uiserver) {
+        m_objectPath.setPath(QString("/JobViewServer/JobView_%1").arg(s_jobId));
+        new JobViewAdaptor(this);
+        QDBusConnection::sessionBus().registerObject(m_objectPath.path(), this);
+    }
+}
 
-    new JobViewAdaptor(this);
-    QDBusConnection::sessionBus().registerObject(m_objectPath.path(), this);
+UIServer::JobView::~JobView()
+{
+    //kDebug();
 }
 
 void UIServer::JobView::terminate(const QString &errorMessage)
 {
     QModelIndex index = s_uiserver->m_progressListModel->indexForJob(this);
-
     s_uiserver->m_progressListModel->setData(index, JobInfo::Cancelled, ProgressListModel::State);
 
-    if (errorMessage.isNull())
-    {
-        s_uiserver->m_progressListFinishedModel->newJob(s_uiserver->m_progressListModel->data(index, ProgressListModel::ApplicationName).toString(),
+    if (errorMessage.isEmpty() && Configuration::radioMove()) {
+        // nasty hack due to how the model works, creating a JobView when newJob is called
+        // only this job is done, so we don't actually need nor want it on the bus
+        uint jobId = s_jobId;
+        s_jobId = 0;
+        JobView *finis = s_uiserver->m_progressListFinishedModel->newJob(s_uiserver->m_progressListModel->data(index, ProgressListModel::ApplicationName).toString(),
                                                         s_uiserver->m_progressListModel->data(index, ProgressListModel::Icon).toString(),
                                                         s_uiserver->m_progressListModel->data(index, ProgressListModel::Capabilities).toInt());
+        finis->setSuspended(true);
+        s_jobId = jobId;
     }
 
-    s_uiserver->m_progressListModel->finishJob(this);
-
     QDBusConnection::sessionBus().unregisterObject(m_objectPath.path(), QDBusConnection::UnregisterTree);
+    s_uiserver->m_progressListModel->finishJob(this);
+    deleteLater();
 }
 
 void UIServer::JobView::setSuspended(bool suspended)
@@ -171,16 +182,13 @@ QDBusObjectPath UIServer::JobView::objectPath() const
 }
 
 UIServer::UIServer()
-    : KXmlGuiWindow(0)
+    : KXmlGuiWindow(0),
+      m_systemTray(0)
 {
     // Register necessary services and D-Bus adaptors.
     new JobViewServerAdaptor(this);
     QDBusConnection::sessionBus().registerService(QLatin1String("org.kde.JobViewServer"));
     QDBusConnection::sessionBus().registerObject(QLatin1String("/JobViewServer"), this);
-
-    QWidget *centralWidget = new QWidget(this);
-    QVBoxLayout *layout = new QVBoxLayout;
-    centralWidget->setLayout(layout);
 
     tabWidget = new KTabWidget(this);
 
@@ -219,10 +227,7 @@ UIServer::UIServer()
     listFinished->setObjectName("progresslistFinished");
     listFinished->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
 
-    layout->addWidget(listProgress);
-
-    tabWidget->addTab(centralWidget, i18n("In Progress"));
-    //tabWidget->addTab(listFinished, i18n("Finished"));
+    tabWidget->addTab(listProgress, i18n("In Progress"));
 
     setCentralWidget(tabWidget);
 
@@ -275,20 +280,31 @@ QDBusObjectPath UIServer::requestView(const QString &appName, const QString &app
     if (!s_jobId) s_jobId++;
 
     JobView *jobView = m_progressListModel->newJob(appName, appIconName, capabilities);
-
     return jobView->objectPath();
 }
 
 void UIServer::updateConfiguration()
 {
     Configuration::self()->writeConfig();
+    applySettings();
 }
 
 void UIServer::applySettings()
 {
-     KSystemTrayIcon *m_systemTray = new KSystemTrayIcon(this);
-     m_systemTray->setIcon(KSystemTrayIcon::loadIcon("display"));
-     m_systemTray->show();
+    int finishedIndex = tabWidget->indexOf(listFinished);
+    if (Configuration::radioMove()) {
+        if (finishedIndex == -1) {
+            tabWidget->addTab(listFinished, i18n("Finished"));
+        }
+    } else if (finishedIndex != -1) {
+        tabWidget->removeTab(finishedIndex);
+    }
+
+    if (!m_systemTray) {
+        KSystemTrayIcon *m_systemTray = new KSystemTrayIcon(this);
+        m_systemTray->setIcon(KSystemTrayIcon::loadIcon("display"));
+        m_systemTray->show();
+    }
 }
 
 void UIServer::closeEvent(QCloseEvent *event)
@@ -338,8 +354,6 @@ UIConfigurationDialog::~UIConfigurationDialog()
 
 /// ===========================================================
 
-
-uint UIServer::s_jobId = 0;
 
 extern "C" KDE_EXPORT int kdemain(int argc, char **argv)
 {

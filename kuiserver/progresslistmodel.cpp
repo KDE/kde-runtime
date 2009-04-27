@@ -39,8 +39,9 @@ QVariant ProgressListModel::data(const QModelIndex &index, int role) const
 {
     QVariant result;
 
-    if (!index.isValid())
+    if (!index.isValid()) {
         return result;
+    }
 
     JobInfo jobInfo = jobInfoMap[static_cast<UIServer::JobView*>(index.internalPointer())];
 
@@ -100,15 +101,19 @@ QModelIndex ProgressListModel::index(int row, int column, const QModelIndex &par
 {
     Q_UNUSED(parent);
 
-    if (row >= rowCount())
+    if (row >= jobInfoMap.count() || column > 0)
         return QModelIndex();
 
     int i = 0;
     UIServer::JobView *jobView = 0;
-    foreach (UIServer::JobView *jv, jobInfoMap.keys()) {
-        jobView = jv;
-        if (i == row)
+    QMap<UIServer::JobView*, JobInfo>::const_iterator it = jobInfoMap.constBegin();
+    QMap<UIServer::JobView*, JobInfo>::const_iterator itEnd = jobInfoMap.constEnd();
+    while (it != itEnd) {
+        jobView = it.key();
+        if (i == row) {
             break;
+        }
+        ++it;
         ++i;
     }
 
@@ -118,9 +123,13 @@ QModelIndex ProgressListModel::index(int row, int column, const QModelIndex &par
 QModelIndex ProgressListModel::indexForJob(UIServer::JobView *jobView) const
 {
     int i = 0;
-    foreach (UIServer::JobView *jv, jobInfoMap.keys()) {
-        if (jv == jobView)
-            return createIndex(i, 0, jv);
+    QMap<UIServer::JobView*, JobInfo>::const_iterator it = jobInfoMap.constBegin();
+    QMap<UIServer::JobView*, JobInfo>::const_iterator itEnd = jobInfoMap.constEnd();
+    while (it != itEnd) {
+        if (it.key() == jobView) {
+            return createIndex(i, 0, jobView);
+        }
+        ++it;
         ++i;
     }
 
@@ -183,8 +192,6 @@ bool ProgressListModel::setData(const QModelIndex &index, const QVariant &value,
 
 UIServer::JobView* ProgressListModel::newJob(const QString &appName, const QString &appIcon, int capabilities)
 {
-    insertRow(rowCount());
-
     JobInfo newJob;
     newJob.jobView = new UIServer::JobView();
     newJob.sizeTotals.clear();
@@ -201,21 +208,20 @@ UIServer::JobView* ProgressListModel::newJob(const QString &appName, const QStri
     newJob.capabilities = capabilities;
     jobInfoMap.insert(newJob.jobView, newJob);
 
+    insertRow(rowCount());
     return newJob.jobView;
 }
 
 
 void ProgressListModel::finishJob(UIServer::JobView *jobView)
 {
-    beginRemoveRows(QModelIndex(), rowCount() - 1, rowCount() - 1);
-
     QModelIndex indexToRemove = indexForJob(jobView);
 
     if (indexToRemove.isValid()) {
+        beginRemoveRows(QModelIndex(), indexToRemove.row(), indexToRemove.row());
         jobInfoMap.remove(jobView);
+        endRemoveRows();
     }
-
-    endRemoveRows();
 }
 
 QPair<QString, QString> ProgressListModel::getDescriptionField(const QModelIndex &index, uint id)

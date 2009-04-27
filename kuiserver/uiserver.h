@@ -40,6 +40,7 @@ class QToolBar;
 class KTabWidget;
 class KLineEdit;
 class KPushButton;
+class KSystemTrayIcon;
 class OrgKdeJobViewInterface;
 class JobViewAdaptor;
 
@@ -81,6 +82,7 @@ private:
 
     QToolBar *toolBar;
     KLineEdit *searchText;
+    KSystemTrayIcon *m_systemTray;
 
     static uint s_jobId;
     static UIServer *s_uiserver;
@@ -96,6 +98,7 @@ class UIServer::JobView
 
 public:
     JobView(QObject *parent = 0);
+    ~JobView();
 
     void terminate(const QString &errorMessage);
     void setSuspended(bool suspended);

@@ -6,11 +6,11 @@
     <group name="Configuration">
         <entry key="radioMove" type="Bool">
             <label>Move them to a different list.</label>
-            <default>true</default>
+            <default>false</default>
         </entry>
         <entry key="radioRemove" type="Bool">
             <label>Remove them.</label>
-            <default>false</default>
+            <default>true</default>
         </entry>
         <entry key="radioList" type="Bool">
             <label>Show all jobs in a list.</label>
