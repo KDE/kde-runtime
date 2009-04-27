@@ -119,7 +119,7 @@ void KrashConfig :: readConfig()
 
 QString KrashConfig::signalName() const
 {
-#ifdef HAVE_STRSIGNAL //krazy:exclude=cpp
+#ifdef HAVE_STRSIGNAL
     const char * oldLocale = std::setlocale(LC_MESSAGES, "C");
     const char *name = strsignal(m_signalnum);
     std::setlocale(LC_MESSAGES, oldLocale);

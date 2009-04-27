@@ -195,7 +195,8 @@ QString ReportInfo::generateReport() const
 //if the values change on the server side, they need to be updated here as well.
 static inline QString bugzillaOs()
 {
-#if defined(Q_OS_LINUX) //krazy:excludeall=cpp
+//krazy:excludeall=cpp
+#if defined(Q_OS_LINUX)
     return QLatin1String("Linux");
 #elif defined(Q_OS_FREEBSD)
     return QLatin1String("FreeBSD");
