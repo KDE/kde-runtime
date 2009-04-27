@@ -119,6 +119,7 @@ Q_SIGNALS:
 
 private:
     QDBusObjectPath m_objectPath;
+    uint m_jobId;
 
     friend class ProgressListDelegate;
 };

@@ -264,17 +264,19 @@ QList<QWidget*> ProgressListDelegate::createItemWidgets() const
 
     KPushButton *pauseResumeButton = new KPushButton(KIcon("media-playback-pause"), i18n("Pause"));
     KPushButton *cancelButton = new KPushButton(KIcon("media-playback-stop"), i18n("Cancel"));
+    KPushButton *clearButton = new KPushButton(KIcon("edit-clear"), i18n("Clear"));
     QProgressBar *progressBar = new QProgressBar();
 
     connect(pauseResumeButton, SIGNAL(clicked(bool)), this, SLOT(slotPauseResumeClicked()));
     connect(cancelButton, SIGNAL(clicked(bool)), this, SLOT(slotCancelClicked()));
+    connect(clearButton, SIGNAL(clicked(bool)), this, SLOT(slotClearClicked()));
 
     setBlockedEventTypes(pauseResumeButton, QList<QEvent::Type>() << QEvent::MouseButtonPress
                             << QEvent::MouseButtonRelease << QEvent::MouseButtonDblClick);
     setBlockedEventTypes(cancelButton, QList<QEvent::Type>() << QEvent::MouseButtonPress
                             << QEvent::MouseButtonRelease << QEvent::MouseButtonDblClick);
 
-    widgetList << pauseResumeButton << cancelButton << progressBar;
+    widgetList << pauseResumeButton << cancelButton << progressBar << clearButton;
 
     return widgetList;
 }
@@ -287,9 +289,15 @@ void ProgressListDelegate::updateItemWidgets(const QList<QWidget*> widgets,
         return;
     }
 
-    KPushButton *cancelButton = static_cast<KPushButton*>(widgets[1]);
     KPushButton *pauseResumeButton = static_cast<KPushButton*>(widgets[0]);
+    KPushButton *cancelButton = static_cast<KPushButton*>(widgets[1]);
     QProgressBar *progressBar = static_cast<QProgressBar*>(widgets[2]);
+    KPushButton *clearButton = static_cast<KPushButton*>(widgets[3]);
+
+    int percent = d->getPercent(index);
+    cancelButton->setVisible(percent < 100);
+    pauseResumeButton->setVisible(percent < 100);
+    clearButton->setVisible(percent > 99);
 
     KJob::Capabilities capabilities = (KJob::Capabilities) index.model()->data(index, ProgressListModel::Capabilities).toInt();
     cancelButton->setEnabled(capabilities & KJob::Killable);
@@ -307,20 +315,27 @@ void ProgressListDelegate::updateItemWidgets(const QList<QWidget*> widgets,
             break;
     }
 
-    progressBar->setValue(d->getPercent(index));
+    QSize progressBarButtonSizeHint;
+    if (percent < 100) {
+        QSize cancelButtonSizeHint = cancelButton->sizeHint();
+        cancelButton->resize(cancelButtonSizeHint);
+        cancelButton->move(option.rect.width() - d->separatorPixels - cancelButtonSizeHint.width(), option.rect.height() - d->separatorPixels - cancelButtonSizeHint.height());
 
-    QSize cancelButtonSizeHint = cancelButton->sizeHint();
-    cancelButton->resize(cancelButtonSizeHint);
-    cancelButton->move(option.rect.width() - d->separatorPixels - cancelButtonSizeHint.width(), option.rect.height() - d->separatorPixels - cancelButtonSizeHint.height());
+        QSize pauseResumeButtonSizeHint = pauseResumeButton->sizeHint();
+        pauseResumeButton->resize(pauseResumeButtonSizeHint);
+        pauseResumeButton->move(option.rect.width() - d->separatorPixels * 2 - pauseResumeButtonSizeHint.width() - cancelButtonSizeHint.width(), option.rect.height() - d->separatorPixels - pauseResumeButtonSizeHint.height());
+        progressBarButtonSizeHint = pauseResumeButtonSizeHint;
+    } else {
+        progressBarButtonSizeHint = clearButton->sizeHint();
+        clearButton->resize(progressBarButtonSizeHint);
+        clearButton->move(option.rect.width() - d->separatorPixels - progressBarButtonSizeHint.width(), option.rect.height() - d->separatorPixels - progressBarButtonSizeHint.height());
+    }
 
-    QSize pauseResumeButtonSizeHint = pauseResumeButton->sizeHint();
-    pauseResumeButton->resize(pauseResumeButtonSizeHint);
-    pauseResumeButton->move(option.rect.width() - d->separatorPixels * 2 - pauseResumeButtonSizeHint.width() - cancelButtonSizeHint.width(), option.rect.height() - d->separatorPixels - pauseResumeButtonSizeHint.height());
-
+    progressBar->setValue(percent);
     QFontMetrics fm(QApplication::font());
     QSize progressBarSizeHint = progressBar->sizeHint();
     progressBar->resize(QSize(option.rect.width() - d->getCurrentLeftMargin(fm.height()) - d->rightMargin, progressBarSizeHint.height()));
-    progressBar->move(d->getCurrentLeftMargin(fm.height()), option.rect.height() - d->separatorPixels * 2 - pauseResumeButtonSizeHint.height() - progressBarSizeHint.height());
+    progressBar->move(d->getCurrentLeftMargin(fm.height()), option.rect.height() - d->separatorPixels * 2 - progressBarButtonSizeHint.height() - progressBarSizeHint.height());
 }
 
 void ProgressListDelegate::slotPauseResumeClicked()
@@ -349,6 +364,15 @@ void ProgressListDelegate::slotCancelClicked()
     UIServer::JobView *jobView = index.model()->data(index, ProgressListModel::JobViewRole).value<UIServer::JobView*>();
     if (jobView) {
         emit jobView->cancelRequested();
+    }
+}
+
+void ProgressListDelegate::slotClearClicked()
+{
+    const QModelIndex index = focusedIndex();
+    UIServer::JobView *jobView = index.model()->data(index, ProgressListModel::JobViewRole).value<UIServer::JobView*>();
+    if (jobView) {
+        jobView->terminate(QString());
     }
 }
 

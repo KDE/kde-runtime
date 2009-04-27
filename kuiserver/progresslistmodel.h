@@ -139,6 +139,7 @@ public:
       */
     bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
 
+    void addFinishedJob(ProgressListModel *model, const QModelIndex &index);
     UIServer::JobView* newJob(const QString &appName, const QString &appIcon, int capabilities);
 
     void finishJob(UIServer::JobView *jobView);

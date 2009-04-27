@@ -55,6 +55,7 @@ protected:
 private Q_SLOTS:
     void slotPauseResumeClicked();
     void slotCancelClicked();
+    void slotClearClicked();
 
 private:
     class Private;

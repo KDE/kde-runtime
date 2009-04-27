@@ -43,7 +43,7 @@ QVariant ProgressListModel::data(const QModelIndex &index, int role) const
         return result;
     }
 
-    JobInfo jobInfo = jobInfoMap[static_cast<UIServer::JobView*>(index.internalPointer())];
+    JobInfo &jobInfo = const_cast<ProgressListModel*>(this)->jobInfoMap[static_cast<UIServer::JobView*>(index.internalPointer())];
 
     switch (role)
     {
@@ -109,15 +109,19 @@ QModelIndex ProgressListModel::index(int row, int column, const QModelIndex &par
     QMap<UIServer::JobView*, JobInfo>::const_iterator it = jobInfoMap.constBegin();
     QMap<UIServer::JobView*, JobInfo>::const_iterator itEnd = jobInfoMap.constEnd();
     while (it != itEnd) {
-        jobView = it.key();
         if (i == row) {
+            jobView = it.key();
             break;
         }
         ++it;
         ++i;
     }
 
-    return createIndex(row, column, jobView);
+    if (jobView) {
+        return createIndex(row, column, jobView);
+    } else {
+        return QModelIndex();
+    }
 }
 
 QModelIndex ProgressListModel::indexForJob(UIServer::JobView *jobView) const
@@ -190,6 +194,19 @@ bool ProgressListModel::setData(const QModelIndex &index, const QVariant &value,
     return true;
 }
 
+void ProgressListModel::addFinishedJob(ProgressListModel *model, const QModelIndex &index)
+{
+    if (!index.isValid()) {
+        return;
+    }
+
+    JobInfo newJob = model->jobInfoMap[static_cast<UIServer::JobView*>(index.internalPointer())];
+    newJob.jobView = new UIServer::JobView();
+    newJob.percent = 100;
+    jobInfoMap.insert(newJob.jobView, newJob);
+    insertRow(rowCount());
+}
+
 UIServer::JobView* ProgressListModel::newJob(const QString &appName, const QString &appIcon, int capabilities)
 {
     JobInfo newJob;
@@ -216,7 +233,6 @@ UIServer::JobView* ProgressListModel::newJob(const QString &appName, const QStri
 void ProgressListModel::finishJob(UIServer::JobView *jobView)
 {
     QModelIndex indexToRemove = indexForJob(jobView);
-
     if (indexToRemove.isValid()) {
         beginRemoveRows(QModelIndex(), indexToRemove.row(), indexToRemove.row());
         jobInfoMap.remove(jobView);

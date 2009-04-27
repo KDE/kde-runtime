@@ -57,9 +57,10 @@ UIServer *UIServer::s_uiserver = 0;
 uint UIServer::s_jobId = 1;
 
 UIServer::JobView::JobView(QObject *parent)
-    : QObject(parent)
+    : QObject(parent),
+      m_jobId(s_jobId)
 {
-    if (s_uiserver) {
+    if (s_jobId) {
         m_objectPath.setPath(QString("/JobViewServer/JobView_%1").arg(s_jobId));
         new JobViewAdaptor(this);
         QDBusConnection::sessionBus().registerObject(m_objectPath.path(), this);
@@ -73,23 +74,35 @@ UIServer::JobView::~JobView()
 
 void UIServer::JobView::terminate(const QString &errorMessage)
 {
-    QModelIndex index = s_uiserver->m_progressListModel->indexForJob(this);
-    s_uiserver->m_progressListModel->setData(index, JobInfo::Cancelled, ProgressListModel::State);
+    ProgressListModel *model;
 
-    if (errorMessage.isEmpty() && Configuration::radioMove()) {
-        // nasty hack due to how the model works, creating a JobView when newJob is called
-        // only this job is done, so we don't actually need nor want it on the bus
-        uint jobId = s_jobId;
-        s_jobId = 0;
-        JobView *finis = s_uiserver->m_progressListFinishedModel->newJob(s_uiserver->m_progressListModel->data(index, ProgressListModel::ApplicationName).toString(),
-                                                        s_uiserver->m_progressListModel->data(index, ProgressListModel::Icon).toString(),
-                                                        s_uiserver->m_progressListModel->data(index, ProgressListModel::Capabilities).toInt());
-        finis->setSuspended(true);
-        s_jobId = jobId;
+    if (m_jobId) {
+        model = s_uiserver->m_progressListModel;
+    } else {
+        model = s_uiserver->m_progressListFinishedModel;
     }
 
-    QDBusConnection::sessionBus().unregisterObject(m_objectPath.path(), QDBusConnection::UnregisterTree);
-    s_uiserver->m_progressListModel->finishJob(this);
+    QModelIndex index = model->indexForJob(this);
+
+    if (!index.isValid()) {
+        deleteLater();
+        return;
+    }
+
+    if (model == s_uiserver->m_progressListModel) {
+        model->setData(index, JobInfo::Cancelled, ProgressListModel::State);
+
+        if (errorMessage.isEmpty() && Configuration::radioMove()) {
+            uint jobId = s_jobId;
+            s_jobId = 0;
+            s_uiserver->m_progressListFinishedModel->addFinishedJob(s_uiserver->m_progressListModel, index);
+            s_jobId = jobId;
+        }
+
+        QDBusConnection::sessionBus().unregisterObject(m_objectPath.path(), QDBusConnection::UnregisterTree);
+    }
+
+    model->finishJob(this);
     deleteLater();
 }
 
