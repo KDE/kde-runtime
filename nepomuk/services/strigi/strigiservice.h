@@ -25,6 +25,7 @@
 namespace Strigi {
     class IndexManager;
 }
+class FileSystemWatcher;
 
 namespace Nepomuk {
 
@@ -41,11 +42,27 @@ namespace Nepomuk {
         StrigiService( QObject* parent = 0, const QList<QVariant>& args = QList<QVariant>() );
         ~StrigiService();
 
+        IndexScheduler* indexScheduler() const { return m_indexScheduler; }
+
+    Q_SIGNALS:
+        void statusStringChanged();
+
+    public Q_SLOTS:
+        /**
+         * \return A user readable status string
+         */
+        QString userStatusString() const;
+
+    private Q_SLOTS:
+        void updateWatches();
+
     private:
         void updateStrigiConfig();
 
         Strigi::IndexManager* m_indexManager;
         IndexScheduler* m_indexScheduler;
+
+        FileSystemWatcher* m_fsWatcher;
     };
 }
 

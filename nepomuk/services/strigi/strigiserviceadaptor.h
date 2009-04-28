@@ -26,7 +26,6 @@
 
 namespace Nepomuk {
 
-    class IndexScheduler;
     class StrigiService;
 
     class StrigiServiceAdaptor: public QDBusAbstractAdaptor
@@ -60,6 +59,10 @@ namespace Nepomuk {
                     "      <arg name=\"lastModificationDate\" direction=\"in\" type=\"u\" />\n"
                     "      <arg name=\"tmpFileName\" direction=\"in\" type=\"s\" />\n"
                     "    </method>\n"
+                    "    <method name=\"userStatusString\" >\n"
+                    "      <arg direction=\"out\" type=\"s\" />\n"
+                    "    </method>\n"
+                    "    <signal name=\"statusChanged\" />\n"
                     "    <signal name=\"indexingStarted\" />\n"
                     "    <signal name=\"indexingStopped\" />\n"
                     "    <signal name=\"indexingFolder\" >\n"
@@ -69,7 +72,7 @@ namespace Nepomuk {
                     "")
 
     public:
-        StrigiServiceAdaptor( IndexScheduler* scheduler, StrigiService* parent );
+        StrigiServiceAdaptor( StrigiService* parent );
         ~StrigiServiceAdaptor();
 
     public Q_SLOTS:
@@ -82,14 +85,16 @@ namespace Nepomuk {
         void updateAllFolders();
         void analyzeResource( const QString& uri, uint mTime, const QByteArray& data );
         void analyzeResourceFromTempFileAndDeleteTempFile( const QString& uri, uint mTime, const QString& tmpFile );
+        QString userStatusString() const;
 
     Q_SIGNALS:
+        void statusChanged();
         void indexingFolder( const QString& path );
         void indexingStarted();
         void indexingStopped();
 
     private:
-        IndexScheduler* m_indexScheduler;
+        StrigiService* m_service;
     };
 }
 

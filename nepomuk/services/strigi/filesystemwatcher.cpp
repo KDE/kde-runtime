@@ -55,6 +55,7 @@ public:
     Private( FileSystemWatcher* parent )
         : recursive( true ),
           interval( 10*60 ),
+          status( FileSystemWatcher::Idle ),
           q( parent ) {
     }
 
@@ -62,6 +63,8 @@ public:
     QHash<QString, FolderEntry> cache;
     bool recursive;
     int interval;
+
+    FileSystemWatcher::Status status;
 
     void start( const QDateTime& startTime );
     void stop();
@@ -113,7 +116,11 @@ void FileSystemWatcher::Private::run()
         }
 
         // check all folders
+        status = Checking;
+        emit q->statusChanged( Checking );
         checkFolders();
+        status = Idle;
+        emit q->statusChanged( Idle );
 
         // check if we have been stopped
         QMutexLocker lock( &m_stoppedMutex );
@@ -239,6 +246,12 @@ bool FileSystemWatcher::watchRecursively() const
 int FileSystemWatcher::interval() const
 {
     return d->interval;
+}
+
+
+FileSystemWatcher::Status FileSystemWatcher::status() const
+{
+    return d->status;
 }
 
 

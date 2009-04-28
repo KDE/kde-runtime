@@ -39,6 +39,13 @@ public:
     bool watchRecursively() const;
     int interval() const;
 
+    enum Status {
+        Checking,
+        Idle
+    };
+
+    Status status() const;
+
 public Q_SLOTS:
     void setFolders( const QStringList& folders );
 
@@ -67,6 +74,8 @@ Q_SIGNALS:
      * changed.
      */
     void dirty( const QString& folder );
+
+    void statusChanged( FileSystemWatcher::Status status );
 
 private:
     class Private;

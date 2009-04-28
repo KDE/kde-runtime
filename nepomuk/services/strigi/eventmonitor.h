@@ -25,7 +25,6 @@
 #include <QtCore/QTime>
 
 class KDiskFreeSpace;
-class FileSystemWatcher;
 
 namespace Nepomuk {
 
@@ -41,7 +40,6 @@ namespace Nepomuk {
 
     private Q_SLOTS:
         void slotPowerManagementStatusChanged( bool conserveResources );
-        void updateWatches();
         void slotCheckAvailableSpace();
         void slotIndexingStopped();
         void slotDirDirty( const QString& );
@@ -55,8 +53,6 @@ namespace Nepomuk {
 
         IndexScheduler* m_indexScheduler;
         int m_pauseState;
-
-        FileSystemWatcher* m_fsWatcher;
 
         // timer used to periodically check for available space
         QTimer m_availSpaceTimer;

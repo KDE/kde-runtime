@@ -28,6 +28,10 @@
       <arg name="name" type="s" direction="in" />
       <arg name="result" type="b" direction="out" />
     </method>
+    <method name="isServiceRunning">
+      <arg name="name" type="s" direction="in" />
+      <arg name="result" type="b" direction="out" />
+    </method>
     <signal name="serviceInitialized">
       <arg name="name" type="s" direction="out" />
     </signal>

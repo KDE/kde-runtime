@@ -46,12 +46,14 @@ namespace Nepomuk {
          * Even uninitialized services are running.
          *
          * \return A list of names of all running services.
+         *
+         * \sa isServiceRunning, isServiceInitialized
          */
         QStringList runningServices() const;
 
         /**
          * All services that are available in the system. Started
-         * and not started. This list does only include valid 
+         * and not started. This list does only include valid
          * services, i.e. those that have a proper dependency tree.
          *
          * \return A list of names of all running services.
@@ -61,8 +63,18 @@ namespace Nepomuk {
         /**
          * \return \p true if the service identified by \p servicename
          * is running and initialized.
+         *
+         * \sa isServiceRunning
          */
         bool isServiceInitialized( const QString& servicename ) const;
+
+        /**
+         * \return \p true if the service identified by \p servicename
+         * is running.
+         *
+         * \sa isServiceInitialized
+         */
+        bool isServiceRunning( const QString& servicename ) const;
 
     Q_SIGNALS:
         /**

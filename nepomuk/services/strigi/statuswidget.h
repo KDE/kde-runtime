@@ -34,14 +34,14 @@ namespace Soprano {
 
 namespace Nepomuk {
 
-    class IndexScheduler;
+    class StrigiService;
 
     class StatusWidget : public KDialog, public Ui::StatusWidget
     {
         Q_OBJECT
 
     public:
-        StatusWidget( Soprano::Model* model, IndexScheduler* scheduler, QWidget* parent = 0 );
+        StatusWidget( Soprano::Model* model, StrigiService* service, QWidget* parent = 0 );
         ~StatusWidget();
 
     private Q_SLOTS:
@@ -57,7 +57,7 @@ namespace Nepomuk {
         void hideEvent( QHideEvent* event );
 
         Soprano::Model* m_model;
-        IndexScheduler* m_indexScheduler;
+        StrigiService* m_service;
 
         bool m_connected;
         QTimer m_updateTimer;

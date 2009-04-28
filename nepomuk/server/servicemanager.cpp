@@ -412,6 +412,17 @@ bool Nepomuk::ServiceManager::isServiceInitialized( const QString& service ) con
 }
 
 
+bool Nepomuk::ServiceManager::isServiceRunning( const QString& service ) const
+{
+    if ( ServiceController* sc = d->findService( service ) ) {
+        return sc->isRunning();
+    }
+    else {
+        return false;
+    }
+}
+
+
 bool Nepomuk::ServiceManager::isServiceAutostarted( const QString& name )
 {
     if ( ServiceController* sc = d->findService( name ) ) {

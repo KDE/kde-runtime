@@ -25,6 +25,7 @@
 #include "strigiserviceconfig.h"
 #include "statuswidget.h"
 #include "nepomukstorageinterface.h"
+#include "filesystemwatcher.h"
 
 #include <KDebug>
 
@@ -40,6 +41,7 @@ Nepomuk::StrigiService::StrigiService( QObject* parent, const QList<QVariant>& )
     // only so ResourceManager won't open yet another connection to the nepomuk server
     ResourceManager::instance()->setOverrideMainModel( mainModel() );
 
+
     // lower process priority - we do not want to spoil KDE usage
     // ==============================================================
     if ( !lowerPriority() )
@@ -49,6 +51,7 @@ Nepomuk::StrigiService::StrigiService( QObject* parent, const QList<QVariant>& )
     if ( !lowerIOPriority() )
         kDebug() << "Failed to lower io priority.";
 
+
     // Using Strigi with the redland backend is torture.
     // Thus we simply fail initialization if it is used
     // ==============================================================
@@ -56,16 +59,50 @@ Nepomuk::StrigiService::StrigiService( QObject* parent, const QList<QVariant>& )
                                      "/nepomukstorage",
                                      QDBusConnection::sessionBus() )
          .usedSopranoBackend().value() != QString::fromLatin1( "redland" ) ) {
+
         // setup the actual index scheduler including strigi stuff
         // ==============================================================
         if ( ( m_indexManager = Strigi::IndexPluginLoader::createIndexManager( "sopranobackend", 0 ) ) ) {
             m_indexScheduler = new IndexScheduler( m_indexManager, this );
 
+            // monitor all kinds of events
             ( void )new EventMonitor( m_indexScheduler, this );
-            ( void )new StrigiServiceAdaptor( m_indexScheduler, this );
-            StatusWidget* sw = new StatusWidget( mainModel(), m_indexScheduler );
-            ( new SystemTray( m_indexScheduler, sw ) )->show();
 
+            // monitor the file system
+            m_fsWatcher = new FileSystemWatcher( this );
+            m_fsWatcher->setWatchRecursively( true );
+            connect( m_fsWatcher, SIGNAL( dirty( QString ) ),
+                     this, SLOT( slotDirDirty( QString ) ) );
+
+            // update the watches if the config changes
+            connect( StrigiServiceConfig::self(), SIGNAL( configChanged() ),
+                     this, SLOT( updateWatches() ) );
+
+            // export on dbus
+            ( void )new StrigiServiceAdaptor( this );
+
+            // create the status widget (hidden)
+            StatusWidget* sw = new StatusWidget( mainModel(), this );
+
+            // create the systray
+            SystemTray* tray =  new SystemTray( this, sw );
+            tray->show();
+
+            // setup status connections
+            connect( m_indexScheduler, SIGNAL( indexingStarted() ),
+                     this, SIGNAL( statusStringChanged() ) );
+            connect( m_indexScheduler, SIGNAL( indexingStopped() ),
+                     this, SIGNAL( statusStringChanged() ) );
+            connect( m_indexScheduler, SIGNAL( indexingFolder(QString) ),
+                     this, SIGNAL( statusStringChanged() ) );
+            connect( m_fsWatcher, SIGNAL( statusChanged(FileSystemWatcher::Status) ),
+                     this, SIGNAL( statusStringChanged() ) );
+
+
+            // start watching the index folders
+            updateWatches();
+
+            // start the actual indexing
             m_indexScheduler->start();
         }
         else {
@@ -91,6 +128,35 @@ Nepomuk::StrigiService::~StrigiService()
         m_indexScheduler->wait();
         Strigi::IndexPluginLoader::deleteIndexManager( m_indexManager );
     }
+}
+
+
+void Nepomuk::StrigiService::updateWatches()
+{
+    // the hard way since the KDirWatch API is too simple
+    QStringList folders = StrigiServiceConfig::self()->folders();
+    if ( folders != m_fsWatcher->folders() ) {
+        m_fsWatcher->setFolders( StrigiServiceConfig::self()->folders() );
+        m_fsWatcher->setInterval( 2*60 ); // check every 2 minutes
+        m_fsWatcher->start();
+    }
+}
+
+
+QString Nepomuk::StrigiService::userStatusString() const
+{
+    bool indexing = m_indexScheduler->isIndexing();
+    bool suspended = m_indexScheduler->isSuspended();
+    QString folder = m_indexScheduler->currentFolder();
+
+    if ( suspended )
+        return i18nc( "@info:status", "File indexer is suspended" );
+    else if ( indexing )
+        return i18nc( "@info:status", "Strigi is currently indexing files in folder %1", folder );
+    else if ( m_fsWatcher->status() == FileSystemWatcher::Checking )
+        return i18nc( "@info:status", "Checking file system for new files" );
+    else
+        return i18nc( "@info:status", "File indexer is idle" );
 }
 
 

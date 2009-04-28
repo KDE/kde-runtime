@@ -196,20 +196,13 @@ void Nepomuk::ServerConfigModule::slotUpdateStrigiStatus()
 {
     if ( m_serviceManagerInterface.runningServices().value().contains( "nepomukstrigiservice") ) {
         if ( m_serviceManagerInterface.isServiceInitialized( "nepomukstrigiservice") ) {
-            bool indexing = m_strigiInterface->isIndexing();
-            bool suspended = m_strigiInterface->isSuspended();
-            QString folder = m_strigiInterface->currentFolder();
-
-            if ( m_strigiInterface->lastError().isValid() )
+            QString status = m_strigiInterface->userStatusString();
+            if ( status.isEmpty() )
                 m_labelStrigiStatus->setText( i18nc( "@info:status %1 is an error message returned by a dbus interface.",
                                                      "Failed to contact Strigi indexer (%1)",
                                                      m_strigiInterface->lastError().message() ) );
-            else if ( suspended )
-                m_labelStrigiStatus->setText( i18nc( "@info_status", "File indexer is suspended" ) );
-            else if ( indexing )
-                m_labelStrigiStatus->setText( i18nc( "@info_status", "Strigi is currently indexing files in folder %1", folder ) );
             else
-                m_labelStrigiStatus->setText( i18nc( "@info_status", "File indexer is idle" ) );
+                m_labelStrigiStatus->setText( status );
         }
         else {
             m_labelStrigiStatus->setText( i18nc( "@info_status", "Strigi service failed to initialize, most likely due to an installation problem." ) );
@@ -225,11 +218,7 @@ void Nepomuk::ServerConfigModule::recreateStrigiInterface()
 {
     delete m_strigiInterface;
     m_strigiInterface = new org::kde::nepomuk::Strigi( "org.kde.nepomuk.services.nepomukstrigiservice", "/nepomukstrigiservice", QDBusConnection::sessionBus() );
-    connect( m_strigiInterface, SIGNAL( indexingStarted() ),
-             this, SLOT( slotUpdateStrigiStatus() ) );
-    connect( m_strigiInterface, SIGNAL( indexingStopped() ),
-             this, SLOT( slotUpdateStrigiStatus() ) );
-    connect( m_strigiInterface, SIGNAL( indexingFolder(QString) ),
+    connect( m_strigiInterface, SIGNAL( statusChanged() ),
              this, SLOT( slotUpdateStrigiStatus() ) );
 }
 

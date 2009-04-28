@@ -26,13 +26,14 @@ class KToggleAction;
 namespace Nepomuk {
 
     class IndexScheduler;
+    class StrigiService;
 
     class SystemTray : public KSystemTrayIcon
     {
         Q_OBJECT
 
     public:
-        SystemTray( IndexScheduler* scheduler, QWidget* parent );
+        SystemTray( StrigiService* service, QWidget* parent );
         ~SystemTray();
 
     private Q_SLOTS:
@@ -42,7 +43,7 @@ namespace Nepomuk {
     private:
         KToggleAction* m_suspendResumeAction;
 
-        IndexScheduler* m_indexScheduler;
+        StrigiService* m_service;
     };
 }
 

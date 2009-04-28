@@ -31,15 +31,17 @@
 #include <KDebug>
 
 
-Nepomuk::StrigiServiceAdaptor::StrigiServiceAdaptor( IndexScheduler* scheduler, StrigiService* parent )
+Nepomuk::StrigiServiceAdaptor::StrigiServiceAdaptor( StrigiService* parent )
     : QDBusAbstractAdaptor(parent),
-      m_indexScheduler( scheduler )
+      m_service( parent )
 {
-    connect( m_indexScheduler, SIGNAL( indexingStarted() ),
+    connect( m_service, SIGNAL( statusStringChanged() ),
+             this, SIGNAL( statusChanged() ) );
+    connect( m_service->indexScheduler(), SIGNAL( indexingStarted() ),
              this, SIGNAL( indexingStarted() ) );
-    connect( m_indexScheduler, SIGNAL( indexingStopped() ),
+    connect( m_service->indexScheduler(), SIGNAL( indexingStopped() ),
              this, SIGNAL( indexingStopped() ) );
-    connect( m_indexScheduler, SIGNAL( indexingFolder(QString) ),
+    connect( m_service->indexScheduler(), SIGNAL( indexingFolder(QString) ),
              this, SIGNAL( indexingFolder(QString) ) );
 }
 
@@ -52,53 +54,53 @@ Nepomuk::StrigiServiceAdaptor::~StrigiServiceAdaptor()
 bool Nepomuk::StrigiServiceAdaptor::isIndexing()
 {
     // handle method call org.kde.nepomuk.Strigi.isIndexing
-    return m_indexScheduler->isIndexing();
+    return m_service->indexScheduler()->isIndexing();
 }
 
 
 bool Nepomuk::StrigiServiceAdaptor::isSuspended()
 {
     // handle method call org.kde.nepomuk.Strigi.isSuspended
-    return m_indexScheduler->isSuspended();
+    return m_service->indexScheduler()->isSuspended();
 }
 
 
 QString Nepomuk::StrigiServiceAdaptor::currentFolder()
 {
-    return m_indexScheduler->currentFolder();
+    return m_service->indexScheduler()->currentFolder();
 }
 
 
 void Nepomuk::StrigiServiceAdaptor::resume()
 {
     // handle method call org.kde.nepomuk.Strigi.resume
-    m_indexScheduler->resume();
+    m_service->indexScheduler()->resume();
 }
 
 
 void Nepomuk::StrigiServiceAdaptor::suspend()
 {
     // handle method call org.kde.nepomuk.Strigi.suspend
-    m_indexScheduler->suspend();
+    m_service->indexScheduler()->suspend();
 }
 
 
 void Nepomuk::StrigiServiceAdaptor::updateFolder( const QString& path )
 {
-    m_indexScheduler->updateDir( path );
+    m_service->indexScheduler()->updateDir( path );
 }
 
 
 void Nepomuk::StrigiServiceAdaptor::updateAllFolders()
 {
-    m_indexScheduler->updateAll();
+    m_service->indexScheduler()->updateAll();
 }
 
 
 void Nepomuk::StrigiServiceAdaptor::analyzeResource( const QString& uri, uint mTime, const QByteArray& data )
 {
     QDataStream stream( data );
-    m_indexScheduler->analyzeResource( QUrl::fromEncoded( uri.toAscii() ), QDateTime::fromTime_t( mTime ), stream );
+    m_service->indexScheduler()->analyzeResource( QUrl::fromEncoded( uri.toAscii() ), QDateTime::fromTime_t( mTime ), stream );
 }
 
 
@@ -107,10 +109,16 @@ void Nepomuk::StrigiServiceAdaptor::analyzeResourceFromTempFileAndDeleteTempFile
     QFile file( tmpFile );
     if ( file.open( QIODevice::ReadOnly ) ) {
         QDataStream stream( &file );
-        m_indexScheduler->analyzeResource( QUrl::fromEncoded( uri.toAscii() ), QDateTime::fromTime_t( mTime ), stream );
+        m_service->indexScheduler()->analyzeResource( QUrl::fromEncoded( uri.toAscii() ), QDateTime::fromTime_t( mTime ), stream );
         file.remove();
     }
     else {
         kDebug() << "Failed to open" << tmpFile;
     }
+}
+
+
+QString Nepomuk::StrigiServiceAdaptor::userStatusString() const
+{
+    return m_service->userStatusString();
 }

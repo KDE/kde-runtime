@@ -23,6 +23,10 @@
       <arg name="lastModificationDate" direction="in" type="u" />
       <arg name="tmpFileName" direction="in" type="s" />
     </method>
+    <method name="userStatusString">
+      <arg type="s" direction="out" />
+    </method>
+    <signal name="statusChanged" />
     <signal name="indexingStarted" />
     <signal name="indexingStopped" />
     <signal name="indexingFolder">

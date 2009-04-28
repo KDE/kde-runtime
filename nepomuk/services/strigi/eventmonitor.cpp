@@ -19,7 +19,6 @@
 #include "eventmonitor.h"
 #include "strigiserviceconfig.h"
 #include "indexscheduler.h"
-#include "filesystemwatcher.h"
 
 #include <KDebug>
 #include <KPassivePopup>
@@ -46,19 +45,6 @@ Nepomuk::EventMonitor::EventMonitor( IndexScheduler* scheduler, QObject* parent 
       m_indexScheduler( scheduler ),
       m_pauseState( NotPaused )
 {
-    // monitor the file system
-    m_fsWatcher = new FileSystemWatcher( this );
-    m_fsWatcher->setWatchRecursively( true );
-    connect( m_fsWatcher, SIGNAL( dirty( QString ) ),
-             this, SLOT( slotDirDirty( QString ) ) );
-
-    // update the watches if the config changes
-    connect( StrigiServiceConfig::self(), SIGNAL( configChanged() ),
-             this, SLOT( updateWatches() ) );
-
-    // start watching the index folders
-    updateWatches();
-
     // FileSystemWatcher does not catch changes to files, only new and removed files
     // thus, we also do periodic updates of the whole index every two hours
     connect( &m_periodicUpdateTimer, SIGNAL( timeout() ),
@@ -101,18 +87,6 @@ Nepomuk::EventMonitor::EventMonitor( IndexScheduler* scheduler, QObject* parent 
 
 Nepomuk::EventMonitor::~EventMonitor()
 {
-}
-
-
-void Nepomuk::EventMonitor::updateWatches()
-{
-    // the hard way since the KDirWatch API is too simple
-    QStringList folders = StrigiServiceConfig::self()->folders();
-    if ( folders != m_fsWatcher->folders() ) {
-        m_fsWatcher->setFolders( StrigiServiceConfig::self()->folders() );
-        m_fsWatcher->setInterval( 2*60 ); // check every 2 minutes
-        m_fsWatcher->start();
-    }
 }
 
 

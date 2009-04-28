@@ -18,6 +18,7 @@
 
 #include "systray.h"
 #include "indexscheduler.h"
+#include "strigiservice.h"
 
 #include <KMenu>
 #include <KToggleAction>
@@ -27,9 +28,9 @@
 
 
 
-Nepomuk::SystemTray::SystemTray( IndexScheduler* scheduler, QWidget* parent )
+Nepomuk::SystemTray::SystemTray( StrigiService* service, QWidget* parent )
     : KSystemTrayIcon( "nepomuk", parent ),
-      m_indexScheduler( scheduler )
+      m_service( service )
 {
     KMenu* menu = new KMenu;
     menu->addTitle( i18n( "Strigi File Indexing" ) );
@@ -38,7 +39,7 @@ Nepomuk::SystemTray::SystemTray( IndexScheduler* scheduler, QWidget* parent )
     m_suspendResumeAction->setCheckedState( KGuiItem( i18n( "Suspend Strigi Indexing" ) ) );
     m_suspendResumeAction->setToolTip( i18n( "Suspend or resume the Strigi file indexer manually" ) );
     connect( m_suspendResumeAction, SIGNAL( toggled( bool ) ),
-             m_indexScheduler, SLOT( setSuspended( bool ) ) );
+             m_service->indexScheduler(), SLOT( setSuspended( bool ) ) );
 
     KAction* configAction = new KAction( menu );
     configAction->setText( i18n( "Configure Strigi" ) );
@@ -49,14 +50,9 @@ Nepomuk::SystemTray::SystemTray( IndexScheduler* scheduler, QWidget* parent )
     menu->addAction( m_suspendResumeAction );
     menu->addAction( configAction );
 
-    setContextMenu( menu );
+    connect( m_service, SIGNAL( statusStringChanged() ), this, SLOT( slotUpdateStrigiStatus() ) );
 
-    connect( m_indexScheduler, SIGNAL( indexingStarted() ),
-             this, SLOT( slotUpdateStrigiStatus() ) );
-    connect( m_indexScheduler, SIGNAL( indexingStopped() ),
-             this, SLOT( slotUpdateStrigiStatus() ) );
-    connect( m_indexScheduler, SIGNAL( indexingFolder(QString) ),
-             this, SLOT( slotUpdateStrigiStatus() ) );
+    setContextMenu( menu );
 }
 
 
@@ -67,18 +63,8 @@ Nepomuk::SystemTray::~SystemTray()
 
 void Nepomuk::SystemTray::slotUpdateStrigiStatus()
 {
-    bool indexing = m_indexScheduler->isIndexing();
-    bool suspended = m_indexScheduler->isSuspended();
-    QString folder = m_indexScheduler->currentFolder();
-
-    if ( suspended )
-        setToolTip( i18n( "File indexer is suspended" ) );
-    else if ( indexing )
-        setToolTip( i18n( "Strigi is currently indexing files in folder %1", folder ) );
-    else
-        setToolTip( i18n( "File indexer is idle" ) );
-
-    m_suspendResumeAction->setChecked( suspended );
+    setToolTip( m_service->userStatusString() );
+    m_suspendResumeAction->setChecked( m_service->indexScheduler()->isSuspended() );
 }
 
 

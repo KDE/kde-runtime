@@ -18,6 +18,7 @@
 
 #include "statuswidget.h"
 #include "indexscheduler.h"
+#include "strigiservice.h"
 
 #include <KToolInvocation>
 #include <KIcon>
@@ -34,10 +35,10 @@
 #include <QtCore/QTimer>
 
 
-Nepomuk::StatusWidget::StatusWidget( Soprano::Model* model, IndexScheduler* scheduler, QWidget* parent )
+Nepomuk::StatusWidget::StatusWidget( Soprano::Model* model, StrigiService* service, QWidget* parent )
     : KDialog( parent ),
       m_model( model ),
-      m_indexScheduler( scheduler ),
+      m_service( service ),
       m_connected( false ),
       m_updatingJobCnt( 0 ),
       m_updateRequested( false )
@@ -68,16 +69,7 @@ Nepomuk::StatusWidget::~StatusWidget()
 
 void Nepomuk::StatusWidget::slotUpdateStrigiStatus()
 {
-    bool indexing = m_indexScheduler->isIndexing();
-    bool suspended = m_indexScheduler->isSuspended();
-    QString folder = m_indexScheduler->currentFolder();
-
-    if ( suspended )
-        m_labelStrigiState->setText( i18n( "File indexer is suspended" ) );
-    else if ( indexing )
-        m_labelStrigiState->setText( i18n( "Strigi is currently indexing files in folder %1", folder ) );
-    else
-        m_labelStrigiState->setText( i18n( "File indexer is idle" ) );
+    m_labelStrigiState->setText( m_service->userStatusString() );
 }
 
 
@@ -214,11 +206,7 @@ static QRect screenRect( QWidget *widget, int screen )
 void Nepomuk::StatusWidget::showEvent( QShowEvent* event )
 {
     if ( !m_connected ) {
-        connect( m_indexScheduler, SIGNAL( indexingStarted() ),
-                 this, SLOT( slotUpdateStrigiStatus() ) );
-        connect( m_indexScheduler, SIGNAL( indexingStopped() ),
-                 this, SLOT( slotUpdateStrigiStatus() ) );
-        connect( m_indexScheduler, SIGNAL( indexingFolder(QString) ),
+        connect( m_service, SIGNAL( statusStringChanged() ),
                  this, SLOT( slotUpdateStrigiStatus() ) );
 
         connect( m_model, SIGNAL( statementsAdded() ),
@@ -244,7 +232,7 @@ void Nepomuk::StatusWidget::showEvent( QShowEvent* event )
 void Nepomuk::StatusWidget::hideEvent( QHideEvent* event )
 {
     if ( m_connected ) {
-        m_indexScheduler->disconnect( this );
+        m_service->disconnect( this );
         m_model->disconnect( this );
         m_connected = false;
     }
