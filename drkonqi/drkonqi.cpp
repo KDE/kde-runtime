@@ -194,26 +194,17 @@ void DrKonqi::saveReport(const QString & reportText, QWidget *parent)
         if (defname.contains('/')) {
             defname = defname.mid(defname.lastIndexOf('/') + 1);
         }
-        KUrl fileUrl = KFileDialog::getSaveUrl(defname, QString(), parent,
-                                               i18nc("@title:window","Select Filename"));
+        
+        KFileDialog dlg(defname, QString(), parent);
+        dlg.setSelection(defname);
+        dlg.setCaption(i18nc("@title:window","Select Filename"));
+        dlg.setOperationMode(KFileDialog::Saving);
+        dlg.setMode(KFile::File);
+        dlg.setConfirmOverwrite(true);
+        dlg.exec();
+        
+        KUrl fileUrl = dlg.selectedUrl();
         if (fileUrl.isValid()) {
-            KIO::UDSEntry udsEntry;
-            if (KIO::NetAccess::stat(fileUrl, udsEntry, parent)) {
-                if (KMessageBox::Cancel ==
-                        KMessageBox::warningContinueCancel(0,
-                                i18nc("@info","A file named <filename>%1</filename> already exists. "
-                                     "Are you sure you want to overwrite it?", fileUrl.fileName()),
-                                i18nc("@title:window","Overwrite File?"),
-                                KGuiItem2(i18nc("@action:button","&Overwrite"),
-                                          KIcon("document-save-as"),
-                                          i18nc("@info:tooltip",
-                                                "Use this button to overwrite the current file."))
-                        )
-                    ) {
-                    return;
-                }
-            }
-
             KTemporaryFile tf;
             if (tf.open()) {
                 QTextStream ts(&tf);
