@@ -62,6 +62,22 @@
           rdfs:subPropertyOf <http://www.semanticdesktop.org/ontologies/2007/08/15/nao#isRelated> ;
           nrl:inverseProperty nao:hasTopic .
 
+    <http://www.semanticdesktop.org/ontologies/2007/08/15/nao#hasSubResource>
+          a       rdf:Property, nrl:SymmetricProperty ;
+          rdfs:comment "Defines a relationship between a resource and one or more sub resources" ;
+          rdfs:label "has Subresource" ;
+          rdfs:range rdfs:Resource ;
+          rdfs:subPropertyOf <http://www.semanticdesktop.org/ontologies/2007/08/15/nao#isRelated> ;
+          nrl:inverseProperty nao:hasSuperResource .
+
+    <http://www.semanticdesktop.org/ontologies/2007/08/15/nao#hasSuperResource>
+          a       rdf:Property, nrl:SymmetricProperty ;
+          rdfs:comment "Defines a relationship between a resource and one or more super resources" ;
+          rdfs:label "has Superresource" ;
+          rdfs:range rdfs:Resource ;
+          rdfs:subPropertyOf <http://www.semanticdesktop.org/ontologies/2007/08/15/nao#isRelated> ;
+          nrl:inverseProperty nao:hasSubResource .
+
     <http://www.semanticdesktop.org/ontologies/2007/08/15/nao#isTagFor>
           a       rdf:Property ;
           rdfs:comment "States which resources a tag is associated with" ;
@@ -151,11 +167,11 @@
           a       rdf:Property ;
           rdfs:subPropertyOf <http://www.semanticdesktop.org/ontologies/2007/08/15/nao#rating> ,
  				     <http://www.semanticdesktop.org/ontologies/2007/08/15/nao#scoreParameter> ;
-          rdfs:comment "Annotation for a resource in the form of a numeric rating, allowed values are between 1 and 10 whereas 0 is interpreted as not set" ;
+          rdfs:comment " Annotation for a resource in the form of a numeric rating (float value), allowed values are between 1 and 10 whereas 0 is interpreted as not set" ;
           rdfs:domain rdfs:Resource ;
           rdfs:label "numeric rating" ;
-          rdfs:range xsd:unsignedInt ;
-          nrl:maxCardinality "1"^^xsd:nonNegativeInteger .
+          rdfs:range xsd:float ;
+	    nrl:maxCardinality "1"^^xsd:nonNegativeInteger .
 
     <http://www.semanticdesktop.org/ontologies/2007/08/15/nao#Tag>
           a       rdfs:Class ;
