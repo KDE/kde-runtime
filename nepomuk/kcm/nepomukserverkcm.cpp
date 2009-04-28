@@ -58,7 +58,8 @@ Nepomuk::ServerConfigModule::ServerConfigModule( QWidget* parent, const QVariant
     : KCModule( NepomukConfigModuleFactory::componentData(), parent, args ),
       m_serverInterface( "org.kde.NepomukServer", "/nepomukserver", QDBusConnection::sessionBus() ),
       m_serviceManagerInterface( "org.kde.NepomukServer", "/servicemanager", QDBusConnection::sessionBus() ),
-      m_strigiInterface( 0 )
+      m_strigiInterface( 0 ),
+      m_failedToInitialize( false )
 {
     KAboutData *about = new KAboutData(
         "kcm_nepomuk", 0, ki18n("Nepomuk Configuration Module"),
@@ -194,21 +195,25 @@ void Nepomuk::ServerConfigModule::defaults()
 
 void Nepomuk::ServerConfigModule::slotUpdateStrigiStatus()
 {
-    if ( m_serviceManagerInterface.runningServices().value().contains( "nepomukstrigiservice") ) {
+    if ( m_serviceManagerInterface.isServiceRunning( "nepomukstrigiservice") ) {
         if ( m_serviceManagerInterface.isServiceInitialized( "nepomukstrigiservice") ) {
             QString status = m_strigiInterface->userStatusString();
-            if ( status.isEmpty() )
+            if ( status.isEmpty() ) {
                 m_labelStrigiStatus->setText( i18nc( "@info:status %1 is an error message returned by a dbus interface.",
                                                      "Failed to contact Strigi indexer (%1)",
                                                      m_strigiInterface->lastError().message() ) );
-            else
+            }
+            else {
+                m_failedToInitialize = false;
                 m_labelStrigiStatus->setText( status );
+            }
         }
         else {
+            m_failedToInitialize = true;
             m_labelStrigiStatus->setText( i18nc( "@info_status", "Strigi service failed to initialize, most likely due to an installation problem." ) );
         }
     }
-    else {
+    else if ( !m_failedToInitialize ) {
         m_labelStrigiStatus->setText( i18nc( "@info_status", "Strigi service not running." ) );
     }
 }

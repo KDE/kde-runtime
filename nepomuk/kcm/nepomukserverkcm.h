@@ -51,6 +51,8 @@ namespace Nepomuk {
         org::kde::nepomuk::Strigi* m_strigiInterface;
 
         FolderSelectionModel* m_folderModel;
+
+        bool m_failedToInitialize;
     };
 }
 
