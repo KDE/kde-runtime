@@ -143,6 +143,14 @@ void Nepomuk::StrigiService::updateWatches()
 }
 
 
+void Nepomuk::StrigiService::slotDirDirty( const QString& path )
+{
+    if ( StrigiServiceConfig::self()->shouldFolderBeIndexed( path ) ) {
+        m_indexScheduler->updateDir( path );
+    }
+}
+
+
 QString Nepomuk::StrigiService::userStatusString() const
 {
     bool indexing = m_indexScheduler->isIndexing();
@@ -157,6 +165,19 @@ QString Nepomuk::StrigiService::userStatusString() const
         return i18nc( "@info:status", "Checking file system for new files" );
     else
         return i18nc( "@info:status", "File indexer is idle" );
+}
+
+
+void Nepomuk::StrigiService::setSuspended( bool suspend )
+{
+    if ( suspend ) {
+        m_indexScheduler->suspend();
+        m_fsWatcher->suspend();
+    }
+    else {
+        m_indexScheduler->resume();
+        m_fsWatcher->resume();
+    }
 }
 
 

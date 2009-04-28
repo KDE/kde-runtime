@@ -68,6 +68,9 @@ public Q_SLOTS:
 
     void stop();
 
+    void suspend();
+    void resume();
+
 Q_SIGNALS:
     /**
      * Emitted if a folder is dirty, i.e. its contents

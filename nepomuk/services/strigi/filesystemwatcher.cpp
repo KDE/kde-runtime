@@ -68,6 +68,7 @@ public:
 
     void start( const QDateTime& startTime );
     void stop();
+    void suspend( bool );
     void run();
 
     void buildFolderCache( uint mTime );
@@ -77,10 +78,15 @@ private:
     void updateChildrenCache( const QString& parentPath, FolderEntry& parentEntry, bool signalNewEntries );
     void checkFolder( const QString& path, FolderEntry& folder );
 
+    // waits if suspended, returns false if stopped
+    bool continueChecking();
+
     QDateTime m_startTime;
     QWaitCondition m_updateWaiter;
-    QMutex m_stoppedMutex;
+    QMutex m_statusMutex;
+    QWaitCondition m_statusWaiter;
     bool m_stopped;
+    bool m_suspended;
 
     FileSystemWatcher* q;
 };
@@ -96,9 +102,33 @@ void FileSystemWatcher::Private::start( const QDateTime& startTime )
 
 void FileSystemWatcher::Private::stop()
 {
-    QMutexLocker lock( &m_stoppedMutex );
+    QMutexLocker lock( &m_statusMutex );
     m_stopped = true;
     m_updateWaiter.wakeAll();
+    m_statusWaiter.wakeAll();
+}
+
+
+void FileSystemWatcher::Private::suspend( bool suspend )
+{
+    if ( suspend != m_suspended ) {
+        kDebug() << suspend;
+        QMutexLocker lock( &m_statusMutex );
+        m_suspended = suspend;
+        if ( !suspend )
+            m_statusWaiter.wakeAll();
+    }
+}
+
+
+bool FileSystemWatcher::Private::continueChecking()
+{
+    QMutexLocker lock( &m_statusMutex );
+    if ( m_suspended && !m_stopped ) {
+        kDebug() << "waiting";
+        m_statusWaiter.wait( &m_statusMutex );
+    }
+    return !m_stopped;
 }
 
 
@@ -115,6 +145,12 @@ void FileSystemWatcher::Private::run()
             return;
         }
 
+        kDebug() << "woke up";
+
+        // check if we have been stopped
+        if ( !continueChecking() )
+            return;
+
         // check all folders
         status = Checking;
         emit q->statusChanged( Checking );
@@ -123,8 +159,7 @@ void FileSystemWatcher::Private::run()
         emit q->statusChanged( Idle );
 
         // check if we have been stopped
-        QMutexLocker lock( &m_stoppedMutex );
-        if ( m_stopped )
+        if ( !continueChecking() )
             return;
     }
 }
@@ -169,6 +204,7 @@ void FileSystemWatcher::Private::updateChildrenCache( const QString& parentPath,
 
 void FileSystemWatcher::Private::checkFolders()
 {
+    kDebug();
     for( QHash<QString, FolderEntry>::iterator it = cache.begin();
          it != cache.end(); ++it ) {
         checkFolder( it.key(), it.value() );
@@ -192,6 +228,10 @@ void FileSystemWatcher::Private::checkFolder( const QString& path, FolderEntry& 
         for( QHash<QString, FolderEntry>::iterator it = entry.children.begin();
              it != entry.children.end(); ++it ) {
             checkFolder( path + '/' + it.key(), it.value() );
+
+            // wait in case we are suspended
+            if ( !continueChecking() )
+                return;
         }
 
         // update in case folders have been created
@@ -228,6 +268,18 @@ void FileSystemWatcher::stop()
 {
     d->stop();
     d->wait();
+}
+
+
+void FileSystemWatcher::suspend()
+{
+    d->suspend( true );
+}
+
+
+void FileSystemWatcher::resume()
+{
+    d->suspend( false );
 }
 
 

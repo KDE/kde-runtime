@@ -74,14 +74,14 @@ QString Nepomuk::StrigiServiceAdaptor::currentFolder()
 void Nepomuk::StrigiServiceAdaptor::resume()
 {
     // handle method call org.kde.nepomuk.Strigi.resume
-    m_service->indexScheduler()->resume();
+    m_service->setSuspended( false );
 }
 
 
 void Nepomuk::StrigiServiceAdaptor::suspend()
 {
     // handle method call org.kde.nepomuk.Strigi.suspend
-    m_service->indexScheduler()->suspend();
+    m_service->setSuspended( true );
 }
 
 

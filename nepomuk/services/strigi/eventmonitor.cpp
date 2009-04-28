@@ -90,14 +90,6 @@ Nepomuk::EventMonitor::~EventMonitor()
 }
 
 
-void Nepomuk::EventMonitor::slotDirDirty( const QString& path )
-{
-    if ( StrigiServiceConfig::self()->shouldFolderBeIndexed( path ) ) {
-        m_indexScheduler->updateDir( path );
-    }
-}
-
-
 void Nepomuk::EventMonitor::slotPowerManagementStatusChanged( bool conserveResources )
 {
     if ( !conserveResources && m_pauseState == PausedDueToPowerManagement ) {

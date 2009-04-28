@@ -42,7 +42,6 @@ namespace Nepomuk {
         void slotPowerManagementStatusChanged( bool conserveResources );
         void slotCheckAvailableSpace();
         void slotIndexingStopped();
-        void slotDirDirty( const QString& );
 
     private:
         enum {
