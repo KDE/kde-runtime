@@ -27,4 +27,8 @@ add_subdirectory(servicestub)
 add_subdirectory(kioslaves)
 add_subdirectory(interfaces)
 
+if (NOT WIN32)
+  add_subdirectory(doc)
+endif (NOT WIN32)
+
 #add_subdirectory(test)

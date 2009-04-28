@@ -1,0 +1,145 @@
+<?xml version="1.0" ?>
+<!DOCTYPE refentry PUBLIC "-//KDE//DTD DocBook XML V4.1-Based Variant V1.0//EN" "dtd/kdex.dtd" [
+  <!ENTITY % English "INCLUDE"><!-- change language only here -->
+]>
+
+<refentry>
+
+<refentryinfo>
+<title>&kde; User's Manual</title>
+<author>
+<firstname>Sebastian</firstname>
+<surname>Trueg</surname>
+<affiliation>
+<address><email>trueg@kde.org</email></address>
+</affiliation>
+</author>
+
+<date>2009-04-28</date>
+<releaseinfo>0.01.01</releaseinfo>
+
+</refentryinfo>
+
+<refmeta>
+<refentrytitle><command>nepomukservicestub</command></refentrytitle>
+<manvolnum>8</manvolnum>
+</refmeta>
+
+<refnamediv>
+<refname><command>nepomukservicestub</command></refname>
+<refpurpose>&kde; wrapper around Nepomuk service plugins.</refpurpose>
+</refnamediv>
+
+<refsynopsisdiv>
+<title>Synopsis</title>
+
+<cmdsynopsis>
+<command>nepomukservicestub</command>
+
+<arg choice="opt">--help</arg>
+<arg choice="opt">Generic options</arg>
+<arg choice="opt">Qt-options</arg>
+<arg choice="opt">KDE-options</arg>
+<arg choice="req">servicename</arg>
+</cmdsynopsis>
+</refsynopsisdiv>
+
+<refsect1>
+<title>Description</title>
+
+<para>
+<command>nepomukservicestub</command> runs a Nepomuk service plugin in its own process.
+</para>
+<para>
+It is used by <command>nepomukserver</command> to run all configured Nepomuk services.
+</para>
+</refsect1>
+
+<refsect1>
+<title>Generic Options</title>
+<para>
+<variablelist>
+
+<varlistentry>
+<term><option>--author</option></term>
+<listitem>
+<para>Show author information.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><option>--help</option></term>
+<listitem>
+<para>Show help about options.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><option>--help-all</option></term>
+<listitem>
+<para>Show all options.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><option>--help-kde</option></term>
+<listitem>
+<para>Show KDE specific options.</para>
+
+
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><option>--help-qt</option></term>
+<listitem>
+<para>Show Qt specific options.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><option>--license</option></term>
+<listitem>
+<para>Show license information.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><option>-v</option> <option>--version</option></term>
+<listitem>
+<para>Show version information</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+</para>
+</refsect1>
+
+<refsect1>
+<title>Application Options</title>
+<variablelist>
+
+<varlistentry>
+<term><option>servicename</option></term>
+<listitem>
+<para>The name of the service plugin to run
+</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+
+</refsect1>
+
+<refsect1>
+<title>See Also</title>
+<para><replaceable>nepomukserver</replaceable>(8)
+</para>
+</refsect1>
+
+<refsect1>
+<title>Bugs</title>
+<para>There are probably tons of bugs. Use <ulink url="http://bugs.kde.org">bugs.kde.org</ulink> to report them.</para>
+</refsect1>
+
+</refentry>
