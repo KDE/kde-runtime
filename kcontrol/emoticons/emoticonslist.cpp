@@ -63,7 +63,7 @@ void EditDialog::setupDlg()
     btnIcon->setFixedSize(QSize(64, 64));
     btnIcon->setIconSize(QSize(64, 64));
 
-    QLabel *lab = new QLabel(i18n("Insert the string for the emoticon separated by space if you want multiple strings"), wdg);
+    QLabel *lab = new QLabel(i18n("Insert the string for the emoticon.  If you want multiple strings, separate them by spaces."), wdg);
     lab->setWordWrap(true);
     vl->addWidget(lab);
     hb->addWidget(btnIcon);
