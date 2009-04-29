@@ -5,3 +5,4 @@ test_d: ReallyUseful
 test_e: ProbablyUseless
 test_f: ProbablyUseless
 test_g: ReallyUseful
+test_bug190882: ReallyUseful

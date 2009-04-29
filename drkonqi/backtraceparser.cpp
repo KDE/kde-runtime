@@ -444,6 +444,14 @@ BacktraceParser::Usefulness BacktraceParserGdb::backtraceUsefulness() const
     uint rating = 0, bestPossibleRating = 0, counter = 0;
     QList<BacktraceLineGdb>::const_iterator i;
     for (i = d->m_usefulLinesList.constBegin(); i != d->m_usefulLinesList.constEnd(); ++i) {
+        //Under some circumstances, the very first stack frame is invalid (ex, calling a function
+        //at an invalid address could result in a stack frame like "0x00000000 in ?? ()"),
+        //which however does not necessarily mean that the backtrace has a missing symbol on
+        //the first line. Here we make sure to ignore this line from rating. (bug 190882)
+        if ( i == d->m_usefulLinesList.constBegin() &&
+             (*i).rating() == BacktraceLineGdb::MissingEverything )
+            continue;
+
         uint multiplier = d->m_usefulLinesList.size() - counter; //give weight to the first lines
         rating += static_cast<uint>((*i).rating()) * multiplier;
         bestPossibleRating += static_cast<uint>(BacktraceLineGdb::BestRating) * multiplier;
