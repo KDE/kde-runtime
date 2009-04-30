@@ -26,10 +26,10 @@
 
 class KTimeZoneDBase : public KDEDModule
 {
-	Q_OBJECT
+        Q_OBJECT
     public:
         KTimeZoneDBase(QObject* parent, const QList<QVariant>&)
-	:KDEDModule(parent) {}
+        :KDEDModule(parent) {}
         virtual ~KTimeZoneDBase() {};
 
     public Q_SLOTS:
@@ -38,18 +38,18 @@ class KTimeZoneDBase : public KDEDModule
          *                initialized itself
          */
         Q_SCRIPTABLE void initialize(bool reinit)
-	{
-	    // If we reach here, the module has already been constructed and therefore
-    	    // initialized. So only do anything if reinit is true.
-    	    if (reinit)
+        {
+            // If we reach here, the module has already been constructed and therefore
+            // initialized. So only do anything if reinit is true.
+            if (reinit)
                 init(true);
-	}
+        }
 
     Q_SIGNALS:
         /** D-Bus signal emitted when the time zone configuration in the registry has changed. */
         void configChanged();
     protected:
-	virtual void init(bool) = 0;
+        virtual void init(bool) = 0;
 
         QString     mLocalZone;         // local system time zone name
         QString     mConfigLocalZone;   // local system time zone name as stored in config file

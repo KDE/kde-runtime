@@ -26,18 +26,18 @@
 class KTimeZoned : public KTimeZoneDBase
 {
         Q_OBJECT
-	friend class RegistryWatcherThread;
+        friend class RegistryWatcherThread;
 
     public:
         KTimeZoned(QObject* parent, const QList<QVariant>&);
         ~KTimeZoned();
 
     private:
-	/** reimp */
-	void init(bool);
-	void updateLocalZone();
+        /** reimp */
+        void init(bool);
+        void updateLocalZone();
 
-	RegistryWatcherThread     *mRegistryWatcherThread; // thread that watches the timezone registry key
+        RegistryWatcherThread     *mRegistryWatcherThread; // thread that watches the timezone registry key
 };
 
 #endif

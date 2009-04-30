@@ -1,7 +1,7 @@
 if (WIN32)
-	set(kded_ktimezoned_SRCS ktimezoned_win.cpp)
+    set(kded_ktimezoned_SRCS ktimezoned_win.cpp)
 else (WIN32)
-	set(kded_ktimezoned_SRCS ktimezoned.cpp)
+    set(kded_ktimezoned_SRCS ktimezoned.cpp)
 endif (WIN32)
 
 kde4_add_plugin(kded_ktimezoned ${kded_ktimezoned_SRCS})

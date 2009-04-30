@@ -57,7 +57,7 @@ class RegistryWatcherThread : public QThread
 {
     public:
     RegistryWatcherThread(KTimeZoned* parent)
-    :QThread(parent),q(parent)    
+    :QThread(parent),q(parent)
     {
     }
 
@@ -68,15 +68,15 @@ class RegistryWatcherThread : public QThread
 
     void run()
     {
-	if ( RegOpenKeyEx( HKEY_LOCAL_MACHINE, currentTimeZoneKey, 0, KEY_READ, &key ) == ERROR_SUCCESS )
+        if ( RegOpenKeyEx( HKEY_LOCAL_MACHINE, currentTimeZoneKey, 0, KEY_READ, &key ) == ERROR_SUCCESS )
         {
-	    while(true)
+            while(true)
             {
                 RegNotifyChangeKeyValue( key, true, REG_NOTIFY_CHANGE_LAST_SET,
-				         NULL, false /*async, we want it to block*/ );
-		q->updateLocalZone();
+                                         NULL, false /*async, we want it to block*/ );
+                q->updateLocalZone();
             }
-	}
+        }
     }
     private:
         KTimeZoned* q;
@@ -104,8 +104,8 @@ void KTimeZoned::init(bool restart)
     if (restart)
     {
         kDebug(1221) << "KTimeZoned::init(restart)";
-    	delete mRegistryWatcherThread;
-    	mRegistryWatcherThread = 0;
+        delete mRegistryWatcherThread;
+        mRegistryWatcherThread = 0;
     }
 
     KConfig config(QLatin1String("ktimezonedrc"));
@@ -136,7 +136,7 @@ void KTimeZoned::updateLocalZone()
 
     if (mConfigLocalZone != mLocalZone)
     {
-    	kDebug(1221) << "Local timezone is now: " << mLocalZone;
+        kDebug(1221) << "Local timezone is now: " << mLocalZone;
         KConfig config(QLatin1String("ktimezonedrc"));
         KConfigGroup group(&config, "TimeZones");
         mConfigLocalZone = mLocalZone;

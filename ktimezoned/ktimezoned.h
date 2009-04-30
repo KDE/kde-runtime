@@ -43,9 +43,9 @@ class KTimeZoned : public KTimeZoneDBase
     Q_SIGNALS:
         /** D-Bus signal emitted when the time zone configuration file has changed. */
         void configChanged();
-	/** D-Bus signal emitted when zone.tab contents have changed.
-	 *  @param zonetab path to zone.tab
-	 */
+        /** D-Bus signal emitted when zone.tab contents have changed.
+         *  @param zonetab path to zone.tab
+         */
 
     private Q_SLOTS:
         void  zonetab_Changed(const QString& path);
@@ -78,7 +78,7 @@ class KTimeZoned : public KTimeZoneDBase
         };
         typedef QMap<QString, QString> MD5Map;    // zone name, checksum
 
-	/** reimp */
+        /** reimp */
         void  init(bool restart);
         bool  findZoneTab(QFile& f);
         void  readZoneTab(QFile& f);
