@@ -20,6 +20,7 @@
 */
 
 #include "ktimezoned.moc"
+#include "ktimezonedbase.moc"
 
 #include <climits>
 #include <cstdlib>
@@ -57,8 +58,8 @@ const char ZONE_TAB_CACHE[] = "ZonetabCache";  // type of cached simulated zone.
 const char LOCAL_ZONE[]     = "LocalZone";     // name of local time zone
 
 
-KTimeZoned::KTimeZoned(QObject* parent, const QList<QVariant>&)
-  : KDEDModule(parent),
+KTimeZoned::KTimeZoned(QObject* parent, const QList<QVariant>& l)
+  : KTimeZoneDBase(parent, l),
     mSource(0),
     mZonetabWatch(0),
     mDirWatch(0)
@@ -76,14 +77,6 @@ KTimeZoned::~KTimeZoned()
     mDirWatch = 0;
 }
 
-void KTimeZoned::initialize(bool reinit)
-{
-    // If we reach here, the module has already been constructed and therefore
-    // initialized. So only do anything if reinit is true.
-    if (reinit)
-        init(true);
-}
-
 void KTimeZoned::init(bool restart)
 {
     if (restart)
@@ -97,11 +90,6 @@ void KTimeZoned::init(bool restart)
         mDirWatch = 0;
     }
 
-#ifdef Q_OS_WIN
-    // On Windows, HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Time Zones
-    // holds the time zone database. The TZI binary value is the TIME_ZONE_INFORMATION structure.
-#else
-    // For Unix, read zone.tab.
     KConfig config(QLatin1String("ktimezonedrc"));
     if (restart)
         config.reparseConfiguration();
@@ -111,6 +99,9 @@ void KTimeZoned::init(bool restart)
     mConfigLocalZone = group.readEntry(LOCAL_ZONE);
     QString ztc      = group.readEntry(ZONE_TAB_CACHE, QString());
     mZoneTabCache    = (ztc == "Solaris") ? Solaris : NoCache;
+
+    // For Unix, read zone.tab.
+
     QString oldZoneinfoDir = mZoneinfoDir;
     QString oldZoneTab     = mZoneTab;
     CacheType oldCacheType = mZoneTabCache;
@@ -164,7 +155,6 @@ void KTimeZoned::init(bool restart)
     mZonetabWatch = new KDirWatch(this);
     mZonetabWatch->addFile(mZoneTab);
     connect(mZonetabWatch, SIGNAL(dirty(const QString&)), SLOT(zonetab_Changed(const QString&)));
-#endif
 
     // Find the local system time zone and set up file monitors to detect changes
     findLocalZone();

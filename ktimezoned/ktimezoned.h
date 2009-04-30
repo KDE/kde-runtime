@@ -21,6 +21,8 @@
 #ifndef KTIMEZONED_H
 #define KTIMEZONED_H
 
+#include "ktimezonedbase.h"
+
 #include <QString>
 #include <QByteArray>
 class QFile;
@@ -30,34 +32,20 @@ class QFile;
 #include <ksystemtimezone.h>
 
 
-class KTimeZoned : public KDEDModule
+class KTimeZoned : public KTimeZoneDBase
 {
         Q_OBJECT
-        Q_CLASSINFO("D-Bus Interface", "org.kde.KTimeZoned")
 
     public:
         KTimeZoned(QObject* parent, const QList<QVariant>&);
         ~KTimeZoned();
 
-    public Q_SLOTS:
-        /** D-Bus call to initialize the module.
-         *  @param reinit determines whether to reinitialize if the module has already
-         *                initialized itself
-         */
-        Q_SCRIPTABLE void initialize(bool reinit);
-
     Q_SIGNALS:
         /** D-Bus signal emitted when the time zone configuration file has changed. */
         void configChanged();
-	/** D-Bus signal emitted when zone.tab contents have changed.
-	 *  @param zonetab path to zone.tab
-	 */
-        void zonetabChanged(const QString &zonetab);
-	/** D-Bus signal emitted when the definition (not the identity) of the local
-	 *  system time zone has changed.
-	 *  @param zone path to time zone definition file
-	 */
-        void zoneDefinitionChanged(const QString &zone);
+        /** D-Bus signal emitted when zone.tab contents have changed.
+         *  @param zonetab path to zone.tab
+         */
 
     private Q_SLOTS:
         void  zonetab_Changed(const QString& path);
@@ -90,6 +78,7 @@ class KTimeZoned : public KDEDModule
         };
         typedef QMap<QString, QString> MD5Map;    // zone name, checksum
 
+        /** reimp */
         void  init(bool restart);
         bool  findZoneTab(QFile& f);
         void  readZoneTab(QFile& f);
@@ -110,8 +99,6 @@ class KTimeZoned : public KDEDModule
         QByteArray  mSavedTZ;           // last value of TZ if it's used to set local zone
         KSystemTimeZoneSource *mSource;
         KTimeZones  mZones;             // time zones collection
-        QString     mLocalZone;         // local system time zone name
-        QString     mConfigLocalZone;   // local system time zone name as stored in config file
         QString     mLocalIdFile;       // file containing pointer to local time zone definition
         QString     mLocalZoneDataFile; // zoneinfo file containing local time zone definition
         QString     mLocaltimeMd5Sum;   // MD5 checksum of /etc/localtime
