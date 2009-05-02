@@ -1,2 +1,0 @@
-add_subdirectory(crashtest)
-add_subdirectory(backtraceparsertest)
