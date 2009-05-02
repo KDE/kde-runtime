@@ -1,17 +1,6 @@
-project( DRKONQUING )
-
-find_package(KDE4 REQUIRED)
-
-include(KDE4Defaults)
-include(MacroLibrary)
-include(CheckFunctionExists)
-
 check_function_exists("strsignal" HAVE_STRSIGNAL)
 check_function_exists("uname" HAVE_UNAME)
 configure_file (config-drkonqi.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-drkonqi.h )
-
-add_definitions (${QT_DEFINITIONS} ${KDE4_DEFINITIONS})
-include_directories (${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} ${KDE4_INCLUDES})
 
 add_subdirectory( pics ) 
 add_subdirectory( debuggers ) 
@@ -38,11 +27,11 @@ set(drkonqi_SRCS
 )
 
 kde4_add_ui_files(drkonqi_SRCS ui/getbacktracewidget.ui
-ui/assistantpage_introduction.ui ui/assistantpage_crashinfo.ui ui/assistantpage_bugawareness.ui
-ui/assistantpage_conclusions.ui  ui/assistantpage_conclusions_dialog.ui
-ui/assistantpage_bugzilla_login.ui ui/assistantpage_bugzilla_keywords.ui
-ui/assistantpage_bugzilla_duplicates.ui ui/assistantpage_bugzilla_duplicates_dialog.ui
-ui/assistantpage_bugzilla_information.ui ui/assistantpage_bugzilla_send.ui)
+    ui/assistantpage_introduction.ui ui/assistantpage_crashinfo.ui ui/assistantpage_bugawareness.ui
+    ui/assistantpage_conclusions.ui  ui/assistantpage_conclusions_dialog.ui
+    ui/assistantpage_bugzilla_login.ui ui/assistantpage_bugzilla_keywords.ui
+    ui/assistantpage_bugzilla_duplicates.ui ui/assistantpage_bugzilla_duplicates_dialog.ui
+    ui/assistantpage_bugzilla_information.ui ui/assistantpage_bugzilla_send.ui)
 
 # if BACKTRACE_PARSER_DEBUG is enabled, it will show both the
 # parsed and the unparsed backtrace in the backtrace widget.

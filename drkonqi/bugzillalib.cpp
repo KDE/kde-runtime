@@ -33,7 +33,7 @@
 #include <KUrl>
 #include <KLocale>
 
-static const char bugtrackerBaseUrl[] = "http://bugstest.kde.org/"; //TODO change to correct HTTPS BKO "https://bugs.kde.org/";
+static const char bugtrackerBaseUrl[] = "https://bugs.kde.org/";
 
 static const char columns[] = "bug_severity,priority,bug_status,product,short_desc"; //resolution,
 
