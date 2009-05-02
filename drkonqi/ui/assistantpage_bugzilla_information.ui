@@ -57,7 +57,7 @@
    <item>
     <widget class="QLabel" name="m_crashInfoLabel">
      <property name="text">
-      <string comment="@info/rich">&lt;note&gt;The crash information will be automatically integrated into the bug report.&lt;/note&gt;</string>
+      <string comment="@info/rich">&lt;note&gt;The crash and system information will be automatically integrated into the bug report.&lt;/note&gt;</string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>
