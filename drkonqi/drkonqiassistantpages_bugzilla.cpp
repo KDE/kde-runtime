@@ -454,7 +454,7 @@ void BugzillaDuplicatesPage::stopCurrentSearch()
         
         markAsSearching(false);
         
-        if (ui.m_bugListWidget->topLevelItemCount() == 0) { //No results at all
+        if (m_startDate==m_endDate) { //Never searched
             ui.m_statusWidget->setIdle(i18nc("@info:status","Search stopped."));
         } else {
             ui.m_statusWidget->setIdle(i18nc("@info:status","Search stopped. Showing results from "
@@ -494,12 +494,12 @@ void BugzillaDuplicatesPage::searchMore()
 
 void BugzillaDuplicatesPage::searchFinished(const BugMapList & list)
 {
-    markAsSearching(false);
-    
     m_startDate = m_searchingStartDate;
     
     int results = list.count();
     if (results > 0) {
+        markAsSearching(false);
+        
         ui.m_statusWidget->setIdle(i18nc("@info:status","Showing results from %1 to %2",
                                      m_startDate.toString("yyyy-MM-dd"),
                                      m_endDate.toString("yyyy-MM-dd")));
@@ -520,8 +520,12 @@ void BugzillaDuplicatesPage::searchFinished(const BugMapList & list)
     } else {
 
         if (canSearchMore()) {
-            searchMore();
+            //We don't call markAsSearching(false) to avoid flicker
+            //Delayed call to searchMore to avoid unexpected behaviour (signal/slot)
+            //because we are in a slot, and searchMore() will be ending calling this slot again
+            QTimer::singleShot(0, this, SLOT(searchMore()));
         } else {
+            markAsSearching(false);
             ui.m_statusWidget->setIdle(i18nc("@info:status","Search Finished. "
                                                          "No more possible date ranges to search."));
             ui.m_searchMoreButton->setEnabled(false);

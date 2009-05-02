@@ -158,7 +158,8 @@ void BugzillaManager::searchBugs(QString words, QString product, QString severit
                                  QString date_start, QString date_end, QString comment)
 {
     QString url = QString(bugtrackerBaseUrl) +
-                  QString(searchUrl).arg(words.replace(' ' , '+'), product, comment, date_start,
+                  QString(searchUrl).arg(words.replace(' ' , '+'), product, 
+                                         comment.replace(' ' , '+'), date_start,
                                          date_end, severity, QString(columns));
 
     stopCurrentSearch();

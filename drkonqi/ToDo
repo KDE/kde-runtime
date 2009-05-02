@@ -5,11 +5,19 @@
 
 ##Unassigned
 -------------
-
+    
 - We need a new icon/image :)
 
 - Side by side backtrace comparison on "Show report information" (duplicates step)
 - Ask for saving the report information to file when exiting the report assistant without reporting
+
+##Bugzilla DrKonqi reports cleanup:
+---
+Wontfix: 143243, 179721, 185547
+Invalid/NEEDSINFO: 182048-worksforme
+Worksforme: 167911 (gdb bug?)
+Needs research: 126073
+---
 
 #ToDiscuss
 --------
