@@ -14,7 +14,7 @@
    <item>
     <widget class="QLabel" name="m_explanationLabel">
      <property name="text">
-      <string comment="@info/rich">This is an optional step where you can try to find an already reported bug that could match the crash you got. If there are search results, you can double click a report in the list and compare the situations. Then, you can suggest that your crash could be a duplicate of that report.</string>
+      <string comment="@info/rich">You can try to find an already reported bug that could match the crash you got. If there are search results, you can double click a report in the list and compare the situations. Then, you can suggest that your crash could be a duplicate of that report.</string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>

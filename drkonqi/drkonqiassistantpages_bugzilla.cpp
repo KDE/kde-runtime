@@ -514,6 +514,7 @@ void BugzillaDuplicatesPage::searchFinished(const BugMapList & list)
         }
 
         ui.m_bugListWidget->sortItems(0 , Qt::DescendingOrder);
+        ui.m_bugListWidget->resizeColumnToContents(1);
 
         if (!canSearchMore()) {
             ui.m_searchMoreButton->setEnabled(false);
