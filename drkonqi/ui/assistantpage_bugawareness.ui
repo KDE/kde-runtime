@@ -6,29 +6,29 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>505</width>
-    <height>484</height>
+    <width>600</width>
+    <height>298</height>
    </rect>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
-   <item>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
     <widget class="QLabel" name="m_detailLabel">
      <property name="text">
-      <string comment="@info refers to 'if you can give detailed information'">&lt;para&gt;&lt;b&gt;Can you give detailed information about what you were doing when the application crashed?&lt;/b&gt;&lt;/para&gt;&lt;para&gt;If you can, that will help the developers reproduce and fix the bug. &lt;emphasis&gt;Examples of Details: steps to take to reproduce the crash, what you were doing in the application, whether it happens every time, or whether it crashes on a particular URL or document.&lt;/emphasis&gt;&lt;/para&gt;</string>
+      <string comment="@info refers to 'if you can give detailed information'">&lt;para&gt;&lt;b&gt;Can you give details about how to reproduce it?&lt;/b&gt;&lt;/para&gt;&lt;/br&gt;&lt;para&gt;&lt;emphasis&gt; Examples: &lt;ul&gt;&lt;li&gt;steps to reproduce the crash&lt;/li&gt; &lt;li&gt;what you were doing at the time&lt;/li&gt; &lt;li&gt;if it happens every time&lt;/li&gt; &lt;li&gt;a URL or document that crashes&lt;/li&gt;&lt;/emphasis&gt;&lt;/para&gt;</string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>
      </property>
     </widget>
    </item>
-   <item>
+   <item row="1" column="0">
     <widget class="QCheckBox" name="m_canDetailCheckBox">
      <property name="text">
       <string comment="@option:check">Yes, I can give information about the crash.</string>
      </property>
     </widget>
    </item>
-   <item>
+   <item row="2" column="0">
     <spacer name="verticalSpacer_2">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -44,24 +44,24 @@
      </property>
     </spacer>
    </item>
-   <item>
+   <item row="3" column="0">
     <widget class="QLabel" name="m_developersCanContactReporterLabel">
      <property name="text">
-      <string comment="@info">&lt;para&gt;&lt;b&gt;Can the developers contact you for more information?&lt;/b&gt;&lt;/para&gt;&lt;para&gt;Sometimes, while the bug is being investigated, the developers need more information from the reporter in order to fix the bug.&lt;/para&gt;</string>
+      <string comment="@info">&lt;para&gt;&lt;b&gt;Can the developers contact you for more information?&lt;/b&gt;&lt;/para&gt;</string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>
      </property>
     </widget>
    </item>
-   <item>
+   <item row="4" column="0">
     <widget class="QCheckBox" name="m_developersCanContactReporterCheckBox">
      <property name="text">
-      <string comment="@option:check">Yes, developers can contact me for more information if required.</string>
+      <string comment="@option:check">Yes, developers can contact me.</string>
      </property>
     </widget>
    </item>
-   <item>
+   <item row="5" column="0">
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
