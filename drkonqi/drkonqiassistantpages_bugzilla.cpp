@@ -103,6 +103,8 @@ void BugzillaLoginPage::aboutToShow()
 
         ui.m_savePasswordCheckBox->setVisible(false);
         
+        ui.m_noticeLabel->setVisible(false);
+        
         ui.m_statusWidget->setIdle(i18nc("@info:status the user is logged at the bugtracker site as USERNAME",
                                       "Logged in at the KDE bug tracking system (%1) as: %2.",
                                       QLatin1String(KDE_BUGZILLA_SHORT_URL),
@@ -527,7 +529,7 @@ void BugzillaDuplicatesPage::searchFinished(const BugMapList & list)
         } else {
             markAsSearching(false);
             ui.m_statusWidget->setIdle(i18nc("@info:status","Search Finished. "
-                                                         "No more possible date ranges to search."));
+                                                         "No reports found."));
             ui.m_searchMoreButton->setEnabled(false);
             if (ui.m_bugListWidget->topLevelItemCount() == 0) {
                 //No reports to mark as possible duplicate

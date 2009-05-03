@@ -233,7 +233,7 @@ void DrKonqiBugReport::closeEvent(QCloseEvent * event)
 {
     if (!m_canClose) {
         if (KMessageBox::questionYesNo(this, i18nc("@info","Do you really want to close the bug "
-                                                   "assistant without sending the bug report?"),
+                                                   "assistant without submitting the bug report?"),
                                        i18nc("@title:window","Close Crash Reporting Assistant"))
                                         == KMessageBox::Yes) {
             event->accept();
