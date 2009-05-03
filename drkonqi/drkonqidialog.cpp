@@ -92,8 +92,8 @@ void DrKonqiDialog::buildMainWidget()
     QLabel * infoLabel = new QLabel(i18nc("@info", "<para>You can help us improve KDE by reporting "
                                           "this error.<nl /><link url='#aboutbugreporting'>Learn "
                                           "more about bug reporting.</link></para><para><note>It is "
-                                          "safe to close this dialog if you do not want to report a bug."
-                                          "</note></para>"));
+                                          "safe to close this dialog if you do not want to report "
+                                          "this bug.</note></para>"));
     connect(infoLabel, SIGNAL(linkActivated(QString)), this, SLOT(aboutBugReporting()));
     infoLabel->setWordWrap(true);
 

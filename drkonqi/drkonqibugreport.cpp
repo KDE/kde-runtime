@@ -207,12 +207,11 @@ void DrKonqiBugReport::next()
 {
     DrKonqiAssistantPage * page = dynamic_cast<DrKonqiAssistantPage*>(currentPage()->widget());
     if (page) {
-        if (page->showNextPage()) { //Time to ask the user if we need to
-            KAssistantDialog::next();
+        if (!page->showNextPage()) { //Time to ask the user if we need to
+            return;
         }
-    } else {
-        KAssistantDialog::next();
     }
+    KAssistantDialog::next();
 }
 
 void DrKonqiBugReport::enableNextButton(bool enabled)

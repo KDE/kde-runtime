@@ -690,6 +690,7 @@ void BugzillaInformationPage::checkTexts()
 
 bool BugzillaInformationPage::showNextPage()
 {
+    bool textsOk = false;
     checkTexts();
     if (m_textsOK) { //not empty
         bool titleShort = ui.m_titleEdit->text().size() < 50;
@@ -714,17 +715,25 @@ bool BugzillaInformationPage::showNextPage()
             //The user input is less than we want.... encourage to write more
             if (KMessageBox::questionYesNo(this, message,
                                            i18nc("@title:window","We need more information"))
-                                            == KMessageBox::Yes) {
-                return false; //Cancel show next, to allow the user to write more
-            } else {
-                return true; //Allow to continue
+                                            == KMessageBox::No) {
+                textsOk = true; //Allow to continue
             }
         } else {
-            return true;
+            textsOk = true;
         }
-    } else {
-        return false;
     }
+    
+    if (textsOk) {
+        if (KMessageBox::questionYesNo(this, i18nc("@info question","Are you ready to submit this "
+                                            "report?") , i18nc("@title:window","Are you sure?"))
+                                            == KMessageBox::Yes) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    return false;
 }
 
 bool BugzillaInformationPage::isComplete()
