@@ -141,10 +141,18 @@ QString ReportInfo::generateReport() const
 
     QString report;
 
-    //Description (title)
-    if (!m_reportKeywords.isEmpty()) {
-        report.append(QString("Title: %1\n\n").arg(m_reportKeywords));
+    //Program name and versions
+    report.append(QString("Application that crashed: %1\n").arg(krashConfig->productName()));
+    report.append(QString("Version of the application: %1\n").arg(krashConfig->productVersion()));
+    report.append(QString("KDE Version: %1\n").arg(KDE::versionString()));
+    report.append(QString("Qt Version: %1\n").arg(qVersion()));
+    report.append(QString("Operating System: %1\n").arg(osString()));
+
+    //LSB output
+    if ( !m_lsbRelease.isEmpty() ) {
+        report.append(QString("Distribution: %1\n").arg(m_lsbRelease));
     }
+    report.append(QLatin1String("\n"));
 
     //Details of the crash situation
     if (m_userCanDetail) {
@@ -157,20 +165,6 @@ QString ReportInfo::generateReport() const
         }
         report.append(QLatin1String("\n\n"));
     }
-
-    //Program name and versions
-    report.append(QString(" -- Application and System information:\n"));
-    report.append(QString("Application that crashed: %1\n").arg(krashConfig->productName()));
-    report.append(QString("Version of the application: %1\n").arg(krashConfig->productVersion()));
-    report.append(QString("KDE Version: %1\n").arg(KDE::versionString()));
-    report.append(QString("Qt Version: %1\n").arg(qVersion()));
-    report.append(QString("Operating System: %1\n").arg(osString()));
-
-    //LSB output
-    if ( !m_lsbRelease.isEmpty() ) {
-        report.append(QString("Distribution: %1\n").arg(m_lsbRelease));
-    }
-    report.append(QLatin1String("\n"));
 
     //Backtrace
     report.append(QString(" -- Backtrace:\n"));
