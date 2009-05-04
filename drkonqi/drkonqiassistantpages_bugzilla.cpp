@@ -726,9 +726,9 @@ bool BugzillaInformationPage::showNextPage()
     bool textsOk = false;
     checkTexts();
     if (m_textsOK) { //not empty
-        bool titleShort = ui.m_titleEdit->text().size() < 50;
+        bool titleShort = ui.m_titleEdit->text().size() < 25;
         bool detailsShort = ui.m_detailsEdit->isVisible() ?
-                                (ui.m_detailsEdit->toPlainText().size() < 150) : false;
+                                (ui.m_detailsEdit->toPlainText().size() < 100) : false;
 
         if (titleShort || detailsShort) {
             QString message;
