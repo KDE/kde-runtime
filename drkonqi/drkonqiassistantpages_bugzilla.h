@@ -111,7 +111,7 @@ private Q_SLOTS:
     void searchMore();
     void performSearch();
 
-    void checkBoxChanged(int);
+    void checkBoxChanged(bool);
 
     void markAsSearching(bool);
     
@@ -133,6 +133,7 @@ private:
     QDate                                       m_searchingStartDate;
     QDate                                       m_searchingEndDate;
     
+    long                                        m_possibleDuplicateBugNumber;
     QString                                     m_currentKeywords;
 };
 

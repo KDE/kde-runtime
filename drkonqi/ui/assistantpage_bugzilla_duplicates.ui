@@ -90,30 +90,7 @@
      <item>
       <widget class="QCheckBox" name="m_foundDuplicateCheckBox">
        <property name="text">
-        <string comment="@option:check">My crash may be a duplicate of bug number:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer_2">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <widget class="KLineEdit" name="m_possibleDuplicateEdit">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="inputMask">
-        <string notr="true" comment="@info krazy2complains">000000; </string>
+        <string/>
        </property>
       </widget>
      </item>
@@ -126,11 +103,6 @@
    <class>KPushButton</class>
    <extends>QPushButton</extends>
    <header>kpushbutton.h</header>
-  </customwidget>
-  <customwidget>
-   <class>KLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>klineedit.h</header>
   </customwidget>
   <customwidget>
    <class>StatusWidget</class>
