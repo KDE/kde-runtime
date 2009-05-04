@@ -152,6 +152,7 @@ class ReportInformationDialog : public KDialog
     Q_OBJECT
 public:
     ReportInformationDialog(const QString & reportText);
+    ~ReportInformationDialog();
 
 private Q_SLOTS:
     void saveReport();

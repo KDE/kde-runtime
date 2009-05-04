@@ -334,6 +334,16 @@ ReportInformationDialog::ReportInformationDialog(const QString & reportText)
                                                "a file. You can use this option to report the "
                                                "bug later.")));
     connect(this, SIGNAL(user1Clicked()), this, SLOT(saveReport()));
+
+    setInitialSize(QSize(800, 600));
+    KConfigGroup config(KGlobal::config(), "ReportInformationDialog");
+    restoreDialogSize(config);
+}
+
+ReportInformationDialog::~ReportInformationDialog()
+{
+    KConfigGroup config(KGlobal::config(), "ReportInformationDialog");
+    saveDialogSize(config);
 }
 
 void ReportInformationDialog::saveReport()
