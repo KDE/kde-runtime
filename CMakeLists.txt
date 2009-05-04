@@ -27,6 +27,13 @@ endif(SOPRANO_PLUGIN_SESAME2BACKEND_FOUND OR SOPRANO_PLUGIN_REDLANDBACKEND_FOUND
 macro_log_feature(SOPRANO_BACKEND_FOUND "Soprano Storage Backend" "Soprano Libraries" "kdesupport" FALSE "" "No Soprano storage backend found. Nepomuk will not be compiled without it. (It is highly recommended to use the Sesame2 backend for performance.)")
 macro_log_feature(SOPRANO_PLUGIN_RAPTORPARSER_FOUND "Soprano raptor parser plugin" "Soprano Libraries" "kdesupport" FALSE "" "Required to run Nepomuk.")
 
+macro_optional_find_package(SLP)
+macro_log_feature( SLP_FOUND
+  "OpenSLP" "SLP (Service Location Protocol) implementation" "http://www.openslp.org/" FALSE
+  "" "Provides SLP support in the network:/ kioslave."
+)
+
+
 check_include_files(sys/wait.h HAVE_SYS_WAIT_H)
 check_include_files(sys/time.h HAVE_SYS_TIME_H)
 
