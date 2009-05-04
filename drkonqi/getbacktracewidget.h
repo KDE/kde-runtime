@@ -39,6 +39,7 @@ public:
 
 public Q_SLOTS:
     void generateBacktrace();
+    void hilightExtraDetailsLabel(bool hilight);
 
 Q_SIGNALS:
     void stateChanged();

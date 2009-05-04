@@ -57,6 +57,7 @@ CrashInformationPage::CrashInformationPage(DrKonqiBugReport * parent)
 void CrashInformationPage::aboutToShow()
 {
     m_backtraceWidget->generateBacktrace();
+    m_backtraceWidget->hilightExtraDetailsLabel(false);
     emitCompleteChanged();
 }
 
@@ -89,6 +90,7 @@ bool CrashInformationPage::showNextPage()
                                 i18nc("@info","The crash information is not useful enough, "
                                               "do you want to try to improve it?"),
                                 i18nc("@title:window","Crash Information is not useful enough")) ) {
+            m_backtraceWidget->hilightExtraDetailsLabel(true);
             return false; //Cancel show next, to allow the user to write more
         } else {
             return true; //Allow to continue
