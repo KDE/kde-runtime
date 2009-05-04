@@ -14,7 +14,7 @@
    <item>
     <widget class="QLabel" name="m_explanationLabel">
      <property name="text">
-      <string comment="@info/rich">Complete the bug report fields in order to properly submit it. &lt;nl /&gt;&lt;note&gt;All the text must be written in English.&lt;/note&gt;</string>
+      <string comment="@info/rich">Complete the bug report fields: &lt;nl /&gt;&lt;note&gt;Use English.&lt;/note&gt;</string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>
@@ -34,7 +34,7 @@
    <item>
     <widget class="QLabel" name="m_detailsLabel">
      <property name="text">
-      <string comment="@label:textbox">Details of the crash situation</string>
+      <string comment="@label:textbox">Details about the crash</string>
      </property>
     </widget>
    </item>

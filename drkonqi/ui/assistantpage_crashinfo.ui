@@ -14,7 +14,7 @@
    <item>
     <widget class="QLabel" name="m_subTitle">
      <property name="text">
-      <string comment="@info/rich">This page will generate some information about your crash. Developers need this in a bug report about crashes.</string>
+      <string comment="@info/rich">This page will generate information about your crash that developers need.</string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>

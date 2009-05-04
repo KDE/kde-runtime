@@ -7,14 +7,14 @@
     <x>0</x>
     <y>0</y>
     <width>600</width>
-    <height>298</height>
+    <height>348</height>
    </rect>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
     <widget class="QLabel" name="m_detailLabel">
      <property name="text">
-      <string comment="@info refers to 'if you can give detailed information'">&lt;para&gt;&lt;b&gt;Can you give details about how to reproduce it?&lt;/b&gt;&lt;/para&gt;&lt;/br&gt;&lt;para&gt;&lt;emphasis&gt; Examples: &lt;ul&gt;&lt;li&gt;steps to reproduce the crash&lt;/li&gt; &lt;li&gt;what you were doing at the time&lt;/li&gt; &lt;li&gt;if it happens every time&lt;/li&gt; &lt;li&gt;a URL or document that crashes&lt;/li&gt;&lt;/emphasis&gt;&lt;/para&gt;</string>
+      <string comment="@info refers to 'if you can give detailed information'">&lt;para&gt;&lt;b&gt;Can you detail how it can be reproduced?&lt;/b&gt;&lt;/para&gt;&lt;/br&gt;&lt;para&gt;&lt;emphasis&gt; Examples: &lt;ul&gt;&lt;li&gt;steps to reproduce the crash&lt;/li&gt; &lt;li&gt;what you were doing at the time&lt;/li&gt; &lt;li&gt;if it happens every time&lt;/li&gt; &lt;li&gt;a URL or document that crashes&lt;/li&gt;&lt;/emphasis&gt;&lt;/para&gt;</string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>
