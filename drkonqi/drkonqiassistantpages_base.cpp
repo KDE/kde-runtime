@@ -327,7 +327,7 @@ ReportInformationDialog::ReportInformationDialog(const QString & reportText)
     ui.setupUi(mainWidget());
     ui.m_reportInformationBrowser->setPlainText(reportText);
 
-    setButtonGuiItem(KDialog::User1, KGuiItem2(i18nc("@action:button", "&Save to File"),
+    setButtonGuiItem(KDialog::User1, KGuiItem2(i18nc("@action:button", "&Save to File..."),
                                                KIcon("document-save"),
                                                i18nc("@info:tooltip", "Use this button to save the "
                                                "generated report information about this crash to "

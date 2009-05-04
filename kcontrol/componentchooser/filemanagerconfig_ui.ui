@@ -9,7 +9,7 @@
    <item>
     <widget class="QLabel" name="label">
      <property name="text">
-      <string>Browse directories using the following file manager </string>
+      <string>Browse directories using the following file manager:</string>
      </property>
     </widget>
    </item>

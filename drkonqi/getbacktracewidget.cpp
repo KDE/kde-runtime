@@ -62,7 +62,7 @@ GetBacktraceWidget::GetBacktraceWidget(BacktraceGenerator *generator, QWidget *p
     connect(ui.m_copyButton, SIGNAL(clicked()) , this, SLOT(copyClicked()));
     ui.m_copyButton->setEnabled(false);
 
-    ui.m_saveButton->setGuiItem(KGuiItem2(i18nc("@action:button", "&Save to File"),
+    ui.m_saveButton->setGuiItem(KGuiItem2(i18nc("@action:button", "&Save to File..."),
                                           KIcon("document-save"),
                                           i18nc("@info:tooltip", "Use this button to save the "
                                           "crash information (backtrace) to a file. This is useful "
