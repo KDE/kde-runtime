@@ -32,6 +32,8 @@
 #include <KIcon>
 #include <KLocale>
 
+const char *extraDetailsLabelMargin = " margin: 5px; ";
+
 GetBacktraceWidget::GetBacktraceWidget(BacktraceGenerator *generator, QWidget *parent) :
         QWidget(parent),
         m_btGenerator(generator)
@@ -44,6 +46,8 @@ GetBacktraceWidget::GetBacktraceWidget(BacktraceGenerator *generator, QWidget *p
     connect(m_btGenerator, SIGNAL(newLine(QString)) , this, SLOT(backtraceNewLine(QString)));
 
     ui.m_extraDetailsLabel->setVisible(false);
+    ui.m_extraDetailsLabel->setStyleSheet(QLatin1String(extraDetailsLabelMargin));
+
     ui.m_reloadBacktraceButton->setGuiItem(
                 KGuiItem2(i18nc("@action:button", "&Reload Crash Information"),
                           KIcon("view-refresh"), i18nc("@info:tooltip", "Use this button to "
@@ -249,12 +253,13 @@ void GetBacktraceWidget::hilightExtraDetailsLabel(bool hilight)
 {
     QString stylesheet;
     if (hilight) {
-        stylesheet = QLatin1String("QLabel { border-width: 2px; "
-                                            "border-style: solid; "
-                                            "border-color: red; }");
+        stylesheet = QLatin1String("border-width: 2px; "
+                                    "border-style: solid; "
+                                    "border-color: red;");
     } else {
-        stylesheet = QLatin1String("QLabel { border-width: 0px; }");
+        stylesheet = QLatin1String("border-width: 0px;");
     }
+    stylesheet += QLatin1String(extraDetailsLabelMargin);
     ui.m_extraDetailsLabel->setStyleSheet(stylesheet);
 }
 
