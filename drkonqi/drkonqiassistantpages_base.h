@@ -24,7 +24,6 @@
 #include "drkonqibugreport.h"
 
 #include "ui_assistantpage_introduction.h"
-#include "ui_assistantpage_crashinfo.h"
 #include "ui_assistantpage_bugawareness.h"
 #include "ui_assistantpage_conclusions.h"
 #include "ui_assistantpage_conclusions_dialog.h"
@@ -90,7 +89,6 @@ private:
 /** Backtrace page **/
 class CrashInformationPage: public DrKonqiAssistantPage
 {
-
     Q_OBJECT
 
 public:
@@ -102,7 +100,6 @@ public:
     bool showNextPage();
 
 private:
-    Ui::AssistantPageCrashInfo  ui;
     GetBacktraceWidget *        m_backtraceWidget;
 };
 

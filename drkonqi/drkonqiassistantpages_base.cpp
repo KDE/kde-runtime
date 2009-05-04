@@ -47,11 +47,11 @@ IntroductionPage::IntroductionPage(DrKonqiBugReport * parent) :
 CrashInformationPage::CrashInformationPage(DrKonqiBugReport * parent)
         : DrKonqiAssistantPage(parent)
 {
-    ui.setupUi(this);
-    
     m_backtraceWidget = new GetBacktraceWidget(DrKonqi::instance()->backtraceGenerator());
     connect(m_backtraceWidget, SIGNAL(stateChanged()) , this, SLOT(emitCompleteChanged()));
-    ui.verticalLayout->addWidget(m_backtraceWidget);
+
+    QVBoxLayout *layout = new QVBoxLayout(this);
+    layout->addWidget(m_backtraceWidget);
 }
 
 void CrashInformationPage::aboutToShow()
