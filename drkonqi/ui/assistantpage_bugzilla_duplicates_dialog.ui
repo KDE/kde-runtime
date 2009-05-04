@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>517</width>
-    <height>479</height>
+    <width>531</width>
+    <height>564</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -16,15 +16,47 @@
     <height>300</height>
    </size>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
-    <widget class="StatusWidget" name="m_statusWidget" native="true"/>
+    <widget class="StatusWidget" name="m_statusWidget" native="true">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+    </widget>
    </item>
    <item>
-    <widget class="KTextBrowser" name="m_infoBrowser"/>
+    <widget class="QSplitter" name="splitter">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <widget class="KTextBrowser" name="m_infoBrowser"/>
+     <widget class="QWidget" name="layoutWidget">
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QLabel" name="m_backtraceTitleLabel">
+         <property name="text">
+          <string comment="@label:textbox">Backtrace of the crash I am about to report:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="KTextBrowser" name="m_backtraceBrowser"/>
+       </item>
+      </layout>
+     </widget>
+    </widget>
    </item>
    <item>
     <widget class="QLabel" name="m_linkLabel">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="wordWrap">
       <bool>true</bool>
      </property>

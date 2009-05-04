@@ -44,7 +44,9 @@ public:
     QStringList firstBacktraceFunctions() const;
     void setFirstBacktraceFunctions(const QStringList & functions);
 
+    QString backtrace() const;
     void setBacktrace(const QString & backtrace);
+    
     void setDetailText(const QString & text);
     void setPossibleDuplicate(const QString & bug);
 

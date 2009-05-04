@@ -143,6 +143,7 @@ class BugzillaReportInformationDialog : public KDialog
 
 public:
     BugzillaReportInformationDialog(BugzillaDuplicatesPage*parent=0);
+    ~BugzillaReportInformationDialog();
     
     void showBugReport(int bugNumber);
 

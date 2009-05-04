@@ -90,6 +90,11 @@ void ReportInfo::setReportKeywords(const QString & keywords)
     m_reportKeywords = keywords;
 }
 
+QString ReportInfo::backtrace() const
+{
+    return m_backtrace;
+}
+
 void ReportInfo::setBacktrace(const QString & backtrace)
 {
     m_backtrace = backtrace;

@@ -478,6 +478,7 @@ void BugzillaDuplicatesPage::performSearch()
     BugReport report = reportInfo()->newBugReportTemplate();
     bugzillaManager()->searchBugs(m_currentKeywords, report.product(), report.bugSeverity(),
                                     startDateStr, endDateStr, reportInfo()->firstBacktraceFunctions().join(" "));
+    
     //Test search
     /*
     bugzillaManager()->searchBugs( "konqueror crash toggle mode", "konqueror", "crash",  
@@ -572,6 +573,17 @@ BugzillaReportInformationDialog::BugzillaReportInformationDialog(BugzillaDuplica
              this, SLOT(bugFetchFinished(BugReport)));
     connect(m_parent->bugzillaManager(), SIGNAL(bugReportError(QString)),
              this, SLOT(bugFetchError(QString)));
+             
+    setMinimumSize(QSize(800,600));
+    resize(minimumSize());
+    KConfigGroup config(KGlobal::config(), "BugzillaReportInformationDialog");
+    restoreDialogSize(config);
+}
+
+BugzillaReportInformationDialog::~BugzillaReportInformationDialog()
+{
+    KConfigGroup config(KGlobal::config(), "BugzillaReportInformationDialog");
+    saveDialogSize(config);
 }
 
 void BugzillaReportInformationDialog::showBugReport(int bugNumber)
@@ -592,6 +604,8 @@ void BugzillaReportInformationDialog::showBugReport(int bugNumber)
                                                            "<numid>%1</numid> from %2....",
                                             m_bugNumber,
                                             QLatin1String(KDE_BUGZILLA_SHORT_URL)));
+                                            
+    ui.m_backtraceBrowser->setPlainText(m_parent->reportInfo()->backtrace());
     show();
 }
 
