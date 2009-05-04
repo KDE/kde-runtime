@@ -85,8 +85,7 @@ Nepomuk::StrigiService::StrigiService( QObject* parent, const QList<QVariant>& )
             StatusWidget* sw = new StatusWidget( mainModel(), this );
 
             // create the systray
-            SystemTray* tray =  new SystemTray( this, sw );
-            tray->show();
+            new SystemTray( this, sw );
 
             // setup status connections
             connect( m_indexScheduler, SIGNAL( indexingStarted() ),

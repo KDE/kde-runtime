@@ -19,16 +19,18 @@
 #ifndef _NEPOMUK_STRIGI_SYSTRAY_H_
 #define _NEPOMUK_STRIGI_SYSTRAY_H_
 
-#include <KSystemTrayIcon>
+#include <knotificationitem-1/knotificationitem.h>
 
 class KToggleAction;
+
+using namespace Experimental;
 
 namespace Nepomuk {
 
     class IndexScheduler;
     class StrigiService;
 
-    class SystemTray : public KSystemTrayIcon
+    class SystemTray : public KNotificationItem
     {
         Q_OBJECT
 

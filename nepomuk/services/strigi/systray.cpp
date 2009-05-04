@@ -29,9 +29,13 @@
 
 
 Nepomuk::SystemTray::SystemTray( StrigiService* service, QWidget* parent )
-    : KSystemTrayIcon( "nepomuk", parent ),
+    : KNotificationItem( parent ),
       m_service( service )
 {
+    setCategory( SystemServices );
+    setStatus( Passive );
+    setIcon( "nepomuk" );
+    
     KMenu* menu = new KMenu;
     menu->addTitle( i18n( "Strigi File Indexing" ) );
 
@@ -63,7 +67,7 @@ Nepomuk::SystemTray::~SystemTray()
 
 void Nepomuk::SystemTray::slotUpdateStrigiStatus()
 {
-    setToolTip( m_service->userStatusString() );
+    setToolTip("nepomuk", i18n("Nepomuk"),  m_service->userStatusString() );
     m_suspendResumeAction->setChecked( m_service->indexScheduler()->isSuspended() );
 }
 
