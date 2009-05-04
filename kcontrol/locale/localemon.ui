@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>576</width>
-    <height>366</height>
+    <height>406</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" >
@@ -63,6 +63,20 @@
      </item>
      <item row="3" column="1" >
       <widget class="KIntNumInput" name="m_inMonFraDig" />
+     </item>
+     <item row="4" column="0" >
+      <widget class="QLabel" name="m_labMonDigSet" >
+       <property name="text" >
+        <string>Digit set:</string>
+       </property>
+       <property name="alignment" >
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="1" >
+      <widget class="QComboBox" name="m_cmbMonDigSet" >
+      </widget>
      </item>
     </layout>
    </item>

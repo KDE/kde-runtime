@@ -21,6 +21,7 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include <kdebug.h>
 #include <QCheckBox>
 #include <QComboBox>
 #include <QLabel>
@@ -58,6 +59,7 @@ KLocaleConfigMoney::KLocaleConfigMoney(KLocale *locale,
   m_negativeGB->setObjectName( I18N_NOOP("Negative") );
   m_chMonNegPreCurSym->setObjectName(I18N_NOOP("Prefix currency symbol"));
   m_labMonNegMonSignPos->setObjectName( I18N_NOOP("Sign position:") );
+  m_labMonDigSet->setObjectName( I18N_NOOP("Digit set:") );
 
   connect( m_edMonCurSym, SIGNAL( textChanged(const QString &) ),
            SLOT( slotMonCurSymChanged(const QString &) ) );
@@ -82,6 +84,9 @@ KLocaleConfigMoney::KLocaleConfigMoney(KLocale *locale,
 
   connect( m_cmbMonNegMonSignPos, SIGNAL( activated(int) ),
            SLOT( slotMonNegMonSignPosChanged(int) ) );
+
+  connect( m_cmbMonDigSet, SIGNAL( activated(int) ),
+           SLOT( slotMonDigSetChanged(int) ) );
 
   m_inMonFraDig->setRange(0, 10, 1);
   m_inMonFraDig->setSliderEnabled(false);
@@ -158,6 +163,13 @@ void KLocaleConfigMoney::save()
                        (int)m_locale->negativeMonetarySignPosition(),
                        KConfig::Persistent|KConfig::Global);
 
+  i = entGrp.readEntry("MonetaryDigitSet", (int)KLocale::ArabicDigits);
+  group.deleteEntry("MonetaryDigitSet", KConfig::Persistent | KConfig::Global);
+  if (i != m_locale->monetaryDigitSet())
+    group.writeEntry("MonetaryDigitSet",
+                     (int)m_locale->monetaryDigitSet(),
+                     KConfig::Persistent|KConfig::Global);
+
   group.sync();
 }
 
@@ -172,6 +184,8 @@ void KLocaleConfigMoney::slotLocaleChanged()
   m_chMonNegPreCurSym->setChecked( m_locale->negativePrefixCurrencySymbol() );
   m_cmbMonPosMonSignPos->setCurrentIndex( m_locale->positiveMonetarySignPosition() );
   m_cmbMonNegMonSignPos->setCurrentIndex( m_locale->negativeMonetarySignPosition() );
+
+  m_cmbMonDigSet->setCurrentIndex( m_locale->monetaryDigitSet() );
 }
 
 void KLocaleConfigMoney::slotMonCurSymChanged(const QString &t)
@@ -222,6 +236,12 @@ void KLocaleConfigMoney::slotMonNegMonSignPosChanged(int i)
   emit localeChanged();
 }
 
+void KLocaleConfigMoney::slotMonDigSetChanged(int i)
+{
+  m_locale->setMonetaryDigitSet((KLocale::DigitSet)i);
+  emit localeChanged();
+}
+
 void KLocaleConfigMoney::slotTranslate()
 {
   QList<QComboBox*> list;
@@ -236,6 +256,15 @@ void KLocaleConfigMoney::slotTranslate()
     wc->setItemText(3, ki18n("Before Money").toString(m_locale));
     wc->setItemText(4, ki18n("After Money").toString(m_locale));
   }
+
+  QList<KLocale::DigitSet> digitSets = m_locale->allDigitSetsList();
+  qSort(digitSets);
+  m_cmbMonDigSet->clear();
+  foreach (KLocale::DigitSet ds, digitSets)
+  {
+    m_cmbMonDigSet->addItem(m_locale->digitSetToName(ds, true));
+  }
+  m_cmbMonDigSet->setCurrentIndex(m_locale->monetaryDigitSet());
 
   QString str;
 
@@ -288,4 +317,13 @@ void KLocaleConfigMoney::slotTranslate()
                "values." ).toString( m_locale );
   m_labMonNegMonSignPos->setWhatsThis( str );
   m_cmbMonNegMonSignPos->setWhatsThis( str );
+
+  str = ki18n( "<p>Here you can define the set of digits "
+               "used to display monetary values.</p>"
+               "<p>Note that the set of digits used to "
+               "display other numbers has to be defined "
+               "separately (see the 'Numbers' tab).</p>" ).toString( m_locale );
+  m_labMonDigSet->setWhatsThis( str );
+  m_cmbMonDigSet->setWhatsThis( str );
+
 }

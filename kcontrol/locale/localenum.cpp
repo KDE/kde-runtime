@@ -23,6 +23,7 @@
 
 #include <QLabel>
 #include <QLineEdit>
+#include <QComboBox>
 #include <QLayout>
 #include <QRegExp>
 
@@ -84,8 +85,19 @@ KLocaleConfigNumber::KLocaleConfigNumber(KLocale *locale,
 	   this, SLOT( slotMonNegSignChanged(const QString &) ) );
   m_labMonNegSign->setBuddy(m_edMonNegSign);
 
+  m_labDigSet = new QLabel(this);
+  lay->addWidget(m_labDigSet, 4, 0);
+  m_labDigSet->setObjectName( I18N_NOOP("Di&git set:") );
+  m_labDigSet->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+  m_cmbDigSet = new QComboBox(this);
+  lay->addWidget(m_cmbDigSet, 4, 1);
+  connect( m_cmbDigSet, SIGNAL( activated(int) ),
+	   this, SLOT( slotDigSetChanged(int) ) );
+  m_labDigSet->setBuddy(m_cmbDigSet);
+
+
   lay->setColumnStretch(1, 1);
-  lay->setRowStretch(4, 1);
+  lay->setRowStretch(5, 1);
 
   connect(this, SIGNAL(localeChanged()),
 	  SLOT(slotLocaleChanged()));
@@ -106,6 +118,7 @@ void KLocaleConfigNumber::save()
   KConfigGroup entGrp = ent.group("KCM Locale");
 
   QString str;
+  int i;
 
   str = entGrp.readEntry("DecimalSymbol",
 		      QString::fromLatin1("."));
@@ -132,6 +145,11 @@ void KLocaleConfigNumber::save()
   group.deleteEntry("NegativeSign", KConfig::Persistent | KConfig::Global);
   if (str != m_locale->negativeSign())
     group.writeEntry("NegativeSign", m_locale->negativeSign(), KConfig::Persistent|KConfig::Global);
+
+  i = entGrp.readEntry("DigitSet", (int)KLocale::ArabicDigits);
+  group.deleteEntry("DigitSet", KConfig::Persistent | KConfig::Global);
+  if (i != m_locale->digitSet())
+    group.writeEntry("DigitSet", (int)m_locale->digitSet(), KConfig::Persistent|KConfig::Global);
 }
 
 void KLocaleConfigNumber::slotLocaleChanged()
@@ -141,6 +159,7 @@ void KLocaleConfigNumber::slotLocaleChanged()
   m_edThoSep->setText( m_locale->thousandsSeparator() );
   m_edMonPosSign->setText( m_locale->positiveSign() );
   m_edMonNegSign->setText( m_locale->negativeSign() );
+  m_cmbDigSet->setCurrentIndex( m_locale->digitSet() );
 }
 
 void KLocaleConfigNumber::slotDecSymChanged(const QString &t)
@@ -167,9 +186,24 @@ void KLocaleConfigNumber::slotMonNegSignChanged(const QString &t)
   emit localeChanged();
 }
 
+void KLocaleConfigNumber::slotDigSetChanged(int i)
+{
+  m_locale->setDigitSet((KLocale::DigitSet) i);
+  emit localeChanged();
+}
+
 void KLocaleConfigNumber::slotTranslate()
 {
   QString str;
+
+  QList<KLocale::DigitSet> digitSets = m_locale->allDigitSetsList();
+  qSort(digitSets);
+  m_cmbDigSet->clear();
+  foreach (KLocale::DigitSet ds, digitSets)
+  {
+    m_cmbDigSet->addItem(m_locale->digitSetToName(ds, true));
+  }
+  m_cmbDigSet->setCurrentIndex(m_locale->digitSet());
 
   str = ki18n( "<p>Here you can define the decimal separator used "
 	       "to display numbers (i.e. a dot or a comma in "
@@ -200,4 +234,13 @@ void KLocaleConfigNumber::slotTranslate()
 	       "numbers. It is normally set to minus (-)." ).toString( m_locale );
   m_labMonNegSign->setWhatsThis( str );
   m_edMonNegSign->setWhatsThis( str );
+
+  str = ki18n( "<p>Here you can define the set of digits "
+	       "used to display numbers.</p><p>"
+	       "Note that the set of digits used to "
+	       "display monetary values has to be set "
+	       "separately (see the 'Money' tab).</p>" ).toString( m_locale );
+  m_labDigSet->setWhatsThis( str );
+  m_cmbDigSet->setWhatsThis( str );
+
 }

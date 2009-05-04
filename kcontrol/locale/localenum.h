@@ -28,6 +28,7 @@
 #include <QWidget>
 
 class QLineEdit;
+class QComboBox;
 
 class KLocale;
 
@@ -60,6 +61,7 @@ private Q_SLOTS:
   void slotMonNegSignChanged(const QString &t);
   void slotDecSymChanged(const QString &t);
   void slotThoSepChanged(const QString &t);
+  void slotDigSetChanged(int);
 
 private:
   KLocale *m_locale;
@@ -73,6 +75,8 @@ private:
   QLineEdit *m_edMonPosSign;
   QLabel *m_labMonNegSign;
   QLineEdit *m_edMonNegSign;
+  QLabel *m_labDigSet;
+  QComboBox *m_cmbDigSet;
 };
 
 #endif // LOCALENUM_H

@@ -61,6 +61,7 @@ private Q_SLOTS:
   void slotMonNegPreCurSymChanged();
   void slotMonPosMonSignPosChanged(int i);
   void slotMonNegMonSignPosChanged(int i);
+  void slotMonDigSetChanged(int i);
 
 private:
   KLocale *m_locale;
