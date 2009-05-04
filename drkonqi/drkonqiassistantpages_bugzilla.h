@@ -34,6 +34,7 @@ namespace KWallet { class Wallet; }
 class QDate;
 class QTreeWidgetItem;
 class BugzillaReportInformationDialog;
+class KGuiItem;
 
 /** Bugs.kde.org login **/
 class BugzillaLoginPage: public DrKonqiAssistantPage
@@ -135,6 +136,9 @@ private:
     
     long                                        m_possibleDuplicateBugNumber;
     QString                                     m_currentKeywords;
+    
+    KGuiItem                                    m_searchMoreGuiItem;
+    KGuiItem                                    m_retrySearchGuiItem;
 };
 
 /** Internal bug-info dialog **/

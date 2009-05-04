@@ -314,12 +314,19 @@ BugzillaDuplicatesPage::BugzillaDuplicatesPage(DrKonqiBugReport * parent):
     header->setResizeMode(0, QHeaderView::ResizeToContents);
     header->setResizeMode(1, QHeaderView::Interactive);
 
-    ui.m_searchMoreButton->setGuiItem(KGuiItem2(i18nc("@action:button", "Search for more reports"),
+    m_searchMoreGuiItem = KGuiItem2(i18nc("@action:button", "Search for more reports"),
                                                    KIcon("edit-find"),
                                                    i18nc("@info:tooltip", "Use this button to "
                                                         "search for more similar bug reports on an "
-                                                        "earlier date.")));
+                                                        "earlier date."));
+    ui.m_searchMoreButton->setGuiItem(m_searchMoreGuiItem);
     connect(ui.m_searchMoreButton, SIGNAL(clicked()), this, SLOT(searchMore()));
+    
+    m_retrySearchGuiItem = KGuiItem2(i18nc("@action:button", "Retry search"),
+                                                   KIcon("edit-find"),
+                                                   i18nc("@info:tooltip", "Use this button to "
+                                                        "retry the search that previously "
+                                                        "failed."));
 
     ui.m_openReportButton->setGuiItem(KGuiItem2(i18nc("@action:button", "Open selected report"),
                                                    KIcon("document-preview"),
@@ -361,7 +368,9 @@ void BugzillaDuplicatesPage::markAsSearching(bool searching)
     
     ui.m_bugListWidget->setEnabled(!searching);
     ui.m_searchMoreButton->setEnabled(!searching);
+    ui.m_searchMoreButton->setVisible(!searching);
     ui.m_stopSearchButton->setEnabled(searching);
+    ui.m_stopSearchButton->setVisible(searching);
     
     ui.m_foundDuplicateCheckBox->setEnabled(!searching);
     
@@ -374,6 +383,7 @@ void BugzillaDuplicatesPage::markAsSearching(bool searching)
 
 void BugzillaDuplicatesPage::searchError(QString err)
 {
+    ui.m_searchMoreButton->setGuiItem(m_retrySearchGuiItem);
     markAsSearching(false);
 
     ui.m_statusWidget->setIdle(i18nc("@info:status","Error fetching the bug report list"));
@@ -502,6 +512,7 @@ void BugzillaDuplicatesPage::searchMore()
 
 void BugzillaDuplicatesPage::searchFinished(const BugMapList & list)
 {
+    ui.m_searchMoreButton->setGuiItem(m_searchMoreGuiItem);
     m_startDate = m_searchingStartDate;
     
     int results = list.count();
@@ -579,8 +590,7 @@ BugzillaReportInformationDialog::BugzillaReportInformationDialog(BugzillaDuplica
     connect(m_parent->bugzillaManager(), SIGNAL(bugReportError(QString)),
              this, SLOT(bugFetchError(QString)));
              
-    setMinimumSize(QSize(800,600));
-    resize(minimumSize());
+    setInitialSize(QSize(800, 600));
     KConfigGroup config(KGlobal::config(), "BugzillaReportInformationDialog");
     restoreDialogSize(config);
 }
