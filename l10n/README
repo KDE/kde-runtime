@@ -124,6 +124,17 @@ between the entry name and the value.
 
 	Default: ","
 
+* DigitSet
+	The set of digits used to display numbers.
+
+	0 Arabic
+	1 Arabic-Indic
+	2 Eastern Arabic-Indic
+	3 Devenagari
+
+	Default: 0
+
+
 * CurrencySymbol
 	The symbol of the currency used in the country.
 
@@ -139,6 +150,13 @@ between the entry name and the value.
 	Thousands separator for money.
 
 	Default: ","
+
+* MonetaryDigitSet
+	The set of digits used to display money amounts.
+
+	See DigitSet for possible values.
+
+	Default: 0
 
 * PositiveSign
 	Positive sign for money.
