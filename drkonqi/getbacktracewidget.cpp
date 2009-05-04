@@ -175,26 +175,13 @@ void GetBacktraceWidget::loadData()
         }
         ui.m_statusWidget->setIdle(usefulnessText);
 
-        //QStringList missingSymbols = QStringList() << btInfo->usefulFilesWithMissingSymbols();
         if (btParser->backtraceUsefulness() != BacktraceParser::ReallyUseful) {
             ui.m_extraDetailsLabel->setVisible(true);
             ui.m_extraDetailsLabel->setText(i18nc("@info/rich", "Please read <link url='%1'>How to "
                                 "create useful crash reports</link> to learn how to get a useful "
-                                "backtrace.<nl/>After you install the needed packages you can "
-                                "click the <interface>Reload Crash Information</interface> button.",
+                                "backtrace. After you install the needed packages, click the "
+                                "<interface>Reload Crash Information</interface> button.",
                                 QLatin1String(TECHBASE_HOWTO_DOC)));
-
-#if 0
-            if (!missingSymbols.isEmpty()) { //Detected missing symbols
-                QString details = i18ncp("@info order", "You need to install the debug symbols for the package ",
-                                                        "You need to install the debug symbols for the following packages:", 
-                                                        missingSymbols.count());
-                Q_FOREACH(const QString & pkg, missingSymbols) {
-                    details += "<i>" + pkg + "</i> ";
-                }
-                ui.m_extraDetailsLabel->setText(ui.m_extraDetailsLabel->text() + "<br /><br />" + details);
-            }
-#endif
         }
 
         ui.m_copyButton->setEnabled(true);
@@ -202,18 +189,15 @@ void GetBacktraceWidget::loadData()
     } else if (m_btGenerator->state() == BacktraceGenerator::Failed) {
         m_usefulnessMeter->setUsefulness(BacktraceParser::Useless);
 
-        ui.m_statusWidget->setIdle(i18nc("@info:status",
-                                         "The crash information could not be generated."));
+        ui.m_statusWidget->setIdle(i18nc("@info:status", "The debugger has quit unexpectedly."));
 
         ui.m_backtraceEdit->setPlainText(i18nc("@info:status",
                                                "The crash information could not be generated."));
 
         ui.m_extraDetailsLabel->setVisible(true);
-        ui.m_extraDetailsLabel->setText(i18nc("@info/rich", "You need to install the debug symbols "
-                       "package for this application.<nl/>Please read <link url='%1'>How to create "
-                       "useful crash reports</link> to learn how to get a useful backtrace.<nl/>"
-                       "After you install the needed packages you can click the <interface>Reload "
-                       "Crash Information</interface> button.", QLatin1String(TECHBASE_HOWTO_DOC)));
+        ui.m_extraDetailsLabel->setText(i18nc("@info/rich", "You could try to regenerate the "
+                                            "backtrace by clicking the <interface>Reload Crash "
+                                            "Information</interface> button."));
     } else if (m_btGenerator->state() == BacktraceGenerator::FailedToStart) {
         m_usefulnessMeter->setUsefulness(BacktraceParser::Useless);
 
