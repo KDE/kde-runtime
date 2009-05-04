@@ -35,6 +35,7 @@ public:
     const KrashConfig *krashConfig() const;
     BacktraceGenerator *backtraceGenerator() const;
 
+    bool appRestarted() const;
     static void saveReport(const QString & reportText, QWidget *parent = 0);
 
 signals:

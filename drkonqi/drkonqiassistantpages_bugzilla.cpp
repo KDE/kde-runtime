@@ -20,6 +20,7 @@
 #include "drkonqiassistantpages_bugzilla.h"
 #include "reportinfo.h"
 #include "statuswidget.h"
+#include "drkonqi.h"
 #include "drkonqi_globals.h"
 
 #include <QtCore/QDate>
@@ -800,7 +801,8 @@ BugzillaSendPage::BugzillaSendPage(DrKonqiBugReport * parent)
     connect(ui.m_retryButton, SIGNAL(clicked()), this , SLOT(retryClicked()));
     
     ui.m_launchPageOnFinish->setVisible(false);
-
+    ui.m_restartAppOnFinish->setVisible(false);
+    
     connect(assistant(), SIGNAL(user1Clicked()), this, SLOT(finishClicked()));
 }
 
@@ -823,6 +825,8 @@ void BugzillaSendPage::sent(int bug_id)
     ui.m_retryButton->setVisible(false);
     
     ui.m_launchPageOnFinish->setVisible(true);
+    ui.m_restartAppOnFinish->setVisible(!DrKonqi::instance()->appRestarted());
+    ui.m_restartAppOnFinish->setChecked(false);
     
     reportUrl = bugzillaManager()->urlForBug(bug_id);
     ui.m_finishedLabel->setText(i18nc("@info/rich","Crash report sent.<nl/>"
@@ -846,8 +850,11 @@ void BugzillaSendPage::sendError(QString errorString)
 
 void BugzillaSendPage::finishClicked()
 {
-    if (ui.m_launchPageOnFinish->checkState()==Qt::Checked && !reportUrl.isEmpty()) {
+    if (ui.m_launchPageOnFinish->isChecked() && !reportUrl.isEmpty()) {
         KToolInvocation::invokeBrowser(reportUrl);
+    }
+    if (ui.m_restartAppOnFinish->isChecked()) {
+        DrKonqi::instance()->restartCrashedApplication();
     }
 }
 

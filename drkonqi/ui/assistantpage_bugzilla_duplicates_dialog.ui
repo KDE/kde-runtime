@@ -38,7 +38,7 @@
        <item>
         <widget class="QLabel" name="m_backtraceTitleLabel">
          <property name="text">
-          <string comment="@label:textbox">Backtrace of the crash I am about to report:</string>
+          <string comment="@label:textbox">Backtrace of the crash I am sending:</string>
          </property>
         </widget>
        </item>

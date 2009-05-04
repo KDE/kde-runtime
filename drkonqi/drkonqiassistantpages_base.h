@@ -128,11 +128,13 @@ public:
     ConclusionPage(DrKonqiBugReport *);
     
     void aboutToShow();
+    void aboutToHide();
 
     bool isComplete();
 
 private Q_SLOTS:
-    void launchManualReport();
+    void finishClicked();
+    
     void openReportInformation();
 
 private:

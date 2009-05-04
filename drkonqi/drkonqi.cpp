@@ -65,12 +65,14 @@
 #include <signal.h>
 
 struct DrKonqi::Private {
-    Private() : m_state(ProcessRunning), m_krashConfig(NULL), m_btGenerator(NULL) {}
+    Private() : m_state(ProcessRunning), m_krashConfig(NULL), m_btGenerator(NULL),
+    m_applicationRestarted(false) {}
 
     DrKonqi::State         m_state;
     KrashConfig *          m_krashConfig;
     DetachedProcessMonitor m_debuggerMonitor;
     BacktraceGenerator *   m_btGenerator;
+    bool                   m_applicationRestarted;
 };
 
 DrKonqi::DrKonqi()
@@ -225,12 +227,15 @@ void DrKonqi::saveReport(const QString & reportText, QWidget *parent)
 
 void DrKonqi::restartCrashedApplication()
 {
-    QString executable = KStandardDirs::findExe(d->m_krashConfig->executableName());
-    kDebug() << "Restarting application" << executable;
+    if (!d->m_applicationRestarted) {
+        d->m_applicationRestarted = true;
+        QString executable = KStandardDirs::findExe(d->m_krashConfig->executableName());
+        kDebug() << "Restarting application" << executable;
 
-    //start the application via kdeinit, as it needs to have a pristine environment and
-    //KProcess::startDetached() can't start a new process with custom environment variables.
-    KToolInvocation::kdeinitExec(executable);
+        //start the application via kdeinit, as it needs to have a pristine environment and
+        //KProcess::startDetached() can't start a new process with custom environment variables.
+        KToolInvocation::kdeinitExec(executable);
+    }
 }
 
 void DrKonqi::startDefaultExternalDebugger()
@@ -287,6 +292,11 @@ void DrKonqi::debuggerStopped()
 void DrKonqi::registerDebuggingApplication(const QString& launchName)
 {
     emit newDebuggingApplication(launchName);
+}
+
+bool DrKonqi::appRestarted() const
+{
+    return d->m_applicationRestarted;
 }
 
 #include "drkonqi.moc"
