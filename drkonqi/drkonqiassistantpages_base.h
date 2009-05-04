@@ -28,6 +28,8 @@
 #include "ui_assistantpage_conclusions.h"
 #include "ui_assistantpage_conclusions_dialog.h"
 
+#include <QtCore/QPointer>
+
 /** BASE interface which implements some signals, and
 **  aboutTo(Show|Hide) functions (also reimplements QWizard behaviour) **/
 class DrKonqiAssistantPage: public QWidget
@@ -124,7 +126,6 @@ class ConclusionPage : public DrKonqiAssistantPage
 
 public:
     ConclusionPage(DrKonqiBugReport *);
-    ~ConclusionPage();
     
     void aboutToShow();
 
@@ -133,19 +134,30 @@ public:
 private Q_SLOTS:
     void launchManualReport();
     void openReportInformation();
-    void saveReport();
 
 private:
     Ui::AssistantPageConclusions            ui;
     
-    Ui::AssistantPageConclusionsDialog      dialogUi;
-    KDialog     *                           m_infoDialog;
+    QPointer<KDialog>                       m_infoDialog;
     
     bool                                    isBKO;
     bool                                    needToReport;
 
 Q_SIGNALS:
     void finished(bool);
+};
+
+class ReportInformationDialog : public KDialog
+{
+    Q_OBJECT
+public:
+    ReportInformationDialog(const QString & reportText);
+
+private Q_SLOTS:
+    void saveReport();
+
+private:
+    Ui::AssistantPageConclusionsDialog ui;
 };
 
 #endif

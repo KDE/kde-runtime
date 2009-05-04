@@ -124,7 +124,6 @@ void BugAwarenessPage::aboutToHide()
 
 ConclusionPage::ConclusionPage(DrKonqiBugReport * parent)
         : DrKonqiAssistantPage(parent),
-        m_infoDialog(0),
         needToReport(false)
 {
     isBKO = DrKonqi::instance()->krashConfig()->isKDEBugzilla();
@@ -138,11 +137,6 @@ ConclusionPage::ConclusionPage(DrKonqiBugReport * parent)
                             "report information about this crash to a file.")));
     connect(ui.m_showReportInformationButton, SIGNAL(clicked()), this, 
                                                                     SLOT(openReportInformation()));
-}
-
-ConclusionPage::~ConclusionPage()
-{
-    delete m_infoDialog;
 }
 
 void ConclusionPage::launchManualReport()
@@ -295,40 +289,21 @@ void ConclusionPage::aboutToShow()
 void ConclusionPage::openReportInformation()
 {
     if (!m_infoDialog) {
-        m_infoDialog = new KDialog(this);
-        m_infoDialog->setButtons(KDialog::Close | KDialog::User1);
-        m_infoDialog->setDefaultButton(KDialog::Close);
-        m_infoDialog->setCaption(i18nc("@title:window","Report Information"));
-        m_infoDialog->setModal(true);
-        
-        dialogUi.setupUi(m_infoDialog->mainWidget());
-                
-        m_infoDialog->setButtonGuiItem(KDialog::User1,
-                    KGuiItem2(i18nc("@action:button", "&Save to File"),
-                            KIcon("document-save"),
-                            i18nc("@info:tooltip", "Use this button to save the generated "
-                            "report information about this crash to a file. You can use "
-                            "this option to report the bug later.")));
-        connect(m_infoDialog, SIGNAL(user1Clicked()), this, SLOT(saveReport()));
-    }
-    
-    QString reportUri;
-    if (isBKO) {
-        reportUri = QLatin1String(KDE_BUGZILLA_URL);
-    } else {
-        const KrashConfig * krashConfig = DrKonqi::instance()->krashConfig();
-        reportUri = krashConfig->getReportLink();
-    }
-    QString info = reportInfo()->generateReport() + '\n' + 
+        QString reportUri;
+        if (isBKO) {
+            reportUri = QLatin1String(KDE_BUGZILLA_URL);
+        } else {
+            const KrashConfig * krashConfig = DrKonqi::instance()->krashConfig();
+            reportUri = krashConfig->getReportLink();
+        }
+        QString info = reportInfo()->generateReport() + '\n' +
                             i18nc("@info/plain","Report to %1", reportUri);
-    dialogUi.m_reportInformationBrowser->setPlainText(info);
-    
-    m_infoDialog->show();
-}
 
-void ConclusionPage::saveReport()
-{
-    DrKonqi::saveReport(dialogUi.m_reportInformationBrowser->toPlainText(), this);
+        m_infoDialog = new ReportInformationDialog(info);
+    }
+    m_infoDialog->show();
+    m_infoDialog->raise();
+    m_infoDialog->activateWindow();
 }
 
 bool ConclusionPage::isComplete()
@@ -337,3 +312,34 @@ bool ConclusionPage::isComplete()
 }
 
 //END ConclusionPage
+
+//BEGIN ReportInformationDialog
+
+ReportInformationDialog::ReportInformationDialog(const QString & reportText)
+    : KDialog()
+{
+    setAttribute(Qt::WA_DeleteOnClose, true);
+
+    setButtons(KDialog::Close | KDialog::User1);
+    setDefaultButton(KDialog::Close);
+    setCaption(i18nc("@title:window","Report Information"));
+
+    ui.setupUi(mainWidget());
+    ui.m_reportInformationBrowser->setPlainText(reportText);
+
+    setButtonGuiItem(KDialog::User1, KGuiItem2(i18nc("@action:button", "&Save to File"),
+                                               KIcon("document-save"),
+                                               i18nc("@info:tooltip", "Use this button to save the "
+                                               "generated report information about this crash to "
+                                               "a file. You can use this option to report the "
+                                               "bug later.")));
+    connect(this, SIGNAL(user1Clicked()), this, SLOT(saveReport()));
+}
+
+void ReportInformationDialog::saveReport()
+{
+    DrKonqi::saveReport(ui.m_reportInformationBrowser->toPlainText(), this);
+}
+
+//END ReportInformationDialog
+
