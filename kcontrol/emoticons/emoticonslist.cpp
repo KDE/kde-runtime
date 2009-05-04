@@ -317,7 +317,7 @@ void EmoticonList::editEmoticon()
 
     KEmoticonsTheme theme = emoMap.value(themeList->currentItem()->text());
     QString path = theme.emoticonsMap().key(emoList->currentItem()->text().split(' '));
-    QString f = QFileInfo(path).baseName();
+    QString f = QFileInfo(path).fileName();
     EditDialog *dlg = new EditDialog(this, i18n("Edit Emoticon"), emoList->currentItem(), path);
 
     if (dlg->exec() == QDialog::Rejected) {
@@ -340,6 +340,10 @@ void EmoticonList::editEmoticon()
             emo = dir->findResource("emoticons", themeList->currentItem()->text() + QDir::separator()  + f + ".png");
         if (emo.isNull())
             emo = dir->findResource("emoticons", themeList->currentItem()->text() + QDir::separator()  + f + ".gif");
+        if (emo.isNull())
+            emo = dir->findResource("emoticons", themeList->currentItem()->text() + QDir::separator()  + f + ".jpg");
+        if (emo.isNull())
+            emo = dir->findResource("emoticons", themeList->currentItem()->text() + QDir::separator()  + f + ".jpeg");
         if (emo.isNull()) {
             delete dlg;
             return;
