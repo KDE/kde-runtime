@@ -32,6 +32,9 @@ public:
     AboutBugReportingDialog(QWidget * parent = 0);
     void showSection(const QString&);
 
+private Q_SLOTS:
+    void handleInternalLinks(const QString&);
+
 private:
     KTextBrowser * m_textBrowser;
 };

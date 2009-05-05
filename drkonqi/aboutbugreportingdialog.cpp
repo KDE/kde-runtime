@@ -22,6 +22,7 @@
 #include "drkonqi_globals.h"
 
 #include <KLocale>
+#include <KToolInvocation>
 #include <KTextBrowser>
 
 AboutBugReportingDialog::AboutBugReportingDialog(QWidget * parent):
@@ -37,6 +38,8 @@ AboutBugReportingDialog::AboutBugReportingDialog(QWidget * parent):
 
     m_textBrowser = new KTextBrowser(this);
     m_textBrowser->setMinimumSize(QSize(500, 300));
+    m_textBrowser->setNotifyClick(true);
+    connect(m_textBrowser, SIGNAL(urlClick(QString)), this, SLOT(handleInternalLinks(QString)));
 
     QString text =
 
@@ -44,8 +47,7 @@ AboutBugReportingDialog::AboutBugReportingDialog(QWidget * parent):
         QString("<a name=\"%1\" /><h1>%2</h1>").arg(QLatin1String(PAGE_HELP_BEGIN_ID),
                                 i18nc("@title","Information about bug reporting")) +
         QString("<p>%1</p><p>%2</p><p>%3</p>").arg(
-            i18nc("@info/rich", "You can help us improve this software by filing "
-                                            "a bug report."),
+            i18nc("@info/rich", "You can help us improve this software by filing a bug report."),
             i18nc("@info/rich","<note>It is safe to close this dialog. If you do not "
                             "want to, you do not have to file a bug report.</note>"),
             i18nc("@info/rich","In order to generate a useful bug report we need some "
@@ -73,7 +75,8 @@ AboutBugReportingDialog::AboutBugReportingDialog(QWidget * parent):
         //Bug Awareness Page
         QString("<a name=\"%1\" /><h2>%2</h2>").arg(QLatin1String(PAGE_AWARENESS_ID),
                                 i18nc("@title","What do you know about the crash?")) +
-        QString("<p>%1</p><p>%2</p>").arg(
+        QString("<p>%1</p><p>%2<ul><li>%3</li><li>%4</li><li>%5</li><li>%6</li><li>%7</li>"
+        "</ul>%8</p>").arg(
             i18nc("@info/rich","In this page you answer some questions about the crash context, "
                             "and if you are willing to help the developers in "
                             "the future. This means you will need to open a KDE "
@@ -81,19 +84,19 @@ AboutBugReportingDialog::AboutBugReportingDialog(QWidget * parent):
                             "because often a developer may need to ask you for clarification. "
                             "Also, you can track the status of your bug report by having "
                             "email updates sent to you."),
-                                          //FIXME this needs bullet points!
             i18nc("@info/rich","If you can, describe in as much detail as possible, "
                             "the crash circumstances, and "
-                            "what you were doing when the application crashed. You can mention: "
-                            "actions you were taking inside or outside the application, "
-                            "documents or images that you were using and their type/format "
-                            "(later if you go to look at the report in the bug tracking system, "
-                            "you can "
-                            "attach a file to the report), widgets that you were running, "
-                            "were taking in or outside the application, the url of a web site "
-                            "you were browsing, "
-                            "or other strange things you notice before or after the crash. "
-                            "Screenshots can be very helpful. You can attach them to the bug "
+                            "what you were doing when the application crashed. You can mention: "),
+            i18nc("@info/rich crash situation example","actions you were taking inside or outside "
+                            "the application"),
+            i18nc("@info/rich crash situation example","documents or images that you were using "
+                            "and their type/format (later if you go to look at the report in the "
+                            "bug tracking system, you can attach a file to the report)"),
+            i18nc("@info/rich crash situation example","widgets that you were running"),
+            i18nc("@info/rich crash situation example","the url of a web site you were browsing"),
+            i18nc("@info/rich crash situation example","or other strange things you notice before "
+                            "or after the crash. "),
+            i18nc("@info/rich","Screenshots can be very helpful. You can attach them to the bug "
                             "report after it is posted to the bug tracking system.")) +
         //Conclusions Page
         QString("<a name=\"%1\" /><h2>%2</h2>").arg(QLatin1String(PAGE_CONCLUSIONS_ID),
@@ -149,7 +152,7 @@ AboutBugReportingDialog::AboutBugReportingDialog(QWidget * parent):
         //Bugzilla Duplicates Page
         QString("<a name=\"%1\" /><h2>%2</h2>").arg(QLatin1String(PAGE_BZDUPLICATES_ID),
                                 i18nc("@title","Bug Report Possible Duplicate list")) +
-        QString("<p>%1</p><p>%2</p><p>%3</p><p>%4</p>").arg(
+        QString("<p>%1</p><p>%2</p><p>%3</p><p>%4</p><p>%5</p><p>%6</p>").arg(
         //needs some more string cleanup below
             i18nc("@info/rich","This is an optional step."),
             i18nc("@info/rich","This page will search the bug report database for "
@@ -178,10 +181,11 @@ AboutBugReportingDialog::AboutBugReportingDialog(QWidget * parent):
         //Bugzilla Crash Information - Details Page
         QString("<a name=\"%1\" /><h2>%2</h2>").arg(QLatin1String(PAGE_BZDETAILS_ID),
                                         i18nc("@title","Details of the Bug report")) +
-        QString("<p>%1</p><p>%2</p>").arg(
+        QString("<p>%1<a href=\"#%2\">%3</a></p><p>%4</p>").arg(
             i18nc("@info/rich","In this case you need to write a title and description "
-                            "of the crash. Explain as best you can."),
-                                          // FIXME: add a link to the 4th section, or repeat it
+                            "of the crash. Explain as best you can. "),
+            QLatin1String(PAGE_AWARENESS_ID),
+            i18nc("@title","What do you know about the crash?"),
             i18nc("@info/rich","<note>You should write in English.</note>")) +
         //Bugzilla Send Page
         QString("<a name=\"%1\" /><h2>%2</h2>").arg(QLatin1String(PAGE_BZSEND_ID),
@@ -189,18 +193,26 @@ AboutBugReportingDialog::AboutBugReportingDialog(QWidget * parent):
         QString("<p>%1</p><p>%2</p>").arg(
             i18nc("@info/rich","This page will send the bug report to the bug tracking "
                             "system and it will notify you when it is done. Then, it will show "
-                            "the " //URL??? should we dumb that down? web address?
-                            "URL of the bug report in the KDE bug tracking system, so that "
-                            "you can "
-                            "look at the report later."),
+                            "the web addres of the bug report in the KDE bug tracking system, "
+                            "so that you can look at the report later."),
             i18nc("@info/rich","If the process fails, you can click "
-                            "<interface>Retry</interface> to try sending the bug report "
-                            "again."));
+                            "<interface>Retry</interface> to try sending the bug report again."));
             //I feel like we should now congratulate them and ask them to join BugSquad.
 
     m_textBrowser->setText(text);
 
     setMainWidget(m_textBrowser);
+}
+
+void AboutBugReportingDialog::handleInternalLinks(const QString& url)
+{
+    if (!url.isEmpty()) {
+        if (url.startsWith('#')) {
+            showSection(url.mid(1,url.length()));
+        } else {
+            KToolInvocation::invokeBrowser(url);
+        }
+    }
 }
 
 void AboutBugReportingDialog::showSection(const QString& anchor)

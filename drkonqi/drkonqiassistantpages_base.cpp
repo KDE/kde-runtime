@@ -51,8 +51,9 @@ CrashInformationPage::CrashInformationPage(DrKonqiBugReport * parent)
     connect(m_backtraceWidget, SIGNAL(stateChanged()) , this, SLOT(emitCompleteChanged()));
 
     QVBoxLayout *layout = new QVBoxLayout(this);
+    layout->setContentsMargins(0,0,0,0);
     layout->addWidget(m_backtraceWidget);
-    layout->addStretch();
+    layout->addSpacing(10); //We need this for better usability until we get something better
 }
 
 void CrashInformationPage::aboutToShow()
