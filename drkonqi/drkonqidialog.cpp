@@ -99,6 +99,7 @@ void DrKonqiDialog::buildMainWidget()
 
     //Main widget layout
     QVBoxLayout * introLayout = new QVBoxLayout;
+    introLayout->addSpacing(20);
 
     QHBoxLayout * horizontalLayout = new QHBoxLayout();
 
@@ -111,6 +112,7 @@ void DrKonqiDialog::buildMainWidget()
     iconLabel->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
     iconLabel->setPixmap(QPixmap(KStandardDirs::locate("appdata", QLatin1String("pics/crash.png"))));
     horizontalLayout->addWidget(iconLabel);
+    horizontalLayout->setAlignment(iconLabel,Qt::AlignTop);
 
     introLayout->addLayout(horizontalLayout);
     introLayout->addStretch();
