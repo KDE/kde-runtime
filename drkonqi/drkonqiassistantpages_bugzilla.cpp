@@ -68,7 +68,7 @@ BugzillaLoginPage::BugzillaLoginPage(DrKonqiBugReport * parent) :
                         i18nc("@info/rich","<note>You need a user account on the "
                             "<link url='%1'>KDE bug tracking system</link> in order to "
                             "file a bug report, because we may need to contact you later "
-                            "for requesting further information. <nl />If you do not have "
+                            "for requesting further information. If you do not have "
                             "one, you can freely <link url='%2'>create one here</link>.</note>",
                             QLatin1String(KDE_BUGZILLA_URL),
                             QLatin1String(KDE_BUGZILLA_CREATE_ACCOUNT_URL)));
