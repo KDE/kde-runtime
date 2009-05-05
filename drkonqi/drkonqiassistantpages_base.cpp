@@ -1,6 +1,7 @@
 /*******************************************************************
 * drkonqiassistantpages_base.cpp
 * Copyright 2009    Dario Andres Rodriguez <andresbajotierra@gmail.com>
+* Copyright 2009    A. L. Spehr <spehr@kde.org>
 *
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License as
@@ -89,8 +90,9 @@ bool CrashInformationPage::showNextPage()
     if (use == BacktraceParser::InvalidUsefulness || use == BacktraceParser::ProbablyUseless
             || use == BacktraceParser::Useless) {
         if ( KMessageBox::Yes == KMessageBox::questionYesNo(this,
-                                i18nc("@info","The crash information is not useful enough, "
-                                              "do you want to try to improve it?"),
+                                i18nc("@info","This crash information is not useful enough, "
+                                              "do you want to try to improve it? You will need "
+                                              "to install some debugging packages."),
                                 i18nc("@title:window","Crash Information is not useful enough")) ) {
             m_backtraceWidget->hilightExtraDetailsLabel(true);
             return false; //Cancel show next, to allow the user to write more
@@ -184,13 +186,14 @@ void ConclusionPage::aboutToShow()
     case BacktraceParser::ReallyUseful: {
         needToReport = (canDetails || developersCanContactReporter);
         explanationHTML += QString("<li>%1</li>").arg(i18nc("@info","The automatically generated "
-                                                              "crash information is very useful."));
+                                                            "crash information is useful."));
         break;
     }
     case BacktraceParser::MayBeUseful: {
         needToReport = (canDetails || developersCanContactReporter);
         explanationHTML += QString("<li>%1</li>").arg(i18nc("@info","The automatically generated "
-                                                            "crash information lacks some details "
+                                                            "crash information lacks some "
+                                                            "details "
                                                             "but may be still be useful."));
         break;
     }
@@ -198,8 +201,7 @@ void ConclusionPage::aboutToShow()
         needToReport = (canDetails && developersCanContactReporter);
         explanationHTML += QString("<li>%1</li>").arg(i18nc("@info","The automatically generated "
                                                         "crash information lacks important details "
-                                                        "and it is probably not very useful."));
-                                                        //should we add "use your judgment"?
+                                                        "and it is probably not helpful."));
         break;
     }
     case BacktraceParser::Useless:
@@ -207,10 +209,11 @@ void ConclusionPage::aboutToShow()
         needToReport =  false;
         explanationHTML += QString("<li>%1<br />%2</li>").arg(
                                         i18nc("@info","The automatically generated crash "
-                                        "information is not useful enough."), 
-                                        i18nc("@info","<note>You can try to improve this by "
-                                        "installing some packages and reloading the information on "
-                                        "the Crash Information page. You can read the Bug "
+                                        "information does not contain enough information to be "
+                                        "helpful."),
+                                        i18nc("@info","<note>You can improve it by "
+                                        "installing some software and reloading the crash on "
+                                        "the Crash Information page. You can get help with the Bug "
                                         "Reporting Guide by clicking on the "
                                         "<interface>Help</interface> button.</note>"));
                                     //but this guide doesn't mention bt packages? that's techbase
@@ -221,23 +224,22 @@ void ConclusionPage::aboutToShow()
     //User can provide details / is Willing to help
     if (canDetails) {
         if (developersCanContactReporter) {
-            explanationHTML += QString("<li>%1</li>").arg(i18nc("@info","You can explain in detail "
-                                "what you were doing when the application crashed and the "
-                                "developers can contact you for more information if required."));
+            explanationHTML += QString("<li>%1</li>").arg(i18nc("@info","You can provide crash "
+                                "details, and the "
+                                "developers can contact you if required."));
         } else {
-            explanationHTML += QString("<li>%1</li>").arg(i18nc("@info","You can explain in detail "
-                                "what you were doing when the application crashed but the "
-                                "developers cannot contact you for more information if required."));
+            explanationHTML += QString("<li>%1</li>").arg(i18nc("@info","You can provide crash "
+                                "details, but do not want "
+                                "developers to contact you for more information if required."));
         }
     } else {
         if (developersCanContactReporter) {
             explanationHTML += QString("<li>%1</li>").arg(i18nc("@info","You are not sure what you "
-                                    "were doing when the application crashed but the developers "
+                                    "were doing when the application crashed, but the developers "
                                     "can contact you for more information if required."));
         } else {
             explanationHTML += QString("<li>%1</li>").arg(i18nc("@info","You are not sure what you "
-                                    "were doing when the application crashed and the developers "
-                                    "cannot contact you for more information if required."));
+                                    "were doing when the application crashed, and do not want the " "developers to contact you for more information if required."));
         }
     }
     
@@ -246,8 +248,8 @@ void ConclusionPage::aboutToShow()
     ui.m_explanationLabel->setText(explanationHTML);
 
     if (needToReport) {
-        ui.m_conclusionsLabel->setText(QString("<p><strong>%1</strong>").arg(i18nc("@info","This is "
-                                           "considered helpful for the application developers.")));
+        ui.m_conclusionsLabel->setText(QString("<p><strong>%1</strong>").arg(i18nc("@info","This "
+                                           "report is considered helpful.")));
 
         if (isBKO) {
             emitCompleteChanged();
@@ -265,7 +267,7 @@ void ConclusionPage::aboutToShow()
             ui.m_howToProceedLabel->setText(i18nc("@info","This application is not supported in the "
                                                 "KDE bug tracking system. Click <interface>"
                                                 "Finish</interface> to report this bug to "
-                                                "the application maintainer. Also you can manually "
+                                                "the application maintainer. Also, you can manually "
                                                 "report at <link>%1</link>.",
                                                 krashConfig->getReportLink()));
 
@@ -278,12 +280,11 @@ void ConclusionPage::aboutToShow()
         }
         
         ui.m_conclusionsLabel->setText(QString("<p><strong>%1</strong><br />%2</p>").arg(
-                            i18nc("@info","This is not considered helpful enough for the application "
-                            "developers and therefore the automated bug reporting process is not "
+                            i18nc("@info","This report does not contain enough information for the "
+                            "developers, so the automated bug reporting process is not "
                             "enabled for this crash."),
-                            i18nc("@info","If you change your mind, you can go back and review the "
-                            "assistant questions. Also, you can manually report it on your own if "
-                            "you would like to.")));
+                            i18nc("@info","If you wish, you can go back and change your answers. "
+                            "Also, you can manually report the crash if you would like to.")));
 
         if (krashConfig->isKDEBugzilla()) {
             ui.m_howToProceedLabel->setText(i18nc("@info","This application is supported in the KDE "
@@ -353,7 +354,7 @@ ReportInformationDialog::ReportInformationDialog(const QString & reportText)
     setButtonGuiItem(KDialog::User1, KGuiItem2(i18nc("@action:button", "&Save to File..."),
                                                KIcon("document-save"),
                                                i18nc("@info:tooltip", "Use this button to save the "
-                                               "generated report information about this crash to "
+                                               "generated crash report information to "
                                                "a file. You can use this option to report the "
                                                "bug later.")));
     connect(this, SIGNAL(user1Clicked()), this, SLOT(saveReport()));
