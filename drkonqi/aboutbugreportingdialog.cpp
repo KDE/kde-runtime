@@ -27,9 +27,10 @@
 AboutBugReportingDialog::AboutBugReportingDialog(QWidget * parent):
         KDialog(parent)
 {
+    setAttribute(Qt::WA_DeleteOnClose, true);
+
     setWindowIcon(KIcon("help-hint"));
     setCaption(i18nc("@title title of the dialog", "About Bug Reporting"));
-    setModal(false);
 
     setButtons(KDialog::Close);
     setDefaultButton(KDialog::Close);

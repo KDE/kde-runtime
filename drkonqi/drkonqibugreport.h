@@ -20,6 +20,7 @@
 #ifndef DRKONQIBUGREPORT__H
 #define DRKONQIBUGREPORT__H
 
+#include <QtCore/QPointer>
 #include <KAssistantDialog>
 
 class DrKonqiAssistantPage;
@@ -64,7 +65,7 @@ private:
     void connectSignals(DrKonqiAssistantPage *);
     void closeEvent(QCloseEvent*);
 
-    AboutBugReportingDialog *   m_aboutBugReportingDialog;
+    QPointer<AboutBugReportingDialog>   m_aboutBugReportingDialog;
     ReportInfo *                m_reportInfo;
     BugzillaManager *           m_bugzillaManager;
 

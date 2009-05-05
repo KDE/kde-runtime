@@ -209,9 +209,12 @@ void DrKonqiDialog::reportBugAssistant()
 void DrKonqiDialog::aboutBugReporting()
 {
     if (!m_aboutBugReportingDialog) {
-        m_aboutBugReportingDialog = new AboutBugReportingDialog(this);
+        m_aboutBugReportingDialog = new AboutBugReportingDialog();
+        connect(this, SIGNAL(destroyed(QObject*)), m_aboutBugReportingDialog, SLOT(close()));
     }
     m_aboutBugReportingDialog->show();
+    m_aboutBugReportingDialog->raise();
+    m_aboutBugReportingDialog->activateWindow();
 }
 
 void DrKonqiDialog::restartApplication()

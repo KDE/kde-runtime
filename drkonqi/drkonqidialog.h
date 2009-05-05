@@ -20,6 +20,7 @@
 #ifndef DRKONQIDIALOG__H
 #define DRKONQIDIALOG__H
 
+#include <QtCore/QPointer>
 #include <KDialog>
 
 class GetBacktraceWidget;
@@ -56,7 +57,7 @@ private Q_SLOTS:
 private:
     KTabWidget *                    m_tabWidget;
 
-    AboutBugReportingDialog *       m_aboutBugReportingDialog;
+    QPointer<AboutBugReportingDialog> m_aboutBugReportingDialog;
 
     QWidget *                       m_introWidget;
     GetBacktraceWidget *            m_backtraceWidget;

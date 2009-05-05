@@ -195,9 +195,11 @@ void DrKonqiBugReport::assistantFinished(bool showBack)
 void DrKonqiBugReport::showHelp()
 {
     if (!m_aboutBugReportingDialog) {
-        m_aboutBugReportingDialog = new AboutBugReportingDialog(this);
+        m_aboutBugReportingDialog = new AboutBugReportingDialog();
     }
     m_aboutBugReportingDialog->show();
+    m_aboutBugReportingDialog->raise();
+    m_aboutBugReportingDialog->activateWindow();
     m_aboutBugReportingDialog->showSection(QLatin1String(PAGE_HELP_BEGIN_ID));
     m_aboutBugReportingDialog->showSection(currentPage()->name());
 }
