@@ -227,7 +227,8 @@ void DrKonqiDialog::slotNewDebuggingApp(const QString & app)
 {
     m_customDebugAction->setVisible(true);
     m_customDebugAction->setEnabled(true);
-    m_customDebugAction->setText(app);
+    m_customDebugAction->setText(i18nc("@action:inmenu 1 is the debugger name",
+                                       "Debug in <application>%1</application>", app));
 }
 
 DrKonqiDialog::~DrKonqiDialog()
