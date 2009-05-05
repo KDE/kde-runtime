@@ -78,10 +78,10 @@ AboutBugReportingDialog::AboutBugReportingDialog(QWidget * parent):
         QString("<p>%1</p><p>%2<ul><li>%3</li><li>%4</li><li>%5</li><li>%6</li><li>%7</li>"
         "</ul>%8</p>").arg(
             i18nc("@info/rich","In this page you answer some questions about the crash context, "
-                            "and if you are willing to help the developers in "
-                            "the future. This means you will need to open a KDE "
-                            "Bug tracking system account. Doing so is strongly encouraged, "
-                            "because often a developer may need to ask you for clarification. "
+                            "and note whether you are willing to help the developers in "
+                            "the future. To do this, you will need to open a KDE "
+                            "Bug tracking system account. This is strongly encouraged, as "
+                            "often a developer may need to ask you for clarification. "
                             "Also, you can track the status of your bug report by having "
                             "email updates sent to you."),
             i18nc("@info/rich","If you can, describe in as much detail as possible, "
@@ -107,7 +107,7 @@ AboutBugReportingDialog::AboutBugReportingDialog(QWidget * parent):
                             "tell you if the crash is worth reporting or not."),
             i18nc("@info/rich","If the crash is worth reporting, and the application "
                             "is supported in the KDE bug tracking system, you can click "
-                            "<interface>Next</interface>. However if it is not supported you "
+                            "<interface>Next</interface>. However, if it is not supported, you "
                             "will need to directly contact the maintainer of the application."),
             i18nc("@info/rich","If the crash is listed as being not worth reporting, "
                             "and you think the assistant has made a mistake, "
@@ -119,12 +119,12 @@ AboutBugReportingDialog::AboutBugReportingDialog(QWidget * parent):
                                     i18nc("@title","KDE Bug Tracking System Login")) +
         QString("<p>%1</p><p>%2</p><p>%3</p>").arg(
             i18nc("@info/rich","We may need to contact you in the future to ask for "
-                            "further information. And we need to keep track of the bug reports, "
-                            "so you "
+                            "further information. As we need to keep track of the bug reports, "
+                            "you "
                             "need to have an account on the KDE bug tracking system. If you do "
                             "not have one, you can create one here: <link>%1</link>",
                             QString(KDE_BUGZILLA_CREATE_ACCOUNT_URL)),
-            i18nc("@info/rich","Then you can enter your username and password and "
+            i18nc("@info/rich","Then, enter your username and password and "
                             "press the Login button. Once you are authenticated, you can press "
                             "Next to continue. You can use this login to directly access the "
                             "KDE bug tracking system later."),
@@ -146,7 +146,7 @@ AboutBugReportingDialog::AboutBugReportingDialog(QWidget * parent):
                             "used to start "
                             "the title of the future bug report. You can change this title "
                             "later. Some examples: toolbar vanishes then plasma crashes, or "
-                            "(konqueror) crash on site with CSS. Note that you don't need "
+                            "(konqueror) crash on a site with CSS. Note that you do not need "
                             "to use the word crash, since that is already part of the report."),
             i18nc("@info/rich","<note>You should write in English.</note>")) +
         //Bugzilla Duplicates Page
@@ -166,7 +166,7 @@ AboutBugReportingDialog::AboutBugReportingDialog(QWidget * parent):
                             "<interface>Bug report page at the KDE bug tracking "
                             "system</interface>. You can then add "
                             "any new information that you might have. "),
-            i18nc("@info/rich","If you are unsure if your report is the same, follow the main "
+            i18nc("@info/rich","If you are unsure whether your report is the same, follow the main "
                             "options to tentatively mark your crash as a duplicate of that "
                             "report. This is usually the safest thing to do. We cannnot "
                             "uncombine bug reports, but we can easily merge them."),
