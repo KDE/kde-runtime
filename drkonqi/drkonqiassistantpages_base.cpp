@@ -217,6 +217,7 @@ void ConclusionPage::aboutToShow()
                                         "Reporting Guide by clicking on the "
                                         "<interface>Help</interface> button.</note>"));
                                     //but this guide doesn't mention bt packages? that's techbase
+                                    //->>and the help guide mention techbase page... 
         break;
     }
     }
@@ -239,7 +240,8 @@ void ConclusionPage::aboutToShow()
                                     "can contact you for more information if required."));
         } else {
             explanationHTML += QString("<li>%1</li>").arg(i18nc("@info","You are not sure what you "
-                                    "were doing when the application crashed, and do not want the " "developers to contact you for more information if required."));
+                                    "were doing when the application crashed, and do not want the " 
+                                    "developers to contact you for more information if required."));
         }
     }
     
