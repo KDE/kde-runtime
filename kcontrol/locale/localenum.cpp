@@ -236,8 +236,12 @@ void KLocaleConfigNumber::slotTranslate()
   m_edMonNegSign->setWhatsThis( str );
 
   str = ki18n( "<p>Here you can define the set of digits "
-	       "used to display numbers.</p><p>"
-	       "Note that the set of digits used to "
+	       "used to display numbers. "
+	       "If digits other than Arabic are selected, "
+	       "they will appear only if used in the language "
+	       "of the application or the piece of text "
+	       "where the number is shown.</p>"
+	       "<p>Note that the set of digits used to "
 	       "display monetary values has to be set "
 	       "separately (see the 'Money' tab).</p>" ).toString( m_locale );
   m_labDigSet->setWhatsThis( str );
