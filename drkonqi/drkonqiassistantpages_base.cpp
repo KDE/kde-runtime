@@ -212,7 +212,7 @@ void ConclusionPage::aboutToShow()
                                         "information does not contain enough information to be "
                                         "helpful."),
                                         i18nc("@info","<note>You can improve it by "
-                                        "installing some software and reloading the crash on "
+                                        "installing debugging packages and reloading the crash on "
                                         "the Crash Information page. You can get help with the Bug "
                                         "Reporting Guide by clicking on the "
                                         "<interface>Help</interface> button.</note>"));
@@ -285,8 +285,8 @@ void ConclusionPage::aboutToShow()
                             i18nc("@info","This report does not contain enough information for the "
                             "developers, so the automated bug reporting process is not "
                             "enabled for this crash."),
-                            i18nc("@info","If you wish, you can go back and change your answers. "
-                            "Also, you can manually report the crash if you would like to.")));
+                            i18nc("@info","If you wish, you can go back and change your "
+                            "answers. ")));
 
         if (krashConfig->isKDEBugzilla()) {
             ui.m_howToProceedLabel->setText(i18nc("@info","This application is supported in the KDE "
