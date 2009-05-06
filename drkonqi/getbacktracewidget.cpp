@@ -162,10 +162,10 @@ void GetBacktraceWidget::loadData()
             usefulnessText = i18nc("@info", "This crash information may be useful");
             break;
         case BacktraceParser::ProbablyUseless:
-            usefulnessText = i18nc("@info", "This crash information is probably not really useful");
+            usefulnessText = i18nc("@info", "This crash information is probably not useful");
             break;
         case BacktraceParser::Useless:
-            usefulnessText = i18nc("@info", "This crash information is not really useful");
+            usefulnessText = i18nc("@info", "This crash information is not useful");
             break;
         default:
             //let's hope nobody will ever see this... ;)
