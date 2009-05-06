@@ -69,6 +69,11 @@ void Nepomuk::SystemTray::slotUpdateStrigiStatus()
 {
     setToolTip("nepomuk", i18n("Nepomuk"),  m_service->userStatusString() );
     m_suspendResumeAction->setChecked( m_service->indexScheduler()->isSuspended() );
+    if (m_service->indexScheduler()->isIndexing()) {
+        setStatus(Active);
+    } else {
+        setStatus(Passive);
+    }
 }
 
 
