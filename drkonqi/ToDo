@@ -1,8 +1,5 @@
 #Assigned
 
-# Who / What
---------------
-
 ##Unassigned
 -------------
     
@@ -11,33 +8,27 @@
 - Store "willing to help developers" for future DrKonqi usages?
 
 - Option to "don't show drkonqi for this(X) app"
+- Option to avoid drkonqi at all (setting KDE_DEBUG=1), and GUI to renable it
 
 - We need a new icon/image :)
 
-- Side by side backtrace comparison on "Show report information" (duplicates step)
-    improve this dialog: what if you want to pick more than one possibly duplicate? 
+- Improve DuplicatesPage dialog: what if you want to pick more than one possibly duplicate? 
 
 - Ask for saving the report information to file when exiting the report assistant without reporting
 
 - Application detection: ask for or detect specific things depending on application
    ie konqueror: url, plasma: plasmoids in use, kopete: protocal, etc.
 
-##Bugzilla DrKonqi reports cleanup:
----
-Wontfix: 143243, 179721, 185547
-Invalid/NEEDSINFO: 182048-worksforme
-Worksforme: 167911 (gdb bug?)
-Needs research: 126073
----
-
-#ToDiscuss
+#ToDiscuss/Improve
 --------
 
-- BugzillaKeywordsPage word filtering (and minimum length) criteria (drkonqiassistantpages_bugzilla.cpp:269)
+- BugzillaKeywordsPage word filtering (and minimum length) criteria 
+(drkonqiassistantpages_bugzilla.cpp:257)
 (( check at least X words, with Y of them with a minimum of Z chars ..? ))
     currently 50 for subject and 100 for body; we'll see how that works
 
-- Rewire criteria of minimum chars/words to use in the Title and Details fields  (drkonqiassistantpages_bugzilla.cpp:258)
+- REVIEW criteria of minimum chars/words to use in the Title and Details fields 
+(drkonqiassistantpages_bugzilla.cpp:729)
 
 #Later
 ---------
@@ -47,11 +38,21 @@ Needs research: 126073
 - Bugzilla searches should be on product name +"kde" +(?kdelibs?)
 - Recheck KDevelop integration (currently it seems disabled on KDevelop side)
 
-//waiting for productName()->product/component mapping (custom cgi file at BKO)
-( if no combination is found, revert to "kde" product )
+- waiting for productName()->product/component mapping (custom cgi file at BKO)
 [[ currently bugzillalib detects unexistent products to later use the "kde" product ]] [LATER]
 
+#DONE
+-------
+
+- Side by side backtrace comparison on "Show report information" (duplicates step)
 - WordWrap aboutbugreporting
 - Removed Qt::escape calls
-gkiakia is working on a SystemInfo class
 - Avoid LSB messages at all if no found
+
+##Bugzilla DrKonqi reports cleanup:
+---
+Wontfix: 143243, 179721, 185547
+Invalid/NEEDSINFO: 182048-worksforme
+Worksforme: 167911 (gdb bug?)
+Needs research: 126073
+---
