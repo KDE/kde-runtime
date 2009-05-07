@@ -64,6 +64,8 @@ int main(int argc, char* argv[])
                          "andresbajotierra@gmail.com");
     aboutData.addAuthor(ki18nc("@info:credit","George Kiagiadakis"), KLocalizedString(),
                          "gkiagia@users.sourceforge.net");
+    aboutData.addAuthor(ki18nc("@info:credit","A. L. Spehr"), KLocalizedString(),
+                         "spehr@kde.org");
     aboutData.setProgramIconName("tools-report-bug");
 
     KCmdLineArgs::init(argc, argv, &aboutData);
