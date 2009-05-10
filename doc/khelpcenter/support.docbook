@@ -1,7 +1,7 @@
 <chapter id="supporting-kde">
 <chapterinfo>
-<date>2002-03-04</date>
-<releaseinfo>2.02.00</releaseinfo>
+<date>2009-05-09</date>
+<releaseinfo>4.00.00</releaseinfo>
 </chapterinfo>
 <title>Supporting &kde;</title>
 <anchor id="support"/>
@@ -66,34 +66,13 @@ order to finance its operations.  </para>
 
 <para> If your busy schedule or skills do not permit you to be
 actively involved in &kde; development, please consider supporting
-&kde; financially by sending a donation to: </para>
-
-<para> You can send regular US checks to the following address: </para>
-
-<literallayout>
-K Desktop Environment e.V.
-Mirko Boehm
-2029 Chadds Ford Drive
-Reston, VA 20191
-USA
-</literallayout>
-
-<para> Use "KDE e.V. - Mirko Boehm" in the "Pay to the order of..." line. 
-</para>
+&kde; financially.</para>
 
 <para>
-From Europe, you may remit your donation to (be aware of a fee if wiring from outside of Germany): 
+There are three ways to make a payment to the &kde; project: PayPal, personal
+check, and money order. Please review
+<ulink url="http://www.kde.org/support/support.php"/>.
 </para>
-
-<literallayout>
-K Desktop Environment e.V.
-Account-Nr. 0 66 64 46
-BLZ 200 700 24
-Deutsche Bank 24
-</literallayout>
-
-<para> Please contact Mirko Boehm
-<email>kde-ev-treasurer@kde.org</email> if you have any questions.  </para>
 
 <para> Your contribution is very much appreciated. Thank you!  </para>
 
