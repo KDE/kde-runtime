@@ -81,10 +81,17 @@ two characters that make the most sense.</para>
 units of thousands in numbers. If no character, not even a space, is
 present, then there will be no separator for thousands.</para>
 
-<para>Finally, you can choose what character should be prefixed to
-positive and negative numbers respectively. For example, the default
-for English is not to have any prefix for positive numbers, and a
-<userinput>-</userinput> for negative numbers.</para>
+<para>The following two text boxes allow you to choose what character
+should be prefixed to positive and negative numbers respectively.
+For example, the default for English is not to have any prefix for
+positive numbers, and a <userinput>-</userinput> for negative numbers.</para>
+
+<para>The <guilabel>Digit set</guilabel> dropdown list presents digit sets
+which may be used instead of basic Arabic when displaying numbers.
+If you select a digit set other than Arabic, it will be applied only to
+numbers which appear in language context that admits this set
+(e.g. Arabic-Indic digits in application translated to Arabic language),
+while Arabic digits are still going to be used elsewhere.</para>
 
 </sect2>
 
@@ -97,9 +104,10 @@ currency values do vary from region to region. However, you will
 find that the defaults are probably fine.</para>
 
 <para>The character or characters representing the currency symbol
-are based on the country that is currently selected. The decimal
-symbol and thousands separator work as they do for numbers. The
-text box labeled <guilabel>Fract digits</guilabel> allows you
+are based on the country that is currently selected.
+The decimal symbol, thousands separator, and digit set work
+as they do for numbers.
+The text box labeled <guilabel>Fract digits</guilabel> allows you
 to specify the number of fractional digits used in displaying
 currency values.</para>
 
