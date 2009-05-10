@@ -1,6 +1,8 @@
 # install the cmake files
 
-file(GLOB cmakeFiles "${CMAKE_CURRENT_SOURCE_DIR}/*.cmake")
+# don't glob for the files, we don't want to install e.g. FindLibKNotification-1.cmake
+set(cmakeFiles FindCLucene.cmake
+               FindSLP.cmake)
 
 set(module_install_dir ${DATA_INSTALL_DIR}/cmake/modules )
 
