@@ -1,0 +1,6 @@
+[Mappings]
+plasma-desktop=plasma/general
+kwrite=kate/kwrite
+kded4=kdelibs/kded
+kcmshell4=systemsettings/general
+dragon=dragonplayer/general

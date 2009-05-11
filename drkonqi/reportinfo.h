@@ -25,6 +25,7 @@
 #include <QtCore/QStringList>
 class BugzillaManager;
 class BugReport;
+class ProductMapping;
 
 class ReportInfo : public QObject
 {
@@ -71,6 +72,8 @@ private:
     QString     m_possibleDuplicate;
 
     QString     m_lsbRelease;
+    
+    ProductMapping *    m_productMapping;
 };
 
 #endif

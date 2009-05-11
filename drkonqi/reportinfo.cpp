@@ -22,6 +22,7 @@
 #include "drkonqi.h"
 #include "krashconf.h"
 #include "bugzillalib.h"
+#include "productmapping.h"
 
 #include <KProcess>
 #include <KStandardDirs>
@@ -39,6 +40,8 @@ ReportInfo::ReportInfo(QObject *parent)
     m_userCanDetail = false;
     m_developersCanContactReporter = false;
 
+    m_productMapping = new ProductMapping(DrKonqi::instance()->krashConfig()->productName(), this);
+    
     //if lsb_release needs to run, start it asynchronously because it takes much time...
     QString lsb_release = KStandardDirs::findExe(QLatin1String("lsb_release"));
     if ( !lsb_release.isEmpty() ) {
@@ -228,8 +231,8 @@ BugReport ReportInfo::newBugReportTemplate() const
 {
     BugReport report;
     const KrashConfig * krashConfig = DrKonqi::instance()->krashConfig();
-    report.setProduct(krashConfig->productName());
-    report.setComponent(QLatin1String("general"));
+    report.setProduct(m_productMapping->bugzillaProduct());
+    report.setComponent(m_productMapping->bugzillaComponent());
     report.setVersion(krashConfig->productVersion());
     report.setOperatingSystem(bugzillaOs());
     report.setPriority(QLatin1String("NOR"));
