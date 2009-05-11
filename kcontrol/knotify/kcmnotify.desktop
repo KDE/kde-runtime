@@ -88,8 +88,8 @@ Name[uz]=Tizimning xabarnomalari
 Name[uz@cyrillic]=Тизимнинг хабарномалари
 Name[vi]=Thông báo Hệ thống
 Name[wa]=Notifiaedjes do sistinme
-Name[x-test]=xxSystem Notificationsxx
 Name[xh]=Izaziso Zendlela esetyenziswayo
+Name[x-test]=xxSystem Notificationsxx
 Name[zh_CN]=系统通知
 Name[zh_TW]=系統通知
 
@@ -170,8 +170,8 @@ Comment[uz]=Tizimning xabarnomalarini moslash
 Comment[uz@cyrillic]=Тизимнинг хабарномаларини мослаш
 Comment[vi]=Cấu hình Thông báo Hệ thống
 Comment[wa]=Apontiaedje po les notifiaedjes do sistinme
-Comment[x-test]=xxSystem Notification Configurationxx
 Comment[xh]=Uqwalaselo Lwezaziso Zendlela yokusebenza
+Comment[x-test]=xxSystem Notification Configurationxx
 Comment[zh_CN]=系统通知配置
 Comment[zh_TW]=系統通知組態
 
