@@ -107,7 +107,7 @@ Nepomuk::IndexScheduler::IndexScheduler( Strigi::IndexManager* manager, QObject*
     m_analyzerConfig = new StoppableConfiguration;
 
     connect( StrigiServiceConfig::self(), SIGNAL( configChanged() ),
-             this, SLOT( readConfig() ) );
+             this, SLOT( slotConfigChanged() ) );
 }
 
 
@@ -158,6 +158,14 @@ void Nepomuk::IndexScheduler::stop()
 }
 
 
+void Nepomuk::IndexScheduler::restart()
+{
+    stop();
+    wait();
+    start();
+}
+
+
 bool Nepomuk::IndexScheduler::isSuspended() const
 {
     return isRunning() && m_suspended;
@@ -205,7 +213,6 @@ void Nepomuk::IndexScheduler::run()
     setIndexingStarted( true );
 
     // do the actual indexing
-    m_dirsToUpdate.clear();
     foreach( const QString& f, StrigiServiceConfig::self()->folders() )
         m_dirsToUpdate << qMakePair( f, UpdateRecursive|AutoUpdateFolder );
 
@@ -413,6 +420,14 @@ void Nepomuk::IndexScheduler::readConfig()
     }
     m_analyzerConfig->setFilters(filters);
     updateAll();
+}
+
+
+void Nepomuk::IndexScheduler::slotConfigChanged()
+{
+    readConfig();
+    if ( isRunning() )
+        restart();
 }
 
 

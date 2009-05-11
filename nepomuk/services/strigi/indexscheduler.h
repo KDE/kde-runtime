@@ -68,6 +68,7 @@ namespace Nepomuk {
         void suspend();
         void resume();
         void stop();
+        void restart();
 
         void setSuspended( bool );
 
@@ -102,6 +103,7 @@ namespace Nepomuk {
 
     private Q_SLOTS:
         void readConfig();
+        void slotConfigChanged();
 
     private:
         void run();
@@ -115,7 +117,7 @@ namespace Nepomuk {
          * from the store
          */
         void deleteEntries( const std::vector<std::string>& entries );
-        
+
         // emits indexingStarted or indexingStopped based on parameter. Makes sure
         // no signal is emitted twice
         void setIndexingStarted( bool started );

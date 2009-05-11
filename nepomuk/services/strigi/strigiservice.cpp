@@ -36,7 +36,8 @@
 
 
 Nepomuk::StrigiService::StrigiService( QObject* parent, const QList<QVariant>& )
-    : Service( parent, true )
+    : Service( parent, true ),
+      m_indexManager( 0 )
 {
     // only so ResourceManager won't open yet another connection to the nepomuk server
     ResourceManager::instance()->setOverrideMainModel( mainModel() );
