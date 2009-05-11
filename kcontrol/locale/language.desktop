@@ -90,8 +90,8 @@ Name[uz]=Davlat/region va til
 Name[uz@cyrillic]=Давлат/регион ва тил
 Name[vi]=Quốc gia và Ngôn ngữ
 Name[wa]=Payis & lingaedje
-Name[x-test]=xxCountry/Region & Languagexx
 Name[xh]=Ilizwe/Ummandla & Ulwimi
+Name[x-test]=xxCountry/Region & Languagexx
 Name[zh_CN]=国家/地区和语言
 Name[zh_TW]=國家/地區與語言
 
@@ -171,8 +171,8 @@ Comment[uz]=Davlatingiz uchun til, son va vaqt moslamalari
 Comment[uz@cyrillic]=Давлатингиз учун тил, сон ва вақт мосламалари
 Comment[vi]=Ngôn ngữ, số và các thiết lập về thời gian cho vùng cụ thể
 Comment[wa]=Apontiaedje do lingaedje et des preferinces (prezintaedje des limeros, des dates, evnd.) po vosse payis
-Comment[x-test]=xxLanguage, numeric, and time settings for your particular regionxx
 Comment[xh]=Ulwimi, amanani, kunye nezicwangciso zexesha zommandla wakho
+Comment[x-test]=xxLanguage, numeric, and time settings for your particular regionxx
 Comment[zh_CN]=您所在地区的语言、数字和时间设置
 Comment[zh_TW]=您所在地區的語言、數字和時間設定
 
