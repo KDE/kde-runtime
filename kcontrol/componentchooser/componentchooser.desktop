@@ -168,7 +168,7 @@ Comment[x-test]=xxChoose the default components for various servicesxx
 Comment[zh_CN]=选择各种服务的默认组件
 Comment[zh_TW]=選擇各種服務的預設元件
 
-X-KDE-Keywords=components,component chooser,resources,e-mail,email client,terminal emulator,applications
+X-KDE-Keywords=default applications,components,component chooser,resources,e-mail,email client,text editor,instant messenger,terminal emulator,web browser,URL,hyperlinks
 X-KDE-Keywords[be]=кампаненты,выбар кампанентаў,рэсурсы,кліент электроннай пошты,эмулятар тэрміналу,components,component chooser,resources, email client, terminal emulator
 X-KDE-Keywords[bg]=Keywords=е-поща, ел, поща, редактор, стандартен, компонент, модул, components, component chooser, resources, email client, terminal emulator
 X-KDE-Keywords[ca]=components,selector de components,recursos,correu electrònic,client de correu,emulador de terminal,aplicacions

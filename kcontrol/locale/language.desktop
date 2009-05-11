@@ -176,7 +176,7 @@ Comment[x-test]=xxLanguage, numeric, and time settings for your particular regio
 Comment[zh_CN]=您所在地区的语言、数字和时间设置
 Comment[zh_TW]=您所在地區的語言、數字和時間設定
 
-X-KDE-Keywords=language,translation,number format,currency,time,date,formats,locale,Country,charsets,character sets,Decimal symbol,Thousands separator,symbol,separator,sign,positive,negative,fractional digits,week,week start
+X-KDE-Keywords=language,translation,number format,locale,Country,charsets,character sets,Decimal symbol,Thousands separator,symbol,separator,sign,positive,negative,currency,money,fractional digits,calendar,time,date,formats,week,week start,first,paper,size,letter,A4,measure,metric,English,Imperial
 X-KDE-Keywords[af]=language,translation,number format,currency,time,date,formats,locale,Country,charsets,character sets,Decimal symbol,Thousands separator,symbol,separator,sign,positive,negative,fractional digits,week,week begin
 X-KDE-Keywords[be]=Мова,Пераклад,Фармат лікаў,Валюта,Час,Дата,Фарматы,Мясцовасць,Лакаль,Краіна,Знаказбор,Знаказборы,Сімвал дзесятковай коскі,Падзяляльнік тысяч,Сімвал,Знак,Падзяляльнік,Дадатны,Адмоўны,Тыдзень,Пачатак тыдня,language,translation,number format,currency,time,date,formats,locale,Country,charsets,character sets,Decimal symbol,Thousands separator,symbol,separator,sign,positive,negative,fractional digits,week,week start
 X-KDE-Keywords[bg]=Keywords=език, страна, регион, превод, числа, формат, дата, час, пари, валута, единица, локал, локализация, language, translation, number format, currency, time, date, formats, locale, Country, charsets, character sets, Decimal symbol, Thousands separator, symbol, separator, sign, positive, negative, fractional digits, week, week start
