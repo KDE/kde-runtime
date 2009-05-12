@@ -1,5 +1,12 @@
 # ctxt: standard desktop component
 Name=Terminal Emulator
+Name[csb]=Emùlator terminala
+Name[et]=Terminaliemulaator
+Name[pt]=Emulador de Terminal
+Name[pt_BR]=Emulador de Terminal
+Name[sv]=Terminalemulator
+Name[uk]=Емуляція термінала
+Name[zh_TW]=終端機模擬程式
 Comment=This service allows you to configure your default terminal emulator. All KDE applications which invoke a terminal emulator application should honor this setting.
 Comment[af]=Hierdie diens laat jou toe om jou standaard terminaal emuleerder op te stel. Al die KDE programme wat 'n terminaal skep behoort hierdie instelling te gebruik.
 Comment[ar]=هذه الخدمة تسنح بإعداد محاك الطرفية المبدئي لكل تطبيقات كيدي التي تحتاج الوصول للبريد ستستخدم هذا الإعداد

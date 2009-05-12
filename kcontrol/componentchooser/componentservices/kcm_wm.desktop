@@ -1,5 +1,12 @@
 # ctxt: standard desktop component
 Name=Window Manager
+Name[csb]=Mendżer òknów
+Name[et]=Aknahaldur
+Name[pt]=Gestor de Janelas
+Name[pt_BR]=Gestor de Janelas
+Name[sv]=Fönsterhanterare
+Name[uk]=Керування вікнами
+Name[zh_TW]=視窗管理員
 Comment=Here you can select the window manager to be run in your KDE session.
 Comment[ar]=هنا يمكنك انتقاء مدير النوافذ ليعمل في جلسة الكيدي
 Comment[be@latin]=Tut možna vybrać akońnika, jaki ŭklučajecca pry ŭvachodzie ŭ KDE.

@@ -1,5 +1,12 @@
 # ctxt: standard desktop component
 Name=Web Browser
+Name[csb]=Internetowi przezérnik
+Name[et]=Veebibrauser
+Name[pt]=Navegador Web
+Name[pt_BR]=Navegador Web
+Name[sv]=Webbläsare
+Name[uk]=Навігатор Тенет
+Name[zh_TW]=網頁瀏覽器
 Comment=Here you can configure your default web browser. All KDE applications in which you can select hyperlinks should honor this setting.
 Comment[af]=Hier kan jy die standaard web blaaier opstel. Al die KDE programme waarin jy hiperskakels kan kies behoort hierdie instelling te gebruik.
 Comment[ar]=هنا تستطيع إعداد المتصفح المبدئي لكيدي كل التطبيقات ستستخدم هذا الإعداد

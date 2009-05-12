@@ -1,5 +1,12 @@
 # ctxt: standard desktop component
 Name=Email Client
+Name[csb]=E-mailowô programa
+Name[et]=E-posti klient
+Name[pt]=Cliente de E-mail
+Name[pt_BR]=Cliente de E-mail
+Name[sv]=E-postklient
+Name[uk]=Клієнт електронної пошти
+Name[zh_TW]=電子郵件客戶端程式
 Comment=This service allows you to configure your default email client. All KDE applications which need access to an email client application should honor this setting.
 Comment[af]=Hierdie diens laat jou toe om jou standaard e-pos kliënt op te stel. Al die KDE programme wat toegang tot 'n e-pos kliënt benodig behoort hierdie instelling te gebruik.
 Comment[ar]=هذه الخدمة تسنح بإعداد عميل البريد الإلكتروني المبدئي لكل تطبيقات كيدي التي تحتاج الوصول للبريد ستستخدم هذا الإعداد
