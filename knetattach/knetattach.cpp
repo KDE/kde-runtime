@@ -39,6 +39,11 @@ KNetAttach::KNetAttach( QWidget* parent )
 {
     setupUi( this );
 
+    QFont f = font();
+    f.setPointSizeF( f.pointSizeF() * 1.41 );
+    f.setBold( true );
+    setTitleFont( f );
+
     connect(_recent, SIGNAL(toggled(bool)), _recentConnectionName, SLOT(setEnabled(bool)));
     connect(_connectionName, SIGNAL(textChanged(const QString&)), this, SLOT(updateParametersPageStatus()));
     connect(_user, SIGNAL(textChanged(const QString&)), this, SLOT(updateParametersPageStatus()));

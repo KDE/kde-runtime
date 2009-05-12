@@ -12,11 +12,6 @@
   <property name="windowTitle" >
    <string>Network Folder Wizard</string>
   </property>
-  <property name="titleFont" >
-   <font>
-    <pointsize>16</pointsize>
-   </font>
-  </property>
   <widget class="QWidget" name="_folderType" >
    <attribute name="title" >
     <string>Add Network Folder</string>
