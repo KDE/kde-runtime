@@ -46,7 +46,7 @@ kded4=kdelibs/kded
 kcmshell4=systemsettings/general
 kwalletd=kdelibs/kwallet
 kwriteconfig=kdelibs/general
-kwrited=kdelibs/general
+kwrited=konsole/kwrited
 
 #KWin
 kwin_killer_helper=kwin/general
