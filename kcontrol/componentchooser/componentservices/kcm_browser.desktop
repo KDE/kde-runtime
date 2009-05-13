@@ -1,9 +1,10 @@
 # ctxt: standard desktop component
 Name=Web Browser
 Name[csb]=Internetowi przezérnik
+Name[da]=Webbrowser
 Name[et]=Veebibrauser
 Name[pt]=Navegador Web
-Name[pt_BR]=Navegador Web
+Name[pt_BR]=Navegador da Internet
 Name[sv]=Webbläsare
 Name[uk]=Навігатор Тенет
 Name[zh_TW]=網頁瀏覽器

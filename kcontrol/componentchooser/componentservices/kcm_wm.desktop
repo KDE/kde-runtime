@@ -1,9 +1,10 @@
 # ctxt: standard desktop component
 Name=Window Manager
 Name[csb]=Mendżer òknów
+Name[da]=Vindueshåndtering
 Name[et]=Aknahaldur
 Name[pt]=Gestor de Janelas
-Name[pt_BR]=Gestor de Janelas
+Name[pt_BR]=Gerenciador de janelas
 Name[sv]=Fönsterhanterare
 Name[uk]=Керування вікнами
 Name[zh_TW]=視窗管理員

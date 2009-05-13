@@ -1,9 +1,10 @@
 # ctxt: standard desktop component
 Name=Email Client
 Name[csb]=E-mailowô programa
+Name[da]=E-mail-klient
 Name[et]=E-posti klient
 Name[pt]=Cliente de E-mail
-Name[pt_BR]=Cliente de E-mail
+Name[pt_BR]=Cliente de e-mail
 Name[sv]=E-postklient
 Name[uk]=Клієнт електронної пошти
 Name[zh_TW]=電子郵件客戶端程式

@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Type=Directory
 Name=Connectivity
+Name[da]=Forbindelse
 Name[de]=Verbindungen
 Name[el]=Συνδεσιμότητα
 Name[et]=Võrk

@@ -1,9 +1,10 @@
 # ctxt: standard desktop component
 Name=Terminal Emulator
 Name[csb]=Emùlator terminala
+Name[da]=Terminalemulator
 Name[et]=Terminaliemulaator
 Name[pt]=Emulador de Terminal
-Name[pt_BR]=Emulador de Terminal
+Name[pt_BR]=Emulador de terminal
 Name[sv]=Terminalemulator
 Name[uk]=Емуляція термінала
 Name[zh_TW]=終端機模擬程式
