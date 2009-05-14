@@ -53,7 +53,14 @@ GlobalShortcutsRegistry::GlobalShortcutsRegistry()
 GlobalShortcutsRegistry::~GlobalShortcutsRegistry()
     {
     _manager->setEnabled(false);
-    clear();
+
+    // Ungrab all keys. We don't go over GlobalShortcuts because
+    // GlobalShortcutsRegistry::self() doesn't work anymore.
+    Q_FOREACH (const int key, _active_keys.keys())
+        {
+        _manager->grabKey(key, false);
+        }
+    _active_keys.clear();
     }
 
 
