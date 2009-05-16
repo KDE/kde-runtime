@@ -21,6 +21,7 @@ Name[sv]=Solid automatisk utmatningstjänst
 Name[tr]=Solid Otomatik-çıkarma servisi
 Name[uk]=Служба автоматичного виштовхування Solid
 Name[x-test]=xxSolid Auto-eject servicexx
+Name[zh_CN]=Solid 自动弹出服务
 Name[zh_TW]=實體自動退出服務
 Comment=Allows to automatically release drives when their eject button is pushed
 Comment[da]=Muliggør automatisk åbning af drev når der trykkes på deres skub ud-knap

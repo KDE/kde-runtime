@@ -9,6 +9,7 @@ Name[pt_BR]=Gerenciador de arquivos
 Name[sv]=Filhanterare
 Name[tr]=Dosya Yönetici
 Name[uk]=Керування файлами
+Name[zh_CN]=文件管理器
 Name[zh_TW]=檔案管理員
 Comment=Here you can configure your default file manager. The entries in the K menu and all KDE applications in which you can open folders will use this file manager.
 Comment[ar]=هنا يمكنك ضبط مدير الملفات المبدئي. مدخلات قائمة البدء و جميع تطبيقات الكيدي التي تستطيع أن تفتح الملفات سوف تستخدم هذا المدير.

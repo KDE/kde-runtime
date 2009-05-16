@@ -9,6 +9,7 @@ Name[pt_BR]=Emulador de terminal
 Name[sv]=Terminalemulator
 Name[tr]=Uçbirim Öykünücü
 Name[uk]=Емуляція термінала
+Name[zh_CN]=终端仿真器
 Name[zh_TW]=終端機模擬程式
 Comment=This service allows you to configure your default terminal emulator. All KDE applications which invoke a terminal emulator application should honor this setting.
 Comment[af]=Hierdie diens laat jou toe om jou standaard terminaal emuleerder op te stel. Al die KDE programme wat 'n terminaal skep behoort hierdie instelling te gebruik.
