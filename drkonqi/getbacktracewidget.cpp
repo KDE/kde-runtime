@@ -247,3 +247,7 @@ void GetBacktraceWidget::hilightExtraDetailsLabel(bool hilight)
     ui.m_extraDetailsLabel->setStyleSheet(stylesheet);
 }
 
+void GetBacktraceWidget::focusReloadButton()
+{
+    ui.m_reloadBacktraceButton->setFocus();
+}

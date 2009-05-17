@@ -95,6 +95,7 @@ bool CrashInformationPage::showNextPage()
                                               "to install some debugging packages."),
                                 i18nc("@title:window","Crash Information is not useful enough")) ) {
             m_backtraceWidget->hilightExtraDetailsLabel(true);
+            m_backtraceWidget->focusReloadButton();
             return false; //Cancel show next, to allow the user to write more
         } else {
             return true; //Allow to continue
