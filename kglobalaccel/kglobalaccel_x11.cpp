@@ -103,14 +103,6 @@ bool KGlobalAccelImpl::grabKey( int keyQt, bool grab )
 
 	keyModX &= g_keyModMaskXAccel; // Get rid of any non-relevant bits in mod
 
-	// HACK: make Alt+Print work
-	// only do this for the Xorg default keyboard keycodes,
-	// other mappings (e.g. evdev) don't need or want it
-	if( keyCodeX == XK_Sys_Req && XKeycodeToKeysym( QX11Info::display(), 111, 0 ) == XK_Print ) {
-	    keyModX |= KKeyServer::modXAlt();
-	    keyCodeX = 111;
-	}
-
 	if( !keyCodeX ) {
 		kDebug() << "keyQt (" << hex << keyQt << ") was resolved to x11 keycode 0";
 		return false;
