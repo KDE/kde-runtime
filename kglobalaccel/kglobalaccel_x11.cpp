@@ -88,11 +88,21 @@ bool KGlobalAccelImpl::grabKey( int keyQt, bool grab )
 
 	int keyCodeX;
 	uint keyModX;
-	KKeyServer::keyQtToCodeX(keyQt, &keyCodeX);
-	KKeyServer::keyQtToModX(keyQt, &keyModX);
+
+	// Resolve the modifier
+	if( !KKeyServer::keyQtToModX(keyQt, &keyModX) ) {
+		kDebug() << "keyQt (" << hex << keyQt << ") failed to resolve to x11 modifier";
+		return false;
+	}
+
+	// Resolve the key
+	if( !KKeyServer::keyQtToCodeX(keyQt, &keyCodeX) ) {
+		kDebug() << "keyQt (" << hex << keyQt << ") failed to resolve to x11 keycode";
+		return false;
+	}
 
 	keyModX &= g_keyModMaskXAccel; // Get rid of any non-relevant bits in mod
-	
+
 	// HACK: make Alt+Print work
 	// only do this for the Xorg default keyboard keycodes,
 	// other mappings (e.g. evdev) don't need or want it
@@ -101,12 +111,10 @@ bool KGlobalAccelImpl::grabKey( int keyQt, bool grab )
 	    keyCodeX = 111;
 	}
 
-	if( !keyCodeX )
+	if( !keyCodeX ) {
+		kDebug() << "keyQt (" << hex << keyQt << ") was resolved to x11 keycode 0";
 		return false;
-
-    // kDebug() << "grabKey keyQt " << (keyQt & ~Qt::KeyboardModifierMask)
-    //    << " mod " << (keyQt & Qt::KeyboardModifierMask) << " ( key: '" << QKeySequence(keyQt).toString()
-    //    << "', grab: " << grab << " ): keyCodeX: " << keyCodeX << " keyModX: " << keyModX << endl;
+	}
 
 	KXErrorHandler handler( XGrabErrorHandler );
 
