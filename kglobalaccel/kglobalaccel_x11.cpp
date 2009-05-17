@@ -177,10 +177,16 @@ void KGlobalAccelImpl::x11MappingNotify()
 	// uint oldKeyModMaskXAccel = g_keyModMaskXAccel;
 	// uint oldKeyModMaskXOnOrOff = g_keyModMaskXOnOrOff;
 
+	// First ungrab all currently grabbed keys. This is needed because we
+	// store the keys as qt keycodes and use KKeyServer to map them to x11 key
+	// codes. After calling KKeyServer::initializeMods() they could map to
+	// different keycodes.
+	m_owner->ungrabKeys();
+
 	KKeyServer::initializeMods();
 	calculateGrabMasks();
-	// Do new XGrabKey()s.
-    m_owner->regrabKeys();
+
+	m_owner->grabKeys();
 
 }
 

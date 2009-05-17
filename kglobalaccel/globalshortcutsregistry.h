@@ -137,12 +137,11 @@ public Q_SLOTS:
 
     void writeSettings() const;
 
-    /**
-     * Renews the grabs.
-     *
-     * This is called after the user changed something with xmodmap.
-     */
-    void regrabKeys();
+    // Grab the keys
+    void grabKeys();
+
+    // Ungrab the keys
+    void ungrabKeys();
 
 private:
 

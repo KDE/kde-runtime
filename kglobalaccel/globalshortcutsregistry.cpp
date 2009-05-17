@@ -186,11 +186,20 @@ GlobalShortcutsRegistry * GlobalShortcutsRegistry::self()
 bool GlobalShortcutsRegistry::keyPressed(int keyQt)
     {
     GlobalShortcut *shortcut = getShortcutByKey(keyQt);
-    if (!shortcut || !shortcut->isActive())
+    if (!shortcut)
         {
-        // We are a standalone module. All pressed keys should be known.
-        Q_ASSERT(shortcut);
-        Q_ASSERT(shortcut->isActive());
+        // This can happen for example with the ALT-Print shortcut of kwin.
+        // ALT+PRINT is SYSREQ on my keyboard. So we grab something we think
+        // is ALT+PRINT but symXToKeyQt and modXToQt make ALT+SYSREQ of it
+        // when pressed (correctly). We can't match that.
+        kDebug() << "Got unknown key" << QKeySequence(keyQt).toString();
+
+        // In production mode just do nothing.
+        return false;
+        }
+    else if (!shortcut->isActive())
+        {
+        kDebug() << "Got inactive key" << QKeySequence(keyQt).toString();
 
         // In production mode just do nothing.
         return false;
@@ -272,12 +281,8 @@ void GlobalShortcutsRegistry::loadSettings()
     }
 
 
-void GlobalShortcutsRegistry::regrabKeys()
+void GlobalShortcutsRegistry::grabKeys()
     {
-    deactivateShortcuts();
-    // We store the keys as qt keycodes. Those stay the same. activateShortcut
-    // will translates to the corresponding x11 shortcut. So just activate
-    // again.
     activateShortcuts();
     }
 
@@ -321,6 +326,12 @@ KdeDGlobalAccel::Component *GlobalShortcutsRegistry::takeComponent(KdeDGlobalAcc
     QDBusConnection conn(QDBusConnection::sessionBus());
     conn.unregisterObject(component->dbusPath().path());
     return _components.take(component->uniqueName());
+    }
+
+
+void GlobalShortcutsRegistry::ungrabKeys()
+    {
+    deactivateShortcuts();
     }
 
 
