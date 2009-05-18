@@ -16,7 +16,7 @@
 #include "nepomukstorage-config.h"
 #include "modelcopyjob.h"
 
-#ifdef HAVE_CLUCENE
+#if defined(HAVE_CLUCENE) && defined(HAVE_SOPRANO_INDEX)
 #include "cluceneanalyzer.h"
 #endif
 
