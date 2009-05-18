@@ -1,8 +1,11 @@
 # ctxt: standard desktop component
 Name=File Manager
+Name[ca]=Gestor de fitxers
+Name[ca@valencia]=Gestor de fitxers
 Name[csb]=Menadżera lopków
 Name[da]=Filhåndtering
 Name[et]=Failihaldur
+Name[gu]=ફાઇલ વ્યવસ્થાપક
 Name[nds]=Dateipleger
 Name[pt]=Gestor de Ficheiros
 Name[pt_BR]=Gerenciador de arquivos

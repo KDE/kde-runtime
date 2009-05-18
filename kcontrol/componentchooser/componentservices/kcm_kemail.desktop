@@ -1,8 +1,11 @@
 # ctxt: standard desktop component
 Name=Email Client
+Name[ca]=Client de correu
+Name[ca@valencia]=Client de correu
 Name[csb]=E-mailowô programa
 Name[da]=E-mail-klient
 Name[et]=E-posti klient
+Name[gu]=ઇમેલ ક્લાયન્ટ
 Name[nds]=Nettpost-Programm
 Name[pt]=Cliente de E-mail
 Name[pt_BR]=Cliente de e-mail

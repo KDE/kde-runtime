@@ -2,6 +2,8 @@
 Encoding=UTF-8
 Type=Directory
 Name=Communication
+Name[ca]=Comunicació
+Name[ca@valencia]=Comunicació
 Name[csb]=Kòmùnikacëjô
 Name[da]=Kommunikation
 Name[de]=Kommunikation
