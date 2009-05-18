@@ -78,7 +78,7 @@ IconThemesConfig::IconThemesConfig(const KComponentData &inst, QWidget *parent)
   m_previewFolder=new QLabel(m_preview);
   m_previewFolder->setPixmap(DesktopIcon("folder"));
   m_previewDocument=new QLabel(m_preview);
-  m_previewDocument->setPixmap(DesktopIcon("document"));
+  m_previewDocument->setPixmap(DesktopIcon("document-preview"));
 
   lh2->addStretch(10);
   lh2->addWidget(m_previewExec);
