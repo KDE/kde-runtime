@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Application
 Exec=kcmshell4 kcmhelpcenter
-Icon=help
+Icon=help-browser
 
 X-KDE-SubstituteUID=true
 X-KDE-Library=helpcenter
