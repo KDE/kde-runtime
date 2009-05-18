@@ -25,6 +25,8 @@
 #include <KLocale>
 #include <KIcon>
 #include <KToolInvocation>
+#include <KActionCollection>
+#include <KStandardAction>
 
 
 
@@ -35,7 +37,7 @@ Nepomuk::SystemTray::SystemTray( StrigiService* service, QWidget* parent )
     setCategory( SystemServices );
     setStatus( Passive );
     setIcon( "nepomuk" );
-    
+
     KMenu* menu = new KMenu;
     menu->addTitle( i18n( "Strigi File Indexing" ) );
 
@@ -57,6 +59,9 @@ Nepomuk::SystemTray::SystemTray( StrigiService* service, QWidget* parent )
     connect( m_service, SIGNAL( statusStringChanged() ), this, SLOT( slotUpdateStrigiStatus() ) );
 
     setContextMenu( menu );
+
+    // trueg: Hack until KNotificationItem allows to disable default actions
+    connect( menu, SIGNAL(aboutToShow()), this, SLOT(slotContextMenuAboutToShow()));
 }
 
 
@@ -82,6 +87,13 @@ void Nepomuk::SystemTray::slotConfigure()
     QStringList args;
     args << "kcm_nepomuk";
     KToolInvocation::kdeinitExec("kcmshell4", args);
+}
+
+
+void Nepomuk::SystemTray::slotContextMenuAboutToShow()
+{
+    if ( QAction* a = actionCollection()->action( KStandardAction::name(KStandardAction::Quit) ) )
+        contextMenu()->removeAction( a );
 }
 
 #include "systray.moc"
