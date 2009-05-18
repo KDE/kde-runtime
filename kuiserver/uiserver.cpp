@@ -287,7 +287,7 @@ void UIServer::updateConfiguration()
 void UIServer::applySettings()
 {
      KSystemTrayIcon *m_systemTray = new KSystemTrayIcon(this);
-     m_systemTray->setIcon(KSystemTrayIcon::loadIcon("display"));
+     m_systemTray->setIcon(KSystemTrayIcon::loadIcon("video-display"));
      m_systemTray->show();
 }
 
