@@ -8,7 +8,7 @@ include_directories(
   ${NEPOMUK_INCLUDE_DIR}
   ${STRIGI_INCLUDE_DIR}
   ${nepomukstrigiservice_BUILD_DIR}
-  ${LIBKNOTIFICATIONITEM-1_INCLUDE_DIR}
+  ${KNOTIFICATIONITEM_INCLUDE_DIR}
   )
 
 set(strigiservice_SRCS
@@ -31,7 +31,7 @@ kde4_add_ui_files(strigiservice_SRCS
 kde4_add_plugin(nepomukstrigiservice ${strigiservice_SRCS})
 
 target_link_libraries(nepomukstrigiservice
-  ${LIBKNOTIFICATIONITEM-1_LIBRARIES}
+  ${KNOTIFICATIONITEM_LIBRARIES}
   ${STRIGI_STREAMANALYZER_LIBRARY}
   ${STRIGI_STREAMS_LIBRARY}
   ${KDE4_KDEUI_LIBS}
