@@ -33,10 +33,6 @@
 #include <KIcon>
 #include <KMessageBox>
 
-#include <KTemporaryFile>
-#include <KRun>
-#include <QtCore/QTextStream>
-
 //BEGIN IntroductionPage
 
 IntroductionPage::IntroductionPage(DrKonqiBugReport * parent) :
