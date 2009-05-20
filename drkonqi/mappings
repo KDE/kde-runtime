@@ -97,3 +97,4 @@ kwrite=kate|kwrite
 dragon=dragonplayer|general
 kfontinst=systemsettings|kcm_fontinst
 kfontview=systemsettings|kcm_fontinst
+kalarmautostart=kalarm|general
