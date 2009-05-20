@@ -33,6 +33,10 @@
 #include <KIcon>
 #include <KMessageBox>
 
+#include <KTemporaryFile>
+#include <KRun>
+#include <QtCore/QTextStream>
+
 //BEGIN IntroductionPage
 
 IntroductionPage::IntroductionPage(DrKonqiBugReport * parent) :
@@ -149,6 +153,7 @@ ConclusionPage::ConclusionPage(DrKonqiBugReport * parent)
 
 void ConclusionPage::finishClicked()
 {
+    //Manual report
     if (needToReport && !isBKO) {
         const KrashConfig * krashConfig = DrKonqi::instance()->krashConfig();
 
@@ -158,9 +163,14 @@ void ConclusionPage::finishClicked()
             QString body = reportInfo()->generateReport();
             KToolInvocation::invokeMailer(krashConfig->getReportLink(), "", "" , subject, body);
         } else {
-            KToolInvocation::invokeBrowser(krashConfig->getReportLink());
+            QString reportUrl = krashConfig->getReportLink();
+            if (KUrl(reportUrl).isRelative()) { //Scheme is missing
+                reportUrl = QLatin1String("http://") + reportUrl;
+            }
+            KToolInvocation::invokeBrowser(reportUrl);
         }
     }
+    //Restart application
     if (ui.m_restartAppOnFinish->isChecked()) {
          DrKonqi::instance()->restartCrashedApplication();
     }
