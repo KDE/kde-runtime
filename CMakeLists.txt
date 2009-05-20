@@ -1,7 +1,7 @@
 project(KDEBASE_RUNTIME)
 
 # where to look first for cmake modules, before ${CMAKE_ROOT}/Modules/ is checked
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules )
+set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
 
 #search packages used by KDE
 set(KDE_MIN_VERSION "4.2.85")  # for the < 4.2 macro
