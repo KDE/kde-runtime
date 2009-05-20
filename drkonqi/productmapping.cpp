@@ -43,7 +43,7 @@ void ProductMapping::mapUsingInternalFile(const QString & appName)
     if (mappings.hasKey(appName)) {
         QString mappingString = mappings.readEntry(appName);
         if (!mappingString.isEmpty()) {
-            QStringList list = mappingString.split('/', QString::SkipEmptyParts);
+            QStringList list = mappingString.split('|', QString::SkipEmptyParts);
             if (list.count()==2) {
                 m_bugzillaProduct = list.at(0);
                 m_bugzillaComponent = list.at(1);
