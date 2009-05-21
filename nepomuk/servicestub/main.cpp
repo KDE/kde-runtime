@@ -88,6 +88,8 @@ int main( int argc, char** argv )
     KCmdLineArgs* args = KCmdLineArgs::parsedArgs();
 
     if( args->count() != 1 ) {
+        // create dummy componentData for the locale
+        KComponentData dummy( "___nepomukdummyservicename___" );
         KCmdLineArgs::usageError( i18n("No service name specified") );
     }
 
