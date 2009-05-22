@@ -52,6 +52,8 @@ public:
     KGlobalAccelD(QObject* parent = NULL);
     ~KGlobalAccelD();
 
+    bool init();
+
 public Q_SLOTS:
 
     /**

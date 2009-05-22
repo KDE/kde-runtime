@@ -92,6 +92,9 @@ extern "C" KDE_EXPORT int kdemain(int argc, char **argv)
     KCrash::setFlags(KCrash::AutoRestart);
 
     KGlobalAccelD globalaccel;
-    int res = app.exec();
-    return res;
+    if (!globalaccel.init()) {
+        return -1;
+    }
+
+    return app.exec();
     }
