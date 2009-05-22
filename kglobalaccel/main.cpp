@@ -61,11 +61,6 @@ extern "C" KDE_EXPORT int kdemain(int argc, char **argv)
 
     KCmdLineArgs::init( argc, argv, &aboutdata );
     KUniqueApplication::addCmdLineOptions();
-    KUniqueApplication app;
-
-    // This app is started automatically, no need for session management
-    app.disableSessionManagement();
-    app.setQuitOnLastWindowClosed( false );
 
     // check if kwallet is disabled
     if (!isEnabled())
@@ -79,6 +74,14 @@ extern "C" KDE_EXPORT int kdemain(int argc, char **argv)
         kDebug() << "kglobalaccel is already running!";
         return (0);
         }
+
+    // As in the KUniqueApplication example only create a instance AFTER
+    // calling KUniqueApplication::start()
+    KUniqueApplication app;
+
+    // This app is started automatically, no need for session management
+    app.disableSessionManagement();
+    app.setQuitOnLastWindowClosed( false );
 
     // Stop gracefully
     KDE_signal(SIGINT, sighandler);
