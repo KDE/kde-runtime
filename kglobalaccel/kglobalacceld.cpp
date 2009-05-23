@@ -217,7 +217,7 @@ bool KGlobalAccelD::init()
         return false;
     }
 
-    GlobalShortcutsRegistry::self()->setDBusPath(QDBusObjectPath());
+    GlobalShortcutsRegistry::self()->setDBusPath(QDBusObjectPath("/"));
     GlobalShortcutsRegistry::self()->loadSettings();
 
     connect(reg, SIGNAL(invokeAction(const QStringList &, qlonglong)),

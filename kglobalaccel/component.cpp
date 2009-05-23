@@ -208,7 +208,7 @@ QDBusObjectPath Component::dbusPath() const
             dbusPath[i] = QLatin1Char('_');
         }
     // QDBusObjectPath could be a little bit easier to handle :-)
-    return QDBusObjectPath( _registry->dbusPath().path() + "/component/" + dbusPath);
+    return QDBusObjectPath( _registry->dbusPath().path() + "component/" + dbusPath);
     }
 
 
