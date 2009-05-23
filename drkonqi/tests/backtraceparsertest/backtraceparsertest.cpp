@@ -101,6 +101,8 @@ void BacktraceParserTest::btParserTest()
                         << metaUsefulness.valueToKey(parser->backtraceUsefulness())
                         << " Expected: " << metaUsefulness.valueToKey(result) << endl;
 
+    QTextStream(stdout) << "First valid functions: " << parser->firstValidFunctions().join(" ") << endl;
+
     QCOMPARE(parser->backtraceUsefulness(), result);
 }
 
