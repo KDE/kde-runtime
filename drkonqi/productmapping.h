@@ -25,8 +25,9 @@
 
 class ProductMapping: public QObject
 {
+Q_OBJECT
 public:
-    ProductMapping(const QString&, QObject * parent = 0);
+    explicit ProductMapping(const QString&, QObject * parent = 0);
     
     QString bugzillaProduct() const;
     QString bugzillaComponent() const;

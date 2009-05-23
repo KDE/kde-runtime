@@ -89,7 +89,7 @@
    <item>
     <widget class="QCheckBox" name="m_restartAppOnFinish">
      <property name="text">
-      <string>Restart the application when clicking the Finish button</string>
+      <string comment="@option:check">Restart the application when clicking the Finish button</string>
      </property>
     </widget>
    </item>

@@ -446,7 +446,7 @@ static bool lineIsStackTop(const BacktraceLineGdb & line)
         || line.rating() == BacktraceLineGdb::MissingFunction )
         return false;
 
-    if ( line.functionName().startsWith("qt_assert") //qt_assert and qt_assert_x
+    if ( line.functionName().startsWith(QLatin1String("qt_assert")) //qt_assert and qt_assert_x
         || line.functionName() == "qFatal"
         || line.functionName() == "abort"
         || line.functionName() == "*__GI_abort"
@@ -462,7 +462,7 @@ static bool lineShouldBeIgnored(const BacktraceLineGdb & line)
 {
     if ( line.libraryName().contains("libc.so")
         || line.libraryName().contains("libstdc++.so")
-        || line.functionName().startsWith("*__GI_") //glibc 2.9 prefixes everything with *__GI_
+        || line.functionName().startsWith(QLatin1String("*__GI_")) //glibc2.9 uses *__GI_ as prefix
         || line.libraryName().contains("libpthread.so") )
         return true;
 
