@@ -401,6 +401,7 @@ QDBusObjectPath KGlobalAccelD::getComponent(const QString &componentUnique) cons
         }
     else
         {
+        sendErrorReply("org.kde.kglobalaccel.NoSuchComponent", QString("The component '%1' doesn't exist.").arg(componentUnique));
         return QDBusObjectPath();
         }
     }
