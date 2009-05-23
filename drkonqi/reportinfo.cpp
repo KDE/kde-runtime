@@ -142,7 +142,7 @@ QString ReportInfo::osString() const
     return result;
 }
 
-QString ReportInfo::generateReport() const
+QString ReportInfo::generateReport(bool drKonqiStamp) const
 {
     //Note: no translations must be done in this function's strings
     const KrashConfig * krashConfig = DrKonqi::instance()->krashConfig();
@@ -186,10 +186,14 @@ QString ReportInfo::generateReport() const
     //Possible duplicate
     if (!m_possibleDuplicate.isEmpty()) {
         report.append(QLatin1String("\n"));
-        report.append(QString("This bug may be a duplicate of or related to bug %1")
+        report.append(QString("This bug may be a duplicate of or related to bug %1\n")
                         .arg(m_possibleDuplicate));
     }
 
+    if (drKonqiStamp) {
+        report.append(QLatin1String("\nReported using DrKonqi"));
+    }
+    
     return report;
 }
 
@@ -244,7 +248,7 @@ BugReport ReportInfo::newBugReportTemplate() const
 void ReportInfo::sendBugReport(BugzillaManager *bzManager) const
 {
     BugReport report = newBugReportTemplate();
-    report.setDescription(generateReport());
+    report.setDescription(generateReport(true));
     report.setValid(true);
     connect(bzManager, SIGNAL(sendReportErrorWrongProduct()), this, SLOT(sendUsingDefaultProduct()));
     bzManager->sendReport(report);
@@ -257,7 +261,7 @@ void ReportInfo::sendUsingDefaultProduct() const
     BugReport report = newBugReportTemplate();
     report.setProduct(QLatin1String("kde"));
     report.setComponent(QLatin1String("general"));
-    report.setDescription(generateReport());
+    report.setDescription(generateReport(true));
     report.setValid(true);
     bzManager->sendReport(report);
 }

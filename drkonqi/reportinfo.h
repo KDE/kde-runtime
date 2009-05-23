@@ -51,7 +51,7 @@ public:
     void setDetailText(const QString & text);
     void setPossibleDuplicate(const QString & bug);
 
-    QString generateReport() const;
+    QString generateReport(bool drKonqiStamp) const;
 
     BugReport newBugReportTemplate() const;
     void sendBugReport(BugzillaManager *bzManager) const;
