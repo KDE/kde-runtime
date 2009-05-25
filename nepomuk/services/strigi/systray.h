@@ -41,7 +41,6 @@ namespace Nepomuk {
     private Q_SLOTS:
         void slotUpdateStrigiStatus();
         void slotConfigure();
-        void slotContextMenuAboutToShow();
 
     private:
         KToggleAction* m_suspendResumeAction;
