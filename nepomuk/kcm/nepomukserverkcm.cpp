@@ -67,7 +67,7 @@ Nepomuk::ServerConfigModule::ServerConfigModule( QWidget* parent, const QVariant
         ki18n("Copyright 2007 Sebastian Trüg"));
     about->addAuthor(ki18n("Sebastian Trüg"), KLocalizedString(), "trueg@kde.org");
     setAboutData(about);
-    setButtons(Apply|Default);
+    setButtons(Help|Apply|Default);
     setupUi( this );
 
     m_folderModel = new FolderSelectionModel( m_viewIndexFolders );

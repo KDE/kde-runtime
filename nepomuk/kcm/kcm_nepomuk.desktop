@@ -3,6 +3,8 @@ Exec=kcmshell4 kcm_nepomuk
 Icon=nepomuk
 Type=Service
 
+X-DocPath=kcontrol/nepomuk/index.html
+
 X-KDE-ServiceTypes=KCModule
 X-KDE-Library=kcm_nepomuk
 X-KDE-ParentApp=kcontrol
