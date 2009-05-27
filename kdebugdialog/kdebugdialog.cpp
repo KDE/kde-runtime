@@ -41,18 +41,16 @@ KDebugDialog::KDebugDialog( QStringList areaList, QWidget *parent, const char *n
 {
   setCaption(i18n("Debug Settings"));
   setButtons(None);
-  QWidget* mainWidget = new QWidget( this );
-  QVBoxLayout *topLayout = new QVBoxLayout( mainWidget );
+  QVBoxLayout *topLayout = new QVBoxLayout( mainWidget() );
   topLayout->setMargin( KDialog::marginHint() );
   topLayout->setSpacing( KDialog::spacingHint() );
-  setLayout( topLayout );
 
-  QLabel * tmpLabel = new QLabel( i18n("Debug area:"), this );
+  QLabel * tmpLabel = new QLabel( i18n("Debug area:"), mainWidget() );
   tmpLabel->setFixedHeight( fontMetrics().lineSpacing() );
   topLayout->addWidget( tmpLabel );
 
   // Build combo of debug areas
-  pDebugAreas = new QComboBox( this );
+  pDebugAreas = new QComboBox( mainWidget() );
   pDebugAreas->setEditable( false );
   pDebugAreas->setFixedHeight( pDebugAreas->sizeHint().height() );
   pDebugAreas->addItems( areaList );
@@ -72,7 +70,7 @@ KDebugDialog::KDebugDialog( QStringList areaList, QWidget *parent, const char *n
   //
   // Upper left frame
   //
-  pInfoGroup = new QGroupBox( i18n("Information"), this );
+  pInfoGroup = new QGroupBox( i18n("Information"), mainWidget() );
   gbox->addWidget( pInfoGroup, 0, 0 );
   QVBoxLayout *vbox = new QVBoxLayout( pInfoGroup );
   vbox->setSpacing( KDialog::spacingHint() );
@@ -99,7 +97,7 @@ KDebugDialog::KDebugDialog( QStringList areaList, QWidget *parent, const char *n
   //
   // Upper right frame
   //
-  pWarnGroup = new QGroupBox( i18n("Warning"), this );
+  pWarnGroup = new QGroupBox( i18n("Warning"), mainWidget() );
   gbox->addWidget( pWarnGroup, 0, 1 );
   vbox = new QVBoxLayout( pWarnGroup );
   vbox->setSpacing( KDialog::spacingHint() );
@@ -126,7 +124,7 @@ KDebugDialog::KDebugDialog( QStringList areaList, QWidget *parent, const char *n
   //
   // Lower left frame
   //
-  pErrorGroup = new QGroupBox( i18n("Error"), this );
+  pErrorGroup = new QGroupBox( i18n("Error"), mainWidget() );
   gbox->addWidget( pErrorGroup, 1, 0 );
   vbox = new QVBoxLayout( pErrorGroup );
   vbox->setSpacing( KDialog::spacingHint() );
@@ -153,7 +151,7 @@ KDebugDialog::KDebugDialog( QStringList areaList, QWidget *parent, const char *n
   //
   // Lower right frame
   //
-  pFatalGroup = new QGroupBox( i18n("Fatal Error"), this );
+  pFatalGroup = new QGroupBox( i18n("Fatal Error"), mainWidget() );
   gbox->addWidget( pFatalGroup, 1, 1 );
   vbox = new QVBoxLayout( pFatalGroup );
   vbox->setSpacing( KDialog::spacingHint() );
@@ -178,11 +176,11 @@ KDebugDialog::KDebugDialog( QStringList areaList, QWidget *parent, const char *n
   */
 
 
-  pAbortFatal = new QCheckBox( i18n("Abort on fatal errors"), this );
+  pAbortFatal = new QCheckBox( i18n("Abort on fatal errors"), mainWidget() );
   topLayout->addWidget(pAbortFatal);
 
   topLayout->addStretch();
-  KSeparator *hline = new KSeparator( Qt::Horizontal, this );
+  KSeparator *hline = new KSeparator( Qt::Horizontal, mainWidget() );
   topLayout->addWidget( hline );
 
   buildButtons( topLayout );
@@ -195,7 +193,6 @@ KDebugDialog::KDebugDialog( QStringList areaList, QWidget *parent, const char *n
   slotDestinationChanged(0);
 
   resize( 300, height() );
-  setMainWidget( mainWidget );
 }
 
 KDebugDialog::~KDebugDialog()
