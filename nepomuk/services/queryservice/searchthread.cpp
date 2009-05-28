@@ -207,11 +207,19 @@ namespace {
                             .arg( varName );
                     }
                     else {
+                        //
+                        // Nepomuk still treats all plain literals as xsd string typed literals,
+                        // i.e. Resource only saves typed literals, never plain ones, even if the
+                        // property is defined to range to a plain one.
+                        //
+                        Nepomuk::Types::Property p( node.term.property() );
                         return QString( "%1 <%2> \"%3\"^^<%4> . " )
                             .arg( varName )
                             .arg( QString::fromAscii( node.term.property().toEncoded() ) )
                             .arg( subTerm.value().toString() )
-                            .arg( Nepomuk::Types::Property( node.term.property() ).literalRangeType().dataTypeUri().toString() );
+                            .arg( p.literalRangeType().dataTypeUri() == Soprano::Vocabulary::RDFS::Literal()
+                                  ? Soprano::Vocabulary::XMLSchema::string().toString()
+                                  : p.literalRangeType().dataTypeUri().toString() );
                     }
                 }
             }
@@ -701,15 +709,16 @@ QList<QUrl> Nepomuk::Search::SearchThread::matchFieldName( const QString& field 
 
     // Step 1: see if we have a direct match to a predicate label
     //         there is no need in selecting unused properties
+    // We use the ugly FILTER to support both Soprano 2.3 (which supports plain literals) and earlier (which had only typed literals)
     QString query = QString( "select distinct ?p where { "
                              "?p <%1> <%2> . "
-                             "?p <%3> \"%4\"^^<%5> . "
+                             "?p <%3> ?label . "
+                             "FILTER(STR(?label) = \"%4\") . "
                              "?x ?p ?y . }" )
                     .arg( Soprano::Vocabulary::RDF::type().toString() )
                     .arg( Soprano::Vocabulary::RDF::Property().toString() )
                     .arg( Soprano::Vocabulary::RDFS::label().toString() )
-                    .arg( field )
-                    .arg( Soprano::Vocabulary::XMLSchema::string().toString() );
+                    .arg( field );
     kDebug() << "Direct match query:" << query;
 
     Soprano::QueryResultIterator labelHits = ResourceManager::instance()->mainModel()->executeQuery( query,
