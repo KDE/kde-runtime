@@ -23,6 +23,7 @@
 #include <QtCore/QDateTime>
 
 #include <Soprano/Backend>
+#include <Soprano/Version>
 #include <Soprano/StorageModel>
 #include <Soprano/PluginManager>
 #include <Soprano/Global>
@@ -52,13 +53,14 @@ namespace {
     }
 
     bool findGraphUris( Soprano::Model* model, const QUrl& ns, QUrl& dataGraphUri, QUrl& metaDataGraphUri ) {
+        // We use a FILTER(STR(?ns)...) to support both Soprano 2.3 (with plain literals) and earlier (with only typed ones)
         QString query = QString( "select ?dg ?mdg where { "
-                                 "?dg <%1> \"%2\"^^<%3> . "
+                                 "?dg <%1> ?ns . "
                                  "?mdg <%4> ?dg . "
+                                 "FILTER(STR(?ns) = \"%2\") . "
                                  "}" )
                         .arg( Soprano::Vocabulary::NAO::hasDefaultNamespace().toString() )
                         .arg( ns.toString() )
-                        .arg( Soprano::Vocabulary::XMLSchema::string().toString() )
                         .arg( Soprano::Vocabulary::NRL::coreGraphMetadataFor().toString() );
 
         QueryResultIterator it = model->executeQuery( query, Soprano::Query::QueryLanguageSparql );
@@ -300,12 +302,16 @@ Soprano::Model* Nepomuk::OntologyUpdateJob::model() const
 
 QDateTime Nepomuk::OntologyUpdateJob::ontoModificationDate( Soprano::Model* model, const QUrl& uri )
 {
-    QueryResultIterator it = model->executeQuery( QString( "select ?date where { ?onto <%1> \"%2\"^^<%3> . ?onto <%4> ?date . }" )
-                                                  .arg( Soprano::Vocabulary::NAO::hasDefaultNamespace().toString() )
-                                                  .arg( uri.toString() )
-                                                  .arg( Soprano::Vocabulary::XMLSchema::string().toString() )
-                                                  .arg( Soprano::Vocabulary::NAO::lastModified().toString() ),
-                                                  Soprano::Query::QueryLanguageSparql );
+    // We use a FILTER(STR(?ns)...) to support both Soprano 2.3 (with plain literals) and earlier (with only typed ones)
+    QString query = QString( "select ?date where { "
+                             "?onto <%1> ?ns . "
+                             "?onto <%3> ?date . "
+                             "FILTER(STR(?ns) = \"%2\") . "
+                             "}" )
+                    .arg( Soprano::Vocabulary::NAO::hasDefaultNamespace().toString() )
+                    .arg( uri.toString() )
+                    .arg( Soprano::Vocabulary::NAO::lastModified().toString() );
+    QueryResultIterator it = model->executeQuery( query, Soprano::Query::QueryLanguageSparql );
     if ( it.next() ) {
         kDebug() << "Found modification date for" << uri << it.binding( "date" ).literal().toDateTime();
         return it.binding( "date" ).literal().toDateTime();

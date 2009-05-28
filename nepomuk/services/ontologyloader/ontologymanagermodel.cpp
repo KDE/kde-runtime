@@ -22,6 +22,7 @@
 #include <QtCore/QDateTime>
 
 #include <Soprano/Backend>
+#include <Soprano/Version>
 #include <Soprano/StorageModel>
 #include <Soprano/PluginManager>
 #include <Soprano/Global>
@@ -68,15 +69,15 @@ namespace {
      * with proper values.
      */
     bool findGraphUris( Soprano::Model* model, const QUrl& ns, QUrl& dataGraphUri, QUrl& metaDataGraphUri ) {
+        // We use a FILTER(STR(?ns)...) to support both Soprano 2.3 (with plain literals) and earlier (with only typed ones)
         QString query = QString( "select ?dg ?mdg where { "
-                                 "?dg <%1> \"%2\"^^<%3> . "
-                                 "?mdg <%4> ?dg . "
+                                 "?dg <%1> ?ns . "
+                                 "?mdg <%3> ?dg . "
+                                 "FILTER(STR(?ns) = \"%2\") . "
                                  "}" )
                         .arg( Soprano::Vocabulary::NAO::hasDefaultNamespace().toString() )
                         .arg( ns.toString() )
-                        .arg( Soprano::Vocabulary::XMLSchema::string().toString() )
                         .arg( Soprano::Vocabulary::NRL::coreGraphMetadataFor().toString() );
-
         QueryResultIterator it = model->executeQuery( query, Soprano::Query::QueryLanguageSparql );
         if ( it.next() ) {
             metaDataGraphUri = it.binding("mdg").uri();
@@ -217,7 +218,11 @@ namespace {
             tmpModel->addStatement( Soprano::Statement( dataGraphUri, Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::NRL::Ontology(), metaDataGraphUri ) );
             tmpModel->addStatement( Soprano::Statement( dataGraphUri, Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::NRL::InstanceBase(), metaDataGraphUri ) );
         }
+#if SOPRANO_IS_VERSION( 2, 2, 67 )
+        tmpModel->addStatement( Soprano::Statement( dataGraphUri, Soprano::Vocabulary::NAO::hasDefaultNamespace(), LiteralValue::createPlainLiteral( ns.toString() ), metaDataGraphUri ) );
+#else
         tmpModel->addStatement( Soprano::Statement( dataGraphUri, Soprano::Vocabulary::NAO::hasDefaultNamespace(), LiteralValue( ns.toString() ), metaDataGraphUri ) );
+#endif
     }
 
     /**
@@ -405,16 +410,17 @@ bool Nepomuk::OntologyManagerModel::removeOntology( const QUrl& ns )
 
 QDateTime Nepomuk::OntologyManagerModel::ontoModificationDate( const QUrl& uri )
 {
-    QueryResultIterator it = executeQuery( QString( "select ?date where { "
-                                                    "?onto <%1> \"%2\"^^<%3> . "
-                                                    "?onto <%4> ?date . "
-                                                    "FILTER(DATATYPE(?date) = <%5>) . }" )
-                                           .arg( Soprano::Vocabulary::NAO::hasDefaultNamespace().toString() )
-                                           .arg( uri.toString() )
-                                           .arg( Soprano::Vocabulary::XMLSchema::string().toString() )
-                                           .arg( Soprano::Vocabulary::NAO::lastModified().toString() )
-                                           .arg( Soprano::Vocabulary::XMLSchema::dateTime().toString() ),
-                                           Soprano::Query::QueryLanguageSparql );
+    // We use a FILTER(STR(?ns)...) to support both Soprano 2.3 (with plain literals) and earlier (with only typed ones)
+    QString query = QString( "select ?date where { "
+                             "?onto <%1> ?ns . "
+                             "?onto <%3> ?date . "
+                             "FILTER(STR(?ns) = \"%2\") . "
+                             "FILTER(DATATYPE(?date) = <%4>) . }" )
+                    .arg( Soprano::Vocabulary::NAO::hasDefaultNamespace().toString() )
+                    .arg( uri.toString() )
+                    .arg( Soprano::Vocabulary::NAO::lastModified().toString() )
+                    .arg( Soprano::Vocabulary::XMLSchema::dateTime().toString() );
+    QueryResultIterator it = executeQuery( query, Soprano::Query::QueryLanguageSparql );
     if ( it.next() ) {
         kDebug() << "Found modification date for" << uri << it.binding( "date" ).literal().toDateTime();
         return it.binding( "date" ).literal().toDateTime();
