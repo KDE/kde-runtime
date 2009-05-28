@@ -36,7 +36,7 @@ Nepomuk::SystemTray::SystemTray( StrigiService* service, QWidget* parent )
 {
     setCategory( SystemServices );
     setStatus( Passive );
-    setIcon( "nepomuk" );
+    setIconByName( "nepomuk" );
 
     KMenu* menu = new KMenu;
     menu->addTitle( i18n( "Strigi File Indexing" ) );
