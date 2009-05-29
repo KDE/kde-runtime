@@ -90,7 +90,9 @@ namespace {
             if ( QFile::exists( archivePath ) ) {
                 if ( archivePath.endsWith( QLatin1String( ".tar" ) ) ||
                      archivePath.endsWith( QLatin1String( ".tar.gz" ) ) ||
-                     archivePath.endsWith( QLatin1String( ".tar.bz2" ) ) ) {
+                     archivePath.endsWith( QLatin1String( ".tar.bz2" ) ) ||
+                     archivePath.endsWith( QLatin1String( ".tar.lzma" ) ) ||
+                     archivePath.endsWith( QLatin1String( ".tar.xz" ) ) ) {
                     uri.setScheme( "tar" );
                 }
                 else if ( archivePath.endsWith( QLatin1String( ".zip" ) ) ) {
