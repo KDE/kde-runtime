@@ -2,6 +2,8 @@ check_function_exists("strsignal" HAVE_STRSIGNAL)
 check_function_exists("uname" HAVE_UNAME)
 configure_file (config-drkonqi.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-drkonqi.h )
 
+add_definitions(-DKDE_DEFAULT_DEBUG_AREA=1410)
+
 add_subdirectory( pics ) 
 add_subdirectory( debuggers ) 
 add_subdirectory( tests ) 
