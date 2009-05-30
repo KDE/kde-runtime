@@ -151,6 +151,12 @@ currency symbol that may be present.</para></listitem>
 <para>If you use a different calendar system than Gregorian, you can
 choose this from the first dropdown box.</para>
 
+<!-- FIXME: [2009-05-29] Message freeze in effect, activate some other time.
+<para>Likewise, if numbers in date and time strings should use
+digits other than basic Arabic, another set of digits can selected
+from the second dropdown box.</para>
+-->
+
 <para>On the rest of this page, there are text boxes for the time, long
 date, and short date, in which you can type format strings to control
 the way in which times and dates are displayed.</para>
