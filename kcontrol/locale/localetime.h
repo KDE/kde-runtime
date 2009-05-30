@@ -73,9 +73,11 @@ private Q_SLOTS:
   void slotWeekDayOfPrayChanged(int weekDay);
   void slotDateMonthNamePossChanged();
   void slotCalendarSystemChanged(int calendarSystem);
+  void slotDateTimeDigSetChanged(int);
 
 private:
   void updateWeekDayNames();
+  void updateDigitSetNames();
 
   QList<StringPair> timeMap() const;
   QList<StringPair> dateMap() const;
@@ -95,6 +97,8 @@ private:
   QComboBox * m_comboDateFmt;
   QLabel *m_labDateFmtShort;
   QComboBox * m_comboDateFmtShort;
+  QLabel *m_labDateTimeDigSet;
+  QComboBox *m_comboDateTimeDigSet;
 //   QLabel * m_labWeekStartDay;
   QComboBox * m_comboWeekStartDay;
 //   QLabel * m_labWorkingWeekStartDay;

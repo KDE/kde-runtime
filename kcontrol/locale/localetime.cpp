@@ -213,6 +213,14 @@ KLocaleConfigTime::KLocaleConfigTime(KLocale *_locale,
     tmpCalendars << QString() << QString();
     m_comboCalendarSystem->addItems(tmpCalendars);
 
+    m_labDateTimeDigSet = new QLabel(this);
+    m_labDateTimeDigSet->setObjectName( I18N_NOOP("Di&git set:") );
+    m_comboDateTimeDigSet = new QComboBox(this);
+    lay->addRow(m_labDateTimeDigSet, m_comboDateTimeDigSet);
+    connect( m_comboDateTimeDigSet, SIGNAL( activated(int) ),
+             this, SLOT( slotDateTimeDigSetChanged(int) ) );
+    m_labDateTimeDigSet->setBuddy( m_comboDateTimeDigSet );
+
     QGroupBox *fGr = new QGroupBox(/*("Format"),*/this);
     QFormLayout *fLay = new QFormLayout( fGr );
 
@@ -292,6 +300,7 @@ KLocaleConfigTime::KLocaleConfigTime(KLocale *_locale,
     lay->addRow( horizontalLayout );
 
     updateWeekDayNames();
+    updateDigitSetNames();
 }
 
 
@@ -331,6 +340,12 @@ void KLocaleConfigTime::save()
     if (str != m_locale->dateFormatShort())
       group.writeEntry("DateFormatShort",
             m_locale->dateFormatShort(), KConfig::Persistent|KConfig::Global);
+
+    int dateTimeDigSet;
+    dateTimeDigSet = entGrp.readEntry("DateTimeDigitSet", (int) KLocale::ArabicDigits);
+    group.deleteEntry("DateTimeDigitSet", KConfig::Persistent | KConfig::Global);
+    if (dateTimeDigSet != m_locale->dateTimeDigitSet())
+        group.writeEntry("DateTimeDigitSet", (int) m_locale->dateTimeDigitSet(), KConfig::Persistent|KConfig::Global);
 
     int firstDay;
     firstDay = entGrp.readEntry("WeekStartDay", 1);  //default to Monday
@@ -416,6 +431,7 @@ void KLocaleConfigTime::slotLocaleChanged()
 
     kDebug() << "calSys: " << calendarSystem << ": " << calendarType;
     m_comboCalendarSystem->setCurrentIndex( calendarSystem );
+    m_comboDateTimeDigSet->setCurrentIndex( m_locale->dateTimeDigitSet() );
 
     //  m_edTimeFmt->setText( m_locale->timeFormat() );
     m_comboTimeFmt->setEditText( storeToUser( timeMap(), m_locale->timeFormat() ) );
@@ -456,6 +472,12 @@ void KLocaleConfigTime::slotDateFmtShortChanged(const QString &t)
 {
     //m_locale->setDateFormatShort(t);
     m_locale->setDateFormatShort( userToStore( dateMap(), t ) );
+    emit localeChanged();
+}
+
+void KLocaleConfigTime::slotDateTimeDigSetChanged(int i)
+{
+    m_locale->setDateTimeDigitSet((KLocale::DigitSet) i);
     emit localeChanged();
 }
 
@@ -528,6 +550,7 @@ void KLocaleConfigTime::slotTranslate()
   m_comboDateFmtShort->setEditText(old);
 
   updateWeekDayNames();
+  updateDigitSetNames();
 
   while ( m_comboCalendarSystem->count() < 4 )
     m_comboCalendarSystem->addItem(QString());
@@ -597,6 +620,18 @@ void KLocaleConfigTime::slotTranslate()
   m_labDateFmtShort->setWhatsThis( str );
   m_comboDateFmtShort->setWhatsThis(  str );
 
+  /* FIXME: [2009-05-29] Message freeze in effect, activate some other time.
+  str = ki18n
+    ( "<p>Here you can define the set of digits "
+      "used to display time and dates. "
+      "If digits other than Arabic are selected, "
+      "they will appear only if used in the language "
+      "of the application or the piece of text "
+      "where the number is shown.</p>" ).toString( m_locale );
+  m_labDateTimeDigSet->setWhatsThis( str );
+  m_comboDateTimeDigSet->setWhatsThis( str );
+  */
+
   str = ki18n
     ("<p>This option determines which day will be considered as "
      "the first one of the week.</p>").toString(m_locale);
@@ -653,4 +688,16 @@ void KLocaleConfigTime::updateWeekDayNames()
   m_comboWorkingWeekEndDay->setCurrentIndex( m_locale->workingWeekEndDay() - 1 );
   m_comboWeekDayOfPray->setCurrentIndex( m_locale->weekDayOfPray() );  // First option is None=0
 
+}
+
+void KLocaleConfigTime::updateDigitSetNames()
+{
+  QList<KLocale::DigitSet> digitSets = m_locale->allDigitSetsList();
+  qSort(digitSets);
+  m_comboDateTimeDigSet->clear();
+  foreach ( KLocale::DigitSet ds, digitSets )
+  {
+     m_comboDateTimeDigSet->addItem(m_locale->digitSetToName(ds, true));
+  }
+  m_comboDateTimeDigSet->setCurrentIndex(m_locale->dateTimeDigitSet());
 }
