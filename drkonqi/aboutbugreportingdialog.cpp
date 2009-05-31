@@ -168,7 +168,7 @@ AboutBugReportingDialog::AboutBugReportingDialog(QWidget * parent):
                             "any new information that you might have. "),
             i18nc("@info/rich","If you are unsure whether your report is the same, follow the main "
                             "options to tentatively mark your crash as a duplicate of that "
-                            "report. This is usually the safest thing to do. We cannnot "
+                            "report. This is usually the safest thing to do. We cannot "
                             "uncombine bug reports, but we can easily merge them."),
             i18nc("@info/rich","If not enough possible duplicates are found, or you "
                             "did not find a similar report, then you can force it to search "
@@ -192,8 +192,8 @@ AboutBugReportingDialog::AboutBugReportingDialog(QWidget * parent):
                                        i18nc("@title","Send Crash Report")) +
         QString("<p>%1</p><p>%2</p>").arg(
             i18nc("@info/rich","This page will send the bug report to the bug tracking "
-                            "system and it will notify you when it is done. Then, it will show "
-                            "the web addres of the bug report in the KDE bug tracking system, "
+                            "system and will notify you when it is done. It will then show "
+                            "the web address of the bug report in the KDE bug tracking system, "
                             "so that you can look at the report later."),
             i18nc("@info/rich","If the process fails, you can click "
                             "<interface>Retry</interface> to try sending the bug report again."));
