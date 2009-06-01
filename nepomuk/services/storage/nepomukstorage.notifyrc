@@ -37,6 +37,7 @@ Name[ko]=Nepomuk 데이터 저장소
 Name[ku]=Nepomuk Hîser Kirina Dane yan
 Name[lt]=Nepomuk duomenų saugojimas
 Name[lv]=Nepomuk datu glabātuve
+Name[mai]=Nepomuk डाटा भंडारण
 Name[ml]=Nepomuk ഡേറ്റാ സംഭരണം
 Name[mr]=Nepomuk माहिती संचयन
 Name[nb]=Nepomuk datalagring
@@ -96,6 +97,7 @@ Comment[ko]=Nepomuk 저장소 서비스
 Comment[ku]=Nepomuk Servîsa Hîser Kirinê 
 Comment[lt]=Nepomuk saugojimo tarnyba
 Comment[lv]=Nepomuk glabāšanas serviss
+Comment[mai]=Nepomuk भंडारण सेवा
 Comment[ml]=നെപോമുക് സൂക്ഷിപ്പു് സേവനം
 Comment[mr]=Nepomuk संचयन सेवा
 Comment[nb]=Nepomuk lagringstjeneste
@@ -154,6 +156,7 @@ Name[ko]=Nepomuk 인덱스 다시 생성하는 중
 Name[ku]=Nû ve Çêkirina Pêrista Nepomuk
 Name[lt]=Atstatomas Nepomuk indeksas
 Name[lv]=Pārbūvē Nepomuk indeksu
+Name[mai]=नेपोमक निर्देशिका फेर सँ बनाएल जाए रहल अछि
 Name[ml]=നെപോമുക് സൂചിക വിണ്ടും ഉണ്ടാക്കിക്കൊണ്ടിരിയ്ക്കുന്നു
 Name[nb]=Bygger om Nepomuk-registeret
 Name[nds]=Nepomuk-Index warrt nieg opstellt
@@ -264,6 +267,7 @@ Name[ko]=Nepomuk 인덱스를 다시 생성하였습니다
 Name[ku]=Nû ve Çêkirina Pêrista Nepomuk hat qedandin
 Name[lt]=Nepomuk indekso atstatymas atliktas
 Name[lv]=Nepomuk indeksa pārbūvēšana pabeigta
+Name[mai]=नेपोमक निर्देशिका फेर सँ बनाए लेल गेल अछि
 Name[ml]=നെപോമുക് സൂചിക വിണ്ടും ഉണ്ടാക്കുന്നതു് തീര്‍ന്നു
 Name[nb]=Nepomuk-registeret er ferdig ombygget
 Name[nds]=Niegopstellen vun Nepomuk-Index afslaten
@@ -319,6 +323,7 @@ Comment[ko]=Nepomuk 전문 검색 인덱스를 다시 생성하였습니다
 Comment[ku]=Nû ve çêkirina pêrista lêgerîna hemû nivîsê yê Nepomuk hat qedandin.
 Comment[lt]=Nepomuk viso teksto paieškos indekso atstatymas atliktas.
 Comment[lv]=Pabeigta Nepomuk pilnas teksta meklēšanas indeksa pārbūve.
+Comment[mai]=नेपोमक पूरा पाठ खोज निर्देशिका फेर सँ बनाए लेल गेल अछि
 Comment[ml]=പുതിയ കഴിവുകള്‍ക്കായി നെപോമുക്കിന്റം മുഴുവന്‍ പദാവലിയുടേയും സൂചിക വീണ്ടും ഉണ്ടാക്കുന്നതു് തീര്‍ന്നു.
 Comment[nb]=Nepomuks register for fulltekst-søk er ferdig bygget på nytt.
 Comment[nds]=Dat Niegopbuen vun Nepomuk sien Heeltext-Söökindex is afslaten.
@@ -375,6 +380,7 @@ Name[ko]=Nepomuk 데이터 변환 중
 Name[ku]=Veguherandina dane yên Nepomuk
 Name[lt]=Konvertuojami Nepomuk duomenys
 Name[lv]=Konvertē Nepomuk datus
+Name[mai]=नेपोमक डाटा बदलल जाए रहल अछि
 Name[ml]=നെപോമുക് ഡാറ്റ മാറ്റിക്കൊണ്ടിരിയ്ക്കുന്നു
 Name[nb]=Konvertering av Nepomuk-data
 Name[nds]=Nepomuk-Daten warrt ümwannelt
@@ -428,6 +434,7 @@ Comment[ko]=새 저장소 백엔드를 사용하도록 Nepomuk 데이터를 변�
 Comment[ku]=Hemû dane yên Nepomuk ji paş-dawî ya hîser kirina nû re hatin veguherandin
 Comment[lt]=Visi Nepomuk duomenys buvo konvertuoti į naujos saugojimo programinės sąsajos formatą
 Comment[lv]=Visi Nepomuk dati ir konvertēti uz jaunu glabāšanas aizmuguri
+Comment[mai]=सभटा नेपोमक डाटाकेँ नव भंडार बैकएण्डमे परिवर्तित कए लेल गेल
 Comment[ml]=പുതിയ സൂക്ഷിപ്പു് സംവിധാനത്തിലേയ്ക്കു് എല്ലാ നെപോമുക് ഡാറ്റയും മാറ്റിക്കഴിഞ്ഞു
 Comment[nb]=Alle Nepomuk-data er konvertert til et nytt lagringsbakstykke
 Comment[nds]=All Nepomuk-Daten warrt för en nieg Hülpprogramm ümwannelt
@@ -484,6 +491,7 @@ Name[ko]=Nepomuk 데이터를 변환하는 데 실패하였습니다
 Name[ku]=Veguherandina dane yên Nepomuk têk çû
 Name[lt]=Nepomuk duomenų konvertavimas nepavyko
 Name[lv]=Neizdevās konvertēt Nepomuk datus
+Name[mai]=नेपोमक डाटा परिवर्तित करबामे असफल
 Name[ml]=നെപോമുക് ഡാറ്റ മാറ്റുന്നതു് പരാജയപ്പെട്ടു
 Name[nb]=Konvertering av Nepomuk-databasen mislyktes
 Name[nds]=Ümwanneln vun Nepomuk-Daten fehlslaan
@@ -537,6 +545,7 @@ Comment[ko]=Nepomuk 데이터를 새로운 백엔드로 변환하는 데 실패�
 Comment[ku]=Veguherandina dane yên Nepomuk ji paş-dawî ya nû re têk çû
 Comment[lt]=Nepomuk duomenų konvertavimas į naudojimui su nauja programine sąsaja nepavyko
 Comment[lv]=Neizdevās konvertēt Nepomuk datus uz jaunu aizmuguri
+Comment[mai]=नेपोमक डाटाकेँ नव बैकएण्डमे परिवर्तित करबामे असफल
 Comment[ml]=പുതിയ സൂക്ഷിപ്പു് സംവിധാനത്തിലേയ്ക്കു് നെപോമുക് ഡാറ്റ മാറ്റുന്നതു് പരാജയപ്പെട്ടു
 Comment[nb]=Konvertering av Nepomuk-data til et nytt bakstykke lyktes ikke
 Comment[nds]=Ümwanneln vun Nepomuk-Daten för en nieg Hülpprogramm fehlslaan
@@ -593,6 +602,7 @@ Name[ko]=Nepomuk 데이터를 변환하였습니다
 Name[ku]=Veguherandina dane yên Nepomuk hat qedandin
 Name[lt]=Nepomuk duomenų konvertavimas baigtas
 Name[lv]=Pabeigta Nepomuk datu konvertēšana
+Name[mai]=नेपोमक डाटा परिवर्तित भए गेल
 Name[ml]=നെപോമുക് ഡാറ്റ മാറ്റുന്നതു് തീര്‍ന്നു
 Name[nb]=Konvertering av Nepomuk-data ferdig
 Name[nds]=Ümwanneln vun Nepomuk-Daten afslaten
@@ -646,6 +656,7 @@ Comment[ko]=새 저장소 백엔드를 사용하도록 Nepomuk 데이터를 변�
 Comment[ku]=Bi serfiraz dane yên Nepomuk ji paş-dawî ya nû re veguherand
 Comment[lt]=Sėkmingai konvertuoti Nepomuk duomenys naudojimui su nauja programine sąsaja
 Comment[lv]=Nepomuk dati veiksmīgi konvertēti uz jaunu aizmuguri
+Comment[mai]=नेपोमक डाटा केँ नव बैकएण्डमे सफलतापूर्वक परिवर्तित कएल गेल
 Comment[ml]=പുതിയ സൂക്ഷിപ്പു് സംവിധാനത്തിലേയ്ക്കു് എല്ലാ നെപോമുക് ഡാറ്റയും വിജയകരമായി മാറ്റിക്കഴിഞ്ഞു
 Comment[nb]=Fullført konvertering av Nepomuk-data til et nytt bakstykke
 Comment[nds]=Nepomuk-Daten mit Spood för nieg Hülpprogramm ümwannelt
