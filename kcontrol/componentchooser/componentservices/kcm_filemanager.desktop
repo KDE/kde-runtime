@@ -1,5 +1,6 @@
 # ctxt: standard desktop component
 Name=File Manager
+Name[bg]=Преглед на файлове
 Name[ca]=Gestor de fitxers
 Name[ca@valencia]=Gestor de fitxers
 Name[csb]=Menadżera lopków
