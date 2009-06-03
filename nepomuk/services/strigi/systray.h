@@ -19,7 +19,7 @@
 #ifndef _NEPOMUK_STRIGI_SYSTRAY_H_
 #define _NEPOMUK_STRIGI_SYSTRAY_H_
 
-#include <knotificationitem-1/knotificationitem.h>
+#include <knotificationitem.h>
 
 class KToggleAction;
 
