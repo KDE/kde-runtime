@@ -33,7 +33,7 @@ static QList<int> keysFromString(const QString &str)
     if (str == "none") {
         return ret;
     }
-    QStringList strList = str.split('\t');
+    const QStringList strList = str.split('\t');
     foreach (const QString &s, strList) {
         int key = QKeySequence(s)[0];
         if (key != -1) {     //sanity check just in case
