@@ -1,5 +1,6 @@
 # ctxt: standard desktop component
 Name=Email Client
+Name[bg]=Клиент за е-поща
 Name[ca]=Client de correu
 Name[ca@valencia]=Client de correu
 Name[csb]=E-mailowô programa

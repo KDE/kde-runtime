@@ -1,5 +1,6 @@
 # ctxt: standard desktop component
 Name=Window Manager
+Name[bg]=Управител на прозорци
 Name[ca]=Gestor de finestres
 Name[ca@valencia]=Gestor de finestres
 Name[csb]=Mendżer òknów
@@ -27,7 +28,7 @@ Name[zh_TW]=視窗管理員
 Comment=Here you can select the window manager to be run in your KDE session.
 Comment[ar]=هنا يمكنك انتقاء مدير النوافذ ليعمل في جلسة الكيدي
 Comment[be@latin]=Tut možna vybrać akońnika, jaki ŭklučajecca pry ŭvachodzie ŭ KDE.
-Comment[bg]=Тук можете да изберете мениджъра на прозорци, който да се стартира при нова сесия.
+Comment[bg]=Тук можете да изберете управителя на прозорци, който да се стартира при нова сесия.
 Comment[bn]=আপনার কে.ডি.ই. সেশন-এ যে উইণ্ডো ম্যানেজার ব্যবহার করা হবে সেটি আপনি এখানে পছন্দ করতে পারেন।
 Comment[bn_IN]=আপনার কে.ডি.ই. সেশন-এ যে উইণ্ডো ম্যানেজার ব্যবহার করা হবে সেটি আপনি এখানে পছন্দ করতে পারেন।
 Comment[ca]=Aquí podeu seleccionar el gestor de finestres que s'executarà en la sessió del KDE.

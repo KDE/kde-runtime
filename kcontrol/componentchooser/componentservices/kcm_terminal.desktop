@@ -1,5 +1,6 @@
 # ctxt: standard desktop component
 Name=Terminal Emulator
+Name[bg]=Конзолна програма
 Name[ca]=Emulador de terminal
 Name[ca@valencia]=Emulador de terminal
 Name[csb]=Emùlator terminala
