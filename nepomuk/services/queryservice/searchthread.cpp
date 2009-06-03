@@ -42,6 +42,7 @@
 #include <Soprano/Vocabulary/Xesam>
 
 #include <KDebug>
+#include <KRandom>
 
 #include <QtCore/QTime>
 
@@ -154,6 +155,16 @@ namespace {
     }
 
 
+    QString wrapInInstanceBaseGraphQuery( const QString& query, int cnt = 0 )
+    {
+        // TODO: better use a member variable to count the used graphs
+        return QString( "graph ?g%1 { %2 } . ?g%1 a %3 . " )
+            .arg( cnt > 0 ? cnt : KRandom::random() )
+            .arg( query )
+            .arg( Soprano::Node::resourceToN3( Soprano::Vocabulary::NRL::InstanceBase() ) );
+    }
+
+
     QString createGraphPattern( const Nepomuk::Search::SearchNode& node, int& varCnt, const QString& varName = QString( "?r" ) )
     {
         switch( node.term.type() ) {
@@ -183,28 +194,33 @@ namespace {
                             filter += QString( "^^<%1>" ).arg( prop.literalRangeType().dataTypeUri().toString() );
                     }
 
-                    return QString( "%1 <%2> ?var%3 . FILTER(%4) . " )
-                        .arg( varName )
-                        .arg( QString::fromAscii( node.term.property().toEncoded() ) )
-                        .arg( varCnt )
-                        .arg( filter );
+                    return wrapInInstanceBaseGraphQuery( QString( "%1 <%2> ?var%3 . FILTER(%4) . " )
+                                                         .arg( varName )
+                                                         .arg( QString::fromAscii( node.term.property().toEncoded() ) )
+                                                         .arg( varCnt )
+                                                         .arg( filter ) );
                 }
                 else {
                     if ( subTerm.type() == Nepomuk::Search::Term::ResourceTerm ) {
-                        return QString( "%1 <%2> <%3> . " )
-                            .arg( varName )
-                            .arg( QString::fromAscii( node.term.property().toEncoded() ) )
-                            .arg( QString::fromAscii( subTerm.resource().toEncoded() ) );
+                        return wrapInInstanceBaseGraphQuery( QString( "%1 <%2> <%3> . " )
+                                                             .arg( varName )
+                                                             .arg( QString::fromAscii( node.term.property().toEncoded() ) )
+                                                             .arg( QString::fromAscii( subTerm.resource().toEncoded() ) ) );
                     }
                     else if ( Nepomuk::Types::Property( node.term.property() ).range().isValid() ) {
-                        return QString( "%7 <%1> ?x . { ?x <%2> \"%3\"^^<%4> . } UNION { ?x <%5> \"%3\"^^<%4>.  } UNION { ?x <%6> \"%3\"^^<%4> . }" )
-                            .arg( QString::fromAscii( node.term.property().toEncoded() ) )
-                            .arg( Soprano::Vocabulary::RDFS::label().toString() )
-                            .arg( subTerm.value().toString() )
-                            .arg( Soprano::Vocabulary::XMLSchema::string().toString() )
-                            .arg( Soprano::Vocabulary::NAO::prefLabel().toString() )
-                            .arg( Soprano::Vocabulary::NAO::identifier().toString() )
-                            .arg( varName );
+                        return wrapInInstanceBaseGraphQuery( QString( "%1 %2 ?x . " )
+                                                             .arg( varName )
+                                                             .arg( Soprano::Node::resourceToN3( node.term.property() ) ) )
+                            + wrapInInstanceBaseGraphQuery( QString( "{ ?x %1 \"%2\"^^%3 . }"
+                                                                     " UNION "
+                                                                     "{ ?x %4 \"%2\"^^%3.  }"
+                                                                     " UNION "
+                                                                     "{ ?x %5 \"%2\"^^%3 . }" )
+                                                            .arg( Soprano::Node::resourceToN3( Soprano::Vocabulary::RDFS::label() ) )
+                                                            .arg( subTerm.value().toString() )
+                                                            .arg( Soprano::Node::resourceToN3( Soprano::Vocabulary::XMLSchema::string() ) )
+                                                            .arg( Soprano::Node::resourceToN3( Soprano::Vocabulary::NAO::prefLabel() ) )
+                                                            .arg( Soprano::Node::resourceToN3( Soprano::Vocabulary::NAO::identifier() ) ) );
                     }
                     else {
                         //
@@ -213,13 +229,13 @@ namespace {
                         // property is defined to range to a plain one.
                         //
                         Nepomuk::Types::Property p( node.term.property() );
-                        return QString( "%1 <%2> \"%3\"^^<%4> . " )
-                            .arg( varName )
-                            .arg( QString::fromAscii( node.term.property().toEncoded() ) )
-                            .arg( subTerm.value().toString() )
-                            .arg( p.literalRangeType().dataTypeUri() == Soprano::Vocabulary::RDFS::Literal()
-                                  ? Soprano::Vocabulary::XMLSchema::string().toString()
-                                  : p.literalRangeType().dataTypeUri().toString() );
+                        return wrapInInstanceBaseGraphQuery( QString( "%1 <%2> \"%3\"^^<%4> . " )
+                                                             .arg( varName )
+                                                             .arg( QString::fromAscii( node.term.property().toEncoded() ) )
+                                                             .arg( subTerm.value().toString() )
+                                                             .arg( p.literalRangeType().dataTypeUri() == Soprano::Vocabulary::RDFS::Literal()
+                                                                   ? Soprano::Vocabulary::XMLSchema::string().toString()
+                                                                   : p.literalRangeType().dataTypeUri().toString() ) );
                     }
                 }
             }
@@ -781,9 +797,8 @@ QList<QUrl> Nepomuk::Search::SearchThread::matchFieldName( const QString& field 
 QString Nepomuk::Search::SearchThread::createSparqlQuery( const Nepomuk::Search::SearchNode& node )
 {
     int varCnt = 0;
-    return QString( "select distinct ?r %1 where { graph ?g { ?r a ?type . } . ?g a <%2> . %3 %4 }" )
+    return QString( "select distinct ?r %1 where { %3 %4 }" )
         .arg( buildRequestPropertyVariableList() )
-        .arg( Soprano::Vocabulary::NRL::InstanceBase().toString() )
         .arg( createGraphPattern( node, varCnt ) )
         .arg( buildRequestPropertyPatterns() );
 }
