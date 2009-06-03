@@ -31,7 +31,7 @@ kde4_add_ui_files(strigiservice_SRCS
 kde4_add_plugin(nepomukstrigiservice ${strigiservice_SRCS})
 
 target_link_libraries(nepomukstrigiservice
-  ${LIBKNOTIFICATIONITEM-1_LIBRARY}
+  ${KNOTIFICATIONITEM_LIBRARIES}
   ${STRIGI_STREAMANALYZER_LIBRARY}
   ${STRIGI_STREAMS_LIBRARY}
   ${KDE4_KDEUI_LIBS}
