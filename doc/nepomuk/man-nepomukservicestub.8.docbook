@@ -1,5 +1,5 @@
 <?xml version="1.0" ?>
-<!DOCTYPE refentry PUBLIC "-//KDE//DTD DocBook XML V4.1-Based Variant V1.0//EN" "dtd/kdex.dtd" [
+<!DOCTYPE refentry PUBLIC "-//KDE//DTD DocBook XML V4.2-Based Variant V1.1//EN" "dtd/kdex.dtd" [
   <!ENTITY % English "INCLUDE"><!-- change language only here -->
 ]>
 
@@ -38,8 +38,8 @@
 
 <arg choice="opt">--help</arg>
 <arg choice="opt">Generic options</arg>
-<arg choice="opt">Qt-options</arg>
-<arg choice="opt">KDE-options</arg>
+<arg choice="opt">&Qt;-options</arg>
+<arg choice="opt">&kde;-options</arg>
 <arg choice="req">servicename</arg>
 </cmdsynopsis>
 </refsynopsisdiv>
@@ -84,7 +84,7 @@ It is used by <command>nepomukserver</command> to run all configured Nepomuk ser
 <varlistentry>
 <term><option>--help-kde</option></term>
 <listitem>
-<para>Show KDE specific options.</para>
+<para>Show &kde; specific options.</para>
 
 
 </listitem>
@@ -93,7 +93,7 @@ It is used by <command>nepomukserver</command> to run all configured Nepomuk ser
 <varlistentry>
 <term><option>--help-qt</option></term>
 <listitem>
-<para>Show Qt specific options.</para>
+<para>Show &Qt; specific options.</para>
 </listitem>
 </varlistentry>
 
