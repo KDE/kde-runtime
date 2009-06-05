@@ -28,9 +28,11 @@
 #include <QtCore/QWaitCondition>
 #include <QtCore/QMutex>
 #include <QtCore/QMutexLocker>
+#include <QtCore/QMetaType>
 
 #include <KDebug>
 
+Q_DECLARE_METATYPE( FileSystemWatcher::Status )
 
 namespace {
     // small class to keep mem usage low
@@ -247,6 +249,7 @@ FileSystemWatcher::FileSystemWatcher( QObject* parent )
     : QObject( parent ),
       d( new Private( this ) )
 {
+    qRegisterMetaType<FileSystemWatcher::Status>();
 }
 
 
