@@ -476,13 +476,13 @@ void DevicePreference::save()
 void DevicePreference::defaults()
 {
     {
-        QList<Phonon::AudioOutputDevice> list = availableAudioOutputDevices();
+        const QList<Phonon::AudioOutputDevice> list = availableAudioOutputDevices();
         for (int i = -1; i <= Phonon::LastCategory; ++i) {
             m_outputModel[i]->setModelData(list);
         }
     }
     {
-        QList<Phonon::AudioCaptureDevice> list = availableAudioCaptureDevices();
+        const QList<Phonon::AudioCaptureDevice> list = availableAudioCaptureDevices();
         for (int i = 0; i < captureCategoriesCount; ++i) {
             m_captureModel[captureCategories[i]]->setModelData(list);
         }

@@ -166,7 +166,7 @@ QList<int> GlobalConfig::audioOutputDeviceListFor(Phonon::Category category, Hid
 
 int GlobalConfig::audioOutputDeviceFor(Phonon::Category category) const
 {
-    QList<int> ret = audioOutputDeviceListFor(category);
+    const QList<int> ret = audioOutputDeviceListFor(category);
     if (ret.isEmpty())
         return -1;
     return ret.first();

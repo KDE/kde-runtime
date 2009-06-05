@@ -66,7 +66,7 @@ void BackendSelection::load()
 
 void BackendSelection::showBackendKcm(const KService::Ptr &backendService)
 {
-    QString parentComponent = backendService->library();
+    const QString parentComponent = backendService->library();
     if (!m_kcms.contains(parentComponent)) {
         const KService::List offers = KServiceTypeTrader::self()->query("KCModule",
                 QString("'%1' in [X-KDE-ParentComponents]").arg(parentComponent));
@@ -202,7 +202,7 @@ void BackendSelection::up()
     QList<QListWidgetItem *> selectedList = m_select->selectedItems();
     foreach (QListWidgetItem *selected, selectedList)
     {
-        int row = m_select->row(selected);
+        const int row = m_select->row(selected);
         if (row > 0)
         {
             QListWidgetItem *taken = m_select->takeItem(row - 1);
@@ -218,7 +218,7 @@ void BackendSelection::down()
     QList<QListWidgetItem *> selectedList = m_select->selectedItems();
     foreach (QListWidgetItem *selected, selectedList)
     {
-        int row = m_select->row(selected);
+        const int row = m_select->row(selected);
         if (row + 1 < m_select->count())
         {
             QListWidgetItem *taken = m_select->takeItem(row + 1);
