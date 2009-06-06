@@ -177,7 +177,7 @@ void DrKonqiDialog::buildDialogOptions()
 
     //Restart application button
     setButtonGuiItem(KDialog::User3, KGuiItem2(i18nc("@action:button", "Restart Application"),
-                                               KIcon("system-restart"),
+                                               KIcon("system-reboot"),
                                                i18nc("@info:tooltip", "Use this button to restart "
                                                      "the crashed application.")));
     connect(this, SIGNAL(user3Clicked()), this, SLOT(restartApplication()));
