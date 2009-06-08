@@ -16,7 +16,7 @@ include(MacroLibrary)
 include(CheckFunctionExists)
 include(CheckIncludeFiles)
 
-set(SOPRANO_MIN_VERSION "2.1.67")
+set(SOPRANO_MIN_VERSION "2.2.67")
 macro_optional_find_package(Soprano)
 macro_optional_find_package(Nepomuk)
 macro_log_feature(Soprano_FOUND "Soprano" "Soprano Libraries" "kdesupport" FALSE "" "Required to build Nepomuk.")
