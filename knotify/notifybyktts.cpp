@@ -80,6 +80,7 @@ void NotifyByKTTS::notify( int id, KNotifyConfig * config )
 	if ( say.isEmpty() )
 		say = config->text; // fallback
 
+    m_kspeech->setApplicationName(config->appname);
 	m_kspeech->call(QDBus::NoBlock, "say", say, 0);
 
 	finished(id);
