@@ -74,7 +74,7 @@ public:
     void setActive();
 
     //! Sets the default keys for this shortcut.
-    void setDefaultKeys(QList<int>);
+    void setDefaultKeys(const QList<int>);
 
     //! Sets the friendly name for the shortcut. For display.
     void setFriendlyName(const QString &);
@@ -86,7 +86,7 @@ public:
     void setIsFresh(bool);
 
     //! Sets the keys activated with this shortcut. The old keys are freed.
-    void setKeys(QList<int>);
+    void setKeys(const QList<int>);
 
     //! Returns the unique name aka id for the shortcuts.
     QString uniqueName() const;
