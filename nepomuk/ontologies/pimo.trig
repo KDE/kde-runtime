@@ -590,12 +590,6 @@ There can be multiple effectual periods.""" ;
           rdfs:subPropertyOf pimo:datatypeProperty ;
           nrl:maxCardinality "1" .
 
-    geo:long
-          a       rdf:Property ;
-          rdfs:range xsd:float ;
-          rdfs:subPropertyOf pimo:datatypeProperty ;
-          nrl:maxCardinality "1" .
-
     pimo:GroundingClosure
           a       nrl:GraphView ;
           rdfs:label "GroundingClosure" .
