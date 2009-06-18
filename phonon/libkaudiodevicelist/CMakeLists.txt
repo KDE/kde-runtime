@@ -7,7 +7,7 @@ IF(ALSA_VERSION_STR AND NOT WIN32)
    ENDIF(ALSA_VERSION_STR MATCHES "^1\\.(0\\.(1[4-9]|[2-9][0-9]+)|[1-9][0-9]*\\.)")
 ENDIF(ALSA_VERSION_STR AND NOT WIN32)
 if(NOT WIN32)
-   macro_log_feature(HAVE_CURRENT_ALSA "ALSA" "current alsa-lib is needed for dmix and virtual device listing" "http://www.alsa-project.org/" FALSE "1.0.14a")
+   macro_log_feature(HAVE_CURRENT_ALSA "ALSA" "The Advanced Linux Sound Architecture (ALSA) library" "http://www.alsa-project.org/" FALSE "1.0.14a" "A current ALSA library is needed for dmix and virtual device listing")
 endif(NOT WIN32)
 
 include_directories(${ALSA_INCLUDES})

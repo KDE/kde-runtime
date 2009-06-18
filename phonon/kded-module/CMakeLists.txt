@@ -10,7 +10,7 @@ set(HAVE_CURRENT_ALSA FALSE)
 #endif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 
 macro_optional_find_package(PulseAudio)
-macro_log_feature(PULSEAUDIO_FOUND "PulseAudio" "libpulse is needed to allow audio playback via the PulseAudio soundserver when it is running" "http://www.pulseaudio.org/" FALSE)
+macro_log_feature(PULSEAUDIO_FOUND "PulseAudio" "A cross-platform, networked sound server." "http://www.pulseaudio.org" FALSE "" "Allows audio playback via the PulseAudio soundserver when it is running")
 
 if(PULSEAUDIO_FOUND)
    add_definitions(-DHAVE_PULSEAUDIO)
