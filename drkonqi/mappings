@@ -90,7 +90,7 @@ sopranod=nepomuk|general
 
 #Other
 ksysguardd=ksysguard|ksysguardd
-knotify4=knotify|general
+knotify4=kdelibs|knotify
 kmixctrl=kmix|general
 kwrite=kate|kwrite
 dragon=dragonplayer|general
