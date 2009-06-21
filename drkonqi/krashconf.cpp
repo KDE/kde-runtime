@@ -64,7 +64,7 @@ void KrashConfig :: readConfig()
     m_pid = args->getOption("pid").toInt();
     m_startedByKdeinit = args->isSet("kdeinit");
     m_safeMode = args->isSet("safer");
-    m_execname = args->getOption("appname");
+    m_execname = m_startedByKdeinit ? QLatin1String("kdeinit4") : args->getOption("appname");
     if (!args->getOption("apppath").isEmpty()) {
         m_execname.prepend(args->getOption("apppath") + '/');
     }
@@ -153,10 +153,9 @@ void KrashConfig :: expandString(QString &str, ExpandStringUsage usage, const QS
                                     i18nc("@info/rich","<application>%1</application>", appName()) :
                                     appName();
 
-    QString execname = startedByKdeinit() ? QLatin1String("kdeinit") : m_execname;
     map[QLatin1String("execname")] = (usage == ExpansionUsageRichText) ?
-                                     i18nc("@info/rich","<command>%1</command>", execname) :
-                                     execname;
+                                     i18nc("@info/rich","<command>%1</command>", executableName()) :
+                                     executableName();
 
     map[QLatin1String("signum")] = QString::number(signalNumber());
     map[QLatin1String("signame")] = signalName();
