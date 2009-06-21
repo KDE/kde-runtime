@@ -1,5 +1,7 @@
 project(migration1)
 
+add_definitions(-DKDE_DEFAULT_DEBUG_AREA=300102)
+
 include_directories(
   ${QT_INCLUDES}
   ${KDE4_INCLUDES}

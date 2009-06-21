@@ -1,5 +1,7 @@
 project(nepomukstrigiservice)
 
+add_definitions(-DKDE_DEFAULT_DEBUG_AREA=300106)
+
 find_package(LibKNotificationItem-1 REQUIRED)
 
 include_directories(

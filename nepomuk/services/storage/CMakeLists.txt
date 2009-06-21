@@ -1,5 +1,7 @@
 project(storage)
 
+add_definitions(-DKDE_DEFAULT_DEBUG_AREA=300105)
+
 include_directories(
   ${SOPRANO_INCLUDE_DIR}
   ${CMAKE_SOURCE_DIR}

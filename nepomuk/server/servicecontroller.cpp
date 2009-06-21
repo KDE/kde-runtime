@@ -167,7 +167,7 @@ bool Nepomuk::ServiceController::start()
         return true;
     }
     else {
-        kDebug(300002) << "Starting" << name();
+        kDebug() << "Starting" << name();
 
         if( !d->processControl ) {
             d->processControl = new ProcessControl( this );
@@ -190,7 +190,7 @@ bool Nepomuk::ServiceController::start()
 void Nepomuk::ServiceController::stop()
 {
     if( isRunning() ) {
-        kDebug(300002) << "Stopping" << name();
+        kDebug() << "Stopping" << name();
 
         d->attached = false;
 

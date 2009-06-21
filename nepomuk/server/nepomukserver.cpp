@@ -78,7 +78,7 @@ void Nepomuk::Server::init()
 
 void Nepomuk::Server::enableNepomuk( bool enabled )
 {
-    kDebug(300002) << "enableNepomuk" << enabled;
+    kDebug() << "enableNepomuk" << enabled;
     if ( enabled != m_enabled ) {
         if ( enabled ) {
             // start all autostart services
@@ -115,7 +115,7 @@ void Nepomuk::Server::enableNepomuk( bool enabled )
 
 void Nepomuk::Server::enableStrigi( bool enabled )
 {
-    kDebug(300002) << enabled;
+    kDebug() << enabled;
     if ( isNepomukEnabled() ) {
         if ( enabled ) {
             m_serviceManager->startService( m_strigiServiceName );

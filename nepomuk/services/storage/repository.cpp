@@ -150,20 +150,20 @@ void Nepomuk::Repository::open()
     KStandardDirs::makeDir( indexPath );
     KStandardDirs::makeDir( storagePath );
 
-    kDebug(300002) << "opening repository '" << name() << "' at '" << m_basePath << "'";
+    kDebug() << "opening repository '" << name() << "' at '" << m_basePath << "'";
 
 
     // open storage
     // =================================
     m_model = backend->createModel( QList<Soprano::BackendSetting>() << Soprano::BackendSetting( Soprano::BackendOptionStorageDir, storagePath ) );
     if ( !m_model ) {
-        kDebug(300002) << "Unable to create model for repository" << name();
+        kDebug() << "Unable to create model for repository" << name();
         m_state = CLOSED;
         emit opened( this, false );
         return;
     }
 
-    kDebug(300002) << "Successfully created new model for repository" << name();
+    kDebug() << "Successfully created new model for repository" << name();
 
 #if defined(HAVE_SOPRANO_INDEX) && defined(HAVE_CLUCENE)
     m_analyzer = new CLuceneAnalyzer();
@@ -177,7 +177,7 @@ void Nepomuk::Repository::open()
 #endif
 
     if ( m_index->open( indexPath, true ) ) {
-        kDebug(300002) << "Successfully created new index for repository" << name();
+        kDebug() << "Successfully created new index for repository" << name();
         m_indexModel = new Soprano::Index::IndexFilterModel( m_index, m_model );
 
         // FIXME: find a good value here
@@ -195,7 +195,7 @@ void Nepomuk::Repository::open()
         setParentModel( m_indexModel );
     }
     else {
-        kDebug(300002) << "Unable to open CLucene index for repo '" << name() << "': " << m_index->lastError();
+        kDebug() << "Unable to open CLucene index for repo '" << name() << "': " << m_index->lastError();
         delete m_index;
         delete m_model;
         m_index = 0;
@@ -389,11 +389,11 @@ const Soprano::Backend* Nepomuk::Repository::activeSopranoBackend()
     QString backendName = KSharedConfig::openConfig( "nepomukserverrc" )->group( "Basic Settings" ).readEntry( "Soprano Backend", "sesame2" );
     const Soprano::Backend* backend = ::Soprano::discoverBackendByName( backendName );
     if ( !backend ) {
-        kDebug(300002) << "(Nepomuk::Core::Core) could not find backend" << backendName << ". Falling back to default.";
+        kDebug() << "(Nepomuk::Core::Core) could not find backend" << backendName << ". Falling back to default.";
         backend = ::Soprano::usedBackend();
     }
     if ( !backend ) {
-        kDebug(300002) << "(Nepomuk::Core::Core) could not find a backend.";
+        kDebug() << "(Nepomuk::Core::Core) could not find a backend.";
     }
     return backend;
 }

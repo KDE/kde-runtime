@@ -218,7 +218,7 @@ Nepomuk::ServiceController* Nepomuk::ServiceManager::Private::findService( const
 
 void Nepomuk::ServiceManager::Private::startService( ServiceController* sc )
 {
-    kDebug( 300002 ) << sc->name();
+    kDebug() << sc->name();
 
     if( !sc->isRunning() ) {
         // start dependencies if possible

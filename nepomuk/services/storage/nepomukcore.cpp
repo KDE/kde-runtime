@@ -37,7 +37,7 @@ Nepomuk::Core::Core( QObject* parent )
 
 Nepomuk::Core::~Core()
 {
-    kDebug(300002) << "Shutting down Nepomuk storage core.";
+    kDebug() << "Shutting down Nepomuk storage core.";
 
     KSharedConfig::Ptr config = KSharedConfig::openConfig( "nepomukserverrc" );
     config->group( "Basic Settings" ).writeEntry( "Configured repositories", m_repositories.keys() );
@@ -116,7 +116,7 @@ Soprano::Model* Nepomuk::Core::createModel( const QList<Soprano::BackendSetting>
 {
     // use the name we cached in model()
     if ( !m_repositories.contains( m_currentRepoName ) ) {
-        kDebug(300002) << "Creating new repository with name " << m_currentRepoName;
+        kDebug() << "Creating new repository with name " << m_currentRepoName;
 
         // FIXME: There should be no need for conversion but who knows...
         Repository* newRepo = new Repository( m_currentRepoName );

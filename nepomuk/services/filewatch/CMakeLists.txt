@@ -1,5 +1,7 @@
 project(nepomukfilewatch)
 
+add_definitions(-DKDE_DEFAULT_DEBUG_AREA=300101)
+
 include_directories(
   ${QT_INCLUDES}
   ${KDE4_INCLUDES}
