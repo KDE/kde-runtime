@@ -44,7 +44,7 @@ static const char kWalletEntryPassword[] = "password";
 
 BugzillaLoginPage::BugzillaLoginPage(DrKonqiBugReport * parent) :
         DrKonqiAssistantPage(parent),
-        m_wallet(0)
+        m_wallet(0), m_walletWasOpened(false)
 {
     connect(bugzillaManager(), SIGNAL(loginFinished(bool)), this, SLOT(loginFinished(bool)));
     connect(bugzillaManager(), SIGNAL(loginError(QString)), this, SLOT(loginError(QString)));
@@ -125,6 +125,9 @@ bool BugzillaLoginPage::kWalletEntryExists()
 
 void BugzillaLoginPage::openWallet()
 {
+    //Store if the wallet was previously opened so we can know if we should close it later
+    m_walletWasOpened = KWallet::Wallet::isOpen(KWallet::Wallet::NetworkWallet());
+    //Request open the wallet
     m_wallet = KWallet::Wallet::openWallet(KWallet::Wallet::NetworkWallet(), 
                                     static_cast<QWidget*>(this->parent())->winId());
 }
@@ -208,7 +211,7 @@ void BugzillaLoginPage::loginFinished(bool logged)
 
         aboutToShow();
         if (m_wallet) {
-            if (m_wallet->isOpen()) {
+            if (m_wallet->isOpen() && !m_walletWasOpened) {
                 m_wallet->lockWallet();
             }
         }
@@ -227,8 +230,9 @@ void BugzillaLoginPage::loginFinished(bool logged)
 
 BugzillaLoginPage::~BugzillaLoginPage()
 {
+    //Close wallet if we close the assistant in this step
     if (m_wallet) {
-        if (m_wallet->isOpen()) { //Close wallet if we close the assistant in this step
+        if (m_wallet->isOpen() && !m_walletWasOpened) { 
             m_wallet->lockWallet();
         }
         delete m_wallet;

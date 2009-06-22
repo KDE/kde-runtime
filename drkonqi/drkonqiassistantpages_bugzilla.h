@@ -62,6 +62,7 @@ private:
     Ui::AssistantPageBugzillaLogin      ui;
 
     KWallet::Wallet *                   m_wallet;
+    bool                                m_walletWasOpened;
 };
 
 /** Enter keywords page **/
