@@ -104,10 +104,12 @@ void CfgBrowser::selectBrowser()
     if (dlg.exec() != QDialog::Accepted)
         return;
     m_browserService = dlg.service();
-    if (m_browserService)
+    if (m_browserService) {
         m_browserExec = m_browserService->desktopEntryName();
-    else
+        if (m_browserExec.isEmpty())
+            m_browserExec = m_browserService->exec();
+    } else {
         m_browserExec = dlg.text();
-
+    }
     lineExec->setText(m_browserExec);
 }
