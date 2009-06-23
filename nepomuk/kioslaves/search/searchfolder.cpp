@@ -406,6 +406,9 @@ Nepomuk::SearchEntry* Nepomuk::SearchFolder::statResult( const Search::Result& r
         if ( !icon.isEmpty() ) {
             uds.insert( KIO::UDSEntry::UDS_ICON_NAME, icon );
         }
+        else {
+            uds.insert( KIO::UDSEntry::UDS_ICON_NAME, "nepomuk" );
+        }
 
         uds.insert( KIO::UDSEntry::UDS_CREATION_TIME, res.property( Soprano::Vocabulary::NAO::created() ).toDateTime().toTime_t() );
 
