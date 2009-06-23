@@ -250,6 +250,13 @@ between the entry name and the value.
 
 	Default: "%H:%M:%S"
 
+* DateTimeDigitSet
+	The set of digits used to display date and time numbers.
+
+	See DigitSet for possible values.
+
+	Default: 0
+
 * WeekStartDay
 	This defines which day is the first of the week. Accepted value is
 	an integer number where 1 means Monday, 2 Tuesday, and so on.
