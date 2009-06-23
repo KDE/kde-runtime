@@ -33,6 +33,7 @@ Name[x-test]=xxSolid Auto-eject servicexx
 Name[zh_CN]=Solid 自动弹出服务
 Name[zh_TW]=實體自動退出服務
 Comment=Allows to automatically release drives when their eject button is pushed
+Comment[bg]=Автоматично освобождаване на устройствата при натискане на бутона за изваждане
 Comment[ca]=Permet alliberar unitats automàticament quan es prem el seu botó d'expulsió
 Comment[ca@valencia]=Permet alliberar unitats automàticament quan es prem el seu botó d'expulsió
 Comment[da]=Muliggør automatisk åbning af drev når der trykkes på deres skub ud-knap

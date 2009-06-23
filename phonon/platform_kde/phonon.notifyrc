@@ -205,6 +205,7 @@ Name[zh_TW]=預設音效裝置
 Comment=Notification on automatic fallback if the preferred device is unavailable
 Comment[ar]=التبديل الآلي للجهاز الاحتياطي عند تعطل الجهاز الرئيسي
 Comment[be@latin]=Paviedamleńnie pra aŭtamatyčnaje vykarystańnie zapasnoj pryłady, kali niama hałoŭnaj.
+Comment[bg]=Съобщаване при явтоматично  връщане ако устройството е заето
 Comment[ca]=Notificació del funcionament automàtic del de reserva si el dispositiu preferit no és disponible
 Comment[ca@valencia]=Notificació del funcionament automàtic del de reserva si el dispositiu preferit no és disponible
 Comment[cs]=Upozornění na automatickou náhradu, pokud je preferované zařízení nedostupné

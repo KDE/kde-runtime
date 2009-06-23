@@ -45,6 +45,7 @@ Name[x-test]=xxPlatformxx
 Name[zh_CN]=平台
 Name[zh_TW]=平台
 Comment=Windows Platform Manager
+Comment[bg]=Менджър за Windows
 Comment[ca]=Gestor de la plataforma Windows
 Comment[ca@valencia]=Gestor de la plataforma Windows
 Comment[csb]=Mendżer platfòrmë òknów
