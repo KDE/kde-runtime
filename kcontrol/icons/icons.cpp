@@ -135,6 +135,7 @@ void KIconConfig::init()
     mpUsageList->addItem(i18n("Main Toolbar"));
     mpUsageList->addItem(i18n("Small Icons"));
     mpUsageList->addItem(i18n("Panel"));
+    mpUsageList->addItem(i18n("Dialogs"));
     mpUsageList->addItem(i18n("All Icons"));
 
     // For reading the configuration
@@ -143,6 +144,7 @@ void KIconConfig::init()
     mGroups += "MainToolbar";
     mGroups += "Small";
     mGroups += "Panel";
+    mGroups += "Dialog";
 
     mStates += "Default";
     mStates += "Active";
@@ -167,7 +169,7 @@ void KIconConfig::initDefaults()
     mDefaultEffect[1].color2 = QColor(0,0,0);
     mDefaultEffect[2].color2 = QColor(0,0,0);
 
-    const int defDefSizes[] = { 32, 22, 22, 16, 32 };
+    const int defDefSizes[] = { 32, 22, 22, 16, 32, 32 };
 
     KIconLoader::Group i;
     QStringList::ConstIterator it;
@@ -214,7 +216,15 @@ void KIconConfig::read()
     if (mpLoader->theme())
     {
         for (KIconLoader::Group i=KIconLoader::FirstGroup; i<KIconLoader::LastGroup; i++)
+        {
             mAvSizes[i] = mpLoader->theme()->querySizes(i);
+
+            // ### Themes need to be fixed to include available sizes for Dialog icons
+            if (i == KIconLoader::Dialog && mAvSizes[i].isEmpty())
+            {
+                mAvSizes[i] = mAvSizes[KIconLoader::Desktop];
+            }
+        }
 
         mTheme = mpLoader->theme()->current();
         mExample = mpLoader->theme()->example();
