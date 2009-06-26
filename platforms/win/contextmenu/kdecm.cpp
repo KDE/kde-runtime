@@ -46,7 +46,6 @@
 
 #include "resource.h"
 #include "kdecm.h"
-#include <kmimetype.h>
 #pragma data_seg()
 
 //---------------------------------------------------------------------------
