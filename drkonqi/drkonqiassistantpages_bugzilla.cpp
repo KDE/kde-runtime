@@ -790,7 +790,8 @@ void BugzillaInformationPage::aboutToHide()
 //BEGIN BugzillaSendPage
 
 BugzillaSendPage::BugzillaSendPage(DrKonqiBugReport * parent)
-        : DrKonqiAssistantPage(parent)
+        : DrKonqiAssistantPage(parent),
+        m_contentsDialog(0)
 {
     connect(bugzillaManager(), SIGNAL(reportSent(int)), this, SLOT(sent(int)));
     connect(bugzillaManager(), SIGNAL(sendReportError(QString)), this, SLOT(sendError(QString)));
@@ -801,6 +802,15 @@ BugzillaSendPage::BugzillaSendPage(DrKonqiBugReport * parent)
                                               KIcon("view-refresh"),
                                               i18nc("@info:tooltip", "Use this button to retry "
                                                   "sending the crash report if it failed before.")));
+    
+    ui.m_showReportContentsButton->setGuiItem(
+                    KGuiItem2(i18nc("@action:button", "Sho&w Contents of the Report"),
+                            KIcon("document-preview"),
+                            i18nc("@info:tooltip", "Use this button to show the generated "
+                            "report information about this crash.")));
+    ui.m_showReportContentsButton->setVisible(false);
+    connect(ui.m_showReportContentsButton, SIGNAL(clicked()), this, SLOT(openReportContents()));
+                                                  
     ui.m_retryButton->setVisible(false);
     connect(ui.m_retryButton, SIGNAL(clicked()), this , SLOT(retryClicked()));
     
@@ -812,6 +822,7 @@ BugzillaSendPage::BugzillaSendPage(DrKonqiBugReport * parent)
 
 void BugzillaSendPage::retryClicked()
 {
+    ui.m_showReportContentsButton->setVisible(false);
     ui.m_retryButton->setEnabled(false);
     aboutToShow();
 }
@@ -827,6 +838,8 @@ void BugzillaSendPage::sent(int bug_id)
     ui.m_statusWidget->setVisible(false);
     ui.m_retryButton->setEnabled(false);
     ui.m_retryButton->setVisible(false);
+    
+    ui.m_showReportContentsButton->setVisible(false);
     
     ui.m_launchPageOnFinish->setVisible(true);
     ui.m_restartAppOnFinish->setVisible(!DrKonqi::instance()->appRestarted());
@@ -848,6 +861,8 @@ void BugzillaSendPage::sendError(QString errorString)
     ui.m_statusWidget->setIdle(i18nc("@info:status","Error sending the crash report:  "
                                   "<message>%1.</message>", errorString));
 
+    ui.m_showReportContentsButton->setVisible(true);
+    
     ui.m_retryButton->setEnabled(true);
     ui.m_retryButton->setVisible(true);
 }
@@ -860,6 +875,19 @@ void BugzillaSendPage::finishClicked()
     if (ui.m_restartAppOnFinish->isChecked()) {
         DrKonqi::instance()->restartCrashedApplication();
     }
+}
+
+void BugzillaSendPage::openReportContents()
+{
+    if (!m_contentsDialog)
+    {
+        QString report = reportInfo()->generateReport(false) + QLatin1Char('\n') +
+                            i18nc("@info/plain","Report to %1", QLatin1String(KDE_BUGZILLA_URL));
+        m_contentsDialog = new ReportInformationDialog(report);
+    }
+    m_contentsDialog->show();
+    m_contentsDialog->raise();
+    m_contentsDialog->activateWindow();
 }
 
 //END BugzillaSendPage

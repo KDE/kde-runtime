@@ -205,10 +205,14 @@ private Q_SLOTS:
 
     void retryClicked();
     void finishClicked();
+    
+    void openReportContents();
 
 private:
     Ui::AssistantPageBugzillaSend           ui;
     QString                                 reportUrl;
+    
+    QPointer<KDialog>                       m_contentsDialog;
     
 Q_SIGNALS:
     void finished(bool);
