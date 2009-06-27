@@ -32,6 +32,9 @@
      <item>
       <widget class="KPushButton" name="m_retryButton"/>
      </item>
+     <item>
+      <widget class="KPushButton" name="m_showReportContentsButton"/>
+     </item>
     </layout>
    </item>
    <item>
