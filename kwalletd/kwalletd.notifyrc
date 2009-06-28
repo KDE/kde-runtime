@@ -33,6 +33,7 @@ Comment[pl]=Demon Portfela KDE
 Comment[pt]=O Servidor da Carteira do KDE
 Comment[pt_BR]=O daemon da carteira do KDE
 Comment[ro]=Demonul de portofel KDE
+Comment[ru]=Бумажник KDE
 Comment[sl]=Pritajeni program KDE-jeve Listnice
 Comment[sv]=KDE-plånboksdemon
 Comment[tg]=Суҳбати шабакаи дохилӣ
@@ -81,6 +82,7 @@ Name[pl]=Potrzebne jest hasło
 Name[pt]=Necessita de senha
 Name[pt_BR]=Necessita senha
 Name[ro]=Necesită parolă
+Name[ru]=Требуется пароль
 Name[si]=රහස්පදය අවශ්‍ය වේ
 Name[sl]=Potrebuje geslo
 Name[sv]=Kräver lösenord
@@ -111,6 +113,7 @@ Comment[ja]=KDE ウォレットデーモンがパスワードを要求してい�
 Comment[km]=ដេមិន​កាបូប​របស់ KDE ស្នើ​ពាក្យសម្ងាត់
 Comment[ko]=KDE 지갑 데몬에서 암호를 물어봅니다
 Comment[lv]=KDE Maka dēmons pieprasa paroli
+Comment[mai]=KDE वालेट डेमान एकटा कूटशब्दकेँ आग्रह करैत अछि
 Comment[mk]=KDE даемонот за паричник побарува лозинка
 Comment[ml]=കെഡിയിലെ വാലറ്റ് നിരന്തരപ്രവൃത്തി ഒരു അടയാളവാക്കു് ചോദിയ്ക്കുന്നു
 Comment[nb]=KDEs lommeboknisse ber om et passord
