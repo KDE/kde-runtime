@@ -45,8 +45,7 @@ void NotifyByLogfile::notify( int id, KNotifyConfig * config )
 
 //	kDebug(300) << file << KUrl(file).path();
 	
-    // ignore empty messages
-	if ( config->text.isEmpty() || file.isEmpty() )
+	if ( file.isEmpty() )
 	{
 		finish( id );
 		return;
@@ -60,10 +59,13 @@ void NotifyByLogfile::notify( int id, KNotifyConfig * config )
 		return;
 	}
 
+	QString text = config->text;
+	if( text.isEmpty())
+		text = config->readEntry( "Name" );
     // append msg
 	QTextStream strm( &logFile );
 	strm << "- KNotify " << QDateTime::currentDateTime().toString() << ": ";
-	strm << config->text << endl;
+	strm << text << endl;
 
     // close file
 	logFile.close();
