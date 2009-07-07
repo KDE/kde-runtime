@@ -2,6 +2,7 @@
 IconName=kwalletmanager
 Comment=The KDE Wallet Daemon
 Comment[bg]=Услуга "портфейл" за KDE
+Comment[bn_IN]=KDE Wallet ডেমন
 Comment[ca]=Dimoni de carteres del KDE
 Comment[ca@valencia]=Dimoni de carteres del KDE
 Comment[cs]=Démon úschovny KDE
@@ -56,6 +57,7 @@ Name[x-test]=xxkwalletdxx
 [Event/needsPassword]
 Name=Needs password
 Name[bg]=Нужна е парола
+Name[bn_IN]=পাসওয়ার্ড প্রয়োজন
 Name[ca]=Cal contrasenya
 Name[ca@valencia]=Cal contrasenya
 Name[cs]=Je třeba heslo
@@ -80,6 +82,7 @@ Name[lv]=Nepieciešama parole
 Name[mai]=गुड़किल्लीकेँ जरूरत अछि
 Name[mk]=Потребна е лозинка
 Name[ml]=അടയാളവാക്ക് വേണം
+Name[mr]=परवलीचा शब्द आवश्यक आहे
 Name[nb]=Trenger passord
 Name[nds]=Passwoort deit noot
 Name[nl]=Wachtwoord nodig

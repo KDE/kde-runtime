@@ -1,6 +1,7 @@
 # ctxt: standard desktop component
 Name=Web Browser
 Name[bg]=Уеб браузър
+Name[bn_IN]=ওয়েব ব্রাউজার
 Name[ca]=Navegador web
 Name[ca@valencia]=Navegador web
 Name[cs]=Webový prohlížeč
@@ -14,12 +15,14 @@ Name[gl]=Navegador Web
 Name[gu]=વેબ બ્રાઉઝર
 Name[hu]=Webböngésző
 Name[is]=Vafri
+Name[ja]=ウェブブラウザ
 Name[km]=កម្មវិធី​រុករក​បណ្ដាញ 
 Name[ko]=웹 브라우저
 Name[lt]=Žiniatinklio naršyklė
 Name[lv]=Tīmekļa pārlūks
 Name[mai]=वेब ब्राउजर
 Name[mk]=Веб-прелистувач
+Name[mr]=वेब ब्राऊजर
 Name[nb]=Nettleser
 Name[nds]=Nettkieker
 Name[nl]=Webbrowser

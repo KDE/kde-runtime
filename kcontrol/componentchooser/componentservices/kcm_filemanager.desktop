@@ -1,6 +1,7 @@
 # ctxt: standard desktop component
 Name=File Manager
 Name[bg]=Преглед на файлове
+Name[bn_IN]=ফাইল পরিচালন ব্যবস্থা
 Name[ca]=Gestor de fitxers
 Name[ca@valencia]=Gestor de fitxers
 Name[cs]=Správce souborů
@@ -14,12 +15,14 @@ Name[gl]=Xestor de ficheiros
 Name[gu]=ફાઇલ વ્યવસ્થાપક
 Name[hu]=Fájlkezelő
 Name[is]=Skráastjóri
+Name[ja]=ファイルマネージャ
 Name[km]=កម្មវិធី​គ្រប់គ្រង​ឯកសារ 
 Name[ko]=파일 관리자
 Name[lt]=Failų tvarkyklė
 Name[lv]=Failu pārvaldnieks
 Name[mai]=फाइल प्रबंधक
 Name[mk]=Менаџер на датотеки
+Name[mr]=फाइल व्यवस्थापक
 Name[nb]=Filbehandler
 Name[nds]=Dateipleger
 Name[nl]=Bestandsbeheerder
