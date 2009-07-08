@@ -1,0 +1,20 @@
+[Global]
+IconName=
+Comment=KDE Global Shortcuts Daemon
+Name=kglobalaccel
+
+[Context/Application]
+Name=Application
+Comment=The application name
+
+[Event/newshortcutregistered]
+Name=Global Shortcut Registration
+Comment=A application registered new global shorcuts
+Contexts=Application
+Action=Popup
+
+[Event/globalshortcutpressed]
+Name=Global Shortcut Triggered
+Comment=The user triggered a global shortcut
+Contexts=Application
+Action=
