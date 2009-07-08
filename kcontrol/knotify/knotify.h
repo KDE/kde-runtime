@@ -58,13 +58,13 @@ public Q_SLOTS:
     virtual void load();
 
 private Q_SLOTS:
-    void slotAppActivated( int index );
+    void slotAppActivated( const QString &description );
     void slotPlayerSettings();
 
 private:
 
     KComboBox *m_appCombo;
-    QStringList m_appNames;
+    QMap<QString, QString> m_apps;
     KNotifyConfigWidget *m_notifyWidget;
     PlayerSettingsDialog *m_playerSettings;
     QPushButton *m_psb;
@@ -85,7 +85,7 @@ public:
 protected Q_SLOTS:
     void externalToggled( bool on );
     void slotChanged();
-    
+
     signals:
     void changed(bool);
 private:

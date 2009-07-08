@@ -97,8 +97,8 @@ KCMKNotify::KCMKNotify(QWidget *parent, const QVariantList & )
     tab->addTab(app_tab, i18n("&Applications"));
     tab->addTab(m_playerSettings, i18n("&Player Settings"));
 
-    connect( m_appCombo, SIGNAL( activated( int ) ),
-             SLOT( slotAppActivated( int )) );
+    connect( m_appCombo, SIGNAL( activated( QString ) ),
+             SLOT( slotAppActivated( QString )) );
 
     KAboutData* ab = new KAboutData(
         "kcmknotify", 0, ki18n("KNotify"), "4.0",
@@ -120,11 +120,13 @@ KCMKNotify::~KCMKNotify()
     config.sync();
 }
 
-void KCMKNotify::slotAppActivated( int index )
+void KCMKNotify::slotAppActivated( const QString &description )
 {
     QString text;
-    if(index>=0 && index < m_appNames.size())
-        text=m_appNames[index];
+
+    Q_ASSERT(m_apps.contains(description));
+    text = m_apps[description];
+
     m_notifyWidget->save();
     m_notifyWidget->setApplication( text );
 }
@@ -145,7 +147,7 @@ void KCMKNotify::load()
     // setCursor( KCursor::waitCursor() );
 
     m_appCombo->clear();
-    m_appNames.clear();
+    m_apps.clear();
 //    m_notifyWidget->clear();
 
     QStringList fullpaths =
@@ -163,9 +165,12 @@ void KCMKNotify::load()
             QString icon = globalConfig.readEntry(QString::fromLatin1("IconName"), QString::fromLatin1("misc"));
             QString description = globalConfig.readEntry( QString::fromLatin1("Comment"), appname );
             m_appCombo->addItem( SmallIcon( icon ), description );
-            m_appNames.append( appname );
+            m_apps.insert(description, appname );
         }
     }
+
+    m_appCombo->model()->sort(0);
+
     /*
     KConfig config( "knotifyrc", true, false );
     config.setGroup( "Misc" );
@@ -186,8 +191,9 @@ void KCMKNotify::load()
 
     m_playerSettings->load();
 
-    if ( m_appNames.count() > 0 )
-        m_notifyWidget->setApplication( m_appNames.at( 0 ) );
+    if ( m_appCombo->count() > 0 )
+        m_appCombo->setCurrentIndex(0);
+        m_notifyWidget->setApplication( m_apps.value(m_appCombo->itemText(0)) );
 
     emit changed(false);
 
@@ -214,7 +220,7 @@ PlayerSettingsDialog::PlayerSettingsDialog( QWidget *parent )
     m_ui->setupUi( this );
 
     load();
-    
+
     connect( m_ui->cbExternal, SIGNAL( toggled( bool ) ), this, SLOT( externalToggled( bool ) ) );
     connect( m_ui->cbArts, SIGNAL(clicked(bool)), this, SLOT(slotChanged()));
     connect( m_ui->cbExternal, SIGNAL(clicked(bool)), this, SLOT(slotChanged()));
@@ -245,7 +251,7 @@ void PlayerSettingsDialog::save()
 {
     if(!m_change)
         return;
-    
+
     // see kdebase/runtime/knotify/notifybysound.h
     KConfig _config("knotifyrc", KConfig::NoGlobals);
     KConfigGroup config(&_config, "Sounds" );
@@ -256,7 +262,7 @@ void PlayerSettingsDialog::save()
     config.writeEntry( "No sound",  m_ui->cbNone->isChecked() );
 
     config.sync();
-    
+
     QDBusInterface itr("org.kde.knotify", "/Notify", "org.kde.KNotify", QDBusConnection::sessionBus(), this);
     itr.call("reconfigure");
     m_change=false;
