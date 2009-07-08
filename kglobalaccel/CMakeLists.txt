@@ -43,21 +43,20 @@ install( FILES kglobalaccel.desktop DESTINATION ${SERVICES_INSTALL_DIR})
 # Install some update file (not yet working)
 #install( FILES kconf/kdedglobalaccel_kde42.upd DESTINATION ${DATA_INSTALL_DIR}/kconf_update)
 
-# Uninstall the kde 4.0 - 4.2 kdedglobalaccel files
+###
+### KDE 4.2 > 4.3 Migration Start
+###
+### Uninstall the kde 4.0 - 4.2 kdedglobalaccel files
 find_file(
     KDEBASE_KGLOBALACCEL_REMOVE_OBSOLETE_KDED_DESKTOP_FILE
     kdedglobalaccel.desktop
     PATHS ${SERVICES_INSTALL_DIR}/kded
     NO_DEFAULT_PATH)
-# message(${KDEBASE_KGLOBALACCEL_REMOVE_OBSOLETE_KDED_DESKTOP_FILE})
 find_file(
     KDEBASE_KGLOBALACCEL_REMOVE_OBSOLETE_KDED_PLUGIN
     kded_globalaccel.so
     PATHS ${PLUGIN_INSTALL_DIR}
     NO_DEFAULT_PATH)
-# message(${KDEBASE_KGLOBALACCEL_REMOVE_OBSOLETE_KDED_PLUGIN})
-
-# Remove old kdedglobalaccel files
 if(KDEBASE_KGLOBALACCEL_REMOVE_OBSOLETE_KDED_DESKTOP_FILE)
     install(CODE "MESSAGE(\"Removing kdedglobalaccel desktop file\")")
     install(CODE "file(REMOVE ${KDEBASE_KGLOBALACCEL_REMOVE_OBSOLETE_KDED_DESKTOP_FILE})")
@@ -66,4 +65,8 @@ if(KDEBASE_KGLOBALACCEL_REMOVE_OBSOLETE_KDED_PLUGIN)
     install(CODE "MESSAGE(\"Removing kdedglobalaccel plugin\")")
     install(CODE "file(REMOVE ${KDEBASE_KGLOBALACCEL_REMOVE_OBSOLETE_KDED_PLUGIN})")
 endif(KDEBASE_KGLOBALACCEL_REMOVE_OBSOLETE_KDED_PLUGIN)
+
+###
+### KDE 4.2 > 4.3 Migration End
+###
 
