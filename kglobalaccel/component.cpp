@@ -229,6 +229,8 @@ void Component::deactivateShortcuts(bool temporarily)
 
 QString Component::friendlyName() const
     {
+    if (_friendlyName.isEmpty())
+        return _uniqueName;
     return _friendlyName;
     }
 
