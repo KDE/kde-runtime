@@ -49,7 +49,7 @@ public:
 
     //! Creates a new component. The component will be registered with @p
     //! registry if specified and registered with dbus.
-    Component( 
+    Component(
             const QString &uniqueName,
             const QString &friendlyName,
             GlobalShortcutsRegistry *registry = NULL);
@@ -152,6 +152,9 @@ public Q_SLOTS:
 
     //! Returns the shortcut contexts available for the component.
     Q_SCRIPTABLE QStringList getShortcutContexts() const;
+
+    //! Start the global shortcuts kcm and show this component.
+    Q_SCRIPTABLE bool showKCM();
 
 private:
 

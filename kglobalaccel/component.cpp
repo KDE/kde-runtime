@@ -22,7 +22,8 @@
 #include "globalshortcutcontext.h"
 #include "globalshortcutsregistry.h"
 
-#include <kdebug.h>
+#include <KDE/KRun>
+#include <KDE/KDebug>
 
 #include <QtCore/QStringList>
 #include <QtGui/QKeySequence>
@@ -337,7 +338,7 @@ void Component::loadSettings(KConfigGroup &configGroup)
             {
             if (key != 0)
                 {
-                if (GlobalShortcutsRegistry::self()->getShortcutByKey(key)) 
+                if (GlobalShortcutsRegistry::self()->getShortcutByKey(key))
                     {
                     // The shortcut is already used. The config file is
                     // broken. Ignore the request.
@@ -379,6 +380,12 @@ QStringList Component::shortcutNames( const QString &contextName) const
         }
 
     return context->_actions.keys();
+    }
+
+
+bool Component::showKCM()
+    {
+    return KRun::runCommand("kcmshell4 keys", NULL);
     }
 
 

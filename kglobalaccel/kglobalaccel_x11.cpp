@@ -143,23 +143,30 @@ bool KGlobalAccelImpl::grabKey( int keyQt, bool grab )
 				}
 			}
 	}
-	
+
 	return !failed;
 }
 
 bool KGlobalAccelImpl::x11Event( XEvent* event )
 {
 	switch( event->type ) {
+
 		case MappingNotify:
+			kDebug() << "Got XMappingNotify event";
 			XRefreshKeyboardMapping(&event->xmapping);
 			x11MappingNotify();
-            return true;
+			return true;
 
-		 case XKeyPress:
-			if( x11KeyPress( event ) )
-				return true;
-			break;
+		case XKeyPress:
+			kDebug() << "Got XKeyPress event";
+			return x11KeyPress(event);
+
+		default:
+			// We get all XEvents. Just ignore them.
+			return false;
 	}
+
+	Q_ASSERT(false);
 	return false;
 }
 
@@ -179,17 +186,19 @@ void KGlobalAccelImpl::x11MappingNotify()
 	calculateGrabMasks();
 
 	m_owner->grabKeys();
-
 }
+
 
 bool KGlobalAccelImpl::x11KeyPress( const XEvent *pEvent )
 {
-    // Keyboard needs to be ungrabed after XGrabKey() activates the grab,
-    // otherwise it becomes frozen.
-	if( !QWidget::keyboardGrabber() && !QApplication::activePopupWidget()) {
-		XUngrabKeyboard( QX11Info::display(), pEvent->xkey.time );
-		XFlush( QX11Info::display()); // avoid X(?) bug
+	if (QWidget::keyboardGrabber() || QApplication::activePopupWidget()) {
+		kWarning() << "kglobalacceld should be popup and keyboard grabbing free!";
 	}
+
+	// Keyboard needs to be ungrabed after XGrabKey() activates the grab,
+	// otherwise it becomes frozen.
+	XUngrabKeyboard( QX11Info::display(), pEvent->xkey.time );
+	XFlush( QX11Info::display()); // avoid X(?) bug
 
 	uchar keyCodeX = pEvent->xkey.keycode;
 	uint keyModX = pEvent->xkey.state & (g_keyModMaskXAccel | KKeyServer::MODE_SWITCH);
@@ -205,6 +214,7 @@ bool KGlobalAccelImpl::x11KeyPress( const XEvent *pEvent )
 		// If this is a keypad key,
 		if( sym >= XK_KP_Space && sym <= XK_KP_9 ) {
 			switch( sym ) {
+
 				// Leave the following keys unaltered
 				// FIXME: The proper solution is to see which keysyms don't change when shifted.
 				case XK_KP_Multiply:
@@ -212,6 +222,7 @@ bool KGlobalAccelImpl::x11KeyPress( const XEvent *pEvent )
 				case XK_KP_Subtract:
 				case XK_KP_Divide:
 					break;
+
 				default:
 					keyModX ^= KKeyServer::modXShift();
 			}
@@ -222,14 +233,11 @@ bool KGlobalAccelImpl::x11KeyPress( const XEvent *pEvent )
 	int keyModQt;
 	KKeyServer::symXToKeyQt(keySymX, &keyCodeQt);
 	KKeyServer::modXToQt(keyModX, &keyModQt);
-	
+
 	int keyQt = keyCodeQt | keyModQt;
 
 	// All that work for this hey... argh...
-	if (m_owner->keyPressed(keyQt))
-		return true;
-
-	return false;
+	return m_owner->keyPressed(keyQt);
 }
 
 void KGlobalAccelImpl::setEnabled( bool enable )

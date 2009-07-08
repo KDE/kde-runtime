@@ -146,7 +146,10 @@ private Q_SLOTS:
 
     void blockGlobalShortcuts(int);
 
+
 private:
+
+    Q_PRIVATE_SLOT(d, void _k_newGlobalShortcutNotification() );
 
     void scheduleWriteSettings() const;
 
