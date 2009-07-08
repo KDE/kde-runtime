@@ -149,7 +149,7 @@ private Q_SLOTS:
 
 private:
 
-    Q_PRIVATE_SLOT(d, void _k_newGlobalShortcutNotification() );
+    Q_PRIVATE_SLOT(d, void _k_newGlobalShortcutNotification() )
 
     void scheduleWriteSettings() const;
 
