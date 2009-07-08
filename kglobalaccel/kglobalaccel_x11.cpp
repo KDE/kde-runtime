@@ -197,7 +197,10 @@ bool KGlobalAccelImpl::x11KeyPress( const XEvent *pEvent )
 
 	// Keyboard needs to be ungrabed after XGrabKey() activates the grab,
 	// otherwise it becomes frozen.
-	XUngrabKeyboard( QX11Info::display(), pEvent->xkey.time );
+	Status status = XUngrabKeyboard( QX11Info::display(), CurrentTime );
+	if (status != GrabSuccess) {
+		kWarning() << "Ungrabbing the keyboard failed with status" << hex << status << "!";
+	}
 	XFlush( QX11Info::display()); // avoid X(?) bug
 
 	uchar keyCodeX = pEvent->xkey.keycode;
