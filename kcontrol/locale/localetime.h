@@ -78,6 +78,7 @@ private Q_SLOTS:
 private:
   void updateWeekDayNames();
   void updateDigitSetNames();
+  void updateCalendarNames();
 
   QList<StringPair> timeMap() const;
   QList<StringPair> dateMap() const;

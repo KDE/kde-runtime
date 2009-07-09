@@ -389,49 +389,22 @@ void KLocaleConfigTime::showEvent( QShowEvent *e )
     QWidget::showEvent( e );
 }
 
-void KLocaleConfigTime::slotCalendarSystemChanged(int calendarSystem)
+void KLocaleConfigTime::slotCalendarSystemChanged( int calendarSystem )
 {
     kDebug() << "CalendarSystem: " << calendarSystem;
 
-    typedef QVector<QString> CalendarVector;
-    CalendarVector calendars(4);
-    calendars[0] = "gregorian";
-    calendars[1] = "hijri";
-    calendars[2] = "hebrew";
-    calendars[3] = "jalali";
-
-    QString calendarType;
-    if( calendarSystem >= calendars.size())
-        calendarType = calendars.first();
-    else
-        calendarType = calendars.at(calendarSystem);
-
-    m_locale->setCalendar(calendarType);
-
-    updateWeekDayNames();
-    emit localeChanged();
+    if ( calendarSystem >= 0 && calendarSystem < m_comboCalendarSystem->count() ) {
+        m_locale->setCalendar( m_comboCalendarSystem->itemData( calendarSystem ).toString() );
+        updateWeekDayNames();
+        emit localeChanged();
+    }
 }
 
 void KLocaleConfigTime::slotLocaleChanged()
 {
-    typedef QVector<QString> CalendarVector;
-    CalendarVector calendars(4);
-    calendars[0] = "gregorian";
-    calendars[1] = "hijri";
-    calendars[2] = "hebrew";
-    calendars[3] = "jalali";
-
-    QString calendarType = m_locale->calendarType();
-    int calendarSystem = 0;
-
-    CalendarVector::iterator it = qFind(calendars.begin(), calendars.end(),
-        calendarType);
-    if ( it != calendars.end() )
-        calendarSystem = it - calendars.begin();
-
-    kDebug() << "calSys: " << calendarSystem << ": " << calendarType;
-    m_comboCalendarSystem->setCurrentIndex( calendarSystem );
-    m_comboDateTimeDigSet->setCurrentIndex( m_locale->dateTimeDigitSet() );
+    updateCalendarNames();
+    updateWeekDayNames();
+    updateDigitSetNames();
 
     //  m_edTimeFmt->setText( m_locale->timeFormat() );
     m_comboTimeFmt->setEditText( storeToUser( timeMap(), m_locale->timeFormat() ) );
@@ -439,10 +412,6 @@ void KLocaleConfigTime::slotLocaleChanged()
     m_comboDateFmt->setEditText( storeToUser( dateMap(), m_locale->dateFormat() ) );
     //m_edDateFmtShort->setText( m_locale->dateFormatShort() );
     m_comboDateFmtShort->setEditText( storeToUser( dateMap(), m_locale->dateFormatShort() ) );
-    m_comboWeekStartDay->setCurrentIndex( m_locale->weekStartDay() - 1 );
-    m_comboWorkingWeekStartDay->setCurrentIndex( m_locale->workingWeekStartDay() - 1 );
-    m_comboWorkingWeekEndDay->setCurrentIndex( m_locale->workingWeekEndDay() - 1 );
-    m_comboWeekDayOfPray->setCurrentIndex( m_locale->weekDayOfPray() );  // First option is None=0
 
     if ( m_locale->nounDeclension() )
         m_chDateMonthNamePossessive->setChecked( m_locale->dateMonthNamePossessive() );
@@ -549,19 +518,9 @@ void KLocaleConfigTime::slotTranslate()
   m_comboDateFmtShort->addItems(str.split( sep));
   m_comboDateFmtShort->setEditText(old);
 
+  updateCalendarNames();
   updateWeekDayNames();
   updateDigitSetNames();
-
-  while ( m_comboCalendarSystem->count() < 4 )
-    m_comboCalendarSystem->addItem(QString());
-  m_comboCalendarSystem->setItemText
-    (0, ki18nc("Calendar System Gregorian", "Gregorian").toString(m_locale));
-  m_comboCalendarSystem->setItemText
-    (1, ki18nc("Calendar System Hijri", "Hijri").toString(m_locale));
-  m_comboCalendarSystem->setItemText
-    (2, ki18nc("Calendar System Hebrew", "Hebrew").toString(m_locale));
-  m_comboCalendarSystem->setItemText
-    (3, ki18nc("Calendar System Jalali", "Jalali").toString(m_locale));
 
   str = ki18n
     ("<p>The text in this textbox will be used to format "
@@ -700,4 +659,18 @@ void KLocaleConfigTime::updateDigitSetNames()
      m_comboDateTimeDigSet->addItem(m_locale->digitSetToName(ds, true));
   }
   m_comboDateTimeDigSet->setCurrentIndex(m_locale->dateTimeDigitSet());
+}
+
+void KLocaleConfigTime::updateCalendarNames()
+{
+    QStringList calendars = KCalendarSystem::calendarSystems();
+
+    m_comboCalendarSystem->clear();
+
+    foreach ( QString cal, calendars )
+    {
+        m_comboCalendarSystem->addItem( KCalendarSystem::calendarLabel( cal ), QVariant( cal ) );
+    }
+
+    m_comboCalendarSystem->setCurrentIndex( m_comboCalendarSystem->findData( QVariant( m_locale->calendarType() ) ) );
 }
