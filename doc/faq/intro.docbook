@@ -82,7 +82,7 @@ Public License.  All &kde; libraries are available under the
 the <acronym>GPL</acronym>.</para>
 <para>&kde; uses the <link linkend="qt">&Qt; C++ crossplatform
 toolkit</link>, which is also released (since version 2.2) under the
-<acronym>GPL</acronym>.</para>
+<acronym>GPL</acronym> and since version 4.5.0 also under the <acronym>LGPL</acronym>.</para>
 <para>It is absolutely legal to make &kde; and &Qt; available on
 &CD-ROM; free of charge.  No runtime fees of any kind are
 incurred.</para>
