@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=script-nowplaying
+Name[ar]=سكربت-المشغل الآن
 Name[cs]=Skript  "Právě hraje"
 Name[es]=script-ejecutando
 Name[fy]=skript-no ôfspyljend
@@ -19,6 +20,7 @@ Name[tr]=betik-şimdi dinlenen parça
 Name[x-test]=xxscript-nowplayingxx
 Name[zh_CN]=脚本-现在收听
 Comment=Javascript version current track playing
+Comment[ar]=ودجة جافا سكربت تتابع ما يشغل الآن
 Comment[bg]=Текущо изпълняван запис (JavaScript)
 Comment[ca]=Versió en Javascript de la peça actual en reproducció
 Comment[ca@valencia]=Versió en Javascript de la peça actual en reproducció

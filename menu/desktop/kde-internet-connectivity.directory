@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Type=Directory
 Name=Connectivity
+Name[ar]=الربط
 Name[bg]=Интернет и мрежа
 Name[bn_IN]=সংযোগ ব্যবস্থা
 Name[ca]=Connectivitat

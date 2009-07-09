@@ -9,6 +9,7 @@ X-KDE-Library=kcm_phononxine
 X-KDE-ParentComponents=phonon_xine
 
 Name=Phonon Xine
+Name[ar]=فونون Xine
 Name[bn]=ফোনন জাইন
 Name[csb]=Phonon-Xine
 Name[de]=Phonon-Xine
@@ -31,6 +32,7 @@ Name[wa]=Xine Phonon
 Name[x-test]=xxPhonon Xinexx
 Comment=Xine Backend Configuration
 Comment[af]=Xine Backend konfigurasie
+Comment[ar]=ضبط خلفية Xine
 Comment[be]=Настаўленне унутранага карыстання Xine
 Comment[be@latin]=Настаўленне унутранага карыстання Xine
 Comment[bg]=Настройване на Xine

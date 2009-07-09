@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=script-digital-clock
+Name[ar]=ساعة-رقمية-سكربت
 Name[cs]=Skript pro digitální hodiny
 Name[es]=script-Reloj-digital
 Name[fy]=skript-digitale-klok
@@ -20,6 +21,7 @@ Name[tr]=betik-dijital-saat
 Name[x-test]=xxscript-digital-clockxx
 Name[zh_CN]=脚本-数字钟
 Comment=Javascript digital clock
+Comment[ar]=ساعة رقمية بجافا سكربت
 Comment[bg]=Цифров часовник (JavaScript)
 Comment[bn_IN]=Javascript ডিজিট্যাল ঘড়ি
 Comment[ca]=Rellotge digital en Javascript

@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=script-mediaplayer
+Name[ar]=سكربت-مشغل الوسائط المتعددة
 Name[fy]=script-mediaspiler
 Name[gu]=સ્ક્રિપ્ટ-મીડિઆપ્લેયર
 Name[is]=margmiðlunarspilara-skrifta
@@ -16,6 +17,7 @@ Name[x-test]=xxscript-mediaplayerxx
 Name[zh_CN]=脚本-媒体播放器
 
 Comment=Javascript media player
+Comment[ar]=مشغل وسائط بجافا سكربت
 Comment[bg]=Медиа плеър (JavaScript)
 Comment[bn_IN]=Javascript মিডিয়া প্লেয়ার
 Comment[ca]=Reproductor de suports en Javascript

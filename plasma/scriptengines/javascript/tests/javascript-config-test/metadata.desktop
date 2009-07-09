@@ -13,6 +13,7 @@ Name[tr]=javascript-yapılandırma-testi
 Name[x-test]=xxjavascript-config-testxx
 Name[zh_CN]=JavaScript-配置测试
 Comment=Javascript config object test widget
+Comment[ar]=ودجة اختبار كائن ضبط لجافا سكربت
 Comment[ca]=Eina de proves de configuració d'objectes de Javascript
 Comment[ca@valencia]=Eina de proves de configuració d'objectes de Javascript
 Comment[cs]=Widget pro testování Javascriptu
