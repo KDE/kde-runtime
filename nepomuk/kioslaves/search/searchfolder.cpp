@@ -415,8 +415,11 @@ Nepomuk::SearchEntry* Nepomuk::SearchFolder::statResult( const Search::Result& r
         uds.insert( KIO::UDSEntry::UDS_ACCESS, 0700 );
         uds.insert( KIO::UDSEntry::UDS_USER, KUser().loginName() );
 
-//    uds.insert( KIO::UDSEntry::UDS_FILE_TYPE, S_IFDIR );
-        uds.insert( KIO::UDSEntry::UDS_MIME_TYPE, "application/x-nepomuk-resource" );
+//        uds.insert( KIO::UDSEntry::UDS_MIME_TYPE, "application/x-nepomuk-resource" );
+
+        Nepomuk::Types::Class type( res.resourceType() );
+        if (!type.label().isEmpty())
+            uds.insert( KIO::UDSEntry::UDS_DISPLAY_TYPE, type.label() );
     }
 
     uds.insert( KIO::UDSEntry::UDS_TARGET_URL, result.resourceUri().toString() );
