@@ -25,7 +25,7 @@
 #include <Soprano/Node> // for qHash( QUrl )
 
 #include <Nepomuk/Variant>
-
+#include <nepomuk/class.h>
 #include <QtCore/QMutexLocker>
 
 #include <KUrl>
