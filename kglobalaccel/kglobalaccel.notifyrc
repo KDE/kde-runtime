@@ -1,7 +1,16 @@
 [Global]
 IconName=
 Comment=KDE Global Shortcuts Daemon
+Comment[km]=ដេមិន​ផ្លូវកាត់​សកល​របស់ KDE
+Comment[nds]=KDE-Tastkombinatschonen-Dämoon
+Comment[pt_BR]=Daemon de atalhos globais do KDE
+Comment[sv]=KDE:s globala snabbtangentdemon
+Comment[uk]=Фонова служба загальних скорочень KDE
+Comment[x-test]=xxKDE Global Shortcuts Daemonxx
+Comment[zh_TW]=KDE 全域捷徑守護程式
 Name=kglobalaccel
+Name[sv]=Kglobalsnabbtangent
+Name[x-test]=xxkglobalaccelxx
 
 [Context/Application]
 Name=Application
@@ -76,15 +85,47 @@ Name[x-test]=xxApplicationxx
 Name[zh_CN]=应用程序
 Name[zh_TW]=應用程式
 Comment=The application name
+Comment[km]=ឈ្មោះ​កម្មវិធី​
+Comment[nds]=De Programmnaam
+Comment[pt_BR]=O nome do aplicativo
+Comment[sv]=Programnamnet
+Comment[uk]=Назва програми
+Comment[x-test]=xxThe application namexx
+Comment[zh_TW]=應用程式名稱
 
 [Event/newshortcutregistered]
 Name=Global Shortcut Registration
+Name[km]=ការ​ចុះឈ្មោះ​ផ្លូវកាត់​សកល
+Name[nds]=Globaal Tastkombinatschoon inmeldt
+Name[pt_BR]=Registro de atalhos globais
+Name[sv]=Registrering av globala snabbtangenter
+Name[uk]=Реєстрація загальних скорочень
+Name[x-test]=xxGlobal Shortcut Registrationxx
+Name[zh_TW]=全域捷徑註冊
 Comment=A application registered new global shorcuts
+Comment[km]=កម្មវិធី​បាន​ចុះឈ្មោះ​ផ្លូវកាត់​សកល​ថ្មី
+Comment[nds]=En Programm hett niege globale Tastkombinatschonen inmeldt
+Comment[sv]=Ett program registrerade nya globala snabbtangenter
+Comment[uk]=Програма зареєструвала нові загальні скорочення
+Comment[x-test]=xxA application registered new global shorcutsxx
+Comment[zh_TW]=註冊新的全域捷徑的應用程式
 Contexts=Application
 Action=Popup
 
 [Event/globalshortcutpressed]
 Name=Global Shortcut Triggered
+Name[km]=បានកេះ​ផ្លូវកាត់​សកល
+Name[nds]=Globaal Tastkombinatschoon utlööst
+Name[sv]=Global snabbtangent aktiverad
+Name[uk]=Використано загальне скорочення
+Name[x-test]=xxGlobal Shortcut Triggeredxx
+Name[zh_TW]=全域捷徑被觸發
 Comment=The user triggered a global shortcut
+Comment[km]=អ្នក​ប្រើ​បានកេះ​ផ្លូវកាត់​សកល
+Comment[nds]=De Bruker hett en globaal Tastkombinatschoon utlööst
+Comment[sv]=Användaren aktiverade en global snabbtangent
+Comment[uk]=Користувач використав загальне скорочення
+Comment[x-test]=xxThe user triggered a global shortcutxx
+Comment[zh_TW]=使用者觸發了一個全域捷徑
 Contexts=Application
 Action=
