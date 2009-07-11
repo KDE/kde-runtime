@@ -46,6 +46,7 @@ kcmshell4=systemsettings|general
 kwalletd=kdelibs|kwallet
 kwriteconfig=kdelibs|general
 kwrited=konsole|kwrited
+kbuildsycoca4=kdelibs|ksycoca
 
 #KWin
 kwin_killer_helper=kwin|general
