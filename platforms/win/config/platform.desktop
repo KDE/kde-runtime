@@ -1,6 +1,6 @@
 [Desktop Entry]
 Exec=kcmshell4 platform
-Icon=face-smile
+Icon=kde-windows
 Type=Service
 X-DocPath=kcontrol/platform/index.html
 
