@@ -296,7 +296,7 @@ void RegistryManager::setUseNativeDialogs(bool isNative)
 {
 	KConfig kdeGlobSettings("kdeglobals");
 	KConfigGroup shellGrp( &kdeGlobSettings , "KFileDialog Settings");
-	return shellGrp.writeEntry("Native", isNative);
+	shellGrp.writeEntry("Native", isNative);
 }
 
 bool RegistryManager::isNativeDialogsUsed()
