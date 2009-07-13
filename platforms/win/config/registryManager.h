@@ -29,40 +29,40 @@
 class RegistryManager
 {
 public:
-	typedef enum { Plasma, Native, Custom } Shell;
-	RegistryManager(QWidget *);
-	Shell getCurShell();
-	QMap<QString, QString> customShell;
-	QMap<QString, QString> getCustomShell();
-	void setCustomShell(QMap<QString, QString>);
-	void setCurShell(Shell);
-	
-	void installCPlEntry() const;
-	void uninstallCPlEntry() const;
-	bool isCPlEntryInstalled() const;
-	
-	void installCursors() const;
-	void uninstallCursors() const;
-	bool isCursorsInstalled() const;
-	
-	void installWallpapers() const;
-	void uninstallWallpapers() const;
+    typedef enum { Plasma, Native, Custom } Shell;
+    RegistryManager(QWidget *);
+    Shell getCurShell();
+    QMap<QString, QString> customShell;
+    QMap<QString, QString> getCustomShell();
+    void setCustomShell(QMap<QString, QString>);
+    void setCurShell(Shell);
+    
+    void installCPlEntry() const;
+    void uninstallCPlEntry() const;
+    bool isCPlEntryInstalled() const;
+    
+    void installCursors() const;
+    void uninstallCursors() const;
+    bool isCursorsInstalled() const;
+    
+    void installWallpapers() const;
+    void uninstallWallpapers() const;
 /*
 this will return Qt::Unchecked if wallpapers haven't been installed at all,
 Qt::PartiallyChecked if wallpapers need to be updated
 Qt::Checked  if wallpapers are up-to-date
 */
-	Qt::CheckState isWallpapersInstalled() const;
-	
-	void setUseNativeDialogs(bool);
-	bool isNativeDialogsUsed();
+    Qt::CheckState isWallpapersInstalled() const;
+    
+    void setUseNativeDialogs(bool);
+    bool isNativeDialogsUsed();
 
     void setLoadAtLogin(bool);
     bool isLoadedAtLogin();
 
 private:
-	QSettings nativeSettings;
-	KSharedConfig::Ptr iniSettings;
+    QSettings nativeSettings;
+    KSharedConfig::Ptr iniSettings;
     QWidget * parentWidgetPtr;
 };
 

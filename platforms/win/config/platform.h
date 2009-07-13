@@ -28,22 +28,22 @@
 class Platform : public KCModule, Ui::PlatformThing
 {
     Q_OBJECT
-	
+
 public:
     Platform(QWidget *parent, const QVariantList &args);
     ~Platform();
     void save();
-	void load();
-	
+    void load();
+
 private slots:
-	void somethingChanged();
-	void showCustShellDlg();
+    void somethingChanged();
+    void showCustShellDlg();
 
-private:	
-	QMap<QString, QString> customShell;
-	RegistryManager::Shell currentShell;
+private:
+    QMap<QString, QString> customShell;
+    RegistryManager::Shell currentShell;
 
-	RegistryManager regMan;
+    RegistryManager regMan;
     MenuManager menuMan;
 };
 

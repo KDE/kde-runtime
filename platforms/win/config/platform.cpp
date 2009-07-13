@@ -50,38 +50,38 @@ Platform::Platform(QWidget *parent, const QVariantList &args)
     } else {
         optCustom->setChecked(true);
     }
-    
+
     chkInstallCPl->setChecked(regMan.isCPlEntryInstalled());
-	chkInstallCursors->setChecked(regMan.isCursorsInstalled());
-	chkUseNativeDialogs->setChecked(regMan.isNativeDialogsUsed());
+    chkInstallCursors->setChecked(regMan.isCursorsInstalled());
+    chkUseNativeDialogs->setChecked(regMan.isNativeDialogsUsed());
     chkDisableMenuGen->setChecked(menuMan.isMenuCreationEnabled());
     chkStartAtLogin->setChecked(regMan.isLoadedAtLogin());
 
-	Qt::CheckState wpState = regMan.isWallpapersInstalled();
-	if (wpState == Qt::PartiallyChecked){
-		chkInstallWallpapers->setTristate(true);
-		chkInstallWallpapers->setCheckState(Qt::PartiallyChecked);
-	} else {
-		chkInstallWallpapers->setTristate(false);
-		chkInstallWallpapers->setCheckState(wpState);
-	}
-	
-	connect(optNative, SIGNAL(toggled(bool)), this, SLOT(somethingChanged()));
-	connect(optPlasma, SIGNAL(toggled(bool)), this, SLOT(somethingChanged()));
-	connect(chkInstallCPl, SIGNAL(toggled(bool)), this, SLOT(somethingChanged()));
-	connect(chkDisableMenuGen, SIGNAL(toggled(bool)), this, SLOT(somethingChanged()));
-	connect(chkInstallCursors, SIGNAL(toggled(bool)), this, SLOT(somethingChanged()));
-	connect(chkUseNativeDialogs, SIGNAL(toggled(bool)), this, SLOT(somethingChanged()));
-	connect(chkInstallWallpapers, SIGNAL(stateChanged(int)), this, SLOT(somethingChanged()));
-	connect(chkStartAtLogin, SIGNAL(stateChanged(int)), this, SLOT(somethingChanged()));
-	connect(btnShellSetup, SIGNAL(pressed()), this, SLOT(showCustShellDlg()));
-	
-	emit changed(false);
+    Qt::CheckState wpState = regMan.isWallpapersInstalled();
+    if (wpState == Qt::PartiallyChecked){
+        chkInstallWallpapers->setTristate(true);
+        chkInstallWallpapers->setCheckState(Qt::PartiallyChecked);
+    } else {
+        chkInstallWallpapers->setTristate(false);
+        chkInstallWallpapers->setCheckState(wpState);
+    }
+
+    connect(optNative, SIGNAL(toggled(bool)), this, SLOT(somethingChanged()));
+    connect(optPlasma, SIGNAL(toggled(bool)), this, SLOT(somethingChanged()));
+    connect(chkInstallCPl, SIGNAL(toggled(bool)), this, SLOT(somethingChanged()));
+    connect(chkDisableMenuGen, SIGNAL(toggled(bool)), this, SLOT(somethingChanged()));
+    connect(chkInstallCursors, SIGNAL(toggled(bool)), this, SLOT(somethingChanged()));
+    connect(chkUseNativeDialogs, SIGNAL(toggled(bool)), this, SLOT(somethingChanged()));
+    connect(chkInstallWallpapers, SIGNAL(stateChanged(int)), this, SLOT(somethingChanged()));
+    connect(chkStartAtLogin, SIGNAL(stateChanged(int)), this, SLOT(somethingChanged()));
+    connect(btnShellSetup, SIGNAL(pressed()), this, SLOT(showCustShellDlg()));
+
+    emit changed(false);
 }
 
 void Platform::somethingChanged()
 {
-	emit changed(true);
+    emit changed(true);
 }
 
 Platform::~Platform()
@@ -90,57 +90,55 @@ Platform::~Platform()
 
 void Platform::showCustShellDlg()
 {
-	qDebug() << "Calling showCustShellDlg SLOT";
-	ShellEdit shellEditDlg(regMan.customShell.value("Name"), regMan.customShell.value("Description"), regMan.customShell.value("Command"));
+    ShellEdit shellEditDlg(regMan.customShell.value("Name"), regMan.customShell.value("Description"), regMan.customShell.value("Command"));
 
-	if(shellEditDlg.exec()){
-		optCustom->setText(shellEditDlg.shellNameEdit->text());
-		descrCustom->setText(shellEditDlg.shellDescrEdit->text());
-		
-		regMan.customShell["Name"] = shellEditDlg.shellNameEdit->text();
-		regMan.customShell["Description"] = shellEditDlg.shellDescrEdit->text();
-		regMan.customShell["Command"] = shellEditDlg.shellCmdEdit->text();
-	}
-	
-	emit changed(true);
+    if(shellEditDlg.exec()){
+        optCustom->setText(shellEditDlg.shellNameEdit->text());
+        descrCustom->setText(shellEditDlg.shellDescrEdit->text());
+
+        regMan.customShell["Name"] = shellEditDlg.shellNameEdit->text();
+        regMan.customShell["Description"] = shellEditDlg.shellDescrEdit->text();
+        regMan.customShell["Command"] = shellEditDlg.shellCmdEdit->text();
+    }
+    
+    emit changed(true);
 }
 
 void Platform::save()
 {
-	qDebug() << "Calling it save";
-	
-	if(optNative->isChecked()){
-		regMan.setCurShell(RegistryManager::Native);
-	} else if(optPlasma->isChecked()){
-		regMan.setCurShell(RegistryManager::Plasma);
-	} else if (optCustom->isChecked()){
-		regMan.setCurShell(RegistryManager::Custom);
-	}
-	
-	if(chkInstallCPl->isChecked()){
-		regMan.installCPlEntry();
-	} else {
-		regMan.uninstallCPlEntry();
-	}
-	
-	if(chkInstallCursors->isChecked()){
-		regMan.installCursors();
-	} else {
-		regMan.uninstallCursors();
-	}
-	
-	if(chkInstallWallpapers->checkState() == Qt::Checked){
-		regMan.installWallpapers();
-	} else if (chkInstallWallpapers->checkState() == Qt::Unchecked) {
-		regMan.uninstallWallpapers();
-	}
-    
-	regMan.setUseNativeDialogs(chkUseNativeDialogs->isChecked());
-	regMan.setLoadAtLogin(chkUseNativeDialogs->isChecked());
+    qDebug() << "Calling it save";
+
+    if(optNative->isChecked()){
+        regMan.setCurShell(RegistryManager::Native);
+    } else if(optPlasma->isChecked()){
+        regMan.setCurShell(RegistryManager::Plasma);
+    } else if (optCustom->isChecked()){
+        regMan.setCurShell(RegistryManager::Custom);
+    }
+
+    if(chkInstallCPl->isChecked()){
+        regMan.installCPlEntry();
+    } else {
+        regMan.uninstallCPlEntry();
+    }
+
+    if(chkInstallCursors->isChecked()){
+        regMan.installCursors();
+    } else {
+        regMan.uninstallCursors();
+    }
+
+    if(chkInstallWallpapers->checkState() == Qt::Checked){
+        regMan.installWallpapers();
+    } else if (chkInstallWallpapers->checkState() == Qt::Unchecked) {
+        regMan.uninstallWallpapers();
+    }
+
+    regMan.setUseNativeDialogs(chkUseNativeDialogs->isChecked());
+    regMan.setLoadAtLogin(chkUseNativeDialogs->isChecked());
     menuMan.setMenuCreationEnabled(chkDisableMenuGen->isChecked());
 }
 
 void Platform::load()
 {
-	qDebug() << "Loading module";
 }
