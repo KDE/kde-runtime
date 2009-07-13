@@ -47,7 +47,6 @@ public:
 	
 	void installWallpapers() const;
 	void uninstallWallpapers() const;
-	
 /*
 this will return Qt::Unchecked if wallpapers haven't been installed at all,
 Qt::PartiallyChecked if wallpapers need to be updated
@@ -57,6 +56,9 @@ Qt::Checked  if wallpapers are up-to-date
 	
 	void setUseNativeDialogs(bool);
 	bool isNativeDialogsUsed();
+
+    void setLoadAtLogin(bool);
+    bool isLoadedAtLogin();
 
 private:
 	QSettings nativeSettings;

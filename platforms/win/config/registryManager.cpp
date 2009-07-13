@@ -307,6 +307,32 @@ bool RegistryManager::isNativeDialogsUsed()
 }
 
 ////////////////////////////////////////////////////////////////
+// Enabling/disabling KDE load at user login
+////////////////////////////////////////////////////////////////
+void RegistryManager::setLoadAtLogin(bool startAtLogin)
+{
+    KConfig platformSetting("kdeplatformrc");
+    QSettings settingsHKCU("HKEY_CURRENT_USER", QSettings::NativeFormat);
+    if (!isLoadedAtLogin()){
+        qDebug() << "KDE isn't set up to be started at user login! Setting...";
+        settingsHKCU.setValue("SOFTWARE/Microsoft/Windows/CurrentVersion/Run/KDE", "X:\\rel-build\\bin\\kdeinit4.exe");
+    } else {
+        qDebug() << "KDE is set up to be started at user login! Removing...";
+        settingsHKCU.remove("SOFTWARE/Microsoft/Windows/CurrentVersion/Run/KDE");
+    };
+}
+
+bool RegistryManager::isLoadedAtLogin()
+{
+    QSettings settingsHKCU("HKEY_CURRENT_USER", QSettings::NativeFormat);
+    if (settingsHKCU.value("SOFTWARE/Microsoft/Windows/CurrentVersion/Run/KDE").isNull()) {
+        return false;
+    } else {
+        return true;
+    };
+}
+
+////////////////////////////////////////////////////////////////
 // Shell switching part
 ////////////////////////////////////////////////////////////////
 RegistryManager::Shell RegistryManager::getCurShell()

@@ -38,26 +38,25 @@ Platform::Platform(QWidget *parent, const QVariantList &args)
     setAboutData(about);
     setButtons(Apply | Help);
     setupUi(this);
+
+    currentShell = regMan.getCurShell();
+    optCustom->setText(regMan.customShell.value("Name"));
+    descrCustom->setText(regMan.customShell.value("Description"));
+
+    if(currentShell == RegistryManager::Native){
+        optNative->setChecked(true);
+    } else if (currentShell == RegistryManager::Plasma) {
+        optPlasma->setChecked(true);
+    } else {
+        optCustom->setChecked(true);
+    }
     
-    qDebug() << "The pointer to this is " << this;
-
-	currentShell = regMan.getCurShell();
-	optCustom->setText(regMan.customShell.value("Name"));
-	descrCustom->setText(regMan.customShell.value("Description"));
-
-	if(currentShell == RegistryManager::Native){
-		optNative->setChecked(true);
-	} else if (currentShell == RegistryManager::Plasma) {
-		optPlasma->setChecked(true);
-	} else {
-		optCustom->setChecked(true);
-	}
-	
     chkInstallCPl->setChecked(regMan.isCPlEntryInstalled());
 	chkInstallCursors->setChecked(regMan.isCursorsInstalled());
 	chkUseNativeDialogs->setChecked(regMan.isNativeDialogsUsed());
     chkDisableMenuGen->setChecked(menuMan.isMenuCreationEnabled());
-	
+    chkStartAtLogin->setChecked(regMan.isLoadedAtLogin());
+
 	Qt::CheckState wpState = regMan.isWallpapersInstalled();
 	if (wpState == Qt::PartiallyChecked){
 		chkInstallWallpapers->setTristate(true);
@@ -74,6 +73,7 @@ Platform::Platform(QWidget *parent, const QVariantList &args)
 	connect(chkInstallCursors, SIGNAL(toggled(bool)), this, SLOT(somethingChanged()));
 	connect(chkUseNativeDialogs, SIGNAL(toggled(bool)), this, SLOT(somethingChanged()));
 	connect(chkInstallWallpapers, SIGNAL(stateChanged(int)), this, SLOT(somethingChanged()));
+	connect(chkStartAtLogin, SIGNAL(stateChanged(int)), this, SLOT(somethingChanged()));
 	connect(btnShellSetup, SIGNAL(pressed()), this, SLOT(showCustShellDlg()));
 	
 	emit changed(false);
@@ -136,6 +136,7 @@ void Platform::save()
 	}
     
 	regMan.setUseNativeDialogs(chkUseNativeDialogs->isChecked());
+	regMan.setLoadAtLogin(chkUseNativeDialogs->isChecked());
     menuMan.setMenuCreationEnabled(chkDisableMenuGen->isChecked());
 }
 
