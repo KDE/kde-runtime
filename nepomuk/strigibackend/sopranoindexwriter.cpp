@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2007-2008 Sebastian Trueg <trueg@kde.org>
+   Copyright (C) 2007-2009 Sebastian Trueg <trueg@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public License as
@@ -19,10 +19,11 @@
 
 #include "sopranoindexwriter.h"
 #include "util.h"
+#include "nfo.h"
+#include "nie.h"
 
 #include <Soprano/Soprano>
 #include <Soprano/Vocabulary/RDF>
-#include <Soprano/Vocabulary/Xesam>
 #include <Soprano/LiteralValue>
 
 #include <QtCore/QList>
@@ -52,6 +53,7 @@
 // IMPORTANT: strings in Strigi are apparently UTF8! Except for file names. Those are in local encoding.
 
 using namespace Soprano;
+using namespace std;
 
 
 uint qHash( const std::string& s )
@@ -338,6 +340,7 @@ void Strigi::Soprano::IndexWriter::addValue( const AnalysisResult* idx,
             // in standard desktop searches
             if ( field->key() == FieldRegister::pathFieldName ||
                  field->key() == FieldRegister::parentLocationFieldName ) {
+#warning FIXME: this is where relative file URLs are to be generated and our new fancy file system class should provide us with the file system URI
                 d->repository->addStatement( md->fileUri,
                                              rfd->property,
                                              QUrl::fromLocalFile( QFile::decodeName( QByteArray::fromRawData( value.c_str(), value.length() ) ) ),
@@ -465,24 +468,24 @@ void Strigi::Soprano::IndexWriter::finishAnalysis( const AnalysisResult* idx )
 
     if ( md->content.length() > 0 ) {
         d->repository->addStatement( Statement( md->fileUri,
-                                                Vocabulary::Xesam::asText(),
+                                                Nepomuk::Vocabulary::NIE::plainTextContent(),
                                                 LiteralValue( QString::fromUtf8( md->content.c_str() ) ),
                                                 md->context ) );
         if ( d->repository->lastError() )
             qDebug() << "Failed to add" << md->fileUri << "as text" << QString::fromUtf8( md->content.c_str() );
     }
 
-    // Strigi only indexes files and extractors mostly (if at all) store the xesam:DataObject type (i.e. the contents)
-    // Thus, here we go the easy way and mark each indexed file as a xesam:File.
+    // Strigi only indexes files and extractors mostly (if at all) store the nie:DataObject type (i.e. the contents)
+    // Thus, here we go the easy way and mark each indexed file as a nfo:FileDataObject.
     if ( QFileInfo( QFile::decodeName( idx->path().c_str() ) ).isDir() )
         d->repository->addStatement( Statement( md->fileUri,
                                                 Vocabulary::RDF::type(),
-                                                Vocabulary::Xesam::Folder(),
+                                                Nepomuk::Vocabulary::NFO::Folder(),
                                                 md->context ) );
     else
         d->repository->addStatement( Statement( md->fileUri,
                                                 Vocabulary::RDF::type(),
-                                                Vocabulary::Xesam::File(),
+                                                Nepomuk::Vocabulary::NFO::FileDataObject(),
                                                 md->context ) );
 
 

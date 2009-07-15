@@ -1,5 +1,7 @@
 project(nepomukfilewatch)
 
+include(SopranoAddOntology)
+
 add_definitions(-DKDE_DEFAULT_DEBUG_AREA=300101)
 
 include_directories(
@@ -14,6 +16,17 @@ set(SRCS
   nepomukfilewatch.cpp
   metadatamover.cpp
   )
+
+soprano_add_ontology(SRCS
+  ${nepomukontologies_SOURCE_DIR}/nfo.trig
+  "NFO"
+  "Nepomuk::Vocabulary"
+  "trig")
+soprano_add_ontology(SRCS
+  ${nepomukontologies_SOURCE_DIR}/nie.trig
+  "NIE"
+  "Nepomuk::Vocabulary"
+  "trig")
 
 kde4_add_plugin(nepomukfilewatch ${SRCS})
 

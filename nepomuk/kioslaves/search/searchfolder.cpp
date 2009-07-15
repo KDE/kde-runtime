@@ -17,6 +17,7 @@
  */
 
 #include "searchfolder.h"
+#include "nfo.h"
 
 #include "queryserviceclient.h"
 
@@ -355,9 +356,11 @@ Nepomuk::SearchEntry* Nepomuk::SearchFolder::statResult( const Search::Result& r
 
     KIO::UDSEntry uds;
 
-    KUrl url = result[Soprano::Vocabulary::Xesam::url()].toString();
+    KUrl url = result[Nepomuk::Vocabulary::NFO::fileUrl()].uri();
     if ( url.isEmpty() ) {
-        url = result.resourceUri();
+        url = result[Soprano::Vocabulary::Xesam::url()].uri();
+        if ( url.isEmpty() )
+            url = result.resourceUri();
     }
     bool isFile = false;
     if ( !url.isEmpty() && url.scheme() != "akonadi" ) { // do not stat akonadi resouces here, way too slow, even hangs if akonadi is not running

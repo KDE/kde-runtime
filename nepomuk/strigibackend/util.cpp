@@ -32,7 +32,6 @@
 #include <Soprano/Model>
 #include <Soprano/Vocabulary/RDF>
 #include <Soprano/Vocabulary/RDFS>
-#include <Soprano/Vocabulary/Xesam>
 #include <Soprano/Vocabulary/NRL>
 #include <Soprano/Vocabulary/XMLSchema>
 
@@ -128,60 +127,19 @@ Strigi::Variant Strigi::Soprano::Util::nodeToVariant( const ::Soprano::Node& nod
 void Strigi::Soprano::Util::storeStrigiMiniOntology( ::Soprano::Model* model )
 {
     // we use some nice URI here although we still have the STRIGI_NS for backwards comp
-    // at some point (if parentUrl will not be moved to xesam) we should move to a proper onto
 
     QUrl graph( "http://nepomuk.kde.org/ontologies/2008/07/24/strigi/metadata" );
-    ::Soprano::Statement parentUrlProp( fieldUri( FieldRegister::parentLocationFieldName ),
-                                        ::Soprano::Vocabulary::RDF::type(),
-                                        ::Soprano::Vocabulary::RDF::Property(),
-                                        graph );
     ::Soprano::Statement depthProp( fieldUri( FieldRegister::embeddepthFieldName ),
                                         ::Soprano::Vocabulary::RDF::type(),
                                         ::Soprano::Vocabulary::RDF::Property(),
                                         graph );
-    ::Soprano::Statement parentUrlRange( parentUrlProp.subject(),
-                                         ::Soprano::Vocabulary::RDFS::range(),
-                                         ::Soprano::Vocabulary::RDFS::Resource(),
-                                         graph );
-    ::Soprano::Statement oldParentUrlRange( parentUrlProp.subject(),
-                                            ::Soprano::Vocabulary::RDFS::range(),
-                                            ::Soprano::Vocabulary::XMLSchema::string(),
-                                            graph );
-    ::Soprano::Statement parentUrlDomain( parentUrlProp.subject(),
-                                          ::Soprano::Vocabulary::RDFS::domain(),
-                                          ::Soprano::Vocabulary::Xesam::File(),
-                                          graph );
-    ::Soprano::Statement parentUrlHiding( parentUrlProp.subject(),
-                                          QUrl::fromEncoded( "http://nepomuk.kde.org/ontologies/2009/01/14/nrdo#hideFromGUI", QUrl::StrictMode ),
-                                          ::Soprano::LiteralValue( true ),
-                                          graph );
-    ::Soprano::Statement depthHiding( depthProp.subject(),
-                                      QUrl::fromEncoded( "http://nepomuk.kde.org/ontologies/2009/01/14/nrdo#hideFromGUI", QUrl::StrictMode ),
-                                      ::Soprano::LiteralValue( true ),
-                                      graph );
     ::Soprano::Statement metaDataType( graph,
                                        ::Soprano::Vocabulary::RDF::type(),
                                        ::Soprano::Vocabulary::NRL::Ontology(),
                                        graph );
 
-    if ( !model->containsStatement( parentUrlProp ) ) {
-        model->addStatement( parentUrlProp );
-    }
-    if ( !model->containsStatement( parentUrlRange ) ) {
-        model->removeStatement( oldParentUrlRange );
-        model->addStatement( parentUrlRange );
-    }
-    if ( !model->containsStatement( parentUrlDomain ) ) {
-        model->addStatement( parentUrlDomain );
-    }
-    if ( !model->containsStatement( parentUrlHiding ) ) {
-        model->addStatement( parentUrlHiding );
-    }
     if ( !model->containsStatement( depthProp ) ) {
         model->addStatement( depthProp );
-    }
-    if ( !model->containsStatement( depthHiding ) ) {
-        model->addStatement( depthHiding );
     }
     if ( !model->containsStatement( metaDataType ) ) {
         model->addStatement( metaDataType );
