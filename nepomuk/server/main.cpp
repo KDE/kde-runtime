@@ -66,7 +66,7 @@ namespace Nepomuk {
     {
     public:
         ServerApplication()
-            : KUniqueApplication(),
+            : KUniqueApplication(false /* no gui */),
               m_server( 0 ) {
         }
 
