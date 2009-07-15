@@ -1,5 +1,7 @@
 project(nepomukstrigiservice)
 
+include(SopranoAddOntology)
+
 add_definitions(-DKDE_DEFAULT_DEBUG_AREA=300106)
 
 find_package(LibKNotificationItem-1 REQUIRED)
@@ -24,6 +26,12 @@ set(strigiservice_SRCS
   statuswidget.cpp
   filesystemwatcher.cpp
   )
+
+soprano_add_ontology(strigiservice_SRCS
+  ${nepomukontologies_SOURCE_DIR}/nfo.trig
+  "NFO"
+  "Nepomuk::Vocabulary"
+  "trig")
 
 qt4_add_dbus_interface(strigiservice_SRCS ../../interfaces/org.kde.nepomuk.Storage.xml nepomukstorageinterface)
 

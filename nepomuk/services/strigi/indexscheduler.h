@@ -64,6 +64,31 @@ namespace Nepomuk {
          */
         QString currentFolder() const;
 
+        enum UpdateDirFlag {
+            /**
+             * No flags, only used to make code more readable
+             */
+            NoUpdateFlags = 0x0,
+
+            /**
+             * The folder should be updated recursive
+             */
+            UpdateRecursive = 0x1,
+
+            /**
+             * The folder has been scheduled to update by the
+             * update system, not by a call to updateDir
+             */
+            AutoUpdateFolder = 0x2,
+
+            /**
+             * The files in the folder should be updated regardless
+             * of their state.
+             */
+            ForceUpdate = 0x4
+        };
+        Q_DECLARE_FLAGS( UpdateDirFlags, UpdateDirFlag )
+
     public Q_SLOTS:
         void suspend();
         void resume();
@@ -79,12 +104,12 @@ namespace Nepomuk {
          * Updates a complete folder (non-recursively). Makes sense for
          * signals like KDirWatch::dirty.
          */
-        void updateDir( const QString& path );
+        void updateDir( const QString& path, bool forceUpdate = false );
 
         /**
          * Updates all configured folders.
          */
-        void updateAll();
+        void updateAll( bool forceUpdate = false );
 
         /**
          * Analyze a resource that is not read from the local harddisk.
@@ -109,7 +134,7 @@ namespace Nepomuk {
         void run();
 
         bool waitForContinue();
-        bool updateDir( const QString& dir, Strigi::StreamAnalyzer* analyzer, bool recursive );
+        bool updateDir( const QString& dir, Strigi::StreamAnalyzer* analyzer, UpdateDirFlags flags );
         void analyzeFile( const QFileInfo& file, Strigi::StreamAnalyzer* analyzer );
 
         /**
@@ -133,7 +158,7 @@ namespace Nepomuk {
         Strigi::IndexManager* m_indexManager;
 
         // set of folders to update (+flags defined in the source file) - changed by updateDir
-        QSet<QPair<QString, int> > m_dirsToUpdate;
+        QSet<QPair<QString, UpdateDirFlags> > m_dirsToUpdate;
 
         QMutex m_dirsToUpdateMutex;
         QWaitCondition m_dirsToUpdateWc;
@@ -141,5 +166,7 @@ namespace Nepomuk {
         QString m_currentFolder;
     };
 }
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(Nepomuk::IndexScheduler::UpdateDirFlags)
 
 #endif

@@ -19,6 +19,7 @@
 #include "statuswidget.h"
 #include "indexscheduler.h"
 #include "strigiservice.h"
+#include "nfo.h"
 
 #include <KToolInvocation>
 #include <KIcon>
@@ -87,9 +88,10 @@ namespace {
             while ( m_cnt != lastCnt ) {
                 lastCnt = m_cnt;
                 Soprano::QueryResultIterator it
-                    = m_model->executeQuery( QString( "select distinct ?r where { ?r a <%1> . } "
-                                                      "OFFSET %2 LIMIT 500" )
-                                             .arg( Soprano::Vocabulary::Xesam::File().toString() )
+                    = m_model->executeQuery( QString( "select distinct ?r where { { ?r a %1 . } UNION { ?r a %2 . } } "
+                                                      "OFFSET %3 LIMIT 500" )
+                                             .arg( Soprano::Node::resourceToN3( Soprano::Vocabulary::Xesam::File() ) )
+                                             .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NFO::FileDataObject() ) )
                                              .arg( m_cnt ),
                                              Soprano::Query::QueryLanguageSparql );
                 while ( it.next() ) {

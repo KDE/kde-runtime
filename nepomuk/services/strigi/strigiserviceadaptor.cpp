@@ -91,9 +91,21 @@ void Nepomuk::StrigiServiceAdaptor::updateFolder( const QString& path )
 }
 
 
+void Nepomuk::StrigiServiceAdaptor::forceFolderUpdate( const QString& path )
+{
+    m_service->indexScheduler()->updateDir( path, true );
+}
+
+
 void Nepomuk::StrigiServiceAdaptor::updateAllFolders()
 {
     m_service->indexScheduler()->updateAll();
+}
+
+
+void Nepomuk::StrigiServiceAdaptor::forceAllFoldersUpdate()
+{
+    m_service->indexScheduler()->updateAll( true );
 }
 
 
