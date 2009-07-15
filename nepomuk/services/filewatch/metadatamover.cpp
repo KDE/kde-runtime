@@ -17,6 +17,8 @@
 */
 
 #include "metadatamover.h"
+#include "nfo.h"
+#include "nie.h"
 
 #include <QtCore/QDir>
 #include <QtCore/QRegExp>
@@ -46,8 +48,15 @@ namespace {
 //        kDebug() << "query:" << QString( "select ?r ?p where { ?r <http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#fileUrl> ?p FILTER(REGEX(STR(?p), '^%1')) . }" ).arg( regexpPath );
 
         // query for all files that
-        return model->executeQuery( QString( "prefix xesam: <http://freedesktop.org/standards/xesam/1.0/core#> "
-                                             "select ?r ?p where { ?r xesam:url ?p . FILTER(REGEX(STR(?p), '^%1')) . }" ).arg( regexpPath ),
+        return model->executeQuery( QString( "select ?r ?p where { "
+                                             "{ ?r %1 ?p . } "
+                                             "UNION "
+                                             "{ ?r %2 ?p . } . "
+                                             "FILTER(REGEX(STR(?p), '^%3')) . "
+                                             "}" )
+                                    .arg( Soprano::Node::resourceToN3( Soprano::Vocabulary::Xesam::url() ) )
+                                    .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NFO::fileUrl() ) )
+                                    .arg( regexpPath ),
                                     Soprano::Query::QueryLanguageSparql );
     }
 }
@@ -219,7 +228,8 @@ void Nepomuk::MetadataMover::updateMetadata( const KUrl& from, const KUrl& to )
                                                            Soprano::LiteralValue( to.path() ),
                                                            s.context() ) );
             }
-            else if ( s.predicate() == m_strigiParentUrlUri ) {
+            else if ( s.predicate() == m_strigiParentUrlUri ||
+                      s.predicate() == Nepomuk::Vocabulary::NIE::isPartOf() ) {
                 m_model->addStatement( Soprano::Statement( newResource,
                                                            s.predicate(),
                                                            Soprano::LiteralValue( to.directory( KUrl::IgnoreTrailingSlash ) ),

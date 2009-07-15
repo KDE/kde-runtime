@@ -18,6 +18,7 @@
 
 #include "kio_nepomuksearch.h"
 #include "searchfolder.h"
+#include "nfo.h"
 
 #include <QtCore/QFile>
 
@@ -65,33 +66,22 @@ Nepomuk::SearchProtocol::SearchProtocol( const QByteArray& poolSocket, const QBy
     // FIXME: allow icons
 
     // all music files
-    addDefaultSearch( i18n( "All Music Files" ), Search::Term( Soprano::Vocabulary::RDF::type(),
-                                                               Soprano::Vocabulary::Xesam::Music() ) );
-
-    // today's files
-    Search::Term term;
-    QDateTime today( QDate::currentDate(), QTime(), Qt::UTC );
-    term.setType( Search::Term::AndTerm );
-    term.addSubTerm( Search::Term( Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::Xesam::File() ) );
-    term.addSubTerm( Search::Term( Soprano::Vocabulary::Xesam::sourceModified(), today, Search::Term::GreaterOrEqual ) );
-    addDefaultSearch( i18n( "Today's Files" ), term );
-
-    // yesterday's files
-    term = Search::Term();
-    term.setType( Search::Term::AndTerm );
-    term.addSubTerm( Search::Term( Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::Xesam::File() ) );
-    QDateTime yesterday( today );
-    yesterday.addDays( -1 );
-    term.addSubTerm( Search::Term( Soprano::Vocabulary::Xesam::sourceModified(), yesterday, Search::Term::GreaterOrEqual ) );
-    term.addSubTerm( Search::Term( Soprano::Vocabulary::Xesam::sourceModified(), today, Search::Term::Smaller ) );
-    addDefaultSearch( i18n( "Yesterday's Files" ), term );
+    Search::Term musicOrTerm;
+    musicOrTerm.setType( Search::Term::OrTerm );
+    musicOrTerm.addSubTerm( Search::Term( Soprano::Vocabulary::RDF::type(),
+                                          Soprano::Vocabulary::Xesam::Music() ) );
+    musicOrTerm.addSubTerm( Search::Term( Soprano::Vocabulary::RDF::type(),
+                                          Nepomuk::Vocabulary::NFO::Audio() ) );
+    addDefaultSearch( i18n( "All Music Files" ), musicOrTerm );
 
     // select the 10 most recent files:
     addDefaultSearch( i18n( "Recent Files" ),
-                      Search::Query( "select distinct ?r where { "
-                                     "?r a <http://freedesktop.org/standards/xesam/1.0/core#File> . ?r "
-                                     "<http://freedesktop.org/standards/xesam/1.0/core#sourceModified> ?date . "
-                                     "} ORDER BY DESC(?date) LIMIT 10" ) );
+                      Search::Query( QString( "select distinct ?r where { "
+                                              "?r a %1 . "
+                                              "?r %2 ?date . "
+                                              "} ORDER BY DESC(?date) LIMIT 10" )
+                                     .arg(Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NFO::FileDataObject() ))
+                                     .arg(Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NFO::fileLastModified() )) ) );
 }
 
 
@@ -104,6 +94,7 @@ void Nepomuk::SearchProtocol::addDefaultSearch( const QString& name, const Searc
 {
     Search::Query query( q );
     query.addRequestProperty( Soprano::Vocabulary::Xesam::url(), true );
+    query.addRequestProperty( Nepomuk::Vocabulary::NFO::fileUrl(), true );
     m_defaultSearches.insert( name, query );
 }
 
@@ -297,6 +288,7 @@ Nepomuk::SearchFolder* Nepomuk::SearchProtocol::getQueryResults( const QString& 
 
         Search::Query q = Nepomuk::Search::QueryParser::parseQuery( query );
         q.addRequestProperty( Soprano::Vocabulary::Xesam::url(), true );
+        q.addRequestProperty( Nepomuk::Vocabulary::NFO::fileUrl(), true );
         SearchFolder* folder = new SearchFolder( query, q, this );
         m_searchCacheNameQueue.enqueue( query );
         m_searchCache.insert( query, folder );

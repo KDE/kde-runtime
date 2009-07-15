@@ -19,6 +19,7 @@
 
 #include "searchthread.h"
 #include "term.h"
+#include "nfo.h"
 
 #include <Nepomuk/ResourceManager>
 #include <Nepomuk/Resource>
@@ -461,12 +462,13 @@ Nepomuk::Search::Term Nepomuk::Search::SearchThread::resolveValues( const Term& 
                 // TODO: without being able to query the resource type simple searching for term.value() is waaaaay to slow
                 // FIXME: We CAN query the type now!
                 //QString query = QString( "%1:\"%2\"^4 \"%2\"" )
-                QString query = QString( "%1:\"%2\" OR %3:\"%2\" OR %4:\"%2\" OR %5:\"%2\"" )
+                QString query = QString( "%1:\"%2\" OR %3:\"%2\" OR %4:\"%2\" OR %5:\"%2\" OR %6:\"%2\"" )
                                 .arg( luceneQueryEscape( Soprano::Vocabulary::RDFS::label() ) )
                                 .arg( term.subTerms().first().value().toString() )
                                 .arg( luceneQueryEscape( Soprano::Vocabulary::NAO::prefLabel() ) )
                                 .arg( luceneQueryEscape( Soprano::Vocabulary::NAO::identifier() ) )
-                                .arg( luceneQueryEscape( Soprano::Vocabulary::Xesam::name() ) );
+                                .arg( luceneQueryEscape( Soprano::Vocabulary::Xesam::name() ) )
+                                .arg( luceneQueryEscape( Nepomuk::Vocabulary::NFO::fileName() ) );
                 Soprano::QueryResultIterator hits = ResourceManager::instance()->mainModel()->executeQuery( query,
                                                                                                             Soprano::Query::QueryLanguageUser,
                                                                                                             "lucene" );

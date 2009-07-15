@@ -1,5 +1,7 @@
 project(strigi_soprano_indexer)
 
+include(SopranoAddOntology)
+
 include_directories( 
   ${STRIGI_INCLUDE_DIR}
   ${SOPRANO_INCLUDE_DIR}
@@ -14,6 +16,17 @@ set( strigi_soprano_indexer_SRCS
   util.cpp
   tstring.cpp
 )
+
+soprano_add_ontology(strigi_soprano_indexer_SRCS
+  ${nepomukontologies_SOURCE_DIR}/nfo.trig
+  "NFO"
+  "Nepomuk::Vocabulary"
+  "trig")
+soprano_add_ontology(strigi_soprano_indexer_SRCS
+  ${nepomukontologies_SOURCE_DIR}/nie.trig
+  "NIE"
+  "Nepomuk::Vocabulary"
+  "trig")
 
 # CLucene requires exception support
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${KDE4_ENABLE_EXCEPTIONS}")

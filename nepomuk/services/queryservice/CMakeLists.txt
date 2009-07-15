@@ -1,5 +1,7 @@
 project(queryservice)
 
+include(SopranoAddOntology)
+
 add_definitions(-DKDE_DEFAULT_DEBUG_AREA=300104)
 
 include_directories(
@@ -21,6 +23,12 @@ set(queryservice_SRCS
   ${nepomuk_SOURCE_DIR}/libnepomukquery/queryparser.cpp
   ${nepomuk_SOURCE_DIR}/libnepomukquery/dbusoperators.cpp
 )
+
+soprano_add_ontology(queryservice_SRCS
+  ${nepomukontologies_SOURCE_DIR}/nfo.trig
+  "NFO"
+  "Nepomuk::Vocabulary"
+  "trig")
 
 qt4_add_dbus_adaptor(queryservice_SRCS
   ../../interfaces/org.kde.nepomuk.Query.xml

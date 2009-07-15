@@ -44,6 +44,7 @@
 
 
 using namespace Soprano;
+using namespace std;
 
 
 static lucene::index::Term* createWildCardTerm( const TString& name,
@@ -227,7 +228,7 @@ public:
                     doc.mimetype = value;
                 }
                 else if (fieldName == FieldRegister::mtimeFieldName) {
-                    // FIXME: Sadly in Xesam sourceModified is not typed as DateTime but defaults to an int :( We try to be compatible
+                    // Sadly in Xesam sourceModified is not typed as DateTime but defaults to an int :( We try to be compatible
                     if ( s.object().literal().isDateTime() ) {
                         doc.mtime = s.object().literal().toDateTime().toTime_t();
                     }
@@ -464,7 +465,7 @@ time_t Strigi::Soprano::IndexReader::mTime( const std::string& uri )
     if ( it.next() ) {
         ::Soprano::LiteralValue val = it.binding( "mtime" ).literal();
 
-        // FIXME: Sadly in Xesam sourceModified is not typed as DateTime but defaults to an int :( We try to be compatible
+        // Sadly in Xesam sourceModified is not typed as DateTime but defaults to an int :( We try to be compatible
         if ( val.isDateTime() ) {
             mtime = val.toDateTime().toTime_t();
         }
