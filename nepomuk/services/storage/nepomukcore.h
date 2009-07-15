@@ -25,15 +25,15 @@
 #include <QtCore/QStringList>
 
 namespace Nepomuk {
-    
+
     class Core : public Soprano::Server::ServerCore
     {
         Q_OBJECT
-	
+
     public:
         Core( QObject* parent = 0 );
         ~Core();
-	
+
         /**
          * reimplemented from ServerCore
          */
@@ -53,6 +53,7 @@ namespace Nepomuk {
 
     public Q_SLOTS:
         void optimize( const QString& repoName );
+        void rebuildIndex( const QString& repoName );
 
     Q_SIGNALS:
         void initializationDone( bool success );

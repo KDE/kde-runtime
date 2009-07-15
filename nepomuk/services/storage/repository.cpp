@@ -93,9 +93,6 @@ void Nepomuk::Repository::close()
     if ( m_state == OPEN ) {
 #ifdef HAVE_SOPRANO_INDEX
         delete m_indexModel;
-#if SOPRANO_IS_VERSION(2,2,66)
-        delete m_index->queryAnalyzer();
-#endif
         delete m_index;
         m_indexModel = 0;
         m_index = 0;
@@ -168,13 +165,6 @@ void Nepomuk::Repository::open()
 #if defined(HAVE_SOPRANO_INDEX) && defined(HAVE_CLUCENE)
     m_analyzer = new CLuceneAnalyzer();
     m_index = new Soprano::Index::CLuceneIndex( m_analyzer );
-
-#if SOPRANO_IS_VERSION(2,2,66)
-    // in order to be able to query the resource type through clucene we need to avoid having
-    // URLs borked by the standard analyzer. By using the WhitespaceAnalyzer we shift resposibility
-    // for proper query term encoding to the client.
-    m_index->setQueryAnalyzer( new lucene::analysis::WhitespaceAnalyzer() );
-#endif
 
     if ( m_index->open( indexPath, true ) ) {
         kDebug() << "Successfully created new index for repository" << name();
@@ -364,6 +354,16 @@ void Nepomuk::Repository::slotDoOptimize()
 }
 
 
+void Nepomuk::Repository::rebuildIndex()
+{
+#if defined(HAVE_SOPRANO_INDEX) && defined(HAVE_CLUCENE) && SOPRANO_IS_VERSION(2,1,64)
+    RebuildIndexThread* rit = new RebuildIndexThread( m_indexModel );
+    connect( rit, SIGNAL( finished() ), rit, SLOT( deleteLater() ) );
+    rit->start();
+#endif
+}
+
+
 bool Nepomuk::Repository::rebuildIndexIfNecessary()
 {
 #if defined(HAVE_SOPRANO_INDEX) && defined(HAVE_CLUCENE) && SOPRANO_IS_VERSION(2,1,64)
@@ -372,7 +372,7 @@ bool Nepomuk::Repository::rebuildIndexIfNecessary()
         KNotification::event( "rebuldingNepomukIndex",
                               i18nc("@info - notification message",
                                     "Rebuilding Nepomuk full text search index for new features. This will only be done once and might take a while."),
-                                    KIcon( "nepomuk" ).pixmap( 32, 32 ) );
+                              KIcon( "nepomuk" ).pixmap( 32, 32 ) );
         RebuildIndexThread* rit = new RebuildIndexThread( m_indexModel );
         connect( rit, SIGNAL( finished() ), this, SLOT( rebuildingIndexFinished() ) );
         connect( rit, SIGNAL( finished() ), rit, SLOT( deleteLater() ) );

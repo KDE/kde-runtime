@@ -69,6 +69,11 @@ namespace Nepomuk {
          */
         void optimize();
 
+        /**
+         * Rebuild the complete full text index in the background.
+         */
+        void rebuildIndex();
+
     Q_SIGNALS:
         void opened( Repository*, bool success );
 

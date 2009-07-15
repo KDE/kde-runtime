@@ -41,12 +41,14 @@ namespace Nepomuk {
         : stopSet(false)
 	{
         CL_NS(analysis)::StopFilter::fillStopTable( &stopSet,CL_NS(analysis)::StopAnalyzer::ENGLISH_STOP_WORDS);
+        m_rdfType = L"http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
 	}
 
 	CLuceneAnalyzer::CLuceneAnalyzer( const TCHAR** stopWords):
 		stopSet(false)
 	{
 		CL_NS(analysis)::StopFilter::fillStopTable( &stopSet,stopWords );
+        m_rdfType = L"http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
 	}
 
 	CLuceneAnalyzer::~CLuceneAnalyzer()
@@ -56,10 +58,16 @@ namespace Nepomuk {
 
 	CL_NS(analysis)::TokenStream* CLuceneAnalyzer::tokenStream(const TCHAR* fieldName, Reader* reader)
 	{
-		CL_NS(analysis)::TokenStream* ret = _CLNEW CLuceneTokenizer(reader);
-		ret = _CLNEW CLuceneFilter(ret,true);
-		ret = _CLNEW CL_NS(analysis)::LowerCaseFilter(ret,true);
-		ret = _CLNEW CL_NS(analysis)::StopFilter(ret,true, &stopSet);
-		return ret;
+        if ( !::wcscmp( fieldName, m_rdfType ) ) {
+            // never tokenize the type URIs
+            return _CLNEW CL_NS(analysis)::WhitespaceTokenizer(reader);
+        }
+        else {
+            CL_NS(analysis)::TokenStream* ret = _CLNEW CLuceneTokenizer(reader);
+            ret = _CLNEW CLuceneFilter(ret,true);
+            ret = _CLNEW CL_NS(analysis)::LowerCaseFilter(ret,true);
+            ret = _CLNEW CL_NS(analysis)::StopFilter(ret,true, &stopSet);
+            return ret;
+        }
 	}
 }
