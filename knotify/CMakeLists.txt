@@ -12,6 +12,7 @@ notifybylogfile.cpp
 notifybytaskbar.cpp
 notifybyexecute.cpp
 notifybyktts.cpp
+imageconverter.cpp
 )
 
 qt4_add_dbus_interfaces(knotify_SRCS ${KDE4_DBUS_INTERFACES_DIR}/org.kde.KSpeech.xml)

@@ -20,6 +20,7 @@
 
 #include "notifybypopup.h"
 #include "knotifyconfig.h"
+#include "imageconverter.h"
 
 #include <kdebug.h>
 #include <kpassivepopup.h>
@@ -378,8 +379,10 @@ bool NotifyByPopup::sendNotificationDBus(int id, int replacesId, KNotifyConfig* 
 
 	QVariantMap map;
 	// let's see if we've got an image, and store the image in the hints map
-	if (!config->image.isNull())
-		map["image_data"] = config->image.data();
+	if (!config->image.isNull()) {
+		QImage image = config->image.toImage();
+		map["image_data"] = ImageConverter::variantForImage(image);
+	}
 
 	args.append( map ); // hints
 	args.append( timeout ); // expire timout
