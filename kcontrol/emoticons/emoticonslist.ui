@@ -117,13 +117,13 @@
      <item>
       <widget class="KPushButton" name="btGetNew" >
        <property name="toolTip" >
-        <string>Get new themes from the Internet</string>
+        <string>Get new icon themes from the Internet</string>
        </property>
        <property name="whatsThis" >
         <string>You need to be connected to the Internet to use this action. A dialog will display a list of emoticon themes from the http://www.kde.org website. Clicking the Install button associated with a theme will install this theme locally.</string>
        </property>
        <property name="text" >
-        <string>Get New Themes...</string>
+        <string>Get New Icon Themes...</string>
        </property>
       </widget>
      </item>
