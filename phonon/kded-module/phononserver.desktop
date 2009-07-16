@@ -117,6 +117,7 @@ Comment[te]=ఫోనాన్‌ను వుపయోగించి నిర
 Comment[th]=แม่ข่ายศูนย์กลางที่จะใช้ตัดสินใจและข้อมูลของโปรแกรมโดยใช้ Phonon
 Comment[tr]=Phonon kullanan uygulamaların verilerini ve bu uygulamalara ilişkin kararları merkezileştirmek için bir sunucu
 Comment[uk]=Сервер для централізації рішень і даних програм, які використовують Phonon
+Comment[wa]=On sierveu po mete a ene seule plaece les decidaedjes ayet les dnêyes des programes k' eployèt Phonon
 Comment[x-test]=xxA server to centralize decisions and data of applications using Phononxx
 Comment[zh_CN]=一个使用 Phonon 的程序数据集中化处理服务器
 Comment[zh_TW]=將使用 Phonon 的應用程式的資料集中處理的伺服器
