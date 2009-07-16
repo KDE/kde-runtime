@@ -38,9 +38,9 @@
 #include <QDBusConnectionInterface>
 #include <kconfiggroup.h>
 
-static const char dbusServiceName[] = "org.kde.VisualNotifications";
-static const char dbusInterfaceName[] = "org.kde.VisualNotifications";
-static const char dbusPath[] = "/VisualNotifications";
+static const char dbusServiceName[] = "org.freedesktop.Notifications";
+static const char dbusInterfaceName[] = "org.freedesktop.Notifications";
+static const char dbusPath[] = "/org/freedesktop/Notifications";
 
 NotifyByPopup::NotifyByPopup(QObject *parent) 
   : KNotifyPlugin(parent) , m_animationTimer(0), m_dbusServiceExists(false)
@@ -348,7 +348,8 @@ bool NotifyByPopup::sendNotificationDBus(int id, int replacesId, KNotifyConfig* 
 	// NOTE readEntry here is not KConfigGroup::readEntry - this is a custom class
 	// It returns QString.
 	QString timeoutStr = config->readEntry( "Timeout" );
-	int timeout = !timeoutStr.isEmpty() ? timeoutStr.toInt() : 0;
+	// -1 means: notification server decides
+	int timeout = !timeoutStr.isEmpty() ? timeoutStr.toInt() : -1;
 
 	QList<QVariant> args;
 
@@ -358,7 +359,7 @@ bool NotifyByPopup::sendNotificationDBus(int id, int replacesId, KNotifyConfig* 
 	args.append( appCaption ); // app_name
 	args.append( dbus_replaces_id ); // replaces_id
 	args.append( iconName ); // app_icon
-	args.append( config->title ); // summary
+	args.append( config->title.isEmpty() ? appCaption : config->title ); // summary
 	args.append( config->text ); // body
 	// galago spec defines action list to be list like
 	// (act_id1, action1, act_id2, action2, ...)
