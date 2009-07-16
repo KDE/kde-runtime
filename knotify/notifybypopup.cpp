@@ -357,7 +357,6 @@ bool NotifyByPopup::sendNotificationDBus(int id, int replacesId, KNotifyConfig* 
 
 	args.append( appCaption ); // app_name
 	args.append( dbus_replaces_id ); // replaces_id
-	args.append( config->eventid ); // event_id
 	args.append( iconName ); // app_icon
 	args.append( config->title ); // summary
 	args.append( config->text ); // body
