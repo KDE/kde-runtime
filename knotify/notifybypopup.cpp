@@ -95,10 +95,9 @@ void NotifyByPopup::notify( int id, KNotifyConfig * config )
 	pop->setAutoDelete( true );
 	connect(pop, SIGNAL(destroyed()) , this, SLOT(slotPopupDestroyed()) );
 
-	// NOTE readEntry here is not KConfigGroup::readEntry - this is a custom class
-	// It returns QString.
-	QString timeoutStr = config->readEntry( "Timeout" );
-	pop->setTimeout( !timeoutStr.isEmpty() ? timeoutStr.toInt() : 0 );
+	// Default to 6 seconds if no timeout has been defined
+	int timeout = config->timeout == -1 ? 6 : config->timeout;
+	pop->setTimeout(timeout);
 
 	pop->adjustSize();
 	pop->show(QPoint(screen.left() + screen.width()/2 - pop->width()/2  , m_nextPosition));
@@ -346,12 +345,6 @@ bool NotifyByPopup::sendNotificationDBus(int id, int replacesId, KNotifyConfig* 
 
 	QDBusMessage m = QDBusMessage::createMethodCall( dbusServiceName, dbusPath, dbusInterfaceName, "Notify" );
 
-	// NOTE readEntry here is not KConfigGroup::readEntry - this is a custom class
-	// It returns QString.
-	QString timeoutStr = config->readEntry( "Timeout" );
-	// -1 means: notification server decides
-	int timeout = !timeoutStr.isEmpty() ? timeoutStr.toInt() : -1;
-
 	QList<QVariant> args;
 
 	QString appCaption, iconName;
@@ -385,7 +378,7 @@ bool NotifyByPopup::sendNotificationDBus(int id, int replacesId, KNotifyConfig* 
 	}
 
 	args.append( map ); // hints
-	args.append( timeout ); // expire timout
+	args.append( config->timeout ); // expire timout
 
 	m.setArguments( args );
 	QDBusMessage replyMsg = QDBusConnection::sessionBus().call(m);

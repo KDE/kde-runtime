@@ -110,7 +110,7 @@ void KNotify::closeNotification(int id)
 	delete e;
 }
 
-int KNotify::event( const QString & event, const QString & appname, const ContextList & contexts, const QString & title, const QString & text, const KNotifyImage & image, const QStringList & actions, WId winId )
+int KNotify::event( const QString & event, const QString & appname, const ContextList & contexts, const QString & title, const QString & text, const KNotifyImage & image, const QStringList & actions, int timeout, WId winId )
 {
 	m_counter++;
 	Event *e=new Event(appname , contexts , event );
@@ -121,6 +121,7 @@ int KNotify::event( const QString & event, const QString & appname, const Contex
 	e->config.text=text;
 	e->config.actions=actions;
 	e->config.image=image;
+	e->config.timeout=timeout;
 	e->config.winId=(WId)winId;
 	
 	m_notifications.insert(m_counter,e);
@@ -207,7 +208,8 @@ void KNotifyAdaptor::closeNotification(int id)
 }
 
 int KNotifyAdaptor::event(const QString &event, const QString &fromApp, const QVariantList& contexts,
-						const QString &title, const QString &text, const QByteArray& image,  const QStringList& actions , qlonglong winId)
+						const QString &title, const QString &text, const QByteArray& image,  const QStringList& actions,
+						int timeout, qlonglong winId)
 //						  const QDBusMessage & , int _return )
 								  
 {
@@ -231,7 +233,7 @@ int KNotifyAdaptor::event(const QString &event, const QString &fromApp, const QV
 			contextlist << qMakePair(context_key , s);
 	}
 	
-	return static_cast<KNotify *>(parent())->event(event, fromApp, contextlist, title, text, image, actions, WId(winId));
+	return static_cast<KNotify *>(parent())->event(event, fromApp, contextlist, title, text, image, actions, timeout, WId(winId));
 }
 
 void KNotifyAdaptor::reemit(int id, const QVariantList& contexts)

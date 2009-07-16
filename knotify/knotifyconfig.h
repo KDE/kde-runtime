@@ -84,6 +84,12 @@ class KNotifyConfig
 		 */
 		KNotifyImage image;
 		/**
+		 * How long the notification should be presented (in seconds).
+		 * -1 means server decides,
+		 *  0 means infinite.
+		 */
+		int timeout;
+		/**
 		 * The windowsID of the window that initiated the notification
 		 * (it is a window in the client)
 		 */

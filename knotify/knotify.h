@@ -52,7 +52,8 @@ class KNotify : public QObject
 		void closeNotification( int id);
 		
 		int event(const QString &event, const QString &fromApp, const ContextList& contexts ,
-				const QString &title, const QString &text, const KNotifyImage& image,  const QStringList& actions , WId winId = 0);
+				const QString &title, const QString &text, const KNotifyImage& image,  const QStringList& actions,
+				int timeout, WId winId = 0);
 		
 		void update(int id, const QString &title, const QString &text, const KNotifyImage& image,  const QStringList& actions);
 		void reemit(int id, const ContextList& contexts);
@@ -108,6 +109,7 @@ class KNotifyAdaptor : public QDBusAbstractAdaptor
 							"<arg name=\"text\" type=\"s\" direction=\"in\"/>"
 							"<arg name=\"pixmap\" type=\"ay\" direction=\"in\"/>"
 							"<arg name=\"actions\" type=\"as\" direction=\"in\"/>"
+							"<arg name=\"timeout\" type=\"i\" direction=\"in\"/>"
 							"<arg name=\"winId\" type=\"x\" direction=\"in\"/>"
 						"</method>"
 						"<method name=\"update\">"
@@ -134,7 +136,8 @@ class KNotifyAdaptor : public QDBusAbstractAdaptor
 		void closeNotification( int id);
 		
 		int event(const QString &event, const QString &fromApp, const QVariantList& contexts ,
-								const QString &title, const QString &text, const QByteArray& pixmap,  const QStringList& actions , qlonglong winId );
+								const QString &title, const QString &text, const QByteArray& pixmap,  const QStringList& actions , int timeout,
+								qlonglong winId );
 		
 		void reemit(int id, const QVariantList& contexts);
 		void update(int id, const QString &title, const QString &text, const QByteArray& pixmap,  const QStringList& actions );
