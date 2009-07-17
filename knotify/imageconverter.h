@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2009 by Aurélien Gâteau <agateau@kde.org>
+   Copyright (C) 2009 by Aurélien Gâteau <aurelien.gateau@canonical.com>
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
