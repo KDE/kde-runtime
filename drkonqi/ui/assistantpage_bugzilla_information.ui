@@ -39,7 +39,11 @@
     </widget>
    </item>
    <item>
-    <widget class="KTextEdit" name="m_detailsEdit"/>
+    <widget class="KTextEdit" name="m_detailsEdit">
+     <property name="acceptRichText">
+      <bool>false</bool>
+     </property>
+    </widget>
    </item>
    <item>
     <spacer name="verticalSpacer">
