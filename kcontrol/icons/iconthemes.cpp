@@ -185,10 +185,10 @@ void IconThemesConfig::installNewTheme()
 {
   KUrl themeURL = KUrlRequesterDialog::getUrl(QString(), this,
                                            i18n("Drag or Type Theme URL"));
-  kDebug() << themeURL.prettyUrl();
 
   if (themeURL.url().isEmpty()) return;
 
+  kDebug() << themeURL.prettyUrl();
   QString themeTmpFile;
   // themeTmpFile contains the name of the downloaded file
 
