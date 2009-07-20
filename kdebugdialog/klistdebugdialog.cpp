@@ -21,7 +21,6 @@
 #include "klistdebugdialog.h"
 
 #include <kconfig.h>
-#include <kapplication.h>
 #include <kdebug.h>
 #include <klocale.h>
 #include <ktreewidgetsearchline.h>
@@ -31,9 +30,8 @@
 #include <QTreeWidget>
 #include <QPushButton>
 
-KListDebugDialog::KListDebugDialog( QStringList areaList, QWidget *parent, const char *name, bool modal )
-  : KAbstractDebugDialog( parent, name, modal ),
-  m_areaList( areaList )
+KListDebugDialog::KListDebugDialog(const AreaMap& areaMap, QWidget *parent)
+    : KAbstractDebugDialog(parent)
 {
   setCaption(i18n("Debug Settings"));
   QWidget* mainWidget = new QWidget( this );
@@ -58,37 +56,33 @@ KListDebugDialog::KListDebugDialog( QStringList areaList, QWidget *parent, const
 
   m_incrSearch->searchLine()->addTreeWidget(m_areaWidget);
 
-  generateCheckBoxes();
+  for( QMap<QString,QString>::const_iterator it = areaMap.begin(); it != areaMap.end(); ++it ) {
+      QTreeWidgetItem* item = new QTreeWidgetItem(m_areaWidget, QStringList() << it.value());
+      item->setData(0, Qt::UserRole, it.key().simplified());
+  }
 
-  QHBoxLayout* selectButs = new QHBoxLayout();
-  lay->addLayout( selectButs );
-  QPushButton* all = new QPushButton( i18n("&Select All"));
-  QPushButton* none = new QPushButton( i18n("&Deselect All"));
+  m_buttonContainer = new QWidget(mainWidget);
+  QHBoxLayout* selectButs = new QHBoxLayout(m_buttonContainer);
+  lay->addWidget(m_buttonContainer);
+  QPushButton* all = new QPushButton(i18n("&Select All"), m_buttonContainer);
+  QPushButton* none = new QPushButton(i18n("&Deselect All"), m_buttonContainer);
   selectButs->addWidget( all );
   selectButs->addWidget( none );
 
   connect( all, SIGNAL( clicked() ), this, SLOT( selectAll() ) );
   connect( none, SIGNAL( clicked() ), this, SLOT( deSelectAll() ) );
 
+  m_disableAll = new QCheckBox(mainWidget);
+  m_disableAll->setText(i18n("Disable all debug output"));
+  connect(m_disableAll, SIGNAL(toggled(bool)), this, SLOT(disableAllClicked()));
+  lay->addWidget(m_disableAll);
+
+  load();
+
   buildButtons( lay );
   resize( 350, 400 );
   setMainWidget( mainWidget );
   setButtons( KDialog::NoDefault );
-}
-
-void KListDebugDialog::generateCheckBoxes()
-{
-  foreach (const QString& area, m_areaList) {
-    QString data = area.simplified();
-    int space = data.indexOf(" ");
-    if (space == -1)
-      kError() << "No space:" << data << endl;
-
-    QTreeWidgetItem* item = new QTreeWidgetItem(m_areaWidget, QStringList() << data);
-    item->setData(0, Qt::UserRole, data.left(space).toLatin1());
-  }
-
-  load();
 }
 
 void KListDebugDialog::selectAll()
@@ -111,7 +105,7 @@ void KListDebugDialog::deSelectAll()
   }
 }
 
-void KListDebugDialog::load()
+void KListDebugDialog::doLoad()
 {
   for (int i = 0; i < m_areaWidget->topLevelItemCount(); ++i) {
     QTreeWidgetItem* item = m_areaWidget->topLevelItem(i);
@@ -123,6 +117,7 @@ void KListDebugDialog::load()
       case 4: // off
         item->setCheckState(0, Qt::Unchecked);
         break;
+      case -1: // default
       case 2: //shell
         item->setCheckState(0, Qt::Checked);
         break;
@@ -137,7 +132,7 @@ void KListDebugDialog::load()
   }
 }
 
-void KListDebugDialog::save()
+void KListDebugDialog::doSave()
 {
   for (int i = 0; i < m_areaWidget->topLevelItemCount(); ++i) {
     QTreeWidgetItem* item = m_areaWidget->topLevelItem(i);
@@ -158,12 +153,20 @@ void KListDebugDialog::save()
   }
 }
 
-void KListDebugDialog::activateArea( QByteArray area, bool activate )
+void KListDebugDialog::activateArea( const QByteArray& area, bool activate )
 {
   foreach(QTreeWidgetItem* item, m_areaWidget->findItems(area, Qt::MatchContains)) {
     item->setCheckState( 0, activate ? Qt::Checked : Qt::Unchecked );
     return;
   }
+}
+
+void KListDebugDialog::disableAllClicked()
+{
+    bool allDisabled = m_disableAll->isChecked();
+    m_incrSearch->setEnabled(!allDisabled);
+    m_areaWidget->setEnabled(!allDisabled);
+    m_buttonContainer->setEnabled(!allDisabled);
 }
 
 #include "klistdebugdialog.moc"

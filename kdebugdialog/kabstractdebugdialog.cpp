@@ -20,17 +20,15 @@
 #include "kabstractdebugdialog.h"
 #include <kconfig.h>
 #include <kpushbutton.h>
+#include <QCheckBox>
 #include <QLayout>
-#include <kapplication.h>
 #include <klocale.h>
 #include <kstandardguiitem.h>
 #include <ktoolinvocation.h>
 
-KAbstractDebugDialog::KAbstractDebugDialog( QWidget *parent, const char *name, bool modal )
-    : KDialog( parent)
+KAbstractDebugDialog::KAbstractDebugDialog(QWidget *parent)
+    : KDialog(parent)
 {
-	setObjectName(name);
-	setModal(modal);
     pConfig = new KConfig( "kdebugrc", KConfig::NoGlobals );
 }
 
@@ -76,7 +74,6 @@ void KAbstractDebugDialog::buildButtons( QVBoxLayout * topLayout )
 
 void KAbstractDebugDialog::slotShowHelp()
 {
-  if (kapp)
     KToolInvocation::invokeHelp();
 }
 
@@ -84,6 +81,20 @@ void KAbstractDebugDialog::slotApply()
 {
   save();
   pConfig->sync();
+}
+
+void KAbstractDebugDialog::save()
+{
+    doSave();
+    KConfigGroup topGroup(pConfig, QString());
+    topGroup.writeEntry("DisableAll", m_disableAll->isChecked());
+}
+
+void KAbstractDebugDialog::load()
+{
+    doLoad();
+    KConfigGroup topGroup(pConfig, QString());
+    m_disableAll->setChecked(topGroup.readEntry("DisableAll", false));
 }
 
 #include "kabstractdebugdialog.moc"

@@ -38,24 +38,26 @@ class KListDebugDialog : public KAbstractDebugDialog
   Q_OBJECT
 
 public:
-  explicit KListDebugDialog( QStringList areaList, QWidget *parent=0, const char *name=0, bool modal=true );
+  explicit KListDebugDialog(const AreaMap& areaMap, QWidget *parent = 0);
   virtual ~KListDebugDialog() {}
 
-  void activateArea( QByteArray area, bool activate );
-
-  virtual void save();
+  void activateArea( const QByteArray& area, bool activate );
 
 protected Q_SLOTS:
   void selectAll();
   void deSelectAll();
+  void disableAllClicked();
 
-  void generateCheckBoxes();
+protected:
+  virtual void doSave();
+  virtual void doLoad();
+
+
 
 private:
-  void load();
-  QStringList m_areaList;
   QTreeWidget* m_areaWidget;
   KTreeWidgetSearchLineWidget *m_incrSearch;
+    QWidget* m_buttonContainer;
 };
 
 #endif

@@ -1,5 +1,5 @@
 /* This file is part of the KDE libraries
-   Copyright (C) 2000 David Faure <faure@kde.org>
+   Copyright (C) 2000, 2009 David Faure <faure@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -31,48 +31,72 @@
 
 #include <QFile>
 
-QStringList readAreaList()
+static KAbstractDebugDialog::AreaMap readAreas()
 {
-  QStringList lst;
-  lst.append( "0 (generic)" );
+    KAbstractDebugDialog::AreaMap areas;
+    areas.insert( "      0" /*cf rightJustified below*/, "0 (generic)" );
 
-  QString confAreasFile = KStandardDirs::locate( "config", "kdebug.areas" );
+  const QString confAreasFile = KStandardDirs::locate("config", "kdebug.areas");
   QFile file( confAreasFile );
   if (!file.open(QIODevice::ReadOnly)) {
-    kWarning() << "Couldn't open " << confAreasFile ;
-    file.close();
-  }
-  else
-  {
+    kWarning() << "Couldn't open" << confAreasFile;
+  } else {
     QString data;
 
-    QTextStream *ts = new QTextStream(&file);
-    ts->setCodec( "ISO-8859-1" );
-    while (!ts->atEnd()) {
-      data = ts->readLine().simplified();
+    QTextStream ts(&file);
+    ts.setCodec( "ISO-8859-1" );
+    while (!ts.atEnd()) {
+      data = ts.readLine().simplified();
 
       int pos = data.indexOf("#");
-      if ( pos != -1 )
+      if ( pos != -1 ) {
         data.truncate( pos );
+        data = data.simplified();
+      }
 
       if (data.isEmpty())
         continue;
 
-      lst.append( data );
-    }
+      const int space = data.indexOf(' ');
+      if (space == -1)
+          kError() << "No space:" << data << endl;
 
-    delete ts;
-    file.close();
+      bool longOK;
+      unsigned long number = data.left(space).toULong(&longOK);
+      if (!longOK)
+          kError() << "The first part wasn't a number : " << data << endl;
+
+      const QString description = data.mid(space).simplified();
+
+      // In the key, right-align the area number to 6 digits for proper sorting
+      const QString key = QString::number(number).rightJustified(6);
+      areas.insert( key, QString("%1 %2").arg(number).arg(description) );
+    }
   }
 
-  return lst;
+  bool ok;
+#ifndef NDEBUG
+  // Builtin unittest for our expectations of QString::toInt
+  QString("4a").toInt(&ok);
+  Q_ASSERT(!ok);
+#endif
+
+  KConfig config("kdebugrc", KConfig::NoGlobals);
+  Q_FOREACH(const QString& groupName, config.groupList()) {
+      groupName.toInt(&ok);
+      if (ok)
+          continue; // we are not interested in old-style number-only groups
+      areas.insert(groupName, groupName); // ID == description
+  }
+
+  return areas;
 }
 
 int main(int argc, char ** argv)
 {
   KAboutData data( "kdebugdialog", 0, ki18n( "KDebugDialog"),
     "1.0", ki18n("A dialog box for setting preferences for debug output"),
-    KAboutData::License_GPL, ki18n("Copyright 1999-2000, David Faure <email>faure@kde.org</email>"));
+    KAboutData::License_GPL, ki18n("Copyright 1999-2009, David Faure <email>faure@kde.org</email>"));
   data.addAuthor(ki18n("David Faure"), ki18n("Maintainer"), "faure@kde.org");
   data.setProgramIconName("tools-report-bug");
   KCmdLineArgs::init( argc, argv, &data );
@@ -86,13 +110,11 @@ int main(int argc, char ** argv)
   KUniqueApplication app;
   KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 
-  QStringList areaList ( readAreaList() );
   KAbstractDebugDialog * dialog;
-  if (args->isSet("fullmode"))
-      dialog = new KDebugDialog(areaList, 0L);
-  else
-  {
-      KListDebugDialog * listdialog = new KListDebugDialog(areaList, 0L);
+  if (args->isSet("fullmode")) {
+      dialog = new KDebugDialog(readAreas());
+  } else {
+      KListDebugDialog * listdialog = new KListDebugDialog(readAreas());
       if (args->isSet("on"))
       {
           listdialog->activateArea( args->getOption("on").toUtf8(), true );

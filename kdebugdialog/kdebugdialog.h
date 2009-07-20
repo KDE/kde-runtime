@@ -39,17 +39,21 @@ class KDebugDialog : public KAbstractDebugDialog
   Q_OBJECT
 
 public:
-  explicit KDebugDialog( QStringList areaList, QWidget *parent=0, const char *name=0, bool modal=true );
+  explicit KDebugDialog(const AreaMap& areaMap, QWidget *parent = 0);
   virtual ~KDebugDialog();
 
-  void save();
+  void doLoad() {}
+  void doSave();
 
 protected Q_SLOTS:
-  void slotDebugAreaChanged( const QString & );
-  void slotDestinationChanged(int);
+  void slotDebugAreaChanged(int);
+  void slotDestinationChanged();
+    void disableAllClicked();
 
 private:
-  int mCurrentDebugArea;
+  void showArea(const QString& areaName);
+
+  QString mCurrentDebugArea;
   QComboBox* pDebugAreas;
   QGroupBox* pInfoGroup;
   QLabel* pInfoLabel1;
@@ -81,6 +85,7 @@ private:
   QLineEdit* pFatalShow;
 
   QCheckBox* pAbortFatal;
+    QWidget* m_container;
 
 private:
   // Disallow assignment and copy-construction

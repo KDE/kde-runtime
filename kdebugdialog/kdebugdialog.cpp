@@ -32,33 +32,41 @@
 #include <kdialog.h>
 #include <kconfig.h>
 #include <kseparator.h>
-#include <kapplication.h>
 
 #include "kdebugdialog.h"
 
-KDebugDialog::KDebugDialog( QStringList areaList, QWidget *parent, const char *name, bool modal )
-  : KAbstractDebugDialog( parent, name, modal )
+KDebugDialog::KDebugDialog(const AreaMap& areaMap, QWidget* parent)
+    : KAbstractDebugDialog(parent)
 {
   setCaption(i18n("Debug Settings"));
   setButtons(None);
-  QVBoxLayout *topLayout = new QVBoxLayout( mainWidget() );
+
+  QVBoxLayout *topLayout = new QVBoxLayout(mainWidget());
   topLayout->setMargin( KDialog::marginHint() );
   topLayout->setSpacing( KDialog::spacingHint() );
 
-  QLabel * tmpLabel = new QLabel( i18n("Debug area:"), mainWidget() );
+  m_container = new QWidget(mainWidget());
+  QVBoxLayout* containerLayout = new QVBoxLayout(m_container);
+  containerLayout->setMargin(0);
+  containerLayout->setSpacing(0);
+  topLayout->addWidget(m_container);
+
+  QLabel * tmpLabel = new QLabel( i18n("Debug area:"), m_container );
   tmpLabel->setFixedHeight( fontMetrics().lineSpacing() );
-  topLayout->addWidget( tmpLabel );
+  containerLayout->addWidget( tmpLabel );
 
   // Build combo of debug areas
-  pDebugAreas = new QComboBox( mainWidget() );
+  pDebugAreas = new QComboBox( m_container );
   pDebugAreas->setEditable( false );
   pDebugAreas->setFixedHeight( pDebugAreas->sizeHint().height() );
-  pDebugAreas->addItems( areaList );
-  topLayout->addWidget( pDebugAreas );
+  for( QMap<QString,QString>::const_iterator it = areaMap.begin(); it != areaMap.end(); ++it ) {
+      pDebugAreas->addItem(it.value(), QVariant(it.key().simplified()));
+  }
+  containerLayout->addWidget( pDebugAreas );
 
   QGridLayout *gbox = new QGridLayout();
   gbox->setMargin( KDialog::marginHint() );
-  topLayout->addLayout( gbox );
+  containerLayout->addLayout( gbox );
 
   QStringList destList;
   destList.append( i18n("File") );
@@ -70,7 +78,7 @@ KDebugDialog::KDebugDialog( QStringList areaList, QWidget *parent, const char *n
   //
   // Upper left frame
   //
-  pInfoGroup = new QGroupBox( i18n("Information"), mainWidget() );
+  pInfoGroup = new QGroupBox( i18n("Information"), m_container );
   gbox->addWidget( pInfoGroup, 0, 0 );
   QVBoxLayout *vbox = new QVBoxLayout( pInfoGroup );
   vbox->setSpacing( KDialog::spacingHint() );
@@ -80,7 +88,7 @@ KDebugDialog::KDebugDialog( QStringList areaList, QWidget *parent, const char *n
   pInfoCombo = new QComboBox( pInfoGroup );
   pInfoCombo->setEditable( false );
   connect(pInfoCombo, SIGNAL(activated(int)),
-	  this, SLOT(slotDestinationChanged(int)));
+	  this, SLOT(slotDestinationChanged()));
   vbox->addWidget( pInfoCombo );
   pInfoCombo->addItems( destList );
   pInfoLabel2 = new QLabel( i18n("Filename:"), pInfoGroup );
@@ -97,7 +105,7 @@ KDebugDialog::KDebugDialog( QStringList areaList, QWidget *parent, const char *n
   //
   // Upper right frame
   //
-  pWarnGroup = new QGroupBox( i18n("Warning"), mainWidget() );
+  pWarnGroup = new QGroupBox( i18n("Warning"), m_container );
   gbox->addWidget( pWarnGroup, 0, 1 );
   vbox = new QVBoxLayout( pWarnGroup );
   vbox->setSpacing( KDialog::spacingHint() );
@@ -107,7 +115,7 @@ KDebugDialog::KDebugDialog( QStringList areaList, QWidget *parent, const char *n
   pWarnCombo = new QComboBox( pWarnGroup );
   pWarnCombo->setEditable( false );
   connect(pWarnCombo, SIGNAL(activated(int)),
-	  this, SLOT(slotDestinationChanged(int)));
+	  this, SLOT(slotDestinationChanged()));
   vbox->addWidget( pWarnCombo );
   pWarnCombo->addItems( destList );
   pWarnLabel2 = new QLabel( i18n("Filename:"), pWarnGroup );
@@ -124,7 +132,7 @@ KDebugDialog::KDebugDialog( QStringList areaList, QWidget *parent, const char *n
   //
   // Lower left frame
   //
-  pErrorGroup = new QGroupBox( i18n("Error"), mainWidget() );
+  pErrorGroup = new QGroupBox( i18n("Error"), m_container );
   gbox->addWidget( pErrorGroup, 1, 0 );
   vbox = new QVBoxLayout( pErrorGroup );
   vbox->setSpacing( KDialog::spacingHint() );
@@ -134,7 +142,7 @@ KDebugDialog::KDebugDialog( QStringList areaList, QWidget *parent, const char *n
   pErrorCombo = new QComboBox( pErrorGroup );
   pErrorCombo->setEditable( false );
   connect(pErrorCombo, SIGNAL(activated(int)),
-	  this, SLOT(slotDestinationChanged(int)));
+	  this, SLOT(slotDestinationChanged()));
   vbox->addWidget( pErrorCombo );
   pErrorCombo->addItems( destList );
   pErrorLabel2 = new QLabel( i18n("Filename:"), pErrorGroup );
@@ -151,7 +159,7 @@ KDebugDialog::KDebugDialog( QStringList areaList, QWidget *parent, const char *n
   //
   // Lower right frame
   //
-  pFatalGroup = new QGroupBox( i18n("Fatal Error"), mainWidget() );
+  pFatalGroup = new QGroupBox( i18n("Fatal Error"), m_container );
   gbox->addWidget( pFatalGroup, 1, 1 );
   vbox = new QVBoxLayout( pFatalGroup );
   vbox->setSpacing( KDialog::spacingHint() );
@@ -161,7 +169,7 @@ KDebugDialog::KDebugDialog( QStringList areaList, QWidget *parent, const char *n
   pFatalCombo = new QComboBox( pFatalGroup );
   pFatalCombo->setEditable( false );
   connect(pFatalCombo, SIGNAL(activated(int)),
-	  this, SLOT(slotDestinationChanged(int)));
+	  this, SLOT(slotDestinationChanged()));
   vbox->addWidget( pFatalCombo );
   pFatalCombo->addItems( destList );
   pFatalLabel2 = new QLabel( i18n("Filename:"), pFatalGroup );
@@ -176,8 +184,13 @@ KDebugDialog::KDebugDialog( QStringList areaList, QWidget *parent, const char *n
   */
 
 
-  pAbortFatal = new QCheckBox( i18n("Abort on fatal errors"), mainWidget() );
-  topLayout->addWidget(pAbortFatal);
+  pAbortFatal = new QCheckBox( i18n("Abort on fatal errors"), m_container );
+  containerLayout->addWidget(pAbortFatal);
+
+  m_disableAll = new QCheckBox(mainWidget());
+  m_disableAll->setText(i18n("Disable all debug output"));
+  connect(m_disableAll, SIGNAL(toggled(bool)), this, SLOT(disableAllClicked()));
+  topLayout->addWidget(m_disableAll);
 
   topLayout->addStretch();
   KSeparator *hline = new KSeparator( Qt::Horizontal, mainWidget() );
@@ -185,12 +198,13 @@ KDebugDialog::KDebugDialog( QStringList areaList, QWidget *parent, const char *n
 
   buildButtons( topLayout );
 
-  connect( pDebugAreas, SIGNAL( activated( const QString &) ),
-           SLOT( slotDebugAreaChanged( const QString & ) ) );
+  connect( pDebugAreas, SIGNAL(activated(int)),
+           SLOT(slotDebugAreaChanged(int)) );
 
-  // Get initial values ("initial" is understood by the slot)
-  slotDebugAreaChanged( "0 initial" );
-  slotDestinationChanged(0);
+  // Get initial values
+  showArea(QString("0"));
+
+  load();
 
   resize( 300, height() );
 }
@@ -199,25 +213,20 @@ KDebugDialog::~KDebugDialog()
 {
 }
 
-void KDebugDialog::slotDebugAreaChanged( const QString & text )
+void KDebugDialog::slotDebugAreaChanged(int index)
 {
-  // Save settings from previous page
-  if ( text != "0 initial" ) // except on first call
+    // Save settings from previous page
     save();
 
-  QString data = text.simplified();
-  int space = data.indexOf(" ");
-  if (space == -1)
-      kError() << "No space:" << data << endl;
+    const QString areaName = pDebugAreas->itemData(index).toString();
+    showArea(areaName);
+}
 
-  bool longOK;
-  unsigned long number = data.left(space).toULong(&longOK);
-  if (!longOK)
-      kError() << "The first part wasn't a number : " << data << endl;
-
+void KDebugDialog::showArea(const QString& areaName)
+{
   /* Fill dialog fields with values from config data */
-  mCurrentDebugArea = number;
-  KConfigGroup group = pConfig->group( QString::number( number ) ); // Group name = debug area code
+  mCurrentDebugArea = areaName;
+  KConfigGroup group = pConfig->group(areaName);
   pInfoCombo->setCurrentIndex( group.readEntry( "InfoOutput", 2 ) );
   pInfoFile->setText( group.readPathEntry( "InfoFilename","kdebug.dbg" ) );
   //pInfoShow->setText( group.readEntry( "InfoShow" ) );
@@ -231,12 +240,12 @@ void KDebugDialog::slotDebugAreaChanged( const QString & text )
   pFatalFile->setText( group.readPathEntry("FatalFilename","kdebug.dbg") );
   //pFatalShow->setText( group.readEntry( "FatalShow" ) );
   pAbortFatal->setChecked( group.readEntry( "AbortFatal", 1 ) );
-  slotDestinationChanged(0);
+  slotDestinationChanged();
 }
 
-void KDebugDialog::save()
+void KDebugDialog::doSave()
 {
-  KConfigGroup group = pConfig->group( QString::number( mCurrentDebugArea ) ); // Group name = debug area code
+  KConfigGroup group = pConfig->group( mCurrentDebugArea ); // Group name = debug area code
   group.writeEntry( "InfoOutput", pInfoCombo->currentIndex() );
   group.writePathEntry( "InfoFilename", pInfoFile->text() );
   //group.writeEntry( "InfoShow", pInfoShow->text() );
@@ -258,11 +267,18 @@ void KDebugDialog::save()
   }
 }
 
-void KDebugDialog::slotDestinationChanged(int) {
+void KDebugDialog::slotDestinationChanged()
+{
     pInfoFile->setEnabled(pInfoCombo->currentIndex() == 0);
     pWarnFile->setEnabled(pWarnCombo->currentIndex() == 0);
     pErrorFile->setEnabled(pErrorCombo->currentIndex() == 0);
     pFatalFile->setEnabled(pFatalCombo->currentIndex() == 0);
+}
+
+void KDebugDialog::disableAllClicked()
+{
+    kDebug();
+    m_container->setEnabled(!m_disableAll->isChecked());
 }
 
 #include "kdebugdialog.moc"
