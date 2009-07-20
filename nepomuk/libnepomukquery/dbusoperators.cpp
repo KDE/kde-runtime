@@ -329,7 +329,10 @@ const QDBusArgument& operator>>( const QDBusArgument& arg, Soprano::Node& node )
     QString value, language, dataTypeUri;
     arg >> type >> value >> language >> dataTypeUri;
     if ( type == Soprano::Node::LiteralNode ) {
-        node = Soprano::Node( Soprano::LiteralValue::fromString( value, dataTypeUri ), language );
+        if ( dataTypeUri.isEmpty() )
+            node = Soprano::Node( Soprano::LiteralValue::createPlainLiteral( value, language ) );
+        else
+            node = Soprano::Node( Soprano::LiteralValue::fromString( value, QUrl::fromEncoded( dataTypeUri.toAscii() ) ) );
     }
     else if ( type == Soprano::Node::ResourceNode ) {
         node = Soprano::Node( QUrl::fromEncoded( value.toAscii() ) );
