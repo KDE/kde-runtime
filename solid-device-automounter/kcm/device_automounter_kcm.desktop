@@ -1,0 +1,13 @@
+[Desktop Entry]
+Exec=kcmshell4 device_automounter_kcm
+Icon=drive-removable-media
+Type=Service
+X-KDE-ServiceTypes=KCModule
+X-KDE-Library=kcm_device_automounter
+X-KDE-ParentApp=kcontrol
+X-KDE-System-Settings-Parent-Category=advanced-user-settings
+X-KDE-Keywords=Mount,Removable,Devices,Automatic
+
+Name=Removable Devices
+Comment=Configure automatic handling of removable storage media
+Categories=Qt;KDE;Filesystem;System;X-KDE-settings-components;

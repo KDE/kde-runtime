@@ -1,0 +1,4 @@
+ClassName=AutomounterSettings
+File=AutomounterSettings.kcfg
+Mutators=true
+Singleton=true
