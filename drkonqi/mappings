@@ -70,6 +70,7 @@ plasmawallpaperviewer=plasma|general
 plasmoidviewer=plasma|general
 knotificationareaitemtest=plasma|widget-systemtray
 knotificationicontest=plasma|widget-systemtray
+lancelot=plasma|widget-lancelot
 
 #KIO
 kioclient=kio|general
