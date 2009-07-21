@@ -41,10 +41,10 @@
          <string extracomment="tooltip for option in switching Windows Desktop shells">Native Windows Explorer shell</string>
         </property>
         <property name="whatsThis">
-         <string extracomment="whatsThis for option in switching Windows Desktop shells">This is standard Windows Desktop shell. Chose this if you want to return youer system to default desktop.</string>
+         <string extracomment="whatsThis for option in switching Windows Desktop shells">This is standard Windows Desktop shell. Cohose this if you want to return your system to default desktop.</string>
         </property>
         <property name="text">
-         <string extracomment="radio button to chose Windows Desktop shell">Native desktop shell</string>
+         <string extracomment="radio button to choose Windows Desktop shell">Native desktop shell</string>
         </property>
        </widget>
       </item>
@@ -61,10 +61,10 @@
          <string extracomment="tooltip for option in switching Windows Desktop shells">Use KDE desktop shell as it's seen on Linux</string>
         </property>
         <property name="whatsThis">
-         <string extracomment="whatsThis for option in switching Windows Desktop shells">Chose this option if you would like to use Plasma desktop shell for your Windows system.</string>
+         <string extracomment="whatsThis for option in switching Windows Desktop shells">Choose this option if you would like to use Plasma desktop shell for your Windows system.</string>
         </property>
         <property name="text">
-         <string extracomment="radio button to chose Windows Desktop shell">Plasma desktop shell</string>
+         <string extracomment="radio button to choose Windows Desktop shell">Plasma desktop shell</string>
         </property>
        </widget>
       </item>
@@ -81,7 +81,7 @@
          <string extracomment="tooltip for option in switching Windows Desktop shells">Your custom desktop shell</string>
         </property>
         <property name="whatsThis">
-         <string extracomment="whatsThis for option in switching Windows Desktop shells">Chose this and press &lt;i&gt;&quot;Setup...&quot;&lt;/i&gt; button to configure you custom desktop shell. Not recommended for average user.</string>
+         <string extracomment="whatsThis for option in switching Windows Desktop shells">Choose this and press &lt;i&gt;&quot;Setup...&quot;&lt;/i&gt; button to configure you custom desktop shell. Not recommended for average user.</string>
         </property>
         <property name="text">
          <string extracomment="radio button to chose Windows Desktop shell">Custom desktop shell</string>
@@ -109,7 +109,7 @@
            <string extracomment="tooltip for button to setup custom Desktop shell">Press to setup your custom desktop shell</string>
           </property>
           <property name="whatsThis">
-           <string extracomment="whatsThis for button to setup custom Desktop shells">Press this and configuration dialog will popup to let you cnfigure your custom desktop shell</string>
+           <string extracomment="whatsThis for button to setup custom Desktop shells">Press this and configuration dialog will popup to let you configure your custom desktop shell</string>
           </property>
           <property name="text">
            <string>Setup...</string>
@@ -180,7 +180,7 @@
          <string/>
         </property>
         <property name="whatsThis">
-         <string extracomment="whatsThis tooltip">Chose this option to make KDE applications use usual Windows Open/Save file dialogs instead of custom KDE ones.</string>
+         <string extracomment="whatsThis tooltip">Choose this option to make KDE applications use usual Windows Open/Save file dialogs instead of custom KDE ones.</string>
         </property>
         <property name="text">
          <string extracomment="checkbox caption in System Integration options">Use native system file dialogs</string>
