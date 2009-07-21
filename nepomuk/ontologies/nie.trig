@@ -332,7 +332,7 @@ nie: {nie:characterSet
           rdfs:subPropertyOf dcterms:hasPart ;
           nrl:inverseProperty nie:isLogicalPartOf .
 
-    nfo:url
+    nie:url
           a       rdf:Property ;
           rdfs:comment "URL of a DataObject. It points to the location of the object. A typial usage is FileDataObject. In cases where creating a simple file:// or http:// URL for a file is difficult (e.g. for files inside compressed archives) the applications are encouraged to use conventions defined by Apache Commons VFS Project at http://jakarta.apache.org/  commons/ vfs/ filesystems.html." ;
           rdfs:domain nie:DataObject ;
