@@ -18,11 +18,6 @@ set(SRCS
   )
 
 soprano_add_ontology(SRCS
-  ${nepomukontologies_SOURCE_DIR}/nfo.trig
-  "NFO"
-  "Nepomuk::Vocabulary"
-  "trig")
-soprano_add_ontology(SRCS
   ${nepomukontologies_SOURCE_DIR}/nie.trig
   "NIE"
   "Nepomuk::Vocabulary"

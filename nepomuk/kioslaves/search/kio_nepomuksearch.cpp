@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2008 by Sebastian Trueg <trueg at kde.org>
+   Copyright (C) 2008-2009 by Sebastian Trueg <trueg at kde.org>
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 #include "kio_nepomuksearch.h"
 #include "searchfolder.h"
 #include "nfo.h"
+#include "nie.h"
 
 #include <QtCore/QFile>
 
@@ -94,7 +95,7 @@ void Nepomuk::SearchProtocol::addDefaultSearch( const QString& name, const Searc
 {
     Search::Query query( q );
     query.addRequestProperty( Soprano::Vocabulary::Xesam::url(), true );
-    query.addRequestProperty( Nepomuk::Vocabulary::NFO::fileUrl(), true );
+    query.addRequestProperty( Nepomuk::Vocabulary::NIE::url(), true );
     m_defaultSearches.insert( name, query );
 }
 
@@ -288,7 +289,7 @@ Nepomuk::SearchFolder* Nepomuk::SearchProtocol::getQueryResults( const QString& 
 
         Search::Query q = Nepomuk::Search::QueryParser::parseQuery( query );
         q.addRequestProperty( Soprano::Vocabulary::Xesam::url(), true );
-        q.addRequestProperty( Nepomuk::Vocabulary::NFO::fileUrl(), true );
+        q.addRequestProperty( Nepomuk::Vocabulary::NIE::url(), true );
         SearchFolder* folder = new SearchFolder( query, q, this );
         m_searchCacheNameQueue.enqueue( query );
         m_searchCache.insert( query, folder );
