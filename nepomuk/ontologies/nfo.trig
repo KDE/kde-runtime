@@ -44,6 +44,7 @@ nfo: {nfo:horizontalResolution
           rdfs:comment "Name of the file, together with the extension" ;
           rdfs:domain nfo:FileDataObject ;
           rdfs:label "fileName" ;
+          nrl:maxCardinality "1" ;
           rdfs:range xsd:string .
 
     nfo:MediaStream
