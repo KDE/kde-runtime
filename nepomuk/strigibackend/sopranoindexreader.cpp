@@ -23,6 +23,7 @@
 #include <strigi/queryparser.h>
 #include <strigi/fieldtypes.h>
 #include "util.h"
+#include "nie.h"
 
 #include <Soprano/Soprano>
 #include <Soprano/Index/IndexFilterModel>
@@ -193,12 +194,6 @@ static lucene::search::Query* createMultiFieldQuery( const Strigi::Query& query 
 }
 
 
-static QString escapeLiteralForSparqlQuery( const QString& s )
-{
-    return QString( s ).replace( '\\', "\\\\" ).replace( '\"', "\\\"" );
-}
-
-
 class Strigi::Soprano::IndexReader::Private
 {
 public:
@@ -252,7 +247,6 @@ public:
         return true;
     }
 
-//    ::Soprano::Index::IndexFilterModel* repository;
     ::Soprano::Model* repository;
 };
 
@@ -281,7 +275,6 @@ int32_t Strigi::Soprano::IndexReader::countHits( const Query& query )
     ::Soprano::QueryResultIterator hits = d->repository->executeQuery( TString( q->toString(), true ),
                                                                        ::Soprano::Query::QueryLanguageUser,
                                                                        QLatin1String( "lucene" ) );
-//    Iterator< ::Soprano::Index::QueryHit> hits = d->repository->index()->search( q );
     int s = 0;
     while ( hits.next() ) {
         qDebug() << "Query hit:" << hits.binding( 0 );
@@ -303,7 +296,6 @@ void Strigi::Soprano::IndexReader::getHits( const Strigi::Query& query,
     ::Soprano::QueryResultIterator hits = d->repository->executeQuery( TString( bq->toString(), true ),
                                                                        ::Soprano::Query::QueryLanguageUser,
                                                                        QLatin1String( "lucene" ) );
-//    Iterator< ::Soprano::Index::QueryHit> hits = d->repository->index()->search( bq );
 
     int i = -1;
     while ( hits.next() ) {
@@ -315,7 +307,6 @@ void Strigi::Soprano::IndexReader::getHits( const Strigi::Query& query,
             break;
         }
 
-//        ::Soprano::Index::QueryHit hit = *hits;
         std::vector<Strigi::Variant> resultRow;
         std::vector<std::string>::const_iterator fieldIt = fields.begin();
         std::vector<Strigi::Variant::Type>::const_iterator typesIt = types.begin();
@@ -354,7 +345,6 @@ std::vector<Strigi::IndexedDocument> Strigi::Soprano::IndexReader::query( const 
     ::Soprano::QueryResultIterator hits = d->repository->executeQuery( TString( bq->toString(), true ),
                                                                        ::Soprano::Query::QueryLanguageUser,
                                                                        QLatin1String( "lucene" ) );
-//    Iterator< ::Soprano::Index::QueryHit> hits = d->repository->index()->search( bq );
 
     int i = -1;
     while ( hits.next() ) {
@@ -367,7 +357,6 @@ std::vector<Strigi::IndexedDocument> Strigi::Soprano::IndexReader::query( const 
         }
 
         IndexedDocument result;
-//        ::Soprano::Index::QueryHit hit = *hits;
         result.score = hits.binding( 1 ).literal().toDouble();
         if ( d->createDocument( hits.binding( 0 ), result ) ) {
             results.push_back( result );
@@ -385,27 +374,34 @@ std::vector<Strigi::IndexedDocument> Strigi::Soprano::IndexReader::query( const 
 void Strigi::Soprano::IndexReader::getChildren( const std::string& parent,
                                                 std::map<std::string, time_t>& children )
 {
-//    qDebug() << "IndexReader::getChildren in thread" << QThread::currentThread();
+    //
+    // We are compatible with old Xesam data, thus the weird query
+    //
     QString query = QString( "select distinct ?path ?mtime where { "
-                             "{ { ?r <%1> \"%2\"^^<%3> . } UNION { ?r <%1> %6 . } } . "
-                             "?r <%4> ?mtime . "
-                             "?r <%5> ?path . "
+                             "{ ?r <http://strigi.sf.net/ontologies/0.9#parentUrl> %1 . } "
+                             "UNION "
+                             "{ ?r <http://strigi.sf.net/ontologies/0.9#parentUrl> %2 . } "
+                             "UNION "
+                             "{ ?r %3 %2 . } . "
+                             "{ ?r %4 ?mtime . } UNION { ?r %5 ?mtime . } "
+                             "{ ?r %6 ?path . } UNION { ?r %7 ?path . } "
                              "}")
-                    .arg( Util::fieldUri( FieldRegister::parentLocationFieldName ).toString(),
-                          escapeLiteralForSparqlQuery( QString::fromUtf8( parent.c_str() ) ),
-                          Vocabulary::XMLSchema::string().toString(),
-                          Util::fieldUri( FieldRegister::mtimeFieldName ).toString(),
-                          Util::fieldUri( FieldRegister::pathFieldName ).toString(),
-                          Node( QUrl::fromLocalFile( QFile::decodeName( parent.c_str() ) ) ).toN3() );
+                    .arg( Node::literalToN3( QString::fromUtf8( parent.c_str() ) ),
+                          Node::resourceToN3( QUrl::fromLocalFile( QFile::decodeName( parent.c_str() ) ) ),
+                          Node::resourceToN3( Nepomuk::Vocabulary::NIE::isPartOf() ),
+                          Node::resourceToN3( Vocabulary::Xesam::sourceModified() ),
+                          Node::resourceToN3( Nepomuk::Vocabulary::NIE::lastModified() ),
+                          Node::resourceToN3( Vocabulary::Xesam::url() ),
+                          Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ) );
 
-//    qDebug() << "running getChildren query:" << query;
+    qDebug() << "running getChildren query:" << query;
 
     QueryResultIterator result = d->repository->executeQuery( query, ::Soprano::Query::QueryLanguageSparql );
 
     while ( result.next() ) {
         Node pathNode = result.binding( "path" );
         Node mTimeNode = result.binding( "mtime" );
-//        qDebug() << "file in index: " << pathNode.toString() << "mtime:" << mTimeNode.literal().toDateTime() << "(" << mTimeNode.literal().toDateTime().toTime_t() << ")";
+        qDebug() << "file in index: " << pathNode.toString() << "mtime:" << mTimeNode.literal().toDateTime() << "(" << mTimeNode.literal().toDateTime().toTime_t() << ")";
 
         // be backwards compatible in case there are paths left encoded as literals
         std::string path;
@@ -450,12 +446,17 @@ int64_t Strigi::Soprano::IndexReader::indexSize()
 
 time_t Strigi::Soprano::IndexReader::mTime( const std::string& uri )
 {
-//    qDebug() << "IndexReader::mTime in thread" << QThread::currentThread();
-    QString query = QString( "select ?mtime where { ?r <%2> \"%3\"^^<%4> . ?r <%1> ?mtime . }" )
-                    .arg( Util::fieldUri( FieldRegister::mtimeFieldName ).toString(),
-                          Util::fieldUri( FieldRegister::pathFieldName ).toString(),
-                          escapeLiteralForSparqlQuery( QString::fromUtf8( uri.c_str() ) ),
-                          Vocabulary::XMLSchema::string().toString() );
+    //
+    // We are compatible with old Xesam data, thus the weird query
+    //
+    QString query = QString( "select ?mtime where { "
+                             "{ ?r %1 %2 . } UNION { ?r %3 %2 . } "
+                             "{ ?r %4 ?mtime . } UNION { ?r %5 ?mtime . } }" )
+                    .arg( Node::resourceToN3( Vocabulary::Xesam::url() ),
+                          Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ),
+                          Node::literalToN3( QString::fromUtf8( uri.c_str() ) ),
+                          Node::resourceToN3( Vocabulary::Xesam::sourceModified() ),
+                          Node::resourceToN3( Nepomuk::Vocabulary::NIE::lastModified() ) );
 
     qDebug() << "mTime( " << uri.c_str() << ") query:" << query;
 

@@ -234,11 +234,9 @@ private:
 Strigi::Soprano::IndexWriter::IndexWriter( ::Soprano::Model* model )
     : Strigi::IndexWriter()
 {
-//    qDebug() << "IndexWriter::IndexWriter in thread" << QThread::currentThread();
     d = new Private;
     d->repository = model;
     Util::storeStrigiMiniOntology( d->repository );
-//    qDebug() << "IndexWriter::IndexWriter done in thread" << QThread::currentThread();
 }
 
 
@@ -256,21 +254,21 @@ void Strigi::Soprano::IndexWriter::commit()
 // delete all indexed data for the files listed in entries
 void Strigi::Soprano::IndexWriter::deleteEntries( const std::vector<std::string>& entries )
 {
-//    qDebug() << "IndexWriter::deleteEntries in thread" << QThread::currentThread();
-
-    QString systemLocationUri = Util::fieldUri( FieldRegister::pathFieldName ).toString();
     for ( unsigned int i = 0; i < entries.size(); ++i ) {
         QString path = QString::fromUtf8( entries[i].c_str() );
         QString query = QString( "select ?g ?mg where { "
-                                 "{ { ?r <%1> \"%2\"^^<%3> . } UNION { ?r <%1> %6 . } } . "
-                                 "?g <%4> ?r . "
-                                 "OPTIONAL { ?mg <%5> ?g . } }" )
-                        .arg( systemLocationUri )
-                        .arg( path )
-                        .arg( Vocabulary::XMLSchema::string().toString() )
-                        .arg( Strigi::Ontology::indexGraphFor().toString() )
-                        .arg( Vocabulary::NRL::coreGraphMetadataFor().toString() )
-                        .arg( Node( QUrl::fromLocalFile( path ) ).toN3() );
+                                 "{ ?r <http://strigi.sf.net/ontologies/0.9#parentUrl> %1 . } "
+                                 "UNION "
+                                 "{ ?r <http://strigi.sf.net/ontologies/0.9#parentUrl> %2 . } "
+                                 "UNION "
+                                 "{ ?r %3 %2 . } . "
+                                 "?g %4 ?r . "
+                                 "OPTIONAL { ?mg %5 ?g . } }" )
+                        .arg( Node::literalToN3( path ),
+                              Node::resourceToN3( QUrl::fromLocalFile( path ) ),
+                              Node::resourceToN3( Nepomuk::Vocabulary::NIE::isPartOf() ),
+                              Node::resourceToN3( Strigi::Ontology::indexGraphFor() ),
+                              Node::resourceToN3( Vocabulary::NRL::coreGraphMetadataFor() ) );
 
         qDebug() << "deleteEntries query:" << query;
 
@@ -296,10 +294,8 @@ void Strigi::Soprano::IndexWriter::deleteEntries( const std::vector<std::string>
 
 void Strigi::Soprano::IndexWriter::deleteAllEntries()
 {
-//    qDebug() << "IndexWriter::deleteAllEntries in thread" << QThread::currentThread();
-
     // query all index graphs (FIXME: would a type derived from nrl:Graph be better than only the predicate?)
-    QString query = QString( "select ?g where { ?g <%1> ?r . }" ).arg( Strigi::Ontology::indexGraphFor().toString() );
+    QString query = QString( "select ?g where { ?g %1 ?r . }" ).arg( Node::resourceToN3( Strigi::Ontology::indexGraphFor() ) );
 
     qDebug() << "deleteAllEntries query:" << query;
 
@@ -326,7 +322,6 @@ void Strigi::Soprano::IndexWriter::startAnalysis( const AnalysisResult* idx )
         return;
     }
 
-//    qDebug() << "IndexWriter::startAnalysis in thread" << QThread::currentThread();
     FileMetaData* data = new FileMetaData();
     data->fileUri = createResourceUri( idx );
 
@@ -340,8 +335,6 @@ void Strigi::Soprano::IndexWriter::startAnalysis( const AnalysisResult* idx )
     else {
         data->context = d->createUrn();
     }
-
-//    qDebug() << "Starting analysis for" << data->fileUri << "in thread" << QThread::currentThread();
 
     idx->setWriterData( data );
 
@@ -442,7 +435,6 @@ void Strigi::Soprano::IndexWriter::addValue( const AnalysisResult* idx,
         return;
     }
 
-//    qDebug() << "IndexWriter::addValue in thread" << QThread::currentThread();
     FileMetaData* md = reinterpret_cast<FileMetaData*>( idx->writerData() );
     RegisteredFieldData* rfd = reinterpret_cast<RegisteredFieldData*>( field->writerData() );
 
@@ -455,7 +447,6 @@ void Strigi::Soprano::IndexWriter::addValue( const AnalysisResult* idx,
                                             rfd->property,
                                             val,
                                             md->context) );
-//    qDebug() << "IndexWriter::addValue done in thread" << QThread::currentThread();
 }
 
 
@@ -467,7 +458,6 @@ void Strigi::Soprano::IndexWriter::addValue( const AnalysisResult* idx,
         return;
     }
 
-//    qDebug() << "IndexWriter::addValue in thread" << QThread::currentThread();
     FileMetaData* md = reinterpret_cast<FileMetaData*>( idx->writerData() );
     RegisteredFieldData* rfd = reinterpret_cast<RegisteredFieldData*>( field->writerData() );
 
@@ -475,7 +465,6 @@ void Strigi::Soprano::IndexWriter::addValue( const AnalysisResult* idx,
                                             rfd->property,
                                             LiteralValue( value ),
                                             md->context) );
-//    qDebug() << "IndexWriter::addValue done in thread" << QThread::currentThread();
 }
 
 
@@ -487,7 +476,6 @@ void Strigi::Soprano::IndexWriter::addValue( const AnalysisResult* idx,
         return;
     }
 
-//    qDebug() << "IndexWriter::addValue in thread" << QThread::currentThread();
     FileMetaData* md = reinterpret_cast<FileMetaData*>( idx->writerData() );
     RegisteredFieldData* rfd = reinterpret_cast<RegisteredFieldData*>( field->writerData() );
 
@@ -495,7 +483,6 @@ void Strigi::Soprano::IndexWriter::addValue( const AnalysisResult* idx,
                                             rfd->property,
                                             LiteralValue( value ),
                                             md->context) );
-//    qDebug() << "IndexWriter::addValue done in thread" << QThread::currentThread();
 }
 
 
@@ -532,7 +519,6 @@ void Strigi::Soprano::IndexWriter::finishAnalysis( const AnalysisResult* idx )
         return;
     }
 
-//    qDebug() << "IndexWriter::finishAnalysis in thread" << QThread::currentThread();
     FileMetaData* md = static_cast<FileMetaData*>( idx->writerData() );
 
     if ( md->content.length() > 0 ) {
@@ -585,8 +571,6 @@ void Strigi::Soprano::IndexWriter::finishAnalysis( const AnalysisResult* idx )
     // cleanup
     delete md;
     idx->setWriterData( 0 );
-
-//    qDebug() << "IndexWriter::finishAnalysis done in thread" << QThread::currentThread();
 }
 
 
