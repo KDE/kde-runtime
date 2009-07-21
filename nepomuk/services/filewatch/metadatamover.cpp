@@ -17,7 +17,6 @@
 */
 
 #include "metadatamover.h"
-#include "nfo.h"
 #include "nie.h"
 
 #include <QtCore/QDir>
@@ -45,8 +44,6 @@ namespace {
         }
         regexpPath.replace( QRegExp( "([\\.\\?\\*\\\\+\\(\\)\\\\\\|\\[\\]{}])" ), "\\\\\\1" );
 
-//        kDebug() << "query:" << QString( "select ?r ?p where { ?r <http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#fileUrl> ?p FILTER(REGEX(STR(?p), '^%1')) . }" ).arg( regexpPath );
-
         // query for all files that
         return model->executeQuery( QString( "select ?r ?p where { "
                                              "{ ?r %1 ?p . } "
@@ -55,7 +52,7 @@ namespace {
                                              "FILTER(REGEX(STR(?p), '^%3')) . "
                                              "}" )
                                     .arg( Soprano::Node::resourceToN3( Soprano::Vocabulary::Xesam::url() ) )
-                                    .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NFO::fileUrl() ) )
+                                    .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ) )
                                     .arg( regexpPath ),
                                     Soprano::Query::QueryLanguageSparql );
     }

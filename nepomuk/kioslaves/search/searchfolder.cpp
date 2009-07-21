@@ -18,6 +18,7 @@
 
 #include "searchfolder.h"
 #include "nfo.h"
+#include "nie.h"
 
 #include "queryserviceclient.h"
 
@@ -356,7 +357,7 @@ Nepomuk::SearchEntry* Nepomuk::SearchFolder::statResult( const Search::Result& r
 
     KIO::UDSEntry uds;
 
-    KUrl url = result[Nepomuk::Vocabulary::NFO::fileUrl()].uri();
+    KUrl url = result[Nepomuk::Vocabulary::NIE::url()].uri();
     if ( url.isEmpty() ) {
         url = result[Soprano::Vocabulary::Xesam::url()].uri();
         if ( url.isEmpty() )

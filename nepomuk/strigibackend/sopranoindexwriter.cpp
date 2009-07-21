@@ -25,6 +25,8 @@
 #include <Soprano/Soprano>
 #include <Soprano/Vocabulary/RDF>
 #include <Soprano/LiteralValue>
+#include <Soprano/Node>
+#include <Soprano/QueryResultIterator>
 
 #include <QtCore/QList>
 #include <QtCore/QHash>
@@ -49,6 +51,9 @@
 #include <sstream>
 #include <algorithm>
 
+#include <Nepomuk/Types/Property>
+#include <Nepomuk/Types/Class>
+#include <Nepomuk/Types/Literal>
 
 // IMPORTANT: strings in Strigi are apparently UTF8! Except for file names. Those are in local encoding.
 
@@ -111,10 +116,6 @@ namespace {
         return uri;
     }
 
-    QUrl createGraphUri() {
-        return QUrl( "urn:nepomuk:local:" + QUuid::createUuid().toString().remove( QRegExp( "[\\{\\}]" ) ) );
-    }
-
     class FileMetaData
     {
     public:
@@ -122,6 +123,9 @@ namespace {
         QUrl fileUri;
         QUrl context;
         std::string content;
+
+        // mapping from blank nodes used in addTriplet to our urns
+        QMap<std::string, QUrl> blankNodeMap;
     };
 
     class RegisteredFieldData
@@ -144,7 +148,8 @@ class Strigi::Soprano::IndexWriter::Private
 {
 public:
     Private()
-        : indexTransactionID( 0 ) {
+        : indexTransactionID( 0 ),
+          currentResult( 0 ) {
         literalTypes[FieldRegister::stringType] = QVariant::String;
         literalTypes[FieldRegister::floatType] = QVariant::Double;
         literalTypes[FieldRegister::integerType] = QVariant::Int;
@@ -179,8 +184,47 @@ public:
         }
     }
 
+    QUrl createUrn() {
+        QUrl urn;
+        do {
+            urn = QUrl( "urn:nepomuk:local:" + QUuid::createUuid().toString().remove( QRegExp( "[\\{\\}]" ) ) );
+        } while ( repository->executeQuery( QString("ask where { "
+                                                    "{ %1 ?p1 ?o1 . } "
+                                                    "UNION "
+                                                    "{ ?r2 %1 ?o2 . } "
+                                                    "UNION "
+                                                    "{ ?r3 ?p3 %1 . } "
+                                                    "}")
+                                            .arg( ::Soprano::Node::resourceToN3( urn ) ),
+                                            ::Soprano::Query::QueryLanguageSparql ).boolValue() );
+        return urn;
+    }
+
+    QUrl mapNode( FileMetaData* fmd, const std::string& s ) {
+        if ( s[0] == ':' ) {
+            if( fmd->blankNodeMap.contains( s ) ) {
+                return fmd->blankNodeMap[s];
+            }
+            else {
+                QUrl urn = createUrn();
+                fmd->blankNodeMap.insert( s, urn );
+                return urn;
+            }
+        }
+        else {
+            return QUrl::fromEncoded( s.c_str() );
+        }
+    }
+
     ::Soprano::Model* repository;
     int indexTransactionID;
+
+    //
+    // The Strigi API does not provide context information in addTriplet, i.e. the AnalysisResult.
+    // However, we only use one thread, only one AnalysisResult at the time.
+    // Thus, we can just remember that and use it in addTriplet.
+    //
+    const Strigi::AnalysisResult* currentResult;
 
 private:
     QHash<std::string, QVariant::Type> literalTypes;
@@ -294,12 +338,14 @@ void Strigi::Soprano::IndexWriter::startAnalysis( const AnalysisResult* idx )
         data->context = it.current().subject().uri();
     }
     else {
-        data->context = createGraphUri();
+        data->context = d->createUrn();
     }
 
 //    qDebug() << "Starting analysis for" << data->fileUri << "in thread" << QThread::currentThread();
 
     idx->setWriterData( data );
+
+    d->currentResult = idx;
 }
 
 
@@ -322,41 +368,52 @@ void Strigi::Soprano::IndexWriter::addValue( const AnalysisResult* idx,
         return;
     }
 
-//    qDebug() << "IndexWriter::addValue in thread" << QThread::currentThread();
     if ( value.length() > 0 ) {
         FileMetaData* md = reinterpret_cast<FileMetaData*>( idx->writerData() );
         RegisteredFieldData* rfd = reinterpret_cast<RegisteredFieldData*>( field->writerData() );
 
+        // the statement we will create, we will determine the object below
+        ::Soprano::Statement statement( md->fileUri, rfd->property, ::Soprano::Node(), md->context );
+
+        //
         // Strigi uses rdf:type improperly since it stores the value as a string. We have to
         // make sure it is a resource.
+        //
         if ( rfd->isRdfType ) {
-            d->repository->addStatement( md->fileUri,
-                                         ::Soprano::Vocabulary::RDF::type(),
-                                         QUrl::fromEncoded( value.c_str(), QUrl::StrictMode ),
-                                         md->context );
+            statement.setPredicate( ::Soprano::Vocabulary::RDF::type() );
+            statement.setObject( QUrl::fromEncoded( value.c_str(), QUrl::StrictMode ) );
         }
+
         else {
-            // we bend the plain strigi properties into something nicer, also because we do not want paths to be indexed, way too many false positives
+            //
+            // we bend the plain strigi properties into something nicer, also because we
+            // do not want paths to be indexed, way too many false positives
             // in standard desktop searches
+            //
             if ( field->key() == FieldRegister::pathFieldName ||
                  field->key() == FieldRegister::parentLocationFieldName ) {
-#warning FIXME: this is where relative file URLs are to be generated and our new fancy file system class should provide us with the file system URI
-                d->repository->addStatement( md->fileUri,
-                                             rfd->property,
-                                             QUrl::fromLocalFile( QFile::decodeName( QByteArray::fromRawData( value.c_str(), value.length() ) ) ),
-                                             md->context );
+                // TODO: this is where relative file URLs are to be generated and our new fancy file system
+                // class should provide us with the file system URI
+                statement.setObject( QUrl::fromLocalFile( QFile::decodeName( QByteArray::fromRawData( value.c_str(), value.length() ) ) ) );
             }
             else {
-                d->repository->addStatement( Statement( md->fileUri,
-                                                        rfd->property,
-                                                        d->createLiteralValue( rfd->dataType, ( unsigned char* )value.c_str(), value.length() ),
-                                                        md->context) );
+                statement.setObject( d->createLiteralValue( rfd->dataType, ( unsigned char* )value.c_str(), value.length() ) );
+            }
+
+            //
+            // Strigi uses anonymeous nodes prefixed with ':'. However, it is possible that literals
+            // start with a ':'. Thus, we also check the range of the property
+            //
+            if ( value[0] == ':' ) {
+                Nepomuk::Types::Property property( rfd->property );
+                if ( property.range().isValid() ) {
+                    statement.setObject( d->mapNode( md, value ) );
+                }
             }
         }
-        if ( d->repository->lastError() )
-            qDebug() << "Failed to add value" << value.c_str();
+
+        d->repository->addStatement( statement );
     }
-//    qDebug() << "IndexWriter::addValue done in thread" << QThread::currentThread();
 }
 
 
@@ -442,23 +499,35 @@ void Strigi::Soprano::IndexWriter::addValue( const AnalysisResult* idx,
 }
 
 
-void Strigi::Soprano::IndexWriter::addTriplet( const std::string& subject,
-                                               const std::string& predicate, const std::string& object )
+void Strigi::Soprano::IndexWriter::addTriplet( const std::string& s,
+                                               const std::string& p,
+                                               const std::string& o )
 {
-    // PROBLEM: which named graph (context) should we use here? Create a new one for each triple? Use one until the
-    // next commit()?
+    //
+    // The Strigi API does not provide context information here, i.e. the AnalysisResult this triple
+    // belongs to. However, we only use one thread, only one AnalysisResult at the time.
+    // Thus, we can just remember that and use it here.
+    //
 
-    // FIXME: create an NRL metadata graph
-    d->repository->addStatement( Statement( Node( QUrl( QString::fromUtf8( subject.c_str() ) ) ),
-                                            Node( QUrl( QString::fromUtf8( predicate.c_str() ) ) ),
-                                            Node( QUrl( QString::fromUtf8( object.c_str() ) ) ),
-                                            Node() ) );
+    FileMetaData* md = static_cast<FileMetaData*>( d->currentResult->writerData() );
+
+    QUrl subject = d->mapNode( md, s );
+    Nepomuk::Types::Property property( d->mapNode( md, p ) );
+    ::Soprano::Node object;
+    if ( property.range().isValid() )
+        object = d->mapNode( md, o );
+    else
+        object = ::Soprano::LiteralValue::fromString( QString::fromUtf8( o.c_str() ), property.literalRangeType().dataTypeUri() );
+
+    d->repository->addStatement( subject, property.uri(), object, md->context );
 }
 
 
 // called after each indexed file
 void Strigi::Soprano::IndexWriter::finishAnalysis( const AnalysisResult* idx )
 {
+    d->currentResult = 0;
+
     if ( idx->depth() > 0 ) {
         return;
     }
