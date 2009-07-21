@@ -25,7 +25,7 @@
 
 #include <QDateTime>
 #include <QLabel>
-#include <QLayout>
+#include <QFormLayout>
 #include <QTimer>
 
 #include <stdio.h>
@@ -39,44 +39,32 @@ KLocaleSample::KLocaleSample(KLocale *locale, QWidget *parent)
   : QWidget(parent),
     m_locale(locale)
 {
-  QGridLayout *lay = new QGridLayout(this);
+  QFormLayout *lay = new QFormLayout(this);
 
   m_labNumber = new QLabel(this);
-  lay->addWidget(m_labNumber, 0, 0);
   m_labNumber->setObjectName( I18N_NOOP("Numbers:") );
-  m_labNumber->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
   m_numberSample = new QLabel(this);
-  lay->addWidget(m_numberSample, 0, 1);
+  lay->addRow(m_labNumber, m_numberSample);
 
   m_labMoney = new QLabel(this);
-  lay->addWidget(m_labMoney, 1, 0);
   m_labMoney->setObjectName( I18N_NOOP("Money:") );
-  m_labMoney->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
   m_moneySample = new QLabel(this);
-  lay->addWidget(m_moneySample, 1, 1);
+  lay->addRow(m_labMoney, m_moneySample);
 
   m_labDate = new QLabel(this);
-  lay->addWidget(m_labDate, 2, 0);
   m_labDate->setObjectName( I18N_NOOP("Date:") );
-  m_labDate->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
   m_dateSample = new QLabel(this);
-  lay->addWidget(m_dateSample, 2, 1);
+  lay->addRow(m_labDate, m_dateSample);
 
   m_labDateShort = new QLabel(this);
-  lay->addWidget(m_labDateShort, 3, 0);
   m_labDateShort->setObjectName( I18N_NOOP("Short date:") );
-  m_labDateShort->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
   m_dateShortSample = new QLabel(this);
-  lay->addWidget(m_dateShortSample, 3, 1);
+  lay->addRow(m_labDateShort, m_dateShortSample);
 
   m_labTime = new QLabel(this);
-  lay->addWidget(m_labTime, 4, 0);
   m_labTime->setObjectName( I18N_NOOP("Time:") );
-  m_labTime->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
   m_timeSample = new QLabel(this);
-  lay->addWidget(m_timeSample, 4, 1);
-
-  lay->setColumnStretch(1, 3);
+  lay->addRow(m_labTime, m_timeSample);
 
   QTimer *timer = new QTimer(this);
   timer->setObjectName(QLatin1String("clock_timer"));

@@ -89,7 +89,6 @@ KDEDConfig::KDEDConfig(QWidget* parent, const QVariantList &) :
 
 	QVBoxLayout *lay = new QVBoxLayout( this );
 	lay->setMargin( 0 );
-	lay->setSpacing( KDialog::spacingHint() );
 
 	QGroupBox *gb = new QGroupBox( i18n("Load-on-Demand Services"), this );
 	gb->setWhatsThis( i18n("This is a list of available KDE services which will "

@@ -199,8 +199,6 @@ KLocaleConfigTime::KLocaleConfigTime(KLocale *_locale,
 {
     // Time
     QFormLayout *lay = new QFormLayout( this );
-    lay->setMargin( KDialog::marginHint() );
-    lay->setSpacing( KDialog::spacingHint());
 
     QLabel* labCalendarSystem = new QLabel(this);
     labCalendarSystem->setObjectName( I18N_NOOP("Calendar system:") );

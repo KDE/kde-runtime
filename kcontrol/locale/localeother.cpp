@@ -43,8 +43,6 @@ KLocaleConfigOther::KLocaleConfigOther(KLocale *locale,
 {
   // Other
   QGridLayout *lay = new QGridLayout(this );
-  lay->setMargin( KDialog::marginHint() );
-  lay->setSpacing( KDialog::spacingHint());
 
   m_labPageSize = new QLabel(this);
   m_labPageSize->setObjectName(I18N_NOOP("Paper format:") );

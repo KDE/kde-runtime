@@ -34,6 +34,7 @@ SonnetSpellCheckingModule::SonnetSpellCheckingModule(QWidget* parent, const QVar
     KCModule(SpellFactory::componentData(), parent)
 {
   QBoxLayout *layout = new QVBoxLayout( this );
+  layout->setMargin(0);
   m_config = new KConfig("sonnetrc");
   m_configWidget = new Sonnet::ConfigWidget( m_config, this );
   layout->addWidget(m_configWidget);

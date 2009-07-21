@@ -68,7 +68,6 @@ KCMKNotify::KCMKNotify(QWidget *parent, const QVariantList & )
 
     QVBoxLayout *layout = new QVBoxLayout( this );
     layout->setMargin( 0 );
-    layout->setSpacing( KDialog::spacingHint() );
     QTabWidget *tab = new QTabWidget(this);
     layout->addWidget(tab);
 
@@ -79,8 +78,7 @@ KCMKNotify::KCMKNotify(QWidget *parent, const QVariantList & )
     m_appCombo = new KComboBox( false, app_tab );
     m_appCombo->setObjectName( "app combo" );
     QHBoxLayout *hbox = new QHBoxLayout();
-    hbox->setSpacing( KDialog::spacingHint() );
-    app_layout->addItem( hbox );
+    app_layout->addLayout( hbox );
     hbox->addWidget( label );
     hbox->addWidget( m_appCombo, 10 );
 
@@ -164,7 +162,7 @@ void KCMKNotify::load()
             KConfigGroup globalConfig( &config, QString::fromLatin1("Global") );
             QString icon = globalConfig.readEntry(QString::fromLatin1("IconName"), QString::fromLatin1("misc"));
             QString description = globalConfig.readEntry( QString::fromLatin1("Comment"), appname );
-            m_appCombo->addItem( SmallIcon( icon ), description );
+            m_appCombo->addItem( KIcon( icon ), description );
             m_apps.insert(description, appname );
         }
     }

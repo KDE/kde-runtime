@@ -75,7 +75,6 @@ KLocaleApplication::KLocaleApplication(QWidget *parent,
 
   QVBoxLayout *l = new QVBoxLayout(this);
   l->setMargin(0);
-  l->setSpacing(KDialog::spacingHint());
 
   m_tab = new QTabWidget(this);
   l->addWidget(m_tab);
@@ -96,7 +95,6 @@ KLocaleApplication::KLocaleApplication(QWidget *parent,
   m_gbox = new QGroupBox(this);
   l->addWidget(m_gbox);
   QVBoxLayout *laygroup = new QVBoxLayout(m_gbox);
-  laygroup->setSpacing(KDialog::spacingHint());
   m_sample = new KLocaleSample(m_locale, m_gbox);
   laygroup->addWidget( m_sample );
 
