@@ -104,3 +104,5 @@ kbluetooth4=kde-bluetooth|general
 digikamthemedesigner=digikam|general
 
 polkit-kde-manager=policykit-kde|manager
+
+kepastray=kepas|general
