@@ -186,6 +186,7 @@ void TOC::meinprocExited( int exitCode, QProcess::ExitStatus exitStatus)
 
     delete meinproc;
 
+    // add a timestamp to the meinproc4 created xml file
     QFile f( m_cacheFile );
     if ( !f.open( QIODevice::ReadWrite ) )
         return;
@@ -197,16 +198,22 @@ void TOC::meinprocExited( int exitCode, QProcess::ExitStatus exitStatus)
     QDomComment timestamp = doc.createComment( QString::number( sourceFileCTime() ) );
     doc.documentElement().appendChild( timestamp );
 
+    // write back updated xml content 
     f.seek( 0 );
     QTextStream stream( &f );
     stream.setCodec( "UTF-8" );
-    stream << doc.toString();
-
-    f.close();
 #ifdef Q_WS_WIN
-    kDebug() << "on german systems umlauts are displayed as '?' for unknown (Qt'r related ?) reasons. Please fix.";
-#endif
+    /*
+      the problem that on german systems umlauts are displayed as '?' for unknown (Qt'r related ?) reasons
+      is caused by wrong encoding type conversations and has been fixed in kdelibs/kdoctools
+      To have propper encoding tags in the xml file, QXmlDocument::save() is used. 
+    */
+    doc.save(stream, 1, QDomNode::EncodingFromTextStream);
 
+#else
+    stream << doc.toString();
+#endif
+    f.close();
     fillTree();
 }
 
