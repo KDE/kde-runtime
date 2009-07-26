@@ -27,7 +27,8 @@
 #include <QFrame>
 #include <QHBoxLayout>
 #include <QDBusInterface>
-
+#include <QSortFilterProxyModel>
+#include <QStandardItemModel>
 
 #include <kapplication.h>
 #include <kaboutdata.h>
@@ -77,6 +78,14 @@ KCMKNotify::KCMKNotify(QWidget *parent, const QVariantList & )
     QLabel *label = new QLabel( i18n( "Event source:" ), app_tab );
     m_appCombo = new KComboBox( false, app_tab );
     m_appCombo->setObjectName( "app combo" );
+
+    // We want to sort the combo box
+    QSortFilterProxyModel *proxyModel = new QSortFilterProxyModel(this);
+    proxyModel->setSourceModel(new QStandardItemModel(0, 1, proxyModel));
+    // Now configure and set our sort model
+    proxyModel->setSortCaseSensitivity(Qt::CaseInsensitive);
+    m_appCombo->setModel(proxyModel);
+
     QHBoxLayout *hbox = new QHBoxLayout();
     app_layout->addLayout( hbox );
     hbox->addWidget( label );
@@ -95,8 +104,8 @@ KCMKNotify::KCMKNotify(QWidget *parent, const QVariantList & )
     tab->addTab(app_tab, i18n("&Applications"));
     tab->addTab(m_playerSettings, i18n("&Player Settings"));
 
-    connect( m_appCombo, SIGNAL( activated( QString ) ),
-             SLOT( slotAppActivated( QString )) );
+    connect( m_appCombo, SIGNAL( activated( int ) ),
+             SLOT( slotAppActivated( int )) );
 
     KAboutData* ab = new KAboutData(
         "kcmknotify", 0, ki18n("KNotify"), "4.0",
@@ -118,13 +127,9 @@ KCMKNotify::~KCMKNotify()
     config.sync();
 }
 
-void KCMKNotify::slotAppActivated( const QString &description )
+void KCMKNotify::slotAppActivated(const int &index)
 {
-    QString text;
-
-    Q_ASSERT(m_apps.contains(description));
-    text = m_apps[description];
-
+    QString text( m_appCombo->itemData(index).toString() );
     m_notifyWidget->save();
     m_notifyWidget->setApplication( text );
 }
@@ -145,7 +150,6 @@ void KCMKNotify::load()
     // setCursor( KCursor::waitCursor() );
 
     m_appCombo->clear();
-    m_apps.clear();
 //    m_notifyWidget->clear();
 
     QStringList fullpaths =
@@ -162,8 +166,7 @@ void KCMKNotify::load()
             KConfigGroup globalConfig( &config, QString::fromLatin1("Global") );
             QString icon = globalConfig.readEntry(QString::fromLatin1("IconName"), QString::fromLatin1("misc"));
             QString description = globalConfig.readEntry( QString::fromLatin1("Comment"), appname );
-            m_appCombo->addItem( KIcon( icon ), description );
-            m_apps.insert(description, appname );
+            m_appCombo->addItem( SmallIcon( icon ), description, appname );
         }
     }
 
@@ -189,12 +192,12 @@ void KCMKNotify::load()
 
     m_playerSettings->load();
 
-    if ( m_appCombo->count() > 0 )
+    if ( m_appCombo->count() > 0 ) {
         m_appCombo->setCurrentIndex(0);
-        m_notifyWidget->setApplication( m_apps.value(m_appCombo->itemText(0)) );
+        m_notifyWidget->setApplication( m_appCombo->itemData( 0 ).toString() );
+    }
 
     emit changed(false);
-
 }
 
 void KCMKNotify::save()
