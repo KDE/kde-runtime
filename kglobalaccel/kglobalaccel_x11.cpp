@@ -91,20 +91,20 @@ bool KGlobalAccelImpl::grabKey( int keyQt, bool grab )
 
 	// Resolve the modifier
 	if( !KKeyServer::keyQtToModX(keyQt, &keyModX) ) {
-		kDebug() << "keyQt (" << hex << keyQt << ") failed to resolve to x11 modifier";
+		kDebug() << "keyQt (0x" << hex << keyQt << ") failed to resolve to x11 modifier";
 		return false;
 	}
 
 	// Resolve the key
 	if( !KKeyServer::keyQtToCodeX(keyQt, &keyCodeX) ) {
-		kDebug() << "keyQt (" << hex << keyQt << ") failed to resolve to x11 keycode";
+		kDebug() << "keyQt (0x" << hex << keyQt << ") failed to resolve to x11 keycode";
 		return false;
 	}
 
 	keyModX &= g_keyModMaskXAccel; // Get rid of any non-relevant bits in mod
 
 	if( !keyCodeX ) {
-		kDebug() << "keyQt (" << hex << keyQt << ") was resolved to x11 keycode 0";
+		kDebug() << "keyQt (0x" << hex << keyQt << ") was resolved to x11 keycode 0";
 		return false;
 	}
 
