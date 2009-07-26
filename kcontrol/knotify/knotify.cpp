@@ -237,7 +237,7 @@ void PlayerSettingsDialog::load()
     KConfigGroup config(&_config, "Sounds" );
     bool useExternal = config.readEntry( "Use external player", false );
     m_ui->cbExternal->setChecked( useExternal );
-    m_ui->reqExternal->setPath( config.readPathEntry( "External player", QString() ) );
+    m_ui->reqExternal->setUrl( config.readPathEntry( "External player", QString() ) );
     m_ui->volumeSlider->setValue( config.readEntry( "Volume", 100 ) );
 
     if ( !m_ui->cbExternal->isChecked() )
