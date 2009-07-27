@@ -367,7 +367,7 @@ bool Nepomuk::Repository::rebuildIndexIfNecessary()
 {
 #if defined(HAVE_SOPRANO_INDEX) && defined(HAVE_CLUCENE) && SOPRANO_IS_VERSION(2,1,64)
     KConfigGroup repoConfig = KSharedConfig::openConfig( "nepomukserverrc" )->group( name() + " Settings" );
-    if( !repoConfig.readEntry( "index version", 1 ) ) {
+    if( repoConfig.readEntry( "index version", 1 ) < s_indexVersion ) {
         KNotification::event( "rebuldingNepomukIndex",
                               i18nc("@info - notification message",
                                     "Rebuilding Nepomuk full text search index for new features. This will only be done once and might take a while."),
