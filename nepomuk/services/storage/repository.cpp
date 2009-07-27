@@ -25,7 +25,6 @@
 #include <Soprano/Version>
 #include <Soprano/StorageModel>
 #include <Soprano/Error/Error>
-#include <Soprano/Vocabulary/Xesam>
 #include <Soprano/Vocabulary/RDF>
 
 #ifdef HAVE_SOPRANO_INDEX
@@ -67,6 +66,11 @@ namespace {
     private:
         Soprano::Index::IndexFilterModel* m_model;
     };
+
+    // The index version that is written by this implementation. Increase this if a major bug
+    // was fixed in the CLucene index or new information needs to be written into the index
+    // (for example using Soprano::IndexFilterModel::addForceIndexPredicate.)
+    const int s_indexVersion = 2;
 #endif
 }
 
@@ -173,11 +177,6 @@ void Nepomuk::Repository::open()
         // FIXME: find a good value here
         m_indexModel->setTransactionCacheSize( 100 );
 
-#if SOPRANO_IS_VERSION(2,0,99)
-        // no need for the whole content in the store, we only need it for searching
-        // (compare the strigi backend)
-        m_indexModel->addIndexOnlyPredicate( Soprano::Vocabulary::Xesam::asText() );
-#endif
 #if SOPRANO_IS_VERSION(2,1,64)
         m_indexModel->addForceIndexPredicate( Soprano::Vocabulary::RDF::type() );
 #endif
@@ -287,7 +286,7 @@ void Nepomuk::Repository::rebuildingIndexFinished()
 
     // save our new settings
     KConfigGroup repoConfig = KSharedConfig::openConfig( "nepomukserverrc" )->group( name() + " Settings" );
-    repoConfig.writeEntry( "rebuilt index for type indexing", true );
+    repoConfig.writeEntry( "index version", s_indexVersion );
 
     // inform that we are open and done
     m_state = OPEN;
@@ -368,7 +367,7 @@ bool Nepomuk::Repository::rebuildIndexIfNecessary()
 {
 #if defined(HAVE_SOPRANO_INDEX) && defined(HAVE_CLUCENE) && SOPRANO_IS_VERSION(2,1,64)
     KConfigGroup repoConfig = KSharedConfig::openConfig( "nepomukserverrc" )->group( name() + " Settings" );
-    if( !repoConfig.readEntry( "rebuilt index for type indexing", false ) ) {
+    if( !repoConfig.readEntry( "index version", 1 ) ) {
         KNotification::event( "rebuldingNepomukIndex",
                               i18nc("@info - notification message",
                                     "Rebuilding Nepomuk full text search index for new features. This will only be done once and might take a while."),
