@@ -59,7 +59,7 @@ const char LOCAL_ZONE[]     = "LocalZone";     // name of local time zone
 
 
 KTimeZoned::KTimeZoned(QObject* parent, const QList<QVariant>& l)
-  : KTimeZoneDBase(parent, l),
+  : KTimeZonedBase(parent, l),
     mSource(0),
     mZonetabWatch(0),
     mDirWatch(0)

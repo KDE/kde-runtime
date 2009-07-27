@@ -84,7 +84,7 @@ class RegistryWatcherThread : public QThread
 };
 
 KTimeZoned::KTimeZoned(QObject* parent, const QList<QVariant>& l)
-  : KTimeZoneDBase(parent, l), mRegistryWatcherThread(0)
+  : KTimeZonedBase(parent, l), mRegistryWatcherThread(0)
 {
     init(false);
 }

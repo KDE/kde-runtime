@@ -24,13 +24,13 @@
 #include <kdedmodule.h>
 
 
-class KTimeZoneDBase : public KDEDModule
+class KTimeZonedBase : public KDEDModule
 {
         Q_OBJECT
     public:
-        KTimeZoneDBase(QObject* parent, const QList<QVariant>&)
+        KTimeZonedBase(QObject* parent, const QList<QVariant>&)
         :KDEDModule(parent) {}
-        virtual ~KTimeZoneDBase() {};
+        virtual ~KTimeZonedBase() {};
 
     public Q_SLOTS:
         /** D-Bus call to initialize the module.

@@ -23,7 +23,7 @@
 
 #include "ktimezonedbase.h"
 
-class KTimeZoned : public KTimeZoneDBase
+class KTimeZoned : public KTimeZonedBase
 {
         Q_OBJECT
         friend class RegistryWatcherThread;

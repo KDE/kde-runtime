@@ -32,7 +32,7 @@ class QFile;
 #include <ksystemtimezone.h>
 
 
-class KTimeZoned : public KTimeZoneDBase
+class KTimeZoned : public KTimeZonedBase
 {
         Q_OBJECT
 
