@@ -1,5 +1,6 @@
 /*
    This file is part of the KDE libraries
+   Copyright (c) 2007-2009 David Jarvie <software@astrojar.org.uk>
    Copyright (c) 2009 Till Adam <adam@kde.org>
 
    This library is free software; you can redistribute it and/or
@@ -27,6 +28,7 @@
 class KTimeZonedBase : public KDEDModule
 {
         Q_OBJECT
+        Q_CLASSINFO("D-Bus Interface", "org.kde.KTimeZoned")
     public:
         KTimeZonedBase(QObject* parent, const QList<QVariant>&)
         :KDEDModule(parent) {}
@@ -46,8 +48,20 @@ class KTimeZonedBase : public KDEDModule
         }
 
     Q_SIGNALS:
-        /** D-Bus signal emitted when the time zone configuration in the registry has changed. */
+        /** D-Bus signal emitted when the time zone configuration has changed. */
         void configChanged();
+
+	/** D-Bus signal emitted when zone.tab contents have changed.
+	 *  @param zonetab path to zone.tab
+	 */
+        void zonetabChanged(const QString &zonetab);
+
+	/** D-Bus signal emitted when the definition (not the identity) of the local
+	 *  system time zone has changed.
+	 *  @param zone path to time zone definition file
+	 */
+	void zoneDefinitionChanged(const QString &zone);
+
     protected:
         virtual void init(bool) = 0;
 

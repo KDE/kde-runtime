@@ -40,13 +40,6 @@ class KTimeZoned : public KTimeZonedBase
         KTimeZoned(QObject* parent, const QList<QVariant>&);
         ~KTimeZoned();
 
-    Q_SIGNALS:
-        /** D-Bus signal emitted when the time zone configuration file has changed. */
-        void configChanged();
-        /** D-Bus signal emitted when zone.tab contents have changed.
-         *  @param zonetab path to zone.tab
-         */
-
     private Q_SLOTS:
         void  zonetab_Changed(const QString& path);
         void  localChanged(const QString& path);
