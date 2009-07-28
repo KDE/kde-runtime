@@ -37,8 +37,8 @@ DeviceAutomounter::DeviceAutomounter(QObject *parent, const QVariantList &args)
     Q_UNUSED(args);
     connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceAdded(const QString&)), this, SLOT(deviceAdded(const QString&)));
     QList<Solid::Device> volumes = Solid::Device::listFromType(Solid::DeviceInterface::StorageVolume);
-    foreach(const Solid::Device &volume, volumes) {
-        const Solid::StorageAccess *sa = volume.as<Solid::StorageAccess>();
+    foreach(Solid::Device volume, volumes) {
+        Solid::StorageAccess *sa = volume.as<Solid::StorageAccess>();
         connect(sa, SIGNAL(accessibilityChanged(bool, const QString)), this, SLOT(deviceMountChanged(bool, const QString)));
         automountDevice(volume, AutomounterSettings::Login);
     }
@@ -57,14 +57,13 @@ DeviceAutomounter::deviceMountChanged(bool accessible, const QString &udi)
 }
 
 void
-DeviceAutomounter::automountDevice(const Solid::Device &dev, AutomounterSettings::AutomountType type)
+DeviceAutomounter::automountDevice(Solid::Device &dev, AutomounterSettings::AutomountType type)
 {
     if (dev.is<Solid::StorageVolume>() && dev.is<Solid::StorageAccess>()) {
-        Solid::Device volumeDevice(dev.udi());
-        Solid::StorageAccess *sa = volumeDevice.as<Solid::StorageAccess>();
+        Solid::StorageAccess *sa = dev.as<Solid::StorageAccess>();
         AutomounterSettings::setDeviceLastSeenMounted(dev.udi(), sa->isAccessible());
         if (AutomounterSettings::shouldAutomountDevice(dev.udi(), type)) {
-            Solid::StorageVolume *sv = volumeDevice.as<Solid::StorageVolume>();
+            Solid::StorageVolume *sv = dev.as<Solid::StorageVolume>();
             if (!sv->isIgnored()) {
                 kDebug() << "Mounting" << dev.udi();
                 sa->setup();
