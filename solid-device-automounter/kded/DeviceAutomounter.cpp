@@ -36,6 +36,7 @@ K_EXPORT_PLUGIN(DeviceAutomounterFactory("kded_device_automounter"));
 DeviceAutomounter::DeviceAutomounter(QObject *parent, const QVariantList &args)
     : KDEDModule(parent)
 {
+    Q_UNUSED(args);
     connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceAdded(const QString&)), this, SLOT(deviceAdded(const QString&)));
     QList<Solid::Device> volumes = Solid::Device::listFromType(Solid::DeviceInterface::StorageVolume);
     foreach(const Solid::Device &volume, volumes) {
@@ -65,7 +66,7 @@ DeviceAutomounter::automountDevice(const Solid::Device &dev)
         Solid::Device volumeDevice(dev.udi());
         Solid::StorageAccess *sa = volumeDevice.as<Solid::StorageAccess>();
         AutomounterSettings::setDeviceLastSeenMounted(dev.udi(), sa->isAccessible());
-        if (AutomounterSettings::shouldAutomountDevice(dev)) {
+        if (AutomounterSettings::shouldAutomountDevice(dev.udi())) {
             Solid::StorageVolume *sv = volumeDevice.as<Solid::StorageVolume>();
             if (!sv->isIgnored()) {
                 kDebug() << "Mounting" << dev.udi();
