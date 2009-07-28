@@ -37,15 +37,14 @@ DeviceAutomounter::DeviceAutomounter(QObject *parent, const QVariantList &args)
     : KDEDModule(parent)
 {
     connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceAdded(const QString&)), this, SLOT(deviceAdded(const QString&)));
-    if (AutomounterSettings::automountOnLogin()) {
-        QList<Solid::Device> volumes = Solid::Device::listFromType(Solid::DeviceInterface::StorageVolume);
-        foreach(const Solid::Device &volume, volumes) {
-            const Solid::StorageAccess *sa = volume.as<Solid::StorageAccess>();
-            connect(sa, SIGNAL(accessibilityChanged(bool, const QString)), this, SLOT(deviceMountChanged(bool, const QString)));
+    QList<Solid::Device> volumes = Solid::Device::listFromType(Solid::DeviceInterface::StorageVolume);
+    foreach(const Solid::Device &volume, volumes) {
+        const Solid::StorageAccess *sa = volume.as<Solid::StorageAccess>();
+        connect(sa, SIGNAL(accessibilityChanged(bool, const QString)), this, SLOT(deviceMountChanged(bool, const QString)));
+        if ((AutomounterSettings::automountEnabled() && AutomounterSettings::automountOnLogin()) || AutomounterSettings::deviceAutomountIsForced(volume.udi()))
             automountDevice(volume);
-        }
-        AutomounterSettings::self()->writeConfig();
     }
+    AutomounterSettings::self()->writeConfig();
 }
 
 DeviceAutomounter::~DeviceAutomounter()
@@ -80,9 +79,13 @@ void
 DeviceAutomounter::deviceAdded(const QString &udi)
 {
     AutomounterSettings::self()->readConfig();
-    if (AutomounterSettings::automountOnPlugin()) {
-        Solid::Device dev(udi);
+    Solid::Device dev(udi);
+    if ((AutomounterSettings::automountEnabled() && AutomounterSettings::automountOnPlugin()) || AutomounterSettings::deviceAutomountIsForced(udi)) {
         automountDevice(dev);
         AutomounterSettings::self()->writeConfig();
+    }
+    if (dev.is<Solid::StorageAccess>()) {
+        Solid::StorageAccess *sa = dev.as<Solid::StorageAccess>();
+        connect(sa, SIGNAL(accessibilityChanged(bool, const QString)), this, SLOT(deviceMountChanged(bool, const QString)));
     }
 }
