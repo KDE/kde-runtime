@@ -22,6 +22,7 @@
 #include <QtCore/QVariantList>
 #include <KDEDModule>
 #include <Solid/Device>
+#include "AutomounterSettings.h"
 
 class DeviceAutomounter : public KDEDModule {
     Q_OBJECT
@@ -32,7 +33,7 @@ class DeviceAutomounter : public KDEDModule {
         void deviceAdded(const QString &udi);
         void deviceMountChanged(bool accessible, const QString &udi);
     private:
-        void automountDevice(const Solid::Device &dev);
+        void automountDevice(const Solid::Device &dev, AutomounterSettings::AutomountType type);
 };
 
 #endif

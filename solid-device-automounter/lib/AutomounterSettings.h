@@ -28,10 +28,14 @@
 
 class AutomounterSettings : public AutomounterSettingsBase {
     public:
+        enum AutomountType {
+            Login,
+            Attach
+        };
         static KConfigGroup deviceSettings(const QString &udi);
         static QStringList knownDevices();
         static bool deviceIsKnown(const QString &udi);
-        static bool shouldAutomountDevice(const QString &udi);
+        static bool shouldAutomountDevice(const QString &udi, AutomountType type);
         static void setDeviceLastSeenMounted(const QString &udi, bool mounted);
         static bool deviceAutomountIsForced(const QString &udi);
 };

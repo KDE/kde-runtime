@@ -19,8 +19,6 @@
 
 #include "DeviceAutomounter.h"
 
-#include "AutomounterSettings.h"
-
 #include <KGenericFactory>
 
 #include <Solid/Device>
@@ -42,8 +40,7 @@ DeviceAutomounter::DeviceAutomounter(QObject *parent, const QVariantList &args)
     foreach(const Solid::Device &volume, volumes) {
         const Solid::StorageAccess *sa = volume.as<Solid::StorageAccess>();
         connect(sa, SIGNAL(accessibilityChanged(bool, const QString)), this, SLOT(deviceMountChanged(bool, const QString)));
-        if ((AutomounterSettings::automountEnabled() && AutomounterSettings::automountOnLogin()) || AutomounterSettings::deviceAutomountIsForced(volume.udi()))
-            automountDevice(volume);
+        automountDevice(volume, AutomounterSettings::Login);
     }
     AutomounterSettings::self()->writeConfig();
 }
@@ -60,13 +57,13 @@ DeviceAutomounter::deviceMountChanged(bool accessible, const QString &udi)
 }
 
 void
-DeviceAutomounter::automountDevice(const Solid::Device &dev)
+DeviceAutomounter::automountDevice(const Solid::Device &dev, AutomounterSettings::AutomountType type)
 {
     if (dev.is<Solid::StorageVolume>() && dev.is<Solid::StorageAccess>()) {
         Solid::Device volumeDevice(dev.udi());
         Solid::StorageAccess *sa = volumeDevice.as<Solid::StorageAccess>();
         AutomounterSettings::setDeviceLastSeenMounted(dev.udi(), sa->isAccessible());
-        if (AutomounterSettings::shouldAutomountDevice(dev.udi())) {
+        if (AutomounterSettings::shouldAutomountDevice(dev.udi(), type)) {
             Solid::StorageVolume *sv = volumeDevice.as<Solid::StorageVolume>();
             if (!sv->isIgnored()) {
                 kDebug() << "Mounting" << dev.udi();
@@ -81,10 +78,8 @@ DeviceAutomounter::deviceAdded(const QString &udi)
 {
     AutomounterSettings::self()->readConfig();
     Solid::Device dev(udi);
-    if ((AutomounterSettings::automountEnabled() && AutomounterSettings::automountOnPlugin()) || AutomounterSettings::deviceAutomountIsForced(udi)) {
-        automountDevice(dev);
-        AutomounterSettings::self()->writeConfig();
-    }
+    automountDevice(dev, AutomounterSettings::Attach);
+    AutomounterSettings::self()->writeConfig();
     if (dev.is<Solid::StorageAccess>()) {
         Solid::StorageAccess *sa = dev.as<Solid::StorageAccess>();
         connect(sa, SIGNAL(accessibilityChanged(bool, const QString)), this, SLOT(deviceMountChanged(bool, const QString)));
