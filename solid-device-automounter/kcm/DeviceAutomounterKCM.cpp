@@ -26,6 +26,7 @@
 #include <KAboutData>
 #include <KConfigGroup>
 #include <KInputDialog>
+#include <Solid/DeviceNotifier>
 
 #include "AutomounterSettings.h"
 
@@ -65,6 +66,8 @@ DeviceAutomounterKCM::DeviceAutomounterKCM(QWidget *parent, const QVariantList &
     connect(forgetDevice, SIGNAL(clicked(bool)), this, SLOT(forgetSelectedDevices()));
     connect(addDevice, SIGNAL(clicked(bool)), this, SLOT(addNewDevice()));
 
+    connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceAdded(const QString)), this, SLOT(deviceAttached(const QString)));
+
     forgetDevice->setEnabled(false);
 }
 
@@ -92,6 +95,12 @@ DeviceAutomounterKCM::addNewDevice(const QString &udi)
     m_devices->appendRow(row);
 }
 
+void
+DeviceAutomounterKCM::deviceAttached(const QString &udi)
+{
+    if (!AutomounterSettings::knownDevices().contains(udi))
+        addNewDevice(udi);
+}
 
 void
 DeviceAutomounterKCM::updateForgetDeviceButton()
@@ -152,6 +161,15 @@ DeviceAutomounterKCM::load()
     else
         automountOnPlugin->setCheckState(Qt::Unchecked);
 
+    reloadDevices();
+
+    enabledChanged();
+}
+
+void
+DeviceAutomounterKCM::reloadDevices()
+{
+    AutomounterSettings::self()->readConfig();
     m_devices->clear();
     QStringList headers;
     headers << "Name" << "Always Automount";
@@ -160,8 +178,6 @@ DeviceAutomounterKCM::load()
         addNewDevice(dev);
     }
     deviceView->resizeColumnToContents(0);
-
-    enabledChanged();
 }
 
 void
