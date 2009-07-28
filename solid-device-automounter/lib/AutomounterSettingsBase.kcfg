@@ -12,6 +12,9 @@
     <entry name="AutomountOnPlugin" type="Bool">
         <default>true</default>
     </entry>
+    <entry name="OnlyAutomountKnownDevices" type="Bool">
+        <default>true</default>
+    </entry>
+    <entry name="DeviceList" type="StringList"/>
   </group>
 </kcfg>
-
