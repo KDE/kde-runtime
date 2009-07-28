@@ -18,6 +18,6 @@ Devices/<dev>/LastSeenMounted:	Saves the 'mounted' state between desktop
 				sessions. Devices with this set to true are
 				automagically remounted when the module loads.
 
-Devices/<dev>/Automount:	Determines if this device should get
+Devices/<dev>/ForceAutomount:	Determines if this device should get
 				automounted regardless of anything else,
 				including AutomountEnabled.

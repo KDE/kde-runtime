@@ -6,7 +6,7 @@ kde4_add_ui_files(kcm_device_automounter_SRCS DeviceAutomounterKCM.ui)
 
 kde4_add_plugin(kcm_device_automounter ${kcm_device_automounter_SRCS})
 
-target_link_libraries(kcm_device_automounter device_automounter_lib ${KDE4_KDEUI_LIBS} ${KDE4_KDECORE_LIBS})
+target_link_libraries(kcm_device_automounter device_automounter_lib ${KDE4_KDEUI_LIBS} ${KDE4_KDECORE_LIBS} ${KDE4_SOLID_LIBS})
 
 install(TARGETS kcm_device_automounter DESTINATION ${PLUGIN_INSTALL_DIR})
 

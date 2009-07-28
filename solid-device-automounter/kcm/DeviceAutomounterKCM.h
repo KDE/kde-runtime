@@ -36,6 +36,13 @@ class DeviceAutomounterKCM : public KCModule, public Ui::DeviceAutomounterKCM {
         void save();
     private slots:
         void emitChanged();
+        void enabledChanged();
+        void updateForgetDeviceButton();
+        void forgetSelectedDevices();
+        void addNewDevice();
+    private:
+        void addNewDevice(const QString &udi);
+        QStandardItemModel *m_devices;
 };
 
 #endif

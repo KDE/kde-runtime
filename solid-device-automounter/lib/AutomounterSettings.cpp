@@ -53,6 +53,12 @@ AutomounterSettings::deviceIsKnown(const Solid::Device &dev)
 }
 
 bool
+AutomounterSettings::deviceAutomountIsForced(const QString &udi)
+{
+    return deviceSettings(udi).readEntry("ForceAutomount", false);
+}
+
+bool
 AutomounterSettings::shouldAutomountDevice(const QString &udi)
 {
     /*
@@ -64,7 +70,7 @@ AutomounterSettings::shouldAutomountDevice(const QString &udi)
     bool known = deviceIsKnown(udi);
     bool enabled = automountEnabled();
     bool automountKnown = !automountUnknownDevices();
-    bool deviceAutomount = deviceSettings(udi).readEntry("Automount", false);
+    bool deviceAutomount = deviceAutomountIsForced(udi);
     bool lastSeenMounted = deviceSettings(udi).readEntry("LastSeenMounted", false);
     bool shouldAutomount = deviceAutomount || (enabled && ((automountKnown && known) || lastSeenMounted));
 
