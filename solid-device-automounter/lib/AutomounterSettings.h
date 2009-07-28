@@ -34,8 +34,7 @@ class AutomounterSettings : public AutomounterSettingsBase {
         static bool deviceIsKnown(const Solid::Device &dev);
         static bool shouldAutomountDevice(const QString &udi);
         static bool shouldAutomountDevice(const Solid::Device &dev);
-        static void markDeviceSeen(const QString &udi);
-        static void markDeviceSeen(const Solid::Device &dev);
+        static void setDeviceLastSeenMounted(const QString &udi, bool mounted);
 };
 
 #endif

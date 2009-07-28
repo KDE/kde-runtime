@@ -30,6 +30,7 @@ class DeviceAutomounter : public KDEDModule {
         virtual ~DeviceAutomounter();
     private slots:
         void deviceAdded(const QString &udi);
+        void deviceMountChanged(bool accessible, const QString &udi);
     private:
         void automountDevice(const Solid::Device &dev);
 };

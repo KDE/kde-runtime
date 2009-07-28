@@ -30,13 +30,20 @@ AutomounterSettings::deviceSettings(const QString &udi)
 QStringList
 AutomounterSettings::knownDevices()
 {
-    return self()->config()->group("Devices").groupList();
+    KConfigGroup deviceList = self()->config()->group("Devices");
+    QStringList allDevices = deviceList.groupList();
+    QStringList knownDevices;
+    foreach(const QString &dev, allDevices) {
+        if (deviceList.group(dev).readEntry("EverMounted", false))
+            knownDevices << dev;
+    }
+    return knownDevices;
 }
 
 bool
 AutomounterSettings::deviceIsKnown(const QString &udi)
 {
-    return self()->config()->group("Devices").hasGroup(udi);
+    return self()->config()->group("Devices").group(udi).readEntry("EverMounted", false);
 }
 
 bool
@@ -48,7 +55,28 @@ AutomounterSettings::deviceIsKnown(const Solid::Device &dev)
 bool
 AutomounterSettings::shouldAutomountDevice(const QString &udi)
 {
-    return automountUnknownDevices() || (deviceIsKnown(udi) && deviceSettings(udi).readEntry("Automount",automount()));
+    /*
+     * First, we check the device-specific AutomountEnabled-overriding Automount value.
+     * If thats true, we then check AutomountEnabled. Assuming true, we check if we
+     * should automount known devices and if it is a known device. If neither, we check if
+     * we should bother restoring its 'mounted' propery.
+     */
+    bool known = deviceIsKnown(udi);
+    bool enabled = automountEnabled();
+    bool automountKnown = !automountUnknownDevices();
+    bool deviceAutomount = deviceSettings(udi).readEntry("Automount", false);
+    bool lastSeenMounted = deviceSettings(udi).readEntry("LastSeenMounted", false);
+    bool shouldAutomount = deviceAutomount || (enabled && ((automountKnown && known) || lastSeenMounted));
+
+    kDebug() << "Processing" << udi;
+    kDebug() << "automountKnownDevices:" << automountKnown;
+    kDebug() << "deviceIsKnown:" << known;
+    kDebug() << "AutomountEnabled:" << enabled;
+    kDebug() << "Automount:" << deviceAutomount;
+    kDebug() << "LastSeenMounted:" << lastSeenMounted;
+    kDebug() << "ShouldAutomount:" << shouldAutomount;
+    
+    return shouldAutomount;
 }
 
 bool
@@ -58,14 +86,10 @@ AutomounterSettings::shouldAutomountDevice(const Solid::Device &dev)
 }
 
 void
-AutomounterSettings::markDeviceSeen(const QString &udi)
+AutomounterSettings::setDeviceLastSeenMounted(const QString &udi, bool mounted)
 {
-    deviceSettings(udi).writeEntry("LastSeen", QDateTime::currentDateTime());
-    kDebug() << "Marking" << udi << "as last seen on" << deviceSettings(udi).readEntry("LastSeen");
-}
-
-void
-AutomounterSettings::markDeviceSeen(const Solid::Device &dev)
-{
-    markDeviceSeen(dev.udi());
+    kDebug() << "Marking" << udi << "as lastSeenMounted:" << mounted;
+    if (mounted)
+        deviceSettings(udi).writeEntry("EverMounted", true);
+    deviceSettings(udi).writeEntry("LastSeenMounted", mounted);
 }
