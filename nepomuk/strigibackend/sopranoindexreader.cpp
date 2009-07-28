@@ -394,14 +394,13 @@ void Strigi::Soprano::IndexReader::getChildren( const std::string& parent,
                           Node::resourceToN3( Vocabulary::Xesam::url() ),
                           Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ) );
 
-    qDebug() << "running getChildren query:" << query;
+//    qDebug() << "running getChildren query:" << query;
 
     QueryResultIterator result = d->repository->executeQuery( query, ::Soprano::Query::QueryLanguageSparql );
 
     while ( result.next() ) {
         Node pathNode = result.binding( "path" );
         Node mTimeNode = result.binding( "mtime" );
-        qDebug() << "file in index: " << pathNode.toString() << "mtime:" << mTimeNode.literal().toDateTime() << "(" << mTimeNode.literal().toDateTime().toTime_t() << ")";
 
         // be backwards compatible in case there are paths left encoded as literals
         std::string path;
@@ -458,7 +457,7 @@ time_t Strigi::Soprano::IndexReader::mTime( const std::string& uri )
                           Node::resourceToN3( Vocabulary::Xesam::sourceModified() ),
                           Node::resourceToN3( Nepomuk::Vocabulary::NIE::lastModified() ) );
 
-    qDebug() << "mTime( " << uri.c_str() << ") query:" << query;
+//    qDebug() << "mTime( " << uri.c_str() << ") query:" << query;
 
     QueryResultIterator it = d->repository->executeQuery( query, ::Soprano::Query::QueryLanguageSparql );
 
