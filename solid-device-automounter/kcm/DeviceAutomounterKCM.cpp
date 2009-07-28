@@ -55,6 +55,8 @@ DeviceAutomounterKCM::DeviceAutomounterKCM(QWidget *parent, const QVariantList &
     connect(automountEnabled, SIGNAL(stateChanged(int)), this, SLOT(emitChanged()));
     connect(automountUnknownDevices, SIGNAL(stateChanged(int)), this, SLOT(emitChanged()));
     connect(m_devices, SIGNAL(dataChanged(const QModelIndex, const QModelIndex)), this, SLOT(emitChanged()));
+    connect(m_devices, SIGNAL(rowsInserted(const QModelIndex, int, int)), this, SLOT(emitChanged()));
+    connect(m_devices, SIGNAL(rowsRemoved(const QModelIndex, int, int)), this, SLOT(emitChanged()));
 
     connect(automountEnabled, SIGNAL(stateChanged(int)), this, SLOT(enabledChanged()));
 
@@ -186,14 +188,20 @@ DeviceAutomounterKCM::save()
         AutomounterSettings::setAutomountOnPlugin(false);
 
     int i;
+    QStringList validDevices;
     for(i = 0;i < m_devices->rowCount();i++) {
         QModelIndex udi = m_devices->index(i, 0);
         QModelIndex automount = m_devices->index(i, 1);
         QString device = udi.data().toString();
+        validDevices << device;
         if (automount.data(Qt::CheckStateRole).toInt() == Qt::Checked)
             AutomounterSettings::deviceSettings(device).writeEntry("ForceAutomount", true);
         else
             AutomounterSettings::deviceSettings(device).writeEntry("ForceAutomount", false);
+    }
+    foreach(const QString &possibleDevice, AutomounterSettings::knownDevices()) {
+        if (!validDevices.contains(possibleDevice))
+            AutomounterSettings::deviceSettings(possibleDevice).deleteGroup();
     }
 
     AutomounterSettings::self()->writeConfig();
