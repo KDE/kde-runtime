@@ -79,7 +79,7 @@ AutomounterSettings::shouldAutomountDevice(const QString &udi, AutomountType typ
     kDebug() << "Automount:" << deviceAutomount;
     kDebug() << "LastSeenMounted:" << lastSeenMounted;
     kDebug() << "ShouldAutomount:" << shouldAutomount;
-    
+
     return shouldAutomount;
 }
 

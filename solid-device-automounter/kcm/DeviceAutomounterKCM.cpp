@@ -160,7 +160,7 @@ DeviceAutomounterKCM::load()
         addNewDevice(dev);
     }
     deviceView->resizeColumnToContents(0);
-    
+
     enabledChanged();
 }
 
