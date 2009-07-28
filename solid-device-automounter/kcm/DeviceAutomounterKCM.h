@@ -1,5 +1,5 @@
 /***************************************************************************
-*   Copyright (C) 2009 by Trever Fischer <wm161@wm161.net                 *
+*   Copyright (C) 2009 by Trever Fischer <wm161@wm161.net>                *
 *                                                                         *
 *   This program is free software; you can redistribute it and/or modify  *
 *   it under the terms of the GNU General Public License as published by  *
