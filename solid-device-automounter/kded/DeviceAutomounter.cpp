@@ -29,7 +29,7 @@
 #include <KDebug>
 
 K_PLUGIN_FACTORY(DeviceAutomounterFactory, registerPlugin<DeviceAutomounter>();)
-K_EXPORT_PLUGIN(DeviceAutomounterFactory("kded_device_automounter"));
+K_EXPORT_PLUGIN(DeviceAutomounterFactory("kded_device_automounter"))
 
 DeviceAutomounter::DeviceAutomounter(QObject *parent, const QVariantList &args)
     : KDEDModule(parent)

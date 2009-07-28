@@ -1,7 +1,0 @@
-set(device_automounter_lib_SRCS AutomounterSettings.cpp)
-
-kde4_add_kcfg_files(device_automounter_lib_SRCS AutomounterSettingsBase.kcfgc)
-
-target_link_libraries(device_automounter_lib ${KDE_KDECORE_LIBS})
-
-add_library(device_automounter_lib STATIC ${device_automounter_lib_SRCS})
