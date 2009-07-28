@@ -19,17 +19,13 @@
 
 #include "AutomounterSettings.h"
 
+#include <QtCore/QDateTime>
+
 KConfigGroup
 AutomounterSettings::deviceSettings(const QString &udi)
 {
     return self()->config()->group("Devices").group(udi);
 }
-
-/*static const KConfigGroup
-AutomounterSettings::deviceSettings(const QString &udi) const
-{
-    return self()->config()->cogroup("Devices").group(udi);
-}*/
 
 QStringList
 AutomounterSettings::knownDevices()
@@ -47,4 +43,29 @@ bool
 AutomounterSettings::deviceIsKnown(const Solid::Device &dev)
 {
     return deviceIsKnown(dev.udi());
+}
+
+bool
+AutomounterSettings::shouldAutomountDevice(const QString &udi)
+{
+    return automountUnknownDevices() || (deviceIsKnown(udi) && deviceSettings(udi).readEntry("Automount",automount()));
+}
+
+bool
+AutomounterSettings::shouldAutomountDevice(const Solid::Device &dev)
+{
+    return shouldAutomountDevice(dev.udi());
+}
+
+void
+AutomounterSettings::markDeviceSeen(const QString &udi)
+{
+    deviceSettings(udi).writeEntry("LastSeen", QDateTime::currentDateTime());
+    kDebug() << "Marking" << udi << "as last seen on" << deviceSettings(udi).readEntry("LastSeen");
+}
+
+void
+AutomounterSettings::markDeviceSeen(const Solid::Device &dev)
+{
+    markDeviceSeen(dev.udi());
 }

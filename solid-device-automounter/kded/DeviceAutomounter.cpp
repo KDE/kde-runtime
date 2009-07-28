@@ -40,8 +40,11 @@ DeviceAutomounter::DeviceAutomounter(QObject *parent, const QVariantList &args)
     if (AutomounterSettings::automountOnLogin()) {
         QList<Solid::Device> volumes = Solid::Device::listFromType(Solid::DeviceInterface::StorageVolume);
         foreach(const Solid::Device &volume, volumes) {
-            mountDevice(volume.udi());
+            if (AutomounterSettings::shouldAutomountDevice(volume))
+                mountDevice(volume.udi());
+            AutomounterSettings::markDeviceSeen(volume);
         }
+        AutomounterSettings::self()->writeConfig();
     }
 }
 
@@ -68,6 +71,12 @@ DeviceAutomounter::deviceAdded(const QString &udi)
 {
     AutomounterSettings::self()->readConfig();
     if (AutomounterSettings::automountOnPlugin()) {
-        mountDevice(udi);
+        Solid::Device dev(udi);
+        if (dev.is<Solid::StorageVolume>()) {
+            if (AutomounterSettings::shouldAutomountDevice(dev))
+                mountDevice(udi);
+            AutomounterSettings::markDeviceSeen(udi);
+            AutomounterSettings::self()->writeConfig();
+        }
     }
 }

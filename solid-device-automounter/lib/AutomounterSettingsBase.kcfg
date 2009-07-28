@@ -16,4 +16,9 @@
         <default>false</default>
     </entry>
   </group>
+  <group name="Device Defaults">
+    <entry name="Automount" type="Bool">
+        <default>false</default>
+    </entry>
+  </group>
 </kcfg>
