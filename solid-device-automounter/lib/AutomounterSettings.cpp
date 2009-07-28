@@ -30,14 +30,7 @@ AutomounterSettings::deviceSettings(const QString &udi)
 QStringList
 AutomounterSettings::knownDevices()
 {
-    KConfigGroup deviceList = self()->config()->group("Devices");
-    QStringList allDevices = deviceList.groupList();
-    QStringList knownDevices;
-    foreach(const QString &dev, allDevices) {
-        if (deviceList.group(dev).readEntry("EverMounted", false))
-            knownDevices << dev;
-    }
-    return knownDevices;
+    return self()->config()->group("Devices").groupList();
 }
 
 bool
@@ -66,7 +59,7 @@ AutomounterSettings::shouldAutomountDevice(const QString &udi, AutomountType typ
     bool automountKnown = !automountUnknownDevices();
     bool deviceAutomount = deviceAutomountIsForced(udi);
     bool lastSeenMounted = deviceSettings(udi).readEntry("LastSeenMounted", false);
-    bool typeCondition;
+    bool typeCondition = false;
     switch(type) {
         case Login:
             typeCondition = automountOnLogin();
