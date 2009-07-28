@@ -55,7 +55,7 @@ extern "C" KDE_EXPORT int kdemain(int argc, char **argv)
             KAboutData::License_LGPL,
             ki18n("(C) 2007-2009  Andreas Hartmetz, Michael Jansen"));
     aboutdata.addAuthor(ki18n("Andreas Hartmetz"),ki18n("Maintainer"),"ahartmetz@gmail.com");
-    aboutdata.addAuthor(ki18n("Michael Jansen"),ki18n("Mmaintainer"),"kde@michael-jansen.biz");
+    aboutdata.addAuthor(ki18n("Michael Jansen"),ki18n("Maintainer"),"kde@michael-jansen.biz");
 
     aboutdata.setProgramIconName("kglobalaccel");
 
