@@ -75,7 +75,8 @@ void
 DeviceAutomounterKCM::addNewDevice()
 {
     QString udi = KInputDialog::getText(i18n("Add Device"), i18n("Enter the device's system identifier"), 0, 0, this);
-    addNewDevice(udi);
+    if( !udi.isEmpty())
+       addNewDevice(udi);
 }
 
 void
@@ -111,7 +112,7 @@ DeviceAutomounterKCM::updateForgetDeviceButton()
 void
 DeviceAutomounterKCM::forgetSelectedDevices()
 {
-    QModelIndexList selected = deviceView->selectionModel()->selectedRows();
+    const QModelIndexList selected = deviceView->selectionModel()->selectedRows();
     foreach(const QModelIndex &idx, selected) {
         kDebug() << "Deleting" << idx.row();
         m_devices->removeRow(idx.row());
