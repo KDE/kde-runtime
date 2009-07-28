@@ -40,9 +40,7 @@ DeviceAutomounter::DeviceAutomounter(QObject *parent, const QVariantList &args)
     if (AutomounterSettings::automountOnLogin()) {
         QList<Solid::Device> volumes = Solid::Device::listFromType(Solid::DeviceInterface::StorageVolume);
         foreach(const Solid::Device &volume, volumes) {
-            if (AutomounterSettings::shouldAutomountDevice(volume))
-                mountDevice(volume.udi());
-            AutomounterSettings::markDeviceSeen(volume);
+            automountDevice(volume);
         }
         AutomounterSettings::self()->writeConfig();
     }
@@ -53,16 +51,19 @@ DeviceAutomounter::~DeviceAutomounter()
 }
 
 void
-DeviceAutomounter::mountDevice(const QString &udi)
+DeviceAutomounter::automountDevice(const Solid::Device &dev)
 {
-    Solid::Device dev(udi);
     if (dev.is<Solid::StorageVolume>()) {
-        Solid::StorageVolume *sv = dev.as<Solid::StorageVolume>();
-        if (!sv->isIgnored() && dev.is<Solid::StorageAccess>()) {
-            Solid::StorageAccess *sa = dev.as<Solid::StorageAccess>();
-            kDebug() << "Mounting" << udi;
-            sa->setup();
+        if (AutomounterSettings::shouldAutomountDevice(dev)) {
+            Solid::Device volumeDevice(dev.udi());
+            Solid::StorageVolume *sv = volumeDevice.as<Solid::StorageVolume>();
+            if (!sv->isIgnored() && dev.is<Solid::StorageAccess>()) {
+                Solid::StorageAccess *sa = volumeDevice.as<Solid::StorageAccess>();
+                kDebug() << "Mounting" << dev.udi();
+                sa->setup();
+            }
         }
+        AutomounterSettings::markDeviceSeen(dev);
     }
 }
 
@@ -72,11 +73,7 @@ DeviceAutomounter::deviceAdded(const QString &udi)
     AutomounterSettings::self()->readConfig();
     if (AutomounterSettings::automountOnPlugin()) {
         Solid::Device dev(udi);
-        if (dev.is<Solid::StorageVolume>()) {
-            if (AutomounterSettings::shouldAutomountDevice(dev))
-                mountDevice(udi);
-            AutomounterSettings::markDeviceSeen(udi);
-            AutomounterSettings::self()->writeConfig();
-        }
+        automountDevice(dev);
+        AutomounterSettings::self()->writeConfig();
     }
 }

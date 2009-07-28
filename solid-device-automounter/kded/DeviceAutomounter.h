@@ -21,6 +21,7 @@
 
 #include <QtCore/QVariantList>
 #include <KDEDModule>
+#include <Solid/Device>
 
 class DeviceAutomounter : public KDEDModule {
     Q_OBJECT
@@ -30,7 +31,7 @@ class DeviceAutomounter : public KDEDModule {
     private slots:
         void deviceAdded(const QString &udi);
     private:
-        void mountDevice(const QString &udi);
+        void automountDevice(const Solid::Device &dev);
 };
 
 #endif
