@@ -24,7 +24,6 @@
 #include <KPluginLoader>
 #include <KAboutData>
 #include <KSharedConfig>
-#include <KLed>
 #include <KMessageBox>
 
 #include <QtGui/QTreeView>
@@ -50,6 +49,30 @@ namespace {
             view->expand( index );
             expandRecursively( index.parent(), view );
         }
+    }
+
+    bool isDirHidden( const QString& dir ) {
+        QDir d( dir );
+        while ( !d.isRoot() ) {
+            if ( QFileInfo( d.path() ).isHidden() )
+                return true;
+            if ( !d.cdUp() )
+                return false; // dir does not exist or is not readable
+        }
+        return false;
+    }
+
+    QStringList removeHiddenFolders( const QStringList& folders ) {
+        QStringList newFolders( folders );
+        for ( QStringList::iterator it = newFolders.begin(); it != newFolders.end(); /* do nothing here */ ) {
+            if ( isDirHidden( *it ) ) {
+                it = newFolders.erase( it );
+            }
+            else {
+                ++it;
+            }
+        }
+        return newFolders;
     }
 }
 
@@ -137,6 +160,17 @@ void Nepomuk::ServerConfigModule::load()
                                strigiConfig.group( "General" ).readPathEntry( "exclude folders", QStringList() ) );
     m_editStrigiExcludeFilters->setItems( strigiConfig.group( "General" ).readEntry( "exclude filters", defaultExcludeFilters() ) );
 
+    // make sure we do not have a hidden folder to expand which would make QFileSystemModel crash
+    // + it would be weird to have a hidden folder indexed but not shown
+    if ( !m_checkShowHiddenFolders->isChecked() ) {
+        foreach( const QString& dir, m_folderModel->includeFolders() + m_folderModel->excludeFolders() ) {
+            if ( isDirHidden( dir ) ) {
+                m_checkShowHiddenFolders->setChecked( true );
+                break;
+            }
+        }
+    }
+
     // make sure that the tree is expanded to show all selected items
     foreach( const QString& dir, m_folderModel->includeFolders() + m_folderModel->excludeFolders() ) {
         expandRecursively( m_folderModel->index( dir ), m_viewIndexFolders );
@@ -150,6 +184,15 @@ void Nepomuk::ServerConfigModule::load()
 
 void Nepomuk::ServerConfigModule::save()
 {
+    QStringList includeFolders = m_folderModel->includeFolders();
+    QStringList excludeFolders = m_folderModel->excludeFolders();
+
+    // 0. remove all hidden dirs from the folder lists if hidden folders are not to be indexed
+    if ( !m_checkShowHiddenFolders->isChecked() ) {
+        includeFolders = removeHiddenFolders( includeFolders );
+        excludeFolders = removeHiddenFolders( excludeFolders );
+    }
+
     // 1. change the settings (in case the server is not running)
     KConfig config( "nepomukserverrc" );
     config.group( "Basic Settings" ).writeEntry( "Start Nepomuk", m_checkEnableNepomuk->isChecked() );
@@ -158,8 +201,8 @@ void Nepomuk::ServerConfigModule::save()
 
     // 2. update Strigi config
     KConfig strigiConfig( "nepomukstrigirc" );
-    strigiConfig.group( "General" ).writePathEntry( "folders", m_folderModel->includeFolders() );
-    strigiConfig.group( "General" ).writePathEntry( "exclude folders", m_folderModel->excludeFolders() );
+    strigiConfig.group( "General" ).writePathEntry( "folders", includeFolders );
+    strigiConfig.group( "General" ).writePathEntry( "exclude folders", excludeFolders );
     strigiConfig.group( "General" ).writeEntry( "exclude filters", m_editStrigiExcludeFilters->items() );
     strigiConfig.group( "General" ).writeEntry( "index hidden folders", m_checkShowHiddenFolders->isChecked() );
 
