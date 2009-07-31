@@ -34,7 +34,6 @@ class QWidget;
 class KColorButton;
 class KIconEffect;
 class KIconLoader;
-class KIconTheme;
 
 struct Effect
 {
