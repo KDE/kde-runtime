@@ -1,6 +1,6 @@
 /*
    This file is part of the KDE libraries
-   Copyright (c) 2007-2009 David Jarvie <software@astrojar.org.uk>
+   Copyright (c) 2007-2009 David Jarvie <djarvie@kde.org>
    Copyright (c) 2009 Till Adam <adam@kde.org>
 
    This library is free software; you can redistribute it and/or
