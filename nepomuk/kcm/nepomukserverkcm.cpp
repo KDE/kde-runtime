@@ -92,6 +92,7 @@ Nepomuk::ServerConfigModule::ServerConfigModule( QWidget* parent, const QVariant
     setAboutData(about);
     setButtons(Help|Apply|Default);
     setupUi( this );
+    m_editStrigiExcludeFilters->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     m_folderModel = new FolderSelectionModel( m_viewIndexFolders );
     m_viewIndexFolders->setModel( m_folderModel );
