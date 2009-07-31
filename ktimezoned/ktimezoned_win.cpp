@@ -132,7 +132,7 @@ void KTimeZoned::updateLocalZone()
     TIME_ZONE_INFORMATION tzinfo;
     DWORD res =  GetTimeZoneInformation(&tzinfo);
     if (res == TIME_ZONE_ID_INVALID) return; // hm
-    mLocalZone = QString::fromWCharArray(tzinfo.StandardName);
+    mLocalZone = QString::fromUtf16( reinterpret_cast<ushort*>( tzinfo.StandardName ) );
 
     if (mConfigLocalZone != mLocalZone)
     {
