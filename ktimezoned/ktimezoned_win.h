@@ -23,6 +23,8 @@
 
 #include "ktimezonedbase.h"
 
+class RegistryWatcherThread;
+
 class KTimeZoned : public KTimeZonedBase
 {
         Q_OBJECT
