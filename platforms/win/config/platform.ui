@@ -41,7 +41,7 @@
          <string extracomment="tooltip for option in switching Windows Desktop shells">Native Windows Explorer shell</string>
         </property>
         <property name="whatsThis">
-         <string extracomment="whatsThis for option in switching Windows Desktop shells">This is standard Windows Desktop shell. Cohose this if you want to return your system to default desktop.</string>
+         <string extracomment="whatsThis for option in switching Windows Desktop shells">This is standard Windows Desktop shell. Choose this if you want to return your system to default desktop.</string>
         </property>
         <property name="text">
          <string extracomment="radio button to choose Windows Desktop shell">Native desktop shell</string>
