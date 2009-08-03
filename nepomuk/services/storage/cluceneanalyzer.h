@@ -37,25 +37,23 @@
 namespace Nepomuk {
 
 	/** Represents a standard analyzer. */
-	class CLuceneAnalyzer : public CL_NS(analysis)::Analyzer 
+	class CLuceneAnalyzer : public CL_NS(analysis)::Analyzer
 	{
 	public:
 		/** Builds an analyzer.*/
 		CLuceneAnalyzer();
 
-		/** Builds an analyzer with the given stop words. */
-		CLuceneAnalyzer( const TCHAR** stopWords);
-
 		~CLuceneAnalyzer();
 
 		/**
-         * Constructs a StandardTokenizer filtered by a 
+         * Constructs a StandardTokenizer filtered by a
          * StandardFilter, a LowerCaseFilter and a StopFilter.
          */
 		CL_NS(analysis)::TokenStream* tokenStream(const TCHAR* fieldName, CL_NS(util)::Reader* reader);
 
  	private:
 		CL_NS(util)::CLSetList<const TCHAR*> stopSet;
+        TCHAR* m_rdfType;
 	};
 }
 
