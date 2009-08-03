@@ -38,18 +38,11 @@ CL_NS_USE(analysis)
 namespace Nepomuk {
 
 	CLuceneAnalyzer::CLuceneAnalyzer()
-        : stopSet(false)
+        : stopSet(false),
+          m_rdfType( L"http://www.w3.org/1999/02/22-rdf-syntax-ns#type" )
 	{
         CL_NS(analysis)::StopFilter::fillStopTable( &stopSet,CL_NS(analysis)::StopAnalyzer::ENGLISH_STOP_WORDS);
-        m_rdfType = L"http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
-	}
-
-	CLuceneAnalyzer::CLuceneAnalyzer( const TCHAR** stopWords):
-		stopSet(false)
-	{
-		CL_NS(analysis)::StopFilter::fillStopTable( &stopSet,stopWords );
-        m_rdfType = L"http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
-	}
+    }
 
 	CLuceneAnalyzer::~CLuceneAnalyzer()
     {

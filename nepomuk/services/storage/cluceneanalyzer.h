@@ -43,9 +43,6 @@ namespace Nepomuk {
 		/** Builds an analyzer.*/
 		CLuceneAnalyzer();
 
-		/** Builds an analyzer with the given stop words. */
-		CLuceneAnalyzer( const TCHAR** stopWords);
-
 		~CLuceneAnalyzer();
 
 		/**
