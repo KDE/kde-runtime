@@ -36,9 +36,9 @@
 #include <KToolInvocation>
 #include <KWallet/Wallet>
 
-static const char kWalletEntryName[] = "https://bugs.kde.org/index.cgi#login";
-static const char kWalletEntryUsername[] = "Bugzilla_login";
-static const char kWalletEntryPassword[] = "Bugzilla_password";
+static const char kWalletEntryName[] = "drkonqi_bugzilla";
+static const char kWalletEntryUsername[] = "username";
+static const char kWalletEntryPassword[] = "password";
 
 //BEGIN BugzillaLoginPage
 
