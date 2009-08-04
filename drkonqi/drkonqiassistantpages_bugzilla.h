@@ -24,7 +24,6 @@
 #include "bugzillalib.h"
 
 #include "ui_assistantpage_bugzilla_login.h"
-#include "ui_assistantpage_bugzilla_keywords.h"
 #include "ui_assistantpage_bugzilla_duplicates.h"
 #include "ui_assistantpage_bugzilla_duplicates_dialog.h"
 #include "ui_assistantpage_bugzilla_information.h"
@@ -62,28 +61,7 @@ private:
     Ui::AssistantPageBugzillaLogin      ui;
 
     KWallet::Wallet *                   m_wallet;
-    bool                                m_walletWasOpened;
-};
-
-/** Enter keywords page **/
-class BugzillaKeywordsPage : public DrKonqiAssistantPage
-{
-    Q_OBJECT
-
-public:
-    BugzillaKeywordsPage(DrKonqiBugReport *);
-
-    void aboutToShow();
-    void aboutToHide();
-
-    bool isComplete();
-
-private Q_SLOTS:
-    void textEdited(QString);
-
-private:
-    Ui::AssistantPageBugzillaKeywords   ui;
-    bool                                m_keywordsOK;
+    bool                                m_walletWasOpenedBefore;
 };
 
 /** Searching for duplicates and showing report information page**/
@@ -136,7 +114,6 @@ private:
     QDate                                       m_searchingEndDate;
     
     long                                        m_possibleDuplicateBugNumber;
-    QString                                     m_currentKeywords;
     
     KGuiItem                                    m_searchMoreGuiItem;
     KGuiItem                                    m_retrySearchGuiItem;

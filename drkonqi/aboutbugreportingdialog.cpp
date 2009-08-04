@@ -132,23 +132,6 @@ AboutBugReportingDialog::AboutBugReportingDialog(QWidget * parent):
                             "save your password in the KWallet password system. Also, it will "
                             "prompt you for the KWallet password upon loading to autocomplete "
                             "the login fields if you use this assistant again.")) +
-        //Bugzilla Keywords Page
-        QString("<a name=\"%1\" /><h2>%2</h2>").arg(QLatin1String(PAGE_BZKEYWORDS_ID),
-                                        i18nc("@title","Bug Report Keywords")) +
-        QString("<p>%1</p><p>%2</p>").arg(
-            i18nc("@info/rich","In this step you need to write at least four (4) words "
-                            "to describe and identify the crash. You do not need to use "
-                            "the application name, since that will be automatically sent. "
-                            "This text will be "
-                            "used to search for similar crashes already reported in the "
-                            "database, "
-                            "to help you and others find them later. Also, this text will be "
-                            "used to start "
-                            "the title of the future bug report. You can change this title "
-                            "later. Some examples: toolbar vanishes then plasma crashes, or "
-                            "(konqueror) crash on a site with CSS. Note that you do not need "
-                            "to use the word crash, since that is already part of the report."),
-            i18nc("@info/rich","<note>You should write in English.</note>")) +
         //Bugzilla Duplicates Page
         QString("<a name=\"%1\" /><h2>%2</h2>").arg(QLatin1String(PAGE_BZDUPLICATES_ID),
                                 i18nc("@title","Bug Report Possible Duplicate list")) +

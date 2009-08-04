@@ -83,16 +83,6 @@ void ReportInfo::setDevelopersCanContactReporter(bool canContact)
     m_developersCanContactReporter = canContact;
 }
 
-QString ReportInfo::reportKeywords() const
-{
-    return m_reportKeywords;
-}
-
-void ReportInfo::setReportKeywords(const QString & keywords)
-{
-    m_reportKeywords = keywords;
-}
-
 QString ReportInfo::backtrace() const
 {
     return m_backtrace;
@@ -113,9 +103,19 @@ void ReportInfo::setFirstBacktraceFunctions(const QStringList & functions)
     m_firstBacktraceFunctions = functions;
 }
 
+QString ReportInfo::title() const
+{
+    return m_reportTitle;
+}
+    
+void ReportInfo::setTitle(const QString & text)
+{
+    m_reportTitle = text;
+}
+
 void ReportInfo::setDetailText(const QString & text)
 {
-    m_userDetailText = text;
+    m_reportDetailText = text;
 }
 
 void ReportInfo::setPossibleDuplicate(const QString & bug)
@@ -165,8 +165,8 @@ QString ReportInfo::generateReport(bool drKonqiStamp) const
     //Details of the crash situation
     if (m_userCanDetail) {
         report.append(QString("What I was doing when the application crashed:\n"));
-        if (!m_userDetailText.isEmpty()) {
-            report.append(m_userDetailText);
+        if (!m_reportDetailText.isEmpty()) {
+            report.append(m_reportDetailText);
         } else {
             report.append(i18nc("@info/plain","<placeholder>In detail, tell us what you were doing "
                                               " when the application crashed.</placeholder>"));
@@ -241,7 +241,7 @@ BugReport ReportInfo::newBugReportTemplate() const
     report.setOperatingSystem(bugzillaOs());
     report.setPriority(QLatin1String("NOR"));
     report.setBugSeverity(QLatin1String("crash"));
-    report.setShortDescription(m_reportKeywords);
+    report.setShortDescription(m_reportTitle);
     return report;
 }
 

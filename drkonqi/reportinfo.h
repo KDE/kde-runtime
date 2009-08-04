@@ -39,15 +39,15 @@ public:
     bool developersCanContactReporter() const;
     void setDevelopersCanContactReporter(bool canContact);
 
-    QString reportKeywords() const;
-    void setReportKeywords(const QString & keywords);
-
     QStringList firstBacktraceFunctions() const;
     void setFirstBacktraceFunctions(const QStringList & functions);
 
     QString backtrace() const;
     void setBacktrace(const QString & backtrace);
     
+    QString title() const;
+    void setTitle(const QString & text);
+
     void setDetailText(const QString & text);
     void setPossibleDuplicate(const QString & bug);
 
@@ -67,10 +67,12 @@ private:
 
     bool        m_userCanDetail;
     bool        m_developersCanContactReporter;
-    QString     m_reportKeywords;
+    
     QString     m_backtrace;
     QStringList m_firstBacktraceFunctions;
-    QString     m_userDetailText;
+    
+    QString     m_reportTitle;
+    QString     m_reportDetailText;
     QString     m_possibleDuplicate;
 
     QString     m_lsbRelease;

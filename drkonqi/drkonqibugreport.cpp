@@ -89,15 +89,6 @@ DrKonqiBugReport::DrKonqiBugReport(QWidget * parent) :
     m_bugzillaLoginPage->setHeader(i18nc("@title","KDE Bug Tracking System Login"));
     m_bugzillaLoginPage->setIcon(KIcon("tools-report-bug"));
 
-    //Bugzilla keywords
-    BugzillaKeywordsPage * m_bugzillaKeywords =  new BugzillaKeywordsPage(this);
-    connectSignals(m_bugzillaKeywords);
-
-    KPageWidgetItem * m_bugzillaKeywordsPage =  new KPageWidgetItem(m_bugzillaKeywords, 
-                                                                QLatin1String(PAGE_BZKEYWORDS_ID));
-    m_bugzillaKeywordsPage->setHeader(i18nc("@title","Bug Report Keywords"));
-    m_bugzillaKeywordsPage->setIcon(KIcon("tools-report-bug"));
-
     //Bugzilla duplicates
     BugzillaDuplicatesPage * m_bugzillaDuplicates =  new BugzillaDuplicatesPage(this);
     connectSignals(m_bugzillaDuplicates);
@@ -131,7 +122,6 @@ DrKonqiBugReport::DrKonqiBugReport(QWidget * parent) :
     addPage(m_awarenessPage);
     addPage(m_conclusionsPage);
     addPage(m_bugzillaLoginPage);
-    addPage(m_bugzillaKeywordsPage);
     addPage(m_bugzillaDuplicatesPage);
     addPage(m_bugzillaInformationPage);
     addPage(m_bugzillaSendPage);

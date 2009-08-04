@@ -44,7 +44,7 @@ static const char kWalletEntryPassword[] = "password";
 
 BugzillaLoginPage::BugzillaLoginPage(DrKonqiBugReport * parent) :
         DrKonqiAssistantPage(parent),
-        m_wallet(0), m_walletWasOpened(false)
+        m_wallet(0), m_walletWasOpenedBefore(false)
 {
     connect(bugzillaManager(), SIGNAL(loginFinished(bool)), this, SLOT(loginFinished(bool)));
     connect(bugzillaManager(), SIGNAL(loginError(QString)), this, SLOT(loginError(QString)));
@@ -126,7 +126,7 @@ bool BugzillaLoginPage::kWalletEntryExists()
 void BugzillaLoginPage::openWallet()
 {
     //Store if the wallet was previously opened so we can know if we should close it later
-    m_walletWasOpened = KWallet::Wallet::isOpen(KWallet::Wallet::NetworkWallet());
+    m_walletWasOpenedBefore = KWallet::Wallet::isOpen(KWallet::Wallet::NetworkWallet());
     //Request open the wallet
     m_wallet = KWallet::Wallet::openWallet(KWallet::Wallet::NetworkWallet(), 
                                     static_cast<QWidget*>(this->parent())->winId());
@@ -211,7 +211,7 @@ void BugzillaLoginPage::loginFinished(bool logged)
 
         aboutToShow();
         if (m_wallet) {
-            if (m_wallet->isOpen() && !m_walletWasOpened) {
+            if (m_wallet->isOpen() && !m_walletWasOpenedBefore) {
                 m_wallet->lockWallet();
             }
         }
@@ -232,7 +232,7 @@ BugzillaLoginPage::~BugzillaLoginPage()
 {
     //Close wallet if we close the assistant in this step
     if (m_wallet) {
-        if (m_wallet->isOpen() && !m_walletWasOpened) { 
+        if (m_wallet->isOpen() && !m_walletWasOpenedBefore) { 
             m_wallet->lockWallet();
         }
         delete m_wallet;
@@ -240,59 +240,6 @@ BugzillaLoginPage::~BugzillaLoginPage()
 }
 
 //END BugzillaLoginPage
-
-//BEGIN BugzillaKeywordsPage
-
-BugzillaKeywordsPage::BugzillaKeywordsPage(DrKonqiBugReport * parent) :
-        DrKonqiAssistantPage(parent),
-        m_keywordsOK(false)
-{
-    ui.setupUi(this);
-    
-    connect(ui.m_keywordsEdit, SIGNAL(textEdited(QString)), this, SLOT(textEdited(QString)));
-}
-
-void BugzillaKeywordsPage::textEdited(QString newText)
-{
-    QStringList list = newText.split(' ', QString::SkipEmptyParts);
-
-    bool ok = (list.count() >= 4); //At least four (valid) words
-
-    //Check words size
-    /* FIXME, some words can be short, like version numbers
-    if ( ok )
-    {
-        Q_FOREACH( const QString & word, list)
-        {
-            if( word.size() <= 3 )
-                ok = false;
-        }
-    }
-    */
-
-    if (ok != m_keywordsOK) {
-        m_keywordsOK = ok;
-        emitCompleteChanged();
-    }
-}
-
-bool BugzillaKeywordsPage::isComplete()
-{
-    return m_keywordsOK;
-}
-
-void BugzillaKeywordsPage::aboutToShow()
-{
-    textEdited(ui.m_keywordsEdit->text());
-}
-
-void BugzillaKeywordsPage::aboutToHide()
-{
-    //Save keywords (as short description of the future report)
-    reportInfo()->setReportKeywords(ui.m_keywordsEdit->text());
-}
-
-//END BugzillaKeywordsPage
 
 //BEGIN BugzillaDuplicatesPage
 
@@ -442,6 +389,15 @@ void BugzillaDuplicatesPage::resetDates()
 
 void BugzillaDuplicatesPage::aboutToShow()
 {
+    //FIXME check this
+    if (!m_searching) {
+        //If I never searched before, performSearch
+        if (ui.m_bugListWidget->topLevelItemCount() == 0 && canSearchMore()) {
+            searchMore();
+        }
+    }
+
+    /*
     if (m_currentKeywords != reportInfo()->reportKeywords()) { //Keywords changed
         m_currentKeywords = reportInfo()->reportKeywords();
         //Clear list and retrieve new reports
@@ -456,6 +412,7 @@ void BugzillaDuplicatesPage::aboutToShow()
             }
         }
     }
+    */
 }
 
 void BugzillaDuplicatesPage::aboutToHide()
@@ -502,7 +459,7 @@ void BugzillaDuplicatesPage::performSearch()
     
     //Test search
     /*
-    bugzillaManager()->searchBugs( "konqueror crash toggle mode",QStringList()<<"konqueror", "crash",  
+    bugzillaManager()->searchBugs( QString(), QStringList() << "konqueror", "crash",  
                 startDateStr, endDateStr , "caret" );
     */
 }
@@ -705,7 +662,7 @@ BugzillaInformationPage::BugzillaInformationPage(DrKonqiBugReport * parent)
 void BugzillaInformationPage::aboutToShow()
 {
     if (ui.m_titleEdit->text().isEmpty()) {
-        ui.m_titleEdit->setText(reportInfo()->reportKeywords());
+        ui.m_titleEdit->setText(reportInfo()->title());
     }
 
     bool showDetails = reportInfo()->userCanDetail();
@@ -782,7 +739,7 @@ bool BugzillaInformationPage::isComplete()
 void BugzillaInformationPage::aboutToHide()
 {
     //Save fields data
-    reportInfo()->setReportKeywords(ui.m_titleEdit->text());
+    reportInfo()->setTitle(ui.m_titleEdit->text());
     reportInfo()->setDetailText(ui.m_detailsEdit->toPlainText());
 }
 
