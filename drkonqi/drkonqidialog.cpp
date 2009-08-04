@@ -72,6 +72,14 @@ DrKonqiDialog::DrKonqiDialog(QWidget * parent) :
     restoreDialogSize(config);
 }
 
+DrKonqiDialog::~DrKonqiDialog()
+{
+    KConfigGroup config(KGlobal::config(), "General");
+    saveDialogSize(config);
+    
+    KGlobal::deref();
+}
+
 void DrKonqiDialog::tabIndexChanged(int index)
 {
     if (index == 1) {
@@ -229,12 +237,4 @@ void DrKonqiDialog::slotNewDebuggingApp(const QString & app)
     m_customDebugAction->setEnabled(true);
     m_customDebugAction->setText(i18nc("@action:inmenu 1 is the debugger name",
                                        "Debug in <application>%1</application>", app));
-}
-
-DrKonqiDialog::~DrKonqiDialog()
-{
-    KConfigGroup config(KGlobal::config(), "General");
-    saveDialogSize(config);
-    
-    KGlobal::deref();
 }
