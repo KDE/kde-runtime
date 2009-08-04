@@ -52,11 +52,11 @@ private Q_SLOTS:
     void assistantFinished(bool);
 
     void enableNextButton(bool);
-    void enableBackButton(bool);
 
     void showHelp();
 
     void next();
+    void back();
 
     //Override default reject method
     void reject();
@@ -65,6 +65,8 @@ private:
     void connectSignals(DrKonqiAssistantPage *);
     void closeEvent(QCloseEvent*);
 
+    QHash<QLatin1String, KPageWidgetItem*>       m_pageWidgetMap;
+    
     QPointer<AboutBugReportingDialog>   m_aboutBugReportingDialog;
     ReportInfo *                m_reportInfo;
     BugzillaManager *           m_bugzillaManager;

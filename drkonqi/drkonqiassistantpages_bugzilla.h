@@ -54,6 +54,9 @@ private Q_SLOTS:
 
     void walletLogin();
 
+Q_SIGNALS:
+    void loggedTurnToNextPage();
+ 
 private:
     bool kWalletEntryExists();
     void openWallet();

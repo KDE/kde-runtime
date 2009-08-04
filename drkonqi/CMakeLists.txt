@@ -30,7 +30,7 @@ set(drkonqi_SRCS
 )
 
 kde4_add_ui_files(drkonqi_SRCS ui/getbacktracewidget.ui
-    ui/assistantpage_introduction.ui ui/assistantpage_bugawareness.ui
+    ui/assistantpage_bugawareness.ui
     ui/assistantpage_conclusions.ui  ui/assistantpage_conclusions_dialog.ui
     ui/assistantpage_bugzilla_login.ui
     ui/assistantpage_bugzilla_duplicates.ui ui/assistantpage_bugzilla_duplicates_dialog.ui

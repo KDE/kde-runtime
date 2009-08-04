@@ -23,7 +23,6 @@
 #include "getbacktracewidget.h"
 #include "drkonqibugreport.h"
 
-#include "ui_assistantpage_introduction.h"
 #include "ui_assistantpage_bugawareness.h"
 #include "ui_assistantpage_conclusions.h"
 #include "ui_assistantpage_conclusions_dialog.h"
@@ -74,18 +73,6 @@ Q_SIGNALS:
 
 private:
     DrKonqiBugReport * const m_assistant;
-};
-
-/** Dummy Introduction page **/
-class IntroductionPage: public DrKonqiAssistantPage
-{
-    Q_OBJECT
-
-public:
-    IntroductionPage(DrKonqiBugReport *);
-    
-private:
-    Ui::AssistantPageIntroduction   ui;
 };
 
 /** Backtrace page **/

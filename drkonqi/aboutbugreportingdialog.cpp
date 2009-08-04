@@ -60,6 +60,9 @@ AboutBugReportingDialog::AboutBugReportingDialog(QWidget * parent):
                             "reporting process for the KDE Bug Reports Database Site. All the "
                             "information you enter on the bug report must be in English, if "
                             "possible, as KDE is developed internationally.")) +
+        
+        //FIXME invert order of bz, bugawareness, rewrite text a bit
+        
         //Crash Information Page   I suspect this needs more information...
         QString("<a name=\"%1\" /><h2>%2</h2>").arg(QLatin1String(PAGE_CRASHINFORMATION_ID),
                                 i18nc("@title","Crash Information")) +

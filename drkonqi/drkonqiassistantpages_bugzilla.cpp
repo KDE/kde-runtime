@@ -215,6 +215,8 @@ void BugzillaLoginPage::loginFinished(bool logged)
                 m_wallet->lockWallet();
             }
         }
+        
+        emit loggedTurnToNextPage();
     } else {
         ui.m_statusWidget->setIdle(i18nc("@info:status","Invalid username or password"));
 

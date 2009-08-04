@@ -33,16 +33,6 @@
 #include <KIcon>
 #include <KMessageBox>
 
-//BEGIN IntroductionPage
-
-IntroductionPage::IntroductionPage(DrKonqiBugReport * parent) :
-        DrKonqiAssistantPage(parent)
-{
-    ui.setupUi(this);
-}
-
-//END IntroductionPage
-
 //BEGIN CrashInformationPage
 
 CrashInformationPage::CrashInformationPage(DrKonqiBugReport * parent)
@@ -218,7 +208,12 @@ void ConclusionPage::aboutToShow()
     }
     case BacktraceParser::Useless:
     case BacktraceParser::InvalidUsefulness: {
-        explanationHTML += QString("<li>%1<br />%2</li>").arg(
+        BacktraceGenerator::State state = DrKonqi::instance()->backtraceGenerator()->state();
+        if (state == BacktraceGenerator::NotLoaded) {
+            explanationHTML += QString("<li>%1</li>").arg(i18nc("@info","The crash information was "
+                                        "not generated because it was not needed.")); 
+        } else {
+            explanationHTML += QString("<li>%1<br />%2</li>").arg(
                                         i18nc("@info","The automatically generated crash "
                                         "information does not contain enough information to be "
                                         "helpful."),
@@ -229,6 +224,7 @@ void ConclusionPage::aboutToShow()
                                         "<interface>Help</interface> button.</note>"));
                                     //but this guide doesn't mention bt packages? that's techbase
                                     //->>and the help guide mention techbase page... 
+        }
         break;
     }
     }

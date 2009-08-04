@@ -36,7 +36,6 @@ public:
 #define TECHBASE_HOWTO_DOC "http://techbase.kde.org/Development/Tutorials/Debugging/How_to_create_useful_crash_reports#Preparing_your_KDE_packages"
 
 /* IDs for bugreport assistant pages -> help anchors */
-#define PAGE_INTRODUCTION_ID "IntroductionID"
 #define PAGE_CRASHINFORMATION_ID "BacktraceID"
 #define PAGE_AWARENESS_ID "AwarenessID"
 #define PAGE_CONCLUSIONS_ID "ConclusionsID"
