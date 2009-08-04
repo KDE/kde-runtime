@@ -266,4 +266,9 @@ void ReportInfo::sendUsingDefaultProduct() const
     bzManager->sendReport(report);
 }
 
+QStringList ReportInfo::relatedBugzillaProducts() const
+{
+    return m_productMapping->relatedBugzillaProducts();
+}
+
 #include "reportinfo.moc"

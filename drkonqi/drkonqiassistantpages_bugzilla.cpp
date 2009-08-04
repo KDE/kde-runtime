@@ -496,12 +496,13 @@ void BugzillaDuplicatesPage::performSearch()
     ui.m_statusWidget->setBusy(i18nc("@info:status","Searching for duplicates (from %1 to %2)...",
                                    startDateStr, endDateStr));
     BugReport report = reportInfo()->newBugReportTemplate();
-    bugzillaManager()->searchBugs(m_currentKeywords, report.product(), report.bugSeverity(),
-                                    startDateStr, endDateStr, reportInfo()->firstBacktraceFunctions().join(" "));
+    bugzillaManager()->searchBugs(QString(), reportInfo()->relatedBugzillaProducts(), 
+                                  report.bugSeverity(), startDateStr, endDateStr, 
+                                  reportInfo()->firstBacktraceFunctions().join(" "));
     
     //Test search
     /*
-    bugzillaManager()->searchBugs( "konqueror crash toggle mode", "konqueror", "crash",  
+    bugzillaManager()->searchBugs( "konqueror crash toggle mode",QStringList()<<"konqueror", "crash",  
                 startDateStr, endDateStr , "caret" );
     */
 }

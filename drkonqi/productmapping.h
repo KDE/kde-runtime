@@ -22,6 +22,7 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QString>
+#include <QtCore/QStringList>
 
 class ProductMapping: public QObject
 {
@@ -31,11 +32,14 @@ public:
     
     QString bugzillaProduct() const;
     QString bugzillaComponent() const;
+    QStringList relatedBugzillaProducts() const;
     
 private:
     void map(const QString&);
     void mapUsingInternalFile(const QString&);
+    void getRelatedProductsUsingInternalFile(const QString&);
     
+    QStringList m_relatedBugzillaProducts;
     QString     m_bugzillaProduct;
     QString     m_bugzillaComponent;
 };

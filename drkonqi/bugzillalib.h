@@ -194,7 +194,7 @@ public:
     void tryLogin();
 
     void fetchBugReport(int);
-    void searchBugs(QString words, QString product, QString severity,
+    void searchBugs(QString words, QStringList products, QString severity,
                     QString date_start, QString date_end , QString comment);
     void stopCurrentSearch();
     

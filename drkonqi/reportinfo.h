@@ -56,6 +56,8 @@ public:
     BugReport newBugReportTemplate() const;
     void sendBugReport(BugzillaManager *bzManager) const;
 
+    QStringList relatedBugzillaProducts() const;
+    
 private slots:
     void sendUsingDefaultProduct() const;
     void lsbReleaseFinished();

@@ -154,14 +154,26 @@ void BugzillaManager::fetchBugReportDone(KJob* job)
     m_fetchBugJob = 0;
 }
 
-void BugzillaManager::searchBugs(QString words, QString product, QString severity,
+void BugzillaManager::searchBugs(QString words, QStringList products, QString severity,
                                  QString date_start, QString date_end, QString comment)
 {
+    QString product;
+    if (products.size() > 0) {
+        if (products.size() == 1) {
+            product = products.at(0);
+        } else  {
+            Q_FOREACH(const QString & p, products) {
+                product += p + "&product=";
+            }
+            product = product.mid(0,product.size()-9);
+        }
+    }
+
     QString url = QString(bugtrackerBaseUrl) +
                   QString(searchUrl).arg(words.replace(' ' , '+'), product, 
                                          comment.replace(' ' , '+'), date_start,
                                          date_end, severity, QString(columns));
-
+    
     stopCurrentSearch();
     
     m_searchJob = KIO::storedGet(KUrl(url) , KIO::Reload, KIO::HideProgressInfo);

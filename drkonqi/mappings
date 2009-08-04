@@ -106,3 +106,18 @@ digikamthemedesigner=digikam|general
 polkit-kde-manager=policykit-kde|manager
 
 kepastray=kepas|general
+
+[ProductGroup]
+kontact=kdepim-base|kdepim-apps
+korganizer=kdepim-base
+kaddressbook=kdepim-base
+akregator=kdepim-base
+kmail=kdepim-base
+Akonadi=kdepim-base
+kdelibs=kdelibs
+kio=kdelibs
+
+[BZGroups]
+kdepim-base=kontact|kdepimlibs|libkdepim|Akonadi
+kdepim-apps=kontact|korganizer|kaddressbook|akregator|kmail
+kdelibs=kde|kdelibs|kio|kfile
