@@ -19,10 +19,14 @@
 ******************************************************************/
 
 #include "reportinfo.h"
+
 #include "drkonqi.h"
 #include "krashconf.h"
 #include "bugzillalib.h"
 #include "productmapping.h"
+
+#include "backtraceparser.h"
+#include "backtracegenerator.h"
 
 #include <KProcess>
 #include <KStandardDirs>
@@ -269,6 +273,35 @@ void ReportInfo::sendUsingDefaultProduct() const
 QStringList ReportInfo::relatedBugzillaProducts() const
 {
     return m_productMapping->relatedBugzillaProducts();
+}
+
+bool ReportInfo::isWorthReporting() const
+{
+    bool needToReport = false;
+    
+    BacktraceParser::Usefulness use =
+                DrKonqi::instance()->backtraceGenerator()->parser()->backtraceUsefulness();
+   
+    switch (use) {
+    case BacktraceParser::ReallyUseful: {
+        needToReport = (m_userCanDetail || m_developersCanContactReporter);
+        break;
+    }
+    case BacktraceParser::MayBeUseful: {
+        needToReport = (m_userCanDetail || m_developersCanContactReporter);
+        break;
+    }
+    case BacktraceParser::ProbablyUseless: {
+        needToReport = (m_userCanDetail && m_developersCanContactReporter);
+        break;
+    }
+    case BacktraceParser::Useless:
+    case BacktraceParser::InvalidUsefulness: {
+        needToReport =  false;
+    }
+    }
+    
+    return needToReport;
 }
 
 #include "reportinfo.moc"

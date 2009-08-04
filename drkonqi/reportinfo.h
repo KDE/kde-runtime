@@ -58,7 +58,9 @@ public:
 
     QStringList relatedBugzillaProducts() const;
     
-private slots:
+    bool isWorthReporting() const;
+    
+private Q_SLOTS:
     void sendUsingDefaultProduct() const;
     void lsbReleaseFinished();
 

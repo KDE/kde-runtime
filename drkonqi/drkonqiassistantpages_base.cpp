@@ -188,26 +188,22 @@ void ConclusionPage::aboutToShow()
     ui.m_restartAppOnFinish->setVisible(false);
     ui.m_restartAppOnFinish->setChecked(false);
 
-    needToReport = false;
+    needToReport = reportInfo()->isWorthReporting();
     emitCompleteChanged();
 
     const KrashConfig * krashConfig = DrKonqi::instance()->krashConfig();
     BacktraceParser::Usefulness use =
                 DrKonqi::instance()->backtraceGenerator()->parser()->backtraceUsefulness();
-    bool canDetails = reportInfo()->userCanDetail();
-    bool developersCanContactReporter = reportInfo()->developersCanContactReporter();
 
     QString explanationHTML = QLatin1String("<p><ul>");
     
     switch (use) {
     case BacktraceParser::ReallyUseful: {
-        needToReport = (canDetails || developersCanContactReporter);
         explanationHTML += QString("<li>%1</li>").arg(i18nc("@info","The automatically generated "
                                                             "crash information is useful."));
         break;
     }
     case BacktraceParser::MayBeUseful: {
-        needToReport = (canDetails || developersCanContactReporter);
         explanationHTML += QString("<li>%1</li>").arg(i18nc("@info","The automatically generated "
                                                             "crash information lacks some "
                                                             "details "
@@ -215,7 +211,6 @@ void ConclusionPage::aboutToShow()
         break;
     }
     case BacktraceParser::ProbablyUseless: {
-        needToReport = (canDetails && developersCanContactReporter);
         explanationHTML += QString("<li>%1</li>").arg(i18nc("@info","The automatically generated "
                                                         "crash information lacks important details "
                                                         "and it is probably not helpful."));
@@ -223,7 +218,6 @@ void ConclusionPage::aboutToShow()
     }
     case BacktraceParser::Useless:
     case BacktraceParser::InvalidUsefulness: {
-        needToReport =  false;
         explanationHTML += QString("<li>%1<br />%2</li>").arg(
                                         i18nc("@info","The automatically generated crash "
                                         "information does not contain enough information to be "
@@ -240,8 +234,8 @@ void ConclusionPage::aboutToShow()
     }
     
     //User can provide details / is Willing to help
-    if (canDetails) {
-        if (developersCanContactReporter) {
+    if (reportInfo()->userCanDetail()) {
+        if (reportInfo()->developersCanContactReporter()) {
             explanationHTML += QString("<li>%1</li>").arg(i18nc("@info","You can provide crash "
                                 "details, and the "
                                 "developers can contact you if required."));
@@ -251,7 +245,7 @@ void ConclusionPage::aboutToShow()
                                 "developers to contact you for more information if required."));
         }
     } else {
-        if (developersCanContactReporter) {
+        if (reportInfo()->developersCanContactReporter()) {
             explanationHTML += QString("<li>%1</li>").arg(i18nc("@info","You are not sure what you "
                                     "were doing when the application crashed, but the developers "
                                     "can contact you for more information if required."));
@@ -305,7 +299,7 @@ void ConclusionPage::aboutToShow()
                             i18nc("@info","If you wish, you can go back and change your "
                             "answers. ")));
 
-        if (krashConfig->isKDEBugzilla()) {
+        if (isBKO) {
             ui.m_howToProceedLabel->setText(i18nc("@info","This application is supported in the KDE "
                                             "bug tracking system. You can manually report this bug "
                                             "at <link>%1</link>. "
