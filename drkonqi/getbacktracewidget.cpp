@@ -30,6 +30,7 @@
 #include <QtGui/QVBoxLayout>
 
 #include <KIcon>
+#include <KMessageBox>
 #include <KLocale>
 
 const char *extraDetailsLabelMargin = " margin: 5px; ";
@@ -40,6 +41,11 @@ GetBacktraceWidget::GetBacktraceWidget(BacktraceGenerator *generator, QWidget *p
 {
     ui.setupUi(this);
 
+    //Debug package installer
+    m_debugPackageInstaller = new DebugPackageInstaller(DrKonqi::instance()->krashConfig()->productName());
+    connect(m_debugPackageInstaller, SIGNAL(error(QString)), this, SLOT(debugPackageError(QString)));
+    connect(m_debugPackageInstaller, SIGNAL(packagesInstalled()), this, SLOT(regenerateBacktrace()));
+    
     connect(m_btGenerator, SIGNAL(done()) , this, SLOT(loadData()));
     connect(m_btGenerator, SIGNAL(someError()) , this, SLOT(loadData()));
     connect(m_btGenerator, SIGNAL(failedToStart()) , this, SLOT(loadData()));
@@ -55,6 +61,13 @@ GetBacktraceWidget::GetBacktraceWidget(BacktraceGenerator *generator, QWidget *p
                           "installed the proper debug symbol packages and you want to obtain "
                           "a better backtrace.")));
     connect(ui.m_reloadBacktraceButton, SIGNAL(clicked()), this, SLOT(regenerateBacktrace()));
+
+    ui.m_installDebugButton->setGuiItem(
+                KGuiItem2(i18nc("@action:button", "&Install Debug Symbols"),
+                          KIcon("system-software-update"), i18nc("@info:tooltip", "Use this button to "
+                          "install the missing debug symbols packages.")));
+    ui.m_installDebugButton->setVisible(false);
+    connect(ui.m_installDebugButton, SIGNAL(clicked()), this, SLOT(installDebugPackages()));
 
     ui.m_copyButton->setGuiItem(KGuiItem2(i18nc("@action:button", "&Copy"), KIcon("edit-copy"),
                                           i18nc("@info:tooltip", "Use this button to copy the "
@@ -92,6 +105,7 @@ void GetBacktraceWidget::setAsLoading()
     ui.m_extraDetailsLabel->setVisible(false);
     ui.m_extraDetailsLabel->clear();
 
+    ui.m_installDebugButton->setEnabled(false);
     ui.m_reloadBacktraceButton->setEnabled(false);
 
     ui.m_copyButton->setEnabled(false);
@@ -139,6 +153,7 @@ void GetBacktraceWidget::anotherDebuggerRunning()
                                     "the crashed application. Therefore, the DrKonqi debugger cannot "
                                     "fetch the backtrace. Please close the other debugger and "
                                     "click <interface>Reload Crash Information</interface>."));
+    ui.m_installDebugButton->setEnabled(true);
     ui.m_reloadBacktraceButton->setEnabled(true);
 }
 
@@ -159,12 +174,15 @@ void GetBacktraceWidget::loadData()
             usefulnessText = i18nc("@info", "This crash information is useful");
             break;
         case BacktraceParser::MayBeUseful:
+            ui.m_installDebugButton->setVisible(true);
             usefulnessText = i18nc("@info", "This crash information may be useful");
             break;
         case BacktraceParser::ProbablyUseless:
+            ui.m_installDebugButton->setVisible(true);
             usefulnessText = i18nc("@info", "This crash information is probably not useful");
             break;
         case BacktraceParser::Useless:
+            ui.m_installDebugButton->setVisible(true);
             usefulnessText = i18nc("@info", "This crash information is not useful");
             break;
         default:
@@ -213,6 +231,7 @@ void GetBacktraceWidget::loadData()
                                               DrKonqi::instance()->krashConfig()->debuggerName()));
     }
 
+    ui.m_installDebugButton->setEnabled(true);
     ui.m_reloadBacktraceButton->setEnabled(true);
     emit stateChanged();
 }
@@ -250,4 +269,17 @@ void GetBacktraceWidget::hilightExtraDetailsLabel(bool hilight)
 void GetBacktraceWidget::focusReloadButton()
 {
     ui.m_reloadBacktraceButton->setFocus();
+    //FIXME change message and force m_installDebugButton focus
+}
+
+void GetBacktraceWidget::installDebugPackages()
+{
+    ui.m_installDebugButton->setVisible(false);
+    m_debugPackageInstaller->installDebugPackages();
+}
+
+void GetBacktraceWidget::debugPackageError(const QString & errorMessage)
+{
+    ui.m_installDebugButton->setVisible(true);
+    KMessageBox::error(this, errorMessage, QString("Error during installation of debug symbols"));
 }

@@ -22,6 +22,7 @@
 
 #include <QtGui/QWidget>
 
+#include "debugpackageinstaller.h"
 #include "ui_getbacktracewidget.h"
 
 class KTextBrowser;
@@ -50,6 +51,8 @@ private:
     Ui::Form    ui;
     UsefulnessMeter *   m_usefulnessMeter;
 
+    DebugPackageInstaller * m_debugPackageInstaller;
+    
 private Q_SLOTS:
     void loadData();
     void backtraceNewLine(const QString &);
@@ -61,6 +64,9 @@ private Q_SLOTS:
     void copyClicked();
 
     void anotherDebuggerRunning();
+    
+    void installDebugPackages();
+    void debugPackageError(const QString &);
 };
 
 #endif

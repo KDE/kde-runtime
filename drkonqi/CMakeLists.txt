@@ -27,6 +27,7 @@ set(drkonqi_SRCS
    drkonqi.cpp
    detachedprocessmonitor.cpp
    productmapping.cpp
+   debugpackageinstaller.cpp
 )
 
 kde4_add_ui_files(drkonqi_SRCS ui/getbacktracewidget.ui
@@ -45,5 +46,16 @@ kde4_add_executable(drkonqi ${drkonqi_SRCS})
 
 target_link_libraries(drkonqi ${KDE4_KIO_LIBS})
 
+#Bzlib test
+#set(bzlibtest_SRCS
+#    bzlibtest.cpp
+#    bugzillalib.cpp
+#    debugpackageinstaller.cpp
+#)
+#kde4_add_executable(bzlibtest ${bzlibtest_SRCS})
+#target_link_libraries(bzlibtest ${KDE4_KIO_LIBS})
+
 install(TARGETS drkonqi DESTINATION ${LIBEXEC_INSTALL_DIR})
+
 install(FILES mappings DESTINATION ${DATA_INSTALL_DIR}/drkonqi)
+install(PROGRAMS installdbgsymbols.sh DESTINATION ${LIBEXEC_INSTALL_DIR})
