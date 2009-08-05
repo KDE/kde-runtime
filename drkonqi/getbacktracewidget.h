@@ -67,6 +67,7 @@ private Q_SLOTS:
     
     void installDebugPackages();
     void debugPackageError(const QString &);
+    void debugPackageCanceled();
 };
 
 #endif

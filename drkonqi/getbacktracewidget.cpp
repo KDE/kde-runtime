@@ -45,6 +45,7 @@ GetBacktraceWidget::GetBacktraceWidget(BacktraceGenerator *generator, QWidget *p
     m_debugPackageInstaller = new DebugPackageInstaller(DrKonqi::instance()->krashConfig()->productName());
     connect(m_debugPackageInstaller, SIGNAL(error(QString)), this, SLOT(debugPackageError(QString)));
     connect(m_debugPackageInstaller, SIGNAL(packagesInstalled()), this, SLOT(regenerateBacktrace()));
+    connect(m_debugPackageInstaller, SIGNAL(canceled()), this, SLOT(debugPackageCanceled()));
     
     connect(m_btGenerator, SIGNAL(done()) , this, SLOT(loadData()));
     connect(m_btGenerator, SIGNAL(someError()) , this, SLOT(loadData()));
@@ -55,7 +56,7 @@ GetBacktraceWidget::GetBacktraceWidget(BacktraceGenerator *generator, QWidget *p
     ui.m_extraDetailsLabel->setStyleSheet(QLatin1String(extraDetailsLabelMargin));
 
     ui.m_reloadBacktraceButton->setGuiItem(
-                KGuiItem2(i18nc("@action:button", "&Reload Crash Information"),
+                KGuiItem2(i18nc("@action:button", "&Reload"),
                           KIcon("view-refresh"), i18nc("@info:tooltip", "Use this button to "
                           "reload the crash information (backtrace). This is useful when you have "
                           "installed the proper debug symbol packages and you want to obtain "
@@ -69,13 +70,13 @@ GetBacktraceWidget::GetBacktraceWidget(BacktraceGenerator *generator, QWidget *p
     ui.m_installDebugButton->setVisible(false);
     connect(ui.m_installDebugButton, SIGNAL(clicked()), this, SLOT(installDebugPackages()));
 
-    ui.m_copyButton->setGuiItem(KGuiItem2(i18nc("@action:button", "&Copy"), KIcon("edit-copy"),
+    ui.m_copyButton->setGuiItem(KGuiItem2(i18nc("@action:button", ""), KIcon("edit-copy"),
                                           i18nc("@info:tooltip", "Use this button to copy the "
                                                 "crash information (backtrace) to the clipboard.")));
     connect(ui.m_copyButton, SIGNAL(clicked()) , this, SLOT(copyClicked()));
     ui.m_copyButton->setEnabled(false);
 
-    ui.m_saveButton->setGuiItem(KGuiItem2(i18nc("@action:button", "&Save to File..."),
+    ui.m_saveButton->setGuiItem(KGuiItem2(i18nc("@action:button", ""),
                                           KIcon("document-save"),
                                           i18nc("@info:tooltip", "Use this button to save the "
                                           "crash information (backtrace) to a file. This is useful "
@@ -105,7 +106,7 @@ void GetBacktraceWidget::setAsLoading()
     ui.m_extraDetailsLabel->setVisible(false);
     ui.m_extraDetailsLabel->clear();
 
-    ui.m_installDebugButton->setEnabled(false);
+    ui.m_installDebugButton->setVisible(false);
     ui.m_reloadBacktraceButton->setEnabled(false);
 
     ui.m_copyButton->setEnabled(false);
@@ -153,7 +154,7 @@ void GetBacktraceWidget::anotherDebuggerRunning()
                                     "the crashed application. Therefore, the DrKonqi debugger cannot "
                                     "fetch the backtrace. Please close the other debugger and "
                                     "click <interface>Reload Crash Information</interface>."));
-    ui.m_installDebugButton->setEnabled(true);
+    ui.m_installDebugButton->setVisible(false);
     ui.m_reloadBacktraceButton->setEnabled(true);
 }
 
@@ -231,7 +232,6 @@ void GetBacktraceWidget::loadData()
                                               DrKonqi::instance()->krashConfig()->debuggerName()));
     }
 
-    ui.m_installDebugButton->setEnabled(true);
     ui.m_reloadBacktraceButton->setEnabled(true);
     emit stateChanged();
 }
@@ -282,4 +282,9 @@ void GetBacktraceWidget::debugPackageError(const QString & errorMessage)
 {
     ui.m_installDebugButton->setVisible(true);
     KMessageBox::error(this, errorMessage, QString("Error during installation of debug symbols"));
+}
+
+void GetBacktraceWidget::debugPackageCanceled()
+{
+    ui.m_installDebugButton->setVisible(true);    
 }
