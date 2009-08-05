@@ -40,6 +40,10 @@ static const char kWalletEntryName[] = "drkonqi_bugzilla";
 static const char kWalletEntryUsername[] = "username";
 static const char kWalletEntryPassword[] = "password";
 
+static const char konquerorKWalletEntryName[] = "https://bugs.kde.org/index.cgi#login";
+static const char konquerorKWalletEntryUsername[] = "Bugzilla_login";
+static const char konquerorKWalletEntryPassword[] = "Bugzilla_password";
+
 //BEGIN BugzillaLoginPage
 
 BugzillaLoginPage::BugzillaLoginPage(DrKonqiBugReport * parent) :
@@ -136,8 +140,8 @@ void BugzillaLoginPage::walletLogin()
 {
     if (!m_wallet) {
         if (kWalletEntryExists()) {  //Key exists!
-            ui.m_savePasswordCheckBox->setCheckState(Qt::Checked);
             openWallet();
+            ui.m_savePasswordCheckBox->setCheckState(Qt::Checked);
             //Was the wallet opened?
             if (m_wallet) {
                 m_wallet->setFolder(KWallet::Wallet::FormDataFolder());
@@ -153,6 +157,34 @@ void BugzillaLoginPage::walletLogin()
                     ui.m_passwordEdit->setText(password);
                 }
             }
+        } else if (!KWallet::Wallet::keyDoesNotExist(KWallet::Wallet::NetworkWallet(),
+                                               KWallet::Wallet::FormDataFolder(),
+                                               QLatin1String(konquerorKWalletEntryName))) {
+            //If the DrKonqi entry is empty, but a Konqueror entry exists, use and copy it.
+            openWallet();
+            if (m_wallet) {
+                m_wallet->setFolder(KWallet::Wallet::FormDataFolder());
+
+                //Fetch Konqueror data
+                QMap<QString, QString> values;
+                m_wallet->readMap(QLatin1String(konquerorKWalletEntryName), values);
+                QString username = values.value(QLatin1String(konquerorKWalletEntryUsername));
+                QString password = values.value(QLatin1String(konquerorKWalletEntryPassword));
+                
+                if (!username.isEmpty() && !password.isEmpty()) {
+                    //Copy to DrKonqi own entries
+                    values.clear();
+                    values.insert(QLatin1String(kWalletEntryUsername), username);
+                    values.insert(QLatin1String(kWalletEntryPassword), password);
+                    m_wallet->writeMap(QLatin1String(kWalletEntryName), values);
+
+                    ui.m_savePasswordCheckBox->setCheckState(Qt::Checked);
+                    
+                    ui.m_userEdit->setText(username);
+                    ui.m_passwordEdit->setText(password);
+                }
+            }
+            
         }
     }
 }
