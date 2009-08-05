@@ -22,6 +22,7 @@
 #include <QtGui/QProgressDialog>
 
 #include <KStandardDirs>
+#include <KShell>
 #include <KDebug>
 #include <KProcess>
 
@@ -31,7 +32,7 @@ DebugPackageInstaller::DebugPackageInstaller(const QString & packageName, QWidge
     : QObject(parent), m_installerProcess(0), m_progressDialog(0)
 {
     m_parent = parent;
-    m_executablePath = KStandardDirs::findExe(installerName) + " " + packageName;
+    m_executablePath = KStandardDirs::findExe(installerName) + " " + KShell::quoteArg(packageName);
 }
 
 void DebugPackageInstaller::installDebugPackages()
@@ -86,7 +87,7 @@ void DebugPackageInstaller::processFinished(int exitCode, QProcess::ExitStatus)
             break;
         }
         case ResultNotImplemented: {
-            emit error("Your distribution does not provide a way to install debug symbols packages.");
+            emit error("Your distribution does not provide a way to install debug symbols packages. (or you compiled KDE by source).");
             break;
         }
         case ResultError: {
