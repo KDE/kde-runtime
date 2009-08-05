@@ -20,11 +20,7 @@
 */
 
 #include <QLabel>
-#include <QLayout>
-#include <QRadioButton>
-#include <QSlider>
 #include <QVBoxLayout>
-#include <QFrame>
 #include <QHBoxLayout>
 #include <QDBusInterface>
 #include <QSortFilterProxyModel>
