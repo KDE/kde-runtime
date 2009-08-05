@@ -14,7 +14,6 @@
 #include <QCheckBox>
 #include <QComboBox>
 #include <QLabel>
-#include <QLayout>
 #include <QFormLayout>
 #include <QSlider>
 #include <QGroupBox>
@@ -24,7 +23,6 @@
 #include <QBoxLayout>
 #include <QVBoxLayout>
 #include <QListWidget>
-#include <KApplication>
 #include <kcolorbutton.h>
 #include <kconfig.h>
 #include <kdebug.h>

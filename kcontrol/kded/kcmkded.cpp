@@ -20,14 +20,13 @@
 
 #include "kcmkded.h"
 
-#include <QByteArray>
 #include <QtDBus/QtDBus>
 #include <QGroupBox>
-#include <QHeaderView>
 #include <QPushButton>
 #include <QTimer>
 #include <QTreeWidget>
 #include <QVBoxLayout>
+#include <QHeaderView>
 
 #include <kaboutdata.h>
 #include <kdialogbuttonbox.h>

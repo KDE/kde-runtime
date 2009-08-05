@@ -21,13 +21,7 @@
 #include <sys/stat.h>
 #include <config-runtime.h>
 
-#include <QLayout>
-#include <QFile>
-#include <QRadioButton>
-#include <QTimer>
-#include <QTabWidget>
 //Added by qt3to4:
-#include <QTextStream>
 
 #include <klocale.h>
 #include <kaboutdata.h>

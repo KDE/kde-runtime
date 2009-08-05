@@ -22,7 +22,6 @@
 #include <unistd.h>
 
 #include <QFileInfo>
-#include <QLayout>
 #include <QLabel>
 //Added by qt3to4:
 #include <QPixmap>
