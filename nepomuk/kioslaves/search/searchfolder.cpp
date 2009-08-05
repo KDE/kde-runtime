@@ -108,7 +108,7 @@ void Nepomuk::SearchFolder::run()
 
     m_client = new Nepomuk::Search::QueryServiceClient();
 
-    // results signals are connected directly to update the results cache m_results
+    // results signals are connected directly to update the results cache m_resultsQueue
     // and the entries cache m_entries, as well as emitting KDirNotify signals
     // a queued connection is not possible since we have no event loop after the
     // initial listing which means that queued signals would never get delivered
@@ -137,7 +137,6 @@ void Nepomuk::SearchFolder::list()
     kDebug() << m_name << QThread::currentThread();
 
     m_listEntries = !m_initialListingFinished;
-    m_statEntry = false;
 
     if ( !isRunning() ) {
         start();
@@ -151,7 +150,7 @@ void Nepomuk::SearchFolder::list()
 
         // if there is nothing more to list...
         if ( m_initialListingFinished &&
-            m_results.isEmpty() ) {
+            m_resultsQueue.isEmpty() ) {
             m_slave->listEntry( KIO::UDSEntry(), true );
             m_slave->finished();
         }
@@ -179,31 +178,36 @@ void Nepomuk::SearchFolder::stat( const QString& name )
         m_slave->statEntry( entry->entry() );
         m_slave->finished();
     }
-    else if ( !isRunning() ||
-              !m_results.isEmpty() ) {
-        m_nameToStat = name;
-        m_statEntry = true;
-        m_listEntries = false;
-
-        if ( !isRunning() ) {
-            start();
-        }
-
-        if ( !m_statingStarted ) {
-            QTimer::singleShot( 0, this, SLOT( slotStatNextResult() ) );
-        }
-        m_loop.exec();
-    }
     else {
         m_slave->error( KIO::ERR_DOES_NOT_EXIST, "nepomuksearch:/" + m_name + '/' + name );
     }
 }
 
 
-Nepomuk::SearchEntry* Nepomuk::SearchFolder::findEntry( const QString& name ) const
+Nepomuk::SearchEntry* Nepomuk::SearchFolder::findEntry( const QString& name )
 {
     kDebug() << name;
 
+    //
+    // get all results in case we do not have them already
+    //
+    if ( !isRunning() ||
+         !m_resultsQueue.isEmpty() ) {
+
+        if ( !isRunning() )
+            start();
+
+        if ( !m_statingStarted ) {
+            m_listEntries = false;
+            QTimer::singleShot( 0, this, SLOT( slotStatNextResult() ) );
+        }
+        kDebug() << "entering loop" << m_name << QThread::currentThread();
+        m_loop.exec();
+    }
+
+    //
+    // search for the one we need
+    //
     QHash<QString, SearchEntry*>::const_iterator it = m_entries.find( name );
     if ( it != m_entries.end() ) {
         kDebug() << "-----> found";
@@ -216,7 +220,7 @@ Nepomuk::SearchEntry* Nepomuk::SearchFolder::findEntry( const QString& name ) co
 }
 
 
-Nepomuk::SearchEntry* Nepomuk::SearchFolder::findEntry( const KUrl& url ) const
+Nepomuk::SearchEntry* Nepomuk::SearchFolder::findEntry( const KUrl& url )
 {
     // FIXME
     return 0;
@@ -229,7 +233,7 @@ void Nepomuk::SearchFolder::slotNewEntries( const QList<Nepomuk::Search::Result>
     kDebug() << m_name << QThread::currentThread();
 
     m_resultMutex.lock();
-    m_results += results;
+    m_resultsQueue += results;
     m_resultMutex.unlock();
 
     if ( m_initialListingFinished ) {
@@ -282,21 +286,14 @@ void Nepomuk::SearchFolder::slotStatNextResult()
         // newEntries signals to be delivered which would result in
         // a deadlock
         m_resultMutex.lock();
-        if( !m_results.isEmpty() ) {
-            Search::Result result = m_results.dequeue();
+        if( !m_resultsQueue.isEmpty() ) {
+            Search::Result result = m_resultsQueue.dequeue();
             m_resultMutex.unlock();
             SearchEntry* entry = statResult( result );
             if ( entry ) {
                 if ( m_listEntries ) {
                     kDebug() << "listing" << entry->resource();
                     m_slave->listEntry( entry->entry(), false );
-                }
-                else if ( m_statEntry ) {
-                    if ( m_nameToStat == entry->entry().stringValue( KIO::UDSEntry::UDS_NAME ) ) {
-                        kDebug() << "stating" << entry->resource();
-                        m_nameToStat.clear();
-                        m_slave->statEntry( entry->entry() );
-                    }
                 }
             }
         }
@@ -306,10 +303,8 @@ void Nepomuk::SearchFolder::slotStatNextResult()
         }
     }
 
-    if ( !m_results.isEmpty() ||
+    if ( !m_resultsQueue.isEmpty() ||
          !m_initialListingFinished ) {
-        // we need to use the timer since statResource does only create an event loop
-        // for files, not for arbitrary resources.
         QTimer::singleShot( 0, this, SLOT( slotStatNextResult() ) );
     }
     else {
@@ -324,28 +319,18 @@ void Nepomuk::SearchFolder::wrap()
 {
     kDebug() << m_name << QThread::currentThread();
 
-    if ( m_results.isEmpty() &&
+    if ( m_resultsQueue.isEmpty() &&
          m_initialListingFinished &&
          m_loop.isRunning() ) {
         if ( m_listEntries ) {
             kDebug() << "listing done";
             m_slave->listEntry( KIO::UDSEntry(), true );
-            m_slave->finished();
         }
-        else if ( m_statEntry ) {
-            if ( !m_nameToStat.isEmpty() ) {
-                // if m_nameToStat is not empty the name was not found during listing which means that
-                // it does not exist
-                m_slave->error( KIO::ERR_DOES_NOT_EXIST, "nepomuksearch:/" + m_name + '/' + m_nameToStat );
-                m_nameToStat.clear();
-            }
-            else
-                m_slave->finished();
-        }
+
+        m_slave->finished();
 
         m_statingStarted = false;
         m_listEntries = false;
-        m_statEntry = false;
         kDebug() << m_name << QThread::currentThread() << "exiting loop";
         m_loop.exit();
     }

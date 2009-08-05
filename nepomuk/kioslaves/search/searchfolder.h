@@ -73,8 +73,8 @@ namespace Nepomuk {
         QString name() const { return m_name; }
         QList<SearchEntry*> entries() const { return m_entries.values(); }
 
-        SearchEntry* findEntry( const QString& name ) const;
-        SearchEntry* findEntry( const KUrl& url ) const;
+        SearchEntry* findEntry( const QString& name );
+        SearchEntry* findEntry( const KUrl& url );
 
         void list();
         void stat( const QString& name );
@@ -103,7 +103,7 @@ namespace Nepomuk {
         Search::Query m_query;
 
         // result cache
-        QQueue<Search::Result> m_results;
+        QQueue<Search::Result> m_resultsQueue;
         QHash<QString, SearchEntry*> m_entries;
         QHash<QUrl, QString> m_resourceNameMap;
 
@@ -118,14 +118,6 @@ namespace Nepomuk {
 
         // the parent slave used for listing and stating
         KIO::SlaveBase* m_slave;
-
-        // if set, this is the name that was requested through
-        // stat(). Used during initial listing when not all results
-        // are available yet
-        QString m_nameToStat;
-
-        // true if stating of an entry has been requested (name of entry in m_nameToStat)
-        bool m_statEntry;
 
         // true if listing of entries has been requested
         bool m_listEntries;
