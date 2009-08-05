@@ -35,6 +35,11 @@ soprano_add_ontology(kio_nepomuksearch_PART_SRCS
   "NIE"
   "Nepomuk::Vocabulary"
   "trig")
+soprano_add_ontology(kio_nepomuksearch_PART_SRCS
+  ${nepomukontologies_SOURCE_DIR}/pimo.trig
+  "PIMO"
+  "Nepomuk::Vocabulary"
+  "trig")
 
 set_source_files_properties(
   ../../interfaces/org.kde.nepomuk.QueryService.xml
