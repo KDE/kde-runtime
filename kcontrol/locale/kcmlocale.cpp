@@ -23,13 +23,9 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include <QLabel>
-#include <QLayout>
 #include <QPushButton>
 
 #include <KDebug>
-#include <KDialog>
-#include <KIconLoader>
 #include <KConfig>
 #include <KConfigGroup>
 #include <KStandardDirs>

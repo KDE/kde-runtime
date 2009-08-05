@@ -24,15 +24,9 @@
 #include <kdebug.h>
 #include <QCheckBox>
 #include <QComboBox>
-#include <QLabel>
-#include <QLineEdit>
 
-#include <QLayout>
 
-#include <QRegExp>
 
-#include <KNumInput>
-#include <KDialog>
 #include <KConfig>
 #include <KConfigGroup>
 #include <KStandardDirs>

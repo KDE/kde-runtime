@@ -24,10 +24,8 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QComboBox>
-#include <QLayout>
-#include <QRegExp>
+#include <QGridLayout>
 
-#include <KDialog>
 #include <KConfig>
 #include <KConfigGroup>
 #include <KStandardDirs>

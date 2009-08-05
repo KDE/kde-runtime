@@ -24,13 +24,11 @@
 
 #include <QCheckBox>
 #include <QLabel>
-#include <QLayout>
 #include <QFormLayout>
 
 #include <QComboBox>
 #include <QGroupBox>
 
-#include <KDialog>
 #include <KConfig>
 #include <KConfigGroup>
 #include <KStandardDirs>

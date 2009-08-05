@@ -23,7 +23,6 @@
 #include <QCheckBox>
 #include <QGroupBox>
 #include <QLabel>
-#include <QLayout>
 #include <QPushButton>
 #include <QTabWidget>
 

@@ -27,7 +27,6 @@
 
 #include <QWidget>
 
-#include <QMap>
 
 class QCheckBox;
 class QComboBox;

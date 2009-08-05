@@ -22,11 +22,10 @@
  */
 
 #include <QComboBox>
-#include <QLayout>
 #include <QLabel>
 #include <QPrinter>
+#include <QGridLayout>
 
-#include <KDialog>
 #include <KLocale>
 #include <KConfig>
 #include <KConfigGroup>
