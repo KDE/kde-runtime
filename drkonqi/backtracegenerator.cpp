@@ -32,8 +32,6 @@
 
 #include <KDebug>
 #include <KStandardDirs>
-#include <KMessageBox>
-#include <KLocale>
 #include <KTemporaryFile>
 #include <KShell>
 

@@ -49,7 +49,6 @@
 #include <QtDBus/QDBusConnection>
 #include <QtCore/QTimer>
 
-#include <KGlobal>
 #include <KProcess>
 #include <KStandardDirs>
 #include <KDebug>

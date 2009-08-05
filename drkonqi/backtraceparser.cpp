@@ -58,7 +58,6 @@
 #include <QtCore/QSharedData>
 #include <QtCore/QStack>
 #include <QtCore/QMetaEnum> //used for a kDebug() in BacktraceParserGdb::backtraceUsefulness()
-#include <KGlobal>
 
 //BEGIN BacktraceParser
 
