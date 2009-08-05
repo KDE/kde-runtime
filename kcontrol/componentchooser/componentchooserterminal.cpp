@@ -20,9 +20,6 @@
 #include <klauncher_iface.h>
 #include <QtDBus/QtDBus>
 #include <QCheckBox>
-#include <QLabel>
-#include <QLayout>
-#include <QRadioButton>
 
 #include <kdebug.h>
 #include <kapplication.h>

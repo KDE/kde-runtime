@@ -22,8 +22,6 @@
 #include "ktimerdialog.h"
 
 #include <QLabel>
-#include <QLayout>
-#include <QPixmap>
 #include <QTimer>
 
 #include <QtGui/QProgressBar>

@@ -27,9 +27,6 @@
 #endif
 
 #include <QCheckBox>
-#include <QLabel>
-#include <QLayout>
-#include <QRadioButton>
 
 #include <klocale.h>
 #include <kmessagebox.h>
