@@ -403,13 +403,17 @@ Nepomuk::SearchEntry* Nepomuk::SearchFolder::statResult( const Search::Result& r
     KIO::UDSEntry uds = statFile( url, isFile );
 
 
+    if ( isFile ) {
+        uds.insert( KIO::UDSEntry::UDS_TARGET_URL, url.url() );
+    }
+
     //
     // If it is not a file we get inventive:
     // In case it is a pimo thing, we see if it has a grounding occurrence
     // which is a file. If so, we merge the two by taking the file URL and the thing's
     // label and icon if set
     //
-    if ( !isFile ) {
+    else {
         kDebug() << "listing resource" << result.resourceUri();
 
         //
