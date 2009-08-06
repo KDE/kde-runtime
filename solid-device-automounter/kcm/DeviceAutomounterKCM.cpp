@@ -173,7 +173,7 @@ DeviceAutomounterKCM::reloadDevices()
     AutomounterSettings::self()->readConfig();
     m_devices->clear();
     QStringList headers;
-    headers << "Name" << "Always Automount";
+    headers << i18n( "Name" ) << i18n( "Always Automount" );
     m_devices->setHorizontalHeaderLabels(headers);
     foreach(const QString &dev, AutomounterSettings::knownDevices()) {
         addNewDevice(dev);
