@@ -294,6 +294,7 @@ struct BacktraceParserGdb::Private {
     QList<BacktraceLineGdb> m_linesList;
     QList<BacktraceLineGdb> m_linesToRate;
     QStringList m_firstUsefulFunctions;
+    QSet<QString> m_librariesWithMissingDebugSymbols;
     int m_possibleKCrashStart;
     int m_threadsCount;
     bool m_isBelowSignalHandler;
@@ -462,7 +463,8 @@ static bool lineShouldBeIgnored(const BacktraceLineGdb & line)
     if ( line.libraryName().contains("libc.so")
         || line.libraryName().contains("libstdc++.so")
         || line.functionName().startsWith(QLatin1String("*__GI_")) //glibc2.9 uses *__GI_ as prefix
-        || line.libraryName().contains("libpthread.so") )
+        || line.libraryName().contains("libpthread.so") 
+        || line.libraryName().contains("libglib-2.0.so") )
         return true;
 
     return false;
@@ -510,6 +512,11 @@ BacktraceParser::Usefulness BacktraceParserGdb::backtraceUsefulness() const
             continue;
         }
 
+        if ( line.rating() == BacktraceLineGdb::MissingFunction 
+            || line.rating() == BacktraceLineGdb::MissingSourceFile) {
+            d->m_librariesWithMissingDebugSymbols.insert(line.libraryName().trimmed());
+        }
+        
         if ( line.rating() != BacktraceLineGdb::MissingEverything
             && line.rating() != BacktraceLineGdb::MissingFunction ) {
             usefulFunctionsStack.push(line);
@@ -573,6 +580,11 @@ QStringList BacktraceParserGdb::firstValidFunctions() const
     return d ? d->m_firstUsefulFunctions : QStringList();
 }
 
+QSet<QString> BacktraceParserGdb::librariesWithMissingDebugSymbols() const
+{
+    return d->m_librariesWithMissingDebugSymbols;
+}
+
 //END BacktraceParserGdb
 
 //BEGIN BacktraceParserNull
@@ -603,6 +615,11 @@ void BacktraceParserNull::resetState()
 void BacktraceParserNull::newLine(const QString & lineStr)
 {
     m_lines.append(lineStr);
+}
+
+QSet<QString> BacktraceParserNull::librariesWithMissingDebugSymbols() const
+{
+    return QSet<QString>();
 }
 
 //END BacktraceParserNull

@@ -175,15 +175,12 @@ void GetBacktraceWidget::loadData()
             usefulnessText = i18nc("@info", "This crash information is useful");
             break;
         case BacktraceParser::MayBeUseful:
-            ui.m_installDebugButton->setVisible(true);
             usefulnessText = i18nc("@info", "This crash information may be useful");
             break;
         case BacktraceParser::ProbablyUseless:
-            ui.m_installDebugButton->setVisible(true);
             usefulnessText = i18nc("@info", "This crash information is probably not useful");
             break;
         case BacktraceParser::Useless:
-            ui.m_installDebugButton->setVisible(true);
             usefulnessText = i18nc("@info", "This crash information is not useful");
             break;
         default:
@@ -201,6 +198,10 @@ void GetBacktraceWidget::loadData()
                                 "backtrace. After you install the needed packages, click the "
                                 "<interface>Reload Crash Information</interface> button.",
                                 QLatin1String(TECHBASE_HOWTO_DOC)));
+            ui.m_installDebugButton->setVisible(true);
+            QString missingLibraries = 
+                    QStringList(btParser->librariesWithMissingDebugSymbols().toList()).join(" ");
+            m_debugPackageInstaller->setMissingLibraries(missingLibraries);
         }
 
         ui.m_copyButton->setEnabled(true);

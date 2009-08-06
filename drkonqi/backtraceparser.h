@@ -40,6 +40,8 @@ public:
     virtual QString parsedBacktrace() const = 0;
     virtual Usefulness backtraceUsefulness() const = 0;
     virtual QStringList firstValidFunctions() const = 0;
+    
+    virtual QSet<QString> librariesWithMissingDebugSymbols() const = 0;
 
 protected Q_SLOTS:
     virtual void resetState() = 0;
@@ -57,6 +59,8 @@ public:
     virtual Usefulness backtraceUsefulness() const;
     virtual QStringList firstValidFunctions() const;
 
+    virtual QSet<QString> librariesWithMissingDebugSymbols() const;
+    
 protected Q_SLOTS:
     virtual void resetState();
     virtual void newLine(const QString & lineStr);
@@ -79,6 +83,8 @@ public:
     virtual Usefulness backtraceUsefulness() const;
     virtual QStringList firstValidFunctions() const;
 
+    virtual QSet<QString> librariesWithMissingDebugSymbols() const;
+    
 protected Q_SLOTS:
     virtual void resetState();
     virtual void newLine(const QString & lineStr);

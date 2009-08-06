@@ -102,6 +102,8 @@ void BacktraceParserTest::btParserTest()
                         << " Expected: " << metaUsefulness.valueToKey(result) << endl;
 
     QTextStream(stdout) << "First valid functions: " << parser->firstValidFunctions().join(" ") << endl;
+    QStringList l = (QStringList)parser->librariesWithMissingDebugSymbols().toList();
+    QTextStream(stdout) << "Missing dbgsym libs: " << l.join(" ") << endl;
 
     QEXPECT_FAIL("test_e", "Working on it", Continue);
     QCOMPARE(parser->backtraceUsefulness(), result);

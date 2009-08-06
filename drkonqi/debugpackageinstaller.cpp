@@ -35,6 +35,11 @@ DebugPackageInstaller::DebugPackageInstaller(const QString & packageName, QWidge
     m_executablePath = KStandardDirs::findExe(installerName) + " " + KShell::quoteArg(packageName);
 }
 
+void DebugPackageInstaller::setMissingLibraries(const QString & libraries)
+{
+    m_missingLibraries = libraries;
+}
+
 void DebugPackageInstaller::installDebugPackages()
 {
     if (!m_installerProcess) {
@@ -42,7 +47,9 @@ void DebugPackageInstaller::installDebugPackages()
         m_installerProcess = new KProcess(this);
         connect(m_installerProcess, SIGNAL(finished(int, QProcess::ExitStatus)), 
                                             this, SLOT(processFinished(int, QProcess::ExitStatus)));
-        m_installerProcess->setShellCommand(m_executablePath);
+
+        QString exec = m_executablePath + " " + KShell::quoteArg(m_missingLibraries);
+        m_installerProcess->setShellCommand(exec);
         m_installerProcess->start();
         
         //Show dialog
