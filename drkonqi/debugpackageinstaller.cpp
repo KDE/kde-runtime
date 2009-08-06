@@ -32,10 +32,10 @@ DebugPackageInstaller::DebugPackageInstaller(const QString & packageName, QWidge
     : QObject(parent), m_installerProcess(0), m_progressDialog(0)
 {
     m_parent = parent;
-    m_executablePath = KStandardDirs::findExe(installerName) + " " + KShell::quoteArg(packageName);
+    m_packageName = packageName;
 }
 
-void DebugPackageInstaller::setMissingLibraries(const QString & libraries)
+void DebugPackageInstaller::setMissingLibraries(const QStringList & libraries)
 {
     m_missingLibraries = libraries;
 }
@@ -43,13 +43,18 @@ void DebugPackageInstaller::setMissingLibraries(const QString & libraries)
 void DebugPackageInstaller::installDebugPackages()
 {
     if (!m_installerProcess) {
+        //Find the executable path the first time
+        if (m_executablePath.isEmpty()) {
+            m_executablePath = KStandardDirs::findExe(installerName);
+        }
+        
         //Run process
         m_installerProcess = new KProcess(this);
         connect(m_installerProcess, SIGNAL(finished(int, QProcess::ExitStatus)), 
                                             this, SLOT(processFinished(int, QProcess::ExitStatus)));
 
-        QString exec = m_executablePath + " " + KShell::quoteArg(m_missingLibraries);
-        m_installerProcess->setShellCommand(exec);
+        QStringList args = QStringList() << m_packageName << m_missingLibraries;
+        m_installerProcess->setProgram(m_executablePath, args);
         m_installerProcess->start();
         
         //Show dialog

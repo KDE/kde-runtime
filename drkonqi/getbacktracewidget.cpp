@@ -199,8 +199,8 @@ void GetBacktraceWidget::loadData()
                                 "<interface>Reload Crash Information</interface> button.",
                                 QLatin1String(TECHBASE_HOWTO_DOC)));
             ui.m_installDebugButton->setVisible(true);
-            QString missingLibraries = 
-                    QStringList(btParser->librariesWithMissingDebugSymbols().toList()).join(" ");
+            
+            QStringList missingLibraries = btParser->librariesWithMissingDebugSymbols().toList();
             m_debugPackageInstaller->setMissingLibraries(missingLibraries);
         }
 

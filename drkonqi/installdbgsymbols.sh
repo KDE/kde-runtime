@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # Interface to install debug symbols packages - Dario Andres Rodriguez 2009
 # Distributions have to modify/adapt this script to their needs/naming/tools
 # 
@@ -23,5 +23,8 @@
 # ex. gather the packages names with some CLI tool using the parameters provided,
 # launch a GUI tool to get admin access and install the desired packages, showing progress
 # return the proper value asking if the packages were properly installed using CLI tools again
+
+# Uncomment to get a visual feedback of the parameters (just for testing)
+# kdialog --passivepopup "installdbgsymbols.sh called with: $1 $2 $3 $4 $5 $6 $7 $8 $9" 5
 
 exit 20; #Default return value, not implemented

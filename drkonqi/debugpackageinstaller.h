@@ -35,7 +35,7 @@ class DebugPackageInstaller: public QObject
     
     public:
         DebugPackageInstaller(const QString & packageName, QWidget * parent = 0);
-        void setMissingLibraries(const QString &);
+        void setMissingLibraries(const QStringList &);
         void installDebugPackages();
         
     private Q_SLOTS:
@@ -52,7 +52,9 @@ class DebugPackageInstaller: public QObject
         QProgressDialog *       m_progressDialog;
         
         QString                 m_executablePath;
-        QString                 m_missingLibraries;
+        QString                 m_packageName;
+        
+        QStringList             m_missingLibraries;
         
         QWidget *               m_parent;
 };
