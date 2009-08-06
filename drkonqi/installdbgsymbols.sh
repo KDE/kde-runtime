@@ -4,7 +4,9 @@
 # 
 # Parameters this script gets:
 # $1 is the (crashed) program executable which requires debug symbols (ex. plasma-desktop)
-# $2... libraries with missing debug symbols (full path, extracted from backtrace)
+# $2,$3,$n... libraries with missing debug symbols (full path, extracted from backtrace)
+# (ex. /usr/lib/libkhtml.so.5.3.0 /usr/lib/libkio.so.5.3.0)
+#
 # FIXME, may be we need some better param organization here?
 #
 # Return values:
@@ -16,6 +18,10 @@
 #
 # Note: distro tools should do the work to get permissions and/or show progress/download UI
 #
-#Implement package install distro-dependant logic here: -------
+# Implement package install distro-dependant logic here: -------
+#
+# ex. gather the packages names with some CLI tool using the parameters provided,
+# launch a GUI tool to get admin access and install the desired packages, showing progress
+# return the proper value asking if the packages were properly installed using CLI tools again
 
 exit 20; #Default return value, not implemented
