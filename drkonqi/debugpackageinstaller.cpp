@@ -42,10 +42,17 @@ void DebugPackageInstaller::setMissingLibraries(const QStringList & libraries)
 
 void DebugPackageInstaller::installDebugPackages()
 {
+    //FIXME i18n strings
     if (!m_installerProcess) {
         //Find the executable path the first time
         if (m_executablePath.isEmpty()) {
             m_executablePath = KStandardDirs::findExe(installerName);
+            if (m_executablePath.isEmpty()) {
+                emit error(QString("The helper application needed to install the missing "
+                            "debug symbols \"%1\" is missing. Please inform your "
+                            "distribution.").arg(installerName));
+                return;
+            }
         }
         
         //Run process
@@ -62,7 +69,7 @@ void DebugPackageInstaller::installDebugPackages()
         connect(m_progressDialog, SIGNAL(canceled()), this, SLOT(progressDialogCanceled()));
         m_progressDialog->setRange(0,0);
         m_progressDialog->setWindowTitle("Missing debug symbols");
-        m_progressDialog->setLabelText(QString("Requesting installation of missing debug symbols packages"));
+        m_progressDialog->setLabelText(QString("Requesting installation of missing debug symbols packages..."));
         m_progressDialog->show();
     }
 }
