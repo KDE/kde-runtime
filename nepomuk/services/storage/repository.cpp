@@ -279,6 +279,7 @@ void Nepomuk::Repository::open()
 
 void Nepomuk::Repository::rebuildingIndexFinished()
 {
+#if defined(HAVE_SOPRANO_INDEX) && defined(HAVE_CLUCENE) && SOPRANO_IS_VERSION(2,1,64)
     KNotification::event( "rebuldingNepomukIndexDone",
                           i18nc("@info - notification message",
                                 "Rebuilding Nepomuk full text search index for new features done."),
@@ -291,6 +292,7 @@ void Nepomuk::Repository::rebuildingIndexFinished()
     // inform that we are open and done
     m_state = OPEN;
     emit opened( this, true );
+#endif
 }
 
 
