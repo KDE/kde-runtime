@@ -97,11 +97,20 @@ void DrKonqiDialog::buildMainWidget()
                                       krashConfig->programName()));
     title->setWordWrap(true);
 
-    QLabel * infoLabel = new QLabel(i18nc("@info", "<para>You can help us improve KDE by reporting "
+    QString reportMessage;
+    if (!krashConfig->getReportLink().isEmpty()) {
+        reportMessage = i18nc("@info", "<para>You can help us improve KDE by reporting "
                                           "this error.<nl /><link url='#aboutbugreporting'>Learn "
                                           "more about bug reporting.</link></para><para><note>It is "
                                           "safe to close this dialog if you do not want to report "
-                                          "this bug.</note></para>"));
+                                          "this bug.</note></para>");
+    } else {
+        reportMessage = i18nc("@info", "<para>You can't report this error because the "
+                                        "application does not provide a bug reporting "
+                                        "address</para>");
+    }
+    QLabel * infoLabel = new QLabel(reportMessage);    
+                                          
     connect(infoLabel, SIGNAL(linkActivated(QString)), this, SLOT(aboutBugReporting()));
     infoLabel->setWordWrap(true);
 
@@ -152,6 +161,7 @@ void DrKonqiDialog::buildDialogOptions()
                                                KIcon("tools-report-bug"),
                                                i18nc("@info:tooltip",
                                                      "Starts the bug report assistant.")));
+    enableButton(KDialog::User1, !krashConfig->getReportLink().isEmpty());
     connect(this, SIGNAL(user1Clicked()), this, SLOT(reportBugAssistant()));
 
     //Default debugger button and menu (only for developer mode)
