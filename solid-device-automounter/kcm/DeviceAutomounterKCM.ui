@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>459</width>
-    <height>304</height>
+    <width>614</width>
+    <height>380</height>
    </rect>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
@@ -39,7 +39,7 @@
      <item>
       <widget class="QCheckBox" name="automountUnknownDevices">
        <property name="text">
-        <string>Automatically mount unknown devices</string>
+        <string>Only automatically mount removable media that has been manually mounted before</string>
        </property>
       </widget>
      </item>
@@ -53,7 +53,7 @@
      <item>
       <widget class="QCheckBox" name="automountOnPlugin">
        <property name="text">
-        <string>Automatically mount all removable media when attached</string>
+        <string>Automatically mount removable media when attached</string>
        </property>
       </widget>
      </item>
@@ -75,10 +75,25 @@
    <item row="2" column="0" colspan="3">
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
-      <string>Devices</string>
+      <string>Device Overrides</string>
      </property>
-     <layout class="QGridLayout" name="gridLayout">
-      <item row="0" column="0" colspan="2">
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <widget class="QLabel" name="label">
+        <property name="font">
+         <font>
+          <italic>true</italic>
+         </font>
+        </property>
+        <property name="text">
+         <string>Enabling automounting for a device in this list overrides any other setting.</string>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QTreeView" name="deviceView">
         <property name="editTriggers">
          <set>QAbstractItemView::NoEditTriggers</set>
@@ -106,19 +121,23 @@
         </attribute>
        </widget>
       </item>
-      <item row="1" column="0">
-       <widget class="QPushButton" name="forgetDevice">
-        <property name="text">
-         <string>Forget Device</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QPushButton" name="addDevice">
-        <property name="text">
-         <string>Add Device...</string>
-        </property>
-       </widget>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QPushButton" name="forgetDevice">
+          <property name="text">
+           <string>Forget Device</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="addDevice">
+          <property name="text">
+           <string>Add Device...</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
     </widget>
