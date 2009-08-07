@@ -1,16 +1,53 @@
-#Assigned
+##Brainstorming
+--------------
 
-##Unassigned
+#IDEAS for installdbgsymbols.sh ? (to show progress in DrKonqi UI)
+* Catch output and show status messages (ex "echo 1" , show "packages found"...)
+* Catch all the output and show in a textedit (like a readonly terminal)
+* Embed a Konsole KPart
+---
+
+- Display the time of the crashed
+(oh, I came back to the computer some time later and drkonqi was there.. 
+when the application crashed? during the night?) (by sreich)
+
+- Usability review and suggestions:
+http://blogs.msdn.com/oldnewthing/archive/2003/09/01/54734.aspx (by Maciej)
+
+- Hide backtrace from user (only show progress and backtrace status)??
+
+- Search in backtrace (esp. for [KCrash Handler])
+- Backtrace syntax highlighting (xml parser+ some qt/kde class ?)
+
+--
+
+##Other tasks
 -------------
-    
-- Dialogs -> Non-modal
 
+- Dialogs -> Non-modal
+    
 - Option to "don't show drkonqi for this(X) app"
 - Option to avoid drkonqi at all (setting KDE_DEBUG=1), and GUI to renable it
 
-- Improve DuplicatesPage dialog: what if you want to pick more than one possibly duplicate? 
+- Improve DuplicatesPage dialog: what if you want to pick more than one possibly duplicate?
+
+- Option to Attach the new crash information to an existing report (check username and backtraces?
+to avoid mixed reports)
 
 - Ask for saving the report information to file when exiting the report assistant without reporting
+( This is going to be done with the Drkonqi2.1 proposal to not close the main dialog on report)
+Leave the main dialog on launching the reporting tool, but add some legends:
+ "Reporting tool started for this crash"
+ "You reported this crash already" (and remove the , "help KDE, report bug" messages)
+
+- Custom usefulness values needed by application (ex. Amarok wants only perfect backtraces...)
+
+- Check for plugins ? (example, if plasma crashes, which libs were loaded, which lib caused the crash)
+This is useful to determine if some external plugin is involved
+(I don't know if this is technically possible)
+(cat /proc/PID/maps)
+
+- Read and upload as attachment (cat /proc/PID/maps), memmap
 
 - Application detection: ask for or detect specific things depending on application
    ie konqueror: url, plasma: plasmoids in use, kopete: protocal, etc.
