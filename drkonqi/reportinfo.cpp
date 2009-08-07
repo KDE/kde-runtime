@@ -59,7 +59,7 @@ ReportInfo::ReportInfo(QObject *parent)
         connect(process, SIGNAL(finished(int, QProcess::ExitStatus)), SLOT(lsbReleaseFinished()));
         process->start();
     } else {
-        m_bugzillaPlatform = QLatin1String("unspecified");
+        setBugzillaPlatform(QLatin1String("unspecified"));
     }
 }
 
@@ -72,41 +72,41 @@ void ReportInfo::lsbReleaseFinished()
     
     //Guess distro string
     if ( m_lsbRelease.contains("suse",Qt::CaseInsensitive) ) {
-        m_bugzillaPlatform = QLatin1String("SuSE RPMs");
+        setBugzillaPlatform(QLatin1String("SuSE RPMs"));
     } else if ( m_lsbRelease.contains("ubuntu",Qt::CaseInsensitive) ) {
-        m_bugzillaPlatform = QLatin1String("Ubuntu Packages");
+        setBugzillaPlatform(QLatin1String("Ubuntu Packages"));
     } else if ( m_lsbRelease.contains("ubuntu",Qt::CaseInsensitive) ) {
-        m_bugzillaPlatform = QLatin1String("Ubuntu Packages");
+        setBugzillaPlatform(QLatin1String("Ubuntu Packages"));
     } else if ( m_lsbRelease.contains("fedora",Qt::CaseInsensitive) ) {
-        m_bugzillaPlatform = QLatin1String("Fedora RPMs");
+        setBugzillaPlatform(QLatin1String("Fedora RPMs"));
     } else if ( m_lsbRelease.contains("redhat",Qt::CaseInsensitive) ) {
-        m_bugzillaPlatform = QLatin1String("RedHat RPMs");
+        setBugzillaPlatform(QLatin1String("RedHat RPMs"));
     } else if ( m_lsbRelease.contains("mandriva",Qt::CaseInsensitive) ) {
-        m_bugzillaPlatform = QLatin1String("Mandriva RPMs");
+        setBugzillaPlatform(QLatin1String("Mandriva RPMs"));
     } else if ( m_lsbRelease.contains("slack",Qt::CaseInsensitive) ) {
-        m_bugzillaPlatform = QLatin1String("Slackware Packages");
+        setBugzillaPlatform(QLatin1String("Slackware Packages"));
     } else if ( m_lsbRelease.contains("pardus",Qt::CaseInsensitive) ) {
-        m_bugzillaPlatform = QLatin1String("Pardus Packages");
+        setBugzillaPlatform(QLatin1String("Pardus Packages"));
     } else if ( m_lsbRelease.contains("freebsd",Qt::CaseInsensitive) ) {
-        m_bugzillaPlatform = QLatin1String("FreeBSD Ports");
+        setBugzillaPlatform(QLatin1String("FreeBSD Ports"));
     } else if ( m_lsbRelease.contains("netbsd",Qt::CaseInsensitive) ) {
-        m_bugzillaPlatform = QLatin1String("NetBSD pkgsrc");
+        setBugzillaPlatform(QLatin1String("NetBSD pkgsrc"));
     } else if ( m_lsbRelease.contains("openbsd",Qt::CaseInsensitive) ) {
-        m_bugzillaPlatform = QLatin1String("OpenBSD Packages");
+        setBugzillaPlatform(QLatin1String("OpenBSD Packages"));
     } else if ( m_lsbRelease.contains("solaris",Qt::CaseInsensitive) ) {
-        m_bugzillaPlatform = QLatin1String("Solaris Packages");
+        setBugzillaPlatform(QLatin1String("Solaris Packages"));
     } else if ( m_lsbRelease.contains("arch",Qt::CaseInsensitive) ) {
-        m_bugzillaPlatform = QLatin1String("Archlinux Packages");
+        setBugzillaPlatform(QLatin1String("Archlinux Packages"));
     } else if ( m_lsbRelease.contains("debian",Qt::CaseInsensitive) ) {
         if ( m_lsbRelease.contains("stable",Qt::CaseInsensitive) ) {
-            m_bugzillaPlatform = QLatin1String("Debian stable");
+            setBugzillaPlatform(QLatin1String("Debian stable"));
         } else if ( m_lsbRelease.contains("testing",Qt::CaseInsensitive) ) {
-            m_bugzillaPlatform = QLatin1String("Debian testing");
+            setBugzillaPlatform(QLatin1String("Debian testing"));
         } else {
-            m_bugzillaPlatform = QLatin1String("Debian unstable");
+            setBugzillaPlatform(QLatin1String("Debian unstable"));
         }
     } else {
-        m_bugzillaPlatform = QLatin1String("unspecified");
+        setBugzillaPlatform(QLatin1String("unspecified"));
     }
 }
 
