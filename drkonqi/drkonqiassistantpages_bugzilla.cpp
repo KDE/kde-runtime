@@ -728,6 +728,7 @@ void BugzillaInformationPage::aboutToShow()
             KConfigGroup config(KGlobal::config(), "BugzillaInformationPage");
             QString entry = config.readEntry("BugzillaPlatform","unspecified");
             int index = ui.m_distributionChooserCombo->findData(entry);
+            if ( index == -1 ) index = 0;
             ui.m_distributionChooserCombo->setCurrentIndex(index);
         } else {
             ui.m_distributionChooserCombo->setVisible(false);
