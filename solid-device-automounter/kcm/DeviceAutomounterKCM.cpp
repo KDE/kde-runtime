@@ -173,7 +173,7 @@ DeviceAutomounterKCM::reloadDevices()
     AutomounterSettings::self()->readConfig();
     m_devices->clear();
     QStringList headers;
-    headers << i18n( "Name" ) << i18n( "Always Automount" );
+    headers << i18nc("@title:column The device's internal UDI if not attached, user-friendly name reported by Solid otherwise.", "Name" ) << i18n( "Always Automount" );
     m_devices->setHorizontalHeaderLabels(headers);
     foreach(const QString &dev, AutomounterSettings::knownDevices()) {
         addNewDevice(dev);

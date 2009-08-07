@@ -2,8 +2,7 @@
 <!DOCTYPE kcfg SYSTEM "http://www.kde.org/standards/kcfg/1.0/kcfg.dtd">
 <kcfg xmlns="http://www.kde.org/standards/kcfg/1.0"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0
-                          http://www.kde.org/standards/kcfg/1.0/kcfg.xsd">
+      xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0/kcfg.xsd">
   <kcfgfile name="kded_device_automounterrc"/>
   <group name="General">
     <entry name="AutomountOnLogin" type="Bool">
@@ -18,5 +17,5 @@
     <entry name="AutomountEnabled" type="Bool">
         <default>true</default>
     </entry>
-  </group>s
+  </group>
 </kcfg>
