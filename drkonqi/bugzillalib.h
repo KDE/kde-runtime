@@ -41,7 +41,7 @@ public:
 
     BugReport();
 
-    void setBugNumber(QString value) {
+    void setBugNumber(const QString & value) {
         setData("bug_id", value);
     }
     QString bugNumber() const {
@@ -51,84 +51,84 @@ public:
         return getData("bug_id").toInt();
     }
 
-    void setShortDescription(QString value) {
+    void setShortDescription(const QString & value) {
         setData("short_desc", value);
     }
     QString shortDescription() const {
         return getData("short_desc");
     }
 
-    void setProduct(QString value) {
+    void setProduct(const QString & value) {
         setData("product", value);
     }
     QString product() const {
         return getData("product");
     }
 
-    void setComponent(QString value) {
+    void setComponent(const QString & value) {
         setData("component", value);
     }
     QString component() const {
         return getData("component");
     }
 
-    void setVersion(QString value) {
+    void setVersion(const QString & value) {
         setData("version", value);
     }
     QString version() const {
         return getData("version");
     }
 
-    void setOperatingSystem(QString value) {
+    void setOperatingSystem(const QString & value) {
         setData("op_sys", value);
     }
     QString operatingSystem() const {
         return getData("op_sys");
     }
 
-    void setPlatform(QString value) {
+    void setPlatform(const QString & value) {
         setData("rep_platform", value);
     }
     QString platform() const {
         return getData("rep_platform");
     }
     
-    void setBugStatus(QString value) {
+    void setBugStatus(const QString & value) {
         setData("bug_status", value);
     }
     QString bugStatus() const {
         return getData("bug_status");
     }
 
-    void setResolution(QString value) {
+    void setResolution(const QString & value) {
         setData("resolution", value);
     }
     QString resolution() const {
         return getData("resolution");
     }
 
-    void setPriority(QString value) {
+    void setPriority(const QString & value) {
         setData("priority", value);
     }
     QString priority() const {
         return getData("priority");
     }
 
-    void setBugSeverity(QString value) {
+    void setBugSeverity(const QString & value) {
         setData("bug_severity", value);
     }
     QString bugSeverity() const {
         return getData("bug_severity");
     }
 
-    void setDescription(QString desc) {
+    void setDescription(const QString & desc) {
         m_commentList.insert(0, desc);
     }
     QString description() const {
         return m_commentList.at(0);
     }
 
-    void setComments(QStringList comm) {
+    void setComments(const QStringList & comm) {
         m_commentList.append(comm);
     }
     QStringList comments() const {
@@ -149,10 +149,10 @@ private:
     BugMap      m_dataMap;
     QStringList m_commentList;
 
-    void setData(QString key, QString val) {
+    void setData(const QString & key, const QString & val) {
         m_dataMap.insert(key, val);
     }
-    QString getData(QString key) const {
+    QString getData(const QString & key) const {
         return m_dataMap.value(key);
     }
 
@@ -163,7 +163,7 @@ private:
 class BugReportXMLParser
 {
 public:
-    BugReportXMLParser(QByteArray);
+    BugReportXMLParser(const QByteArray &);
     BugReport parse();
     bool isValid() {
         return m_valid;
@@ -172,7 +172,7 @@ public:
 private:
     bool            m_valid;
     QDomDocument    m_xml;
-    QString getSimpleValue(QString);
+    QString getSimpleValue(const QString &);
 
 };
 
@@ -197,12 +197,12 @@ class BugzillaManager : public QObject
 public:
     BugzillaManager(QObject *parent = 0);
 
-    void setLoginData(QString, QString);
+    void setLoginData(const QString &, const QString &);
     void tryLogin();
 
     void fetchBugReport(int);
-    void searchBugs(QString words, QStringList products, QString severity,
-                    QString date_start, QString date_end , QString comment);
+    void searchBugs(QString words, const QStringList & products, const QString & severity,
+                    const QString & date_start, const QString & date_end , QString comment);
     void stopCurrentSearch();
     
     void sendReport(BugReport);
@@ -227,17 +227,17 @@ private Q_SLOTS:
 Q_SIGNALS:
     void loginFinished(bool);
     void bugReportFetched(BugReport);
-    void searchFinished(BugMapList);
+    void searchFinished(const BugMapList &);
     void reportSent(int);
 
-    void loginError(QString);
-    void bugReportError(QString);
-    void searchError(QString);
-    void sendReportError(QString);
+    void loginError(const QString &);
+    void bugReportError(const QString &);
+    void searchError(const QString &);
+    void sendReportError(const QString &);
     void sendReportErrorWrongProduct(); //To use "kde" product
 
 private:
-    QByteArray generatePostDataForReport(BugReport);
+    QByteArray generatePostDataForReport(BugReport) const;
 
     QString     m_username;
     QString     m_password;

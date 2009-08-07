@@ -69,7 +69,7 @@ void BugzillaManager::setCustomBugtrackerUrl(const QString & customUrl)
     m_bugTrackerUrl = customUrl;
 }
 
-void BugzillaManager::setLoginData(QString _username, QString _password)
+void BugzillaManager::setLoginData(const QString & _username, const QString & _password)
 {
     m_username = _username;
     m_password = _password;
@@ -160,8 +160,9 @@ void BugzillaManager::fetchBugReportDone(KJob* job)
     m_fetchBugJob = 0;
 }
 
-void BugzillaManager::searchBugs(QString words, QStringList products, QString severity,
-                                 QString date_start, QString date_end, QString comment)
+void BugzillaManager::searchBugs(QString words, const QStringList & products,
+                                const QString & severity, const QString & date_start, 
+                                const QString & date_end, QString comment)
 {
     QString product;
     if (products.size() > 0) {
@@ -232,7 +233,7 @@ void BugzillaManager::sendReport(BugReport report)
     sendJob->start();
 }
 
-QByteArray BugzillaManager::generatePostDataForReport(BugReport report)
+QByteArray BugzillaManager::generatePostDataForReport(BugReport report) const
 {
     QByteArray postData =
         QByteArray("product=") +
@@ -348,7 +349,7 @@ BugMapList BugListCSVParser::parse()
     return list;
 }
 
-BugReportXMLParser::BugReportXMLParser(QByteArray data)
+BugReportXMLParser::BugReportXMLParser(const QByteArray & data)
 {
     m_valid = m_xml.setContent(data, true);
 }
@@ -397,7 +398,7 @@ BugReport BugReportXMLParser::parse()
     return report;
 }
 
-QString BugReportXMLParser::getSimpleValue(QString name)   //Extract an unique tag from XML
+QString BugReportXMLParser::getSimpleValue(const QString & name)   //Extract an unique tag from XML
 {
     QString ret;
 
