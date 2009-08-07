@@ -43,6 +43,8 @@ ReportInfo::ReportInfo(QObject *parent)
 {
     m_userCanDetail = false;
     m_developersCanContactReporter = false;
+    
+    m_compiledSources = false;
 
     m_productMapping = new ProductMapping(DrKonqi::instance()->krashConfig()->productName(), this);
     
@@ -208,8 +210,14 @@ QString ReportInfo::generateReport(bool drKonqiStamp) const
                                 m_bugzillaPlatform != QLatin1String("unspecified")) {
         report.append(QString("Distribution (Platform): %1\n").arg(m_bugzillaPlatform));
     }
-    report.append(QLatin1String("\n"));
+    
+    //Compiled from sources
+    if ( m_compiledSources ) {
+        report.append(QString("KDE compiled from sources\n"));
+    }
 
+    report.append(QLatin1String("\n"));
+    
     //Details of the crash situation
     if (m_userCanDetail) {
         report.append(QString("What I was doing when the application crashed:\n"));
@@ -287,7 +295,11 @@ BugReport ReportInfo::newBugReportTemplate() const
     report.setComponent(m_productMapping->bugzillaComponent());
     report.setVersion(krashConfig->productVersion());
     report.setOperatingSystem(bugzillaOs());
-    report.setPlatform(m_bugzillaPlatform);
+    if (m_compiledSources) {
+        report.setPlatform(QLatin1String("Compiled Sources"));
+    } else {
+        report.setPlatform(m_bugzillaPlatform);
+    }
     report.setPriority(QLatin1String("NOR"));
     report.setBugSeverity(QLatin1String("crash"));
     report.setShortDescription(m_reportTitle);
@@ -357,6 +369,11 @@ QString ReportInfo::bugzillaPlatform() const
 void ReportInfo::setBugzillaPlatform(const QString & platform)
 {
     m_bugzillaPlatform = platform;
+}
+
+void ReportInfo::setCompiledSources(bool compiled)
+{
+    m_compiledSources = compiled;
 }
 
 #include "reportinfo.moc"

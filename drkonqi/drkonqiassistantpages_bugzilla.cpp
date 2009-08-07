@@ -699,7 +699,7 @@ void BugzillaInformationPage::aboutToShow()
     if (!m_distributionComboSetup) {
         if (reportInfo()->bugzillaPlatform()==QLatin1String("unspecified")) { //Autodetecting distro failed
             m_distroComboVisible = true;
-            ui.m_distributionChooserCombo->addItem("unspecified","unspecified");
+            ui.m_distributionChooserCombo->addItem("Unspecified","unspecified");
             ui.m_distributionChooserCombo->addItem("Debian stable","Debian stable");
             ui.m_distributionChooserCombo->addItem("Debian testing","Debian testing");
             ui.m_distributionChooserCombo->addItem("Debian unstable","Debian unstable");
@@ -805,6 +805,8 @@ void BugzillaInformationPage::aboutToHide()
             ui.m_distributionChooserCombo->itemData(ui.m_distributionChooserCombo->currentIndex())
             .toString());
     }
+    reportInfo()->setCompiledSources(ui.m_compiledSourcesCheckBox->checkState() == Qt::Checked);
+    
 }
 
 //END BugzillaInformationPage

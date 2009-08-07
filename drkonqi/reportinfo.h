@@ -63,6 +63,8 @@ public:
     QString bugzillaPlatform() const;
     void setBugzillaPlatform(const QString &);
     
+    void setCompiledSources(bool);
+    
 private Q_SLOTS:
     void sendUsingDefaultProduct() const;
     void lsbReleaseFinished();
@@ -82,6 +84,8 @@ private:
 
     QString     m_bugzillaPlatform;
     QString     m_lsbRelease;
+    
+    bool        m_compiledSources;
     
     ProductMapping *    m_productMapping;
 };
