@@ -5,8 +5,6 @@
     
 - Dialogs -> Non-modal
 
-- Store "willing to help developers" for future DrKonqi usages?
-
 - Option to "don't show drkonqi for this(X) app"
 - Option to avoid drkonqi at all (setting KDE_DEBUG=1), and GUI to renable it
 
@@ -16,8 +14,6 @@
 
 - Application detection: ask for or detect specific things depending on application
    ie konqueror: url, plasma: plasmoids in use, kopete: protocal, etc.
-
-//If distro was not autodetected, a combobox is show. Save that selected entry to config.
 
 #ToDiscuss/Improve
 --------

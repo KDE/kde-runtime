@@ -103,14 +103,24 @@ BugAwarenessPage::BugAwarenessPage(DrKonqiBugReport * parent)
         : DrKonqiAssistantPage(parent)
 {
     ui.setupUi(this);
+    
+    KConfigGroup config(KGlobal::config(), "BugAwarenessPage");
+    bool developersCanContact = config.readEntry("DevelopersCanContactReporter", false);
+    ui.m_developersCanContactReporterCheckBox->setChecked(developersCanContact);
 }
 
 void BugAwarenessPage::aboutToHide()
 {
     //Save data
     reportInfo()->setUserCanDetail(ui.m_canDetailCheckBox->checkState() == Qt::Checked);
-    reportInfo()->setDevelopersCanContactReporter(
-           ui.m_developersCanContactReporterCheckBox->checkState() == Qt::Checked);
+    
+    bool developersCanContactReporter = ui.m_developersCanContactReporterCheckBox->checkState() == 
+                                                                                        Qt::Checked;
+    reportInfo()->setDevelopersCanContactReporter(developersCanContactReporter);
+           
+    KConfigGroup config(KGlobal::config(), "BugAwarenessPage");
+    config.writeEntry("DevelopersCanContactReporter", developersCanContactReporter);
+    config.sync();
 }
 
 //END BugAwarenessPage
