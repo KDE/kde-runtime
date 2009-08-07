@@ -197,9 +197,14 @@ QString ReportInfo::generateReport(bool drKonqiStamp) const
     QString report;
 
     //Program name and versions
-    report.append(QString("Application that crashed: %1\n").arg(krashConfig->productName()));
-    report.append(QString("Version of the application: %1\n").arg(krashConfig->productVersion()));
-    report.append(QString("KDE Version: %1\n").arg(KDE::versionString()));
+    report.append(QString("Application: %1 (%2)\n").arg(krashConfig->productName(),
+                                                                    krashConfig->productVersion()));
+    report.append(QString("KDE Version: %1").arg(KDE::versionString()));
+    if ( m_compiledSources ) {
+        report.append(QString(" (Compiled from sources)\n"));
+    } else {
+        report.append(QString("\n"));
+    }
     report.append(QString("Qt Version: %1\n").arg(qVersion()));
     report.append(QString("Operating System: %1\n").arg(osString()));
 
@@ -210,12 +215,6 @@ QString ReportInfo::generateReport(bool drKonqiStamp) const
                                 m_bugzillaPlatform != QLatin1String("unspecified")) {
         report.append(QString("Distribution (Platform): %1\n").arg(m_bugzillaPlatform));
     }
-    
-    //Compiled from sources
-    if ( m_compiledSources ) {
-        report.append(QString("KDE compiled from sources\n"));
-    }
-
     report.append(QLatin1String("\n"));
     
     //Details of the crash situation
