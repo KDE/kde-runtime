@@ -31,12 +31,12 @@
 #include "AutomounterSettings.h"
 
 K_PLUGIN_FACTORY(DeviceAutomounterKCMFactory, registerPlugin<DeviceAutomounterKCM>();)
-K_EXPORT_PLUGIN(DeviceAutomounterKCMFactory("device_automounter"))
+K_EXPORT_PLUGIN(DeviceAutomounterKCMFactory("kcm_device_automounter"))
 
 DeviceAutomounterKCM::DeviceAutomounterKCM(QWidget *parent, const QVariantList &)
     : KCModule(DeviceAutomounterKCMFactory::componentData(), parent)
 {
-    KAboutData *about = new KAboutData("device_automounter",
+    KAboutData *about = new KAboutData("kcm_device_automounter",
                                        0,
                                        ki18n("Device Automounter"),
                                        "0.1",
