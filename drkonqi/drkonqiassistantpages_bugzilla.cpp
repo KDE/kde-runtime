@@ -690,6 +690,11 @@ BugzillaInformationPage::BugzillaInformationPage(DrKonqiBugReport * parent)
     connect(ui.m_titleEdit, SIGNAL(textChanged(QString)), this, SLOT(checkTexts()));
     connect(ui.m_detailsEdit, SIGNAL(textChanged()), this, SLOT(checkTexts()));
 
+    //FIXME use an unique KConfigGroup as object member and re-use, or create only when using ?
+    KConfigGroup config(KGlobal::config(), "BugzillaInformationPage");
+    bool compiledFrom = config.readEntry("CompiledSources", false);
+    ui.m_compiledSourcesCheckBox->setChecked(compiledFrom);
+    
     checkTexts();
 }
 
@@ -718,6 +723,12 @@ void BugzillaInformationPage::aboutToShow()
             ui.m_distributionChooserCombo->addItem("OpenBSD","OpenBSD Packages");
             ui.m_distributionChooserCombo->addItem("Mac OS X","MacPorts Packages");
             ui.m_distributionChooserCombo->addItem("Solaris","Solaris Packages");
+            
+            //Restore previously selected bugzilla platform (distribution)
+            KConfigGroup config(KGlobal::config(), "BugzillaInformationPage");
+            QString entry = config.readEntry("BugzillaPlatform","unspecified");
+            int index = ui.m_distributionChooserCombo->findData(entry);
+            ui.m_distributionChooserCombo->setCurrentIndex(index);
         } else {
             ui.m_distributionChooserCombo->setVisible(false);
         }
@@ -800,13 +811,18 @@ void BugzillaInformationPage::aboutToHide()
     //Save fields data
     reportInfo()->setTitle(ui.m_titleEdit->text());
     reportInfo()->setDetailText(ui.m_detailsEdit->toPlainText());
+    KConfigGroup config(KGlobal::config(), "BugzillaInformationPage");
     if (m_distroComboVisible) {
-        reportInfo()->setBugzillaPlatform(
-            ui.m_distributionChooserCombo->itemData(ui.m_distributionChooserCombo->currentIndex())
-            .toString());
+        //Save bugzilla platform (distribution)
+        QString bugzillaPlatform = ui.m_distributionChooserCombo->itemData(
+                                        ui.m_distributionChooserCombo->currentIndex()).toString();
+        config.writeEntry("BugzillaPlatform", bugzillaPlatform);
+        reportInfo()->setBugzillaPlatform(bugzillaPlatform);
     }
-    reportInfo()->setCompiledSources(ui.m_compiledSourcesCheckBox->checkState() == Qt::Checked);
-    
+    bool compiledFromSources = ui.m_compiledSourcesCheckBox->checkState() == Qt::Checked;
+    reportInfo()->setCompiledSources(compiledFromSources);
+    config.writeEntry("CompiledSources", compiledFromSources);
+    config.sync();
 }
 
 //END BugzillaInformationPage
