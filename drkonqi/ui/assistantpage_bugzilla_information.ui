@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>474</width>
-    <height>433</height>
+    <width>513</width>
+    <height>345</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
@@ -46,6 +46,29 @@
     </widget>
    </item>
    <item>
+    <widget class="QGroupBox" name="m_distributionGroupBox">
+     <property name="title">
+      <string comment="@title:groupbox">Distribution method:</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="KComboBox" name="m_distributionChooserCombo"/>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="m_compiledSourcesCheckBox">
+          <property name="text">
+           <string comment="@option:checkbox">Compiled KDE by sources</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -75,6 +98,11 @@
    <class>KLineEdit</class>
    <extends>QLineEdit</extends>
    <header>klineedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>KComboBox</class>
+   <extends>QComboBox</extends>
+   <header>kcombobox.h</header>
   </customwidget>
   <customwidget>
    <class>KTextEdit</class>

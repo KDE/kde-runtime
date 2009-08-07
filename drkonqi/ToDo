@@ -10,8 +10,6 @@
 - Option to "don't show drkonqi for this(X) app"
 - Option to avoid drkonqi at all (setting KDE_DEBUG=1), and GUI to renable it
 
-- We need a new icon/image :)
-
 - Improve DuplicatesPage dialog: what if you want to pick more than one possibly duplicate? 
 
 - Ask for saving the report information to file when exiting the report assistant without reporting
@@ -19,13 +17,10 @@
 - Application detection: ask for or detect specific things depending on application
    ie konqueror: url, plasma: plasmoids in use, kopete: protocal, etc.
 
+//If distro was not autodetected, a combobox is show. Save that selected entry to config.
+
 #ToDiscuss/Improve
 --------
-
-- BugzillaKeywordsPage word filtering (and minimum length) criteria 
-(drkonqiassistantpages_bugzilla.cpp:257)
-(( check at least X words, with Y of them with a minimum of Z chars ..? ))
-    currently 50 for subject and 100 for body; we'll see how that works
 
 - REVIEW criteria of minimum chars/words to use in the Title and Details fields 
 (drkonqiassistantpages_bugzilla.cpp:729)
@@ -33,21 +28,12 @@
 #Later
 ---------
 
-- Better kwallet integration: use what konqueror uses when you login?
-   some method of keeping you logged in to bz to avoid a few dialogs
-- Bugzilla searches should be on product name +"kde" +(?kdelibs?)
-- Recheck KDevelop integration (currently it seems disabled on KDevelop side)
-
 - waiting for productName()->product/component mapping (custom cgi file at BKO)
-[[ currently bugzillalib detects unexistent products to later use the "kde" product ]] [LATER]
+[[ currently bugzillalib detects unexistent products to later use the "kde" product ]]
+Update: local mappings file support already implemented.
 
 #DONE
 -------
-
-- Side by side backtrace comparison on "Show report information" (duplicates step)
-- WordWrap aboutbugreporting
-- Removed Qt::escape calls
-- Avoid LSB messages at all if no found
 
 ##Bugzilla DrKonqi reports cleanup:
 ---

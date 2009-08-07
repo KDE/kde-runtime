@@ -33,7 +33,7 @@
 #include <KUrl>
 #include <KLocale>
 
-static const char bugtrackerBaseUrl[] = "https://bugs.kde.org/";
+static const char bugtrackerBKOBaseUrl[] = "https://bugs.kde.org/";
 
 static const char columns[] = "bug_severity,priority,bug_status,product,short_desc"; //resolution,
 
@@ -61,6 +61,12 @@ BugzillaManager::BugzillaManager(QObject *parent):
         m_fetchBugJob(0),
         m_searchJob(0)
 {
+    m_bugTrackerUrl = bugtrackerBKOBaseUrl;
+}
+
+void BugzillaManager::setCustomBugtrackerUrl(const QString & customUrl)
+{
+    m_bugTrackerUrl = customUrl;
 }
 
 void BugzillaManager::setLoginData(QString _username, QString _password)
@@ -81,7 +87,7 @@ void BugzillaManager::tryLogin()
             QByteArray("&log_in=Log+in");
 
         KIO::StoredTransferJob * loginJob =
-            KIO::storedHttpPost(postData, KUrl(QString(bugtrackerBaseUrl) + QString(loginUrl)),
+            KIO::storedHttpPost(postData, KUrl(QString(m_bugTrackerUrl) + QString(loginUrl)),
                                 KIO::HideProgressInfo);
         connect(loginJob, SIGNAL(finished(KJob*)) , this, SLOT(loginDone(KJob*)));
 
@@ -120,7 +126,7 @@ void BugzillaManager::loginDone(KJob* job)
 
 void BugzillaManager::fetchBugReport(int bugnumber)
 {
-    KUrl url = KUrl(QString(bugtrackerBaseUrl) + QString(fetchBugUrl).arg(bugnumber));
+    KUrl url = KUrl(QString(m_bugTrackerUrl) + QString(fetchBugUrl).arg(bugnumber));
 
     if (m_fetchBugJob) { //Stop previous fetchBugJob
         m_fetchBugJob->disconnect();
@@ -169,7 +175,7 @@ void BugzillaManager::searchBugs(QString words, QStringList products, QString se
         }
     }
 
-    QString url = QString(bugtrackerBaseUrl) +
+    QString url = QString(m_bugTrackerUrl) +
                   QString(searchUrl).arg(words.replace(' ' , '+'), product, 
                                          comment.replace(' ' , '+'), date_start,
                                          date_end, severity, QString(columns));
@@ -215,7 +221,7 @@ void BugzillaManager::sendReport(BugReport report)
 {
     QByteArray postData = generatePostDataForReport(report);
 
-    QString url = QString(bugtrackerBaseUrl) + QString(sendReportUrl);
+    QString url = QString(m_bugTrackerUrl) + QString(sendReportUrl);
 
     KIO::StoredTransferJob * sendJob =
         KIO::storedHttpPost(postData, KUrl(url), KIO::HideProgressInfo);
@@ -236,7 +242,7 @@ QByteArray BugzillaManager::generatePostDataForReport(BugReport report)
         QByteArray("&bug_severity=") +
         QUrl::toPercentEncoding(report.bugSeverity()) +
         QByteArray("&rep_platform=") +
-        QUrl::toPercentEncoding(QString("Unlisted Binaries")) +
+        QUrl::toPercentEncoding(report.platform()) +
         QByteArray("&op_sys=") +
         QUrl::toPercentEncoding(report.operatingSystem()) +
         QByteArray("&priority=") +
@@ -289,7 +295,7 @@ void BugzillaManager::sendReportDone(KJob * job)
 
 QString BugzillaManager::urlForBug(int bug_number)
 {
-    return QString(bugtrackerBaseUrl) + QString(showBugUrl).arg(bug_number);
+    return QString(m_bugTrackerUrl) + QString(showBugUrl).arg(bug_number);
 }
 
 BugListCSVParser::BugListCSVParser(QByteArray data)
@@ -407,3 +413,4 @@ BugReport::BugReport()
 {
     m_isValid = false;
 }
+

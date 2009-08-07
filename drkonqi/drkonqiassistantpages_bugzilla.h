@@ -167,6 +167,8 @@ private:
     Ui::AssistantPageBugzillaInformation    ui;
 
     bool                                    m_textsOK;
+    bool                                    m_distributionComboSetup;
+    bool                                    m_distroComboVisible;
 };
 
 /** Send crash report page **/

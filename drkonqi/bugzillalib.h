@@ -86,6 +86,13 @@ public:
         return getData("op_sys");
     }
 
+    void setPlatform(QString value) {
+        setData("rep_platform", value);
+    }
+    QString platform() const {
+        return getData("rep_platform");
+    }
+    
     void setBugStatus(QString value) {
         setData("bug_status", value);
     }
@@ -209,6 +216,8 @@ public:
 
     QString urlForBug(int bug_number);
 
+    void setCustomBugtrackerUrl(const QString &);
+    
 private Q_SLOTS:
     void loginDone(KJob*);
     void fetchBugReportDone(KJob*);
@@ -237,6 +246,7 @@ private:
     KJob *  m_fetchBugJob;
     KJob *  m_searchJob;
 
+    QString     m_bugTrackerUrl;
 };
 
 #endif

@@ -683,7 +683,7 @@ void BugzillaReportInformationDialog::bugFetchError(QString err)
 
 BugzillaInformationPage::BugzillaInformationPage(DrKonqiBugReport * parent)
         : DrKonqiAssistantPage(parent),
-        m_textsOK(false)
+        m_textsOK(false), m_distributionComboSetup(false), m_distroComboVisible(false)
 {
     ui.setupUi(this);
     
@@ -695,8 +695,33 @@ BugzillaInformationPage::BugzillaInformationPage(DrKonqiBugReport * parent)
 
 void BugzillaInformationPage::aboutToShow()
 {
-    if (ui.m_titleEdit->text().isEmpty()) {
-        ui.m_titleEdit->setText(reportInfo()->title());
+    //FIXME i18n
+    if (!m_distributionComboSetup) {
+        if (reportInfo()->bugzillaPlatform()==QLatin1String("unspecified")) { //Autodetecting distro failed
+            m_distroComboVisible = true;
+            ui.m_distributionChooserCombo->addItem("unspecified","unspecified");
+            ui.m_distributionChooserCombo->addItem("Debian stable","Debian stable");
+            ui.m_distributionChooserCombo->addItem("Debian testing","Debian testing");
+            ui.m_distributionChooserCombo->addItem("Debian unstable","Debian unstable");
+            ui.m_distributionChooserCombo->addItem("Exherbo","Exherbo Packages");
+            ui.m_distributionChooserCombo->addItem("Gentoo","Gentoo Packages");
+            ui.m_distributionChooserCombo->addItem("Mandriva","Mandriva RPMs");
+            ui.m_distributionChooserCombo->addItem("Slackware","Slackware Packages");
+            ui.m_distributionChooserCombo->addItem("SuSE/OpenSUSE","SuSE RPMs");
+            ui.m_distributionChooserCombo->addItem("RedHat","RedHat RPMs");
+            ui.m_distributionChooserCombo->addItem("Fedora","Fedora RPMs");
+            ui.m_distributionChooserCombo->addItem("Kubuntu/Ubuntu (and derivates)","Ubuntu Packages");
+            ui.m_distributionChooserCombo->addItem("Pardus","Pardus Packages");
+            ui.m_distributionChooserCombo->addItem("Archlinux","Archlinux Packages");
+            ui.m_distributionChooserCombo->addItem("FreeBSD (Ports)","FreeBSD Ports");
+            ui.m_distributionChooserCombo->addItem("NetBSD (pkgsrc)","NetBSD pkgsrc");
+            ui.m_distributionChooserCombo->addItem("OpenBSD","OpenBSD Packages");
+            ui.m_distributionChooserCombo->addItem("Mac OS X","MacPorts Packages");
+            ui.m_distributionChooserCombo->addItem("Solaris","Solaris Packages");
+        } else {
+            ui.m_distributionChooserCombo->setVisible(false);
+        }
+        m_distributionComboSetup = true;
     }
 
     bool showDetails = reportInfo()->userCanDetail();
@@ -775,6 +800,11 @@ void BugzillaInformationPage::aboutToHide()
     //Save fields data
     reportInfo()->setTitle(ui.m_titleEdit->text());
     reportInfo()->setDetailText(ui.m_detailsEdit->toPlainText());
+    if (m_distroComboVisible) {
+        reportInfo()->setBugzillaPlatform(
+            ui.m_distributionChooserCombo->itemData(ui.m_distributionChooserCombo->currentIndex())
+            .toString());
+    }
 }
 
 //END BugzillaInformationPage

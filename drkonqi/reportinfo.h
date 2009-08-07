@@ -60,6 +60,9 @@ public:
     
     bool isWorthReporting() const;
     
+    QString bugzillaPlatform() const;
+    void setBugzillaPlatform(const QString &);
+    
 private Q_SLOTS:
     void sendUsingDefaultProduct() const;
     void lsbReleaseFinished();
@@ -77,6 +80,7 @@ private:
     QString     m_reportDetailText;
     QString     m_possibleDuplicate;
 
+    QString     m_bugzillaPlatform;
     QString     m_lsbRelease;
     
     ProductMapping *    m_productMapping;

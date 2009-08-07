@@ -56,6 +56,8 @@ ReportInfo::ReportInfo(QObject *parent)
         *process << lsb_release << "-sd";
         connect(process, SIGNAL(finished(int, QProcess::ExitStatus)), SLOT(lsbReleaseFinished()));
         process->start();
+    } else {
+        m_bugzillaPlatform = QLatin1String("unspecified");
     }
 }
 
@@ -65,6 +67,45 @@ void ReportInfo::lsbReleaseFinished()
     Q_ASSERT(process);
     m_lsbRelease = QString::fromLocal8Bit(process->readAllStandardOutput().trimmed());
     process->deleteLater();
+    
+    //Guess distro string
+    if ( m_lsbRelease.contains("suse",Qt::CaseInsensitive) ) {
+        m_bugzillaPlatform = QLatin1String("SuSE RPMs");
+    } else if ( m_lsbRelease.contains("ubuntu",Qt::CaseInsensitive) ) {
+        m_bugzillaPlatform = QLatin1String("Ubuntu Packages");
+    } else if ( m_lsbRelease.contains("ubuntu",Qt::CaseInsensitive) ) {
+        m_bugzillaPlatform = QLatin1String("Ubuntu Packages");
+    } else if ( m_lsbRelease.contains("fedora",Qt::CaseInsensitive) ) {
+        m_bugzillaPlatform = QLatin1String("Fedora RPMs");
+    } else if ( m_lsbRelease.contains("redhat",Qt::CaseInsensitive) ) {
+        m_bugzillaPlatform = QLatin1String("RedHat RPMs");
+    } else if ( m_lsbRelease.contains("mandriva",Qt::CaseInsensitive) ) {
+        m_bugzillaPlatform = QLatin1String("Mandriva RPMs");
+    } else if ( m_lsbRelease.contains("slack",Qt::CaseInsensitive) ) {
+        m_bugzillaPlatform = QLatin1String("Slackware Packages");
+    } else if ( m_lsbRelease.contains("pardus",Qt::CaseInsensitive) ) {
+        m_bugzillaPlatform = QLatin1String("Pardus Packages");
+    } else if ( m_lsbRelease.contains("freebsd",Qt::CaseInsensitive) ) {
+        m_bugzillaPlatform = QLatin1String("FreeBSD Ports");
+    } else if ( m_lsbRelease.contains("netbsd",Qt::CaseInsensitive) ) {
+        m_bugzillaPlatform = QLatin1String("NetBSD pkgsrc");
+    } else if ( m_lsbRelease.contains("openbsd",Qt::CaseInsensitive) ) {
+        m_bugzillaPlatform = QLatin1String("OpenBSD Packages");
+    } else if ( m_lsbRelease.contains("solaris",Qt::CaseInsensitive) ) {
+        m_bugzillaPlatform = QLatin1String("Solaris Packages");
+    } else if ( m_lsbRelease.contains("arch",Qt::CaseInsensitive) ) {
+        m_bugzillaPlatform = QLatin1String("Archlinux Packages");
+    } else if ( m_lsbRelease.contains("debian",Qt::CaseInsensitive) ) {
+        if ( m_lsbRelease.contains("stable",Qt::CaseInsensitive) ) {
+            m_bugzillaPlatform = QLatin1String("Debian stable");
+        } else if ( m_lsbRelease.contains("testing",Qt::CaseInsensitive) ) {
+            m_bugzillaPlatform = QLatin1String("Debian testing");
+        } else {
+            m_bugzillaPlatform = QLatin1String("Debian unstable");
+        }
+    } else {
+        m_bugzillaPlatform = QLatin1String("unspecified");
+    }
 }
 
 bool ReportInfo::userCanDetail() const
@@ -160,9 +201,12 @@ QString ReportInfo::generateReport(bool drKonqiStamp) const
     report.append(QString("Qt Version: %1\n").arg(qVersion()));
     report.append(QString("Operating System: %1\n").arg(osString()));
 
-    //LSB output
+    //LSB output or manually selected distro
     if ( !m_lsbRelease.isEmpty() ) {
         report.append(QString("Distribution: %1\n").arg(m_lsbRelease));
+    } else if ( !m_bugzillaPlatform.isEmpty() && 
+                                m_bugzillaPlatform != QLatin1String("unspecified")) {
+        report.append(QString("Distribution (Platform): %1\n").arg(m_bugzillaPlatform));
     }
     report.append(QLatin1String("\n"));
 
@@ -243,6 +287,7 @@ BugReport ReportInfo::newBugReportTemplate() const
     report.setComponent(m_productMapping->bugzillaComponent());
     report.setVersion(krashConfig->productVersion());
     report.setOperatingSystem(bugzillaOs());
+    report.setPlatform(m_bugzillaPlatform);
     report.setPriority(QLatin1String("NOR"));
     report.setBugSeverity(QLatin1String("crash"));
     report.setShortDescription(m_reportTitle);
@@ -302,6 +347,16 @@ bool ReportInfo::isWorthReporting() const
     }
     
     return needToReport;
+}
+
+QString ReportInfo::bugzillaPlatform() const
+{
+    return m_bugzillaPlatform;
+}
+
+void ReportInfo::setBugzillaPlatform(const QString & platform)
+{
+    m_bugzillaPlatform = platform;
 }
 
 #include "reportinfo.moc"
