@@ -101,9 +101,19 @@ KLocaleConfig::KLocaleConfig(KControlLocale *locale, QWidget *parent)
     m_languageList = configGroup.readEntry("Language").split(':',QString::SkipEmptyParts);
 }
 
+int KLocaleConfig::selectedRow() const
+{
+    QList<QListWidgetItem *>selectedItems = m_languages->selectedItems();
+
+    if ( selectedItems.isEmpty() ) {
+        return -1;
+    }
+    return m_languages->row( selectedItems.at(0) );
+}
+
 void KLocaleConfig::slotAddLanguage(const QString & code)
 {
-  int pos = m_languages->currentRow();
+  int pos = selectedRow();
   if ( pos < 0 )
     pos = 0;
 
@@ -126,7 +136,7 @@ void KLocaleConfig::slotAddLanguage(const QString & code)
 
 void KLocaleConfig::slotRemoveLanguage()
 {
-  int pos = m_languages->currentRow();
+  int pos = selectedRow();
 
   if (pos != -1)
   {
@@ -142,7 +152,7 @@ void KLocaleConfig::slotRemoveLanguage()
 
 void KLocaleConfig::languageMove(Direction direcition)
 {
-  int pos = m_languages->currentRow();
+  int pos = selectedRow();
 
   QStringList::Iterator it1 = m_languageList.begin() + pos - 1*(direcition==Up);
   QStringList::Iterator it2 = m_languageList.begin() + pos + 1*(direcition==Down);
@@ -194,10 +204,10 @@ void KLocaleConfig::save()
 
 void KLocaleConfig::slotCheckButtons()
 {
-  languageRemove->setEnabled( m_languages->currentRow() != -1 && m_languages->count() > 1 );
-  m_upButton->setEnabled( m_languages->currentRow() > 0 );
-  m_downButton->setEnabled( m_languages->currentRow() != -1 &&
-                            m_languages->currentRow() < (signed)(m_languages->count() - 1) );
+  languageRemove->setEnabled( selectedRow() != -1 && m_languages->count() > 1 );
+  m_upButton->setEnabled( selectedRow() > 0 );
+  m_downButton->setEnabled( selectedRow() != -1 &&
+                            selectedRow() < (signed)(m_languages->count() - 1) );
 }
 
 void KLocaleConfig::slotLocaleChanged()
