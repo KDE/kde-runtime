@@ -310,7 +310,7 @@ void ReportInfo::sendBugReport(BugzillaManager *bzManager) const
     BugReport report = newBugReportTemplate();
     report.setDescription(generateReport(true));
     report.setValid(true);
-    connect(bzManager, SIGNAL(sendReportErrorWrongProduct()), this, SLOT(sendUsingDefaultProduct()));
+    connect(bzManager, SIGNAL(sendReportErrorInvalidValues()), this, SLOT(sendUsingDefaultProduct()));
     bzManager->sendReport(report);
 }
 
@@ -321,6 +321,7 @@ void ReportInfo::sendUsingDefaultProduct() const
     BugReport report = newBugReportTemplate();
     report.setProduct(QLatin1String("kde"));
     report.setComponent(QLatin1String("general"));
+    report.setPlatform(QLatin1String("unspecified"));
     report.setDescription(generateReport(true));
     report.setValid(true);
     bzManager->sendReport(report);

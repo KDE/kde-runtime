@@ -234,7 +234,7 @@ Q_SIGNALS:
     void bugReportError(const QString &);
     void searchError(const QString &);
     void sendReportError(const QString &);
-    void sendReportErrorWrongProduct(); //To use "kde" product
+    void sendReportErrorInvalidValues(); //To use default values
 
 private:
     QByteArray generatePostDataForReport(BugReport) const;

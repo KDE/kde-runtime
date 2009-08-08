@@ -43,6 +43,7 @@ class BugzillaLibTest : public QObject
             connect(manager, SIGNAL(loginError(QString)), this, SLOT(loginError(QString)));
             connect(manager, SIGNAL(reportSent(int)), this, SLOT(reportSent(int)));
             connect(manager, SIGNAL(sendReportError(QString)), this, SLOT(sendReportError(QString)));
+            connect(manager, SIGNAL(sendReportErrorInvalidValues()), this, SLOT(sendBR2()));
             manager->setLoginData(user, password);
             manager->tryLogin();
             kDebug() << "Login ...";
@@ -81,6 +82,25 @@ class BugzillaLibTest : public QObject
             br.setVersion("undefined");
             br.setOperatingSystem("Linux");
             br.setPriority("NOR");
+            br.setPlatform("random test");
+            br.setBugSeverity("crash");
+            br.setShortDescription("bla bla");
+            br.setDescription("bla bla large");
+            
+            manager->sendReport(br);
+            kDebug() << "Trying to send bug report";
+        }
+        
+        void sendBR2()
+        {
+            BugReport br;
+            br.setValid(true);
+            br.setProduct("konqueror");
+            br.setComponent("general");
+            br.setVersion("undefined");
+            br.setOperatingSystem("Linux");
+            br.setPriority("NOR");
+            br.setPlatform("unspecified");
             br.setBugSeverity("crash");
             br.setShortDescription("bla bla");
             br.setDescription("bla bla large");
@@ -118,7 +138,6 @@ int main (int argc, char ** argv)
     
     KApplication app;
     
-    /*
     if (!KCmdLineArgs::parsedArgs()->isSet("user") || !KCmdLineArgs::parsedArgs()->isSet("pass")) {
         kDebug() << "Provide bugstest.kde.org username and password. See help";
         return 0;
@@ -126,15 +145,14 @@ int main (int argc, char ** argv)
     
     new BugzillaLibTest(KCmdLineArgs::parsedArgs()->getOption("user"), 
                                                     KCmdLineArgs::parsedArgs()->getOption("pass") );
-    */
     
     /*
     DebugPackageInstaller * i = new DebugPackageInstaller("kontact");
     i->installDebugPackages();
     */
     
-    //return app.exec();
-    return 0;
+    return app.exec();
+    //return 0;
 }
 
 #include "bzlibtest.moc"

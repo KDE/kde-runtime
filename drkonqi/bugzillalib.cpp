@@ -278,12 +278,21 @@ void BugzillaManager::sendReportDone(KJob * job)
             if (pos != -1) {
                 error = reg.cap(1).trimmed();
             } else {
-                error = i18nc("@info","Unknown error");
+                QString illegalPlatformMessage = "Bugzilla has suffered an internal error. "
+                "Please save this page and send";
+                QString illegalPlatformMessage2 = "A legal Platform was not set.";
+                if (response.contains(illegalPlatformMessage) && 
+                            response.contains(illegalPlatformMessage2)) {
+                    emit sendReportErrorInvalidValues();
+                    return;
+                } else {
+                    error = i18nc("@info","Unknown error");
+                }
             }
 
             if (error.contains(QLatin1String("does not exist or you aren't authorized to"))
                 || error.contains(QLatin1String("There is no component named 'general'"))) {
-                emit sendReportErrorWrongProduct();
+                emit sendReportErrorInvalidValues();
             } else {
                 emit sendReportError(error);
             }
