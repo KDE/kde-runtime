@@ -66,6 +66,7 @@ private Q_SLOTS:
 private:
   enum Direction {Up,Down};
   void languageMove(Direction direcition);
+  int selectedRow() const;
 
 
   // NOTE: we need to mantain our own language list instead of using KLocale's
