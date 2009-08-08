@@ -79,7 +79,7 @@ public:
     void aboutToShow();
     void aboutToHide();
 
-    void setPossibleDuplicateNumber(int);
+    void addPossibleDuplicateNumber(int);
     
 private Q_SLOTS:
     void searchFinished(const BugMapList&);
@@ -89,12 +89,15 @@ private Q_SLOTS:
     
     void openSelectedReport();
     void itemClicked(QTreeWidgetItem *, int);
+    void itemClicked(QListWidgetItem *);
+    void showReportInformationDialog(int);
+
     void itemSelectionChanged();
 
+    void removeSelectedDuplicate();
+    
     void searchMore();
     void performSearch();
-
-    void checkBoxChanged(bool);
 
     void markAsSearching(bool);
     
@@ -115,8 +118,6 @@ private:
     //Dates of searching process
     QDate                                       m_searchingStartDate;
     QDate                                       m_searchingEndDate;
-    
-    long                                        m_possibleDuplicateBugNumber;
     
     KGuiItem                                    m_searchMoreGuiItem;
     KGuiItem                                    m_retrySearchGuiItem;

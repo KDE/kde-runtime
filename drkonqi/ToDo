@@ -29,7 +29,8 @@ http://blogs.msdn.com/oldnewthing/archive/2003/09/01/54734.aspx (by Maciej)
 - Option to "don't show drkonqi for this(X) app"
 - Option to avoid drkonqi at all (setting KDE_DEBUG=1), and GUI to renable it
 
-- Improve DuplicatesPage dialog: what if you want to pick more than one possibly duplicate?
+#- Improve DuplicatesPage dialog: what if you want to pick more than one possibly duplicate?
+   - Improve UI of the new feature implementation
 
 - Option to Attach the new crash information to an existing report (check username and backtraces?
 to avoid mixed reports)
@@ -51,6 +52,8 @@ This is useful to determine if some external plugin is involved
 
 - Application detection: ask for or detect specific things depending on application
    ie konqueror: url, plasma: plasmoids in use, kopete: protocal, etc.
+
+- On Duplicates page, when showing a bug report which is already fixed. REMARK that it is fixed!
 
 #ToDiscuss/Improve
 --------

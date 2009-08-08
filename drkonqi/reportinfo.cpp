@@ -165,9 +165,9 @@ void ReportInfo::setDetailText(const QString & text)
     m_reportDetailText = text;
 }
 
-void ReportInfo::setPossibleDuplicate(const QString & bug)
+void ReportInfo::setPossibleDuplicates(const QStringList & list)
 {
-    m_possibleDuplicate = bug;
+    m_possibleDuplicates = list;
 }
 
 QString ReportInfo::osString() const
@@ -239,10 +239,15 @@ QString ReportInfo::generateReport(bool drKonqiStamp) const
     }
 
     //Possible duplicate
-    if (!m_possibleDuplicate.isEmpty()) {
+    if (!m_possibleDuplicates.isEmpty()) {
         report.append(QLatin1String("\n"));
-        report.append(QString("This bug may be a duplicate of or related to bug %1\n")
-                        .arg(m_possibleDuplicate));
+        QString duplicatesString;
+        Q_FOREACH(const QString & dupe, m_possibleDuplicates) {
+            duplicatesString += QLatin1String("bug ") + dupe + QLatin1String(", ");
+        }
+        duplicatesString = duplicatesString.left(duplicatesString.length()-2) + ".";
+        report.append(QString("This bug may be a duplicate of or related to %1\n")
+                        .arg(duplicatesString));
     }
 
     if (drKonqiStamp) {

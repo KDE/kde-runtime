@@ -49,7 +49,7 @@ public:
     void setTitle(const QString & text);
 
     void setDetailText(const QString & text);
-    void setPossibleDuplicate(const QString & bug);
+    void setPossibleDuplicates(const QStringList & duplicatesList);
 
     QString generateReport(bool drKonqiStamp) const;
 
@@ -80,7 +80,7 @@ private:
     
     QString     m_reportTitle;
     QString     m_reportDetailText;
-    QString     m_possibleDuplicate;
+    QStringList m_possibleDuplicates;
 
     QString     m_bugzillaPlatform;
     QString     m_lsbRelease;

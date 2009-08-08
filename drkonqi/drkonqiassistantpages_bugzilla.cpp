@@ -280,8 +280,7 @@ BugzillaLoginPage::~BugzillaLoginPage()
 BugzillaDuplicatesPage::BugzillaDuplicatesPage(DrKonqiBugReport * parent):
         DrKonqiAssistantPage(parent),
         m_searching(false),
-        m_infoDialog(0),
-        m_possibleDuplicateBugNumber(0)
+        m_infoDialog(0)
 {
     resetDates();
 
@@ -325,9 +324,14 @@ BugzillaDuplicatesPage::BugzillaDuplicatesPage(DrKonqiBugReport * parent):
                                                    i18nc("@info:tooltip", "Use this button to stop "
                                                    "the current search.")));
     connect(ui.m_stopSearchButton, SIGNAL(clicked()), this, SLOT(stopCurrentSearch()));
-                                                   
-    connect(ui.m_foundDuplicateCheckBox , SIGNAL(toggled(bool)), this, SLOT(checkBoxChanged(bool)));
-    ui.m_foundDuplicateCheckBox->setVisible(false);
+    
+    //Possible duplicates list and buttons
+    connect(ui.m_selectedDuplicatesList, SIGNAL(itemDoubleClicked(QListWidgetItem*)),
+             this, SLOT(itemClicked(QListWidgetItem*)));
+             
+    ui.m_removeSelectedDuplicateButton->setIcon(KIcon("list-remove"));
+    connect(ui.m_removeSelectedDuplicateButton, SIGNAL(clicked()), this, 
+                                                                SLOT(removeSelectedDuplicate()));
 }
 
 BugzillaDuplicatesPage::~BugzillaDuplicatesPage()
@@ -358,7 +362,8 @@ void BugzillaDuplicatesPage::markAsSearching(bool searching)
     ui.m_stopSearchButton->setEnabled(searching);
     ui.m_stopSearchButton->setVisible(searching);
     
-    ui.m_foundDuplicateCheckBox->setEnabled(!searching);
+    ui.m_selectedDuplicatesList->setEnabled(!searching);
+    ui.m_removeSelectedDuplicateButton->setEnabled(!searching);
     
     if (!searching) {
         itemSelectionChanged();
@@ -379,19 +384,19 @@ void BugzillaDuplicatesPage::searchError(QString err)
                                                  "Please wait some time and try again.", err));
 }
 
-void BugzillaDuplicatesPage::checkBoxChanged(bool checked)
-{
-    if (!checked) {
-        m_possibleDuplicateBugNumber = 0;
-        ui.m_foundDuplicateCheckBox->setVisible(false);
-    }
-}
-
 void BugzillaDuplicatesPage::itemClicked(QTreeWidgetItem * item, int col)
 {
     Q_UNUSED(col);
-    
-    int bugNumber = item->text(0).toInt();
+    showReportInformationDialog(item->text(0).toInt());
+}
+
+void BugzillaDuplicatesPage::itemClicked(QListWidgetItem * item)
+{
+    showReportInformationDialog(item->text().toInt());
+}
+
+void BugzillaDuplicatesPage::showReportInformationDialog(int bugNumber)
+{
     if (bugNumber <= 0) {
         return;
     }
@@ -401,14 +406,22 @@ void BugzillaDuplicatesPage::itemClicked(QTreeWidgetItem * item, int col)
     m_infoDialog->showBugReport(bugNumber);
 }
 
-void BugzillaDuplicatesPage::setPossibleDuplicateNumber(int bugNumber)
+void BugzillaDuplicatesPage::addPossibleDuplicateNumber(int bugNumber)
 {
-    m_possibleDuplicateBugNumber = bugNumber;
-    ui.m_foundDuplicateCheckBox->setVisible(true);
-    ui.m_foundDuplicateCheckBox->setCheckState(Qt::Checked);
-    ui.m_foundDuplicateCheckBox->setText(i18nc("@option:check", "My crash may be duplicate of "
-                                                "bug: <numid>%1</numid>", bugNumber));
+    QString stringNumber = QString::number(bugNumber);
+    if (ui.m_selectedDuplicatesList->findItems(stringNumber, Qt::MatchExactly).isEmpty()) {
+        ui.m_selectedDuplicatesList->addItem(stringNumber);
+    }
 }
+
+void BugzillaDuplicatesPage::removeSelectedDuplicate()
+{
+    QList<QListWidgetItem*> items = ui.m_selectedDuplicatesList->selectedItems();
+    if (items.length() > 0) {
+        delete ui.m_selectedDuplicatesList->takeItem(ui.m_selectedDuplicatesList->row(items.at(0)));
+    }
+}
+
 
 bool BugzillaDuplicatesPage::canSearchMore()
 {
@@ -453,11 +466,12 @@ void BugzillaDuplicatesPage::aboutToHide()
 {
     stopCurrentSearch();
     
-    if (ui.m_foundDuplicateCheckBox->isChecked() && m_possibleDuplicateBugNumber>0) {
-        reportInfo()->setPossibleDuplicate(QString::number(m_possibleDuplicateBugNumber));
-    } else {
-        reportInfo()->setPossibleDuplicate(QString());
+    QStringList possibleDuplicates;
+    int count = ui.m_selectedDuplicatesList->count();
+    for(int i = 0; i<count; i++) {
+        possibleDuplicates << ui.m_selectedDuplicatesList->item(i)->text();
     }
+    reportInfo()->setPossibleDuplicates(possibleDuplicates);
 }
 
 void BugzillaDuplicatesPage::stopCurrentSearch()
@@ -548,7 +562,7 @@ void BugzillaDuplicatesPage::searchFinished(const BugMapList & list)
             ui.m_searchMoreButton->setEnabled(false);
             if (ui.m_bugListWidget->topLevelItemCount() == 0) {
                 //No reports to mark as possible duplicate
-                ui.m_foundDuplicateCheckBox->setEnabled(false);
+                ui.m_selectedDuplicatesList->setEnabled(false);
             }
         }
     }
@@ -661,7 +675,7 @@ void BugzillaReportInformationDialog::bugFetchFinished(BugReport report)
 
 void BugzillaReportInformationDialog::mayBeDuplicateClicked()
 {
-    m_parent->setPossibleDuplicateNumber(m_bugNumber);
+    m_parent->addPossibleDuplicateNumber(m_bugNumber);
     hide();
 }
 
