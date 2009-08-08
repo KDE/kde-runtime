@@ -808,7 +808,6 @@ BugzillaSendPage::BugzillaSendPage(DrKonqiBugReport * parent)
                             KIcon("document-preview"),
                             i18nc("@info:tooltip", "Use this button to show the generated "
                             "report information about this crash.")));
-    ui.m_showReportContentsButton->setVisible(false);
     connect(ui.m_showReportContentsButton, SIGNAL(clicked()), this, SLOT(openReportContents()));
                                                   
     ui.m_retryButton->setVisible(false);
@@ -822,7 +821,6 @@ BugzillaSendPage::BugzillaSendPage(DrKonqiBugReport * parent)
 
 void BugzillaSendPage::retryClicked()
 {
-    ui.m_showReportContentsButton->setVisible(false);
     ui.m_retryButton->setEnabled(false);
     aboutToShow();
 }
@@ -861,8 +859,6 @@ void BugzillaSendPage::sendError(QString errorString)
     ui.m_statusWidget->setIdle(i18nc("@info:status","Error sending the crash report:  "
                                   "<message>%1.</message>", errorString));
 
-    ui.m_showReportContentsButton->setVisible(true);
-    
     ui.m_retryButton->setEnabled(true);
     ui.m_retryButton->setVisible(true);
 }
