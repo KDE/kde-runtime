@@ -1,6 +1,7 @@
 [Global]
 IconName=
 Comment=KDE Global Shortcuts Daemon
+Comment[is]=KDE víðtækur flýtilyklaþjónn
 Comment[km]=ដេមិន​ផ្លូវកាត់​សកល​របស់ KDE
 Comment[nb]=KDE-tjener for globale snarveier
 Comment[nds]=KDE-Tastkombinatschonen-Dämoon
@@ -94,6 +95,7 @@ Name[x-test]=xxApplicationxx
 Name[zh_CN]=应用程序
 Name[zh_TW]=應用程式
 Comment=The application name
+Comment[is]=Heiti forrits
 Comment[km]=ឈ្មោះ​កម្មវិធី​
 Comment[nb]=Programnavnet
 Comment[nds]=De Programmnaam
