@@ -74,7 +74,7 @@ DeviceAutomounterKCM::DeviceAutomounterKCM(QWidget *parent, const QVariantList &
 void
 DeviceAutomounterKCM::addNewDevice()
 {
-    QString udi = KInputDialog::getText(i18n("Add Device"), i18n("Enter the device's system identifier"), 0, 0, this);
+    const QString udi = KInputDialog::getText(i18n("Add Device"), i18n("Enter the device's system identifier"), 0, 0, this);
     if( !udi.isEmpty())
        addNewDevice(udi);
 }
@@ -206,7 +206,7 @@ DeviceAutomounterKCM::save()
 
     int i;
     QStringList validDevices;
-    for(i = 0;i < m_devices->rowCount();i++) {
+    for(i = 0;i < m_devices->rowCount();++i) {
         QModelIndex udi = m_devices->index(i, 0);
         QModelIndex automount = m_devices->index(i, 1);
         QString device = udi.data().toString();
