@@ -208,8 +208,8 @@ Nepomuk::SearchEntry* Nepomuk::SearchFolder::findEntry( const QString& name )
     //
     // search for the one we need
     //
-    QHash<QString, SearchEntry*>::const_iterator it = m_entries.find( name );
-    if ( it != m_entries.end() ) {
+    QHash<QString, SearchEntry*>::const_iterator it = m_entries.constFind( name );
+    if ( it != m_entries.constEnd() ) {
         kDebug() << "-----> found";
         return *it;
     }
