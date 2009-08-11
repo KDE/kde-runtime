@@ -1,0 +1,15 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+  <interface name="org.kde.KLockingServer" >
+    <method name="lock">
+      <arg direction="in" type="s" name="resource" />
+    </method>
+    <method name="unlock">
+      <arg direction="in" type="s" name="resource" />
+    </method>
+    <signal name="lockGranted" >
+      <arg type="s" name="service" />
+      <arg type="s" name="resource" />
+    </signal>
+  </interface>
+</node>
