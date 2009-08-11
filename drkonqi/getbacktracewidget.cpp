@@ -282,7 +282,7 @@ void GetBacktraceWidget::installDebugPackages()
 void GetBacktraceWidget::debugPackageError(const QString & errorMessage)
 {
     ui.m_installDebugButton->setVisible(true);
-    KMessageBox::error(this, errorMessage, QString("Error during installation of debug symbols"));
+    KMessageBox::error(this, errorMessage, i18n("Error during installation of debug symbols"));
 }
 
 void GetBacktraceWidget::debugPackageCanceled()

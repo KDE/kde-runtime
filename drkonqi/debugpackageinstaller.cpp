@@ -25,6 +25,7 @@
 #include <KShell>
 #include <KDebug>
 #include <KProcess>
+#include <KLocale>
 
 static const char installerName[] = "installdbgsymbols.sh";
 
@@ -68,8 +69,8 @@ void DebugPackageInstaller::installDebugPackages()
         m_progressDialog = new QProgressDialog(m_parent);
         connect(m_progressDialog, SIGNAL(canceled()), this, SLOT(progressDialogCanceled()));
         m_progressDialog->setRange(0,0);
-        m_progressDialog->setWindowTitle("Missing debug symbols");
-        m_progressDialog->setLabelText(QString("Requesting installation of missing debug symbols packages..."));
+        m_progressDialog->setWindowTitle(i18n("Missing debug symbols"));
+        m_progressDialog->setLabelText(i18n("Requesting installation of missing debug symbols packages..."));
         m_progressDialog->show();
     }
 }
