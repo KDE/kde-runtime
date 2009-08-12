@@ -1,9 +1,7 @@
 [Desktop Entry]
 Type=Service
 Name=KDED Locking Module
-Name[x-test]=xxKDED Locking Modulexx
 Comment=Inter-process locking support
-Comment[x-test]=xxInter-process locking supportxx
 X-KDE-ServiceTypes=KDEDModule
 X-KDE-Library=klockingserver
 X-KDE-DBus-ModuleName=klockingserver
