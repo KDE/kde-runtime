@@ -48,11 +48,11 @@ namespace {
         int start = name.lastIndexOf('.');
         if (start != -1) {
             // has a . somewhere, e.g. it has an extension
-            newName.insert(start, QString::number( i ));
+            newName.insert(start, QString( " (%1)" ).arg( i ));
         }
         else {
             // no extension, just tack it on to the end
-            newName += QString::number( i );
+            newName += QString( " (%1)" ).arg( i );
         }
         return newName;
     }
