@@ -382,7 +382,7 @@ void KDEDConfig::slotReload()
 	if ( !current.isEmpty() )
 	{
 		int count = _lvStartup->topLevelItemCount();
-		for( int i = 0; !i < count; ++i )
+		for( int i = 0; i < count; ++i )
 		{
 			QTreeWidgetItem *treeitem = _lvStartup->topLevelItem( i );
 			if ( treeitem->data( StartupService, LibraryRole ).toString() == current )
