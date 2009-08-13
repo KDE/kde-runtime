@@ -253,6 +253,7 @@ void Nepomuk::SearchFolder::slotEntriesRemoved( const QList<QUrl>& entries )
 void Nepomuk::SearchFolder::slotFinishedListing()
 {
     kDebug() << m_name << QThread::currentThread();
+    QMutexLocker lock( &m_resultMutex );
     m_initialListingFinished = true;
     m_resultWaiter.wakeAll();
 }
@@ -261,8 +262,7 @@ void Nepomuk::SearchFolder::slotFinishedListing()
 // always called in main thread
 void Nepomuk::SearchFolder::statResults()
 {
-    while ( !m_initialListingFinished ||
-            !m_resultsQueue.isEmpty() ) {
+    while ( 1 ) {
         m_resultMutex.lock();
         if ( !m_resultsQueue.isEmpty() ) {
             Search::Result result = m_resultsQueue.dequeue();
@@ -278,6 +278,9 @@ void Nepomuk::SearchFolder::statResults()
         else if ( !m_initialListingFinished ) {
             m_resultWaiter.wait( &m_resultMutex );
             m_resultMutex.unlock();
+        }
+        else {
+            break;
         }
     }
 }
