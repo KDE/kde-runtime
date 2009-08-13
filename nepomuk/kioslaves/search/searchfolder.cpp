@@ -27,7 +27,8 @@
 #include <Soprano/Node> // for qHash( QUrl )
 
 #include <Nepomuk/Variant>
-
+#include <Nepomuk/Thing>
+#include <nepomuk/class.h>
 #include <QtCore/QMutexLocker>
 
 #include <KUrl>
@@ -78,8 +79,7 @@ Nepomuk::SearchFolder::SearchFolder( const QString& name, const Search::Query& q
       m_query( query ),
       m_initialListingFinished( false ),
       m_slave( slave ),
-      m_listEntries( false ),
-      m_statingStarted( false )
+      m_listEntries( false )
 {
     kDebug() << name << QThread::currentThread();
     Q_ASSERT( !name.isEmpty() );
@@ -106,7 +106,7 @@ void Nepomuk::SearchFolder::run()
 
     m_client = new Nepomuk::Search::QueryServiceClient();
 
-    // results signals are connected directly to update the results cache m_results
+    // results signals are connected directly to update the results cache m_resultsQueue
     // and the entries cache m_entries, as well as emitting KDirNotify signals
     // a queued connection is not possible since we have no event loop after the
     // initial listing which means that queued signals would never get delivered
@@ -116,11 +116,9 @@ void Nepomuk::SearchFolder::run()
     connect( m_client, SIGNAL( entriesRemoved( const QList<QUrl>& ) ),
              this, SLOT( slotEntriesRemoved( const QList<QUrl>& ) ),
              Qt::DirectConnection );
-
-    // slotFinishedListing needs to be called in the GUi thread
     connect( m_client, SIGNAL( finishedListing() ),
              this, SLOT( slotFinishedListing() ),
-             Qt::QueuedConnection );
+             Qt::DirectConnection );
 
     m_client->query( m_query );
     exec();
@@ -134,38 +132,28 @@ void Nepomuk::SearchFolder::list()
 {
     kDebug() << m_name << QThread::currentThread();
 
-    m_listEntries = !m_initialListingFinished;
-    m_statEntry = false;
+    m_listEntries = true;
 
     if ( !isRunning() ) {
         start();
     }
-    else {
-        // list all cached entries
-        for ( QHash<QString, SearchEntry*>::const_iterator it = m_entries.constBegin();
-              it != m_entries.constEnd(); ++it ) {
-            m_slave->listEntry( ( *it )->entry(), false );
-        }
 
-        // if there is nothing more to list...
-        if ( m_initialListingFinished &&
-            m_results.isEmpty() ) {
-            m_slave->listEntry( KIO::UDSEntry(), true );
-            m_slave->finished();
-        }
-        else {
-            m_listEntries = true;
-        }
+    // list all cached entries
+    kDebug() << "listing" << m_entries.count() << "cached entries";
+    for ( QHash<QString, SearchEntry*>::const_iterator it = m_entries.constBegin();
+          it != m_entries.constEnd(); ++it ) {
+        m_slave->listEntry( ( *it )->entry(), false );
     }
 
-    // if we have more to list
-    if ( m_listEntries ) {
-        if ( !m_statingStarted ) {
-            QTimer::singleShot( 0, this, SLOT( slotStatNextResult() ) );
-        }
-        kDebug() << "entering loop" << m_name << QThread::currentThread();
-        m_loop.exec();
-    }
+    // list all results
+    statResults();
+
+    kDebug() << "listing done";
+
+    m_listEntries = false;
+
+    m_slave->listEntry( KIO::UDSEntry(), true );
+    m_slave->finished();
 }
 
 
@@ -173,24 +161,11 @@ void Nepomuk::SearchFolder::stat( const QString& name )
 {
     kDebug() << name;
 
+    m_listEntries = false;
+
     if ( SearchEntry* entry = findEntry( name ) ) {
         m_slave->statEntry( entry->entry() );
         m_slave->finished();
-    }
-    else if ( !isRunning() ||
-              !m_results.isEmpty() ) {
-        m_nameToStat = name;
-        m_statEntry = true;
-        m_listEntries = false;
-
-        if ( !isRunning() ) {
-            start();
-        }
-
-        if ( !m_statingStarted ) {
-            QTimer::singleShot( 0, this, SLOT( slotStatNextResult() ) );
-        }
-        m_loop.exec();
     }
     else {
         m_slave->error( KIO::ERR_DOES_NOT_EXIST, "nepomuksearch:/" + m_name + '/' + name );
@@ -198,12 +173,22 @@ void Nepomuk::SearchFolder::stat( const QString& name )
 }
 
 
-Nepomuk::SearchEntry* Nepomuk::SearchFolder::findEntry( const QString& name ) const
+Nepomuk::SearchEntry* Nepomuk::SearchFolder::findEntry( const QString& name )
 {
     kDebug() << name;
 
-    QHash<QString, SearchEntry*>::const_iterator it = m_entries.find( name );
-    if ( it != m_entries.end() ) {
+    //
+    // get all results in case we do not have them already
+    //
+    if ( !isRunning() )
+        start();
+    statResults();
+
+    //
+    // search for the one we need
+    //
+    QHash<QString, SearchEntry*>::const_iterator it = m_entries.constFind( name );
+    if ( it != m_entries.constEnd() ) {
         kDebug() << "-----> found";
         return *it;
     }
@@ -214,7 +199,7 @@ Nepomuk::SearchEntry* Nepomuk::SearchFolder::findEntry( const QString& name ) co
 }
 
 
-Nepomuk::SearchEntry* Nepomuk::SearchFolder::findEntry( const KUrl& url ) const
+Nepomuk::SearchEntry* Nepomuk::SearchFolder::findEntry( const KUrl& url )
 {
     // FIXME
     return 0;
@@ -227,13 +212,17 @@ void Nepomuk::SearchFolder::slotNewEntries( const QList<Nepomuk::Search::Result>
     kDebug() << m_name << QThread::currentThread();
 
     m_resultMutex.lock();
-    m_results += results;
+    m_resultsQueue += results;
     m_resultMutex.unlock();
 
     if ( m_initialListingFinished ) {
         // inform everyone of the change
         kDebug() << ( "Informing about change in folder nepomuksearch:/" + m_name );
         org::kde::KDirNotify::emitFilesAdded( "nepomuksearch:/" + m_name );
+    }
+    else {
+        kDebug() << "Waking main thread";
+        m_resultWaiter.wakeAll();
     }
 }
 
@@ -263,25 +252,19 @@ void Nepomuk::SearchFolder::slotEntriesRemoved( const QList<QUrl>& entries )
 void Nepomuk::SearchFolder::slotFinishedListing()
 {
     kDebug() << m_name << QThread::currentThread();
+    QMutexLocker lock( &m_resultMutex );
     m_initialListingFinished = true;
-    wrap();
+    m_resultWaiter.wakeAll();
 }
 
 
 // always called in main thread
-void Nepomuk::SearchFolder::slotStatNextResult()
+void Nepomuk::SearchFolder::statResults()
 {
-//    kDebug();
-    m_statingStarted = true;
-
     while ( 1 ) {
-        // never lock the mutex for the whole duration of the method
-        // since it may start an event loop which can result in more
-        // newEntries signals to be delivered which would result in
-        // a deadlock
         m_resultMutex.lock();
-        if( !m_results.isEmpty() ) {
-            Search::Result result = m_results.dequeue();
+        if ( !m_resultsQueue.isEmpty() ) {
+            Search::Result result = m_resultsQueue.dequeue();
             m_resultMutex.unlock();
             SearchEntry* entry = statResult( result );
             if ( entry ) {
@@ -289,74 +272,73 @@ void Nepomuk::SearchFolder::slotStatNextResult()
                     kDebug() << "listing" << entry->resource();
                     m_slave->listEntry( entry->entry(), false );
                 }
-                else if ( m_statEntry ) {
-                    if ( m_nameToStat == entry->entry().stringValue( KIO::UDSEntry::UDS_NAME ) ) {
-                        kDebug() << "stating" << entry->resource();
-                        m_nameToStat.clear();
-                        m_slave->statEntry( entry->entry() );
-                    }
-                }
             }
         }
-        else {
+        else if ( !m_initialListingFinished ) {
+            m_resultWaiter.wait( &m_resultMutex );
             m_resultMutex.unlock();
+        }
+        else {
             break;
         }
     }
-
-    if ( !m_results.isEmpty() ||
-         !m_initialListingFinished ) {
-        // we need to use the timer since statResource does only create an event loop
-        // for files, not for arbitrary resources.
-        QTimer::singleShot( 0, this, SLOT( slotStatNextResult() ) );
-    }
-    else {
-        m_statingStarted = false;
-        wrap();
-    }
 }
 
 
-// always called in main thread
-void Nepomuk::SearchFolder::wrap()
-{
-    kDebug() << m_name << QThread::currentThread();
+namespace {
+    /**
+     * Stat a file.
+     *
+     * \param url The url of the file
+     * \param success will be set to \p true if the stat was successful
+     */
+    KIO::UDSEntry statFile( const KUrl& url, bool& success )
+    {
+        success = false;
+        KIO::UDSEntry uds;
 
-    if ( m_results.isEmpty() &&
-         m_initialListingFinished &&
-         m_loop.isRunning() ) {
-        if ( m_listEntries ) {
-            kDebug() << "listing done";
-            m_slave->listEntry( KIO::UDSEntry(), true );
-            m_slave->finished();
-        }
-        else if ( m_statEntry ) {
-            if ( !m_nameToStat.isEmpty() ) {
-                // if m_nameToStat is not empty the name was not found during listing which means that
-                // it does not exist
-                m_slave->error( KIO::ERR_DOES_NOT_EXIST, "nepomuksearch:/" + m_name + '/' + m_nameToStat );
-                m_nameToStat.clear();
+        if ( !url.isEmpty() &&
+             url.scheme() != "akonadi" &&
+             url.scheme() != "nepomuk" ) { // do not stat akonadi resouces here, way too slow, even hangs if akonadi is not running
+            kDebug() << "listing file" << url;
+            if ( KIO::StatJob* job = KIO::stat( url, KIO::HideProgressInfo ) ) {
+                job->setAutoDelete( false );
+                if ( KIO::NetAccess::synchronousRun( job, 0 ) ) {
+                    uds = job->statResult();
+                    if ( url.isLocalFile() ) {
+                        uds.insert( KIO::UDSEntry::UDS_LOCAL_PATH, url.toLocalFile() );
+                    }
+                    success = true;
+                }
+                else {
+                    kDebug() << "failed to stat" << url;
+                }
+                delete job;
             }
-            else
-                m_slave->finished();
         }
 
-        m_statingStarted = false;
-        m_listEntries = false;
-        m_statEntry = false;
-        kDebug() << m_name << QThread::currentThread() << "exiting loop";
-        m_loop.exit();
+        return uds;
+    }
+
+
+    /**
+     * Workaround a missing Nepomuk::Variant feature which is in trunk but not in 4.3.0.
+     */
+    QUrl extractUrl( const Nepomuk::Variant& v ) {
+        QList<Nepomuk::Resource> rl = v.toResourceList();
+        if ( !rl.isEmpty() )
+            return rl.first().resourceUri();
+        return QUrl();
     }
 }
-
 
 // always called in main thread
 Nepomuk::SearchEntry* Nepomuk::SearchFolder::statResult( const Search::Result& result )
 {
-    kDebug() << result.resourceUri();
-
-    KIO::UDSEntry uds;
-
+    //
+    // First we check if the resource is a file itself. For that we first get
+    // the URL (being backwards compatible with Xesam data) and then stat that URL
+    //
     KUrl url = result[Nepomuk::Vocabulary::NIE::url()].uri();
     if ( url.isEmpty() ) {
         url = result[Soprano::Vocabulary::Xesam::url()].uri();
@@ -364,35 +346,48 @@ Nepomuk::SearchEntry* Nepomuk::SearchFolder::statResult( const Search::Result& r
             url = result.resourceUri();
     }
     bool isFile = false;
-    if ( !url.isEmpty() && url.scheme() != "akonadi" ) { // do not stat akonadi resouces here, way too slow, even hangs if akonadi is not running
-        kDebug() << "listing file" << url;
-        if ( KIO::StatJob* job = KIO::stat( url, KIO::HideProgressInfo ) ) {
-            job->setAutoDelete( false );
-            if ( KIO::NetAccess::synchronousRun( job, 0 ) ) {
-                uds = job->statResult();
-                if ( url.isLocalFile() ) {
-                    uds.insert( KIO::UDSEntry::UDS_LOCAL_PATH, url.toLocalFile() );
-                }
-                isFile = true;
-            }
-            else {
-                kDebug() << "failed to stat" << url;
-            }
-            delete job;
-        }
+    KIO::UDSEntry uds = statFile( url, isFile );
+
+
+    if ( isFile ) {
+        uds.insert( KIO::UDSEntry::UDS_TARGET_URL, url.url() );
     }
 
     //
-    // The nepomuk resource listing is the same as in the nepomuk kio slave.
-    // So either only depend on that or let the nepomuk kio slave fail on each
-    // stat. (the latter means that we need the nepomuk kio slave in kdebase)
+    // If it is not a file we get inventive:
+    // In case it is a pimo thing, we see if it has a grounding occurrence
+    // which is a file. If so, we merge the two by taking the file URL and the thing's
+    // label and icon if set
     //
-    if ( !isFile ) {
+    else {
         kDebug() << "listing resource" << result.resourceUri();
 
+        //
+        // We only create a resource here since this is a rather slow process and
+        // a lot of file results could become slow then.
+        //
         Nepomuk::Resource res( result.resourceUri() );
 
-        QString name = res.genericLabel();
+        //
+        // let's see if it is a pimo thing which refers to a file
+        //
+        bool isPimoThingLinkedFile = false;
+        if ( res.pimoThing() == res ) {
+            if ( !res.pimoThing().groundingOccurrences().isEmpty() ) {
+                Nepomuk::Resource fileRes = res.pimoThing().groundingOccurrences().first();
+                url = extractUrl( fileRes.property( Nepomuk::Vocabulary::NIE::url() ) );
+                if ( url.isEmpty() ) {
+                    url = extractUrl( fileRes.property( Soprano::Vocabulary::Xesam::url() ) );
+                    if ( url.isEmpty() )
+                        url = result.resourceUri();
+                }
+                uds = statFile( url, isPimoThingLinkedFile );
+            }
+        }
+
+        QString name = res.label();
+        if ( name.isEmpty() && !isPimoThingLinkedFile )
+            name = res.genericLabel();
 
         // make sure name is not the URI (which is the fallback of genericLabel() and will lead to crashes in KDirModel)
         if ( name.contains( '/' ) ) {
@@ -403,27 +398,44 @@ Nepomuk::SearchEntry* Nepomuk::SearchFolder::statResult( const Search::Result& r
                 name = res.resourceUri().toString().replace( '/', '_' );
         }
 
-        uds.insert( KIO::UDSEntry::UDS_NAME, name );
-        uds.insert( KIO::UDSEntry::UDS_DISPLAY_NAME, name );
+        //
+        // We always use the pimo things label, even if it points to a file
+        //
+        if ( !name.isEmpty() ) {
+            uds.insert( KIO::UDSEntry::UDS_NAME, name );
+            uds.insert( KIO::UDSEntry::UDS_DISPLAY_NAME, name );
+        }
 
+        //
+        // An icon set on the pimo thing overrides the file's icon
+        //
         QString icon = res.genericIcon();
         if ( !icon.isEmpty() ) {
             uds.insert( KIO::UDSEntry::UDS_ICON_NAME, icon );
         }
-        else {
+        else if ( !isPimoThingLinkedFile ) {
             uds.insert( KIO::UDSEntry::UDS_ICON_NAME, "nepomuk" );
         }
 
-        uds.insert( KIO::UDSEntry::UDS_CREATION_TIME, res.property( Soprano::Vocabulary::NAO::created() ).toDateTime().toTime_t() );
+        //
+        // Generate some dummy values
+        //
+        if ( !isPimoThingLinkedFile ) {
+            uds.insert( KIO::UDSEntry::UDS_CREATION_TIME, res.property( Soprano::Vocabulary::NAO::created() ).toDateTime().toTime_t() );
+            uds.insert( KIO::UDSEntry::UDS_ACCESS, 0700 );
+            uds.insert( KIO::UDSEntry::UDS_USER, KUser().loginName() );
+//        uds.insert( KIO::UDSEntry::UDS_MIME_TYPE, "application/x-nepomuk-resource" );
+        }
 
-        uds.insert( KIO::UDSEntry::UDS_ACCESS, 0700 );
-        uds.insert( KIO::UDSEntry::UDS_USER, KUser().loginName() );
-
-//    uds.insert( KIO::UDSEntry::UDS_FILE_TYPE, S_IFDIR );
-        uds.insert( KIO::UDSEntry::UDS_MIME_TYPE, "application/x-nepomuk-resource" );
+        //
+        // Although in KDE 4.3 the target url is sort of deprecated, we still set it.
+        // Cannot hurt.
+        //
+        if ( isPimoThingLinkedFile )
+            uds.insert( KIO::UDSEntry::UDS_TARGET_URL, url.url() );
+        else
+            uds.insert( KIO::UDSEntry::UDS_TARGET_URL, result.resourceUri().toString() );
     }
-
-    uds.insert( KIO::UDSEntry::UDS_TARGET_URL, result.resourceUri().toString() );
 
     //
     // make sure we have no duplicate names
