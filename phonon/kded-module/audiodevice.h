@@ -24,7 +24,7 @@
 namespace PS
 {
     struct AudioDeviceKey;
-    struct AudioDevice;
+    class AudioDevice;
 } // namespace PS
 
 #include <QtCore/QDebug>
