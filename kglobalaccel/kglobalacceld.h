@@ -28,7 +28,7 @@
 #include <QtCore/QList>
 #include <QtDBus/QtDBus>
 
-class KGlobalAccelDPrivate;
+struct KGlobalAccelDPrivate;
 
 /**
  * @todo get rid of all of those QStringList parameters.
