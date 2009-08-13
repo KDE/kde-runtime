@@ -197,14 +197,14 @@ void KIconConfig::initDefaults()
         if ( group != -1 )
         {
             mEffects[ group ][ activeState ].type = KIconEffect::ToGamma;
-            mEffects[ group ][ activeState ].value = 0.7;
+            mEffects[ group ][ activeState ].value = 0.7f;
         }
 
         group = mGroups.indexOf( "Panel" );
         if ( group != -1 )
         {
             mEffects[ group ][ activeState ].type = KIconEffect::ToGamma;
-            mEffects[ group ][ activeState ].value = 0.7;
+            mEffects[ group ][ activeState ].value = 0.7f;
         }
     }
 }
