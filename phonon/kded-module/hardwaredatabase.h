@@ -29,7 +29,7 @@ namespace PS
 namespace HardwareDatabase
 {
     class Entry;
-    struct HardwareDatabasePrivate;
+    class HardwareDatabasePrivate;
 
     bool contains(const QString &udi);
     Entry entryFor(const QString &udi);
