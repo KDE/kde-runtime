@@ -38,6 +38,7 @@
 
 #ifdef Q_OS_WIN
 //for setting HIDDEN file property
+#undef _WIN32_IE
 #define _WIN32_IE 0x0400
 #include <windows.h>
 #endif
