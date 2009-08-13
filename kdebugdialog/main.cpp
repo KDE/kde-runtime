@@ -34,7 +34,8 @@
 static KAbstractDebugDialog::AreaMap readAreas()
 {
     KAbstractDebugDialog::AreaMap areas;
-    areas.insert( "      0" /*cf rightJustified below*/, "0 (generic)" );
+    // Group 0 is not used anymore. kDebug() uses the area named after the appname.
+    //areas.insert( "      0" /*cf rightJustified below*/, "0 (generic)" );
 
   const QString confAreasFile = KStandardDirs::locate("config", "kdebug.areas");
   QFile file( confAreasFile );
