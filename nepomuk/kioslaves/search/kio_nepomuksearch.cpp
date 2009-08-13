@@ -347,7 +347,7 @@ extern "C"
     KDE_EXPORT int kdemain( int argc, char **argv )
     {
         // necessary to use other kio slaves
-        KComponentData( "kio_nepomuksearch" );
+        KComponentData comp( "kio_nepomuksearch" );
         QCoreApplication app( argc, argv );
 
         if ( Nepomuk::ResourceManager::instance()->init() ) {
