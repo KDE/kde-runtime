@@ -80,8 +80,7 @@ Nepomuk::SearchFolder::SearchFolder( const QString& name, const Search::Query& q
       m_query( query ),
       m_initialListingFinished( false ),
       m_slave( slave ),
-      m_listEntries( false ),
-      m_statingStarted( false )
+      m_listEntries( false )
 {
     kDebug() << name << QThread::currentThread();
     Q_ASSERT( !name.isEmpty() );
@@ -118,11 +117,9 @@ void Nepomuk::SearchFolder::run()
     connect( m_client, SIGNAL( entriesRemoved( const QList<QUrl>& ) ),
              this, SLOT( slotEntriesRemoved( const QList<QUrl>& ) ),
              Qt::DirectConnection );
-
-    // slotFinishedListing needs to be called in the GUi thread
     connect( m_client, SIGNAL( finishedListing() ),
              this, SLOT( slotFinishedListing() ),
-             Qt::QueuedConnection );
+             Qt::DirectConnection );
 
     m_client->query( m_query );
     exec();
@@ -136,43 +133,36 @@ void Nepomuk::SearchFolder::list()
 {
     kDebug() << m_name << QThread::currentThread();
 
-    m_listEntries = !m_initialListingFinished;
+    m_listEntries = true;
 
     if ( !isRunning() ) {
         start();
     }
-    else {
-        // list all cached entries
-        for ( QHash<QString, SearchEntry*>::const_iterator it = m_entries.constBegin();
-              it != m_entries.constEnd(); ++it ) {
-            m_slave->listEntry( ( *it )->entry(), false );
-        }
 
-        // if there is nothing more to list...
-        if ( m_initialListingFinished &&
-            m_resultsQueue.isEmpty() ) {
-            m_slave->listEntry( KIO::UDSEntry(), true );
-            m_slave->finished();
-        }
-        else {
-            m_listEntries = true;
-        }
+    // list all cached entries
+    kDebug() << "listing" << m_entries.count() << "cached entries";
+    for ( QHash<QString, SearchEntry*>::const_iterator it = m_entries.constBegin();
+          it != m_entries.constEnd(); ++it ) {
+        m_slave->listEntry( ( *it )->entry(), false );
     }
 
-    // if we have more to list
-    if ( m_listEntries ) {
-        if ( !m_statingStarted ) {
-            QTimer::singleShot( 0, this, SLOT( slotStatNextResult() ) );
-        }
-        kDebug() << "entering loop" << m_name << QThread::currentThread();
-        m_loop.exec();
-    }
+    // list all results
+    statResults();
+
+    kDebug() << "listing done";
+
+    m_listEntries = false;
+
+    m_slave->listEntry( KIO::UDSEntry(), true );
+    m_slave->finished();
 }
 
 
 void Nepomuk::SearchFolder::stat( const QString& name )
 {
     kDebug() << name;
+
+    m_listEntries = false;
 
     if ( SearchEntry* entry = findEntry( name ) ) {
         m_slave->statEntry( entry->entry() );
@@ -191,19 +181,9 @@ Nepomuk::SearchEntry* Nepomuk::SearchFolder::findEntry( const QString& name )
     //
     // get all results in case we do not have them already
     //
-    if ( !isRunning() ||
-         !m_resultsQueue.isEmpty() ) {
-
-        if ( !isRunning() )
-            start();
-
-        if ( !m_statingStarted ) {
-            m_listEntries = false;
-            QTimer::singleShot( 0, this, SLOT( slotStatNextResult() ) );
-        }
-        kDebug() << "entering loop" << m_name << QThread::currentThread();
-        m_loop.exec();
-    }
+    if ( !isRunning() )
+        start();
+    statResults();
 
     //
     // search for the one we need
@@ -241,6 +221,10 @@ void Nepomuk::SearchFolder::slotNewEntries( const QList<Nepomuk::Search::Result>
         kDebug() << ( "Informing about change in folder nepomuksearch:/" + m_name );
         org::kde::KDirNotify::emitFilesAdded( "nepomuksearch:/" + m_name );
     }
+    else {
+        kDebug() << "Waking main thread";
+        m_resultWaiter.wakeAll();
+    }
 }
 
 
@@ -270,23 +254,17 @@ void Nepomuk::SearchFolder::slotFinishedListing()
 {
     kDebug() << m_name << QThread::currentThread();
     m_initialListingFinished = true;
-    wrap();
+    m_resultWaiter.wakeAll();
 }
 
 
 // always called in main thread
-void Nepomuk::SearchFolder::slotStatNextResult()
+void Nepomuk::SearchFolder::statResults()
 {
-//    kDebug();
-    m_statingStarted = true;
-
-    while ( 1 ) {
-        // never lock the mutex for the whole duration of the method
-        // since it may start an event loop which can result in more
-        // newEntries signals to be delivered which would result in
-        // a deadlock
+    while ( !m_initialListingFinished ||
+            !m_resultsQueue.isEmpty() ) {
         m_resultMutex.lock();
-        if( !m_resultsQueue.isEmpty() ) {
+        if ( !m_resultsQueue.isEmpty() ) {
             Search::Result result = m_resultsQueue.dequeue();
             m_resultMutex.unlock();
             SearchEntry* entry = statResult( result );
@@ -297,42 +275,10 @@ void Nepomuk::SearchFolder::slotStatNextResult()
                 }
             }
         }
-        else {
+        else if ( !m_initialListingFinished ) {
+            m_resultWaiter.wait( &m_resultMutex );
             m_resultMutex.unlock();
-            break;
         }
-    }
-
-    if ( !m_resultsQueue.isEmpty() ||
-         !m_initialListingFinished ) {
-        QTimer::singleShot( 0, this, SLOT( slotStatNextResult() ) );
-    }
-    else {
-        m_statingStarted = false;
-        wrap();
-    }
-}
-
-
-// always called in main thread
-void Nepomuk::SearchFolder::wrap()
-{
-    kDebug() << m_name << QThread::currentThread();
-
-    if ( m_resultsQueue.isEmpty() &&
-         m_initialListingFinished &&
-         m_loop.isRunning() ) {
-        if ( m_listEntries ) {
-            kDebug() << "listing done";
-            m_slave->listEntry( KIO::UDSEntry(), true );
-        }
-
-        m_slave->finished();
-
-        m_statingStarted = false;
-        m_listEntries = false;
-        kDebug() << m_name << QThread::currentThread() << "exiting loop";
-        m_loop.exit();
     }
 }
 
@@ -387,8 +333,6 @@ namespace {
 // always called in main thread
 Nepomuk::SearchEntry* Nepomuk::SearchFolder::statResult( const Search::Result& result )
 {
-    kDebug() << result.resourceUri();
-
     //
     // First we check if the resource is a file itself. For that we first get
     // the URL (being backwards compatible with Xesam data) and then stat that URL

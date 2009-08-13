@@ -25,6 +25,7 @@
 #include <QtCore/QEventLoop>
 #include <QtCore/QQueue>
 #include <QtCore/QMutex>
+#include <QtCore/QWaitCondition>
 
 #include "term.h"
 #include "result.h"
@@ -80,10 +81,14 @@ namespace Nepomuk {
         void stat( const QString& name );
 
     private Q_SLOTS:
+        /// connected to the QueryServiceClient in the search thread
         void slotNewEntries( const QList<Nepomuk::Search::Result>& );
+
+        /// connected to the QueryServiceClient in the search thread
         void slotEntriesRemoved( const QList<QUrl>& );
+
+        /// connected to the QueryServiceClient in the search thread
         void slotFinishedListing();
-        void slotStatNextResult();
 
     private:
         // reimplemented from QThread -> does handle the query
@@ -93,17 +98,24 @@ namespace Nepomuk {
         void run();
 
         /**
+         * This method will stat all entries in m_resultsQueue until
+         * the search thread is finished. It is run in the main thread.
+         */
+        void statResults();
+
+        /**
          * Stats the result and returns the entry.
          */
         SearchEntry* statResult( const Search::Result& result );
-        void wrap();
 
         // folder properties
         QString m_name;
         Search::Query m_query;
 
-        // result cache
+        // result cache, filled by the search thread
         QQueue<Search::Result> m_resultsQueue;
+
+        // final results, filled by the main thread in statResults
         QHash<QString, SearchEntry*> m_entries;
         QHash<QUrl, QString> m_resourceNameMap;
 
@@ -122,16 +134,13 @@ namespace Nepomuk {
         // true if listing of entries has been requested
         bool m_listEntries;
 
-        // true if the stat loop is running
-        bool m_statingStarted;
-
-        // used to make all calls sync
-        QEventLoop m_loop;
-
         Search::QueryServiceClient* m_client;
 
         // mutex to protect the results
         QMutex m_resultMutex;
+
+        // used to wait in the main thread for the serch thread to deliver results
+        QWaitCondition m_resultWaiter;
     };
 }
 
