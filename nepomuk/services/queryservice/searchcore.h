@@ -54,11 +54,11 @@ namespace Nepomuk {
 
         public Q_SLOTS:
             void query( const Query& query );
-            
+
             void cancel();
 
             /**
-             * Default: 0.25
+             * Default: 0.0
              */
             void setCutOffScore( double score );
 
