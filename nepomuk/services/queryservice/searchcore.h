@@ -58,7 +58,7 @@ namespace Nepomuk {
             void cancel();
 
             /**
-             * Default: 0.25
+             * Default: 0.0
              */
             void setCutOffScore( double score );
 

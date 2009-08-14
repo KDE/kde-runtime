@@ -31,7 +31,7 @@ class Nepomuk::Search::SearchCore::Private
 {
 public:
     Private()
-        : cutOffScore( 0.25 ),
+        : cutOffScore( 0.0 ),
           active( false ),
           canceled( false ) {
     }
