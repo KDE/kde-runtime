@@ -1,18 +1,22 @@
 [Desktop Entry]
 Type=Service
 Name=KDED Locking Module
+Name[hr]=KDED Modul za zaključavanje
 Name[pt]=Módulo de Bloqueio do KDED
 Name[pt_BR]=Módulo de bloqueio do KDED
 Name[sv]=KDED-låsningsmodul
 Name[tr]=KDED Kilitleme Modülü
 Name[uk]=Модуль блокування KDED
+Name[x-test]=xxKDED Locking Modulexx
 Name[zh_TW]=KDED 鎖定模組
 Comment=Inter-process locking support
+Comment[hr]=Podrška za međuprocesno zaključavanje
 Comment[pt]=Suporte ao bloqueio entre processos
 Comment[pt_BR]=Suporte ao bloqueio inter-processo
 Comment[sv]=Stöd för låsning mellan processer
 Comment[tr]=Süreçler arası kilitleme desteği
 Comment[uk]=Підтримка міжпроцесного блокування
+Comment[x-test]=xxInter-process locking supportxx
 Comment[zh_TW]=行程間的鎖定支援
 X-KDE-ServiceTypes=KDEDModule
 X-KDE-Library=klockingserver

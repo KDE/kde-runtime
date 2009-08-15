@@ -1,6 +1,7 @@
 [Global]
 IconName=
 Comment=KDE Global Shortcuts Daemon
+Comment[hr]=KDE Globalni poslužitelj prečaca tipkovnice
 Comment[is]=KDE víðtækur flýtilyklaþjónn
 Comment[km]=ដេមិន​ផ្លូវកាត់​សកល​របស់ KDE
 Comment[nb]=KDE-tjener for globale snarveier
@@ -95,6 +96,7 @@ Name[x-test]=xxApplicationxx
 Name[zh_CN]=应用程序
 Name[zh_TW]=應用程式
 Comment=The application name
+Comment[hr]=Ime aplikacije
 Comment[is]=Heiti forrits
 Comment[km]=ឈ្មោះ​កម្មវិធី​
 Comment[nb]=Programnavnet
@@ -113,6 +115,7 @@ Comment[zh_TW]=應用程式名稱
 
 [Event/newshortcutregistered]
 Name=Global Shortcut Registration
+Name[hr]=Prijava globalnih prečaca tipkovnice
 Name[km]=ការ​ចុះឈ្មោះ​ផ្លូវកាត់​សកល
 Name[nb]=Global snarveisregistrering
 Name[nds]=Globaal Tastkombinatschoon inmeldt
@@ -128,6 +131,7 @@ Name[uk]=Реєстрація загальних скорочень
 Name[x-test]=xxGlobal Shortcut Registrationxx
 Name[zh_TW]=全域捷徑註冊
 Comment=A application registered new global shorcuts
+Comment[hr]=Aplikacija je prijavila nove globalne prečace
 Comment[km]=កម្មវិធី​បាន​ចុះឈ្មោះ​ផ្លូវកាត់​សកល​ថ្មី
 Comment[nb]=Et program registrerte nye globale snarveier
 Comment[nds]=En Programm hett niege globale Tastkombinatschonen inmeldt
@@ -146,6 +150,7 @@ Action=Popup
 
 [Event/globalshortcutpressed]
 Name=Global Shortcut Triggered
+Name[hr]=Globalni prečac je korišten
 Name[km]=បានកេះ​ផ្លូវកាត់​សកល
 Name[nb]=Global snarvei utløst
 Name[nds]=Globaal Tastkombinatschoon utlööst
@@ -161,6 +166,7 @@ Name[uk]=Використано загальне скорочення
 Name[x-test]=xxGlobal Shortcut Triggeredxx
 Name[zh_TW]=全域捷徑被觸發
 Comment=The user triggered a global shortcut
+Comment[hr]=Korisnik je koristio globalni prečac
 Comment[km]=អ្នក​ប្រើ​បានកេះ​ផ្លូវកាត់​សកល
 Comment[nb]=Brulkeren  utløste en global snarvei
 Comment[nds]=De Bruker hett en globaal Tastkombinatschoon utlööst
