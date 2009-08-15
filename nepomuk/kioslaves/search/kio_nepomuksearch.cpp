@@ -244,7 +244,7 @@ bool Nepomuk::SearchProtocol::rewriteUrl( const KUrl& url, KUrl& newURL )
     if ( SearchFolder* folder = extractSearchFolder( url ) ) {
         if ( SearchEntry* entry = folder->findEntry( url.fileName() ) ) {
             QString localPath = entry->entry().stringValue( KIO::UDSEntry::UDS_LOCAL_PATH );
-            if ( localPath.isEmpty() ) {
+            if ( !localPath.isEmpty() ) {
                 newURL = localPath;
             }
             else {
