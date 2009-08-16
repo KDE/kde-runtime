@@ -500,6 +500,13 @@ void BugzillaDuplicatesPage::performSearch()
 
     ui.m_statusWidget->setBusy(i18nc("@info:status","Searching for duplicates (from %1 to %2)...",
                                    startDateStr, endDateStr));
+                           
+    //Bugzilla will not search on Today bugs if we send the date.
+    //we need to send "Now"
+    if (m_searchingEndDate == QDate::currentDate()) {
+        endDateStr = QLatin1String("Now");
+    }
+    
     BugReport report = reportInfo()->newBugReportTemplate();
     bugzillaManager()->searchBugs(QString(), reportInfo()->relatedBugzillaProducts(), 
                                   report.bugSeverity(), startDateStr, endDateStr, 
