@@ -78,3 +78,32 @@ Invalid/NEEDSINFO: 182048-worksforme
 Worksforme: 167911 (gdb bug?)
 Needs research: 126073
 ---
+
+---------
+
+https://bugs.kde.org/show_bug.cgi?id=126073 ->
+**** Restore block shutdown/logout while DrKonqi window is up
+(to catch crashes on shutdown)
+- Config option to:
+  - (default) Show a feedback indicator for a "automatically closing window" timer (and continue with shutdown)
+  - non-default Block shutdown/logout completely, do not use a closing timer.
+
+- Ask Seli for Session Management stuff (we need to ask from code if we are in the middle of a shutdown process)
+- Use " unsetenv("SESSION_MANAGER");" again on main.cpp  (http://websvn.kde.org/trunk/kdebase/drkonqi/main.cpp?r1=408177&r2=408176&pathrev=408177)
+
+- Startkde waiting for drkonqi to exit->
+     # wait if there's any crashhandler shown
+318          while dcop | grep -q ^drkonqi- ; do
+319              sleep 5
+320          done
+
+"   while qdbus | grep "^[^w]*org.kde.drkonqi" > /dev/null ; do sleep 5; done  "
+http://websvn.kde.org/trunk/kdebase/startkde?r1=408177&r2=408176&pathrev=408177
+
+http://websvn.kde.org/?view=rev&revision=408177
+
+bool KSessionManager::saveState     (   QSessionManager &        sm      )       [virtual]
+void QApplication::saveState ( QSessionManager & manager ) 
+
+
+
