@@ -27,4 +27,4 @@ endif(MINGW)
 
 target_link_libraries(kdecm ole32 comctl32 uuid ${QT_QTCORE_LIBRARY} ${QT_QTDBUS_LIBRARY} ${KDE4_KDECORE_LIBS})
 
-install(TARGETS kdecm DESTINATION bin)
+install(TARGETS kdecm ${INSTALL_TARGETS_DEFAULT_ARGS})
