@@ -107,6 +107,8 @@ polkit-kde-manager=policykit-kde|manager
 
 kepastray=kepas|general
 
+kpilotDaemon=kpilot|kpilotDaemon
+
 [ProductGroup]
 kontact=kdepim-base|kdepim-apps
 korganizer=kdepim-base
