@@ -2,6 +2,7 @@
 Type=Service
 Name=KDED Locking Module
 Name[hr]=KDED Modul za zaključavanje
+Name[nb]=KDED låsemodul
 Name[pt]=Módulo de Bloqueio do KDED
 Name[pt_BR]=Módulo de bloqueio do KDED
 Name[sv]=KDED-låsningsmodul
@@ -11,6 +12,7 @@ Name[x-test]=xxKDED Locking Modulexx
 Name[zh_TW]=KDED 鎖定模組
 Comment=Inter-process locking support
 Comment[hr]=Podrška za međuprocesno zaključavanje
+Comment[nb]=Støtte for låsing mellom prosesser
 Comment[pt]=Suporte ao bloqueio entre processos
 Comment[pt_BR]=Suporte ao bloqueio inter-processo
 Comment[sv]=Stöd för låsning mellan processer
