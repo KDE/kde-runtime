@@ -20,6 +20,7 @@ akonadi_nntp_resource=Akonadi|general
 akonadi_strigi_feeder=Akonadi|general
 akonadi_vcard_resource=Akonadi|VCard file resource
 akonadi_vcarddir_resource=Akonadi|VCard dir resource
+akonadi_gcal_resource=Akonadi|Google Resource
 akonadiconsole=Akonadi|general
 akonadictl=Akonadi|general
 akonadiserver=Akonadi|server
@@ -106,3 +107,5 @@ digikamthemedesigner=digikam|general
 polkit-kde-manager=policykit-kde|manager
 
 kepastray=kepas|general
+
+kpilotDaemon=kpilot|kpilotDaemon
