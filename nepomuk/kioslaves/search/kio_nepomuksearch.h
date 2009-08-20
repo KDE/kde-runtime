@@ -40,7 +40,7 @@ namespace Nepomuk {
         virtual ~SearchProtocol();
 
         /**
-         * 
+         *
          */
         void listDir( const KUrl& url );
 
@@ -73,6 +73,7 @@ namespace Nepomuk {
         bool rewriteUrl( const KUrl& url, KUrl& newURL );
 
     private:
+        bool ensureNepomukRunning();
         void listRoot();
         void listQuery( const QString& query );
         void listActions();

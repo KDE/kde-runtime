@@ -20,6 +20,7 @@
 #include "searchfolder.h"
 #include "nfo.h"
 #include "nie.h"
+#include "queryserviceclient.h"
 
 #include <QtCore/QFile>
 
@@ -91,6 +92,22 @@ Nepomuk::SearchProtocol::~SearchProtocol()
 }
 
 
+bool Nepomuk::SearchProtocol::ensureNepomukRunning()
+{
+    if ( Nepomuk::ResourceManager::instance()->init() ) {
+        error( KIO::ERR_SLAVE_DEFINED, i18n( "The Nepomuk system is not activated. Unable to answer queries without it." ) );
+        return false;
+    }
+    else if ( !Nepomuk::Search::QueryServiceClient::serviceAvailable() ) {
+        error( KIO::ERR_SLAVE_DEFINED, i18n( "The Nepomuk query service is not running. Unable to answer queries without it." ) );
+        return false;
+    }
+    else {
+        return true;
+    }
+}
+
+
 void Nepomuk::SearchProtocol::addDefaultSearch( const QString& name, const Search::Query& q )
 {
     Search::Query query( q );
@@ -123,6 +140,9 @@ void Nepomuk::SearchProtocol::listDir( const KUrl& url )
 {
     kDebug() << url;
 
+    if ( !ensureNepomukRunning() )
+        return;
+
     //
     // Root dir: * list default searches: "all music files", "recent files"
     //           * list configuration entries: "create new default search"
@@ -152,6 +172,10 @@ void Nepomuk::SearchProtocol::listDir( const KUrl& url )
 void Nepomuk::SearchProtocol::get( const KUrl& url )
 {
     kDebug() << url;
+
+    if ( !ensureNepomukRunning() )
+        return;
+
     ForwardingSlaveBase::get( url );
 }
 
@@ -159,6 +183,10 @@ void Nepomuk::SearchProtocol::get( const KUrl& url )
 void Nepomuk::SearchProtocol::put( const KUrl& url, int permissions, KIO::JobFlags flags )
 {
     kDebug() << url << permissions << flags;
+
+    if ( !ensureNepomukRunning() )
+        return;
+
     // this will work only for existing files (ie. overwrite to allow saving of opened files)
     ForwardingSlaveBase::put( url, permissions, flags );
 }
@@ -167,6 +195,9 @@ void Nepomuk::SearchProtocol::put( const KUrl& url, int permissions, KIO::JobFla
 void Nepomuk::SearchProtocol::mimetype( const KUrl& url )
 {
     kDebug() << url;
+
+    if ( !ensureNepomukRunning() )
+        return;
 
     if ( url.path() == "/" ) {
         mimeType( QString::fromLatin1( "inode/directory" ) );
@@ -186,6 +217,9 @@ void Nepomuk::SearchProtocol::mimetype( const KUrl& url )
 void Nepomuk::SearchProtocol::stat( const KUrl& url )
 {
     kDebug() << url;
+
+    if ( !ensureNepomukRunning() )
+        return;
 
     if ( url.path() == "/" ) {
         if ( url.queryItems().isEmpty() ) {
@@ -349,11 +383,6 @@ extern "C"
         // necessary to use other kio slaves
         KComponentData comp( "kio_nepomuksearch" );
         QCoreApplication app( argc, argv );
-
-        if ( Nepomuk::ResourceManager::instance()->init() ) {
-            kError() << "Unable to initialized Nepomuk.";
-            return -1;
-        }
 
         kDebug(7102) << "Starting nepomuksearch slave " << getpid();
 
