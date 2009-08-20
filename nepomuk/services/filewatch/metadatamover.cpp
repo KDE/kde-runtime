@@ -49,7 +49,7 @@ namespace {
                                              "{ ?r %1 ?p . } "
                                              "UNION "
                                              "{ ?r %2 ?p . } . "
-                                             "FILTER(REGEX(STR(?p), '^%3')) . "
+                                             "FILTER(REGEX(STR(?p), '^file://%3')) . "
                                              "}" )
                                     .arg( Soprano::Node::resourceToN3( Soprano::Vocabulary::Xesam::url() ) )
                                     .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ) )
@@ -153,8 +153,8 @@ void Nepomuk::MetadataMover::run()
                     QString path = to.path();
                     if ( !path.endsWith( '/' ) )
                         path += '/';
-                    path += bs[1].toString().mid( fromPath.endsWith( '/' ) ? fromPath.length() : fromPath.length()+1 );
-                    updateMetadata( bs[1].toString(), path ); // FIXME: reuse the URI we already have
+                    path += bs[1].uri().path().mid( fromPath.endsWith( '/' ) ? fromPath.length() : fromPath.length()+1 );
+                    updateMetadata( bs[1].uri(), path );
                 }
 
                 // TODO: optionally create a xesam:url property in case a file was moved from a remote URL to a local one
