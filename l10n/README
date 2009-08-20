@@ -316,7 +316,7 @@ between the entry name and the value.
 * AddressCountryPosition
 	These fields define the formatting of postal addresses. For
 	detailled information on these fields' format, please refer to
-	kdelibs/kabc/README.AddressFormat
+	kdepimlibs/kabc/README.AddressFormat
 
 Hans Petter Bieker <bieker@kde.org>
 Lukas Tinkl <lukas@kde.org>
