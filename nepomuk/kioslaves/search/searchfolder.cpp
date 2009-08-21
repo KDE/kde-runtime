@@ -146,7 +146,8 @@ void Nepomuk::SearchFolder::list()
     }
 
     // list all results
-    statResults();
+    if ( !m_initialListingFinished )
+        statResults();
 
     kDebug() << "listing done";
 
