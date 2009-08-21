@@ -146,8 +146,7 @@ void Nepomuk::SearchFolder::list()
     }
 
     // list all results
-    if ( !m_initialListingFinished )
-        statResults();
+    statResults();
 
     kDebug() << "listing done";
 
@@ -280,6 +279,7 @@ void Nepomuk::SearchFolder::statResults()
             m_resultMutex.unlock();
         }
         else {
+            m_resultMutex.unlock();
             break;
         }
     }
