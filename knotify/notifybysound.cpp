@@ -197,6 +197,12 @@ void NotifyBySound::loadConfig()
 
 void NotifyBySound::notify( int eventId, KNotifyConfig * config )
 {
+	if(d->playerMode == Private::NoSound)
+	{
+		finish( eventId );
+		return;
+	}
+
 	if(d->playerObjects.contains(eventId)  || d->processes.contains(eventId) )
 	{
 		//a sound is already playing for this notification,  we don't support playing two sounds.
@@ -212,7 +218,7 @@ void NotifyBySound::notify( int eventId, KNotifyConfig * config )
 		finish( eventId );
 		return;
 	}
-	
+
     // get file name
 	if ( KUrl::isRelativeUrl(soundFile) )
 	{
