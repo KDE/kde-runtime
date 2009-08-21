@@ -41,6 +41,7 @@
 #include <QtCore/QUuid>
 
 #include <KUrl>
+#include <KDebug>
 
 #include <sys/stat.h>
 #include <stdlib.h>
@@ -495,6 +496,16 @@ void Strigi::Soprano::IndexWriter::addTriplet( const std::string& s,
     // belongs to. However, we only use one thread, only one AnalysisResult at the time.
     // Thus, we can just remember that and use it here.
     //
+
+    // mjansen: 08/2009 - I get many crashes here and can't print s, p and o
+    // from the debugger with the core files. So print out this information
+    // and then die.
+    if (!d->currentResult) {
+        kWarning() << "Attempt to add" << s.c_str() << p.c_str() << o.c_str() << "to IndexWriter with currentResult = NULL";
+        Q_ASSERT(d->currentResult);
+        // In production just return.
+        return;
+    }
 
     FileMetaData* md = static_cast<FileMetaData*>( d->currentResult->writerData() );
 
