@@ -24,6 +24,7 @@
 
 #include <Soprano/Soprano>
 #include <Soprano/Vocabulary/RDF>
+#include <Soprano/Vocabulary/Xesam>
 #include <Soprano/LiteralValue>
 #include <Soprano/Node>
 #include <Soprano/QueryResultIterator>
@@ -255,22 +256,27 @@ void Strigi::Soprano::IndexWriter::commit()
 void Strigi::Soprano::IndexWriter::deleteEntries( const std::vector<std::string>& entries )
 {
     for ( unsigned int i = 0; i < entries.size(); ++i ) {
+        //
+        // We are compatible with old Xesam data where the url was encoded as a string instead of a url,
+        // thus the weird query
+        //
         QString path = QString::fromUtf8( entries[i].c_str() );
         QString query = QString( "select ?g ?mg where { "
-                                 "{ ?r <http://strigi.sf.net/ontologies/0.9#parentUrl> %1 . } "
+                                 "{ ?r %3 %1 . } "
                                  "UNION "
-                                 "{ ?r <http://strigi.sf.net/ontologies/0.9#parentUrl> %2 . } "
+                                 "{ ?r %3 %2 . } "
                                  "UNION "
-                                 "{ ?r %3 %2 . } . "
-                                 "?g %4 ?r . "
-                                 "OPTIONAL { ?mg %5 ?g . } }" )
+                                 "{ ?r %4 %2 . } . "
+                                 "?g %5 ?r . "
+                                 "OPTIONAL { ?mg %6 ?g . } }" )
                         .arg( Node::literalToN3( path ),
                               Node::resourceToN3( QUrl::fromLocalFile( path ) ),
-                              Node::resourceToN3( Nepomuk::Vocabulary::NIE::isPartOf() ),
+                              Node::resourceToN3( Vocabulary::Xesam::url() ),
+                              Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ),
                               Node::resourceToN3( Strigi::Ontology::indexGraphFor() ),
                               Node::resourceToN3( Vocabulary::NRL::coreGraphMetadataFor() ) );
 
-        qDebug() << "deleteEntries query:" << query;
+//        qDebug() << "deleteEntries query:" << query;
 
         QueryResultIterator result = d->repository->executeQuery( query, ::Soprano::Query::QueryLanguageSparql );
         if ( result.next() ) {
