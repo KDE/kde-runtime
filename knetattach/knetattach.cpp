@@ -72,7 +72,8 @@ KNetAttach::KNetAttach( QWidget* parent )
     }
     _encoding->clear();
     _encoding->addItems(KGlobal::charsets()->descriptiveEncodingNames());
-    _encoding->setCurrentIndex(0);    
+    const int codecForLocaleIdx = _encoding->findText(QTextCodec::codecForLocale()->name(), Qt::MatchContains);
+    _encoding->setCurrentIndex(codecForLocaleIdx != -1 ? codecForLocaleIdx : 0);
 }
 
 void KNetAttach::slotHelpClicked()
