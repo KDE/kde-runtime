@@ -315,6 +315,8 @@ bool KNetAttach::updateForProtocol(const QString& protocol)
 	_port->show();
 	_userText->show();
 	_user->show();
+	_encodingText->show();
+	_encoding->show();
     } else if (protocol == "FTP") {
 	_useEncryption->hide();
 	_portText->show();
