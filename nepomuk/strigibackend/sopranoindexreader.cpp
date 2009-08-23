@@ -375,7 +375,8 @@ void Strigi::Soprano::IndexReader::getChildren( const std::string& parent,
                                                 std::map<std::string, time_t>& children )
 {
     //
-    // We are compatible with old Xesam data, thus the weird query
+    // We are compatible with old Xesam data where the url was encoded as a string instead of a url,
+    // thus the weird query
     //
     QString query = QString( "select distinct ?path ?mtime where { "
                              "{ ?r <http://strigi.sf.net/ontologies/0.9#parentUrl> %1 . } "
