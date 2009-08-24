@@ -194,14 +194,11 @@ void EmoticonList::somethingChanged()
 
 void EmoticonList::updateButton()
 {
-    btRemoveEmoticon->setEnabled(themeList->currentItem() && emoList->selectedItems().size());
-    if (themeList->currentItem() && themeList->currentItem()->text() != "kde4" && themeList->count() > 1) {
-        btRemoveTheme->setEnabled(true);
-    } else {
-        btRemoveTheme->setEnabled(false);
-    }
-    btEdit->setEnabled(themeList->currentItem() && emoList->selectedItems().size());
-    btAdd->setEnabled(themeList->currentItem());
+    bool can = canEditTheme();
+    btRemoveEmoticon->setEnabled(themeList->currentItem() && emoList->selectedItems().size() && can);
+    btRemoveTheme->setEnabled(themeList->currentItem() && themeList->currentItem()->text() != "kde4" && themeList->count() > 1 && can);
+    btEdit->setEnabled(themeList->currentItem() && emoList->selectedItems().size() && can);
+    btAdd->setEnabled(themeList->currentItem() && can);
 }
 
 void EmoticonList::selectTheme()
@@ -455,7 +452,6 @@ QString EmoticonList::previewEmoticon(const KEmoticonsTheme &theme)
 
 void EmoticonList::initDefaults()
 {
-    
     QList<QListWidgetItem *>ls = themeList->findItems("kde4", Qt::MatchExactly);
     themeList->setCurrentItem( ls.first() );
 
@@ -468,6 +464,14 @@ void EmoticonList::defaults()
     initDefaults();
     selectTheme();
     emit changed(true);
+}
+
+bool EmoticonList::canEditTheme()
+{
+    KEmoticonsTheme theme = emoMap.value(themeList->currentItem()->text());
+    QFileInfo inf(theme.themePath() + '/' + theme.fileName());
+
+    return inf.isWritable();
 }
 
 // kate: space-indent on; indent-width 4; replace-tabs on;
