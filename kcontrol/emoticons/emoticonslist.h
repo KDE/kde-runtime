@@ -71,6 +71,7 @@ private slots:
 private:
     void loadTheme(const QString &name);
     void initDefaults();
+    bool canEditTheme();
     QString previewEmoticon(const KEmoticonsTheme &theme);
     QHash<QString, KEmoticonsTheme> emoMap;
     QStringList delFiles;
