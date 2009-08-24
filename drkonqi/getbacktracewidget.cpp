@@ -70,13 +70,13 @@ GetBacktraceWidget::GetBacktraceWidget(BacktraceGenerator *generator, QWidget *p
     ui.m_installDebugButton->setVisible(false);
     connect(ui.m_installDebugButton, SIGNAL(clicked()), this, SLOT(installDebugPackages()));
 
-    ui.m_copyButton->setGuiItem(KGuiItem2(i18nc("@action:button", ""), KIcon("edit-copy"),
+    ui.m_copyButton->setGuiItem(KGuiItem2(QString(), KIcon("edit-copy"),
                                           i18nc("@info:tooltip", "Use this button to copy the "
                                                 "crash information (backtrace) to the clipboard.")));
     connect(ui.m_copyButton, SIGNAL(clicked()) , this, SLOT(copyClicked()));
     ui.m_copyButton->setEnabled(false);
 
-    ui.m_saveButton->setGuiItem(KGuiItem2(i18nc("@action:button", ""),
+    ui.m_saveButton->setGuiItem(KGuiItem2(QString(),
                                           KIcon("document-save"),
                                           i18nc("@info:tooltip", "Use this button to save the "
                                           "crash information (backtrace) to a file. This is useful "
