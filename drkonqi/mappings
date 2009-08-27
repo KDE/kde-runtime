@@ -7,6 +7,7 @@ akonadi_control=Akonadi|general
 akonadi_distlist_resource=Akonadi|general
 akonadi_ical_resource=Akonadi|ICal file resource
 akonadi_imaplib_resource=Akonadi|general
+akonadi_imap_resource=Akonadi|general
 akonadi_kabc_resource=Akonadi|general
 akonadi_kcal_resource=Akonadi|general
 akonadi_knut_resource=Akonadi|general
