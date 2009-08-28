@@ -102,6 +102,7 @@ kfontinst=systemsettings|kcm_fontinst
 kfontview=systemsettings|kcm_fontinst
 kalarmautostart=kalarm|general
 kbluetooth4=kde-bluetooth|general
+korgac=korganizer|reminder daemon (korgac)
 
 digikamthemedesigner=digikam|general
 
