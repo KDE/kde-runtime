@@ -37,18 +37,19 @@ Nepomuk::SystemTray::SystemTray( StrigiService* service, QWidget* parent )
     setCategory( SystemServices );
     setStatus( Passive );
     setIconByName( "nepomuk" );
+    setTitle( i18n( "Search Service" ) );
 
     KMenu* menu = new KMenu;
-    menu->addTitle( i18n( "Strigi File Indexing" ) );
+    menu->addTitle( i18n( "Search Service" ) );
 
-    m_suspendResumeAction = new KToggleAction( i18n( "Suspend Strigi Indexing" ), menu );
-    m_suspendResumeAction->setCheckedState( KGuiItem( i18n( "Suspend Strigi Indexing" ) ) );
-    m_suspendResumeAction->setToolTip( i18n( "Suspend or resume the Strigi file indexer manually" ) );
+    m_suspendResumeAction = new KToggleAction( i18n( "Suspend File Indexing" ), menu );
+    m_suspendResumeAction->setCheckedState( KGuiItem( i18n( "Suspend File Indexing" ) ) );
+    m_suspendResumeAction->setToolTip( i18n( "Suspend or resume the file indexer manually" ) );
     connect( m_suspendResumeAction, SIGNAL( toggled( bool ) ),
              m_service, SLOT( setSuspended( bool ) ) );
 
     KAction* configAction = new KAction( menu );
-    configAction->setText( i18n( "Configure Strigi" ) );
+    configAction->setText( i18n( "Configure File Indexer" ) );
     configAction->setIcon( KIcon( "configure" ) );
     connect( configAction, SIGNAL( triggered() ),
              this, SLOT( slotConfigure() ) );
@@ -72,7 +73,7 @@ Nepomuk::SystemTray::~SystemTray()
 
 void Nepomuk::SystemTray::slotUpdateStrigiStatus()
 {
-    setToolTip("nepomuk", i18n("Nepomuk"),  m_service->userStatusString() );
+    setToolTip("nepomuk", i18n("Search Service"),  m_service->userStatusString() );
     m_suspendResumeAction->setChecked( m_service->indexScheduler()->isSuspended() );
     if (m_service->indexScheduler()->isIndexing()) {
         setStatus(Active);
