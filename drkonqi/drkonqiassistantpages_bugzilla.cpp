@@ -279,8 +279,7 @@ BugzillaLoginPage::~BugzillaLoginPage()
 
 BugzillaDuplicatesPage::BugzillaDuplicatesPage(DrKonqiBugReport * parent):
         DrKonqiAssistantPage(parent),
-        m_searching(false),
-        m_infoDialog(0)
+        m_searching(false)
 {
     resetDates();
 
@@ -336,7 +335,6 @@ BugzillaDuplicatesPage::BugzillaDuplicatesPage(DrKonqiBugReport * parent):
 
 BugzillaDuplicatesPage::~BugzillaDuplicatesPage()
 {
-    delete m_infoDialog;
 }
 
 void BugzillaDuplicatesPage::itemSelectionChanged()
@@ -400,10 +398,9 @@ void BugzillaDuplicatesPage::showReportInformationDialog(int bugNumber)
     if (bugNumber <= 0) {
         return;
     }
-    if (!m_infoDialog) {
-        m_infoDialog = new BugzillaReportInformationDialog(this);
-    }
-    m_infoDialog->showBugReport(bugNumber);
+
+    BugzillaReportInformationDialog * infoDialog = new BugzillaReportInformationDialog(this);
+    infoDialog->showBugReport(bugNumber);
 }
 
 void BugzillaDuplicatesPage::addPossibleDuplicateNumber(int bugNumber)
@@ -569,7 +566,6 @@ BugzillaReportInformationDialog::BugzillaReportInformationDialog(BugzillaDuplica
     setButtons(KDialog::Close | KDialog::User1);
     setDefaultButton(KDialog::Close);
     setCaption(i18nc("@title:window","Bug Description"));
-    setModal(true);
     
     QWidget * widget = new QWidget(this);
     ui.setupUi(widget);
@@ -583,10 +579,10 @@ BugzillaReportInformationDialog::BugzillaReportInformationDialog(BugzillaDuplica
     connect(this, SIGNAL(user1Clicked()) , this, SLOT(mayBeDuplicateClicked()));
 
     //Connect bugzillalib signals
-    connect(m_parent->bugzillaManager(), SIGNAL(bugReportFetched(BugReport)),
-             this, SLOT(bugFetchFinished(BugReport)));
-    connect(m_parent->bugzillaManager(), SIGNAL(bugReportError(QString)),
-             this, SLOT(bugFetchError(QString)));
+    connect(m_parent->bugzillaManager(), SIGNAL(bugReportFetched(BugReport, QObject *)),
+             this, SLOT(bugFetchFinished(BugReport, QObject *)));
+    connect(m_parent->bugzillaManager(), SIGNAL(bugReportError(QString, QObject *)),
+             this, SLOT(bugFetchError(QString, QObject *)));
              
     setInitialSize(QSize(800, 600));
     KConfigGroup config(KGlobal::config(), "BugzillaReportInformationDialog");
@@ -595,6 +591,11 @@ BugzillaReportInformationDialog::BugzillaReportInformationDialog(BugzillaDuplica
 
 BugzillaReportInformationDialog::~BugzillaReportInformationDialog()
 {
+    disconnect(m_parent->bugzillaManager(), SIGNAL(bugReportFetched(BugReport, QObject *)),
+             this, SLOT(bugFetchFinished(BugReport, QObject *)));
+    disconnect(m_parent->bugzillaManager(), SIGNAL(bugReportError(QString, QObject *)),
+             this, SLOT(bugFetchError(QString, QObject *)));
+
     KConfigGroup config(KGlobal::config(), "BugzillaReportInformationDialog");
     saveDialogSize(config);
 }
@@ -602,7 +603,7 @@ BugzillaReportInformationDialog::~BugzillaReportInformationDialog()
 void BugzillaReportInformationDialog::showBugReport(int bugNumber)
 {
     m_bugNumber = bugNumber;
-    m_parent->bugzillaManager()->fetchBugReport(m_bugNumber);
+    m_parent->bugzillaManager()->fetchBugReport(m_bugNumber, this);
 
     button(KDialog::User1)->setEnabled(false);
 
@@ -622,10 +623,11 @@ void BugzillaReportInformationDialog::showBugReport(int bugNumber)
     show();
 }
 
-void BugzillaReportInformationDialog::bugFetchFinished(BugReport report)
+void BugzillaReportInformationDialog::bugFetchFinished(BugReport report, QObject * jobOwner)
 {
-    if (report.isValid()) {
-        if (isVisible()) {
+    if (jobOwner == this && isVisible()) {
+        if (report.isValid()) {
+            //Generate html for comments
             QString comments;
             QStringList commentList = report.comments();
             for (int i = 0; i < commentList.count(); i++) {
@@ -677,9 +679,11 @@ void BugzillaReportInformationDialog::bugFetchFinished(BugReport report)
                                                                 report.shortDescription()) +
                 i18n("<strong>Status:</strong> %1<br />", customStatusString) +
                 i18n("<strong>Full Description:</strong><br />%1",
-                                                report.description().replace('\n', "<br />")) +
-                QLatin1String("<br /><br />") +
-                i18n("<strong>Comments:</strong> %1", comments);
+                                                report.description().replace('\n', "<br />"));
+                                                
+            if (!comments.isEmpty()) {
+                text += i18n("<br /><br /><strong>Comments:</strong> %1", comments);
+            }
 
             ui.m_infoBrowser->setText(text);
             ui.m_infoBrowser->setEnabled(true);
@@ -688,9 +692,9 @@ void BugzillaReportInformationDialog::bugFetchFinished(BugReport report)
 
             ui.m_statusWidget->setIdle(i18nc("@info:status", "Showing report <numid>%1</numid>",
                                                             report.bugNumberAsInt()));
+        } else {
+            bugFetchError(i18nc("@info","Invalid report data"), this);
         }
-    } else {
-        bugFetchError(i18nc("@info","Invalid report data"));
     }
 }
 
@@ -700,9 +704,9 @@ void BugzillaReportInformationDialog::mayBeDuplicateClicked()
     hide();
 }
 
-void BugzillaReportInformationDialog::bugFetchError(QString err)
+void BugzillaReportInformationDialog::bugFetchError(QString err, QObject * jobOwner)
 {
-    if (isVisible()) {
+    if (jobOwner == this && isVisible()) {
         KMessageBox::error(this , i18nc("@info/rich","Error fetching the bug report<nl/>"
                                         "<message>%1.</message><nl/>"
                                         "Please wait some time and try again.", err));

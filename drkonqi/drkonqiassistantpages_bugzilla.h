@@ -110,8 +110,6 @@ private:
 
     Ui::AssistantPageBugzillaDuplicates         ui;
     
-    BugzillaReportInformationDialog *           m_infoDialog;
-    
     //Dates of current Results
     QDate                                       m_startDate;
     QDate                                       m_endDate;
@@ -135,8 +133,8 @@ public:
     void showBugReport(int bugNumber);
 
 private Q_SLOTS:
-    void bugFetchFinished(BugReport);
-    void bugFetchError(QString);
+    void bugFetchFinished(BugReport,QObject *);
+    void bugFetchError(QString, QObject *);
     
     void mayBeDuplicateClicked();
     

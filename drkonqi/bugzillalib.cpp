@@ -58,7 +58,6 @@ static const char sendReportUrl[] = "post_bug.cgi";
 BugzillaManager::BugzillaManager(QObject *parent):
         QObject(parent),
         m_logged(false),
-        m_fetchBugJob(0),
         m_searchJob(0)
 {
     m_bugTrackerUrl = bugtrackerBKOBaseUrl;
@@ -124,18 +123,15 @@ void BugzillaManager::loginDone(KJob* job)
     }
 }
 
-void BugzillaManager::fetchBugReport(int bugnumber)
+void BugzillaManager::fetchBugReport(int bugnumber, QObject * jobOwner)
 {
     KUrl url = KUrl(QString(m_bugTrackerUrl) + QString(fetchBugUrl).arg(bugnumber));
 
-    if (m_fetchBugJob) { //Stop previous fetchBugJob
-        m_fetchBugJob->disconnect();
-        m_fetchBugJob->kill();
-        m_fetchBugJob = 0;
-    }
-
-    m_fetchBugJob = KIO::storedGet(url, KIO::Reload, KIO::HideProgressInfo);
-    connect(m_fetchBugJob, SIGNAL(finished(KJob*)) , this, SLOT(fetchBugReportDone(KJob*)));
+    if (!jobOwner) jobOwner = this;
+    
+    KJob * fetchBugJob = KIO::storedGet(url, KIO::Reload, KIO::HideProgressInfo);
+    fetchBugJob->setParent(jobOwner);
+    connect(fetchBugJob, SIGNAL(finished(KJob*)) , this, SLOT(fetchBugReportDone(KJob*)));
 }
 
 void BugzillaManager::fetchBugReportDone(KJob* job)
@@ -147,17 +143,15 @@ void BugzillaManager::fetchBugReportDone(KJob* job)
         BugReport report = parser->parse();
 
         if (parser->isValid()) {
-            emit bugReportFetched(report);
+            emit bugReportFetched(report, job->parent());
         } else {
-            emit bugReportError(i18nc("@info","Invalid bug report: corrupted data"));
+            emit bugReportError(i18nc("@info","Invalid bug report: corrupted data"), job->parent());
         }
 
         delete parser;
     } else {
-        emit bugReportError(job->errorString());
+        emit bugReportError(job->errorString(), job->parent());
     }
-
-    m_fetchBugJob = 0;
 }
 
 void BugzillaManager::searchBugs(QString words, const QStringList & products,

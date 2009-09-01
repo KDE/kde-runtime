@@ -200,7 +200,7 @@ public:
     void setLoginData(const QString &, const QString &);
     void tryLogin();
 
-    void fetchBugReport(int);
+    void fetchBugReport(int, QObject * jobOwner = 0);
     void searchBugs(QString words, const QStringList & products, const QString & severity,
                     const QString & date_start, const QString & date_end , QString comment);
     void stopCurrentSearch();
@@ -226,12 +226,12 @@ private Q_SLOTS:
 
 Q_SIGNALS:
     void loginFinished(bool);
-    void bugReportFetched(BugReport);
+    void bugReportFetched(BugReport, QObject *);
     void searchFinished(const BugMapList &);
     void reportSent(int);
 
     void loginError(const QString &);
-    void bugReportError(const QString &);
+    void bugReportError(const QString &, QObject *);
     void searchError(const QString &);
     void sendReportError(const QString &);
     void sendReportErrorInvalidValues(); //To use default values
@@ -243,7 +243,6 @@ private:
     QString     m_password;
     bool        m_logged;
 
-    KJob *  m_fetchBugJob;
     KJob *  m_searchJob;
 
     QString     m_bugTrackerUrl;
