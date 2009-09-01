@@ -20,9 +20,6 @@ http://blogs.msdn.com/oldnewthing/archive/2003/09/01/54734.aspx (by Maciej)
 
 - Update "AboutBugReporting" guide to reflect the new workflow
 
-- Dialogs -> Non-modal
--- Possible-Duplicate info dialog
-    
 - Option to "don't show DrKonqi for this(X) app"
 - Option to avoid drkonqi at all (setting KDE_DEBUG=1), and GUI to renable it
 
@@ -49,8 +46,6 @@ This is useful to determine if some external plugin is involved
 
 - Application detection: ask for or detect specific things depending on application
    ie konqueror: url, plasma: plasmoids in use, kopete: protocol, etc.
-
-- On Duplicates page, when showing a bug report which is already fixed. REMARK that it is fixed!
 
 #ToDiscuss/Improve
 --------
