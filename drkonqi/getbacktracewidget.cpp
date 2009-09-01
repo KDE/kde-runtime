@@ -42,7 +42,8 @@ GetBacktraceWidget::GetBacktraceWidget(BacktraceGenerator *generator, QWidget *p
     ui.setupUi(this);
 
     //Debug package installer
-    m_debugPackageInstaller = new DebugPackageInstaller(DrKonqi::instance()->krashConfig()->productName());
+    m_debugPackageInstaller = new DebugPackageInstaller(
+                                        DrKonqi::instance()->krashConfig()->productName(), this);
     connect(m_debugPackageInstaller, SIGNAL(error(QString)), this, SLOT(debugPackageError(QString)));
     connect(m_debugPackageInstaller, SIGNAL(packagesInstalled()), this, SLOT(regenerateBacktrace()));
     connect(m_debugPackageInstaller, SIGNAL(canceled()), this, SLOT(debugPackageCanceled()));
