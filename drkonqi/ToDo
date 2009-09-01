@@ -1,15 +1,9 @@
 ##Brainstorming
 --------------
 
-#IDEAS for installdbgsymbols.sh ? (to show progress in DrKonqi UI)
-* Catch output and show status messages (ex "echo 1" , show "packages found"...)
-* Catch all the output and show in a textedit (like a readonly terminal)
-* Embed a Konsole KPart
----
-
-- Display the time of the crashed
-(oh, I came back to the computer some time later and drkonqi was there.. 
-when the application crashed? during the night?) (by sreich)
+- Display the time of the crash
+("I came back to the computer some time later and drkonqi was there.. 
+when the application crashed? during the night?") (by sreich)
 
 - Usability review and suggestions:
 http://blogs.msdn.com/oldnewthing/archive/2003/09/01/54734.aspx (by Maciej)
@@ -25,8 +19,9 @@ http://blogs.msdn.com/oldnewthing/archive/2003/09/01/54734.aspx (by Maciej)
 -------------
 
 - Dialogs -> Non-modal
+-- Possible-Duplicate info dialog
     
-- Option to "don't show drkonqi for this(X) app"
+- Option to "don't show DrKonqi for this(X) app"
 - Option to avoid drkonqi at all (setting KDE_DEBUG=1), and GUI to renable it
 
 #- Improve DuplicatesPage dialog: what if you want to pick more than one possibly duplicate?
@@ -51,7 +46,7 @@ This is useful to determine if some external plugin is involved
 - Read and upload as attachment (cat /proc/PID/maps), memmap
 
 - Application detection: ask for or detect specific things depending on application
-   ie konqueror: url, plasma: plasmoids in use, kopete: protocal, etc.
+   ie konqueror: url, plasma: plasmoids in use, kopete: protocol, etc.
 
 - On Duplicates page, when showing a bug report which is already fixed. REMARK that it is fixed!
 
