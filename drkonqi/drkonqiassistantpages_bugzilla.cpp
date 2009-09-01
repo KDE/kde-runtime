@@ -436,30 +436,10 @@ void BugzillaDuplicatesPage::resetDates()
 
 void BugzillaDuplicatesPage::aboutToShow()
 {
-    //FIXME check this
-    if (!m_searching) {
-        //If I never searched before, performSearch
-        if (ui.m_bugListWidget->topLevelItemCount() == 0 && canSearchMore()) {
-            searchMore();
-        }
-    }
-
-    /*
-    if (m_currentKeywords != reportInfo()->reportKeywords()) { //Keywords changed
-        m_currentKeywords = reportInfo()->reportKeywords();
-        //Clear list and retrieve new reports
-        ui.m_bugListWidget->clear();
-        resetDates();
+    //Perform initial search if we are not currently searching and if there are no results yet
+    if (!m_searching && ui.m_bugListWidget->topLevelItemCount() == 0 && canSearchMore()) {
         searchMore();
-    } else {
-        if (!m_searching) {
-            //If I never searched before, performSearch
-            if (ui.m_bugListWidget->topLevelItemCount() == 0 && canSearchMore()) {
-                searchMore();
-            }
-        }
     }
-    */
 }
 
 void BugzillaDuplicatesPage::aboutToHide()
@@ -721,7 +701,6 @@ BugzillaInformationPage::BugzillaInformationPage(DrKonqiBugReport * parent)
 
 void BugzillaInformationPage::aboutToShow()
 {
-    //FIXME i18n
     if (!m_distributionComboSetup) {
         //Autodetecting distro failed ?
         if (reportInfo()->bugzillaPlatform() == QLatin1String("unspecified")) { 

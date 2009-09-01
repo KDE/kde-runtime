@@ -82,7 +82,7 @@ DrKonqiDialog::~DrKonqiDialog()
 
 void DrKonqiDialog::tabIndexChanged(int index)
 {
-    if (index == 1) {
+    if (index == m_tabWidget->indexOf(m_backtraceWidget)) {
         m_backtraceWidget->generateBacktrace();
     }
 }
