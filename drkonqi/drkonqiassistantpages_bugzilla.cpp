@@ -634,14 +634,48 @@ void BugzillaReportInformationDialog::bugFetchFinished(BugReport report)
                 comments += "<br /><strong>----</strong><br />" + comment;
             }
 
+            //Generate a non-geek readable status
+            QString customStatusString;
+            if (report.bugStatus() == QLatin1String("UNCONFIRMED")
+                || report.bugStatus() == QLatin1String("NEW")
+                || report.bugStatus() == QLatin1String("REOPENED")
+                || report.bugStatus() == QLatin1String("ASSIGNED")) {
+                customStatusString = i18nc("@info bug status", "Open");
+            } else if (report.bugStatus() == QLatin1String("RESOLVED")
+                || report.bugStatus() == QLatin1String("VERIFIED")
+                || report.bugStatus() == QLatin1String("CLOSED")) {
+                
+                QString customResolutionString;
+                if (report.resolution() == QLatin1String("FIXED")) {
+                    customResolutionString = i18nc("@info bug resolution", "Fixed");
+                } else if (report.resolution() == QLatin1String("WORKSFORME")) {
+                    customResolutionString = i18nc("@info bug resolution", "Non-reproducible");
+                } else if (report.resolution() == QLatin1String("DUPLICATE")) {
+                    customResolutionString = i18nc("@info bug resolution", "Already reported");
+                } else if (report.resolution() == QLatin1String("INVALID")) {
+                    customResolutionString = i18nc("@info bug resolution", "Not a valid report/crash");
+                } else if (report.resolution() == QLatin1String("DOWNSTREAM") 
+                    || report.resolution() == QLatin1String("UPSTREAM")) {
+                    customResolutionString = i18nc("@info bug resolution", "Not a KDE bug");
+                } else {
+                    customResolutionString = report.resolution();
+                }
+                
+                customStatusString = i18nc("@info bug status, %1 is the resolutin", "Closed (%1)",
+                                           customResolutionString);
+            } else if (report.bugStatus() == QLatin1String("NEEDSINFO")) {
+                customStatusString = i18nc("@info bug status", "Temporary closed because the lack "
+                                            "of information");
+            } else {
+                customStatusString = QString("%1 (%2)").arg(report.bugStatus(), report.resolution());
+            }
+            
             QString text =
-                i18n("<strong>Bug ID:</strong> %1<br />", report.bugNumber()) +
-                i18n("<strong>Product:</strong> %1/%2<br />", report.product(),
+                i18n("<strong>Product:</strong> %1 (%2)<br />", report.product(),
                                                                 report.component()) +
-                i18n("<strong>Short Description:</strong> %1<br />",
+                i18n("<strong>Title:</strong> %1<br />",
                                                                 report.shortDescription()) +
-                i18n("<strong>Status:</strong> %1<br />", report.bugStatus()) +
-                i18n("<strong>Resolution:</strong> %1<br />", report.resolution()) +
+                i18n("<strong>Status:</strong> %1<br />", customStatusString) +
                 i18n("<strong>Full Description:</strong><br />%1",
                                                 report.description().replace('\n', "<br />")) +
                 QLatin1String("<br /><br />") +
