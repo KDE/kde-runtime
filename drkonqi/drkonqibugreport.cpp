@@ -125,8 +125,6 @@ DrKonqiBugReport::DrKonqiBugReport(QWidget * parent) :
     m_bugzillaSendPage->setIcon(KIcon("tools-report-bug"));
     connect(m_bugzillaSend, SIGNAL(finished(bool)), this, SLOT(assistantFinished(bool)));
 
-    //TODO remove connectSignals() and use a loop?
-    
     //TODO remember to keep ordered
     addPage(m_awarenessPage);
     addPage(m_backtracePage);
@@ -230,15 +228,7 @@ void DrKonqiBugReport::next()
         {
             setCurrentPage(m_pageWidgetMap.value(QLatin1String(PAGE_CONCLUSIONS_ID)));
             return;
-        }/* else { //TODO is this useful?
-            //If we already fetched a perfect backtrace, continue to bugzilla login
-            if (DrKonqi::instance()->backtraceGenerator()->parser()->backtraceUsefulness() == 
-                                                                    BacktraceParser::ReallyUseful)
-            {
-                setCurrentPage(m_pageWidgetMap.value(QLatin1String(PAGE_BZLOGIN_ID)));
-                return;
-            }
-        }*/
+        }
     } else {
         if (currentPage()->name() == QLatin1String(PAGE_CRASHINFORMATION_ID))
         {
