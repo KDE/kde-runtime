@@ -1,6 +1,7 @@
 [Global]
 IconName=
 Comment=KDE Global Shortcuts Daemon
+Comment[et]=KDE globaalsete kiirklahvide deemon
 Comment[hr]=KDE Globalni poslužitelj prečaca tipkovnice
 Comment[id]=Jurik Jalan Pintas Global KDE
 Comment[is]=KDE víðtækur flýtilyklaþjónn
@@ -99,6 +100,7 @@ Name[x-test]=xxApplicationxx
 Name[zh_CN]=应用程序
 Name[zh_TW]=應用程式
 Comment=The application name
+Comment[et]=Rakenduse nimi
 Comment[hr]=Ime aplikacije
 Comment[id]=Nama aplikasi
 Comment[is]=Heiti forrits
@@ -120,6 +122,7 @@ Comment[zh_TW]=應用程式名稱
 
 [Event/newshortcutregistered]
 Name=Global Shortcut Registration
+Name[et]=Globaalsete kiirklahvide registreerimine
 Name[hr]=Prijava globalnih prečaca tipkovnice
 Name[id]=Registrasi Jalan Pintas Global
 Name[km]=ការ​ចុះឈ្មោះ​ផ្លូវកាត់​សកល
@@ -138,6 +141,7 @@ Name[uk]=Реєстрація загальних скорочень
 Name[x-test]=xxGlobal Shortcut Registrationxx
 Name[zh_TW]=全域捷徑註冊
 Comment=A application registered new global shorcuts
+Comment[et]=Rakendus registreeris uued globaalsed kiirklahvid
 Comment[hr]=Aplikacija je prijavila nove globalne prečace
 Comment[id]=Sebuah aplikasi yang mendaftarkan jalan pintas global baru
 Comment[km]=កម្មវិធី​បាន​ចុះឈ្មោះ​ផ្លូវកាត់​សកល​ថ្មី
@@ -158,6 +162,7 @@ Action=Popup
 
 [Event/globalshortcutpressed]
 Name=Global Shortcut Triggered
+Name[et]=Kasutati globaalset kiirklahvi
 Name[hr]=Globalni prečac je korišten
 Name[id]=Jalan Pintas Global Dipicu
 Name[km]=បានកេះ​ផ្លូវកាត់​សកល
@@ -175,6 +180,7 @@ Name[uk]=Використано загальне скорочення
 Name[x-test]=xxGlobal Shortcut Triggeredxx
 Name[zh_TW]=全域捷徑被觸發
 Comment=The user triggered a global shortcut
+Comment[et]=Kasutaja kasutas globaalset kiirklahvi
 Comment[hr]=Korisnik je koristio globalni prečac
 Comment[id]=Pengguna memicu jalan pintas global
 Comment[km]=អ្នក​ប្រើ​បានកេះ​ផ្លូវកាត់​សកល
