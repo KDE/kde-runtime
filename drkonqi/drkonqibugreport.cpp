@@ -115,6 +115,15 @@ DrKonqiBugReport::DrKonqiBugReport(QWidget * parent) :
     m_bugzillaInformationPage->setHeader(i18nc("@title","Details of the Bug Report"));
     m_bugzillaInformationPage->setIcon(KIcon("tools-report-bug"));
 
+    //Bugzilla Report Preview
+    BugzillaPreviewPage * m_bugzillaPreview =  new BugzillaPreviewPage(this);
+
+    KPageWidgetItem * m_bugzillaPreviewPage = new KPageWidgetItem(m_bugzillaPreview, 
+                                                                QLatin1String(PAGE_BZPREVIEW_ID));
+    m_pageWidgetMap.insert(QLatin1String(PAGE_BZPREVIEW_ID),m_bugzillaPreviewPage);
+    m_bugzillaPreviewPage->setHeader(i18nc("@title","Preview Report"));
+    m_bugzillaPreviewPage->setIcon(KIcon("tools-report-bug"));
+    
     //Bugzilla commit
     BugzillaSendPage * m_bugzillaSend =  new BugzillaSendPage(this);
 
@@ -132,6 +141,7 @@ DrKonqiBugReport::DrKonqiBugReport(QWidget * parent) :
     addPage(m_bugzillaLoginPage);
     addPage(m_bugzillaDuplicatesPage);
     addPage(m_bugzillaInformationPage);
+    addPage(m_bugzillaPreviewPage);
     addPage(m_bugzillaSendPage);
 
     setMinimumSize(QSize(600, 400));

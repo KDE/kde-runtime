@@ -42,6 +42,7 @@ public:
 #define PAGE_BZLOGIN_ID "BugzillaLoginID"
 #define PAGE_BZDUPLICATES_ID "BugzillaDuplicatesID"
 #define PAGE_BZDETAILS_ID "BugzillaDetailsID"
+#define PAGE_BZPREVIEW_ID "BugzillaPreviewID"
 #define PAGE_BZSEND_ID "BugzillaSendID"
 
 #define PAGE_HELP_BEGIN_ID "Begin"

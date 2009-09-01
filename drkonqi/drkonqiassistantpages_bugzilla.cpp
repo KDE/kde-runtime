@@ -813,7 +813,6 @@ void BugzillaInformationPage::checkTexts()
 
 bool BugzillaInformationPage::showNextPage()
 {
-    bool textsOk = false;
     checkTexts();
     if (m_textsOK) { //not empty
         bool titleShort = ui.m_titleEdit->text().size() < 25;
@@ -839,20 +838,10 @@ bool BugzillaInformationPage::showNextPage()
             if (KMessageBox::questionYesNo(this, message,
                                            i18nc("@title:window","We need more information"))
                                             == KMessageBox::No) {
-                textsOk = true; //Allow to continue
+                return true; //Allow to continue
             }
         } else {
-            textsOk = true;
-        }
-    }
-    
-    if (textsOk) {
-        if (KMessageBox::questionYesNo(this, i18nc("@info question","Are you ready to submit this "
-                                            "report?") , i18nc("@title:window","Are you sure?"))
-                                            == KMessageBox::Yes) {
             return true;
-        } else {
-            return false;
         }
     }
     
@@ -884,6 +873,28 @@ void BugzillaInformationPage::aboutToHide()
 }
 
 //END BugzillaInformationPage
+
+//BEGIN BugzillaPreviewPage
+
+BugzillaPreviewPage::BugzillaPreviewPage(DrKonqiBugReport * parent)
+        : DrKonqiAssistantPage(parent)
+{
+    ui.setupUi(this);
+}
+
+void BugzillaPreviewPage::aboutToShow()
+{
+    ui.m_previewEdit->setText(reportInfo()->generateReport(true));
+}
+
+bool BugzillaPreviewPage::showNextPage()
+{
+    return (KMessageBox::questionYesNo(this, i18nc("@info question","Are you ready to submit this "
+                                            "report?") , i18nc("@title:window","Are you sure?"))
+                                            == KMessageBox::Yes);
+}
+
+//END BugzillaPreviewPage
 
 //BEGIN BugzillaSendPage
 

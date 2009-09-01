@@ -27,6 +27,7 @@
 #include "ui_assistantpage_bugzilla_duplicates.h"
 #include "ui_assistantpage_bugzilla_duplicates_dialog.h"
 #include "ui_assistantpage_bugzilla_information.h"
+#include "ui_assistantpage_bugzilla_preview.h"
 #include "ui_assistantpage_bugzilla_send.h"
 
 namespace KWallet { class Wallet; }
@@ -168,6 +169,22 @@ private:
     bool                                    m_textsOK;
     bool                                    m_distributionComboSetup;
     bool                                    m_distroComboVisible;
+};
+
+/** Preview report page **/
+class BugzillaPreviewPage : public DrKonqiAssistantPage
+{
+    Q_OBJECT
+
+public:
+    BugzillaPreviewPage(DrKonqiBugReport *);
+
+    void aboutToShow();
+
+    bool showNextPage();
+    
+private:
+    Ui::AssistantPageBugzillaPreview    ui;
 };
 
 /** Send crash report page **/

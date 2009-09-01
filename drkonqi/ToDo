@@ -18,6 +18,9 @@ http://blogs.msdn.com/oldnewthing/archive/2003/09/01/54734.aspx (by Maciej)
 ##Other tasks
 -------------
 
+- Check strings (native english) of the DebugInstaller class
+- Check strings (native english) of the Preview Report page
+
 - Update "AboutBugReporting" guide to reflect the new workflow
 
 - Option to "don't show DrKonqi for this(X) app"
