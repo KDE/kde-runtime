@@ -43,15 +43,14 @@ void DebugPackageInstaller::setMissingLibraries(const QStringList & libraries)
 
 void DebugPackageInstaller::installDebugPackages()
 {
-    //FIXME i18n strings
     if (!m_installerProcess) {
         //Find the executable path the first time
         if (m_executablePath.isEmpty()) {
             m_executablePath = KStandardDirs::findExe(installerName);
             if (m_executablePath.isEmpty()) {
-                emit error(QString("The helper application needed to install the missing "
+                emit error(i18nc("@info:status", "The helper application needed to install the missing "
                             "debug symbols \"%1\" is missing. Please inform your "
-                            "distribution.").arg(installerName));
+                            "distribution.", installerName));
                 return;
             }
         }
@@ -69,8 +68,9 @@ void DebugPackageInstaller::installDebugPackages()
         m_progressDialog = new QProgressDialog(m_parent);
         connect(m_progressDialog, SIGNAL(canceled()), this, SLOT(progressDialogCanceled()));
         m_progressDialog->setRange(0,0);
-        m_progressDialog->setWindowTitle(i18n("Missing debug symbols"));
-        m_progressDialog->setLabelText(i18n("Requesting installation of missing debug symbols packages..."));
+        m_progressDialog->setWindowTitle(i18nc("@title:window", "Missing debug symbols"));
+        m_progressDialog->setLabelText(i18nc("@info:progress", "Requesting installation of missing "
+                                                                    "debug symbols packages..."));
         m_progressDialog->show();
     }
 }
@@ -96,26 +96,29 @@ void DebugPackageInstaller::progressDialogCanceled()
 
 void DebugPackageInstaller::processFinished(int exitCode, QProcess::ExitStatus)
 {
-    //FIXME i18n strings
     switch(exitCode){
         case ResultInstalled: {
             emit packagesInstalled();
             break;
         }
         case ResultNotPresent: {
-            emit error("The debug symbols packages for this application are not present.");
+            emit error(i18nc("@info:status", "The debug symbols packages for this application are "
+                                                                                 "not present."));
             break;
         }
         case ResultNotImplemented: {
-            emit error("Your distribution does not provide a way to install debug symbols packages. (or you compiled KDE by source).");
+            emit error(i18nc("@info:status", "Your distribution does not provide a way to install "
+                                     "debug symbols packages. (or you compiled KDE by source)."));
             break;
         }
         case ResultError: {
-            emit error("There was an error, the debug symbols packages could not be installed.");
+            emit error(i18nc("@info:status", "There was an error, the debug symbols packages could "
+                                                                            "not be installed."));
             break;
         }
         default: {
-            emit error("Unhandled error. The debug symbols packages could not be installed.");
+            emit error(i18nc("@info:status", "Unhandled error. The debug symbols packages could "
+                                                                            "not be installed."));
         }
     }
     
