@@ -67,7 +67,7 @@ Nepomuk::EventMonitor::EventMonitor( IndexScheduler* scheduler, QObject* parent 
 
         // inform the user about the initial indexing
         sendEvent( "initialIndexingStarted",
-                   i18n( "Strigi file indexing started. Indexing all files for fast desktop searches may take a while." ),
+                   i18n( "Indexing files for fast searching. This process may take a while." ),
                    "nepomuk" );
 
         // connect to get the end of initial indexing
@@ -96,14 +96,14 @@ void Nepomuk::EventMonitor::slotPowerManagementStatusChanged( bool conserveResou
         kDebug() << "Resuming indexer due to power management";
         m_pauseState = NotPaused;
         m_indexScheduler->resume();
-        sendEvent( "indexingResumed", i18n("Resuming Strigi file indexing."), "solid" );
+        sendEvent( "indexingResumed", i18n("Resuming indexing of files for fast searching."), "solid" );
     }
     else if ( m_indexScheduler->isRunning() &&
               !m_indexScheduler->isSuspended() ) {
         kDebug() << "Pausing indexer due to power management";
         m_pauseState = PausedDueToPowerManagement;
         m_indexScheduler->suspend();
-        sendEvent( "indexingSuspended", i18n("Suspending Strigi file indexing to preserve resources."), "solid" );
+        sendEvent( "indexingSuspended", i18n("Suspending the indexing of files to preserve resources."), "solid" );
     }
 }
 
@@ -118,7 +118,7 @@ void Nepomuk::EventMonitor::slotCheckAvailableSpace()
                 m_pauseState = PausedDueToAvailSpace;
                 m_indexScheduler->suspend();
                 sendEvent( "indexingSuspended",
-                           i18n("Local disk space is running low (%1 left). Suspending Strigi file indexing.",
+                           i18n("Disk space is running low (%1 left). Suspending indexing of files.",
                                 KIO::convertSize( info.available() ) ),
                            "drive-harddisk" );
             }
@@ -127,7 +127,7 @@ void Nepomuk::EventMonitor::slotCheckAvailableSpace()
             kDebug() << "Resuming indexer due to disk space";
             m_pauseState = NotPaused;
             m_indexScheduler->resume();
-            sendEvent( "indexingResumed", i18n("Resuming Strigi file indexing."), "drive-harddisk" );
+            sendEvent( "indexingResumed", i18n("Resuming indexing of files for fast searching."), "drive-harddisk" );
         }
     }
     else {
@@ -144,7 +144,7 @@ void Nepomuk::EventMonitor::slotIndexingStopped()
         kDebug() << "initial indexing took" << m_initialIndexTime.elapsed();
         sendEvent( "initialIndexingFinished",
                    i18nc( "@info %1 is a duration formatted using KLocale::formatDuration",
-                          "Initial Desktop Search file indexing finished in %1",
+                          "Initial indexing of files for fast searching finished in %1",
                           KGlobal::locale()->formatDuration( m_initialIndexTime.elapsed() ) ),
                    "nepomuk" );
         m_indexScheduler->disconnect( this );
