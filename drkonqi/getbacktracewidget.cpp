@@ -193,9 +193,12 @@ void GetBacktraceWidget::loadData()
 
         if (btParser->backtraceUsefulness() != BacktraceParser::ReallyUseful) {
             ui.m_extraDetailsLabel->setVisible(true);
-            ui.m_extraDetailsLabel->setText(i18nc("@info/rich", "Please read <link url='%1'>How to "
+            ui.m_extraDetailsLabel->setText(i18nc("@info/rich", "You can click the <interface>"
+                                "Install Debug Symbols</interface> button in order to automatically "
+                                "install the missing debugging information packages. If this method "
+                                "does not work: please read <link url='%1'>How to "
                                 "create useful crash reports</link> to learn how to get a useful "
-                                "backtrace. After you install the needed packages, click the "
+                                "backtrace; install the needed packages and click the "
                                 "<interface>Reload Crash Information</interface> button.",
                                 QLatin1String(TECHBASE_HOWTO_DOC)));
             ui.m_installDebugButton->setVisible(true);
@@ -267,10 +270,9 @@ void GetBacktraceWidget::hilightExtraDetailsLabel(bool hilight)
     ui.m_extraDetailsLabel->setStyleSheet(stylesheet);
 }
 
-void GetBacktraceWidget::focusReloadButton()
+void GetBacktraceWidget::focusImproveBacktraceButton()
 {
-    ui.m_reloadBacktraceButton->setFocus();
-    //FIXME change message and force m_installDebugButton focus
+    ui.m_installDebugButton->setFocus();
 }
 
 void GetBacktraceWidget::installDebugPackages()
