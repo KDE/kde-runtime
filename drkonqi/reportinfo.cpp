@@ -350,7 +350,7 @@ bool ReportInfo::isWorthReporting() const
         break;
     }
     case BacktraceParser::MayBeUseful: {
-        needToReport = (m_userCanDetail || m_developersCanContactReporter);
+        needToReport = (m_userCanDetail && m_developersCanContactReporter);
         break;
     }
     case BacktraceParser::ProbablyUseless: {
