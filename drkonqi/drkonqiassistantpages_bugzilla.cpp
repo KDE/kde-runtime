@@ -723,36 +723,56 @@ void BugzillaInformationPage::aboutToShow()
 {
     //FIXME i18n
     if (!m_distributionComboSetup) {
-        if (reportInfo()->bugzillaPlatform()==QLatin1String("unspecified")) { //Autodetecting distro failed
+        //Autodetecting distro failed ?
+        if (reportInfo()->bugzillaPlatform() == QLatin1String("unspecified")) { 
             m_distroComboVisible = true;
-            ui.m_distributionChooserCombo->addItem("Unspecified","unspecified");
-            ui.m_distributionChooserCombo->addItem("Debian stable","Debian stable");
-            ui.m_distributionChooserCombo->addItem("Debian testing","Debian testing");
-            ui.m_distributionChooserCombo->addItem("Debian unstable","Debian unstable");
-            ui.m_distributionChooserCombo->addItem("Exherbo","Exherbo Packages");
-            ui.m_distributionChooserCombo->addItem("Gentoo","Gentoo Packages");
-            ui.m_distributionChooserCombo->addItem("Mandriva","Mandriva RPMs");
-            ui.m_distributionChooserCombo->addItem("Slackware","Slackware Packages");
-            ui.m_distributionChooserCombo->addItem("SuSE/OpenSUSE","SuSE RPMs");
-            ui.m_distributionChooserCombo->addItem("RedHat","RedHat RPMs");
-            ui.m_distributionChooserCombo->addItem("Fedora","Fedora RPMs");
-            ui.m_distributionChooserCombo->addItem("Kubuntu/Ubuntu (and derivates)","Ubuntu Packages");
-            ui.m_distributionChooserCombo->addItem("Pardus","Pardus Packages");
-            ui.m_distributionChooserCombo->addItem("Archlinux","Archlinux Packages");
-            ui.m_distributionChooserCombo->addItem("FreeBSD (Ports)","FreeBSD Ports");
-            ui.m_distributionChooserCombo->addItem("NetBSD (pkgsrc)","NetBSD pkgsrc");
-            ui.m_distributionChooserCombo->addItem("OpenBSD","OpenBSD Packages");
-            ui.m_distributionChooserCombo->addItem("Mac OS X","MacPorts Packages");
-            ui.m_distributionChooserCombo->addItem("Solaris","Solaris Packages");
+            ui.m_distroChooserCombo->addItem(i18nc("KDE distribution method", "Unspecified",
+                                                   "unspecified"));
+            ui.m_distroChooserCombo->addItem(i18nc("KDE distribution method", "Debian stable",
+                                                   "Debian stable"));
+            ui.m_distroChooserCombo->addItem(i18nc("KDE distribution method", "Debian testing",
+                                                   "Debian testing"));
+            ui.m_distroChooserCombo->addItem(i18nc("KDE distribution method", "Debian unstable",
+                                                   "Debian unstable"));
+            ui.m_distroChooserCombo->addItem(i18nc("KDE distribution method", "Exherbo",
+                                                   "Exherbo Packages"));
+            ui.m_distroChooserCombo->addItem(i18nc("KDE distribution method", "Gentoo",
+                                                   "Gentoo Packages"));
+            ui.m_distroChooserCombo->addItem(i18nc("KDE distribution method", "Mandriva",
+                                                   "Mandriva RPMs"));
+            ui.m_distroChooserCombo->addItem(i18nc("KDE distribution method", "Slackware",
+                                                   "Slackware Packages"));
+            ui.m_distroChooserCombo->addItem(i18nc("KDE distribution method", "SuSE/OpenSUSE",
+                                                   "SuSE RPMs"));
+            ui.m_distroChooserCombo->addItem(i18nc("KDE distribution method", "RedHat",
+                                                   "RedHat RPMs"));
+            ui.m_distroChooserCombo->addItem(i18nc("KDE distribution method", "Fedora",
+                                                   "Fedora RPMs"));
+            ui.m_distroChooserCombo->addItem(i18nc("KDE distribution method", "Kubuntu/Ubuntu "
+                                                   "(and derivates)", "Ubuntu Packages"));
+            ui.m_distroChooserCombo->addItem(i18nc("KDE distribution method", "Pardus",
+                                                   "Pardus Packages"));
+            ui.m_distroChooserCombo->addItem(i18nc("KDE distribution method", "Archlinux",
+                                                   "Archlinux Packages"));
+            ui.m_distroChooserCombo->addItem(i18nc("KDE distribution method", "FreeBSD (Ports)",
+                                                   "FreeBSD Ports"));
+            ui.m_distroChooserCombo->addItem(i18nc("KDE distribution method", "NetBSD (pkgsrc)",
+                                                   "NetBSD pkgsrc"));
+            ui.m_distroChooserCombo->addItem(i18nc("KDE distribution method", "OpenBSD",
+                                                   "OpenBSD Packages"));
+            ui.m_distroChooserCombo->addItem(i18nc("KDE distribution method", "Mac OS X",
+                                                   "MacPorts Packages"));
+            ui.m_distroChooserCombo->addItem(i18nc("KDE distribution method", "Solaris",
+                                                   "Solaris Packages"));
             
             //Restore previously selected bugzilla platform (distribution)
             KConfigGroup config(KGlobal::config(), "BugzillaInformationPage");
             QString entry = config.readEntry("BugzillaPlatform","unspecified");
-            int index = ui.m_distributionChooserCombo->findData(entry);
+            int index = ui.m_distroChooserCombo->findData(entry);
             if ( index == -1 ) index = 0;
-            ui.m_distributionChooserCombo->setCurrentIndex(index);
+            ui.m_distroChooserCombo->setCurrentIndex(index);
         } else {
-            ui.m_distributionChooserCombo->setVisible(false);
+            ui.m_distroChooserCombo->setVisible(false);
         }
         m_distributionComboSetup = true;
     }
@@ -836,8 +856,8 @@ void BugzillaInformationPage::aboutToHide()
     KConfigGroup config(KGlobal::config(), "BugzillaInformationPage");
     if (m_distroComboVisible) {
         //Save bugzilla platform (distribution)
-        QString bugzillaPlatform = ui.m_distributionChooserCombo->itemData(
-                                        ui.m_distributionChooserCombo->currentIndex()).toString();
+        QString bugzillaPlatform = ui.m_distroChooserCombo->itemData(
+                                        ui.m_distroChooserCombo->currentIndex()).toString();
         config.writeEntry("BugzillaPlatform", bugzillaPlatform);
         reportInfo()->setBugzillaPlatform(bugzillaPlatform);
     }

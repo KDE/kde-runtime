@@ -54,7 +54,7 @@
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
-         <widget class="KComboBox" name="m_distributionChooserCombo"/>
+         <widget class="KComboBox" name="m_distroChooserCombo"/>
         </item>
         <item>
          <widget class="QCheckBox" name="m_compiledSourcesCheckBox">
