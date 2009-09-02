@@ -19,11 +19,9 @@
 #ifndef _NEPOMUK_STRIGI_SYSTRAY_H_
 #define _NEPOMUK_STRIGI_SYSTRAY_H_
 
-#include <knotificationitem.h>
+#include <KNotificationItem>
 
 class KToggleAction;
-
-using namespace Experimental;
 
 namespace Nepomuk {
 
