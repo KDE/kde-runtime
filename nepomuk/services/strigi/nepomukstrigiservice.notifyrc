@@ -1,6 +1,13 @@
 [Global]
 IconName=nepomuk
 Comment=Search service file indexer
+Comment[id]=Layanan pencarian pengindeksan berkas
+Comment[nds]=Söökdeenst-Dateiindizeren
+Comment[pt]=Indexação de ficheiros do serviço de pesquisa
+Comment[pt_BR]=Indexação de ficheiros do serviço de pesquisa
+Comment[sv]=Söktjänst filindexering
+Comment[uk]=Індексування файлів служби пошуку
+Comment[x-test]=xxSearch service file indexerxx
 
 [Event/initialIndexingStarted]
 Name=Initial Indexing started
@@ -70,6 +77,13 @@ Name[x-test]=xxInitial Indexing startedxx
 Name[zh_CN]=索引初始化开始
 Name[zh_TW]=初始化索引已開始
 Comment=Indexing of local files for fast searches has started.
+Comment[id]=Pengindeksan berkas lokal untuk pencarian desktop secara cepat telah dimulai.
+Comment[nds]=Dat Indizeren vun lokaal Dateien för gau Söken hett anfungen
+Comment[pt]=A indexação dos ficheiros para pesquisas mais rápidas começou agora.
+Comment[pt_BR]=A indexação dos ficheiros para pesquisas mais rápidas começou agora.
+Comment[sv]=Indexering av lokala filer för snabb sökning har startat.
+Comment[uk]=Розпочато індексування локальних файлів для пришвидшення пошуку.
+Comment[x-test]=xxIndexing of local files for fast searches has started.xx
 Action=Popup
 
 [Event/initialIndexingFinished]
@@ -139,6 +153,13 @@ Name[x-test]=xxInitial Indexing finishedxx
 Name[zh_CN]=索引初始化完成
 Name[zh_TW]=初始化索引已完成
 Comment=The initial indexing of local files for fast desktop searches has completed.
+Comment[id]=Pengindeksan awal berkas lokal untuk pencarian desktop secara cepat telah selesai.
+Comment[nds]=Dat eerste Indizeren vun lokaal Dateien för gau Schriefdisch-Söken is afslaten.
+Comment[pt]=A primeira indexação dos ficheiros para pesquisas mais rápidas terminou.
+Comment[pt_BR]=A primeira indexação dos ficheiros para pesquisas mais rápidas terminou.
+Comment[sv]=Den inledande indexeringen av lokala filer för snabb skrivbordssökning är klar.
+Comment[uk]=Початкове індексування локальних файлів для пришвидшення стільничного пошуку завершено.
+Comment[x-test]=xxThe initial indexing of local files for fast desktop searches has completed.xx
 Action=Popup
 
 [Event/indexingSuspended]
@@ -207,6 +228,13 @@ Name[x-test]=xxIndexing suspendedxx
 Name[zh_CN]=索引已中断
 Name[zh_TW]=索引暫停
 Comment=File indexing has been suspended by the search service.
+Comment[id]=Pengindeksan berkas telah disuspensi oleh layanan pencarian.
+Comment[nds]=De Söökdeenst hett dat Indizeren vun Dateien utsett.
+Comment[pt]=A indexação de ficheiros foi suspensa pelo serviço de pesquisa.
+Comment[pt_BR]=A indexação de ficheiros foi suspensa pelo serviço de pesquisa.
+Comment[sv]=Filindexering har tillfälligt stoppats av söktjänsten.
+Comment[uk]=Індексування файлів було призупинено службою пошуку.
+Comment[x-test]=xxFile indexing has been suspended by the search service.xx
 Action=Popup
 
 [Event/indexingResumed]
@@ -275,4 +303,11 @@ Name[x-test]=xxIndexing resumedxx
 Name[zh_CN]=索引已恢复
 Name[zh_TW]=索引回復
 Comment=File indexing has been resumed by the search service.
+Comment[id]=Pengindeksan berkas telah dilanjutkan oleh layanan pencarian.
+Comment[nds]=De Söökdeenst maakt mit dat Indizeren vun Dateien wieder.
+Comment[pt]=A indexação de ficheiros foi retomada pelo serviço de pesquisa.
+Comment[pt_BR]=A indexação de ficheiros foi retomada pelo serviço de pesquisa.
+Comment[sv]=Filindexering har återupptagits av söktjänsten.
+Comment[uk]=Індексування файлів було поновлено службою пошуку.
+Comment[x-test]=xxFile indexing has been resumed by the search service.xx
 Action=Popup
