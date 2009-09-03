@@ -28,4 +28,7 @@ executes it, passes the arguments of the &URL; and sets the
 environment variables needed by <acronym>CGI</acronym>
 programs.</para>
 
+<para>The systemsettings module kcmcgi is used to configure the search paths for CGI
+programs.</para>
+
 </article>

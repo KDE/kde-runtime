@@ -15,7 +15,7 @@ provides most of the widgets you will see in a &kde; application:
 menus, buttons, sliders, &etc;.  &Qt; is a cross-platform library that
 allows you to write code that will compile on &UNIX; systems as well as
 &Windows; and embedded devices.  You can learn more about &Qt; at <ulink
-url="http://www.trolltech.com">http://www.trolltech.com</ulink>.</para>
+url="http://www.qtsoftware.com">http://www.qtsoftware.com</ulink>.</para>
 </answer>
 </qandaentry>
 
@@ -36,7 +36,7 @@ the best.</para>
 
 <qandaentry>
 <question>
-<para>Why does &kde; not use gtk, xforms, xlib, whatever?</para>
+<para>Why does &kde; not use GTK, XForms, Xlib, whatever?</para>
 </question>
 <answer>
 <para>There are a number of toolkits available.  To provide a
@@ -53,7 +53,8 @@ reasons mentioned above.</para>
 <answer>
 <para>It is!  As of September 4, 2000, version 2.2 of the &Qt;
 libraries were licensed under the <acronym>GPL</acronym>, thereby
-fulfiling all aspects of <quote>free software</quote>.</para>
+fulfiling all aspects of <quote>free software</quote>. Since version 4.5.0
+Qt is also available under the <acronym>LGPL</acronym>.</para>
 </answer>
 </qandaentry>
 
@@ -64,12 +65,12 @@ fulfiling all aspects of <quote>free software</quote>.</para>
 <answer>
 <para>You can use the &kde; libraries to write <quote>commercial and
 closed source</quote> as well as <quote>commercial and open
-source</quote> software.  If you write open source software you can
-use the &Qt; free edition.  But if you write closed source software
+source</quote> software. If you want to write open source software you can
+use the &Qt; free edition.  But if you intend to write closed source software
 you may not use the &Qt; free edition; you need to obtain the &Qt;
-professional edition from Troll Tech. </para> <para>If you want more
+professional edition from Qt Software.</para> <para>If you want more
 information, please contact <ulink
-url="http://www.trolltech.com">Troll Tech</ulink> directly.</para>
+url="http://www.qtsoftware.com">Qt Software</ulink> directly.</para>
 </answer>
 </qandaentry>
 </qandaset>

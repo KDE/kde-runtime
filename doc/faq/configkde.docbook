@@ -91,9 +91,9 @@ off secure</userinput>.</para>
 </answer>
 </qandaentry>
 
+<!-- is this part obsolete?
 <qandaentry>
 <question>
-
 <para>I would like to click the &LMB; anywhere on the
 desktop and have the <guimenu>K</guimenu> menu displayed.</para>
 </question>
@@ -107,6 +107,7 @@ the entry labeled <guilabel>Left button</guilabel> to say
 <guilabel>Application Menu</guilabel>.</para>
 </answer>
 </qandaentry>
+-->
 
 <qandaentry>
 <question>
@@ -166,7 +167,7 @@ url="http://X-TT.dsl.gr.jp/">X-&TrueType; Server Project Home
 Page</ulink> for the font servers.</para>
 
 <para>If you have a bunch of &TrueType; fonts from &Microsoft;
-&Windows;, edit the <filename>XF86Config</filename> file to get the
+&Windows;, edit the <filename>xorg.conf</filename> file to get the
 fonts from the font folder.  Then just tell &kde; to use these new
 fonts with the font administrator utility.</para>
 
@@ -197,7 +198,7 @@ usually a folder named <filename class="directory">.kde</filename>
 folder. If you want scripts to be executed for all &kde; users, you can
 put them under <filename class="directory">$<envar>KDEDIR</envar>/env/</filename>, where $<envar>KDEDIR</envar> is the prefix &kde; was
 installed to (you can find this out using the command
-<userinput><command>kde-config</command> --prefix</userinput>).</para>
+<userinput><command>kde4-config</command> --prefix</userinput>).</para>
 <para>If you wish to start a program after &kde; has started, you may want to use the 
 <filename class="directory">Autostart</filename> folder. To add
 entries to the <filename class="directory">Autostart</filename> folder:
