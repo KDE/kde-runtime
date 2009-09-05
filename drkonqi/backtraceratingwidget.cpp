@@ -1,5 +1,5 @@
 /*******************************************************************
-* usefulnessmeter.cpp
+* backtraceratingwidget.cpp
 * Copyright 2009    Dario Andres Rodriguez <andresbajotierra@gmail.com>
 *
 * This program is free software; you can redistribute it and/or
@@ -17,14 +17,14 @@
 *
 ******************************************************************/
 
-#include "usefulnessmeter.h"
+#include "backtraceratingwidget.h"
 
 #include <QtGui/QPainter>
 #include <QtGui/QPixmap>
 
 #include <KIcon>
 
-UsefulnessMeter::UsefulnessMeter(QWidget * parent) :
+BacktraceRatingWidget::BacktraceRatingWidget(QWidget * parent) :
         QWidget(parent),
         m_state(BacktraceGenerator::NotLoaded),
         m_star1(false),
@@ -38,7 +38,7 @@ UsefulnessMeter::UsefulnessMeter(QWidget * parent) :
     m_errorPixmap = KIcon("dialog-error").pixmap(QSize(22, 22));
 }
 
-void UsefulnessMeter::setUsefulness(BacktraceParser::Usefulness usefulness)
+void BacktraceRatingWidget::setUsefulness(BacktraceParser::Usefulness usefulness)
 {
     switch (usefulness) {
     case BacktraceParser::ReallyUseful: {
@@ -71,7 +71,7 @@ void UsefulnessMeter::setUsefulness(BacktraceParser::Usefulness usefulness)
     update();
 }
 
-void UsefulnessMeter::paintEvent(QPaintEvent * event)
+void BacktraceRatingWidget::paintEvent(QPaintEvent * event)
 {
     Q_UNUSED(event);
 

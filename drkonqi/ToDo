@@ -18,6 +18,9 @@ http://blogs.msdn.com/oldnewthing/archive/2003/09/01/54734.aspx (by Maciej)
 ##Other tasks
 -------------
 
+- KCrash could send the current KCrash behaviour as a parameter to DrKonqi, so if the app behaviour is to auto-restart itself, the
+Restart button could be hidden as it wont make sense. (plasma crashes)
+
 - Check strings (native english) of the DebugInstaller class
 - Check strings (native english) of the Preview Report page
 
@@ -53,8 +56,7 @@ This is useful to determine if some external plugin is involved
 #ToDiscuss/Improve
 --------
 
-- REVIEW criteria of minimum chars/words to use in the Title and Details fields 
-(drkonqiassistantpages_bugzilla.cpp:729)
+- REVIEW criteria of minimum chars/words to use in the Title and Details fields
 
 #Later
 ---------

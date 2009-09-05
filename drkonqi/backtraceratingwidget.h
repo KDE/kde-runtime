@@ -1,5 +1,5 @@
 /*******************************************************************
-* usefulnessmeter.h
+* backtraceratingwidget.h
 * Copyright 2009    Dario Andres Rodriguez <andresbajotierra@gmail.com>
 *
 * This program is free software; you can redistribute it and/or
@@ -17,8 +17,8 @@
 *
 ******************************************************************/
 
-#ifndef USEFULNESSMETER__H
-#define USEFULNESSMETER__H
+#ifndef BACKTRACERATINGWIDGET__H
+#define BACKTRACERATINGWIDGET__H
 
 #include "backtraceparser.h"
 #include "backtracegenerator.h"
@@ -27,13 +27,13 @@
 
 class QPixmap;
 
-class UsefulnessMeter: public QWidget
+class BacktraceRatingWidget: public QWidget
 {
     Q_OBJECT
 
 public:
 
-    UsefulnessMeter(QWidget *);
+    BacktraceRatingWidget(QWidget *);
     void setUsefulness(BacktraceParser::Usefulness);
     void setState(BacktraceGenerator::State s) {
         m_state = s; update();

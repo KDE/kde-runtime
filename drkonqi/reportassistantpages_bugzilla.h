@@ -1,5 +1,5 @@
 /*******************************************************************
-* drkonqiassistantpages_bugzilla.h
+* reportassistantpages_bugzilla.h
 * Copyright 2009    Dario Andres Rodriguez <andresbajotierra@gmail.com>
 *
 * This program is free software; you can redistribute it and/or
@@ -17,10 +17,10 @@
 *
 ******************************************************************/
 
-#ifndef DRKONQIASSISTANTPAGESBUGZILLA__H
-#define DRKONQIASSISTANTPAGESBUGZILLA__H
+#ifndef REPORTASSISTANTPAGESBUGZILLA__H
+#define REPORTASSISTANTPAGESBUGZILLA__H
 
-#include "drkonqiassistantpages_base.h"
+#include "reportassistantpages_base.h"
 #include "bugzillalib.h"
 
 #include "ui_assistantpage_bugzilla_login.h"
@@ -37,12 +37,12 @@ class BugzillaReportInformationDialog;
 class KGuiItem;
 
 /** Bugs.kde.org login **/
-class BugzillaLoginPage: public DrKonqiAssistantPage
+class BugzillaLoginPage: public ReportAssistantPage
 {
     Q_OBJECT
 
 public:
-    BugzillaLoginPage(DrKonqiBugReport *);
+    BugzillaLoginPage(ReportAssistantDialog *);
     ~BugzillaLoginPage();
 
     void aboutToShow();
@@ -69,12 +69,12 @@ private:
 };
 
 /** Searching for duplicates and showing report information page**/
-class BugzillaDuplicatesPage : public DrKonqiAssistantPage
+class BugzillaDuplicatesPage : public ReportAssistantPage
 {
     Q_OBJECT
 
 public:
-    BugzillaDuplicatesPage(DrKonqiBugReport *);
+    BugzillaDuplicatesPage(ReportAssistantDialog *);
     ~BugzillaDuplicatesPage();
 
     void aboutToShow();
@@ -147,12 +147,12 @@ private:
 };
 
 /** Title and details page **/
-class BugzillaInformationPage : public DrKonqiAssistantPage
+class BugzillaInformationPage : public ReportAssistantPage
 {
     Q_OBJECT
 
 public:
-    BugzillaInformationPage(DrKonqiBugReport *);
+    BugzillaInformationPage(ReportAssistantDialog *);
 
     void aboutToShow();
     void aboutToHide();
@@ -172,12 +172,12 @@ private:
 };
 
 /** Preview report page **/
-class BugzillaPreviewPage : public DrKonqiAssistantPage
+class BugzillaPreviewPage : public ReportAssistantPage
 {
     Q_OBJECT
 
 public:
-    BugzillaPreviewPage(DrKonqiBugReport *);
+    BugzillaPreviewPage(ReportAssistantDialog *);
 
     void aboutToShow();
 
@@ -188,12 +188,12 @@ private:
 };
 
 /** Send crash report page **/
-class BugzillaSendPage : public DrKonqiAssistantPage
+class BugzillaSendPage : public ReportAssistantPage
 {
     Q_OBJECT
 
 public:
-    BugzillaSendPage(DrKonqiBugReport *);
+    BugzillaSendPage(ReportAssistantDialog *);
 
     void aboutToShow();
 

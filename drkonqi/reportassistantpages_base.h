@@ -1,5 +1,5 @@
 /*******************************************************************
-* drkonqiassistantpages_base.h
+* reportassistantpages_base.h
 * Copyright 2009    Dario Andres Rodriguez <andresbajotierra@gmail.com>
 *
 * This program is free software; you can redistribute it and/or
@@ -17,11 +17,11 @@
 *
 ******************************************************************/
 
-#ifndef DRKONQIASSISTANTPAGES__H
-#define DRKONQIASSISTANTPAGES__H
+#ifndef REPORTASSISTANTPAGES__H
+#define REPORTASSISTANTPAGES__H
 
-#include "getbacktracewidget.h"
-#include "drkonqibugreport.h"
+#include "backtracewidget.h"
+#include "reportassistantdialog.h"
 
 #include "ui_assistantpage_bugawareness.h"
 #include "ui_assistantpage_conclusions.h"
@@ -31,12 +31,12 @@
 
 /** BASE interface which implements some signals, and
 **  aboutTo(Show|Hide) functions (also reimplements QWizard behaviour) **/
-class DrKonqiAssistantPage: public QWidget
+class ReportAssistantPage: public QWidget
 {
     Q_OBJECT
 
 public:
-    DrKonqiAssistantPage(DrKonqiBugReport * parent) :
+    ReportAssistantPage(ReportAssistantDialog * parent) :
             QWidget(parent), m_assistant(parent) {}
 
     /** Load the widget data if empty **/
@@ -58,7 +58,7 @@ public:
     BugzillaManager *bugzillaManager() const {
         return m_assistant->bugzillaManager();
     }
-    DrKonqiBugReport * assistant() const {
+    ReportAssistantDialog * assistant() const {
         return m_assistant;
     }
 
@@ -69,19 +69,19 @@ public Q_SLOTS:
 
 Q_SIGNALS:
     /** Tells the KAssistantDialog that the isComplete function changed value **/
-    void completeChanged(DrKonqiAssistantPage*, bool);
+    void completeChanged(ReportAssistantPage*, bool);
 
 private:
-    DrKonqiBugReport * const m_assistant;
+    ReportAssistantDialog * const m_assistant;
 };
 
 /** Backtrace page **/
-class CrashInformationPage: public DrKonqiAssistantPage
+class CrashInformationPage: public ReportAssistantPage
 {
     Q_OBJECT
 
 public:
-    CrashInformationPage(DrKonqiBugReport *);
+    CrashInformationPage(ReportAssistantDialog *);
 
     void aboutToShow();
     void aboutToHide();
@@ -89,16 +89,16 @@ public:
     bool showNextPage();
 
 private:
-    GetBacktraceWidget *        m_backtraceWidget;
+    BacktraceWidget *        m_backtraceWidget;
 };
 
 /** Bug Awareness page **/
-class BugAwarenessPage: public DrKonqiAssistantPage
+class BugAwarenessPage: public ReportAssistantPage
 {
     Q_OBJECT
 
 public:
-    BugAwarenessPage(DrKonqiBugReport *);
+    BugAwarenessPage(ReportAssistantDialog *);
 
     void aboutToHide();
 
@@ -107,12 +107,12 @@ private:
 };
 
 /** Conclusions page **/
-class ConclusionPage : public DrKonqiAssistantPage
+class ConclusionPage : public ReportAssistantPage
 {
     Q_OBJECT
 
 public:
-    ConclusionPage(DrKonqiBugReport *);
+    ConclusionPage(ReportAssistantDialog *);
     
     void aboutToShow();
     void aboutToHide();

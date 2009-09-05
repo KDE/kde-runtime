@@ -18,9 +18,10 @@
 ******************************************************************/
 
 #include "drkonqidialog.h"
+
 #include "drkonqi.h"
-#include "getbacktracewidget.h"
-#include "drkonqibugreport.h"
+#include "backtracewidget.h"
+#include "reportassistantdialog.h"
 #include "aboutbugreportingdialog.h"
 #include "krashconf.h"
 #include "drkonqi_globals.h"
@@ -61,7 +62,7 @@ DrKonqiDialog::DrKonqiDialog(QWidget * parent) :
     buildMainWidget();
     m_tabWidget->addTab(m_introWidget, i18nc("@title:tab general information", "&General"));
 
-    m_backtraceWidget = new GetBacktraceWidget(DrKonqi::instance()->backtraceGenerator(), this);
+    m_backtraceWidget = new BacktraceWidget(DrKonqi::instance()->backtraceGenerator(), this);
     m_backtraceWidget->setMinimumSize(QSize(575, 240));
     m_tabWidget->addTab(m_backtraceWidget, i18nc("@title:tab", "&Developer Information"));
 
@@ -219,7 +220,7 @@ void DrKonqiDialog::enableDebugMenu(bool debuggerRunning)
 
 void DrKonqiDialog::reportBugAssistant()
 {
-    DrKonqiBugReport * m_bugReportAssistant = new DrKonqiBugReport();
+    ReportAssistantDialog * m_bugReportAssistant = new ReportAssistantDialog();
     close();
     m_bugReportAssistant->show();
 }

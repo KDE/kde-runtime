@@ -9,34 +9,39 @@ add_subdirectory( debuggers )
 add_subdirectory( tests ) 
 
 set(drkonqi_SRCS 
-   main.cpp 
-   krashconf.cpp 
-   drkonqiadaptor.cpp
-   bugzillalib.cpp
-   drkonqidialog.cpp
-   statuswidget.cpp
-   reportinfo.cpp
-   aboutbugreportingdialog.cpp
-   drkonqiassistantpages_base.cpp
-   drkonqiassistantpages_bugzilla.cpp
-   drkonqibugreport.cpp
-   usefulnessmeter.cpp
-   getbacktracewidget.cpp
-   backtracegenerator.cpp 
-   backtraceparser.cpp
-   drkonqi.cpp
-   detachedprocessmonitor.cpp
-   productmapping.cpp
-   debugpackageinstaller.cpp
+    main.cpp 
+    krashconf.cpp 
+    drkonqiadaptor.cpp
+    bugzillalib.cpp
+    drkonqidialog.cpp
+    statuswidget.cpp
+    reportinfo.cpp
+    aboutbugreportingdialog.cpp
+    reportassistantdialog.cpp    
+    reportassistantpages_base.cpp
+    reportassistantpages_bugzilla.cpp
+    backtraceratingwidget.cpp
+    backtracewidget.cpp
+    backtracegenerator.cpp 
+    backtraceparser.cpp
+    drkonqi.cpp
+    detachedprocessmonitor.cpp
+    productmapping.cpp
+    debugpackageinstaller.cpp
 )
 
-kde4_add_ui_files(drkonqi_SRCS ui/getbacktracewidget.ui
+kde4_add_ui_files(drkonqi_SRCS
+    ui/backtracewidget.ui
     ui/assistantpage_bugawareness.ui
-    ui/assistantpage_conclusions.ui  ui/assistantpage_conclusions_dialog.ui
+    ui/assistantpage_conclusions.ui
+    ui/assistantpage_conclusions_dialog.ui
     ui/assistantpage_bugzilla_login.ui
-    ui/assistantpage_bugzilla_duplicates.ui ui/assistantpage_bugzilla_duplicates_dialog.ui
-    ui/assistantpage_bugzilla_information.ui ui/assistantpage_bugzilla_preview.ui
-    ui/assistantpage_bugzilla_send.ui)
+    ui/assistantpage_bugzilla_duplicates.ui
+    ui/assistantpage_bugzilla_duplicates_dialog.ui
+    ui/assistantpage_bugzilla_information.ui
+    ui/assistantpage_bugzilla_preview.ui
+    ui/assistantpage_bugzilla_send.ui
+)
 
 # if BACKTRACE_PARSER_DEBUG is enabled, it will show both the
 # parsed and the unparsed backtrace in the backtrace widget.

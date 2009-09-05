@@ -1,5 +1,5 @@
 /*******************************************************************
-* drkonqibugreport.cpp
+* reportassistantdialog.cpp
 * Copyright 2009    Dario Andres Rodriguez <andresbajotierra@gmail.com>
 *
 * This program is free software; you can redistribute it and/or
@@ -17,7 +17,7 @@
 *
 ******************************************************************/
 
-#include "drkonqibugreport.h"
+#include "reportassistantdialog.h"
 
 #include "drkonqi_globals.h"
 
@@ -26,14 +26,14 @@
 
 #include "aboutbugreportingdialog.h"
 
-#include "drkonqiassistantpages_base.h"
-#include "drkonqiassistantpages_bugzilla.h"
+#include "reportassistantpages_base.h"
+#include "reportassistantpages_bugzilla.h"
 #include "reportinfo.h"
 
 #include <QtGui/QCloseEvent>
 #include <KMessageBox>
 
-DrKonqiBugReport::DrKonqiBugReport(QWidget * parent) :
+ReportAssistantDialog::ReportAssistantDialog(QWidget * parent) :
         KAssistantDialog(parent),
         m_aboutBugReportingDialog(0),
         m_reportInfo(new ReportInfo(this)),
@@ -148,31 +148,31 @@ DrKonqiBugReport::DrKonqiBugReport(QWidget * parent) :
     resize(QSize(600, 400));
 }
 
-DrKonqiBugReport::~DrKonqiBugReport()
+ReportAssistantDialog::~ReportAssistantDialog()
 {
     KGlobal::deref();
 }
 
-void DrKonqiBugReport::connectSignals(DrKonqiAssistantPage * page)
+void ReportAssistantDialog::connectSignals(ReportAssistantPage * page)
 {
-    connect(page, SIGNAL(completeChanged(DrKonqiAssistantPage*, bool)),
-             this, SLOT(completeChanged(DrKonqiAssistantPage*, bool)));
+    connect(page, SIGNAL(completeChanged(ReportAssistantPage*, bool)),
+             this, SLOT(completeChanged(ReportAssistantPage*, bool)));
 }
 
-void DrKonqiBugReport::currentPageChanged_slot(KPageWidgetItem * current , KPageWidgetItem * before)
+void ReportAssistantDialog::currentPageChanged_slot(KPageWidgetItem * current , KPageWidgetItem * before)
 {
     enableButton(KDialog::Cancel, true);
     m_canClose = false;
 
     //Save data of the previous page
     if (before) {
-        DrKonqiAssistantPage* beforePage = dynamic_cast<DrKonqiAssistantPage*>(before->widget());
+        ReportAssistantPage* beforePage = dynamic_cast<ReportAssistantPage*>(before->widget());
         beforePage->aboutToHide();
     }
 
     //Load data of the current page
     if (current) {
-        DrKonqiAssistantPage* currentPage = dynamic_cast<DrKonqiAssistantPage*>(current->widget());
+        ReportAssistantPage* currentPage = dynamic_cast<ReportAssistantPage*>(current->widget());
         enableNextButton(currentPage->isComplete());
         currentPage->aboutToShow();
     }
@@ -185,14 +185,14 @@ void DrKonqiBugReport::currentPageChanged_slot(KPageWidgetItem * current , KPage
     }
 }
 
-void DrKonqiBugReport::completeChanged(DrKonqiAssistantPage* page, bool isComplete)
+void ReportAssistantDialog::completeChanged(ReportAssistantPage* page, bool isComplete)
 {
-    if (page == dynamic_cast<DrKonqiAssistantPage*>(currentPage()->widget())) {
+    if (page == dynamic_cast<ReportAssistantPage*>(currentPage()->widget())) {
         enableNextButton(isComplete);
     }
 }
 
-void DrKonqiBugReport::assistantFinished(bool showBack)
+void ReportAssistantDialog::assistantFinished(bool showBack)
 {
     //The assistant finished: allow the user to close the dialog normally
     
@@ -204,7 +204,7 @@ void DrKonqiBugReport::assistantFinished(bool showBack)
     m_canClose = true;
 }
 
-void DrKonqiBugReport::showHelp()
+void ReportAssistantDialog::showHelp()
 {
     if (!m_aboutBugReportingDialog) {
         m_aboutBugReportingDialog = new AboutBugReportingDialog();
@@ -217,11 +217,11 @@ void DrKonqiBugReport::showHelp()
 }
 
 //Override KAssistantDialog "next" page implementation
-void DrKonqiBugReport::next()
+void ReportAssistantDialog::next()
 {
     //Allow the widget to Ask a question to the user before changing the page
     
-    DrKonqiAssistantPage * page = dynamic_cast<DrKonqiAssistantPage*>(currentPage()->widget());
+    ReportAssistantPage * page = dynamic_cast<ReportAssistantPage*>(currentPage()->widget());
     if (page) {
         if (!page->showNextPage()) {
             return;
@@ -260,7 +260,7 @@ void DrKonqiBugReport::next()
 
 //Override KAssistantDialog "back"(previous) page implementation
 //It has to mirror the custom next() implementation
-void DrKonqiBugReport::back()
+void ReportAssistantDialog::back()
  {
     if (currentPage()->name() == QLatin1String(PAGE_CONCLUSIONS_ID))
     {
@@ -283,17 +283,17 @@ void DrKonqiBugReport::back()
     KAssistantDialog::back();
 }
  
-void DrKonqiBugReport::enableNextButton(bool enabled)
+void ReportAssistantDialog::enableNextButton(bool enabled)
 {
     enableButton(KDialog::User2, enabled);
 }
 
-void DrKonqiBugReport::reject()
+void ReportAssistantDialog::reject()
 {
     close();
 }
 
-void DrKonqiBugReport::closeEvent(QCloseEvent * event)
+void ReportAssistantDialog::closeEvent(QCloseEvent * event)
 {
     if (!m_canClose) {
         if (KMessageBox::questionYesNo(this, i18nc("@info","Do you really want to close the bug "

@@ -1,5 +1,5 @@
 /*******************************************************************
-* getbacktracewidget.h
+* backtracewidget.h
 * Copyright 2009    Dario Andres Rodriguez <andresbajotierra@gmail.com>
 *
 * This program is free software; you can redistribute it and/or
@@ -17,26 +17,26 @@
 *
 ******************************************************************/
 
-#ifndef GETBACKTRACEWIDGET__H
-#define GETBACKTRACEWIDGET__H
+#ifndef BACKTRACEWIDGET__H
+#define BACKTRACEWIDGET__H
 
 #include <QtGui/QWidget>
 
 #include "debugpackageinstaller.h"
-#include "ui_getbacktracewidget.h"
+#include "ui_backtracewidget.h"
 
 class KTextBrowser;
 class QLabel;
 class KPushButton;
-class UsefulnessMeter;
+class BacktraceRatingWidget;
 class BacktraceGenerator;
 
-class GetBacktraceWidget: public QWidget
+class BacktraceWidget: public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit GetBacktraceWidget(BacktraceGenerator *generator, QWidget *parent = 0);
+    explicit BacktraceWidget(BacktraceGenerator *generator, QWidget *parent = 0);
 
 public Q_SLOTS:
     void generateBacktrace();
@@ -49,7 +49,7 @@ Q_SIGNALS:
 private:
     BacktraceGenerator * m_btGenerator;
     Ui::Form    ui;
-    UsefulnessMeter *   m_usefulnessMeter;
+    BacktraceRatingWidget *   m_backtraceRatingWidget;
 
     DebugPackageInstaller * m_debugPackageInstaller;
     

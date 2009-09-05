@@ -1,5 +1,5 @@
 /*******************************************************************
-* drkonqiassistantpages_bugzilla.cpp
+* reportassistantpages_bugzilla.cpp
 * Copyright 2009    Dario Andres Rodriguez <andresbajotierra@gmail.com>
 *
 * This program is free software; you can redistribute it and/or
@@ -17,7 +17,7 @@
 *
 ******************************************************************/
 
-#include "drkonqiassistantpages_bugzilla.h"
+#include "reportassistantpages_bugzilla.h"
 #include "reportinfo.h"
 #include "statuswidget.h"
 #include "drkonqi.h"
@@ -46,8 +46,8 @@ static const char konquerorKWalletEntryPassword[] = "Bugzilla_password";
 
 //BEGIN BugzillaLoginPage
 
-BugzillaLoginPage::BugzillaLoginPage(DrKonqiBugReport * parent) :
-        DrKonqiAssistantPage(parent),
+BugzillaLoginPage::BugzillaLoginPage(ReportAssistantDialog * parent) :
+        ReportAssistantPage(parent),
         m_wallet(0), m_walletWasOpenedBefore(false)
 {
     connect(bugzillaManager(), SIGNAL(loginFinished(bool)), this, SLOT(loginFinished(bool)));
@@ -277,8 +277,8 @@ BugzillaLoginPage::~BugzillaLoginPage()
 
 //BEGIN BugzillaDuplicatesPage
 
-BugzillaDuplicatesPage::BugzillaDuplicatesPage(DrKonqiBugReport * parent):
-        DrKonqiAssistantPage(parent),
+BugzillaDuplicatesPage::BugzillaDuplicatesPage(ReportAssistantDialog * parent):
+        ReportAssistantPage(parent),
         m_searching(false)
 {
     resetDates();
@@ -720,8 +720,8 @@ void BugzillaReportInformationDialog::bugFetchError(QString err, QObject * jobOw
 
 //BEGIN BugzillaInformationPage
 
-BugzillaInformationPage::BugzillaInformationPage(DrKonqiBugReport * parent)
-        : DrKonqiAssistantPage(parent),
+BugzillaInformationPage::BugzillaInformationPage(ReportAssistantDialog * parent)
+        : ReportAssistantPage(parent),
         m_textsOK(false), m_distributionComboSetup(false), m_distroComboVisible(false)
 {
     ui.setupUi(this);
@@ -876,8 +876,8 @@ void BugzillaInformationPage::aboutToHide()
 
 //BEGIN BugzillaPreviewPage
 
-BugzillaPreviewPage::BugzillaPreviewPage(DrKonqiBugReport * parent)
-        : DrKonqiAssistantPage(parent)
+BugzillaPreviewPage::BugzillaPreviewPage(ReportAssistantDialog * parent)
+        : ReportAssistantPage(parent)
 {
     ui.setupUi(this);
 }
@@ -898,8 +898,8 @@ bool BugzillaPreviewPage::showNextPage()
 
 //BEGIN BugzillaSendPage
 
-BugzillaSendPage::BugzillaSendPage(DrKonqiBugReport * parent)
-        : DrKonqiAssistantPage(parent),
+BugzillaSendPage::BugzillaSendPage(ReportAssistantDialog * parent)
+        : ReportAssistantPage(parent),
         m_contentsDialog(0)
 {
     connect(bugzillaManager(), SIGNAL(reportSent(int)), this, SLOT(sent(int)));

@@ -1,5 +1,5 @@
 /*******************************************************************
-* drkonqibugreport.h
+* reportassistantdialog.h
 * Copyright 2009    Dario Andres Rodriguez <andresbajotierra@gmail.com>
 *
 * This program is free software; you can redistribute it and/or
@@ -17,25 +17,25 @@
 *
 ******************************************************************/
 
-#ifndef DRKONQIBUGREPORT__H
-#define DRKONQIBUGREPORT__H
+#ifndef REPORTASSISTANTDIALOG__H
+#define REPORTASSISTANTDIALOG__H
 
 #include <QtCore/QPointer>
 #include <KAssistantDialog>
 
-class DrKonqiAssistantPage;
+class ReportAssistantPage;
 class AboutBugReportingDialog;
 class ReportInfo;
 class QCloseEvent;
 class BugzillaManager;
 
-class DrKonqiBugReport: public KAssistantDialog
+class ReportAssistantDialog: public KAssistantDialog
 {
     Q_OBJECT
 
 public:
-    explicit DrKonqiBugReport(QWidget * parent = 0);
-    ~DrKonqiBugReport();
+    explicit ReportAssistantDialog(QWidget * parent = 0);
+    ~ReportAssistantDialog();
 
     ReportInfo *reportInfo() const {
         return m_reportInfo;
@@ -48,7 +48,7 @@ public:
 private Q_SLOTS:
     void currentPageChanged_slot(KPageWidgetItem *, KPageWidgetItem *);
 
-    void completeChanged(DrKonqiAssistantPage*, bool);
+    void completeChanged(ReportAssistantPage*, bool);
     void assistantFinished(bool);
 
     void enableNextButton(bool);
@@ -62,7 +62,7 @@ private Q_SLOTS:
     void reject();
     
 private:
-    void connectSignals(DrKonqiAssistantPage *);
+    void connectSignals(ReportAssistantPage *);
     void closeEvent(QCloseEvent*);
 
     QHash<QLatin1String, KPageWidgetItem*>       m_pageWidgetMap;

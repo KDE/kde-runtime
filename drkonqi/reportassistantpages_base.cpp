@@ -1,5 +1,5 @@
 /*******************************************************************
-* drkonqiassistantpages_base.cpp
+* reportassistantpages_base.cpp
 * Copyright 2009    Dario Andres Rodriguez <andresbajotierra@gmail.com>
 * Copyright 2009    A. L. Spehr <spehr@kde.org>
 *
@@ -18,7 +18,8 @@
 *
 ******************************************************************/
 
-#include "drkonqiassistantpages_base.h"
+#include "reportassistantpages_base.h"
+
 #include "drkonqi.h"
 #include "krashconf.h"
 #include "reportinfo.h"
@@ -35,10 +36,10 @@
 
 //BEGIN CrashInformationPage
 
-CrashInformationPage::CrashInformationPage(DrKonqiBugReport * parent)
-        : DrKonqiAssistantPage(parent)
+CrashInformationPage::CrashInformationPage(ReportAssistantDialog * parent)
+        : ReportAssistantPage(parent)
 {
-    m_backtraceWidget = new GetBacktraceWidget(DrKonqi::instance()->backtraceGenerator());
+    m_backtraceWidget = new BacktraceWidget(DrKonqi::instance()->backtraceGenerator());
     connect(m_backtraceWidget, SIGNAL(stateChanged()) , this, SLOT(emitCompleteChanged()));
 
     QVBoxLayout *layout = new QVBoxLayout(this);
@@ -99,8 +100,8 @@ bool CrashInformationPage::showNextPage()
 
 //BEGIN BugAwarenessPage
 
-BugAwarenessPage::BugAwarenessPage(DrKonqiBugReport * parent)
-        : DrKonqiAssistantPage(parent)
+BugAwarenessPage::BugAwarenessPage(ReportAssistantDialog * parent)
+        : ReportAssistantPage(parent)
 {
     ui.setupUi(this);
     
@@ -127,8 +128,8 @@ void BugAwarenessPage::aboutToHide()
 
 //BEGIN ConclusionPage
 
-ConclusionPage::ConclusionPage(DrKonqiBugReport * parent)
-        : DrKonqiAssistantPage(parent),
+ConclusionPage::ConclusionPage(ReportAssistantDialog * parent)
+        : ReportAssistantPage(parent),
         needToReport(false)
 {
     isBKO = DrKonqi::instance()->krashConfig()->isKDEBugzilla();

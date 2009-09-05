@@ -23,9 +23,9 @@
 #include <QtCore/QPointer>
 #include <KDialog>
 
-class GetBacktraceWidget;
+class BacktraceWidget;
 class AboutBugReportingDialog;
-class DrKonqiBugReport;
+class ReportAssistantDialog;
 class KrashConfig;
 class KTabWidget;
 
@@ -60,7 +60,7 @@ private:
     QPointer<AboutBugReportingDialog> m_aboutBugReportingDialog;
 
     QWidget *                       m_introWidget;
-    GetBacktraceWidget *            m_backtraceWidget;
+    BacktraceWidget *               m_backtraceWidget;
 
     QAction *                       m_defaultDebugAction;
     QAction *                       m_customDebugAction;

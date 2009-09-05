@@ -1,5 +1,5 @@
 /*******************************************************************
-* getbacktracewidget.cpp
+* backtracewidget.cpp
 * Copyright 2009    Dario Andres Rodriguez <andresbajotierra@gmail.com>
 *
 * This program is free software; you can redistribute it and/or
@@ -17,8 +17,9 @@
 *
 ******************************************************************/
 
-#include "getbacktracewidget.h"
-#include "usefulnessmeter.h"
+#include "backtracewidget.h"
+#include "backtraceratingwidget.h"
+
 #include "drkonqi.h"
 #include "backtracegenerator.h"
 #include "backtraceparser.h"
@@ -35,7 +36,7 @@
 
 const char *extraDetailsLabelMargin = " margin: 5px; ";
 
-GetBacktraceWidget::GetBacktraceWidget(BacktraceGenerator *generator, QWidget *parent) :
+BacktraceWidget::BacktraceWidget(BacktraceGenerator *generator, QWidget *parent) :
         QWidget(parent),
         m_btGenerator(generator)
 {
@@ -86,23 +87,21 @@ GetBacktraceWidget::GetBacktraceWidget(BacktraceGenerator *generator, QWidget *p
     connect(ui.m_saveButton, SIGNAL(clicked()) , this, SLOT(saveClicked()));
     ui.m_saveButton->setEnabled(false);
 
-    //StatusWidget
-
-    m_usefulnessMeter = new UsefulnessMeter(ui.m_statusWidget);
-    ui.m_statusWidget->addCustomStatusWidget(m_usefulnessMeter);
+    m_backtraceRatingWidget = new BacktraceRatingWidget(ui.m_statusWidget);
+    ui.m_statusWidget->addCustomStatusWidget(m_backtraceRatingWidget);
 
     ui.m_statusWidget->setIdle(QString());
 }
 
-void GetBacktraceWidget::setAsLoading()
+void BacktraceWidget::setAsLoading()
 {
     ui.m_backtraceEdit->setText(i18nc("@info:status", "Loading..."));
     ui.m_backtraceEdit->setEnabled(false);
 
     ui.m_statusWidget->setBusy(i18nc("@info:status",
                                      "Loading crash information... (this may take some time)"));
-    m_usefulnessMeter->setUsefulness(BacktraceParser::Useless);
-    m_usefulnessMeter->setState(BacktraceGenerator::Loading);
+    m_backtraceRatingWidget->setUsefulness(BacktraceParser::Useless);
+    m_backtraceRatingWidget->setState(BacktraceGenerator::Loading);
 
     ui.m_extraDetailsLabel->setVisible(false);
     ui.m_extraDetailsLabel->clear();
@@ -115,7 +114,7 @@ void GetBacktraceWidget::setAsLoading()
 }
 
 //Force backtrace generation
-void GetBacktraceWidget::regenerateBacktrace()
+void BacktraceWidget::regenerateBacktrace()
 {
     setAsLoading();
 
@@ -128,7 +127,7 @@ void GetBacktraceWidget::regenerateBacktrace()
     emit stateChanged();
 }
 
-void GetBacktraceWidget::generateBacktrace()
+void BacktraceWidget::generateBacktrace()
 {
     if (m_btGenerator->state() == BacktraceGenerator::NotLoaded) {
         regenerateBacktrace();    //First backtrace generation
@@ -142,13 +141,13 @@ void GetBacktraceWidget::generateBacktrace()
     }
 }
 
-void GetBacktraceWidget::anotherDebuggerRunning()
+void BacktraceWidget::anotherDebuggerRunning()
 {
     ui.m_backtraceEdit->setEnabled(false);
     ui.m_backtraceEdit->setText(i18nc("@info", "Another debugger is currently debugging the "
                                    "same application. The crash information could not be fetched."));
-    m_usefulnessMeter->setState(BacktraceGenerator::Failed);
-    m_usefulnessMeter->setUsefulness(BacktraceParser::Useless);
+    m_backtraceRatingWidget->setState(BacktraceGenerator::Failed);
+    m_backtraceRatingWidget->setUsefulness(BacktraceParser::Useless);
     ui.m_statusWidget->setIdle(i18nc("@info:status", "The crash information could not be fetched."));
     ui.m_extraDetailsLabel->setVisible(true);
     ui.m_extraDetailsLabel->setText(i18nc("@info/rich", "Another debugging process is attached to "
@@ -159,16 +158,16 @@ void GetBacktraceWidget::anotherDebuggerRunning()
     ui.m_reloadBacktraceButton->setEnabled(true);
 }
 
-void GetBacktraceWidget::loadData()
+void BacktraceWidget::loadData()
 {
-    m_usefulnessMeter->setState(m_btGenerator->state());
+    m_backtraceRatingWidget->setState(m_btGenerator->state());
 
     if (m_btGenerator->state() == BacktraceGenerator::Loaded) {
         ui.m_backtraceEdit->setEnabled(true);
         ui.m_backtraceEdit->setPlainText(m_btGenerator->backtrace());
 
         BacktraceParser * btParser = m_btGenerator->parser();
-        m_usefulnessMeter->setUsefulness(btParser->backtraceUsefulness());
+        m_backtraceRatingWidget->setUsefulness(btParser->backtraceUsefulness());
 
         QString usefulnessText;
         switch (btParser->backtraceUsefulness()) {
@@ -211,7 +210,7 @@ void GetBacktraceWidget::loadData()
         ui.m_copyButton->setEnabled(true);
         ui.m_saveButton->setEnabled(true);
     } else if (m_btGenerator->state() == BacktraceGenerator::Failed) {
-        m_usefulnessMeter->setUsefulness(BacktraceParser::Useless);
+        m_backtraceRatingWidget->setUsefulness(BacktraceParser::Useless);
 
         ui.m_statusWidget->setIdle(i18nc("@info:status", "The debugger has quit unexpectedly."));
 
@@ -223,7 +222,7 @@ void GetBacktraceWidget::loadData()
                                             "backtrace by clicking the <interface>Reload Crash "
                                             "Information</interface> button."));
     } else if (m_btGenerator->state() == BacktraceGenerator::FailedToStart) {
-        m_usefulnessMeter->setUsefulness(BacktraceParser::Useless);
+        m_backtraceRatingWidget->setUsefulness(BacktraceParser::Useless);
 
         ui.m_statusWidget->setIdle(i18nc("@info:status", "The debugger application is missing or "
                                                          "could not be launched."));
@@ -241,23 +240,23 @@ void GetBacktraceWidget::loadData()
     emit stateChanged();
 }
 
-void GetBacktraceWidget::backtraceNewLine(const QString & line)
+void BacktraceWidget::backtraceNewLine(const QString & line)
 {
     ui.m_backtraceEdit->append(line.trimmed());
 }
 
-void GetBacktraceWidget::copyClicked()
+void BacktraceWidget::copyClicked()
 {
     ui.m_backtraceEdit->selectAll();
     ui.m_backtraceEdit->copy();
 }
 
-void GetBacktraceWidget::saveClicked()
+void BacktraceWidget::saveClicked()
 {
     DrKonqi::saveReport(m_btGenerator->backtrace(), this);
 }
 
-void GetBacktraceWidget::hilightExtraDetailsLabel(bool hilight)
+void BacktraceWidget::hilightExtraDetailsLabel(bool hilight)
 {
     QString stylesheet;
     if (hilight) {
@@ -271,25 +270,25 @@ void GetBacktraceWidget::hilightExtraDetailsLabel(bool hilight)
     ui.m_extraDetailsLabel->setStyleSheet(stylesheet);
 }
 
-void GetBacktraceWidget::focusImproveBacktraceButton()
+void BacktraceWidget::focusImproveBacktraceButton()
 {
     ui.m_installDebugButton->setFocus();
 }
 
-void GetBacktraceWidget::installDebugPackages()
+void BacktraceWidget::installDebugPackages()
 {
     ui.m_installDebugButton->setVisible(false);
     m_debugPackageInstaller->installDebugPackages();
 }
 
-void GetBacktraceWidget::debugPackageError(const QString & errorMessage)
+void BacktraceWidget::debugPackageError(const QString & errorMessage)
 {
     ui.m_installDebugButton->setVisible(true);
     KMessageBox::error(this, errorMessage, i18nc("@title:window", "Error during the installation of"
                                                                                 " debug symbols"));
 }
 
-void GetBacktraceWidget::debugPackageCanceled()
+void BacktraceWidget::debugPackageCanceled()
 {
     ui.m_installDebugButton->setVisible(true);    
 }
