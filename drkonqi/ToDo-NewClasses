@@ -10,6 +10,9 @@ NewClassesWork
 * Backtrace
 * Backtrace functions
 * other KrashConf members
+* other process information (memory map)
+* Custom usefulness value required in bugzilla (from mappings-like file) ?
+* Custom details to add to the bug report (from mappings-like file) ?
 
 + SystemInformation:
 -----------------------------------------------
@@ -35,4 +38,7 @@ NewClassesWork
 
 -- Classes to modify:
 
-* DrKonqi singleton
+* DrKonqi singleton:
+-----------------------------------------------
+Nuke this class or adapt it ?
+- Use it as a central point to access all the other "*Information" classes ?
