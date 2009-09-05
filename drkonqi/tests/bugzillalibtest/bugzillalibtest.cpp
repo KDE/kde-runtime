@@ -1,5 +1,5 @@
 /*******************************************************************
-* bzlibtest.cpp
+* bugzillalibtest.cpp
 * Copyright  2009    Dario Andres Rodriguez <andresbajotierra@gmail.com>
 *
 * This program is free software; you can redistribute it and/or
@@ -28,8 +28,8 @@
 
 #include <QtCore/QString>
 
-#include "bugzillalib.h"
-#include "debugpackageinstaller.h"
+#include "../../bugzillalib.h"
+#include "../../debugpackageinstaller.h"
 
 class BugzillaLibTest : public QObject
 {
@@ -145,14 +145,7 @@ int main (int argc, char ** argv)
     
     new BugzillaLibTest(KCmdLineArgs::parsedArgs()->getOption("user"), 
                                                     KCmdLineArgs::parsedArgs()->getOption("pass") );
-    
-    /*
-    DebugPackageInstaller * i = new DebugPackageInstaller("kontact");
-    i->installDebugPackages();
-    */
-    
     return app.exec();
-    //return 0;
 }
 
 #include "bzlibtest.moc"
