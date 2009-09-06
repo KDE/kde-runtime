@@ -1,6 +1,7 @@
 /*******************************************************************
 * systeminformation.cpp
 * Copyright 2009    Dario Andres Rodriguez <andresbajotierra@gmail.com>
+* Copyright 2009    George Kiagiadakis <gkiagia@users.sourceforge.net>
 *
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License as
