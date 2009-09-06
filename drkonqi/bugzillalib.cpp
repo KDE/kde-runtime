@@ -82,7 +82,7 @@ void BugzillaManager::setLoginData(const QString & _username, const QString & _p
     m_logged = false;
 }
 
-void BugzillaManager::tryLogin()
+void BugzillaManager::tryLogin(bool forceManualCookie)
 {
     if (!m_logged) {
         QByteArray postData =
@@ -97,7 +97,9 @@ void BugzillaManager::tryLogin()
                                 KIO::HideProgressInfo);
         connect(loginJob, SIGNAL(finished(KJob*)) , this, SLOT(loginDone(KJob*)));
 
-        if (m_fallbackManualCookie) {
+        if (!isCookieDaemonActive() || forceManualCookie) {
+            kDebug() << "Cookie daemon problem, fallback to manual";
+            m_fallbackManualCookie = true;
             loginJob->addMetaData("cookies", "manual"); //Use manual-set cookies
         }
         loginJob->addMetaData("content-type", "Content-Type: application/x-www-form-urlencoded");
@@ -117,17 +119,16 @@ void BugzillaManager::loginDone(KJob* job)
             if (response.contains(QByteArray("Managing Your Account"))
                 && response.contains(QByteArray("Log out"))) {
                 
-                //Check for cookies
-                if (!m_fallbackManualCookie) {
-                    if (!isLoginCookieSet()) {
-                        kDebug() << "Cookies daemon disabled (or cookie not saved), "
-                                                                        "falling-back to manual";
-                        m_fallbackManualCookie = true;
-                        tryLogin();
+               if (m_fallbackManualCookie) {
+                    processLoginCookie(loginJob);
+                } else {
+                    //If the cookie daemon is active + cookie not set; 
+                    //or if the cookie daemon died already, force manual cookies
+                    if ((isCookieDaemonActive() && !isLoginCookieSet()) || 
+                            !isCookieDaemonActive()) {
+                        tryLogin(true);
                         return;
                     }
-                } else {
-                    processLoginCookie(loginJob);
                 }
                 
                 m_logged = true;
@@ -359,19 +360,28 @@ QString BugzillaManager::urlForBug(int bug_number)
 
 bool BugzillaManager::isLoginCookieSet()
 {
-    //Check if the bugzilla cookie is set (and if the cookie daemon is running)
+    //Check if the bugzilla cookie is set properly
     QDBusInterface kded("org.kde.kded", "/modules/kcookiejar", "org.kde.KCookieServer");
     QDBusReply<QString> reply = kded.call("listCookies", 
                                     KUrl(QString(m_bugTrackerUrl) + QString(loginUrl)).url());
-    bool bkoCookie = false;
     if (reply.isValid()) {
-        bkoCookie = reply.value().contains(QLatin1String("Bugzilla_logincookie"));
+        return reply.value().contains(QLatin1String("Bugzilla_logincookie"));
     }
-    
-    if (bkoCookie) { //Check if we should use the global cookies (settings can be weird)
-        KConfig cfg ("kcookiejarrc");
-        KConfigGroup group = cfg.group ("Cookie Policy");
-        return group.readEntry("Cookies", false);
+    return false;
+}
+
+bool BugzillaManager::isCookieDaemonActive()
+{
+    //Check if global cookies are activated
+    KConfig cfg ("kcookiejarrc");
+    KConfigGroup group = cfg.group ("Cookie Policy");
+    if (group.readEntry("Cookies", false)) {
+        //Check if cookies server is running
+        QDBusInterface kdedInterface("org.kde.kded", "/kded", "org.kde.kded");
+        QDBusReply<QStringList> reply = kdedInterface.call("loadedModules");
+        if (reply.isValid()) {
+            return reply.value().contains(QLatin1String("kcookiejar"));
+        }
     }
     return false;
 }
