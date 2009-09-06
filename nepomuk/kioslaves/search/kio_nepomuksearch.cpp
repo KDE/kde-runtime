@@ -120,6 +120,13 @@ void Nepomuk::SearchProtocol::addDefaultSearch( const QString& name, const Searc
 Nepomuk::SearchFolder* Nepomuk::SearchProtocol::extractSearchFolder( const KUrl& url )
 {
     QString name = url.path().section( '/', 0, 0, QString::SectionSkipEmpty );
+
+    if ( name.isEmpty() ) {
+        // Nepomuk::Searchfolder::SearchFolder will assert anyway
+        Q_ASSERT( !name.isEmpty() );
+        return 0;
+    }
+
     kDebug() << url << name;
     if ( SearchFolder* sf = getDefaultQueryFolder( name ) ) {
         kDebug() << "-----> is default search folder";
