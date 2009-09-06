@@ -120,7 +120,8 @@ void BugzillaManager::loginDone(KJob* job)
                 //Check for cookies
                 if (!m_fallbackManualCookie) {
                     if (!isLoginCookieSet()) {
-                        kDebug() << "Cookies daemon disabled (or cookie not saved), falling-back to manual";
+                        kDebug() << "Cookies daemon disabled (or cookie not saved), "
+                                                                        "falling-back to manual";
                         m_fallbackManualCookie = true;
                         tryLogin();
                         return;
