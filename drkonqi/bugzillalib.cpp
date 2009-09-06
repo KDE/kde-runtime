@@ -29,9 +29,15 @@
 #include <QtXml/QDomElement>
 #include <QtXml/QDomNamedNodeMap>
 
+#include <QDBusInterface>
+#include <QDBusReply>
+
 #include <KIO/Job>
 #include <KUrl>
+#include <KConfig>
+#include <KConfigGroup>
 #include <KLocale>
+#include <KDebug>
 
 static const char bugtrackerBKOBaseUrl[] = "https://bugs.kde.org/";
 
@@ -58,7 +64,8 @@ static const char sendReportUrl[] = "post_bug.cgi";
 BugzillaManager::BugzillaManager(QObject *parent):
         QObject(parent),
         m_logged(false),
-        m_searchJob(0)
+        m_searchJob(0),
+        m_fallbackManualCookie(false)
 {
     m_bugTrackerUrl = bugtrackerBKOBaseUrl;
 }
@@ -85,11 +92,14 @@ void BugzillaManager::tryLogin()
             QUrl::toPercentEncoding(m_password) +
             QByteArray("&log_in=Log+in");
 
-        KIO::StoredTransferJob * loginJob =
+        KIO::Job * loginJob =
             KIO::storedHttpPost(postData, KUrl(QString(m_bugTrackerUrl) + QString(loginUrl)),
                                 KIO::HideProgressInfo);
         connect(loginJob, SIGNAL(finished(KJob*)) , this, SLOT(loginDone(KJob*)));
 
+        if (m_fallbackManualCookie) {
+            loginJob->addMetaData("cookies", "manual"); //Use manual-set cookies
+        }
         loginJob->addMetaData("content-type", "Content-Type: application/x-www-form-urlencoded");
     }
 }
@@ -106,6 +116,19 @@ void BugzillaManager::loginDone(KJob* job)
         } else {
             if (response.contains(QByteArray("Managing Your Account"))
                 && response.contains(QByteArray("Log out"))) {
+                
+                //Check for cookies
+                if (!m_fallbackManualCookie) {
+                    if (!isLoginCookieSet()) {
+                        kDebug() << "Cookies daemon disabled (or cookie not saved), falling-back to manual";
+                        m_fallbackManualCookie = true;
+                        tryLogin();
+                        return;
+                    }
+                } else {
+                    processLoginCookie(loginJob);
+                }
+                
                 m_logged = true;
             } else {
                 m_logged = false;
@@ -123,15 +146,38 @@ void BugzillaManager::loginDone(KJob* job)
     }
 }
 
+void BugzillaManager::processLoginCookie(KIO::Job * job)
+{
+    const QStringList cookieList = (job->queryMetaData("setcookies")).split('\n');
+    QString cookieString;
+    if(!cookieList.isEmpty()) {
+        cookieString = "Cookie: ";
+        foreach(const QString &str, cookieList) {
+            if(str.contains("Set-Cookie: ")) {
+                const QStringList cl = str.split(' ');
+                if (cl.size() >= 2) {
+                    cookieString += cl.at(1);
+                }
+            }
+        }
+    }
+    m_cookieString = cookieString;
+}
+
 void BugzillaManager::fetchBugReport(int bugnumber, QObject * jobOwner)
 {
     KUrl url = KUrl(QString(m_bugTrackerUrl) + QString(fetchBugUrl).arg(bugnumber));
 
     if (!jobOwner) jobOwner = this;
     
-    KJob * fetchBugJob = KIO::storedGet(url, KIO::Reload, KIO::HideProgressInfo);
+    KIO::Job * fetchBugJob = KIO::storedGet(url, KIO::Reload, KIO::HideProgressInfo);
     fetchBugJob->setParent(jobOwner);
     connect(fetchBugJob, SIGNAL(finished(KJob*)) , this, SLOT(fetchBugReportDone(KJob*)));
+    
+    if (m_fallbackManualCookie && !m_cookieString.isEmpty()) {
+        fetchBugJob->addMetaData("cookies", "manual");
+        fetchBugJob->addMetaData("setcookies", m_cookieString);
+    }
 }
 
 void BugzillaManager::fetchBugReportDone(KJob* job)
@@ -179,6 +225,11 @@ void BugzillaManager::searchBugs(QString words, const QStringList & products,
     
     m_searchJob = KIO::storedGet(KUrl(url) , KIO::Reload, KIO::HideProgressInfo);
     connect(m_searchJob, SIGNAL(finished(KJob*)) , this, SLOT(searchBugsDone(KJob*)));
+    
+    if (m_fallbackManualCookie && !m_cookieString.isEmpty()) {
+        m_searchJob->addMetaData("cookies", "manual");
+        m_searchJob->addMetaData("setcookies", m_cookieString);
+    }
 }
 
 void BugzillaManager::stopCurrentSearch()
@@ -218,13 +269,16 @@ void BugzillaManager::sendReport(BugReport report)
 
     QString url = QString(m_bugTrackerUrl) + QString(sendReportUrl);
 
-    KIO::StoredTransferJob * sendJob =
+    KIO::Job * sendJob =
         KIO::storedHttpPost(postData, KUrl(url), KIO::HideProgressInfo);
 
     connect(sendJob, SIGNAL(finished(KJob*)) , this, SLOT(sendReportDone(KJob*)));
 
-    sendJob->addMetaData("content-type", "Content-Type: application/x-www-form-urlencoded");
-    sendJob->start();
+    if (m_fallbackManualCookie && !m_cookieString.isEmpty()) {
+        sendJob->addMetaData("cookies", "manual");
+        sendJob->addMetaData("setcookies", m_cookieString);
+    }
+    sendJob->addMetaData("content-type", "Content-Type: application/x-www-form-urlencoded");    
 }
 
 QByteArray BugzillaManager::generatePostDataForReport(BugReport report) const
@@ -300,6 +354,25 @@ void BugzillaManager::sendReportDone(KJob * job)
 QString BugzillaManager::urlForBug(int bug_number)
 {
     return QString(m_bugTrackerUrl) + QString(showBugUrl).arg(bug_number);
+}
+
+bool BugzillaManager::isLoginCookieSet()
+{
+    //Check if the bugzilla cookie is set (and if the cookie daemon is running)
+    QDBusInterface kded("org.kde.kded", "/modules/kcookiejar", "org.kde.KCookieServer");
+    QDBusReply<QString> reply = kded.call("listCookies", 
+                                    KUrl(QString(m_bugTrackerUrl) + QString(loginUrl)).url());
+    bool bkoCookie = false;
+    if (reply.isValid()) {
+        bkoCookie = reply.value().contains(QLatin1String("Bugzilla_logincookie"));
+    }
+    
+    if (bkoCookie) { //Check if we should use the global cookies (settings can be weird)
+        KConfig cfg ("kcookiejarrc");
+        KConfigGroup group = cfg.group ("Cookie Policy");
+        return group.readEntry("Cookies", false);
+    }
+    return false;
 }
 
 BugListCSVParser::BugListCSVParser(QByteArray data)

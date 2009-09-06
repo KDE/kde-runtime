@@ -26,6 +26,7 @@
 
 #include <QtXml/QDomDocument>
 
+namespace KIO { class Job; }
 class KJob;
 class QString;
 class QByteArray;
@@ -238,14 +239,19 @@ Q_SIGNALS:
 
 private:
     QByteArray generatePostDataForReport(BugReport) const;
+    void processLoginCookie(KIO::Job *);
+    bool isLoginCookieSet();
 
     QString     m_username;
     QString     m_password;
     bool        m_logged;
 
-    KJob *  m_searchJob;
+    KIO::Job *  m_searchJob;
 
     QString     m_bugTrackerUrl;
+    
+    QString     m_cookieString;
+    bool        m_fallbackManualCookie;
 };
 
 #endif
