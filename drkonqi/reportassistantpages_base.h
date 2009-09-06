@@ -17,63 +17,19 @@
 *
 ******************************************************************/
 
-#ifndef REPORTASSISTANTPAGES__H
-#define REPORTASSISTANTPAGES__H
+#ifndef REPORTASSISTANTPAGES__BASE__H
+#define REPORTASSISTANTPAGES__BASE__H
+
+#include "reportassistantdialog.h"
+#include "reportassistantpage.h"
 
 #include "backtracewidget.h"
-#include "reportassistantdialog.h"
 
 #include "ui_assistantpage_bugawareness.h"
 #include "ui_assistantpage_conclusions.h"
 #include "ui_assistantpage_conclusions_dialog.h"
 
 #include <QtCore/QPointer>
-
-/** BASE interface which implements some signals, and
-**  aboutTo(Show|Hide) functions (also reimplements QWizard behaviour) **/
-class ReportAssistantPage: public QWidget
-{
-    Q_OBJECT
-
-public:
-    ReportAssistantPage(ReportAssistantDialog * parent) :
-            QWidget(parent), m_assistant(parent) {}
-
-    /** Load the widget data if empty **/
-    virtual void aboutToShow() {}
-    /** Save the widget data to ReportInfo **/
-    virtual void aboutToHide() {}
-    /** Tells the KAssistantDialog to enable the Next button **/
-    virtual bool isComplete() {
-        return true;
-    }
-    /** Last time checks to see if you can turn the page **/
-    virtual bool showNextPage() {
-        return true;
-    }
-    
-    ReportInfo * reportInfo() const {
-        return m_assistant->reportInfo();
-    }
-    BugzillaManager *bugzillaManager() const {
-        return m_assistant->bugzillaManager();
-    }
-    ReportAssistantDialog * assistant() const {
-        return m_assistant;
-    }
-
-public Q_SLOTS:
-    void emitCompleteChanged() {
-        emit completeChanged(this, isComplete());
-    }
-
-Q_SIGNALS:
-    /** Tells the KAssistantDialog that the isComplete function changed value **/
-    void completeChanged(ReportAssistantPage*, bool);
-
-private:
-    ReportAssistantDialog * const m_assistant;
-};
 
 /** Backtrace page **/
 class CrashInformationPage: public ReportAssistantPage

@@ -17,8 +17,10 @@
 *
 ******************************************************************/
 
-#ifndef REPORTASSISTANTPAGESBUGZILLA__H
-#define REPORTASSISTANTPAGESBUGZILLA__H
+#ifndef REPORTASSISTANTPAGES__BUGZILLA__H
+#define REPORTASSISTANTPAGES__BUGZILLA__H
+
+#include "reportassistantpage.h"
 
 #include "reportassistantpages_base.h"
 #include "bugzillalib.h"
