@@ -24,6 +24,7 @@
 #include "krashconf.h"
 #include "bugzillalib.h"
 #include "productmapping.h"
+#include "systeminformation.h"
 
 #include "backtraceparser.h"
 #include "backtracegenerator.h"
@@ -31,12 +32,7 @@
 #include <KProcess>
 #include <KStandardDirs>
 #include <KDebug>
-#include <kdeversion.h>
 
-#include <config-drkonqi.h>
-#ifdef HAVE_UNAME
-# include <sys/utsname.h>
-#endif
 
 ReportInfo::ReportInfo(QObject *parent)
     : QObject(parent)
@@ -44,70 +40,7 @@ ReportInfo::ReportInfo(QObject *parent)
     m_userCanDetail = false;
     m_developersCanContactReporter = false;
     
-    m_compiledSources = false;
-
     m_productMapping = new ProductMapping(DrKonqi::instance()->krashConfig()->productName(), this);
-    
-    //if lsb_release needs to run, start it asynchronously because it takes much time...
-    QString lsb_release = KStandardDirs::findExe(QLatin1String("lsb_release"));
-    if ( !lsb_release.isEmpty() ) {
-        kDebug() << "found lsb_release";
-        KProcess *process = new KProcess();
-        process->setOutputChannelMode(KProcess::OnlyStdoutChannel);
-        process->setEnv("LC_ALL", "C");
-        *process << lsb_release << "-sd";
-        connect(process, SIGNAL(finished(int, QProcess::ExitStatus)), SLOT(lsbReleaseFinished()));
-        process->start();
-    } else {
-        setBugzillaPlatform(QLatin1String("unspecified"));
-    }
-}
-
-void ReportInfo::lsbReleaseFinished()
-{
-    KProcess *process = qobject_cast<KProcess*>(sender());
-    Q_ASSERT(process);
-    m_lsbRelease = QString::fromLocal8Bit(process->readAllStandardOutput().trimmed());
-    process->deleteLater();
-    
-    //Guess distro string
-    if ( m_lsbRelease.contains("suse",Qt::CaseInsensitive) ) {
-        setBugzillaPlatform(QLatin1String("SuSE RPMs"));
-    } else if ( m_lsbRelease.contains("ubuntu",Qt::CaseInsensitive) ) {
-        setBugzillaPlatform(QLatin1String("Ubuntu Packages"));
-    } else if ( m_lsbRelease.contains("ubuntu",Qt::CaseInsensitive) ) {
-        setBugzillaPlatform(QLatin1String("Ubuntu Packages"));
-    } else if ( m_lsbRelease.contains("fedora",Qt::CaseInsensitive) ) {
-        setBugzillaPlatform(QLatin1String("Fedora RPMs"));
-    } else if ( m_lsbRelease.contains("redhat",Qt::CaseInsensitive) ) {
-        setBugzillaPlatform(QLatin1String("RedHat RPMs"));
-    } else if ( m_lsbRelease.contains("mandriva",Qt::CaseInsensitive) ) {
-        setBugzillaPlatform(QLatin1String("Mandriva RPMs"));
-    } else if ( m_lsbRelease.contains("slack",Qt::CaseInsensitive) ) {
-        setBugzillaPlatform(QLatin1String("Slackware Packages"));
-    } else if ( m_lsbRelease.contains("pardus",Qt::CaseInsensitive) ) {
-        setBugzillaPlatform(QLatin1String("Pardus Packages"));
-    } else if ( m_lsbRelease.contains("freebsd",Qt::CaseInsensitive) ) {
-        setBugzillaPlatform(QLatin1String("FreeBSD Ports"));
-    } else if ( m_lsbRelease.contains("netbsd",Qt::CaseInsensitive) ) {
-        setBugzillaPlatform(QLatin1String("NetBSD pkgsrc"));
-    } else if ( m_lsbRelease.contains("openbsd",Qt::CaseInsensitive) ) {
-        setBugzillaPlatform(QLatin1String("OpenBSD Packages"));
-    } else if ( m_lsbRelease.contains("solaris",Qt::CaseInsensitive) ) {
-        setBugzillaPlatform(QLatin1String("Solaris Packages"));
-    } else if ( m_lsbRelease.contains("arch",Qt::CaseInsensitive) ) {
-        setBugzillaPlatform(QLatin1String("Archlinux Packages"));
-    } else if ( m_lsbRelease.contains("debian",Qt::CaseInsensitive) ) {
-        if ( m_lsbRelease.contains("stable",Qt::CaseInsensitive) ) {
-            setBugzillaPlatform(QLatin1String("Debian stable"));
-        } else if ( m_lsbRelease.contains("testing",Qt::CaseInsensitive) ) {
-            setBugzillaPlatform(QLatin1String("Debian testing"));
-        } else {
-            setBugzillaPlatform(QLatin1String("Debian unstable"));
-        }
-    } else {
-        setBugzillaPlatform(QLatin1String("unspecified"));
-    }
 }
 
 bool ReportInfo::userCanDetail() const
@@ -170,50 +103,33 @@ void ReportInfo::setPossibleDuplicates(const QStringList & list)
     m_possibleDuplicates = list;
 }
 
-QString ReportInfo::osString() const
-{
-    //FIXME what if we don't have uname?
-    QString result;
-#ifdef HAVE_UNAME
-    struct utsname buf;
-    if (uname(&buf) == -1) {
-        kDebug() << "call to uname failed" << perror;
-        return QString();
-    }
-    result += QString::fromLocal8Bit(buf.sysname);
-    result += ' ';
-    result += QString::fromLocal8Bit(buf.release);
-    result += ' ';
-    result += QString::fromLocal8Bit(buf.machine);
-#endif
-    return result;
-}
-
 QString ReportInfo::generateReport(bool drKonqiStamp) const
 {
     //Note: no translations must be done in this function's strings
     const KrashConfig * krashConfig = DrKonqi::instance()->krashConfig();
-
+    const SystemInformation * sysInfo = DrKonqi::instance()->systemInformation();
+    
     QString report;
 
     //Program name and versions
     report.append(QString("Application: %1 (%2)\n").arg(krashConfig->productName(),
                                                                     krashConfig->productVersion()));
-    report.append(QString("KDE Version: %1").arg(KDE::versionString()));
-    if ( m_compiledSources ) {
+    report.append(QString("KDE Version: %1").arg(sysInfo->kdeVersion()));
+    if ( sysInfo->compiledSources() ) {
         report.append(QString(" (Compiled from sources)\n"));
     } else {
         report.append(QString("\n"));
     }
-    report.append(QString("Qt Version: %1\n").arg(qVersion()));
-    report.append(QString("Operating System: %1\n").arg(osString()));
+    report.append(QString("Qt Version: %1\n").arg(sysInfo->qtVersion()));
+    report.append(QString("Operating System: %1\n").arg(sysInfo->operatingSystem()));
 
     //LSB output or manually selected distro
-    if ( !m_lsbRelease.isEmpty() ) {
-        report.append(QString("Distribution: %1\n").arg(m_lsbRelease));
-    } else if ( !m_bugzillaPlatform.isEmpty() && 
-                                m_bugzillaPlatform != QLatin1String("unspecified")) {
-        report.append(QString("Distribution (Platform): %1\n").arg(m_bugzillaPlatform));
+    if ( !sysInfo->lsbRelease().isEmpty() ) {
+        report.append(QString("Distribution: %1\n").arg(sysInfo->lsbRelease()));
+    } else if ( !sysInfo->bugzillaPlatform().isEmpty() && 
+                        sysInfo->bugzillaPlatform() != QLatin1String("unspecified")) {
+        report.append(QString("Distribution (Platform): %1\n").arg(
+                                                        sysInfo->bugzillaPlatform()));
     }
     report.append(QLatin1String("\n"));
     
@@ -257,52 +173,21 @@ QString ReportInfo::generateReport(bool drKonqiStamp) const
     return report;
 }
 
-//this function maps the operating system to an OS value that is accepted by bugs.kde.org.
-//if the values change on the server side, they need to be updated here as well.
-static inline QString bugzillaOs()
-{
-//krazy:excludeall=cpp
-#if defined(Q_OS_LINUX)
-    return QLatin1String("Linux");
-#elif defined(Q_OS_FREEBSD)
-    return QLatin1String("FreeBSD");
-#elif defined(Q_OS_NETBSD)
-    return QLatin1String("NetBSD");
-#elif defined(Q_OS_OPENBSD)
-    return QLatin1String("OpenBSD");
-#elif defined(Q_OS_AIX)
-    return QLatin1String("AIX");
-#elif defined(Q_OS_HPUX)
-    return QLatin1String("HP-UX");
-#elif defined(Q_OS_IRIX)
-    return QLatin1String("IRIX");
-#elif defined(Q_OS_OSF)
-    return QLatin1String("Tru64");
-#elif defined(Q_OS_SOLARIS)
-    return QLatin1String("Solaris");
-#elif defined(Q_OS_CYGWIN)
-    return QLatin1String("Cygwin");
-#elif defined(Q_OS_DARWIN)
-    return QLatin1String("OS X");
-#elif defined(Q_OS_WIN32)
-    return QLatin1String("MS Windows");
-#else
-    return QLatin1String("unspecified");
-#endif
-}
-
 BugReport ReportInfo::newBugReportTemplate() const
 {
     BugReport report;
+    
     const KrashConfig * krashConfig = DrKonqi::instance()->krashConfig();
+    const SystemInformation * sysInfo = DrKonqi::instance()->systemInformation();
+    
     report.setProduct(m_productMapping->bugzillaProduct());
     report.setComponent(m_productMapping->bugzillaComponent());
     report.setVersion(krashConfig->productVersion());
-    report.setOperatingSystem(bugzillaOs());
-    if (m_compiledSources) {
+    report.setOperatingSystem(sysInfo->bugzillaOperatingSystem());
+    if (sysInfo->compiledSources()) {
         report.setPlatform(QLatin1String("Compiled Sources"));
     } else {
-        report.setPlatform(m_bugzillaPlatform);
+        report.setPlatform(sysInfo->bugzillaPlatform());
     }
     report.setPriority(QLatin1String("NOR"));
     report.setBugSeverity(QLatin1String("crash"));
@@ -364,21 +249,6 @@ bool ReportInfo::isWorthReporting() const
     }
     
     return needToReport;
-}
-
-QString ReportInfo::bugzillaPlatform() const
-{
-    return m_bugzillaPlatform;
-}
-
-void ReportInfo::setBugzillaPlatform(const QString & platform)
-{
-    m_bugzillaPlatform = platform;
-}
-
-void ReportInfo::setCompiledSources(bool compiled)
-{
-    m_compiledSources = compiled;
 }
 
 #include "reportinfo.moc"

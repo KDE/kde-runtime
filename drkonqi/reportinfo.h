@@ -23,6 +23,9 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QStringList>
+
+class SystemInformation;
+
 class BugzillaManager;
 class BugReport;
 class ProductMapping;
@@ -60,18 +63,10 @@ public:
     
     bool isWorthReporting() const;
     
-    QString bugzillaPlatform() const;
-    void setBugzillaPlatform(const QString &);
-    
-    void setCompiledSources(bool);
-    
 private Q_SLOTS:
     void sendUsingDefaultProduct() const;
-    void lsbReleaseFinished();
 
 private:
-    QString osString() const;
-
     bool        m_userCanDetail;
     bool        m_developersCanContactReporter;
     
@@ -82,11 +77,6 @@ private:
     QString     m_reportDetailText;
     QStringList m_possibleDuplicates;
 
-    QString     m_bugzillaPlatform;
-    QString     m_lsbRelease;
-    
-    bool        m_compiledSources;
-    
     ProductMapping *    m_productMapping;
 };
 

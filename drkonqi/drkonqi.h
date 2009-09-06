@@ -18,8 +18,10 @@
 #define DRKONQI_H
 
 #include <QtCore/QObject>
+
 class KrashConfig;
 class BacktraceGenerator;
+class SystemInformation;
 
 class DrKonqi : public QObject
 {
@@ -35,6 +37,8 @@ public:
     const KrashConfig *krashConfig() const;
     BacktraceGenerator *backtraceGenerator() const;
 
+    SystemInformation *systemInformation() const;
+    
     bool appRestarted() const;
     static void saveReport(const QString & reportText, QWidget *parent = 0);
 

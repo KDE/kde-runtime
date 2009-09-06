@@ -6,13 +6,24 @@ NewClassesWork
 -----------------------------------------------
 * App Name
 * App path
+* App version
+* Signal / Signal name
+* PID
 * Bugzilla Product and Component (mappings) ?
+* Report address / mail / isKDEProduct functions
 * Backtrace
 * Backtrace functions
 * other KrashConf members
 * other process information (memory map)
 * Custom usefulness value required in bugzilla (from mappings-like file) ?
 * Custom details to add to the bug report (from mappings-like file) ?
+
++ DebuggerInformation:
+-----------------------------------------------
+* Debugger name
+* Debugger command
+* Batch commands
+* Show debugger or not
 
 + SystemInformation:
 -----------------------------------------------
@@ -42,3 +53,4 @@ NewClassesWork
 -----------------------------------------------
 Nuke this class or adapt it ?
 - Use it as a central point to access all the other "*Information" classes ?
+- Move KrashConf::expandString to DrKonqi ??

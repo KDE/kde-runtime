@@ -18,7 +18,10 @@
 ******************************************************************/
 
 #include "reportassistantpages_bugzilla.h"
+
 #include "reportinfo.h"
+#include "systeminformation.h"
+
 #include "statuswidget.h"
 #include "drkonqi.h"
 #include "drkonqi_globals.h"
@@ -729,9 +732,8 @@ BugzillaInformationPage::BugzillaInformationPage(ReportAssistantDialog * parent)
     connect(ui.m_titleEdit, SIGNAL(textChanged(QString)), this, SLOT(checkTexts()));
     connect(ui.m_detailsEdit, SIGNAL(textChanged()), this, SLOT(checkTexts()));
 
-    KConfigGroup config(KGlobal::config(), "BugzillaInformationPage");
-    bool compiledFrom = config.readEntry("CompiledSources", false);
-    ui.m_compiledSourcesCheckBox->setChecked(compiledFrom);
+    ui.m_compiledSourcesCheckBox->setChecked(
+                                    DrKonqi::instance()->systemInformation()->compiledSources());
     
     checkTexts();
 }
@@ -740,7 +742,8 @@ void BugzillaInformationPage::aboutToShow()
 {
     if (!m_distributionComboSetup) {
         //Autodetecting distro failed ?
-        if (reportInfo()->bugzillaPlatform() == QLatin1String("unspecified")) { 
+        if (DrKonqi::instance()->systemInformation()->bugzillaPlatform() == 
+                                                                    QLatin1String("unspecified")) { 
             m_distroComboVisible = true;
             ui.m_distroChooserCombo->addItem(i18nc("KDE distribution method", "Unspecified"),
                                                    "unspecified");
@@ -858,18 +861,18 @@ void BugzillaInformationPage::aboutToHide()
     //Save fields data
     reportInfo()->setTitle(ui.m_titleEdit->text());
     reportInfo()->setDetailText(ui.m_detailsEdit->toPlainText());
-    KConfigGroup config(KGlobal::config(), "BugzillaInformationPage");
+    
     if (m_distroComboVisible) {
         //Save bugzilla platform (distribution)
         QString bugzillaPlatform = ui.m_distroChooserCombo->itemData(
                                         ui.m_distroChooserCombo->currentIndex()).toString();
+        KConfigGroup config(KGlobal::config(), "BugzillaInformationPage");
         config.writeEntry("BugzillaPlatform", bugzillaPlatform);
-        reportInfo()->setBugzillaPlatform(bugzillaPlatform);
+        DrKonqi::instance()->systemInformation()->setBugzillaPlatform(bugzillaPlatform);
     }
     bool compiledFromSources = ui.m_compiledSourcesCheckBox->checkState() == Qt::Checked;
-    reportInfo()->setCompiledSources(compiledFromSources);
-    config.writeEntry("CompiledSources", compiledFromSources);
-    config.sync();
+    DrKonqi::instance()->systemInformation()->setCompiledSources(compiledFromSources);
+    
 }
 
 //END BugzillaInformationPage

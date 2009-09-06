@@ -40,11 +40,13 @@
     * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 #include "drkonqi.h"
+
 #include "drkonqi_globals.h"
 #include "krashconf.h"
 #include "drkonqiadaptor.h"
 #include "detachedprocessmonitor.h"
 #include "backtracegenerator.h"
+#include "systeminformation.h"
 
 #include <QtDBus/QDBusConnection>
 #include <QtCore/QTimer>
@@ -65,12 +67,13 @@
 
 struct DrKonqi::Private {
     Private() : m_state(ProcessRunning), m_krashConfig(NULL), m_btGenerator(NULL),
-    m_applicationRestarted(false) {}
+    m_systemInformation(NULL), m_applicationRestarted(false) {}
 
     DrKonqi::State         m_state;
     KrashConfig *          m_krashConfig;
     DetachedProcessMonitor m_debuggerMonitor;
     BacktraceGenerator *   m_btGenerator;
+    SystemInformation *    m_systemInformation;
     bool                   m_applicationRestarted;
 };
 
@@ -139,6 +142,9 @@ bool DrKonqi::init()
     connect(d->m_btGenerator, SIGNAL(failedToStart()), this, SLOT(debuggerStopped()));
     connect(&d->m_debuggerMonitor, SIGNAL(processFinished()), this, SLOT(debuggerStopped()));
 
+    //System information
+    d->m_systemInformation = new SystemInformation(this);
+    
     return true;
 }
 
@@ -168,6 +174,12 @@ BacktraceGenerator *DrKonqi::backtraceGenerator() const
 {
     Q_ASSERT(d->m_btGenerator != NULL);
     return d->m_btGenerator;
+}
+
+SystemInformation *DrKonqi::systemInformation() const
+{
+    Q_ASSERT(d->m_systemInformation != NULL);
+    return d->m_systemInformation; 
 }
 
 //static

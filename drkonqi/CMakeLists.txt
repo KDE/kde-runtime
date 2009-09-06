@@ -29,6 +29,7 @@ set(drkonqi_SRCS
     detachedprocessmonitor.cpp
     productmapping.cpp
     debugpackageinstaller.cpp
+    systeminformation.cpp
 )
 
 kde4_add_ui_files(drkonqi_SRCS

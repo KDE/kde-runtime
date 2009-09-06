@@ -18,6 +18,8 @@ http://blogs.msdn.com/oldnewthing/archive/2003/09/01/54734.aspx (by Maciej)
 ##Other tasks
 -------------
 
+- Cache lsbrelease output and/or bugzilla platform ??
+
 - KCrash could send the current KCrash behaviour as a parameter to DrKonqi, so if the app behaviour is to auto-restart itself, the
 Restart button could be hidden as it wont make sense. (plasma crashes)
 
