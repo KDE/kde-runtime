@@ -30,8 +30,8 @@ class DebugPackageInstaller: public QObject
 {
     Q_OBJECT
     
-    enum Results { ResultInstalled = 0, ResultNotPresent = 10, ResultNotImplemented = 20, 
-                                                                            ResultError = 30 };
+    enum Results { ResultInstalled = 0, ResultError = 1,
+                   ResultSymbolsNotFound = 2, ResultCanceled = 3 };
     
     public:
         DebugPackageInstaller(const QString & packageName, QObject *parent = 0);

@@ -91,30 +91,29 @@ void DebugPackageInstaller::progressDialogCanceled()
 
 void DebugPackageInstaller::processFinished(int exitCode, QProcess::ExitStatus)
 {
-    switch(exitCode){
-        case ResultInstalled: {
-            emit packagesInstalled();
-            break;
-        }
-        case ResultNotPresent: {
-            emit error(i18nc("@info:status", "The debug symbols packages for this application are "
-                                                                                 "not present."));
-            break;
-        }
-        case ResultNotImplemented: {
-            emit error(i18nc("@info:status", "Your distribution does not provide a way to install "
-                                     "debug symbols packages. (or you compiled KDE by source)."));
-            break;
-        }
-        case ResultError: {
-            emit error(i18nc("@info:status", "There was an error, the debug symbols packages could "
-                                                                            "not be installed."));
-            break;
-        }
-        default: {
-            emit error(i18nc("@info:status", "Unhandled error. The debug symbols packages could "
-                                                                            "not be installed."));
-        }
+    switch(exitCode) {
+    case ResultInstalled:
+    {
+        emit packagesInstalled();
+        break;
+    }
+    case ResultSymbolsNotFound:
+    {
+        emit error(i18nc("@info", "Could not find debug symbol packages for this application."));
+        break;
+    }
+    case ResultCanceled:
+    {
+        emit canceled();
+        break;
+    }
+    case ResultError:
+    default:
+    {
+        emit error(i18nc("@info", "An error was encountered during the installation "
+                                  "of the debug symbol packages."));
+        break;
+    }
     }
     
     m_progressDialog->cancel();
