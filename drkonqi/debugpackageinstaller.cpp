@@ -34,6 +34,12 @@ DebugPackageInstaller::DebugPackageInstaller(const QString & packageName, QWidge
 {
     m_parent = parent;
     m_packageName = packageName;
+    m_executablePath = KStandardDirs::findExe(installerName);
+}
+
+bool DebugPackageInstaller::canInstallDebugPackages() const
+{
+    return !m_executablePath.isEmpty();
 }
 
 void DebugPackageInstaller::setMissingLibraries(const QStringList & libraries)
@@ -43,18 +49,9 @@ void DebugPackageInstaller::setMissingLibraries(const QStringList & libraries)
 
 void DebugPackageInstaller::installDebugPackages()
 {
+    Q_ASSERT(canInstallDebugPackages());
+
     if (!m_installerProcess) {
-        //Find the executable path the first time
-        if (m_executablePath.isEmpty()) {
-            m_executablePath = KStandardDirs::findExe(installerName);
-            if (m_executablePath.isEmpty()) {
-                emit error(i18nc("@info:status", "The helper application needed to install the missing "
-                            "debug symbols \"%1\" is missing. Please inform your "
-                            "distribution.", installerName));
-                return;
-            }
-        }
-        
         //Run process
         m_installerProcess = new KProcess(this);
         connect(m_installerProcess, SIGNAL(finished(int, QProcess::ExitStatus)), 

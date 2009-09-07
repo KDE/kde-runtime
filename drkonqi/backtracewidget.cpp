@@ -191,7 +191,8 @@ void BacktraceWidget::loadData()
         }
         ui.m_statusWidget->setIdle(usefulnessText);
 
-        if (btParser->backtraceUsefulness() != BacktraceParser::ReallyUseful) {
+        if (btParser->backtraceUsefulness() != BacktraceParser::ReallyUseful
+            && m_debugPackageInstaller->canInstallDebugPackages() ) {
             ui.m_extraDetailsLabel->setVisible(true);
             ui.m_extraDetailsLabel->setText(i18nc("@info/rich", "You can click the <interface>"
                                 "Install Debug Symbols</interface> button in order to automatically "

@@ -35,6 +35,7 @@ class DebugPackageInstaller: public QObject
     
     public:
         DebugPackageInstaller(const QString & packageName, QWidget * parent = 0);
+        bool canInstallDebugPackages() const;
         void setMissingLibraries(const QStringList &);
         void installDebugPackages();
         
