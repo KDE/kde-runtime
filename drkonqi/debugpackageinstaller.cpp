@@ -29,10 +29,9 @@
 
 static const char installerName[] = "installdbgsymbols.sh";
 
-DebugPackageInstaller::DebugPackageInstaller(const QString & packageName, QWidget * parent)
+DebugPackageInstaller::DebugPackageInstaller(const QString & packageName, QObject *parent)
     : QObject(parent), m_installerProcess(0), m_progressDialog(0)
 {
-    m_parent = parent;
     m_packageName = packageName;
     m_executablePath = KStandardDirs::findExe(installerName);
 }
@@ -62,7 +61,7 @@ void DebugPackageInstaller::installDebugPackages()
         m_installerProcess->start();
         
         //Show dialog
-        m_progressDialog = new QProgressDialog(m_parent);
+        m_progressDialog = new QProgressDialog(qobject_cast<QWidget*>(parent()));
         connect(m_progressDialog, SIGNAL(canceled()), this, SLOT(progressDialogCanceled()));
         m_progressDialog->setRange(0,0);
         m_progressDialog->setWindowTitle(i18nc("@title:window", "Missing debug symbols"));

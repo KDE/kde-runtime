@@ -34,7 +34,7 @@ class DebugPackageInstaller: public QObject
                                                                             ResultError = 30 };
     
     public:
-        DebugPackageInstaller(const QString & packageName, QWidget * parent = 0);
+        DebugPackageInstaller(const QString & packageName, QObject *parent = 0);
         bool canInstallDebugPackages() const;
         void setMissingLibraries(const QStringList &);
         void installDebugPackages();
@@ -56,8 +56,6 @@ class DebugPackageInstaller: public QObject
         QString                 m_packageName;
         
         QStringList             m_missingLibraries;
-        
-        QWidget *               m_parent;
 };
 
 #endif
