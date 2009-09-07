@@ -18,6 +18,7 @@
 ******************************************************************/
 
 #include "debugpackageinstaller.h"
+#include <config-drkonqi.h>
 
 #include <QtGui/QProgressDialog>
 
@@ -27,13 +28,11 @@
 #include <KProcess>
 #include <KLocale>
 
-static const char installerName[] = "installdbgsymbols.sh";
-
 DebugPackageInstaller::DebugPackageInstaller(const QString & packageName, QObject *parent)
     : QObject(parent), m_installerProcess(0), m_progressDialog(0)
 {
     m_packageName = packageName;
-    m_executablePath = KStandardDirs::findExe(installerName);
+    m_executablePath = KStandardDirs::findExe(DEBUG_PACKAGE_INSTALLER_NAME); //defined from CMakeLists.txt
 }
 
 bool DebugPackageInstaller::canInstallDebugPackages() const
