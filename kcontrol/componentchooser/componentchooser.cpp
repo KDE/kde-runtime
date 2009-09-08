@@ -129,7 +129,10 @@ ComponentChooser::ComponentChooser(QWidget *parent):
 	for (QStringList::const_iterator it=services.constBegin(); it!=services.constEnd(); ++it)
 	{
 		KConfig cfg(*it, KConfig::SimpleConfig);
-		QListWidgetItem *item = new QListWidgetItem(cfg.group(QByteArray()).readEntry("Name",i18n("Unknown")));
+		KConfigGroup cg = cfg.group(QByteArray());
+		QListWidgetItem *item = new QListWidgetItem(
+			KIcon(cg.readEntry("Icon",QString("preferences-desktop-default-applications"))), 
+			cg.readEntry("Name",i18n("Unknown")));
 		item->setData(Qt::UserRole, (*it));
 		ServiceChooser->addItem(item);
 	}

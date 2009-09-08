@@ -1,4 +1,6 @@
 # ctxt: standard desktop component
+Icon=internet-web-browser
+
 Name=Web Browser
 Name[bg]=Уеб браузър
 Name[ca]=Navegador web
