@@ -61,7 +61,7 @@ void CfgComponent::save(KConfig *cfg) {
 		if (!m_lookupDict.contains(ComponentSelector->currentText()))
 			return;
 
-		KConfigGroup mainGroup = cfg->group("");
+		KConfigGroup mainGroup = cfg->group(QByteArray());
 		QString serviceTypeToConfigure=mainGroup.readEntry("ServiceTypeToConfigure");
 		KConfig store(mainGroup.readPathEntry("storeInFile", "null"));
 		KConfigGroup cg(&store, mainGroup.readEntry("valueSection"));
@@ -77,7 +77,7 @@ void CfgComponent::load(KConfig *cfg) {
 	m_lookupDict.clear();
 	m_revLookupDict.clear();
 
-	const KConfigGroup mainGroup = cfg->group("");
+	const KConfigGroup mainGroup = cfg->group(QByteArray());
 	const QString serviceTypeToConfigure = mainGroup.readEntry("ServiceTypeToConfigure");
 
 	const KService::List offers = KServiceTypeTrader::self()->query(serviceTypeToConfigure);
@@ -119,28 +119,24 @@ void CfgComponent::defaults()
 
 
 ComponentChooser::ComponentChooser(QWidget *parent):
-    QWidget(parent), Ui::ComponentChooser_UI(), configWidget(0)
+    QWidget(parent), Ui::ComponentChooser_UI(), somethingChanged(false), configWidget(0)
 {
 	setupUi(this);
 	static_cast<QGridLayout*>(layout())->setRowStretch(1, 1);
-	somethingChanged=false;
-	latestEditedService="";
 
-	QStringList dummy;
 	const QStringList services=KGlobal::dirs()->findAllResources( "data","kcm_componentchooser/*.desktop",
-															KStandardDirs::NoDuplicates, dummy );
+															KStandardDirs::NoDuplicates);
 	for (QStringList::const_iterator it=services.constBegin(); it!=services.constEnd(); ++it)
 	{
 		KConfig cfg(*it, KConfig::SimpleConfig);
-		QListWidgetItem *item = new QListWidgetItem(cfg.group("").readEntry("Name",i18n("Unknown")));
+		QListWidgetItem *item = new QListWidgetItem(cfg.group(QByteArray()).readEntry("Name",i18n("Unknown")));
 		item->setData(Qt::UserRole, (*it));
 		ServiceChooser->addItem(item);
-
 	}
 	ServiceChooser->setFixedWidth(ServiceChooser->sizeHintForColumn(0) + 20);
-	ServiceChooser->model()->sort(0);
+	ServiceChooser->sortItems();
 	connect(ServiceChooser,SIGNAL(currentItemChanged(QListWidgetItem*, QListWidgetItem*)),this,SLOT(slotServiceSelected(QListWidgetItem*)));
-	ServiceChooser->item(0)->setSelected(true);
+	ServiceChooser->setCurrentRow(0);
 	slotServiceSelected(ServiceChooser->item(0));
 
 }
@@ -153,11 +149,11 @@ void ComponentChooser::slotServiceSelected(QListWidgetItem* it) {
 	}
 	KConfig cfg(it->data(Qt::UserRole).toString(), KConfig::SimpleConfig);
 
-	ComponentDescription->setText(cfg.group("").readEntry("Comment",i18n("No description available")));
+	ComponentDescription->setText(cfg.group(QByteArray()).readEntry("Comment",i18n("No description available")));
 	ComponentDescription->setMinimumSize(ComponentDescription->sizeHint());
 
 
-	QString cfgType=cfg.group("").readEntry("configurationType");
+	QString cfgType=cfg.group(QByteArray()).readEntry("configurationType");
 	QWidget *newConfigWidget = 0;
 	if (cfgType.isEmpty() || (cfgType=="component"))
 	{
