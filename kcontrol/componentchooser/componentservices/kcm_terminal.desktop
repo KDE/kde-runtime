@@ -1,6 +1,6 @@
-# ctxt: standard desktop component
 Icon=utilities-terminal
 
+# ctxt: standard desktop component
 Name=Terminal Emulator
 Name[bg]=Конзолна програма
 Name[ca]=Emulador de terminal

@@ -1,6 +1,6 @@
-# ctxt: standard desktop component
 Icon=preferences-system-windows
 
+# ctxt: standard desktop component
 Name=Window Manager
 Name[bg]=Мениджър на прозорци
 Name[ca]=Gestor de finestres

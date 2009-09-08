@@ -1,6 +1,6 @@
-# ctxt: standard desktop component
 Icon=internet-mail
 
+# ctxt: standard desktop component
 Name=Email Client
 Name[bg]=Програма за е-поща
 Name[ca]=Client de correu
