@@ -39,14 +39,6 @@
 #include <kconfiggroup.h>
 #include <KServiceTypeTrader>
 
-class MyListBoxItem: public QListWidgetItem
-{
-public:
-	MyListBoxItem(const QString& text, const QString &file):QListWidgetItem(text),mFile(file){}
-	QString mFile;
-};
-
-
 //BEGIN  General kpart based Component selection
 
 CfgComponent::CfgComponent(QWidget *parent)
@@ -140,7 +132,9 @@ ComponentChooser::ComponentChooser(QWidget *parent):
 	for (QStringList::const_iterator it=services.constBegin(); it!=services.constEnd(); ++it)
 	{
 		KConfig cfg(*it, KConfig::SimpleConfig);
-		ServiceChooser->addItem(new MyListBoxItem(cfg.group("").readEntry("Name",i18n("Unknown")),(*it)));
+		QListWidgetItem *item = new QListWidgetItem(cfg.group("").readEntry("Name",i18n("Unknown")));
+		item->setData(Qt::UserRole, (*it));
+		ServiceChooser->addItem(item);
 
 	}
 	ServiceChooser->setFixedWidth(ServiceChooser->sizeHintForColumn(0) + 20);
@@ -157,7 +151,7 @@ void ComponentChooser::slotServiceSelected(QListWidgetItem* it) {
 	if (somethingChanged) {
 		if (KMessageBox::questionYesNo(this,i18n("<qt>You changed the default component of your choice, do want to save that change now ?</qt>"),QString(),KStandardGuiItem::save(),KStandardGuiItem::discard())==KMessageBox::Yes) save();
 	}
-	KConfig cfg(static_cast<MyListBoxItem*>(it)->mFile, KConfig::SimpleConfig);
+	KConfig cfg(it->data(Qt::UserRole).toString(), KConfig::SimpleConfig);
 
 	ComponentDescription->setText(cfg.group("").readEntry("Comment",i18n("No description available")));
 	ComponentDescription->setMinimumSize(ComponentDescription->sizeHint());
@@ -238,7 +232,7 @@ void ComponentChooser::slotServiceSelected(QListWidgetItem* it) {
 		dynamic_cast<CfgPlugin*>(configWidget)->load(&cfg);
 
         emitChanged(false);
-	latestEditedService=static_cast<MyListBoxItem*>(it)->mFile;
+	latestEditedService=it->data(Qt::UserRole).toString();
 }
 
 
