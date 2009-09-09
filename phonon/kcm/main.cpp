@@ -48,9 +48,9 @@ PhononKcm::PhononKcm(QWidget *parent, const QVariantList &args)
     KTabWidget *tabs = new KTabWidget(this);
     layout()->addWidget(tabs);
 
-    m_devicePreferenceWidget = new DevicePreference;
+    m_devicePreferenceWidget = new DevicePreference(this);
     tabs->addTab(m_devicePreferenceWidget, i18n("Device Preference"));
-    m_backendSelection = new BackendSelection;
+    m_backendSelection = new BackendSelection(this);
     tabs->addTab(m_backendSelection, i18n("Backend"));
     load();
     connect(m_backendSelection, SIGNAL(changed()), SLOT(changed()));

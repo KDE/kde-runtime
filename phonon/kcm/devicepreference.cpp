@@ -128,14 +128,14 @@ DevicePreference::DevicePreference(QWidget *parent)
 
     // Audio Output Parent
     QStandardItem *outputItem = new CategoryItem(Phonon::NoCategory);
-    m_outputModel[Phonon::NoCategory] = new Phonon::AudioOutputDeviceModel;
+    m_outputModel[Phonon::NoCategory] = new Phonon::AudioOutputDeviceModel(this);
     outputItem->setEditable(false);
     outputItem->setToolTip(i18n("Defines the default ordering of devices which can be overridden by individual categories."));
     parentItem->appendRow(outputItem);
 
     // Audio Capture Parent
     QStandardItem *captureItem = new CategoryItem(Phonon::NoCategory, false);
-    m_captureModel[Phonon::NoCategory] = new Phonon::AudioCaptureDeviceModel;
+    m_captureModel[Phonon::NoCategory] = new Phonon::AudioCaptureDeviceModel(this);
     captureItem->setEditable(false);
     captureItem->setToolTip(i18n("Defines the default ordering of devices which can be overridden by individual categories."));
     parentItem->appendRow(captureItem);
@@ -143,7 +143,7 @@ DevicePreference::DevicePreference(QWidget *parent)
     // Audio Output Children
     parentItem = outputItem;
     for (int i = 0; i <= Phonon::LastCategory; ++i) {
-        m_outputModel[i] = new Phonon::AudioOutputDeviceModel;
+        m_outputModel[i] = new Phonon::AudioOutputDeviceModel(this);
         QStandardItem *item = new CategoryItem(static_cast<Phonon::Category>(i));
         item->setEditable(false);
         parentItem->appendRow(item);
@@ -152,7 +152,7 @@ DevicePreference::DevicePreference(QWidget *parent)
     // Audio Capture Children
     parentItem = captureItem;
     for (int i = 1; i < captureCategoriesCount; ++i) { // i == 1 to skip NoCategory
-        m_captureModel[captureCategories[i]] = new Phonon::AudioCaptureDeviceModel;
+        m_captureModel[captureCategories[i]] = new Phonon::AudioCaptureDeviceModel(this);
         QStandardItem *item = new CategoryItem(captureCategories[i], false);
         item->setEditable(false);
         parentItem->appendRow(item);
