@@ -20,7 +20,6 @@
 
 #include "ikwsopts.h"
 #include "ikwsopts_p.h"
-#include "ui_ikwsopts_ui.h"
 
 #include "kuriikwsfiltereng.h"
 #include "searchprovider.h"
@@ -37,6 +36,12 @@
 
 
 //BEGIN ProvidersModel
+
+ProvidersModel::~ProvidersModel()
+{
+  qDeleteAll(m_providers);
+}
+
 QVariant ProvidersModel::headerData(int section, Qt::Orientation orientation, int role ) const
 {
   if (role == Qt::DisplayRole)
@@ -128,6 +133,7 @@ void ProvidersModel::deleteProvider(SearchProvider* p)
   beginRemoveRows(QModelIndex(), row, row);
   m_providers.removeAt(row); 
   endRemoveRows();
+  delete p;
   emit dataModified();
 }
 
@@ -206,27 +212,26 @@ static QSortFilterProxyModel* wrapInProxyModel(QAbstractItemModel* model)
 FilterOptions::FilterOptions(const KComponentData &componentData, QWidget *parent)
  : KCModule(componentData, parent)
  , m_providersModel(new ProvidersModel(this))
- , m_dlg(new Ui::FilterOptionsUI)
 {
-  m_dlg->setupUi(this);
+  m_dlg.setupUi(this);
 
-  m_dlg->lvSearchProviders->setModel(wrapInProxyModel(m_providersModel));
-  m_dlg->cmbDefaultEngine->setModel(wrapInProxyModel(m_providersModel->createListModel()));
+  m_dlg.lvSearchProviders->setModel(wrapInProxyModel(m_providersModel));
+  m_dlg.cmbDefaultEngine->setModel(wrapInProxyModel(m_providersModel->createListModel()));
 
   // Connect all the signals/slots...
-  connect(m_dlg->cbEnableShortcuts, SIGNAL(toggled(bool)), m_dlg->grOpts, SLOT(setEnabled(bool)));
-  connect(m_dlg->cbEnableShortcuts, SIGNAL(toggled(bool)), SLOT(changed()));
+  connect(m_dlg.cbEnableShortcuts, SIGNAL(toggled(bool)), m_dlg.grOpts, SLOT(setEnabled(bool)));
+  connect(m_dlg.cbEnableShortcuts, SIGNAL(toggled(bool)), SLOT(changed()));
 
   connect(m_providersModel, SIGNAL(dataModified()), SLOT(changed()));
 
-  connect(m_dlg->cmbDefaultEngine, SIGNAL(currentIndexChanged(int)),  SLOT(changed()));
-  connect(m_dlg->cmbDelimiter,     SIGNAL(currentIndexChanged(int)),  SLOT(changed()));
+  connect(m_dlg.cmbDefaultEngine, SIGNAL(currentIndexChanged(int)),  SLOT(changed()));
+  connect(m_dlg.cmbDelimiter,     SIGNAL(currentIndexChanged(int)),  SLOT(changed()));
 
-  connect(m_dlg->pbNew,    SIGNAL(clicked()), SLOT(addSearchProvider()));
-  connect(m_dlg->pbDelete, SIGNAL(clicked()), SLOT(deleteSearchProvider()));
-  connect(m_dlg->pbChange, SIGNAL(clicked()), SLOT(changeSearchProvider()));
-  connect(m_dlg->lvSearchProviders, SIGNAL(activated(QModelIndex)),    SLOT(updateSearchProviderEditingButons()));
-  connect(m_dlg->lvSearchProviders, SIGNAL(doubleClicked(QModelIndex)),SLOT(changeSearchProvider()));
+  connect(m_dlg.pbNew,    SIGNAL(clicked()), SLOT(addSearchProvider()));
+  connect(m_dlg.pbDelete, SIGNAL(clicked()), SLOT(deleteSearchProvider()));
+  connect(m_dlg.pbChange, SIGNAL(clicked()), SLOT(changeSearchProvider()));
+  connect(m_dlg.lvSearchProviders, SIGNAL(activated(QModelIndex)),    SLOT(updateSearchProviderEditingButons()));
+  connect(m_dlg.lvSearchProviders, SIGNAL(doubleClicked(QModelIndex)),SLOT(changeSearchProvider()));
 }
 
 QString FilterOptions::quickHelp() const
@@ -244,13 +249,13 @@ QString FilterOptions::quickHelp() const
 
 void FilterOptions::setDefaultEngine(int index)
 {
-  QSortFilterProxyModel* proxy=qobject_cast<QSortFilterProxyModel*>(m_dlg->cmbDefaultEngine->model());
+  QSortFilterProxyModel* proxy=qobject_cast<QSortFilterProxyModel*>(m_dlg.cmbDefaultEngine->model());
   if (index==-1)
     index=proxy->rowCount()-1;//"None" is the last
 
   QModelIndex sel=proxy->mapFromSource(proxy->sourceModel()->index(index,0));
-  m_dlg->cmbDefaultEngine->setCurrentIndex(sel.row());
-  m_dlg->cmbDefaultEngine->view()->setCurrentIndex(sel);  //TODO remove this when Qt bug is fixed
+  m_dlg.cmbDefaultEngine->setCurrentIndex(sel.row());
+  m_dlg.cmbDefaultEngine->view()->setCurrentIndex(sel);  //TODO remove this when Qt bug is fixed
 }
 
 void FilterOptions::load()
@@ -277,13 +282,13 @@ void FilterOptions::load()
   }
 
   m_providersModel->setProviders(providers, favouriteEngines);
-  m_dlg->lvSearchProviders->setColumnWidth(0,200);
-  m_dlg->lvSearchProviders->resizeColumnToContents(1);
-  m_dlg->lvSearchProviders->sortByColumn(0,Qt::AscendingOrder);
-  m_dlg->cmbDefaultEngine->model()->sort(0,Qt::AscendingOrder);
+  m_dlg.lvSearchProviders->setColumnWidth(0,200);
+  m_dlg.lvSearchProviders->resizeColumnToContents(1);
+  m_dlg.lvSearchProviders->sortByColumn(0,Qt::AscendingOrder);
+  m_dlg.cmbDefaultEngine->model()->sort(0,Qt::AscendingOrder);
   setDefaultEngine(defaultProviderIndex);
 
-  m_dlg->cbEnableShortcuts->setChecked(group.readEntry("EnableWebShortcuts", true));
+  m_dlg.cbEnableShortcuts->setChecked(group.readEntry("EnableWebShortcuts", true));
   
   QString delimiter = group.readEntry ("KeywordDelimiter", ":");
   setDelimiter(delimiter[0].toLatin1() );
@@ -292,12 +297,12 @@ void FilterOptions::load()
 char FilterOptions::delimiter()
 {
   const char delimiters[]={':',' '};
-  return delimiters[m_dlg->cmbDelimiter->currentIndex()];
+  return delimiters[m_dlg.cmbDelimiter->currentIndex()];
 }
 
 void FilterOptions::setDelimiter (char sep)
 {
-  m_dlg->cmbDelimiter->setCurrentIndex(sep==' ');
+  m_dlg.cmbDelimiter->setCurrentIndex(sep==' ');
 }
 
 void FilterOptions::save()
@@ -305,9 +310,9 @@ void FilterOptions::save()
   KConfig config(KURISearchFilterEngine::self()->name() + "rc", KConfig::NoGlobals );
 
   KConfigGroup group = config.group("General");
-  group.writeEntry("EnableWebShortcuts", m_dlg->cbEnableShortcuts->isChecked());
+  group.writeEntry("EnableWebShortcuts", m_dlg.cbEnableShortcuts->isChecked());
   group.writeEntry("KeywordDelimiter", QString(delimiter() ));
-  group.writeEntry("DefaultSearchEngine", m_dlg->cmbDefaultEngine->view()->currentIndex().data(ProvidersListModel::ShortNameRole));
+  group.writeEntry("DefaultSearchEngine", m_dlg.cmbDefaultEngine->view()->currentIndex().data(ProvidersListModel::ShortNameRole));
   group.writeEntry("FavoriteSearchEngines", m_providersModel->favouriteEngines());
       
   QList<SearchProvider*> providers = m_providersModel->providers();
@@ -404,7 +409,7 @@ void FilterOptions::defaults()
 {
   setDelimiter (':');
   setDefaultEngine(-1);
-  m_dlg->cbEnableShortcuts->setChecked(true);
+  m_dlg.cbEnableShortcuts->setChecked(true);
 }
 
 void FilterOptions::addSearchProvider()
@@ -413,11 +418,13 @@ void FilterOptions::addSearchProvider()
 
   if (dlg.exec())
     m_providersModel->addProvider(dlg.provider());
+  
+  m_providersModel->changeProvider(dlg.provider());
 }
 
 void FilterOptions::changeSearchProvider()
 {
-  SearchProvider* provider=m_providersModel->providers().at(m_dlg->lvSearchProviders->currentIndex().data(Qt::UserRole).toInt());
+  SearchProvider* provider=m_providersModel->providers().at(m_dlg.lvSearchProviders->currentIndex().data(Qt::UserRole).toInt());
   SearchProviderDialog dlg(provider, this);
 
   if (dlg.exec())
@@ -426,16 +433,16 @@ void FilterOptions::changeSearchProvider()
 
 void FilterOptions::deleteSearchProvider()
 {
-  SearchProvider* provider=m_providersModel->providers().at(m_dlg->lvSearchProviders->currentIndex().data(Qt::UserRole).toInt());
+  SearchProvider* provider=m_providersModel->providers().at(m_dlg.lvSearchProviders->currentIndex().data(Qt::UserRole).toInt());
   m_deletedProviders.append(provider->desktopEntryName());
   m_providersModel->deleteProvider(provider);
 }
 
 void FilterOptions::updateSearchProviderEditingButons()
 {
-  bool enable=m_dlg->lvSearchProviders->currentIndex().isValid();
-  m_dlg->pbChange->setEnabled(enable);
-  m_dlg->pbDelete->setEnabled(enable);
+  bool enable=m_dlg.lvSearchProviders->currentIndex().isValid();
+  m_dlg.pbChange->setEnabled(enable);
+  m_dlg.pbDelete->setEnabled(enable);
 }
 
 #include "ikwsopts.moc"
