@@ -72,8 +72,6 @@ void SystemInformation::lsbReleaseFinished()
         setBugzillaPlatform(QLatin1String("SuSE RPMs"));
     } else if ( m_lsbRelease.contains("ubuntu",Qt::CaseInsensitive) ) {
         setBugzillaPlatform(QLatin1String("Ubuntu Packages"));
-    } else if ( m_lsbRelease.contains("ubuntu",Qt::CaseInsensitive) ) {
-        setBugzillaPlatform(QLatin1String("Ubuntu Packages"));
     } else if ( m_lsbRelease.contains("fedora",Qt::CaseInsensitive) ) {
         setBugzillaPlatform(QLatin1String("Fedora RPMs"));
     } else if ( m_lsbRelease.contains("redhat",Qt::CaseInsensitive) ) {
@@ -95,12 +93,12 @@ void SystemInformation::lsbReleaseFinished()
     } else if ( m_lsbRelease.contains("arch",Qt::CaseInsensitive) ) {
         setBugzillaPlatform(QLatin1String("Archlinux Packages"));
     } else if ( m_lsbRelease.contains("debian",Qt::CaseInsensitive) ) {
-        if ( m_lsbRelease.contains("stable",Qt::CaseInsensitive) ) {
-            setBugzillaPlatform(QLatin1String("Debian stable"));
+        if ( m_lsbRelease.contains("unstable",Qt::CaseInsensitive) ) {
+            setBugzillaPlatform(QLatin1String("Debian unstable"));
         } else if ( m_lsbRelease.contains("testing",Qt::CaseInsensitive) ) {
             setBugzillaPlatform(QLatin1String("Debian testing"));
         } else {
-            setBugzillaPlatform(QLatin1String("Debian unstable"));
+            setBugzillaPlatform(QLatin1String("Debian stable"));
         }
     } else {
         setBugzillaPlatform(QLatin1String("unspecified"));
@@ -112,7 +110,6 @@ void SystemInformation::lsbReleaseFinished()
 void SystemInformation::fetchOSInformation()
 {
     //Get the base OS string (bugzillaOS)
-    //TODO cache the base OS string on KConfig ?
 #if defined(Q_OS_LINUX)
     m_bugzillaOperatingSystem = QLatin1String("Linux");
 #elif defined(Q_OS_FREEBSD)
