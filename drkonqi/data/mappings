@@ -73,6 +73,7 @@ plasmoidviewer=plasma|general
 knotificationareaitemtest=plasma|widget-systemtray
 knotificationicontest=plasma|widget-systemtray
 lancelot=plasma|widget-lancelot
+plasma-netbook=plasma|netbook-shell
 
 #KIO
 kioclient=kio|general
