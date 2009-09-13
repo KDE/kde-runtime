@@ -353,7 +353,7 @@ void BugzillaManager::sendReportDone(KJob * job)
 
 }
 
-QString BugzillaManager::urlForBug(int bug_number)
+QString BugzillaManager::urlForBug(int bug_number) const
 {
     return QString(m_bugTrackerUrl) + QString(showBugUrl).arg(bug_number);
 }

@@ -39,7 +39,6 @@ typedef QList<BugMap>           BugMapList; //List of reports
 class BugReport
 {
 public:
-
     BugReport();
 
     void setBugNumber(const QString & value) {
@@ -211,11 +210,11 @@ public:
     bool getLogged() {
         return m_logged;
     }
-    QString getUsername() {
+    QString getUsername() const {
         return m_username;
     }
 
-    QString urlForBug(int bug_number);
+    QString urlForBug(int bug_number) const;
 
     void setCustomBugtrackerUrl(const QString &);
     
