@@ -1,5 +1,5 @@
 /*******************************************************************
-* reportinfo.cpp
+* reportinterface.cpp
 * Copyright 2009    Dario Andres Rodriguez <andresbajotierra@gmail.com>
 * Copyright 2009    George Kiagiadakis <gkiagia@users.sourceforge.net>
 *
@@ -18,7 +18,7 @@
 *
 ******************************************************************/
 
-#include "reportinfo.h"
+#include "reportinterface.h"
 
 #include "drkonqi.h"
 #include "krashconf.h"
@@ -34,7 +34,7 @@
 #include <KDebug>
 
 
-ReportInfo::ReportInfo(QObject *parent)
+ReportInterface::ReportInterface(QObject *parent)
     : QObject(parent)
 {
     m_userCanDetail = false;
@@ -43,67 +43,67 @@ ReportInfo::ReportInfo(QObject *parent)
     m_productMapping = new ProductMapping(DrKonqi::instance()->krashConfig()->productName(), this);
 }
 
-bool ReportInfo::userCanDetail() const
+bool ReportInterface::userCanDetail() const
 {
     return m_userCanDetail;
 }
 
-void ReportInfo::setUserCanDetail(bool canDetail)
+void ReportInterface::setUserCanDetail(bool canDetail)
 {
     m_userCanDetail = canDetail;
 }
 
-bool ReportInfo::developersCanContactReporter() const
+bool ReportInterface::developersCanContactReporter() const
 {
     return m_developersCanContactReporter;
 }
 
-void ReportInfo::setDevelopersCanContactReporter(bool canContact)
+void ReportInterface::setDevelopersCanContactReporter(bool canContact)
 {
     m_developersCanContactReporter = canContact;
 }
 
-QString ReportInfo::backtrace() const
+QString ReportInterface::backtrace() const
 {
     return m_backtrace;
 }
 
-void ReportInfo::setBacktrace(const QString & backtrace)
+void ReportInterface::setBacktrace(const QString & backtrace)
 {
     m_backtrace = backtrace;
 }
 
-QStringList ReportInfo::firstBacktraceFunctions() const
+QStringList ReportInterface::firstBacktraceFunctions() const
 {
     return m_firstBacktraceFunctions;
 }
 
-void ReportInfo::setFirstBacktraceFunctions(const QStringList & functions)
+void ReportInterface::setFirstBacktraceFunctions(const QStringList & functions)
 {
     m_firstBacktraceFunctions = functions;
 }
 
-QString ReportInfo::title() const
+QString ReportInterface::title() const
 {
     return m_reportTitle;
 }
     
-void ReportInfo::setTitle(const QString & text)
+void ReportInterface::setTitle(const QString & text)
 {
     m_reportTitle = text;
 }
 
-void ReportInfo::setDetailText(const QString & text)
+void ReportInterface::setDetailText(const QString & text)
 {
     m_reportDetailText = text;
 }
 
-void ReportInfo::setPossibleDuplicates(const QStringList & list)
+void ReportInterface::setPossibleDuplicates(const QStringList & list)
 {
     m_possibleDuplicates = list;
 }
 
-QString ReportInfo::generateReport(bool drKonqiStamp) const
+QString ReportInterface::generateReport(bool drKonqiStamp) const
 {
     //Note: no translations must be done in this function's strings
     const KrashConfig * krashConfig = DrKonqi::instance()->krashConfig();
@@ -173,7 +173,7 @@ QString ReportInfo::generateReport(bool drKonqiStamp) const
     return report;
 }
 
-BugReport ReportInfo::newBugReportTemplate() const
+BugReport ReportInterface::newBugReportTemplate() const
 {
     BugReport report;
     
@@ -195,7 +195,7 @@ BugReport ReportInfo::newBugReportTemplate() const
     return report;
 }
 
-void ReportInfo::sendBugReport(BugzillaManager *bzManager) const
+void ReportInterface::sendBugReport(BugzillaManager *bzManager) const
 {
     BugReport report = newBugReportTemplate();
     report.setDescription(generateReport(true));
@@ -204,7 +204,7 @@ void ReportInfo::sendBugReport(BugzillaManager *bzManager) const
     bzManager->sendReport(report);
 }
 
-void ReportInfo::sendUsingDefaultProduct() const
+void ReportInterface::sendUsingDefaultProduct() const
 {
     BugzillaManager *bzManager = qobject_cast<BugzillaManager*>(sender());
     Q_ASSERT(bzManager);
@@ -217,12 +217,12 @@ void ReportInfo::sendUsingDefaultProduct() const
     bzManager->sendReport(report);
 }
 
-QStringList ReportInfo::relatedBugzillaProducts() const
+QStringList ReportInterface::relatedBugzillaProducts() const
 {
     return m_productMapping->relatedBugzillaProducts();
 }
 
-bool ReportInfo::isWorthReporting() const
+bool ReportInterface::isWorthReporting() const
 {
     bool needToReport = false;
     
@@ -251,4 +251,4 @@ bool ReportInfo::isWorthReporting() const
     return needToReport;
 }
 
-#include "reportinfo.moc"
+#include "reportinterface.moc"

@@ -20,12 +20,12 @@ set(drkonqi_SRCS
     bugzillalib.cpp
     drkonqidialog.cpp
     statuswidget.cpp
-    reportinfo.cpp
     aboutbugreportingdialog.cpp
     reportassistantdialog.cpp    
     reportassistantpage.cpp
     reportassistantpages_base.cpp
     reportassistantpages_bugzilla.cpp
+    reportinterface.cpp
     backtraceratingwidget.cpp
     backtracewidget.cpp
     backtracegenerator.cpp 

@@ -34,9 +34,9 @@ bool ReportAssistantPage::showNextPage()
     return true;
 }
 
-ReportInfo * ReportAssistantPage::reportInfo() const
+ReportInterface * ReportAssistantPage::reportInterface() const
 {
-    return m_assistant->reportInfo();
+    return m_assistant->reportInterface();
 }
 
 BugzillaManager * ReportAssistantPage::bugzillaManager() const

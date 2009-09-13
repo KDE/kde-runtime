@@ -25,7 +25,7 @@
 
 class ReportAssistantPage;
 class AboutBugReportingDialog;
-class ReportInfo;
+class ReportInterface;
 class QCloseEvent;
 class BugzillaManager;
 
@@ -37,8 +37,8 @@ public:
     explicit ReportAssistantDialog(QWidget * parent = 0);
     ~ReportAssistantDialog();
 
-    ReportInfo *reportInfo() const {
-        return m_reportInfo;
+    ReportInterface *reportInterface() const {
+        return m_reportInterface;
     }
 
     BugzillaManager *bugzillaManager() const {
@@ -68,7 +68,7 @@ private:
     QHash<QLatin1String, KPageWidgetItem*>       m_pageWidgetMap;
     
     QPointer<AboutBugReportingDialog>   m_aboutBugReportingDialog;
-    ReportInfo *                m_reportInfo;
+    ReportInterface *                m_reportInterface;
     BugzillaManager *           m_bugzillaManager;
 
     bool                        m_canClose;

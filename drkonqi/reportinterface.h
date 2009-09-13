@@ -1,5 +1,5 @@
 /*******************************************************************
-* reportinfo.h
+* reportinterface.h
 * Copyright 2009    Dario Andres Rodriguez <andresbajotierra@gmail.com>
 * Copyright 2009    George Kiagiadakis <gkiagia@users.sourceforge.net>
 *
@@ -18,8 +18,8 @@
 *
 ******************************************************************/
 
-#ifndef REPORTINFO__H
-#define REPORTINFO__H
+#ifndef REPORTINTERFACE__H
+#define REPORTINTERFACE__H
 
 #include <QtCore/QObject>
 #include <QtCore/QStringList>
@@ -30,11 +30,11 @@ class BugzillaManager;
 class BugReport;
 class ProductMapping;
 
-class ReportInfo : public QObject
+class ReportInterface : public QObject
 {
     Q_OBJECT
 public:
-    ReportInfo(QObject *parent = 0);
+    ReportInterface(QObject *parent = 0);
 
     bool userCanDetail() const;
     void setUserCanDetail(bool canDetail);

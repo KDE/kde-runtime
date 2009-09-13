@@ -35,7 +35,7 @@ public:
 
     /** Load the widget data if empty **/
     virtual void aboutToShow() {}
-    /** Save the widget data to ReportInfo **/
+    /** Save the widget data **/
     virtual void aboutToHide() {}
     /** Tells the KAssistantDialog to enable the Next button **/
     virtual bool isComplete();
@@ -43,7 +43,7 @@ public:
     /** Last time checks to see if you can turn the page **/
     virtual bool showNextPage();
     
-    ReportInfo * reportInfo() const;
+    ReportInterface *reportInterface() const;
     BugzillaManager *bugzillaManager() const;
     ReportAssistantDialog * assistant() const;
 

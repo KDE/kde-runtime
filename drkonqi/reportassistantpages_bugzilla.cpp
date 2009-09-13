@@ -19,7 +19,7 @@
 
 #include "reportassistantpages_bugzilla.h"
 
-#include "reportinfo.h"
+#include "reportinterface.h"
 #include "systeminformation.h"
 
 #include "statuswidget.h"
@@ -451,7 +451,7 @@ void BugzillaDuplicatesPage::aboutToHide()
     for(int i = 0; i<count; i++) {
         possibleDuplicates << ui.m_selectedDuplicatesList->item(i)->text();
     }
-    reportInfo()->setPossibleDuplicates(possibleDuplicates);
+    reportInterface()->setPossibleDuplicates(possibleDuplicates);
 }
 
 void BugzillaDuplicatesPage::stopCurrentSearch()
@@ -487,10 +487,10 @@ void BugzillaDuplicatesPage::performSearch()
         endDateStr = QLatin1String("Now");
     }
     
-    BugReport report = reportInfo()->newBugReportTemplate();
-    bugzillaManager()->searchBugs(QString(), reportInfo()->relatedBugzillaProducts(), 
+    BugReport report = reportInterface()->newBugReportTemplate();
+    bugzillaManager()->searchBugs(QString(), reportInterface()->relatedBugzillaProducts(), 
                                   report.bugSeverity(), startDateStr, endDateStr, 
-                                  reportInfo()->firstBacktraceFunctions().join(" "));
+                                  reportInterface()->firstBacktraceFunctions().join(" "));
     
     //Test search
     /*
@@ -622,7 +622,7 @@ void BugzillaReportInformationDialog::showBugReport(int bugNumber)
                                             m_bugNumber,
                                             QLatin1String(KDE_BUGZILLA_SHORT_URL)));
                                             
-    ui.m_backtraceBrowser->setPlainText(m_parent->reportInfo()->backtrace());
+    ui.m_backtraceBrowser->setPlainText(m_parent->reportInterface()->backtrace());
     show();
 }
 
@@ -796,7 +796,7 @@ void BugzillaInformationPage::aboutToShow()
         m_distributionComboSetup = true;
     }
 
-    bool showDetails = reportInfo()->userCanDetail();
+    bool showDetails = reportInterface()->userCanDetail();
     ui.m_detailsLabel->setVisible(showDetails);
     ui.m_detailsEdit->setVisible(showDetails);
 
@@ -859,8 +859,8 @@ bool BugzillaInformationPage::isComplete()
 void BugzillaInformationPage::aboutToHide()
 {
     //Save fields data
-    reportInfo()->setTitle(ui.m_titleEdit->text());
-    reportInfo()->setDetailText(ui.m_detailsEdit->toPlainText());
+    reportInterface()->setTitle(ui.m_titleEdit->text());
+    reportInterface()->setDetailText(ui.m_detailsEdit->toPlainText());
     
     if (m_distroComboVisible) {
         //Save bugzilla platform (distribution)
@@ -887,7 +887,7 @@ BugzillaPreviewPage::BugzillaPreviewPage(ReportAssistantDialog * parent)
 
 void BugzillaPreviewPage::aboutToShow()
 {
-    ui.m_previewEdit->setText(reportInfo()->generateReport(true));
+    ui.m_previewEdit->setText(reportInterface()->generateReport(true));
 }
 
 bool BugzillaPreviewPage::showNextPage()
@@ -940,7 +940,7 @@ void BugzillaSendPage::retryClicked()
 void BugzillaSendPage::aboutToShow()
 {
     ui.m_statusWidget->setBusy(i18nc("@info:status","Sending crash report... (please wait)"));
-    reportInfo()->sendBugReport(bugzillaManager());
+    reportInterface()->sendBugReport(bugzillaManager());
 }
 
 void BugzillaSendPage::sent(int bug_id)
@@ -987,7 +987,7 @@ void BugzillaSendPage::openReportContents()
 {
     if (!m_contentsDialog)
     {
-        QString report = reportInfo()->generateReport(false) + QLatin1Char('\n') +
+        QString report = reportInterface()->generateReport(false) + QLatin1Char('\n') +
                             i18nc("@info/plain","Report to %1", QLatin1String(KDE_BUGZILLA_URL));
         m_contentsDialog = new ReportInformationDialog(report);
     }

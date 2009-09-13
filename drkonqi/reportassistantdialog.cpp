@@ -28,7 +28,7 @@
 
 #include "reportassistantpages_base.h"
 #include "reportassistantpages_bugzilla.h"
-#include "reportinfo.h"
+#include "reportinterface.h"
 
 #include <QtGui/QCloseEvent>
 #include <KMessageBox>
@@ -36,7 +36,7 @@
 ReportAssistantDialog::ReportAssistantDialog(QWidget * parent) :
         KAssistantDialog(parent),
         m_aboutBugReportingDialog(0),
-        m_reportInfo(new ReportInfo(this)),
+        m_reportInterface(new ReportInterface(this)),
         m_bugzillaManager(new BugzillaManager(this)),
         m_canClose(false)
 {
@@ -234,7 +234,7 @@ void ReportAssistantDialog::next()
         //Force save settings in the current page
         page->aboutToHide();
 
-        if (!(m_reportInfo->userCanDetail() || m_reportInfo->developersCanContactReporter()))
+        if (!(m_reportInterface->userCanDetail() || m_reportInterface->developersCanContactReporter()))
         {
             setCurrentPage(m_pageWidgetMap.value(QLatin1String(PAGE_CONCLUSIONS_ID)));
             return;
@@ -246,7 +246,7 @@ void ReportAssistantDialog::next()
             page->aboutToHide();
 
             //If the crash is worth reporting and it is BKO, skip the Conclusions page
-            if (m_reportInfo->isWorthReporting() && 
+            if (m_reportInterface->isWorthReporting() && 
                                                 DrKonqi::instance()->krashConfig()->isKDEBugzilla())
             {
                 setCurrentPage(m_pageWidgetMap.value(QLatin1String(PAGE_BZLOGIN_ID)));
@@ -264,7 +264,7 @@ void ReportAssistantDialog::back()
  {
     if (currentPage()->name() == QLatin1String(PAGE_CONCLUSIONS_ID))
     {
-        if (!(m_reportInfo->userCanDetail() || m_reportInfo->developersCanContactReporter()))
+        if (!(m_reportInterface->userCanDetail() || m_reportInterface->developersCanContactReporter()))
         {
             setCurrentPage(m_pageWidgetMap.value(QLatin1String(PAGE_AWARENESS_ID)));
             return;
@@ -273,7 +273,7 @@ void ReportAssistantDialog::back()
     
     if (currentPage()->name() == QLatin1String(PAGE_BZLOGIN_ID))
     {
-        if (m_reportInfo->isWorthReporting() && DrKonqi::instance()->krashConfig()->isKDEBugzilla())
+        if (m_reportInterface->isWorthReporting() && DrKonqi::instance()->krashConfig()->isKDEBugzilla())
         {
             setCurrentPage(m_pageWidgetMap.value(QLatin1String(PAGE_CRASHINFORMATION_ID)));
             return;
