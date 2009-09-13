@@ -19,13 +19,12 @@ qt4_add_dbus_adaptor(servicestub_SRCS
   servicecontrol.h
   Nepomuk::ServiceControl)
 
-kde4_add_executable(nepomukservicestub
+kde4_add_executable(nepomukservicestub NOGUI
   ${servicestub_SRCS}
 )
 
 target_link_libraries(nepomukservicestub
   ${QT_QTCORE_LIBRARY}
-  ${QT_QTGUI_LIBRARY}
   ${QT_QTDBUS_LIBRARY}
   ${KDE4_KDECORE_LIBS}
   ${KDE4_KDEUI_LIBS}
