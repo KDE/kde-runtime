@@ -59,7 +59,7 @@ Name[hi]=केवालेट
 Name[hr]=kwalletd – KNovčanik daemon
 Name[mai]=केवालेट्ड
 Name[ml]=കെവാലറ്റ്ഡി
-Name[nds]=Kwalletd
+Name[nds]=KWalletd
 Name[x-test]=xxkwalletdxx
 
 [Event/needsPassword]
