@@ -191,7 +191,15 @@ BugReport ReportInterface::newBugReportTemplate() const
     }
     report.setPriority(QLatin1String("NOR"));
     report.setBugSeverity(QLatin1String("crash"));
-    report.setShortDescription(m_reportTitle);
+    
+    //Show the backtrace functions on Title
+    QString btFunctions;
+    if (!m_firstBacktraceFunctions.isEmpty()) {
+        btFunctions = QLatin1String(" [") + m_firstBacktraceFunctions.join(", ").trimmed() 
+                                                                            + QLatin1String("]");
+    }
+    
+    report.setShortDescription(m_reportTitle + btFunctions);
     return report;
 }
 
