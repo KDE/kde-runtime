@@ -253,7 +253,7 @@ void BugzillaLoginPage::loginFinished(bool logged)
         
         emit loggedTurnToNextPage();
     } else {
-        ui.m_statusWidget->setIdle(i18nc("@info:rich","<b>Error: Invalid username or "
+        ui.m_statusWidget->setIdle(i18nc("@info:status/rich","<b>Error: Invalid username or "
                                                                                   "password</b>"));
 
         ui.m_loginButton->setEnabled(true);
