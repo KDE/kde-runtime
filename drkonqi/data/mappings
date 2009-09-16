@@ -113,6 +113,8 @@ kepastray=kepas|general
 
 kpilotDaemon=kpilot|kpilotDaemon
 
+kpackagekitsmarticon=kpackagekit|general
+
 [ProductGroup]
 kontact=kdepim-base|kdepim-apps
 korganizer=kdepim-base
