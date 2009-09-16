@@ -17,6 +17,7 @@
 */
 
 #include "ontologymanagermodel.h"
+#include "crappyinferencer.h"
 
 #include <QtCore/QUrl>
 #include <QtCore/QDateTime>
@@ -73,7 +74,7 @@ namespace {
         QString query = QString( "select ?dg ?mdg where { "
                                  "?dg <%1> ?ns . "
                                  "?mdg <%3> ?dg . "
-                                 "FILTER(STR(?ns) = \"%2\") . "
+                                 "FILTER(REGEX(STR(?ns), \"^%2\")) . "
                                  "}" )
                         .arg( Soprano::Vocabulary::NAO::hasDefaultNamespace().toString() )
                         .arg( ns.toString() )
@@ -251,6 +252,8 @@ public:
         : q( p ) {
     }
 
+    CrappyInferencer m_inferenceModel;
+
 private:
     OntologyManagerModel* q;
 };
@@ -260,10 +263,12 @@ private:
 
 
 Nepomuk::OntologyManagerModel::OntologyManagerModel( Soprano::Model* parentModel, QObject* parent )
-    : FilterModel( parentModel ),
+    : FilterModel(),
       d( new Private( this ) )
 {
     setParent( parent );
+    FilterModel::setParentModel( &d->m_inferenceModel );
+    setParentModel( parentModel );
 }
 
 
@@ -275,7 +280,7 @@ Nepomuk::OntologyManagerModel::~OntologyManagerModel()
 
 void Nepomuk::OntologyManagerModel::setParentModel( Soprano::Model* parentModel )
 {
-    FilterModel::setParentModel( parentModel );
+    d->m_inferenceModel.setParentModel( parentModel );
 }
 
 

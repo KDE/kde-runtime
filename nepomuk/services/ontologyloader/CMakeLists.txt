@@ -12,6 +12,7 @@ set(ontologyloader_SRCS
   ontologyloader.cpp
   ontologymanagermodel.cpp
   graphretriever.cpp
+  crappyinferencer.cpp
   )
 
 qt4_add_dbus_adaptor(ontologyloader_SRCS
