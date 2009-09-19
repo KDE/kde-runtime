@@ -113,3 +113,5 @@ kpilotDaemon=kpilot|kpilotDaemon
 korgac=korganizer|reminder daemon (korgac)
 
 kpackagekitsmarticon=kpackagekit|general
+
+kscreenlocker=krunner|kscreenlocker
