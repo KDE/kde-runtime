@@ -115,6 +115,8 @@ kpilotDaemon=kpilot|kpilotDaemon
 
 kpackagekitsmarticon=kpackagekit|general
 
+kscreenlocker=krunner|kscreenlocker
+
 [ProductGroup]
 kontact=kdepim-base|kdepim-apps
 korganizer=kdepim-base
