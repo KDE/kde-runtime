@@ -232,7 +232,7 @@ Q_SIGNALS:
     void bugReportFetched(BugReport, QObject *);
     void searchFinished(const BugMapList &);
     void reportSent(int);
-    void attachToReportSent(int);
+    void attachToReportSent(int, int);
 
     void loginError(const QString &);
     void bugReportError(const QString &, QObject *);

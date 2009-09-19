@@ -399,7 +399,8 @@ void BugzillaManager::attachToReportDone(KJob * job)
         int pos = reg.indexIn(response);
         if (pos != -1) {
             int attach_id = reg.cap(1).toInt();
-            emit attachToReportSent(attach_id);
+            int bug_id = reg.cap(2).toInt();
+            emit attachToReportSent(attach_id, bug_id);
         } else {
             QString reason;
 
