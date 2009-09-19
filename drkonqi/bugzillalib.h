@@ -198,7 +198,7 @@ public:
     BugzillaManager(QObject *parent = 0);
 
     void setLoginData(const QString &, const QString &);
-    void tryLogin(bool forceManualCookie = false);
+    void tryLogin();
 
     void fetchBugReport(int, QObject * jobOwner = 0);
     void searchBugs(QString words, const QStringList & products, const QString & severity,
@@ -244,9 +244,6 @@ Q_SIGNALS:
 private:
     void attachToReport(const QByteArray &, const QByteArray &);
     QByteArray generatePostDataForReport(BugReport) const;
-    void processLoginCookie(KIO::Job *);
-    bool isCookieDaemonActive();
-    bool isLoginCookieSet();
 
     QString     m_username;
     QString     m_password;
@@ -255,9 +252,6 @@ private:
     KIO::Job *  m_searchJob;
 
     QString     m_bugTrackerUrl;
-    
-    QString     m_cookieString;
-    bool        m_fallbackManualCookie;
 };
 
 class BugzillaUploadData

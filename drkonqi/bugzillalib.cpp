@@ -73,8 +73,7 @@ static const char attachDataUrl[] = "attachment.cgi";
 BugzillaManager::BugzillaManager(QObject *parent):
         QObject(parent),
         m_logged(false),
-        m_searchJob(0),
-        m_fallbackManualCookie(false)
+        m_searchJob(0)
 {
     m_bugTrackerUrl = bugtrackerBKOBaseUrl;
 }
@@ -91,7 +90,7 @@ void BugzillaManager::setLoginData(const QString & _username, const QString & _p
     m_logged = false;
 }
 
-void BugzillaManager::tryLogin(bool forceManualCookie)
+void BugzillaManager::tryLogin()
 {
     if (!m_logged) {
         QByteArray postData =
@@ -106,11 +105,6 @@ void BugzillaManager::tryLogin(bool forceManualCookie)
                                 KIO::HideProgressInfo);
         connect(loginJob, SIGNAL(finished(KJob*)) , this, SLOT(loginDone(KJob*)));
 
-        if (!isCookieDaemonActive() || forceManualCookie) {
-            kDebug() << "Cookie daemon problem, fallback to manual";
-            m_fallbackManualCookie = true;
-            loginJob->addMetaData("cookies", "manual"); //Use manual-set cookies
-        }
         loginJob->addMetaData("content-type", "Content-Type: application/x-www-form-urlencoded");
     }
 }
@@ -127,19 +121,6 @@ void BugzillaManager::loginDone(KJob* job)
         } else {
             if (response.contains(QByteArray("Managing Your Account"))
                 && response.contains(QByteArray("Log out"))) {
-                
-               if (m_fallbackManualCookie) {
-                    processLoginCookie(loginJob);
-                } else {
-                    //If the cookie daemon is active + cookie not set; 
-                    //or if the cookie daemon died already, force manual cookies
-                    if ((isCookieDaemonActive() && !isLoginCookieSet()) || 
-                            !isCookieDaemonActive()) {
-                        tryLogin(true);
-                        return;
-                    }
-                }
-                
                 m_logged = true;
             } else {
                 m_logged = false;
@@ -157,24 +138,6 @@ void BugzillaManager::loginDone(KJob* job)
     }
 }
 
-void BugzillaManager::processLoginCookie(KIO::Job * job)
-{
-    const QStringList cookieList = (job->queryMetaData("setcookies")).split('\n');
-    QString cookieString;
-    if(!cookieList.isEmpty()) {
-        cookieString = "Cookie: ";
-        foreach(const QString &str, cookieList) {
-            if(str.contains("Set-Cookie: ")) {
-                const QStringList cl = str.split(' ');
-                if (cl.size() >= 2) {
-                    cookieString += cl.at(1);
-                }
-            }
-        }
-    }
-    m_cookieString = cookieString;
-}
-
 void BugzillaManager::fetchBugReport(int bugnumber, QObject * jobOwner)
 {
     KUrl url = KUrl(QString(m_bugTrackerUrl) + QString(fetchBugUrl).arg(bugnumber));
@@ -184,11 +147,6 @@ void BugzillaManager::fetchBugReport(int bugnumber, QObject * jobOwner)
     KIO::Job * fetchBugJob = KIO::storedGet(url, KIO::Reload, KIO::HideProgressInfo);
     fetchBugJob->setParent(jobOwner);
     connect(fetchBugJob, SIGNAL(finished(KJob*)) , this, SLOT(fetchBugReportDone(KJob*)));
-    
-    if (m_fallbackManualCookie && !m_cookieString.isEmpty()) {
-        fetchBugJob->addMetaData("cookies", "manual");
-        fetchBugJob->addMetaData("setcookies", m_cookieString);
-    }
 }
 
 void BugzillaManager::fetchBugReportDone(KJob* job)
@@ -236,11 +194,6 @@ void BugzillaManager::searchBugs(QString words, const QStringList & products,
     
     m_searchJob = KIO::storedGet(KUrl(url) , KIO::Reload, KIO::HideProgressInfo);
     connect(m_searchJob, SIGNAL(finished(KJob*)) , this, SLOT(searchBugsDone(KJob*)));
-    
-    if (m_fallbackManualCookie && !m_cookieString.isEmpty()) {
-        m_searchJob->addMetaData("cookies", "manual");
-        m_searchJob->addMetaData("setcookies", m_cookieString);
-    }
 }
 
 void BugzillaManager::stopCurrentSearch()
@@ -285,10 +238,6 @@ void BugzillaManager::sendReport(BugReport report)
 
     connect(sendJob, SIGNAL(finished(KJob*)) , this, SLOT(sendReportDone(KJob*)));
 
-    if (m_fallbackManualCookie && !m_cookieString.isEmpty()) {
-        sendJob->addMetaData("cookies", "manual");
-        sendJob->addMetaData("setcookies", m_cookieString);
-    }
     sendJob->addMetaData("content-type", "Content-Type: application/x-www-form-urlencoded");    
 }
 
@@ -380,10 +329,6 @@ void BugzillaManager::attachToReport(const QByteArray & data, const QByteArray &
 
     connect(attachJob, SIGNAL(finished(KJob*)) , this, SLOT(attachToReportDone(KJob*)));
 
-    if (m_fallbackManualCookie && !m_cookieString.isEmpty()) {
-        attachJob->addMetaData("cookies", "manual");
-        attachJob->addMetaData("setcookies", m_cookieString);
-    }
     attachJob->addMetaData("content-type", 
                            "Content-Type: multipart/form-data; boundary=" + boundary);   
 }
@@ -425,34 +370,6 @@ void BugzillaManager::attachToReportDone(KJob * job)
 QString BugzillaManager::urlForBug(int bug_number) const
 {
     return QString(m_bugTrackerUrl) + QString(showBugUrl).arg(bug_number);
-}
-
-bool BugzillaManager::isLoginCookieSet()
-{
-    //Check if the bugzilla cookie is set properly
-    QDBusInterface kded("org.kde.kded", "/modules/kcookiejar", "org.kde.KCookieServer");
-    QDBusReply<QString> reply = kded.call("listCookies", 
-                                    KUrl(QString(m_bugTrackerUrl) + QString(loginUrl)).url());
-    if (reply.isValid()) {
-        return reply.value().contains(QLatin1String("Bugzilla_logincookie"));
-    }
-    return false;
-}
-
-bool BugzillaManager::isCookieDaemonActive()
-{
-    //Check if global cookies are activated
-    KConfig cfg ("kcookiejarrc");
-    KConfigGroup group = cfg.group ("Cookie Policy");
-    if (group.readEntry("Cookies", false)) {
-        //Check if cookies server is running
-        QDBusInterface kdedInterface("org.kde.kded", "/kded", "org.kde.kded");
-        QDBusReply<QStringList> reply = kdedInterface.call("loadedModules");
-        if (reply.isValid()) {
-            return reply.value().contains(QLatin1String("kcookiejar"));
-        }
-    }
-    return false;
 }
 
 BugListCSVParser::BugListCSVParser(QByteArray data)
