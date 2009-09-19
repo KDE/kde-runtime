@@ -2,6 +2,11 @@
 * bugzillalib.cpp
 * Copyright  2009    Dario Andres Rodriguez <andresbajotierra@gmail.com>
 *
+* //Http-post file upload
+* Copyright (C) 2007 by Artur Duque de Souza <morpheuz@gmail.com>
+*                       Vardhman Jain <vardhman@gmail.com>
+*                       Gilles Caulier <caulier.gilles@gmail.com>
+*
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License as
 * published by the Free Software Foundation; either version 2 of
@@ -23,6 +28,7 @@
 #include <QtCore/QByteArray>
 #include <QtCore/QString>
 #include <QtCore/QRegExp>
+#include <QtCore/QFile>
 
 #include <QtXml/QDomNode>
 #include <QtXml/QDomNodeList>
@@ -37,6 +43,7 @@
 #include <KConfig>
 #include <KConfigGroup>
 #include <KLocale>
+#include <KRandom>
 #include <KDebug>
 
 static const char bugtrackerBKOBaseUrl[] = "https://bugs.kde.org/";
@@ -60,6 +67,8 @@ static const char showBugUrl[] = "show_bug.cgi?id=%1";
 static const char fetchBugUrl[] = "show_bug.cgi?id=%1&ctype=xml";
 
 static const char sendReportUrl[] = "post_bug.cgi";
+
+static const char attachDataUrl[] = "attachment.cgi";
 
 BugzillaManager::BugzillaManager(QObject *parent):
         QObject(parent),
@@ -353,6 +362,65 @@ void BugzillaManager::sendReportDone(KJob * job)
 
 }
 
+void BugzillaManager::attachTextToReport(const QString & text, const QString & filename, 
+    const QString & description, uint bug)
+{
+    BugzillaUploadData request(bug);
+    request.attachRawData(text.toUtf8(), filename, "text/plain", description);
+
+    attachToReport(request.postData(), request.boundary());
+}
+
+void BugzillaManager::attachToReport(const QByteArray & data, const QByteArray & boundary)
+{
+    KIO::Job * attachJob =
+        KIO::storedHttpPost(data, 
+                            KUrl(QString(m_bugTrackerUrl) + QString(attachDataUrl)),
+                            KIO::HideProgressInfo);
+
+    connect(attachJob, SIGNAL(finished(KJob*)) , this, SLOT(attachToReportDone(KJob*)));
+
+    if (m_fallbackManualCookie && !m_cookieString.isEmpty()) {
+        attachJob->addMetaData("cookies", "manual");
+        attachJob->addMetaData("setcookies", m_cookieString);
+    }
+    attachJob->addMetaData("content-type", 
+                           "Content-Type: multipart/form-data; boundary=" + boundary);   
+}
+
+void BugzillaManager::attachToReportDone(KJob * job)
+{
+    if (!job->error()) {
+        KIO::StoredTransferJob * sendJob = (KIO::StoredTransferJob *)job;
+        QString response = sendJob->data();
+        response.remove('\r'); response.remove('\n');
+        
+        QRegExp reg("<title>Attachment (\\d+) added to Bug (\\d+)</title>");
+        int pos = reg.indexIn(response);
+        if (pos != -1) {
+            int attach_id = reg.cap(1).toInt();
+            emit attachToReportSent(attach_id);
+        } else {
+            QString reason;
+
+            QRegExp reg("<td id=\"error_msg\" class=\"throw_error\">(.+)</td>");
+            response.remove('\r'); response.remove('\n');
+            pos = reg.indexIn(response);
+            if (pos != -1) {
+                reason = reg.cap(1).trimmed();
+            } else {
+                reason = i18nc("@info","Unknown error");
+            }
+
+            QString error = i18nc("@info", "Error while attaching the data to the bug report: %1", 
+                                  reason);
+            emit attachToReportError(error);
+        }
+    } else {
+        emit attachToReportError(job->errorString());
+    }
+}
+
 QString BugzillaManager::urlForBug(int bug_number) const
 {
     return QString(m_bugTrackerUrl) + QString(showBugUrl).arg(bug_number);
@@ -502,3 +570,72 @@ BugReport::BugReport()
     m_isValid = false;
 }
 
+//BEGIN BugzillaUploadData
+
+BugzillaUploadData::BugzillaUploadData(uint bugNumber)
+{
+    m_bugNumber = bugNumber;
+    m_boundary = "----------" + KRandom::randomString(42 + 13).toAscii();
+}
+
+void BugzillaUploadData::attachFile(const QString & url, const QString & description)
+{
+    //FIXME implement
+    //Read file contents and use attachRawData
+    Q_UNUSED(url);
+    Q_UNUSED(description);
+}
+
+void BugzillaUploadData::attachRawData(const QByteArray & data, const QString & filename,
+    const QString & mimeType, const QString & description)
+{
+    addPostField("bugid", QString::number(m_bugNumber));
+    addPostField("action", "insert");
+    addPostData("data", data, mimeType, filename);
+    addPostField("description", description);
+    addPostField("contenttypemethod", "manual");
+    addPostField("contenttypeselection", "text/plain"); //Needed?
+    addPostField("contenttypeentry", mimeType);
+    finishPostRequest();
+}
+
+void BugzillaUploadData::addPostField(const QString & name, const QString & value)
+{
+     QByteArray str = "--" + m_boundary + "\r\n";
+     str += "Content-Disposition: form-data; name=\"" + name.toAscii() + "\"";
+     str += "\r\n\r\n" + value.toUtf8() + "\r\n";
+
+     m_postData.append(str);
+}
+
+void BugzillaUploadData::addPostData(const QString & name, const QByteArray & data,
+    const QString & mimeType, const QString & path)
+{
+    QByteArray str = "--" + m_boundary + "\r\n";
+    str += "Content-Disposition: form-data; name=\"" + name.toAscii() + "\"; ";
+    str += "filename=\"" + QFile::encodeName(KUrl(path).fileName()) + "\"" + "\r\n";
+    str += "Content-Type: " + mimeType.toUtf8() + "\r\n\r\n";
+    
+    m_postData.append(str);
+    m_postData.append(data);
+    m_postData.append("\r\n");
+}
+
+void BugzillaUploadData::finishPostRequest()
+{
+    QByteArray str = "--" + m_boundary + "--";
+    m_postData.append(str);
+}
+
+
+QByteArray BugzillaUploadData::postData() const
+{
+    return m_postData;
+}
+
+QByteArray BugzillaUploadData::boundary() const
+{
+    return m_boundary;
+}
+
+//END BugzillaUploadData

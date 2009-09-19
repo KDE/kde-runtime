@@ -206,6 +206,8 @@ public:
     void stopCurrentSearch();
     
     void sendReport(BugReport);
+    
+    void attachTextToReport(const QString &, const QString &, const QString &, uint);
 
     bool getLogged() {
         return m_logged;
@@ -223,20 +225,24 @@ private Q_SLOTS:
     void fetchBugReportDone(KJob*);
     void searchBugsDone(KJob*);
     void sendReportDone(KJob*);
+    void attachToReportDone(KJob*);
 
 Q_SIGNALS:
     void loginFinished(bool);
     void bugReportFetched(BugReport, QObject *);
     void searchFinished(const BugMapList &);
     void reportSent(int);
+    void attachToReportSent(int);
 
     void loginError(const QString &);
     void bugReportError(const QString &, QObject *);
     void searchError(const QString &);
     void sendReportError(const QString &);
     void sendReportErrorInvalidValues(); //To use default values
+    void attachToReportError(const QString &);
 
 private:
+    void attachToReport(const QByteArray &, const QByteArray &);
     QByteArray generatePostDataForReport(BugReport) const;
     void processLoginCookie(KIO::Job *);
     bool isCookieDaemonActive();
@@ -252,6 +258,29 @@ private:
     
     QString     m_cookieString;
     bool        m_fallbackManualCookie;
+};
+
+class BugzillaUploadData
+{
+public:
+    BugzillaUploadData(uint bugNumber);
+    
+    QByteArray postData() const;
+    QByteArray boundary() const;
+    
+    void attachFile(const QString & url, const QString & description);
+    void attachRawData(const QByteArray & data, const QString & filename, 
+                    const QString & mimeType, const QString & description);
+    
+private:
+    void addPostField(const QString & name, const QString & value);
+    void addPostData(const QString & name, const QByteArray & data, const QString & mimeType,
+                     const QString & path);
+    void finishPostRequest();
+    
+    QByteArray      m_boundary;
+    uint            m_bugNumber;
+    QByteArray      m_postData;
 };
 
 #endif

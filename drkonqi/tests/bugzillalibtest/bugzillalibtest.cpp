@@ -57,15 +57,19 @@ class BugzillaLibTest : public QObject
                 return;
             }
             
-            //Tests!!!!!
+            //Uncomment to Test
+            //FIXME provide a way to select the test from the command line
             
-            kDebug() << "sending BR";
-            sendBR();
-            
+            //Send a new bug report
             /*
-            manager->attachFile("169565", "mem Maps !!!", "" , BugzillaManager::AttachmentText);
+            sendBR();
             */
             
+            //Attach a simple text to a report as a file
+            /*
+            manager->attachTextToReport("Bugzilla Lib Attachment Content Test", "/tmp/var", 
+                                        "Bugzilla Lib Attachment Description Test", 150000);
+            */
         }
         
         void loginError(const QString & msg)
