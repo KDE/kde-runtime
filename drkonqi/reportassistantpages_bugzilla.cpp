@@ -36,6 +36,7 @@
 
 #include <KIcon>
 #include <KMessageBox>
+#include <KInputDialog>
 #include <KToolInvocation>
 #include <KWallet/Wallet>
 
@@ -303,6 +304,15 @@ BugzillaDuplicatesPage::BugzillaDuplicatesPage(ReportAssistantDialog * parent):
     header->setResizeMode(0, QHeaderView::ResizeToContents);
     header->setResizeMode(1, QHeaderView::Interactive);
 
+    QTreeWidgetItem * customBugItem = new QTreeWidgetItem(
+        QStringList() << i18nc("@item:intable custom bug report number", "Custom")
+                      << i18nc("@item:intable custom bug report number description", 
+                                                            "Manually enter a bug report ID"));
+    customBugItem->setData(0, Qt::UserRole, QLatin1String("custom"));
+    customBugItem->setIcon(1, KIcon("edit-rename"));
+
+    ui.m_bugListWidget->addTopLevelItem(customBugItem);
+
     m_searchMoreGuiItem = KGuiItem2(i18nc("@action:button", "Search for more reports"),
                                                    KIcon("edit-find"),
                                                    i18nc("@info:tooltip", "Use this button to "
@@ -390,7 +400,18 @@ void BugzillaDuplicatesPage::searchError(QString err)
 void BugzillaDuplicatesPage::itemClicked(QTreeWidgetItem * item, int col)
 {
     Q_UNUSED(col);
-    showReportInformationDialog(item->text(0).toInt());
+
+    int bugNumber = 0;
+    if (item->data(0, Qt::UserRole) == QLatin1String("custom")) {
+        bool ok = false;
+        bugNumber = KInputDialog::getInteger(
+                    i18nc("@title:window", "Enter a custom bug report number"),
+                    i18nc("@info:label", "Enter the number of the bug report you want to check"),
+                    0, 0, 1000000, 1, &ok, this);
+    } else {
+        bugNumber = item->text(0).toInt();
+    }
+    showReportInformationDialog(bugNumber);
 }
 
 void BugzillaDuplicatesPage::itemClicked(QListWidgetItem * item)
@@ -439,7 +460,7 @@ void BugzillaDuplicatesPage::resetDates()
 void BugzillaDuplicatesPage::aboutToShow()
 {
     //Perform initial search if we are not currently searching and if there are no results yet
-    if (!m_searching && ui.m_bugListWidget->topLevelItemCount() == 0 && canSearchMore()) {
+    if (!m_searching && ui.m_bugListWidget->topLevelItemCount() == 1 && canSearchMore()) {
         searchMore();
     }
 }
