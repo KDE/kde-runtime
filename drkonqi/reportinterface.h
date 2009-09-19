@@ -63,8 +63,16 @@ public:
     
     bool isWorthReporting() const;
     
+    //Zero means creating a new bug report
+    void setAttachToBugNumber(uint);
+    
 private Q_SLOTS:
     void sendUsingDefaultProduct() const;
+    void attachSent(int, int);
+
+Q_SIGNALS:
+    void reportSent(int);
+    void sendReportError(const QString &);
 
 private:
     bool        m_userCanDetail;
@@ -78,6 +86,8 @@ private:
     QStringList m_possibleDuplicates;
 
     ProductMapping *    m_productMapping;
+    
+    uint     m_attachToBugNumber;
 };
 
 #endif

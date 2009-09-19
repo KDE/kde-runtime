@@ -41,6 +41,8 @@ ReportInterface::ReportInterface(QObject *parent)
     m_developersCanContactReporter = false;
     
     m_productMapping = new ProductMapping(DrKonqi::instance()->krashConfig()->productName(), this);
+    
+    m_attachToBugNumber = 0;
 }
 
 bool ReportInterface::userCanDetail() const
@@ -208,8 +210,26 @@ void ReportInterface::sendBugReport(BugzillaManager *bzManager) const
     BugReport report = newBugReportTemplate();
     report.setDescription(generateReport(true));
     report.setValid(true);
-    connect(bzManager, SIGNAL(sendReportErrorInvalidValues()), this, SLOT(sendUsingDefaultProduct()));
-    bzManager->sendReport(report);
+    
+    if (m_attachToBugNumber > 0)
+    {
+        connect(bzManager, SIGNAL(attachToReportSent(int, int)), this, SLOT(attachSent(int, int)));
+        connect(bzManager, SIGNAL(attachToReportError(QString)), this, 
+                                                                SIGNAL(sendReportError(QString)));
+
+        QString reportText = QLatin1String("Title: ") + 
+                             report.shortDescription() + QLatin1String("\n\n") +
+                             report.description();
+
+        bzManager->attachTextToReport(reportText, QLatin1String("/tmp/drkonqireport"), //Fake path
+                                      QLatin1String("New crash information added by DrKonqi"),
+                                      m_attachToBugNumber);
+    } else {
+        connect(bzManager, SIGNAL(sendReportErrorInvalidValues()), this, SLOT(sendUsingDefaultProduct()));
+        connect(bzManager, SIGNAL(reportSent(int)), this, SIGNAL(reportSent(int)));
+        connect(bzManager, SIGNAL(sendReportError(QString)), this, SIGNAL(sendReportError(QString)));
+        bzManager->sendReport(report);
+    }
 }
 
 void ReportInterface::sendUsingDefaultProduct() const
@@ -223,6 +243,12 @@ void ReportInterface::sendUsingDefaultProduct() const
     report.setDescription(generateReport(true));
     report.setValid(true);
     bzManager->sendReport(report);
+}
+
+void ReportInterface::attachSent(int attachId, int bugId)
+{
+    Q_UNUSED(attachId);
+    emit reportSent(bugId);
 }
 
 QStringList ReportInterface::relatedBugzillaProducts() const
@@ -259,4 +285,9 @@ bool ReportInterface::isWorthReporting() const
     return needToReport;
 }
 
+void ReportInterface::setAttachToBugNumber(uint bugNumber)
+{
+    m_attachToBugNumber = bugNumber;
+}
+    
 #include "reportinterface.moc"

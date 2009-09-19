@@ -912,8 +912,8 @@ BugzillaSendPage::BugzillaSendPage(ReportAssistantDialog * parent)
         : ReportAssistantPage(parent),
         m_contentsDialog(0)
 {
-    connect(bugzillaManager(), SIGNAL(reportSent(int)), this, SLOT(sent(int)));
-    connect(bugzillaManager(), SIGNAL(sendReportError(QString)), this, SLOT(sendError(QString)));
+    connect(reportInterface(), SIGNAL(reportSent(int)), this, SLOT(sent(int)));
+    connect(reportInterface(), SIGNAL(sendReportError(QString)), this, SLOT(sendError(QString)));
 
     ui.setupUi(this);
     
