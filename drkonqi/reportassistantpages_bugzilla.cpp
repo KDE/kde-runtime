@@ -113,7 +113,8 @@ void BugzillaLoginPage::aboutToShow()
         
         ui.m_noticeLabel->setVisible(false);
         
-        ui.m_statusWidget->setIdle(i18nc("@info:status the user is logged at the bugtracker site as USERNAME",
+        ui.m_statusWidget->setIdle(i18nc("@info:status the user is logged at the bugtracker site "
+                                      "as USERNAME",
                                       "Logged in at the KDE bug tracking system (%1) as: %2.",
                                       QLatin1String(KDE_BUGZILLA_SHORT_URL),
                                       bugzillaManager()->getUsername()));
@@ -677,16 +678,20 @@ void BugzillaReportInformationDialog::bugFetchFinished(BugReport report, QObject
             }
             
             QString text =
-                i18n("<strong>Product:</strong> %1 (%2)<br />", report.product(),
-                                                                report.component()) +
-                i18n("<strong>Title:</strong> %1<br />",
-                                                                report.shortDescription()) +
-                i18n("<strong>Status:</strong> %1<br />", customStatusString) +
-                i18n("<strong>Full Description:</strong><br />%1",
-                                                report.description().replace('\n', "<br />"));
+                i18nc("@label:textbox bug report label and value", 
+                                "<strong>Product:</strong> %1 (%2)<br />", 
+                                report.product(), report.component()) +
+                i18nc("@label:textbox bug report label and value", 
+                                "<strong>Title:</strong> %1<br />", report.shortDescription()) +
+                i18nc("@label:textbox bug report label and value", 
+                                "<strong>Status:</strong> %1<br />", customStatusString) +
+                i18nc("@label:textbox bug report label and value", 
+                                "<strong>Full Description:</strong><br />%1", 
+                                report.description().replace('\n', "<br />"));
                                                 
             if (!comments.isEmpty()) {
-                text += i18n("<br /><br /><strong>Comments:</strong> %1", comments);
+                text += i18nc("@label:textbox bug report label and value", 
+                                "<br /><br /><strong>Comments:</strong> %1", comments);
             }
 
             ui.m_infoBrowser->setText(text);
@@ -746,44 +751,45 @@ void BugzillaInformationPage::aboutToShow()
         if (DrKonqi::instance()->systemInformation()->bugzillaPlatform() == 
                                                                     QLatin1String("unspecified")) { 
             m_distroComboVisible = true;
-            ui.m_distroChooserCombo->addItem(i18nc("KDE distribution method", "Unspecified"),
-                                                   "unspecified");
-            ui.m_distroChooserCombo->addItem(i18nc("KDE distribution method", "Debian stable"),
-                                                   "Debian stable");
-            ui.m_distroChooserCombo->addItem(i18nc("KDE distribution method", "Debian testing"),
-                                                   "Debian testing");
-            ui.m_distroChooserCombo->addItem(i18nc("KDE distribution method", "Debian unstable"),
-                                                   "Debian unstable");
-            ui.m_distroChooserCombo->addItem(i18nc("KDE distribution method", "Exherbo"),
-                                                   "Exherbo Packages");
-            ui.m_distroChooserCombo->addItem(i18nc("KDE distribution method", "Gentoo"),
-                                                   "Gentoo Packages");
-            ui.m_distroChooserCombo->addItem(i18nc("KDE distribution method", "Mandriva"),
-                                                   "Mandriva RPMs");
-            ui.m_distroChooserCombo->addItem(i18nc("KDE distribution method", "Slackware"),
-                                                   "Slackware Packages");
-            ui.m_distroChooserCombo->addItem(i18nc("KDE distribution method", "SuSE/OpenSUSE"),
-                                                   "SuSE RPMs");
-            ui.m_distroChooserCombo->addItem(i18nc("KDE distribution method", "RedHat"),
-                                                   "RedHat RPMs");
-            ui.m_distroChooserCombo->addItem(i18nc("KDE distribution method", "Fedora"),
-                                                   "Fedora RPMs");
-            ui.m_distroChooserCombo->addItem(i18nc("KDE distribution method", "Kubuntu/Ubuntu "
-                                                   "(and derivates)"), "Ubuntu Packages");
-            ui.m_distroChooserCombo->addItem(i18nc("KDE distribution method", "Pardus"),
-                                                   "Pardus Packages");
-            ui.m_distroChooserCombo->addItem(i18nc("KDE distribution method", "Archlinux"),
-                                                   "Archlinux Packages");
-            ui.m_distroChooserCombo->addItem(i18nc("KDE distribution method", "FreeBSD (Ports)"),
-                                                   "FreeBSD Ports");
-            ui.m_distroChooserCombo->addItem(i18nc("KDE distribution method", "NetBSD (pkgsrc)"),
-                                                   "NetBSD pkgsrc");
-            ui.m_distroChooserCombo->addItem(i18nc("KDE distribution method", "OpenBSD"),
-                                                   "OpenBSD Packages");
-            ui.m_distroChooserCombo->addItem(i18nc("KDE distribution method", "Mac OS X"),
-                                                   "MacPorts Packages");
-            ui.m_distroChooserCombo->addItem(i18nc("KDE distribution method", "Solaris"),
-                                                   "Solaris Packages");
+            ui.m_distroChooserCombo->addItem(i18nc("@label:listbox KDE distribution method",
+                                                   "Unspecified"),"unspecified");
+            ui.m_distroChooserCombo->addItem(i18nc("@label:listbox KDE distribution method",
+                                                   "Debian stable"), "Debian stable");
+            ui.m_distroChooserCombo->addItem(i18nc("@label:listbox KDE distribution method",
+                                                   "Debian testing"), "Debian testing");
+            ui.m_distroChooserCombo->addItem(i18nc("@label:listbox KDE distribution method",
+                                                   "Debian unstable"), "Debian unstable");
+            ui.m_distroChooserCombo->addItem(i18nc("@label:listbox KDE distribution method",
+                                                   "Exherbo"), "Exherbo Packages");
+            ui.m_distroChooserCombo->addItem(i18nc("@label:listbox KDE distribution method",
+                                                   "Gentoo"), "Gentoo Packages");
+            ui.m_distroChooserCombo->addItem(i18nc("@label:listbox KDE distribution method",
+                                                   "Mandriva"), "Mandriva RPMs");
+            ui.m_distroChooserCombo->addItem(i18nc("@label:listbox KDE distribution method",
+                                                   "Slackware"), "Slackware Packages");
+            ui.m_distroChooserCombo->addItem(i18nc("@label:listbox KDE distribution method",
+                                                   "SuSE/OpenSUSE"), "SuSE RPMs");
+            ui.m_distroChooserCombo->addItem(i18nc("@label:listbox KDE distribution method",
+                                                   "RedHat"), "RedHat RPMs");
+            ui.m_distroChooserCombo->addItem(i18nc("@label:listbox KDE distribution method",
+                                                   "Fedora"), "Fedora RPMs");
+            ui.m_distroChooserCombo->addItem(i18nc("@label:listbox KDE distribution method",
+                                                   "Kubuntu/Ubuntu (and derivates)"), 
+                                                   "Ubuntu Packages");
+            ui.m_distroChooserCombo->addItem(i18nc("@label:listbox KDE distribution method",
+                                                   "Pardus"), "Pardus Packages");
+            ui.m_distroChooserCombo->addItem(i18nc("@label:listbox KDE distribution method",
+                                                   "Archlinux"), "Archlinux Packages");
+            ui.m_distroChooserCombo->addItem(i18nc("@label:listbox KDE distribution method",
+                                                   "FreeBSD (Ports)"), "FreeBSD Ports");
+            ui.m_distroChooserCombo->addItem(i18nc("@label:listbox KDE distribution method",
+                                                   "NetBSD (pkgsrc)"), "NetBSD pkgsrc");
+            ui.m_distroChooserCombo->addItem(i18nc("@label:listbox KDE distribution method",
+                                                   "OpenBSD"), "OpenBSD Packages");
+            ui.m_distroChooserCombo->addItem(i18nc("@label:listbox KDE distribution method",
+                                                   "Mac OS X"), "MacPorts Packages");
+            ui.m_distroChooserCombo->addItem(i18nc("@label:listbox KDE distribution method",
+                                                   "Solaris"), "Solaris Packages");
             
             //Restore previously selected bugzilla platform (distribution)
             KConfigGroup config(KGlobal::config(), "BugzillaInformationPage");

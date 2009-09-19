@@ -48,7 +48,7 @@
    <item>
     <widget class="QGroupBox" name="m_distributionGroupBox">
      <property name="title">
-      <string comment="@title:groupbox">Distribution method:</string>
+      <string comment="@title:group">Distribution method:</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
@@ -59,7 +59,7 @@
         <item>
          <widget class="QCheckBox" name="m_compiledSourcesCheckBox">
           <property name="text">
-           <string comment="@option:checkbox">KDE compiled from sources</string>
+           <string comment="@option:check">KDE compiled from sources</string>
           </property>
          </widget>
         </item>

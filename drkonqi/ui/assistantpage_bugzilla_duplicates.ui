@@ -54,7 +54,7 @@
        <item>
         <widget class="QLabel" name="m_selectedPossibleDuplicatesLabel">
          <property name="text">
-          <string>Selected possible duplicates:</string>
+          <string comment="@label title of a listbox where the possible duplicate bug numbers are put in">Selected possible duplicates:</string>
          </property>
         </widget>
        </item>

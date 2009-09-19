@@ -109,6 +109,7 @@ void SystemInformation::lsbReleaseFinished()
 //if the values change on the server side, they need to be updated here as well.
 void SystemInformation::fetchOSInformation()
 {
+    //krazy:excludeall=cpp
     //Get the base OS string (bugzillaOS)
 #if defined(Q_OS_LINUX)
     m_bugzillaOperatingSystem = QLatin1String("Linux");

@@ -24,7 +24,7 @@
 #include <QProcess>
 
 class KProcess;
-class QProgressDialog;
+class KProgressDialog;
 
 class DebugPackageInstaller: public QObject
 {
@@ -34,7 +34,7 @@ class DebugPackageInstaller: public QObject
                    ResultSymbolsNotFound = 2, ResultCanceled = 3 };
     
     public:
-        DebugPackageInstaller(const QString & packageName, QObject *parent = 0);
+        explicit DebugPackageInstaller(const QString & packageName, QObject *parent = 0);
         bool canInstallDebugPackages() const;
         void setMissingLibraries(const QStringList &);
         void installDebugPackages();
@@ -50,7 +50,7 @@ class DebugPackageInstaller: public QObject
         
     private:
         KProcess *              m_installerProcess;
-        QProgressDialog *       m_progressDialog;
+        KProgressDialog *       m_progressDialog;
         
         QString                 m_executablePath;
         QString                 m_packageName;

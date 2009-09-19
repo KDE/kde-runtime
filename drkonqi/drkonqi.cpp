@@ -50,6 +50,7 @@
 
 #include <QtDBus/QDBusConnection>
 #include <QtCore/QTimer>
+#include <QtCore/QPointer>
 
 #include <KProcess>
 #include <KStandardDirs>
@@ -208,15 +209,16 @@ void DrKonqi::saveReport(const QString & reportText, QWidget *parent)
             defname = defname.mid(defname.lastIndexOf('/') + 1);
         }
         
-        KFileDialog dlg(defname, QString(), parent);
-        dlg.setSelection(defname);
-        dlg.setCaption(i18nc("@title:window","Select Filename"));
-        dlg.setOperationMode(KFileDialog::Saving);
-        dlg.setMode(KFile::File);
-        dlg.setConfirmOverwrite(true);
-        dlg.exec();
+        QPointer<KFileDialog> dlg = new KFileDialog(defname, QString(), parent);
+        dlg->setSelection(defname);
+        dlg->setCaption(i18nc("@title:window","Select Filename"));
+        dlg->setOperationMode(KFileDialog::Saving);
+        dlg->setMode(KFile::File);
+        dlg->setConfirmOverwrite(true);
+        dlg->exec();
         
-        KUrl fileUrl = dlg.selectedUrl();
+        KUrl fileUrl = dlg->selectedUrl();
+        delete dlg;
         if (fileUrl.isValid()) {
             KTemporaryFile tf;
             if (tf.open()) {

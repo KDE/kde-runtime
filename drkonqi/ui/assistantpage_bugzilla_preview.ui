@@ -23,7 +23,7 @@ If you want to modify it go the previous pages.</string>
     </widget>
    </item>
    <item>
-    <widget class="QTextEdit" name="m_previewEdit">
+    <widget class="KTextEdit" name="m_previewEdit">
      <property name="readOnly">
       <bool>true</bool>
      </property>

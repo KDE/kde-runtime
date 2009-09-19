@@ -20,13 +20,12 @@
 #include "debugpackageinstaller.h"
 #include <config-drkonqi.h>
 
-#include <QtGui/QProgressDialog>
-
 #include <KStandardDirs>
 #include <KShell>
 #include <KDebug>
 #include <KProcess>
 #include <KLocale>
+#include <KProgressDialog>
 
 DebugPackageInstaller::DebugPackageInstaller(const QString & packageName, QObject *parent)
     : QObject(parent), m_installerProcess(0), m_progressDialog(0)
@@ -60,9 +59,9 @@ void DebugPackageInstaller::installDebugPackages()
         m_installerProcess->start();
         
         //Show dialog
-        m_progressDialog = new QProgressDialog(qobject_cast<QWidget*>(parent()));
-        connect(m_progressDialog, SIGNAL(canceled()), this, SLOT(progressDialogCanceled()));
-        m_progressDialog->setRange(0,0);
+        m_progressDialog = new KProgressDialog(qobject_cast<QWidget*>(parent()));
+        connect(m_progressDialog, SIGNAL(cancelClicked()), this, SLOT(progressDialogCanceled()));
+        m_progressDialog->progressBar()->setRange(0,0);
         m_progressDialog->setWindowTitle(i18nc("@title:window", "Missing debug symbols"));
         m_progressDialog->setLabelText(i18nc("@info:progress", "Requesting installation of missing "
                                                                     "debug symbols packages..."));
@@ -116,7 +115,7 @@ void DebugPackageInstaller::processFinished(int exitCode, QProcess::ExitStatus)
     }
     }
     
-    m_progressDialog->cancel();
+    m_progressDialog->reject();
     
     delete m_progressDialog;
     m_progressDialog = 0;

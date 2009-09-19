@@ -161,7 +161,7 @@ QString ReportInterface::generateReport(bool drKonqiStamp) const
         Q_FOREACH(const QString & dupe, m_possibleDuplicates) {
             duplicatesString += QLatin1String("bug ") + dupe + QLatin1String(", ");
         }
-        duplicatesString = duplicatesString.left(duplicatesString.length()-2) + ".";
+        duplicatesString = duplicatesString.left(duplicatesString.length()-2) + '.';
         report.append(QString("This bug may be a duplicate of or related to %1\n")
                         .arg(duplicatesString));
     }
