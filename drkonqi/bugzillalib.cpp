@@ -70,6 +70,8 @@ static const char sendReportUrl[] = "post_bug.cgi";
 
 static const char attachDataUrl[] = "attachment.cgi";
 
+static const char addInformationUrl[] = "process_bug.cgi";
+
 BugzillaManager::BugzillaManager(QObject *parent):
         QObject(parent),
         m_logged(false),
@@ -364,6 +366,53 @@ void BugzillaManager::attachToReportDone(KJob * job)
         }
     } else {
         emit attachToReportError(job->errorString());
+    }
+}
+
+void BugzillaManager::addMeToCC(int bugNumber)
+{
+    QByteArray postData;
+    postData += QByteArray("id=") + QByteArray::number(bugNumber) + QByteArray("&addselfcc=on");
+
+    KIO::Job * addCCJob =
+        KIO::storedHttpPost(postData, KUrl(QString(m_bugTrackerUrl) + QString(addInformationUrl)),
+                            KIO::HideProgressInfo);
+    connect(addCCJob, SIGNAL(finished(KJob*)) , this, SLOT(addMeToCCDone(KJob*)));
+
+    addCCJob->addMetaData("content-type", "Content-Type: application/x-www-form-urlencoded");
+}
+
+void BugzillaManager::addMeToCCDone(KJob * job)
+{
+    if (!job->error()) {
+        KIO::StoredTransferJob * sendJob = (KIO::StoredTransferJob *)job;
+        QString response = sendJob->data();
+        response.remove('\r'); response.remove('\n');
+        
+        QRegExp reg("<title>Bug (.+) processed</title>");
+        int pos = reg.indexIn(response);
+        if (pos != -1) {
+            int bug_id = reg.cap(1).toInt();
+            emit addMeToCCFinished(bug_id);
+        } else {
+            QString reason;
+
+            QRegExp reg("<td id=\"error_msg\" class=\"throw_error\">(.+)</td>");
+            response.remove('\r'); response.remove('\n');
+            pos = reg.indexIn(response);
+            if (pos != -1) {
+                reason = reg.cap(1).trimmed();
+            } else {
+                reason = i18nc("@info","Unknown error");
+            }
+
+            QString error = i18nc("@info", "Error while adding yourself to the CC list: %1", 
+                                  reason);
+
+            emit addMeToCCError(error);
+        }
+    } else {
+        emit addMeToCCError(job->errorString());
     }
 }
 

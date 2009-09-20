@@ -207,24 +207,17 @@ BugReport ReportInterface::newBugReportTemplate() const
 
 void ReportInterface::sendBugReport(BugzillaManager *bzManager) const
 {
-    BugReport report = newBugReportTemplate();
-    report.setDescription(generateReport(true));
-    report.setValid(true);
-    
     if (m_attachToBugNumber > 0)
     {
-        connect(bzManager, SIGNAL(attachToReportSent(int, int)), this, SLOT(attachSent(int, int)));
-        connect(bzManager, SIGNAL(attachToReportError(QString)), this, 
-                                                                SIGNAL(sendReportError(QString)));
-
-        QString reportText = QLatin1String("Title: ") + 
-                             report.shortDescription() + QLatin1String("\n\n") +
-                             report.description();
-
-        bzManager->attachTextToReport(reportText, QLatin1String("/tmp/drkonqireport"), //Fake path
-                                      QLatin1String("New crash information added by DrKonqi"),
-                                      m_attachToBugNumber);
+        connect(bzManager, SIGNAL(addMeToCCFinished(int)), this, SLOT(addedToCC()));
+        connect(bzManager, SIGNAL(addMeToCCError(QString)), this, SIGNAL(sendReportError(QString)));
+        //First add the user to the CC list, then attach
+        bzManager->addMeToCC(m_attachToBugNumber);
     } else {
+        BugReport report = newBugReportTemplate();
+        report.setDescription(generateReport(true));
+        report.setValid(true);
+
         connect(bzManager, SIGNAL(sendReportErrorInvalidValues()), this, SLOT(sendUsingDefaultProduct()));
         connect(bzManager, SIGNAL(reportSent(int)), this, SIGNAL(reportSent(int)));
         connect(bzManager, SIGNAL(sendReportError(QString)), this, SIGNAL(sendReportError(QString)));
@@ -243,6 +236,25 @@ void ReportInterface::sendUsingDefaultProduct() const
     report.setDescription(generateReport(true));
     report.setValid(true);
     bzManager->sendReport(report);
+}
+
+void ReportInterface::addedToCC()
+{
+    BugzillaManager *bzManager = qobject_cast<BugzillaManager*>(sender());
+    Q_ASSERT(bzManager);
+    //The user was added to the CC list, proceed with the attachment
+    connect(bzManager, SIGNAL(attachToReportSent(int, int)), this, SLOT(attachSent(int, int)));
+    connect(bzManager, SIGNAL(attachToReportError(QString)), this, 
+                                                            SIGNAL(sendReportError(QString)));
+    BugReport report = newBugReportTemplate();
+
+    QString reportText = QLatin1String("Title: ") + 
+                         report.shortDescription() + QLatin1String("\n\n") +
+                         generateReport(true);
+
+    bzManager->attachTextToReport(reportText, QLatin1String("/tmp/drkonqireport"), //Fake path
+                                  QLatin1String("New crash information added by DrKonqi"),
+                                  m_attachToBugNumber);
 }
 
 void ReportInterface::attachSent(int attachId, int bugId)

@@ -70,6 +70,10 @@ class BugzillaLibTest : public QObject
             manager->attachTextToReport("Bugzilla Lib Attachment Content Test", "/tmp/var", 
                                         "Bugzilla Lib Attachment Description Test", 150000);
             */
+
+            /*
+            manager->addMeToCC(100005);
+            */
         }
         
         void loginError(const QString & msg)

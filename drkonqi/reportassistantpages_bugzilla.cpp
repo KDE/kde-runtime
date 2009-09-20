@@ -346,10 +346,35 @@ BugzillaDuplicatesPage::BugzillaDuplicatesPage(ReportAssistantDialog * parent):
     ui.m_removeSelectedDuplicateButton->setIcon(KIcon("list-remove"));
     connect(ui.m_removeSelectedDuplicateButton, SIGNAL(clicked()), this, 
                                                                 SLOT(removeSelectedDuplicate()));
+
+    ui.m_attachToReportIcon->setPixmap(KIcon("mail-attachment").pixmap(16,16));
+    ui.m_attachToReportIcon->setFixedSize(16,16);
+    ui.m_attachToReportIcon->setVisible(false);
+    ui.m_attachToReportLabel->setVisible(false);
+    connect(ui.m_attachToReportLabel, SIGNAL(linkActivated(QString)), this, 
+                                                                SLOT(cancelAttachToBugReport()));
+    showDuplicatesPanel(false);
 }
 
 BugzillaDuplicatesPage::~BugzillaDuplicatesPage()
 {
+}
+
+void BugzillaDuplicatesPage::attachToBugReport(int bugNumber)
+{
+    ui.m_attachToReportLabel->setText(i18nc("@label", "The report is going to be "
+                            "<strong>attached</strong> to bug <numid>%1</numid>. "
+                            "<a href=\"#\">Cancel</a>", bugNumber));
+    ui.m_attachToReportLabel->setVisible(true);
+    ui.m_attachToReportIcon->setVisible(true);
+    reportInterface()->setAttachToBugNumber(bugNumber);
+}
+
+void BugzillaDuplicatesPage::cancelAttachToBugReport()
+{
+    ui.m_attachToReportLabel->setVisible(false);
+    ui.m_attachToReportIcon->setVisible(false);
+    reportInterface()->setAttachToBugNumber(0);
 }
 
 void BugzillaDuplicatesPage::itemSelectionChanged()
@@ -435,6 +460,8 @@ void BugzillaDuplicatesPage::addPossibleDuplicateNumber(int bugNumber)
     if (ui.m_selectedDuplicatesList->findItems(stringNumber, Qt::MatchExactly).isEmpty()) {
         ui.m_selectedDuplicatesList->addItem(stringNumber);
     }
+
+    showDuplicatesPanel(true);
 }
 
 void BugzillaDuplicatesPage::removeSelectedDuplicate()
@@ -443,8 +470,19 @@ void BugzillaDuplicatesPage::removeSelectedDuplicate()
     if (items.length() > 0) {
         delete ui.m_selectedDuplicatesList->takeItem(ui.m_selectedDuplicatesList->row(items.at(0)));
     }
+
+    if (ui.m_selectedDuplicatesList->count() == 0) {
+        showDuplicatesPanel(false);
+    }
 }
 
+
+void BugzillaDuplicatesPage::showDuplicatesPanel(bool show)
+{
+    ui.m_removeSelectedDuplicateButton->setVisible(show);
+    ui.m_selectedDuplicatesList->setVisible(show);
+    ui.m_selectedPossibleDuplicatesLabel->setVisible(show);
+}
 
 bool BugzillaDuplicatesPage::canSearchMore()
 {
@@ -589,7 +627,7 @@ BugzillaReportInformationDialog::BugzillaReportInformationDialog(BugzillaDuplica
     m_parent = parent;
     
     //Create the GUI
-    setButtons(KDialog::Close | KDialog::User1);
+    setButtons(KDialog::Close | KDialog::User1 | KDialog::User2);
     setDefaultButton(KDialog::Close);
     setCaption(i18nc("@title:window","Bug Description"));
     
@@ -597,12 +635,19 @@ BugzillaReportInformationDialog::BugzillaReportInformationDialog(BugzillaDuplica
     ui.setupUi(widget);
     setMainWidget(widget);
         
-    setButtonGuiItem(KDialog::User1, 
-                KGuiItem2(i18nc("@action:button", "My crash may be a duplicate of this report"),
-                    KIcon("document-import"), i18nc("@info:tooltip", "Use this button to mark your "
+    setButtonGuiItem(KDialog::User2, 
+                KGuiItem2(i18nc("@action:button", "Add as a possible duplicate"),
+                    KIcon("list-add"), i18nc("@info:tooltip", "Use this button to mark your "
                     "crash as related to the currently shown bug report. This will help "
                     "the KDE developers to determine whether they are duplicates or not.")));
-    connect(this, SIGNAL(user1Clicked()) , this, SLOT(mayBeDuplicateClicked()));
+    connect(this, SIGNAL(user2Clicked()) , this, SLOT(mayBeDuplicateClicked()));
+
+    setButtonGuiItem(KDialog::User1, 
+                KGuiItem2(i18nc("@action:button", "Attach to this report (Advanced)"),
+                    KIcon("mail-attachment"), i18nc("@info:tooltip", "Use this button to attach "
+                    "your crash information to this report; only if you are really sure this is "
+                    "the same crash.")));
+    connect(this, SIGNAL(user1Clicked()) , this, SLOT(attachToBugReportClicked()));
 
     //Connect bugzillalib signals
     connect(m_parent->bugzillaManager(), SIGNAL(bugReportFetched(BugReport, QObject *)),
@@ -632,6 +677,7 @@ void BugzillaReportInformationDialog::showBugReport(int bugNumber)
     m_parent->bugzillaManager()->fetchBugReport(m_bugNumber, this);
 
     button(KDialog::User1)->setEnabled(false);
+    button(KDialog::User2)->setEnabled(false);
 
     ui.m_infoBrowser->setText(i18nc("@info:status","Loading..."));
     ui.m_infoBrowser->setEnabled(false);
@@ -719,6 +765,7 @@ void BugzillaReportInformationDialog::bugFetchFinished(BugReport report, QObject
             ui.m_infoBrowser->setEnabled(true);
             
             button(KDialog::User1)->setEnabled(true);
+            button(KDialog::User2)->setEnabled(true);
 
             ui.m_statusWidget->setIdle(i18nc("@info:status", "Showing report <numid>%1</numid>",
                                                             report.bugNumberAsInt()));
@@ -732,6 +779,19 @@ void BugzillaReportInformationDialog::mayBeDuplicateClicked()
 {
     m_parent->addPossibleDuplicateNumber(m_bugNumber);
     hide();
+}
+
+void BugzillaReportInformationDialog::attachToBugReportClicked()
+{
+    if (KMessageBox::questionYesNo(this, 
+           i18nc("@info","If you want to attach new information to an existing bug report you need "
+           "to be sure that they refer to the same crash.<nl />Are you sure you want to attach "
+           "your report to bug <numid>%1</numid> ?", m_bugNumber),
+           i18nc("@title:window","Attach the information to bug <numid>%1</numid>", m_bugNumber))
+                                        == KMessageBox::Yes) {
+        m_parent->attachToBugReport(m_bugNumber);
+        hide();
+    }
 }
 
 void BugzillaReportInformationDialog::bugFetchError(QString err, QObject * jobOwner)

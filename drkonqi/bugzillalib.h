@@ -209,6 +209,8 @@ public:
     
     void attachTextToReport(const QString &, const QString &, const QString &, uint);
 
+    void addMeToCC(int);
+    
     bool getLogged() {
         return m_logged;
     }
@@ -226,6 +228,7 @@ private Q_SLOTS:
     void searchBugsDone(KJob*);
     void sendReportDone(KJob*);
     void attachToReportDone(KJob*);
+    void addMeToCCDone(KJob*);
 
 Q_SIGNALS:
     void loginFinished(bool);
@@ -233,6 +236,7 @@ Q_SIGNALS:
     void searchFinished(const BugMapList &);
     void reportSent(int);
     void attachToReportSent(int, int);
+    void addMeToCCFinished(int);
 
     void loginError(const QString &);
     void bugReportError(const QString &, QObject *);
@@ -240,6 +244,7 @@ Q_SIGNALS:
     void sendReportError(const QString &);
     void sendReportErrorInvalidValues(); //To use default values
     void attachToReportError(const QString &);
+    void addMeToCCError(const QString &);
 
 private:
     void attachToReport(const QByteArray &, const QByteArray &);

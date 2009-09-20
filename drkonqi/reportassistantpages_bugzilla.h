@@ -83,6 +83,7 @@ public:
     void aboutToHide();
 
     void addPossibleDuplicateNumber(int);
+    void attachToBugReport(int);
     
 private Q_SLOTS:
     void searchFinished(const BugMapList&);
@@ -105,6 +106,10 @@ private Q_SLOTS:
     void markAsSearching(bool);
     
     bool canSearchMore();
+
+    void showDuplicatesPanel(bool);
+
+    void cancelAttachToBugReport();
 
 private:
     void resetDates();
@@ -140,6 +145,7 @@ private Q_SLOTS:
     void bugFetchError(QString, QObject *);
     
     void mayBeDuplicateClicked();
+    void attachToBugReportClicked();
     
 private:
     Ui::AssistantPageBugzillaDuplicatesDialog   ui;
