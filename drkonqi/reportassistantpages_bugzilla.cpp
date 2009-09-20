@@ -360,141 +360,6 @@ BugzillaDuplicatesPage::~BugzillaDuplicatesPage()
 {
 }
 
-void BugzillaDuplicatesPage::attachToBugReport(int bugNumber)
-{
-    ui.m_attachToReportLabel->setText(i18nc("@label", "The report is going to be "
-                            "<strong>attached</strong> to bug <numid>%1</numid>. "
-                            "<a href=\"#\">Cancel</a>", bugNumber));
-    ui.m_attachToReportLabel->setVisible(true);
-    ui.m_attachToReportIcon->setVisible(true);
-    reportInterface()->setAttachToBugNumber(bugNumber);
-}
-
-void BugzillaDuplicatesPage::cancelAttachToBugReport()
-{
-    ui.m_attachToReportLabel->setVisible(false);
-    ui.m_attachToReportIcon->setVisible(false);
-    reportInterface()->setAttachToBugNumber(0);
-}
-
-void BugzillaDuplicatesPage::itemSelectionChanged()
-{
-    ui.m_openReportButton->setEnabled(ui.m_bugListWidget->selectedItems().count() == 1);
-}
-
-void BugzillaDuplicatesPage::openSelectedReport()
-{
-    QList<QTreeWidgetItem*> selected = ui.m_bugListWidget->selectedItems();
-    if (selected.count() == 1) {
-        itemClicked(selected.at(0), 0);
-    }
-}
-
-void BugzillaDuplicatesPage::markAsSearching(bool searching)
-{
-    m_searching = searching;
-    
-    ui.m_bugListWidget->setEnabled(!searching);
-    ui.m_searchMoreButton->setEnabled(!searching);
-    ui.m_searchMoreButton->setVisible(!searching);
-    ui.m_stopSearchButton->setEnabled(searching);
-    ui.m_stopSearchButton->setVisible(searching);
-    
-    ui.m_selectedDuplicatesList->setEnabled(!searching);
-    ui.m_removeSelectedDuplicateButton->setEnabled(!searching);
-    
-    if (!searching) {
-        itemSelectionChanged();
-    } else {
-        ui.m_openReportButton->setEnabled(false);
-    }
-}
-
-void BugzillaDuplicatesPage::searchError(QString err)
-{
-    ui.m_searchMoreButton->setGuiItem(m_retrySearchGuiItem);
-    markAsSearching(false);
-
-    ui.m_statusWidget->setIdle(i18nc("@info:status","Error fetching the bug report list"));
-
-    KMessageBox::error(this , i18nc("@info/rich","Error fetching the bug report list<nl/>"
-                                                 "<message>%1.</message><nl/>"
-                                                 "Please wait some time and try again.", err));
-}
-
-void BugzillaDuplicatesPage::itemClicked(QTreeWidgetItem * item, int col)
-{
-    Q_UNUSED(col);
-
-    int bugNumber = 0;
-    if (item->data(0, Qt::UserRole) == QLatin1String("custom")) {
-        bool ok = false;
-        bugNumber = KInputDialog::getInteger(
-                    i18nc("@title:window", "Enter a custom bug report number"),
-                    i18nc("@label", "Enter the number of the bug report you want to check"),
-                    0, 0, 1000000, 1, &ok, this);
-    } else {
-        bugNumber = item->text(0).toInt();
-    }
-    showReportInformationDialog(bugNumber);
-}
-
-void BugzillaDuplicatesPage::itemClicked(QListWidgetItem * item)
-{
-    showReportInformationDialog(item->text().toInt());
-}
-
-void BugzillaDuplicatesPage::showReportInformationDialog(int bugNumber)
-{
-    if (bugNumber <= 0) {
-        return;
-    }
-
-    BugzillaReportInformationDialog * infoDialog = new BugzillaReportInformationDialog(this);
-    infoDialog->showBugReport(bugNumber);
-}
-
-void BugzillaDuplicatesPage::addPossibleDuplicateNumber(int bugNumber)
-{
-    QString stringNumber = QString::number(bugNumber);
-    if (ui.m_selectedDuplicatesList->findItems(stringNumber, Qt::MatchExactly).isEmpty()) {
-        ui.m_selectedDuplicatesList->addItem(stringNumber);
-    }
-
-    showDuplicatesPanel(true);
-}
-
-void BugzillaDuplicatesPage::removeSelectedDuplicate()
-{
-    QList<QListWidgetItem*> items = ui.m_selectedDuplicatesList->selectedItems();
-    if (items.length() > 0) {
-        delete ui.m_selectedDuplicatesList->takeItem(ui.m_selectedDuplicatesList->row(items.at(0)));
-    }
-
-    if (ui.m_selectedDuplicatesList->count() == 0) {
-        showDuplicatesPanel(false);
-    }
-}
-
-
-void BugzillaDuplicatesPage::showDuplicatesPanel(bool show)
-{
-    ui.m_removeSelectedDuplicateButton->setVisible(show);
-    ui.m_selectedDuplicatesList->setVisible(show);
-    ui.m_selectedPossibleDuplicatesLabel->setVisible(show);
-}
-
-bool BugzillaDuplicatesPage::canSearchMore()
-{
-    return (m_startDate.year() >= 2002);
-}
-
-void BugzillaDuplicatesPage::resetDates()
-{
-    m_endDate = QDate::currentDate();
-    m_startDate = m_endDate;
-}
-
 void BugzillaDuplicatesPage::aboutToShow()
 {
     //Perform initial search if we are not currently searching and if there are no results yet
@@ -515,21 +380,14 @@ void BugzillaDuplicatesPage::aboutToHide()
     reportInterface()->setPossibleDuplicates(possibleDuplicates);
 }
 
-void BugzillaDuplicatesPage::stopCurrentSearch()
+//BEGIN Search related methods
+void BugzillaDuplicatesPage::searchMore()
 {
-    if (m_searching) {
-        bugzillaManager()->stopCurrentSearch(); 
-        
-        markAsSearching(false);
-        
-        if (m_startDate==m_endDate) { //Never searched
-            ui.m_statusWidget->setIdle(i18nc("@info:status","Search stopped."));
-        } else {
-            ui.m_statusWidget->setIdle(i18nc("@info:status","Search stopped. Showing results from "
-                                        "%1 to %2", m_startDate.toString("yyyy-MM-dd"),
-                                        m_endDate.toString("yyyy-MM-dd")));
-        }
-    }
+    //1 year back
+    m_searchingEndDate = m_startDate;
+    m_searchingStartDate = m_searchingEndDate.addYears(-1);
+
+    performSearch();
 }
 
 void BugzillaDuplicatesPage::performSearch()
@@ -560,13 +418,46 @@ void BugzillaDuplicatesPage::performSearch()
     */
 }
 
-void BugzillaDuplicatesPage::searchMore()
+void BugzillaDuplicatesPage::stopCurrentSearch()
 {
-    //1 year back
-    m_searchingEndDate = m_startDate;
-    m_searchingStartDate = m_searchingEndDate.addYears(-1);
+    if (m_searching) {
+        bugzillaManager()->stopCurrentSearch(); 
+        
+        markAsSearching(false);
+        
+        if (m_startDate==m_endDate) { //Never searched
+            ui.m_statusWidget->setIdle(i18nc("@info:status","Search stopped."));
+        } else {
+            ui.m_statusWidget->setIdle(i18nc("@info:status","Search stopped. Showing results from "
+                                        "%1 to %2", m_startDate.toString("yyyy-MM-dd"),
+                                        m_endDate.toString("yyyy-MM-dd")));
+        }
+    }
+}
 
-    performSearch();
+void BugzillaDuplicatesPage::markAsSearching(bool searching)
+{
+    m_searching = searching;
+    
+    ui.m_bugListWidget->setEnabled(!searching);
+    ui.m_searchMoreButton->setEnabled(!searching);
+    ui.m_searchMoreButton->setVisible(!searching);
+    ui.m_stopSearchButton->setEnabled(searching);
+    ui.m_stopSearchButton->setVisible(searching);
+    
+    ui.m_selectedDuplicatesList->setEnabled(!searching);
+    ui.m_removeSelectedDuplicateButton->setEnabled(!searching);
+    
+    if (!searching) {
+        itemSelectionChanged();
+    } else {
+        ui.m_openReportButton->setEnabled(false);
+    }
+}
+
+bool BugzillaDuplicatesPage::canSearchMore()
+{
+    return (m_startDate.year() >= 2002);
 }
 
 void BugzillaDuplicatesPage::searchFinished(const BugMapList & list)
@@ -616,16 +507,135 @@ void BugzillaDuplicatesPage::searchFinished(const BugMapList & list)
     }
 }
 
+void BugzillaDuplicatesPage::searchError(QString err)
+{
+    ui.m_searchMoreButton->setGuiItem(m_retrySearchGuiItem);
+    markAsSearching(false);
+
+    ui.m_statusWidget->setIdle(i18nc("@info:status","Error fetching the bug report list"));
+
+    KMessageBox::error(this , i18nc("@info/rich","Error fetching the bug report list<nl/>"
+                                                 "<message>%1.</message><nl/>"
+                                                 "Please wait some time and try again.", err));
+}
+
+void BugzillaDuplicatesPage::resetDates()
+{
+    m_endDate = QDate::currentDate();
+    m_startDate = m_endDate;
+}
+//END Search related methods
+
+//BEGIN Duplicates list related methods
+void BugzillaDuplicatesPage::openSelectedReport()
+{
+    QList<QTreeWidgetItem*> selected = ui.m_bugListWidget->selectedItems();
+    if (selected.count() == 1) {
+        itemClicked(selected.at(0), 0);
+    }
+}
+
+void BugzillaDuplicatesPage::itemClicked(QTreeWidgetItem * item, int col)
+{
+    Q_UNUSED(col);
+
+    int bugNumber = 0;
+    if (item->data(0, Qt::UserRole) == QLatin1String("custom")) {
+        bool ok = false;
+        bugNumber = KInputDialog::getInteger(
+                    i18nc("@title:window", "Enter a custom bug report number"),
+                    i18nc("@label", "Enter the number of the bug report you want to check"),
+                    0, 0, 1000000, 1, &ok, this);
+    } else {
+        bugNumber = item->text(0).toInt();
+    }
+    showReportInformationDialog(bugNumber);
+}
+
+void BugzillaDuplicatesPage::itemClicked(QListWidgetItem * item)
+{
+    showReportInformationDialog(item->text().toInt());
+}
+
+void BugzillaDuplicatesPage::showReportInformationDialog(int bugNumber)
+{
+    if (bugNumber <= 0) {
+        return;
+    }
+
+    BugzillaReportInformationDialog * infoDialog = new BugzillaReportInformationDialog(this);
+    connect(infoDialog, SIGNAL(possibleDuplicateSelected(int)), this, 
+                                                            SLOT(addPossibleDuplicateNumber(int)));
+    connect(infoDialog, SIGNAL(attachToBugReportSelected(int)), this, SLOT(attachToBugReport(int)));
+
+    infoDialog->showBugReport(bugNumber);
+}
+
+void BugzillaDuplicatesPage::itemSelectionChanged()
+{
+    ui.m_openReportButton->setEnabled(ui.m_bugListWidget->selectedItems().count() == 1);
+}
+//END Duplicates list related methods
+
+//BEGIN Selected duplicates list related methods
+void BugzillaDuplicatesPage::addPossibleDuplicateNumber(int bugNumber)
+{
+    QString stringNumber = QString::number(bugNumber);
+    if (ui.m_selectedDuplicatesList->findItems(stringNumber, Qt::MatchExactly).isEmpty()) {
+        ui.m_selectedDuplicatesList->addItem(stringNumber);
+    }
+
+    showDuplicatesPanel(true);
+}
+
+void BugzillaDuplicatesPage::removeSelectedDuplicate()
+{
+    QList<QListWidgetItem*> items = ui.m_selectedDuplicatesList->selectedItems();
+    if (items.length() > 0) {
+        delete ui.m_selectedDuplicatesList->takeItem(ui.m_selectedDuplicatesList->row(items.at(0)));
+    }
+
+    if (ui.m_selectedDuplicatesList->count() == 0) {
+        showDuplicatesPanel(false);
+    }
+}
+
+void BugzillaDuplicatesPage::showDuplicatesPanel(bool show)
+{
+    ui.m_removeSelectedDuplicateButton->setVisible(show);
+    ui.m_selectedDuplicatesList->setVisible(show);
+    ui.m_selectedPossibleDuplicatesLabel->setVisible(show);
+}
+//END Selected duplicates list related methods
+
+//BEGIN Attach to bug related methods
+void BugzillaDuplicatesPage::attachToBugReport(int bugNumber)
+{
+    ui.m_attachToReportLabel->setText(i18nc("@label", "The report is going to be "
+                            "<strong>attached</strong> to bug <numid>%1</numid>. "
+                            "<a href=\"#\">Cancel</a>", bugNumber));
+    ui.m_attachToReportLabel->setVisible(true);
+    ui.m_attachToReportIcon->setVisible(true);
+    reportInterface()->setAttachToBugNumber(bugNumber);
+}
+
+void BugzillaDuplicatesPage::cancelAttachToBugReport()
+{
+    ui.m_attachToReportLabel->setVisible(false);
+    ui.m_attachToReportIcon->setVisible(false);
+    reportInterface()->setAttachToBugNumber(0);
+}
+//END Attach to bug related methods
+
 //END BugzillaDuplicatesPage
 
 //BEGIN BugzillaReportInformationDialog
 
 BugzillaReportInformationDialog::BugzillaReportInformationDialog(BugzillaDuplicatesPage * parent) :
         KDialog(parent),
+        m_parent(parent),
         m_bugNumber(0)
 {
-    m_parent = parent;
-    
     //Create the GUI
     setButtons(KDialog::Close | KDialog::User1 | KDialog::User2);
     setDefaultButton(KDialog::Close);
@@ -777,7 +787,7 @@ void BugzillaReportInformationDialog::bugFetchFinished(BugReport report, QObject
 
 void BugzillaReportInformationDialog::mayBeDuplicateClicked()
 {
-    m_parent->addPossibleDuplicateNumber(m_bugNumber);
+    emit possibleDuplicateSelected(m_bugNumber);
     hide();
 }
 
@@ -789,7 +799,7 @@ void BugzillaReportInformationDialog::attachToBugReportClicked()
            "your report to bug <numid>%1</numid> ?", m_bugNumber),
            i18nc("@title:window","Attach the information to bug <numid>%1</numid>", m_bugNumber))
                                         == KMessageBox::Yes) {
-        m_parent->attachToBugReport(m_bugNumber);
+        emit attachToBugReportSelected(m_bugNumber);
         hide();
     }
 }

@@ -82,38 +82,39 @@ public:
     void aboutToShow();
     void aboutToHide();
 
-    void addPossibleDuplicateNumber(int);
-    void attachToBugReport(int);
-    
 private Q_SLOTS:
-    void searchFinished(const BugMapList&);
-    void searchError(QString);
-    
-    void stopCurrentSearch();
-    
-    void openSelectedReport();
-    void itemClicked(QTreeWidgetItem *, int);
-    void itemClicked(QListWidgetItem *);
-    void showReportInformationDialog(int);
-
-    void itemSelectionChanged();
-
-    void removeSelectedDuplicate();
-    
+    /* Search related methods */
     void searchMore();
     void performSearch();
+    void stopCurrentSearch();
 
     void markAsSearching(bool);
     
     bool canSearchMore();
 
+    void searchFinished(const BugMapList&);
+    void searchError(QString);
+
+    void resetDates();
+    
+    /* Duplicates list related methods */
+    void openSelectedReport();
+    void itemClicked(QTreeWidgetItem *, int);
+    void itemClicked(QListWidgetItem *);
+    void showReportInformationDialog(int);
+    void itemSelectionChanged();
+
+    /* Selected duplicates list related methods */
+    void addPossibleDuplicateNumber(int);
+    void removeSelectedDuplicate();
+
     void showDuplicatesPanel(bool);
 
+    /* Attach to bug related methods */
+    void attachToBugReport(int);
     void cancelAttachToBugReport();
 
 private:
-    void resetDates();
-    
     bool                                        m_searching;
 
     Ui::AssistantPageBugzillaDuplicates         ui;
@@ -147,9 +148,13 @@ private Q_SLOTS:
     void mayBeDuplicateClicked();
     void attachToBugReportClicked();
     
+Q_SIGNALS:
+    void possibleDuplicateSelected(int);
+    void attachToBugReportSelected(int);
+
 private:
     Ui::AssistantPageBugzillaDuplicatesDialog   ui;
-    BugzillaDuplicatesPage *                      m_parent;
+    BugzillaDuplicatesPage *                    m_parent;
     int                                         m_bugNumber;
     
 };
