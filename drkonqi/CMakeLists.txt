@@ -25,6 +25,7 @@ set(drkonqi_SRCS
     reportassistantpage.cpp
     reportassistantpages_base.cpp
     reportassistantpages_bugzilla.cpp
+    reportassistantpages_bugzilla_duplicates.cpp
     reportinterface.cpp
     backtraceratingwidget.cpp
     backtracewidget.cpp

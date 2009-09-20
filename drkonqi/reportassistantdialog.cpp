@@ -28,6 +28,7 @@
 
 #include "reportassistantpages_base.h"
 #include "reportassistantpages_bugzilla.h"
+#include "reportassistantpages_bugzilla_duplicates.h"
 #include "reportinterface.h"
 
 #include <QtGui/QCloseEvent>
