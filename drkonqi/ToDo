@@ -13,38 +13,28 @@ http://blogs.msdn.com/oldnewthing/archive/2003/09/01/54734.aspx (by Maciej)
 - Search in backtrace (esp. for [KCrash Handler])
 - Backtrace syntax highlighting (xml parser+ some qt/kde class ?)
 
---
+- Option to "don't show DrKonqi for this(X) app"
+- Option to avoid drkonqi at all (setting KDE_DEBUG=1), and GUI to renable it
+
 
 ##Other tasks
 -------------
-
-NO - Cache lsbrelease output and/or bugzilla platform ??
-((This will lead to messy results after a distro upgrade))
 
 - KCrash could send the current KCrash behaviour as a parameter to DrKonqi, so if the app behaviour is to auto-restart itself, the
 Restart button could be hidden as it wont make sense. (plasma crashes)
 (gkiagia rework on KCrash)
 
-- Check strings (native english) of the DebugInstaller class
-- Check strings (native english) of the Preview Report page
+- Check string (native english) in the new features.
 
 - Update "AboutBugReporting" guide to reflect the new workflow
 
-- Option to "don't show DrKonqi for this(X) app"
-- Option to avoid drkonqi at all (setting KDE_DEBUG=1), and GUI to renable it
-
-#- Improve DuplicatesPage dialog: what if you want to pick more than one possibly duplicate?
-   - Improve UI of the new feature implementation
-
-#- Option to Attach the new crash information to an existing report (check username and backtraces?
-to avoid mixed reports)
-   - Implement a UI
 
 - Ask for saving the report information to file when exiting the report assistant without reporting
 ( This is going to be done with the Drkonqi2.1 proposal to not close the main dialog on report)
 Leave the main dialog on launching the reporting tool, but add some legends:
  "Reporting tool started for this crash"
  "You reported this crash already" (and remove the , "help KDE, report bug" messages)
+->>>> THis may need a major UI rework...
 
 - Custom usefulness values needed by application (ex. Amarok wants only perfect backtraces...)
 
@@ -57,28 +47,26 @@ This is useful to determine if some external plugin is involved
 - Application detection: ask for or detect specific things depending on application
    ie konqueror: url, plasma: plasmoids in use, kopete: protocol, etc.
 
-#ToDiscuss/Improve
---------
-
-- REVIEW criteria of minimum chars/words to use in the Title and Details fields
-
 #Later
 ---------
 
-- waiting for productName()->product/component mapping (custom cgi file at BKO)
+- Waiting for productName()->product/component mapping (custom cgi file at BKO)
 [[ currently bugzillalib detects unexistent products to later use the "kde" product ]]
 Update: local mappings file support already implemented.
+
+- REVIEW criteria of minimum chars/words to use in the Title and Details fields
 
 #DONE
 -------
 
+#- Improve DuplicatesPage dialog: what if you want to pick more than one possibly duplicate?
+#   - Improve UI of the new feature implementation
+#- Option to Attach the new crash information to an existing report (check username and backtraces?
+to avoid mixed reports)
+#   - Implement a UI
+
 ##Bugzilla DrKonqi reports cleanup:
----
-Wontfix: 143243, 179721, 185547
-Invalid/NEEDSINFO: 182048-worksforme
-Worksforme: 167911 (gdb bug?)
-Needs research: 126073
----
+Wontfix: 143243, 185547
 
 ---------
 
@@ -107,6 +95,3 @@ http://websvn.kde.org/?view=rev&revision=408177
 
 bool KSessionManager::saveState     (   QSessionManager &        sm      )       [virtual]
 void QApplication::saveState ( QSessionManager & manager ) 
-
-
-
