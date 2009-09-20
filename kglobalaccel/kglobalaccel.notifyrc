@@ -1,6 +1,7 @@
 [Global]
 IconName=
 Comment=KDE Global Shortcuts Daemon
+Comment[bg]=Сървър KDE Global Shortcuts
 Comment[et]=KDE globaalsete kiirklahvide deemon
 Comment[hr]=KDE Globalni poslužitelj prečaca tipkovnice
 Comment[id]=Jurik Jalan Pintas Global KDE
@@ -21,6 +22,7 @@ Comment[uk]=Фонова служба загальних скорочень KDE
 Comment[x-test]=xxKDE Global Shortcuts Daemonxx
 Comment[zh_TW]=KDE 全域捷徑守護程式
 Name=kglobalaccel
+Name[bg]=kglobalaccel
 Name[et]=kglobalaccel
 Name[hr]=kglobalaccel
 Name[id]=kglobalaccel
@@ -117,6 +119,7 @@ Name[x-test]=xxApplicationxx
 Name[zh_CN]=应用程序
 Name[zh_TW]=應用程式
 Comment=The application name
+Comment[bg]=Име на програма
 Comment[et]=Rakenduse nimi
 Comment[hr]=Ime aplikacije
 Comment[id]=Nama aplikasi
@@ -139,6 +142,7 @@ Comment[zh_TW]=應用程式名稱
 
 [Event/newshortcutregistered]
 Name=Global Shortcut Registration
+Name[bg]=Централно указване на съкратени клавиши
 Name[et]=Globaalsete kiirklahvide registreerimine
 Name[hr]=Prijava globalnih prečaca tipkovnice
 Name[id]=Registrasi Jalan Pintas Global
@@ -179,6 +183,7 @@ Action=Popup
 
 [Event/globalshortcutpressed]
 Name=Global Shortcut Triggered
+Name[bg]=Задействан е общ бърз клавиш
 Name[et]=Kasutati globaalset kiirklahvi
 Name[hr]=Globalni prečac je korišten
 Name[id]=Jalan Pintas Global Dipicu
