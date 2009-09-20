@@ -39,7 +39,9 @@ typedef QList<BugMap>           BugMapList; //List of reports
 class BugReport
 {
 public:
-    BugReport();
+    BugReport() {
+        m_isValid = false;
+    }
 
     void setBugNumber(const QString & value) {
         setData("bug_id", value);
@@ -143,12 +145,6 @@ public:
     }
 
 private:
-
-    bool        m_isValid;
-
-    BugMap      m_dataMap;
-    QStringList m_commentList;
-
     void setData(const QString & key, const QString & val) {
         m_dataMap.insert(key, val);
     }
@@ -156,7 +152,10 @@ private:
         return m_dataMap.value(key);
     }
 
+    bool        m_isValid;
 
+    BugMap      m_dataMap;
+    QStringList m_commentList;
 };
 
 //XML parser that creates a BugReport object
@@ -164,25 +163,29 @@ class BugReportXMLParser
 {
 public:
     BugReportXMLParser(const QByteArray &);
+
     BugReport parse();
+
     bool isValid() {
         return m_valid;
     }
 
 private:
-    bool            m_valid;
-    QDomDocument    m_xml;
     QString getSimpleValue(const QString &);
 
+    bool            m_valid;
+    QDomDocument    m_xml;
 };
 
 class BugListCSVParser
 {
 public:
     BugListCSVParser(QByteArray);
+
     bool isValid() {
         return m_isValid;
     }
+
     BugMapList parse();
 
 private:
@@ -197,40 +200,43 @@ class BugzillaManager : public QObject
 public:
     BugzillaManager(QObject *parent = 0);
 
-    void setLoginData(const QString &, const QString &);
+    /* Login methods */
     void tryLogin();
+    bool getLogged() const;
 
+    void setLoginData(const QString &, const QString &);
+    QString getUsername() const;
+
+    /* Bugzilla Action methods */
     void fetchBugReport(int, QObject * jobOwner = 0);
+
     void searchBugs(QString words, const QStringList & products, const QString & severity,
                     const QString & date_start, const QString & date_end , QString comment);
-    void stopCurrentSearch();
     
     void sendReport(BugReport);
     
     void attachTextToReport(const QString &, const QString &, const QString &, uint);
 
     void addMeToCC(int);
-    
-    bool getLogged() {
-        return m_logged;
-    }
-    QString getUsername() const {
-        return m_username;
-    }
 
+    /* Misc methods */
     QString urlForBug(int bug_number) const;
 
     void setCustomBugtrackerUrl(const QString &);
+
+    void stopCurrentSearch();
     
 private Q_SLOTS:
-    void loginDone(KJob*);
-    void fetchBugReportDone(KJob*);
-    void searchBugsDone(KJob*);
-    void sendReportDone(KJob*);
-    void attachToReportDone(KJob*);
-    void addMeToCCDone(KJob*);
+    /* Slots to handle KJob::finished */
+    void loginJobFinished(KJob*);
+    void fetchBugJobFinished(KJob*);
+    void searchBugsJobFinished(KJob*);
+    void sendReportJobFinished(KJob*);
+    void attachToReportJobFinished(KJob*);
+    void addMeToCCJobFinished(KJob*);
 
 Q_SIGNALS:
+    /* Bugzilla actions finished successfully */
     void loginFinished(bool);
     void bugReportFetched(BugReport, QObject *);
     void searchFinished(const BugMapList &);
@@ -238,6 +244,7 @@ Q_SIGNALS:
     void attachToReportSent(int, int);
     void addMeToCCFinished(int);
 
+    /* Bugzilla actions had errors */
     void loginError(const QString &);
     void bugReportError(const QString &, QObject *);
     void searchError(const QString &);
@@ -247,6 +254,7 @@ Q_SIGNALS:
     void addMeToCCError(const QString &);
 
 private:
+    /* Private helper methods */
     void attachToReport(const QByteArray &, const QByteArray &);
     QByteArray generatePostDataForReport(BugReport) const;
 

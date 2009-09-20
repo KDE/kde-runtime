@@ -2,7 +2,7 @@
 * bugzillalib.cpp
 * Copyright  2009    Dario Andres Rodriguez <andresbajotierra@gmail.com>
 *
-* //Http-post file upload
+* //Http-post file upload (bz attachments)
 * Copyright (C) 2007 by Artur Duque de Souza <morpheuz@gmail.com>
 *                       Vardhman Jain <vardhman@gmail.com>
 *                       Gilles Caulier <caulier.gilles@gmail.com>
@@ -35,9 +35,6 @@
 #include <QtXml/QDomElement>
 #include <QtXml/QDomNamedNodeMap>
 
-#include <QDBusInterface>
-#include <QDBusReply>
-
 #include <KIO/Job>
 #include <KUrl>
 #include <KConfig>
@@ -50,9 +47,8 @@ static const char bugtrackerBKOBaseUrl[] = "https://bugs.kde.org/";
 
 static const char columns[] = "bug_severity,priority,bug_status,product,short_desc"; //resolution,
 
-//BKO URLs
+//Bugzilla URLs
 static const char loginUrl[] = "index.cgi";
-
 static const char searchUrl[] = "buglist.cgi?query_format=advanced&short_desc_type=anywordssubstr"
                             "&short_desc=%1&product=kde&product=%2&long_desc_type=anywordssubstr&"
                             "long_desc=%3&bug_file_loc_type=allwordssubstr&bug_file_loc=&keywords_"
@@ -62,15 +58,13 @@ static const char searchUrl[] = "buglist.cgi?query_format=advanced&short_desc_ty
                             "&type0-0-0=noop&value0-0-0=&bug_severity=%6&order=Importance"
                             "&columnlist=%7&ctype=csv";
 // short_desc, product, long_desc(possible backtraces lines), searchFrom, searchTo, severity, columnList
-
 static const char showBugUrl[] = "show_bug.cgi?id=%1";
 static const char fetchBugUrl[] = "show_bug.cgi?id=%1&ctype=xml";
-
 static const char sendReportUrl[] = "post_bug.cgi";
-
 static const char attachDataUrl[] = "attachment.cgi";
-
 static const char addInformationUrl[] = "process_bug.cgi";
+
+//BEGIN BugzillaManager
 
 BugzillaManager::BugzillaManager(QObject *parent):
         QObject(parent),
@@ -80,18 +74,7 @@ BugzillaManager::BugzillaManager(QObject *parent):
     m_bugTrackerUrl = bugtrackerBKOBaseUrl;
 }
 
-void BugzillaManager::setCustomBugtrackerUrl(const QString & customUrl)
-{
-    m_bugTrackerUrl = customUrl;
-}
-
-void BugzillaManager::setLoginData(const QString & _username, const QString & _password)
-{
-    m_username = _username;
-    m_password = _password;
-    m_logged = false;
-}
-
+//BEGIN Login methods
 void BugzillaManager::tryLogin()
 {
     if (!m_logged) {
@@ -105,13 +88,132 @@ void BugzillaManager::tryLogin()
         KIO::Job * loginJob =
             KIO::storedHttpPost(postData, KUrl(QString(m_bugTrackerUrl) + QString(loginUrl)),
                                 KIO::HideProgressInfo);
-        connect(loginJob, SIGNAL(finished(KJob*)) , this, SLOT(loginDone(KJob*)));
+        connect(loginJob, SIGNAL(finished(KJob*)) , this, SLOT(loginJobFinished(KJob*)));
 
         loginJob->addMetaData("content-type", "Content-Type: application/x-www-form-urlencoded");
     }
 }
 
-void BugzillaManager::loginDone(KJob* job)
+bool BugzillaManager::getLogged() const
+{
+    return m_logged;
+}
+
+void BugzillaManager::setLoginData(const QString & _username, const QString & _password)
+{
+    m_username = _username;
+    m_password = _password;
+    m_logged = false;
+}
+
+QString BugzillaManager::getUsername() const
+{
+    return m_username;
+}
+//END Login methods
+
+//BEGIN Bugzilla Action methods
+void BugzillaManager::fetchBugReport(int bugnumber, QObject * jobOwner)
+{
+    KUrl url = KUrl(QString(m_bugTrackerUrl) + QString(fetchBugUrl).arg(bugnumber));
+
+    if (!jobOwner) {
+        jobOwner = this;
+    }
+    
+    KIO::Job * fetchBugJob = KIO::storedGet(url, KIO::Reload, KIO::HideProgressInfo);
+    fetchBugJob->setParent(jobOwner);
+    connect(fetchBugJob, SIGNAL(finished(KJob*)) , this, SLOT(fetchBugJobFinished(KJob*)));
+}
+
+
+void BugzillaManager::searchBugs(QString words, const QStringList & products,
+                                const QString & severity, const QString & date_start, 
+                                const QString & date_end, QString comment)
+{
+    QString product;
+    if (products.size() > 0) {
+        if (products.size() == 1) {
+            product = products.at(0);
+        } else  {
+            Q_FOREACH(const QString & p, products) {
+                product += p + "&product=";
+            }
+            product = product.mid(0,product.size()-9);
+        }
+    }
+
+    QString url = QString(m_bugTrackerUrl) +
+                  QString(searchUrl).arg(words.replace(' ' , '+'), product, 
+                                         comment.replace(' ' , '+'), date_start,
+                                         date_end, severity, QString(columns));
+    
+    stopCurrentSearch();
+    
+    m_searchJob = KIO::storedGet(KUrl(url) , KIO::Reload, KIO::HideProgressInfo);
+    connect(m_searchJob, SIGNAL(finished(KJob*)) , this, SLOT(searchBugsJobFinished(KJob*)));
+}
+
+void BugzillaManager::sendReport(BugReport report)
+{
+    QByteArray postData = generatePostDataForReport(report);
+
+    QString url = QString(m_bugTrackerUrl) + QString(sendReportUrl);
+
+    KIO::Job * sendJob =
+        KIO::storedHttpPost(postData, KUrl(url), KIO::HideProgressInfo);
+
+    connect(sendJob, SIGNAL(finished(KJob*)) , this, SLOT(sendReportJobFinished(KJob*)));
+
+    sendJob->addMetaData("content-type", "Content-Type: application/x-www-form-urlencoded");    
+}
+
+void BugzillaManager::attachTextToReport(const QString & text, const QString & filename, 
+    const QString & description, uint bug)
+{
+    BugzillaUploadData request(bug);
+    request.attachRawData(text.toUtf8(), filename, "text/plain", description);
+
+    attachToReport(request.postData(), request.boundary());
+}
+
+void BugzillaManager::addMeToCC(int bugNumber)
+{
+    QByteArray postData;
+    postData += QByteArray("id=") + QByteArray::number(bugNumber) + QByteArray("&addselfcc=on");
+
+    KIO::Job * addCCJob =
+        KIO::storedHttpPost(postData, KUrl(QString(m_bugTrackerUrl) + QString(addInformationUrl)),
+                            KIO::HideProgressInfo);
+    connect(addCCJob, SIGNAL(finished(KJob*)) , this, SLOT(addMeToCCJobFinished(KJob*)));
+
+    addCCJob->addMetaData("content-type", "Content-Type: application/x-www-form-urlencoded");
+}
+//END Bugzilla Action methods
+
+//BEGIN Misc methods
+QString BugzillaManager::urlForBug(int bug_number) const
+{
+    return QString(m_bugTrackerUrl) + QString(showBugUrl).arg(bug_number);
+}
+
+void BugzillaManager::setCustomBugtrackerUrl(const QString & customUrl)
+{
+    m_bugTrackerUrl = customUrl;
+}
+
+void BugzillaManager::stopCurrentSearch()
+{
+    if (m_searchJob) { //Stop previous searchJob
+        m_searchJob->disconnect();
+        m_searchJob->kill();
+        m_searchJob = 0;
+    }
+}
+//END Misc methods
+
+//BEGIN Slots to handle KJob::finished
+void BugzillaManager::loginJobFinished(KJob* job)
 {
     if (!job->error()) {
         KIO::StoredTransferJob * loginJob = (KIO::StoredTransferJob *)job;
@@ -140,18 +242,7 @@ void BugzillaManager::loginDone(KJob* job)
     }
 }
 
-void BugzillaManager::fetchBugReport(int bugnumber, QObject * jobOwner)
-{
-    KUrl url = KUrl(QString(m_bugTrackerUrl) + QString(fetchBugUrl).arg(bugnumber));
-
-    if (!jobOwner) jobOwner = this;
-    
-    KIO::Job * fetchBugJob = KIO::storedGet(url, KIO::Reload, KIO::HideProgressInfo);
-    fetchBugJob->setParent(jobOwner);
-    connect(fetchBugJob, SIGNAL(finished(KJob*)) , this, SLOT(fetchBugReportDone(KJob*)));
-}
-
-void BugzillaManager::fetchBugReportDone(KJob* job)
+void BugzillaManager::fetchBugJobFinished(KJob* job)
 {
     if (!job->error()) {
         KIO::StoredTransferJob * fetchBugJob = (KIO::StoredTransferJob *)job;
@@ -171,43 +262,7 @@ void BugzillaManager::fetchBugReportDone(KJob* job)
     }
 }
 
-void BugzillaManager::searchBugs(QString words, const QStringList & products,
-                                const QString & severity, const QString & date_start, 
-                                const QString & date_end, QString comment)
-{
-    QString product;
-    if (products.size() > 0) {
-        if (products.size() == 1) {
-            product = products.at(0);
-        } else  {
-            Q_FOREACH(const QString & p, products) {
-                product += p + "&product=";
-            }
-            product = product.mid(0,product.size()-9);
-        }
-    }
-
-    QString url = QString(m_bugTrackerUrl) +
-                  QString(searchUrl).arg(words.replace(' ' , '+'), product, 
-                                         comment.replace(' ' , '+'), date_start,
-                                         date_end, severity, QString(columns));
-    
-    stopCurrentSearch();
-    
-    m_searchJob = KIO::storedGet(KUrl(url) , KIO::Reload, KIO::HideProgressInfo);
-    connect(m_searchJob, SIGNAL(finished(KJob*)) , this, SLOT(searchBugsDone(KJob*)));
-}
-
-void BugzillaManager::stopCurrentSearch()
-{
-    if (m_searchJob) { //Stop previous searchJob
-        m_searchJob->disconnect();
-        m_searchJob->kill();
-        m_searchJob = 0;
-    }
-}
-
-void BugzillaManager::searchBugsDone(KJob * job)
+void BugzillaManager::searchBugsJobFinished(KJob * job)
 {
     if (!job->error()) {
         KIO::StoredTransferJob * searchBugsJob = (KIO::StoredTransferJob *)job;
@@ -229,46 +284,7 @@ void BugzillaManager::searchBugsDone(KJob * job)
     m_searchJob = 0;
 }
 
-void BugzillaManager::sendReport(BugReport report)
-{
-    QByteArray postData = generatePostDataForReport(report);
-
-    QString url = QString(m_bugTrackerUrl) + QString(sendReportUrl);
-
-    KIO::Job * sendJob =
-        KIO::storedHttpPost(postData, KUrl(url), KIO::HideProgressInfo);
-
-    connect(sendJob, SIGNAL(finished(KJob*)) , this, SLOT(sendReportDone(KJob*)));
-
-    sendJob->addMetaData("content-type", "Content-Type: application/x-www-form-urlencoded");    
-}
-
-QByteArray BugzillaManager::generatePostDataForReport(BugReport report) const
-{
-    QByteArray postData =
-        QByteArray("product=") +
-        QUrl::toPercentEncoding(report.product()) +
-        QByteArray("&version=unspecified&component=") +
-        QUrl::toPercentEncoding(report.component()) +
-        QByteArray("&bug_severity=") +
-        QUrl::toPercentEncoding(report.bugSeverity()) +
-        QByteArray("&rep_platform=") +
-        QUrl::toPercentEncoding(report.platform()) +
-        QByteArray("&op_sys=") +
-        QUrl::toPercentEncoding(report.operatingSystem()) +
-        QByteArray("&priority=") +
-        QUrl::toPercentEncoding(report.priority()) +
-        QByteArray("&bug_status=") +
-        QUrl::toPercentEncoding(report.bugStatus()) +
-        QByteArray("&short_desc=") +
-        QUrl::toPercentEncoding(report.shortDescription()) +
-        QByteArray("&comment=") +
-        QUrl::toPercentEncoding(report.description());
-
-    return postData;
-}
-
-void BugzillaManager::sendReportDone(KJob * job)
+void BugzillaManager::sendReportJobFinished(KJob * job)
 {
     if (!job->error()) {
         KIO::StoredTransferJob * sendJob = (KIO::StoredTransferJob *)job;
@@ -313,29 +329,7 @@ void BugzillaManager::sendReportDone(KJob * job)
 
 }
 
-void BugzillaManager::attachTextToReport(const QString & text, const QString & filename, 
-    const QString & description, uint bug)
-{
-    BugzillaUploadData request(bug);
-    request.attachRawData(text.toUtf8(), filename, "text/plain", description);
-
-    attachToReport(request.postData(), request.boundary());
-}
-
-void BugzillaManager::attachToReport(const QByteArray & data, const QByteArray & boundary)
-{
-    KIO::Job * attachJob =
-        KIO::storedHttpPost(data, 
-                            KUrl(QString(m_bugTrackerUrl) + QString(attachDataUrl)),
-                            KIO::HideProgressInfo);
-
-    connect(attachJob, SIGNAL(finished(KJob*)) , this, SLOT(attachToReportDone(KJob*)));
-
-    attachJob->addMetaData("content-type", 
-                           "Content-Type: multipart/form-data; boundary=" + boundary);   
-}
-
-void BugzillaManager::attachToReportDone(KJob * job)
+void BugzillaManager::attachToReportJobFinished(KJob * job)
 {
     if (!job->error()) {
         KIO::StoredTransferJob * sendJob = (KIO::StoredTransferJob *)job;
@@ -369,20 +363,7 @@ void BugzillaManager::attachToReportDone(KJob * job)
     }
 }
 
-void BugzillaManager::addMeToCC(int bugNumber)
-{
-    QByteArray postData;
-    postData += QByteArray("id=") + QByteArray::number(bugNumber) + QByteArray("&addselfcc=on");
-
-    KIO::Job * addCCJob =
-        KIO::storedHttpPost(postData, KUrl(QString(m_bugTrackerUrl) + QString(addInformationUrl)),
-                            KIO::HideProgressInfo);
-    connect(addCCJob, SIGNAL(finished(KJob*)) , this, SLOT(addMeToCCDone(KJob*)));
-
-    addCCJob->addMetaData("content-type", "Content-Type: application/x-www-form-urlencoded");
-}
-
-void BugzillaManager::addMeToCCDone(KJob * job)
+void BugzillaManager::addMeToCCJobFinished(KJob * job)
 {
     if (!job->error()) {
         KIO::StoredTransferJob * sendJob = (KIO::StoredTransferJob *)job;
@@ -415,11 +396,51 @@ void BugzillaManager::addMeToCCDone(KJob * job)
         emit addMeToCCError(job->errorString());
     }
 }
+//END Slots to handle KJob::finished
 
-QString BugzillaManager::urlForBug(int bug_number) const
+//END Private helper methods
+void BugzillaManager::attachToReport(const QByteArray & data, const QByteArray & boundary)
 {
-    return QString(m_bugTrackerUrl) + QString(showBugUrl).arg(bug_number);
+    KIO::Job * attachJob =
+        KIO::storedHttpPost(data, 
+                            KUrl(QString(m_bugTrackerUrl) + QString(attachDataUrl)),
+                            KIO::HideProgressInfo);
+
+    connect(attachJob, SIGNAL(finished(KJob*)) , this, SLOT(attachToReportJobFinished(KJob*)));
+
+    attachJob->addMetaData("content-type", 
+                           "Content-Type: multipart/form-data; boundary=" + boundary);   
 }
+
+QByteArray BugzillaManager::generatePostDataForReport(BugReport report) const
+{
+    QByteArray postData =
+        QByteArray("product=") +
+        QUrl::toPercentEncoding(report.product()) +
+        QByteArray("&version=unspecified&component=") +
+        QUrl::toPercentEncoding(report.component()) +
+        QByteArray("&bug_severity=") +
+        QUrl::toPercentEncoding(report.bugSeverity()) +
+        QByteArray("&rep_platform=") +
+        QUrl::toPercentEncoding(report.platform()) +
+        QByteArray("&op_sys=") +
+        QUrl::toPercentEncoding(report.operatingSystem()) +
+        QByteArray("&priority=") +
+        QUrl::toPercentEncoding(report.priority()) +
+        QByteArray("&bug_status=") +
+        QUrl::toPercentEncoding(report.bugStatus()) +
+        QByteArray("&short_desc=") +
+        QUrl::toPercentEncoding(report.shortDescription()) +
+        QByteArray("&comment=") +
+        QUrl::toPercentEncoding(report.description());
+
+    return postData;
+}
+//END Private helper methods
+
+//END BugzillaManager
+
+//BEGIN BugzillaCSVParser
 
 BugListCSVParser::BugListCSVParser(QByteArray data)
 {
@@ -470,6 +491,10 @@ BugMapList BugListCSVParser::parse()
 
     return list;
 }
+
+//END BugzillaCSVParser
+
+//BEGIN BugzillaXMLParser
 
 BugReportXMLParser::BugReportXMLParser(const QByteArray & data)
 {
@@ -532,10 +557,7 @@ QString BugReportXMLParser::getSimpleValue(const QString & name)   //Extract an 
     return ret;
 }
 
-BugReport::BugReport()
-{
-    m_isValid = false;
-}
+//END BugzillaXMLParser
 
 //BEGIN BugzillaUploadData
 
