@@ -406,7 +406,7 @@ void BugzillaDuplicatesPage::itemClicked(QTreeWidgetItem * item, int col)
         bool ok = false;
         bugNumber = KInputDialog::getInteger(
                     i18nc("@title:window", "Enter a custom bug report number"),
-                    i18nc("@info:label", "Enter the number of the bug report you want to check"),
+                    i18nc("@label", "Enter the number of the bug report you want to check"),
                     0, 0, 1000000, 1, &ok, this);
     } else {
         bugNumber = item->text(0).toInt();
