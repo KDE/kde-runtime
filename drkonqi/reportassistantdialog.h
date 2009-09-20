@@ -49,6 +49,9 @@ private Q_SLOTS:
     void currentPageChanged_slot(KPageWidgetItem *, KPageWidgetItem *);
 
     void completeChanged(ReportAssistantPage*, bool);
+
+    void loginFinished();
+
     void assistantFinished(bool);
 
     void enableNextButton(bool);

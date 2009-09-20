@@ -93,7 +93,7 @@ ReportAssistantDialog::ReportAssistantDialog(QWidget * parent) :
     m_pageWidgetMap.insert(QLatin1String(PAGE_BZLOGIN_ID),m_bugzillaLoginPage);
     m_bugzillaLoginPage->setHeader(i18nc("@title","KDE Bug Tracking System Login"));
     m_bugzillaLoginPage->setIcon(KIcon("tools-report-bug"));
-    connect(m_bugzillaLogin, SIGNAL(loggedTurnToNextPage()), this, SLOT(next()));
+    connect(m_bugzillaLogin, SIGNAL(loggedTurnToNextPage()), this, SLOT(loginFinished()));
     
     //Bugzilla duplicates
     BugzillaDuplicatesPage * m_bugzillaDuplicates =  new BugzillaDuplicatesPage(this);
@@ -202,6 +202,14 @@ void ReportAssistantDialog::assistantFinished(bool showBack)
     enableButton(KDialog::Cancel, false);
     
     m_canClose = true;
+}
+
+void ReportAssistantDialog::loginFinished()
+{
+    //Bugzilla login finished, go to the next page
+    if (currentPage()->name() == QLatin1String(PAGE_BZLOGIN_ID)) {
+        next();
+    }
 }
 
 void ReportAssistantDialog::showHelp()
