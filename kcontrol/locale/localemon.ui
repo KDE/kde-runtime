@@ -150,7 +150,6 @@
         </item>
        </layout>
        <zorder>m_chMonPosPreCurSym</zorder>
-       <zorder>m_negativeGB</zorder>
       </widget>
      </item>
      <item>
