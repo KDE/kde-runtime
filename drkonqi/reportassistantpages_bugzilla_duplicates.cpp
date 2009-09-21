@@ -96,8 +96,14 @@ BugzillaDuplicatesPage::BugzillaDuplicatesPage(ReportAssistantDialog * parent):
     //Possible duplicates list and buttons
     connect(ui.m_selectedDuplicatesList, SIGNAL(itemDoubleClicked(QListWidgetItem*)),
              this, SLOT(itemClicked(QListWidgetItem*)));
+    connect(ui.m_selectedDuplicatesList, SIGNAL(itemSelectionChanged()),
+             this, SLOT(possibleDuplicateSelectionChanged()));
              
-    ui.m_removeSelectedDuplicateButton->setIcon(KIcon("list-remove"));
+    ui.m_removeSelectedDuplicateButton->setGuiItem(
+        KGuiItem2(i18nc("@action:button remove the selected item from a list", "Remove"),
+               KIcon("list-remove"),
+               i18nc("@info:tooltip", "Use this button to remove a selected possible duplicate")));
+    ui.m_removeSelectedDuplicateButton->setEnabled(false);
     connect(ui.m_removeSelectedDuplicateButton, SIGNAL(clicked()), this, 
                                                                 SLOT(removeSelectedDuplicate()));
 
@@ -200,7 +206,8 @@ void BugzillaDuplicatesPage::markAsSearching(bool searching)
     ui.m_stopSearchButton->setVisible(searching);
     
     ui.m_selectedDuplicatesList->setEnabled(!searching);
-    ui.m_removeSelectedDuplicateButton->setEnabled(!searching);
+    ui.m_removeSelectedDuplicateButton->setEnabled(!searching && 
+                                        !ui.m_selectedDuplicatesList->selectedItems().isEmpty());
     
     if (!searching) {
         itemSelectionChanged();
@@ -359,6 +366,12 @@ void BugzillaDuplicatesPage::showDuplicatesPanel(bool show)
     ui.m_removeSelectedDuplicateButton->setVisible(show);
     ui.m_selectedDuplicatesList->setVisible(show);
     ui.m_selectedPossibleDuplicatesLabel->setVisible(show);
+}
+
+void BugzillaDuplicatesPage::possibleDuplicateSelectionChanged()
+{
+    ui.m_removeSelectedDuplicateButton->setEnabled(
+                                        !ui.m_selectedDuplicatesList->selectedItems().isEmpty());
 }
 //END Selected duplicates list related methods
 

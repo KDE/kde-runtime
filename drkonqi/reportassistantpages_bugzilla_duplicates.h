@@ -75,6 +75,8 @@ private Q_SLOTS:
 
     void showDuplicatesPanel(bool);
 
+    void possibleDuplicateSelectionChanged();
+
     /* Attach to bug related methods */
     void attachToBugReport(int);
     void cancelAttachToBugReport();
