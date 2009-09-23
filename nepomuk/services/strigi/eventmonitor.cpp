@@ -96,14 +96,14 @@ void Nepomuk::EventMonitor::slotPowerManagementStatusChanged( bool conserveResou
         kDebug() << "Resuming indexer due to power management";
         m_pauseState = NotPaused;
         m_indexScheduler->resume();
-        sendEvent( "indexingResumed", i18n("Resuming Strigi file indexing."), "solid" );
+        sendEvent( "indexingResumed", i18n("Resuming indexing of files for fast searching."), "battery-charging" );
     }
     else if ( m_indexScheduler->isRunning() &&
               !m_indexScheduler->isSuspended() ) {
         kDebug() << "Pausing indexer due to power management";
         m_pauseState = PausedDueToPowerManagement;
         m_indexScheduler->suspend();
-        sendEvent( "indexingSuspended", i18n("Suspending Strigi file indexing to preserve resources."), "solid" );
+        sendEvent( "indexingSuspended", i18n("Suspending the indexing of files to preserve resources."), "battery-100" );
     }
 }
 
