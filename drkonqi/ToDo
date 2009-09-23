@@ -47,6 +47,23 @@ This is useful to determine if some external plugin is involved
 - Application detection: ask for or detect specific things depending on application
    ie konqueror: url, plasma: plasmoids in use, kopete: protocol, etc.
 
+- Implement TerminalDebuggerLauncher (the idea is to use the same trick as the one used in the installdbgsymbols.sh examples)
+
+- Add and use restarted() signal in CrashedApplication for future expansion.
+  (there could be a dbus interface allowing others to call restart())
+
+- BacktraceGenerator should not be allowed to start if another debugger is running.
+  Add some check and possibly some signal indicating this state. As a consequence,
+  remove the call to DrKonqi::debuggerManager()->debuggerIsRunning() from BacktraceWidget
+  to make it trully independent from drkonqi.
+
+- Make a docs dir and add documentation for:
+  1) the format of the debugger files
+  2) The dbus interface
+  + move README.packagers in there with a proper name.
+  
+- Register dynamic debug area (see dfaure's mail on k-c-d).
+
 #Later
 ---------
 
@@ -55,6 +72,8 @@ This is useful to determine if some external plugin is involved
 Update: local mappings file support already implemented.
 
 - REVIEW criteria of minimum chars/words to use in the Title and Details fields
+
+- Implement a proper dbus interface.
 
 #DONE
 -------
