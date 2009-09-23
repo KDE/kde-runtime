@@ -14,7 +14,6 @@ add_subdirectory( tests )
 
 set(drkonqi_SRCS 
     main.cpp
-    #drkonqiadaptor.cpp
     bugzillalib.cpp
     drkonqidialog.cpp
     statuswidget.cpp
