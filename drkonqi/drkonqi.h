@@ -17,53 +17,32 @@
 #ifndef DRKONQI_H
 #define DRKONQI_H
 
-#include <QtCore/QObject>
-
-class BacktraceGenerator;
 class SystemInformation;
+class DebuggerManager;
 class CrashedApplication;
+class AbstractDrKonqiBackend;
+class QString;
+class QWidget;
 
-class DrKonqi : public QObject
+class DrKonqi
 {
-    Q_OBJECT
 public:
-    enum State { ProcessRunning, ProcessStopped, DebuggerRunning };
+    static bool init();
+    static void cleanup();
 
-    static DrKonqi *instance();
-    bool init();
-    void cleanup();
+    static SystemInformation *systemInformation();
+    static DebuggerManager *debuggerManager();
+    static CrashedApplication *crashedApplication();
 
-    State currentState() const;
-    BacktraceGenerator *backtraceGenerator() const;
-    SystemInformation *systemInformation() const;
-    static const CrashedApplication *crashedApplication();
-
-    bool appRestarted() const;
     static void saveReport(const QString & reportText, QWidget *parent = 0);
-
-signals:
-    void debuggerRunning(bool running);
-    void newDebuggingApplication(const QString&);
-    void acceptDebuggingApplication();
-
-public slots:
-    void restartCrashedApplication();
-    void startDefaultExternalDebugger();
-    void startCustomExternalDebugger();
-    void registerDebuggingApplication(const QString&);
-
-private slots:
-    void stopAttachedProcess();
-    void continueAttachedProcess();
-    void debuggerStarting();
-    void debuggerStopped();
 
 private:
     DrKonqi();
-    virtual ~DrKonqi();
+    ~DrKonqi();
+    static DrKonqi *instance();
 
-    struct Private;
-    Private *const d;
+    SystemInformation *m_systemInformation;
+    AbstractDrKonqiBackend *m_backend;
 };
 
 #endif

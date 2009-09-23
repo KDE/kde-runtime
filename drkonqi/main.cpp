@@ -90,7 +90,8 @@ int main(int argc, char* argv[])
         new KApplication;
     qa->setApplicationName(inst.componentName());
 
-    if (!DrKonqi::instance()->init()) {
+    if (!DrKonqi::init()) {
+        delete qa;
         return 1;
     }
 
@@ -101,7 +102,7 @@ int main(int argc, char* argv[])
     w->show();
     int ret = qa->exec();
 
-    DrKonqi::instance()->cleanup();
+    DrKonqi::cleanup();
     delete qa;
     return ret;
 }

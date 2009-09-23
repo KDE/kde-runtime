@@ -18,13 +18,14 @@
 #define CRASHEDAPPLICATION_H
 
 #include "bugreportaddress.h"
+#include <QtCore/QObject>
 #include <QtCore/QFileInfo>
 
-class DrKonqi;
+class KCrashBackend;
 
-class CrashedApplication
+class CrashedApplication : QObject
 {
-    Q_DISABLE_COPY(CrashedApplication);
+    Q_OBJECT
 public:
     virtual ~CrashedApplication();
 
@@ -49,13 +50,22 @@ public:
     /** Returns the name of the signal (ex. SIGSEGV) */
     QString signalName() const;
 
-protected:
-    struct Private;
-    friend class DrKonqi;
-    CrashedApplication(Private *dd);
-    static CrashedApplication *createFromKCrashData();
+    bool hasBeenRestarted() const;
 
-    Private *const d;
+public slots:
+    void restart();
+
+protected:
+    friend class KCrashBackend;
+    CrashedApplication(QObject *parent = 0);
+
+    int m_pid;
+    int m_signalNumber;
+    QString m_name;
+    QFileInfo m_executable;
+    QString m_version;
+    BugReportAddress m_reportAddress;
+    bool m_restarted;
 };
 
 #endif // CRASHEDAPPLICATION_H

@@ -21,11 +21,14 @@
 #define DRKONQIDIALOG__H
 
 #include <QtCore/QPointer>
+#include <QtCore/QHash>
 #include <KDialog>
 
 class BacktraceWidget;
 class AboutBugReportingDialog;
 class KTabWidget;
+class AbstractDebuggerLauncher;
+class KMenu;
 
 class DrKonqiDialog: public KDialog
 {
@@ -41,9 +44,8 @@ private Q_SLOTS:
 
     void restartApplication();
 
-    //New debugger detected
-    void slotNewDebuggingApp(const QString &);
-
+    void addDebugger(AbstractDebuggerLauncher *launcher);
+    void removeDebugger(AbstractDebuggerLauncher *launcher);
     void enableDebugMenu(bool);
 
     //GUI
@@ -60,8 +62,8 @@ private:
     QWidget *                       m_introWidget;
     BacktraceWidget *               m_backtraceWidget;
 
-    QAction *                       m_defaultDebugAction;
-    QAction *                       m_customDebugAction;
+    KMenu *m_debugMenu;
+    QHash<AbstractDebuggerLauncher*, QAction*> m_debugMenuActions;
 };
 
 #endif

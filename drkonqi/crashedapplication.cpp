@@ -16,10 +16,7 @@
 */
 
 #include "crashedapplication.h"
-#include <QtCore/QDir>
-#include <KCmdLineArgs>
-#include <KStandardDirs>
-#include <KDebug>
+#include <KToolInvocation>
 
 #include <config-drkonqi.h>
 #ifdef HAVE_STRSIGNAL
@@ -28,49 +25,43 @@
 # include <cstdlib>
 #endif
 
-struct CrashedApplication::Private
+CrashedApplication::CrashedApplication(QObject *parent)
+    : QObject(parent), m_restarted(false)
 {
-    int pid;
-    int signalNumber;
-    QString name;
-    QFileInfo executable;
-    QString version;
-    BugReportAddress reportAddress;
-};
+}
 
 CrashedApplication::~CrashedApplication()
 {
-    delete d;
 }
 
 QString CrashedApplication::name() const
 {
-    return d->name;
+    return m_name;
 }
 
 QFileInfo CrashedApplication::executable() const
 {
-    return d->executable;
+    return m_executable;
 }
 
 QString CrashedApplication::version() const
 {
-    return d->version;
+    return m_version;
 }
 
 BugReportAddress CrashedApplication::bugReportAddress() const
 {
-    return d->reportAddress;
+    return m_reportAddress;
 }
 
 int CrashedApplication::pid() const
 {
-    return d->pid;
+    return m_pid;
 }
 
 int CrashedApplication::signalNumber() const
 {
-    return d->signalNumber;
+    return m_signalNumber;
 }
 
 QString CrashedApplication::signalName() const
@@ -84,7 +75,7 @@ QString CrashedApplication::signalName() const
         savedLocale = NULL;
     }
     std::setlocale(LC_MESSAGES, "C");
-    const char *name = strsignal(d->signalNumber);
+    const char *name = strsignal(m_signalNumber);
     std::setlocale(LC_MESSAGES, savedLocale);
     std::free(savedLocale);
     return QString::fromLocal8Bit(name != NULL ? name : "Unknown");
@@ -99,47 +90,20 @@ QString CrashedApplication::signalName() const
 #endif
 }
 
-// private members
-
-CrashedApplication::CrashedApplication(Private *dd)
-    : d(dd)
+bool CrashedApplication::hasBeenRestarted() const
 {
+    return m_restarted;
 }
 
-//static
-CrashedApplication *CrashedApplication::createFromKCrashData()
+void CrashedApplication::restart()
 {
-    CrashedApplication::Private *d = new Private;
-    KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
-    d->name = args->getOption("programname");
-    d->version = args->getOption("appversion").toUtf8();
-    d->reportAddress = BugReportAddress(args->getOption("bugaddress").toUtf8());
-    d->pid = args->getOption("pid").toInt();
-    d->signalNumber = args->getOption("signal").toInt();
+    if (!m_restarted) {
+        m_restarted = true;
 
-    //try to determine the executable that crashed
-    if ( QFileInfo(QString("/proc/%1/exe").arg(d->pid)).exists() ) {
-        //on linux, the fastest and most reliable way is to get the path from /proc
-        kDebug() << "Using /proc to determine executable path";
-        d->executable.setFile(QFile::symLinkTarget(QString("/proc/%1/exe").arg(d->pid)));
-    } else {
-        if ( args->isSet("kdeinit") ) {
-            d->executable = QFileInfo(KStandardDirs::findExe("kdeinit4"));
-        } else {
-            QFileInfo execPath(args->getOption("appname"));
-            if ( execPath.isAbsolute() ) {
-                d->executable = execPath;
-            } else if ( !args->getOption("apppath").isEmpty() ) {
-                QDir execDir(args->getOption("apppath"));
-                d->executable = execDir.absoluteFilePath(execPath.fileName());
-            } else {
-                d->executable = QFileInfo(KStandardDirs::findExe(execPath.fileName()));
-            }
-        }
+        //start the application via kdeinit, as it needs to have a pristine environment and
+        //KProcess::startDetached() can't start a new process with custom environment variables.
+        KToolInvocation::kdeinitExec(m_executable.absoluteFilePath());
     }
-
-    kDebug() << "Executable is:" << d->executable.absoluteFilePath();
-    kDebug() << "Executable exists:" << d->executable.exists();
-
-    return new CrashedApplication(d);
 }
+
+#include "crashedapplication.moc"

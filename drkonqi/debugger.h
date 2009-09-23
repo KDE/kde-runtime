@@ -14,61 +14,62 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef DEBUGGERCONFIG_H
-#define DEBUGGERCONFIG_H
+#ifndef DEBUGGER_H
+#define DEBUGGER_H
 
 #include <QtCore/QString>
-#include <QtCore/QSharedDataPointer>
+#include <KSharedConfig>
 class CrashedApplication;
-struct DebuggerConfigPrivate;
 
-class DebuggerConfig
+class Debugger
 {
 public:
-    DebuggerConfig();
-    DebuggerConfig(const DebuggerConfig & other);
-    DebuggerConfig & operator=(const DebuggerConfig & other);
-    virtual ~DebuggerConfig();
-
-    static DebuggerConfig loadFromConfig(const QString & debuggerName);
+    static QList<Debugger> availableInternalDebuggers();
+    static QList<Debugger> availableExternalDebuggers();
 
     /** Returns true if this DebuggerConfig instance can be used, or false otherwise */
     bool isValid() const;
 
     /** Returns the internal name of the debugger (eg. "gdb") */
-    QString debuggerName() const;
-
-    /** Returns the command that should be run to get an instance of the debugger running externally */
-    QString externalDebuggerCommand() const;
-
-    /** Returns whether the external debugger should be run in a terminal */
-    bool externalDebuggerRunInTerminal() const;
-
-    /** Returns the batch command that should be run to get a backtrace for use in drkonqi */
-    QString debuggerBatchCommand() const;
-
-    /** Returns the commands that should be given to the debugger when
-     * run in batch mode in order to generate a backtrace
-     */
-    QString backtraceBatchCommands() const;
+    QString name() const;
 
     /** Returns the executable name that drkonqi should check if it exists
      * to determine whether the debugger is installed
      */
     QString tryExec() const;
 
+    /** Returns a list with the drkonqi backends that this debugger supports */
+    QStringList supportedBackends() const;
+
+    /** Sets the backend to be used. This function must be called before using
+     * command(), backtraceBatchCommands() or runInTerminal().
+     */
+    void setUsedBackend(const QString & backendName);
+
+    /** Returns the command that should be run to use the debugger */
+    QString command() const;
+
+    /** Returns the commands that should be given to the debugger when
+     * run in batch mode in order to generate a backtrace
+     */
+    QString backtraceBatchCommands() const;
+
+    /** If this is an external debugger, it returns whether it should be run in a terminal or not */
+    bool runInTerminal() const;
+
+
     enum ExpandStringUsage {
         ExpansionUsagePlainText,
         ExpansionUsageShell
     };
 
-    static void expandString(QString & str, const CrashedApplication & appInfo,
-                             ExpandStringUsage usage = ExpansionUsagePlainText,
+    static void expandString(QString & str, ExpandStringUsage usage = ExpansionUsagePlainText,
                              const QString & tempFile = QString());
 
 private:
-    DebuggerConfig(DebuggerConfigPrivate *dd);
-    QSharedDataPointer<DebuggerConfigPrivate> d;
+    static QList<Debugger> availableDebuggers(const char *regexp);
+    KSharedConfig::Ptr m_config;
+    QString m_backend;
 };
 
-#endif // DEBUGGERCONFIG_H
+#endif

@@ -1,0 +1,8 @@
+[General]
+Name=gdb
+TryExec=gdb
+Backends=KCrash
+
+[KCrash]
+Exec=gdb -nw -p %pid %execpath
+Terminal=true

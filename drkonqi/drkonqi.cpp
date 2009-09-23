@@ -40,58 +40,28 @@
     * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 #include "drkonqi.h"
-
-#include "drkonqi_globals.h"
-//#include "drkonqiadaptor.h"
-#include "detachedprocessmonitor.h"
-#include "backtracegenerator.h"
 #include "systeminformation.h"
 #include "crashedapplication.h"
+#include "drkonqibackends.h"
 
-#include <QtDBus/QDBusConnection>
-#include <QtCore/QTimer>
 #include <QtCore/QPointer>
-
-#include <KProcess>
-#include <KStandardDirs>
-#include <KDebug>
+#include <QtCore/QTextStream>
 #include <KMessageBox>
 #include <KFileDialog>
 #include <KTemporaryFile>
-#include <KToolInvocation>
 #include <KCmdLineArgs>
 #include <KIO/NetAccess>
 
-#include <cstdlib>
-#include <cerrno>
-#include <sys/types.h>
-#include <signal.h>
-
-struct DrKonqi::Private
-{
-    Private() : m_state(ProcessRunning), m_btGenerator(NULL), m_systemInformation(NULL),
-                m_crashedApplication(NULL), m_applicationRestarted(false) {}
-
-    DrKonqi::State         m_state;
-    DetachedProcessMonitor m_debuggerMonitor;
-    BacktraceGenerator *   m_btGenerator;
-    SystemInformation *    m_systemInformation;
-    CrashedApplication *   m_crashedApplication;
-    bool                   m_applicationRestarted;
-};
-
 DrKonqi::DrKonqi()
-        : QObject(), d(new Private)
 {
-#if 0
-    QDBusConnection::sessionBus().registerObject("/krashinfo", this);
-    new DrKonqiAdaptor(this);
-#endif
+    m_backend = new KCrashBackend();
+    m_systemInformation = new SystemInformation();
 }
 
 DrKonqi::~DrKonqi()
 {
-    delete d;
+    delete m_systemInformation;
+    delete m_backend;
 }
 
 //static
@@ -106,89 +76,35 @@ DrKonqi *DrKonqi::instance()
 
 bool DrKonqi::init()
 {
-    //stop the process to avoid high cpu usage by other threads (bug 175362).
-    //if the process was started by kdeinit, we need to wait a bit for KCrash
-    //to reach the alarm(0); call in kdeui/util/kcrash.cpp line 406 or else
-    //if we stop it before this call, pending alarm signals will kill the
-    //process when we try to continue it.
-    QTimer::singleShot(2000, this, SLOT(stopAttachedProcess()));
-
-    // Make sure that DrKonqi will not be saved in the session
-    unsetenv("SESSION_MANAGER");
-
-    //arguments processing is done here
-    d->m_crashedApplication = CrashedApplication::createFromKCrashData();
-
-    //check whether the attached process exists and whether we have permissions to inspect it
-    if (d->m_crashedApplication->pid() <= 0) {
-        kError() << "Invalid pid specified";
+    if (!instance()->m_backend->init()) {
+        cleanup();
         return false;
+    } else {
+        return true;
     }
-
-    if (::kill(d->m_crashedApplication->pid(), 0) < 0) {
-        switch (errno) {
-        case EPERM:
-            kError() << "DrKonqi doesn't have permissions to inspect the specified process";
-            break;
-        case ESRCH:
-            kError() << "The specified process does not exist.";
-            break;
-        default:
-            break;
-        }
-        return false;
-    }
-
-    KConfigGroup config(KGlobal::config(), "drkonqi");
-    QString debuggerName = config.readEntry("Debugger", QString("gdb"));
-    DebuggerConfig debuggerConfig = DebuggerConfig::loadFromConfig(debuggerName);
-
-    //misc initializations
-    d->m_btGenerator = new BacktraceGenerator(debuggerConfig, this);
-    connect(d->m_btGenerator, SIGNAL(starting()), this, SLOT(debuggerStarting()));
-    connect(d->m_btGenerator, SIGNAL(done()), this, SLOT(debuggerStopped()));
-    connect(d->m_btGenerator, SIGNAL(someError()), this, SLOT(debuggerStopped()));
-    connect(d->m_btGenerator, SIGNAL(failedToStart()), this, SLOT(debuggerStopped()));
-    connect(&d->m_debuggerMonitor, SIGNAL(processFinished()), this, SLOT(debuggerStopped()));
-
-    //System information
-    d->m_systemInformation = new SystemInformation(this);
-
-    return true;
 }
 
 void DrKonqi::cleanup()
 {
-    if (d->m_btGenerator->state() == BacktraceGenerator::Loading) {
-        //if the debugger is running, kill it and continue the process.
-        delete d->m_btGenerator;
-        d->m_state = ProcessStopped;
-    }
-    continueAttachedProcess();
-    delete this;
-}
-
-DrKonqi::State DrKonqi::currentState() const
-{
-    return d->m_state;
-}
-
-BacktraceGenerator *DrKonqi::backtraceGenerator() const
-{
-    Q_ASSERT(d->m_btGenerator != NULL);
-    return d->m_btGenerator;
-}
-
-SystemInformation *DrKonqi::systemInformation() const
-{
-    Q_ASSERT(d->m_systemInformation != NULL);
-    return d->m_systemInformation; 
+    delete instance();
 }
 
 //static
-const CrashedApplication *DrKonqi::crashedApplication()
+SystemInformation *DrKonqi::systemInformation()
 {
-    return instance()->d->m_crashedApplication;
+    return instance()->m_systemInformation;
+}
+
+//static
+DebuggerManager* DrKonqi::debuggerManager()
+{
+    return instance()->m_backend->debuggerManager();
+}
+
+//static
+CrashedApplication *DrKonqi::crashedApplication()
+{
+    return instance()->m_backend->crashedApplication();
 }
 
 //static
@@ -215,7 +131,7 @@ void DrKonqi::saveReport(const QString & reportText, QWidget *parent)
         if (defname.contains('/')) {
             defname = defname.mid(defname.lastIndexOf('/') + 1);
         }
-        
+
         QPointer<KFileDialog> dlg = new KFileDialog(defname, QString(), parent);
         dlg->setSelection(defname);
         dlg->setCaption(i18nc("@title:window","Select Filename"));
@@ -223,9 +139,10 @@ void DrKonqi::saveReport(const QString & reportText, QWidget *parent)
         dlg->setMode(KFile::File);
         dlg->setConfirmOverwrite(true);
         dlg->exec();
-        
+
         KUrl fileUrl = dlg->selectedUrl();
         delete dlg;
+
         if (fileUrl.isValid()) {
             KTemporaryFile tf;
             if (tf.open()) {
@@ -245,78 +162,3 @@ void DrKonqi::saveReport(const QString & reportText, QWidget *parent)
     }
 }
 
-void DrKonqi::restartCrashedApplication()
-{
-    if (!d->m_applicationRestarted) {
-        d->m_applicationRestarted = true;
-
-        //start the application via kdeinit, as it needs to have a pristine environment and
-        //KProcess::startDetached() can't start a new process with custom environment variables.
-        KToolInvocation::kdeinitExec(d->m_crashedApplication->executable().absoluteFilePath());
-    }
-}
-
-void DrKonqi::startDefaultExternalDebugger()
-{
-#if 0
-    Q_ASSERT(d->m_state != DebuggerRunning);
-
-    QString str = d->m_krashConfig->externalDebuggerCommand();
-    d->m_krashConfig->expandString(str, KrashConfig::ExpansionUsageShell);
-
-    KProcess proc;
-    proc.setShellCommand(str);
-
-    debuggerStarting();
-    int pid = proc.startDetached();
-    d->m_debuggerMonitor.startMonitoring(pid);
-#endif
-}
-
-void DrKonqi::startCustomExternalDebugger()
-{
-    debuggerStarting();
-    emit acceptDebuggingApplication();
-}
-
-void DrKonqi::stopAttachedProcess()
-{
-    if (d->m_state == ProcessRunning) {
-        ::kill(d->m_crashedApplication->pid(), SIGSTOP);
-        d->m_state = ProcessStopped;
-    }
-}
-
-void DrKonqi::continueAttachedProcess()
-{
-    if (d->m_state == ProcessStopped) {
-        ::kill(d->m_crashedApplication->pid(), SIGCONT);
-        d->m_state = ProcessRunning;
-    }
-}
-
-void DrKonqi::debuggerStarting()
-{
-    continueAttachedProcess();
-    d->m_state = DebuggerRunning;
-    emit debuggerRunning(true);
-}
-
-void DrKonqi::debuggerStopped()
-{
-    d->m_state = ProcessRunning;
-    stopAttachedProcess();
-    emit debuggerRunning(false);
-}
-
-void DrKonqi::registerDebuggingApplication(const QString& launchName)
-{
-    emit newDebuggingApplication(launchName);
-}
-
-bool DrKonqi::appRestarted() const
-{
-    return d->m_applicationRestarted;
-}
-
-#include "drkonqi.moc"

@@ -24,6 +24,7 @@
 #include "backtracegenerator.h"
 #include "backtraceparser.h"
 #include "drkonqi_globals.h"
+#include "debuggermanager.h"
 
 #include <QtGui/QLabel>
 #include <QtGui/QHBoxLayout>
@@ -116,7 +117,7 @@ void BacktraceWidget::regenerateBacktrace()
 {
     setAsLoading();
 
-    if (DrKonqi::instance()->currentState() != DrKonqi::DebuggerRunning) {
+    if (!DrKonqi::debuggerManager()->debuggerIsRunning()) {
         m_btGenerator->start();
     } else {
         anotherDebuggerRunning();
@@ -232,7 +233,7 @@ void BacktraceWidget::loadData()
         ui.m_extraDetailsLabel->setText(i18nc("@info/rich", "You need to install the debugger "
                                               "package (%1) and click the <interface>Reload Crash "
                                               "Information</interface> button.",
-                                              m_btGenerator->debugger().debuggerName()));
+                                              m_btGenerator->debugger().name()));
     }
 
     ui.m_reloadBacktraceButton->setEnabled(true);

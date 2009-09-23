@@ -27,19 +27,18 @@
  *****************************************************************/
 #include "backtracegenerator.h"
 #include "backtraceparser.h"
-#include "drkonqi.h"
 
 #include <KDebug>
 #include <KStandardDirs>
 #include <KTemporaryFile>
 #include <KShell>
 
-BacktraceGenerator::BacktraceGenerator(const DebuggerConfig & debugger, QObject *parent)
+BacktraceGenerator::BacktraceGenerator(const Debugger & debugger, QObject *parent)
         : QObject(parent),
           m_debugger(debugger), m_proc(NULL),
           m_temp(NULL), m_state(NotLoaded)
 {
-    m_parser = BacktraceParser::newParser(m_debugger.debuggerName(), this);
+    m_parser = BacktraceParser::newParser(m_debugger.name(), this);
     m_parser->connectToGenerator(this);
 
 #ifdef BACKTRACE_PARSER_DEBUG
@@ -68,8 +67,7 @@ bool BacktraceGenerator::start()
     m_parsedBacktrace.clear();
     m_state = Loading;
 
-    QString exec = m_debugger.tryExec();
-    if (!exec.isEmpty() && KStandardDirs::findExe(exec).isEmpty()) {
+    if (!m_debugger.isValid()) {
         m_state = FailedToStart;
         emit failedToStart();
         return false;
@@ -87,9 +85,8 @@ bool BacktraceGenerator::start()
     m_temp->flush();
 
     // start the debugger
-    QString str = m_debugger.debuggerBatchCommand();
-    DebuggerConfig::expandString(str, *DrKonqi::crashedApplication(),
-                                 DebuggerConfig::ExpansionUsageShell, m_temp->fileName());
+    QString str = m_debugger.command();
+    Debugger::expandString(str, Debugger::ExpansionUsageShell, m_temp->fileName());
 
     *m_proc << KShell::splitArgs(str);
     m_proc->setOutputChannelMode(KProcess::OnlyStdoutChannel);
@@ -148,7 +145,7 @@ void BacktraceGenerator::slotProcessExited(int exitCode, QProcess::ExitStatus ex
 
     //no translation, string appears in the report
     QString tmp("Application: %progname (%execname), signal: %signame\n");
-    DebuggerConfig::expandString(tmp, *DrKonqi::crashedApplication());
+    Debugger::expandString(tmp);
 
     m_parsedBacktrace = tmp + m_parser->parsedBacktrace();
     m_state = Loaded;

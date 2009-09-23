@@ -1,0 +1,8 @@
+[General]
+Name=gdb
+TryExec=gdb
+Backends=KCrash
+
+[KCrash]
+Exec=gdb -nw -n -batch -x %tempfile -p %pid %execpath
+BatchCommands=set width 200\nthread\nthread apply all bt

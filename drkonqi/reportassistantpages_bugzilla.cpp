@@ -21,7 +21,7 @@
 
 #include "reportinterface.h"
 #include "systeminformation.h"
-
+#include "crashedapplication.h"
 #include "statuswidget.h"
 #include "drkonqi.h"
 #include "drkonqi_globals.h"
@@ -289,7 +289,7 @@ BugzillaInformationPage::BugzillaInformationPage(ReportAssistantDialog * parent)
     connect(ui.m_detailsEdit, SIGNAL(textChanged()), this, SLOT(checkTexts()));
 
     ui.m_compiledSourcesCheckBox->setChecked(
-                                    DrKonqi::instance()->systemInformation()->compiledSources());
+                                    DrKonqi::systemInformation()->compiledSources());
     
     checkTexts();
 }
@@ -298,8 +298,7 @@ void BugzillaInformationPage::aboutToShow()
 {
     if (!m_distributionComboSetup) {
         //Autodetecting distro failed ?
-        if (DrKonqi::instance()->systemInformation()->bugzillaPlatform() == 
-                                                                    QLatin1String("unspecified")) { 
+        if (DrKonqi::systemInformation()->bugzillaPlatform() == QLatin1String("unspecified")) {
             m_distroComboVisible = true;
             ui.m_distroChooserCombo->addItem(i18nc("@label:listbox KDE distribution method",
                                                    "Unspecified"),"unspecified");
@@ -425,10 +424,10 @@ void BugzillaInformationPage::aboutToHide()
                                         ui.m_distroChooserCombo->currentIndex()).toString();
         KConfigGroup config(KGlobal::config(), "BugzillaInformationPage");
         config.writeEntry("BugzillaPlatform", bugzillaPlatform);
-        DrKonqi::instance()->systemInformation()->setBugzillaPlatform(bugzillaPlatform);
+        DrKonqi::systemInformation()->setBugzillaPlatform(bugzillaPlatform);
     }
     bool compiledFromSources = ui.m_compiledSourcesCheckBox->checkState() == Qt::Checked;
-    DrKonqi::instance()->systemInformation()->setCompiledSources(compiledFromSources);
+    DrKonqi::systemInformation()->setCompiledSources(compiledFromSources);
     
 }
 
@@ -509,7 +508,7 @@ void BugzillaSendPage::sent(int bug_id)
     ui.m_showReportContentsButton->setVisible(false);
     
     ui.m_launchPageOnFinish->setVisible(true);
-    ui.m_restartAppOnFinish->setVisible(!DrKonqi::instance()->appRestarted());
+    ui.m_restartAppOnFinish->setVisible(!DrKonqi::crashedApplication()->hasBeenRestarted());
     ui.m_restartAppOnFinish->setChecked(false);
     
     reportUrl = bugzillaManager()->urlForBug(bug_id);
@@ -536,7 +535,7 @@ void BugzillaSendPage::finishClicked()
         KToolInvocation::invokeBrowser(reportUrl);
     }
     if (ui.m_restartAppOnFinish->isChecked()) {
-        DrKonqi::instance()->restartCrashedApplication();
+        DrKonqi::crashedApplication()->restart();
     }
 }
 

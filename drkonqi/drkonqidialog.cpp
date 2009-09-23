@@ -24,6 +24,8 @@
 #include "reportassistantdialog.h"
 #include "aboutbugreportingdialog.h"
 #include "crashedapplication.h"
+#include "debuggermanager.h"
+#include "debuggerlaunchers.h"
 #include "drkonqi_globals.h"
 
 #include <QtGui/QLabel>
@@ -37,6 +39,7 @@
 #include <KStandardDirs>
 #include <KLocale>
 #include <KTabWidget>
+#include <KDebug>
 
 DrKonqiDialog::DrKonqiDialog(QWidget * parent) :
         KDialog(parent),
@@ -45,10 +48,6 @@ DrKonqiDialog::DrKonqiDialog(QWidget * parent) :
 {
     KGlobal::ref();
     setAttribute(Qt::WA_DeleteOnClose, true);
-
-    connect(DrKonqi::instance(), SIGNAL(debuggerRunning(bool)), this, SLOT(enableDebugMenu(bool)));
-    connect(DrKonqi::instance(), SIGNAL(newDebuggingApplication(QString)),
-            this, SLOT(slotNewDebuggingApp(QString)));
 
     //Setting dialog title and icon
     setCaption(DrKonqi::crashedApplication()->name());
@@ -62,7 +61,7 @@ DrKonqiDialog::DrKonqiDialog(QWidget * parent) :
     buildMainWidget();
     m_tabWidget->addTab(m_introWidget, i18nc("@title:tab general information", "&General"));
 
-    m_backtraceWidget = new BacktraceWidget(DrKonqi::instance()->backtraceGenerator(), this);
+    m_backtraceWidget = new BacktraceWidget(DrKonqi::debuggerManager()->backtraceGenerator(), this);
     m_backtraceWidget->setMinimumSize(QSize(575, 240));
     m_tabWidget->addTab(m_backtraceWidget, i18nc("@title:tab", "&Developer Information"));
 
@@ -166,49 +165,34 @@ void DrKonqiDialog::buildDialogOptions()
     connect(this, SIGNAL(user1Clicked()), this, SLOT(reportBugAssistant()));
 
     //Default debugger button and menu (only for developer mode)
-    KConfigGroup config(KGlobal::config(), "drkonqi");
-    bool showDebugger = config.readEntry("ShowDebugButton", false);
-
-    //for compatibility with drkonqi 1.0, if "ShowDebugButton" is not specified in the config
-    //and the old "ConfigName" key exists and is set to "developer", we show the debug button.
-    if (!config.hasKey("ShowDebugButton") &&
-        config.readEntry("ConfigName") == "developer") {
-        showDebugger = true;
-    }
-
+    DebuggerManager *debuggerManager = DrKonqi::debuggerManager();
     setButtonGuiItem(KDialog::User2, KGuiItem2(i18nc("@action:button this is the debug menu button "
                                                "label which contains the debugging applications", 
                                                "Debug"), KIcon("applications-development"),
                                                i18nc("@info:tooltip", "Starts a program to debug "
                                                      "the crashed application.")));
-    showButton(KDialog::User2, showDebugger);
+    showButton(KDialog::User2, debuggerManager->showExternalDebuggers());
 
-    KMenu *debugMenu = new KMenu(this);
-    setButtonMenu(KDialog::User2, debugMenu);
+    m_debugMenu = new KMenu(this);
+    setButtonMenu(KDialog::User2, m_debugMenu);
 
-    m_defaultDebugAction = new QAction(KIcon("applications-development"),
-                                       i18nc("@action:inmenu 1 is the debugger name",
-                                             "Debug in <application>%1</application>",
-                                              QLatin1String("gdb")), //FIXME
-                                       debugMenu);
-    connect(m_defaultDebugAction, SIGNAL(triggered()),
-            DrKonqi::instance(), SLOT(startDefaultExternalDebugger()));
+    QList<AbstractDebuggerLauncher*> debuggers = debuggerManager->availableExternalDebuggers();
+    foreach(AbstractDebuggerLauncher *launcher, debuggers) {
+        addDebugger(launcher);
+    }
 
-    m_customDebugAction = new QAction(KIcon("applications-development"),
-                                      QString(), debugMenu); //Default null (disabled) action
-    connect(m_customDebugAction, SIGNAL(triggered()),
-            DrKonqi::instance(), SLOT(startCustomExternalDebugger()));
-    m_customDebugAction->setEnabled(false);
-    m_customDebugAction->setVisible(false);
-
-    debugMenu->addAction(m_defaultDebugAction);
-    debugMenu->addAction(m_customDebugAction);
+    connect(debuggerManager, SIGNAL(externalDebuggerAdded(AbstractDebuggerLauncher*)),
+            SLOT(addDebugger(AbstractDebuggerLauncher*)));
+    connect(debuggerManager, SIGNAL(externalDebuggerRemoved(AbstractDebuggerLauncher*)),
+            SLOT(removeDebugger(AbstractDebuggerLauncher*)));
+    connect(debuggerManager, SIGNAL(debuggerRunning(bool)), SLOT(enableDebugMenu(bool)));
 
     //Restart application button
     setButtonGuiItem(KDialog::User3, KGuiItem2(i18nc("@action:button", "Restart Application"),
                                                KIcon("system-reboot"),
                                                i18nc("@info:tooltip", "Use this button to restart "
                                                      "the crashed application.")));
+    enableButton(KDialog::User3, !crashedApp->hasBeenRestarted());
     connect(this, SIGNAL(user3Clicked()), this, SLOT(restartApplication()));
 
     //Close button
@@ -218,14 +202,33 @@ void DrKonqiDialog::buildDialogOptions()
     setButtonWhatsThis(KDialog::Close, tooltipText);
     setDefaultButton(KDialog::Close);
     setButtonFocus(KDialog::Close);
+}
 
+void DrKonqiDialog::addDebugger(AbstractDebuggerLauncher *launcher)
+{
+    QAction *action = new QAction(KIcon("applications-development"),
+                                  i18nc("@action:inmenu 1 is the debugger name",
+                                        "Debug in <application>%1</application>",
+                                        launcher->name()), m_debugMenu);
+    m_debugMenu->addAction(action);
+    connect(action, SIGNAL(triggered()), launcher, SLOT(start()));
+    m_debugMenuActions.insert(launcher, action);
+}
+
+void DrKonqiDialog::removeDebugger(AbstractDebuggerLauncher *launcher)
+{
+    QAction *action = m_debugMenuActions.take(launcher);
+    if ( action ) {
+        m_debugMenu->removeAction(action);
+        action->deleteLater();
+    } else {
+        kError() << "Invalid launcher";
+    }
 }
 
 void DrKonqiDialog::enableDebugMenu(bool debuggerRunning)
 {
     enableButton(KDialog::User2, !debuggerRunning);
-    m_defaultDebugAction->setEnabled(!debuggerRunning);
-    m_customDebugAction->setEnabled(!debuggerRunning);
 }
 
 void DrKonqiDialog::reportBugAssistant()
@@ -249,13 +252,5 @@ void DrKonqiDialog::aboutBugReporting()
 void DrKonqiDialog::restartApplication()
 {
     enableButton(KDialog::User3, false);
-    DrKonqi::instance()->restartCrashedApplication();
-}
-
-void DrKonqiDialog::slotNewDebuggingApp(const QString & app)
-{
-    m_customDebugAction->setVisible(true);
-    m_customDebugAction->setEnabled(true);
-    m_customDebugAction->setText(i18nc("@action:inmenu 1 is the debugger name",
-                                       "Debug in <application>%1</application>", app));
+    DrKonqi::crashedApplication()->restart();
 }

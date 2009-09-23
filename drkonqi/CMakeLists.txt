@@ -10,7 +10,6 @@ configure_file (config-drkonqi.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-drkonq
 add_definitions(-DKDE_DEFAULT_DEBUG_AREA=1410)
 
 add_subdirectory( pics ) 
-add_subdirectory( debuggers ) 
 add_subdirectory( tests ) 
 
 set(drkonqi_SRCS 
@@ -31,12 +30,15 @@ set(drkonqi_SRCS
     backtracegenerator.cpp 
     backtraceparser.cpp
     drkonqi.cpp
+    drkonqibackends.cpp
     detachedprocessmonitor.cpp
     productmapping.cpp
     debugpackageinstaller.cpp
     systeminformation.cpp
     crashedapplication.cpp
-    debuggerconfig.cpp
+    debugger.cpp
+    debuggerlaunchers.cpp
+    debuggermanager.cpp
 )
 
 kde4_add_ui_files(drkonqi_SRCS
@@ -63,3 +65,4 @@ target_link_libraries(drkonqi ${KDE4_KIO_LIBS})
 
 install(TARGETS drkonqi DESTINATION ${LIBEXEC_INSTALL_DIR})
 install(FILES data/mappings DESTINATION ${DATA_INSTALL_DIR}/drkonqi)
+install(DIRECTORY debuggers DESTINATION ${DATA_INSTALL_DIR}/drkonqi)

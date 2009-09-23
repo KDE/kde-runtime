@@ -25,7 +25,7 @@
 #include "productmapping.h"
 #include "systeminformation.h"
 #include "crashedapplication.h"
-
+#include "debuggermanager.h"
 #include "backtraceparser.h"
 #include "backtracegenerator.h"
 
@@ -107,7 +107,7 @@ QString ReportInterface::generateReport(bool drKonqiStamp) const
 {
     //Note: no translations must be done in this function's strings
     const CrashedApplication * crashedApp = DrKonqi::crashedApplication();
-    const SystemInformation * sysInfo = DrKonqi::instance()->systemInformation();
+    const SystemInformation * sysInfo = DrKonqi::systemInformation();
     
     QString report;
 
@@ -178,7 +178,7 @@ BugReport ReportInterface::newBugReportTemplate() const
     BugReport report;
     
     const CrashedApplication * crashedApp = DrKonqi::crashedApplication();
-    const SystemInformation * sysInfo = DrKonqi::instance()->systemInformation();
+    const SystemInformation * sysInfo = DrKonqi::systemInformation();
     
     report.setProduct(m_productMapping->bugzillaProduct());
     report.setComponent(m_productMapping->bugzillaComponent());
@@ -271,7 +271,7 @@ bool ReportInterface::isWorthReporting() const
     bool needToReport = false;
     
     BacktraceParser::Usefulness use =
-                DrKonqi::instance()->backtraceGenerator()->parser()->backtraceUsefulness();
+                DrKonqi::debuggerManager()->backtraceGenerator()->parser()->backtraceUsefulness();
    
     switch (use) {
     case BacktraceParser::ReallyUseful: {

@@ -21,6 +21,7 @@
 #include "reportassistantpages_base.h"
 
 #include "drkonqi.h"
+#include "debuggermanager.h"
 #include "crashedapplication.h"
 #include "reportinterface.h"
 #include "backtraceparser.h"
@@ -39,7 +40,7 @@
 CrashInformationPage::CrashInformationPage(ReportAssistantDialog * parent)
         : ReportAssistantPage(parent)
 {
-    m_backtraceWidget = new BacktraceWidget(DrKonqi::instance()->backtraceGenerator());
+    m_backtraceWidget = new BacktraceWidget(DrKonqi::debuggerManager()->backtraceGenerator());
     connect(m_backtraceWidget, SIGNAL(stateChanged()) , this, SLOT(emitCompleteChanged()));
 
     QVBoxLayout *layout = new QVBoxLayout(this);
@@ -57,7 +58,7 @@ void CrashInformationPage::aboutToShow()
 
 void CrashInformationPage::aboutToHide()
 {
-    BacktraceGenerator *btGenerator = DrKonqi::instance()->backtraceGenerator();
+    BacktraceGenerator *btGenerator = DrKonqi::debuggerManager()->backtraceGenerator();
     BacktraceParser::Usefulness use = btGenerator->parser()->backtraceUsefulness();
 
     if (use != BacktraceParser::Useless && use != BacktraceParser::InvalidUsefulness) {
@@ -68,7 +69,7 @@ void CrashInformationPage::aboutToHide()
 
 bool CrashInformationPage::isComplete()
 {
-    BacktraceGenerator *generator = DrKonqi::instance()->backtraceGenerator();
+    BacktraceGenerator *generator = DrKonqi::debuggerManager()->backtraceGenerator();
     return (generator->state() != BacktraceGenerator::NotLoaded &&
             generator->state() != BacktraceGenerator::Loading);
 }
@@ -76,7 +77,7 @@ bool CrashInformationPage::isComplete()
 bool CrashInformationPage::showNextPage()
 {
     BacktraceParser::Usefulness use =
-                        DrKonqi::instance()->backtraceGenerator()->parser()->backtraceUsefulness();
+                    DrKonqi::debuggerManager()->backtraceGenerator()->parser()->backtraceUsefulness();
 
     if (use == BacktraceParser::InvalidUsefulness || use == BacktraceParser::ProbablyUseless
             || use == BacktraceParser::Useless) {
@@ -177,7 +178,7 @@ void ConclusionPage::finishClicked()
     
     //Restart application
     if (ui.m_restartAppOnFinish->isChecked()) {
-         DrKonqi::instance()->restartCrashedApplication();
+         DrKonqi::crashedApplication()->restart();
     }
 }
 
@@ -192,7 +193,7 @@ void ConclusionPage::aboutToShow()
 
     BugReportAddress reportAddress = DrKonqi::crashedApplication()->bugReportAddress();
     BacktraceParser::Usefulness use =
-                DrKonqi::instance()->backtraceGenerator()->parser()->backtraceUsefulness();
+                DrKonqi::debuggerManager()->backtraceGenerator()->parser()->backtraceUsefulness();
 
     QString explanationHTML = QLatin1String("<p><ul>");
     
@@ -217,7 +218,7 @@ void ConclusionPage::aboutToShow()
     }
     case BacktraceParser::Useless:
     case BacktraceParser::InvalidUsefulness: {
-        BacktraceGenerator::State state = DrKonqi::instance()->backtraceGenerator()->state();
+        BacktraceGenerator::State state = DrKonqi::debuggerManager()->backtraceGenerator()->state();
         if (state == BacktraceGenerator::NotLoaded) {
             explanationHTML += QString("<li>%1</li>").arg(i18nc("@info","The crash information was "
                                         "not generated because it was not needed.")); 
@@ -278,7 +279,7 @@ void ConclusionPage::aboutToShow()
                                                   QLatin1String(KDE_BUGZILLA_URL)));
 
         } else {
-            if (!DrKonqi::instance()->appRestarted()) {
+            if (!DrKonqi::crashedApplication()->hasBeenRestarted()) {
                 ui.m_restartAppOnFinish->setVisible(true);
             }
             
@@ -292,7 +293,7 @@ void ConclusionPage::aboutToShow()
         }
 
     } else { // (needToReport)
-        if (!DrKonqi::instance()->appRestarted()) {
+        if (!DrKonqi::crashedApplication()->hasBeenRestarted()) {
             ui.m_restartAppOnFinish->setVisible(true);
         }
         
