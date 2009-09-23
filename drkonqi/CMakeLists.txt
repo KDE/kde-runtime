@@ -36,6 +36,8 @@ set(drkonqi_SRCS
     productmapping.cpp
     debugpackageinstaller.cpp
     systeminformation.cpp
+    crashedapplication.cpp
+    debuggerconfig.cpp
 )
 
 kde4_add_ui_files(drkonqi_SRCS
