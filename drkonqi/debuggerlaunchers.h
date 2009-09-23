@@ -22,6 +22,8 @@
 #include <QtDBus/QDBusAbstractAdaptor>
 #include <KProcess>
 
+class DetachedProcessMonitor;
+
 class AbstractDebuggerLauncher : public QObject
 {
     Q_OBJECT
@@ -50,12 +52,14 @@ public slots:
     virtual void start();
 
 private slots:
-    void processStateChanged(QProcess::ProcessState newState);
+    void onProcessFinished();
 
 private:
     const Debugger m_debugger;
+    DetachedProcessMonitor *m_monitor;
 };
 
+#if 0
 class TerminalDebuggerLauncher : public DefaultDebuggerLauncher
 {
     Q_OBJECT
@@ -65,6 +69,7 @@ public:
 public slots:
     virtual void start();
 };
+#endif
 
 class DBusOldInterfaceAdaptor;
 

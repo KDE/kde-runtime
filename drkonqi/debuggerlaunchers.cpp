@@ -15,6 +15,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "debuggerlaunchers.h"
+#include "detachedprocessmonitor.h"
 #include "drkonqi.h"
 #include "crashedapplication.h"
 #include <QtDBus/QDBusConnection>
@@ -24,6 +25,8 @@
 DefaultDebuggerLauncher::DefaultDebuggerLauncher(const Debugger & debugger, DebuggerManager *parent)
     : AbstractDebuggerLauncher(parent), m_debugger(debugger)
 {
+    m_monitor = new DetachedProcessMonitor(this);
+    connect(m_monitor, SIGNAL(processFinished()), SLOT(onProcessFinished()));
 }
 
 QString DefaultDebuggerLauncher::name() const
@@ -38,25 +41,25 @@ void DefaultDebuggerLauncher::start()
         return;
     }
 
-    KProcess *process = new KProcess(this);
     QString str = m_debugger.command();
     Debugger::expandString(str, Debugger::ExpansionUsageShell);
-    *process << KShell::splitArgs(str);
 
     emit starting();
-    connect(process, SIGNAL(stateChanged(QProcess::ProcessState)),
-            SLOT(processStateChanged(QProcess::ProcessState)));
-    process->start();
-}
-
-void DefaultDebuggerLauncher::processStateChanged(QProcess::ProcessState newState)
-{
-    if (newState == QProcess::NotRunning) {
+    int pid = KProcess::startDetached(KShell::splitArgs(str));
+    if ( pid > 0 ) {
+        m_monitor->startMonitoring(pid);
+    } else {
+        kError() << "Could not start debugger:" << name();
         emit finished();
-        delete sender();
     }
 }
 
+void DefaultDebuggerLauncher::onProcessFinished()
+{
+    emit finished();
+}
+
+#if 0
 TerminalDebuggerLauncher::TerminalDebuggerLauncher(const Debugger & debugger, DebuggerManager *parent)
     : DefaultDebuggerLauncher(debugger, parent)
 {
@@ -66,6 +69,7 @@ void TerminalDebuggerLauncher::start()
 {
     DefaultDebuggerLauncher::start(); //FIXME
 }
+#endif
 
 
 DBusOldInterfaceLauncher::DBusOldInterfaceLauncher(DebuggerManager *parent)

@@ -4,5 +4,5 @@ TryExec=gdb
 Backends=KCrash
 
 [KCrash]
-Exec=gdb -nw -p %pid %execpath
+Exec=konsole --nofork -e gdb -nw -p %pid %execpath
 Terminal=true
