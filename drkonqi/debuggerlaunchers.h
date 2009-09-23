@@ -19,6 +19,7 @@
 
 #include "debugger.h"
 #include "debuggermanager.h"
+#include <QtDBus/QDBusAbstractAdaptor>
 #include <KProcess>
 
 class AbstractDebuggerLauncher : public QObject
@@ -65,10 +66,42 @@ public slots:
     virtual void start();
 };
 
-#if 0
-class DbusDebuggerLauncher : public AbstractDebuggerLauncher
+class DBusOldInterfaceAdaptor;
+
+/** This class handles the old drkonqi dbus interface used by kdevelop */
+class DBusOldInterfaceLauncher : public AbstractDebuggerLauncher
 {
+    Q_OBJECT
+    friend class DBusOldInterfaceAdaptor;
+public:
+    explicit DBusOldInterfaceLauncher(DebuggerManager *parent = 0);
+    virtual QString name() const;
+
+public slots:
+    virtual void start();
+
+signals:
+    void available();
+
+private:
+    QString m_name;
+    DBusOldInterfaceAdaptor *m_adaptor;
 };
-#endif
+
+class DBusOldInterfaceAdaptor : public QDBusAbstractAdaptor
+{
+    Q_OBJECT
+    Q_CLASSINFO("D-Bus Interface", "org.kde.Krash")
+    friend class DBusOldInterfaceLauncher;
+public:
+    DBusOldInterfaceAdaptor(DBusOldInterfaceLauncher *parent);
+
+public slots:
+    int pid();
+    Q_NOREPLY void registerDebuggingApplication(const QString & name);
+
+signals:
+    void acceptDebuggingApplication();
+};
 
 #endif // DEBUGGERLAUNCHERS_H

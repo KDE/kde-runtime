@@ -26,6 +26,7 @@ struct DebuggerManager::Private
     BacktraceGenerator *btGenerator;
     bool debuggerRunning;
     QList<AbstractDebuggerLauncher*> externalDebuggers;
+    DBusOldInterfaceLauncher *dbusOldInterfaceLauncher;
 };
 
 DebuggerManager::DebuggerManager(const Debugger & internalDebugger,
@@ -45,7 +46,13 @@ DebuggerManager::DebuggerManager(const Debugger & internalDebugger,
         d->externalDebuggers.append(l);
         connect(l, SIGNAL(starting()), SLOT(onDebuggerStarting()));
         connect(l, SIGNAL(finished()), SLOT(onDebuggerFinished()));
+        connect(l, SIGNAL(invalidated()), SLOT(onDebuggerInvalidated()));
     }
+
+    //setup kdevelop compatibility
+    d->dbusOldInterfaceLauncher = new DBusOldInterfaceLauncher(this);
+    connect(d->dbusOldInterfaceLauncher, SIGNAL(starting()), SLOT(onDebuggerStarting()));
+    connect(d->dbusOldInterfaceLauncher, SIGNAL(available()), SLOT(onDBusOldInterfaceDebuggerAvailable()));
 }
 
 DebuggerManager::~DebuggerManager()
@@ -112,3 +119,11 @@ void DebuggerManager::onDebuggerInvalidated()
     d->externalDebuggers.removeAt(index);
     emit externalDebuggerRemoved(launcher);
 }
+
+void DebuggerManager::onDBusOldInterfaceDebuggerAvailable()
+{
+    d->externalDebuggers.append(d->dbusOldInterfaceLauncher);
+    emit externalDebuggerAdded(d->dbusOldInterfaceLauncher);
+}
+
+#include "debuggermanager.moc"
