@@ -1,0 +1,7 @@
+[General]
+Name=kdbg
+TryExec=kdbg
+Backends=KCrash
+
+[KCrash]
+Exec=kdbg -p %pid %execpath
