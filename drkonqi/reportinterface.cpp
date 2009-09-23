@@ -21,10 +21,10 @@
 #include "reportinterface.h"
 
 #include "drkonqi.h"
-#include "krashconf.h"
 #include "bugzillalib.h"
 #include "productmapping.h"
 #include "systeminformation.h"
+#include "crashedapplication.h"
 
 #include "backtraceparser.h"
 #include "backtracegenerator.h"
@@ -32,16 +32,14 @@
 #include <KProcess>
 #include <KStandardDirs>
 #include <KDebug>
-
+#include <KLocale>
 
 ReportInterface::ReportInterface(QObject *parent)
     : QObject(parent)
 {
     m_userCanDetail = false;
     m_developersCanContactReporter = false;
-    
-    m_productMapping = new ProductMapping(DrKonqi::instance()->krashConfig()->productName(), this);
-    
+    m_productMapping = new ProductMapping(DrKonqi::crashedApplication()->executable().baseName(), this);
     m_attachToBugNumber = 0;
 }
 
@@ -108,14 +106,14 @@ void ReportInterface::setPossibleDuplicates(const QStringList & list)
 QString ReportInterface::generateReport(bool drKonqiStamp) const
 {
     //Note: no translations must be done in this function's strings
-    const KrashConfig * krashConfig = DrKonqi::instance()->krashConfig();
+    const CrashedApplication * crashedApp = DrKonqi::crashedApplication();
     const SystemInformation * sysInfo = DrKonqi::instance()->systemInformation();
     
     QString report;
 
     //Program name and versions
-    report.append(QString("Application: %1 (%2)\n").arg(krashConfig->productName(),
-                                                                    krashConfig->productVersion()));
+    report.append(QString("Application: %1 (%2)\n").arg(crashedApp->executable().fileName(),
+                                                        crashedApp->version()));
     report.append(QString("KDE Version: %1").arg(sysInfo->kdeVersion()));
     if ( sysInfo->compiledSources() ) {
         report.append(QString(" (Compiled from sources)\n"));
@@ -179,12 +177,12 @@ BugReport ReportInterface::newBugReportTemplate() const
 {
     BugReport report;
     
-    const KrashConfig * krashConfig = DrKonqi::instance()->krashConfig();
+    const CrashedApplication * crashedApp = DrKonqi::crashedApplication();
     const SystemInformation * sysInfo = DrKonqi::instance()->systemInformation();
     
     report.setProduct(m_productMapping->bugzillaProduct());
     report.setComponent(m_productMapping->bugzillaComponent());
-    report.setVersion(krashConfig->productVersion());
+    report.setVersion(crashedApp->version());
     report.setOperatingSystem(sysInfo->bugzillaOperatingSystem());
     if (sysInfo->compiledSources()) {
         report.setPlatform(QLatin1String("Compiled Sources"));

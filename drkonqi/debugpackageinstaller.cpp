@@ -18,6 +18,8 @@
 ******************************************************************/
 
 #include "debugpackageinstaller.h"
+#include "drkonqi.h"
+#include "crashedapplication.h"
 #include <config-drkonqi.h>
 
 #include <KStandardDirs>
@@ -27,10 +29,9 @@
 #include <KLocale>
 #include <KProgressDialog>
 
-DebugPackageInstaller::DebugPackageInstaller(const QString & packageName, QObject *parent)
+DebugPackageInstaller::DebugPackageInstaller(QObject *parent)
     : QObject(parent), m_installerProcess(0), m_progressDialog(0)
 {
-    m_packageName = packageName;
     m_executablePath = KStandardDirs::findExe(DEBUG_PACKAGE_INSTALLER_NAME); //defined from CMakeLists.txt
 }
 
@@ -54,10 +55,11 @@ void DebugPackageInstaller::installDebugPackages()
         connect(m_installerProcess, SIGNAL(finished(int, QProcess::ExitStatus)), 
                                             this, SLOT(processFinished(int, QProcess::ExitStatus)));
 
-        QStringList args = QStringList() << m_packageName << m_missingLibraries;
-        m_installerProcess->setProgram(m_executablePath, args);
+        *m_installerProcess << m_executablePath
+                            << DrKonqi::crashedApplication()->executable().absoluteFilePath()
+                            << m_missingLibraries;
         m_installerProcess->start();
-        
+
         //Show dialog
         m_progressDialog = new KProgressDialog(qobject_cast<QWidget*>(parent()));
         connect(m_progressDialog, SIGNAL(cancelClicked()), this, SLOT(progressDialogCanceled()));

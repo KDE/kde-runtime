@@ -19,7 +19,6 @@
 
 #include <QtCore/QString>
 #include <QtCore/QSharedDataPointer>
-class KConfig;
 class CrashedApplication;
 struct DebuggerConfigPrivate;
 
@@ -31,7 +30,7 @@ public:
     DebuggerConfig & operator=(const DebuggerConfig & other);
     virtual ~DebuggerConfig();
 
-    static DebuggerConfig loadFromKConfig(const KConfig & config);
+    static DebuggerConfig loadFromConfig(const QString & debuggerName);
 
     /** Returns true if this DebuggerConfig instance can be used, or false otherwise */
     bool isValid() const;

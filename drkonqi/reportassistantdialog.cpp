@@ -20,12 +20,9 @@
 #include "reportassistantdialog.h"
 
 #include "drkonqi_globals.h"
-
 #include "drkonqi.h"
-#include "krashconf.h"
-
+#include "crashedapplication.h"
 #include "aboutbugreportingdialog.h"
-
 #include "reportassistantpages_base.h"
 #include "reportassistantpages_bugzilla.h"
 #include "reportassistantpages_bugzilla_duplicates.h"
@@ -256,7 +253,7 @@ void ReportAssistantDialog::next()
 
             //If the crash is worth reporting and it is BKO, skip the Conclusions page
             if (m_reportInterface->isWorthReporting() && 
-                                                DrKonqi::instance()->krashConfig()->isKDEBugzilla())
+                DrKonqi::crashedApplication()->bugReportAddress().isKdeBugzilla())
             {
                 setCurrentPage(m_pageWidgetMap.value(QLatin1String(PAGE_BZLOGIN_ID)));
                 return;
@@ -282,7 +279,8 @@ void ReportAssistantDialog::back()
     
     if (currentPage()->name() == QLatin1String(PAGE_BZLOGIN_ID))
     {
-        if (m_reportInterface->isWorthReporting() && DrKonqi::instance()->krashConfig()->isKDEBugzilla())
+        if (m_reportInterface->isWorthReporting() &&
+            DrKonqi::crashedApplication()->bugReportAddress().isKdeBugzilla())
         {
             setCurrentPage(m_pageWidgetMap.value(QLatin1String(PAGE_CRASHINFORMATION_ID)));
             return;

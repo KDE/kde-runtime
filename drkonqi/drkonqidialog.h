@@ -25,8 +25,6 @@
 
 class BacktraceWidget;
 class AboutBugReportingDialog;
-class ReportAssistantDialog;
-class KrashConfig;
 class KTabWidget;
 
 class DrKonqiDialog: public KDialog

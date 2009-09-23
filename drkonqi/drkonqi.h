@@ -19,9 +19,9 @@
 
 #include <QtCore/QObject>
 
-class KrashConfig;
 class BacktraceGenerator;
 class SystemInformation;
+class CrashedApplication;
 
 class DrKonqi : public QObject
 {
@@ -34,11 +34,10 @@ public:
     void cleanup();
 
     State currentState() const;
-    const KrashConfig *krashConfig() const;
     BacktraceGenerator *backtraceGenerator() const;
-
     SystemInformation *systemInformation() const;
-    
+    static const CrashedApplication *crashedApplication();
+
     bool appRestarted() const;
     static void saveReport(const QString & reportText, QWidget *parent = 0);
 

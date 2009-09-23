@@ -28,9 +28,8 @@
 #ifndef BACKTRACEGENERATOR_H
 #define BACKTRACEGENERATOR_H
 
+#include "debuggerconfig.h"
 #include <KProcess>
-
-class KrashConfig;
 class KTemporaryFile;
 class BacktraceParser;
 
@@ -41,17 +40,23 @@ class BacktraceGenerator : public QObject
 public:
     enum State { NotLoaded, Loading, Loaded, Failed, FailedToStart };
 
-    BacktraceGenerator(const KrashConfig *krashconf, QObject *parent);
+    BacktraceGenerator(const DebuggerConfig & debugger, QObject *parent);
     ~BacktraceGenerator();
 
     State state() const {
         return m_state;
     }
+
     BacktraceParser *parser() const {
         return m_parser;
     }
+
     QString backtrace() const {
         return m_parsedBacktrace;
+    }
+
+    DebuggerConfig debugger() const {
+        return m_debugger;
     }
 
 public Q_SLOTS:
@@ -69,7 +74,7 @@ private Q_SLOTS:
     void slotReadInput();
 
 private:
-    const KrashConfig * const m_krashconf;
+    DebuggerConfig    m_debugger;
     KProcess *        m_proc;
     KTemporaryFile *  m_temp;
     QByteArray        m_output;
@@ -81,4 +86,5 @@ private:
     BacktraceParser * m_debugParser;
 #endif
 };
+
 #endif

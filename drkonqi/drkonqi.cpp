@@ -42,11 +42,11 @@
 #include "drkonqi.h"
 
 #include "drkonqi_globals.h"
-#include "krashconf.h"
-#include "drkonqiadaptor.h"
+//#include "drkonqiadaptor.h"
 #include "detachedprocessmonitor.h"
 #include "backtracegenerator.h"
 #include "systeminformation.h"
+#include "crashedapplication.h"
 
 #include <QtDBus/QDBusConnection>
 #include <QtCore/QTimer>
@@ -59,6 +59,7 @@
 #include <KFileDialog>
 #include <KTemporaryFile>
 #include <KToolInvocation>
+#include <KCmdLineArgs>
 #include <KIO/NetAccess>
 
 #include <cstdlib>
@@ -66,23 +67,26 @@
 #include <sys/types.h>
 #include <signal.h>
 
-struct DrKonqi::Private {
-    Private() : m_state(ProcessRunning), m_krashConfig(NULL), m_btGenerator(NULL),
-    m_systemInformation(NULL), m_applicationRestarted(false) {}
+struct DrKonqi::Private
+{
+    Private() : m_state(ProcessRunning), m_btGenerator(NULL), m_systemInformation(NULL),
+                m_crashedApplication(NULL), m_applicationRestarted(false) {}
 
     DrKonqi::State         m_state;
-    KrashConfig *          m_krashConfig;
     DetachedProcessMonitor m_debuggerMonitor;
     BacktraceGenerator *   m_btGenerator;
     SystemInformation *    m_systemInformation;
+    CrashedApplication *   m_crashedApplication;
     bool                   m_applicationRestarted;
 };
 
 DrKonqi::DrKonqi()
         : QObject(), d(new Private)
 {
+#if 0
     QDBusConnection::sessionBus().registerObject("/krashinfo", this);
     new DrKonqiAdaptor(this);
+#endif
 }
 
 DrKonqi::~DrKonqi()
@@ -113,15 +117,15 @@ bool DrKonqi::init()
     unsetenv("SESSION_MANAGER");
 
     //arguments processing is done here
-    d->m_krashConfig = new KrashConfig(this);
+    d->m_crashedApplication = CrashedApplication::createFromKCrashData();
 
     //check whether the attached process exists and whether we have permissions to inspect it
-    if (d->m_krashConfig->pid() <= 0) {
+    if (d->m_crashedApplication->pid() <= 0) {
         kError() << "Invalid pid specified";
         return false;
     }
 
-    if (::kill(d->m_krashConfig->pid(), 0) < 0) {
+    if (::kill(d->m_crashedApplication->pid(), 0) < 0) {
         switch (errno) {
         case EPERM:
             kError() << "DrKonqi doesn't have permissions to inspect the specified process";
@@ -135,8 +139,12 @@ bool DrKonqi::init()
         return false;
     }
 
+    KConfigGroup config(KGlobal::config(), "drkonqi");
+    QString debuggerName = config.readEntry("Debugger", QString("gdb"));
+    DebuggerConfig debuggerConfig = DebuggerConfig::loadFromConfig(debuggerName);
+
     //misc initializations
-    d->m_btGenerator = new BacktraceGenerator(d->m_krashConfig, this);
+    d->m_btGenerator = new BacktraceGenerator(debuggerConfig, this);
     connect(d->m_btGenerator, SIGNAL(starting()), this, SLOT(debuggerStarting()));
     connect(d->m_btGenerator, SIGNAL(done()), this, SLOT(debuggerStopped()));
     connect(d->m_btGenerator, SIGNAL(someError()), this, SLOT(debuggerStopped()));
@@ -145,7 +153,7 @@ bool DrKonqi::init()
 
     //System information
     d->m_systemInformation = new SystemInformation(this);
-    
+
     return true;
 }
 
@@ -165,12 +173,6 @@ DrKonqi::State DrKonqi::currentState() const
     return d->m_state;
 }
 
-const KrashConfig *DrKonqi::krashConfig() const
-{
-    Q_ASSERT(d->m_krashConfig != NULL);
-    return d->m_krashConfig;
-}
-
 BacktraceGenerator *DrKonqi::backtraceGenerator() const
 {
     Q_ASSERT(d->m_btGenerator != NULL);
@@ -184,10 +186,15 @@ SystemInformation *DrKonqi::systemInformation() const
 }
 
 //static
+const CrashedApplication *DrKonqi::crashedApplication()
+{
+    return instance()->d->m_crashedApplication;
+}
+
+//static
 void DrKonqi::saveReport(const QString & reportText, QWidget *parent)
 {
-    const KrashConfig *krashConfig = instance()->krashConfig();
-    if (krashConfig->safeMode()) {
+    if (KCmdLineArgs::parsedArgs()->isSet("safer")) {
         KTemporaryFile tf;
         tf.setSuffix(".kcrash");
         tf.setAutoRemove(false);
@@ -203,7 +210,7 @@ void DrKonqi::saveReport(const QString & reportText, QWidget *parent)
             KMessageBox::sorry(parent, i18nc("@info","Could not create a file in which to save the report."));
         }
     } else {
-        QString defname = krashConfig->appName() + '-'
+        QString defname = crashedApplication()->executable().baseName() + '-'
                                 + QDate::currentDate().toString("yyyyMMdd") + ".kcrash";
         if (defname.contains('/')) {
             defname = defname.mid(defname.lastIndexOf('/') + 1);
@@ -242,17 +249,16 @@ void DrKonqi::restartCrashedApplication()
 {
     if (!d->m_applicationRestarted) {
         d->m_applicationRestarted = true;
-        QString executable = KStandardDirs::findExe(d->m_krashConfig->executableName());
-        kDebug() << "Restarting application" << executable;
 
         //start the application via kdeinit, as it needs to have a pristine environment and
         //KProcess::startDetached() can't start a new process with custom environment variables.
-        KToolInvocation::kdeinitExec(executable);
+        KToolInvocation::kdeinitExec(d->m_crashedApplication->executable().absoluteFilePath());
     }
 }
 
 void DrKonqi::startDefaultExternalDebugger()
 {
+#if 0
     Q_ASSERT(d->m_state != DebuggerRunning);
 
     QString str = d->m_krashConfig->externalDebuggerCommand();
@@ -264,6 +270,7 @@ void DrKonqi::startDefaultExternalDebugger()
     debuggerStarting();
     int pid = proc.startDetached();
     d->m_debuggerMonitor.startMonitoring(pid);
+#endif
 }
 
 void DrKonqi::startCustomExternalDebugger()
@@ -275,7 +282,7 @@ void DrKonqi::startCustomExternalDebugger()
 void DrKonqi::stopAttachedProcess()
 {
     if (d->m_state == ProcessRunning) {
-        ::kill(d->m_krashConfig->pid(), SIGSTOP);
+        ::kill(d->m_crashedApplication->pid(), SIGSTOP);
         d->m_state = ProcessStopped;
     }
 }
@@ -283,7 +290,7 @@ void DrKonqi::stopAttachedProcess()
 void DrKonqi::continueAttachedProcess()
 {
     if (d->m_state == ProcessStopped) {
-        ::kill(d->m_krashConfig->pid(), SIGCONT);
+        ::kill(d->m_crashedApplication->pid(), SIGCONT);
         d->m_state = ProcessRunning;
     }
 }

@@ -34,7 +34,7 @@ class DebugPackageInstaller: public QObject
                    ResultSymbolsNotFound = 2, ResultCanceled = 3 };
     
     public:
-        explicit DebugPackageInstaller(const QString & packageName, QObject *parent = 0);
+        explicit DebugPackageInstaller(QObject *parent = 0);
         bool canInstallDebugPackages() const;
         void setMissingLibraries(const QStringList &);
         void installDebugPackages();
@@ -51,10 +51,7 @@ class DebugPackageInstaller: public QObject
     private:
         KProcess *              m_installerProcess;
         KProgressDialog *       m_progressDialog;
-        
         QString                 m_executablePath;
-        QString                 m_packageName;
-        
         QStringList             m_missingLibraries;
 };
 

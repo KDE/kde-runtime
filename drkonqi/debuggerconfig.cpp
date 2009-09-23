@@ -33,10 +33,16 @@ struct DebuggerConfigPrivate : public QSharedData
 };
 
 //static
-DebuggerConfig DebuggerConfig::loadFromKConfig(const KConfig & config)
+DebuggerConfig DebuggerConfig::loadFromConfig(const QString & debuggerName)
 {
     DebuggerConfigPrivate *d = new DebuggerConfigPrivate;
+
+    //load debugger information from config file
+    KConfig config(QString::fromLatin1("debuggers/%1rc").arg(debuggerName),
+                   KConfig::NoGlobals, "appdata");
     const KConfigGroup generalGroup = config.group("General");
+
+    d->debuggerName = debuggerName;
     d->debuggerCommand = generalGroup.readPathEntry("Exec", QString());
     d->debuggerBatchCommand = generalGroup.readPathEntry("ExecBatch", QString());
     d->tryExec = generalGroup.readPathEntry("TryExec", QString());
