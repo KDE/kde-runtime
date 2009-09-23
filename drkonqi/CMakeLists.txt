@@ -64,4 +64,4 @@ target_link_libraries(drkonqi ${KDE4_KIO_LIBS})
 
 install(TARGETS drkonqi DESTINATION ${LIBEXEC_INSTALL_DIR})
 install(FILES data/mappings DESTINATION ${DATA_INSTALL_DIR}/drkonqi)
-install(DIRECTORY debuggers DESTINATION ${DATA_INSTALL_DIR}/drkonqi)
+install(DIRECTORY debuggers DESTINATION ${DATA_INSTALL_DIR}/drkonqi PATTERN ".svn" EXCLUDE)
