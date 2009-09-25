@@ -46,9 +46,9 @@ of libraries that are missing symbols (for example, "/usr/lib/libkio.so.5"). All
 paths are absolute, but they will probably point to symlinks (at least for libraries).
 The paths are taken from gdb. For each stack frame that is missing details, if gdb can
 tell where is this symbol from, the path to the library that gdb specifies is passed
-as is to the script.
-
-### FIXME: what about kdeinit-launched apps?
+as is to the script. Note that for applications that were launched via kdeinit, argv[1]
+is the path to kdeinit4, not the path to the executable that would be launched if there
+was no kdeinit involved.
 
 2. Return values
 ----------------
@@ -83,4 +83,4 @@ or fix bugs in them.
 
 --
 George Kiagiadakis <kiagiadakis.george@gmail.com>
-Last updated: 7 Semptember 2009
+Last updated: 25 Semptember 2009
