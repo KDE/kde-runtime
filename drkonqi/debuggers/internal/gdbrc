@@ -1,5 +1,10 @@
 [General]
 Name=gdb
+Name[pt]=gdb
+Name[pt_BR]=gdb
+Name[sv]=gdb
+Name[uk]=gdb
+Name[x-test]=xxgdbxx
 TryExec=gdb
 Backends=KCrash
 
