@@ -108,9 +108,14 @@ CrashedApplication *KCrashBackend::constructCrashedApplication()
         //on linux, the fastest and most reliable way is to get the path from /proc
         kDebug() << "Using /proc to determine executable path";
         a->m_executable.setFile(QFile::symLinkTarget(QString("/proc/%1/exe").arg(a->m_pid)));
+
+        if ( args->isSet("kdeinit") ) {
+            a->m_fakeBaseName = args->getOption("appname");
+        }
     } else {
         if ( args->isSet("kdeinit") ) {
             a->m_executable = QFileInfo(KStandardDirs::findExe("kdeinit4"));
+            a->m_fakeBaseName = args->getOption("appname");
         } else {
             QFileInfo execPath(args->getOption("appname"));
             if ( execPath.isAbsolute() ) {

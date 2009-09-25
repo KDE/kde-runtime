@@ -39,7 +39,7 @@ ReportInterface::ReportInterface(QObject *parent)
 {
     m_userCanDetail = false;
     m_developersCanContactReporter = false;
-    m_productMapping = new ProductMapping(DrKonqi::crashedApplication()->executable().baseName(), this);
+    m_productMapping = new ProductMapping(DrKonqi::crashedApplication()->fakeExecutableBaseName(), this);
     m_attachToBugNumber = 0;
 }
 
@@ -112,7 +112,7 @@ QString ReportInterface::generateReport(bool drKonqiStamp) const
     QString report;
 
     //Program name and versions
-    report.append(QString("Application: %1 (%2)\n").arg(crashedApp->executable().fileName(),
+    report.append(QString("Application: %1 (%2)\n").arg(crashedApp->fakeExecutableBaseName(),
                                                         crashedApp->version()));
     report.append(QString("KDE Version: %1").arg(sysInfo->kdeVersion()));
     if ( sysInfo->compiledSources() ) {

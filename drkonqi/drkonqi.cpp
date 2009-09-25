@@ -126,7 +126,7 @@ void DrKonqi::saveReport(const QString & reportText, QWidget *parent)
             KMessageBox::sorry(parent, i18nc("@info","Could not create a file in which to save the report."));
         }
     } else {
-        QString defname = crashedApplication()->executable().baseName() + '-'
+        QString defname = crashedApplication()->fakeExecutableBaseName() + '-'
                                 + QDate::currentDate().toString("yyyyMMdd") + ".kcrash";
         if (defname.contains('/')) {
             defname = defname.mid(defname.lastIndexOf('/') + 1);

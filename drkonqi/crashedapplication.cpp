@@ -44,6 +44,15 @@ QFileInfo CrashedApplication::executable() const
     return m_executable;
 }
 
+QString CrashedApplication::fakeExecutableBaseName() const
+{
+    if (!m_fakeBaseName.isEmpty()) {
+        return m_fakeBaseName;
+    } else {
+        return m_executable.baseName();
+    }
+}
+
 QString CrashedApplication::version() const
 {
     return m_version;
