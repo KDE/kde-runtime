@@ -27,6 +27,7 @@
 #include <KConfig>
 #include <KConfigGroup>
 #include <KGlobal>
+#include <KStartupInfo>
 
 #include <cstdlib>
 #include <cerrno>
@@ -59,6 +60,13 @@ KCrashBackend::~KCrashBackend()
 bool KCrashBackend::init()
 {
     AbstractDrKonqiBackend::init();
+
+    QString startupId(KCmdLineArgs::parsedArgs()->getOption("startupid"));
+    if (!startupId.isEmpty()) { // stop startup notification
+        KStartupInfoId id;
+        id.initId(startupId.toLocal8Bit());
+        KStartupInfo::sendFinish(id);
+    }
 
     //check whether the attached process exists and whether we have permissions to inspect it
     if (crashedApplication()->pid() <= 0) {
