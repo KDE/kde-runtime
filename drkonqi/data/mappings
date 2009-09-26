@@ -116,6 +116,7 @@ kpilotDaemon=kpilot|kpilotDaemon
 kpackagekitsmarticon=kpackagekit|general
 
 kscreenlocker=krunner|kscreenlocker
+printer-applet-kde=printer-applet|general
 
 [ProductGroup]
 kontact=kdepim-base|kdepim-apps
