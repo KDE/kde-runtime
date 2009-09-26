@@ -115,3 +115,6 @@ korgac=korganizer|reminder daemon (korgac)
 kpackagekitsmarticon=kpackagekit|general
 
 kscreenlocker=krunner|kscreenlocker
+
+printer-applet-kde=printer-applet|general
+
