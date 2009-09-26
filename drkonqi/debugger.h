@@ -30,8 +30,11 @@ public:
     /** Returns true if this DebuggerConfig instance can be used, or false otherwise */
     bool isValid() const;
 
-    /** Returns the internal name of the debugger (eg. "gdb") */
+    /** Returns the translatable name of the debugger (eg. "GDB") */
     QString name() const;
+
+    /** Returns the code name of the debugger (eg. "gdb"). */
+    QString codeName() const;
 
     /** Returns the executable name that drkonqi should check if it exists
      * to determine whether the debugger is installed

@@ -154,7 +154,7 @@ DebuggerManager *KCrashBackend::constructDebuggerManager()
         if (!firstKnownGoodDebugger.isValid() && debugger.supportedBackends().contains("KCrash")) {
             firstKnownGoodDebugger = debugger;
         }
-        if (debugger.name() == defaultDebuggerName) {
+        if (debugger.codeName() == defaultDebuggerName) {
             preferredDebugger = debugger;
         }
         if (firstKnownGoodDebugger.isValid() && preferredDebugger.isValid()) {

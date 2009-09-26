@@ -47,6 +47,13 @@ QString Debugger::name() const
     return m_config->group("General").readEntry("Name");
 }
 
+QString Debugger::codeName() const
+{
+    //fall back to the "TryExec" string if "CodeName" is not specified.
+    //for most debuggers those strings should be the same
+    return m_config->group("General").readEntry("CodeName", tryExec());
+}
+
 QString Debugger::tryExec() const
 {
     return m_config->group("General").readEntry("TryExec");
