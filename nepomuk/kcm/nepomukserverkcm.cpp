@@ -97,6 +97,8 @@ Nepomuk::ServerConfigModule::ServerConfigModule( QWidget* parent, const QVariant
     m_folderModel = new FolderSelectionModel( m_viewIndexFolders );
     m_viewIndexFolders->setModel( m_folderModel );
     m_viewIndexFolders->setHeaderHidden( true );
+    m_viewIndexFolders->header()->setStretchLastSection( false );
+    m_viewIndexFolders->header()->setResizeMode( QHeaderView::ResizeToContents );
     m_viewIndexFolders->setRootIsDecorated( true );
     m_viewIndexFolders->setAnimated( true );
     m_viewIndexFolders->setRootIndex( m_folderModel->setRootPath( QDir::rootPath() ) );
