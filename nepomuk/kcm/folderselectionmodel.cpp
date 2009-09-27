@@ -91,12 +91,12 @@ QVariant FolderSelectionModel::data( const QModelIndex& index, int role ) const
             switch( state ) {
             case StateInclude:
             case StateIncludeInherited:
-//                brush = QPalette().brush( QPalette::Disabled, QPalette::Foreground );
+                brush = QPalette().brush( QPalette::Active, QPalette::Text );
                 break;
             case StateNone:
             case StateExclude:
             case StateExcludeInherited:
-                brush = QPalette().brush( QPalette::Disabled, QPalette::Foreground );
+                brush = QPalette().brush( QPalette::Disabled, QPalette::Text );
                 break;
             }
             return QVariant::fromValue( brush );
