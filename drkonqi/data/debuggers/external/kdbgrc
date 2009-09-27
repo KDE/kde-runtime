@@ -1,5 +1,9 @@
 [General]
 Name=kdbg
+Name[nds]=kgdb
+Name[sv]=kdbg
+Name[uk]=kdbg
+Name[x-test]=xxkdbgxx
 TryExec=kdbg
 Backends=KCrash
 
