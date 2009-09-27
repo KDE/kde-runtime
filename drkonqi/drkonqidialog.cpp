@@ -92,10 +92,11 @@ void DrKonqiDialog::buildMainWidget()
 {
     const CrashedApplication *crashedApp = DrKonqi::crashedApplication();
 
-    //Main widget components
-    QLabel * title = new QLabel(i18nc("@info", "<para>We are sorry, <application>%1</application> "
+    m_introWidget = new QWidget(this);
+    ui.setupUi(m_introWidget);
+    
+    ui.titleLabel->setText(i18nc("@info", "<para>We are sorry, <application>%1</application> "
                                                "closed unexpectedly.</para>", crashedApp->name()));
-    title->setWordWrap(true);
 
     QString reportMessage;
     if (!crashedApp->bugReportAddress().isEmpty()) {
@@ -117,45 +118,19 @@ void DrKonqiDialog::buildMainWidget()
                                         "application does not provide a bug reporting "
                                         "address</para>");
     }
-    QLabel * infoLabel = new QLabel(reportMessage);
+    ui.infoLabel->setText(reportMessage);
+    connect(ui.infoLabel, SIGNAL(linkActivated(QString)), this, SLOT(aboutBugReporting()));
 
-    connect(infoLabel, SIGNAL(linkActivated(QString)), this, SLOT(aboutBugReporting()));
-    infoLabel->setWordWrap(true);
+    ui.iconLabel->setPixmap(
+                        QPixmap(KStandardDirs::locate("appdata", QLatin1String("pics/crash.png"))));
 
-    //Main widget layout
-    QVBoxLayout * introLayout = new QVBoxLayout;
-    introLayout->addSpacing(20);
+    ui.detailsTitleLabel->setText(QString("<strong>%1</strong>").arg(i18nc("@label","Details:")));
 
-    QHBoxLayout * horizontalLayout = new QHBoxLayout();
-
-    QVBoxLayout * verticalTextLayout = new QVBoxLayout();
-    verticalTextLayout->addWidget(title);
-    verticalTextLayout->addWidget(infoLabel);
-    horizontalLayout->addLayout(verticalTextLayout);
-
-    QLabel * iconLabel = new QLabel();
-    iconLabel->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
-    iconLabel->setPixmap(QPixmap(KStandardDirs::locate("appdata", QLatin1String("pics/crash.png"))));
-    horizontalLayout->addWidget(iconLabel);
-    horizontalLayout->setAlignment(iconLabel,Qt::AlignTop);
-
-    introLayout->addLayout(horizontalLayout);
-    introLayout->addStretch();
-
-    //Details
-    introLayout->addWidget(new QLabel(QString("<strong>%1</strong>").arg(i18nc("@label","Details:"))));
-
-    QLabel * detailsLabel = new QLabel(i18nc("@info","<para>Executable: <application>%1"
+    ui.detailsLabel->setText(i18nc("@info","<para>Executable: <application>%1"
                                             "</application> PID: <numid>%2</numid> Signal: %3 (%4)"
                                             "</para>", crashedApp->executable().fileName(),
                                              crashedApp->pid(), crashedApp->signalNumber(),
                                              crashedApp->signalName()));
-    detailsLabel->setTextInteractionFlags(Qt::TextBrowserInteraction);
-    introLayout->addWidget(detailsLabel);
-
-    //Introduction widget
-    m_introWidget = new QWidget(this);
-    m_introWidget->setLayout(introLayout);
 }
 
 void DrKonqiDialog::buildDialogOptions()

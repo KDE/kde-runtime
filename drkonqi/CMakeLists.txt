@@ -41,6 +41,7 @@ set(drkonqi_SRCS
 )
 
 kde4_add_ui_files(drkonqi_SRCS
+    ui/maindialog.ui
     ui/backtracewidget.ui
     ui/assistantpage_bugawareness.ui
     ui/assistantpage_conclusions.ui

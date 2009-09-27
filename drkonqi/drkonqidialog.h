@@ -24,6 +24,8 @@
 #include <QtCore/QHash>
 #include <KDialog>
 
+#include "ui_maindialog.h"
+
 class BacktraceWidget;
 class AboutBugReportingDialog;
 class KTabWidget;
@@ -55,12 +57,14 @@ private Q_SLOTS:
     void tabIndexChanged(int);
 
 private:
-    KTabWidget *                    m_tabWidget;
+    KTabWidget *                        m_tabWidget;
 
-    QPointer<AboutBugReportingDialog> m_aboutBugReportingDialog;
+    QPointer<AboutBugReportingDialog>   m_aboutBugReportingDialog;
 
-    QWidget *                       m_introWidget;
-    BacktraceWidget *               m_backtraceWidget;
+    QWidget *                           m_introWidget;
+    Ui::MainWidget                      ui;
+    
+    BacktraceWidget *                   m_backtraceWidget;
 
     KMenu *m_debugMenu;
     QHash<AbstractDebuggerLauncher*, QAction*> m_debugMenuActions;
