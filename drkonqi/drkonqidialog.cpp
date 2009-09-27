@@ -100,18 +100,11 @@ void DrKonqiDialog::buildMainWidget()
     QString reportMessage;
     if (!crashedApp->bugReportAddress().isEmpty()) {
         if (KCmdLineArgs::parsedArgs()->isSet("safer")) {
-            QString reportUri;
-            if (crashedApp->bugReportAddress().isKdeBugzilla()) {
-                reportUri = QLatin1String(KDE_BUGZILLA_URL);
-            } else {
-                reportUri = crashedApp->bugReportAddress();
-            }
-            
             reportMessage = i18nc("@info", "<para>The reporting assistant is disabled because "
-                                           "this application was started in safe mode.<nl />You "
-                                           "can manually report this bug to %1 (including the "
-                                           "backtrace from the Developer Information tab)</para>",
-                                           reportUri);
+                                           "the crash handler dialog was started in safe mode."
+                                           "<nl />You can manually report this bug to %1 "
+                                           "(including the backtrace from the Developer Information "
+                                           "tab)</para>", crashedApp->bugReportAddress());
         } else {
             reportMessage = i18nc("@info", "<para>You can help us improve KDE by reporting "
                                           "this error.<nl /><link url='#aboutbugreporting'>Learn "

@@ -17,22 +17,26 @@
 #ifndef BUGREPORTADDRESS_H
 #define BUGREPORTADDRESS_H
 
+#include "drkonqi_globals.h"
 #include <QtCore/QString>
 
 class BugReportAddress : public QString
 {
 public:
     inline BugReportAddress() : QString() {}
-    inline BugReportAddress(const QString & address) : QString(address) {}
+    inline BugReportAddress(const QString & address)
+        : QString(address == QLatin1String("submit@bugs.kde.org") ?
+                  QLatin1String(KDE_BUGZILLA_URL) : address)
+    {}
 
     inline bool isKdeBugzilla() const
     {
-        return isEmpty() || *this == QLatin1String("submit@bugs.kde.org");
+        return *this == QLatin1String(KDE_BUGZILLA_URL);
     }
 
     inline bool isEmail() const
     {
-        return contains('@') && *this != QLatin1String("submit@bugs.kde.org");
+        return contains('@');
     }
 };
 

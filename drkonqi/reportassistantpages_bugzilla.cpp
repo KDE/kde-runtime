@@ -74,7 +74,7 @@ BugzillaLoginPage::BugzillaLoginPage(ReportAssistantDialog * parent) :
                             "file a bug report, because we may need to contact you later "
                             "for requesting further information. If you do not have "
                             "one, you can freely <link url='%2'>create one here</link>.</note>",
-                            QLatin1String(KDE_BUGZILLA_URL),
+                            DrKonqi::crashedApplication()->bugReportAddress(),
                             QLatin1String(KDE_BUGZILLA_CREATE_ACCOUNT_URL)));
 }
 
@@ -544,7 +544,8 @@ void BugzillaSendPage::openReportContents()
     if (!m_contentsDialog)
     {
         QString report = reportInterface()->generateReport(false) + QLatin1Char('\n') +
-                            i18nc("@info/plain","Report to %1", QLatin1String(KDE_BUGZILLA_URL));
+                            i18nc("@info/plain report to KDE bugtracker addres","Report to %1", 
+                                  DrKonqi::crashedApplication()->bugReportAddress());
         m_contentsDialog = new ReportInformationDialog(report);
     }
     m_contentsDialog->show();

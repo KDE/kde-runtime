@@ -276,7 +276,7 @@ void ConclusionPage::aboutToShow()
                                             "to the KDE bug tracking system: click <interface>Next"
                                             "</interface> to start the reporting process. "
                                             "You can manually report at <link>%1</link>",
-                                                  QLatin1String(KDE_BUGZILLA_URL)));
+                                                  reportAddress));
 
         } else {
             if (!DrKonqi::crashedApplication()->hasBeenRestarted()) {
@@ -310,7 +310,7 @@ void ConclusionPage::aboutToShow()
                                             "at <link>%1</link>. "
                                             "Click <interface>Finish</interface> to close the "
                                             "assistant.",
-                                            QLatin1String(KDE_BUGZILLA_URL)));
+                                            reportAddress));
         } else {
             ui.m_howToProceedLabel->setText(i18nc("@info","This application is not supported in the "
                                               "KDE bug tracking system. You can manually report this "
@@ -330,14 +330,9 @@ void ConclusionPage::aboutToHide()
 void ConclusionPage::openReportInformation()
 {
     if (!m_infoDialog) {
-        QString reportUri;
-        if (isBKO) {
-            reportUri = QLatin1String(KDE_BUGZILLA_URL);
-        } else {
-            reportUri = DrKonqi::crashedApplication()->bugReportAddress();
-        }
         QString info = reportInterface()->generateReport(false) + QLatin1Char('\n') +
-                            i18nc("@info/plain","Report to %1", reportUri);
+                            i18nc("@info/plain report to url/mail address","Report to %1", 
+                                  DrKonqi::crashedApplication()->bugReportAddress());
 
         m_infoDialog = new ReportInformationDialog(info);
     }
