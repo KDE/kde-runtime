@@ -1,7 +1,10 @@
 [General]
 Name=gdb
+Name[id]=gdb
 Name[nds]=gdb
+Name[pt]=gdb
 Name[sv]=gdb
+Name[tr]=gdb
 Name[uk]=gdb
 Name[x-test]=xxgdbxx
 TryExec=gdb

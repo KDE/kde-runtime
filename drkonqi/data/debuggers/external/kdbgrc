@@ -1,7 +1,10 @@
 [General]
 Name=kdbg
+Name[id]=kdbg
 Name[nds]=kgdb
+Name[pt]=kdbg
 Name[sv]=kdbg
+Name[tr]=kdbg
 Name[uk]=kdbg
 Name[x-test]=xxkdbgxx
 TryExec=kdbg
