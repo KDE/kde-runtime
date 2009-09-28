@@ -28,7 +28,7 @@ if(CLucene_FOUND AND SopranoIndex_FOUND)
   macro_optional_add_subdirectory(strigibackend)
 endif(CLucene_FOUND AND SopranoIndex_FOUND)
 
-add_subdirectory(libnepomukquery)
+#add_subdirectory(libnepomukquery)
 add_subdirectory(server)
 add_subdirectory(kcm)
 add_subdirectory(services)
