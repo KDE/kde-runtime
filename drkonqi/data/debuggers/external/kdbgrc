@@ -1,5 +1,7 @@
 [General]
 Name=kdbg
+Name[de]=kdbg
+Name[et]=kdbg
 Name[id]=kdbg
 Name[nds]=kgdb
 Name[pt]=kdbg

@@ -1,5 +1,7 @@
 [General]
 Name=gdb
+Name[de]=gdb
+Name[et]=gdb
 Name[id]=gdb
 Name[nds]=gdb
 Name[pt]=gdb
