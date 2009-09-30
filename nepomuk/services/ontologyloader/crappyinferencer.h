@@ -89,7 +89,7 @@ namespace Nepomuk {
      *
      * \author Sebastian Trueg <trueg@kde.org>
      */
-    class NEPOMUK_EXPORT CrappyInferencer : public Soprano::FilterModel
+    class CrappyInferencer : public Soprano::FilterModel
     {
         Q_OBJECT
 
