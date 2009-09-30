@@ -2,9 +2,11 @@
 Name=gdb
 Name[de]=gdb
 Name[et]=gdb
+Name[gl]=gdb
 Name[id]=gdb
 Name[nds]=gdb
 Name[pt]=gdb
+Name[pt_BR]=gdb
 Name[sv]=gdb
 Name[tr]=gdb
 Name[uk]=gdb
