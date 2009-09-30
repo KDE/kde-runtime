@@ -36,7 +36,7 @@ namespace Nepomuk {
         /**
          * Please consider using QueryServiceClient instead.
          */
-        class NEPOMUK_EXPORT SearchCore : public QObject
+        class SearchCore : public QObject
         {
             Q_OBJECT
 
