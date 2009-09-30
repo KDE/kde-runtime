@@ -38,7 +38,7 @@ namespace Nepomuk {
          *
          * \author Sebastian Trueg <trueg@kde.org>
          */
-        class NEPOMUK_EXPORT Result
+        class Result
         {
         public:
             Result();

@@ -25,8 +25,6 @@
 #include <QtCore/QPair>
 #include <QtCore/QDebug>
 
-#include <nepomuk/nepomuk_export.h>
-
 class QUrl;
 
 namespace Nepomuk {
@@ -44,7 +42,7 @@ namespace Nepomuk {
          *
          * \author Sebastian Trueg <trueg@kde.org>
          */
-        class NEPOMUK_EXPORT Query
+        class Query
         {
         public:
             enum Type {
@@ -113,10 +111,10 @@ namespace Nepomuk {
             QSharedDataPointer<Private> d;
         };
 
-        NEPOMUK_EXPORT uint qHash( const Nepomuk::Search::Query& );
+        uint qHash( const Nepomuk::Search::Query& );
     }
 }
 
-NEPOMUK_EXPORT QDebug operator<<( QDebug, const Nepomuk::Search::Query& );
+QDebug operator<<( QDebug, const Nepomuk::Search::Query& );
 
 #endif

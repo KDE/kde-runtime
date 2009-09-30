@@ -25,24 +25,22 @@
 #include "query.h"
 #include "term.h"
 
-#include <nepomuk/nepomuk_export.h>
-
 namespace Nepomuk {
     namespace Search {
-        NEPOMUK_EXPORT void registerDBusTypes();
+        void registerDBusTypes();
     }
 }
 
-NEPOMUK_EXPORT QDBusArgument& operator<<( QDBusArgument& arg, const Soprano::Node& );
-NEPOMUK_EXPORT const QDBusArgument& operator>>( const QDBusArgument& arg, Soprano::Node& );
+QDBusArgument& operator<<( QDBusArgument& arg, const Soprano::Node& );
+const QDBusArgument& operator>>( const QDBusArgument& arg, Soprano::Node& );
 
-NEPOMUK_EXPORT QDBusArgument& operator<<( QDBusArgument& arg, const Nepomuk::Search::Term& term );
-NEPOMUK_EXPORT const QDBusArgument& operator>>( const QDBusArgument& arg, Nepomuk::Search::Term& );
+QDBusArgument& operator<<( QDBusArgument& arg, const Nepomuk::Search::Term& term );
+const QDBusArgument& operator>>( const QDBusArgument& arg, Nepomuk::Search::Term& );
 
-NEPOMUK_EXPORT QDBusArgument& operator<<( QDBusArgument& arg, const Nepomuk::Search::Query& query );
-NEPOMUK_EXPORT const QDBusArgument& operator>>( const QDBusArgument& arg, Nepomuk::Search::Query& );
+QDBusArgument& operator<<( QDBusArgument& arg, const Nepomuk::Search::Query& query );
+const QDBusArgument& operator>>( const QDBusArgument& arg, Nepomuk::Search::Query& );
 
-NEPOMUK_EXPORT QDBusArgument& operator<<( QDBusArgument& arg, const Nepomuk::Search::Result& );
-NEPOMUK_EXPORT const QDBusArgument& operator>>( const QDBusArgument& arg, Nepomuk::Search::Result& );
+QDBusArgument& operator<<( QDBusArgument& arg, const Nepomuk::Search::Result& );
+const QDBusArgument& operator>>( const QDBusArgument& arg, Nepomuk::Search::Result& );
 
 #endif

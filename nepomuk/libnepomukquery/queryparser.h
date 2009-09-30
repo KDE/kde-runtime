@@ -24,12 +24,10 @@
 
 #include <QtCore/QString>
 
-#include <nepomuk/nepomuk_export.h>
-
 
 namespace Nepomuk {
     namespace Search {
-        class NEPOMUK_EXPORT QueryParser
+        class QueryParser
         {
         public:
             QueryParser();
