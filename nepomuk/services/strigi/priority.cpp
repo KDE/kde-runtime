@@ -31,11 +31,12 @@
 #include <sys/resource.h>
 
 #include <unistd.h>
+#ifndef _WIN32
 #include <sys/syscall.h>
 #include <errno.h>
 
 #include <sched.h>
-
+#endif
 
 #ifdef SYS_ioprio_set
 namespace {
@@ -82,7 +83,11 @@ bool lowerIOPriority()
 
 bool lowerPriority()
 {
+#ifndef Q_OS_WIN
     return !setpriority( PRIO_PROCESS, 0, 19 );
+#else
+    return false;
+#endif
 }
 
 
