@@ -31,6 +31,11 @@ soprano_add_ontology(strigi_soprano_indexer_SRCS
 # CLucene requires exception support
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${KDE4_ENABLE_EXCEPTIONS}")
 
+if(MSVC)
+  # add some define to link correctly against clucene
+  add_definitions(-Zc:wchar_t-)
+endif(MSVC)
+
 if(WIN32)
   # this is needed to have mingw, cygwin and msvc libs installed in one directory
   if(MSVC)

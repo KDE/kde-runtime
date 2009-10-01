@@ -20,6 +20,11 @@ set(HAVE_SOPRANO_INDEX ${SopranoIndex_FOUND})
 
 if(CLucene_FOUND AND SopranoIndex_FOUND)
 
+  if(MSVC)
+    # add some define to link correctly against clucene
+    add_definitions(-Zc:wchar_t-)
+  endif(MSVC)
+
   include_directories(${CLUCENE_INCLUDE_DIR} ${CLUCENE_LIBRARY_DIR})
 
   set(storage_SRCS
