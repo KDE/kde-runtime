@@ -468,6 +468,10 @@ void EmoticonList::defaults()
 
 bool EmoticonList::canEditTheme()
 {
+    if (!themeList->currentItem()) {
+        return false;
+    }
+
     KEmoticonsTheme theme = emoMap.value(themeList->currentItem()->text());
     QFileInfo inf(theme.themePath() + '/' + theme.fileName());
 
