@@ -164,7 +164,7 @@
          <string/>
         </property>
         <property name="whatsThis">
-         <string extracomment="whatsThis tooltip">This option defines if Windows' Start menu entries should be regenerated or not. By default start menu entries are regenerated automaticaly, but you may wish to disable it if you have issues with that.</string>
+         <string extracomment="whatsThis tooltip">This option defines if Windows' Start menu entries should be regenerated or not. By default start menu entries are regenerated automatically, but you may wish to disable it if you have issues with that.</string>
         </property>
         <property name="text">
          <string extracomment="checkbox caption in System Integration options">Enable automatic regeneration of start menu entries</string>
