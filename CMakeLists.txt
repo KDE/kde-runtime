@@ -1,5 +1,11 @@
 project(KDEBASE_RUNTIME)
 
+# Used e.g. in KDE4RuntimeConfig.cmake, Alex
+set(KDE4RUNTIME_VERSION_MAJOR 4)
+set(KDE4RUNTIME_VERSION_MINOR 3)
+set(KDE4RUNTIME_VERSION_PATCH 61)
+set(KDE4RUNTIME_VERSION ${KDE4RUNTIME_VERSION_MAJOR}.${KDE4RUNTIME_VERSION_MINOR}.${KDE4RUNTIME_VERSION_PATCH} )
+
 # where to look first for cmake modules, before ${CMAKE_ROOT}/Modules/ is checked
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
 
@@ -120,3 +126,76 @@ endif(CMAKE_SOURCE_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
 
 ########### install files ###############
 install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/kde4 DESTINATION ${BIN_INSTALL_DIR})
+
+
+# make the libraries installed from kdebase/runtime available to other projects
+# by creating and installing a KDE4RuntimeConfig.cmake file, which will
+# be searched and found by kdelibs/cmake/modules/FindKDE4Runtime.cmake. Alex
+
+# now create the KDE4RuntimeConfig.cmake file, which will be loaded by
+# kdelibs/cmake/modules/FindKDE4Runtime.cmake and which has to contain all information
+# about the libraries installed from kdebase/runtime/libs/ anybody would like to have. Alex
+
+# we need the absolute directories where stuff will be installed too
+# but since the variables which contain the destinations can be relative
+# or absolute paths, we need this macro to make them all absoulte, Alex
+macro(MAKE_INSTALL_PATH_ABSOLUTE out in)
+   if (IS_ABSOLUTE "${in}")    # IS_ABSOLUTE is new since cmake 2.4.8
+      set(${out} "${in}")
+   else (IS_ABSOLUTE "${in}")
+      set(${out} "\${KDE4RUNTIME_INSTALL_DIR}/${in}")
+   endif (IS_ABSOLUTE "${in}")
+endmacro(MAKE_INSTALL_PATH_ABSOLUTE out in)
+
+make_install_path_absolute(KDE4RUNTIME_LIB_DIR     ${LIB_INSTALL_DIR})
+make_install_path_absolute(KDE4RUNTIME_LIBEXEC_DIR ${LIBEXEC_INSTALL_DIR})
+make_install_path_absolute(KDE4RUNTIME_INCLUDE_DIR ${INCLUDE_INSTALL_DIR})
+make_install_path_absolute(KDE4RUNTIME_BIN_DIR     ${BIN_INSTALL_DIR})
+make_install_path_absolute(KDE4RUNTIME_SBIN_DIR    ${SBIN_INSTALL_DIR})
+make_install_path_absolute(KDE4RUNTIME_DATA_DIR    ${DATA_INSTALL_DIR})
+make_install_path_absolute(KDE4RUNTIME_HTML_DIR    ${HTML_INSTALL_DIR})
+make_install_path_absolute(KDE4RUNTIME_CONFIG_DIR  ${CONFIG_INSTALL_DIR})
+make_install_path_absolute(KDE4RUNTIME_ICON_DIR    ${ICON_INSTALL_DIR})
+make_install_path_absolute(KDE4RUNTIME_KCFG_DIR    ${KCFG_INSTALL_DIR})
+make_install_path_absolute(KDE4RUNTIME_LOCALE_DIR  ${LOCALE_INSTALL_DIR})
+make_install_path_absolute(KDE4RUNTIME_MIME_DIR    ${MIME_INSTALL_DIR})
+make_install_path_absolute(KDE4RUNTIME_SOUND_DIR   ${SOUND_INSTALL_DIR})
+make_install_path_absolute(KDE4RUNTIME_TEMPLATES_DIR    ${TEMPLATES_INSTALL_DIR})
+make_install_path_absolute(KDE4RUNTIME_WALLPAPER_DIR    ${WALLPAPER_INSTALL_DIR})
+make_install_path_absolute(KDE4RUNTIME_KCONF_UPDATE_DIR    ${KCONF_UPDATE_INSTALL_DIR})
+make_install_path_absolute(KDE4RUNTIME_AUTOSTART_DIR    ${AUTOSTART_INSTALL_DIR})
+make_install_path_absolute(KDE4RUNTIME_XDG_APPS_DIR        ${XDG_APPS_INSTALL_DIR})
+make_install_path_absolute(KDE4RUNTIME_XDG_DIRECTORY_DIR   ${XDG_DIRECTORY_INSTALL_DIR})
+make_install_path_absolute(KDE4RUNTIME_SYSCONF_DIR ${SYSCONF_INSTALL_DIR})
+make_install_path_absolute(KDE4RUNTIME_MAN_DIR     ${MAN_INSTALL_DIR})
+make_install_path_absolute(KDE4RUNTIME_INFO_DIR    ${INFO_INSTALL_DIR})
+make_install_path_absolute(KDE4RUNTIME_DBUS_INTERFACES_DIR ${DBUS_INTERFACES_INSTALL_DIR})
+make_install_path_absolute(KDE4RUNTIME_DBUS_SERVICES_DIR   ${DBUS_SERVICES_INSTALL_DIR})
+make_install_path_absolute(KDE4RUNTIME_SERVICES_DIR ${SERVICES_INSTALL_DIR})
+make_install_path_absolute(KDE4RUNTIME_SERVICETYPES_DIR ${SERVICETYPES_INSTALL_DIR})
+
+set(KDE4RUNTIME_TARGET_PREFIX KDE4Runtime__)
+
+configure_file(KDE4RuntimeConfig.cmake.in "${CMAKE_CURRENT_BINARY_DIR}/KDE4RuntimeConfig.cmake" @ONLY)
+
+# this file will be installed too and will be used by cmake when searching for the Config.cmake file to check the version of kdepimlibs, Alex
+macro_write_basic_cmake_version_file(${CMAKE_CURRENT_BINARY_DIR}/KDE4RuntimeConfigVersion.cmake
+                                     ${KDE4RUNTIME_VERSION_MAJOR} ${KDE4RUNTIME_VERSION_MINOR} ${KDE4RUNTIME_VERSION_PATCH})
+
+set(_KDE4RuntimeConfig_INSTALL_DIR ${LIB_INSTALL_DIR}/KDE4Runtime-${KDE4RUNTIME_VERSION}/cmake)
+# places where find_package() looks for FooConfig.cmake files:
+# CMake >= 2.6.0 looks in lib/Foo*/cmake/, CMake >= 2.6.3 also looks in
+# lib/cmake/Foo*/, which packagers prefer. So they can set the KDE4_USE_COMMON_CMAKE_PACKAGE_CONFIG_DIR
+# option to have kdepimlibs install its Config file there. Alex
+if(KDE4_USE_COMMON_CMAKE_PACKAGE_CONFIG_DIR)
+   set(_KDE4RuntimeConfig_INSTALL_DIR ${LIB_INSTALL_DIR}/cmake/KDE4Runtime-${KDE4RUNTIME_VERSION} )
+endif(KDE4_USE_COMMON_CMAKE_PACKAGE_CONFIG_DIR)
+
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/KDE4RuntimeConfig.cmake
+              ${CMAKE_CURRENT_BINARY_DIR}/KDE4RuntimeConfigVersion.cmake
+        DESTINATION ${_KDE4RuntimeConfig_INSTALL_DIR})
+
+# install(EXPORT kderuntimeLibraryTargets
+#         NAMESPACE ${KDE4RUNTIME_TARGET_PREFIX}
+#         DESTINATION ${_KDE4RuntimeConfig_INSTALL_DIR}
+#         FILE KDE4RuntimeLibraryTargets.cmake )
