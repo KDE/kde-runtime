@@ -352,7 +352,7 @@ Nepomuk::SearchEntry* Nepomuk::SearchFolder::statResult( const Search::Result& r
 
 
     if ( isFile ) {
-        uds.insert( KIO::UDSEntry::UDS_TARGET_URL, url.url() );
+        uds.insert( KIO::UDSEntry::UDS_NEPOMUK_URI, url.url() );
     }
 
     //
@@ -442,13 +442,14 @@ Nepomuk::SearchEntry* Nepomuk::SearchFolder::statResult( const Search::Result& r
         }
 
         //
-        // Although in KDE 4.3 the target url is sort of deprecated, we still set it.
-        // Cannot hurt.
+        // Starting with KDE 4.4 we have the pretty UDS_NEPOMUK_URI which makes
+        // everything much cleaner since kio slaves can decide if the resources can be
+        // annotated or not.
         //
         if ( isPimoThingLinkedFile )
-            uds.insert( KIO::UDSEntry::UDS_TARGET_URL, url.url() );
+            uds.insert( KIO::UDSEntry::UDS_NEPOMUK_URI, KUrl( url ).url() );
         else
-            uds.insert( KIO::UDSEntry::UDS_TARGET_URL, result.resourceUri().toString() );
+            uds.insert( KIO::UDSEntry::UDS_NEPOMUK_URI, KUrl( res.resourceUri() ).url() );
     }
 
     //
