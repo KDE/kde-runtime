@@ -253,11 +253,11 @@ void Nepomuk::ServerConfigModule::slotUpdateStrigiStatus()
         }
         else {
             m_failedToInitialize = true;
-            m_labelStrigiStatus->setText( i18nc( "@info_status", "Strigi service failed to initialize, most likely due to an installation problem." ) );
+            m_labelStrigiStatus->setText( i18nc( "@info:status", "Strigi service failed to initialize, most likely due to an installation problem." ) );
         }
     }
     else if ( !m_failedToInitialize ) {
-        m_labelStrigiStatus->setText( i18nc( "@info_status", "Strigi service not running." ) );
+        m_labelStrigiStatus->setText( i18nc( "@info:status", "Strigi service not running." ) );
     }
 }
 
