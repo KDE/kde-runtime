@@ -94,7 +94,7 @@ void Nepomuk::Core::createRepository( const QString& name )
 
 void Nepomuk::Core::slotRepositoryOpened( Repository* repo, bool success )
 {
-    m_failedToOpenRepository = m_failedToOpenRepository && !success;
+    m_failedToOpenRepository = success ? m_failedToOpenRepository : true;
     m_openingRepositories.removeAll( repo->name() );
     if ( m_openingRepositories.isEmpty() ) {
         emit initializationDone( !m_failedToOpenRepository );
