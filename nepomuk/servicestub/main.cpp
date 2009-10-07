@@ -71,6 +71,7 @@ int main( int argc, char** argv )
                           ki18n("(c) 2008, Sebastian Trüg"),
                           KLocalizedString(),
                           "http://nepomuk.kde.org" );
+    aboutData.setProgramIconName( "nepomuk" );
     aboutData.addAuthor(ki18n("Sebastian Trüg"),ki18n("Maintainer"), "trueg@kde.org");
 
     KCmdLineOptions options;
