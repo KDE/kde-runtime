@@ -14,71 +14,137 @@
 
 #include "modelcopyjob.h"
 
-#include <Soprano/Model>
+#include <Soprano/StorageModel>
+#include <Soprano/Backend>
 #include <Soprano/Error/Error>
 
 #include <KLocale>
 #include <KDebug>
+#include <kuiserverjobtracker.h>
+
+#include <QtCore/QThread>
+#include <QtCore/QTimer>
+
+
+class Nepomuk::ModelCopyJob::Private : public QThread
+{
+public:
+    void run();
+
+    Soprano::Model* m_source;
+    Soprano::Model* m_dest;
+
+    bool m_allCopied;
+    bool m_stopped;
+
+    KUiServerJobTracker* m_jobTracker;
+
+    ModelCopyJob* q;
+};
+
+
+void Nepomuk::ModelCopyJob::Private::run()
+{
+    m_stopped = false;
+    unsigned long size = m_source->statementCount();
+    unsigned long done = 0;
+    kDebug() << "Need to copy" << size << "statements.";
+
+    Soprano::StatementIterator it = m_source->listStatements();
+
+    while ( !m_stopped ) {
+        if ( it.next() ) {
+            ++done;
+
+            if ( m_dest->addStatement( *it ) != Soprano::Error::ErrorNone ) {
+                kDebug() << m_dest->lastError();
+                q->setErrorText( m_dest->lastError().message() );
+                break;
+            }
+
+            // progress
+            if ( size > 0 ) {
+                // emitPercent does only emit a signal if the percent value actually changes
+                q->emitPercent( done, size );
+            }
+        }
+        else if ( it.lastError() ) {
+            q->setErrorText( it.lastError().message() );
+        }
+    }
+}
 
 
 Nepomuk::ModelCopyJob::ModelCopyJob( Soprano::Model* source, Soprano::Model* dest, QObject* parent )
     : KJob( parent ),
-      m_source( source ),
-      m_dest( dest )
+      d( new Private() )
 {
     kDebug();
-    connect( &m_timer, SIGNAL( timeout() ),
-             this, SLOT( slotCopy() ) );
+
+    d->q = this;
+    d->m_source = source;
+    d->m_dest = dest;
+
+    setCapabilities( KJob::Killable );
+
+    d->m_jobTracker = new KUiServerJobTracker();
+    d->m_jobTracker->registerJob( this );
+
+    connect( d, SIGNAL( finished() ),
+             this, SLOT( slotThreadFinished() ) );
 }
 
 
 Nepomuk::ModelCopyJob::~ModelCopyJob()
 {
+    if ( d->isRunning() ) {
+        kill();
+    }
+
+    d->m_jobTracker->deleteLater();
+}
+
+
+Soprano::Model* Nepomuk::ModelCopyJob::source() const
+{
+    return d->m_source;
+}
+
+
+Soprano::Model* Nepomuk::ModelCopyJob::dest() const
+{
+    return d->m_dest;
 }
 
 
 void Nepomuk::ModelCopyJob::start()
 {
     kDebug();
-    emit description( this, i18n( "Converting Nepomuk database" ) );
-
-    m_size = m_source->statementCount();
-    m_done = 0;
-    m_allCopied = true;
-
-    if ( m_size > 0 ) {
-        setTotalAmount( KJob::Files, m_size );
-    }
-
-    m_iterator = m_source->listStatements();
-
-    m_timer.start( 0 );
+    emit description( this,
+                      i18nc( "@title job", "Converting Nepomuk database" ),
+                      qMakePair( i18n( "Old backend" ), qobject_cast<Soprano::StorageModel*>( d->m_source )->backend()->pluginName() ),
+                      qMakePair( i18n( "New backend" ), qobject_cast<Soprano::StorageModel*>( d->m_dest )->backend()->pluginName() ) );
+    d->start();
 }
 
 
-void Nepomuk::ModelCopyJob::slotCopy()
+void Nepomuk::ModelCopyJob::slotThreadFinished()
 {
-    if ( m_iterator.next() ) {
-        ++m_done;
+    if ( !d->m_stopped ) {
+        emitResult();
+    }
+}
 
-        if ( m_dest->addStatement( *m_iterator ) != Soprano::Error::ErrorNone ) {
-            kDebug() << m_dest->lastError();
-            emit warning( this, m_dest->lastError().message() );
-            m_allCopied = false;
-        }
 
-        setProcessedAmount( KJob::Files, m_done );
+bool Nepomuk::ModelCopyJob::doKill()
+{
+    if ( d->isRunning() ) {
+        d->m_stopped = true;
+        d->wait();
+        return true;
     }
     else {
-        kDebug() << "done";
-        m_timer.stop();
-
-        if ( !m_allCopied ) {
-            setError( 1 );
-            setErrorText( i18n( "Some data was lost in the conversion." ) );
-        }
-
-        emitResult();
+        return false;
     }
 }
 

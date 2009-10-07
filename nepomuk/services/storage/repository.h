@@ -35,6 +35,7 @@ class KJob;
 namespace Nepomuk {
 
     class CLuceneAnalyzer;
+    class ModelCopyJob;
 
     class Repository : public Soprano::Util::SignalCacheModel
     {
@@ -104,6 +105,9 @@ namespace Nepomuk {
         Nepomuk::CLuceneAnalyzer* m_analyzer;
         Soprano::Index::CLuceneIndex* m_index;
         Soprano::Index::IndexFilterModel* m_indexModel;
+
+        // can only be non-null in the opening state
+        ModelCopyJob* m_modelCopyJob;
     };
 
     typedef QMap<QString, Repository*> RepositoryMap;

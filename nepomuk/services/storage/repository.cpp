@@ -81,35 +81,40 @@ Nepomuk::Repository::Repository( const QString& name )
       m_model( 0 ),
       m_analyzer( 0 ),
       m_index( 0 ),
-      m_indexModel( 0 )
+      m_indexModel( 0 ),
+      m_modelCopyJob( 0 )
 {
 }
 
 
 Nepomuk::Repository::~Repository()
 {
+    kDebug() << m_name;
     close();
 }
 
 
 void Nepomuk::Repository::close()
 {
-    if ( m_state == OPEN ) {
-#ifdef HAVE_SOPRANO_INDEX
-        delete m_indexModel;
-        delete m_index;
-        m_indexModel = 0;
-        m_index = 0;
-#ifdef HAVE_CLUCENE
-        delete m_analyzer;
-        m_analyzer = 0;
-#endif
-#endif
-        delete m_model;
-        m_model = 0;
+    kDebug() << m_name;
 
-        m_state = CLOSED;
-    }
+    delete m_modelCopyJob;
+    m_modelCopyJob = 0;
+
+#ifdef HAVE_SOPRANO_INDEX
+    delete m_indexModel;
+    delete m_index;
+    m_indexModel = 0;
+    m_index = 0;
+#ifdef HAVE_CLUCENE
+    delete m_analyzer;
+    m_analyzer = 0;
+#endif
+#endif
+    delete m_model;
+    m_model = 0;
+
+    m_state = CLOSED;
 }
 
 
@@ -166,6 +171,9 @@ void Nepomuk::Repository::open()
 
     kDebug() << "Successfully created new model for repository" << name();
 
+
+    // Create CLuence index
+    // =================================
 #if defined(HAVE_SOPRANO_INDEX) && defined(HAVE_CLUCENE)
     m_analyzer = new CLuceneAnalyzer();
     m_index = new Soprano::Index::CLuceneIndex( m_analyzer );
@@ -234,9 +242,9 @@ void Nepomuk::Repository::open()
 
                 convertingData = true;
                 // No need to use the index filter as it already contains the data
-                ModelCopyJob* copyJob = new ModelCopyJob( oldModel, m_model, this );
-                connect( copyJob, SIGNAL( result( KJob* ) ), this, SLOT( copyFinished( KJob* ) ) );
-                copyJob->start();
+                m_modelCopyJob = new ModelCopyJob( oldModel, m_model, this );
+                connect( m_modelCopyJob, SIGNAL( result( KJob* ) ), this, SLOT( copyFinished( KJob* ) ) );
+                m_modelCopyJob->start();
             }
             else {
                 m_state = OPEN;
@@ -298,6 +306,8 @@ void Nepomuk::Repository::rebuildingIndexFinished()
 
 void Nepomuk::Repository::copyFinished( KJob* job )
 {
+    m_modelCopyJob = 0;
+
     if ( job->error() ) {
         KNotification::event( "convertingNepomukDataFailed",
                               i18nc("@info - notification message",

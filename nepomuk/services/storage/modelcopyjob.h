@@ -17,8 +17,6 @@
 
 #include <KJob>
 
-#include <QtCore/QTimer>
-
 #include <Soprano/StatementIterator>
 
 namespace Soprano {
@@ -34,25 +32,20 @@ namespace Nepomuk {
         ModelCopyJob( Soprano::Model* source, Soprano::Model* dest, QObject* parent = 0 );
         ~ModelCopyJob();
 
-        Soprano::Model* source() const { return m_source; }
-        Soprano::Model* dest() const { return m_dest; }
+        Soprano::Model* source() const;
+        Soprano::Model* dest() const;
 
     public Q_SLOTS:
         void start();
 
     private Q_SLOTS:
-        void slotCopy();
-	
+        void slotThreadFinished();
+
     private:
-        Soprano::Model* m_source;
-        Soprano::Model* m_dest;
+        bool doKill();
 
-        Soprano::StatementIterator m_iterator;
-        int m_size;
-        int m_done;
-        bool m_allCopied;
-
-        QTimer m_timer;
+        class Private;
+        Private* const d;
     };
 }
 
