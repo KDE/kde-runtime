@@ -68,8 +68,11 @@ void Nepomuk::ModelCopyJob::Private::run()
                 q->emitPercent( done, size );
             }
         }
-        else if ( it.lastError() ) {
-            q->setErrorText( it.lastError().message() );
+        else {
+            if ( it.lastError() ) {
+                q->setErrorText( it.lastError().message() );
+            }
+            break;
         }
     }
 }
