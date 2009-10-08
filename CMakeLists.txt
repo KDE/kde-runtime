@@ -51,9 +51,10 @@ add_subdirectory(kwalletd)
 if ( UNIX )
    add_subdirectory(soliduiserver)
 endif ( UNIX )
-if(Soprano_FOUND AND Nepomuk_FOUND AND STRIGI_STRIGIQTDBUSCLIENT_LIBRARY)
-  macro_optional_add_subdirectory(nepomuk)
-endif(Soprano_FOUND AND Nepomuk_FOUND AND STRIGI_STRIGIQTDBUSCLIENT_LIBRARY)
+#we don't need nepomuk in e4
+#if(Soprano_FOUND AND Nepomuk_FOUND AND STRIGI_STRIGIQTDBUSCLIENT_LIBRARY)
+#  macro_optional_add_subdirectory(nepomuk)
+#endif(Soprano_FOUND AND Nepomuk_FOUND AND STRIGI_STRIGIQTDBUSCLIENT_LIBRARY)
 
 # Plugins/components required for basic utility
 add_subdirectory(kcontrol)
