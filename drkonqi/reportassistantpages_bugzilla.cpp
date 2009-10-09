@@ -323,7 +323,7 @@ void BugzillaInformationPage::aboutToShow()
             ui.m_distroChooserCombo->addItem(i18nc("@label:listbox KDE distribution method",
                                                    "Fedora"), "Fedora RPMs");
             ui.m_distroChooserCombo->addItem(i18nc("@label:listbox KDE distribution method",
-                                                   "Kubuntu/Ubuntu (and derivates)"), 
+                                                   "Kubuntu/Ubuntu (and derivatives)"), 
                                                    "Ubuntu Packages");
             ui.m_distroChooserCombo->addItem(i18nc("@label:listbox KDE distribution method",
                                                    "Pardus"), "Pardus Packages");

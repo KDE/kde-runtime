@@ -105,7 +105,7 @@ void DrKonqiDialog::buildMainWidget()
                                            "the crash handler dialog was started in safe mode."
                                            "<nl />You can manually report this bug to %1 "
                                            "(including the backtrace from the Developer Information "
-                                           "tab)</para>", crashedApp->bugReportAddress());
+                                           "tab.)</para>", crashedApp->bugReportAddress());
         } else {
             reportMessage = i18nc("@info", "<para>You can help us improve KDE by reporting "
                                           "this error.<nl /><link url='#aboutbugreporting'>Learn "
@@ -114,9 +114,9 @@ void DrKonqiDialog::buildMainWidget()
                                           "this bug.</note></para>");
         }
     } else {
-        reportMessage = i18nc("@info", "<para>You can't report this error because the "
+        reportMessage = i18nc("@info", "<para>You cannot report this error, because the "
                                         "application does not provide a bug reporting "
-                                        "address</para>");
+                                        "address.</para>");
     }
     ui.infoLabel->setText(reportMessage);
     connect(ui.infoLabel, SIGNAL(linkActivated(QString)), this, SLOT(aboutBugReporting()));
