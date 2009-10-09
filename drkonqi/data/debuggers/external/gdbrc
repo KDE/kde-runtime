@@ -1,6 +1,7 @@
 [General]
 Name=gdb
 Name[de]=gdb
+Name[en_GB]=gdb
 Name[et]=gdb
 Name[gl]=gdb
 Name[id]=gdb
@@ -12,6 +13,7 @@ Name[sv]=gdb
 Name[tr]=gdb
 Name[uk]=gdb
 Name[x-test]=xxgdbxx
+Name[zh_TW]=gdb
 TryExec=gdb
 Backends=KCrash
 
