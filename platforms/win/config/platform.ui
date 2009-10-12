@@ -41,7 +41,7 @@
          <string extracomment="tooltip for option in switching Windows Desktop shells">Native Windows Explorer shell</string>
         </property>
         <property name="whatsThis">
-         <string extracomment="whatsThis for option in switching Windows Desktop shells">This is standard Windows Desktop shell. Choose this if you want to return your system to default desktop.</string>
+         <string extracomment="whatsThis for option in switching Windows Desktop shells">This is the standard Windows Desktop shell. Choose this if you want to return your system to the default desktop.</string>
         </property>
         <property name="text">
          <string extracomment="radio button to choose Windows Desktop shell">Native desktop shell</string>
@@ -58,10 +58,10 @@
       <item row="1" column="0">
        <widget class="QRadioButton" name="optPlasma">
         <property name="toolTip">
-         <string extracomment="tooltip for option in switching Windows Desktop shells">Use KDE desktop shell as it's seen on Linux</string>
+         <string extracomment="tooltip for option in switching Windows Desktop shells">Use the KDE desktop shell, as it is seen on Linux.</string>
         </property>
         <property name="whatsThis">
-         <string extracomment="whatsThis for option in switching Windows Desktop shells">Choose this option if you would like to use Plasma desktop shell for your Windows system.</string>
+         <string extracomment="whatsThis for option in switching Windows Desktop shells">Choose this option if you would like to use the Plasma desktop shell for your Windows system.</string>
         </property>
         <property name="text">
          <string extracomment="radio button to choose Windows Desktop shell">Plasma desktop shell</string>
@@ -81,7 +81,7 @@
          <string extracomment="tooltip for option in switching Windows Desktop shells">Your custom desktop shell</string>
         </property>
         <property name="whatsThis">
-         <string extracomment="whatsThis for option in switching Windows Desktop shells">Choose this and press &lt;i&gt;&quot;Setup...&quot;&lt;/i&gt; button to configure you custom desktop shell. Not recommended for average user.</string>
+         <string extracomment="whatsThis for option in switching Windows Desktop shells">Choose this and press the &lt;i&gt;&quot;Setup...&quot;&lt;/i&gt; button to configure you custom desktop shell. Not recommended for the average user.</string>
         </property>
         <property name="text">
          <string extracomment="radio button to chose Windows Desktop shell">Custom desktop shell</string>
@@ -109,7 +109,7 @@
            <string extracomment="tooltip for button to setup custom Desktop shell">Press to setup your custom desktop shell</string>
           </property>
           <property name="whatsThis">
-           <string extracomment="whatsThis for button to setup custom Desktop shells">Press this and configuration dialog will popup to let you configure your custom desktop shell</string>
+           <string extracomment="whatsThis for button to setup custom Desktop shells">Press this and a configuration dialog will appear to allow you to configure your custom desktop shell.</string>
           </property>
           <property name="text">
            <string>Setup...</string>
@@ -180,7 +180,7 @@
          <string/>
         </property>
         <property name="whatsThis">
-         <string extracomment="whatsThis tooltip">Choose this option to make KDE applications use usual Windows Open/Save file dialogs instead of custom KDE ones.</string>
+         <string extracomment="whatsThis tooltip">Choose this option to make KDE applications use the standard Windows Open/Save file dialogs, instead of those normally used in KDE.</string>
         </property>
         <property name="text">
          <string extracomment="checkbox caption in System Integration options">Use native system file dialogs</string>
@@ -196,10 +196,10 @@
          </size>
         </property>
         <property name="toolTip">
-         <string extracomment="tooltip for checkbox">Install SystemSettings into Windows' Control Panel</string>
+         <string extracomment="tooltip for checkbox">Install System Settings into the Windows Control Panel.</string>
         </property>
         <property name="whatsThis">
-         <string extracomment="whatsThis tooltip">This will install KDE SystemSettings as an element in Windows Control Panel.&lt;br&gt;&lt;b&gt;This option tweaks your Windows registry!&lt;/b&gt;</string>
+         <string extracomment="whatsThis tooltip">This will install the KDE 'System Settings' as an element in the Windows Control Panel.&lt;br&gt;&lt;b&gt;Caution: This option tweaks your Windows registry.&lt;/b&gt;</string>
         </property>
         <property name="text">
          <string extracomment="checkbox caption in System Integration options">Install as control panel element</string>
@@ -209,10 +209,10 @@
       <item>
        <widget class="QCheckBox" name="chkInstallCursors">
         <property name="toolTip">
-         <string extracomment="tooltip for checkbox">Install Oxygen cursors and as Windows cursor schemes</string>
+         <string extracomment="tooltip for checkbox">Install Oxygen cursors as Windows cursor schemes</string>
         </property>
         <property name="whatsThis">
-         <string extracomment="whatsThis tooltip">This will install Oxygen cursors into your system and combine them into cursor themes.&lt;br&gt;&lt;b&gt;This option tweaks your Windows registry!&lt;/b&gt;</string>
+         <string extracomment="whatsThis tooltip">This will install the Oxygen cursors into your system and combine them as a cursor theme.&lt;br&gt;&lt;b&gt;Caution: This option tweaks your Windows registry.&lt;/b&gt;</string>
         </property>
         <property name="text">
          <string extracomment="checkbox caption in System Integration options">Install Oxygen cursor schemes</string>
@@ -225,7 +225,7 @@
          <string extracomment="tooltip for checkbox">This option installs KDE wallpapers into your &quot;My Pictures&quot; directory</string>
         </property>
         <property name="whatsThis">
-         <string extracomment="whatsThis tooltip">This will install KDE wallpapers into &lt;i&gt;&quot;My Pictures&quot;&lt;/i&gt; directory so that you could use them as your Windows wallpapers. If the checkbox is set to half-checked then it means that there're new wallpapers available to update.&lt;br&gt; Wallpaper aspect ratio will be selected according to your current screen resolution.</string>
+         <string extracomment="whatsThis tooltip">This will install KDE wallpapers into the &lt;i&gt;&quot;My Pictures&quot;&lt;/i&gt; directory so they can be used as your Windows wallpaper. If the checkbox is set to half-checked then it means that there are new wallpapers available to update.&lt;br&gt; The wallpaper aspect ratio will be selected according to your current screen resolution.</string>
         </property>
         <property name="text">
          <string extracomment="checkbox caption in System Integration options">Install Oxygen wallpapers</string>
@@ -238,7 +238,7 @@
          <string extracomment="tooltip for checkbox">This will make essential KDE processes run at user login</string>
         </property>
         <property name="whatsThis">
-         <string extracomment="whatsThis tooltip">Enabling this option will make needed KDE processes be started at user login. Normally these processes are started at when you start first KDE application during user session, so actual application launch is delayed.&lt;br&gt;It is recommended to enable this option to make your applications launch faster for the first time.&lt;br&gt;&lt;b&gt;This option tweaks your Windows registry!&lt;/b&gt;</string>
+         <string extracomment="whatsThis tooltip">Enabling this option will start essential KDE processes at user login. Normally these processes are started when you first start a KDE application, thereby delaying the actual application launch.&lt;br&gt;It is recommended to enable this option to make your applications launch faster for the first time.&lt;br&gt;&lt;b&gt;Caution: This option tweaks your Windows registry.&lt;/b&gt;</string>
         </property>
         <property name="text">
          <string extracomment="checkbox caption in System Integration options">Load KDE at user login</string>
