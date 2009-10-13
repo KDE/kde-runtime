@@ -192,7 +192,7 @@ namespace {
                         Nepomuk::Types::Property prop( node.term.property() );
                         filter += QString( "\"%1\"" ).arg( subTerm.value().toString() );
                         if ( prop.literalRangeType().dataTypeUri().isValid() )
-                            filter += QString( "^^<%1>" ).arg( prop.literalRangeType().dataTypeUri().toString() );
+                            filter += QString( "^^%1" ).arg( Soprano::Node::resourceToN3( prop.literalRangeType().dataTypeUri() ) );
                     }
 
                     return wrapInInstanceBaseGraphQuery( QString( "%1 <%2> ?var%3 . FILTER(%4) . " )
@@ -799,7 +799,7 @@ QList<QUrl> Nepomuk::Search::SearchThread::matchFieldName( const QString& field 
 QString Nepomuk::Search::SearchThread::createSparqlQuery( const Nepomuk::Search::SearchNode& node )
 {
     int varCnt = 0;
-    return QString( "select distinct ?r %1 where { %3 %4 }" )
+    return QString( "select distinct ?r %1 where { %2 %3 }" )
         .arg( buildRequestPropertyVariableList() )
         .arg( createGraphPattern( node, varCnt ) )
         .arg( buildRequestPropertyPatterns() );
@@ -953,7 +953,7 @@ void Nepomuk::Search::SearchThread::fetchRequestPropertiesForResource( Result& r
 {
     QString q = QString( "select distinct %1 where { %2 }" )
                 .arg( buildRequestPropertyVariableList() )
-                .arg( buildRequestPropertyPatterns().replace( "?r ", '<' + QString::fromAscii( result.resourceUri().toEncoded() ) + "> " ) );
+                .arg( buildRequestPropertyPatterns().replace( "?r ", Soprano::Node::resourceToN3( result.resourceUri() ) ) );
     kDebug() << q;
     Soprano::QueryResultIterator reqPropHits = ResourceManager::instance()->mainModel()->executeQuery( q, Soprano::Query::QueryLanguageSparql );
     if ( reqPropHits.next() ) {
