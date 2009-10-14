@@ -10,6 +10,7 @@ X-KDE-Keywords=Mount,Removable,Devices,Automatic
 
 Name=Removable Devices
 Name[de]=Wechseldatenträger
+Name[en_GB]=Removable Devices
 Name[es]=Dispositivos extraíbles
 Name[fr]=Périphériques amovibles
 Name[gl]=Dispositivos retirábeis
@@ -24,6 +25,7 @@ Name[x-test]=xxRemovable Devicesxx
 Name[zh_TW]=可移除裝置
 Comment=Configure automatic handling of removable storage media
 Comment[de]=Automatische Handhabung der Wechselmedien einstellen
+Comment[en_GB]=Configure automatic handling of removable storage media
 Comment[es]=Configurar manejo automático de los dispositivos de almacenamiento extraíbles
 Comment[fr]=Configurer la prise en charge automatique des media de stockage amovibles
 Comment[gl]=Configurar automaticamente que se fai cos medios de almacenamento retirábeis
