@@ -232,7 +232,7 @@ void BacktraceLineGdb::parse()
 
     regExp.setPattern(".*\\(no debugging symbols found\\).*|"
                       ".*\\[Thread debugging using libthread_db enabled\\].*|"
-                      ".*\\[New Thread 0x[0-9a-f]+\\s+\\(.*\\)\\].*|"
+                      ".*\\[New .*|"
                       "0x[0-9a-f]+.*|"
                       "Current language:.*");
     if (regExp.exactMatch(d->m_line)) {
@@ -241,7 +241,7 @@ void BacktraceLineGdb::parse()
         return;
     }
 
-    regExp.setPattern("Thread [0-9]+\\s+\\(Thread 0x[0-9a-f]+\\s+\\(.*\\)\\):\n");
+    regExp.setPattern("Thread [0-9]+\\s+\\(Thread [0-9a-fx]+\\s+\\(.*\\)\\):\n");
     if (regExp.exactMatch(d->m_line)) {
         kDebug() << "thread start detected:" << d->m_line;
         d->m_type = ThreadStart;
