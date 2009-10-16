@@ -1,6 +1,7 @@
 [Global]
 IconName=nepomuk
 Comment=Search service file indexer
+Comment[csb]=Indeksownik serwisu szëkbë lopków
 Comment[en_GB]=Search service file indexer
 Comment[et]=Otsinguteenuse failide indekseerija
 Comment[gl]=Indexador de ficheiros do servizo de procura

@@ -1,10 +1,12 @@
 [General]
 Name=kdbg
+Name[csb]=kdbg
 Name[de]=kdbg
 Name[en_GB]=kdbg
 Name[et]=kdbg
 Name[gl]=kdbg
 Name[id]=kdbg
+Name[is]=kdbg
 Name[nb]=kdbg
 Name[nds]=kgdb
 Name[nl]=kdbg
