@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2008-2009 by Sebastian Trueg <trueg at kde.org>
+   Copyright (C) 2008 by Sebastian Trueg <trueg at kde.org>
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 #include "searchfolder.h"
 #include "nfo.h"
 #include "nie.h"
+#include "pimo.h"
 #include "queryserviceclient.h"
 
 #include <QtCore/QFile>
@@ -28,10 +29,13 @@
 #include <KDebug>
 #include <KAboutData>
 #include <KApplication>
+#include <KConfig>
+#include <KConfigGroup>
 #include <KCmdLineArgs>
 #include <kio/global.h>
 #include <kio/job.h>
 #include <KMimeType>
+#include <KStandardDirs>
 
 #include <Nepomuk/Resource>
 #include <Nepomuk/ResourceManager>
@@ -39,7 +43,10 @@
 #include "queryparser.h"
 
 #include <Soprano/Vocabulary/RDF>
-#include <Soprano/Vocabulary/Xesam>
+#include <Soprano/Vocabulary/RDFS>
+#include <Soprano/Vocabulary/NRL>
+#include <Soprano/Vocabulary/NAO>
+#include <Soprano/Vocabulary/XMLSchema>
 
 #include <sys/types.h>
 #include <unistd.h>
@@ -56,6 +63,39 @@ namespace {
         return uds;
     }
 
+
+    //if type != 0, also retreives the type of the query and stores it into type
+    QString queryNameFromURL( const KUrl& url, Nepomuk::Search::Query::Type* type = 0 ) {
+        if(url.queryItems().contains( "sparql" ) ) {
+            if( type ) {
+                *type = Nepomuk::Search::Query::SPARQLQuery;
+            }
+            return url.queryItem( "sparql" );
+        }
+        else if(url.queryItems().contains( "query" ) ) {
+            if( type ) {
+                *type = Nepomuk::Search::Query::PlainQuery;
+            }
+            return url.queryItem( "query" );
+        }
+        else {
+            if( type ) {
+                *type = Nepomuk::Search::Query::PlainQuery;
+            }
+            return url.path().section( '/', 0, 0, QString::SectionSkipEmpty );
+        }
+    }
+
+
+    Nepomuk::Search::Query createQuery( const QString& name, Nepomuk::Search::Query::Type type ) {
+        if( type == Nepomuk::Search::Query::PlainQuery ) {
+            return Nepomuk::Search::QueryParser::parseQuery( name );
+        }
+        else /*type == Search::Query::SPARQLQuery*/ {
+            return Nepomuk::Search::Query( name );
+        }
+    }
+
     // do not cache more than SEARCH_CACHE_MAX search folders at the same time
     const int SEARCH_CACHE_MAX = 5;
 }
@@ -64,26 +104,21 @@ namespace {
 Nepomuk::SearchProtocol::SearchProtocol( const QByteArray& poolSocket, const QByteArray& appSocket )
     : KIO::ForwardingSlaveBase( "nepomuksearch", poolSocket, appSocket )
 {
-    // FIXME: load default searches from config
-    // FIXME: allow icons
+    // FIXME: trueg: install a file watch on this file and update it whenever the queries change.
+    // FIXME: trueg: also emit a KDirNotify signal to inform KIO about that change
+    KConfig config("kionepomukuserqueriesrc" );
 
-    // all music files
-    Search::Term musicOrTerm;
-    musicOrTerm.setType( Search::Term::OrTerm );
-    musicOrTerm.addSubTerm( Search::Term( Soprano::Vocabulary::RDF::type(),
-                                          Soprano::Vocabulary::Xesam::Music() ) );
-    musicOrTerm.addSubTerm( Search::Term( Soprano::Vocabulary::RDF::type(),
-                                          Nepomuk::Vocabulary::NFO::Audio() ) );
-    addDefaultSearch( i18n( "All Music Files" ), musicOrTerm );
+    foreach( QString search, config.group("Searches").readEntry("All searches", QStringList() ) )
+    {
+        search = search.simplified();
+        KConfigGroup grp = config.group(search);
+        KUrl url( QUrl( QString("nepomuksearch:/") + grp.readEntry("Query",QString() ) ) );
 
-    // select the 10 most recent files:
-    addDefaultSearch( i18n( "Recent Files" ),
-                      Search::Query( QString( "select distinct ?r where { "
-                                              "?r a %1 . "
-                                              "?r %2 ?date . "
-                                              "} ORDER BY DESC(?date) LIMIT 10" )
-                                     .arg(Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NFO::FileDataObject() ))
-                                     .arg(Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NFO::fileLastModified() )) ) );
+        Search::Query::Type type;
+        QString name = queryNameFromURL(url, &type );
+
+        addDefaultSearch(search, createQuery( name, type ) );
+    }
 }
 
 
@@ -111,7 +146,6 @@ bool Nepomuk::SearchProtocol::ensureNepomukRunning()
 void Nepomuk::SearchProtocol::addDefaultSearch( const QString& name, const Search::Query& q )
 {
     Search::Query query( q );
-    query.addRequestProperty( Soprano::Vocabulary::Xesam::url(), true );
     query.addRequestProperty( Nepomuk::Vocabulary::NIE::url(), true );
     m_defaultSearches.insert( name, query );
 }
@@ -119,20 +153,14 @@ void Nepomuk::SearchProtocol::addDefaultSearch( const QString& name, const Searc
 
 Nepomuk::SearchFolder* Nepomuk::SearchProtocol::extractSearchFolder( const KUrl& url )
 {
-    QString name = url.path().section( '/', 0, 0, QString::SectionSkipEmpty );
-
-    if ( name.isEmpty() ) {
-        // Nepomuk::Searchfolder::SearchFolder will assert anyway
-        Q_ASSERT( !name.isEmpty() );
-        return 0;
-    }
-
+    Search::Query::Type type;
+    QString name = queryNameFromURL( url, &type );
     kDebug() << url << name;
     if ( SearchFolder* sf = getDefaultQueryFolder( name ) ) {
         kDebug() << "-----> is default search folder";
         return sf;
     }
-    else if ( SearchFolder* sf = getQueryResults( name ) ) {
+    else if ( SearchFolder* sf = getQueryResults( name, type ) ) {
         kDebug() << "-----> is on-the-fly search folder";
         return sf;
     }
@@ -145,7 +173,9 @@ Nepomuk::SearchFolder* Nepomuk::SearchProtocol::extractSearchFolder( const KUrl&
 
 void Nepomuk::SearchProtocol::listDir( const KUrl& url )
 {
-    kDebug() << url;
+    Search::Query::Type type;
+    QString name = queryNameFromURL( url, &type );
+    kDebug() << url << name;
 
     if ( !ensureNepomukRunning() )
         return;
@@ -161,17 +191,16 @@ void Nepomuk::SearchProtocol::listDir( const KUrl& url )
     //           * Look for a default search and execute that
     //
 
-    if ( url.path() == "/" ) {
+    if ( name.isEmpty() ) {
         listRoot();
     }
-    else if ( url.directory() == "/" &&
-              m_defaultSearches.contains( url.fileName() ) ) {
+    else if ( m_defaultSearches.contains( name ) ) {
         // the default search name is the folder name
-        listDefaultSearch( url.fileName() );
+        listDefaultSearch( name );
     }
     else {
         // lets create an on-the-fly search
-        listQuery( url.fileName() );
+        listQuery( name, type );
     }
 }
 
@@ -225,55 +254,75 @@ void Nepomuk::SearchProtocol::stat( const KUrl& url )
 {
     kDebug() << url;
 
+    Search::Query::Type type;
+    QString name = queryNameFromURL( url, &type );
+    kDebug() << url << name;
+
     if ( !ensureNepomukRunning() )
         return;
 
-    if ( url.path() == "/" ) {
-        if ( url.queryItems().isEmpty() ) {
-            kDebug() << "/";
-            //
-            // stat the root path
-            //
-            KIO::UDSEntry uds;
-            uds.insert( KIO::UDSEntry::UDS_NAME, QString::fromLatin1( "/" ) );
-            uds.insert( KIO::UDSEntry::UDS_ICON_NAME, QString::fromLatin1( "nepomuk" ) );
-            uds.insert( KIO::UDSEntry::UDS_FILE_TYPE, S_IFDIR );
-            uds.insert( KIO::UDSEntry::UDS_MIME_TYPE, QString::fromLatin1( "inode/directory" ) );
+    //
+    // Root dir: * list default searches: "all music files", "recent files"
+    //           * list configuration entries: "create new default search"
+    //
+    // Root dir with query:
+    //           * execute the query (cached) and list its results
+    //
+    // some folder:
+    //           * Look for a default search and execute that
+    //
 
-            statEntry( uds );
-            finished();
-        }
-        else {
-            kDebug() << "query folder:" << url.queryItemValue("query");
+    if ( name.isEmpty() ) {
+        //
+        // stat the root path
+        //
+        KIO::UDSEntry uds;
+        uds.insert( KIO::UDSEntry::UDS_NAME, QString::fromLatin1( "/" ) );
+        uds.insert( KIO::UDSEntry::UDS_ICON_NAME, QString::fromLatin1( "nepomuk" ) );
+        uds.insert( KIO::UDSEntry::UDS_FILE_TYPE, S_IFDIR );
+        uds.insert( KIO::UDSEntry::UDS_MIME_TYPE, QString::fromLatin1( "inode/directory" ) );
 
-            //
-            // stat a query folder
-            //
-            KIO::UDSEntry uds;
-            uds.insert( KIO::UDSEntry::UDS_NAME, url.fileName() );
-            uds.insert( KIO::UDSEntry::UDS_FILE_TYPE, S_IFDIR );
-            uds.insert( KIO::UDSEntry::UDS_MIME_TYPE, QString::fromLatin1( "inode/directory" ) );
-
-            statEntry( uds );
-            finished();
-        }
+        statEntry( uds );
+        finished();
     }
-    else if ( url.directory() == "/" ) {
-        if ( SearchFolder* sf = extractSearchFolder( url ) ) {
-            KIO::UDSEntry uds = statDefaultSearchFolder( sf->name() );
-            Q_ASSERT( !uds.stringValue( KIO::UDSEntry::UDS_NAME ).isEmpty() );
-            statEntry( uds );
-            finished();
-        }
-        else {
-            error( KIO::ERR_DOES_NOT_EXIST, url.url() );
-        }
-    }
-    else if ( SearchFolder* folder = extractSearchFolder( url ) ) {
-        folder->stat( url.fileName() );
+    else if ( m_defaultSearches.contains( name ) ) {
+        statEntry( statDefaultSearchFolder( name ) );
     }
     else {
-        error( KIO::ERR_DOES_NOT_EXIST, url.url() );
+        ForwardingSlaveBase::stat(url);
+    }
+}
+
+
+void Nepomuk::SearchProtocol::del(const KUrl& url, bool isFile)
+{
+    if ( !ensureNepomukRunning() )
+        return;
+
+    Nepomuk::SearchFolder* folder = extractSearchFolder( url );
+
+    if (folder) {
+        if ( SearchEntry* entry = folder->findEntry( url.fileName() ) ) {
+            kDebug() << "findEntry returned something";
+
+            if ( entry->isFile() ) {
+                kDebug() << entry->resource() << "is file";
+                KIO::ForwardingSlaveBase::del(entry->entry().stringValue( KIO::UDSEntry::UDS_TARGET_URL ), isFile);
+            }
+            else {
+                kDebug() << entry->resource() << "is non file";
+                Nepomuk::Resource(entry->resource()).remove();
+            }
+            finished();
+        }
+        else {
+            kDebug() << "findEntry returned nothing";
+            error( KIO::ERR_DOES_NOT_EXIST, url.fileName() ); // not in m_entries
+        }
+    }
+    else {
+        kDebug() << "ERROR : extractSearchFolder returned NOTHING";
+        error( KIO::ERR_DOES_NOT_EXIST, url.fileName() );
     }
 }
 
@@ -317,7 +366,7 @@ void Nepomuk::SearchProtocol::listActions()
 }
 
 
-Nepomuk::SearchFolder* Nepomuk::SearchProtocol::getQueryResults( const QString& query )
+Nepomuk::SearchFolder* Nepomuk::SearchProtocol::getQueryResults( const QString& query, Search::Query::Type type )
 {
     if ( m_searchCache.contains( query ) ) {
         return m_searchCache[query];
@@ -328,8 +377,8 @@ Nepomuk::SearchFolder* Nepomuk::SearchProtocol::getQueryResults( const QString& 
             delete m_searchCache.take( oldestQuery );
         }
 
-        Search::Query q = Nepomuk::Search::QueryParser::parseQuery( query );
-        q.addRequestProperty( Soprano::Vocabulary::Xesam::url(), true );
+        Search::Query q = createQuery( query, type );
+
         q.addRequestProperty( Nepomuk::Vocabulary::NIE::url(), true );
         SearchFolder* folder = new SearchFolder( query, q, this );
         m_searchCacheNameQueue.enqueue( query );
@@ -355,10 +404,10 @@ Nepomuk::SearchFolder* Nepomuk::SearchProtocol::getDefaultQueryFolder( const QSt
 }
 
 
-void Nepomuk::SearchProtocol::listQuery( const QString& query )
+void Nepomuk::SearchProtocol::listQuery( const QString& query, Search::Query::Type type )
 {
     kDebug() << query;
-    getQueryResults( query )->list();
+    getQueryResults( query, type )->list();
 }
 
 

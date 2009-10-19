@@ -12,7 +12,7 @@ include_directories(
   ${nepomuk_SOURCE_DIR}/libnepomukquery
 )
 
-add_definitions (${QT_DEFINITIONS} ${KDE4_DEFINITIONS})
+add_definitions (${QT_DEFINITIONS} ${KDE4_DEFINITIONS} -DDISABLE_NEPOMUK_LEGACY)
 
 set(kio_nepomuksearch_PART_SRCS
   kio_nepomuksearch.cpp

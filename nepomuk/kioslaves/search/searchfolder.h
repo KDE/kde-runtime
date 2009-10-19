@@ -48,14 +48,17 @@ namespace Nepomuk {
     {
     public:
         SearchEntry( const QUrl& uri,
+                     bool isFile,
                      const KIO::UDSEntry& = KIO::UDSEntry() );
 
         QUrl resource() const { return m_resource; }
         KIO::UDSEntry entry() const { return m_entry; }
+        bool isFile() const  { return m_isFile; }
 
     private:
         QUrl m_resource;
         KIO::UDSEntry m_entry;
+        bool m_isFile;
 
         friend class SearchFolder;
     };

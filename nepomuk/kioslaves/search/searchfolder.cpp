@@ -60,9 +60,11 @@ namespace {
 
 
 Nepomuk::SearchEntry::SearchEntry( const QUrl& res,
-                                   const KIO::UDSEntry& uds )
+                                   bool isFile,
+                                   const KIO::UDSEntry& uds)
     : m_resource( res ),
-      m_entry( uds )
+      m_entry( uds ),
+      m_isFile(isFile)
 {
 }
 
@@ -475,7 +477,7 @@ Nepomuk::SearchEntry* Nepomuk::SearchFolder::statResult( const Search::Result& r
         uds.insert( KIO::UDSEntry::UDS_NAME, name );
         uds.insert( KIO::UDSEntry::UDS_DISPLAY_NAME, name );
 
-        SearchEntry* entry = new SearchEntry( result.resourceUri(), uds );
+        SearchEntry* entry = new SearchEntry( result.resourceUri(), isFile, uds );
         m_entries.insert( name, entry );
         m_resourceNameMap.insert( result.resourceUri(), name );
 

@@ -66,6 +66,11 @@ namespace Nepomuk {
          */
         void stat( const KUrl& url );
 
+        /**
+         * Delete resources
+         */
+        void del(const KUrl&, bool);
+
     protected:
         /**
          * reimplemented from ForwardingSlaveBase
@@ -75,7 +80,7 @@ namespace Nepomuk {
     private:
         bool ensureNepomukRunning();
         void listRoot();
-        void listQuery( const QString& query );
+        void listQuery( const QString& query, Search::Query::Type type );
         void listActions();
         void listDefaultSearches();
         void listDefaultSearch( const QString& path );
@@ -86,7 +91,7 @@ namespace Nepomuk {
         /**
          * Get (possibly cached) query results
          */
-        SearchFolder* getQueryResults( const QString& query );
+        SearchFolder* getQueryResults( const QString& query, Search::Query::Type type );
         SearchFolder* getDefaultQueryFolder( const QString& name );
 
         // the default search folders
