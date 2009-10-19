@@ -1,5 +1,5 @@
 /*
-   Copyright (c) 2008 Sebastian Trueg <trueg@kde.org>
+   Copyright (c) 2008-2009 Sebastian Trueg <trueg@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -34,6 +34,9 @@
 
 #include <Nepomuk/ResourceManager>
 
+#define USING_SOPRANO_NRLMODEL_UNSTABLE_API
+#include <Soprano/NRLModel>
+
 
 NEPOMUK_EXPORT_SERVICE( Nepomuk::Search::QueryService, "nepomukqueryservice" )
 
@@ -44,8 +47,10 @@ Nepomuk::Search::QueryService::QueryService( QObject* parent, const QVariantList
     : Service( parent ),
       m_folderConnectionCnt( 0 )
 {
-    // only so ResourceManager won't open yet another connection to the nepomuk server
-    ResourceManager::instance()->setOverrideMainModel( mainModel() );
+    m_nrlModel = new Soprano::NRLModel( Service::mainModel() );
+    m_nrlModel->setParent(this); // memory management
+    m_nrlModel->setEnableQueryPrefixExpansion( true );
+    ResourceManager::instance()->setOverrideMainModel( m_nrlModel );
 
     Nepomuk::Search::registerDBusTypes();
 
@@ -101,7 +106,7 @@ QDBusObjectPath Nepomuk::Search::QueryService::query( const Nepomuk::Search::Que
 
 Soprano::Model* Nepomuk::Search::QueryService::mainModel()
 {
-    return Nepomuk::Service::mainModel();
+    return m_nrlModel;
 }
 
 

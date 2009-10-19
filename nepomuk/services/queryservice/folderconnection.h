@@ -1,4 +1,4 @@
-/* 
+/*
    Copyright (c) 2008 Sebastian Trueg <trueg@kde.org>
 
    This library is free software; you can redistribute it and/or

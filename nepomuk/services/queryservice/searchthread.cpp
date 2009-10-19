@@ -17,6 +17,7 @@
   Boston, MA 02110-1301, USA.
 */
 
+#include "dateparser.h"
 #include "searchthread.h"
 #include "term.h"
 #include "nfo.h"
@@ -43,9 +44,12 @@
 #include <Soprano/Vocabulary/Xesam>
 
 #include <KDebug>
+#include <KDateTime>
 #include <KRandom>
 
 #include <QtCore/QTime>
+#include <QLatin1String>
+#include <QStringList>
 
 
 
@@ -94,6 +98,24 @@ namespace {
         return es;
     }
 
+    QString createFolderFilterStringSparql( const Nepomuk::Search::SearchNode& node, const QString& varName = QString( "?r" ) )
+    {
+        QStringList positive, negative;
+        QString filter;
+
+        QList<Nepomuk::Search::Query::FolderLimit>::const_iterator it;
+        for( it = node.folderLimits.constBegin(); it != node.folderLimits.constEnd(); ++it ) {
+            QStringList& ref = it->second ? positive : negative;
+            ref.append( QString::fromAscii( it->first.toEncoded( QUrl::StripTrailingSlash ) ) );
+        }
+
+        if( !positive.isEmpty() )
+            filter += QString( " FILTER(REGEX(STR(%1), \"^%2/\")) ." ).arg( varName ).arg( positive.join( "|" ) );
+        if( !negative.isEmpty() )
+            filter += QString( " FILTER(!REGEX(STR(%1), \"^%2/\")) ." ).arg( varName ).arg( negative.join( "|" ) );
+        return filter;
+    }
+
     QString luceneQueryEscape( const QUrl& s ) {
         return luceneQueryEscape( QString::fromAscii( s.toEncoded() ) );
     }
@@ -107,12 +129,35 @@ namespace {
         }
     }
 
+    QString createFolderFilterStringLucene( const Nepomuk::Search::SearchNode& node )
+    {
+        QStringList positive, negative;
+        QString filter;
+
+        QList<Nepomuk::Search::Query::FolderLimit>::const_iterator it;
+        for( it = node.folderLimits.constBegin(); it != node.folderLimits.constEnd(); ++it ) {
+            QStringList& ref = it->second ? positive : negative;
+            QString notTerm = it->second ? QString() : QString( "NOT" );
+            ref.append( QString( "%1 id:%2/*" ).arg( notTerm ).arg( luceneQueryEscape( it->first ) ) );
+        }
+
+        if( !positive.isEmpty() )
+            filter += QString( " AND ( %1) " ).arg( positive.join( " OR " ) );
+        if( !negative.isEmpty() )
+            filter += QString( " AND %1 " ).arg( negative.join( " AND " ) );
+        return filter;
+    }
+
     QString createLuceneQuery( const Nepomuk::Search::SearchNode& node ) {
+        const QString notTerm = node.term.positive() ? QLatin1String("") : QLatin1String( "NOT " );
+
+        QString filterString = createFolderFilterStringLucene( node );
+
         if ( node.term.type() == Nepomuk::Search::Term::LiteralTerm ) {
-            return createLuceneLiteralQuery( luceneQueryEscape( node.term.value().toString() ) );
+            return notTerm + createLuceneLiteralQuery( luceneQueryEscape( node.term.value().toString() ) ) + filterString;
         }
         else if ( node.term.type() == Nepomuk::Search::Term::ComparisonTerm ) {
-            return luceneQueryEscape( node.term.property() ) + ':' + createLuceneLiteralQuery( luceneQueryEscape( node.term.subTerms().first().value().toString() ) );
+            return notTerm + luceneQueryEscape( node.term.property() ) + ':' + createLuceneLiteralQuery( luceneQueryEscape( node.term.subTerms().first().value().toString() ) ) + filterString;
         }
         else {
             Q_ASSERT( node.term.type() == Nepomuk::Search::Term::AndTerm ||
@@ -151,6 +196,24 @@ namespace {
     }
 
 
+    Nepomuk::Search::Term::Comparator oppositeComparator( Nepomuk::Search::Term::Comparator c ) {
+        switch( c ) {
+            case Nepomuk::Search::Term::Greater:
+                return Nepomuk::Search::Term::SmallerOrEqual;
+            case Nepomuk::Search::Term::Smaller:
+                return Nepomuk::Search::Term::GreaterOrEqual;
+            case Nepomuk::Search::Term::GreaterOrEqual:
+                return Nepomuk::Search::Term::Smaller;
+            case Nepomuk::Search::Term::SmallerOrEqual:
+                return Nepomuk::Search::Term::Greater;
+            default:
+                kDebug() << "Unknown or invalid comparator:" << comparatorString(c);
+                //to remove warnings we return Contains as default
+                return Nepomuk::Search::Term::Contains;
+        }
+    }
+
+
     bool isNumberLiteralValue( const Soprano::LiteralValue& value ) {
         return value.isInt() || value.isInt64() || value.isUnsignedInt() || value.isUnsignedInt64() || value.isDouble();
     }
@@ -168,10 +231,13 @@ namespace {
 
     QString createGraphPattern( const Nepomuk::Search::SearchNode& node, int& varCnt, const QString& varName = QString( "?r" ) )
     {
+        //TODO: ugly code, refactor :(
         switch( node.term.type() ) {
         case Nepomuk::Search::Term::ComparisonTerm: {
 
             Nepomuk::Search::Term subTerm( node.term.subTerms().first() );
+
+            QString filterString = createFolderFilterStringSparql( node );
 
             //
             // is the subterm (we only support one ATM) a final term (no further subterms)
@@ -180,11 +246,12 @@ namespace {
             if ( subTerm.type() == Nepomuk::Search::Term::ResourceTerm ||
                  subTerm.type() == Nepomuk::Search::Term::LiteralTerm ) {
                 if( node.term.comparator() != Nepomuk::Search::Term::Equal ) {
+                    Nepomuk::Search::Term::Comparator c = node.term.positive() ? node.term.comparator() : oppositeComparator( node.term.comparator() );
                     // For numbers there is no need for quotes + this way we can handle all the xsd decimal types
                     // FIXME: it may be necessary to escape stuff
                     QString filter = QString( "?var%1 %2 " )
                                      .arg( ++varCnt )
-                                     .arg( comparatorString( node.term.comparator() ) );
+                                     .arg( comparatorString( c ) );
                     if ( isNumberLiteralValue( subTerm.value() ) ) {
                         filter += subTerm.value().toString();
                     }
@@ -195,19 +262,31 @@ namespace {
                             filter += QString( "^^%1" ).arg( Soprano::Node::resourceToN3( prop.literalRangeType().dataTypeUri() ) );
                     }
 
-                    return wrapInInstanceBaseGraphQuery( QString( "%1 <%2> ?var%3 . FILTER(%4) . " )
+                    return wrapInInstanceBaseGraphQuery( QString( "%1 <%2> ?var%3 . FILTER(%4) . %5" )
                                                          .arg( varName )
                                                          .arg( QString::fromAscii( node.term.property().toEncoded() ) )
                                                          .arg( varCnt )
-                                                         .arg( filter ) );
+                                                         .arg( filter )
+                                                         .arg( filterString ) );
                 }
                 else {
                     if ( subTerm.type() == Nepomuk::Search::Term::ResourceTerm ) {
-                        return wrapInInstanceBaseGraphQuery( QString( "%1 <%2> <%3> . " )
-                                                             .arg( varName )
-                                                             .arg( QString::fromAscii( node.term.property().toEncoded() ) )
-                                                             .arg( QString::fromAscii( subTerm.resource().toEncoded() ) ) );
+                        QString resourceLiteral( QString::fromAscii( subTerm.resource().toEncoded() ) );
+                        QString resource = node.term.positive() ? Soprano::Node::resourceToN3( resourceLiteral ) : QString( "?v" );
+                        QString baseTerm = QString( "%1 <%2> %3 . %4" )
+                                           .arg( varName )
+                                           .arg( QString::fromAscii( node.term.property().toEncoded() ) )
+                                           .arg( resource )
+                                           .arg( filterString );
+                        if( node.term.positive() )
+                            return wrapInInstanceBaseGraphQuery( baseTerm );
+                        else {
+                            return QString( " %1 OPTIONAL { %2 } FILTER(!BOUND(?v))" )
+                                   .arg( wrapInInstanceBaseGraphQuery( QString ( "%1 a ?type . " ).arg( varName ) ) )
+                                   .arg( wrapInInstanceBaseGraphQuery( baseTerm + QString(" FILTER(?v = <%1>) . ").arg( resourceLiteral ) ) );
+                        }
                     }
+                    //TODO: negation, folder filters here
                     else if ( Nepomuk::Types::Property( node.term.property() ).range().isValid() ) {
                         return wrapInInstanceBaseGraphQuery( QString( "%1 %2 ?x . " )
                                                              .arg( varName )
@@ -230,13 +309,14 @@ namespace {
                         // property is defined to range to a plain one.
                         //
                         Nepomuk::Types::Property p( node.term.property() );
-                        return wrapInInstanceBaseGraphQuery( QString( "%1 <%2> \"%3\"^^<%4> . " )
+                        return wrapInInstanceBaseGraphQuery( QString( "%1 <%2> \"%3\"^^<%4> . %5" )
                                                              .arg( varName )
                                                              .arg( QString::fromAscii( node.term.property().toEncoded() ) )
                                                              .arg( subTerm.value().toString() )
                                                              .arg( p.literalRangeType().dataTypeUri() == Soprano::Vocabulary::RDFS::Literal()
                                                                    ? Soprano::Vocabulary::XMLSchema::string().toString()
-                                                                   : p.literalRangeType().dataTypeUri().toString() ) );
+                                                                   : p.literalRangeType().dataTypeUri().toString() )
+                                                             .arg( filterString ) );
                     }
                 }
             }
@@ -278,6 +358,57 @@ namespace {
         }
 
         return QString();
+    }
+
+
+    QDateTime parseDateTime( const Soprano::LiteralValue& literal ) {
+        //TODO: change to DateTime parser once complete
+        Nepomuk::Search::DateParser date( literal.toString() );
+        if( date.hasDate() )
+            return QDateTime( date.getDate() );
+        else
+        {
+            Nepomuk::Search::TimeParser time( literal.toString() );
+            if(time.hasTime() )
+                return QDateTime(QDate::currentDate(), time.next() );
+            else
+                return QDateTime(); //return invalid datetime
+        }
+    }
+
+
+    Soprano::LiteralValue parseSizeType( const Soprano::LiteralValue& literal ) {
+        const double KiB = 1024.0;
+        const double MiB = KiB * 1024.0;
+        const double GiB = MiB * 1024.0;
+        const double TiB = GiB * 1024.0;
+
+        const double KB = 1000.0;
+        const double MB = KB * 1000.0;
+        const double GB = MB * 1000.0;
+        const double TB = GB * 1000.0;
+
+        QHash<QString, double> sizes;
+        sizes.insert( "KiB", KiB );
+        sizes.insert( "MiB", MiB );
+        sizes.insert( "GiB", GiB );
+        sizes.insert( "TiB", TiB );
+        sizes.insert( "KB", KB );
+        sizes.insert( "MB", MB );
+        sizes.insert( "GB", GB );
+        sizes.insert ("TB", TB );
+
+        QHash<QString, double>::const_iterator i;
+        for (i = sizes.constBegin(); i != sizes.constEnd(); ++i) {
+            QRegExp cur( QString("^([\\d]+.?[\\d]*)[\\s]*%1$").arg( i.key() ) );
+            if( cur.indexIn( literal.toString() ) != -1 ) {
+                double value = cur.cap( 1 ).toDouble();
+                double newValue = value * i.value();
+                kDebug() << "Found value" << value << i.key() << "->" << newValue;
+                return Soprano::LiteralValue( newValue );
+            }
+        }
+        return literal;
     }
 }
 
@@ -331,12 +462,14 @@ void Nepomuk::Search::SearchThread::run()
         t = optimize( t );
         kDebug() << "Optimized query:" << t;
 
-        search( splitLuceneSparql( t ) /*optimize( resolveValues( resolveFields( m_searchTerm ) ) )*/, 1.0, true );
+        Nepomuk::Search::SearchNode temp = splitLuceneSparql( t, m_searchTerm.folderLimits() );
+
+        search( temp /*optimize( resolveValues( resolveFields( m_searchTerm ) ) )*/, 1.0, true );
     }
     else {
         // FIXME: once we have the Soprano query API it should be simple to add the requestProperties here
         // for now we do it the hacky way
-        QString query = m_searchTerm.sparqlQuery();
+        QString query = tuneQuery( m_searchTerm.sparqlQuery() );
         int pos = query.indexOf( QLatin1String( "where" ) );
         if ( pos > 0 ) {
             query.insert( pos, buildRequestPropertyVariableList() + ' ' );
@@ -344,6 +477,15 @@ void Nepomuk::Search::SearchThread::run()
             if ( pos > 0 ) {
                 query.insert( pos, ' ' + buildRequestPropertyPatterns() + ' ' );
             }
+        }
+
+        //do relative date parsing here
+        DateParser date(query, DateParser::RelativeDates);
+        while( date.hasDate() ) {
+            //TODO: this will likely not work with multiple dates in a query due to changing string length
+            QString replaced = Soprano::Node::literalToN3( QDateTime(date.getDate()) );
+            query.replace( date.pos(), date.length(), replaced );
+            date.next();
         }
 
         sparqlQuery( query, 1.0, true );
@@ -480,7 +622,7 @@ Nepomuk::Search::Term Nepomuk::Search::SearchThread::resolveValues( const Term& 
                     QUrl hit = hits.binding( 0 ).uri();
                     if ( prop.range().uri() == Soprano::Vocabulary::RDFS::Resource() ||
                          Nepomuk::Resource( hit ).hasType( prop.range().uri() ) ) {
-                        orTerm.addSubTerm( Term( term.property(), hit ) );
+                        orTerm.addSubTerm( Term( term.property(), hit, term.positive() ) );
                         if ( orTerm.subTerms().count() == MAX_RESOURCES ) {
                             break;
                         }
@@ -504,11 +646,43 @@ Nepomuk::Search::Term Nepomuk::Search::SearchThread::resolveValues( const Term& 
             }
         }
 
-        // non-literal term or non-contains term -> handled in SPARQL query
+
         else {
-            Term newTerm( term );
-            newTerm.setSubTerms( QList<Term>() << resolveValues( term.subTerms().first() ) );
-            return newTerm;
+            //modify the value for specific ranges
+            QString dateTimeRange = QString("ASK {%1 %2 %3}")
+                                   .arg( Soprano::Node::resourceToN3( term.property().toString() ) )
+                                   .arg( Soprano::Node::resourceToN3( Soprano::Vocabulary::RDFS::range().toString() ) )
+                                   .arg( Soprano::Node::resourceToN3( Soprano::Vocabulary::XMLSchema::dateTime().toString() ) );
+            QString integerRange  = QString("ASK {%1 %2 %3}")
+                                   .arg( Soprano::Node::resourceToN3( term.property().toString() ) )
+                                   .arg( Soprano::Node::resourceToN3( Soprano::Vocabulary::RDFS::range().toString() ) )
+                                   .arg( Soprano::Node::resourceToN3( Soprano::Vocabulary::XMLSchema::integer().toString() ) );
+
+            Soprano::QueryResultIterator dtRange  = ResourceManager::instance()->mainModel()->executeQuery( dateTimeRange, Soprano::Query::QUERY_LANGUAGE_SPARQL );
+            Soprano::QueryResultIterator intRange = ResourceManager::instance()->mainModel()->executeQuery( integerRange , Soprano::Query::QUERY_LANGUAGE_SPARQL );
+            //look for date properties to parse
+            if( dtRange.boolValue() ) {
+                QDateTime dateTime = parseDateTime( term.subTerms().first().value() );
+                kDebug() << "datetime is" << dateTime;
+                Term newTerm( term.property(), dateTime, term.positive(), term.comparator() );
+                if( dateTime.isValid() )
+                    return newTerm;
+                else {
+                    Term newTerm( term );
+                    newTerm.setSubTerms( QList<Term>() << resolveValues( term.subTerms().first() ) );
+                    return newTerm;
+                }
+            }
+            //check for sizes
+            else if( intRange.boolValue() ) {
+                return Term( term.property(), parseSizeType( term.subTerms().first().value() ), term.positive(), term.comparator() );
+            }
+            // non-literal term or non-contains term -> handled in SPARQL query
+            else {
+                Term newTerm( term );
+                newTerm.setSubTerms( QList<Term>() << resolveValues( term.subTerms().first() ) );
+                return newTerm;
+            }
         }
     }
 
@@ -549,7 +723,8 @@ Nepomuk::Search::Term Nepomuk::Search::SearchThread::optimize( const Term& term 
 }
 
 
-Nepomuk::Search::SearchNode Nepomuk::Search::SearchThread::splitLuceneSparql( const Term& term )
+Nepomuk::Search::SearchNode Nepomuk::Search::SearchThread::splitLuceneSparql( const Nepomuk::Search::Term& term,
+                                                                              const QList<Nepomuk::Search::Query::FolderLimit>& folderLimits )
 {
     // Goal: separate the terms into 2 groups: literal and resource which are
     // merged with only one AND or OR action. Is that possible?
@@ -562,18 +737,18 @@ Nepomuk::Search::SearchNode Nepomuk::Search::SearchThread::splitLuceneSparql( co
 
     switch( term.type() ) {
     case Term::LiteralTerm:
-        return SearchNode( term, SearchNode::Lucene );
+        return SearchNode( term, SearchNode::Lucene, folderLimits );
 
     case Term::ComparisonTerm:
         if ( term.comparator() == Term::Contains &&
              term.subTerms().first().type() == Term::LiteralTerm ) {
             // no need for subnides here - we only use the subterm's value
-            return SearchNode( term, SearchNode::Lucene );
+            return SearchNode( term, SearchNode::Lucene, folderLimits );
         }
         else {
             // all subnodes are resolved and can be handled in a SPARQL query
-            SearchNode node( term, SearchNode::Sparql );
-            node.subNodes += splitLuceneSparql( term.subTerms().first() );
+            SearchNode node( term, SearchNode::Sparql, folderLimits );
+            node.subNodes += splitLuceneSparql( term.subTerms().first(), folderLimits );
             return node;
         }
 
@@ -585,7 +760,7 @@ Nepomuk::Search::SearchNode Nepomuk::Search::SearchThread::splitLuceneSparql( co
         QList<Term>::const_iterator end( subTerms.constEnd() );
         for ( QList<Term>::const_iterator it = subTerms.constBegin();
               it != end; ++it ) {
-            SearchNode node = splitLuceneSparql( *it );
+            SearchNode node = splitLuceneSparql( *it, folderLimits );
             if ( node.type == SearchNode::Lucene ) {
                 luceneNodes += node;
             }
@@ -598,24 +773,24 @@ Nepomuk::Search::SearchNode Nepomuk::Search::SearchThread::splitLuceneSparql( co
         }
 
         if ( luceneNodes.count() && !sparqlNodes.count() && !unknownNodes.count() ) {
-            return SearchNode( term, SearchNode::Lucene, luceneNodes );
+            return SearchNode( term, SearchNode::Lucene, folderLimits, luceneNodes );
         }
         else if ( !luceneNodes.count() && sparqlNodes.count() && !unknownNodes.count() ) {
-            return SearchNode( term, SearchNode::Sparql, sparqlNodes );
+            return SearchNode( term, SearchNode::Sparql, folderLimits, sparqlNodes );
         }
         else if ( !luceneNodes.count() && !sparqlNodes.count() && unknownNodes.count() ) {
-            return SearchNode( term, SearchNode::Unknown, unknownNodes );
+            return SearchNode( term, SearchNode::Unknown, folderLimits, unknownNodes );
         }
         else {
             Term newTerm;
             newTerm.setType( term.type() );
             SearchNode andNode( newTerm );
             if ( luceneNodes.count() )
-                andNode.subNodes += SearchNode( term, SearchNode::Lucene, luceneNodes );
+                andNode.subNodes += SearchNode( term, SearchNode::Lucene, folderLimits, luceneNodes );
             if ( sparqlNodes.count() )
-                andNode.subNodes += SearchNode( term, SearchNode::Sparql, sparqlNodes );
+                andNode.subNodes += SearchNode( term, SearchNode::Sparql, folderLimits, sparqlNodes );
             if ( unknownNodes.count() )
-                andNode.subNodes += SearchNode( term, SearchNode::Unknown, unknownNodes );
+                andNode.subNodes += SearchNode( term, SearchNode::Unknown, folderLimits, unknownNodes );
             return andNode;
         }
     }
@@ -755,9 +930,10 @@ QList<QUrl> Nepomuk::Search::SearchThread::matchFieldName( const QString& field 
             //        we do not search the data itself and do not have to filter
             // BUT: What about inference?
 
-            query = QString( "select ?p where { "
+            query = QString( "select distinct ?p where { "
                              "?p <%1> <%2> . "
                              "?p <%3> ?label . "
+                             "?x ?p ?y . "
                              "FILTER(REGEX(STR(?label),'%4','i')) . }" )
                     .arg( Soprano::Vocabulary::RDF::type().toString() )
                     .arg( Soprano::Vocabulary::RDF::Property().toString() )
@@ -775,8 +951,9 @@ QList<QUrl> Nepomuk::Search::SearchThread::matchFieldName( const QString& field 
 
 
         if ( results.isEmpty() ) {
-            query = QString( "select ?p where { "
+            query = QString( "select distinct ?p where { "
                              "?p <%1> <%2> . "
+                             "?x ?p ?y . "
                              "FILTER(REGEX(STR(?p),'%3','i')) . }" )
                     .arg( Soprano::Vocabulary::RDF::type().toString() )
                     .arg( Soprano::Vocabulary::RDF::Property().toString() )
@@ -963,6 +1140,57 @@ void Nepomuk::Search::SearchThread::fetchRequestPropertiesForResource( Result& r
             result.addRequestProperty( rp.first, reqPropHits.binding( QString("reqProp%1").arg( i++ ) ) );
         }
     }
+}
+
+
+void Nepomuk::Search::SearchThread::buildPrefixMap()
+{
+    // fixed prefixes
+    m_prefixes.insert( "rdf", Soprano::Vocabulary::RDF::rdfNamespace() );
+    m_prefixes.insert( "rdfs", Soprano::Vocabulary::RDFS::rdfsNamespace() );
+    m_prefixes.insert( "xsd", Soprano::Vocabulary::XMLSchema::xsdNamespace() );
+
+    // get prefixes from nepomuk
+    Soprano::QueryResultIterator it =
+        ResourceManager::instance()->mainModel()->executeQuery( QString( "select ?ns ?ab where { "
+                                                                         "?g %1 ?ns . "
+                                                                         "?g %2 ?ab . }" )
+                                                                .arg( Soprano::Node::resourceToN3( Soprano::Vocabulary::NAO::hasDefaultNamespace() ) )
+                                                                .arg( Soprano::Node::resourceToN3( Soprano::Vocabulary::NAO::hasDefaultNamespaceAbbreviation() ) ),
+                                                                Soprano::Query::QueryLanguageSparql );
+    while ( it.next() ) {
+        QString ab = it["ab"].toString();
+        QUrl ns = it["ns"].toString();
+        if ( !m_prefixes.contains( ab ) ) {
+            m_prefixes.insert( ab, ns );
+        }
+    }
+}
+
+
+QString Nepomuk::Search::SearchThread::tuneQuery( const QString& query_ )
+{
+    QString query( query_ );
+
+    buildPrefixMap();
+
+    for ( QHash<QString, QUrl>::const_iterator it = m_prefixes.constBegin();
+          it != m_prefixes.constEnd(); ++it ) {
+        QString prefix = it.key();
+        QUrl ns = it.value();
+
+        // very stupid check for the prefix usage
+        if ( query.contains( prefix + ':' ) ) {
+            // if the prefix is not defined add it
+            if ( !query.contains( QRegExp( QString( "[pP][rR][eE][fF][iI][xX]\\s*%1\\s*:\\s*<%2>" )
+                                           .arg( prefix )
+                                           .arg( QRegExp::escape( ns.toString() ) ) ) ) ) {
+                query.prepend( QString( "prefix %1: <%2> " ).arg( prefix ).arg( ns.toString() ) );
+            }
+        }
+    }
+
+    return query;
 }
 
 #include "searchthread.moc"

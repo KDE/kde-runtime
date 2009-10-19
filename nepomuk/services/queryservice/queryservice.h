@@ -1,5 +1,5 @@
-/* 
-   Copyright (c) 2008 Sebastian Trueg <trueg@kde.org>
+/*
+   Copyright (c) 2008-2009 Sebastian Trueg <trueg@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -28,6 +28,9 @@
 class QDBusObjectPath;
 class QDBusMessage;
 
+namespace Soprano {
+    class NRLModel;
+}
 
 namespace Nepomuk {
     namespace Search {
@@ -48,7 +51,7 @@ namespace Nepomuk {
             Soprano::Model* mainModel();
 
             static QueryService* instance();
-            
+
         public Q_SLOTS:
             Q_SCRIPTABLE QDBusObjectPath query( const QString& query, const QStringList& props, const QDBusMessage& msg );
             Q_SCRIPTABLE QDBusObjectPath query( const Nepomuk::Search::Query& query, const QDBusMessage& msg );
@@ -59,7 +62,7 @@ namespace Nepomuk {
                                           const QString& newOwner );
             void slotFolderDestroyed( QObject* folder );
             void slotFolderConnectionDestroyed( QObject* conn );
-        
+
         private:
             /**
              * Creates a new folder or reuses an existing one.
@@ -74,6 +77,8 @@ namespace Nepomuk {
             QHash<FolderConnection*, QString> m_connectionDBusServiceHash; // maps connections to their using dbus service
 
             int m_folderConnectionCnt; // only used for unique dbus object path generation
+
+            Soprano::NRLModel* m_nrlModel;
         };
     }
 }

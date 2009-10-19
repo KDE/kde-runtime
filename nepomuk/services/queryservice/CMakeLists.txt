@@ -17,6 +17,7 @@ set(queryservice_SRCS
   searchthread.cpp
   folder.cpp
   folderconnection.cpp
+  dateparser.cpp
   ${nepomuk_SOURCE_DIR}/libnepomukquery/result.cpp
   ${nepomuk_SOURCE_DIR}/libnepomukquery/query.cpp
   ${nepomuk_SOURCE_DIR}/libnepomukquery/term.cpp

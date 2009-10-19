@@ -105,7 +105,7 @@ namespace Nepomuk {
             /**
              * Construct a literal term.
              */
-            Term( const Soprano::LiteralValue& value );
+            Term( const Soprano::LiteralValue& value, bool isPositive = true );
 
             /**
              * Construct a resource term.
@@ -119,7 +119,7 @@ namespace Nepomuk {
              *        types are converted to string.
              * \param comparator The Comparator to use
              */
-            Term( const QString& field, const Soprano::LiteralValue& value, Comparator c = Contains );
+            Term( const QString& field, const Soprano::LiteralValue& value, bool isPositive = true, Comparator c = Contains );
 
             /**
              * Construct a Contains ComparisonTerm term.
@@ -128,14 +128,14 @@ namespace Nepomuk {
              *        types are converted to string.
              * \param comparator The Comparator to use
              */
-            Term( const QUrl& field, const Soprano::LiteralValue& value, Comparator c = Contains );
+            Term( const QUrl& field, const Soprano::LiteralValue& value, bool isPositive = true, Comparator c = Contains );
 
             /**
              * Construct an EqualityTerm term.
              * \param field The exact field to match
              * \param value The resource that should be matched.
              */
-            Term( const QUrl& field, const QUrl& resource );
+            Term( const QUrl& field, const QUrl& resource, bool isPositive = true );
 
             /**
              * Destructor
@@ -156,6 +156,11 @@ namespace Nepomuk {
              * \return \p true if the Term is valid.
              */
             bool isValid() const;
+            
+            /**
+            * \return \p true is the Term is positive
+            */
+            bool positive() const;
 
             /**
              * \return the Term type.
@@ -206,6 +211,11 @@ namespace Nepomuk {
              * \sa setSubTerms, addSubTerm
              */
             QList<Term> subTerms() const;
+            
+            /**
+             * Sets whether or not this term is positive
+             */
+            void setPositive( bool );
 
             /**
              * Set the type of the Term

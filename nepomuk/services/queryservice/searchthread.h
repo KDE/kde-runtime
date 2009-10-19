@@ -47,14 +47,19 @@ namespace Nepomuk {
                 Sparql
             };
 
-            SearchNode( const Term& t, Type tt = Unknown, const QList<SearchNode>& sub = QList<SearchNode>() )
+            SearchNode( const Term& t,
+                        Type tt = Unknown,
+                        const QList<Nepomuk::Search::Query::FolderLimit>& l = QList<Nepomuk::Search::Query::FolderLimit>(),
+                        const QList<SearchNode>& sub = QList<SearchNode>() )
                 : term(t),
                 type(tt),
+                folderLimits(l),
                 subNodes(sub) {
             }
-            
+
             Term term;
             Type type;
+            QList<Nepomuk::Search::Query::FolderLimit> folderLimits;
             QList<SearchNode> subNodes;
         };
 
@@ -112,7 +117,7 @@ namespace Nepomuk {
              * Try to split the query into two (or more) subqueries, one of which will be
              * executed against the lucene index and one against the soprano store.
              */
-            SearchNode splitLuceneSparql( const Term& term );
+            SearchNode splitLuceneSparql( const Term& term, const QList<Nepomuk::Search::Query::FolderLimit>& folderLimits );
 
             QList<QUrl> matchFieldName( const QString& field );
             QHash<QUrl, Result> search( const SearchNode& node, double baseScore, bool reportResults = false );
@@ -128,12 +133,25 @@ namespace Nepomuk {
 
             QString createSparqlQuery( const SearchNode& node );
 
+            /**
+             * Fill m_prefixes with values from the Nepomuk db.
+             */
+            void buildPrefixMap();
+
+            /**
+             * Insert missing prefix statements into the query.
+             */
+            QString tuneQuery( const QString& query_ );
+
             Query m_searchTerm;
             double m_cutOffScore;
 
             // status
             int m_numResults;
             bool m_canceled;
+
+            // cache of all prefixes that are supported
+            QHash<QString, QUrl> m_prefixes;
         };
     }
 }
