@@ -133,16 +133,6 @@ namespace Nepomuk {
 
             QString createSparqlQuery( const SearchNode& node );
 
-            /**
-             * Fill m_prefixes with values from the Nepomuk db.
-             */
-            void buildPrefixMap();
-
-            /**
-             * Insert missing prefix statements into the query.
-             */
-            QString tuneQuery( const QString& query_ );
-
             Query m_searchTerm;
             double m_cutOffScore;
 

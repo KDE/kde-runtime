@@ -469,7 +469,7 @@ void Nepomuk::Search::SearchThread::run()
     else {
         // FIXME: once we have the Soprano query API it should be simple to add the requestProperties here
         // for now we do it the hacky way
-        QString query = tuneQuery( m_searchTerm.sparqlQuery() );
+        QString query = m_searchTerm.sparqlQuery();
         int pos = query.indexOf( QLatin1String( "where" ) );
         if ( pos > 0 ) {
             query.insert( pos, buildRequestPropertyVariableList() + ' ' );
@@ -1140,57 +1140,6 @@ void Nepomuk::Search::SearchThread::fetchRequestPropertiesForResource( Result& r
             result.addRequestProperty( rp.first, reqPropHits.binding( QString("reqProp%1").arg( i++ ) ) );
         }
     }
-}
-
-
-void Nepomuk::Search::SearchThread::buildPrefixMap()
-{
-    // fixed prefixes
-    m_prefixes.insert( "rdf", Soprano::Vocabulary::RDF::rdfNamespace() );
-    m_prefixes.insert( "rdfs", Soprano::Vocabulary::RDFS::rdfsNamespace() );
-    m_prefixes.insert( "xsd", Soprano::Vocabulary::XMLSchema::xsdNamespace() );
-
-    // get prefixes from nepomuk
-    Soprano::QueryResultIterator it =
-        ResourceManager::instance()->mainModel()->executeQuery( QString( "select ?ns ?ab where { "
-                                                                         "?g %1 ?ns . "
-                                                                         "?g %2 ?ab . }" )
-                                                                .arg( Soprano::Node::resourceToN3( Soprano::Vocabulary::NAO::hasDefaultNamespace() ) )
-                                                                .arg( Soprano::Node::resourceToN3( Soprano::Vocabulary::NAO::hasDefaultNamespaceAbbreviation() ) ),
-                                                                Soprano::Query::QueryLanguageSparql );
-    while ( it.next() ) {
-        QString ab = it["ab"].toString();
-        QUrl ns = it["ns"].toString();
-        if ( !m_prefixes.contains( ab ) ) {
-            m_prefixes.insert( ab, ns );
-        }
-    }
-}
-
-
-QString Nepomuk::Search::SearchThread::tuneQuery( const QString& query_ )
-{
-    QString query( query_ );
-
-    buildPrefixMap();
-
-    for ( QHash<QString, QUrl>::const_iterator it = m_prefixes.constBegin();
-          it != m_prefixes.constEnd(); ++it ) {
-        QString prefix = it.key();
-        QUrl ns = it.value();
-
-        // very stupid check for the prefix usage
-        if ( query.contains( prefix + ':' ) ) {
-            // if the prefix is not defined add it
-            if ( !query.contains( QRegExp( QString( "[pP][rR][eE][fF][iI][xX]\\s*%1\\s*:\\s*<%2>" )
-                                           .arg( prefix )
-                                           .arg( QRegExp::escape( ns.toString() ) ) ) ) ) {
-                query.prepend( QString( "prefix %1: <%2> " ).arg( prefix ).arg( ns.toString() ) );
-            }
-        }
-    }
-
-    return query;
 }
 
 #include "searchthread.moc"
