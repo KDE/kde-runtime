@@ -37,13 +37,6 @@
 #include <kconfiggroup.h>
 #include <kdesktopfile.h>
 
-#if defined(_MSC_VER)
-#define MY_CAST(a) a
-#else
-// mingw needs char cast
-#define MY_CAST(a) (CHAR *)(a)
-#endif
-
 /*
     add correct prefix for win32 filesystem functions
     described in msdn, but taken from Qt's qfsfileeninge_win.cpp
@@ -73,7 +66,7 @@ bool LinkFile::read()
 
 #   if !defined(UNICODE)
         WCHAR wsz[MAX_PATH];
-        if (0 == MultiByteToWideChar(CP_ACP, 0, MY_CAST(szShortcutFile), -1, wsz, MAX_PATH) )
+        if (0 == MultiByteToWideChar(CP_ACP, 0, szShortcutFile, -1, wsz, MAX_PATH) )
             goto cleanup;
 #   else
         LPCWSTR wsz = szShortcutFile;
@@ -88,19 +81,19 @@ bool LinkFile::read()
     if (FAILED( ppf->Load(wsz, STGM_READ) ))
         goto cleanup;
 
-    if (NOERROR != psl->GetPath(MY_CAST(szTarget), MAX_PATH, NULL, 0) )
+    if (NOERROR != psl->GetPath(szTarget, MAX_PATH, NULL, 0) )
         goto cleanup;
     m_execPath = QString::fromUtf16((const ushort*)szTarget);
 
-    if (NOERROR != psl->GetWorkingDirectory(MY_CAST(szWorkingDir), MAX_PATH) )
+    if (NOERROR != psl->GetWorkingDirectory(szWorkingDir, MAX_PATH) )
         goto cleanup;
     m_workingDir = QString::fromUtf16((const ushort*)szWorkingDir);
 
-    if (NOERROR != psl->GetDescription(MY_CAST(szDescription), MAX_PATH) )
+    if (NOERROR != psl->GetDescription(szDescription, MAX_PATH) )
         goto cleanup;
     m_description = QString::fromUtf16((const ushort*)szDescription);
 
-    if (NOERROR != psl->GetArguments(MY_CAST(szArguments), MAX_PATH) )
+    if (NOERROR != psl->GetArguments(szArguments, MAX_PATH) )
         goto cleanup;
     m_arguments = QString::fromUtf16((const ushort*)szArguments).split(QLatin1Char(' '), QString::SkipEmptyParts);
 
