@@ -287,6 +287,7 @@ void Nepomuk::SearchProtocol::stat( const KUrl& url )
     }
     else if ( m_defaultSearches.contains( name ) ) {
         statEntry( statDefaultSearchFolder( name ) );
+        finished();
     }
     else {
         ForwardingSlaveBase::stat(url);
