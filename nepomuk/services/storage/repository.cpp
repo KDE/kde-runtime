@@ -72,6 +72,21 @@ namespace {
     // (for example using Soprano::IndexFilterModel::addForceIndexPredicate.)
     const int s_indexVersion = 2;
 #endif
+
+    Soprano::BackendSettings parseSettings( const QStringList& sl )
+    {
+        Soprano::BackendSettings settings;
+        foreach( const QString& setting, sl ) {
+            QStringList keyValue = setting.split( '=' );
+            if ( keyValue.count() != 2 ) {
+                kDebug() << "Invalid backend setting: " << setting;
+            }
+            else {
+                settings << Soprano::BackendSetting( keyValue[0], keyValue[1] );
+            }
+        }
+        return settings;
+    }
 }
 
 
@@ -138,6 +153,8 @@ void Nepomuk::Repository::open()
     KConfigGroup repoConfig = KSharedConfig::openConfig( "nepomukserverrc" )->group( name() + " Settings" );
     QString oldBackendName = repoConfig.readEntry( "Used Soprano Backend", backend->pluginName() );
     QString oldBasePath = repoConfig.readPathEntry( "Storage Dir", QString() ); // backward comp: empty string means old storage path
+    bool createIndex = repoConfig.readEntry( "Create Index", true );
+    Soprano::BackendSettings settings = parseSettings( repoConfig.readEntry( "Settings", QStringList() ) );
 
     // If possible we want to keep the old storage path. exception: oldStoragePath is empty. In that case we stay backwards
     // compatible and convert the data to the new default location createStoragePath( name ) + "data/" + backend->pluginName()
@@ -161,7 +178,8 @@ void Nepomuk::Repository::open()
 
     // open storage
     // =================================
-    m_model = backend->createModel( QList<Soprano::BackendSetting>() << Soprano::BackendSetting( Soprano::BackendOptionStorageDir, storagePath ) );
+    Soprano::settingInSettings( settings, Soprano::BackendOptionStorageDir ).setValue( storagePath );
+    m_model = backend->createModel( settings );
     if ( !m_model ) {
         kDebug() << "Unable to create model for repository" << name();
         m_state = CLOSED;
@@ -175,36 +193,40 @@ void Nepomuk::Repository::open()
     // Create CLuence index
     // =================================
 #if defined(HAVE_SOPRANO_INDEX) && defined(HAVE_CLUCENE)
-    m_analyzer = new CLuceneAnalyzer();
-    m_index = new Soprano::Index::CLuceneIndex( m_analyzer );
+    if( createIndex ) {
+        m_analyzer = new CLuceneAnalyzer();
+        m_index = new Soprano::Index::CLuceneIndex( m_analyzer );
 
-    if ( m_index->open( indexPath, true ) ) {
-        kDebug() << "Successfully created new index for repository" << name();
-        m_indexModel = new Soprano::Index::IndexFilterModel( m_index, m_model );
+        if ( m_index->open( indexPath, true ) ) {
+            kDebug() << "Successfully created new index for repository" << name();
+            m_indexModel = new Soprano::Index::IndexFilterModel( m_index, m_model );
 
-        // FIXME: find a good value here
-        m_indexModel->setTransactionCacheSize( 100 );
+            // FIXME: find a good value here
+            m_indexModel->setTransactionCacheSize( 100 );
 
 #if SOPRANO_IS_VERSION(2,1,64)
-        m_indexModel->addForceIndexPredicate( Soprano::Vocabulary::RDF::type() );
+            m_indexModel->addForceIndexPredicate( Soprano::Vocabulary::RDF::type() );
 #endif
 
-        setParentModel( m_indexModel );
-    }
-    else {
-        kDebug() << "Unable to open CLucene index for repo '" << name() << "': " << m_index->lastError();
-        delete m_index;
-        delete m_model;
-        m_index = 0;
-        m_model = 0;
+            setParentModel( m_indexModel );
+        }
+        else {
+            kDebug() << "Unable to open CLucene index for repo '" << name() << "': " << m_index->lastError();
+            delete m_index;
+            delete m_model;
+            m_index = 0;
+            m_model = 0;
 
-        m_state = CLOSED;
-        emit opened( this, false );
-        return;
+            m_state = CLOSED;
+            emit opened( this, false );
+            return;
+        }
     }
-#else
-    setParentModel( m_model );
+    else
 #endif
+    {
+        setParentModel( m_model );
+    }
 
     // check if we have to convert
     // =================================
@@ -251,9 +273,20 @@ void Nepomuk::Repository::open()
             }
         }
         else {
-            // FIXME: inform the user
-            kDebug( 300002 ) << "Unable to convert old model.";
-            m_state = OPEN;
+            kDebug( 300002 ) << "Unable to convert old model: cound not load old backend" << oldBackendName;
+            KNotification::event( "convertingNepomukDataFailed",
+                                  i18nc("@info - notification message",
+                                        "Nepomuk was not able to find the configured database backend '%1'. "
+                                        "Existing data can thus not be accessed. "
+                                        "For data security reasons Nepomuk will be disabled until "
+                                        "the situation has been resolved manually.",
+                                        oldBackendName ),
+                                  KIcon( "nepomuk" ).pixmap( 32, 32 ),
+                                  0,
+                                  KNotification::Persistent );
+            m_state = CLOSED;
+            emit opened( this, false );
+            return;
         }
     }
     else {
@@ -311,10 +344,16 @@ void Nepomuk::Repository::copyFinished( KJob* job )
     if ( job->error() ) {
         KNotification::event( "convertingNepomukDataFailed",
                               i18nc("@info - notification message",
-                                    "Converting Nepomuk data to the new backend failed. Data may still be recovered manually though."),
-                                    KIcon( "nepomuk" ).pixmap( 32, 32 ) );
+                                    "Converting Nepomuk data to the new backend failed. "
+                                    "For data security reasons Nepomuk will be disabled until "
+                                    "the situation has been resolved manually."),
+                              KIcon( "nepomuk" ).pixmap( 32, 32 ),
+                              0,
+                              KNotification::Persistent );
 
         kDebug( 300002 ) << "Converting old model failed.";
+        m_state = CLOSED;
+        emit opened( this, false );
     }
     else {
         KNotification::event( "convertingNepomukDataDone",
@@ -337,15 +376,12 @@ void Nepomuk::Repository::copyFinished( KJob* job )
         repoConfig.writePathEntry( "Storage Dir", m_basePath );
         repoConfig.sync();
 
-        if ( rebuildIndexIfNecessary() ) {
-            // opened will be emitted in rebuildingIndexFinished
-            return;
+        // opened will be emitted in rebuildingIndexFinished
+        if ( !rebuildIndexIfNecessary() ) {
+            m_state = OPEN;
+            emit opened( this, true );
         }
     }
-
-    // although converting might have failed, the new model is open anyway
-    m_state = OPEN;
-    emit opened( this, true );
 }
 
 
