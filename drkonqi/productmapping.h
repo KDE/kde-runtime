@@ -24,24 +24,35 @@
 #include <QtCore/QString>
 #include <QtCore/QStringList>
 
+class BugzillaManager;
+
 class ProductMapping: public QObject
 {
 Q_OBJECT
 public:
-    explicit ProductMapping(const QString&, QObject * parent = 0);
+    explicit ProductMapping(const QString&, BugzillaManager *, QObject * parent = 0);
     
     QString bugzillaProduct() const;
     QString bugzillaComponent() const;
+    QString bugzillaVersion() const;
     QStringList relatedBugzillaProducts() const;
-    
+
+private Q_SLOTS:
+    void checkValidVersions(const QStringList &);
+
 private:
     void map(const QString&);
     void mapUsingInternalFile(const QString&);
     void getRelatedProductsUsingInternalFile(const QString&);
-    
+    void retrieveValidVersions();
+
     QStringList m_relatedBugzillaProducts;
     QString     m_bugzillaProduct;
     QString     m_bugzillaComponent;
+
+    QString     m_bugzillaVersionString;
+
+    BugzillaManager *   m_bugzillaManagerPtr;
 };
 
 #endif

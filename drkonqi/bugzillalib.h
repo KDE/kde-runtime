@@ -219,6 +219,8 @@ public:
 
     void addMeToCC(int);
 
+    void checkVersionsForProduct(const QString &);
+    
     /* Misc methods */
     QString urlForBug(int bug_number) const;
 
@@ -234,6 +236,7 @@ private Q_SLOTS:
     void sendReportJobFinished(KJob*);
     void attachToReportJobFinished(KJob*);
     void addMeToCCJobFinished(KJob*);
+    void checkVersionJobFinished(KJob*);
 
 Q_SIGNALS:
     /* Bugzilla actions finished successfully */
@@ -243,6 +246,7 @@ Q_SIGNALS:
     void reportSent(int);
     void attachToReportSent(int, int);
     void addMeToCCFinished(int);
+    void checkVersionsForProductFinished(const QStringList);
 
     /* Bugzilla actions had errors */
     void loginError(const QString &);
@@ -252,6 +256,7 @@ Q_SIGNALS:
     void sendReportErrorInvalidValues(); //To use default values
     void attachToReportError(const QString &);
     void addMeToCCError(const QString &);
+    void checkVersionsForProductError();
 
 private:
     /* Private helper methods */

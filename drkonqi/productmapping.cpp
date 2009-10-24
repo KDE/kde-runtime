@@ -19,23 +19,33 @@
 
 #include "productmapping.h"
 
+#include "bugzillalib.h"
+
+#include "drkonqi.h"
+#include "crashedapplication.h"
+
 #include <KConfig>
 #include <KConfigGroup>
 #include <KDebug>
 
-ProductMapping::ProductMapping(const QString & appName, QObject * parent)
+ProductMapping::ProductMapping(const QString & appName, BugzillaManager * bzManager, QObject * parent)
     : QObject(parent)
 {
+    m_bugzillaManagerPtr = bzManager;
+
+    //Default "fallback" values
     m_bugzillaProduct = appName;
     m_bugzillaComponent = QLatin1String("general");
+    m_bugzillaVersionString = QLatin1String("unspecified");
     m_relatedBugzillaProducts = QStringList() << m_bugzillaProduct;
-    
+
     map(appName);
 }
 
 void ProductMapping::map(const QString & appName)
 {
     mapUsingInternalFile(appName);
+    retrieveValidVersions();
     getRelatedProductsUsingInternalFile(m_bugzillaProduct);
 }
 
@@ -102,6 +112,22 @@ void ProductMapping::getRelatedProductsUsingInternalFile(const QString & bugzill
     }
 }
 
+void ProductMapping::retrieveValidVersions()
+{
+    connect(m_bugzillaManagerPtr, SIGNAL(checkVersionsForProductFinished(QStringList)),
+            this, SLOT(checkValidVersions(QStringList)));
+    m_bugzillaManagerPtr->checkVersionsForProduct(m_bugzillaProduct);
+}
+
+void ProductMapping::checkValidVersions(const QStringList & versionList)
+{
+    const QString version = DrKonqi::crashedApplication()->version();
+    if (versionList.contains(version)) {
+        //The version the crash application provided is a valid bugzilla version: use it !
+        m_bugzillaVersionString = version;
+    }
+}
+
 QStringList ProductMapping::relatedBugzillaProducts() const
 {
     return m_relatedBugzillaProducts;
@@ -116,3 +142,9 @@ QString ProductMapping::bugzillaComponent() const
 {
     return m_bugzillaComponent;
 }
+
+QString ProductMapping::bugzillaVersion() const
+{
+    return m_bugzillaVersionString;
+}
+

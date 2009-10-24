@@ -18,6 +18,7 @@
 ******************************************************************/
 
 #include "reportassistantpage.h"
+#include "reportinterface.h"
 
 ReportAssistantPage::ReportAssistantPage(ReportAssistantDialog * parent)
     : QWidget(parent), m_assistant(parent)
@@ -41,7 +42,7 @@ ReportInterface * ReportAssistantPage::reportInterface() const
 
 BugzillaManager * ReportAssistantPage::bugzillaManager() const
 {
-    return m_assistant->bugzillaManager();
+    return reportInterface()->bugzillaManager();
 }
 
 ReportAssistantDialog * ReportAssistantPage::assistant() const

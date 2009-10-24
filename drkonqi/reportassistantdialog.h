@@ -27,7 +27,6 @@ class ReportAssistantPage;
 class AboutBugReportingDialog;
 class ReportInterface;
 class QCloseEvent;
-class BugzillaManager;
 
 class ReportAssistantDialog: public KAssistantDialog
 {
@@ -39,10 +38,6 @@ public:
 
     ReportInterface *reportInterface() const {
         return m_reportInterface;
-    }
-
-    BugzillaManager *bugzillaManager() const {
-        return m_bugzillaManager;
     }
 
 private Q_SLOTS:
@@ -72,7 +67,6 @@ private:
     
     QPointer<AboutBugReportingDialog>   m_aboutBugReportingDialog;
     ReportInterface *                m_reportInterface;
-    BugzillaManager *           m_bugzillaManager;
 
     bool                        m_canClose;
 };

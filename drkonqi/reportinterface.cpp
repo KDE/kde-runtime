@@ -37,9 +37,16 @@
 ReportInterface::ReportInterface(QObject *parent)
     : QObject(parent)
 {
+    m_bugzillaManager = new BugzillaManager(this);
+
+    //Set a custom tracker for testing purposes
+    //m_bugzillaManager->setCustomBugtrackerUrl("http://bugstest.kde.org/");
+
+    m_productMapping = new ProductMapping(DrKonqi::crashedApplication()->fakeExecutableBaseName(),
+                                          m_bugzillaManager, this);
+
     m_userCanDetail = false;
     m_developersCanContactReporter = false;
-    m_productMapping = new ProductMapping(DrKonqi::crashedApplication()->fakeExecutableBaseName(), this);
     m_attachToBugNumber = 0;
 }
 
@@ -177,12 +184,11 @@ BugReport ReportInterface::newBugReportTemplate() const
 {
     BugReport report;
     
-    const CrashedApplication * crashedApp = DrKonqi::crashedApplication();
     const SystemInformation * sysInfo = DrKonqi::systemInformation();
     
     report.setProduct(m_productMapping->bugzillaProduct());
     report.setComponent(m_productMapping->bugzillaComponent());
-    report.setVersion(crashedApp->version());
+    report.setVersion(m_productMapping->bugzillaVersion());
     report.setOperatingSystem(sysInfo->bugzillaOperatingSystem());
     if (sysInfo->compiledSources()) {
         report.setPlatform(QLatin1String("Compiled Sources"));
@@ -203,46 +209,42 @@ BugReport ReportInterface::newBugReportTemplate() const
     return report;
 }
 
-void ReportInterface::sendBugReport(BugzillaManager *bzManager) const
+void ReportInterface::sendBugReport() const
 {
     if (m_attachToBugNumber > 0)
     {
-        connect(bzManager, SIGNAL(addMeToCCFinished(int)), this, SLOT(addedToCC()));
-        connect(bzManager, SIGNAL(addMeToCCError(QString)), this, SIGNAL(sendReportError(QString)));
+        connect(m_bugzillaManager, SIGNAL(addMeToCCFinished(int)), this, SLOT(addedToCC()));
+        connect(m_bugzillaManager, SIGNAL(addMeToCCError(QString)), this, SIGNAL(sendReportError(QString)));
         //First add the user to the CC list, then attach
-        bzManager->addMeToCC(m_attachToBugNumber);
+        m_bugzillaManager->addMeToCC(m_attachToBugNumber);
     } else {
         BugReport report = newBugReportTemplate();
         report.setDescription(generateReport(true));
         report.setValid(true);
 
-        connect(bzManager, SIGNAL(sendReportErrorInvalidValues()), this, SLOT(sendUsingDefaultProduct()));
-        connect(bzManager, SIGNAL(reportSent(int)), this, SIGNAL(reportSent(int)));
-        connect(bzManager, SIGNAL(sendReportError(QString)), this, SIGNAL(sendReportError(QString)));
-        bzManager->sendReport(report);
+        connect(m_bugzillaManager, SIGNAL(sendReportErrorInvalidValues()), this, SLOT(sendUsingDefaultProduct()));
+        connect(m_bugzillaManager, SIGNAL(reportSent(int)), this, SIGNAL(reportSent(int)));
+        connect(m_bugzillaManager, SIGNAL(sendReportError(QString)), this, SIGNAL(sendReportError(QString)));
+        m_bugzillaManager->sendReport(report);
     }
 }
 
 void ReportInterface::sendUsingDefaultProduct() const
 {
-    BugzillaManager *bzManager = qobject_cast<BugzillaManager*>(sender());
-    Q_ASSERT(bzManager);
     BugReport report = newBugReportTemplate();
     report.setProduct(QLatin1String("kde"));
     report.setComponent(QLatin1String("general"));
     report.setPlatform(QLatin1String("unspecified"));
     report.setDescription(generateReport(true));
     report.setValid(true);
-    bzManager->sendReport(report);
+    m_bugzillaManager->sendReport(report);
 }
 
 void ReportInterface::addedToCC()
 {
-    BugzillaManager *bzManager = qobject_cast<BugzillaManager*>(sender());
-    Q_ASSERT(bzManager);
     //The user was added to the CC list, proceed with the attachment
-    connect(bzManager, SIGNAL(attachToReportSent(int, int)), this, SLOT(attachSent(int, int)));
-    connect(bzManager, SIGNAL(attachToReportError(QString)), this, 
+    connect(m_bugzillaManager, SIGNAL(attachToReportSent(int, int)), this, SLOT(attachSent(int, int)));
+    connect(m_bugzillaManager, SIGNAL(attachToReportError(QString)), this,
                                                             SIGNAL(sendReportError(QString)));
     BugReport report = newBugReportTemplate();
 
@@ -250,7 +252,7 @@ void ReportInterface::addedToCC()
                          report.shortDescription() + QLatin1String("\n\n") +
                          generateReport(true);
 
-    bzManager->attachTextToReport(reportText, QLatin1String("/tmp/drkonqireport"), //Fake path
+    m_bugzillaManager->attachTextToReport(reportText, QLatin1String("/tmp/drkonqireport"), //Fake path
                                   QLatin1String("New crash information added by DrKonqi"),
                                   m_attachToBugNumber);
 }
@@ -299,5 +301,10 @@ void ReportInterface::setAttachToBugNumber(uint bugNumber)
 {
     m_attachToBugNumber = bugNumber;
 }
-    
+
+BugzillaManager * ReportInterface::bugzillaManager() const
+{
+    return m_bugzillaManager;
+}
+
 #include "reportinterface.moc"

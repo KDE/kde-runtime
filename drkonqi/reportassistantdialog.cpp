@@ -35,15 +35,11 @@ ReportAssistantDialog::ReportAssistantDialog(QWidget * parent) :
         KAssistantDialog(parent),
         m_aboutBugReportingDialog(0),
         m_reportInterface(new ReportInterface(this)),
-        m_bugzillaManager(new BugzillaManager(this)),
         m_canClose(false)
 {
     KGlobal::ref();
     setAttribute(Qt::WA_DeleteOnClose, true);
 
-    //Just for Testing FIXME removeme!! 
-    //m_bugzillaManager->setCustomBugtrackerUrl("http://bugstest.kde.org/");
-    
     setWindowTitle(i18nc("@title:window","Crash Reporting Assistant"));
     setWindowIcon(KIcon("tools-report-bug"));
 

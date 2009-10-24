@@ -57,7 +57,7 @@ public:
     QString generateReport(bool drKonqiStamp) const;
 
     BugReport newBugReportTemplate() const;
-    void sendBugReport(BugzillaManager *bzManager) const;
+    void sendBugReport() const;
 
     QStringList relatedBugzillaProducts() const;
     
@@ -65,6 +65,8 @@ public:
     
     //Zero means creating a new bug report
     void setAttachToBugNumber(uint);
+
+    BugzillaManager * bugzillaManager() const;
     
 private Q_SLOTS:
     void sendUsingDefaultProduct() const;
@@ -86,9 +88,10 @@ private:
     QString     m_reportDetailText;
     QStringList m_possibleDuplicates;
 
-    ProductMapping *    m_productMapping;
-    
     uint     m_attachToBugNumber;
+    
+    ProductMapping *    m_productMapping;
+    BugzillaManager *   m_bugzillaManager;
 };
 
 #endif

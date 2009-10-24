@@ -24,6 +24,8 @@
 
 #include <QtGui/QWidget>
 
+class BugzillaManager;
+
 /** BASE interface which implements some signals, and
 **  aboutTo(Show|Hide) functions (also reimplements QWizard behaviour) **/
 class ReportAssistantPage: public QWidget

@@ -496,7 +496,7 @@ void BugzillaSendPage::retryClicked()
 void BugzillaSendPage::aboutToShow()
 {
     ui.m_statusWidget->setBusy(i18nc("@info:status","Sending crash report... (please wait)"));
-    reportInterface()->sendBugReport(bugzillaManager());
+    reportInterface()->sendBugReport();
 }
 
 void BugzillaSendPage::sent(int bug_id)

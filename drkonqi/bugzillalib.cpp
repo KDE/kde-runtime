@@ -63,6 +63,7 @@ static const char fetchBugUrl[] = "show_bug.cgi?id=%1&ctype=xml";
 static const char sendReportUrl[] = "post_bug.cgi";
 static const char attachDataUrl[] = "attachment.cgi";
 static const char addInformationUrl[] = "process_bug.cgi";
+static const char checkLegalVersionUrl[] = "query.cgi?format=advanced&product=%1";
 
 //BEGIN BugzillaManager
 
@@ -189,6 +190,15 @@ void BugzillaManager::addMeToCC(int bugNumber)
 
     addCCJob->addMetaData("content-type", "Content-Type: application/x-www-form-urlencoded");
 }
+
+void BugzillaManager::checkVersionsForProduct(const QString & product)
+{
+    KUrl checkVersionUrl = KUrl(QString(m_bugTrackerUrl) +
+                                                        QString(checkLegalVersionUrl).arg(product));
+    KIO::Job * checkVersionJob = KIO::storedGet(checkVersionUrl, KIO::Reload, KIO::HideProgressInfo);
+    connect(checkVersionJob, SIGNAL(finished(KJob*)) , this, SLOT(checkVersionJobFinished(KJob*)));
+}
+
 //END Bugzilla Action methods
 
 //BEGIN Misc methods
@@ -396,6 +406,75 @@ void BugzillaManager::addMeToCCJobFinished(KJob * job)
         emit addMeToCCError(job->errorString());
     }
 }
+
+void BugzillaManager::checkVersionJobFinished(KJob * job)
+{
+    if (!job->error()) {
+        KIO::StoredTransferJob * checkVersionJob = (KIO::StoredTransferJob *)job;
+
+        QString response = checkVersionJob->data();
+
+        const QString product = checkVersionJob->url().queryItem("product");
+        if (product.isEmpty()) {
+            emit checkVersionsForProductError();
+            return;
+        }
+
+        //Be ware: Quick'n'dirty HTML parsing ....
+
+        const QString firstSelect = "<select name=\"product\"";
+        const QString searchString = "<option value=\"" + product;
+
+        //Determine the index of the product in the select combobox
+        int indexOfFirstSelect = response.indexOf(firstSelect);
+        if (indexOfFirstSelect == -1) {
+            emit checkVersionsForProductError();
+            return;
+        }
+
+        int indexOfProduct = response.indexOf(searchString, indexOfFirstSelect);
+
+        if (indexOfProduct == -1) {
+            emit checkVersionsForProductError();
+            return;
+        }
+        const QString subString = response.mid(indexOfFirstSelect, indexOfProduct-indexOfFirstSelect);
+
+        int productIndex = subString.count("<option value=");
+
+        //Retrieve the versions array (vers[productID])
+        const QString versionSearchString = "vers[" + QString::number(productIndex) + ']';
+        int indexVersion = response.indexOf(versionSearchString);
+        if (indexVersion == -1) {
+            emit checkVersionsForProductError();
+            return;
+        }
+        int indexEnd = response.indexOf("\n", indexVersion);
+
+        const QString versionString = response.mid(indexVersion, indexEnd-indexVersion);
+
+        int index1 = versionSearchString.length()+4;
+        int len = versionString.length()-3-index1;
+        const QString versions = versionString.mid(index1, len);
+
+        const QStringList list = versions.split(',');
+
+        QStringList versionList;
+
+        //Clean the values
+        QList<QString>::const_iterator it;
+        for (it = list.constBegin(); it != list.constEnd(); ++it) {
+            QString tempString = *it;
+            tempString = tempString.trimmed();
+            tempString = tempString.mid(1, tempString.length()-2);
+            versionList.append(tempString);
+        }
+
+        emit checkVersionsForProductFinished(versionList);
+    } else {
+        emit checkVersionsForProductError();
+    }
+}
 //END Slots to handle KJob::finished
 
 //END Private helper methods
@@ -417,7 +496,9 @@ QByteArray BugzillaManager::generatePostDataForReport(BugReport report) const
     QByteArray postData =
         QByteArray("product=") +
         QUrl::toPercentEncoding(report.product()) +
-        QByteArray("&version=unspecified&component=") +
+        QByteArray("&version=") +
+        QUrl::toPercentEncoding(report.version()) +
+        QByteArray("&component=") +
         QUrl::toPercentEncoding(report.component()) +
         QByteArray("&bug_severity=") +
         QUrl::toPercentEncoding(report.bugSeverity()) +
