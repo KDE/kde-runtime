@@ -49,9 +49,6 @@ This is useful to determine if some external plugin is involved
 
 - Implement TerminalDebuggerLauncher (the idea is to use the same trick as the one used in the installdbgsymbols.sh examples)
 
-- Add and use restarted() signal in CrashedApplication for future expansion.
-  (there could be a dbus interface allowing others to call restart())
-
 - BacktraceGenerator should not be allowed to start if another debugger is running.
   Add some check and possibly some signal indicating this state. As a consequence,
   remove the call to DrKonqi::debuggerManager()->debuggerIsRunning() from BacktraceWidget

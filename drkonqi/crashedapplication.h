@@ -23,7 +23,7 @@
 
 class KCrashBackend;
 
-class CrashedApplication : QObject
+class CrashedApplication : public QObject
 {
     Q_OBJECT
 public:
@@ -62,6 +62,9 @@ public:
 
 public slots:
     void restart();
+
+signals:
+    void restarted();
 
 protected:
     friend class KCrashBackend;

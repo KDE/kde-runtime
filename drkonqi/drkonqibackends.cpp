@@ -110,6 +110,7 @@ CrashedApplication *KCrashBackend::constructCrashedApplication()
     a->m_reportAddress = BugReportAddress(args->getOption("bugaddress").toUtf8());
     a->m_pid = args->getOption("pid").toInt();
     a->m_signalNumber = args->getOption("signal").toInt();
+    a->m_restarted = args->isSet("restarted");
 
     //try to determine the executable that crashed
     if ( QFileInfo(QString("/proc/%1/exe").arg(a->m_pid)).exists() ) {

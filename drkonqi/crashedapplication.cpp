@@ -112,6 +112,7 @@ void CrashedApplication::restart()
         //start the application via kdeinit, as it needs to have a pristine environment and
         //KProcess::startDetached() can't start a new process with custom environment variables.
         KToolInvocation::kdeinitExec(m_executable.absoluteFilePath());
+        emit restarted();
     }
 }
 

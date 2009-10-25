@@ -44,7 +44,7 @@ private Q_SLOTS:
     void aboutBugReporting();
     void reportBugAssistant();
 
-    void restartApplication();
+    void applicationRestarted();
 
     void addDebugger(AbstractDebuggerLauncher *launcher);
     void removeDebugger(AbstractDebuggerLauncher *launcher);

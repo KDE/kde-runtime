@@ -81,6 +81,7 @@ int main(int argc, char* argv[])
     options.add("startupid <id>", ki18nc("@info:shell","Startup ID of the program"));
     options.add("kdeinit", ki18nc("@info:shell","The program was started by kdeinit"));
     options.add("safer", ki18nc("@info:shell","Disable arbitrary disk access"));
+    options.add("restarted", ki18nc("@info:shell","The program has already been restarted"));
     KCmdLineArgs::addCmdLineOptions(options);
 
     KComponentData inst(KCmdLineArgs::aboutData());

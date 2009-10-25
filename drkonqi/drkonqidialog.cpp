@@ -178,7 +178,8 @@ void DrKonqiDialog::buildDialogOptions()
                                                i18nc("@info:tooltip", "Use this button to restart "
                                                      "the crashed application.")));
     enableButton(KDialog::User3, !crashedApp->hasBeenRestarted());
-    connect(this, SIGNAL(user3Clicked()), this, SLOT(restartApplication()));
+    connect(this, SIGNAL(user3Clicked()), crashedApp, SLOT(restart()));
+    connect(crashedApp, SIGNAL(restarted()), this, SLOT(applicationRestarted()));
 
     //Close button
     QString tooltipText = i18nc("@info:tooltip",
@@ -234,8 +235,7 @@ void DrKonqiDialog::aboutBugReporting()
     m_aboutBugReportingDialog->activateWindow();
 }
 
-void DrKonqiDialog::restartApplication()
+void DrKonqiDialog::applicationRestarted()
 {
     enableButton(KDialog::User3, false);
-    DrKonqi::crashedApplication()->restart();
 }
