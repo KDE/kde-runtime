@@ -69,7 +69,7 @@ void SystemInformation::lsbReleaseFinished()
     //Guess distro string
     //TODO cache this value on KConfig ?
     if ( m_lsbRelease.contains("suse",Qt::CaseInsensitive) ) {
-        setBugzillaPlatform(QLatin1String("SuSE RPMs"));
+        setBugzillaPlatform(QLatin1String("openSUSE RPMs"));
     } else if ( m_lsbRelease.contains("ubuntu",Qt::CaseInsensitive) ) {
         setBugzillaPlatform(QLatin1String("Ubuntu Packages"));
     } else if ( m_lsbRelease.contains("fedora",Qt::CaseInsensitive) ) {
