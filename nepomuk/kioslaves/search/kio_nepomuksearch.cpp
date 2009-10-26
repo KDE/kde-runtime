@@ -64,7 +64,7 @@ namespace {
     }
 
 
-    //if type != 0, also retreives the type of the query and stores it into type
+    // if type != 0, also retreives the type of the query and stores it into type
     QString queryNameFromURL( const KUrl& url, Nepomuk::Search::Query::Type* type = 0 ) {
         if(url.queryItems().contains( "sparql" ) ) {
             if( type ) {
@@ -86,6 +86,20 @@ namespace {
         }
     }
 
+    /**
+     * Empty if the path only contains the query.
+     */
+    QString fileNameFromUrl( const KUrl& url ) {
+        QString fn;
+        if ( url.hasQueryItem( QLatin1String( "sparql" ) ) ||
+             url.hasQueryItem( QLatin1String( "query" ) ) ||
+             url.directory() != QLatin1String( "/" ) ) {
+            return url.fileName();
+        }
+        else {
+            return QString();
+        }
+    }
 
     Nepomuk::Search::Query createQuery( const QString& name, Nepomuk::Search::Query::Type type ) {
         if( type == Nepomuk::Search::Query::PlainQuery ) {
@@ -261,18 +275,8 @@ void Nepomuk::SearchProtocol::stat( const KUrl& url )
     if ( !ensureNepomukRunning() )
         return;
 
-    //
-    // Root dir: * list default searches: "all music files", "recent files"
-    //           * list configuration entries: "create new default search"
-    //
-    // Root dir with query:
-    //           * execute the query (cached) and list its results
-    //
-    // some folder:
-    //           * Look for a default search and execute that
-    //
-
     if ( name.isEmpty() ) {
+        kDebug() << "Stat root" << url;
         //
         // stat the root path
         //
@@ -285,11 +289,13 @@ void Nepomuk::SearchProtocol::stat( const KUrl& url )
         statEntry( uds );
         finished();
     }
-    else if ( m_defaultSearches.contains( name ) ) {
+    else if ( fileNameFromUrl( url ).isEmpty() ) {
+        kDebug() << "Stat search folder" << url;
         statEntry( statDefaultSearchFolder( name ) );
         finished();
     }
     else {
+        kDebug() << "Stat forward" << url;
         ForwardingSlaveBase::stat(url);
     }
 }
