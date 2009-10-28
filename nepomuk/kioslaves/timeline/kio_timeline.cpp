@@ -309,6 +309,7 @@ void Nepomuk::TimelineProtocol::listPreviousYears()
 {
     kDebug();
     // TODO: list years before this year that have files
+    // Using a query like: "select ?date where { ?r a nfo:FileDataObject . ?r nie:lastModified ?date . } ORDER BY ?date LIMIT 1" (this would have to be cached)
 }
 
 
