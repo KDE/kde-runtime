@@ -31,7 +31,7 @@
 
 
 Nepomuk::SystemTray::SystemTray( StrigiService* service, QWidget* parent )
-    : KNotificationItem( parent ),
+    : KStatusNotifierItem( parent ),
       m_service( service )
 {
     setCategory( SystemServices );

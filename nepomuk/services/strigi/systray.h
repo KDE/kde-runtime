@@ -19,7 +19,7 @@
 #ifndef _NEPOMUK_STRIGI_SYSTRAY_H_
 #define _NEPOMUK_STRIGI_SYSTRAY_H_
 
-#include <KNotificationItem>
+#include <KStatusNotifierItem>
 
 class KToggleAction;
 
@@ -28,7 +28,7 @@ namespace Nepomuk {
     class IndexScheduler;
     class StrigiService;
 
-    class SystemTray : public KNotificationItem
+    class SystemTray : public KStatusNotifierItem
     {
         Q_OBJECT
 
