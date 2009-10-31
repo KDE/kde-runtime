@@ -20,14 +20,9 @@ http://blogs.msdn.com/oldnewthing/archive/2003/09/01/54734.aspx (by Maciej)
 ##Other tasks
 -------------
 
-- KCrash could send the current KCrash behaviour as a parameter to DrKonqi, so if the app behaviour is to auto-restart itself, the
-Restart button could be hidden as it wont make sense. (plasma crashes)
-(gkiagia rework on KCrash)
-
 - Check string (native english) in the new features.
 
 - Update "AboutBugReporting" guide to reflect the new workflow
-
 
 - Ask for saving the report information to file when exiting the report assistant without reporting
 ( This is going to be done with the Drkonqi2.1 proposal to not close the main dialog on report)
