@@ -56,10 +56,6 @@ public:
     QString getApplicationInternalName(const QModelIndex &index) const;
     QString getApplicationName(const QModelIndex &index) const;
     QString getIcon(const QModelIndex &index) const;
-    qlonglong getFileTotals(const QModelIndex &index) const;
-    qlonglong getFilesProcessed(const QModelIndex &index) const;
-    qlonglong getDirTotals(const QModelIndex &index) const;
-    qlonglong getDirsProcessed(const QModelIndex &index) const;
     QString getSizeTotals(const QModelIndex &index) const;
     QString getSizeProcessed(const QModelIndex &index) const;
     qlonglong getTimeTotals(const QModelIndex &index) const;
