@@ -27,6 +27,7 @@
 #include <KConfigGroup>
 #include <KInputDialog>
 #include <Solid/DeviceNotifier>
+#include <Solid/StorageVolume>
 
 #include "AutomounterSettings.h"
 
@@ -67,6 +68,7 @@ DeviceAutomounterKCM::DeviceAutomounterKCM(QWidget *parent, const QVariantList &
     connect(addDevice, SIGNAL(clicked(bool)), this, SLOT(addNewDevice()));
 
     connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceAdded(const QString)), this, SLOT(deviceAttached(const QString)));
+    connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceRemoved(const QString)), this, SLOT(deviceRemoved(const QString)));
 
     forgetDevice->setEnabled(false);
 }
@@ -82,24 +84,64 @@ DeviceAutomounterKCM::addNewDevice()
 void
 DeviceAutomounterKCM::addNewDevice(const QString &udi)
 {
+    Solid::Device dev(udi);
+    bool valid = dev.isValid();
+    
     KConfigGroup grp = AutomounterSettings::deviceSettings(udi);
     QList<QStandardItem*> row;
-    QStandardItem *name = new QStandardItem(udi);
+    QString displayName;
+    if (valid)
+        displayName = dev.description();
+    else
+        displayName = AutomounterSettings::getDeviceName(udi);
+    if (displayName.isEmpty())
+        displayName = "UDI: "+udi;
+    QStandardItem *name = new QStandardItem(displayName);
+    name->setData(udi, Qt::ToolTipRole);
+    name->setData(udi);
     QStandardItem *shouldAutomount = new QStandardItem();
     if (grp.readEntry("ForceAutomount", false))
         shouldAutomount->setData(Qt::Checked, Qt::CheckStateRole);
     else
         shouldAutomount->setData(Qt::Unchecked, Qt::CheckStateRole);
     shouldAutomount->setFlags(Qt::ItemIsEnabled | Qt::ItemIsUserCheckable | Qt::ItemIsSelectable);
+    
+    QStandardItem *willLoginAutomount;
+    QStandardItem *willAttachAutomount;
+    if (AutomounterSettings::shouldAutomountDevice(udi, AutomounterSettings::Login))
+        willLoginAutomount = new QStandardItem(i18n("Yes"));
+    else
+        willLoginAutomount = new QStandardItem(i18n("No"));
+    if (AutomounterSettings::shouldAutomountDevice(udi, AutomounterSettings::Attach))
+        willAttachAutomount = new QStandardItem(i18n("Yes"));
+    else
+        willAttachAutomount = new QStandardItem(i18n("No"));
     name->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-    row << name << shouldAutomount;
-    m_devices->appendRow(row);
+    row << name << shouldAutomount << willLoginAutomount << willAttachAutomount;
+        
+    if (valid)
+        m_attachedGroup->appendRow(row);
+    else
+        m_disconnectedGroup->appendRow(row);
+    m_deviceMap[udi] = row[0]->index();
+}
+
+
+void
+DeviceAutomounterKCM::deviceRemoved(const QString &udi) {
+    Solid::Device dev(udi);
+    if (AutomounterSettings::knownDevices().contains(udi) && dev.is<Solid::StorageVolume>()) {
+        QModelIndex dev = m_deviceMap[udi];
+        m_devices->itemFromIndex(dev.parent())->removeRow(dev.row());
+        addNewDevice(udi);
+    }
 }
 
 void
 DeviceAutomounterKCM::deviceAttached(const QString &udi)
 {
-    if (!AutomounterSettings::knownDevices().contains(udi))
+    Solid::Device dev(udi);
+    if (!AutomounterSettings::knownDevices().contains(udi) && dev.is<Solid::StorageVolume>())
         addNewDevice(udi);
 }
 
@@ -173,8 +215,12 @@ DeviceAutomounterKCM::reloadDevices()
     AutomounterSettings::self()->readConfig();
     m_devices->clear();
     QStringList headers;
-    headers << i18nc("@title:column The device's internal UDI if not attached, user-friendly name reported by Solid otherwise.", "Name" ) << i18n( "Always Automount" );
+    headers << i18nc("@title:column The device's internal UDI if not attached, user-friendly name reported by Solid otherwise.", "Name" ) << i18n( "Always Automount" ) << i18n( "Automount on login" ) << i18n("Automount on attach");
     m_devices->setHorizontalHeaderLabels(headers);
+    m_attachedGroup = new QStandardItem(i18nc("@title:group Group of devices currently attached to the computer", "Attached Devices"));
+    m_disconnectedGroup = new QStandardItem(i18nc("@title:group Group of devices currently not attached to the computer", "Disconnected Devices"));
+    m_devices->appendRow(m_attachedGroup);
+    m_devices->appendRow(m_disconnectedGroup);
     foreach(const QString &dev, AutomounterSettings::knownDevices()) {
         addNewDevice(dev);
     }
@@ -206,16 +252,28 @@ DeviceAutomounterKCM::save()
 
     int i;
     QStringList validDevices;
-    for(i = 0;i < m_devices->rowCount();++i) {
-        QModelIndex udi = m_devices->index(i, 0);
-        QModelIndex automount = m_devices->index(i, 1);
-        QString device = udi.data().toString();
+    for(i = 0;i < m_attachedGroup->rowCount();++i) {
+        QStandardItem *udi = m_attachedGroup->child(i, 0);
+        QStandardItem *automount = m_attachedGroup->child(i, 1);
+        QString device = udi->data().toString();
         validDevices << device;
-        if (automount.data(Qt::CheckStateRole).toInt() == Qt::Checked)
+        if (automount->data(Qt::CheckStateRole).toInt() == Qt::Checked)
             AutomounterSettings::deviceSettings(device).writeEntry("ForceAutomount", true);
         else
             AutomounterSettings::deviceSettings(device).writeEntry("ForceAutomount", false);
     }
+    
+    for(i = 0;i < m_disconnectedGroup->rowCount();++i) {
+        QStandardItem *udi = m_disconnectedGroup->child(i, 0);
+        QStandardItem *automount = m_disconnectedGroup->child(i, 1);
+        QString device = udi->data().toString();
+        validDevices << device;
+        if (automount->data(Qt::CheckStateRole).toInt() == Qt::Checked)
+            AutomounterSettings::deviceSettings(device).writeEntry("ForceAutomount", true);
+        else
+            AutomounterSettings::deviceSettings(device).writeEntry("ForceAutomount", false);
+    }
+    
     foreach(const QString &possibleDevice, AutomounterSettings::knownDevices()) {
         if (!validDevices.contains(possibleDevice))
             AutomounterSettings::deviceSettings(possibleDevice).deleteGroup();

@@ -91,3 +91,15 @@ AutomounterSettings::setDeviceLastSeenMounted(const QString &udi, bool mounted)
         deviceSettings(udi).writeEntry("EverMounted", true);
     deviceSettings(udi).writeEntry("LastSeenMounted", mounted);
 }
+
+void
+AutomounterSettings::setDeviceName(const QString &udi, const QString &name)
+{
+    deviceSettings(udi).writeEntry("LastNameSeen", name);
+}
+
+QString
+AutomounterSettings::getDeviceName(const QString &udi)
+{
+    return deviceSettings(udi).readEntry("LastNameSeen");
+}
