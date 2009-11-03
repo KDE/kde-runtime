@@ -26,6 +26,9 @@
 #include <Solid/StorageAccess>
 #include <Solid/StorageVolume>
 
+#include <KGlobal>
+#include <KLocale>
+
 #include <KDebug>
 
 K_PLUGIN_FACTORY(DeviceAutomounterFactory, registerPlugin<DeviceAutomounter>();)
@@ -62,7 +65,9 @@ DeviceAutomounter::automountDevice(Solid::Device &dev, AutomounterSettings::Auto
     if (dev.is<Solid::StorageVolume>() && dev.is<Solid::StorageAccess>()) {
         Solid::StorageAccess *sa = dev.as<Solid::StorageAccess>();
         AutomounterSettings::setDeviceLastSeenMounted(dev.udi(), sa->isAccessible());
-        AutomounterSettings::setDeviceName(dev.udi(), dev.description());
+        Solid::StorageVolume *sv = dev.as<Solid::StorageVolume>();
+        QString name = dev.parent().vendor()+' '+dev.parent().product()+" ("+KGlobal::locale()->formatByteSize(sv->size())+')';
+        AutomounterSettings::setDeviceName(dev.udi(), name);
         if (AutomounterSettings::shouldAutomountDevice(dev.udi(), type)) {
             Solid::StorageVolume *sv = dev.as<Solid::StorageVolume>();
             if (!sv->isIgnored()) {

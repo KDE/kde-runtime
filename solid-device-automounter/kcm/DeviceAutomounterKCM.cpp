@@ -29,6 +29,9 @@
 #include <Solid/DeviceNotifier>
 #include <Solid/StorageVolume>
 
+#include <KGlobal>
+#include <KLocale>
+
 #include "AutomounterSettings.h"
 
 K_PLUGIN_FACTORY(DeviceAutomounterKCMFactory, registerPlugin<DeviceAutomounterKCM>();)
@@ -89,16 +92,20 @@ DeviceAutomounterKCM::addNewDevice(const QString &udi)
     
     KConfigGroup grp = AutomounterSettings::deviceSettings(udi);
     QList<QStandardItem*> row;
-    QString displayName;
-    if (valid)
-        displayName = dev.description();
-    else
-        displayName = AutomounterSettings::getDeviceName(udi);
-    if (displayName.isEmpty())
-        displayName = "UDI: "+udi;
+    QString displayName = AutomounterSettings::getDeviceName(udi);
+    if (displayName.isEmpty()) {
+        if (valid) {
+            Solid::StorageVolume *sv = dev.as<Solid::StorageVolume>();
+            displayName = dev.parent().vendor()+' '+dev.parent().product()+" ("+KGlobal::locale()->formatByteSize(sv->size())+')';
+        } else {
+            displayName = "UDI: "+udi;
+        }
+    }
     QStandardItem *name = new QStandardItem(displayName);
     name->setData(udi, Qt::ToolTipRole);
     name->setData(udi);
+    if (valid)
+        name->setData(KIcon(dev.icon()), Qt::DecorationRole);
     QStandardItem *shouldAutomount = new QStandardItem();
     if (grp.readEntry("ForceAutomount", false))
         shouldAutomount->setData(Qt::Checked, Qt::CheckStateRole);
