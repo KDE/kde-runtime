@@ -130,7 +130,7 @@ Clicking this button will remove all files for this theme from your system. A co
 <screeninfo>Removing A Theme</screeninfo>
   <mediaobject>
     <imageobject>
-      <imagedata fileref="remove-theme.png" format="PNG"/>
+      <imagedata fileref="delete-theme.png" format="PNG"/>
     </imageobject>
     <textobject>
       <phrase>Removing A Theme</phrase>
