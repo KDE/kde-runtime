@@ -89,14 +89,15 @@ DeviceAutomounterKCM::addNewDevice(const QString &udi)
 {
     Solid::Device dev(udi);
     bool valid = dev.isValid();
-    
+
     KConfigGroup grp = AutomounterSettings::deviceSettings(udi);
     QList<QStandardItem*> row;
     QString displayName = AutomounterSettings::getDeviceName(udi);
     if (displayName.isEmpty()) {
         if (valid) {
             Solid::StorageVolume *sv = dev.as<Solid::StorageVolume>();
-            displayName = dev.parent().vendor()+' '+dev.parent().product()+" ("+KGlobal::locale()->formatByteSize(sv->size())+')';
+            displayName = QString(dev.parent().vendor()+' '+dev.parent().product()+" "+dev.product()+" ("+KGlobal::locale()->formatByteSize(sv->size())+')' ).trimmed();;
+            AutomounterSettings::setDeviceName(udi, displayName);
         } else {
             displayName = "UDI: "+udi;
         }
@@ -112,7 +113,7 @@ DeviceAutomounterKCM::addNewDevice(const QString &udi)
     else
         shouldAutomount->setData(Qt::Unchecked, Qt::CheckStateRole);
     shouldAutomount->setFlags(Qt::ItemIsEnabled | Qt::ItemIsUserCheckable | Qt::ItemIsSelectable);
-    
+
     QStandardItem *willLoginAutomount;
     QStandardItem *willAttachAutomount;
     if (AutomounterSettings::shouldAutomountDevice(udi, AutomounterSettings::Login))
@@ -125,7 +126,7 @@ DeviceAutomounterKCM::addNewDevice(const QString &udi)
         willAttachAutomount = new QStandardItem(i18n("No"));
     name->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
     row << name << shouldAutomount << willLoginAutomount << willAttachAutomount;
-        
+
     if (valid)
         m_attachedGroup->appendRow(row);
     else
@@ -269,7 +270,7 @@ DeviceAutomounterKCM::save()
         else
             AutomounterSettings::deviceSettings(device).writeEntry("ForceAutomount", false);
     }
-    
+
     for(i = 0;i < m_disconnectedGroup->rowCount();++i) {
         QStandardItem *udi = m_disconnectedGroup->child(i, 0);
         QStandardItem *automount = m_disconnectedGroup->child(i, 1);
@@ -280,7 +281,7 @@ DeviceAutomounterKCM::save()
         else
             AutomounterSettings::deviceSettings(device).writeEntry("ForceAutomount", false);
     }
-    
+
     foreach(const QString &possibleDevice, AutomounterSettings::knownDevices()) {
         if (!validDevices.contains(possibleDevice))
             AutomounterSettings::deviceSettings(possibleDevice).deleteGroup();
