@@ -96,8 +96,7 @@ DeviceAutomounterKCM::addNewDevice(const QString &udi)
     if (displayName.isEmpty()) {
         if (valid) {
             Solid::StorageVolume *sv = dev.as<Solid::StorageVolume>();
-            displayName = QString(dev.parent().vendor()+' '+dev.parent().product()+" "+dev.product()+" ("+KGlobal::locale()->formatByteSize(sv->size())+')' ).trimmed();;
-            AutomounterSettings::setDeviceName(udi, displayName);
+            displayName = QString(dev.parent().vendor()+' '+dev.parent().product()+" "+dev.description()+" ("+KGlobal::locale()->formatByteSize(sv->size())+')' ).trimmed();;
         } else {
             displayName = "UDI: "+udi;
         }
