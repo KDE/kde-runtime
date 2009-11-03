@@ -1,6 +1,6 @@
 /*
    This file is part of the KDE libraries
-   Copyright (c) 2005-2007 David Jarvie <djarvie@kde.org>
+   Copyright (c) 2005-2009 David Jarvie <djarvie@kde.org>
    Copyright (c) 2005 S.R.Haque <srhaque@iee.org>.
 
    This library is free software; you can redistribute it and/or
@@ -99,6 +99,8 @@ void KTimeZoned::init(bool restart)
     mConfigLocalZone = group.readEntry(LOCAL_ZONE);
     QString ztc      = group.readEntry(ZONE_TAB_CACHE, QString());
     mZoneTabCache    = (ztc == "Solaris") ? Solaris : NoCache;
+    if (mZoneinfoDir.length() > 1 && mZoneinfoDir.endsWith('/'))
+        mZoneinfoDir.truncate(mZoneinfoDir.length() - 1);   // strip trailing '/'
 
     // For Unix, read zone.tab.
 
@@ -574,20 +576,31 @@ kDebug(1221)<<"checkTimezone(): /etc/timezone opened";
     if (!ts.atEnd())
         zoneName = ts.readLine();
     f.close();
-    if (!zoneName.isEmpty())
+    if (zoneName.isEmpty())
+        return false;
+    KTimeZone local = mZones.zone(zoneName);
+    if (!local.isValid())
     {
-        KTimeZone local = mZones.zone(zoneName);
-kDebug(1221)<<"checkTimezone(): local="<<local.isValid()<<", name="<<zoneName;
-        if (local.isValid())
-        {
-            mLocalZone = zoneName;
-            mLocalMethod = Timezone;
-            mLocalIdFile = f.fileName();
-            mLocalZoneDataFile = mZoneinfoDir.isEmpty() ? QString() : mZoneinfoDir + '/' + zoneName;
-            return true;
-        }
+        // It isn't a recognised zone in zone.tab.
+        // Note that some systems (e.g. Gentoo) have zones under zoneinfo which
+        // are not in zone.tab, so check if it points to another zone file.
+	if (mZoneinfoDir.isEmpty())
+	    return false;
+        QString path = mZoneinfoDir + '/' + zoneName;
+        QFile qf;
+        qf.setFileName(path);
+        QFileInfo fi(qf);
+        if (fi.isSymLink())
+            fi.setFile(fi.canonicalFilePath());
+        if (!fi.exists() || !fi.isReadable())
+            return false;
     }
-    return false;
+kDebug(1221)<<"checkTimezone(): local="<<local.isValid()<<", name="<<zoneName;
+    mLocalZone = zoneName;
+    mLocalMethod = Timezone;
+    mLocalIdFile = f.fileName();
+    mLocalZoneDataFile = mZoneinfoDir.isEmpty() ? QString() : mZoneinfoDir + '/' + zoneName;
+    return true;
 }
 
 bool KTimeZoned::matchZoneFile(const QString &path)
@@ -609,12 +622,10 @@ bool KTimeZoned::matchZoneFile(const QString &path)
             {
                 // We've got the zoneinfo file path.
                 // The time zone name is the part of the path after the zoneinfo directory.
-                QString name = zoneInfoFileName.mid(mZoneinfoDir.length() + 1);
-                // kDebug(1221) << "local=" << name;
-                KTimeZone local = mZones.zone(name);
-                if (!local.isValid())
-                    return false;
-                mLocalZone = name;
+                // Note that some systems (e.g. Gentoo) have zones under zoneinfo which
+                // are not in zone.tab, so don't validate against mZones.
+                mLocalZone = zoneInfoFileName.mid(mZoneinfoDir.length() + 1);
+                // kDebug(1221) << "local=" << mLocalZone;
             }
             else
             {
