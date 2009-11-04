@@ -87,6 +87,15 @@ namespace {
         }
         return settings;
     }
+
+    void addVirtuosoSettings( Soprano::BackendSettings& settings )
+    {
+        Soprano::BackendSetting& indexes = Soprano::settingInSettings( settings, QLatin1String( "indexes" ) );
+        if ( indexes.value().toString().isEmpty() ) {
+            // TODO: The list of indexes will be optimized based on frequent Nepomuk queries soon
+            indexes.setValue( QLatin1String( "SPOG,POSG,OPSG,GSPO,GPOS" ) );
+        }
+    }
 }
 
 
@@ -155,6 +164,9 @@ void Nepomuk::Repository::open()
     QString oldBasePath = repoConfig.readPathEntry( "Storage Dir", QString() ); // backward comp: empty string means old storage path
     bool createIndex = repoConfig.readEntry( "Create Index", true );
     Soprano::BackendSettings settings = parseSettings( repoConfig.readEntry( "Settings", QStringList() ) );
+    if ( backend->pluginName() == QLatin1String( "virtuosobackend" ) ) {
+        addVirtuosoSettings( settings );
+    }
 
     // If possible we want to keep the old storage path. exception: oldStoragePath is empty. In that case we stay backwards
     // compatible and convert the data to the new default location createStoragePath( name ) + "data/" + backend->pluginName()
@@ -170,8 +182,18 @@ void Nepomuk::Repository::open()
     QString indexPath = m_basePath + "index";
     QString storagePath = m_basePath + "data/" + backend->pluginName();
 
-    KStandardDirs::makeDir( indexPath );
-    KStandardDirs::makeDir( storagePath );
+    if ( !KStandardDirs::makeDir( indexPath ) ) {
+        kDebug() << "Failed to create index folder" << indexPath;
+        m_state = CLOSED;
+        emit opened( this, false );
+        return;
+    }
+    if ( !KStandardDirs::makeDir( storagePath ) ) {
+        kDebug() << "Failed to create storage folder" << storagePath;
+        m_state = CLOSED;
+        emit opened( this, false );
+        return;
+    }
 
     kDebug() << "opening repository '" << name() << "' at '" << m_basePath << "'";
 
@@ -433,7 +455,7 @@ bool Nepomuk::Repository::rebuildIndexIfNecessary()
 
 const Soprano::Backend* Nepomuk::Repository::activeSopranoBackend()
 {
-    QString backendName = KSharedConfig::openConfig( "nepomukserverrc" )->group( "Basic Settings" ).readEntry( "Soprano Backend", "sesame2" );
+    QString backendName = KSharedConfig::openConfig( "nepomukserverrc" )->group( "Basic Settings" ).readEntry( "Soprano Backend", "virtuosobackend" );
     const Soprano::Backend* backend = ::Soprano::discoverBackendByName( backendName );
     if ( !backend ) {
         kDebug() << "(Nepomuk::Core::Core) could not find backend" << backendName << ". Falling back to default.";
