@@ -162,7 +162,8 @@ bool BugzillaDuplicatesPage::showNextPage()
            "crash information. Selecting possible duplicates helps the KDE developers and bug "
            "triagers to organize the bug report information and to get better quality reports. "
            "Can you confirm that you have not found any duplicate of your crash ?"),
-           i18nc("@title:window",""), letMeCheckMoreReportsButton, noDuplicatesButton)
+           i18nc("@title:window","No selected possible duplicates"), letMeCheckMoreReportsButton,
+                               noDuplicatesButton)
                                         == KMessageBox::Yes) {
             return false;
         }
@@ -558,7 +559,7 @@ void BugzillaReportInformationDialog::bugFetchFinished(BugReport report, QObject
                        "marked as duplicate of another bug report (bug <numid>%2</numid>). "
                        "Do you want to read it ?",
                        report.bugNumber(), dupId),
-                       i18nc("@title:window",""), yesItem, noItem)
+                       i18nc("@title:window","Nested duplicate detected"), yesItem, noItem)
                                                     == KMessageBox::Yes) {
                         showBugReport(duplicate.toInt());
                         return;

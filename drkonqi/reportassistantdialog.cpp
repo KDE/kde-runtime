@@ -21,6 +21,11 @@
 
 #include "drkonqi_globals.h"
 #include "drkonqi.h"
+
+#include "backtraceparser.h"
+#include "debuggermanager.h"
+#include "backtracegenerator.h"
+
 #include "crashedapplication.h"
 #include "aboutbugreportingdialog.h"
 #include "reportassistantpages_base.h"
@@ -299,13 +304,45 @@ void ReportAssistantDialog::reject()
 void ReportAssistantDialog::closeEvent(QCloseEvent * event)
 {
     if (!m_canClose) {
-        if (KMessageBox::questionYesNo(this, i18nc("@info","Do you really want to close the bug "
-                                                   "assistant without submitting the bug report?"),
-                                       i18nc("@title:window","Close Crash Reporting Assistant"))
-                                        == KMessageBox::Yes) {
-            event->accept();
+        KGuiItem closeItem = KStandardGuiItem::close();
+        closeItem.setText(i18nc("@action:button", "Close the assistant"));
+
+        KGuiItem keepOpenItem = KStandardGuiItem::cancel();
+        keepOpenItem.setText(i18nc("@action:button", "Cancel"));
+
+        BacktraceParser::Usefulness use =
+                DrKonqi::debuggerManager()->backtraceGenerator()->parser()->backtraceUsefulness();
+        if (use == BacktraceParser::ReallyUseful || use == BacktraceParser::MayBeUseful) {
+            //Backtrace is still useful, let the user save it.
+            KGuiItem saveBacktraceItem = KStandardGuiItem::save();
+            saveBacktraceItem.setText(i18nc("@action:button", "Save information and close"));
+
+            int ret = KMessageBox::questionYesNoCancel(this,
+                           i18nc("@info","Do you really want to close the bug assistant without "
+                           "submitting the report? <note>The crash information is still valid so "
+                           "you can save the report before closing</note>"),
+                           i18nc("@title:window","Close the Reporting Assistant"),
+                           closeItem, saveBacktraceItem, keepOpenItem, QString(), KMessageBox::Dangerous);
+            if(ret == KMessageBox::Yes)
+            {
+                event->accept();
+            } else if (ret == KMessageBox::No) {
+                //Save backtrace and accept
+                DrKonqi::saveReport(reportInterface()->generateReport(false));
+                event->accept();
+            } else {
+                event->ignore();
+            }
         } else {
-            event->ignore();
+            if (KMessageBox::questionYesNo(this, i18nc("@info","Do you really want to close the bug "
+                                                   "assistant without submitting the bug report?"),
+                                       i18nc("@title:window","Close the Reporting Assistant"),
+                                           closeItem, keepOpenItem, QString(), KMessageBox::Dangerous)
+                                        == KMessageBox::Yes) {
+                event->accept();
+            } else {
+                event->ignore();
+            }
         }
     } else {
         event->accept();
