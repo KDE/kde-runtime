@@ -380,6 +380,8 @@ if (!mLocalZone.isEmpty()) kDebug(1221)<<"/etc/default/init: "<<mLocalZone;
         if (!mLocalZoneDataFile.isEmpty())
             mDirWatch->addFile(mLocalZoneDataFile);
         connect(mDirWatch, SIGNAL(dirty(const QString&)), SLOT(localChanged(const QString&)));
+        connect(mDirWatch, SIGNAL(deleted(const QString&)), SLOT(localChanged(const QString&)));
+        connect(mDirWatch, SIGNAL(created(const QString&)), SLOT(localChanged(const QString&)));
     }
     else if (!mZoneinfoDir.isEmpty())
     {
@@ -584,8 +586,8 @@ kDebug(1221)<<"checkTimezone(): /etc/timezone opened";
         // It isn't a recognised zone in zone.tab.
         // Note that some systems (e.g. Gentoo) have zones under zoneinfo which
         // are not in zone.tab, so check if it points to another zone file.
-	if (mZoneinfoDir.isEmpty())
-	    return false;
+        if (mZoneinfoDir.isEmpty())
+            return false;
         QString path = mZoneinfoDir + '/' + zoneName;
         QFile qf;
         qf.setFileName(path);
