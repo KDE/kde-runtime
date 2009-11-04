@@ -86,7 +86,7 @@ class KTimeZoned : public KTimeZonedBase
         void  updateLocalZone();
         bool  matchZoneFile(const QString &path);
         bool  findKey(const QString &path, const QString &key);
-	bool  setLocalZone(const QString &zoneName);
+        bool  setLocalZone(const QString &zoneName);
         KTimeZone compareChecksum(const KTimeZone&, const QString &referenceMd5Sum, qlonglong size);
         bool  compareChecksum(MD5Map::ConstIterator, const QString &referenceMd5Sum, qlonglong size);
         QString calcChecksum(const QString &zoneName, qlonglong size);
