@@ -1,6 +1,6 @@
 /*
    This file is part of the KDE libraries
-   Copyright (c) 2007 David Jarvie <software@astrojar.org.uk>
+   Copyright (c) 2007,2009 David Jarvie <software@astrojar.org.uk>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -57,6 +57,7 @@ class KTimeZoned : public KTimeZonedBase
             TzName,         // specified in tzname via tzset()
             Localtime,      // specified in /etc/localtime
             Timezone,       // specified in /etc/timezone
+            RcFile,         // specified in /etc/rc.conf or /etc/rc.local
             DefaultInit,    // specified in /etc/default/init
             EnvTzFile = EnvTz | File,
             EnvTzLink = EnvTz | Link,
@@ -80,9 +81,12 @@ class KTimeZoned : public KTimeZonedBase
         bool  checkLocaltimeLink();
         bool  checkLocaltimeFile();
         bool  checkTimezone();
+        bool  checkRcFile();
         bool  checkDefaultInit();
         void  updateLocalZone();
         bool  matchZoneFile(const QString &path);
+        bool  findKey(const QString &path, const QString &key);
+	bool  setLocalZone(const QString &zoneName);
         KTimeZone compareChecksum(const KTimeZone&, const QString &referenceMd5Sum, qlonglong size);
         bool  compareChecksum(MD5Map::ConstIterator, const QString &referenceMd5Sum, qlonglong size);
         QString calcChecksum(const QString &zoneName, qlonglong size);
@@ -93,6 +97,7 @@ class KTimeZoned : public KTimeZonedBase
         KSystemTimeZoneSource *mSource;
         KTimeZones  mZones;             // time zones collection
         QString     mLocalIdFile;       // file containing pointer to local time zone definition
+        QString     mLocalIdFile2;      // file containing pointer 2 to local time zone definition
         QString     mLocalZoneDataFile; // zoneinfo file containing local time zone definition
         QString     mLocaltimeMd5Sum;   // MD5 checksum of /etc/localtime
         LocalMethod mLocalMethod;       // how the local time zone is specified

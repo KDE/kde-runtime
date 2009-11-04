@@ -335,6 +335,7 @@ void KTimeZoned::findLocalZone()
     mDirWatch = 0;
     mLocalZone.clear();
     mLocalIdFile.clear();
+    mLocalIdFile2.clear();
     mLocalZoneDataFile.clear();
 
     // SOLUTION 1: DEFINITIVE.
@@ -343,7 +344,7 @@ void KTimeZoned::findLocalZone()
     if (checkTZ(envtz))
     {
         mSavedTZ = envtz;
-if (!mLocalZone.isEmpty()) kDebug(1221)<<"TZ: "<<mLocalZone;
+        if (!mLocalZone.isEmpty()) kDebug(1221)<<"TZ: "<<mLocalZone;
     }
 
     if (mLocalZone.isEmpty())
@@ -351,7 +352,6 @@ if (!mLocalZone.isEmpty()) kDebug(1221)<<"TZ: "<<mLocalZone;
         // SOLUTION 2: DEFINITIVE.
         // BSD & Linux support: local time zone id in /etc/timezone.
         checkTimezone();
-if (!mLocalZone.isEmpty()) kDebug(1221)<<"/etc/timezone: "<<mLocalZone;
     }
     if (mLocalZone.isEmpty() && !mZoneinfoDir.isEmpty())
     {
@@ -360,14 +360,18 @@ if (!mLocalZone.isEmpty()) kDebug(1221)<<"/etc/timezone: "<<mLocalZone;
         // SOLUTION 4: DEFINITIVE.
         // Try to match /etc/localtime against the list of zoneinfo files.
         matchZoneFile(QLatin1String("/etc/localtime"));
-if (!mLocalZone.isEmpty()) kDebug(1221)<<"/etc/localtime: "<<mLocalZone;
     }
     if (mLocalZone.isEmpty())
     {
         // SOLUTION 5: DEFINITIVE.
+        // Look for setting in /etc/rc.conf or /etc/rc.local.
+        checkRcFile();
+    }
+    if (mLocalZone.isEmpty())
+    {
+        // SOLUTION 6: DEFINITIVE.
         // Solaris support using /etc/default/init.
         checkDefaultInit();
-if (!mLocalZone.isEmpty()) kDebug(1221)<<"/etc/default/init: "<<mLocalZone;
     }
 
     if (!mLocalZone.isEmpty())
@@ -377,13 +381,17 @@ if (!mLocalZone.isEmpty()) kDebug(1221)<<"/etc/default/init: "<<mLocalZone;
         // in local time zone.
         mDirWatch = new KDirWatch(this);
         mDirWatch->addFile(mLocalIdFile);
+        if (!mLocalIdFile2.isEmpty())
+            mDirWatch->addFile(mLocalIdFile2);
         if (!mLocalZoneDataFile.isEmpty())
             mDirWatch->addFile(mLocalZoneDataFile);
         connect(mDirWatch, SIGNAL(dirty(const QString&)), SLOT(localChanged(const QString&)));
+        connect(mDirWatch, SIGNAL(deleted(const QString&)), SLOT(localChanged(const QString&)));
+        connect(mDirWatch, SIGNAL(created(const QString&)), SLOT(localChanged(const QString&)));
     }
     else if (!mZoneinfoDir.isEmpty())
     {
-        // SOLUTION 6: HEURISTIC.
+        // SOLUTION 7: HEURISTIC.
         // None of the deterministic stuff above has worked: try a heuristic. We
         // try to find a pair of matching time zone abbreviations...that way, we'll
         // likely return a value in the user's own country.
@@ -413,15 +421,17 @@ if (!mLocalZone.isEmpty()) kDebug(1221)<<"/etc/default/init: "<<mLocalZone;
         }
         KSystemTimeZoneSource::endParseBlock();
         if (!mLocalZone.isEmpty())
+        {
             mLocalMethod = TzName;
-if (!mLocalZone.isEmpty()) kDebug(1221)<<"tzname: "<<mLocalZone;
+            kDebug(1221)<<"tzname: "<<mLocalZone;
+        }
     }
     if (mLocalZone.isEmpty())
     {
-        // SOLUTION 7: FAILSAFE.
+        // SOLUTION 8: FAILSAFE.
         mLocalZone = KTimeZone::utc().name();
         mLocalMethod = Utc;
-if (!mLocalZone.isEmpty()) kDebug(1221)<<"Failsafe: "<<mLocalZone;
+        if (!mLocalZone.isEmpty()) kDebug(1221)<<"Failsafe: "<<mLocalZone;
     }
 
     // Finally, if the local zone identity has changed, store
@@ -491,6 +501,9 @@ void KTimeZoned::localChanged(const QString& path)
             break;
         case Timezone:
             checkTimezone();
+            break;
+        case RcFile:
+            checkRcFile();
             break;
         case DefaultInit:
             checkDefaultInit();
@@ -563,12 +576,10 @@ bool KTimeZoned::checkTimezone()
 {
     // SOLUTION 2: DEFINITIVE.
     // BSD support.
-kDebug(1221)<<"checkTimezone()";
     QFile f;
     f.setFileName(QLatin1String("/etc/timezone"));
     if (!f.open(QIODevice::ReadOnly))
         return false;
-kDebug(1221)<<"checkTimezone(): /etc/timezone opened";
     // Read the first line of the file.
     QTextStream ts(&f);
     ts.setCodec("ISO-8859-1");
@@ -578,28 +589,11 @@ kDebug(1221)<<"checkTimezone(): /etc/timezone opened";
     f.close();
     if (zoneName.isEmpty())
         return false;
-    KTimeZone local = mZones.zone(zoneName);
-    if (!local.isValid())
-    {
-        // It isn't a recognised zone in zone.tab.
-        // Note that some systems (e.g. Gentoo) have zones under zoneinfo which
-        // are not in zone.tab, so check if it points to another zone file.
-	if (mZoneinfoDir.isEmpty())
-	    return false;
-        QString path = mZoneinfoDir + '/' + zoneName;
-        QFile qf;
-        qf.setFileName(path);
-        QFileInfo fi(qf);
-        if (fi.isSymLink())
-            fi.setFile(fi.canonicalFilePath());
-        if (!fi.exists() || !fi.isReadable())
-            return false;
-    }
-kDebug(1221)<<"checkTimezone(): local="<<local.isValid()<<", name="<<zoneName;
-    mLocalZone = zoneName;
+    if (!setLocalZone(zoneName))
+        return false;
     mLocalMethod = Timezone;
     mLocalIdFile = f.fileName();
-    mLocalZoneDataFile = mZoneinfoDir.isEmpty() ? QString() : mZoneinfoDir + '/' + zoneName;
+    kDebug(1221)<<"/etc/timezone: "<<mLocalZone;
     return true;
 }
 
@@ -636,6 +630,7 @@ bool KTimeZoned::matchZoneFile(const QString &path)
             mLocalMethod = LocaltimeLink;
             mLocalIdFile = f.fileName();
             mLocalZoneDataFile = zoneInfoFileName;
+            kDebug(1221)<<mLocalIdFile<<": "<<mLocalZone;
             return true;
         }
     }
@@ -790,41 +785,99 @@ bool KTimeZoned::matchZoneFile(const QString &path)
         {
             mLocalMethod = LocaltimeCopy;
             mLocalIdFile = f.fileName();
+            kDebug(1221)<<mLocalIdFile<<": "<<mLocalZone;
             return true;
         }
     }
     return false;
 }
 
-bool KTimeZoned::checkDefaultInit()
+bool KTimeZoned::checkRcFile()
 {
     // SOLUTION 5: DEFINITIVE.
+    // Look for setting in /etc/rc.conf or /etc/rc.local,
+    // with priority to /etc/rc.local.
+    if (findKey(QLatin1String("/etc/rc.local"), "TIMEZONE"))
+    {
+        mLocalIdFile2.clear();
+        kDebug(1221)<<"/etc/rc.local: "<<mLocalZone;
+    }
+    else
+    {
+        if (!findKey(QLatin1String("/etc/rc.conf"), "TIMEZONE"))
+            return false;
+        mLocalIdFile2 = mLocalIdFile;
+        mLocalIdFile  = QLatin1String("/etc/rc.local");
+        kDebug(1221)<<"/etc/rc.conf: "<<mLocalZone;
+    }
+    mLocalMethod = RcFile;
+    return true;
+}
+
+bool KTimeZoned::checkDefaultInit()
+{
+    // SOLUTION 6: DEFINITIVE.
     // Solaris support using /etc/default/init.
+    if (!findKey(QLatin1String("/etc/default/init"), "TZ"))
+        return false;
+    mLocalMethod = DefaultInit;
+    kDebug(1221)<<"/etc/default/init: "<<mLocalZone;
+    return true;
+}
+
+bool KTimeZoned::findKey(const QString &path, const QString &key)
+{
     QFile f;
-    f.setFileName(QLatin1String("/etc/default/init"));
+    f.setFileName(path);
     if (!f.open(QIODevice::ReadOnly))
         return false;
-    // Read the last line starting "TZ=".
+    QString line;
     QString zoneName;
+    QRegExp keyexp('^' + key + "\\s*=\\s*");
     QTextStream ts(&f);
     ts.setCodec("ISO-8859-1");
     while (!ts.atEnd())
     {
-        zoneName = ts.readLine();
-        if (zoneName.startsWith("TZ="))
+        line = ts.readLine();
+        if (keyexp.indexIn(line) == 0)
         {
-            zoneName = zoneName.mid(3);
-            // kDebug(1221) << "local=" << zoneName;
+            zoneName = line.mid(keyexp.matchedLength());
             break;
         }
     }
     f.close();
+    if (zoneName.isEmpty())
+        return false;
+    if (!setLocalZone(zoneName))
+        return false;
+    kDebug(1221) << "Key:" << key << "->" << zoneName;
+    mLocalIdFile = f.fileName();
+    return true;
+}
+
+// Check whether the zone name is valid, either as a zone in zone.tab or
+// as another file in the zoneinfo directory.
+// If valid, set the local zone information.
+bool KTimeZoned::setLocalZone(const QString &zoneName)
+{
     KTimeZone local = mZones.zone(zoneName);
     if (!local.isValid())
-        return false;
+    {
+        // It isn't a recognised zone in zone.tab.
+        // Note that some systems (e.g. Gentoo) have zones under zoneinfo which
+        // are not in zone.tab, so check if it points to another zone file.
+	if (mZoneinfoDir.isEmpty())
+	    return false;
+        QString path = mZoneinfoDir + '/' + zoneName;
+        QFile qf;
+        qf.setFileName(path);
+        QFileInfo fi(qf);
+        if (fi.isSymLink())
+            fi.setFile(fi.canonicalFilePath());
+        if (!fi.exists() || !fi.isReadable())
+            return false;
+    }
     mLocalZone = zoneName;
-    mLocalMethod = DefaultInit;
-    mLocalIdFile = f.fileName();
     mLocalZoneDataFile = mZoneinfoDir.isEmpty() ? QString() : mZoneinfoDir + '/' + zoneName;
     return true;
 }
