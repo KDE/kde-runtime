@@ -302,6 +302,11 @@ void ReportInterface::setAttachToBugNumber(uint bugNumber)
     m_attachToBugNumber = bugNumber;
 }
 
+uint ReportInterface::attachToBugNumber() const
+{
+    return m_attachToBugNumber;
+}
+
 BugzillaManager * ReportInterface::bugzillaManager() const
 {
     return m_bugzillaManager;

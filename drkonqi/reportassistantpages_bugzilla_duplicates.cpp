@@ -140,6 +140,37 @@ void BugzillaDuplicatesPage::aboutToHide()
     reportInterface()->setPossibleDuplicates(possibleDuplicates);
 }
 
+bool BugzillaDuplicatesPage::showNextPage()
+{
+    /*
+    //WIP ask the user to check all the possible duplicates...
+
+    if (ui.m_bugListWidget->topLevelItemCount() != 0 && ui.m_selectedDuplicatesList->count() == 0
+        && reportInterface()->attachToBugNumber() == 0) {
+        //The user didn't selected any possible duplicate nor a report to attach the new info.
+        //Double check this, we need to reduce the duplicate count.
+        KGuiItem noDuplicatesButton;
+        noDuplicatesButton.setText("There are no real duplicates");
+        noDuplicatesButton.setIcon(KIcon("dialog-cancel"));
+
+        KGuiItem letMeCheckMoreReportsButton;
+        letMeCheckMoreReportsButton.setText("Let me check more reports");
+        letMeCheckMoreReportsButton.setIcon(KIcon("document-preview"));
+
+        if (KMessageBox::questionYesNo(this,
+           i18nc("@info","You have not selected any possible duplicate nor a report to attach your "
+           "crash information. Selecting possible duplicates helps the KDE developers and bug "
+           "triagers to organize the bug report information and to get better quality reports. "
+           "Can you confirm that you have not found any duplicate of your crash ?"),
+           i18nc("@title:window",""), letMeCheckMoreReportsButton, noDuplicatesButton)
+                                        == KMessageBox::Yes) {
+            return false;
+        }
+    }
+    */
+    return true;
+}
+
 //BEGIN Search related methods
 void BugzillaDuplicatesPage::searchMore()
 {
@@ -167,14 +198,15 @@ void BugzillaDuplicatesPage::performSearch()
     }
     
     BugReport report = reportInterface()->newBugReportTemplate();
-    bugzillaManager()->searchBugs(QString(), reportInterface()->relatedBugzillaProducts(), 
+    bugzillaManager()->searchBugs(reportInterface()->relatedBugzillaProducts(),
                                   report.bugSeverity(), startDateStr, endDateStr, 
                                   reportInterface()->firstBacktraceFunctions().join(" "));
-    
+
     //Test search
     /*
-    bugzillaManager()->searchBugs( QString(), QStringList() << "konqueror", "crash",  
-                startDateStr, endDateStr , "caret" );
+    bugzillaManager()->searchBugs(QStringList() << "plasma", "crash",
+                startDateStr, endDateStr,
+       "QGraphicsScenePrivate::processDirtyItemsRecursive QGraphicsScenePrivate::_q_processDirtyItems");
     */
 }
 
@@ -237,7 +269,37 @@ void BugzillaDuplicatesPage::searchFinished(const BugMapList & list)
         for (int i = 0; i < results; i++) {
             BugMap bug = list.at(i);
 
-            QStringList fields = QStringList() << bug["bug_id"] << bug["short_desc"];
+            QString title;
+
+            //Generate a non-geek readable status
+            QString customStatusString;
+            if (bug.value("bug_status") == QLatin1String("UNCONFIRMED")
+                || bug.value("bug_status") == QLatin1String("NEW")
+                || bug.value("bug_status") == QLatin1String("REOPENED")
+                || bug.value("bug_status") == QLatin1String("ASSIGNED")) {
+                customStatusString = i18nc("@info/plain bug status", "[Open]");
+            } else if (bug.value("bug_status") == QLatin1String("RESOLVED")
+                || bug.value("bug_status") == QLatin1String("VERIFIED")
+                || bug.value("bug_status") == QLatin1String("CLOSED")) {
+                if (bug.value("resolution") == QLatin1String("FIXED")) {
+                    customStatusString = i18nc("@info/plain bug resolution", "[Fixed]");
+                } else if (bug.value("resolution") == QLatin1String("WORKSFORME")) {
+                    customStatusString = i18nc("@info/plain bug resolution", "[Non-reproducible]");
+                } else if (bug.value("resolution") == QLatin1String("DUPLICATE")) {
+                    customStatusString = i18nc("@info/plain bug resolution", "[Already reported]");
+                } else if (bug.value("resolution") == QLatin1String("INVALID")) {
+                    customStatusString = i18nc("@info/plain bug resolution", "[Invalid]");
+                } else if (bug.value("resolution") == QLatin1String("DOWNSTREAM")
+                    || bug.value("resolution") == QLatin1String("UPSTREAM")) {
+                    customStatusString = i18nc("@info/plain bug resolution", "[Not a KDE bug]");
+                }
+            } else if (bug.value("bug_status") == QLatin1String("NEEDSINFO")) {
+                customStatusString = i18nc("@info bug/plain status", "[Incomplete]");
+            }
+
+            title = customStatusString + ' ' + bug["short_desc"];
+
+            QStringList fields = QStringList() << bug["bug_id"] << title;
             ui.m_bugListWidget->addTopLevelItem(new QTreeWidgetItem(fields));
         }
 
@@ -476,6 +538,34 @@ void BugzillaReportInformationDialog::bugFetchFinished(BugReport report, QObject
 {
     if (jobOwner == this && isVisible()) {
         if (report.isValid()) {
+
+            //Resolve duplicates
+            QString duplicate = report.markedAsDuplicateOf();
+            if (!duplicate.isEmpty()) {
+                bool ok = false;
+                int dupId = duplicate.toInt(&ok);
+                if (ok && dupId > 0) {
+                    KGuiItem yesItem = KStandardGuiItem::yes();
+                    yesItem.setText(i18nc("@action:button let the user to choose to read the "
+                    "main report", "Yes, read the main report"));
+
+                    KGuiItem noItem = KStandardGuiItem::no();
+                    noItem.setText(i18nc("@action:button let the user choose to read the original "
+                    "report", "No, let me read the report I selected"));
+
+                    if (KMessageBox::questionYesNo(this,
+                       i18nc("@info","The report you selected (bug <numid>%1</numid>) is already "
+                       "marked as duplicate of another bug report (bug <numid>%2</numid>). "
+                       "Do you want to read it ?",
+                       report.bugNumber(), dupId),
+                       i18nc("@title:window",""), yesItem, noItem)
+                                                    == KMessageBox::Yes) {
+                        showBugReport(duplicate.toInt());
+                        return;
+                    }
+                }
+            }
+
             //Generate html for comments
             QString comments;
             QStringList commentList = report.comments();

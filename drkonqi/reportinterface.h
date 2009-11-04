@@ -65,6 +65,7 @@ public:
     
     //Zero means creating a new bug report
     void setAttachToBugNumber(uint);
+    uint attachToBugNumber() const;
 
     BugzillaManager * bugzillaManager() const;
     

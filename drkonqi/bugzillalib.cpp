@@ -45,18 +45,18 @@
 
 static const char bugtrackerBKOBaseUrl[] = "https://bugs.kde.org/";
 
-static const char columns[] = "bug_severity,priority,bug_status,product,short_desc"; //resolution,
+static const char columns[] = "bug_severity,priority,bug_status,product,short_desc,resolution";
 
 //Bugzilla URLs
 static const char loginUrl[] = "index.cgi";
-static const char searchUrl[] = "buglist.cgi?query_format=advanced&short_desc_type=anywordssubstr"
-                            "&short_desc=%1&product=kde&product=%2&long_desc_type=anywordssubstr&"
-                            "long_desc=%3&bug_file_loc_type=allwordssubstr&bug_file_loc=&keywords_"
+static const char searchUrl[] = "buglist.cgi?query_format=advanced"
+                            "&product=%1&long_desc_type=allwordssubstr&"
+                            "long_desc=%2&bug_file_loc_type=allwordssubstr&bug_file_loc=&keywords_"
                             "type=allwords&keywords=&emailtype1=substring&email1=&emailtype2=substr"
-                            "ing&email2=&bugidtype=include&bug_id=&votes=&chfieldfrom=%4&chfieldto="
-                            "%5&chfield=[Bug+creation]&chfieldvalue=&cmdtype=doit&field0-0-0=noop"
-                            "&type0-0-0=noop&value0-0-0=&bug_severity=%6&order=Importance"
-                            "&columnlist=%7&ctype=csv";
+                            "ing&email2=&bugidtype=include&bug_id=&votes=&chfieldfrom=%3&chfieldto="
+                            "%4&chfield=[Bug+creation]&chfieldvalue=&cmdtype=doit&field0-0-0=noop"
+                            "&type0-0-0=noop&value0-0-0=&bug_severity=%5&order=Importance"
+                            "&columnlist=%6&ctype=csv";
 // short_desc, product, long_desc(possible backtraces lines), searchFrom, searchTo, severity, columnList
 static const char showBugUrl[] = "show_bug.cgi?id=%1";
 static const char fetchBugUrl[] = "show_bug.cgi?id=%1&ctype=xml";
@@ -128,7 +128,7 @@ void BugzillaManager::fetchBugReport(int bugnumber, QObject * jobOwner)
 }
 
 
-void BugzillaManager::searchBugs(QString words, const QStringList & products,
+void BugzillaManager::searchBugs(const QStringList & products,
                                 const QString & severity, const QString & date_start, 
                                 const QString & date_end, QString comment)
 {
@@ -145,8 +145,7 @@ void BugzillaManager::searchBugs(QString words, const QStringList & products,
     }
 
     QString url = QString(m_bugTrackerUrl) +
-                  QString(searchUrl).arg(words.replace(' ' , '+'), product, 
-                                         comment.replace(' ' , '+'), date_start,
+                  QString(searchUrl).arg(product, comment.replace(' ' , '+'), date_start,
                                          date_end, severity, QString(columns));
     
     stopCurrentSearch();
@@ -540,7 +539,7 @@ BugMapList BugListCSVParser::parse()
         QString expectedHeadersLine = QString(columns);
 
         if (headersLine == (QString("bug_id,") + expectedHeadersLine)) {
-            QStringList headers = expectedHeadersLine.split(',');
+            QStringList headers = expectedHeadersLine.split(',', QString::KeepEmptyParts);
             int headersCount = headers.count();
 
             while (!ts.atEnd()) {
@@ -557,7 +556,7 @@ BugMapList BugListCSVParser::parse()
 
                 QStringList fields = line.split(",\"");
 
-                for (int i = 0; i < headersCount ; i++) {
+                for (int i = 0; i < headersCount && i < fields.count(); i++) {
                     QString field = fields.at(i);
                     field = field.left(field.size() - 1) ;   //Remove trailing "
                     bug.insert(headers.at(i), field);
@@ -609,6 +608,7 @@ BugReport BugReportXMLParser::parse()
             report.setResolution(getSimpleValue("resolution"));
             report.setPriority(getSimpleValue("priority"));
             report.setBugSeverity(getSimpleValue("bug_severity"));
+            report.setMarkedAsDuplicateOf(getSimpleValue("dup_id"));
 
             //Parse full content + comments
             QStringList m_commentList;

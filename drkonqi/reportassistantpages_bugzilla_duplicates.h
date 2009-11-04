@@ -47,6 +47,8 @@ public:
     void aboutToShow();
     void aboutToHide();
 
+    bool showNextPage();
+
 private Q_SLOTS:
     /* Search related methods */
     void searchMore();

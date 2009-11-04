@@ -137,6 +137,13 @@ public:
         return m_commentList.mid(1);
     }
 
+    void setMarkedAsDuplicateOf(const QString & dupID) {
+        setData("dup_id", dupID);
+    }
+    QString markedAsDuplicateOf() const {
+        return getData("dup_id");
+    }
+
     void setValid(bool valid) {
         m_isValid = valid;
     }
@@ -210,7 +217,7 @@ public:
     /* Bugzilla Action methods */
     void fetchBugReport(int, QObject * jobOwner = 0);
 
-    void searchBugs(QString words, const QStringList & products, const QString & severity,
+    void searchBugs(const QStringList & products, const QString & severity,
                     const QString & date_start, const QString & date_end , QString comment);
     
     void sendReport(BugReport);
