@@ -319,8 +319,8 @@ void ReportAssistantDialog::closeEvent(QCloseEvent * event)
 
             int ret = KMessageBox::questionYesNoCancel(this,
                            i18nc("@info","Do you really want to close the bug assistant without "
-                           "submitting the report? <note>The crash information is still valid so "
-                           "you can save the report before closing</note>"),
+                           "submitting the report? <note>The crash information is still valid, so "
+                           "you can save the report before closing.</note>"),
                            i18nc("@title:window","Close the Reporting Assistant"),
                            closeItem, saveBacktraceItem, keepOpenItem, QString(), KMessageBox::Dangerous);
             if(ret == KMessageBox::Yes)
