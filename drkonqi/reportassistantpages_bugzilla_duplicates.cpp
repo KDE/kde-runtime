@@ -556,8 +556,8 @@ void BugzillaReportInformationDialog::bugFetchFinished(BugReport report, QObject
 
                     if (KMessageBox::questionYesNo(this,
                        i18nc("@info","The report you selected (bug <numid>%1</numid>) is already "
-                       "marked as duplicate of another bug report (bug <numid>%2</numid>). "
-                       "Do you want to read it?",
+                       "marked as duplicate of bug <numid>%2</numid>. "
+                       "Do you want to read that report instead?",
                        report.bugNumber(), dupId),
                        i18nc("@title:window","Nested duplicate detected"), yesItem, noItem)
                                                     == KMessageBox::Yes) {
