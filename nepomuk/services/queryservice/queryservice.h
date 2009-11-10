@@ -21,9 +21,12 @@
 
 #include <Nepomuk/Service>
 
-#include <QtCore/QUrl>
+#include "dbusoperators.h"
+
+#include <KUrl>
+
 #include <QtCore/QVariant>
-#include <QtCore/QMultiHash>
+#include <QtCore/QHash>
 
 class QDBusObjectPath;
 class QDBusMessage;
@@ -33,11 +36,10 @@ namespace Soprano {
 }
 
 namespace Nepomuk {
-    namespace Search {
+    namespace Query {
 
         class Folder;
         class FolderConnection;
-        class Query;
 
         class QueryService : public Service
         {
@@ -53,8 +55,17 @@ namespace Nepomuk {
             static QueryService* instance();
 
         public Q_SLOTS:
-            Q_SCRIPTABLE QDBusObjectPath query( const QString& query, const QStringList& props, const QDBusMessage& msg );
-            Q_SCRIPTABLE QDBusObjectPath query( const Nepomuk::Search::Query& query, const QDBusMessage& msg );
+            /**
+             * Create a query folder from desktop query string \p query. The optional properties in \p requestProps will be
+             * added to the Query object once \p query has been parsed by QueryParser.
+             */
+            Q_SCRIPTABLE QDBusObjectPath query( const QString& query, const QDBusMessage& msg );
+
+            /**
+             * Create a query folder from SPARQL query string \p query. The optional properties in \p requestProps are assumed
+             * to be part of \p query already as done by Query::toSparqlQuery. They are simple needed to map bindings to properties.
+             */
+            Q_SCRIPTABLE QDBusObjectPath sparqlQuery( const QString& query, const RequestPropertyMapDBus& requestProps, const QDBusMessage& msg );
 
         private Q_SLOTS:
             void slotServiceOwnerChanged( const QString& serviceName,
@@ -67,12 +78,12 @@ namespace Nepomuk {
             /**
              * Creates a new folder or reuses an existing one.
              */
-            Folder* getFolder( const Query& query );
+            Folder* getFolder( const QString& sparql, const RequestPropertyMap& requestProps );
 
             static QueryService* s_instance;
 
-            QHash<Query, Folder*> m_openFolders;
-            QHash<Folder*, Query> m_folderQueryHash;
+            QHash<QString, Folder*> m_openFolders;
+            QHash<Folder*, QString> m_folderQueryHash;
             QMultiHash<QString, FolderConnection*> m_openConnections;      // maps from DBus service to connection
             QHash<FolderConnection*, QString> m_connectionDBusServiceHash; // maps connections to their using dbus service
 

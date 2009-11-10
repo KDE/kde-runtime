@@ -20,14 +20,15 @@
 #include "searchcore.h"
 #include "searchthread.h"
 
-#include <QtCore/QEventLoop>
 #include <QtCore/QPointer>
 
 #include <Soprano/Node>
 
+#include <Nepomuk/Resource>
+
 #include <KDebug>
 
-class Nepomuk::Search::SearchCore::Private
+class Nepomuk::Query::SearchCore::Private
 {
 public:
     Private()
@@ -37,51 +38,49 @@ public:
     }
 
     double cutOffScore;
-    QHash<QUrl, Nepomuk::Search::Result> lastResults;
+    QHash<QUrl, Nepomuk::Query::Result> lastResults;
     SearchThread* searchThread;
 
     bool active;
     bool canceled;
-
-    QPointer<QEventLoop> eventLoop;
 };
 
 
-Nepomuk::Search::SearchCore::SearchCore( QObject* parent )
+Nepomuk::Query::SearchCore::SearchCore( QObject* parent )
     : QObject( parent ),
       d( new Private() )
 {
     d->searchThread = new SearchThread( this );
-    connect( d->searchThread, SIGNAL( newResult( const Nepomuk::Search::Result& ) ),
-             this, SLOT( slotNewResult( const Nepomuk::Search::Result& ) ) );
+    connect( d->searchThread, SIGNAL( newResult( const Nepomuk::Query::Result& ) ),
+             this, SLOT( slotNewResult( const Nepomuk::Query::Result& ) ) );
     connect( d->searchThread, SIGNAL( finished() ),
              this, SLOT( slotFinished() ) );
 }
 
 
-Nepomuk::Search::SearchCore::~SearchCore()
+Nepomuk::Query::SearchCore::~SearchCore()
 {
     d->searchThread->cancel();
     delete d;
 }
 
 
-bool Nepomuk::Search::SearchCore::isActive() const
+bool Nepomuk::Query::SearchCore::isActive() const
 {
     return d->active;
 }
 
 
-void Nepomuk::Search::SearchCore::query( const Query& query )
+void Nepomuk::Query::SearchCore::query( const QString& query, const Nepomuk::Query::RequestPropertyMap& requestProps )
 {
     d->lastResults.clear();
     d->canceled = false;
     d->active = true;
-    d->searchThread->query( query, cutOffScore() );
+    d->searchThread->query( query, requestProps, cutOffScore() );
 }
 
 
-void Nepomuk::Search::SearchCore::cancel()
+void Nepomuk::Query::SearchCore::cancel()
 {
     d->canceled = true;
     d->active = false;
@@ -89,30 +88,30 @@ void Nepomuk::Search::SearchCore::cancel()
 }
 
 
-void Nepomuk::Search::SearchCore::setCutOffScore( double score )
+void Nepomuk::Query::SearchCore::setCutOffScore( double score )
 {
     d->cutOffScore = qMin( 1.0, qMax( score, 0.0 ) );
 }
 
 
-double Nepomuk::Search::SearchCore::cutOffScore() const
+double Nepomuk::Query::SearchCore::cutOffScore() const
 {
     return d->cutOffScore;
 }
 
 
-QList<Nepomuk::Search::Result> Nepomuk::Search::SearchCore::lastResults() const
+QList<Nepomuk::Query::Result> Nepomuk::Query::SearchCore::lastResults() const
 {
     return d->lastResults.values();
 }
 
 
-void Nepomuk::Search::SearchCore::slotNewResult( const Nepomuk::Search::Result& result )
+void Nepomuk::Query::SearchCore::slotNewResult( const Nepomuk::Query::Result& result )
 {
     if ( !d->canceled ) {
-        QHash<QUrl, Result>::iterator it = d->lastResults.find( result.resourceUri() );
+        QHash<QUrl, Result>::iterator it = d->lastResults.find( result.resource().resourceUri() );
         if ( it == d->lastResults.end() ) {
-            d->lastResults.insert( result.resourceUri(), result );
+            d->lastResults.insert( result.resource().resourceUri(), result );
             emit newResult( result );
         }
         else {
@@ -124,37 +123,11 @@ void Nepomuk::Search::SearchCore::slotNewResult( const Nepomuk::Search::Result& 
 }
 
 
-void Nepomuk::Search::SearchCore::slotFinished()
+void Nepomuk::Query::SearchCore::slotFinished()
 {
     kDebug();
     d->active = false;
-    if ( d->eventLoop ) {
-        d->eventLoop->exit();
-    }
     emit finished();
-}
-
-
-QList<Nepomuk::Search::Result> Nepomuk::Search::SearchCore::blockingQuery( const Query& q )
-{
-    kDebug();
-
-    // cancel previous search
-    if( d->eventLoop != 0 ) {
-        kDebug() << "Killing previous search";
-        QEventLoop* loop = d->eventLoop;
-        d->eventLoop = 0;
-        d->searchThread->cancel();
-        loop->exit();
-    }
-
-    QEventLoop loop;
-    d->eventLoop = &loop;
-    query( q );
-    loop.exec();
-    d->eventLoop = 0;
-    kDebug() << "done";
-    return lastResults();
 }
 
 #include "searchcore.moc"

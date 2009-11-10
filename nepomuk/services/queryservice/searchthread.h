@@ -1,6 +1,6 @@
 /*
    This file is part of the Nepomuk KDE project.
-   Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+   Copyright (C) 2007-2009 Sebastian Trueg <trueg@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -22,13 +22,12 @@
 
 #include <QtCore/QThread>
 #include <QtCore/QHash>
-#include <QtCore/QUrl>
 #include <QtCore/QPair>
 
-#include "query.h"
-#include "term.h"
-#include "result.h"
+#include <Nepomuk/Query/Result>
+#include <Nepomuk/Query/Query>
 
+#include <KUrl>
 
 
 namespace Soprano {
@@ -36,33 +35,7 @@ namespace Soprano {
 }
 
 namespace Nepomuk {
-    namespace Search {
-
-        class SearchNode
-        {
-        public:
-            enum Type {
-                Unknown,
-                Lucene,
-                Sparql
-            };
-
-            SearchNode( const Term& t,
-                        Type tt = Unknown,
-                        const QList<Nepomuk::Search::Query::FolderLimit>& l = QList<Nepomuk::Search::Query::FolderLimit>(),
-                        const QList<SearchNode>& sub = QList<SearchNode>() )
-                : term(t),
-                type(tt),
-                folderLimits(l),
-                subNodes(sub) {
-            }
-
-            Term term;
-            Type type;
-            QList<Nepomuk::Search::Query::FolderLimit> folderLimits;
-            QList<SearchNode> subNodes;
-        };
-
+    namespace Query {
         class SearchThread : public QThread
         {
             Q_OBJECT
@@ -74,74 +47,28 @@ namespace Nepomuk {
             /**
              * Use instead of QThread::start()
              */
-            void query( const Query& query, double cutOffScore );
+            void query( const QString& query, const RequestPropertyMap& requestProps, double cutOffScore );
             void cancel();
 
             double cutOffScore() const { return m_cutOffScore; }
 
         signals:
-            void newResult( const Nepomuk::Search::Result& result );
+            void newResult( const Nepomuk::Query::Result& result );
 
         protected:
             void run();
 
         private:
-            /**
-             * Makes sure each contains or euality term has a property set instead of
-             * a fuzzy field name. However, nonexisting fields will not be changed!
-             *
-             * If a field matches multiple properties an OR term will be constructed to include
-             * them all.
-             *
-             * Works recursively on all term types.
-             */
-            Nepomuk::Search::Term resolveFields( const Term& term );
+            QHash<QUrl, Nepomuk::Query::Result> sparqlQuery( const QString& query, double baseScore, bool reportResults );
+            Nepomuk::Query::Result extractResult( const Soprano::QueryResultIterator& it ) const;
 
-            /**
-             * Resolves the values in the contains and equality terms.
-             * This means that terms that refer to properties that have resource ranges
-             * are replaced by terms that name the actual resources.
-             *
-             * Be aware that resolveFields needs to be run before this method.
-             *
-             * Works recursively on all term types.
-             */
-            Nepomuk::Search::Term resolveValues( const Term& term );
+            QString m_sparqlQuery;
+            RequestPropertyMap m_requestProperties;
 
-            /**
-             * Optimizes a query, i.e. combines OR and AND terms where possible.
-             */
-            Nepomuk::Search::Term optimize( const Term& term );
-
-            /**
-             * Try to split the query into two (or more) subqueries, one of which will be
-             * executed against the lucene index and one against the soprano store.
-             */
-            SearchNode splitLuceneSparql( const Term& term, const QList<Nepomuk::Search::Query::FolderLimit>& folderLimits );
-
-            QList<QUrl> matchFieldName( const QString& field );
-            QHash<QUrl, Result> search( const SearchNode& node, double baseScore, bool reportResults = false );
-            QHash<QUrl, Result> andSearch( const QList<SearchNode>& terms, double baseScore, bool reportResults = false );
-            QHash<QUrl, Result> orSearch( const QList<SearchNode>& terms, double baseScore, bool reportResults = false );
-            QHash<QUrl, Nepomuk::Search::Result> sparqlQuery( const QString& query, double baseScore, bool reportResults );
-            QHash<QUrl, Nepomuk::Search::Result> luceneQuery( const QString& query, double baseScore, bool reportResults );
-
-            QString buildRequestPropertyVariableList() const;
-            QString buildRequestPropertyPatterns() const;
-            Nepomuk::Search::Result extractResult( const Soprano::QueryResultIterator& it ) const;
-            void fetchRequestPropertiesForResource( Result& uri );
-
-            QString createSparqlQuery( const SearchNode& node );
-
-            Query m_searchTerm;
             double m_cutOffScore;
 
             // status
-            int m_numResults;
             bool m_canceled;
-
-            // cache of all prefixes that are supported
-            QHash<QString, QUrl> m_prefixes;
         };
     }
 }

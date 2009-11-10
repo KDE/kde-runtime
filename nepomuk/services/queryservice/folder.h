@@ -1,5 +1,5 @@
-/* 
-   Copyright (c) 2008 Sebastian Trueg <trueg@kde.org>
+/*
+   Copyright (c) 2008-2009 Sebastian Trueg <trueg@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -21,18 +21,18 @@
 
 #include <QtCore/QObject>
 
-#include "result.h"
-#include "query.h"
-#include "searchcore.h"
+#include <Nepomuk/Query/Result>
 
 #include <QtCore/QHash>
 #include <QtCore/QTimer>
 
+#include <KUrl>
+
+#include "searchcore.h"
 
 namespace Nepomuk {
-    namespace Search {
+    namespace Query {
 
-        class Query;
         class FolderConnection;
 
         /**
@@ -45,7 +45,7 @@ namespace Nepomuk {
             Q_OBJECT
 
         public:
-            Folder( const Query& query, QObject* parent = 0 );
+            Folder( const QString& query, const RequestPropertyMap& requestProps, QObject* parent = 0 );
             ~Folder();
 
             /**
@@ -67,13 +67,13 @@ namespace Nepomuk {
             void update();
 
         Q_SIGNALS:
-            void newEntries( const QList<Nepomuk::Search::Result>& entries );
+            void newEntries( const QList<Nepomuk::Query::Result>& entries );
             void entriesRemoved( const QList<QUrl>& entries );
             void finishedListing();
 
         private Q_SLOTS:
-            void slotSearchNewResult( const Nepomuk::Search::Result& );
-            void slotSearchScoreChanged( const Nepomuk::Search::Result& );
+            void slotSearchNewResult( const Nepomuk::Query::Result& );
+            void slotSearchScoreChanged( const Nepomuk::Query::Result& );
             void slotSearchFinished();
             void slotStorageChanged();
             void slotUpdateTimeout();
@@ -89,7 +89,8 @@ namespace Nepomuk {
              */
             void removeConnection( FolderConnection* );
 
-            Query m_query;
+            QString m_query;
+            RequestPropertyMap m_requestProperties;
             QList<FolderConnection*> m_connections;
 
             bool m_initialListingDone;

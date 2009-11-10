@@ -8,7 +8,6 @@ include_directories(
   ${QT_INCLUDES}
   ${KDE4_INCLUDES}
   ${NEPOMUK_INCLUDES}
-  ${nepomuk_SOURCE_DIR}/libnepomukquery
 )
 
 set(queryservice_SRCS
@@ -17,12 +16,7 @@ set(queryservice_SRCS
   searchthread.cpp
   folder.cpp
   folderconnection.cpp
-  dateparser.cpp
-  ${nepomuk_SOURCE_DIR}/libnepomukquery/result.cpp
-  ${nepomuk_SOURCE_DIR}/libnepomukquery/query.cpp
-  ${nepomuk_SOURCE_DIR}/libnepomukquery/term.cpp
-  ${nepomuk_SOURCE_DIR}/libnepomukquery/queryparser.cpp
-  ${nepomuk_SOURCE_DIR}/libnepomukquery/dbusoperators.cpp
+  dbusoperators.cpp
 )
 
 soprano_add_ontology(queryservice_SRCS
@@ -30,11 +24,16 @@ soprano_add_ontology(queryservice_SRCS
   "NFO"
   "Nepomuk::Vocabulary"
   "trig")
+soprano_add_ontology(queryservice_SRCS
+  ${nepomukontologies_SOURCE_DIR}/nie.trig
+  "NIE"
+  "Nepomuk::Vocabulary"
+  "trig")
 
 qt4_add_dbus_adaptor(queryservice_SRCS
   ../../interfaces/org.kde.nepomuk.Query.xml
   folderconnection.h
-  Nepomuk::Search::FolderConnection)
+  Nepomuk::Query::FolderConnection)
 
 kde4_add_plugin(nepomukqueryservice ${queryservice_SRCS})
 
@@ -44,6 +43,7 @@ target_link_libraries(nepomukqueryservice
   ${KDE4_KDEUI_LIBS}
   ${KDE4_KIO_LIBS}
   ${NEPOMUK_LIBRARIES}
+  ${NEPOMUK_QUERY_LIBRARIES}
   )
 
 install(
@@ -52,5 +52,3 @@ install(
 install(
   TARGETS nepomukqueryservice
   DESTINATION ${PLUGIN_INSTALL_DIR})
-
-#add_subdirectory(test)

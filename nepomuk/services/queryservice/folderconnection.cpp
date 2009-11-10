@@ -1,5 +1,5 @@
 /*
-   Copyright (c) 2008 Sebastian Trueg <trueg@kde.org>
+   Copyright (c) 2008-2009 Sebastian Trueg <trueg@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -23,12 +23,12 @@
 
 #include <KDebug>
 
-Nepomuk::Search::FolderConnection::FolderConnection( Folder* folder )
+Nepomuk::Query::FolderConnection::FolderConnection( Folder* folder )
     : QObject( folder ),
       m_folder( folder )
 {
-    connect( m_folder, SIGNAL( newEntries( QList<Nepomuk::Search::Result> ) ),
-             this, SIGNAL( newEntries( QList<Nepomuk::Search::Result> ) ) );
+    connect( m_folder, SIGNAL( newEntries( QList<Nepomuk::Query::Result> ) ),
+             this, SIGNAL( newEntries( QList<Nepomuk::Query::Result> ) ) );
     connect( m_folder, SIGNAL( entriesRemoved( QList<QUrl> ) ),
              this, SLOT( slotEntriesRemoved( QList<QUrl> ) ) );
     connect( m_folder, SIGNAL( finishedListing() ),
@@ -38,13 +38,13 @@ Nepomuk::Search::FolderConnection::FolderConnection( Folder* folder )
 }
 
 
-Nepomuk::Search::FolderConnection::~FolderConnection()
+Nepomuk::Query::FolderConnection::~FolderConnection()
 {
     m_folder->removeConnection( this );
 }
 
 
-void Nepomuk::Search::FolderConnection::list()
+void Nepomuk::Query::FolderConnection::list()
 {
     kDebug();
     if ( !m_folder->entries().isEmpty() ) {
@@ -60,7 +60,7 @@ void Nepomuk::Search::FolderConnection::list()
 }
 
 
-void Nepomuk::Search::FolderConnection::slotEntriesRemoved( QList<QUrl> entries )
+void Nepomuk::Query::FolderConnection::slotEntriesRemoved( QList<QUrl> entries )
 {
     QStringList uris;
     for ( int i = 0; i < entries.count(); ++i ) {
@@ -70,7 +70,7 @@ void Nepomuk::Search::FolderConnection::slotEntriesRemoved( QList<QUrl> entries 
 }
 
 
-void Nepomuk::Search::FolderConnection::close()
+void Nepomuk::Query::FolderConnection::close()
 {
     kDebug();
     deleteLater();

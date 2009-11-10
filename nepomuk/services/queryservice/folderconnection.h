@@ -1,5 +1,5 @@
 /*
-   Copyright (c) 2008 Sebastian Trueg <trueg@kde.org>
+   Copyright (c) 2008-2009 Sebastian Trueg <trueg@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -24,7 +24,7 @@
 class QUrl;
 
 namespace Nepomuk {
-    namespace Search {
+    namespace Query {
 
         class Result;
         class ResultIterator;
@@ -43,7 +43,7 @@ namespace Nepomuk {
             void close();
 
         Q_SIGNALS:
-            void newEntries( const QList<Nepomuk::Search::Result>& );
+            void newEntries( const QList<Nepomuk::Query::Result>& );
             void entriesRemoved( const QStringList& );
             void finishedListing();
 
