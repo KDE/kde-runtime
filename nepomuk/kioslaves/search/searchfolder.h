@@ -27,9 +27,9 @@
 #include <QtCore/QMutex>
 #include <QtCore/QWaitCondition>
 
-#include "term.h"
-#include "result.h"
-#include "query.h"
+#include <Nepomuk/Query/Term>
+#include <Nepomuk/Query/Result>
+#include <Nepomuk/Query/Query>
 
 #include <kio/udsentry.h>
 #include <kio/slavebase.h>
@@ -38,7 +38,7 @@
 
 
 namespace Nepomuk {
-    namespace Search {
+    namespace Query {
         class QueryServiceClient;
     }
 
@@ -70,10 +70,10 @@ namespace Nepomuk {
 
     public:
         SearchFolder();
-        SearchFolder( const QString& name, const Search::Query& query, KIO::SlaveBase* slave );
+        SearchFolder( const QString& name, const QString& query, KIO::SlaveBase* slave );
         ~SearchFolder();
 
-        Search::Query query() const { return m_query; }
+        QString query() const { return m_query; }
         QString name() const { return m_name; }
         QList<SearchEntry*> entries() const { return m_entries.values(); }
 
@@ -85,7 +85,7 @@ namespace Nepomuk {
 
     private Q_SLOTS:
         /// connected to the QueryServiceClient in the search thread
-        void slotNewEntries( const QList<Nepomuk::Search::Result>& );
+        void slotNewEntries( const QList<Nepomuk::Query::Result>& );
 
         /// connected to the QueryServiceClient in the search thread
         void slotEntriesRemoved( const QList<QUrl>& );
@@ -109,14 +109,16 @@ namespace Nepomuk {
         /**
          * Stats the result and returns the entry.
          */
-        SearchEntry* statResult( const Search::Result& result );
+        SearchEntry* statResult( const Query::Result& result );
 
         // folder properties
         QString m_name;
-        Search::Query m_query;
+
+        // SPARQL query that is actually sent to the query service
+        QString m_query;
 
         // result cache, filled by the search thread
-        QQueue<Search::Result> m_resultsQueue;
+        QQueue<Query::Result> m_resultsQueue;
 
         // final results, filled by the main thread in statResults
         QHash<QString, SearchEntry*> m_entries;
@@ -137,7 +139,7 @@ namespace Nepomuk {
         // true if listing of entries has been requested
         bool m_listEntries;
 
-        Search::QueryServiceClient* m_client;
+        Query::QueryServiceClient* m_client;
 
         // mutex to protect the results
         QMutex m_resultMutex;

@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2008 by Sebastian Trueg <trueg at kde.org>
+   Copyright (C) 2008-2009 by Sebastian Trueg <trueg at kde.org>
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -21,15 +21,16 @@
 #include "nie.h"
 #include "pimo.h"
 
-#include "queryserviceclient.h"
-
 #include <Soprano/Vocabulary/Xesam>
 #include <Soprano/Vocabulary/NAO>
 #include <Soprano/Node> // for qHash( QUrl )
 
 #include <Nepomuk/Variant>
 #include <Nepomuk/Thing>
-#include <nepomuk/class.h>
+#include <Nepomuk/Types/Class>
+#include <Nepomuk/Query/Query>
+#include <Nepomuk/Query/QueryServiceClient>
+
 #include <QtCore/QMutexLocker>
 
 #include <KUrl>
@@ -76,7 +77,7 @@ Nepomuk::SearchFolder::SearchFolder()
 }
 
 
-Nepomuk::SearchFolder::SearchFolder( const QString& name, const Search::Query& query, KIO::SlaveBase* slave )
+Nepomuk::SearchFolder::SearchFolder( const QString& name, const QString& query, KIO::SlaveBase* slave )
     : QThread(),
       m_name( name ),
       m_query( query ),
@@ -107,14 +108,14 @@ void Nepomuk::SearchFolder::run()
 {
     kDebug() << m_name << QThread::currentThread();
 
-    m_client = new Nepomuk::Search::QueryServiceClient();
+    m_client = new Nepomuk::Query::QueryServiceClient();
 
     // results signals are connected directly to update the results cache m_resultsQueue
     // and the entries cache m_entries, as well as emitting KDirNotify signals
     // a queued connection is not possible since we have no event loop after the
     // initial listing which means that queued signals would never get delivered
-    connect( m_client, SIGNAL( newEntries( const QList<Nepomuk::Search::Result>& ) ),
-             this, SLOT( slotNewEntries( const QList<Nepomuk::Search::Result>& ) ),
+    connect( m_client, SIGNAL( newEntries( const QList<Nepomuk::Query::Result>& ) ),
+             this, SLOT( slotNewEntries( const QList<Nepomuk::Query::Result>& ) ),
              Qt::DirectConnection );
     connect( m_client, SIGNAL( entriesRemoved( const QList<QUrl>& ) ),
              this, SLOT( slotEntriesRemoved( const QList<QUrl>& ) ),
@@ -123,7 +124,9 @@ void Nepomuk::SearchFolder::run()
              this, SLOT( slotFinishedListing() ),
              Qt::DirectConnection );
 
-    m_client->query( m_query );
+    Query::Query q;
+    q.addRequestProperty( Query::Query::RequestProperty( Nepomuk::Vocabulary::NIE::url() ) );
+    m_client->sparqlQuery( m_query, q.requestPropertyMap() );
     exec();
     delete m_client;
 
@@ -210,7 +213,7 @@ Nepomuk::SearchEntry* Nepomuk::SearchFolder::findEntry( const KUrl& url )
 
 
 // always called in search thread
-void Nepomuk::SearchFolder::slotNewEntries( const QList<Nepomuk::Search::Result>& results )
+void Nepomuk::SearchFolder::slotNewEntries( const QList<Nepomuk::Query::Result>& results )
 {
     kDebug() << m_name << QThread::currentThread();
 
@@ -267,7 +270,7 @@ void Nepomuk::SearchFolder::statResults()
     while ( 1 ) {
         m_resultMutex.lock();
         if ( !m_resultsQueue.isEmpty() ) {
-            Search::Result result = m_resultsQueue.dequeue();
+            Query::Result result = m_resultsQueue.dequeue();
             m_resultMutex.unlock();
             SearchEntry* entry = statResult( result );
             if ( entry ) {
@@ -337,7 +340,7 @@ namespace {
 }
 
 // always called in main thread
-Nepomuk::SearchEntry* Nepomuk::SearchFolder::statResult( const Search::Result& result )
+Nepomuk::SearchEntry* Nepomuk::SearchFolder::statResult( const Query::Result& result )
 {
     //
     // First we check if the resource is a file itself. For that we first get
@@ -345,9 +348,7 @@ Nepomuk::SearchEntry* Nepomuk::SearchFolder::statResult( const Search::Result& r
     //
     KUrl url = result[Nepomuk::Vocabulary::NIE::url()].uri();
     if ( url.isEmpty() ) {
-        url = result[Soprano::Vocabulary::Xesam::url()].uri();
-        if ( url.isEmpty() )
-            url = result.resourceUri();
+        url = result.resource().resourceUri();
     }
     bool isFile = false;
     KIO::UDSEntry uds = statFile( url, isFile );
@@ -364,13 +365,13 @@ Nepomuk::SearchEntry* Nepomuk::SearchFolder::statResult( const Search::Result& r
     // label and icon if set
     //
     else {
-        kDebug() << "listing resource" << result.resourceUri();
+        kDebug() << "listing resource" << result.resource().resourceUri();
 
         //
         // We only create a resource here since this is a rather slow process and
         // a lot of file results could become slow then.
         //
-        Nepomuk::Resource res( result.resourceUri() );
+        Nepomuk::Resource res( result.resource() );
 
         //
         // let's see if it is a pimo thing which refers to a file
@@ -383,7 +384,7 @@ Nepomuk::SearchEntry* Nepomuk::SearchFolder::statResult( const Search::Result& r
                 if ( url.isEmpty() ) {
                     url = extractUrl( fileRes.property( Soprano::Vocabulary::Xesam::url() ) );
                     if ( url.isEmpty() )
-                        url = result.resourceUri();
+                        url = res.resourceUri();
                 }
                 uds = statFile( url, isPimoThingLinkedFile );
             }
@@ -426,6 +427,7 @@ Nepomuk::SearchEntry* Nepomuk::SearchFolder::statResult( const Search::Result& r
         //
         if ( !isPimoThingLinkedFile ) {
             uds.insert( KIO::UDSEntry::UDS_CREATION_TIME, res.property( Soprano::Vocabulary::NAO::created() ).toDateTime().toTime_t() );
+            uds.insert( KIO::UDSEntry::UDS_MODIFICATION_TIME, res.property( Soprano::Vocabulary::NAO::lastModified() ).toDateTime().toTime_t() );
             uds.insert( KIO::UDSEntry::UDS_ACCESS, 0700 );
             uds.insert( KIO::UDSEntry::UDS_USER, KUser().loginName() );
 //        uds.insert( KIO::UDSEntry::UDS_MIME_TYPE, "application/x-nepomuk-resource" );
@@ -448,10 +450,14 @@ Nepomuk::SearchEntry* Nepomuk::SearchFolder::statResult( const Search::Result& r
         // everything much cleaner since kio slaves can decide if the resources can be
         // annotated or not.
         //
-        if ( isPimoThingLinkedFile )
+        if ( isPimoThingLinkedFile ) {
             uds.insert( KIO::UDSEntry::UDS_NEPOMUK_URI, KUrl( url ).url() );
-        else
+            uds.insert( KIO::UDSEntry::UDS_TARGET_URL, KUrl( url ).url() );
+        }
+        else {
             uds.insert( KIO::UDSEntry::UDS_NEPOMUK_URI, KUrl( res.resourceUri() ).url() );
+            uds.insert( KIO::UDSEntry::UDS_TARGET_URL, KUrl( res.resourceUri() ).url() );
+        }
     }
 
     //
@@ -477,17 +483,17 @@ Nepomuk::SearchEntry* Nepomuk::SearchFolder::statResult( const Search::Result& r
         uds.insert( KIO::UDSEntry::UDS_NAME, name );
         uds.insert( KIO::UDSEntry::UDS_DISPLAY_NAME, name );
 
-        SearchEntry* entry = new SearchEntry( result.resourceUri(), isFile, uds );
+        SearchEntry* entry = new SearchEntry( result.resource().resourceUri(), isFile, uds );
         m_entries.insert( name, entry );
-        m_resourceNameMap.insert( result.resourceUri(), name );
+        m_resourceNameMap.insert( result.resource().resourceUri(), name );
 
-        kDebug() << "Stating" << result.resourceUri() << "done";
+        kDebug() << "Stating" << result.resource().resourceUri() << "done";
 
         return entry;
     }
     else {
         // no valid name -> no valid uds
-        kDebug() << "Stating" << result.resourceUri() << "failed";
+        kDebug() << "Stating" << result.resource().resourceUri() << "failed";
         return 0;
     }
 }

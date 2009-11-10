@@ -21,7 +21,6 @@
 
 #include <kio/forwardingslavebase.h>
 
-#include "term.h"
 #include "searchfolder.h"
 
 #include <QtCore/QQueue>
@@ -80,22 +79,22 @@ namespace Nepomuk {
     private:
         bool ensureNepomukRunning();
         void listRoot();
-        void listQuery( const QString& query, Search::Query::Type type );
+        void listQuery( const QString& query, bool sparql );
         void listActions();
         void listDefaultSearches();
         void listDefaultSearch( const QString& path );
-        void addDefaultSearch( const QString& name, const Search::Query& );
+        void addDefaultSearch( const QString& name, const KUrl& url );
 
         SearchFolder* extractSearchFolder( const KUrl& url );
 
         /**
-         * Get (possibly cached) query results
+         * Get (possibly cached) query folder
          */
-        SearchFolder* getQueryResults( const QString& query, Search::Query::Type type );
+        SearchFolder* getQueryFolder( const QString& query, bool sparql );
         SearchFolder* getDefaultQueryFolder( const QString& name );
 
         // the default search folders
-        QHash<QString, Nepomuk::Search::Query> m_defaultSearches;
+        QHash<QString, KUrl> m_defaultSearches;
 
         // cache of all on-the-fly search folders
         QHash<QString, SearchFolder*>  m_searchCache;

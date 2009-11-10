@@ -21,7 +21,6 @@
 #include "nfo.h"
 #include "nie.h"
 #include "pimo.h"
-#include "queryserviceclient.h"
 
 #include <QtCore/QFile>
 
@@ -40,7 +39,8 @@
 #include <Nepomuk/Resource>
 #include <Nepomuk/ResourceManager>
 #include <Nepomuk/Variant>
-#include "queryparser.h"
+#include <Nepomuk/Query/QueryParser>
+#include <Nepomuk/Query/QueryServiceClient>
 
 #include <Soprano/Vocabulary/RDF>
 #include <Soprano/Vocabulary/RDFS>
@@ -64,24 +64,20 @@ namespace {
     }
 
 
-    // if type != 0, also retreives the type of the query and stores it into type
-    QString queryNameFromURL( const KUrl& url, Nepomuk::Search::Query::Type* type = 0 ) {
+    QString queryFromUrl( const KUrl& url, bool* sparql = 0 ) {
         if(url.queryItems().contains( "sparql" ) ) {
-            if( type ) {
-                *type = Nepomuk::Search::Query::SPARQLQuery;
-            }
+            if( sparql )
+                *sparql = true;
             return url.queryItem( "sparql" );
         }
         else if(url.queryItems().contains( "query" ) ) {
-            if( type ) {
-                *type = Nepomuk::Search::Query::PlainQuery;
-            }
+            if( sparql )
+                *sparql = false;
             return url.queryItem( "query" );
         }
         else {
-            if( type ) {
-                *type = Nepomuk::Search::Query::PlainQuery;
-            }
+            if( sparql )
+                *sparql = false;
             return url.path().section( '/', 0, 0, QString::SectionSkipEmpty );
         }
     }
@@ -101,15 +97,6 @@ namespace {
         }
     }
 
-    Nepomuk::Search::Query createQuery( const QString& name, Nepomuk::Search::Query::Type type ) {
-        if( type == Nepomuk::Search::Query::PlainQuery ) {
-            return Nepomuk::Search::QueryParser::parseQuery( name );
-        }
-        else /*type == Search::Query::SPARQLQuery*/ {
-            return Nepomuk::Search::Query( name );
-        }
-    }
-
     // do not cache more than SEARCH_CACHE_MAX search folders at the same time
     const int SEARCH_CACHE_MAX = 5;
 }
@@ -126,12 +113,13 @@ Nepomuk::SearchProtocol::SearchProtocol( const QByteArray& poolSocket, const QBy
     {
         search = search.simplified();
         KConfigGroup grp = config.group(search);
-        KUrl url( QUrl( QString("nepomuksearch:/") + grp.readEntry("Query",QString() ) ) );
+        KUrl url( grp.readEntry("Query", QString() ) );
+        url.setScheme( QLatin1String( "nepomuksearch" ) );
+        QString name = grp.readEntry( "Name", QString() );
+        if ( name.isEmpty() )
+            name = queryFromUrl(url);
 
-        Search::Query::Type type;
-        QString name = queryNameFromURL(url, &type );
-
-        addDefaultSearch(search, createQuery( name, type ) );
+        addDefaultSearch( name, url );
     }
 }
 
@@ -147,7 +135,7 @@ bool Nepomuk::SearchProtocol::ensureNepomukRunning()
         error( KIO::ERR_SLAVE_DEFINED, i18n( "The Nepomuk system is not activated. Unable to answer queries without it." ) );
         return false;
     }
-    else if ( !Nepomuk::Search::QueryServiceClient::serviceAvailable() ) {
+    else if ( !Nepomuk::Query::QueryServiceClient::serviceAvailable() ) {
         error( KIO::ERR_SLAVE_DEFINED, i18n( "The Nepomuk query service is not running. Unable to answer queries without it." ) );
         return false;
     }
@@ -157,24 +145,22 @@ bool Nepomuk::SearchProtocol::ensureNepomukRunning()
 }
 
 
-void Nepomuk::SearchProtocol::addDefaultSearch( const QString& name, const Search::Query& q )
+void Nepomuk::SearchProtocol::addDefaultSearch( const QString& name, const KUrl& url )
 {
-    Search::Query query( q );
-    query.addRequestProperty( Nepomuk::Vocabulary::NIE::url(), true );
-    m_defaultSearches.insert( name, query );
+    m_defaultSearches.insert( name, url );
 }
 
 
 Nepomuk::SearchFolder* Nepomuk::SearchProtocol::extractSearchFolder( const KUrl& url )
 {
-    Search::Query::Type type;
-    QString name = queryNameFromURL( url, &type );
+    bool sparql;
+    QString name = queryFromUrl( url, &sparql );
     kDebug() << url << name;
     if ( SearchFolder* sf = getDefaultQueryFolder( name ) ) {
         kDebug() << "-----> is default search folder";
         return sf;
     }
-    else if ( SearchFolder* sf = getQueryResults( name, type ) ) {
+    else if ( SearchFolder* sf = getQueryFolder( name, sparql ) ) {
         kDebug() << "-----> is on-the-fly search folder";
         return sf;
     }
@@ -187,8 +173,8 @@ Nepomuk::SearchFolder* Nepomuk::SearchProtocol::extractSearchFolder( const KUrl&
 
 void Nepomuk::SearchProtocol::listDir( const KUrl& url )
 {
-    Search::Query::Type type;
-    QString name = queryNameFromURL( url, &type );
+    bool sparql = false;
+    QString name = queryFromUrl( url, &sparql );
     kDebug() << url << name;
 
     if ( !ensureNepomukRunning() )
@@ -214,7 +200,7 @@ void Nepomuk::SearchProtocol::listDir( const KUrl& url )
     }
     else {
         // lets create an on-the-fly search
-        listQuery( name, type );
+        listQuery( name, sparql );
     }
 }
 
@@ -268,8 +254,7 @@ void Nepomuk::SearchProtocol::stat( const KUrl& url )
 {
     kDebug() << url;
 
-    Search::Query::Type type;
-    QString name = queryNameFromURL( url, &type );
+    QString name = queryFromUrl( url );
     kDebug() << url << name;
 
     if ( !ensureNepomukRunning() )
@@ -373,10 +358,10 @@ void Nepomuk::SearchProtocol::listActions()
 }
 
 
-Nepomuk::SearchFolder* Nepomuk::SearchProtocol::getQueryResults( const QString& query, Search::Query::Type type )
+Nepomuk::SearchFolder* Nepomuk::SearchProtocol::getQueryFolder( const QString& queryString, bool sparql )
 {
-    if ( m_searchCache.contains( query ) ) {
-        return m_searchCache[query];
+    if ( m_searchCache.contains( queryString ) ) {
+        return m_searchCache[queryString];
     }
     else {
         if ( m_searchCache.count() >= SEARCH_CACHE_MAX ) {
@@ -384,12 +369,16 @@ Nepomuk::SearchFolder* Nepomuk::SearchProtocol::getQueryResults( const QString& 
             delete m_searchCache.take( oldestQuery );
         }
 
-        Search::Query q = createQuery( query, type );
+        QString q( queryString );
+        if ( !sparql ) {
+            Query::Query query = Query::QueryParser::parseQuery( queryString );
+            query.addRequestProperty( Query::Query::RequestProperty( Nepomuk::Vocabulary::NIE::url(), true ) );
+            q = query.toSparqlQuery();
+        }
 
-        q.addRequestProperty( Nepomuk::Vocabulary::NIE::url(), true );
-        SearchFolder* folder = new SearchFolder( query, q, this );
-        m_searchCacheNameQueue.enqueue( query );
-        m_searchCache.insert( query, folder );
+        SearchFolder* folder = new SearchFolder( queryString, q, this );
+        m_searchCacheNameQueue.enqueue( queryString );
+        m_searchCache.insert( queryString, folder );
         return folder;
     }
 }
@@ -401,7 +390,9 @@ Nepomuk::SearchFolder* Nepomuk::SearchProtocol::getDefaultQueryFolder( const QSt
         return m_defaultSearchCache[name];
     }
     else if ( m_defaultSearches.contains( name ) ) {
-        SearchFolder* folder = new SearchFolder( name, m_defaultSearches[name], this );
+        bool sparql = false;
+        QString query = queryFromUrl( m_defaultSearches[name], &sparql );
+        SearchFolder* folder = getQueryFolder( query, sparql );
         m_defaultSearchCache.insert( name, folder );
         return folder;
     }
@@ -411,16 +402,16 @@ Nepomuk::SearchFolder* Nepomuk::SearchProtocol::getDefaultQueryFolder( const QSt
 }
 
 
-void Nepomuk::SearchProtocol::listQuery( const QString& query, Search::Query::Type type )
+void Nepomuk::SearchProtocol::listQuery( const QString& query, bool sparql )
 {
     kDebug() << query;
-    getQueryResults( query, type )->list();
+    getQueryFolder( query, sparql )->list();
 }
 
 
 void Nepomuk::SearchProtocol::listDefaultSearches()
 {
-    for ( QHash<QString, Nepomuk::Search::Query>::const_iterator it = m_defaultSearches.constBegin();
+    for ( QHash<QString, KUrl>::const_iterator it = m_defaultSearches.constBegin();
           it != m_defaultSearches.constEnd(); ++it ) {
         listEntry( statDefaultSearchFolder( it.key() ), false );
     }
