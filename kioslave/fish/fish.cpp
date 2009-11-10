@@ -30,8 +30,8 @@
 #include "config-fish.h"
 #include <QFile>
 #include <QDateTime>
-#include <QBitArray>
 #include <QRegExp>
+#include <QCoreApplication>
 
 #include <stdlib.h>
 #ifdef HAVE_PTY_H
@@ -50,10 +50,6 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <sys/types.h>
-
-#ifdef HAVE_STROPTS
-#include <stropts.h>
-#endif
 
 #ifdef HAVE_SYS_IOCTL_H
 #include <sys/ioctl.h>
@@ -133,6 +129,7 @@ extern "C" {
 
 int KDE_EXPORT kdemain( int argc, char **argv )
 {
+    QCoreApplication app(argc, argv);
     KComponentData componentData("fish", "kio_fish");
 
     myDebug( << "*** Starting fish " << endl);
@@ -520,10 +517,14 @@ bool fishProtocol::connectionStart() {
             myDebug( << "select failed, rc: " << rc << ", error: " << strerror(errno) << endl);
             return true;
         }
-        if (FD_ISSET(childFd,&wfds) && outBufPos >= 0) {
-            if (outBuf) rc = ::write(childFd,outBuf+outBufPos,outBufLen-outBufPos);
-            else rc = 0;
-            if (rc >= 0) outBufPos += rc;
+        if (FD_ISSET(childFd, &wfds) && outBufPos >= 0) {
+            if (outBuf)
+                rc = ::write(childFd, outBuf + outBufPos, outBufLen - outBufPos);
+            else
+                rc = 0;
+
+            if (rc >= 0)
+                outBufPos += rc;
             else {
                 if (errno == EINTR)
                     continue;
@@ -536,13 +537,14 @@ bool fishProtocol::connectionStart() {
                 outBuf = NULL;
                 outBufLen = 0;
             }
-        }
-        if (FD_ISSET(childFd,&rfds)) {
-            rc = ::read(childFd,buf+offset,32768-offset);
+        } else if (FD_ISSET(childFd,&rfds)) {
+            rc = ::read(childFd, buf + offset, sizeof(buf) - offset);
             if (rc > 0) {
-                int noff = establishConnection(buf,rc+offset);
-                if (noff < 0) return false;
-                if (noff > 0) memmove(buf,buf+offset+rc-noff,noff);
+                int noff = establishConnection(buf, rc + offset);
+                if (noff < 0)
+                    return false;
+                if (noff > 0)
+                    memmove(buf, buf + offset + rc - noff, noff);
                 offset = noff;
             } else {
                 if (errno == EINTR)
@@ -567,8 +569,7 @@ void fishProtocol::writeChild(const QByteArray &buf, KIO::fileoffset_t len) {
     if (outBufPos >= 0 && outBuf.size()) {
 #endif
 #if 0
-        QString debug;
-        debug.setLatin1(outBuf,outBufLen);
+        QString debug = QString::fromLatin1(outBuf,outBufLen);
         if (len > 0) myDebug( << "write request while old one is pending, throwing away input (" << outBufLen << "," << outBufPos << "," << debug.left(10) << "...)" << endl);
 #endif
         return;
@@ -1405,6 +1406,7 @@ void fishProtocol::finished() {
         isRunning = false;
     }
 }
+
 /** aborts command sequence and calls error() */
 void fishProtocol::error(int type, const QString &detail) {
     commandList.clear();
@@ -1413,8 +1415,13 @@ void fishProtocol::error(int type, const QString &detail) {
     SlaveBase::error(type,detail);
     isRunning = false;
 }
+
 /** executes a chain of commands */
-void fishProtocol::run() {
+void fishProtocol::run()
+/* This function writes to childFd fish commands (like #STOR 0 /tmp/test ...) that are stored in outBuf
+and reads from childFd the remote host's response. ChildFd is the fd to a process that communicates
+with .fishsrv.pl typically running on another computer. */
+{
     if (!isRunning) {
         int rc;
         isRunning = true;
@@ -1442,24 +1449,24 @@ void fishProtocol::run() {
                 shutdownConnection();
                 return;
             }
+	    // We first write the complete buffer, including all newlines.
+	    // Do: send command and newlines, expect response then
+	    // Do not: send commands, expect response, send newlines, expect response on newlines
+	    // Newlines do not trigger a response.
             if (FD_ISSET(childFd,&wfds) && outBufPos >= 0) {
+                if (outBufLen-outBufPos > 0)
+                    rc = ::write(childFd, outBuf + outBufPos, outBufLen - outBufPos);
 #else
             if (outBufPos >= 0) {
-#endif
-#if 0
-                QString debug;
-                debug.setLatin1(outBuf+outBufPos,outBufLen-outBufPos);
-                myDebug( << "now writing " << (outBufLen-outBufPos) << " " << debug.left(40) << "..." << endl);
-#endif
-#ifndef Q_WS_WIN
-                if (outBufLen-outBufPos > 0) rc = ::write(childFd,outBuf+outBufPos,outBufLen-outBufPos);
-#else
                 if (outBufLen-outBufPos > 0) {
                     rc = childPid->write(outBuf);
                 }
 #endif
-                else rc = 0;
-                if (rc >= 0) outBufPos += rc;
+                else
+                    rc = 0;
+
+                if (rc >= 0)
+                    outBufPos += rc;
                 else {
 #ifndef Q_WS_WIN
                     if (errno == EINTR)
@@ -1480,15 +1487,15 @@ void fishProtocol::run() {
             }
 #ifndef Q_WS_WIN
             else if (FD_ISSET(childFd,&rfds)) {
-                rc = ::read(childFd,buf+offset,32768-offset);
+                rc = ::read(childFd, buf + offset, sizeof(buf) - offset);
 #else
             else if (childPid->waitForReadyRead(1000)) {
-                rc = childPid->read(buf+offset,32768-offset);
+                rc = childPid->read(buf + offset, sizeof(buf) - offset);
 #endif
                 //myDebug( << "read " << rc << " bytes" << endl);
                 if (rc > 0) {
-                    int noff = received(buf,rc+offset);
-                    if (noff > 0) memmove(buf,buf+offset+rc-noff,noff);
+                    int noff = received(buf, rc + offset);
+                    if (noff > 0) memmove(buf, buf + offset + rc - noff, noff);
                     //myDebug( << "left " << noff << " bytes: " << QString::fromLatin1(buf,offset) << endl);
                     offset = noff;
                 } else {
@@ -1509,6 +1516,7 @@ void fishProtocol::run() {
         }
     }
 }
+
 /** stat a file */
 void fishProtocol::stat(const KUrl& u){
     myDebug( << "@@@@@@@@@ stat " << u << endl);
