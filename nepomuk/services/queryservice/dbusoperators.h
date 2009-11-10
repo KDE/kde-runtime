@@ -23,9 +23,9 @@
 
 #include <QtDBus/QDBusArgument>
 
-#include "result.h"
-#include "query.h"
-#include "term.h"
+#include <Nepomuk/Query/Result>
+#include <Nepomuk/Query/Query>
+#include <Nepomuk/Query/Term>
 
 #include "nepomukquery_export.h"
 
