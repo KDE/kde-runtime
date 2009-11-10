@@ -43,7 +43,7 @@ target_link_libraries(nepomukqueryservice
   ${KDE4_KDEUI_LIBS}
   ${KDE4_KIO_LIBS}
   ${NEPOMUK_LIBRARIES}
-  ${NEPOMUK_QUERY_LIBRARIES}
+  ${NEPOMUK_QUERY_LIBRARIES} nepomukquery
   )
 
 install(
