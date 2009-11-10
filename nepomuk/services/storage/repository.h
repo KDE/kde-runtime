@@ -24,17 +24,12 @@
 namespace Soprano {
     class Model;
     class Backend;
-    namespace Index {
-        class IndexFilterModel;
-        class CLuceneIndex;
-    }
 }
 
 class KJob;
 
 namespace Nepomuk {
 
-    class CLuceneAnalyzer;
     class ModelCopyJob;
 
     class Repository : public Soprano::Util::SignalCacheModel
@@ -65,36 +60,17 @@ namespace Nepomuk {
 
         void close();
 
-        /**
-         * Calls slotDoOptimize via timer for instant return.
-         */
-        void optimize();
-
-        /**
-         * Rebuild the complete full text index in the background.
-         */
-        void rebuildIndex();
-
     Q_SIGNALS:
         void opened( Repository*, bool success );
 
     private Q_SLOTS:
         void copyFinished( KJob* job );
-        void rebuildingIndexFinished();
-        void slotDoOptimize();
 
     private:
-        /**
-         * \return true if the index needs to be rebuilt and the method
-         * took over initialization.
-         */
-        bool rebuildIndexIfNecessary();
-
         QString m_name;
         State m_state;
 
-        // the base path for the data. Will contain subfolders:
-        // "index" for the fulltext index
+        // the base path for the data. Will contain subfolder:
         // "data" for the data
         QString m_basePath;
 
@@ -102,9 +78,6 @@ namespace Nepomuk {
         QString m_oldStoragePath;
 
         Soprano::Model* m_model;
-        Nepomuk::CLuceneAnalyzer* m_analyzer;
-        Soprano::Index::CLuceneIndex* m_index;
-        Soprano::Index::IndexFilterModel* m_indexModel;
 
         // can only be non-null in the opening state
         ModelCopyJob* m_modelCopyJob;

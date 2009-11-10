@@ -129,18 +129,4 @@ Soprano::Model* Nepomuk::Core::createModel( const QList<Soprano::BackendSetting>
     }
 }
 
-
-void Nepomuk::Core::optimize( const QString& name )
-{
-    if ( m_repositories.contains( name ) )
-        m_repositories[name]->optimize();
-}
-
-
-void Nepomuk::Core::rebuildIndex( const QString& name )
-{
-    if ( m_repositories.contains( name ) )
-        m_repositories[name]->rebuildIndex();
-}
-
 #include "nepomukcore.moc"

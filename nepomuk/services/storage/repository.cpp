@@ -13,12 +13,7 @@
  */
 
 #include "repository.h"
-#include "nepomukstorage-config.h"
 #include "modelcopyjob.h"
-
-#ifdef HAVE_CLUCENE
-#include "cluceneanalyzer.h"
-#endif
 
 #include <Soprano/Backend>
 #include <Soprano/Global>
@@ -27,11 +22,6 @@
 #include <Soprano/Error/Error>
 #include <Soprano/Vocabulary/RDF>
 
-#ifdef HAVE_SOPRANO_INDEX
-#include <Soprano/Index/IndexFilterModel>
-#include <Soprano/Index/CLuceneIndex>
-#endif
-
 #include <KStandardDirs>
 #include <KDebug>
 #include <KConfigGroup>
@@ -39,8 +29,10 @@
 #include <KLocale>
 #include <KNotification>
 #include <KIcon>
+#include <KIO/DeleteJob>
 
 #include <QtCore/QTimer>
+#include <QtCore/QFile>
 #include <QtCore/QThread>
 #include <QtCore/QCoreApplication>
 
@@ -50,28 +42,6 @@ namespace {
     {
         return KStandardDirs::locateLocal( "data", "nepomuk/repository/" + repositoryId + '/' );
     }
-
-#if defined(HAVE_SOPRANO_INDEX) && defined(HAVE_CLUCENE) && SOPRANO_IS_VERSION(2,1,64)
-    class RebuildIndexThread : public QThread
-    {
-    public:
-        RebuildIndexThread( Soprano::Index::IndexFilterModel* model )
-            : m_model( model ) {
-        }
-
-        void run() {
-            m_model->rebuildIndex();
-        }
-
-    private:
-        Soprano::Index::IndexFilterModel* m_model;
-    };
-
-    // The index version that is written by this implementation. Increase this if a major bug
-    // was fixed in the CLucene index or new information needs to be written into the index
-    // (for example using Soprano::IndexFilterModel::addForceIndexPredicate.)
-    const int s_indexVersion = 2;
-#endif
 
     Soprano::BackendSettings parseSettings( const QStringList& sl )
     {
@@ -103,9 +73,6 @@ Nepomuk::Repository::Repository( const QString& name )
     : m_name( name ),
       m_state( CLOSED ),
       m_model( 0 ),
-      m_analyzer( 0 ),
-      m_index( 0 ),
-      m_indexModel( 0 ),
       m_modelCopyJob( 0 )
 {
 }
@@ -125,16 +92,6 @@ void Nepomuk::Repository::close()
     delete m_modelCopyJob;
     m_modelCopyJob = 0;
 
-#ifdef HAVE_SOPRANO_INDEX
-    delete m_indexModel;
-    delete m_index;
-    m_indexModel = 0;
-    m_index = 0;
-#ifdef HAVE_CLUCENE
-    delete m_analyzer;
-    m_analyzer = 0;
-#endif
-#endif
     delete m_model;
     m_model = 0;
 
@@ -162,10 +119,22 @@ void Nepomuk::Repository::open()
     KConfigGroup repoConfig = KSharedConfig::openConfig( "nepomukserverrc" )->group( name() + " Settings" );
     QString oldBackendName = repoConfig.readEntry( "Used Soprano Backend", backend->pluginName() );
     QString oldBasePath = repoConfig.readPathEntry( "Storage Dir", QString() ); // backward comp: empty string means old storage path
-    bool createIndex = repoConfig.readEntry( "Create Index", true );
     Soprano::BackendSettings settings = parseSettings( repoConfig.readEntry( "Settings", QStringList() ) );
     if ( backend->pluginName() == QLatin1String( "virtuosobackend" ) ) {
         addVirtuosoSettings( settings );
+    }
+    else {
+        KNotification::event( "invalidBackendType",
+                              i18nc("@info - notification message",
+                                    "Nepomuk data is stored in the '%1' Soprano backend instead "
+                                    "of the Virtuoso RDF server. This will have strong effects on "
+                                    "the performance of the system and prevent core features such "
+                                    "as the desktop search not to work properly. "
+                                    "It is highly recommended to install the Virtuoso Soprano plugin.",
+                                    backend->pluginName() ),
+                              KIcon( "nepomuk" ).pixmap( 32, 32 ),
+                              0,
+                              KNotification::Persistent );
     }
 
     // If possible we want to keep the old storage path. exception: oldStoragePath is empty. In that case we stay backwards
@@ -179,15 +148,8 @@ void Nepomuk::Repository::open()
     // create storage paths
     // =================================
     m_basePath = oldBasePath.isEmpty() ? createStoragePath( name() ) : oldBasePath;
-    QString indexPath = m_basePath + "index";
     QString storagePath = m_basePath + "data/" + backend->pluginName();
 
-    if ( !KStandardDirs::makeDir( indexPath ) ) {
-        kDebug() << "Failed to create index folder" << indexPath;
-        m_state = CLOSED;
-        emit opened( this, false );
-        return;
-    }
     if ( !KStandardDirs::makeDir( storagePath ) ) {
         kDebug() << "Failed to create storage folder" << storagePath;
         m_state = CLOSED;
@@ -197,6 +159,11 @@ void Nepomuk::Repository::open()
 
     kDebug() << "opening repository '" << name() << "' at '" << m_basePath << "'";
 
+    // remove old pre 4.4 clucene index
+    // =================================
+    if ( QFile::exists( m_basePath + QLatin1String( "index" ) ) ) {
+        KIO::del( m_basePath + QLatin1String( "index" ) );
+    }
 
     // open storage
     // =================================
@@ -211,44 +178,7 @@ void Nepomuk::Repository::open()
 
     kDebug() << "Successfully created new model for repository" << name();
 
-
-    // Create CLuence index
-    // =================================
-#if defined(HAVE_SOPRANO_INDEX) && defined(HAVE_CLUCENE)
-    if( createIndex ) {
-        m_analyzer = new CLuceneAnalyzer();
-        m_index = new Soprano::Index::CLuceneIndex( m_analyzer );
-
-        if ( m_index->open( indexPath, true ) ) {
-            kDebug() << "Successfully created new index for repository" << name();
-            m_indexModel = new Soprano::Index::IndexFilterModel( m_index, m_model );
-
-            // FIXME: find a good value here
-            m_indexModel->setTransactionCacheSize( 100 );
-
-#if SOPRANO_IS_VERSION(2,1,64)
-            m_indexModel->addForceIndexPredicate( Soprano::Vocabulary::RDF::type() );
-#endif
-
-            setParentModel( m_indexModel );
-        }
-        else {
-            kDebug() << "Unable to open CLucene index for repo '" << name() << "': " << m_index->lastError();
-            delete m_index;
-            delete m_model;
-            m_index = 0;
-            m_model = 0;
-
-            m_state = CLOSED;
-            emit opened( this, false );
-            return;
-        }
-    }
-    else
-#endif
-    {
-        setParentModel( m_model );
-    }
+    setParentModel( m_model );
 
     // check if we have to convert
     // =================================
@@ -326,9 +256,7 @@ void Nepomuk::Repository::open()
         repoConfig.sync(); // even if we crash the model has been created
 
         if( m_state == OPEN ) {
-            if ( !rebuildIndexIfNecessary() ) {
-                emit opened( this, true );
-            }
+            emit opened( this, true );
         }
     }
     else {
@@ -337,25 +265,6 @@ void Nepomuk::Repository::open()
                                     "Converting Nepomuk data to a new backend. This might take a while."),
                                     KIcon( "nepomuk" ).pixmap( 32, 32 ) );
     }
-}
-
-
-void Nepomuk::Repository::rebuildingIndexFinished()
-{
-#if defined(HAVE_SOPRANO_INDEX) && defined(HAVE_CLUCENE) && SOPRANO_IS_VERSION(2,1,64)
-    KNotification::event( "rebuldingNepomukIndexDone",
-                          i18nc("@info - notification message",
-                                "Rebuilding Nepomuk full text search index for new features done."),
-                          KIcon( "nepomuk" ).pixmap( 32, 32 ) );
-
-    // save our new settings
-    KConfigGroup repoConfig = KSharedConfig::openConfig( "nepomukserverrc" )->group( name() + " Settings" );
-    repoConfig.writeEntry( "index version", s_indexVersion );
-
-    // inform that we are open and done
-    m_state = OPEN;
-    emit opened( this, true );
-#endif
 }
 
 
@@ -398,58 +307,9 @@ void Nepomuk::Repository::copyFinished( KJob* job )
         repoConfig.writePathEntry( "Storage Dir", m_basePath );
         repoConfig.sync();
 
-        // opened will be emitted in rebuildingIndexFinished
-        if ( !rebuildIndexIfNecessary() ) {
-            m_state = OPEN;
-            emit opened( this, true );
-        }
+        m_state = OPEN;
+        emit opened( this, true );
     }
-}
-
-
-void Nepomuk::Repository::optimize()
-{
-    QTimer::singleShot( 0, this, SLOT( slotDoOptimize() ) );
-}
-
-
-void Nepomuk::Repository::slotDoOptimize()
-{
-#ifdef HAVE_SOPRANO_INDEX
-#if SOPRANO_IS_VERSION(2,1,60)
-    m_index->optimize();
-#endif
-#endif
-}
-
-
-void Nepomuk::Repository::rebuildIndex()
-{
-#if defined(HAVE_SOPRANO_INDEX) && defined(HAVE_CLUCENE) && SOPRANO_IS_VERSION(2,1,64)
-    RebuildIndexThread* rit = new RebuildIndexThread( m_indexModel );
-    connect( rit, SIGNAL( finished() ), rit, SLOT( deleteLater() ) );
-    rit->start();
-#endif
-}
-
-
-bool Nepomuk::Repository::rebuildIndexIfNecessary()
-{
-#if defined(HAVE_SOPRANO_INDEX) && defined(HAVE_CLUCENE) && SOPRANO_IS_VERSION(2,1,64)
-    KConfigGroup repoConfig = KSharedConfig::openConfig( "nepomukserverrc" )->group( name() + " Settings" );
-    if( repoConfig.readEntry( "index version", 1 ) < s_indexVersion ) {
-        KNotification::event( "rebuldingNepomukIndex",
-                              i18nc("@info - notification message",
-                                    "Rebuilding Nepomuk full text search index for new features. This will only be done once and might take a while."),
-                              KIcon( "nepomuk" ).pixmap( 32, 32 ) );
-        RebuildIndexThread* rit = new RebuildIndexThread( m_indexModel );
-        connect( rit, SIGNAL( finished() ), this, SLOT( rebuildingIndexFinished() ) );
-        connect( rit, SIGNAL( finished() ), rit, SLOT( deleteLater() ) );
-        rit->start();
-        return true;
-    }
-#endif
-    return false;
 }
 
 

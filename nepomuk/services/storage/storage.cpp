@@ -73,18 +73,6 @@ void Nepomuk::Storage::slotNepomukCoreInitialized( bool success )
 }
 
 
-void Nepomuk::Storage::optimize( const QString& repo )
-{
-    m_core->optimize( repo );
-}
-
-
-void Nepomuk::Storage::rebuildIndex( const QString& repo )
-{
-    m_core->rebuildIndex( repo );
-}
-
-
 QString Nepomuk::Storage::usedSopranoBackend() const
 {
     // FIXME: this is only partly true. It is perfectly possible to change the backend only
