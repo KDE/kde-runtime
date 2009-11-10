@@ -27,8 +27,6 @@
 #include <Nepomuk/Query/Query>
 #include <Nepomuk/Query/Term>
 
-#include "nepomukquery_export.h"
-
 Q_DECLARE_METATYPE(Nepomuk::Query::Result)
 Q_DECLARE_METATYPE(Soprano::Node)
 Q_DECLARE_METATYPE(QList<Nepomuk::Query::Result>)
@@ -42,14 +40,14 @@ namespace Nepomuk {
          * query service. This method is only made public for the query service
          * itself which links to this library, too.
          */
-        NEPOMUKQUERY_EXPORT void registerDBusTypes();
+        void registerDBusTypes();
     }
 }
 
-NEPOMUKQUERY_EXPORT QDBusArgument& operator<<( QDBusArgument& arg, const Soprano::Node& );
-NEPOMUKQUERY_EXPORT const QDBusArgument& operator>>( const QDBusArgument& arg, Soprano::Node& );
+QDBusArgument& operator<<( QDBusArgument& arg, const Soprano::Node& );
+const QDBusArgument& operator>>( const QDBusArgument& arg, Soprano::Node& );
 
-NEPOMUKQUERY_EXPORT QDBusArgument& operator<<( QDBusArgument& arg, const Nepomuk::Query::Result& );
-NEPOMUKQUERY_EXPORT const QDBusArgument& operator>>( const QDBusArgument& arg, Nepomuk::Query::Result& );
+QDBusArgument& operator<<( QDBusArgument& arg, const Nepomuk::Query::Result& );
+const QDBusArgument& operator>>( const QDBusArgument& arg, Nepomuk::Query::Result& );
 
 #endif
