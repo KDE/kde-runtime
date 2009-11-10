@@ -40,7 +40,7 @@ kde4_add_plugin(kio_nepomuksearch
 target_link_libraries(kio_nepomuksearch
   ${KDE4_KIO_LIBS}
   ${NEPOMUK_LIBRARIES}
-  ${NEPOMUK_QUERY_LIBRARIES} nepomukquery
+  ${NEPOMUK_QUERY_LIBRARIES}
   ${SOPRANO_LIBRARIES}
   )
 
