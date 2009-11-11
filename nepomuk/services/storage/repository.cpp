@@ -128,9 +128,9 @@ void Nepomuk::Repository::open()
                               i18nc("@info - notification message",
                                     "Nepomuk data is stored in the '%1' Soprano backend instead "
                                     "of the Virtuoso RDF server. This will have strong effects on "
-                                    "the performance of the system and prevent core features such "
-                                    "as the desktop search not to work properly. "
-                                    "It is highly recommended to install the Virtuoso Soprano plugin.",
+                                    "the performance of the system and will cause core features such "
+                                    "as the desktop search to not work properly. "
+                                    "Installing the Virtuoso Soprano plugin is highly recommended.",
                                     backend->pluginName() ),
                               KIcon( "nepomuk" ).pixmap( 32, 32 ),
                               0,
