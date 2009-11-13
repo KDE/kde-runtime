@@ -1,42 +1,38 @@
-##Brainstorming
---------------
-
-- Display the time of the crash
-("I came back to the computer some time later and drkonqi was there.. 
-when the application crashed? during the night?") (by sreich)
-
-- Usability review and suggestions:
-http://blogs.msdn.com/oldnewthing/archive/2003/09/01/54734.aspx (by Maciej)
-
-- Hide backtrace from user (only show progress and backtrace status)??
-
-- Search in backtrace (esp. for [KCrash Handler])
-- Backtrace syntax highlighting (xml parser+ some qt/kde class ?)
-
-- Option to "don't show DrKonqi for this(X) app"
-- Option to avoid drkonqi at all (setting KDE_DEBUG=1), and GUI to renable it
-
-
-##Other tasks
+##Main Tasks
 -------------
 
-- Check string (native english) in the new features.
-
+!!IMPORTANT: (to be done before 2009Nov25 / String Freeze)
 - Update "AboutBugReporting" guide to reflect the new workflow
+- Review the confirmation dialog in the Bug Report Information page:
+if the text is not long enough, we dismiss the whole report saying something like "a report without a good description
+will only waste bug triagers and developers time"...
+- If a possible duplicate is marked as FIXED, show a better  (banner) message so the user will notice....
 
-- Ask for saving the report information to file when exiting the report assistant without reporting
-( This is going to be done with the Drkonqi2.1 proposal to not close the main dialog on report)
-Leave the main dialog on launching the reporting tool, but add some legends:
- "Reporting tool started for this crash"
- "You reported this crash already" (and remove the , "help KDE, report bug" messages)
-->>>> THis may need a major UI rework...
+- Use https://bugs.kde.org/enter_bug.cgi?product=X to fetch product versions... (it will reduce server load)
+
+- REVIEW criteria of minimum chars/words to use in the Title and Details fields
+
+---
+
+For KDE4.5+:
+
+##- Waiting for productName()->product/component mapping (custom cgi file at BKO)
+[[ currently bugzillalib detects unexistent products to later use the "kde" product ]]
+##Update: local mappings file support already implemented.
+Working on PHP script... implementation on server was delayed until we resolve
+the bugtracking system change.
+- Implement online mappings on svn/bugzilla as an addon file (will .php work?)
+
+- Implement bugtracking-system-agnostic interface on KDE servers and adapt DrKonqi to interact with it
+(this will also remove the HTML parsing code from DrKonqi itself, to put it on a remote script)
+
+---
 
 - Custom usefulness values needed by application (ex. Amarok wants only perfect backtraces...)
 
 - Check for plugins ? (example, if plasma crashes, which libs were loaded, which lib caused the crash)
 This is useful to determine if some external plugin is involved
 (I don't know if this is technically possible)
-(cat /proc/PID/maps)
 - Read and upload as attachment (cat /proc/PID/maps), memmap
 
 - Application detection: ask for or detect specific things depending on application
@@ -56,29 +52,36 @@ This is useful to determine if some external plugin is involved
   
 - Register dynamic debug area (see dfaure's mail on k-c-d).
 
+##Brainstorming
+--------------
+
+- Display the time of the crash
+("I came back to the computer some time later and drkonqi was there..
+when the application crashed? during the night?") (by sreich)
+
+- Usability review and suggestions:
+http://blogs.msdn.com/oldnewthing/archive/2003/09/01/54734.aspx (by Maciej)
+
+- Hide backtrace from user (only show progress and backtrace status)??
+
+- Search in backtrace (esp. for [KCrash Handler])
+- Backtrace syntax highlighting (xml parser+ some qt/kde class ?)
+
+- Option to "don't show DrKonqi for this(X) app"
+- Option to avoid drkonqi at all (setting KDE_DEBUG=1), and GUI to renable it
+
 #Later
 ---------
 
-- Waiting for productName()->product/component mapping (custom cgi file at BKO)
-[[ currently bugzillalib detects unexistent products to later use the "kde" product ]]
-Update: local mappings file support already implemented.
-
-- REVIEW criteria of minimum chars/words to use in the Title and Details fields
-
-- Implement a proper dbus interface.
+- Implement a proper DBus interface.
 
 #DONE
 -------
 
-#- Improve DuplicatesPage dialog: what if you want to pick more than one possibly duplicate?
-#   - Improve UI of the new feature implementation
-#- Option to Attach the new crash information to an existing report (check username and backtraces?
-to avoid mixed reports)
-#   - Implement a UI
-
 ##Bugzilla DrKonqi reports cleanup:
 Wontfix: 143243, 185547
 
+---------
 ---------
 
 * Crashes on Shutdown:
