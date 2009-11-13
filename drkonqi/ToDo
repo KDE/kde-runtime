@@ -8,8 +8,6 @@ if the text is not long enough, we dismiss the whole report saying something lik
 will only waste bug triagers and developers time"...
 - If a possible duplicate is marked as FIXED, show a better  (banner) message so the user will notice....
 
-- Use https://bugs.kde.org/enter_bug.cgi?product=X to fetch product versions... (it will reduce server load)
-
 - REVIEW criteria of minimum chars/words to use in the Title and Details fields
 
 ---
@@ -77,6 +75,8 @@ http://blogs.msdn.com/oldnewthing/archive/2003/09/01/54734.aspx (by Maciej)
 
 #DONE
 -------
+
+##- Use https://bugs.kde.org/enter_bug.cgi?product=X to fetch product versions... (it will reduce server load)
 
 ##Bugzilla DrKonqi reports cleanup:
 Wontfix: 143243, 185547
