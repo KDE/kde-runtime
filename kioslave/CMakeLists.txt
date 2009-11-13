@@ -19,7 +19,9 @@ add_subdirectory( trash )
 add_subdirectory( remote )
 add_subdirectory( desktop )
 add_subdirectory( sftp )
-add_subdirectory( fish )
+#the generate_fishcode.bat doesn't seem to work on some versions of Windows
+#so let's not waste our effort trying to build at this time.
+#add_subdirectory( fish )
 add_subdirectory( thumbnail )
 
 if(NOT WIN32)
