@@ -227,6 +227,7 @@ public:
     void addMeToCC(int);
 
     void checkVersionsForProduct(const QString &);
+    void delayedCheckVersionsForProduct(const QString &);
     
     /* Misc methods */
     QString urlForBug(int bug_number) const;
@@ -244,6 +245,7 @@ private Q_SLOTS:
     void attachToReportJobFinished(KJob*);
     void addMeToCCJobFinished(KJob*);
     void checkVersionJobFinished(KJob*);
+    void delayedCheckVersionJobFinished(KJob*);
 
 Q_SIGNALS:
     /* Bugzilla actions finished successfully */

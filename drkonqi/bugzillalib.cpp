@@ -64,6 +64,7 @@ static const char sendReportUrl[] = "post_bug.cgi";
 static const char attachDataUrl[] = "attachment.cgi";
 static const char addInformationUrl[] = "process_bug.cgi";
 static const char checkLegalVersionUrl[] = "query.cgi?format=advanced&product=%1";
+static const char delayedCheckLegalVersionUrl[]  = "enter_bug.cgi?product=%1";
 
 //BEGIN BugzillaManager
 
@@ -196,6 +197,14 @@ void BugzillaManager::checkVersionsForProduct(const QString & product)
                                                         QString(checkLegalVersionUrl).arg(product));
     KIO::Job * checkVersionJob = KIO::storedGet(checkVersionUrl, KIO::Reload, KIO::HideProgressInfo);
     connect(checkVersionJob, SIGNAL(finished(KJob*)) , this, SLOT(checkVersionJobFinished(KJob*)));
+}
+
+void BugzillaManager::delayedCheckVersionsForProduct(const QString & product)
+{
+    KUrl checkVersionUrl = KUrl(QString(m_bugTrackerUrl) +
+                                                QString(delayedCheckLegalVersionUrl).arg(product));
+    KIO::Job * checkVersionJob = KIO::storedGet(checkVersionUrl, KIO::Reload, KIO::HideProgressInfo);
+    connect(checkVersionJob, SIGNAL(finished(KJob*)) , this, SLOT(delayedCheckVersionJobFinished(KJob*)));
 }
 
 //END Bugzilla Action methods
@@ -467,6 +476,43 @@ void BugzillaManager::checkVersionJobFinished(KJob * job)
             tempString = tempString.trimmed();
             tempString = tempString.mid(1, tempString.length()-2);
             versionList.append(tempString);
+        }
+
+        emit checkVersionsForProductFinished(versionList);
+    } else {
+        emit checkVersionsForProductError();
+    }
+}
+void BugzillaManager::delayedCheckVersionJobFinished(KJob * job)
+{
+    if (!job->error()) {
+        KIO::StoredTransferJob * checkVersionJob = (KIO::StoredTransferJob *)job;
+
+        QString response = checkVersionJob->data();
+
+        const QString product = checkVersionJob->url().queryItem("product");
+        if (product.isEmpty()) {
+            emit checkVersionsForProductError();
+            return;
+        }
+
+        //HTML parsing
+        int index1 = response.indexOf("<select name=\"version\"");
+        int index2 = response.indexOf("</select>", index1);
+
+        QString selectString = response.mid(index1, index2-index1);
+        selectString.remove(" selected=\"selected\"");
+
+        int versionStringsCount = selectString.count("<option value=\"");
+        int lastIndex = 0;
+
+        QStringList versionList;
+        for(int i = 0; i< versionStringsCount; i++) {
+            index1 = selectString.indexOf("<option value=\"", lastIndex);
+            index1 += 15;
+            index2 = selectString.indexOf("\">", index1);
+            versionList.append(selectString.mid(index1, index2-index1).trimmed());
+            lastIndex = index2+3;
         }
 
         emit checkVersionsForProductFinished(versionList);

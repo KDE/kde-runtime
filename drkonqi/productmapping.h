@@ -38,13 +38,13 @@ public:
     QStringList relatedBugzillaProducts() const;
 
 private Q_SLOTS:
+    void delayedLoginCheck(bool);
     void checkValidVersions(const QStringList &);
 
 private:
     void map(const QString&);
     void mapUsingInternalFile(const QString&);
     void getRelatedProductsUsingInternalFile(const QString&);
-    void retrieveValidVersions();
 
     QStringList m_relatedBugzillaProducts;
     QString     m_bugzillaProduct;

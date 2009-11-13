@@ -32,6 +32,10 @@ ProductMapping::ProductMapping(const QString & appName, BugzillaManager * bzMana
     : QObject(parent)
 {
     m_bugzillaManagerPtr = bzManager;
+    //Get valid versions using a delayed check after login
+    connect(m_bugzillaManagerPtr, SIGNAL(loginFinished(bool)), this, SLOT(delayedLoginCheck(bool)));
+    connect(m_bugzillaManagerPtr, SIGNAL(checkVersionsForProductFinished(QStringList)), this,
+                                                            SLOT(checkValidVersions(QStringList)));
 
     //Default "fallback" values
     m_bugzillaProduct = appName;
@@ -45,7 +49,6 @@ ProductMapping::ProductMapping(const QString & appName, BugzillaManager * bzMana
 void ProductMapping::map(const QString & appName)
 {
     mapUsingInternalFile(appName);
-    retrieveValidVersions();
     getRelatedProductsUsingInternalFile(m_bugzillaProduct);
 }
 
@@ -112,11 +115,11 @@ void ProductMapping::getRelatedProductsUsingInternalFile(const QString & bugzill
     }
 }
 
-void ProductMapping::retrieveValidVersions()
+void ProductMapping::delayedLoginCheck(bool logged)
 {
-    connect(m_bugzillaManagerPtr, SIGNAL(checkVersionsForProductFinished(QStringList)),
-            this, SLOT(checkValidVersions(QStringList)));
-    m_bugzillaManagerPtr->checkVersionsForProduct(m_bugzillaProduct);
+    if (logged) {
+        m_bugzillaManagerPtr->delayedCheckVersionsForProduct(m_bugzillaProduct);
+    }
 }
 
 void ProductMapping::checkValidVersions(const QStringList & versionList)
