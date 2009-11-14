@@ -156,9 +156,9 @@ bool BugzillaDuplicatesPage::showNextPage()
         letMeCheckMoreReportsButton.setIcon(KIcon("document-preview"));
 
         if (KMessageBox::questionYesNo(this,
-           i18nc("@info","You have not selected any possible duplicate nor a report to attach your "
-           "crash information. Have you read all the reports and you can confirm that there are no "
-           "real duplicates ?"),
+           i18nc("@info","You have not selected any possible duplicates, or a report to which to attach your "
+           "crash information. Have you read all the reports, and can you confirm that there are no "
+           "real duplicates?"),
            i18nc("@title:window","No selected possible duplicates"), letMeCheckMoreReportsButton,
                                noDuplicatesButton)
                                         == KMessageBox::Yes) {

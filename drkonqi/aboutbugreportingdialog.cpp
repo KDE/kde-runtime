@@ -151,7 +151,7 @@ AboutBugReportingDialog::AboutBugReportingDialog(QWidget * parent):
                             "you can check to see if they are similar. "),
             i18nc("@info/rich","If you are very sure your bug is the same as another that is "
                             "previously reported, you can set your information to be attached to "
-                            "the existant report."),
+                            "the existing report."),
             i18nc("@info/rich","If you are unsure whether your report is the same, follow the main "
                             "options to tentatively mark your crash as a duplicate of that "
                             "report. This is usually the safest thing to do. We cannot "
@@ -159,10 +159,10 @@ AboutBugReportingDialog::AboutBugReportingDialog(QWidget * parent):
             i18nc("@info/rich","If not enough possible duplicates are found, or you "
                             "did not find a similar report, then you can force it to search "
                             "for more bug reports (only if the date range limit is not reached.)"),
-            i18nc("@info/rich","If you do not find any related report, your crash information "
-                                "is not useful enough, and you can not really add aditional "
+            i18nc("@info/rich","If you do not find any related reports, your crash information "
+                                "is not useful enough, and you really cannot give additional "
                                 "information about the crash context, then it is better to "
-                                "not file the bug report, closing the assistant.")) +
+                                "not file the bug report, thereby closing the assistant.")) +
 
         //Bugzilla Crash Information - Details Page
         QString("<a name=\"%1\" /><h2>%2</h2>").arg(QLatin1String(PAGE_BZDETAILS_ID),
@@ -173,8 +173,8 @@ AboutBugReportingDialog::AboutBugReportingDialog(QWidget * parent):
             QLatin1String(PAGE_AWARENESS_ID),
             i18nc("@title","What do you know about the crash ?"),
             i18nc("@info/rich", "You can also specify your distribution method (GNU/Linux "
-                                "distribution or packaging system) or if compiled KDE "
-                                "by sources."),
+                                "distribution or packaging system) or if you compiled KDE "
+                                "from sources."),
             i18nc("@info/rich", "<note>You should write in English.</note>")) +
 
         //Bugzilla Send Page
@@ -187,8 +187,8 @@ AboutBugReportingDialog::AboutBugReportingDialog(QWidget * parent):
                             "so that you can look at the report later."),
             i18nc("@info/rich","If the process fails, you can click "
                             "<interface>Retry</interface> to try sending the bug report again. "
-                            "If the report can not be sent because the bug tracking database has a "
-                            "problem, you can save it to a file to manually report it later.")) +
+                            "If the report cannot be sent because the bug tracking database has a "
+                            "problem, you can save it to a file to manually report later.")) +
 
         QString("<h1>%1</h1><p>%2</p>").arg(
             i18nc("@info/rich", "Thank you for contributing to KDE!"),

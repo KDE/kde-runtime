@@ -392,14 +392,14 @@ bool BugzillaInformationPage::showNextPage()
                                         "details do not provide enough information.");
             }
 
-            message += ' ' + i18nc("@info","If you can't provide enough information, your report "
-                                    "will probably waste developer's time. Can you tell us more ?");
+            message += ' ' + i18nc("@info","If you cannot provide enough information, your report "
+                                    "will probably waste developers' time. Can you tell us more?");
 
             KGuiItem yesItem = KStandardGuiItem::yes();
             yesItem.setText("Yes, let me add more information");
 
             KGuiItem noItem = KStandardGuiItem::no();
-            noItem.setText("No, I can't add any other information");
+            noItem.setText("No, I cannot add any other information");
 
             if (KMessageBox::warningYesNo(this, message,
                                            i18nc("@title:window","We need more information"),
