@@ -317,7 +317,7 @@ void BugzillaInformationPage::aboutToShow()
             ui.m_distroChooserCombo->addItem(i18nc("@label:listbox KDE distribution method",
                                                    "Slackware"), "Slackware Packages");
             ui.m_distroChooserCombo->addItem(i18nc("@label:listbox KDE distribution method",
-                                                   "SuSE/OpenSUSE"), "SuSE RPMs");
+                                                   "SuSE/OpenSUSE"), "openSUSE RPMs");
             ui.m_distroChooserCombo->addItem(i18nc("@label:listbox KDE distribution method",
                                                    "RedHat"), "RedHat RPMs");
             ui.m_distroChooserCombo->addItem(i18nc("@label:listbox KDE distribution method",
