@@ -9,6 +9,7 @@ X-KDE-System-Settings-Parent-Category=advanced-user-settings
 X-KDE-Keywords=Mount,Removable,Devices,Automatic
 
 Name=Removable Devices
+Name[da]=Flytbare enheder
 Name[de]=Wechseldatenträger
 Name[en_GB]=Removable Devices
 Name[es]=Dispositivos extraíbles
@@ -26,6 +27,7 @@ Name[uk]=Змінні пристрої
 Name[x-test]=xxRemovable Devicesxx
 Name[zh_TW]=可移除裝置
 Comment=Configure automatic handling of removable storage media
+Comment[da]=Indstil automatisk håndtering af flytbare lagringsmedier
 Comment[de]=Automatische Handhabung der Wechselmedien einstellen
 Comment[en_GB]=Configure automatic handling of removable storage media
 Comment[es]=Configurar manejo automático de los dispositivos de almacenamiento extraíbles
