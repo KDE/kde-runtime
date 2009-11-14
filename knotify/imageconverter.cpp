@@ -55,6 +55,13 @@ const QDBusArgument &operator>>(const QDBusArgument &argument, SpecImage &image)
 	return argument;
 }
 
+} // namespace
+
+// This must be before the QVariant::fromValue below (#211726)
+Q_DECLARE_METATYPE(ImageConverter::SpecImage)
+
+namespace ImageConverter
+{
 QVariant variantForImage(const QImage &_image)
 {
 	qDBusRegisterMetaType<SpecImage>();
@@ -98,4 +105,3 @@ QVariant variantForImage(const QImage &_image)
 
 } // namespace
 
-Q_DECLARE_METATYPE(ImageConverter::SpecImage)
