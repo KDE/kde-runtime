@@ -230,6 +230,7 @@ Comment[da]=Bekendtgørelse om automatisk brug af reserve hvis den foretrukne en
 Comment[de]=Benachrichtigung bei automatischem Ausweichen, wenn das bevorzugte Gerät nicht verfügbar ist.
 Comment[el]=Ειδοποίηση κατά την αυτόματη χρήση εφεδρικής συσκευής αν η προτιμώμενη δεν είναι διαθέσιμη
 Comment[en_GB]=Notification on automatic fallback if the preferred device is unavailable
+Comment[eo]=Avizo pri uzo de rezerva rimedo se la preferinda aparato ne estas disponebla
 Comment[es]=Notificación de plan alternativo si el dispositivo elegido no está disponible
 Comment[et]=Märguanne tagavaraseadme automaatse kasutamise korral, kui eelistatud seade pole saadaval
 Comment[fr]=Prévenir en cas de d'utilisation du périphérique audio de secours si le périphérique principal n'est pas disponible
