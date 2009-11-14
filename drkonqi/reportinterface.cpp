@@ -284,10 +284,7 @@ bool ReportInterface::isWorthReporting() const
         needToReport = (m_userCanDetail && m_developersCanContactReporter);
         break;
     }
-    case BacktraceParser::ProbablyUseless: {
-        needToReport = (m_userCanDetail && m_developersCanContactReporter);
-        break;
-    }
+    case BacktraceParser::ProbablyUseless:
     case BacktraceParser::Useless:
     case BacktraceParser::InvalidUsefulness: {
         needToReport =  false;

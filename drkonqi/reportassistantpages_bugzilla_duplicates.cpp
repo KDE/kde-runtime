@@ -142,10 +142,8 @@ void BugzillaDuplicatesPage::aboutToHide()
 
 bool BugzillaDuplicatesPage::showNextPage()
 {
-    /*
-    //WIP ask the user to check all the possible duplicates...
-
-    if (ui.m_bugListWidget->topLevelItemCount() != 0 && ui.m_selectedDuplicatesList->count() == 0
+    //Ask the user to check all the possible duplicates...
+    if (ui.m_bugListWidget->topLevelItemCount() != 1 && ui.m_selectedDuplicatesList->count() == 0
         && reportInterface()->attachToBugNumber() == 0) {
         //The user didn't selected any possible duplicate nor a report to attach the new info.
         //Double check this, we need to reduce the duplicate count.
@@ -159,16 +157,14 @@ bool BugzillaDuplicatesPage::showNextPage()
 
         if (KMessageBox::questionYesNo(this,
            i18nc("@info","You have not selected any possible duplicate nor a report to attach your "
-           "crash information. Selecting possible duplicates helps the KDE developers and bug "
-           "triagers to organize the bug report information and to get better quality reports. "
-           "Can you confirm that you have not found any duplicate of your crash ?"),
+           "crash information. Have you read all the reports and you can confirm that there are no "
+           "real duplicates ?"),
            i18nc("@title:window","No selected possible duplicates"), letMeCheckMoreReportsButton,
                                noDuplicatesButton)
                                         == KMessageBox::Yes) {
             return false;
         }
     }
-    */
     return true;
 }
 

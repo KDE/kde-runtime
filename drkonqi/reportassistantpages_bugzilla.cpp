@@ -376,9 +376,10 @@ bool BugzillaInformationPage::showNextPage()
     if (m_textsOK) { //not empty
         bool titleShort = ui.m_titleEdit->text().size() < 25;
         bool detailsShort = ui.m_detailsEdit->isVisible() ?
-                                (ui.m_detailsEdit->toPlainText().size() < 100) : false;
+                                (ui.m_detailsEdit->toPlainText().size() < 50) : false;
 
         if (titleShort || detailsShort) {
+            //The user input is less than we want.... encourage to write more
             QString message;
 
             if (titleShort && !detailsShort) {
@@ -391,13 +392,22 @@ bool BugzillaInformationPage::showNextPage()
                                         "details do not provide enough information.");
             }
 
-            message += ' ' + i18nc("@info","Can you tell us more?");
+            message += ' ' + i18nc("@info","If you can't provide enough information, your report "
+                                    "will probably waste developer's time. Can you tell us more ?");
 
-            //The user input is less than we want.... encourage to write more
-            if (KMessageBox::questionYesNo(this, message,
-                                           i18nc("@title:window","We need more information"))
+            KGuiItem yesItem = KStandardGuiItem::yes();
+            yesItem.setText("Yes, let me add more information");
+
+            KGuiItem noItem = KStandardGuiItem::no();
+            noItem.setText("No, I can't add any other information");
+
+            if (KMessageBox::warningYesNo(this, message,
+                                           i18nc("@title:window","We need more information"),
+                                           yesItem, noItem)
                                             == KMessageBox::No) {
-                return true; //Allow to continue
+                //Request the assistant to close itself (it will prompt for confirmation anyways)
+                assistant()->close();
+                return false;
             }
         } else {
             return true;
