@@ -1,13 +1,6 @@
 ##Main Tasks
 -------------
 
-!!IMPORTANT: (to be done before 2009Nov25 / String Freeze)
-- Update "AboutBugReporting" guide to reflect the new workflow
-- Review the confirmation dialog in the Bug Report Information page:
-if the text is not long enough, we dismiss the whole report saying something like "a report without a good description
-will only waste bug triagers and developers time"...
-- If a possible duplicate is marked as FIXED, show a better  (banner) message so the user will notice....
-
 - REVIEW criteria of minimum chars/words to use in the Title and Details fields
 
 ---
@@ -75,6 +68,15 @@ http://blogs.msdn.com/oldnewthing/archive/2003/09/01/54734.aspx (by Maciej)
 
 #DONE
 -------
+
+"- If a possible duplicate is marked as FIXED, show a better (banner) message so the user will notice....
+
+
+!!IMPORTANT: (to be done before 2009Nov25 / String Freeze)
+- Update "AboutBugReporting" guide to reflect the new workflow
+- Review the confirmation dialog in the Bug Report Information page:
+if the text is not long enough, we dismiss the whole report saying something like "a report without a good description
+will only waste bug triagers and developers time"...
 
 ##- Use https://bugs.kde.org/enter_bug.cgi?product=X to fetch product versions... (it will reduce server load)
 

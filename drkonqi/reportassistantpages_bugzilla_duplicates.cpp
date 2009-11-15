@@ -140,6 +140,11 @@ void BugzillaDuplicatesPage::aboutToHide()
     reportInterface()->setPossibleDuplicates(possibleDuplicates);
 }
 
+bool BugzillaDuplicatesPage::isComplete()
+{
+    return !m_searching;
+}
+
 bool BugzillaDuplicatesPage::showNextPage()
 {
     //Ask the user to check all the possible duplicates...
@@ -193,7 +198,7 @@ void BugzillaDuplicatesPage::performSearch()
     if (m_searchingEndDate == QDate::currentDate()) {
         endDateStr = QLatin1String("Now");
     }
-    
+
     BugReport report = reportInterface()->newBugReportTemplate();
     bugzillaManager()->searchBugs(reportInterface()->relatedBugzillaProducts(),
                                   report.bugSeverity(), startDateStr, endDateStr, 
@@ -227,6 +232,7 @@ void BugzillaDuplicatesPage::stopCurrentSearch()
 void BugzillaDuplicatesPage::markAsSearching(bool searching)
 {
     m_searching = searching;
+    emitCompleteChanged();
     
     ui.m_bugListWidget->setEnabled(!searching);
     ui.m_searchMoreButton->setEnabled(!searching);
@@ -291,7 +297,7 @@ void BugzillaDuplicatesPage::searchFinished(const BugMapList & list)
                     customStatusString = i18nc("@info/plain bug resolution", "[Not a KDE bug]");
                 }
             } else if (bug.value("bug_status") == QLatin1String("NEEDSINFO")) {
-                customStatusString = i18nc("@info bug/plain status", "[Incomplete]");
+                customStatusString = i18nc("@info/plain bug status", "[Incomplete]");
             }
 
             title = customStatusString + ' ' + bug["short_desc"];
@@ -509,6 +515,7 @@ BugzillaReportInformationDialog::~BugzillaReportInformationDialog()
 
 void BugzillaReportInformationDialog::showBugReport(int bugNumber)
 {
+    m_closedStateString.clear();
     m_bugNumber = bugNumber;
     m_parent->bugzillaManager()->fetchBugReport(m_bugNumber, this);
 
@@ -553,7 +560,7 @@ void BugzillaReportInformationDialog::bugFetchFinished(BugReport report, QObject
                     if (KMessageBox::questionYesNo(this,
                        i18nc("@info","The report you selected (bug <numid>%1</numid>) is already "
                        "marked as duplicate of bug <numid>%2</numid>. "
-                       "Do you want to read that report instead?",
+                       "Do you want to read that report instead? (recommended)",
                        report.bugNumber(), dupId),
                        i18nc("@title:window","Nested duplicate detected"), yesItem, noItem)
                                                     == KMessageBox::Yes) {
@@ -569,7 +576,7 @@ void BugzillaReportInformationDialog::bugFetchFinished(BugReport report, QObject
             for (int i = 0; i < commentList.count(); i++) {
                 QString comment = commentList.at(i);
                 comment.replace('\n', "<br />");
-                comments += "<br /><strong>----</strong><br />" + comment;
+                comments += "<p><hr />" + comment + "</p>";
             }
 
             //Generate a non-geek readable status
@@ -578,14 +585,14 @@ void BugzillaReportInformationDialog::bugFetchFinished(BugReport report, QObject
                 || report.bugStatus() == QLatin1String("NEW")
                 || report.bugStatus() == QLatin1String("REOPENED")
                 || report.bugStatus() == QLatin1String("ASSIGNED")) {
-                customStatusString = i18nc("@info bug status", "Open");
+                customStatusString = i18nc("@info bug status", "Opened");
             } else if (report.bugStatus() == QLatin1String("RESOLVED")
                 || report.bugStatus() == QLatin1String("VERIFIED")
                 || report.bugStatus() == QLatin1String("CLOSED")) {
-                
                 QString customResolutionString;
                 if (report.resolution() == QLatin1String("FIXED")) {
                     customResolutionString = i18nc("@info bug resolution", "Fixed");
+                    m_closedStateString = i18nc("@info bug resolution", "the bug was fixed by KDE developers");
                 } else if (report.resolution() == QLatin1String("WORKSFORME")) {
                     customResolutionString = i18nc("@info bug resolution", "Non-reproducible");
                 } else if (report.resolution() == QLatin1String("DUPLICATE")) {
@@ -595,6 +602,7 @@ void BugzillaReportInformationDialog::bugFetchFinished(BugReport report, QObject
                 } else if (report.resolution() == QLatin1String("DOWNSTREAM") 
                     || report.resolution() == QLatin1String("UPSTREAM")) {
                     customResolutionString = i18nc("@info bug resolution", "Not a KDE bug");
+                    m_closedStateString = i18nc("@info bug resolution", "the bug is not caused by KDE code");
                 } else {
                     customResolutionString = report.resolution();
                 }
@@ -609,20 +617,20 @@ void BugzillaReportInformationDialog::bugFetchFinished(BugReport report, QObject
             }
             
             QString text =
-                i18nc("@label:textbox bug report label and value", 
-                                "<strong>Product:</strong> %1 (%2)<br />", 
+                i18nc("@info bug report label and value",
+                                "<h2>%1</h2>", report.shortDescription()) +
+                i18nc("@info bug report label and value",
+                                "<h3>Bug Report Status: %1</h3>", customStatusString) +
+                i18nc("@info bug report label and value",
+                                "<p><strong>Product:</strong> %1 (%2)</p>",
                                 report.product(), report.component()) +
-                i18nc("@label:textbox bug report label and value", 
-                                "<strong>Title:</strong> %1<br />", report.shortDescription()) +
-                i18nc("@label:textbox bug report label and value", 
-                                "<strong>Status:</strong> %1<br />", customStatusString) +
-                i18nc("@label:textbox bug report label and value", 
-                                "<strong>Full Description:</strong><br />%1", 
+                i18nc("@info bug report label and value",
+                                "<h2>Description of the bug</h2><p>%1</p>",
                                 report.description().replace('\n', "<br />"));
-                                                
+
             if (!comments.isEmpty()) {
                 text += i18nc("@label:textbox bug report label and value", 
-                                "<br /><br /><strong>Comments:</strong> %1", comments);
+                                "<h2>Additional Comments</h2>%1", comments);
             }
 
             ui.m_infoBrowser->setText(text);
@@ -639,22 +647,70 @@ void BugzillaReportInformationDialog::bugFetchFinished(BugReport report, QObject
     }
 }
 
+int BugzillaReportInformationDialog::proceedOnAlreadyClosedReport()
+{
+    //This is WIP
+    KGuiItem userIsNotSureProceedButton;
+    userIsNotSureProceedButton.setText("I cannot be sure. Proceed reporting the bug");
+    userIsNotSureProceedButton.setIcon(KIcon("dialog-ok-apply"));
+
+    KGuiItem dismissBugReportButton;
+    dismissBugReportButton.setText("It is the same bug. Do not file my report (Close)");
+    dismissBugReportButton.setIcon(KIcon("dialog-close"));
+
+    int ret = KMessageBox::questionYesNoCancel(this,
+        i18nc("@info messagebox question %1 is the close state cause","This report is marked as "
+        "\"closed\" because %1. If you are sure your crash is the same, then adding further details "
+        "or creating a new report will be useless and will waste developers' time. "
+        "Can you be sure this is the same as your crash?", m_closedStateString),
+        i18nc("@title:window", "This report is already closed"), userIsNotSureProceedButton,
+        dismissBugReportButton, KStandardGuiItem::cancel(), QString(),
+                                               KMessageBox::Dangerous | KMessageBox::Notify);
+
+    return ret;
+}
+
 void BugzillaReportInformationDialog::mayBeDuplicateClicked()
 {
+    if (!m_closedStateString.isEmpty()) {
+        int ret = proceedOnAlreadyClosedReport();
+        if (ret == KMessageBox::No) {
+            //Ask to close the report assistant dialog
+            hide();
+            m_parent->assistant()->close();
+            return;
+        } else if (ret == KMessageBox::Cancel) {
+            return;
+        }
+    }
     emit possibleDuplicateSelected(m_bugNumber);
     hide();
 }
 
 void BugzillaReportInformationDialog::attachToBugReportClicked()
 {
-    if (KMessageBox::questionYesNo(this, 
-           i18nc("@info","If you want to attach new information to an existing bug report you need "
-           "to be sure that they refer to the same crash.<nl />Are you sure you want to attach "
-           "your report to bug <numid>%1</numid> ?", m_bugNumber),
-           i18nc("@title:window","Attach the information to bug <numid>%1</numid>", m_bugNumber))
-                                        == KMessageBox::Yes) {
+    if (!m_closedStateString.isEmpty()) {
+        int ret = proceedOnAlreadyClosedReport();
+        if (ret == KMessageBox::No) {
+            //Ask to close the report assistant dialog
+            hide();
+            m_parent->assistant()->close();
+            return;
+        } else if (ret == KMessageBox::Cancel) {
+            return;
+        }
         emit attachToBugReportSelected(m_bugNumber);
         hide();
+    } else {
+        if (KMessageBox::questionYesNo(this,
+               i18nc("@info","If you want to attach new information to an existing bug report you need "
+               "to be sure that they refer to the same crash.<nl />Are you sure you want to attach "
+               "your report to bug <numid>%1</numid> ?", m_bugNumber),
+               i18nc("@title:window","Attach the information to bug <numid>%1</numid>", m_bugNumber))
+                                            == KMessageBox::Yes) {
+            emit attachToBugReportSelected(m_bugNumber);
+            hide();
+        }
     }
 }
 

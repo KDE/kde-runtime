@@ -47,6 +47,7 @@ public:
     void aboutToShow();
     void aboutToHide();
 
+    bool isComplete();
     bool showNextPage();
 
 private Q_SLOTS:
@@ -113,7 +114,8 @@ public:
 private Q_SLOTS:
     void bugFetchFinished(BugReport,QObject *);
     void bugFetchError(QString, QObject *);
-    
+
+    int proceedOnAlreadyClosedReport();
     void mayBeDuplicateClicked();
     void attachToBugReportClicked();
     
@@ -125,6 +127,7 @@ private:
     Ui::AssistantPageBugzillaDuplicatesDialog   ui;
     BugzillaDuplicatesPage *                    m_parent;
     int                                         m_bugNumber;
+    QString                                     m_closedStateString;
     
 };
 

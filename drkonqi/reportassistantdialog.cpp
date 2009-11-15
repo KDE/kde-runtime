@@ -318,10 +318,10 @@ void ReportAssistantDialog::closeEvent(QCloseEvent * event)
             saveBacktraceItem.setText(i18nc("@action:button", "Save information and close"));
 
             int ret = KMessageBox::questionYesNoCancel(this,
-                           i18nc("@info","Do you really want to close the bug assistant without "
-                           "submitting the report? <note>The crash information is still valid, so "
-                           "you can save the report before closing.</note>"),
-                           i18nc("@title:window","Close the Reporting Assistant"),
+                           i18nc("@info","Do you really want to close the bug reporting assistant?"
+                           "<note>The crash information is still valid, so "
+                           "you can save the report before closing if you want.</note>"),
+                           i18nc("@title:window","Close the Assistant"),
                            closeItem, saveBacktraceItem, keepOpenItem, QString(), KMessageBox::Dangerous);
             if(ret == KMessageBox::Yes)
             {
@@ -335,8 +335,8 @@ void ReportAssistantDialog::closeEvent(QCloseEvent * event)
             }
         } else {
             if (KMessageBox::questionYesNo(this, i18nc("@info","Do you really want to close the bug "
-                                                   "assistant without submitting the bug report?"),
-                                       i18nc("@title:window","Close the Reporting Assistant"),
+                                                   "reporting assistant?"),
+                                       i18nc("@title:window","Close the Assistant"),
                                            closeItem, keepOpenItem, QString(), KMessageBox::Dangerous)
                                         == KMessageBox::Yes) {
                 event->accept();
