@@ -126,7 +126,7 @@ void HardwareDatabasePrivate::createCache(const QString &dbFileName, const QStri
 
     const KConfig dbFile(dbFileName, KConfig::CascadeConfig);
     const bool opened = cacheFile.open(); // QIODevice::WriteOnly
-    Q_ASSERT(opened);
+    Q_ASSERT(opened); Q_UNUSED(opened);
     QDataStream cacheStream(&cacheFile);
     cacheStream.writeRawData(CACHE_MAGIC, 6);
     cacheStream << CACHE_VERSION << cacheStream.version() << quint32(0) << quint32(0);

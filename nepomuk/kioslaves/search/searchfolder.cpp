@@ -207,6 +207,7 @@ Nepomuk::SearchEntry* Nepomuk::SearchFolder::findEntry( const QString& name )
 
 Nepomuk::SearchEntry* Nepomuk::SearchFolder::findEntry( const KUrl& url )
 {
+    Q_UNUSED(url);
     // FIXME
     return 0;
 }

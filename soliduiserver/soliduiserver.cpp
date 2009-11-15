@@ -164,6 +164,7 @@ void SolidUiServer::showPassphraseDialog(const QString &udi,
 
 void SolidUiServer::onPassphraseDialogCompleted(const QString &pass, bool keep)
 {
+    Q_UNUSED(keep);
     KPasswordDialog *dialog = qobject_cast<KPasswordDialog*>(sender());
 
     if (dialog) {
