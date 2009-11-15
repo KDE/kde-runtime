@@ -304,6 +304,8 @@ void BugzillaDuplicatesPage::searchFinished(const BugMapList & list)
 
             QStringList fields = QStringList() << bug["bug_id"] << title;
             ui.m_bugListWidget->addTopLevelItem(new QTreeWidgetItem(fields));
+
+            reportInterface()->addPossibleDuplicateByQuery(bug["bug_id"]);
         }
 
         ui.m_bugListWidget->sortItems(0 , Qt::DescendingOrder);

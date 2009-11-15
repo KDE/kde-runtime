@@ -173,6 +173,19 @@ QString ReportInterface::generateReport(bool drKonqiStamp) const
                         .arg(duplicatesString));
     }
 
+    //All possible duplicates by query
+    if (!m_allPossibleDuplicatesByQuery.isEmpty()) {
+        report.append(QLatin1String("\n"));
+        QString duplicatesString;
+        int count = m_allPossibleDuplicatesByQuery.count();
+        for(int i=0; i < count && i < 5; i++) {
+            duplicatesString += QLatin1String("bug ") + m_allPossibleDuplicatesByQuery.at(i) +
+                                QLatin1String(", ");
+        }
+        duplicatesString = duplicatesString.left(duplicatesString.length()-2) + '.';
+        report.append(QString("Possible duplicates by query: %1\n").arg(duplicatesString));
+    }
+
     if (drKonqiStamp) {
         report.append(QLatin1String("\nReported using DrKonqi"));
     }
@@ -302,6 +315,11 @@ void ReportInterface::setAttachToBugNumber(uint bugNumber)
 uint ReportInterface::attachToBugNumber() const
 {
     return m_attachToBugNumber;
+}
+
+void ReportInterface::addPossibleDuplicateByQuery(const QString & duplicate)
+{
+    m_allPossibleDuplicatesByQuery.append(duplicate);
 }
 
 BugzillaManager * ReportInterface::bugzillaManager() const

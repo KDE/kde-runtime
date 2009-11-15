@@ -67,6 +67,8 @@ public:
     void setAttachToBugNumber(uint);
     uint attachToBugNumber() const;
 
+    void addPossibleDuplicateByQuery(const QString &);
+
     BugzillaManager * bugzillaManager() const;
     
 private Q_SLOTS:
@@ -88,6 +90,8 @@ private:
     QString     m_reportTitle;
     QString     m_reportDetailText;
     QStringList m_possibleDuplicates;
+
+    QStringList m_allPossibleDuplicatesByQuery;
 
     uint     m_attachToBugNumber;
     
