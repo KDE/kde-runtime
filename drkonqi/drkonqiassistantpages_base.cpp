@@ -201,13 +201,13 @@ void ConclusionPage::aboutToShow()
     
     switch (use) {
     case BacktraceParser::ReallyUseful: {
-        needToReport = (canDetails || developersCanContactReporter);
+        needToReport = (canDetails && developersCanContactReporter);
         explanationHTML += QString("<li>%1</li>").arg(i18nc("@info","The automatically generated "
                                                             "crash information is useful."));
         break;
     }
     case BacktraceParser::MayBeUseful: {
-        needToReport = (canDetails || developersCanContactReporter);
+        needToReport = (canDetails && developersCanContactReporter);
         explanationHTML += QString("<li>%1</li>").arg(i18nc("@info","The automatically generated "
                                                             "crash information lacks some "
                                                             "details "
@@ -215,7 +215,7 @@ void ConclusionPage::aboutToShow()
         break;
     }
     case BacktraceParser::ProbablyUseless: {
-        needToReport = (canDetails && developersCanContactReporter);
+        needToReport = false;
         explanationHTML += QString("<li>%1</li>").arg(i18nc("@info","The automatically generated "
                                                         "crash information lacks important details "
                                                         "and it is probably not helpful."));
