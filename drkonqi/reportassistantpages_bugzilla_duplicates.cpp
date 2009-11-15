@@ -651,11 +651,11 @@ int BugzillaReportInformationDialog::proceedOnAlreadyClosedReport()
 {
     //This is WIP
     KGuiItem userIsNotSureProceedButton;
-    userIsNotSureProceedButton.setText("I cannot be sure. Proceed reporting the bug");
+    userIsNotSureProceedButton.setText("I cannot be sure. Proceed with reporting the bug.");
     userIsNotSureProceedButton.setIcon(KIcon("dialog-ok-apply"));
 
     KGuiItem dismissBugReportButton;
-    dismissBugReportButton.setText("It is the same bug. Do not file my report (Close)");
+    dismissBugReportButton.setText("It is the same bug. Do not file my report (Close).");
     dismissBugReportButton.setIcon(KIcon("dialog-close"));
 
     int ret = KMessageBox::questionYesNoCancel(this,
