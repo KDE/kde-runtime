@@ -41,7 +41,7 @@ static const char columns[] = "bug_severity,priority,bug_status,product,short_de
 static const char loginUrl[] = "index.cgi";
 
 static const char searchUrl[] = "buglist.cgi?query_format=advanced&short_desc_type=anywordssubstr"
-                            "&short_desc=%1&product=kde&product=%2&long_desc_type=anywordssubstr&"
+                            "&short_desc=%1&product=kde&product=%2&long_desc_type=allwordssubstr&"
                             "long_desc=%3&bug_file_loc_type=allwordssubstr&bug_file_loc=&keywords_"
                             "type=allwords&keywords=&emailtype1=substring&email1=&emailtype2=substr"
                             "ing&email2=&bugidtype=include&bug_id=&votes=&chfieldfrom=%4&chfieldto="
