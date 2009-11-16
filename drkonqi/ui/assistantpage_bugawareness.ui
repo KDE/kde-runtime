@@ -79,6 +79,9 @@
      <property name="text">
       <string comment="@info">This assistant will analyze the crash information and guide you through the bug reporting process.</string>
      </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
     </widget>
    </item>
   </layout>
