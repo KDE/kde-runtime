@@ -26,6 +26,7 @@
 
 class QStandardItemModel;
 class QStandardItem;
+class DeviceModel;
 
 class DeviceAutomounterKCM : public KCModule, public Ui::DeviceAutomounterKCM {
     Q_OBJECT
@@ -40,16 +41,8 @@ class DeviceAutomounterKCM : public KCModule, public Ui::DeviceAutomounterKCM {
         void enabledChanged();
         void updateForgetDeviceButton();
         void forgetSelectedDevices();
-        void addNewDevice();
-        void deviceAttached(const QString &udi);
-        void deviceRemoved(const QString &udi);
     private:
-        void addNewDevice(const QString &udi);
-        void reloadDevices();
-        QStandardItemModel *m_devices;
-        QHash<QString, QModelIndex> m_deviceMap;
-        QStandardItem *m_attachedGroup;
-        QStandardItem *m_disconnectedGroup;
+        DeviceModel* m_devices;
 };
 
 #endif

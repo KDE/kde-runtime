@@ -1,4 +1,4 @@
-set(kcm_device_automounter_SRCS DeviceAutomounterKCM.cpp)
+set(kcm_device_automounter_SRCS DeviceAutomounterKCM.cpp DeviceModel.cpp)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
 

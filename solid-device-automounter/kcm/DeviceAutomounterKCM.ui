@@ -86,7 +86,7 @@
          </font>
         </property>
         <property name="text">
-         <string>Enabling &quot;Always Automount&quot; for a device in this list overrides any other setting.</string>
+         <string>Enabling &quot;Always Automount&quot; for a device in this list overrides any other setting, including globally enabling automounting.</string>
         </property>
         <property name="wordWrap">
          <bool>true</bool>
@@ -130,13 +130,6 @@
          <widget class="QPushButton" name="forgetDevice">
           <property name="text">
            <string>Forget Device</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="addDevice">
-          <property name="text">
-           <string>Add Device...</string>
           </property>
          </widget>
         </item>

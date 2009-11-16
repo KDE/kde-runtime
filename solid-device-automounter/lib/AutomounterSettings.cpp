@@ -92,14 +92,28 @@ AutomounterSettings::setDeviceLastSeenMounted(const QString &udi, bool mounted)
     deviceSettings(udi).writeEntry("LastSeenMounted", mounted);
 }
 
-void
-AutomounterSettings::setDeviceName(const QString &udi, const QString &name)
-{
-    deviceSettings(udi).writeEntry("LastNameSeen", name);
-}
-
 QString
 AutomounterSettings::getDeviceName(const QString &udi)
 {
     return deviceSettings(udi).readEntry("LastNameSeen");
+}
+
+void
+AutomounterSettings::saveDevice(const Solid::Device &dev)
+{
+    KConfigGroup settings = deviceSettings(dev.udi());
+    settings.writeEntry("LastNameSeen", dev.description());
+    settings.writeEntry("Icon", dev.icon());
+}
+
+bool
+AutomounterSettings::getDeviceForcedAutomount(const QString &udi)
+{
+    return deviceSettings(udi).readEntry("ForceAutomount", false);
+}
+
+QString
+AutomounterSettings::getDeviceIcon(const QString &udi)
+{
+    return deviceSettings(udi).readEntry("Icon");
 }
