@@ -26,8 +26,10 @@ else (LIBSSH_LIBRARIES AND LIBSSH_INCLUDE_DIRS)
       /usr/local/include
       /opt/local/include
       /sw/include
+      ${CMAKE_INCLUDE_PATH}
+      ${CMAKE_INSTALL_PREFIX}/include
   )
-
+  
   find_library(SSH_LIBRARY
     NAMES
       ssh
@@ -37,6 +39,8 @@ else (LIBSSH_LIBRARIES AND LIBSSH_INCLUDE_DIRS)
       /usr/local/lib
       /opt/local/lib
       /sw/lib
+      ${CMAKE_LIBRARY_PATH}
+      ${CMAKE_INSTALL_PREFIX}/lib
   )
 
   if (LIBSSH_INCLUDE_DIR AND SSH_LIBRARY)
