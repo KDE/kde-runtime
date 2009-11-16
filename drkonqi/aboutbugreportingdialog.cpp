@@ -64,7 +64,7 @@ AboutBugReportingDialog::AboutBugReportingDialog(QWidget * parent):
 
         //Bug Awareness Page
         QString("<a name=\"%1\" /><h2>%2</h2>").arg(QLatin1String(PAGE_AWARENESS_ID),
-                                i18nc("@title","What do you know about the crash ?")) +
+                                i18nc("@title","What do you know about the crash?")) +
         QString("<p>%1</p><p>%2<ul><li>%3</li><li>%4</li><li>%5</li><li>%6</li><li>%7</li>"
         "</ul>%8</p>").arg(
             i18nc("@info/rich","In this page you answer some questions about the crash context, "
@@ -171,7 +171,7 @@ AboutBugReportingDialog::AboutBugReportingDialog(QWidget * parent):
             i18nc("@info/rich","In this case you need to write a title and description "
                             "of the crash. Explain as best you can. "),
             QLatin1String(PAGE_AWARENESS_ID),
-            i18nc("@title","What do you know about the crash ?"),
+            i18nc("@title","What do you know about the crash?"),
             i18nc("@info/rich", "You can also specify your distribution method (GNU/Linux "
                                 "distribution or packaging system) or if you compiled KDE "
                                 "from sources."),
