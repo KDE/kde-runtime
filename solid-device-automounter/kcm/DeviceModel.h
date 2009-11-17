@@ -31,7 +31,8 @@ class DeviceModel : public QAbstractItemModel {
         void addNewDevice(const QString &udi);
         QList<QString> m_attached;
         QList<QString> m_disconnected;
-        QHash<QString, bool> m_forced;
+        QHash<QString, bool> m_loginForced;
+        QHash<QString, bool> m_attachedForced;
 };
 
 #endif

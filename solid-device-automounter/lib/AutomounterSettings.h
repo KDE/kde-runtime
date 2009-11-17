@@ -37,7 +37,7 @@ class AutomounterSettings : public AutomounterSettingsBase {
         static bool deviceIsKnown(const QString &udi);
         static bool shouldAutomountDevice(const QString &udi, AutomountType type);
         static void setDeviceLastSeenMounted(const QString &udi, bool mounted);
-        static bool deviceAutomountIsForced(const QString &udi);
+        static bool deviceAutomountIsForced(const QString &udi, AutomountType type);
         static QString getDeviceName(const QString &udi);
         static bool getDeviceForcedAutomount(const QString &udi);
         static QString getDeviceIcon(const QString &udi);

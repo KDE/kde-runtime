@@ -79,21 +79,6 @@
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
-       <widget class="QLabel" name="label">
-        <property name="font">
-         <font>
-          <italic>true</italic>
-         </font>
-        </property>
-        <property name="text">
-         <string>Enabling &quot;Always Automount&quot; for a device in this list overrides any other setting, including globally enabling automounting.</string>
-        </property>
-        <property name="wordWrap">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
        <widget class="QTreeView" name="deviceView">
         <property name="editTriggers">
          <set>QAbstractItemView::NoEditTriggers</set>

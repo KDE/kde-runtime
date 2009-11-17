@@ -101,10 +101,12 @@ DeviceAutomounterKCM::enabledChanged()
         automountOnLogin->setEnabled(false);
         automountOnPlugin->setEnabled(false);
         automountUnknownDevices->setEnabled(false);
+        deviceView->setEnabled(false);
     } else {
         automountOnLogin->setEnabled(true);
         automountOnPlugin->setEnabled(true);
         automountUnknownDevices->setEnabled(true);
+        deviceView->setEnabled(true);
     }
 }
 
@@ -162,13 +164,18 @@ DeviceAutomounterKCM::save()
     for(int i = 0;i < m_devices->rowCount();i++) {
         QModelIndex idx = m_devices->index(i, 0);
         for(int j = 0;j < m_devices->rowCount(idx);j++) {
-            QModelIndex dev = m_devices->index(j, 3, idx);
+            QModelIndex dev = m_devices->index(j, 1, idx);
             QString device = dev.data(Qt::UserRole).toString();
             validDevices << device;
             if (dev.data(Qt::CheckStateRole).toInt() == Qt::Checked)
-                AutomounterSettings::deviceSettings(device).writeEntry("ForceAutomount", true);
+                AutomounterSettings::deviceSettings(device).writeEntry("ForceLoginAutomount", true);
             else
-                AutomounterSettings::deviceSettings(device).writeEntry("ForceAutomount", false);
+                AutomounterSettings::deviceSettings(device).writeEntry("ForceLoginAutomount", false);
+            dev = dev.sibling(j, 2);
+            if (dev.data(Qt::CheckStateRole).toInt() == Qt::Checked)
+                AutomounterSettings::deviceSettings(device).writeEntry("ForceAttachAutomount", true);
+            else
+                AutomounterSettings::deviceSettings(device).writeEntry("ForceAttachAutomount", false);
         }
     }
 

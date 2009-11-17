@@ -40,9 +40,14 @@ AutomounterSettings::deviceIsKnown(const QString &udi)
 }
 
 bool
-AutomounterSettings::deviceAutomountIsForced(const QString &udi)
+AutomounterSettings::deviceAutomountIsForced(const QString &udi, AutomountType type)
 {
-    return deviceSettings(udi).readEntry("ForceAutomount", false);
+    switch (type) {
+        case Login:
+            return deviceSettings(udi).readEntry("ForceLoginAutomount", false);
+        case Attach:
+            return deviceSettings(udi).readEntry("ForceAttachAutomount", false);
+    }
 }
 
 bool
@@ -57,7 +62,7 @@ AutomounterSettings::shouldAutomountDevice(const QString &udi, AutomountType typ
     bool known = deviceIsKnown(udi);
     bool enabled = automountEnabled();
     bool automountKnown = !automountUnknownDevices();
-    bool deviceAutomount = deviceAutomountIsForced(udi);
+    bool deviceAutomount = deviceAutomountIsForced(udi, type);
     bool lastSeenMounted = deviceSettings(udi).readEntry("LastSeenMounted", false);
     bool typeCondition = false;
     switch(type) {

@@ -4,6 +4,7 @@
 #include <Solid/DeviceNotifier>
 #include <Solid/Device>
 #include <Solid/StorageVolume>
+#include <KIcon>
 
 #include "AutomounterSettings.h"
 
@@ -18,8 +19,6 @@ DeviceModel::DeviceModel(QObject *parent)
     
     connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceAdded(const QString)), this, SLOT(deviceAttached(const QString)));
     connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceRemoved(const QString)), this, SLOT(deviceRemoved(const QString)));
-    kDebug() << "Rows present:" << rowCount(QModelIndex());
-    kDebug() << "Rows in row 1" << rowCount(index(0, 0, QModelIndex()));
 }
 
 DeviceModel::~DeviceModel()
@@ -39,7 +38,8 @@ DeviceModel::forgetDevice(const QString &udi)
         m_attached.removeOne(udi);
         endRemoveRows();
     }
-    m_forced.remove(udi);
+    m_loginForced.remove(udi);
+    m_attachedForced.remove(udi);
 }
 
 QVariant
@@ -53,8 +53,6 @@ DeviceModel::headerData(int section, Qt::Orientation orientation, int role) cons
                 return i18n("Automount on login");
             case 2:
                 return i18n("Automount on attach");
-            case 3:
-                return i18n("Always automount");
         }
     }
     return QVariant();
@@ -66,9 +64,11 @@ DeviceModel::deviceAttached(const QString &udi)
     Solid::Device dev(udi);
     if (dev.is<Solid::StorageVolume>()) {
         if (m_disconnected.contains(udi)) {
+            emit layoutAboutToBeChanged();
             beginRemoveRows(index(0, 0), m_disconnected.indexOf(udi), m_disconnected.indexOf(udi));
             m_disconnected.removeOne(udi);
             endRemoveRows();
+            emit layoutChanged();
         }
         addNewDevice(udi);
     }
@@ -78,9 +78,11 @@ void
 DeviceModel::deviceRemoved(const QString &udi)
 {
     if (m_attached.contains(udi)) {
+        emit layoutAboutToBeChanged();
         beginRemoveRows(index(1, 0), m_attached.indexOf(udi), m_attached.indexOf(udi));
         m_attached.removeOne(udi);
         endRemoveRows();
+        emit layoutChanged();
         addNewDevice(udi);
     }
 }
@@ -88,8 +90,12 @@ DeviceModel::deviceRemoved(const QString &udi)
 void
 DeviceModel::addNewDevice(const QString &udi)
 {
-    if (!m_forced.contains(udi))
-        m_forced[udi] = AutomounterSettings::getDeviceForcedAutomount(udi);
+    AutomounterSettings::self()->readConfig();
+    if (!m_loginForced.contains(udi))
+        m_loginForced[udi] = AutomounterSettings::deviceAutomountIsForced(udi, AutomounterSettings::Login);
+    if (!m_attachedForced.contains(udi))
+        m_loginForced[udi] = AutomounterSettings::deviceAutomountIsForced(udi, AutomounterSettings::Attach);
+    emit layoutAboutToBeChanged();
     Solid::Device dev(udi);
     if (dev.isValid()) {
         beginInsertRows(index(0, 0), m_attached.size(), m_attached.size()+1);
@@ -101,13 +107,15 @@ DeviceModel::addNewDevice(const QString &udi)
         kDebug() << "Adding disconnected device" << udi;
     }
     endInsertRows();
+    emit layoutChanged();
 }
 
 void
 DeviceModel::reload()
 {
-    foreach(QString udi, m_forced.keys()) {
-        m_forced[udi] = AutomounterSettings::getDeviceForcedAutomount(udi);
+    foreach(QString udi, m_loginForced.keys()) {
+        m_loginForced[udi] = AutomounterSettings::deviceAutomountIsForced(udi, AutomounterSettings::Login);
+        m_attachedForced[udi] = AutomounterSettings::deviceAutomountIsForced(udi, AutomounterSettings::Attach);
     }
 }
 
@@ -116,14 +124,14 @@ DeviceModel::index(int row, int column, const QModelIndex &parent) const
 {
     if (parent.isValid()) {
         if (parent.row() == 0) {
-            if (row >= 0 && row < m_attached.size() && column >= 0 && column <= 3)
+            if (row >= 0 && row < m_attached.size() && column >= 0 && column <= 2)
                 return createIndex(row, column, 0);
         } else if (parent.row() == 1) {
-            if (row >= 0 && row < m_disconnected.size() && column >= 0 && column <= 3)
+            if (row >= 0 && row < m_disconnected.size() && column >= 0 && column <= 2)
                 return createIndex(row, column, 1);
         }
     } else {
-         if ((row == 0 || row == 1) && column >= 0 && column <= 3)
+         if ((row == 0 || row == 1) && column >= 0 && column <= 2)
             return createIndex(row, column, 3);
     }
     return QModelIndex();
@@ -146,9 +154,9 @@ DeviceModel::flags(const QModelIndex &index) const
 {
     if (index.isValid()) {
         if (index.parent().isValid()) {
-            if (index.column() == 3) {
+            if (index.column() > 0) {
                 return Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable;
-            } else if (index.column() >= 0 && index.column() <= 2) {
+            } else if (index.column() == 0) {
                 return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
             }
         } else {
@@ -161,8 +169,16 @@ DeviceModel::flags(const QModelIndex &index) const
 bool
 DeviceModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-    if (index.isValid() && role == Qt::CheckStateRole) {
-        m_forced[index.data(Qt::UserRole).toString()] = (value.toInt() == Qt::Checked) ? true : false;
+    if (index.isValid() && role == Qt::CheckStateRole && index.column() > 0) {
+        QString udi = index.data(Qt::UserRole).toString();
+        switch(index.column()) {
+            case 1:
+                m_loginForced[udi] = (value.toInt() == Qt::Checked) ? true : false;
+                break;
+            case 2:
+                m_attachedForced[udi] = (value.toInt() == Qt::Checked) ? true : false;
+                break;
+        }
         emit dataChanged(index, index);
         return true;
     }
@@ -185,14 +201,12 @@ DeviceModel::data(const QModelIndex &index, int role) const
                     case Qt::ToolTipRole:
                         return udi;
                     case Qt::DecorationRole:
-                        return dev.icon();
+                        return KIcon(dev.icon());
                 }
             } else if (index.column() == 1 && role == Qt::CheckStateRole) {
-                return AutomounterSettings::shouldAutomountDevice(udi, AutomounterSettings::Login) ? i18n("Yes") : i18n("No");
+                return m_loginForced[udi] ? Qt::Checked : Qt::Unchecked;
             } else if (index.column() == 2 && role == Qt::CheckStateRole) {
-                return AutomounterSettings::shouldAutomountDevice(udi, AutomounterSettings::Attach) ? i18n("Yes") : i18n("No");
-            } else if (index.column() == 3 && role == Qt::CheckStateRole) {
-                return m_forced[udi] ? Qt::Checked : Qt::Unchecked;
+                return m_attachedForced[udi] ? Qt::Checked : Qt::Unchecked;
             }
         } else if (index.parent().row() == 1) {
             QString udi = m_disconnected[index.row()];
@@ -205,14 +219,12 @@ DeviceModel::data(const QModelIndex &index, int role) const
                     case Qt::ToolTipRole:
                         return udi;
                     case Qt::DecorationRole:
-                        return AutomounterSettings::getDeviceIcon(udi);
+                        return KIcon(AutomounterSettings::getDeviceIcon(udi));
                 }
             } else if (index.column() == 1 && role == Qt::CheckStateRole) {
-                return AutomounterSettings::shouldAutomountDevice(udi, AutomounterSettings::Login) ? i18n("Yes") : i18n("No");
+                return m_loginForced[udi] ? Qt::Checked : Qt::Unchecked;
             } else if (index.column() == 2 && role == Qt::CheckStateRole) {
-                return AutomounterSettings::shouldAutomountDevice(udi, AutomounterSettings::Attach) ? i18n("Yes") : i18n("No");
-            } else if (index.column() == 3 && role == Qt::CheckStateRole) {
-                return m_forced[udi] ? Qt::Checked : Qt::Unchecked;
+                return m_attachedForced[udi] ? i18n("Yes") : i18n("No");
             }
         }
     } else if (index.isValid()) {
@@ -244,5 +256,5 @@ int
 DeviceModel::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    return 4;
+    return 3;
 }
