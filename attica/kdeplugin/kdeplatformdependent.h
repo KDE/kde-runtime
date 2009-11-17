@@ -52,6 +52,8 @@ public:
     virtual QNetworkAccessManager* nam();
 
 private:
+    void openWallet(bool force);
+    
     KSharedConfigPtr m_config;
     // FIXME: Change to KIO::AccessManager
     QNetworkAccessManager m_qnam;
