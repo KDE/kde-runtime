@@ -8,6 +8,7 @@ X-KDE-Library=kcm_componentchooser
 X-KDE-ParentApp=kcontrol
 
 X-KDE-System-Settings-Parent-Category=personal
+X-DocPath=kcontrol/componentchooser/index.html
 
 Name=Default Applications
 Name[af]=Verstektoepassings
