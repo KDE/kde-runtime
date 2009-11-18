@@ -8,6 +8,7 @@ X-KDE-Library=kcm_kded
 X-KDE-ParentApp=kcontrol
 
 X-KDE-System-Settings-Parent-Category=advanced-user-settings
+X-DocPath=kcontrol/kded/index.html
 
 Name=Service Manager
 Name[af]=Diens Bestuurder
