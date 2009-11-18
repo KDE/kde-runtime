@@ -235,7 +235,7 @@ void BacktraceLineGdb::parse()
                       "0x[0-9a-f]+.*|"
                       "Current language:.*");
     if (regExp.exactMatch(d->m_line)) {
-        kDebug() << "crap detected:" << d->m_line;
+        kDebug() << "garbage detected:" << d->m_line;
         d->m_type = Crap;
         return;
     }
