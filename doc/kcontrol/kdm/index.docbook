@@ -472,7 +472,7 @@ user. Enable this using the <guilabel>Truly automatic login</guilabel>
 option. If this option is not enabled, &kdm; will start normally,
 enabling you to login as any user, and will only perform automatic login
 if you kill the X server, &eg; by pressing <keycombo
-action="simul">&Ctrl;&Alt;<keycap>Backspace</keycap></keycombo>.</para>
+action="simul">&Ctrl;&Alt;&Backspace;</keycombo>.</para>
 
 <para>You can choose the account to be used for automatic login in the
 list below.</para>
