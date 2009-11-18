@@ -31,12 +31,18 @@
 #include <Soprano/QueryResultIterator>
 
 
+//
+// Hint: Inverse property handling has been disabled but the code kept for possible future use or educational value.
+//       Handling inverse properties here does not make sense as the crappy inference is only applied to the ontologies,
+//       not the data itself.
+//
+
 class Nepomuk::CrappyInferencer::Private
 {
 public:
     QUrl infoContext() const;
 
-    QHash<QUrl, QUrl> m_inverseProperties;
+//    QHash<QUrl, QUrl> m_inverseProperties;
     QMultiHash<QUrl, QUrl> m_subClasses;
     QMultiHash<QUrl, QUrl> m_superClasses;
     QMultiHash<QUrl, QUrl> m_subProperties;
@@ -88,6 +94,7 @@ Soprano::Error::ErrorCode Nepomuk::CrappyInferencer::addStatement( const Soprano
     //
     if ( statement.subject().isResource() &&
          statement.object().isResource() ) {
+#if 0
         //
         // handle inverse properties
         //
@@ -103,7 +110,9 @@ Soprano::Error::ErrorCode Nepomuk::CrappyInferencer::addStatement( const Soprano
         //
         // infer sub classing
         //
-        else if ( statement.predicate() == Soprano::Vocabulary::RDFS::subClassOf() ) {
+        else
+#endif
+            if ( statement.predicate() == Soprano::Vocabulary::RDFS::subClassOf() ) {
             addInference( statement, d->m_subClasses, d->m_superClasses );
         }
 
@@ -162,6 +171,7 @@ Soprano::Error::ErrorCode Nepomuk::CrappyInferencer::removeAllStatements( const 
 
 void Nepomuk::CrappyInferencer::removeStatementInference( const Soprano::Statement& s, Soprano::Graph& statementsToRemove )
 {
+#if 0
     //
     // handle inverse properties
     //
@@ -179,7 +189,9 @@ void Nepomuk::CrappyInferencer::removeStatementInference( const Soprano::Stateme
     //
     // remove subclass inference
     //
-    else if ( s.predicate() == Soprano::Vocabulary::RDFS::subClassOf() ) {
+    else
+#endif
+        if ( s.predicate() == Soprano::Vocabulary::RDFS::subClassOf() ) {
         removeInference( s, d->m_subClasses, d->m_superClasses, statementsToRemove );
     }
 
@@ -294,13 +306,13 @@ void Nepomuk::CrappyInferencer::addInference( const Soprano::Statement& statemen
 void Nepomuk::CrappyInferencer::createInferenceIndex()
 {
     // clear cache
-    d->m_inverseProperties.clear();
+//    d->m_inverseProperties.clear();
     d->m_subClasses.clear();
     d->m_superClasses.clear();
     d->m_subProperties.clear();
     d->m_superProperties.clear();
 
-
+#if 0
     // cache inverse properties
     Soprano::QueryResultIterator it = executeQuery( QString( "select ?x ?y where { ?x %1 ?y . }" )
                                                     .arg( Soprano::Node::resourceToN3( Soprano::Vocabulary::NRL::inverseProperty() ) ),
@@ -309,13 +321,13 @@ void Nepomuk::CrappyInferencer::createInferenceIndex()
         d->m_inverseProperties.insert( it["x"].uri(), it["y"].uri() );
         d->m_inverseProperties.insert( it["y"].uri(), it["x"].uri() );
     }
-
+#endif
 
     // cache subClassOf relations (only the original ones)
-    it = executeQuery( QString( "select ?x ?y where { graph ?g { ?x %1 ?y . } . FILTER(?g != %2) . }" )
-                       .arg( Soprano::Node::resourceToN3( Soprano::Vocabulary::RDFS::subClassOf() ) )
-                       .arg( Soprano::Node::resourceToN3( d->infoContext() ) ),
-                       Soprano::Query::QueryLanguageSparql );
+    Soprano::QueryResultIterator it = executeQuery( QString( "select ?x ?y where { graph ?g { ?x %1 ?y . } . FILTER(?g != %2) . }" )
+                                                    .arg( Soprano::Node::resourceToN3( Soprano::Vocabulary::RDFS::subClassOf() ) )
+                                                    .arg( Soprano::Node::resourceToN3( d->infoContext() ) ),
+                                                    Soprano::Query::QueryLanguageSparql );
     while ( it.next() ) {
         d->m_subClasses.insert( it["x"].uri(), it["y"].uri() );
         d->m_superClasses.insert( it["y"].uri(), it["x"].uri() );
