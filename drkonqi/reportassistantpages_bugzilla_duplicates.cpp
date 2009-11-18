@@ -609,7 +609,7 @@ void BugzillaReportInformationDialog::bugFetchFinished(BugReport report, QObject
                     customResolutionString = report.resolution();
                 }
                 
-                customStatusString = i18nc("@info bug status, %1 is the resolutin", "Closed (%1)",
+                customStatusString = i18nc("@info bug status, %1 is the resolution", "Closed (%1)",
                                            customResolutionString);
             } else if (report.bugStatus() == QLatin1String("NEEDSINFO")) {
                 customStatusString = i18nc("@info bug status", "Temporarily closed, because of a lack "
