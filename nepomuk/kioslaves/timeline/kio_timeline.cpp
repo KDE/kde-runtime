@@ -20,14 +20,13 @@
 
 #include "kio_timeline.h"
 
-#include <nepomuk/resourcemanager.h>
-
 #include <KUrl>
 #include <kio/global.h>
 #include <klocale.h>
 #include <kio/job.h>
 #include <KUser>
 #include <KDebug>
+#include <KLocale>
 #include <kio/netaccess.h>
 #include <KCalendarSystem>
 #include <KUser>
@@ -119,7 +118,7 @@ void Nepomuk::TimelineProtocol::listDir( const KUrl& url )
         // Today
         // ------------------------------------
         KIO::UDSEntry uds = createFolderUDSEntry( QLatin1String("today"), i18n("Today"), QDate::currentDate() );
-        uds.insert( KIO::UDSEntry::UDS_URL, buildQueryUrl( QDate::currentDate() ).url() );
+//        uds.insert( KIO::UDSEntry::UDS_URL, buildQueryUrl( QDate::currentDate() ).url() );
         listEntry( uds, false );
 
         // Calendar
@@ -138,13 +137,52 @@ void Nepomuk::TimelineProtocol::listDir( const KUrl& url )
             finished();
         }
         else {
-            kDebug() << ru;
+            kDebug() << ru << url.query();
             QStringList terms = ru.split('/', QString::SkipEmptyParts );
             kDebug() << terms;
             if( terms.count() == 1 ) {
                 QDate date = QDate::fromString( terms[0], QLatin1String("yyyy-MM") );
-                kDebug() << date;
-                if( date.isValid() ) {
+                QDate newDate = date;
+                QMap<QString,QString> queryItems = url.queryItems();
+                QString dayKey = QLatin1String("relDays");
+                QString weekKey = QLatin1String("relWeeks");
+                QString monthKey = QLatin1String("relMonths");
+                QString yearKey = QLatin1String("relYears");
+                bool ok = false;
+
+                if (queryItems.contains(yearKey)) {
+                    int relYears = queryItems[yearKey].toInt(&ok);
+                    if (ok) {
+                        newDate = date.addYears(relYears);
+                    }
+                } else if (queryItems.contains(monthKey)) {
+                    int relMonths = queryItems[monthKey].toInt(&ok);
+                    if (ok) {
+                        newDate = date.addMonths(relMonths);
+                    }
+                } else if (queryItems.contains(weekKey)) {
+                    int relWeeks = queryItems[weekKey].toInt(&ok);
+                    if (ok) {
+                        const KCalendarSystem * calSystem = KGlobal::locale()->calendar();
+                        newDate = date.addDays(relWeeks * calSystem->daysInWeek(date));
+                    }
+                } else if (queryItems.contains(dayKey)) {
+                    int relDays = queryItems[dayKey].toInt(&ok);
+                    if (ok) {
+                        newDate = date.addDays(relDays);
+                    }
+                }
+
+                if (ok && newDate <= QDate::currentDate()) {
+                    KUrl newUrl;
+                    newUrl.setScheme(QLatin1String("timeline"));
+                    newUrl.setPath(QString("/calendar/%1").arg(newDate.toString("yyyy-MM")));
+                    kDebug() << newUrl;
+                    redirection(newUrl);
+                    finished();
+                }
+                else if( date.isValid() ) {
+                    kDebug() << date;
                     listDays( date.month(), date.year() );
                     listEntry( KIO::UDSEntry(), true );
                     finished();
@@ -288,7 +326,7 @@ void Nepomuk::TimelineProtocol::listDays( int month, int year )
             KIO::UDSEntry uds = createFolderUDSEntry( date.toString("yyyy-MM-dd"),
                                                       KGlobal::locale()->formatDate( date, KLocale::FancyLongDate ),
                                                       date );
-            uds.insert( KIO::UDSEntry::UDS_URL, buildQueryUrl( date ).url() );
+//            uds.insert( KIO::UDSEntry::UDS_URL, buildQueryUrl( date ).url() );
             listEntry( uds, false );
         }
     }
@@ -326,11 +364,6 @@ extern "C"
         if (argc != 4) {
             kError() << "Usage: kio_timeline protocol domain-socket1 domain-socket2";
             exit(-1);
-        }
-
-        if ( Nepomuk::ResourceManager::instance()->init() ) {
-            kError() << "Unable to initialized Nepomuk.";
-            exit( -1 );
         }
 
         Nepomuk::TimelineProtocol slave(argv[2], argv[3]);

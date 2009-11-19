@@ -61,11 +61,9 @@ namespace {
 
 
 Nepomuk::SearchEntry::SearchEntry( const QUrl& res,
-                                   bool isFile,
                                    const KIO::UDSEntry& uds)
     : m_resource( res ),
-      m_entry( uds ),
-      m_isFile(isFile)
+      m_entry( uds )
 {
 }
 
@@ -242,15 +240,8 @@ void Nepomuk::SearchFolder::slotEntriesRemoved( const QList<QUrl>& entries )
     QMutexLocker lock( &m_resultMutex );
 
     foreach( const QUrl& uri, entries ) {
-        QHash<QUrl, QString>::iterator it = m_resourceNameMap.find( uri );
-        if ( it != m_resourceNameMap.end() ) {
-            delete m_entries.take( it.value() );
-
-            // inform everybody
-            org::kde::KDirNotify::emitFilesRemoved( QStringList() << ( "nepomuksearch:/" + m_name + '/' + *it ) );
-
-            m_resourceNameMap.erase( it );
-        }
+        // inform everybody
+        org::kde::KDirNotify::emitFilesRemoved( QStringList() << ( "nepomuksearch:/" + m_name + '/' + uri.toEncoded().toPercentEncoding() ) );
     }
 }
 
@@ -294,206 +285,48 @@ void Nepomuk::SearchFolder::statResults()
 
 
 namespace {
-    /**
-     * Stat a file.
-     *
-     * \param url The url of the file
-     * \param success will be set to \p true if the stat was successful
-     */
-    KIO::UDSEntry statFile( const KUrl& url, bool& success )
+    bool statFile( const KUrl& url, KIO::UDSEntry& uds )
     {
-        success = false;
-        KIO::UDSEntry uds;
+        // the akonadi kio slave is just way too slow and
+        // in KDE 4.4 akonadi items should have nepomuk:/res/<uuid> URIs anyway
+        if ( url.scheme() == QLatin1String( "akonadi" ) )
+            return false;
 
-        if ( !url.isEmpty() &&
-             url.scheme() != "akonadi" &&
-             url.scheme() != "nepomuk" ) { // do not stat akonadi resouces here, way too slow, even hangs if akonadi is not running
-            kDebug() << "listing file" << url;
-            if ( KIO::StatJob* job = KIO::stat( url, KIO::HideProgressInfo ) ) {
-                job->setAutoDelete( false );
-                if ( KIO::NetAccess::synchronousRun( job, 0 ) ) {
-                    uds = job->statResult();
-                    if ( url.isLocalFile() ) {
-                        uds.insert( KIO::UDSEntry::UDS_LOCAL_PATH, url.toLocalFile() );
-                    }
-                    success = true;
-                }
-                else {
-                    kDebug() << "failed to stat" << url;
-                }
-                delete job;
+        bool success = false;
+
+        if ( KIO::StatJob* job = KIO::stat( url, KIO::HideProgressInfo ) ) {
+            job->setAutoDelete( false );
+            if ( KIO::NetAccess::synchronousRun( job, 0 ) ) {
+                uds = job->statResult();
+                success = true;
             }
+            else {
+                kDebug() << "failed to stat" << url;
+            }
+            delete job;
         }
 
-        return uds;
-    }
-
-
-    /**
-     * Workaround a missing Nepomuk::Variant feature which is in trunk but not in 4.3.0.
-     */
-    QUrl extractUrl( const Nepomuk::Variant& v ) {
-        QList<Nepomuk::Resource> rl = v.toResourceList();
-        if ( !rl.isEmpty() )
-            return rl.first().resourceUri();
-        return QUrl();
+        return success;
     }
 }
+
 
 // always called in main thread
 Nepomuk::SearchEntry* Nepomuk::SearchFolder::statResult( const Query::Result& result )
 {
-    //
-    // First we check if the resource is a file itself. For that we first get
-    // the URL (being backwards compatible with Xesam data) and then stat that URL
-    //
-    KUrl url = result[Nepomuk::Vocabulary::NIE::url()].uri();
-    if ( url.isEmpty() ) {
-        url = result.resource().resourceUri();
-    }
-    bool isFile = false;
-    KIO::UDSEntry uds = statFile( url, isFile );
-
-
-    if ( isFile ) {
+    KUrl url = result.resource().resourceUri();
+    KIO::UDSEntry uds;
+    if ( statFile( url, uds ) ) {
         uds.insert( KIO::UDSEntry::UDS_NEPOMUK_URI, url.url() );
-    }
-
-    //
-    // If it is not a file we get inventive:
-    // In case it is a pimo thing, we see if it has a grounding occurrence
-    // which is a file. If so, we merge the two by taking the file URL and the thing's
-    // label and icon if set
-    //
-    else {
-        kDebug() << "listing resource" << result.resource().resourceUri();
-
-        //
-        // We only create a resource here since this is a rather slow process and
-        // a lot of file results could become slow then.
-        //
-        Nepomuk::Resource res( result.resource() );
-
-        //
-        // let's see if it is a pimo thing which refers to a file
-        //
-        bool isPimoThingLinkedFile = false;
-        if ( res.pimoThing() == res ) {
-            if ( !res.pimoThing().groundingOccurrences().isEmpty() ) {
-                Nepomuk::Resource fileRes = res.pimoThing().groundingOccurrences().first();
-                url = extractUrl( fileRes.property( Nepomuk::Vocabulary::NIE::url() ) );
-                if ( url.isEmpty() ) {
-                    url = extractUrl( fileRes.property( Soprano::Vocabulary::Xesam::url() ) );
-                    if ( url.isEmpty() )
-                        url = res.resourceUri();
-                }
-                uds = statFile( url, isPimoThingLinkedFile );
-            }
+        // be backwards compatible for the pre KDE 4.4 times where we actually used file:/ URLs for nepomuk resources
+        if ( url.scheme() != QLatin1String( "nepomuk" ) ) {
+            uds.insert( KIO::UDSEntry::UDS_URL, url.url() );
         }
-
-        QString name = res.label();
-        if ( name.isEmpty() && !isPimoThingLinkedFile )
-            name = res.genericLabel();
-
-        // make sure name is not the URI (which is the fallback of genericLabel() and will lead to crashes in KDirModel)
-        if ( name.contains( '/' ) ) {
-            name = name.section( '/', -1 );
-            if ( name.isEmpty() )
-                name = res.resourceUri().fragment();
-            if ( name.isEmpty() )
-                name = res.resourceUri().toString().replace( '/', '_' );
-        }
-
-        //
-        // We always use the pimo things label, even if it points to a file
-        //
-        if ( !name.isEmpty() ) {
-            uds.insert( KIO::UDSEntry::UDS_NAME, name );
-            uds.insert( KIO::UDSEntry::UDS_DISPLAY_NAME, name );
-        }
-
-        //
-        // An icon set on the pimo thing overrides the file's icon
-        //
-        QString icon = res.genericIcon();
-        if ( !icon.isEmpty() ) {
-            uds.insert( KIO::UDSEntry::UDS_ICON_NAME, icon );
-        }
-        else if ( !isPimoThingLinkedFile ) {
-            uds.insert( KIO::UDSEntry::UDS_ICON_NAME, "nepomuk" );
-        }
-
-        //
-        // Generate some dummy values
-        //
-        if ( !isPimoThingLinkedFile ) {
-            uds.insert( KIO::UDSEntry::UDS_CREATION_TIME, res.property( Soprano::Vocabulary::NAO::created() ).toDateTime().toTime_t() );
-            uds.insert( KIO::UDSEntry::UDS_MODIFICATION_TIME, res.property( Soprano::Vocabulary::NAO::lastModified() ).toDateTime().toTime_t() );
-            uds.insert( KIO::UDSEntry::UDS_ACCESS, 0700 );
-            uds.insert( KIO::UDSEntry::UDS_USER, KUser().loginName() );
-//        uds.insert( KIO::UDSEntry::UDS_MIME_TYPE, "application/x-nepomuk-resource" );
-        }
-
-        //
-        // We always want the display type, even for pimo thing linked files, in the
-        // end showing "Invoice" or "Letter" is better than "text file"
-        // However, mimetypes are better than generic stuff like pimo:Thing and pimo:Document
-        //
-        Nepomuk::Types::Class type( res.pimoThing().isValid() ? res.pimoThing().resourceType() : res.resourceType() );
-        if ( !isPimoThingLinkedFile ||
-             type.uri() != Nepomuk::Vocabulary::PIMO::Thing() ) {
-            if (!type.label().isEmpty())
-                uds.insert( KIO::UDSEntry::UDS_DISPLAY_TYPE, type.label() );
-        }
-
-        //
-        // Starting with KDE 4.4 we have the pretty UDS_NEPOMUK_URI which makes
-        // everything much cleaner since kio slaves can decide if the resources can be
-        // annotated or not.
-        //
-        if ( isPimoThingLinkedFile ) {
-            uds.insert( KIO::UDSEntry::UDS_NEPOMUK_URI, KUrl( url ).url() );
-            uds.insert( KIO::UDSEntry::UDS_TARGET_URL, KUrl( url ).url() );
-        }
-        else {
-            uds.insert( KIO::UDSEntry::UDS_NEPOMUK_URI, KUrl( res.resourceUri() ).url() );
-            uds.insert( KIO::UDSEntry::UDS_TARGET_URL, KUrl( res.resourceUri() ).url() );
-        }
-    }
-
-    //
-    // make sure we have no duplicate names
-    //
-    QString name = uds.stringValue( KIO::UDSEntry::UDS_DISPLAY_NAME );
-    if ( name.isEmpty() ) {
-        name = uds.stringValue( KIO::UDSEntry::UDS_NAME );
-    }
-
-    // the name is empty if the resource could not be stated
-    if ( !name.isEmpty() ) {
-        int cnt = 0;
-        if ( m_nameCntHash.contains( name ) ) {
-            cnt = ++m_nameCntHash[name];
-        }
-        else {
-            cnt = m_nameCntHash[name] = 0;
-        }
-        if ( cnt >= 1 ) {
-            name = addCounterToFileName( name, cnt );
-        }
-        uds.insert( KIO::UDSEntry::UDS_NAME, name );
-        uds.insert( KIO::UDSEntry::UDS_DISPLAY_NAME, name );
-
-        SearchEntry* entry = new SearchEntry( result.resource().resourceUri(), isFile, uds );
-        m_entries.insert( name, entry );
-        m_resourceNameMap.insert( result.resource().resourceUri(), name );
-
-        kDebug() << "Stating" << result.resource().resourceUri() << "done";
-
+        SearchEntry* entry = new SearchEntry( url, uds );
+        m_entries.insert( uds.stringValue( KIO::UDSEntry::UDS_NAME ), entry );
         return entry;
     }
     else {
-        // no valid name -> no valid uds
         kDebug() << "Stating" << result.resource().resourceUri() << "failed";
         return 0;
     }

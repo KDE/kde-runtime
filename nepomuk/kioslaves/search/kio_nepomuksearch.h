@@ -75,6 +75,7 @@ namespace Nepomuk {
          * reimplemented from ForwardingSlaveBase
          */
         bool rewriteUrl( const KUrl& url, KUrl& newURL );
+        void prepareUDSEntry( KIO::UDSEntry& entry, bool ) const;
 
     private:
         bool ensureNepomukRunning();

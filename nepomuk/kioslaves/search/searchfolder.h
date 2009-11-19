@@ -48,17 +48,14 @@ namespace Nepomuk {
     {
     public:
         SearchEntry( const QUrl& uri,
-                     bool isFile,
                      const KIO::UDSEntry& = KIO::UDSEntry() );
 
         QUrl resource() const { return m_resource; }
         KIO::UDSEntry entry() const { return m_entry; }
-        bool isFile() const  { return m_isFile; }
 
     private:
         QUrl m_resource;
         KIO::UDSEntry m_entry;
-        bool m_isFile;
 
         friend class SearchFolder;
     };
@@ -122,11 +119,6 @@ namespace Nepomuk {
 
         // final results, filled by the main thread in statResults
         QHash<QString, SearchEntry*> m_entries;
-        QHash<QUrl, QString> m_resourceNameMap;
-
-        // used to make sure we have unique names
-        // FIXME: the changed names could clash again!
-        QHash<QString, int> m_nameCntHash;
 
         // true if the client listed all results and new
         // ones do not need to be listed but emitted through
