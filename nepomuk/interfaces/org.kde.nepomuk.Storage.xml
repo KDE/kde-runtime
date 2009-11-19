@@ -2,9 +2,6 @@
          "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
 <node>
   <interface name="org.kde.nepomuk.Storage">
-    <method name="optimize">
-      <arg name="repoName" type="s" direction="in" />
-    </method>
     <method name="usedSopranoBackend">
       <arg name="backendName" type="s" direction="out" />
     </method>
