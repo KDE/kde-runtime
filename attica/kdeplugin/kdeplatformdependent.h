@@ -24,7 +24,7 @@
 #ifndef ATTICA_KDEPLATFORMDEPENDENT_H
 #define ATTICA_KDEPLATFORMDEPENDENT_H
 
-#include "platformdependent.h"
+#include <attica/platformdependent.h>
 
 #include <KSharedConfig>
 #include <KIO/AccessManager>
