@@ -33,6 +33,12 @@ macro_log_feature( SLP_FOUND
   "" "Provides SLP support in the network:/ kioslave."
 )
 
+macro_optional_find_package(LibAttica)
+macro_log_feature( LIBATTICA_FOUND
+  "LibAttica" "Library to access Open Collaboration Services" "http://www.freedesktop.org/wiki/Specifications/open-collaboration-services" FALSE
+  "" "Provides KDE integration in LibAttica."
+)
+
 
 check_include_files(sys/wait.h HAVE_SYS_WAIT_H)
 check_include_files(sys/time.h HAVE_SYS_TIME_H)
@@ -113,6 +119,11 @@ macro_optional_add_subdirectory(doc)
 add_subdirectory(desktoptheme)
 add_subdirectory(pics)
 add_subdirectory(kstyles)
+
+# KDE integration for attica
+if(LIBATTICA_FOUND)
+  macro_optional_add_subdirectory(attica)
+endif(LIBATTICA_FOUND)
 
 if(CMAKE_SOURCE_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
   macro_display_feature_log()
