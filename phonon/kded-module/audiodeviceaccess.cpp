@@ -44,8 +44,6 @@ const QString PS::AudioDeviceAccess::driverName() const
         return i18n("ALSA");
     case OssDriver:
         return i18n("OSS");
-    case PulseAudioDriver:
-        return i18n("PulseAudio");
     case JackdDriver:
         return i18n("Jack");
     case EsdDriver:

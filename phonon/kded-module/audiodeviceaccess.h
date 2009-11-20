@@ -33,7 +33,6 @@ class AudioDeviceAccess
             InvalidDriver = 0,
             AlsaDriver,
             OssDriver,
-            PulseAudioDriver,
             JackdDriver,
             EsdDriver,
             ArtsDriver

@@ -45,10 +45,6 @@
 #include <Solid/Device>
 #include <Solid/DeviceNotifier>
 
-#ifdef HAVE_PULSEAUDIO
-#include <pulse/pulseaudio.h>
-#endif // HAVE_PULSEAUDIO
-
 #include <../config-alsa.h>
 #ifdef HAVE_LIBASOUND2
 #include <alsa/asoundlib.h>
@@ -334,128 +330,6 @@ static void removeOssOnlyDevices(QList<PS::AudioDevice> *list)
     }
 }
 
-#ifdef HAVE_PULSEAUDIO
-class PulseDetectionUserData
-{
-    public:
-        inline PulseDetectionUserData(PhononServer *p, pa_mainloop_api *api)
-            : phononServer(p), mainloopApi(api), ready(2),
-            alsaHandleMatches(QLatin1String(".*\\s(plughw|hw|front|surround\\d\\d):(\\d+)\\s.*")),
-            captureNameMatches(QLatin1String(".*_sound_card_(\\d+)_.*_(?:playback|capture)_(\\d+)(\\.monitor)?")),
-            playbackNameMatches(QLatin1String(".*_sound_card_(\\d+)_.*_playback_(\\d+)"))
-        {}
-
-        PhononServer *const phononServer;
-        QList<QPair<PS::AudioDeviceKey, PS::AudioDeviceAccess> > sinks;
-        QList<QPair<PS::AudioDeviceKey, PS::AudioDeviceAccess> > sources;
-
-        inline void eol() { if (--ready == 0) { quit(); } }
-        inline void quit() { mainloopApi->quit(mainloopApi, 0); }
-    private:
-        pa_mainloop_api *const mainloopApi;
-        int ready;
-    public:
-        QRegExp alsaHandleMatches;
-        QRegExp captureNameMatches;
-        QRegExp playbackNameMatches;
-};
-
-static void pulseSinkInfoListCallback(pa_context *context, const pa_sink_info *i, int eol, void *userdata)
-{
-    PulseDetectionUserData *d = reinterpret_cast<PulseDetectionUserData *>(userdata);
-    if (eol) {
-        d->eol();
-        return;
-    }
-    Q_ASSERT(i);
-    kDebug(601).nospace()
-        << "name: " << i->name
-        << ", index: " << i->index
-        << ", description: " << i->description
-        << ", sample_spec: " << i->sample_spec.format << i->sample_spec.rate << i->sample_spec.channels
-        << ", channel_map: " << i->channel_map.channels << i->channel_map.map
-        << ", owner_module: " << i->owner_module
-        //<< ", volume: " << i->volume
-        << ", mute: " << i->mute
-        << ", monitor_source: " << i->monitor_source
-        << ", latency: " << i->latency
-        << ", driver: " << i->driver
-        << ", flags: " << i->flags;
-    const QString &handle = QString::fromUtf8(i->name);
-    if (d->playbackNameMatches.exactMatch(handle)) {
-        const QString &description = QString::fromUtf8(i->description);
-        const bool m = d->alsaHandleMatches.exactMatch(description);
-        const int cardNumber = m ? d->alsaHandleMatches.cap(2).toInt() : -1; // card_name_X in the name always has X == 0 ;( so we can't use d->playbackNameMatches.cap(1).toInt();
-        const int deviceNumber = d->playbackNameMatches.cap(2).toInt();
-        const PS::AudioDeviceKey key = { QString(), cardNumber, deviceNumber };
-        const PS::AudioDeviceAccess access(QStringList(QString::fromUtf8(pa_context_get_server(context)) + QLatin1Char('\n') + handle), 30, PS::AudioDeviceAccess::PulseAudioDriver, false, true);
-        d->sinks << QPair<PS::AudioDeviceKey, PS::AudioDeviceAccess>(key, access);
-    }
-}
-
-static void pulseSourceInfoListCallback(pa_context *context, const pa_source_info *i, int eol, void *userdata)
-{
-    PulseDetectionUserData *d = reinterpret_cast<PulseDetectionUserData *>(userdata);
-    if (eol) {
-        d->eol();
-        return;
-    }
-    Q_ASSERT(i);
-    kDebug(601).nospace()
-        << "name: " << i->name
-        << ", index: " << i->index
-        << ", description: " << i->description
-        << ", sample_spec: " << i->sample_spec.format << i->sample_spec.rate << i->sample_spec.channels
-        << ", channel_map: " << i->channel_map.channels << i->channel_map.map
-        << ", owner_module: " << i->owner_module
-        //<< ", volume: " << i->volume
-        << ", mute: " << i->mute
-        << ", monitor_of_sink: " << i->monitor_of_sink
-        << ", monitor_of_sink_name: " << i->monitor_of_sink_name
-        << ", latency: " << i->latency
-        << ", driver: " << i->driver
-        << ", flags: " << i->flags;
-    const QString &handle = QString::fromUtf8(i->name);
-    if (d->captureNameMatches.exactMatch(handle)) {
-        if (d->captureNameMatches.cap(3).isEmpty()) {
-            const QString &description = QString::fromUtf8(i->description);
-            const bool m = d->alsaHandleMatches.exactMatch(description);
-            const int cardNumber = m ? d->alsaHandleMatches.cap(2).toInt() : d->captureNameMatches.cap(1).toInt();
-            const int deviceNumber = d->captureNameMatches.cap(2).toInt();
-            const PS::AudioDeviceKey key = {
-                d->captureNameMatches.cap(3).isEmpty() ? QString() : handle, cardNumber, deviceNumber
-            };
-            const PS::AudioDeviceAccess access(QStringList(QString::fromUtf8(pa_context_get_server(context)) + QLatin1Char(':') + handle), 30, PS::AudioDeviceAccess::PulseAudioDriver, true, false);
-            d->sources << QPair<PS::AudioDeviceKey, PS::AudioDeviceAccess>(key, access);
-        } else {
-            const PS::AudioDeviceKey key = {
-                QString::fromUtf8(i->description), -2, -2
-            };
-            const PS::AudioDeviceAccess access(QStringList(QString::fromUtf8(pa_context_get_server(context)) + QLatin1Char(':') + handle), 30, PS::AudioDeviceAccess::PulseAudioDriver, true, false);
-            d->sources << QPair<PS::AudioDeviceKey, PS::AudioDeviceAccess>(key, access);
-        }
-    }
-}
-
-static void pulseContextStateCallback(pa_context *context, void *userdata)
-{
-    switch (pa_context_get_state(context)) {
-    case PA_CONTEXT_READY:
-        /*pa_operation *op1 =*/ pa_context_get_sink_info_list(context, &pulseSinkInfoListCallback, userdata);
-        /*pa_operation *op2 =*/ pa_context_get_source_info_list(context, &pulseSourceInfoListCallback, userdata);
-        break;
-    case PA_CONTEXT_FAILED:
-        {
-            PulseDetectionUserData *d = reinterpret_cast<PulseDetectionUserData *>(userdata);
-            d->quit();
-        }
-        break;
-    default:
-        break;
-    }
-}
-#endif // HAVE_PULSEAUDIO
-
 void PhononServer::findDevices()
 {
     QHash<PS::AudioDeviceKey, PS::AudioDevice> playbackDevices;
@@ -630,73 +504,6 @@ void PhononServer::findDevices()
     m_audioOutputDevices = playbackDevices.values();
     m_audioCaptureDevices = captureDevices.values();
 
-#ifdef HAVE_PULSEAUDIO
-    {
-        pa_mainloop *mainloop = pa_mainloop_new();
-        Q_ASSERT(mainloop);
-        pa_mainloop_api *mainloopApi = pa_mainloop_get_api(mainloop);
-        PulseDetectionUserData userData(this, mainloopApi);
-        // XXX I don't want to show up in the client list. All I want to know is the list of sources
-        // and sinks...
-        pa_context *context = pa_context_new(mainloopApi, "KDE");
-        // XXX stupid cast. report a bug about a missing enum value
-        if (pa_context_connect(context, NULL, static_cast<pa_context_flags_t>(0), 0) >= 0) {
-            pa_context_set_state_callback(context, &pulseContextStateCallback, &userData);
-            pa_mainloop_run(mainloop, NULL);
-            pa_context_disconnect(context);
-        }
-        pa_mainloop_free(mainloop);
-        kDebug(601) << "pulse sources:" << userData.sources;
-        kDebug(601) << "pulse sinks:  " << userData.sinks;
-        QMutableListIterator<PS::AudioDevice> it(m_audioOutputDevices);
-        typedef QPair<PS::AudioDeviceKey, PS::AudioDeviceAccess> MyPair;
-        static int uniqueDeviceNumber = -2;
-        foreach (const MyPair &pair, userData.sinks) {
-            it.toFront();
-            bool needNewDeviceObject = true;
-            while (it.hasNext()) {
-                PS::AudioDevice &dev = it.next();
-                if (dev.key() == pair.first) {
-                    dev.addAccess(pair.second);
-                    needNewDeviceObject = false;
-                    continue;
-                }
-            }
-            if (needNewDeviceObject) {
-                const PS::AudioDeviceKey key = {
-                    pair.second.deviceIds().first() + QLatin1String("playback"),
-                    -1, --uniqueDeviceNumber
-                };
-                PS::AudioDevice dev(pair.first.uniqueId, QLatin1String("audio-backend-pulseaudio"), key, 0, true);
-                dev.addAccess(pair.second);
-                m_audioOutputDevices.append(dev);
-            }
-        }
-        it = m_audioCaptureDevices;
-        foreach (const MyPair &pair, userData.sources) {
-            it.toFront();
-            bool needNewDeviceObject = true;
-            while (it.hasNext()) {
-                PS::AudioDevice &dev = it.next();
-                if (dev.key() == pair.first) {
-                    dev.addAccess(pair.second);
-                    needNewDeviceObject = false;
-                    continue;
-                }
-            }
-            if (needNewDeviceObject) {
-                const PS::AudioDeviceKey key = {
-                    pair.second.deviceIds().first() + QLatin1String("capture"),
-                    -1, --uniqueDeviceNumber
-                };
-                PS::AudioDevice dev(pair.first.uniqueId, QLatin1String("audio-backend-pulseaudio"), key, 0, true);
-                dev.addAccess(pair.second);
-                m_audioCaptureDevices.append(dev);
-            }
-        }
-    }
-#endif // HAVE_PULSEAUDIO
-
     if (haveAlsaDevices) {
         // go through the lists and check for devices that have only OSS and remove them since
         // they're very likely bogus (Solid tells us a device can do capture and playback, even
@@ -855,8 +662,6 @@ static inline QByteArray nameForDriver(PS::AudioDeviceAccess::AudioDriver d)
         return "alsa";
     case PS::AudioDeviceAccess::OssDriver:
         return "oss";
-    case PS::AudioDeviceAccess::PulseAudioDriver:
-        return "pulseaudio";
     case PS::AudioDeviceAccess::JackdDriver:
         return "jackd";
     case PS::AudioDeviceAccess::EsdDriver:

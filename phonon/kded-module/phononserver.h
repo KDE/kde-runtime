@@ -51,7 +51,7 @@ class PhononServer : public KDEDModule
     private slots:
         void deviceAdded(const QString &udi);
         void deviceRemoved(const QString &udi);
-        // TODO add callbacks for Pulse, Jack changes and whatever else, if somehow possible
+        // TODO add callbacks for Jack changes and whatever else, if somehow possible (Pulse handled by libphonon)
 
         void alsaConfigChanged();
 

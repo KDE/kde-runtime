@@ -9,17 +9,7 @@ set(HAVE_CURRENT_ALSA FALSE)
 #   macro_log_feature(HAVE_CURRENT_ALSA "ALSA" "current alsa-lib is needed for dmix and virtual device listing" "http://www.alsa-project.org/" TRUE "1.0.14a")
 #endif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 
-macro_optional_find_package(PulseAudio)
-macro_log_feature(PULSEAUDIO_FOUND "PulseAudio" "A cross-platform, networked sound server." "http://www.pulseaudio.org" FALSE "" "Allows audio playback via the PulseAudio soundserver when it is running")
-
-if(PULSEAUDIO_FOUND)
-   add_definitions(-DHAVE_PULSEAUDIO)
-else(PULSEAUDIO_FOUND)
-   set(PULSEAUDIO_INCLUDE_DIR "")
-   set(PULSEAUDIO_LIBRARY "")
-endif(PULSEAUDIO_FOUND)
-
-include_directories(${ALSA_INCLUDES} ${PULSEAUDIO_INCLUDE_DIR})
+include_directories(${ALSA_INCLUDES})
 
 set(kded_phonon_SRCS
    phononserver.cpp
@@ -29,7 +19,7 @@ set(kded_phonon_SRCS
    )
 
 kde4_add_plugin(kded_phononserver ${kded_phonon_SRCS})
-target_link_libraries(kded_phononserver ${KDE4_KDEUI_LIBS} ${KDE4_PHONON_LIBS} ${KDE4_SOLID_LIBS} ${ASOUND_LIBRARY} ${PULSEAUDIO_LIBRARY})
+target_link_libraries(kded_phononserver ${KDE4_KDEUI_LIBS} ${KDE4_PHONON_LIBS} ${KDE4_SOLID_LIBS} ${ASOUND_LIBRARY})
 install(TARGETS kded_phononserver  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 install(FILES phononserver.desktop DESTINATION ${SERVICES_INSTALL_DIR}/kded)
