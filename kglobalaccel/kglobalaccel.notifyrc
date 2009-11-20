@@ -30,6 +30,7 @@ Comment[x-test]=xxKDE Global Shortcuts Daemonxx
 Comment[zh_TW]=KDE 全域捷徑守護程式
 Name=kglobalaccel
 Name[bg]=kglobalaccel
+Name[cs]=kglobalaccel
 Name[csb]=kglobalaccel
 Name[en_GB]=kglobalaccel
 Name[eo]=kglobalaccel
