@@ -46,10 +46,6 @@ const QString PS::AudioDeviceAccess::driverName() const
         return i18n("OSS");
     case JackdDriver:
         return i18n("Jack");
-    case EsdDriver:
-        return i18n("ESD");
-    case ArtsDriver:
-        return i18n("aRts");
     }
     return QString();
 }

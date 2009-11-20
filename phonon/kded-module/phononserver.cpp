@@ -664,10 +664,6 @@ static inline QByteArray nameForDriver(PS::AudioDeviceAccess::AudioDriver d)
         return "oss";
     case PS::AudioDeviceAccess::JackdDriver:
         return "jackd";
-    case PS::AudioDeviceAccess::EsdDriver:
-        return "esd";
-    case PS::AudioDeviceAccess::ArtsDriver:
-        return "arts";
     case PS::AudioDeviceAccess::InvalidDriver:
         break;
     }

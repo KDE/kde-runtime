@@ -33,9 +33,7 @@ class AudioDeviceAccess
             InvalidDriver = 0,
             AlsaDriver,
             OssDriver,
-            JackdDriver,
-            EsdDriver,
-            ArtsDriver
+            JackdDriver
         };
 
         inline AudioDeviceAccess(const QStringList &deviceIds, int accessPreference,
