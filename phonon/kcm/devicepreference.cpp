@@ -328,7 +328,11 @@ QList<Phonon::AudioCaptureDevice> DevicePreference::availableAudioCaptureDevices
 void DevicePreference::load()
 {
     showCheckBox->setChecked(!Phonon::GlobalConfig().getHideAdvancedDevices());
+    loadCategoryDevices();
+}
 
+void DevicePreference::loadCategoryDevices()
+{
     // "Load" the settings from the backend.
     for (Phonon::Category cat = Phonon::NoCategory; cat <= Phonon::LastCategory; ++cat) {
         QList<Phonon::AudioOutputDevice> list;
@@ -542,7 +546,7 @@ void DevicePreference::on_showCheckBox_toggled()
     // In order to get the right list from the backend, we need to update the settings now
     // before calling availableAudio{Output,Capture}Devices()
     Phonon::GlobalConfig().hideAdvancedDevices(!showCheckBox->isChecked());
-    load();
+    loadCategoryDevices();
 }
 
 void DevicePreference::on_testPlaybackButton_toggled(bool down)
