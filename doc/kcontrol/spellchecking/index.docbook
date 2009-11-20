@@ -81,7 +81,7 @@ for spelling errors. These addresses often contain words run together.</para></t
 </variablelist>
 </sect2>
 <sect2><title>Ignoring words</title>
-<para>The bottom half of the dialog box allows you to designate specific words (they may be specialized terminology, proper names, etc) which
+<para>The bottom half of the dialog box allows you to designate specific words (they may be specialized terminology, proper names, &etc;) which
 should be ignored by the spelling program.</para>
 
 <sect3><title>Adding a word to the ignore list</title>
