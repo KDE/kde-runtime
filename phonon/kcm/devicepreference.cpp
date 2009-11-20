@@ -34,11 +34,12 @@
 
 #include <Phonon/AudioOutput>
 #include <Phonon/MediaObject>
+#include <phonon/backendinterface.h>
 #include <phonon/backendcapabilities.h>
+#include <phonon/globalconfig.h>
 #include <phonon/objectdescription.h>
 #include <phonon/phononnamespace.h>
-#include "qsettingsgroup_p.h"
-#include "globalconfig_p.h"
+#include "factory_p.h"
 #include <kfadewidgeteffect.h>
 
 #include <kdialog.h>
@@ -54,8 +55,6 @@
 // Want this exactly once, see phonondefs_p.h kcm/devicepreference.cpp
 Q_DECLARE_METATYPE(QList<int>)
 #endif
-
-using Phonon::QSettingsGroup;
 
 static const Phonon::Category captureCategories[] = {
     Phonon::NoCategory,
@@ -318,111 +317,35 @@ void DevicePreference::updateAudioOutputDevices()
 
 QList<Phonon::AudioOutputDevice> DevicePreference::availableAudioOutputDevices() const
 {
-    QList<Phonon::AudioOutputDevice> ret;
-    const QList<int> deviceIndexes = Phonon::GlobalConfig().audioOutputDeviceListFor(Phonon::NoCategory,
-            showCheckBox->isChecked()
-            ? Phonon::GlobalConfig::ShowAdvancedDevices
-            : Phonon::GlobalConfig::HideAdvancedDevices);
-    foreach (int i, deviceIndexes) {
-        ret.append(Phonon::AudioOutputDevice::fromIndex(i));
-    }
-    return ret;
+    return Phonon::BackendCapabilities::availableAudioOutputDevices();
 }
 
 QList<Phonon::AudioCaptureDevice> DevicePreference::availableAudioCaptureDevices() const
 {
-    QList<Phonon::AudioCaptureDevice> ret;
-    const QList<int> deviceIndexes = Phonon::GlobalConfig().audioCaptureDeviceListFor(Phonon::NoCategory,
-            showCheckBox->isChecked()
-            ? Phonon::GlobalConfig::ShowAdvancedDevices
-            : Phonon::GlobalConfig::HideAdvancedDevices);
-    kDebug() << deviceIndexes;
-    foreach (int i, deviceIndexes) {
-        ret.append(Phonon::AudioCaptureDevice::fromIndex(i));
-    }
-    return ret;
+    return Phonon::BackendCapabilities::availableAudioCaptureDevices();
 }
 
 void DevicePreference::load()
 {
-    QSettings phononConfig(QLatin1String("kde.org"), QLatin1String("libphonon"));
-    QSettingsGroup outputDeviceGroup(&phononConfig, QLatin1String("AudioOutputDevice"));
-    QSettingsGroup captureDeviceGroup(&phononConfig, QLatin1String("AudioCaptureDevice"));
-    QSettingsGroup generalGroup(&phononConfig, QLatin1String("General"));
-    showCheckBox->setChecked(!generalGroup.value(QLatin1String("HideAdvancedDevices"), true));
+    showCheckBox->setChecked(!Phonon::GlobalConfig().getHideAdvancedDevices());
 
-    {
-        // the following call returns ordered according to NoCategory
-        const QList<Phonon::AudioOutputDevice> list = availableAudioOutputDevices();
-        m_outputModel[Phonon::NoCategory]->setModelData(list);
-
-        QHash<int, Phonon::AudioOutputDevice> hash;
-        foreach (const Phonon::AudioOutputDevice &dev, list) {
-            hash.insert(dev.index(), dev);
+    // "Load" the settings from the backend.
+    for (Phonon::Category cat = Phonon::NoCategory; cat <= Phonon::LastCategory; ++cat) {
+        QList<Phonon::AudioOutputDevice> list;
+        const QList<int> deviceIndexes = Phonon::GlobalConfig().audioOutputDeviceListFor(cat);
+        foreach (int i, deviceIndexes) {
+            list.append(Phonon::AudioOutputDevice::fromIndex(i));
         }
-        for (int i = 0; i <= Phonon::LastCategory; ++i) {
-            const QString configKey(QLatin1String("Category_") + QString::number(i));
-            if (!outputDeviceGroup.hasKey(configKey)) {
-                m_outputModel[i]->setModelData(list); // use the NoCategory order
-                continue;
-            }
-            QHash<int, Phonon::AudioOutputDevice> hashCopy(hash);
-            const QList<int> order = outputDeviceGroup.value(configKey, QList<int>());
-            QList<Phonon::AudioOutputDevice> orderedList;
-            foreach (int idx, order) {
-                if (hashCopy.contains(idx)) {
-                    orderedList << hashCopy.take(idx);
-                }
-            }
-            if (hashCopy.size() > 1) {
-                // keep the order of the original list
-                foreach (const Phonon::AudioOutputDevice &dev, list) {
-                    if (hashCopy.contains(dev.index())) {
-                        orderedList << hashCopy.take(dev.index());
-                    }
-                }
-            } else if (hashCopy.size() == 1) {
-                orderedList += hashCopy.values();
-            }
-            m_outputModel[i]->setModelData(orderedList);
-        }
+        m_outputModel[cat]->setModelData(list);
     }
-    {
-        // the following call returns ordered according to NoCategory
-        QList<Phonon::AudioCaptureDevice> list = availableAudioCaptureDevices();
-        m_captureModel[Phonon::NoCategory]->setModelData(list);
-
-        QHash<int, Phonon::AudioCaptureDevice> hash;
-        foreach (const Phonon::AudioCaptureDevice &dev, list) {
-            hash.insert(dev.index(), dev);
+    for (int i = 0; i < captureCategoriesCount; ++i) {
+        const Phonon::Category cat = captureCategories[i];
+        QList<Phonon::AudioCaptureDevice> list;
+        const QList<int> deviceIndexes = Phonon::GlobalConfig().audioCaptureDeviceListFor(cat);
+        foreach (int i, deviceIndexes) {
+            list.append(Phonon::AudioCaptureDevice::fromIndex(i));
         }
-        for (int i = 1; i < captureCategoriesCount; ++i) { // i == 1 to skip NoCategory
-            const Phonon::Category cat = captureCategories[i];
-            const QString configKey(QLatin1String("Category_") + QString::number(cat));
-            if (!captureDeviceGroup.hasKey(configKey)) {
-                m_captureModel[cat]->setModelData(list); // use the NoCategory order
-                continue;
-            }
-            QHash<int, Phonon::AudioCaptureDevice> hashCopy(hash);
-            const QList<int> order = captureDeviceGroup.value(configKey, QList<int>());
-            QList<Phonon::AudioCaptureDevice> orderedList;
-            foreach (int idx, order) {
-                if (hashCopy.contains(idx)) {
-                    orderedList << hashCopy.take(idx);
-                }
-            }
-            if (hashCopy.size() > 1) {
-                // keep the order of the original list
-                foreach (const Phonon::AudioCaptureDevice &dev, list) {
-                    if (hashCopy.contains(dev.index())) {
-                        orderedList << hashCopy.take(dev.index());
-                    }
-                }
-            } else if (hashCopy.size() == 1) {
-                orderedList += hashCopy.values();
-            }
-            m_captureModel[cat]->setModelData(orderedList);
-        }
+        m_captureModel[cat]->setModelData(list);
     }
 
     deviceList->resizeColumnToContents(0);
@@ -430,11 +353,6 @@ void DevicePreference::load()
 
 void DevicePreference::save()
 {
-    QSettings config(QLatin1String("kde.org"), QLatin1String("libphonon"));
-    {
-        QSettingsGroup generalGroup(&config, QLatin1String("General"));
-        generalGroup.setValue(QLatin1String("HideAdvancedDevices"), !showCheckBox->isChecked());
-    }
     if (!m_removeOnApply.isEmpty()) {
         QDBusMessage msg = QDBusMessage::createMethodCall("org.kde.kded", "/modules/phononserver",
                 "org.kde.PhononServer", "removeAudioDevices");
@@ -442,34 +360,17 @@ void DevicePreference::save()
         QDBusConnection::sessionBus().send(msg);
         m_removeOnApply.clear();
     }
-    {
-        QSettingsGroup globalGroup(&config, QLatin1String("AudioOutputDevice"));
-        const QList<int> noCategoryOrder = m_outputModel.value(Phonon::NoCategory)->tupleIndexOrder();
-        globalGroup.setValue(QLatin1String("Category_") + QString::number(Phonon::NoCategory), noCategoryOrder);
-        for (int i = 0; i <= Phonon::LastCategory; ++i) {
-            Q_ASSERT(m_outputModel.value(i));
-            const QList<int> order = m_outputModel.value(i)->tupleIndexOrder();
-            if (order == noCategoryOrder) {
-                globalGroup.removeEntry(QLatin1String("Category_") + QString::number(i));
-            } else {
-                globalGroup.setValue(QLatin1String("Category_") + QString::number(i), order);
-            }
-        }
+
+    for (Phonon::Category cat = Phonon::NoCategory; cat <= Phonon::LastCategory; ++cat) {
+        Q_ASSERT(m_outputModel.value(cat));
+        const QList<int> order = m_outputModel.value(cat)->tupleIndexOrder();
+        Phonon::GlobalConfig().setAudioOutputDeviceListFor(cat, order);
     }
-    {
-        QSettingsGroup globalGroup(&config, QLatin1String("AudioCaptureDevice"));
-        const QList<int> noCategoryOrder = m_captureModel.value(Phonon::NoCategory)->tupleIndexOrder();
-        globalGroup.setValue(QLatin1String("Category_") + QString::number(Phonon::NoCategory), noCategoryOrder);
-        for (int i = 1; i < captureCategoriesCount; ++i) {
-            const Phonon::Category cat = captureCategories[i];
-            Q_ASSERT(m_captureModel.value(cat));
-            const QList<int> order = m_captureModel.value(cat)->tupleIndexOrder();
-            if (order == noCategoryOrder) {
-                globalGroup.removeEntry(QLatin1String("Category_") + QString::number(cat));
-            } else {
-                globalGroup.setValue(QLatin1String("Category_") + QString::number(cat), order);
-            }
-        }
+    for (int i = 1; i < captureCategoriesCount; ++i) {
+        const Phonon::Category cat = captureCategories[i];
+        Q_ASSERT(m_captureModel.value(cat));
+        const QList<int> order = m_captureModel.value(cat)->tupleIndexOrder();
+        Phonon::GlobalConfig().setAudioCaptureDeviceListFor(cat, order);
     }
 }
 
@@ -638,70 +539,10 @@ void DevicePreference::on_applyPreferencesButton_clicked()
 
 void DevicePreference::on_showCheckBox_toggled()
 {
-    {
-        // the following call returns ordered according to NoCategory
-        const QList<Phonon::AudioOutputDevice> list = availableAudioOutputDevices();
-        m_outputModel[Phonon::NoCategory]->setModelData(list);
-
-        QHash<int, Phonon::AudioOutputDevice> hash;
-        foreach (const Phonon::AudioOutputDevice &dev, list) {
-            hash.insert(dev.index(), dev);
-        }
-        for (int i = 0; i <= Phonon::LastCategory; ++i) {
-            QHash<int, Phonon::AudioOutputDevice> hashCopy(hash);
-            const QList<int> order = m_outputModel[i]->tupleIndexOrder();
-            QList<Phonon::AudioOutputDevice> orderedList;
-            foreach (int idx, order) {
-                if (hashCopy.contains(idx)) {
-                    orderedList << hashCopy.take(idx);
-                }
-            }
-            if (hashCopy.size() > 1) {
-                // keep the order of the original list
-                foreach (const Phonon::AudioOutputDevice &dev, list) {
-                    if (hashCopy.contains(dev.index())) {
-                        orderedList << hashCopy.take(dev.index());
-                    }
-                }
-            } else if (hashCopy.size() == 1) {
-                orderedList += hashCopy.values();
-            }
-            m_outputModel[i]->setModelData(orderedList);
-        }
-    }
-    {
-        // the following call returns ordered according to NoCategory
-        const QList<Phonon::AudioCaptureDevice> list = availableAudioCaptureDevices();
-        m_captureModel[Phonon::NoCategory]->setModelData(list);
-
-        QHash<int, Phonon::AudioCaptureDevice> hash;
-        foreach (const Phonon::AudioCaptureDevice &dev, list) {
-            hash.insert(dev.index(), dev);
-        }
-        for (int i = 1; i < captureCategoriesCount; ++i) {
-            const Phonon::Category cat = captureCategories[i];
-            QHash<int, Phonon::AudioCaptureDevice> hashCopy(hash);
-            const QList<int> order = m_captureModel[cat]->tupleIndexOrder();
-            QList<Phonon::AudioCaptureDevice> orderedList;
-            foreach (int idx, order) {
-                if (hashCopy.contains(idx)) {
-                    orderedList << hashCopy.take(idx);
-                }
-            }
-            if (hashCopy.size() > 1) {
-                // keep the order of the original list
-                foreach (const Phonon::AudioCaptureDevice &dev, list) {
-                    if (hashCopy.contains(dev.index())) {
-                        orderedList << hashCopy.take(dev.index());
-                    }
-                }
-            } else if (hashCopy.size() == 1) {
-                orderedList += hashCopy.values();
-            }
-            m_captureModel[cat]->setModelData(orderedList);
-        }
-    }
-    deviceList->resizeColumnToContents(0);
+    // In order to get the right list from the backend, we need to update the settings now
+    // before calling availableAudio{Output,Capture}Devices()
+    Phonon::GlobalConfig().hideAdvancedDevices(!showCheckBox->isChecked());
+    load();
 }
 
 void DevicePreference::on_testPlaybackButton_toggled(bool down)
