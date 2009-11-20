@@ -4,8 +4,8 @@ project(KDEBASE_RUNTIME)
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
 
 #search packages used by KDE
-set(KDE_MIN_VERSION "4.3.75")  # for the < 4.2 macro
-find_package(KDE4 4.3.75 REQUIRED)
+set(KDE_MIN_VERSION "4.3.76")  # for the < 4.2 macro
+find_package(KDE4 4.3.76 REQUIRED)
 find_package(Strigi REQUIRED)
 # I don't see any package requiring it. please explain why this dependency
 # is necessary (dirk)
@@ -21,11 +21,9 @@ macro_optional_find_package(Soprano)
 macro_optional_find_package(Nepomuk)
 macro_log_feature(Soprano_FOUND "Soprano" "Soprano Libraries" "kdesupport" FALSE "" "Required to build Nepomuk.")
 macro_log_feature(Nepomuk_FOUND "Nepomuk" "Nepomuk Libraries" "kdelibs" FALSE "" "Required to build Nepomuk.")
-if(SOPRANO_PLUGIN_SESAME2BACKEND_FOUND OR SOPRANO_PLUGIN_REDLANDBACKEND_FOUND OR SOPRANO_PLUGIN_VIRTUOSOBACKEND_FOUND)
-  set(SOPRANO_BACKEND_FOUND true)
-endif(SOPRANO_PLUGIN_SESAME2BACKEND_FOUND OR SOPRANO_PLUGIN_REDLANDBACKEND_FOUND OR SOPRANO_PLUGIN_VIRTUOSOBACKEND_FOUND)
-macro_log_feature(SOPRANO_BACKEND_FOUND "Soprano Storage Backend" "Soprano Libraries" "kdesupport" FALSE "" "No Soprano storage backend found. Nepomuk will not be compiled without it. (It is highly recommended to use the Sesame2 backend for performance.)")
-macro_log_feature(SOPRANO_PLUGIN_RAPTORPARSER_FOUND "Soprano raptor parser plugin" "Soprano Libraries" "kdesupport" FALSE "" "Required to run Nepomuk.")
+macro_log_feature(SOPRANO_PLUGIN_VIRTUOSOBACKEND_FOUND "Soprano Virtuoso Backend" "Virtuoso storage backend for Soprano" "http://soprano.sourceforge.net" FALSE "" "The Soprano Virtuoso backend is required to run the Nepomuk semantic desktop system.")
+macro_log_feature(SOPRANO_PLUGIN_RAPTORPARSER_FOUND "Soprano Raptor Parser" "RDF parser plugin for Soprano" "http://soprano.sourceforge.net" FALSE "" "The Soprano raptor parser plugin is required to build the Nepomuk semantic desktop system.")
+macro_log_feature(SOPRANO_PLUGIN_REDLANDBACKEND_FOUND "Soprano Redland Backend" "Redland storage backend for Soprano" "http://soprano.sourceforge.net" FALSE "" "The Soprano redland backend is required to build the Nepomuk semantic desktop system.")
 
 macro_optional_find_package(SLP)
 macro_log_feature( SLP_FOUND
@@ -63,9 +61,9 @@ if ( UNIX )
    add_subdirectory(soliduiserver)
    add_subdirectory(solidautoeject)
 endif ( UNIX )
-if(Soprano_FOUND AND Nepomuk_FOUND AND STRIGI_STRIGIQTDBUSCLIENT_LIBRARY AND SOPRANO_BACKEND_FOUND AND SOPRANO_PLUGIN_RAPTORPARSER_FOUND)
+if(Soprano_FOUND AND Nepomuk_FOUND AND STRIGI_STRIGIQTDBUSCLIENT_LIBRARY AND SOPRANO_PLUGIN_REDLANDBACKEND_FOUND AND SOPRANO_PLUGIN_VIRTUOSOBACKEND_FOUND AND SOPRANO_PLUGIN_RAPTORPARSER_FOUND)
   macro_optional_add_subdirectory(nepomuk)
-endif(Soprano_FOUND AND Nepomuk_FOUND AND STRIGI_STRIGIQTDBUSCLIENT_LIBRARY AND SOPRANO_BACKEND_FOUND AND SOPRANO_PLUGIN_RAPTORPARSER_FOUND)
+endif(Soprano_FOUND AND Nepomuk_FOUND AND STRIGI_STRIGIQTDBUSCLIENT_LIBRARY AND SOPRANO_PLUGIN_REDLANDBACKEND_FOUND AND SOPRANO_PLUGIN_VIRTUOSOBACKEND_FOUND AND SOPRANO_PLUGIN_RAPTORPARSER_FOUND)
 
 # Plugins/components required for basic utility
 add_subdirectory(kcontrol)
