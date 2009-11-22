@@ -221,7 +221,7 @@ void Nepomuk::IndexScheduler::run()
         m_dirsToUpdateMutex.unlock();
 
         // update until stopped
-        if ( !updateDir( dir.first, &analyzer, dir.second & UpdateRecursive ) ) {
+        if ( !updateDir( dir.first, &analyzer, dir.second | UpdateRecursive ) ) {
             break;
         }
         m_currentFolder.clear();
