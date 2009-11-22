@@ -89,10 +89,19 @@ void ProcessControl::slotFinished( int exitCode, QProcess::ExitStatus exitStatus
     if ( exitStatus == QProcess::CrashExit ) {
         if ( mPolicy == RestartOnCrash ) {
              // don't try to start an unstartable application
-            if ( !mFailedToStart && --mCrashCount >= 0 )
+            if ( !mFailedToStart && --mCrashCount >= 0 ) {
+                qDebug( "Application '%s' crashed! %d restarts left.", qPrintable( mApplication ), mCrashCount );
                 start();
-            else
+            } else {
+                if ( mFailedToStart ) {
+                    qDebug( "Application '%s' failed to start!", qPrintable( mApplication ) );
+                } else {
+                    qDebug( "Application '%s' crashed to often. Giving up!", qPrintable( mApplication ) );
+                }
                 emit finished(false);
+            }
+        } else {
+            qDebug( "Application '%s' crashed. No restart!", qPrintable( mApplication ) );
         }
     } else {
         if ( exitCode != 0 ) {
