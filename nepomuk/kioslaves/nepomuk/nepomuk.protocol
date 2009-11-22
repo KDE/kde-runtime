@@ -14,3 +14,4 @@ source=false
 Icon=nepomuk
 Class=:local
 determineMimetypeFromExtension=false
+maxInstances=10
