@@ -26,11 +26,9 @@
 
 namespace Soprano {
     class Model;
-    namespace Index {
-        class IndexFilterModel;
-    }
 }
 
+class KUrl;
 
 namespace Strigi {
     namespace Soprano {
@@ -77,6 +75,8 @@ namespace Strigi {
             void finishAnalysis( const AnalysisResult* );
 
         private:
+            void removeIndexedData( const KUrl& url );
+
             class Private;
             Private* d;
         };

@@ -24,9 +24,6 @@
 
 namespace Soprano {
     class Model;
-    namespace Index {
-	class IndexFilterModel;
-    }
 }
 
 namespace Strigi {
@@ -40,6 +37,17 @@ namespace Strigi {
             IndexReader( ::Soprano::Model* );
             ~IndexReader();
 
+            void getChildren( const std::string& parent,
+                              std::map<std::string, time_t>& children );
+
+            int64_t indexSize();
+            time_t mTime( const std::string& uri );
+
+            // the methods below are all unused in Nepomuk and thus, not implemented
+            // ---------------------------------------------------------------------
+            int32_t countDocuments();
+            int32_t countWords();
+            std::vector<std::string> fieldNames();
             int32_t countHits( const Query& query );
             std::vector<IndexedDocument> query( const Query&, int off, int max );
             void getHits( const Strigi::Query& query,
@@ -47,15 +55,6 @@ namespace Strigi {
                           const std::vector<Strigi::Variant::Type>& types,
                           std::vector<std::vector<Strigi::Variant> >& result,
                           int off, int max );
-
-            void getChildren( const std::string& parent,
-                              std::map<std::string, time_t>& children );
-
-            int32_t countDocuments();
-            int32_t countWords();
-            int64_t indexSize();
-            time_t mTime( const std::string& uri );
-            std::vector<std::string> fieldNames();
             std::vector<std::pair<std::string,uint32_t> > histogram( const std::string& query,
                                                                      const std::string& fieldname,
                                                                      const std::string& labeltype );
@@ -64,6 +63,7 @@ namespace Strigi {
             std::vector<std::string> keywords( const std::string& keywordmatch,
                                                const std::vector<std::string>& fieldnames,
                                                uint32_t max, uint32_t offset );
+            // ---------------------------------------------------------------------
 
         private:
             class Private;

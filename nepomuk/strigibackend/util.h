@@ -21,9 +21,10 @@
 #define _STRIGI_SOPRNOA_UTIL_H_
 
 #include <string>
-#include "tstring.h"
 
 class QUrl;
+class QString;
+
 namespace Soprano {
     class Model;
     class Node;
@@ -38,7 +39,6 @@ namespace Strigi {
             QUrl fieldUri( const std::string& s );
             QUrl fileUrl( const std::string& filename );
             std::string fieldName( const QUrl& uri );
-            TString convertSearchField( const std::string& field );
             QUrl uniqueUri( const QString& ns, ::Soprano::Model* model );
             Strigi::Variant nodeToVariant( const ::Soprano::Node& node );
 

@@ -5,8 +5,6 @@ include(SopranoAddOntology)
 include_directories( 
   ${STRIGI_INCLUDE_DIR}
   ${SOPRANO_INCLUDE_DIR}
-  ${CLUCENE_LIBRARY_DIR}
-  ${CLUCENE_INCLUDE_DIR}
 )
 
 set( strigi_soprano_indexer_SRCS
@@ -14,7 +12,6 @@ set( strigi_soprano_indexer_SRCS
   sopranoindexreader.cpp
   sopranoindexwriter.cpp
   util.cpp
-  tstring.cpp
 )
 
 soprano_add_ontology(strigi_soprano_indexer_SRCS
@@ -58,9 +55,7 @@ target_link_libraries(sopranobackend
   ${NEPOMUK_LIBRARIES}
   ${SOPRANO_LIBRARIES}
   ${SOPRANO_CLIENT_LIBRARIES}
-  ${SOPRANO_INDEX_LIBRARIES}
   ${QT_QTCORE_LIBRARY}
-  ${CLUCENE_LIBRARY}
   ${KDE4_KDECORE_LIBS}
 )
 

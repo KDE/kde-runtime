@@ -78,17 +78,6 @@ std::string Strigi::Soprano::Util::fieldName( const QUrl& uri )
 }
 
 
-TString Strigi::Soprano::Util::convertSearchField( const std::string& field )
-{
-    if ( QString::fromUtf8( field.c_str() ) == ::Soprano::Index::CLuceneIndex::defaultSearchField() ) {
-        return TString::fromUtf8( field.c_str() );
-    }
-    else {
-        return fieldUri( field ).toString();
-    }
-}
-
-
 QUrl Strigi::Soprano::Util::uniqueUri( const QString& ns, ::Soprano::Model* model )
 {
     QUrl uri;
