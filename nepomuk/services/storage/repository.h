@@ -3,7 +3,7 @@
  * $Id: sourceheader 511311 2006-02-19 14:51:05Z trueg $
  *
  * This file is part of the Nepomuk KDE project.
- * Copyright (C) 2006-2007 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2006-2009 Sebastian Trueg <trueg@kde.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,9 +48,9 @@ namespace Nepomuk {
             OPEN
         };
 
-        State state() const;
+        State state() const { return m_state; }
 
-        static const Soprano::Backend* activeSopranoBackend();
+        QString usedSopranoBackend() const;
 
     public Q_SLOTS:
         /**
@@ -67,20 +67,24 @@ namespace Nepomuk {
         void copyFinished( KJob* job );
 
     private:
+        const Soprano::Backend* determineBackend();
+
         QString m_name;
         State m_state;
+
+        Soprano::Model* m_model;
+        const Soprano::Backend* m_backend;
+
+        // only used during opening
+        // ------------------------------------------
+        ModelCopyJob* m_modelCopyJob;
+        const Soprano::Backend* m_oldStorageBackend;
+        QString m_oldStoragePath;
 
         // the base path for the data. Will contain subfolder:
         // "data" for the data
         QString m_basePath;
-
-        const Soprano::Backend* m_oldStorageBackend;
-        QString m_oldStoragePath;
-
-        Soprano::Model* m_model;
-
-        // can only be non-null in the opening state
-        ModelCopyJob* m_modelCopyJob;
+        // ------------------------------------------
     };
 
     typedef QMap<QString, Repository*> RepositoryMap;

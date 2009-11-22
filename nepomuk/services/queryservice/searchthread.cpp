@@ -128,6 +128,7 @@ QHash<QUrl, Nepomuk::Query::Result> Nepomuk::Query::SearchThread::sparqlQuery( c
 
 Nepomuk::Query::Result Nepomuk::Query::SearchThread::extractResult( const Soprano::QueryResultIterator& it ) const
 {
+    kDebug() << it.binding( 0 ).uri();
     Result result( it.binding( 0 ).uri() );
 
     for ( RequestPropertyMap::const_iterator rpIt = m_requestProperties.constBegin();

@@ -24,6 +24,7 @@
 #include <Soprano/Node>
 
 #include <Nepomuk/Resource>
+#include <Nepomuk/ResourceManager>
 
 #include <KDebug>
 
@@ -46,9 +47,9 @@ Nepomuk::Query::Folder::Folder( const QString& query, const RequestPropertyMap& 
              this, SLOT( slotSearchScoreChanged( const Nepomuk::Query::Result& ) ) );
     connect( m_searchCore, SIGNAL( finished() ),
              this, SLOT( slotSearchFinished() ) );
-    connect( QueryService::instance()->mainModel(), SIGNAL( statementsAdded() ),
+    connect( ResourceManager::instance()->mainModel(), SIGNAL( statementsAdded() ),
              this, SLOT( slotStorageChanged() ) );
-    connect( QueryService::instance()->mainModel(), SIGNAL( statementsRemoved() ),
+    connect( ResourceManager::instance()->mainModel(), SIGNAL( statementsRemoved() ),
              this, SLOT( slotStorageChanged() ) );
     connect( &m_updateTimer, SIGNAL( timeout() ),
              this, SLOT( slotUpdateTimeout() ) );

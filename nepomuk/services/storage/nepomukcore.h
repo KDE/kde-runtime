@@ -58,20 +58,8 @@ namespace Nepomuk {
         void slotRepositoryOpened( Repository* repo, bool success );
 
     private:
-        /**
-         * reimplemented from ServerCode
-         */
-        Soprano::Model* createModel( const QList<Soprano::BackendSetting>& settings );
-        void createRepository( const QString& name );
-
-        RepositoryMap m_repositories;
-
-        // initialization
-        QStringList m_openingRepositories;
-        QString m_currentRepoName;
-
-        // true if one of the repos could not be opened
-        bool m_failedToOpenRepository;
+        /// the one single "main" repository Nepomuk uses
+        Repository* m_repository;
     };
 }
 

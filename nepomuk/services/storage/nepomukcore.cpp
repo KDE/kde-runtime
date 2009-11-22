@@ -28,19 +28,22 @@
 
 #include <Soprano/BackendSetting>
 
+static const char* s_repositoryName = "main";
 
 Nepomuk::Core::Core( QObject* parent )
-    : Soprano::Server::ServerCore( parent )
+    : Soprano::Server::ServerCore( parent ),
+      m_repository( 0 )
 {
+    // we give the Virtuoso server a server thread max of 100 which is already an insane number
+    // just make sure we never reach that limit
+    setMaximumConnectionCount( 80 );
 }
 
 
 Nepomuk::Core::~Core()
 {
     kDebug() << "Shutting down Nepomuk storage core.";
-
-    KSharedConfig::Ptr config = KSharedConfig::openConfig( "nepomukserverrc" );
-    config->group( "Basic Settings" ).writeEntry( "Configured repositories", m_repositories.keys() );
+    delete m_repository;
 }
 
 
@@ -48,84 +51,37 @@ void Nepomuk::Core::init()
 {
     // TODO: export the main model on org.kde.NepomukRepository via Soprano::Server::DBusExportModel
 
-    m_failedToOpenRepository = false;
-
-    KSharedConfig::Ptr config = KSharedConfig::openConfig( "nepomukserverrc" );
-
-    const Soprano::Backend* backend = Repository::activeSopranoBackend();
-    if ( backend ) {
-        m_openingRepositories = config->group( "Basic Settings" ).readEntry( "Configured repositories", QStringList() << "main" );
-        if ( !m_openingRepositories.contains( "main" ) ) {
-            m_openingRepositories << "main";
-        }
-
-        foreach( const QString &repoName, m_openingRepositories ) {
-            createRepository( repoName );
-        }
-
-        if ( m_openingRepositories.isEmpty() ) {
-            emit initializationDone( !m_failedToOpenRepository );
-        }
-    }
-    else {
-        kError() << "No Soprano backend found. Cannot start Nepomuk repository.";
-    }
+    // we have only the one repository
+    model( QLatin1String( s_repositoryName ) );
 }
 
 
 bool Nepomuk::Core::initialized() const
 {
-    return m_openingRepositories.isEmpty() && !m_repositories.isEmpty();
+    return( m_repository && m_repository->state() == Repository::OPEN );
 }
 
 
-void Nepomuk::Core::createRepository( const QString& name )
+void Nepomuk::Core::slotRepositoryOpened( Repository*, bool success )
 {
-    Repository* repo = new Repository( name );
-    m_repositories.insert( name, repo );
-    connect( repo, SIGNAL( opened( Repository*, bool ) ),
-             this, SLOT( slotRepositoryOpened( Repository*, bool ) ) );
-    QTimer::singleShot( 0, repo, SLOT( open() ) );
-
-    // make sure ServerCore knows about the repo (important for memory management)
-    model( name );
-}
-
-
-void Nepomuk::Core::slotRepositoryOpened( Repository* repo, bool success )
-{
-    m_failedToOpenRepository = success ? m_failedToOpenRepository : true;
-    m_openingRepositories.removeAll( repo->name() );
-    if ( m_openingRepositories.isEmpty() ) {
-        emit initializationDone( !m_failedToOpenRepository );
-    }
+    emit initializationDone( success );
 }
 
 
 Soprano::Model* Nepomuk::Core::model( const QString& name )
 {
-    // we need the name of the model for the repository creation
-    // but on the other hand want to use the AsyncModel stuff from
-    // ServerCore. Thus, we have to hack a bit
-    m_currentRepoName = name;
-    return ServerCore::model( name );
-}
-
-
-Soprano::Model* Nepomuk::Core::createModel( const QList<Soprano::BackendSetting>& )
-{
-    // use the name we cached in model()
-    if ( !m_repositories.contains( m_currentRepoName ) ) {
-        kDebug() << "Creating new repository with name " << m_currentRepoName;
-
-        // FIXME: There should be no need for conversion but who knows...
-        Repository* newRepo = new Repository( m_currentRepoName );
-        m_repositories.insert( m_currentRepoName, newRepo );
-        newRepo->open();
-        return newRepo;
+    // we only allow the one model
+    if ( name == QLatin1String( s_repositoryName ) ) {
+        if ( !m_repository ) {
+            m_repository = new Repository( name );
+            connect( m_repository, SIGNAL( opened( Repository*, bool ) ),
+                     this, SLOT( slotRepositoryOpened( Repository*, bool ) ) );
+            QTimer::singleShot( 0, m_repository, SLOT( open() ) );
+        }
+        return m_repository;
     }
     else {
-        return m_repositories[m_currentRepoName];
+        return 0;
     }
 }
 

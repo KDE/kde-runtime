@@ -22,6 +22,9 @@
 #include <Soprano/Error/Error>
 #include <Soprano/Vocabulary/RDF>
 
+#define USING_SOPRANO_NRLMODEL_UNSTABLE_API
+#include <Soprano/NRLModel>
+
 #include <KStandardDirs>
 #include <KDebug>
 #include <KConfigGroup>
@@ -105,10 +108,10 @@ void Nepomuk::Repository::open()
 
     m_state = OPENING;
 
-    // get used backend
+    // get backend
     // =================================
-    const Soprano::Backend* backend = activeSopranoBackend();
-    if ( !backend ) {
+    m_backend = determineBackend();
+    if ( !m_backend ) {
         m_state = CLOSED;
         emit opened( this, false );
         return;
@@ -117,10 +120,10 @@ void Nepomuk::Repository::open()
     // read config
     // =================================
     KConfigGroup repoConfig = KSharedConfig::openConfig( "nepomukserverrc" )->group( name() + " Settings" );
-    QString oldBackendName = repoConfig.readEntry( "Used Soprano Backend", backend->pluginName() );
+    QString oldBackendName = repoConfig.readEntry( "Used Soprano Backend", m_backend->pluginName() );
     QString oldBasePath = repoConfig.readPathEntry( "Storage Dir", QString() ); // backward comp: empty string means old storage path
     Soprano::BackendSettings settings = parseSettings( repoConfig.readEntry( "Settings", QStringList() ) );
-    if ( backend->pluginName() == QLatin1String( "virtuosobackend" ) ) {
+    if ( m_backend->pluginName() == QLatin1String( "virtuosobackend" ) ) {
         addVirtuosoSettings( settings );
     }
     else {
@@ -131,24 +134,24 @@ void Nepomuk::Repository::open()
                                     "the performance of the system and will cause core features such "
                                     "as the desktop search to not work properly. "
                                     "Installing the Virtuoso Soprano plugin is highly recommended.",
-                                    backend->pluginName() ),
+                                    m_backend->pluginName() ),
                               KIcon( "nepomuk" ).pixmap( 32, 32 ),
                               0,
                               KNotification::Persistent );
     }
 
     // If possible we want to keep the old storage path. exception: oldStoragePath is empty. In that case we stay backwards
-    // compatible and convert the data to the new default location createStoragePath( name ) + "data/" + backend->pluginName()
+    // compatible and convert the data to the new default location createStoragePath( name ) + "data/" + m_backend->pluginName()
     //
     // If we have a proper oldStoragePath and a different backend we use the oldStoragePath as basePath
-    // newDataPath = oldStoragePath + "data/" + backend->pluginName()
+    // newDataPath = oldStoragePath + "data/" + m_backend->pluginName()
     // oldDataPath = oldStoragePath + "data/" + oldBackendName
 
 
     // create storage paths
     // =================================
     m_basePath = oldBasePath.isEmpty() ? createStoragePath( name() ) : oldBasePath;
-    QString storagePath = m_basePath + "data/" + backend->pluginName();
+    QString storagePath = m_basePath + "data/" + m_backend->pluginName();
 
     if ( !KStandardDirs::makeDir( storagePath ) ) {
         kDebug() << "Failed to create storage folder" << storagePath;
@@ -168,7 +171,7 @@ void Nepomuk::Repository::open()
     // open storage
     // =================================
     Soprano::settingInSettings( settings, Soprano::BackendOptionStorageDir ).setValue( storagePath );
-    m_model = backend->createModel( settings );
+    m_model = m_backend->createModel( settings );
     if ( !m_model ) {
         kDebug() << "Unable to create model for repository" << name();
         m_state = CLOSED;
@@ -178,7 +181,13 @@ void Nepomuk::Repository::open()
 
     kDebug() << "Successfully created new model for repository" << name();
 
-    setParentModel( m_model );
+    // create a NRLModel for those extra nice features
+    // =================================
+    Soprano::NRLModel* nrlModel = new Soprano::NRLModel( m_model );
+    nrlModel->setParent(this); // memory management
+    nrlModel->setEnableQueryPrefixExpansion( true );
+
+    setParentModel( nrlModel );
 
     // check if we have to convert
     // =================================
@@ -187,10 +196,10 @@ void Nepomuk::Repository::open()
     // if the backend changed we convert
     // in case only the storage dir changes we normally would not have to convert but
     // it is just simpler this way
-    if ( oldBackendName != backend->pluginName() ||
+    if ( oldBackendName != m_backend->pluginName() ||
          oldBasePath.isEmpty() ) {
 
-        kDebug() << "Previous backend:" << oldBackendName << "- new backend:" << backend->pluginName();
+        kDebug() << "Previous backend:" << oldBackendName << "- new backend:" << m_backend->pluginName();
         kDebug() << "Old path:" << oldBasePath << "- new path:" << m_basePath;
 
         if ( oldBasePath.isEmpty() ) {
@@ -251,7 +260,7 @@ void Nepomuk::Repository::open()
     // do not save when converting yet. If converting is cancelled we would loose data.
     // this way conversion is restarted the next time
     if ( !convertingData ) {
-        repoConfig.writeEntry( "Used Soprano Backend", backend->pluginName() );
+        repoConfig.writeEntry( "Used Soprano Backend", m_backend->pluginName() );
         repoConfig.writePathEntry( "Storage Dir", m_basePath );
         repoConfig.sync(); // even if we crash the model has been created
 
@@ -300,10 +309,11 @@ void Nepomuk::Repository::copyFinished( KJob* job )
 
         // cleanup the actual data
         m_oldStorageBackend->deleteModelData( QList<Soprano::BackendSetting>() << Soprano::BackendSetting( Soprano::BackendOptionStorageDir, m_oldStoragePath ) );
+        m_oldStorageBackend = 0;
 
         // save our new settings
         KConfigGroup repoConfig = KSharedConfig::openConfig( "nepomukserverrc" )->group( name() + " Settings" );
-        repoConfig.writeEntry( "Used Soprano Backend", activeSopranoBackend()->pluginName() );
+        repoConfig.writeEntry( "Used Soprano Backend", m_backend->pluginName() );
         repoConfig.writePathEntry( "Storage Dir", m_basePath );
         repoConfig.sync();
 
@@ -313,18 +323,26 @@ void Nepomuk::Repository::copyFinished( KJob* job )
 }
 
 
-const Soprano::Backend* Nepomuk::Repository::activeSopranoBackend()
+const Soprano::Backend* Nepomuk::Repository::determineBackend()
 {
+    // get the default configured one
     QString backendName = KSharedConfig::openConfig( "nepomukserverrc" )->group( "Basic Settings" ).readEntry( "Soprano Backend", "virtuosobackend" );
     const Soprano::Backend* backend = ::Soprano::discoverBackendByName( backendName );
     if ( !backend ) {
-        kDebug() << "(Nepomuk::Core::Core) could not find backend" << backendName << ". Falling back to default.";
-        backend = ::Soprano::usedBackend();
-    }
-    if ( !backend ) {
-        kDebug() << "(Nepomuk::Core::Core) could not find a backend.";
+        kDebug() << "(Nepomuk::Core::Core) could not find backend" << backendName << ". Falling back to previously used.";
+        KConfigGroup repoConfig = KSharedConfig::openConfig( "nepomukserverrc" )->group( name() + " Settings" );
+        QString oldBackendName = repoConfig.readEntry( "Used Soprano Backend" );
+        if ( !( backend = ::Soprano::discoverBackendByName( oldBackendName ) ) ) {
+            backend = ::Soprano::usedBackend();
+        }
     }
     return backend;
+}
+
+
+QString Nepomuk::Repository::usedSopranoBackend() const
+{
+    return m_backend->pluginName();
 }
 
 #include "repository.moc"

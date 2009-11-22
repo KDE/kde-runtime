@@ -18,6 +18,7 @@
 
 #include "storage.h"
 #include "nepomukcore.h"
+#include "repository.h"
 
 #include <QtDBus/QDBusConnection>
 #include <QtCore/QFile>
@@ -75,9 +76,7 @@ void Nepomuk::Storage::slotNepomukCoreInitialized( bool success )
 
 QString Nepomuk::Storage::usedSopranoBackend() const
 {
-    // FIXME: this is only partly true. It is perfectly possible to change the backend only
-    //        for the main repo in the config file
-    return Repository::activeSopranoBackend()->pluginName();
+    return static_cast<Repository*>( m_core->model( QLatin1String( "main" ) ) )->usedSopranoBackend();
 }
 
 #include "storage.moc"

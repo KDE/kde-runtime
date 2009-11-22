@@ -31,10 +31,6 @@
 class QDBusObjectPath;
 class QDBusMessage;
 
-namespace Soprano {
-    class NRLModel;
-}
-
 namespace Nepomuk {
     namespace Query {
 
@@ -49,8 +45,6 @@ namespace Nepomuk {
         public:
             QueryService( QObject* parent, const QVariantList& );
             ~QueryService();
-
-            Soprano::Model* mainModel();
 
             static QueryService* instance();
 
@@ -88,8 +82,6 @@ namespace Nepomuk {
             QHash<FolderConnection*, QString> m_connectionDBusServiceHash; // maps connections to their using dbus service
 
             int m_folderConnectionCnt; // only used for unique dbus object path generation
-
-            Soprano::NRLModel* m_nrlModel;
         };
     }
 }

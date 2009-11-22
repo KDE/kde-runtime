@@ -36,9 +36,6 @@
 #include <Nepomuk/Query/Query>
 #include <Nepomuk/Query/QueryParser>
 
-#define USING_SOPRANO_NRLMODEL_UNSTABLE_API
-#include <Soprano/NRLModel>
-
 
 NEPOMUK_EXPORT_SERVICE( Nepomuk::Query::QueryService, "nepomukqueryservice" )
 
@@ -49,10 +46,7 @@ Nepomuk::Query::QueryService::QueryService( QObject* parent, const QVariantList&
     : Service( parent ),
       m_folderConnectionCnt( 0 )
 {
-    m_nrlModel = new Soprano::NRLModel( Service::mainModel() );
-    m_nrlModel->setParent(this); // memory management
-    m_nrlModel->setEnableQueryPrefixExpansion( true );
-    ResourceManager::instance()->setOverrideMainModel( m_nrlModel );
+    ResourceManager::instance()->setOverrideMainModel( Service::mainModel() );
 
     Nepomuk::Query::registerDBusTypes();
 
@@ -112,12 +106,6 @@ QDBusObjectPath Nepomuk::Query::QueryService::sparqlQuery( const QString& sparql
     m_connectionDBusServiceHash.insert( conn, dbusClient );
 
     return QDBusObjectPath( dbusObjectPath );
-}
-
-
-Soprano::Model* Nepomuk::Query::QueryService::mainModel()
-{
-    return m_nrlModel;
 }
 
 
