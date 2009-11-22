@@ -92,8 +92,6 @@ namespace Nepomuk {
         void prepareUDSEntry( KIO::UDSEntry &entry,
                               bool listing = false ) const;
     private:
-        void listDay( const QDate& date );
-        void listMonth( int month, int year );
         void listDays( int month, int year );
         void listThisYearsMonths();
         void listPreviousYears();

@@ -95,6 +95,28 @@ namespace {
         uds.insert( KIO::UDSEntry::UDS_USER, KUser().loginName() );
         return uds;
     }
+
+    KIO::UDSEntry createMonthUDSEntry( int month, int year )
+    {
+        QString dateString
+            = KGlobal::locale()->calendar()->formatDate( QDate(year, month, 1),
+                                                         i18nc("Month and year used in a tree above the actual days. "
+                                                               "Have a look at http://api.kde.org/4.x-api/kdelibs-"
+                                                               "apidocs/kdecore/html/classKCalendarSystem.html#a560204439a4b670ad36c16c404f292b4 "
+                                                               "to see which variables you can use and ask kde-i18n-doc@kde.org if you have "
+                                                               "problems understanding how to translate this",
+                                                               "%B %Y") );
+        return createFolderUDSEntry( QDate(year, month, 1).toString(QLatin1String("yyyy-MM")),
+                                     dateString,
+                                     QDate(year, month, 1) );
+    }
+
+    KIO::UDSEntry createDayUDSEntry( const QDate& date )
+    {
+        return createFolderUDSEntry( date.toString("yyyy-MM-dd"),
+                                     KGlobal::locale()->formatDate( date, KLocale::FancyLongDate ),
+                                     date );
+    }
 }
 
 
@@ -114,20 +136,19 @@ Nepomuk::TimelineProtocol::~TimelineProtocol()
 void Nepomuk::TimelineProtocol::listDir( const KUrl& url )
 {
     kDebug() << url;
+    //
+    // list root path
+    //
     if( url.path() == QLatin1String("/") ) {
-        // Today
-        // ------------------------------------
-        KIO::UDSEntry uds = createFolderUDSEntry( QLatin1String("today"), i18n("Today"), QDate::currentDate() );
-//        uds.insert( KIO::UDSEntry::UDS_URL, buildQueryUrl( QDate::currentDate() ).url() );
-        listEntry( uds, false );
-
-        // Calendar
-        // ------------------------------------
+        listEntry( createFolderUDSEntry( QLatin1String("today"), i18n("Today"), QDate::currentDate() ), false );
         listEntry( createFolderUDSEntry( QLatin1String("calendar"), i18n("Calendar"), QDate::currentDate() ), false );
-
         listEntry( KIO::UDSEntry(), true );
         finished();
     }
+
+    //
+    // list calendar entry
+    //
     else if( url.path().startsWith( QLatin1String("/calendar") ) ) {
         QString ru( url.path().mid( 9 ) );
         if( ru.isEmpty() ) {
@@ -212,14 +233,26 @@ void Nepomuk::TimelineProtocol::mkdir( const KUrl &url, int permissions )
 void Nepomuk::TimelineProtocol::get( const KUrl& url )
 {
     kDebug() << url;
-    ForwardingSlaveBase::get( url );
+
+    // there are only two possible urls to get:
+    // 1. /today/<filename>
+    // 2. /calendar/YYYY-MM/YYYY-MM-DD/<filename>
+    // Thus, it should be enough to get the 2nd last section
+    // and compare it to either "today" and a date
+    QString dateString = url.path().section('/', -2, -1, QString::SectionSkipEmpty );
+    if ( dateString == QLatin1String( "today" ) ||
+        QDate::fromString( dateString, "yyyy-MM-dd" ).isValid() ) {
+        ForwardingSlaveBase::get( url );
+    }
+    else {
+        error( KIO::ERR_IS_DIRECTORY, url.prettyUrl() );
+    }
 }
 
 
 void Nepomuk::TimelineProtocol::put( const KUrl& url, int permissions, KIO::JobFlags flags )
 {
-    kDebug();
-    Q_UNUSED( url );
+    kDebug() << url;
     Q_UNUSED( permissions );
     Q_UNUSED( flags );
 
@@ -250,19 +283,58 @@ void Nepomuk::TimelineProtocol::rename( const KUrl& src, const KUrl& dest, KIO::
 
 void Nepomuk::TimelineProtocol::del( const KUrl& url, bool isfile )
 {
+    kDebug() << url;
     ForwardingSlaveBase::del( url, isfile );
 }
 
 
 void Nepomuk::TimelineProtocol::mimetype( const KUrl& url )
 {
+    kDebug() << url;
     ForwardingSlaveBase::mimetype( url );
 }
 
 
 void Nepomuk::TimelineProtocol::stat( const KUrl& url )
 {
-    ForwardingSlaveBase::stat( url );
+    kDebug() << url;
+    if( url.path() == QLatin1String("/") ) {
+        KIO::UDSEntry uds;
+        uds.insert( KIO::UDSEntry::UDS_NAME, QString::fromLatin1( "/" ) );
+        uds.insert( KIO::UDSEntry::UDS_ICON_NAME, QString::fromLatin1( "nepomuk" ) );
+        uds.insert( KIO::UDSEntry::UDS_FILE_TYPE, S_IFDIR );
+        uds.insert( KIO::UDSEntry::UDS_MIME_TYPE, QString::fromLatin1( "inode/directory" ) );
+        statEntry( uds );
+        finished();
+    }
+    else if ( url.path() == QLatin1String( "/today" ) ) {
+        statEntry( createFolderUDSEntry( QLatin1String("today"), i18n("Today"), QDate::currentDate() ) );
+        finished();
+    }
+    else if ( url.path() == QLatin1String( "/calendar" ) ) {
+        statEntry( createFolderUDSEntry( QLatin1String("calendar"), i18n("Calendar"), QDate::currentDate() ) );
+        finished();
+    }
+    else {
+        // path: /calendar/YYYY-MM
+        if ( url.path().length() == 17 ) {
+            QString dateString = url.path().section('/', -1, -1, QString::SectionSkipEmpty );
+            QDate date = QDate::fromString( dateString, QLatin1String("yyyy-MM") );
+            statEntry( createMonthUDSEntry( date.month(), date.year() ) );
+            finished();
+        }
+
+        // path: /calendar/YYYY-MM/YYYY-MM-DD
+        else if ( url.path().length() == 28 ) {
+            QString dateString = url.path().section('/', -1, -1, QString::SectionSkipEmpty );
+            QDate date = QDate::fromString( dateString, "yyyy-MM-dd" );
+            statEntry( createDayUDSEntry( date ) );
+            finished();
+        }
+        else {
+            ForwardingSlaveBase::stat( url );
+        }
+    }
 }
 
 
@@ -298,24 +370,6 @@ void Nepomuk::TimelineProtocol::prepareUDSEntry( KIO::UDSEntry& entry,
 }
 
 
-void Nepomuk::TimelineProtocol::listMonth( int month, int year )
-{
-    kDebug() << month << year;
-    QString dateString
-        = KGlobal::locale()->calendar()->formatDate( QDate(year, month, 1),
-                                                     i18nc("Month and year used in a tree above the actual days. "
-                                                           "Have a look at http://api.kde.org/4.x-api/kdelibs-"
-                                                           "apidocs/kdecore/html/classKCalendarSystem.html#a560204439a4b670ad36c16c404f292b4 "
-                                                           "to see which variables you can use and ask kde-i18n-doc@kde.org if you have "
-                                                           "problems understanding how to translate this",
-                                                           "%B %Y") );
-    listEntry( createFolderUDSEntry( QDate(year, month, 1).toString(QLatin1String("yyyy-MM")),
-                                     dateString,
-                                     QDate(year, month, 1) ),
-                                     false );
-}
-
-
 void Nepomuk::TimelineProtocol::listDays( int month, int year )
 {
     kDebug() << month << year;
@@ -323,11 +377,7 @@ void Nepomuk::TimelineProtocol::listDays( int month, int year )
     for( int day = 1; day <= days; ++day ) {
         QDate date(year, month, day);
         if( date <= QDate::currentDate() ) {
-            KIO::UDSEntry uds = createFolderUDSEntry( date.toString("yyyy-MM-dd"),
-                                                      KGlobal::locale()->formatDate( date, KLocale::FancyLongDate ),
-                                                      date );
-//            uds.insert( KIO::UDSEntry::UDS_URL, buildQueryUrl( date ).url() );
-            listEntry( uds, false );
+            listEntry( createDayUDSEntry( date ), false );
         }
     }
 }
@@ -338,7 +388,7 @@ void Nepomuk::TimelineProtocol::listThisYearsMonths()
     kDebug();
     int currentMonth = QDate::currentDate().month();
     for( int month = 1; month <= currentMonth; ++month ) {
-        listMonth( month, QDate::currentDate().year() );
+        listEntry( createMonthUDSEntry( month, QDate::currentDate().year() ), false );
     }
 }
 
