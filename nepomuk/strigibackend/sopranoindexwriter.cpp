@@ -304,6 +304,7 @@ Strigi::Soprano::IndexWriter::~IndexWriter()
 }
 
 
+// unused
 void Strigi::Soprano::IndexWriter::commit()
 {
     // do nothing
@@ -347,6 +348,8 @@ void Strigi::Soprano::IndexWriter::startAnalysis( const AnalysisResult* idx )
     // remove previously indexed data
     removeIndexedData( data->fileUrl );
 
+    // TODO: it would be great for future file sharing purposes to keep the resource URI between strigi updates.
+
     // determine the resource URI by using Nepomuk::Resource's power
     // this will automatically find previous uses of the file in question
     // with backwards compatibility
@@ -369,7 +372,7 @@ void Strigi::Soprano::IndexWriter::addText( const AnalysisResult* idx, const cha
         return;
     }
 
-    FileMetaData* md = fileDataForResult( idx );;
+    FileMetaData* md = fileDataForResult( idx );
     md->content.append( text, length );
 }
 
@@ -383,7 +386,7 @@ void Strigi::Soprano::IndexWriter::addValue( const AnalysisResult* idx,
     }
 
     if ( value.length() > 0 ) {
-        FileMetaData* md = fileDataForResult( idx );;
+        FileMetaData* md = fileDataForResult( idx );
         RegisteredFieldData* rfd = reinterpret_cast<RegisteredFieldData*>( field->writerData() );
 
         // the statement we will create, we will determine the object below
@@ -456,7 +459,7 @@ void Strigi::Soprano::IndexWriter::addValue( const AnalysisResult* idx,
         return;
     }
 
-    FileMetaData* md = fileDataForResult( idx );;
+    FileMetaData* md = fileDataForResult( idx );
     RegisteredFieldData* rfd = reinterpret_cast<RegisteredFieldData*>( field->writerData() );
 
     LiteralValue val( value );
@@ -479,7 +482,7 @@ void Strigi::Soprano::IndexWriter::addValue( const AnalysisResult* idx,
         return;
     }
 
-    FileMetaData* md = fileDataForResult( idx );;
+    FileMetaData* md = fileDataForResult( idx );
     RegisteredFieldData* rfd = reinterpret_cast<RegisteredFieldData*>( field->writerData() );
 
     d->repository->addStatement( Statement( md->resourceUri,
@@ -497,7 +500,7 @@ void Strigi::Soprano::IndexWriter::addValue( const AnalysisResult* idx,
         return;
     }
 
-    FileMetaData* md = fileDataForResult( idx );;
+    FileMetaData* md = fileDataForResult( idx );
     RegisteredFieldData* rfd = reinterpret_cast<RegisteredFieldData*>( field->writerData() );
 
     d->repository->addStatement( Statement( md->resourceUri,
