@@ -70,15 +70,15 @@ AboutBugReportingDialog::AboutBugReportingDialog(QWidget * parent):
             i18nc("@info/rich","In this page you need to describe how much do you know about "
                                 "the desktop and the application state before it crashed."),
             i18nc("@info/rich","If you can, describe in as much detail as possible the crash "
-                               "circumstances, and what you were doing when the application crashed. "
-                               "(this information is going to be requested later) You can mention: "),
+                               "circumstances, and what you were doing when the application crashed "
+                               "(this information is going to be requested later.) You can mention: "),
             i18nc("@info/rich crash situation example","actions you were taking inside or outside "
                             "the application"),
             i18nc("@info/rich crash situation example","documents or images that you were using "
                             "and their type/format (later if you go to look at the report in the "
                             "bug tracking system, you can attach a file to the report)"),
             i18nc("@info/rich crash situation example","widgets that you were running"),
-            i18nc("@info/rich crash situation example","the url of a web site you were browsing"),
+            i18nc("@info/rich crash situation example","the URL of a web site you were browsing"),
             i18nc("@info/rich crash situation example","configuration details of the application"),
             i18nc("@info/rich crash situation example","or other strange things you notice before "
                             "or after the crash. "),

@@ -129,12 +129,12 @@
        </item>
        <item>
         <property name="text">
-         <string>Some of the times</string>
+         <string>Sometimes</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>Everytime</string>
+         <string>Every time</string>
         </property>
        </item>
       </widget>
@@ -216,7 +216,7 @@
           <bool>false</bool>
          </property>
          <property name="text">
-          <string comment="@option:check kind of information the user can provide about the crash">Unusual behavior in the desktop</string>
+          <string comment="@option:check kind of information the user can provide about the crash">Unusual desktop behavior</string>
          </property>
         </widget>
        </item>
