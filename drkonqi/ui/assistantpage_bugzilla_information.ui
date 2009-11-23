@@ -14,7 +14,7 @@
    <item>
     <widget class="QLabel" name="m_explanationLabel">
      <property name="text">
-      <string comment="@info/rich">Complete the bug report fields: &lt;nl /&gt;&lt;note&gt;Use English.&lt;/note&gt;</string>
+      <string comment="@info/rich">Complete the bug report fields: &lt;note&gt;Use English.&lt;/note&gt;</string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>
@@ -24,7 +24,7 @@
    <item>
     <widget class="QLabel" name="m_titleLabel">
      <property name="text">
-      <string comment="@label:textbox">Title of the bug report</string>
+      <string comment="@label:textbox">&lt;strong&gt;Title of the bug report:&lt;/strong&gt; (&lt;a href=&quot;#&quot;&gt;examples&lt;/a&gt;)</string>
      </property>
     </widget>
    </item>
@@ -34,7 +34,7 @@
    <item>
     <widget class="QLabel" name="m_detailsLabel">
      <property name="text">
-      <string comment="@label:textbox">Details about the crash</string>
+      <string comment="@label:textbox">&lt;strong&gt;Information about the crash:&lt;/strong&gt;</string>
      </property>
     </widget>
    </item>
@@ -59,7 +59,7 @@
         <item>
          <widget class="QCheckBox" name="m_compiledSourcesCheckBox">
           <property name="text">
-           <string comment="@option:check">KDE compiled from sources</string>
+           <string comment="@option:check">KDE is compiled from sources</string>
           </property>
          </widget>
         </item>
@@ -73,10 +73,13 @@
      <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
+     <property name="sizeType">
+      <enum>QSizePolicy::Fixed</enum>
+     </property>
      <property name="sizeHint" stdset="0">
       <size>
        <width>20</width>
-       <height>40</height>
+       <height>10</height>
       </size>
      </property>
     </spacer>

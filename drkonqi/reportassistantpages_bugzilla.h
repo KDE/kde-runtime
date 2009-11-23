@@ -79,6 +79,8 @@ public:
     bool showNextPage();
 
 private Q_SLOTS:
+    void showTitleExamples();
+
     void checkTexts();
 
 private:

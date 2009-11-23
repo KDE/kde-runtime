@@ -30,6 +30,8 @@
 
 #include <QtGui/QLabel>
 #include <QtGui/QCheckBox>
+#include <QtGui/QToolTip>
+#include <QtGui/QCursor>
 
 #include <KIcon>
 #include <KMessageBox>
@@ -288,6 +290,8 @@ BugzillaInformationPage::BugzillaInformationPage(ReportAssistantDialog * parent)
     connect(ui.m_titleEdit, SIGNAL(textChanged(QString)), this, SLOT(checkTexts()));
     connect(ui.m_detailsEdit, SIGNAL(textChanged()), this, SLOT(checkTexts()));
 
+    connect(ui.m_titleLabel, SIGNAL(linkActivated(QString)), this, SLOT(showTitleExamples()));
+
     ui.m_compiledSourcesCheckBox->setChecked(
                                     DrKonqi::systemInformation()->compiledSources());
     
@@ -435,6 +439,17 @@ void BugzillaInformationPage::aboutToHide()
     bool compiledFromSources = ui.m_compiledSourcesCheckBox->checkState() == Qt::Checked;
     DrKonqi::systemInformation()->setCompiledSources(compiledFromSources);
     
+}
+
+void BugzillaInformationPage::showTitleExamples()
+{
+    QString titleExamples = i18nc("@info:tooltip examples of good bug report titles",
+          "<strong>Examples of good titles:</strong><nl />\"Plasma crashed after adding the Notes "
+          "widget and writing on it\"<nl />\"Konqueror crashed when accessing the Facebook "
+          "application 'X'\"<nl />\"Kopete suddenly closed after resuming the computer and "
+          "talking to a MSN buddy\"<nl />\"Kate closed while editing a log file and pressing the "
+          "Delete key a couple of times\"");
+    QToolTip::showText(QCursor::pos(), titleExamples);
 }
 
 //END BugzillaInformationPage

@@ -1,14 +1,6 @@
 ##Main Tasks
 -------------
 
-!!!
-BugAwareness UI
-Improve UI files i18n semantics
-
-Update help ?
-
-Include help in the details page, near the "Details:" label (ex. "What should I write this?" link with help)
-
 - REVIEW criteria of minimum chars/words to use in the Title and Details fields
 
 ---
@@ -73,6 +65,7 @@ http://blogs.msdn.com/oldnewthing/archive/2003/09/01/54734.aspx (by Maciej)
 ---------
 
 - Implement a proper DBus interface.
+- Include help in the details page, near the "Details:" label (ex. "What should I write this?" link with help)
 
 #DONE
 -------
