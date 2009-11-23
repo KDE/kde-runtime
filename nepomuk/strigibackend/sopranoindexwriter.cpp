@@ -409,8 +409,6 @@ void Strigi::Soprano::IndexWriter::addValue( const AnalysisResult* idx,
             //
             if ( field->key() == FieldRegister::pathFieldName ||
                  field->key() == FieldRegister::parentLocationFieldName ) {
-                // TODO: this is where relative file URLs are to be generated and our new fancy file system
-                // class should provide us with the file system URI
                 statement.setObject( QUrl::fromLocalFile( QFile::decodeName( QByteArray::fromRawData( value.c_str(), value.length() ) ) ) );
             }
             else {

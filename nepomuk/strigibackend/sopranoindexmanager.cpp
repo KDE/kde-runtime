@@ -24,8 +24,6 @@
 #include <strigi/strigiconfig.h>
 
 #include <Soprano/Client/DBusClient>
-#include <Soprano/Index/IndexFilterModel>
-#include <Soprano/Index/CLuceneIndex>
 #include <Soprano/Util/MutexModel>
 #include <Soprano/Client/DBusModel>
 #include <Soprano/Client/LocalSocketClient>

@@ -103,7 +103,6 @@ public:
 Strigi::Soprano::IndexReader::IndexReader( ::Soprano::Model* model )
     : Strigi::IndexReader()
 {
-    qDebug() << "IndexReader::IndexReader in thread" << QThread::currentThread();
     d = new Private;
     d->repository = model;
 }
@@ -111,7 +110,6 @@ Strigi::Soprano::IndexReader::IndexReader( ::Soprano::Model* model )
 
 Strigi::Soprano::IndexReader::~IndexReader()
 {
-    qDebug() << "IndexReader::~IndexReader in thread" << QThread::currentThread();
     delete d;
 }
 
