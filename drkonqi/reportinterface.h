@@ -34,14 +34,14 @@ class ReportInterface : public QObject
 {
     Q_OBJECT
 public:
+    enum Reproducible { ReproducibleUnsure, ReproducibleNever,
+        ReproducibleSometimes, ReproducibleEverytime };
+
     ReportInterface(QObject *parent = 0);
 
-    bool userCanDetail() const;
-    void setUserCanDetail(bool canDetail);
-
-    bool developersCanContactReporter() const;
-    void setDevelopersCanContactReporter(bool canContact);
-
+    void setBugAwarenessPageData(bool, Reproducible, bool, bool, bool);
+    bool isBugAwarenessPageDataUseful() const;
+    
     QStringList firstBacktraceFunctions() const;
     void setFirstBacktraceFunctions(const QStringList & functions);
 
@@ -62,7 +62,7 @@ public:
     QStringList relatedBugzillaProducts() const;
     
     bool isWorthReporting() const;
-    
+
     //Zero means creating a new bug report
     void setAttachToBugNumber(uint);
     uint attachToBugNumber() const;
@@ -81,9 +81,14 @@ Q_SIGNALS:
     void sendReportError(const QString &);
 
 private:
-    bool        m_userCanDetail;
-    bool        m_developersCanContactReporter;
+    //Information the user can provide
+    bool        m_userRememberCrashSituation;
+    Reproducible m_reproducible;
+    bool        m_provideActionsApplicationDesktop;
+    bool        m_provideUnusualBehavior;
+    bool        m_provideApplicationConfigurationDetails;
     
+
     QString     m_backtrace;
     QStringList m_firstBacktraceFunctions;
     

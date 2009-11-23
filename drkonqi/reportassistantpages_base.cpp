@@ -35,6 +35,17 @@
 #include <KIcon>
 #include <KMessageBox>
 
+//BEGIN IntroductionPage
+
+IntroductionPage::IntroductionPage(ReportAssistantDialog * parent)
+        : ReportAssistantPage(parent)
+{
+    ui.setupUi(this);
+    ui.m_warningIcon->setPixmap(KIcon("dialog-warning").pixmap(64,64));
+}
+
+//END IntroductionPage
+
 //BEGIN CrashInformationPage
 
 CrashInformationPage::CrashInformationPage(ReportAssistantDialog * parent)
@@ -105,24 +116,107 @@ BugAwarenessPage::BugAwarenessPage(ReportAssistantDialog * parent)
         : ReportAssistantPage(parent)
 {
     ui.setupUi(this);
-    
-    KConfigGroup config(KGlobal::config(), "BugAwarenessPage");
-    bool developersCanContact = config.readEntry("DevelopersCanContactReporter", false);
-    ui.m_developersCanContactReporterCheckBox->setChecked(developersCanContact);
+
+    connect(ui.m_rememberGroup, SIGNAL(buttonClicked(int)), this, SLOT(updateCheckBoxes()));
+
+    setApplicationDetailsText();
+}
+
+void BugAwarenessPage::aboutToShow()
+{
+    updateCheckBoxes();
 }
 
 void BugAwarenessPage::aboutToHide()
 {
     //Save data
-    reportInterface()->setUserCanDetail(ui.m_canDetailCheckBox->checkState() == Qt::Checked);
+    ReportInterface::Reproducible reproducible = ReportInterface::ReproducibleUnsure;
+    switch(ui.m_reproducibleBox->currentIndex()) {
+        case 0: {
+            reproducible = ReportInterface::ReproducibleUnsure;
+            break;
+        }
+        case 1: {
+            reproducible = ReportInterface::ReproducibleNever;
+            break;
+        }
+        case 2: {
+            reproducible = ReportInterface::ReproducibleSometimes;
+            break;
+        }
+        case 3: {
+            reproducible = ReportInterface::ReproducibleEverytime;
+            break;
+        }
+    }
+
+    reportInterface()->setBugAwarenessPageData(ui.m_rememberCrashSituationYes->isChecked(),
+                                               reproducible,
+                                               ui.m_actionsInsideApp->isChecked(),
+                                               ui.m_unusualSituation->isChecked(),
+                                               ui.m_appSpecificDetails->isChecked());
+}
+
+void BugAwarenessPage::setApplicationDetailsText()
+{
+    QString appDetailsText;
+    QString binaryName = DrKonqi::crashedApplication()->fakeExecutableBaseName();
+
+    if (binaryName == QLatin1String("plasma-desktop")) {
+       appDetailsText = i18nc("@info examples about information the user can provide",
+       "Widgets you have in your desktop and panels (both official and unofficial). "
+       "Desktop settings (wallpaper plugin, themes). Activities and dashboard configuration.");
+    } else if (binaryName == QLatin1String("kwin")) {
+        appDetailsText = i18nc("@info examples about information the user can provide",
+        "State of Desktop Effects (Compositing). Kind of effects enabled. Window decoration. "
+        "Specific window rules and configuration.");
+    } else if (binaryName == QLatin1String("konqueror") ||
+        binaryName == QLatin1String("rekonq")) {
+        appDetailsText = i18nc("@info examples about information the user can provide",
+        "Sites you were visiting. Number of opened tabs. Plugins you have installed. "
+        "Non-default settings.");
+    } else if (binaryName == QLatin1String("dolphin")) {
+        appDetailsText = i18nc("@info examples about information the user can provide",
+        "File view mode. Grouping and sorting settings. Preview settings. Directory you were browsing.");
+    } else if (binaryName == QLatin1String("kopete")) {
+        appDetailsText = i18nc("@info examples about information the user can provide",
+        "Instant Messaging protocols you use. Plugins you have installed (official and unofficial).");
+    } else if (binaryName == QLatin1String("kmail")) {
+        appDetailsText = i18nc("@info examples about information the user can provide",
+        "Mail protocols and account-types you use.");
+    } else if (binaryName == QLatin1String("kwrite") ||
+        binaryName == QLatin1String("kate") ||
+        binaryName == QLatin1String("kword")) {
+        appDetailsText = i18nc("@info examples about information the user can provide",
+        "Type of the document you were editing.");
+    } else if (binaryName == QLatin1String("juk") ||
+        binaryName == QLatin1String("amarok") ||
+        binaryName == QLatin1String("dragon") ||
+        binaryName == QLatin1String("kaffeine")) {
+        appDetailsText = i18nc("@info examples about information the user can provide",
+        "Type of media (extension and format) you were watching and/or listening to.");
+    } 
+
+    if (!appDetailsText.isEmpty()) {
+        QString text = i18nc("@label examples about information the user can provide", "Examples: %1",
+                         appDetailsText);
+
+        ui.m_applicationSpecificDetailsLabel->setText(text);
+    }
+}
+
+void BugAwarenessPage::updateCheckBoxes()
+{
+    bool rememberSituation = ui.m_rememberCrashSituationYes->isChecked();
+    ui.m_reproducibleLabel->setEnabled(rememberSituation);
+    ui.m_reproducibleBox->setEnabled(rememberSituation);
     
-    bool developersCanContactReporter = ui.m_developersCanContactReporterCheckBox->checkState() == 
-                                                                                        Qt::Checked;
-    reportInterface()->setDevelopersCanContactReporter(developersCanContactReporter);
-           
-    KConfigGroup config(KGlobal::config(), "BugAwarenessPage");
-    config.writeEntry("DevelopersCanContactReporter", developersCanContactReporter);
-    config.sync();
+    ui.m_informationLabel->setEnabled(rememberSituation);
+    ui.m_actionsInsideApp->setEnabled(rememberSituation);
+    ui.m_unusualSituation->setEnabled(rememberSituation);
+
+    ui.m_appSpecificDetails->setEnabled(rememberSituation);
+    ui.m_applicationSpecificDetailsLabel->setEnabled(rememberSituation);
 }
 
 //END BugAwarenessPage
@@ -238,28 +332,14 @@ void ConclusionPage::aboutToShow()
         break;
     }
     }
-    
-    //User can provide details / is Willing to help
-    if (reportInterface()->userCanDetail()) {
-        if (reportInterface()->developersCanContactReporter()) {
-            explanationHTML += QString("<li>%1</li>").arg(i18nc("@info","You can provide crash "
-                                "details, and the "
-                                "developers can contact you if required."));
-        } else {
-            explanationHTML += QString("<li>%1</li>").arg(i18nc("@info","You can provide crash "
-                                "details, but do not want "
-                                "developers to contact you for more information if required."));
-        }
+
+    //User can provide enough information
+    if (reportInterface()->isBugAwarenessPageDataUseful()) {
+        explanationHTML += QString("<li>%1</li>").arg(i18nc("@info","The information you can "
+                                                            "provide could be considered helpful."));
     } else {
-        if (reportInterface()->developersCanContactReporter()) {
-            explanationHTML += QString("<li>%1</li>").arg(i18nc("@info","You are not sure what you "
-                                    "were doing when the application crashed, but the developers "
-                                    "can contact you for more information if required."));
-        } else {
-            explanationHTML += QString("<li>%1</li>").arg(i18nc("@info","You are not sure what you "
-                                    "were doing when the application crashed, and do not want the " 
-                                    "developers to contact you for more information if required."));
-        }
+        explanationHTML += QString("<li>%1</li>").arg(i18nc("@info","The information you can "
+                                        "provide is not considered helpful enough in this case."));
     }
     
     explanationHTML += QLatin1String("</ul></p>");
@@ -305,15 +385,13 @@ void ConclusionPage::aboutToShow()
                             "answers. ")));
 
         if (isBKO) {
-            ui.m_howToProceedLabel->setText(i18nc("@info","This application is supported in the KDE "
-                                            "bug tracking system. You can manually report this bug "
+            ui.m_howToProceedLabel->setText(i18nc("@info","You can manually report this bug "
                                             "at <link>%1</link>. "
                                             "Click <interface>Finish</interface> to close the "
                                             "assistant.",
                                             reportAddress));
         } else {
-            ui.m_howToProceedLabel->setText(i18nc("@info","This application is not supported in the "
-                                              "KDE bug tracking system. You can manually report this "
+            ui.m_howToProceedLabel->setText(i18nc("@info","You can manually report this "
                                               "bug to its maintainer at <link>%1</link>. "
                                               "Click <interface>Finish</interface> to close the "
                                               "assistant.", reportAddress));

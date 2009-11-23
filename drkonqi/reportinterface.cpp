@@ -45,29 +45,43 @@ ReportInterface::ReportInterface(QObject *parent)
     m_productMapping = new ProductMapping(DrKonqi::crashedApplication()->fakeExecutableBaseName(),
                                           m_bugzillaManager, this);
 
-    m_userCanDetail = false;
-    m_developersCanContactReporter = false;
+    m_userRememberCrashSituation = false;
+    m_reproducible = ReproducibleUnsure;
+    m_provideActionsApplicationDesktop = false;
+    m_provideUnusualBehavior = false;
+    m_provideApplicationConfigurationDetails = false;
+
     m_attachToBugNumber = 0;
 }
 
-bool ReportInterface::userCanDetail() const
+void ReportInterface::setBugAwarenessPageData(bool rememberSituation,
+                                                   Reproducible reproducible, bool actions, 
+                                                   bool unusual, bool configuration)
 {
-    return m_userCanDetail;
+    m_userRememberCrashSituation = rememberSituation;
+    m_reproducible = reproducible;
+    m_provideActionsApplicationDesktop = actions;
+    m_provideUnusualBehavior = unusual;
+    m_provideApplicationConfigurationDetails = configuration;
 }
 
-void ReportInterface::setUserCanDetail(bool canDetail)
+bool ReportInterface::isBugAwarenessPageDataUseful() const
 {
-    m_userCanDetail = canDetail;
-}
+    //To be considered useful:
+    // - User must remember part of the crash situation
+    // AND
+    // - The crash can be reproduced sometimes OR all the times
+    //   OR
+    // - The user must be able to detail some of the proposed topics
 
-bool ReportInterface::developersCanContactReporter() const
-{
-    return m_developersCanContactReporter;
-}
+    bool useful = m_userRememberCrashSituation &&
+                  ( (m_provideActionsApplicationDesktop || m_provideUnusualBehavior ||
+                         m_provideApplicationConfigurationDetails)
+                     || (m_reproducible==ReproducibleSometimes ||
+                         m_reproducible==ReproducibleEverytime)
+                  );
 
-void ReportInterface::setDevelopersCanContactReporter(bool canContact)
-{
-    m_developersCanContactReporter = canContact;
+    return useful;
 }
 
 QString ReportInterface::backtrace() const
@@ -141,8 +155,8 @@ QString ReportInterface::generateReport(bool drKonqiStamp) const
     report.append(QLatin1String("\n"));
     
     //Details of the crash situation
-    if (m_userCanDetail) {
-        report.append(QString("What I was doing when the application crashed:\n"));
+    if (isBugAwarenessPageDataUseful()) {
+        report.append(QString("-- Information about the crash:\n"));
         if (!m_reportDetailText.isEmpty()) {
             report.append(m_reportDetailText);
         } else {
@@ -150,6 +164,17 @@ QString ReportInterface::generateReport(bool drKonqiStamp) const
                                               " when the application crashed.</placeholder>"));
         }
         report.append(QLatin1String("\n\n"));
+    }
+
+    //Can be reproduced
+    if (m_reproducible !=  ReproducibleUnsure) {
+        if (m_reproducible == ReproducibleEverytime) {
+            report.append(QString("The crash can be reproduced everytime.\n\n"));
+        } else if (m_reproducible == ReproducibleSometimes) {
+            report.append(QString("The crash can be reproduced some of the times.\n\n"));
+        } else if (m_reproducible == ReproducibleNever) {
+            report.append(QString("The crash does not seem to be reproducible.\n\n"));
+        }
     }
 
     //Backtrace
@@ -283,21 +308,46 @@ QStringList ReportInterface::relatedBugzillaProducts() const
 
 bool ReportInterface::isWorthReporting() const
 {
+    //Evaluate if the provided information is useful enough to enable the automatic report
     bool needToReport = false;
+
+    if (!m_userRememberCrashSituation) {
+        //This should never happen... but...
+        return false;
+    }
+
+    //Check how many information the user can provide and generate a rating
+    int rating = 0;
+    if (m_provideActionsApplicationDesktop) {
+        rating += 3;
+    }
+    if (m_provideApplicationConfigurationDetails) {
+        rating += 2;
+    }
+    if (m_provideUnusualBehavior) {
+        rating += 1;
+    }
+
     
     BacktraceParser::Usefulness use =
                 DrKonqi::debuggerManager()->backtraceGenerator()->parser()->backtraceUsefulness();
    
     switch (use) {
     case BacktraceParser::ReallyUseful: {
-        needToReport = (m_userCanDetail || m_developersCanContactReporter);
+        //Perfect backtrace: require at least one option or a 100%-50% reproducible crash
+        needToReport = (rating >=2) ||
+            (m_reproducible == ReproducibleEverytime || m_reproducible == ReproducibleSometimes);
         break;
     }
     case BacktraceParser::MayBeUseful: {
-        needToReport = (m_userCanDetail && m_developersCanContactReporter);
+        //Not perfect backtrace: require at least two options or a 100% reproducible crash
+        needToReport = (rating >=3) || (m_reproducible == ReproducibleEverytime);
         break;
     }
     case BacktraceParser::ProbablyUseless:
+        //Bad backtrace: require at least two options and always reproducible (strict)
+        needToReport = (rating >=5) && (m_reproducible == ReproducibleEverytime);
+        break;
     case BacktraceParser::Useless:
     case BacktraceParser::InvalidUsefulness: {
         needToReport =  false;

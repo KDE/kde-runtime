@@ -566,7 +566,7 @@ void BugzillaReportInformationDialog::bugFetchFinished(BugReport report, QObject
                        report.bugNumber(), dupId),
                        i18nc("@title:window","Nested duplicate detected"), yesItem, noItem)
                                                     == KMessageBox::Yes) {
-                        showBugReport(duplicate.toInt());
+                        showBugReport(dupId);
                         return;
                     }
                 }
@@ -661,7 +661,7 @@ int BugzillaReportInformationDialog::proceedOnAlreadyClosedReport()
     dismissBugReportButton.setIcon(KIcon("dialog-close"));
 
     int ret = KMessageBox::questionYesNoCancel(this,
-        i18nc("@info messagebox question %1 is the close state cause","This report is marked as "
+        i18nc("@info messagebox question. %1 is the close state explanation","This report is marked as "
         "\"closed\" because %1. If you are sure your crash is the same, then adding further details "
         "or creating a new report will be useless and will waste developers' time. "
         "Can you be sure this is the same as your crash?", m_closedStateString),

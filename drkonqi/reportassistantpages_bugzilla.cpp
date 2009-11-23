@@ -352,17 +352,12 @@ void BugzillaInformationPage::aboutToShow()
         m_distributionComboSetup = true;
     }
 
-    bool showDetails = reportInterface()->userCanDetail();
-    ui.m_detailsLabel->setVisible(showDetails);
-    ui.m_detailsEdit->setVisible(showDetails);
-
     checkTexts(); //May be the options (canDetail) changed and we need to recheck
 }
 
 void BugzillaInformationPage::checkTexts()
 {
-    bool detailsNotOk = ui.m_detailsEdit->isVisible() ? ui.m_detailsEdit->toPlainText().isEmpty() : false;
-    bool ok = !(ui.m_titleEdit->text().isEmpty() || detailsNotOk);
+    bool ok = !(ui.m_titleEdit->text().isEmpty() || ui.m_detailsEdit->toPlainText().isEmpty());
 
     if (ok != m_textsOK) {
         m_textsOK = ok;
@@ -373,10 +368,11 @@ void BugzillaInformationPage::checkTexts()
 bool BugzillaInformationPage::showNextPage()
 {
     checkTexts();
+
+    //FIXME improve logic according to the info the user can provide
     if (m_textsOK) { //not empty
-        bool titleShort = ui.m_titleEdit->text().size() < 25;
-        bool detailsShort = ui.m_detailsEdit->isVisible() ?
-                                (ui.m_detailsEdit->toPlainText().size() < 50) : false;
+        bool titleShort = ui.m_titleEdit->text().size() < 20;
+        bool detailsShort = ui.m_detailsEdit->toPlainText().size() < 40;
 
         if (titleShort || detailsShort) {
             //The user input is less than we want.... encourage to write more

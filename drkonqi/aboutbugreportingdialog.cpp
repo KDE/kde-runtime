@@ -65,18 +65,13 @@ AboutBugReportingDialog::AboutBugReportingDialog(QWidget * parent):
         //Bug Awareness Page
         QString("<a name=\"%1\" /><h2>%2</h2>").arg(QLatin1String(PAGE_AWARENESS_ID),
                                 i18nc("@title","What do you know about the crash?")) +
-        QString("<p>%1</p><p>%2<ul><li>%3</li><li>%4</li><li>%5</li><li>%6</li><li>%7</li>"
-        "</ul>%8</p>").arg(
-            i18nc("@info/rich","In this page you answer some questions about the crash context, "
-                            "and note whether you are willing to help the developers in "
-                            "the future. To do this, you will need to open a KDE "
-                            "Bug tracking system account. This is strongly encouraged, as "
-                            "often a developer may need to ask you for clarification. "
-                            "Also, you can track the status of your bug report by having "
-                            "email updates sent to you."),
-            i18nc("@info/rich","If you can, describe in as much detail as possible, "
-                            "the crash circumstances, and "
-                            "what you were doing when the application crashed. You can mention: "),
+        QString("<p>%1</p><p>%2<ul><li>%3</li><li>%4</li><li>%5</li><li>%6</li><li>%7</li><li>%8</li>"
+        "</ul>%9</p>").arg(
+            i18nc("@info/rich","In this page you need to describe how much do you know about "
+                                "the desktop and the application state before it crashed."),
+            i18nc("@info/rich","If you can, describe in as much detail as possible the crash "
+                               "circumstances, and what you were doing when the application crashed. "
+                               "(this information is going to be requested later) You can mention: "),
             i18nc("@info/rich crash situation example","actions you were taking inside or outside "
                             "the application"),
             i18nc("@info/rich crash situation example","documents or images that you were using "
@@ -84,6 +79,7 @@ AboutBugReportingDialog::AboutBugReportingDialog(QWidget * parent):
                             "bug tracking system, you can attach a file to the report)"),
             i18nc("@info/rich crash situation example","widgets that you were running"),
             i18nc("@info/rich crash situation example","the url of a web site you were browsing"),
+            i18nc("@info/rich crash situation example","configuration details of the application"),
             i18nc("@info/rich crash situation example","or other strange things you notice before "
                             "or after the crash. "),
             i18nc("@info/rich","Screenshots can be very helpful sometimes. You can attach them to "

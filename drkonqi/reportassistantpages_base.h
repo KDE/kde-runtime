@@ -25,11 +25,24 @@
 
 #include "backtracewidget.h"
 
+#include "ui_assistantpage_introduction.h"
 #include "ui_assistantpage_bugawareness.h"
 #include "ui_assistantpage_conclusions.h"
 #include "ui_assistantpage_conclusions_dialog.h"
 
 #include <QtCore/QPointer>
+
+/** Introduction page **/
+class IntroductionPage: public ReportAssistantPage
+{
+    Q_OBJECT
+
+public:
+    IntroductionPage(ReportAssistantDialog *);
+
+private:
+    Ui::AssistantPageIntroduction   ui;
+};
 
 /** Backtrace page **/
 class CrashInformationPage: public ReportAssistantPage
@@ -56,7 +69,12 @@ class BugAwarenessPage: public ReportAssistantPage
 public:
     BugAwarenessPage(ReportAssistantDialog *);
 
+    void aboutToShow();
     void aboutToHide();
+
+private Q_SLOTS:
+    void setApplicationDetailsText();
+    void updateCheckBoxes();
 
 private:
     Ui::AssistantPageBugAwareness   ui;
