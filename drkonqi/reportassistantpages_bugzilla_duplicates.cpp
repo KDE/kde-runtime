@@ -478,7 +478,13 @@ BugzillaReportInformationDialog::BugzillaReportInformationDialog(BugzillaDuplica
     QWidget * widget = new QWidget(this);
     ui.setupUi(widget);
     setMainWidget(widget);
-        
+
+    ui.m_retryButton->setGuiItem(KGuiItem2(i18nc("@action:button", "Retry..."),
+                                  KIcon("view-refresh"),
+                                  i18nc("@info:tooltip", "Use this button to retry "
+                                                  "loading the bug report.")));
+    connect(ui.m_retryButton, SIGNAL(clicked()), this, SLOT(reloadReport()));
+    
     setButtonGuiItem(KDialog::User2, 
                 KGuiItem2(i18nc("@action:button", "Add as a possible duplicate"),
                     KIcon("list-add"), i18nc("@info:tooltip", "Use this button to mark your "
@@ -515,8 +521,15 @@ BugzillaReportInformationDialog::~BugzillaReportInformationDialog()
     saveDialogSize(config);
 }
 
+void BugzillaReportInformationDialog::reloadReport()
+{
+    showBugReport(m_bugNumber);
+}
+
 void BugzillaReportInformationDialog::showBugReport(int bugNumber)
 {
+    ui.m_retryButton->setVisible(false);
+
     m_closedStateString.clear();
     m_bugNumber = bugNumber;
     m_parent->bugzillaManager()->fetchBugReport(m_bugNumber, this);
@@ -723,8 +736,10 @@ void BugzillaReportInformationDialog::bugFetchError(QString err, QObject * jobOw
                                         "<message>%1.</message><nl/>"
                                         "Please wait some time and try again.", err));
         button(KDialog::User1)->setEnabled(false);
+        button(KDialog::User2)->setEnabled(false);
         ui.m_infoBrowser->setText(i18nc("@info","Error fetching the bug report"));
         ui.m_statusWidget->setIdle(i18nc("@info:status","Error fetching the bug report"));
+        ui.m_retryButton->setVisible(true);
     }
 }
 

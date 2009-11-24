@@ -115,6 +115,8 @@ private Q_SLOTS:
     void bugFetchFinished(BugReport,QObject *);
     void bugFetchError(QString, QObject *);
 
+    void reloadReport();
+
     int proceedOnAlreadyClosedReport();
     void mayBeDuplicateClicked();
     void attachToBugReportClicked();
