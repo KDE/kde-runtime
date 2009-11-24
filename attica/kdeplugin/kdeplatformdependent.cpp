@@ -25,9 +25,10 @@
 
 #include <QtCore/QDebug>
 
+#include <KDebug>
 #include <KConfigGroup>
 #include <KWallet/Wallet>
-
+#include <kcmultidialog.h>
 
 using namespace Attica;
 
@@ -81,13 +82,27 @@ bool KdePlatformDependent::loadCredentials(const QUrl& baseUrl, QString& user, Q
         return false;
     }
     QMap<QString, QString> entries;
-    if (m_wallet->readMap(baseUrl.toString(), entries)) {
+    if (m_wallet->readMap(baseUrl.toString(), entries) != 0) {
         return false;
     }
     user = entries.value("user");
     password = entries.value("password");
+    kDebug() << "Successfully loaded credentials.";
 
     return true;
+}
+
+
+bool Attica::KdePlatformDependent::askForCredentials(const QUrl& baseUrl, QString& user, QString& password)
+{
+    kDebug() << "Attempting to start KCM for credentials";
+    KCMultiDialog KCM;
+    KCM.setWindowTitle( i18n( "Open Collaboration Providers" ) );
+    KCM.addModule( "attica" );
+    
+    KCM.exec();
+
+    return false;
 }
 
 
