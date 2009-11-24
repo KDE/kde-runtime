@@ -36,6 +36,8 @@ add_subdirectory(proxy)
 add_subdirectory(spellchecking)
 add_subdirectory(componentchooser)
 add_subdirectory(kded)
+add_subdirectory(trash)
+#add_subdirectory(history)
 endif ( Q_WS_X11 )
 
 ########### install files ###############
