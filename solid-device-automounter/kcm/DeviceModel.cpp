@@ -199,14 +199,28 @@ DeviceModel::data(const QModelIndex &index, int role) const
                     case Qt::DisplayRole:
                         return dev.description();
                     case Qt::ToolTipRole:
-                        return udi;
+                        return i18n("UDI: %1", udi);
                     case Qt::DecorationRole:
                         return KIcon(dev.icon());
                 }
-            } else if (index.column() == 1 && role == Qt::CheckStateRole) {
-                return m_loginForced[udi] ? Qt::Checked : Qt::Unchecked;
-            } else if (index.column() == 2 && role == Qt::CheckStateRole) {
-                return m_attachedForced[udi] ? Qt::Checked : Qt::Unchecked;
+            } else if (index.column() == 1) {
+                switch(role) {
+                    case Qt::CheckStateRole:
+                        return m_loginForced[udi] ? Qt::Checked : Qt::Unchecked;
+                    case Qt::ToolTipRole:
+                        if (m_loginForced[udi] || AutomounterSettings::shouldAutomountDevice(udi, AutomounterSettings::Login))
+                            return i18n("This device will be automatically mounted at login.");
+                        return i18n("This device will not be automatically mounted at login.");
+                }
+            } else if (index.column() == 2) {
+                switch(role) {
+                    case Qt::CheckStateRole:
+                        return m_attachedForced[udi] ? Qt::Checked : Qt::Unchecked;
+                    case Qt::ToolTipRole:
+                        if (m_attachedForced[udi] || AutomounterSettings::shouldAutomountDevice(udi, AutomounterSettings::Attach))
+                            return i18n("This device will be automatically mounted when attached.");
+                        return i18n("This device will not be automatically mounted when attached.");
+                }
             }
         } else if (index.parent().row() == 1) {
             QString udi = m_disconnected[index.row()];
@@ -217,14 +231,28 @@ DeviceModel::data(const QModelIndex &index, int role) const
                     case Qt::DisplayRole:
                         return AutomounterSettings::getDeviceName(udi);
                     case Qt::ToolTipRole:
-                        return udi;
+                        return i18n("UDI: %1", udi);
                     case Qt::DecorationRole:
                         return KIcon(AutomounterSettings::getDeviceIcon(udi));
                 }
-            } else if (index.column() == 1 && role == Qt::CheckStateRole) {
-                return m_loginForced[udi] ? Qt::Checked : Qt::Unchecked;
-            } else if (index.column() == 2 && role == Qt::CheckStateRole) {
-                return m_attachedForced[udi] ? i18n("Yes") : i18n("No");
+            } else if (index.column() == 1) {
+                switch(role) {
+                    case Qt::CheckStateRole:
+                        return m_loginForced[udi] ? Qt::Checked : Qt::Unchecked;
+                    case Qt::ToolTipRole:
+                        if (m_loginForced[udi] || AutomounterSettings::shouldAutomountDevice(udi, AutomounterSettings::Login))
+                            return i18n("This device will be automatically mounted at login.");
+                        return i18n("This device will not be automatically mounted at login.");
+                }
+            } else if (index.column() == 2) {
+                switch(role) {
+                    case Qt::CheckStateRole:
+                        return m_attachedForced[udi] ? Qt::Checked : Qt::Unchecked;
+                    case Qt::ToolTipRole:
+                        if (m_attachedForced[udi] || AutomounterSettings::shouldAutomountDevice(udi, AutomounterSettings::Attach))
+                            return i18n("This device will be automatically mounted when attached.");
+                        return i18n("This device will not be automatically mounted when attached.");
+                }
             }
         }
     } else if (index.isValid()) {
