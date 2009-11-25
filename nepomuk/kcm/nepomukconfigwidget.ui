@@ -3,11 +3,19 @@
  <author>Sebastian Trueg</author>
  <class>NepomukConfigWidget</class>
  <widget class="QWidget" name="NepomukConfigWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>721</width>
+    <height>363</height>
+   </rect>
+  </property>
   <layout class="QVBoxLayout">
    <item>
     <widget class="KTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
@@ -123,7 +131,7 @@
      </widget>
      <widget class="QWidget" name="tab_2">
       <attribute name="title">
-       <string>Advanced Settings</string>
+       <string>File Indexing</string>
       </attribute>
       <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="3,2">
        <item>
@@ -155,6 +163,16 @@
             </property>
            </widget>
           </item>
+          <item>
+           <widget class="QCheckBox" name="checkBox">
+            <property name="toolTip">
+             <string>Index the files on removable media like USB sticks when they are mounted</string>
+            </property>
+            <property name="text">
+             <string>Index Files on removable media</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </widget>
        </item>
@@ -170,6 +188,81 @@
           <string>Strigi Index Exclude Filters</string>
          </property>
         </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_3">
+      <attribute name="title">
+       <string>Advanced Settings</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_5">
+       <item>
+        <widget class="QGroupBox" name="groupBox_4">
+         <property name="title">
+          <string>Memory Usage</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_4">
+          <item>
+           <widget class="QLabel" name="label_4">
+            <property name="text">
+             <string>The maximum amount of memory the Nepomuk database should use. The more memory Nepomuk has the more performant it will be.</string>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_3">
+            <item>
+             <widget class="QSlider" name="m_sliderMemoryUsage">
+              <property name="minimum">
+               <number>50</number>
+              </property>
+              <property name="maximum">
+               <number>1000</number>
+              </property>
+              <property name="singleStep">
+               <number>10</number>
+              </property>
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSpinBox" name="m_editMemoryUsage">
+              <property name="suffix">
+               <string> MB</string>
+              </property>
+              <property name="minimum">
+               <number>50</number>
+              </property>
+              <property name="maximum">
+               <number>1000</number>
+              </property>
+              <property name="singleStep">
+               <number>10</number>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>203</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </widget>
@@ -209,12 +302,44 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>20</x>
-     <y>20</y>
+     <x>35</x>
+     <y>104</y>
     </hint>
     <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
+     <x>26</x>
+     <y>129</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>m_sliderMemoryUsage</sender>
+   <signal>sliderMoved(int)</signal>
+   <receiver>m_editMemoryUsage</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>564</x>
+     <y>118</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>632</x>
+     <y>118</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>m_editMemoryUsage</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>m_sliderMemoryUsage</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>642</x>
+     <y>121</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>426</x>
+     <y>118</y>
     </hint>
    </hints>
   </connection>
