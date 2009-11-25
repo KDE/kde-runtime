@@ -21,6 +21,7 @@
 
 #include "strigiserviceadaptor.h"
 #include "strigiservice.h"
+#include "strigiserviceconfig.h"
 #include "indexscheduler.h"
 
 #include <QtCore/QUrl>
@@ -85,27 +86,22 @@ void Nepomuk::StrigiServiceAdaptor::suspend()
 }
 
 
-void Nepomuk::StrigiServiceAdaptor::updateFolder( const QString& path )
+void Nepomuk::StrigiServiceAdaptor::updateFolder( const QString& path, bool forced )
 {
-    m_service->indexScheduler()->updateDir( path );
+    if ( StrigiServiceConfig::self()->shouldFolderBeIndexed( path ) )
+        m_service->indexScheduler()->updateDir( path, forced );
 }
 
 
-void Nepomuk::StrigiServiceAdaptor::forceFolderUpdate( const QString& path )
+void Nepomuk::StrigiServiceAdaptor::updateAllFolders( bool forced )
 {
-    m_service->indexScheduler()->updateDir( path, true );
+    m_service->indexScheduler()->updateAll( forced );
 }
 
 
-void Nepomuk::StrigiServiceAdaptor::updateAllFolders()
+void Nepomuk::StrigiServiceAdaptor::indexFolder( const QString& path, bool forced )
 {
-    m_service->indexScheduler()->updateAll();
-}
-
-
-void Nepomuk::StrigiServiceAdaptor::forceAllFoldersUpdate()
-{
-    m_service->indexScheduler()->updateAll( true );
+    m_service->indexScheduler()->updateDir( path, forced );
 }
 
 

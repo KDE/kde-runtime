@@ -13,6 +13,17 @@
     </method>
     <method name="suspend" />
     <method name="resume" />
+    <method name="updateFolder">
+      <arg name="path" type="s" direction="in" />
+      <arg name="forced" type="b" direction="in" />
+    </method>
+    <method name="updateAllFolders">
+      <arg name="forced" type="b" direction="in" />
+    </method>
+    <method name="indexFolder">
+      <arg name="path" type="s" direction="in" />
+      <arg name="forced" type="b" direction="in" />
+    </method>
     <method name="analyzeResource" >
       <arg name="uri" direction="in" type="s" />
       <arg name="lastModificationDate" direction="in" type="u" />

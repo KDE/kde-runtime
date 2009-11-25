@@ -33,44 +33,47 @@ namespace Nepomuk {
         Q_OBJECT
         Q_CLASSINFO("D-Bus Interface", "org.kde.nepomuk.Strigi")
         Q_CLASSINFO("D-Bus Introspection", ""
-                    "  <interface name=\"org.kde.nepomuk.Strigi\" >\n"
-                    "    <method name=\"isIndexing\" >\n"
-                    "      <arg direction=\"out\" type=\"b\" />\n"
+                    "  <interface name=\"org.kde.nepomuk.Strigi\">\n"
+                    "    <method name=\"isIndexing\">\n"
+                    "      <arg direction=\"out\" type=\"b\"/>\n"
                     "    </method>\n"
-                    "    <method name=\"isSuspended\" >\n"
-                    "      <arg direction=\"out\" type=\"b\" />\n"
+                    "    <method name=\"isSuspended\">\n"
+                    "      <arg direction=\"out\" type=\"b\"/>\n"
                     "    </method>\n"
-                    "    <method name=\"currentFolder\" >\n"
-                    "      <arg direction=\"out\" type=\"s\" />\n"
+                    "    <method name=\"currentFolder\">\n"
+                    "      <arg direction=\"out\" type=\"s\"/>\n"
                     "    </method>\n"
-                    "    <method name=\"suspend\" />\n"
-                    "    <method name=\"resume\" />\n"
-                    "    <method name=\"updateFolder\" >\n"
-                    "      <arg name=\"path\" direction=\"in\" type=\"s\" />\n"
+                    "    <method name=\"suspend\"/>\n"
+                    "    <method name=\"resume\"/>\n"
+                    "    <method name=\"updateFolder\">\n"
+                    "      <arg direction=\"in\" type=\"s\" name=\"path\"/>\n"
+                    "      <arg direction=\"in\" type=\"b\" name=\"forced\"/>\n"
                     "    </method>\n"
-                    "    <method name=\"forceFolderUpdate\" >\n"
-                    "      <arg name=\"path\" direction=\"in\" type=\"s\" />\n"
+                    "    <method name=\"updateAllFolders\">\n"
+                    "      <arg direction=\"in\" type=\"b\" name=\"forced\"/>\n"
                     "    </method>\n"
-                    "    <method name=\"updateAllFolders\" />\n"
-                    "    <method name=\"forceAllFoldersUpdate\" />\n"
-                    "    <method name=\"analyzeResource\" >\n"
-                    "      <arg name=\"uri\" direction=\"in\" type=\"s\" />\n"
-                    "      <arg name=\"lastModificationDate\" direction=\"in\" type=\"u\" />\n"
-                    "      <arg name=\"data\" direction=\"in\" type=\"ay\" />\n"
+                    "    <method name=\"indexFolder\">\n"
+                    "      <arg direction=\"in\" type=\"s\" name=\"path\"/>\n"
+                    "      <arg direction=\"in\" type=\"b\" name=\"forced\"/>\n"
                     "    </method>\n"
-                    "    <method name=\"analyzeResourceFromTempFileAndDeleteTempFile\" >\n"
-                    "      <arg name=\"uri\" direction=\"in\" type=\"s\" />\n"
-                    "      <arg name=\"lastModificationDate\" direction=\"in\" type=\"u\" />\n"
-                    "      <arg name=\"tmpFileName\" direction=\"in\" type=\"s\" />\n"
+                    "    <method name=\"analyzeResource\">\n"
+                    "      <arg direction=\"in\" type=\"s\" name=\"uri\"/>\n"
+                    "      <arg direction=\"in\" type=\"u\" name=\"lastModificationDate\"/>\n"
+                    "      <arg direction=\"in\" type=\"ay\" name=\"data\"/>\n"
                     "    </method>\n"
-                    "    <method name=\"userStatusString\" >\n"
-                    "      <arg direction=\"out\" type=\"s\" />\n"
+                    "    <method name=\"analyzeResourceFromTempFileAndDeleteTempFile\">\n"
+                    "      <arg direction=\"in\" type=\"s\" name=\"uri\"/>\n"
+                    "      <arg direction=\"in\" type=\"u\" name=\"lastModificationDate\"/>\n"
+                    "      <arg direction=\"in\" type=\"s\" name=\"tmpFileName\"/>\n"
                     "    </method>\n"
-                    "    <signal name=\"statusChanged\" />\n"
-                    "    <signal name=\"indexingStarted\" />\n"
-                    "    <signal name=\"indexingStopped\" />\n"
-                    "    <signal name=\"indexingFolder\" >\n"
-                    "      <arg type=\"s\" name=\"path\" />\n"
+                    "    <method name=\"userStatusString\">\n"
+                    "      <arg direction=\"out\" type=\"s\"/>\n"
+                    "    </method>\n"
+                    "    <signal name=\"statusChanged\"/>\n"
+                    "    <signal name=\"indexingStarted\"/>\n"
+                    "    <signal name=\"indexingStopped\"/>\n"
+                    "    <signal name=\"indexingFolder\">\n"
+                    "      <arg type=\"s\" name=\"path\"/>\n"
                     "    </signal>\n"
                     "  </interface>\n"
                     "")
@@ -85,10 +88,22 @@ namespace Nepomuk {
         QString currentFolder();
         void resume();
         void suspend();
-        void updateFolder( const QString& path );
-        void forceFolderUpdate( const QString& path );
-        void updateAllFolders();
-        void forceAllFoldersUpdate();
+
+        /**
+         * Update folder \a path if it is configured to be indexed.
+         */
+        void updateFolder( const QString& path, bool forced );
+
+        /**
+         * Update all folders configured to be indexed.
+         */
+        void updateAllFolders( bool forced );
+
+        /**
+         * Index a folder independant of its configuration status.
+         */
+        void indexFolder( const QString& path, bool forced );
+
         void analyzeResource( const QString& uri, uint mTime, const QByteArray& data );
         void analyzeResourceFromTempFileAndDeleteTempFile( const QString& uri, uint mTime, const QString& tmpFile );
         QString userStatusString() const;
