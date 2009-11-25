@@ -1,6 +1,66 @@
+#---
+#Binary name -> Bugzilla product|component mapping
+#---
+
 [Mappings]
 
-#Akonadi
+#KDE Platform (kdelibs)
+kdebugdialog=kdelibs|general
+kdeinit4=kdelibs|general
+kdeinit4_shutdown=kdelibs|general
+kdeinit4_wrapper=kdelibs|general
+kdepasswd=kdelibs|kpasswdserver
+kdialog=kdelibs|general
+keditfiletype=kdelibs|general
+kfmclient=kdelibs|general
+kglobalaccel=kdelibs|general
+kiconfinder=kdelibs|general
+kshell4=kdelibs|general
+kuiserver=kdelibs|general
+kuiviewer=kdelibs|general
+kded4=kdelibs|kded
+kcmshell4=systemsettings|general
+kwalletd=kdelibs|kwallet
+kwriteconfig=kdelibs|general
+kwrited=konsole|kwrited
+kbuildsycoca4=kdelibs|ksycoca
+knotify4=kdelibs|knotify
+#KDE Platform (KIO)
+kioclient=kio|general
+ktrash=kio|trash
+#KDE Platform (Solid)
+solid-action-desktop-gen=solid|general
+solid-bluetooth=solid|control::bluetooth
+solid-hardware=solid|general
+solid-network=solid|control::network
+solid-powermanagement=solid|control::powermanager
+#KDE Platform (Nepomuk)
+nepomuk-rcgen=nepomuk|general
+nepomukserver=nepomuk|general
+nepomukservicestub=nepomuk|general
+sopranocmd=nepomuk|general
+sopranod=nepomuk|general
+
+#KDE Plasma Desktop (Plasma & KRunner)
+plasma-desktop=plasma|general
+plasma-mid=plasma|general
+plasma-overlay=plasma|general
+plasma2jolie=plasma|general
+plasmaengineexplorer=plasma|general
+plasmagik=plasma|general
+plasmapkg=plasma|general
+plasmawallpaperviewer=plasma|general
+plasmoidviewer=plasma|general
+knotificationareaitemtest=plasma|widget-systemtray
+knotificationicontest=plasma|widget-systemtray
+lancelot=plasma|widget-lancelot
+plasma-netbook=plasma|plasma-netbook
+kscreenlocker=krunner|kscreenlocker
+#KDE Plasma Desktop (KWin)
+kwin_killer_helper=kwin|general
+kwin_rules_dialog=kwin|general
+
+#KDE Kontact (Akonadi)
 akonadi_benchmarker=Akonadi|general
 akonadi_birthdays_resource=Akonadi|general
 akonadi_control=Akonadi|general
@@ -28,95 +88,34 @@ akonadictl=Akonadi|general
 akonadiserver=Akonadi|server
 akonaditest=Akonadi|general
 akonaditray=Akonadi|general
+#KDE Kontact (PIM)
+kalarmautostart=kalarm|general
+kpilotDaemon=kpilot|kpilotDaemon
+korgac=korganizer|reminder daemon (korgac)
 
-#kdelibs
-kdebugdialog=kdelibs|general
-kdeinit4=kdelibs|general
-kdeinit4_shutdown=kdelibs|general
-kdeinit4_wrapper=kdelibs|general
-kdepasswd=kdelibs|kpasswdserver
-kdialog=kdelibs|general
-keditfiletype=kdelibs|general
-kfmclient=kdelibs|general
-kglobalaccel=kdelibs|general
-kiconfinder=kdelibs|general
-kshell4=kdelibs|general
-kuiserver=kdelibs|general
-kuiviewer=kdelibs|general
-kded4=kdelibs|kded
-kcmshell4=systemsettings|general
-kwalletd=kdelibs|kwallet
-kwriteconfig=kdelibs|general
-kwrited=konsole|kwrited
-kbuildsycoca4=kdelibs|ksycoca
-
-#KWin
-kwin_killer_helper=kwin|general
-kwin_rules_dialog=kwin|general
-
-#konqueror
+#KDE Konqueror
 kjs=konqueror|kjs
 kjscmd=konqueror|kjs
 nspluginscan=konqueror|nsplugins
 nspluginviewer=konqueror|nspluginviewer
 
-#Plasma
-plasma-desktop=plasma|general
-plasma-mid=plasma|general
-plasma-overlay=plasma|general
-plasma2jolie=plasma|general
-plasmaengineexplorer=plasma|general
-plasmagik=plasma|general
-plasmapkg=plasma|general
-plasmawallpaperviewer=plasma|general
-plasmoidviewer=plasma|general
-knotificationareaitemtest=plasma|widget-systemtray
-knotificationicontest=plasma|widget-systemtray
-lancelot=plasma|widget-lancelot
-plasma-netbook=plasma|plasma-netbook
-
-#KIO
-kioclient=kio|general
-ktrash=kio|trash
-
-#Solid
-solid-action-desktop-gen=solid|general
-solid-bluetooth=solid|control::bluetooth
-solid-hardware=solid|general
-solid-network=solid|control::network
-solid-powermanagement=solid|control::powermanager
-
-#Nepomuk
-nepomuk-rcgen=nepomuk|general
-nepomukserver=nepomuk|general
-nepomukservicestub=nepomuk|general
-sopranocmd=nepomuk|general
-sopranod=nepomuk|general
-
-#Other
+#Other KDE Applications and Technologies
 ksysguardd=ksysguard|ksysguardd
-knotify4=kdelibs|knotify
 kmixctrl=kmix|general
 kwrite=kate|kwrite
 dragon=dragonplayer|general
 kfontinst=systemsettings|kcm_fontinst
 kfontview=systemsettings|kcm_fontinst
-kalarmautostart=kalarm|general
 kbluetooth4=kde-bluetooth|general
-korgac=korganizer|reminder daemon (korgac)
-
 digikamthemedesigner=digikam|general
-
 polkit-kde-manager=policykit-kde|manager
-
 kepastray=kepas|general
-
-kpilotDaemon=kpilot|kpilotDaemon
-
 kpackagekitsmarticon=kpackagekit|general
-
-kscreenlocker=krunner|kscreenlocker
 printer-applet-kde=printer-applet|general
+
+#---
+#This section relates a product groupt to a product
+#---
 
 [ProductGroup]
 kontact=kdepim-base|kdepim-apps
@@ -141,6 +140,10 @@ gwenview=imaging
 kaffeine=multimedia
 knetworkmanager=networkmanager
 Skanlite=scanner
+
+#---
+#This section describes several bugzilla products groups.
+#---
 
 [BZGroups]
 kdeplatform=kde|kdelibs|kio|kfile|Oxygen|solid
