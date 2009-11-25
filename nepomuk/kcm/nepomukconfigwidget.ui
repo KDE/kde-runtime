@@ -3,19 +3,11 @@
  <author>Sebastian Trueg</author>
  <class>NepomukConfigWidget</class>
  <widget class="QWidget" name="NepomukConfigWidget">
-  <property name="geometry">
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>721</width>
-    <height>363</height>
-   </rect>
-  </property>
   <layout class="QVBoxLayout">
    <item>
     <widget class="KTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>2</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
@@ -104,9 +96,6 @@
                 <bold>true</bold>
                </font>
               </property>
-              <property name="text">
-               <string comment="KDE::DoNotExtract">KSqueezedTextLabel</string>
-              </property>
              </widget>
             </item>
            </layout>
@@ -164,7 +153,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="checkBox">
+           <widget class="QCheckBox" name="m_checkIndexRemovableMedia">
             <property name="toolTip">
              <string>Index the files on removable media like USB sticks when they are mounted</string>
             </property>
@@ -302,12 +291,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>35</x>
-     <y>104</y>
+     <x>52</x>
+     <y>58</y>
     </hint>
     <hint type="destinationlabel">
-     <x>26</x>
-     <y>129</y>
+     <x>34</x>
+     <y>52</y>
     </hint>
    </hints>
   </connection>

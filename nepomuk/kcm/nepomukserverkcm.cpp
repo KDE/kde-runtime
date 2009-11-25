@@ -162,6 +162,10 @@ void Nepomuk::ServerConfigModule::load()
     m_folderModel->setFolders( strigiConfig.group( "General" ).readPathEntry( "folders", defaultFolders() ),
                                strigiConfig.group( "General" ).readPathEntry( "exclude folders", QStringList() ) );
     m_editStrigiExcludeFilters->setItems( strigiConfig.group( "General" ).readEntry( "exclude filters", defaultExcludeFilters() ) );
+    m_checkIndexRemovableMedia->setChecked( strigiConfig.group( "General" ).readEntry( "index newly mounted", false ) );
+
+    KConfig serverConfig( "nepomukserverrc" );
+    m_sliderMemoryUsage->setValue( serverConfig.group( "main Settings" ).readEntry( "Maximum memory", 50 ) );
 
     // make sure we do not have a hidden folder to expand which would make QFileSystemModel crash
     // + it would be weird to have a hidden folder indexed but not shown
@@ -200,6 +204,7 @@ void Nepomuk::ServerConfigModule::save()
     KConfig config( "nepomukserverrc" );
     config.group( "Basic Settings" ).writeEntry( "Start Nepomuk", m_checkEnableNepomuk->isChecked() );
     config.group( "Service-nepomukstrigiservice" ).writeEntry( "autostart", m_checkEnableStrigi->isChecked() );
+    config.group( "main Settings" ).writeEntry( "Maximum memory", m_sliderMemoryUsage->value() );
 
 
     // 2. update Strigi config
@@ -208,6 +213,7 @@ void Nepomuk::ServerConfigModule::save()
     strigiConfig.group( "General" ).writePathEntry( "exclude folders", excludeFolders );
     strigiConfig.group( "General" ).writeEntry( "exclude filters", m_editStrigiExcludeFilters->items() );
     strigiConfig.group( "General" ).writeEntry( "index hidden folders", m_checkShowHiddenFolders->isChecked() );
+    strigiConfig.group( "General" ).writeEntry( "index newly mounted", m_checkIndexRemovableMedia->isChecked() );
 
 
     // 3. update the current state of the nepomuk server
