@@ -93,7 +93,10 @@ void ProductMapping::getRelatedProductsUsingInternalFile(const QString & bugzill
         }
         groups = group.split('|', QString::SkipEmptyParts);
     }
-    
+
+    //All KDE apps use the KDE Platform (basic libs)
+    groups << QLatin1String("kdeplatform");
+
     //Add the product itself
     m_relatedBugzillaProducts = QStringList() << m_bugzillaProduct;
     
