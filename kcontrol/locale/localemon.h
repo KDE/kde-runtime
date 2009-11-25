@@ -53,10 +53,11 @@ Q_SIGNALS:
 
 private Q_SLOTS:
   // Money
-  void slotMonCurSymChanged(const QString &t);
+  void slotCurrencyCodeChanged(int i);
+  void slotCurrencySymbolChanged(int i);
   void slotMonDecSymChanged(const QString &t);
   void slotMonThoSepChanged(const QString &t);
-  void slotMonFraDigChanged(int value);
+  void slotMonetaryDecimalPlacesChanged(int i);
   void slotMonPosPreCurSymChanged();
   void slotMonNegPreCurSymChanged();
   void slotMonPosMonSignPosChanged(int i);

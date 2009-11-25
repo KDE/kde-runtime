@@ -29,6 +29,7 @@
 #include <KConfig>
 #include <KConfigGroup>
 #include <KStandardDirs>
+#include <KIntNumInput>
 
 #include "toplevel.h"
 #include "localenum.h"
@@ -81,19 +82,30 @@ KLocaleConfigNumber::KLocaleConfigNumber(KLocale *locale,
 	   this, SLOT( slotMonNegSignChanged(const QString &) ) );
   m_labMonNegSign->setBuddy(m_edMonNegSign);
 
+  m_labelDecimalPlaces = new QLabel(this);
+  lay->addWidget(m_labelDecimalPlaces, 4, 0);
+  m_labelDecimalPlaces->setObjectName( I18N_NOOP("Decimal &places:") );
+  m_labelDecimalPlaces->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+  m_intDecimalPlaces = new KIntNumInput(this);
+  m_intDecimalPlaces->setRange(0, 10, 1);
+  lay->addWidget(m_intDecimalPlaces, 4, 1);
+  connect( m_intDecimalPlaces, SIGNAL( valueChanged(int) ),
+           this,               SLOT( slotDecimalPlacesChanged(int) ) );
+  m_labelDecimalPlaces->setBuddy(m_intDecimalPlaces);
+
   m_labDigSet = new QLabel(this);
-  lay->addWidget(m_labDigSet, 4, 0);
+  lay->addWidget(m_labDigSet, 5, 0);
   m_labDigSet->setObjectName( I18N_NOOP("Di&git set:") );
   m_labDigSet->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
   m_cmbDigSet = new QComboBox(this);
-  lay->addWidget(m_cmbDigSet, 4, 1);
+  lay->addWidget(m_cmbDigSet, 5, 1);
   connect( m_cmbDigSet, SIGNAL( activated(int) ),
 	   this, SLOT( slotDigSetChanged(int) ) );
   m_labDigSet->setBuddy(m_cmbDigSet);
 
 
   lay->setColumnStretch(1, 1);
-  lay->setRowStretch(5, 1);
+  lay->setRowStretch(6, 1);
 
   connect(this, SIGNAL(localeChanged()),
 	  SLOT(slotLocaleChanged()));
@@ -142,6 +154,12 @@ void KLocaleConfigNumber::save()
   if (str != m_locale->negativeSign())
     group.writeEntry("NegativeSign", m_locale->negativeSign(), KConfig::Persistent|KConfig::Global);
 
+  int decimalPlaces = entGrp.readEntry("DecimalPlaces", 2);
+  group.deleteEntry("DecimalPlaces", KConfig::Persistent | KConfig::Global);
+  if (decimalPlaces != m_locale->decimalPlaces()) {
+    group.writeEntry("DecimalPlaces", m_locale->decimalPlaces(), KConfig::Persistent|KConfig::Global);
+  }
+
   i = entGrp.readEntry("DigitSet", (int)KLocale::ArabicDigits);
   group.deleteEntry("DigitSet", KConfig::Persistent | KConfig::Global);
   if (i != m_locale->digitSet())
@@ -155,6 +173,7 @@ void KLocaleConfigNumber::slotLocaleChanged()
   m_edThoSep->setText( m_locale->thousandsSeparator() );
   m_edMonPosSign->setText( m_locale->positiveSign() );
   m_edMonNegSign->setText( m_locale->negativeSign() );
+  m_intDecimalPlaces->setValue( m_locale->decimalPlaces() );
   m_cmbDigSet->setCurrentIndex( m_locale->digitSet() );
 }
 
@@ -180,6 +199,12 @@ void KLocaleConfigNumber::slotMonNegSignChanged(const QString &t)
 {
   m_locale->setNegativeSign(t);
   emit localeChanged();
+}
+
+void KLocaleConfigNumber::slotDecimalPlacesChanged(int value)
+{
+    m_locale->setDecimalPlaces(value);
+    emit localeChanged();
 }
 
 void KLocaleConfigNumber::slotDigSetChanged(int i)
@@ -230,6 +255,12 @@ void KLocaleConfigNumber::slotTranslate()
 	       "numbers. It is normally set to minus (-)." ).toString( m_locale );
   m_labMonNegSign->setWhatsThis( str );
   m_edMonNegSign->setWhatsThis( str );
+
+  str = ki18n( "Here you can set the number of decimal places "
+               "displayed for numeric values, i.e. the number "
+               "of digits <em>after</em> the decimal separator. " ).toString( m_locale );
+  m_labelDecimalPlaces->setWhatsThis( str );
+  m_intDecimalPlaces->setWhatsThis( str );
 
   str = ki18n( "<p>Here you can define the set of digits "
 	       "used to display numbers. "

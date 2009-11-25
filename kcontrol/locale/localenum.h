@@ -31,6 +31,7 @@ class QLineEdit;
 class QComboBox;
 
 class KLocale;
+class KIntNumInput;
 
 class KLocaleConfigNumber : public QWidget
 {
@@ -61,6 +62,7 @@ private Q_SLOTS:
   void slotMonNegSignChanged(const QString &t);
   void slotDecSymChanged(const QString &t);
   void slotThoSepChanged(const QString &t);
+  void slotDecimalPlacesChanged(int value);
   void slotDigSetChanged(int);
 
 private:
@@ -75,6 +77,8 @@ private:
   QLineEdit *m_edMonPosSign;
   QLabel *m_labMonNegSign;
   QLineEdit *m_edMonNegSign;
+  QLabel *m_labelDecimalPlaces;
+  KIntNumInput *m_intDecimalPlaces;
   QLabel *m_labDigSet;
   QComboBox *m_cmbDigSet;
 };
