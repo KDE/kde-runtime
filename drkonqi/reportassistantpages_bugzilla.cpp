@@ -535,7 +535,7 @@ void BugzillaSendPage::sent(int bug_id)
     reportUrl = bugzillaManager()->urlForBug(bug_id);
     ui.m_finishedLabel->setText(i18nc("@info/rich","Crash report sent.<nl/>"
                                              "URL: <link>%1</link><nl/>"
-                                             "Thanks for being part of KDE!. "
+                                             "Thank you for being part of KDE. "
                                              "You can now close this window.", reportUrl));
     
     emit finished(false);
