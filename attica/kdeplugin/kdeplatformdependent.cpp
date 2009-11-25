@@ -46,7 +46,7 @@ void KdePlatformDependent::openWallet(bool force)
         m_wallet = KWallet::Wallet::openWallet(networkWallet, 0);
         m_wallet->createFolder("Attica");
         m_wallet->setFolder("Attica");
-    } 
+    }
 }
 
 QNetworkReply* KdePlatformDependent::post(const QNetworkRequest& request, const QByteArray& data)
@@ -55,17 +55,20 @@ QNetworkReply* KdePlatformDependent::post(const QNetworkRequest& request, const 
 }
 
 
-QNetworkReply* KdePlatformDependent::post(const QNetworkRequest& request, QIODevice* data) {
+QNetworkReply* KdePlatformDependent::post(const QNetworkRequest& request, QIODevice* data)
+{
     return m_qnam.post(request, data);
 }
 
 
-QNetworkReply* KdePlatformDependent::get(const QNetworkRequest& request) {
+QNetworkReply* KdePlatformDependent::get(const QNetworkRequest& request)
+{
     return m_qnam.get(request);
 }
 
 
-bool KdePlatformDependent::saveCredentials(const QUrl& baseUrl, const QString& user, const QString& password) {
+bool KdePlatformDependent::saveCredentials(const QUrl& baseUrl, const QString& user, const QString& password)
+{
     if (!m_wallet) {
         openWallet(true);
     }
@@ -77,7 +80,9 @@ bool KdePlatformDependent::saveCredentials(const QUrl& baseUrl, const QString& u
 }
 
 
-bool KdePlatformDependent::loadCredentials(const QUrl& baseUrl, QString& user, QString& password) {
+bool KdePlatformDependent::loadCredentials(const QUrl& baseUrl, QString& user, QString& password)
+{
+    kDebug() << "Successfully loaded credentials.";
     if (!m_wallet) {
         return false;
     }
@@ -106,7 +111,8 @@ bool Attica::KdePlatformDependent::askForCredentials(const QUrl& baseUrl, QStrin
 }
 
 
-QList<QUrl> KdePlatformDependent::getDefaultProviderFiles() const {
+QList<QUrl> KdePlatformDependent::getDefaultProviderFiles() const
+{
     KConfigGroup group(m_config, "General");
     QStringList pathStrings = group.readPathEntry("providerFiles", QStringList("http://download.kde.org/ocs/providers.xml"));
     QList<QUrl> paths;
@@ -118,7 +124,8 @@ QList<QUrl> KdePlatformDependent::getDefaultProviderFiles() const {
 }
 
 
-QNetworkAccessManager* Attica::KdePlatformDependent::nam() {
+QNetworkAccessManager* Attica::KdePlatformDependent::nam()
+{
     return &m_qnam;
 }
 
