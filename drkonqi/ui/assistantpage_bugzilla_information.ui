@@ -59,7 +59,7 @@
         <item>
          <widget class="QCheckBox" name="m_compiledSourcesCheckBox">
           <property name="text">
-           <string comment="@option:check">KDE is compiled from sources</string>
+           <string comment="@option:check">KDE Platform is compiled from sources</string>
           </property>
          </widget>
         </item>

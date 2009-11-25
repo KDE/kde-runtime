@@ -294,7 +294,7 @@ void BugzillaDuplicatesPage::searchFinished(const BugMapList & list)
                     customStatusString = i18nc("@info/plain bug resolution", "[Invalid]");
                 } else if (bug.value("resolution") == QLatin1String("DOWNSTREAM")
                     || bug.value("resolution") == QLatin1String("UPSTREAM")) {
-                    customStatusString = i18nc("@info/plain bug resolution", "[Not a KDE bug]");
+                    customStatusString = i18nc("@info/plain bug resolution", "[External problem]");
                 }
             } else if (bug.value("bug_status") == QLatin1String("NEEDSINFO")) {
                 customStatusString = i18nc("@info/plain bug status", "[Incomplete]");
@@ -616,8 +616,11 @@ void BugzillaReportInformationDialog::bugFetchFinished(BugReport report, QObject
                     customResolutionString = i18nc("@info bug resolution", "Not a valid report/crash");
                 } else if (report.resolution() == QLatin1String("DOWNSTREAM") 
                     || report.resolution() == QLatin1String("UPSTREAM")) {
-                    customResolutionString = i18nc("@info bug resolution", "Not a KDE bug");
-                    m_closedStateString = i18nc("@info bug resolution", "the bug is not caused by KDE code");
+                    customResolutionString = i18nc("@info bug resolution", "Not caused by a problem "
+                                                "in the KDE's Applications or libraries");
+                    m_closedStateString = i18nc("@info bug resolution", "the bug is caused by a "
+                                                "problem in an external application or library, or "
+                                                "by a distribution or packaging issue.");
                 } else {
                     customResolutionString = report.resolution();
                 }

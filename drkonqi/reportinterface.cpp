@@ -136,7 +136,7 @@ QString ReportInterface::generateReport(bool drKonqiStamp) const
     //Program name and versions
     report.append(QString("Application: %1 (%2)\n").arg(crashedApp->fakeExecutableBaseName(),
                                                         crashedApp->version()));
-    report.append(QString("KDE Version: %1").arg(sysInfo->kdeVersion()));
+    report.append(QString("KDE Platform Version: %1").arg(sysInfo->kdeVersion()));
     if ( sysInfo->compiledSources() ) {
         report.append(QString(" (Compiled from sources)\n"));
     } else {

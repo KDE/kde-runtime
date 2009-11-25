@@ -107,7 +107,7 @@ void DrKonqiDialog::buildMainWidget()
                                            "(including the backtrace from the Developer Information "
                                            "tab.)</para>", crashedApp->bugReportAddress());
         } else {
-            reportMessage = i18nc("@info", "<para>You can help us improve KDE by reporting "
+            reportMessage = i18nc("@info", "<para>You can help us improve KDE Software by reporting "
                                           "this error.<nl /><link url='#aboutbugreporting'>Learn "
                                           "more about bug reporting.</link></para><para><note>It is "
                                           "safe to close this dialog if you do not want to report "

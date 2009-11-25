@@ -60,7 +60,7 @@ AboutBugReportingDialog::AboutBugReportingDialog(QWidget * parent):
             i18nc("@info/rich","This assistant will guide you through the crash "
                             "reporting process for the KDE Bug Reports Database Site. All the "
                             "information you enter on the bug report must be in English, if "
-                            "possible, as KDE is developed internationally.")) +
+                            "possible, as KDE is formed internationally.")) +
 
         //Bug Awareness Page
         QString("<a name=\"%1\" /><h2>%2</h2>").arg(QLatin1String(PAGE_AWARENESS_ID),
@@ -169,8 +169,8 @@ AboutBugReportingDialog::AboutBugReportingDialog(QWidget * parent):
             QLatin1String(PAGE_AWARENESS_ID),
             i18nc("@title","What do you know about the crash?"),
             i18nc("@info/rich", "You can also specify your distribution method (GNU/Linux "
-                                "distribution or packaging system) or if you compiled KDE "
-                                "from sources."),
+                                "distribution or packaging system) or if you compiled the KDE "
+                                "Platform from sources."),
             i18nc("@info/rich", "<note>You should write in English.</note>")) +
 
         //Bugzilla Send Page
@@ -187,7 +187,7 @@ AboutBugReportingDialog::AboutBugReportingDialog(QWidget * parent):
                             "problem, you can save it to a file to manually report later.")) +
 
         QString("<h1>%1</h1><p>%2</p>").arg(
-            i18nc("@info/rich", "Thank you for contributing to KDE!"),
+            i18nc("@info/rich", "Thank you for being part of KDE!"),
             i18nc("@info/rich", "If you are interested into helping us to organize bug reports "
                                 "allowing the developers to focus on fixing the real issues, join the BugSquad (#kde-bugs on FreeNode IRC) "));
             //I feel like we should now congratulate them and ask them to join BugSquad.

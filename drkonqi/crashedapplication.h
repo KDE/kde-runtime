@@ -29,7 +29,7 @@ class CrashedApplication : public QObject
 public:
     virtual ~CrashedApplication();
 
-    /** Returns the crashed program's name, possibly translated (ex. "The KDE crash handler") */
+    /** Returns the crashed program's name, possibly translated (ex. "The KDE Crash Handler") */
     QString name() const;
 
     /** Returns a QFileInfo with information about the executable that crashed */

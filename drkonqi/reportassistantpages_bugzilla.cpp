@@ -535,7 +535,7 @@ void BugzillaSendPage::sent(int bug_id)
     reportUrl = bugzillaManager()->urlForBug(bug_id);
     ui.m_finishedLabel->setText(i18nc("@info/rich","Crash report sent.<nl/>"
                                              "URL: <link>%1</link><nl/>"
-                                             "Thanks for contributing to KDE. "
+                                             "Thanks for being part of KDE!. "
                                              "You can now close this window.", reportUrl));
     
     emit finished(false);
@@ -565,7 +565,7 @@ void BugzillaSendPage::openReportContents()
     if (!m_contentsDialog)
     {
         QString report = reportInterface()->generateReport(false) + QLatin1Char('\n') +
-                            i18nc("@info/plain report to KDE bugtracker addres","Report to %1", 
+                            i18nc("@info/plain report to KDE bugtracker address","Report to %1", 
                                   DrKonqi::crashedApplication()->bugReportAddress());
         m_contentsDialog = new ReportInformationDialog(report);
     }

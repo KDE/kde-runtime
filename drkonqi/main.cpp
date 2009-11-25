@@ -38,7 +38,7 @@
 #include <unistd.h>
 
 static const char version[] = "2.0.50";
-static const char description[] = I18N_NOOP("The KDE crash handler gives the user feedback "
+static const char description[] = I18N_NOOP("The KDE Crash Handler gives the user feedback "
                                             "if a program has crashed.");
 
 int main(int argc, char* argv[])
