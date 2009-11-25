@@ -318,10 +318,6 @@ Nepomuk::SearchEntry* Nepomuk::SearchFolder::statResult( const Query::Result& re
     KIO::UDSEntry uds;
     if ( statFile( url, uds ) ) {
         uds.insert( KIO::UDSEntry::UDS_NEPOMUK_URI, url.url() );
-        // be backwards compatible for the pre KDE 4.4 times where we actually used file:/ URLs for nepomuk resources
-        if ( url.scheme() != QLatin1String( "nepomuk" ) ) {
-            uds.insert( KIO::UDSEntry::UDS_URL, url.url() );
-        }
         SearchEntry* entry = new SearchEntry( url, uds );
         m_entries.insert( uds.stringValue( KIO::UDSEntry::UDS_NAME ), entry );
         return entry;
