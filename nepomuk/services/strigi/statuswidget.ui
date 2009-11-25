@@ -24,9 +24,6 @@
           <bold>true</bold>
          </font>
         </property>
-        <property name="text" >
-         <string>KSqueezedTextLabel</string>
-        </property>
        </widget>
       </item>
      </layout>
