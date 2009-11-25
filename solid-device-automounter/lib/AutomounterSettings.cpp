@@ -48,6 +48,8 @@ AutomounterSettings::deviceAutomountIsForced(const QString &udi, AutomountType t
         case Attach:
             return deviceSettings(udi).readEntry("ForceAttachAutomount", false);
     }
+
+    return false;
 }
 
 bool
