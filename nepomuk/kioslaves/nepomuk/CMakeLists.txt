@@ -15,6 +15,7 @@ kde4_add_plugin(kio_nepomuk ${kio_nepomuk_PART_SRCS})
 
 target_link_libraries(kio_nepomuk
   ${KDE4_KIO_LIBS}
+  ${KDE4_SOLID_LIBS}
   ${NEPOMUK_LIBRARIES}
   ${NEPOMUK_QUERY_LIBRARIES}
   ${SOPRANO_LIBRARIES})

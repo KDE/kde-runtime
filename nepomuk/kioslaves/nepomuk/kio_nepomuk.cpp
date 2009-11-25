@@ -22,6 +22,8 @@
 #include <QtCore/QDateTime>
 #include <QtCore/QFile>
 #include <QtCore/QCoreApplication>
+#include <QtCore/QEventLoop>
+#include <QtCore/QTimer>
 #include <QtDBus/QDBusConnection>
 
 #include <KComponentData>
@@ -42,8 +44,12 @@
 #include <Soprano/Vocabulary/RDF>
 #include <Soprano/Vocabulary/NAO>
 #include <Soprano/QueryResultIterator>
+#include <Soprano/NodeIterator>
 #include <Soprano/Node>
 #include <Soprano/Model>
+
+#include <Solid/Device>
+#include <Solid/StorageAccess>
 
 
 namespace {
@@ -57,6 +63,79 @@ namespace {
         else {
             return false;
         }
+    }
+
+    bool isRemovableMediaFile( const Nepomuk::Resource& res )
+    {
+        if ( res.hasProperty( Nepomuk::Vocabulary::NIE::url() ) ) {
+            KUrl url = res.property( Nepomuk::Vocabulary::NIE::url() ).toUrl();
+            return ( url.protocol() == QLatin1String( "filex" ) );
+        }
+        else {
+            return false;
+        }
+    }
+
+    bool mountAndWait( Solid::StorageAccess* storage )
+    {
+        kDebug() << storage;
+        QEventLoop loop;
+        loop.connect( storage,
+                      SIGNAL(accessibilityChanged(bool, QString)),
+                      SLOT(quit()) );
+        // timeout 20 second
+        QTimer::singleShot( 20000, &loop, SLOT(quit()) );
+
+        storage->setup();
+        loop.exec();
+
+        kDebug() << storage << storage->isAccessible();
+
+        return storage->isAccessible();
+    }
+
+    Solid::StorageAccess* storageFromUUID( const QString& uuid )
+    {
+        QString solidQuery = QString::fromLatin1( "[ StorageVolume.usage=='FileSystem' AND StorageVolume.uuid=='%1' ]" ).arg( uuid.toLower() );
+        QList<Solid::Device> devices = Solid::Device::listFromQuery( solidQuery );
+        kDebug() << uuid << solidQuery << devices.count();
+        if ( !devices.isEmpty() )
+            return devices.first().as<Solid::StorageAccess>();
+        else
+            return 0;
+    }
+
+    KUrl convertRemovableMediaFileUrl( const KUrl& url, bool evenMountIfNecessary = false )
+    {
+        Solid::StorageAccess* storage = storageFromUUID( url.host() );
+        kDebug() << url << storage;
+        if ( storage &&
+             ( storage->isAccessible() ||
+               ( evenMountIfNecessary && mountAndWait( storage ) ) ) ) {
+            kDebug() << "converted:" << KUrl( storage->filePath() + QLatin1String( "/" ) + url.path() );
+            return storage->filePath() + QLatin1String( "/" ) + url.path();
+        }
+        else {
+            return KUrl();
+        }
+    }
+
+    QString getFileSystemLabelForRemovableMediaFileUrl( const KUrl& url )
+    {
+        QList<Soprano::Node> labelNodes
+            = Nepomuk::ResourceManager::instance()->mainModel()->executeQuery( QString::fromLatin1( "select ?label where { "
+                                                                                                    "?r nie:url %1 . "
+                                                                                                    "?r nie:isPartOf ?fs . "
+                                                                                                    "?fs a nfo:Filesystem . "
+                                                                                                    "?fs nao:prefLabel ?label . "
+                                                                                                    "} LIMIT 1" )
+                                                                               .arg( Soprano::Node::resourceToN3( url ) ),
+                                                                               Soprano::Query::QueryLanguageSparql ).iterateBindings( "label" ).allNodes();
+
+        if ( !labelNodes.isEmpty() )
+            return labelNodes.first().toString();
+        else
+            return url.host(); // Solid UUID
     }
 }
 
@@ -78,7 +157,18 @@ void Nepomuk::NepomukProtocol::listDir( const KUrl& url )
     if ( !ensureNepomukRunning() )
         return;
 
-    return ForwardingSlaveBase::listDir( url );
+    //
+    // Some clients (like Gwenview) will directly try to list the parent directory which in our case
+    // is nepomuk:/res. Giving an ugly "does not exist" error to the user is no good. Thus, we simply
+    // list it as an empty dir
+    //
+    if ( url == KUrl( QLatin1String( "nepomuk:/res" ) ) ) {
+        listEntry( KIO::UDSEntry(), true );
+        finished();
+    }
+    else {
+        return ForwardingSlaveBase::listDir( url );
+    }
 }
 
 
@@ -95,6 +185,17 @@ void Nepomuk::NepomukProtocol::get( const KUrl& url )
     }
     else if ( isLocalFile( res ) ) {
         ForwardingSlaveBase::get( url );
+    }
+    else if ( isRemovableMediaFile( url ) ) {
+        KUrl removableMediaUrl = res.property( Nepomuk::Vocabulary::NIE::url() ).toUrl();
+        if ( convertRemovableMediaFileUrl( removableMediaUrl, true ).isValid() ) {
+            ForwardingSlaveBase::get( url );
+        }
+        else {
+            error( KIO::ERR_SLAVE_DEFINED,
+                   i18nc( "@info", "Please insert the removable medium <resource>%1</resource> to access this file.",
+                          getFileSystemLabelForRemovableMediaFileUrl( removableMediaUrl ) ) );
+        }
     }
     else {
         // TODO: call the share service for remote files (KDE 4.5)
@@ -141,6 +242,10 @@ void Nepomuk::NepomukProtocol::stat( const KUrl& url )
     Q_ASSERT( res.exists() );
 
     if ( isLocalFile( res ) ) {
+        ForwardingSlaveBase::stat( url );
+    }
+    else if ( isRemovableMediaFile( res ) &&
+              convertRemovableMediaFileUrl( res.property( Nepomuk::Vocabulary::NIE::url() ).toUrl() ).isValid() ) {
         ForwardingSlaveBase::stat( url );
     }
     else {
@@ -214,12 +319,6 @@ void Nepomuk::NepomukProtocol::stat( const KUrl& url )
         if ( res.hasType( Soprano::Vocabulary::NAO::Tag() ) ) {
             kDebug() << res.resourceUri() << "is tag -> mimetype inode/directory";
             uds.insert( KIO::UDSEntry::UDS_MIME_TYPE, QLatin1String( "inode/directory" ) );
-            Query::ComparisonTerm term( Soprano::Vocabulary::NAO::hasTag(), Query::ResourceTerm( url ), Query::ComparisonTerm::Equal );
-            uds.insert( KIO::UDSEntry::UDS_URL, Query::Query( term ).toSearchUrl().url() );
-        }
-        else {
-            // we use random weird UDS_NAME entries. Thus, we need to set a proper URL
-            uds.insert( KIO::UDSEntry::UDS_URL, url.url() );
         }
 
         statEntry( uds );
@@ -282,6 +381,9 @@ bool Nepomuk::NepomukProtocol::rewriteUrl( const KUrl& url, KUrl& newURL )
 {
     Nepomuk::Resource res( url );
 
+    if( !res.exists() )
+        return false;
+
     //
     // let's see if it is a pimo thing which refers to a file
     //
@@ -290,8 +392,6 @@ bool Nepomuk::NepomukProtocol::rewriteUrl( const KUrl& url, KUrl& newURL )
             res = res.pimoThing().groundingOccurrences().first();
         }
     }
-
-    Q_ASSERT( res.exists() );
 
     if ( res.hasType( Soprano::Vocabulary::NAO::Tag() ) ) {
         Query::ComparisonTerm term( Soprano::Vocabulary::NAO::hasTag(), Query::ResourceTerm( url ), Query::ComparisonTerm::Equal );
@@ -302,13 +402,18 @@ bool Nepomuk::NepomukProtocol::rewriteUrl( const KUrl& url, KUrl& newURL )
         newURL = res.property( Vocabulary::NIE::url() ).toUrl();
         return true;
     }
+    else if ( isRemovableMediaFile( res ) ) {
+        newURL = convertRemovableMediaFileUrl( res.property( Nepomuk::Vocabulary::NIE::url() ).toUrl() );
+        kDebug() << "Rewriting removable media URL" << url << "to" << newURL;
+        return newURL.isValid();
+    }
     else {
         return false;
     }
 }
 
 
-void Nepomuk::NepomukProtocol::prepareUDSEntry( KIO::UDSEntry& entry, bool ) const
+void Nepomuk::NepomukProtocol::prepareUDSEntry( KIO::UDSEntry&, bool ) const
 {
     // other than ForwardingSlaveBase we do not want UDS_URL to be rewritten to the requested URL.
     // On the contrary: we want to actually change to another kio slave on execution.
