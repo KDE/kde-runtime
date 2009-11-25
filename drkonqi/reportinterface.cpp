@@ -67,20 +67,21 @@ void ReportInterface::setBugAwarenessPageData(bool rememberSituation,
 
 bool ReportInterface::isBugAwarenessPageDataUseful() const
 {
-    //To be considered useful:
-    // - User must remember part of the crash situation
-    // AND
-    // - The crash can be reproduced sometimes OR all the times
-    //   OR
-    // - The user must be able to detail some of the proposed topics
+    int rating = 0;
+    if (m_provideActionsApplicationDesktop) {
+        rating += 3;
+    }
+    if (m_provideApplicationConfigurationDetails) {
+        rating += 2;
+    }
+    if (m_provideUnusualBehavior) {
+        rating += 1;
+    }
 
+    //Minimum information required even for a good backtrace.
     bool useful = m_userRememberCrashSituation &&
-                  ( (m_provideActionsApplicationDesktop || m_provideUnusualBehavior ||
-                         m_provideApplicationConfigurationDetails)
-                     || (m_reproducible==ReproducibleSometimes ||
-                         m_reproducible==ReproducibleEverytime)
-                  );
-
+                  (rating >= 2 || (m_reproducible==ReproducibleSometimes ||
+                                 m_reproducible==ReproducibleEverytime));
     return useful;
 }
 
