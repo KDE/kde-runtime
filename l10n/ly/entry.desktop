@@ -87,10 +87,11 @@ Name[zh_TW]=利比亞
 Region=northafrica
 Languages=ar
 DecimalSymbol=,
-CurrencySymbol=LYD
-FracDigits=2
 DateFormatShort=%y/%m/%d
 WorkingWeekStartDay=7
 WorkingWeekEndDay=4
 WeekDayOfPray=5
-
+#DecimalPlaces=2
+#MonetaryDecimalPlaces=2
+CurrencyCodesInUse=LYD
+CurrencyCode=LYD

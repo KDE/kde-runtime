@@ -84,18 +84,14 @@ Name[wa]=Mongoleye
 Name[x-test]=xxMongoliaxx
 Name[zh_CN]=蒙古
 Name[zh_TW]=蒙古
-
-
 Region=eastasia
 Languages=mn
 #DecimalSymbol=,
 #ThousandsSeparator=.
-CurrencySymbol=Tug
 #MonetaryDecimalSymbol=,
 #MonetaryThousandsSeparator=.
 #PositiveSign=
 #NegativeSign=-
-FracDigits=2
 #PositivePrefixCurrencySymbol=false
 #NegativePrefixCurrencySymbol=false
 #PositiveMonetarySignPosition=2
@@ -106,3 +102,7 @@ FracDigits=2
 #WeekStartDay=1
 #PageSize=0
 #MeasureSystem=0
+#DecimalPlaces=2
+#MonetaryDecimalPlaces=2
+CurrencyCodesInUse=MNT
+CurrencyCode=MNT
