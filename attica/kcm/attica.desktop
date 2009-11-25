@@ -1,0 +1,10 @@
+[Desktop Entry]
+Exec=kcmshell4 attica
+Type=Service
+X-KDE-ServiceTypes=KCModule
+
+X-KDE-Library=kcm_attica
+X-KDE-ParentApp=kcontrol
+
+Name=Open Collaboration Services provider management
+Comment=Manage Open Collaboration Services providers

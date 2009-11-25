@@ -1,0 +1,3 @@
+[ ] Fix hitting "Edit..." two times pops up two dialogs - activate opened one
+[ ] When switching to some page (check all) put focus on suitable widget
+[ ] Parse register errors to display more info to the user (statusCode())
