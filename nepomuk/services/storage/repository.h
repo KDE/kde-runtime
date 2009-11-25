@@ -19,6 +19,7 @@
 #include <QtCore/QMap>
 
 #include <Soprano/Util/SignalCacheModel>
+#include <Soprano/BackendSettings>
 
 
 namespace Soprano {
@@ -67,7 +68,7 @@ namespace Nepomuk {
         void copyFinished( KJob* job );
 
     private:
-        const Soprano::Backend* determineBackend();
+        Soprano::BackendSettings readVirtuosoSettings() const;
 
         QString m_name;
         State m_state;

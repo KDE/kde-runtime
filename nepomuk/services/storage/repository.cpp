@@ -16,6 +16,7 @@
 #include "modelcopyjob.h"
 
 #include <Soprano/Backend>
+#include <Soprano/PluginManager>
 #include <Soprano/Global>
 #include <Soprano/Version>
 #include <Soprano/StorageModel>
@@ -44,30 +45,6 @@ namespace {
     QString createStoragePath( const QString& repositoryId )
     {
         return KStandardDirs::locateLocal( "data", "nepomuk/repository/" + repositoryId + '/' );
-    }
-
-    Soprano::BackendSettings parseSettings( const QStringList& sl )
-    {
-        Soprano::BackendSettings settings;
-        foreach( const QString& setting, sl ) {
-            QStringList keyValue = setting.split( '=' );
-            if ( keyValue.count() != 2 ) {
-                kDebug() << "Invalid backend setting: " << setting;
-            }
-            else {
-                settings << Soprano::BackendSetting( keyValue[0], keyValue[1] );
-            }
-        }
-        return settings;
-    }
-
-    void addVirtuosoSettings( Soprano::BackendSettings& settings )
-    {
-        Soprano::BackendSetting& indexes = Soprano::settingInSettings( settings, QLatin1String( "indexes" ) );
-        if ( indexes.value().toString().isEmpty() ) {
-            // TODO: The list of indexes will be optimized based on frequent Nepomuk queries soon
-            indexes.setValue( QLatin1String( "SPOG,POSG,OPSG,GSPO,GPOS" ) );
-        }
     }
 }
 
@@ -110,8 +87,27 @@ void Nepomuk::Repository::open()
 
     // get backend
     // =================================
-    m_backend = determineBackend();
+    m_backend = Soprano::PluginManager::instance()->discoverBackendByName( QLatin1String( "virtuosobackend" ) );
     if ( !m_backend ) {
+        KNotification::event( "failedToStart",
+                              i18nc("@info - notification message",
+                                    "Nepomuk Semantic Desktop needs the Virtuoso RDF server to store its data. "
+                                    "Installing the Virtuoso Soprano plugin is mandatory for using Nepomuk." ),
+                              KIcon( "application-exit" ).pixmap( 32, 32 ),
+                              0,
+                              KNotification::Persistent );
+        m_state = CLOSED;
+        emit opened( this, false );
+        return;
+    }
+    else if ( !m_backend->isAvailable() ) {
+        KNotification::event( "failedToStart",
+                              i18nc("@info - notification message",
+                                    "Nepomuk Semantic Desktop needs the Virtuoso RDF server to store its data. "
+                                    "Installing the Virtuoso server and ODBC driver is mandatory for using Nepomuk." ),
+                              KIcon( "application-exit" ).pixmap( 32, 32 ),
+                              0,
+                              KNotification::Persistent );
         m_state = CLOSED;
         emit opened( this, false );
         return;
@@ -122,23 +118,7 @@ void Nepomuk::Repository::open()
     KConfigGroup repoConfig = KSharedConfig::openConfig( "nepomukserverrc" )->group( name() + " Settings" );
     QString oldBackendName = repoConfig.readEntry( "Used Soprano Backend", m_backend->pluginName() );
     QString oldBasePath = repoConfig.readPathEntry( "Storage Dir", QString() ); // backward comp: empty string means old storage path
-    Soprano::BackendSettings settings = parseSettings( repoConfig.readEntry( "Settings", QStringList() ) );
-    if ( m_backend->pluginName() == QLatin1String( "virtuosobackend" ) ) {
-        addVirtuosoSettings( settings );
-    }
-    else {
-        KNotification::event( "invalidBackendType",
-                              i18nc("@info - notification message",
-                                    "Nepomuk data is stored in the '%1' Soprano backend instead "
-                                    "of the Virtuoso RDF server. This will have strong effects on "
-                                    "the performance of the system and will cause core features such "
-                                    "as the desktop search to not work properly. "
-                                    "Installing the Virtuoso Soprano plugin is highly recommended.",
-                                    m_backend->pluginName() ),
-                              KIcon( "nepomuk" ).pixmap( 32, 32 ),
-                              0,
-                              KNotification::Persistent );
-    }
+    Soprano::BackendSettings settings = readVirtuosoSettings();
 
     // If possible we want to keep the old storage path. exception: oldStoragePath is empty. In that case we stay backwards
     // compatible and convert the data to the new default location createStoragePath( name ) + "data/" + m_backend->pluginName()
@@ -323,26 +303,26 @@ void Nepomuk::Repository::copyFinished( KJob* job )
 }
 
 
-const Soprano::Backend* Nepomuk::Repository::determineBackend()
-{
-    // get the default configured one
-    QString backendName = KSharedConfig::openConfig( "nepomukserverrc" )->group( "Basic Settings" ).readEntry( "Soprano Backend", "virtuosobackend" );
-    const Soprano::Backend* backend = ::Soprano::discoverBackendByName( backendName );
-    if ( !backend ) {
-        kDebug() << "(Nepomuk::Core::Core) could not find backend" << backendName << ". Falling back to previously used.";
-        KConfigGroup repoConfig = KSharedConfig::openConfig( "nepomukserverrc" )->group( name() + " Settings" );
-        QString oldBackendName = repoConfig.readEntry( "Used Soprano Backend" );
-        if ( !( backend = ::Soprano::discoverBackendByName( oldBackendName ) ) ) {
-            backend = ::Soprano::usedBackend();
-        }
-    }
-    return backend;
-}
-
-
 QString Nepomuk::Repository::usedSopranoBackend() const
 {
     return m_backend->pluginName();
+}
+
+
+Soprano::BackendSettings Nepomuk::Repository::readVirtuosoSettings() const
+{
+    Soprano::BackendSettings settings;
+    Soprano::BackendSetting& indexes = Soprano::settingInSettings( settings, QLatin1String( "indexes" ) );
+    if ( indexes.value().toString().isEmpty() ) {
+        // TODO: The list of indexes will be optimized based on frequent Nepomuk queries soon
+        indexes.setValue( QLatin1String( "GPOS,GSPO,OPGS,OPSG,POGS,POSG,SPOG" ) );
+    }
+
+    KConfigGroup repoConfig = KSharedConfig::openConfig( "nepomukserverrc" )->group( name() + " Settings" );
+    const int maxMem = repoConfig.readEntry( "Maximum memory", 50 );
+    settings << Soprano::BackendSetting( "buffers", qMax( 20, maxMem-30 )*100 );
+
+    return settings;
 }
 
 #include "repository.moc"
