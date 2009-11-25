@@ -28,7 +28,7 @@
 #include <Soprano/StatementIterator>
 #include <Soprano/Parser>
 
-#include <KDesktopFile>
+#include <KConfig>
 #include <KConfigGroup>
 #include <KDebug>
 #include <KGlobal>
@@ -70,20 +70,22 @@ private:
 
 void Nepomuk::OntologyLoader::Private::updateOntology( const QString& filename )
 {
-    KDesktopFile df( filename );
+    KConfig ontologyDescFile( filename );
+    KConfigGroup df( &ontologyDescFile, QLatin1String( "Ontology" ) );
 
     // only update if the modification date of the ontology file changed (not the desktop file).
     // ------------------------------------
-    QFileInfo ontoFileInf( df.readPath() );
-    QDateTime ontoLastModified = model->ontoModificationDate( df.readUrl() );
+    QFileInfo ontoFileInf( df.readEntry( QLatin1String("Path") ) );
+    QString ontoNamespace = df.readEntry( QLatin1String("Namespace") );
+    QDateTime ontoLastModified = model->ontoModificationDate( ontoNamespace );
     bool update = false;
 
     if ( ontoLastModified < ontoFileInf.lastModified() ) {
-        kDebug() << "Ontology" << df.readUrl() << "needs updating.";
+        kDebug() << "Ontology" << ontoNamespace << "needs updating.";
         update = true;
     }
     else {
-        kDebug() << "Ontology" << df.readUrl() << "up to date.";
+        kDebug() << "Ontology" << ontoNamespace << "up to date.";
     }
 
     if( !update && forceOntologyUpdate ) {
@@ -92,28 +94,28 @@ void Nepomuk::OntologyLoader::Private::updateOntology( const QString& filename )
     }
 
     if( update ) {
-        QString mimeType = df.desktopGroup().readEntry( "MimeType", QString() );
+        QString mimeType = df.readEntry( "MimeType", QString() );
 
         const Soprano::Parser* parser
             = Soprano::PluginManager::instance()->discoverParserForSerialization( Soprano::mimeTypeToSerialization( mimeType ),
                                                                                   mimeType );
         if ( !parser ) {
-            kDebug() << "No parser to handle" << df.readName() << "(" << mimeType << ")";
+            kDebug() << "No parser to handle" << df.readEntry( QLatin1String( "Name" ) ) << "(" << mimeType << ")";
             return;
         }
 
-        kDebug() << "Parsing" << df.readPath();
+        kDebug() << "Parsing" << ontoFileInf.filePath();
 
-        Soprano::StatementIterator it = parser->parseFile( df.readPath(),
-                                                           df.readUrl(),
+        Soprano::StatementIterator it = parser->parseFile( ontoFileInf.filePath(),
+                                                           ontoNamespace,
                                                            Soprano::mimeTypeToSerialization( mimeType ),
                                                            mimeType );
         if ( !parser->lastError() ) {
-            model->updateOntology( it, df.readUrl() );
-            emit q->ontologyUpdated( df.readUrl() );
+            model->updateOntology( it, ontoNamespace );
+            emit q->ontologyUpdated( ontoNamespace );
         }
         else {
-            emit q->ontologyUpdateFailed( df.readUrl(), i18n( "Parsing of file %1 failed (%2)", df.readPath(), parser->lastError().message() ) );
+            emit q->ontologyUpdateFailed( ontoNamespace, i18n( "Parsing of file %1 failed (%2)", ontoFileInf.filePath(), parser->lastError().message() ) );
         }
     }
 }
@@ -138,10 +140,10 @@ Nepomuk::OntologyLoader::OntologyLoader( QObject* parent, const QList<QVariant>&
              this, SLOT( updateLocalOntologies() ) );
     connect( dirWatch, SIGNAL( created(QString) ),
              this, SLOT( updateLocalOntologies() ) );
-    foreach( const QString& dir, KGlobal::dirs()->findDirs( "data", QString() ) ) {
+    foreach( const QString& dir, KGlobal::dirs()->findDirs( "data", QLatin1String("../") ) ) {
         // we only add the suffix here to make sure to also watch the non-existing local dir
-        kDebug() << "watching" << ( dir + "nepomuk/ontologies/" );
-        dirWatch->addDir( dir + "nepomuk/ontologies/", KDirWatch::WatchFiles );
+        kDebug() << "watching" << ( dir + "ontology/" );
+        dirWatch->addDir( dir + "ontology/", KDirWatch::WatchFiles|KDirWatch::WatchSubDirs );
     }
 }
 
@@ -154,7 +156,7 @@ Nepomuk::OntologyLoader::~OntologyLoader()
 
 void Nepomuk::OntologyLoader::updateLocalOntologies()
 {
-    d->desktopFilesToUpdate = KGlobal::dirs()->findAllResources( "data", "nepomuk/ontologies/*.desktop" );
+    d->desktopFilesToUpdate = KGlobal::dirs()->findAllResources( "data", "../ontology/*.ontology", KStandardDirs::Recursive|KStandardDirs::NoDuplicates );
     d->updateTimer.start(0);
 }
 
@@ -200,7 +202,7 @@ void Nepomuk::OntologyLoader::slotGraphRetrieverResult( KJob* job )
     else {
         // TODO: find a way to check if the imported version of the ontology
         // is newer than the already installed one
-        if ( d->model->updateOntology( graphRetriever->statements(), graphRetriever->url() ) ) {
+        if ( d->model->updateOntology( graphRetriever->statements(), QUrl()/*graphRetriever->url()*/ ) ) {
             emit ontologyUpdated( QString::fromAscii( graphRetriever->url().toEncoded() ) );
         }
         else {

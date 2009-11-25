@@ -19,17 +19,17 @@ set(kio_nepomuksearch_PART_SRCS
 )
 
 soprano_add_ontology(kio_nepomuksearch_PART_SRCS
-  ${nepomukontologies_SOURCE_DIR}/nfo.trig
+  ${DESKTOP_ONTOLOGIES_DIR}/nie/nfo.trig
   "NFO"
   "Nepomuk::Vocabulary"
   "trig")
 soprano_add_ontology(kio_nepomuksearch_PART_SRCS
-  ${nepomukontologies_SOURCE_DIR}/nie.trig
+  ${DESKTOP_ONTOLOGIES_DIR}/nie/nie.trig
   "NIE"
   "Nepomuk::Vocabulary"
   "trig")
 soprano_add_ontology(kio_nepomuksearch_PART_SRCS
-  ${nepomukontologies_SOURCE_DIR}/pimo.trig
+  ${DESKTOP_ONTOLOGIES_DIR}/pimo/pimo.trig
   "PIMO"
   "Nepomuk::Vocabulary"
   "trig")

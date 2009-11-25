@@ -1,5 +1,7 @@
 project(nepomuk)
 
+find_package(SharedDesktopOntologies)
+
 # disable deprecated libnepomuk stuff for less compiler warnings
 add_definitions(-DDISABLE_NEPOMUK_LEGACY=1)
 
@@ -8,9 +10,7 @@ include_directories(
   ${STRIGI_INCLUDE_DIR}
 )
 
-# needs to be included before everything else
 add_subdirectory(ontologies)
-
 add_subdirectory(strigibackend)
 add_subdirectory(server)
 add_subdirectory(kcm)

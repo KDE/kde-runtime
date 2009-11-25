@@ -18,7 +18,7 @@ set(SRCS
   )
 
 soprano_add_ontology(SRCS
-  ${nepomukontologies_SOURCE_DIR}/nie.trig
+  ${DESKTOP_ONTOLOGIES_DIR}/nie/nie.trig
   "NIE"
   "Nepomuk::Vocabulary"
   "trig")
