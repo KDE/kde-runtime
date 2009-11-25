@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=ZMK
+CurrencyCodeIsoNumeric3=894
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Zambian Kwacha
+CurrencyNameIso=Kwacha
+CurrencyUnitSymbols=ZK,ZMK
+CurrencyUnitSymbolDefault=ZK
+CurrencyUnitSymbolUnambiguous=ZK
+CurrencyUnitSingular=
+CurrencyUnitPlural=
+CurrencySubunitSymbol=
+CurrencySubunitSingular=
+CurrencySubunitPlural=
+CurrencyIntroducedDate=1968,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+CurrencySubunitsInCirculation=false
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=ZM

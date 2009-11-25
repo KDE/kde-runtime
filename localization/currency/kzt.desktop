@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=KZT
+CurrencyCodeIsoNumeric3=398
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Kazakhstani Tenge
+CurrencyNameIso=Tenge
+CurrencyUnitSymbols=T,KZT
+CurrencyUnitSymbolDefault=T
+CurrencyUnitSymbolUnambiguous=T
+CurrencyUnitSingular=tenge
+CurrencyUnitPlural=tenge
+CurrencySubunitSymbol=
+CurrencySubunitSingular=tiyn
+CurrencySubunitPlural=tiyn
+CurrencyIntroducedDate=1993,11,15
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=false
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=KZ

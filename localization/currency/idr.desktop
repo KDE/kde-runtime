@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=IDR
+CurrencyCodeIsoNumeric3=360
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Indonesian Rupiah
+CurrencyNameIso=Rupiah
+CurrencyUnitSymbols=Rp,IDR
+CurrencyUnitSymbolDefault=Rp
+CurrencyUnitSymbolUnambiguous=IDR
+CurrencyUnitSingular=rupiah
+CurrencyUnitPlural=rupiah
+CurrencySubunitSymbol=
+CurrencySubunitSingular=sen
+CurrencySubunitPlural=sen
+CurrencyIntroducedDate=1965,12,13
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+CurrencySubunitsInCirculation=false
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=ID,TL

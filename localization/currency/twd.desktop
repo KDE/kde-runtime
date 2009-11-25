@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=TWD
+CurrencyCodeIsoNumeric3=901
+#Context for Name: Adjectival Country Name and Currency Name
+Name=New Taiwan Dollar
+CurrencyNameIso=New Taiwan dollar
+CurrencyUnitSymbols=$,NT$,TWD
+CurrencyUnitSymbolDefault=$
+CurrencyUnitSymbolUnambiguous=NT$
+CurrencyUnitSingular=dollar
+CurrencyUnitPlural=dollars
+CurrencySubunitSymbol=
+CurrencySubunitSingular=cent
+CurrencySubunitPlural=cents
+CurrencyIntroducedDate=1949,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=TW

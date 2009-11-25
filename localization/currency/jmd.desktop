@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=JMD
+CurrencyCodeIsoNumeric3=388
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Jamaican Dollar
+CurrencyNameIso=Jamaican dollar
+CurrencyUnitSymbols=$,J$,JA$,JMD
+CurrencyUnitSymbolDefault=$
+CurrencyUnitSymbolUnambiguous=J$
+CurrencyUnitSingular=dollar
+CurrencyUnitPlural=dollars
+CurrencySubunitSymbol=
+CurrencySubunitSingular=cent
+CurrencySubunitPlural=cents
+CurrencyIntroducedDate=1969,09,08
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=JM

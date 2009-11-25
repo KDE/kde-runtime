@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=TND
+CurrencyCodeIsoNumeric3=788
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Tunisian Dinar
+CurrencyNameIso=Tunisian dinar
+CurrencyUnitSymbols=د.ت,DT,TND
+CurrencyUnitSymbolDefault=د.ت
+CurrencyUnitSymbolUnambiguous=د.ت
+CurrencyUnitSingular=dinar
+CurrencyUnitPlural=dinar
+CurrencySubunitSymbol=
+CurrencySubunitSingular=milim
+CurrencySubunitPlural=milim
+CurrencyIntroducedDate=1960,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+CurrencySubunitsPerUnit=1000
+CurrencyDecimalPlacesDisplay=3
+CurrencyCountriesInUse=TN

@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=CUP
+CurrencyCodeIsoNumeric3=192
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Cuban Peso
+CurrencyNameIso=Cuban peso
+CurrencyUnitSymbols=$,$MN,CUP
+CurrencyUnitSymbolDefault=$
+CurrencyUnitSymbolUnambiguous=$MN
+CurrencyUnitSingular=peso
+CurrencyUnitPlural=pesos
+CurrencySubunitSymbol=
+CurrencySubunitSingular=centavo
+CurrencySubunitPlural=centavos
+CurrencyIntroducedDate=1857,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=CU

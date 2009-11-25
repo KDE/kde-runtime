@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=KES
+CurrencyCodeIsoNumeric3=404
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Kenyan Shilling
+CurrencyNameIso=Kenyan shilling
+CurrencyUnitSymbols=KSh,KES
+CurrencyUnitSymbolDefault=KSh
+CurrencyUnitSymbolUnambiguous=KSh
+CurrencyUnitSingular=shilling
+CurrencyUnitPlural=shillings
+CurrencySubunitSymbol=
+CurrencySubunitSingular=cent
+CurrencySubunitPlural=cents
+CurrencyIntroducedDate=1966,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=KE

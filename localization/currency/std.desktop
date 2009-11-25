@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=STD
+CurrencyCodeIsoNumeric3=678
+#Context for Name: Adjectival Country Name and Currency Name
+Name=São Tomé and Príncipe Dobra
+CurrencyNameIso=Dobra
+CurrencyUnitSymbols=Db,STD
+CurrencyUnitSymbolDefault=Db
+CurrencyUnitSymbolUnambiguous=STD
+CurrencyUnitSingular=dobra
+CurrencyUnitPlural=dobras
+CurrencySubunitSymbol=
+CurrencySubunitSingular=centimo
+CurrencySubunitPlural=centimos
+CurrencyIntroducedDate=1977,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=ST

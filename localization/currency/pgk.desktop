@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=PGK
+CurrencyCodeIsoNumeric3=598
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Papua New Guinean Kina
+CurrencyNameIso=Kina
+CurrencyUnitSymbols=K,PGK
+CurrencyUnitSymbolDefault=K
+CurrencyUnitSymbolUnambiguous=PGK
+CurrencyUnitSingular=kina
+CurrencyUnitPlural=kina
+CurrencySubunitSymbol=
+CurrencySubunitSingular=toea
+CurrencySubunitPlural=toea
+CurrencyIntroducedDate=1975,04,19
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=PGK

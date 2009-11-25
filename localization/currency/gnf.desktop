@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=GNF
+CurrencyCodeIsoNumeric3=324
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Guinean Franc
+CurrencyNameIso=Guinea franc
+CurrencyUnitSymbols=FG,Fr,GFr,GNF
+CurrencyUnitSymbolDefault=FG
+CurrencyUnitSymbolUnambiguous=FG
+CurrencyUnitSingular=franc
+CurrencyUnitPlural=francs
+CurrencySubunitSymbol=
+CurrencySubunitSingular=centime
+CurrencySubunitPlural=centimes
+CurrencyIntroducedDate=1985,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=GN

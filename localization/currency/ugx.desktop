@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=UGX
+CurrencyCodeIsoNumeric3=800
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Ugandan Shilling
+CurrencyNameIso=Uganda shilling
+CurrencyUnitSymbols=USh,UGX
+CurrencyUnitSymbolDefault=USh
+CurrencyUnitSymbolUnambiguous=USh
+CurrencyUnitSingular=
+CurrencyUnitPlural=
+CurrencySubunitSymbol=
+CurrencySubunitSingular=
+CurrencySubunitPlural=
+CurrencyIntroducedDate=
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+CurrencySubunitsInCirculation=false
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=UG

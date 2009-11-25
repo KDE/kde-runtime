@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=LUF
+CurrencyCodeIsoNumeric3=442
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Luxembourgish Franc
+CurrencyNameIso=Luxembourg franc
+CurrencyUnitSymbols=fr.,F,LUF
+CurrencyUnitSymbolDefault=fr.
+CurrencyUnitSymbolUnambiguous=LUF
+CurrencyUnitSingular=franc
+CurrencyUnitPlural=francs
+CurrencySubunitSymbol=
+CurrencySubunitSingular=centime
+CurrencySubunitPlural=centimes
+CurrencyIntroducedDate=1944,01,01
+#CurrencySuspendedDate=
+CurrencyWithdrawnDate=2001,12,31
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=

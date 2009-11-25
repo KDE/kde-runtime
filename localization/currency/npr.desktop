@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=NPR
+CurrencyCodeIsoNumeric3=524
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Nepalese Rupee
+CurrencyNameIso=Nepalese rupee
+CurrencyUnitSymbols=Rs,₨,रू.,NPR
+CurrencyUnitSymbolDefault=Rs
+CurrencyUnitSymbolUnambiguous=NPR
+CurrencyUnitSingular=rupee
+CurrencyUnitPlural=rupees
+CurrencySubunitSymbol=
+CurrencySubunitSingular=paisa
+CurrencySubunitPlural=paisa
+CurrencyIntroducedDate=1932,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=NP

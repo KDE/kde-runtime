@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=BAM
+CurrencyCodeIsoNumeric3=977
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Bosnia and Herzegovina Convertible Mark
+CurrencyNameIso=Convertible marks
+CurrencyUnitSymbols=KM,BAM
+CurrencyUnitSymbolDefault=KM
+CurrencyUnitSymbolUnambiguous=KM
+CurrencyUnitSingular=mark
+CurrencyUnitPlural=marks
+CurrencySubunitSymbol=
+CurrencySubunitSingular=fening
+CurrencySubunitPlural=fenings
+CurrencyIntroducedDate=1995,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=BA

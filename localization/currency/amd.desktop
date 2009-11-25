@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=AMD
+CurrencyCodeIsoNumeric3=051
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Armenian Dram
+CurrencyNameIso=Armenian dram
+CurrencyUnitSymbols=դր,AMD
+CurrencyUnitSymbolDefault=դր
+CurrencyUnitSymbolUnambiguous=դր
+CurrencyUnitSingular=dram
+CurrencyUnitPlural=dram
+CurrencySubunitSymbol=
+CurrencySubunitSingular=luma
+CurrencySubunitPlural=luma
+CurrencyIntroducedDate=1993,11,22
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+CurrencySubunitsInCirculation=false
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=AM

@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=EGP
+CurrencyCodeIsoNumeric3=818
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Egyptian Pound
+CurrencyNameIso=Egyptian pound
+CurrencyUnitSymbols=£,LE,ج.م,EGP
+CurrencyUnitSymbolDefault=LE
+CurrencyUnitSymbolUnambiguous=LE
+CurrencyUnitSingular=pound
+CurrencyUnitPlural=pounds
+CurrencySubunitSymbol=Pt.
+CurrencySubunitSingular=piastres
+CurrencySubunitPlural=piastres
+CurrencyIntroducedDate=1834,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=EG

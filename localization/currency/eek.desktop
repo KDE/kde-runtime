@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=EEK
+CurrencyCodeIsoNumeric3=233
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Estonian Kroon
+CurrencyNameIso=Kroon
+CurrencyUnitSymbols=KR,EEK
+CurrencyUnitSymbolDefault=KR
+CurrencyUnitSymbolUnambiguous=KR
+CurrencyUnitSingular=kroon
+CurrencyUnitPlural=krooni
+CurrencySubunitSymbol=
+CurrencySubunitSingular=sent
+CurrencySubunitPlural=senti
+CurrencyIntroducedDate=1928,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=EE

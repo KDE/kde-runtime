@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=MNT
+CurrencyCodeIsoNumeric3=496
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Mongolian Tugrik
+CurrencyNameIso=Tugrik
+CurrencyUnitSymbols=₮,MNT
+CurrencyUnitSymbolDefault=₮
+CurrencyUnitSymbolUnambiguous=₮
+CurrencyUnitSingular=tugrik
+CurrencyUnitPlural=tugrik
+CurrencySubunitSymbol=
+CurrencySubunitSingular=mongo
+CurrencySubunitPlural=mongo
+CurrencyIntroducedDate=1925,12,09
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+CurrencySubunitsInCirculation=false
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=MN

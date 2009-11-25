@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=XPD
+CurrencyCodeIsoNumeric3=964
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Palladium
+CurrencyNameIso=Palladium
+CurrencyUnitSymbols=XPD
+CurrencyUnitSymbolDefault=XPD
+CurrencyUnitSymbolUnambiguous=XPD
+CurrencyUnitSingular=
+CurrencyUnitPlural=
+CurrencySubunitSymbol=
+CurrencySubunitSingular=
+CurrencySubunitPlural=
+CurrencyIntroducedDate=
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=

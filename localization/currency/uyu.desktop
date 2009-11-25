@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=UYU
+CurrencyCodeIsoNumeric3=858
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Uruguayan Peso
+CurrencyNameIso=Peso Uruguayo
+CurrencyUnitSymbols=$,U$,UYU
+CurrencyUnitSymbolDefault=$
+CurrencyUnitSymbolUnambiguous=U$
+CurrencyUnitSingular=
+CurrencyUnitPlural=
+CurrencySubunitSymbol=
+CurrencySubunitSingular=
+CurrencySubunitPlural=
+CurrencyIntroducedDate=1993,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=UY

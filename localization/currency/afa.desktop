@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=AFA
+CurrencyCodeIsoNumeric3=004
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Afghan afghani
+CurrencyNameIso=Afghan afghani
+CurrencyUnitSymbols=؋,AFA
+CurrencyUnitSymbolDefault=؋
+CurrencyUnitSymbolUnambiguous=؋
+CurrencyUnitSingular=afghani
+CurrencyUnitPlural=afghani
+CurrencySubunitSymbol=
+CurrencySubunitSingular=pul
+CurrencySubunitPlural=pul
+CurrencyIntroducedDate=1925,01,01
+#CurrencySuspendedDate=
+CurrencyWithdrawnDate=2003,01,01
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+#CurrencyCountriesInUse=

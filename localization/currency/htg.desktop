@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=HTG
+CurrencyCodeIsoNumeric3=332
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Haitian Gourde
+CurrencyNameIso=Haiti gourde
+CurrencyUnitSymbols=G,HTG
+CurrencyUnitSymbolDefault=G
+CurrencyUnitSymbolUnambiguous=G
+CurrencyUnitSingular=gourde
+CurrencyUnitPlural=gourdes
+CurrencySubunitSymbol=
+CurrencySubunitSingular=centime
+CurrencySubunitPlural=centimes
+CurrencyIntroducedDate=1872,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=HT

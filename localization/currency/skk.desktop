@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=SKK
+CurrencyCodeIsoNumeric3=703
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Slovak Koruna
+CurrencyNameIso=Slovak koruna
+CurrencyUnitSymbols=Sk,SKK
+CurrencyUnitSymbolDefault=Sk
+CurrencyUnitSymbolUnambiguous=Sk
+CurrencyUnitSingular=koruna
+CurrencyUnitPlural=koruny
+CurrencySubunitSymbol=
+CurrencySubunitSingular=halier
+CurrencySubunitPlural=haliere
+CurrencyIntroducedDate=1993,02,08
+#CurrencySuspendedDate=
+CurrencyWithdrawnDate=2009,01,01
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=

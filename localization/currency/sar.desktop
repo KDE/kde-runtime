@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=SAR
+CurrencyCodeIsoNumeric3=682
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Saudi Riyal
+CurrencyNameIso=Saudi riyal
+CurrencyUnitSymbols=ر.س,SR,SAR
+CurrencyUnitSymbolDefault=ر.س
+CurrencyUnitSymbolUnambiguous=ر.س
+CurrencyUnitSingular=riyal
+CurrencyUnitPlural=riyal
+CurrencySubunitSymbol=
+CurrencySubunitSingular=halala
+CurrencySubunitPlural=halala
+CurrencyIntroducedDate=1963,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=SA

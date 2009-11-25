@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=AOA
+CurrencyCodeIsoNumeric3=973
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Angolan Kwanza
+CurrencyNameIso=Angolan kwanza
+CurrencyUnitSymbols=Kz,AOA
+CurrencyUnitSymbolDefault=Kz
+CurrencyUnitSymbolUnambiguous=Kz
+CurrencyUnitSingular=kwanza
+CurrencyUnitPlural=kwanzas
+CurrencySubunitSymbol=
+CurrencySubunitSingular=cêntimo
+CurrencySubunitPlural=cêntimos
+CurrencyIntroducedDate=1999,12,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=AO

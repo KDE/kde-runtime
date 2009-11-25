@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=ATS
+CurrencyCodeIsoNumeric3=040
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Austrian Schilling
+CurrencyNameIso=Austrian schilling
+CurrencyUnitSymbols=S,öS,ATS
+CurrencyUnitSymbolDefault=S
+CurrencyUnitSymbolUnambiguous=S
+CurrencyUnitSingular=schilling
+CurrencyUnitPlural=schilling
+CurrencySubunitSymbol=
+CurrencySubunitSingular=groschen
+CurrencySubunitPlural=groschen
+CurrencyIntroducedDate=1945,11,30
+#CurrencySuspendedDate=
+CurrencyWithdrawnDate=2001,12,31
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=

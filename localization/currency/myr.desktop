@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=MYR
+CurrencyCodeIsoNumeric3=458
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Malaysian Ringgit
+CurrencyNameIso=Malaysian ringgit
+CurrencyUnitSymbols=RM,MYR
+CurrencyUnitSymbolDefault=RM
+CurrencyUnitSymbolUnambiguous=RM
+CurrencyUnitSingular=ringgit
+CurrencyUnitPlural=ringgit
+CurrencySubunitSymbol=
+CurrencySubunitSingular=sen
+CurrencySubunitPlural=sen
+CurrencyIntroducedDate=1967,06,12
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=MY

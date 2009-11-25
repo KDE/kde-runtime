@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=PHP
+CurrencyCodeIsoNumeric3=608
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Philippine Peso
+CurrencyNameIso=Philippine peso
+CurrencyUnitSymbols=₱,PhP,P,PHP
+CurrencyUnitSymbolDefault=₱
+CurrencyUnitSymbolUnambiguous=₱
+CurrencyUnitSingular=piso
+CurrencyUnitPlural=pisos
+CurrencySubunitSymbol=
+CurrencySubunitSingular=sentimo
+CurrencySubunitPlural=sentimos
+CurrencyIntroducedDate=1949,01,03
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=PH

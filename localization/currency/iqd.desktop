@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=IQD
+CurrencyCodeIsoNumeric3=368
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Iraqi Dinar
+CurrencyNameIso=Iraqi dinar
+CurrencyUnitSymbols=ع.د,IQD
+CurrencyUnitSymbolDefault=ع.د
+CurrencyUnitSymbolUnambiguous=ع.د
+CurrencyUnitSingular=dinar
+CurrencyUnitPlural=dinar
+CurrencySubunitSymbol=
+CurrencySubunitSingular=fils
+CurrencySubunitPlural=fils
+CurrencyIntroducedDate=1932,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+CurrencySubunitsInCirculation=false
+CurrencySubunitsPerUnit=1000
+CurrencyDecimalPlacesDisplay=3
+CurrencyCountriesInUse=IQ

@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=MXV
+CurrencyCodeIsoNumeric3=979
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Mexican Unidad de Inversion
+CurrencyNameIso=Mexican Unidad de Inversion
+CurrencyUnitSymbols=UDI,MXV
+CurrencyUnitSymbolDefault=UDI
+CurrencyUnitSymbolUnambiguous=UDI
+CurrencyUnitSingular=
+CurrencyUnitPlural=
+CurrencySubunitSymbol=
+CurrencySubunitSingular=
+CurrencySubunitPlural=
+CurrencyIntroducedDate=
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=MX

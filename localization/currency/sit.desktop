@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=SIT
+CurrencyCodeIsoNumeric3=705
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Slovenian Tolar
+CurrencyNameIso=Slovenian tolar
+CurrencyUnitSymbols=
+CurrencyUnitSymbolDefault=
+CurrencyUnitSymbolUnambiguous=
+CurrencyUnitSingular=tolar
+CurrencyUnitPlural=tolarjev
+CurrencySubunitSymbol=
+CurrencySubunitSingular=stotin
+CurrencySubunitPlural=stotinov
+CurrencyIntroducedDate=1991,10,08
+#CurrencySuspendedDate=
+CurrencyWithdrawnDate=2007,01,01
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=

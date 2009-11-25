@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=AWG
+CurrencyCodeIsoNumeric3=533
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Aruban Florin
+CurrencyNameIso=Aruban guilder
+CurrencyUnitSymbols=Afl,ƒ,AWG
+CurrencyUnitSymbolDefault=Afl
+CurrencyUnitSymbolUnambiguous=Afl
+CurrencyUnitSingular=florin
+CurrencyUnitPlural=florin
+CurrencySubunitSymbol=
+CurrencySubunitSingular=cent
+CurrencySubunitPlural=cents
+CurrencyIntroducedDate=1986,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=AW

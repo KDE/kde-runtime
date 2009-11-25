@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=IEP
+CurrencyCodeIsoNumeric3=372
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Irish Pound
+CurrencyNameIso=Irish pound
+CurrencyUnitSymbols=£,IEP
+CurrencyUnitSymbolDefault=£
+CurrencyUnitSymbolUnambiguous=IR£
+CurrencyUnitSingular=pound
+CurrencyUnitPlural=pounds
+CurrencySubunitSymbol=p
+CurrencySubunitSingular=penny
+CurrencySubunitPlural=pence
+CurrencyIntroducedDate=1971,02,15
+#CurrencySuspendedDate=
+CurrencyWithdrawnDate=2001,12,31
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=

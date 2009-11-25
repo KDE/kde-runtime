@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=SZL
+CurrencyCodeIsoNumeric3=748
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Swazi Lilangeni
+CurrencyNameIso=Lilangeni
+CurrencyUnitSymbols=
+CurrencyUnitSymbolDefault=
+CurrencyUnitSymbolUnambiguous=
+CurrencyUnitSingular=lilangeni
+CurrencyUnitPlural=emalangeni
+CurrencySubunitSymbol=
+CurrencySubunitSingular=cent
+CurrencySubunitPlural=cents
+CurrencyIntroducedDate=1974,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=SZ

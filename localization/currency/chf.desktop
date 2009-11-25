@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=CHF
+CurrencyCodeIsoNumeric3=756
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Swiss Franc
+CurrencyNameIso=Swiss franc
+CurrencyUnitSymbols=Fr.,SFr.,CHF
+CurrencyUnitSymbolDefault=Fr.
+CurrencyUnitSymbolUnambiguous=Fr.
+CurrencyUnitSingular=franc
+CurrencyUnitPlural=francs
+CurrencySubunitSymbol=
+CurrencySubunitSingular=centime
+CurrencySubunitPlural=centimes
+CurrencyIntroducedDate=1850,05,07
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=CH

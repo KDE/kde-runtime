@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=SRD
+CurrencyCodeIsoNumeric3=968
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Surinamese dollar
+CurrencyNameIso=Surinam dollar
+CurrencyUnitSymbols=$,SRD
+CurrencyUnitSymbolDefault=$
+CurrencyUnitSymbolUnambiguous=SRD
+CurrencyUnitSingular=dollar
+CurrencyUnitPlural=dollars
+CurrencySubunitSymbol=
+CurrencySubunitSingular=cent
+CurrencySubunitPlural=cents
+CurrencyIntroducedDate=2004,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=SR

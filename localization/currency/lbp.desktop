@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=LBD
+CurrencyCodeIsoNumeric3=422
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Lebanese Pound
+CurrencyNameIso=Lebanese pound
+CurrencyUnitSymbols=ل.ل,LBD
+CurrencyUnitSymbolDefault=ل.ل
+CurrencyUnitSymbolUnambiguous=ل.ل
+CurrencyUnitSingular=pound
+CurrencyUnitPlural=pounds
+CurrencySubunitSymbol=
+CurrencySubunitSingular=piastre
+CurrencySubunitPlural=piastres
+CurrencyIntroducedDate=1939,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+CurrencySubunitsInCirculation=false
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=LB

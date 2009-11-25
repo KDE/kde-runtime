@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=NIO
+CurrencyCodeIsoNumeric3=566
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Nicaraguan Cordoba Oro
+CurrencyNameIso=Cordoba oro
+CurrencyUnitSymbols=
+CurrencyUnitSymbolDefault=
+CurrencyUnitSymbolUnambiguous=
+CurrencyUnitSingular=cordoba
+CurrencyUnitPlural=cordoba
+CurrencySubunitSymbol=
+CurrencySubunitSingular=centavo
+CurrencySubunitPlural=centavos
+CurrencyIntroducedDate=1991,04,30
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=NI

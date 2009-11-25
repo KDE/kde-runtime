@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=CDF
+CurrencyCodeIsoNumeric3=976
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Franc Congolais
+CurrencyNameIso=Franc Congolais
+CurrencyUnitSymbols=F,CDF
+CurrencyUnitSymbolDefault=F
+CurrencyUnitSymbolUnambiguous=CDF
+CurrencyUnitSingular=franc
+CurrencyUnitPlural=francs
+CurrencySubunitSymbol=
+CurrencySubunitSingular=centime
+CurrencySubunitPlural=centimes
+CurrencyIntroducedDate=1997,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=CD

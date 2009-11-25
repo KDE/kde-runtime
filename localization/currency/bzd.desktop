@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=BZD
+CurrencyCodeIsoNumeric3=084
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Belize Dollar
+CurrencyNameIso=Belize dollar
+CurrencyUnitSymbols=$,BZ$,BZD
+CurrencyUnitSymbolDefault=$
+CurrencyUnitSymbolUnambiguous=BZ$
+CurrencyUnitSingular=dollar
+CurrencyUnitPlural=dollars
+CurrencySubunitSymbol=
+CurrencySubunitSingular=cent
+CurrencySubunitPlural=cents
+CurrencyIntroducedDate=1973,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=BZ

@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=GYD
+CurrencyCodeIsoNumeric3=328
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Guyanese Dollar
+CurrencyNameIso=Guyana dollar
+CurrencyUnitSymbols=$,G$,GYD
+CurrencyUnitSymbolDefault=$
+CurrencyUnitSymbolUnambiguous=G$
+CurrencyUnitSingular=dollar
+CurrencyUnitPlural=dollars
+CurrencySubunitSymbol=
+CurrencySubunitSingular=cent
+CurrencySubunitPlural=cents
+CurrencyIntroducedDate=1955,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+CurrencySubunitsInCirculation=false
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=GY

@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=OMR
+CurrencyCodeIsoNumeric3=512
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Omani Rial
+CurrencyNameIso=Rial Omani
+CurrencyUnitSymbols=ر.ع.,OMR
+CurrencyUnitSymbolDefault=ر.ع.
+CurrencyUnitSymbolUnambiguous=ر.ع.
+CurrencyUnitSingular=rial
+CurrencyUnitPlural=rials
+CurrencySubunitSymbol=
+CurrencySubunitSingular=baisa
+CurrencySubunitPlural=baisa
+CurrencyIntroducedDate=1973,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+CurrencySubunitsPerUnit=1000
+CurrencyDecimalPlacesDisplay=3
+CurrencyCountriesInUse=

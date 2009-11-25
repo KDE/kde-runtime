@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=MUR
+CurrencyCodeIsoNumeric3=480
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Mauritius Rupee
+CurrencyNameIso=Mauritius rupee
+CurrencyUnitSymbols=R,MUR
+CurrencyUnitSymbolDefault=R
+CurrencyUnitSymbolUnambiguous=MUR
+CurrencyUnitSingular=rupee
+CurrencyUnitPlural=rupees
+CurrencySubunitSymbol=
+CurrencySubunitSingular=cent
+CurrencySubunitPlural=cents
+CurrencyIntroducedDate=1877,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+CurrencySubunitsInCirculation=false
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=MU

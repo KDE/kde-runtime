@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=TRY
+CurrencyCodeIsoNumeric3=949
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Turkish Lira
+CurrencyNameIso=Turkish lira
+CurrencyUnitSymbols=TL,£,TRL
+CurrencyUnitSymbolDefault=TL
+CurrencyUnitSymbolUnambiguous=TL
+CurrencyUnitSingular=lira
+CurrencyUnitPlural=lira
+CurrencySubunitSymbol=
+CurrencySubunitSingular=kurush
+CurrencySubunitPlural=kurush
+CurrencyIntroducedDate=2005,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=TR

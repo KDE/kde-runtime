@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=SVC
+CurrencyCodeIsoNumeric3=222
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Salvadoran colon
+CurrencyNameIso=Salvadoran colon
+CurrencyUnitSymbols=SVC
+CurrencyUnitSymbolDefault=SVC
+CurrencyUnitSymbolUnambiguous=SVC
+CurrencyUnitSingular=colon
+CurrencyUnitPlural=colonc
+CurrencySubunitSymbol=
+CurrencySubunitSingular=centavo
+CurrencySubunitPlural=centavos
+CurrencyIntroducedDate=1919,01,01
+#CurrencySuspendedDate=
+CurrencyWithdrawnDate=2001,01,01
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=

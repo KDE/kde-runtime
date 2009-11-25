@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=FKP
+CurrencyCodeIsoNumeric3=238
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Falkland Islands Pound
+CurrencyNameIso=Falkland Islands pound
+CurrencyUnitSymbols=£,FK£,FKP
+CurrencyUnitSymbolDefault=£
+CurrencyUnitSymbolUnambiguous=FK£
+CurrencyUnitSingular=pound
+CurrencyUnitPlural=pounds
+CurrencySubunitSymbol=p
+CurrencySubunitSingular=penny
+CurrencySubunitPlural=pence
+CurrencyIntroducedDate=1971,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=FK

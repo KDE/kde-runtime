@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=BEF
+CurrencyCodeIsoNumeric3=056
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Belgian Franc
+CurrencyNameIso=Belgian franc
+CurrencyUnitSymbols=fr.,BEF
+CurrencyUnitSymbolDefault=fr.
+CurrencyUnitSymbolUnambiguous=BEF
+CurrencyUnitSingular=franc
+CurrencyUnitPlural=francs
+CurrencySubunitSymbol=c.
+CurrencySubunitSingular=centime
+CurrencySubunitPlural=centimes
+CurrencyIntroducedDate=1832,01,01
+#CurrencySuspendedDate=
+CurrencyWithdrawnDate=2001,12,31
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=

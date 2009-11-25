@@ -1,0 +1,21 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=MVR
+CurrencyCodeIsoNumeric3=462
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Maldivian Rufiyaa
+CurrencyNameIso=Rufiyaa
+CurrencyUnitSymbols=Rf,MRf,.ރ,MVR
+CurrencyUnitSymbolDefault=Rf
+CurrencyUnitSingular=rufiyaa
+CurrencyUnitPlural=rufiyaa
+CurrencySubunitSymbol=
+CurrencySubunitSingular=laari
+CurrencySubunitPlural=laari
+CurrencyIntroducedDate=1947,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=MV

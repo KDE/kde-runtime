@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=UZS
+CurrencyCodeIsoNumeric3=860
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Uzbekistan Som
+CurrencyNameIso=Uzbekistan som
+CurrencyUnitSymbols=UZS
+CurrencyUnitSymbolDefault=UZS
+CurrencyUnitSymbolUnambiguous=UZS
+CurrencyUnitSingular=
+CurrencyUnitPlural=
+CurrencySubunitSymbol=
+CurrencySubunitSingular=
+CurrencySubunitPlural=
+CurrencyIntroducedDate=1993,11,15
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=UZ

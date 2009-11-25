@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=BTN
+CurrencyCodeIsoNumeric3=064
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Bhutanese Ngultrum
+CurrencyNameIso=Ngultrum
+CurrencyUnitSymbols=Nh.,BTN
+CurrencyUnitSymbolDefault=Nh.
+CurrencyUnitSymbolUnambiguous=Nh.
+CurrencyUnitSingular=ngultrum
+CurrencyUnitPlural=ngultrum
+CurrencySubunitSymbol=Ch.
+CurrencySubunitSingular=chhertum
+CurrencySubunitPlural=chhertum
+CurrencyIntroducedDate=1974,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=BT

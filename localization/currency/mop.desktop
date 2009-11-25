@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=MOP
+CurrencyCodeIsoNumeric3=446
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Pataca
+CurrencyNameIso=Pataca
+CurrencyUnitSymbols=MOP$,MOP
+CurrencyUnitSymbolDefault=MOP$
+CurrencyUnitSymbolUnambiguous=MOP$
+CurrencyUnitSingular=pataca
+CurrencyUnitPlural=patacas
+CurrencySubunitSymbol=
+CurrencySubunitSingular=avo
+CurrencySubunitPlural=avos
+CurrencyIntroducedDate=1894,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+CurrencySubunits=2
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=MO

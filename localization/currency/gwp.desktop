@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=GWP
+CurrencyCodeIsoNumeric3=624
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Guinea-Bissau Peso
+CurrencyNameIso=Guinea-Bissau peso
+CurrencyUnitSymbols=GWP
+CurrencyUnitSymbolDefault=GWP
+CurrencyUnitSymbolUnambiguous=GWP
+CurrencyUnitSingular=peso
+CurrencyUnitPlural=pesos
+CurrencySubunitSymbol=
+CurrencySubunitSingular=centavo
+CurrencySubunitPlural=centavos
+CurrencyIntroducedDate=1975,01,01
+#CurrencySuspendedDate=
+CurrencyWithdrawnDate=1997,01,01
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=

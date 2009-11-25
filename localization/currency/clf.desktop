@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=CLF
+CurrencyCodeIsoNumeric3=990
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Chilean Unidad de Fomento
+CurrencyNameIso=Unidad de Fomento
+CurrencyUnitSymbols=UF,CLF
+CurrencyUnitSymbolDefault=UF
+CurrencyUnitSymbolUnambiguous=UF
+CurrencyUnitSingular=unidad de fomento
+CurrencyUnitPlural=unidades de fomento
+CurrencySubunitSymbol=
+CurrencySubunitSingular=
+CurrencySubunitPlural=
+CurrencyIntroducedDate=
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+CurrencySubunits=0
+CurrencySubunitsInCirculation=false
+CurrencySubunitsPerUnit=0
+CurrencyDecimalPlacesDisplay=0
+CurrencyCountriesInUse=CL

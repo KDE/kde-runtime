@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=SLL
+CurrencyCodeIsoNumeric3=694
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Sierra Leonean Leone
+CurrencyNameIso=Leone
+CurrencyUnitSymbols=Le,SLL
+CurrencyUnitSymbolDefault=Le
+CurrencyUnitSymbolUnambiguous=Le
+CurrencyUnitSingular=leone
+CurrencyUnitPlural=leones
+CurrencySubunitSymbol=
+CurrencySubunitSingular=cent
+CurrencySubunitPlural=cents
+CurrencyIntroducedDate=1964,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=SL

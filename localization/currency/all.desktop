@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=ALL
+CurrencyCodeIsoNumeric3=008
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Albanian Lek
+CurrencyNameIso=Albanian lek
+CurrencyUnitSymbols=L,ALL
+CurrencyUnitSymbolDefault=L
+CurrencyUnitSymbolUnambiguous=L
+CurrencyUnitSingular=lek
+CurrencyUnitPlural=lekë
+CurrencySubunitSymbol=
+CurrencySubunitSingular=qindarkë
+CurrencySubunitPlural=qindarka
+CurrencyIntroducedDate=1992,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+CurrencySubunitsInCirculation=false
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=AL

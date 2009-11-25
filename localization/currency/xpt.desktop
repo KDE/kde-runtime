@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=XPT
+CurrencyCodeIsoNumeric3=962
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Platinum
+CurrencyNameIso=Platinum
+CurrencyUnitSymbols=XPT
+CurrencyUnitSymbolDefault=XPT
+CurrencyUnitSymbolUnambiguous=XPT
+CurrencyUnitSingular=
+CurrencyUnitPlural=
+CurrencySubunitSymbol=
+CurrencySubunitSingular=
+CurrencySubunitPlural=
+CurrencyIntroducedDate=
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=

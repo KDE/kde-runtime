@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=CVE
+CurrencyCodeIsoNumeric3=132
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Cape Verde Escudo
+CurrencyNameIso=Cape Verde escudo
+CurrencyUnitSymbols=$,Esc,CVE
+CurrencyUnitSymbolDefault=$
+CurrencyUnitSymbolUnambiguous=Esc
+CurrencyUnitSingular=escudo
+CurrencyUnitPlural=escudos
+CurrencySubunitSymbol=
+CurrencySubunitSingular=centavo
+CurrencySubunitPlural=centavos
+CurrencyIntroducedDate=1914,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+CurrencySubunitsInCirculation=false
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=CV

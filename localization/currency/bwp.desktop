@@ -1,0 +1,23 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=BWP
+CurrencyCodeIsoNumeric3=072
+CurrencyNameIso=Pula
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Botswana Pula
+CurrencyUnitSymbols=P,BWP
+CurrencyUnitSymbolDefault=P
+#CurrencyUnitSymbolUnambiguous=
+CurrencyUnitSingular=pula
+CurrencyUnitPlural=pula
+CurrencySubunitSymbol=
+CurrencySubunitSingular=thebe
+CurrencySubunitPlural=thebe
+#Exact date in 1967 unknown
+CurrencyIntroducedDate=1976,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=BW,ZW

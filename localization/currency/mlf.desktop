@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=MLF
+CurrencyCodeIsoNumeric3=
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Mali Franc
+CurrencyNameIso=Mali franc
+CurrencyUnitSymbols=fr.,F,MLF
+CurrencyUnitSymbolDefault=fr.
+CurrencyUnitSymbolUnambiguous=MLF
+CurrencyUnitSingular=franc
+CurrencyUnitPlural=francs
+CurrencySubunitSymbol=
+CurrencySubunitSingular=centime
+CurrencySubunitPlural=centimes
+CurrencyIntroducedDate=1962,01,01
+#CurrencySuspendedDate=
+CurrencyWithdrawnDate=1984,01,01
+#CurrencySubunits=1
+CurrencySubunitsInCirculation=false
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=

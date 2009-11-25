@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=TOP
+CurrencyCodeIsoNumeric3=776
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Tongan Pa'anga
+CurrencyNameIso=Pa'anga
+CurrencyUnitSymbols=T$,PT,TOP
+CurrencyUnitSymbolDefault=T$
+CurrencyUnitSymbolUnambiguous=T$
+CurrencyUnitSingular=paʻanga
+CurrencyUnitPlural=paʻanga
+CurrencySubunitSymbol=¢
+CurrencySubunitSingular=seniti
+CurrencySubunitPlural=seniti
+CurrencyIntroducedDate=1967,04,03
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=TN

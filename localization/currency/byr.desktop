@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=BYR
+CurrencyCodeIsoNumeric3=974
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Belarusian Ruble
+CurrencyNameIso=Belarusian ruble
+CurrencyUnitSymbols=Br,BYR
+CurrencyUnitSymbolDefault=Br
+CurrencyUnitSymbolUnambiguous=Br
+CurrencyUnitSingular=ruble
+CurrencyUnitPlural=rubles
+CurrencySubunitSymbol=
+CurrencySubunitSingular=kapeyka
+CurrencySubunitPlural=kapeykas
+CurrencyIntroducedDate=2000,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+CurrencySubunitsInCirculation=false
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=BY

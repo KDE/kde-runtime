@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=ETB
+CurrencyCodeIsoNumeric3=230
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Ethiopian Birr
+CurrencyNameIso=Ethiopian birr
+CurrencyUnitSymbols=Br,ETB
+CurrencyUnitSymbolDefault=Br
+CurrencyUnitSymbolUnambiguous=Br
+CurrencyUnitSingular=birr
+CurrencyUnitPlural=birr
+CurrencySubunitSymbol=
+CurrencySubunitSingular=santim
+CurrencySubunitPlural=santim
+CurrencyIntroducedDate=1945,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=ET

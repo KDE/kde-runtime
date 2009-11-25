@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=DEM
+CurrencyCodeIsoNumeric3=276
+#Context for Name: Adjectival Country Name and Currency Name
+Name=German Mark
+CurrencyNameIso= German mark
+CurrencyUnitSymbols=DM,DEM
+CurrencyUnitSymbolDefault=DM
+CurrencyUnitSymbolUnambiguous=DM
+CurrencyUnitSingular=mark
+CurrencyUnitPlural=mark
+CurrencySubunitSymbol=Pf.
+CurrencySubunitSingular=pfennig
+CurrencySubunitPlural=pfennig
+CurrencyIntroducedDate=1948,01,01
+#CurrencySuspendedDate=
+CurrencyWithdrawnDate=2001,12,31
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=

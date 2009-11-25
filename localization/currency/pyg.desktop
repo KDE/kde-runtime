@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=PYG
+CurrencyCodeIsoNumeric3=600
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Paraguayan Guarani
+CurrencyNameIso=Guarani
+CurrencyUnitSymbols=₲,PYG
+CurrencyUnitSymbolDefault=₲
+CurrencyUnitSymbolUnambiguous=₲
+CurrencyUnitSingular=guaraní
+CurrencyUnitPlural=guaraníes
+CurrencySubunitSymbol=
+CurrencySubunitSingular=céntimo
+CurrencySubunitPlural=céntimos
+CurrencyIntroducedDate=1943,10,05
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=PY

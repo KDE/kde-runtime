@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=TMM
+CurrencyCodeIsoNumeric3=795
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Turkmenistani Manat
+CurrencyNameIso=Manat
+CurrencyUnitSymbols=m,TMM
+CurrencyUnitSymbolDefault=m
+CurrencyUnitSymbolUnambiguous=m
+CurrencyUnitSingular=manat
+CurrencyUnitPlural=manat
+CurrencySubunitSymbol=
+CurrencySubunitSingular=tennesi
+CurrencySubunitPlural=tennesi
+CurrencyIntroducedDate=2009,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=TM

@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=QAR
+CurrencyCodeIsoNumeric3=634
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Qatari Riyal
+CurrencyNameIso=Qatari rial
+CurrencyUnitSymbols=ر.ق,QR,QAR
+CurrencyUnitSymbolDefault=ر.ق
+CurrencyUnitSymbolUnambiguous=ر.ق
+CurrencyUnitSingular=riyal
+CurrencyUnitPlural=riyals
+CurrencySubunitSymbol=
+CurrencySubunitSingular=dirham
+CurrencySubunitPlural=dirhams
+CurrencyIntroducedDate=1966,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=QA

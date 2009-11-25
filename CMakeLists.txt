@@ -111,6 +111,7 @@ add_subdirectory(platforms)
 
 # Default settings, content and config
 add_subdirectory(l10n)
+add_subdirectory(localization)
 add_subdirectory(kde-menu)
 macro_optional_add_subdirectory(doc)
 

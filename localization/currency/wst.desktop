@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=WST
+CurrencyCodeIsoNumeric3=882
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Samoan Tala
+CurrencyNameIso=Samoan tala
+CurrencyUnitSymbols=WS$,SAT,ST,T,WST
+CurrencyUnitSymbolDefault=WS$
+CurrencyUnitSymbolUnambiguous=WS$
+CurrencyUnitSingular=
+CurrencyUnitPlural=
+CurrencySubunitSymbol=
+CurrencySubunitSingular=
+CurrencySubunitPlural=
+CurrencyIntroducedDate=1967,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=WS

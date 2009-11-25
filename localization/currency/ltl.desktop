@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=LTL
+CurrencyCodeIsoNumeric3=440
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Lithuanian Litas
+CurrencyNameIso=Lithuanian litas
+CurrencyUnitSymbols=Lt,LTL
+CurrencyUnitSymbolDefault=Lt
+CurrencyUnitSymbolUnambiguous=Lt
+CurrencyUnitSingular=litas
+CurrencyUnitPlural=litai
+CurrencySubunitSymbol=
+CurrencySubunitSingular=centas
+CurrencySubunitPlural=centai
+CurrencyIntroducedDate=1993,06,25
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=LT

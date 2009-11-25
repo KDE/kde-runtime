@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=MAD
+CurrencyCodeIsoNumeric3=504
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Moroccan Dirham
+CurrencyNameIso=Moroccan dirham
+CurrencyUnitSymbols=د.م.,MAD
+CurrencyUnitSymbolDefault=د.م.
+CurrencyUnitSymbolUnambiguous=د.م.
+CurrencyUnitSingular=dirham
+CurrencyUnitPlural=dirhams
+CurrencySubunitSymbol=
+CurrencySubunitSingular=santim
+CurrencySubunitPlural=santims
+CurrencyIntroducedDate=1960,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=MA,EH

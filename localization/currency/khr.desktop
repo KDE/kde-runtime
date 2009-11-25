@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=KHR
+CurrencyCodeIsoNumeric3=116
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Cambodian Riel
+CurrencyNameIso=Riel
+CurrencyUnitSymbols=KHR
+CurrencyUnitSymbolDefault=KHR
+CurrencyUnitSymbolUnambiguous=KHR
+CurrencyUnitSingular=riel
+CurrencyUnitPlural=riel
+CurrencySubunitSymbol=
+CurrencySubunitSingular=sen
+CurrencySubunitPlural=sen
+CurrencyIntroducedDate=1980,04,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+CurrencySubunits=2
+CurrencySubunitsInCirculation=false
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=KH

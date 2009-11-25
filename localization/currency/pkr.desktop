@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=PKR
+CurrencyCodeIsoNumeric3=586
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Pakistan Rupee
+CurrencyNameIso=Pakistan rupee
+CurrencyUnitSymbols=Rs,PKR
+CurrencyUnitSymbolDefault=Rs
+CurrencyUnitSymbolUnambiguous=PKR
+CurrencyUnitSingular=rupee
+CurrencyUnitPlural=rupees
+CurrencySubunitSymbol=
+CurrencySubunitSingular=paisa
+CurrencySubunitPlural=paisas
+CurrencyIntroducedDate=1948,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=PK

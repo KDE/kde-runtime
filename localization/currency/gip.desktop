@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=GIP
+CurrencyCodeIsoNumeric3=292
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Gibraltar Pound
+CurrencyNameIso=Gibraltar pound
+CurrencyUnitSymbols=£,GI£,GIP
+CurrencyUnitSymbolDefault=£
+CurrencyUnitSymbolUnambiguous=GI£
+CurrencyUnitSingular=pound
+CurrencyUnitPlural=pounds
+CurrencySubunitSymbol=p
+CurrencySubunitSingular=penny
+CurrencySubunitPlural=pence
+CurrencyIntroducedDate=1971,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=GI

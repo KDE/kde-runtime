@@ -1,0 +1,23 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=GBP
+CurrencyCodeIsoNumeric3=826
+#Context for Name: Adjectival Country Name and Currency Name
+Name=British Pound Sterling
+CurrencyNameIso=Pound sterling
+CurrencyUnitSymbols=£,GBP
+CurrencyUnitSymbolDefault=£
+#CurrencyUnitSymbolUnambiguous=
+CurrencyUnitSingular=pound
+CurrencyUnitPlural=pounds
+CurrencySubunitSymbol=p
+CurrencySubunitSingular=penny
+CurrencySubunitPlural=pence
+#Use decimalisation day?
+CurrencyIntroducedDate=1971,02,15
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=UK,FK,GI,GG,IM,JE,SH,GS,ZW

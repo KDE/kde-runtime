@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=HNL
+CurrencyCodeIsoNumeric3=340
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Honduran Lempira
+CurrencyNameIso=Lempira
+CurrencyUnitSymbols=L,HNL
+CurrencyUnitSymbolDefault=L
+CurrencyUnitSymbolUnambiguous=HNL
+CurrencyUnitSingular=lempira
+CurrencyUnitPlural=lempiras
+CurrencySubunitSymbol=
+CurrencySubunitSingular=centavo
+CurrencySubunitPlural=centavos
+CurrencyIntroducedDate=1931,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=HN

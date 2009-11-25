@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=MKD
+CurrencyCodeIsoNumeric3=807
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Macedonian Denar
+CurrencyNameIso=Denar
+CurrencyUnitSymbols=ден,MKD
+CurrencyUnitSymbolDefault=ден
+CurrencyUnitSymbolUnambiguous=ден
+CurrencyUnitSingular=denar
+CurrencyUnitPlural=denari
+CurrencySubunitSymbol=
+CurrencySubunitSingular=deni
+CurrencySubunitPlural=deni
+CurrencyIntroducedDate=1993,05,05
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=MK

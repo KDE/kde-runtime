@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=NGN
+CurrencyCodeIsoNumeric3=566
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Nigerian Naira
+CurrencyNameIso=Naira
+CurrencyUnitSymbols=₦,NGN
+CurrencyUnitSymbolDefault=₦
+CurrencyUnitSymbolUnambiguous=₦
+CurrencyUnitSingular=naira
+CurrencyUnitPlural=naira
+CurrencySubunitSymbol=
+CurrencySubunitSingular=kobo
+CurrencySubunitPlural=kobo
+CurrencyIntroducedDate=1973,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=NG

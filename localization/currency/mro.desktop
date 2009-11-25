@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=MRO
+CurrencyCodeIsoNumeric3=478
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Mauritanian Ouguiya
+CurrencyNameIso=Ouguiya
+CurrencyUnitSymbols=UM,MRO
+CurrencyUnitSymbolDefault=UM
+CurrencyUnitSymbolUnambiguous=UM
+CurrencyUnitSingular=ouguiya
+CurrencyUnitPlural=ouguiya
+CurrencySubunitSymbol=
+CurrencySubunitSingular=khoums
+CurrencySubunitPlural=khoums
+CurrencyIntroducedDate=1973,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+CurrencySubunitsPerUnit=5
+CurrencyDecimalPlacesDisplay=1
+CurrencyCountriesInUse=MR

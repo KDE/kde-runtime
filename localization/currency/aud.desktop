@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=AUD
+CurrencyCodeIsoNumeric3=036
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Australian Dollar
+CurrencyNameIso=Australian dollar
+CurrencyUnitSymbols=$,A$,AU$,AUD
+CurrencyUnitSymbolDefault=$
+CurrencyUnitSymbolUnambiguous=AU$
+CurrencyUnitSingular=dollar
+CurrencyUnitPlural=dollars
+CurrencySubunitSymbol=c
+CurrencySubunitSingular=cent
+CurrencySubunitPlural=cents
+CurrencyIntroducedDate=1966,02,14
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=AU,CX,CC,HM,NF,KI,NR,TV

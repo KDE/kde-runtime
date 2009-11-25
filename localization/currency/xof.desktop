@@ -1,0 +1,23 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=XOF
+CurrencyCodeIsoNumeric3=952
+#Context for Name: Adjectival Country Name and Currency Name
+Name=West African CFA Franc
+CurrencyNameIso=CFA Franc BCEAO
+CurrencyUnitSymbols=CFA,XOF
+CurrencyUnitSymbolDefault=CFA
+CurrencyUnitSymbolUnambiguous=CFA
+CurrencyUnitSingular=
+CurrencyUnitPlural=
+CurrencySubunitSymbol=
+CurrencySubunitSingular=
+CurrencySubunitPlural=
+CurrencyIntroducedDate=1945,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+CurrencySubunitsInCirculation=false
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=BJ,BF,CI,GW,ML,NE,SN,TG
+Benin, Burkina Faso, Côte d'Ivoire, Guinea-Bissau, Mali, Niger, Senegal, Togo

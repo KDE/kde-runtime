@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=DJF
+CurrencyCodeIsoNumeric3=262
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Djibouti Franc
+CurrencyNameIso=Djibouti franc
+CurrencyUnitSymbols=Fdj,DJF
+CurrencyUnitSymbolDefault=Fdj
+CurrencyUnitSymbolUnambiguous=Fdj
+CurrencyUnitSingular=franc
+CurrencyUnitPlural=francs
+CurrencySubunitSymbol=
+CurrencySubunitSingular=centime
+CurrencySubunitPlural=centimes
+CurrencyIntroducedDate=1949,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+CurrencySubunitsInCirculation=false
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=DJ

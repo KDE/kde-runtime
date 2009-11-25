@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=ISK
+CurrencyCodeIsoNumeric3=
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Iceland krona
+CurrencyNameIso=Iceland krona
+CurrencyUnitSymbols=kr,Íkr,ISK
+CurrencyUnitSymbolDefault=kr
+CurrencyUnitSymbolUnambiguous=ISK
+CurrencyUnitSingular=krona
+CurrencyUnitPlural=kronur
+CurrencySubunitSymbol=
+CurrencySubunitSingular=eyrir
+CurrencySubunitPlural=aurar
+CurrencyIntroducedDate=1981,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+CurrencySubunitsInCirculation=false
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=IS

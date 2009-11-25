@@ -1,0 +1,23 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=ZAR
+CurrencyCodeIsoNumeric3=710
+#Context for Name: Adjectival Country Name and Currency Name
+Name=South African Rand
+CurrencyNameIso=South African rand
+CurrencyUnitSymbols=R,ZAR
+CurrencyUnitSymbolDefault=R
+#CurrencyUnitSymbolUnambiguous=
+CurrencyUnitSingular=rand
+CurrencyUnitPlural=rand
+CurrencySubunitSymbol=c
+CurrencySubunitSingular=cent
+CurrencySubunitPlural=cents
+#Exact day in 1961 unknown
+CurrencyIntroducedDate=1961,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=ZA,LS,NA,SZ,ZW

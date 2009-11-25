@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=GHC
+CurrencyCodeIsoNumeric3=288
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Ghanaian Cedi
+CurrencyNameIso=Ghanaian cedi
+CurrencyUnitSymbols=₵,GHC
+CurrencyUnitSymbolDefault=₵
+CurrencyUnitSymbolUnambiguous=₵
+CurrencyUnitSingular=cedi
+CurrencyUnitPlural=cedi
+CurrencySubunitSymbol=
+CurrencySubunitSingular=pesewa
+CurrencySubunitPlural=pesewa
+CurrencyIntroducedDate=1967,01,01
+#CurrencySuspendedDate=
+CurrencyWithdrawnDate=2007,06,30
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=

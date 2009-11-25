@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=ZWL
+CurrencyCodeIsoNumeric3=932
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Zimbabwean Dollar
+CurrencyNameIso=Zimbabwe dollar
+CurrencyUnitSymbols=$,Z$,ZWL
+CurrencyUnitSymbolDefault=$
+CurrencyUnitSymbolUnambiguous=Z$
+CurrencyUnitSingular=dollar
+CurrencyUnitPlural=dollars
+CurrencySubunitSymbol=
+CurrencySubunitSingular=cent
+CurrencySubunitPlural=cents
+CurrencyIntroducedDate=2009,02,02
+CurrencySuspendedDate=2009,04,12
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=ZW

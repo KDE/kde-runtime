@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=PAB
+CurrencyCodeIsoNumeric3=590
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Panamanian Balboa
+CurrencyNameIso=Balboa
+CurrencyUnitSymbols=PAB
+CurrencyUnitSymbolDefault=PAB
+CurrencyUnitSymbolUnambiguous=PAB
+CurrencyUnitSingular=balboa
+CurrencyUnitPlural=balboa
+CurrencySubunitSymbol=
+CurrencySubunitSingular=centesimo
+CurrencySubunitPlural=centesimos
+CurrencyIntroducedDate=1904,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=PA

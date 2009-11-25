@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=LVL
+CurrencyCodeIsoNumeric3=482
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Latvian Lats
+CurrencyNameIso=Latvian lats
+CurrencyUnitSymbols=Ls,LVL
+CurrencyUnitSymbolDefault=Ls
+CurrencyUnitSymbolUnambiguous=Ls
+CurrencyUnitSingular=lats
+CurrencyUnitPlural=lati
+CurrencySubunitSymbol=s
+CurrencySubunitSingular=santims
+CurrencySubunitPlural=santimi
+CurrencyIntroducedDate=1993,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=LV

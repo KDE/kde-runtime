@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=ANG
+CurrencyCodeIsoNumeric3=532
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Netherlands Antillean Guilder
+CurrencyNameIso=Netherlands Antillean guilder
+CurrencyUnitSymbols=ƒ,ANG
+CurrencyUnitSymbolDefault=ƒ
+CurrencyUnitSymbolUnambiguous=ƒ
+CurrencyUnitSingular=guilder
+CurrencyUnitPlural=guilders
+CurrencySubunitSymbol=
+CurrencySubunitSingular=cent
+CurrencySubunitPlural=cents
+CurrencyIntroducedDate=
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=AN

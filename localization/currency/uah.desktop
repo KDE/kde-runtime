@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=UAH
+CurrencyCodeIsoNumeric3=980
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Ukrainian Hryvnia
+CurrencyNameIso=Hryvnia
+CurrencyUnitSymbols=₴,UAH
+CurrencyUnitSymbolDefault=₴
+CurrencyUnitSymbolUnambiguous=₴
+CurrencyUnitSingular=
+CurrencyUnitPlural=
+CurrencySubunitSymbol=
+CurrencySubunitSingular=
+CurrencySubunitPlural=
+CurrencyIntroducedDate=1996,09,02
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=UA

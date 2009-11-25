@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=CLP
+CurrencyCodeIsoNumeric3=152
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Chilean Peso
+CurrencyNameIso=Chilean peso
+CurrencyUnitSymbols=$,CL$,CLP
+CurrencyUnitSymbolDefault=$
+CurrencyUnitSymbolUnambiguous=CL$
+CurrencyUnitSingular=peso
+CurrencyUnitPlural=pesos
+CurrencySubunitSymbol=
+CurrencySubunitSingular=centavo
+CurrencySubunitPlural=centavos
+CurrencyIntroducedDate=1975,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+CurrencySubunitsInCirculation=false
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=CL

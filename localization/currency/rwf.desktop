@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=RWF
+CurrencyCodeIsoNumeric3=646
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Rwandan Franc
+CurrencyNameIso=Rwanda franc
+CurrencyUnitSymbols=RF,RWF
+CurrencyUnitSymbolDefault=RF
+CurrencyUnitSymbolUnambiguous=RF
+CurrencyUnitSingular=franc
+CurrencyUnitPlural=francs
+CurrencySubunitSymbol=
+CurrencySubunitSingular=centime
+CurrencySubunitPlural=centimes
+CurrencyIntroducedDate=1964,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=RW

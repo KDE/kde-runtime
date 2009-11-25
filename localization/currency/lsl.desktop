@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=LSL
+CurrencyCodeIsoNumeric3=426
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Lesotho Loti
+CurrencyNameIso=Lesotho loti
+CurrencyUnitSymbols=L,LSL
+CurrencyUnitSymbolDefault=L
+CurrencyUnitSymbolUnambiguous=LSL
+CurrencyUnitSingular=loti
+CurrencyUnitPlural=maloti
+CurrencySubunitSymbol=
+CurrencySubunitSingular=sente
+CurrencySubunitPlural=lisente
+CurrencyIntroducedDate=1966,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=LS

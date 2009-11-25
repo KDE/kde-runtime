@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=BND
+CurrencyCodeIsoNumeric3=096
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Brunei Dollar
+CurrencyNameIso=Brunei dollar
+CurrencyUnitSymbols=$,B$,BND
+CurrencyUnitSymbolDefault=$
+CurrencyUnitSymbolUnambiguous=B$
+CurrencyUnitSingular=dollar
+CurrencyUnitPlural=dollars
+CurrencySubunitSymbol=
+CurrencySubunitSingular=cent
+CurrencySubunitPlural=cents
+CurrencyIntroducedDate=1967,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=BN,SG

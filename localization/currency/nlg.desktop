@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=NLG
+CurrencyCodeIsoNumeric3=528
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Netherlands Guilder
+CurrencyNameIso=Netherlands guilder
+CurrencyUnitSymbols=ƒ,fl.,NLG
+CurrencyUnitSymbolDefault=ƒ
+CurrencyUnitSymbolUnambiguous=ƒ
+CurrencyUnitSingular=guilder
+CurrencyUnitPlural=guilders
+CurrencySubunitSymbol=
+CurrencySubunitSingular=cent
+CurrencySubunitPlural=cents
+CurrencyIntroducedDate=1817,01,01
+#CurrencySuspendedDate=
+CurrencyWithdrawnDate=2001,12,31
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=

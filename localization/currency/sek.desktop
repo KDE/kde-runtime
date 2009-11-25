@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=SEK
+CurrencyCodeIsoNumeric3=752
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Swedish Krona
+CurrencyNameIso=Swedish krona/kronor
+CurrencyUnitSymbols=kr,SEK
+CurrencyUnitSymbolDefault=kr
+CurrencyUnitSymbolUnambiguous=SEK
+CurrencyUnitSingular=krona
+CurrencyUnitPlural=kronor
+CurrencySubunitSymbol=
+CurrencySubunitSingular=ore
+CurrencySubunitPlural=ore
+CurrencyIntroducedDate=1914,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=SE

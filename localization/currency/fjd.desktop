@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=FJD
+CurrencyCodeIsoNumeric3=242
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Fijian Dollar
+CurrencyNameIso=Fiji dollar
+CurrencyUnitSymbols=$,FJ$,FJD
+CurrencyUnitSymbolDefault=$
+CurrencyUnitSymbolUnambiguous=FJ$
+CurrencyUnitSingular=dollar
+CurrencyUnitPlural=dollars
+CurrencySubunitSymbol=
+CurrencySubunitSingular=cent
+CurrencySubunitPlural=cents
+CurrencyIntroducedDate=1969,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=FJ

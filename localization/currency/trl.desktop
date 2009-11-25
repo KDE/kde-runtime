@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=TRL
+CurrencyCodeIsoNumeric3=792
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Turkish Lira A/05
+CurrencyNameIso=Turkish lira A/05
+CurrencyUnitSymbols=TL,£,TRL
+CurrencyUnitSymbolDefault=TL
+CurrencyUnitSymbolUnambiguous=TRL
+CurrencyUnitSingular=lira
+CurrencyUnitPlural=lira
+CurrencySubunitSymbol=
+CurrencySubunitSingular=kurush
+CurrencySubunitPlural=kurush
+CurrencyIntroducedDate=1844,01,01
+#CurrencySuspendedDate=
+CurrencyWithdrawnDate=2005,01,01
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=

@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=BRL
+CurrencyCodeIsoNumeric3=986
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Brazilian Real
+CurrencyNameIso=Brazilian real
+CurrencyUnitSymbols=R$,BRL
+CurrencyUnitSymbolDefault=R$
+CurrencyUnitSymbolUnambiguous=R$
+CurrencyUnitSingular=real
+CurrencyUnitPlural=reals
+CurrencySubunitSymbol=
+CurrencySubunitSingular=centavo
+CurrencySubunitPlural=centavos
+CurrencyIntroducedDate=1994,07,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=BR

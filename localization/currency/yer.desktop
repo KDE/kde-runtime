@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=YER
+CurrencyCodeIsoNumeric3=886
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Yemeni Rial
+CurrencyNameIso=Yemeni rial
+CurrencyUnitSymbols=YER
+CurrencyUnitSymbolDefault=YER
+CurrencyUnitSymbolUnambiguous=YER
+CurrencyUnitSingular=
+CurrencyUnitPlural=
+CurrencySubunitSymbol=
+CurrencySubunitSingular=
+CurrencySubunitPlural=
+CurrencyIntroducedDate=1990,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+CurrencySubunitsInCirculation=false
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=YE

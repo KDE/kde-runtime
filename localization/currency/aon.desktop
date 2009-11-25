@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=AON
+CurrencyCodeIsoNumeric3=024
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Angolan Novo Kwanza
+CurrencyNameIso=Angolan novo kwanza
+CurrencyUnitSymbols=Kz,AON
+CurrencyUnitSymbolDefault=Kz
+CurrencyUnitSymbolUnambiguous=Kz
+CurrencyUnitSingular=kwanza
+CurrencyUnitPlural=kwanzas
+#CurrencySubunitSymbol=
+#CurrencySubunitSingular=
+#CurrencySubunitPlural=
+CurrencyIntroducedDate=1990,09,25
+#CurrencySuspendedDate=
+CurrencyWithdrawnDate=1995,06,30
+CurrencySubunits=0
+CurrencySubunitsInCirculation=false
+CurrencySubunitsPerUnit=0
+CurrencyDecimalPlacesDisplay=0
+#CurrencyCountriesInUse=

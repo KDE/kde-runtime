@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=CAD
+CurrencyCodeIsoNumeric3=124
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Canadian Dollar
+CurrencyNameIso=Canadian dollar
+CurrencyUnitSymbols=$,C$,CAD
+CurrencyUnitSymbolDefault=$
+CurrencyUnitSymbolUnambiguous=C$
+CurrencyUnitSingular=dollar
+CurrencyUnitPlural=dollars
+CurrencySubunitSymbol=¢
+CurrencySubunitSingular=cent
+CurrencySubunitPlural=cents
+CurrencyIntroducedDate=1871,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=CA,PM

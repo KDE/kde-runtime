@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=SCR
+CurrencyCodeIsoNumeric3=690
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Seychellois Rupee
+CurrencyNameIso=Seychelles rupee
+CurrencyUnitSymbols=SR,SRe,SCR
+CurrencyUnitSymbolDefault=SR
+CurrencyUnitSymbolUnambiguous=SR
+CurrencyUnitSingular=rupee
+CurrencyUnitPlural=rupees
+CurrencySubunitSymbol=
+CurrencySubunitSingular=cent
+CurrencySubunitPlural=cents
+CurrencyIntroducedDate=1914,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=SC

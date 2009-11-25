@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=COU
+CurrencyCodeIsoNumeric3=970
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Colombian Unidad de Valor Real
+CurrencyNameIso=Unidad de Valor Real
+CurrencyUnitSymbols=COU
+CurrencyUnitSymbolDefault=COU
+CurrencyUnitSymbolUnambiguous=COU
+CurrencyUnitSingular=
+CurrencyUnitPlural=
+CurrencySubunitSymbol=
+CurrencySubunitSingular=
+CurrencySubunitPlural=
+CurrencyIntroducedDate=
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=CO

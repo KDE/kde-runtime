@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=NAD
+CurrencyCodeIsoNumeric3=516
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Namibian Dollar
+CurrencyNameIso=Namibian dollar
+CurrencyUnitSymbols=$,N$,NAD
+CurrencyUnitSymbolDefault=$
+CurrencyUnitSymbolUnambiguous=N$
+CurrencyUnitSingular=dollar
+CurrencyUnitPlural=dollars
+CurrencySubunitSymbol=
+CurrencySubunitSingular=cent
+CurrencySubunitPlural=cents
+CurrencyIntroducedDate=1993,09,15
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=NA

@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=BHD
+CurrencyCodeIsoNumeric3=048
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Bahraini Dinar
+CurrencyNameIso=Bahraini dinar
+CurrencyUnitSymbols=.د.ب,BD,BHD
+CurrencyUnitSymbolDefault=.د.ب
+CurrencyUnitSymbolUnambiguous=.د.ب
+CurrencyUnitSingular=dinar
+CurrencyUnitPlural=dinar
+CurrencySubunitSymbol=
+CurrencySubunitSingular=fils
+CurrencySubunitPlural=fils
+CurrencyIntroducedDate=1965,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+CurrencySubunitsPerUnit=1000
+CurrencyDecimalPlacesDisplay=3
+CurrencyCountriesInUse=BH

@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=ZWD
+CurrencyCodeIsoNumeric3=716
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Zimbabwean Dollar A/06
+CurrencyNameIso=Zimbabwean dollar A/06
+CurrencyUnitSymbols=$,Z$,ZWD
+CurrencyUnitSymbolDefault=$
+CurrencyUnitSymbolUnambiguous=ZWD
+CurrencyUnitSingular=dollar
+CurrencyUnitPlural=dollars
+CurrencySubunitSymbol=
+CurrencySubunitSingular=cent
+CurrencySubunitPlural=cents
+CurrencyIntroducedDate=1980-04-18
+#CurrencySuspendedDate=
+CurrencyWithdrawnDate=2006-07-31
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=

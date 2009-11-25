@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=COP
+CurrencyCodeIsoNumeric3=170
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Colombian Peso
+CurrencyNameIso=Colombian peso
+CurrencyUnitSymbols=$,COL$,COP
+CurrencyUnitSymbolDefault=$
+CurrencyUnitSymbolUnambiguous=COP$
+CurrencyUnitSingular=peso
+CurrencyUnitPlural=pesos
+CurrencySubunitSymbol=
+CurrencySubunitSingular=centavo
+CurrencySubunitPlural=centavos
+CurrencyIntroducedDate=1915,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+CurrencySubunitsInCirculation=false
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=CO

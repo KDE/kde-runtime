@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=XAG
+CurrencyCodeIsoNumeric3=961
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Silver
+CurrencyNameIso=Silver
+CurrencyUnitSymbols=XAG
+CurrencyUnitSymbolDefault=XAG
+CurrencyUnitSymbolUnambiguous=XAG
+CurrencyUnitSingular=
+CurrencyUnitPlural=
+CurrencySubunitSymbol=
+CurrencySubunitSingular=
+CurrencySubunitPlural=
+CurrencyIntroducedDate=
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=

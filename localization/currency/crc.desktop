@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=CRC
+CurrencyCodeIsoNumeric3=188
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Costa Rican Colon
+CurrencyNameIso=Costa Rican colon
+CurrencyUnitSymbols=₡,CRC
+CurrencyUnitSymbolDefault=₡
+CurrencyUnitSymbolUnambiguous=₡
+CurrencyUnitSingular=colon
+CurrencyUnitPlural=colons
+CurrencySubunitSymbol=
+CurrencySubunitSingular=centimo
+CurrencySubunitPlural=centimos
+CurrencyIntroducedDate=1896,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+CurrencySubunitsInCirculation=false
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=CR

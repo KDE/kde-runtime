@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=SDG
+CurrencyCodeIsoNumeric3=938
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Sudanese Pound
+CurrencyNameIso=Sudanese pound
+CurrencyUnitSymbols=SDG
+CurrencyUnitSymbolDefault=SDG
+CurrencyUnitSymbolUnambiguous=SDG
+CurrencyUnitSingular=pound
+CurrencyUnitPlural=pounds
+CurrencySubunitSymbol=
+CurrencySubunitSingular=piastre
+CurrencySubunitPlural=piastres
+CurrencyIntroducedDate=2007,01,10
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=SD

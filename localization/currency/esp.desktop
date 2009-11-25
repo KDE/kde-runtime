@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=ESP
+CurrencyCodeIsoNumeric3=724
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Spanish Peseta
+CurrencyNameIso=Spanish peseta
+CurrencyUnitSymbols=Pta.,Pts.,Ptas,₧,ESP
+CurrencyUnitSymbolDefault=Pta.
+CurrencyUnitSymbolUnambiguous=Pta.
+CurrencyUnitSingular=peseta
+CurrencyUnitPlural=pesetas
+CurrencySubunitSymbol=centimo
+CurrencySubunitSingular=centimos
+CurrencySubunitPlural=
+CurrencyIntroducedDate=1869,01,01
+#CurrencySuspendedDate=
+CurrencyWithdrawnDate=2001,12,31
+#CurrencySubunits=1
+CurrencySubunitsInCirculation=false
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=

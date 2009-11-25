@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=GRE
+CurrencyCodeIsoNumeric3=300
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Greek Drachma
+CurrencyNameIso=Greek drachma
+CurrencyUnitSymbols=Δρχ.,Δρ.,₯,GRE
+CurrencyUnitSymbolDefault=Δρ.
+CurrencyUnitSymbolUnambiguous=Δρ.
+CurrencyUnitSingular=drachma
+CurrencyUnitPlural=drachmas
+CurrencySubunitSymbol=
+CurrencySubunitSingular=lepton
+CurrencySubunitPlural=leptons
+CurrencyIntroducedDate=1954,01,01
+#CurrencySuspendedDate=
+CurrencyWithdrawnDate=2001,12,31
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=

@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=BIF
+CurrencyCodeIsoNumeric3=108
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Burundian Franc
+CurrencyNameIso=Burundian franc
+CurrencyUnitSymbols=FBu,BIF
+CurrencyUnitSymbolDefault=FBu
+CurrencyUnitSymbolUnambiguous=FBu
+CurrencyUnitSingular=franc
+CurrencyUnitPlural=francs
+CurrencySubunitSymbol=
+CurrencySubunitSingular=centime
+CurrencySubunitPlural=centimes
+CurrencyIntroducedDate=1964,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+CurrencySubunitsInCirculation=false
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=BI

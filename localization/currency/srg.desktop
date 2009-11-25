@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=SRG
+CurrencyCodeIsoNumeric3=740
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Surinamese guilder
+CurrencyNameIso=Suriname guilder
+CurrencyUnitSymbols=ƒ,fl,SRG
+CurrencyUnitSymbolDefault=ƒ
+CurrencyUnitSymbolUnambiguous=SRD
+CurrencyUnitSingular=guilder
+CurrencyUnitPlural=guilders
+CurrencySubunitSymbol=
+CurrencySubunitSingular=cent
+CurrencySubunitPlural=cents
+CurrencyIntroducedDate=
+#CurrencySuspendedDate=
+CurrencyWithdrawnDate=2003,12,31
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=

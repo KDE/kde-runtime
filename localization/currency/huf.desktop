@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=HUF
+CurrencyCodeIsoNumeric3=348
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Hungarian Forint
+CurrencyNameIso=Forint
+CurrencyUnitSymbols=Ft,HUF
+CurrencyUnitSymbolDefault=Ft
+CurrencyUnitSymbolUnambiguous=Ft
+CurrencyUnitSingular=forint
+CurrencyUnitPlural=forint
+CurrencySubunitSymbol=
+CurrencySubunitSingular=filler
+CurrencySubunitPlural=fillers
+CurrencyIntroducedDate=1946,08,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+CurrencySubunitsInCirculation=false
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=HU

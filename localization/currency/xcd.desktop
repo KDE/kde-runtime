@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=XCD
+CurrencyCodeIsoNumeric3=951
+#Context for Name: Adjectival Country Name and Currency Name
+Name=East Caribbean Dollar
+CurrencyNameIso=East Caribbean dollar
+CurrencyUnitSymbols=$,EC$,XCD
+CurrencyUnitSymbolDefault=$
+CurrencyUnitSymbolUnambiguous=EC$
+CurrencyUnitSingular=
+CurrencyUnitPlural=
+CurrencySubunitSymbol=
+CurrencySubunitSingular=
+CurrencySubunitPlural=
+CurrencyIntroducedDate=1965,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=AI,AG,DM,GD,MS,KN,LC,VC

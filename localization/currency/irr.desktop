@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=IRR
+CurrencyCodeIsoNumeric3=364
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Iranian Rial
+CurrencyNameIso=Iranian rial
+CurrencyUnitSymbols=﷼,IRR
+CurrencyUnitSymbolDefault=﷼
+CurrencyUnitSymbolUnambiguous=﷼
+CurrencyUnitSingular=rial
+CurrencyUnitPlural=rials
+CurrencySubunitSymbol=
+CurrencySubunitSingular=dinar
+CurrencySubunitPlural=dinars
+CurrencyIntroducedDate=1932,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=IR

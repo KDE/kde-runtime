@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=MXN
+CurrencyCodeIsoNumeric3=484
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Mexican Peso
+CurrencyNameIso=Mexican peso
+CurrencyUnitSymbols=$,Mex$,MXN
+CurrencyUnitSymbolDefault=$
+CurrencyUnitSymbolUnambiguous=Mex$
+CurrencyUnitSingular=peso
+CurrencyUnitPlural=pesos
+CurrencySubunitSymbol=¢
+CurrencySubunitSingular=centavo
+CurrencySubunitPlural=centavos
+CurrencyIntroducedDate=1993,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=MX

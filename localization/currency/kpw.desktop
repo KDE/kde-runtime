@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=KPW
+CurrencyCodeIsoNumeric3=408
+#Context for Name: Adjectival Country Name and Currency Name
+Name=North Korean Won
+CurrencyNameIso=North Korean won
+CurrencyUnitSymbols=₩,KPW
+CurrencyUnitSymbolDefault=₩
+CurrencyUnitSymbolUnambiguous=₩
+CurrencyUnitSingular=won
+CurrencyUnitPlural=won
+CurrencySubunitSymbol=
+CurrencySubunitSingular=chon
+CurrencySubunitPlural=chon
+CurrencyIntroducedDate=1959,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+CurrencySubunitsInCirculation=false
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=KP

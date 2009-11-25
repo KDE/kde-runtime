@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=PEN
+CurrencyCodeIsoNumeric3=604
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Nuevo Sol
+CurrencyNameIso=Nuevo sol
+CurrencyUnitSymbols=S/.,PEN
+CurrencyUnitSymbolDefault=S/.
+CurrencyUnitSymbolUnambiguous=S/.
+CurrencyUnitSingular=nuevo sol
+CurrencyUnitPlural=nuevos soles
+CurrencySubunitSymbol=
+CurrencySubunitSingular=centimo
+CurrencySubunitPlural=centimos
+CurrencyIntroducedDate=1991,07,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=PE

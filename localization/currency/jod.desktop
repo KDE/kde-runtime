@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=JOD
+CurrencyCodeIsoNumeric3=400
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Jordanian Dinar
+CurrencyNameIso=Jordanian dinar
+CurrencyUnitSymbols=JD,JOD
+CurrencyUnitSymbolDefault=JD
+CurrencyUnitSymbolUnambiguous=JD
+CurrencyUnitSingular=dinar
+CurrencyUnitPlural=dinar
+CurrencySubunitSymbol=
+CurrencySubunitSingular=piastre
+CurrencySubunitPlural=piastres
+CurrencyIntroducedDate=1949,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+CurrencySubunits=3
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=JO,PS

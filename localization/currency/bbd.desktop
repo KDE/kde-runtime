@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=BBD
+CurrencyCodeIsoNumeric3=052
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Barbados Dollar
+CurrencyNameIso=Barbados dollar
+CurrencyUnitSymbols=$,Bds$,BBD
+CurrencyUnitSymbolDefault=$
+CurrencyUnitSymbolUnambiguous=Bds$
+CurrencyUnitSingular=dollar
+CurrencyUnitPlural=dollars
+CurrencySubunitSymbol=
+CurrencySubunitSingular=cent
+CurrencySubunitPlural=cents
+CurrencyIntroducedDate=1973,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=BB

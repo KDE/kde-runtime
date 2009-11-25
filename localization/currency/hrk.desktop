@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=HRK
+CurrencyCodeIsoNumeric3=191
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Croatian Kuna
+CurrencyNameIso=Croatian kuna
+CurrencyUnitSymbols=kn,HRK
+CurrencyUnitSymbolDefault=kn
+CurrencyUnitSymbolUnambiguous=kn
+CurrencyUnitSingular=kuna
+CurrencyUnitPlural=kuna
+CurrencySubunitSymbol=lp
+CurrencySubunitSingular=lipa
+CurrencySubunitPlural=lipa
+CurrencyIntroducedDate=1994,05,30
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=HR

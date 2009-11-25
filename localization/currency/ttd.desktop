@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=TTD
+CurrencyCodeIsoNumeric3=780
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Trinidad and Tobago Dollar
+CurrencyNameIso=Trinidad and Tobago dollar
+CurrencyUnitSymbols=$,TT$,TTD
+CurrencyUnitSymbolDefault=$
+CurrencyUnitSymbolUnambiguous=TT$
+CurrencyUnitSingular=dollar
+CurrencyUnitPlural=dollars
+CurrencySubunitSymbol=¢
+CurrencySubunitSingular=cent
+CurrencySubunitPlural=cents
+CurrencyIntroducedDate=1964,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=TT

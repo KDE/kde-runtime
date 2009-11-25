@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=JPY
+CurrencyCodeIsoNumeric3=392
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Japanese Yen
+CurrencyNameIso=Japanese yen
+CurrencyUnitSymbols=¥,JPY
+CurrencyUnitSymbolDefault=¥
+CurrencyUnitSymbolUnambiguous=¥
+CurrencyUnitSingular=yen
+CurrencyUnitPlural=yen
+CurrencySubunitSymbol=
+CurrencySubunitSingular=sen
+CurrencySubunitPlural=sen
+CurrencyIntroducedDate=1871,05,10
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+CurrencySubunits=2
+CurrencySubunitsInCirculation=false
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=JP

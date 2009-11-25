@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=LYD
+CurrencyCodeIsoNumeric3=434
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Libyan Dinar
+CurrencyNameIso=Libyan dinar
+CurrencyUnitSymbols=ل.د,LD,LYD
+CurrencyUnitSymbolDefault=ل.د
+CurrencyUnitSymbolUnambiguous=ل.د
+CurrencyUnitSingular=dinar
+CurrencyUnitPlural=dinars
+CurrencySubunitSymbol=
+CurrencySubunitSingular=dirham
+CurrencySubunitPlural=dirhams
+CurrencyIntroducedDate=1971,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+CurrencySubunitsPerUnit=1000
+CurrencyDecimalPlacesDisplay=3
+CurrencyCountriesInUse=LY

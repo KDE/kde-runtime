@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=ERN
+CurrencyCodeIsoNumeric3=232
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Eritrean Nakfa
+CurrencyNameIso=Nakfa
+CurrencyUnitSymbols=Nfk,ERN
+CurrencyUnitSymbolDefault=Nfk
+CurrencyUnitSymbolUnambiguous=Nfk
+CurrencyUnitSingular=nafka
+CurrencyUnitPlural=nafka
+CurrencySubunitSymbol=
+CurrencySubunitSingular=cent
+CurrencySubunitPlural=cents
+CurrencyIntroducedDate=1997,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=ER

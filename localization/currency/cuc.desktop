@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=CUC
+CurrencyCodeIsoNumeric3=931
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Cuban Convertible Peso
+CurrencyNameIso=Cuban convertible peso
+CurrencyUnitSymbols=$,CUC$,CUC
+CurrencyUnitSymbolDefault=$
+CurrencyUnitSymbolUnambiguous=CUC$
+CurrencyUnitSingular=peso
+CurrencyUnitPlural=pesos
+CurrencySubunitSymbol=¢
+CurrencySubunitSingular=centavo convertible
+CurrencySubunitPlural=centavos convertible
+CurrencyIntroducedDate=1994,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=CU

@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=CYP
+CurrencyCodeIsoNumeric3=196
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Cypriot Pound
+CurrencyNameIso=Cypriot pound
+CurrencyUnitSymbols=£,CYP
+CurrencyUnitSymbolDefault=£
+CurrencyUnitSymbolUnambiguous=CYP
+CurrencyUnitSingular=pound
+CurrencyUnitPlural=pounds
+CurrencySubunitSymbol=
+CurrencySubunitSingular=cent
+CurrencySubunitPlural=cents
+CurrencyIntroducedDate=1879,01,01
+#CurrencySuspendedDate=
+CurrencyWithdrawnDate=2007,12,31
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=

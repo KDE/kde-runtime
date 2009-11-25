@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=INR
+CurrencyCodeIsoNumeric3=356
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Indian Rupee
+CurrencyNameIso=Indian rupee
+CurrencyUnitSymbols=Rs.,रू,INR
+CurrencyUnitSymbolDefault=Rs.
+CurrencyUnitSymbolUnambiguous=Rs.
+CurrencyUnitSingular=rupee
+CurrencyUnitPlural=rupees
+CurrencySubunitSymbol=
+CurrencySubunitSingular=paisa
+CurrencySubunitPlural=paise
+CurrencyIntroducedDate=1957,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=IN,BT,NP

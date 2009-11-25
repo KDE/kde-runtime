@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=BSD
+CurrencyCodeIsoNumeric3=044
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Bahamian Dollar
+CurrencyNameIso=Bahamian dollar
+CurrencyUnitSymbols=$,B$,BSD
+CurrencyUnitSymbolDefault=$
+CurrencyUnitSymbolUnambiguous=B$
+CurrencyUnitSingular=dollar
+CurrencyUnitPlural=dollars
+CurrencySubunitSymbol=
+CurrencySubunitSingular=cent
+CurrencySubunitPlural=cents
+CurrencyIntroducedDate=1966,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=BS

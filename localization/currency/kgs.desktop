@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=KGS
+CurrencyCodeIsoNumeric3=417
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Kyrgyzstani Som
+CurrencyNameIso=Som
+CurrencyUnitSymbols=KGS
+CurrencyUnitSymbolDefault=KGS
+CurrencyUnitSymbolUnambiguous=KGS
+CurrencyUnitSingular=som
+CurrencyUnitPlural=som
+CurrencySubunitSymbol=
+CurrencySubunitSingular=tyiyn
+CurrencySubunitPlural=tyiyn
+CurrencyIntroducedDate=1993,05,10
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=KG

@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=RON
+CurrencyCodeIsoNumeric3=946
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Romanian Leu
+CurrencyNameIso=Romanian new leu
+CurrencyUnitSymbols=RON
+CurrencyUnitSymbolDefault=RON
+CurrencyUnitSymbolUnambiguous=RON
+CurrencyUnitSingular=leu
+CurrencyUnitPlural=lei
+CurrencySubunitSymbol=
+CurrencySubunitSingular=bani
+CurrencySubunitPlural=bani
+CurrencyIntroducedDate=2005,07,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=RO

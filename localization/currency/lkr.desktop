@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=LKR
+CurrencyCodeIsoNumeric3=144
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Sri Lankan Rupee
+CurrencyNameIso=Sri Lanka rupee
+CurrencyUnitSymbols=Rs,₨,SL₨s,SLRs,LKR
+CurrencyUnitSymbolDefault=Rs
+CurrencyUnitSymbolUnambiguous=SLRs
+CurrencyUnitSingular=rupee
+CurrencyUnitPlural=rupees
+CurrencySubunitSymbol=
+CurrencySubunitSingular=cent
+CurrencySubunitPlural=cents
+CurrencyIntroducedDate=
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=LK

@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=TPE
+CurrencyCodeIsoNumeric3=626
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Portuguese Timorese Escudo
+CurrencyNameIso=Portuguese Timorese escudo
+CurrencyUnitSymbols=TPE
+CurrencyUnitSymbolDefault=TPE
+CurrencyUnitSymbolUnambiguous=TPE
+CurrencyUnitSingular=escudo
+CurrencyUnitPlural=escudos
+CurrencySubunitSymbol=
+CurrencySubunitSingular=centavo
+CurrencySubunitPlural=centavos
+CurrencyIntroducedDate=1959,01,01
+#CurrencySuspendedDate=
+CurrencyWithdrawnDate=1976,01,01
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=

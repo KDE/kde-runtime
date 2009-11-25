@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=KMF
+CurrencyCodeIsoNumeric3=174
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Comorian Franc
+CurrencyNameIso=Comoro franc
+CurrencyUnitSymbols=CF,KMF
+CurrencyUnitSymbolDefault=CF
+CurrencyUnitSymbolUnambiguous=CF
+CurrencyUnitSingular=franc
+CurrencyUnitPlural=franc
+CurrencySubunitSymbol=
+CurrencySubunitSingular=centime
+CurrencySubunitPlural=centimes
+CurrencyIntroducedDate=
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+CurrencySubunitsInCirculation=false
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=KM

@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=MDL
+CurrencyCodeIsoNumeric3=498
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Moldovan Leu
+CurrencyNameIso=Moldovan leu
+CurrencyUnitSymbols=MDL
+CurrencyUnitSymbolDefault=MDL
+CurrencyUnitSymbolUnambiguous=MDL
+CurrencyUnitSingular=leu
+CurrencyUnitPlural=lei
+CurrencySubunitSymbol=
+CurrencySubunitSingular=ban
+CurrencySubunitPlural=bani
+CurrencyIntroducedDate=1993,11,29
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=MD

@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=AZM
+CurrencyCodeIsoNumeric3=031
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Azerbaijani Manat
+CurrencyNameIso=Azerbaijani manat
+CurrencyUnitSymbols=m,man,AZM
+CurrencyUnitSymbolDefault=m
+CurrencyUnitSymbolUnambiguous=m
+CurrencyUnitSingular=manat
+CurrencyUnitPlural=manat
+CurrencySubunitSymbol=
+CurrencySubunitSingular=qəpik
+CurrencySubunitPlural=qəpik
+CurrencyIntroducedDate=1992,08,15
+#CurrencySuspendedDate=
+CurrencyWithdrawnDate=2005,12,31
+#CurrencySubunits=1
+CurrencySubunitsInCirculation=false
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=

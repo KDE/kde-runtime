@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=MZN
+CurrencyCodeIsoNumeric3=943
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Mozambican Metical
+CurrencyNameIso=Metical
+CurrencyUnitSymbols=MTn,MZN
+CurrencyUnitSymbolDefault=MTn
+CurrencyUnitSymbolUnambiguous=MTn
+CurrencyUnitSingular=metical
+CurrencyUnitPlural=meticals
+CurrencySubunitSymbol=
+CurrencySubunitSingular=centavo
+CurrencySubunitPlural=centavos
+CurrencyIntroducedDate=2006,07,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=MZ

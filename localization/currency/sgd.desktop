@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=SGD
+CurrencyCodeIsoNumeric3=702
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Singapore Dollar
+CurrencyNameIso=Singapore dollar
+CurrencyUnitSymbols=$,S$,SGD
+CurrencyUnitSymbolDefault=$
+CurrencyUnitSymbolUnambiguous=S$
+CurrencyUnitSingular=dollar
+CurrencyUnitPlural=dollars
+CurrencySubunitSymbol=
+CurrencySubunitSingular=cent
+CurrencySubunitPlural=cents
+CurrencyIntroducedDate=1967,04,07
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=SG

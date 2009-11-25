@@ -1,0 +1,23 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=CNY
+CurrencyCodeIsoNumeric3=156
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Chinese Yuan
+CurrencyNameIso=Chinese Yuan
+CurrencyUnitSymbols=¥,CNY
+CurrencyUnitSymbolDefault=¥
+#CurrencyUnitSymbolUnambiguous=
+CurrencyUnitSingular=yuan
+CurrencyUnitPlural=yuan
+#CurrencySubunitSymbol=
+CurrencySubunitSingular=jiǎo
+CurrencySubunitPlural=jiǎo
+#Revalued on 1955-04-01?
+CurrencyIntroducedDate=1948,12,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+CurrencySubunits=2
+#CurrencySubunitsInCirculation=true
+CurrencySubunitsPerUnit=10
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=CN,HK,MO,KP,MM

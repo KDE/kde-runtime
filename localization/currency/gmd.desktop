@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=GMD
+CurrencyCodeIsoNumeric3=270
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Gambian Dalasi
+CurrencyNameIso=Dalasi
+CurrencyUnitSymbols=D,GMD
+CurrencyUnitSymbolDefault=D
+CurrencyUnitSymbolUnambiguous=D
+CurrencyUnitSingular=dalasi
+CurrencyUnitPlural=dalasis
+CurrencySubunitSymbol=
+CurrencySubunitSingular=butut
+CurrencySubunitPlural=bututs
+CurrencyIntroducedDate=1971,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=GM

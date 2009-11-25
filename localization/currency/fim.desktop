@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=FIM
+CurrencyCodeIsoNumeric3=246
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Finnish Markka
+CurrencyNameIso=Finnish markka
+CurrencyUnitSymbols=mk,FIM
+CurrencyUnitSymbolDefault=mk
+CurrencyUnitSymbolUnambiguous=mk
+CurrencyUnitSingular=markka
+CurrencyUnitPlural=markkaa
+CurrencySubunitSymbol=
+CurrencySubunitSingular=penni
+CurrencySubunitPlural=pennia
+CurrencyIntroducedDate=1860,01,01
+#CurrencySuspendedDate=
+CurrencyWithdrawnDate=2001,12,31
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=

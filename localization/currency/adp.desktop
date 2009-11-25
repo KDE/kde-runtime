@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=ADP
+CurrencyCodeIsoNumeric3=020
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Andorran Peseta
+CurrencyNameIso=Andorran peseta
+CurrencyUnitSymbols=Pt,Pta,Pts,Ptas,₧,ADP
+CurrencyUnitSymbolDefault=Pt
+CurrencyUnitSymbolUnambiguous=Pt
+CurrencyUnitSingular=peseta
+CurrencyUnitPlural=pesetas
+CurrencySubunitSymbol=
+CurrencySubunitSingular=céntimo
+CurrencySubunitPlural=céntimos
+CurrencyIntroducedDate=
+#CurrencySuspendedDate=
+CurrencyWithdrawnDate=2001,12,31
+#CurrencySubunits=1
+CurrencySubunitsInCirculation=false
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=

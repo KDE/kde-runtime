@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=RSD
+CurrencyCodeIsoNumeric3=941
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Serbian Dinar
+CurrencyNameIso=Serbian dinar
+CurrencyUnitSymbols=РСД,CSD
+CurrencyUnitSymbolDefault=РСД
+CurrencyUnitSymbolUnambiguous=РСД
+CurrencyUnitSingular=dinar
+CurrencyUnitPlural=dinara
+CurrencySubunitSymbol=
+CurrencySubunitSingular=para
+CurrencySubunitPlural=para
+CurrencyIntroducedDate=2006,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+CurrencySubunitsInCirculation=false
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=RS

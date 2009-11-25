@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=AFN
+CurrencyCodeIsoNumeric3=971
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Afghan afghani
+CurrencyNameIso=Afghan afghani
+CurrencyUnitSymbols=؋,AFN
+CurrencyUnitSymbolDefault=؋
+CurrencyUnitSymbolUnambiguous=؋
+CurrencyUnitSingular=afghani
+CurrencyUnitPlural=afghani
+CurrencySubunitSymbol=
+CurrencySubunitSingular=pul
+CurrencySubunitPlural=pul
+CurrencyIntroducedDate=2002,10,07
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=AF

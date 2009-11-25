@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=SDD
+CurrencyCodeIsoNumeric3=810
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Sudanese Dinar
+CurrencyNameIso=Sudanese dinar
+CurrencyUnitSymbols=LSd,£Sd,SDD
+CurrencyUnitSymbolDefault=LSd
+CurrencyUnitSymbolUnambiguous=LSd
+CurrencyUnitSingular=dinar
+CurrencyUnitPlural=dinars
+CurrencySubunitSymbol=
+CurrencySubunitSingular=
+CurrencySubunitPlural=
+CurrencyIntroducedDate=1992,06,08
+#CurrencySuspendedDate=
+CurrencyWithdrawnDate=2007,01,10
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=

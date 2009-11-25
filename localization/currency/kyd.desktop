@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=KYD
+CurrencyCodeIsoNumeric3=136
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Cayman Islands Dollar
+CurrencyNameIso=Cayman Islands dollar
+CurrencyUnitSymbols=$,CI$,KYD
+CurrencyUnitSymbolDefault=$
+CurrencyUnitSymbolUnambiguous=CI$
+CurrencyUnitSingular=dollar
+CurrencyUnitPlural=dollars
+CurrencySubunitSymbol=
+CurrencySubunitSingular=cent
+CurrencySubunitPlural=cents
+CurrencyIntroducedDate=1972,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=KY

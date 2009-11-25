@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=SYP
+CurrencyCodeIsoNumeric3=760
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Syrian Pound
+CurrencyNameIso=Syrian pound
+CurrencyUnitSymbols=SYP
+CurrencyUnitSymbolDefault=SYP
+CurrencyUnitSymbolUnambiguous=SYP
+CurrencyUnitSingular=pound
+CurrencyUnitPlural=pounds
+CurrencySubunitSymbol=
+CurrencySubunitSingular=piastre
+CurrencySubunitPlural=piastres
+CurrencyIntroducedDate=
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+CurrencySubunitsInCirculation=false
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=

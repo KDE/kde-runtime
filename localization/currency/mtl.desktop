@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=MTL
+CurrencyCodeIsoNumeric3=470
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Maltese Lira
+CurrencyNameIso=Maltese lira
+CurrencyUnitSymbols=Lm,£,MTL
+CurrencyUnitSymbolDefault=Lm
+CurrencyUnitSymbolUnambiguous=Lm
+CurrencyUnitSingular=lira
+CurrencyUnitPlural=liri
+CurrencySubunitSymbol=
+CurrencySubunitSingular=cent
+CurrencySubunitPlural=cents
+CurrencyIntroducedDate=1972,01,01
+#CurrencySuspendedDate=
+CurrencyWithdrawnDate=2007,12,31
+CurrencySubunits=2
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=

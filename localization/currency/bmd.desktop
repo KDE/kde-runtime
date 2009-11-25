@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=BMD
+CurrencyCodeIsoNumeric3=060
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Bermuda Dollar
+CurrencyNameIso=Bermudian dollar
+CurrencyUnitSymbols=$,BD$,BMD
+CurrencyUnitSymbolDefault=$
+CurrencyUnitSymbolUnambiguous=BD$
+CurrencyUnitSingular=dollar
+CurrencyUnitPlural=dollrs
+CurrencySubunitSymbol=
+CurrencySubunitSingular=cent
+CurrencySubunitPlural=cents
+CurrencyIntroducedDate=1970,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=BM

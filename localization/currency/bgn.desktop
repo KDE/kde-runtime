@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=BGN
+CurrencyCodeIsoNumeric3=975
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Bulgarian Lev
+CurrencyNameIso=Bulgarian lev
+CurrencyUnitSymbols=лв,BGN
+CurrencyUnitSymbolDefault=лв
+CurrencyUnitSymbolUnambiguous=лв
+CurrencyUnitSingular=lev
+CurrencyUnitPlural=leva
+CurrencySubunitSymbol=
+CurrencySubunitSingular=stotinka
+CurrencySubunitPlural=stotinki
+CurrencyIntroducedDate=1999,07,05
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=BG

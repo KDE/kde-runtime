@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=MMK
+CurrencyCodeIsoNumeric3=104
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Myanma Kyat
+CurrencyNameIso=Kyat
+CurrencyUnitSymbols=K,MMK
+CurrencyUnitSymbolDefault=K
+CurrencyUnitSymbolUnambiguous=K
+CurrencyUnitSingular=kyat
+CurrencyUnitPlural=kyats
+CurrencySubunitSymbol=
+CurrencySubunitSingular=pya
+CurrencySubunitPlural=pyas
+CurrencyIntroducedDate=1952,07,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+CurrencySubunitsInCirculation=false
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=MM

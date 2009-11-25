@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=DKK
+CurrencyCodeIsoNumeric3=208
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Danish Krone
+CurrencyNameIso=Danish krone
+CurrencyUnitSymbols=kr,DKK
+CurrencyUnitSymbolDefault=kr
+CurrencyUnitSymbolUnambiguous=kr
+CurrencyUnitSingular=krone
+CurrencyUnitPlural=kroner
+CurrencySubunitSymbol=
+CurrencySubunitSingular=øre
+CurrencySubunitPlural=øre
+CurrencyIntroducedDate=1914,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=DK,FO,GL

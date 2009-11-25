@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=PLN
+CurrencyCodeIsoNumeric3=985
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Polish Zloty
+CurrencyNameIso=Zloty
+CurrencyUnitSymbols=zł,PLN
+CurrencyUnitSymbolDefault=zł
+CurrencyUnitSymbolUnambiguous=zł
+CurrencyUnitSingular=zloty
+CurrencyUnitPlural=
+CurrencySubunitSymbol=gr
+CurrencySubunitSingular=grosz
+CurrencySubunitPlural=groszy
+CurrencyIntroducedDate=1995,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=PL

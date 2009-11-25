@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=NZD
+CurrencyCodeIsoNumeric3=554
+#Context for Name: Adjectival Country Name and Currency Name
+Name=New Zealand Dollar
+CurrencyNameIso=New Zealand Dollar
+CurrencyUnitSymbols=$,NZ$,NZD
+CurrencyUnitSymbolDefault=$
+CurrencyUnitSymbolUnambiguous=NZ$
+CurrencyUnitSingular=dollar
+CurrencyUnitPlural=dollars
+CurrencySubunitSymbol=c
+CurrencySubunitSingular=cent
+CurrencySubunitPlural=cents
+CurrencyIntroducedDate=1967,07,10
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=NZ,CK,NU,PN,TK

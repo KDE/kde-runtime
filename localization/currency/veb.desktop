@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=VEF
+CurrencyCodeIsoNumeric3=937
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Venezuelan Bolívar Fuerte
+CurrencyNameIso=Venezuelan bolívar fuerte
+CurrencyUnitSymbols=Bs. F,VEF
+CurrencyUnitSymbolDefault=Bs. F
+CurrencyUnitSymbolUnambiguous=Bs. F
+CurrencyUnitSingular=
+CurrencyUnitPlural=
+CurrencySubunitSymbol=
+CurrencySubunitSingular=
+CurrencySubunitPlural=
+CurrencyIntroducedDate=2008,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=VE

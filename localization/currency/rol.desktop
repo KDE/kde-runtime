@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=ROL
+CurrencyCodeIsoNumeric3=642
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Romanian Leu A/05
+CurrencyNameIso=Romanian leu A/05
+CurrencyUnitSymbols=ROL
+CurrencyUnitSymbolDefault=ROL
+CurrencyUnitSymbolUnambiguous=ROL
+CurrencyUnitSingular=leu
+CurrencyUnitPlural=lei
+CurrencySubunitSymbol=
+CurrencySubunitSingular=bani
+CurrencySubunitPlural=bani
+CurrencyIntroducedDate=1952,01,28
+#CurrencySuspendedDate=
+CurrencyWithdrawnDate=2006,12,31
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=

@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=MZM
+CurrencyCodeIsoNumeric3=508
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Mozambican Metical
+CurrencyNameIso=Mozambican metical
+CurrencyUnitSymbols=MTn,MZM
+CurrencyUnitSymbolDefault=MTn
+CurrencyUnitSymbolUnambiguous=MZM
+CurrencyUnitSingular=metical
+CurrencyUnitPlural=meticals
+CurrencySubunitSymbol=
+CurrencySubunitSingular=centavo
+CurrencySubunitPlural=centavos
+CurrencyIntroducedDate=1980,01,01
+#CurrencySuspendedDate=
+CurrencyWithdrawnDate=2006,06,30
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=

@@ -1,0 +1,23 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=EUR
+CurrencyCodeIsoNumeric3=978
+CurrencyNameIso=euro
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Euro
+CurrencyUnitSymbols=€,EUR
+CurrencyUnitSymbolDefault=€
+#CurrencyUnitSymbolUnambiguous=
+CurrencyUnitSingular=euro
+CurrencyUnitPlural=euros
+CurrencySubunitSymbol=c
+CurrencySubunitSingular=cent
+CurrencySubunitPlural=cents
+#Use accounting date
+CurrencyIntroducedDate=1999,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=AT,BE,CY,FI,FR,DE,GR,IE,IT,LU,MT,NL,PT,SK,SI,ES,MC,SM,VA,AD,ME,ZW

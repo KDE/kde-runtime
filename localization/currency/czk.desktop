@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=CZK
+CurrencyCodeIsoNumeric3=203
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Czech Koruna
+CurrencyNameIso=Czech Koruna
+CurrencyUnitSymbols=Kč,CZK
+CurrencyUnitSymbolDefault=Kč
+CurrencyUnitSymbolUnambiguous=Kč
+CurrencyUnitSingular=koruna
+CurrencyUnitPlural=korun
+CurrencySubunitSymbol=h
+CurrencySubunitSingular=haler
+CurrencySubunitPlural=haleru
+CurrencyIntroducedDate=
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=CZ

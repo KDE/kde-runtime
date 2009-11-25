@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=TZS
+CurrencyCodeIsoNumeric3=834
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Tanzanian Shilling
+CurrencyNameIso=Tanzanian shilling
+CurrencyUnitSymbols=/,TZS
+CurrencyUnitSymbolDefault=/
+CurrencyUnitSymbolUnambiguous=/
+CurrencyUnitSingular=shilling
+CurrencyUnitPlural=shillings
+CurrencySubunitSymbol=
+CurrencySubunitSingular=cent
+CurrencySubunitPlural=cents
+CurrencyIntroducedDate=1966,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=TZ

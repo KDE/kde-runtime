@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=KWD
+CurrencyCodeIsoNumeric3=414
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Kuwaiti Dinar
+CurrencyNameIso=Kuwaiti dinar
+CurrencyUnitSymbols=د.ك,KWD
+CurrencyUnitSymbolDefault=د.ك
+CurrencyUnitSymbolUnambiguous=د.ك
+CurrencyUnitSingular=dinar
+CurrencyUnitPlural=dinar
+CurrencySubunitSymbol=
+CurrencySubunitSingular=fils
+CurrencySubunitPlural=fils
+CurrencyIntroducedDate=1961,01,01
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+CurrencySubunitsPerUnit=1000
+CurrencyDecimalPlacesDisplay=3
+CurrencyCountriesInUse=KW

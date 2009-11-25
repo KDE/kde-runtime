@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=VND
+CurrencyCodeIsoNumeric3=704
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Vietnamese Dong
+CurrencyNameIso=Vietnamese đồng
+CurrencyUnitSymbols=₫,VND
+CurrencyUnitSymbolDefault=₫
+CurrencyUnitSymbolUnambiguous=₫
+CurrencyUnitSingular=
+CurrencyUnitPlural=
+CurrencySubunitSymbol=
+CurrencySubunitSingular=
+CurrencySubunitPlural=
+CurrencyIntroducedDate=1978,05,03
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=VN

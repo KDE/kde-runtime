@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=SHP
+CurrencyCodeIsoNumeric3=654
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Saint Helena Pound
+CurrencyNameIso=Saint Helena pound
+CurrencyUnitSymbols=£,SH£,SHP
+CurrencyUnitSymbolDefault=£
+CurrencyUnitSymbolUnambiguous=SH£
+CurrencyUnitSingular=pound
+CurrencyUnitPlural=pounds
+CurrencySubunitSymbol=p
+CurrencySubunitSingular=penny
+CurrencySubunitPlural=pence
+CurrencyIntroducedDate=
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=SH

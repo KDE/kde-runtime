@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=PTE
+CurrencyCodeIsoNumeric3=620
+#Context for Name: Adjectival Country Name and Currency Name
+Name=Portuguese Escudo
+CurrencyNameIso=Portuguese escudo
+CurrencyUnitSymbols=$,PTE
+CurrencyUnitSymbolDefault=$
+CurrencyUnitSymbolUnambiguous=PTE
+CurrencyUnitSingular=escudo
+CurrencyUnitPlural=escudos
+CurrencySubunitSymbol=
+CurrencySubunitSingular=centavo
+CurrencySubunitPlural=centavos
+CurrencyIntroducedDate=1911,05,22
+#CurrencySuspendedDate=
+CurrencyWithdrawnDate=2001,12,31
+#CurrencySubunits=1
+CurrencySubunitsInCirculation=false
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=
