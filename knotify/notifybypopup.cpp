@@ -402,6 +402,7 @@ bool NotifyByPopup::sendNotificationDBus(int id, int replacesId, KNotifyConfig* 
 #endif
 			m_idMap.insert(id, dbus_id);
 			kDebug(300) << "mapping knotify id to dbus id:"<< id << "=>" << dbus_id;
+
 			return true;
 		} else {
 			kDebug(300) << "error: received reply with no arguments";
