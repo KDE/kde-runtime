@@ -7,10 +7,11 @@ target_link_libraries(khotnewstuff4 ${KDE4_KNEWSTUFF3_LIBS} ${KDE4_KDECORE_LIBS}
 install(TARGETS khotnewstuff4 ${INSTALL_TARGETS_DEFAULT_ARGS} )
 install( FILES khotnewstuff.knsrc DESTINATION  ${CONFIG_INSTALL_DIR} )
 
-set(khotnewstuffupload_SRCS khotnewstuff_upload.cpp )
-kde4_add_executable(khotnewstuff-upload ${khotnewstuffupload_SRCS})
-target_link_libraries(khotnewstuff-upload ${KDE4_KNEWSTUFF3_LIBS} ${KDE4_KDECORE_LIBS} 
-                                    ${KDE4_KDEUI_LIBS} ${QT4_QTCORE_LIBRARY})
-install(TARGETS khotnewstuff-upload ${INSTALL_TARGETS_DEFAULT_ARGS} )
-install( FILES khotnewstuff_upload.knsrc DESTINATION  ${CONFIG_INSTALL_DIR} )
-
+if(LIBATTICA_FOUND)
+  set(khotnewstuffupload_SRCS khotnewstuff_upload.cpp )
+  kde4_add_executable(khotnewstuff-upload ${khotnewstuffupload_SRCS})
+  target_link_libraries(khotnewstuff-upload ${KDE4_KNEWSTUFF3_LIBS} ${KDE4_KDECORE_LIBS} 
+                                      ${KDE4_KDEUI_LIBS} ${QT4_QTCORE_LIBRARY})
+  install(TARGETS khotnewstuff-upload ${INSTALL_TARGETS_DEFAULT_ARGS} )
+  install( FILES khotnewstuff_upload.knsrc DESTINATION  ${CONFIG_INSTALL_DIR} )
+endif(LIBATTICA_FOUND)
