@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=DEM
 CurrencyCodeIsoNumeric3=276
 #Context for Name: Adjectival Country Name and Currency Name
 Name=German Mark
+Name[uk]=Німецька марка
 CurrencyNameIso= German mark
 CurrencyUnitSymbols=DM,DEM
 CurrencyUnitSymbolDefault=DM

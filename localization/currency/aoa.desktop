@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=AOA
 CurrencyCodeIsoNumeric3=973
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Angolan Kwanza
+Name[uk]=Ангольська кванза
 CurrencyNameIso=Angolan kwanza
 CurrencyUnitSymbols=Kz,AOA
 CurrencyUnitSymbolDefault=Kz

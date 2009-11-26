@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=BGN
 CurrencyCodeIsoNumeric3=975
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Bulgarian Lev
+Name[uk]=Болгарський лев
 CurrencyNameIso=Bulgarian lev
 CurrencyUnitSymbols=лв,BGN
 CurrencyUnitSymbolDefault=лв

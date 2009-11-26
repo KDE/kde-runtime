@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=GNF
 CurrencyCodeIsoNumeric3=324
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Guinean Franc
+Name[uk]=Гвінейський франк
 CurrencyNameIso=Guinea franc
 CurrencyUnitSymbols=FG,Fr,GFr,GNF
 CurrencyUnitSymbolDefault=FG

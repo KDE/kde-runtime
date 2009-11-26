@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=BZD
 CurrencyCodeIsoNumeric3=084
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Belize Dollar
+Name[uk]=Белізький долар
 CurrencyNameIso=Belize dollar
 CurrencyUnitSymbols=$,BZ$,BZD
 CurrencyUnitSymbolDefault=$

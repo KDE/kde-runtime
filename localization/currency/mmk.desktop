@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=MMK
 CurrencyCodeIsoNumeric3=104
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Myanma Kyat
+Name[uk]=М'янмський к’ят
 CurrencyNameIso=Kyat
 CurrencyUnitSymbols=K,MMK
 CurrencyUnitSymbolDefault=K

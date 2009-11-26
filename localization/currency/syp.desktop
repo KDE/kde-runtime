@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=SYP
 CurrencyCodeIsoNumeric3=760
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Syrian Pound
+Name[uk]=Сирійський фунт
 CurrencyNameIso=Syrian pound
 CurrencyUnitSymbols=SYP
 CurrencyUnitSymbolDefault=SYP

@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=USS
 CurrencyCodeIsoNumeric3=998
 #Context for Name: Adjectival Country Name and Currency Name
 Name=United States Dollar (Same Day)
+Name[uk]=Долар США (на поточну дату)
 CurrencyNameIso=United States dollar (same day)
 CurrencyUnitSymbols=$,US$,USS
 CurrencyUnitSymbolDefault=$

@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=ATS
 CurrencyCodeIsoNumeric3=040
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Austrian Schilling
+Name[uk]=Австрійський шилінг
 CurrencyNameIso=Austrian schilling
 CurrencyUnitSymbols=S,öS,ATS
 CurrencyUnitSymbolDefault=S

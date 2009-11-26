@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=RWF
 CurrencyCodeIsoNumeric3=646
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Rwandan Franc
+Name[uk]=Руандійський франк
 CurrencyNameIso=Rwanda franc
 CurrencyUnitSymbols=RF,RWF
 CurrencyUnitSymbolDefault=RF

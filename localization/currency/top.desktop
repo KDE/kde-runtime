@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=TOP
 CurrencyCodeIsoNumeric3=776
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Tongan Pa'anga
+Name[uk]=Паанга Тонга
 CurrencyNameIso=Pa'anga
 CurrencyUnitSymbols=T$,PT,TOP
 CurrencyUnitSymbolDefault=T$

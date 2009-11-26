@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=BGL
 CurrencyCodeIsoNumeric3=100
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Bulgarian Lev A/99
+Name[uk]=Болгарський лев до 99
 CurrencyNameIso=Bulgarian lev A/99
 CurrencyUnitSymbols=лв,BGL
 CurrencyUnitSymbolDefault=лв

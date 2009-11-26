@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=SHP
 CurrencyCodeIsoNumeric3=654
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Saint Helena Pound
+Name[uk]=Фунт острова Святої Єлени
 CurrencyNameIso=Saint Helena pound
 CurrencyUnitSymbols=£,SH£,SHP
 CurrencyUnitSymbolDefault=£

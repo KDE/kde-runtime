@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=KMF
 CurrencyCodeIsoNumeric3=174
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Comorian Franc
+Name[uk]=Франк Коморських островів
 CurrencyNameIso=Comoro franc
 CurrencyUnitSymbols=CF,KMF
 CurrencyUnitSymbolDefault=CF

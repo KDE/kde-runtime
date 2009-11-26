@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=GHC
 CurrencyCodeIsoNumeric3=288
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Ghanaian Cedi
+Name[uk]=Ганійське седі
 CurrencyNameIso=Ghanaian cedi
 CurrencyUnitSymbols=₵,GHC
 CurrencyUnitSymbolDefault=₵

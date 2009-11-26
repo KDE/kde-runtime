@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=XCD
 CurrencyCodeIsoNumeric3=951
 #Context for Name: Adjectival Country Name and Currency Name
 Name=East Caribbean Dollar
+Name[uk]=Східно-карибський долар
 CurrencyNameIso=East Caribbean dollar
 CurrencyUnitSymbols=$,EC$,XCD
 CurrencyUnitSymbolDefault=$

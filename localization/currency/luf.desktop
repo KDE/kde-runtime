@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=LUF
 CurrencyCodeIsoNumeric3=442
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Luxembourgish Franc
+Name[uk]=Люксембурзький франк
 CurrencyNameIso=Luxembourg franc
 CurrencyUnitSymbols=fr.,F,LUF
 CurrencyUnitSymbolDefault=fr.

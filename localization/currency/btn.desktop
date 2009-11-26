@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=BTN
 CurrencyCodeIsoNumeric3=064
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Bhutanese Ngultrum
+Name[uk]=Бутанський нгультрум
 CurrencyNameIso=Ngultrum
 CurrencyUnitSymbols=Nh.,BTN
 CurrencyUnitSymbolDefault=Nh.

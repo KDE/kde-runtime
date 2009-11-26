@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=ADP
 CurrencyCodeIsoNumeric3=020
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Andorran Peseta
+Name[uk]=Андоррська песета
 CurrencyNameIso=Andorran peseta
 CurrencyUnitSymbols=Pt,Pta,Pts,Ptas,₧,ADP
 CurrencyUnitSymbolDefault=Pt

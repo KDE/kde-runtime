@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=GEL
 CurrencyCodeIsoNumeric3=981
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Georgian Lari
+Name[uk]=Грузинське ларі
 CurrencyNameIso=Lari
 CurrencyUnitSymbols=GEL
 CurrencyUnitSymbolDefault=GEL

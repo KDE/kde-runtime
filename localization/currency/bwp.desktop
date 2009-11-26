@@ -4,6 +4,7 @@ CurrencyCodeIsoNumeric3=072
 CurrencyNameIso=Pula
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Botswana Pula
+Name[uk]=Пула Ботсвани
 CurrencyUnitSymbols=P,BWP
 CurrencyUnitSymbolDefault=P
 #CurrencyUnitSymbolUnambiguous=

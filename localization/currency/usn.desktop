@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=USN
 CurrencyCodeIsoNumeric3=997
 #Context for Name: Adjectival Country Name and Currency Name
 Name=United States Dollar (Next Day)
+Name[uk]=Долар США (на завтра)
 CurrencyNameIso=United States dollar (next day)
 CurrencyUnitSymbols=$,US$,USN
 CurrencyUnitSymbolDefault=$

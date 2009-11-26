@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=TMM
 CurrencyCodeIsoNumeric3=795
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Turkmenistani Manat
+Name[uk]=Туркменський манат
 CurrencyNameIso=Manat
 CurrencyUnitSymbols=m,TMM
 CurrencyUnitSymbolDefault=m

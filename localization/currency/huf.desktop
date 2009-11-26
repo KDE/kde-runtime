@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=HUF
 CurrencyCodeIsoNumeric3=348
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Hungarian Forint
+Name[uk]=Угорський форинт
 CurrencyNameIso=Forint
 CurrencyUnitSymbols=Ft,HUF
 CurrencyUnitSymbolDefault=Ft

@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=MGA
 CurrencyCodeIsoNumeric3=969
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Malagasy Ariary
+Name[uk]=Малагасійське аріарі
 CurrencyNameIso=Malagasy ariary
 CurrencyUnitSymbols=MGA
 CurrencyUnitSymbolDefault=MGA

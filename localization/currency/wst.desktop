@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=WST
 CurrencyCodeIsoNumeric3=882
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Samoan Tala
+Name[uk]=Самоанська тала
 CurrencyNameIso=Samoan tala
 CurrencyUnitSymbols=WS$,SAT,ST,T,WST
 CurrencyUnitSymbolDefault=WS$

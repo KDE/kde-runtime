@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=PGK
 CurrencyCodeIsoNumeric3=598
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Papua New Guinean Kina
+Name[uk]=Кіна Папуа-Нової Гвінеї
 CurrencyNameIso=Kina
 CurrencyUnitSymbols=K,PGK
 CurrencyUnitSymbolDefault=K

@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=SOS
 CurrencyCodeIsoNumeric3=706
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Somali Shilling
+Name[uk]=Сомалійський шилінг
 CurrencyNameIso=Somali shilling
 CurrencyUnitSymbols=So.,Sh.,SOS
 CurrencyUnitSymbolDefault=So.

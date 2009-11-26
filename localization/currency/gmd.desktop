@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=GMD
 CurrencyCodeIsoNumeric3=270
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Gambian Dalasi
+Name[uk]=Гамбійський даласі
 CurrencyNameIso=Dalasi
 CurrencyUnitSymbols=D,GMD
 CurrencyUnitSymbolDefault=D

@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=MGF
 CurrencyCodeIsoNumeric3=450
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Malagasy Franc
+Name[uk]=Малагасійський франк
 CurrencyNameIso=Malagasy franc
 CurrencyUnitSymbols=fr.,F,MGF
 CurrencyUnitSymbolDefault=fr.

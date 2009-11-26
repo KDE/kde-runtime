@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=ANG
 CurrencyCodeIsoNumeric3=532
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Netherlands Antillean Guilder
+Name[uk]=Гульден Нідерландських Антильських Островів
 CurrencyNameIso=Netherlands Antillean guilder
 CurrencyUnitSymbols=ƒ,ANG
 CurrencyUnitSymbolDefault=ƒ

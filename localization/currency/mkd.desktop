@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=MKD
 CurrencyCodeIsoNumeric3=807
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Macedonian Denar
+Name[uk]=Македонський денар
 CurrencyNameIso=Denar
 CurrencyUnitSymbols=ден,MKD
 CurrencyUnitSymbolDefault=ден

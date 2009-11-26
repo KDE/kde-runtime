@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=PLN
 CurrencyCodeIsoNumeric3=985
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Polish Zloty
+Name[uk]=Польський злотий
 CurrencyNameIso=Zloty
 CurrencyUnitSymbols=zł,PLN
 CurrencyUnitSymbolDefault=zł

@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=CRC
 CurrencyCodeIsoNumeric3=188
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Costa Rican Colon
+Name[uk]=Костариканський колон
 CurrencyNameIso=Costa Rican colon
 CurrencyUnitSymbols=₡,CRC
 CurrencyUnitSymbolDefault=₡

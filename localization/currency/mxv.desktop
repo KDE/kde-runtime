@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=MXV
 CurrencyCodeIsoNumeric3=979
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Mexican Unidad de Inversion
+Name[uk]=Мексиканський Unidad de Inversion (UDI
 CurrencyNameIso=Mexican Unidad de Inversion
 CurrencyUnitSymbols=UDI,MXV
 CurrencyUnitSymbolDefault=UDI

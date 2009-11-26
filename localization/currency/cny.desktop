@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=CNY
 CurrencyCodeIsoNumeric3=156
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Chinese Yuan
+Name[uk]=Китайський юань
 CurrencyNameIso=Chinese Yuan
 CurrencyUnitSymbols=¥,CNY
 CurrencyUnitSymbolDefault=¥

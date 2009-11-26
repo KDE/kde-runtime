@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=AWG
 CurrencyCodeIsoNumeric3=533
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Aruban Florin
+Name[uk]=Гульден Аруби
 CurrencyNameIso=Aruban guilder
 CurrencyUnitSymbols=Afl,ƒ,AWG
 CurrencyUnitSymbolDefault=Afl

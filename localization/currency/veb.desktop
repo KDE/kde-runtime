@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=VEF
 CurrencyCodeIsoNumeric3=937
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Venezuelan Bolívar Fuerte
+Name[uk]=Венесуельський Bolívar Fuerte
 CurrencyNameIso=Venezuelan bolívar fuerte
 CurrencyUnitSymbols=Bs. F,VEF
 CurrencyUnitSymbolDefault=Bs. F

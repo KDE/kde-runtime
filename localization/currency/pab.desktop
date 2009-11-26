@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=PAB
 CurrencyCodeIsoNumeric3=590
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Panamanian Balboa
+Name[uk]=Панамське бальбоа
 CurrencyNameIso=Balboa
 CurrencyUnitSymbols=PAB
 CurrencyUnitSymbolDefault=PAB
