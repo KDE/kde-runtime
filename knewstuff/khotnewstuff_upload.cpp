@@ -26,7 +26,7 @@
 #include <kcmdlineargs.h>
 #include <kaboutdata.h>
 
-#include <knewstuff3/downloaddialog.h>
+#include <knewstuff3/uploaddialog.h>
 
 int main(int argc, char **argv)
 {
@@ -38,24 +38,26 @@ int main(int argc, char **argv)
 
     KCmdLineOptions op;
     op.add("+filename", ki18n("Name of .knsrc file to read configuration from"));
-
+    //op.add("type <type>", ki18n("Display only media of this type"));
+    //op.add("+[providerlist]", ki18n("Provider list to use"));
     KCmdLineArgs::addCmdLineOptions(op);
     args = KCmdLineArgs::parsedArgs();
 
     KApplication i;
     
-    if (args->count() > 0) {
-        KNS3::DownloadDialog dialog(args->arg(0));
+    //if (args->count() > 0) {
+        KNS3::UploadDialog dialog("khotnewstuff_upload.knsrc");
+        dialog.setUploadFile(KUrl("/home/frederik/Sampleimages/allegorie.jpg"));
         dialog.exec();
-        foreach (const KNS3::Entry& e, dialog.changedEntries()) {
-            kDebug() << "Changed Entry: " << e.name();
-        }
-    }
-    else
-    {
-        args->usage();
-        return -1;
-    }
+    //}
+    //else
+    //{
+    //    args->usage();
+    //    return -1;
+    //}
+    //if(args->isSet("type")) d.setCategory(args->getOption("type"));
+    //if(args->count() == 1) d.setProviderList(args->arg(0));
+    // FIXME (KNS2): do we still need/want those?
 
     return 0;
 }
