@@ -1,6 +1,4 @@
 [KNewStuff3]
 ProvidersUrl=http://download.kde.org/ocs/providers.xml
-Categories=KDE Wallpaper 1920x1200,KDE Wallpaper 1600x1200
 UploadCategories=KDE Wallpaper 800x600
-TargetDir=testdirectory
 
