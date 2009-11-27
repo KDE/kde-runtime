@@ -41,7 +41,9 @@ public:
 
     void setBugAwarenessPageData(bool, Reproducible, bool, bool, bool);
     bool isBugAwarenessPageDataUseful() const;
-    
+
+    int selectedOptionsRating() const;
+
     QStringList firstBacktraceFunctions() const;
     void setFirstBacktraceFunctions(const QStringList & functions);
 

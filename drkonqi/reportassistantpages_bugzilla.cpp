@@ -375,8 +375,12 @@ bool BugzillaInformationPage::showNextPage()
 
     //FIXME improve logic according to the info the user can provide
     if (m_textsOK) { //not empty
-        bool titleShort = ui.m_titleEdit->text().size() < 20;
-        bool detailsShort = ui.m_detailsEdit->toPlainText().size() < 40;
+        bool titleShort = ui.m_titleEdit->text().size() < 30;
+
+        //Calculate the minimum number of characters required for a description
+        //(minimum 40, maximum 80)
+        int requiredDescription = 20 + (reportInterface()->selectedOptionsRating() * 10);
+        bool detailsShort = ui.m_detailsEdit->toPlainText().size() < requiredDescription;
 
         if (titleShort || detailsShort) {
             //The user input is less than we want.... encourage to write more

@@ -1,33 +1,29 @@
 ##Main Tasks
 -------------
 
-- REVIEW criteria of minimum chars/words to use in the Title and Details fields
+##For KDE4.5+:
+--------------
 
----
+- Update DrKonqi to use the remote product mapping implementation (being done by Mattr)
+    [[ currently bugzillalib detects unexistent products to later use the "kde" product ]]
+    ##Update: local mappings file support already implemented.
+    ##Sample PHP script sent
+    Waiting for remote implementation to be complete.
 
-For KDE4.5+:
+- Custom usefulness values needed by application
+    (ex. Amarok wants only perfect backtraces...)
 
-##- Waiting for productName()->product/component mapping (custom cgi file at BKO)
-[[ currently bugzillalib detects unexistent products to later use the "kde" product ]]
-##Update: local mappings file support already implemented.
-Working on PHP script... implementation on server was delayed until we resolve
-the bugtracking system change.
-- Implement online mappings on svn/bugzilla as an addon file (will .php work?)
+- Try to also provide full backtraces ("bt full")
+    The simple backtrace is going to be pasted inline as always
+    The complete backtrace could be added as an attachment
+    (how to retrieve both versions at the same time?, fetch only the full and "manually strip it" to get the simple one ?)
 
-- Implement bugtracking-system-agnostic interface on KDE servers and adapt DrKonqi to interact with it
-(this will also remove the HTML parsing code from DrKonqi itself, to put it on a remote script)
+- Read memory-maps (/proc/PID/maps) and upload as attachment (??)
 
----
-
-- Custom usefulness values needed by application (ex. Amarok wants only perfect backtraces...)
-
-- Check for plugins ? (example, if plasma crashes, which libs were loaded, which lib caused the crash)
-This is useful to determine if some external plugin is involved
-(I don't know if this is technically possible)
-- Read and upload as attachment (cat /proc/PID/maps), memmap
-
-- Application detection: ask for or detect specific things depending on application
-   ie konqueror: url, plasma: plasmoids in use, kopete: protocol, etc.
+- Check for plugins ?
+    (example, if plasma crashes, which libs were loaded, which lib caused the crash)
+    This is useful to determine if some external plugin is involved
+    (I don't know if this is technically possible)
 
 - Implement TerminalDebuggerLauncher (the idea is to use the same trick as the one used in the installdbgsymbols.sh examples)
 
@@ -46,20 +42,27 @@ This is useful to determine if some external plugin is involved
 ##Brainstorming
 --------------
 
+- Implement bugtracking-system-agnostic interface on KDE servers and adapt DrKonqi to interact with it
+    (this will also remove the HTML parsing code from DrKonqi itself, to put it on a remote script)
+
 - Display the time of the crash
-("I came back to the computer some time later and drkonqi was there..
-when the application crashed? during the night?") (by sreich)
+    ("I came back to the computer some time later and drkonqi was there..
+    when the application crashed? during the night?") (by sreich)
 
 - Usability review and suggestions:
-http://blogs.msdn.com/oldnewthing/archive/2003/09/01/54734.aspx (by Maciej)
+    http://blogs.msdn.com/oldnewthing/archive/2003/09/01/54734.aspx (by Maciej)
 
 - Hide backtrace from user (only show progress and backtrace status)??
 
 - Search in backtrace (esp. for [KCrash Handler])
+
 - Backtrace syntax highlighting (xml parser+ some qt/kde class ?)
 
 - Option to "don't show DrKonqi for this(X) app"
+    (Do we want this?)
+
 - Option to avoid drkonqi at all (setting KDE_DEBUG=1), and GUI to renable it
+    (Do we want this?)
 
 #Later
 ---------
@@ -70,8 +73,11 @@ http://blogs.msdn.com/oldnewthing/archive/2003/09/01/54734.aspx (by Maciej)
 #DONE
 -------
 
-"- If a possible duplicate is marked as FIXED, show a better (banner) message so the user will notice....
+- Application detection: ask for or detect specific things depending on application
+   ie konqueror: url, plasma: plasmoids in use, kopete: protocol, etc.
 
+- REVIEW criteria of minimum chars/words to use in the Title and Details fields
+"- If a possible duplicate is marked as FIXED, show a better (banner) message so the user will notice....
 
 !!IMPORTANT: (to be done before 2009Nov25 / String Freeze)
 - Update "AboutBugReporting" guide to reflect the new workflow

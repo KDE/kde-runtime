@@ -67,6 +67,18 @@ void ReportInterface::setBugAwarenessPageData(bool rememberSituation,
 
 bool ReportInterface::isBugAwarenessPageDataUseful() const
 {
+    int rating = selectedOptionsRating();
+
+    //Minimum information required even for a good backtrace.
+    bool useful = m_userRememberCrashSituation &&
+                  (rating >= 2 || (m_reproducible==ReproducibleSometimes ||
+                                 m_reproducible==ReproducibleEverytime));
+    return useful;
+}
+
+int ReportInterface::selectedOptionsRating() const
+{
+    //Check how many information the user can provide and generate a rating
     int rating = 0;
     if (m_provideActionsApplicationDesktop) {
         rating += 3;
@@ -77,12 +89,7 @@ bool ReportInterface::isBugAwarenessPageDataUseful() const
     if (m_provideUnusualBehavior) {
         rating += 1;
     }
-
-    //Minimum information required even for a good backtrace.
-    bool useful = m_userRememberCrashSituation &&
-                  (rating >= 2 || (m_reproducible==ReproducibleSometimes ||
-                                 m_reproducible==ReproducibleEverytime));
-    return useful;
+    return rating;
 }
 
 QString ReportInterface::backtrace() const
@@ -317,19 +324,8 @@ bool ReportInterface::isWorthReporting() const
         return false;
     }
 
-    //Check how many information the user can provide and generate a rating
-    int rating = 0;
-    if (m_provideActionsApplicationDesktop) {
-        rating += 3;
-    }
-    if (m_provideApplicationConfigurationDetails) {
-        rating += 2;
-    }
-    if (m_provideUnusualBehavior) {
-        rating += 1;
-    }
+    int rating = selectedOptionsRating();
 
-    
     BacktraceParser::Usefulness use =
                 DrKonqi::debuggerManager()->backtraceGenerator()->parser()->backtraceUsefulness();
    
