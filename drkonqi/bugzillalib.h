@@ -243,6 +243,7 @@ private Q_SLOTS:
     void searchBugsJobFinished(KJob*);
     void sendReportJobFinished(KJob*);
     void attachToReportJobFinished(KJob*);
+    void addMeToCCSubJobFinished(KJob*);
     void addMeToCCJobFinished(KJob*);
     void checkVersionJobFinished(KJob*);
     void delayedCheckVersionJobFinished(KJob*);

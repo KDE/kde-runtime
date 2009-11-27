@@ -180,15 +180,10 @@ void BugzillaManager::attachTextToReport(const QString & text, const QString & f
 
 void BugzillaManager::addMeToCC(int bugNumber)
 {
-    QByteArray postData;
-    postData += QByteArray("id=") + QByteArray::number(bugNumber) + QByteArray("&addselfcc=on");
-
-    KIO::Job * addCCJob =
-        KIO::storedHttpPost(postData, KUrl(QString(m_bugTrackerUrl) + QString(addInformationUrl)),
-                            KIO::HideProgressInfo);
-    connect(addCCJob, SIGNAL(finished(KJob*)) , this, SLOT(addMeToCCJobFinished(KJob*)));
-
-    addCCJob->addMetaData("content-type", "Content-Type: application/x-www-form-urlencoded");
+    KUrl addCCJobUrl = KUrl(QString(m_bugTrackerUrl) +
+                                            QString(showBugUrl).arg(bugNumber));
+    KIO::Job * addCCJob = KIO::storedGet(addCCJobUrl, KIO::Reload, KIO::HideProgressInfo);
+    connect(addCCJob, SIGNAL(finished(KJob*)) , this, SLOT(addMeToCCSubJobFinished(KJob*)));
 }
 
 void BugzillaManager::checkVersionsForProduct(const QString & product)
@@ -381,11 +376,55 @@ void BugzillaManager::attachToReportJobFinished(KJob * job)
     }
 }
 
+void BugzillaManager::addMeToCCSubJobFinished(KJob * job)
+{
+    if (!job->error()) {
+        KIO::StoredTransferJob * checkJob = (KIO::StoredTransferJob *)job;
+        QString response = checkJob->data();
+        response.remove('\r'); response.remove('\n');
+
+        //Parse bugzilla token
+        QString token;
+
+        QString searchToken = QLatin1String("<input type=\"hidden\" name=\"token\" value=\"");
+        int index1 = response.indexOf(searchToken);
+        int index2 = response.indexOf(">", index1);
+
+        if (index1 != -1 && index2 != -1) {
+            index1 += searchToken.length();
+            index2 -= 1;
+
+            token = response.mid(index1, index2-index1);
+        }
+
+        const QString bug_id = checkJob->url().queryItem("id");
+
+        if (!bug_id.isEmpty() && !token.isEmpty()) {
+            //Send add To CC job confirmation
+            QByteArray postData;
+            postData += QByteArray("id=") + bug_id.toUtf8() + QByteArray("&addselfcc=on") +
+            QByteArray("&token=") + token.toUtf8();
+
+            KIO::Job * addCCJob =
+                KIO::storedHttpPost(postData, KUrl(QString(m_bugTrackerUrl) +
+                                                                QString(addInformationUrl)),
+                                KIO::HideProgressInfo);
+            connect(addCCJob, SIGNAL(finished(KJob*)) , this, SLOT(addMeToCCJobFinished(KJob*)));
+            addCCJob->addMetaData("content-type", "Content-Type: application/x-www-form-urlencoded");
+        } else {
+            emit addMeToCCError(i18nc("@info","Unknown error"));
+        }
+
+    } else {
+        emit addMeToCCError(job->errorString());
+    }
+}
+
 void BugzillaManager::addMeToCCJobFinished(KJob * job)
 {
     if (!job->error()) {
-        KIO::StoredTransferJob * sendJob = (KIO::StoredTransferJob *)job;
-        QString response = sendJob->data();
+        KIO::StoredTransferJob * addCCJob = (KIO::StoredTransferJob *)job;
+        QString response = addCCJob->data();
         response.remove('\r'); response.remove('\n');
         
         QRegExp reg("<title>Bug (.+) processed</title>");
