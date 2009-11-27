@@ -3,7 +3,10 @@ CurrencyCodeIsoAlpha3=MTL
 CurrencyCodeIsoNumeric3=470
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Maltese Lira
+Name[en_GB]=Maltese Lira
+Name[sv]=Maltesiska lira
 Name[uk]=Мальтійська ліра
+Name[x-test]=xxMaltese Liraxx
 CurrencyNameIso=Maltese lira
 CurrencyUnitSymbols=Lm,£,MTL
 CurrencyUnitSymbolDefault=Lm

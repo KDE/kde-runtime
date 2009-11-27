@@ -3,7 +3,9 @@ CurrencyCodeIsoAlpha3=MLF
 CurrencyCodeIsoNumeric3=
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Mali Franc
+Name[en_GB]=Mali Franc
 Name[uk]=Малійський франк
+Name[x-test]=xxMali Francxx
 CurrencyNameIso=Mali franc
 CurrencyUnitSymbols=fr.,F,MLF
 CurrencyUnitSymbolDefault=fr.

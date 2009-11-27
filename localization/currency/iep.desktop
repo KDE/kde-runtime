@@ -3,7 +3,10 @@ CurrencyCodeIsoAlpha3=IEP
 CurrencyCodeIsoNumeric3=372
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Irish Pound
+Name[en_GB]=Irish Pound
+Name[sv]=irländska pund
 Name[uk]=ірландський фунт
+Name[x-test]=xxIrish Poundxx
 CurrencyNameIso=Irish pound
 CurrencyUnitSymbols=£,IEP
 CurrencyUnitSymbolDefault=£

@@ -3,7 +3,10 @@ CurrencyCodeIsoAlpha3=VND
 CurrencyCodeIsoNumeric3=704
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Vietnamese Dong
+Name[en_GB]=Vietnamese Dong
+Name[sv]=Vietnamesiska dong
 Name[uk]=В’єтнамський донг
+Name[x-test]=xxVietnamese Dongxx
 CurrencyNameIso=Vietnamese đồng
 CurrencyUnitSymbols=₫,VND
 CurrencyUnitSymbolDefault=₫

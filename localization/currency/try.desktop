@@ -3,7 +3,10 @@ CurrencyCodeIsoAlpha3=TRY
 CurrencyCodeIsoNumeric3=949
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Turkish Lira
+Name[en_GB]=Turkish Lira
+Name[sv]=Turkiska lira
 Name[uk]=Турецька ліра
+Name[x-test]=xxTurkish Liraxx
 CurrencyNameIso=Turkish lira
 CurrencyUnitSymbols=TL,£,TRL
 CurrencyUnitSymbolDefault=TL

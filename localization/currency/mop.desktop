@@ -3,7 +3,10 @@ CurrencyCodeIsoAlpha3=MOP
 CurrencyCodeIsoNumeric3=446
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Pataca
+Name[en_GB]=Pataca
+Name[sv]=Pataca
 Name[uk]=Патака
+Name[x-test]=xxPatacaxx
 CurrencyNameIso=Pataca
 CurrencyUnitSymbols=MOP$,MOP
 CurrencyUnitSymbolDefault=MOP$

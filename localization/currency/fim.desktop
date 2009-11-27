@@ -3,7 +3,10 @@ CurrencyCodeIsoAlpha3=FIM
 CurrencyCodeIsoNumeric3=246
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Finnish Markka
+Name[en_GB]=Finnish Markka
+Name[sv]=Finska mark
 Name[uk]=Фінська марка
+Name[x-test]=xxFinnish Markkaxx
 CurrencyNameIso=Finnish markka
 CurrencyUnitSymbols=mk,FIM
 CurrencyUnitSymbolDefault=mk

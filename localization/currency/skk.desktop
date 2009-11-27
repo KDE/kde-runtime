@@ -3,7 +3,10 @@ CurrencyCodeIsoAlpha3=SKK
 CurrencyCodeIsoNumeric3=703
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Slovak Koruna
+Name[en_GB]=Slovak Koruna
+Name[sv]=Slovakiska koruna
 Name[uk]=Словацька крона
+Name[x-test]=xxSlovak Korunaxx
 CurrencyNameIso=Slovak koruna
 CurrencyUnitSymbols=Sk,SKK
 CurrencyUnitSymbolDefault=Sk

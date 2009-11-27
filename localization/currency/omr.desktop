@@ -3,7 +3,10 @@ CurrencyCodeIsoAlpha3=OMR
 CurrencyCodeIsoNumeric3=512
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Omani Rial
+Name[en_GB]=Omani Rial
+Name[sv]=Omanska rial
 Name[uk]=Оманський ріал
+Name[x-test]=xxOmani Rialxx
 CurrencyNameIso=Rial Omani
 CurrencyUnitSymbols=ر.ع.,OMR
 CurrencyUnitSymbolDefault=ر.ع.

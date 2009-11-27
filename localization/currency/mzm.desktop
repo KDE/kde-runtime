@@ -3,7 +3,10 @@ CurrencyCodeIsoAlpha3=MZM
 CurrencyCodeIsoNumeric3=508
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Mozambican Metical
+Name[en_GB]=Mozambican Metical
+Name[sv]=Mozambique metical
 Name[uk]=Мозамбікський метикал
+Name[x-test]=xxMozambican Meticalxx
 CurrencyNameIso=Mozambican metical
 CurrencyUnitSymbols=MTn,MZM
 CurrencyUnitSymbolDefault=MTn

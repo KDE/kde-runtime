@@ -3,7 +3,10 @@ CurrencyCodeIsoAlpha3=NGN
 CurrencyCodeIsoNumeric3=566
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Nigerian Naira
+Name[en_GB]=Nigerian Naira
+Name[sv]=Nigerianska naira
 Name[uk]=Нігерійська найра
+Name[x-test]=xxNigerian Nairaxx
 CurrencyNameIso=Naira
 CurrencyUnitSymbols=₦,NGN
 CurrencyUnitSymbolDefault=₦

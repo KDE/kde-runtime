@@ -3,7 +3,10 @@ CurrencyCodeIsoAlpha3=MDL
 CurrencyCodeIsoNumeric3=498
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Moldovan Leu
+Name[en_GB]=Moldovan Leu
+Name[sv]=Moldavisk leu
 Name[uk]=Молдовська лея
+Name[x-test]=xxMoldovan Leuxx
 CurrencyNameIso=Moldovan leu
 CurrencyUnitSymbols=MDL
 CurrencyUnitSymbolDefault=MDL

@@ -3,7 +3,10 @@ CurrencyCodeIsoAlpha3=GIP
 CurrencyCodeIsoNumeric3=292
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Gibraltar Pound
+Name[en_GB]=Gibraltar Pound
+Name[sv]=Gibraltiska pund
 Name[uk]=Гібралтарський фунт
+Name[x-test]=xxGibraltar Poundxx
 CurrencyNameIso=Gibraltar pound
 CurrencyUnitSymbols=£,GI£,GIP
 CurrencyUnitSymbolDefault=£

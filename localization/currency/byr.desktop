@@ -3,7 +3,10 @@ CurrencyCodeIsoAlpha3=BYR
 CurrencyCodeIsoNumeric3=974
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Belarusian Ruble
+Name[en_GB]=Belarusian Ruble
+Name[sv]=Vitryska rubel
 Name[uk]=Білоруський рубль
+Name[x-test]=xxBelarusian Rublexx
 CurrencyNameIso=Belarusian ruble
 CurrencyUnitSymbols=Br,BYR
 CurrencyUnitSymbolDefault=Br

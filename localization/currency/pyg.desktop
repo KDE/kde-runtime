@@ -3,7 +3,9 @@ CurrencyCodeIsoAlpha3=PYG
 CurrencyCodeIsoNumeric3=600
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Paraguayan Guarani
+Name[en_GB]=Paraguayan Guarani
 Name[uk]=Парагвайське гуарані
+Name[x-test]=xxParaguayan Guaranixx
 CurrencyNameIso=Guarani
 CurrencyUnitSymbols=₲,PYG
 CurrencyUnitSymbolDefault=₲

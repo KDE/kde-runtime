@@ -3,7 +3,10 @@ CurrencyCodeIsoAlpha3=NZD
 CurrencyCodeIsoNumeric3=554
 #Context for Name: Adjectival Country Name and Currency Name
 Name=New Zealand Dollar
+Name[en_GB]=New Zealand Dollar
+Name[sv]=Nyzeeländska dollar
 Name[uk]=Новозеландський долар
+Name[x-test]=xxNew Zealand Dollarxx
 CurrencyNameIso=New Zealand Dollar
 CurrencyUnitSymbols=$,NZ$,NZD
 CurrencyUnitSymbolDefault=$

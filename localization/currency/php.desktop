@@ -3,7 +3,10 @@ CurrencyCodeIsoAlpha3=PHP
 CurrencyCodeIsoNumeric3=608
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Philippine Peso
+Name[en_GB]=Philippine Peso
+Name[sv]=Filippinska peso
 Name[uk]=Філіппінське песо
+Name[x-test]=xxPhilippine Pesoxx
 CurrencyNameIso=Philippine peso
 CurrencyUnitSymbols=₱,PhP,P,PHP
 CurrencyUnitSymbolDefault=₱

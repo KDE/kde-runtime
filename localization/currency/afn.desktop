@@ -3,7 +3,10 @@ CurrencyCodeIsoAlpha3=AFN
 CurrencyCodeIsoNumeric3=971
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Afghan afghani
+Name[en_GB]=Afghan afghani
+Name[sv]=Afghanska afghani
 Name[uk]=Афганське афгані
+Name[x-test]=xxAfghan afghanixx
 CurrencyNameIso=Afghan afghani
 CurrencyUnitSymbols=؋,AFN
 CurrencyUnitSymbolDefault=؋

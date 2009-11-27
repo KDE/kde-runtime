@@ -3,7 +3,10 @@ CurrencyCodeIsoAlpha3=SBD
 CurrencyCodeIsoNumeric3=090
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Solomon Islands Dollar
+Name[en_GB]=Solomon Islands Dollar
+Name[sv]=Salomondollar
 Name[uk]=Долар Соломонових островів
+Name[x-test]=xxSolomon Islands Dollarxx
 CurrencyNameIso=Solomon Islands dollar
 CurrencyUnitSymbols=$,SI$,SBD
 CurrencyUnitSymbolDefault=$

@@ -3,7 +3,10 @@ CurrencyCodeIsoAlpha3=AUD
 CurrencyCodeIsoNumeric3=036
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Australian Dollar
+Name[en_GB]=Australian Dollar
+Name[sv]=Australiska dollar
 Name[uk]=Австралійський долар
+Name[x-test]=xxAustralian Dollarxx
 CurrencyNameIso=Australian dollar
 CurrencyUnitSymbols=$,A$,AU$,AUD
 CurrencyUnitSymbolDefault=$

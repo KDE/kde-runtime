@@ -3,7 +3,10 @@ CurrencyCodeIsoAlpha3=BSD
 CurrencyCodeIsoNumeric3=044
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Bahamian Dollar
+Name[en_GB]=Bahamian Dollar
+Name[sv]=Bahamanska dollar
 Name[uk]=Багамський долар
+Name[x-test]=xxBahamian Dollarxx
 CurrencyNameIso=Bahamian dollar
 CurrencyUnitSymbols=$,B$,BSD
 CurrencyUnitSymbolDefault=$

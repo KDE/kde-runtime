@@ -3,7 +3,9 @@ CurrencyCodeIsoAlpha3=ZWD
 CurrencyCodeIsoNumeric3=716
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Zimbabwean Dollar A/06
+Name[en_GB]=Zimbabwean Dollar A/06
 Name[uk]=Зімбабвійський долар до 2006
+Name[x-test]=xxZimbabwean Dollar A/06xx
 CurrencyNameIso=Zimbabwean dollar A/06
 CurrencyUnitSymbols=$,Z$,ZWD
 CurrencyUnitSymbolDefault=$

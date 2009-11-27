@@ -3,7 +3,9 @@ CurrencyCodeIsoAlpha3=CLF
 CurrencyCodeIsoNumeric3=990
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Chilean Unidad de Fomento
+Name[en_GB]=Chilean Unidad de Fomento
 Name[uk]=Чилійська Unidad de Fomento
+Name[x-test]=xxChilean Unidad de Fomentoxx
 CurrencyNameIso=Unidad de Fomento
 CurrencyUnitSymbols=UF,CLF
 CurrencyUnitSymbolDefault=UF

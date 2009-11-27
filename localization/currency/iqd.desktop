@@ -3,7 +3,10 @@ CurrencyCodeIsoAlpha3=IQD
 CurrencyCodeIsoNumeric3=368
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Iraqi Dinar
+Name[en_GB]=Iraqi Dinar
+Name[sv]=Irakiska dinar
 Name[uk]=Іракський динар
+Name[x-test]=xxIraqi Dinarxx
 CurrencyNameIso=Iraqi dinar
 CurrencyUnitSymbols=ع.د,IQD
 CurrencyUnitSymbolDefault=ع.د

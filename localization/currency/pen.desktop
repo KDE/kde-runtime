@@ -3,7 +3,10 @@ CurrencyCodeIsoAlpha3=PEN
 CurrencyCodeIsoNumeric3=604
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Nuevo Sol
+Name[en_GB]=Nuevo Sol
+Name[sv]=Ny sol
 Name[uk]=Новий соль
+Name[x-test]=xxNuevo Solxx
 CurrencyNameIso=Nuevo sol
 CurrencyUnitSymbols=S/.,PEN
 CurrencyUnitSymbolDefault=S/.

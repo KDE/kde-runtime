@@ -3,7 +3,10 @@ CurrencyCodeIsoAlpha3=AON
 CurrencyCodeIsoNumeric3=024
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Angolan Novo Kwanza
+Name[en_GB]=Angolan Novo Kwanza
+Name[sv]=Nya angolanska kwanza
 Name[uk]=Ангольська нова кванза
+Name[x-test]=xxAngolan Novo Kwanzaxx
 CurrencyNameIso=Angolan novo kwanza
 CurrencyUnitSymbols=Kz,AON
 CurrencyUnitSymbolDefault=Kz
