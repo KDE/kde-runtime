@@ -1,7 +1,5 @@
 project(nepomuk)
 
-find_package(SharedDesktopOntologies)
-
 # disable deprecated libnepomuk stuff for less compiler warnings
 add_definitions(-DDISABLE_NEPOMUK_LEGACY=1)
 

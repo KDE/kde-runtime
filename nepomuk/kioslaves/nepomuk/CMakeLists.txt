@@ -7,9 +7,9 @@ set(kio_nepomuk_PART_SRCS
   kio_nepomuk.cpp
   resourcepagegenerator.cpp)
 
-soprano_add_ontology(kio_nepomuk_PART_SRCS ${DESKTOP_ONTOLOGIES_DIR}/nie/nie.trig "NIE" "Nepomuk::Vocabulary" "trig")
-soprano_add_ontology(kio_nepomuk_PART_SRCS ${DESKTOP_ONTOLOGIES_DIR}/nie/nfo.trig "NFO" "Nepomuk::Vocabulary" "trig")
-soprano_add_ontology(kio_nepomuk_PART_SRCS ${DESKTOP_ONTOLOGIES_DIR}/pimo/pimo.trig "PIMO" "Nepomuk::Vocabulary" "trig")
+soprano_add_ontology(kio_nepomuk_PART_SRCS ${SHAREDDESKTOPONTOLOGIES_ROOT_DIR}/nie/nie.trig "NIE" "Nepomuk::Vocabulary" "trig")
+soprano_add_ontology(kio_nepomuk_PART_SRCS ${SHAREDDESKTOPONTOLOGIES_ROOT_DIR}/nie/nfo.trig "NFO" "Nepomuk::Vocabulary" "trig")
+soprano_add_ontology(kio_nepomuk_PART_SRCS ${SHAREDDESKTOPONTOLOGIES_ROOT_DIR}/pimo/pimo.trig "PIMO" "Nepomuk::Vocabulary" "trig")
 
 kde4_add_plugin(kio_nepomuk ${kio_nepomuk_PART_SRCS})
 

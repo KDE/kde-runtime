@@ -25,12 +25,12 @@ set(strigiservice_SRCS
   )
 
 soprano_add_ontology(strigiservice_SRCS
-  ${DESKTOP_ONTOLOGIES_DIR}/nie/nfo.trig
+  ${SHAREDDESKTOPONTOLOGIES_ROOT_DIR}/nie/nfo.trig
   "NFO"
   "Nepomuk::Vocabulary"
   "trig")
 soprano_add_ontology(strigiservice_SRCS
-  ${DESKTOP_ONTOLOGIES_DIR}/nie/nie.trig
+  ${SHAREDDESKTOPONTOLOGIES_ROOT_DIR}/nie/nie.trig
   "NIE"
   "Nepomuk::Vocabulary"
   "trig")

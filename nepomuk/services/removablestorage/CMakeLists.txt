@@ -12,8 +12,8 @@ set(SRCS
   removablestorageservice.cpp
   )
 
-soprano_add_ontology(SRCS ${DESKTOP_ONTOLOGIES_DIR}/nie/nfo.trig "NFO" "Nepomuk::Vocabulary" "trig")
-soprano_add_ontology(SRCS ${DESKTOP_ONTOLOGIES_DIR}/nie/nie.trig "NIE" "Nepomuk::Vocabulary" "trig")
+soprano_add_ontology(SRCS ${SHAREDDESKTOPONTOLOGIES_ROOT_DIR}/nie/nfo.trig "NFO" "Nepomuk::Vocabulary" "trig")
+soprano_add_ontology(SRCS ${SHAREDDESKTOPONTOLOGIES_ROOT_DIR}/nie/nie.trig "NIE" "Nepomuk::Vocabulary" "trig")
 
 qt4_add_dbus_interface(SRCS ../../interfaces/org.kde.nepomuk.Strigi.xml strigiserviceinterface)
 
