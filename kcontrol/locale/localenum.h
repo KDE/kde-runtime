@@ -29,6 +29,7 @@
 
 class QLineEdit;
 class QComboBox;
+class QLabel;
 
 class KLocale;
 class KIntNumInput;

@@ -21,6 +21,8 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "localeother.h"
+
 #include <QComboBox>
 #include <QLabel>
 #include <QPrinter>
@@ -31,7 +33,6 @@
 #include <KConfigGroup>
 #include <KStandardDirs>
 
-#include "localeother.h"
 #include "localeother.moc"
 
 

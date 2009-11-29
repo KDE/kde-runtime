@@ -21,6 +21,8 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "localemon.h"
+
 #include <kdebug.h>
 #include <QCheckBox>
 #include <QComboBox>
@@ -32,7 +34,6 @@
 #include "kcurrencycode.h"
 
 #include "toplevel.h"
-#include "localemon.h"
 #include "localemon.moc"
 
 KLocaleConfigMoney::KLocaleConfigMoney(KLocale *locale,
@@ -182,7 +183,7 @@ void KLocaleConfigMoney::slotLocaleChanged()
   //Create the list of Currency Symbols for the selected Currency Code
   m_comboCurrencySymbol->clear();
   QStringList currencySymbolList = m_locale->currency()->symbolList();
-  foreach ( QString currencySymbol, currencySymbolList ) {
+  foreach ( const QString &currencySymbol, currencySymbolList ) {
       m_comboCurrencySymbol->addItem( currencySymbol, QVariant( currencySymbol ) );
   }
   int i = m_comboCurrencySymbol->findData( QVariant( m_locale->currencySymbol() ) );
@@ -210,7 +211,7 @@ void KLocaleConfigMoney::slotCurrencyCodeChanged( int i )
     //Create the list of Currency Symbols for the selected Currency Code
     m_comboCurrencySymbol->clear();
     QStringList currencySymbolList = m_locale->currency()->symbolList();
-    foreach ( QString currencySymbol, currencySymbolList ) {
+    foreach ( const QString &currencySymbol, currencySymbolList ) {
         m_comboCurrencySymbol->addItem( currencySymbol, QVariant( currencySymbol ) );
     }
     m_comboCurrencySymbol->setCurrentIndex( m_comboCurrencySymbol->findData( QVariant( m_locale->currency()->defaultSymbol() ) ) );
@@ -280,7 +281,7 @@ void KLocaleConfigMoney::slotTranslate()
   m_comboCurrencyCode->clear();
   //First put all the preferred currencies first in order of priority
   QStringList currencyCodeList = m_locale->currencyCodeList();
-  foreach ( QString currencyCode, currencyCodeList ) {
+  foreach ( const QString &currencyCode, currencyCodeList ) {
       QString text = i18nc( "@item currency name and currency code", "%1 (%2)",
                             m_locale->currency()->currencyCodeToName( currencyCode ), currencyCode );
     m_comboCurrencyCode->addItem( text, QVariant( currencyCode ) );
@@ -289,12 +290,12 @@ void KLocaleConfigMoney::slotTranslate()
   m_comboCurrencyCode->insertSeparator(m_comboCurrencyCode->count());
   currencyCodeList = m_locale->currency()->allCurrencyCodesList();
   QStringList currencyNameList;
-  foreach ( QString currencyCode, currencyCodeList ) {
+  foreach ( const QString &currencyCode, currencyCodeList ) {
     currencyNameList.append( i18nc( "@item currency name and currency code", "%1 (%2)",
                                     m_locale->currency()->currencyCodeToName( currencyCode ), currencyCode ) );
   }
   currencyNameList.sort();
-  foreach ( QString name, currencyNameList ) {
+  foreach ( const QString &name, currencyNameList ) {
     m_comboCurrencyCode->addItem( name, QVariant( name.mid( name.length()-4, 3 ) ) );
   }
   m_comboCurrencyCode->setCurrentIndex( m_comboCurrencyCode->findData( QVariant( m_locale->currencyCode() ) ) );
@@ -302,7 +303,7 @@ void KLocaleConfigMoney::slotTranslate()
   //Create the list of Currency Symbols for the selected Currency Code
   m_comboCurrencySymbol->clear();
   QStringList currencySymbolList = m_locale->currency()->symbolList();
-  foreach ( QString currencySymbol, currencySymbolList ) {
+  foreach ( const QString &currencySymbol, currencySymbolList ) {
     m_comboCurrencySymbol->addItem( currencySymbol, QVariant( currencySymbol ) );
   }
   m_comboCurrencySymbol->setCurrentIndex( m_comboCurrencySymbol->findData( QVariant( m_locale->currencySymbol() ) ) );
@@ -323,7 +324,7 @@ void KLocaleConfigMoney::slotTranslate()
   QList<KLocale::DigitSet> digitSets = m_locale->allDigitSetsList();
   qSort(digitSets);
   m_cmbMonDigSet->clear();
-  foreach (KLocale::DigitSet ds, digitSets)
+  foreach (const KLocale::DigitSet &ds, digitSets)
   {
     m_cmbMonDigSet->addItem(m_locale->digitSetToName(ds, true));
   }

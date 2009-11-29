@@ -21,6 +21,8 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "localenum.h"
+
 #include <QLabel>
 #include <QLineEdit>
 #include <QComboBox>
@@ -32,7 +34,6 @@
 #include <KIntNumInput>
 
 #include "toplevel.h"
-#include "localenum.h"
 #include "localenum.moc"
 
 KLocaleConfigNumber::KLocaleConfigNumber(KLocale *locale,
@@ -220,7 +221,7 @@ void KLocaleConfigNumber::slotTranslate()
   QList<KLocale::DigitSet> digitSets = m_locale->allDigitSetsList();
   qSort(digitSets);
   m_cmbDigSet->clear();
-  foreach (KLocale::DigitSet ds, digitSets)
+  foreach (const KLocale::DigitSet &ds, digitSets)
   {
     m_cmbDigSet->addItem(m_locale->digitSetToName(ds, true));
   }

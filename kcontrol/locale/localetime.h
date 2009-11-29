@@ -30,6 +30,7 @@
 
 class QCheckBox;
 class QComboBox;
+class QLabel;
 
 class KLocale;
 

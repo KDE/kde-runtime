@@ -22,6 +22,8 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "localetime.h"
+
 #include <QCheckBox>
 #include <QLabel>
 #include <QFormLayout>
@@ -36,7 +38,6 @@
 #include <KCalendarSystem>
 
 #include "toplevel.h"
-#include "localetime.h"
 #include "localetime.moc"
 
 class StringPair
@@ -650,7 +651,7 @@ void KLocaleConfigTime::updateDigitSetNames()
   QList<KLocale::DigitSet> digitSets = m_locale->allDigitSetsList();
   qSort(digitSets);
   m_comboDateTimeDigSet->clear();
-  foreach ( KLocale::DigitSet ds, digitSets )
+  foreach ( const KLocale::DigitSet &ds, digitSets )
   {
      m_comboDateTimeDigSet->addItem(m_locale->digitSetToName(ds, true));
   }
@@ -663,7 +664,7 @@ void KLocaleConfigTime::updateCalendarNames()
 
     m_comboCalendarSystem->clear();
 
-    foreach ( QString cal, calendars )
+    foreach ( const QString &cal, calendars )
     {
         m_comboCalendarSystem->addItem( KCalendarSystem::calendarLabel( cal ), QVariant( cal ) );
     }

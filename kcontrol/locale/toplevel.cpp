@@ -20,6 +20,8 @@
 
   */
 
+#include "toplevel.h"
+
 #include <QCheckBox>
 #include <QGroupBox>
 #include <QLabel>
@@ -39,7 +41,6 @@
 #include "localetime.h"
 #include "localeother.h"
 #include "klocalesample.h"
-#include "toplevel.h"
 #include "kcmlocale.h"
 #include "toplevel.moc"
 #include <kconfiggroup.h>

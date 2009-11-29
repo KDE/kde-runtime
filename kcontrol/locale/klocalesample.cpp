@@ -23,6 +23,8 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "klocalesample.h"
+
 #include <QDateTime>
 #include <QLabel>
 #include <QFormLayout>
@@ -32,7 +34,6 @@
 
 #include <klocale.h>
 
-#include "klocalesample.h"
 #include "klocalesample.moc"
 
 KLocaleSample::KLocaleSample(KLocale *locale, QWidget *parent)
