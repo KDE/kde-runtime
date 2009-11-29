@@ -4,6 +4,7 @@ CurrencyCodeIsoNumeric3=
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Mali Franc
 Name[en_GB]=Mali Franc
+Name[ja]=マリ・フラン
 Name[uk]=Малійський франк
 Name[x-test]=xxMali Francxx
 CurrencyNameIso=Mali franc

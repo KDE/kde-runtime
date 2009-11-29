@@ -4,6 +4,7 @@ CurrencyCodeIsoNumeric3=392
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Japanese Yen
 Name[en_GB]=Japanese Yen
+Name[ja]=日本円
 Name[sv]=Japanska yen
 Name[uk]=Японська єна
 Name[x-test]=xxJapanese Yenxx

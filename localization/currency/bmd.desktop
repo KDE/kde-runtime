@@ -4,6 +4,7 @@ CurrencyCodeIsoNumeric3=060
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Bermuda Dollar
 Name[en_GB]=Bermuda Dollar
+Name[ja]=バミューダ・ドル
 Name[uk]=Бермудський долар
 Name[x-test]=xxBermuda Dollarxx
 CurrencyNameIso=Bermudian dollar

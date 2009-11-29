@@ -4,6 +4,8 @@ CurrencyCodeIsoNumeric3=997
 #Context for Name: Adjectival Country Name and Currency Name
 Name=United States Dollar (Next Day)
 Name[en_GB]=United States Dollar (Next Day)
+Name[is]=Bandaríkjadollari (næsta dag)
+Name[ja]=米ドル (翌日)
 Name[sv]=Amerikanska dollar (nästa dag)
 Name[uk]=Долар США (на завтра)
 Name[x-test]=xxUnited States Dollar (Next Day)xx

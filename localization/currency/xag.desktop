@@ -4,6 +4,8 @@ CurrencyCodeIsoNumeric3=961
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Silver
 Name[en_GB]=Silver
+Name[is]=Silfur
+Name[ja]=銀
 Name[sv]=Silver
 Name[uk]=Срібло
 Name[x-test]=xxSilverxx

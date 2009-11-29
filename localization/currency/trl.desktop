@@ -4,6 +4,7 @@ CurrencyCodeIsoNumeric3=792
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Turkish Lira A/05
 Name[en_GB]=Turkish Lira A/05
+Name[ja]=旧トルコ・リラ
 Name[uk]=Турецька ліра до 2005
 Name[x-test]=xxTurkish Lira A/05xx
 CurrencyNameIso=Turkish lira A/05

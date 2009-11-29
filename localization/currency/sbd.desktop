@@ -4,6 +4,8 @@ CurrencyCodeIsoNumeric3=090
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Solomon Islands Dollar
 Name[en_GB]=Solomon Islands Dollar
+Name[is]=Salómonseyjadollari
+Name[ja]=ソロモン諸島・ドル
 Name[sv]=Salomondollar
 Name[uk]=Долар Соломонових островів
 Name[x-test]=xxSolomon Islands Dollarxx

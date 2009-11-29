@@ -4,6 +4,7 @@ CurrencyCodeIsoNumeric3=646
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Rwandan Franc
 Name[en_GB]=Rwandan Franc
+Name[ja]=ルワンダ・フラン
 Name[uk]=Руандійський франк
 Name[x-test]=xxRwandan Francxx
 CurrencyNameIso=Rwanda franc

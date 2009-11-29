@@ -4,6 +4,7 @@ CurrencyCodeIsoNumeric3=756
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Swiss Franc
 Name[en_GB]=Swiss Franc
+Name[ja]=スイス・フラン
 Name[sv]=Schweiziska franc
 Name[uk]=Швейцарський франк
 Name[x-test]=xxSwiss Francxx

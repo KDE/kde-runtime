@@ -4,6 +4,8 @@ CurrencyCodeIsoNumeric3=056
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Belgian Franc
 Name[en_GB]=Belgian Franc
+Name[is]=Belgískur franki
+Name[ja]=ベルギー・フラン
 Name[sv]=Belgiska franc
 Name[uk]=Бельгійський франк
 Name[x-test]=xxBelgian Francxx

@@ -4,6 +4,8 @@ CurrencyCodeIsoNumeric3=
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Andorran Franc
 Name[en_GB]=Andorran Franc
+Name[is]=Andorra franki
+Name[ja]=アンドラ・フラン
 Name[sv]=Andorranska franc
 Name[uk]=Андоррський франк
 Name[x-test]=xxAndorran Francxx

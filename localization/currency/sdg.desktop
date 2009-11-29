@@ -4,6 +4,7 @@ CurrencyCodeIsoNumeric3=938
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Sudanese Pound
 Name[en_GB]=Sudanese Pound
+Name[ja]=スーダン・ポンド
 Name[uk]=Суданський фунт
 Name[x-test]=xxSudanese Poundxx
 CurrencyNameIso=Sudanese pound

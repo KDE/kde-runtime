@@ -4,6 +4,7 @@ CurrencyCodeIsoNumeric3=328
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Guyanese Dollar
 Name[en_GB]=Guyanese Dollar
+Name[ja]=ガイアナ・ドル
 Name[uk]=Гайанський долар
 Name[x-test]=xxGuyanese Dollarxx
 CurrencyNameIso=Guyana dollar

@@ -4,6 +4,8 @@ CurrencyCodeIsoNumeric3=250
 #Context for Name: Adjectival Country Name and Currency Name
 Name=French Franc
 Name[en_GB]=French Franc
+Name[is]=Franskur franki
+Name[ja]=フランス・フラン
 Name[sv]=Franska franc
 Name[uk]=Французький франк
 Name[x-test]=xxFrench Francxx

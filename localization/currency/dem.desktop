@@ -4,6 +4,7 @@ CurrencyCodeIsoNumeric3=276
 #Context for Name: Adjectival Country Name and Currency Name
 Name=German Mark
 Name[en_GB]=German Mark
+Name[ja]=ドイツ・マルク
 Name[sv]=Tyska mark
 Name[uk]=Німецька марка
 Name[x-test]=xxGerman Markxx

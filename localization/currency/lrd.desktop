@@ -4,6 +4,8 @@ CurrencyCodeIsoNumeric3=430
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Liberian Dollar
 Name[en_GB]=Liberian Dollar
+Name[is]=Líberíudollari
+Name[ja]=リベリア・ドル
 Name[sv]=Liberianska dollar
 Name[uk]=Ліберійський долар
 Name[x-test]=xxLiberian Dollarxx

@@ -4,6 +4,7 @@ CurrencyCodeIsoNumeric3=417
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Kyrgyzstani Som
 Name[en_GB]=Kyrgyzstani Som
+Name[ja]=キルギス・ソム
 Name[uk]=Киргизький сом
 Name[x-test]=xxKyrgyzstani Somxx
 CurrencyNameIso=Som

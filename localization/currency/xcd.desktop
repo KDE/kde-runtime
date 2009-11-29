@@ -4,6 +4,8 @@ CurrencyCodeIsoNumeric3=951
 #Context for Name: Adjectival Country Name and Currency Name
 Name=East Caribbean Dollar
 Name[en_GB]=East Caribbean Dollar
+Name[is]=Austur-karíbahafsdollari
+Name[ja]=東カリブ・ドル
 Name[sv]=Östkaribiska dollar
 Name[uk]=Східно-карибський долар
 Name[x-test]=xxEast Caribbean Dollarxx

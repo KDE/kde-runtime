@@ -4,6 +4,7 @@ CurrencyCodeIsoNumeric3=222
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Salvadoran colon
 Name[en_GB]=Salvadoran colon
+Name[ja]=エルサルバドル・コロン
 Name[uk]=Сальвадорський колон
 Name[x-test]=xxSalvadoran colonxx
 CurrencyNameIso=Salvadoran colon

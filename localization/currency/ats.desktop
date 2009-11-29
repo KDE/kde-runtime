@@ -4,6 +4,8 @@ CurrencyCodeIsoNumeric3=040
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Austrian Schilling
 Name[en_GB]=Austrian Schilling
+Name[is]=Austurrískur shillingur
+Name[ja]=オーストリア・シリング
 Name[sv]=Österrikiska schilling
 Name[uk]=Австрійський шилінг
 Name[x-test]=xxAustrian Schillingxx

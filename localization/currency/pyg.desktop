@@ -4,6 +4,7 @@ CurrencyCodeIsoNumeric3=600
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Paraguayan Guarani
 Name[en_GB]=Paraguayan Guarani
+Name[ja]=パラグアイ・グアラニー
 Name[uk]=Парагвайське гуарані
 Name[x-test]=xxParaguayan Guaranixx
 CurrencyNameIso=Guarani

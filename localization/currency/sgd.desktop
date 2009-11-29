@@ -4,6 +4,7 @@ CurrencyCodeIsoNumeric3=702
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Singapore Dollar
 Name[en_GB]=Singapore Dollar
+Name[ja]=シンガポール・ドル
 Name[sv]=Singaporianska dollar
 Name[uk]=Сингапурський долар
 Name[x-test]=xxSingapore Dollarxx

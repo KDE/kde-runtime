@@ -4,6 +4,7 @@ CurrencyCodeIsoNumeric3=800
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Ugandan Shilling
 Name[en_GB]=Ugandan Shilling
+Name[ja]=ウガンダ・シリング
 Name[uk]=Угандійський шилінг
 Name[x-test]=xxUgandan Shillingxx
 CurrencyNameIso=Uganda shilling

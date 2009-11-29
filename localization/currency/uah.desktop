@@ -4,6 +4,7 @@ CurrencyCodeIsoNumeric3=980
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Ukrainian Hryvnia
 Name[en_GB]=Ukrainian Hryvnia
+Name[ja]=ウクライナ・フリヴニャ
 Name[uk]=Українська гривня
 Name[x-test]=xxUkrainian Hryvniaxx
 CurrencyNameIso=Hryvnia

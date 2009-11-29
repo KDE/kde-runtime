@@ -4,6 +4,7 @@ CurrencyCodeIsoNumeric3=300
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Greek Drachma
 Name[en_GB]=Greek Drachma
+Name[ja]=ギリシャ・ドラクマ
 Name[sv]=Grekiska drachma
 Name[uk]=Грецька драхма
 Name[x-test]=xxGreek Drachmaxx

@@ -4,6 +4,7 @@ CurrencyCodeIsoNumeric3=752
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Swedish Krona
 Name[en_GB]=Swedish Krona
+Name[ja]=スウェーデン・クローナ
 Name[sv]=Svenska kronor
 Name[uk]=Шведська крона
 Name[x-test]=xxSwedish Kronaxx

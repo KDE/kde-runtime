@@ -4,6 +4,7 @@ CurrencyCodeIsoNumeric3=977
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Bosnia and Herzegovina Convertible Mark
 Name[en_GB]=Bosnia and Herzegovina Convertible Mark
+Name[ja]=ボスニア・ヘルツェゴビナ・兌換マルク
 Name[uk]=Конвертована марка Боснії і Герцеговини
 Name[x-test]=xxBosnia and Herzegovina Convertible Markxx
 CurrencyNameIso=Convertible marks

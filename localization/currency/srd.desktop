@@ -4,6 +4,8 @@ CurrencyCodeIsoNumeric3=968
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Surinamese dollar
 Name[en_GB]=Surinamese dollar
+Name[is]=Súrínamdollari
+Name[ja]=スリナム・ドル
 Name[uk]=Суринамський долар
 Name[x-test]=xxSurinamese dollarxx
 CurrencyNameIso=Surinam dollar

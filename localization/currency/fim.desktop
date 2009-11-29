@@ -4,6 +4,8 @@ CurrencyCodeIsoNumeric3=246
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Finnish Markka
 Name[en_GB]=Finnish Markka
+Name[is]=Finnskt mark
+Name[ja]=フィンランド・マルッカ
 Name[sv]=Finska mark
 Name[uk]=Фінська марка
 Name[x-test]=xxFinnish Markkaxx

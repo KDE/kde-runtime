@@ -4,6 +4,8 @@ CurrencyCodeIsoNumeric3=036
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Australian Dollar
 Name[en_GB]=Australian Dollar
+Name[is]=Ástralskur dollari
+Name[ja]=オーストラリア・ドル
 Name[sv]=Australiska dollar
 Name[uk]=Австралійський долар
 Name[x-test]=xxAustralian Dollarxx

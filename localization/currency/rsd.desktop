@@ -4,6 +4,7 @@ CurrencyCodeIsoNumeric3=941
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Serbian Dinar
 Name[en_GB]=Serbian Dinar
+Name[ja]=セルビア・ディナール
 Name[uk]=Сербський динар
 Name[x-test]=xxSerbian Dinarxx
 CurrencyNameIso=Serbian dinar
