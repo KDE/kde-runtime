@@ -117,6 +117,11 @@ BugAwarenessPage::BugAwarenessPage(ReportAssistantDialog * parent)
 {
     ui.setupUi(this);
 
+    ui.m_actionsInsideApp->setText(i18nc("@option:check kind of information the user can provide "
+                                    "about the crash, %1 is the application name",
+                                     "What I was doing when the application \"%1\" crashed",
+                                         DrKonqi::crashedApplication()->name()));
+
     connect(ui.m_rememberGroup, SIGNAL(buttonClicked(int)), this, SLOT(updateCheckBoxes()));
 
     setApplicationDetailsText();
@@ -164,23 +169,23 @@ void BugAwarenessPage::setApplicationDetailsText()
 
     if (binaryName == QLatin1String("plasma-desktop")) {
        appDetailsText = i18nc("@info examples about information the user can provide",
-       "Widgets you have in your desktop and panels (both official and unofficial). "
-       "Desktop settings (wallpaper plugin, themes). Activities and dashboard configuration.");
+       "Widgets you have in your desktop and panels (both official and unofficial), "
+       "desktop settings (wallpaper plugin, themes), activities, and dashboard configuration.");
     } else if (binaryName == QLatin1String("kwin")) {
         appDetailsText = i18nc("@info examples about information the user can provide",
-        "State of Desktop Effects (Compositing). Kind of effects enabled. Window decoration. "
-        "Specific window rules and configuration.");
+        "State of Desktop Effects (Compositing), kind of effects enabled, window decoration, "
+        "and specific window rules and configuration.");
     } else if (binaryName == QLatin1String("konqueror") ||
         binaryName == QLatin1String("rekonq")) {
         appDetailsText = i18nc("@info examples about information the user can provide",
-        "Sites you were visiting. Number of opened tabs. Plugins you have installed. "
-        "Non-default settings.");
+        "sites you were visiting, number of opened tabs, plugins you have installed, "
+        "and any other non-default setting.");
     } else if (binaryName == QLatin1String("dolphin")) {
         appDetailsText = i18nc("@info examples about information the user can provide",
-        "File view mode. Grouping and sorting settings. Preview settings. Directory you were browsing.");
+        "File view mode, grouping and sorting settings, preview settings, and directory you were browsing.");
     } else if (binaryName == QLatin1String("kopete")) {
         appDetailsText = i18nc("@info examples about information the user can provide",
-        "Instant Messaging protocols you use. Plugins you have installed (official and unofficial).");
+        "Instant Messaging protocols you use, and plugins you have installed (official and unofficial).");
     } else if (binaryName == QLatin1String("kmail")) {
         appDetailsText = i18nc("@info examples about information the user can provide",
         "Mail protocols and account-types you use.");

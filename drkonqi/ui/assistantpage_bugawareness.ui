@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>508</width>
-    <height>355</height>
+    <height>333</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <item>
     <widget class="QLabel" name="m_rememberLabel">
      <property name="text">
-      <string>&lt;strong&gt;Do you remember what were you doing prior to the crash?&lt;/strong&gt;</string>
+      <string>&lt;strong&gt;Do you remember what you were doing prior to the crash?&lt;/strong&gt;</string>
      </property>
     </widget>
    </item>
@@ -119,7 +119,7 @@
        </property>
        <item>
         <property name="text">
-         <string>I cannot be sure</string>
+         <string>I did not try again</string>
         </property>
        </item>
        <item>
@@ -176,7 +176,7 @@
       <bool>false</bool>
      </property>
      <property name="text">
-      <string>&lt;strong&gt;What kind of information can you provide about the crash?&lt;/strong&gt;</string>
+      <string>&lt;strong&gt;Please select which additional information you can provide:&lt;/strong&gt;</string>
      </property>
     </widget>
    </item>
@@ -205,9 +205,6 @@
          <property name="enabled">
           <bool>false</bool>
          </property>
-         <property name="text">
-          <string comment="@option:check kind of information the user can provide about the crash">Actions in the application and the whole desktop</string>
-         </property>
         </widget>
        </item>
        <item>
@@ -216,7 +213,7 @@
           <bool>false</bool>
          </property>
          <property name="text">
-          <string comment="@option:check kind of information the user can provide about the crash">Unusual desktop behavior</string>
+          <string comment="@option:check kind of information the user can provide about the crash">Unusual desktop behavior I noticed</string>
          </property>
         </widget>
        </item>
@@ -226,7 +223,7 @@
           <bool>false</bool>
          </property>
          <property name="text">
-          <string comment="@option:check kind of information the user can provide about the crash">Details about the application configuration</string>
+          <string comment="@option:check kind of information the user can provide about the crash">Custom settings of the application that may be related</string>
          </property>
         </widget>
        </item>
