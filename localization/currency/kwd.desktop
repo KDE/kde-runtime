@@ -3,8 +3,11 @@ CurrencyCodeIsoAlpha3=KWD
 CurrencyCodeIsoNumeric3=414
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Kuwaiti Dinar
+Name[da]=Kuwaitisk dinar
 Name[en_GB]=Kuwaiti Dinar
 Name[ja]=クウェート・ディナール
+Name[nds]=Kuwaitsch Dinaar
+Name[pt]=Dinar do Koweit
 Name[sv]=Kuwaitiska dinar
 Name[uk]=Кувейтський динар
 Name[x-test]=xxKuwaiti Dinarxx

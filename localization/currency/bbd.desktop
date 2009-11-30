@@ -3,8 +3,13 @@ CurrencyCodeIsoAlpha3=BBD
 CurrencyCodeIsoNumeric3=052
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Barbados Dollar
+Name[da]=Barbadisk dollar
+Name[de]=Barbados-Dollar
 Name[en_GB]=Barbados Dollar
+Name[eu]=Barbadoseko Dolarra
 Name[ja]=バルバドス・ドル
+Name[nds]=Barbados-Dollar
+Name[pt]=Dólar dos Barbados
 Name[sv]=Barbadiska dollar
 Name[uk]=Барбадоський долар
 Name[x-test]=xxBarbados Dollarxx

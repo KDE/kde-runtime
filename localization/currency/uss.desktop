@@ -3,9 +3,12 @@ CurrencyCodeIsoAlpha3=USS
 CurrencyCodeIsoNumeric3=998
 #Context for Name: Adjectival Country Name and Currency Name
 Name=United States Dollar (Same Day)
+Name[da]=Amerikansk dollar (samme dag)
 Name[en_GB]=United States Dollar (Same Day)
 Name[is]=Bandaríkjadollari (sama dag)
 Name[ja]=米ドル (当日)
+Name[nds]=Vereent-Staten-Dollar (sülve Dag)
+Name[pt]=Dólar dos Estados Unidos da América (Mesmo Dia)
 Name[sv]=Amerikanska dollar (samma dag)
 Name[uk]=Долар США (на поточну дату)
 Name[x-test]=xxUnited States Dollar (Same Day)xx

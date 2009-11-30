@@ -3,8 +3,11 @@ CurrencyCodeIsoAlpha3=GWP
 CurrencyCodeIsoNumeric3=624
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Guinea-Bissau Peso
+Name[da]=Guinea-Bissau peso
 Name[en_GB]=Guinea-Bissau Peso
 Name[ja]=ギニアビサウ・ペソ
+Name[nds]=Guinea-Bissau-Peso
+Name[pt]=Peso de Guiné-Bissau
 Name[sv]=Guinea-Bissau peso
 Name[uk]=Песо Гвінеї-Бісау
 Name[x-test]=xxGuinea-Bissau Pesoxx

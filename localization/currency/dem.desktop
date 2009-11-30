@@ -3,8 +3,12 @@ CurrencyCodeIsoAlpha3=DEM
 CurrencyCodeIsoNumeric3=276
 #Context for Name: Adjectival Country Name and Currency Name
 Name=German Mark
+Name[da]=Tysk mark
+Name[de]=Deutsche Mark
 Name[en_GB]=German Mark
 Name[ja]=ドイツ・マルク
+Name[nds]=Düütsch Mark
+Name[pt]=Marco Alemão
 Name[sv]=Tyska mark
 Name[uk]=Німецька марка
 Name[x-test]=xxGerman Markxx

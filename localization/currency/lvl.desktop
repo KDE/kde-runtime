@@ -3,8 +3,11 @@ CurrencyCodeIsoAlpha3=LVL
 CurrencyCodeIsoNumeric3=482
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Latvian Lats
+Name[da]=Lettisk lats
 Name[en_GB]=Latvian Lats
 Name[ja]=ラトビア・ラッツ
+Name[nds]=Lettsch Lats
+Name[pt]=Lats da Letónia
 Name[sv]=Lettländska lats
 Name[uk]=Латвійський лат
 Name[x-test]=xxLatvian Latsxx

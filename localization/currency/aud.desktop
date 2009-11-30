@@ -3,9 +3,14 @@ CurrencyCodeIsoAlpha3=AUD
 CurrencyCodeIsoNumeric3=036
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Australian Dollar
+Name[da]=Australsk dollar
+Name[de]=Australischer Dollar
 Name[en_GB]=Australian Dollar
+Name[eu]=Australiako Dolarra
 Name[is]=Ástralskur dollari
 Name[ja]=オーストラリア・ドル
+Name[nds]=Austraalsch Dollar
+Name[pt]=Dólar Australiano
 Name[sv]=Australiska dollar
 Name[uk]=Австралійський долар
 Name[x-test]=xxAustralian Dollarxx

@@ -3,8 +3,12 @@ CurrencyCodeIsoAlpha3=SDG
 CurrencyCodeIsoNumeric3=938
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Sudanese Pound
+Name[da]=Sudansk pund
 Name[en_GB]=Sudanese Pound
 Name[ja]=スーダン・ポンド
+Name[nds]=Sudaneesch Pund
+Name[pt]=Libra Sudanesa
+Name[sv]=Sudanesiska pund
 Name[uk]=Суданський фунт
 Name[x-test]=xxSudanese Poundxx
 CurrencyNameIso=Sudanese pound

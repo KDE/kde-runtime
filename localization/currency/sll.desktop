@@ -3,8 +3,12 @@ CurrencyCodeIsoAlpha3=SLL
 CurrencyCodeIsoNumeric3=694
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Sierra Leonean Leone
+Name[da]=Sierra Leonsk leone
 Name[en_GB]=Sierra Leonean Leone
 Name[ja]=シエラレオネ・レオン
+Name[nds]=Sierra-leoonsch Leone
+Name[pt]=Leone da Serra Leoa
+Name[sv]=Sierraleonska leone
 Name[uk]=Леоне Сьєрра-Леоне
 Name[x-test]=xxSierra Leonean Leonexx
 CurrencyNameIso=Leone

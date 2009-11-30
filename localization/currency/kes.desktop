@@ -3,8 +3,11 @@ CurrencyCodeIsoAlpha3=KES
 CurrencyCodeIsoNumeric3=404
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Kenyan Shilling
+Name[da]=Kenyansk shilling
 Name[en_GB]=Kenyan Shilling
 Name[ja]=ケニヤ・シリング
+Name[nds]=Keniaansch Schilling
+Name[pt]=Xelim Queniano
 Name[sv]=Kenyanska shilling
 Name[uk]=Кенійський шилінг
 Name[x-test]=xxKenyan Shillingxx

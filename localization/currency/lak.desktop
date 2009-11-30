@@ -3,8 +3,12 @@ CurrencyCodeIsoAlpha3=LAK
 CurrencyCodeIsoNumeric3=418
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Lao Kip
+Name[da]=Laotisk kip
 Name[en_GB]=Lao Kip
 Name[ja]=ラオス・キップ
+Name[nds]=Laootsch Kip
+Name[pt]=Kip do Laos
+Name[sv]=Laotiska kip
 Name[uk]=Лаоський кіп
 Name[x-test]=xxLao Kipxx
 CurrencyNameIso=Kip

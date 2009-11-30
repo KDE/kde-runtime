@@ -3,8 +3,11 @@ CurrencyCodeIsoAlpha3=SIT
 CurrencyCodeIsoNumeric3=705
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Slovenian Tolar
+Name[da]=Slovensk tolar
 Name[en_GB]=Slovenian Tolar
 Name[ja]=スロベニア・トラール
+Name[nds]=Sloweensch Taler
+Name[pt]=Tolar Esloveno
 Name[sv]=Slovenska tolar
 Name[uk]=Словенський толар
 Name[x-test]=xxSlovenian Tolarxx

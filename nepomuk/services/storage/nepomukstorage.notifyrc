@@ -140,12 +140,16 @@ Comment[zh_TW]=Nepomuk 儲存服務
 
 [Event/failedToStart]
 Name=Failed to start Nepomuk
+Name[da]=Kunne ikke starte Nepomuk
 Name[en_GB]=Failed to start Nepomuk
+Name[pt]=Não foi possível iniciar o Nepomuk
 Name[sv]=Misslyckades starta Nepomuk
 Name[uk]=Не вдалося запустити Nepomuk
 Name[x-test]=xxFailed to start Nepomukxx
 Comment=The Nepomuk Semantic Desktop system could not be started
+Comment[da]=Nepomuk semantisk desktop-system kunne ikke startes
 Comment[en_GB]=The Nepomuk Semantic Desktop system could not be started
+Comment[pt]=Não foi possível iniciar o sistema do Ambiente Semântico do Nepomuk
 Comment[sv]=Det semantiska skrivbordssystemet Nepomuk kunde inte startas
 Comment[uk]=Не вдалося запустити систему семантичної стільниці Nepomuk
 Comment[x-test]=xxThe Nepomuk Semantic Desktop system could not be startedxx

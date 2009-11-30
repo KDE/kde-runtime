@@ -3,8 +3,11 @@ CurrencyCodeIsoAlpha3=MWK
 CurrencyCodeIsoNumeric3=454
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Malawian Kwacha
+Name[da]=Malawiansk kwacha
 Name[en_GB]=Malawian Kwacha
 Name[ja]=マラウイ・クワチャ
+Name[nds]=Malawiaansch Kwacha
+Name[pt]=Kwacha do Malawi
 Name[sv]=Malawisk kwacha
 Name[uk]=Малавійська квача
 Name[x-test]=xxMalawian Kwachaxx

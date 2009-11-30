@@ -3,8 +3,12 @@ CurrencyCodeIsoAlpha3=UAH
 CurrencyCodeIsoNumeric3=980
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Ukrainian Hryvnia
+Name[da]=Ukrainsk grynia
 Name[en_GB]=Ukrainian Hryvnia
 Name[ja]=ウクライナ・フリヴニャ
+Name[nds]=Ukrainsch Griwnja
+Name[pt]=Hryvnia Ucraniano
+Name[sv]=Ukrainska hryvnja
 Name[uk]=Українська гривня
 Name[x-test]=xxUkrainian Hryvniaxx
 CurrencyNameIso=Hryvnia

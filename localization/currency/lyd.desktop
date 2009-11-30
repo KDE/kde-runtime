@@ -3,8 +3,11 @@ CurrencyCodeIsoAlpha3=LYD
 CurrencyCodeIsoNumeric3=434
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Libyan Dinar
+Name[da]=Libysk dinar
 Name[en_GB]=Libyan Dinar
 Name[ja]=リビア・ディナール
+Name[nds]=Libysch Dinaar
+Name[pt]=Dinar Líbio
 Name[sv]=Libyska dinar
 Name[uk]=Ліванський динар
 Name[x-test]=xxLibyan Dinarxx

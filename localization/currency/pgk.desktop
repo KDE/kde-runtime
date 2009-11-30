@@ -3,8 +3,11 @@ CurrencyCodeIsoAlpha3=PGK
 CurrencyCodeIsoNumeric3=598
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Papua New Guinean Kina
+Name[da]=Papua Ny Guineansk kina
 Name[en_GB]=Papua New Guinean Kina
 Name[ja]=パプアニューギニア・キナ
+Name[nds]=Papua-Niegguineesch Kina
+Name[pt]=Kina da Papua Nova Guiné
 Name[sv]=Papua Nya Guinea kina
 Name[uk]=Кіна Папуа-Нової Гвінеї
 Name[x-test]=xxPapua New Guinean Kinaxx

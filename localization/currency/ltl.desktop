@@ -3,8 +3,11 @@ CurrencyCodeIsoAlpha3=LTL
 CurrencyCodeIsoNumeric3=440
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Lithuanian Litas
+Name[da]=Litausk litas
 Name[en_GB]=Lithuanian Litas
 Name[ja]=リトアニア・リタス
+Name[nds]=Litausch Litas
+Name[pt]=Litas da Lituânia
 Name[sv]=Lettländska litas
 Name[uk]=Литовський лит
 Name[x-test]=xxLithuanian Litasxx

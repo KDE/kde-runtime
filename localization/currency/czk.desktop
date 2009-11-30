@@ -3,8 +3,12 @@ CurrencyCodeIsoAlpha3=CZK
 CurrencyCodeIsoNumeric3=203
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Czech Koruna
+Name[da]=Tjekkisk koruna
+Name[de]=Tschechische Krone
 Name[en_GB]=Czech Koruna
 Name[ja]=チェコ・コルナ
+Name[nds]=Tschechsch Kroon
+Name[pt]=Coroa Checa
 Name[sv]=Tjeckiska koruna
 Name[uk]=Чеська крона
 Name[x-test]=xxCzech Korunaxx

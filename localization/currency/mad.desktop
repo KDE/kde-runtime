@@ -3,8 +3,11 @@ CurrencyCodeIsoAlpha3=MAD
 CurrencyCodeIsoNumeric3=504
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Moroccan Dirham
+Name[da]=Marokkansk dirham
 Name[en_GB]=Moroccan Dirham
 Name[ja]=モロッコ・ディルハム
+Name[nds]=Marokkaansch Dirham
+Name[pt]=Diram Marroquino
 Name[sv]=Marockanska dirham
 Name[uk]=Марокканський дірхам
 Name[x-test]=xxMoroccan Dirhamxx

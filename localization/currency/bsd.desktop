@@ -3,8 +3,12 @@ CurrencyCodeIsoAlpha3=BSD
 CurrencyCodeIsoNumeric3=044
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Bahamian Dollar
+Name[da]=Bahamansk dollar
+Name[de]=Bahama-Dollar
 Name[en_GB]=Bahamian Dollar
 Name[ja]=バハマ・ドル
+Name[nds]=Bahamaasch Dollar
+Name[pt]=Dólar das Bahamas
 Name[sv]=Bahamanska dollar
 Name[uk]=Багамський долар
 Name[x-test]=xxBahamian Dollarxx

@@ -3,8 +3,11 @@ CurrencyCodeIsoAlpha3=TZS
 CurrencyCodeIsoNumeric3=834
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Tanzanian Shilling
+Name[da]=Tanzanisk shilling
 Name[en_GB]=Tanzanian Shilling
 Name[ja]=タンザニア・シリング
+Name[nds]=Tansaniaansch Schilling
+Name[pt]=Xelim da Tanzânia
 Name[sv]=Tanzaniska shilling
 Name[uk]=Танзанійський шилінг
 Name[x-test]=xxTanzanian Shillingxx

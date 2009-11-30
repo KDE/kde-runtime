@@ -3,9 +3,12 @@ CurrencyCodeIsoAlpha3=NOK
 CurrencyCodeIsoNumeric3=578
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Norwegian Krone
+Name[da]=Norsk krone
 Name[en_GB]=Norwegian Krone
 Name[is]=Norsk króna
 Name[ja]=ノルウェー・クローネ
+Name[nds]=Norweegsch Kroon
+Name[pt]=Coroa Norueguesa
 Name[sv]=Norska kronor
 Name[uk]=Норвезька крона
 Name[x-test]=xxNorwegian Kronexx

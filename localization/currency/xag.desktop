@@ -3,9 +3,13 @@ CurrencyCodeIsoAlpha3=XAG
 CurrencyCodeIsoNumeric3=961
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Silver
+Name[da]=Sølv
 Name[en_GB]=Silver
+Name[eu]=Zilar
 Name[is]=Silfur
 Name[ja]=銀
+Name[nds]=Sülver
+Name[pt]=Prata
 Name[sv]=Silver
 Name[uk]=Срібло
 Name[x-test]=xxSilverxx

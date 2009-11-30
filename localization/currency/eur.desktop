@@ -4,9 +4,13 @@ CurrencyCodeIsoNumeric3=978
 CurrencyNameIso=euro
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Euro
+Name[da]=Euro
+Name[de]=Euro
 Name[en_GB]=Euro
 Name[is]=Evra
 Name[ja]=ユーロ
+Name[nds]=Euro
+Name[pt]=Euro
 Name[sv]=Euro
 Name[uk]=Євро
 Name[x-test]=xxEuroxx

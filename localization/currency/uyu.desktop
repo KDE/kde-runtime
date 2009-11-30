@@ -3,8 +3,11 @@ CurrencyCodeIsoAlpha3=UYU
 CurrencyCodeIsoNumeric3=858
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Uruguayan Peso
+Name[da]=Uruguayansk peso
 Name[en_GB]=Uruguayan Peso
 Name[ja]=ウルグアイ・ペソ
+Name[nds]=Uruguaysch Peso
+Name[pt]=Peso Uruguaio
 Name[sv]=Uruguanska peso
 Name[uk]=Уругвайське песо
 Name[x-test]=xxUruguayan Pesoxx

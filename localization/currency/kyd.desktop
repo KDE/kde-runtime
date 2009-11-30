@@ -3,9 +3,12 @@ CurrencyCodeIsoAlpha3=KYD
 CurrencyCodeIsoNumeric3=136
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Cayman Islands Dollar
+Name[da]=Cayman-øerne-dollar
 Name[en_GB]=Cayman Islands Dollar
 Name[is]=Caymaneyjadollari
 Name[ja]=ケイマン諸島ドル
+Name[nds]=Kaiman-Dollar
+Name[pt]=Dólar das Ilhas Caimão
 Name[sv]=Kaymanska dollar
 Name[uk]=Долар Кайманових островів
 Name[x-test]=xxCayman Islands Dollarxx

@@ -3,8 +3,11 @@ CurrencyCodeIsoAlpha3=HTG
 CurrencyCodeIsoNumeric3=332
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Haitian Gourde
+Name[da]=Haitiansk gourde
 Name[en_GB]=Haitian Gourde
 Name[ja]=ハイチ・グールド
+Name[nds]=Haitiaansch Gourde
+Name[pt]=Gourde do Haiti
 Name[sv]=Haitiska gourde
 Name[uk]=Гаїтянський гурд
 Name[x-test]=xxHaitian Gourdexx

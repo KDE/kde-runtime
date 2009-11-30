@@ -3,8 +3,11 @@ CurrencyCodeIsoAlpha3=ITL
 CurrencyCodeIsoNumeric3=380
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Italian Lira
+Name[da]=Italiensk lire
 Name[en_GB]=Italian Lira
 Name[ja]=イタリア・リラ
+Name[nds]=Italieensch Lira
+Name[pt]=Lira Italiana
 Name[sv]=Italienska lire
 Name[uk]=Італійська ліра
 Name[x-test]=xxItalian Liraxx

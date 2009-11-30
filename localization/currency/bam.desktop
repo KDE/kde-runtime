@@ -3,8 +3,13 @@ CurrencyCodeIsoAlpha3=BAM
 CurrencyCodeIsoNumeric3=977
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Bosnia and Herzegovina Convertible Mark
+Name[da]=Bosnien-Herzegovina konvertibel mark
+Name[de]=Konvertible Mark von Bosnien und Herzegowina
 Name[en_GB]=Bosnia and Herzegovina Convertible Mark
 Name[ja]=ボスニア・ヘルツェゴビナ・兌換マルク
+Name[nds]=Bosnisch-herzegowiensch tuuschbor Mark
+Name[pt]=Marco Convertível da Bósnia e Herzegovina
+Name[sv]=Bosnien och Hercegovina konvertibla mark
 Name[uk]=Конвертована марка Боснії і Герцеговини
 Name[x-test]=xxBosnia and Herzegovina Convertible Markxx
 CurrencyNameIso=Convertible marks

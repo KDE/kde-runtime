@@ -3,8 +3,12 @@ CurrencyCodeIsoAlpha3=SCR
 CurrencyCodeIsoNumeric3=690
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Seychellois Rupee
+Name[da]=Seychellisk rupee
 Name[en_GB]=Seychellois Rupee
 Name[ja]=セーシェル・ルピー
+Name[nds]=Seychelleensch Rupje
+Name[pt]=Rupia das Seychelles
+Name[sv]=Seychelliska rupee
 Name[uk]=Рупія Сейшельських островів
 Name[x-test]=xxSeychellois Rupeexx
 CurrencyNameIso=Seychelles rupee

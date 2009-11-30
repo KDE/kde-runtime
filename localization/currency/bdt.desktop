@@ -3,8 +3,12 @@ CurrencyCodeIsoAlpha3=BDT
 CurrencyCodeIsoNumeric3=050
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Bangladeshi Taka
+Name[da]=Bangladeshisk taka
+Name[de]=Taka von Bangladesch
 Name[en_GB]=Bangladeshi Taka
 Name[ja]=バングラデシュ・タカ
+Name[nds]=Bangladeschisch Taka
+Name[pt]=Taka do Bangladesh
 Name[sv]=Bangladeshiska taka
 Name[uk]=Бангладешська така
 Name[x-test]=xxBangladeshi Takaxx

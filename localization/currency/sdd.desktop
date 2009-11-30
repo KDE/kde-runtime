@@ -3,8 +3,11 @@ CurrencyCodeIsoAlpha3=SDD
 CurrencyCodeIsoNumeric3=810
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Sudanese Dinar
+Name[da]=Sudansk dinar
 Name[en_GB]=Sudanese Dinar
 Name[ja]=スーダン・ディナール
+Name[nds]=Sudaneesch Dinaar
+Name[pt]=Dinar Sudanês
 Name[sv]=Sudanesiska dinar
 Name[uk]=Суданський динар
 Name[x-test]=xxSudanese Dinarxx

@@ -3,8 +3,11 @@ CurrencyCodeIsoAlpha3=WST
 CurrencyCodeIsoNumeric3=882
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Samoan Tala
+Name[da]=Samoansk tala
 Name[en_GB]=Samoan Tala
 Name[ja]=サモア・タラ
+Name[nds]=Samoaansch Tala
+Name[pt]=Tala Samoano
 Name[sv]=Samoaniska tala
 Name[uk]=Самоанська тала
 Name[x-test]=xxSamoan Talaxx

@@ -3,8 +3,11 @@ CurrencyCodeIsoAlpha3=RUB
 CurrencyCodeIsoNumeric3=643
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Russian Ruble
+Name[da]=Russisk rubel
 Name[en_GB]=Russian Ruble
 Name[ja]=ロシア・ルーブル
+Name[nds]=Russ'sch Ruvel
+Name[pt]=Rublo Russo
 Name[sv]=Ryska rubel
 Name[uk]=Російський рубль
 Name[x-test]=xxRussian Rublexx

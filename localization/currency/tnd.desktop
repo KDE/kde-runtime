@@ -3,8 +3,11 @@ CurrencyCodeIsoAlpha3=TND
 CurrencyCodeIsoNumeric3=788
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Tunisian Dinar
+Name[da]=Tunesisk dinar
 Name[en_GB]=Tunisian Dinar
 Name[ja]=チュニジア・ディナール
+Name[nds]=Tuneesch Dinaar
+Name[pt]=Dinar Tunisino
 Name[sv]=Tunisiska dinar
 Name[uk]=Туніський динар
 Name[x-test]=xxTunisian Dinarxx

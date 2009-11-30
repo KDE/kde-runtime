@@ -3,8 +3,13 @@ CurrencyCodeIsoAlpha3=BIF
 CurrencyCodeIsoNumeric3=108
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Burundian Franc
+Name[da]=Burundisk franc
+Name[de]=Burundi-Franc
 Name[en_GB]=Burundian Franc
 Name[ja]=ブルンジ・フラン
+Name[nds]=Burundsch Franc
+Name[pt]=Franco do Burundi
+Name[sv]=Burundiska franc
 Name[uk]=Бурундійський франк
 Name[x-test]=xxBurundian Francxx
 CurrencyNameIso=Burundian franc

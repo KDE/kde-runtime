@@ -3,8 +3,11 @@ CurrencyCodeIsoAlpha3=TWD
 CurrencyCodeIsoNumeric3=901
 #Context for Name: Adjectival Country Name and Currency Name
 Name=New Taiwan Dollar
+Name[da]=Ny taiwansk dollar
 Name[en_GB]=New Taiwan Dollar
 Name[ja]=新台湾ドル
+Name[nds]=Nieg Taiwan-Dollar
+Name[pt]=Novo Dólar de Taiwan
 Name[sv]=Nya taiwanesiska dollar
 Name[uk]=Новий тайванський долар
 Name[x-test]=xxNew Taiwan Dollarxx

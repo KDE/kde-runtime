@@ -3,8 +3,11 @@ CurrencyCodeIsoAlpha3=MVR
 CurrencyCodeIsoNumeric3=462
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Maldivian Rufiyaa
+Name[da]=Maldivisk rufiyaa
 Name[en_GB]=Maldivian Rufiyaa
 Name[ja]=モルディブ・ルフィヤ
+Name[nds]=Malediivsch Rufiyaa
+Name[pt]=Rufia das Malivas
 Name[sv]=Maldiviska rufiyaa
 Name[uk]=Мальдівська руфія
 Name[x-test]=xxMaldivian Rufiyaaxx

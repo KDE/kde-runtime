@@ -3,7 +3,11 @@ CurrencyCodeIsoAlpha3=GHS
 CurrencyCodeIsoNumeric3=936
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Ghana Cedi
+Name[da]=Ghana cedi
+Name[de]=Ghanaischer Cedi
 Name[en_GB]=Ghana Cedi
+Name[nds]=Ghana-Cedi
+Name[pt]=Cedi do Gana
 Name[sv]=Ghana cedi
 Name[uk]=Ганське седі
 Name[x-test]=xxGhana Cedixx
