@@ -317,7 +317,6 @@ Nepomuk::SearchEntry* Nepomuk::SearchFolder::statResult( const Query::Result& re
     KUrl url = result.resource().resourceUri();
     KIO::UDSEntry uds;
     if ( statFile( url, uds ) ) {
-        uds.insert( KIO::UDSEntry::UDS_NEPOMUK_URI, url.url() );
         SearchEntry* entry = new SearchEntry( url, uds );
         m_entries.insert( uds.stringValue( KIO::UDSEntry::UDS_NAME ), entry );
         return entry;
