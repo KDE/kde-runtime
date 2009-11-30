@@ -131,13 +131,22 @@ void BugzillaDuplicatesPage::aboutToShow()
 void BugzillaDuplicatesPage::aboutToHide()
 {
     stopCurrentSearch();
-    
+
+    //Save selected possible duplicates by user
     QStringList possibleDuplicates;
     int count = ui.m_selectedDuplicatesList->count();
     for(int i = 0; i<count; i++) {
         possibleDuplicates << ui.m_selectedDuplicatesList->item(i)->text();
     }
     reportInterface()->setPossibleDuplicates(possibleDuplicates);
+
+    //Save possible duplicates by query
+    QStringList duplicatesByQuery;
+    count = ui.m_bugListWidget->topLevelItemCount();
+    for(int i = 1; i<count; i++) {
+        duplicatesByQuery << ui.m_bugListWidget->topLevelItem(i)->text(0);
+    }
+    reportInterface()->setPossibleDuplicatesByQuery(duplicatesByQuery);
 }
 
 bool BugzillaDuplicatesPage::isComplete()
@@ -304,8 +313,6 @@ void BugzillaDuplicatesPage::searchFinished(const BugMapList & list)
 
             QStringList fields = QStringList() << bug["bug_id"] << title;
             ui.m_bugListWidget->addTopLevelItem(new QTreeWidgetItem(fields));
-
-            reportInterface()->addPossibleDuplicateByQuery(bug["bug_id"]);
         }
 
         ui.m_bugListWidget->sortItems(0 , Qt::DescendingOrder);

@@ -364,9 +364,9 @@ uint ReportInterface::attachToBugNumber() const
     return m_attachToBugNumber;
 }
 
-void ReportInterface::addPossibleDuplicateByQuery(const QString & duplicate)
+void ReportInterface::setPossibleDuplicatesByQuery(const QStringList & list)
 {
-    m_allPossibleDuplicatesByQuery.append(duplicate);
+    m_allPossibleDuplicatesByQuery = list;
 }
 
 BugzillaManager * ReportInterface::bugzillaManager() const

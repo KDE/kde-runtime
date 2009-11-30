@@ -69,7 +69,7 @@ public:
     void setAttachToBugNumber(uint);
     uint attachToBugNumber() const;
 
-    void addPossibleDuplicateByQuery(const QString &);
+    void setPossibleDuplicatesByQuery(const QStringList &);
 
     BugzillaManager * bugzillaManager() const;
     
