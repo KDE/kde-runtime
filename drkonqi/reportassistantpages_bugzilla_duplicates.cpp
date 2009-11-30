@@ -208,17 +208,15 @@ void BugzillaDuplicatesPage::performSearch()
         endDateStr = QLatin1String("Now");
     }
 
+#if true
     BugReport report = reportInterface()->newBugReportTemplate();
     bugzillaManager()->searchBugs(reportInterface()->relatedBugzillaProducts(),
                                   report.bugSeverity(), startDateStr, endDateStr, 
                                   reportInterface()->firstBacktraceFunctions().join(" "));
-
-    //Test search
-    /*
-    bugzillaManager()->searchBugs(QStringList() << "plasma", "crash",
-                startDateStr, endDateStr,
-       "QGraphicsScenePrivate::processDirtyItemsRecursive QGraphicsScenePrivate::_q_processDirtyItems");
-    */
+#else //Test search
+    bugzillaManager()->searchBugs(QStringList() << "plasma", "crash", startDateStr, endDateStr,
+       "QGraphicsScenePrivate::processDirtyItemsRecursive");
+#endif
 }
 
 void BugzillaDuplicatesPage::stopCurrentSearch()
@@ -571,6 +569,8 @@ void BugzillaReportInformationDialog::bugFetchFinished(BugReport report, QObject
                 bool ok = false;
                 int dupId = duplicate.toInt(&ok);
                 if (ok && dupId > 0) {
+                    ui.m_statusWidget->setIdle(QString());
+
                     KGuiItem yesItem = KStandardGuiItem::yes();
                     yesItem.setText(i18nc("@action:button let the user to choose to read the "
                     "main report", "Yes, read the main report"));

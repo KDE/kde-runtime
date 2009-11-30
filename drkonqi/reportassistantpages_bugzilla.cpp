@@ -373,7 +373,6 @@ bool BugzillaInformationPage::showNextPage()
 {
     checkTexts();
 
-    //FIXME improve logic according to the info the user can provide
     if (m_textsOK) { //not empty
         bool titleShort = ui.m_titleEdit->text().size() < 30;
 

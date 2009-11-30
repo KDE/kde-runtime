@@ -735,7 +735,7 @@ BugzillaUploadData::BugzillaUploadData(uint bugNumber)
 
 void BugzillaUploadData::attachFile(const QString & url, const QString & description)
 {
-    //FIXME implement
+    //TODO implement when needed
     //Read file contents and use attachRawData
     Q_UNUSED(url);
     Q_UNUSED(description);
