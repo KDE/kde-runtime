@@ -55,7 +55,7 @@ PhononKcm::PhononKcm(QWidget *parent, const QVariantList &args)
     load();
     connect(m_backendSelection, SIGNAL(changed()), SLOT(changed()));
     connect(m_devicePreferenceWidget, SIGNAL(changed()), SLOT(changed()));
-    setButtons( KCModule::Default|KCModule::Apply );
+    setButtons( KCModule::Default|KCModule::Apply|KCModule::Help );
 }
 
 void PhononKcm::load()

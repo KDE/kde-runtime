@@ -39,6 +39,7 @@ add_subdirectory(kded)
 add_subdirectory(trash)
 add_subdirectory(history)
 add_subdirectory(solid-device-automounter)
+add_subdirectory(phonon)
 endif ( Q_WS_X11 )
 
 ########### install files ###############

@@ -1,0 +1,68 @@
+<?xml version="1.0" ?>
+<!DOCTYPE article PUBLIC "-//KDE//DTD DocBook XML V4.2-Based Variant V1.1//EN"
+"dtd/kdex.dtd" [
+  <!ENTITY % addindex "IGNORE">
+  <!ENTITY % English "INCLUDE">
+]>
+<article lang="&language;">
+<title>Multimedia</title>
+<articleinfo>
+<authorgroup>
+<author><firstname>Matthias</firstname><surname>Kretz</surname></author>
+<!-- TRANS:ROLES_OF_TRANSLATORS -->
+</authorgroup>
+
+<date>2009-11-30</date>
+<releaseinfo>&kde; 4.4</releaseinfo>
+
+<keywordset>
+<keyword>KDE</keyword>
+<keyword>Systemsettings</keyword>
+<keyword>hardware</keyword>
+<keyword>multimedia</keyword>
+<keyword>sound</keyword>
+<keyword>video</keyword>
+<keyword>backend</keyword>
+</keywordset>
+</articleinfo>
+
+<para>
+This &systemsettings; module allows you to configure the sound and video device
+preference and the backends used by Phonon.
+</para>
+
+<variablelist>
+<varlistentry><term><guilabel>Device Preference</guilabel> tab</term>
+<listitem><para>
+On the left your are presented a tree list with various categories of outputs and capture. 
+For each category you may choose what device you wish to use.</para>
+<para>The <guilabel>Audio Output</guilabel> and <guilabel>Audio Capture</guilabel>
+items define the default ordering of devices which can be overridden by 
+each sub items.</para>
+<para>Clicking the <guibutton>Apply Device List To</guibutton> button shows a dialog 
+which enables you to copy the selected setting from one category to many others.</para>
+<para>Highlight a category and the available devices for this category are displayed in the 
+list on the right. The order in this list determines the preference of the output and capture 
+devices. If for some reason the first device cannot be used Phonon will try to use the second, &etc;</para>
+<para>Use the <guibutton>Prefer</guibutton> and <guibutton>Defer</guibutton> buttons to change the order 
+and the <guibutton>Test</guibutton> button to play a test sound on the selected device.
+</para></listitem>
+</varlistentry>
+
+<varlistentry><term><guilabel>Backend</guilabel> tab</term>
+<listitem><para>
+On the left side of this module a list of Phonon backends found on your system is shown. 
+The order here determines the order Phonon will use the backends.
+Use the <guibutton>Prefer</guibutton> and <guibutton>Defer</guibutton> buttons 
+to change this order.</para>
+<para>
+Depending on the selected backend additional settings might be enabled like &eg; Deinterlacing 
+(Media and method) for Xine.
+</para></listitem>
+</varlistentry>
+
+</variablelist>
+
+<para>
+</para>
+</article>
