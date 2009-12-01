@@ -4,8 +4,11 @@ CurrencyCodeIsoNumeric3=320
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Guatemalan Quetzal
 Name[da]=Guatemalansk quetzal
+Name[de]=Guatemaltekischer Quetzal
 Name[en_GB]=Guatemalan Quetzal
+Name[et]=Guatemala quetzal
 Name[ja]=グアテマラ・ケツァル
+Name[nb]=Guatemala-Quetzal
 Name[nds]=Guatemalteeksch Quetzal
 Name[pt]=Quetzal Guatemalteco
 Name[sv]=Guatemalanska quetzal

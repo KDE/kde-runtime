@@ -4,8 +4,12 @@ CurrencyCodeIsoNumeric3=368
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Iraqi Dinar
 Name[da]=Irakisk dinar
+Name[de]=Irak-Dinar
 Name[en_GB]=Iraqi Dinar
+Name[et]=Iraagi dinaar
 Name[ja]=イラク・ディナール
+Name[lv]=Irākas dinārs
+Name[nb]=Irakiske dinarer
 Name[nds]=Iraksch Dinaar
 Name[pt]=Dinar Iraquiano
 Name[sv]=Irakiska dinar

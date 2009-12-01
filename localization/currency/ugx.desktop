@@ -4,8 +4,12 @@ CurrencyCodeIsoNumeric3=800
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Ugandan Shilling
 Name[da]=Ugandisk shilling
+Name[de]=Uganda-Schilling
 Name[en_GB]=Ugandan Shilling
+Name[et]=Uganda šilling
 Name[ja]=ウガンダ・シリング
+Name[lv]=Ugandas šiliņš
+Name[nb]=Uganda-shilling
 Name[nds]=Ugandsch Schilling
 Name[pt]=Xelim Ugandês
 Name[sv]=Ugandiska shilling

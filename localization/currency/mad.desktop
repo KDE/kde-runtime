@@ -4,8 +4,11 @@ CurrencyCodeIsoNumeric3=504
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Moroccan Dirham
 Name[da]=Marokkansk dirham
+Name[de]=Marokkanischer Dirham
 Name[en_GB]=Moroccan Dirham
+Name[et]=Maroko dirham
 Name[ja]=モロッコ・ディルハム
+Name[nb]=Marokkanske dirham
 Name[nds]=Marokkaansch Dirham
 Name[pt]=Diram Marroquino
 Name[sv]=Marockanska dirham

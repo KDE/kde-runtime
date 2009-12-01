@@ -4,8 +4,12 @@ CurrencyCodeIsoNumeric3=496
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Mongolian Tugrik
 Name[da]=Mongolsk tugrik
+Name[de]=Tögrög
 Name[en_GB]=Mongolian Tugrik
+Name[et]=Mongoolia tugrik
 Name[ja]=モンゴル・トゥグルグ
+Name[lv]=Mongolijas tugriks
+Name[nb]=Mongolske tugrik
 Name[nds]=Mongoolsch Tugrik
 Name[pt]=Tugrik da Mongólia
 Name[sv]=Mongoliska tugrik

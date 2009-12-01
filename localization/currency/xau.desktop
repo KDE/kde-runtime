@@ -4,10 +4,14 @@ CurrencyCodeIsoNumeric3=959
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Gold
 Name[da]=Guld
+Name[de]=Gold
 Name[en_GB]=Gold
+Name[et]=Kuld
 Name[eu]=Urre
 Name[is]=Gull
 Name[ja]=金
+Name[lv]=Zelts
+Name[nb]=Gull
 Name[nds]=Gold
 Name[pt]=Ouro
 Name[sv]=Guld

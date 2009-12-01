@@ -4,8 +4,12 @@ CurrencyCodeIsoNumeric3=760
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Syrian Pound
 Name[da]=Syrisk pund
+Name[de]=Syrisches Pfund
 Name[en_GB]=Syrian Pound
+Name[et]=Süüria nael
 Name[ja]=シリア・ポンド
+Name[lv]=Sīrijas mārciņa
+Name[nb]=Syriske pund
 Name[nds]=Syrsch Pund
 Name[pt]=Libra Síria
 Name[sv]=Syriska pund

@@ -4,9 +4,13 @@ CurrencyCodeIsoNumeric3=372
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Irish Pound
 Name[da]=Irsk pund
+Name[de]=Irisches Pfund
 Name[en_GB]=Irish Pound
+Name[et]=Iiri nael
 Name[is]=Írskt pund
 Name[ja]=アイルランド・ポンド
+Name[lv]=Īru mārciņa
+Name[nb]=Irsk pund
 Name[nds]=Iersch Pund
 Name[pt]=Libra Irlandesa
 Name[sv]=irländska pund

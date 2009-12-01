@@ -4,8 +4,12 @@ CurrencyCodeIsoNumeric3=400
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Jordanian Dinar
 Name[da]=Jordansk dinar
+Name[de]=Jordan-Dinar
 Name[en_GB]=Jordanian Dinar
+Name[et]=Jordaania dinaar
 Name[ja]=ヨルダン・ディナール
+Name[lv]=Jordānijas dolārs
+Name[nb]=Jordanske dinarer
 Name[nds]=Jordaansch Dinaar
 Name[pt]=Dinar Jordano
 Name[sv]=Jordanska dinar

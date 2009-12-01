@@ -4,8 +4,12 @@ CurrencyCodeIsoNumeric3=985
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Polish Zloty
 Name[da]=Polsk zloty
+Name[de]=Złoty
 Name[en_GB]=Polish Zloty
+Name[et]=Poola zlott
 Name[ja]=ポーランド・ズロチ
+Name[lv]=Polijas zlots
+Name[nb]=Polske zloty
 Name[nds]=Poolsch Zloty
 Name[pt]=Zloty Polaco
 Name[sv]=Polska zloty

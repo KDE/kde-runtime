@@ -4,9 +4,13 @@ CurrencyCodeIsoNumeric3=
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Iceland krona
 Name[da]=Islandsk krone
+Name[de]=Isländische Krone
 Name[en_GB]=Iceland krona
+Name[et]=Islandi kroon
 Name[is]=Íslensk króna
 Name[ja]=アイスランド・クローナ
+Name[lv]=Īslandes krona
+Name[nb]=Islandske kroner
 Name[nds]=Islannsch Kroon
 Name[pt]=Coroa Islandesa
 Name[sv]=Isländska kronor

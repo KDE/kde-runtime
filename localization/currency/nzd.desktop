@@ -4,9 +4,13 @@ CurrencyCodeIsoNumeric3=554
 #Context for Name: Adjectival Country Name and Currency Name
 Name=New Zealand Dollar
 Name[da]=Newzealandsk dollar
+Name[de]=Neuseeland-Dollar
 Name[en_GB]=New Zealand Dollar
+Name[et]=Uus-Meremaa dollar
 Name[is]=Nýsjálenskur dollari
 Name[ja]=ニュージーランド・ドル
+Name[lv]=Jaunzēlandes dolārs
+Name[nb]=New Zealand-dollar
 Name[nds]=Niegseeland-Dollar
 Name[pt]=Dólar da Nova Zelândia
 Name[sv]=Nyzeeländska dollar

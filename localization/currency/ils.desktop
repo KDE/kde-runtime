@@ -4,8 +4,12 @@ CurrencyCodeIsoNumeric3=376
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Israeli New Sheqel
 Name[da]=Israelsk ny shekel
+Name[de]=Israelischer Schekel
 Name[en_GB]=Israeli New Sheqel
+Name[et]=Iisraeli uus seekel
 Name[ja]=新イスラエル・シェケル
+Name[lv]=Izraēlas jaunais šekelis
+Name[nb]=Ny israelsk shekel
 Name[nds]=Israeelsch nieg Schekel
 Name[pt]=Sheqel Novo Israelita
 Name[sv]=Nya israeliska shekel

@@ -4,9 +4,13 @@ CurrencyCodeIsoNumeric3=840
 #Context for Name: Adjectival Country Name and Currency Name
 Name=United States Dollar
 Name[da]=Amerikansk dollar
+Name[de]=US-Dollar
 Name[en_GB]=United States Dollar
+Name[et]=USA dollar
 Name[is]=Bandaríkjadollari
 Name[ja]=米ドル
+Name[lv]=Amerikas Savienoto Valstu dolārs
+Name[nb]=Amerikanske dollar
 Name[nds]=Vereent-Staten-Dollar
 Name[pt]=Dólar dos Estados Unidos da América
 Name[sv]=Amerikanska dollar

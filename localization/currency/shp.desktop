@@ -4,8 +4,12 @@ CurrencyCodeIsoNumeric3=654
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Saint Helena Pound
 Name[da]=Skt. Helena pund
+Name[de]=St. Helena-Pfund
 Name[en_GB]=Saint Helena Pound
+Name[et]=Saint Helena nael
 Name[ja]=セントヘレナ・ポンド
+Name[lv]=Sv. Helēnas salas mārciņa
+Name[nb]=St. Helena-pund
 Name[nds]=St.-Helena-Pund
 Name[pt]=Libra de Santa Helena
 Name[sv]=Saint Helena-pund

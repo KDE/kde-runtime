@@ -4,8 +4,11 @@ CurrencyCodeIsoNumeric3=740
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Surinamese guilder
 Name[da]=Surinamsk gylden
+Name[de]=Suriname-Gulden
 Name[en_GB]=Surinamese guilder
+Name[et]=Suriname kulden
 Name[ja]=スリナム・ギルダー
+Name[nb]=Surinam-gylden
 Name[nds]=Surinameesch Gulden
 Name[pt]=Florim do Suriname
 Name[sv]=Surinamesisk guilder
