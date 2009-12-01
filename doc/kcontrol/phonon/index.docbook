@@ -34,7 +34,7 @@ preference and the backends used by Phonon.
 <variablelist>
 <varlistentry><term><guilabel>Device Preference</guilabel> tab</term>
 <listitem><para>
-On the left your are presented a tree list with various categories of outputs and capture. 
+On the left you are presented a tree list with various categories of outputs and capture. 
 For each category you may choose what device you wish to use.</para>
 <para>The <guilabel>Audio Output</guilabel> and <guilabel>Audio Capture</guilabel>
 items define the default ordering of devices which can be overridden by 
