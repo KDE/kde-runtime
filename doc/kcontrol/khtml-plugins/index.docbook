@@ -34,16 +34,24 @@
 <title>Global Settings</title>
 
 <para>The first setting here is <guilabel>Enable Plugins
-globally</guilabel>.  If you disable this checkbox, then &konqueror;
+globally</guilabel>.  If you disable this check box, then &konqueror;
 will not use any plugins.  If you enable it, then any installed and
 configured plugins that it can find will be used by &konqueror;</para>
 
 <para>You can also restrict &konqueror; to <guilabel>Only allow HTTP
 and HTTPS URLs for plugins</guilabel> by checking the box.</para>
 
-<para><guilabel>Load plugins on demand only</guilabel>
-<guilabel>CPU priority for plugins</guilabel> slider
-<guibutton>Domain-Specific Settings</guibutton>
+<para>The next option determines, if plugins are loaded on demand only.</para>
+<para>Use the slider labeled <guilabel>CPU priority for plugins</guilabel> 
+to adjust this setting.
+</para>
+
+<para>Click the <guibutton>Domain-Specific Settings</guibutton> button to open
+a dialog where you can set specific plugin policies for any particular 
+host or domain. These policies will be used instead of the default policy for 
+enabling or disabling plugins on pages sent by these domains or hosts.</para>
+<para>
+Add a new policy here or select a policy and use the controls on the right to modify it.
 </para>
 </sect2>
 
