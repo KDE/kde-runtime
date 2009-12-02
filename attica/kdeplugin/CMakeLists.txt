@@ -1,7 +1,5 @@
 ################# KDE PLUGIN for LibAttica #################
 
-include_directories( ${KDE4_INCLUDES} ${QT_INCLUDES} ${LIBATTICA_INCLUDE_DIR} ${CMAKE_CURRENT_SOURCE_DIR} )
-
 set(attica_kde_SRCS
     kdeplatformdependent.cpp
 )

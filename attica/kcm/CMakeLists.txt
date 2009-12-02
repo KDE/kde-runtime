@@ -1,6 +1,3 @@
-include_directories(${KDE4_INCLUDES} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR}/../ocs/lib)
-link_directories(${LIBATTICA_LIBRARY_DIRS})
-
 set(kcm_attica_PART_SRCS
     providereditdialog.cpp
     atticamodule.cpp
