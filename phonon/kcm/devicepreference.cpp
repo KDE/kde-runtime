@@ -534,6 +534,7 @@ void DevicePreference::on_applyPreferencesButton_clicked()
                 }
             }
         }
+        emit changed();
         break;
     case QDialog::Rejected:
         // nothing to do
