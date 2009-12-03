@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=ADF
 CurrencyCodeIsoNumeric3=
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Andorran Franc
+Name[bg]=Андорски франк
 Name[da]=Andorransk franc
 Name[de]=Andoranische Franc
 Name[en_GB]=Andorran Franc

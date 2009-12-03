@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=JOD
 CurrencyCodeIsoNumeric3=400
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Jordanian Dinar
+Name[bg]=Йордански динар
 Name[da]=Jordansk dinar
 Name[de]=Jordan-Dinar
 Name[en_GB]=Jordanian Dinar

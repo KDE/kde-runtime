@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=GRE
 CurrencyCodeIsoNumeric3=300
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Greek Drachma
+Name[bg]=Гръцка драхма
 Name[da]=Græsk drakme
 Name[de]=Griechische Drachme
 Name[en_GB]=Greek Drachma

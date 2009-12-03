@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=FRF
 CurrencyCodeIsoNumeric3=250
 #Context for Name: Adjectival Country Name and Currency Name
 Name=French Franc
+Name[bg]=Френски франк
 Name[da]=Fransk franc
 Name[de]=Französischer Franc
 Name[en_GB]=French Franc

@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=DOP
 CurrencyCodeIsoNumeric3=214
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Dominican Peso
+Name[bg]=Доминиканско песо
 Name[da]=Dominikansk peso
 Name[de]=Dominikanischer Peso
 Name[en_GB]=Dominican Peso

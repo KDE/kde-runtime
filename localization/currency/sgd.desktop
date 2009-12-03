@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=SGD
 CurrencyCodeIsoNumeric3=702
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Singapore Dollar
+Name[bg]=Сингапурски долар
 Name[da]=Singaporeansk dollar
 Name[de]=Singapur-Dollar
 Name[en_GB]=Singapore Dollar

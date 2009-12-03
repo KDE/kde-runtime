@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=MXN
 CurrencyCodeIsoNumeric3=484
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Mexican Peso
+Name[bg]=Мексиканско песо
 Name[da]=Mexicansk peso
 Name[de]=Mexikanischer Peso
 Name[en_GB]=Mexican Peso

@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=DKK
 CurrencyCodeIsoNumeric3=208
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Danish Krone
+Name[bg]=Датска крона
 Name[da]=Dansk krone
 Name[de]=Dänische Krone
 Name[en_GB]=Danish Krone

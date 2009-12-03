@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=BND
 CurrencyCodeIsoNumeric3=096
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Brunei Dollar
+Name[bg]=Брунейски долар
 Name[da]=Brunei dollar
 Name[de]=Brunei-Dollar
 Name[en_GB]=Brunei Dollar

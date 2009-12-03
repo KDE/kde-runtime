@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=RON
 CurrencyCodeIsoNumeric3=946
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Romanian Leu
+Name[bg]=Румънска лея
 Name[da]=Rumænsk leu
 Name[de]=Rumänischer Leu
 Name[en_GB]=Romanian Leu

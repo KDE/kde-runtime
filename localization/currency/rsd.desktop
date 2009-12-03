@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=RSD
 CurrencyCodeIsoNumeric3=941
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Serbian Dinar
+Name[bg]=Сръбски динар
 Name[da]=Serbisk dinar
 Name[de]=Serbischer Dinar
 Name[en_GB]=Serbian Dinar

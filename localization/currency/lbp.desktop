@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=LBD
 CurrencyCodeIsoNumeric3=422
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Lebanese Pound
+Name[bg]=Ливанска лира
 Name[da]=Libanesisk pund
 Name[de]=Libanesisches Pfund
 Name[en_GB]=Lebanese Pound
