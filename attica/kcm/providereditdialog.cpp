@@ -191,7 +191,7 @@ void ProviderEditDialog::registerAccountFinished(Attica::BaseJob* job)
 
     if (postJob->metadata().error() == Attica::Metadata::NoError)
     {
-        showRegisterHint("dialog-ok-apply", i18n("Congratulations! New account was successfully registered."));
+        showRegisterHint("dialog-ok-apply", i18n("Registration complete. New account was successfully registered."));
     }
     else
     {
