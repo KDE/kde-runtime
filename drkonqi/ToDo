@@ -1,8 +1,12 @@
 ##Main Tasks
 -------------
 
+- Title is not needed when attaching the report to an existant one
+
 ##For KDE4.5+:
 --------------
+
+- Improve the "Enter manual bug ID" option in the Duplicates page to be more discoverable
 
 - Replace the progressbar of the StatusWidget with a throbber....
 
@@ -40,6 +44,11 @@
   + move README.packagers in there with a proper name.
   
 - Register dynamic debug area (see dfaure's mail on k-c-d).
+
+- Use external .desktop files to provide examples of "useful crash details" for external applications
+  (ex. Amarok installs a amarokdrkonqiexamples.desktop file with a content like "Type of music you were listening to..."
+  - It can contain translations too.
+  
 
 ##Brainstorming
 --------------
