@@ -206,7 +206,7 @@
             <item>
              <widget class="QSlider" name="m_sliderMemoryUsage">
               <property name="minimum">
-               <number>50</number>
+               <number>20</number>
               </property>
               <property name="maximum">
                <number>1000</number>
