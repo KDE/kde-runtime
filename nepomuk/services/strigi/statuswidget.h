@@ -30,6 +30,9 @@ class KJob;
 
 namespace Soprano {
     class Model;
+    namespace Util {
+        class AsyncQuery;
+    }
 }
 
 namespace Nepomuk {
@@ -49,7 +52,7 @@ namespace Nepomuk {
         void slotUpdateStrigiStatus();
         void slotUpdateStoreStatus();
         void slotStoreSizeCalculated( KJob* job );
-        void slotFileCountFinished();
+        void slotFileCountFinished( Soprano::Util::AsyncQuery* query );
         void slotUpdateTimeout();
 
     private:

@@ -32,6 +32,7 @@
 #include <Soprano/Model>
 #include <Soprano/QueryResultIterator>
 #include <Soprano/Vocabulary/Xesam>
+#include <Soprano/Util/AsyncQuery>
 
 #include <QtCore/QTimer>
 
@@ -74,42 +75,6 @@ void Nepomuk::StatusWidget::slotUpdateStrigiStatus()
 }
 
 
-namespace {
-    class FileCountThread : public QThread
-    {
-    public:
-        FileCountThread( Soprano::Model* model ) {
-            m_model = model;
-        }
-
-        void run() {
-            m_cnt = 0;
-            int lastCnt = -1;
-            while ( m_cnt != lastCnt ) {
-                lastCnt = m_cnt;
-                Soprano::QueryResultIterator it
-                    = m_model->executeQuery( QString( "select distinct ?r where { { ?r a %1 . } UNION { ?r a %2 . } } "
-                                                      "OFFSET %3 LIMIT 500" )
-                                             .arg( Soprano::Node::resourceToN3( Soprano::Vocabulary::Xesam::File() ) )
-                                             .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NFO::FileDataObject() ) )
-                                             .arg( m_cnt ),
-                                             Soprano::Query::QueryLanguageSparql );
-                while ( it.next() ) {
-                    ++m_cnt;
-                }
-            }
-        }
-
-        int count() {
-            return m_cnt;
-        }
-
-    private:
-        Soprano::Model* m_model;
-        int m_cnt;
-    };
-}
-
 void Nepomuk::StatusWidget::slotUpdateStoreStatus()
 {
     if ( !m_updatingJobCnt && !m_updateTimer.isActive() ) {
@@ -122,11 +87,13 @@ void Nepomuk::StatusWidget::slotUpdateStoreStatus()
         connect( job, SIGNAL( result( KJob* ) ), this, SLOT( slotStoreSizeCalculated( KJob* ) ) );
         job->start();
 
-        // update file count the stupid way while trying not to block the store for too long
+        // update file count
         // ========================================
-        FileCountThread* fct = new FileCountThread( m_model );
-        connect( fct, SIGNAL( finished() ), this, SLOT( slotFileCountFinished() ) );
-        fct->start();
+        Soprano::Util::AsyncQuery* query
+            = Soprano::Util::AsyncQuery::executeQuery( m_model,
+                                                       QLatin1String( "select count(?r) where { ?r a nfo:FileDataObject . }" ),
+                                                       Soprano::Query::QueryLanguageSparql );
+        connect( query, SIGNAL( nextReady(Soprano::Util::AsyncQuery*) ), this, SLOT( slotFileCountFinished(Soprano::Util::AsyncQuery*) ) );
     }
     else {
         m_updateRequested = true;
@@ -149,11 +116,10 @@ void Nepomuk::StatusWidget::slotStoreSizeCalculated( KJob* job )
 }
 
 
-void Nepomuk::StatusWidget::slotFileCountFinished()
+void Nepomuk::StatusWidget::slotFileCountFinished( Soprano::Util::AsyncQuery* query )
 {
-    FileCountThread* fct = static_cast<FileCountThread*>( sender() );
-    m_labelFileCount->setText( i18np( "1 file in index", "%1 files in index", fct->count() ) );
-    fct->deleteLater();
+    m_labelFileCount->setText( i18np( "1 file in index", "%1 files in index", query->binding( 0 ).literal().toInt() ) );
+    query->deleteLater();
 
     if ( !--m_updatingJobCnt ) {
         // start the timer to avoid too many updates
