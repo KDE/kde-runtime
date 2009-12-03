@@ -66,7 +66,6 @@ namespace Nepomuk {
         Q_OBJECT
 
     public:
-        SearchFolder();
         SearchFolder( const QString& name, const QString& query, KIO::SlaveBase* slave );
         ~SearchFolder();
 

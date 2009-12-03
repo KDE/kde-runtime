@@ -31,6 +31,7 @@
 #include <KUser>
 #include <kdeversion.h>
 #include <KMessageBox>
+#include <KMimeType>
 
 #include <nepomuk/thing.h>
 #include <nepomuk/resourcemanager.h>
@@ -53,6 +54,9 @@
 
 
 namespace {
+    /**
+     * Check if the resource represents a local file with an existing nie:url property.
+     */
     bool isLocalFile( const Nepomuk::Resource& res )
     {
         if ( res.hasProperty( Nepomuk::Vocabulary::NIE::url() ) ) {
@@ -65,6 +69,10 @@ namespace {
         }
     }
 
+    /**
+     * Check if the resource represents a file on a removable media using a filex:/
+     * URL.
+     */
     bool isRemovableMediaFile( const Nepomuk::Resource& res )
     {
         if ( res.hasProperty( Nepomuk::Vocabulary::NIE::url() ) ) {
@@ -76,6 +84,10 @@ namespace {
         }
     }
 
+    /**
+     * Mount a storage volume via Solid and wait for it to be mounted with
+     * a timeout of 20 seconds.
+     */
     bool mountAndWait( Solid::StorageAccess* storage )
     {
         kDebug() << storage;
@@ -94,6 +106,9 @@ namespace {
         return storage->isAccessible();
     }
 
+    /**
+     * Create a Solid storage access interface from the volume UUID.
+     */
     Solid::StorageAccess* storageFromUUID( const QString& uuid )
     {
         QString solidQuery = QString::fromLatin1( "[ StorageVolume.usage=='FileSystem' AND StorageVolume.uuid=='%1' ]" ).arg( uuid.toLower() );
@@ -105,6 +120,14 @@ namespace {
             return 0;
     }
 
+    /**
+     * Convert a filex:/ URL into its actual local file URL.
+     *
+     * \param url The filex:/ URL to convert
+     * \param evenMountIfNecessary If true an existing unmouted volume will be mounted to grant access to the local file.
+     *
+     * \return The converted local URL or an invalid URL if the filesystem the file is stored on could not be/was not mounted.
+     */
     KUrl convertRemovableMediaFileUrl( const KUrl& url, bool evenMountIfNecessary = false )
     {
         Solid::StorageAccess* storage = storageFromUUID( url.host() );
@@ -120,6 +143,32 @@ namespace {
         }
     }
 
+    /**
+     * Get the mount path of a nfo:Filesystem resource as created by the removable storage service.
+     */
+    KUrl determineFilesystemPath( const Nepomuk::Resource& fsRes )
+    {
+        QString uuidQuery = QString::fromLatin1( "select ?uuid where { %1 %2 ?uuid . }" )
+                            .arg( Soprano::Node::resourceToN3( fsRes.resourceUri() ),
+                                  Soprano::Node::resourceToN3( Soprano::Vocabulary::NAO::identifier() ) );
+        Soprano::QueryResultIterator it = Nepomuk::ResourceManager::instance()->mainModel()->executeQuery( uuidQuery, Soprano::Query::QueryLanguageSparql );
+        if ( it.next() ) {
+            Solid::StorageAccess* storage = storageFromUUID( it["uuid"].toString() );
+            it.close();
+            if ( storage &&
+                 ( storage->isAccessible() ||
+                   mountAndWait( storage ) ) ) {
+                return storage->filePath();
+            }
+        }
+        return KUrl();
+    }
+
+    /**
+     * Determine the label for a filesystem \p url is stored on.
+     *
+     * \param url A filex:/ URL pointing to a file stored on a removable filesystem.
+     */
     QString getFileSystemLabelForRemovableMediaFileUrl( const KUrl& url )
     {
         QList<Soprano::Node> labelNodes
@@ -136,6 +185,40 @@ namespace {
             return labelNodes.first().toString();
         else
             return url.host(); // Solid UUID
+    }
+
+    /**
+     * Split the filename part off a nepomuk:/ URI. This is used in many methods for identifying
+     * entries listed from tags and filesystems.
+     */
+    Nepomuk::Resource splitNepomukUrl( const KUrl& url, QString& filename )
+    {
+        //
+        // let's try to extract the resource from the url in case we listed a tag or
+        // filesystem and need to stat the entries in those virtual folders
+        //
+        // pre KDE 4.4 resources had just a single section, in KDE 4.4 we have "/res/<UUID>"
+        //
+        QString urlStr = url.url();
+        int pos = urlStr.indexOf( '/', urlStr.startsWith( QLatin1String( "nepomuk:/res/" ) ) ? 13 : 9 );
+        if ( pos > 0 ) {
+            KUrl resourceUri = urlStr.left(pos);
+            filename = urlStr.mid( pos+1 );
+            return resourceUri;
+        }
+        else {
+            return url;
+        }
+    }
+
+    /**
+     * Encode the resource URI into the UDS_NAME to make it unique.
+     * It is important that we do not use the % for percent-encoding. Otherwise KUrl::url will
+     * re-encode them, thus, destroying our name.
+     */
+    QString resourceUriToUdsName( const KUrl& url )
+    {
+        return QString::fromAscii( url.toEncoded().toPercentEncoding( QByteArray(), QByteArray(), '_' ) );
     }
 }
 
@@ -179,8 +262,16 @@ void Nepomuk::NepomukProtocol::get( const KUrl& url )
 
     kDebug() << url;
 
-    Resource res( url );
-    if ( res.hasType( Soprano::Vocabulary::NAO::Tag() ) ) {
+    QString filename;
+    Nepomuk::Resource res = splitNepomukUrl( url, filename );
+
+    if( !res.exists() ) {
+        error( KIO::ERR_DOES_NOT_EXIST, url.prettyUrl() );
+    }
+    else if ( !filename.isEmpty() ) {
+        ForwardingSlaveBase::get( url );
+    }
+    else if ( res.hasType( Soprano::Vocabulary::NAO::Tag() ) ) {
         error( KIO::ERR_IS_DIRECTORY, url.prettyUrl() );
     }
     else if ( isLocalFile( res ) ) {
@@ -228,7 +319,8 @@ void Nepomuk::NepomukProtocol::stat( const KUrl& url )
 
     kDebug() << url;
 
-    Resource res( url );
+    QString filename;
+    Nepomuk::Resource res = splitNepomukUrl( url, filename );
 
     //
     // let's see if it is a pimo thing which refers to a file
@@ -239,9 +331,13 @@ void Nepomuk::NepomukProtocol::stat( const KUrl& url )
         }
     }
 
-    Q_ASSERT( res.exists() );
-
-    if ( isLocalFile( res ) ) {
+    if( !res.exists() ) {
+        error( KIO::ERR_DOES_NOT_EXIST, url.prettyUrl() );
+    }
+    else if ( !filename.isEmpty() ) {
+        ForwardingSlaveBase::get( url );
+    }
+    else if ( isLocalFile( res ) ) {
         ForwardingSlaveBase::stat( url );
     }
     else if ( isRemovableMediaFile( res ) &&
@@ -260,7 +356,7 @@ void Nepomuk::NepomukProtocol::stat( const KUrl& url )
         uds.insert( KIO::UDSEntry::UDS_DISPLAY_NAME, res.genericLabel() );
 
         // UDS_NAME needs to be unique but can be ugly
-        uds.insert( KIO::UDSEntry::UDS_NAME, QString::fromAscii( url.toEncoded().toPercentEncoding() ) );
+        uds.insert( KIO::UDSEntry::UDS_NAME, resourceUriToUdsName( url ) );
 
         //
         // There can still be file resources that have a mimetype but are
@@ -315,10 +411,12 @@ void Nepomuk::NepomukProtocol::stat( const KUrl& url )
         uds.insert( KIO::UDSEntry::UDS_NEPOMUK_URI, KUrl( res.resourceUri() ).url() );
 
 
-        // special case: tags are handled as folders
-        if ( res.hasType( Soprano::Vocabulary::NAO::Tag() ) ) {
-            kDebug() << res.resourceUri() << "is tag -> mimetype inode/directory";
+        // special case: tags and filesystems are handled as folders
+        if ( res.hasType( Soprano::Vocabulary::NAO::Tag() ) ||
+             res.hasType( Nepomuk::Vocabulary::NFO::Filesystem() ) ) {
+            kDebug() << res.resourceUri() << "is tag or filesystem -> mimetype inode/directory";
             uds.insert( KIO::UDSEntry::UDS_MIME_TYPE, QLatin1String( "inode/directory" ) );
+            uds.insert( KIO::UDSEntry::UDS_FILE_TYPE, S_IFDIR );
         }
 
         statEntry( uds );
@@ -333,7 +431,11 @@ void Nepomuk::NepomukProtocol::mimetype( const KUrl& url )
 
     kDebug() << url;
 
-    Resource res( url );
+    QString filename;
+    Nepomuk::Resource res = splitNepomukUrl( url, filename );
+    if ( !filename.isEmpty() ) {
+        ForwardingSlaveBase::mimetype( url );
+    }
     if ( res.hasType( Soprano::Vocabulary::NAO::Tag() ) ) {
         kDebug() << res.resourceUri() << "is tag -> mimetype inode/directory";
         // in listDir() we list tags as search folders
@@ -367,8 +469,10 @@ void Nepomuk::NepomukProtocol::del(const KUrl& url, bool isFile)
     if ( !ensureNepomukRunning() )
         return;
 
-    Resource res( url );
-    if ( isLocalFile( url ) ) {
+    QString filename;
+    Nepomuk::Resource res = splitNepomukUrl( url, filename );
+    if ( !filename.isEmpty() ||
+         isLocalFile( res ) ) {
         ForwardingSlaveBase::del( url, isFile );
     }
     else {
@@ -379,9 +483,10 @@ void Nepomuk::NepomukProtocol::del(const KUrl& url, bool isFile)
 
 bool Nepomuk::NepomukProtocol::rewriteUrl( const KUrl& url, KUrl& newURL )
 {
-    Nepomuk::Resource res( url );
+    QString filename;
+    Nepomuk::Resource res = splitNepomukUrl( url, filename );
 
-    if( !res.exists() )
+    if ( !res.exists() )
         return false;
 
     //
@@ -394,31 +499,56 @@ bool Nepomuk::NepomukProtocol::rewriteUrl( const KUrl& url, KUrl& newURL )
     }
 
     if ( res.hasType( Soprano::Vocabulary::NAO::Tag() ) ) {
-        Query::ComparisonTerm term( Soprano::Vocabulary::NAO::hasTag(), Query::ResourceTerm( url ), Query::ComparisonTerm::Equal );
+        Query::ComparisonTerm term( Soprano::Vocabulary::NAO::hasTag(), Query::ResourceTerm( res ), Query::ComparisonTerm::Equal );
         newURL = Query::Query( term ).toSearchUrl().url();
-        return true;
+    }
+    else if ( res.hasType( Nepomuk::Vocabulary::NFO::Filesystem() ) ) {
+        newURL = determineFilesystemPath( res );
+        kDebug() << "Rewriting filesystem URL" << url << "to" << newURL;
     }
     else if ( isLocalFile( res ) ) {
         newURL = res.property( Vocabulary::NIE::url() ).toUrl();
-        return true;
     }
     else if ( isRemovableMediaFile( res ) ) {
         newURL = convertRemovableMediaFileUrl( res.property( Nepomuk::Vocabulary::NIE::url() ).toUrl() );
         kDebug() << "Rewriting removable media URL" << url << "to" << newURL;
-        return newURL.isValid();
     }
-    else {
-        return false;
+
+    if ( !filename.isEmpty() ) {
+        newURL.addPath( filename );
     }
+
+    kDebug() << url << newURL;
+
+    return newURL.isValid();
 }
 
 
-void Nepomuk::NepomukProtocol::prepareUDSEntry( KIO::UDSEntry&, bool ) const
+void Nepomuk::NepomukProtocol::prepareUDSEntry( KIO::UDSEntry& uds, bool listing ) const
 {
-    // other than ForwardingSlaveBase we do not want UDS_URL to be rewritten to the requested URL.
-    // On the contrary: we want to actually change to another kio slave on execution.
-
-    // do nothing
+    //
+    // We cannot handle listing subdirs, thus, nepomuksearch does create UDS_URL
+    // values for us. But since file:/ does not create UDS_MIME_TYPE entries and KFileItem
+    // can only handle local files (our URLs are not local) we need to handle the mimetyping
+    // here the same way ForwardingSlaveBase does. For !listing we have all the correct values
+    // anyway.
+    //
+    if ( listing ) {
+        if ( uds.isDir() ) {
+            //
+            // nepomuksearch does already create correct UDS_URL values for us. But if we are
+            // listing a nfo:Folder resource we do not have the UDS_URL since file:/ does not
+            // set it. But since we cannot handle subdirs in there we need to set UDS_URL to
+            // the original file URL here.
+            //
+            KUrl url = processedUrl();
+            url.addPath( uds.stringValue( KIO::UDSEntry::UDS_NAME ) );
+            uds.insert( KIO::UDSEntry::UDS_URL, url.url() );
+        }
+        else {
+            ForwardingSlaveBase::prepareUDSEntry( uds, listing );
+        }
+    }
 }
 
 

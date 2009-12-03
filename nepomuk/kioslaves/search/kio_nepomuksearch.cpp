@@ -296,7 +296,7 @@ void Nepomuk::SearchProtocol::del(const KUrl& url, bool isFile)
     if (folder) {
         if ( SearchEntry* entry = folder->findEntry( url.fileName() ) ) {
             kDebug() << "findEntry returned something";
-            KIO::ForwardingSlaveBase::del(entry->entry().stringValue( KIO::UDSEntry::UDS_TARGET_URL ), isFile);
+            KIO::ForwardingSlaveBase::del(url, isFile);
         }
         else {
             kDebug() << "findEntry returned nothing";
@@ -312,11 +312,10 @@ void Nepomuk::SearchProtocol::del(const KUrl& url, bool isFile)
 
 bool Nepomuk::SearchProtocol::rewriteUrl( const KUrl& url, KUrl& newURL )
 {
-    kDebug() << url << newURL;
-
     if ( SearchFolder* folder = extractSearchFolder( url ) ) {
         if ( SearchEntry* entry = folder->findEntry( url.fileName() ) ) {
             newURL = entry->resource();
+            kDebug() << url << newURL;
             return true;
         }
     }
@@ -325,13 +324,9 @@ bool Nepomuk::SearchProtocol::rewriteUrl( const KUrl& url, KUrl& newURL )
 }
 
 
-void Nepomuk::SearchProtocol::prepareUDSEntry( KIO::UDSEntry& entry, bool ) const
+void Nepomuk::SearchProtocol::prepareUDSEntry( KIO::UDSEntry& uds, bool listing ) const
 {
-    // other than ForwardingSlaveBase we do not want UDS_URL to be rewritten to the requested URL.
-    // On the contrary: we want to actually change to another kio slave on execution. This is
-    // mostly useful for folders
-
-    // do nothing
+    // we already handle UDS_URL in SearchFolder. No need to do anything more here.
 }
 
 

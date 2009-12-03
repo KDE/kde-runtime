@@ -68,13 +68,6 @@ Nepomuk::SearchEntry::SearchEntry( const QUrl& res,
 }
 
 
-Nepomuk::SearchFolder::SearchFolder()
-{
-    // try to force clients to invalidate their cache
-    org::kde::KDirNotify::emitFilesAdded( "nepomuksearch:/" + m_name );
-}
-
-
 Nepomuk::SearchFolder::SearchFolder( const QString& name, const QString& query, KIO::SlaveBase* slave )
     : QThread(),
       m_name( name ),
@@ -317,6 +310,16 @@ Nepomuk::SearchEntry* Nepomuk::SearchFolder::statResult( const Query::Result& re
     KUrl url = result.resource().resourceUri();
     KIO::UDSEntry uds;
     if ( statFile( url, uds ) ) {
+        // needed since the nepomuk:/ KIO slave does not do stating of files in its own
+        // subdirs (tags and filesystems), and neither do we with real subdirs
+        if ( uds.isDir() &&
+             result.resource().hasProperty( Nepomuk::Vocabulary::NIE::url() ) )
+            uds.insert( KIO::UDSEntry::UDS_URL, KUrl( result.resource().property( Nepomuk::Vocabulary::NIE::url() ).toUrl() ).url() );
+
+        // needed since the file:/ KIO slave does not create them and KFileItem::nepomukUri()
+        // cannot know that it is a local file since it is forwarded
+        uds.insert( KIO::UDSEntry::UDS_NEPOMUK_URI, url.url() );
+
         SearchEntry* entry = new SearchEntry( url, uds );
         m_entries.insert( uds.stringValue( KIO::UDSEntry::UDS_NAME ), entry );
         return entry;
