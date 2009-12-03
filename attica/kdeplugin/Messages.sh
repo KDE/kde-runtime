@@ -1,2 +1,2 @@
 #! /bin/sh
-$XGETTEXT -name *.cpp -o $podir/attica_kde.pot
+$XGETTEXT *.cpp -o $podir/attica_kde.pot
