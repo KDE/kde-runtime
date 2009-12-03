@@ -50,6 +50,21 @@ namespace Nepomuk {
         RemovableStorageService( QObject* parent, const QVariantList& );
         ~RemovableStorageService();
 
+    public Q_SLOTS:
+        /**
+         * Determines the resource URI for a local file URL. This also handles
+         * local file URLs that are not stored as such in Nepomuk but using a
+         * filex:/ scheme URL for a mounted filesystem.
+         *
+         * This method is called by libnepomuk's Resource class to handle
+         * filex:/ URLs transparently.
+         *
+         * \return The resource URI for \p url or an empty string if it could
+         * not be found (this is the case if the filesystem is not mounted or
+         * if \p url is simply invalid or not a used URL.)
+         */
+        Q_SCRIPTABLE QString resourceUriFromLocalFileUrl( const QString& url );
+
     private Q_SLOTS:
         void slotSolidDeviceAdded( const QString& udi );
         void slotSolidDeviceRemoved( const QString& udi );
@@ -71,6 +86,8 @@ namespace Nepomuk {
         public:
             Entry() {}
             Entry( RemovableStorageService* );
+
+            KUrl constructRelativeUrl( const QString& path ) const;
 
             Solid::Device m_device;
 

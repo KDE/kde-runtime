@@ -114,6 +114,63 @@ Nepomuk::RemovableStorageService::~RemovableStorageService()
 }
 
 
+QString Nepomuk::RemovableStorageService::resourceUriFromLocalFileUrl( const QString& urlString )
+{
+    KUrl url( urlString );
+    KUrl fileXUrl;
+    QString path = url.path();
+
+    for ( QHash<QString, Entry>::ConstIterator it = m_metadataCache.constBegin();
+          it != m_metadataCache.constEnd(); ++it ) {
+        const Entry& entry = it.value();
+        if ( !entry.m_lastMountPath.isEmpty() && path.startsWith( entry.m_lastMountPath ) ) {
+            // construct the filex:/ URL and use it below
+            fileXUrl = entry.constructRelativeUrl( path );
+            break;
+        }
+    }
+
+
+    //
+    // This is a query similar to the one Resource in libnepomuk uses. Once we found the filex:/ URL above we
+    // can simply continue with that. If the entry does not exist yet libnepomuk will create a new
+    // random nepomuk:/ URL.
+    //
+    QString query;
+    if ( fileXUrl.isEmpty() )
+        query = QString::fromLatin1("select distinct ?r ?o where { "
+                                    "{ ?r %1 %2 . } "
+                                    "UNION "
+                                    "{ %2 ?p ?o . } "
+                                    "} LIMIT 1")
+                .arg( Soprano::Node::resourceToN3(Nepomuk::Vocabulary::NIE::url()),
+                      Soprano::Node::resourceToN3(url) );
+    else
+        query = QString::fromLatin1("select distinct ?r ?o where { "
+                                    "{ ?r %1 %2 . } "
+                                    "UNION "
+                                    "{ ?r %1 %3 . } "
+                                    "UNION "
+                                    "{ %2 ?p ?o . } "
+                                    "} LIMIT 1")
+                .arg( Soprano::Node::resourceToN3(Nepomuk::Vocabulary::NIE::url()),
+                      Soprano::Node::resourceToN3(url),
+                      Soprano::Node::resourceToN3(fileXUrl) );
+
+    Soprano::QueryResultIterator it = mainModel()->executeQuery( query, Soprano::Query::QueryLanguageSparql );
+    if( it.next() ) {
+        KUrl resourceUri = it["r"].uri();
+        if( resourceUri.isEmpty() )
+            return url.url();
+        else
+            return resourceUri.url();
+    }
+    else {
+        return QString();
+    }
+}
+
+
 void Nepomuk::RemovableStorageService::initCacheEntries()
 {
     QList<Solid::Device> devices
@@ -206,7 +263,9 @@ void Nepomuk::RemovableStorageService::slotAccessibilityChanged( bool accessible
         // so any caches will be cleared. Otherwise KDirModel and friends might try to access the old media URLs
         // which nepomuk:/ KIO has rewritten without asking again.
         //
-        org::kde::KDirNotify::emitFilesRemoved( QStringList() << entry.m_lastMountPath );
+        // FIXME: cannot use "org::kde::KDirNotify::emitFilesRemoved( QStringList() << entry.m_lastMountPath );"
+        //        as that will make the FileWatchService delete all metadata
+        //
 
         //
         // First we create the filesystem resource. We mostly need this for the user readable label.
@@ -221,10 +280,8 @@ void Nepomuk::RemovableStorageService::slotAccessibilityChanged( bool accessible
         // FIXME: do this asyncroneously
         // FIXME: We need to handle the mountpoint folder resource separately. It can no longer be the parent resource for the top-level files on the device.
         QString query = QString::fromLatin1( "select ?r ?url ?g where { " // FIXME: can Virtuoso directly select a substring of the url? Can we maybe even do this in an update query?
-                                             "?r a %1 . "
-                                             "graph ?g { ?r %2 ?url . } . "
-                                             "FILTER(REGEX(STR(?url),'^file://%3/')) . }" )
-                        .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NFO::FileDataObject() ) )
+                                             "graph ?g { ?r %1 ?url . } . "
+                                             "FILTER(REGEX(STR(?url),'^file://%2/')) . }" )
                         .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ) )
                         .arg( entry.m_lastMountPath );
         kDebug() << query;
@@ -232,11 +289,11 @@ void Nepomuk::RemovableStorageService::slotAccessibilityChanged( bool accessible
 
         foreach( const Soprano::BindingSet& b, bindings ) {
             const QUrl resource = b["r"].uri();
-            const QString relativePath = b["url"].uri().path().mid( entry.m_lastMountPath.count() );
+            const QString path = b["url"].uri().path();
             const QUrl graph = b["g"].uri();
 
             // construct the new filex:/ URL from the solid device UID and the relative path on the device
-            const QUrl filexUrl = QLatin1String("filex://") + volume->uuid() + relativePath;
+            const QUrl filexUrl = entry.constructRelativeUrl( path );
 
             kDebug() << "Converting URL" << b["url"] << "to" << filexUrl;
 
@@ -250,12 +307,26 @@ void Nepomuk::RemovableStorageService::slotAccessibilityChanged( bool accessible
             fileRes.addProperty( Nepomuk::Vocabulary::NIE::isPartOf(), fsRes );
         }
     }
+    kDebug() << "done";
 }
 
 
 Nepomuk::RemovableStorageService::Entry::Entry( RemovableStorageService* parent )
     : q( parent )
 {
+}
+
+
+KUrl Nepomuk::RemovableStorageService::Entry::constructRelativeUrl( const QString& path ) const
+{
+    const Solid::StorageVolume* volume = m_device.as<Solid::StorageVolume>();
+    if ( volume ) {
+        const QString relativePath = path.mid( m_lastMountPath.count() );
+        return KUrl( QLatin1String("filex://") + volume->uuid() + relativePath );
+    }
+    else {
+        return KUrl();
+    }
 }
 
 NEPOMUK_EXPORT_SERVICE( Nepomuk::RemovableStorageService, "nepomukremovablestorageservice")
