@@ -29,6 +29,7 @@ namespace Soprano {
 }
 
 class KUrl;
+class QUrl;
 
 namespace Strigi {
     namespace Soprano {
@@ -76,6 +77,8 @@ namespace Strigi {
 
         private:
             void removeIndexedData( const KUrl& url );
+
+            QUrl determineFolderResourceUri( const KUrl& fileUrl );
 
             class Private;
             Private* d;

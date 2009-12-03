@@ -1,5 +1,5 @@
 /* This file is part of the KDE Project
-   Copyright (c) 2008 Sebastian Trueg <trueg@kde.org>
+   Copyright (c) 2008-2009 Sebastian Trueg <trueg@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -75,7 +75,8 @@ void Nepomuk::SystemTray::slotUpdateStrigiStatus()
 {
     setToolTip("nepomuk", i18n("Search Service"),  m_service->userStatusString() );
     m_suspendResumeAction->setChecked( m_service->indexScheduler()->isSuspended() );
-    if (m_service->indexScheduler()->isIndexing()) {
+    // TODO: a manually suspended service should not be passive
+    if (m_service->indexScheduler()->isIndexing() ) {
         setStatus(Active);
     } else {
         setStatus(Passive);

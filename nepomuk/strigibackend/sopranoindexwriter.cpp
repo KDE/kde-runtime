@@ -129,6 +129,8 @@ namespace {
     class FileMetaData
     {
     public:
+        FileMetaData( const KUrl& url );
+
         /// stores basic data including the nie:url and the nrl:GraphMetadata in \p model
         void storeBasicData( Soprano::Model* model );
 
@@ -136,7 +138,10 @@ namespace {
         QUrl resourceUri;
 
         /// The file URL (nie:url)
-        QUrl fileUrl;
+        KUrl fileUrl;
+
+        /// The file info - saved to prevent multiple stats
+        QFileInfo fileInfo;
 
         /// The URI of the graph that contains all indexed statements
         QUrl context;
@@ -167,13 +172,26 @@ namespace {
         bool isRdfType;
     };
 
+    FileMetaData::FileMetaData( const KUrl& url )
+        : fileUrl( url ),
+          fileInfo( url.toLocalFile() )
+    {
+        // determine the resource URI by using Nepomuk::Resource's power
+        // this will automatically find previous uses of the file in question
+        // with backwards compatibility
+        resourceUri = Nepomuk::Resource( fileUrl ).resourceUri();
+
+        // use a new random context URI
+        context = Nepomuk::ResourceManager::instance()->generateUniqueUri( "ctx" );
+    }
+
     void FileMetaData::storeBasicData( Soprano::Model* model )
     {
         model->addStatement( resourceUri, Nepomuk::Vocabulary::NIE::url(), fileUrl, context );
 
         // Strigi only indexes files and extractors mostly (if at all) store the nie:DataObject type (i.e. the contents)
         // Thus, here we go the easy way and mark each indexed file as a nfo:FileDataObject.
-        if ( QFileInfo( fileUrl.toLocalFile() ).isDir() ) {
+        if ( fileInfo.isDir() ) {
             model->addStatement( resourceUri,
                                  Vocabulary::RDF::type(),
                                  Nepomuk::Vocabulary::NFO::Folder(),
@@ -340,23 +358,17 @@ void Strigi::Soprano::IndexWriter::startAnalysis( const AnalysisResult* idx )
     }
 
     // create the file data used during the analysis
-    FileMetaData* data = new FileMetaData;
-
-    // get the file URL
-    data->fileUrl = createFileUrl( idx );
+    FileMetaData* data = new FileMetaData( createFileUrl( idx ) );
 
     // remove previously indexed data
     removeIndexedData( data->fileUrl );
 
-    // TODO: it would be great for future file sharing purposes to keep the resource URI between strigi updates.
-
-    // determine the resource URI by using Nepomuk::Resource's power
-    // this will automatically find previous uses of the file in question
-    // with backwards compatibility
-    data->resourceUri = Nepomuk::Resource( data->fileUrl ).resourceUri();
-
-    // use a new random context URI
-    data->context = Nepomuk::ResourceManager::instance()->generateUniqueUri( "ctx" );
+    // It is important to keep the resource URI between updates (especially for sharing of files)
+    // However, when updating data from pre-KDE 4.4 times we want to get rid of old file:/ resource
+    // URIs. However, we can only do that if we were the only ones to write info about that file
+    // Thus, we need to use Nepomuk::Resource again
+    if ( data->resourceUri.scheme() == QLatin1String( "file" ) )
+        data->resourceUri = Nepomuk::Resource( data->fileUrl ).resourceUri();
 
     // store initial data to make sure newly created URIs are reused directly by libnepomuk
     data->storeBasicData( d->repository );
@@ -399,17 +411,27 @@ void Strigi::Soprano::IndexWriter::addValue( const AnalysisResult* idx,
         if ( rfd->isRdfType ) {
             statement.setPredicate( ::Soprano::Vocabulary::RDF::type() );
             statement.setObject( QUrl::fromEncoded( value.c_str(), QUrl::StrictMode ) );
+
+            // we handle the basic File/Folder typing ourselves
+            if ( statement.object().uri() == Nepomuk::Vocabulary::NFO::FileDataObject() ) {
+                return;
+            }
+        }
+
+        else if ( field->key() == FieldRegister::pathFieldName ) {
+            // ignore it as we handle that ourselves in startAnalysis
+            return;
         }
 
         else {
             //
-            // we bend the plain strigi properties into something nicer, also because we
-            // do not want paths to be indexed, way too many false positives
-            // in standard desktop searches
+            // Like the URIs of the files themselves the folders also need uuid resource URIs.
             //
-            if ( field->key() == FieldRegister::pathFieldName ||
-                 field->key() == FieldRegister::parentLocationFieldName ) {
-                statement.setObject( QUrl::fromLocalFile( QFile::decodeName( QByteArray::fromRawData( value.c_str(), value.length() ) ) ) );
+            if ( field->key() == FieldRegister::parentLocationFieldName ) {
+                QUrl folderUri = determineFolderResourceUri( QUrl::fromLocalFile( QFile::decodeName( QByteArray::fromRawData( value.c_str(), value.length() ) ) ) );
+                if ( folderUri.isEmpty() )
+                    return;
+                statement.setObject( folderUri );
             }
             else {
                 statement.setObject( d->createLiteralValue( rfd->dataType, ( unsigned char* )value.c_str(), value.length() ) );
@@ -620,5 +642,25 @@ void Strigi::Soprano::IndexWriter::removeIndexedData( const KUrl& url )
             d->repository->removeContext( metaDataGraph );
         else
             d->repository->removeAllStatements( Statement( indexGraph, Node(), Node() ) );
+    }
+}
+
+
+QUrl Strigi::Soprano::IndexWriter::determineFolderResourceUri( const KUrl& fileUrl )
+{
+    Nepomuk::Resource res( fileUrl );
+    if ( res.exists() ) {
+        return res.resourceUri();
+    }
+//     QString query = QString::fromLatin1( "select ?r where { ?r %1 %2 . }" )
+//                     .arg( Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ),
+//                           Node::resourceToN3( fileUrl ) );
+//     QueryResultIterator result = d->repository->executeQuery( query, ::Soprano::Query::QueryLanguageSparql );
+//     if ( result.next() ) {
+//         return result["r"].uri();
+//     }
+    else {
+        kDebug() << "!!!!!!!!!!!!!!! Could not find resource URI for folder" << fileUrl;
+        return QUrl();
     }
 }

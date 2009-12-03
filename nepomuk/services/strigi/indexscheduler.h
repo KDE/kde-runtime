@@ -23,6 +23,7 @@
 #include <QtCore/QMutex>
 #include <QtCore/QWaitCondition>
 #include <QtCore/QSet>
+#include <QtCore/QDateTime>
 
 #include <vector>
 #include <string>
@@ -35,7 +36,7 @@ namespace Strigi {
 class StoppableConfiguration;
 class QFileInfo;
 class QUrl;
-class QDateTime;
+class KUrl;
 class QByteArray;
 
 
@@ -146,6 +147,12 @@ namespace Nepomuk {
         // emits indexingStarted or indexingStopped based on parameter. Makes sure
         // no signal is emitted twice
         void setIndexingStarted( bool started );
+
+        /**
+         * Removes all previously indexed entries that are not in the list of folders
+         * to index anymore.
+         */
+        void removeOldAndUnwantedEntries();
 
         bool m_suspended;
         bool m_stopped;

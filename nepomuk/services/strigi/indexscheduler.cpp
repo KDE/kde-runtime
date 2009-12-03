@@ -21,6 +21,8 @@
 
 #include "indexscheduler.h"
 #include "strigiserviceconfig.h"
+#include "nfo.h"
+#include "nie.h"
 
 #include <QtCore/QMutexLocker>
 #include <QtCore/QList>
@@ -33,6 +35,14 @@
 
 #include <KDebug>
 #include <KTemporaryFile>
+#include <KUrl>
+
+#include <Nepomuk/ResourceManager>
+
+#include <Soprano/Model>
+#include <Soprano/QueryResultIterator>
+#include <Soprano/NodeIterator>
+#include <Soprano/Node>
 
 #include <map>
 #include <vector>
@@ -191,10 +201,6 @@ void Nepomuk::IndexScheduler::run()
 
     setIndexingStarted( true );
 
-    // do the actual indexing
-    foreach( const QString& f, StrigiServiceConfig::self()->folders() )
-        m_dirsToUpdate << qMakePair( f, UpdateRecursive|AutoUpdateFolder );
-
     while ( 1 ) {
         // wait for more dirs to analyze in case the initial
         // indexing is done
@@ -231,9 +237,6 @@ void Nepomuk::IndexScheduler::run()
 }
 
 
-// FIXME: the folders in StrigiServiceConfig::self()->folders() themselves are not indexed.
-
-// this method should be thread-safe ("should" because of the unknown situation with indexreader and -writer)
 bool Nepomuk::IndexScheduler::updateDir( const QString& dir, Strigi::StreamAnalyzer* analyzer, UpdateDirFlags flags )
 {
 //    kDebug() << dir << analyzer << recursive;
@@ -244,6 +247,14 @@ bool Nepomuk::IndexScheduler::updateDir( const QString& dir, Strigi::StreamAnaly
     m_currentFolder = dir;
     const bool recursive = flags&UpdateRecursive;
     const bool forceUpdate = flags&ForceUpdate;
+
+    // we start by updating the folder itself
+    time_t storedMTime = m_indexManager->indexReader()->mTime( QFile::encodeName( dir ).data() );
+    QFileInfo dirInfo( dir );
+    if ( storedMTime == 0 ||
+         storedMTime != dirInfo.lastModified().toTime_t() ) {
+        analyzeFile( dirInfo, analyzer );
+    }
 
     // get a map of all indexed files from the dir including their stored mtime
     std::map<std::string, time_t> filesInStore;
@@ -261,7 +272,9 @@ bool Nepomuk::IndexScheduler::updateDir( const QString& dir, Strigi::StreamAnaly
     while ( dirIt.hasNext() ) {
         QString path = dirIt.next();
 
-        QFileInfo fileInfo = dirIt.fileInfo();
+        // FIXME: we cannot use canonialFilePath here since that could lead into another folder. Thus, we probably
+        // need to use another approach then the getChildren one.
+        QFileInfo fileInfo = dirIt.fileInfo();//.canonialFilePath();
 
         bool indexFile = m_analyzerConfig->indexFile( QFile::encodeName( path ), QFile::encodeName( fileInfo.fileName() ) );
 
@@ -395,8 +408,8 @@ void Nepomuk::IndexScheduler::readConfig()
 {
     // load Strigi configuration
     std::vector<std::pair<bool, std::string> > filters;
-    QStringList excludeFilters = StrigiServiceConfig::self()->excludeFilters();
-    QStringList includeFilters = StrigiServiceConfig::self()->includeFilters();
+    const QStringList excludeFilters = StrigiServiceConfig::self()->excludeFilters();
+    const QStringList includeFilters = StrigiServiceConfig::self()->includeFilters();
     foreach( const QString& filter, excludeFilters ) {
         filters.push_back( std::make_pair<bool, std::string>( false, filter.toUtf8().data() ) );
     }
@@ -404,6 +417,7 @@ void Nepomuk::IndexScheduler::readConfig()
         filters.push_back( std::make_pair<bool, std::string>( true, filter.toUtf8().data() ) );
     }
     m_analyzerConfig->setFilters(filters);
+    removeOldAndUnwantedEntries();
     updateAll();
 }
 
@@ -485,6 +499,83 @@ void Nepomuk::IndexScheduler::deleteEntries( const std::vector<std::string>& ent
         deleteEntries( filesToDelete );
     }
     m_indexManager->indexWriter()->deleteEntries( entries );
+}
+
+
+void Nepomuk::IndexScheduler::removeOldAndUnwantedEntries()
+{
+    //
+    // Get all folders that are stored as parent folders of indexed files
+    //
+    QString query = QString::fromLatin1( "select distinct ?d ?dir where { "
+                                         "?r a %1 . "
+                                         "?g <http://www.strigi.org/fields#indexGraphFor> ?r . "
+                                         "?r %2 ?d . "
+                                         "?d %3 ?dir . }" )
+                    .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NFO::FileDataObject() ) )
+                    .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::isPartOf() ) )
+                    .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ) );
+    Soprano::QueryResultIterator it = ResourceManager::instance()->mainModel()->executeQuery( query, Soprano::Query::QueryLanguageSparql );
+    QList<QPair<KUrl, QUrl> > storedFolders;
+    while ( it.next() && !m_stopped ) {
+        storedFolders << qMakePair( KUrl( it["dir"].uri() ), it["d"].uri() );
+    }
+
+    //
+    // Now compare that list with the configured folders and remove any
+    // entries that are children of folders that should not be indexed.
+    //
+    QList<QUrl> storedFoldersToRemove;
+    for ( int i = 0; i < storedFolders.count(); ++i ) {
+        const KUrl& url = storedFolders[i].first;
+        if ( !StrigiServiceConfig::self()->shouldFolderBeIndexed( url.path() ) ) {
+            storedFoldersToRemove << storedFolders[i].second;
+        }
+    }
+
+    // cleanup
+    storedFolders.clear();
+
+    //
+    // Now we gathered all the folders whose children we need to delete from the storage.
+    // We now need to query all entries in those folders to get a list of graphs we actually
+    // need to delete.
+    //
+    for ( int i = 0; i < storedFoldersToRemove.count() && !m_stopped; ++i ) {
+
+        // wait for resume or stop (or simply continue)
+        if ( !waitForContinue() ) {
+            break;
+        }
+
+        QString query = QString::fromLatin1( "select ?g where { "
+                                             "?r a %1 . "
+                                             "?r %2 %3 . "
+                                             "?g <http://www.strigi.org/fields#indexGraphFor> ?r . }" )
+                        .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NFO::FileDataObject() ) )
+                        .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::isPartOf() ) )
+                        .arg( Soprano::Node::resourceToN3( storedFoldersToRemove[i] ) );
+        QList<Soprano::Node> entriesToRemove
+            = ResourceManager::instance()->mainModel()->executeQuery( query, Soprano::Query::QueryLanguageSparql )
+            .iterateBindings( "g" )
+            .allNodes();
+
+        //
+        // Finally delete the entries. The corresponding metadata graphs will be deleted automatically
+        // by the storage service.
+        //
+        for( int j = 0; j < entriesToRemove.count() && !m_stopped; ++j ) {
+
+            // wait for resume or stop (or simply continue)
+            if ( !waitForContinue() ) {
+                break;
+            }
+
+            const Soprano::Node& g = entriesToRemove[j];
+            kDebug() << "Removing old index entry graph" << g;
+            ResourceManager::instance()->mainModel()->removeContext( g );
+        }
+    }
 }
 
 #include "indexscheduler.moc"

@@ -46,56 +46,6 @@ using namespace std;
 class Strigi::Soprano::IndexReader::Private
 {
 public:
-    bool createDocument( const Node& res, IndexedDocument& doc ) {
-        StatementIterator it = repository->listStatements( Statement( res, Node(), Node() ) );
-        if ( it.lastError() ) {
-            return false;
-        }
-
-        // use the resource URI as fallback file URI
-        doc.uri = res.uri().toLocalFile().toUtf8().data();
-
-        while ( it.next() ) {
-            Statement s = *it;
-            if ( s.object().isLiteral() ) {
-                std::string fieldName = Util::fieldName( s.predicate().uri() );
-                std::string value = s.object().toString().toUtf8().data();
-
-                if (fieldName == "text") {
-                    doc.fragment = value;
-                }
-                else if (fieldName == FieldRegister::pathFieldName) {
-                    qDebug() << "Setting IndexedDocument uri=" << value.c_str();
-                    doc.uri = value;
-                }
-                else if (fieldName == FieldRegister::mimetypeFieldName) {
-                    doc.mimetype = value;
-                }
-                else if (fieldName == FieldRegister::mtimeFieldName) {
-                    // Sadly in Xesam sourceModified is not typed as DateTime but defaults to an int :( We try to be compatible
-                    if ( s.object().literal().isDateTime() ) {
-                        doc.mtime = s.object().literal().toDateTime().toTime_t();
-                    }
-                    else {
-                        doc.mtime = s.object().literal().toUnsignedInt();
-                    }
-                }
-                else if (fieldName == FieldRegister::sizeFieldName) {
-                    doc.size = s.object().literal().toInt64();
-                }
-                else {
-                    doc.properties.insert( make_pair<const string, string>( fieldName, value ) );
-                }
-            }
-            else {
-                // FIXME: For "Strigi++" we should at least go one level deeper, i.e. make an RDF query on those results that are
-                // not literal statements
-            }
-        }
-
-        return true;
-    }
-
     ::Soprano::Model* repository;
 };
 
@@ -127,7 +77,7 @@ void Strigi::Soprano::IndexReader::getChildren( const std::string& parent,
                              "UNION "
                              "{ ?r <http://strigi.sf.net/ontologies/0.9#parentUrl> %2 . } "
                              "UNION "
-                             "{ ?r %3 %2 . } . "
+                             "{ ?r %3 ?parent . ?parent %7 %2 . } . "
                              "{ ?r %4 ?mtime . } UNION { ?r %5 ?mtime . } "
                              "{ ?r %6 ?path . } UNION { ?r %7 ?path . } "
                              "}")
@@ -172,21 +122,22 @@ int64_t Strigi::Soprano::IndexReader::indexSize()
 }
 
 
-time_t Strigi::Soprano::IndexReader::mTime( const std::string& uri )
+time_t Strigi::Soprano::IndexReader::mTime( const std::string& path )
 {
     //
     // We are compatible with old Xesam data, thus the weird query
     //
     QString query = QString( "select ?mtime where { "
-                             "{ ?r %1 %2 . } UNION { ?r %3 %2 . } "
-                             "{ ?r %4 ?mtime . } UNION { ?r %5 ?mtime . } }" )
+                             "{ ?r %1 %2 . } UNION { ?r %3 %4 . } "
+                             "{ ?r %5 ?mtime . } UNION { ?r %6 ?mtime . } }" )
                     .arg( Node::resourceToN3( Vocabulary::Xesam::url() ),
+                          Node::literalToN3( QString::fromUtf8( path.c_str() ) ),
                           Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ),
-                          Node::literalToN3( QString::fromUtf8( uri.c_str() ) ),
+                          Node::resourceToN3( QUrl::fromLocalFile( QFile::decodeName( path.c_str() ) ) ),
                           Node::resourceToN3( Vocabulary::Xesam::sourceModified() ),
                           Node::resourceToN3( Nepomuk::Vocabulary::NIE::lastModified() ) );
 
-//    qDebug() << "mTime( " << uri.c_str() << ") query:" << query;
+//    qDebug() << "mTime( " << path.c_str() << ") query:" << query;
 
     QueryResultIterator it = d->repository->executeQuery( query, ::Soprano::Query::QueryLanguageSparql );
 
