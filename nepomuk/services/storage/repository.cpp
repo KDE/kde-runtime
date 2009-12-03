@@ -320,7 +320,15 @@ Soprano::BackendSettings Nepomuk::Repository::readVirtuosoSettings() const
 
     KConfigGroup repoConfig = KSharedConfig::openConfig( "nepomukserverrc" )->group( name() + " Settings" );
     const int maxMem = repoConfig.readEntry( "Maximum memory", 50 );
-    settings << Soprano::BackendSetting( "buffers", qMax( 20, maxMem-30 )*100 );
+
+    // below NumberOfBuffers=400 virtuoso crashes (at least on amd64)
+    settings << Soprano::BackendSetting( "buffers", qMax( 4, maxMem-30 )*100 );
+
+    // make a checkpoint every 10 minutes to minimize the startup time
+    settings << Soprano::BackendSetting( "CheckpointInterval", 10 );
+
+    // lower the minimum transaction log size to make sure the checkpoints are actually executed
+    settings << Soprano::BackendSetting( "MinAutoCheckpointSize", 200000 );
 
     return settings;
 }
