@@ -9,5 +9,6 @@ install(FILES
   org.kde.nepomuk.Storage.xml
   org.kde.nepomuk.QueryService.xml
   org.kde.nepomuk.Query.xml
+  org.kde.nepomuk.RemovableStorage.xml
   DESTINATION ${DBUS_INTERFACES_INSTALL_DIR}
   )
