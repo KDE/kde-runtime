@@ -1,2 +1,2 @@
 #! /usr/bin/env bash
-$XGETTEXT *.cpp -o $podir/soliduiserver.pot
+$XGETTEXT *.cpp -o $podir/solidautoeject.pot
