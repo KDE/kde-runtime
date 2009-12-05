@@ -25,6 +25,7 @@
 #include <QtGui/QProgressDialog>
 
 #include <KDE/KPluginFactory>
+#include <kaboutdata.h>
 #include <KDE/KWallet/Wallet>
 
 #include <attica/providermanager.h>
@@ -42,6 +43,14 @@ using namespace KWallet;
 AtticaModule::AtticaModule(QWidget* parent, const QVariantList&)
     : KCModule(AtticaModuleFactory::componentData(), parent), m_wallet(0)
 {
+    KAboutData *about = new KAboutData(
+            "kcm_attica", 0, ki18n("Open Collaboration Services Configuration"),
+            KDE_VERSION_STRING, KLocalizedString(), KAboutData::License_GPL,
+            ki18n("Copyright 2009 Eckhart Wörner"));
+    about->addAuthor(ki18n("Eckhart Wörner"), KLocalizedString(), "ewoerner@kde.org");
+    about->addAuthor(ki18n("Dmitry Suzdalev"), KLocalizedString(), "dimsuz@gmail.com");
+    setAboutData(about);
+
     m_management.setupUi(this);
     m_management.providerTree->setColumnCount(2);
     m_management.providerTree->setHeaderLabels(QStringList(i18n("Provider")) << i18n("Base URL"));
