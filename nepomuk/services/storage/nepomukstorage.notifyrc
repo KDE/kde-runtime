@@ -152,6 +152,7 @@ Name[pt]=Não foi possível iniciar o Nepomuk
 Name[sv]=Misslyckades starta Nepomuk
 Name[uk]=Не вдалося запустити Nepomuk
 Name[x-test]=xxFailed to start Nepomukxx
+Name[zh_TW]=無法啟動 Nepomuk
 Comment=The Nepomuk Semantic Desktop system could not be started
 Comment[da]=Nepomuk semantisk desktop-system kunne ikke startes
 Comment[de]=Die Nepomuk Semantik-Dienste lassen sich nicht starten.
@@ -164,6 +165,7 @@ Comment[pt]=Não foi possível iniciar o sistema do Ambiente Semântico do Nepom
 Comment[sv]=Det semantiska skrivbordssystemet Nepomuk kunde inte startas
 Comment[uk]=Не вдалося запустити систему семантичної стільниці Nepomuk
 Comment[x-test]=xxThe Nepomuk Semantic Desktop system could not be startedxx
+Comment[zh_TW]=Nepomuk 語意桌面系統無法啟動
 Action=Popup
 
 [Event/convertingNepomukData]
