@@ -399,7 +399,7 @@ void BugzillaManager::addMeToCCSubJobFinished(KJob * job)
 
         const QString bug_id = checkJob->url().queryItem("id");
 
-        if (!bug_id.isEmpty() && !token.isEmpty()) {
+        if (!bug_id.isEmpty()) {
             //Send add To CC job confirmation
             QByteArray postData;
             postData += QByteArray("id=") + bug_id.toUtf8() + QByteArray("&addselfcc=on") +

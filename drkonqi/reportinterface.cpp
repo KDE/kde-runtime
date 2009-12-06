@@ -294,9 +294,7 @@ void ReportInterface::addedToCC()
                                                             SIGNAL(sendReportError(QString)));
     BugReport report = newBugReportTemplate();
 
-    QString reportText = QLatin1String("Title: ") + 
-                         report.shortDescription() + QLatin1String("\n\n") +
-                         generateReport(true);
+    QString reportText = generateReport(true);
 
     m_bugzillaManager->attachTextToReport(reportText, QLatin1String("/tmp/drkonqireport"), //Fake path
                                   QLatin1String("New crash information added by DrKonqi"),

@@ -101,8 +101,6 @@ public:
 
     void aboutToShow();
 
-    bool showNextPage();
-    
 private:
     Ui::AssistantPageBugzillaPreview    ui;
 };

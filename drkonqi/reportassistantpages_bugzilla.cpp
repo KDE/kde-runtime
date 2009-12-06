@@ -361,7 +361,13 @@ void BugzillaInformationPage::aboutToShow()
 
 void BugzillaInformationPage::checkTexts()
 {
-    bool ok = !(ui.m_titleEdit->text().isEmpty() || ui.m_detailsEdit->toPlainText().isEmpty());
+    //If attaching this report to an existant one then the title is not needed
+    bool showTitle = (reportInterface()->attachToBugNumber() == 0);
+    ui.m_titleEdit->setVisible(showTitle);
+    ui.m_titleLabel->setVisible(showTitle);
+
+    bool ok = !((ui.m_titleEdit->isVisible() && ui.m_titleEdit->text().isEmpty())
+        || ui.m_detailsEdit->toPlainText().isEmpty());
 
     if (ok != m_textsOK) {
         m_textsOK = ok;
@@ -373,8 +379,8 @@ bool BugzillaInformationPage::showNextPage()
 {
     checkTexts();
 
-    if (m_textsOK) { //not empty
-        bool titleShort = ui.m_titleEdit->text().size() < 30;
+    if (m_textsOK) {
+        bool titleShort = ui.m_titleEdit->isVisible() ? ui.m_titleEdit->text().size() < 30 : false;
 
         //Calculate the minimum number of characters required for a description
         //(minimum 40, maximum 80)
@@ -468,13 +474,6 @@ BugzillaPreviewPage::BugzillaPreviewPage(ReportAssistantDialog * parent)
 void BugzillaPreviewPage::aboutToShow()
 {
     ui.m_previewEdit->setText(reportInterface()->generateReport(true));
-}
-
-bool BugzillaPreviewPage::showNextPage()
-{
-    return (KMessageBox::questionYesNo(this, i18nc("@info question","Are you ready to submit this "
-                                            "report?") , i18nc("@title:window","Are you sure?"))
-                                            == KMessageBox::Yes);
 }
 
 //END BugzillaPreviewPage
