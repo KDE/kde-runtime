@@ -34,7 +34,7 @@
 
 
 K_PLUGIN_FACTORY(AtticaModuleFactory, registerPlugin<AtticaModule>();)
-K_EXPORT_PLUGIN(AtticaModuleFactory("kcmattica"))
+K_EXPORT_PLUGIN(AtticaModuleFactory("kcm_attica"))
 
 
 using namespace Attica;
