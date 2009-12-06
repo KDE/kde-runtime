@@ -4,6 +4,7 @@ CurrencyCodeIsoNumeric3=020
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Andorran Peseta
 Name[bg]=Андорска песета
+Name[csb]=Andorrańskô Peseta
 Name[da]=Andorransk peseta
 Name[de]=Andoranische Peseta
 Name[en_GB]=Andorran Peseta
@@ -16,6 +17,7 @@ Name[lv]=Andoras pesetas
 Name[nb]=Andorranske peseta
 Name[nds]=Andorraansch Peseet
 Name[pt]=Peseta Andorrenha
+Name[pt_BR]=Peseta de Andorra
 Name[sv]=Andorranska pesetas
 Name[uk]=Андоррська песета
 Name[x-test]=xxAndorran Pesetaxx

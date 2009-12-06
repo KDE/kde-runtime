@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=AWG
 CurrencyCodeIsoNumeric3=533
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Aruban Florin
+Name[csb]=Arubańsczi Florin
 Name[da]=Arubisk florin
 Name[de]=Aruba-Florin
 Name[en_GB]=Aruban Florin
@@ -11,6 +12,7 @@ Name[ja]=アルバ・フロリン
 Name[nb]=Arubisk gylden
 Name[nds]=Aruba-Florin
 Name[pt]=Florim de Aruba
+Name[pt_BR]=Florim de Aruba
 Name[sv]=Arubiska florin
 Name[uk]=Гульден Аруби
 Name[x-test]=xxAruban Florinxx
