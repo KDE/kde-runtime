@@ -167,7 +167,9 @@ void Nepomuk::ServerConfigModule::load()
     m_checkIndexRemovableMedia->setChecked( strigiConfig.group( "General" ).readEntry( "index newly mounted", false ) );
 
     KConfig serverConfig( "nepomukserverrc" );
-    m_sliderMemoryUsage->setValue( serverConfig.group( "main Settings" ).readEntry( "Maximum memory", 50 ) );
+    const int maxMem = qMax( 20, serverConfig.group( "main Settings" ).readEntry( "Maximum memory", 50 ) );
+    m_sliderMemoryUsage->setValue( maxMem );
+    m_editMemoryUsage->setValue( maxMem );
 
     // make sure we do not have a hidden folder to expand which would make QFileSystemModel crash
     // + it would be weird to have a hidden folder indexed but not shown
