@@ -85,6 +85,13 @@ bool KdePlatformDependent::saveCredentials(const QUrl& baseUrl, const QString& u
     if (!m_wallet && !openWallet(true)) {
         return false;
     }
+    
+    // Remove the entry when user name is empty
+    if (user.isEmpty()) {
+        m_wallet->removeEntry(baseUrl.toString());
+        return true;
+    }
+    
     QMap<QString, QString> entries;
     entries.insert("user", user);
     entries.insert("password", password);
@@ -93,7 +100,7 @@ bool KdePlatformDependent::saveCredentials(const QUrl& baseUrl, const QString& u
 }
 
 
-bool KdePlatformDependent::hasCredentials(const QUrl& baseUrl)
+bool KdePlatformDependent::hasCredentials(const QUrl& baseUrl) const
 {
     QString networkWallet = KWallet::Wallet::NetworkWallet();
     if (KWallet::Wallet::folderDoesNotExist(networkWallet, "Attica") &&
@@ -101,18 +108,7 @@ bool KdePlatformDependent::hasCredentials(const QUrl& baseUrl)
         return false;
     }
     
-    if (!m_wallet && !openWallet(false)) {
-        return false;
-    }
-    
-    QMap<QString, QString> entries;
-    if (m_wallet->readMap(baseUrl.toString(), entries) != 0) {
-        return false;
-    }
-    if (!entries.value("user").isEmpty()) {
-        return true;
-    }
-    return false;
+    return true;
 }
 
 
