@@ -22,15 +22,12 @@
 
 #include "providereditdialog.h"
 
-#include <KDE/KWallet/Wallet>
 #include <KDebug>
 
 #include <attica/person.h>
 
-ProviderEditDialog::ProviderEditDialog(const Attica::Provider& provider,
-                                       KWallet::Wallet* wallet,
-                                       QWidget* parent)
-    : KPageDialog(parent), m_provider(provider), m_wallet(wallet),
+ProviderEditDialog::ProviderEditDialog(const Attica::Provider& provider, QWidget* parent)
+    : KPageDialog(parent), m_provider(provider),
     m_loginPageItem(0), m_registerPageItem(0)
 {
     setFaceType(List);
@@ -57,11 +54,13 @@ void ProviderEditDialog::initLoginPage()
     m_loginPageItem->setHeader(header);
     m_loginPageItem->setIcon(KIcon("applications-internet"));
 
-    QMap<QString, QString> details;
-    m_wallet->readMap(m_provider.baseUrl().toString(), details);
-    m_settingsWidget.userEdit->setText(details.value("user"));
-    m_settingsWidget.passwordEdit->setText(details.value("password"));
-
+    if (m_provider.hasCredentials()) {
+        QString user;
+        QString password;
+        m_provider.loadCredentials(user, password);
+        m_settingsWidget.userEdit->setText(user);
+        m_settingsWidget.passwordEdit->setText(password);
+    }
     m_settingsWidget.iconLabel->setPixmap(KIcon("help-about").pixmap(24,24));
 
     connect(m_settingsWidget.userEdit, SIGNAL(textChanged(const QString&)), this, SLOT(loginChanged()));
@@ -204,10 +203,11 @@ void ProviderEditDialog::registerAccountFinished(Attica::BaseJob* job)
 
 void ProviderEditDialog::accept()
 {
-    QMap<QString, QString> details;
-    details.insert("user", m_settingsWidget.userEdit->text());
-    details.insert("password", m_settingsWidget.passwordEdit->text());
-    m_wallet->writeMap(m_provider.baseUrl().toString(), details);
+    if (m_settingsWidget.userEdit->text().isEmpty()) {
+        return;
+    }
+    
+    m_provider.saveCredentials(m_settingsWidget.userEdit->text(), m_settingsWidget.passwordEdit->text());
     KDialog::accept();
 }
 

@@ -30,9 +30,6 @@
 #include "ui_providersettingswidget.h"
 #include "ui_registerwidget.h"
 
-namespace KWallet {
-    class Wallet;
-}
 
 class KPageWidgetItem;
 
@@ -41,7 +38,7 @@ class ProviderEditDialog : public KPageDialog
     Q_OBJECT
 
 public:
-    explicit ProviderEditDialog(const Attica::Provider& provider, KWallet::Wallet* wallet, QWidget* parent = 0);
+    explicit ProviderEditDialog(const Attica::Provider& provider, QWidget* parent = 0);
     void accept();
 
 private Q_SLOTS:
@@ -66,7 +63,6 @@ private:
     Attica::Provider m_provider;
     Ui::ProviderSettingsWidget m_settingsWidget;
     Ui::RegisterWidget m_registerWidget;
-    KWallet::Wallet* m_wallet;
     KPageWidgetItem* m_loginPageItem;
     KPageWidgetItem* m_registerPageItem;
 };

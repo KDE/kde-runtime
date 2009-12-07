@@ -56,13 +56,17 @@ AtticaModule::AtticaModule(QWidget* parent, const QVariantList&)
     m_management.providerTree->setHeaderLabels(QStringList(i18n("Provider")) << i18n("Base URL"));
     m_management.providerTree->setIconSize(QSize(48, 48));
     connect(m_management.editButton, SIGNAL(clicked(bool)), SLOT(edit()));
-    m_wallet = Wallet::openWallet(Wallet::NetworkWallet(), 0);
-    m_wallet->createFolder("Attica");
-    m_wallet->setFolder("Attica");
+    
+    m_manager.setAuthenticationSuppressed(true);
     m_manager.loadDefaultProviders();
     connect(&m_manager, SIGNAL(providerAdded(const Attica::Provider&)), SLOT(providerAdded(const Attica::Provider&)));
     connect(m_management.providerTree, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)), SLOT(currentItemChanged(QTreeWidgetItem*)));
     connect(m_management.providerTree, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), SLOT(edit()));
+}
+
+
+AtticaModule::~AtticaModule()
+{
 }
 
 
@@ -83,10 +87,11 @@ void AtticaModule::save()
 }
 
 
-void AtticaModule::edit() {
+void AtticaModule::edit()
+{
     QTreeWidgetItem* currentItem = m_management.providerTree->currentItem();
     QUrl currentProviderUrl(m_providerForItem.value(currentItem));
-    ProviderEditDialog* dialog = new ProviderEditDialog(m_manager.providerByUrl(currentProviderUrl), m_wallet, this);
+    ProviderEditDialog* dialog = new ProviderEditDialog(m_manager.providerByUrl(currentProviderUrl), this);
     dialog->show();
 }
 

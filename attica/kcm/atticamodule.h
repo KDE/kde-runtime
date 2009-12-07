@@ -43,6 +43,7 @@ class AtticaModule : public KCModule
 
 public:
     AtticaModule(QWidget* parent, const QVariantList&);
+    ~AtticaModule();
     void save();
     void load();
     void defaults();
