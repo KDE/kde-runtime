@@ -108,19 +108,21 @@ Nepomuk::IndexScheduler::~IndexScheduler()
 
 void Nepomuk::IndexScheduler::suspend()
 {
-    if ( isRunning() ) {
+    if ( isRunning() && !m_suspended ) {
         QMutexLocker locker( &m_resumeStopMutex );
         m_suspended = true;
+        emit indexingSuspended( true );
     }
 }
 
 
 void Nepomuk::IndexScheduler::resume()
 {
-    if ( isRunning() ) {
+    if ( isRunning() && m_suspended ) {
         QMutexLocker locker( &m_resumeStopMutex );
         m_suspended = false;
         m_resumeStopWc.wakeAll();
+        emit indexingSuspended( false );
     }
 }
 

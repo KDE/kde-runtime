@@ -32,7 +32,8 @@
 
 Nepomuk::SystemTray::SystemTray( StrigiService* service, QWidget* parent )
     : KStatusNotifierItem( parent ),
-      m_service( service )
+      m_service( service ),
+      m_suspendedManually( false )
 {
     setCategory( SystemServices );
     setStatus( Passive );
@@ -46,7 +47,7 @@ Nepomuk::SystemTray::SystemTray( StrigiService* service, QWidget* parent )
     m_suspendResumeAction->setCheckedState( KGuiItem( i18n( "Suspend File Indexing" ) ) );
     m_suspendResumeAction->setToolTip( i18n( "Suspend or resume the file indexer manually" ) );
     connect( m_suspendResumeAction, SIGNAL( toggled( bool ) ),
-             m_service, SLOT( setSuspended( bool ) ) );
+             this, SLOT( slotSuspend( bool ) ) );
 
     KAction* configAction = new KAction( menu );
     configAction->setText( i18n( "Configure File Indexer" ) );
@@ -75,8 +76,9 @@ void Nepomuk::SystemTray::slotUpdateStrigiStatus()
 {
     setToolTip("nepomuk", i18n("Search Service"),  m_service->userStatusString() );
     m_suspendResumeAction->setChecked( m_service->indexScheduler()->isSuspended() );
-    // TODO: a manually suspended service should not be passive
-    if (m_service->indexScheduler()->isIndexing() ) {
+    // a manually suspended service should not be passive
+    if (m_service->indexScheduler()->isIndexing() ||
+        m_suspendedManually) {
         setStatus(Active);
     } else {
         setStatus(Passive);
@@ -89,6 +91,13 @@ void Nepomuk::SystemTray::slotConfigure()
     QStringList args;
     args << "kcm_nepomuk";
     KToolInvocation::kdeinitExec("kcmshell4", args);
+}
+
+
+void Nepomuk::SystemTray::slotSuspend( bool suspended )
+{
+    m_suspendedManually = suspended;
+    m_service->setSuspended( suspended );
 }
 
 #include "systray.moc"

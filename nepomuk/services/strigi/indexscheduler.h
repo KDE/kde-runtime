@@ -126,6 +126,7 @@ namespace Nepomuk {
         void indexingStarted();
         void indexingStopped();
         void indexingFolder( const QString& );
+        void indexingSuspended( bool suspended );
 
     private Q_SLOTS:
         void readConfig();

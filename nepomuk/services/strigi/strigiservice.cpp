@@ -95,6 +95,8 @@ Nepomuk::StrigiService::StrigiService( QObject* parent, const QList<QVariant>& )
                      this, SIGNAL( statusStringChanged() ) );
             connect( m_indexScheduler, SIGNAL( indexingFolder(QString) ),
                      this, SIGNAL( statusStringChanged() ) );
+            connect( m_indexScheduler, SIGNAL( indexingSuspended(bool) ),
+                     this, SIGNAL( statusStringChanged() ) );
             connect( m_fsWatcher, SIGNAL( statusChanged(FileSystemWatcher::Status) ),
                      this, SIGNAL( statusStringChanged() ) );
 

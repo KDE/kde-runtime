@@ -25,7 +25,6 @@ class KToggleAction;
 
 namespace Nepomuk {
 
-    class IndexScheduler;
     class StrigiService;
 
     class SystemTray : public KStatusNotifierItem
@@ -39,11 +38,13 @@ namespace Nepomuk {
     private Q_SLOTS:
         void slotUpdateStrigiStatus();
         void slotConfigure();
+        void slotSuspend( bool suspended );
 
     private:
         KToggleAction* m_suspendResumeAction;
 
         StrigiService* m_service;
+        bool m_suspendedManually;
     };
 }
 
