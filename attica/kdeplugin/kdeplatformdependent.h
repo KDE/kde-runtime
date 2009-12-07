@@ -43,6 +43,7 @@ class KdePlatformDependent : public QObject, public Attica::PlatformDependent
 
 public:
     KdePlatformDependent();
+    virtual ~KdePlatformDependent();
     virtual QList<QUrl> getDefaultProviderFiles() const;
     virtual QNetworkReply* post(const QNetworkRequest& request, const QByteArray& data);
     virtual QNetworkReply* post(const QNetworkRequest& request, QIODevice* data);

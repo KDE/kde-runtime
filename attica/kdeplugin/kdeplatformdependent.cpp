@@ -35,7 +35,11 @@ using namespace Attica;
 KdePlatformDependent::KdePlatformDependent()
     : m_config(KSharedConfig::openConfig("atticarc")), m_qnam(0), m_wallet(0)
 {
-    openWallet(false);
+}
+
+KdePlatformDependent::~KdePlatformDependent()
+{
+    delete m_wallet;
 }
 
 void KdePlatformDependent::openWallet(bool force)
@@ -44,6 +48,8 @@ void KdePlatformDependent::openWallet(bool force)
     // if not forced, or the folder doesn't exist, don't try to open the wallet
     if (force || (!KWallet::Wallet::folderDoesNotExist(networkWallet, "Attica"))) {
         m_wallet = KWallet::Wallet::openWallet(networkWallet, 0);
+    }
+    if (m_wallet) {
         m_wallet->createFolder("Attica");
         m_wallet->setFolder("Attica");
     }
@@ -72,6 +78,9 @@ bool KdePlatformDependent::saveCredentials(const QUrl& baseUrl, const QString& u
     if (!m_wallet) {
         openWallet(true);
     }
+    if (!m_wallet) {
+        return false;
+    }
     QMap<QString, QString> entries;
     entries.insert("user", user);
     entries.insert("password", password);
@@ -83,6 +92,9 @@ bool KdePlatformDependent::saveCredentials(const QUrl& baseUrl, const QString& u
 bool KdePlatformDependent::loadCredentials(const QUrl& baseUrl, QString& user, QString& password)
 {
     kDebug() << "Successfully loaded credentials.";
+    if (!m_wallet) {
+        openWallet(true);
+    }
     if (!m_wallet) {
         return false;
     }
