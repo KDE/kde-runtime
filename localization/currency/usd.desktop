@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=USD
 CurrencyCodeIsoNumeric3=840
 #Context for Name: Adjectival Country Name and Currency Name
 Name=United States Dollar
+Name[csb]=Amerëkóńsczi Dolar (USA)
 Name[da]=Amerikansk dollar
 Name[de]=US-Dollar
 Name[en_GB]=United States Dollar

@@ -3,11 +3,13 @@ CurrencyCodeIsoAlpha3=YUM
 CurrencyCodeIsoNumeric3=891
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Yugoslav Dinar
+Name[csb]=Jugòsłowiańsczi Dinar
 Name[da]=Jugoslavisk Dinar
 Name[de]=Jugoslawischer Dinar
 Name[en_GB]=Yugoslav Dinar
 Name[es]=Dinar yugoslavo
 Name[et]=Jugoslaavia dinaar
+Name[is]=Júgóslavneskur dínar
 Name[ja]=ユーゴスラビア・ディナール
 Name[lv]=Dienvidslāvijas dinārs
 Name[nb]=Jugoslaviske dinar

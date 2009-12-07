@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=ILS
 CurrencyCodeIsoNumeric3=376
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Israeli New Sheqel
+Name[csb]=Izraelsczi Nowi Szeczél
 Name[da]=Israelsk ny shekel
 Name[de]=Israelischer Schekel
 Name[en_GB]=Israeli New Sheqel

@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=XAF
 CurrencyCodeIsoNumeric3=950
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Central African CFA Franc
+Name[csb]=Westrzódno Afrikańsczi Frank
 Name[da]=Centralafrikansk CFA franc
 Name[de]=CFA-Franc BEAC
 Name[en_GB]=Central African CFA Franc

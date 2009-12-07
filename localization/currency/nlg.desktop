@@ -3,11 +3,13 @@ CurrencyCodeIsoAlpha3=NLG
 CurrencyCodeIsoNumeric3=528
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Netherlands Guilder
+Name[csb]=Hòlandzczi Gùlden
 Name[da]=Hollandsk gylden
 Name[de]=Niederländischer Gulden
 Name[en_GB]=Netherlands Guilder
 Name[et]=Hollandi kulden
 Name[ja]=オランダ・ギルダー
+Name[lv]=Nīderlandes guldenis
 Name[nb]=Nederlandske gylden
 Name[nds]=Nedderlannsch Gulden
 Name[pt]=Florim Holandês
