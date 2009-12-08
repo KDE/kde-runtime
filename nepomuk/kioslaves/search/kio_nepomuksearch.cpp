@@ -296,7 +296,7 @@ void Nepomuk::SearchProtocol::del(const KUrl& url, bool isFile)
     Nepomuk::SearchFolder* folder = extractSearchFolder( url );
 
     if (folder) {
-        if ( SearchEntry* entry = folder->findEntry( url.fileName() ) ) {
+        if ( folder->findEntry( url.fileName() ) ) {
             kDebug() << "findEntry returned something";
             KIO::ForwardingSlaveBase::del(url, isFile);
         }
@@ -326,7 +326,7 @@ bool Nepomuk::SearchProtocol::rewriteUrl( const KUrl& url, KUrl& newURL )
 }
 
 
-void Nepomuk::SearchProtocol::prepareUDSEntry( KIO::UDSEntry& uds, bool listing ) const
+void Nepomuk::SearchProtocol::prepareUDSEntry( KIO::UDSEntry&, bool ) const
 {
     // we already handle UDS_URL in SearchFolder. No need to do anything more here.
 }
