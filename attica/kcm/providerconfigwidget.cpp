@@ -149,9 +149,6 @@ void ProviderConfigWidget::validateRegisterFields()
     if (isDataValid && isPasswordValid )
         showRegisterHint("dialog-ok-apply", i18n("All required information is provided"));
 
-    showRegisterHint("dialog-ok-apply", i18n("Registration complete. New account was successfully registered.<br/>Please <b>check your Email</b> to <b>activate</b> the account."));
-
-
     m_settingsWidget.registerButton->setEnabled(isDataValid && isPasswordValid);
 }
 
