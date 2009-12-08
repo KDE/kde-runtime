@@ -56,6 +56,7 @@ namespace {
     KIO::UDSEntry statDefaultSearchFolder( const QString& name ) {
         KIO::UDSEntry uds;
         uds.insert( KIO::UDSEntry::UDS_NAME, name );
+        uds.insert( KIO::UDSEntry::UDS_DISPLAY_NAME, i18n("Query Results") );
         uds.insert( KIO::UDSEntry::UDS_ACCESS, 0700 );
         uds.insert( KIO::UDSEntry::UDS_USER, KUser().loginName() );
         uds.insert( KIO::UDSEntry::UDS_FILE_TYPE, S_IFDIR );
@@ -267,6 +268,7 @@ void Nepomuk::SearchProtocol::stat( const KUrl& url )
         //
         KIO::UDSEntry uds;
         uds.insert( KIO::UDSEntry::UDS_NAME, QString::fromLatin1( "/" ) );
+        uds.insert( KIO::UDSEntry::UDS_DISPLAY_NAME, i18n("Query Results") );
         uds.insert( KIO::UDSEntry::UDS_ICON_NAME, QString::fromLatin1( "nepomuk" ) );
         uds.insert( KIO::UDSEntry::UDS_FILE_TYPE, S_IFDIR );
         uds.insert( KIO::UDSEntry::UDS_MIME_TYPE, QString::fromLatin1( "inode/directory" ) );
