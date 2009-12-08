@@ -21,27 +21,24 @@
 
 #include "atticamodule.h"
 
-#include <QtCore/QDebug>
-#include <QtGui/QProgressDialog>
+#include <QDebug>
+#include <QProgressDialog>
 
-#include <KDE/KPluginFactory>
-#include <kaboutdata.h>
-#include <KDE/KWallet/Wallet>
+#include <KPluginFactory>
+#include <KAboutData>
+#include <KWallet/Wallet>
+#include <KDebug>
 
 #include <attica/providermanager.h>
 
-#include "providereditdialog.h"
+#include "providerconfigwidget.h"
 
 
 K_PLUGIN_FACTORY(AtticaModuleFactory, registerPlugin<AtticaModule>();)
 K_EXPORT_PLUGIN(AtticaModuleFactory("kcm_attica"))
 
-
-using namespace Attica;
-using namespace KWallet;
-
 AtticaModule::AtticaModule(QWidget* parent, const QVariantList&)
-    : KCModule(AtticaModuleFactory::componentData(), parent), m_wallet(0)
+    : KCModule(AtticaModuleFactory::componentData(), parent)
 {
     KAboutData *about = new KAboutData(
             "kcm_attica", 0, ki18n("Open Collaboration Services Configuration"),
@@ -52,23 +49,18 @@ AtticaModule::AtticaModule(QWidget* parent, const QVariantList&)
     setAboutData(about);
 
     m_management.setupUi(this);
-    m_management.providerTree->setColumnCount(2);
-    m_management.providerTree->setHeaderLabels(QStringList(i18n("Provider")) << i18n("Base URL"));
-    m_management.providerTree->setIconSize(QSize(48, 48));
-    connect(m_management.editButton, SIGNAL(clicked(bool)), SLOT(edit()));
-    
-    m_manager.setAuthenticationSuppressed(true);
-    m_manager.loadDefaultProviders();
-    connect(&m_manager, SIGNAL(providerAdded(const Attica::Provider&)), SLOT(providerAdded(const Attica::Provider&)));
-    connect(m_management.providerTree, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)), SLOT(currentItemChanged(QTreeWidgetItem*)));
-    connect(m_management.providerTree, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), SLOT(edit()));
-}
 
+    m_manager.setAuthenticationSuppressed(true);
+
+    connect(&m_manager, SIGNAL(providerAdded(const Attica::Provider&)), SLOT(providerAdded(const Attica::Provider&)));
+    connect(&m_manager, SIGNAL(defaultProvidersLoaded()), SLOT(onDefaultProvidersLoaded()));
+
+    startLoadingDefaultProviders();
+}
 
 AtticaModule::~AtticaModule()
 {
 }
-
 
 void AtticaModule::defaults()
 {
@@ -77,27 +69,22 @@ void AtticaModule::defaults()
 
 void AtticaModule::load()
 {
-    m_manager.clear();
-    m_manager.loadDefaultProviders();
+    startLoadingDefaultProviders();
 }
 
 
 void AtticaModule::save()
 {
+    m_management.providerConfigWidget->saveData();
 }
 
-
-void AtticaModule::edit()
+void AtticaModule::startLoadingDefaultProviders()
 {
-    QTreeWidgetItem* currentItem = m_management.providerTree->currentItem();
-    QUrl currentProviderUrl(m_providerForItem.value(currentItem));
-    ProviderEditDialog* dialog = new ProviderEditDialog(m_manager.providerByUrl(currentProviderUrl), this);
-    dialog->show();
-}
-
-
-void AtticaModule::currentItemChanged(QTreeWidgetItem* current) {
-    m_management.editButton->setEnabled(current != 0);
+    m_manager.clear();
+    m_manager.loadDefaultProviders();
+    m_management.lblProviderList->setText(i18n("Loading provider list..."));
+    m_management.providerComboBox->hide();
+    m_management.providerConfigWidget->setEnabled(false);
 }
 
 
@@ -105,19 +92,28 @@ void AtticaModule::providerAdded(const Attica::Provider& provider)
 {
     // Add new provider
     QString baseUrl = provider.baseUrl().toString();
-    if (!m_itemForProvider.contains(baseUrl)) {
-        qDebug() << m_itemForProvider << "does not contain" << baseUrl;
-        QTreeWidgetItem* providerItem = new QTreeWidgetItem(0);
-        providerItem->setText(0, provider.name());
-        providerItem->setIcon(0, KIcon("system-users"));
-        providerItem->setText(1, baseUrl);
-        m_management.providerTree->addTopLevelItem(providerItem);
-        m_itemForProvider.insert(baseUrl, providerItem);
-        m_providerForItem.insert(providerItem, baseUrl);
+    int idx = m_management.providerComboBox->findData(baseUrl);
+
+    if ( idx == -1)
+    {
+        kDebug() << "Adding provider" << baseUrl;
+        QString name = provider.name();
+        if (name.isEmpty())
+            name = baseUrl;
+        m_management.providerComboBox->addItem(KIcon("system-users"), name);
     }
 
-    m_management.providerTree->resizeColumnToContents(0);
+    // set only if this is a first provider, otherwise it will be
+    // set on explicit selection
+    if (m_management.providerComboBox->count() == 1)
+        m_management.providerConfigWidget->setProvider(provider);
 }
 
+void AtticaModule::onDefaultProvidersLoaded()
+{
+    m_management.lblProviderList->setText(i18n("Choose a provider to manage:"));
+    m_management.providerComboBox->show();
+    m_management.providerConfigWidget->setEnabled(true);
+}
 
 #include "atticamodule.moc"

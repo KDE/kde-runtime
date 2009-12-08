@@ -20,26 +20,24 @@
     USA.
 */
 
-#ifndef PROVIDEREDITDIALOG_H
-#define PROVIDEREDITDIALOG_H
+#ifndef PROVIDERCONFIGWIDGET_H
+#define PROVIDERCONFIGWIDGET_H
 
-#include <KDE/KPageDialog>
+#include <QWidget>
 
 #include <attica/provider.h>
 
-#include "ui_providersettingswidget.h"
-#include "ui_registerwidget.h"
+#include "ui_providerconfigwidget.h"
 
 
-class KPageWidgetItem;
-
-class ProviderEditDialog : public KPageDialog
+class ProviderConfigWidget : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit ProviderEditDialog(const Attica::Provider& provider, QWidget* parent = 0);
-    void accept();
+    explicit ProviderConfigWidget(QWidget* parent = 0);
+    void setProvider(const Attica::Provider& provider);
+    void saveData();
 
 private Q_SLOTS:
     /// reset the validate button
@@ -61,10 +59,7 @@ private:
 
 private:
     Attica::Provider m_provider;
-    Ui::ProviderSettingsWidget m_settingsWidget;
-    Ui::RegisterWidget m_registerWidget;
-    KPageWidgetItem* m_loginPageItem;
-    KPageWidgetItem* m_registerPageItem;
+    Ui::ProviderConfigWidget m_settingsWidget;
 };
 
 #endif

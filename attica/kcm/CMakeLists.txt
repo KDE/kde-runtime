@@ -1,9 +1,9 @@
 set(kcm_attica_PART_SRCS
-    providereditdialog.cpp
+    providerconfigwidget.cpp
     atticamodule.cpp
 )
 
-kde4_add_ui_files(kcm_attica_PART_SRCS providermanagement.ui providersettingswidget.ui registerwidget.ui)
+kde4_add_ui_files(kcm_attica_PART_SRCS providermanagement.ui providerconfigwidget.ui)
 
 kde4_add_plugin(kcm_attica ${kcm_attica_PART_SRCS})
 

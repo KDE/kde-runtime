@@ -20,101 +20,98 @@
     USA.
 */
 
-#include "providereditdialog.h"
+#include "providerconfigwidget.h"
 
 #include <KDebug>
 
 #include <attica/person.h>
 
-ProviderEditDialog::ProviderEditDialog(const Attica::Provider& provider, QWidget* parent)
-    : KPageDialog(parent), m_provider(provider),
-    m_loginPageItem(0), m_registerPageItem(0)
-{
-    setFaceType(List);
-    setButtons(KDialog::Ok | KDialog::Cancel);
-    showButtonSeparator(true);
-    initLoginPage();
-    initRegisterPage();
+static const int loginTabIdx = 0;
+static const int registerTabIdx = 1;
 
-    resize(640, sizeHint().height());
+ProviderConfigWidget::ProviderConfigWidget(QWidget* parent)
+    : QWidget(parent)
+{
 }
 
-void ProviderEditDialog::initLoginPage()
+void ProviderConfigWidget::setProvider(const Attica::Provider& provider)
 {
-    QWidget* loginPage = new QWidget(this);
-    m_settingsWidget.setupUi(loginPage);
-    m_loginPageItem = addPage(loginPage, i18n("Login"));
+    m_provider = provider;
+    m_settingsWidget.setupUi(this);
 
+    // TODO ensure that it reinits all fields nicely for new provider!
+    initLoginPage();
+    initRegisterPage();
+}
+
+void ProviderConfigWidget::initLoginPage()
+{
     QString header;
     if (m_provider.name().isEmpty()) {
         header = i18n("Account details");
     } else {
         header = i18n("Account details for %1", m_provider.name());
     }
-    m_loginPageItem->setHeader(header);
-    m_loginPageItem->setIcon(KIcon("applications-internet"));
+    m_settingsWidget.titleWidgetLogin->setText(header);
+    m_settingsWidget.tabWidget->setTabIcon(loginTabIdx, KIcon("applications-internet"));
 
     if (m_provider.hasCredentials()) {
         QString user;
         QString password;
         m_provider.loadCredentials(user, password);
-        m_settingsWidget.userEdit->setText(user);
-        m_settingsWidget.passwordEdit->setText(password);
+        m_settingsWidget.userEditLP->setText(user);
+        m_settingsWidget.passwordEditLP->setText(password);
     }
-    m_settingsWidget.iconLabel->setPixmap(KIcon("help-about").pixmap(24,24));
+    m_settingsWidget.iconLabelLP->setPixmap(KIcon("help-about").pixmap(24,24));
 
-    connect(m_settingsWidget.userEdit, SIGNAL(textChanged(const QString&)), this, SLOT(loginChanged()));
-    connect(m_settingsWidget.passwordEdit, SIGNAL(textChanged(const QString&)), this, SLOT(loginChanged()));
+    connect(m_settingsWidget.userEditLP, SIGNAL(textChanged(const QString&)), this, SLOT(loginChanged()));
+    connect(m_settingsWidget.passwordEditLP, SIGNAL(textChanged(const QString&)), this, SLOT(loginChanged()));
     connect(m_settingsWidget.testLoginButton, SIGNAL(clicked()), this, SLOT(testLogin()));
-    connect(m_settingsWidget.infoLabel, SIGNAL(linkActivated(const QString&)), this, SLOT(infoLinkActivated()));
+    connect(m_settingsWidget.infoLabelLP, SIGNAL(linkActivated(const QString&)), this, SLOT(infoLinkActivated()));
 }
 
-void ProviderEditDialog::initRegisterPage()
+void ProviderConfigWidget::initRegisterPage()
 {
-    QWidget* registerPage = new QWidget(this);
-    m_registerWidget.setupUi(registerPage);
-    m_registerPageItem = addPage(registerPage, i18n("Register"));
-
     QString header;
     if (m_provider.name().isEmpty()) {
         header = i18n("Register new account");
     } else {
         header = i18n("Register new account at %1", m_provider.name());
     }
-    m_registerPageItem->setHeader(header);
-    m_registerPageItem->setIcon(KIcon("list-add-user"));
+    m_settingsWidget.titleWidgetRegister->setText(header);
+    m_settingsWidget.tabWidget->setTabIcon(registerTabIdx, KIcon("list-add-user"));
 
-    m_registerWidget.infoLabel->setFont(KGlobalSettings::smallestReadableFont());
+    m_settingsWidget.infoLabelRP->setFont(KGlobalSettings::smallestReadableFont());
 
-    connect(m_registerWidget.userEdit, SIGNAL(textChanged(QString)), SLOT(validateRegisterFields()));
-    connect(m_registerWidget.mailEdit, SIGNAL(textChanged(QString)), SLOT(validateRegisterFields()));
-    connect(m_registerWidget.firstNameEdit, SIGNAL(textChanged(QString)), SLOT(validateRegisterFields()));
-    connect(m_registerWidget.lastNameEdit, SIGNAL(textChanged(QString)), SLOT(validateRegisterFields()));
-    connect(m_registerWidget.passwordEdit, SIGNAL(textChanged(QString)), SLOT(validateRegisterFields()));
-    connect(m_registerWidget.passwordRepeatEdit, SIGNAL(textChanged(QString)), SLOT(validateRegisterFields()));
+    connect(m_settingsWidget.userEditRP, SIGNAL(textChanged(QString)), SLOT(validateRegisterFields()));
+    connect(m_settingsWidget.mailEdit, SIGNAL(textChanged(QString)), SLOT(validateRegisterFields()));
+    connect(m_settingsWidget.firstNameEdit, SIGNAL(textChanged(QString)), SLOT(validateRegisterFields()));
+    connect(m_settingsWidget.lastNameEdit, SIGNAL(textChanged(QString)), SLOT(validateRegisterFields()));
+    connect(m_settingsWidget.passwordEditRP, SIGNAL(textChanged(QString)), SLOT(validateRegisterFields()));
+    connect(m_settingsWidget.passwordRepeatEdit, SIGNAL(textChanged(QString)), SLOT(validateRegisterFields()));
 
-    connect(m_registerWidget.registerButton, SIGNAL(clicked()), SLOT(onRegisterClicked()));
+    connect(m_settingsWidget.registerButton, SIGNAL(clicked()), SLOT(onRegisterClicked()));
 
     validateRegisterFields();
 }
 
-void ProviderEditDialog::loginChanged()
+void ProviderConfigWidget::loginChanged()
 {
     m_settingsWidget.testLoginButton->setText(i18n("Test login"));
     m_settingsWidget.testLoginButton->setEnabled(true);
 }
 
-void ProviderEditDialog::testLogin()
+void ProviderConfigWidget::testLogin()
 {
     m_settingsWidget.testLoginButton->setEnabled(false);
     m_settingsWidget.testLoginButton->setText(i18n("Testing login..."));
 
-    Attica::PostJob* postJob = m_provider.checkLogin(m_settingsWidget.userEdit->text(), m_settingsWidget.passwordEdit->text());
+    Attica::PostJob* postJob = m_provider.checkLogin(m_settingsWidget.userEditLP->text(), m_settingsWidget.passwordEditLP->text());
     connect(postJob, SIGNAL(finished(Attica::BaseJob*)), SLOT(testLoginFinished(Attica::BaseJob*)));
     postJob->start();
 }
 
-void ProviderEditDialog::testLoginFinished(Attica::BaseJob* job)
+void ProviderConfigWidget::testLoginFinished(Attica::BaseJob* job)
 {
     Attica::PostJob* postJob = static_cast<Attica::PostJob*>(job);
 
@@ -127,19 +124,19 @@ void ProviderEditDialog::testLoginFinished(Attica::BaseJob* job)
     }
 }
 
-void ProviderEditDialog::infoLinkActivated()
+void ProviderConfigWidget::infoLinkActivated()
 {
-    setCurrentPage(m_registerPageItem);
+    m_settingsWidget.tabWidget->setCurrentIndex(registerTabIdx);
 }
 
-void ProviderEditDialog::validateRegisterFields()
+void ProviderConfigWidget::validateRegisterFields()
 {
-    QString login = m_registerWidget.userEdit->text();
-    QString mail = m_registerWidget.mailEdit->text();
-    QString firstName = m_registerWidget.firstNameEdit->text();
-    QString lastName = m_registerWidget.lastNameEdit->text();
-    QString password = m_registerWidget.passwordEdit->text();
-    QString passwordRepeat = m_registerWidget.passwordRepeatEdit->text();
+    QString login = m_settingsWidget.userEditRP->text();
+    QString mail = m_settingsWidget.mailEdit->text();
+    QString firstName = m_settingsWidget.firstNameEdit->text();
+    QString lastName = m_settingsWidget.lastNameEdit->text();
+    QString password = m_settingsWidget.passwordEditRP->text();
+    QString passwordRepeat = m_settingsWidget.passwordRepeatEdit->text();
 
     bool isDataValid = (!login.isEmpty() && !mail.isEmpty() && !firstName.isEmpty() &&
                         !lastName.isEmpty() && !password.isEmpty() && !passwordRepeat.isEmpty());
@@ -152,34 +149,34 @@ void ProviderEditDialog::validateRegisterFields()
     if (isDataValid && isPasswordValid )
         showRegisterHint("dialog-ok-apply", i18n("All required information is provided"));
 
-    m_registerWidget.registerButton->setEnabled(isDataValid && isPasswordValid);
+    m_settingsWidget.registerButton->setEnabled(isDataValid && isPasswordValid);
 }
 
-void ProviderEditDialog::showRegisterHint(const QString& iconName, const QString& hint)
+void ProviderConfigWidget::showRegisterHint(const QString& iconName, const QString& hint)
 {
-    m_registerWidget.iconLabel->setPixmap(KIcon(iconName).pixmap(16,16));
-    m_registerWidget.infoLabel->setText(hint);
+    m_settingsWidget.iconLabelRP->setPixmap(KIcon(iconName).pixmap(16,16));
+    m_settingsWidget.infoLabelRP->setText(hint);
 }
 
-void ProviderEditDialog::onRegisterClicked()
+void ProviderConfigWidget::onRegisterClicked()
 {
     // here we assume that all data has been checked with validateRegisterFields()
 
-    QString login = m_registerWidget.userEdit->text();
-    QString mail = m_registerWidget.mailEdit->text();
-    QString firstName = m_registerWidget.firstNameEdit->text();
-    QString lastName = m_registerWidget.lastNameEdit->text();
-    QString password = m_registerWidget.passwordEdit->text();
-    //QString passwordRepeat = m_registerWidget.passwordRepeatEdit->text();
+    QString login = m_settingsWidget.userEditRP->text();
+    QString mail = m_settingsWidget.mailEdit->text();
+    QString firstName = m_settingsWidget.firstNameEdit->text();
+    QString lastName = m_settingsWidget.lastNameEdit->text();
+    QString password = m_settingsWidget.passwordEditRP->text();
+    //QString passwordRepeat = m_settingsWidget.passwordRepeatEdit->text();
 
     Attica::PostJob* postJob = m_provider.registerAccount(login, password, mail, firstName, lastName);
     connect(postJob, SIGNAL(finished(Attica::BaseJob*)), SLOT(registerAccountFinished(Attica::BaseJob*)));
     postJob->start();
     showRegisterHint("help-about", i18n("Registration is in progress..."));
-    m_registerWidget.registerButton->setEnabled(false); // should be disabled while registering
+    m_settingsWidget.registerButton->setEnabled(false); // should be disabled while registering
 }
 
-void ProviderEditDialog::registerAccountFinished(Attica::BaseJob* job)
+void ProviderConfigWidget::registerAccountFinished(Attica::BaseJob* job)
 {
     Attica::PostJob* postJob = static_cast<Attica::PostJob*>(job);
 
@@ -201,14 +198,13 @@ void ProviderEditDialog::registerAccountFinished(Attica::BaseJob* job)
     }
 }
 
-void ProviderEditDialog::accept()
+void ProviderConfigWidget::saveData()
 {
-    if (m_settingsWidget.userEdit->text().isEmpty()) {
+    if (m_settingsWidget.userEditLP->text().isEmpty()) {
         return;
     }
-    
-    m_provider.saveCredentials(m_settingsWidget.userEdit->text(), m_settingsWidget.passwordEdit->text());
-    KDialog::accept();
+
+    m_provider.saveCredentials(m_settingsWidget.userEditLP->text(), m_settingsWidget.passwordEditLP->text());
 }
 
-#include "providereditdialog.moc"
+#include "providerconfigwidget.moc"

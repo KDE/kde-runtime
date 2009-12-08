@@ -49,16 +49,15 @@ public:
     void defaults();
 
 private Q_SLOTS:
-    void currentItemChanged(QTreeWidgetItem* current);
-    void edit();
     void providerAdded(const Attica::Provider&);
+    void onDefaultProvidersLoaded();
+
+private:
+    void startLoadingDefaultProviders();
 
 private:
     Ui::ProviderManagement m_management;
     Attica::ProviderManager m_manager;
-    KWallet::Wallet* m_wallet;
-    QHash<QString, QTreeWidgetItem*> m_itemForProvider;
-    QHash<QTreeWidgetItem*, QString> m_providerForItem;
 };
 
 

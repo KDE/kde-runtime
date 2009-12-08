@@ -1,3 +1,4 @@
-[ ] Fix hitting "Edit..." two times pops up two dialogs - activate opened one
+[ ] Fix apply button
+[KDE 4.5] Parse register errors to display more info to the user (statusCode())
+[ ] Check that password is more than 8 chars in length
 [ ] When switching to some page (check all) put focus on suitable widget
-[ ] Parse register errors to display more info to the user (statusCode())
