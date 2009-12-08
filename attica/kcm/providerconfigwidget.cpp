@@ -149,6 +149,9 @@ void ProviderConfigWidget::validateRegisterFields()
     if (isDataValid && isPasswordValid )
         showRegisterHint("dialog-ok-apply", i18n("All required information is provided"));
 
+    showRegisterHint("dialog-ok-apply", i18n("Registration complete. New account was successfully registered.<br/>Please <b>check your Email</b> to <b>activate</b> the account."));
+
+
     m_settingsWidget.registerButton->setEnabled(isDataValid && isPasswordValid);
 }
 
@@ -187,14 +190,47 @@ void ProviderConfigWidget::registerAccountFinished(Attica::BaseJob* job)
 
     if (postJob->metadata().error() == Attica::Metadata::NoError)
     {
-        showRegisterHint("dialog-ok-apply", i18n("Registration complete. New account was successfully registered."));
+        showRegisterHint("dialog-ok-apply", i18n("Registration complete. New account was successfully registered. Please <b>check your Email</b> to <b>activate</b> the account."));
+
+        QString user = m_settingsWidget.userEditRP->text();
+        QString password = m_settingsWidget.passwordEditRP->text();
+        m_settingsWidget.userEditLP->setText(user);
+        m_settingsWidget.passwordEditLP->setText(password);
+        m_provider.saveCredentials(user, password);
     }
     else
     {
-        // TODO: more detailed error parsing
-        showRegisterHint("dialog-close", i18n("Failed to register new account."));
         kDebug() << "register error:" << postJob->metadata().error() << "statusCode:" << postJob->metadata().statusCode()
             << "status string:"<< postJob->metadata().statusCode();
+        if (postJob->metadata().error() == Attica::Metadata::NetworkError) {
+            showRegisterHint("dialog-close", i18n("Failed to register new account."));
+        } else {
+            /*
+# 100 - successfull / valid account
+# 101 - please specify all mandatory fields
+# 102 - please specify a valid password
+# 103 - please specify a valid login
+# 104 - login already exists
+# 105 - email already taken
+            */
+            switch (postJob->metadata().statusCode()) {
+            case 102:
+                showRegisterHint("dialog-close", i18n("Failed to register new account: Password invalid."));
+                break;
+            case 103:
+                showRegisterHint("dialog-close", i18n("Failed to register new account: User name invalid."));
+                break;
+            case 104:
+                showRegisterHint("dialog-close", i18n("Failed to register new account: User name already taken."));
+                break;
+            case 105:
+                showRegisterHint("dialog-close", i18n("Failed to register new account: Email already taken."));
+                break;
+            default:
+                showRegisterHint("dialog-close", i18n("Failed to register new account."));
+                break;
+            }
+        }
     }
 }
 

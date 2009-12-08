@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>470</width>
-    <height>446</height>
+    <width>463</width>
+    <height>453</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
@@ -263,13 +263,13 @@
            <item row="0" column="0">
             <widget class="QLabel" name="label_2">
              <property name="text">
-              <string>User name:</string>
+              <string>&amp;User name:</string>
              </property>
              <property name="alignment">
               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
              </property>
              <property name="buddy">
-              <cstring>userEditLP</cstring>
+              <cstring>userEditRP</cstring>
              </property>
             </widget>
            </item>
@@ -279,7 +279,7 @@
            <item row="1" column="0">
             <widget class="QLabel" name="label_4">
              <property name="text">
-              <string>Email:</string>
+              <string>&amp;Email:</string>
              </property>
              <property name="alignment">
               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -295,13 +295,13 @@
            <item row="4" column="0">
             <widget class="QLabel" name="label_6">
              <property name="text">
-              <string>Password:</string>
+              <string>&amp;Password:</string>
              </property>
              <property name="alignment">
               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
              </property>
              <property name="buddy">
-              <cstring>passwordEditLP</cstring>
+              <cstring>passwordEditRP</cstring>
              </property>
             </widget>
            </item>
@@ -335,10 +335,13 @@
            <item row="2" column="0">
             <widget class="QLabel" name="label_8">
              <property name="text">
-              <string>First name:</string>
+              <string>&amp;First name:</string>
              </property>
              <property name="alignment">
               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+             <property name="buddy">
+              <cstring>firstNameEdit</cstring>
              </property>
             </widget>
            </item>
@@ -348,10 +351,13 @@
            <item row="3" column="0">
             <widget class="QLabel" name="label_9">
              <property name="text">
-              <string>Last name:</string>
+              <string>&amp;Last name:</string>
              </property>
              <property name="alignment">
               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+             <property name="buddy">
+              <cstring>lastNameEdit</cstring>
              </property>
             </widget>
            </item>
@@ -384,6 +390,9 @@
                <property name="text">
                 <string/>
                </property>
+               <property name="textFormat">
+                <enum>Qt::RichText</enum>
+               </property>
                <property name="wordWrap">
                 <bool>true</bool>
                </property>
@@ -396,7 +405,7 @@
              <item>
               <widget class="QPushButton" name="registerButton">
                <property name="text">
-                <string>Register...</string>
+                <string>&amp;Register...</string>
                </property>
               </widget>
              </item>
