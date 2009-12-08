@@ -15,10 +15,10 @@
 #ifndef _NEPOMUK_KIO_NEPOMUK_H_
 #define _NEPOMUK_KIO_NEPOMUK_H_
 
-#include <kio/forwardingslavebase.h>
+#include <kio/slavebase.h>
 
 namespace Nepomuk {
-    class NepomukProtocol : public KIO::ForwardingSlaveBase
+    class NepomukProtocol : public KIO::SlaveBase
     {
     public:
         NepomukProtocol( const QByteArray& poolSocket, const QByteArray& appSocket );
@@ -30,15 +30,9 @@ namespace Nepomuk {
         void mimetype( const KUrl& url );
         void del(const KUrl&, bool);
 
-    protected:
-        /**
-         * reimplemented from ForwardingSlaveBase
-         */
-        bool rewriteUrl( const KUrl& url, KUrl& newURL );
-        void prepareUDSEntry( KIO::UDSEntry& entry, bool listing = false ) const;
-
     private:
         bool ensureNepomukRunning();
+        bool redirectUrl( const KUrl& url, bool isGet = false );
     };
 }
 

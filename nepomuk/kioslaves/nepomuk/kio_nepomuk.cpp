@@ -224,7 +224,7 @@ namespace {
 
 
 Nepomuk::NepomukProtocol::NepomukProtocol( const QByteArray& poolSocket, const QByteArray& appSocket )
-    : KIO::ForwardingSlaveBase( "nepomuk", poolSocket, appSocket )
+    : KIO::SlaveBase( "nepomuk", poolSocket, appSocket )
 {
     ResourceManager::instance()->init();
 }
@@ -240,17 +240,8 @@ void Nepomuk::NepomukProtocol::listDir( const KUrl& url )
     if ( !ensureNepomukRunning() )
         return;
 
-    //
-    // Some clients (like Gwenview) will directly try to list the parent directory which in our case
-    // is nepomuk:/res. Giving an ugly "does not exist" error to the user is no good. Thus, we simply
-    // list it as an empty dir
-    //
-    if ( url == KUrl( QLatin1String( "nepomuk:/res" ) ) ) {
-        listEntry( KIO::UDSEntry(), true );
-        finished();
-    }
-    else {
-        return ForwardingSlaveBase::listDir( url );
+    if ( !redirectUrl( url ) ) {
+        error( KIO::ERR_DOES_NOT_EXIST, url.prettyUrl() );
     }
 }
 
@@ -262,36 +253,16 @@ void Nepomuk::NepomukProtocol::get( const KUrl& url )
 
     kDebug() << url;
 
-    QString filename;
-    Nepomuk::Resource res = splitNepomukUrl( url, filename );
-
-    if( !res.exists() ) {
-        error( KIO::ERR_DOES_NOT_EXIST, url.prettyUrl() );
-    }
-    else if ( !filename.isEmpty() ) {
-        ForwardingSlaveBase::get( url );
-    }
-    else if ( res.hasType( Soprano::Vocabulary::NAO::Tag() ) ) {
-        error( KIO::ERR_IS_DIRECTORY, url.prettyUrl() );
-    }
-    else if ( isLocalFile( res ) ) {
-        ForwardingSlaveBase::get( url );
-    }
-    else if ( isRemovableMediaFile( url ) ) {
-        KUrl removableMediaUrl = res.property( Nepomuk::Vocabulary::NIE::url() ).toUrl();
-        if ( convertRemovableMediaFileUrl( removableMediaUrl, true ).isValid() ) {
-            ForwardingSlaveBase::get( url );
-        }
-        else {
-            error( KIO::ERR_SLAVE_DEFINED,
-                   i18nc( "@info", "Please insert the removable medium <resource>%1</resource> to access this file.",
-                          getFileSystemLabelForRemovableMediaFileUrl( removableMediaUrl ) ) );
-        }
-    }
-    else {
+    if ( !redirectUrl( url, true ) ) {
         // TODO: call the share service for remote files (KDE 4.5)
 
         mimeType( "text/html" );
+
+        Nepomuk::Resource res( url );
+        if ( !res.exists() ) {
+            error( KIO::ERR_DOES_NOT_EXIST, url.prettyUrl() );
+            return;
+        }
 
         ResourcePageGenerator gen( res );
 
@@ -319,32 +290,14 @@ void Nepomuk::NepomukProtocol::stat( const KUrl& url )
 
     kDebug() << url;
 
-    QString filename;
-    Nepomuk::Resource res = splitNepomukUrl( url, filename );
+    if ( !redirectUrl( url ) ) {
+        Nepomuk::Resource res( url );
 
-    //
-    // let's see if it is a pimo thing which refers to a file
-    //
-    if ( res.hasType( Nepomuk::Vocabulary::PIMO::Thing() ) ) {
-        if ( !res.pimoThing().groundingOccurrences().isEmpty() ) {
-            res = res.pimoThing().groundingOccurrences().first();
+        if ( !res.exists() ) {
+            error( KIO::ERR_DOES_NOT_EXIST, url.prettyUrl() );
+            return;
         }
-    }
 
-    if( !res.exists() ) {
-        error( KIO::ERR_DOES_NOT_EXIST, url.prettyUrl() );
-    }
-    else if ( !filename.isEmpty() ) {
-        ForwardingSlaveBase::get( url );
-    }
-    else if ( isLocalFile( res ) ) {
-        ForwardingSlaveBase::stat( url );
-    }
-    else if ( isRemovableMediaFile( res ) &&
-              convertRemovableMediaFileUrl( res.property( Nepomuk::Vocabulary::NIE::url() ).toUrl() ).isValid() ) {
-        ForwardingSlaveBase::stat( url );
-    }
-    else {
         //
         // We do not have a local file
         // This is where the magic starts to happen.
@@ -433,19 +386,14 @@ void Nepomuk::NepomukProtocol::mimetype( const KUrl& url )
 
     QString filename;
     Nepomuk::Resource res = splitNepomukUrl( url, filename );
-    if ( !filename.isEmpty() ) {
-        ForwardingSlaveBase::mimetype( url );
-    }
-    if ( res.hasType( Soprano::Vocabulary::NAO::Tag() ) ) {
+    if ( filename.isEmpty() &&
+         res.hasType( Soprano::Vocabulary::NAO::Tag() ) ) {
         kDebug() << res.resourceUri() << "is tag -> mimetype inode/directory";
         // in listDir() we list tags as search folders
         mimeType( QLatin1String( "inode/directory" ) );
         finished();
     }
-    else if ( isLocalFile( res ) ) {
-        ForwardingSlaveBase::mimetype( url );
-    }
-    else {
+    else if ( !redirectUrl( url ) ) {
         //
         // There can still be file resources that have a mimetype but are
         // stored remotely, thus they do not have a local nie:url
@@ -473,21 +421,29 @@ void Nepomuk::NepomukProtocol::del(const KUrl& url, bool isFile)
     Nepomuk::Resource res = splitNepomukUrl( url, filename );
     if ( !filename.isEmpty() ||
          isLocalFile( res ) ) {
-        ForwardingSlaveBase::del( url, isFile );
+        redirection( res.property( Nepomuk::Vocabulary::NIE::url() ).toUrl() );
     }
     else {
-        res.remove();
+        if ( !res.exists() ) {
+            error( KIO::ERR_DOES_NOT_EXIST, url.prettyUrl() );
+        }
+        else {
+            res.remove();
+            finished();
+        }
     }
 }
 
 
-bool Nepomuk::NepomukProtocol::rewriteUrl( const KUrl& url, KUrl& newURL )
+bool Nepomuk::NepomukProtocol::redirectUrl( const KUrl& url, bool isGet )
 {
     QString filename;
     Nepomuk::Resource res = splitNepomukUrl( url, filename );
 
     if ( !res.exists() )
         return false;
+
+    KUrl newURL;
 
     //
     // let's see if it is a pimo thing which refers to a file
@@ -510,7 +466,14 @@ bool Nepomuk::NepomukProtocol::rewriteUrl( const KUrl& url, KUrl& newURL )
         newURL = res.property( Vocabulary::NIE::url() ).toUrl();
     }
     else if ( isRemovableMediaFile( res ) ) {
-        newURL = convertRemovableMediaFileUrl( res.property( Nepomuk::Vocabulary::NIE::url() ).toUrl() );
+        KUrl removableMediaUrl = res.property( Nepomuk::Vocabulary::NIE::url() ).toUrl();
+        newURL = convertRemovableMediaFileUrl( res.property( Nepomuk::Vocabulary::NIE::url() ).toUrl(), isGet );
+        if ( !newURL.isValid() && isGet ) {
+            error( KIO::ERR_SLAVE_DEFINED,
+                   i18nc( "@info", "Please insert the removable medium <resource>%1</resource> to access this file.",
+                          getFileSystemLabelForRemovableMediaFileUrl( removableMediaUrl ) ) );
+            return true;
+        }
         kDebug() << "Rewriting removable media URL" << url << "to" << newURL;
     }
 
@@ -520,34 +483,13 @@ bool Nepomuk::NepomukProtocol::rewriteUrl( const KUrl& url, KUrl& newURL )
 
     kDebug() << url << newURL;
 
-    return newURL.isValid();
-}
-
-
-void Nepomuk::NepomukProtocol::prepareUDSEntry( KIO::UDSEntry& uds, bool listing ) const
-{
-    //
-    // We cannot handle listing subdirs, thus, nepomuksearch does create UDS_URL
-    // values for us. But since file:/ does not create UDS_MIME_TYPE entries and KFileItem
-    // can only handle local files (our URLs are not local) we need to handle the mimetyping
-    // here the same way ForwardingSlaveBase does. For !listing we have all the correct values
-    // anyway.
-    //
-    if ( listing ) {
-        if ( uds.isDir() ) {
-            //
-            // nepomuksearch does already create correct UDS_URL values for us. But if we are
-            // listing a nfo:Folder resource we do not have the UDS_URL since file:/ does not
-            // set it. But since we cannot handle subdirs in there we need to set UDS_URL to
-            // the original file URL here.
-            //
-            KUrl url = processedUrl();
-            url.addPath( uds.stringValue( KIO::UDSEntry::UDS_NAME ) );
-            uds.insert( KIO::UDSEntry::UDS_URL, url.url() );
-        }
-        else {
-            ForwardingSlaveBase::prepareUDSEntry( uds, listing );
-        }
+    if ( newURL.isValid() ) {
+        redirection( newURL );
+        finished();
+        return true;
+    }
+    else {
+        return false;
     }
 }
 
