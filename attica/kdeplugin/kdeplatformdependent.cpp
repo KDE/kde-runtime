@@ -35,6 +35,7 @@ using namespace Attica;
 KdePlatformDependent::KdePlatformDependent()
     : m_config(KSharedConfig::openConfig("atticarc")), m_qnam(0), m_wallet(0)
 {
+    KGlobal::locale()->insertCatalog("attica_kde");
 }
 
 KdePlatformDependent::~KdePlatformDependent()
