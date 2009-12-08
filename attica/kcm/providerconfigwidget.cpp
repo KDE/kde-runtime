@@ -218,16 +218,16 @@ void ProviderConfigWidget::registerAccountFinished(Attica::BaseJob* job)
             // no switch.
             switch (postJob->metadata().statusCode()) {
             case 102:
-                showRegisterHint("dialog-close", i18n("Failed to register new account: Password invalid."));
+                showRegisterHint("dialog-close", i18n("Failed to register new account: invalid password."));
                 break;
             case 103:
-                showRegisterHint("dialog-close", i18n("Failed to register new account: User name invalid."));
+                showRegisterHint("dialog-close", i18n("Failed to register new account: invalid username."));
                 break;
             case 104:
-                showRegisterHint("dialog-close", i18n("Failed to register new account: User name already taken."));
+                showRegisterHint("dialog-close", i18n("Failed to register new account: the requested username is already taken."));
                 break;
             case 105:
-                showRegisterHint("dialog-close", i18n("Failed to register new account: Email already taken."));
+                showRegisterHint("dialog-close", i18n("Failed to register new account: the specified email address is already taken."));
                 break;
             default:
                 showRegisterHint("dialog-close", i18n("Failed to register new account."));

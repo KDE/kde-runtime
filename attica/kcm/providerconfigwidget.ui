@@ -29,7 +29,7 @@
          <item row="3" column="1">
           <widget class="QLabel" name="label">
            <property name="text">
-            <string>&amp;User name:</string>
+            <string>&amp;Username:</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
