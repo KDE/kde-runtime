@@ -51,7 +51,6 @@ public:
 private Q_SLOTS:
     void providerAdded(const Attica::Provider&);
     void onDefaultProvidersLoaded();
-    void widgetChanged(bool hasChanged);
 
 private:
     void startLoadingDefaultProviders();

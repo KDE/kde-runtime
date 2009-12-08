@@ -49,7 +49,8 @@ AtticaModule::AtticaModule(QWidget* parent, const QVariantList&)
     setAboutData(about);
 
     m_management.setupUi(this);
-    connect(m_management.providerConfigWidget, SIGNAL(changed(bool)), SLOT(widgetChanged(bool)));
+    connect(m_management.providerConfigWidget, SIGNAL(changed(bool)),
+            this, SIGNAL(changed(bool)));
 
     m_manager.setAuthenticationSuppressed(true);
 
@@ -119,11 +120,6 @@ void AtticaModule::onDefaultProvidersLoaded()
 
     // at least now set it to not changed
     emit changed(false);
-}
-
-void AtticaModule::widgetChanged(bool hasChanged)
-{
-    emit changed(hasChanged);
 }
 
 #include "atticamodule.moc"
