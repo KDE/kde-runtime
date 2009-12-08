@@ -83,16 +83,16 @@ void ProviderConfigWidget::initRegisterPage()
 
     m_settingsWidget.infoLabelRP->setFont(KGlobalSettings::smallestReadableFont());
 
-    connect(m_settingsWidget.userEditRP, SIGNAL(textChanged(QString)), SLOT(validateRegisterFields()));
-    connect(m_settingsWidget.mailEdit, SIGNAL(textChanged(QString)), SLOT(validateRegisterFields()));
-    connect(m_settingsWidget.firstNameEdit, SIGNAL(textChanged(QString)), SLOT(validateRegisterFields()));
-    connect(m_settingsWidget.lastNameEdit, SIGNAL(textChanged(QString)), SLOT(validateRegisterFields()));
-    connect(m_settingsWidget.passwordEditRP, SIGNAL(textChanged(QString)), SLOT(validateRegisterFields()));
-    connect(m_settingsWidget.passwordRepeatEdit, SIGNAL(textChanged(QString)), SLOT(validateRegisterFields()));
+    connect(m_settingsWidget.userEditRP, SIGNAL(textChanged(QString)), SLOT(onRegisterDataChanged()));
+    connect(m_settingsWidget.mailEdit, SIGNAL(textChanged(QString)), SLOT(onRegisterDataChanged()));
+    connect(m_settingsWidget.firstNameEdit, SIGNAL(textChanged(QString)), SLOT(onRegisterDataChanged()));
+    connect(m_settingsWidget.lastNameEdit, SIGNAL(textChanged(QString)), SLOT(onRegisterDataChanged()));
+    connect(m_settingsWidget.passwordEditRP, SIGNAL(textChanged(QString)), SLOT(onRegisterDataChanged()));
+    connect(m_settingsWidget.passwordRepeatEdit, SIGNAL(textChanged(QString)), SLOT(onRegisterDataChanged()));
 
     connect(m_settingsWidget.registerButton, SIGNAL(clicked()), SLOT(onRegisterClicked()));
 
-    validateRegisterFields();
+    onRegisterDataChanged();
 }
 
 void ProviderConfigWidget::loginChanged()
@@ -130,7 +130,7 @@ void ProviderConfigWidget::infoLinkActivated()
     m_settingsWidget.tabWidget->setCurrentIndex(registerTabIdx);
 }
 
-void ProviderConfigWidget::validateRegisterFields()
+void ProviderConfigWidget::onRegisterDataChanged()
 {
     QString login = m_settingsWidget.userEditRP->text();
     QString mail = m_settingsWidget.mailEdit->text();
@@ -151,6 +151,7 @@ void ProviderConfigWidget::validateRegisterFields()
         showRegisterHint("dialog-ok-apply", i18n("All required information is provided"));
 
     m_settingsWidget.registerButton->setEnabled(isDataValid && isPasswordValid);
+
     emit changed(true);
 }
 
@@ -162,7 +163,7 @@ void ProviderConfigWidget::showRegisterHint(const QString& iconName, const QStri
 
 void ProviderConfigWidget::onRegisterClicked()
 {
-    // here we assume that all data has been checked with validateRegisterFields()
+    // here we assume that all data has been checked in onRegisterDataChanged()
 
     QString login = m_settingsWidget.userEditRP->text();
     QString mail = m_settingsWidget.mailEdit->text();
@@ -185,7 +186,7 @@ void ProviderConfigWidget::registerAccountFinished(Attica::BaseJob* job)
     // this will enable "register" button if possible
     // (important to have this call before showRegisterHint() below,
     // so that the correct message will be displayed)
-    validateRegisterFields();
+    onRegisterDataChanged();
 
     if (postJob->metadata().error() == Attica::Metadata::NoError)
     {
@@ -195,7 +196,6 @@ void ProviderConfigWidget::registerAccountFinished(Attica::BaseJob* job)
         QString password = m_settingsWidget.passwordEditRP->text();
         m_settingsWidget.userEditLP->setText(user);
         m_settingsWidget.passwordEditLP->setText(password);
-        m_provider.saveCredentials(user, password);
     }
     else
     {
@@ -212,6 +212,10 @@ void ProviderConfigWidget::registerAccountFinished(Attica::BaseJob* job)
 # 104 - login already exists
 # 105 - email already taken
             */
+            // TODO: Looks like more correct place for this stuff is in libattica,
+            // for example metadata().statusString() or smth like that.
+            // So here will be only showRegisterHint("dialog-close", statusString);
+            // no switch.
             switch (postJob->metadata().statusCode()) {
             case 102:
                 showRegisterHint("dialog-close", i18n("Failed to register new account: Password invalid."));

@@ -48,7 +48,7 @@ private Q_SLOTS:
     /// test login was clicked
     void testLogin();
     void infoLinkActivated();
-    void validateRegisterFields();
+    void onRegisterDataChanged();
     void onRegisterClicked();
 
     /// result of login test
