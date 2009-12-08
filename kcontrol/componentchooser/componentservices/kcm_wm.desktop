@@ -2,6 +2,7 @@ Icon=preferences-system-windows
 
 # ctxt: standard desktop component
 Name=Window Manager
+Name[ar]=مدير النوافذ
 Name[bg]=Мениджър на прозорци
 Name[ca]=Gestor de finestres
 Name[cs]=Správce oken
@@ -54,7 +55,7 @@ Name[x-test]=xxWindow Managerxx
 Name[zh_CN]=窗口管理器
 Name[zh_TW]=視窗管理員
 Comment=Here you can select the window manager to be run in your KDE session.
-Comment[ar]=هنا يمكنك انتقاء مدير النوافذ ليعمل في جلسة الكيدي
+Comment[ar]=هنا يمكنك انتقاء مدير النوافذ ليعمل في جلسة كدي
 Comment[be@latin]=Tut možna vybrać akońnika, jaki ŭklučajecca pry ŭvachodzie ŭ KDE.
 Comment[bg]=Тук можете да изберете мениджъра на прозорци, който да се стартира при нова сесия.
 Comment[bn]=আপনার কে.ডি.ই. সেশন-এ যে উইণ্ডো ম্যানেজার ব্যবহার করা হবে সেটি আপনি এখানে পছন্দ করতে পারেন।

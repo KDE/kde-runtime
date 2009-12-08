@@ -3,7 +3,10 @@ CurrencyCodeIsoAlpha3=MOP
 CurrencyCodeIsoNumeric3=446
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Macanese Pataca
+Name[da]=Macao pataca
 Name[en_GB]=Macanese Pataca
+Name[eo]=Makaa patako
+Name[et]=Macau pataca
 Name[sv]=Macau pataca
 Name[uk]=Патака Макао
 Name[x-test]=xxMacanese Patacaxx

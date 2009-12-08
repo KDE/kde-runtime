@@ -2,7 +2,7 @@
 Type=Service
 Name=KNotify
 Name[af]=KNotify
-Name[ar]=منبه كيدي
+Name[ar]=منبه كدي
 Name[be]=KNotify
 Name[be@latin]=KNotify
 Name[bg]=KNotify
@@ -81,7 +81,7 @@ Name[zh_TW]=KNotify
 Exec=knotify4
 Comment=KDE Notification Daemon
 Comment[af]=KDE Inkennisstel-bediener
-Comment[ar]=مراقب تنبيهات الكيدي
+Comment[ar]=مراقب تنبيهات كدي
 Comment[be]=Сервіс абвяшчэнняў KDE
 Comment[be@latin]=Słužba infarmavańnia KDE
 Comment[bg]=Демон на KDE за уведомяване

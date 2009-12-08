@@ -11,6 +11,7 @@ X-KDE-System-Settings-Parent-Category=advanced-user-settings
 X-KDE-Weight=110
 
 Name=Platform
+Name[ar]=منصة
 Name[bg]=Platform
 Name[ca]=Plataforma
 Name[cs]=Platforma
@@ -66,6 +67,7 @@ Name[x-test]=xxPlatformxx
 Name[zh_CN]=平台
 Name[zh_TW]=平台
 Comment=Windows Platform Manager
+Comment[ar]=مدير منصة الويندوز
 Comment[bg]=Менджър за Windows
 Comment[ca]=Gestor de la plataforma Windows
 Comment[cs]=Správce platformy Windows

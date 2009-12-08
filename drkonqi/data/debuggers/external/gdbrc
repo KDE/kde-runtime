@@ -1,6 +1,7 @@
 [General]
 Name=gdb
 Name[bg]=gdb
+Name[ca]=gdb
 Name[cs]=gdb
 Name[csb]=gdb
 Name[da]=gdb
