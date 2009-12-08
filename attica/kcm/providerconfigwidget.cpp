@@ -99,6 +99,7 @@ void ProviderConfigWidget::loginChanged()
 {
     m_settingsWidget.testLoginButton->setText(i18n("Test login"));
     m_settingsWidget.testLoginButton->setEnabled(true);
+    emit changed(true);
 }
 
 void ProviderConfigWidget::testLogin()
@@ -150,6 +151,7 @@ void ProviderConfigWidget::validateRegisterFields()
         showRegisterHint("dialog-ok-apply", i18n("All required information is provided"));
 
     m_settingsWidget.registerButton->setEnabled(isDataValid && isPasswordValid);
+    emit changed(true);
 }
 
 void ProviderConfigWidget::showRegisterHint(const QString& iconName, const QString& hint)
@@ -236,7 +238,6 @@ void ProviderConfigWidget::saveData()
     if (m_settingsWidget.userEditLP->text().isEmpty()) {
         return;
     }
-
     m_provider.saveCredentials(m_settingsWidget.userEditLP->text(), m_settingsWidget.passwordEditLP->text());
 }
 

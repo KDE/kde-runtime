@@ -39,6 +39,9 @@ public:
     void setProvider(const Attica::Provider& provider);
     void saveData();
 
+Q_SIGNALS:
+    void changed(bool hasChanged);
+
 private Q_SLOTS:
     /// reset the validate button
     void loginChanged();

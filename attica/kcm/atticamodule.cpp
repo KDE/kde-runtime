@@ -49,6 +49,7 @@ AtticaModule::AtticaModule(QWidget* parent, const QVariantList&)
     setAboutData(about);
 
     m_management.setupUi(this);
+    connect(m_management.providerConfigWidget, SIGNAL(changed(bool)), SLOT(widgetChanged(bool)));
 
     m_manager.setAuthenticationSuppressed(true);
 
@@ -80,6 +81,7 @@ void AtticaModule::save()
 
 void AtticaModule::startLoadingDefaultProviders()
 {
+    emit changed(true);
     m_manager.clear();
     m_manager.loadDefaultProviders();
     m_management.lblProviderList->setText(i18n("Loading provider list..."));
@@ -114,6 +116,14 @@ void AtticaModule::onDefaultProvidersLoaded()
     m_management.lblProviderList->setText(i18n("Choose a provider to manage:"));
     m_management.providerComboBox->show();
     m_management.providerConfigWidget->setEnabled(true);
+
+    // at least now set it to not changed
+    emit changed(false);
+}
+
+void AtticaModule::widgetChanged(bool hasChanged)
+{
+    emit changed(hasChanged);
 }
 
 #include "atticamodule.moc"
