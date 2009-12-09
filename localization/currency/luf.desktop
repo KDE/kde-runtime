@@ -4,6 +4,7 @@ CurrencyCodeIsoNumeric3=442
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Luxembourgish Franc
 Name[bg]=Люксембургски франк
+Name[ca]=Franc luxemburguès
 Name[csb]=Luksembùrsczi Frank
 Name[da]=Luxemburgsk franc
 Name[de]=Luxemburgischer Franc
@@ -15,6 +16,7 @@ Name[lv]=Luksemburgas franks
 Name[nb]=Luxemburg-franc
 Name[nds]=Luxemborgsch Franc
 Name[pt]=Franco Luxemburguês
+Name[sl]=luksemburški frank
 Name[sv]=Luxemburgisk franc
 Name[uk]=Люксембурзький франк
 Name[x-test]=xxLuxembourgish Francxx

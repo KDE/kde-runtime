@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=STD
 CurrencyCodeIsoNumeric3=678
 #Context for Name: Adjectival Country Name and Currency Name
 Name=São Tomé and Príncipe Dobra
+Name[ca]=Dobra de Sao Tomé i Príncipe
 Name[csb]=Dobra z Sao Tome ë Principe
 Name[da]=Sao Tome og Principe dobra
 Name[de]=São-toméischer Dobra
@@ -12,6 +13,7 @@ Name[ja]=サントメ・プリンシペ・ドブラ
 Name[nb]=São Tomé og Príncipe dobra
 Name[nds]=Sao-Tomee-un-Principe-Dobra
 Name[pt]=Dobra de São Tomé e Príncipe
+Name[sl]=dobra São Tomé and Príncipe
 Name[sv]=São Tomé och Príncipe dobra
 Name[uk]=Добра Сан-Томе і Принсипі
 Name[x-test]=xxSão Tomé and Príncipe Dobraxx

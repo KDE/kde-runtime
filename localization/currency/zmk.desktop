@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=ZMK
 CurrencyCodeIsoNumeric3=894
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Zambian Kwacha
+Name[ca]=Kwacha de Zàmbia
 Name[csb]=Zambijskô Kwacha
 Name[da]=Zambisk kwacha
 Name[de]=Sambischer Kwacha
@@ -12,6 +13,7 @@ Name[ja]=ザンビア・クワチャ
 Name[nb]=Zambiske kwacha
 Name[nds]=Sambiaansch Kwacha
 Name[pt]=Kwacha da Zâmbia
+Name[sl]=zambijska kvača
 Name[sv]=Zambianska kwacha
 Name[uk]=Замбійська квача
 Name[x-test]=xxZambian Kwachaxx

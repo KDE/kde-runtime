@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=XPD
 CurrencyCodeIsoNumeric3=964
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Palladium
+Name[ca]=Pal·ladi
 Name[csb]=Pallad
 Name[da]=Palladium
 Name[de]=Palladium
@@ -15,6 +16,7 @@ Name[lv]=Palādijs
 Name[nb]=Palladium
 Name[nds]=Palladium
 Name[pt]=Paládio
+Name[sl]=paladij
 Name[sv]=Palladium
 Name[uk]=Паладій
 Name[x-test]=xxPalladiumxx

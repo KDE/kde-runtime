@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=ETB
 CurrencyCodeIsoNumeric3=230
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Ethiopian Birr
+Name[ca]=Birr d'Etiòpia
 Name[csb]=Etiopsczi Birr
 Name[da]=Etiopisk birr
 Name[de]=Äthiopischer Birr
@@ -12,6 +13,7 @@ Name[ja]=エチオピア・ブル
 Name[nb]=Etiopiske birr
 Name[nds]=Äthioopsch Birr
 Name[pt]=Birr da Etiópia
+Name[sl]=etiopski bir
 Name[sv]=Etiopiska birr
 Name[uk]=Ефіопський бир
 Name[x-test]=xxEthiopian Birrxx

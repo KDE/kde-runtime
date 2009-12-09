@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=VUV
 CurrencyCodeIsoNumeric3=548
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Vanuatu Vatu
+Name[ca]=Vatu de Vanuatu
 Name[da]=Vanuatuansk vatu
 Name[de]=Vatu
 Name[en_GB]=Vanuatu Vatu
@@ -11,6 +12,7 @@ Name[ja]=バヌアツ・バツ
 Name[nb]=Vanuatu Vatu
 Name[nds]=Vanuatuusch Vatu
 Name[pt]=Vatu do Vanuatu
+Name[sl]=vanuatujski vatu
 Name[sv]=Vanuatu vatu
 Name[uk]=Вату Вануату
 Name[x-test]=xxVanuatu Vatuxx

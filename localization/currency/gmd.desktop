@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=GMD
 CurrencyCodeIsoNumeric3=270
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Gambian Dalasi
+Name[ca]=Dalasi de Gàmbia
 Name[csb]=Gambijsczé Dalasi
 Name[da]=Gambisk dalasi
 Name[de]=Gambianischer Dalasi
@@ -12,6 +13,7 @@ Name[ja]=ガンビア・ダラシ
 Name[nb]=Gambiske Dalasi
 Name[nds]=Gambiaansch Dalasi
 Name[pt]=Dalasi do Gâmbia
+Name[sl]=gambijski dalasi
 Name[sv]=Gambiska dalasi
 Name[uk]=Гамбійський даласі
 Name[x-test]=xxGambian Dalasixx

@@ -4,6 +4,7 @@ CurrencyCodeIsoNumeric3=807
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Macedonian Denar
 Name[bg]=Македонски денар
+Name[ca]=Denar macedònic
 Name[csb]=Macedońsczi Denar
 Name[da]=Makedonisk denar
 Name[de]=Mazedonischer Denar
@@ -13,6 +14,7 @@ Name[ja]=マケドニア・ディナール
 Name[nb]=Makedonske denarer
 Name[nds]=Makedoonsch Dinaar
 Name[pt]=Dinar Macedónio
+Name[sl]=makedonski denar
 Name[sv]=Makedonisk denar
 Name[uk]=Македонський денар
 Name[x-test]=xxMacedonian Denarxx

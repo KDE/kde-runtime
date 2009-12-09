@@ -4,6 +4,7 @@ CurrencyCodeIsoNumeric3=052
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Barbados Dollar
 Name[bg]=Барбадоски долар
+Name[ca]=Dòlar de Barbados
 Name[csb]=Barbadosczi Dolar
 Name[da]=Barbadisk dollar
 Name[de]=Barbados-Dollar
@@ -15,6 +16,7 @@ Name[lv]=Barbadosas dolārs
 Name[nb]=Barbados-dollar
 Name[nds]=Barbados-Dollar
 Name[pt]=Dólar dos Barbados
+Name[sl]=barbadoški dolar
 Name[sv]=Barbadiska dollar
 Name[uk]=Барбадоський долар
 Name[x-test]=xxBarbados Dollarxx

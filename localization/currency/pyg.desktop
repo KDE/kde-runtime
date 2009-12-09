@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=PYG
 CurrencyCodeIsoNumeric3=600
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Paraguayan Guarani
+Name[ca]=Guaraní de Paraguay
 Name[csb]=Paragwajsczé Guarani
 Name[da]=Paraguayansk guarani
 Name[de]=Paraguayischer Guaraní
@@ -12,6 +13,7 @@ Name[ja]=パラグアイ・グアラニー
 Name[nb]=Paraguayanske guarani
 Name[nds]=Paraguayaansch Guarani
 Name[pt]=Guarani Paraguaio
+Name[sl]=paragvajski gvarani
 Name[sv]=Paraguayanska guarani
 Name[uk]=Парагвайське гуарані
 Name[x-test]=xxParaguayan Guaranixx

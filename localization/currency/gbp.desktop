@@ -4,6 +4,7 @@ CurrencyCodeIsoNumeric3=826
 #Context for Name: Adjectival Country Name and Currency Name
 Name=British Pound Sterling
 Name[bg]=Британска лира стерлинг
+Name[ca]=Lliura esterlina britànica
 Name[csb]=Britëjsczi Fùnt
 Name[da]=Britisk pund sterling
 Name[de]=Pfund Sterling
@@ -17,6 +18,7 @@ Name[lv]=Britu mārciņa
 Name[nb]=Britiske Pund Sterling
 Name[nds]=Britsch Pund Sterling
 Name[pt]=Libra Esterlina Britânica
+Name[sl]=angleški funt
 Name[sv]=Brittiska pund
 Name[uk]=Британський фунт стерлінгів
 Name[x-test]=xxBritish Pound Sterlingxx

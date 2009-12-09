@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=ALL
 CurrencyCodeIsoNumeric3=008
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Albanian Lek
+Name[ca]=Lek albanès
 Name[csb]=Albańsczi Lek
 Name[da]=Albansk Lek
 Name[de]=Albanischer Lek
@@ -16,6 +17,7 @@ Name[nb]=Albanske Lek
 Name[nds]=Albaansch Lek
 Name[pt]=Lek Albanês
 Name[pt_BR]=Lek da Albânia
+Name[sl]=albanski lek
 Name[sv]=Albanska lek
 Name[uk]=Албанський лек
 Name[x-test]=xxAlbanian Lekxx

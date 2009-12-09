@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=TJS
 CurrencyCodeIsoNumeric3=972
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Tajikistani Somoni
+Name[ca]=Somoni de Tadjikistan
 Name[csb]=Tadżykistónsczé Somoni
 Name[da]=Tadsjiksk somoni
 Name[de]=Somoni
@@ -12,6 +13,7 @@ Name[ja]=タジキスタン・ソモニ
 Name[nb]=Tadsjikistanske somoni
 Name[nds]=Tadschikisch Somoni
 Name[pt]=Somoni do Tajiquistão
+Name[sl]=tadžikistanski somoni
 Name[sv]=Tadzjikiska somoni
 Name[uk]=Таджицький сомоні
 Name[x-test]=xxTajikistani Somonixx

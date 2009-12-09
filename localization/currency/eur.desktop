@@ -5,6 +5,7 @@ CurrencyNameIso=euro
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Euro
 Name[bg]=Евро
+Name[ca]=Euro
 Name[csb]=Eùro
 Name[da]=Euro
 Name[de]=Euro
@@ -18,6 +19,7 @@ Name[lv]=Eiro
 Name[nb]=Euro
 Name[nds]=Euro
 Name[pt]=Euro
+Name[sl]=evro
 Name[sv]=Euro
 Name[uk]=Євро
 Name[x-test]=xxEuroxx

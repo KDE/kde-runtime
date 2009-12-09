@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=XCD
 CurrencyCodeIsoNumeric3=951
 #Context for Name: Adjectival Country Name and Currency Name
 Name=East Caribbean Dollar
+Name[ca]=Dòlar del Carib Est
 Name[csb]=Karajibsczi Dolar
 Name[da]=Østvestindisk dollar
 Name[de]=Ostkaribischer Dollar
@@ -13,6 +14,7 @@ Name[ja]=東カリブ・ドル
 Name[nb]=Østkaribiske dollar
 Name[nds]=Oostkaribsch Dollar
 Name[pt]=Dólar das Caraíbas Orientais
+Name[sl]=vzhodnokaribski dolar
 Name[sv]=Östkaribiska dollar
 Name[uk]=Східно-карибський долар
 Name[x-test]=xxEast Caribbean Dollarxx

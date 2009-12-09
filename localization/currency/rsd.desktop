@@ -4,6 +4,7 @@ CurrencyCodeIsoNumeric3=941
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Serbian Dinar
 Name[bg]=Сръбски динар
+Name[ca]=Dinar serbi
 Name[csb]=Serbsczi Dinar
 Name[da]=Serbisk dinar
 Name[de]=Serbischer Dinar
@@ -14,6 +15,7 @@ Name[lv]=Serbijas dinārs
 Name[nb]=Serbiske dinarer
 Name[nds]=Serbsch Dinaar
 Name[pt]=Dinar Sérvio
+Name[sl]=srbski dinar
 Name[sv]=Serbiska dinar
 Name[uk]=Сербський динар
 Name[x-test]=xxSerbian Dinarxx

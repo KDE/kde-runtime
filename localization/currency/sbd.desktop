@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=SBD
 CurrencyCodeIsoNumeric3=090
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Solomon Islands Dollar
+Name[ca]=Dòlar de les Illes Salomó
 Name[csb]=Dolar z Òstrowów Salomona
 Name[da]=Solomonøerne-dollar
 Name[de]=Salomonen-Dollar
@@ -14,6 +15,7 @@ Name[lv]=Solomonu salu dolārs
 Name[nb]=Salomonøy-dollar
 Name[nds]=Salomonen-Dollar
 Name[pt]=Dólar das Ilhas Salomão
+Name[sl]=salomonski dolar
 Name[sv]=Salomondollar
 Name[uk]=Долар Соломонових островів
 Name[x-test]=xxSolomon Islands Dollarxx

@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=OMR
 CurrencyCodeIsoNumeric3=512
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Omani Rial
+Name[ca]=Rial omanita
 Name[csb]=Òmansczi Rial
 Name[da]=Omansk rial
 Name[de]=Omanischer Rial
@@ -12,6 +13,7 @@ Name[ja]=オーマン・リヤル
 Name[nb]=Omanske rialer
 Name[nds]=Omaansch Rial
 Name[pt]=Rial do Omã
+Name[sl]=omanski rial
 Name[sv]=Omanska rial
 Name[uk]=Оманський ріал
 Name[x-test]=xxOmani Rialxx

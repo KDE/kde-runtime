@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=ROL
 CurrencyCodeIsoNumeric3=642
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Romanian Leu A/05
+Name[ca]=Leu romanès A/05
 Name[csb]=Rumùńsczi Lej
 Name[da]=Rumænsk leu A/05
 Name[de]=Rumänischer Leu A/05
@@ -14,6 +15,7 @@ Name[lv]=Rumānijas leja A/05
 Name[nb]=Rumenske Leu A/05
 Name[nds]=Rumäänsch Leu A/05
 Name[pt]=Leu A/05 Romeno
+Name[sl]=romunski leu A/05
 Name[sv]=Rumänska leu, före 2005
 Name[uk]=Румунська лея до 2005
 Name[x-test]=xxRomanian Leu A/05xx

@@ -4,6 +4,7 @@ CurrencyCodeIsoNumeric3=250
 #Context for Name: Adjectival Country Name and Currency Name
 Name=French Franc
 Name[bg]=Френски франк
+Name[ca]=Franc francès
 Name[csb]=Francësczi Frank
 Name[da]=Fransk franc
 Name[de]=Französischer Franc
@@ -17,6 +18,7 @@ Name[lv]=Francijas franks
 Name[nb]=Franske franc
 Name[nds]=Franzöösch Franc
 Name[pt]=Franco Francês
+Name[sl]=francoski frank
 Name[sv]=Franska franc
 Name[uk]=Французький франк
 Name[x-test]=xxFrench Francxx

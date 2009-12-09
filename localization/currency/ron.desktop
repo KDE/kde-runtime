@@ -4,6 +4,7 @@ CurrencyCodeIsoNumeric3=946
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Romanian Leu
 Name[bg]=Румънска лея
+Name[ca]=Leu romanès
 Name[csb]=Rumùńsczi Lej
 Name[da]=Rumænsk leu
 Name[de]=Rumänischer Leu
@@ -15,6 +16,7 @@ Name[lv]=Rumānijas leja
 Name[nb]=Rumenske Leu
 Name[nds]=Rumäänsch Leu
 Name[pt]=Leu Romeno
+Name[sl]=romunski leu
 Name[sv]=Rumänska leu
 Name[uk]=Румунська лея
 Name[x-test]=xxRomanian Leuxx

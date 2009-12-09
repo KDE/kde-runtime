@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=CVE
 CurrencyCodeIsoNumeric3=132
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Cape Verde Escudo
+Name[ca]=Escut de Cap Verd
 Name[csb]=Eskùdo z Cape Verde
 Name[da]=Kap Verde escudo
 Name[de]=Kap-Verde-Escudo
@@ -12,6 +13,7 @@ Name[ja]=カーボベルデ・エスクード
 Name[nb]=Kapp Verde-escudo
 Name[nds]=Kap-Verde-Escudo
 Name[pt]=Escudo do Cabo Verde
+Name[sl]=kapverdski eskudo
 Name[sv]=Kapverdiska escudo
 Name[uk]=Ескудо Кабо Верде
 Name[x-test]=xxCape Verde Escudoxx

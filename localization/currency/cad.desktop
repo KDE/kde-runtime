@@ -4,6 +4,7 @@ CurrencyCodeIsoNumeric3=124
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Canadian Dollar
 Name[bg]=Канадски долар
+Name[ca]=Dòlar canadenc
 Name[csb]=Kanadëjsczi Dolar
 Name[da]=Canadisk dollar
 Name[de]=Kanadischer Dollar
@@ -17,6 +18,7 @@ Name[lv]=Kanādas dolārs
 Name[nb]=Kanadiske dollar
 Name[nds]=Kanaadsch Dollar
 Name[pt]=Dólar Canadiano
+Name[sl]=kanadski dolar
 Name[sv]=Kanadensiska dollar
 Name[uk]=Канадський долар
 Name[x-test]=xxCanadian Dollarxx

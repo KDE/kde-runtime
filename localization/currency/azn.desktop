@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=AZN
 CurrencyCodeIsoNumeric3=944
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Azerbaijani Manat
+Name[ca]=Manat d'Azerbaidjan
 Name[csb]=Azerbejdżańsczi Manat
 Name[da]=Aserbajdsjansk manat
 Name[de]=Aserbaidschan-Manat
@@ -12,6 +13,7 @@ Name[ja]=アゼルバイジャン・マナト
 Name[nb]=Aserbajdsjanske Manat
 Name[nds]=Aserbaidschaansch Manat
 Name[pt]=Manat do Azerbaijão
+Name[sl]=azerbajdžanski manat
 Name[sv]=Azeriska manat
 Name[uk]=Азербайджанський манат
 Name[x-test]=xxAzerbaijani Manatxx

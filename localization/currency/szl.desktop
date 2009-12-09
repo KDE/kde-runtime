@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=SZL
 CurrencyCodeIsoNumeric3=748
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Swazi Lilangeni
+Name[ca]=Lilangeni de Swazilàndia
 Name[csb]=Suazijsczi Lilangeni
 Name[da]=Swazi lilangeni
 Name[de]=Lilangeni
@@ -12,6 +13,7 @@ Name[ja]=スワジランド・リランゲニ
 Name[nb]=Swazi Lilangeni
 Name[nds]=Swasilannsch Lilangeni
 Name[pt]=Lilangeni da Suazilândia
+Name[sl]=svazijski lilangeni
 Name[sv]=Swaziland lilangeni
 Name[uk]=Лілангені Свазіленду
 Name[x-test]=xxSwazi Lilangenixx

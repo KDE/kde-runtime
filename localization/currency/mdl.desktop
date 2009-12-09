@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=MDL
 CurrencyCodeIsoNumeric3=498
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Moldovan Leu
+Name[ca]=Leu moldau
 Name[csb]=Mòłdawsczi Lej
 Name[da]=Moldovisk leu
 Name[de]=Moldau-Leu
@@ -13,6 +14,7 @@ Name[lv]=Moldāvijas leja
 Name[nb]=Moldoviske Leu
 Name[nds]=Moldaawsch Leu
 Name[pt]=Leu da Moldávia
+Name[sl]=moldavijski leu
 Name[sv]=Moldavisk leu
 Name[uk]=Молдовська лея
 Name[x-test]=xxMoldovan Leuxx

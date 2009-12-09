@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=SHP
 CurrencyCodeIsoNumeric3=654
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Saint Helena Pound
+Name[ca]=Lliura de Saint Helena
 Name[csb]=Fùnt ze Swiãti Lenë
 Name[da]=Skt. Helena pund
 Name[de]=St. Helena-Pfund
@@ -13,6 +14,7 @@ Name[lv]=Sv. Helēnas salas mārciņa
 Name[nb]=St. Helena-pund
 Name[nds]=St.-Helena-Pund
 Name[pt]=Libra de Santa Helena
+Name[sl]=funt Svete Helene
 Name[sv]=Saint Helena-pund
 Name[uk]=Фунт острова Святої Єлени
 Name[x-test]=xxSaint Helena Poundxx

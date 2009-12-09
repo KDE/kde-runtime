@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=PAB
 CurrencyCodeIsoNumeric3=590
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Panamanian Balboa
+Name[ca]=Balboa de Panamà
 Name[csb]=Panamskô Balboa
 Name[da]=Panamansk balboa
 Name[de]=Panamaischer Balboa
@@ -12,6 +13,7 @@ Name[ja]=パナマ・ボルボア
 Name[nb]=Panamanske balboa
 Name[nds]=Pamameesch Balboa
 Name[pt]=Balboa do Panamá
+Name[sl]=panamska balboa
 Name[sv]=Panamaniska balboa
 Name[uk]=Панамське бальбоа
 Name[x-test]=xxPanamanian Balboaxx

@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=EEK
 CurrencyCodeIsoNumeric3=233
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Estonian Kroon
+Name[ca]=Corona estoniana
 Name[csb]=Estóńskô Kòróna
 Name[da]=Estisk kroon
 Name[de]=Estnische Krone
@@ -15,6 +16,7 @@ Name[lv]=Igaunijas krona
 Name[nb]=Estiske kroon
 Name[nds]=Eestlannsch Kroon
 Name[pt]=Coroa Estoniana
+Name[sl]=estonska krona
 Name[sv]=Estniska kronor
 Name[uk]=Естонська крона
 Name[x-test]=xxEstonian Kroonxx

@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=MMK
 CurrencyCodeIsoNumeric3=104
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Myanma Kyat
+Name[ca]=Kyat de Myanmar
 Name[csb]=Myanmarsczi Kyat
 Name[da]=Myanmarsk kyat
 Name[de]=Kyat
@@ -13,6 +14,7 @@ Name[ja]=ミャンマー・チャット
 Name[nb]=Myanmar Kvat
 Name[nds]=Myanmaarsch (Birmeesch) Kyat
 Name[pt]=Kyat do Myanmar
+Name[sl]=mjanmarski kjat
 Name[sv]=Myanmar kyat
 Name[uk]=М'янмський к’ят
 Name[x-test]=xxMyanma Kyatxx

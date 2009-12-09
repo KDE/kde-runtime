@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=TRL
 CurrencyCodeIsoNumeric3=792
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Turkish Lira A/05
+Name[ca]=Lira turca A/05
 Name[csb]=Tëreckô Lira A/05
 Name[da]=Tyrkisk lire A/05
 Name[de]=Türkische Lira A/05
@@ -15,6 +16,7 @@ Name[lv]=Turcijas lira A/05
 Name[nb]=Tyrkiske lira A/05
 Name[nds]=Törksch Lira A/05
 Name[pt]=Lira Turca A/05
+Name[sl]=turška lira A/05
 Name[sv]=Turkiska lira, före 2005
 Name[uk]=Турецька ліра до 2005
 Name[x-test]=xxTurkish Lira A/05xx

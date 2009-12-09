@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=LKR
 CurrencyCodeIsoNumeric3=144
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Sri Lankan Rupee
+Name[ca]=Rupia de Sri Lanka
 Name[csb]=Rupja ze Sri Lanczi
 Name[da]=Srilankansk rupee
 Name[de]=Sri-Lanka-Rupie
@@ -15,6 +16,7 @@ Name[lv]=Šrilankas rūpija
 Name[nb]=Sri Lankiske rupier
 Name[nds]=Sri-lankeesch Rupje
 Name[pt]=Rupia do Sri Lanka
+Name[sl]=šrilanška rupija
 Name[sv]=Srilankesiska rupie
 Name[uk]=Рупія Шрі-Ланки
 Name[x-test]=xxSri Lankan Rupeexx

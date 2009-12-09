@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=MGF
 CurrencyCodeIsoNumeric3=450
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Malagasy Franc
+Name[ca]=Franc malgaix
 Name[csb]=Madagarsczi Frank
 Name[da]=Malagasisk franc
 Name[de]=Madagaskar-Franc
@@ -12,6 +13,7 @@ Name[ja]=マダガスカル・フラン
 Name[nb]=Malagassiske franc
 Name[nds]=Madagass'sch Franc
 Name[pt]=Franco Malgaxe
+Name[sl]=malgaški frank
 Name[sv]=Madagaskiska franc
 Name[uk]=Малагасійський франк
 Name[x-test]=xxMalagasy Francxx

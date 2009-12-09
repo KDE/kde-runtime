@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=CUC
 CurrencyCodeIsoNumeric3=931
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Cuban Convertible Peso
+Name[ca]=Pes cubà convertible
 Name[csb]=Kùbańsczé Peso
 Name[da]=Cubansk konvertibel peso
 Name[de]=Kubanischer Konvertibler Peso
@@ -14,6 +15,7 @@ Name[ja]=キューバ・兌換ペソ
 Name[nb]=Cubanske konvertible pesos
 Name[nds]=Kubaansch tuuschbor Peso
 Name[pt]=Peso Convertível Cubano
+Name[sl]=kubanski konvertibilni peso
 Name[sv]=Kubanska konvertibla peso
 Name[uk]=Кубинське конвертоване песо
 Name[x-test]=xxCuban Convertible Pesoxx

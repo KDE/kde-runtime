@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=TPE
 CurrencyCodeIsoNumeric3=626
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Portuguese Timorese Escudo
+Name[ca]=Escut de Timor portuguès
 Name[da]=Portugisisk Timoresiske escudo
 Name[de]=Escudo (Portugiesisch-Timor)
 Name[en_GB]=Portuguese Timorese Escudo
@@ -11,6 +12,7 @@ Name[ja]=ポルトガル領ティモール・エスクード
 Name[nb]=Portugisisk Timor-escudo
 Name[nds]=Portugeesch-Timoreesch Escudo
 Name[pt]=Escudo Português Timorense
+Name[sl]=portugalskotimorski eskudo
 Name[sv]=Portugisiska Timor escudo
 Name[uk]=Ескудо португальсього Тімору
 Name[x-test]=xxPortuguese Timorese Escudoxx

@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=FJD
 CurrencyCodeIsoNumeric3=242
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Fijian Dollar
+Name[ca]=Dòlar de Fiji
 Name[csb]=Dolar z Fidżi
 Name[da]=Fijiansk dollar
 Name[de]=Fidschi-Dollar
@@ -15,6 +16,7 @@ Name[lv]=Fidži dolārs
 Name[nb]=Fiji-dollar
 Name[nds]=Fidschi-Dollar
 Name[pt]=Dólar das Fiji
+Name[sl]=fidžijski dolar
 Name[sv]=Fijianska dollar
 Name[uk]=Фіджійський долар
 Name[x-test]=xxFijian Dollarxx

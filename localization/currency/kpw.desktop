@@ -4,6 +4,7 @@ CurrencyCodeIsoNumeric3=408
 #Context for Name: Adjectival Country Name and Currency Name
 Name=North Korean Won
 Name[bg]=Севернокорейски вон
+Name[ca]=Won nord-coreà
 Name[csb]=Nordowò Kòrejańsczi Won
 Name[da]=Nordkoreansk won
 Name[de]=Nordkoreanischer Won
@@ -16,6 +17,7 @@ Name[lv]=Ziemeļkorejas vons
 Name[nb]=Nord-Koreanske won
 Name[nds]=Noordkoreaansch Won
 Name[pt]=Won da Coreia do Norte
+Name[sl]=severnokorejski von
 Name[sv]=Nordkoreanska won
 Name[uk]=Північнокорейська вона
 Name[x-test]=xxNorth Korean Wonxx

@@ -4,6 +4,7 @@ CurrencyCodeIsoNumeric3=032
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Argentine Peso
 Name[bg]=Аржентинско песо
+Name[ca]=Pes argentí
 Name[csb]=Argentińsczé Peso
 Name[da]=Argentinsk peso
 Name[de]=Argentinischer Peso
@@ -19,6 +20,7 @@ Name[nb]=Argentinske pesos
 Name[nds]=Argentiensch Peso
 Name[pt]=Peso Argentino
 Name[pt_BR]=Peso Argentino
+Name[sl]=argentinski peso
 Name[sv]=Argentinska peso
 Name[uk]=Аргентинське песо
 Name[x-test]=xxArgentine Pesoxx

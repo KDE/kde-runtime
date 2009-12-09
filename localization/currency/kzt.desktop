@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=KZT
 CurrencyCodeIsoNumeric3=398
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Kazakhstani Tenge
+Name[ca]=Tenge de Kazakhstan
 Name[csb]=Kazachstóńsczé Tenge
 Name[da]=Kazakhisk tenge
 Name[de]=Tenge
@@ -13,6 +14,7 @@ Name[lv]=Kazahstānas tenge
 Name[nb]=Kasakhstanske Tenge
 Name[nds]=Kasachsch Tenge
 Name[pt]=Tenge do Cazaquistão
+Name[sl]=kazahstanski tenge
 Name[sv]=Kazakhstanska tenge
 Name[uk]=Казахське тенґе
 Name[x-test]=xxKazakhstani Tengexx

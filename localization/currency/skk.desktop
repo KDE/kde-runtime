@@ -4,6 +4,7 @@ CurrencyCodeIsoNumeric3=703
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Slovak Koruna
 Name[bg]=Словашка крона
+Name[ca]=Corona eslovaca
 Name[csb]=Słowackô Kòróna
 Name[da]=Slovakisk koruna
 Name[de]=Slowakische Krone
@@ -13,6 +14,7 @@ Name[ja]=スロバキア・コルナ
 Name[nb]=Slovakiske koruna
 Name[nds]=Slowaaksch Kroon
 Name[pt]=Coroa Eslovaca
+Name[sl]=slovaška krona
 Name[sv]=Slovakiska koruna
 Name[uk]=Словацька крона
 Name[x-test]=xxSlovak Korunaxx

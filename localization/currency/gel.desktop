@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=GEL
 CurrencyCodeIsoNumeric3=981
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Georgian Lari
+Name[ca]=Lari de Geòrgia
 Name[csb]=Grëzëjsczi Lari
 Name[da]=Georgisk lari
 Name[de]=Georgischer Lari
@@ -15,6 +16,7 @@ Name[lv]=Gruzijas lars
 Name[nb]=Georgiske Lari
 Name[nds]=Georgsch Lari
 Name[pt]=Lari da Geórgia
+Name[sl]=gruzijski lari
 Name[sv]=Georgiska lari
 Name[uk]=Грузинське ларі
 Name[x-test]=xxGeorgian Larixx

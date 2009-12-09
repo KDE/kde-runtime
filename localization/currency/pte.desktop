@@ -4,6 +4,7 @@ CurrencyCodeIsoNumeric3=620
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Portuguese Escudo
 Name[bg]=Португалско ескудо
+Name[ca]=Escut portuguès
 Name[csb]=Pòrtugalsczé Eskùdo
 Name[da]=Portugisisk escudo
 Name[de]=Portugiesischer Escudo
@@ -15,6 +16,7 @@ Name[ja]=ポルトガル・エスクード
 Name[nb]=Portugisiske escudos
 Name[nds]=Portugeesch Escudo
 Name[pt]=Escudo Português
+Name[sl]=portugalski eskudo
 Name[sv]=Portugisiska escudo
 Name[uk]=Португальське ескудо
 Name[x-test]=xxPortuguese Escudoxx

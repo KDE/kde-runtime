@@ -4,6 +4,7 @@ CurrencyCodeIsoNumeric3=986
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Brazilian Real
 Name[bg]=Бразилски реал
+Name[ca]=Real brasiler
 Name[csb]=Brazylëjsczi Real
 Name[da]=Brasiliansk real
 Name[de]=Brasilianischer Real
@@ -15,6 +16,7 @@ Name[lv]=Brazīlijas reāls
 Name[nb]=Brasilianske Real
 Name[nds]=Brasiliaansch Real
 Name[pt]=Real Brasileiro
+Name[sl]=brazilski real
 Name[sv]=Brasilianska real
 Name[uk]=Бразильський реал
 Name[x-test]=xxBrazilian Realxx

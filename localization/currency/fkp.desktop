@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=FKP
 CurrencyCodeIsoNumeric3=238
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Falkland Islands Pound
+Name[ca]=Lliura de les Illes Malvines
 Name[csb]=Fùnt z Falklandzczich Òstrowów
 Name[da]=Falklandsøerne pund
 Name[de]=Falkland-Pfund
@@ -14,6 +15,7 @@ Name[lv]=Folklendu salu mārciņa
 Name[nb]=Falklandsøy-pund
 Name[nds]=Falkland-Pund
 Name[pt]=Libra das Ilhas Falkland
+Name[sl]=falklandski funt
 Name[sv]=Falklandspund
 Name[uk]=Фунт Фолклендських островів
 Name[x-test]=xxFalkland Islands Poundxx

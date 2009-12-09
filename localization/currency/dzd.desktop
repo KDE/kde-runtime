@@ -4,6 +4,7 @@ CurrencyCodeIsoNumeric3=012
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Algerian Dinar
 Name[bg]=Алжирски динар
+Name[ca]=Dinar d'Algèria
 Name[csb]=Algerzczi Dinar
 Name[da]=Algerisk dinar
 Name[de]=Algerischer Dinar
@@ -15,6 +16,7 @@ Name[lv]=Alžīrijas dinārs
 Name[nb]=Algirske dinarer
 Name[nds]=Algeersch Dinaar
 Name[pt]=Dinar Argelino
+Name[sl]=alžirski dinar
 Name[sv]=Algeriska dinar
 Name[uk]=Алжирський динар
 Name[x-test]=xxAlgerian Dinarxx

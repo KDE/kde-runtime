@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=MYR
 CurrencyCodeIsoNumeric3=458
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Malaysian Ringgit
+Name[ca]=Ringgit de Malàisia
 Name[csb]=Malezëjsczi Ringgit
 Name[da]=Malaysisk ringgit
 Name[de]=Malaysischer Ringgit
@@ -12,6 +13,7 @@ Name[ja]=マレーシア・リンギット
 Name[nb]=Malaysiske ringgit
 Name[nds]=Malaiisch Ringgit
 Name[pt]=Ringgit da Malásia
+Name[sl]=malezijski ringit
 Name[sv]=Malaysiska ringgit
 Name[uk]=Малайзійський рінгіт
 Name[x-test]=xxMalaysian Ringgitxx
