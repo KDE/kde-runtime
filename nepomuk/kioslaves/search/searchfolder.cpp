@@ -39,23 +39,17 @@
 #include <KIO/NetAccess>
 #include <KUser>
 #include <kdirnotify.h>
-
+#include <KMimeType>
 
 namespace {
-    QString addCounterToFileName( const QString& name, int i )
+    /**
+     * Encode the resource URI into the UDS_NAME to make it unique.
+     * It is important that we do not use the % for percent-encoding. Otherwise KUrl::url will
+     * re-encode them, thus, destroying our name.
+     */
+    QString resourceUriToUdsName( const KUrl& url )
     {
-        QString newName( name );
-
-        int start = name.lastIndexOf('.');
-        if (start != -1) {
-            // has a . somewhere, e.g. it has an extension
-            newName.insert(start, QString( " (%1)" ).arg( i ));
-        }
-        else {
-            // no extension, just tack it on to the end
-            newName += QString( " (%1)" ).arg( i );
-        }
-        return newName;
+        return QString::fromAscii( url.toEncoded().toPercentEncoding( QByteArray(), QByteArray(), '_' ) );
     }
 }
 
@@ -319,6 +313,39 @@ Nepomuk::SearchEntry* Nepomuk::SearchFolder::statResult( const Query::Result& re
         // needed since the file:/ KIO slave does not create them and KFileItem::nepomukUri()
         // cannot know that it is a local file since it is forwarded
         uds.insert( KIO::UDSEntry::UDS_NEPOMUK_URI, url.url() );
+
+        // make sure we have unique names for everything
+        uds.insert( KIO::UDSEntry::UDS_NAME, resourceUriToUdsName( url ) );
+
+        // make sure we do not use these ugly names for display
+        if ( !uds.contains( KIO::UDSEntry::UDS_DISPLAY_NAME ) ) {
+
+            Resource res( result.resource() );
+            if ( res.hasType( Nepomuk::Vocabulary::PIMO::Thing() ) ) {
+                if ( !res.pimoThing().groundingOccurrences().isEmpty() ) {
+                    res = res.pimoThing().groundingOccurrences().first();
+                }
+            }
+
+            if ( res.hasProperty( Nepomuk::Vocabulary::NIE::url() ) ) {
+                KUrl fileUrl( res.property( Nepomuk::Vocabulary::NIE::url() ).toUrl() );
+                uds.insert( KIO::UDSEntry::UDS_DISPLAY_NAME, fileUrl.fileName() );
+
+                // since we change the UDS_NAME KFileItem cannot handle mimetype and such anymore
+                QString mimetype = uds.stringValue( KIO::UDSEntry::UDS_MIME_TYPE );
+                if ( mimetype.isEmpty() ) {
+                    mimetype = KMimeType::findByUrl(fileUrl)->name();
+                    uds.insert( KIO::UDSEntry::UDS_MIME_TYPE, mimetype );
+                }
+
+                if ( fileUrl.isLocalFile() ) {
+                    uds.insert( KIO::UDSEntry::UDS_LOCAL_PATH, fileUrl.toLocalFile() );
+                }
+            }
+            else {
+                uds.insert( KIO::UDSEntry::UDS_DISPLAY_NAME, result.resource().genericLabel() );
+            }
+        }
 
         SearchEntry* entry = new SearchEntry( url, uds );
         m_entries.insert( uds.stringValue( KIO::UDSEntry::UDS_NAME ), entry );
