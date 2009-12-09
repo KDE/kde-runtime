@@ -1,4 +1,4 @@
-project(strigi_soprano_indexer)
+project(strigi_nepomuk_indexer)
 
 include(SopranoAddOntology)
 
@@ -7,19 +7,19 @@ include_directories(
   ${SOPRANO_INCLUDE_DIR}
 )
 
-set( strigi_soprano_indexer_SRCS
+set( strigi_nepomuk_indexer_SRCS
   sopranoindexmanager.cpp
   sopranoindexreader.cpp
   sopranoindexwriter.cpp
   util.cpp
 )
 
-soprano_add_ontology(strigi_soprano_indexer_SRCS
+soprano_add_ontology(strigi_nepomuk_indexer_SRCS
   ${SHAREDDESKTOPONTOLOGIES_ROOT_DIR}/nie/nfo.trig
   "NFO"
   "Nepomuk::Vocabulary"
   "trig")
-soprano_add_ontology(strigi_soprano_indexer_SRCS
+soprano_add_ontology(strigi_nepomuk_indexer_SRCS
   ${SHAREDDESKTOPONTOLOGIES_ROOT_DIR}/nie/nie.trig
   "NIE"
   "Nepomuk::Vocabulary"
@@ -43,11 +43,11 @@ else(WIN32)
   set(prefix strigiindex_)
 endif(WIN32)
 
-kde4_add_library(sopranobackend MODULE ${strigi_soprano_indexer_SRCS})
+kde4_add_library(nepomukbackend MODULE ${strigi_nepomuk_indexer_SRCS})
 
-set_target_properties(sopranobackend PROPERTIES PREFIX ${prefix})
+set_target_properties(nepomukbackend PROPERTIES PREFIX ${prefix})
 
-target_link_libraries(sopranobackend
+target_link_libraries(nepomukbackend
   ${STRIGI_STREAMANALYZER_LIBRARY}
   ${NEPOMUK_LIBRARIES}
   ${SOPRANO_LIBRARIES}
@@ -56,4 +56,4 @@ target_link_libraries(sopranobackend
   ${KDE4_KDECORE_LIBS}
 )
 
-install(TARGETS sopranobackend LIBRARY DESTINATION ${LIB_INSTALL_DIR}/strigi)
+install(TARGETS nepomukbackend LIBRARY DESTINATION ${LIB_INSTALL_DIR}/strigi)

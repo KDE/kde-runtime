@@ -1,20 +1,20 @@
 /*
-   Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+  Copyright (C) 2007-2009 Sebastian Trueg <trueg@kde.org>
 
-   This library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU General Public License as
-   published by the Free Software Foundation; either version 2 of
-   the License, or (at your option) any later version.
+  This library is free software; you can redistribute it and/or
+  modify it under the terms of the GNU General Public License as
+  published by the Free Software Foundation; either version 2 of
+  the License, or (at your option) any later version.
 
-   This library is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   Library General Public License for more details.
+  This library is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  Library General Public License for more details.
 
-   You should have received a copy of the GNU General Public License
-   along with this library; see the file COPYING.  If not, write to
-   the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-   Boston, MA 02110-1301, USA.
+  You should have received a copy of the GNU General Public License
+  along with this library; see the file COPYING.  If not, write to
+  the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+  Boston, MA 02110-1301, USA.
 */
 
 #include "sopranoindexreader.h"
@@ -33,24 +33,24 @@
 
 #include <QtCore/QThread>
 #include <QtCore/QDateTime>
-#include <QtCore/QDebug>
 #include <QtCore/QString>
 #include <QtCore/QLatin1String>
 #include <QtCore/QFile>
 
+#include <KDebug>
 
 using namespace Soprano;
 using namespace std;
 
 
-class Strigi::Soprano::IndexReader::Private
+class Strigi::NepomukIndexReader::Private
 {
 public:
-    ::Soprano::Model* repository;
+    Soprano::Model* repository;
 };
 
 
-Strigi::Soprano::IndexReader::IndexReader( ::Soprano::Model* model )
+Strigi::NepomukIndexReader::NepomukIndexReader( Soprano::Model* model )
     : Strigi::IndexReader()
 {
     d = new Private;
@@ -58,15 +58,15 @@ Strigi::Soprano::IndexReader::IndexReader( ::Soprano::Model* model )
 }
 
 
-Strigi::Soprano::IndexReader::~IndexReader()
+Strigi::NepomukIndexReader::~NepomukIndexReader()
 {
     delete d;
 }
 
 
 // an empty parent url is perfectly valid as strigi stores a parent url for everything
-void Strigi::Soprano::IndexReader::getChildren( const std::string& parent,
-                                                std::map<std::string, time_t>& children )
+void Strigi::NepomukIndexReader::getChildren( const std::string& parent,
+                                              std::map<std::string, time_t>& children )
 {
     //
     // We are compatible with old Xesam data where the url was encoded as a string instead of a url,
@@ -89,9 +89,9 @@ void Strigi::Soprano::IndexReader::getChildren( const std::string& parent,
                           Node::resourceToN3( Vocabulary::Xesam::url() ),
                           Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ) );
 
-//    qDebug() << "running getChildren query:" << query;
+//    kDebug() << "running getChildren query:" << query;
 
-    QueryResultIterator result = d->repository->executeQuery( query, ::Soprano::Query::QueryLanguageSparql );
+    QueryResultIterator result = d->repository->executeQuery( query, Soprano::Query::QueryLanguageSparql );
 
     while ( result.next() ) {
         Node pathNode = result.binding( "path" );
@@ -115,14 +115,13 @@ void Strigi::Soprano::IndexReader::getChildren( const std::string& parent,
 }
 
 
-int64_t Strigi::Soprano::IndexReader::indexSize()
+int64_t Strigi::NepomukIndexReader::indexSize()
 {
-    qDebug() << "IndexReader::indexSize in thread" << QThread::currentThread();
     return d->repository->statementCount();
 }
 
 
-time_t Strigi::Soprano::IndexReader::mTime( const std::string& path )
+time_t Strigi::NepomukIndexReader::mTime( const std::string& path )
 {
     //
     // We are compatible with old Xesam data, thus the weird query
@@ -137,13 +136,13 @@ time_t Strigi::Soprano::IndexReader::mTime( const std::string& path )
                           Node::resourceToN3( Vocabulary::Xesam::sourceModified() ),
                           Node::resourceToN3( Nepomuk::Vocabulary::NIE::lastModified() ) );
 
-//    qDebug() << "mTime( " << path.c_str() << ") query:" << query;
+//    kDebug() << "mTime( " << path.c_str() << ") query:" << query;
 
-    QueryResultIterator it = d->repository->executeQuery( query, ::Soprano::Query::QueryLanguageSparql );
+    QueryResultIterator it = d->repository->executeQuery( query, Soprano::Query::QueryLanguageSparql );
 
     time_t mtime = 0;
     if ( it.next() ) {
-        ::Soprano::LiteralValue val = it.binding( "mtime" ).literal();
+        Soprano::LiteralValue val = it.binding( "mtime" ).literal();
 
         // Sadly in Xesam sourceModified is not typed as DateTime but defaults to an int :( We try to be compatible
         if ( val.isDateTime() ) {
@@ -159,63 +158,63 @@ time_t Strigi::Soprano::IndexReader::mTime( const std::string& path )
 
 
 // not implemented
-int32_t Strigi::Soprano::IndexReader::countDocuments()
+int32_t Strigi::NepomukIndexReader::countDocuments()
 {
     return 0;
 }
 
 
 // not implemented
-int32_t Strigi::Soprano::IndexReader::countWords()
+int32_t Strigi::NepomukIndexReader::countWords()
 {
     return -1;
 }
 
 
 // not implemented
-std::vector<std::string> Strigi::Soprano::IndexReader::fieldNames()
+std::vector<std::string> Strigi::NepomukIndexReader::fieldNames()
 {
     return std::vector<std::string>();
 }
 
 
 // not implemented
-int32_t Strigi::Soprano::IndexReader::countHits( const Query& )
+int32_t Strigi::NepomukIndexReader::countHits( const Query& )
 {
     return -1;
 }
 
 
 // not implemented
-void Strigi::Soprano::IndexReader::getHits( const Strigi::Query&,
-                                            const std::vector<std::string>&,
-                                            const std::vector<Strigi::Variant::Type>&,
-                                            std::vector<std::vector<Strigi::Variant> >&,
-                                            int,
-                                            int )
+void Strigi::NepomukIndexReader::getHits( const Strigi::Query&,
+                                          const std::vector<std::string>&,
+                                          const std::vector<Strigi::Variant::Type>&,
+                                          std::vector<std::vector<Strigi::Variant> >&,
+                                          int,
+                                          int )
 {
 }
 
 
 // not implemented
-std::vector<Strigi::IndexedDocument> Strigi::Soprano::IndexReader::query( const Query&, int, int )
+std::vector<Strigi::IndexedDocument> Strigi::NepomukIndexReader::query( const Query&, int, int )
 {
     return vector<IndexedDocument>();
 }
 
 
 // not implemented
-std::vector<std::pair<std::string,uint32_t> > Strigi::Soprano::IndexReader::histogram( const std::string&,
-                                                                                       const std::string&,
-                                                                                       const std::string& )
+std::vector<std::pair<std::string,uint32_t> > Strigi::NepomukIndexReader::histogram( const std::string&,
+                                                                                     const std::string&,
+                                                                                     const std::string& )
 {
     return std::vector<std::pair<std::string,uint32_t> >();
 }
 
 
 // not implemented
-int32_t Strigi::Soprano::IndexReader::countKeywords( const std::string&,
-                                                     const std::vector<std::string>& )
+int32_t Strigi::NepomukIndexReader::countKeywords( const std::string&,
+                                                   const std::vector<std::string>& )
 {
     // the clucene indexer also returns 2. I suspect this means: "not implemented" ;)
     return 2;
@@ -223,10 +222,10 @@ int32_t Strigi::Soprano::IndexReader::countKeywords( const std::string&,
 
 
 // not implemented
-std::vector<std::string> Strigi::Soprano::IndexReader::keywords( const std::string&,
-                                                                 const std::vector<std::string>&,
-                                                                 uint32_t,
-                                                                 uint32_t )
+std::vector<std::string> Strigi::NepomukIndexReader::keywords( const std::string&,
+                                                               const std::vector<std::string>&,
+                                                               uint32_t,
+                                                               uint32_t )
 {
     return std::vector<std::string>();
 }

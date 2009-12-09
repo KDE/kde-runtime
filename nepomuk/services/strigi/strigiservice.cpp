@@ -63,7 +63,7 @@ Nepomuk::StrigiService::StrigiService( QObject* parent, const QList<QVariant>& )
 
         // setup the actual index scheduler including strigi stuff
         // ==============================================================
-        if ( ( m_indexManager = Strigi::IndexPluginLoader::createIndexManager( "sopranobackend", 0 ) ) ) {
+        if ( ( m_indexManager = Strigi::IndexPluginLoader::createIndexManager( "nepomukbackend", 0 ) ) ) {
             m_indexScheduler = new IndexScheduler( m_indexManager, this );
 
             // monitor all kinds of events

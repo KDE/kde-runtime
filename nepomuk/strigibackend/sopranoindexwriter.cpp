@@ -1,21 +1,21 @@
 /*
-   Copyright (C) 2007-2009 Sebastian Trueg <trueg@kde.org>
+  Copyright (C) 2007-2009 Sebastian Trueg <trueg@kde.org>
 
-   This library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU General Public License as
-   published by the Free Software Foundation; either version 2 of
-   the License, or (at your option) any later version.
+  This library is free software; you can redistribute it and/or
+  modify it under the terms of the GNU General Public License as
+  published by the Free Software Foundation; either version 2 of
+  the License, or (at your option) any later version.
 
-   This library is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   Library General Public License for more details.
+  This library is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  Library General Public License for more details.
 
-   You should have received a copy of the GNU General Public License
-   along with this library; see the file COPYING.  If not, write to
-   the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-   Boston, MA 02110-1301, USA.
- */
+  You should have received a copy of the GNU General Public License
+  along with this library; see the file COPYING.  If not, write to
+  the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+  Boston, MA 02110-1301, USA.
+*/
 
 #include "sopranoindexwriter.h"
 #include "util.h"
@@ -35,7 +35,6 @@
 #include <QtCore/QFileInfo>
 #include <QtCore/QFile>
 #include <QtCore/QUrl>
-#include <QtCore/QDebug>
 #include <QtCore/QThread>
 #include <QtCore/QDateTime>
 #include <QtCore/QByteArray>
@@ -235,7 +234,7 @@ namespace {
 }
 
 
-class Strigi::Soprano::IndexWriter::Private
+class Strigi::NepomukIndexWriter::Private
 {
 public:
     Private()
@@ -290,7 +289,7 @@ public:
         }
     }
 
-    ::Soprano::Model* repository;
+    Soprano::Model* repository;
 
     //
     // The Strigi API does not provide context information in addTriplet, i.e. the AnalysisResult.
@@ -305,7 +304,7 @@ private:
 };
 
 
-Strigi::Soprano::IndexWriter::IndexWriter( ::Soprano::Model* model )
+Strigi::NepomukIndexWriter::NepomukIndexWriter( Soprano::Model* model )
     : Strigi::IndexWriter()
 {
     d = new Private;
@@ -314,21 +313,21 @@ Strigi::Soprano::IndexWriter::IndexWriter( ::Soprano::Model* model )
 }
 
 
-Strigi::Soprano::IndexWriter::~IndexWriter()
+Strigi::NepomukIndexWriter::~NepomukIndexWriter()
 {
     delete d;
 }
 
 
 // unused
-void Strigi::Soprano::IndexWriter::commit()
+void Strigi::NepomukIndexWriter::commit()
 {
     // do nothing
 }
 
 
 // delete all indexed data for the files listed in entries
-void Strigi::Soprano::IndexWriter::deleteEntries( const std::vector<std::string>& entries )
+void Strigi::NepomukIndexWriter::deleteEntries( const std::vector<std::string>& entries )
 {
     for ( unsigned int i = 0; i < entries.size(); ++i ) {
         QString path = QString::fromUtf8( entries[i].c_str() );
@@ -338,14 +337,14 @@ void Strigi::Soprano::IndexWriter::deleteEntries( const std::vector<std::string>
 
 
 // unused
-void Strigi::Soprano::IndexWriter::deleteAllEntries()
+void Strigi::NepomukIndexWriter::deleteAllEntries()
 {
     // do nothing
 }
 
 
 // called for each indexed file
-void Strigi::Soprano::IndexWriter::startAnalysis( const AnalysisResult* idx )
+void Strigi::NepomukIndexWriter::startAnalysis( const AnalysisResult* idx )
 {
     // we need to remember the AnalysisResult since addTriplet does not provide it
     d->currentResultStack.push(idx);
@@ -376,7 +375,7 @@ void Strigi::Soprano::IndexWriter::startAnalysis( const AnalysisResult* idx )
 }
 
 
-void Strigi::Soprano::IndexWriter::addText( const AnalysisResult* idx, const char* text, int32_t length )
+void Strigi::NepomukIndexWriter::addText( const AnalysisResult* idx, const char* text, int32_t length )
 {
     if ( idx->depth() > 0 ) {
         return;
@@ -387,9 +386,9 @@ void Strigi::Soprano::IndexWriter::addText( const AnalysisResult* idx, const cha
 }
 
 
-void Strigi::Soprano::IndexWriter::addValue( const AnalysisResult* idx,
-                                             const RegisteredField* field,
-                                             const std::string& value )
+void Strigi::NepomukIndexWriter::addValue( const AnalysisResult* idx,
+                                           const RegisteredField* field,
+                                           const std::string& value )
 {
     if ( idx->depth() > 0 ) {
         return;
@@ -400,14 +399,14 @@ void Strigi::Soprano::IndexWriter::addValue( const AnalysisResult* idx,
         RegisteredFieldData* rfd = reinterpret_cast<RegisteredFieldData*>( field->writerData() );
 
         // the statement we will create, we will determine the object below
-        ::Soprano::Statement statement( md->resourceUri, rfd->property, ::Soprano::Node(), md->context );
+        Soprano::Statement statement( md->resourceUri, rfd->property, Soprano::Node(), md->context );
 
         //
         // Strigi uses rdf:type improperly since it stores the value as a string. We have to
         // make sure it is a resource.
         //
         if ( rfd->isRdfType ) {
-            statement.setPredicate( ::Soprano::Vocabulary::RDF::type() );
+            statement.setPredicate( Soprano::Vocabulary::RDF::type() );
             statement.setObject( QUrl::fromEncoded( value.c_str(), QUrl::StrictMode ) );
 
             // we handle the basic File/Folder typing ourselves
@@ -453,25 +452,25 @@ void Strigi::Soprano::IndexWriter::addValue( const AnalysisResult* idx,
 
 
 // the main addValue method
-void Strigi::Soprano::IndexWriter::addValue( const AnalysisResult* idx,
-                                             const RegisteredField* field,
-                                             const unsigned char* data,
-                                             uint32_t size )
+void Strigi::NepomukIndexWriter::addValue( const AnalysisResult* idx,
+                                           const RegisteredField* field,
+                                           const unsigned char* data,
+                                           uint32_t size )
 {
     addValue( idx, field, std::string( ( const char* )data, size ) );
 }
 
 
-void Strigi::Soprano::IndexWriter::addValue( const AnalysisResult*, const RegisteredField*,
-                                             const std::string&, const std::string& )
+void Strigi::NepomukIndexWriter::addValue( const AnalysisResult*, const RegisteredField*,
+                                           const std::string&, const std::string& )
 {
     // we do not support map types
 }
 
 
-void Strigi::Soprano::IndexWriter::addValue( const AnalysisResult* idx,
-                                             const RegisteredField* field,
-                                             uint32_t value )
+void Strigi::NepomukIndexWriter::addValue( const AnalysisResult* idx,
+                                           const RegisteredField* field,
+                                           uint32_t value )
 {
     if ( idx->depth() > 0 ) {
         return;
@@ -492,9 +491,9 @@ void Strigi::Soprano::IndexWriter::addValue( const AnalysisResult* idx,
 }
 
 
-void Strigi::Soprano::IndexWriter::addValue( const AnalysisResult* idx,
-                                             const RegisteredField* field,
-                                             int32_t value )
+void Strigi::NepomukIndexWriter::addValue( const AnalysisResult* idx,
+                                           const RegisteredField* field,
+                                           int32_t value )
 {
     if ( idx->depth() > 0 ) {
         return;
@@ -510,9 +509,9 @@ void Strigi::Soprano::IndexWriter::addValue( const AnalysisResult* idx,
 }
 
 
-void Strigi::Soprano::IndexWriter::addValue( const AnalysisResult* idx,
-                                             const RegisteredField* field,
-                                             double value )
+void Strigi::NepomukIndexWriter::addValue( const AnalysisResult* idx,
+                                           const RegisteredField* field,
+                                           double value )
 {
     if ( idx->depth() > 0 ) {
         return;
@@ -528,9 +527,9 @@ void Strigi::Soprano::IndexWriter::addValue( const AnalysisResult* idx,
 }
 
 
-void Strigi::Soprano::IndexWriter::addTriplet( const std::string& s,
-                                               const std::string& p,
-                                               const std::string& o )
+void Strigi::NepomukIndexWriter::addTriplet( const std::string& s,
+                                             const std::string& p,
+                                             const std::string& o )
 {
     if ( d->currentResultStack.top()->depth() > 0 ) {
         return;
@@ -540,18 +539,18 @@ void Strigi::Soprano::IndexWriter::addTriplet( const std::string& s,
 
     QUrl subject = d->mapNode( md, s );
     Nepomuk::Types::Property property( d->mapNode( md, p ) );
-    ::Soprano::Node object;
+    Soprano::Node object;
     if ( property.range().isValid() )
         object = d->mapNode( md, o );
     else
-        object = ::Soprano::LiteralValue::fromString( QString::fromUtf8( o.c_str() ), property.literalRangeType().dataTypeUri() );
+        object = Soprano::LiteralValue::fromString( QString::fromUtf8( o.c_str() ), property.literalRangeType().dataTypeUri() );
 
     d->repository->addStatement( subject, property.uri(), object, md->context );
 }
 
 
 // called after each indexed file
-void Strigi::Soprano::IndexWriter::finishAnalysis( const AnalysisResult* idx )
+void Strigi::NepomukIndexWriter::finishAnalysis( const AnalysisResult* idx )
 {
     d->currentResultStack.pop();
 
@@ -568,7 +567,7 @@ void Strigi::Soprano::IndexWriter::finishAnalysis( const AnalysisResult* idx )
                                                 LiteralValue( QString::fromUtf8( md->content.c_str() ) ),
                                                 md->context ) );
         if ( d->repository->lastError() )
-            qDebug() << "Failed to add" << md->resourceUri << "as text" << QString::fromUtf8( md->content.c_str() );
+            kDebug() << "Failed to add" << md->resourceUri << "as text" << QString::fromUtf8( md->content.c_str() );
     }
 
     // cleanup
@@ -577,7 +576,7 @@ void Strigi::Soprano::IndexWriter::finishAnalysis( const AnalysisResult* idx )
 }
 
 
-void Strigi::Soprano::IndexWriter::initWriterData( const Strigi::FieldRegister& f )
+void Strigi::NepomukIndexWriter::initWriterData( const Strigi::FieldRegister& f )
 {
     map<string, RegisteredField*>::const_iterator i;
     map<string, RegisteredField*>::const_iterator end = f.fields().end();
@@ -591,7 +590,7 @@ void Strigi::Soprano::IndexWriter::initWriterData( const Strigi::FieldRegister& 
 }
 
 
-void Strigi::Soprano::IndexWriter::releaseWriterData( const Strigi::FieldRegister& f )
+void Strigi::NepomukIndexWriter::releaseWriterData( const Strigi::FieldRegister& f )
 {
     map<string, RegisteredField*>::const_iterator i;
     map<string, RegisteredField*>::const_iterator end = f.fields().end();
@@ -602,7 +601,7 @@ void Strigi::Soprano::IndexWriter::releaseWriterData( const Strigi::FieldRegiste
 }
 
 
-void Strigi::Soprano::IndexWriter::removeIndexedData( const KUrl& url )
+void Strigi::NepomukIndexWriter::removeIndexedData( const KUrl& url )
 {
     //
     // We are compatible with old Xesam data where the url was encoded as a string instead of a url,
@@ -623,9 +622,9 @@ void Strigi::Soprano::IndexWriter::removeIndexedData( const KUrl& url )
                           Node::resourceToN3( Strigi::Ontology::indexGraphFor() ),
                           Node::resourceToN3( Vocabulary::NRL::coreGraphMetadataFor() ) );
 
-//        qDebug() << "deleteEntries query:" << query;
+//        kDebug() << "deleteEntries query:" << query;
 
-    QueryResultIterator result = d->repository->executeQuery( query, ::Soprano::Query::QueryLanguageSparql );
+    QueryResultIterator result = d->repository->executeQuery( query, Soprano::Query::QueryLanguageSparql );
     if ( result.next() ) {
         Node indexGraph = result.binding( "g" );
         Node metaDataGraph = result.binding( "mg" );
@@ -644,7 +643,7 @@ void Strigi::Soprano::IndexWriter::removeIndexedData( const KUrl& url )
 }
 
 
-QUrl Strigi::Soprano::IndexWriter::determineFolderResourceUri( const KUrl& fileUrl )
+QUrl Strigi::NepomukIndexWriter::determineFolderResourceUri( const KUrl& fileUrl )
 {
     Nepomuk::Resource res( fileUrl );
     if ( res.exists() ) {
@@ -653,7 +652,7 @@ QUrl Strigi::Soprano::IndexWriter::determineFolderResourceUri( const KUrl& fileU
 //     QString query = QString::fromLatin1( "select ?r where { ?r %1 %2 . }" )
 //                     .arg( Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ),
 //                           Node::resourceToN3( fileUrl ) );
-//     QueryResultIterator result = d->repository->executeQuery( query, ::Soprano::Query::QueryLanguageSparql );
+//     QueryResultIterator result = d->repository->executeQuery( query, Soprano::Query::QueryLanguageSparql );
 //     if ( result.next() ) {
 //         return result["r"].uri();
 //     }

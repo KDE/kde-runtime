@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+  Copyright (C) 2007-2009 Sebastian Trueg <trueg@kde.org>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU General Public License as
@@ -17,33 +17,30 @@
   Boston, MA 02110-1301, USA.
 */
 
-#ifndef STRIGI_SOPRANO_INDEX_MANAGER_H
-#define STRIGI_SOPRANO_INDEX_MANAGER_H
+#ifndef STRIGI_NEPOMUK_INDEX_MANAGER_H
+#define STRIGI_NEPOMUK_INDEX_MANAGER_H
 
 #include <strigi/indexmanager.h>
 
 class QString;
 
 namespace Strigi {
-
     class IndexReader;
     class IndexWriter;
 
-    namespace Soprano {
-        class IndexManager : public Strigi::IndexManager
-        {
-        public:
-            IndexManager();
-            ~IndexManager();
+    class NepomukIndexManager : public IndexManager
+    {
+    public:
+        NepomukIndexManager();
+        ~NepomukIndexManager();
 
-            Strigi::IndexReader* indexReader();
-            Strigi::IndexWriter* indexWriter();
+        Strigi::IndexReader* indexReader();
+        Strigi::IndexWriter* indexWriter();
 
-        private:
-            class Private;
-            Private* d;
-        };
-    }
+    private:
+        class Private;
+        Private* d;
+    };
 }
 
 #endif

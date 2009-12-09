@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+   Copyright (C) 2007-2009 Sebastian Trueg <trueg@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public License as
@@ -17,8 +17,8 @@
    Boston, MA 02110-1301, USA.
 */
 
-#ifndef _STRIGI_SOPRNOA_UTIL_H_
-#define _STRIGI_SOPRNOA_UTIL_H_
+#ifndef _STRIGI_NEPOMUK_UTIL_H_
+#define _STRIGI_NEPOMUK_UTIL_H_
 
 #include <string>
 
@@ -34,20 +34,18 @@ namespace Strigi {
 
     class Variant;
 
-    namespace Soprano {
-        namespace Util {
-            QUrl fieldUri( const std::string& s );
-            QUrl fileUrl( const std::string& filename );
-            std::string fieldName( const QUrl& uri );
-            QUrl uniqueUri( const QString& ns, ::Soprano::Model* model );
-            Strigi::Variant nodeToVariant( const ::Soprano::Node& node );
+    namespace Util {
+        QUrl fieldUri( const std::string& s );
+        QUrl fileUrl( const std::string& filename );
+        std::string fieldName( const QUrl& uri );
+        QUrl uniqueUri( const QString& ns, ::Soprano::Model* model );
+        Strigi::Variant nodeToVariant( const ::Soprano::Node& node );
 
-            /**
-             * For now only stores the parentUrl property so it can be
-             * searched.
-             */
-            void storeStrigiMiniOntology( ::Soprano::Model* model );
-        }
+        /**
+         * For now only stores the parentUrl property so it can be
+         * searched.
+         */
+        void storeStrigiMiniOntology( ::Soprano::Model* model );
     }
 
     namespace Ontology {

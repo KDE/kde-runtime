@@ -1,20 +1,20 @@
 /*
-   Copyright (C) 2007-2008 Sebastian Trueg <trueg@kde.org>
+  Copyright (C) 2007-2009 Sebastian Trueg <trueg@kde.org>
 
-   This library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU General Public License as
-   published by the Free Software Foundation; either version 2 of
-   the License, or (at your option) any later version.
+  This library is free software; you can redistribute it and/or
+  modify it under the terms of the GNU General Public License as
+  published by the Free Software Foundation; either version 2 of
+  the License, or (at your option) any later version.
 
-   This library is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   Library General Public License for more details.
+  This library is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  Library General Public License for more details.
 
-   You should have received a copy of the GNU General Public License
-   along with this library; see the file COPYING.  If not, write to
-   the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-   Boston, MA 02110-1301, USA.
+  You should have received a copy of the GNU General Public License
+  along with this library; see the file COPYING.  If not, write to
+  the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+  Boston, MA 02110-1301, USA.
 */
 
 #include "util.h"
@@ -38,7 +38,7 @@
 
 #define STRIGI_NS "http://www.strigi.org/data#"
 
-QUrl Strigi::Soprano::Util::fieldUri( const std::string& s )
+QUrl Strigi::Util::fieldUri( const std::string& s )
 {
     QString qKey = QString::fromUtf8( s.c_str() );
     QUrl url;
@@ -60,7 +60,7 @@ QUrl Strigi::Soprano::Util::fieldUri( const std::string& s )
 }
 
 
-QUrl Strigi::Soprano::Util::fileUrl( const std::string& filename )
+QUrl Strigi::Util::fileUrl( const std::string& filename )
 {
     QUrl url = QUrl::fromLocalFile( QFileInfo( QString::fromUtf8( filename.c_str() ) ).absoluteFilePath() );
     url.setScheme( "file" );
@@ -68,7 +68,7 @@ QUrl Strigi::Soprano::Util::fileUrl( const std::string& filename )
 }
 
 
-std::string Strigi::Soprano::Util::fieldName( const QUrl& uri )
+std::string Strigi::Util::fieldName( const QUrl& uri )
 {
     QString s = uri.toString();
     if ( s.startsWith( STRIGI_NS ) ) {
@@ -78,18 +78,18 @@ std::string Strigi::Soprano::Util::fieldName( const QUrl& uri )
 }
 
 
-QUrl Strigi::Soprano::Util::uniqueUri( const QString& ns, ::Soprano::Model* model )
+QUrl Strigi::Util::uniqueUri( const QString& ns, Soprano::Model* model )
 {
     QUrl uri;
     do {
         QString uid = QUuid::createUuid().toString();
         uri = ( ns + uid.mid( 1, uid.length()-2 ) );
-    } while ( model->containsAnyStatement( ::Soprano::Statement( uri, ::Soprano::Node(), ::Soprano::Node() ) ) );
+    } while ( model->containsAnyStatement( Soprano::Statement( uri, Soprano::Node(), Soprano::Node() ) ) );
     return uri;
 }
 
 
-Strigi::Variant Strigi::Soprano::Util::nodeToVariant( const ::Soprano::Node& node )
+Strigi::Variant Strigi::Util::nodeToVariant( const Soprano::Node& node )
 {
     if ( node.isLiteral() ) {
         switch( node.literal().type() ) {
@@ -113,19 +113,19 @@ Strigi::Variant Strigi::Soprano::Util::nodeToVariant( const ::Soprano::Node& nod
 }
 
 
-void Strigi::Soprano::Util::storeStrigiMiniOntology( ::Soprano::Model* model )
+void Strigi::Util::storeStrigiMiniOntology( Soprano::Model* model )
 {
     // we use some nice URI here although we still have the STRIGI_NS for backwards comp
 
     QUrl graph( "http://nepomuk.kde.org/ontologies/2008/07/24/strigi/metadata" );
-    ::Soprano::Statement depthProp( fieldUri( FieldRegister::embeddepthFieldName ),
-                                        ::Soprano::Vocabulary::RDF::type(),
-                                        ::Soprano::Vocabulary::RDF::Property(),
-                                        graph );
-    ::Soprano::Statement metaDataType( graph,
-                                       ::Soprano::Vocabulary::RDF::type(),
-                                       ::Soprano::Vocabulary::NRL::Ontology(),
-                                       graph );
+    Soprano::Statement depthProp( fieldUri( FieldRegister::embeddepthFieldName ),
+                                  Soprano::Vocabulary::RDF::type(),
+                                  Soprano::Vocabulary::RDF::Property(),
+                                  graph );
+    Soprano::Statement metaDataType( graph,
+                                     Soprano::Vocabulary::RDF::type(),
+                                     Soprano::Vocabulary::NRL::Ontology(),
+                                     graph );
 
     if ( !model->containsStatement( depthProp ) ) {
         model->addStatement( depthProp );

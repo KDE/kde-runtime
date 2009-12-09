@@ -17,8 +17,8 @@
   Boston, MA 02110-1301, USA.
 */
 
-#ifndef _SOPRANO_STRIGI_INDEX_WRITER_H_
-#define _SOPRANO_STRIGI_INDEX_WRITER_H_
+#ifndef _STRIGI_NEPOMUK_INDEX_WRITER_H_
+#define _STRIGI_NEPOMUK_INDEX_WRITER_H_
 
 #include <strigi/indexwriter.h>
 #include <strigi/analysisresult.h>
@@ -32,58 +32,55 @@ class KUrl;
 class QUrl;
 
 namespace Strigi {
-    namespace Soprano {
+    class NepomukIndexWriter : public Strigi::IndexWriter
+    {
+    public:
+        NepomukIndexWriter( Soprano::Model* );
+        ~NepomukIndexWriter();
 
-        class IndexWriter : public Strigi::IndexWriter
-        {
-        public:
-            IndexWriter( ::Soprano::Model* );
-            ~IndexWriter();
+        void commit();
 
-            void commit();
+        /**
+         * Delete the entries with the given paths from the index.
+         *
+         * @param entries the paths of the files that should be deleted
+         **/
+        void deleteEntries( const std::vector<std::string>& entries );
 
-            /**
-             * Delete the entries with the given paths from the index.
-             *
-             * @param entries the paths of the files that should be deleted
-             **/
-            void deleteEntries( const std::vector<std::string>& entries );
+        /**
+         * Delete all indexed documents from the index.
+         **/
+        void deleteAllEntries();
 
-            /**
-             * Delete all indexed documents from the index.
-             **/
-            void deleteAllEntries();
+        void initWriterData( const Strigi::FieldRegister& );
+        void releaseWriterData( const Strigi::FieldRegister& );
 
-            void initWriterData( const Strigi::FieldRegister& );
-            void releaseWriterData( const Strigi::FieldRegister& );
+        void startAnalysis( const AnalysisResult* );
+        void addText( const AnalysisResult*, const char* text, int32_t length );
+        void addValue( const AnalysisResult*, const RegisteredField* field,
+                       const std::string& value );
+        void addValue( const AnalysisResult*, const RegisteredField* field,
+                       const unsigned char* data, uint32_t size );
+        void addValue( const AnalysisResult*, const RegisteredField* field,
+                       int32_t value );
+        void addValue( const AnalysisResult*, const RegisteredField* field,
+                       uint32_t value );
+        void addValue( const AnalysisResult*, const RegisteredField* field,
+                       double value );
+        void addTriplet( const std::string& subject,
+                         const std::string& predicate, const std::string& object );
+        void addValue( const AnalysisResult*, const RegisteredField* field,
+                       const std::string& name, const std::string& value );
+        void finishAnalysis( const AnalysisResult* );
 
-            void startAnalysis( const AnalysisResult* );
-            void addText( const AnalysisResult*, const char* text, int32_t length );
-            void addValue( const AnalysisResult*, const RegisteredField* field,
-                           const std::string& value );
-            void addValue( const AnalysisResult*, const RegisteredField* field,
-                           const unsigned char* data, uint32_t size );
-            void addValue( const AnalysisResult*, const RegisteredField* field,
-                           int32_t value );
-            void addValue( const AnalysisResult*, const RegisteredField* field,
-                           uint32_t value );
-            void addValue( const AnalysisResult*, const RegisteredField* field,
-                           double value );
-            void addTriplet( const std::string& subject,
-                             const std::string& predicate, const std::string& object );
-            void addValue( const AnalysisResult*, const RegisteredField* field,
-                           const std::string& name, const std::string& value );
-            void finishAnalysis( const AnalysisResult* );
+    private:
+        void removeIndexedData( const KUrl& url );
 
-        private:
-            void removeIndexedData( const KUrl& url );
+        QUrl determineFolderResourceUri( const KUrl& fileUrl );
 
-            QUrl determineFolderResourceUri( const KUrl& fileUrl );
-
-            class Private;
-            Private* d;
-        };
-    }
+        class Private;
+        Private* d;
+    };
 }
 
 uint qHash( const std::string& s );
