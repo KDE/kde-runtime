@@ -191,16 +191,14 @@ namespace {
 
         // Strigi only indexes files and extractors mostly (if at all) store the nie:DataObject type (i.e. the contents)
         // Thus, here we go the easy way and mark each indexed file as a nfo:FileDataObject.
+        model->addStatement( resourceUri,
+                             Vocabulary::RDF::type(),
+                             Nepomuk::Vocabulary::NFO::FileDataObject(),
+                             context );
         if ( fileInfo.isDir() ) {
             model->addStatement( resourceUri,
                                  Vocabulary::RDF::type(),
                                  Nepomuk::Vocabulary::NFO::Folder(),
-                                 context );
-        }
-        else {
-            model->addStatement( resourceUri,
-                                 Vocabulary::RDF::type(),
-                                 Nepomuk::Vocabulary::NFO::FileDataObject(),
                                  context );
         }
 
