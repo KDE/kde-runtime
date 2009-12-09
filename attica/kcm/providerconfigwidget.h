@@ -29,6 +29,10 @@
 
 #include "ui_providerconfigwidget.h"
 
+namespace Attica
+{
+    class Metadata;
+}
 
 class ProviderConfigWidget : public QWidget
 {
@@ -59,6 +63,8 @@ private:
     void initLoginPage();
     void initRegisterPage();
     void showRegisterHint(const QString&, const QString&);
+    void showRegisterError(const Attica::Metadata&);
+    void clearHighlightedErrors();
 
 private:
     Attica::Provider m_provider;

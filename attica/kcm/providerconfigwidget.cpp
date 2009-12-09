@@ -23,6 +23,8 @@
 #include "providerconfigwidget.h"
 
 #include <KDebug>
+#include <KMessageBox>
+#include <KColorScheme>
 
 #include <attica/person.h>
 
@@ -161,9 +163,77 @@ void ProviderConfigWidget::showRegisterHint(const QString& iconName, const QStri
     m_settingsWidget.infoLabelRP->setText(hint);
 }
 
+void ProviderConfigWidget::showRegisterError(const Attica::Metadata& metadata)
+{
+    if (metadata.error() == Attica::Metadata::NetworkError) {
+        showRegisterHint("dialog-close", i18n("Failed to register new account."));
+    } else {
+        /*
+# 100 - successfull / valid account
+# 101 - please specify all mandatory fields
+# 102 - please specify a valid password
+# 103 - please specify a valid login
+# 104 - login already exists
+# 105 - email already taken
+*/
+        // TODO: Looks like more correct place for this stuff is in libattica,
+        // for example metadata().statusString() or smth like that.
+        // So here will be only showRegisterHint("dialog-close", statusString);
+        // no switch.
+        QWidget* widgetToHighlight = 0;
+        QString hint;
+        switch (metadata.statusCode()) {
+            case 102:
+                hint = i18n("Failed to register new account: invalid password.");
+                widgetToHighlight = m_settingsWidget.passwordEditRP;
+                break;
+            case 103:
+                hint = i18n("Failed to register new account: invalid username.");
+                widgetToHighlight = m_settingsWidget.userEditRP;
+                break;
+            case 104:
+                hint = i18n("Failed to register new account: the requested username is already taken.");
+                widgetToHighlight = m_settingsWidget.userEditRP;
+                break;
+            case 105:
+                hint = i18n("Failed to register new account: the specified email address is already taken.");
+                widgetToHighlight = m_settingsWidget.mailEdit;
+                break;
+            default:
+                hint = i18n("Failed to register new account.");
+                break;
+        }
+
+        if (!hint.isEmpty())
+            showRegisterHint("dialog-close", hint);
+
+        if (widgetToHighlight) {
+            QPalette pal = widgetToHighlight->palette();
+            KColorScheme::adjustBackground(pal, KColorScheme::NegativeBackground, QPalette::Base);
+            widgetToHighlight->setPalette(pal);
+            widgetToHighlight->setFocus();
+        }
+    }
+}
+
+void ProviderConfigWidget::clearHighlightedErrors()
+{
+    QList<QWidget*> widList;
+    widList << m_settingsWidget.userEditRP << m_settingsWidget.mailEdit << m_settingsWidget.firstNameEdit
+        << m_settingsWidget.lastNameEdit << m_settingsWidget.passwordEditRP << m_settingsWidget.passwordRepeatEdit;
+
+    foreach (QWidget* wid, widList) {
+        QPalette pal = wid->palette();
+        KColorScheme::adjustBackground(pal, KColorScheme::NormalBackground, QPalette::Base);
+        wid->setPalette(pal);
+    }
+}
+
 void ProviderConfigWidget::onRegisterClicked()
 {
     // here we assume that all data has been checked in onRegisterDataChanged()
+
+    clearHighlightedErrors();
 
     QString login = m_settingsWidget.userEditRP->text();
     QString mail = m_settingsWidget.mailEdit->text();
@@ -184,13 +254,11 @@ void ProviderConfigWidget::registerAccountFinished(Attica::BaseJob* job)
     Attica::PostJob* postJob = static_cast<Attica::PostJob*>(job);
 
     // this will enable "register" button if possible
-    // (important to have this call before showRegisterHint() below,
-    // so that the correct message will be displayed)
     onRegisterDataChanged();
 
     if (postJob->metadata().error() == Attica::Metadata::NoError)
     {
-        showRegisterHint("dialog-ok-apply", i18n("Registration complete. New account was successfully registered. Please <b>check your Email</b> to <b>activate</b> the account."));
+        KMessageBox::information(this, i18n("Registration complete. New account was successfully registered. Please <b>check your Email</b> to <b>activate</b> the account."));
 
         QString user = m_settingsWidget.userEditRP->text();
         QString password = m_settingsWidget.passwordEditRP->text();
@@ -199,41 +267,8 @@ void ProviderConfigWidget::registerAccountFinished(Attica::BaseJob* job)
     }
     else
     {
-        kDebug() << "register error:" << postJob->metadata().error() << "statusCode:" << postJob->metadata().statusCode()
-            << "status string:"<< postJob->metadata().statusCode();
-        if (postJob->metadata().error() == Attica::Metadata::NetworkError) {
-            showRegisterHint("dialog-close", i18n("Failed to register new account."));
-        } else {
-            /*
-# 100 - successfull / valid account
-# 101 - please specify all mandatory fields
-# 102 - please specify a valid password
-# 103 - please specify a valid login
-# 104 - login already exists
-# 105 - email already taken
-            */
-            // TODO: Looks like more correct place for this stuff is in libattica,
-            // for example metadata().statusString() or smth like that.
-            // So here will be only showRegisterHint("dialog-close", statusString);
-            // no switch.
-            switch (postJob->metadata().statusCode()) {
-            case 102:
-                showRegisterHint("dialog-close", i18n("Failed to register new account: invalid password."));
-                break;
-            case 103:
-                showRegisterHint("dialog-close", i18n("Failed to register new account: invalid username."));
-                break;
-            case 104:
-                showRegisterHint("dialog-close", i18n("Failed to register new account: the requested username is already taken."));
-                break;
-            case 105:
-                showRegisterHint("dialog-close", i18n("Failed to register new account: the specified email address is already taken."));
-                break;
-            default:
-                showRegisterHint("dialog-close", i18n("Failed to register new account."));
-                break;
-            }
-        }
+        kDebug() << "register error:" << postJob->metadata().error() << "statusCode:" << postJob->metadata().statusCode();
+        showRegisterError( postJob->metadata() );
     }
 }
 
