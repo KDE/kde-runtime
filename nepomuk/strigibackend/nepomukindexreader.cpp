@@ -17,7 +17,7 @@
   Boston, MA 02110-1301, USA.
 */
 
-#include "sopranoindexreader.h"
+#include "nepomukindexreader.h"
 #include <strigi/query.h>
 #include <strigi/queryparser.h>
 #include <strigi/fieldtypes.h>

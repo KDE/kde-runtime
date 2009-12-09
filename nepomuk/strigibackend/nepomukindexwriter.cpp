@@ -17,7 +17,7 @@
   Boston, MA 02110-1301, USA.
 */
 
-#include "sopranoindexwriter.h"
+#include "nepomukindexwriter.h"
 #include "util.h"
 #include "nfo.h"
 #include "nie.h"

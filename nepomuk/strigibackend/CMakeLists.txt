@@ -8,9 +8,9 @@ include_directories(
 )
 
 set( strigi_nepomuk_indexer_SRCS
-  sopranoindexmanager.cpp
-  sopranoindexreader.cpp
-  sopranoindexwriter.cpp
+  nepomukindexmanager.cpp
+  nepomukindexreader.cpp
+  nepomukindexwriter.cpp
   util.cpp
 )
 
