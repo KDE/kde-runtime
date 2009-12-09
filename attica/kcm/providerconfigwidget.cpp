@@ -39,7 +39,7 @@ ProviderConfigWidget::ProviderConfigWidget(QWidget* parent)
 void ProviderConfigWidget::setProvider(const Attica::Provider& provider)
 {
     m_provider = provider;
-    m_settingsWidget.setupUi(this);
+    m_ui.setupUi(this);
 
     // TODO ensure that it reinits all fields nicely for new provider!
     initLoginPage();
@@ -54,22 +54,22 @@ void ProviderConfigWidget::initLoginPage()
     } else {
         header = i18n("Account details for %1", m_provider.name());
     }
-    m_settingsWidget.titleWidgetLogin->setText(header);
-    m_settingsWidget.tabWidget->setTabIcon(loginTabIdx, KIcon("applications-internet"));
+    m_ui.titleWidgetLogin->setText(header);
+    m_ui.tabWidget->setTabIcon(loginTabIdx, KIcon("applications-internet"));
 
     if (m_provider.hasCredentials()) {
         QString user;
         QString password;
         m_provider.loadCredentials(user, password);
-        m_settingsWidget.userEditLP->setText(user);
-        m_settingsWidget.passwordEditLP->setText(password);
+        m_ui.userEditLP->setText(user);
+        m_ui.passwordEditLP->setText(password);
     }
-    m_settingsWidget.iconLabelLP->setPixmap(KIcon("help-about").pixmap(24,24));
+    m_ui.iconLabelLP->setPixmap(KIcon("help-about").pixmap(24,24));
 
-    connect(m_settingsWidget.userEditLP, SIGNAL(textChanged(const QString&)), this, SLOT(loginChanged()));
-    connect(m_settingsWidget.passwordEditLP, SIGNAL(textChanged(const QString&)), this, SLOT(loginChanged()));
-    connect(m_settingsWidget.testLoginButton, SIGNAL(clicked()), this, SLOT(testLogin()));
-    connect(m_settingsWidget.infoLabelLP, SIGNAL(linkActivated(const QString&)), this, SLOT(infoLinkActivated()));
+    connect(m_ui.userEditLP, SIGNAL(textChanged(const QString&)), this, SLOT(loginChanged()));
+    connect(m_ui.passwordEditLP, SIGNAL(textChanged(const QString&)), this, SLOT(loginChanged()));
+    connect(m_ui.testLoginButton, SIGNAL(clicked()), this, SLOT(testLogin()));
+    connect(m_ui.infoLabelLP, SIGNAL(linkActivated(const QString&)), this, SLOT(infoLinkActivated()));
 }
 
 void ProviderConfigWidget::initRegisterPage()
@@ -80,36 +80,36 @@ void ProviderConfigWidget::initRegisterPage()
     } else {
         header = i18n("Register new account at %1", m_provider.name());
     }
-    m_settingsWidget.titleWidgetRegister->setText(header);
-    m_settingsWidget.tabWidget->setTabIcon(registerTabIdx, KIcon("list-add-user"));
+    m_ui.titleWidgetRegister->setText(header);
+    m_ui.tabWidget->setTabIcon(registerTabIdx, KIcon("list-add-user"));
 
-    m_settingsWidget.infoLabelRP->setFont(KGlobalSettings::smallestReadableFont());
+    m_ui.infoLabelRP->setFont(KGlobalSettings::smallestReadableFont());
 
-    connect(m_settingsWidget.userEditRP, SIGNAL(textChanged(QString)), SLOT(onRegisterDataChanged()));
-    connect(m_settingsWidget.mailEdit, SIGNAL(textChanged(QString)), SLOT(onRegisterDataChanged()));
-    connect(m_settingsWidget.firstNameEdit, SIGNAL(textChanged(QString)), SLOT(onRegisterDataChanged()));
-    connect(m_settingsWidget.lastNameEdit, SIGNAL(textChanged(QString)), SLOT(onRegisterDataChanged()));
-    connect(m_settingsWidget.passwordEditRP, SIGNAL(textChanged(QString)), SLOT(onRegisterDataChanged()));
-    connect(m_settingsWidget.passwordRepeatEdit, SIGNAL(textChanged(QString)), SLOT(onRegisterDataChanged()));
+    connect(m_ui.userEditRP, SIGNAL(textChanged(QString)), SLOT(onRegisterDataChanged()));
+    connect(m_ui.mailEdit, SIGNAL(textChanged(QString)), SLOT(onRegisterDataChanged()));
+    connect(m_ui.firstNameEdit, SIGNAL(textChanged(QString)), SLOT(onRegisterDataChanged()));
+    connect(m_ui.lastNameEdit, SIGNAL(textChanged(QString)), SLOT(onRegisterDataChanged()));
+    connect(m_ui.passwordEditRP, SIGNAL(textChanged(QString)), SLOT(onRegisterDataChanged()));
+    connect(m_ui.passwordRepeatEdit, SIGNAL(textChanged(QString)), SLOT(onRegisterDataChanged()));
 
-    connect(m_settingsWidget.registerButton, SIGNAL(clicked()), SLOT(onRegisterClicked()));
+    connect(m_ui.registerButton, SIGNAL(clicked()), SLOT(onRegisterClicked()));
 
     onRegisterDataChanged();
 }
 
 void ProviderConfigWidget::loginChanged()
 {
-    m_settingsWidget.testLoginButton->setText(i18n("Test login"));
-    m_settingsWidget.testLoginButton->setEnabled(true);
+    m_ui.testLoginButton->setText(i18n("Test login"));
+    m_ui.testLoginButton->setEnabled(true);
     emit changed(true);
 }
 
 void ProviderConfigWidget::testLogin()
 {
-    m_settingsWidget.testLoginButton->setEnabled(false);
-    m_settingsWidget.testLoginButton->setText(i18n("Testing login..."));
+    m_ui.testLoginButton->setEnabled(false);
+    m_ui.testLoginButton->setText(i18n("Testing login..."));
 
-    Attica::PostJob* postJob = m_provider.checkLogin(m_settingsWidget.userEditLP->text(), m_settingsWidget.passwordEditLP->text());
+    Attica::PostJob* postJob = m_provider.checkLogin(m_ui.userEditLP->text(), m_ui.passwordEditLP->text());
     connect(postJob, SIGNAL(finished(Attica::BaseJob*)), SLOT(testLoginFinished(Attica::BaseJob*)));
     postJob->start();
 }
@@ -119,27 +119,27 @@ void ProviderConfigWidget::testLoginFinished(Attica::BaseJob* job)
     Attica::PostJob* postJob = static_cast<Attica::PostJob*>(job);
 
     if (postJob->metadata().error() == Attica::Metadata::NoError) {
-        m_settingsWidget.testLoginButton->setText(i18n("Success"));
+        m_ui.testLoginButton->setText(i18n("Success"));
     }
 
     if (postJob->metadata().error() == Attica::Metadata::OcsError) {
-        m_settingsWidget.testLoginButton->setText(i18n("Login failed"));
+        m_ui.testLoginButton->setText(i18n("Login failed"));
     }
 }
 
 void ProviderConfigWidget::infoLinkActivated()
 {
-    m_settingsWidget.tabWidget->setCurrentIndex(registerTabIdx);
+    m_ui.tabWidget->setCurrentIndex(registerTabIdx);
 }
 
 void ProviderConfigWidget::onRegisterDataChanged()
 {
-    QString login = m_settingsWidget.userEditRP->text();
-    QString mail = m_settingsWidget.mailEdit->text();
-    QString firstName = m_settingsWidget.firstNameEdit->text();
-    QString lastName = m_settingsWidget.lastNameEdit->text();
-    QString password = m_settingsWidget.passwordEditRP->text();
-    QString passwordRepeat = m_settingsWidget.passwordRepeatEdit->text();
+    QString login = m_ui.userEditRP->text();
+    QString mail = m_ui.mailEdit->text();
+    QString firstName = m_ui.firstNameEdit->text();
+    QString lastName = m_ui.lastNameEdit->text();
+    QString password = m_ui.passwordEditRP->text();
+    QString passwordRepeat = m_ui.passwordRepeatEdit->text();
 
     bool isDataValid = (!login.isEmpty() && !mail.isEmpty() && !firstName.isEmpty() &&
                         !lastName.isEmpty() && !password.isEmpty() && !passwordRepeat.isEmpty());
@@ -152,15 +152,15 @@ void ProviderConfigWidget::onRegisterDataChanged()
     if (isDataValid && isPasswordValid )
         showRegisterHint("dialog-ok-apply", i18n("All required information is provided"));
 
-    m_settingsWidget.registerButton->setEnabled(isDataValid && isPasswordValid);
+    m_ui.registerButton->setEnabled(isDataValid && isPasswordValid);
 
     emit changed(true);
 }
 
 void ProviderConfigWidget::showRegisterHint(const QString& iconName, const QString& hint)
 {
-    m_settingsWidget.iconLabelRP->setPixmap(KIcon(iconName).pixmap(16,16));
-    m_settingsWidget.infoLabelRP->setText(hint);
+    m_ui.iconLabelRP->setPixmap(KIcon(iconName).pixmap(16,16));
+    m_ui.infoLabelRP->setText(hint);
 }
 
 void ProviderConfigWidget::showRegisterError(const Attica::Metadata& metadata)
@@ -185,19 +185,19 @@ void ProviderConfigWidget::showRegisterError(const Attica::Metadata& metadata)
         switch (metadata.statusCode()) {
             case 102:
                 hint = i18n("Failed to register new account: invalid password.");
-                widgetToHighlight = m_settingsWidget.passwordEditRP;
+                widgetToHighlight = m_ui.passwordEditRP;
                 break;
             case 103:
                 hint = i18n("Failed to register new account: invalid username.");
-                widgetToHighlight = m_settingsWidget.userEditRP;
+                widgetToHighlight = m_ui.userEditRP;
                 break;
             case 104:
                 hint = i18n("Failed to register new account: the requested username is already taken.");
-                widgetToHighlight = m_settingsWidget.userEditRP;
+                widgetToHighlight = m_ui.userEditRP;
                 break;
             case 105:
                 hint = i18n("Failed to register new account: the specified email address is already taken.");
-                widgetToHighlight = m_settingsWidget.mailEdit;
+                widgetToHighlight = m_ui.mailEdit;
                 break;
             default:
                 hint = i18n("Failed to register new account.");
@@ -219,8 +219,8 @@ void ProviderConfigWidget::showRegisterError(const Attica::Metadata& metadata)
 void ProviderConfigWidget::clearHighlightedErrors()
 {
     QList<QWidget*> widList;
-    widList << m_settingsWidget.userEditRP << m_settingsWidget.mailEdit << m_settingsWidget.firstNameEdit
-        << m_settingsWidget.lastNameEdit << m_settingsWidget.passwordEditRP << m_settingsWidget.passwordRepeatEdit;
+    widList << m_ui.userEditRP << m_ui.mailEdit << m_ui.firstNameEdit
+        << m_ui.lastNameEdit << m_ui.passwordEditRP << m_ui.passwordRepeatEdit;
 
     foreach (QWidget* wid, widList) {
         QPalette pal = wid->palette();
@@ -235,18 +235,18 @@ void ProviderConfigWidget::onRegisterClicked()
 
     clearHighlightedErrors();
 
-    QString login = m_settingsWidget.userEditRP->text();
-    QString mail = m_settingsWidget.mailEdit->text();
-    QString firstName = m_settingsWidget.firstNameEdit->text();
-    QString lastName = m_settingsWidget.lastNameEdit->text();
-    QString password = m_settingsWidget.passwordEditRP->text();
-    //QString passwordRepeat = m_settingsWidget.passwordRepeatEdit->text();
+    QString login = m_ui.userEditRP->text();
+    QString mail = m_ui.mailEdit->text();
+    QString firstName = m_ui.firstNameEdit->text();
+    QString lastName = m_ui.lastNameEdit->text();
+    QString password = m_ui.passwordEditRP->text();
+    //QString passwordRepeat = m_ui.passwordRepeatEdit->text();
 
     Attica::PostJob* postJob = m_provider.registerAccount(login, password, mail, firstName, lastName);
     connect(postJob, SIGNAL(finished(Attica::BaseJob*)), SLOT(registerAccountFinished(Attica::BaseJob*)));
     postJob->start();
     showRegisterHint("help-about", i18n("Registration is in progress..."));
-    m_settingsWidget.registerButton->setEnabled(false); // should be disabled while registering
+    m_ui.registerButton->setEnabled(false); // should be disabled while registering
 }
 
 void ProviderConfigWidget::registerAccountFinished(Attica::BaseJob* job)
@@ -260,10 +260,10 @@ void ProviderConfigWidget::registerAccountFinished(Attica::BaseJob* job)
     {
         KMessageBox::information(this, i18n("Registration complete. New account was successfully registered. Please <b>check your Email</b> to <b>activate</b> the account."));
 
-        QString user = m_settingsWidget.userEditRP->text();
-        QString password = m_settingsWidget.passwordEditRP->text();
-        m_settingsWidget.userEditLP->setText(user);
-        m_settingsWidget.passwordEditLP->setText(password);
+        QString user = m_ui.userEditRP->text();
+        QString password = m_ui.passwordEditRP->text();
+        m_ui.userEditLP->setText(user);
+        m_ui.passwordEditLP->setText(password);
     }
     else
     {
@@ -274,10 +274,10 @@ void ProviderConfigWidget::registerAccountFinished(Attica::BaseJob* job)
 
 void ProviderConfigWidget::saveData()
 {
-    if (m_settingsWidget.userEditLP->text().isEmpty()) {
+    if (m_ui.userEditLP->text().isEmpty()) {
         return;
     }
-    m_provider.saveCredentials(m_settingsWidget.userEditLP->text(), m_settingsWidget.passwordEditLP->text());
+    m_provider.saveCredentials(m_ui.userEditLP->text(), m_ui.passwordEditLP->text());
 }
 
 #include "providerconfigwidget.moc"

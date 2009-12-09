@@ -68,7 +68,7 @@ private:
 
 private:
     Attica::Provider m_provider;
-    Ui::ProviderConfigWidget m_settingsWidget;
+    Ui::ProviderConfigWidget m_ui;
 };
 
 #endif
