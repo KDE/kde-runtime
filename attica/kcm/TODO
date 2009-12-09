@@ -1,2 +1,4 @@
-[ ] Check that password is more than 8 chars in length
-[ ] When switching to some page (check all) put focus on suitable widget
+KDE4.5:
+- Check that password is more than 8 chars in length (something server should do)
+- Add some "Forget Credentials" button
+- Rename "Login" tab to "Login Settings" to not confuse user
