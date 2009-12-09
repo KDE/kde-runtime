@@ -44,6 +44,8 @@ void ProviderConfigWidget::setProvider(const Attica::Provider& provider)
     // TODO ensure that it reinits all fields nicely for new provider!
     initLoginPage();
     initRegisterPage();
+
+    m_ui.userEditLP->setFocus();
 }
 
 void ProviderConfigWidget::initLoginPage()
@@ -66,10 +68,10 @@ void ProviderConfigWidget::initLoginPage()
     }
     m_ui.iconLabelLP->setPixmap(KIcon("help-about").pixmap(24,24));
 
-    connect(m_ui.userEditLP, SIGNAL(textChanged(const QString&)), this, SLOT(loginChanged()));
-    connect(m_ui.passwordEditLP, SIGNAL(textChanged(const QString&)), this, SLOT(loginChanged()));
-    connect(m_ui.testLoginButton, SIGNAL(clicked()), this, SLOT(testLogin()));
-    connect(m_ui.infoLabelLP, SIGNAL(linkActivated(const QString&)), this, SLOT(infoLinkActivated()));
+    connect(m_ui.userEditLP, SIGNAL(textChanged(const QString&)), this, SLOT(onLoginChanged()));
+    connect(m_ui.passwordEditLP, SIGNAL(textChanged(const QString&)), this, SLOT(onLoginChanged()));
+    connect(m_ui.testLoginButton, SIGNAL(clicked()), this, SLOT(onTestLogin()));
+    connect(m_ui.infoLabelLP, SIGNAL(linkActivated(const QString&)), this, SLOT(onInfoLinkActivated()));
 }
 
 void ProviderConfigWidget::initRegisterPage()
@@ -97,24 +99,24 @@ void ProviderConfigWidget::initRegisterPage()
     onRegisterDataChanged();
 }
 
-void ProviderConfigWidget::loginChanged()
+void ProviderConfigWidget::onLoginChanged()
 {
     m_ui.testLoginButton->setText(i18n("Test login"));
     m_ui.testLoginButton->setEnabled(true);
     emit changed(true);
 }
 
-void ProviderConfigWidget::testLogin()
+void ProviderConfigWidget::onTestLogin()
 {
     m_ui.testLoginButton->setEnabled(false);
     m_ui.testLoginButton->setText(i18n("Testing login..."));
 
     Attica::PostJob* postJob = m_provider.checkLogin(m_ui.userEditLP->text(), m_ui.passwordEditLP->text());
-    connect(postJob, SIGNAL(finished(Attica::BaseJob*)), SLOT(testLoginFinished(Attica::BaseJob*)));
+    connect(postJob, SIGNAL(finished(Attica::BaseJob*)), SLOT(onTestLoginFinished(Attica::BaseJob*)));
     postJob->start();
 }
 
-void ProviderConfigWidget::testLoginFinished(Attica::BaseJob* job)
+void ProviderConfigWidget::onTestLoginFinished(Attica::BaseJob* job)
 {
     Attica::PostJob* postJob = static_cast<Attica::PostJob*>(job);
 
@@ -127,9 +129,10 @@ void ProviderConfigWidget::testLoginFinished(Attica::BaseJob* job)
     }
 }
 
-void ProviderConfigWidget::infoLinkActivated()
+void ProviderConfigWidget::onInfoLinkActivated()
 {
     m_ui.tabWidget->setCurrentIndex(registerTabIdx);
+    m_ui.userEditRP->setFocus();
 }
 
 void ProviderConfigWidget::onRegisterDataChanged()
@@ -218,10 +221,7 @@ void ProviderConfigWidget::showRegisterError(const Attica::Metadata& metadata)
 
 void ProviderConfigWidget::clearHighlightedErrors()
 {
-    QList<QWidget*> widList;
-    widList << m_ui.userEditRP << m_ui.mailEdit << m_ui.firstNameEdit
-        << m_ui.lastNameEdit << m_ui.passwordEditRP << m_ui.passwordRepeatEdit;
-
+    QList<QWidget*> widList = allRegisterWidgets();
     foreach (QWidget* wid, widList) {
         QPalette pal = wid->palette();
         KColorScheme::adjustBackground(pal, KColorScheme::NormalBackground, QPalette::Base);
@@ -243,13 +243,13 @@ void ProviderConfigWidget::onRegisterClicked()
     //QString passwordRepeat = m_ui.passwordRepeatEdit->text();
 
     Attica::PostJob* postJob = m_provider.registerAccount(login, password, mail, firstName, lastName);
-    connect(postJob, SIGNAL(finished(Attica::BaseJob*)), SLOT(registerAccountFinished(Attica::BaseJob*)));
+    connect(postJob, SIGNAL(finished(Attica::BaseJob*)), SLOT(onRegisterAccountFinished(Attica::BaseJob*)));
     postJob->start();
     showRegisterHint("help-about", i18n("Registration is in progress..."));
     m_ui.registerButton->setEnabled(false); // should be disabled while registering
 }
 
-void ProviderConfigWidget::registerAccountFinished(Attica::BaseJob* job)
+void ProviderConfigWidget::onRegisterAccountFinished(Attica::BaseJob* job)
 {
     Attica::PostJob* postJob = static_cast<Attica::PostJob*>(job);
 
@@ -264,6 +264,16 @@ void ProviderConfigWidget::registerAccountFinished(Attica::BaseJob* job)
         QString password = m_ui.passwordEditRP->text();
         m_ui.userEditLP->setText(user);
         m_ui.passwordEditLP->setText(password);
+
+        // clear register fields and switch to login page
+        foreach (QWidget* wid, allRegisterWidgets())
+        {
+            QLineEdit* le = qobject_cast<QLineEdit*>(wid);
+            if (le)
+                le->clear();
+        }
+        m_ui.tabWidget->setCurrentIndex(loginTabIdx);
+        m_ui.userEditLP->setFocus();
     }
     else
     {
@@ -278,6 +288,15 @@ void ProviderConfigWidget::saveData()
         return;
     }
     m_provider.saveCredentials(m_ui.userEditLP->text(), m_ui.passwordEditLP->text());
+}
+
+QList<QWidget*> ProviderConfigWidget::allRegisterWidgets() const
+{
+    QList<QWidget*> widList;
+    widList << m_ui.userEditRP << m_ui.mailEdit << m_ui.firstNameEdit
+        << m_ui.lastNameEdit << m_ui.passwordEditRP << m_ui.passwordRepeatEdit;
+
+    return widList;
 }
 
 #include "providerconfigwidget.moc"

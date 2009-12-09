@@ -47,17 +47,16 @@ Q_SIGNALS:
     void changed(bool hasChanged);
 
 private Q_SLOTS:
-    /// reset the validate button
-    void loginChanged();
-    /// test login was clicked
-    void testLogin();
-    void infoLinkActivated();
+    // login page
+    void onLoginChanged();
+    void onTestLogin();
+    void onTestLoginFinished(Attica::BaseJob* job);
+
+    // register page
+    void onInfoLinkActivated();
     void onRegisterDataChanged();
     void onRegisterClicked();
-
-    /// result of login test
-    void testLoginFinished(Attica::BaseJob* job);
-    void registerAccountFinished(Attica::BaseJob* job);
+    void onRegisterAccountFinished(Attica::BaseJob* job);
 
 private:
     void initLoginPage();
@@ -65,6 +64,8 @@ private:
     void showRegisterHint(const QString&, const QString&);
     void showRegisterError(const Attica::Metadata&);
     void clearHighlightedErrors();
+
+    QList<QWidget*> allRegisterWidgets() const;
 
 private:
     Attica::Provider m_provider;
