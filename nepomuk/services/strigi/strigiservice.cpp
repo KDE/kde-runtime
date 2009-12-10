@@ -28,6 +28,7 @@
 #include "filesystemwatcher.h"
 
 #include <KDebug>
+#include <KDirNotify>
 
 #include <strigi/indexpluginloader.h>
 #include <strigi/indexmanager.h>
@@ -74,6 +75,12 @@ Nepomuk::StrigiService::StrigiService( QObject* parent, const QList<QVariant>& )
             m_fsWatcher->setWatchRecursively( true );
             connect( m_fsWatcher, SIGNAL( dirty( QString ) ),
                      this, SLOT( slotDirDirty( QString ) ) );
+
+            // monitor all KDE-ish changes for quick updates
+            connect( new org::kde::KDirNotify( QString(), QString(), QDBusConnection::sessionBus(), this ),
+                     SIGNAL( FilesAdded( QString ) ),
+                     this, SLOT( slotDirDirty( const QString& ) ) );
+
 
             // update the watches if the config changes
             connect( StrigiServiceConfig::self(), SIGNAL( configChanged() ),

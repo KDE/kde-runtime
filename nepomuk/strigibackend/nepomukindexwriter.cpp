@@ -315,6 +315,7 @@ Strigi::NepomukIndexWriter::NepomukIndexWriter( Soprano::Model* model )
 
 Strigi::NepomukIndexWriter::~NepomukIndexWriter()
 {
+    kDebug();
     delete d;
 }
 
@@ -603,6 +604,8 @@ void Strigi::NepomukIndexWriter::releaseWriterData( const Strigi::FieldRegister&
 
 void Strigi::NepomukIndexWriter::removeIndexedData( const KUrl& url )
 {
+//    kDebug() << url;
+
     //
     // We are compatible with old Xesam data where the url was encoded as a string instead of a url,
     // thus the weird query
@@ -613,32 +616,24 @@ void Strigi::NepomukIndexWriter::removeIndexedData( const KUrl& url )
                              "{ ?r %3 %2 . } "
                              "UNION "
                              "{ ?r %4 %2 . } . "
-                             "?g %5 ?r . "
-                             "OPTIONAL { ?mg %6 ?g . } }" )
+                             "?g %5 ?r . }" )
                     .arg( Node::literalToN3( url.path() ),
                           Node::resourceToN3( url ),
                           Node::resourceToN3( Vocabulary::Xesam::url() ),
                           Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ),
-                          Node::resourceToN3( Strigi::Ontology::indexGraphFor() ),
-                          Node::resourceToN3( Vocabulary::NRL::coreGraphMetadataFor() ) );
+                          Node::resourceToN3( Strigi::Ontology::indexGraphFor() ) );
 
 //        kDebug() << "deleteEntries query:" << query;
 
     QueryResultIterator result = d->repository->executeQuery( query, Soprano::Query::QueryLanguageSparql );
     if ( result.next() ) {
         Node indexGraph = result.binding( "g" );
-        Node metaDataGraph = result.binding( "mg" );
 
         result.close();
 
-        // delete the indexed data
+        // delete the indexed data (The Soprano::NRLModel in the storage service will take care of
+        // the metadata graph)
         d->repository->removeContext( indexGraph );
-
-        // delete the metadata (backwards compatible)
-        if ( metaDataGraph.isValid() )
-            d->repository->removeContext( metaDataGraph );
-        else
-            d->repository->removeAllStatements( Statement( indexGraph, Node(), Node() ) );
     }
 }
 

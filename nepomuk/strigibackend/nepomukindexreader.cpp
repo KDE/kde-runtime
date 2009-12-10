@@ -60,6 +60,7 @@ Strigi::NepomukIndexReader::NepomukIndexReader( Soprano::Model* model )
 
 Strigi::NepomukIndexReader::~NepomukIndexReader()
 {
+    kDebug();
     delete d;
 }
 

@@ -265,7 +265,7 @@ bool Nepomuk::IndexScheduler::updateDir( const QString& dir, Strigi::StreamAnaly
 
     QList<QFileInfo> filesToIndex;
     QList<QString> subFolders;
-    std::vector<std::string> filesToUpdate, filesToDelete;
+    std::vector<std::string> filesToDelete;
 
     // iterate over all files in the dir
     // and select the ones we need to add or delete from the store
@@ -290,8 +290,8 @@ bool Nepomuk::IndexScheduler::updateDir( const QString& dir, Strigi::StreamAnaly
         if ( indexFile && ( newFile || fileChanged || forceUpdate ) )
             filesToIndex << fileInfo;
 
-        if ( !newFile && ( fileChanged || forceUpdate ) )
-            filesToUpdate.push_back( filesInStoreIt->first );
+        // we do not delete files to update here. We do that in the IndexWriter to make
+        // sure we keep the resource URI
         else if ( !newFile && !indexFile )
             filesToDelete.push_back( filesInStoreIt->first );
 
@@ -309,9 +309,6 @@ bool Nepomuk::IndexScheduler::updateDir( const QString& dir, Strigi::StreamAnaly
           it != filesInStoreEnd; ++it ) {
         filesToDelete.push_back( it->first );
     }
-
-    // remove all files non-recursively that need updating
-    m_indexManager->indexWriter()->deleteEntries( filesToUpdate );
 
     // remove all files that have been removed recursively
     deleteEntries( filesToDelete );
@@ -342,13 +339,18 @@ bool Nepomuk::IndexScheduler::updateDir( const QString& dir, Strigi::StreamAnaly
 
 void Nepomuk::IndexScheduler::analyzeFile( const QFileInfo& file, Strigi::StreamAnalyzer* analyzer )
 {
-//    kDebug() << file.filePath();
+    //
+    // strigi asserts if the file path has a trailing slash
+    //
+    KUrl url( file.filePath() );
+    QString filePath = url.toLocalFile( KUrl::RemoveTrailingSlash );
+    QString dir = url.directory(KUrl::IgnoreTrailingSlash);
 
-    Strigi::AnalysisResult analysisresult( QFile::encodeName( file.filePath() ).data(),
+    Strigi::AnalysisResult analysisresult( QFile::encodeName( filePath ).data(),
                                            file.lastModified().toTime_t(),
                                            *m_indexManager->indexWriter(),
                                            *analyzer,
-                                           QFile::encodeName( file.path() ).data() );
+                                           QFile::encodeName( dir ).data() );
     if ( file.isFile() && !file.isSymLink() ) {
         Strigi::FileInputStream stream( QFile::encodeName( file.filePath() ) );
         analysisresult.index( &stream );
