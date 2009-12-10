@@ -50,8 +50,28 @@ namespace Nepomuk {
     private:
         void run();
 
-        void removeMetadata( const KUrl& );
+        /**
+         * Remove the metadata for file \p url
+         */
+        void removeMetadata( const KUrl& url );
+
+        /**
+         * Recursively update the nie:url and nie:isPartOf properties
+         * of the resource describing \p from.
+         *
+         * If old pre-KDE 4.4 file:/ resource URIs are used these are
+         * updated to the new nepomuk:/res/<UUID> scheme
+         */
         void updateMetadata( const KUrl& from, const KUrl& to );
+
+        /**
+         * Convert old pre-KDE 4.4 style file:/ resource URIs to the
+         * new nepomuk:/res/<UUID> scheme.
+         *
+         * \return The new resource URI. This resource does not have
+         * nie:url or nie:isPartOf properties yet.
+         */
+        QUrl updateLegacyMetadata( const QUrl& oldResourceUri );
 
         // if the second url is empty, just delete the metadata
         QQueue<QPair<KUrl, KUrl> > m_updateQueue;

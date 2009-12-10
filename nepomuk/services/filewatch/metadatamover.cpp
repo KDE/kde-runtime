@@ -31,32 +31,15 @@
 #include <Soprano/QueryResultIterator>
 #include <Soprano/Vocabulary/Xesam>
 
+#include <Nepomuk/Resource>
+#include <Nepomuk/ResourceManager>
+#include <Nepomuk/Variant>
+#include <Nepomuk/Types/Property>
+#include <Nepomuk/Query/Query>
+#include <Nepomuk/Query/ComparisonTerm>
+#include <Nepomuk/Query/ResourceTerm>
+
 #include <KDebug>
-
-
-namespace {
-    Soprano::QueryResultIterator queryChildren( Soprano::Model* model, const QString& path )
-    {
-        // escape special chars
-        QString regexpPath( path );
-        if ( regexpPath[regexpPath.length()-1] != '/' ) {
-            regexpPath += '/';
-        }
-        regexpPath.replace( QRegExp( "([\\.\\?\\*\\\\+\\(\\)\\\\\\|\\[\\]{}])" ), "\\\\\\1" );
-
-        // query for all files that
-        return model->executeQuery( QString( "select ?r ?p where { "
-                                             "{ ?r %1 ?p . } "
-                                             "UNION "
-                                             "{ ?r %2 ?p . } . "
-                                             "FILTER(REGEX(STR(?p), '^file://%3')) . "
-                                             "}" )
-                                    .arg( Soprano::Node::resourceToN3( Soprano::Vocabulary::Xesam::url() ) )
-                                    .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ) )
-                                    .arg( regexpPath ),
-                                    Soprano::Query::QueryLanguageSparql );
-    }
-}
 
 
 Nepomuk::MetadataMover::MetadataMover( Soprano::Model* model, QObject* parent )
@@ -127,44 +110,18 @@ void Nepomuk::MetadataMover::run()
             // an empty second url means deletion
             if( updateData.second.isEmpty() ) {
                 KUrl url = updateData.first;
-
                 removeMetadata( url );
-
-                // remove child annotations in case it is a local folder
-                foreach( const Soprano::Node& node, queryChildren( m_model, url.path() ).iterateBindings( 0 ).allNodes() ) {
-                    m_model->removeAllStatements( node, Soprano::Node(), Soprano::Node() );
-                }
             }
             else {
                 KUrl from = updateData.first;
                 KUrl to = updateData.second;
 
-                // We do NOT get deleted messages for overwritten files! Thus, we have to remove all metadata for overwritten files
-                // first. We do that now.
+                // We do NOT get deleted messages for overwritten files! Thus, we
+                // have to remove all metadata for overwritten files first.
                 removeMetadata( to );
 
                 // and finally update the old statements
                 updateMetadata( from, to );
-
-                // update children files in case from is a folder
-                QString fromPath = from.path();
-                QList<Soprano::BindingSet> children = queryChildren( m_model, fromPath ).allBindings();
-                foreach( const Soprano::BindingSet& bs, children ) {
-                    QString path = to.path();
-                    if ( !path.endsWith( '/' ) )
-                        path += '/';
-                    path += bs[1].uri().path().mid( fromPath.endsWith( '/' ) ? fromPath.length() : fromPath.length()+1 );
-                    updateMetadata( bs[1].uri(), path );
-                }
-
-                // TODO: optionally create a xesam:url property in case a file was moved from a remote URL to a local one
-                // still disabled since we also need a new context and that is much easier with a proper NRLModel which
-                // we will hopefully have in Soprano 2.2
-//         if ( to.isLocalFile() ) {
-//             if ( !m_model->containsAnyStatement( to, Soprano::Vocabulary::Xesam::url(), Soprano::Node() ) ) {
-//                 m_model->addStatement( to, Soprano::Vocabulary::Xesam::url(), Soprano::LiteralValue( to.path() ) );
-//             }
-//         }
             }
 
             // lock for next iteration
@@ -186,13 +143,19 @@ void Nepomuk::MetadataMover::removeMetadata( const KUrl& url )
 
     if ( url.isEmpty() ) {
         kDebug() << "empty path. Looks like a bug somewhere...";
-        return;
     }
-
-    m_model->removeAllStatements( url, Soprano::Node(), Soprano::Node() );
-
-    // FIXME: what about the triples that have our uri as object?
-    // FIXME: what about the graph metadata?
+    else {
+        Resource res( url );
+        if ( res.exists() ) {
+            kDebug() << "removing metadata for file" << url << "with resource URI" << res.resourceUri();
+            Query::Query query( Query::ComparisonTerm( Nepomuk::Vocabulary::NIE::isPartOf(), Query::ResourceTerm( res ) ) );
+            Soprano::QueryResultIterator it = m_model->executeQuery( query.toSparqlQuery(), Soprano::Query::QueryLanguageSparql );
+            while ( it.next() ) {
+                removeMetadata( it[0].uri() );
+            }
+            res.remove();
+        }
+    }
 }
 
 
@@ -201,63 +164,108 @@ void Nepomuk::MetadataMover::updateMetadata( const KUrl& from, const KUrl& to )
     kDebug() << from << "->" << to;
 
     //
-    // Nepomuk allows annotating of remote files. These files do not necessarily have a xesam:url property
-    // since it would not be of much use in the classic sense: we cannot use it to locate the file on the hd
+    // Since KDE 4.4 we use nepomuk:/res/<UUID> Uris for all resources including files. Thus, moving a file
+    // means updating two things:
+    // 1. the nie:url property
+    // 2. the nie:isPartOf relation (only necessary if the file and not the whole folder was moved)
     //
-    // Thus, when remote files are moved through KIO and we get the notification, we simply change all triples
-    // referring to the original file to use the new URL
+    // However, since we will still have file:/ resource URIs from old data we will also handle that
+    // and convert them to new nepomuk:/res/<UUID> style URIs.
     //
 
-    Soprano::Node oldResource = from;
-    Soprano::Node newResource = to;
+    Resource oldResource( from );
 
-    // update the resource itself
-    // -----------------------------------------------
-    if ( m_model->containsAnyStatement( Soprano::Statement( oldResource, Soprano::Node(), Soprano::Node() ) ) ) {
+    if ( oldResource.exists() ) {
+        QUrl oldResourceUri = oldResource.resourceUri();
+        QUrl newResourceUri = oldResourceUri;
 
-        QList<Soprano::Statement> sl = m_model->listStatements( Soprano::Statement( oldResource,
-                                                                                    Soprano::Node(),
-                                                                                    Soprano::Node() ) ).allStatements();
-        Q_FOREACH( const Soprano::Statement& s, sl ) {
-            if ( s.predicate() == Soprano::Vocabulary::Xesam::url() ) {
-                m_model->addStatement( Soprano::Statement( newResource,
-                                                           s.predicate(),
-                                                           Soprano::LiteralValue( to.path() ),
-                                                           s.context() ) );
-            }
-            else if ( s.predicate() == m_strigiParentUrlUri ||
-                      s.predicate() == Nepomuk::Vocabulary::NIE::isPartOf() ) {
-                m_model->addStatement( Soprano::Statement( newResource,
-                                                           s.predicate(),
-                                                           Soprano::LiteralValue( to.directory( KUrl::IgnoreTrailingSlash ) ),
-                                                           s.context() ) );
-            }
-            else {
-                m_model->addStatement( Soprano::Statement( newResource,
-                                                           s.predicate(),
-                                                           s.object(),
-                                                           s.context() ) );
-            }
+        //
+        // Handle legacy file:/ resource URIs
+        //
+        if ( from.equals( oldResourceUri, KUrl::CompareWithoutTrailingSlash ) ) {
+            newResourceUri = updateLegacyMetadata( oldResourceUri );
         }
 
-        m_model->removeStatements( sl );
-        // -----------------------------------------------
 
-
-        // update resources relating to it
-        // -----------------------------------------------
-        sl = m_model->listStatements( Soprano::Node(),
-                                      Soprano::Node(),
-                                      oldResource ).allStatements();
-        Q_FOREACH( const Soprano::Statement& s, sl ) {
-            m_model->addStatement( s.subject(),
-                                   s.predicate(),
-                                   newResource,
-                                   s.context() );
+        //
+        // Now update the nie:url and nie:isPartOf relations
+        //
+        Resource newResource( newResourceUri );
+        newResource.setProperty( Nepomuk::Vocabulary::NIE::url(), to );
+        Resource newParent( to.directory( KUrl::IgnoreTrailingSlash ) );
+        if ( newParent.exists() ) {
+            newResource.setProperty( Nepomuk::Vocabulary::NIE::isPartOf(), newParent );
         }
-        m_model->removeStatements( sl );
-        // -----------------------------------------------
+
+        //
+        // Recursively update children
+        //
+        Query::Query query( Query::ComparisonTerm( Nepomuk::Vocabulary::NIE::isPartOf(), Query::ResourceTerm( newResource ) ) );
+        query.addRequestProperty( Query::Query::RequestProperty( Nepomuk::Vocabulary::NIE::url() ) );
+        Soprano::QueryResultIterator it = m_model->executeQuery( query.toSparqlQuery(), Soprano::Query::QueryLanguageSparql );
+        while ( it.next() ) {
+            QUrl uri = it[0].uri();
+            KUrl url = it[1].uri();
+            KUrl newUrl( to );
+            newUrl.addPath( url.fileName() );
+            updateMetadata( url, newUrl );
+        }
     }
+}
+
+
+QUrl Nepomuk::MetadataMover::updateLegacyMetadata( const QUrl& oldResourceUri )
+{
+    kDebug() << oldResourceUri;
+
+    //
+    // Get a new resource URI
+    //
+    QUrl newResourceUri = ResourceManager::instance()->generateUniqueUri( QString() );
+
+    //
+    // update the resource properties
+    //
+    QList<Soprano::Statement> sl = m_model->listStatements( Soprano::Statement( oldResourceUri,
+                                                                                Soprano::Node(),
+                                                                                Soprano::Node() ) ).allStatements();
+    Q_FOREACH( const Soprano::Statement& s, sl ) {
+        //
+        // Skip all the stuff we will update later on
+        //
+        if ( s.predicate() == Soprano::Vocabulary::Xesam::url() ||
+             s.predicate() == Nepomuk::Vocabulary::NIE::url() ||
+             s.predicate() == m_strigiParentUrlUri ||
+             s.predicate() == Nepomuk::Vocabulary::NIE::isPartOf() ) {
+            continue;
+        }
+
+        m_model->addStatement( Soprano::Statement( newResourceUri,
+                                                   s.predicate(),
+                                                   s.object(),
+                                                   s.context() ) );
+    }
+
+    m_model->removeStatements( sl );
+
+
+    //
+    // update resources relating to it
+    //
+    sl = m_model->listStatements( Soprano::Node(),
+                                  Soprano::Node(),
+                                  oldResourceUri ).allStatements();
+    Q_FOREACH( const Soprano::Statement& s, sl ) {
+        m_model->addStatement( s.subject(),
+                               s.predicate(),
+                               newResourceUri,
+                               s.context() );
+    }
+    m_model->removeStatements( sl );
+
+    kDebug() << "->" << newResourceUri;
+
+    return newResourceUri;
 }
 
 #include "metadatamover.moc"
