@@ -28,8 +28,8 @@
 #include <QtCore/QUuid>
 #include <QtCore/QDebug>
 
-#include <Soprano/Index/CLuceneIndex>
 #include <Soprano/Model>
+#include <Soprano/Statement>
 #include <Soprano/Vocabulary/RDF>
 #include <Soprano/Vocabulary/RDFS>
 #include <Soprano/Vocabulary/NRL>
