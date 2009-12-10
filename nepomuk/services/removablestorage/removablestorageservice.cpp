@@ -79,7 +79,8 @@ namespace {
         if ( dev.is<Solid::StorageVolume>() &&
              dev.is<Solid::StorageAccess>() &&
              dev.parent().is<Solid::StorageDrive>() &&
-             dev.parent().as<Solid::StorageDrive>()->isRemovable() ) {
+             ( dev.parent().as<Solid::StorageDrive>()->isRemovable() ||
+               dev.parent().as<Solid::StorageDrive>()->isHotpluggable() ) ) {
             const Solid::StorageVolume* volume = dev.as<Solid::StorageVolume>();
             if ( !volume->isIgnored() && volume->usage() == Solid::StorageVolume::FileSystem )
                 return true;
