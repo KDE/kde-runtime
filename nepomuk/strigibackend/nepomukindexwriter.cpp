@@ -657,7 +657,7 @@ QUrl Strigi::NepomukIndexWriter::determineFolderResourceUri( const KUrl& fileUrl
 //         return result["r"].uri();
 //     }
     else {
-        kDebug() << "!!!!!!!!!!!!!!! Could not find resource URI for folder" << fileUrl;
+        kDebug() << "Could not find resource URI for folder (this is not an error)" << fileUrl;
         return QUrl();
     }
 }
