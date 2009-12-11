@@ -186,7 +186,7 @@ void Nepomuk::ServerConfigModule::load()
     foreach( const QString& dir, m_folderModel->includeFolders() + m_folderModel->excludeFolders() ) {
         expandRecursively( m_folderModel->index( dir ), m_viewIndexFolders );
     }
-
+    groupBox->setEnabled(m_checkEnableNepomuk->isChecked());
     recreateStrigiInterface();
     slotUpdateStrigiStatus();
     emit changed(false);
