@@ -41,6 +41,8 @@ Of these, the following codes are likely to be considered for support:
     * SJ Svalbard and Jan Mayen
     * YT Mayotte
 
+The other codes are unlikely to be considered due to lack of population.
+
 HOW TO ADD INFORMATION
 ======================
 First you have to write a file called "entry.desktop". This file will
@@ -55,10 +57,9 @@ To add your information, we need a two letter country code for you country.
 Use http://www.iso.org/iso/country_codes/ or the entities.csv document in
 this folder as a guide.
 
-Now you are done, and you can submit the files to KDE project by
-sending a mail to Hans Petter Bieker <bieker@kde.org>. The files will
-be added in the next release. Please include the country code in the
-mail.
+Now you are done, and you can submit the files to KDE project by adding a wish
+item on bugs.kde.org under Product kdelibs Componant KLocale. The files will be
+added in the next release.
 
 WHAT IS ENTRY.DESKTOP
 =====================
@@ -119,6 +120,11 @@ between the entry name and the value.
 
 	Default: "."
 
+* DecimalPlaces
+    The number of decimal places to display in a formatted number
+
+    Default: 2
+
 * ThousandsSeparator
 	Thousands separator.
 
@@ -135,16 +141,26 @@ between the entry name and the value.
 	Default: 0
 
 
-* CurrencySymbol
-	The symbol of the currency used in the country.
+* CurrencyCode
+    The ISO Code of the primary currency used in the country.
 
-	Default: "$"
+    Default: "USD"
+
+* CurrencyCodesInUse
+    A list of ISO Codes of all the currencies used in the country.
+
+    Default: "USD"
 
 * MonetaryDecimalSymbol
 	The symbol that separates the decimals from the rest of the number
 	when displaying.
 
 	Default: "."
+
+* MonetaryDecimalPlaces
+    The number of decimal places to display in a formatted money amount
+
+    Default: 2
 
 * MonetaryThousandsSeparator
 	Thousands separator for money.
@@ -169,11 +185,6 @@ between the entry name and the value.
 	Negative sign for money.
 
 	Default: "-"
-
-* FracDigits
-	Number fract digits used for money
-
-	Default: 2
 
 * PositivePrefixCurrencySymbol
 	If currency symbol should be prepended (if not, it will be
@@ -308,6 +319,9 @@ between the entry name and the value.
 	hebrew
 	hijri
 	jalali
+    indian-national
+    ethiopian
+    coptic
 
 	Default: gregorian
 
