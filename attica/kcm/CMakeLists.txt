@@ -10,5 +10,5 @@ kde4_add_plugin(kcm_attica ${kcm_attica_PART_SRCS})
 target_link_libraries(kcm_attica ${LIBATTICA_LIBRARIES} ${KDE4_KDEUI_LIBS})
 
 install(TARGETS kcm_attica DESTINATION ${PLUGIN_INSTALL_DIR})
-install(FILES attica.desktop DESTINATION ${SERVICES_INSTALL_DIR})
+install(FILES kcm_attica.desktop DESTINATION ${SERVICES_INSTALL_DIR})
 
