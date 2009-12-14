@@ -31,10 +31,9 @@ macro_log_feature( SLP_FOUND
   "" "Provides SLP support in the network:/ kioslave."
 )
 
-macro_optional_find_package(LibAttica)
-macro_log_feature( LIBATTICA_FOUND
-  "LibAttica" "Library to access Open Collaboration Services" "http://www.freedesktop.org/wiki/Specifications/open-collaboration-services" FALSE
-  "" "Provides KDE integration in LibAttica."
+set(LIBATTICA_MIN_VERSION "0.1.1")
+find_package(LibAttica)
+macro_log_feature(LIBATTICA_FOUND "libattica" "A library to access Open Collaboration Service providers" "http://websvn.kde.org/trunk/kdesupport/attica/" TRUE "" "Required for Get Hot New Stuff."
 )
 
 
