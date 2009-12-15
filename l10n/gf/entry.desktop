@@ -1,0 +1,25 @@
+[KCM Locale]
+Name=French Guiana
+
+Region=southamerica
+Languages=fr
+#DecimalSymbol=,
+#ThousandsSeparator=
+#MonetaryDecimalSymbol=
+#MonetaryThousandsSeparator=
+#PositiveSign=
+#NegativeSign=-
+#PositivePrefixCurrencySymbol=
+#NegativePrefixCurrencySymbol=true
+#PositiveMonetarySignPosition=1
+#NegativeMonetarySignPosition=1
+#DateFormat[??]=
+#DateFormatShort=
+#TimeFormat=
+#WeekStartDay=
+#PageSize=
+#MeasureSystem=
+#DecimalPlaces=2
+#MonetaryDecimalPlaces=2
+CurrencyCodesInUse=EUR
+CurrencyCode=EUR
