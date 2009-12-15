@@ -58,6 +58,15 @@ CrashInformationPage::CrashInformationPage(ReportAssistantDialog * parent)
     layout->setContentsMargins(0,0,0,0);
     layout->addWidget(m_backtraceWidget);
     layout->addSpacing(10); //We need this for better usability until we get something better
+
+    //If the backtrace was already fetched on the main dialog, save it.
+    BacktraceGenerator *btGenerator = DrKonqi::debuggerManager()->backtraceGenerator();
+    if (btGenerator->state() == BacktraceGenerator::Loaded) {
+        BacktraceParser::Usefulness use = btGenerator->parser()->backtraceUsefulness();
+        if (use != BacktraceParser::Useless && use != BacktraceParser::InvalidUsefulness) {
+            reportInterface()->setBacktrace(btGenerator->backtrace());
+        }
+    }
 }
 
 void CrashInformationPage::aboutToShow()
