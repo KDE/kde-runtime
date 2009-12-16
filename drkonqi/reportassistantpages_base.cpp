@@ -99,8 +99,8 @@ bool CrashInformationPage::showNextPage()
     BacktraceParser::Usefulness use =
                     DrKonqi::debuggerManager()->backtraceGenerator()->parser()->backtraceUsefulness();
 
-    if (use == BacktraceParser::InvalidUsefulness || use == BacktraceParser::ProbablyUseless
-            || use == BacktraceParser::Useless) {
+    if ((use == BacktraceParser::InvalidUsefulness || use == BacktraceParser::ProbablyUseless
+            || use == BacktraceParser::Useless) && m_backtraceWidget->canInstallDebugPackages()) {
         if ( KMessageBox::Yes == KMessageBox::questionYesNo(this,
                                 i18nc("@info","This crash information is not useful enough, "
                                               "do you want to try to improve it? You will need "

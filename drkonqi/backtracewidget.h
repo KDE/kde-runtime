@@ -38,6 +38,8 @@ class BacktraceWidget: public QWidget
 public:
     explicit BacktraceWidget(BacktraceGenerator *generator, QWidget *parent = 0);
 
+    bool canInstallDebugPackages() const;
+
 public Q_SLOTS:
     void generateBacktrace();
     void hilightExtraDetailsLabel(bool hilight);
