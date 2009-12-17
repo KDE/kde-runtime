@@ -1,5 +1,11 @@
 [KCM Locale]
 Name=Mayotte
+Name[ca]=Mayotte
+Name[en_GB]=Mayotte
+Name[et]=Mayotte
+Name[pt]=Mayotte
+Name[sv]=Mayotte
+Name[uk]=Майотта
 
 Region=southafrica
 Languages=fr
