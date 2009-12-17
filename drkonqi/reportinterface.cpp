@@ -243,15 +243,19 @@ BugReport ReportInterface::newBugReportTemplate() const
     }
     report.setPriority(QLatin1String("NOR"));
     report.setBugSeverity(QLatin1String("crash"));
-    
-    //Show the backtrace functions on Title
-    QString btFunctions;
-    if (!m_firstBacktraceFunctions.isEmpty()) {
-        btFunctions = QLatin1String(" [") + m_firstBacktraceFunctions.join(", ").trimmed() 
-                                                                            + QLatin1String("]");
+
+    QString title = m_reportTitle;
+
+    //If there are not too much possible duplicates by query then there are more possibilities
+    //that this report is unique. Let's add the backtrace functions to the title
+    if (m_allPossibleDuplicatesByQuery.count() <= 2) {
+        if (!m_firstBacktraceFunctions.isEmpty()) {
+            title += (QLatin1String(" [") + m_firstBacktraceFunctions.join(", ").trimmed()
+                                                                            + QLatin1String("]"));
+        }
     }
     
-    report.setShortDescription(m_reportTitle + btFunctions);
+    report.setShortDescription(title);
     return report;
 }
 
