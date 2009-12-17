@@ -140,6 +140,7 @@ gwenview=imaging
 kaffeine=multimedia
 knetworkmanager=networkmanager
 Skanlite=scanner
+konqueror=filemanagement
 
 #---
 #This section describes several bugzilla products groups.
@@ -156,3 +157,4 @@ multimedia=Phonon|kdemultimedia
 imaging=digikam|digikamimageplugins|kipiplugins
 networkmanager=knetworkmanager|Network Management|solid
 scanner=libksane
+filemanagement=konqueror|dolphin
