@@ -672,24 +672,23 @@ void BugzillaReportInformationDialog::bugFetchFinished(BugReport report, QObject
     }
 }
 
-int BugzillaReportInformationDialog::proceedOnAlreadyClosedReport()
+int BugzillaReportInformationDialog::promptAboutAlreadyClosedReport()
 {
-    //This is WIP
+    KGuiItem sameBugDoNotReportButton;
+    sameBugDoNotReportButton.setText("It is the same bug. Do not file my report (Close).");
+    sameBugDoNotReportButton.setIcon(KIcon("edit-copy"));
+
     KGuiItem userIsNotSureProceedButton;
     userIsNotSureProceedButton.setText("I cannot be sure. Proceed with reporting the bug.");
-    userIsNotSureProceedButton.setIcon(KIcon("dialog-ok-apply"));
-
-    KGuiItem dismissBugReportButton;
-    dismissBugReportButton.setText("It is the same bug. Do not file my report (Close).");
-    dismissBugReportButton.setIcon(KIcon("dialog-close"));
+    userIsNotSureProceedButton.setIcon(KIcon("go-next"));
 
     int ret = KMessageBox::questionYesNoCancel(this,
         i18nc("@info messagebox question. %1 is the close state explanation","This report is marked as "
         "\"closed\" because %1. If you are sure your crash is the same, then adding further details "
         "or creating a new report will be useless and will waste developers' time. "
         "Can you be sure this is the same as your crash?", m_closedStateString),
-        i18nc("@title:window", "This report is already closed"), userIsNotSureProceedButton,
-        dismissBugReportButton, KStandardGuiItem::cancel(), QString(),
+        i18nc("@title:window", "This report is already closed"), sameBugDoNotReportButton,
+                   userIsNotSureProceedButton, KStandardGuiItem::cancel(), QString(),
                                                KMessageBox::Dangerous | KMessageBox::Notify);
 
     return ret;
@@ -698,8 +697,8 @@ int BugzillaReportInformationDialog::proceedOnAlreadyClosedReport()
 void BugzillaReportInformationDialog::mayBeDuplicateClicked()
 {
     if (!m_closedStateString.isEmpty()) {
-        int ret = proceedOnAlreadyClosedReport();
-        if (ret == KMessageBox::No) {
+        int ret = promptAboutAlreadyClosedReport();
+        if (ret == KMessageBox::Yes) { // "Same bug report, close"
             //Ask to close the report assistant dialog
             hide();
             m_parent->assistant()->close();
@@ -715,8 +714,8 @@ void BugzillaReportInformationDialog::mayBeDuplicateClicked()
 void BugzillaReportInformationDialog::attachToBugReportClicked()
 {
     if (!m_closedStateString.isEmpty()) {
-        int ret = proceedOnAlreadyClosedReport();
-        if (ret == KMessageBox::No) {
+        int ret = promptAboutAlreadyClosedReport();
+        if (ret == KMessageBox::Yes) { // "Same bug report, close"
             //Ask to close the report assistant dialog
             hide();
             m_parent->assistant()->close();
