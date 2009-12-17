@@ -171,15 +171,15 @@ void PhononServer::findVirtualDevices()
         nextHint.name = QString::fromUtf8(x);
         free(x);
 
-        if (nextHint.name.startsWith("front:") ||
+        if (nextHint.name.startsWith(QLatin1String("front:")) ||
                 /*nextHint.name.startsWith("rear:") ||
                 nextHint.name.startsWith("center_lfe:") ||*/
-                nextHint.name.startsWith("surround40:") ||
-                nextHint.name.startsWith("surround41:") ||
-                nextHint.name.startsWith("surround50:") ||
-                nextHint.name.startsWith("surround51:") ||
-                nextHint.name.startsWith("surround71:") ||
-                nextHint.name.startsWith("default:") ||
+                nextHint.name.startsWith(QLatin1String("surround40:")) ||
+                nextHint.name.startsWith(QLatin1String("surround41:")) ||
+                nextHint.name.startsWith(QLatin1String("surround50:")) ||
+                nextHint.name.startsWith(QLatin1String("surround51:")) ||
+                nextHint.name.startsWith(QLatin1String("surround71:")) ||
+                nextHint.name.startsWith(QLatin1String("default:")) ||
                 nextHint.name == "null"
                 ) {
             continue;
@@ -202,21 +202,21 @@ void PhononServer::findVirtualDevices()
         const QString &description = deviceHint.description;
         const QString &uniqueId = description;
         //const QString &udi = alsaDeviceName;
-        const QStringList &lines = description.split("\n");
+        const QStringList &lines = description.split('\n');
         bool isAdvanced = false;
         QString cardName = lines.first();
         if (lines.size() > 1) {
             cardName = i18nc("%1 is the sound card name, %2 is the description in case it exists", "%1 (%2)", cardName, lines[1]);
         }
-        if (alsaDeviceName.startsWith("front:") ||
-                alsaDeviceName.startsWith("rear:") ||
-                alsaDeviceName.startsWith("center_lfe:") ||
-                alsaDeviceName.startsWith("surround40:") ||
-                alsaDeviceName.startsWith("surround41:") ||
-                alsaDeviceName.startsWith("surround50:") ||
-                alsaDeviceName.startsWith("surround51:") ||
-                alsaDeviceName.startsWith("surround71:") ||
-                alsaDeviceName.startsWith("iec958:")) {
+        if (alsaDeviceName.startsWith(QLatin1String("front:")) ||
+                alsaDeviceName.startsWith(QLatin1String("rear:")) ||
+                alsaDeviceName.startsWith(QLatin1String("center_lfe:")) ||
+                alsaDeviceName.startsWith(QLatin1String("surround40:")) ||
+                alsaDeviceName.startsWith(QLatin1String("surround41:")) ||
+                alsaDeviceName.startsWith(QLatin1String("surround50:")) ||
+                alsaDeviceName.startsWith(QLatin1String("surround51:")) ||
+                alsaDeviceName.startsWith(QLatin1String("surround71:")) ||
+                alsaDeviceName.startsWith(QLatin1String("iec958:"))) {
             isAdvanced = true;
         }
 

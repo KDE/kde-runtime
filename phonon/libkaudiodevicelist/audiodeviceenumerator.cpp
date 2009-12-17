@@ -176,12 +176,12 @@ void AudioDeviceEnumeratorPrivate::findVirtualDevices()
         if (/*nextHint.name.startsWith("front:") ||
                 nextHint.name.startsWith("rear:") ||
                 nextHint.name.startsWith("center_lfe:") ||*/
-                nextHint.name.startsWith("surround40:") ||
-                nextHint.name.startsWith("surround41:") ||
-                nextHint.name.startsWith("surround50:") ||
-                nextHint.name.startsWith("surround51:") ||
-                nextHint.name.startsWith("surround71:") ||
-                nextHint.name.startsWith("default:") ||
+                nextHint.name.startsWith(QLatin1String("surround40:")) ||
+                nextHint.name.startsWith(QLatin1String("surround41:")) ||
+                nextHint.name.startsWith(QLatin1String("surround50:")) ||
+                nextHint.name.startsWith(QLatin1String("surround51:")) ||
+                nextHint.name.startsWith(QLatin1String("surround71:")) ||
+                nextHint.name.startsWith(QLatin1String("default:")) ||
                 nextHint.name == "null"
                 ) {
             continue;

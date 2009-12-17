@@ -324,7 +324,7 @@ AudioDevice::AudioDevice(KConfigGroup &deviceGroup)
     d->uniqueId = groupName.mid(groupName.indexOf(QLatin1Char('_')) + 1);
     d->udi = deviceGroup.readEntry("udi", d->udi);
     kDebug(603) << groupName << d->uniqueId;
-    if (d->uniqueId.startsWith("/org/freedesktop/Hal/devices/")) {
+    if (d->uniqueId.startsWith(QLatin1String("/org/freedesktop/Hal/devices/"))) {
         // old invalid group
         d->valid = false;
         return;
@@ -351,20 +351,20 @@ AudioDevice::AudioDevice(const QString &alsaDeviceName, const QString &descripti
     d->udi = alsaDeviceName;
     d->driver = Solid::AudioInterface::Alsa;
     d->deviceIds << alsaDeviceName;
-    QStringList lines = description.split("\n");
+    QStringList lines = description.split('\n');
     d->cardName = lines.first();
     if (lines.size() > 1) {
         d->cardName = i18n("%1 (%2)", d->cardName, lines[1]);
     }
-    if (alsaDeviceName.startsWith("front:") ||
-            alsaDeviceName.startsWith("rear:") ||
-            alsaDeviceName.startsWith("center_lfe:") ||
-            alsaDeviceName.startsWith("surround40:") ||
-            alsaDeviceName.startsWith("surround41:") ||
-            alsaDeviceName.startsWith("surround50:") ||
-            alsaDeviceName.startsWith("surround51:") ||
-            alsaDeviceName.startsWith("surround71:") ||
-            alsaDeviceName.startsWith("iec958:")) {
+    if (alsaDeviceName.startsWith(QLatin1String("front:")) ||
+            alsaDeviceName.startsWith(QLatin1String("rear:")) ||
+            alsaDeviceName.startsWith(QLatin1String("center_lfe:")) ||
+            alsaDeviceName.startsWith(QLatin1String("surround40:")) ||
+            alsaDeviceName.startsWith(QLatin1String("surround41:")) ||
+            alsaDeviceName.startsWith(QLatin1String("surround50:")) ||
+            alsaDeviceName.startsWith(QLatin1String("surround51:")) ||
+            alsaDeviceName.startsWith(QLatin1String("surround71:")) ||
+            alsaDeviceName.startsWith(QLatin1String("iec958:"))) {
         d->isAdvanced = true;
     }
 

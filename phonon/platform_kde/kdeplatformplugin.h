@@ -17,8 +17,8 @@
 
 */
 
-#ifndef PHONON_KDEPLUGINFACTORY_H
-#define PHONON_KDEPLUGINFACTORY_H
+#ifndef PHONON_KDEPLATFORMPLUGIN_H
+#define PHONON_KDEPLATFORMPLUGIN_H
 
 #include <phonon/platformplugin.h>
 #include <phonon/objectdescription.h>
@@ -67,4 +67,4 @@ class KdePlatformPlugin : public QObject, public PlatformPlugin
 
 } // namespace Phonon
 
-#endif // PHONON_KDEPLUGINFACTORY_H
+#endif // PHONON_KDEPLATFORMPLUGIN_H
