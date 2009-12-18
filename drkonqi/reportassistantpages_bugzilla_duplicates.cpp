@@ -260,7 +260,7 @@ void BugzillaDuplicatesPage::markAsSearching(bool searching)
 
 bool BugzillaDuplicatesPage::canSearchMore()
 {
-    return (m_startDate.year() >= 2002);
+    return (m_startDate.year() >= 2007);
 }
 
 void BugzillaDuplicatesPage::searchFinished(const BugMapList & list)
