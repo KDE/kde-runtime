@@ -3,10 +3,16 @@ Name=French Guiana
 Name[ca]=Guaiana Francesa
 Name[en_GB]=French Guiana
 Name[et]=Prantsuse Guajaana
+Name[eu]=Guiana Frantziarra
+Name[fy]=Frânsk Guiana
+Name[hu]=Francia Guyana
+Name[id]=Guyana Perancis
 Name[pt]=Guiana Francesa
+Name[pt_BR]=Guiana Francesa
 Name[sv]=Franska Guyana
 Name[uk]=Французька Гвіана
 Name[x-test]=xxFrench Guianaxx
+Name[zh_TW]=法屬圭亞那
 
 Region=southamerica
 Languages=fr
