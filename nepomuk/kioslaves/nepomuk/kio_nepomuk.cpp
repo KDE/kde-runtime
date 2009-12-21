@@ -253,7 +253,7 @@ void Nepomuk::NepomukProtocol::get( const KUrl& url )
 
     kDebug() << url;
 
-    if ( !redirectUrl( url, true ) ) {
+    if ( !redirectUrl( url, Get ) ) {
         // TODO: call the share service for remote files (KDE 4.5)
 
         mimeType( "text/html" );
@@ -290,7 +290,7 @@ void Nepomuk::NepomukProtocol::stat( const KUrl& url )
 
     kDebug() << url;
 
-    if ( !redirectUrl( url ) ) {
+    if ( !redirectUrl( url, Stat ) ) {
         Nepomuk::Resource res( url );
 
         if ( !res.exists() ) {
@@ -372,6 +372,12 @@ void Nepomuk::NepomukProtocol::stat( const KUrl& url )
             uds.insert( KIO::UDSEntry::UDS_FILE_TYPE, S_IFDIR );
         }
 
+        // special case: tags cannot be redirected in stat, thus we need to use UDS_URL here
+        if ( res.hasType( Soprano::Vocabulary::NAO::Tag() ) ) {
+            Query::ComparisonTerm term( Soprano::Vocabulary::NAO::hasTag(), Query::ResourceTerm( res ), Query::ComparisonTerm::Equal );
+            uds.insert( KIO::UDSEntry::UDS_URL, Query::Query( term ).toSearchUrl().url() );
+        }
+
         statEntry( uds );
         finished();
     }
@@ -435,7 +441,7 @@ void Nepomuk::NepomukProtocol::del(const KUrl& url, bool isFile)
 }
 
 
-bool Nepomuk::NepomukProtocol::redirectUrl( const KUrl& url, bool isGet )
+bool Nepomuk::NepomukProtocol::redirectUrl( const KUrl& url, Operation op )
 {
     QString filename;
     Nepomuk::Resource res = splitNepomukUrl( url, filename );
@@ -454,21 +460,26 @@ bool Nepomuk::NepomukProtocol::redirectUrl( const KUrl& url, bool isGet )
         }
     }
 
-    if ( res.hasType( Soprano::Vocabulary::NAO::Tag() ) ) {
+    //
+    // Do not redirect Tags and Filesystems on stat. Otherwise they will show up as "Query Results" which is
+    // rather unintuitive
+    //
+    if ( op != Stat && res.hasType( Soprano::Vocabulary::NAO::Tag() ) ) {
         Query::ComparisonTerm term( Soprano::Vocabulary::NAO::hasTag(), Query::ResourceTerm( res ), Query::ComparisonTerm::Equal );
         newURL = Query::Query( term ).toSearchUrl().url();
     }
-    else if ( res.hasType( Nepomuk::Vocabulary::NFO::Filesystem() ) ) {
+    else if ( op != Stat && res.hasType( Nepomuk::Vocabulary::NFO::Filesystem() ) ) {
         newURL = determineFilesystemPath( res );
         kDebug() << "Rewriting filesystem URL" << url << "to" << newURL;
     }
+
     else if ( isLocalFile( res ) ) {
         newURL = res.property( Vocabulary::NIE::url() ).toUrl();
     }
     else if ( isRemovableMediaFile( res ) ) {
         KUrl removableMediaUrl = res.property( Nepomuk::Vocabulary::NIE::url() ).toUrl();
-        newURL = convertRemovableMediaFileUrl( res.property( Nepomuk::Vocabulary::NIE::url() ).toUrl(), isGet );
-        if ( !newURL.isValid() && isGet ) {
+        newURL = convertRemovableMediaFileUrl( res.property( Nepomuk::Vocabulary::NIE::url() ).toUrl(), op == Get );
+        if ( !newURL.isValid() && op == Get ) {
             error( KIO::ERR_SLAVE_DEFINED,
                    i18nc( "@info", "Please insert the removable medium <resource>%1</resource> to access this file.",
                           getFileSystemLabelForRemovableMediaFileUrl( removableMediaUrl ) ) );

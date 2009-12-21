@@ -31,8 +31,13 @@ namespace Nepomuk {
         void del(const KUrl&, bool);
 
     private:
+        enum Operation {
+            Get,
+            Stat,
+            Other
+        };
         bool ensureNepomukRunning();
-        bool redirectUrl( const KUrl& url, bool isGet = false );
+        bool redirectUrl( const KUrl& url, Operation op = Other );
     };
 }
 
