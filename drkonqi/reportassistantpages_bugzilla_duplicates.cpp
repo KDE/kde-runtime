@@ -91,6 +91,7 @@ BugzillaDuplicatesPage::BugzillaDuplicatesPage(ReportAssistantDialog * parent):
                                                    KIcon("process-stop"),
                                                    i18nc("@info:tooltip", "Use this button to stop "
                                                    "the current search.")));
+    ui.m_stopSearchButton->setText(QString()); //FIXME 
     connect(ui.m_stopSearchButton, SIGNAL(clicked()), this, SLOT(stopCurrentSearch()));
     
     //Possible duplicates list and buttons
@@ -248,9 +249,12 @@ void BugzillaDuplicatesPage::markAsSearching(bool searching)
     ui.m_stopSearchButton->setVisible(searching);
     
     ui.m_selectedDuplicatesList->setEnabled(!searching);
+    ui.m_selectedPossibleDuplicatesLabel->setEnabled(!searching);
     ui.m_removeSelectedDuplicateButton->setEnabled(!searching && 
                                         !ui.m_selectedDuplicatesList->selectedItems().isEmpty());
-    
+
+    ui.m_attachToReportLabel->setEnabled(!searching);
+
     if (!searching) {
         itemSelectionChanged();
     } else {
