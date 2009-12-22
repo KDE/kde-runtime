@@ -135,11 +135,13 @@ Nepomuk::TimelineProtocol::~TimelineProtocol()
 
 void Nepomuk::TimelineProtocol::listDir( const KUrl& url )
 {
+    QString path = url.path(KUrl::RemoveTrailingSlash);
     kDebug() << url;
+
     //
     // list root path
     //
-    if( url.path() == QLatin1String("/") ) {
+    if( path.isEmpty() || path == QLatin1String( "/" ) ) {
         listEntry( createFolderUDSEntry( QLatin1String("today"), i18n("Today"), QDate::currentDate() ), false );
         listEntry( createFolderUDSEntry( QLatin1String("calendar"), i18n("Calendar"), QDate::currentDate() ), false );
         listEntry( KIO::UDSEntry(), true );
@@ -149,8 +151,9 @@ void Nepomuk::TimelineProtocol::listDir( const KUrl& url )
     //
     // list calendar entry
     //
-    else if( url.path().startsWith( QLatin1String("/calendar") ) ) {
-        QString ru( url.path().mid( 9 ) );
+    else if( path.startsWith( QLatin1String("/calendar") ) ) {
+        QString ru( path.mid( 9 ) );
+
         if( ru.isEmpty() ) {
             listThisYearsMonths();
             // TODO: add entry for previous years
@@ -161,6 +164,7 @@ void Nepomuk::TimelineProtocol::listDir( const KUrl& url )
             kDebug() << ru << url.query();
             QStringList terms = ru.split('/', QString::SkipEmptyParts );
             kDebug() << terms;
+
             if( terms.count() == 1 ) {
                 QDate date = QDate::fromString( terms[0], QLatin1String("yyyy-MM") );
                 QDate newDate = date;
@@ -297,8 +301,10 @@ void Nepomuk::TimelineProtocol::mimetype( const KUrl& url )
 
 void Nepomuk::TimelineProtocol::stat( const KUrl& url )
 {
+    QString path = url.path(KUrl::RemoveTrailingSlash);
     kDebug() << url;
-    if( url.path() == QLatin1String("/") ) {
+
+    if( path.isEmpty() || path == QLatin1String("/") ) {
         KIO::UDSEntry uds;
         uds.insert( KIO::UDSEntry::UDS_NAME, QString::fromLatin1( "/" ) );
         uds.insert( KIO::UDSEntry::UDS_ICON_NAME, QString::fromLatin1( "nepomuk" ) );
@@ -307,26 +313,26 @@ void Nepomuk::TimelineProtocol::stat( const KUrl& url )
         statEntry( uds );
         finished();
     }
-    else if ( url.path() == QLatin1String( "/today" ) ) {
+    else if( path == QLatin1String( "/today" ) ) {
         statEntry( createFolderUDSEntry( QLatin1String("today"), i18n("Today"), QDate::currentDate() ) );
         finished();
     }
-    else if ( url.path() == QLatin1String( "/calendar" ) ) {
+    else if( path == QLatin1String( "/calendar" ) ) {
         statEntry( createFolderUDSEntry( QLatin1String("calendar"), i18n("Calendar"), QDate::currentDate() ) );
         finished();
     }
     else {
         // path: /calendar/YYYY-MM
-        if ( url.path().length() == 17 ) {
-            QString dateString = url.path().section('/', -1, -1, QString::SectionSkipEmpty );
+        if ( path.length() == 17 ) {
+            QString dateString = path.section('/', -1, -1, QString::SectionSkipEmpty );
             QDate date = QDate::fromString( dateString, QLatin1String("yyyy-MM") );
             statEntry( createMonthUDSEntry( date.month(), date.year() ) );
             finished();
         }
 
         // path: /calendar/YYYY-MM/YYYY-MM-DD
-        else if ( url.path().length() == 28 ) {
-            QString dateString = url.path().section('/', -1, -1, QString::SectionSkipEmpty );
+        else if ( path.length() == 28 ) {
+            QString dateString = path.section('/', -1, -1, QString::SectionSkipEmpty );
             QDate date = QDate::fromString( dateString, "yyyy-MM-dd" );
             statEntry( createDayUDSEntry( date ) );
             finished();
@@ -341,7 +347,7 @@ void Nepomuk::TimelineProtocol::stat( const KUrl& url )
 // only used for the queries
 bool Nepomuk::TimelineProtocol::rewriteUrl( const KUrl& url, KUrl& newURL )
 {
-    if( url.path() == QLatin1String("/today") ) {
+    if( url.path(KUrl::RemoveTrailingSlash) == QLatin1String( "/today" ) ) {
         newURL = buildQueryUrl( QDate::currentDate() );
         kDebug() << url << newURL;
         return true;
@@ -409,7 +415,7 @@ extern "C"
         KComponentData( "kio_timeline" );
         QCoreApplication app( argc, argv );
 
-        kDebug(7102) << "Starting tags slave " << getpid();
+        kDebug(7102) << "Starting timeline slave " << getpid();
 
         if (argc != 4) {
             kError() << "Usage: kio_timeline protocol domain-socket1 domain-socket2";
