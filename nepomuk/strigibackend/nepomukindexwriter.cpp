@@ -365,8 +365,16 @@ void Strigi::NepomukIndexWriter::startAnalysis( const AnalysisResult* idx )
     // However, when updating data from pre-KDE 4.4 times we want to get rid of old file:/ resource
     // URIs. However, we can only do that if we were the only ones to write info about that file
     // Thus, we need to use Nepomuk::Resource again
-    if ( data->resourceUri.scheme() == QLatin1String( "file" ) )
+    if ( data->resourceUri.scheme() == QLatin1String( "file" ) ) {
+        // we need to clear the ResourceManager cache. Otherwise the bug/shortcoming in libnepomuk will
+        // always get us back to the cached file:/ URI
+        Nepomuk::ResourceManager::instance()->clearCache();
         data->resourceUri = Nepomuk::Resource( data->fileUrl ).resourceUri();
+    }
+
+    // create a new resource URI for non-existing file resources
+    if ( data->resourceUri.isEmpty() )
+        data->resourceUri = Nepomuk::ResourceManager::instance()->generateUniqueUri( QString() );
 
     // store initial data to make sure newly created URIs are reused directly by libnepomuk
     data->storeBasicData( d->repository );
