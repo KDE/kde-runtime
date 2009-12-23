@@ -91,7 +91,7 @@ void Nepomuk::StatusWidget::slotUpdateStoreStatus()
         // ========================================
         Soprano::Util::AsyncQuery* query
             = Soprano::Util::AsyncQuery::executeQuery( m_model,
-                                                       QLatin1String( "select count(?r) where { ?r a nfo:FileDataObject . }" ),
+                                                       QLatin1String( "select count(distinct ?r) where { ?r a nfo:FileDataObject . }" ),
                                                        Soprano::Query::QueryLanguageSparql );
         connect( query, SIGNAL( nextReady(Soprano::Util::AsyncQuery*) ), this, SLOT( slotFileCountFinished(Soprano::Util::AsyncQuery*) ) );
     }
