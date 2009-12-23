@@ -31,6 +31,10 @@ namespace Soprano {
     }
 }
 
+namespace KInotify {
+    class DirWatch;
+}
+
 class KUrl;
 
 namespace Nepomuk {
@@ -56,6 +60,10 @@ namespace Nepomuk {
 
     private:
         MetadataMover* m_metadataMover;
+
+#ifndef Q_WS_WIN
+        KInotify::DirWatch* m_dirWatch;
+#endif
     };
 }
 

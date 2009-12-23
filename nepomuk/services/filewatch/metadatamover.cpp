@@ -22,6 +22,7 @@
 #include <QtCore/QDir>
 #include <QtCore/QRegExp>
 #include <QtCore/QFileInfo>
+#include <QtCore/QTimer>
 
 #include <Soprano/Model>
 #include <Soprano/StatementIterator>
@@ -48,6 +49,10 @@ Nepomuk::MetadataMover::MetadataMover( Soprano::Model* model, QObject* parent )
       m_model( model ),
       m_strigiParentUrlUri( "http://strigi.sf.net/ontologies/0.9#parentUrl" )
 {
+    QTimer* timer = new QTimer( this );
+    connect( timer, SIGNAL( timeout() ), this, SLOT( slotClearRecentlyFinishedRequests() ) );
+    timer->setInterval( 30000 );
+    timer->start();
 }
 
 
@@ -66,7 +71,10 @@ void Nepomuk::MetadataMover::stop()
 void Nepomuk::MetadataMover::moveFileMetadata( const KUrl& from, const KUrl& to )
 {
     m_queueMutex.lock();
-    m_updateQueue.enqueue( qMakePair( from, to ) );
+    UpdateRequest req( from, to );
+    if ( !m_updateQueue.contains( req ) &&
+         !m_recentlyFinishedRequests.contains( req ) )
+        m_updateQueue.enqueue( req );
     m_queueMutex.unlock();
     m_queueWaiter.wakeAll();
 }
@@ -75,7 +83,10 @@ void Nepomuk::MetadataMover::moveFileMetadata( const KUrl& from, const KUrl& to 
 void Nepomuk::MetadataMover::removeFileMetadata( const KUrl& file )
 {
     m_queueMutex.lock();
-    m_updateQueue.enqueue( qMakePair( file, KUrl() ) );
+    UpdateRequest req( file );
+    if ( !m_updateQueue.contains( req ) &&
+         !m_recentlyFinishedRequests.contains( req ) )
+        m_updateQueue.enqueue( req );
     m_queueMutex.unlock();
     m_queueWaiter.wakeAll();
 }
@@ -84,8 +95,12 @@ void Nepomuk::MetadataMover::removeFileMetadata( const KUrl& file )
 void Nepomuk::MetadataMover::removeFileMetadata( const KUrl::List& files )
 {
     m_queueMutex.lock();
-    foreach( const KUrl& file, files )
-        m_updateQueue.enqueue( qMakePair( file, KUrl() ) );
+    foreach( const KUrl& file, files ) {
+        UpdateRequest req( file );
+        if ( !m_updateQueue.contains( req ) &&
+             !m_recentlyFinishedRequests.contains( req ) )
+            m_updateQueue.enqueue( req );
+    }
     m_queueMutex.unlock();
     m_queueWaiter.wakeAll();
 }
@@ -102,19 +117,32 @@ void Nepomuk::MetadataMover::run()
 
         // work the queue
         while( !m_updateQueue.isEmpty() ) {
-            QPair<KUrl, KUrl> updateData = m_updateQueue.dequeue();
+            UpdateRequest updateRequest = m_updateQueue.dequeue();
+            m_recentlyFinishedRequests.insert( updateRequest );
 
             // unlock after queue utilization
             m_queueMutex.unlock();
 
+            kDebug() << "========================= handling" << updateRequest.source() << updateRequest.target();
+
+            //
+            // IMPORTANT: clear the ResourceManager cache since otherwise the following will happen
+            // (see also ResourceData::invalidateCache):
+            // We update the nie:url for resource X. Afterwards we get a fileDeleted event for the
+            // old URL. That one is still in the ResourceManager cache and will bring us directly
+            // to resource X. As a result we will delete all its metadata.
+            // This is a bug in ResourceManager for which I (trueg) have not found a good solution yet.
+            //
+            ResourceManager::instance()->clearCache();
+
             // an empty second url means deletion
-            if( updateData.second.isEmpty() ) {
-                KUrl url = updateData.first;
+            if( updateRequest.target().isEmpty() ) {
+                KUrl url = updateRequest.source();
                 removeMetadata( url );
             }
             else {
-                KUrl from = updateData.first;
-                KUrl to = updateData.second;
+                KUrl from = updateRequest.source();
+                KUrl to = updateRequest.target();
 
                 // We do NOT get deleted messages for overwritten files! Thus, we
                 // have to remove all metadata for overwritten files first.
@@ -123,6 +151,8 @@ void Nepomuk::MetadataMover::run()
                 // and finally update the old statements
                 updateMetadata( from, to );
             }
+
+            kDebug() << "========================= done with" << updateRequest.source() << updateRequest.target();
 
             // lock for next iteration
             m_queueMutex.lock();
@@ -266,6 +296,23 @@ QUrl Nepomuk::MetadataMover::updateLegacyMetadata( const QUrl& oldResourceUri )
     kDebug() << "->" << newResourceUri;
 
     return newResourceUri;
+}
+
+
+// removes all finished requests older than 1 minute
+void Nepomuk::MetadataMover::slotClearRecentlyFinishedRequests()
+{
+    QMutexLocker lock( &m_queueMutex );
+    QSet<UpdateRequest>::iterator it = m_recentlyFinishedRequests.begin();
+    while ( it != m_recentlyFinishedRequests.end() ) {
+        const UpdateRequest& req = *it;
+        if ( req.timestamp().secsTo( QDateTime::currentDateTime() ) > 60 ) {
+            it = m_recentlyFinishedRequests.erase( it );
+        }
+        else {
+            ++it;
+        }
+    }
 }
 
 #include "metadatamover.moc"

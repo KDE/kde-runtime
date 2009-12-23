@@ -23,9 +23,12 @@
 #include <QtCore/QMutex>
 #include <QtCore/QWaitCondition>
 #include <QtCore/QQueue>
-#include <QtCore/QPair>
+#include <QtCore/QSet>
+#include <QtCore/QDateTime>
 
 #include <KUrl>
+
+#include "updaterequest.h"
 
 namespace Soprano {
     class Model;
@@ -46,6 +49,9 @@ namespace Nepomuk {
         void removeFileMetadata( const KUrl::List& files );
 
         void stop();
+
+    private Q_SLOTS:
+        void slotClearRecentlyFinishedRequests();
 
     private:
         void run();
@@ -74,14 +80,23 @@ namespace Nepomuk {
         QUrl updateLegacyMetadata( const QUrl& oldResourceUri );
 
         // if the second url is empty, just delete the metadata
-        QQueue<QPair<KUrl, KUrl> > m_updateQueue;
+        QQueue<UpdateRequest> m_updateQueue;
+
+        // we use several systems to watch for file operations.
+        // Thus, we can get the same request more than once. We then
+        // need a way to determine if we have already handled it.
+        // (otherwise we would remove the previously moved data.)
+        // The only way to do that is to keep a list of all requests
+        // that have been handled in the last N seconds.
+        QSet<UpdateRequest> m_recentlyFinishedRequests;
+
         QMutex m_queueMutex;
         QWaitCondition m_queueWaiter;
         bool m_stopped;
 
         Soprano::Model* m_model;
 
-        QUrl m_strigiParentUrlUri;
+        const QUrl m_strigiParentUrlUri;
     };
 }
 

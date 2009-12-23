@@ -15,6 +15,7 @@ include_directories(
 set(SRCS
   nepomukfilewatch.cpp
   metadatamover.cpp
+  updaterequest.cpp
   )
 
 soprano_add_ontology(SRCS

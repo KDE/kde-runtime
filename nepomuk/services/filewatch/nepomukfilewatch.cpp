@@ -19,6 +19,7 @@
 #include "nepomukfilewatch.h"
 #include "metadatamover.h"
 
+#include <QtCore/QDir>
 #include <QtDBus/QDBusConnection>
 
 #include <KDebug>
