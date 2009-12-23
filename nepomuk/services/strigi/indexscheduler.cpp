@@ -193,9 +193,6 @@ void Nepomuk::IndexScheduler::run()
     setPriority( QThread::IdlePriority );
 
     // initialization
-    m_suspended = false;
-    m_stopped = false;
-    m_analyzerConfig->setStop( false );
     readConfig();
 
     Strigi::StreamAnalyzer analyzer( *m_analyzerConfig );
@@ -236,6 +233,11 @@ void Nepomuk::IndexScheduler::run()
     }
 
     setIndexingStarted( false );
+
+    // reset state
+    m_suspended = false;
+    m_stopped = false;
+    m_analyzerConfig->setStop( false );
 }
 
 
