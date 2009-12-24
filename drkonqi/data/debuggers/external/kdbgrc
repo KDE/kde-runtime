@@ -35,6 +35,7 @@ Name[tr]=kdbg
 Name[uk]=kdbg
 Name[wa]=kdbg
 Name[x-test]=xxkdbgxx
+Name[zh_CN]=kdbg
 Name[zh_TW]=kdbg
 TryExec=kdbg
 Backends=KCrash

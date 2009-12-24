@@ -82,6 +82,7 @@ Name[tr]=kglobalaccel
 Name[uk]=kglobalaccel
 Name[wa]=kglobalaccel
 Name[x-test]=xxkglobalaccelxx
+Name[zh_CN]=kglobalaccel
 Name[zh_TW]=kglobalaccel
 
 [Context/Application]
@@ -275,6 +276,7 @@ Comment[tr]=Bir uygulama yeni bir genel kısayol kaydetti.
 Comment[uk]=Програма зареєструвала нові загальні скорочення.
 Comment[wa]=On programe a eredjistré des noveas rascourtis globås.
 Comment[x-test]=xxAn application registered new global shortcuts.xx
+Comment[zh_CN]=用于注册新全局快捷键的应用程序。
 Comment[zh_TW]=一個應用程式註冊了新的全域捷徑
 Contexts=Application
 Action=Popup
@@ -354,6 +356,7 @@ Comment[sv]=Användaren aktiverade en global snabbtangent
 Comment[tr]=Kullanıcı bir genel kısayolu tetikledi
 Comment[uk]=Користувач використав загальне скорочення
 Comment[x-test]=xxThe user triggered a global shortcutxx
+Comment[zh_CN]=用户触发了一个全局快捷键
 Comment[zh_TW]=使用者觸發了一個全域捷徑
 Contexts=Application
 Action=
