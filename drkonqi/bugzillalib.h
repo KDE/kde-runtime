@@ -222,7 +222,7 @@ public:
     
     void sendReport(BugReport);
     
-    void attachTextToReport(const QString &, const QString &, const QString &, uint);
+    void attachTextToReport(const QString &, const QString &, const QString &, uint, const QString &);
 
     void addMeToCC(int);
 
@@ -292,7 +292,8 @@ public:
     
     void attachFile(const QString & url, const QString & description);
     void attachRawData(const QByteArray & data, const QString & filename, 
-                    const QString & mimeType, const QString & description);
+                    const QString & mimeType, const QString & description,
+                    const QString & comment = QString());
     
 private:
     void addPostField(const QString & name, const QString & value);

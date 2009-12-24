@@ -170,10 +170,10 @@ void BugzillaManager::sendReport(BugReport report)
 }
 
 void BugzillaManager::attachTextToReport(const QString & text, const QString & filename, 
-    const QString & description, uint bug)
+    const QString & description, uint bug, const QString & comment)
 {
     BugzillaUploadData request(bug);
-    request.attachRawData(text.toUtf8(), filename, "text/plain", description);
+    request.attachRawData(text.toUtf8(), filename, "text/plain", description, comment);
 
     attachToReport(request.postData(), request.boundary());
 }
@@ -561,7 +561,7 @@ void BugzillaManager::delayedCheckVersionJobFinished(KJob * job)
 }
 //END Slots to handle KJob::finished
 
-//END Private helper methods
+//BEGIN Private helper methods
 void BugzillaManager::attachToReport(const QByteArray & data, const QByteArray & boundary)
 {
     KIO::Job * attachJob =
@@ -742,12 +742,13 @@ void BugzillaUploadData::attachFile(const QString & url, const QString & descrip
 }
 
 void BugzillaUploadData::attachRawData(const QByteArray & data, const QString & filename,
-    const QString & mimeType, const QString & description)
+    const QString & mimeType, const QString & description, const QString & comment)
 {
     addPostField("bugid", QString::number(m_bugNumber));
     addPostField("action", "insert");
     addPostData("data", data, mimeType, filename);
     addPostField("description", description);
+    addPostField("comment", comment);
     addPostField("contenttypemethod", "manual");
     addPostField("contenttypeselection", "text/plain"); //Needed?
     addPostField("contenttypeentry", mimeType);
