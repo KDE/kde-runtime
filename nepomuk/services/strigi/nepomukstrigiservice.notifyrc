@@ -30,6 +30,7 @@ Comment[sv]=Söktjänst filindexering
 Comment[tr]=Arama servisi dosya indeksleyici
 Comment[uk]=Індексування файлів служби пошуку
 Comment[x-test]=xxSearch service file indexerxx
+Comment[zh_CN]=搜索服务文件索引器
 Comment[zh_TW]=搜尋服務檔案索引
 
 [Event/initialIndexingStarted]
@@ -134,6 +135,7 @@ Comment[sv]=Indexering av lokala filer för snabb sökning har startat.
 Comment[tr]=Hızlı arama için yerel dosyaların indekslenme işlemi başlatıldı.
 Comment[uk]=Розпочато індексування локальних файлів для пришвидшення пошуку.
 Comment[x-test]=xxIndexing of local files for fast searches has started.xx
+Comment[zh_CN]=本地文件索引已经开始。
 Comment[zh_TW]=已開始製作本地檔案的快速搜尋索引。
 Action=Popup
 
@@ -237,6 +239,7 @@ Comment[sv]=Den inledande indexeringen av lokala filer för snabb skrivbordssök
 Comment[tr]=Hızlı masaüstü araması için yerel dosyaların temel indeksleme işlemi tamamlandı.
 Comment[uk]=Початкове індексування локальних файлів для пришвидшення стільничного пошуку завершено.
 Comment[x-test]=xxThe initial indexing of local files for fast desktop searches has completed.xx
+Comment[zh_CN]=Strigi 对本地文件的索引初始化工作已完成。
 Comment[zh_TW]=已完成初始化本地檔案的快速桌面搜尋索引。
 Action=Popup
 
@@ -340,6 +343,7 @@ Comment[sv]=Filindexering har tillfälligt stoppats av söktjänsten.
 Comment[tr]=Dosya indeksleyici arama servisi tarafından durduruldu.
 Comment[uk]=Індексування файлів було призупинено службою пошуку.
 Comment[x-test]=xxFile indexing has been suspended by the search service.xx
+Comment[zh_CN]=Strigi 文件索引操作已经被搜索服务中断。
 Comment[zh_TW]=檔案索引已被暫停。
 Action=Popup
 
@@ -444,5 +448,6 @@ Comment[sv]=Filindexering har återupptagits av söktjänsten.
 Comment[tr]=Dosya indeksleyici arama servisi tarafından devam ettirildi.
 Comment[uk]=Індексування файлів було поновлено службою пошуку.
 Comment[x-test]=xxFile indexing has been resumed by the search service.xx
+Comment[zh_CN]=Strigi 文件索引操作已经被搜索服务恢复。
 Comment[zh_TW]=檔案索引已回復。
 Action=Popup
