@@ -4,6 +4,8 @@
 ##For KDE4.5+:
 --------------
 
+- Show the minimum text require length / or a "progress bar"(or capacitybar)
+
 - Improve the "Enter manual bug ID" option in the Duplicates page to be more discoverable
 
 - Replace the progressbar of the StatusWidget with a throbber....
@@ -137,3 +139,30 @@ http://websvn.kde.org/?view=rev&revision=408177
 
 bool KSessionManager::saveState     (   QSessionManager &        sm      )       [virtual]
 void QApplication::saveState ( QSessionManager & manager ) 
+
+---------------------
+Improving symbol loading speed using GDB
+---
+
+- Create a temp file "init"
+
+"init" contents:
+set auto-solib-add off
+
+(this will disable the symbols autoload)
+
+Start gdb with .. "-x init" (init includes the fullpath)
+
+"bt full" will show an empty backtrace, but with the libraries path.
+
+Use "shar path" to load the debug symbols for that file
+
+"bt full" will now be more complete (but it may need more symbols to be loaded)
+
+
+--
+
+The current gdb commands could be adapted to...
+- Do not include the PID on the command line
+- "set auto-solib-add off" could be the first command of the BatchCommands (passed tempfile with -x)
+- "attach PID" could be the second command
