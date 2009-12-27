@@ -312,7 +312,7 @@ void RegistryManager::setLoadAtLogin(bool startAtLogin)
     QSettings settingsHKCU("HKEY_CURRENT_USER", QSettings::NativeFormat);
     if (!isLoadedAtLogin()){
         qDebug() << "KDE isn't set up to be started at user login! Setting...";
-        settingsHKCU.setValue("SOFTWARE/Microsoft/Windows/CurrentVersion/Run/KDE", KStandardDirs::locate("exe", "kdeinit4"));
+        settingsHKCU.setValue("SOFTWARE/Microsoft/Windows/CurrentVersion/Run/KDE", QString("\""+QDir::toNativeSeparators ( KStandardDirs::locate("exe", "kdeinit4"))+"\""));
     } else {
         qDebug() << "KDE is set up to be started at user login! Removing...";
         settingsHKCU.remove("SOFTWARE/Microsoft/Windows/CurrentVersion/Run/KDE");
