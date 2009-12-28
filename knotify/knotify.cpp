@@ -168,7 +168,7 @@ void KNotify::reemit(int id, const ContextList& contexts)
 void KNotify::emitEvent(Event *e)
 {
 	QString presentstring=e->config.readEntry("Action");
-	QStringList presents=presentstring.split ("|");
+	QStringList presents=presentstring.split ('|');
 	
 	foreach(const QString & action , presents)
 	{

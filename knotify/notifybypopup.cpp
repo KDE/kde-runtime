@@ -156,8 +156,8 @@ void NotifyByPopup::timerEvent(QTimerEvent * event)
 
 void NotifyByPopup::slotLinkClicked( const QString &adr )
 {
-	unsigned int id=adr.section("/" , 0 , 0).toUInt();
-	unsigned int action=adr.section("/" , 1 , 1).toUInt();
+	unsigned int id=adr.section('/' , 0 , 0).toUInt();
+	unsigned int action=adr.section('/' , 1 , 1).toUInt();
 
 //	kDebug(300) << id << " " << action;
         
