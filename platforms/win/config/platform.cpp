@@ -17,16 +17,18 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA            *
  ***************************************************************************/
 
-#include "registryManager.h"
-#include "shellEdit.h"
 #include "platform.h"
+
 #include <QComboBox>
 #include <QPushButton>
 #include <QLineEdit>
+#include <QtDebug>
+
 #include <KAboutData>
 #include <kgenericfactory.h>
 
-#include <QtDebug>
+#include "registryManager.h"
+#include "shellEdit.h"
 
 K_PLUGIN_FACTORY(PlatformFactory, registerPlugin<Platform>();)
 K_EXPORT_PLUGIN(PlatformFactory("platform", "kcm_platform"))

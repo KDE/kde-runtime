@@ -225,10 +225,10 @@ bool generateMenuEntries(QList<LinkFile> &files, const KUrl &url, const QString 
                 continue;
             }
             
-            QString linkPath = getKDEStartMenuPath() + relPathTranslated + "/";
+            QString linkPath = getKDEStartMenuPath() + relPathTranslated + '/';
             QString linkName = s->name();
             if (!s->genericName().isEmpty() && s->genericName() != s->name()) 
-                linkName += " (" + s->genericName().replace("/","-") + ")";
+                linkName += " (" + s->genericName().replace('/','-') + ')';
             
             QString linkFilePath = linkPath + linkName + ".lnk";
             QFileInfo fi(linkFilePath);
@@ -275,7 +275,7 @@ void removeObsolateInstallations()
         LinkFiles::scan(allReleasesFiles, getStartMenuPath() + '/' + release);
         bool available = false;
         bool sameWorkingDir = false;
-        foreach(LinkFile lf, allReleasesFiles) 
+        foreach(const LinkFile &lf, allReleasesFiles) 
         {
             lf.read(); // this in not done by the LinkFile class by default 
             QFileInfo fi(lf.execPath());

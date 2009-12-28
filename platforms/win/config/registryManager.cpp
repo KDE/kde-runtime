@@ -74,7 +74,7 @@ void RegistryManager::installWallpapers() const
     wpListFile.open(QIODevice::ReadWrite | QIODevice::Text);
     QTextStream wpListFileStream(&wpListFile);
 
-    QStringList wpList = wpListFileStream.readAll().split("\n", QString::SkipEmptyParts, Qt::CaseInsensitive);
+    QStringList wpList = wpListFileStream.readAll().split('\n', QString::SkipEmptyParts, Qt::CaseInsensitive);
     QStringList wallpapersList = wallpaperDir.entryList(QDir::NoDotAndDotDot | QDir::Dirs, QDir::NoSort);
     qDebug() << "The list of found wallpapers" << wallpapersList;
 
@@ -110,8 +110,8 @@ void RegistryManager::installWallpapers() const
     progress.setWindowModality(Qt::WindowModal);
     for (int i = 0; i < wallpapersList.size(); ++i){
     progress.setValue(i);
-        oxyWallpaper = wallpaperDir.canonicalPath() + "/" + wallpapersList.at(i) + "/contents/images/" + resolution + ".jpg";
-        winWallpaper = QDesktopServices::storageLocation(QDesktopServices::PicturesLocation) + "/" + wallpapersList.at(i) + ".jpg";
+        oxyWallpaper = wallpaperDir.canonicalPath() + '/' + wallpapersList.at(i) + "/contents/images/" + resolution + ".jpg";
+        winWallpaper = QDesktopServices::storageLocation(QDesktopServices::PicturesLocation) + '/' + wallpapersList.at(i) + ".jpg";
 
     if (progress.wasCanceled()){
         break;
@@ -143,7 +143,7 @@ void RegistryManager::uninstallWallpapers() const
     
     QString winWallpaper;
     for (int i = 0; i < wallpapersList.size(); ++i){
-        winWallpaper = QDesktopServices::storageLocation(QDesktopServices::PicturesLocation) + "/" + wallpapersList.at(i) + ".jpg";
+        winWallpaper = QDesktopServices::storageLocation(QDesktopServices::PicturesLocation) + '/' + wallpapersList.at(i) + ".jpg";
         QFile wpFile(winWallpaper);
         wpFile.remove();
     }
@@ -159,7 +159,7 @@ Qt::CheckState RegistryManager::isWallpapersInstalled() const
         return Qt::Unchecked;
     } else {
         QTextStream wpListFileStream(&wpListFile);
-        QStringList wpList = wpListFileStream.readAll().split("\n", QString::SkipEmptyParts, Qt::CaseInsensitive);
+        QStringList wpList = wpListFileStream.readAll().split('\n', QString::SkipEmptyParts, Qt::CaseInsensitive);
         
         QDir wallpaperDir(QDir::cleanPath(KStandardDirs::installPath("icon") + QString("../wallpapers")));
         QStringList wallpapersList = wallpaperDir.entryList(QDir::NoDotAndDotDot | QDir::Dirs, QDir::NoSort);
@@ -215,7 +215,7 @@ bool RegistryManager::isCPlEntryInstalled() const
     QSettings settingsHKLM("HKEY_LOCAL_MACHINE", QSettings::NativeFormat);
     bool isInstalled;
 
-    if (settingsHKLM.value("SOFTWARE/Microsoft/Windows/CurrentVersion/Explorer/ControlPanel/NameSpace/{FADD6487-C270-4fae-A6C5-7BCF90E47C56}/Default").toString() == ""){
+    if (settingsHKLM.value("SOFTWARE/Microsoft/Windows/CurrentVersion/Explorer/ControlPanel/NameSpace/{FADD6487-C270-4fae-A6C5-7BCF90E47C56}/Default").toString().isEmpty()){
         isInstalled = false;
     } else {
         isInstalled = true;
@@ -238,22 +238,22 @@ void RegistryManager::installCursors() const
     QString schemeName;
     for (int i = 0; i < cursorSchemeList.size(); ++i){
         schemeName = cursorSchemeList.at(i);
-        cursorSchemeRegVal = cursorDir.path() + "/" + schemeName + "/left_ptr.cur,";
-        cursorSchemeRegVal += cursorDir.path() + "/" + schemeName + "/help.cur,";
-        cursorSchemeRegVal += cursorDir.path() + "/" + schemeName + "/progress.ani,";
-        cursorSchemeRegVal += cursorDir.path() + "/" + schemeName + "/wait.ani,";
-        cursorSchemeRegVal += cursorDir.path() + "/" + schemeName + "/cross.cur,";
-        cursorSchemeRegVal += cursorDir.path() + "/" + schemeName + "/text.cur,";
-        cursorSchemeRegVal += cursorDir.path() + "/" + schemeName + "/pencil.cur,";
-        cursorSchemeRegVal += cursorDir.path() + "/" + schemeName + "/circle.cur,";
-        cursorSchemeRegVal += cursorDir.path() + "/" + schemeName + "/size_ver.cur,";
-        cursorSchemeRegVal += cursorDir.path() + "/" + schemeName + "/size_hor.cur,";
-        cursorSchemeRegVal += cursorDir.path() + "/" + schemeName + "/size_fdiag.cur,";
-        cursorSchemeRegVal += cursorDir.path() + "/" + schemeName + "/size_bdiag.cur,";
-        cursorSchemeRegVal += cursorDir.path() + "/" + schemeName + "/fleur.cur,";
-        cursorSchemeRegVal += cursorDir.path() + "/" + schemeName + "/up_arrow.cur,";
-        cursorSchemeRegVal += cursorDir.path() + "/" + schemeName + "/pointer.cur";
-        cursorSchemeRegVal = cursorSchemeRegVal.replace("/", "\\\\");
+        cursorSchemeRegVal = cursorDir.path() + '/' + schemeName + "/left_ptr.cur,";
+        cursorSchemeRegVal += cursorDir.path() + '/' + schemeName + "/help.cur,";
+        cursorSchemeRegVal += cursorDir.path() + '/' + schemeName + "/progress.ani,";
+        cursorSchemeRegVal += cursorDir.path() + '/' + schemeName + "/wait.ani,";
+        cursorSchemeRegVal += cursorDir.path() + '/' + schemeName + "/cross.cur,";
+        cursorSchemeRegVal += cursorDir.path() + '/' + schemeName + "/text.cur,";
+        cursorSchemeRegVal += cursorDir.path() + '/' + schemeName + "/pencil.cur,";
+        cursorSchemeRegVal += cursorDir.path() + '/' + schemeName + "/circle.cur,";
+        cursorSchemeRegVal += cursorDir.path() + '/' + schemeName + "/size_ver.cur,";
+        cursorSchemeRegVal += cursorDir.path() + '/' + schemeName + "/size_hor.cur,";
+        cursorSchemeRegVal += cursorDir.path() + '/' + schemeName + "/size_fdiag.cur,";
+        cursorSchemeRegVal += cursorDir.path() + '/' + schemeName + "/size_bdiag.cur,";
+        cursorSchemeRegVal += cursorDir.path() + '/' + schemeName + "/fleur.cur,";
+        cursorSchemeRegVal += cursorDir.path() + '/' + schemeName + "/up_arrow.cur,";
+        cursorSchemeRegVal += cursorDir.path() + '/' + schemeName + "/pointer.cur";
+        cursorSchemeRegVal = cursorSchemeRegVal.replace('/', "\\\\");
 
         schemeRegistry.setValue(schemeName, cursorSchemeRegVal);
     }

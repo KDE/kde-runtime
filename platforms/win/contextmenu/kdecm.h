@@ -9,6 +9,9 @@
 
 //{72619BBF-9859-4015-B0B3-84D7A0363F00}
 
+#ifndef KDECM_H
+#define KDECM_H
+
 DEFINE_GUID(CLSID_ShellExtension,
             0x72619BBF, 0x9859, 0x4015, 0xB0, 0xB3, 0x84, 0xD7, 0xA0, 0x36, 0x3F, 0x00);
 
@@ -65,3 +68,5 @@ public:
 };
 
 typedef CShellExt *LPCSHELLEXT;
+
+#endif // KDECM_H
