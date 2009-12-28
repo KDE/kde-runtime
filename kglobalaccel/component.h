@@ -127,7 +127,7 @@ public Q_SLOTS:
      * Remove all currently not used global shortcuts registrations for this
      * component and if nothing is left the component too.
      *
-     * If the method returns true consider all information previously aquired
+     * If the method returns true consider all information previously acquired
      * from this component as void.
      *
      * The method will cleanup in all contexts.

@@ -71,7 +71,7 @@ struct KGlobalAccelDPrivate
         context = "default";
         if (component.indexOf('|')!=-1)
             {
-            QStringList tmp = component.split("|");
+            QStringList tmp = component.split('|');
             Q_ASSERT(tmp.size()==2);
             component= tmp.at(0);
             context= tmp.at(1);
@@ -184,7 +184,7 @@ GlobalShortcut *KGlobalAccelDPrivate::addAction(const QStringList &actionId)
     QString contextUnique = "default";
 
     if (componentUnique.indexOf("|")!=-1) {
-        QStringList tmp = componentUnique.split("|");
+        QStringList tmp = componentUnique.split('|');
         Q_ASSERT(tmp.size()==2);
         componentUnique = tmp.at(0);
         contextUnique = tmp.at(1);
@@ -494,7 +494,7 @@ QList<KGlobalShortcutInfo> KGlobalAccelD::getGlobalShortcutsByKey(int key) const
         GlobalShortcutsRegistry::self()->getShortcutsByKey(key);
 
     QList<KGlobalShortcutInfo> rc;
-    Q_FOREACH(GlobalShortcut const*sc, shortcuts)
+    Q_FOREACH(const GlobalShortcut *sc, shortcuts)
         {
 #ifdef KDEDGLOBALACCEL_TRACE
     kDebug() << sc->context()->uniqueName() << sc->uniqueName();

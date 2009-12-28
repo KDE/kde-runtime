@@ -103,7 +103,7 @@ bool GlobalShortcut::isPresent() const
 
 bool GlobalShortcut::isSessionShortcut() const
     {
-    return uniqueName().startsWith("_k_session:");
+    return uniqueName().startsWith(QLatin1String("_k_session:"));
     }
 
 
