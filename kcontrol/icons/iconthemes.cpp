@@ -16,6 +16,8 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "iconthemes.h"
+
 #include <config-runtime.h>
 
 #include <stdlib.h>
@@ -54,8 +56,6 @@
 #include <kio/deletejob.h>
 #include <kio/netaccess.h>
 #include <ktar.h>
-
-#include "iconthemes.h"
 #include <kglobalsettings.h>
 
 static const int ThemeNameRole = Qt::UserRole + 1;

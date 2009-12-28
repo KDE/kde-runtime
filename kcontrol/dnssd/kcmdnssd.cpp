@@ -18,8 +18,12 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.             *
  ***************************************************************************/
 
+#include "kcmdnssd.h"
+
 #include <sys/stat.h>
 #include <config-runtime.h>
+
+#include <QtDBus/QtDBus>
 
 //Added by qt3to4:
 
@@ -32,10 +36,8 @@
 #include <kpassworddialog.h>
 #include <kconfig.h>
 
-#include "kcmdnssd.h"
 #include <dnssd/settings.h>
 #include <dnssd/domainbrowser.h>
-#include <QtDBus/QtDBus>
 
 #define MDNSD_CONF "/etc/mdnsd.conf"
 #define MDNSD_PID "/var/run/mdnsd.pid"

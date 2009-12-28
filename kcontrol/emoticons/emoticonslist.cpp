@@ -273,7 +273,7 @@ void EmoticonList::btRemoveEmoticonClicked()
 
     QListWidgetItem *itm = emoList->currentItem();
     KEmoticonsTheme theme = emoMap.value(themeList->currentItem()->text());
-    QString fPath = theme.emoticonsMap().key(itm->text().split(" "));
+    QString fPath = theme.emoticonsMap().key(itm->text().split(' '));
     if (theme.removeEmoticon(itm->text())) {
         int ret = KMessageBox::questionYesNo(this, i18n("Do you want to remove %1 too?", fPath), i18n("Delete emoticon"));
         if (ret == KMessageBox::Yes) {

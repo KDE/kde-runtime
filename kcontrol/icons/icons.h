@@ -18,6 +18,7 @@
 #include <kcmodule.h>
 #include <kdialog.h>
 #include <kconfig.h>
+#include <KSharedConfig>
 
 class QCheckBox;
 class QColor;

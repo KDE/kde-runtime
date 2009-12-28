@@ -19,6 +19,8 @@
 
 */
 
+#include "knotify.h"
+
 #include <QLabel>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -37,8 +39,6 @@
 #include <kurlcompletion.h>
 #include <kurlrequester.h>
 
-
-#include "knotify.h"
 #include "ui_playersettings.h"
 
 static const int COL_FILENAME = 1;

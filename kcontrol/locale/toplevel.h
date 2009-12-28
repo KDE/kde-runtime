@@ -3,8 +3,8 @@
 
   written 1998 by Matthias Hoelzer
 
-  Copyright 1998 Matthias Hoelzer.
-  Copyright 1999-2003 Hans Petter Bieker <bieker@kde.org>.
+  Copyright (c) 1998 Matthias Hoelzer <hoelzer@physik.uni-wuerzburg.de>
+  Copyright (c) 1999-2003 Hans Petter Bieker <bieker@kde.org>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by

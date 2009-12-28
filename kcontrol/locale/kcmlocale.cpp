@@ -23,6 +23,8 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "kcmlocale.h"
+
 #include <QPushButton>
 
 #include <KDebug>
@@ -30,7 +32,6 @@
 #include <KConfigGroup>
 #include <KStandardDirs>
 
-#include "kcmlocale.h"
 #include "kcmlocale.moc"
 #include "toplevel.h"
 #include "klanguagebutton.h"

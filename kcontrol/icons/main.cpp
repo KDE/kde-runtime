@@ -21,16 +21,17 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "main.h"
+
 //Added by qt3to4:
 #include <QVBoxLayout>
 
 #include <kaboutdata.h>
+#include <KPluginFactory>
+#include <KPluginLoader>
 
 #include "icons.h"
 #include "iconthemes.h"
-#include "main.h"
-#include <KPluginFactory>
-#include <KPluginLoader>
 
 /**** DLL Interface ****/
 K_PLUGIN_FACTORY(IconsFactory,

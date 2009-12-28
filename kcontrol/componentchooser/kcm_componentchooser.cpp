@@ -13,16 +13,17 @@
  *                                                                         *
  ***************************************************************************/
 
+#include "kcm_componentchooser.h"
+
 //Added by qt3to4:
 #include <QVBoxLayout>
-#include <klocale.h>
 
+#include <klocale.h>
 #include <kaboutdata.h>
 #include <kglobal.h>
 #include <kcomponentdata.h>
-
-#include "kcm_componentchooser.h"
 #include <KPluginFactory>
+
 #include "kcm_componentchooser.moc"
 
 K_PLUGIN_FACTORY(KCMComponentChooserFactory,

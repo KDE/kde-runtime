@@ -9,6 +9,8 @@
  * License. See the file "COPYING" for the exact licensing terms.
  */
 
+#include "icons.h"
+
 #include <stdlib.h>
 
 #include <QCheckBox>
@@ -23,6 +25,7 @@
 #include <QBoxLayout>
 #include <QVBoxLayout>
 #include <QListWidget>
+
 #include <kcolorbutton.h>
 #include <kconfig.h>
 #include <kdebug.h>
@@ -31,8 +34,6 @@
 #include <klocale.h>
 #include <kseparator.h>
 #include <kglobalsettings.h>
-
-#include "icons.h"
 
 /**** KIconConfig ****/
 
