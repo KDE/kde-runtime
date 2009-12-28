@@ -113,7 +113,7 @@ DeviceModel::addNewDevice(const QString &udi)
 void
 DeviceModel::reload()
 {
-    foreach(QString udi, m_loginForced.keys()) {
+    foreach(const QString &udi, m_loginForced.keys()) {
         m_loginForced[udi] = AutomounterSettings::deviceAutomountIsForced(udi, AutomounterSettings::Login);
         m_attachedForced[udi] = AutomounterSettings::deviceAutomountIsForced(udi, AutomounterSettings::Attach);
     }
