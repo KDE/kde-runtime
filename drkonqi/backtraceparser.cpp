@@ -351,10 +351,12 @@ void BacktraceParserGdb::parseLine(const QString & lineStr)
         d->m_frameZeroAppeared = false; // gdb bug workaround flag, see below
         break;
     case BacktraceLineGdb::SignalHandlerStart:
-        //replace the stack frames of KCrash with a nice message
-        d->m_linesList.erase(d->m_linesList.begin() + d->m_possibleKCrashStart, d->m_linesList.end());
-        d->m_linesList.insert(d->m_possibleKCrashStart, BacktraceLineGdb("[KCrash Handler]\n"));
-        d->m_isBelowSignalHandler = true; //next line is the first below the signal handler
+        if (!d->m_isBelowSignalHandler) {
+            //replace the stack frames of KCrash with a nice message
+            d->m_linesList.erase(d->m_linesList.begin() + d->m_possibleKCrashStart, d->m_linesList.end());
+            d->m_linesList.insert(d->m_possibleKCrashStart, BacktraceLineGdb("[KCrash Handler]\n"));
+            d->m_isBelowSignalHandler = true; //next line is the first below the signal handler
+        }
         break;
     case BacktraceLineGdb::StackFrame:
         // gdb workaround - (v6.8 at least) - 'thread apply all bt' writes
