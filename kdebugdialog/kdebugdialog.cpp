@@ -18,6 +18,8 @@
    Boston, MA 02110-1301, USA.
 */
 
+#include "kdebugdialog.h"
+
 #include <QLayout>
 #include <QLineEdit>
 #include <QComboBox>
@@ -26,14 +28,13 @@
 #include <QCheckBox>
 #include <QPushButton>
 #include <QtDBus/QtDBus>
+
 #include <kdebug.h>
 #include <kglobal.h>
 #include <klocale.h>
 #include <kdialog.h>
 #include <kconfig.h>
 #include <kseparator.h>
-
-#include "kdebugdialog.h"
 
 KDebugDialog::KDebugDialog(const AreaMap& areaMap, QWidget* parent)
     : KAbstractDebugDialog(parent)
