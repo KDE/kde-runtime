@@ -4,6 +4,10 @@
 ##For KDE4.5+:
 --------------
 
+- If the report was "dismissed" because it was not really useful, and the backtrace was not generated;
+  allow the advanced users to generate it later (on the "Show report's content" button or in the backtrace tab)
+- Merge the two main dialogs ?????
+
 - Show the minimum text require length / or a "progress bar"(or capacitybar)
 
 - Improve the "Enter manual bug ID" option in the Duplicates page to be more discoverable

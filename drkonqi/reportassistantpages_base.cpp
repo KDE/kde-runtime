@@ -304,7 +304,8 @@ void ConclusionPage::aboutToShow()
                 DrKonqi::debuggerManager()->backtraceGenerator()->parser()->backtraceUsefulness();
 
     QString explanationHTML = QLatin1String("<p><ul>");
-    
+
+    bool backtraceGenerated = true;
     switch (use) {
     case BacktraceParser::ReallyUseful: {
         explanationHTML += QString("<li>%1</li>").arg(i18nc("@info","The automatically generated "
@@ -328,6 +329,7 @@ void ConclusionPage::aboutToShow()
     case BacktraceParser::InvalidUsefulness: {
         BacktraceGenerator::State state = DrKonqi::debuggerManager()->backtraceGenerator()->state();
         if (state == BacktraceGenerator::NotLoaded) {
+            backtraceGenerated = false;
             explanationHTML += QString("<li>%1</li>").arg(i18nc("@info","The crash information was "
                                         "not generated because it was not needed.")); 
         } else {
@@ -360,6 +362,9 @@ void ConclusionPage::aboutToShow()
     
     ui.m_explanationLabel->setText(explanationHTML);
 
+    //Hide the "Show contents of the report" button if the backtrace was not generated
+    ui.m_showReportInformationButton->setVisible(backtraceGenerated);
+    
     if (needToReport) {
         ui.m_conclusionsLabel->setText(QString("<p><strong>%1</strong>").arg(i18nc("@info","This "
                                            "report is considered helpful.")));
@@ -398,17 +403,23 @@ void ConclusionPage::aboutToShow()
                             i18nc("@info","If you wish, you can go back and change your "
                             "answers. ")));
 
-        if (isBKO) {
-            ui.m_howToProceedLabel->setText(i18nc("@info","You can manually report this bug "
-                                            "at <link>%1</link>. "
-                                            "Click <interface>Finish</interface> to close the "
-                                            "assistant.",
-                                            reportAddress));
-        } else {
-            ui.m_howToProceedLabel->setText(i18nc("@info","You can manually report this "
-                                              "bug to its maintainer at <link>%1</link>. "
-                                              "Click <interface>Finish</interface> to close the "
-                                              "assistant.", reportAddress));
+        //Only mention "manual reporting" if the backtrace was generated.
+        //FIXME separate the texts "manual reporting" / "click finish to close"
+        //"manual reporting" should be ~"manual report using the contents of the report"....
+        //FIXME for 4.5 (workflow, see ToDo)
+        if (backtraceGenerated) {
+            if (isBKO) {
+                ui.m_howToProceedLabel->setText(i18nc("@info","You can manually report this bug "
+                                                "at <link>%1</link>. "
+                                                "Click <interface>Finish</interface> to close the "
+                                                "assistant.",
+                                                reportAddress));
+            } else {
+                ui.m_howToProceedLabel->setText(i18nc("@info","You can manually report this "
+                                                  "bug to its maintainer at <link>%1</link>. "
+                                                  "Click <interface>Finish</interface> to close the "
+                                                  "assistant.", reportAddress));
+            }
         }
         emit finished(true);
     }
