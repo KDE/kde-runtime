@@ -18,18 +18,17 @@
    Boston, MA 02110-1301, USA.
 */
 
-#include <klocale.h>
-#include <kurl.h>
-#include <kurllabel.h>
+#include "imagevisualizer.h"
 
 #include <qlabel.h>
 #include <qpixmap.h>
 #include <qimage.h>
 
+#include <klocale.h>
+#include <kurl.h>
+#include <kurllabel.h>
 #include <kio/netaccess.h>
 #include <kvbox.h>
-
-#include "imagevisualizer.h"
 
 ImageVisualizer::ImageVisualizer( QWidget *parent, const KUrl &url )
   : KVBox( parent )

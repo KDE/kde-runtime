@@ -28,6 +28,8 @@
 
 class QPixmap;
 class QLabel;
+class KUrl;
+
 class ImageVisualizer : public KVBox
 {
   Q_OBJECT

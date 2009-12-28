@@ -17,6 +17,8 @@
    Boston, MA 02110-1301, USA.
 */
 
+#include "audiopreview.h"
+
 #include <QLabel>
 #include <QPixmap>
 
@@ -24,14 +26,11 @@
 #include <klocale.h>
 #include <kmimetype.h>
 #include <kurl.h>
-
 #include <kio/netaccess.h>
 #include <kurllabel.h>
 #include <kmediaplayer/player.h>
 #include <kservicetypetrader.h>
 #include <ksqueezedtextlabel.h>
-
-#include "audiopreview.h"
 
 AudioPreview::AudioPreview( QWidget *parent, const KUrl &url, const QString &mimeType)
   : KVBox( parent )
@@ -82,7 +81,7 @@ void AudioPreview::initView( const QString& mimeType )
   {
     if (mimeptr->is("audio/mpeg") || mimeptr->is("application/ogg"))
     {
-      // following 3 infos might be very long; make sure they get squeezed
+      // following 3 labels might be very long; make sure they get squeezed
       KSqueezedTextLabel *sl;
 
       sl = new KSqueezedTextLabel(this);

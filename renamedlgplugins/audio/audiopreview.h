@@ -28,6 +28,7 @@ namespace KMediaPlayer
 }
 
 class QLabel;
+class KUrl;
 
 class AudioPreview : public KVBox
 {
