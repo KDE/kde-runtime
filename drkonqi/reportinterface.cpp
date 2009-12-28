@@ -177,9 +177,9 @@ QString ReportInterface::generateReport(bool drKonqiStamp) const
     //Can be reproduced
     if (m_reproducible !=  ReproducibleUnsure) {
         if (m_reproducible == ReproducibleEverytime) {
-            report.append(QString("The crash can be reproduced everytime.\n\n"));
+            report.append(QString("The crash can be reproduced every time.\n\n"));
         } else if (m_reproducible == ReproducibleSometimes) {
-            report.append(QString("The crash can be reproduced some of the times.\n\n"));
+            report.append(QString("The crash can be reproduced some of the time.\n\n"));
         } else if (m_reproducible == ReproducibleNever) {
             report.append(QString("The crash does not seem to be reproducible.\n\n"));
         }
@@ -191,7 +191,7 @@ QString ReportInterface::generateReport(bool drKonqiStamp) const
         QString formattedBacktrace = m_backtrace.trimmed();
         report.append(formattedBacktrace + QLatin1String("\n"));
     } else {
-        report.append(QString("An useful backtrace could not be generated\n"));
+        report.append(QString("A useful backtrace could not be generated\n"));
     }
 
     //Possible duplicate

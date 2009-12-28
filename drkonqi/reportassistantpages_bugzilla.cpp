@@ -361,7 +361,7 @@ void BugzillaInformationPage::aboutToShow()
 
 void BugzillaInformationPage::checkTexts()
 {
-    //If attaching this report to an existant one then the title is not needed
+    //If attaching this report to an existing one then the title is not needed
     bool showTitle = (reportInterface()->attachToBugNumber() == 0);
     ui.m_titleEdit->setVisible(showTitle);
     ui.m_titleLabel->setVisible(showTitle);
