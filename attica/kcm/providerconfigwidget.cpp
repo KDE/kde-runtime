@@ -172,7 +172,7 @@ void ProviderConfigWidget::showRegisterError(const Attica::Metadata& metadata)
         showRegisterHint("dialog-close", i18n("Failed to register new account."));
     } else {
         /*
-# 100 - successfull / valid account
+# 100 - successful / valid account
 # 101 - please specify all mandatory fields
 # 102 - please specify a valid password
 # 103 - please specify a valid login
