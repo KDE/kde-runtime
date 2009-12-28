@@ -356,6 +356,10 @@ void BacktraceParserGdb::parseLine(const QString & lineStr)
             d->m_linesList.erase(d->m_linesList.begin() + d->m_possibleKCrashStart, d->m_linesList.end());
             d->m_linesList.insert(d->m_possibleKCrashStart, BacktraceLineGdb("[KCrash Handler]\n"));
             d->m_isBelowSignalHandler = true; //next line is the first below the signal handler
+        } else {
+            //this is not the first time we see a crash handler frame on the same thread,
+            //so we just add it to the list
+            d->m_linesList.append(line);
         }
         break;
     case BacktraceLineGdb::StackFrame:
