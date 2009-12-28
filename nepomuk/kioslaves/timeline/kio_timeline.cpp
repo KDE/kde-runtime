@@ -29,7 +29,6 @@
 #include <KLocale>
 #include <kio/netaccess.h>
 #include <KCalendarSystem>
-#include <KUser>
 #include <KComponentData>
 
 #include <Soprano/Vocabulary/NAO>

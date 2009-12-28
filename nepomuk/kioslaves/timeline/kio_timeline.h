@@ -18,8 +18,8 @@
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef _KIO_KMETADATA_TIMELINE_H_
-#define _KIO_KMETADATA_TIMELINE_H_
+#ifndef _NEPOMUK_KIO_TIMELINE_H_
+#define _NEPOMUK_KIO_TIMELINE_H_
 
 #include <kio/forwardingslavebase.h>
 
@@ -98,4 +98,4 @@ namespace Nepomuk {
     };
 }
 
-#endif
+#endif // _NEPOMUK_KIO_TIMELINE_H_

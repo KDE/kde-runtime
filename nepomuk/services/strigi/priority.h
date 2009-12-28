@@ -16,11 +16,11 @@
    Boston, MA 02110-1301, USA.
 */
 
-#ifndef _NEPOMUK_LINUX_PRIO_H_
-#define _NEPOMUK_LINUX_PRIO_H_
+#ifndef _NEPOMUK_LINUX_PRIORITY_H_
+#define _NEPOMUK_LINUX_PRIORITY_H_
 
 bool lowerIOPriority();
 bool lowerSchedulingPriority();
 bool lowerPriority();
 
-#endif
+#endif // _NEPOMUK_LINUX_PRIORITY_H_

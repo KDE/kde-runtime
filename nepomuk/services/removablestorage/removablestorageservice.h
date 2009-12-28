@@ -16,8 +16,8 @@
    Boston, MA 02110-1301, USA.
 */
 
-#ifndef _NEPOMUK_REMOVABLE_STORAGE_H_
-#define _NEPOMUK_REMOVABLE_STORAGE_H_
+#ifndef _NEPOMUK_REMOVABLE_STORAGE_SERVICE_H_
+#define _NEPOMUK_REMOVABLE_STORAGE_SERVICE_H_
 
 #include <Nepomuk/Service>
 
@@ -100,4 +100,4 @@ namespace Nepomuk {
     };
 }
 
-#endif
+#endif // _NEPOMUK_REMOVABLE_STORAGE_SERVICE_H_
