@@ -190,8 +190,10 @@ void BacktraceWidget::loadData()
         }
         ui.m_statusWidget->setIdle(usefulnessText);
 
-        if (btParser->backtraceUsefulness() != BacktraceParser::ReallyUseful
-            && canInstallDebugPackages() ) {
+        if (btParser->backtraceUsefulness() != BacktraceParser::ReallyUseful) {
+            //FIXME 4.5 Split this text, the button should only appear if the installdbgsymbols
+            //script is available. the text about the textbase article should appear always, or
+            //at least, when the script is not available.
             ui.m_extraDetailsLabel->setVisible(true);
             ui.m_extraDetailsLabel->setText(i18nc("@info/rich", "You can click the <interface>"
                                 "Install Debug Symbols</interface> button in order to automatically "
@@ -202,6 +204,8 @@ void BacktraceWidget::loadData()
                                 "<interface>Reload Crash Information</interface> button.",
                                 QLatin1String(TECHBASE_HOWTO_DOC)));
             ui.m_installDebugButton->setVisible(true);
+            //Show the "Install dbg symbols" button disabled if the script is not available
+            ui.m_installDebugButton->setEnabled(canInstallDebugPackages());
             
             QStringList missingLibraries = btParser->librariesWithMissingDebugSymbols().toList();
             m_debugPackageInstaller->setMissingLibraries(missingLibraries);
