@@ -31,6 +31,7 @@
 #include <windowsx.h>
 #include <shlobj.h>
 #include <stdio.h>
+#include <stdlib.h>
 #ifdef _MSC_VER
 #include <ShellApi.h>
 #endif
@@ -67,8 +68,6 @@ typedef struct{
 BOOL RegisterServer(CLSID, LPTSTR);
 BOOL UnregisterServer(CLSID, LPTSTR);
 
-#include <stdio.h>
-#include <stdlib.h>
 
 inline QString clsid2QString(REFCLSID rclsid)
 {
