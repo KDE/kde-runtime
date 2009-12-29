@@ -8,19 +8,34 @@
 // kdecm.cpp
 // Defines the entry point for the DLL application.
 //---------------------------------------------------------------------------
+//krazy:excludeall=includes
 
-#include "kdecm.h"
+#include <kcomponentdata.h>
+#include <klockfile.h>
+#include <kmimetype.h>
+#include <kmimetypetrader.h>
+#include <kservice.h>
+#include <kstandarddirs.h>
+
+#include <QtCore/QDebug>
+#include <QtCore/QProcess>
+#include <QtCore/QString>
+#include <QtCore/QStringList>
+#include <QtCore/QSettings>
+
+#include <QtDBus>
 
 #define INC_OLE2
+
 #include <windows.h>
 #include <windowsx.h>
 #include <shlobj.h>
 #include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
 #ifdef _MSC_VER
 #include <ShellApi.h>
 #endif
+
+#include <math.h>
 
 #define GUID_SIZE 128
 #define ResultFromShort(i) ResultFromScode(MAKE_SCODE(SEVERITY_SUCCESS, 0, (USHORT)(i)))
@@ -30,22 +45,8 @@
 #include <initguid.h>
 #include <shlguid.h>
 
-#include <QtCore/QDebug>
-#include <QtCore/QProcess>
-#include <QtCore/QString>
-#include <QtCore/QStringList>
-#include <QtCore/QSettings>
-#include <QtDBus>
-
-#include <kcomponentdata.h>
-#include <klockfile.h>
-#include <kmimetype.h>
-#include <kmimetypetrader.h>
-#include <kservice.h>
-#include <kstandarddirs.h>
-
 #include "resource.h"
-
+#include "kdecm.h"
 #pragma data_seg()
 
 //---------------------------------------------------------------------------
@@ -65,6 +66,9 @@ typedef struct{
 
 BOOL RegisterServer(CLSID, LPTSTR);
 BOOL UnregisterServer(CLSID, LPTSTR);
+
+#include <stdio.h>
+#include <stdlib.h>
 
 inline QString clsid2QString(REFCLSID rclsid)
 {
