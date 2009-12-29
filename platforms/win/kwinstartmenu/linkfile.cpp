@@ -210,7 +210,7 @@ bool LinkFiles::scan(QList <LinkFile> &files, const QString &path)
 bool LinkFiles::create(QList <LinkFile> &newFiles)
 {
     // create new link files 
-    foreach(const LinkFile &linkFile, newFiles)
+    foreach(LinkFile linkFile, newFiles)   //krazy:exclude=foreach
     {
         if (!linkFile.exists())
         {
@@ -226,7 +226,7 @@ bool LinkFiles::create(QList <LinkFile> &newFiles)
 bool LinkFiles::cleanup(QList <LinkFile> &newFiles, QList <LinkFile> &oldFiles)
 {
     // delete not available linkfiles 
-    foreach(const LinkFile &oldFile, oldFiles)
+    foreach(LinkFile oldFile, oldFiles)   //krazy:exclude=foreach
     {
         QString oldPath = QDir::fromNativeSeparators ( oldFile.linkPath().toLower() );
         bool found = false;

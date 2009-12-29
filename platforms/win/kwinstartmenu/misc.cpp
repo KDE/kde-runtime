@@ -275,7 +275,7 @@ void removeObsolateInstallations()
         LinkFiles::scan(allReleasesFiles, getStartMenuPath() + '/' + release);
         bool available = false;
         bool sameWorkingDir = false;
-        foreach(const LinkFile &lf, allReleasesFiles) 
+        foreach(LinkFile lf, allReleasesFiles)    //krazy:exclude=foreach
         {
             lf.read(); // this in not done by the LinkFile class by default 
             QFileInfo fi(lf.execPath());
