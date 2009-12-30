@@ -113,6 +113,7 @@ kepastray=kepas|general
 kpackagekitsmarticon=kpackagekit|general
 printer-applet-kde=printer-applet|general
 partitionmanager-bin=partitionmanager|general
+krandrtray=krandr|krandrtray
 
 #---
 #This section relates a product groupt to a product
