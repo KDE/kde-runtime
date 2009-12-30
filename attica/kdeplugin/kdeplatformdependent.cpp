@@ -35,12 +35,14 @@
 using namespace Attica;
 
 KdePlatformDependent::KdePlatformDependent()
-    : m_config(KSharedConfig::openConfig("atticarc")), m_qnam(0), m_wallet(0)
+    : m_config(KSharedConfig::openConfig("atticarc")), m_accessManager(0), m_wallet(0)
 {
     KLocale* locale = KGlobal::locale();
     if (locale) {
         locale->insertCatalog("attica_kde");
     }
+
+    m_accessManager = new KIO::Integration::AccessManager(this);
 }
 
 KdePlatformDependent::~KdePlatformDependent()
@@ -70,24 +72,32 @@ bool KdePlatformDependent::openWallet(bool force)
 
 QNetworkReply* KdePlatformDependent::post(const QNetworkRequest& request, const QByteArray& data)
 {
-    return m_qnam.post(request, data);
+    return m_accessManager->post(removeAuthFromRequest(request), data);
 }
-
 
 QNetworkReply* KdePlatformDependent::post(const QNetworkRequest& request, QIODevice* data)
 {
-    return m_qnam.post(request, data);
+    return m_accessManager->post(removeAuthFromRequest(request), data);
 }
-
 
 QNetworkReply* KdePlatformDependent::get(const QNetworkRequest& request)
 {
-    return m_qnam.get(request);
+    return m_accessManager->get(removeAuthFromRequest(request));
 }
 
+QNetworkRequest KdePlatformDependent::removeAuthFromRequest(const QNetworkRequest& request)
+{
+    QStringList noauth;
+    noauth << "no-auth-prompt" << "true";
+    QNetworkRequest notConstReq = const_cast<QNetworkRequest&>(request);
+    notConstReq.setAttribute(QNetworkRequest::User, noauth);
+    return notConstReq;
+}
 
 bool KdePlatformDependent::saveCredentials(const QUrl& baseUrl, const QString& user, const QString& password)
 {
+    m_passwords[baseUrl.toString()] = QPair<QString, QString> (user, password);
+
     if (!m_wallet && !openWallet(true)) {
         
         if (KMessageBox::warningContinueCancel(0, i18n("Should the password be stored in the configuration file? This is unsafe.")
@@ -121,6 +131,10 @@ bool KdePlatformDependent::saveCredentials(const QUrl& baseUrl, const QString& u
 
 bool KdePlatformDependent::hasCredentials(const QUrl& baseUrl) const
 {
+    if (m_passwords.contains(baseUrl.toString())) {
+        return true;
+    }
+
     QString networkWallet = KWallet::Wallet::NetworkWallet();
     if (!KWallet::Wallet::folderDoesNotExist(networkWallet, "Attica") &&
         !KWallet::Wallet::keyDoesNotExist(networkWallet, "Attica", baseUrl.toString())) {
@@ -152,6 +166,7 @@ bool KdePlatformDependent::loadCredentials(const QUrl& baseUrl, QString& user, Q
         password = KStringHandler::obscure(group.readEntry("password", QString()));
         if (!user.isEmpty()) {
             kDebug() << "Successfully loaded credentials from kconfig";
+            m_passwords[baseUrl.toString()] = QPair<QString, QString> (user, password);
             return true;
         }
         return false;
@@ -168,6 +183,8 @@ bool KdePlatformDependent::loadCredentials(const QUrl& baseUrl, QString& user, Q
     user = entries.value("user");
     password = entries.value("password");
     kDebug() << "Successfully loaded credentials.";
+
+    m_passwords[baseUrl.toString()] = QPair<QString, QString> (user, password);
 
     return true;
 }
@@ -201,7 +218,7 @@ QList<QUrl> KdePlatformDependent::getDefaultProviderFiles() const
 
 QNetworkAccessManager* Attica::KdePlatformDependent::nam()
 {
-    return &m_qnam;
+    return m_accessManager;
 }
 
 

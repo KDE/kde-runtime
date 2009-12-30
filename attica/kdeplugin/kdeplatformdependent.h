@@ -26,6 +26,8 @@
 
 #include <attica/platformdependent.h>
 
+#include <QtCore/QHash>
+
 #include <KSharedConfig>
 #include <KIO/AccessManager>
 
@@ -56,11 +58,13 @@ public:
 
 private:
     bool openWallet(bool force);
+    QNetworkRequest removeAuthFromRequest(const QNetworkRequest& request);
     
     KSharedConfigPtr m_config;
-    // FIXME: Change to KIO::AccessManager
-    QNetworkAccessManager m_qnam;
+    //QNetworkAccessManager m_qnam;
+    KIO::Integration::AccessManager* m_accessManager;
     KWallet::Wallet* m_wallet;
+    QHash<QString, QPair <QString, QString> > m_passwords;
 };
 
 }
