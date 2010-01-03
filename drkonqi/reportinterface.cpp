@@ -1,6 +1,6 @@
 /*******************************************************************
 * reportinterface.cpp
-* Copyright 2009    Dario Andres Rodriguez <andresbajotierra@gmail.com>
+* Copyright 2009,2010    Dario Andres Rodriguez <andresbajotierra@gmail.com>
 * Copyright 2009    George Kiagiadakis <gkiagia@users.sourceforge.net>
 *
 * This program is free software; you can redistribute it and/or
@@ -244,6 +244,10 @@ BugReport ReportInterface::newBugReportTemplate() const
     report.setPriority(QLatin1String("NOR"));
     report.setBugSeverity(QLatin1String("crash"));
 
+    /*
+    Disable the backtrace functions on title for release.
+    It also needs a bit of polishment
+
     QString title = m_reportTitle;
 
     //If there are not too much possible duplicates by query then there are more possibilities
@@ -254,8 +258,9 @@ BugReport ReportInterface::newBugReportTemplate() const
                                                                             + QLatin1String("]"));
         }
     }
-    
-    report.setShortDescription(title);
+    */
+
+    report.setShortDescription(m_reportTitle);
     return report;
 }
 

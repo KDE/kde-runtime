@@ -1,6 +1,6 @@
 /*******************************************************************
 * reportassistantpages_bugzilla.cpp
-* Copyright 2009    Dario Andres Rodriguez <andresbajotierra@gmail.com>
+* Copyright 2009, 2010    Dario Andres Rodriguez <andresbajotierra@gmail.com>
 *
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License as
@@ -380,11 +380,13 @@ bool BugzillaInformationPage::showNextPage()
     checkTexts();
 
     if (m_textsOK) {
-        bool titleShort = ui.m_titleEdit->isVisible() ? ui.m_titleEdit->text().size() < 30 : false;
+        bool titleShort = ui.m_titleEdit->isVisible() ? (ui.m_titleEdit->text().size() < 30) : false;
 
         //Calculate the minimum number of characters required for a description
-        //(minimum 40, maximum 80)
-        int requiredDescription = 20 + (reportInterface()->selectedOptionsRating() * 10);
+        //If creating a new report: minimum 40, maximum 80
+        //If attaching to an existant report: minimum 30, maximum 50
+        int multiplier = (reportInterface()->attachToBugNumber() == 0) ? 10 : 5;
+        int requiredDescription = 20 + (reportInterface()->selectedOptionsRating() * multiplier);
         bool detailsShort = ui.m_detailsEdit->toPlainText().size() < requiredDescription;
 
         if (titleShort || detailsShort) {
