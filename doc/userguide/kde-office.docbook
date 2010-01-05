@@ -205,7 +205,7 @@ actually use the OASIS OpenDocument file format.
 	<listitem><para>The painting and image manipulation component. &krita; contains both ease-of-use, fun features like guided painting, as well as high-end features like support for 16-bit images, <acronym>CMYK</acronym> and even OpenEXR <acronym>HDR</acronym> images.  </para>
 	
 		<itemizedlist>
-			<listitem><para>Website: <ulink url="http://www.koffice.org/krita/">http://www.koffice.org/krita/</ulink></para></listitem>
+			<listitem><para>Website: <ulink url="http://www.krita.org">http://www.krita.org</ulink></para></listitem>
 			<listitem><para><ulink url="help:/krita">&krita; Handbook</ulink></para></listitem>
 		</itemizedlist>
 		
