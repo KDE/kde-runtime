@@ -23,6 +23,7 @@ Name[ko]=Nepomuk 이동식 저장소 서비스
 Name[ml]=നെപ്പോമുക്ക്  സൂക്ഷിപ്പു് സേവനം
 Name[nb]=Nepomuk flyttbar lagringstjeneste
 Name[nds]=Nepomuk-Tuuschbor-Loopwark-Deenst
+Name[nl]=Nepomuk verwijderbare opslagdienst
 Name[nn]=Nepomuk-teneste for lagringsmedium
 Name[pa]=ਨਿਪੋਮੁਕ ਹਟਾਉਣਯੋਗ ਸਟੋਰੇਜ਼ ਸਰਵਿਸ
 Name[pt]=Serviço de Armazenamento Removível do Nepomuk
@@ -54,6 +55,7 @@ Comment[ko]=Nepomuk 이동식 저장소 서비스는 이동식 저장소에 있�
 Comment[ml]=നീക്കം ചെയ്യാവുന്ന സംഭരണോപകരണങ്ങള്‍ക്കു് നെപ്പോമുക്ക് മെറ്റാഡാറ്റ ഉപയോഗിയ്ക്കാന്‍ അനുവദിയ്ക്കുന്ന നെപ്പോമുക്കിന്റെ നീക്കം ചെയ്യാവുന്ന സംഭരണ സേവനം.
 Comment[nb]=Nepomuk flyttbar lagringstjeneste som gir tilgang til Nepomuk metadata på flyttbare lagringsenheter.
 Comment[nds]=De Nepomuk-Deenst för tuuschbor Loopwarken; stellt Togriep op Nepomuk-Metadaten op tuuschbor Spiekerreedschappen praat.
+Comment[nl]=De Nepomuk verwijderbare opslagservice, levert toegang tot Nepomuk metagegevens over verwijderbare opslagapparaten.
 Comment[nn]=Nepomuk-tenesta for lagringsmedium gjev tilgang til Nepomuk-metadata på flyttbare einingar.
 Comment[pt]=O serviço de armazenamento removíveis do Nepomuk, o qual fornece o acesso aos meta-dados do Nepomuk para os dispositivos removíveis de armazenamento.
 Comment[sl]=Storitev odstranljivih nosilcev za semantično namizje, ki omogoča dostop do semantičnih metapodatkov na odstranljivih napravah za shranjevanje.
