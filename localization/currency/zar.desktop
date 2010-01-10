@@ -4,6 +4,7 @@ CurrencyCodeIsoNumeric3=710
 #Context for Name: Adjectival Country Name and Currency Name
 Name=South African Rand
 Name[ca]=Rand de Sud-àfrica
+Name[ca@valencia]=Rand de Sud-àfrica
 Name[csb]=Pôłniowò Afrikańsczi Rand
 Name[da]=Sydafrikansk rand
 Name[de]=Südafrikanischer Rand
@@ -20,6 +21,7 @@ Name[ja]=南アフリカ・ランド
 Name[kk]=Оңтүстік Африка ранды
 Name[kn]=ದಕ್ಷಿಣ ಆಫ್ರಿಕಾದ ರಾಂಡ್
 Name[ko]=남아프리카 공화국 랜드
+Name[lv]=Dienvidāfrikas rands
 Name[ml]=ദക്ഷിണാഫ്രിക്കയിലെ റാന്റ്
 Name[nb]=Sør-Afrikanske rand
 Name[nds]=Söödafrikaansch Rand

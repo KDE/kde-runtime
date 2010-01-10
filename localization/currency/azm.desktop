@@ -4,6 +4,7 @@ CurrencyCodeIsoNumeric3=031
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Azerbaijani Manat
 Name[ca]=Manat d'Azerbaidjan
+Name[ca@valencia]=Manat d'Azerbaidjan
 Name[csb]=Azerbejdżańsczi Manat
 Name[da]=Aserbajdsjansk manat
 Name[de]=Aserbaidschan-Manat
@@ -23,7 +24,6 @@ Name[ja]=アゼルバイジャン・マナト
 Name[kk]=Әзербайжан манаты
 Name[kn]=ಅಝರ್ಬೈಜಾನಿಯಾದ ಮನಾಟ್
 Name[ko]=아제르바이잔 마나트
-Name[lv]=Azarbeidžānas manats
 Name[ml]=അസര്‍ബൈജാനിലെ മാനറ്റ്
 Name[nb]=Aserbajdsjanske Manat
 Name[nds]=Aserbaidschaansch Manat

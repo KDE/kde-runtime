@@ -2,6 +2,7 @@
 Name=gdb
 Name[bg]=gdb
 Name[ca]=gdb
+Name[ca@valencia]=gdb
 Name[cs]=gdb
 Name[csb]=gdb
 Name[da]=gdb
@@ -43,6 +44,7 @@ Name[sr@ijekavian]=ГДБ
 Name[sr@ijekavianlatin]=GDB
 Name[sr@latin]=GDB
 Name[sv]=gdb
+Name[tg]=gdb
 Name[tr]=gdb
 Name[uk]=gdb
 Name[wa]=gdb

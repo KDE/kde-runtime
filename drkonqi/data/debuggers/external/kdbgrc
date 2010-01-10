@@ -2,6 +2,7 @@
 Name=kdbg
 Name[bg]=kdbg
 Name[ca]=kdbg
+Name[ca@valencia]=kdbg
 Name[cs]=kdbg
 Name[csb]=kdbg
 Name[da]=kdbg
@@ -43,6 +44,7 @@ Name[sr@ijekavian]=Кдбг
 Name[sr@ijekavianlatin]=Kdbg
 Name[sr@latin]=Kdbg
 Name[sv]=kdbg
+Name[tg]=kdbg
 Name[tr]=kdbg
 Name[uk]=kdbg
 Name[wa]=kdbg

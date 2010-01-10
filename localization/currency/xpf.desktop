@@ -4,6 +4,7 @@ CurrencyCodeIsoNumeric3=953
 #Context for Name: Adjectival Country Name and Currency Name
 Name=CFP Franc
 Name[ca]=Franc CFP
+Name[ca@valencia]=Franc CFP
 Name[csb]=CFP Frank
 Name[da]=CFP franc
 Name[de]=CFP Franc

@@ -4,6 +4,7 @@ CurrencyCodeIsoNumeric3=788
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Tunisian Dinar
 Name[ca]=Dinar tunisià
+Name[ca@valencia]=Dinar tunisià
 Name[csb]=Tunezëjsczi Dinar
 Name[da]=Tunesisk dinar
 Name[de]=Tunesischer Dinar
@@ -15,6 +16,7 @@ Name[et]=Tuneesia dinaar
 Name[fy]=Tunesyske dinar
 Name[gu]=ટ્યુનિશિઅન દિનાર
 Name[he]=דינר תוניסאי
+Name[hr]=Tuniski dinar
 Name[id]=Dinar Tunisia
 Name[is]=Túnískur dínar
 Name[ja]=チュニジア・ディナール

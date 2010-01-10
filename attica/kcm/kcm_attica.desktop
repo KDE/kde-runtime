@@ -10,6 +10,7 @@ X-KDE-System-Settings-Parent-Category=advanced-user-settings
 
 Name=Open Collaboration Services provider management
 Name[ca]=Gestor de proveïdors de serveis «Open Collaboration»
+Name[ca@valencia]=Gestor de proveïdors de serveis «Open Collaboration»
 Name[cs]=Správa poskytovatelů služeb otevřené spolupráce
 Name[csb]=Sprôwianié dowòznikama ùsłëżnotów Open Collaboration
 Name[da]=Håndtering af udbydere af Open Collaboration Services
@@ -46,6 +47,7 @@ Name[zh_CN]=打开协作服务器的管理服务
 Name[zh_TW]=開放協同服務提供者管理
 Comment=Manage Open Collaboration Services providers
 Comment[ca]=Gestiona els proveïdors de serveis «Open Collaboration»
+Comment[ca@valencia]=Gestiona els proveïdors de serveis «Open Collaboration»
 Comment[cs]=Spravovat poskytovatele služeb otevřené spolupráce
 Comment[csb]=Sprôwiôj dowòznikama ùsłëżnotów Open Collaboration
 Comment[da]=Håndtér udbydere af Open Collaboration Services

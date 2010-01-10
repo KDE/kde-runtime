@@ -4,6 +4,7 @@ Type=Directory
 Name=File download and sharing
 Name[bg]=Изтегляне и споделяне на файлове
 Name[ca]=Baixada i compartició de fitxers
+Name[ca@valencia]=Baixada i compartició de fitxers
 Name[cs]=Stahování a sdílení souborů
 Name[csb]=Zladënk ë dzelenié lopków
 Name[da]=Fildownload og -deling

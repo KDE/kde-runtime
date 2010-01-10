@@ -4,6 +4,7 @@ CurrencyCodeIsoNumeric3=961
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Silver
 Name[ca]=Argent
+Name[ca@valencia]=Argent
 Name[csb]=Strzébro
 Name[da]=Sølv
 Name[de]=Silber

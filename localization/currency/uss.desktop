@@ -4,6 +4,7 @@ CurrencyCodeIsoNumeric3=998
 #Context for Name: Adjectival Country Name and Currency Name
 Name=United States Dollar (Same Day)
 Name[ca]=Dòlar d'Estats Units (mateix dia)
+Name[ca@valencia]=Dòlar d'Estats Units (mateix dia)
 Name[csb]=Amerëkóńsczi Dolar (Nen dzéń)
 Name[da]=Amerikansk dollar (samme dag)
 Name[de]=US-Dollar (Gleicher Tag)
@@ -11,6 +12,7 @@ Name[el]=Δολάριο Ηνωμένων Πολιτειών Αμερικής (Ί
 Name[en_GB]=United States Dollar (Same Day)
 Name[es]=Dólar estadounidense (mismo día)
 Name[et]=USA dollar (sama päev)
+Name[eu]=Amerikako Estatu Batuak (egun berdina)
 Name[fy]=Amerikaanske dollar (selde dei)
 Name[gu]=યુનાઇટેડ સ્ટેટ્સ ડોલર (એજ દિવસ)
 Name[he]=דולר ארצות הברית (יום נוכחי)

@@ -4,6 +4,7 @@ CurrencyCodeIsoNumeric3=901
 #Context for Name: Adjectival Country Name and Currency Name
 Name=New Taiwan Dollar
 Name[ca]=Dòlar nou de Taiwan
+Name[ca@valencia]=Dòlar nou de Taiwan
 Name[csb]=Nowi Tajwańsczi Dolar
 Name[da]=Ny taiwansk dollar
 Name[de]=Neuer Taiwan-Dollar
@@ -13,6 +14,7 @@ Name[et]=Uus Taiwani dollar
 Name[fy]=Nije Taiwaneeske dollar
 Name[gu]=નવો તાઈવાન ડોલર
 Name[he]=דולר טיוואני חדש
+Name[hr]=Novozelandski dolar
 Name[id]=Dollar Taiwan Baru
 Name[is]=Nýr tævanskur dollari
 Name[ja]=新台湾ドル
