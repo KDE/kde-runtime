@@ -5,6 +5,7 @@ Name[ar]=Ethicle
 Name[bg]=Ethicle
 Name[bn_IN]=Ethicle
 Name[ca]=Ethicle
+Name[ca@valencia]=Ethicle
 Name[cs]=Ethicle
 Name[csb]=Ethicle
 Name[da]=Ethicle
@@ -62,6 +63,7 @@ Query[ar]=http://www.ethicle.com/search.php?q=\\{@}
 Query[bg]=http://www.ethicle.com/search.php?q=\\{@}
 Query[bn_IN]=http://www.ethicle.com/search.php?q=\\{@}
 Query[ca]=http://www.ethicle.com/search.php?q=\\{@}
+Query[ca@valencia]=http://www.ethicle.com/search.php?q=\\{@}
 Query[cs]=http://www.ethicle.com/search.php?q=\\{@}
 Query[csb]=http://www.ethicle.com/search.php?q=\\{@}
 Query[da]=http://www.ethicle.com/search.php?q=\\{@}
