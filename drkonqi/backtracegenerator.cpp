@@ -51,11 +51,14 @@ BacktraceGenerator::~BacktraceGenerator()
 {
     if (m_proc && m_proc->state() == QProcess::Running) {
         kWarning() << "Killing running debugger instance";
+        m_proc->disconnect(this);
         m_proc->terminate();
         if (!m_proc->waitForFinished(10000)) {
             m_proc->kill();
             m_proc->waitForFinished();
         }
+        delete m_proc;
+        delete m_temp;
     }
 }
 
