@@ -1,5 +1,5 @@
 /*
-   Copyright 2009  Sebastian Trueg <trueg@kde.org>
+   Copyright 2009-2010 Sebastian Trueg <trueg@kde.org>
 
    This program is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public License as
@@ -116,11 +116,50 @@ namespace {
                                      KGlobal::locale()->formatDate( date, KLocale::FancyLongDate ),
                                      date );
     }
+
+    QDate applyRelativeDateModificators( const QDate& date, const QMap<QString, QString>& modificators )
+    {
+        QDate newDate( date );
+        const QString dayKey = QLatin1String("relDays");
+        const QString weekKey = QLatin1String("relWeeks");
+        const QString monthKey = QLatin1String("relMonths");
+        const QString yearKey = QLatin1String("relYears");
+        bool ok = false;
+
+        if (modificators.contains(yearKey)) {
+            int relYears = modificators[yearKey].toInt(&ok);
+            if (ok) {
+                newDate = newDate.addYears(relYears);
+            }
+        }
+        if (modificators.contains(monthKey)) {
+            int relMonths = modificators[monthKey].toInt(&ok);
+            if (ok) {
+                newDate = newDate.addMonths(relMonths);
+            }
+        }
+        if (modificators.contains(weekKey)) {
+            int relWeeks = modificators[weekKey].toInt(&ok);
+            if (ok) {
+                const KCalendarSystem * calSystem = KGlobal::locale()->calendar();
+                newDate = newDate.addDays(relWeeks * calSystem->daysInWeek(date));
+            }
+        }
+        if (modificators.contains(dayKey)) {
+            int relDays = modificators[dayKey].toInt(&ok);
+            if (ok) {
+                newDate = newDate.addDays(relDays);
+            }
+        }
+        return newDate;
+    }
 }
 
 
 Nepomuk::TimelineProtocol::TimelineProtocol( const QByteArray& poolSocket, const QByteArray& appSocket )
-    : KIO::ForwardingSlaveBase( "timeline", poolSocket, appSocket )
+    : KIO::ForwardingSlaveBase( "timeline", poolSocket, appSocket ),
+      m_folderType( NoFolder ),
+      m_dateRegexp( QLatin1String("\\d{4}-\\d{2}(?:-(\\d{2}))?") )
 {
     kDebug();
 }
@@ -134,94 +173,39 @@ Nepomuk::TimelineProtocol::~TimelineProtocol()
 
 void Nepomuk::TimelineProtocol::listDir( const KUrl& url )
 {
-    QString path = url.path(KUrl::RemoveTrailingSlash);
-    kDebug() << url;
+    if ( parseUrl( url ) ) {
+        switch( m_folderType ) {
+        case RootFolder:
+            listEntry( createFolderUDSEntry( QLatin1String("today"), i18n("Today"), QDate::currentDate() ), false );
+            listEntry( createFolderUDSEntry( QLatin1String("calendar"), i18n("Calendar"), QDate::currentDate() ), false );
+            listEntry( KIO::UDSEntry(), true );
+            finished();
+            break;
 
-    //
-    // list root path
-    //
-    if( path.isEmpty() || path == QLatin1String( "/" ) ) {
-        listEntry( createFolderUDSEntry( QLatin1String("today"), i18n("Today"), QDate::currentDate() ), false );
-        listEntry( createFolderUDSEntry( QLatin1String("calendar"), i18n("Calendar"), QDate::currentDate() ), false );
-        listEntry( KIO::UDSEntry(), true );
-        finished();
-    }
-
-    //
-    // list calendar entry
-    //
-    else if( path.startsWith( QLatin1String("/calendar") ) ) {
-        QString ru( path.mid( 9 ) );
-
-        if( ru.isEmpty() ) {
+        case CalendarFolder:
             listThisYearsMonths();
             // TODO: add entry for previous years
             listEntry( KIO::UDSEntry(), true );
             finished();
-        }
-        else {
-            kDebug() << ru << url.query();
-            QStringList terms = ru.split('/', QString::SkipEmptyParts );
-            kDebug() << terms;
+            break;
 
-            if( terms.count() == 1 ) {
-                QDate date = QDate::fromString( terms[0], QLatin1String("yyyy-MM") );
-                QDate newDate = date;
-                QMap<QString,QString> queryItems = url.queryItems();
-                QString dayKey = QLatin1String("relDays");
-                QString weekKey = QLatin1String("relWeeks");
-                QString monthKey = QLatin1String("relMonths");
-                QString yearKey = QLatin1String("relYears");
-                bool ok = false;
+        case MonthFolder:
+            listDays( m_date.month(), m_date.year() );
+            listEntry( KIO::UDSEntry(), true );
+            finished();
+            break;
 
-                if (queryItems.contains(yearKey)) {
-                    int relYears = queryItems[yearKey].toInt(&ok);
-                    if (ok) {
-                        newDate = date.addYears(relYears);
-                    }
-                } else if (queryItems.contains(monthKey)) {
-                    int relMonths = queryItems[monthKey].toInt(&ok);
-                    if (ok) {
-                        newDate = date.addMonths(relMonths);
-                    }
-                } else if (queryItems.contains(weekKey)) {
-                    int relWeeks = queryItems[weekKey].toInt(&ok);
-                    if (ok) {
-                        const KCalendarSystem * calSystem = KGlobal::locale()->calendar();
-                        newDate = date.addDays(relWeeks * calSystem->daysInWeek(date));
-                    }
-                } else if (queryItems.contains(dayKey)) {
-                    int relDays = queryItems[dayKey].toInt(&ok);
-                    if (ok) {
-                        newDate = date.addDays(relDays);
-                    }
-                }
+        case DayFolder:
+            ForwardingSlaveBase::listDir( url );
+            break;
 
-                if (ok && newDate <= QDate::currentDate()) {
-                    KUrl newUrl;
-                    newUrl.setScheme(QLatin1String("timeline"));
-                    newUrl.setPath(QString("/calendar/%1").arg(newDate.toString("yyyy-MM")));
-                    kDebug() << newUrl;
-                    redirection(newUrl);
-                    finished();
-                }
-                else if( date.isValid() ) {
-                    kDebug() << date;
-                    listDays( date.month(), date.year() );
-                    listEntry( KIO::UDSEntry(), true );
-                    finished();
-                }
-                else {
-                    error( ERR_MALFORMED_URL, url.url() );
-                }
-            }
-            else {
-                ForwardingSlaveBase::listDir( url );
-            }
+        default:
+            error( KIO::ERR_DOES_NOT_EXIST, url.prettyUrl() );
+            break;
         }
     }
     else {
-        ForwardingSlaveBase::listDir( url );
+        error( KIO::ERR_DOES_NOT_EXIST, url.prettyUrl() );
     }
 }
 
@@ -237,18 +221,11 @@ void Nepomuk::TimelineProtocol::get( const KUrl& url )
 {
     kDebug() << url;
 
-    // there are only two possible urls to get:
-    // 1. /today/<filename>
-    // 2. /calendar/YYYY-MM/YYYY-MM-DD/<filename>
-    // Thus, it should be enough to get the 2nd last section
-    // and compare it to either "today" and a date
-    QString dateString = url.path().section('/', -2, -1, QString::SectionSkipEmpty );
-    if ( dateString == QLatin1String( "today" ) ||
-        QDate::fromString( dateString, "yyyy-MM-dd" ).isValid() ) {
+    if ( parseUrl( url ) && !m_filename.isEmpty() ) {
         ForwardingSlaveBase::get( url );
     }
     else {
-        error( KIO::ERR_IS_DIRECTORY, url.prettyUrl() );
+        error( KIO::ERR_DOES_NOT_EXIST, url.prettyUrl() );
     }
 }
 
@@ -256,10 +233,13 @@ void Nepomuk::TimelineProtocol::get( const KUrl& url )
 void Nepomuk::TimelineProtocol::put( const KUrl& url, int permissions, KIO::JobFlags flags )
 {
     kDebug() << url;
-    Q_UNUSED( permissions );
-    Q_UNUSED( flags );
 
-    error( ERR_UNSUPPORTED_ACTION, url.prettyUrl() );
+    if ( parseUrl( url ) && !m_filename.isEmpty() ) {
+        ForwardingSlaveBase::put( url, permissions, flags );
+    }
+    else {
+        error( KIO::ERR_DOES_NOT_EXIST, url.prettyUrl() );
+    }
 }
 
 
@@ -300,45 +280,46 @@ void Nepomuk::TimelineProtocol::mimetype( const KUrl& url )
 
 void Nepomuk::TimelineProtocol::stat( const KUrl& url )
 {
-    QString path = url.path(KUrl::RemoveTrailingSlash);
-    kDebug() << url;
+    if ( parseUrl( url ) ) {
+        switch( m_folderType ) {
+        case RootFolder: {
+            KIO::UDSEntry uds;
+            uds.insert( KIO::UDSEntry::UDS_NAME, QString::fromLatin1( "/" ) );
+            uds.insert( KIO::UDSEntry::UDS_ICON_NAME, QString::fromLatin1( "nepomuk" ) );
+            uds.insert( KIO::UDSEntry::UDS_FILE_TYPE, S_IFDIR );
+            uds.insert( KIO::UDSEntry::UDS_MIME_TYPE, QString::fromLatin1( "inode/directory" ) );
+            statEntry( uds );
+            finished();
+            break;
+        }
 
-    if( path.isEmpty() || path == QLatin1String("/") ) {
-        KIO::UDSEntry uds;
-        uds.insert( KIO::UDSEntry::UDS_NAME, QString::fromLatin1( "/" ) );
-        uds.insert( KIO::UDSEntry::UDS_ICON_NAME, QString::fromLatin1( "nepomuk" ) );
-        uds.insert( KIO::UDSEntry::UDS_FILE_TYPE, S_IFDIR );
-        uds.insert( KIO::UDSEntry::UDS_MIME_TYPE, QString::fromLatin1( "inode/directory" ) );
-        statEntry( uds );
-        finished();
-    }
-    else if( path == QLatin1String( "/today" ) ) {
-        statEntry( createFolderUDSEntry( QLatin1String("today"), i18n("Today"), QDate::currentDate() ) );
-        finished();
-    }
-    else if( path == QLatin1String( "/calendar" ) ) {
-        statEntry( createFolderUDSEntry( QLatin1String("calendar"), i18n("Calendar"), QDate::currentDate() ) );
-        finished();
+        case CalendarFolder:
+            statEntry( createFolderUDSEntry( QLatin1String("calendar"), i18n("Calendar"), QDate::currentDate() ) );
+            finished();
+            break;
+
+        case MonthFolder:
+            statEntry( createMonthUDSEntry( m_date.month(), m_date.year() ) );
+            finished();
+            break;
+
+        case DayFolder:
+            if ( m_filename.isEmpty() ) {
+                statEntry( createDayUDSEntry( m_date ) );
+                finished();
+            }
+            else {
+                ForwardingSlaveBase::stat( url );
+            }
+            break;
+
+        default:
+            error( KIO::ERR_DOES_NOT_EXIST, url.prettyUrl() );
+            break;
+        }
     }
     else {
-        // path: /calendar/YYYY-MM
-        if ( path.length() == 17 ) {
-            QString dateString = path.section('/', -1, -1, QString::SectionSkipEmpty );
-            QDate date = QDate::fromString( dateString, QLatin1String("yyyy-MM") );
-            statEntry( createMonthUDSEntry( date.month(), date.year() ) );
-            finished();
-        }
-
-        // path: /calendar/YYYY-MM/YYYY-MM-DD
-        else if ( path.length() == 28 ) {
-            QString dateString = path.section('/', -1, -1, QString::SectionSkipEmpty );
-            QDate date = QDate::fromString( dateString, "yyyy-MM-dd" );
-            statEntry( createDayUDSEntry( date ) );
-            finished();
-        }
-        else {
-            ForwardingSlaveBase::stat( url );
-        }
+        error( KIO::ERR_DOES_NOT_EXIST, url.prettyUrl() );
     }
 }
 
@@ -346,23 +327,13 @@ void Nepomuk::TimelineProtocol::stat( const KUrl& url )
 // only used for the queries
 bool Nepomuk::TimelineProtocol::rewriteUrl( const KUrl& url, KUrl& newURL )
 {
-    if( url.path(KUrl::RemoveTrailingSlash) == QLatin1String( "/today" ) ) {
-        newURL = buildQueryUrl( QDate::currentDate() );
-        kDebug() << url << newURL;
+    if ( parseUrl( url ) && m_folderType == DayFolder ) {
+        newURL = buildQueryUrl( m_date );
+        newURL.setPath( QLatin1String( "/" ) + m_filename );
         return true;
     }
     else {
-        QString dateString = url.path().section('/', -1, -1, QString::SectionSkipEmpty );
-        QDate date = QDate::fromString( dateString, "yyyy-MM-dd" );
-        if( date.isValid() ) {
-            newURL = buildQueryUrl( date );
-            kDebug() << url << newURL;
-            return true;
-        }
-        else {
-            kDebug() << url << "failed.";
-            return false;
-        }
+        return false;
     }
 }
 
@@ -405,6 +376,67 @@ void Nepomuk::TimelineProtocol::listPreviousYears()
     // Using a query like: "select ?date where { ?r a nfo:FileDataObject . ?r nie:lastModified ?date . } ORDER BY ?date LIMIT 1" (this would have to be cached)
 }
 
+
+bool Nepomuk::TimelineProtocol::parseUrl( const KUrl& url )
+{
+    kDebug() << url;
+
+    // rest
+    m_date = QDate();
+    m_filename.truncate(0);
+
+    const QString path = url.path(KUrl::RemoveTrailingSlash);
+
+    if( path.isEmpty() || path == QLatin1String("/") ) {
+        m_folderType = RootFolder;
+        kDebug() << url << "is root folder";
+        return true;
+    }
+    else if( path.startsWith( QLatin1String( "/today" ) ) ) {
+        m_folderType = DayFolder;
+        m_date = QDate::currentDate();
+        m_filename = path.mid( 7 );
+        kDebug() << url << "is today folder:" << m_date << m_filename;
+        return true;
+    }
+    else if( path == QLatin1String( "/calendar" ) ) {
+        m_folderType = CalendarFolder;
+        kDebug() << url << "is calendar folder";
+        return true;
+    }
+    else {
+        QStringList sections = path.split( QLatin1String( "/" ), QString::SkipEmptyParts );
+        QString dateString;
+        if ( m_dateRegexp.exactMatch( sections.last() ) ) {
+            dateString = sections.last();
+        }
+        else if ( sections.count() > 1 && m_dateRegexp.exactMatch( sections[sections.count()-2] ) ) {
+            dateString = sections[sections.count()-2];
+            m_filename = sections.last();
+        }
+        else {
+            kDebug() << url << "COULD NOT PARSE";
+            return false;
+        }
+
+        if ( m_dateRegexp.cap( 1 ).isEmpty() ) {
+            // no day -> month listing
+            m_folderType = MonthFolder;
+            kDebug() << "parsing " << dateString;
+            m_date = QDate::fromString( dateString, QLatin1String("yyyy-MM") );
+            kDebug() << url << "is month folder:" << m_date.month() << m_date.year();
+            return m_date.month() > 0 && m_date.year() > 0;
+        }
+        else {
+            m_folderType = DayFolder;
+            kDebug() << "parsing " << dateString;
+            m_date = applyRelativeDateModificators( QDate::fromString( dateString, "yyyy-MM-dd" ), url.queryItems() );
+            // only in day folders we can have filenames
+            kDebug() << url << "is day folder:" << m_date << m_filename;
+            return m_date.isValid();
+        }
+    }
+}
 
 extern "C"
 {

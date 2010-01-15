@@ -1,0 +1,52 @@
+The Nepomuk KIO slave
+=====================
+
+This KIO slave is used to handle all Nepomuk resources which use 
+the new (KDE 4.4) URI scheme nepomuk:/. This includes file resources. 
+The slave will handle the following cases:
+
+1. Nepomuk resources that refer to local files
+The KIO slave will forward all operations to the file:/ KIO slave.
+
+2. Nepomuk resources that refer to local folders
+The KIO slave will forward all operations to the file:/ KIO slave.
+In addition UDS_URL will be set to the local URL so that the
+slave does not need to recurse into subfolders. This is only done
+for simplicity.
+
+3. Nepomuk resources that are of type nao:Tag
+These will be listed as folders containing all resources tagged with
+that specific tag. This is achieved by redirecting all operations
+to the nepomuksearch:/ KIO slave. A redirect is used instead of a
+forward in order to never show nepomuk:/ URLs in the GUI.
+
+4. Nepomuk resources that are of type nfo:Filesystem
+These will be listed as folders if the corresponding removable
+device is mounted. As with tags a redirect is used to prevent
+showing the nepomuk:/ URL in the GUI.
+
+5. Nepomuk resources that refer to files on removable devices
+These will be forwarded to the file:/ KIO slave in case the device
+is mounted (the get operation will even mount an available but
+unmounted device). In case the device is not mounted a virtual
+entry is created showing the file as being available on another 
+device.
+
+6. Nepomuk resources that refer to folders on removable devices
+Handled like files on removable devices. In addition UDS_URL will
+be set to the local URL so that the slave does not need to recurse 
+into subfolders. This is the same procedure as with local folders.
+
+7. Any other unrelated Nepomuk resource
+General resources will be listed as virtual entries and get will 
+return an HTML page which shows its properties and relations.
+
+
+The KIO slave heavily depends on UDS_DISPLAY_NAME since it will
+put the resource's URI into UDS_NAME. This is the same procedure
+the nepomuksearch:/ KIO slave uses to solve the problem with
+duplicate names in query results.
+UDS_LOCAL_PATH will be set whenever possible.
+
+
+15.01.2010 Sebastian Trueg <trueg@kde.org> (maintainer)
