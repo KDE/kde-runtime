@@ -1,5 +1,5 @@
 /*
-   Copyright 2009  Sebastian Trueg <trueg@kde.org>
+   Copyright 2009-2010 Sebastian Trueg <trueg@kde.org>
 
    This program is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public License as
@@ -22,6 +22,9 @@
 #define _NEPOMUK_KIO_TIMELINE_H_
 
 #include <kio/forwardingslavebase.h>
+
+#include <QtCore/QDate>
+#include <QtCore/QRegExp>
 
 
 namespace Nepomuk {
@@ -91,10 +94,30 @@ namespace Nepomuk {
 
         void prepareUDSEntry( KIO::UDSEntry &entry,
                               bool listing = false ) const;
+
     private:
         void listDays( int month, int year );
         void listThisYearsMonths();
         void listPreviousYears();
+
+        /// will set m_date, m_filename, and m_folderType
+        bool parseUrl( const KUrl& url );
+
+        /// folder type that is set by parseUrl
+        enum FolderType {
+            NoFolder = 0,    /// nothing
+            RootFolder,      /// the root folder
+            CalendarFolder,  /// the calendar folder listing all months
+            MonthFolder,     /// a folder listing a month's days (m_date contains the month)
+            DayFolder        /// a folder listing a day (m_date); optionally m_filename is set
+        };
+
+        /// temp vars for the currently handled URL
+        QDate m_date;
+        QString m_filename;
+        FolderType m_folderType;
+
+        const QRegExp m_dateRegexp;
     };
 }
 

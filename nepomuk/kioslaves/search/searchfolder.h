@@ -66,18 +66,17 @@ namespace Nepomuk {
         Q_OBJECT
 
     public:
-        SearchFolder( const QString& name, const QString& query, KIO::SlaveBase* slave );
+        SearchFolder( const KUrl& url, KIO::SlaveBase* slave );
         ~SearchFolder();
 
         QString query() const { return m_query; }
-        QString name() const { return m_name; }
+        KUrl url() const { return m_url; }
         QList<SearchEntry*> entries() const { return m_entries.values(); }
 
         SearchEntry* findEntry( const QString& name );
         SearchEntry* findEntry( const KUrl& url );
 
         void list();
-        void stat( const QString& name );
 
     private Q_SLOTS:
         /// connected to the QueryServiceClient in the search thread
@@ -108,7 +107,7 @@ namespace Nepomuk {
         SearchEntry* statResult( const Query::Result& result );
 
         // folder properties
-        QString m_name;
+        KUrl m_url;
 
         // SPARQL query that is actually sent to the query service
         QString m_query;

@@ -80,7 +80,6 @@ namespace Nepomuk {
     private:
         bool ensureNepomukRunning();
         void listRoot();
-        void listQuery( const QString& query, bool sparql );
         void listActions();
         void listDefaultSearches();
         void listDefaultSearch( const QString& path );
@@ -91,7 +90,7 @@ namespace Nepomuk {
         /**
          * Get (possibly cached) query folder
          */
-        SearchFolder* getQueryFolder( const QString& query, bool sparql );
+        SearchFolder* getQueryFolder( const KUrl& url );
         SearchFolder* getDefaultQueryFolder( const QString& name );
 
         // the default search folders
@@ -103,10 +102,6 @@ namespace Nepomuk {
         // queue to remember the order of the search cache
         // when enforcing the cache max
         QQueue<QString> m_searchCacheNameQueue;
-
-        // cache for the default searches, needs to differ from
-        // on-the-fly cache because of the name
-        QHash<QString, SearchFolder*>  m_defaultSearchCache;
     };
 }
 
