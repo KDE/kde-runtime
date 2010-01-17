@@ -34,12 +34,12 @@ as Authors, publish date, the abstract, and Keywords -->
 </copyright>
 <legalnotice>&FDLNotice;</legalnotice>
 
-<date>2005-02-09</date>
-<releaseinfo>1.01.00</releaseinfo>
+<date>2010-01-18</date>
+<releaseinfo>&kde; 4.4</releaseinfo>
 
 <abstract>
 <para>
-&knetattach; is an application which makes it easier to integrate your 
+&knetattach; is a wizard which makes it easier to integrate your 
 network resources with your &kde; Desktop.
 </para>
 </abstract>
@@ -59,11 +59,18 @@ Please at least include KDE, the KDE package it is in, the name
 
 </bookinfo>
 
+<!-- 
+in kde 4 no application any more.
+
+konqueror/dolphin/gwenview enter "remote:/" in location bar or click Network in Places
+"Add Network Folder" click opens the wizard
+-->
+
 <chapter id="introduction">
 <title>Introduction</title>
 
 <para>
-The &knetattach; program, affectionately and hereafter known as the 
+The &knetattach; wizard, affectionately and hereafter known as the 
 Network Folder Wizard, allows easy addition and integration of various 
 network folders with your &kde; desktop. Please report any problems or 
 feature requests for it to the &kde; bugs website.
@@ -75,10 +82,9 @@ feature requests for it to the &kde; bugs website.
 
 <para>
 As you will see in the screenshot below, the Network Folder Wizard currently
-allows 
-you to add four types of network folders: WebDav, &FTP;, 
-&Microsoft; &Windows; (Samba) network drives and
-SSH.
+allows you to add four types of network folders: WebDav, &FTP;, 
+&Microsoft; &Windows; (Samba) network drives and SSH.
+Additionally you can select a recent connection for the list box.
 
 <screenshot>
 <screeninfo>Here's a screenshot of &knetattach;</screeninfo>
@@ -101,10 +107,11 @@ SSH.
 <title>Adding network folders</title>
 
 <para>
-Network folders show up in a special location of &konqueror; called a
-<emphasis>virtual folder</emphasis>.
+Network folders show up in a special location of &konqueror; and &dolphin; 
+called a <emphasis>virtual folder</emphasis>.
 This virtual folder is accessed by typing <userinput>remote:/</userinput> in
-&konqueror; <interface>Location bar</interface>. You will then be able to see
+the location bar or by selecting <guilabel>Network</guilabel> from the 
+<guilabel>Places</guilabel> panel. You will then be able to see
 any folders which have been previously added and you also will be able to use
 the wizard to add new ones.
 <screenshot>
@@ -133,8 +140,8 @@ login password for the network share you've chosen to access.
 <para>
 Below is a list of the information needed by the wizard to create the network
 folders. If an option is not 
-available for a particular folder it does not have to be entered. &eg;. The Samba
-folders do not require a <guilabel>Port</guilabel> entry.
+available for a particular folder it does not have to be entered. The Samba
+folders &eg; do not require a <guilabel>Port</guilabel> entry.
 </para>
 
 <para>
@@ -149,7 +156,14 @@ your imagination (or alphabet).
 </listitem>
 </varlistentry>
 <varlistentry>
-<term>Server:</term>
+<term><guilabel>User:</guilabel></term>
+<listitem>
+<para>
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Server:</guilabel></term>
 <listitem>
 <para>
 This is the address of the server you are attempting to add. It can be an 
@@ -176,6 +190,14 @@ Not available for &Microsoft; &Windows; (Samba) folders.
 <listitem>
 <para>
 The path to the folder you wish to connect to should go here.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Encoding:</guilabel></term>
+<listitem>
+<para>
+Use the items in this list box to select an encoding for &FTP; and ssh connections.
 </para>
 </listitem>
 </varlistentry>
@@ -289,7 +311,8 @@ So now we are all connected now and able to navigate our newly added share. Joy!
 <para>
 To get back to our network folders all that is necessary is typing
 <action>remote:/</action>
-in the <guilabel>Location:</guilabel> bar of &konqueror;.
+in the location bar of &konqueror; or &dolphin; or
+select <guilabel>Network</guilabel> from the <guilabel>Places</guilabel> panel.
 </para>
 
 <para>
