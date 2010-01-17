@@ -1,3 +1,4 @@
+add_subdirectory(attica)
 add_subdirectory(bookmarks)
 add_subdirectory(icons)
 add_subdirectory(cookies)
