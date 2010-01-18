@@ -35,8 +35,6 @@ soprano_add_ontology(strigiservice_SRCS
   "Nepomuk::Vocabulary"
   "trig")
 
-qt4_add_dbus_interface(strigiservice_SRCS ../../interfaces/org.kde.nepomuk.Storage.xml nepomukstorageinterface)
-
 kde4_add_ui_files(strigiservice_SRCS
   statuswidget.ui)
 
