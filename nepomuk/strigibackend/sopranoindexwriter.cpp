@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2007-2009 Sebastian Trueg <trueg@kde.org>
+   Copyright (C) 2007-2010 Sebastian Trueg <trueg@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public License as
@@ -40,6 +40,7 @@
 #include <QtCore/QDateTime>
 #include <QtCore/QByteArray>
 #include <QtCore/QUuid>
+#include <QtCore/QStack>
 
 #include <KUrl>
 
@@ -149,8 +150,7 @@ class Strigi::Soprano::IndexWriter::Private
 {
 public:
     Private()
-        : indexTransactionID( 0 ),
-          currentResult( 0 ) {
+        : indexTransactionID( 0 ) {
         literalTypes[FieldRegister::stringType] = QVariant::String;
         literalTypes[FieldRegister::floatType] = QVariant::Double;
         literalTypes[FieldRegister::integerType] = QVariant::Int;
@@ -225,7 +225,7 @@ public:
     // However, we only use one thread, only one AnalysisResult at the time.
     // Thus, we can just remember that and use it in addTriplet.
     //
-    const Strigi::AnalysisResult* currentResult;
+    QStack<const Strigi::AnalysisResult*> currentResultStack;
 
 private:
     QHash<std::string, QVariant::Type> literalTypes;
@@ -324,6 +324,9 @@ void Strigi::Soprano::IndexWriter::deleteAllEntries()
 // called for each indexed file
 void Strigi::Soprano::IndexWriter::startAnalysis( const AnalysisResult* idx )
 {
+    // we need to remember the AnalysisResult since addTriplet does not provide it
+    d->currentResultStack.push(idx);
+
     if ( idx->depth() > 0 ) {
         return;
     }
@@ -343,8 +346,6 @@ void Strigi::Soprano::IndexWriter::startAnalysis( const AnalysisResult* idx )
     }
 
     idx->setWriterData( data );
-
-    d->currentResult = idx;
 }
 
 
@@ -496,13 +497,16 @@ void Strigi::Soprano::IndexWriter::addTriplet( const std::string& s,
                                                const std::string& p,
                                                const std::string& o )
 {
+    if ( d->currentResultStack.top()->depth() > 0 ) {
+        return;
+    }
+
     //
     // The Strigi API does not provide context information here, i.e. the AnalysisResult this triple
     // belongs to. However, we only use one thread, only one AnalysisResult at the time.
     // Thus, we can just remember that and use it here.
     //
-
-    FileMetaData* md = static_cast<FileMetaData*>( d->currentResult->writerData() );
+    FileMetaData* md = static_cast<FileMetaData*>( d->currentResultStack.top()->writerData() );
 
     QUrl subject = d->mapNode( md, s );
     Nepomuk::Types::Property property( d->mapNode( md, p ) );
@@ -519,7 +523,7 @@ void Strigi::Soprano::IndexWriter::addTriplet( const std::string& s,
 // called after each indexed file
 void Strigi::Soprano::IndexWriter::finishAnalysis( const AnalysisResult* idx )
 {
-    d->currentResult = 0;
+    d->currentResultStack.pop();
 
     if ( idx->depth() > 0 ) {
         return;
