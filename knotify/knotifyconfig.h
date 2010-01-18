@@ -116,9 +116,9 @@ class KNotifyConfig
 		QString eventid;
 
 		/**
-		 * clear the config cache.  to be used when the config may have changed
+		 * reparse the cached configs.  to be used when the config may have changed
 		 */
-        static void clearCache();
+		static void reparseConfiguration();
 };
 
 #endif
