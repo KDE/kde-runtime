@@ -40,9 +40,11 @@ static KSharedConfig::Ptr retrieve_from_cache(const QString& filename, const cha
 	return m;
 }
 
-void KNotifyConfig::clearCache()
+void KNotifyConfig::reparseConfiguration()
 {
-    static_cache->clear();
+	QCache<QString, KSharedConfig::Ptr> &cache = *static_cache;
+	foreach (const QString& filename, cache.keys())
+		(*cache[filename])->reparseConfiguration();
 }
 
 
