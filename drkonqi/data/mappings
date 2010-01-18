@@ -152,7 +152,7 @@ konqueror=filemanagement
 
 [BZGroups]
 kdeplatform=kde|kdelibs|kio|kfile|Oxygen|solid
-kdepim-base=kontact|kdepimlibs|libkdepim|Akonadi|kresources
+kdepim-base=kontact|kdepimlibs|kdepim|Akonadi|kresources
 kdepim-apps=kontact|korganizer|kaddressbook|akregator|kmail
 koffice=koffice|koshell|kspread|kword|krita|karbon|kchart|kplato|kpresenter
 kdevelop=kdevelop|kdevplatform
