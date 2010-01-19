@@ -20,7 +20,7 @@
 #include "folder.h"
 #include "folderconnection.h"
 #include "queryadaptor.h"
-#include "dbusoperators.h"
+#include "dbusoperators_p.h"
 
 #include <QtDBus/QDBusConnection>
 #include <QtDBus/QDBusConnectionInterface>
