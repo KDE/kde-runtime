@@ -16,7 +16,6 @@ set(queryservice_SRCS
   searchthread.cpp
   folder.cpp
   folderconnection.cpp
-  dbusoperators.cpp
 )
 
 soprano_add_ontology(queryservice_SRCS
