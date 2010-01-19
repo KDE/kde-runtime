@@ -41,13 +41,22 @@ applications that use &sonnet;, which is a frontend to various free spell checke
 <para>In the drop down box <guilabel>Default language</guilabel> choose from the 
 available dictionaries, which one to use for &sonnet;. </para>
 
+<!-- in case of missing language in the list which apps to install?
+HSpell??
+<para>(If you do not have <application>Ispell</application> installed
+you can obtain it from the <ulink
+url="http://fmg-www.cs.ucla.edu/geoff/ispell.html">International
+ISpell home page</ulink>.  <application>ASpell</application> is available from the <ulink
+url="http://aspell.sourceforge.net/">ASpell home page</ulink>.)
+</para>
+-->
 <sect2 id="spell-options">
 <title>Spell Options</title>
 
 <variablelist>
 
 <varlistentry>
-<term><guilabel>Auto spell check enabled by default</guilabel></term>
+<term><guilabel>Automatic spell checking enabled by default</guilabel></term>
 <listitem>
 <para>If a mark is placed in this checkbox, the spelling of words will be check in your document 
 as you type them. Misspelled will have a red line drawn under them.
@@ -80,6 +89,7 @@ for spelling errors. These addresses often contain words run together.</para></t
 
 </variablelist>
 </sect2>
+<!-- from koffice/kword/opt.docbook 1.6.2--> 
 <sect2><title>Ignoring words</title>
 <para>The bottom half of the dialog box allows you to designate specific words (they may be specialized terminology, proper names, &etc;) which
 should be ignored by the spelling program.</para>
