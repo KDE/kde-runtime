@@ -128,7 +128,7 @@ void DeviceActionsDialog::slotOk()
 void DeviceActionsDialog::launchAction(DeviceAction *action)
 {
     action->execute(m_device);
-    close();
+    accept();
 }
 
 #include "deviceactionsdialog.moc"
