@@ -22,6 +22,7 @@
 #include "nfo.h"
 #include "nie.h"
 #include "pimo.h"
+#include "nepomuksearchurltools.h"
 
 #include <Soprano/Vocabulary/Xesam>
 #include <Soprano/Vocabulary/NAO>
@@ -41,69 +42,21 @@
 #include <KIO/Job>
 #include <KIO/NetAccess>
 #include <KUser>
-#include <kdirnotify.h>
 #include <KMimeType>
-
-namespace {
-    QString queryFromUrl( const KUrl& url, bool* sparql = 0 ) {
-        if(url.queryItems().contains( "sparql" ) ) {
-            if( sparql )
-                *sparql = true;
-            return url.queryItem( "sparql" );
-        }
-        else if(url.queryItems().contains( "query" ) ) {
-            if( sparql )
-                *sparql = false;
-            return url.queryItem( "query" );
-        }
-        else {
-            if( sparql )
-                *sparql = false;
-            return url.path().section( '/', 0, 0, QString::SectionSkipEmpty );
-        }
-    }
-
-    /**
-     * Encode the resource URI into the UDS_NAME to make it unique.
-     * It is important that we do not use the % for percent-encoding. Otherwise KUrl::url will
-     * re-encode them, thus, destroying our name.
-     *
-     * This is (and should always be) the exact same as in ../nepomuk/kio_nepomuk.cpp.
-     */
-    QString resourceUriToUdsName( const KUrl& url )
-    {
-        return QString::fromAscii( url.toEncoded().toPercentEncoding( QByteArray(), QByteArray(), '_' ) );
-    }
-}
-
-
-Nepomuk::SearchEntry::SearchEntry( const QUrl& res,
-                                   const KIO::UDSEntry& uds)
-    : m_resource( res ),
-      m_entry( uds )
-{
-}
 
 
 Nepomuk::SearchFolder::SearchFolder( const KUrl& url, KIO::SlaveBase* slave )
     : QThread(),
       m_url( url ),
       m_initialListingFinished( false ),
-      m_slave( slave ),
-      m_listEntries( false )
+      m_slave( slave )
 {
     kDebug() <<  url;
 
     qRegisterMetaType<QList<QUrl> >();
 
     // parse URL
-    bool sparql = false;
-    m_query = queryFromUrl( url, &sparql );
-    if ( !sparql ) {
-        Query::Query query = Query::QueryParser::parseQuery( m_query );
-        query.addRequestProperty( Query::Query::RequestProperty( Nepomuk::Vocabulary::NIE::url(), true ) );
-        m_query = query.toSparqlQuery();
-    }
+    m_query = queryFromUrl( url );
 }
 
 
@@ -114,8 +67,6 @@ Nepomuk::SearchFolder::~SearchFolder()
     // properly shut down the search thread
     quit();
     wait();
-
-    qDeleteAll( m_entries );
 }
 
 
@@ -131,9 +82,6 @@ void Nepomuk::SearchFolder::run()
     // initial listing which means that queued signals would never get delivered
     connect( m_client, SIGNAL( newEntries( const QList<Nepomuk::Query::Result>& ) ),
              this, SLOT( slotNewEntries( const QList<Nepomuk::Query::Result>& ) ),
-             Qt::DirectConnection );
-    connect( m_client, SIGNAL( entriesRemoved( const QList<QUrl>& ) ),
-             this, SLOT( slotEntriesRemoved( const QList<QUrl>& ) ),
              Qt::DirectConnection );
     connect( m_client, SIGNAL( finishedListing() ),
              this, SLOT( slotFinishedListing() ),
@@ -153,62 +101,20 @@ void Nepomuk::SearchFolder::list()
 {
     kDebug() << m_url << QThread::currentThread();
 
-    m_listEntries = true;
-
-    if ( !isRunning() ) {
-        start();
-    }
-
-    // list all cached entries
-    kDebug() << "listing" << m_entries.count() << "cached entries";
-    for ( QHash<QString, SearchEntry*>::const_iterator it = m_entries.constBegin();
-          it != m_entries.constEnd(); ++it ) {
-        m_slave->listEntry( ( *it )->entry(), false );
-    }
+    // start the search thread
+    start();
 
     // list all results
     statResults();
 
     kDebug() << "listing done";
 
-    m_listEntries = false;
-
     m_slave->listEntry( KIO::UDSEntry(), true );
     m_slave->finished();
-}
 
-
-Nepomuk::SearchEntry* Nepomuk::SearchFolder::findEntry( const QString& name )
-{
-    kDebug() << name;
-
-    //
-    // get all results in case we do not have them already
-    //
-    if ( !isRunning() )
-        start();
-    statResults();
-
-    //
-    // search for the one we need
-    //
-    QHash<QString, SearchEntry*>::const_iterator it = m_entries.constFind( name );
-    if ( it != m_entries.constEnd() ) {
-        kDebug() << "-----> found";
-        return *it;
-    }
-    else {
-        kDebug() << "-----> not found";
-        return 0;
-    }
-}
-
-
-Nepomuk::SearchEntry* Nepomuk::SearchFolder::findEntry( const KUrl& url )
-{
-    Q_UNUSED(url);
-    // FIXME
-    return 0;
+    // shutdown and delete
+    exit();
+    deleteLater();
 }
 
 
@@ -221,38 +127,10 @@ void Nepomuk::SearchFolder::slotNewEntries( const QList<Nepomuk::Query::Result>&
     m_resultsQueue += results;
     m_resultMutex.unlock();
 
-    if ( m_initialListingFinished ) {
-        // inform everyone of the change
-        kDebug() << "Informing about change in folder" << m_url.url();
-        org::kde::KDirNotify::emitFilesAdded( m_url.url() );
-    }
-    else {
+    if ( !m_initialListingFinished ) {
         kDebug() << "Waking main thread";
         m_resultWaiter.wakeAll();
     }
-}
-
-
-// always called in search thread
-void Nepomuk::SearchFolder::slotEntriesRemoved( const QList<QUrl>& entries )
-{
-    QMutexLocker lock( &m_resultMutex );
-
-    QStringList urls;
-    foreach( const QUrl& uri, entries ) {
-        QString name = resourceUriToUdsName( uri );
-
-        // update cache
-        delete m_entries.take( name );
-
-        KUrl resultUrl( m_url );
-        resultUrl.addPath( resourceUriToUdsName( uri ) );
-        urls << resultUrl.url();
-    }
-
-    // inform everybody
-    kDebug() << m_url << "Informing about removed files:" << urls;
-    org::kde::KDirNotify::emitFilesRemoved( urls );
 }
 
 
@@ -274,12 +152,10 @@ void Nepomuk::SearchFolder::statResults()
         if ( !m_resultsQueue.isEmpty() ) {
             Query::Result result = m_resultsQueue.dequeue();
             m_resultMutex.unlock();
-            SearchEntry* entry = statResult( result );
-            if ( entry ) {
-                if ( m_listEntries ) {
-                    kDebug() << "listing" << entry->resource();
-                    m_slave->listEntry( entry->entry(), false );
-                }
+            KIO::UDSEntry uds = statResult( result );
+            if ( uds.count() ) {
+                kDebug() << "listing" << result.resource().resourceUri();
+                m_slave->listEntry( uds, false );
             }
         }
         else if ( !m_initialListingFinished ) {
@@ -322,7 +198,7 @@ namespace {
 
 
 // always called in main thread
-Nepomuk::SearchEntry* Nepomuk::SearchFolder::statResult( const Query::Result& result )
+KIO::UDSEntry Nepomuk::SearchFolder::statResult( const Query::Result& result )
 {
     Resource res( result.resource() );
     KUrl url = res.resourceUri();
@@ -373,12 +249,10 @@ Nepomuk::SearchEntry* Nepomuk::SearchFolder::statResult( const Query::Result& re
             }
         }
 
-        SearchEntry* entry = new SearchEntry( url, uds );
-        m_entries.insert( uds.stringValue( KIO::UDSEntry::UDS_NAME ), entry );
-        return entry;
+        return uds;
     }
     else {
         kDebug() << "Stating" << result.resource().resourceUri() << "failed";
-        return 0;
+        return KIO::UDSEntry();
     }
 }

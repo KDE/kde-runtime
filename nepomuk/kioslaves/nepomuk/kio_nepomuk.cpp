@@ -23,6 +23,7 @@
 #include "nfo.h"
 #include "pimo.h"
 #include "resourcepagegenerator.h"
+#include "nepomuksearchurltools.h"
 
 #include <QtCore/QByteArray>
 #include <QtCore/QDateTime>
@@ -222,18 +223,6 @@ namespace {
         else {
             return stripQuery( url );
         }
-    }
-
-    /**
-     * Encode the resource URI into the UDS_NAME to make it unique.
-     * It is important that we do not use the % for percent-encoding. Otherwise KUrl::url will
-     * re-encode them, thus, destroying our name.
-     *
-     * This is (and should always be) the exact same as in ../search/searchfolder.cpp.
-     */
-    QString resourceUriToUdsName( const KUrl& url )
-    {
-        return QString::fromAscii( url.toEncoded().toPercentEncoding( QByteArray(), QByteArray(), '_' ) );
     }
 }
 
