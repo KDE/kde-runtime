@@ -39,7 +39,13 @@ namespace Nepomuk {
             ~FolderConnection();
 
         public Q_SLOTS:
+            /// List all entries in the folder, used by the public kdelibs API
             void list();
+
+            /// internal API used by the kio kded module to listen for changes
+            void listen();
+
+            /// close the connection to the folder. Will delete this connection
             void close();
 
         Q_SIGNALS:
@@ -48,7 +54,8 @@ namespace Nepomuk {
             void finishedListing();
 
         private Q_SLOTS:
-            void slotEntriesRemoved( QList<QUrl> entries );
+            void slotEntriesRemoved( const QList<QUrl>& entries );
+            void slotFinishedListing();
 
         private:
             Folder* m_folder;

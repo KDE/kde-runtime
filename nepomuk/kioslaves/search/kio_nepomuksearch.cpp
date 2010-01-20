@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2008 by Sebastian Trueg <trueg at kde.org>
+   Copyright (C) 2008-2010 by Sebastian Trueg <trueg at kde.org>
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 #include "nfo.h"
 #include "nie.h"
 #include "pimo.h"
+#include "nepomuksearchurltools.h"
 
 #include <QtCore/QFile>
 
@@ -116,14 +117,18 @@ Nepomuk::SearchProtocol::~SearchProtocol()
 }
 
 
-bool Nepomuk::SearchProtocol::ensureNepomukRunning()
+bool Nepomuk::SearchProtocol::ensureNepomukRunning( bool emitError )
 {
     if ( Nepomuk::ResourceManager::instance()->init() ) {
-        error( KIO::ERR_SLAVE_DEFINED, i18n( "The Nepomuk system is not activated. Unable to answer queries without it." ) );
+        kDebug() << "Failed to init Nepomuk";
+        if ( emitError )
+            error( KIO::ERR_SLAVE_DEFINED, i18n( "The Nepomuk system is not activated. Unable to answer queries without it." ) );
         return false;
     }
     else if ( !Nepomuk::Query::QueryServiceClient::serviceAvailable() ) {
-        error( KIO::ERR_SLAVE_DEFINED, i18n( "The Nepomuk query service is not running. Unable to answer queries without it." ) );
+        kDebug() << "Nepomuk Query service is not running.";
+        if ( emitError )
+            error( KIO::ERR_SLAVE_DEFINED, i18n( "The Nepomuk query service is not running. Unable to answer queries without it." ) );
         return false;
     }
     else {
@@ -160,9 +165,6 @@ void Nepomuk::SearchProtocol::listDir( const KUrl& url )
 {
     kDebug() << url;
 
-    if ( !ensureNepomukRunning() )
-        return;
-
     //
     // Root dir: * list default searches: "all music files", "recent files"
     //           * list configuration entries: "create new default search"
@@ -177,8 +179,18 @@ void Nepomuk::SearchProtocol::listDir( const KUrl& url )
     if ( isRootUrl( url ) ) {
         listRoot();
     }
-    else if ( SearchFolder* folder = extractSearchFolder( url ) ) {
-        folder->list();
+    else {
+        if ( !ensureNepomukRunning(false) ) {
+            // we defer the listing to later when Nepomuk is up and running
+            listEntry( KIO::UDSEntry(),  true);
+            finished();
+        }
+        else if ( SearchFolder* folder = extractSearchFolder( url ) ) {
+            folder->list();
+        }
+        else {
+            error( KIO::ERR_DOES_NOT_EXIST, url.prettyUrl() );
+        }
     }
 }
 
@@ -210,9 +222,6 @@ void Nepomuk::SearchProtocol::mimetype( const KUrl& url )
 {
     kDebug() << url;
 
-    if ( !ensureNepomukRunning() )
-        return;
-
     if ( isRootUrl( url ) ) {
         mimeType( QString::fromLatin1( "inode/directory" ) );
         finished();
@@ -231,9 +240,6 @@ void Nepomuk::SearchProtocol::mimetype( const KUrl& url )
 void Nepomuk::SearchProtocol::stat( const KUrl& url )
 {
     kDebug() << url;
-
-    if ( !ensureNepomukRunning() )
-        return;
 
     if ( isRootUrl( url ) ) {
         kDebug() << "Stat root" << url;
@@ -265,39 +271,21 @@ void Nepomuk::SearchProtocol::stat( const KUrl& url )
 
 void Nepomuk::SearchProtocol::del(const KUrl& url, bool isFile)
 {
-    if ( !ensureNepomukRunning() )
-        return;
-
-    Nepomuk::SearchFolder* folder = extractSearchFolder( url );
-
-    if (folder) {
-        if ( folder->findEntry( url.fileName() ) ) {
-            kDebug() << "findEntry returned something";
-            KIO::ForwardingSlaveBase::del(url, isFile);
-        }
-        else {
-            kDebug() << "findEntry returned nothing";
-            error( KIO::ERR_DOES_NOT_EXIST, url.fileName() ); // not in m_entries
-        }
+    if ( isFile ) {
+        ForwardingSlaveBase::del( url, isFile );
     }
     else {
-        kDebug() << "ERROR : extractSearchFolder returned NOTHING";
-        error( KIO::ERR_DOES_NOT_EXIST, url.fileName() );
+        error( KIO::ERR_UNSUPPORTED_ACTION, url.prettyUrl() );
     }
 }
 
 
 bool Nepomuk::SearchProtocol::rewriteUrl( const KUrl& url, KUrl& newURL )
 {
-    if ( SearchFolder* folder = extractSearchFolder( url ) ) {
-        if ( SearchEntry* entry = folder->findEntry( url.fileName() ) ) {
-            newURL = entry->resource();
-            kDebug() << url << newURL;
-            return true;
-        }
-    }
-
-    return false;
+    // we do it the speedy but slightly umpf way: decode the encoded URI from the filename
+    newURL = Nepomuk::udsNameToResourceUri( url.fileName() );
+    kDebug() << "NEW URL:" << newURL << newURL.protocol() << newURL.path() << newURL.fileName();
+    return newURL.isValid();
 }
 
 
@@ -337,20 +325,8 @@ Nepomuk::SearchFolder* Nepomuk::SearchProtocol::getQueryFolder( const KUrl& url 
     }
 
     QString urlStr = strippedUrl.url();
-    if ( m_searchCache.contains( urlStr ) ) {
-        return m_searchCache[urlStr];
-    }
-    else {
-        if ( m_searchCache.count() >= SEARCH_CACHE_MAX ) {
-            QString oldestQuery = m_searchCacheNameQueue.dequeue();
-            delete m_searchCache.take( oldestQuery );
-        }
-
-        SearchFolder* folder = new SearchFolder( strippedUrl, this );
-        m_searchCacheNameQueue.enqueue( urlStr );
-        m_searchCache.insert( urlStr, folder );
-        return folder;
-    }
+    SearchFolder* folder = new SearchFolder( strippedUrl, this );
+    return folder;
 }
 
 

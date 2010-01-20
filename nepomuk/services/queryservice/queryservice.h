@@ -21,7 +21,7 @@
 
 #include <Nepomuk/Service>
 
-#include "dbusoperators.h"
+#include "dbusoperators_p.h"
 
 #include <KUrl>
 

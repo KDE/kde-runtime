@@ -3,6 +3,7 @@
 <node>
   <interface name="org.kde.nepomuk.Query">
     <method name="list" />
+    <method name="listen" />
     <method name="close" />
     <signal name="newEntries">
       <arg name="entries" type="a(sda{s(isss)})" />

@@ -9,6 +9,7 @@ include_directories(
   ${KDE4_INCLUDES}
   ${KDE4_KIO_INCLUDES}
   ${NEPOMUK_INCLUDE_DIR}
+  ${nepomuk_kio_slaves_SOURCE_DIR}/common
 )
 
 add_definitions (${QT_DEFINITIONS} ${KDE4_DEFINITIONS} -DDISABLE_NEPOMUK_LEGACY)
@@ -50,3 +51,5 @@ install(
 install(
   FILES nepomuksearch.protocol
   DESTINATION  ${SERVICES_INSTALL_DIR})
+
+add_subdirectory(kdedmodule)

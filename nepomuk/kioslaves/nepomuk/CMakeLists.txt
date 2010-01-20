@@ -1,6 +1,7 @@
 include_directories(
   ${KDE4_INCLUDES}
   ${CMAKE_CURRENT_BINARY_DIR}
+  ${nepomuk_kio_slaves_SOURCE_DIR}/common
 )
 
 set(kio_nepomuk_PART_SRCS 

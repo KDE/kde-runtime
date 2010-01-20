@@ -42,25 +42,6 @@ namespace Nepomuk {
         class QueryServiceClient;
     }
 
-    class SearchFolder;
-
-    class SearchEntry
-    {
-    public:
-        SearchEntry( const QUrl& uri,
-                     const KIO::UDSEntry& = KIO::UDSEntry() );
-
-        QUrl resource() const { return m_resource; }
-        KIO::UDSEntry entry() const { return m_entry; }
-
-    private:
-        QUrl m_resource;
-        KIO::UDSEntry m_entry;
-
-        friend class SearchFolder;
-    };
-
-
     class SearchFolder : public QThread
     {
         Q_OBJECT
@@ -71,19 +52,12 @@ namespace Nepomuk {
 
         QString query() const { return m_query; }
         KUrl url() const { return m_url; }
-        QList<SearchEntry*> entries() const { return m_entries.values(); }
-
-        SearchEntry* findEntry( const QString& name );
-        SearchEntry* findEntry( const KUrl& url );
 
         void list();
 
     private Q_SLOTS:
         /// connected to the QueryServiceClient in the search thread
         void slotNewEntries( const QList<Nepomuk::Query::Result>& );
-
-        /// connected to the QueryServiceClient in the search thread
-        void slotEntriesRemoved( const QList<QUrl>& );
 
         /// connected to the QueryServiceClient in the search thread
         void slotFinishedListing();
@@ -104,7 +78,7 @@ namespace Nepomuk {
         /**
          * Stats the result and returns the entry.
          */
-        SearchEntry* statResult( const Query::Result& result );
+        KIO::UDSEntry statResult( const Query::Result& result );
 
         // folder properties
         KUrl m_url;
@@ -115,9 +89,6 @@ namespace Nepomuk {
         // result cache, filled by the search thread
         QQueue<Query::Result> m_resultsQueue;
 
-        // final results, filled by the main thread in statResults
-        QHash<QString, SearchEntry*> m_entries;
-
         // true if the client listed all results and new
         // ones do not need to be listed but emitted through
         // KDirNotify
@@ -125,9 +96,6 @@ namespace Nepomuk {
 
         // the parent slave used for listing and stating
         KIO::SlaveBase* m_slave;
-
-        // true if listing of entries has been requested
-        bool m_listEntries;
 
         Query::QueryServiceClient* m_client;
 

@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2008 by Sebastian Trueg <trueg at kde.org>
+   Copyright (C) 2008-2010 by Sebastian Trueg <trueg at kde.org>
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -78,7 +78,7 @@ namespace Nepomuk {
         void prepareUDSEntry( KIO::UDSEntry& entry, bool ) const;
 
     private:
-        bool ensureNepomukRunning();
+        bool ensureNepomukRunning( bool emitError = true );
         void listRoot();
         void listActions();
         void listDefaultSearches();
@@ -95,13 +95,6 @@ namespace Nepomuk {
 
         // the default search folders
         QHash<QString, KUrl> m_defaultSearches;
-
-        // cache of all on-the-fly search folders
-        QHash<QString, SearchFolder*>  m_searchCache;
-
-        // queue to remember the order of the search cache
-        // when enforcing the cache max
-        QQueue<QString> m_searchCacheNameQueue;
     };
 }
 
