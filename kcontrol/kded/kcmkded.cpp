@@ -284,12 +284,12 @@ void KDEDConfig::defaults()
 	int count = _lvStartup->topLevelItemCount();
 	for( int i = 0; i < count; ++i )
 	{
-		_lvStartup->topLevelItem( i )->setCheckState( StartupUse, Qt::Unchecked );
+		_lvStartup->topLevelItem( i )->setCheckState( StartupUse, Qt::Checked );
 	}
 
 	getServiceStatus();
 
-	emit changed(false);
+	emit changed(true);
 }
 
 
