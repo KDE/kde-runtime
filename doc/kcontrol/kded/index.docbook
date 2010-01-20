@@ -45,12 +45,18 @@ services.
 <varlistentry>
 <term><guilabel>Startup Services</guilabel></term>
 <listitem><para>
-This shows all &kde; services that can be loaded on &kde; startup. Checked 
-services will be invoked on next startup.</para>
+This shows all &kde; services that can be loaded on &kde; startup.  
+Services checked in the <guilabel>Use</guilabel> column will be invoked on next startup.</para>
 <para>Be careful with deactivation of 
 unknown services: some services are vital for &kde;; do 
 not deactivate services if you do not know what you are doing.
-</para></listitem>
+</para>
+<para>To change the <guilabel>Status</guilabel> of a service, select it in the list. 
+Then you can use the <guibutton>Start</guibutton> and <guibutton>Stop</guibutton>
+to change the status of a service from <guilabel>Not running</guilabel> to <guilabel>Running</guilabel>
+and vice versa.
+</para>
+</listitem>
 </varlistentry>
 
 </variablelist>
