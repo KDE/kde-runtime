@@ -32,7 +32,7 @@ the device notifier applet or the navigation panel in the file manager to get ac
 recently plugged in device.
 </para>
 
-<para>On the bottom of the dialog you find the global settings, which can be overridden
+<para>At the top of the dialog you find the global settings, which can be overridden
 for each single device in the <guilabel>Device Overrides</guilabel> list.
 For a single-user desktop it is recommended to have all the 
 check boxes above the overrides list enabled. 
