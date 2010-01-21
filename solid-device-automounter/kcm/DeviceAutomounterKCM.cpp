@@ -1,5 +1,5 @@
-/***************************************************************************
-*   Copyright (C) 2009 by Trever Fischer <wm161@wm161.net>                *
+/**************************************************************************
+*   Copyright (C) 2009-2010 Trever Fischer <tdfischer@fedoraproject.org>  *
 *                                                                         *
 *   This program is free software; you can redistribute it and/or modify  *
 *   it under the terms of the GNU General Public License as published by  *
@@ -33,6 +33,7 @@
 #include <KLocale>
 
 #include "AutomounterSettings.h"
+#include "LayoutSettings.h"
 #include "DeviceModel.h"
 
 K_PLUGIN_FACTORY(DeviceAutomounterKCMFactory, registerPlugin<DeviceAutomounterKCM>();)
@@ -135,11 +136,13 @@ DeviceAutomounterKCM::load()
 
     m_devices->reload();
     enabledChanged();
+    loadLayout();
 }
 
 void
 DeviceAutomounterKCM::save()
 {
+    saveLayout();
     if (this->automountEnabled->checkState() == Qt::Checked)
         AutomounterSettings::setAutomountEnabled(true);
     else
@@ -189,5 +192,35 @@ DeviceAutomounterKCM::save()
 
 DeviceAutomounterKCM::~DeviceAutomounterKCM()
 {
+    saveLayout();
 }
 
+void
+DeviceAutomounterKCM::saveLayout()
+{
+    QList<int> widths;
+    for(int i = 0;i<m_devices->columnCount();i++)
+        widths << deviceView->columnWidth(i);
+    LayoutSettings::setHeaderWidths(widths);
+    //Check DeviceModel.cpp, thats where the magic row numbers come from.
+    LayoutSettings::setAttachedExpanded(deviceView->isExpanded(m_devices->index(0,0)));
+    LayoutSettings::setDetatchedExpanded(deviceView->isExpanded(m_devices->index(1,0)));
+    LayoutSettings::self()->writeConfig();
+}
+
+void
+DeviceAutomounterKCM::loadLayout()
+{
+    LayoutSettings::self()->readConfig();
+    //Reset it first, just in case there isn't any layout saved for a particular column.
+    for(int i = 0;i<m_devices->columnCount();i++)
+        deviceView->resizeColumnToContents(i);
+
+    QList<int> widths = LayoutSettings::headerWidths();
+    for(int i = 0;i<m_devices->columnCount() && i<widths.size();i++) {
+        deviceView->setColumnWidth(i, widths[i]);
+    }
+
+    deviceView->setExpanded(m_devices->index(0,0), LayoutSettings::attachedExpanded());
+    deviceView->setExpanded(m_devices->index(1,0), LayoutSettings::detatchedExpanded());
+}

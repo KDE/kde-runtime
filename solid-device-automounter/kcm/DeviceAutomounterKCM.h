@@ -1,5 +1,5 @@
-/***************************************************************************
-*   Copyright (C) 2009 by Trever Fischer <wm161@wm161.net>                *
+/**************************************************************************
+*   Copyright (C) 2009-2010 Trever Fischer <tdfischer@fedoraproject.org>  *
 *                                                                         *
 *   This program is free software; you can redistribute it and/or modify  *
 *   it under the terms of the GNU General Public License as published by  *
@@ -43,6 +43,8 @@ class DeviceAutomounterKCM : public KCModule, public Ui::DeviceAutomounterKCM {
         void forgetSelectedDevices();
     private:
         DeviceModel* m_devices;
+        void saveLayout();
+        void loadLayout();
 };
 
 #endif

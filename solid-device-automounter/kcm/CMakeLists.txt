@@ -6,7 +6,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
 
 kde4_add_ui_files(kcm_device_automounter_SRCS DeviceAutomounterKCM.ui)
 
-kde4_add_kcfg_files(kcm_device_automounter_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/../lib/AutomounterSettingsBase.kcfgc)
+kde4_add_kcfg_files(kcm_device_automounter_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/../lib/AutomounterSettingsBase.kcfgc ${CMAKE_CURRENT_SOURCE_DIR}/LayoutSettings.kcfgc)
 
 
 kde4_add_plugin(kcm_device_automounter ${kcm_device_automounter_SRCS} ${device_automounter_lib_SRCS})
