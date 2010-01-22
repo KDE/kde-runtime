@@ -1,6 +1,6 @@
 /*******************************************************************
 * backtracewidget.cpp
-* Copyright 2009    Dario Andres Rodriguez <andresbajotierra@gmail.com>
+* Copyright 2009,2010    Dario Andres Rodriguez <andresbajotierra@gmail.com>
 *
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License as
@@ -56,6 +56,7 @@ BacktraceWidget::BacktraceWidget(BacktraceGenerator *generator, QWidget *parent)
     ui.m_extraDetailsLabel->setVisible(false);
     ui.m_extraDetailsLabel->setStyleSheet(QLatin1String(extraDetailsLabelMargin));
 
+    //Setup the buttons
     ui.m_reloadBacktraceButton->setGuiItem(
                 KGuiItem2(i18nc("@action:button", "&Reload"),
                           KIcon("view-refresh"), i18nc("@info:tooltip", "Use this button to "
@@ -86,6 +87,7 @@ BacktraceWidget::BacktraceWidget(BacktraceGenerator *generator, QWidget *parent)
     connect(ui.m_saveButton, SIGNAL(clicked()) , this, SLOT(saveClicked()));
     ui.m_saveButton->setEnabled(false);
 
+    //Create the rating widget
     m_backtraceRatingWidget = new BacktraceRatingWidget(ui.m_statusWidget);
     ui.m_statusWidget->addCustomStatusWidget(m_backtraceRatingWidget);
 
@@ -94,6 +96,7 @@ BacktraceWidget::BacktraceWidget(BacktraceGenerator *generator, QWidget *parent)
 
 void BacktraceWidget::setAsLoading()
 {
+    //Set the widget as loading and disable all the action buttons
     ui.m_backtraceEdit->setText(i18nc("@info:status", "Loading..."));
     ui.m_backtraceEdit->setEnabled(false);
 
@@ -129,19 +132,24 @@ void BacktraceWidget::regenerateBacktrace()
 void BacktraceWidget::generateBacktrace()
 {
     if (m_btGenerator->state() == BacktraceGenerator::NotLoaded) {
-        regenerateBacktrace();    //First backtrace generation
+        //First backtrace generation
+        regenerateBacktrace();
     } else if (m_btGenerator->state() == BacktraceGenerator::Loading) {
-        setAsLoading(); //Set in loading state, the widget will catch the backtrace events anyway
-        emit stateChanged();
-    } else { //*Finished* states
+        //Set in loading state, the widget will catch the backtrace events anyway
         setAsLoading();
         emit stateChanged();
-        loadData(); //Load already gathered information
+    } else {
+        //*Finished* states
+        setAsLoading();
+        emit stateChanged();
+        //Load already gathered information
+        loadData(); 
     }
 }
 
 void BacktraceWidget::anotherDebuggerRunning()
 {
+    //As another debugger is running, we should disable the actions and notify the user
     ui.m_backtraceEdit->setEnabled(false);
     ui.m_backtraceEdit->setText(i18nc("@info", "Another debugger is currently debugging the "
                                    "same application. The crash information could not be fetched."));
@@ -159,6 +167,7 @@ void BacktraceWidget::anotherDebuggerRunning()
 
 void BacktraceWidget::loadData()
 {
+    //Load the backtrace data from the generator
     m_backtraceRatingWidget->setState(m_btGenerator->state());
 
     if (m_btGenerator->state() == BacktraceGenerator::Loaded) {
@@ -168,6 +177,7 @@ void BacktraceWidget::loadData()
         BacktraceParser * btParser = m_btGenerator->parser();
         m_backtraceRatingWidget->setUsefulness(btParser->backtraceUsefulness());
 
+        //Generate the text to put in the status widget (backtrace usefulness)
         QString usefulnessText;
         switch (btParser->backtraceUsefulness()) {
         case BacktraceParser::ReallyUseful:
@@ -191,29 +201,37 @@ void BacktraceWidget::loadData()
         ui.m_statusWidget->setIdle(usefulnessText);
 
         if (btParser->backtraceUsefulness() != BacktraceParser::ReallyUseful) {
-            //FIXME 4.5 Split this text, the button should only appear if the installdbgsymbols
-            //script is available. the text about the textbase article should appear always, or
-            //at least, when the script is not available.
+            //Not a perfect bactrace, ask the user to try to improve it
             ui.m_extraDetailsLabel->setVisible(true);
-            ui.m_extraDetailsLabel->setText(i18nc("@info/rich", "You can click the <interface>"
-                                "Install Debug Symbols</interface> button in order to automatically "
-                                "install the missing debugging information packages. If this method "
-                                "does not work: please read <link url='%1'>How to "
-                                "create useful crash reports</link> to learn how to get a useful "
-                                "backtrace; install the needed packages and click the "
-                                "<interface>Reload Crash Information</interface> button.",
-                                QLatin1String(TECHBASE_HOWTO_DOC)));
-            ui.m_installDebugButton->setVisible(true);
-            //Show the "Install dbg symbols" button disabled if the script is not available
-            ui.m_installDebugButton->setEnabled(canInstallDebugPackages());
-            
-            QStringList missingLibraries = btParser->librariesWithMissingDebugSymbols().toList();
-            m_debugPackageInstaller->setMissingLibraries(missingLibraries);
+            if (canInstallDebugPackages()) {
+                //The script to install the debug packages is available
+                ui.m_extraDetailsLabel->setText(i18nc("@info/rich", "You can click the <interface>"
+                                    "Install Debug Symbols</interface> button in order to automatically "
+                                    "install the missing debugging information packages. If this method "
+                                    "does not work: please read <link url='%1'>How to "
+                                    "create useful crash reports</link> to learn how to get a useful "
+                                    "backtrace; install the needed packages and click the "
+                                    "<interface>Reload Crash Information</interface> button.",
+                                    QLatin1String(TECHBASE_HOWTO_DOC)));
+                ui.m_installDebugButton->setVisible(true);
+                //Retrieve the libraries with missing debug info
+                QStringList missingLibraries = btParser->librariesWithMissingDebugSymbols().toList();
+                m_debugPackageInstaller->setMissingLibraries(missingLibraries);
+            } else {
+                //No automated method to install the missing debug info
+                //Tell the user to read the howto and reload
+                ui.m_extraDetailsLabel->setText(i18nc("@info/rich", "Please read <link url='%1'>How to "
+                                    "create useful crash reports</link> to learn how to get a useful "
+                                    "backtrace; install the needed packages and click the "
+                                    "<interface>Reload Crash Information</interface> button.",
+                                    QLatin1String(TECHBASE_HOWTO_DOC)));
+            }
         }
 
         ui.m_copyButton->setEnabled(true);
         ui.m_saveButton->setEnabled(true);
     } else if (m_btGenerator->state() == BacktraceGenerator::Failed) {
+        //The backtrace could not be generated because the debugger had an error
         m_backtraceRatingWidget->setUsefulness(BacktraceParser::Useless);
 
         ui.m_statusWidget->setIdle(i18nc("@info:status", "The debugger has quit unexpectedly."));
@@ -226,6 +244,8 @@ void BacktraceWidget::loadData()
                                             "backtrace by clicking the <interface>Reload Crash "
                                             "Information</interface> button."));
     } else if (m_btGenerator->state() == BacktraceGenerator::FailedToStart) {
+        //The backtrace could not be generated because the debugger could not start (missing)
+        //Tell the user to install it.
         m_backtraceRatingWidget->setUsefulness(BacktraceParser::Useless);
 
         ui.m_statusWidget->setIdle(i18nc("@info:status", "The debugger application is missing or "
@@ -246,6 +266,7 @@ void BacktraceWidget::loadData()
 
 void BacktraceWidget::backtraceNewLine(const QString & line)
 {
+    //While loading the backtrace (unparsed) a new line was sent from the debugger, append it
     ui.m_backtraceEdit->append(line.trimmed());
 }
 
