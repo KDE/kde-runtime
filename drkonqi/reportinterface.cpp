@@ -39,18 +39,22 @@ ReportInterface::ReportInterface(QObject *parent)
 {
     m_bugzillaManager = new BugzillaManager(this);
 
+#if 0
     //Set a custom tracker for testing purposes
     //m_bugzillaManager->setCustomBugtrackerUrl("http://bugstest.kde.org/");
+#endif
 
     m_productMapping = new ProductMapping(DrKonqi::crashedApplication()->fakeExecutableBaseName(),
                                           m_bugzillaManager, this);
 
+    //Information the user can provide about the crash
     m_userRememberCrashSituation = false;
     m_reproducible = ReproducibleUnsure;
     m_provideActionsApplicationDesktop = false;
     m_provideUnusualBehavior = false;
     m_provideApplicationConfigurationDetails = false;
 
+    //Do not attach the bug report to any other existant report (create a new one)
     m_attachToBugNumber = 0;
 }
 
@@ -58,6 +62,7 @@ void ReportInterface::setBugAwarenessPageData(bool rememberSituation,
                                                    Reproducible reproducible, bool actions, 
                                                    bool unusual, bool configuration)
 {
+    //Save the information the user can provide about the crash from the assistant page
     m_userRememberCrashSituation = rememberSituation;
     m_reproducible = reproducible;
     m_provideActionsApplicationDesktop = actions;
@@ -67,6 +72,8 @@ void ReportInterface::setBugAwarenessPageData(bool rememberSituation,
 
 bool ReportInterface::isBugAwarenessPageDataUseful() const
 {
+    //Determine if the assistant should proceed, considering the amount of information
+    //the user can provide
     int rating = selectedOptionsRating();
 
     //Minimum information required even for a good backtrace.
@@ -168,13 +175,15 @@ QString ReportInterface::generateReport(bool drKonqiStamp) const
         if (!m_reportDetailText.isEmpty()) {
             report.append(m_reportDetailText);
         } else {
+            //If the user manual reports this crash, he/she should know what to put in here.
+            //This message is the only one translated in this function
             report.append(i18nc("@info/plain","<placeholder>In detail, tell us what you were doing "
                                               " when the application crashed.</placeholder>"));
         }
         report.append(QLatin1String("\n\n"));
     }
 
-    //Can be reproduced
+    //Crash reproducibility (only if useful)
     if (m_reproducible !=  ReproducibleUnsure) {
         if (m_reproducible == ReproducibleEverytime) {
             report.append(QString("The crash can be reproduced every time.\n\n"));
@@ -194,7 +203,7 @@ QString ReportInterface::generateReport(bool drKonqiStamp) const
         report.append(QString("A useful backtrace could not be generated\n"));
     }
 
-    //Possible duplicate
+    //Possible duplicates (selected by the user)
     if (!m_possibleDuplicates.isEmpty()) {
         report.append(QLatin1String("\n"));
         QString duplicatesString;
@@ -206,7 +215,7 @@ QString ReportInterface::generateReport(bool drKonqiStamp) const
                         .arg(duplicatesString));
     }
 
-    //All possible duplicates by query
+    //Several possible duplicates (by bugzilla query)
     if (!m_allPossibleDuplicatesByQuery.isEmpty()) {
         report.append(QLatin1String("\n"));
         QString duplicatesString;
@@ -228,6 +237,7 @@ QString ReportInterface::generateReport(bool drKonqiStamp) const
 
 BugReport ReportInterface::newBugReportTemplate() const
 {
+    //Generate a new bug report template with some values on it
     BugReport report;
     
     const SystemInformation * sysInfo = DrKonqi::systemInformation();
@@ -245,7 +255,7 @@ BugReport ReportInterface::newBugReportTemplate() const
     report.setBugSeverity(QLatin1String("crash"));
 
     /*
-    Disable the backtrace functions on title for release.
+    Disable the backtrace functions on title for RELEASE.
     It also needs a bit of polishment
 
     QString title = m_reportTitle;
@@ -268,11 +278,13 @@ void ReportInterface::sendBugReport() const
 {
     if (m_attachToBugNumber > 0)
     {
+        //We are going to attach the report to an existant one
         connect(m_bugzillaManager, SIGNAL(addMeToCCFinished(int)), this, SLOT(addedToCC()));
         connect(m_bugzillaManager, SIGNAL(addMeToCCError(QString)), this, SIGNAL(sendReportError(QString)));
         //First add the user to the CC list, then attach
         m_bugzillaManager->addMeToCC(m_attachToBugNumber);
     } else {
+        //Creating a new bug report
         BugReport report = newBugReportTemplate();
         report.setDescription(generateReport(true));
         report.setValid(true);
@@ -286,6 +298,8 @@ void ReportInterface::sendBugReport() const
 
 void ReportInterface::sendUsingDefaultProduct() const
 {
+    //Fallback function: if some of the custom values fail, we need to reset all the fields to the default
+    //(and valid) bugzilla values; and try to resend
     BugReport report = newBugReportTemplate();
     report.setProduct(QLatin1String("kde"));
     report.setComponent(QLatin1String("general"));
@@ -305,6 +319,7 @@ void ReportInterface::addedToCC()
 
     QString reportText = generateReport(true);
 
+    //Attach the report. The description of the attachment also includes the bug description
     m_bugzillaManager->attachTextToReport(reportText, QLatin1String("/tmp/drkonqireport"), //Fake path
                                   QLatin1String("New crash information added by DrKonqi"),
                                   m_attachToBugNumber,
@@ -314,6 +329,7 @@ void ReportInterface::addedToCC()
 void ReportInterface::attachSent(int attachId, int bugId)
 {
     Q_UNUSED(attachId);
+    //The bug was attached, consider it "sent"
     emit reportSent(bugId);
 }
 
@@ -364,6 +380,7 @@ bool ReportInterface::isWorthReporting() const
 
 void ReportInterface::setAttachToBugNumber(uint bugNumber)
 {
+    //If bugNumber>0, the report is going to be attached to bugNumber
     m_attachToBugNumber = bugNumber;
 }
 

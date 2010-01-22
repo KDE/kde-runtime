@@ -1,6 +1,6 @@
 /*******************************************************************
 * reportassistantdialog.cpp
-* Copyright 2009    Dario Andres Rodriguez <andresbajotierra@gmail.com>
+* Copyright 2009,2010    Dario Andres Rodriguez <andresbajotierra@gmail.com>
 *
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License as
@@ -45,6 +45,7 @@ ReportAssistantDialog::ReportAssistantDialog(QWidget * parent) :
     KGlobal::ref();
     setAttribute(Qt::WA_DeleteOnClose, true);
 
+    //Set window properties
     setWindowTitle(i18nc("@title:window","Crash Reporting Assistant"));
     setWindowIcon(KIcon("tools-report-bug"));
 
@@ -52,7 +53,9 @@ ReportAssistantDialog::ReportAssistantDialog(QWidget * parent) :
             this, SLOT(currentPageChanged_slot(KPageWidgetItem *, KPageWidgetItem *)));
     connect(this, SIGNAL(helpClicked()), this, SLOT(showHelp()));
 
-    //Introduction Page
+    //Create the assistant pages
+    
+    //-Introduction Page
     IntroductionPage * m_introduction = new IntroductionPage(this);
 
     KPageWidgetItem * m_introductionPage = new KPageWidgetItem(m_introduction,
@@ -61,7 +64,7 @@ ReportAssistantDialog::ReportAssistantDialog(QWidget * parent) :
     m_introductionPage->setHeader(i18nc("@title","Welcome to the Reporting Assistant"));
     m_introductionPage->setIcon(KIcon("tools-report-bug"));
     
-    //Bug Awareness Page
+    //-Bug Awareness Page
     BugAwarenessPage * m_awareness = new BugAwarenessPage(this);
     connectSignals(m_awareness);
 
@@ -71,7 +74,7 @@ ReportAssistantDialog::ReportAssistantDialog(QWidget * parent) :
     m_awarenessPage->setHeader(i18nc("@title","What do you know about the crash?"));
     m_awarenessPage->setIcon(KIcon("checkbox"));
     
-    //Crash Information Page
+    //-Crash Information Page
     CrashInformationPage * m_backtrace = new CrashInformationPage(this);
     connectSignals(m_backtrace);
 
@@ -81,7 +84,7 @@ ReportAssistantDialog::ReportAssistantDialog(QWidget * parent) :
     m_backtracePage->setHeader(i18nc("@title","Crash Information (Backtrace)"));
     m_backtracePage->setIcon(KIcon("run-build"));
 
-    //Results Page
+    //-Results Page
     ConclusionPage * m_conclusions = new ConclusionPage(this);
     connectSignals(m_conclusions);
 
@@ -92,7 +95,7 @@ ReportAssistantDialog::ReportAssistantDialog(QWidget * parent) :
     m_conclusionsPage->setIcon(KIcon("dialog-information"));
     connect(m_conclusions, SIGNAL(finished(bool)), this, SLOT(assistantFinished(bool)));
 
-    //Bugzilla Login
+    //-Bugzilla Login
     BugzillaLoginPage * m_bugzillaLogin =  new BugzillaLoginPage(this);
     connectSignals(m_bugzillaLogin);
 
@@ -103,7 +106,7 @@ ReportAssistantDialog::ReportAssistantDialog(QWidget * parent) :
     m_bugzillaLoginPage->setIcon(KIcon("user-identity"));
     connect(m_bugzillaLogin, SIGNAL(loggedTurnToNextPage()), this, SLOT(loginFinished()));
     
-    //Bugzilla duplicates
+    //-Bugzilla duplicates
     BugzillaDuplicatesPage * m_bugzillaDuplicates =  new BugzillaDuplicatesPage(this);
     connectSignals(m_bugzillaDuplicates);
 
@@ -113,7 +116,7 @@ ReportAssistantDialog::ReportAssistantDialog(QWidget * parent) :
     m_bugzillaDuplicatesPage->setHeader(i18nc("@title","Bug Report Possible Duplicates List"));
     m_bugzillaDuplicatesPage->setIcon(KIcon("repository"));
 
-    //Bugzilla information
+    //-Bugzilla information
     BugzillaInformationPage * m_bugzillaInformation =  new BugzillaInformationPage(this);
     connectSignals(m_bugzillaInformation);
 
@@ -123,7 +126,7 @@ ReportAssistantDialog::ReportAssistantDialog(QWidget * parent) :
     m_bugzillaInformationPage->setHeader(i18nc("@title","Details of the Bug Report"));
     m_bugzillaInformationPage->setIcon(KIcon("document-edit"));
 
-    //Bugzilla Report Preview
+    //-Bugzilla Report Preview
     BugzillaPreviewPage * m_bugzillaPreview =  new BugzillaPreviewPage(this);
 
     KPageWidgetItem * m_bugzillaPreviewPage = new KPageWidgetItem(m_bugzillaPreview, 
@@ -132,7 +135,7 @@ ReportAssistantDialog::ReportAssistantDialog(QWidget * parent) :
     m_bugzillaPreviewPage->setHeader(i18nc("@title","Preview Report"));
     m_bugzillaPreviewPage->setIcon(KIcon("document-preview"));
     
-    //Bugzilla commit
+    //-Bugzilla commit
     BugzillaSendPage * m_bugzillaSend =  new BugzillaSendPage(this);
 
     KPageWidgetItem * m_bugzillaSendPage = new KPageWidgetItem(m_bugzillaSend, 
@@ -142,7 +145,7 @@ ReportAssistantDialog::ReportAssistantDialog(QWidget * parent) :
     m_bugzillaSendPage->setIcon(KIcon("applications-internet"));
     connect(m_bugzillaSend, SIGNAL(finished(bool)), this, SLOT(assistantFinished(bool)));
 
-    //TODO remember to keep ordered
+    //TODO Remember to keep the pages ordered
     addPage(m_introductionPage);
     addPage(m_awarenessPage);
     addPage(m_backtracePage);
@@ -164,12 +167,15 @@ ReportAssistantDialog::~ReportAssistantDialog()
 
 void ReportAssistantDialog::connectSignals(ReportAssistantPage * page)
 {
+    //React to the changes in the assistant pages
     connect(page, SIGNAL(completeChanged(ReportAssistantPage*, bool)),
              this, SLOT(completeChanged(ReportAssistantPage*, bool)));
 }
 
 void ReportAssistantDialog::currentPageChanged_slot(KPageWidgetItem * current , KPageWidgetItem * before)
 {
+    //Page changed
+
     enableButton(KDialog::Cancel, true);
     m_canClose = false;
 
@@ -179,14 +185,14 @@ void ReportAssistantDialog::currentPageChanged_slot(KPageWidgetItem * current , 
         beforePage->aboutToHide();
     }
 
-    //Load data of the current page
+    //Load data of the current(new) page
     if (current) {
         ReportAssistantPage* currentPage = dynamic_cast<ReportAssistantPage*>(current->widget());
         enableNextButton(currentPage->isComplete());
         currentPage->aboutToShow();
     }
-        
-    //If the current page is the last one, disable all the buttons until we get the bug sent or err
+
+    //If the current page is the last one, disable all the buttons until the bug is sent
     if (current->name() == QLatin1String(PAGE_BZSEND_ID)) { 
         enableNextButton(false);
         enableButton(KDialog::User3, false); //Back button
@@ -223,6 +229,7 @@ void ReportAssistantDialog::loginFinished()
 
 void ReportAssistantDialog::showHelp()
 {
+    //Show the bug reporting guide dialog
     if (!m_aboutBugReportingDialog) {
         m_aboutBugReportingDialog = new AboutBugReportingDialog();
     }
@@ -237,14 +244,13 @@ void ReportAssistantDialog::showHelp()
 void ReportAssistantDialog::next()
 {
     //Allow the widget to Ask a question to the user before changing the page
-    
     ReportAssistantPage * page = dynamic_cast<ReportAssistantPage*>(currentPage()->widget());
     if (page) {
         if (!page->showNextPage()) {
             return;
         }
     }
-    
+
     //If the information the user can provide is not useful, skip the backtrace page
     if (currentPage()->name() == QLatin1String(PAGE_AWARENESS_ID))
     {
@@ -313,7 +319,11 @@ void ReportAssistantDialog::reject()
 
 void ReportAssistantDialog::closeEvent(QCloseEvent * event)
 {
+    //Handle the close event
     if (!m_canClose) {
+        //If the assistant didn't finished yet, offer the user the posibilities to
+        //Close, Cancel, or Save the bug report and Close"
+
         KGuiItem closeItem = KStandardGuiItem::close();
         closeItem.setText(i18nc("@action:button", "Close the assistant"));
 
@@ -337,7 +347,7 @@ void ReportAssistantDialog::closeEvent(QCloseEvent * event)
             {
                 event->accept();
             } else if (ret == KMessageBox::No) {
-                //Save backtrace and accept
+                //Save backtrace and accept event (dialog will be closed)
                 DrKonqi::saveReport(reportInterface()->generateReport(false));
                 event->accept();
             } else {
