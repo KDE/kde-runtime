@@ -144,9 +144,9 @@ void Nepomuk::EventMonitor::slotIndexingStopped()
     if ( !m_indexScheduler->isSuspended() ) {
         kDebug() << "initial indexing took" << m_initialIndexTime.elapsed();
         sendEvent( "initialIndexingFinished",
-                   i18nc( "@info %1 is a duration formatted using KLocale::formatDuration",
+                   i18nc( "@info %1 is a duration formatted using KLocale::prettyFormatDuration",
                           "Initial indexing of files for fast searching finished in %1",
-                          KGlobal::locale()->formatDuration( m_initialIndexTime.elapsed() ) ),
+                          KGlobal::locale()->prettyFormatDuration( m_initialIndexTime.elapsed() ) ),
                    "nepomuk" );
         m_indexScheduler->disconnect( this );
 
