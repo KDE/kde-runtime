@@ -1,6 +1,6 @@
 /*******************************************************************
 * statuswidget.cpp
-* Copyright 2009    Dario Andres Rodriguez <andresbajotierra@gmail.com>
+* Copyright 2009,2010    Dario Andres Rodriguez <andresbajotierra@gmail.com>
 *
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License as
@@ -20,8 +20,10 @@
 
 #include <QtGui/QApplication>
 #include <QtGui/QSizePolicy>
-#include <QtGui/QProgressBar>
 #include <QtGui/QHBoxLayout>
+
+#include <kpixmapsequencewidget.h>
+#include <kpixmapsequence.h>
 
 StatusWidget::StatusWidget(QWidget * parent) :
         QStackedWidget(parent),
@@ -50,9 +52,9 @@ StatusWidget::StatusWidget(QWidget * parent) :
     statusLayout->addWidget(m_statusLabel);
 
     //Busy widget
-    m_progressBar = new QProgressBar();
-    m_progressBar->setRange(0, 0);
-    m_progressBar->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
+    m_throbberWidget = new KPixmapSequenceWidget();
+    m_throbberWidget->setSequence(KPixmapSequence("process-working", 22));
+    m_throbberWidget->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
     
     m_busyLabel = new WrapLabel();
     //m_busyLabel->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum));
@@ -62,8 +64,8 @@ StatusWidget::StatusWidget(QWidget * parent) :
     m_busyPage->setLayout(busyLayout);
 
     busyLayout->addWidget(m_busyLabel);
-    busyLayout->addWidget(m_progressBar);
-    busyLayout->setAlignment(m_progressBar,Qt::AlignVCenter);
+    busyLayout->addWidget(m_throbberWidget);
+    busyLayout->setAlignment(m_throbberWidget,Qt::AlignVCenter);
 }
 
 void StatusWidget::setBusy(QString busyMessage)

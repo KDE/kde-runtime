@@ -1,6 +1,6 @@
 /*******************************************************************
 * statuswidget.h
-* Copyright 2009    Dario Andres Rodriguez <andresbajotierra@gmail.com>
+* Copyright 2009,2010    Dario Andres Rodriguez <andresbajotierra@gmail.com>
 *
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License as
@@ -25,7 +25,7 @@
 #include <QtGui/QTextDocument>
 
 class WrapLabel;
-class QProgressBar;
+class KPixmapSequenceWidget;
 class QHideEvent;
 
 class StatusWidget: public QStackedWidget
@@ -48,8 +48,8 @@ private:
 
     WrapLabel *         m_statusLabel;
 
-    QProgressBar *      m_progressBar;
-    WrapLabel *         m_busyLabel;
+    KPixmapSequenceWidget * m_throbberWidget;
+    WrapLabel *             m_busyLabel;
 
     QWidget *           m_statusPage;
     QWidget *           m_busyPage;
