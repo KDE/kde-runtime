@@ -4,9 +4,11 @@ CurrencyCodeIsoNumeric3=604
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Peruvian Nuevo Sol
 Name[ca]=Nuevo Sol de Perú
+Name[da]=Peruviansk nuevo sol
 Name[en_GB]=Peruvian Nuevo Sol
 Name[es]=Nuevo sol peruano
 Name[eu]=Peruko nuevo sol
+Name[nds]=Peruaansch Nuevo Sol
 Name[nl]=Peruaanse nieuwe sol
 Name[pt]=Nuevo Sol Peruano
 Name[sv]=Peruanska nuevo sol
