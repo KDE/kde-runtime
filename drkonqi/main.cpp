@@ -27,6 +27,7 @@
 
 #include "drkonqi.h"
 #include "drkonqidialog.h"
+#include "backtracewidget.h"
 
 #include <KApplication>
 #include <KCmdLineArgs>
@@ -36,6 +37,7 @@
 
 #include <cstdlib>
 #include <unistd.h>
+#include <signal.h>
 
 static const char version[] = "2.1.0";
 static const char description[] = I18N_NOOP("The KDE Crash Handler gives the user feedback "
@@ -82,6 +84,7 @@ int main(int argc, char* argv[])
     options.add("kdeinit", ki18nc("@info:shell","The program was started by kdeinit"));
     options.add("safer", ki18nc("@info:shell","Disable arbitrary disk access"));
     options.add("restarted", ki18nc("@info:shell","The program has already been restarted"));
+    options.add("keeprunning", ki18nc("@info:shell","DrKonqi should try to keep the program alice and will try to receive the backtrace instantly"));
     KCmdLineArgs::addCmdLineOptions(options);
 
     KComponentData inst(KCmdLineArgs::aboutData());
@@ -100,6 +103,10 @@ int main(int argc, char* argv[])
     KGlobal::setAllowQuit(true);
 
     DrKonqiDialog *w = new DrKonqiDialog();
+    if(KCmdLineArgs::parsedArgs()->isSet("keeprunning"))
+    {
+        w->backtraceWidget()->generateBacktrace();
+    }
     w->show();
     int ret = qa->exec();
 

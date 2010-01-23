@@ -96,7 +96,8 @@ bool KCrashBackend::init()
     //to reach the alarm(0); call in kdeui/util/kcrash.cpp line 406 or else
     //if we stop it before this call, pending alarm signals will kill the
     //process when we try to continue it.
-    QTimer::singleShot(2000, this, SLOT(stopAttachedProcess()));
+    if(!KCmdLineArgs::parsedArgs()->isSet("keeprunning"))
+        QTimer::singleShot(2000, this, SLOT(stopAttachedProcess()));
 
     return true;
 }
@@ -189,6 +190,7 @@ DebuggerManager *KCrashBackend::constructDebuggerManager()
 
 void KCrashBackend::stopAttachedProcess()
 {
+    kDebug() << "Stop";
     if (m_state == ProcessRunning) {
         ::kill(crashedApplication()->pid(), SIGSTOP);
         m_state = ProcessStopped;
@@ -197,6 +199,7 @@ void KCrashBackend::stopAttachedProcess()
 
 void KCrashBackend::continueAttachedProcess()
 {
+    kDebug() << "Continue";
     if (m_state == ProcessStopped) {
         ::kill(crashedApplication()->pid(), SIGCONT);
         m_state = ProcessRunning;
@@ -205,14 +208,20 @@ void KCrashBackend::continueAttachedProcess()
 
 void KCrashBackend::onDebuggerStarting()
 {
-    continueAttachedProcess();
+    if(KCmdLineArgs::parsedArgs()->isSet("keeprunning"))
+        stopAttachedProcess();
+    else
+        continueAttachedProcess();
     m_state = DebuggerRunning;
 }
 
 void KCrashBackend::onDebuggerFinished()
 {
     m_state = ProcessRunning;
-    stopAttachedProcess();
+    if(KCmdLineArgs::parsedArgs()->isSet("keeprunning"))
+        ::kill(crashedApplication()->pid(), SIGCONT);
+    else
+        stopAttachedProcess();
 }
 
 #include "drkonqibackends.moc"

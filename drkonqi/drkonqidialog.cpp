@@ -81,6 +81,11 @@ DrKonqiDialog::~DrKonqiDialog()
     KGlobal::deref();
 }
 
+BacktraceWidget *DrKonqiDialog::backtraceWidget()
+{
+    return m_backtraceWidget;
+}
+
 void DrKonqiDialog::tabIndexChanged(int index)
 {
     if (index == m_tabWidget->indexOf(m_backtraceWidget)) {
