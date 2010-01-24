@@ -40,7 +40,6 @@ public:
     explicit DrKonqiDialog(QWidget * parent = 0);
     ~DrKonqiDialog();
 
-    BacktraceWidget *backtraceWidget();
 private Q_SLOTS:
     void aboutBugReporting();
     void reportBugAssistant();
