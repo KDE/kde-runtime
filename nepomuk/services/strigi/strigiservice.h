@@ -20,7 +20,6 @@
 #define _NEPOMUK_STRIGI_SERVICE_H_
 
 #include <Nepomuk/Service>
-#include <QtCore/QPoint>
 #include <QtCore/QTimer>
 
 
@@ -46,8 +45,6 @@ namespace Nepomuk {
 
         IndexScheduler* indexScheduler() const { return m_indexScheduler; }
 
-        bool isSuspended() const;
-
     Q_SIGNALS:
         void statusStringChanged();
 
@@ -59,10 +56,8 @@ namespace Nepomuk {
         void setSuspended( bool );
 
     private Q_SLOTS:
-        void delayedInit();
         void updateWatches();
         void slotDirDirty( const QString& );
-        void wakeUp();
 
     private:
         void updateStrigiConfig();
@@ -71,16 +66,6 @@ namespace Nepomuk {
         IndexScheduler* m_indexScheduler;
 
         FileSystemWatcher* m_fsWatcher;
-
-        QTimer* m_wakeUpTimer;
-        QPoint m_cursorPos;
-
-        // in case a suspend is requested before the service is initialized
-        bool m_suspendRequested;
-
-        // if the service is suspended internally because of a user interaction,
-        // the user visible state should be shown as 'idle' and not as 'suspended'
-        bool m_internallySuspended;
     };
 }
 
