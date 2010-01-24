@@ -22,6 +22,7 @@ set(strigiservice_SRCS
   systray.cpp
   statuswidget.cpp
   filesystemwatcher.cpp
+  useractivitymonitor.cpp
   )
 
 soprano_add_ontology(strigiservice_SRCS

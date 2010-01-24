@@ -56,9 +56,14 @@
 #include <strigi/analyzerconfiguration.h>
 
 
-// FIXME: remove all files from the datastore which are in folders not supposed to be indexed
+namespace {
+    const int s_reducedSpeedDelay = 50; // ms
+    const int s_snailPaceDelay = 200;   // ms
+}
 
-class StoppableConfiguration : public Strigi::AnalyzerConfiguration {
+
+class Nepomuk::IndexScheduler::StoppableConfiguration : public Strigi::AnalyzerConfiguration
+{
 public:
     StoppableConfiguration()
         : m_stop(false) {
@@ -91,7 +96,8 @@ Nepomuk::IndexScheduler::IndexScheduler( Strigi::IndexManager* manager, QObject*
       m_suspended( false ),
       m_stopped( false ),
       m_indexing( false ),
-      m_indexManager( manager )
+      m_indexManager( manager ),
+      m_speed( FullSpeed )
 {
     m_analyzerConfig = new StoppableConfiguration;
 
@@ -154,6 +160,22 @@ void Nepomuk::IndexScheduler::restart()
     stop();
     wait();
     start();
+}
+
+
+void Nepomuk::IndexScheduler::setIndexingSpeed( IndexingSpeed speed )
+{
+    kDebug() << speed;
+    m_speed = speed;
+}
+
+
+void Nepomuk::IndexScheduler::setReducedIndexingSpeed( bool reduced )
+{
+    if ( reduced )
+        setIndexingSpeed( ReducedSpeed );
+    else
+        setIndexingSpeed( FullSpeed );
 }
 
 
@@ -371,6 +393,9 @@ bool Nepomuk::IndexScheduler::waitForContinue()
         m_resumeStopWc.wait( &m_resumeStopMutex );
         setIndexingStarted( true );
     }
+    else if ( m_speed != FullSpeed ) {
+        msleep( m_speed == ReducedSpeed ? s_reducedSpeedDelay : s_snailPaceDelay );
+    }
 
     return !m_stopped;
 }
@@ -582,6 +607,23 @@ void Nepomuk::IndexScheduler::removeOldAndUnwantedEntries()
             ResourceManager::instance()->mainModel()->removeContext( g );
         }
     }
+}
+
+
+QDebug Nepomuk::operator<<( QDebug dbg, IndexScheduler::IndexingSpeed speed )
+{
+    dbg << ( int )speed;
+    switch( speed ) {
+    case IndexScheduler::FullSpeed:
+        return dbg << "FullSpeed";
+    case IndexScheduler::ReducedSpeed:
+        return dbg << "ReducedSpeed";
+    case IndexScheduler::SnailPace:
+        return dbg << "SnailPace";
+    }
+
+    // make gcc shut up
+    return dbg;
 }
 
 #include "indexscheduler.moc"

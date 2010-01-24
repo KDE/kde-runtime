@@ -33,7 +33,6 @@ namespace Strigi {
     class IndexManager;
 }
 
-class StoppableConfiguration;
 class QFileInfo;
 class QUrl;
 class KUrl;
@@ -90,11 +89,48 @@ namespace Nepomuk {
         };
         Q_DECLARE_FLAGS( UpdateDirFlags, UpdateDirFlag )
 
+        enum IndexingSpeed {
+            /**
+             * Index at full speed, i.e. do not use any artificial
+             * delays.
+             *
+             * This is the mode used if the user is "away".
+             */
+            FullSpeed = 0,
+
+            /**
+             * Reduce the indexing speed mildly. This is the normal
+             * mode used while the user works. The indexer uses small
+             * delay between indexing two files in order to keep the
+             * load on CPU and IO down.
+             */
+            ReducedSpeed,
+
+            /**
+             * Like ReducedSpeed delays are used but they are much longer
+             * to get even less CPU and IO load. This mode is used for the
+             * first 2 minutes after startup to give the KDE session manager
+             * time to start up the KDE session rapidly.
+             */
+            SnailPace
+        };
+
+        IndexingSpeed currentSpeed() const { return m_speed; }
+
     public Q_SLOTS:
         void suspend();
         void resume();
         void stop();
         void restart();
+
+        void setIndexingSpeed( IndexingSpeed speed );
+
+        /**
+         * A convinience slot which calls setIndexingSpeed
+         * with either FullSpeed or ReducedSpeed, based on the
+         * value of \p reduced.
+         */
+        void setReducedIndexingSpeed( bool reduced = false );
 
         void setSuspended( bool );
 
@@ -162,6 +198,7 @@ namespace Nepomuk {
         QMutex m_resumeStopMutex;
         QWaitCondition m_resumeStopWc;
 
+        class StoppableConfiguration;
         StoppableConfiguration* m_analyzerConfig;
         Strigi::IndexManager* m_indexManager;
 
@@ -172,7 +209,11 @@ namespace Nepomuk {
         QWaitCondition m_dirsToUpdateWc;
 
         QString m_currentFolder;
+
+        IndexingSpeed m_speed;
     };
+
+    QDebug operator<<( QDebug dbg, IndexScheduler::IndexingSpeed speed );
 }
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(Nepomuk::IndexScheduler::UpdateDirFlags)
