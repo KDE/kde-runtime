@@ -91,7 +91,9 @@ bool KCrashBackend::init()
 
     //--keeprunning means: generate backtrace instantly and let the process continue execution
     if(KCmdLineArgs::parsedArgs()->isSet("keeprunning")) {
+        stopAttachedProcess();
         debuggerManager()->backtraceGenerator()->start();
+        connect(debuggerManager(), SIGNAL(debuggerFinished()), SLOT(continueAttachedProcess()));
     } else {
         connect(debuggerManager(), SIGNAL(debuggerStarting()), SLOT(onDebuggerStarting()));
         connect(debuggerManager(), SIGNAL(debuggerFinished()), SLOT(onDebuggerFinished()));
