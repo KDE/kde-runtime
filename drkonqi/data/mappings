@@ -115,6 +115,7 @@ printer-applet-kde=printer-applet|general
 partitionmanager-bin=partitionmanager|general
 krandrtray=krandr|krandrtray
 kmymoney=kmymoney4|general
+kdevdesigner=kdevelop|Qt Designer Integration
 
 #---
 #This section relates a product groupt to a product
@@ -126,6 +127,7 @@ korganizer=kdepim-base
 kaddressbook=kdepim-base
 akregator=kdepim-base
 kmail=kdepim-base
+KMail 2=kdepim-base
 Akonadi=kdepim-base
 kspread=koffice
 kword=koffice
@@ -136,6 +138,7 @@ kplato=koffice
 kpresenter=koffice
 koshell=koffice
 kdevelop=kdevelop
+kdevdesigner=kdevelop
 plasma=kdebindings
 amarok=multimedia
 digikam=imaging
