@@ -126,6 +126,9 @@ Nepomuk::OntologyLoader::OntologyLoader( QObject* parent, const QList<QVariant>&
     : Service( parent ),
       d( new Private(this) )
 {
+    // register ontology resource dir
+    KGlobal::dirs()->addResourceType( "ontology", 0, "share/ontology" );
+
     ( void )new OntologyManagerAdaptor( this );
 
     d->model = new OntologyManagerModel( mainModel(), this );
@@ -140,10 +143,10 @@ Nepomuk::OntologyLoader::OntologyLoader( QObject* parent, const QList<QVariant>&
              this, SLOT( updateLocalOntologies() ) );
     connect( dirWatch, SIGNAL( created(QString) ),
              this, SLOT( updateLocalOntologies() ) );
-    foreach( const QString& dir, KGlobal::dirs()->findDirs( "data", QLatin1String("../") ) ) {
-        // we only add the suffix here to make sure to also watch the non-existing local dir
-        kDebug() << "watching" << ( dir + "ontology/" );
-        dirWatch->addDir( dir + "ontology/", KDirWatch::WatchFiles|KDirWatch::WatchSubDirs );
+
+    foreach( const QString& dir, KGlobal::dirs()->resourceDirs( "ontology" ) ) {
+        kDebug() << "watching" << dir;
+        dirWatch->addDir( dir, KDirWatch::WatchFiles|KDirWatch::WatchSubDirs );
     }
 }
 
@@ -156,7 +159,7 @@ Nepomuk::OntologyLoader::~OntologyLoader()
 
 void Nepomuk::OntologyLoader::updateLocalOntologies()
 {
-    d->desktopFilesToUpdate = KGlobal::dirs()->findAllResources( "data", "../ontology/*.ontology", KStandardDirs::Recursive|KStandardDirs::NoDuplicates );
+    d->desktopFilesToUpdate = KGlobal::dirs()->findAllResources( "ontology", "*.ontology", KStandardDirs::Recursive|KStandardDirs::NoDuplicates );
     d->updateTimer.start(0);
 }
 
