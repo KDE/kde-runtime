@@ -28,7 +28,7 @@
 
 #include <Soprano/BackendSetting>
 
-static const char* s_repositoryName = "main";
+static const char s_repositoryName[] = "main";
 
 Nepomuk::Core::Core( QObject* parent )
     : Soprano::Server::ServerCore( parent ),

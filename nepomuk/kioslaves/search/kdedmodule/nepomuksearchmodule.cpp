@@ -30,7 +30,7 @@
 namespace {
     inline bool isNepomukSearchUrl( const KUrl& url )
     {
-        static const char* s_nepProName = "nepomuksearch";
+        static const char s_nepProName[] = "nepomuksearch";
         return url.protocol() == QLatin1String( s_nepProName );
     }
 }
