@@ -199,7 +199,8 @@ void
 DeviceAutomounterKCM::saveLayout()
 {
     QList<int> widths;
-    for(int i = 0;i<m_devices->columnCount();i++)
+    const int nbColumn = m_devices->columnCount();
+    for(int i = 0;i<nbColumn;++i)
         widths << deviceView->columnWidth(i);
     LayoutSettings::setHeaderWidths(widths);
     //Check DeviceModel.cpp, thats where the magic row numbers come from.
@@ -213,11 +214,13 @@ DeviceAutomounterKCM::loadLayout()
 {
     LayoutSettings::self()->readConfig();
     //Reset it first, just in case there isn't any layout saved for a particular column.
-    for(int i = 0;i<m_devices->columnCount();i++)
+    int nbColumn = m_devices->columnCount();
+    for(int i = 0;i<nbColumn;++i)
         deviceView->resizeColumnToContents(i);
 
     QList<int> widths = LayoutSettings::headerWidths();
-    for(int i = 0;i<m_devices->columnCount() && i<widths.size();i++) {
+    nbColumn = m_devices->columnCount();
+    for(int i = 0;i<nbColumn && i<widths.size();i++) {
         deviceView->setColumnWidth(i, widths[i]);
     }
 
