@@ -384,7 +384,7 @@ bool BugzillaInformationPage::showNextPage()
 
         //Calculate the minimum number of characters required for a description
         //If creating a new report: minimum 40, maximum 80
-        //If attaching to an existant report: minimum 30, maximum 50
+        //If attaching to an existent report: minimum 30, maximum 50
         int multiplier = (reportInterface()->attachToBugNumber() == 0) ? 10 : 5;
         int requiredDescription = 20 + (reportInterface()->selectedOptionsRating() * multiplier);
         bool detailsShort = ui.m_detailsEdit->toPlainText().size() < requiredDescription;

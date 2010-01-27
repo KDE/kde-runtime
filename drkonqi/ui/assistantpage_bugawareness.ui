@@ -110,7 +110,7 @@
       </spacer>
      </item>
      <item>
-      <widget class="QComboBox" name="m_reproducibleBox">
+      <widget class="KComboBox" name="m_reproducibleBox">
        <property name="enabled">
         <bool>false</bool>
        </property>
@@ -273,6 +273,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>KComboBox</class>
+   <extends>QComboBox</extends>
+   <header>kcombobox.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
  <buttongroups>

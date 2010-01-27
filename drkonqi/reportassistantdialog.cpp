@@ -321,7 +321,7 @@ void ReportAssistantDialog::closeEvent(QCloseEvent * event)
 {
     //Handle the close event
     if (!m_canClose) {
-        //If the assistant didn't finished yet, offer the user the posibilities to
+        //If the assistant didn't finished yet, offer the user the possibilities to
         //Close, Cancel, or Save the bug report and Close"
 
         KGuiItem closeItem = KStandardGuiItem::close();

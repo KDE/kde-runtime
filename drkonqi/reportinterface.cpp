@@ -54,7 +54,7 @@ ReportInterface::ReportInterface(QObject *parent)
     m_provideUnusualBehavior = false;
     m_provideApplicationConfigurationDetails = false;
 
-    //Do not attach the bug report to any other existant report (create a new one)
+    //Do not attach the bug report to any other existent report (create a new one)
     m_attachToBugNumber = 0;
 }
 
@@ -278,7 +278,7 @@ void ReportInterface::sendBugReport() const
 {
     if (m_attachToBugNumber > 0)
     {
-        //We are going to attach the report to an existant one
+        //We are going to attach the report to an existent one
         connect(m_bugzillaManager, SIGNAL(addMeToCCFinished(int)), this, SLOT(addedToCC()));
         connect(m_bugzillaManager, SIGNAL(addMeToCCError(QString)), this, SIGNAL(sendReportError(QString)));
         //First add the user to the CC list, then attach
