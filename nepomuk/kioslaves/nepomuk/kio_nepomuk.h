@@ -50,6 +50,7 @@ namespace Nepomuk {
 
     private:
         enum Operation {
+            GetPrepare,
             Get,
             Stat,
             Other
