@@ -172,26 +172,23 @@ namespace {
     }
 
     /**
-     * Determine the label for a filesystem \p url is stored on.
-     *
-     * \param url A filex:/ URL pointing to a file stored on a removable filesystem.
+     * Determine the label for a filesystem \p res is stored on.
      */
-    QString getFileSystemLabelForRemovableMediaFileUrl( const KUrl& url )
+    QString getFileSystemLabelForRemovableMediaFileUrl( const Nepomuk::Resource& res )
     {
         QList<Soprano::Node> labelNodes
             = Nepomuk::ResourceManager::instance()->mainModel()->executeQuery( QString::fromLatin1( "select ?label where { "
-                                                                                                    "?r nie:url %1 . "
-                                                                                                    "?r nie:isPartOf ?fs . "
+                                                                                                    "%1 nie:isPartOf ?fs . "
                                                                                                     "?fs a nfo:Filesystem . "
                                                                                                     "?fs nao:prefLabel ?label . "
                                                                                                     "} LIMIT 1" )
-                                                                               .arg( Soprano::Node::resourceToN3( url ) ),
+                                                                               .arg( Soprano::Node::resourceToN3( res.resourceUri() ) ),
                                                                                Soprano::Query::QueryLanguageSparql ).iterateBindings( "label" ).allNodes();
 
         if ( !labelNodes.isEmpty() )
             return labelNodes.first().toString();
         else
-            return url.host(); // Solid UUID
+            return res.property( Nepomuk::Vocabulary::NIE::url() ).toUrl().host(); // Solid UUID
     }
 
     KUrl stripQuery( const KUrl& url )
@@ -394,13 +391,12 @@ KIO::UDSEntry Nepomuk::NepomukProtocol::statNepomukResource( const Nepomuk::Reso
     // The display name can be anything
     QString displayName;
     if ( isFileOnRemovableMedium ) {
-        const KUrl removableMediaUrl = res.property( Nepomuk::Vocabulary::NIE::url() ).toUrl();
         displayName = i18nc( "%1 is a filename of a file on a removable device, "
                              "%2 is the name of the removable medium which often is something like "
                              "'X GiB Removable Media.",
                              "%1 (on unmounted medium <resource>%2</resource>)",
                              res.genericLabel(),
-                             getFileSystemLabelForRemovableMediaFileUrl( removableMediaUrl ) );
+                             getFileSystemLabelForRemovableMediaFileUrl( res ) );
     }
     else {
         displayName = res.genericLabel();
@@ -567,11 +563,11 @@ bool Nepomuk::NepomukProtocol::rewriteUrl( const KUrl& url, KUrl& newURL )
     }
     else if ( isRemovableMediaFile( res ) ) {
         const KUrl removableMediaUrl = res.property( Nepomuk::Vocabulary::NIE::url() ).toUrl();
-        newURL = convertRemovableMediaFileUrl( res.property( Nepomuk::Vocabulary::NIE::url() ).toUrl(), m_currentOperation == Get || m_currentOperation == GetPrepare );
+        newURL = convertRemovableMediaFileUrl( removableMediaUrl, m_currentOperation == Get || m_currentOperation == GetPrepare );
         if ( !newURL.isValid() && m_currentOperation == Get ) {
             error( KIO::ERR_SLAVE_DEFINED,
                    i18nc( "@info", "Please insert the removable medium <resource>%1</resource> to access this file.",
-                          getFileSystemLabelForRemovableMediaFileUrl( removableMediaUrl ) ) );
+                          getFileSystemLabelForRemovableMediaFileUrl( res ) ) );
             return true;
         }
         else if ( m_currentOperation == GetPrepare ) {
