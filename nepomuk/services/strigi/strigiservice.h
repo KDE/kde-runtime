@@ -53,7 +53,9 @@ namespace Nepomuk {
          * \return A user readable status string
          */
         QString userStatusString() const;
+        bool isIdle() const;
         void setSuspended( bool );
+        bool isSuspended() const;
 
     private Q_SLOTS:
         void updateWatches();

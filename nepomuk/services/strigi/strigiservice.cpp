@@ -176,6 +176,12 @@ QString Nepomuk::StrigiService::userStatusString() const
 }
 
 
+bool Nepomuk::StrigiService::isIdle() const
+{
+    return ( !m_indexScheduler->isIndexing() && m_fsWatcher->status() == FileSystemWatcher::Idle );
+}
+
+
 void Nepomuk::StrigiService::setSuspended( bool suspend )
 {
     if ( suspend ) {
@@ -188,6 +194,11 @@ void Nepomuk::StrigiService::setSuspended( bool suspend )
     }
 }
 
+
+bool Nepomuk::StrigiService::isSuspended() const
+{
+    return m_indexScheduler->isSuspended();
+}
 
 #include <kpluginfactory.h>
 #include <kpluginloader.h>
