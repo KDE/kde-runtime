@@ -557,6 +557,9 @@ bool Nepomuk::NepomukProtocol::rewriteUrl( const KUrl& url, KUrl& newURL )
                           getFileSystemLabelForRemovableMediaFileUrl( removableMediaUrl ) ) );
             return true;
         }
+        else if ( m_currentOperation == GetPrepare ) {
+            return true;
+        }
         kDebug() << "Rewriting removable media URL" << url << "to" << newURL;
     }
 
