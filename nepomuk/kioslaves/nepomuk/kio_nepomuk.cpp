@@ -287,7 +287,7 @@ void Nepomuk::NepomukProtocol::get( const KUrl& url )
     // which will also try to mount removable devices.
     // If not we generate a HTML page.
     //
-    m_currentOperation = Other;
+    m_currentOperation = GetPrepare;
     KUrl newUrl;
     if ( rewriteUrl( url, newUrl ) ) {
         m_currentOperation = Get;
@@ -387,8 +387,25 @@ KIO::UDSEntry Nepomuk::NepomukProtocol::statNepomukResource( const Nepomuk::Reso
     //
     KIO::UDSEntry uds;
 
+    // we handle files on removable media which are not mounted
+    // as a special case
+    bool isFileOnRemovableMedium = isRemovableMediaFile( res );
+
     // The display name can be anything
-    uds.insert( KIO::UDSEntry::UDS_DISPLAY_NAME, res.genericLabel() );
+    QString displayName;
+    if ( isFileOnRemovableMedium ) {
+        const KUrl removableMediaUrl = res.property( Nepomuk::Vocabulary::NIE::url() ).toUrl();
+        displayName = i18nc( "%1 is a filename of a file on a removable device, "
+                             "%2 is the name of the removable medium which often is something like "
+                             "'X GiB Removable Media.",
+                             "%1 (on unmounted medium <resource>%2</resource>)",
+                             res.genericLabel(),
+                             getFileSystemLabelForRemovableMediaFileUrl( removableMediaUrl ) );
+    }
+    else {
+        displayName = res.genericLabel();
+    }
+    uds.insert( KIO::UDSEntry::UDS_DISPLAY_NAME, displayName );
 
     // UDS_NAME needs to be unique but can be ugly
     uds.insert( KIO::UDSEntry::UDS_NAME, resourceUriToUdsName( res.resourceUri() ) );
@@ -397,9 +414,20 @@ KIO::UDSEntry Nepomuk::NepomukProtocol::statNepomukResource( const Nepomuk::Reso
     // There can still be file resources that have a mimetype but are
     // stored remotely, thus they do not have a local nie:url
     //
-    QString mimeType = res.property( Vocabulary::NIE::mimeType() ).toString();
-    if ( !mimeType.isEmpty() ) {
-        uds.insert( KIO::UDSEntry::UDS_MIME_TYPE, mimeType );
+    // Sadly Strigi's mimetype is not very useful (yet)
+    /* QStringList mimeTypes = res.property( Vocabulary::NIE::mimeType() ).toStringList();
+    if ( !mimeTypes.isEmpty() ) {
+        uds.insert( KIO::UDSEntry::UDS_MIME_TYPE, mimeTypes.first() );
+    }
+    else */
+    if ( isFileOnRemovableMedium ) {
+        KMimeType::Ptr mt = KMimeType::findByUrl( res.property( Vocabulary::NIE::url() ).toUrl(),
+                                                  0,
+                                                  false, /* no local file as it is not accessible at the moment */
+                                                  true   /* fast mode */ );
+        if ( mt ) {
+            uds.insert( KIO::UDSEntry::UDS_MIME_TYPE, mt->name() );
+        }
     }
     else {
         // Use nice display types like "Person", "Project" and so on
@@ -538,8 +566,8 @@ bool Nepomuk::NepomukProtocol::rewriteUrl( const KUrl& url, KUrl& newURL )
         newURL = res.property( Vocabulary::NIE::url() ).toUrl();
     }
     else if ( isRemovableMediaFile( res ) ) {
-        KUrl removableMediaUrl = res.property( Nepomuk::Vocabulary::NIE::url() ).toUrl();
-        newURL = convertRemovableMediaFileUrl( res.property( Nepomuk::Vocabulary::NIE::url() ).toUrl(), m_currentOperation == Get );
+        const KUrl removableMediaUrl = res.property( Nepomuk::Vocabulary::NIE::url() ).toUrl();
+        newURL = convertRemovableMediaFileUrl( res.property( Nepomuk::Vocabulary::NIE::url() ).toUrl(), m_currentOperation == Get || m_currentOperation == GetPrepare );
         if ( !newURL.isValid() && m_currentOperation == Get ) {
             error( KIO::ERR_SLAVE_DEFINED,
                    i18nc( "@info", "Please insert the removable medium <resource>%1</resource> to access this file.",
