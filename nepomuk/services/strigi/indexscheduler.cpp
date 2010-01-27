@@ -1,5 +1,5 @@
 /* This file is part of the KDE Project
-   Copyright (c) 2008 Sebastian Trueg <trueg@kde.org>
+   Copyright (c) 2008-2010 Sebastian Trueg <trueg@kde.org>
 
    Parts of this file are based on code from Strigi
    Copyright (C) 2006-2007 Jos van den Oever <jos@vandenoever.info>
@@ -214,13 +214,13 @@ void Nepomuk::IndexScheduler::run()
     // set lowest priority for this thread
     setPriority( QThread::IdlePriority );
 
+    setIndexingStarted( true );
+
     // initialization
     readConfig();
 
     Strigi::StreamAnalyzer analyzer( *m_analyzerConfig );
     analyzer.setIndexWriter( *m_indexManager->indexWriter() );
-
-    setIndexingStarted( true );
 
     while ( 1 ) {
         // wait for more dirs to analyze in case the initial

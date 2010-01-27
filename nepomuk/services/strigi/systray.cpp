@@ -77,12 +77,7 @@ void Nepomuk::SystemTray::slotUpdateStrigiStatus()
     setToolTip("nepomuk", i18n("Search Service"),  m_service->userStatusString() );
     m_suspendResumeAction->setChecked( m_service->indexScheduler()->isSuspended() );
     // a manually suspended service should not be passive
-    if (m_service->indexScheduler()->isIndexing() ||
-        m_suspendedManually) {
-        setStatus(Active);
-    } else {
-        setStatus(Passive);
-    }
+    setStatus( m_service->isIdle() && !m_service->isSuspended() ? Passive : Active );
 }
 
 

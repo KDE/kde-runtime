@@ -104,16 +104,9 @@ Nepomuk::StrigiService::StrigiService( QObject* parent, const QList<QVariant>& )
         // setup the indexer to index at snail speed for the first two minutes
         // this is done for KDE startup - to not slow that down too much
         m_indexScheduler->setIndexingSpeed( IndexScheduler::SnailPace );
-        QTimer::singleShot( 2*60*1000, m_indexScheduler, SLOT( setReducedIndexingSpeed() ) );
 
-        // slow down on user activity (start also only after 2 minutes)
-        UserActivityMonitor* userActivityMonitor = new UserActivityMonitor( this );
-        connect( userActivityMonitor, SIGNAL( userActive( bool ) ),
-                 m_indexScheduler, SLOT( setReducedIndexingSpeed( bool ) ) );
-        QTimer::singleShot( 2*60*1000, userActivityMonitor, SLOT( start() ) );
-
-        // start watching the index folders
-        QTimer::singleShot( 2*60*1000, this, SLOT( updateWatches() ) );
+        // delayed init for the rest which uses IO and CPU
+        QTimer::singleShot( 2*60*1000, this, SLOT( finishInitialization() ) );
 
         // start the actual indexing
         m_indexScheduler->start();
@@ -136,6 +129,22 @@ Nepomuk::StrigiService::~StrigiService()
         m_indexScheduler->wait();
         Strigi::IndexPluginLoader::deleteIndexManager( m_indexManager );
     }
+}
+
+
+void Nepomuk::StrigiService::finishInitialization()
+{
+    // slow down on user activity (start also only after 2 minutes)
+    UserActivityMonitor* userActivityMonitor = new UserActivityMonitor( this );
+    connect( userActivityMonitor, SIGNAL( userActive( bool ) ),
+             m_indexScheduler, SLOT( setReducedIndexingSpeed( bool ) ) );
+    userActivityMonitor->start();
+
+    // full speed until the user is active
+    m_indexScheduler->setIndexingSpeed( IndexScheduler::FullSpeed );
+
+    // start watching the fs the ugly way
+    updateWatches();
 }
 
 
@@ -165,14 +174,27 @@ QString Nepomuk::StrigiService::userStatusString() const
     bool suspended = m_indexScheduler->isSuspended();
     QString folder = m_indexScheduler->currentFolder();
 
-    if ( suspended )
+    if ( suspended ) {
         return i18nc( "@info:status", "File indexer is suspended" );
-    else if ( indexing )
-        return i18nc( "@info:status", "Strigi is currently indexing files in folder %1", folder );
-    else if ( m_fsWatcher->status() == FileSystemWatcher::Checking )
+    }
+    else if ( indexing ) {
+        if ( folder.isEmpty() )
+            return i18nc( "@info:status", "Strigi is currently indexing files" );
+        else
+            return i18nc( "@info:status", "Strigi is currently indexing files in folder %1", folder );
+    }
+    else if ( m_fsWatcher->status() == FileSystemWatcher::Checking ) {
         return i18nc( "@info:status", "Checking file system for new files" );
-    else
+    }
+    else {
         return i18nc( "@info:status", "File indexer is idle" );
+    }
+}
+
+
+bool Nepomuk::StrigiService::isIdle() const
+{
+    return ( !m_indexScheduler->isIndexing() && m_fsWatcher->status() == FileSystemWatcher::Idle );
 }
 
 
@@ -188,6 +210,11 @@ void Nepomuk::StrigiService::setSuspended( bool suspend )
     }
 }
 
+
+bool Nepomuk::StrigiService::isSuspended() const
+{
+    return m_indexScheduler->isSuspended();
+}
 
 #include <kpluginfactory.h>
 #include <kpluginloader.h>
