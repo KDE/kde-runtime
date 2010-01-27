@@ -359,7 +359,7 @@ void Strigi::NepomukIndexWriter::startAnalysis( const AnalysisResult* idx )
     FileMetaData* data = new FileMetaData( createFileUrl( idx ) );
 
     // remove previously indexed data
-    removeIndexedData( data->fileUrl );
+    removeIndexedData( data->resourceUri, true );
 
     // It is important to keep the resource URI between updates (especially for sharing of files)
     // However, when updating data from pre-KDE 4.4 times we want to get rid of old file:/ resource
@@ -610,34 +610,43 @@ void Strigi::NepomukIndexWriter::releaseWriterData( const Strigi::FieldRegister&
 }
 
 
-void Strigi::NepomukIndexWriter::removeIndexedData( const KUrl& url )
+void Strigi::NepomukIndexWriter::removeIndexedData( const KUrl& url, bool isResourceUri )
 {
 //    kDebug() << url;
+
+    if ( url.isEmpty() )
+        return;
 
     //
     // We are compatible with old Xesam data where the url was encoded as a string instead of a url,
     // thus the weird query
     //
-    QString query = QString( "select ?g ?mg where { "
-                             "{ ?r %3 %1 . } "
-                             "UNION "
-                             "{ ?r %3 %2 . } "
-                             "UNION "
-                             "{ ?r %4 %2 . } . "
-                             "?g %5 ?r . }" )
+    QString query;
+    if ( isResourceUri ) {
+         query = QString::fromLatin1( "select ?g where { ?g %1 %2 . }" )
+                    .arg( Soprano::Node::resourceToN3( Strigi::Ontology::indexGraphFor() ),
+                          Soprano::Node::resourceToN3( url ) );
+    }
+    else {
+        query = QString::fromLatin1( "select ?g ?mg where { "
+                                         "{ ?r %3 %1 . } "
+                                         "UNION "
+                                         "{ ?r %3 %2 . } "
+                                         "UNION "
+                                         "{ ?r %4 %2 . } . "
+                                         "?g %5 ?r . }" )
                     .arg( Node::literalToN3( url.path() ),
                           Node::resourceToN3( url ),
                           Node::resourceToN3( Vocabulary::Xesam::url() ),
                           Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ),
                           Node::resourceToN3( Strigi::Ontology::indexGraphFor() ) );
+    }
 
 //        kDebug() << "deleteEntries query:" << query;
 
     QueryResultIterator result = d->repository->executeQuery( query, Soprano::Query::QueryLanguageSparql );
-    if ( result.next() ) {
+    while ( result.next() ) {
         Node indexGraph = result.binding( "g" );
-
-        result.close();
 
         // delete the indexed data (The Soprano::NRLModel in the storage service will take care of
         // the metadata graph)

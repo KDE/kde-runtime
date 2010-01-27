@@ -74,7 +74,11 @@ namespace Strigi {
         void finishAnalysis( const AnalysisResult* );
 
     private:
-        void removeIndexedData( const KUrl& url );
+        /**
+         * \param isResourceUri if true \p url is a resource URI, otherwise it
+         * is a local file URL
+         */
+        void removeIndexedData( const KUrl& url, bool isResourceUri = false );
 
         QUrl determineFolderResourceUri( const KUrl& fileUrl );
 
