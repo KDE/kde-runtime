@@ -191,6 +191,8 @@ Nepomuk::RemovableStorageService::Entry* Nepomuk::RemovableStorageService::creat
 {
     Entry entry( this );
     entry.m_device = dev;
+    entry.m_description = dev.description();
+    entry.m_uuid = entry.m_device.as<Solid::StorageVolume>()->uuid();
     connect( dev.as<Solid::StorageAccess>(), SIGNAL(accessibilityChanged(bool, QString)),
              this, SLOT(slotAccessibilityChanged(bool, QString)) );
 
@@ -271,15 +273,14 @@ void Nepomuk::RemovableStorageService::slotAccessibilityChanged( bool accessible
         //
         // First we create the filesystem resource. We mostly need this for the user readable label.
         //
-        const Solid::StorageVolume* volume = entry.m_device.as<Solid::StorageVolume>();
-        Nepomuk::Resource fsRes( volume->uuid(), Nepomuk::Vocabulary::NFO::Filesystem() );
-        fsRes.setLabel( entry.m_device.description() );
+        Nepomuk::Resource fsRes( entry.m_uuid, Nepomuk::Vocabulary::NFO::Filesystem() );
+        fsRes.setLabel( entry.m_description );
 
         //
         // We change all absolute file:/ URLs to relative filex:/ URLs which include the solid id
         //
         // FIXME: do this asyncroneously
-        // FIXME: We need to handle the mountpoint folder resource separately. It can no longer be the parent resource for the top-level files on the device.
+        //
         QString query = QString::fromLatin1( "select ?r ?url ?g where { " // FIXME: can Virtuoso directly select a substring of the url? Can we maybe even do this in an update query?
                                              "graph ?g { ?r %1 ?url . } . "
                                              "FILTER(REGEX(STR(?url),'^file://%2/')) . }" )
@@ -307,6 +308,12 @@ void Nepomuk::RemovableStorageService::slotAccessibilityChanged( bool accessible
             Resource fileRes( resource );
             fileRes.addProperty( Nepomuk::Vocabulary::NIE::isPartOf(), fsRes );
         }
+
+        //
+        // the mount point is no longer the parent folder of the top level files on the removable device
+        // We need to delete those relations seperately
+        //
+        mainModel()->removeAllStatements( Soprano::Node(), Nepomuk::Vocabulary::NIE::isPartOf(), Resource( KUrl( entry.m_lastMountPath ) ).resourceUri() );
     }
     kDebug() << "done";
 }
@@ -320,14 +327,8 @@ Nepomuk::RemovableStorageService::Entry::Entry( RemovableStorageService* parent 
 
 KUrl Nepomuk::RemovableStorageService::Entry::constructRelativeUrl( const QString& path ) const
 {
-    const Solid::StorageVolume* volume = m_device.as<Solid::StorageVolume>();
-    if ( volume ) {
-        const QString relativePath = path.mid( m_lastMountPath.count() );
-        return KUrl( QLatin1String("filex://") + volume->uuid() + relativePath );
-    }
-    else {
-        return KUrl();
-    }
+    const QString relativePath = path.mid( m_lastMountPath.count() );
+    return KUrl( QLatin1String("filex://") + m_uuid + relativePath );
 }
 
 NEPOMUK_EXPORT_SERVICE( Nepomuk::RemovableStorageService, "nepomukremovablestorageservice")

@@ -90,8 +90,13 @@ namespace Nepomuk {
             KUrl constructRelativeUrl( const QString& path ) const;
 
             Solid::Device m_device;
-
             QString m_lastMountPath;
+
+            // need to cache the device properties in case
+            // an USB device is simply ejected without properly
+            // unmounting before
+            QString m_description;
+            QString m_uuid;
         };
         QHash<QString, Entry> m_metadataCache;
 
