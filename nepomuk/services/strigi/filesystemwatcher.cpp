@@ -58,6 +58,7 @@ public:
         : recursive( true ),
           interval( 10*60 ),
           status( FileSystemWatcher::Idle ),
+          m_suspended( false ),
           q( parent ) {
     }
 
