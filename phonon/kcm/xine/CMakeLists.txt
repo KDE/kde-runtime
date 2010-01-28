@@ -1,4 +1,6 @@
-find_package(Xine)
+macro_optional_find_package(Xine)
+
+macro_log_feature(XINE_FOUND "Xine" "Xine libraries" "http://www.xine-project.org/" FALSE "" "Needed to build the KCM for phonon's xine backend")
 
 if(XINE_FOUND)
    set(kcmphononxine_SRCS xineoptions.cpp)
