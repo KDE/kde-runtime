@@ -278,17 +278,31 @@ void Nepomuk::NepomukProtocol::get( const KUrl& url )
 
     kDebug() << url;
 
+    m_currentOperation = Get;
+
     //
     // First we check if it is a generic resource which cannot be forwarded
     // If we could rewrite the URL than we can continue as Get operation
     // which will also try to mount removable devices.
     // If not we generate a HTML page.
     //
-    m_currentOperation = GetPrepare;
     KUrl newUrl;
     if ( rewriteUrl( url, newUrl ) ) {
-        m_currentOperation = Get;
-        ForwardingSlaveBase::get( url );
+        //
+        // rewriteUrl() returns true even if we have no new url for removable media
+        //
+        if ( newUrl.isEmpty() ) {
+            QString filename;
+            Nepomuk::Resource res = splitNepomukUrl( url, filename );
+            if ( isRemovableMediaFile( res ) ) {
+                error( KIO::ERR_SLAVE_DEFINED,
+                       i18nc( "@info", "Please insert the removable medium <resource>%1</resource> to access this file.",
+                              getFileSystemLabelForRemovableMediaFileUrl( res ) ) );
+            }
+        }
+        else {
+            ForwardingSlaveBase::get( url );
+        }
     }
     else {
         // TODO: call the share service for remote files (KDE 4.5)
@@ -563,14 +577,10 @@ bool Nepomuk::NepomukProtocol::rewriteUrl( const KUrl& url, KUrl& newURL )
     }
     else if ( isRemovableMediaFile( res ) ) {
         const KUrl removableMediaUrl = res.property( Nepomuk::Vocabulary::NIE::url() ).toUrl();
-        newURL = convertRemovableMediaFileUrl( removableMediaUrl, m_currentOperation == Get || m_currentOperation == GetPrepare );
+        newURL = convertRemovableMediaFileUrl( removableMediaUrl, m_currentOperation == Get );
         if ( !newURL.isValid() && m_currentOperation == Get ) {
-            error( KIO::ERR_SLAVE_DEFINED,
-                   i18nc( "@info", "Please insert the removable medium <resource>%1</resource> to access this file.",
-                          getFileSystemLabelForRemovableMediaFileUrl( res ) ) );
-            return true;
-        }
-        else if ( m_currentOperation == GetPrepare ) {
+            kDebug() << "FAILED TO CONVERT URL. OFF TO GET.";
+            // error handling in get()
             return true;
         }
         kDebug() << "Rewriting removable media URL" << url << "to" << newURL;
