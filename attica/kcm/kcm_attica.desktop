@@ -8,7 +8,7 @@ X-KDE-Library=kcm_attica
 X-KDE-ParentApp=kcontrol
 X-KDE-System-Settings-Parent-Category=advanced-user-settings
 
-Name=Open Collaboration Services provider management
+Name=Open Collaboration Services provider
 Name[ca]=Gestor de proveïdors de serveis «Open Collaboration»
 Name[cs]=Správa poskytovatelů služeb otevřené spolupráce
 Name[csb]=Sprôwianié dowòznikama ùsłëżnotów Open Collaboration
