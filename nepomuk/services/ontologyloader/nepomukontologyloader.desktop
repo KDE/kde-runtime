@@ -44,6 +44,7 @@ Name[ku]=Nepomuk Barkerê Ontolojî
 Name[lt]=Nepomuk ontologijos įkėliklis
 Name[lv]=Nepomuk ontoloģiju ielādētājs
 Name[mai]=नेपोमक ऑन्टोलॉज़ी लोडर
+Name[mk]=Вчитувач на онтологии за Непомук
 Name[ml]=നെപ്പോമുക്ക് ഓണ്‍ടോളജി ലോഡര്‍
 Name[nb]=Nepomuk ontologi-laster
 Name[nds]=Nepomuk-Weeswarklader
@@ -111,6 +112,7 @@ Comment[ko]=시스템에 설치된 온톨로지를 관리하는 Nepomuk 서비�
 Comment[ku]=Servîsa Nepomuk yê ku ontolojî yên di pergalê de saz kirî peyda dike
 Comment[lt]=Nepomuk tarnyba, palaikanti sistemoje įdiegtas ontologijas
 Comment[lv]=Nepomuk serviss, kas uztur sistēmā instalētās ontoloģijas
+Comment[mk]=Сервис на Непомук што ракува со онтологиите инсталирани на системот
 Comment[ml]=സിസ്റ്റത്തില്‍ ഇന്‍സ്റ്റോള്‍ ചെയ്തിരിക്കുന്ന ഓണ്‍ടോളജി കൈകാര്യം ചെയ്യുന്ന നെപ്പോമുക്ക് സേവനം
 Comment[nb]=Nepomuk tjeneste som er ansvarlig for ontologiene som er installert på systemet
 Comment[nds]=Nepomuk-Deenst, he pleegt de Weeswarken, de op't Systeem installeert sünd

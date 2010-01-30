@@ -41,6 +41,7 @@ Name[ku]=Nepomuk Hîser Kirina Dane yan
 Name[lt]=Nepomuk duomenų saugojimas
 Name[lv]=Nepomuk datu glabātuve
 Name[mai]=Nepomuk डाटा भंडारण
+Name[mk]=Складирање на податоци во Непомук
 Name[ml]=നെപ്പോമുക്ക് ഡേറ്റാ സംഭരണം
 Name[mr]=Nepomuk माहिती संचयन
 Name[nb]=Nepomuk datalagring
@@ -113,6 +114,7 @@ Comment[ku]=Nepomuk Servîsa Hîser Kirinê
 Comment[lt]=Nepomuk saugojimo tarnyba
 Comment[lv]=Nepomuk glabāšanas serviss
 Comment[mai]=Nepomuk भंडारण सेवा
+Comment[mk]=Сервис за складирање на Непомук
 Comment[ml]=നെപ്പോമുക്ക് സൂക്ഷിപ്പു് സേവനം
 Comment[mr]=Nepomuk संचयन सेवा
 Comment[nb]=Nepomuk lagringstjeneste
@@ -170,6 +172,7 @@ Name[km]=បានបរាជ័យ​ក្នុង​ការ​ចាប�
 Name[kn]=ನೆಪೋಮುಕ್ ಅನ್ನು ಆರಂಭಿಸುವಲ್ಲಿ ವಿಫಲಗೊಂಡಿದೆ
 Name[ko]=Nepomuk을 시작할 수 없음
 Name[lv]=Neizdevās palaist Nepomuk
+Name[mk]=Не успеа стартувањето на Непомук
 Name[ml]=നെപ്പോമുക്ക് ആരംഭിയ്ക്കുന്നതില്‍ പരാജയപ്പെട്ടു
 Name[nb]=Klarte ikke å starte Nepomuk
 Name[nds]=Nepomuk lett sik nich starten.
@@ -211,6 +214,7 @@ Comment[kk]=Nepomuk семантикалық үстел жүйесі жұмыс�
 Comment[km]=ប្រព័ន្ធ​ផ្ទៃតុ​ Nepomuk Semantic មិនអាច​ត្រូវ​បាន​ចាប់ផ្ដើម​បានទេ
 Comment[ko]=Nepomuk 시맨틱 데스크톱을 시작할 수 없음
 Comment[lv]=Nebija iespējams palaist Nepomuk semantisko darbvirsmas sistēmu
+Comment[mk]=Системот „Непомук семантички десктоп“ не можеше да биде стартуван
 Comment[ml]=നെപ്പോമുക്ക് സിമാന്റിക്ക് പണിയിട സിസ്റ്റം തുടങ്ങുവാന്‍ കഴിഞ്ഞില്ല
 Comment[nb]=Nepomuk semantisk skrivebord kunne ikke startes
 Comment[nds]=Dat Schriefdischbeslötel-Systeem Nepomuk lett sik nich starten
@@ -273,6 +277,7 @@ Name[ku]=Veguherandina dane yên Nepomuk
 Name[lt]=Konvertuojami Nepomuk duomenys
 Name[lv]=Konvertē Nepomuk datus
 Name[mai]=नेपोमक डाटा बदलल जाए रहल अछि
+Name[mk]=Конвертирање на податоци од Непомук
 Name[ml]=നെപ്പോമുക്ക് ഡാറ്റ മാറ്റിക്കൊണ്ടിരിയ്ക്കുന്നു
 Name[nb]=Konvertering av Nepomuk-data
 Name[nds]=Nepomuk-Daten warrt ümwannelt
@@ -342,6 +347,7 @@ Comment[ku]=Hemû dane yên Nepomuk ji paş-dawî ya hîser kirina nû re hatin 
 Comment[lt]=Visi Nepomuk duomenys buvo konvertuoti į naujos saugojimo programinės sąsajos formatą
 Comment[lv]=Visi Nepomuk dati ir konvertēti uz jaunu glabāšanas aizmuguri
 Comment[mai]=सभटा नेपोमक डाटाकेँ नव भंडार बैकएण्डमे परिवर्तित कए लेल गेल
+Comment[mk]=Сите податоци од Непомук се конвертирани за новиот заден крај за складирање
 Comment[ml]=പുതിയ സൂക്ഷിപ്പു് സംവിധാനത്തിലേയ്ക്കു് എല്ലാ നെപ്പോമുക്ക് ഡാറ്റയും മാറ്റിക്കഴിഞ്ഞു
 Comment[nb]=Alle Nepomuk-data er konvertert til et nytt lagringsbakstykke
 Comment[nds]=All Nepomuk-Daten warrt för en nieg Hülpprogramm ümwannelt
@@ -414,6 +420,7 @@ Name[ku]=Veguherandina dane yên Nepomuk têk çû
 Name[lt]=Nepomuk duomenų konvertavimas nepavyko
 Name[lv]=Neizdevās konvertēt Nepomuk datus
 Name[mai]=नेपोमक डाटा परिवर्तित करबामे असफल
+Name[mk]=Конверзијата на податоците од Непомук не успеа
 Name[ml]=നെപ്പോമുക്ക് ഡാറ്റ മാറ്റുന്നതു് പരാജയപ്പെട്ടു
 Name[nb]=Konvertering av Nepomuk-databasen mislyktes
 Name[nds]=Ümwanneln vun Nepomuk-Daten fehlslaan
@@ -483,6 +490,7 @@ Comment[ku]=Veguherandina dane yên Nepomuk ji paş-dawî ya nû re têk çû
 Comment[lt]=Nepomuk duomenų konvertavimas į naudojimui su nauja programine sąsaja nepavyko
 Comment[lv]=Neizdevās konvertēt Nepomuk datus uz jaunu aizmuguri
 Comment[mai]=नेपोमक डाटाकेँ नव बैकएण्डमे परिवर्तित करबामे असफल
+Comment[mk]=Конверзијата на податоците од Непомук за новиот заден крај не успеа
 Comment[ml]=പുതിയ സൂക്ഷിപ്പു് സംവിധാനത്തിലേയ്ക്കു് നെപ്പോമുക്ക് ഡാറ്റ മാറ്റുന്നതു് പരാജയപ്പെട്ടു
 Comment[nb]=Konvertering av Nepomuk-data til et nytt bakstykke lyktes ikke
 Comment[nds]=Ümwanneln vun Nepomuk-Daten för en nieg Hülpprogramm fehlslaan
@@ -555,6 +563,7 @@ Name[ku]=Veguherandina dane yên Nepomuk hat qedandin
 Name[lt]=Nepomuk duomenų konvertavimas baigtas
 Name[lv]=Pabeigta Nepomuk datu konvertēšana
 Name[mai]=नेपोमक डाटा परिवर्तित भए गेल
+Name[mk]=Конверзијата на податоците од Непомук е завршена
 Name[ml]=നെപ്പോമുക്ക് ഡാറ്റ മാറ്റുന്നതു് തീര്‍ന്നു
 Name[nb]=Konvertering av Nepomuk-data ferdig
 Name[nds]=Ümwanneln vun Nepomuk-Daten afslaten
