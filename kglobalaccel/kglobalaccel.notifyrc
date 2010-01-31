@@ -324,7 +324,7 @@ Comment[x-test]=xxAn application registered new global shortcuts.xx
 Comment[zh_CN]=用于注册新全局快捷键的应用程序。
 Comment[zh_TW]=一個應用程式註冊了新的全域捷徑
 Contexts=Application
-Action=Popup
+Action=
 
 [Event/globalshortcutpressed]
 Name=Global Shortcut Triggered
