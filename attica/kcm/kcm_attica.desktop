@@ -7,6 +7,7 @@ X-KDE-ServiceTypes=KCModule
 X-KDE-Library=kcm_attica
 X-KDE-ParentApp=kcontrol
 X-KDE-System-Settings-Parent-Category=advanced-user-settings
+X-DocPath=kcontrol/attica/index.html
 
 Name=Open Collaboration Services provider
 Name[ca]=Gestor de proveïdors de serveis «Open Collaboration»
