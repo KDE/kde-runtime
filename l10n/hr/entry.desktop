@@ -104,6 +104,7 @@ DateFormat[hr]=%a %d %B %Y.
 DateFormat[eo]=%A, la %ea de %B %Y
 DateFormatShort=%d.%m.%Y.
 TimeFormat=%H:%M:%S
+DateMonthNamePossessive=true
 #DecimalPlaces=2
 #MonetaryDecimalPlaces=2
 CurrencyCodesInUse=HRK
