@@ -4,6 +4,13 @@
 ##For KDE4.5+:
 --------------
 
+- Detect app versions and encourage the user to test new version?
+  (detect stable or devel)
+
+- Improve the help about the information the user needs to provide
+
+- In the "Details page" (user enters description) write the headers like
+"What I was doing when app crashed: \n\n Other useful config details:" (depending on the options checked before)
 - Detect if a possible duplicate has too much duplicate reports on it (count "has been marked as duplicate" messages)
   and tell the user to not report if he/she can't add valuable info.... (?)
   
