@@ -258,7 +258,26 @@ void Nepomuk::RemovableStorageService::slotAccessibilityChanged( bool accessible
             interface.indexFolder( entry.m_lastMountPath, false );
         }
 
-        // TODO: remove all metadata for files that have been removed from the media whilst it was not mounted with us.
+        //
+        // Remove all metadata for files that have been removed from the media whilst it was not mounted with us.
+        // The Strigi service cannot handle this since it does not support filex:/ URLs when updating folders.
+        //
+        QString query = QString::fromLatin1( "select ?url ?r where { "
+                                             "?r a nfo:FileDataObject . "
+                                             "?r nie:isPartOf ?fs . "
+                                             "?r nie:url ?url . "
+                                             "?fs a nfo:Filesystem . "
+                                             "?fs nao:identifier %1 . "
+                                             "}" )
+                        .arg( Soprano::Node::literalToN3( entry.m_uuid ) );
+        Soprano::QueryResultIterator it = mainModel()->executeQuery( query, Soprano::Query::QueryLanguageSparql );
+        while ( it.next() ) {
+            QString path = entry.constructLocalPath( it["url"].uri() );
+            if ( !QFile::exists( path ) ) {
+                kDebug() << "Removing metadata for no longer existing" << path;
+                Nepomuk::Resource( it["r"].uri() ).remove();
+            }
+        }
     }
     else {
         //
@@ -329,6 +348,16 @@ KUrl Nepomuk::RemovableStorageService::Entry::constructRelativeUrl( const QStrin
 {
     const QString relativePath = path.mid( m_lastMountPath.count() );
     return KUrl( QLatin1String("filex://") + m_uuid + relativePath );
+}
+
+
+QString Nepomuk::RemovableStorageService::Entry::constructLocalPath( const KUrl& filexUrl ) const
+{
+    QString path( m_lastMountPath );
+    if ( path.endsWith( QLatin1String( "/" ) ) )
+        path.truncate( path.length()-1 );
+    path += filexUrl.path();
+    return path;
 }
 
 NEPOMUK_EXPORT_SERVICE( Nepomuk::RemovableStorageService, "nepomukremovablestorageservice")
