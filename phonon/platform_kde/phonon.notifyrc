@@ -241,6 +241,7 @@ Comment[en_GB]=Notification on automatic fallback if the preferred device is una
 Comment[eo]=Avizo pri uzo de rezerva rimedo se la preferinda aparato ne estas disponebla
 Comment[es]=Notificación de plan alternativo si el dispositivo elegido no está disponible
 Comment[et]=Märguanne tagavaraseadme automaatse kasutamise korral, kui eelistatud seade pole saadaval
+Comment[eu]=Jakinarazi automatikoki ordezkora jotzen dela hobetsitako gailua erabilgarri ez badago
 Comment[fi]=Huomautus automaattisesta varmistuksesta, jos parempana pidetty laite ei ole käytettävissä
 Comment[fr]=Prévenir en cas de d'utilisation du périphérique audio de secours si le périphérique principal n'est pas disponible
 Comment[fy]=Melding fan automatyske tebekfal as it apparaat fan foarkar net beskikber is.
