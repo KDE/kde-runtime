@@ -88,6 +88,7 @@ namespace Nepomuk {
             Entry( RemovableStorageService* );
 
             KUrl constructRelativeUrl( const QString& path ) const;
+            QString constructLocalPath( const KUrl& filexUrl ) const;
 
             Solid::Device m_device;
             QString m_lastMountPath;
