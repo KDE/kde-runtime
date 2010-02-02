@@ -628,13 +628,13 @@ void Strigi::NepomukIndexWriter::removeIndexedData( const KUrl& url, bool isReso
                           Soprano::Node::resourceToN3( url ) );
     }
     else {
-        query = QString::fromLatin1( "select ?g ?mg where { "
-                                         "{ ?r %3 %1 . } "
-                                         "UNION "
-                                         "{ ?r %3 %2 . } "
-                                         "UNION "
-                                         "{ ?r %4 %2 . } . "
-                                         "?g %5 ?r . }" )
+        query = QString::fromLatin1( "select ?g where { "
+                                     "{ ?r %3 %1 . } "
+                                     "UNION "
+                                     "{ ?r %3 %2 . } "
+                                     "UNION "
+                                     "{ ?r %4 %2 . } . "
+                                     "?g %5 ?r . }" )
                     .arg( Node::literalToN3( url.path() ),
                           Node::resourceToN3( url ),
                           Node::resourceToN3( Vocabulary::Xesam::url() ),
