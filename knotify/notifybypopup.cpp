@@ -96,7 +96,7 @@ void NotifyByPopup::notify( int id, KNotifyConfig * config )
 	connect(pop, SIGNAL(destroyed()) , this, SLOT(slotPopupDestroyed()) );
 
 	// Default to 6 seconds if no timeout has been defined
-	int timeout = config->timeout == -1 ? 6 : config->timeout;
+	int timeout = config->timeout == -1 ? 6000 : config->timeout;
 	pop->setTimeout(timeout);
 
 	pop->adjustSize();
