@@ -3,7 +3,7 @@
  * $Id: sourceheader 511311 2006-02-19 14:51:05Z trueg $
  *
  * This file is part of the Nepomuk KDE project.
- * Copyright (C) 2006-2008 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2006-2010 Sebastian Trueg <trueg@kde.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -312,11 +312,6 @@ QString Nepomuk::Repository::usedSopranoBackend() const
 Soprano::BackendSettings Nepomuk::Repository::readVirtuosoSettings() const
 {
     Soprano::BackendSettings settings;
-    Soprano::BackendSetting& indexes = Soprano::settingInSettings( settings, QLatin1String( "indexes" ) );
-    if ( indexes.value().toString().isEmpty() ) {
-        // TODO: The list of indexes will be optimized based on frequent Nepomuk queries soon
-        indexes.setValue( QLatin1String( "GPOS,GSPO,OPGS,OPSG,POGS,POSG,SPOG" ) );
-    }
 
     KConfigGroup repoConfig = KSharedConfig::openConfig( "nepomukserverrc" )->group( name() + " Settings" );
     const int maxMem = repoConfig.readEntry( "Maximum memory", 50 );
