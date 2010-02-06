@@ -159,6 +159,7 @@ your imagination (or alphabet).
 <term><guilabel>User:</guilabel></term>
 <listitem>
 <para>
+This is the username that will be used to establish the connection.
 </para>
 </listitem>
 </varlistentry>
