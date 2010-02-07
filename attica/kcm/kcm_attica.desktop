@@ -10,7 +10,9 @@ X-KDE-System-Settings-Parent-Category=advanced-user-settings
 X-DocPath=kcontrol/attica/index.html
 
 Name=Open Collaboration Services provider
+Name[de]=Anbieter von Open-Collaboration-Diensten
 Name[pt]=Fornecedor dos Serviços Abertos de Colaboração
+Name[pt_BR]=Fornecedores dos Serviços de Colaboração Abertos
 Name[sv]=Leverantör öppna samarbetstjänster
 Name[uk]=Надання послуг службами Open Collaboration
 Name[x-test]=xxOpen Collaboration Services providerxx
