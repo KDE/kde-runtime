@@ -42,7 +42,7 @@
      <item>
       <widget class="QCheckBox" name="automountUnknownDevices">
        <property name="whatsThis">
-        <string>When this is checked, KDE will only automatically mount devices it remembers. A device is 'remembered' if it has ever been mounted before. e.g. plugging in a USB media player to charge is not sufficient to 'remember' it. If the files are not accessed, KDE will not automatically mount the player next time it is seen. Once they have been accessed, however, KDE will remember to automatically make the contents accessible to your system.</string>
+        <string>When this is checked, KDE will only automatically mount devices it remembers. A device is 'remembered' if it has ever been mounted before. For instance, plugging in a USB media player to charge is not sufficient to 'remember' it - if the files are not accessed, KDE will not automatically mount the player next time it is seen. Once they have been accessed, however, KDE will remember to automatically make the contents accessible to your system.</string>
        </property>
        <property name="text">
         <string>Only automatically mount removable media that has been manually mounted before</string>
