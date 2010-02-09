@@ -53,7 +53,7 @@ select the country or region that you want
 to use.</para>
 
 <para>When you click on <guilabel>change</guilabel>,
-a menu pops up showing major groups of countries. You can select
+a dialog pops up showing major groups of countries. You can select
 one of these regions and see a list of the countries that are
 available for that region.</para>
 
@@ -69,7 +69,7 @@ highlighted language up and down.</para>
 
 <para>Click on the <guilabel>Add Language</guilabel> drop down box to add a 
 language to the list. If the language is already in the 
-list, the old one will be moved instead.</para>
+list, it will be moved up to the first place in the list instead.</para>
 
 <para>If only US English is available, no translations have been installed.
 </para>

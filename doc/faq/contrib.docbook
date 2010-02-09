@@ -138,16 +138,6 @@ http://techbase.kde.org/Getting_Started/Sources/Anonymous_SVN</ulink>
 
 <qandaentry>
 <question>
-<para>Are there any <acronym>SVN</acronym> mirror sites for &kde;?</para>
-</question>
-<answer>
-<para>No, there are currently no anonymous <acronym>SVN</acronym> mirror sites for &kde;. If you're interested in setting one up, please contact <email>sysadmin@kde.org</email>
-</para>
-</answer>
-</qandaentry>
-
-<qandaentry>
-<question>
 <para>How do I go about translating &kde; programs into my native
 language?</para>
 </question>
