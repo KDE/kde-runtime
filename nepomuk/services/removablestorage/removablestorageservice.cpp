@@ -1,5 +1,5 @@
 /* This file is part of the KDE Project
-   Copyright (c) 2009 Sebastian Trueg <trueg@kde.org>
+   Copyright (c) 2009-2010 Sebastian Trueg <trueg@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -263,13 +263,18 @@ void Nepomuk::RemovableStorageService::slotAccessibilityChanged( bool accessible
         // The Strigi service cannot handle this since it does not support filex:/ URLs when updating folders.
         //
         QString query = QString::fromLatin1( "select ?url ?r where { "
-                                             "?r a nfo:FileDataObject . "
-                                             "?r nie:isPartOf ?fs . "
-                                             "?r nie:url ?url . "
-                                             "?fs a nfo:Filesystem . "
-                                             "?fs nao:identifier %1 . "
+                                             "?r a %1 . "
+                                             "?r %2 ?fs . "
+                                             "?r %3 ?url . "
+                                             "?fs a %4 . "
+                                             "?fs %5 %6 . "
                                              "}" )
-                        .arg( Soprano::Node::literalToN3( entry.m_uuid ) );
+                        .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NFO::FileDataObject() ),
+                              Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::isPartOf() ),
+                              Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ),
+                              Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NFO::Filesystem() ),
+                              Soprano::Node::resourceToN3( Soprano::Vocabulary::NAO::identifier() ),
+                              Soprano::Node::literalToN3( entry.m_uuid ) );
         Soprano::QueryResultIterator it = mainModel()->executeQuery( query, Soprano::Query::QueryLanguageSparql );
         while ( it.next() ) {
             QString path = entry.constructLocalPath( it["url"].uri() );
@@ -332,7 +337,9 @@ void Nepomuk::RemovableStorageService::slotAccessibilityChanged( bool accessible
         // the mount point is no longer the parent folder of the top level files on the removable device
         // We need to delete those relations seperately
         //
-        mainModel()->removeAllStatements( Soprano::Node(), Nepomuk::Vocabulary::NIE::isPartOf(), Resource( KUrl( entry.m_lastMountPath ) ).resourceUri() );
+        QUrl parentUrl = Resource( KUrl( entry.m_lastMountPath ) ).resourceUri();
+        if( parentUrl.isValid() )
+            mainModel()->removeAllStatements( Soprano::Node(), Nepomuk::Vocabulary::NIE::isPartOf(), parentUrl );
     }
     kDebug() << "done";
 }
