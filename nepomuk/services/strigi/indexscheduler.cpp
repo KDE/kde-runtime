@@ -57,8 +57,8 @@
 
 
 namespace {
-    const int s_reducedSpeedDelay = 50; // ms
-    const int s_snailPaceDelay = 200;   // ms
+    const int s_reducedSpeedDelay = 200; // ms
+    const int s_snailPaceDelay = 1000;   // ms
 }
 
 
@@ -535,6 +535,7 @@ void Nepomuk::IndexScheduler::deleteEntries( const std::vector<std::string>& ent
 
 void Nepomuk::IndexScheduler::removeOldAndUnwantedEntries()
 {
+    kDebug();
     //
     // Get all folders that are stored as parent folders of indexed files
     //
@@ -607,6 +608,7 @@ void Nepomuk::IndexScheduler::removeOldAndUnwantedEntries()
             ResourceManager::instance()->mainModel()->removeContext( g );
         }
     }
+    kDebug() << "done";
 }
 
 
