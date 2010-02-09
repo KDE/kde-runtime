@@ -115,6 +115,8 @@ Nepomuk::ServerConfigModule::ServerConfigModule( QWidget* parent, const QVariant
              this, SLOT( changed() ) );
     connect( m_sliderMemoryUsage, SIGNAL( valueChanged(int) ),
              this, SLOT( changed() ) );
+    connect( m_checkIndexRemovableMedia, SIGNAL( toggled(bool) ),
+             this, SLOT( changed() ) );
     connect( m_checkShowHiddenFolders, SIGNAL( toggled( bool ) ),
              m_folderModel, SLOT( setHiddenFoldersShown( bool ) ) );
 
