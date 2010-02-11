@@ -328,6 +328,9 @@ Soprano::BackendSettings Nepomuk::Repository::readVirtuosoSettings() const
     // alwyays index literals
     settings << Soprano::BackendSetting( "fulltextindex", "sync" );
 
+    // Always force the start, ie. kill previously started Virtuoso instances
+    settings << Soprano::BackendSetting( "forcedstart", true );
+
     return settings;
 }
 
