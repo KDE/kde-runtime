@@ -196,10 +196,17 @@ void FileSystemWatcher::Private::updateChildrenCache( const QString& parentPath,
                 emit q->dirty( dirIt.filePath() );
             }
         }
+
+        // check if we have been stopped
+        if ( !continueChecking() )
+            return;
     }
 
     for( QHash<QString, FolderEntry>::iterator it = parentEntry.children.begin();
          it != parentEntry.children.end(); ++it ) {
+        // check if we have been stopped
+        if ( !continueChecking() )
+            return;
         updateChildrenCache( parentPath + '/' + it.key(), it.value(), signalNewEntries );
     }
 }
