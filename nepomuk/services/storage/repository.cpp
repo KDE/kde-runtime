@@ -325,6 +325,12 @@ Soprano::BackendSettings Nepomuk::Repository::readVirtuosoSettings() const
     // lower the minimum transaction log size to make sure the checkpoints are actually executed
     settings << Soprano::BackendSetting( "MinAutoCheckpointSize", 200000 );
 
+    // alwyays index literals
+    settings << Soprano::BackendSetting( "fulltextindex", "sync" );
+
+    // Always force the start, ie. kill previously started Virtuoso instances
+    settings << Soprano::BackendSetting( "forcedstart", true );
+
     return settings;
 }
 
