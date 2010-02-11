@@ -116,6 +116,7 @@ partitionmanager-bin=partitionmanager|general
 krandrtray=krandr|krandrtray
 kmymoney=kmymoney4|general
 kdevdesigner=kdevelop|Qt Designer Integration
+kdevelop.bin=kdevelop|general
 
 #---
 #This section relates a product groupt to a product
