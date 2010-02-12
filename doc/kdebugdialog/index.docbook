@@ -29,7 +29,7 @@
 
 
 <para>&kdebugdialog; is a dialog box for managing diagnostic messages at runtime.
-It features a simple and a fil mode.</para>
+It features a simple and a full mode.</para>
 <para>In order to be able to make changes  
 <guilabel>Disable all debug output</guilabel> has to be unchecked.</para>
 
