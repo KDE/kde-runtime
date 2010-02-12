@@ -73,7 +73,8 @@ public:
     void aboutToHide();
 
 private Q_SLOTS:
-    void setApplicationDetailsText();
+    void showApplicationDetailsExamples();
+
     void updateCheckBoxes();
 
 private:

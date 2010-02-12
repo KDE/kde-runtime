@@ -28,6 +28,7 @@
 #include "debuggermanager.h"
 #include "backtraceparser.h"
 #include "backtracegenerator.h"
+#include "applicationdetailsexamples.h"
 
 #include <KProcess>
 #include <KStandardDirs>
@@ -46,6 +47,8 @@ ReportInterface::ReportInterface(QObject *parent)
 
     m_productMapping = new ProductMapping(DrKonqi::crashedApplication()->fakeExecutableBaseName(),
                                           m_bugzillaManager, this);
+
+    m_appDetailsExamples = new ApplicationDetailsExamples(this);
 
     //Information the user can provide about the crash
     m_userRememberCrashSituation = false;
@@ -397,6 +400,11 @@ void ReportInterface::setPossibleDuplicatesByQuery(const QStringList & list)
 BugzillaManager * ReportInterface::bugzillaManager() const
 {
     return m_bugzillaManager;
+}
+
+ApplicationDetailsExamples * ReportInterface::appDetailsExamples() const
+{
+    return m_appDetailsExamples;
 }
 
 #include "reportinterface.moc"

@@ -26,9 +26,11 @@
 
 class SystemInformation;
 
-class BugzillaManager;
 class BugReport;
+
+class BugzillaManager;
 class ProductMapping;
+class ApplicationDetailsExamples;
 
 class ReportInterface : public QObject
 {
@@ -72,6 +74,7 @@ public:
     void setPossibleDuplicatesByQuery(const QStringList &);
 
     BugzillaManager * bugzillaManager() const;
+    ApplicationDetailsExamples * appDetailsExamples() const;
     
 private Q_SLOTS:
     void sendUsingDefaultProduct() const;
@@ -104,6 +107,7 @@ private:
     
     ProductMapping *    m_productMapping;
     BugzillaManager *   m_bugzillaManager;
+    ApplicationDetailsExamples * m_appDetailsExamples;
 };
 
 #endif

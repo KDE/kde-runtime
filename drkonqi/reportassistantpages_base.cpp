@@ -27,9 +27,11 @@
 #include "backtraceparser.h"
 #include "backtracegenerator.h"
 #include "drkonqi_globals.h"
+#include "applicationdetailsexamples.h"
 
 #include <QtGui/QLabel>
 #include <QtGui/QCheckBox>
+#include <QtGui/QToolTip>
 
 #include <KToolInvocation>
 #include <KIcon>
@@ -133,7 +135,12 @@ BugAwarenessPage::BugAwarenessPage(ReportAssistantDialog * parent)
 
     connect(ui.m_rememberGroup, SIGNAL(buttonClicked(int)), this, SLOT(updateCheckBoxes()));
 
-    setApplicationDetailsText();
+    ui.m_appSpecificDetailsExamples->setVisible(reportInterface()->appDetailsExamples()->hasExamples());
+    
+    connect(ui.m_appSpecificDetailsExamples, SIGNAL(linkHovered(QString)), this,
+            SLOT(showApplicationDetailsExamples()));
+    connect(ui.m_appSpecificDetailsExamples, SIGNAL(linkActivated(QString)), this,
+            SLOT(showApplicationDetailsExamples()));
 }
 
 void BugAwarenessPage::aboutToShow()
@@ -171,54 +178,6 @@ void BugAwarenessPage::aboutToHide()
                                                ui.m_appSpecificDetails->isChecked());
 }
 
-void BugAwarenessPage::setApplicationDetailsText()
-{
-    QString appDetailsText;
-    QString binaryName = DrKonqi::crashedApplication()->fakeExecutableBaseName();
-
-    if (binaryName == QLatin1String("plasma-desktop")) {
-       appDetailsText = i18nc("@info examples about information the user can provide",
-       "Widgets you have in your desktop and panels (both official and unofficial), "
-       "desktop settings (wallpaper plugin, themes), activities, and dashboard configuration.");
-    } else if (binaryName == QLatin1String("kwin")) {
-        appDetailsText = i18nc("@info examples about information the user can provide",
-        "State of Desktop Effects (Compositing), kind of effects enabled, window decoration, "
-        "and specific window rules and configuration.");
-    } else if (binaryName == QLatin1String("konqueror") ||
-        binaryName == QLatin1String("rekonq")) {
-        appDetailsText = i18nc("@info examples about information the user can provide",
-        "sites you were visiting, number of opened tabs, plugins you have installed, "
-        "and any other non-default setting.");
-    } else if (binaryName == QLatin1String("dolphin")) {
-        appDetailsText = i18nc("@info examples about information the user can provide",
-        "File view mode, grouping and sorting settings, preview settings, and directory you were browsing.");
-    } else if (binaryName == QLatin1String("kopete")) {
-        appDetailsText = i18nc("@info examples about information the user can provide",
-        "Instant Messaging protocols you use, and plugins you have installed (official and unofficial).");
-    } else if (binaryName == QLatin1String("kmail")) {
-        appDetailsText = i18nc("@info examples about information the user can provide",
-        "Mail protocols and account-types you use.");
-    } else if (binaryName == QLatin1String("kwrite") ||
-        binaryName == QLatin1String("kate") ||
-        binaryName == QLatin1String("kword")) {
-        appDetailsText = i18nc("@info examples about information the user can provide",
-        "Type of the document you were editing.");
-    } else if (binaryName == QLatin1String("juk") ||
-        binaryName == QLatin1String("amarok") ||
-        binaryName == QLatin1String("dragon") ||
-        binaryName == QLatin1String("kaffeine")) {
-        appDetailsText = i18nc("@info examples about information the user can provide",
-        "Type of media (extension and format) you were watching and/or listening to.");
-    } 
-
-    if (!appDetailsText.isEmpty()) {
-        QString text = i18nc("@label examples about information the user can provide", "Examples: %1",
-                         appDetailsText);
-
-        ui.m_applicationSpecificDetailsLabel->setText(text);
-    }
-}
-
 void BugAwarenessPage::updateCheckBoxes()
 {
     bool rememberSituation = ui.m_rememberCrashSituationYes->isChecked();
@@ -230,7 +189,15 @@ void BugAwarenessPage::updateCheckBoxes()
     ui.m_unusualSituation->setEnabled(rememberSituation);
 
     ui.m_appSpecificDetails->setEnabled(rememberSituation);
-    ui.m_applicationSpecificDetailsLabel->setEnabled(rememberSituation);
+    ui.m_appSpecificDetailsExamples->setEnabled(rememberSituation);
+}
+
+void BugAwarenessPage::showApplicationDetailsExamples()
+{
+    QToolTip::showText(QCursor::pos(),
+                       i18nc("@label examples about information the user can provide",
+                             "Examples: %1", reportInterface()->appDetailsExamples()->examples()),
+                       this);
 }
 
 //END BugAwarenessPage

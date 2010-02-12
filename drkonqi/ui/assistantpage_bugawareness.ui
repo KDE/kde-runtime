@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>508</width>
-    <height>333</height>
+    <height>319</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -215,19 +215,22 @@
         </widget>
        </item>
        <item>
-        <widget class="QCheckBox" name="m_appSpecificDetails">
-         <property name="enabled">
-          <bool>false</bool>
+        <layout class="QHBoxLayout" name="horizontalLayout_5">
+         <property name="spacing">
+          <number>0</number>
          </property>
-         <property name="text">
-          <string comment="@option:check kind of information the user can provide about the crash">Custom settings of the application that may be related</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_4">
          <item>
-          <spacer name="horizontalSpacer_5">
+          <widget class="QCheckBox" name="m_appSpecificDetails">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string comment="@option:check kind of information the user can provide about the crash">Custom settings of the application that may be related</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_6">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
@@ -236,21 +239,40 @@
            </property>
            <property name="sizeHint" stdset="0">
             <size>
-             <width>40</width>
+             <width>10</width>
              <height>20</height>
             </size>
            </property>
           </spacer>
          </item>
          <item>
-          <widget class="QLabel" name="m_applicationSpecificDetailsLabel">
+          <widget class="QLabel" name="m_appSpecificDetailsExamples">
            <property name="enabled">
             <bool>false</bool>
            </property>
-           <property name="wordWrap">
-            <bool>true</bool>
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>&lt;a href=&quot;#&quot;&gt;Examples&lt;/a&gt;</string>
            </property>
           </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_5">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
          </item>
         </layout>
        </item>

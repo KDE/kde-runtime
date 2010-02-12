@@ -38,6 +38,7 @@ set(drkonqi_SRCS
     debugger.cpp
     debuggerlaunchers.cpp
     debuggermanager.cpp
+    applicationdetailsexamples.cpp
 )
 
 kde4_add_ui_files(drkonqi_SRCS
