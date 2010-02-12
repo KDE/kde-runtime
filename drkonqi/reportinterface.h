@@ -75,6 +75,18 @@ public:
 
     BugzillaManager * bugzillaManager() const;
     ApplicationDetailsExamples * appDetailsExamples() const;
+
+    bool userCanProvideActionsAppDesktop() const {
+        return m_provideActionsApplicationDesktop;
+    }
+
+    bool userCanProvideUnusualBehavior() const {
+        return m_provideUnusualBehavior;
+    }
+
+    bool userCanProvideApplicationConfigDetails() const {
+        return m_provideApplicationConfigurationDetails;
+    }
     
 private Q_SLOTS:
     void sendUsingDefaultProduct() const;

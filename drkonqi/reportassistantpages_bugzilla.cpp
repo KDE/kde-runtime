@@ -294,7 +294,8 @@ BugzillaInformationPage::BugzillaInformationPage(ReportAssistantDialog * parent)
 
     ui.m_compiledSourcesCheckBox->setChecked(
                                     DrKonqi::systemInformation()->compiledSources());
-    
+
+    //ui.m_distributionGroupBox->setVisible(false);  //TODO do this?
     checkTexts();
 }
 
@@ -354,6 +355,21 @@ void BugzillaInformationPage::aboutToShow()
             ui.m_distroChooserCombo->setVisible(false);
         }
         m_distributionComboSetup = true;
+    }
+
+    //Fill the description textedit with some headings:
+    QString descriptionTemplate;
+    if (ui.m_detailsEdit->toPlainText().isEmpty()) {
+        if (reportInterface()->userCanProvideActionsAppDesktop()) {
+            descriptionTemplate += "- What I was doing when the application crashed:\n\n\n";
+        }
+        if (reportInterface()->userCanProvideUnusualBehavior()) {
+            descriptionTemplate += "- Unusual behavior I noticed:\n\n\n";
+        }
+        if (reportInterface()->userCanProvideApplicationConfigDetails()) {
+            descriptionTemplate += "- Custom settings of the application:\n\n\n";
+        }
+        ui.m_detailsEdit->setText(descriptionTemplate);
     }
 
     checkTexts(); //May be the options (canDetail) changed and we need to recheck
