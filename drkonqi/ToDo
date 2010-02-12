@@ -4,43 +4,31 @@
 ##For KDE4.5+:
 --------------
 
-- Detect app versions and encourage the user to test new version?
-  (detect stable or devel)
+#P1:
+
+- If we are going to attach the bug report to an existent one, and that one has too much duplicates, warn the user that his/her attachment is only going to be useful if s/he provides good info
+
+#P2
 
 - Improve the help about the information the user needs to provide
 
 - In the "Details page" (user enters description) write the headers like
 "What I was doing when app crashed: \n\n Other useful config details:" (depending on the options checked before)
-- Detect if a possible duplicate has too much duplicate reports on it (count "has been marked as duplicate" messages)
-  and tell the user to not report if he/she can't add valuable info.... (?)
-  
-- Exclude some backtrace functions to improve the search feature (like Qt base stuff at the top of the bt)
 
 - If the report was "dismissed" because it was not really useful, and the backtrace was not generated;
   allow the advanced users to generate it later (on the "Show report's content" button or in the backtrace tab)
-- Merge the two main dialogs ?????
+
+#P3
+
+- Merge the two main dialogs (?)
 
 - Show the minimum text require length / or a "progress bar"(or capacitybar)
 
 - Improve the "Enter manual bug ID" option in the Duplicates page to be more discoverable
 
-- Update DrKonqi to use the remote product mapping implementation (being done by Mattr)
-    [[ currently bugzillalib detects unexistent products to later use the "kde" product ]]
-    ##Update: local mappings file support already implemented.
-    ##Sample PHP script sent
-    Waiting for remote implementation to be complete.
+#Other
 
-- Custom usefulness values needed by application
-    (ex. Amarok wants only perfect backtraces...)
-
-- Try to also provide full backtraces ("bt full")
-    The simple backtrace is going to be pasted inline as always
-    The complete backtrace could be added as an attachment
-    (how to retrieve both versions at the same time?, fetch only the full and "manually strip it" to get the simple one ?)
-
-- Read memory-maps (/proc/PID/maps) and upload as attachment (??)
-
-- Check for plugins ?
+- Check for plugins / Read memory-maps (/proc/PID/maps) and upload as attachment
     (example, if plasma crashes, which libs were loaded, which lib caused the crash)
     This is useful to determine if some external plugin is involved
     (I don't know if this is technically possible)
@@ -63,9 +51,30 @@
   (ex. Amarok installs a amarokdrkonqiexamples.desktop file with a content like "Type of music you were listening to..."
   - It can contain translations too.
   
+## FUTURE
+---------------
+
+- Update DrKonqi to use the remote product mapping implementation (being done by Mattr)
+    [[ currently bugzillalib detects unexistent products to later use the "kde" product ]]
+    ##Update: local mappings file support already implemented.
+    ##Sample PHP script sent
+    Waiting for remote implementation to be complete.
+
+- Implement a bugzilla field "Fixed at" X version, to show to the user... (mattr)
+
+- Detect app versions and encourage the user to test new version?
+  (detect stable or devel)
+
+- Custom usefulness values needed by application
+    (ex. Amarok wants only perfect backtraces...)
 
 ##Brainstorming
 --------------
+
+- Try to also provide full backtraces ("bt full")
+    The simple backtrace is going to be pasted inline as always
+    The complete backtrace could be added as an attachment
+    (how to retrieve both versions at the same time?, fetch only the full and "manually strip it" to get the simple one ?)
 
 - Implement bugtracking-system-agnostic interface on KDE servers and adapt DrKonqi to interact with it
     (this will also remove the HTML parsing code from DrKonqi itself, to put it on a remote script)
@@ -97,6 +106,8 @@
 
 #DONE
 -------
+
+- Exclude some backtrace functions to improve the search feature (like Qt base stuff at the top of the bt)
 
 - Replace the progressbar of the StatusWidget with a throbber....
 
@@ -155,6 +166,7 @@ http://websvn.kde.org/?view=rev&revision=408177
 bool KSessionManager::saveState     (   QSessionManager &        sm      )       [virtual]
 void QApplication::saveState ( QSessionManager & manager ) 
 
+---------------------
 ---------------------
 Improving symbol loading speed using GDB
 ---
