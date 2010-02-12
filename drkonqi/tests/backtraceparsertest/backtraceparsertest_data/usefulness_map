@@ -10,3 +10,5 @@ test_bug190882: ReallyUseful
 test_bug192412_a: Useless
 test_bug192412_b: Useless
 test_bug168000: MayBeUseful
+test_usefulfunctions: ReallyUseful
+test_usefulfunctions2: ReallyUseful
