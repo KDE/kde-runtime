@@ -55,7 +55,6 @@ knotificationareaitemtest=plasma|widget-systemtray
 knotificationicontest=plasma|widget-systemtray
 lancelot=plasma|widget-lancelot
 plasma-netbook=plasma|plasma-netbook
-kscreenlocker=krunner|kscreenlocker
 #KDE Plasma Desktop (KWin)
 kwin_killer_helper=kwin|general
 kwin_rules_dialog=kwin|general
@@ -118,6 +117,7 @@ krandrtray=krandr|krandrtray
 kmymoney=kmymoney4|general
 kdevdesigner=kdevelop|Qt Designer Integration
 kdevelop.bin=kdevelop|general
+kscreenlocker=kscreensaver|locker
 
 #---
 #This section relates a product groupt to a product
