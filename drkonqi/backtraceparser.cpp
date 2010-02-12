@@ -217,7 +217,7 @@ void BacktraceLineGdb::parse()
     if (regExp.exactMatch(d->m_line)) {
         d->m_type = StackFrame;
         d->m_stackFrameNumber = regExp.cap(1).toInt();
-        d->m_functionName = regExp.cap(3);
+        d->m_functionName = regExp.cap(3).trimmed();
         //remove \n because arguments may be split in two lines
         d->m_functionArguments = regExp.cap(5).remove('\n');
         d->m_hasFileInfo = !regExp.cap(6).isEmpty();
@@ -476,6 +476,56 @@ static bool lineShouldBeIgnored(const BacktraceLineGdb & line)
     return false;
 }
 
+static bool isFunctionUsefulForSearch(const BacktraceLineGdb & line)
+{
+    //We need the function name
+    if ( line.rating() == BacktraceLineGdb::MissingEverything
+        || line.rating() == BacktraceLineGdb::MissingFunction ) {
+        return false;
+    }
+
+    //Misc ignores
+    if ( line.functionName() == "__kernel_vsyscall") {
+        return false;
+    }
+
+    //Ignore core Qt functions
+    //(QObject can be useful in some cases)
+    if ( line.functionName().startsWith("QBasicAtomicInt::")
+        || line.functionName().startsWith("QBasicAtomicPointer::")
+        || line.functionName().startsWith("QAtomicInt::")
+        || line.functionName().startsWith("QAtomicPointer::")
+        || line.functionName().startsWith("QMetaObject::")
+        || line.functionName().startsWith("QPointer::")
+        || line.functionName().startsWith("QWeakPointer::")
+        || line.functionName().startsWith("QSharedPointer::")
+        || line.functionName().startsWith("QScopedPointer::") ) {
+        return false;
+    }
+
+    //Misc Qt stuff
+    if ( line.functionName() == "qt_message_output"
+        || line.functionName().startsWith("qGetPtrHelper")) {
+        return false;
+    }
+
+    //Ignore Qt containers (and iterators Q*Iterator)
+    if ( line.functionName().startsWith("QList")
+        || line.functionName().startsWith("QLinkedList")
+        || line.functionName().startsWith("QVector")
+        || line.functionName().startsWith("QStack")
+        || line.functionName().startsWith("QQueue")
+        || line.functionName().startsWith("QSet")
+        || line.functionName().startsWith("QMap")
+        || line.functionName().startsWith("QMultiMap")
+        || line.functionName().startsWith("QHash")
+        || line.functionName().startsWith("QMultiHash")) {
+        return false;
+    }
+
+    return true;
+}
+
 BacktraceParser::Usefulness BacktraceParserGdb::backtraceUsefulness() const
 {
     //if there is no d, the debugger has not run,
@@ -491,7 +541,6 @@ BacktraceParser::Usefulness BacktraceParserGdb::backtraceUsefulness() const
 
     uint rating = 0, bestPossibleRating = 0, counter = 0;
     bool haveSeenStackBase = false;
-    QStack<BacktraceLineGdb> usefulFunctionsStack;
 
     QListIterator<BacktraceLineGdb> i(d->m_linesToRate);
     i.toBack(); //start from the end of the list
@@ -522,11 +571,6 @@ BacktraceParser::Usefulness BacktraceParserGdb::backtraceUsefulness() const
             || line.rating() == BacktraceLineGdb::MissingSourceFile) {
             d->m_librariesWithMissingDebugSymbols.insert(line.libraryName().trimmed());
         }
-        
-        if ( line.rating() != BacktraceLineGdb::MissingEverything
-            && line.rating() != BacktraceLineGdb::MissingFunction ) {
-            usefulFunctionsStack.push(line);
-        }
 
         uint multiplier = ++counter; //give weight to the first lines
         rating += static_cast<uint>(line.rating()) * multiplier;
@@ -537,8 +581,14 @@ BacktraceParser::Usefulness BacktraceParserGdb::backtraceUsefulness() const
 
     //Save the first 3 useful functions that were encountered in the backtrace.
     //This is used later to search for duplicate reports.
-    for (int i = 0; i<3 && !usefulFunctionsStack.isEmpty(); i++) {
-        d->m_firstUsefulFunctions.append(usefulFunctionsStack.pop().functionName());
+    i.toFront(); //Reuse the list iterator
+    int functionIndex = 0;
+    while( i.hasNext() && functionIndex < 3 ) {
+        const BacktraceLineGdb & line = i.next();
+        if ( !lineShouldBeIgnored(line) && isFunctionUsefulForSearch(line) ) {
+            d->m_firstUsefulFunctions.append(line.functionName());
+            functionIndex++;
+        }
     }
 
     //calculate rating
