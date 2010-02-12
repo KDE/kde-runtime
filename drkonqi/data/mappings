@@ -165,4 +165,4 @@ multimedia=Phonon|kdemultimedia|taglib
 imaging=digikam|digikamimageplugins|kipiplugins
 networkmanager=knetworkmanager|Network Management|solid
 scanner=libksane
-filemanagement=konqueror|dolphin
+filemanagement=konqueror|dolphin|nepomuk
