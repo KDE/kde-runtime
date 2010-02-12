@@ -114,6 +114,12 @@
        <property name="enabled">
         <bool>false</bool>
        </property>
+       <property name="toolTip">
+        <string comment="tooltip text">If you tried to repeat the situation, select how oftenly the application crashes</string>
+       </property>
+       <property name="whatsThis">
+        <string comment="what's this text">If you tried to repeat the situation, select how oftenly the application crashes</string>
+       </property>
        <item>
         <property name="text">
          <string>I did not try again</string>
@@ -202,12 +208,24 @@
          <property name="enabled">
           <bool>false</bool>
          </property>
+         <property name="toolTip">
+          <string comment="tooltip text">Check this option if you can describe what were you doing inside the application before it crashed</string>
+         </property>
+         <property name="whatsThis">
+          <string comment="what's this text">Check this option if you can describe what were you doing inside the application before it crashed</string>
+         </property>
         </widget>
        </item>
        <item>
         <widget class="QCheckBox" name="m_unusualSituation">
          <property name="enabled">
           <bool>false</bool>
+         </property>
+         <property name="toolTip">
+          <string comment="tooltip help">Check this option if you can describe any unusual behavior or appearance in the application or the whole desktop</string>
+         </property>
+         <property name="whatsThis">
+          <string comment="what's this help">Check this option if you can describe any unusual behavior or appearance in the application or the whole desktop</string>
          </property>
          <property name="text">
           <string comment="@option:check kind of information the user can provide about the crash">Unusual desktop behavior I noticed</string>
@@ -223,6 +241,12 @@
           <widget class="QCheckBox" name="m_appSpecificDetails">
            <property name="enabled">
             <bool>false</bool>
+           </property>
+           <property name="toolTip">
+            <string comment="tooltip help">Check this option if you can provide application specific details or settings that may be related to the crash. You can check the examples (if available)</string>
+           </property>
+           <property name="whatsThis">
+            <string comment="what's this help">Check this option if you can provide application specific details or settings that may be related to the crash. You can check the examples (if available)</string>
            </property>
            <property name="text">
             <string comment="@option:check kind of information the user can provide about the crash">Custom settings of the application that may be related</string>
