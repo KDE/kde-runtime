@@ -69,7 +69,6 @@ namespace {
      * Empty if the path only contains the query.
      */
     QString fileNameFromUrl( const KUrl& url ) {
-        QString fn;
         if ( url.hasQueryItem( QLatin1String( "sparql" ) ) ||
              url.hasQueryItem( QLatin1String( "query" ) ) ||
              url.directory() != QLatin1String( "/" ) ) {
