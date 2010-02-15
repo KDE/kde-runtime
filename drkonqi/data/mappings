@@ -118,6 +118,7 @@ kdevdesigner=kdevelop|Qt Designer Integration
 kdevelop.bin=kdevelop|general
 kscreenlocker=kscreensaver|locker
 gwenview_importer=gwenview|general
+kdmgreet=kdm|general
 
 #---
 #This section relates a product groupt to a product
