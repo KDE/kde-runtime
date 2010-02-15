@@ -53,7 +53,7 @@ IntroductionPage::IntroductionPage(ReportAssistantDialog * parent)
 CrashInformationPage::CrashInformationPage(ReportAssistantDialog * parent)
         : ReportAssistantPage(parent)
 {
-    m_backtraceWidget = new BacktraceWidget(DrKonqi::debuggerManager()->backtraceGenerator());
+    m_backtraceWidget = new BacktraceWidget(DrKonqi::debuggerManager()->backtraceGenerator(), this, true);
     connect(m_backtraceWidget, SIGNAL(stateChanged()) , this, SLOT(emitCompleteChanged()));
 
     QVBoxLayout *layout = new QVBoxLayout(this);

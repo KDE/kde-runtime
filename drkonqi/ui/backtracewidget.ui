@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>609</width>
-    <height>538</height>
+    <width>487</width>
+    <height>415</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,7 +20,14 @@
       <widget class="StatusWidget" name="m_statusWidget" native="true"/>
      </item>
      <item>
-      <layout class="QVBoxLayout" name="verticalLayout_3">
+      <layout class="QVBoxLayout" name="mainLayout">
+       <item>
+        <widget class="QCheckBox" name="m_toggleBacktraceCheckBox">
+         <property name="text">
+          <string>Show backtrace</string>
+         </property>
+        </widget>
+       </item>
        <item>
         <widget class="KTextBrowser" name="m_backtraceEdit"/>
        </item>
@@ -70,7 +77,7 @@
           <bool>true</bool>
          </property>
          <property name="openExternalLinks">
-          <bool>true</bool>
+          <bool>false</bool>
          </property>
         </widget>
        </item>

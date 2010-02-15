@@ -36,7 +36,8 @@ class BacktraceWidget: public QWidget
     Q_OBJECT
 
 public:
-    explicit BacktraceWidget(BacktraceGenerator *generator, QWidget *parent = 0);
+    explicit BacktraceWidget(BacktraceGenerator *generator, QWidget *parent = 0,
+                             bool showToggleBacktrace = false);
 
     bool canInstallDebugPackages() const;
 
@@ -44,6 +45,9 @@ public Q_SLOTS:
     void generateBacktrace();
     void hilightExtraDetailsLabel(bool hilight);
     void focusImproveBacktraceButton();
+
+    void toggleBacktrace(bool show);
+    void extraDetailsLinkActivated(QString link);
 
 Q_SIGNALS:
     void stateChanged();

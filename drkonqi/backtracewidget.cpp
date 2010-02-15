@@ -21,6 +21,7 @@
 #include "backtraceratingwidget.h"
 
 #include "drkonqi.h"
+#include "crashedapplication.h"
 #include "backtracegenerator.h"
 #include "backtraceparser.h"
 #include "drkonqi_globals.h"
@@ -33,10 +34,12 @@
 #include <KIcon>
 #include <KMessageBox>
 #include <KLocale>
+#include <KToolInvocation>
 
 const char *extraDetailsLabelMargin = " margin: 5px; ";
 
-BacktraceWidget::BacktraceWidget(BacktraceGenerator *generator, QWidget *parent) :
+BacktraceWidget::BacktraceWidget(BacktraceGenerator *generator, QWidget *parent,
+    bool showToggleBacktrace) :
         QWidget(parent),
         m_btGenerator(generator)
 {
@@ -53,6 +56,8 @@ BacktraceWidget::BacktraceWidget(BacktraceGenerator *generator, QWidget *parent)
     connect(m_btGenerator, SIGNAL(failedToStart()) , this, SLOT(loadData()));
     connect(m_btGenerator, SIGNAL(newLine(QString)) , this, SLOT(backtraceNewLine(QString)));
 
+    connect(ui.m_extraDetailsLabel, SIGNAL(linkActivated(QString)), this,
+            SLOT(extraDetailsLinkActivated(QString)));
     ui.m_extraDetailsLabel->setVisible(false);
     ui.m_extraDetailsLabel->setStyleSheet(QLatin1String(extraDetailsLabelMargin));
 
@@ -92,6 +97,16 @@ BacktraceWidget::BacktraceWidget(BacktraceGenerator *generator, QWidget *parent)
     ui.m_statusWidget->addCustomStatusWidget(m_backtraceRatingWidget);
 
     ui.m_statusWidget->setIdle(QString());
+
+    //Do we need the "Show backtrace" toggle action ?
+    if (!showToggleBacktrace) {
+        ui.mainLayout->removeWidget(ui.m_toggleBacktraceCheckBox);
+        ui.m_toggleBacktraceCheckBox->setVisible(false);
+    } else {
+        connect(ui.m_toggleBacktraceCheckBox, SIGNAL(toggled(bool)), this,
+                SLOT(toggleBacktrace(bool)));
+        toggleBacktrace(false);
+    }
 }
 
 void BacktraceWidget::setAsLoading()
@@ -210,9 +225,11 @@ void BacktraceWidget::loadData()
                                     "install the missing debugging information packages. If this method "
                                     "does not work: please read <link url='%1'>How to "
                                     "create useful crash reports</link> to learn how to get a useful "
-                                    "backtrace; install the needed packages and click the "
-                                    "<interface>Reload Crash Information</interface> button.",
-                                    QLatin1String(TECHBASE_HOWTO_DOC)));
+                                    "backtrace; install the needed packages (<link url='%2'>"
+                                    "list of files</link>) and click the "
+                                    "<interface>Reload</interface> button.",
+                                    QLatin1String(TECHBASE_HOWTO_DOC),
+                                    QLatin1String("#missingDebugPackages")));
                 ui.m_installDebugButton->setVisible(true);
                 //Retrieve the libraries with missing debug info
                 QStringList missingLibraries = btParser->librariesWithMissingDebugSymbols().toList();
@@ -222,9 +239,11 @@ void BacktraceWidget::loadData()
                 //Tell the user to read the howto and reload
                 ui.m_extraDetailsLabel->setText(i18nc("@info/rich", "Please read <link url='%1'>How to "
                                     "create useful crash reports</link> to learn how to get a useful "
-                                    "backtrace; install the needed packages and click the "
-                                    "<interface>Reload Crash Information</interface> button.",
-                                    QLatin1String(TECHBASE_HOWTO_DOC)));
+                                    "backtrace; install the needed packages (<link url='%2'>"
+                                    "list of files</link>) and click the "
+                                    "<interface>Reload</interface> button.",
+                                    QLatin1String(TECHBASE_HOWTO_DOC),
+                                    QLatin1String("#missingDebugPackages")));
             }
         }
 
@@ -322,3 +341,41 @@ bool BacktraceWidget::canInstallDebugPackages() const
 {
     return m_debugPackageInstaller->canInstallDebugPackages();
 }
+
+void BacktraceWidget::toggleBacktrace(bool show)
+{
+    ui.m_backtraceEdit->setVisible(show);
+    if (show) {
+        ui.mainLayout->removeItem(ui.mainLayout->itemAt(ui.mainLayout->indexOf(ui.m_toggleBacktraceCheckBox)+1));
+    } else {
+        ui.mainLayout->insertStretch(ui.mainLayout->indexOf(ui.m_toggleBacktraceCheckBox)+1);
+    }
+}
+
+void BacktraceWidget::extraDetailsLinkActivated(QString link)
+{
+    if (link.startsWith("http")) {
+        //Open externally
+        KToolInvocation::invokeBrowser(link);
+    } else if (link == QLatin1String("#missingDebugPackages")) {
+        BacktraceParser * btParser = m_btGenerator->parser();
+
+        QStringList missingDbgForFiles = btParser->librariesWithMissingDebugSymbols().toList();
+        missingDbgForFiles.insert(0, DrKonqi::crashedApplication()->executable().absoluteFilePath());
+
+        //HTML message
+        QString message;
+        message = "<html>";
+        message += i18n("The packages containing debug information for the following application and libraries are missing:");
+        message += "<br /><ul>";
+
+        Q_FOREACH(const QString & string, missingDbgForFiles) {
+            message += "<li>" + string + "</li>";
+        }
+
+        message += "</ul></html>";
+
+        KMessageBox::information(this, message, i18nc("messagebox title","Missing debug information packages"));
+    }
+}
+
