@@ -250,7 +250,11 @@ void Nepomuk::NepomukProtocol::listDir( const KUrl& url )
     QString filename;
     Nepomuk::Resource res = splitNepomukUrl( url, filename );
 
-    if ( res.hasType( Soprano::Vocabulary::NAO::Tag() ) ) {
+    if ( res.hasType( Nepomuk::Vocabulary::NFO::Folder() ) ) {
+        redirection( res.property( Nepomuk::Vocabulary::NIE::url() ).toUrl() );
+        finished();
+    }
+    else if ( res.hasType( Soprano::Vocabulary::NAO::Tag() ) ) {
         Query::ComparisonTerm term( Soprano::Vocabulary::NAO::hasTag(), Query::ResourceTerm( res ), Query::ComparisonTerm::Equal );
         redirection( Query::Query( term ).toSearchUrl().url() );
         finished();
@@ -579,7 +583,6 @@ bool Nepomuk::NepomukProtocol::rewriteUrl( const KUrl& url, KUrl& newURL )
         const KUrl removableMediaUrl = res.property( Nepomuk::Vocabulary::NIE::url() ).toUrl();
         newURL = convertRemovableMediaFileUrl( removableMediaUrl, m_currentOperation == Get );
         if ( !newURL.isValid() && m_currentOperation == Get ) {
-            kDebug() << "FAILED TO CONVERT URL. OFF TO GET.";
             // error handling in get()
             return true;
         }
