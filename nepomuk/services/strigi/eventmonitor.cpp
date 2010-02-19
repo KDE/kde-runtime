@@ -150,10 +150,6 @@ void Nepomuk::EventMonitor::slotIndexingStopped()
                    "nepomuk" );
         m_indexScheduler->disconnect( this );
 
-        // after this much index work, it makes sense to optimize the full text index in the main model
-        QDBusInterface( "org.kde.nepomuk.services.nepomukstorage", "/nepomukstorage", "org.kde.nepomuk.Storage" ).call( "optimize", "main" );
-
-
         m_periodicUpdateTimer.start();
     }
 }
