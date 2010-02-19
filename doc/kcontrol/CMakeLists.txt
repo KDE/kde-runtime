@@ -36,9 +36,3 @@ add_subdirectory(history)
 add_subdirectory(solid-device-automounter)
 add_subdirectory(phonon)
 endif ( Q_WS_X11 )
-
-########### install files ###############
-#
-#
-#
-kde4_create_handbook(index.docbook INSTALL_DESTINATION ${HTML_INSTALL_DIR}/en)
