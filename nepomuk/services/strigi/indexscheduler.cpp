@@ -455,7 +455,6 @@ void Nepomuk::IndexScheduler::readConfig()
 
 void Nepomuk::IndexScheduler::slotConfigChanged()
 {
-    readConfig();
     if ( isRunning() )
         restart();
 }
@@ -533,82 +532,85 @@ void Nepomuk::IndexScheduler::deleteEntries( const std::vector<std::string>& ent
 }
 
 
-void Nepomuk::IndexScheduler::removeOldAndUnwantedEntries()
-{
-    kDebug();
-    //
-    // Get all folders that are stored as parent folders of indexed files
-    //
-    QString query = QString::fromLatin1( "select distinct ?d ?dir where { "
-                                         "?r a %1 . "
-                                         "?g <http://www.strigi.org/fields#indexGraphFor> ?r . "
-                                         "?r %2 ?d . "
-                                         "?d %3 ?dir . }" )
-                    .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NFO::FileDataObject() ) )
-                    .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::isPartOf() ) )
-                    .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ) );
-    Soprano::QueryResultIterator it = ResourceManager::instance()->mainModel()->executeQuery( query, Soprano::Query::QueryLanguageSparql );
-    QList<QPair<KUrl, QUrl> > storedFolders;
-    while ( it.next() && !m_stopped ) {
-        storedFolders << qMakePair( KUrl( it["dir"].uri() ), it["d"].uri() );
-    }
-
-    //
-    // Now compare that list with the configured folders and remove any
-    // entries that are children of folders that should not be indexed.
-    //
-    QList<QUrl> storedFoldersToRemove;
-    for ( int i = 0; i < storedFolders.count(); ++i ) {
-        const KUrl& url = storedFolders[i].first;
-        if ( !StrigiServiceConfig::self()->shouldFolderBeIndexed( url.path() ) ) {
-            storedFoldersToRemove << storedFolders[i].second;
+namespace {
+    void insertSortFolders( const QStringList& folders, bool include, QList<QPair<QString, bool> >& result )
+    {
+        foreach( const QString& f, folders ) {
+            // insertion sort
+            int pos = 0;
+            while ( result.count() > pos &&
+                    result[pos].first < f )
+                ++pos;
+            result.insert( pos, qMakePair( f, include ) );
         }
     }
 
-    // cleanup
-    storedFolders.clear();
+    QString constructFolderFilter( const QList<QPair<QString, bool> > folders, int& index )
+    {
+        const QString path = folders[index].first;
+        const bool include = folders[index].second;
+
+        ++index;
+
+        QStringList subFilters;
+        while ( index < folders.count() &&
+                folders[index].first.startsWith( path ) ) {
+            subFilters << constructFolderFilter( folders, index );
+        }
+
+        QString thisFilter = QString::fromLatin1( "REGEX(STR(?url),'^file://%1')" ).arg( path );
+
+        // we want all folders that should NOT be indexed
+        if ( include ) {
+            thisFilter.prepend( '!' );
+        }
+
+        subFilters.prepend( thisFilter );
+        if ( subFilters.count() > 1 ) {
+            return '(' + subFilters.join( include ? QLatin1String( " || " ) : QLatin1String( " && " ) ) + ')';
+        }
+        else {
+            return subFilters.first();
+        }
+    }
+}
+
+void Nepomuk::IndexScheduler::removeOldAndUnwantedEntries()
+{
+    //
+    // We now query all indexed files that are in folders that should not
+    // be indexed at once.
+    //
+    QList<QPair<QString, bool> > folders;
+    insertSortFolders( StrigiServiceConfig::self()->folders(), true, folders );
+    insertSortFolders( StrigiServiceConfig::self()->excludeFolders(), false, folders );
+    int i = 0;
+    QString folderFilter = constructFolderFilter( folders, i );
 
     //
-    // Now we gathered all the folders whose children we need to delete from the storage.
-    // We now need to query all entries in those folders to get a list of graphs we actually
-    // need to delete.
+    // We query all files that should not be in the store
+    // This for example excludes all filex:/ URLs.
     //
-    for ( int i = 0; i < storedFoldersToRemove.count() && !m_stopped; ++i ) {
+    QString query = QString::fromLatin1( "select distinct ?g where { "
+                                         "?r %1 ?url . "
+                                         "?g <http://www.strigi.org/fields#indexGraphFor> ?r . "
+                                         "FILTER(REGEX(STR(?url),'^file:/')) . "
+                                         "FILTER(%2) . }" )
+                    .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ),
+                          folderFilter );
+    kDebug() << query;
+
+    Soprano::QueryResultIterator it = ResourceManager::instance()->mainModel()->executeQuery( query, Soprano::Query::QueryLanguageSparql );
+    while ( it.next() ) {
 
         // wait for resume or stop (or simply continue)
         if ( !waitForContinue() ) {
             break;
         }
 
-        QString query = QString::fromLatin1( "select ?g where { "
-                                             "?r a %1 . "
-                                             "?r %2 %3 . "
-                                             "?g <http://www.strigi.org/fields#indexGraphFor> ?r . }" )
-                        .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NFO::FileDataObject() ) )
-                        .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::isPartOf() ) )
-                        .arg( Soprano::Node::resourceToN3( storedFoldersToRemove[i] ) );
-        QList<Soprano::Node> entriesToRemove
-            = ResourceManager::instance()->mainModel()->executeQuery( query, Soprano::Query::QueryLanguageSparql )
-            .iterateBindings( "g" )
-            .allNodes();
-
-        //
-        // Finally delete the entries. The corresponding metadata graphs will be deleted automatically
-        // by the storage service.
-        //
-        for( int j = 0; j < entriesToRemove.count() && !m_stopped; ++j ) {
-
-            // wait for resume or stop (or simply continue)
-            if ( !waitForContinue() ) {
-                break;
-            }
-
-            const Soprano::Node& g = entriesToRemove[j];
-            kDebug() << "Removing old index entry graph" << g;
-            ResourceManager::instance()->mainModel()->removeContext( g );
-        }
+        const Soprano::Node& g = it[0];
+        ResourceManager::instance()->mainModel()->removeContext( g );
     }
-    kDebug() << "done";
 }
 
 
