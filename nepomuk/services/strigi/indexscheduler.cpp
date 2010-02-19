@@ -57,8 +57,8 @@
 
 
 namespace {
-    const int s_reducedSpeedDelay = 200; // ms
-    const int s_snailPaceDelay = 1000;   // ms
+    const int s_reducedSpeedDelay = 500; // ms
+    const int s_snailPaceDelay = 3000;   // ms
 }
 
 
