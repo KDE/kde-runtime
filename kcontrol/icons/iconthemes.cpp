@@ -43,7 +43,7 @@
 #include <kstandarddirs.h>
 #include <kservice.h>
 #include <kconfig.h>
-#include <knewstuff3/downloaddialog.h>
+#include <knewstuff2/engine.h>
 
 #undef Unsorted
 
@@ -314,23 +314,24 @@ QStringList IconThemesConfig::findThemeDirs(const QString &archiveName)
 
 void IconThemesConfig::getNewTheme()
 {
-  KNS3::DownloadDialog dialog("icons.knsrc", this);
-  dialog.exec();
-  if (!dialog.changedEntries().isEmpty()) {
-    for(int i = 0; i < dialog.changedEntries().size(); i ++) {
-      if(dialog.changedEntries().at(i).status() == KNS3::Entry::Installed
-         && !dialog.changedEntries().at(i).installedFiles().isEmpty()) {
-          const QString themeTmpFile = dialog.changedEntries().at(i).installedFiles().at(0);
-          const QString name = dialog.changedEntries().at(i).installedFiles().at(0).section('/', -2, -2);
-          kDebug()<<"IconThemesConfig::getNewTheme() themeTmpFile="<<themeTmpFile<<"name="<<name;
-          QStringList themeNames = findThemeDirs(themeTmpFile);
-          if (themeNames.isEmpty()) {
-              //dialog.changedEntries().at(i)->setStatus(KNS3::Entry::Invalid);
-          }
-          else if (! installThemes(themeNames, themeTmpFile)) {
-              //dialog.changedEntries().at(i)->setStatus(KNS3::Entry::Invalid);
-          }
-      }
+  KNS::Engine engine(this);
+  if (engine.init("icons.knsrc")) {
+    KNS::Entry::List entries = engine.downloadDialogModal(this);
+
+    for(int i = 0; i < entries.size(); i ++) {
+        if(entries.at(i)->status() == KNS::Entry::Installed
+           && !entries.at(i)->installedFiles().isEmpty()) {
+            const QString themeTmpFile = entries.at(i)->installedFiles().at(0);
+            const QString name = entries.at(i)->installedFiles().at(0).section('/', -2, -2);
+            kDebug()<<"IconThemesConfig::getNewTheme() themeTmpFile="<<themeTmpFile<<"name="<<name;
+            QStringList themeNames = findThemeDirs(themeTmpFile);
+            if (themeNames.isEmpty()) {
+                //entries.at(i)->setStatus(KNS::Entry::Invalid);
+            }
+            else if (! installThemes(themeNames, themeTmpFile)) {
+                //entries.at(i)->setStatus(KNS::Entry::Invalid);
+            }
+        }
     }
 
     // reload the display icontheme items
