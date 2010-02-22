@@ -508,6 +508,8 @@ BugzillaReportInformationDialog::BugzillaReportInformationDialog(BugzillaDuplica
                     "the same crash.")));
     connect(this, SIGNAL(user1Clicked()) , this, SLOT(attachToBugReportClicked()));
 
+    connect(ui.m_showOwnBacktraceCheckBox, SIGNAL(toggled(bool)), this, SLOT(toggleShowOwnBacktrace(bool)));
+
     //Connect bugzillalib signals
     connect(m_parent->bugzillaManager(), SIGNAL(bugReportFetched(BugReport, QObject *)),
              this, SLOT(bugFetchFinished(BugReport, QObject *)));
@@ -549,8 +551,7 @@ void BugzillaReportInformationDialog::showBugReport(int bugNumber)
     ui.m_infoBrowser->setText(i18nc("@info:status","Loading..."));
     ui.m_infoBrowser->setEnabled(false);
     
-    ui.m_linkLabel->setText(i18nc("@info","<link url='%1'>Bug report page at the KDE bug "
-                                              "tracking system</link>",
+    ui.m_linkLabel->setText(i18nc("@info","<link url='%1'>Report's webpage</link>",
                                     m_parent->bugzillaManager()->urlForBug(m_bugNumber)));
 
     ui.m_statusWidget->setBusy(i18nc("@info:status","Loading information about bug "
@@ -558,7 +559,17 @@ void BugzillaReportInformationDialog::showBugReport(int bugNumber)
                                             m_bugNumber,
                                             QLatin1String(KDE_BUGZILLA_SHORT_URL)));
                                             
-    ui.m_backtraceBrowser->setPlainText(m_parent->reportInterface()->backtrace());
+    ui.m_backtraceBrowser->setPlainText(
+                    i18nc("@info/plain","Backtrace of the crash I experienced:\n\n") +
+                    m_parent->reportInterface()->backtrace());
+
+    KConfigGroup config(KGlobal::config(), "BugzillaReportInformationDialog");
+    bool showOwnBacktrace = config.readEntry("ShowOwnBacktrace", false);
+    ui.m_showOwnBacktraceCheckBox->setChecked(showOwnBacktrace);
+    if (!showOwnBacktrace) { //setChecked(false) will not emit toggled(false)
+        toggleShowOwnBacktrace(false);
+    }
+
     show();
 }
 
@@ -754,6 +765,22 @@ void BugzillaReportInformationDialog::bugFetchError(QString err, QObject * jobOw
         ui.m_statusWidget->setIdle(i18nc("@info:status","Error fetching the bug report"));
         ui.m_retryButton->setVisible(true);
     }
+}
+
+void BugzillaReportInformationDialog::toggleShowOwnBacktrace(bool show)
+{
+    QList<int> sizes;
+    if (show) {
+        int size = (ui.m_reportSplitter->sizeHint().width()-ui.m_reportSplitter->handleWidth())/2;
+        sizes << size << size;
+    } else {
+        sizes << ui.m_reportSplitter->sizeHint().width() << 0; //Hide backtrace
+    }
+    ui.m_reportSplitter->setSizes(sizes);
+
+    //Save the current show value
+    KConfigGroup config(KGlobal::config(), "BugzillaReportInformationDialog");
+    config.writeEntry("ShowOwnBacktrace", show);
 }
 
 //END BugzillaReportInformationDialog

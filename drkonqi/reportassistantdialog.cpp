@@ -146,12 +146,13 @@ ReportAssistantDialog::ReportAssistantDialog(QWidget * parent) :
     connect(m_bugzillaSend, SIGNAL(finished(bool)), this, SLOT(assistantFinished(bool)));
 
     //TODO Remember to keep the pages ordered
+addPage(m_bugzillaDuplicatesPage);
     addPage(m_introductionPage);
     addPage(m_awarenessPage);
     addPage(m_backtracePage);
     addPage(m_conclusionsPage);
     addPage(m_bugzillaLoginPage);
-    addPage(m_bugzillaDuplicatesPage);
+    
     addPage(m_bugzillaInformationPage);
     addPage(m_bugzillaPreviewPage);
     addPage(m_bugzillaSendPage);

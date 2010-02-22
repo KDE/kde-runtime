@@ -120,6 +120,8 @@ private Q_SLOTS:
     int promptAboutAlreadyClosedReport();
     void mayBeDuplicateClicked();
     void attachToBugReportClicked();
+
+    void toggleShowOwnBacktrace(bool);
     
 Q_SIGNALS:
     void possibleDuplicateSelected(int);
