@@ -31,18 +31,14 @@
 #include <kstandarddirs.h>
 #include <kdirnotify.h>
 #include <kcharsets.h>
-
+#include <kdebug.h>
 #include <KRun>
+#include <KToolInvocation>
 
 KNetAttach::KNetAttach( QWidget* parent )
-    : Q3Wizard( parent ), Ui_KNetAttach()
+    : QWizard( parent ), Ui_KNetAttach()
 {
     setupUi( this );
-
-    QFont f = font();
-    f.setPointSizeF( f.pointSizeF() * 1.41 );
-    f.setBold( true );
-    setTitleFont( f );
 
     connect(_recent, SIGNAL(toggled(bool)), _recentConnectionName, SLOT(setEnabled(bool)));
     connect(_connectionName, SIGNAL(textChanged(const QString&)), this, SLOT(updateParametersPageStatus()));
@@ -51,13 +47,12 @@ KNetAttach::KNetAttach( QWidget* parent )
     connect(_path, SIGNAL(textChanged(const QString&)), this, SLOT(updateParametersPageStatus()));
     connect(_useEncryption, SIGNAL(toggled(bool)), this, SLOT(updatePort(bool)));
     connect(_createIcon, SIGNAL(toggled(bool)), this, SLOT(updateFinishButtonText(bool)));
-    connect( this, SIGNAL(helpClicked() ), this, SLOT( slotHelpClicked() ) );
+    connect( this, SIGNAL(helpRequested()), this, SLOT( slotHelpClicked() ) );
     setWindowIcon(KIcon("knetattach"));
-    disconnect(finishButton(), SIGNAL(clicked()), (QDialog*)this, SLOT(accept()));
-    connect(finishButton(), SIGNAL(clicked()), this, SLOT(finished()));
-    finishButton()->setText(i18n("Save && C&onnect"));
+    setOption(HaveHelpButton, true);
+    button(FinishButton)->setText(i18n("Save && C&onnect"));
     //setResizeMode(Fixed); FIXME: make the wizard fixed-geometry
-    setFinishEnabled(_folderParameters, false);
+    button(FinishButton)->setEnabled(false);
     KConfig crecent( "krecentconnections", KConfig::NoGlobals  );
     KConfigGroup recent(&crecent, "General");
     QStringList idx = recent.readEntry("Index",QStringList());
@@ -98,10 +93,17 @@ void KNetAttach::setInformationText( const QString &type )
     _informationText->setText(text);
 }
 
-void KNetAttach::showPage( QWidget *page )
+void KNetAttach::updateParametersPageStatus()
 {
-    if (page == _folderType) {
-    } else if (page == _folderParameters) {
+    button(FinishButton)->setEnabled(
+		  !_host->text().trimmed().isEmpty() &&
+		  !_path->text().trimmed().isEmpty() &&
+		  !_connectionName->text().trimmed().isEmpty());
+}
+
+bool KNetAttach::validateCurrentPage()
+{
+    if (currentPage() == _folderType){
 	_host->setFocus();
 	_connectionName->setFocus();
 
@@ -137,8 +139,7 @@ void KNetAttach::showPage( QWidget *page )
 		    _recent->setEnabled(true);
 		    _recentConnectionName->addItems(idx);
 		}
-		showPage(_folderType);
-		return;
+		return false;
 	    }
 	    KConfigGroup group = recent.group(_recentConnectionName->currentText());
 	    _type = group.readEntry("Type");
@@ -159,119 +160,104 @@ void KNetAttach::showPage( QWidget *page )
 	    _createIcon->setChecked(false);
 	}
 	updateParametersPageStatus();
+
+    }else{
+      button(BackButton)->setEnabled(false);
+      button(FinishButton)->setEnabled(false);
+      KUrl url;
+      if (_type == "WebFolder") {
+	  if (_useEncryption->isChecked()) {
+	      url.setProtocol("webdavs");
+	  } else {
+	      url.setProtocol("webdav");
+	  }
+	  url.setPort(_port->value());
+      } else if (_type == "Fish") {
+      KConfig config("kio_fishrc");
+      KConfigGroup cg(&config, _host->text().trimmed());
+      cg.writeEntry("Charset", KGlobal::charsets()->encodingForName(_encoding->currentText()));
+	  url.setProtocol("fish");
+	  url.setPort(_port->value());
+      } else if (_type == "FTP") {
+	  url.setProtocol("ftp");
+	  url.setPort(_port->value());
+      KConfig config("kio_ftprc");
+      KConfigGroup cg(&config, _host->text().trimmed());
+      cg.writeEntry("Charset", KGlobal::charsets()->encodingForName(_encoding->currentText()));
+      config.sync();
+      } else if (_type == "SMB") {
+	  url.setProtocol("smb");
+      } else { // recent
+      }
+
+      url.setHost(_host->text().trimmed());
+      url.setUser(_user->text().trimmed());
+      QString path = _path->text().trimmed();
+  #ifndef Q_WS_WIN
+      // could a relative path really be made absolute by simply prepending a '/' ?
+      if (!path.startsWith('/')) {
+	  path = QString("/") + path;
+      }
+  #endif
+      url.setPath(path);
+    _folderParameters->setEnabled(false);
+      bool success = doConnectionTest(url);
+    _folderParameters->setEnabled(true);
+      if (!success) {
+	  KMessageBox::sorry(this, i18n("Unable to connect to server.  Please check your settings and try again."));
+	  button(BackButton)->setEnabled(true);
+	  return false;
+      }
+
+      KRun::runUrl(url, "inode/directory", this);
+
+      QString name = _connectionName->text().trimmed();
+
+      if (_createIcon->isChecked()) {
+	  KGlobal::dirs()->addResourceType("remote_entries", "data", "remoteview");
+
+	  QString path = KGlobal::dirs()->saveLocation("remote_entries");
+	  path += name + ".desktop";
+	  KConfig _desktopFile( path, KConfig::SimpleConfig );
+	  KConfigGroup desktopFile(&_desktopFile, "Desktop Entry");
+	  desktopFile.writeEntry("Icon", "folder-remote");
+	  desktopFile.writeEntry("Name", name);
+	  desktopFile.writeEntry("Type", "Link");
+	  desktopFile.writeEntry("URL", url.prettyUrl());
+      desktopFile.writeEntry("Charset", url.fileEncoding());
+	  desktopFile.sync();
+	  org::kde::KDirNotify::emitFilesAdded( "remote:/" );
+      }
+
+      if (!name.isEmpty()) {
+	  KConfig _recent("krecentconnections", KConfig::NoGlobals);
+	  KConfigGroup recent(&_recent, "General");
+	  QStringList idx = recent.readEntry("Index",QStringList());
+	  _recent.deleteGroup(name); // erase anything stale
+	  if (idx.contains(name)) {
+	      idx.removeAll(name);
+	      idx.prepend(name);
+	      recent.writeEntry("Index", idx);
+	  } else {
+	      QString last;
+	      if (!idx.isEmpty()) {
+		  last = idx.last();
+		  idx.pop_back();
+	      }
+	      idx.prepend(name);
+	      _recent.deleteGroup(last);
+	      recent.writeEntry("Index", idx);
+	  }
+	recent = KConfigGroup(&_recent,name);
+	  recent.writeEntry("URL", url.prettyUrl());
+	  if (_type == "WebFolder" || _type == "Fish" || _type == "FTP") {
+	      recent.writeEntry("Port", _port->value());
+	  }
+	  recent.writeEntry("Type", _type);
+	  recent.sync();
+      }
     }
-
-    Q3Wizard::showPage(page);
-}
-
-
-void KNetAttach::updateParametersPageStatus()
-{
-    setFinishEnabled(_folderParameters,
-		  !_host->text().trimmed().isEmpty() &&
-		  !_path->text().trimmed().isEmpty() &&
-		  !_connectionName->text().trimmed().isEmpty());
-}
-
-void KNetAttach::finished()
-{
-    setBackEnabled(_folderParameters,false);
-    setFinishEnabled(_folderParameters, false);
-    KUrl url;
-    if (_type == "WebFolder") {
-	if (_useEncryption->isChecked()) {
-	    url.setProtocol("webdavs");
-	} else {
-	    url.setProtocol("webdav");
-	}
-	url.setPort(_port->value());
-    } else if (_type == "Fish") {
-    KConfig config("kio_fishrc");
-    KConfigGroup cg(&config, _host->text().trimmed());
-    cg.writeEntry("Charset", KGlobal::charsets()->encodingForName(_encoding->currentText()));
-	url.setProtocol("fish");
-	url.setPort(_port->value());
-    } else if (_type == "FTP") {
-	url.setProtocol("ftp");
-	url.setPort(_port->value());
-    KConfig config("kio_ftprc");
-    KConfigGroup cg(&config, _host->text().trimmed());
-    cg.writeEntry("Charset", KGlobal::charsets()->encodingForName(_encoding->currentText()));
-    config.sync();
-    } else if (_type == "SMB") {
-	url.setProtocol("smb");
-    } else { // recent
-    }
-
-    url.setHost(_host->text().trimmed());
-    url.setUser(_user->text().trimmed());
-    QString path = _path->text().trimmed();
-#ifndef Q_WS_WIN
-    // could a relative path really be made absolute by simply prepending a '/' ?
-    if (!path.startsWith('/')) {
-	path = QString("/") + path;
-    }
-#endif
-    url.setPath(path);
-   _folderParameters->setEnabled(false);
-    bool success = doConnectionTest(url);
-   _folderParameters->setEnabled(true);
-    if (!success) {
-	KMessageBox::sorry(this, i18n("Unable to connect to server.  Please check your settings and try again."));
-	showPage(_folderParameters);
-	setBackEnabled(_folderParameters, true);
-	return;
-    }
-
-    KRun::runUrl(url, "inode/directory", this);
-
-    QString name = _connectionName->text().trimmed();
-
-    if (_createIcon->isChecked()) {
-	KGlobal::dirs()->addResourceType("remote_entries", "data", "remoteview");
-
-	QString path = KGlobal::dirs()->saveLocation("remote_entries");
-	path += name + ".desktop";
-	KConfig _desktopFile( path, KConfig::SimpleConfig );
-	KConfigGroup desktopFile(&_desktopFile, "Desktop Entry");
-	desktopFile.writeEntry("Icon", "folder-remote");
-	desktopFile.writeEntry("Name", name);
-	desktopFile.writeEntry("Type", "Link");
-	desktopFile.writeEntry("URL", url.prettyUrl());
-    desktopFile.writeEntry("Charset", url.fileEncoding());
-	desktopFile.sync();
-	org::kde::KDirNotify::emitFilesAdded( "remote:/" );
-    }
-
-    if (!name.isEmpty()) {
-	KConfig _recent("krecentconnections", KConfig::NoGlobals);
-	KConfigGroup recent(&_recent, "General");
-	QStringList idx = recent.readEntry("Index",QStringList());
-	_recent.deleteGroup(name); // erase anything stale
-	if (idx.contains(name)) {
-	    idx.removeAll(name);
-	    idx.prepend(name);
-	    recent.writeEntry("Index", idx);
-	} else {
-	    QString last;
-	    if (!idx.isEmpty()) {
-		last = idx.last();
-		idx.pop_back();
-	    }
-	    idx.prepend(name);
-	    _recent.deleteGroup(last);
-	    recent.writeEntry("Index", idx);
-	}
-       recent = KConfigGroup(&_recent,name);
-	recent.writeEntry("URL", url.prettyUrl());
-	if (_type == "WebFolder" || _type == "Fish" || _type == "FTP") {
-	    recent.writeEntry("Port", _port->value());
-	}
-	recent.writeEntry("Type", _type);
-	recent.sync();
-    }
-
-    QDialog::accept();
+    return true;
 }
 
 
@@ -344,9 +330,9 @@ bool KNetAttach::updateForProtocol(const QString& protocol)
 void KNetAttach::updateFinishButtonText(bool save)
 {
     if (save) {
-	finishButton()->setText(i18n("Save && C&onnect"));
+	button(FinishButton)->setText(i18n("Save && C&onnect"));
     } else {
-	finishButton()->setText(i18n("C&onnect"));
+	button(FinishButton)->setText(i18n("C&onnect"));
     }
 }
 

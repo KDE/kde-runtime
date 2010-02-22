@@ -22,7 +22,7 @@
 
 #include "ui_knetattach.h"
 
-class KNetAttach : public Q3Wizard, private Ui_KNetAttach
+class KNetAttach : public QWizard, private Ui_KNetAttach
 {
     Q_OBJECT
 
@@ -39,9 +39,8 @@ private:
     bool updateForProtocol( const QString & protocol );
 
 private slots:
-    void showPage( QWidget * page );
     void updateParametersPageStatus();
-    void finished();
+    bool validateCurrentPage();
     void updatePort( bool encryption );
     void updateFinishButtonText( bool save );
     void slotHelpClicked();

@@ -7,8 +7,7 @@ kde4_add_app_icon(knetattach_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/hi*-app-knetattac
 
 kde4_add_executable(knetattach ${knetattach_SRCS})
 
-# needs qt3support for Q3Wizard
-target_link_libraries(knetattach  ${KDE4_KIO_LIBS} ${QT_QT3SUPPORT_LIBRARY} )
+target_link_libraries(knetattach  ${KDE4_KIO_LIBS} )
 
 install(TARGETS knetattach DESTINATION ${LIBEXEC_INSTALL_DIR})
 
