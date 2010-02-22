@@ -7,7 +7,7 @@ X-KDE-DBus-ModuleName=ktimezoned
 X-KDE-Kded-autoload=true
 X-KDE-Kded-load-on-demand=true
 
-Name=KDE Time Zone Daemon
+Name=Time Zone
 Name[af]=KDE tydzone-bediener
 Name[ar]=رقيب النطاق الزمني لكدي
 Name[be]=Сервіс часавых зон KDE
@@ -87,7 +87,7 @@ Name[wa]=Démon di coisse d' eurêye di KDE
 Name[x-test]=xxKDE Time Zone Daemonxx
 Name[zh_CN]=KDE 时区守护程序
 Name[zh_TW]=KDE 時區伺服程式
-Comment=Time zone daemon for KDE
+Comment=Holds the configured time zone for the desktop
 Comment[af]=Tydsone-bediener vir KDE
 Comment[ar]=رقيب النطاق الزمني لكدي
 Comment[be@latin]=Słužba časavych pajasoŭ dla KDE

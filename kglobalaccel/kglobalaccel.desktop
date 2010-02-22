@@ -1,6 +1,6 @@
 [Desktop Entry]
 Type=Service
-
+Icon=preferences-desktop-keyboard
 Icon=preferences-desktop-keyboard
 Exec=kglobalaccel
 X-KDE-autostart-phase=1
