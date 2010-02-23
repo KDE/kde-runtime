@@ -77,7 +77,8 @@ BugzillaLoginPage::BugzillaLoginPage(ReportAssistantDialog * parent) :
                             "<link url='%1'>KDE bug tracking system</link> in order to "
                             "file a bug report, because we may need to contact you later "
                             "for requesting further information. If you do not have "
-                            "one, you can freely <link url='%2'>create one here</link>.</note>",
+                            "one, you can freely <link url='%2'>create one here</link>. "
+                            "Please do not use disposable email accounts.</note>",
                             DrKonqi::crashedApplication()->bugReportAddress(),
                             QLatin1String(KDE_BUGZILLA_CREATE_ACCOUNT_URL)));
 }
@@ -198,6 +199,9 @@ void BugzillaLoginPage::loginClicked()
 {
     if (!(ui.m_userEdit->text().isEmpty() || ui.m_passwordEdit->text().isEmpty())) {
         ui.m_loginButton->setEnabled(false);
+
+        ui.m_userLabel->setEnabled(false);
+        ui.m_passwordLabel->setEnabled(false);
 
         ui.m_userEdit->setEnabled(false);
         ui.m_passwordEdit->setEnabled(false);
