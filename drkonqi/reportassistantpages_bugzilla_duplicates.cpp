@@ -664,8 +664,8 @@ void BugzillaReportInformationDialog::bugFetchFinished(BugReport report, QObject
             }
 
             //Generate notes
-            QString notes = i18n("<p><note>The bug report's title is oftenly written by its reporter"
-                                 "and it may not reflect the bug nature, root cause or other visible"
+            QString notes = i18n("<p><note>The bug report's title is oftenly written by its reporter "
+                                 "and it may not reflect the bug nature, root cause or other visible "
                                  "symptoms you could use to compare to your crash. Please read the"
                                  "complete report and all the comments below.</note></p>");
 
@@ -678,10 +678,10 @@ void BugzillaReportInformationDialog::bugFetchFinished(BugReport report, QObject
             }
 
             //A manually entered bug ID could represent a normal bug
-            if (report.priority() != QLatin1String("crash")
-                || report.priority() != QLatin1String("major")
-                || report.priority() != QLatin1String("grave")
-                || report.priority() != QLatin1String("critical"))
+            if (report.bugSeverity() != QLatin1String("crash")
+                && report.bugSeverity() != QLatin1String("major")
+                && report.bugSeverity() != QLatin1String("grave")
+                && report.bugSeverity() != QLatin1String("critical"))
             {
                 notes += i18n("<p><note>This bug report is not about a crash or about any other "
                               "critical bug.</note></p>");
