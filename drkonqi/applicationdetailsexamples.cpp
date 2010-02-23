@@ -63,8 +63,6 @@ ApplicationDetailsExamples::ApplicationDetailsExamples(QObject * parent)
         m_examples = i18nc("@info examples about information the user can provide",
         "Type of media (extension and format) you were watching and/or listening to.");
     }
-
-    m_examples = "AA";
 }
 
 bool ApplicationDetailsExamples::hasExamples() const
