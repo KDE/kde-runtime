@@ -102,7 +102,16 @@ BacktraceWidget::BacktraceWidget(BacktraceGenerator *generator, QWidget *parent,
     if (!showToggleBacktrace) {
         ui.mainLayout->removeWidget(ui.m_toggleBacktraceCheckBox);
         ui.m_toggleBacktraceCheckBox->setVisible(false);
+        toggleBacktrace(true);
     } else {
+        //Generate help widget
+        ui.m_backtraceHelpLabel->setText(
+            i18n("<h2>What is a \"backtrace\" ?</h2><p>A backtrace basically describes what was "
+                 "happening inside the application when it crashed, so the developers may track "
+                 "down where the mess started. They may look meaningless to you, but they might "
+                 "actually contain a wealth of useful information.<br />Backtraces are commonly "
+                 "used during interactive and post-mortem debugging.</p>"));
+        ui.m_backtraceHelpIcon->setPixmap(KIcon("help-hint").pixmap(48,48));
         connect(ui.m_toggleBacktraceCheckBox, SIGNAL(toggled(bool)), this,
                 SLOT(toggleBacktrace(bool)));
         toggleBacktrace(false);
@@ -344,12 +353,7 @@ bool BacktraceWidget::canInstallDebugPackages() const
 
 void BacktraceWidget::toggleBacktrace(bool show)
 {
-    ui.m_backtraceEdit->setVisible(show);
-    if (show) {
-        ui.mainLayout->removeItem(ui.mainLayout->itemAt(ui.mainLayout->indexOf(ui.m_toggleBacktraceCheckBox)+1));
-    } else {
-        ui.mainLayout->insertStretch(ui.mainLayout->indexOf(ui.m_toggleBacktraceCheckBox)+1);
-    }
+    ui.m_backtraceStack->setCurrentWidget(show ? ui.backtracePage : ui.backtraceHelpPage);
 }
 
 void BacktraceWidget::extraDetailsLinkActivated(QString link)
