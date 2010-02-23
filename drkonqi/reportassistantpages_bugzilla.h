@@ -31,6 +31,7 @@
 #include "ui_assistantpage_bugzilla_send.h"
 
 namespace KWallet { class Wallet; }
+class KCapacityBar;
 
 /** Bugs.kde.org login **/
 class BugzillaLoginPage: public ReportAssistantPage
@@ -84,11 +85,16 @@ private Q_SLOTS:
     void checkTexts();
 
 private:
+    int currentDescriptionCharactersCount();
+
     Ui::AssistantPageBugzillaInformation    ui;
+    KCapacityBar *                          m_textCompleteBar;
 
     bool                                    m_textsOK;
     bool                                    m_distributionComboSetup;
     bool                                    m_distroComboVisible;
+
+    int                                     m_requiredCharacters;
 };
 
 /** Preview report page **/

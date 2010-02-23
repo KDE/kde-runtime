@@ -32,11 +32,15 @@
     <widget class="KLineEdit" name="m_titleEdit"/>
    </item>
    <item>
-    <widget class="QLabel" name="m_detailsLabel">
-     <property name="text">
-      <string comment="@label:textbox">&lt;strong&gt;Information about the crash:&lt;/strong&gt;</string>
-     </property>
-    </widget>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QLabel" name="m_detailsLabel">
+       <property name="text">
+        <string comment="@label:textbox">&lt;strong&gt;Information about the crash:&lt;/strong&gt;</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
    <item>
     <widget class="KTextEdit" name="m_detailsEdit">

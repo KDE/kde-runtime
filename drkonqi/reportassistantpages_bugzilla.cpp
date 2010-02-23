@@ -37,6 +37,7 @@
 #include <KMessageBox>
 #include <KToolInvocation>
 #include <KWallet/Wallet>
+#include <kcapacitybar.h>
 
 static const char kWalletEntryName[] = "drkonqi_bugzilla";
 static const char kWalletEntryUsername[] = "username";
@@ -283,10 +284,13 @@ BugzillaLoginPage::~BugzillaLoginPage()
 
 BugzillaInformationPage::BugzillaInformationPage(ReportAssistantDialog * parent)
         : ReportAssistantPage(parent),
-        m_textsOK(false), m_distributionComboSetup(false), m_distroComboVisible(false)
+        m_textsOK(false), m_distributionComboSetup(false), m_distroComboVisible(false),
+        m_requiredCharacters(1)
 {
     ui.setupUi(this);
-    
+    m_textCompleteBar = new KCapacityBar(KCapacityBar::DrawTextInline, this);
+    ui.horizontalLayout_2->addWidget(m_textCompleteBar);
+
     connect(ui.m_titleEdit, SIGNAL(textChanged(QString)), this, SLOT(checkTexts()));
     connect(ui.m_detailsEdit, SIGNAL(textChanged()), this, SLOT(checkTexts()));
 
@@ -296,7 +300,6 @@ BugzillaInformationPage::BugzillaInformationPage(ReportAssistantDialog * parent)
                                     DrKonqi::systemInformation()->compiledSources());
 
     //ui.m_distributionGroupBox->setVisible(false);  //TODO do this?
-    checkTexts();
 }
 
 void BugzillaInformationPage::aboutToShow()
@@ -357,6 +360,12 @@ void BugzillaInformationPage::aboutToShow()
         m_distributionComboSetup = true;
     }
 
+    //Calculate the minimum number of characters required for a description
+    //If creating a new report: minimum 40, maximum 80
+    //If attaching to an existent report: minimum 30, maximum 50
+    int multiplier = (reportInterface()->attachToBugNumber() == 0) ? 10 : 5;
+    m_requiredCharacters = 20 + (reportInterface()->selectedOptionsRating() * multiplier);
+    
     //Fill the description textedit with some headings:
     QString descriptionTemplate;
     if (ui.m_detailsEdit->toPlainText().isEmpty()) {
@@ -375,6 +384,22 @@ void BugzillaInformationPage::aboutToShow()
     checkTexts(); //May be the options (canDetail) changed and we need to recheck
 }
 
+int BugzillaInformationPage::currentDescriptionCharactersCount()
+{
+    QString description = ui.m_detailsEdit->toPlainText();
+
+    //Do not count template messages, and other misc chars
+    description.remove("What I was doing when the application crashed");
+    description.remove("Unusual behavior I noticed");
+    description.remove("Custom settings of the application");
+    description.remove("\n");
+    description.remove("-");
+    description.remove(":");
+    description.remove(" ");
+
+    return description.size();
+}
+
 void BugzillaInformationPage::checkTexts()
 {
     //If attaching this report to an existing one then the title is not needed
@@ -384,6 +409,19 @@ void BugzillaInformationPage::checkTexts()
 
     bool ok = !((ui.m_titleEdit->isVisible() && ui.m_titleEdit->text().isEmpty())
         || ui.m_detailsEdit->toPlainText().isEmpty());
+
+    QString message;
+    int percent = currentDescriptionCharactersCount() * 100 / m_requiredCharacters;
+    if (percent >= 100) {
+        percent = 100;
+        message = i18nc("the minimum required lenght of a text was reached",
+                        "Minimum length reached");
+    } else {
+        message = i18nc("the minimum required lenght of a text wasn't reached yet",
+                        "Provide more information");
+    }
+    m_textCompleteBar->setValue(percent);
+    m_textCompleteBar->setText(message);
 
     if (ok != m_textsOK) {
         m_textsOK = ok;
@@ -398,12 +436,7 @@ bool BugzillaInformationPage::showNextPage()
     if (m_textsOK) {
         bool titleShort = ui.m_titleEdit->isVisible() ? (ui.m_titleEdit->text().size() < 30) : false;
 
-        //Calculate the minimum number of characters required for a description
-        //If creating a new report: minimum 40, maximum 80
-        //If attaching to an existent report: minimum 30, maximum 50
-        int multiplier = (reportInterface()->attachToBugNumber() == 0) ? 10 : 5;
-        int requiredDescription = 20 + (reportInterface()->selectedOptionsRating() * multiplier);
-        bool detailsShort = ui.m_detailsEdit->toPlainText().size() < requiredDescription;
+        bool detailsShort = currentDescriptionCharactersCount() < m_requiredCharacters;
 
         if (titleShort || detailsShort) {
             //The user input is less than we want.... encourage to write more

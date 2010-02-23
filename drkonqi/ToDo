@@ -21,8 +21,6 @@
 
 - Merge the two main dialogs (?)
 
-- Show the minimum text require length / or a "progress bar"(or capacitybar)
-
 - Improve the "Enter manual bug ID" option in the Duplicates page to be more discoverable
 
 #Other
@@ -105,6 +103,8 @@
 
 #DONE
 -------
+
+- Show the minimum text require length / or a "progress bar"(or capacitybar)
 
 - If we are going to attach the bug report to an existent one, and that one has too much duplicates, warn the user that his/her attachment is only going to be useful if s/he provides good info
 
