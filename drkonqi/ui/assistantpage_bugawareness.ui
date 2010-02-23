@@ -281,7 +281,7 @@
             </sizepolicy>
            </property>
            <property name="text">
-            <string comment="@label, clicking/hovering this, the user will get examples about application specific details s/he can provide">&lt;a href=&quot;#&quot;&gt;Examples&lt;/a&gt;</string>
+            <string comment="@label clicking/hovering this, the user will get examples about application specific details s/he can provide">&lt;a href=&quot;#&quot;&gt;Examples&lt;/a&gt;</string>
            </property>
           </widget>
          </item>
