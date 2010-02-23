@@ -125,7 +125,7 @@ void BacktraceWidget::setAsLoading()
     ui.m_backtraceEdit->setEnabled(false);
 
     ui.m_statusWidget->setBusy(i18nc("@info:status",
-                                     "Loading crash information... (this may take some time)"));
+                                     "Gathering backtrace... (this may take some time)"));
     m_backtraceRatingWidget->setUsefulness(BacktraceParser::Useless);
     m_backtraceRatingWidget->setState(BacktraceGenerator::Loading);
 
@@ -205,21 +205,21 @@ void BacktraceWidget::loadData()
         QString usefulnessText;
         switch (btParser->backtraceUsefulness()) {
         case BacktraceParser::ReallyUseful:
-            usefulnessText = i18nc("@info", "This crash information is useful");
+            usefulnessText = i18nc("@info", "The gathered crash information is useful");
             break;
         case BacktraceParser::MayBeUseful:
-            usefulnessText = i18nc("@info", "This crash information may be useful");
+            usefulnessText = i18nc("@info", "The gathered crash information may be useful");
             break;
         case BacktraceParser::ProbablyUseless:
-            usefulnessText = i18nc("@info", "This crash information is probably not useful");
+            usefulnessText = i18nc("@info", "The gathered crash information is probably not useful");
             break;
         case BacktraceParser::Useless:
-            usefulnessText = i18nc("@info", "This crash information is not useful");
+            usefulnessText = i18nc("@info", "The gathered crash information is not useful");
             break;
         default:
             //let's hope nobody will ever see this... ;)
             usefulnessText = i18nc("@info", "The rating of this crash information is invalid. "
-                                            "This is a bug in drkonqi itself.");
+                                            "This is a bug in DrKonqi itself.");
             break;
         }
         ui.m_statusWidget->setIdle(usefulnessText);
