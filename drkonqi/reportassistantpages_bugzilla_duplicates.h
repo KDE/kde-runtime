@@ -118,6 +118,8 @@ private Q_SLOTS:
     void reloadReport();
 
     int promptAboutAlreadyClosedReport();
+    void warnAboutCommonCrashReport();
+    
     void mayBeDuplicateClicked();
     void attachToBugReportClicked();
 

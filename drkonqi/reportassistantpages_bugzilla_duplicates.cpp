@@ -731,6 +731,17 @@ int BugzillaReportInformationDialog::promptAboutAlreadyClosedReport()
     return ret;
 }
 
+void BugzillaReportInformationDialog::warnAboutCommonCrashReport()
+{
+    KMessageBox::sorry(this,
+        i18nc("@info","This bug report has %1 duplicate reports, which means it is probably a "
+              "<strong>common crash</strong>, and a lot of different cases' details may have been "
+              "provided already. <i>Please consider proceeding only if you can add new information "
+              "which was not already mentioned.</i> Otherwise, we suggest you to cancel the bug "
+              "reporting process.</note></p>", m_duplicatesCount),
+                       i18nc("@title:window", "This is a common crash"));
+}
+
 void BugzillaReportInformationDialog::mayBeDuplicateClicked()
 {
     if (!m_closedStateString.isEmpty()) {
@@ -743,6 +754,11 @@ void BugzillaReportInformationDialog::mayBeDuplicateClicked()
         } else if (ret == KMessageBox::Cancel) {
             return;
         }
+    }
+
+    //Warn about possible common crashes
+    if (m_duplicatesCount > 10) {
+        warnAboutCommonCrashReport();
     }
     emit possibleDuplicateSelected(m_bugNumber);
     hide();
@@ -760,19 +776,24 @@ void BugzillaReportInformationDialog::attachToBugReportClicked()
         } else if (ret == KMessageBox::Cancel) {
             return;
         }
-        emit attachToBugReportSelected(m_bugNumber);
-        hide();
     } else {
         if (KMessageBox::questionYesNo(this,
                i18nc("@info","If you want to attach new information to an existing bug report you need "
                "to be sure that they refer to the same crash.<nl />Are you sure you want to attach "
                "your report to bug <numid>%1</numid> ?", m_bugNumber),
                i18nc("@title:window","Attach the information to bug <numid>%1</numid>", m_bugNumber))
-                                            == KMessageBox::Yes) {
-            emit attachToBugReportSelected(m_bugNumber);
-            hide();
+                                            == KMessageBox::No) {
+            return;
         }
     }
+
+    //Warn about possible common crashes
+    if (m_duplicatesCount > 10) {
+        warnAboutCommonCrashReport();
+    }
+ 
+    emit attachToBugReportSelected(m_bugNumber);
+    hide();
 }
 
 void BugzillaReportInformationDialog::bugFetchError(QString err, QObject * jobOwner)

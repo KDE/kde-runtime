@@ -6,7 +6,7 @@
 
 #P1:
 
-- If we are going to attach the bug report to an existent one, and that one has too much duplicates, warn the user that his/her attachment is only going to be useful if s/he provides good info
+- Check the wording of the new introduced texts (common crashes warnings and notes)
 
 #P2
 
@@ -103,6 +103,8 @@
 
 #DONE
 -------
+
+- If we are going to attach the bug report to an existent one, and that one has too much duplicates, warn the user that his/her attachment is only going to be useful if s/he provides good info
 
 - In the "Details page" (user enters description) write the headers like
 "What I was doing when app crashed: \n\n Other useful config details:" (depending on the options checked before)
