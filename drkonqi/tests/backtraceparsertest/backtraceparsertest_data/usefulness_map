@@ -12,3 +12,5 @@ test_bug192412_b: Useless
 test_bug168000: MayBeUseful
 test_usefulfunctions: ReallyUseful
 test_usefulfunctions2: ReallyUseful
+test_usefulfunctions3: ReallyUseful
+test_usefulfunctions4: ProbablyUseless

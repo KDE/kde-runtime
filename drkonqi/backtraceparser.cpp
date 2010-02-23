@@ -505,7 +505,9 @@ static bool isFunctionUsefulForSearch(const BacktraceLineGdb & line)
 
     //Misc Qt stuff
     if ( line.functionName() == "qt_message_output"
-        || line.functionName().startsWith("qGetPtrHelper")) {
+        || line.functionName() == "qFatal"
+        || line.functionName().startsWith("qGetPtrHelper")
+        || line.functionName().startsWith("qt_meta_")) {
         return false;
     }
 
@@ -586,8 +588,10 @@ BacktraceParser::Usefulness BacktraceParserGdb::backtraceUsefulness() const
     while( i.hasNext() && functionIndex < 3 ) {
         const BacktraceLineGdb & line = i.next();
         if ( !lineShouldBeIgnored(line) && isFunctionUsefulForSearch(line) ) {
-            d->m_firstUsefulFunctions.append(line.functionName());
-            functionIndex++;
+            if (!d->m_firstUsefulFunctions.contains(line.functionName())) {
+                d->m_firstUsefulFunctions.append(line.functionName());
+                functionIndex++;
+            }
         }
     }
 
