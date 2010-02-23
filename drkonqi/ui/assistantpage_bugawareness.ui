@@ -14,7 +14,7 @@
    <item>
     <widget class="QLabel" name="m_rememberLabel">
      <property name="text">
-      <string>&lt;strong&gt;Do you remember what you were doing prior to the crash?&lt;/strong&gt;</string>
+      <string comment="@label question">&lt;strong&gt;Do you remember what you were doing prior to the crash?&lt;/strong&gt;</string>
      </property>
     </widget>
    </item>
@@ -41,7 +41,7 @@
        <item>
         <widget class="QRadioButton" name="m_rememberCrashSituationYes">
          <property name="text">
-          <string>Yes</string>
+          <string comment="@option:radio &quot;yes&quot; to the question &quot;do you remember what were you doing prior to the crash?&quot;">Yes</string>
          </property>
          <attribute name="buttonGroup">
           <string>m_rememberGroup</string>
@@ -51,7 +51,7 @@
        <item>
         <widget class="QRadioButton" name="m_rememberCrashSituationNo">
          <property name="text">
-          <string>No</string>
+          <string comment="@option:radio &quot;No&quot; to the question &quot;do you remember what were you doing prior to the crash?&quot;">No</string>
          </property>
          <property name="checked">
           <bool>true</bool>
@@ -87,7 +87,7 @@
       <bool>false</bool>
      </property>
      <property name="text">
-      <string>&lt;strong&gt;Does the application crash again if you repeat the same situation?&lt;/strong&gt;</string>
+      <string comment="@label question">&lt;strong&gt;Does the application crash again if you repeat the same situation?&lt;/strong&gt;</string>
      </property>
     </widget>
    </item>
@@ -115,29 +115,29 @@
         <bool>false</bool>
        </property>
        <property name="toolTip">
-        <string comment="tooltip text">If you tried to repeat the situation, select how oftenly the application crashes</string>
+        <string comment="@info:tooltip">If you tried to repeat the situation, select how oftenly the application crashes</string>
        </property>
        <property name="whatsThis">
-        <string comment="what's this text">If you tried to repeat the situation, select how oftenly the application crashes</string>
+        <string comment="@info:whatsthis">If you tried to repeat the situation, select how oftenly the application crashes</string>
        </property>
        <item>
         <property name="text">
-         <string>I did not try again</string>
+         <string comment="@item:inlistbox  user didn't tried to repeat the crash situation">I did not try again</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>Never</string>
+         <string comment="@item:inlistbox the crash cannot be reproduce. reproduciblity-&gt;never">Never</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>Sometimes</string>
+         <string comment="@item:inlistbox the bug can be reproduced sometimes">Sometimes</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>Every time</string>
+         <string comment="@item:inlistbox the bug can be reproduced every time">Every time</string>
         </property>
        </item>
       </widget>
@@ -179,7 +179,7 @@
       <bool>false</bool>
      </property>
      <property name="text">
-      <string>&lt;strong&gt;Please select which additional information you can provide:&lt;/strong&gt;</string>
+      <string comment="@label question">&lt;strong&gt;Please select which additional information you can provide:&lt;/strong&gt;</string>
      </property>
     </widget>
    </item>
@@ -209,10 +209,10 @@
           <bool>false</bool>
          </property>
          <property name="toolTip">
-          <string comment="tooltip text">Check this option if you can describe what were you doing inside the application before it crashed</string>
+          <string comment="@info:tooltip">Check this option if you can describe what were you doing inside the application before it crashed</string>
          </property>
          <property name="whatsThis">
-          <string comment="what's this text">Check this option if you can describe what were you doing inside the application before it crashed</string>
+          <string comment="@info:whatsthis">Check this option if you can describe what were you doing inside the application before it crashed</string>
          </property>
         </widget>
        </item>
@@ -222,10 +222,10 @@
           <bool>false</bool>
          </property>
          <property name="toolTip">
-          <string comment="tooltip help">Check this option if you can describe any unusual behavior or appearance in the application or the whole desktop</string>
+          <string comment="@info:tooltip">Check this option if you can describe any unusual behavior or appearance in the application or the whole desktop</string>
          </property>
          <property name="whatsThis">
-          <string comment="what's this help">Check this option if you can describe any unusual behavior or appearance in the application or the whole desktop</string>
+          <string comment="@info:whatsthis">Check this option if you can describe any unusual behavior or appearance in the application or the whole desktop</string>
          </property>
          <property name="text">
           <string comment="@option:check kind of information the user can provide about the crash">Unusual desktop behavior I noticed</string>
@@ -243,10 +243,10 @@
             <bool>false</bool>
            </property>
            <property name="toolTip">
-            <string comment="tooltip help">Check this option if you can provide application specific details or settings that may be related to the crash. You can check the examples (if available)</string>
+            <string comment="@info:tooltip">Check this option if you can provide application specific details or settings that may be related to the crash. You can check the examples (if available)</string>
            </property>
            <property name="whatsThis">
-            <string comment="what's this help">Check this option if you can provide application specific details or settings that may be related to the crash. You can check the examples (if available)</string>
+            <string comment="@info:whatsthis">Check this option if you can provide application specific details or settings that may be related to the crash. You can check the examples (if available)</string>
            </property>
            <property name="text">
             <string comment="@option:check kind of information the user can provide about the crash">Custom settings of the application that may be related</string>
@@ -281,7 +281,7 @@
             </sizepolicy>
            </property>
            <property name="text">
-            <string>&lt;a href=&quot;#&quot;&gt;Examples&lt;/a&gt;</string>
+            <string comment="@label, clicking/hovering this, the user will get examples about application specific details s/he can provide">&lt;a href=&quot;#&quot;&gt;Examples&lt;/a&gt;</string>
            </property>
           </widget>
          </item>

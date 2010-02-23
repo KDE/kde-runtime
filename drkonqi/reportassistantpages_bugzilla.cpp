@@ -399,10 +399,10 @@ int BugzillaInformationPage::currentDescriptionCharactersCount()
     description.remove("What I was doing when the application crashed");
     description.remove("Unusual behavior I noticed");
     description.remove("Custom settings of the application");
-    description.remove("\n");
-    description.remove("-");
-    description.remove(":");
-    description.remove(" ");
+    description.remove('\n');
+    description.remove('-');
+    description.remove(':');
+    description.remove(' ');
 
     return description.size();
 }
@@ -421,10 +421,10 @@ void BugzillaInformationPage::checkTexts()
     int percent = currentDescriptionCharactersCount() * 100 / m_requiredCharacters;
     if (percent >= 100) {
         percent = 100;
-        message = i18nc("the minimum required lenght of a text was reached",
+        message = i18nc("the minimum required length of a text was reached",
                         "Minimum length reached");
     } else {
-        message = i18nc("the minimum required lenght of a text wasn't reached yet",
+        message = i18nc("the minimum required length of a text wasn't reached yet",
                         "Provide more information");
     }
     m_textCompleteBar->setValue(percent);
@@ -540,7 +540,7 @@ void BugzillaInformationPage::showDescriptionHelpExamples()
                            i18nc("@info:tooltip help and examples of good bug descriptions",
                                  "- Note any non-default configuration in the application.");
         if (reportInterface()->appDetailsExamples()->hasExamples()) {
-            descriptionHelp += " " +
+            descriptionHelp += ' ' +
                                i18nc("@info:tooltip examples of configuration details. "
                                      "the examples are already translated",
                                      "Examples: %1",

@@ -358,7 +358,7 @@ void BacktraceWidget::toggleBacktrace(bool show)
 
 void BacktraceWidget::extraDetailsLinkActivated(QString link)
 {
-    if (link.startsWith("http")) {
+    if (link.startsWith(QLatin1String("http"))) {
         //Open externally
         KToolInvocation::invokeBrowser(link);
     } else if (link == QLatin1String("#missingDebugPackages")) {

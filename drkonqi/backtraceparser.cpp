@@ -491,37 +491,37 @@ static bool isFunctionUsefulForSearch(const BacktraceLineGdb & line)
 
     //Ignore core Qt functions
     //(QObject can be useful in some cases)
-    if ( line.functionName().startsWith("QBasicAtomicInt::")
-        || line.functionName().startsWith("QBasicAtomicPointer::")
-        || line.functionName().startsWith("QAtomicInt::")
-        || line.functionName().startsWith("QAtomicPointer::")
-        || line.functionName().startsWith("QMetaObject::")
-        || line.functionName().startsWith("QPointer::")
-        || line.functionName().startsWith("QWeakPointer::")
-        || line.functionName().startsWith("QSharedPointer::")
-        || line.functionName().startsWith("QScopedPointer::") ) {
+    if ( line.functionName().startsWith(QLatin1String("QBasicAtomicInt::"))
+        || line.functionName().startsWith(QLatin1String("QBasicAtomicPointer::"))
+        || line.functionName().startsWith(QLatin1String("QAtomicInt::"))
+        || line.functionName().startsWith(QLatin1String("QAtomicPointer::"))
+        || line.functionName().startsWith(QLatin1String("QMetaObject::"))
+        || line.functionName().startsWith(QLatin1String("QPointer::"))
+        || line.functionName().startsWith(QLatin1String("QWeakPointer::"))
+        || line.functionName().startsWith(QLatin1String("QSharedPointer::"))
+        || line.functionName().startsWith(QLatin1String("QScopedPointer::")) ) {
         return false;
     }
 
     //Misc Qt stuff
     if ( line.functionName() == "qt_message_output"
         || line.functionName() == "qFatal"
-        || line.functionName().startsWith("qGetPtrHelper")
-        || line.functionName().startsWith("qt_meta_")) {
+        || line.functionName().startsWith(QLatin1String("qGetPtrHelper"))
+        || line.functionName().startsWith(QLatin1String("qt_meta_")) ) {
         return false;
     }
 
     //Ignore Qt containers (and iterators Q*Iterator)
-    if ( line.functionName().startsWith("QList")
-        || line.functionName().startsWith("QLinkedList")
-        || line.functionName().startsWith("QVector")
-        || line.functionName().startsWith("QStack")
-        || line.functionName().startsWith("QQueue")
-        || line.functionName().startsWith("QSet")
-        || line.functionName().startsWith("QMap")
-        || line.functionName().startsWith("QMultiMap")
-        || line.functionName().startsWith("QHash")
-        || line.functionName().startsWith("QMultiHash")) {
+    if ( line.functionName().startsWith(QLatin1String("QList"))
+        || line.functionName().startsWith(QLatin1String("QLinkedList"))
+        || line.functionName().startsWith(QLatin1String("QVector"))
+        || line.functionName().startsWith(QLatin1String("QStack"))
+        || line.functionName().startsWith(QLatin1String("QQueue"))
+        || line.functionName().startsWith(QLatin1String("QSet"))
+        || line.functionName().startsWith(QLatin1String("QMap"))
+        || line.functionName().startsWith(QLatin1String("QMultiMap"))
+        || line.functionName().startsWith(QLatin1String("QHash"))
+        || line.functionName().startsWith(QLatin1String("QMultiHash")) ) {
         return false;
     }
 

@@ -17,8 +17,8 @@
 *
 ******************************************************************/
 
-#ifndef APPDETAILSEXAMPLES__H
-#define APPDETAILSEXAMPLES__H
+#ifndef APPLICATIONDETAILSEXAMPLES__H
+#define APPLICATIONDETAILSEXAMPLES__H
 
 #include <QtCore/QObject>
 #include <QtCore/QString>
