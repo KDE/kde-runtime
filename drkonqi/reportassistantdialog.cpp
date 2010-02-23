@@ -81,7 +81,7 @@ ReportAssistantDialog::ReportAssistantDialog(QWidget * parent) :
     KPageWidgetItem * m_backtracePage = new KPageWidgetItem(m_backtrace, 
                                                         QLatin1String(PAGE_CRASHINFORMATION_ID));
     m_pageWidgetMap.insert(QLatin1String(PAGE_CRASHINFORMATION_ID),m_backtracePage);
-    m_backtracePage->setHeader(i18nc("@title","Crash Information (Backtrace)"));
+    m_backtracePage->setHeader(i18nc("@title","Fetching the Crash Information (Backtrace)"));
     m_backtracePage->setIcon(KIcon("run-build"));
 
     //-Results Page
@@ -91,7 +91,7 @@ ReportAssistantDialog::ReportAssistantDialog(QWidget * parent) :
     KPageWidgetItem * m_conclusionsPage = new KPageWidgetItem(m_conclusions,
                                                                 QLatin1String(PAGE_CONCLUSIONS_ID));
     m_pageWidgetMap.insert(QLatin1String(PAGE_CONCLUSIONS_ID),m_conclusionsPage);
-    m_conclusionsPage->setHeader(i18nc("@title","Crash Analysis Results"));
+    m_conclusionsPage->setHeader(i18nc("@title","Results of the Analyzed Crash Details"));
     m_conclusionsPage->setIcon(KIcon("dialog-information"));
     connect(m_conclusions, SIGNAL(finished(bool)), this, SLOT(assistantFinished(bool)));
 
@@ -102,7 +102,7 @@ ReportAssistantDialog::ReportAssistantDialog(QWidget * parent) :
     KPageWidgetItem * m_bugzillaLoginPage = new KPageWidgetItem(m_bugzillaLogin,
                                                                 QLatin1String(PAGE_BZLOGIN_ID));
     m_pageWidgetMap.insert(QLatin1String(PAGE_BZLOGIN_ID),m_bugzillaLoginPage);
-    m_bugzillaLoginPage->setHeader(i18nc("@title","KDE Bug Tracking System Login"));
+    m_bugzillaLoginPage->setHeader(i18nc("@title","Login into the KDE Bugtracking System"));
     m_bugzillaLoginPage->setIcon(KIcon("user-identity"));
     connect(m_bugzillaLogin, SIGNAL(loggedTurnToNextPage()), this, SLOT(loginFinished()));
     
@@ -113,7 +113,7 @@ ReportAssistantDialog::ReportAssistantDialog(QWidget * parent) :
     KPageWidgetItem * m_bugzillaDuplicatesPage = new KPageWidgetItem(m_bugzillaDuplicates, 
                                                             QLatin1String(PAGE_BZDUPLICATES_ID));
     m_pageWidgetMap.insert(QLatin1String(PAGE_BZDUPLICATES_ID),m_bugzillaDuplicatesPage);
-    m_bugzillaDuplicatesPage->setHeader(i18nc("@title","Bug Report Possible Duplicates List"));
+    m_bugzillaDuplicatesPage->setHeader(i18nc("@title","Look for Possible Duplicate Reports"));
     m_bugzillaDuplicatesPage->setIcon(KIcon("repository"));
 
     //-Bugzilla information
@@ -123,7 +123,7 @@ ReportAssistantDialog::ReportAssistantDialog(QWidget * parent) :
     KPageWidgetItem * m_bugzillaInformationPage = new KPageWidgetItem(m_bugzillaInformation, 
                                                                 QLatin1String(PAGE_BZDETAILS_ID));
     m_pageWidgetMap.insert(QLatin1String(PAGE_BZDETAILS_ID),m_bugzillaInformationPage);
-    m_bugzillaInformationPage->setHeader(i18nc("@title","Details of the Bug Report"));
+    m_bugzillaInformationPage->setHeader(i18nc("@title","Enter the Detals about the Crash"));
     m_bugzillaInformationPage->setIcon(KIcon("document-edit"));
 
     //-Bugzilla Report Preview
@@ -132,7 +132,7 @@ ReportAssistantDialog::ReportAssistantDialog(QWidget * parent) :
     KPageWidgetItem * m_bugzillaPreviewPage = new KPageWidgetItem(m_bugzillaPreview, 
                                                                 QLatin1String(PAGE_BZPREVIEW_ID));
     m_pageWidgetMap.insert(QLatin1String(PAGE_BZPREVIEW_ID),m_bugzillaPreviewPage);
-    m_bugzillaPreviewPage->setHeader(i18nc("@title","Preview Report"));
+    m_bugzillaPreviewPage->setHeader(i18nc("@title","Preview the Report"));
     m_bugzillaPreviewPage->setIcon(KIcon("document-preview"));
     
     //-Bugzilla commit
@@ -141,7 +141,7 @@ ReportAssistantDialog::ReportAssistantDialog(QWidget * parent) :
     KPageWidgetItem * m_bugzillaSendPage = new KPageWidgetItem(m_bugzillaSend, 
                                                                     QLatin1String(PAGE_BZSEND_ID));
     m_pageWidgetMap.insert(QLatin1String(PAGE_BZSEND_ID),m_bugzillaSendPage);
-    m_bugzillaSendPage->setHeader(i18nc("@title","Send Crash Report"));
+    m_bugzillaSendPage->setHeader(i18nc("@title","Sending the Crash Report"));
     m_bugzillaSendPage->setIcon(KIcon("applications-internet"));
     connect(m_bugzillaSend, SIGNAL(finished(bool)), this, SLOT(assistantFinished(bool)));
 
