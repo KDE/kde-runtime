@@ -300,7 +300,7 @@ void BugzillaDuplicatesPage::searchFinished(const BugMapList & list)
                 } else if (bug.value("resolution") == QLatin1String("WORKSFORME")) {
                     customStatusString = i18nc("@info/plain bug resolution", "[Non-reproducible]");
                 } else if (bug.value("resolution") == QLatin1String("DUPLICATE")) {
-                    customStatusString = i18nc("@info/plain bug resolution", "[Already reported]");
+                    customStatusString = i18nc("@info/plain bug resolution", "[Duplicate report]");
                 } else if (bug.value("resolution") == QLatin1String("INVALID")) {
                     customStatusString = i18nc("@info/plain bug resolution", "[Invalid]");
                 } else if (bug.value("resolution") == QLatin1String("DOWNSTREAM")
