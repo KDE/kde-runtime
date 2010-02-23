@@ -10,9 +10,7 @@
 
 #P2
 
-- Have a "canceled " page (instead of directly exiting the assistant) ?????
-
-- Improve the help about the information the user needs to provide
+#- Have a "canceled " page (instead of directly exiting the assistant) ?????
 
 - If the report was "dismissed" because it was not really useful, and the backtrace was not generated;
   allow the advanced users to generate it later (on the "Show report's content" button or in the backtrace tab)
@@ -103,6 +101,8 @@
 
 #DONE
 -------
+
+- Improve the help about the information the user needs to provide
 
 - Show the minimum text require length / or a "progress bar"(or capacitybar)
 

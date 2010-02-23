@@ -81,6 +81,7 @@ public:
 
 private Q_SLOTS:
     void showTitleExamples();
+    void showDescriptionHelpExamples();
 
     void checkTexts();
 

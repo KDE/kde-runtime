@@ -36,7 +36,7 @@
      <item>
       <widget class="QLabel" name="m_detailsLabel">
        <property name="text">
-        <string comment="@label:textbox">&lt;strong&gt;Information about the crash:&lt;/strong&gt;</string>
+        <string comment="@label:textbox">&lt;strong&gt;Information about the crash:&lt;/strong&gt; (&lt;a href=&quot;#&quot;&gt;help and examples&lt;/a&gt;)</string>
        </property>
       </widget>
      </item>

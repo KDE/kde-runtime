@@ -25,6 +25,7 @@
 #include "statuswidget.h"
 #include "drkonqi.h"
 #include "drkonqi_globals.h"
+#include "applicationdetailsexamples.h"
 
 #include <QtCore/QTimer>
 
@@ -295,6 +296,8 @@ BugzillaInformationPage::BugzillaInformationPage(ReportAssistantDialog * parent)
     connect(ui.m_detailsEdit, SIGNAL(textChanged()), this, SLOT(checkTexts()));
 
     connect(ui.m_titleLabel, SIGNAL(linkActivated(QString)), this, SLOT(showTitleExamples()));
+    connect(ui.m_detailsLabel, SIGNAL(linkActivated(QString)), this,
+            SLOT(showDescriptionHelpExamples()));
 
     ui.m_compiledSourcesCheckBox->setChecked(
                                     DrKonqi::systemInformation()->compiledSources());
@@ -510,6 +513,37 @@ void BugzillaInformationPage::showTitleExamples()
           "talking to a MSN buddy\"<nl />\"Kate closed while editing a log file and pressing the "
           "Delete key a couple of times\"");
     QToolTip::showText(QCursor::pos(), titleExamples);
+}
+
+void BugzillaInformationPage::showDescriptionHelpExamples()
+{
+    QString descriptionHelp = i18nc("@info:tooltip help and examples of good bug descriptions",
+                                  "Describe in as much detail as possible the crash circumstances:");
+    if (reportInterface()->userCanProvideActionsAppDesktop()) {
+        descriptionHelp += "<br />" +
+                           i18nc("@info:tooltip help and examples of good bug descriptions",
+                                 "- Detail which actions were you taking inside and outside the "
+                                 "application an instant before the crash.");
+    }
+    if (reportInterface()->userCanProvideUnusualBehavior()) {
+        descriptionHelp += "<br />" + 
+                           i18nc("@info:tooltip help and examples of good bug descriptions",
+                                 "- Note if you noticed any unusual behavior in the application "
+                                 "or in the whole environment.");
+    }
+    if (reportInterface()->userCanProvideApplicationConfigDetails()) {
+        descriptionHelp += "<br />" +
+                           i18nc("@info:tooltip help and examples of good bug descriptions",
+                                 "- Note any non-default configuration in the application.");
+        if (reportInterface()->appDetailsExamples()->hasExamples()) {
+            descriptionHelp += " " +
+                               i18nc("@info:tooltip examples of configuration details. "
+                                     "the examples are already translated",
+                                     "Examples: %1",
+                                     reportInterface()->appDetailsExamples()->examples());
+        }
+    }
+    QToolTip::showText(QCursor::pos(), descriptionHelp);
 }
 
 //END BugzillaInformationPage
