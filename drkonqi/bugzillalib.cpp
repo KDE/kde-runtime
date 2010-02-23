@@ -266,7 +266,9 @@ void BugzillaManager::fetchBugJobFinished(KJob* job)
         if (parser->isValid()) {
             emit bugReportFetched(report, job->parent());
         } else {
-            emit bugReportError(i18nc("@info","Invalid bug report: corrupted data"), job->parent());
+            emit bugReportError(i18nc("@info","Invalid report information (malformed data). This "
+                                      "could mean that the bug report doesn't exist, or the "
+                                      "bug tracking site is experiencing a problem."), job->parent());
         }
 
         delete parser;

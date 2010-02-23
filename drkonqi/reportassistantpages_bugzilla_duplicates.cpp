@@ -677,6 +677,17 @@ void BugzillaReportInformationDialog::bugFetchFinished(BugReport report, QObject
                               m_duplicatesCount);
             }
 
+            //A manually entered bug ID could represent a normal bug
+            if (report.priority() != QLatin1String("crash")
+                || report.priority() != QLatin1String("major")
+                || report.priority() != QLatin1String("grave")
+                || report.priority() != QLatin1String("critical"))
+            {
+                notes += i18n("<p><note>This bug report is not about a crash or about any other "
+                              "critical bug.</note></p>");
+            }
+
+            //Generate HTML text
             QString text =
                 i18nc("@info bug report title (quoted)",
                                 "<h3>\"%1\"</h3>", report.shortDescription()) +
@@ -704,7 +715,9 @@ void BugzillaReportInformationDialog::bugFetchFinished(BugReport report, QObject
             ui.m_statusWidget->setIdle(i18nc("@info:status", "Showing bug <numid>%1</numid>",
                                                             report.bugNumberAsInt()));
         } else {
-            bugFetchError(i18nc("@info", "Invalid report information (malformed data)"), this);
+            bugFetchError(i18nc("@info", "Invalid report information (malformed data). This could "
+                                "mean that the bug report doesn't exist, or the bug tracking site "
+                                "is experiencing a problem."), this);
         }
     }
 }
