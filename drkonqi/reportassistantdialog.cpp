@@ -81,7 +81,7 @@ ReportAssistantDialog::ReportAssistantDialog(QWidget * parent) :
     KPageWidgetItem * m_backtracePage = new KPageWidgetItem(m_backtrace, 
                                                         QLatin1String(PAGE_CRASHINFORMATION_ID));
     m_pageWidgetMap.insert(QLatin1String(PAGE_CRASHINFORMATION_ID),m_backtracePage);
-    m_backtracePage->setHeader(i18nc("@title","Fetching the Crash Information (Backtrace)"));
+    m_backtracePage->setHeader(i18nc("@title","Fetching the Backtrace (Automatic Crash Information)"));
     m_backtracePage->setIcon(KIcon("run-build"));
 
     //-Results Page
