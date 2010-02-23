@@ -477,7 +477,8 @@ void BugzillaDuplicatesPage::cancelAttachToBugReport()
 BugzillaReportInformationDialog::BugzillaReportInformationDialog(BugzillaDuplicatesPage * parent) :
         KDialog(parent),
         m_parent(parent),
-        m_bugNumber(0)
+        m_bugNumber(0),
+        m_duplicatesCount(0)
 {
     //Create the GUI
     setButtons(KDialog::Close | KDialog::User1 | KDialog::User2);
@@ -578,7 +579,7 @@ void BugzillaReportInformationDialog::bugFetchFinished(BugReport report, QObject
     if (jobOwner == this && isVisible()) {
         if (report.isValid()) {
 
-            //Resolve duplicates
+            //Handle duplicate state
             QString duplicate = report.markedAsDuplicateOf();
             if (!duplicate.isEmpty()) {
                 bool ok = false;
@@ -607,22 +608,27 @@ void BugzillaReportInformationDialog::bugFetchFinished(BugReport report, QObject
                 }
             }
 
-            //Generate html for comments
+            //Generate html for comments (with proper numbering)
             QString comments;
             QStringList commentList = report.comments();
             for (int i = 0; i < commentList.count(); i++) {
                 QString comment = commentList.at(i);
                 comment.replace('\n', "<br />");
-                comments += "<p><hr />" + comment + "</p>";
+                comments += i18nc("comment $number to use as subtitle", "<h4>Comment %1:</h4>", (i+1))
+                                  + "<p>" + comment + "</p><hr />";
             }
+
+            //Count duplicates (simple check)
+            m_duplicatesCount = comments.count("has been marked as a duplicate of this bug.");
 
             //Generate a non-geek readable status
             QString customStatusString;
-            if (report.bugStatus() == QLatin1String("UNCONFIRMED")
-                || report.bugStatus() == QLatin1String("NEW")
+            if (report.bugStatus() == QLatin1String("UNCONFIRMED")) {
+                customStatusString = i18nc("@info bug status", "Opened (Unconfirmed)");
+            } else if (report.bugStatus() == QLatin1String("NEW")
                 || report.bugStatus() == QLatin1String("REOPENED")
                 || report.bugStatus() == QLatin1String("ASSIGNED")) {
-                customStatusString = i18nc("@info bug status", "Opened");
+                customStatusString = i18nc("@info bug status", "Opened (Unfixed)");
             } else if (report.bugStatus() == QLatin1String("RESOLVED")
                 || report.bugStatus() == QLatin1String("VERIFIED")
                 || report.bugStatus() == QLatin1String("CLOSED")) {
@@ -633,7 +639,8 @@ void BugzillaReportInformationDialog::bugFetchFinished(BugReport report, QObject
                 } else if (report.resolution() == QLatin1String("WORKSFORME")) {
                     customResolutionString = i18nc("@info bug resolution", "Non-reproducible");
                 } else if (report.resolution() == QLatin1String("DUPLICATE")) {
-                    customResolutionString = i18nc("@info bug resolution", "Already reported");
+                    customResolutionString = i18nc("@info bug resolution", "Duplicate report "
+                                                   "(Already reported before)");
                 } else if (report.resolution() == QLatin1String("INVALID")) {
                     customResolutionString = i18nc("@info bug resolution", "Not a valid report/crash");
                 } else if (report.resolution() == QLatin1String("DOWNSTREAM") 
@@ -652,24 +659,39 @@ void BugzillaReportInformationDialog::bugFetchFinished(BugReport report, QObject
             } else if (report.bugStatus() == QLatin1String("NEEDSINFO")) {
                 customStatusString = i18nc("@info bug status", "Temporarily closed, because of a lack "
                                             "of information");
-            } else {
+            } else { //Fallback to other raw values
                 customStatusString = QString("%1 (%2)").arg(report.bugStatus(), report.resolution());
             }
-            
+
+            //Generate notes
+            QString notes = i18n("<p><note>The bug report's title is oftenly written by its reporter"
+                                 "and it may not reflect the bug nature, root cause or other visible"
+                                 "symptoms you could use to compare to your crash. Please read the"
+                                 "complete report and all the comments below.</note></p>");
+
+            if (m_duplicatesCount > 10) { //Consider a possible mass duplicate crash
+                notes += i18n("<p><note>This bug report has %1 duplicate reports. That means this "
+                              "probably is a <strong>common crash</strong>. <i>Please consider only "
+                              "adding a comment or a note if you can provide new valuable "
+                              "information which wasn't already mentioned.</i></note></p>",
+                              m_duplicatesCount);
+            }
+
             QString text =
-                i18nc("@info bug report label and value",
-                                "<h2>%1</h2>", report.shortDescription()) +
-                i18nc("@info bug report label and value",
-                                "<h3>Bug Report Status: %1</h3>", customStatusString) +
-                i18nc("@info bug report label and value",
-                                "<p><strong>Product:</strong> %1 (%2)</p>",
+                i18nc("@info bug report title (quoted)",
+                                "<h3>\"%1\"</h3>", report.shortDescription()) +
+                notes +
+                i18nc("@info bug report status",
+                                "<h4>Bug Report Status: %1</h4>", customStatusString) +
+                i18nc("@info bug report product and component",
+                                "<h4>Affected Component: %1 (%2)</h4>",
                                 report.product(), report.component()) +
-                i18nc("@info bug report label and value",
-                                "<h2>Description of the bug</h2><p>%1</p>",
+                i18nc("@info bug report description",
+                                "<h3>Description of the bug</h3><p>%1</p>",
                                 report.description().replace('\n', "<br />"));
 
             if (!comments.isEmpty()) {
-                text += i18nc("@label:textbox bug report label and value", 
+                text += i18nc("@label:textbox bug report comments (already formatted)", 
                                 "<h2>Additional Comments</h2>%1", comments);
             }
 
@@ -679,10 +701,10 @@ void BugzillaReportInformationDialog::bugFetchFinished(BugReport report, QObject
             button(KDialog::User1)->setEnabled(true);
             button(KDialog::User2)->setEnabled(true);
 
-            ui.m_statusWidget->setIdle(i18nc("@info:status", "Showing report <numid>%1</numid>",
+            ui.m_statusWidget->setIdle(i18nc("@info:status", "Showing bug <numid>%1</numid>",
                                                             report.bugNumberAsInt()));
         } else {
-            bugFetchError(i18nc("@info","Invalid report data"), this);
+            bugFetchError(i18nc("@info", "Invalid report information (malformed data)"), this);
         }
     }
 }
@@ -698,7 +720,7 @@ int BugzillaReportInformationDialog::promptAboutAlreadyClosedReport()
     userIsNotSureProceedButton.setIcon(KIcon("go-next"));
 
     int ret = KMessageBox::questionYesNoCancel(this,
-        i18nc("@info messagebox question. %1 is the close state explanation","This report is marked as "
+        i18nc("@info messagebox question. %1 is the state explanation","This report is marked as "
         "\"closed\" because %1. If you are sure your crash is the same, then adding further details "
         "or creating a new report will be useless and will waste developers' time. "
         "Can you be sure this is the same as your crash?", m_closedStateString),

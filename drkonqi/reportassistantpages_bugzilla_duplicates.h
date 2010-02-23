@@ -132,7 +132,8 @@ private:
     BugzillaDuplicatesPage *                    m_parent;
     int                                         m_bugNumber;
     QString                                     m_closedStateString;
-    
+
+    int                                         m_duplicatesCount;
 };
 
 #endif
