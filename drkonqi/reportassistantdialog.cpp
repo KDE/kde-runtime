@@ -123,7 +123,7 @@ ReportAssistantDialog::ReportAssistantDialog(QWidget * parent) :
     KPageWidgetItem * m_bugzillaInformationPage = new KPageWidgetItem(m_bugzillaInformation, 
                                                                 QLatin1String(PAGE_BZDETAILS_ID));
     m_pageWidgetMap.insert(QLatin1String(PAGE_BZDETAILS_ID),m_bugzillaInformationPage);
-    m_bugzillaInformationPage->setHeader(i18nc("@title","Enter the Detals about the Crash"));
+    m_bugzillaInformationPage->setHeader(i18nc("@title","Enter the Details about the Crash"));
     m_bugzillaInformationPage->setIcon(KIcon("document-edit"));
 
     //-Bugzilla Report Preview
