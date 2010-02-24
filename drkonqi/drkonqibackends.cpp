@@ -146,13 +146,13 @@ CrashedApplication *KCrashBackend::constructCrashedApplication()
 
 DebuggerManager *KCrashBackend::constructDebuggerManager()
 {
-    QList<Debugger> internalDebuggers = Debugger::availableInternalDebuggers();
+    QList<Debugger> internalDebuggers = Debugger::availableInternalDebuggers("KCrash");
     KConfigGroup config(KGlobal::config(), "drkonqi");
     QString defaultDebuggerName = config.readEntry("Debugger", QString("gdb"));
 
     Debugger firstKnownGoodDebugger, preferredDebugger;
     foreach (const Debugger & debugger, internalDebuggers) {
-        if (!firstKnownGoodDebugger.isValid() && debugger.supportedBackends().contains("KCrash")) {
+        if (!firstKnownGoodDebugger.isValid() && debugger.isInstalled()) {
             firstKnownGoodDebugger = debugger;
         }
         if (debugger.codeName() == defaultDebuggerName) {
@@ -163,7 +163,7 @@ DebuggerManager *KCrashBackend::constructDebuggerManager()
         }
     }
 
-    if (!preferredDebugger.supportedBackends().contains("KCrash")) {
+    if (!preferredDebugger.isInstalled()) {
         if (firstKnownGoodDebugger.isValid()) {
             preferredDebugger = firstKnownGoodDebugger;
         } else {
@@ -171,20 +171,7 @@ DebuggerManager *KCrashBackend::constructDebuggerManager()
         }
     }
 
-    preferredDebugger.setUsedBackend("KCrash");
-
-    QList<Debugger> externalDebuggers = Debugger::availableExternalDebuggers();
-    QList<Debugger>::iterator i;
-    for (i=externalDebuggers.begin(); i != externalDebuggers.end();) {
-        if (!(*i).supportedBackends().contains("KCrash")) {
-            i = externalDebuggers.erase(i);
-        } else {
-            (*i).setUsedBackend("KCrash");
-            ++i;
-        }
-    }
-
-    return new DebuggerManager(preferredDebugger, externalDebuggers, this);
+    return new DebuggerManager(preferredDebugger, Debugger::availableExternalDebuggers("KCrash"), this);
 }
 
 void KCrashBackend::stopAttachedProcess()

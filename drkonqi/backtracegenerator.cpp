@@ -70,13 +70,13 @@ bool BacktraceGenerator::start()
     m_parsedBacktrace.clear();
     m_state = Loading;
 
-    if (!m_debugger.isValid()) {
+    emit starting();
+
+    if (!m_debugger.isValid() || !m_debugger.isInstalled()) {
         m_state = FailedToStart;
         emit failedToStart();
         return false;
     }
-
-    emit starting();
 
     m_proc = new KProcess;
     m_proc->setEnv("LC_ALL", "C");   // force C locale
