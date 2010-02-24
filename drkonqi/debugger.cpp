@@ -26,57 +26,61 @@
 #include <KDebug>
 
 //static
-QList<Debugger> Debugger::availableInternalDebuggers()
+QList<Debugger> Debugger::availableInternalDebuggers(const QString & backend)
 {
-    return availableDebuggers("debuggers/internal/*");
+    return availableDebuggers("debuggers/internal/*", backend);
 }
 
 //static
-QList<Debugger> Debugger::availableExternalDebuggers()
+QList<Debugger> Debugger::availableExternalDebuggers(const QString & backend)
 {
-    return availableDebuggers("debuggers/external/*");
+    return availableDebuggers("debuggers/external/*", backend);
 }
 
 bool Debugger::isValid() const
 {
-    return !m_config.isNull() && !m_backend.isEmpty();
+    return !m_config.isNull();
+}
+
+bool Debugger::isInstalled() const
+{
+    QString tryexec = tryExec();
+    return !tryexec.isEmpty() && !KStandardDirs::findExe(tryexec).isEmpty();
 }
 
 QString Debugger::name() const
 {
-    return m_config->group("General").readEntry("Name");
+    return isValid() ? m_config->group("General").readEntry("Name") : QString();
 }
 
 QString Debugger::codeName() const
 {
     //fall back to the "TryExec" string if "CodeName" is not specified.
     //for most debuggers those strings should be the same
-    return m_config->group("General").readEntry("CodeName", tryExec());
+    return isValid() ? m_config->group("General").readEntry("CodeName", tryExec()) : QString();
 }
 
 QString Debugger::tryExec() const
 {
-    return m_config->group("General").readEntry("TryExec");
+    return isValid() ? m_config->group("General").readEntry("TryExec") : QString();
 }
 
 QStringList Debugger::supportedBackends() const
 {
-    return m_config->group("General").readEntry("Backends").split('|', QString::SkipEmptyParts);
+    return isValid() ? m_config->group("General").readEntry("Backends")
+                                   .split('|', QString::SkipEmptyParts) : QStringList();
 }
 
 void Debugger::setUsedBackend(const QString & backendName)
 {
     if (supportedBackends().contains(backendName)) {
         m_backend = backendName;
-    } else {
-        kWarning() << "Invalid backend specified";
     }
 }
 
 QString Debugger::command() const
 {
-    if ( !m_config->hasGroup(m_backend) ) {
-        kWarning() << "No backend has been set";
+    if (!isValid() || !m_config->hasGroup(m_backend)) {
         return QString();
     } else {
         return m_config->group(m_backend).readPathEntry("Exec", QString());
@@ -85,8 +89,7 @@ QString Debugger::command() const
 
 QString Debugger::backtraceBatchCommands() const
 {
-    if ( !m_config->hasGroup(m_backend) ) {
-        kWarning() << "No backend has been set";
+    if (!isValid() || !m_config->hasGroup(m_backend)) {
         return QString();
     } else {
         return m_config->group(m_backend).readEntry("BatchCommands");
@@ -95,8 +98,7 @@ QString Debugger::backtraceBatchCommands() const
 
 bool Debugger::runInTerminal() const
 {
-    if ( !m_config->hasGroup(m_backend) ) {
-        kWarning() << "No backend has been set";
+    if (!isValid() || !m_config->hasGroup(m_backend)) {
         return false;
     } else {
         return m_config->group(m_backend).readEntry("Terminal", false);
@@ -124,7 +126,7 @@ void Debugger::expandString(QString & str, ExpandStringUsage usage, const QStrin
 }
 
 //static
-QList<Debugger> Debugger::availableDebuggers(const char *regexp)
+QList<Debugger> Debugger::availableDebuggers(const char *regexp, const QString & backend)
 {
     KStandardDirs *dirs = KGlobal::dirs();
     QStringList debuggers = dirs->findAllResources("appdata", QLatin1String(regexp),
@@ -134,8 +136,8 @@ QList<Debugger> Debugger::availableDebuggers(const char *regexp)
     foreach (const QString & debuggerFile, debuggers) {
         Debugger debugger;
         debugger.m_config = KSharedConfig::openConfig(debuggerFile);
-        QString tryExec = debugger.tryExec();
-        if (!tryExec.isEmpty() && !KStandardDirs::findExe(tryExec).isEmpty()) {
+        if (debugger.supportedBackends().contains(backend)) {
+            debugger.setUsedBackend(backend);
             result.append(debugger);
         }
     }

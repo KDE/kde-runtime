@@ -42,11 +42,13 @@ DebuggerManager::DebuggerManager(const Debugger & internalDebugger,
     connect(d->btGenerator, SIGNAL(failedToStart()), SLOT(onDebuggerFinished()));
 
     foreach(const Debugger & debugger, externalDebuggers) {
-        AbstractDebuggerLauncher *l = new DefaultDebuggerLauncher(debugger, this); //FIXME
-        d->externalDebuggers.append(l);
-        connect(l, SIGNAL(starting()), SLOT(onDebuggerStarting()));
-        connect(l, SIGNAL(finished()), SLOT(onDebuggerFinished()));
-        connect(l, SIGNAL(invalidated()), SLOT(onDebuggerInvalidated()));
+        if (debugger.isInstalled()) {
+            AbstractDebuggerLauncher *l = new DefaultDebuggerLauncher(debugger, this); //FIXME
+            d->externalDebuggers.append(l);
+            connect(l, SIGNAL(starting()), SLOT(onDebuggerStarting()));
+            connect(l, SIGNAL(finished()), SLOT(onDebuggerFinished()));
+            connect(l, SIGNAL(invalidated()), SLOT(onDebuggerInvalidated()));
+        }
     }
 
     //setup kdevelop compatibility

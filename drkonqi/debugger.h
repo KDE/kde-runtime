@@ -24,11 +24,21 @@ class CrashedApplication;
 class Debugger
 {
 public:
-    static QList<Debugger> availableInternalDebuggers();
-    static QList<Debugger> availableExternalDebuggers();
+    static QList<Debugger> availableInternalDebuggers(const QString & backend);
+    static QList<Debugger> availableExternalDebuggers(const QString & backend);
 
-    /** Returns true if this DebuggerConfig instance can be used, or false otherwise */
+    /** Returns true if this Debugger instance is valid, or false otherwise.
+     * Debugger instances are valid only if they have been constructed from
+     * availableInternalDebuggers() or availableExternalDebuggers(). If they
+     * have been constructed directly using the Debugger constructor, they are invalid.
+     */
     bool isValid() const;
+
+    /** Returns true if this debugger is installed. This is determined by
+     * looking for the executable that tryExec() returns. If it is in $PATH,
+     * this method returns true.
+     */
+    bool isInstalled() const;
 
     /** Returns the translatable name of the debugger (eg. "GDB") */
     QString name() const;
@@ -70,7 +80,7 @@ public:
                              const QString & tempFile = QString());
 
 private:
-    static QList<Debugger> availableDebuggers(const char *regexp);
+    static QList<Debugger> availableDebuggers(const char *regexp, const QString & backend);
     KSharedConfig::Ptr m_config;
     QString m_backend;
 };
