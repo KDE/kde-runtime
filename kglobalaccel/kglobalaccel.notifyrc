@@ -1,6 +1,6 @@
 [Global]
-IconName=
-Comment=KDE Global Shortcuts Daemon
+IconName=preferences-desktop-keyboard
+Comment=Global Keyboard Shortcuts
 Comment[bg]=Сървър KDE Global Shortcuts
 Comment[ca]=Dimoni de dreceres globals del KDE
 Comment[ca@valencia]=Dimoni de dreceres globals del KDE

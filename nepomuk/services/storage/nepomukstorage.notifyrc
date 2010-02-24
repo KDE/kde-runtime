@@ -1,6 +1,6 @@
 [Global]
 IconName=nepomuk
-Name=Nepomuk Data Storage
+Name=Semantic Data Storage
 Name[ar]=مخزن بيانات  نبومك
 Name[be@latin]=Schovišča dla źviestak „Nepomuk”
 Name[bg]=Хранилище Nepomuk
@@ -73,7 +73,7 @@ Name[wa]=Wårdaedje di dnêyes Nepomuk
 Name[x-test]=xxNepomuk Data Storagexx
 Name[zh_CN]=Nepomuk 数据存储
 Name[zh_TW]=Nepomuk 資料儲存
-Comment=The Nepomuk Storage Service
+Comment=Semantic Desktop
 Comment[ar]=خدمة التخزين لنبومك
 Comment[be@latin]=Słužba zachoŭvańnia źviestak „Nepomuk”
 Comment[bg]=Услуга за съхранение Nepomuk
