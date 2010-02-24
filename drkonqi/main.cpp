@@ -51,7 +51,7 @@ int main(int argc, char* argv[])
     }
 #endif
 
-    // Make sure that DrKonqi doesn't start DrKonqi when it crashes :-]
+    // Prevent KApplication from setting the crash handler. We will set it later...
     setenv("KDE_DEBUG", "true", 1);
 
     KAboutData aboutData("drkonqi", 0, ki18n("The KDE Crash Handler"),

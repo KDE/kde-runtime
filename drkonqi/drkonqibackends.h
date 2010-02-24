@@ -63,6 +63,9 @@ private slots:
     void onDebuggerFinished();
 
 private:
+    static void emergencySaveFunction(int signal);
+    static qint64 s_pid; //for use by the emergencySaveFunction
+
     enum State { ProcessRunning, ProcessStopped, DebuggerRunning };
     State m_state;
 };

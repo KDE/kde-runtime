@@ -46,11 +46,14 @@
 
 #include <QtCore/QPointer>
 #include <QtCore/QTextStream>
+#include <QtCore/QTimerEvent>
 #include <KMessageBox>
 #include <KFileDialog>
 #include <KTemporaryFile>
 #include <KCmdLineArgs>
 #include <KIO/NetAccess>
+#include <KCrash>
+#include <KDebug>
 
 DrKonqi::DrKonqi()
 {
@@ -74,12 +77,37 @@ DrKonqi *DrKonqi::instance()
     return drKonqiInstance;
 }
 
+//based on KCrashDelaySetHandler from kdeui/util/kcrash.cpp
+class EnableCrashCatchingDelayed : public QObject
+{
+public:
+    EnableCrashCatchingDelayed() {
+        startTimer(10000); // 10 s
+    }
+protected:
+    void timerEvent(QTimerEvent *event) {
+        kDebug() << "Enabling drkonqi crash catching";
+        KCrash::setDrKonqiEnabled(true);
+        killTimer(event->timerId());
+        this->deleteLater();
+    }
+};
+
 bool DrKonqi::init()
 {
     if (!instance()->m_backend->init()) {
         cleanup();
         return false;
-    } else {
+    } else { //all ok, continue initialization
+        // Set drkonqi to handle its own crashes, but only if the crashed app
+        // is not drkonqi already. If it is drkonqi, delay enabling crash catching
+        // to prevent recursive crashes (in case it crashes at startup)
+        if (crashedApplication()->fakeExecutableBaseName() != "drkonqi") {
+            kDebug() << "Enabling drkonqi crash catching";
+            KCrash::setDrKonqiEnabled(true);
+        } else {
+            new EnableCrashCatchingDelayed;
+        }
         return true;
     }
 }

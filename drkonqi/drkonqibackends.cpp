@@ -29,6 +29,7 @@
 #include <KConfigGroup>
 #include <KGlobal>
 #include <KStartupInfo>
+#include <KCrash>
 
 #include <cstdlib>
 #include <cerrno>
@@ -105,6 +106,10 @@ bool KCrashBackend::init()
         //process when we try to continue it.
         QTimer::singleShot(2000, this, SLOT(stopAttachedProcess()));
     }
+
+    //Handle drkonqi crashes
+    s_pid = crashedApplication()->pid(); //copy pid for use by the crash handler, so that it is safer
+    KCrash::setEmergencySaveFunction(emergencySaveFunction);
 
     return true;
 }
@@ -210,6 +215,18 @@ void KCrashBackend::onDebuggerFinished()
 {
     m_state = ProcessRunning;
     stopAttachedProcess();
+}
+
+//static
+qint64 KCrashBackend::s_pid = 0;
+
+//static
+void KCrashBackend::emergencySaveFunction(int signal)
+{
+    // In case drkonqi itself crashes, we need to get rid of the process being debugged,
+    // so we kill it, no matter what its state was.
+    Q_UNUSED(signal);
+    ::kill(s_pid, SIGKILL);
 }
 
 #include "drkonqibackends.moc"
