@@ -441,24 +441,12 @@ bool BugzillaInformationPage::showNextPage()
     checkTexts();
 
     if (m_textsOK) {
-        bool titleShort = ui.m_titleEdit->isVisible() ? (ui.m_titleEdit->text().size() < 30) : false;
-
         bool detailsShort = currentDescriptionCharactersCount() < m_requiredCharacters;
 
-        if (titleShort || detailsShort) {
+        if (detailsShort) {
             //The user input is less than we want.... encourage to write more
-            QString message;
-
-            if (titleShort && !detailsShort) {
-                message = i18nc("@info","The title does not provide enough information.");
-            } else if (detailsShort && !titleShort) {
-                message = i18nc("@info","The description about the crash details does not provide "
+            QString message = i18nc("@info","The description about the crash details does not provide "
                                         "enough information.");
-            } else {
-                message = i18nc("@info","Both the title and the description about the crash "
-                                        "details do not provide enough information.");
-            }
-
             message += ' ' + i18nc("@info","If you cannot provide enough information, your report "
                                     "will probably waste developers' time. Can you tell us more?");
 
