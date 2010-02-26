@@ -1,6 +1,10 @@
 [Global]
 IconName=nepomuk
 Comment=Desktop Search
+Comment[pt]=Pesquisa no Ambiente de Trabalho
+Comment[pt_BR]=Pesquisa na área de trabalho
+Comment[uk]=Стільничний пошук
+Comment[x-test]=xxDesktop Searchxx
 
 [Event/initialIndexingStarted]
 Name=Initial Indexing started

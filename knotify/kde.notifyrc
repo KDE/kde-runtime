@@ -1,6 +1,10 @@
 [Global]
 IconName=kde
 Comment=KDE Workspace
+Comment[pt]=Espaço de Trabalho do KDE
+Comment[pt_BR]=Espaço de trabalho KDE
+Comment[uk]=Робочий простір KDE
+Comment[x-test]=xxKDE Workspacexx
 
 [Event/Trash: emptied]
 Name=Trash: Emptied

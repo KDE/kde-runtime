@@ -1,6 +1,10 @@
 [Global]
 IconName=preferences-desktop-sound
 Comment=Multimedia System
+Comment[pt]=Sistema Multimédia
+Comment[pt_BR]=Sistema multimídia
+Comment[uk]=Мультимедійна система
+Comment[x-test]=xxMultimedia Systemxx
 
 [Context/Application]
 Name=Application

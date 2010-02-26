@@ -1,6 +1,10 @@
 [Global]
 IconName=preferences-desktop-keyboard
 Comment=Global Keyboard Shortcuts
+Comment[pt]=Atalhos Globais do Teclado
+Comment[pt_BR]=Atalhos de teclado globais
+Comment[uk]=Загальні клавіатурні скорочення
+Comment[x-test]=xxGlobal Keyboard Shortcutsxx
 Name=kglobalaccel
 Name[bg]=kglobalaccel
 Name[ca]=kglobalaccel

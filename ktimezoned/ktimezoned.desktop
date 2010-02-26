@@ -15,3 +15,7 @@ Name[sv]=Tidszon
 Name[uk]=Часовий пояс
 Name[x-test]=xxTime Zonexx
 Comment=Provides the system's time zone to applications
+Comment[pt]=Fornece o fuso-horário do sistema às aplicações
+Comment[pt_BR]=Fornece o fuso horário do sistema para os aplicativos
+Comment[uk]=Надає дані щодо часового поясу системи програмам
+Comment[x-test]=xxProvides the system's time zone to applicationsxx

@@ -1,7 +1,15 @@
 [Global]
 IconName=nepomuk
 Name=Semantic Data Storage
+Name[pt]=Armazenamento de Dados Semânticos
+Name[pt_BR]=Armazenamento de dados semântico
+Name[uk]=Сховище семантичних даних
+Name[x-test]=xxSemantic Data Storagexx
 Comment=Semantic Desktop
+Comment[pt]=Ambiente de Trabalho Semântico
+Comment[pt_BR]=Área de trabalho semântica
+Comment[uk]=Семантична стільниця
+Comment[x-test]=xxSemantic Desktopxx
 
 [Event/failedToStart]
 Name=Failed to start Nepomuk
