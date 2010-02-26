@@ -485,7 +485,9 @@ static bool isFunctionUsefulForSearch(const BacktraceLineGdb & line)
     }
 
     //Misc ignores
-    if ( line.functionName() == "__kernel_vsyscall") {
+    if ( line.functionName() == "__kernel_vsyscall"
+         || line.functionName() == "raise"
+         || line.functionName() == "abort" ) {
         return false;
     }
 
@@ -505,6 +507,7 @@ static bool isFunctionUsefulForSearch(const BacktraceLineGdb & line)
 
     //Misc Qt stuff
     if ( line.functionName() == "qt_message_output"
+        || line.functionName() == "qt_message"
         || line.functionName() == "qFatal"
         || line.functionName().startsWith(QLatin1String("qGetPtrHelper"))
         || line.functionName().startsWith(QLatin1String("qt_meta_")) ) {
