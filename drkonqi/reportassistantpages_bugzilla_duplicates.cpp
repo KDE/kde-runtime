@@ -481,7 +481,7 @@ BugzillaReportInformationDialog::BugzillaReportInformationDialog(BugzillaDuplica
         m_duplicatesCount(0)
 {
     //Create the GUI
-    setButtons(KDialog::Close | KDialog::User1 | KDialog::User2);
+    setButtons(KDialog::Close | KDialog::User1);
     setDefaultButton(KDialog::Close);
     setCaption(i18nc("@title:window","Bug Description"));
     
@@ -494,21 +494,14 @@ BugzillaReportInformationDialog::BugzillaReportInformationDialog(BugzillaDuplica
                                   i18nc("@info:tooltip", "Use this button to retry "
                                                   "loading the bug report.")));
     connect(ui.m_retryButton, SIGNAL(clicked()), this, SLOT(reloadReport()));
+
+    setButtonGuiItem(KDialog::User1,
+                KGuiItem2(i18nc("@action:button", "Suggest this crash is related"),
+                    KIcon("list-add"), i18nc("@info:tooltip", "Use this button to suggest that "
+                                             "the crash you experienced is related to this bug "
+                                             "report")));
+    connect(this, SIGNAL(user1Clicked()) , this, SLOT(relatedReportClicked()));
     
-    setButtonGuiItem(KDialog::User2, 
-                KGuiItem2(i18nc("@action:button", "Add as a possible duplicate"),
-                    KIcon("list-add"), i18nc("@info:tooltip", "Use this button to mark your "
-                    "crash as related to the currently shown bug report. This will help "
-                    "the KDE developers to determine whether they are duplicates or not.")));
-    connect(this, SIGNAL(user2Clicked()) , this, SLOT(mayBeDuplicateClicked()));
-
-    setButtonGuiItem(KDialog::User1, 
-                KGuiItem2(i18nc("@action:button", "Attach to this report (Advanced)"),
-                    KIcon("mail-attachment"), i18nc("@info:tooltip", "Use this button to attach "
-                    "your crash information to this report; only if you are really sure this is "
-                    "the same crash.")));
-    connect(this, SIGNAL(user1Clicked()) , this, SLOT(attachToBugReportClicked()));
-
     connect(ui.m_showOwnBacktraceCheckBox, SIGNAL(toggled(bool)), this, SLOT(toggleShowOwnBacktrace(bool)));
 
     //Connect bugzillalib signals
@@ -547,7 +540,6 @@ void BugzillaReportInformationDialog::showBugReport(int bugNumber)
     m_parent->bugzillaManager()->fetchBugReport(m_bugNumber, this);
 
     button(KDialog::User1)->setEnabled(false);
-    button(KDialog::User2)->setEnabled(false);
 
     ui.m_infoBrowser->setText(i18nc("@info:status","Loading..."));
     ui.m_infoBrowser->setEnabled(false);
@@ -649,7 +641,7 @@ void BugzillaReportInformationDialog::bugFetchFinished(BugReport report, QObject
                                                 "in the KDE's Applications or libraries");
                     m_closedStateString = i18nc("@info bug resolution", "the bug is caused by a "
                                                 "problem in an external application or library, or "
-                                                "by a distribution or packaging issue.");
+                                                "by a distribution or packaging issue");
                 } else {
                     customResolutionString = report.resolution();
                 }
@@ -669,7 +661,7 @@ void BugzillaReportInformationDialog::bugFetchFinished(BugReport report, QObject
                                  "symptoms you could use to compare to your crash. Please read the "
                                  "complete report and all the comments below.</note></p>");
 
-            if (m_duplicatesCount > 10) { //Consider a possible mass duplicate crash
+            if (m_duplicatesCount >= 10) { //Consider a possible mass duplicate crash
                 notes += i18n("<p><note>This bug report has %1 duplicate reports. That means this "
                               "probably is a <strong>common crash</strong>. <i>Please consider only "
                               "adding a comment or a note if you can provide new valuable "
@@ -710,7 +702,6 @@ void BugzillaReportInformationDialog::bugFetchFinished(BugReport report, QObject
             ui.m_infoBrowser->setEnabled(true);
             
             button(KDialog::User1)->setEnabled(true);
-            button(KDialog::User2)->setEnabled(true);
 
             ui.m_statusWidget->setIdle(i18nc("@info:status", "Showing bug <numid>%1</numid>",
                                                             report.bugNumberAsInt()));
@@ -722,91 +713,30 @@ void BugzillaReportInformationDialog::bugFetchFinished(BugReport report, QObject
     }
 }
 
-int BugzillaReportInformationDialog::promptAboutAlreadyClosedReport()
+void BugzillaReportInformationDialog::markAsDuplicate()
 {
-    KGuiItem sameBugDoNotReportButton;
-    sameBugDoNotReportButton.setText("It is the same bug. Do not file my report (Close).");
-    sameBugDoNotReportButton.setIcon(KIcon("edit-copy"));
-
-    KGuiItem userIsNotSureProceedButton;
-    userIsNotSureProceedButton.setText("I cannot be sure. Proceed with reporting the bug.");
-    userIsNotSureProceedButton.setIcon(KIcon("go-next"));
-
-    int ret = KMessageBox::questionYesNoCancel(this,
-        i18nc("@info messagebox question. %1 is the state explanation","This report is marked as "
-        "\"closed\" because %1. If you are sure your crash is the same, then adding further details "
-        "or creating a new report will be useless and will waste developers' time. "
-        "Can you be sure this is the same as your crash?", m_closedStateString),
-        i18nc("@title:window", "This report is already closed"), sameBugDoNotReportButton,
-                   userIsNotSureProceedButton, KStandardGuiItem::cancel(), QString(),
-                                               KMessageBox::Dangerous | KMessageBox::Notify);
-
-    return ret;
-}
-
-void BugzillaReportInformationDialog::warnAboutCommonCrashReport()
-{
-    KMessageBox::sorry(this,
-        i18nc("@info","This bug report has %1 duplicate reports, which means it is probably a "
-              "<strong>common crash</strong>, and a lot of different cases' details may have been "
-              "provided already. <i>Please consider proceeding only if you can add new information "
-              "which was not already mentioned.</i> Otherwise, we suggest you to cancel the bug "
-              "reporting process.</note></p>", m_duplicatesCount),
-                       i18nc("@title:window", "This is a common crash"));
-}
-
-void BugzillaReportInformationDialog::mayBeDuplicateClicked()
-{
-    if (!m_closedStateString.isEmpty()) {
-        int ret = promptAboutAlreadyClosedReport();
-        if (ret == KMessageBox::Yes) { // "Same bug report, close"
-            //Ask to close the report assistant dialog
-            hide();
-            m_parent->assistant()->close();
-            return;
-        } else if (ret == KMessageBox::Cancel) {
-            return;
-        }
-    }
-
-    //Warn about possible common crashes
-    if (m_duplicatesCount > 10) {
-        warnAboutCommonCrashReport();
-    }
     emit possibleDuplicateSelected(m_bugNumber);
     hide();
 }
 
-void BugzillaReportInformationDialog::attachToBugReportClicked()
+void BugzillaReportInformationDialog::attachToBugReport()
 {
-    if (!m_closedStateString.isEmpty()) {
-        int ret = promptAboutAlreadyClosedReport();
-        if (ret == KMessageBox::Yes) { // "Same bug report, close"
-            //Ask to close the report assistant dialog
-            hide();
-            m_parent->assistant()->close();
-            return;
-        } else if (ret == KMessageBox::Cancel) {
-            return;
-        }
-    } else {
-        if (KMessageBox::questionYesNo(this,
-               i18nc("@info","If you want to attach new information to an existing bug report you need "
-               "to be sure that they refer to the same crash.<nl />Are you sure you want to attach "
-               "your report to bug <numid>%1</numid> ?", m_bugNumber),
-               i18nc("@title:window","Attach the information to bug <numid>%1</numid>", m_bugNumber))
-                                            == KMessageBox::No) {
-            return;
-        }
-    }
-
-    //Warn about possible common crashes
-    if (m_duplicatesCount > 10) {
-        warnAboutCommonCrashReport();
-    }
- 
     emit attachToBugReportSelected(m_bugNumber);
     hide();
+}
+
+void BugzillaReportInformationDialog::cancelAssistant()
+{
+    m_parent->assistant()->close();
+    hide();
+}
+
+void BugzillaReportInformationDialog::relatedReportClicked()
+{
+    BugzillaReportConfirmationDialog * confirmation =
+        new BugzillaReportConfirmationDialog(m_bugNumber, (m_duplicatesCount >= 10),
+                                             m_closedStateString, this);
+    confirmation->show();
 }
 
 void BugzillaReportInformationDialog::bugFetchError(QString err, QObject * jobOwner)
@@ -816,7 +746,6 @@ void BugzillaReportInformationDialog::bugFetchError(QString err, QObject * jobOw
                                         "<message>%1.</message><nl/>"
                                         "Please wait some time and try again.", err));
         button(KDialog::User1)->setEnabled(false);
-        button(KDialog::User2)->setEnabled(false);
         ui.m_infoBrowser->setText(i18nc("@info","Error fetching the bug report"));
         ui.m_statusWidget->setIdle(i18nc("@info:status","Error fetching the bug report"));
         ui.m_retryButton->setVisible(true);
@@ -840,3 +769,135 @@ void BugzillaReportInformationDialog::toggleShowOwnBacktrace(bool show)
 }
 
 //END BugzillaReportInformationDialog
+
+//BEGIN BugzillaReportConfirmationDialog
+
+BugzillaReportConfirmationDialog::BugzillaReportConfirmationDialog(int bugNumber, bool commonCrash,
+    QString closedState, BugzillaReportInformationDialog * parent)
+    : KDialog(parent),
+    m_parent(parent),
+    m_showProceedQuestion(false),
+    m_bugNumber(bugNumber)
+{
+    KGlobal::ref();
+    setAttribute(Qt::WA_DeleteOnClose, true);
+    setModal(true);
+
+    QWidget * widget = new QWidget(this);
+    ui.setupUi(widget);
+    setMainWidget(widget);
+
+    //Setup dialog
+    setButtons(KDialog::Ok | KDialog::Cancel);
+    setDefaultButton(KDialog::Cancel);
+    setCaption(i18nc("@title:window", "Related Bug Report"));
+
+    //Setup buttons
+    button(KDialog::Cancel)->setText(i18nc("@action:button", "Cancel (Go back to the report)"));
+    button(KDialog::Ok)->setText(i18nc("@action:button continue with the selected option "
+                                       "and close the dialog", "Continue"));
+    button(KDialog::Ok)->setEnabled(false);
+
+    connect(this, SIGNAL(okClicked()) , this, SLOT(proceedClicked()));
+    connect(this, SIGNAL(cancelClicked()) , this, SLOT(hide()));
+
+    //Set introduction text
+    ui.introLabel->setText(i18n("You are going to mark your crash as related to bug <numid>%1</numid>",
+                             m_bugNumber));
+
+    if (commonCrash) { //Common ("massive") crash
+        m_showProceedQuestion = true;
+        ui.commonCrashIcon->setPixmap(KIcon("edit-bomb").pixmap(22,22));
+    } else {
+        ui.commonCrashLabel->setVisible(false);
+        ui.commonCrashIcon->setVisible(false);
+    }
+
+    if (!closedState.isEmpty()) { //Bug report closed
+        ui.closedReportLabel->setText(
+                     i18nc("@info", "The report is closed because %1. "
+                           "<i>If the crash is the same, adding further information will be useless "
+                           "and will consume developers' time.</i>",
+                           closedState));
+        ui.closedReportIcon->setPixmap(KIcon("document-close").pixmap(22,22));
+        m_showProceedQuestion = true;
+    } else {
+        ui.closedReportLabel->setVisible(false);
+        ui.closedReportIcon->setVisible(false);
+    }
+
+    //Disable all the radio buttons
+    ui.proceedRadioYes->setChecked(false);
+    ui.proceedRadioNo->setChecked(false);
+    ui.markAsDuplicateCheck->setChecked(false);
+    ui.attachToBugReportCheck->setChecked(false);
+
+    connect(ui.buttonGroupProceed, SIGNAL(buttonClicked(int)), this, SLOT(checkProceed()));
+    connect(ui.buttonGroupProceedQuestion, SIGNAL(buttonClicked(int)), this, SLOT(checkProceed()));
+
+    if (!m_showProceedQuestion) {
+        ui.proceedLabel->setEnabled(false);
+        ui.proceedRadioYes->setEnabled(false);
+        ui.proceedRadioNo->setEnabled(false);
+
+        ui.proceedLabel->setVisible(false);
+        ui.proceedRadioYes->setVisible(false);
+        ui.proceedRadioNo->setVisible(false);
+
+        ui.subscribeToBugCheck->setEnabled(false);
+
+        ui.proceedRadioYes->setChecked(true);
+    }
+
+    checkProceed();
+
+    setMinimumSize(QSize(600, 350));
+    setInitialSize(QSize(600, 350));
+}
+
+BugzillaReportConfirmationDialog::~BugzillaReportConfirmationDialog()
+{
+    KGlobal::deref();
+}
+
+void BugzillaReportConfirmationDialog::checkProceed()
+{
+    bool yes = ui.proceedRadioYes->isChecked();
+    bool no = ui.proceedRadioNo->isChecked();
+    
+    //Enable/disable labels and controls
+    ui.areYouSureLabel->setEnabled(yes);
+    ui.markAsDuplicateCheck->setEnabled(yes);
+    ui.attachToBugReportCheck->setEnabled(yes);
+
+    //TODO renable when subscribe is implemented
+    ui.subscribeToBugCheck->setEnabled(false); // (!yes && no)
+
+    //Enable Continue button if valid options are selected
+    bool possibleDupe = ui.markAsDuplicateCheck->isChecked();
+    bool attach = ui.attachToBugReportCheck->isChecked();
+    bool enableContinueButton = yes ? (possibleDupe || attach) : no;
+    button(KDialog::Ok)->setEnabled(enableContinueButton);
+}
+
+void BugzillaReportConfirmationDialog::proceedClicked()
+{
+    if (ui.proceedRadioYes->isChecked()) {
+        if (ui.markAsDuplicateCheck->isChecked()) {
+            m_parent->markAsDuplicate();
+            hide();
+        } else {
+            m_parent->attachToBugReport();
+            hide();
+        }
+    } else {
+        if (ui.subscribeToBugCheck->isChecked()) {
+            //TODO implement subscription
+        } else {
+            hide();
+            m_parent->cancelAssistant();
+        }
+    }
+}
+
+//END BugzillaReportConfirmationDialog

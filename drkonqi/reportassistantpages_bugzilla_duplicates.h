@@ -27,6 +27,7 @@
 
 #include "ui_assistantpage_bugzilla_duplicates.h"
 #include "ui_assistantpage_bugzilla_duplicates_dialog.h"
+#include "ui_assistantpage_bugzilla_duplicates_dialog_confirmation.h"
 
 class QDate;
 class QTreeWidgetItem;
@@ -111,17 +112,17 @@ public:
     
     void showBugReport(int bugNumber);
 
+    void markAsDuplicate();
+    void attachToBugReport();
+    void cancelAssistant();
+
 private Q_SLOTS:
     void bugFetchFinished(BugReport,QObject *);
     void bugFetchError(QString, QObject *);
 
     void reloadReport();
 
-    int promptAboutAlreadyClosedReport();
-    void warnAboutCommonCrashReport();
-    
-    void mayBeDuplicateClicked();
-    void attachToBugReportClicked();
+    void relatedReportClicked();
 
     void toggleShowOwnBacktrace(bool);
     
@@ -132,10 +133,33 @@ Q_SIGNALS:
 private:
     Ui::AssistantPageBugzillaDuplicatesDialog   ui;
     BugzillaDuplicatesPage *                    m_parent;
+
     int                                         m_bugNumber;
     QString                                     m_closedStateString;
-
     int                                         m_duplicatesCount;
 };
 
+class BugzillaReportConfirmationDialog : public KDialog
+{
+    Q_OBJECT
+
+public:
+    BugzillaReportConfirmationDialog(int bugNumber, bool commonCrash, QString closedState,
+                                     BugzillaReportInformationDialog * parent);
+    ~BugzillaReportConfirmationDialog();
+
+private Q_SLOTS:
+    void proceedClicked();
+
+    void checkProceed();
+
+private:
+    Ui::ConfirmationDialog              ui;
+
+    BugzillaReportInformationDialog *   m_parent;
+
+    bool                                m_showProceedQuestion;
+
+    int                                 m_bugNumber;
+};
 #endif

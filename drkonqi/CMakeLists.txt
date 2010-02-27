@@ -51,6 +51,7 @@ kde4_add_ui_files(drkonqi_SRCS
     ui/assistantpage_bugzilla_login.ui
     ui/assistantpage_bugzilla_duplicates.ui
     ui/assistantpage_bugzilla_duplicates_dialog.ui
+    ui/assistantpage_bugzilla_duplicates_dialog_confirmation.ui
     ui/assistantpage_bugzilla_information.ui
     ui/assistantpage_bugzilla_preview.ui
     ui/assistantpage_bugzilla_send.ui
