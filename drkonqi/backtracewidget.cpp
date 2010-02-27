@@ -125,7 +125,7 @@ void BacktraceWidget::setAsLoading()
     ui.m_backtraceEdit->setEnabled(false);
 
     ui.m_statusWidget->setBusy(i18nc("@info:status",
-                                     "Gathering backtrace... (this may take some time)"));
+                                     "Generating backtrace... (this may take some time)"));
     m_backtraceRatingWidget->setUsefulness(BacktraceParser::Useless);
     m_backtraceRatingWidget->setState(BacktraceGenerator::Loading);
 
@@ -166,7 +166,7 @@ void BacktraceWidget::generateBacktrace()
         //*Finished* states
         setAsLoading();
         emit stateChanged();
-        //Load already gathered information
+        //Load already generated information
         loadData(); 
     }
 }
@@ -205,16 +205,16 @@ void BacktraceWidget::loadData()
         QString usefulnessText;
         switch (btParser->backtraceUsefulness()) {
         case BacktraceParser::ReallyUseful:
-            usefulnessText = i18nc("@info", "The gathered crash information is useful");
+            usefulnessText = i18nc("@info", "The generated crash information is useful");
             break;
         case BacktraceParser::MayBeUseful:
-            usefulnessText = i18nc("@info", "The gathered crash information may be useful");
+            usefulnessText = i18nc("@info", "The generated crash information may be useful");
             break;
         case BacktraceParser::ProbablyUseless:
-            usefulnessText = i18nc("@info", "The gathered crash information is probably not useful");
+            usefulnessText = i18nc("@info", "The generated crash information is probably not useful");
             break;
         case BacktraceParser::Useless:
-            usefulnessText = i18nc("@info", "The gathered crash information is not useful");
+            usefulnessText = i18nc("@info", "The generated crash information is not useful");
             break;
         default:
             //let's hope nobody will ever see this... ;)
