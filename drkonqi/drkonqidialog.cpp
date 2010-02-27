@@ -100,7 +100,15 @@ void DrKonqiDialog::buildMainWidget()
 
     QString reportMessage;
     if (!crashedApp->bugReportAddress().isEmpty()) {
-        if (KCmdLineArgs::parsedArgs()->isSet("safer")) {
+        if (crashedApp->fakeExecutableBaseName() == QLatin1String("drkonqi")) { //Handle own crashes
+            reportMessage = i18nc("@info", "<para>As the Crash Handler itself has failed, the "
+                                           "automatic reporting process is disabled to reduce the "
+                                           "risks of failing again.<nl /><nl />"
+                                           "Please, manually report this error in "
+                                           "the \"drkonqi\" product at %1. Do not forget to include "
+                                           "the backtrace from the Developers Information tab.</para>",
+                                           QLatin1String(KDE_BUGZILLA_URL));
+        } else if (KCmdLineArgs::parsedArgs()->isSet("safer")) {
             reportMessage = i18nc("@info", "<para>The reporting assistant is disabled because "
                                            "the crash handler dialog was started in safe mode."
                                            "<nl />You can manually report this bug to %1 "
@@ -145,8 +153,11 @@ void DrKonqiDialog::buildDialogOptions()
                                                KIcon("tools-report-bug"),
                                                i18nc("@info:tooltip",
                                                      "Starts the bug report assistant.")));
-    enableButton(KDialog::User1, !crashedApp->bugReportAddress().isEmpty() &&
-                                 !KCmdLineArgs::parsedArgs()->isSet("safer"));
+
+    bool enableReportAssistant = !crashedApp->bugReportAddress().isEmpty() &&
+                                 crashedApp->fakeExecutableBaseName() != QLatin1String("drkonqi") &&
+                                 !KCmdLineArgs::parsedArgs()->isSet("safer");
+    enableButton(KDialog::User1, enableReportAssistant);
     connect(this, SIGNAL(user1Clicked()), this, SLOT(reportBugAssistant()));
 
     //Default debugger button and menu (only for developer mode)
@@ -177,7 +188,8 @@ void DrKonqiDialog::buildDialogOptions()
                                                KIcon("system-reboot"),
                                                i18nc("@info:tooltip", "Use this button to restart "
                                                      "the crashed application.")));
-    enableButton(KDialog::User3, !crashedApp->hasBeenRestarted());
+    enableButton(KDialog::User3, !crashedApp->hasBeenRestarted() &&
+                                 crashedApp->fakeExecutableBaseName() != QLatin1String("drkonqi"));
     connect(this, SIGNAL(user3Clicked()), crashedApp, SLOT(restart()));
     connect(crashedApp, SIGNAL(restarted()), this, SLOT(applicationRestarted()));
 
