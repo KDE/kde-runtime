@@ -10,6 +10,8 @@
 
 - Check the wording of the new introduced texts (common crashes warnings and notes)
 
+- Implement inline help (tooltip/whatsthis) for Bugzilla Duplicate Confirmation dialog
+
 #P2
 
 #- Have a "canceled " page (instead of directly exiting the assistant) ?????
@@ -24,6 +26,8 @@
 - Improve the "Enter manual bug ID" option in the Duplicates page to be more discoverable
 
 #Other
+
+- If attaching, include in the attach'description, a condensed string with the app/kdesc version
 
 - Check for plugins / Read memory-maps (/proc/PID/maps) and upload as attachment
     (example, if plasma crashes, which libs were loaded, which lib caused the crash)
