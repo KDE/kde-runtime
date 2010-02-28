@@ -23,8 +23,6 @@
 
 - Merge the two main dialogs (?)
 
-- Improve the "Enter manual bug ID" option in the Duplicates page to be more discoverable
-
 #Other
 
 - If attaching, include in the attach'description, a condensed string with the app/kdesc version
@@ -107,6 +105,8 @@
 
 #DONE
 -------
+
+- Improve the "Enter manual bug ID" option in the Duplicates page to be more discoverable
 
 - Improve the help about the information the user needs to provide
 

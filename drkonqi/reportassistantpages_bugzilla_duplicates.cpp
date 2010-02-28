@@ -58,12 +58,20 @@ BugzillaDuplicatesPage::BugzillaDuplicatesPage(ReportAssistantDialog * parent):
     header->setResizeMode(0, QHeaderView::ResizeToContents);
     header->setResizeMode(1, QHeaderView::Interactive);
 
+    //Create manual bug report entry (first one)
     QTreeWidgetItem * customBugItem = new QTreeWidgetItem(
-        QStringList() << i18nc("@item:intable custom bug report number", "Custom")
+        QStringList() << i18nc("@item:intable custom/manaul bug report number", "Manual")
                       << i18nc("@item:intable custom bug report number description", 
                                                             "Manually enter a bug report ID"));
     customBugItem->setData(0, Qt::UserRole, QLatin1String("custom"));
     customBugItem->setIcon(1, KIcon("edit-rename"));
+
+    QString helpMessage = i18nc("@info:tooltip / whatsthis",
+                                "Select this option to manually load a specific bug report");
+    customBugItem->setToolTip(0, helpMessage);
+    customBugItem->setToolTip(1, helpMessage);
+    customBugItem->setWhatsThis(0, helpMessage);
+    customBugItem->setWhatsThis(1, helpMessage);
 
     ui.m_bugListWidget->addTopLevelItem(customBugItem);
 
@@ -314,7 +322,12 @@ void BugzillaDuplicatesPage::searchFinished(const BugMapList & list)
             title = customStatusString + ' ' + bug["short_desc"];
 
             QStringList fields = QStringList() << bug["bug_id"] << title;
-            ui.m_bugListWidget->addTopLevelItem(new QTreeWidgetItem(fields));
+
+            QTreeWidgetItem * item = new QTreeWidgetItem(fields);
+            item->setToolTip(0, bug["short_desc"]);
+            item->setToolTip(1, bug["short_desc"]);
+
+            ui.m_bugListWidget->addTopLevelItem(item);
         }
 
         ui.m_bugListWidget->sortItems(0 , Qt::DescendingOrder);
