@@ -89,7 +89,7 @@ QString CrashedApplication::signalName() const
     std::free(savedLocale);
     return QString::fromLocal8Bit(name != NULL ? name : "Unknown");
 #else
-    switch (m_signalnum) {
+    switch (m_signalNumber) {
     case 4: return QString("SIGILL");
     case 6: return QString("SIGABRT");
     case 8: return QString("SIGFPE");
