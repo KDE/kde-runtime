@@ -1,11 +1,16 @@
 [Global]
 IconName=nepomuk
 Name=Semantic Data Storage
+Name[el]=Αποθήκη σημασιολογικών δεδομένων
+Name[es]=Almacenamiento de datos semánticos
 Name[pt]=Armazenamento de Dados Semânticos
 Name[pt_BR]=Armazenamento de dados semântico
 Name[uk]=Сховище семантичних даних
 Name[x-test]=xxSemantic Data Storagexx
 Comment=Semantic Desktop
+Comment[el]=Σημασιολογική επιφάνεια εργασίας
+Comment[es]=Escritorio semántico
+Comment[nds]=Schriefdischbeslöteln
 Comment[pt]=Ambiente de Trabalho Semântico
 Comment[pt_BR]=Área de trabalho semântica
 Comment[uk]=Семантична стільниця

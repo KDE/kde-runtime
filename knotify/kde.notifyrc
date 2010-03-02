@@ -1,8 +1,13 @@
 [Global]
 IconName=kde
 Comment=KDE Workspace
+Comment[el]=Χώρος εργασίας KDE
+Comment[es]=Espacio de trabajo KDE
+Comment[hr]=KDE-ov radni prostor
+Comment[nds]=KDE-Arbeitrebeet
 Comment[pt]=Espaço de Trabalho do KDE
 Comment[pt_BR]=Espaço de trabalho KDE
+Comment[th]=พื้นที่ทำงานของ KDE
 Comment[uk]=Робочий простір KDE
 Comment[x-test]=xxKDE Workspacexx
 
@@ -1417,7 +1422,7 @@ Comment[sv]=KDE startas
 Comment[ta]=கேபசூ துவங்குகிறது
 Comment[te]=KDE ప్రారంభమౌతోంది
 Comment[tg]=KDE оғоз шудааст
-Comment[th]=KDE กำลังเริ่มงาน
+Comment[th]=KDE กำลังเริ่มการทำงาน
 Comment[tr]=KDE başlatılıyor
 Comment[uk]=Запускається KDE
 Comment[uz]=KDE ishga tushyapti
@@ -1582,7 +1587,7 @@ Comment[sv]=KDE avslutas
 Comment[ta]=கேபசூ வெளியேறுகிறது
 Comment[te]=KDE నిష్క్రమిస్తోంది
 Comment[tg]=KDE хомӯш шудааст
-Comment[th]=กำลังออกจาก KDE
+Comment[th]=กำลังออกจากระบบ KDE
 Comment[tr]=KDE kapatılıyor
 Comment[uk]=Вихід з KDE
 Comment[uz]=KDE ishini yakunlayapti
