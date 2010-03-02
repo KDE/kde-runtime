@@ -115,7 +115,6 @@ macro_optional_add_subdirectory(doc)
 # Artwork
 add_subdirectory(desktoptheme)
 add_subdirectory(pics)
-add_subdirectory(kstyles)
 
 # KDE integration for attica
 if(LIBATTICA_FOUND)
