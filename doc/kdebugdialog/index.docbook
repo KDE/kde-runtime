@@ -1,5 +1,5 @@
 <?xml version="1.0" ?>
-<!DOCTYPE book PUBLIC "-//KDE//DTD DocBook XML V4.2-Based Variant V1.1//EN"
+<!DOCTYPE article PUBLIC "-//KDE//DTD DocBook XML V4.2-Based Variant V1.1//EN"
 "dtd/kdex.dtd" [
   <!ENTITY kdebugdialog "<application>KDebugDialog</application>">
   <!ENTITY kappname "&kdebugdialog;">
@@ -9,57 +9,56 @@
   
 ]>
 
-<book lang="&language;">
-<bookinfo>
-<title>The &kdebugdialog; Handbook</title>
-
+<article lang="&language;">
+<title>KDebugDialog</title>
+<articleinfo>
 <authorgroup>
 <author>&David.Faure; &David.Faure.mail;</author>
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
 </authorgroup>
 
-<date>2001-02-13</date>
-<releaseinfo>0.03.00</releaseinfo>
-
-<abstract>
-<para>This document describes &kdebugdialog;.</para>
-</abstract>
+<date>2010-02-11</date>
+<releaseinfo>1.0 &kde; 4.4</releaseinfo>
 
 <keywordset>
 <keyword>KDE</keyword>
 <keyword>KDebugdialog</keyword>
+<keyword>Debug</keyword>
 </keywordset>
-</bookinfo>
+</articleinfo>
 
-<chapter id="Introduction">
-<title>What is &kdebugdialog;?</title>
 
-<para>It is a dialog box for managing diagnostic messages at runtime.
-</para>
+<para>&kdebugdialog; is a dialog box for managing diagnostic messages at runtime.
+It features a simple and a full mode.</para>
+<para>In order to be able to make changes  
+<guilabel>Disable all debug output</guilabel> has to be unchecked.</para>
 
+<variablelist>
+<varlistentry>
+<term>Simple mode</term>
+<listitem>
 <para>If you simply start <command>kdebugdialog</command>, you will
 see a list of <quote>areas</quote>, that can be disabled or enabled. A
 <function>kDebug(area)</function> call in the code will show
 something in the debug output only if the area is enabled.</para>
 
 <note><para>Note that kWarning, kError and kFatal always appear,
-they are NOT controlled by this setting.  </para></note>
+they are <emphasis>NOT</emphasis> controlled by this setting.  </para></note>
 
-<variablelist>
-<varlistentry>
-<term><guilabel>Area</guilabel></term>
-<listitem>
-<para>The areas which should only be output. Every message
-that is not mentioned here will simply not be output (unless
-this field remains empty, which is the default, and means that all
-messages should be output). You can enter several areas
-separated by commas here, and you can also use area ranges with
-the syntax start-end. Thus a valid entry could be:
-117,214-289,356-359,221. Do not use whitespaces.</para>
+<para>Enter a matching string into the <guilabel>Search</guilabel> 
+box at the top of the list, this allows you to filter the areas 
+which are displayed in the list view.
+Use the buttons below the list to select or deselect all items in the view
+(the other areas are not effected) or change the debug output for a single
+item using the check box in front of it.
+</para>
+
 </listitem>
 </varlistentry>
-</variablelist>
 
+<varlistentry>
+<term>Full mode</term>
+<listitem>
 <para>If you start <command>kdebugdialog</command>
 <option>--fullmode</option>, then for every severity level you can
 define separately what should be done with the diagnostic messages of
@@ -89,7 +88,7 @@ should be output. The choices are: <quote>File</quote>, <quote>Message
 Box</quote>, <quote>Shell</quote> (meaning stderr) and
 <quote>Syslog</quote>. Please do not direct fatal messages to syslog
 unless you are the system administrator yourself. The default is
-<quote>Message Box</quote>.</para> 
+<quote>Shell</quote>.</para> 
 </listitem>
 </varlistentry>
 
@@ -109,9 +108,13 @@ the severity level <computeroutput>KDEBUG_FATAL</computeroutput> is
 output, the application aborts with a SIGABRT after outputting the
 message.</para>
 
+</listitem>
+</varlistentry>
+</variablelist>
+
 <para>When you close the dialog by pressing <guibutton>OK</guibutton>,
 your entries apply immediately and are saved in
-<filename>kdebugrc</filename>. When you press
+<filename>$<envar>KDEHOME</envar>/share/config/kdebugrc</filename>. When you press
 <guibutton>Cancel</guibutton>, your entries are discarded and the old
 ones are restored.</para>
 
@@ -122,10 +125,7 @@ ones are restored.</para>
 
 &underFDL;
 
-</chapter>
-
-&documentation.index; 
-</book>
+</article>
 <!--
 Local Variables:
 mode: sgml

@@ -77,6 +77,10 @@ list, it will be moved up to the first place in the list instead.</para>
 <note><para>
 Note that some applications may not be translated to your languages; in 
 this case, they will automatically fall back to US English.</para></note>
+<note><para>
+Language and Country/Region are independent settings. Changing a language
+does <emphasis>not</emphasis> automatically change the settings for numbers,
+currency &etc; to the corresponding country or region.</para></note>
 </sect2>
 
 <sect2 id="locale-numbers">
