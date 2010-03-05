@@ -7,6 +7,7 @@ add_definitions(-DKDE_DEFAULT_DEBUG_AREA=300104)
 include_directories(
   ${QT_INCLUDES}
   ${KDE4_INCLUDES}
+  ${SOPRANO_INCLUDE_DIR}
   ${NEPOMUK_INCLUDES}
 )
 
