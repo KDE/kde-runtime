@@ -19,10 +19,10 @@ if(NOT WIN32)
     componentchooserterminal.cpp ktimerdialog.cpp)
 endif(NOT WIN32)
 
-if(NOT APPLE AND NOT WIN32)
+if(Q_WS_X11)
   set(kcm_componentchooser_SRCS ${kcm_componentchooser_SRCS}
      componentchooserwm.cpp )
-endif(NOT APPLE AND NOT WIN32)
+endif(Q_WS_X11)
 
 
 kde4_add_ui_files(kcm_componentchooser_SRCS 
