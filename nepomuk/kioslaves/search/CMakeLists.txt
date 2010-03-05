@@ -8,6 +8,7 @@ include_directories(
   ${QT_INCLUDES}
   ${KDE4_INCLUDES}
   ${KDE4_KIO_INCLUDES}
+  ${SOPRANO_INCLUDE_DIR}
   ${NEPOMUK_INCLUDE_DIR}
   ${nepomuk_kio_slaves_SOURCE_DIR}/common
 )
