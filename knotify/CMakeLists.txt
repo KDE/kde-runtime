@@ -22,6 +22,12 @@ kde4_add_app_icon(knotify_SRCS "${CMAKE_SOURCE_DIR}/pics/oxygen/*/apps/preferenc
 set (knotify_OUTPUT_NAME knotify4)
 kde4_add_executable( knotify ${knotify_SRCS})
 
+if (Q_WS_MAC)
+    set_target_properties(knotify PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/Info.plist.template)
+    set_target_properties(knotify PROPERTIES MACOSX_BUNDLE_GUI_IDENTIFIER "org.kde.knotify4")
+    set_target_properties(knotify PROPERTIES MACOSX_BUNDLE_BUNDLE_NAME "KDE Notify")
+endif (Q_WS_MAC)
+
 target_link_libraries( knotify ${KDE4_KDEUI_LIBS} ${KDE4_PHONON_LIBS})
 
 set_target_properties(knotify PROPERTIES OUTPUT_NAME knotify4 )
