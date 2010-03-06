@@ -1,6 +1,7 @@
 [Global]
 IconName=kde
 Comment=KDE Workspace
+Comment[de]=KDE Arbeitsfläche
 Comment[el]=Χώρος εργασίας KDE
 Comment[es]=Espacio de trabajo KDE
 Comment[hr]=KDE-ov radni prostor

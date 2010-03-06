@@ -1,6 +1,7 @@
 [Global]
 IconName=preferences-desktop-keyboard
 Comment=Global Keyboard Shortcuts
+Comment[de]=Globale Kurzbefehle
 Comment[el]=Καθολικές συντομεύσεις πληκτρολογίου
 Comment[es]=Accesos rápidos de teclado globales
 Comment[hr]=Globalni tipkovnički prečaci

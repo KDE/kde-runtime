@@ -1,6 +1,7 @@
 [Global]
 IconName=nepomuk
 Comment=Desktop Search
+Comment[de]=Desktopsuche
 Comment[el]=Αναζήτηση επιφάνειας εργασίας
 Comment[es]=Búsqueda de escritorio
 Comment[nb]=Skrivebordssøk
