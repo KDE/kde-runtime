@@ -7,6 +7,7 @@ Name[es]=Almacenamiento de datos semánticos
 Name[nb]=Semantisk datalagring
 Name[pt]=Armazenamento de Dados Semânticos
 Name[pt_BR]=Armazenamento de dados semântico
+Name[sv]=Semantisk datalagring
 Name[uk]=Сховище семантичних даних
 Name[x-test]=xxSemantic Data Storagexx
 Comment=Semantic Desktop
@@ -17,6 +18,7 @@ Comment[nb]=Semantisk skrivebord
 Comment[nds]=Schriefdischbeslöteln
 Comment[pt]=Ambiente de Trabalho Semântico
 Comment[pt_BR]=Área de trabalho semântica
+Comment[sv]=Semantiskt skrivbord
 Comment[uk]=Семантична стільниця
 Comment[x-test]=xxSemantic Desktopxx
 
