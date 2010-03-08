@@ -15,6 +15,11 @@ set( strigi_nepomuk_indexer_SRCS
 )
 
 soprano_add_ontology(strigi_nepomuk_indexer_SRCS
+  ${SHAREDDESKTOPONTOLOGIES_ROOT_DIR}/nepomuk/nrl.trig
+  "NRL"
+  "Nepomuk::Vocabulary"
+  "trig")
+soprano_add_ontology(strigi_nepomuk_indexer_SRCS
   ${SHAREDDESKTOPONTOLOGIES_ROOT_DIR}/nie/nfo.trig
   "NFO"
   "Nepomuk::Vocabulary"
