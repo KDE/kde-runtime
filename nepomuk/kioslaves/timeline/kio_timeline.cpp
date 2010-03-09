@@ -68,7 +68,7 @@ namespace {
                                 "  ?de ntao:dataObject ?r . "
                                 "} "
 #endif
-                                "FILTER(?date > '%3'^^%5 && ?date < '%4'^^%5) . "
+                                "FILTER(?date > '%1'^^%3 && ?date < '%2'^^%3) . "
                                 "OPTIONAL { ?r2 a nfo:Folder . FILTER(?r=?r2) . } . FILTER(!BOUND(?r2)) . "
                                 "}")
                         .arg(dateFrom)
