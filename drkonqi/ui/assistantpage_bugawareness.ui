@@ -115,10 +115,10 @@
         <bool>false</bool>
        </property>
        <property name="toolTip">
-        <string comment="@info:tooltip">If you tried to repeat the situation, select how oftenly the application crashes</string>
+        <string comment="@info:tooltip">If you tried to repeat the situation, select how often the application crashes</string>
        </property>
        <property name="whatsThis">
-        <string comment="@info:whatsthis">If you tried to repeat the situation, select how oftenly the application crashes</string>
+        <string comment="@info:whatsthis">If you tried to repeat the situation, select how often the application crashes</string>
        </property>
        <item>
         <property name="text">
@@ -243,10 +243,10 @@
             <bool>false</bool>
            </property>
            <property name="toolTip">
-            <string comment="@info:tooltip">Check this option if you can provide application specific details or settings that may be related to the crash. You can check the examples (if available)</string>
+            <string comment="@info:tooltip">Check this option if you can provide application specific details or settings that may be related to the crash. You can check the examples (if available.)</string>
            </property>
            <property name="whatsThis">
-            <string comment="@info:whatsthis">Check this option if you can provide application specific details or settings that may be related to the crash. You can check the examples (if available)</string>
+            <string comment="@info:whatsthis">Check this option if you can provide application specific details or settings that may be related to the crash. You can check the examples (if available.)</string>
            </property>
            <property name="text">
             <string comment="@option:check kind of information the user can provide about the crash">Custom settings of the application that may be related</string>

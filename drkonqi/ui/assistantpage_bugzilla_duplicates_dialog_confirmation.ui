@@ -139,7 +139,7 @@
        <item>
         <widget class="QRadioButton" name="proceedRadioNo">
          <property name="text">
-          <string>No, don't file a new bug report and cancel the assistant</string>
+          <string>No, do not file a new bug report, and cancel the assistant</string>
          </property>
          <attribute name="buttonGroup">
           <string>buttonGroupProceedQuestion</string>
@@ -149,7 +149,7 @@
        <item>
         <widget class="QRadioButton" name="proceedRadioYes">
          <property name="text">
-          <string>Yes, proceed reporting the bug</string>
+          <string>Proceed with reporting the bug</string>
          </property>
          <attribute name="buttonGroup">
           <string>buttonGroupProceedQuestion</string>
@@ -179,7 +179,7 @@
    <item>
     <widget class="QLabel" name="areYouSureLabel">
      <property name="text">
-      <string>&lt;strong&gt;Are you sure this report matches your crash situation ?&lt;/strong&gt;</string>
+      <string>&lt;strong&gt;Are you sure this report matches your crash situation?&lt;/strong&gt;</string>
      </property>
     </widget>
    </item>

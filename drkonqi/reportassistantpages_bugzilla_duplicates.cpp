@@ -669,16 +669,20 @@ void BugzillaReportInformationDialog::bugFetchFinished(BugReport report, QObject
             }
 
             //Generate notes
-            QString notes = i18n("<p><note>The bug report's title is oftenly written by its reporter "
-                                 "and it may not reflect the bug nature, root cause or other visible "
+            QString notes = i18n("<p><note>The bug report's title is often written by its reporter "
+                                 "and may not reflect the bug's nature, root cause or other visible "
                                  "symptoms you could use to compare to your crash. Please read the "
                                  "complete report and all the comments below.</note></p>");
 
             if (m_duplicatesCount >= 10) { //Consider a possible mass duplicate crash
-                notes += i18n("<p><note>This bug report has %1 duplicate reports. That means this "
-                              "probably is a <strong>common crash</strong>. <i>Please consider only "
-                              "adding a comment or a note if you can provide new valuable "
-                              "information which wasn't already mentioned.</i></note></p>",
+                notes += i18np("<p><note>This bug report has %1 duplicate report. That means this "
+                               "is probably a <strong>common crash</strong>. <i>Please consider only "
+                               "adding a comment or a note if you can provide new valuable "
+                               "information which was not already mentioned.</i></note></p>",
+                               "<p><note>This bug report has %1 duplicate reports. That means this "
+                               "is probably a <strong>common crash</strong>. <i>Please consider only "
+                               "adding a comment or a note if you can provide new valuable "
+                               "information which was not already mentioned.</i></note></p>",
                               m_duplicatesCount);
             }
 
@@ -720,7 +724,7 @@ void BugzillaReportInformationDialog::bugFetchFinished(BugReport report, QObject
                                                             report.bugNumberAsInt()));
         } else {
             bugFetchError(i18nc("@info", "Invalid report information (malformed data). This could "
-                                "mean that the bug report doesn't exist, or the bug tracking site "
+                                "mean that the bug report does not exist, or the bug tracking site "
                                 "is experiencing a problem."), this);
         }
     }

@@ -267,7 +267,7 @@ void BugzillaManager::fetchBugJobFinished(KJob* job)
             emit bugReportFetched(report, job->parent());
         } else {
             emit bugReportError(i18nc("@info","Invalid report information (malformed data). This "
-                                      "could mean that the bug report doesn't exist, or the "
+                                      "could mean that the bug report does not exist, or the "
                                       "bug tracking site is experiencing a problem."), job->parent());
         }
 
