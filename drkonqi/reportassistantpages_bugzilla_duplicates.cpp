@@ -800,6 +800,8 @@ BugzillaReportConfirmationDialog::BugzillaReportConfirmationDialog(int bugNumber
     ui.setupUi(widget);
     setMainWidget(widget);
 
+    ui.subscribeToBugCheck->setVisible(false); //Unimplemented feature
+
     //Setup dialog
     setButtons(KDialog::Ok | KDialog::Cancel);
     setDefaultButton(KDialog::Cancel);
@@ -857,7 +859,7 @@ BugzillaReportConfirmationDialog::BugzillaReportConfirmationDialog(int bugNumber
         ui.proceedRadioYes->setVisible(false);
         ui.proceedRadioNo->setVisible(false);
 
-        ui.subscribeToBugCheck->setEnabled(false);
+        //ui.subscribeToBugCheck->setEnabled(false);
 
         ui.proceedRadioYes->setChecked(true);
     }
@@ -883,8 +885,7 @@ void BugzillaReportConfirmationDialog::checkProceed()
     ui.markAsDuplicateCheck->setEnabled(yes);
     ui.attachToBugReportCheck->setEnabled(yes);
 
-    //TODO renable when subscribe is implemented
-    ui.subscribeToBugCheck->setEnabled(false); // (!yes && no)
+    //ui.subscribeToBugCheck->setEnabled((!yes && no)); //Unimplemented feature
 
     //Enable Continue button if valid options are selected
     bool possibleDupe = ui.markAsDuplicateCheck->isChecked();
@@ -904,12 +905,9 @@ void BugzillaReportConfirmationDialog::proceedClicked()
             hide();
         }
     } else {
-        if (ui.subscribeToBugCheck->isChecked()) {
-            //TODO implement subscription
-        } else {
-            hide();
-            m_parent->cancelAssistant();
-        }
+        //Unimplemented, check for ui.subscribeToBugCheck->isChecked()
+        hide();
+        m_parent->cancelAssistant();
     }
 }
 
