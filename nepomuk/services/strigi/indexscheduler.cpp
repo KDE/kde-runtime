@@ -571,7 +571,8 @@ namespace {
     {
         int i = 0;
         while ( i < result.count() ) {
-            if ( alreadyInList( result, result[i].first, result[i].second ) )
+            if ( result[i].first.isEmpty() ||
+                 alreadyInList( result, result[i].first, result[i].second ) )
                 result.removeAt( i );
             else
                 ++i;
