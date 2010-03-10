@@ -533,10 +533,27 @@ void Nepomuk::IndexScheduler::deleteEntries( const std::vector<std::string>& ent
 
 
 namespace {
+    /**
+     * Returns true if the specified folder f would already be included or excluded using the list
+     * folders
+     */
+    bool alreadyInList( const QList<QPair<QString, bool> >& folders, const QString& f, bool include )
+    {
+        bool included = false;
+        for ( int i = 0; i < folders.count(); ++i ) {
+            if ( f != folders[i].first &&
+                 f.startsWith( folders[i].first ) )
+                included = folders[i].second;
+        }
+        return included == include;
+    }
+
+    /**
+     * Simple insertion sort
+     */
     void insertSortFolders( const QStringList& folders, bool include, QList<QPair<QString, bool> >& result )
     {
         foreach( const QString& f, folders ) {
-            // insertion sort
             int pos = 0;
             while ( result.count() > pos &&
                     result[pos].first < f )
@@ -545,9 +562,27 @@ namespace {
         }
     }
 
-    QString constructFolderFilter( const QList<QPair<QString, bool> > folders, int& index )
+    /**
+     * Remove useless entries which would confuse the algo below.
+     * This makes sure all top-level items are include folders.
+     * This runs in O(n^2) and could be optimized but what for.
+     */
+    void cleanupList( QList<QPair<QString, bool> >& result )
     {
-        const QString path = folders[index].first;
+        int i = 0;
+        while ( i < result.count() ) {
+            if ( alreadyInList( result, result[i].first, result[i].second ) )
+                result.removeAt( i );
+            else
+                ++i;
+        }
+    }
+
+    QString constructFolderSubFilter( const QList<QPair<QString, bool> > folders, int& index )
+    {
+        QString path = folders[index].first;
+        if ( !path.endsWith( '/' ) )
+            path += '/';
         const bool include = folders[index].second;
 
         ++index;
@@ -555,7 +590,7 @@ namespace {
         QStringList subFilters;
         while ( index < folders.count() &&
                 folders[index].first.startsWith( path ) ) {
-            subFilters << constructFolderFilter( folders, index );
+            subFilters << constructFolderSubFilter( folders, index );
         }
 
         QString thisFilter = QString::fromLatin1( "REGEX(STR(?url),'^file://%1')" ).arg( path );
@@ -573,6 +608,20 @@ namespace {
             return subFilters.first();
         }
     }
+
+    QString constructFolderFilter()
+    {
+        QList<QPair<QString, bool> > folders;
+        insertSortFolders( Nepomuk::StrigiServiceConfig::self()->folders(), true, folders );
+        insertSortFolders( Nepomuk::StrigiServiceConfig::self()->excludeFolders(), false, folders );
+        cleanupList( folders );
+        int index = 0;
+        QStringList subFilters;
+        while ( index < folders.count() ) {
+            subFilters << constructFolderSubFilter( folders, index );
+        }
+        return subFilters.join(" && ");
+    }
 }
 
 void Nepomuk::IndexScheduler::removeOldAndUnwantedEntries()
@@ -581,11 +630,7 @@ void Nepomuk::IndexScheduler::removeOldAndUnwantedEntries()
     // We now query all indexed files that are in folders that should not
     // be indexed at once.
     //
-    QList<QPair<QString, bool> > folders;
-    insertSortFolders( StrigiServiceConfig::self()->folders(), true, folders );
-    insertSortFolders( StrigiServiceConfig::self()->excludeFolders(), false, folders );
-    int i = 0;
-    QString folderFilter = constructFolderFilter( folders, i );
+    QString folderFilter = constructFolderFilter();
 
     //
     // We query all files that should not be in the store
