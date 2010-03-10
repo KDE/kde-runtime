@@ -56,6 +56,7 @@ Name[zh_TW]=可移除裝置自動掛載器
 Comment=Automatically mounts devices as needed
 Comment[de]=Bindet Geräte bei Bedarf automatisch ein
 Comment[el]=Αυτόματη προσάρτηση συσκευών όταν χρειάζεται
+Comment[en_GB]=Automatically mounts devices as needed
 Comment[es]=Monta automáticamente dispositivos cuando se necesitan
 Comment[hr]=Automatski montira uređaje po potrebi
 Comment[nb]=Monterer enheter automatisk når de trengs
