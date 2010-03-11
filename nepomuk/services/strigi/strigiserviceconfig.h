@@ -20,6 +20,8 @@
 #define _NEPOMUK_STRIGI_SERVICE_CONFIG_H_
 
 #include <QtCore/QObject>
+#include <QtCore/QList>
+#include <QtCore/QRegExp>
 
 #include <kconfig.h>
 #include <kio/global.h>
@@ -67,7 +69,7 @@ namespace Nepomuk {
         bool isInitialRun() const;
 
         /**
-         * Check if the folder should be indexed based on 
+         * Check if the folder should be indexed based on
          * folders() and excludeFolders()
          */
         bool shouldFolderBeIndexed( const QString& );
@@ -81,7 +83,14 @@ namespace Nepomuk {
     private:
         StrigiServiceConfig();
 
+        bool folderInFolderList( const QString& path, const QStringList& include, const QStringList& exclude ) const;
+        void buildExcludeFilterRegExpCache();
+
         KConfig m_config;
+
+        /// cache of regexp objects for all exclude filters
+        /// to prevent regexp parsing over and over
+        QList<QRegExp> m_excludeFilterRegExpCache;
     };
 }
 
