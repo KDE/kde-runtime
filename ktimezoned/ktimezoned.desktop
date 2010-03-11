@@ -30,5 +30,6 @@ Comment[nb]=Viser systemets tidssone til programmer
 Comment[pt]=Fornece o fuso-horário do sistema às aplicações
 Comment[pt_BR]=Fornece o fuso horário do sistema para os aplicativos
 Comment[sv]=Tillhandahåller systemets tidszon till program
+Comment[th]=กำหนดเขตเวลาของระบบให้กับโปรแกรมต่าง ๆ
 Comment[uk]=Надає дані щодо часового поясу системи програмам
 Comment[x-test]=xxProvides the system's time zone to applicationsxx

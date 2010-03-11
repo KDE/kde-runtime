@@ -15,6 +15,7 @@ Name[nds]=Klangregeln
 Name[pt]=Política de Som
 Name[pt_BR]=Política de som
 Name[sv]=Ljudpolicy
+Name[th]=ข้อกำหนดระบบเสียง
 Name[uk]=Правила доступу до звуку
 Name[x-test]=xxSound Policyxx
 Comment=Provides sound system policy to applications
@@ -27,6 +28,7 @@ Comment[nb]=Forsyner programmer med systemets lydpraksis
 Comment[pt]=Fornece uma política do sistema de som para as aplicações
 Comment[pt_BR]=Fornece uma política do sistema de som para os aplicativos
 Comment[sv]=Tillhandahåller systemets ljudpolicy till program
+Comment[th]=กำหนดข้อนโยบายของระบบเสียงให้กับโปรแกรมต่าง ๆ
 Comment[uk]=Права доступу до звукової системи для програм
 Comment[x-test]=xxProvides sound system policy to applicationsxx
 
