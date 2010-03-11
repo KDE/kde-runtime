@@ -46,10 +46,10 @@ void NotifyByExecute::notify( int id, KNotifyConfig * config )
 {
 	QString command=config->readEntry( "Execute" );
 	
-	kDebug(300) << command;
+	kDebug() << command;
 	
 	if (!command.isEmpty()) {
-// 	kDebug(300) << "executing command '" << command << "'";
+// 	kDebug() << "executing command '" << command << "'";
 		QHash<QChar,QString> subst;
 		subst.insert( 'e', config->eventid );
 		subst.insert( 'a', config->appname );
@@ -62,7 +62,7 @@ void NotifyByExecute::notify( int id, KNotifyConfig * config )
                 KProcess proc;
 		proc.setShellCommand(execLine.trimmed());
 		if(!proc.startDetached())
-			kDebug(300)<<"KNotify: Could not start process!";
+			kDebug()<<"KNotify: Could not start process!";
 	}
 	
 	finish( id );

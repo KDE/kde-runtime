@@ -70,11 +70,11 @@ NotifyByPopup::~NotifyByPopup()
 
 void NotifyByPopup::notify( int id, KNotifyConfig * config )
 {
-	kDebug(300) << id << "  active notifications:" << m_popups.keys() << m_idMap.keys();
+	kDebug() << id << "  active notifications:" << m_popups.keys() << m_idMap.keys();
 
 	if(m_popups.contains(id) || m_idMap.contains(id))
 	{
-		kDebug(300) << "the popup is already shown";
+		kDebug() << "the popup is already shown";
 		finish(id);
 		return;
 	}
@@ -159,7 +159,7 @@ void NotifyByPopup::slotLinkClicked( const QString &adr )
 	unsigned int id=adr.section('/' , 0 , 0).toUInt();
 	unsigned int action=adr.section('/' , 1 , 1).toUInt();
 
-//	kDebug(300) << id << " " << action;
+//	kDebug() << id << " " << action;
         
 	if(id==0 || action==0)
 		return;
@@ -256,7 +256,7 @@ void NotifyByPopup::slotServiceOwnerChanged( const QString & serviceName,
 {
 	if(serviceName == dbusServiceName)
 	{
-		kDebug(300) << serviceName << oldOwner << newOwner;
+		kDebug() << serviceName << oldOwner << newOwner;
 		// tell KNotify that all existing notifications which it sent
 		// to DBus had been closed
 		foreach (int id, m_idMap.keys())
@@ -279,7 +279,7 @@ void NotifyByPopup::slotServiceOwnerChanged( const QString & serviceName,
 					this,
 					SLOT(slotDBusNotificationActionInvoked(uint,const QString&)));
 			if (!connected) {
-				kWarning(300) << "warning: failed to connect to ActionInvoked dbus signal";
+				kWarning() << "warning: failed to connect to ActionInvoked dbus signal";
 			}
 
 			connected = QDBusConnection::sessionBus().connect(QString(), // from any service
@@ -289,7 +289,7 @@ void NotifyByPopup::slotServiceOwnerChanged( const QString & serviceName,
 					this,
 					SLOT(slotDBusNotificationClosed(uint,uint)));
 			if (!connected) {
-				kWarning(300) << "warning: failed to connect to NotificationClosed dbus signal";
+				kWarning() << "warning: failed to connect to NotificationClosed dbus signal";
 			}
 		}
 	}
@@ -300,10 +300,10 @@ void NotifyByPopup::slotDBusNotificationActionInvoked(uint dbus_id, const QStrin
 	// find out knotify id
 	int id = m_idMap.key(dbus_id, 0);
 	if (id == 0) {
-		kDebug(300) << "failed to find knotify id for dbus_id" << dbus_id;
+		kDebug() << "failed to find knotify id for dbus_id" << dbus_id;
 		return;
 	}
-	kDebug(300) << "action" << actKey << "invoked for notification " << id;
+	kDebug() << "action" << actKey << "invoked for notification " << id;
 	// emulate link clicking
 	slotLinkClicked( QString("%1/%2").arg(id).arg(actKey) );
     // now close notification - similar to popup behaviour
@@ -316,9 +316,9 @@ void NotifyByPopup::slotDBusNotificationClosed(uint dbus_id, uint reason)
 	Q_UNUSED(reason)
 	// find out knotify id
 	int id = m_idMap.key(dbus_id, 0);
-	kDebug(300) << dbus_id << "  -> " << id;
+	kDebug() << dbus_id << "  -> " << id;
 	if (id == 0) {
-		kDebug(300) << "failed to find knotify id for dbus_id" << dbus_id;
+		kDebug() << "failed to find knotify id for dbus_id" << dbus_id;
 		return;
 	}
 	// tell KNotify that this notification has been closed
@@ -387,7 +387,7 @@ bool NotifyByPopup::sendNotificationDBus(int id, int replacesId, KNotifyConfig* 
 			uint dbus_id = replyMsg.arguments().at(0).toUInt();
 			if (dbus_id == 0)
 			{
-				kDebug(300) << "error: dbus_id is null";
+				kDebug() << "error: dbus_id is null";
 				return false;
 			}
 			if (dbus_replaces_id && dbus_id == dbus_replaces_id) 
@@ -395,22 +395,22 @@ bool NotifyByPopup::sendNotificationDBus(int id, int replacesId, KNotifyConfig* 
 #if 1
 			int oldId = m_idMap.key(dbus_id, 0);
 			if (oldId != 0) {
-				kWarning(300) << "Received twice the same id "<< dbus_id << "( previous notification: " << oldId << ")";
+				kWarning() << "Received twice the same id "<< dbus_id << "( previous notification: " << oldId << ")";
 				m_idMap.remove(oldId);
 				finish(oldId);
 			}
 #endif
 			m_idMap.insert(id, dbus_id);
-			kDebug(300) << "mapping knotify id to dbus id:"<< id << "=>" << dbus_id;
+			kDebug() << "mapping knotify id to dbus id:"<< id << "=>" << dbus_id;
 
 			return true;
 		} else {
-			kDebug(300) << "error: received reply with no arguments";
+			kDebug() << "error: received reply with no arguments";
 		}
 	} else if (replyMsg.type() == QDBusMessage::ErrorMessage) {
-		kDebug(300) << "error: failed to send dbus message";
+		kDebug() << "error: failed to send dbus message";
 	} else {
-		kDebug(300) << "unexpected reply type";
+		kDebug() << "unexpected reply type";
 	}
 	return false;
 }
@@ -419,7 +419,7 @@ void NotifyByPopup::closeNotificationDBus(int id)
 {
 	uint dbus_id = m_idMap.take(id);
 	if (dbus_id == 0) {
-		kDebug(300) << "not found dbus id to close" << id;
+		kDebug() << "not found dbus id to close" << id;
 	    return;
 	}
 
@@ -431,7 +431,7 @@ void NotifyByPopup::closeNotificationDBus(int id)
 	bool queued = QDBusConnection::sessionBus().send(m);
 	if(!queued)
 	{
-		kDebug(300) << "warning: failed to queue dbus message";
+		kDebug() << "warning: failed to queue dbus message";
 	}
 	
 }

@@ -235,7 +235,7 @@ void NotifyBySound::notify( int eventId, KNotifyConfig * config )
 		return;
 	}
 
-	kDebug(300) << " going to play " << soundFile;
+	kDebug() << " going to play " << soundFile;
 	d->poolTimer.stop();
 
 	if(d->playerMode == Private::UsePhonon)
@@ -281,7 +281,7 @@ void NotifyBySound::timerEvent(QTimerEvent *e)
 
 void NotifyBySound::slotSoundFinished(int id)
 {
-	kDebug(300) << id;
+	kDebug() << id;
 	if(d->playerObjects.contains(id))
 	{
 		Player *player=d->playerObjects.take(id);

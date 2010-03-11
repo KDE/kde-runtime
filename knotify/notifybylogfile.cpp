@@ -43,7 +43,7 @@ void NotifyByLogfile::notify( int id, KNotifyConfig * config )
 {
 	QString file=config->readEntry( "Logfile" );
 
-//	kDebug(300) << file << KUrl(file).path();
+//	kDebug() << file << KUrl(file).path();
 	
 	if ( file.isEmpty() )
 	{
