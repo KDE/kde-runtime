@@ -224,6 +224,8 @@ public:
     
     void attachTextToReport(const QString &, const QString &, const QString &, uint, const QString &);
 
+    void addCommentToBugReport(const QString &, int, bool);
+
     void addMeToCC(int);
 
     void checkVersionsForProduct(const QString &);
@@ -243,6 +245,8 @@ private Q_SLOTS:
     void searchBugsJobFinished(KJob*);
     void sendReportJobFinished(KJob*);
     void attachToReportJobFinished(KJob*);
+    void addCommentSubJobFinished(KJob*);
+    void addCommentJobFinished(KJob*);
     void addMeToCCSubJobFinished(KJob*);
     void addMeToCCJobFinished(KJob*);
     void checkVersionJobFinished(KJob*);
@@ -255,6 +259,7 @@ Q_SIGNALS:
     void searchFinished(const BugMapList &);
     void reportSent(int);
     void attachToReportSent(int, int);
+    void addCommentFinished(int);
     void addMeToCCFinished(int);
     void checkVersionsForProductFinished(const QStringList);
 
@@ -265,11 +270,13 @@ Q_SIGNALS:
     void sendReportError(const QString &);
     void sendReportErrorInvalidValues(); //To use default values
     void attachToReportError(const QString &);
+    void addCommentError(const QString &);
     void addMeToCCError(const QString &);
     void checkVersionsForProductError();
 
 private:
     /* Private helper methods */
+    QString getToken(const QString &);
     void attachToReport(const QByteArray &, const QByteArray &);
     QByteArray generatePostDataForReport(BugReport) const;
 

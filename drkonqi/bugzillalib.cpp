@@ -178,6 +178,18 @@ void BugzillaManager::attachTextToReport(const QString & text, const QString & f
     attachToReport(request.postData(), request.boundary());
 }
 
+void BugzillaManager::addCommentToBugReport(const QString & comment, int bugNumber, bool addToCC)
+{
+    KUrl addCommentJobUrl = KUrl(QString(m_bugTrackerUrl) +
+                                            QString(showBugUrl).arg(bugNumber));
+    addCommentJobUrl.addQueryItem("drkonqi_comment", comment);
+    addCommentJobUrl.addQueryItem("drkonqi_addCC", addToCC ? "1" : "0");
+    
+    KIO::Job * addCommentSubJob = KIO::storedGet(addCommentJobUrl, KIO::Reload, KIO::HideProgressInfo);
+
+    connect(addCommentSubJob, SIGNAL(finished(KJob*)) , this, SLOT(addCommentSubJobFinished(KJob*)));
+}
+    
 void BugzillaManager::addMeToCC(int bugNumber)
 {
     KUrl addCCJobUrl = KUrl(QString(m_bugTrackerUrl) +
@@ -378,6 +390,78 @@ void BugzillaManager::attachToReportJobFinished(KJob * job)
     }
 }
 
+void BugzillaManager::addCommentSubJobFinished(KJob * job)
+{
+    if (!job->error()) {
+        KIO::StoredTransferJob * checkJob = (KIO::StoredTransferJob *)job;
+        QString response = checkJob->data();
+        response.remove('\r'); response.remove('\n');
+
+        //Parse bugzilla token
+        QString token = getToken(response);
+
+        const QString bug_id = checkJob->url().queryItem("id");
+        const QString comment = checkJob->url().queryItem("drkonqi_comment");
+        const QString addCCString = checkJob->url().queryItem("drkonqi_addCC");
+        bool addToCC = (addCCString == QLatin1String("1"));
+
+        if (!bug_id.isEmpty() && !comment.isEmpty()) {
+            QByteArray postData;
+            postData += 
+                QByteArray("id=") +  QUrl::toPercentEncoding(bug_id) +
+                QByteArray("&token=") +  QUrl::toPercentEncoding(token) +
+                QByteArray("&comment=") +  QUrl::toPercentEncoding(comment);
+            if (addToCC) {
+                postData += QByteArray("&addselfcc=on");
+            }        
+                
+            KIO::Job * addCommentJob =
+                KIO::storedHttpPost(postData, KUrl(QString(m_bugTrackerUrl) +
+                                                                QString(addInformationUrl)),
+                                KIO::HideProgressInfo);
+            connect(addCommentJob, SIGNAL(finished(KJob*)) , this, SLOT(addCommentJobFinished(KJob*)));
+            addCommentJob->addMetaData("content-type", "Content-Type: application/x-www-form-urlencoded");
+        } else {
+            emit addCommentError(i18nc("@info","Unknown error"));
+        }
+
+    } else {
+        emit addCommentError(job->errorString());
+    }
+}
+
+void BugzillaManager::addCommentJobFinished(KJob * job)
+{
+    if (!job->error()) {
+        KIO::StoredTransferJob * addCommentJob = (KIO::StoredTransferJob *)job;
+        QString response = addCommentJob->data();
+        response.remove('\r'); response.remove('\n');
+
+        QRegExp reg("<title>Bug (.+) processed</title>");
+        int pos = reg.indexIn(response);
+        if (pos != -1) {
+            int bug_id = reg.cap(1).toInt();
+            emit addCommentFinished(bug_id);
+        } else {
+            QString reason;
+
+            QRegExp reg("<td id=\"error_msg\" class=\"throw_error\">(.+)</td>");
+            pos = reg.indexIn(response);
+            if (pos != -1) {
+                reason = reg.cap(1).trimmed();
+            } else {
+                reason = i18nc("@info","Unknown error");
+            }
+
+            QString error = i18nc("@info", "Error while adding a new comment into the bug report: %1", 
+                                  reason);
+            emit addCommentError(error);
+        }
+    } else {
+        emit addCommentError(job->errorString());
+    }  
+}
+
 void BugzillaManager::addMeToCCSubJobFinished(KJob * job)
 {
     if (!job->error()) {
@@ -386,33 +470,23 @@ void BugzillaManager::addMeToCCSubJobFinished(KJob * job)
         response.remove('\r'); response.remove('\n');
 
         //Parse bugzilla token
-        QString token;
-
-        QString searchToken = QLatin1String("<input type=\"hidden\" name=\"token\" value=\"");
-        int index1 = response.indexOf(searchToken);
-        int index2 = response.indexOf(">", index1);
-
-        if (index1 != -1 && index2 != -1) {
-            index1 += searchToken.length();
-            index2 -= 1;
-
-            token = response.mid(index1, index2-index1);
-        }
+        QString token = getToken(response);
 
         const QString bug_id = checkJob->url().queryItem("id");
 
         if (!bug_id.isEmpty()) {
             //Send add To CC job confirmation
             QByteArray postData;
-            postData += QByteArray("id=") + bug_id.toUtf8() + QByteArray("&addselfcc=on") +
-            QByteArray("&token=") + token.toUtf8();
+            postData += QByteArray("id=") + QUrl::toPercentEncoding(bug_id) +
+            QByteArray("&addselfcc=on") +
+            QByteArray("&token=") + QUrl::toPercentEncoding(token);
 
             KIO::Job * addCCJob =
                 KIO::storedHttpPost(postData, KUrl(QString(m_bugTrackerUrl) +
                                                                 QString(addInformationUrl)),
                                 KIO::HideProgressInfo);
-            connect(addCCJob, SIGNAL(finished(KJob*)) , this, SLOT(addMeToCCJobFinished(KJob*)));
             addCCJob->addMetaData("content-type", "Content-Type: application/x-www-form-urlencoded");
+            connect(addCCJob, SIGNAL(finished(KJob*)) , this, SLOT(addMeToCCJobFinished(KJob*)));
         } else {
             emit addMeToCCError(i18nc("@info","Unknown error"));
         }
@@ -575,6 +649,23 @@ void BugzillaManager::attachToReport(const QByteArray & data, const QByteArray &
 
     attachJob->addMetaData("content-type", 
                            "Content-Type: multipart/form-data; boundary=" + boundary);   
+}
+
+QString BugzillaManager::getToken(const QString & response)
+{
+    QString token;
+
+    QString searchToken = QLatin1String("<input type=\"hidden\" name=\"token\" value=\"");
+    int index1 = response.indexOf(searchToken);
+    int index2 = response.indexOf(">", index1);
+
+    if (index1 != -1 && index2 != -1) {
+        index1 += searchToken.length();
+        index2 -= 1;
+        token = response.mid(index1, index2-index1);
+    }
+
+    return token;
 }
 
 QByteArray BugzillaManager::generatePostDataForReport(BugReport report) const
