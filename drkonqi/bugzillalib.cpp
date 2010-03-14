@@ -777,6 +777,7 @@ BugReport BugReportXMLParser::parse()
             report.setPriority(getSimpleValue("priority"));
             report.setBugSeverity(getSimpleValue("bug_severity"));
             report.setMarkedAsDuplicateOf(getSimpleValue("dup_id"));
+            report.setVersionFixedIn(getSimpleValue("cf_versionfixedin"));
 
             //Parse full content + comments
             QStringList m_commentList;

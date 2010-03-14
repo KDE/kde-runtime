@@ -144,6 +144,13 @@ public:
         return getData("dup_id");
     }
 
+    void setVersionFixedIn(const QString & dupID) {
+        setData("cf_versionfixedin", dupID);
+    }
+    QString versionFixedIn() const {
+        return getData("cf_versionfixedin");
+    }
+    
     void setValid(bool valid) {
         m_isValid = valid;
     }
