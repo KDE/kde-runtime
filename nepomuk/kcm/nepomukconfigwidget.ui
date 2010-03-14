@@ -158,7 +158,7 @@
              <string>Index the files on removable media like USB sticks when they are mounted</string>
             </property>
             <property name="text">
-             <string>Index Files on Removable Media</string>
+             <string>Index files on removable media</string>
             </property>
            </widget>
           </item>
