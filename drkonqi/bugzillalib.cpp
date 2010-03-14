@@ -178,7 +178,7 @@ void BugzillaManager::attachTextToReport(const QString & text, const QString & f
     attachToReport(request.postData(), request.boundary());
 }
 
-void BugzillaManager::addCommentToBugReport(const QString & comment, int bugNumber, bool addToCC)
+void BugzillaManager::addCommentToReport(const QString & comment, int bugNumber, bool addToCC)
 {
     KUrl addCommentJobUrl = KUrl(QString(m_bugTrackerUrl) +
                                             QString(showBugUrl).arg(bugNumber));

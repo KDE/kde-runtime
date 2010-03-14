@@ -224,7 +224,7 @@ public:
     
     void attachTextToReport(const QString &, const QString &, const QString &, uint, const QString &);
 
-    void addCommentToBugReport(const QString &, int, bool);
+    void addCommentToReport(const QString &, int, bool);
 
     void addMeToCC(int);
 
