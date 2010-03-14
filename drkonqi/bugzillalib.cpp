@@ -316,6 +316,7 @@ void BugzillaManager::sendReportJobFinished(KJob * job)
     if (!job->error()) {
         KIO::StoredTransferJob * sendJob = (KIO::StoredTransferJob *)job;
         QString response = sendJob->data();
+        response.remove('\r'); response.remove('\n');
 
         QRegExp reg("<title>Bug (\\d+) Submitted</title>");
         int pos = reg.indexIn(response);
@@ -325,11 +326,10 @@ void BugzillaManager::sendReportJobFinished(KJob * job)
         } else {
             QString error;
 
-            QRegExp reg("<td id=\"error_msg\" class=\"throw_error\">(.+)</td>");
-            response.remove('\r'); response.remove('\n');
-            pos = reg.indexIn(response);
-            if (pos != -1) {
-                error = reg.cap(1).trimmed();
+            QString errorMessage = getErrorMessage(response, false);
+            if (!errorMessage.isEmpty())
+            {
+                error = errorMessage;
             } else {
                 QString illegalPlatformMessage = "Bugzilla has suffered an internal error. "
                 "Please save this page and send";
@@ -370,19 +370,10 @@ void BugzillaManager::attachToReportJobFinished(KJob * job)
             int bug_id = reg.cap(2).toInt();
             emit attachToReportSent(attach_id, bug_id);
         } else {
-            QString reason;
-
-            QRegExp reg("<td id=\"error_msg\" class=\"throw_error\">(.+)</td>");
-            response.remove('\r'); response.remove('\n');
-            pos = reg.indexIn(response);
-            if (pos != -1) {
-                reason = reg.cap(1).trimmed();
-            } else {
-                reason = i18nc("@info","Unknown error");
-            }
+            QString errorMessage = getErrorMessage(response);
 
             QString error = i18nc("@info", "Error while attaching the data to the bug report: %1", 
-                                  reason);
+                                  errorMessage);
             emit attachToReportError(error);
         }
     } else {
@@ -397,9 +388,8 @@ void BugzillaManager::addCommentSubJobFinished(KJob * job)
         QString response = checkJob->data();
         response.remove('\r'); response.remove('\n');
 
-        //Parse bugzilla token
+        //Parse query values
         QString token = getToken(response);
-
         const QString bug_id = checkJob->url().queryItem("id");
         const QString comment = checkJob->url().queryItem("drkonqi_comment");
         const QString addCCString = checkJob->url().queryItem("drkonqi_addCC");
@@ -422,7 +412,7 @@ void BugzillaManager::addCommentSubJobFinished(KJob * job)
             connect(addCommentJob, SIGNAL(finished(KJob*)) , this, SLOT(addCommentJobFinished(KJob*)));
             addCommentJob->addMetaData("content-type", "Content-Type: application/x-www-form-urlencoded");
         } else {
-            emit addCommentError(i18nc("@info","Unknown error"));
+            emit addCommentError(i18nc("@info","Missing bug ID or comment in the query. Unknown error"));
         }
 
     } else {
@@ -443,18 +433,10 @@ void BugzillaManager::addCommentJobFinished(KJob * job)
             int bug_id = reg.cap(1).toInt();
             emit addCommentFinished(bug_id);
         } else {
-            QString reason;
-
-            QRegExp reg("<td id=\"error_msg\" class=\"throw_error\">(.+)</td>");
-            pos = reg.indexIn(response);
-            if (pos != -1) {
-                reason = reg.cap(1).trimmed();
-            } else {
-                reason = i18nc("@info","Unknown error");
-            }
+            QString errorMessage = getErrorMessage(response);
 
             QString error = i18nc("@info", "Error while adding a new comment into the bug report: %1", 
-                                  reason);
+                                  errorMessage);
             emit addCommentError(error);
         }
     } else {
@@ -488,7 +470,7 @@ void BugzillaManager::addMeToCCSubJobFinished(KJob * job)
             addCCJob->addMetaData("content-type", "Content-Type: application/x-www-form-urlencoded");
             connect(addCCJob, SIGNAL(finished(KJob*)) , this, SLOT(addMeToCCJobFinished(KJob*)));
         } else {
-            emit addMeToCCError(i18nc("@info","Unknown error"));
+            emit addMeToCCError(i18nc("@info","Missing bug ID in the query. Unknown error"));
         }
 
     } else {
@@ -509,19 +491,10 @@ void BugzillaManager::addMeToCCJobFinished(KJob * job)
             int bug_id = reg.cap(1).toInt();
             emit addMeToCCFinished(bug_id);
         } else {
-            QString reason;
-
-            QRegExp reg("<td id=\"error_msg\" class=\"throw_error\">(.+)</td>");
-            response.remove('\r'); response.remove('\n');
-            pos = reg.indexIn(response);
-            if (pos != -1) {
-                reason = reg.cap(1).trimmed();
-            } else {
-                reason = i18nc("@info","Unknown error");
-            }
+            QString errorMessage = getErrorMessage(response);
 
             QString error = i18nc("@info", "Error while adding yourself to the CC list: %1", 
-                                  reason);
+                                  errorMessage);
 
             emit addMeToCCError(error);
         }
@@ -543,7 +516,7 @@ void BugzillaManager::checkVersionJobFinished(KJob * job)
             return;
         }
 
-        //Be ware: Quick'n'dirty HTML parsing ....
+        //Warning!: Quick'n'dirty HTML parsing ....
 
         const QString firstSelect = "<select name=\"product\"";
         const QString searchString = "<option value=\"" + product;
@@ -666,6 +639,23 @@ QString BugzillaManager::getToken(const QString & response)
     }
 
     return token;
+}
+
+QString BugzillaManager::getErrorMessage(const QString & response, bool fallbackMessage)
+{
+    QString errorMessage;
+
+    QRegExp reg("<td id=\"error_msg\" class=\"throw_error\">(.+)</td>");
+    int pos = reg.indexIn(response);
+    if (pos != -1) {
+        errorMessage = reg.cap(1).trimmed();
+    } else {
+        if (fallbackMessage) {
+            errorMessage = i18nc("@info","Unknown error");
+        }
+    }
+
+    return errorMessage;
 }
 
 QByteArray BugzillaManager::generatePostDataForReport(BugReport report) const

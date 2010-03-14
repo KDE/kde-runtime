@@ -277,6 +277,8 @@ Q_SIGNALS:
 private:
     /* Private helper methods */
     QString getToken(const QString &);
+    QString getErrorMessage(const QString &, bool fallBackMessage = true);
+
     void attachToReport(const QByteArray &, const QByteArray &);
     QByteArray generatePostDataForReport(BugReport) const;
 
