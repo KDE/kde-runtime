@@ -206,7 +206,7 @@
        <item>
         <widget class="QRadioButton" name="markAsDuplicateCheck">
          <property name="text">
-          <string>Not really sure: add as a possible duplicate</string>
+          <string>Not really sure: mark as a possible duplicate</string>
          </property>
          <attribute name="buttonGroup">
           <string>buttonGroupProceed</string>
@@ -226,29 +226,6 @@
       </layout>
      </item>
     </layout>
-   </item>
-   <item>
-    <spacer name="verticalSpacer_5">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeType">
-      <enum>QSizePolicy::Fixed</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>5</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item>
-    <widget class="QCheckBox" name="subscribeToBugCheck">
-     <property name="text">
-      <string>Subscribe me to get news about changes in the bug report</string>
-     </property>
-    </widget>
    </item>
    <item>
     <spacer name="verticalSpacer_4">
