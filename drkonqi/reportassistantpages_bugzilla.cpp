@@ -377,13 +377,13 @@ void BugzillaInformationPage::aboutToShow()
     QString descriptionTemplate;
     if (ui.m_detailsEdit->toPlainText().isEmpty()) {
         if (reportInterface()->userCanProvideActionsAppDesktop()) {
-            descriptionTemplate += "- What I was doing when the application crashed:\n\n\n";
+            descriptionTemplate += "- What I was doing when the application crashed:\n\n";
         }
         if (reportInterface()->userCanProvideUnusualBehavior()) {
-            descriptionTemplate += "- Unusual behavior I noticed:\n\n\n";
+            descriptionTemplate += "- Unusual behavior I noticed:\n\n";
         }
         if (reportInterface()->userCanProvideApplicationConfigDetails()) {
-            descriptionTemplate += "- Custom settings of the application:\n\n\n";
+            descriptionTemplate += "- Custom settings of the application:\n\n";
         }
         ui.m_detailsEdit->setText(descriptionTemplate);
     }
