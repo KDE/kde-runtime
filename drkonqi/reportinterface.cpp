@@ -176,7 +176,7 @@ QString ReportInterface::generateReport(bool drKonqiStamp) const
     if (isBugAwarenessPageDataUseful()) {
         report.append(QString("-- Information about the crash:\n"));
         if (!m_reportDetailText.isEmpty()) {
-            report.append(m_reportDetailText);
+            report.append(m_reportDetailText.trimmed());
         } else {
             //If the user manual reports this crash, he/she should know what to put in here.
             //This message is the only one translated in this function
@@ -198,7 +198,7 @@ QString ReportInterface::generateReport(bool drKonqiStamp) const
     }
 
     //Backtrace
-    report.append(QString(" -- Backtrace:\n"));
+    report.append(QString("-- Backtrace:\n"));
     if (!m_backtrace.isEmpty()) {
         QString formattedBacktrace = m_backtrace.trimmed();
         report.append(formattedBacktrace + QLatin1String("\n"));
@@ -236,6 +236,35 @@ QString ReportInterface::generateReport(bool drKonqiStamp) const
     }
     
     return report;
+}
+
+QString ReportInterface::generateReportForAttachmentDescription() const
+{
+    QString description;
+
+    //Note: no translations must be done in this function's strings
+    const CrashedApplication * crashedApp = DrKonqi::crashedApplication();
+    const SystemInformation * sysInfo = DrKonqi::systemInformation();
+
+    //Program name and versions
+    description.append(QString("%1 (%2) on KDE Platform %3 using Qt %4\n\n")
+                       .arg(crashedApp->fakeExecutableBaseName())
+                       .arg(crashedApp->version())
+                       .arg(sysInfo->kdeVersion())
+                       .arg(sysInfo->qtVersion()));
+
+    //Details of the crash situation
+    if (isBugAwarenessPageDataUseful()) {
+        description.append(QString("%1\n\n").arg(m_reportDetailText.trimmed()));
+    }
+
+    //Backtrace (only 6 lines)
+    description.append(QString("-- Backtrace (Reduced):\n"));
+    QString reducedBacktrace =
+                DrKonqi::debuggerManager()->backtraceGenerator()->parser()->simplifiedBacktrace();
+    description.append(reducedBacktrace.trimmed());
+
+    return description;
 }
 
 BugReport ReportInterface::newBugReportTemplate() const
@@ -321,12 +350,13 @@ void ReportInterface::addedToCC()
     BugReport report = newBugReportTemplate();
 
     QString reportText = generateReport(true);
+    QString description = generateReportForAttachmentDescription();
 
     //Attach the report. The description of the attachment also includes the bug description
     m_bugzillaManager->attachTextToReport(reportText, QLatin1String("/tmp/drkonqireport"), //Fake path
                                   QLatin1String("New crash information added by DrKonqi"),
                                   m_attachToBugNumber,
-                                  m_reportDetailText);
+                                  description);
 }
 
 void ReportInterface::attachSent(int attachId, int bugId)

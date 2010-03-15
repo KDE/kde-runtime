@@ -59,6 +59,7 @@ public:
     void setPossibleDuplicates(const QStringList & duplicatesList);
 
     QString generateReport(bool drKonqiStamp) const;
+    QString generateReportForAttachmentDescription() const;
 
     BugReport newBugReportTemplate() const;
     void sendBugReport() const;
