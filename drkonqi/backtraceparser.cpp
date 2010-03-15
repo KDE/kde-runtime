@@ -294,6 +294,7 @@ struct BacktraceParserGdb::Private {
     QList<BacktraceLineGdb> m_linesList;
     QList<BacktraceLineGdb> m_linesToRate;
     QStringList m_firstUsefulFunctions;
+    QString m_simplifiedBacktrace;
     QSet<QString> m_librariesWithMissingDebugSymbols;
     int m_possibleKCrashStart;
     int m_threadsCount;
@@ -476,7 +477,7 @@ static bool lineShouldBeIgnored(const BacktraceLineGdb & line)
     return false;
 }
 
-static bool isFunctionUsefulForSearch(const BacktraceLineGdb & line)
+static bool isFunctionUseful(const BacktraceLineGdb & line)
 {
     //We need the function name
     if ( line.rating() == BacktraceLineGdb::MissingEverything
@@ -501,7 +502,15 @@ static bool isFunctionUsefulForSearch(const BacktraceLineGdb & line)
         || line.functionName().startsWith(QLatin1String("QPointer::"))
         || line.functionName().startsWith(QLatin1String("QWeakPointer::"))
         || line.functionName().startsWith(QLatin1String("QSharedPointer::"))
-        || line.functionName().startsWith(QLatin1String("QScopedPointer::")) ) {
+        || line.functionName().startsWith(QLatin1String("QScopedPointer::"))
+        || line.functionName().startsWith(QLatin1String("QMetaCallEvent::")) ) {
+        return false;
+    }
+
+    //Ignore core Qt containers misc functions
+    if ( line.functionName().endsWith(QLatin1String("::detach"))
+        || line.functionName().endsWith(QLatin1String("::detach_helper"))
+        || line.functionName().endsWith(QLatin1String("::node_create")) ) {
         return false;
     }
 
@@ -514,6 +523,11 @@ static bool isFunctionUsefulForSearch(const BacktraceLineGdb & line)
         return false;
     }
 
+    return true;
+}
+
+static bool isFunctionUsefulForSearch(const BacktraceLineGdb & line)
+{
     //Ignore Qt containers (and iterators Q*Iterator)
     if ( line.functionName().startsWith(QLatin1String("QList"))
         || line.functionName().startsWith(QLatin1String("QLinkedList"))
@@ -584,17 +598,36 @@ BacktraceParser::Usefulness BacktraceParserGdb::backtraceUsefulness() const
         kDebug() << line.rating() << line.toString();
     }
 
-    //Save the first 3 useful functions that were encountered in the backtrace.
-    //This is used later to search for duplicate reports.
+    //Generate a simplified backtrace
+    //- Starts from the first useful function
+    //- Max of 5 lines
+    //- Replaces garbage with [...]
+    //At the same time, grab the first three useful functions for search queries
+
     i.toFront(); //Reuse the list iterator
     int functionIndex = 0;
-    while( i.hasNext() && functionIndex < 3 ) {
+    int usefulFunctionsCount = 0;
+    bool firstUsefulFound = false;
+    while( i.hasNext() && functionIndex < 5 ) {
         const BacktraceLineGdb & line = i.next();
-        if ( !lineShouldBeIgnored(line) && isFunctionUsefulForSearch(line) ) {
-            if (!d->m_firstUsefulFunctions.contains(line.functionName())) {
-                d->m_firstUsefulFunctions.append(line.functionName());
-                functionIndex++;
+        if ( !lineShouldBeIgnored(line) && isFunctionUseful(line) ) { //Line is not garbage to use
+            if (!firstUsefulFound) {
+                firstUsefulFound = true;
             }
+            //Save simplified backtrace line
+            d->m_simplifiedBacktrace += line.toString();
+
+            //Fetch three useful functions (only functionName) for search queries
+            if (usefulFunctionsCount < 3 && isFunctionUsefulForSearch(line) &&
+                !d->m_firstUsefulFunctions.contains(line.functionName())) {
+                d->m_firstUsefulFunctions.append(line.functionName());
+                usefulFunctionsCount++;
+            }
+
+            functionIndex++;
+        } else if (firstUsefulFound) {
+            //Add "[...]" if there are invalid functions in the middle
+            d->m_simplifiedBacktrace += QLatin1String("[...]\n");
         }
     }
 
@@ -643,6 +676,19 @@ QStringList BacktraceParserGdb::firstValidFunctions() const
     return d ? d->m_firstUsefulFunctions : QStringList();
 }
 
+QString BacktraceParserGdb::simplifiedBacktrace() const
+{
+    //if there is no cached usefulness, the usefulness calculation function has not run yet.
+    //in this case, we need to run it because the simplified backtrace is also saved from there.
+    if (d && d->m_cachedUsefulness == InvalidUsefulness) {
+        kDebug() << "backtrace usefulness has not been calculated yet. calculating...";
+        backtraceUsefulness();
+    }
+
+    //if there is no d, the debugger has not run, so we have backtrace.
+    return d ? d->m_simplifiedBacktrace : QString();
+}
+
 QSet<QString> BacktraceParserGdb::librariesWithMissingDebugSymbols() const
 {
     return d->m_librariesWithMissingDebugSymbols;
@@ -658,6 +704,11 @@ BacktraceParserNull::~BacktraceParserNull() {}
 QString BacktraceParserNull::parsedBacktrace() const
 {
     return m_lines.join("");
+}
+
+QString BacktraceParserNull::simplifiedBacktrace() const
+{
+    return QString();
 }
 
 BacktraceParser::Usefulness BacktraceParserNull::backtraceUsefulness() const

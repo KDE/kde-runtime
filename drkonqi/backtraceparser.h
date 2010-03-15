@@ -38,6 +38,7 @@ public:
     void connectToGenerator(BacktraceGenerator *generator);
 
     virtual QString parsedBacktrace() const = 0;
+    virtual QString simplifiedBacktrace() const = 0;
     virtual Usefulness backtraceUsefulness() const = 0;
     virtual QStringList firstValidFunctions() const = 0;
     
@@ -56,6 +57,7 @@ public:
     virtual ~BacktraceParserGdb();
 
     virtual QString parsedBacktrace() const;
+    virtual QString simplifiedBacktrace() const;
     virtual Usefulness backtraceUsefulness() const;
     virtual QStringList firstValidFunctions() const;
 
@@ -80,6 +82,7 @@ public:
     virtual ~BacktraceParserNull();
 
     virtual QString parsedBacktrace() const;
+    virtual QString simplifiedBacktrace() const;
     virtual Usefulness backtraceUsefulness() const;
     virtual QStringList firstValidFunctions() const;
 
