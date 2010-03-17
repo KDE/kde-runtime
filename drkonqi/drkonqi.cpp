@@ -155,7 +155,7 @@ void DrKonqi::saveReport(const QString & reportText, QWidget *parent)
         }
     } else {
         QString defname = crashedApplication()->fakeExecutableBaseName() + '-'
-                                + QDate::currentDate().toString("yyyyMMdd") + ".kcrash";
+                            + QDateTime::currentDateTime().toString("yyyyMMdd-hhmmss") + ".kcrash";
         if (defname.contains('/')) {
             defname = defname.mid(defname.lastIndexOf('/') + 1);
         }
