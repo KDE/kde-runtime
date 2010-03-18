@@ -1,5 +1,5 @@
 /* This file is part of the KDE Project
-   Copyright (c) 2007-2008 Sebastian Trueg <trueg@kde.org>
+   Copyright (c) 2007-2010 Sebastian Trueg <trueg@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -31,9 +31,7 @@ namespace Soprano {
     }
 }
 
-namespace KInotify {
-    class DirWatch;
-}
+class KInotify;
 
 class KUrl;
 
@@ -51,18 +49,23 @@ namespace Nepomuk {
         ~FileWatch();
 
     public Q_SLOTS:
-        Q_SCRIPTABLE void moveFileMetadata( const QString& from, const QString& to );
+        Q_SCRIPTABLE void watchFolder( const QString& path );
 
     private Q_SLOTS:
         void slotFileMoved( const QString& from, const QString& to );
         void slotFileDeleted( const QString& path );
         void slotFilesDeleted( const QStringList& path );
+        void slotFileCreated( const QString& );
+        void connectToKDirWatch();
+#ifndef Q_WS_WIN
+        void slotInotifyWatchUserLimitReached();
+#endif
 
     private:
         MetadataMover* m_metadataMover;
 
 #ifndef Q_WS_WIN
-        KInotify::DirWatch* m_dirWatch;
+        KInotify* m_dirWatch;
 #endif
     };
 }

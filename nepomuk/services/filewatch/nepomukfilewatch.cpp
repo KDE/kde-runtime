@@ -1,5 +1,5 @@
 /* This file is part of the KDE Project
-   Copyright (c) 2007-2008 Sebastian Trueg <trueg@kde.org>
+   Copyright (c) 2007-2010 Sebastian Trueg <trueg@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -18,6 +18,12 @@
 
 #include "nepomukfilewatch.h"
 #include "metadatamover.h"
+#include "strigiserviceinterface.h"
+#include "../strigi/priority.h"
+
+#ifndef Q_WS_WIN
+#include "kinotify.h"
+#endif
 
 #include <QtCore/QDir>
 #include <QtDBus/QDBusConnection>
@@ -26,18 +32,6 @@
 #include <KUrl>
 #include <KPluginFactory>
 
-
-// Restrictions and TODO:
-// ----------------------
-//
-// * KIO slaves that do change the local file system may emit stuff like
-//   file:///foo/bar -> xyz://foobar while the file actually ends up in
-//   the local file system again. This is not handled here. It is maybe
-//   necessary to use KFileItem::mostLocalUrl to determine local paths
-//   before deciding to call updateMetaDataForResource.
-//
-// * Only operations done through KIO are caught
-//
 
 using namespace Soprano;
 
@@ -52,11 +46,38 @@ Nepomuk::FileWatch::FileWatch( QObject* parent, const QList<QVariant>& )
     m_metadataMover = new MetadataMover( mainModel(), this );
     m_metadataMover->start();
 
-    // monitor KIO for changes
-    QDBusConnection::sessionBus().connect( QString(), QString(), "org.kde.KDirNotify", "FileMoved",
-                                           this, SIGNAL( slotFileMoved( const QString&, const QString& ) ) );
-    QDBusConnection::sessionBus().connect( QString(), QString(), "org.kde.KDirNotify", "FilesRemoved",
-                                           this, SIGNAL( slotFilesDeleted( const QStringList& ) ) );
+#ifndef Q_WS_WIN
+    // listing all folders in watchFolder below will be IO-intensive. Do not grab it all
+    if ( !lowerIOPriority() )
+        kDebug() << "Failed to lower io priority.";
+
+    // monitor the file system for changes (restricted by the inotify limit)
+    m_dirWatch = new KInotify( this );
+
+    // FIXME: force to only use maxUserWatches-500 or something or always leave 500 free watches
+
+    connect( m_dirWatch, SIGNAL( moved( const QString&, const QString& ) ),
+             this, SLOT( slotFileMoved( const QString&, const QString& ) ) );
+    connect( m_dirWatch, SIGNAL( deleted( const QString& ) ),
+             this, SLOT( slotFileDeleted( const QString& ) ) );
+    connect( m_dirWatch, SIGNAL( created( const QString& ) ),
+             this, SLOT( slotFileCreated( const QString& ) ) );
+    connect( m_dirWatch, SIGNAL( watchUserLimitReached() ),
+             this, SLOT( slotInotifyWatchUserLimitReached() ) );
+
+    // recursively watch the whole home dir
+
+    // FIXME: we cannot simply watch the folders that contain annotated files since moving
+    // one of these files out of the watched "area" would mean we "lose" it, i.e. we have no
+    // information about where it is moved.
+    // On the other hand only using the homedir means a lot of restrictions.
+    // One dummy solution would be a hybrid: watch the whole home dir plus all folders that
+    // contain annotated files outside of the home dir and hope for the best
+
+    watchFolder( QDir::homePath() );
+#else
+    connectToKDirWatch();
+#endif
 }
 
 
@@ -67,9 +88,15 @@ Nepomuk::FileWatch::~FileWatch()
 }
 
 
-void Nepomuk::FileWatch::moveFileMetadata( const QString& from, const QString& to )
+void Nepomuk::FileWatch::watchFolder( const QString& path )
 {
-    slotFileMoved( from, to );
+    kDebug() << path;
+#ifndef Q_WS_WIN
+    if ( m_dirWatch && !m_dirWatch->watchingPath( path ) )
+        m_dirWatch->addWatch( path,
+                              KInotify::WatchEvents( KInotify::EventMove|KInotify::EventDelete|KInotify::EventDeleteSelf|KInotify::EventCreate ),
+                              KInotify::WatchFlags() );
+#endif
 }
 
 
@@ -101,5 +128,35 @@ void Nepomuk::FileWatch::slotFileDeleted( const QString& urlString )
 {
     slotFilesDeleted( QStringList( urlString ) );
 }
+
+
+void Nepomuk::FileWatch::slotFileCreated( const QString& path )
+{
+    // tell Strigi service (if running)
+    org::kde::nepomuk::Strigi strigi( "org.kde.nepomuk.services.nepomukstrigiservice", "/nepomukstrigiservice", QDBusConnection::sessionBus() );
+    if ( strigi.isValid() )
+        strigi.updateFolder( path, false /* no forced update */ );
+}
+
+
+void Nepomuk::FileWatch::connectToKDirWatch()
+{
+    // monitor KIO for changes
+    QDBusConnection::sessionBus().connect( QString(), QString(), "org.kde.KDirNotify", "FileMoved",
+                                           this, SIGNAL( slotFileMoved( const QString&, const QString& ) ) );
+    QDBusConnection::sessionBus().connect( QString(), QString(), "org.kde.KDirNotify", "FilesRemoved",
+                                           this, SIGNAL( slotFilesDeleted( const QStringList& ) ) );
+}
+
+
+#ifndef Q_WS_WIN
+void Nepomuk::FileWatch::slotInotifyWatchUserLimitReached()
+{
+    // we do it the brutal way for now hoping with new kernels and defaults this will never happen
+    delete m_dirWatch;
+    m_dirWatch = 0;
+    connectToKDirWatch();
+}
+#endif
 
 #include "nepomukfilewatch.moc"

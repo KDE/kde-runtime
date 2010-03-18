@@ -16,7 +16,17 @@ set(SRCS
   nepomukfilewatch.cpp
   metadatamover.cpp
   updaterequest.cpp
+  ../strigi/priority.cpp
   )
+
+qt4_add_dbus_interface(SRCS ../../interfaces/org.kde.nepomuk.Strigi.xml strigiserviceinterface)
+
+if(NOT WIN32)
+  set(SRCS
+    ${SRCS}
+    kinotify.cpp
+)
+endif(NOT WIN32)
 
 soprano_add_ontology(SRCS
   ${SHAREDDESKTOPONTOLOGIES_ROOT_DIR}/nie/nie.trig

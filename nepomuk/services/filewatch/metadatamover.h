@@ -68,7 +68,7 @@ namespace Nepomuk {
          * If old pre-KDE 4.4 file:/ resource URIs are used these are
          * updated to the new nepomuk:/res/<UUID> scheme
          */
-        void updateMetadata( const KUrl& from, const KUrl& to );
+        void updateMetadata( const KUrl& from, const KUrl& to, bool includeChildren = true );
 
         /**
          * Convert old pre-KDE 4.4 style file:/ resource URIs to the

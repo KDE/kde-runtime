@@ -1,5 +1,5 @@
 /* This file is part of the KDE Project
-   Copyright (c) 2009 Sebastian Trueg <trueg@kde.org>
+   Copyright (c) 2009-2010 Sebastian Trueg <trueg@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -39,6 +39,7 @@
 #include <Nepomuk/Query/Query>
 #include <Nepomuk/Query/ComparisonTerm>
 #include <Nepomuk/Query/ResourceTerm>
+#include <Nepomuk/Query/LiteralTerm>
 
 #include <KDebug>
 
@@ -70,6 +71,7 @@ void Nepomuk::MetadataMover::stop()
 
 void Nepomuk::MetadataMover::moveFileMetadata( const KUrl& from, const KUrl& to )
 {
+    kDebug() << from << to;
     m_queueMutex.lock();
     UpdateRequest req( from, to );
     if ( !m_updateQueue.contains( req ) &&
@@ -82,18 +84,13 @@ void Nepomuk::MetadataMover::moveFileMetadata( const KUrl& from, const KUrl& to 
 
 void Nepomuk::MetadataMover::removeFileMetadata( const KUrl& file )
 {
-    m_queueMutex.lock();
-    UpdateRequest req( file );
-    if ( !m_updateQueue.contains( req ) &&
-         !m_recentlyFinishedRequests.contains( req ) )
-        m_updateQueue.enqueue( req );
-    m_queueMutex.unlock();
-    m_queueWaiter.wakeAll();
+    removeFileMetadata( KUrl::List() << file );
 }
 
 
 void Nepomuk::MetadataMover::removeFileMetadata( const KUrl::List& files )
 {
+    kDebug() << files;
     m_queueMutex.lock();
     foreach( const KUrl& file, files ) {
         UpdateRequest req( file );
@@ -189,7 +186,7 @@ void Nepomuk::MetadataMover::removeMetadata( const KUrl& url )
 }
 
 
-void Nepomuk::MetadataMover::updateMetadata( const KUrl& from, const KUrl& to )
+void Nepomuk::MetadataMover::updateMetadata( const KUrl& from, const KUrl& to, bool includeChildren )
 {
     kDebug() << from << "->" << to;
 
@@ -226,19 +223,38 @@ void Nepomuk::MetadataMover::updateMetadata( const KUrl& from, const KUrl& to )
         if ( newParent.exists() ) {
             newResource.setProperty( Nepomuk::Vocabulary::NIE::isPartOf(), newParent );
         }
+    }
 
+    if ( includeChildren && QFileInfo( to.toLocalFile() ).isDir() ) {
         //
         // Recursively update children
+        // We cannot use the nie:isPartOf relation since only children could have metadata. Thus, we do a regex
+        // match on all files and folders below the URL we got.
         //
-        Query::Query query( Query::ComparisonTerm( Nepomuk::Vocabulary::NIE::isPartOf(), Query::ResourceTerm( newResource ) ) );
-        query.addRequestProperty( Query::Query::RequestProperty( Nepomuk::Vocabulary::NIE::url() ) );
-        Soprano::QueryResultIterator it = m_model->executeQuery( query.toSparqlQuery(), Soprano::Query::QueryLanguageSparql );
+        QString query = QString::fromLatin1( "select distinct ?r ?url where { "
+                                             "?r %1 ?url . "
+                                             "FILTER(REGEX(STR(?url),'^%2')) . "
+                                             "}" )
+                        .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ),
+                              from.url() );
+        kDebug() << query;
+        Soprano::QueryResultIterator it = m_model->executeQuery( query, Soprano::Query::QueryLanguageSparql );
         while ( it.next() ) {
-            QUrl uri = it[0].uri();
-            KUrl url = it[1].uri();
-            KUrl newUrl( to );
-            newUrl.addPath( url.fileName() );
-            updateMetadata( url, newUrl );
+
+            // the resource URI of the resource to update
+            const QUrl uri = it[0].uri();
+
+            // the old URL of the resource to update
+            const KUrl url = it[1].uri();
+
+            // now construct the new URL
+            const QString oldBasePath = from.path( KUrl::AddTrailingSlash );
+            const QString newBasePath = to.path( KUrl::AddTrailingSlash );
+            QString oldRelativePath = url.path().mid( oldBasePath.length() );
+            KUrl newUrl( newBasePath + oldRelativePath );
+
+            // finally update the metadata (excluding children since we already handle them all here)
+            updateMetadata( url, newUrl, false );
         }
     }
 }
