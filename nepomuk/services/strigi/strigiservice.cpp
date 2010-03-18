@@ -142,9 +142,9 @@ Nepomuk::StrigiService::~StrigiService()
 void Nepomuk::StrigiService::updateWatches()
 {
     // the hard way since the KDirWatch API is too simple
-    QStringList folders = StrigiServiceConfig::self()->folders();
+    QStringList folders = StrigiServiceConfig::self()->includeFolders();
     if ( folders != m_fsWatcher->folders() ) {
-        m_fsWatcher->setFolders( StrigiServiceConfig::self()->folders() );
+        m_fsWatcher->setFolders( StrigiServiceConfig::self()->includeFolders() );
         m_fsWatcher->setInterval( 2*60 ); // check every 2 minutes
         m_fsWatcher->start();
     }

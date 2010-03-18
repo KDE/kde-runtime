@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2007-2009 Sebastian Trueg <trueg@kde.org>
+   Copyright (C) 2007-2010 Sebastian Trueg <trueg@kde.org>
 
    This program is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public License as
@@ -30,6 +30,8 @@ namespace Strigi {
 
     class Query;
 
+    /// The IndexReader is not used in Nepomuk and thus, this is only
+    /// a dummy implementation
     class NepomukIndexReader : public Strigi::IndexReader
     {
     public:
@@ -38,12 +40,8 @@ namespace Strigi {
 
         void getChildren( const std::string& parent,
                           std::map<std::string, time_t>& children );
-
         int64_t indexSize();
         time_t mTime( const std::string& uri );
-
-        // the methods below are all unused in Nepomuk and thus, not implemented
-        // ---------------------------------------------------------------------
         int32_t countDocuments();
         int32_t countWords();
         std::vector<std::string> fieldNames();
@@ -62,7 +60,6 @@ namespace Strigi {
         std::vector<std::string> keywords( const std::string& keywordmatch,
                                            const std::vector<std::string>& fieldnames,
                                            uint32_t max, uint32_t offset );
-        // ---------------------------------------------------------------------
 
     private:
         class Private;

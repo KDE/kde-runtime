@@ -75,10 +75,10 @@ namespace Strigi {
 
     private:
         /**
-         * \param isResourceUri if true \p url is a resource URI, otherwise it
-         * is a local file URL
+         * \param uri The resource URI. Can be empty if \p url is not.
+         * \param url The file URL. Can be empty if \p uri is not.
          */
-        void removeIndexedData( const KUrl& url, bool isResourceUri = false );
+        void removeIndexedData( const KUrl& uri, const KUrl& url );
 
         QUrl determineFolderResourceUri( const KUrl& fileUrl );
 

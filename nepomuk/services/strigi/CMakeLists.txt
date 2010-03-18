@@ -12,6 +12,18 @@ include_directories(
   ${nepomukstrigiservice_BUILD_DIR}
   )
 
+# Check if Strigi has the FileInputStream::open method which was introduced between versions 0.7.2 and 0.7.3
+include(CheckCXXSourceCompiles)
+set(CMAKE_REQUIRED_INCLUDES ${STRIGI_INCLUDE_DIR})
+set(CMAKE_REQUIRED_LIBRARIES ${STRIGI_STREAMS_LIBRARY})
+CHECK_CXX_SOURCE_COMPILES(
+  "#include <strigi/fileinputstream.h>\nint main(int ac,char* av[]) { Strigi::FileInputStream::open(\"dummy\"); }"
+  STRIGI_HAS_FILEINPUTSTREAM_OPEN
+)
+if(${STRIGI_HAS_FILEINPUTSTREAM_OPEN})
+  add_definitions(-DSTRIGI_HAS_FILEINPUTSTREAM_OPEN)
+endif(${STRIGI_HAS_FILEINPUTSTREAM_OPEN})
+
 set(strigiservice_SRCS
   strigiservice.cpp
   strigiserviceadaptor.cpp

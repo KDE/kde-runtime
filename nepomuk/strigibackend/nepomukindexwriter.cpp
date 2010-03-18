@@ -24,7 +24,6 @@
 
 #include <Soprano/Soprano>
 #include <Soprano/Vocabulary/RDF>
-#include <Soprano/Vocabulary/Xesam>
 #include <Soprano/LiteralValue>
 #include <Soprano/Node>
 #include <Soprano/QueryResultIterator>
@@ -332,7 +331,7 @@ void Strigi::NepomukIndexWriter::deleteEntries( const std::vector<std::string>& 
 {
     for ( unsigned int i = 0; i < entries.size(); ++i ) {
         QString path = QString::fromUtf8( entries[i].c_str() );
-        removeIndexedData( path );
+        removeIndexedData( KUrl(), path );
     }
 }
 
@@ -359,7 +358,7 @@ void Strigi::NepomukIndexWriter::startAnalysis( const AnalysisResult* idx )
     FileMetaData* data = new FileMetaData( createFileUrl( idx ) );
 
     // remove previously indexed data
-    removeIndexedData( data->resourceUri, true );
+    removeIndexedData( data->resourceUri, data->fileUrl );
 
     // It is important to keep the resource URI between updates (especially for sharing of files)
     // However, when updating data from pre-KDE 4.4 times we want to get rid of old file:/ resource
@@ -610,34 +609,36 @@ void Strigi::NepomukIndexWriter::releaseWriterData( const Strigi::FieldRegister&
 }
 
 
-void Strigi::NepomukIndexWriter::removeIndexedData( const KUrl& url, bool isResourceUri )
+void Strigi::NepomukIndexWriter::removeIndexedData( const KUrl& uri, const KUrl& url )
 {
 //    kDebug() << url;
 
     if ( url.isEmpty() )
         return;
 
-    //
-    // We are compatible with old Xesam data where the url was encoded as a string instead of a url,
-    // thus the weird query
-    //
     QString query;
-    if ( isResourceUri ) {
+    if ( uri == url || url.isEmpty() ) {
          query = QString::fromLatin1( "select ?g where { ?g %1 %2 . }" )
                     .arg( Soprano::Node::resourceToN3( Strigi::Ontology::indexGraphFor() ),
+                          Soprano::Node::resourceToN3( uri ) );
+    }
+    else if ( !uri.isEmpty() ) {
+        // makes sure we also catch data created by buggy versions of ourselves.
+        query = QString::fromLatin1( "select ?g where { { ?g %1 %2 . } UNION { ?g %1 %3 . } }" )
+                    .arg( Soprano::Node::resourceToN3( Strigi::Ontology::indexGraphFor() ),
+                          Soprano::Node::resourceToN3( uri ),
                           Soprano::Node::resourceToN3( url ) );
     }
     else {
+        // The last UNION makes sure we also catch data created by buggy versions of ourselves.
         query = QString::fromLatin1( "select ?g where { "
-                                     "{ ?r %3 %1 . } "
+                                     "{ "
+                                     "?r %2 %1 . "
+                                     "?g %3 ?r . } "
                                      "UNION "
-                                     "{ ?r %3 %2 . } "
-                                     "UNION "
-                                     "{ ?r %4 %2 . } . "
-                                     "?g %5 ?r . }" )
-                    .arg( Node::literalToN3( url.path() ),
-                          Node::resourceToN3( url ),
-                          Node::resourceToN3( Vocabulary::Xesam::url() ),
+                                     "{ ?g %3 %1 . }"
+                                     "}")
+                    .arg( Node::resourceToN3( url ),
                           Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ),
                           Node::resourceToN3( Strigi::Ontology::indexGraphFor() ) );
     }

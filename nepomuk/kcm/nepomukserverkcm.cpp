@@ -1,5 +1,5 @@
 /* This file is part of the KDE Project
-   Copyright (c) 2007 Sebastian Trueg <trueg@kde.org>
+   Copyright (c) 2007-2010 Sebastian Trueg <trueg@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -19,6 +19,7 @@
 #include "nepomukserverkcm.h"
 #include "nepomukserverinterface.h"
 #include "folderselectionmodel.h"
+#include "../services/strigi/strigiservicedefaults.h"
 
 #include <KPluginFactory>
 #include <KPluginLoader>
@@ -38,10 +39,6 @@ K_EXPORT_PLUGIN( NepomukConfigModuleFactory("kcm_nepomuk", "nepomuk") )
 namespace {
     QStringList defaultFolders() {
         return QStringList() << QDir::homePath();
-    }
-
-    QStringList defaultExcludeFilters() {
-        return QStringList() << ".*/" << ".*" << "*~" << "*.part";
     }
 
     void expandRecursively( const QModelIndex& index, QTreeView* view ) {
@@ -165,7 +162,7 @@ void Nepomuk::ServerConfigModule::load()
     m_checkShowHiddenFolders->setChecked( strigiConfig.group( "General" ).readEntry( "index hidden folders", false ) );
     m_folderModel->setFolders( strigiConfig.group( "General" ).readPathEntry( "folders", defaultFolders() ),
                                strigiConfig.group( "General" ).readPathEntry( "exclude folders", QStringList() ) );
-    m_editStrigiExcludeFilters->setItems( strigiConfig.group( "General" ).readEntry( "exclude filters", defaultExcludeFilters() ) );
+    m_editStrigiExcludeFilters->setItems( strigiConfig.group( "General" ).readEntry( "exclude filters", Nepomuk::defaultExcludeFilterList() ) );
     m_checkIndexRemovableMedia->setChecked( strigiConfig.group( "General" ).readEntry( "index newly mounted", false ) );
 
     KConfig serverConfig( "nepomukserverrc" );
@@ -246,7 +243,7 @@ void Nepomuk::ServerConfigModule::defaults()
     m_checkEnableStrigi->setChecked( true );
     m_checkEnableNepomuk->setChecked( true );
     m_checkShowHiddenFolders->setChecked( false );
-    m_editStrigiExcludeFilters->setItems( defaultExcludeFilters() );
+    m_editStrigiExcludeFilters->setItems( Nepomuk::defaultExcludeFilterList() );
     m_folderModel->setFolders( defaultFolders(), QStringList() );
 }
 

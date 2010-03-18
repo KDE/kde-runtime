@@ -1,5 +1,5 @@
 /* This file is part of the KDE Project
-   Copyright (c) 2008-2009 Sebastian Trueg <trueg@kde.org>
+   Copyright (c) 2008-2010 Sebastian Trueg <trueg@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -17,6 +17,7 @@
 */
 
 #include "strigiserviceconfig.h"
+#include "strigiservicedefaults.h"
 
 #include <QtCore/QStringList>
 #include <QtCore/QDir>
@@ -37,6 +38,7 @@ Nepomuk::StrigiServiceConfig::StrigiServiceConfig()
              this, SLOT( slotConfigDirty() ) );
     dirWatch->addFile( KStandardDirs::locateLocal( "config", m_config.name() ) );
 
+    buildFolderCache();
     buildExcludeFilterRegExpCache();
 }
 
@@ -54,27 +56,37 @@ Nepomuk::StrigiServiceConfig* Nepomuk::StrigiServiceConfig::self()
 }
 
 
-QStringList Nepomuk::StrigiServiceConfig::folders() const
+QList<QPair<QString, bool> > Nepomuk::StrigiServiceConfig::folders() const
 {
-    return m_config.group( "General" ).readPathEntry( "folders", QStringList() << QDir::homePath() );
+    return m_folderCache;
+}
+
+
+QStringList Nepomuk::StrigiServiceConfig::includeFolders() const
+{
+    QStringList fl;
+    for ( int i = 0; i < m_folderCache.count(); ++i ) {
+        if ( m_folderCache[i].second )
+            fl << m_folderCache[i].first;
+    }
+    return fl;
 }
 
 
 QStringList Nepomuk::StrigiServiceConfig::excludeFolders() const
 {
-    return m_config.group( "General" ).readPathEntry( "exclude folders", QStringList() );
+    QStringList fl;
+    for ( int i = 0; i < m_folderCache.count(); ++i ) {
+        if ( !m_folderCache[i].second )
+            fl << m_folderCache[i].first;
+    }
+    return fl;
 }
 
 
 QStringList Nepomuk::StrigiServiceConfig::excludeFilters() const
 {
-    return m_config.group( "General" ).readEntry( "exclude filters", QStringList() << ".*/" << ".*" << "*~" << "*.part" );
-}
-
-
-QStringList Nepomuk::StrigiServiceConfig::includeFilters() const
-{
-    return m_config.group( "General" ).readEntry( "include filters", QStringList() );
+    return m_config.group( "General" ).readEntry( "exclude filters", defaultExcludeFilterList() );
 }
 
 
@@ -94,6 +106,7 @@ KIO::filesize_t Nepomuk::StrigiServiceConfig::minDiskSpace() const
 void Nepomuk::StrigiServiceConfig::slotConfigDirty()
 {
     m_config.reparseConfiguration();
+    buildFolderCache();
     buildExcludeFilterRegExpCache();
     emit configChanged();
 }
@@ -117,9 +130,15 @@ namespace {
     }
 }
 
-bool Nepomuk::StrigiServiceConfig::shouldFolderBeIndexed( const QString& path )
+bool Nepomuk::StrigiServiceConfig::shouldFolderBeIndexed( const QString& path ) const
 {
-    if ( folderInFolderList( path, folders(), excludeFolders() ) ) {
+    bool exact = false;
+    if ( folderInFolderList( path, exact ) ) {
+        // we always index the folders in the list
+        // ignoring the name filters
+        if ( exact )
+            return true;
+
         // check for hidden folders
         QDir dir( path );
         if ( !indexHiddenFolders() && isDirHidden( dir ) )
@@ -129,14 +148,7 @@ bool Nepomuk::StrigiServiceConfig::shouldFolderBeIndexed( const QString& path )
         dir = path;
 
         // check the filters
-        const QString dirName = dir.dirName();
-        foreach( const QRegExp& filter, m_excludeFilterRegExpCache ) {
-            if ( filter.exactMatch( dirName ) ) {
-                return false;
-            }
-        }
-
-        return true;
+        return shouldFileBeIndexed( dir.dirName() );
     }
     else {
         return false;
@@ -144,23 +156,96 @@ bool Nepomuk::StrigiServiceConfig::shouldFolderBeIndexed( const QString& path )
 }
 
 
-bool Nepomuk::StrigiServiceConfig::folderInFolderList( const QString& path, const QStringList& inDirs, const QStringList& exDirs ) const
+bool Nepomuk::StrigiServiceConfig::shouldFileBeIndexed( const QString& fileName ) const
 {
-    if( inDirs.contains( path ) ) {
-        return true;
-    }
-    else if( exDirs.contains( path ) ) {
-        return false;
-    }
-    else {
-        QString parent = path.section( QDir::separator(), 0, -2, QString::SectionSkipEmpty|QString::SectionIncludeLeadingSep );
-        if( parent.isEmpty() ) {
+    // check the filters
+    foreach( const QRegExp& filter, m_excludeFilterRegExpCache ) {
+        if ( filter.exactMatch( fileName ) ) {
             return false;
         }
-        else {
-            return folderInFolderList( parent, inDirs, exDirs );
+    }
+    return true;
+}
+
+
+bool Nepomuk::StrigiServiceConfig::folderInFolderList( const QString& path, bool& exact ) const
+{
+    QString p = KUrl( path ).path( KUrl::RemoveTrailingSlash );
+
+    // we traverse the list backwards to catch all exclude folders
+    int i = m_folderCache.count();
+    while ( --i >= 0 ) {
+        const QString& f = m_folderCache[i].first;
+        const bool include = m_folderCache[i].second;
+        if ( p.startsWith( f ) ) {
+            exact = ( p == f );
+            return include;
         }
     }
+    // path is not in the list, thus it should not be included
+    return false;
+}
+
+
+namespace {
+    /**
+     * Returns true if the specified folder f would already be included or excluded using the list
+     * folders
+     */
+    bool alreadyInList( const QList<QPair<QString, bool> >& folders, const QString& f, bool include )
+    {
+        bool included = false;
+        for ( int i = 0; i < folders.count(); ++i ) {
+            if ( f != folders[i].first &&
+                 f.startsWith( folders[i].first ) )
+                included = folders[i].second;
+        }
+        return included == include;
+    }
+
+    /**
+     * Simple insertion sort
+     */
+    void insertSortFolders( const QStringList& folders, bool include, QList<QPair<QString, bool> >& result )
+    {
+        foreach( const QString& f, folders ) {
+            int pos = 0;
+            QString path = KUrl( f ).path( KUrl::RemoveTrailingSlash );
+            while ( result.count() > pos &&
+                    result[pos].first < path )
+                ++pos;
+            result.insert( pos, qMakePair( path, include ) );
+        }
+    }
+
+    /**
+     * Remove useless entries which would confuse the algo below.
+     * This makes sure all top-level items are include folders.
+     * This runs in O(n^2) and could be optimized but what for.
+     */
+    void cleanupList( QList<QPair<QString, bool> >& result )
+    {
+        int i = 0;
+        while ( i < result.count() ) {
+            if ( result[i].first.isEmpty() ||
+                 alreadyInList( result, result[i].first, result[i].second ) )
+                result.removeAt( i );
+            else
+                ++i;
+        }
+    }
+}
+
+
+void Nepomuk::StrigiServiceConfig::buildFolderCache()
+{
+    QStringList includeFoldersPlain = m_config.group( "General" ).readPathEntry( "folders", QStringList() << QDir::homePath() );
+    QStringList excludeFoldersPlain = m_config.group( "General" ).readPathEntry( "exclude folders", QStringList() );;
+
+    m_folderCache.clear();
+    insertSortFolders( includeFoldersPlain, true, m_folderCache );
+    insertSortFolders( excludeFoldersPlain, false, m_folderCache );
+    cleanupList( m_folderCache );
 }
 
 
