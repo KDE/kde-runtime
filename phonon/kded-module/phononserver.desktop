@@ -6,6 +6,7 @@ X-KDE-DBus-ModuleName=phononserver
 X-KDE-Kded-autoload=false
 X-KDE-Kded-load-on-demand=true
 Name=Sound Policy
+Name[cs]=Chování zvuku
 Name[de]=Audioregelungen
 Name[el]=Πολιτική ήχου
 Name[en_GB]=Sound Policy

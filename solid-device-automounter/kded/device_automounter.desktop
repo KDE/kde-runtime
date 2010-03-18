@@ -55,6 +55,7 @@ Name[x-test]=xxRemovable Device Automounterxx
 Name[zh_CN]=可移动设备自动挂载程序
 Name[zh_TW]=可移除裝置自動掛載器
 Comment=Automatically mounts devices as needed
+Comment[cs]=Připojí automaticky zařízení podle potřeby
 Comment[de]=Bindet Geräte bei Bedarf automatisch ein
 Comment[el]=Αυτόματη προσάρτηση συσκευών όταν χρειάζεται
 Comment[en_GB]=Automatically mounts devices as needed
