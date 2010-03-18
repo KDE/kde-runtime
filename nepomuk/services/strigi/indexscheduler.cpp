@@ -37,12 +37,15 @@
 #include <KTemporaryFile>
 #include <KUrl>
 
+#include <Nepomuk/Resource>
 #include <Nepomuk/ResourceManager>
+#include <Nepomuk/Variant>
 
 #include <Soprano/Model>
 #include <Soprano/QueryResultIterator>
 #include <Soprano/NodeIterator>
 #include <Soprano/Node>
+#include <Soprano/Vocabulary/Xesam>
 
 #include <map>
 #include <vector>
@@ -59,6 +62,32 @@
 namespace {
     const int s_reducedSpeedDelay = 500; // ms
     const int s_snailPaceDelay = 3000;   // ms
+
+
+    QHash<QString, QDateTime> getChildren( const QString& dir )
+    {
+        QHash<QString, QDateTime> children;
+
+        QString query = QString( "select distinct ?url ?mtime where { "
+                                 "?r %1 ?parent . ?parent %2 %3 . "
+                                 "?r %4 ?mtime . "
+                                 "?r %2 ?url . "
+                                 "}")
+                        .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::isPartOf() ),
+                              Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ),
+                              Soprano::Node::resourceToN3( KUrl( dir ) ),
+                              Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::lastModified() ) );
+
+        //kDebug() << "running getChildren query:" << query;
+
+        Soprano::QueryResultIterator result = Nepomuk::ResourceManager::instance()->mainModel()->executeQuery( query, Soprano::Query::QueryLanguageSparql );
+
+        while ( result.next() ) {
+            children.insert( result["url"].uri().toLocalFile(), result["mtime"].literal().toDateTime() );
+        }
+
+        return children;
+    }
 }
 
 
@@ -197,6 +226,12 @@ QString Nepomuk::IndexScheduler::currentFolder() const
 }
 
 
+QString Nepomuk::IndexScheduler::currentFile() const
+{
+    return m_currentUrl.toLocalFile();
+}
+
+
 void Nepomuk::IndexScheduler::setIndexingStarted( bool started )
 {
     if ( started != m_indexing ) {
@@ -217,12 +252,14 @@ void Nepomuk::IndexScheduler::run()
     setIndexingStarted( true );
 
     // initialization
-    readConfig();
+    queueAllFoldersForUpdate();
+
+    removeOldAndUnwantedEntries();
 
     Strigi::StreamAnalyzer analyzer( *m_analyzerConfig );
     analyzer.setIndexWriter( *m_indexManager->indexWriter() );
 
-    while ( 1 ) {
+    while ( waitForContinue() ) {
         // wait for more dirs to analyze in case the initial
         // indexing is done
         if ( m_dirsToUpdate.isEmpty() ) {
@@ -260,6 +297,7 @@ void Nepomuk::IndexScheduler::run()
     m_suspended = false;
     m_stopped = false;
     m_analyzerConfig->setStop( false );
+    m_currentFolder.clear();
 }
 
 
@@ -275,21 +313,21 @@ bool Nepomuk::IndexScheduler::updateDir( const QString& dir, Strigi::StreamAnaly
     const bool forceUpdate = flags&ForceUpdate;
 
     // we start by updating the folder itself
-    time_t storedMTime = m_indexManager->indexReader()->mTime( QFile::encodeName( dir ).data() );
     QFileInfo dirInfo( dir );
-    if ( storedMTime == 0 ||
-         storedMTime != dirInfo.lastModified().toTime_t() ) {
+    KUrl dirUrl( dir );
+    Nepomuk::Resource dirRes( dirUrl );
+    if ( !dirRes.exists() ||
+         dirRes.property( Nepomuk::Vocabulary::NIE::lastModified() ).toDateTime() != dirInfo.lastModified() ) {
         analyzeFile( dirInfo, analyzer );
     }
 
     // get a map of all indexed files from the dir including their stored mtime
-    std::map<std::string, time_t> filesInStore;
-    m_indexManager->indexReader()->getChildren( QFile::encodeName( dir ).data(), filesInStore );
-    std::map<std::string, time_t>::const_iterator filesInStoreEnd = filesInStore.end();
+    QHash<QString, QDateTime> filesInStore = getChildren( dir );
+    QHash<QString, QDateTime>::iterator filesInStoreEnd = filesInStore.end();
 
     QList<QFileInfo> filesToIndex;
-    QList<QString> subFolders;
-    std::vector<std::string> filesToDelete;
+    QStringList subFolders;
+    QStringList filesToDelete;
 
     // iterate over all files in the dir
     // and select the ones we need to add or delete from the store
@@ -302,14 +340,18 @@ bool Nepomuk::IndexScheduler::updateDir( const QString& dir, Strigi::StreamAnaly
         // need to use another approach then the getChildren one.
         QFileInfo fileInfo = dirIt.fileInfo();//.canonialFilePath();
 
-        bool indexFile = m_analyzerConfig->indexFile( QFile::encodeName( path ), QFile::encodeName( fileInfo.fileName() ) );
+        bool indexFile = Nepomuk::StrigiServiceConfig::self()->shouldFileBeIndexed( fileInfo.fileName() );
 
         // check if this file is new by looking it up in the store
-        std::map<std::string, time_t>::iterator filesInStoreIt = filesInStore.find( QFile::encodeName( path ).data() );
+        QHash<QString, QDateTime>::iterator filesInStoreIt = filesInStore.find( path );
         bool newFile = ( filesInStoreIt == filesInStoreEnd );
+        if ( newFile && indexFile )
+            kDebug() << "NEW    :" << path;
 
         // do we need to update? Did the file change?
-        bool fileChanged = !newFile && fileInfo.lastModified().toTime_t() != filesInStoreIt->second;
+        bool fileChanged = !newFile && fileInfo.lastModified() != filesInStoreIt.value();
+        if ( fileChanged )
+            kDebug() << "CHANGED:" << path << fileInfo.lastModified() << filesInStoreIt.value();
 
         if ( indexFile && ( newFile || fileChanged || forceUpdate ) )
             filesToIndex << fileInfo;
@@ -317,7 +359,7 @@ bool Nepomuk::IndexScheduler::updateDir( const QString& dir, Strigi::StreamAnaly
         // we do not delete files to update here. We do that in the IndexWriter to make
         // sure we keep the resource URI
         else if ( !newFile && !indexFile )
-            filesToDelete.push_back( filesInStoreIt->first );
+            filesToDelete.append( filesInStoreIt.key() );
 
         // cleanup a bit for faster lookups
         if ( !newFile )
@@ -329,10 +371,7 @@ bool Nepomuk::IndexScheduler::updateDir( const QString& dir, Strigi::StreamAnaly
 
     // all the files left in filesInStore are not in the current
     // directory and should be deleted
-    for ( std::map<std::string, time_t>::const_iterator it = filesInStore.begin();
-          it != filesInStoreEnd; ++it ) {
-        filesToDelete.push_back( it->first );
-    }
+    filesToDelete += filesInStore.keys();
 
     // remove all files that have been removed recursively
     deleteEntries( filesToDelete );
@@ -351,7 +390,7 @@ bool Nepomuk::IndexScheduler::updateDir( const QString& dir, Strigi::StreamAnaly
     // compare m_currentFolder)
     if ( recursive ) {
         foreach( const QString& folder, subFolders ) {
-            if ( !StrigiServiceConfig::self()->excludeFolders().contains( folder ) &&
+            if ( StrigiServiceConfig::self()->shouldFolderBeIndexed( folder ) &&
                  !updateDir( folder, analyzer, flags ) )
                 return false;
         }
@@ -366,9 +405,9 @@ void Nepomuk::IndexScheduler::analyzeFile( const QFileInfo& file, Strigi::Stream
     //
     // strigi asserts if the file path has a trailing slash
     //
-    KUrl url( file.filePath() );
-    QString filePath = url.toLocalFile( KUrl::RemoveTrailingSlash );
-    QString dir = url.directory(KUrl::IgnoreTrailingSlash);
+    m_currentUrl = file.filePath();
+    QString filePath = m_currentUrl.toLocalFile( KUrl::RemoveTrailingSlash );
+    QString dir = m_currentUrl.directory(KUrl::IgnoreTrailingSlash);
 
     Strigi::AnalysisResult analysisresult( QFile::encodeName( filePath ).data(),
                                            file.lastModified().toTime_t(),
@@ -376,16 +415,25 @@ void Nepomuk::IndexScheduler::analyzeFile( const QFileInfo& file, Strigi::Stream
                                            *analyzer,
                                            QFile::encodeName( dir ).data() );
     if ( file.isFile() && !file.isSymLink() ) {
+#ifdef STRIGI_HAS_FILEINPUTSTREAM_OPEN
+        Strigi::InputStream* stream = Strigi::FileInputStream::open( QFile::encodeName( file.filePath() ) );
+        analysisresult.index( stream );
+        delete stream;
+#else
         Strigi::FileInputStream stream( QFile::encodeName( file.filePath() ) );
         analysisresult.index( &stream );
+#endif
     }
     else {
         analysisresult.index(0);
     }
+
+    // done with this file
+    m_currentUrl = KUrl();
 }
 
 
-bool Nepomuk::IndexScheduler::waitForContinue()
+bool Nepomuk::IndexScheduler::waitForContinue( bool disableDelay )
 {
     QMutexLocker locker( &m_resumeStopMutex );
     if ( m_suspended ) {
@@ -393,7 +441,7 @@ bool Nepomuk::IndexScheduler::waitForContinue()
         m_resumeStopWc.wait( &m_resumeStopMutex );
         setIndexingStarted( true );
     }
-    else if ( m_speed != FullSpeed ) {
+    else if ( !disableDelay && m_speed != FullSpeed ) {
         msleep( m_speed == ReducedSpeed ? s_reducedSpeedDelay : s_snailPaceDelay );
     }
 
@@ -411,10 +459,16 @@ void Nepomuk::IndexScheduler::updateDir( const QString& path, bool forceUpdate )
 
 void Nepomuk::IndexScheduler::updateAll( bool forceUpdate )
 {
+    queueAllFoldersForUpdate( forceUpdate );
+    m_dirsToUpdateWc.wakeAll();
+}
+
+
+void Nepomuk::IndexScheduler::queueAllFoldersForUpdate( bool forceUpdate )
+{
     QMutexLocker lock( &m_dirsToUpdateMutex );
 
     // remove previously added folders to not index stuff we are not supposed to
-    // (FIXME: this does not include currently being indexed folders)
     QSet<QPair<QString, UpdateDirFlags> >::iterator it = m_dirsToUpdate.begin();
     while ( it != m_dirsToUpdate.end() ) {
         if ( it->second & AutoUpdateFolder )
@@ -428,33 +482,14 @@ void Nepomuk::IndexScheduler::updateAll( bool forceUpdate )
         flags |= ForceUpdate;
 
     // update everything again in case the folders changed
-    foreach( const QString& f, StrigiServiceConfig::self()->folders() )
+    foreach( const QString& f, StrigiServiceConfig::self()->includeFolders() )
         m_dirsToUpdate << qMakePair( f, flags );
-
-    m_dirsToUpdateWc.wakeAll();
-}
-
-
-void Nepomuk::IndexScheduler::readConfig()
-{
-    // load Strigi configuration
-    std::vector<std::pair<bool, std::string> > filters;
-    const QStringList excludeFilters = StrigiServiceConfig::self()->excludeFilters();
-    const QStringList includeFilters = StrigiServiceConfig::self()->includeFilters();
-    foreach( const QString& filter, excludeFilters ) {
-        filters.push_back( std::make_pair<bool, std::string>( false, filter.toUtf8().data() ) );
-    }
-    foreach( const QString& filter, includeFilters ) {
-        filters.push_back( std::make_pair<bool, std::string>( true, filter.toUtf8().data() ) );
-    }
-    m_analyzerConfig->setFilters(filters);
-    removeOldAndUnwantedEntries();
-    updateAll();
 }
 
 
 void Nepomuk::IndexScheduler::slotConfigChanged()
 {
+    // restart to make sure we update all folders and removeOldAndUnwantedEntries
     if ( isRunning() )
         restart();
 }
@@ -492,14 +527,9 @@ namespace {
 
 void Nepomuk::IndexScheduler::analyzeResource( const QUrl& uri, const QDateTime& modificationTime, QDataStream& data )
 {
-    QDateTime existingMTime = QDateTime::fromTime_t( m_indexManager->indexReader()->mTime( uri.toEncoded().data() ) );
-    if ( existingMTime < modificationTime ) {
-        // remove the old data
-        std::vector<std::string> entries;
-        entries.push_back( uri.toEncoded().data() );
-        m_indexManager->indexWriter()->deleteEntries( entries );
-
-        // create the new
+    Resource dirRes( uri );
+    if ( !dirRes.exists() ||
+         dirRes.property( Nepomuk::Vocabulary::NIE::lastModified() ).toDateTime() != modificationTime ) {
         Strigi::StreamAnalyzer analyzer( *m_analyzerConfig );
         analyzer.setIndexWriter( *m_indexManager->indexWriter() );
         Strigi::AnalysisResult analysisresult( uri.toEncoded().data(),
@@ -515,68 +545,33 @@ void Nepomuk::IndexScheduler::analyzeResource( const QUrl& uri, const QDateTime&
 }
 
 
-void Nepomuk::IndexScheduler::deleteEntries( const std::vector<std::string>& entries )
+void Nepomuk::IndexScheduler::deleteEntries( const QStringList& entries )
 {
     // recurse into subdirs
-    for ( unsigned int i = 0; i < entries.size(); ++i ) {
-        std::map<std::string, time_t> filesInStore;
-        m_indexManager->indexReader()->getChildren( entries[i], filesInStore );
-        std::vector<std::string> filesToDelete;
-        for ( std::map<std::string, time_t>::const_iterator it = filesInStore.begin();
-              it != filesInStore.end(); ++it ) {
-            filesToDelete.push_back( it->first );
-        }
-        deleteEntries( filesToDelete );
+    // TODO: use a less mem intensive method
+    std::vector<std::string> stdEntries;
+    for ( int i = 0; i < entries.count(); ++i ) {
+        deleteEntries( getChildren( entries[i] ).keys() );
+        stdEntries.push_back( QFile::encodeName( entries[i] ).data() );
     }
-    m_indexManager->indexWriter()->deleteEntries( entries );
+    m_indexManager->indexWriter()->deleteEntries( stdEntries );
 }
 
 
 namespace {
     /**
-     * Returns true if the specified folder f would already be included or excluded using the list
-     * folders
+     * Creates one SPARQL filter expression that excludes the include folders.
+     * This is necessary since constructFolderSubFilter will append a slash to
+     * each folder to make sure it does not match something like
+     * '/home/foobar' with '/home/foo'.
      */
-    bool alreadyInList( const QList<QPair<QString, bool> >& folders, const QString& f, bool include )
+    QString constructExcludeIncludeFoldersFilter()
     {
-        bool included = false;
-        for ( int i = 0; i < folders.count(); ++i ) {
-            if ( f != folders[i].first &&
-                 f.startsWith( folders[i].first ) )
-                included = folders[i].second;
+        QStringList filters;
+        foreach( const QString& folder, Nepomuk::StrigiServiceConfig::self()->includeFolders() ) {
+            filters << QString::fromLatin1( "(?url!=<file://%1>)" ).arg( folder );
         }
-        return included == include;
-    }
-
-    /**
-     * Simple insertion sort
-     */
-    void insertSortFolders( const QStringList& folders, bool include, QList<QPair<QString, bool> >& result )
-    {
-        foreach( const QString& f, folders ) {
-            int pos = 0;
-            while ( result.count() > pos &&
-                    result[pos].first < f )
-                ++pos;
-            result.insert( pos, qMakePair( f, include ) );
-        }
-    }
-
-    /**
-     * Remove useless entries which would confuse the algo below.
-     * This makes sure all top-level items are include folders.
-     * This runs in O(n^2) and could be optimized but what for.
-     */
-    void cleanupList( QList<QPair<QString, bool> >& result )
-    {
-        int i = 0;
-        while ( i < result.count() ) {
-            if ( result[i].first.isEmpty() ||
-                 alreadyInList( result, result[i].first, result[i].second ) )
-                result.removeAt( i );
-            else
-                ++i;
-        }
+        return filters.join( QLatin1String( " && " ) );
     }
 
     QString constructFolderSubFilter( const QList<QPair<QString, bool> > folders, int& index )
@@ -600,8 +595,8 @@ namespace {
         if ( include ) {
             thisFilter.prepend( '!' );
         }
-
         subFilters.prepend( thisFilter );
+
         if ( subFilters.count() > 1 ) {
             return '(' + subFilters.join( include ? QLatin1String( " || " ) : QLatin1String( " && " ) ) + ')';
         }
@@ -610,14 +605,16 @@ namespace {
         }
     }
 
+    /**
+     * Creates one SPARQL filter which matches all files and folders that should NOT be indexed.
+     */
     QString constructFolderFilter()
     {
-        QList<QPair<QString, bool> > folders;
-        insertSortFolders( Nepomuk::StrigiServiceConfig::self()->folders(), true, folders );
-        insertSortFolders( Nepomuk::StrigiServiceConfig::self()->excludeFolders(), false, folders );
-        cleanupList( folders );
+        QStringList subFilters( constructExcludeIncludeFoldersFilter() );
+
+        // now add the actual filters
+        QList<QPair<QString, bool> > folders = Nepomuk::StrigiServiceConfig::self()->folders();
         int index = 0;
-        QStringList subFilters;
         while ( index < folders.count() ) {
             subFilters << constructFolderSubFilter( folders, index );
         }
@@ -637,7 +634,7 @@ void Nepomuk::IndexScheduler::removeOldAndUnwantedEntries()
     // We query all files that should not be in the store
     // This for example excludes all filex:/ URLs.
     //
-    QString query = QString::fromLatin1( "select distinct ?g where { "
+    QString query = QString::fromLatin1( "select distinct ?g ?url where { "
                                          "?r %1 ?url . "
                                          "?g <http://www.strigi.org/fields#indexGraphFor> ?r . "
                                          "FILTER(REGEX(STR(?url),'^file:/')) . "
@@ -655,7 +652,64 @@ void Nepomuk::IndexScheduler::removeOldAndUnwantedEntries()
         }
 
         const Soprano::Node& g = it[0];
+        kDebug() << "REMOVING" << it["url"].uri();
         ResourceManager::instance()->mainModel()->removeContext( g );
+    }
+
+
+    //
+    // Build filter query for all exclude filters
+    //
+    QStringList filters;
+    foreach( const QRegExp& re, Nepomuk::StrigiServiceConfig::self()->excludeFilterRegExps() ) {
+        filters << QString::fromLatin1( "REGEX(STR(?fn),\"/%1$\")" ).arg( re.pattern().replace( '\\',"\\\\" ) );
+    }
+    query = QString::fromLatin1( "select distinct ?g ?url where { "
+                                 "?r %1 ?url . "
+                                 "?r %2 ?fn . "
+                                 "?g <http://www.strigi.org/fields#indexGraphFor> ?r . "
+                                 "FILTER(REGEX(STR(?url),'^file:/')) . "
+                                 "FILTER((%3) && (%4)) . }" )
+            .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ),
+                  Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NFO::fileName() ),
+                  constructExcludeIncludeFoldersFilter(),
+                  filters.join( " || " ) );
+    kDebug() << query;
+    it = ResourceManager::instance()->mainModel()->executeQuery( query, Soprano::Query::QueryLanguageSparql );
+    while ( it.next() ) {
+
+        // wait for resume or stop (or simply continue)
+        if ( !waitForContinue() ) {
+            break;
+        }
+
+        const Soprano::Node& g = it[0];
+        kDebug() << "REMOVING" << it["url"].uri();
+        ResourceManager::instance()->mainModel()->removeContext( g );
+    }
+
+
+    //
+    // Remove all old data from Xesam-times. While we leave out the data created by libnepomuk
+    // there is no problem since libnepomuk still uses backwards compatible queries and we use
+    // libnepomuk to determine URIs in the strigi backend.
+    //
+    query = QString::fromLatin1( "select distinct ?g where { "
+                                 "?g <http://www.strigi.org/fields#indexGraphFor> ?x . "
+                                 "{ graph ?g { ?r1 <http://strigi.sf.net/ontologies/0.9#parentUrl> ?p1 . } } "
+                                 "UNION "
+                                 "{ graph ?g { ?r2 %1 ?u2 . } } "
+                                 "}" )
+            .arg( Soprano::Node::resourceToN3( Soprano::Vocabulary::Xesam::url() ) );
+    it = ResourceManager::instance()->mainModel()->executeQuery( query, Soprano::Query::QueryLanguageSparql );
+    while ( it.next() ) {
+
+        // wait for resume or stop (or simply continue)
+        if ( !waitForContinue() ) {
+            break;
+        }
+
+        ResourceManager::instance()->mainModel()->removeContext( it[0] );
     }
 }
 

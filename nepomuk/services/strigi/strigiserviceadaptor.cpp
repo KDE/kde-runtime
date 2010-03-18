@@ -72,6 +72,12 @@ QString Nepomuk::StrigiServiceAdaptor::currentFolder()
 }
 
 
+QString Nepomuk::StrigiServiceAdaptor::currentFile()
+{
+    return m_service->indexScheduler()->currentFile();
+}
+
+
 void Nepomuk::StrigiServiceAdaptor::resume()
 {
     // handle method call org.kde.nepomuk.Strigi.resume

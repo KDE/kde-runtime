@@ -41,18 +41,26 @@ namespace Nepomuk {
         static StrigiServiceConfig* self();
 
         /**
-         * The folders to search for files to analyze
+         * A cleaned up list of all include and exclude folders
+         * with their respective include/exclude flag sorted by
+         * path. None of the paths have trailing slashes.
          */
-        QStringList folders() const;
+        QList<QPair<QString, bool> > folders() const;
 
         /**
-         * The folders that should be excluded.
+         * The folders to search for files to analyze. Cached and cleaned up.
+         */
+        QStringList includeFolders() const;
+
+        /**
+         * The folders that should be excluded. Cached and cleaned up.
          * It is perfectly possible to include subfolders again.
          */
         QStringList excludeFolders() const;
 
         QStringList excludeFilters() const;
-        QStringList includeFilters() const;
+
+        QList<QRegExp> excludeFilterRegExps() const { return m_excludeFilterRegExpCache; }
 
         bool indexHiddenFolders() const;
 
@@ -72,7 +80,13 @@ namespace Nepomuk {
          * Check if the folder should be indexed based on
          * folders() and excludeFolders()
          */
-        bool shouldFolderBeIndexed( const QString& );
+        bool shouldFolderBeIndexed( const QString& ) const;
+
+        /**
+         * Check \p fileName for all exclude filters. This does
+         * not take file paths into account.
+         */
+        bool shouldFileBeIndexed( const QString& fileName ) const;
 
     Q_SIGNALS:
         void configChanged();
@@ -83,10 +97,20 @@ namespace Nepomuk {
     private:
         StrigiServiceConfig();
 
-        bool folderInFolderList( const QString& path, const QStringList& include, const QStringList& exclude ) const;
+        /**
+         * Check if \p path is in the list of folders to be indexed taking
+         * include and exclude folders into account.
+         * \p exact is set to true if \p path is a top level folder from
+         * the include or exclude list.
+         */
+        bool folderInFolderList( const QString& path, bool& exact ) const;
+        void buildFolderCache();
         void buildExcludeFilterRegExpCache();
 
         KConfig m_config;
+
+        /// Caching cleaned up list (no duplicates, no useless entries, etc.)
+        QList<QPair<QString, bool> > m_folderCache;
 
         /// cache of regexp objects for all exclude filters
         /// to prevent regexp parsing over and over

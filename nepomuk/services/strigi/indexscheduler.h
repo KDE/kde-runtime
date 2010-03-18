@@ -28,14 +28,14 @@
 #include <vector>
 #include <string>
 
+#include <KUrl>
+
 namespace Strigi {
     class StreamAnalyzer;
     class IndexManager;
 }
 
 class QFileInfo;
-class QUrl;
-class KUrl;
 class QByteArray;
 
 
@@ -63,6 +63,14 @@ namespace Nepomuk {
          * If suspended the folder might still be set!
          */
         QString currentFolder() const;
+
+        /**
+         * The file currently being indexed. Empty if not indexing.
+         * If suspended the file might still be set!
+         *
+         * This file should always be a child of currentFolder().
+         */
+        QString currentFile() const;
 
         enum UpdateDirFlag {
             /**
@@ -165,21 +173,21 @@ namespace Nepomuk {
         void indexingSuspended( bool suspended );
 
     private Q_SLOTS:
-        void readConfig();
         void slotConfigChanged();
 
     private:
         void run();
 
-        bool waitForContinue();
+        bool waitForContinue( bool disableDelay = false );
         bool updateDir( const QString& dir, Strigi::StreamAnalyzer* analyzer, UpdateDirFlags flags );
         void analyzeFile( const QFileInfo& file, Strigi::StreamAnalyzer* analyzer );
+        void queueAllFoldersForUpdate( bool forceUpdate = false );
 
         /**
          * Deletes all indexed information about entries and all subfolders and files
          * from the store
          */
-        void deleteEntries( const std::vector<std::string>& entries );
+        void deleteEntries( const QStringList& entries );
 
         // emits indexingStarted or indexingStopped based on parameter. Makes sure
         // no signal is emitted twice
@@ -209,6 +217,7 @@ namespace Nepomuk {
         QWaitCondition m_dirsToUpdateWc;
 
         QString m_currentFolder;
+        KUrl m_currentUrl;
 
         IndexingSpeed m_speed;
     };

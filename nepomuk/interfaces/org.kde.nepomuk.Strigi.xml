@@ -11,6 +11,9 @@
     <method name="currentFolder">
       <arg type="s" direction="out" />
     </method>
+    <method name="currentFile">
+      <arg type="s" direction="out" />
+    </method>
     <method name="suspend" />
     <method name="resume" />
     <method name="updateFolder">

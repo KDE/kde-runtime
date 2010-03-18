@@ -45,12 +45,6 @@ Nepomuk::EventMonitor::EventMonitor( IndexScheduler* scheduler, QObject* parent 
       m_indexScheduler( scheduler ),
       m_pauseState( NotPaused )
 {
-    // FileSystemWatcher does not catch changes to files, only new and removed files
-    // thus, we also do periodic updates of the whole index every two hours
-    connect( &m_periodicUpdateTimer, SIGNAL( timeout() ),
-             m_indexScheduler, SLOT( updateAll() ) );
-    m_periodicUpdateTimer.setInterval( 2*60*60*1000 );
-
     // monitor the powermanagement to not drain the battery
     connect( Solid::PowerManagement::notifier(), SIGNAL( appShouldConserveResourcesChanged( bool ) ),
              this, SLOT( slotPowerManagementStatusChanged( bool ) ) );
@@ -76,9 +70,6 @@ Nepomuk::EventMonitor::EventMonitor( IndexScheduler* scheduler, QObject* parent 
         connect( m_indexScheduler, SIGNAL( indexingStopped() ),
                  this, SLOT( slotIndexingStopped() ),
                  Qt::QueuedConnection );
-    }
-    else {
-        m_periodicUpdateTimer.start();
     }
 
     slotPowerManagementStatusChanged( Solid::PowerManagement::appShouldConserveResources() );
@@ -149,8 +140,6 @@ void Nepomuk::EventMonitor::slotIndexingStopped()
                           KGlobal::locale()->prettyFormatDuration( m_initialIndexTime.elapsed() ) ),
                    "nepomuk" );
         m_indexScheduler->disconnect( this );
-
-        m_periodicUpdateTimer.start();
     }
 }
 

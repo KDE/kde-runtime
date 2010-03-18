@@ -43,6 +43,9 @@ namespace Nepomuk {
                     "    <method name=\"currentFolder\">\n"
                     "      <arg direction=\"out\" type=\"s\"/>\n"
                     "    </method>\n"
+                    "    <method name=\"currentFile\">\n"
+                    "      <arg direction=\"out\" type=\"s\"/>\n"
+                    "    </method>\n"
                     "    <method name=\"suspend\"/>\n"
                     "    <method name=\"resume\"/>\n"
                     "    <method name=\"updateFolder\">\n"
@@ -86,6 +89,7 @@ namespace Nepomuk {
         bool isIndexing();
         bool isSuspended();
         QString currentFolder();
+        QString currentFile();
         void resume();
         void suspend();
 

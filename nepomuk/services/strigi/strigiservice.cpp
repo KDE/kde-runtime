@@ -24,8 +24,8 @@
 #include "systray.h"
 #include "strigiserviceconfig.h"
 #include "statuswidget.h"
-#include "filesystemwatcher.h"
 #include "useractivitymonitor.h"
+#include "filewatchserviceinterface.h"
 
 #include <KDebug>
 #include <KDirNotify>
@@ -42,10 +42,6 @@ Nepomuk::StrigiService::StrigiService( QObject* parent, const QList<QVariant>& )
     : Service( parent, true ),
       m_indexManager( 0 )
 {
-    // only so ResourceManager won't open yet another connection to the nepomuk server
-    ResourceManager::instance()->setOverrideMainModel( mainModel() );
-
-
     // lower process priority - we do not want to spoil KDE usage
     // ==============================================================
     if ( !lowerPriority() )
@@ -63,18 +59,6 @@ Nepomuk::StrigiService::StrigiService( QObject* parent, const QList<QVariant>& )
 
         // monitor all kinds of events
         ( void )new EventMonitor( m_indexScheduler, this );
-
-        // monitor the file system
-        m_fsWatcher = new FileSystemWatcher( this );
-        m_fsWatcher->setWatchRecursively( true );
-        connect( m_fsWatcher, SIGNAL( dirty( QString ) ),
-                 this, SLOT( slotDirDirty( QString ) ) );
-
-        // monitor all KDE-ish changes for quick updates
-        connect( new org::kde::KDirNotify( QString(), QString(), QDBusConnection::sessionBus(), this ),
-                 SIGNAL( FilesAdded( QString ) ),
-                 this, SLOT( slotDirDirty( const QString& ) ) );
-
 
         // update the watches if the config changes
         connect( StrigiServiceConfig::self(), SIGNAL( configChanged() ),
@@ -97,8 +81,6 @@ Nepomuk::StrigiService::StrigiService( QObject* parent, const QList<QVariant>& )
         connect( m_indexScheduler, SIGNAL( indexingFolder(QString) ),
                  this, SIGNAL( statusStringChanged() ) );
         connect( m_indexScheduler, SIGNAL( indexingSuspended(bool) ),
-                 this, SIGNAL( statusStringChanged() ) );
-        connect( m_fsWatcher, SIGNAL( statusChanged(FileSystemWatcher::Status) ),
                  this, SIGNAL( statusStringChanged() ) );
 
         // setup the indexer to index at snail speed for the first two minutes
@@ -143,27 +125,17 @@ void Nepomuk::StrigiService::finishInitialization()
     // full speed until the user is active
     m_indexScheduler->setIndexingSpeed( IndexScheduler::FullSpeed );
 
-    // start watching the fs the ugly way
     updateWatches();
 }
 
 
 void Nepomuk::StrigiService::updateWatches()
 {
-    // the hard way since the KDirWatch API is too simple
-    QStringList folders = StrigiServiceConfig::self()->folders();
-    if ( folders != m_fsWatcher->folders() ) {
-        m_fsWatcher->setFolders( StrigiServiceConfig::self()->folders() );
-        m_fsWatcher->setInterval( 2*60 ); // check every 2 minutes
-        m_fsWatcher->start();
-    }
-}
-
-
-void Nepomuk::StrigiService::slotDirDirty( const QString& path )
-{
-    if ( StrigiServiceConfig::self()->shouldFolderBeIndexed( path ) ) {
-        m_indexScheduler->updateDir( path );
+    org::kde::nepomuk::FileWatch filewatch( "org.kde.nepomuk.services.nepomukfilewatch",
+                                            "/nepomukfilewatch",
+                                            QDBusConnection::sessionBus() );
+    foreach( const QString& folder, StrigiServiceConfig::self()->includeFolders() ) {
+        filewatch.watchFolder( folder );
     }
 }
 
@@ -183,9 +155,6 @@ QString Nepomuk::StrigiService::userStatusString() const
         else
             return i18nc( "@info:status", "Strigi is currently indexing files in folder %1", folder );
     }
-    else if ( m_fsWatcher->status() == FileSystemWatcher::Checking ) {
-        return i18nc( "@info:status", "Checking file system for new files" );
-    }
     else {
         return i18nc( "@info:status", "File indexer is idle" );
     }
@@ -194,7 +163,7 @@ QString Nepomuk::StrigiService::userStatusString() const
 
 bool Nepomuk::StrigiService::isIdle() const
 {
-    return ( !m_indexScheduler->isIndexing() && m_fsWatcher->status() == FileSystemWatcher::Idle );
+    return ( !m_indexScheduler->isIndexing() );
 }
 
 
@@ -202,11 +171,9 @@ void Nepomuk::StrigiService::setSuspended( bool suspend )
 {
     if ( suspend ) {
         m_indexScheduler->suspend();
-        m_fsWatcher->suspend();
     }
     else {
         m_indexScheduler->resume();
-        m_fsWatcher->resume();
     }
 }
 

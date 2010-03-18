@@ -26,7 +26,6 @@
 namespace Strigi {
     class IndexManager;
 }
-class FileSystemWatcher;
 
 namespace Nepomuk {
 
@@ -60,15 +59,12 @@ namespace Nepomuk {
     private Q_SLOTS:
         void finishInitialization();
         void updateWatches();
-        void slotDirDirty( const QString& );
 
     private:
         void updateStrigiConfig();
 
         Strigi::IndexManager* m_indexManager;
         IndexScheduler* m_indexScheduler;
-
-        FileSystemWatcher* m_fsWatcher;
     };
 }
 

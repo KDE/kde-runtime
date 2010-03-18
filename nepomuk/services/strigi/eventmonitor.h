@@ -57,8 +57,6 @@ namespace Nepomuk {
         QTimer m_availSpaceTimer;
 
         QTime m_initialIndexTime;
-
-        QTimer m_periodicUpdateTimer;
     };
 }
 
