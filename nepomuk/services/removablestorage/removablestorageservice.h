@@ -65,6 +65,8 @@ namespace Nepomuk {
          */
         Q_SCRIPTABLE QString resourceUriFromLocalFileUrl( const QString& url );
 
+        Q_SCRIPTABLE QStringList currentlyMountedAndIndexed();
+
     private Q_SLOTS:
         void slotSolidDeviceAdded( const QString& udi );
         void slotSolidDeviceRemoved( const QString& udi );
@@ -89,6 +91,7 @@ namespace Nepomuk {
 
             KUrl constructRelativeUrl( const QString& path ) const;
             QString constructLocalPath( const KUrl& filexUrl ) const;
+            bool hasLastMountPath() const;
 
             Solid::Device m_device;
             QString m_lastMountPath;

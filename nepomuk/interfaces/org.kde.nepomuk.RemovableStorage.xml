@@ -6,5 +6,8 @@
       <arg type="s" direction="out"/>
       <arg name="url" type="s" direction="in"/>
     </method>
+    <method name="currentlyMountedAndIndexed">
+      <arg type="as" direction="out"/>
+    </method>
   </interface>
 </node>

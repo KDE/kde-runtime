@@ -20,6 +20,7 @@
 #include "nfo.h"
 #include "nie.h"
 #include "strigiserviceinterface.h"
+#include "filewatchserviceinterface.h"
 
 #include <QtDBus/QDBusConnection>
 #include <QtCore/QUuid>
@@ -172,6 +173,26 @@ QString Nepomuk::RemovableStorageService::resourceUriFromLocalFileUrl( const QSt
 }
 
 
+QStringList Nepomuk::RemovableStorageService::currentlyMountedAndIndexed()
+{
+    if( KConfig( "nepomukstrigirc" ).group( "General" ).readEntry( "index newly mounted", false ) ) {
+        QStringList paths;
+        for ( QHash<QString, Entry>::ConstIterator it = m_metadataCache.constBegin();
+              it != m_metadataCache.constEnd(); ++it ) {
+            const Entry& entry = it.value();
+            const Solid::StorageAccess* storage = entry.m_device.as<Solid::StorageAccess>();
+            if ( storage && storage->isAccessible() ) {
+                paths << storage->filePath();
+            }
+        }
+        return paths;
+    }
+    else {
+        return QStringList();
+    }
+}
+
+
 void Nepomuk::RemovableStorageService::initCacheEntries()
 {
     QList<Solid::Device> devices
@@ -248,14 +269,25 @@ void Nepomuk::RemovableStorageService::slotAccessibilityChanged( bool accessible
         //
         entry.m_lastMountPath = entry.m_device.as<Solid::StorageAccess>()->filePath();
 
-        //
-        // tell Strigi to update the newly mounted device
-        //
-        if( KConfig( "nepomukstrigirc" ).group( "General" ).readEntry( "index newly mounted", false ) ) {
-            org::kde::nepomuk::Strigi interface( "org.kde.nepomuk.services.nepomukstrigiservice",
-                                                 "/nepomukstrigiservice",
-                                                 QDBusConnection::sessionBus() );
-            interface.indexFolder( entry.m_lastMountPath, false );
+        if ( entry.hasLastMountPath() ) {
+            //
+            // tell the filewatch service that it should monitor the new medium
+            //
+            org::kde::nepomuk::FileWatch( "org.kde.nepomuk.services.nepomukfilewatch",
+                                          "/nepomukfilewatch",
+                                          QDBusConnection::sessionBus() )
+                .watchFolder( entry.m_lastMountPath );
+
+
+            //
+            // tell Strigi to update the newly mounted device
+            //
+            if( KConfig( "nepomukstrigirc" ).group( "General" ).readEntry( "index newly mounted", false ) ) {
+                org::kde::nepomuk::Strigi( "org.kde.nepomuk.services.nepomukstrigiservice",
+                                           "/nepomukstrigiservice",
+                                           QDBusConnection::sessionBus() )
+                    .indexFolder( entry.m_lastMountPath, false );
+            }
         }
 
         //
@@ -284,7 +316,7 @@ void Nepomuk::RemovableStorageService::slotAccessibilityChanged( bool accessible
             }
         }
     }
-    else {
+    else if ( entry.hasLastMountPath() ) {
         //
         // The first thing we need to do is to inform nepomuk:/ kio slave instances that something has changed
         // so any caches will be cleared. Otherwise KDirModel and friends might try to access the old media URLs
@@ -365,6 +397,13 @@ QString Nepomuk::RemovableStorageService::Entry::constructLocalPath( const KUrl&
         path.truncate( path.length()-1 );
     path += filexUrl.path();
     return path;
+}
+
+
+bool Nepomuk::RemovableStorageService::Entry::hasLastMountPath() const
+{
+    return( !m_lastMountPath.isEmpty() &&
+            m_lastMountPath != QLatin1String( "/" ) );
 }
 
 NEPOMUK_EXPORT_SERVICE( Nepomuk::RemovableStorageService, "nepomukremovablestorageservice")
