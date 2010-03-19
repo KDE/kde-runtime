@@ -27,7 +27,7 @@
 class QTimer;
 
 class KJobTest
-    : public KIO::Job
+        : public KIO::Job
 {
     Q_OBJECT
 

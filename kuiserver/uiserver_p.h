@@ -1,4 +1,4 @@
-/**
+/*
   * This file is part of the KDE project
   * Copyright (C) 2007 Rafael Fernández López <ereslibre@kde.org>
   *
@@ -15,19 +15,18 @@
   * along with this library; see the file COPYING.LIB.  If not, write to
   * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
   * Boston, MA 02110-1301, USA.
-  */
+*/
 
 #ifndef UISERVER_P_H
 #define UISERVER_P_H
 
 #include <QtGui/QWidget>
-#include <QtDBus/QDBusObjectPath>
 
-#include "ui_uiserverConfigDialog.h"
+#include "ui_configdialog.h"
 
 class UIConfigurationDialog
-    : public QWidget
-    , private Ui::configurationDialog
+        : public QWidget
+        , private Ui::configurationDialog
 {
     Q_OBJECT
 

@@ -27,8 +27,8 @@
 #include <kuiserverjobtracker.h>
 
 KJobTest::KJobTest(int numberOfSeconds)
-    : KIO::Job(), timer(new QTimer(this)), clockTimer(new QTimer(this)),
-      seconds(numberOfSeconds), total(numberOfSeconds)
+        : KIO::Job(), timer(new QTimer(this)), clockTimer(new QTimer(this)),
+        seconds(numberOfSeconds), total(numberOfSeconds)
 {
     setCapabilities(KJob::NoCapabilities);
 }
@@ -65,7 +65,7 @@ void KJobTest::timerTimeout()
 void KJobTest::updateMessage()
 {
     emit infoMessage(this, i18n("Testing kuiserver (%1 seconds remaining)", seconds), i18n("Testing kuiserver (%1 seconds remaining)", seconds));
-    emitPercent(total-seconds, total);
+    emitPercent(total - seconds, total);
 
     seconds--;
 }

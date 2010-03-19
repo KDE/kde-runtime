@@ -1,4 +1,4 @@
-/**
+/*
   * This file is part of the KDE project
   * Copyright (C) 2007, 2006 Rafael Fernández López <ereslibre@kde.org>
   *
@@ -15,7 +15,7 @@
   * along with this library; see the file COPYING.LIB.  If not, write to
   * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
   * Boston, MA 02110-1301, USA.
-  */
+*/
 
 #ifndef PROGRESSLISTDELEGATE_P_H
 #define PROGRESSLISTDELEGATE_P_H
@@ -37,37 +37,29 @@ class ProgressListDelegate::Private
 public:
     Private(QListView *listView)
         : separatorPixels(0),
-          leftMargin(0),
-          rightMargin(0),
-          minimumItemHeight(0),
-          minimumContentWidth(0),
-          editorHeight(0),
-          iconWidth(0),
-          listView(listView),
-          progressBar(new QProgressBar(0))
+        leftMargin(0),
+        rightMargin(0),
+        minimumItemHeight(0),
+        minimumContentWidth(0),
+        editorHeight(0),
+        iconWidth(0),
+        listView(listView),
+        progressBar(new QProgressBar(0))
     {
     }
 
-    ~Private()
-    {
+    ~Private() {
         delete progressBar;
     }
 
-    QString getApplicationInternalName(const QModelIndex &index) const;
-    QString getApplicationName(const QModelIndex &index) const;
     QString getIcon(const QModelIndex &index) const;
-    QString getSizeTotals(const QModelIndex &index) const;
+    QString getSizeTotal(const QModelIndex &index) const;
     QString getSizeProcessed(const QModelIndex &index) const;
-    qlonglong getTimeTotals(const QModelIndex &index) const;
+    qlonglong getTimeTotal(const QModelIndex &index) const;
     qlonglong getTimeProcessed(const QModelIndex &index) const;
-    QString getFromLabel(const QModelIndex &index) const;
-    QString getFrom(const QModelIndex &index) const;
-    QString getToLabel(const QModelIndex &index) const;
-    QString getTo(const QModelIndex &index) const;
     QString getSpeed(const QModelIndex &index) const;
     int getPercent(const QModelIndex &index) const;
-    QString getMessage(const QModelIndex &index) const;
-    QString getProgressMessage(const QModelIndex &index) const;
+    QString getInfoMessage(const QModelIndex &index) const;
     int getCurrentLeftMargin(int fontHeight) const;
 
 public:

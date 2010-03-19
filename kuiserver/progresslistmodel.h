@@ -1,5 +1,6 @@
-/**
+/*
   * This file is part of the KDE project
+  * Copyright (C) 2009 Shaun Reich <shaun.reich@kdemail.net>
   * Copyright (C) 2006-2008 Rafael Fernández López <ereslibre@kde.org>
   *
   * This library is free software; you can redistribute it and/or
@@ -15,152 +16,174 @@
   * along with this library; see the file COPYING.LIB.  If not, write to
   * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
   * Boston, MA 02110-1301, USA.
-  */
+*/
 
 #ifndef PROGRESSLISTMODEL_H
 #define PROGRESSLISTMODEL_H
 
 #include "uiserver.h"
+#include "jobview.h"
 
 #include <QAbstractListModel>
-#include <QTimer>
 
-#include <kio/global.h>
-#include <kio/jobclasses.h>
+class QDBusAbstractInterface;
+class JobViewServerAdaptor;
+class QDBusConnectionInterface;
+class RequestViewCallWatcher;
 
-class KWidgetJobTracker;
 
-struct JobInfo
+class ProgressListModel: public QAbstractItemModel
 {
-    enum State {
-        InvalidState = 0,
-        Running,
-        Suspended,
-        Cancelled
-    };
+    Q_OBJECT;
+    Q_CLASSINFO("D-Bus Interface", "org.kde.JobViewServer");
 
-    int capabilities;           ///< The capabilities of the job
-    UIServer::JobView *jobView; ///< The D-Bus object associated to this job
-    QString applicationName;    ///< The application name
-    QString icon;               ///< The icon name
-    QString sizeTotals;         ///< The total size of the operation
-    QString sizeProcessed;      ///< The processed size at the moment
-    qlonglong timeElapsed;      ///< The elapsed time
-    qlonglong timeTotals;       ///< The total time of the operation
-    QString speed;              ///< The current speed of the operation (human readable, example, "3Mb/s")
-    int percent;                ///< The current percent of the progress
-    QString message;            ///< The information message to be shown
-    QHash<uint, QPair<QString, QString> > descFields; ///< Description fields
-    State state;                ///< The state of the job
-};
-
-class ProgressListModel
-    : public QAbstractItemModel
-{
-    Q_OBJECT
 
 public:
-    enum ExtraModelRole
-    {
-        Capabilities = 33,
-        ApplicationName,
-        Icon,
-        SizeTotals,
-        SizeProcessed,
-        TimeTotals,
-        TimeElapsed,
-        Speed,
-        Percent,
-        Message,
-        DescFields,
-        State,
-        JobViewRole
-    };
 
-    ProgressListModel(QObject *parent = 0);
+    explicit ProgressListModel(QObject *parent = 0);
     ~ProgressListModel();
 
     QModelIndex parent(const QModelIndex&) const;
 
-    /**
-      * Returns the data on @p index that @p role contains. The result is
-      * a QVariant, so you may need to cast it to the type you want
-      *
-      * @param index    the index in which you are accessing
-      * @param role     the role you want to retrieve
-      * @return         the data in a QVariant class
-      */
-    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
 
     /**
-      * Returns what operations the model/delegate support on the given @p index
-      *
-      * @param index    the index in which you want to know the allowed operations
-      * @return         the allowed operations on the model/delegate
-      */
+    * Returns what operations the model/delegate support on the given @p index
+    *
+    * @param index    the index in which you want to know the allowed operations
+    * @return         the allowed operations on the model/delegate
+    */
     Qt::ItemFlags flags(const QModelIndex &index) const;
 
+
     /**
-      * Returns the index for the given @p row. Since it is a list, @p column should
-      * be 0, but it will be ignored. @p parent will be ignored as well.
-      *
-      * @param row      the row you want to get the index
-      * @param column   will be ignored
-      * @param parent   will be ignored
-      * @return         the index for the given @p row as a QModelIndex
-      */
+    * Returns the data on @p index that @p role contains. The result is
+    * a QVariant, so you may need to cast it to the type you want
+    *
+    * @param index    the index in which you are accessing
+    * @param role     the role you want to retrieve
+    * @return         the data in a QVariant class
+    */
+    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
+
+
+    /**
+    * Returns the index for the given @p row. Since it is a list, @p column should
+    * be 0, but it will be ignored. @p parent will be ignored as well.
+    *
+    * @param row      the row you want to get the index
+    * @param column   will be ignored
+    * @param parent   will be ignored
+    * @return         the index for the given @p row as a QModelIndex
+    */
     QModelIndex index(int row, int column = 0, const QModelIndex &parent = QModelIndex()) const;
 
-    QModelIndex indexForJob(UIServer::JobView *jobView) const;
+    QModelIndex indexForJob(JobView *jobView) const;
+
 
     /**
-      * Returns the number of columns
-      *
-      * @param parent   will be ignored
-      * @return         the number of columns. In this case is always 1
-      */
+    * Returns the number of columns
+    *
+    * @param parent   will be ignored
+    * @return         the number of columns. In this case is always 1
+    */
     int columnCount(const QModelIndex &parent = QModelIndex()) const;
 
+
     /**
-      * Returns the number of rows
-      *
-      * @param parent   will be ignored
-      * @return         the number of rows in the model
-      */
+    * Returns the number of rows
+    *
+    * @param parent   will be ignored
+    * @return         the number of rows in the model
+    */
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
 
+
     /**
-      * Sets the data contained on @p value to the given @p index and @p role
-      *
-      * @param index    the index where the data contained on @p value will be stored
-      * @param value    the data that is going to be stored
-      * @param role     in what role we want to store the data at the given @p index
-      * @return         whether the data was successfully stored or not
-      */
-    bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
+    * Called by a KJob's DBus connection to this ("JobViewServer").
+    * Indicates that the KJob is now in existence (and is a just-created job).
+    * Returns a QDBusObjectPath that represents a unique dbus path that is a subset
+    * of the current "org.kde.JobView" address(so there can be multiple jobs, and KJob
+    * can keep track of them.
+    */
+    QDBusObjectPath requestView(const QString &appName, const QString &appIconName, int capabilities);
 
-    void addFinishedJob(ProgressListModel *model, const QModelIndex &index);
-    UIServer::JobView* newJob(const QString &appName, const QString &appIcon, int capabilities);
+public Q_SLOTS:
+    /**
+    * Calling this(within "org.kde.kuiserver") results in all of the
+    * information that pertains to any KJobs and status updates for
+    * them, being sent to this DBus address, at the given
+    * @p objectPath
+    * Note that you will also receive jobs that existed before this was
+    * called
+    */
+    void registerService(const QString &service, const QString &objectPath);
 
-    void finishJob(UIServer::JobView *jobView);
+    /**
+    * Forces emission of jobUrlsChanged() signal...exposed to D-BUS (because they need it).
+    * @see jobUrlsChanged
+    */
+    void emitJobUrlsChanged();
 
-    QPair<QString, QString> getDescriptionField(const QModelIndex &index, uint id);
+    /**
+    * Whether or not a JobTracker will be needed. This will occur if there are no useful registered
+    * services. For example, this would occur if Plasma has "Show application jobs/file transfers" disabled.
+    * In which case, returning true here would be expected. This way KDynamicJobTracker can create a
+    * KWidgetJobTracker for each job (shows a dialog for each job).
+    * @return if a proper job tracker needs to be created by something.
+    */
+    bool requiresJobTracker();
 
-    bool setDescriptionField(const QModelIndex &index, uint id, const QString &name, const QString &value);
+private Q_SLOTS:
 
-    void clearDescriptionField(const QModelIndex &index, uint id);
+    void jobFinished(JobView *jobView);
+    void jobChanged(uint jobId);
 
-    JobInfo::State state(const QModelIndex &index) const;
+
+    /**
+    * Only implemented to handle the case when a client drops out.
+    *
+    * @p oldOwner is the old service address.
+    * @p newOwner if null, then it's true, it dropped off of the bus.
+    */
+    void slotServiceOwnerChanged(const QString &name, const QString &oldOwner, const QString &newOwner);
+
+    void pendingCallFinished(RequestViewCallWatcher *watcher);
+
+Q_SIGNALS:
+    void serviceDropped(const QString&);
+
+    /**
+    * Emits a list of destination URL's that have
+    * jobs pertaining to them(when it changes).
+    */
+    void jobUrlsChanged(QStringList);
 
 private:
-    /**
-      * @internal
-      */
-    bool setData(int row, const QVariant &value, int role = Qt::EditRole);
 
-    QMap<UIServer::JobView*, JobInfo> jobInfoMap; /// @internal
+    QDBusObjectPath newJob(const QString &appName, const QString &appIcon, int capabilities);
+
+    ///< desturls
+    QStringList gatherJobUrls();
+
+    /**
+    * The next available(unused) unique jobId, we can use this one directly,
+    * just remember to increment it after you construct a job from it.
+    */
+    uint m_jobId;
+
+    QList<JobView*> m_jobViews;
+
+    /**
+     * Contains the list of registered services. In other words, the clients
+     * who have "subscribed" to our D-Bus interface so they can get informed
+     * about changes to all the jobs.
+     */
+    QHash<QString, QDBusAbstractInterface*> m_registeredServices;
+
+    UiServer *m_uiServer;
+
 };
 
-Q_DECLARE_METATYPE(UIServer::JobView*)
+Q_DECLARE_METATYPE(JobView*);
 
 #endif // PROGRESSLISTMODEL_H

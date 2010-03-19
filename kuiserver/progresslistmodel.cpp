@@ -1,5 +1,6 @@
-/**
+/*
   * This file is part of the KDE project
+  * Copyright (C) 2009 Shaun Reich <shaun.reich@kdemail.net>
   * Copyright (C) 2006-2008 Rafael Fernández López <ereslibre@kde.org>
   *
   * This library is free software; you can redistribute it and/or
@@ -15,24 +16,83 @@
   * along with this library; see the file COPYING.LIB.  If not, write to
   * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
   * Boston, MA 02110-1301, USA.
-  */
+*/
 
 #include "progresslistmodel.h"
+#include "jobviewserveradaptor.h"
+#include "kuiserveradaptor.h"
+#include "jobviewserver_interface.h"
+#include "requestviewcallwatcher.h"
+#include "uiserver.h"
 
-#include <kwidgetjobtracker.h>
+#include <kdebug.h>
 
 ProgressListModel::ProgressListModel(QObject *parent)
-    : QAbstractItemModel(parent)
+        : QAbstractItemModel(parent), m_jobId(1),
+        m_uiServer(0)
 {
+    // Register necessary services and D-Bus adaptors.
+    new JobViewServerAdaptor(this);
+    new KuiserverAdaptor(this);
+
+    QDBusConnection sessionBus = QDBusConnection::sessionBus();
+
+    if (!sessionBus.registerService(QLatin1String("org.kde.kuiserver"))) {
+        kDebug(7024) <<
+        "********** Error, we have failed to register service org.kde.kuiserver. Perhaps something  has already taken it?";
+    }
+
+    if (!sessionBus.registerService(QLatin1String("org.kde.JobViewServer"))) {
+        kDebug(7024) <<
+        "********** Error, we have failed to register service JobViewServer. Perhaps something already has taken it?";
+    }
+
+    if (!sessionBus.registerObject(QLatin1String("/JobViewServer"), this)) {
+        kDebug(7024) <<
+        "********** Error, we have failed to register object /JobViewServer.";
+    }
+
+    connect(sessionBus.interface(), SIGNAL(serviceOwnerChanged(const QString&, const QString&, const QString&)),
+            this, SLOT(slotServiceOwnerChanged(const QString&, const QString&, const QString&)));
+
+    /* unused
+    if (m_registeredServices.isEmpty() && !m_uiServer) {
+        m_uiServer = new UiServer(this);
+    }
+    */
 }
 
 ProgressListModel::~ProgressListModel()
 {
+    QDBusConnection sessionBus = QDBusConnection::sessionBus();
+    sessionBus.unregisterService("org.kde.JobViewServer");
+    sessionBus.unregisterService("org.kde.kuiserver");
+
+    qDeleteAll(m_jobViews);
+
+    delete m_uiServer;
 }
 
 QModelIndex ProgressListModel::parent(const QModelIndex&) const
 {
     return QModelIndex();
+}
+
+QDBusObjectPath ProgressListModel::requestView(const QString &appName, const QString &appIconName, int capabilities)
+{
+    return newJob(appName, appIconName, capabilities);
+}
+
+Qt::ItemFlags ProgressListModel::flags(const QModelIndex &index) const
+{
+    Q_UNUSED(index);
+    return Qt::ItemIsEnabled;
+}
+
+int ProgressListModel::columnCount(const QModelIndex &parent) const
+{
+    Q_UNUSED(parent);
+    return 1;
 }
 
 QVariant ProgressListModel::data(const QModelIndex &index, int role) const
@@ -43,262 +103,221 @@ QVariant ProgressListModel::data(const QModelIndex &index, int role) const
         return result;
     }
 
-    JobInfo &jobInfo = const_cast<ProgressListModel*>(this)->jobInfoMap[static_cast<UIServer::JobView*>(index.internalPointer())];
+    JobView *jobView = m_jobViews.at(index.row());
+    Q_ASSERT(jobView);
 
-    switch (role)
-    {
-        case Capabilities:
-            result = jobInfo.capabilities;
-            break;
-        case ApplicationName:
-            result = jobInfo.applicationName;
-            break;
-        case Icon:
-            result = jobInfo.icon;
-            break;
-        case SizeTotals:
-            result = jobInfo.sizeTotals;
-            break;
-        case SizeProcessed:
-            result = jobInfo.sizeProcessed;
-            break;
-        case TimeTotals:
-            result = jobInfo.timeTotals;
-            break;
-        case TimeElapsed:
-            result = jobInfo.timeElapsed;
-            break;
-        case Speed:
-            result = jobInfo.speed;
-            break;
-        case Percent:
-            result = jobInfo.percent;
-            break;
-        case Message:
-            result = jobInfo.message;
-            break;
-        case State:
-            result = jobInfo.state;
-            break;
-        case JobViewRole:
-            result = QVariant::fromValue<UIServer::JobView*>(jobInfo.jobView);
-            break;
-        default:
-            break;
+    switch (role) {
+    case JobView::Capabilities:
+        result = jobView->capabilities();
+        break;
+    case JobView::ApplicationName:
+        result = jobView->appName();
+        break;
+    case JobView::Icon:
+        result = jobView->appIconName();
+        break;
+    case JobView::SizeTotal:
+        result = jobView->sizeTotal();
+        break;
+    case JobView::SizeProcessed:
+        result = jobView->sizeProcessed();
+        break;
+    case JobView::TimeTotal:
+
+        break;
+    case JobView::TimeElapsed:
+
+        break;
+    case JobView::Speed:
+        result = jobView->speed();
+        break;
+    case JobView::Percent:
+        result = jobView->percent();
+        break;
+    case JobView::InfoMessage:
+        result = jobView->infoMessage();
+        break;
+    case JobView::DescFields:
+
+        break;
+    case JobView::State:
+        result = jobView->state();
+        break;
+    case JobView::JobViewRole:
+        result = QVariant::fromValue<JobView*>(jobView);
+        break;
+    default:
+        break;
     }
 
     return result;
-}
-
-Qt::ItemFlags ProgressListModel::flags(const QModelIndex &index) const
-{
-    Q_UNUSED(index);
-
-    return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
 }
 
 QModelIndex ProgressListModel::index(int row, int column, const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
 
-    if (row >= jobInfoMap.count() || column > 0)
+    if (row >= m_jobViews.count() || column > 0)
         return QModelIndex();
 
-    int i = 0;
-    UIServer::JobView *jobView = 0;
-    QMap<UIServer::JobView*, JobInfo>::const_iterator it = jobInfoMap.constBegin();
-    QMap<UIServer::JobView*, JobInfo>::const_iterator itEnd = jobInfoMap.constEnd();
-    while (it != itEnd) {
-        if (i == row) {
-            jobView = it.key();
-            break;
-        }
-        ++it;
-        ++i;
-    }
+        return createIndex(row, column);
+}
 
-    if (jobView) {
-        return createIndex(row, column, jobView);
+QModelIndex ProgressListModel::indexForJob(JobView *jobView) const
+{
+    int index = m_jobViews.indexOf(jobView);
+
+    if (index != -1) {
+        return createIndex(index, 0, jobView);
     } else {
         return QModelIndex();
     }
 }
 
-QModelIndex ProgressListModel::indexForJob(UIServer::JobView *jobView) const
-{
-    int i = 0;
-    QMap<UIServer::JobView*, JobInfo>::const_iterator it = jobInfoMap.constBegin();
-    QMap<UIServer::JobView*, JobInfo>::const_iterator itEnd = jobInfoMap.constEnd();
-    while (it != itEnd) {
-        if (it.key() == jobView) {
-            return createIndex(i, 0, jobView);
-        }
-        ++it;
-        ++i;
-    }
-
-    return QModelIndex();
-}
-
-int ProgressListModel::columnCount(const QModelIndex &parent) const
-{
-    Q_UNUSED(parent);
-    return 1;
-}
-
 int ProgressListModel::rowCount(const QModelIndex &parent) const
 {
-    return parent.isValid() ? 0 : jobInfoMap.count();
+    return parent.isValid() ? 0 : m_jobViews.count();
 }
 
-bool ProgressListModel::setData(const QModelIndex &index, const QVariant &value, int role)
+QDBusObjectPath ProgressListModel::newJob(const QString &appName, const QString &appIcon, int capabilities)
 {
-    if (!index.isValid())
-        return false;
+    // Since s_jobId is an unsigned int, if we received an overflow and go back to 0,
+    // be sure we do not assign 0 to a valid job, 0 is reserved only for
+    // reporting problems.
+    if (!m_jobId) ++m_jobId;
+    JobView *newJob = new JobView(m_jobId);
+    ++m_jobId;
 
-    JobInfo &jobInfo = jobInfoMap[static_cast<UIServer::JobView*>(index.internalPointer())];
+    newJob->setAppName(appName);
+    newJob->setAppIconName(appIcon);
+    newJob->setCapabilities(capabilities);
 
-    switch (role)
-    {
-        case SizeTotals:
-            jobInfo.sizeTotals = value.toString();
-            break;
-        case SizeProcessed:
-            jobInfo.sizeProcessed = value.toString();
-            break;
-        case TimeTotals:
-            jobInfo.timeTotals = value.toLongLong();
-            break;
-        case TimeElapsed:
-            jobInfo.timeElapsed = value.toLongLong();
-            break;
-        case Speed:
-            jobInfo.speed = value.toString();
-            break;
-        case Percent:
-            jobInfo.percent = value.toInt();
-            break;
-        case Message:
-            jobInfo.message = value.toString();
-            break;
-        case State:
-            jobInfo.state = (JobInfo::State) value.toInt();
-            break;
-        default:
-            return false;
+    beginInsertRows(QModelIndex(), 0, 0);
+    m_jobViews.prepend(newJob);
+    endInsertRows();
+
+    //The model will now get notified when a job changes -- so it can emit dataChanged(..)
+    connect(newJob, SIGNAL(changed(uint)), this, SLOT(jobChanged(uint)));
+    connect(newJob, SIGNAL(finished(JobView*)), this, SLOT(jobFinished(JobView*)));
+    connect(newJob, SIGNAL(destUrlSet()), this, SLOT(emitJobUrlsChanged()));
+    connect(this, SIGNAL(serviceDropped(const QString&)), newJob, SLOT(serviceDropped(const QString&)));
+
+    //Forward this new job over to existing DBus clients.
+    foreach(QDBusAbstractInterface* interface, m_registeredServices) {
+
+        QDBusPendingCall pendingCall = interface->asyncCall("requestView", appName, appIcon, capabilities);
+        RequestViewCallWatcher *watcher = new RequestViewCallWatcher(newJob, interface->service(), pendingCall, this);
+
+        connect(watcher, SIGNAL(callFinished(RequestViewCallWatcher*)),
+                this, SLOT(pendingCallFinished(RequestViewCallWatcher*)));
     }
 
-    emit dataChanged(index, index);
-    emit layoutChanged();
-
-    return true;
+    return newJob->objectPath();
 }
 
-void ProgressListModel::addFinishedJob(ProgressListModel *model, const QModelIndex &index)
+QStringList ProgressListModel::gatherJobUrls()
 {
-    if (!index.isValid()) {
-        return;
+    QStringList jobUrls;
+
+    foreach(JobView* jobView, m_jobViews) {
+        jobUrls.append(jobView->destUrl().toString());
     }
-
-    JobInfo newJob = model->jobInfoMap[static_cast<UIServer::JobView*>(index.internalPointer())];
-    newJob.jobView = new UIServer::JobView();
-    newJob.percent = 100;
-    jobInfoMap.insert(newJob.jobView, newJob);
-    insertRow(rowCount());
+    return jobUrls;
 }
 
-UIServer::JobView* ProgressListModel::newJob(const QString &appName, const QString &appIcon, int capabilities)
+void ProgressListModel::jobFinished(JobView *jobView)
 {
-    JobInfo newJob;
-    newJob.jobView = new UIServer::JobView();
-    newJob.sizeTotals.clear();
-    newJob.sizeProcessed.clear();
-    newJob.timeElapsed = -1;
-    newJob.timeTotals = -1;
-    newJob.speed.clear();
-    newJob.percent = -1;
-    newJob.message.clear();
-    newJob.state = JobInfo::Running;
-    // given information
-    newJob.applicationName = appName;
-    newJob.icon = appIcon;
-    newJob.capabilities = capabilities;
-    jobInfoMap.insert(newJob.jobView, newJob);
-
-    insertRow(rowCount());
-    return newJob.jobView;
+        // Job finished, delete it if we are not in self-ui mode, *and* the config option to keep finished jobs is set
+        //TODO: does not check for case for the config
+        if (!m_uiServer) {
+            m_jobViews.removeOne(jobView);
+            //job dies, dest. URL's change..
+            emit jobUrlsChanged(gatherJobUrls());
+        }
 }
 
-
-void ProgressListModel::finishJob(UIServer::JobView *jobView)
+void ProgressListModel::jobChanged(uint jobId)
 {
-    QModelIndex indexToRemove = indexForJob(jobView);
-    if (indexToRemove.isValid()) {
-        beginRemoveRows(QModelIndex(), indexToRemove.row(), indexToRemove.row());
-        jobInfoMap.remove(jobView);
-        endRemoveRows();
-    }
+    emit dataChanged(createIndex(jobId - 1, 0), createIndex(jobId + 1, 0));
+    layoutChanged();
 }
 
-QPair<QString, QString> ProgressListModel::getDescriptionField(const QModelIndex &index, uint id)
+void ProgressListModel::emitJobUrlsChanged()
 {
-    if (!index.isValid())
-        return QPair<QString, QString>(QString(), QString());
-
-    JobInfo &jobInfo = jobInfoMap[static_cast<UIServer::JobView*>(index.internalPointer())];
-
-    if (!jobInfo.descFields.contains(id))
-        return QPair<QString, QString>(QString(), QString());
-
-    return jobInfo.descFields[id];
+    emit jobUrlsChanged(gatherJobUrls());
 }
 
-bool ProgressListModel::setDescriptionField(const QModelIndex &index, uint id, const QString &name, const QString &value)
+void ProgressListModel::registerService(const QString &service, const QString &objectPath)
 {
-    if (!index.isValid())
-        return false;
+    QDBusConnection sessionBus = QDBusConnection::sessionBus();
 
-    JobInfo &jobInfo = jobInfoMap[static_cast<UIServer::JobView*>(index.internalPointer())];
+    if (!service.isEmpty() && !objectPath.isEmpty()) {
+        if (sessionBus.interface()->isServiceRegistered(service).value() &&
+                !m_registeredServices.contains(service)) {
 
-    if (jobInfo.descFields.contains(id))
-    {
-        jobInfo.descFields[id].first = name;
-        jobInfo.descFields[id].second = value;
-    }
-    else
-    {
-        QPair<QString, QString> descField(name, value);
-        jobInfo.descFields.insert(id, descField);
-    }
+            org::kde::JobViewServer *client =
+                new org::kde::JobViewServer(service, objectPath, sessionBus);
 
-    return true;
-}
+            if (client->isValid()) {
 
-void ProgressListModel::clearDescriptionField(const QModelIndex &index, uint id)
-{
-    if (!index.isValid())
-        return;
+                if (m_uiServer) {
+                    delete m_uiServer;
+                    m_uiServer = 0;
+                }
 
-    JobInfo &jobInfo = jobInfoMap[static_cast<UIServer::JobView*>(index.internalPointer())];
+                m_registeredServices.insert(service, client);
 
-    if (jobInfo.descFields.contains(id))
-    {
-        jobInfo.descFields.remove(id);
+                //tell this new client to create all of the same jobs that we currently have.
+                //also connect them so that when the method comes back, it will return a
+                //QDBusObjectPath value, which is where we can contact that job, within "org.kde.JobViewV2"
+                //TODO: KDE5 remember to replace current org.kde.JobView interface with the V2 one.. (it's named V2 for compat. reasons).
+                foreach(JobView* jobView, m_jobViews) {
+
+                    QDBusPendingCall pendingCall =
+                        client->asyncCall("requestView", jobView->appName(), jobView->appIconName(), jobView->capabilities());
+
+                    RequestViewCallWatcher *watcher = new RequestViewCallWatcher(jobView, service, pendingCall, this);
+                    connect(watcher, SIGNAL(callFinished(RequestViewCallWatcher*)),
+                            this, SLOT(pendingCallFinished(RequestViewCallWatcher*)));
+                }
+            } else {
+                delete client;
+            }
+        }
     }
 }
 
-JobInfo::State ProgressListModel::state(const QModelIndex &index) const
+bool ProgressListModel::requiresJobTracker()
 {
-    if (index.isValid()) {
-        return ((JobInfo::State) data(index, State).toInt());
-    }
-
-    return JobInfo::InvalidState;
+    return m_registeredServices.isEmpty();
 }
 
-bool ProgressListModel::setData(int row, const QVariant &value, int role)
+void ProgressListModel::pendingCallFinished(RequestViewCallWatcher *watcher)
 {
-    return setData(index(row), value, role);
+    QDBusPendingReply<QDBusObjectPath> reply = *watcher;
+    QDBusObjectPath objectPath = reply.argumentAt<0>();
+    watcher->jobView()->addJobContact(objectPath.path(), watcher->service());
+}
+
+void ProgressListModel::slotServiceOwnerChanged(const QString &name, const QString &oldOwner, const QString &newOwner)
+{
+    Q_UNUSED(oldOwner);
+
+    //This D-Bus owner died, emit signal to inform all internal JobViews that it did.
+    //Otherwise they will be hanging in the wind with those values, talking to a dead client.
+    if (newOwner.isEmpty()) {
+        if (m_registeredServices.contains(name)) {
+
+            emit serviceDropped(name);
+
+            /* unused
+            if (m_registeredServices.isEmpty()) {
+                //the last service dropped, we *need* to show our GUI
+                m_uiServer = new UiServer(this);
+            }
+            */
+        }
+    }
 }
 
 #include "progresslistmodel.moc"

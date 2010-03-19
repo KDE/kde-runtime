@@ -1,5 +1,6 @@
-/**
+/*
   * This file is part of the KDE project
+  * Copyright (C) 2009 Shaun Reich <shaun.reich@kdemail.net>
   * Copyright (C) 2006-2008 Rafael Fernández López <ereslibre@kde.org>
   *
   * This library is free software; you can redistribute it and/or
@@ -15,7 +16,7 @@
   * along with this library; see the file COPYING.LIB.  If not, write to
   * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
   * Boston, MA 02110-1301, USA.
-  */
+*/
 
 #include "progresslistdelegate.h"
 #include "progresslistdelegate_p.h"
@@ -30,56 +31,50 @@
 #include <QHBoxLayout>
 #include <QProgressBar>
 
-#include <kdebug.h>
 #include <kicon.h>
 #include <klocale.h>
 #include <kpushbutton.h>
 
 #define MIN_CONTENT_PIXELS 50
 
-QString ProgressListDelegate::Private::getApplicationName(const QModelIndex &index) const
-{
-    return index.model()->data(index, ProgressListModel::ApplicationName).toString();
-}
-
 QString ProgressListDelegate::Private::getIcon(const QModelIndex &index) const
 {
-    return index.model()->data(index, ProgressListModel::Icon).toString();
+    return index.model()->data(index, JobView::Icon).toString();
 }
 
-QString ProgressListDelegate::Private::getSizeTotals(const QModelIndex &index) const
+QString ProgressListDelegate::Private::getSizeTotal(const QModelIndex &index) const
 {
-    return index.model()->data(index, ProgressListModel::SizeTotals).toString();
+    return index.model()->data(index, JobView::SizeTotal).toString();
 }
 
 QString ProgressListDelegate::Private::getSizeProcessed(const QModelIndex &index) const
 {
-    return index.model()->data(index, ProgressListModel::SizeProcessed).toString();
+    return index.model()->data(index, JobView::SizeProcessed).toString();
 }
 
-qlonglong ProgressListDelegate::Private::getTimeTotals(const QModelIndex &index) const
+qlonglong ProgressListDelegate::Private::getTimeTotal(const QModelIndex &index) const
 {
-    return index.model()->data(index, ProgressListModel::TimeTotals).toLongLong();
+    return index.model()->data(index, JobView::TimeTotal).toLongLong();
 }
 
 qlonglong ProgressListDelegate::Private::getTimeProcessed(const QModelIndex &index) const
 {
-    return index.model()->data(index, ProgressListModel::TimeElapsed).toLongLong();
+    return index.model()->data(index, JobView::TimeElapsed).toLongLong();
 }
 
 QString ProgressListDelegate::Private::getSpeed(const QModelIndex &index) const
 {
-    return index.model()->data(index, ProgressListModel::Speed).toString();
+    return index.model()->data(index, JobView::Speed).toString();
 }
 
 int ProgressListDelegate::Private::getPercent(const QModelIndex &index) const
 {
-    return index.model()->data(index, ProgressListModel::Percent).toInt();
+    return index.model()->data(index, JobView::Percent).toInt();
 }
 
-QString ProgressListDelegate::Private::getMessage(const QModelIndex &index) const
+QString ProgressListDelegate::Private::getInfoMessage(const QModelIndex &index) const
 {
-    return index.model()->data(index, ProgressListModel::Message).toString();
+    return index.model()->data(index, JobView::InfoMessage).toString();
 }
 
 int ProgressListDelegate::Private::getCurrentLeftMargin(int fontHeight) const
@@ -88,8 +83,8 @@ int ProgressListDelegate::Private::getCurrentLeftMargin(int fontHeight) const
 }
 
 ProgressListDelegate::ProgressListDelegate(QObject *parent, QListView *listView)
-    : KWidgetItemDelegate(listView, parent)
-    , d(new Private(listView))
+        : KWidgetItemDelegate(listView, parent)
+        , d(new Private(listView))
 {
 }
 
@@ -101,7 +96,6 @@ ProgressListDelegate::~ProgressListDelegate()
 void ProgressListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     QApplication::style()->drawPrimitive(QStyle::PE_PanelItemViewItem, &option, painter, 0);
-
     if (!index.isValid()) {
         return;
     }
@@ -122,13 +116,10 @@ void ProgressListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
     unselectedPen.setColor(unselectedTextColor);
     selectedPen.setColor(selectedTextColor);
 
-    if (option.state & QStyle::State_Selected)
-    {
+    if (option.state & QStyle::State_Selected) {
         painter->fillRect(option.rect, option.palette.highlight());
         painter->setPen(selectedPen);
-    }
-    else
-    {
+    } else {
         painter->setPen(unselectedPen);
     }
 
@@ -136,28 +127,14 @@ void ProgressListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
     painter->setRenderHint(QPainter::Antialiasing, true);
 
     QRect canvas = option.rect;
-    int iconWidth = canvas.height() - d->leftMargin - d->rightMargin;
+    int iconWidth = canvas.height() / 2 - d->leftMargin - d->rightMargin;
     int iconHeight = iconWidth;
     d->iconWidth = iconWidth;
 
-    painter->setOpacity(0.25);
-
     painter->drawPixmap(option.rect.right() - iconWidth - d->rightMargin, coordY, iconToShow.pixmap(iconWidth, iconHeight));
 
-    painter->translate(d->leftMargin + option.rect.left(), d->separatorPixels + qMin(fontMetrics.width(d->getApplicationName(index)) / 2, (option.rect.height() / 2) - d->separatorPixels) + (iconHeight / 2) + canvas.top());
-    painter->rotate(270);
-
-    QRect appNameRect(0, 0, qMin(fontMetrics.width(d->getApplicationName(index)), option.rect.height() - d->separatorPixels * 2), textHeight);
-
-    painter->drawText(appNameRect, Qt::AlignLeft, fontMetrics.elidedText(d->getApplicationName(index), Qt::ElideRight, option.rect.height() - d->separatorPixels * 2));
-
-    painter->resetMatrix();
-
-    painter->setOpacity(1);
-
-    if (!d->getMessage(index).isEmpty())
-    {
-        QString textToShow = fontMetrics.elidedText(d->getMessage(index), Qt::ElideRight, canvas.width() - d->getCurrentLeftMargin(textHeight) - d->rightMargin);
+    if (!d->getInfoMessage(index).isEmpty()) {
+        QString textToShow = fontMetrics.elidedText(d->getInfoMessage(index), Qt::ElideRight, canvas.width() - d->getCurrentLeftMargin(textHeight) - d->rightMargin);
 
         textHeight = fontMetrics.size(Qt::TextSingleLine, textToShow).height();
 
@@ -166,14 +143,13 @@ void ProgressListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
         coordY += textHeight;
     }
 
-    if (!d->getSizeProcessed(index).isEmpty() || !d->getSizeTotals(index).isEmpty() || !d->getSpeed(index).isEmpty())
-    {
+    if (!d->getSizeProcessed(index).isEmpty() || !d->getSizeTotal(index).isEmpty() || !d->getSpeed(index).isEmpty()) {
         QString textToShow;
-        if (!d->getSizeTotals(index).isEmpty() && !d->getSpeed(index).isEmpty())
-            textToShow = fontMetrics.elidedText(i18n("%1 of %2 processed at %3/s", d->getSizeProcessed(index), d->getSizeTotals(index), d->getSpeed(index)), Qt::ElideRight, canvas.width() - d->getCurrentLeftMargin(textHeight) - d->rightMargin);
-        else if (!d->getSizeTotals(index).isEmpty() && d->getSpeed(index).isEmpty())
-            textToShow = fontMetrics.elidedText(i18n("%1 of %2 processed", d->getSizeProcessed(index), d->getSizeTotals(index)), Qt::ElideRight, canvas.width() - d->getCurrentLeftMargin(textHeight) - d->rightMargin);
-        else if (d->getSizeTotals(index).isEmpty() && !d->getSpeed(index).isEmpty())
+        if (!d->getSizeTotal(index).isEmpty() && !d->getSpeed(index).isEmpty())
+            textToShow = fontMetrics.elidedText(i18n("%1 of %2 processed at %3/s", d->getSizeProcessed(index), d->getSizeTotal(index), d->getSpeed(index)), Qt::ElideRight, canvas.width() - d->getCurrentLeftMargin(textHeight) - d->rightMargin);
+        else if (!d->getSizeTotal(index).isEmpty() && d->getSpeed(index).isEmpty())
+            textToShow = fontMetrics.elidedText(i18n("%1 of %2 processed", d->getSizeProcessed(index), d->getSizeTotal(index)), Qt::ElideRight, canvas.width() - d->getCurrentLeftMargin(textHeight) - d->rightMargin);
+        else if (d->getSizeTotal(index).isEmpty() && !d->getSpeed(index).isEmpty())
             textToShow = fontMetrics.elidedText(i18n("%1 processed at %2/s", d->getSizeProcessed(index), d->getSpeed(index)), Qt::ElideRight, canvas.width() - d->getCurrentLeftMargin(textHeight) - d->rightMargin);
         else
             textToShow = fontMetrics.elidedText(i18n("%1 processed", d->getSizeProcessed(index)), Qt::ElideRight, canvas.width() - d->getCurrentLeftMargin(textHeight) - d->rightMargin);
@@ -186,8 +162,6 @@ void ProgressListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
     }
 
     painter->restore();
-
-    KWidgetItemDelegate::paintWidgets(painter, option, index);
 }
 
 QSize ProgressListDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
@@ -200,15 +174,13 @@ QSize ProgressListDelegate::sizeHint(const QStyleOptionViewItem &option, const Q
 
     int textSize = fontMetrics.height();
 
-    if (!d->getMessage(index).isEmpty())
-    {
-        textSize = fontMetrics.size(Qt::TextSingleLine, d->getMessage(index)).height();
+    if (!d->getInfoMessage(index).isEmpty()) {
+        textSize = fontMetrics.size(Qt::TextSingleLine, d->getInfoMessage(index)).height();
         itemHeight += textSize;
     }
 
     if (!d->getSizeProcessed(index).isEmpty() || !d->getSpeed(index).isEmpty() ||
-        !d->getSizeTotals(index).isEmpty())
-    {
+            !d->getSizeTotal(index).isEmpty()) {
         textSize = fontMetrics.size(Qt::TextSingleLine, d->getSizeProcessed(index)).height();
         itemHeight += textSize;
     }
@@ -262,8 +234,12 @@ QList<QWidget*> ProgressListDelegate::createItemWidgets() const
 {
     QList<QWidget*> widgetList;
 
-    KPushButton *pauseResumeButton = new KPushButton(KIcon("media-playback-pause"), i18n("Pause"));
-    KPushButton *cancelButton = new KPushButton(KIcon("media-playback-stop"), i18n("Cancel"));
+    KPushButton *pauseResumeButton = new KPushButton();
+    pauseResumeButton->setIcon(KIcon("media-playback-pause"));
+
+    KPushButton *cancelButton = new KPushButton();
+    cancelButton->setIcon(KIcon("media-playback-stop"));
+
     KPushButton *clearButton = new KPushButton(KIcon("edit-clear"), i18n("Clear"));
     QProgressBar *progressBar = new QProgressBar();
 
@@ -272,9 +248,9 @@ QList<QWidget*> ProgressListDelegate::createItemWidgets() const
     connect(clearButton, SIGNAL(clicked(bool)), this, SLOT(slotClearClicked()));
 
     setBlockedEventTypes(pauseResumeButton, QList<QEvent::Type>() << QEvent::MouseButtonPress
-                            << QEvent::MouseButtonRelease << QEvent::MouseButtonDblClick);
+                         << QEvent::MouseButtonRelease << QEvent::MouseButtonDblClick);
     setBlockedEventTypes(cancelButton, QList<QEvent::Type>() << QEvent::MouseButtonPress
-                            << QEvent::MouseButtonRelease << QEvent::MouseButtonDblClick);
+                         << QEvent::MouseButtonRelease << QEvent::MouseButtonDblClick);
 
     widgetList << pauseResumeButton << cancelButton << progressBar << clearButton;
 
@@ -282,78 +258,98 @@ QList<QWidget*> ProgressListDelegate::createItemWidgets() const
 }
 
 void ProgressListDelegate::updateItemWidgets(const QList<QWidget*> widgets,
-                                             const QStyleOptionViewItem &option,
-                                             const QPersistentModelIndex &index) const
+        const QStyleOptionViewItem &option,
+        const QPersistentModelIndex &index) const
 {
     if (!index.isValid()) {
         return;
     }
 
     KPushButton *pauseResumeButton = static_cast<KPushButton*>(widgets[0]);
+
     KPushButton *cancelButton = static_cast<KPushButton*>(widgets[1]);
+    cancelButton->setToolTip(i18n("Cancel"));
+
     QProgressBar *progressBar = static_cast<QProgressBar*>(widgets[2]);
     KPushButton *clearButton = static_cast<KPushButton*>(widgets[3]);
 
     int percent = d->getPercent(index);
+
     cancelButton->setVisible(percent < 100);
     pauseResumeButton->setVisible(percent < 100);
     clearButton->setVisible(percent > 99);
 
-    KJob::Capabilities capabilities = (KJob::Capabilities) index.model()->data(index, ProgressListModel::Capabilities).toInt();
+    KJob::Capabilities capabilities = (KJob::Capabilities) index.model()->data(index, JobView::Capabilities).toInt();
     cancelButton->setEnabled(capabilities & KJob::Killable);
     pauseResumeButton->setEnabled(capabilities & KJob::Suspendable);
 
-    JobInfo::State state = (JobInfo::State) index.model()->data(index, ProgressListModel::State).toInt();
+
+    JobView::JobState state = (JobView::JobState) index.model()->data(index, JobView::State).toInt();
     switch (state) {
-        case JobInfo::Running:
-            pauseResumeButton->setText(i18n("Pause"));
-            pauseResumeButton->setIcon(KIcon("media-playback-pause"));
-            break;
-        case JobInfo::Suspended:
-            pauseResumeButton->setText(i18n("Resume"));
-            pauseResumeButton->setIcon(KIcon("media-playback-start"));
-            break;
+    case JobView::Running:
+        pauseResumeButton->setToolTip(i18n("Pause"));
+        pauseResumeButton->setIcon(KIcon("media-playback-pause"));
+        break;
+    case JobView::Suspended:
+        pauseResumeButton->setToolTip(i18n("Resume"));
+        pauseResumeButton->setIcon(KIcon("media-playback-start"));
+        break;
+    default:
+        Q_ASSERT(0);
+        break;
     }
 
     QSize progressBarButtonSizeHint;
+
+
+
     if (percent < 100) {
         QSize cancelButtonSizeHint = cancelButton->sizeHint();
-        cancelButton->resize(cancelButtonSizeHint);
-        cancelButton->move(option.rect.width() - d->separatorPixels - cancelButtonSizeHint.width(), option.rect.height() - d->separatorPixels - cancelButtonSizeHint.height());
+
+        cancelButton->move(option.rect.width() - d->separatorPixels - cancelButtonSizeHint.width(),
+                           option.rect.height() - d->separatorPixels - cancelButtonSizeHint.height());
 
         QSize pauseResumeButtonSizeHint = pauseResumeButton->sizeHint();
-        pauseResumeButton->resize(pauseResumeButtonSizeHint);
-        pauseResumeButton->move(option.rect.width() - d->separatorPixels * 2 - pauseResumeButtonSizeHint.width() - cancelButtonSizeHint.width(), option.rect.height() - d->separatorPixels - pauseResumeButtonSizeHint.height());
+
+
+        pauseResumeButton->move(option.rect.width() - d->separatorPixels * 2 - pauseResumeButtonSizeHint.width() - cancelButtonSizeHint.width(),
+                                option.rect.height() - d->separatorPixels - pauseResumeButtonSizeHint.height());
+
         progressBarButtonSizeHint = pauseResumeButtonSizeHint;
     } else {
         progressBarButtonSizeHint = clearButton->sizeHint();
         clearButton->resize(progressBarButtonSizeHint);
-        clearButton->move(option.rect.width() - d->separatorPixels - progressBarButtonSizeHint.width(), option.rect.height() - d->separatorPixels - progressBarButtonSizeHint.height());
-    }
 
+        clearButton->move(option.rect.width() - d->separatorPixels - progressBarButtonSizeHint.width(),
+                          option.rect.height() - d->separatorPixels - progressBarButtonSizeHint.height());
+    }
     progressBar->setValue(percent);
+
     QFontMetrics fm(QApplication::font());
     QSize progressBarSizeHint = progressBar->sizeHint();
+
     progressBar->resize(QSize(option.rect.width() - d->getCurrentLeftMargin(fm.height()) - d->rightMargin, progressBarSizeHint.height()));
-    progressBar->move(d->getCurrentLeftMargin(fm.height()), option.rect.height() - d->separatorPixels * 2 - progressBarButtonSizeHint.height() - progressBarSizeHint.height());
+
+    progressBar->move(d->getCurrentLeftMargin(fm.height()),
+                      option.rect.height() - d->separatorPixels * 2 - progressBarButtonSizeHint.height() - progressBarSizeHint.height());
 }
 
 void ProgressListDelegate::slotPauseResumeClicked()
 {
     const QModelIndex index = focusedIndex();
-    UIServer::JobView *jobView = index.model()->data(index, ProgressListModel::JobViewRole).value<UIServer::JobView*>();
-    JobInfo::State state = (JobInfo::State) index.model()->data(index, ProgressListModel::State).toInt();
+    JobView *jobView = index.model()->data(index, JobView::JobViewRole).value<JobView*>();
+    JobView::JobState state = (JobView::JobState) index.model()->data(index, JobView::State).toInt();
     if (jobView) {
         switch (state) {
-            case JobInfo::Running:
-                emit jobView->suspendRequested();
-                break;
-            case JobInfo::Suspended:
-                emit jobView->resumeRequested();
-                break;
-            default:
-                Q_ASSERT(0); // this point should have never been reached
-                break;
+        case JobView::Running:
+            jobView->requestSuspend();
+            break;
+        case JobView::Suspended:
+            jobView->requestResume();
+            break;
+        default:
+            Q_ASSERT(0); // this point should have never been reached
+            break;
         }
     }
 }
@@ -361,16 +357,16 @@ void ProgressListDelegate::slotPauseResumeClicked()
 void ProgressListDelegate::slotCancelClicked()
 {
     const QModelIndex index = focusedIndex();
-    UIServer::JobView *jobView = index.model()->data(index, ProgressListModel::JobViewRole).value<UIServer::JobView*>();
+    JobView *jobView = index.model()->data(index, JobView::JobViewRole).value<JobView*>();
     if (jobView) {
-        emit jobView->cancelRequested();
+        jobView->requestCancel();
     }
 }
 
 void ProgressListDelegate::slotClearClicked()
 {
     const QModelIndex index = focusedIndex();
-    UIServer::JobView *jobView = index.model()->data(index, ProgressListModel::JobViewRole).value<UIServer::JobView*>();
+    JobView *jobView = index.model()->data(index, JobView::JobViewRole).value<JobView*>();
     if (jobView) {
         jobView->terminate(QString());
     }

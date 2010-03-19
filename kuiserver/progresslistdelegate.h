@@ -1,4 +1,4 @@
-/**
+/*
   * This file is part of the KDE project
   * Copyright (C) 2006-2008 Rafael Fernández López <ereslibre@kde.org>
   *
@@ -15,7 +15,7 @@
   * along with this library; see the file COPYING.LIB.  If not, write to
   * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
   * Boston, MA 02110-1301, USA.
-  */
+*/
 
 #ifndef PROGRESSLISTDELEGATE_H
 #define PROGRESSLISTDELEGATE_H
@@ -27,7 +27,7 @@
 class QListView;
 
 class ProgressListDelegate
-    : public KWidgetItemDelegate
+        : public KWidgetItemDelegate
 {
     Q_OBJECT
     Q_ENUMS(ProgressItemRole)

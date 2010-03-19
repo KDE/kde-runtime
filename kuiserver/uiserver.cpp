@@ -1,5 +1,6 @@
-/**
+/*
   * This file is part of the KDE project
+  * Copyright (C) 2009 Shaun Reich <shaun.reich@kdemail.net>
   * Copyright (C) 2006-2008 Rafael Fernández López <ereslibre@kde.org>
   * Copyright (C) 2001 George Staikos <staikos@kde.org>
   * Copyright (C) 2000 Matej Koss <koss@miesto.sk>
@@ -18,12 +19,11 @@
   * along with this library; see the file COPYING.LIB.  If not, write to
   * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
   * Boston, MA 02110-1301, USA.
-  */
+*/
 
 #include "uiserver.h"
 #include "uiserver_p.h"
-#include "jobviewadaptor.h"
-#include "jobviewserveradaptor.h"
+
 #include "progresslistmodel.h"
 #include "progresslistdelegate.h"
 
@@ -31,185 +31,27 @@
 #include <QtGui/QAction>
 #include <QtGui/QBoxLayout>
 #include <QtGui/QCloseEvent>
+#include <QtGui/QToolBar>
 
-#include <ksqueezedtextlabel.h>
-#include <kconfig.h>
 #include <kconfigdialog.h>
-#include <kstandarddirs.h>
-#include <kuniqueapplication.h>
-#include <kaboutdata.h>
-#include <kcmdlineargs.h>
-#include <kglobal.h>
 #include <klocale.h>
-#include <kpushbutton.h>
-#include <ktabwidget.h>
-#include <kstatusbar.h>
-#include <kdebug.h>
 #include <kdialog.h>
 #include <ksystemtrayicon.h>
-#include <kmenu.h>
-#include <kaction.h>
-#include <klineedit.h>
-#include <kio/jobclasses.h>
-#include <kjob.h>
+#include <kpushbutton.h>
 
-UIServer *UIServer::s_uiserver = 0;
-uint UIServer::s_jobId = 1;
-
-UIServer::JobView::JobView(QObject *parent)
-    : QObject(parent),
-      m_jobId(s_jobId)
+UiServer::UiServer(ProgressListModel* model)
+        : KXmlGuiWindow(0), m_systemTray(0)
 {
-    if (s_jobId) {
-        m_objectPath.setPath(QString("/JobViewServer/JobView_%1").arg(s_jobId));
-        new JobViewAdaptor(this);
-        QDBusConnection::sessionBus().registerObject(m_objectPath.path(), this);
-    }
-}
-
-UIServer::JobView::~JobView()
-{
-    //kDebug();
-}
-
-void UIServer::JobView::terminate(const QString &errorMessage)
-{
-    ProgressListModel *model;
-
-    if (m_jobId) {
-        model = s_uiserver->m_progressListModel;
-    } else {
-        model = s_uiserver->m_progressListFinishedModel;
-    }
-
-    QModelIndex index = model->indexForJob(this);
-
-    if (!index.isValid()) {
-        deleteLater();
-        return;
-    }
-
-    if (model == s_uiserver->m_progressListModel) {
-        model->setData(index, JobInfo::Cancelled, ProgressListModel::State);
-
-        if (errorMessage.isEmpty() && Configuration::radioMove()) {
-            uint jobId = s_jobId;
-            s_jobId = 0;
-            s_uiserver->m_progressListFinishedModel->addFinishedJob(s_uiserver->m_progressListModel, index);
-            s_jobId = jobId;
-        }
-
-        QDBusConnection::sessionBus().unregisterObject(m_objectPath.path(), QDBusConnection::UnregisterTree);
-    }
-
-    model->finishJob(this);
-    deleteLater();
-}
-
-void UIServer::JobView::setSuspended(bool suspended)
-{
-    QModelIndex index = s_uiserver->m_progressListModel->indexForJob(this);
-
-    s_uiserver->m_progressListModel->setData(index, suspended ? JobInfo::Suspended
-                                                              : JobInfo::Running, ProgressListModel::State);
-}
-
-void UIServer::JobView::setTotalAmount(qlonglong amount, const QString &unit)
-{
-    QModelIndex index = s_uiserver->m_progressListModel->indexForJob(this);
-
-    if (unit == "bytes") {
-        s_uiserver->m_progressListModel->setData(index, amount ? KGlobal::locale()->formatByteSize(amount)
-                                                               : QString(), ProgressListModel::SizeTotals);
-    } else if (unit == "files") {
-        s_uiserver->m_progressListModel->setData(index, amount ? i18np("%1 file", "%1 files", amount)
-                                                               : QString(), ProgressListModel::SizeTotals);
-    } else if (unit == "dirs") {
-        s_uiserver->m_progressListModel->setData(index, amount ? i18np("%1 folder", "%1 folders", amount)
-                                                               : QString(), ProgressListModel::SizeTotals);
-    }
-}
-
-void UIServer::JobView::setProcessedAmount(qlonglong amount, const QString &unit)
-{
-    QModelIndex index = s_uiserver->m_progressListModel->indexForJob(this);
-
-    if (unit == "bytes") {
-        s_uiserver->m_progressListModel->setData(index, amount ? KGlobal::locale()->formatByteSize(amount)
-                                                               : QString(), ProgressListModel::SizeProcessed);
-    } else if (unit == "files") {
-        s_uiserver->m_progressListModel->setData(index, amount ? i18np("%1 file", "%1 files", amount)
-                                                               : QString(), ProgressListModel::SizeProcessed);
-    } else if (unit == "dirs") {
-        s_uiserver->m_progressListModel->setData(index, amount ? i18np("%1 folder", "%1 folders", amount)
-                                                               : QString(), ProgressListModel::SizeProcessed);
-    }
-}
-
-void UIServer::JobView::setPercent(uint percent)
-{
-    QModelIndex index = s_uiserver->m_progressListModel->indexForJob(this);
-
-    if (index.isValid())
-        s_uiserver->m_progressListModel->setData(index, percent, ProgressListModel::Percent);
-}
-
-void UIServer::JobView::setSpeed(qlonglong bytesPerSecond)
-{
-    QModelIndex index = s_uiserver->m_progressListModel->indexForJob(this);
-
-    if (index.isValid())
-        s_uiserver->m_progressListModel->setData(index, bytesPerSecond ? KGlobal::locale()->formatByteSize(bytesPerSecond)
-                                                                       : QString(), ProgressListModel::Speed);
-}
-
-void UIServer::JobView::setInfoMessage(const QString &infoMessage)
-{
-    QModelIndex index = s_uiserver->m_progressListModel->indexForJob(this);
-
-    if (index.isValid())
-        s_uiserver->m_progressListModel->setData(index, infoMessage, ProgressListModel::Message);
-}
-
-bool UIServer::JobView::setDescriptionField(uint number, const QString &name, const QString &value)
-{
-    QModelIndex index = s_uiserver->m_progressListModel->indexForJob(this);
-
-    if (index.isValid())
-        return s_uiserver->m_progressListModel->setDescriptionField(index, number, name, value);
-
-    return false;
-}
-
-void UIServer::JobView::clearDescriptionField(uint number)
-{
-    QModelIndex index = s_uiserver->m_progressListModel->indexForJob(this);
-
-    if (index.isValid())
-        s_uiserver->m_progressListModel->clearDescriptionField(index, number);
-}
-
-QDBusObjectPath UIServer::JobView::objectPath() const
-{
-    return m_objectPath;
-}
-
-UIServer::UIServer()
-    : KXmlGuiWindow(0),
-      m_systemTray(0)
-{
-    // Register necessary services and D-Bus adaptors.
-    new JobViewServerAdaptor(this);
-    QDBusConnection::sessionBus().registerService(QLatin1String("org.kde.JobViewServer"));
-    QDBusConnection::sessionBus().registerObject(QLatin1String("/JobViewServer"), this);
-
-    tabWidget = new KTabWidget(this);
+    //NOTE: if enough people really hate this dialog (having centralized information and such),
+    //I imagine we could somehow forward it to the old dialogs, which would be displayed 1 for each job.
+    //Or create our own. no worries, we'll see how it plays out..
 
     QString configure = i18n("Configure...");
 
     toolBar = addToolBar(configure);
     toolBar->setMovable(false);
     toolBar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+
     QAction *configureAction = toolBar->addAction(configure);
     configureAction->setIcon(KIcon("configure"));
     configureAction->setIconText(configure);
@@ -217,38 +59,16 @@ UIServer::UIServer()
     connect(configureAction, SIGNAL(triggered(bool)), this,
             SLOT(showConfigurationDialog()));
 
-    connect(QDBusConnection::sessionBus().interface(), SIGNAL(serviceOwnerChanged(const QString&,const QString&,const QString&)), this,
-            SLOT(slotServiceOwnerChanged(const QString&,const QString&,const QString&)));
-
-
     toolBar->addSeparator();
 
-    searchText = new KLineEdit(toolBar);
-    searchText->setClickMessage(i18n("Search"));
-    searchText->setClearButtonShown(true);
-
-    toolBar->addWidget(searchText);
-
-    listProgress = new QListView(tabWidget);
+    listProgress = new QListView(this);
     listProgress->setAlternatingRowColors(true);
-    listProgress->setObjectName("progresslist");
     listProgress->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
+    listProgress->setUniformItemSizes(true);
+    listProgress->setSelectionMode(QAbstractItemView::NoSelection);
+    listProgress->setModel(model);
 
-    listFinished = new QListView(tabWidget);
-    listFinished->setAlternatingRowColors(true);
-    listFinished->setVisible(false);
-    listFinished->setObjectName("progresslistFinished");
-    listFinished->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
-
-    tabWidget->addTab(listProgress, i18n("In Progress"));
-
-    setCentralWidget(tabWidget);
-
-    m_progressListModel = new ProgressListModel(this);
-    m_progressListFinishedModel = new ProgressListModel(this);
-
-    listProgress->setModel(m_progressListModel);
-    listFinished->setModel(m_progressListFinishedModel);
+    setCentralWidget(listProgress);
 
     progressListDelegate = new ProgressListDelegate(this, listProgress);
     progressListDelegate->setSeparatorPixels(5);
@@ -259,102 +79,68 @@ UIServer::UIServer()
     progressListDelegate->setEditorHeight(20);
     listProgress->setItemDelegate(progressListDelegate);
 
-    progressListDelegateFinished = new ProgressListDelegate(this, listFinished);
-    progressListDelegateFinished->setSeparatorPixels(5);
-    progressListDelegateFinished->setLeftMargin(10);
-    progressListDelegateFinished->setRightMargin(10);
-    progressListDelegateFinished->setMinimumItemHeight(100);
-    progressListDelegateFinished->setMinimumContentWidth(300);
-    progressListDelegateFinished->setEditorHeight(20);
-    listFinished->setItemDelegate(progressListDelegateFinished);
 
+    m_systemTray = new KSystemTrayIcon(this);
+    m_systemTray->setIcon(KSystemTrayIcon::loadIcon("view-process-system"));
+    m_systemTray->setToolTip("List of running file transfers/jobs (kuiserver)");
+    m_systemTray->show();
+    resize(450, 450);
     applySettings();
 }
 
-UIServer::~UIServer()
+UiServer::~UiServer()
 {
 }
 
-UIServer* UIServer::createInstance()
-{
-    s_uiserver = new UIServer;
-    return s_uiserver;
-}
 
-QDBusObjectPath UIServer::requestView(const QString &appName, const QString &appIconName, int capabilities)
-{
-    if (isHidden()) show();
-
-    s_jobId++;
-
-    // Since s_jobId is an unsigned int, if we got overflow and go back to 0,
-    // be sure we do not assign 0 to a valid job, since 0 is reserved only for
-    // reporting problems.
-    if (!s_jobId) s_jobId++;
-
-    JobView *jobView = m_progressListModel->newJob(appName, appIconName, capabilities);
-    return jobView->objectPath();
-}
-
-void UIServer::updateConfiguration()
+void UiServer::updateConfiguration()
 {
     Configuration::self()->writeConfig();
     applySettings();
 }
 
-void UIServer::applySettings()
+void UiServer::applySettings()
 {
-    int finishedIndex = tabWidget->indexOf(listFinished);
-    if (Configuration::radioMove()) {
-        if (finishedIndex == -1) {
-            tabWidget->addTab(listFinished, i18n("Finished"));
-        }
-    } else if (finishedIndex != -1) {
-        tabWidget->removeTab(finishedIndex);
-    }
-
-    if (!m_systemTray) {
-        KSystemTrayIcon *m_systemTray = new KSystemTrayIcon(this);
-        m_systemTray->setIcon(KSystemTrayIcon::loadIcon("display"));
-        m_systemTray->show();
-    }
+    /* not used.
+     int finishedIndex = tabWidget->indexOf(listFinished);
+     if (Configuration::radioMove()) {
+         if (finishedIndex == -1) {
+             tabWidget->addTab(listFinished, i18n("Finished"));
+         }
+     } else if (finishedIndex != -1) {
+         tabWidget->removeTab(finishedIndex);
+     } */
 }
 
-void UIServer::closeEvent(QCloseEvent *event)
+void UiServer::closeEvent(QCloseEvent *event)
 {
     event->ignore();
     hide();
 }
 
-void UIServer::showConfigurationDialog()
+void UiServer::showConfigurationDialog()
 {
     if (KConfigDialog::showDialog("configuration"))
         return;
 
     KConfigDialog *dialog = new KConfigDialog(this, "configuration",
-                                              Configuration::self());
+            Configuration::self());
 
     UIConfigurationDialog *configurationUI = new UIConfigurationDialog(0);
 
-    dialog->addPage(configurationUI, i18n("Behavior"), "display");
+    dialog->addPage(configurationUI, i18n("Behavior"), "configure");
 
     connect(dialog, SIGNAL(settingsChanged(const QString&)), this,
             SLOT(updateConfiguration()));
-    dialog->enableButton(KDialog::Help, false);
+    dialog->button(KDialog::Help)->hide();
     dialog->show();
 }
-
-void UIServer::slotServiceOwnerChanged(const QString &name, const QString &oldOwner, const QString &newOwner)
-{
-    kDebug() << "dbus name: " << name << " oldowner: " << oldOwner << " newowner: " << newOwner;
-}
-
 
 /// ===========================================================
 
 
 UIConfigurationDialog::UIConfigurationDialog(QWidget *parent)
-    : QWidget(parent)
+        : QWidget(parent)
 {
     setupUi(this);
     adjustSize();
@@ -367,39 +153,6 @@ UIConfigurationDialog::~UIConfigurationDialog()
 
 /// ===========================================================
 
-
-extern "C" KDE_EXPORT int kdemain(int argc, char **argv)
-{
-    //  GS 5/2001 - I changed the name to "KDE" to make it look better
-    //              in the titles of dialogs which are displayed.
-    KAboutData aboutdata("kuiserver", "kdelibs4", ki18n("Progress Manager"),
-                         "0.8", ki18n("KDE Progress Information UI Server"),
-                         KAboutData::License_GPL, ki18n("(C) 2000-2008, KDE Team"));
-    aboutdata.addAuthor(ki18n("Rafael Fernández López"),ki18n("Maintainer"),"ereslibre@kde.org");
-    aboutdata.addAuthor(ki18n("David Faure"),ki18n("Former maintainer"),"faure@kde.org");
-    aboutdata.addAuthor(ki18n("Matej Koss"),ki18n("Developer"),"koss@miesto.sk");
-
-    KCmdLineArgs::init( argc, argv, &aboutdata );
-    // KCmdLineArgs::addCmdLineOptions( options );
-    KUniqueApplication::addCmdLineOptions();
-
-    if (!KUniqueApplication::start())
-    {
-      kDebug(7024) << "kuiserver is already running!";
-      return (0);
-    }
-
-    KUniqueApplication app;
-
-    // This app is started automatically, no need for session management
-    app.disableSessionManagement();
-    app.setQuitOnLastWindowClosed( false );
-    //app.dcopClient()->setDaemonMode( true );
-
-    UIServer::createInstance();
-
-    return app.exec();
-}
 
 #include "uiserver.moc"
 #include "uiserver_p.moc"
