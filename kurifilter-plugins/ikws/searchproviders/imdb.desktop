@@ -102,6 +102,7 @@ Query[hr]=http://imdb.com/find?s=all&q=\\{@}
 Query[is]=http://imdb.com/find?s=all&q=\\{@}
 Query[it]=http://italian.imdb.com/find?s=all&q=\\{@}
 Query[lt]=http://imdb.com/find?s=all&q=\\{@}
+Query[lv]=http://imdb.com/find?s=all&q=\\{@}
 Query[nb]=http://imdb.com/find?s=all&q=\\{@}
 Query[nds]=http://imdb.com/find?s=all&q=\\{@}
 Query[nl]=http://imdb.com/find?s=all&q=\\{@}
