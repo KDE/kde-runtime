@@ -34,8 +34,8 @@ class RequestViewCallWatcher;
 
 class ProgressListModel: public QAbstractItemModel
 {
-    Q_OBJECT;
-    Q_CLASSINFO("D-Bus Interface", "org.kde.JobViewServer");
+    Q_OBJECT
+    Q_CLASSINFO("D-Bus Interface", "org.kde.JobViewServer")
 
 
 public:
@@ -184,6 +184,6 @@ private:
 
 };
 
-Q_DECLARE_METATYPE(JobView*);
+Q_DECLARE_METATYPE(JobView*)
 
 #endif // PROGRESSLISTMODEL_H
