@@ -26,6 +26,7 @@
 #include <Solid/StorageAccess>
 #include <Solid/StorageVolume>
 
+#include <QTimer>
 #include <KGlobal>
 #include <KLocale>
 
@@ -38,6 +39,16 @@ DeviceAutomounter::DeviceAutomounter(QObject *parent, const QVariantList &args)
     : KDEDModule(parent)
 {
     Q_UNUSED(args);
+    QTimer::singleShot(0, this, SLOT(init()));
+}
+
+DeviceAutomounter::~DeviceAutomounter()
+{
+}
+
+void
+DeviceAutomounter::init()
+{
     connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceAdded(const QString&)), this, SLOT(deviceAdded(const QString&)));
     QList<Solid::Device> volumes = Solid::Device::listFromType(Solid::DeviceInterface::StorageVolume);
     foreach(Solid::Device volume, volumes) {
@@ -46,10 +57,6 @@ DeviceAutomounter::DeviceAutomounter(QObject *parent, const QVariantList &args)
         automountDevice(volume, AutomounterSettings::Login);
     }
     AutomounterSettings::self()->writeConfig();
-}
-
-DeviceAutomounter::~DeviceAutomounter()
-{
 }
 
 void
