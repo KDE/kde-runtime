@@ -21,12 +21,12 @@ set(SRCS
 
 qt4_add_dbus_interface(SRCS ../../interfaces/org.kde.nepomuk.Strigi.xml strigiserviceinterface)
 
-if(NOT WIN32)
+if(CMAKE_SYSTEM_NAME MATCHES "Linux")
   set(SRCS
     ${SRCS}
     kinotify.cpp
 )
-endif(NOT WIN32)
+endif(CMAKE_SYSTEM_NAME MATCHES "Linux")
 
 soprano_add_ontology(SRCS
   ${SHAREDDESKTOPONTOLOGIES_ROOT_DIR}/nie/nie.trig
