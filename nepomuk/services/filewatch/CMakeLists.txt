@@ -26,6 +26,7 @@ if(CMAKE_SYSTEM_NAME MATCHES "Linux")
     ${SRCS}
     kinotify.cpp
 )
+add_definitions(-DBUILD_KINOTIFY)
 endif(CMAKE_SYSTEM_NAME MATCHES "Linux")
 
 soprano_add_ontology(SRCS

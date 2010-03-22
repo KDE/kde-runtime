@@ -21,7 +21,7 @@
 #include "strigiserviceinterface.h"
 #include "../strigi/priority.h"
 
-#ifndef Q_WS_WIN
+#ifdef BUILD_KINOTIFY
 #include "kinotify.h"
 #endif
 
@@ -46,7 +46,7 @@ Nepomuk::FileWatch::FileWatch( QObject* parent, const QList<QVariant>& )
     m_metadataMover = new MetadataMover( mainModel(), this );
     m_metadataMover->start();
 
-#ifndef Q_WS_WIN
+#ifdef BUILD_KINOTIFY
     // listing all folders in watchFolder below will be IO-intensive. Do not grab it all
     if ( !lowerIOPriority() )
         kDebug() << "Failed to lower io priority.";
@@ -91,7 +91,7 @@ Nepomuk::FileWatch::~FileWatch()
 void Nepomuk::FileWatch::watchFolder( const QString& path )
 {
     kDebug() << path;
-#ifndef Q_WS_WIN
+#ifdef BUILD_KINOTIFY
     if ( m_dirWatch && !m_dirWatch->watchingPath( path ) )
         m_dirWatch->addWatch( path,
                               KInotify::WatchEvents( KInotify::EventMove|KInotify::EventDelete|KInotify::EventDeleteSelf|KInotify::EventCreate ),
@@ -149,7 +149,7 @@ void Nepomuk::FileWatch::connectToKDirWatch()
 }
 
 
-#ifndef Q_WS_WIN
+#ifdef BUILD_KINOTIFY
 void Nepomuk::FileWatch::slotInotifyWatchUserLimitReached()
 {
     // we do it the brutal way for now hoping with new kernels and defaults this will never happen
