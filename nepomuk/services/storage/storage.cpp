@@ -76,7 +76,10 @@ void Nepomuk::Storage::slotNepomukCoreInitialized( bool success )
 
 QString Nepomuk::Storage::usedSopranoBackend() const
 {
-    return static_cast<Repository*>( m_core->model( QLatin1String( "main" ) ) )->usedSopranoBackend();
+    if ( Repository* rep = static_cast<Repository*>( m_core->model( QLatin1String( "main" ) ) ) )
+        return rep->usedSopranoBackend();
+    else
+        return QString();
 }
 
 #include "storage.moc"
