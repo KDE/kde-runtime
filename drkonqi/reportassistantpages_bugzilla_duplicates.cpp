@@ -171,11 +171,11 @@ bool BugzillaDuplicatesPage::showNextPage()
         //The user didn't selected any possible duplicate nor a report to attach the new info.
         //Double check this, we need to reduce the duplicate count.
         KGuiItem noDuplicatesButton;
-        noDuplicatesButton.setText("There are no real duplicates");
+        noDuplicatesButton.setText(i18n("There are no real duplicates"));
         noDuplicatesButton.setIcon(KIcon("dialog-cancel"));
 
         KGuiItem letMeCheckMoreReportsButton;
-        letMeCheckMoreReportsButton.setText("Let me check more reports");
+        letMeCheckMoreReportsButton.setText(i18n("Let me check more reports"));
         letMeCheckMoreReportsButton.setIcon(KIcon("document-preview"));
 
         if (KMessageBox::questionYesNo(this,
