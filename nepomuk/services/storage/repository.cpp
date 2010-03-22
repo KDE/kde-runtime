@@ -305,7 +305,10 @@ void Nepomuk::Repository::copyFinished( KJob* job )
 
 QString Nepomuk::Repository::usedSopranoBackend() const
 {
-    return m_backend->pluginName();
+    if ( m_backend )
+        return m_backend->pluginName();
+    else
+        return QString();
 }
 
 
