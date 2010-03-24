@@ -138,10 +138,12 @@ namespace Oxygen
         } else if( widget->inherits( "QLineEdit" ) ) { return lineEditEngine().registerWidget( widget, AnimationHover|AnimationFocus ); }
         else if( widget->inherits( "QTextEdit" ) ) { return lineEditEngine().registerWidget( widget, AnimationHover|AnimationFocus ); }
 
-        // lists
-        else if( widget->inherits( "QAbstractItemView" ) ) { return lineEditEngine().registerWidget( widget, AnimationHover|AnimationFocus ); }
         else if( widget->inherits( "QProgressBar" ) ) { return progressBarEngine().registerWidget( widget ); }
         else if( widget->inherits( "QDial" ) ) { return widgetStateEngine().registerWidget( widget, AnimationHover|AnimationFocus ); }
+
+        // lists
+        else if( widget->inherits( "QAbstractItemView" ) || widget->inherits( "Q3ListView" ) )
+        { lineEditEngine().registerWidget( widget, AnimationHover|AnimationFocus ); }
 
         return false;
 

@@ -3714,6 +3714,7 @@ void OxygenStyle::polish(QWidget* widget)
         || qobject_cast<QTextEdit*>(widget)
         || qobject_cast<QToolButton*>(widget)
         || qobject_cast<QDial*>(widget)
+        || widget->inherits( "Q3ListView" )
         )
     { widget->setAttribute(Qt::WA_Hover); }
 
@@ -3805,6 +3806,10 @@ void OxygenStyle::polish(QWidget* widget)
 
         widget->installEventFilter(this);
 
+    } else if( widget->inherits( "Q3ListView" ) ) {
+
+        widget->installEventFilter(this);
+
     }
 
     // base class polishing
@@ -3844,7 +3849,11 @@ void OxygenStyle::unpolish(QWidget* widget)
         || qobject_cast<QScrollBar*>(widget)
         || qobject_cast<QSlider*>(widget)
         || qobject_cast<QLineEdit*>(widget)
-    ) { widget->setAttribute(Qt::WA_Hover, false); }
+        || widget->inherits( "Q3ListView ") )
+    { widget->setAttribute(Qt::WA_Hover, false); }
+
+    if( widget->inherits( "Q3ListView" ) )
+    { widget->removeEventFilter(this); }
 
     if (qobject_cast<QMenuBar*>(widget)
         || (widget && widget->inherits("Q3ToolBar"))
@@ -6254,8 +6263,30 @@ bool OxygenStyle::eventFilter(QObject *obj, QEvent *ev)
 
     }
 
-    // combobox container
+    // cast to QWidget
     QWidget *widget = static_cast<QWidget*>(obj);
+
+    // Q3ListView
+    if( widget->inherits( "Q3ListView" ) )
+    {
+        switch(ev->type())
+        {
+            case QEvent::FocusIn:
+            {
+                widget->update();
+                return false;
+            }
+            case QEvent::FocusOut:
+            {
+                widget->update();
+                return false;
+            }
+
+            default: return false;
+        }
+
+    }
+
     if (widget->inherits("QComboBoxPrivateContainer"))
     {
         switch(ev->type())
