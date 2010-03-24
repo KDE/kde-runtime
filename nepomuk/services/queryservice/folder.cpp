@@ -42,7 +42,8 @@ Nepomuk::Query::Folder::Folder( const QString& query, const RequestPropertyMap& 
     m_searchThread = new SearchThread( this );
 
     connect( m_searchThread, SIGNAL( newResult( const Nepomuk::Query::Result& ) ),
-             this, SLOT( slotSearchNewResult( const Nepomuk::Query::Result& ) ) );
+             this, SLOT( slotSearchNewResult( const Nepomuk::Query::Result& ) ),
+             Qt::QueuedConnection );
     connect( m_searchThread, SIGNAL( finished() ),
              this, SLOT( slotSearchFinished() ) );
     connect( ResourceManager::instance()->mainModel(), SIGNAL( statementsAdded() ),
