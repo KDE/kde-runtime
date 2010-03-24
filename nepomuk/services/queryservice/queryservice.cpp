@@ -46,8 +46,6 @@ Nepomuk::Query::QueryService::QueryService( QObject* parent, const QVariantList&
     : Service( parent ),
       m_folderConnectionCnt( 0 )
 {
-    ResourceManager::instance()->setOverrideMainModel( Service::mainModel() );
-
     Nepomuk::Query::registerDBusTypes();
 
     s_instance = this;

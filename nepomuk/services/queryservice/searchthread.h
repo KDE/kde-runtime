@@ -1,6 +1,6 @@
 /*
    This file is part of the Nepomuk KDE project.
-   Copyright (C) 2007-2009 Sebastian Trueg <trueg@kde.org>
+   Copyright (C) 2007-2010 Sebastian Trueg <trueg@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -47,7 +47,7 @@ namespace Nepomuk {
             /**
              * Use instead of QThread::start()
              */
-            void query( const QString& query, const RequestPropertyMap& requestProps, double cutOffScore );
+            void query( const QString& query, const RequestPropertyMap& requestProps, double cutOffScore = 0.0 );
             void cancel();
 
             double cutOffScore() const { return m_cutOffScore; }
@@ -59,7 +59,7 @@ namespace Nepomuk {
             void run();
 
         private:
-            QHash<QUrl, Nepomuk::Query::Result> sparqlQuery( const QString& query, double baseScore, bool reportResults );
+            void sparqlQuery( const QString& query, double baseScore );
             Nepomuk::Query::Result extractResult( const Soprano::QueryResultIterator& it ) const;
 
             QString m_sparqlQuery;

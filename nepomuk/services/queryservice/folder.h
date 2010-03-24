@@ -1,5 +1,5 @@
 /*
-   Copyright (c) 2008-2009 Sebastian Trueg <trueg@kde.org>
+   Copyright (c) 2008-2010 Sebastian Trueg <trueg@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -28,7 +28,7 @@
 
 #include <KUrl>
 
-#include "searchcore.h"
+#include "searchthread.h"
 
 namespace Nepomuk {
     namespace Query {
@@ -73,7 +73,6 @@ namespace Nepomuk {
 
         private Q_SLOTS:
             void slotSearchNewResult( const Nepomuk::Query::Result& );
-            void slotSearchScoreChanged( const Nepomuk::Query::Result& );
             void slotSearchFinished();
             void slotStorageChanged();
             void slotUpdateTimeout();
@@ -97,7 +96,7 @@ namespace Nepomuk {
             QHash<QUrl, Result> m_results;    // the actual current results
             QHash<QUrl, Result> m_newResults; // the results gathered during an update, needed to find removed items
 
-            SearchCore* m_searchCore;
+            SearchThread* m_searchThread;
 
             bool m_storageChanged;            // did the nepomuk store change after the last update
             QTimer m_updateTimer;             // used to ensure that we do not update all the time if the storage changes a lot

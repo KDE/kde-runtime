@@ -1,5 +1,5 @@
 /*
-   Copyright (c) 2008-2009 Sebastian Trueg <trueg@kde.org>
+   Copyright (c) 2008-2010 Sebastian Trueg <trueg@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -39,13 +39,12 @@ Nepomuk::Query::Folder::Folder( const QString& query, const RequestPropertyMap& 
     m_updateTimer.setSingleShot( true );
     m_updateTimer.setInterval( 2000 );
 
-    m_searchCore = new SearchCore( this );
+    m_searchThread = new SearchThread( this );
 
-    connect( m_searchCore, SIGNAL( newResult( const Nepomuk::Query::Result& ) ),
-             this, SLOT( slotSearchNewResult( const Nepomuk::Query::Result& ) ) );
-    connect( m_searchCore, SIGNAL( scoreChanged( const Nepomuk::Query::Result& ) ),
-             this, SLOT( slotSearchScoreChanged( const Nepomuk::Query::Result& ) ) );
-    connect( m_searchCore, SIGNAL( finished() ),
+    connect( m_searchThread, SIGNAL( newResult( const Nepomuk::Query::Result& ) ),
+             this, SLOT( slotSearchNewResult( const Nepomuk::Query::Result& ) ),
+             Qt::QueuedConnection );
+    connect( m_searchThread, SIGNAL( finished() ),
              this, SLOT( slotSearchFinished() ) );
     connect( ResourceManager::instance()->mainModel(), SIGNAL( statementsAdded() ),
              this, SLOT( slotStorageChanged() ) );
@@ -58,14 +57,15 @@ Nepomuk::Query::Folder::Folder( const QString& query, const RequestPropertyMap& 
 
 Nepomuk::Query::Folder::~Folder()
 {
+    m_searchThread->cancel();
 }
 
 
 void Nepomuk::Query::Folder::update()
 {
-    if ( !m_searchCore->isActive() ) {
+    if ( !m_searchThread->isRunning() ) {
         // run the search and forward signals to all connections that requested it
-        m_searchCore->query( m_query, m_requestProperties );
+        m_searchThread->query( m_query, m_requestProperties );
     }
 }
 
@@ -97,18 +97,6 @@ void Nepomuk::Query::Folder::slotSearchNewResult( const Nepomuk::Query::Result& 
 }
 
 
-void Nepomuk::Query::Folder::slotSearchScoreChanged( const Nepomuk::Query::Result& )
-{
-    // TODO: implement this
-    if ( m_initialListingDone ) {
-
-    }
-    else {
-
-    }
-}
-
-
 void Nepomuk::Query::Folder::slotSearchFinished()
 {
     if ( m_initialListingDone ) {
@@ -135,7 +123,7 @@ void Nepomuk::Query::Folder::slotSearchFinished()
 
 void Nepomuk::Query::Folder::slotStorageChanged()
 {
-    if ( !m_updateTimer.isActive() && !m_searchCore->isActive() ) {
+    if ( !m_updateTimer.isActive() && !m_searchThread->isRunning() ) {
         update();
     }
     else {
@@ -147,7 +135,7 @@ void Nepomuk::Query::Folder::slotStorageChanged()
 // if there was a change in the nepomuk store we update
 void Nepomuk::Query::Folder::slotUpdateTimeout()
 {
-    if ( m_storageChanged && !m_searchCore->isActive() ) {
+    if ( m_storageChanged && !m_searchThread->isRunning() ) {
         m_storageChanged = false;
         update();
     }
