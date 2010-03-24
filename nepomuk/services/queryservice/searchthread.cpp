@@ -1,6 +1,6 @@
 /*
   This file is part of the Nepomuk KDE project.
-  Copyright (C) 2007-2009 Sebastian Trueg <trueg@kde.org>
+  Copyright (C) 2007-2010 Sebastian Trueg <trueg@kde.org>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Library General Public
@@ -75,7 +75,7 @@ void Nepomuk::Query::SearchThread::query( const QString& query, const RequestPro
     m_canceled = false;
     m_sparqlQuery = query;
     m_requestProperties = requestProps;
-    m_cutOffScore = cutOffScore;
+    m_cutOffScore = qMin( 1.0, qMax( cutOffScore, 0.0 ) );
 
     start();
 }
@@ -93,17 +93,29 @@ void Nepomuk::Query::SearchThread::run()
     QTime time;
     time.start();
 
-    sparqlQuery( m_sparqlQuery, 1.0, true );
+    //
+    // To speed up the user experience and since in most cases users would only
+    // look at the first few results anyway, we run the query twice: once with a
+    // limit of 10 and once without a limit. To check if the query already has a
+    // limit or an offset we do not do any fancy things. We simply check if the
+    // query ends with a closing bracket which always suceeds for queries
+    // created via the Nepomuk query API.
+    //
+    if ( m_sparqlQuery.endsWith( QLatin1String( "}" ) ) ) {
+        sparqlQuery( m_sparqlQuery + QLatin1String( " LIMIT 10" ), 1.0 );
+        sparqlQuery( m_sparqlQuery + QLatin1String( " OFFSET 10" ), 1.0 );
+    }
+    else {
+        sparqlQuery( m_sparqlQuery, 1.0 );
+    }
 
     kDebug() << time.elapsed();
 }
 
 
-QHash<QUrl, Nepomuk::Query::Result> Nepomuk::Query::SearchThread::sparqlQuery( const QString& query, double baseScore, bool reportResults )
+void Nepomuk::Query::SearchThread::sparqlQuery( const QString& query, double baseScore )
 {
     kDebug() << query;
-
-    QHash<QUrl, Result> results;
 
     Soprano::QueryResultIterator hits = ResourceManager::instance()->mainModel()->executeQuery( query, Soprano::Query::QueryLanguageSparql );
     while ( hits.next() ) {
@@ -114,15 +126,8 @@ QHash<QUrl, Nepomuk::Query::Result> Nepomuk::Query::SearchThread::sparqlQuery( c
 
         kDebug() << "Found result:" << result.resource().resourceUri();
 
-        // these are actual direct hits and we can report them right away
-        if ( reportResults ) {
-            emit newResult( result );
-        }
-
-        results.insert( result.resource().resourceUri(), result );
+        emit newResult( result );
     }
-
-    return results;
 }
 
 

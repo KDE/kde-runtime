@@ -13,7 +13,6 @@ include_directories(
 
 set(queryservice_SRCS
   queryservice.cpp
-  searchcore.cpp
   searchthread.cpp
   folder.cpp
   folderconnection.cpp
