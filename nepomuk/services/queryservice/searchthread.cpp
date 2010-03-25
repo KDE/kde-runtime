@@ -54,7 +54,8 @@
 using namespace Soprano;
 
 Nepomuk::Query::SearchThread::SearchThread( QObject* parent )
-    : QThread( parent )
+    : QThread( parent ),
+      m_resultCnt( 0 )
 {
 }
 
@@ -93,6 +94,8 @@ void Nepomuk::Query::SearchThread::run()
     QTime time;
     time.start();
 
+    m_resultCnt = 0;
+
     //
     // To speed up the user experience and since in most cases users would only
     // look at the first few results anyway, we run the query twice: once with a
@@ -103,7 +106,8 @@ void Nepomuk::Query::SearchThread::run()
     //
     if ( m_sparqlQuery.endsWith( QLatin1String( "}" ) ) ) {
         sparqlQuery( m_sparqlQuery + QLatin1String( " LIMIT 10" ), 1.0 );
-        sparqlQuery( m_sparqlQuery + QLatin1String( " OFFSET 10" ), 1.0 );
+        if ( !m_canceled && m_resultCnt >= 10 )
+            sparqlQuery( m_sparqlQuery + QLatin1String( " OFFSET 10" ), 1.0 );
     }
     else {
         sparqlQuery( m_sparqlQuery, 1.0 );
@@ -120,6 +124,8 @@ void Nepomuk::Query::SearchThread::sparqlQuery( const QString& query, double bas
     Soprano::QueryResultIterator hits = ResourceManager::instance()->mainModel()->executeQuery( query, Soprano::Query::QueryLanguageSparql );
     while ( hits.next() ) {
         if ( m_canceled ) break;
+
+        ++m_resultCnt;
 
         Result result = extractResult( hits );
         result.setScore( baseScore );
