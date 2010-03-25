@@ -72,16 +72,32 @@ namespace Oxygen
         void unregisterWidget( Key key )
         {
 
+            // check key
+            if( !key ) return;
+
             // clear last value if needed
-            if( key == lastKey_ && lastValue_ ) lastValue_.data()->deleteLater();
+            if( key == lastKey_ )
+            {
+
+                if( lastValue_ )
+                {
+                    lastValue_.data()->deleteLater();
+                    lastValue_.clear();
+                }
+
+                lastKey_ = NULL;
+
+            }
+
+            // find key in map
+            typename QMap<Key, Value>::iterator iter( QMap<Key, Value>::find( key ) );
+            if( iter == QMap<Key, Value>::end() ) return;
 
             // delete value from map if found
-            typename QMap<Key, Value>::iterator iter( QMap<Key, Value>::find( key ) );
-            if( iter != QMap<Key, Value>::end() )
-            { if( iter.value() ) iter.value().data()->deleteLater(); }
+            if( iter.value() ) iter.value().data()->deleteLater();
+            QMap<Key, Value>::erase( iter );
 
-            // remove key from map
-            QMap<Key, Value>::remove( key );
+            return;
 
         }
 
