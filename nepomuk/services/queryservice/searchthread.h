@@ -69,6 +69,7 @@ namespace Nepomuk {
 
             // status
             bool m_canceled;
+            int m_resultCnt;
         };
     }
 }
