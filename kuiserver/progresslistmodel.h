@@ -27,10 +27,10 @@
 #include <QAbstractListModel>
 
 class QDBusAbstractInterface;
-class JobViewServerAdaptor;
 class QDBusConnectionInterface;
+class QDBusServiceWatcher;
+class JobViewServerAdaptor;
 class RequestViewCallWatcher;
-
 
 class ProgressListModel: public QAbstractItemModel
 {
@@ -140,12 +140,9 @@ private Q_SLOTS:
 
 
     /**
-    * Only implemented to handle the case when a client drops out.
-    *
-    * @p oldOwner is the old service address.
-    * @p newOwner if null, then it's true, it dropped off of the bus.
+    * Implemented to handle the case when a client drops out.
     */
-    void slotServiceOwnerChanged(const QString &name, const QString &oldOwner, const QString &newOwner);
+    void serviceUnregistered(const QString &name);
 
     void pendingCallFinished(RequestViewCallWatcher *watcher);
 
@@ -181,7 +178,7 @@ private:
     QHash<QString, QDBusAbstractInterface*> m_registeredServices;
 
     UiServer *m_uiServer;
-
+    QDBusServiceWatcher *m_serviceWatcher;
 };
 
 Q_DECLARE_METATYPE(JobView*)

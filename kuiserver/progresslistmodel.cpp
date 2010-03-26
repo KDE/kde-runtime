@@ -19,18 +19,26 @@
 */
 
 #include "progresslistmodel.h"
+
+#include <QDBusServiceWatcher>
+
+#include <KDebug>
+
 #include "jobviewserveradaptor.h"
 #include "kuiserveradaptor.h"
 #include "jobviewserver_interface.h"
 #include "requestviewcallwatcher.h"
 #include "uiserver.h"
 
-#include <kdebug.h>
-
 ProgressListModel::ProgressListModel(QObject *parent)
         : QAbstractItemModel(parent), m_jobId(1),
-        m_uiServer(0)
+          m_uiServer(0)
 {
+    m_serviceWatcher = new QDBusServiceWatcher(this);
+    m_serviceWatcher->setConnection(QDBusConnection::sessionBus());
+    m_serviceWatcher->setWatchMode(QDBusServiceWatcher::WatchForUnregistration);
+    connect(m_serviceWatcher, SIGNAL(serviceUnregistered(const QString &)), this, SLOT(serviceUnregistered(const QString &)));
+
     // Register necessary services and D-Bus adaptors.
     new JobViewServerAdaptor(this);
     new KuiserverAdaptor(this);
@@ -51,9 +59,6 @@ ProgressListModel::ProgressListModel(QObject *parent)
         kDebug(7024) <<
         "********** Error, we have failed to register object /JobViewServer.";
     }
-
-    connect(sessionBus.interface(), SIGNAL(serviceOwnerChanged(const QString&, const QString&, const QString&)),
-            this, SLOT(slotServiceOwnerChanged(const QString&, const QString&, const QString&)));
 
     /* unused
     if (m_registeredServices.isEmpty() && !m_uiServer) {
@@ -266,6 +271,8 @@ void ProgressListModel::registerService(const QString &service, const QString &o
                 }
 
                 m_registeredServices.insert(service, client);
+                m_serviceWatcher->addWatchedService(service);
+
 
                 //tell this new client to create all of the same jobs that we currently have.
                 //also connect them so that when the method comes back, it will return a
@@ -299,24 +306,20 @@ void ProgressListModel::pendingCallFinished(RequestViewCallWatcher *watcher)
     watcher->jobView()->addJobContact(objectPath.path(), watcher->service());
 }
 
-void ProgressListModel::slotServiceOwnerChanged(const QString &name, const QString &oldOwner, const QString &newOwner)
+void ProgressListModel::serviceUnregistered(const QString &name)
 {
-    Q_UNUSED(oldOwner);
+    m_serviceWatcher->removeWatchedService(name);
+    if (m_registeredServices.contains(name)) {
 
-    //This D-Bus owner died, emit signal to inform all internal JobViews that it did.
-    //Otherwise they will be hanging in the wind with those values, talking to a dead client.
-    if (newOwner.isEmpty()) {
-        if (m_registeredServices.contains(name)) {
+        emit serviceDropped(name);
+        delete m_registeredServices.take(name);
 
-            emit serviceDropped(name);
-
-            /* unused
-            if (m_registeredServices.isEmpty()) {
-                //the last service dropped, we *need* to show our GUI
-                m_uiServer = new UiServer(this);
-            }
-            */
+        /* unused
+        if (m_registeredServices.isEmpty()) {
+            //the last service dropped, we *need* to show our GUI
+            m_uiServer = new UiServer(this);
         }
+         */
     }
 }
 
