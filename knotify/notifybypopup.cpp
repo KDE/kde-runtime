@@ -37,6 +37,7 @@
 #include <QDesktopWidget>
 #include <QDBusConnection>
 #include <QDBusConnectionInterface>
+#include <QDBusServiceWatcher>
 #include <kconfiggroup.h>
 
 static const char dbusServiceName[] = "org.freedesktop.Notifications";
@@ -57,7 +58,11 @@ NotifyByPopup::NotifyByPopup(QObject *parent)
 		slotServiceOwnerChanged(dbusServiceName, QString(), "_"); //connect signals
 
 	// to catch register/unregister events from service in runtime
-	connect(interface, SIGNAL(serviceOwnerChanged(const QString&, const QString&, const QString&)),
+	QDBusServiceWatcher *watcher = new QDBusServiceWatcher(this);
+	watcher->setConnection(QDBusConnection::sessionBus());
+	watcher->setWatchMode(QDBusServiceWatcher::WatchForOwnerChange);
+	watcher->addWatchedService(dbusServiceName);
+	connect(watcher, SIGNAL(serviceOwnerChanged(const QString&, const QString&, const QString&)),
 			SLOT(slotServiceOwnerChanged(const QString&, const QString&, const QString&)));
 }
 
@@ -254,46 +259,44 @@ void NotifyByPopup::fillPopup(KPassivePopup *pop,int id,KNotifyConfig * config)
 void NotifyByPopup::slotServiceOwnerChanged( const QString & serviceName,
 		const QString & oldOwner, const QString & newOwner )
 {
-	if(serviceName == dbusServiceName)
+	kDebug() << serviceName << oldOwner << newOwner;
+	// tell KNotify that all existing notifications which it sent
+	// to DBus had been closed
+	foreach (int id, m_idMap.keys())
+		finished(id);
+	m_idMap.clear();
+
+	if(newOwner.isEmpty())
 	{
-		kDebug() << serviceName << oldOwner << newOwner;
-		// tell KNotify that all existing notifications which it sent
-		// to DBus had been closed
-		foreach (int id, m_idMap.keys())
-			finished(id);
-		m_idMap.clear();
+		m_dbusServiceExists = false;
+	}
+	else if(oldOwner.isEmpty())
+	{
+		m_dbusServiceExists = true;
 
-		if(newOwner.isEmpty())
-		{
-			m_dbusServiceExists = false;
+		// connect to action invocation signals
+		bool connected = QDBusConnection::sessionBus().connect(QString(), // from any service
+				dbusPath,
+				dbusInterfaceName,
+				"ActionInvoked",
+				this,
+				SLOT(slotDBusNotificationActionInvoked(uint,const QString&)));
+		if (!connected) {
+			kWarning() << "warning: failed to connect to ActionInvoked dbus signal";
 		}
-		else if(oldOwner.isEmpty())
-		{
-			m_dbusServiceExists = true;
 
-			// connect to action invocation signals
-			bool connected = QDBusConnection::sessionBus().connect(QString(), // from any service
-					dbusPath,
-					dbusInterfaceName,
-					"ActionInvoked",
-					this,
-					SLOT(slotDBusNotificationActionInvoked(uint,const QString&)));
-			if (!connected) {
-				kWarning() << "warning: failed to connect to ActionInvoked dbus signal";
-			}
-
-			connected = QDBusConnection::sessionBus().connect(QString(), // from any service
-					dbusPath,
-					dbusInterfaceName,
-					"NotificationClosed",
-					this,
-					SLOT(slotDBusNotificationClosed(uint,uint)));
-			if (!connected) {
-				kWarning() << "warning: failed to connect to NotificationClosed dbus signal";
-			}
+		connected = QDBusConnection::sessionBus().connect(QString(), // from any service
+				dbusPath,
+				dbusInterfaceName,
+				"NotificationClosed",
+				this,
+				SLOT(slotDBusNotificationClosed(uint,uint)));
+		if (!connected) {
+			kWarning() << "warning: failed to connect to NotificationClosed dbus signal";
 		}
 	}
 }
+
 
 void NotifyByPopup::slotDBusNotificationActionInvoked(uint dbus_id, const QString& actKey)
 {

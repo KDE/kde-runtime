@@ -41,7 +41,12 @@ void NotifyByKTTS::setupKttsd()
     m_kspeech = new org::kde::KSpeech("org.kde.kttsd", "/KSpeech", QDBusConnection::sessionBus());
     m_kspeech->setParent(this);
     m_kspeech->setApplicationName("KNotify");
-    connect( QDBusConnection::sessionBus().interface(), SIGNAL( serviceOwnerChanged( const QString &, const QString &, const QString & ) ), this, SLOT( slotServiceOwnerChanged( const QString &, const QString &, const QString & ) ) );
+
+    QDBusServiceWatcher *watcher = new QDBusServiceWatcher(this);
+    watcher->setConnection(QDBusConnection::sessionBus());
+    watcher->setWatchMode(QDBusServiceWatcher::WatchForUnregistration);
+    watcher->addWatchedService("org.kde.kttsd");
+    connect(watcher, SIGNAL(serviceUnregistered( const QString & ) ), this, SLOT( removeSpeech() ));
 }
 
 void NotifyByKTTS::notify( int id, KNotifyConfig * config )
@@ -86,23 +91,12 @@ void NotifyByKTTS::notify( int id, KNotifyConfig * config )
 	finished(id);
 }
 
-
-void NotifyByKTTS::slotServiceOwnerChanged( const QString &service, const QString &, const QString &newOwner )
-{
-  if ( service == QLatin1String( "org.kde.kttsd" ) && newOwner.isEmpty() )
-  {
-    removeSpeech();
-  }
-}
-
 void NotifyByKTTS::removeSpeech()
 {
     tryToStartKttsd = false;
-    disconnect( QDBusConnection::sessionBus().interface(), 0, this, 0 );
 
     delete m_kspeech;
     m_kspeech = 0;
-
 }
 
 #include "notifybyktts.moc"
