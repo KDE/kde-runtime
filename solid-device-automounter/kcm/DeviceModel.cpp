@@ -30,11 +30,11 @@ void
 DeviceModel::forgetDevice(const QString &udi)
 {
     if (m_disconnected.contains(udi)) {
-        beginRemoveRows(index(0, 0), m_disconnected.indexOf(udi), m_disconnected.indexOf(udi));
+        beginRemoveRows(index(1, 0), m_disconnected.indexOf(udi), m_disconnected.indexOf(udi));
         m_disconnected.removeOne(udi);
         endRemoveRows();
     } else if (m_attached.contains(udi)) {
-        beginRemoveRows(index(1, 0), m_attached.indexOf(udi), m_attached.indexOf(udi));
+        beginRemoveRows(index(0, 0), m_attached.indexOf(udi), m_attached.indexOf(udi));
         m_attached.removeOne(udi);
         endRemoveRows();
     }
@@ -65,7 +65,7 @@ DeviceModel::deviceAttached(const QString &udi)
     if (dev.is<Solid::StorageVolume>()) {
         if (m_disconnected.contains(udi)) {
             emit layoutAboutToBeChanged();
-            beginRemoveRows(index(0, 0), m_disconnected.indexOf(udi), m_disconnected.indexOf(udi));
+            beginRemoveRows(index(1, 0), m_disconnected.indexOf(udi), m_disconnected.indexOf(udi));
             m_disconnected.removeOne(udi);
             endRemoveRows();
             emit layoutChanged();
@@ -79,7 +79,7 @@ DeviceModel::deviceRemoved(const QString &udi)
 {
     if (m_attached.contains(udi)) {
         emit layoutAboutToBeChanged();
-        beginRemoveRows(index(1, 0), m_attached.indexOf(udi), m_attached.indexOf(udi));
+        beginRemoveRows(index(0, 0), m_attached.indexOf(udi), m_attached.indexOf(udi));
         m_attached.removeOne(udi);
         endRemoveRows();
         emit layoutChanged();
@@ -123,6 +123,8 @@ QModelIndex
 DeviceModel::index(int row, int column, const QModelIndex &parent) const
 {
     if (parent.isValid()) {
+        if (parent.column() > 0)
+            return QModelIndex();
         if (parent.row() == 0) {
             if (row >= 0 && row < m_attached.size() && column >= 0 && column <= 2)
                 return createIndex(row, column, 0);
@@ -141,7 +143,6 @@ QModelIndex
 DeviceModel::parent(const QModelIndex &index) const
 {
     if (index.isValid()) {
-        ///TODO: Use internalId with constants instead of parent().row() everywhere.
         if (index.internalId() == 3)
             return QModelIndex();
         return createIndex(index.internalId(), 0, 3);
@@ -270,7 +271,7 @@ int
 DeviceModel::rowCount(const QModelIndex &parent) const
 {
     if (parent.isValid()) {
-        if (parent.parent().isValid())
+        if (parent.internalId() < 3 || parent.column() > 0)
             return 0;
         if (parent.row() == 0)
             return m_attached.size();

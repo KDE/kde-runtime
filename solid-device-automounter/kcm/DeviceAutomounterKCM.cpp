@@ -21,6 +21,7 @@
 
 #include <QtGui/QStandardItem>
 #include <QtGui/QStandardItemModel>
+#include <QtGui/QItemSelectionModel>
 
 #include <KGenericFactory>
 #include <KAboutData>
@@ -81,10 +82,9 @@ DeviceAutomounterKCM::updateForgetDeviceButton()
 void
 DeviceAutomounterKCM::forgetSelectedDevices()
 {
-    const QModelIndexList selected = deviceView->selectionModel()->selectedRows();
-    foreach(const QModelIndex &idx, selected) {
-        kDebug() << "Deleting" << idx.row();
-        m_devices->forgetDevice(idx.data(Qt::UserRole).toString());
+    QItemSelectionModel* selected = deviceView->selectionModel();
+    while(selected->hasSelection()) {
+        m_devices->forgetDevice(selected->selectedIndexes()[0].data(Qt::UserRole).toString());
     }
     changed();
 }
