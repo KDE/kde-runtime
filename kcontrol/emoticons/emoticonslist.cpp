@@ -387,8 +387,6 @@ void EmoticonList::newTheme()
         QString type = KInputDialog::getItem(i18n("New Emoticon Theme"), i18n("Choose the type of emoticon theme to create"), ls, current, false, &ok, this);
 
         if (ok && !type.isEmpty()) {
-            KIO::NetAccess::mkdir(KUrl(path), this);
-
             int index = ls.indexOf(type);
             kEmoticons.newTheme(name, srv.at(index));
 
