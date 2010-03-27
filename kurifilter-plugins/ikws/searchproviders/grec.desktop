@@ -75,7 +75,7 @@ Name[sv]=Stor ordbok för katalanska språket (Gran Enciclopèdia Catalana)
 Name[ta]=கேடலன் மொழியின் அகராதி (GRan Enciclopèdia  Catalana)
 Name[te]=కెటలాన్ భాషయొక్క గొప్ప పదకోశం (GRan Enciclopèdia  Catalana)
 Name[tg]=Большой словарь каталонского языка (GRan Enciclopèdia  Catalana)
-Name[th]=พจนานุกรมที่ยิ่งใหญ่ของภาษาคาตะลาน(GRan Enciclopèdia  Catalana)
+Name[th]=พจนานุกรมที่ยิ่งใหญ่ของภาษาคาตะลาน (GRan Enciclopèdia  Catalana)
 Name[tr]=Katalanca Büyük Sözlük (GRan Enciclopèdia  Catalana)
 Name[uk]=Великий словник каталонської мови (GRan Enciclopèdia Catalana)
 Name[vi]=Tra Từ điển Lớn của tiếng Catalan (GRan Enciclopèdia Catalana)
@@ -136,6 +136,7 @@ Query[sr@ijekavianlatin]=http://ec.grec.net/cgi-bin/AppDLC3.exe?APP=CERCADLC&GEC
 Query[sr@latin]=http://ec.grec.net/cgi-bin/AppDLC3.exe?APP=CERCADLC&GECART=\\{@}
 Query[sv]=http://ec.grec.net/cgi-bin/AppDLC3.exe?APP=CERCADLC&GECART=\\{@}
 Query[tg]=http://ec.grec.net/cgi-bin/AppDLC3.exe?APP=CERCADLC&GECART=\\{@}
+Query[th]=http://ec.grec.net/cgi-bin/AppDLC3.exe?APP=CERCADLC&GECART=\\{@}
 Query[tr]=http://ec.grec.net/cgi-bin/AppDLC3.exe?APP=CERCADLC&GECART=\\{@}
 Query[uk]=http://ec.grec.net/cgi-bin/AppDLC3.exe?APP=CERCADLC&GECART=\\{@}
 Query[x-test]=xxhttp://ec.grec.net/cgi-bin/AppDLC3.exe?APP=CERCADLC&GECART=\\{@}xx
