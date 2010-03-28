@@ -226,7 +226,7 @@ bool GlobalShortcutsRegistry::keyPressed(int keyQt)
 #endif
 
     // 1st Invoke the action
-    emit invokeAction(data, timestamp);
+    shortcut->context()->component()->emitGlobalShortcutPressed( *shortcut );
 
     // Then do anything else
     KNotification *notification = new KNotification(

@@ -298,9 +298,6 @@ bool KGlobalAccelD::init()
     GlobalShortcutsRegistry::self()->setDBusPath(QDBusObjectPath("/"));
     GlobalShortcutsRegistry::self()->loadSettings();
 
-    connect(reg, SIGNAL(invokeAction(const QStringList &, qlonglong)),
-            SIGNAL(invokeAction(const QStringList &, qlonglong)));
-
     connect(KGlobalSettings::self(), SIGNAL(blockShortcuts(int)),
             SLOT(blockGlobalShortcuts(int)));
 

@@ -156,6 +156,13 @@ public Q_SLOTS:
     //! Start the global shortcuts kcm and show this component.
     Q_SCRIPTABLE bool showKCM();
 
+    void emitGlobalShortcutPressed(const GlobalShortcut &shortcut);
+
+Q_SIGNALS:
+
+    //! Signals that a action for this component was triggered
+    Q_SCRIPTABLE void globalShortcutPressed(const QString &componentUnique, const QString &shortcutUnique, qlonglong timestamp);
+
 private:
 
     QString _uniqueName;

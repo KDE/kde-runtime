@@ -137,9 +137,6 @@ public Q_SLOTS:
 
 Q_SIGNALS:
 
-    // this is qlonglong because manually written adaptor is used and just long doesn't work
-    Q_SCRIPTABLE void invokeAction(const QStringList &actionId, qlonglong timestamp);
-
     Q_SCRIPTABLE void yourShortcutGotChanged(const QStringList &actionId, const QList<int> &newKeys);
 
 private Q_SLOTS:

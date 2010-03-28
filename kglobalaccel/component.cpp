@@ -22,11 +22,16 @@
 #include "globalshortcutcontext.h"
 #include "globalshortcutsregistry.h"
 
-#include <KDE/KRun>
 #include <KDE/KDebug>
+#include <KDE/KRun>
 
 #include <QtCore/QStringList>
 #include <QtGui/QKeySequence>
+
+#ifdef Q_WS_X11
+#include <QtGui/QApplication>
+#include <QtGui/QX11Info>
+#endif
 
 static QList<int> keysFromString(const QString &str)
 {
@@ -225,6 +230,35 @@ void Component::deactivateShortcuts(bool temporarily)
             }
         shortcut->setInactive();
         }
+    }
+
+
+void Component::emitGlobalShortcutPressed( const GlobalShortcut &shortcut )
+    {
+#ifdef Q_WS_X11
+    // pass X11 timestamp
+    long timestamp = QX11Info::appTime();
+    // Make sure kglobalacceld has ungrabbed the keyboard after receiving the
+    // keypress, otherwise actions in application that try to grab the
+    // keyboard (e.g. in kwin) may fail to do so. There is still a small race
+    // condition with this being out-of-process.
+    qApp->syncX();
+#else
+    long timestamp = 0;
+#endif
+
+    // Make sure it is one of ours
+    if (shortcut.context()->component() != this)
+        {
+        Q_ASSERT(shortcut.context()->component() == this);
+        // In production mode do nothing
+        return;
+        }
+
+    emit globalShortcutPressed(
+            shortcut.context()->component()->uniqueName(),
+            shortcut.uniqueName(),
+            timestamp);
     }
 
 

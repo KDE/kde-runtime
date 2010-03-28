@@ -125,10 +125,6 @@ public:
 
     bool unregisterKey(int key, GlobalShortcut *shortcut);
 
-Q_SIGNALS:
-
-    void invokeAction(const QStringList &actionId, qlonglong timestamp);
-
 public Q_SLOTS:
 
     void clear();
