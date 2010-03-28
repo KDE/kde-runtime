@@ -225,6 +225,10 @@ bool GlobalShortcutsRegistry::keyPressed(int keyQt)
     long timestamp = 0;
 #endif
 
+    // 1st Invoke the action
+    emit invokeAction(data, timestamp);
+
+    // Then do anything else
     KNotification *notification = new KNotification(
             "globalshortcutpressed",
             KNotification::CloseOnTimeout);
@@ -236,7 +240,6 @@ bool GlobalShortcutsRegistry::keyPressed(int keyQt)
 
     notification->sendEvent();
 
-    emit invokeAction(data, timestamp);
     return true;
 }
 
