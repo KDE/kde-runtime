@@ -79,12 +79,7 @@ namespace Oxygen
             if( key == lastKey_ )
             {
 
-                if( lastValue_ )
-                {
-                    lastValue_.data()->deleteLater();
-                    lastValue_.clear();
-                }
-
+                if( lastValue_ ) lastValue_.clear();
                 lastKey_ = NULL;
 
             }
@@ -94,7 +89,7 @@ namespace Oxygen
             if( iter == QMap<Key, Value>::end() ) return;
 
             // delete value from map if found
-            if( iter.value() ) iter.value().data()->deleteLater();
+            if( iter.value() ) delete iter.value().data();
             QMap<Key, Value>::erase( iter );
 
             return;
