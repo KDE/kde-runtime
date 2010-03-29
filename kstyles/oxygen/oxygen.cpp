@@ -5480,7 +5480,7 @@ int OxygenStyle::styleHint(StyleHint hint, const QStyleOption * option, const QW
         {
 
             // mask should be returned only if composite in disabled
-            if( !compositingActive() )
+            if( !( compositingActive() ) )
             {
                 if (QStyleHintReturnMask *mask = qstyleoption_cast<QStyleHintReturnMask *>(returnData))
                 { mask->region = _helper.roundedMask( option->rect ); }
@@ -6160,8 +6160,11 @@ bool OxygenStyle::eventFilter(QObject *obj, QEvent *ev)
 
                 if( compositingActive() )
                 {
+                    p.setCompositionMode(QPainter::CompositionMode_Source );
                     TileSet *tileSet( _helper.roundCorner(color) );
                     tileSet->render( r, &p );
+
+                    p.setCompositionMode(QPainter::CompositionMode_SourceOver );
                     p.setClipRegion( _helper.roundedRegion( r.adjusted( 1, 1, -1, -1 ) ), Qt::IntersectClip );
                 }
 
@@ -6232,10 +6235,12 @@ bool OxygenStyle::eventFilter(QObject *obj, QEvent *ev)
 
                 if( compositingActive() )
                 {
+
+                    p.setCompositionMode(QPainter::CompositionMode_Source );
                     TileSet *tileSet( _helper.roundCorner(color) );
                     tileSet->render( r, &p );
 
-                    // set clip region
+                    p.setCompositionMode(QPainter::CompositionMode_SourceOver );
                     p.setClipRegion( _helper.roundedRegion( r.adjusted( 1, 1, -1, -1 ) ), Qt::IntersectClip );
 
                 }
@@ -6322,10 +6327,12 @@ bool OxygenStyle::eventFilter(QObject *obj, QEvent *ev)
 
                 if( compositingActive() )
                 {
+                    p.setCompositionMode(QPainter::CompositionMode_Source );
                     TileSet *tileSet( _helper.roundCorner(color) );
                     tileSet->render( r, &p );
 
                     // set clip region
+                    p.setCompositionMode(QPainter::CompositionMode_SourceOver );
                     p.setClipRegion( _helper.roundedRegion( r.adjusted( 1, 1, -1, -1 ) ), Qt::IntersectClip );
 
                 }
@@ -6411,10 +6418,11 @@ bool OxygenStyle::eventFilter(QObject *obj, QEvent *ev)
 #ifndef Q_WS_WIN
                     if( compositingActive() )
                     {
+                        p.setCompositionMode(QPainter::CompositionMode_Source );
                         TileSet *tileSet( _helper.roundCorner(color) );
                         tileSet->render( r, &p );
 
-                        // set clip region
+                        p.setCompositionMode(QPainter::CompositionMode_SourceOver );
                         p.setClipRegion( _helper.roundedRegion( r.adjusted( 1, 1, -1, -1 ) ), Qt::IntersectClip );
                     }
 #endif
