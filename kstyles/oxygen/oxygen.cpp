@@ -6148,15 +6148,24 @@ bool OxygenStyle::eventFilter(QObject *obj, QEvent *ev)
             case QEvent::Paint:
             {
 
-                // default painting when not floating
-                if( !t->isFloating() ) return false;
-
                 QPainter p(t);
                 QPaintEvent *e = (QPaintEvent*)ev;
                 p.setClipRegion(e->region());
 
                 QRect r = t->rect();
                 QColor color = t->palette().window().color();
+
+                // default painting when not floating
+                if( !t->isFloating() ) {
+
+                    // background has to be rendered explicitely
+                    // when one of the parent has autofillBackground set to true
+                    if( checkAutoFillBackground(t) )
+                    { _helper.renderWindowBackground(&p, r, t, color); }
+
+                    return false;
+
+                }
 
                 if( compositingActive() )
                 {
