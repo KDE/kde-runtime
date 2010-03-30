@@ -184,7 +184,7 @@ void BacktraceWidget::anotherDebuggerRunning()
     ui.m_extraDetailsLabel->setText(i18nc("@info/rich", "Another debugging process is attached to "
                                     "the crashed application. Therefore, the DrKonqi debugger cannot "
                                     "fetch the backtrace. Please close the other debugger and "
-                                    "click <interface>Reload Crash Information</interface>."));
+                                    "click <interface>Reload</interface>."));
     ui.m_installDebugButton->setVisible(false);
     ui.m_reloadBacktraceButton->setEnabled(true);
 }
@@ -269,8 +269,8 @@ void BacktraceWidget::loadData()
 
         ui.m_extraDetailsLabel->setVisible(true);
         ui.m_extraDetailsLabel->setText(i18nc("@info/rich", "You could try to regenerate the "
-                                            "backtrace by clicking the <interface>Reload Crash "
-                                            "Information</interface> button."));
+                                            "backtrace by clicking the <interface>Reload"
+                                            "</interface> button."));
     } else if (m_btGenerator->state() == BacktraceGenerator::FailedToStart) {
         //The backtrace could not be generated because the debugger could not start (missing)
         //Tell the user to install it.
@@ -283,8 +283,8 @@ void BacktraceWidget::loadData()
                                                "The crash information could not be generated."));
         ui.m_extraDetailsLabel->setVisible(true);
         ui.m_extraDetailsLabel->setText(i18nc("@info/rich", "You need to install the debugger "
-                                              "package (%1) and click the <interface>Reload Crash "
-                                              "Information</interface> button.",
+                                              "package (%1) and click the <interface>Reload"
+                                              "</interface> button.",
                                               m_btGenerator->debugger().name()));
     }
 
