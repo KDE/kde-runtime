@@ -18,6 +18,7 @@ Comment[sv]=Skrivbordssökning
 Comment[th]=ค้นหาผ่านพื้นที่ทำงาน
 Comment[uk]=Стільничний пошук
 Comment[x-test]=xxDesktop Searchxx
+Comment[zh_TW]=桌面搜尋
 
 [Event/initialIndexingStarted]
 Name=Initial Indexing started

@@ -24,6 +24,7 @@ Name[sv]=Ljudpolicy
 Name[th]=ข้อกำหนดระบบเสียง
 Name[uk]=Правила доступу до звуку
 Name[x-test]=xxSound Policyxx
+Name[zh_TW]=音效政策
 Comment=Provides sound system policy to applications
 Comment[de]=Audiosystemregeln den Anwendungen zur Verfügung stellen
 Comment[el]=Παρέχει την πολιτική ήχου του συστήματος στις εφαρμογές
@@ -42,4 +43,5 @@ Comment[sv]=Tillhandahåller systemets ljudpolicy till program
 Comment[th]=กำหนดข้อนโยบายของระบบเสียงให้กับโปรแกรมต่าง ๆ
 Comment[uk]=Права доступу до звукової системи для програм
 Comment[x-test]=xxProvides sound system policy to applicationsxx
+Comment[zh_TW]=提供音效系統政策給應用程式
 

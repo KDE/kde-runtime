@@ -19,6 +19,7 @@ Comment[sv]=KDE:s arbetsyta
 Comment[th]=พื้นที่ทำงานของ KDE
 Comment[uk]=Робочий простір KDE
 Comment[x-test]=xxKDE Workspacexx
+Comment[zh_TW]=KDE 工作空間
 
 [Event/Trash: emptied]
 Name=Trash: Emptied

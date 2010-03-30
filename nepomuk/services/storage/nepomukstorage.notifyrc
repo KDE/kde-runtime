@@ -17,6 +17,7 @@ Name[sv]=Semantisk datalagring
 Name[th]=ที่จัดเก็บข้อมูลของระบบค้นหา
 Name[uk]=Сховище семантичних даних
 Name[x-test]=xxSemantic Data Storagexx
+Name[zh_TW]=語意資料儲存
 Comment=Semantic Desktop
 Comment[de]=Semantischer Desktop
 Comment[el]=Σημασιολογική επιφάνεια εργασίας
@@ -35,6 +36,7 @@ Comment[sv]=Semantiskt skrivbord
 Comment[th]=ระบบค้นหาผ่านพื้นที่ทำงาน
 Comment[uk]=Семантична стільниця
 Comment[x-test]=xxSemantic Desktopxx
+Comment[zh_TW]=語意桌面
 
 [Event/failedToStart]
 Name=Failed to start Nepomuk
