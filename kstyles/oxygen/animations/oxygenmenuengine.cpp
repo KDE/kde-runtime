@@ -36,10 +36,10 @@ namespace Oxygen
     bool MenuEngineV1::registerWidget( QWidget* widget )
     {
 
-        if( !( enabled() && widget ) ) return false;
+        if( !widget ) return false;
 
         // create new data class
-        if( !data_.contains( widget ) ) data_.insert( widget, new MenuDataV1( this, widget, duration() ) );
+        if( !data_.contains( widget ) ) data_.insert( widget, new MenuDataV1( this, widget, duration() ), enabled() );
 
         // connect destruction signal
         disconnect( widget, SIGNAL( destroyed( QObject* ) ), this, SLOT( unregisterWidget( QObject* ) ) );
