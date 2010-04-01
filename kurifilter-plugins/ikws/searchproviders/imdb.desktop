@@ -98,6 +98,7 @@ Query[el]=http://imdb.com/find?s=all&q=\\{@}
 Query[es]=http://imdb.com/find?s=all&q=\\{@}
 Query[et]=http://imdb.com/find?s=all&q=\\{@}
 Query[fr]=http://imdb.com/find?s=all&q=\\{@}
+Query[ga]=http://imdb.com/find?s=all&q=\\{@}
 Query[hr]=http://imdb.com/find?s=all&q=\\{@}
 Query[hu]=http://imdb.com/find?s=all&q=\\{@}
 Query[is]=http://imdb.com/find?s=all&q=\\{@}
