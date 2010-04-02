@@ -152,7 +152,7 @@ void BacktraceWidget::anotherDebuggerRunning()
     ui.m_extraDetailsLabel->setText(i18nc("@info/rich", "Another debugging process is attached to "
                                     "the crashed application. Therefore, the DrKonqi debugger cannot "
                                     "fetch the backtrace. Please close the other debugger and "
-                                    "click <interface>Reload Crash Information</interface>."));
+                                    "click <interface>Reload</interface>."));
     ui.m_installDebugButton->setVisible(false);
     ui.m_reloadBacktraceButton->setEnabled(true);
 }
@@ -201,7 +201,7 @@ void BacktraceWidget::loadData()
                                 "does not work: please read <link url='%1'>How to "
                                 "create useful crash reports</link> to learn how to get a useful "
                                 "backtrace; install the needed packages and click the "
-                                "<interface>Reload Crash Information</interface> button.",
+                                "<interface>Reload</interface> button.",
                                 QLatin1String(TECHBASE_HOWTO_DOC)));
             ui.m_installDebugButton->setVisible(true);
             //Show the "Install dbg symbols" button disabled if the script is not available
@@ -223,8 +223,8 @@ void BacktraceWidget::loadData()
 
         ui.m_extraDetailsLabel->setVisible(true);
         ui.m_extraDetailsLabel->setText(i18nc("@info/rich", "You could try to regenerate the "
-                                            "backtrace by clicking the <interface>Reload Crash "
-                                            "Information</interface> button."));
+                                            "backtrace by clicking the <interface>Reload"
+                                            "</interface> button."));
     } else if (m_btGenerator->state() == BacktraceGenerator::FailedToStart) {
         m_backtraceRatingWidget->setUsefulness(BacktraceParser::Useless);
 
@@ -235,8 +235,8 @@ void BacktraceWidget::loadData()
                                                "The crash information could not be generated."));
         ui.m_extraDetailsLabel->setVisible(true);
         ui.m_extraDetailsLabel->setText(i18nc("@info/rich", "You need to install the debugger "
-                                              "package (%1) and click the <interface>Reload Crash "
-                                              "Information</interface> button.",
+                                              "package (%1) and click the <interface>Reload"
+                                              "</interface> button.",
                                               m_btGenerator->debugger().name()));
     }
 
