@@ -2222,8 +2222,8 @@ bool OxygenStyle::drawWindowPrimitive(
             }
 
             p->restore();
-            return true;
         }
+        return true;
 
         default: return false;
     }
@@ -5470,18 +5470,9 @@ int OxygenStyle::styleHint(StyleHint hint, const QStyleOption * option, const QW
             return false;
         }
 
-        case SH_WindowFrame_Mask:
-        {
+        // set no mask for window frame as round corners are rendered antialiased
+        case SH_WindowFrame_Mask: return true;
 
-            const QStyleOptionTitleBar *opt = qstyleoption_cast<const QStyleOptionTitleBar *>(option);
-            if (!opt) return true;
-            if (QStyleHintReturnMask *mask = qstyleoption_cast<QStyleHintReturnMask *>(returnData)) {
-                if (opt->titleBarState & Qt::WindowMaximized) mask->region = option->rect;
-                else mask->region = _helper.roundedMask( option->rect );
-            }
-            return true;
-
-        }
 
         case SH_Menu_Mask:
         {
@@ -6395,19 +6386,27 @@ bool OxygenStyle::eventFilter(QObject *obj, QEvent *ev)
     }
 
     // mdi subwindow painting
-    if( QMdiSubWindow* mdi = qobject_cast<QMdiSubWindow*>( widget ) )
+    if( QMdiSubWindow* sw = qobject_cast<QMdiSubWindow*>( widget ) )
     {
+
         if (ev->type() == QEvent::Paint)
         {
 
-            QPainter p(widget);
-            QRect r( static_cast<QPaintEvent*>( ev )->rect() );
+            QPainter p(sw);
+            QRect clip( static_cast<QPaintEvent*>(ev)->rect() );
+            if( sw->isMaximized() ) _helper.renderWindowBackground(&p, clip, sw, sw->palette() );
+            else {
 
-            if( mdi->isMaximized() ) _helper.renderWindowBackground(&p, r, widget, widget->palette() );
-            else _helper.renderWindowBackground(&p, r, widget, widget, widget->palette(), 0, 50 );
+                p.setClipRect( clip );
 
-            // continue with normal painting
-            return false;
+                QRect r( sw->rect() );
+                TileSet *tileSet( _helper.roundCorner( sw->palette().color( sw->backgroundRole() ) ) );
+                tileSet->render( r, &p );
+
+                p.setClipRegion( _helper.roundedRegion( r.adjusted( 1, 1, -1, -1 ) ), Qt::IntersectClip );
+                _helper.renderWindowBackground(&p, clip, sw, sw, sw->palette(), 0, 50 );
+
+            }
 
         }
 
