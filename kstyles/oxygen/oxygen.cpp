@@ -6380,8 +6380,8 @@ bool OxygenStyle::eventFilter(QObject *obj, QEvent *ev)
             if(widget->testAttribute(Qt::WA_StyledBackground) && !widget->testAttribute(Qt::WA_NoSystemBackground))
             {
                 QPainter p(widget);
-                _helper.renderWindowBackground(&p, static_cast<QPaintEvent*>(ev)->rect(), widget,widget->window()->palette());
-            }
+                _helper.renderWindowBackground(&p, widget->rect(), widget,widget->window()->palette());
+           }
         }
     }
 
