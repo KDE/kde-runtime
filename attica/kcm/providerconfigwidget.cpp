@@ -145,17 +145,21 @@ void ProviderConfigWidget::onRegisterDataChanged()
     QString passwordRepeat = m_ui.passwordRepeatEdit->text();
 
     bool isDataValid = (!login.isEmpty() && !mail.isEmpty() && !firstName.isEmpty() &&
-                        !lastName.isEmpty() && !password.isEmpty() && !passwordRepeat.isEmpty());
-    bool isPasswordValid = !password.isEmpty() && !passwordRepeat.isEmpty() && password == passwordRepeat;
+                        !lastName.isEmpty() && !password.isEmpty());
+    bool isPasswordLengthValid = password.size() > 7;
+    bool isPasswordEqual = password == passwordRepeat;
 
-    if (!isDataValid)
+    if (!isDataValid) {
         showRegisterHint("dialog-cancel", i18n("Not all required fields are filled"));
-    if (isDataValid && !isPasswordValid)
+    } else if (!isPasswordLengthValid) {
+        showRegisterHint("dialog-cancel", i18n("Password is too short"));
+    } else if (!isPasswordEqual) {
         showRegisterHint("dialog-cancel", i18n("Passwords do not match"));
-    if (isDataValid && isPasswordValid )
+    } else {
         showRegisterHint("dialog-ok-apply", i18n("All required information is provided"));
+    }
 
-    m_ui.registerButton->setEnabled(isDataValid && isPasswordValid);
+    m_ui.registerButton->setEnabled(isDataValid && isPasswordLengthValid && isPasswordEqual);
 
     emit changed(true);
 }
@@ -202,6 +206,9 @@ void ProviderConfigWidget::showRegisterError(const Attica::Metadata& metadata)
                 hint = i18n("Failed to register new account: the specified email address is already taken.");
                 widgetToHighlight = m_ui.mailEdit;
                 break;
+            case 106:
+                hint = i18n("Failed to register new account: the specified email address is invalid.");
+                widgetToHighlight = m_ui.mailEdit;
             default:
                 hint = i18n("Failed to register new account.");
                 break;

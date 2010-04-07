@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>463</width>
+    <width>467</width>
     <height>453</height>
    </rect>
   </property>
@@ -18,7 +18,7 @@
      </property>
      <widget class="QWidget" name="loginTab">
       <attribute name="title">
-       <string>Login</string>
+       <string>Account Information</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_2">
        <item row="0" column="0">
