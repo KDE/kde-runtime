@@ -40,6 +40,7 @@
 #include <QtGui/QGraphicsView>
 #include <QtGui/QLineEdit>
 #include <QtGui/QMainWindow>
+#include <QtGui/QMdiSubWindow>
 #include <QtGui/QPaintEvent>
 #include <QtGui/QProgressBar>
 #include <QtGui/QPushButton>
@@ -3769,6 +3770,11 @@ void OxygenStyle::polish(QWidget* widget)
         widget->setContentsMargins(3,3,3,3);
         widget->installEventFilter(this);
 
+    } else if( qobject_cast<QMdiSubWindow*>(widget) ) {
+
+        widget->setAutoFillBackground( false );
+        widget->installEventFilter( this );
+
     } else if (qobject_cast<QToolBox*>(widget)) {
 
         widget->setBackgroundRole(QPalette::NoRole);
@@ -6383,11 +6389,29 @@ bool OxygenStyle::eventFilter(QObject *obj, QEvent *ev)
             if(widget->testAttribute(Qt::WA_StyledBackground) && !widget->testAttribute(Qt::WA_NoSystemBackground))
             {
                 QPainter p(widget);
-                _helper.renderWindowBackground(&p, widget->rect(), widget,widget->window()->palette());
+                _helper.renderWindowBackground(&p, static_cast<QPaintEvent*>(ev)->rect(), widget,widget->window()->palette());
             }
         }
     }
 
+    // mdi subwindow painting
+    if( QMdiSubWindow* mdi = qobject_cast<QMdiSubWindow*>( widget ) )
+    {
+        if (ev->type() == QEvent::Paint)
+        {
+
+            QPainter p(widget);
+            QRect r( static_cast<QPaintEvent*>( ev )->rect() );
+
+            if( mdi->isMaximized() ) _helper.renderWindowBackground(&p, r, widget, widget->palette() );
+            else _helper.renderWindowBackground(&p, r, widget, widget, widget->palette(), 0, 50 );
+
+            // continue with normal painting
+            return false;
+
+        }
+
+    }
     // dock widgets
     if (QDockWidget*dw = qobject_cast<QDockWidget*>(obj))
     {
