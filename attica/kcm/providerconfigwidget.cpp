@@ -284,9 +284,6 @@ void ProviderConfigWidget::onRegisterAccountFinished(Attica::BaseJob* job)
 
 void ProviderConfigWidget::saveData()
 {
-    if (m_ui.userEditLP->text().isEmpty()) {
-        return;
-    }
     m_provider.saveCredentials(m_ui.userEditLP->text(), m_ui.passwordEditLP->text());
 }
 
