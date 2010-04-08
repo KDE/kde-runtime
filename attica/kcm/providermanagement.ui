@@ -46,6 +46,20 @@
        </property>
       </spacer>
      </item>
+     <item>
+      <widget class="QPushButton" name="addProviderButton">
+       <property name="text">
+        <string>Add Provider</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="removeProviderButton">
+       <property name="text">
+        <string>Remove Provider</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
    <item row="0" column="0">

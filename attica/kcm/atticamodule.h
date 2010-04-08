@@ -51,12 +51,15 @@ public:
 private Q_SLOTS:
     void providerAdded(const Attica::Provider&);
     void onDefaultProvidersLoaded();
+    void addProvider();
+    void removeProvider();
+    void providerSelected(int);
 
 private:
     void startLoadingDefaultProviders();
 
 private:
-    Ui::ProviderManagement m_management;
+    Ui::ProviderManagement m_ui;
     Attica::ProviderManager m_manager;
 };
 

@@ -32,7 +32,7 @@ macro_log_feature( SLP_FOUND
   "" "Provides SLP support in the network:/ kioslave."
 )
 
-set(LIBATTICA_MIN_VERSION "0.1.1")
+set(LIBATTICA_MIN_VERSION "0.1.4")
 find_package(LibAttica)
 macro_log_feature(LIBATTICA_FOUND "libattica" "A library to access Open Collaboration Service providers" "http://websvn.kde.org/trunk/kdesupport/attica/" TRUE "" "Required for Get Hot New Stuff."
 )

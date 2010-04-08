@@ -28,6 +28,7 @@
 #include <KAboutData>
 #include <KWallet/Wallet>
 #include <KDebug>
+#include <kurlrequesterdialog.h>
 
 #include <attica/providermanager.h>
 
@@ -48,8 +49,20 @@ AtticaModule::AtticaModule(QWidget* parent, const QVariantList&)
     about->addAuthor(ki18n("Dmitry Suzdalev"), KLocalizedString(), "dimsuz@gmail.com");
     setAboutData(about);
 
-    m_management.setupUi(this);
-    connect(m_management.providerConfigWidget, SIGNAL(changed(bool)),
+    m_ui.setupUi(this);
+    
+    m_ui.addProviderButton->setIcon(KIcon("list-add"));
+    m_ui.removeProviderButton->setIcon(KIcon("list-remove"));
+    
+    // FIXME
+    m_ui.removeProviderButton->setEnabled(false);
+    
+    connect(m_ui.addProviderButton, SIGNAL(clicked()), this, SLOT(addProvider()));
+    connect(m_ui.removeProviderButton, SIGNAL(clicked()), this, SLOT(removeProvider()));
+    
+    connect(m_ui.providerComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(providerSelected(int)));
+    
+    connect(m_ui.providerConfigWidget, SIGNAL(changed(bool)),
             this, SIGNAL(changed(bool)));
 
     m_manager.setAuthenticationSuppressed(true);
@@ -68,7 +81,6 @@ void AtticaModule::defaults()
 {
 }
 
-
 void AtticaModule::load()
 {
     startLoadingDefaultProviders();
@@ -77,7 +89,7 @@ void AtticaModule::load()
 
 void AtticaModule::save()
 {
-    m_management.providerConfigWidget->saveData();
+    m_ui.providerConfigWidget->saveData();
 }
 
 void AtticaModule::startLoadingDefaultProviders()
@@ -85,17 +97,16 @@ void AtticaModule::startLoadingDefaultProviders()
     emit changed(true);
     m_manager.clear();
     m_manager.loadDefaultProviders();
-    m_management.lblProviderList->setText(i18n("Loading provider list..."));
-    m_management.providerComboBox->hide();
-    m_management.providerConfigWidget->setEnabled(false);
+    m_ui.lblProviderList->setText(i18n("Loading provider list..."));
+    m_ui.providerComboBox->hide();
+    m_ui.providerConfigWidget->setEnabled(false);
 }
-
 
 void AtticaModule::providerAdded(const Attica::Provider& provider)
 {
     // Add new provider
     QString baseUrl = provider.baseUrl().toString();
-    int idx = m_management.providerComboBox->findData(baseUrl);
+    int idx = m_ui.providerComboBox->findData(baseUrl);
 
     if ( idx == -1)
     {
@@ -103,23 +114,45 @@ void AtticaModule::providerAdded(const Attica::Provider& provider)
         QString name = provider.name();
         if (name.isEmpty())
             name = baseUrl;
-        m_management.providerComboBox->addItem(KIcon("system-users"), name);
+        m_ui.providerComboBox->addItem(KIcon("system-users"), name, provider.baseUrl());
     }
 
     // set only if this is a first provider, otherwise it will be
     // set on explicit selection
-    if (m_management.providerComboBox->count() == 1)
-        m_management.providerConfigWidget->setProvider(provider);
+    if (m_ui.providerComboBox->count() == 1) {
+        m_ui.providerConfigWidget->setProvider(provider);
+    }
+}
+
+void AtticaModule::providerSelected(int providerNumber)
+{
+    QUrl providerUrl = m_ui.providerComboBox->itemData(providerNumber).toUrl();
+    m_ui.providerConfigWidget->setProvider(m_manager.providerByUrl(providerUrl));
 }
 
 void AtticaModule::onDefaultProvidersLoaded()
 {
-    m_management.lblProviderList->setText(i18n("Choose a provider to manage:"));
-    m_management.providerComboBox->show();
-    m_management.providerConfigWidget->setEnabled(true);
+    m_ui.lblProviderList->setText(i18n("Choose a provider to manage:"));
+    m_ui.providerComboBox->show();
+    m_ui.providerConfigWidget->setEnabled(true);
 
     // at least now set it to not changed
     emit changed(false);
 }
+
+void AtticaModule::addProvider()
+{
+    KUrlRequesterDialog dialog("http://", i18nc("addition of an attica/knewstuff provider by entering its url", "Url of the provider file (provider.xml)"), this);
+    if (dialog.exec() == KDialog::Accepted) {
+        kDebug() << "Add provider: " << dialog.selectedUrl();
+        m_manager.addProviderFileToDefaultProviders(dialog.selectedUrl());
+    }
+}
+
+void AtticaModule::removeProvider()
+{
+    //m_manager.removeProviderFileToDefaultProviders(url);
+}
+
 
 #include "atticamodule.moc"

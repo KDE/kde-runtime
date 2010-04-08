@@ -34,12 +34,12 @@ static const int registerTabIdx = 1;
 ProviderConfigWidget::ProviderConfigWidget(QWidget* parent)
     : QWidget(parent)
 {
+    m_ui.setupUi(this);
 }
 
 void ProviderConfigWidget::setProvider(const Attica::Provider& provider)
 {
     m_provider = provider;
-    m_ui.setupUi(this);
 
     // TODO ensure that it reinits all fields nicely for new provider!
     initLoginPage();
@@ -63,8 +63,12 @@ void ProviderConfigWidget::initLoginPage()
         QString user;
         QString password;
         m_provider.loadCredentials(user, password);
+        kDebug() << "cred for: " << user;
         m_ui.userEditLP->setText(user);
         m_ui.passwordEditLP->setText(password);
+    } else {
+        m_ui.userEditLP->clear();
+        m_ui.passwordEditLP->clear();
     }
     m_ui.iconLabelLP->setPixmap(KIcon("help-about").pixmap(24,24));
 
