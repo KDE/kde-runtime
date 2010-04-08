@@ -202,7 +202,6 @@ bool Attica::KdePlatformDependent::askForCredentials(const QUrl& baseUrl, QStrin
     return false;
 }
 
-
 QList<QUrl> KdePlatformDependent::getDefaultProviderFiles() const
 {
     KConfigGroup group(m_config, "General");
@@ -215,6 +214,23 @@ QList<QUrl> KdePlatformDependent::getDefaultProviderFiles() const
     return paths;
 }
 
+void KdePlatformDependent::addDefaultProviderFile(const QUrl& url)
+{
+    KConfigGroup group(m_config, "General");
+    QStringList pathStrings = group.readPathEntry("providerFiles", QStringList("http://download.kde.org/ocs/providers.xml"));
+    pathStrings.append(url.toString());
+    group.writeEntry("providerFiles", pathStrings);
+    group.sync();
+    kDebug() << "wrote providers: " << pathStrings;
+}
+
+void KdePlatformDependent::removeDefaultProviderFile(const QUrl& url)
+{
+    KConfigGroup group(m_config, "General");
+    QStringList pathStrings = group.readPathEntry("providerFiles", QStringList("http://download.kde.org/ocs/providers.xml"));
+    pathStrings.removeAll(url.toString());
+    group.writeEntry("providerFiles", pathStrings);
+}
 
 QNetworkAccessManager* Attica::KdePlatformDependent::nam()
 {
