@@ -44,9 +44,11 @@ int main(int argc, char **argv)
 
     KApplication i;
     
-    if (args->count() > 1) {
+    if (args->count() > 0) {
         KNS3::UploadDialog dialog(args->arg(0));
-        dialog.setUploadFile(KUrl(args->arg(1)));
+        if (args->count() > 1) {
+            dialog.setUploadFile(KUrl(args->arg(1)));
+        }
         dialog.exec();
     }
     else
