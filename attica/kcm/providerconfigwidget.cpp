@@ -71,7 +71,7 @@ void ProviderConfigWidget::initLoginPage()
         m_ui.passwordEditLP->clear();
     }
     m_ui.enableProviderCheckBox->setChecked(m_provider.isEnabled());
-    
+    m_ui.testLoginButton->setIcon(KIcon("network-connect"));
     m_ui.iconLabelLP->setPixmap(KIcon("help-about").pixmap(24,24));
 
     connect(m_ui.userEditLP, SIGNAL(textChanged(const QString&)), this, SLOT(onLoginChanged()));
