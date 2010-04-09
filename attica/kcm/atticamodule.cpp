@@ -2,6 +2,7 @@
     This file is part of KDE.
 
     Copyright (c) 2009 Eckhart Wörner <ewoerner@kde.org>
+    Copyright (c) 2010 Frederik Gladhorn <gladhorn@kde.org>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -42,11 +43,12 @@ AtticaModule::AtticaModule(QWidget* parent, const QVariantList&)
     : KCModule(AtticaModuleFactory::componentData(), parent)
 {
     KAboutData *about = new KAboutData(
-            "kcm_attica", 0, ki18n("Open Collaboration Services"),
+            "kcm_attica", 0, ki18n("Social Desktop"),
             KDE_VERSION_STRING, KLocalizedString(), KAboutData::License_GPL,
             ki18n("Copyright 2009 Eckhart Wörner"));
     about->addAuthor(ki18n("Eckhart Wörner"), KLocalizedString(), "ewoerner@kde.org");
     about->addAuthor(ki18n("Dmitry Suzdalev"), KLocalizedString(), "dimsuz@gmail.com");
+    about->addAuthor(ki18n("Frederik Gladhorn"), KLocalizedString(), "gladhorn@kde.org");
     setAboutData(about);
 
     m_ui.setupUi(this);

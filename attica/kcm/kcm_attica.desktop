@@ -9,7 +9,7 @@ X-KDE-ParentApp=kcontrol
 X-KDE-System-Settings-Parent-Category=advanced-user-settings
 X-DocPath=kcontrol/attica/index.html
 
-Name=Open Collaboration Services provider
+Name=Social Desktop
 Name[cs]=Poskytovatel služeb otevřené spolupráce
 Name[de]=Anbieter von Open-Collaboration-Diensten
 Name[el]=Άνοιγμα πάροχων υπηρεσιών ανοιχτής συνεργασίας
@@ -34,7 +34,7 @@ Name[th]=ผู้ให้บริการการมีส่วนร่�
 Name[uk]=Надання послуг службами Open Collaboration
 Name[x-test]=xxOpen Collaboration Services providerxx
 Name[zh_TW]=管理開放協同服務提供者
-Comment=Manage Open Collaboration Services providers
+Comment=Manage Social Desktop Providers
 Comment[ca]=Gestiona els proveïdors de serveis «Open Collaboration»
 Comment[ca@valencia]=Gestiona els proveïdors de serveis «Open Collaboration»
 Comment[cs]=Spravovat poskytovatele služeb otevřené spolupráce
