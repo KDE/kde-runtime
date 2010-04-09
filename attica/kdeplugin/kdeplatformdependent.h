@@ -48,7 +48,9 @@ public:
     virtual ~KdePlatformDependent();
     virtual QList<QUrl> getDefaultProviderFiles() const;
     virtual void addDefaultProviderFile(const QUrl& url);
-    virtual void removeDefaultProviderFile(const QUrl& url);    
+    virtual void removeDefaultProviderFile(const QUrl& url);
+    virtual void enableProvider(const QUrl& baseUrl, bool enabled) const;
+    virtual bool isEnabled(const QUrl& baseUrl) const;
     
     virtual QNetworkReply* post(const QNetworkRequest& request, const QByteArray& data);
     virtual QNetworkReply* post(const QNetworkRequest& request, QIODevice* data);

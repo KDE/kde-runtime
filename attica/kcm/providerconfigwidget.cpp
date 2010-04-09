@@ -70,12 +70,15 @@ void ProviderConfigWidget::initLoginPage()
         m_ui.userEditLP->clear();
         m_ui.passwordEditLP->clear();
     }
+    m_ui.enableProviderCheckBox->setChecked(m_provider.isEnabled());
+    
     m_ui.iconLabelLP->setPixmap(KIcon("help-about").pixmap(24,24));
 
     connect(m_ui.userEditLP, SIGNAL(textChanged(const QString&)), this, SLOT(onLoginChanged()));
     connect(m_ui.passwordEditLP, SIGNAL(textChanged(const QString&)), this, SLOT(onLoginChanged()));
     connect(m_ui.testLoginButton, SIGNAL(clicked()), this, SLOT(onTestLogin()));
     connect(m_ui.infoLabelLP, SIGNAL(linkActivated(const QString&)), this, SLOT(onInfoLinkActivated()));
+    connect(m_ui.enableProviderCheckBox, SIGNAL(clicked(bool)), this, SLOT(enableToggled(bool)));
 }
 
 void ProviderConfigWidget::initRegisterPage()
@@ -131,6 +134,11 @@ void ProviderConfigWidget::onTestLoginFinished(Attica::BaseJob* job)
     if (postJob->metadata().error() == Attica::Metadata::OcsError) {
         m_ui.testLoginButton->setText(i18n("Login failed"));
     }
+}
+
+void ProviderConfigWidget::enableToggled(bool enabled)
+{
+    m_provider.setEnabled(enabled);
 }
 
 void ProviderConfigWidget::onInfoLinkActivated()

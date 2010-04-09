@@ -51,13 +51,15 @@ private Q_SLOTS:
     void onLoginChanged();
     void onTestLogin();
     void onTestLoginFinished(Attica::BaseJob* job);
+    void enableToggled(bool enabled);
 
     // register page
     void onInfoLinkActivated();
     void onRegisterDataChanged();
     void onRegisterClicked();
     void onRegisterAccountFinished(Attica::BaseJob* job);
-
+    
+    
 private:
     void initLoginPage();
     void initRegisterPage();

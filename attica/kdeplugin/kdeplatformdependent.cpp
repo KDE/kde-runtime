@@ -232,6 +232,27 @@ void KdePlatformDependent::removeDefaultProviderFile(const QUrl& url)
     group.writeEntry("providerFiles", pathStrings);
 }
 
+void KdePlatformDependent::enableProvider(const QUrl& baseUrl, bool enabled) const
+{
+    KConfigGroup group(m_config, "General");
+    QStringList pathStrings = group.readPathEntry("disabledProviders", QStringList());
+    if (enabled) {
+        pathStrings.removeAll(baseUrl.toString());
+    } else {
+        if (!pathStrings.contains(baseUrl.toString())) {
+            pathStrings.append(baseUrl.toString());
+        }
+    }
+    group.writeEntry("disabledProviders", pathStrings);
+    group.sync();
+}
+
+bool KdePlatformDependent::isEnabled(const QUrl& baseUrl) const
+{
+    KConfigGroup group(m_config, "General");
+    return !group.readPathEntry("disabledProviders", QStringList()).contains(baseUrl.toString());
+}
+
 QNetworkAccessManager* Attica::KdePlatformDependent::nam()
 {
     return m_accessManager;
