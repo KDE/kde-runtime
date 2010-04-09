@@ -171,7 +171,7 @@
          </property>
         </spacer>
        </item>
-       <item row="3" column="0" colspan="2">
+       <item row="4" column="0" colspan="2">
         <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
           <widget class="QLabel" name="iconLabelLP">
@@ -203,6 +203,16 @@
           </widget>
          </item>
         </layout>
+       </item>
+       <item row="5" column="0">
+        <widget class="QLabel" name="infoLabelLP_2">
+         <property name="text">
+          <string>The Social Desktop Providers are used for &quot;Get Hot New Stuff&quot; and the &quot;Community&quot; and &quot;Social News&quot; Plasma applets.</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
