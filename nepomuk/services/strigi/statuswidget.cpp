@@ -52,8 +52,10 @@ Nepomuk::StatusWidget::StatusWidget( Soprano::Model* model, StrigiService* servi
     setDefaultButton( Ok );
     setButtonGuiItem( User1, KGuiItem( i18n( "Configure" ), KIcon( "configure" ) ) );
 
-    m_title->setPixmap( KIcon( "nepomuk" ).pixmap( 32, 32 ) );
-
+    KIcon icon( "nepomuk" );
+    m_title->setPixmap( icon.pixmap( 32, 32 ) );
+    setWindowIcon( icon );
+    
     m_updateTimer.setSingleShot( true );
     m_updateTimer.setInterval( 10*1000 ); // do not update multiple times in 10 seconds
     connect( &m_updateTimer, SIGNAL( timeout() ),
