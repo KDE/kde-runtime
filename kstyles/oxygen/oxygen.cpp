@@ -1027,9 +1027,11 @@ bool OxygenStyle::drawMenuBarItemPrimitive(
     {
         case MenuBarItem::Panel:
         {
-            bool active  = flags & State_Selected;
+            const bool enabled  = flags & State_Enabled;
+            const bool active  = flags & State_Selected;
+            if( !enabled ) return true;
 
-            bool animated( animations().menuBarEngine().isAnimated(widget, r.topLeft() ) );
+            const bool animated( animations().menuBarEngine().isAnimated(widget, r.topLeft() ) );
             qreal opacity( animations().menuBarEngine().opacity( widget, r.topLeft() ) );
             QRect currentRect( animations().menuBarEngine().currentRect( widget, r.topLeft() ) );
 
