@@ -18,7 +18,7 @@ include(CheckIncludeFiles)
 
 set(SOPRANO_MIN_VERSION "2.3.70")
 set(SDO_MIN_VERSION "0.3.60")
-macro_optional_find_package(SharedDesktopOntologies ${SDO_MIN_VERSION})
+macro_optional_find_package(SharedDesktopOntologies ${SDO_MIN_VERSION} REQUIRED)
 macro_optional_find_package(Nepomuk)
 macro_log_feature(SHAREDDESKTOPONTOLOGIES_FOUND "Shared desktop ontologies" "Desktop ontologies" "http://oscaf.sourceforge.net" FALSE ${SDO_MIN_VERSION} "Ontologies necessary for the Nepomuk semantic desktop.")
 macro_log_feature(Nepomuk_FOUND "Nepomuk" "Nepomuk Libraries" "kdelibs" FALSE "" "Required to build Nepomuk.")
