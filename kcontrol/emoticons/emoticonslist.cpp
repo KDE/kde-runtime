@@ -34,7 +34,7 @@
 #include <kdecore_export.h>
 #include <kio/netaccess.h>
 #include <kgenericfactory.h>
-#include <knewstuff2/engine.h>
+#include <KNS3/DownloadDialog>
 
 EditDialog::EditDialog(QWidget *parent, const QString &name)
         : KDialog(parent)
@@ -422,15 +422,23 @@ void EmoticonList::loadTheme(const QString &name)
 
 void EmoticonList::getNewStuff()
 {
-    KNS::Engine engine(this);
-    if (engine.init("emoticons.knsrc")) {
-        KNS::Entry::List entries = engine.downloadDialogModal(this);
+    KNS3::DownloadDialog dialog("emoticons.knsrc", this);
+    dialog.exec();
+    if (!dialog.changedEntries().isEmpty()) {
+        KNS3::Entry::List entries = dialog.changedEntries();
 
         for (int i = 0; i < entries.size(); i ++) {
-            if (entries.at(i)->status() == KNS::Entry::Installed
-                && !entries.at(i)->installedFiles().isEmpty()) {
-                QString name = entries.at(i)->installedFiles().at(0).section('/', -2, -2);
+            if (entries.at(i).status() == KNS3::Entry::Installed
+                && !entries.at(i).installedFiles().isEmpty()) {
+                QString name = entries.at(i).installedFiles().at(0).section('/', -2, -2);
                 loadTheme(name);
+            } else if (entries.at(i).status() == KNS3::Entry::Deleted) {
+                QString name = entries.at(i).uninstalledFiles().at(0).section('/', -2, -2);
+                QList<QListWidgetItem*> ls = themeList->findItems(name, Qt::MatchExactly);
+                if (ls.size()) {
+                    delete ls.at(0);
+                    emoMap.remove(name);
+                }
             }
         }
     }

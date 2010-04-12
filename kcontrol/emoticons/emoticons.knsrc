@@ -1,4 +1,5 @@
-[KNewStuff2]
-ProvidersUrl=http://download.kde.org/khotnewstuff/emoticons-providers.xml
+[KNewStuff3]
+ProvidersUrl=http://download.kde.org/ocs/providers.xml
+Categories=Emoticon Theme
 StandardResource=emoticons
-Uncompress=true
+Uncompress=always
