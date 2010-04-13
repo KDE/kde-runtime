@@ -23,6 +23,7 @@
 #include "dbusoperators_p.h"
 
 #include <QtDBus/QDBusConnection>
+#include <QtDBus/QDBusServiceWatcher>
 
 #include <kdebug.h>
 #include <kdirnotify.h>
@@ -47,10 +48,12 @@ Nepomuk::SearchModule::SearchModule( QObject* parent, const QList<QVariant>& )
     // connect to serviceOwnerChanged to catch crashed clients that never unregistered
     // themselves
     //
-    connect( QDBusConnection::sessionBus().interface(),
-             SIGNAL( serviceOwnerChanged( const QString&, const QString&, const QString& ) ),
-             this,
-             SLOT( slotServiceOwnerChanged( const QString&, const QString&, const QString& ) ) );
+    m_watcher = new QDBusServiceWatcher( QString(),
+                                         QDBusConnection::sessionBus(),
+                                         QDBusServiceWatcher::WatchForUnregistration,
+                                         this );
+    connect( m_watcher, SIGNAL( serviceUnregistered( const QString& ) ),
+             this, SLOT( slotServiceUnregistered( const QString& ) ) );
 
     //
     // connect to KDirLister telling us that it entered a dir
@@ -93,8 +96,10 @@ void Nepomuk::SearchModule::registerSearchUrl( const QString& urlString )
             it.value()->ref();
         }
 
-        if ( calledFromDBus() )
+        if ( calledFromDBus() ) {
             m_dbusServiceUrlHash.insert( message().service(), url );
+            m_watcher->addWatchedService( message().service() );
+        }
     }
 }
 
@@ -105,8 +110,11 @@ void Nepomuk::SearchModule::unregisterSearchUrl( const QString& urlString )
     if ( isNepomukSearchUrl( url ) ) {
         kDebug() << "UNREGISTER UNREGISTER UNREGISTER UNREGISTER UNREGISTER" << url;
         unrefUrl( url );
-        if ( calledFromDBus() )
+        if ( calledFromDBus() ) {
             m_dbusServiceUrlHash.remove( message().service(), url );
+            if ( !m_dbusServiceUrlHash.contains( message().service() ) )
+                m_watcher->removeWatchedService( message().service() );
+        }
     }
 }
 
@@ -117,18 +125,15 @@ QStringList Nepomuk::SearchModule::watchedSearchUrls()
 }
 
 
-void Nepomuk::SearchModule::slotServiceOwnerChanged( const QString& serviceName,
-                                                     const QString&,
-                                                     const QString& newOwner )
+void Nepomuk::SearchModule::slotServiceUnregistered( const QString& serviceName )
 {
-    if ( newOwner.isEmpty() ) {
-        QHash<QString, KUrl>::iterator it = m_dbusServiceUrlHash.find( serviceName );
-        while ( it != m_dbusServiceUrlHash.end() ) {
-            unrefUrl( it.value() );
-            m_dbusServiceUrlHash.erase( it );
-            it = m_dbusServiceUrlHash.find( serviceName );
-        }
+    QHash<QString, KUrl>::iterator it = m_dbusServiceUrlHash.find( serviceName );
+    while ( it != m_dbusServiceUrlHash.end() ) {
+        unrefUrl( it.value() );
+        m_dbusServiceUrlHash.erase( it );
+        it = m_dbusServiceUrlHash.find( serviceName );
     }
+    m_watcher->removeWatchedService( message().service() );
 }
 
 

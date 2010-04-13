@@ -26,6 +26,8 @@
 #include <QtDBus/QDBusContext>
 #include <QtCore/QMultiHash>
 
+class QDBusServiceWatcher;
+
 namespace Nepomuk {
 
     class SearchUrlListener;
@@ -45,15 +47,15 @@ namespace Nepomuk {
         Q_SCRIPTABLE QStringList watchedSearchUrls();
 
     private Q_SLOTS:
-        void slotServiceOwnerChanged( const QString& serviceName,
-                                      const QString&,
-                                      const QString& newOwner );
+        void slotServiceUnregistered( const QString& serviceName );
 
     private:
         void unrefUrl( const KUrl& url );
 
         QHash<KUrl, SearchUrlListener*> m_queryHash;
         QMultiHash<QString, KUrl> m_dbusServiceUrlHash;
+
+        QDBusServiceWatcher *m_watcher;
     };
 }
 
