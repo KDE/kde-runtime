@@ -28,6 +28,7 @@
 #include <KMessageBox>
 
 #include <QtGui/QTreeView>
+#include <QtDBus/QDBusServiceWatcher>
 
 #include <Soprano/PluginManager>
 
@@ -117,10 +118,15 @@ Nepomuk::ServerConfigModule::ServerConfigModule( QWidget* parent, const QVariant
     connect( m_checkShowHiddenFolders, SIGNAL( toggled( bool ) ),
              m_folderModel, SLOT( setHiddenFoldersShown( bool ) ) );
 
-    connect( QDBusConnection::sessionBus().interface(),
-             SIGNAL( serviceOwnerChanged( const QString&, const QString&, const QString& ) ),
-             this,
-             SLOT( slotUpdateStrigiStatus() ) );
+    QDBusServiceWatcher * watcher = new QDBusServiceWatcher( this );
+    watcher->addWatchedService( QLatin1String("org.kde.nepomuk.services.nepomukstrigiservice") );
+    watcher->setConnection( QDBusConnection::sessionBus() );
+    watcher->setWatchMode( QDBusServiceWatcher::WatchForRegistration | QDBusServiceWatcher::WatchForUnregistration );
+    
+    connect( watcher, SIGNAL( serviceRegistered(const QString&) ),
+             this, SLOT( slotUpdateStrigiStatus() ) );
+    connect( watcher, SIGNAL( serviceUnregistered(const QString&) ),
+             this, SLOT( slotUpdateStrigiStatus() ) );
 
     recreateStrigiInterface();
 }
