@@ -97,6 +97,8 @@ private Q_SLOTS:
 private:
     bool start();
 
+    QString commandLine() const;
+
     QProcess mProcess;
     QString mApplication;
     QStringList mArguments;

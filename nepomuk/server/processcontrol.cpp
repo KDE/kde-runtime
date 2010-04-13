@@ -90,27 +90,27 @@ void ProcessControl::slotFinished( int exitCode, QProcess::ExitStatus exitStatus
         if ( mPolicy == RestartOnCrash ) {
              // don't try to start an unstartable application
             if ( !mFailedToStart && --mCrashCount >= 0 ) {
-                qDebug( "Application '%s' crashed! %d restarts left.", qPrintable( mApplication ), mCrashCount );
+                qDebug( "Application '%s' crashed! %d restarts left.", qPrintable( commandLine() ), mCrashCount );
                 start();
             } else {
                 if ( mFailedToStart ) {
-                    qDebug( "Application '%s' failed to start!", qPrintable( mApplication ) );
+                    qDebug( "Application '%s' failed to start!", qPrintable( commandLine() ) );
                 } else {
-                    qDebug( "Application '%s' crashed to often. Giving up!", qPrintable( mApplication ) );
+                    qDebug( "Application '%s' crashed to often. Giving up!", qPrintable( commandLine() ) );
                 }
                 emit finished(false);
             }
         } else {
-            qDebug( "Application '%s' crashed. No restart!", qPrintable( mApplication ) );
+            qDebug( "Application '%s' crashed. No restart!", qPrintable( commandLine() ) );
         }
     } else {
         if ( exitCode != 0 ) {
             qDebug( "ProcessControl: Application '%s' returned with exit code %d (%s)",
-                    qPrintable( mApplication ), exitCode, qPrintable( mProcess.errorString() ) );
+                    qPrintable( commandLine() ), exitCode, qPrintable( mProcess.errorString() ) );
             mFailedToStart = true;
             emit finished(false);
         } else {
-            qDebug( "Application '%s' exited normally...", qPrintable( mApplication ) );
+            qDebug( "Application '%s' exited normally...", qPrintable( commandLine() ) );
             emit finished(true);
         }
     }
@@ -143,6 +143,11 @@ void ProcessControl::slotStdoutMessages()
 bool ProcessControl::isRunning() const
 {
     return mProcess.state() == QProcess::Running;
+}
+
+QString ProcessControl::commandLine() const
+{
+    return mApplication + QLatin1String(" ") + mArguments.join(QLatin1String(" "));
 }
 
 #include "processcontrol.moc"
