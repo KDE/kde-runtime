@@ -30,6 +30,7 @@
 
 class QDBusObjectPath;
 class QDBusMessage;
+class QDBusServiceWatcher;
 
 namespace Nepomuk {
     namespace Query {
@@ -62,9 +63,7 @@ namespace Nepomuk {
             Q_SCRIPTABLE QDBusObjectPath sparqlQuery( const QString& query, const RequestPropertyMapDBus& requestProps, const QDBusMessage& msg );
 
         private Q_SLOTS:
-            void slotServiceOwnerChanged( const QString& serviceName,
-                                          const QString&,
-                                          const QString& newOwner );
+            void slotServiceUnregistered( const QString& serviceName );
             void slotFolderDestroyed( QObject* folder );
             void slotFolderConnectionDestroyed( QObject* conn );
 
@@ -82,6 +81,7 @@ namespace Nepomuk {
             QHash<FolderConnection*, QString> m_connectionDBusServiceHash; // maps connections to their using dbus service
 
             int m_folderConnectionCnt; // only used for unique dbus object path generation
+            QDBusServiceWatcher *m_serviceWatcher;
         };
     }
 }

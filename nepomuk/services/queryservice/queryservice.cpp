@@ -26,6 +26,7 @@
 #include <QtDBus/QDBusConnectionInterface>
 #include <QtDBus/QDBusObjectPath>
 #include <QtDBus/QDBusMessage>
+#include <QtDBus/QDBusServiceWatcher>
 
 #include <KPluginFactory>
 #include <KUrl>
@@ -50,10 +51,12 @@ Nepomuk::Query::QueryService::QueryService( QObject* parent, const QVariantList&
 
     s_instance = this;
 
-    connect( QDBusConnection::sessionBus().interface(),
-             SIGNAL( serviceOwnerChanged( const QString&, const QString&, const QString& ) ),
-             this,
-             SLOT( slotServiceOwnerChanged( const QString&, const QString&, const QString& ) ) );
+    m_serviceWatcher = new QDBusServiceWatcher( QString(),
+                                                QDBusConnection::sessionBus(),
+                                                QDBusServiceWatcher::WatchForUnregistration, this);
+
+    connect( m_serviceWatcher, SIGNAL( serviceUnregistered(const QString& ) ),
+             this, SLOT( slotServiceUnregistered( const QString& ) ) );
 }
 
 
@@ -102,6 +105,7 @@ QDBusObjectPath Nepomuk::Query::QueryService::sparqlQuery( const QString& sparql
     QString dbusClient = msg.service();
     m_openConnections.insert( dbusClient, conn );
     m_connectionDBusServiceHash.insert( conn, dbusClient );
+    m_serviceWatcher->addWatchedService( dbusClient );
 
     return QDBusObjectPath( dbusObjectPath );
 }
@@ -155,18 +159,15 @@ void Nepomuk::Query::QueryService::slotFolderConnectionDestroyed( QObject* o )
 }
 
 
-void Nepomuk::Query::QueryService::slotServiceOwnerChanged( const QString& serviceName,
-                                                            const QString&,
-                                                            const QString& newOwner )
+void Nepomuk::Query::QueryService::slotServiceUnregistered( const QString& serviceName )
 {
-    if ( newOwner.isEmpty() ) {
-        QList<FolderConnection*> conns = m_openConnections.values( serviceName );
-        if ( !conns.isEmpty() ) {
-            kDebug() << "Service" << serviceName << "went down. Removing connections";
-            // hash cleanup will be triggered automatically
-            qDeleteAll( conns );
-        }
+    QList<FolderConnection*> conns = m_openConnections.values( serviceName );
+    if ( !conns.isEmpty() ) {
+        kDebug() << "Service" << serviceName << "went down. Removing connections";
+        // hash cleanup will be triggered automatically
+        qDeleteAll( conns );
     }
+    m_serviceWatcher->removeWatchedService(serviceName);
 }
 
 #include "queryservice.moc"
