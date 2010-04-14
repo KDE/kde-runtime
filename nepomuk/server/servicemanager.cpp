@@ -327,39 +327,8 @@ void Nepomuk::ServiceManager::stopAllServices()
 bool Nepomuk::ServiceManager::startService( const QString& name )
 {
     if( ServiceController* sc = d->findService( name ) ) {
-        if( !sc->isRunning() ) {
-            // start dependencies if possible
-            foreach( const QString &dependency, d->dependencyTree[name] ) {
-                if ( ServiceController* depSc = d->findService( dependency ) ) {
-                    if( depSc->autostart() || depSc->startOnDemand() ) {
-                        if ( !startService( dependency ) ) {
-                            kDebug() << "Cannot start dependency" << dependency;
-                            return false;
-                        }
-                    }
-                    else {
-                        kDebug() << "Dependency" << dependency << "can not be started automatically. It is not an autostart or start on demand service";
-                        return false;
-                    }
-                }
-                else {
-                    kDebug() << "Invalid dependency:" << dependency;
-                    return false;
-                }
-            }
-
-            if ( sc->start() ) {
-                return sc->waitForInitialized();
-            }
-            else {
-                // failed to start service
-                return false;
-            }
-        }
-        else {
-            // service already running
-            return true;
-        }
+        d->startService( sc );
+        return sc->waitForInitialized();
     }
     else {
         // could not find service

@@ -24,13 +24,15 @@
 #include <QtCore/QEventLoop>
 #include <QtCore/QTimer>
 
+#include <QtDBus/QDBusServiceWatcher>
+
 #include <KStandardDirs>
 #include <KConfigGroup>
 #include <KDebug>
 
 
 namespace {
-    QString dbusServiceName( const QString& serviceName ) {
+    inline QString dbusServiceName( const QString& serviceName ) {
         return QString("org.kde.nepomuk.services.%1").arg(serviceName);
     }
 }
@@ -42,6 +44,7 @@ public:
     Private()
         : processControl( 0 ),
           serviceControlInterface( 0 ),
+          dbusServiceWatcher( 0 ),
           attached( false ),
           initialized( false ),
           failedToInitialize( false ) {
@@ -54,6 +57,7 @@ public:
 
     ProcessControl* processControl;
     OrgKdeNepomukServiceControlInterface* serviceControlInterface;
+    QDBusServiceWatcher* dbusServiceWatcher;
 
     // true if we attached to an already running instance instead of
     // starting our own (in that case processControl will be 0)
@@ -158,12 +162,25 @@ bool Nepomuk::ServiceController::start()
     d->initialized = false;
     d->failedToInitialize = false;
 
+    if ( !d->dbusServiceWatcher ) {
+        d->dbusServiceWatcher = new QDBusServiceWatcher( dbusServiceName(name()),
+                                                         QDBusConnection::sessionBus(),
+                                                         QDBusServiceWatcher::WatchForRegistration | QDBusServiceWatcher::WatchForUnregistration,
+                                                         this );
+    }
+    d->dbusServiceWatcher->disconnect( this );
+
     // check if the service is already running, ie. has been started by someone else or by a crashed instance of the server
     // we cannot rely on the auto-restart feature of ProcessControl here. So we handle that completely in slotServiceOwnerChanged
     if( QDBusConnection::sessionBus().interface()->isServiceRegistered( dbusServiceName( name() ) ) ) {
         kDebug() << "Attaching to already running service" << name();
         d->attached = true;
         createServiceControlInterface();
+
+        // we do not have ProcessControl to take care of restarting. Thus, we monitor the service via DBus
+        connect( d->dbusServiceWatcher, SIGNAL( serviceUnregistered( QString ) ),
+                 this, SLOT( slotServiceUnregistered( QString ) ) );
+
         return true;
     }
     else {
@@ -175,10 +192,9 @@ bool Nepomuk::ServiceController::start()
                      this, SLOT( slotProcessFinished( bool ) ) );
         }
 
-        connect( QDBusConnection::sessionBus().interface(),
-                 SIGNAL( serviceOwnerChanged( const QString&, const QString&, const QString& ) ),
-                 this,
-                 SLOT( slotServiceOwnerChanged( const QString&, const QString&, const QString& ) ) );
+        // wait for the service to be registered with DBus before creating the service interface
+        connect( d->dbusServiceWatcher, SIGNAL( serviceRegistered( QString ) ),
+                 this, SLOT( slotServiceRegistered( QString ) ) );
 
         d->processControl->setCrashPolicy( ProcessControl::RestartOnCrash );
         return d->processControl->start( KGlobal::dirs()->locate( "exe", "nepomukservicestub" ),
@@ -265,19 +281,19 @@ void Nepomuk::ServiceController::slotProcessFinished( bool /*clean*/ )
 }
 
 
-void Nepomuk::ServiceController::slotServiceOwnerChanged( const QString& serviceName,
-                                                          const QString& oldOwner,
-                                                          const QString& newOwner )
+void Nepomuk::ServiceController::slotServiceRegistered( const QString& serviceName )
 {
-    if( !newOwner.isEmpty() && serviceName == dbusServiceName( name() ) ) {
+    if( serviceName == dbusServiceName( name() ) ) {
         createServiceControlInterface();
     }
+}
 
+void Nepomuk::ServiceController::slotServiceUnregistered( const QString& serviceName )
+{
     // an attached service was not started through ProcessControl. Thus, we cannot rely
     // on its restart-on-crash feature and have to do it manually. Afterwards it is back
-    // to normals
-    else if( d->attached &&
-             oldOwner == dbusServiceName( name() ) ) {
+    // to normal
+    if( d->attached && serviceName == dbusServiceName( name() ) ) {
         kDebug() << "Attached service" << name() << "went down. Restarting ourselves.";
         d->attached = false;
         start();

@@ -80,9 +80,8 @@ namespace Nepomuk {
         
     private Q_SLOTS:
         void slotProcessFinished( bool );
-        void slotServiceOwnerChanged( const QString& serviceName,
-                                      const QString&,
-                                      const QString& newOwner );
+        void slotServiceRegistered( const QString& serviceName );
+        void slotServiceUnregistered( const QString& serviceName );
         void slotServiceInitialized( bool success );
         
     private:
