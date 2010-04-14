@@ -133,7 +133,7 @@ void Nepomuk::SearchModule::slotServiceUnregistered( const QString& serviceName 
         m_dbusServiceUrlHash.erase( it );
         it = m_dbusServiceUrlHash.find( serviceName );
     }
-    m_watcher->removeWatchedService( message().service() );
+    m_watcher->removeWatchedService( serviceName );
 }
 
 
