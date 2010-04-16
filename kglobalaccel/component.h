@@ -158,6 +158,8 @@ public Q_SLOTS:
 
     void emitGlobalShortcutPressed(const GlobalShortcut &shortcut);
 
+    Q_SCRIPTABLE void invokeShortcut(const QString &shortcutName, const QString &context = "default");
+
 Q_SIGNALS:
 
     //! Signals that a action for this component was triggered

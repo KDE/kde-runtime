@@ -261,6 +261,11 @@ void Component::emitGlobalShortcutPressed( const GlobalShortcut &shortcut )
             timestamp);
     }
 
+void Component::invokeShortcut(const QString &shortcutName, const QString &context)
+    {
+        GlobalShortcut *shortcut = getShortcutByName(shortcutName, context);
+        if (shortcut) emitGlobalShortcutPressed(*shortcut);
+    }
 
 QString Component::friendlyName() const
     {
