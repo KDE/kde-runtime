@@ -45,6 +45,9 @@ namespace Nepomuk {
 
         StrigiService* m_service;
         bool m_suspendedManually;
+
+        // used to prevent endless status updates
+        QString m_prevStatus;
     };
 }
 

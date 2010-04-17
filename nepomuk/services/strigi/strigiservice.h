@@ -49,9 +49,14 @@ namespace Nepomuk {
 
     public Q_SLOTS:
         /**
-         * \return A user readable status string
+         * \return A user readable status string. Includes the currently indexed folder.
          */
         QString userStatusString() const;
+
+        /**
+         * Simplified status string without details.
+         */
+        QString simpleUserStatusString() const;
         bool isIdle() const;
         void setSuspended( bool );
         bool isSuspended() const;
@@ -62,6 +67,7 @@ namespace Nepomuk {
 
     private:
         void updateStrigiConfig();
+        QString userStatusString( bool simple ) const;
 
         Strigi::IndexManager* m_indexManager;
         IndexScheduler* m_indexScheduler;

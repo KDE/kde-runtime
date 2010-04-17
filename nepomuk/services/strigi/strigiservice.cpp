@@ -142,6 +142,18 @@ void Nepomuk::StrigiService::updateWatches()
 
 QString Nepomuk::StrigiService::userStatusString() const
 {
+    return userStatusString( false );
+}
+
+
+QString Nepomuk::StrigiService::simpleUserStatusString() const
+{
+    return userStatusString( true );
+}
+
+
+QString Nepomuk::StrigiService::userStatusString( bool simple ) const
+{
     bool indexing = m_indexScheduler->isIndexing();
     bool suspended = m_indexScheduler->isSuspended();
     QString folder = m_indexScheduler->currentFolder();
@@ -150,7 +162,7 @@ QString Nepomuk::StrigiService::userStatusString() const
         return i18nc( "@info:status", "File indexer is suspended" );
     }
     else if ( indexing ) {
-        if ( folder.isEmpty() )
+        if ( folder.isEmpty() || simple )
             return i18nc( "@info:status", "Strigi is currently indexing files" );
         else
             return i18nc( "@info:status", "Strigi is currently indexing files in folder %1", folder );
