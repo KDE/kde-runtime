@@ -7,7 +7,7 @@ X-KDE-ServiceTypes=KCModule
 X-KDE-Library=kcm_componentchooser
 X-KDE-ParentApp=kcontrol
 
-X-KDE-System-Settings-Parent-Category=personal
+X-KDE-System-Settings-Parent-Category=workspace-appearance-and-behavior
 X-DocPath=kcontrol/componentchooser/index.html
 
 Name=Default Applications

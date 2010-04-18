@@ -7,7 +7,7 @@ X-KDE-ServiceTypes=KCModule
 X-KDE-Library=kcm_kded
 X-KDE-ParentApp=kcontrol
 
-X-KDE-System-Settings-Parent-Category=advanced-user-settings
+X-KDE-System-Settings-Parent-Category=startup-and-shutdown
 X-DocPath=kcontrol/kded/index.html
 
 Name=Service Manager

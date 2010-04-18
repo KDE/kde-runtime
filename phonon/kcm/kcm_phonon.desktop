@@ -7,10 +7,10 @@ X-KDE-ServiceTypes=KCModule
 X-KDE-Library=kcm_phonon
 X-KDE-FactoryName=kcm_phonon
 X-KDE-ParentApp=kcontrol
-X-KDE-System-Settings-Parent-Category=computer-administration
+X-KDE-System-Settings-Parent-Category=hardware
 X-DocPath=kcontrol/phonon/index.html
 
-Name=Multimedia
+Name=Phonon
 Name[af]=Multimedia
 Name[ar]=الوسائط المتعددة
 Name[as]=মাল্টিমিডিয়া
