@@ -8,7 +8,7 @@ X-DocPath=kcontrol/nepomuk/index.html
 X-KDE-ServiceTypes=KCModule
 X-KDE-Library=kcm_nepomuk
 X-KDE-ParentApp=kcontrol
-X-KDE-System-Settings-Parent-Category=application-appearance-and-behavior
+X-KDE-System-Settings-Parent-Category=workspace-appearance-and-behavior
 
 Name=Desktop Search
 Name[ar]=بحث سطح المكتب
