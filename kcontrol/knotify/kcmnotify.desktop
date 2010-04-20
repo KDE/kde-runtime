@@ -12,9 +12,12 @@ X-KDE-System-Settings-Parent-Category=application-and-system-notifications
 X-KDE-Weight=50
 
 Name=Manage Notifications
+Name[ia]=Il Administra le Notificationes
+Name[pt]=Gerir as Notificações
 Name[sv]=Hantera underrättelser
 Name[uk]=Керування сповіщеннями
 Name[x-test]=xxManage Notificationsxx
+Name[zh_TW]=管理通知
 Comment=System Notification Configuration
 Comment[af]=Stelsel Inkennisstelling Opstelling
 Comment[ar]=تشكيل تنبيهات النظام
