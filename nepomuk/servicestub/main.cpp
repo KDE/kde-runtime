@@ -23,6 +23,7 @@
 #include <KService>
 #include <KServiceTypeTrader>
 #include <KDebug>
+#include <KApplication>
 
 #include <QtCore/QTextStream>
 #include <QtCore/QTimer>
@@ -80,10 +81,6 @@ int main( int argc, char** argv )
 
     KCmdLineArgs::init( argc, argv, &aboutData );
 
-    QApplication app( argc, argv );
-    installSignalHandler();
-    QApplication::setQuitOnLastWindowClosed( false );
-
     // FIXME: set the proper KConfig rc name using the service name
 
     KCmdLineArgs* args = KCmdLineArgs::parsedArgs();
@@ -100,7 +97,9 @@ int main( int argc, char** argv )
     args->clear();
 
     aboutData.setAppName( serviceName.toLocal8Bit() );
-    KComponentData compData( aboutData );
+    KApplication app( true /* The strigi service actually needs a GUI at the moment */ );
+    installSignalHandler();
+    QApplication::setQuitOnLastWindowClosed( false );
 
 
     // check if NepomukServer is running
@@ -142,12 +141,12 @@ int main( int argc, char** argv )
 
     // register the service control
     // ====================================
-    Nepomuk::ServiceControl* control = new Nepomuk::ServiceControl( serviceName, service, &app );
+    Nepomuk::ServiceControl control( serviceName, service, 0 );
 
 
     // start the service (queued since we need an event loop)
     // ====================================
-    QTimer::singleShot( 0, control, SLOT( start() ) );
+    QTimer::singleShot( 0, &control, SLOT( start() ) );
 
     return app.exec();
 }
