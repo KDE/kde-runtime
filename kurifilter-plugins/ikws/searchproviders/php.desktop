@@ -117,6 +117,7 @@ Query[sr@ijekavianlatin]=http://www.php.net/manual-lookup.php?pattern=\\{@}
 Query[sr@latin]=http://www.php.net/manual-lookup.php?pattern=\\{@}
 Query[sv]=http://www.php.net/manual-lookup.php?pattern=\\{@}
 Query[th]=http://www.php.net/manual-lookup.php?pattern=\\{@}
+Query[tr]=http://www.php.net/manual-lookup.php?pattern=\\{@}
 Query[uk]=http://www.php.net/manual-lookup.php?pattern=\\{@}
 Query[x-test]=xxhttp://www.php.net/manual-lookup.php?pattern=\\{@}xx
 Query[zh_CN]=http://www.php.net/manual-lookup.php?pattern=\\{@}
