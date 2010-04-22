@@ -210,6 +210,7 @@ void Nepomuk::Repository::open()
                 m_modelCopyJob->start();
             }
             else {
+                delete oldModel;
                 m_state = OPEN;
             }
         }
