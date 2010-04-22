@@ -98,6 +98,7 @@ int main( int argc, char** argv )
 
     aboutData.setAppName( serviceName.toLocal8Bit() );
     KApplication app( true /* The strigi service actually needs a GUI at the moment */ );
+    app.disableSessionManagement();
     installSignalHandler();
     QApplication::setQuitOnLastWindowClosed( false );
 
