@@ -144,7 +144,7 @@ void AtticaModule::onDefaultProvidersLoaded()
 
 void AtticaModule::addProvider()
 {
-    KUrlRequesterDialog dialog("http://", i18nc("addition of an attica/knewstuff provider by entering its url", "Url of the provider file (provider.xml)"), this);
+    KUrlRequesterDialog dialog("http://", i18nc("addition of an attica/knewstuff provider by entering its url", "URL of the provider file (provider.xml)"), this);
     if (dialog.exec() == KDialog::Accepted) {
         kDebug() << "Add provider: " << dialog.selectedUrl();
         m_manager.addProviderFileToDefaultProviders(dialog.selectedUrl());
