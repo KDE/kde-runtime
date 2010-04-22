@@ -204,12 +204,12 @@ void Nepomuk::Repository::open()
                 kDebug() << "Starting model conversion";
 
                 convertingData = true;
-                // No need to use the index filter as it already contains the data
                 m_modelCopyJob = new ModelCopyJob( oldModel, m_model, this );
                 connect( m_modelCopyJob, SIGNAL( result( KJob* ) ), this, SLOT( copyFinished( KJob* ) ) );
                 m_modelCopyJob->start();
             }
             else {
+                delete oldModel;
                 m_state = OPEN;
             }
         }
