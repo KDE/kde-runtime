@@ -43,7 +43,8 @@ namespace {
 Nepomuk::EventMonitor::EventMonitor( IndexScheduler* scheduler, QObject* parent )
     : QObject( parent ),
       m_indexScheduler( scheduler ),
-      m_pauseState( NotPaused )
+      m_pauseState( NotPaused ),
+      m_totalIndexingSeconds( 0 )
 {
     // monitor the powermanagement to not drain the battery
     connect( Solid::PowerManagement::notifier(), SIGNAL( appShouldConserveResourcesChanged( bool ) ),
@@ -57,7 +58,7 @@ Nepomuk::EventMonitor::EventMonitor( IndexScheduler* scheduler, QObject* parent 
     if ( StrigiServiceConfig::self()->isInitialRun() ) {
         // TODO: add actions to this notification
 
-        m_initialIndexTime.start();
+        m_indexingStartTime = QDateTime::currentDateTime();
 
         // inform the user about the initial indexing
         sendEvent( "initialIndexingStarted",
@@ -70,6 +71,9 @@ Nepomuk::EventMonitor::EventMonitor( IndexScheduler* scheduler, QObject* parent 
         connect( m_indexScheduler, SIGNAL( indexingStopped() ),
                  this, SLOT( slotIndexingStopped() ),
                  Qt::QueuedConnection );
+                 
+        connect( m_indexScheduler, SIGNAL( indexingSuspended(bool) ),
+                 this, SLOT( slotIndexingSuspended(bool) ) );
     }
 
     slotPowerManagementStatusChanged( Solid::PowerManagement::appShouldConserveResources() );
@@ -85,16 +89,14 @@ void Nepomuk::EventMonitor::slotPowerManagementStatusChanged( bool conserveResou
 {
     if ( !conserveResources && m_pauseState == PausedDueToPowerManagement ) {
         kDebug() << "Resuming indexer due to power management";
-        m_pauseState = NotPaused;
-        m_indexScheduler->resume();
+        resumeIndexing();
         sendEvent( "indexingResumed", i18n("Resuming indexing of files for fast searching."), "battery-charging" );
     }
     else if ( conserveResources &&
               m_indexScheduler->isRunning() &&
               !m_indexScheduler->isSuspended() ) {
         kDebug() << "Pausing indexer due to power management";
-        m_pauseState = PausedDueToPowerManagement;
-        m_indexScheduler->suspend();
+        pauseIndexing( PausedDueToPowerManagement );
         sendEvent( "indexingSuspended", i18n("Suspending the indexing of files to preserve resources."), "battery-100" );
     }
 }
@@ -107,8 +109,7 @@ void Nepomuk::EventMonitor::slotCheckAvailableSpace()
         if ( info.available() <= StrigiServiceConfig::self()->minDiskSpace() ) {
             if ( m_indexScheduler->isRunning() &&
                 !m_indexScheduler->isSuspended() ) {
-                m_pauseState = PausedDueToAvailSpace;
-                m_indexScheduler->suspend();
+                pauseIndexing( PausedDueToAvailSpace );
                 sendEvent( "indexingSuspended",
                            i18n("Disk space is running low (%1 left). Suspending indexing of files.",
                                 KIO::convertSize( info.available() ) ),
@@ -117,8 +118,7 @@ void Nepomuk::EventMonitor::slotCheckAvailableSpace()
         }
         else if ( m_pauseState == PausedDueToAvailSpace ) {
             kDebug() << "Resuming indexer due to disk space";
-            m_pauseState = NotPaused;
-            m_indexScheduler->resume();
+            resumeIndexing();
             sendEvent( "indexingResumed", i18n("Resuming indexing of files for fast searching."), "drive-harddisk" );
         }
     }
@@ -133,13 +133,47 @@ void Nepomuk::EventMonitor::slotIndexingStopped()
 {
     // inform the user about the end of initial indexing. This will only be called once
     if ( !m_indexScheduler->isSuspended() ) {
-        kDebug() << "initial indexing took" << m_initialIndexTime.elapsed();
+        m_totalIndexingSeconds += m_indexingStartTime.secsTo( QDateTime::currentDateTime() );
+        const int elapsed = m_totalIndexingSeconds * 1000;
+        
+        kDebug() << "initial indexing took" << elapsed;
         sendEvent( "initialIndexingFinished",
                    i18nc( "@info %1 is a duration formatted using KLocale::prettyFormatDuration",
                           "Initial indexing of files for fast searching finished in %1",
-                          KGlobal::locale()->prettyFormatDuration( m_initialIndexTime.elapsed() ) ),
+                          KGlobal::locale()->prettyFormatDuration( elapsed ) ),
                    "nepomuk" );
         m_indexScheduler->disconnect( this );
+    }
+}
+
+
+void Nepomuk::EventMonitor::pauseIndexing(int pauseState)
+{
+    m_pauseState = pauseState;
+    m_indexScheduler->suspend();
+
+    m_totalIndexingSeconds += m_indexingStartTime.secsTo( QDateTime::currentDateTime() );
+}
+
+
+void Nepomuk::EventMonitor::resumeIndexing()
+{
+    m_pauseState = NotPaused;
+    m_indexScheduler->resume();
+
+    m_indexingStartTime = QDateTime::currentDateTime();
+}
+
+
+void Nepomuk::EventMonitor::slotIndexingSuspended( bool suspended )
+{
+    if( suspended ) {
+        //The indexing is already paused, this meerly sets the correct state, and adjusts the timing.
+        pauseIndexing( PausedCustom );
+    }
+    else {
+        //Again, used to set the correct state, and adjust the timing.
+        resumeIndexing();
     }
 }
 

@@ -22,7 +22,7 @@
 #include <QtCore/QObject>
 #include <QtCore/QStringList>
 #include <QtCore/QTimer>
-#include <QtCore/QTime>
+#include <QtCore/QDateTime>
 
 class KDiskFreeSpace;
 
@@ -42,12 +42,16 @@ namespace Nepomuk {
         void slotPowerManagementStatusChanged( bool conserveResources );
         void slotCheckAvailableSpace();
         void slotIndexingStopped();
+        void pauseIndexing(int pauseState);
+        void resumeIndexing();
+        void slotIndexingSuspended( bool suspended );
 
     private:
         enum {
             NotPaused,
             PausedDueToPowerManagement,
-            PausedDueToAvailSpace
+            PausedDueToAvailSpace,
+            PausedCustom
         };
 
         IndexScheduler* m_indexScheduler;
@@ -56,7 +60,8 @@ namespace Nepomuk {
         // timer used to periodically check for available space
         QTimer m_availSpaceTimer;
 
-        QTime m_initialIndexTime;
+        QDateTime m_indexingStartTime;
+        int m_totalIndexingSeconds;
     };
 }
 
