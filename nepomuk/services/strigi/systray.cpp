@@ -74,10 +74,21 @@ Nepomuk::SystemTray::~SystemTray()
 
 void Nepomuk::SystemTray::slotUpdateStrigiStatus()
 {
-    setToolTip("nepomuk", i18n("Search Service"),  m_service->userStatusString() );
-    m_suspendResumeAction->setChecked( m_service->indexScheduler()->isSuspended() );
+    // make sure we do not update the systray icon all the time
+
     // a manually suspended service should not be passive
-    setStatus( m_service->isIdle() && !m_service->isSuspended() ? Passive : Active );
+    ItemStatus newStatus = m_service->isIdle() && !m_service->isSuspended() ? Passive : Active;
+    if ( newStatus != status() ) {
+        setStatus( newStatus );
+    }
+
+    QString statusString = m_service->userStatusString();
+    if ( statusString != m_prevStatus ) {
+        m_prevStatus = statusString;
+        setToolTip("nepomuk", i18n("Search Service"), statusString );
+    }
+
+    m_suspendResumeAction->setChecked( m_service->indexScheduler()->isSuspended() );
 }
 
 
