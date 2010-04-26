@@ -5,21 +5,25 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/mod
 
 #search packages used by KDE
 find_package(KDE4 REQUIRED)
+if ( NOT ONLY_KLEO )
 find_package(Strigi REQUIRED)
 # I don't see any package requiring it. please explain why this dependency
 # is necessary (dirk)
 #find_package(KdepimLibs REQUIRED)
+endif ( NOT ONLY_KLEO )
 
 include(KDE4Defaults)
 include(MacroLibrary)
 include(CheckFunctionExists)
 include(CheckIncludeFiles)
 
+if ( NOT ONLY_KLEO )
 set(SOPRANO_MIN_VERSION "2.0.98")
 macro_optional_find_package(Soprano)
 macro_optional_find_package(Nepomuk)
 macro_log_feature(Soprano_FOUND "Soprano" "Soprano Libraries" "kdesupport" FALSE "" "Required to build Nepomuk.")
 macro_log_feature(Nepomuk_FOUND "Nepomuk" "Nepomuk Libraries" "kdelibs" FALSE "" "Required to build Nepomuk.")
+endif ( NOT ONLY_KLEO )
 
 check_include_files(sys/wait.h HAVE_SYS_WAIT_H)
 check_include_files(sys/time.h HAVE_SYS_TIME_H)
@@ -31,8 +35,11 @@ add_definitions(-D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE) # for off_t, in at
 
 include_directories (${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} ${KDE4_INCLUDES})
 
+if ( NOT ONLY_KLEO )
 add_subdirectory(cmake)
+endif ( NOT ONLY_KLEO )
 macro_optional_add_subdirectory(doc)
+if ( NOT ONLY_KLEO )
 add_subdirectory(kuiserver)
 if ( NOT WIN32 )
   add_subdirectory(drkonqi)
@@ -42,7 +49,9 @@ add_subdirectory(kioexec)
 add_subdirectory(kioslave)
 add_subdirectory(knetattach)
 add_subdirectory(kpasswdserver)
+endif ( NOT ONLY_KLEO )
 add_subdirectory(kdebugdialog)
+if ( NOT ONLY_KLEO )
 add_subdirectory(ktimezoned)
 add_subdirectory(kcontrol)
 add_subdirectory(kcmshell)
@@ -90,3 +99,4 @@ endif(CMAKE_SOURCE_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
 
 ########### install files ###############
 install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/kde4 DESTINATION ${BIN_INSTALL_DIR})
+endif ( NOT ONLY_KLEO )
