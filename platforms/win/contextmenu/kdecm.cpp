@@ -32,7 +32,7 @@
 #include <shlobj.h>
 #include <stdio.h>
 #include <stdlib.h>
-#ifdef _MSC_VER
+#if defined(_MSC_VER) || defined(__MINGW64__)
 #include <ShellApi.h>
 #endif
 
@@ -49,6 +49,7 @@
 #include "resource.h"
 #include "kdecm.h"
 #pragma data_seg()
+
 
 //---------------------------------------------------------------------------
 //  Global variables
