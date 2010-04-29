@@ -56,7 +56,8 @@ class KInotify::Private
 {
 public:
     Private( KInotify* parent )
-        : m_inotifyFd( -1 ),
+        : watchHiddenFolders( true ),
+          m_inotifyFd( -1 ),
           m_notifier( 0 ),
           q( parent) {
     }
@@ -76,6 +77,8 @@ public:
     // FIXME: only stored from the last addWatch call
     WatchEvents mode;
     WatchFlags flags;
+
+    bool watchHiddenFolders;
 
     int inotify() {
         if ( m_inotifyFd < 0 ) {
@@ -136,6 +139,8 @@ public:
 
                 if ( ( entry->d_type == DT_UNKNOWN ||
                        entry->d_type == DT_DIR ) &&
+                     ( watchHiddenFolders ||
+                       qstrncmp( entry->d_name, ".", 1 ) ) &&
                      qstrcmp( entry->d_name, "." ) &&
                      qstrcmp( entry->d_name, ".." ) ) {
                     bool isDir = true;
@@ -332,12 +337,16 @@ void KInotify::slotEvent( int socket )
         }
         if ( event->mask & EventDelete ) {
             kDebug() << path << "EventDelete";
-            d->removeWatch( event->wd );
+            if ( event->mask & IN_ISDIR ) {
+                d->removeWatch( event->wd );
+            }
             emit deleted( path );
         }
         if ( event->mask & EventDeleteSelf ) {
             kDebug() << path << "EventDeleteSelf";
-            d->removeWatch( event->wd );
+            if ( event->mask & IN_ISDIR ) {
+                d->removeWatch( event->wd );
+            }
             emit deleted( path );
         }
         if ( event->mask & EventModify ) {
@@ -369,7 +378,9 @@ void KInotify::slotEvent( int socket )
         }
         if ( event->mask & EventUnmount ) {
             kDebug() << path << "EventUnmount. removing from path hash";
-            d->removeWatch( event->wd );
+            if ( event->mask & IN_ISDIR ) {
+                d->removeWatch( event->wd );
+            }
             emit unmounted( path );
         }
         if ( event->mask & EventQueueOverflow ) {
