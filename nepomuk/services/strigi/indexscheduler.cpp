@@ -569,7 +569,7 @@ namespace {
     {
         QStringList filters;
         foreach( const QString& folder, Nepomuk::StrigiServiceConfig::self()->includeFolders() ) {
-            filters << QString::fromLatin1( "(?url!=<file://%1>)" ).arg( folder );
+            filters << QString::fromLatin1( "(?url!=%1)" ).arg( Soprano::Node::resourceToN3( KUrl( folder ) ) );
         }
         return filters.join( QLatin1String( " && " ) );
     }
@@ -589,7 +589,7 @@ namespace {
             subFilters << constructFolderSubFilter( folders, index );
         }
 
-        QString thisFilter = QString::fromLatin1( "REGEX(STR(?url),'^file://%1')" ).arg( path );
+        QString thisFilter = QString::fromLatin1( "REGEX(STR(?url),'^%1')" ).arg( QString::fromAscii( KUrl( path ).toEncoded() ) );
 
         // we want all folders that should NOT be indexed
         if ( include ) {
