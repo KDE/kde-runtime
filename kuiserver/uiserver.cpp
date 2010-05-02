@@ -82,7 +82,7 @@ UiServer::UiServer(ProgressListModel* model)
 
     m_systemTray = new KSystemTrayIcon(this);
     m_systemTray->setIcon(KSystemTrayIcon::loadIcon("view-process-system"));
-    m_systemTray->setToolTip("List of running file transfers/jobs (kuiserver)");
+    m_systemTray->setToolTip(i18n("List of running file transfers/jobs (kuiserver)"));
     m_systemTray->show();
     resize(450, 450);
     applySettings();
