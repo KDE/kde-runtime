@@ -34,7 +34,7 @@ namespace Nepomuk {
         "libtool", "config.status", "confdefs.h",
         "CMakeFiles", "cmake_install.cmake",
         "CTestTestfile.cmake", "*.moc", "moc_*.cpp",
-        0 };
+        "*.torrent", 0 };
 
     QStringList defaultExcludeFilterList()
     {
