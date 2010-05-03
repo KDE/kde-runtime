@@ -231,12 +231,15 @@ void Nepomuk::MetadataMover::updateMetadata( const KUrl& from, const KUrl& to, b
         // We cannot use the nie:isPartOf relation since only children could have metadata. Thus, we do a regex
         // match on all files and folders below the URL we got.
         //
+        // CAUTION: The trailing slash on the from URL is essential! Otherwise we might match the newly added
+        //          URLs, too (in case a rename only added chars to the name)
+        //
         QString query = QString::fromLatin1( "select distinct ?r ?url where { "
                                              "?r %1 ?url . "
                                              "FILTER(REGEX(STR(?url),'^%2')) . "
                                              "}" )
                         .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ),
-                              from.url() );
+                              from.url(KUrl::AddTrailingSlash) );
         kDebug() << query;
         Soprano::QueryResultIterator it = m_model->executeQuery( query, Soprano::Query::QueryLanguageSparql );
         while ( it.next() ) {
