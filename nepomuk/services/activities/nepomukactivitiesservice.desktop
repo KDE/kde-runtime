@@ -1,0 +1,21 @@
+[Desktop Entry]
+Type=Service
+ServiceTypes=NepomukService
+X-KDE-Library=nepomukactivitiesservice
+X-KDE-Nepomuk-autostart=true
+X-KDE-Nepomuk-start-on-demand=false
+Name=Nepomuk Activities Service
+Name[en_GB]=Nepomuk Activities Service
+Name[es]=Servicio de actividades de Nepomuk
+Name[et]=Nepomuki tegevuste teenus
+Name[fr]=Service des activités Nepomuk
+Name[gl]=Servizo de actividades Nepomuk
+Name[nb]=Nepomuk Strigi-tjeneste
+Name[nl]=Nepomuk activiteitenservice
+Name[pt]=Serviço de Actividades do Nepomuk
+Name[pt_BR]=Serviço de Atividades do Nepomuk
+Name[sv]=Nepomuk aktivitetstjänst
+Name[tr]=Nepomuk Eylemler Servisi
+Name[uk]=Служба просторів дій Nepomuk
+Name[x-test]=xxNepomuk Activities Servicexx
+Comment=
