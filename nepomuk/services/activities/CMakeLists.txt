@@ -42,7 +42,7 @@ install(
    DESTINATION ${PLUGIN_INSTALL_DIR}
    )
 
-install(FILES
-   org.kde.nepomuk.ActivitiesService.xml
-   DESTINATION ${DBUS_INTERFACES_INSTALL_DIR}
-   )
+# install(FILES
+#    org.kde.nepomuk.ActivitiesService.xml
+#    DESTINATION ${DBUS_INTERFACES_INSTALL_DIR}
+#    )

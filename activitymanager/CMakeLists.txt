@@ -12,7 +12,7 @@ qt4_add_dbus_adaptor(
 
 qt4_add_dbus_interface(
     kded_activitymanager_SRCS
-    ${KDEBASE_RUNTIME_SOURCE_DIR}/../workspace/libs/kworkspace/org.kde.ActivityController.xml
+    org.kde.ActivityController.xml
     activitycontroller_interface
 )
 
@@ -34,4 +34,4 @@ target_link_libraries(kded_activitymanager
 install( TARGETS kded_activitymanager DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 install( FILES activitymanager.desktop DESTINATION ${SERVICES_INSTALL_DIR}/kded )
-install( FILES org.kde.ActivityManager.xml DESTINATION ${DBUS_INTERFACES_INSTALL_DIR} )
+# install( FILES org.kde.ActivityManager.xml DESTINATION ${DBUS_INTERFACES_INSTALL_DIR} )
