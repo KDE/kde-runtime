@@ -9,23 +9,7 @@ X-KDE-Kded-load-on-demand=false
 X-KDE-Kded-phase=1
 
 Name=Activity Manager
-Name[en_GB]=Activity Manager
-Name[es]=Gestor de actividad
-Name[fr]=Gestionnaire d'agencement
-Name[nb]=Aktivitet
-Name[pt]=Gestor de Actividades
-Name[pt_BR]=Gerenciador de atividades
-Name[sv]=Aktivitetshanterare
-Name[uk]=Керування просторами дій
 Name[x-test]=xxActivity Managerxx
 
 Comment=The activity management backend
-Comment[en_GB]=The activity management backend
-Comment[es]=El motor de gestión de actividad
-Comment[fr]=Le moteur de gestion de l'agencement
-Comment[nb]=Bakgrunnsmotor for Bluetooth-styring
-Comment[pt]=A infra-estrutura do gestor de actividades
-Comment[pt_BR]=A infraestrutura de gerenciamento de atividades
-Comment[sv]=Gränssnittet för aktivitetshanteringen
-Comment[uk]=Сервер керування просторами дій
 Comment[x-test]=xxThe activity management backendxx
