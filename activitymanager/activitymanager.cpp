@@ -303,7 +303,7 @@ void ActivityManager::SetActivityName(const QString & id, const QString & name)
 
 void ActivityManager::RegisterResourceWindow(uint wid, const QString & uri)
 {
-    d->resourceWindows[wid] << uri;
+    d->resourceWindows[(WId)wid] << uri;
     d->resourceActivities[uri] << CurrentActivity();
 
     d->emitResourceWindowRegistered(wid, uri);
@@ -311,9 +311,9 @@ void ActivityManager::RegisterResourceWindow(uint wid, const QString & uri)
 
 void ActivityManager::UnregisterResourceWindow(uint wid, const QString & uri)
 {
-    d->resourceWindows[wid].remove(uri);
-    if (uri.isEmpty() || d->resourceWindows[wid].size() == 0) {
-        d->resourceWindows.remove(wid);
+    d->resourceWindows[(WId)wid].remove(uri);
+    if (uri.isEmpty() || d->resourceWindows[(WId)wid].size() == 0) {
+        d->resourceWindows.remove((WId)wid);
     }
 
     d->emitResourceWindowUnregistered(wid, uri);
@@ -381,7 +381,7 @@ QString ActivityManager::_allInfo() const
             i.next();
 
             QStringList list = i.value().toList();
-            result << QString::number(i.key()) + ':' + list.join(" ") + '\n';
+            result << QString::number((intptr_t)i.key()) + ':' + list.join(" ") + '\n';
         }
     }
 
