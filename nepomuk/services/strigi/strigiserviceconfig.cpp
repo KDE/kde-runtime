@@ -198,7 +198,7 @@ namespace {
         bool included = false;
         for ( int i = 0; i < folders.count(); ++i ) {
             if ( f != folders[i].first &&
-                 f.startsWith( folders[i].first ) )
+                 f.startsWith( KUrl( folders[i].first ).path( KUrl::AddTrailingSlash ) ) )
                 included = folders[i].second;
         }
         return included == include;
