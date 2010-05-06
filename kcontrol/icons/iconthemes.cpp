@@ -37,7 +37,7 @@
 #include <kapplication.h>
 #include <kbuildsycocaprogressdialog.h>
 #include <klocale.h>
-#include <kiconcache.h>
+#include <kshareddatacache.h>
 #include <kpushbutton.h>
 #include <ksvgrenderer.h>
 #include <kstandarddirs.h>
@@ -479,7 +479,7 @@ void IconThemesConfig::save()
   KIconTheme::reconfigure();
   emit changed(false);
 
-  KIconCache::deleteCache();
+  KSharedDataCache::deleteCache("icon-cache");
 
   for (int i=0; i<KIconLoader::LastGroup; i++)
   {
