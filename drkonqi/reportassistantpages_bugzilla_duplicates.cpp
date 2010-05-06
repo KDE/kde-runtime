@@ -217,7 +217,7 @@ void BugzillaDuplicatesPage::performSearch()
         endDateStr = QLatin1String("Now");
     }
 
-#if true
+#if 1
     BugReport report = reportInterface()->newBugReportTemplate();
     bugzillaManager()->searchBugs(reportInterface()->relatedBugzillaProducts(),
                                   report.bugSeverity(), startDateStr, endDateStr, 
