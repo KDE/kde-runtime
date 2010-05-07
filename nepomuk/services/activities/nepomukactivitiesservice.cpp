@@ -128,6 +128,26 @@ void NepomukActivitiesService::setName(const QString & id, const QString & name)
     activityResource(id).setLabel(name);
 }
 
+QString NepomukActivitiesService::icon(const QString & id) const
+{
+    QStringList symbols = activityResource(id).symbols();
+
+    if (symbols.isEmpty()) {
+        return QString();
+    } else {
+        return symbols.first();
+    }
+}
+
+void NepomukActivitiesService::setIcon(const QString & id, const QString & icon)
+{
+    QStringList symbols;
+
+    symbols << icon;
+
+    activityResource(id).setSymbols(symbols);
+}
+
 QString NepomukActivitiesService::resourceUri(const QString & id) const
 {
     return KUrl(activityResource(id).resourceUri()).url();

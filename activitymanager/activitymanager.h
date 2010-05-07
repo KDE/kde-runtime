@@ -83,6 +83,19 @@ public Q_SLOTS:
      */
     void SetActivityName(const QString & id, const QString & name);
 
+    /**
+     * @returns the icon of the specified activity
+     * @param id id of the activity
+     */
+    QString ActivityIcon(const QString & id) const;
+
+    /**
+     * Sets the icon of the specified activity
+     * @param id id of the activity
+     * @param icon icon to be set
+     */
+    void SetActivityIcon(const QString & id, const QString & icon);
+
     // Resource related functions
 
     /**

@@ -303,6 +303,26 @@ void ActivityManager::SetActivityName(const QString & id, const QString & name)
     emit ActivityNameChanged(id, name);
 }
 
+QString ActivityManager::ActivityIcon(const QString & id) const
+{
+    if (!d->availableActivities.contains(id) ||
+            !d->activitiesStore) {
+        return QString();
+    }
+
+    return d->activitiesStore->icon(id);
+}
+
+void ActivityManager::SetActivityIcon(const QString & id, const QString & icon)
+{
+    if (!d->availableActivities.contains(id) ||
+            !d->activitiesStore) {
+        return;
+    }
+
+    d->activitiesStore->setIcon(id, icon);
+}
+
 void ActivityManager::RegisterResourceWindow(uint wid, const QString & uri)
 {
     d->resourceWindows[(WId)wid] << uri;

@@ -81,6 +81,19 @@ public Q_SLOTS:
     void setName(const QString & activityId, const QString & name);
 
     /**
+     * @returns the icon of the specified activity
+     * @param activityId id of the activity
+     */
+    QString icon(const QString & activityId) const;
+
+    /**
+     * Sets the icon of the specified activity.
+     * @param activityId id of the activity
+     * @param icon path or freedesktop.org icon name
+     */
+    void setIcon(const QString & activityId, const QString & icon);
+
+    /**
      * @returns the Nepomuk URI of the specified activity
      * @param activityId id of the activity
      */
