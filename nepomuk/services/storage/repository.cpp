@@ -53,7 +53,9 @@ Nepomuk::Repository::Repository( const QString& name )
     : m_name( name ),
       m_state( CLOSED ),
       m_model( 0 ),
-      m_modelCopyJob( 0 )
+      m_backend( 0 ),
+      m_modelCopyJob( 0 ),
+      m_oldStorageBackend( 0 )
 {
 }
 
