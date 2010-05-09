@@ -48,9 +48,9 @@ DeviceModel::headerData(int section, Qt::Orientation orientation, int role) cons
             case 0:
                 return i18n("Device");
             case 1:
-                return i18n("Automount on login");
+                return i18n("Automount on Login");
             case 2:
-                return i18n("Automount on attach");
+                return i18n("Automount on Attach");
         }
     }
     return QVariant();
