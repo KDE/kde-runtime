@@ -545,6 +545,9 @@ void Nepomuk::NepomukProtocol::del(const KUrl& url, bool isFile)
 
 bool Nepomuk::NepomukProtocol::rewriteUrl( const KUrl& url, KUrl& newURL )
 {
+    if ( url.queryItemValue( QLatin1String( "noFollow" ) ) == QLatin1String( "true" ) )
+        return false;
+
     QString filename;
     Nepomuk::Resource res = splitNepomukUrl( url, filename );
 
