@@ -142,10 +142,20 @@ Nepomuk::Query::Result Nepomuk::Query::SearchThread::extractResult( const Sopran
     kDebug() << it.binding( 0 ).uri();
     Result result( it.binding( 0 ).uri() );
 
+    // make sure we do not store values twice
+    QStringList names = it.bindingNames();
+    names.removeAll( QLatin1String( "r" ) );
+
     for ( RequestPropertyMap::const_iterator rpIt = m_requestProperties.constBegin();
           rpIt != m_requestProperties.constEnd(); ++rpIt ) {
         result.addRequestProperty( rpIt.value(), it.binding( rpIt.key() ) );
+        names.removeAll( rpIt.key() );
     }
+
+    Soprano::BindingSet set;
+    foreach( const QString& var, names )
+        set.insert( var, it[var] );
+    result.setAdditionalBindings( set );
 
     // score will be set above
     return result;
