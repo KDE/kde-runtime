@@ -19,6 +19,7 @@
 */
 
 #include "resourcepagegenerator.h"
+#include "nie.h"
 
 #include <QtCore/QByteArray>
 #include <QtCore/QTextStream>
@@ -77,6 +78,14 @@ namespace {
         }
 
         return typeStrings.join( ", " );
+    }
+
+    QString encodeUrl( const QUrl& u ) {
+        QUrl url( u );
+        if ( url.scheme() == QLatin1String( "nepomuk" ) ) {
+            url.setEncodedQuery( "noFollow=true" );
+        }
+        return QString::fromAscii( url.toEncoded() );
     }
 }
 
@@ -197,11 +206,23 @@ QByteArray Nepomuk::ResourcePageGenerator::generatePage() const
                     os << s.object().toString();
             }
             else {
-                Resource resource( s.object().uri() );
-                os << QString( "<a href=\"%1\">%2</a> (%3)" )
-                    .arg( QString::fromAscii( resource.resourceUri().toEncoded() ) )
-                    .arg( resource.genericLabel() )
-                    .arg( typesToHtml( resource.types() ) );
+                //
+                // nie:url is a special case for which we should never use Resource
+                // since Resource does in turn use nie:url to resolve resource URIs.
+                // Thus, we would get back to m_resource.
+                //
+                KUrl uri = s.object().uri();
+                QString label = uri.fileName();
+                if ( s.predicate() != Nepomuk::Vocabulary::NIE::url() ) {
+                    Resource resource( uri );
+                    uri = resource.resourceUri();
+                    label = QString::fromLatin1( "%1 (%2)" )
+                            .arg( resource.genericLabel(),
+                                  typesToHtml( resource.types() ) );
+                }
+                os << QString( "<a href=\"%1\">%2</a>" )
+                    .arg( encodeUrl( uri ),
+                          label );
             }
             os << "</td></tr>";
         }
@@ -218,9 +239,9 @@ QByteArray Nepomuk::ResourcePageGenerator::generatePage() const
             Nepomuk::Types::Property p( s.predicate().uri() );
             os << "<td align=right>"
                << QString( "<a href=\"%1\">%2</a> (%3)" )
-                .arg( QString::fromAscii( s.subject().uri().toEncoded() ) )
-                .arg( resource.genericLabel() )
-                .arg( typesToHtml( resource.types() ) )
+                .arg( encodeUrl( s.subject().uri() ),
+                      resource.genericLabel(),
+                      typesToHtml( resource.types() ) )
                << "</td>"
                << "<td width=16px></td>"
                << "<td><i>" << ( p.label().isEmpty() ? p.name() : p.label() ) << "</i></td></tr>";
