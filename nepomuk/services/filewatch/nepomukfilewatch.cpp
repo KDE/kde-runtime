@@ -20,23 +20,64 @@
 #include "metadatamover.h"
 #include "strigiserviceinterface.h"
 #include "../strigi/priority.h"
+#include "nie.h"
 
 #ifdef BUILD_KINOTIFY
 #include "kinotify.h"
 #endif
 
 #include <QtCore/QDir>
+#include <QtCore/QThread>
 #include <QtDBus/QDBusConnection>
 
 #include <KDebug>
 #include <KUrl>
 #include <KPluginFactory>
 
+#include <Nepomuk/ResourceManager>
+
+#include <Soprano/Model>
+#include <Soprano/QueryResultIterator>
+#include <Soprano/Node>
+
 
 using namespace Soprano;
 
 
 NEPOMUK_EXPORT_SERVICE( Nepomuk::FileWatch, "nepomukfilewatch")
+
+
+namespace {
+    
+    class RemoveInvalidThread : public QThread {
+    public :
+        RemoveInvalidThread(QObject* parent = 0);
+        void run();
+    };
+
+    RemoveInvalidThread::RemoveInvalidThread(QObject* parent): QThread(parent)
+    {
+        connect( this, SIGNAL(finished()), this, SLOT(deleteLater()) );
+    }
+
+    void RemoveInvalidThread::run()
+    {
+        QString query = QString::fromLatin1( "select distinct ?g ?url where { ?r %1 ?url. FILTER( regex(str(?url), 'file://') ). graph ?g { ?r ?p ?o. } }" )
+                                        .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ) );
+        Soprano::QueryResultIterator it = Nepomuk::ResourceManager::instance()->mainModel()->executeQuery( query, Soprano::Query::QueryLanguageSparql );
+
+        while( it.next() ) {
+            QUrl url( it["url"].uri() );
+            QString file = url.toLocalFile();
+            
+            if( !file.isEmpty() && !QFile::exists(file) ) {
+                kDebug() << "REMOVING " << file;
+                Nepomuk::ResourceManager::instance()->mainModel()->removeContext( it["g"] );
+            }
+        }
+    }
+
+}
 
 
 Nepomuk::FileWatch::FileWatch( QObject* parent, const QList<QVariant>& )
@@ -78,6 +119,8 @@ Nepomuk::FileWatch::FileWatch( QObject* parent, const QList<QVariant>& )
 #else
     connectToKDirWatch();
 #endif
+    
+    (new RemoveInvalidThread())->start();
 }
 
 
