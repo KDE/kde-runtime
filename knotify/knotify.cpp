@@ -30,6 +30,7 @@
 #include <config-runtime.h>
 
 #include "knotifyconfig.h"
+#include "ksolidnotify.h"
 #include "notifybysound.h"
 #include "notifybypopup.h"
 #include "notifybyexecute.h"
@@ -45,6 +46,7 @@ KNotify::KNotify( QObject *parent )
 {
 	loadConfig();
 	(void)new KNotifyAdaptor(this);
+	(void)new KSolidNotify(this);
 	QDBusConnection::sessionBus().registerObject("/Notify", this, QDBusConnection::ExportAdaptors 
 	 /*|  QDBusConnection::ExportScriptableSlots |  QDBusConnection::ExportScriptableSignals*/ );
 }

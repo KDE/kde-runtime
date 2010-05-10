@@ -1,0 +1,10 @@
+[Global]
+Name=Hardware notifications
+IconName=emblem-mounted
+Comment=Notifications triggered by solid
+Version=1
+
+[Event/mounterror]
+Name=Mount or unmount error
+Comment=There has been a problem mounting or unmounting a device
+Action=Popup
