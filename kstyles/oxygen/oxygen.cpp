@@ -3404,9 +3404,9 @@ bool OxygenStyle::drawGenericPrimitive(
                         animations().scrollBarEngine().setSubControlRect( widget, subcontrol, r );
                     }
 
-                    QColor highlight = KColorScheme(pal.currentColorGroup()).decoration(KColorScheme::HoverColor).color();
                     if( r.intersects(  animations().scrollBarEngine().subControlRect( widget, subcontrol ) ) )
                     {
+                        QColor highlight = _viewHoverBrush.brush(pal).color();
 
                         if( animated )
                         {
@@ -3429,7 +3429,7 @@ bool OxygenStyle::drawGenericPrimitive(
                 bool animated( animations().toolBarEngine().isAnimated( widget, Oxygen::AnimationHover ) );
                 qreal opacity( animations().toolBarEngine().opacity( widget, Oxygen::AnimationHover ) );
 
-                QColor highlight = KColorScheme(pal.currentColorGroup()).decoration(KColorScheme::HoverColor).color();
+                QColor highlight = _viewHoverBrush.brush(pal).color();
                 color = pal.color( QPalette::WindowText );
 
                 // toolbuttons
