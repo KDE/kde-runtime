@@ -1,10 +1,14 @@
 [Global]
 Name=Hardware notifications
+Name[x-test]=xxHardware notificationsxx
 IconName=emblem-mounted
 Comment=Notifications triggered by solid
+Comment[x-test]=xxNotifications triggered by solidxx
 Version=1
 
 [Event/mounterror]
 Name=Mount or unmount error
+Name[x-test]=xxMount or unmount errorxx
 Comment=There has been a problem mounting or unmounting a device
+Comment[x-test]=xxThere has been a problem mounting or unmounting a devicexx
 Action=Popup
