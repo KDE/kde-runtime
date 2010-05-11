@@ -86,7 +86,7 @@ KLocaleApplication::KLocaleApplication(QWidget *parent,
   m_tab->addTab( m_localenum, QString() );
   m_localemon = new KLocaleConfigMoney(m_locale, this);
   m_tab->addTab( m_localemon, QString() );
-  m_localetime = new KLocaleConfigTime(m_locale, this);
+  m_localetime = new KLocaleConfigTime(m_locale, m_nullConfig, this);
   m_tab->addTab( m_localetime, QString() );
   m_localeother = new KLocaleConfigOther(m_locale, this);
   m_tab->addTab( m_localeother, QString() );

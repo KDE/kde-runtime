@@ -26,22 +26,23 @@
 #define LOCALETIME_H
 
 #include <QWidget>
+#include <QMap>
 
+#include <KSharedConfig>
 
 class QCheckBox;
 class QComboBox;
 class QLabel;
+class QString;
 
 class KLocale;
-
-class StringPair;
 
 class KLocaleConfigTime : public QWidget
 {
   Q_OBJECT
 
 public:
-  explicit KLocaleConfigTime( KLocale *_locale, QWidget *parent=0);
+  explicit KLocaleConfigTime( KLocale *_locale, KSharedConfigPtr config, QWidget *parent = 0 );
   virtual ~KLocaleConfigTime( );
 
   void save();
@@ -73,6 +74,7 @@ private Q_SLOTS:
   void slotWeekDayOfPrayChanged(int weekDay);
   void slotDateMonthNamePossChanged();
   void slotCalendarSystemChanged(int calendarSystem);
+  void slotUseCommonEraChanged();
   void slotDateTimeDigSetChanged(int);
 
 private:
@@ -80,16 +82,14 @@ private:
   void updateDigitSetNames();
   void updateCalendarNames();
 
-  QList<StringPair> timeMap() const;
-  QList<StringPair> dateMap() const;
+  QMap<QString, QString> timeMap() const;
+  QMap<QString, QString> dateMap() const;
 
-  QString storeToUser(const QList<StringPair> & map,
-		      const QString & storeFormat) const;
-  QString userToStore(const QList<StringPair> & map,
-		      const QString & userFormat) const;
-  StringPair buildStringPair(const QChar &storeName, const QString &userName) const;
+  QString storeToUser( const QMap<QString, QString> &map, const QString & storeFormat ) const;
+  QString userToStore( const QMap<QString, QString> &map, const QString & userFormat ) const;
 
   KLocale *m_locale;
+  KSharedConfigPtr m_config;
 
   // Time & dates
   QLabel *m_labTimeFmt;
@@ -100,17 +100,13 @@ private:
   QComboBox * m_comboDateFmtShort;
   QLabel *m_labDateTimeDigSet;
   QComboBox *m_comboDateTimeDigSet;
-//   QLabel * m_labWeekStartDay;
   QComboBox * m_comboWeekStartDay;
-//   QLabel * m_labWorkingWeekStartDay;
   QComboBox * m_comboWorkingWeekStartDay;
-//   QLabel * m_labWorkingWeekEndDay;
   QComboBox * m_comboWorkingWeekEndDay;
-//   QLabel * m_labWeekDayOfPray;
   QComboBox * m_comboWeekDayOfPray;
   QCheckBox *m_chDateMonthNamePossessive;
-//   QLabel * m_labCalendarSystem;
   QComboBox * m_comboCalendarSystem;
+  QCheckBox *m_checkUseCommonEra;
 
 };
 

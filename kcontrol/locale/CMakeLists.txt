@@ -10,8 +10,9 @@ set(kcm_locale_PART_SRCS
    countryselectordialog.cpp
    toplevel.cpp 
    kcmlocale.cpp 
-   klocalesample.cpp 
-   localenum.cpp 
+   klocalesample.cpp
+   kcontrollocale.cpp
+   localenum.cpp
    localemon.cpp 
    localetime.cpp 
    localeother.cpp )

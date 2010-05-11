@@ -33,6 +33,7 @@
 #include <stdio.h>
 
 #include <klocale.h>
+#include <kcalendarsystem.h>
 
 #include "klocalesample.moc"
 
@@ -81,8 +82,8 @@ void KLocaleSample::slotUpdateTime()
 {
   QDateTime dt = QDateTime::currentDateTime();
 
-  m_dateSample->setText(m_locale->formatDate(dt.date(), KLocale::LongDate));
-  m_dateShortSample->setText(m_locale->formatDate(dt.date(), KLocale::ShortDate));
+  m_dateSample->setText(m_locale->calendar()->formatDate(dt.date(), KLocale::LongDate));
+  m_dateShortSample->setText(m_locale->calendar()->formatDate(dt.date(), KLocale::ShortDate));
   m_timeSample->setText(m_locale->formatTime(dt.time(), true));
 }
 

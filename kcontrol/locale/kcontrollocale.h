@@ -25,29 +25,22 @@
 #include <klocale.h>
 #include <ksharedconfig.h>
 
+class KCalendarSystem;
+
 class KControlLocale : public KLocale
 {
 public:
-    explicit KControlLocale(const QString &catalog, KSharedConfig::Ptr config_)
-        : KLocale(catalog, config_), config(config_)
-    {}
+    explicit KControlLocale(const QString &catalog, KSharedConfig::Ptr config_);
 
-    void setLanguage(const QString &lang)
-    {
-        KLocale::setLanguage(lang, config.data());
-    }
+    void setLanguage(const QString &lang);
+    void setLanguage(const QStringList &langlist);
+    bool setCountry(const QString &country);
+    const KCalendarSystem *calendar() const;
+    void setCalendar(const QString & calendarType);
 
-    void setLanguage(const QStringList &langlist)
-    {
-        KLocale::setLanguage(langlist);
-    }
-
-    bool setCountry(const QString &country)
-    {
-        return KLocale::setCountry(country, config.data());
-    }
 private:
     KSharedConfig::Ptr config;
+    KCalendarSystem *m_calendar;
 };
 
 #endif

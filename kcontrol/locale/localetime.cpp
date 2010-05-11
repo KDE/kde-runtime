@@ -2,10 +2,7 @@
  * localetime.cpp
  *
  * Copyright (c) 1999-2003 Hans Petter Bieker <bieker@kde.org>
- * Copyright (c) 2008 John Layt <john@layt.net>
- *
- * Requires the Qt widget libraries, available at no cost at
- * http://www.troll.no/
+ * Copyright (c) 2008, 2010 John Layt <john@layt.net>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -27,7 +24,6 @@
 #include <QCheckBox>
 #include <QLabel>
 #include <QFormLayout>
-
 #include <QComboBox>
 #include <QGroupBox>
 
@@ -40,161 +36,109 @@
 #include "toplevel.h"
 #include "localetime.moc"
 
-class StringPair
+QMap<QString, QString> KLocaleConfigTime::timeMap() const
 {
-public:
-  QChar storeName;
-  QString userName;
+    QMap<QString, QString> map;
 
-  static StringPair find( const QList <StringPair> &list, const QChar &c)
-  {
-    for ( QList<StringPair>::ConstIterator it = list.begin();
-	it != list.end();
-	++it )
-      if ((*it).storeName==c) return (*it);
+    map.insert( QString( 'H' ), ki18n( "HH" ).toString( m_locale ) );
+    map.insert( QString( 'k' ), ki18n( "hH" ).toString( m_locale ) );
+    map.insert( QString( 'I' ), ki18n( "PH" ).toString( m_locale ) );
+    map.insert( QString( 'l' ), ki18n( "pH" ).toString( m_locale ) );
+    map.insert( QString( 'M' ), ki18nc( "Minute", "MM" ).toString( m_locale ) );
+    map.insert( QString( 'S' ), ki18n( "SS" ).toString( m_locale ) );
+    map.insert( QString( 'p' ), ki18n( "AMPM" ).toString( m_locale ) );
 
-    StringPair r;
-    return r;
-  }
-
-};
-
-/*  Sort the string pairs with qHeapSort in the order we want
-    ( relative to the userName value and with "MESCORTO" before "MES" )
-    */
-bool operator< (const StringPair &p1, const StringPair &p2)
-{
-  return ! (p1.userName<p2.userName);
+    return map;
 }
 
-bool operator<= (const StringPair &p1, const StringPair &p2)
+QMap<QString, QString> KLocaleConfigTime::dateMap() const
 {
-  return ! (p1.userName<=p2.userName);
+    QMap<QString, QString> map;
+
+    map.insert( QString( 'Y' ), ki18n("YYYY").toString( m_locale ) );
+    map.insert( QString( 'y' ), ki18n( "YY" ).toString( m_locale ) );
+    map.insert( QString( 'n' ), ki18n( "mM" ).toString( m_locale ) );
+    map.insert( QString( 'm' ), ki18nc( "Month", "MM" ).toString( m_locale ) );
+    map.insert( QString( 'b' ), ki18n( "SHORTMONTH" ).toString( m_locale ) );
+    map.insert( QString( 'B' ), ki18n( "MONTH" ).toString( m_locale ) );
+    map.insert( QString( 'e' ), ki18n( "dD" ).toString( m_locale ) );
+    map.insert( QString( 'd' ), ki18n( "DD" ).toString( m_locale ) );
+    map.insert( QString( 'a' ), ki18n( "SHORTWEEKDAY" ).toString( m_locale ) );
+    map.insert( QString( 'A' ), ki18n( "WEEKDAY" ).toString( m_locale ) );
+    map.insert( "EY", ki18n( "ERAYEAR" ).toString( m_locale ) );
+    map.insert( "Ey", ki18n( "YEARINERA" ).toString( m_locale ) );
+    map.insert( "EC", ki18n( "SHORTERANAME" ).toString( m_locale ) );
+    map.insert( QString( 'j' ), ki18n( "DAYOFYEAR" ).toString( m_locale ) );
+    map.insert( QString( 'V' ), ki18n( "ISOWEEK" ).toString( m_locale ) );
+    map.insert( QString( 'u' ), ki18n( "DAYOFISOWEEK" ).toString( m_locale ) );
+
+    return map;
 }
 
-bool operator> (const StringPair &p1, const StringPair &p2)
+QString KLocaleConfigTime::userToStore( const QMap<QString, QString> &map, const QString &userFormat ) const
 {
-  return ! (p1.userName>p2.userName);
-}
+    QString result;
 
-bool operator>= (const StringPair &p1, const StringPair &p2)
-{
-  return ! (p1.userName>=p2.userName);
-}
+    for ( int pos = 0; pos < userFormat.length(); ++pos ) {
+        bool matchFound = false;
+        QMap<QString, QString>::const_iterator it = map.constBegin();
+        while ( it != map.constEnd() && !matchFound ) {
+            QString s = it.value();
 
-StringPair KLocaleConfigTime::buildStringPair(const QChar &c, const QString &s) const
-{
-  StringPair pair;
-  pair.storeName=c;
-  pair.userName=s;
-  return pair;
-}
+            if ( userFormat.mid( pos, s.length() ) == s ) {
+                result += '%';
+                result += it.key();
+                pos += s.length() - 1;
+                matchFound = true;
+            }
+            ++it;
+        }
 
-QList<StringPair> KLocaleConfigTime::timeMap() const
-{
-  QList < StringPair > list;
-  list+=buildStringPair('H',ki18n("HH").toString(m_locale));
-  list+=buildStringPair('k',ki18n("hH").toString(m_locale));
-  list+=buildStringPair('I',ki18n("PH").toString(m_locale));
-  list+=buildStringPair('l',ki18n("pH").toString(m_locale));
-  list+=buildStringPair('M',ki18nc("Minute", "MM").toString(m_locale));
-  list+=buildStringPair('S',ki18n("SS").toString(m_locale));
-  list+=buildStringPair('p',ki18n("AMPM").toString(m_locale));
-
-  qSort( list );
-
-  return list;
-}
-
-QList <StringPair> KLocaleConfigTime::dateMap() const
-{
-  QList < StringPair > list;
-  list+=buildStringPair('Y',ki18n("YYYY").toString(m_locale));
-  list+=buildStringPair('y',ki18n("YY").toString(m_locale));
-  list+=buildStringPair('n',ki18n("mM").toString(m_locale));
-  list+=buildStringPair('m',ki18nc("Month", "MM").toString(m_locale));
-  list+=buildStringPair('b',ki18n("SHORTMONTH").toString(m_locale));
-  list+=buildStringPair('B',ki18n("MONTH").toString(m_locale));
-  list+=buildStringPair('e',ki18n("dD").toString(m_locale));
-  list+=buildStringPair('d',ki18n("DD").toString(m_locale));
-  list+=buildStringPair('a',ki18n("SHORTWEEKDAY").toString(m_locale));
-  list+=buildStringPair('A',ki18n("WEEKDAY").toString(m_locale));
-
-  qSort( list );
-
-  return list;
-}
-
-QString KLocaleConfigTime::userToStore(const QList<StringPair> & list,
-		    const QString & userFormat) const
-{
-  QString result;
-
-  for ( int pos = 0; pos < userFormat.length(); ++pos )
-    {
-      bool bFound = false;
-      for ( QList<StringPair>::ConstIterator it = list.begin();
-	    it != list.end() && !bFound;
-	    ++it )
-	{
-	  QString s = (*it).userName;
-
-	  if ( userFormat.mid( pos, s.length() ) == s )
-	    {
-	      result += '%';
-	      result += (*it).storeName;
-
-	      pos += s.length() - 1;
-
-	      bFound = true;
-	    }
-	}
-
-      if ( !bFound )
-	{
-	  QChar c = userFormat.at( pos );
-	  if ( c == '%' )
-	    result += c;
-
-	  result += c;
-	}
+        if ( !matchFound ) {
+            QChar c = userFormat.at( pos );
+            if ( c == '%' ) {
+                result += c;
+            }
+            result += c;
+        }
     }
 
-  return result;
+    return result;
 }
 
-QString KLocaleConfigTime::storeToUser(const QList<StringPair> & list,
-				       const QString & storeFormat) const
+QString KLocaleConfigTime::storeToUser( const QMap<QString, QString> &map, const QString &storeFormat ) const
 {
-  QString result;
+    QString result;
 
-  bool escaped = false;
-  for ( int pos = 0; pos < storeFormat.length(); ++pos )
-    {
-      QChar c = storeFormat.at(pos);
-      if ( escaped )
-	{
-	  StringPair it = StringPair::find( list, c );
-	  if ( !it.userName.isEmpty() )
-	    result += it.userName;
-	  else
-	    result += c;
-
-	  escaped = false;
-	}
-      else if ( c == '%' )
-	escaped = true;
-      else
-	result += c;
+    bool escaped = false;
+    for ( int pos = 0; pos < storeFormat.length(); ++pos ) {
+        QChar c = storeFormat.at( pos );
+        if ( escaped ) {
+            QString key = c;
+            if ( c == 'E' ) {
+                key += storeFormat.at( ++pos );
+            }
+            QString val = map.value( key, QString() );
+            if ( !val.isEmpty() ) {
+                result += val;
+            } else {
+                result += key;
+            }
+            escaped = false;
+        } else if ( c == '%' ) {
+            escaped = true;
+        } else {
+            result += c;
+        }
     }
 
-  return result;
+    return result;
 }
 
-KLocaleConfigTime::KLocaleConfigTime(KLocale *_locale,
-				     QWidget *parent)
- : QWidget(parent),
-   m_locale(_locale)
+KLocaleConfigTime::KLocaleConfigTime( KLocale *_locale, KSharedConfigPtr config, QWidget *parent )
+                 : QWidget(parent),
+                   m_locale(_locale),
+                   m_config(config)
 {
     // Time
     QFormLayout *lay = new QFormLayout( this );
@@ -209,6 +153,13 @@ KLocaleConfigTime::KLocaleConfigTime(KLocale *_locale,
     QStringList tmpCalendars;
     tmpCalendars << QString() << QString();
     m_comboCalendarSystem->addItems(tmpCalendars);
+
+    QLabel *labelUseCommonEra = new QLabel(this);
+    m_checkUseCommonEra = new QCheckBox(this);
+    m_checkUseCommonEra->setObjectName( I18N_NOOP("Use Common Era") );
+    lay->addRow(labelUseCommonEra, m_checkUseCommonEra);
+    connect(m_checkUseCommonEra, SIGNAL(clicked()),
+            this,                SLOT(slotUseCommonEraChanged()));
 
     m_labDateTimeDigSet = new QLabel(this);
     m_labDateTimeDigSet->setObjectName( I18N_NOOP("Di&git set:") );
@@ -226,8 +177,6 @@ KLocaleConfigTime::KLocaleConfigTime(KLocale *_locale,
     m_comboTimeFmt = new QComboBox(this);
     fLay->addRow(m_labTimeFmt,m_comboTimeFmt);
     m_comboTimeFmt->setEditable(true);
-    //m_edTimeFmt = m_comboTimeFmt->lineEdit();
-    //m_edTimeFmt = new QLineEdit(this);
     connect( m_comboTimeFmt, SIGNAL( editTextChanged(const QString &) ),
              this, SLOT( slotTimeFmtChanged(const QString &) ) );
 
@@ -251,7 +200,7 @@ KLocaleConfigTime::KLocaleConfigTime(KLocale *_locale,
     m_chDateMonthNamePossessive->setObjectName(I18N_NOOP("Use declined form of month name"));
     fLay->addWidget(m_chDateMonthNamePossessive);
     connect( m_chDateMonthNamePossessive, SIGNAL(clicked()),
-               SLOT(slotDateMonthNamePossChanged()));
+             this,                        SLOT(slotDateMonthNamePossChanged()));
 
 
     QGroupBox *wGr = new QGroupBox(/*("Week"),*/this);
@@ -293,7 +242,7 @@ KLocaleConfigTime::KLocaleConfigTime(KLocale *_locale,
     QHBoxLayout * horizontalLayout = new QHBoxLayout();
     horizontalLayout->addWidget( fGr );
     horizontalLayout->addWidget( wGr );
-    
+
     lay->addRow( horizontalLayout );
 
     updateWeekDayNames();
@@ -321,6 +270,17 @@ void KLocaleConfigTime::save()
     group.deleteEntry("CalendarSystem", KConfig::Persistent | KConfig::Global);
     if (str != m_locale->calendarType())
       group.writeEntry("CalendarSystem", m_locale->calendarType(), KConfig::Persistent|KConfig::Global);
+
+    if ( m_locale->calendarType() == "gregorian" ||
+         m_locale->calendarType() == "gregorian-proleptic" ||
+         m_locale->calendarType() == "julian" ) {
+        KConfigGroup calendarGroup = ent.group( QString( "KCalendarSystem %1" ).arg( m_locale->calendarType() ) );
+        if ( m_checkUseCommonEra->isChecked() ) {
+            calendarGroup.writeEntry( "UseCommonEra", true, KConfig::Persistent | KConfig::Global );
+        } else {
+            calendarGroup.deleteEntry( "UseCommonEra", KConfig::Persistent | KConfig::Global );
+        }
+    }
 
     str = entGrp.readEntry("TimeFormat", QString::fromLatin1("%H:%M:%S"));
     group.deleteEntry("TimeFormat", KConfig::Persistent | KConfig::Global);
@@ -388,13 +348,38 @@ void KLocaleConfigTime::showEvent( QShowEvent *e )
 
 void KLocaleConfigTime::slotCalendarSystemChanged( int calendarSystem )
 {
-    kDebug() << "CalendarSystem: " << calendarSystem;
-
     if ( calendarSystem >= 0 && calendarSystem < m_comboCalendarSystem->count() ) {
         m_locale->setCalendar( m_comboCalendarSystem->itemData( calendarSystem ).toString() );
+        if ( m_locale->calendarType() == "gregorian" ||
+            m_locale->calendarType() == "gregorian-proleptic" ||
+            m_locale->calendarType() == "julian" ) {
+            m_checkUseCommonEra->setEnabled( true );
+            KConfigGroup group( KGlobal::config(), "Locale" );
+            KConfig entry( KStandardDirs::locate( "locale",
+                           QString::fromLatin1( "l10n/%1/entry.desktop" ).arg( m_locale->country() ) ) );
+            entry.setLocale( m_locale->language() );
+            KConfigGroup calendarGroup = entry.group( QString( "KCalendarSystem %1" ).arg( m_locale->calendarType() ) );
+            m_checkUseCommonEra->setChecked( calendarGroup.readEntry( "UseCommonEra", false ) );
+        } else {
+            m_checkUseCommonEra->setEnabled( false );
+            m_checkUseCommonEra->setChecked( false );
+        }
         updateWeekDayNames();
         emit localeChanged();
     }
+}
+
+void KLocaleConfigTime::slotUseCommonEraChanged()
+{
+    KConfigGroup calendarGroup( m_config, QString( "KCalendarSystem %1" ).arg( m_locale->calendarType() ) );
+
+    if ( m_checkUseCommonEra->isChecked() ) {
+        calendarGroup.writeEntry( "UseCommonEra", true );
+    } else {
+        calendarGroup.deleteEntry( "UseCommonEra" );
+    }
+
+    emit localeChanged();
 }
 
 void KLocaleConfigTime::slotLocaleChanged()
@@ -482,38 +467,68 @@ void KLocaleConfigTime::slotDateMonthNamePossChanged()
 
 void KLocaleConfigTime::slotTranslate()
 {
+  // Obtain the currently selected country's locale file
+  KConfig localeFile(KStandardDirs::locate("locale", QString::fromLatin1("l10n/%1/entry.desktop").arg(m_locale->country())));
+  localeFile.setLocale(m_locale->language());
+  KConfigGroup localeGroup(&localeFile, "KCM Locale");
+
   QString str;
+  QStringList formatList;
 
   QString sep = QString::fromLatin1("\n");
 
   QString old;
 
-  // clear() and insertStringList also changes the current item, so
-  // we better use save and restore here..
+  // Setup the format combos with
+  // 1) Users currently selected/typed in choice
+  // 2) The current country's default format
+  // 3) The users current global format
+  // 4) Some other popular formats for the users current language
+  // 5) Remove duplicates
+
   old = m_comboTimeFmt->currentText();
+  formatList.clear();
+  formatList.append( old );
+  formatList.append( storeToUser( timeMap(), m_locale->timeFormat() ) );
+  formatList.append( storeToUser( timeMap(), localeGroup.readEntry( "TimeFormat", QString::fromLatin1( "%H:%M:%S" ) ) ) );
+  str = i18nc( "some reasonable time formats for the language",
+               "HH:MM:SS\n"
+               "pH:MM:SS AMPM");
+  formatList.append( str.split( sep ) );
+  formatList.removeDuplicates();
   m_comboTimeFmt->clear();
-  str = i18nc("some reasonable time formats for the language",
-	     "HH:MM:SS\n"
-	     "pH:MM:SS AMPM");
-  m_comboTimeFmt->addItems(str.split( sep));
-  m_comboTimeFmt->setEditText(old);
+  m_comboTimeFmt->addItems( formatList );
+  m_comboTimeFmt->setEditText( old );
 
   old = m_comboDateFmt->currentText();
-  m_comboDateFmt->clear();
+  formatList.clear();
+  formatList.append( old );
+  formatList.append( storeToUser( dateMap(), m_locale->dateFormat() ) );
+  formatList.append( storeToUser( dateMap(), localeGroup.readEntry("DateFormat", QString::fromLatin1("%A %d %B %Y") ) ) );
   str = i18nc("some reasonable date formats for the language",
-	     "WEEKDAY MONTH dD YYYY\n"
-	     "SHORTWEEKDAY MONTH dD YYYY");
-  m_comboDateFmt->addItems(str.split( sep));
-  m_comboDateFmt->setEditText(old);
+              "WEEKDAY MONTH dD YYYY\n"
+              "SHORTWEEKDAY MONTH dD YYYY");
+  formatList.append( str.split( sep ) );
+  formatList.removeDuplicates();
+  m_comboDateFmt->clear();
+  m_comboDateFmt->addItems( formatList );
+  m_comboDateFmt->setEditText( old );
 
   old = m_comboDateFmtShort->currentText();
-  m_comboDateFmtShort->clear();
+  formatList.clear();
+  formatList.append( old );
+  formatList.append( storeToUser( dateMap(), m_locale->dateFormatShort() ) );
+  formatList.append( storeToUser( dateMap(), localeGroup.readEntry("DateFormatShort", QString::fromLatin1("%Y-%m-%d") ) ) );
+  formatList.append( storeToUser( dateMap(), QString::fromLatin1("%Y-%m-%d") ) );
   str = i18nc("some reasonable short date formats for the language",
-	     "YYYY-MM-DD\n"
-	     "dD.mM.YYYY\n"
-	     "DD.MM.YYYY");
-  m_comboDateFmtShort->addItems(str.split( sep));
-  m_comboDateFmtShort->setEditText(old);
+              "YYYY-MM-DD\n"
+              "dD.mM.YYYY\n"
+              "DD.MM.YYYY");
+  formatList.append( str.split( sep ) );
+  formatList.removeDuplicates();
+  m_comboDateFmtShort->clear();
+  m_comboDateFmtShort->addItems( formatList );
+  m_comboDateFmtShort->setEditText( old );
 
   updateCalendarNames();
   updateWeekDayNames();
@@ -561,6 +576,12 @@ void KLocaleConfigTime::slotTranslate()
     "<tr><td><b>SHORTWEEKDAY</b></td><td>The first three characters of the weekday name."
     "</td></tr>"
     "<tr><td><b>WEEKDAY</b></td><td>The full weekday name.</td></tr>"
+    "<tr><td><b>ERAYEAR</b></td><td>The Era Year in local format (e.g. 2000 AD).</td></tr>"
+    "<tr><td><b>SHORTERANAME</b></td><td>The short Era Name.</td></tr>"
+    "<tr><td><b>YEARINERA</b></td><td>The Year in Era as a decimal number.</td></tr>"
+    "<tr><td><b>DAYOFYEAR</b></td><td>The Day of Year as a decimal number.</td></tr>"
+    "<tr><td><b>ISOWEEK</b></td><td>The ISO Week as a decimal number.</td></tr>"
+    "<tr><td><b>DAYOFISOWEEK</b></td><td>The Day of the ISO Week as a decimal number.</td></tr>"
     "</table>").toString(m_locale);
 
   str = ki18n
@@ -576,7 +597,6 @@ void KLocaleConfigTime::slotTranslate()
   m_labDateFmtShort->setWhatsThis( str );
   m_comboDateFmtShort->setWhatsThis(  str );
 
-  /* FIXME: [2009-05-29] Message freeze in effect, activate some other time.
   str = ki18n
     ( "<p>Here you can define the set of digits "
       "used to display time and dates. "
@@ -586,7 +606,6 @@ void KLocaleConfigTime::slotTranslate()
       "where the number is shown.</p>" ).toString( m_locale );
   m_labDateTimeDigSet->setWhatsThis( str );
   m_comboDateTimeDigSet->setWhatsThis( str );
-  */
 
   str = ki18n
     ("<p>This option determines which day will be considered as "
@@ -615,6 +634,11 @@ void KLocaleConfigTime::slotTranslate()
        "names should be used in dates.</p>").toString(m_locale);
     m_chDateMonthNamePossessive->setWhatsThis(  str );
   }
+
+  str = ki18n
+    ("<p>This option determines if the Common Era (CE/BCE) should "
+     "be used instead of the Christian Era (AD/BC).</p>").toString(m_locale);
+  m_checkUseCommonEra->setWhatsThis( str );
 }
 
 void KLocaleConfigTime::updateWeekDayNames()

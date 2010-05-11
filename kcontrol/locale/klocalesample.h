@@ -30,6 +30,7 @@
 class QLabel;
 
 class KLocale;
+class KCalendarSystem;
 
 class KLocaleSample : public QWidget
 {
