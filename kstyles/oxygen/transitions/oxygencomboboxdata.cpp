@@ -36,6 +36,7 @@ namespace Oxygen
         target_( target )
     {
         target_.data()->installEventFilter( this );
+        connect( target_.data(), SIGNAL( destroyed() ), SLOT( targetDestroyed() ) );
         connect( target_.data(), SIGNAL( currentIndexChanged( int ) ), SLOT( indexChanged() ) );
     }
 
@@ -91,7 +92,7 @@ namespace Oxygen
         {
 
             timer_.stop();
-            if( target_ && !target_.data()->isEditable() )
+            if( enabled() && transition() && target_ && !target_.data()->isEditable() )
             {
                 setRecursiveCheck( true );
                 transition().data()->setEndPixmap( transition().data()->grab( target_.data(), targetRect() ) );
@@ -140,6 +141,13 @@ namespace Oxygen
 
         return true;
 
+    }
+
+    //___________________________________________________________________
+    void ComboBoxData::targetDestroyed( void )
+    {
+        setEnabled( false );
+        target_.clear();
     }
 
 }

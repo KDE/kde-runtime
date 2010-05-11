@@ -43,7 +43,8 @@ namespace Oxygen
         edited_( false )
     {
         target_.data()->installEventFilter( this );
-        transition().data()->setFlags( TransitionWidget::GrabFromWindow );
+
+        connect( target_.data(), SIGNAL( destroyed() ), SLOT( targetDestroyed() ) );
         connect( target_.data(), SIGNAL( textEdited( const QString& ) ), SLOT( textEdited( const QString& ) ) );
         connect( target_.data(), SIGNAL( textChanged( const QString& ) ), SLOT( textChanged( const QString& ) ) );
         connect( target_.data(), SIGNAL( selectionChanged() ), SLOT( selectionChanged() ) );
@@ -81,7 +82,7 @@ namespace Oxygen
         {
 
             timer_.stop();
-            if( transition() && target_ && target_.data()->isVisible() )
+            if( enabled() && transition() && target_ && target_.data()->isVisible() )
             {
                 setRecursiveCheck( true );
                 transition().data()->setEndPixmap( transition().data()->grab( target_.data(), targetRect() ) );
@@ -175,6 +176,20 @@ namespace Oxygen
 
         return valid;
 
+    }
+
+    //___________________________________________________________________
+    bool LineEditData::animate( void )
+    {
+        transition().data()->animate();
+        return true;
+    }
+
+    //___________________________________________________________________
+    void LineEditData::targetDestroyed( void )
+    {
+        setEnabled( false );
+        target_.clear();
     }
 
 }
