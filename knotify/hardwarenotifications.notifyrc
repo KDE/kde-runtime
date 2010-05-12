@@ -1,14 +1,34 @@
 [Global]
 Name=Hardware notifications
+Name[lt]=Aparatinės įrangos pranešimai
+Name[pt]=Notificações de 'hardware'
+Name[pt_BR]=Notificações de hardware
+Name[sv]=Underrättelser om hårdvara
+Name[uk]=Сповіщення щодо обладнання
 Name[x-test]=xxHardware notificationsxx
 IconName=emblem-mounted
 Comment=Notifications triggered by solid
+Comment[lt]=Solid siunčiami pranešimai
+Comment[pt]=Notificações despoletadas pelo Solid
+Comment[pt_BR]=Notificações acionadas pelo Solid
+Comment[sv]=Underrättelser utlösta av Solid
+Comment[uk]=Сповіщення, спричинені solid
 Comment[x-test]=xxNotifications triggered by solidxx
 Version=1
 
 [Event/mounterror]
 Name=Mount or unmount error
+Name[lt]=Montavimo arba išmontavimo klaida
+Name[pt]=Erro de montagem ou desmontagem
+Name[pt_BR]=Erro de montagem ou desmontagem
+Name[sv]=Monterings- eller avmonteringsfel
+Name[uk]=Помилка монтування або демонтування
 Name[x-test]=xxMount or unmount errorxx
 Comment=There has been a problem mounting or unmounting a device
+Comment[lt]=Montuojant arba išmontuojant įrenginį įvyko klaida
+Comment[pt]=Ocorreu um problema ao montar ou desmontar um dispositivo
+Comment[pt_BR]=Ocorreu um problema ao montar ou desmontar um dispositivo
+Comment[sv]=Ett problem har uppstått vid montering eller avmontering av en enhet
+Comment[uk]=Під час спроби монтування або демонтування пристрою сталася помилка
 Comment[x-test]=xxThere has been a problem mounting or unmounting a devicexx
 Action=Popup
