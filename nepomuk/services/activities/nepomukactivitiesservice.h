@@ -151,7 +151,10 @@ public Q_SLOTS:
 
 private:
     Soprano::Model * m_model;
+
     Nepomuk::Resource activityResource(const QString & activityId) const;
+    QString activityId(const Nepomuk::Resource & resource) const;
+
     QString urlForResource(const Nepomuk::Resource & resource) const;
 
 };

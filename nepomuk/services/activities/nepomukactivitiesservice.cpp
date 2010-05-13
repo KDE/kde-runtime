@@ -51,6 +51,7 @@
 #include "nie.h"
 
 #define URL_ACTIVITY_TYPE "http://www.kde.org/ontologies/activities#Activity"
+#define ACTIVITIES_PROTOCOL "activities://"
 
 /**
  * this macro creates a service factory which can then be found by the Qt/KDE
@@ -88,13 +89,7 @@ QStringList NepomukActivitiesService::listAvailable() const
 
         kDebug() << "url for resource" << resource << urlForResource(resource);
 
-        if (resource.identifiers().size()) {
-            result << resource.identifiers()
-                .first()
-                .replace(QLatin1String("activities://"), QString());
-        } else {
-            kDebug() << "invalid resource:" << resource.resourceUri() << resource.label();
-        }
+        result << activityId(resource);
     }
 
     return result;
@@ -105,6 +100,7 @@ void NepomukActivitiesService::add(const QString & id, const QString & name)
     Nepomuk::Resource activity = activityResource(id);
     activity.setLabel(name);
     activity.addType(QUrl(URL_ACTIVITY_TYPE));
+    activity.addIdentifier(ACTIVITIES_PROTOCOL + id);
 
     kDebug() << activity << id << name;
 }
@@ -155,13 +151,13 @@ QString NepomukActivitiesService::resourceUri(const QString & id) const
 
 QString NepomukActivitiesService::uri(const QString & id) const
 {
-    return QString("activities://%1").arg(id);
+    return ACTIVITIES_PROTOCOL + id;
 }
 
-void NepomukActivitiesService::associateResource(const QString & activityID,
+void NepomukActivitiesService::associateResource(const QString & activityId,
     const QString & resourceUri, const QString & typeUri)
 {
-    Nepomuk::Resource activity = activityResource(activityID);
+    Nepomuk::Resource activity = activityResource(activityId);
     Nepomuk::Resource resource = Nepomuk::Resource(resourceUri);
 
     kDebug() << activity << resource;
@@ -174,10 +170,10 @@ void NepomukActivitiesService::associateResource(const QString & activityID,
     }
 }
 
-void NepomukActivitiesService::disassociateResource(const QString & activityID,
+void NepomukActivitiesService::disassociateResource(const QString & activityId,
     const QString & resourceUri)
 {
-    Nepomuk::Resource activity = activityResource(activityID);
+    Nepomuk::Resource activity = activityResource(activityId);
     Nepomuk::Resource resource = Nepomuk::Resource(resourceUri);
 
     kDebug() << activity << resource;
@@ -265,9 +261,7 @@ QStringList NepomukActivitiesService::forResource(const QString & uri) const
 
         kDebug() << urlForResource(resource);
 
-        result << resource.identifiers()
-                          .first()
-                          .replace(QLatin1String("activities://"), QString());
+        result << activityId(resource);
     }
 
     return result;
@@ -293,7 +287,7 @@ QString NepomukActivitiesService::_serviceIteration() const
 
 Nepomuk::Resource NepomukActivitiesService::activityResource(const QString & id) const
 {
-    return Nepomuk::Resource(KUrl("activities://" + id));
+    return Nepomuk::Resource(KUrl(ACTIVITIES_PROTOCOL + id));
 }
 
 QString NepomukActivitiesService::urlForResource(const Nepomuk::Resource & resource) const
@@ -310,6 +304,18 @@ QString NepomukActivitiesService::urlForResource(const Nepomuk::Resource & resou
         return KUrl(resource.resourceUri()).url();
 
     }
+}
+
+QString NepomukActivitiesService::activityId(const Nepomuk::Resource & resource) const
+{
+    foreach(QString identifier, resource.identifiers()) { // krazy:exclude=foreach
+        if (identifier.startsWith(ACTIVITIES_PROTOCOL)) {
+            return identifier.replace(QLatin1String(ACTIVITIES_PROTOCOL), QString());
+        }
+    }
+
+    return KUrl(resource.resourceUri()).url()
+            .replace(QLatin1String(ACTIVITIES_PROTOCOL), QString());
 }
 
 #include "nepomukactivitiesservice.moc"
