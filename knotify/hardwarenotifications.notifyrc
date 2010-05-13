@@ -1,5 +1,7 @@
 [Global]
 Name=Hardware notifications
+Name[ia]=Notificationes de Hardware
+Name[km]=ការ​ជូន​ដំណឹង​របស់​ផ្នែក​រឹង
 Name[lt]=Aparatinės įrangos pranešimai
 Name[pt]=Notificações de 'hardware'
 Name[pt_BR]=Notificações de hardware
@@ -8,6 +10,8 @@ Name[uk]=Сповіщення щодо обладнання
 Name[x-test]=xxHardware notificationsxx
 IconName=emblem-mounted
 Comment=Notifications triggered by solid
+Comment[ia]=Notificationes discatenate per solid
+Comment[km]=ការ​ជូន​ដំណឹង​បានកេះ​ដោយ​តាន់
 Comment[lt]=Solid siunčiami pranešimai
 Comment[pt]=Notificações despoletadas pelo Solid
 Comment[pt_BR]=Notificações acionadas pelo Solid
@@ -18,6 +22,8 @@ Version=1
 
 [Event/mounterror]
 Name=Mount or unmount error
+Name[ia]=Error de montar o dismontar
+Name[km]=កំហុស​ក្នុងការ​ម៉ោន ឬ​អាន់ម៉ោន
 Name[lt]=Montavimo arba išmontavimo klaida
 Name[pt]=Erro de montagem ou desmontagem
 Name[pt_BR]=Erro de montagem ou desmontagem
@@ -25,6 +31,8 @@ Name[sv]=Monterings- eller avmonteringsfel
 Name[uk]=Помилка монтування або демонтування
 Name[x-test]=xxMount or unmount errorxx
 Comment=There has been a problem mounting or unmounting a device
+Comment[ia]=Il habeva un problema durante que il montava o dismontava un dispositivo
+Comment[km]=មាន​បញ្ហា​ខណៈពេល​ម៉ោន​ ឬ​អាន់ម៉ោន​ឧបករណ៍
 Comment[lt]=Montuojant arba išmontuojant įrenginį įvyko klaida
 Comment[pt]=Ocorreu um problema ao montar ou desmontar um dispositivo
 Comment[pt_BR]=Ocorreu um problema ao montar ou desmontar um dispositivo
