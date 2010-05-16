@@ -52,6 +52,7 @@
 #include <QtGui/QToolBox>
 #include <QtGui/QToolButton>
 #include <QtGui/QDial>
+#include <QtGui/QX11Info>
 
 #include <QtDBus/QtDBus>
 
@@ -5494,17 +5495,15 @@ int OxygenStyle::styleHint(StyleHint hint, const QStyleOption * option, const QW
         {
 
             // mask should be returned only if composite in disabled
-            if( !( compositingActive() ) )
+            if( !hasAlphaChannel( widget ) )
             {
                 if (QStyleHintReturnMask *mask = qstyleoption_cast<QStyleHintReturnMask *>(returnData))
                 { mask->region = _helper.roundedMask( option->rect ); }
-                return true;
-
-            } else {
-
-                return KStyle::styleHint(hint, option, widget, returnData);
 
             }
+
+            return true;
+
         }
 
         case SH_ItemView_ArrowKeysNavigateIntoChildren:
@@ -6144,7 +6143,7 @@ bool OxygenStyle::eventFilter(QObject *obj, QEvent *ev)
             case QEvent::Resize:
             {
                 // make sure mask appropriate
-                if( !compositingActive() )
+                if( !hasAlphaChannel(t) )
                 {
 
                     QRegion mask( _helper.roundedMask( t->rect() ) );
@@ -6181,7 +6180,8 @@ bool OxygenStyle::eventFilter(QObject *obj, QEvent *ev)
 
                 }
 
-                if( compositingActive() )
+                bool hasAlpha( hasAlphaChannel(t) );
+                if( hasAlpha )
                 {
                     p.setCompositionMode(QPainter::CompositionMode_Source );
                     TileSet *tileSet( _helper.roundCorner(color) );
@@ -6212,7 +6212,7 @@ bool OxygenStyle::eventFilter(QObject *obj, QEvent *ev)
                 }
 
                 // frame
-                if( compositingActive() ) p.setClipping( false );
+                if( hasAlpha ) p.setClipping( false );
                 _helper.drawFloatFrame( &p, r, color );
 
                 return true;
@@ -6226,25 +6226,6 @@ bool OxygenStyle::eventFilter(QObject *obj, QEvent *ev)
     if (QMenu *m = qobject_cast<QMenu*>(obj))
     {
         switch(ev->type()) {
-            case QEvent::Show:
-            case QEvent::Resize:
-            {
-
-                // make sure mask is appropriate
-                if( compositingActive() )
-                {
-                    if( m->mask() != QRegion() )
-                    { m->clearMask(); }
-
-                } else if( m->mask() == QRegion() ) {
-
-                    m->setMask( _helper.roundedMask( m->rect() ) );
-
-                }
-
-                return false;
-
-            }
 
             case QEvent::Paint:
             {
@@ -6256,7 +6237,8 @@ bool OxygenStyle::eventFilter(QObject *obj, QEvent *ev)
                 QRect r = m->rect();
                 QColor color = m->palette().window().color();
 
-                if( compositingActive() )
+                bool hasAlpha( hasAlphaChannel( m ) );
+                if( hasAlpha )
                 {
 
                     p.setCompositionMode(QPainter::CompositionMode_Source );
@@ -6279,7 +6261,7 @@ bool OxygenStyle::eventFilter(QObject *obj, QEvent *ev)
                 p.fillRect(lowerRect, _helper.backgroundBottomColor(color));
 
                 // frame
-                if( compositingActive() ) p.setClipping( false );
+                if( hasAlpha ) p.setClipping( false );
                 _helper.drawFloatFrame( &p, r, color );
 
                 return false;
@@ -6324,7 +6306,7 @@ bool OxygenStyle::eventFilter(QObject *obj, QEvent *ev)
             {
 
                 // make sure mask is appropriate
-                if( compositingActive() )
+                if( hasAlphaChannel( widget ) )
                 {
                     if( widget->mask() != QRegion() )
                     { widget->clearMask(); }
@@ -6348,7 +6330,8 @@ bool OxygenStyle::eventFilter(QObject *obj, QEvent *ev)
                 QRect r = widget->rect();
                 QColor color = widget->palette().window().color();
 
-                if( compositingActive() )
+                bool hasAlpha( hasAlphaChannel( widget ) );
+                if( hasAlpha )
                 {
                     p.setCompositionMode(QPainter::CompositionMode_Source );
                     TileSet *tileSet( _helper.roundCorner(color) );
@@ -6371,7 +6354,7 @@ bool OxygenStyle::eventFilter(QObject *obj, QEvent *ev)
                 p.fillRect(lowerRect, _helper.backgroundBottomColor(color));
 
                 // frame
-                if( compositingActive() ) p.setClipping( false );
+                if( hasAlpha ) p.setClipping( false );
                 _helper.drawFloatFrame( &p, r, color );
                 return false;
 
@@ -6436,7 +6419,7 @@ bool OxygenStyle::eventFilter(QObject *obj, QEvent *ev)
             case QEvent::Resize:
             {
 
-                if( dw->isFloating() && !compositingActive() )
+                if( dw->isFloating() && !hasAlphaChannel( dw ) )
                 {
 
                     QRegion mask( _helper.roundedMask( dw->rect() ) );
@@ -6465,7 +6448,8 @@ bool OxygenStyle::eventFilter(QObject *obj, QEvent *ev)
                     QColor color = dw->palette().window().color();
 
 #ifndef Q_WS_WIN
-                    if( compositingActive() )
+                    bool hasAlpha( hasAlphaChannel( dw ) );
+                    if( hasAlpha )
                     {
                         p.setCompositionMode(QPainter::CompositionMode_Source );
                         TileSet *tileSet( _helper.roundCorner(color) );
@@ -6479,7 +6463,7 @@ bool OxygenStyle::eventFilter(QObject *obj, QEvent *ev)
                     _helper.renderWindowBackground(&p, r, dw, color);
 
 #ifndef Q_WS_WIN
-                    if( compositingActive() ) p.setClipping( false );
+                    if( hasAlpha ) p.setClipping( false );
 #endif
 
                     _helper.drawFloatFrame(&p, r, color);
@@ -6557,6 +6541,24 @@ bool OxygenStyle::eventFilter(QObject *obj, QEvent *ev)
 bool OxygenStyle::compositingActive( void ) const
 {
     return KWindowSystem::compositingActive();
+}
+
+//____________________________________________________________________
+bool OxygenStyle::hasAlphaChannel( const QWidget* widget ) const
+{
+    #ifdef Q_WS_X11
+    if( compositingActive() )
+    {
+
+        if( widget ) return widget->x11Info().depth() == 32;
+        else return QX11Info().appDepth() == 32;
+
+    } else return false;
+
+    #else
+    return compositingActive();
+    #endif
+
 }
 
 //____________________________________________________________________

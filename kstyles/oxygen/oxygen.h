@@ -304,6 +304,9 @@ class OxygenStyle : public KStyle
     //! returns true if compositing is active
     bool compositingActive( void ) const;
 
+    //! returns true if a given widget supports alpha channel
+    bool hasAlphaChannel( const QWidget* ) const;
+
     /*!
     returns first widget in parent chain that sets autoFillBackground to true,
     or NULL if none
