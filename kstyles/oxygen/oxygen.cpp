@@ -5495,7 +5495,7 @@ int OxygenStyle::styleHint(StyleHint hint, const QStyleOption * option, const QW
         {
 
             // mask should be returned only if composite in disabled
-            if( !hasAlphaChannel( widget ) )
+            if( !hasAlphaChannel( widget ) && (!widget || widget->isWindow()) )
             {
                 if (QStyleHintReturnMask *mask = qstyleoption_cast<QStyleHintReturnMask *>(returnData))
                 { mask->region = _helper.roundedMask( option->rect ); }
@@ -6229,6 +6229,10 @@ bool OxygenStyle::eventFilter(QObject *obj, QEvent *ev)
 
             case QEvent::Paint:
             {
+
+                // do nothing if menu is embedded in another widget
+                // this corresponds to having a transparent background
+                if( !m->isWindow() ) return true;
 
                 QPainter p(m);
                 QPaintEvent *e = (QPaintEvent*)ev;
