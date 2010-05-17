@@ -1,6 +1,7 @@
 [Global]
 Name=Hardware notifications
 Name[ia]=Notificationes de Hardware
+Name[ja]=ハードウェアの通知
 Name[km]=ការ​ជូន​ដំណឹង​របស់​ផ្នែក​រឹង
 Name[lt]=Aparatinės įrangos pranešimai
 Name[nds]=Reedschappen-Bescheden
@@ -13,6 +14,7 @@ Name[x-test]=xxHardware notificationsxx
 IconName=emblem-mounted
 Comment=Notifications triggered by solid
 Comment[ia]=Notificationes discatenate per solid
+Comment[ja]=Solid が通知を引き起こしました
 Comment[km]=ការ​ជូន​ដំណឹង​បានកេះ​ដោយ​តាន់
 Comment[lt]=Solid siunčiami pranešimai
 Comment[nds]=Vun "Solid" utlööst Bescheden
@@ -27,6 +29,7 @@ Version=1
 [Event/mounterror]
 Name=Mount or unmount error
 Name[ia]=Error de montar o dismontar
+Name[ja]=マウントかアンマウントのエラー
 Name[km]=កំហុស​ក្នុងការ​ម៉ោន ឬ​អាន់ម៉ោន
 Name[lt]=Montavimo arba išmontavimo klaida
 Name[nds]=Fehler bi't In- oder Afhangen
@@ -38,6 +41,7 @@ Name[uk]=Помилка монтування або демонтування
 Name[x-test]=xxMount or unmount errorxx
 Comment=There has been a problem mounting or unmounting a device
 Comment[ia]=Il habeva un problema durante que il montava o dismontava un dispositivo
+Comment[ja]=デバイスをマウントかアンマウントするのに問題がありました
 Comment[km]=មាន​បញ្ហា​ខណៈពេល​ម៉ោន​ ឬ​អាន់ម៉ោន​ឧបករណ៍
 Comment[lt]=Montuojant arba išmontuojant įrenginį įvyko klaida
 Comment[nds]=Dat geev en Problem bi't In- oder Afhangen vun en Reedschap.
