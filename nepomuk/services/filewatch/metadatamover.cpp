@@ -241,6 +241,10 @@ void Nepomuk::MetadataMover::updateMetadata( const KUrl& from, const KUrl& to, b
                         .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ),
                               from.url(KUrl::AddTrailingSlash) );
         kDebug() << query;
+        
+        const QString oldBasePath = from.path( KUrl::AddTrailingSlash );
+        const QString newBasePath = to.path( KUrl::AddTrailingSlash );
+        
         Soprano::QueryResultIterator it = m_model->executeQuery( query, Soprano::Query::QueryLanguageSparql );
         while ( it.next() ) {
 
@@ -251,8 +255,6 @@ void Nepomuk::MetadataMover::updateMetadata( const KUrl& from, const KUrl& to, b
             const KUrl url = it[1].uri();
 
             // now construct the new URL
-            const QString oldBasePath = from.path( KUrl::AddTrailingSlash );
-            const QString newBasePath = to.path( KUrl::AddTrailingSlash );
             QString oldRelativePath = url.path().mid( oldBasePath.length() );
             KUrl newUrl( newBasePath + oldRelativePath );
 
