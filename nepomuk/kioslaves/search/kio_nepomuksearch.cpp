@@ -53,10 +53,33 @@
 
 
 namespace {
-    KIO::UDSEntry statDefaultSearchFolder( const QString& name ) {
+    KIO::UDSEntry statDefaultSearchFolder( const KUrl& url, const QString& customName = QString() ) {
+        QString name( customName );
+        QString displayName( url.queryItem(QLatin1String( "title" ) ) );
+        QString userQuery( url.queryItem(QLatin1String( "userquery" ) ) );
+
+        if ( name.isEmpty() ) {
+            name = QString::fromAscii( url.toEncoded().toPercentEncoding( QByteArray(), QByteArray(), '_' ) );
+        }
+
+        if ( displayName.isEmpty() ) {
+            if ( userQuery.isEmpty() ) {
+                userQuery = Nepomuk::extractPlainQuery( url );
+            }
+
+            if ( !userQuery.isEmpty() ) {
+                displayName = i18nc( "@title UDS_DISPLAY_NAME for a KIO directory listing. %1 is the query the user entered.",
+                                     "Query Results from '%1'",
+                                     userQuery );
+            }
+            else {
+                displayName = i18n("Query Results");
+            }
+        }
+
         KIO::UDSEntry uds;
         uds.insert( KIO::UDSEntry::UDS_NAME, name );
-        uds.insert( KIO::UDSEntry::UDS_DISPLAY_NAME, i18n("Query Results") );
+        uds.insert( KIO::UDSEntry::UDS_DISPLAY_NAME, displayName );
         uds.insert( KIO::UDSEntry::UDS_ACCESS, 0700 );
         uds.insert( KIO::UDSEntry::UDS_USER, KUser().loginName() );
         uds.insert( KIO::UDSEntry::UDS_FILE_TYPE, S_IFDIR );
@@ -247,7 +270,7 @@ void Nepomuk::SearchProtocol::stat( const KUrl& url )
         //
         KIO::UDSEntry uds;
         uds.insert( KIO::UDSEntry::UDS_NAME, QString::fromLatin1( "/" ) );
-        uds.insert( KIO::UDSEntry::UDS_DISPLAY_NAME, i18n("Query Results") );
+        uds.insert( KIO::UDSEntry::UDS_DISPLAY_NAME, i18n("Desktop Queries") );
         uds.insert( KIO::UDSEntry::UDS_ICON_NAME, QString::fromLatin1( "nepomuk" ) );
         uds.insert( KIO::UDSEntry::UDS_FILE_TYPE, S_IFDIR );
         uds.insert( KIO::UDSEntry::UDS_MIME_TYPE, QString::fromLatin1( "inode/directory" ) );
@@ -257,8 +280,7 @@ void Nepomuk::SearchProtocol::stat( const KUrl& url )
     }
     else if ( fileNameFromUrl( url ).isEmpty() ) {
         kDebug() << "Stat search folder" << url;
-        // we use the encoded query url as UDS_NAME
-        statEntry( statDefaultSearchFolder( QString::fromAscii( url.toEncoded().toPercentEncoding( QByteArray(), QByteArray(), '_' ) ) ) );
+        statEntry( statDefaultSearchFolder( url ) );
         finished();
     }
     else {
