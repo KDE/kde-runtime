@@ -10,6 +10,7 @@ X-KDE-Kded-phase=1
 
 Name=Activity Manager
 Name[en_GB]=Activity Manager
+Name[es]=Gestor de actividades
 Name[ia]=Gerente de Activitate
 Name[ja]=アクティビティマネージャ
 Name[km]=កម្មវិធី​គ្រប់គ្រង​សកម្មភាព
@@ -21,9 +22,11 @@ Name[pt_BR]=Gerenciador de atividades
 Name[sv]=Aktivitetshanterare
 Name[uk]=Керування просторами дій
 Name[x-test]=xxActivity Managerxx
+Name[zh_TW]=活動管理員
 
 Comment=The activity management backend
 Comment[en_GB]=The activity management backend
+Comment[es]=Motor de gestión de actividades
 Comment[ia]=Le Backend de gestion de activitate
 Comment[ja]=アクティビティマネージャのバックエンド
 Comment[km]=កម្មវិធី​ខាងក្រោយ​នៃ​ការ​គ្រប់គ្រង​សកម្មភាព
@@ -35,3 +38,4 @@ Comment[pt_BR]=A infraestrutura de gerenciamento de atividades
 Comment[sv]=Gränssnittet för aktivitetshanteringen
 Comment[uk]=Сервер керування просторами дій
 Comment[x-test]=xxThe activity management backendxx
+Comment[zh_TW]=活動管理後端介面
