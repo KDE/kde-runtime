@@ -220,6 +220,7 @@ OxygenStyle::OxygenStyle() :
     setWidgetLayoutProp(WT_SpinBox, SpinBox::ButtonMargin+Right, 8);
     setWidgetLayoutProp(WT_SpinBox, SpinBox::ButtonMargin+Top, 5);
     setWidgetLayoutProp(WT_SpinBox, SpinBox::ButtonMargin+Bot, 4);
+    setWidgetLayoutProp(WT_SpinBox, SpinBox::SupportFrameless, 1);
 
     setWidgetLayoutProp(WT_ComboBox, ComboBox::FrameWidth, 4);
     setWidgetLayoutProp(WT_ComboBox, ComboBox::ContentsMargin, 0);
@@ -234,6 +235,7 @@ OxygenStyle::OxygenStyle() :
     setWidgetLayoutProp(WT_ComboBox, ComboBox::ButtonMargin+Top, 6);
     setWidgetLayoutProp(WT_ComboBox, ComboBox::ButtonMargin+Bot, 3);
     setWidgetLayoutProp(WT_ComboBox, ComboBox::FocusMargin, 0);
+    setWidgetLayoutProp(WT_ComboBox, ComboBox::SupportFrameless, 1);
 
     setWidgetLayoutProp(WT_ToolBar, ToolBar::FrameWidth, 0);
     setWidgetLayoutProp(WT_ToolBar, ToolBar::ItemSpacing, 1);
