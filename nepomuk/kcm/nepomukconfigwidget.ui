@@ -194,7 +194,7 @@
           <item>
            <widget class="QLabel" name="label_4">
             <property name="text">
-             <string>The maximum amount of memory the Nepomuk database should use. The more memory Nepomuk has the more performant it will be.</string>
+             <string>&lt;p&gt;The maximum amount of main memory the Nepomuk system should use for its database process. The more memory is available to Nepomuk the better will be its performance. (The Nepomuk database process shows up as &lt;command&gt;virtuoso-t&lt;/command&gt; in the process manager.)</string>
             </property>
             <property name="wordWrap">
              <bool>true</bool>
@@ -222,7 +222,7 @@
             <item>
              <widget class="QSpinBox" name="m_editMemoryUsage">
               <property name="suffix">
-               <string> MB</string>
+               <string> MiB</string>
               </property>
               <property name="minimum">
                <number>50</number>
