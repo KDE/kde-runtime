@@ -49,21 +49,29 @@ namespace Nepomuk {
     }
 
     /**
+     * Returns an empty string for sparql query URLs.
+     */
+    inline QString extractPlainQuery( const KUrl& url ) {
+        if( url.queryItems().contains( "query" ) ) {
+            return url.queryItem( "query" );
+        }
+        else if ( !url.queryItems().contains( "sparql" ) ) {
+            return url.path().section( '/', 0, 0, QString::SectionSkipEmpty );
+        }
+        else {
+            return QString();
+        }
+    }
+
+    /**
      * Extract SPARQL query from a nepomuksearch query URL.
      */
     inline QString queryFromUrl( const KUrl& url ) {
-        if(url.queryItems().contains( "sparql" ) ) {
+        if( url.queryItems().contains( "sparql" ) ) {
             return url.queryItem( "sparql" );
         }
         else {
-            QString plainQuery;
-            if(url.queryItems().contains( "query" ) ) {
-                plainQuery = url.queryItem( "query" );
-            }
-            else {
-                plainQuery = url.path().section( '/', 0, 0, QString::SectionSkipEmpty );
-            }
-            Query::Query query = Query::QueryParser::parseQuery( plainQuery );
+            Query::Query query = Query::QueryParser::parseQuery( extractPlainQuery( url ) );
             query.addRequestProperty( Query::Query::RequestProperty( Nepomuk::Vocabulary::NIE::url(), true ) );
             return query.toSparqlQuery();
         }
