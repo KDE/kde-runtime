@@ -109,6 +109,7 @@ Query[de]=http://info.alexa.com/data/details?url=\\{@}
 Query[el]=http://info.alexa.com/data/details?url=\\{@}
 Query[en_GB]=http://info.alexa.com/data/details?url=\\{@}
 Query[eo]=http://info.alexa.com/data/details?url=\\{@}
+Query[es]=http://info.alexa.com/data/details?url=\\{@}
 Query[et]=http://info.alexa.com/data/details?url=\\{@}
 Query[eu]=http://info.alexa.com/data/details?url=\\{@}
 Query[fi]=http://info.alexa.com/data/details?url=\\{@}
