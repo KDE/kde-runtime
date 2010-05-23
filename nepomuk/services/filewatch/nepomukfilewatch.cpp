@@ -48,7 +48,7 @@ NEPOMUK_EXPORT_SERVICE( Nepomuk::FileWatch, "nepomukfilewatch")
 
 
 namespace {
-    
+
     class RemoveInvalidThread : public QThread {
     public :
         RemoveInvalidThread(QObject* parent = 0);
@@ -69,7 +69,7 @@ namespace {
         while( it.next() ) {
             QUrl url( it["url"].uri() );
             QString file = url.toLocalFile();
-            
+
             if( !file.isEmpty() && !QFile::exists(file) ) {
                 kDebug() << "REMOVING " << file;
                 Nepomuk::ResourceManager::instance()->mainModel()->removeContext( it["g"] );
@@ -103,6 +103,8 @@ Nepomuk::FileWatch::FileWatch( QObject* parent, const QList<QVariant>& )
              this, SLOT( slotFileDeleted( const QString& ) ) );
     connect( m_dirWatch, SIGNAL( created( const QString& ) ),
              this, SLOT( slotFileCreated( const QString& ) ) );
+    connect( m_dirWatch, SIGNAL( modified( const QString& ) ),
+             this, SLOT( slotFileModified( const QString& ) ) );
     connect( m_dirWatch, SIGNAL( watchUserLimitReached() ),
              this, SLOT( slotInotifyWatchUserLimitReached() ) );
 
@@ -119,7 +121,7 @@ Nepomuk::FileWatch::FileWatch( QObject* parent, const QList<QVariant>& )
 #else
     connectToKDirWatch();
 #endif
-    
+
     (new RemoveInvalidThread())->start();
 }
 
@@ -175,10 +177,36 @@ void Nepomuk::FileWatch::slotFileDeleted( const QString& urlString )
 
 void Nepomuk::FileWatch::slotFileCreated( const QString& path )
 {
-    // tell Strigi service (if running)
+    updateFolderViaStrigi( path );
+}
+
+
+void Nepomuk::FileWatch::slotFileModified( const QString& path )
+{
+    updateFolderViaStrigi( path );
+}
+
+
+// static
+void Nepomuk::FileWatch::updateFolderViaStrigi( const QString& path )
+{
+    //
+    // Tell Strigi service (if running) to update the newly created
+    // folder or the folder containing the newly created file
+    //
     org::kde::nepomuk::Strigi strigi( "org.kde.nepomuk.services.nepomukstrigiservice", "/nepomukstrigiservice", QDBusConnection::sessionBus() );
-    if ( strigi.isValid() )
-        strigi.updateFolder( path, false /* no forced update */ );
+    if ( strigi.isValid() ) {
+        QString dirPath;
+        QFileInfo info( path );
+        if ( !info.exists() )
+            return;
+        if ( info.isDir() )
+            dirPath = info.absoluteFilePath();
+        else
+            dirPath = info.absolutePath();
+
+        strigi.updateFolder( dirPath, false /* no forced update */ );
+    }
 }
 
 

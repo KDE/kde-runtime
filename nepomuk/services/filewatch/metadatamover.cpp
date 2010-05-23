@@ -19,6 +19,7 @@
 #include "metadatamover.h"
 #include "nie.h"
 #include "nfo.h"
+#include "nepomukfilewatch.h"
 
 #include <QtCore/QDir>
 #include <QtCore/QRegExp>
@@ -31,6 +32,7 @@
 #include <Soprano/Node>
 #include <Soprano/NodeIterator>
 #include <Soprano/QueryResultIterator>
+#include <Soprano/LiteralValue>
 #include <Soprano/Vocabulary/Xesam>
 
 #include <Nepomuk/Resource>
@@ -204,8 +206,8 @@ void Nepomuk::MetadataMover::updateMetadata( const KUrl& from, const KUrl& to, b
     Resource oldResource( from );
 
     if ( oldResource.exists() ) {
-        QUrl oldResourceUri = oldResource.resourceUri();
-        QUrl newResourceUri = oldResourceUri;
+        const QUrl oldResourceUri = oldResource.resourceUri();
+        QUrl newResourceUri( oldResourceUri );
 
         //
         // Handle legacy file:/ resource URIs
@@ -214,18 +216,73 @@ void Nepomuk::MetadataMover::updateMetadata( const KUrl& from, const KUrl& to, b
             newResourceUri = updateLegacyMetadata( oldResourceUri );
         }
 
+        //
+        // Now update the nie:url, nfo:fileName, and nie:isPartOf relations.
+        //
+        // We do NOT use Resource::setProperty to avoid the overhead and data clutter of creating
+        // new metadata graphs for the changed data.
+        //
+        // TODO: put this into a nice API which can act as the low-level version of Nepomuk::Resource
+        //
+        QString query = QString::fromLatin1( "select distinct ?g ?u ?f ?p where { "
+                                             "graph ?g { %1 ?prop ?obj . "
+                                             "OPTIONAL { %1 %2 ?u . } . "
+                                             "OPTIONAL { %1 %3 ?f . } . "
+                                             "OPTIONAL { %1 %4 ?p . } . "
+                                             "} . "
+                                             "FILTER(BOUND(?u) || BOUND(?f) || BOUND(?p)) . }" )
+                        .arg( Soprano::Node::resourceToN3( newResourceUri ),
+                              Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ),
+                              Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NFO::fileName() ),
+                              Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::isPartOf() ) );
+        QList<Soprano::BindingSet> graphs
+            = m_model->executeQuery( query, Soprano::Query::QueryLanguageSparql ).allBindings();
 
-        //
-        // Now update the nie:url and nie:isPartOf relations
-        //
-        Resource newResource( newResourceUri );
-        newResource.setProperty( Nepomuk::Vocabulary::NIE::url(), to );
-        if ( newResource.hasProperty( Nepomuk::Vocabulary::NFO::fileName() ) )
-            newResource.setProperty( Nepomuk::Vocabulary::NFO::fileName(), to.fileName() );
-        Resource newParent( to.directory( KUrl::IgnoreTrailingSlash ) );
-        if ( newParent.exists() ) {
-            newResource.setProperty( Nepomuk::Vocabulary::NIE::isPartOf(), newParent );
+        Q_FOREACH( const Soprano::BindingSet& graph, graphs ) {
+
+            if ( graph["u"].isValid() ) {
+                m_model->removeStatement( newResourceUri,
+                                          Nepomuk::Vocabulary::NIE::url(),
+                                          graph["u"],
+                                          graph["g"] );
+                m_model->addStatement( newResourceUri,
+                                       Nepomuk::Vocabulary::NIE::url(),
+                                       to,
+                                       graph["g"] );
+            }
+
+            if ( graph["f"].isValid() ) {
+                m_model->removeStatement( newResourceUri,
+                                          Nepomuk::Vocabulary::NFO::fileName(),
+                                          graph["f"],
+                                          graph["g"] );
+                m_model->addStatement( newResourceUri,
+                                       Nepomuk::Vocabulary::NFO::fileName(),
+                                       Soprano::LiteralValue( to.fileName() ),
+                                       graph["g"] );
+            }
+
+            if ( graph["p"].isValid() ) {
+                m_model->removeStatement( newResourceUri,
+                                          Nepomuk::Vocabulary::NIE::isPartOf(),
+                                          graph["p"],
+                                          graph["g"] );
+                Resource newParent( to.directory( KUrl::IgnoreTrailingSlash ) );
+                if ( newParent.exists() ) {
+                    m_model->addStatement( newResourceUri,
+                                           Nepomuk::Vocabulary::NIE::isPartOf(),
+                                           newParent.resourceUri(),
+                                           graph["g"] );
+                }
+            }
         }
+    }
+    else {
+        //
+        // If we have no metadata yet we need to tell strigi (if running) so it can
+        // create the metadata in case the target folder is configured to be indexed.
+        //
+        FileWatch::updateFolderViaStrigi( to.directory( KUrl::IgnoreTrailingSlash ) );
     }
 
     if ( includeChildren && QFileInfo( to.toLocalFile() ).isDir() ) {
@@ -280,9 +337,9 @@ QUrl Nepomuk::MetadataMover::updateLegacyMetadata( const QUrl& oldResourceUri )
     //
     // update the resource properties
     //
-    QList<Soprano::Statement> sl = m_model->listStatements( Soprano::Statement( oldResourceUri,
-                                                                                Soprano::Node(),
-                                                                                Soprano::Node() ) ).allStatements();
+    QList<Soprano::Statement> sl = m_model->listStatements( oldResourceUri,
+                                                            Soprano::Node(),
+                                                            Soprano::Node() ).allStatements();
     Q_FOREACH( const Soprano::Statement& s, sl ) {
         //
         // Skip all the stuff we will update later on
@@ -294,10 +351,10 @@ QUrl Nepomuk::MetadataMover::updateLegacyMetadata( const QUrl& oldResourceUri )
             continue;
         }
 
-        m_model->addStatement( Soprano::Statement( newResourceUri,
-                                                   s.predicate(),
-                                                   s.object(),
-                                                   s.context() ) );
+        m_model->addStatement( newResourceUri,
+                               s.predicate(),
+                               s.object(),
+                               s.context() );
     }
 
     m_model->removeStatements( sl );

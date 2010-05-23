@@ -48,6 +48,12 @@ namespace Nepomuk {
         FileWatch( QObject* parent, const QVariantList& );
         ~FileWatch();
 
+        /**
+         * Tells strigi to update the folder at \p path or the folder
+         * containing \p path in case it is a file.
+         */
+        static void updateFolderViaStrigi( const QString& path );
+
     public Q_SLOTS:
         Q_SCRIPTABLE void watchFolder( const QString& path );
 
@@ -56,6 +62,7 @@ namespace Nepomuk {
         void slotFileDeleted( const QString& path );
         void slotFilesDeleted( const QStringList& path );
         void slotFileCreated( const QString& );
+        void slotFileModified( const QString& );
         void connectToKDirWatch();
 #ifdef BUILD_KINOTIFY
         void slotInotifyWatchUserLimitReached();
