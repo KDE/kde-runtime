@@ -23,6 +23,11 @@ soprano_add_ontology(SRCS
   "NIE"
   "Nepomuk::Vocabulary"
   "trig")
+soprano_add_ontology(SRCS
+  ${SHAREDDESKTOPONTOLOGIES_ROOT_DIR}/nie/nfo.trig
+  "NFO"
+  "Nepomuk::Vocabulary"
+  "trig")
 
 kde4_add_plugin(nepomukfilewatch ${SRCS})
 
