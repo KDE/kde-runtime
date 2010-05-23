@@ -18,6 +18,7 @@
 
 #include "metadatamover.h"
 #include "nie.h"
+#include "nfo.h"
 
 #include <QtCore/QDir>
 #include <QtCore/QRegExp>
@@ -219,6 +220,8 @@ void Nepomuk::MetadataMover::updateMetadata( const KUrl& from, const KUrl& to, b
         //
         Resource newResource( newResourceUri );
         newResource.setProperty( Nepomuk::Vocabulary::NIE::url(), to );
+        if ( newResource.hasProperty( Nepomuk::Vocabulary::NFO::fileName() ) )
+            newResource.setProperty( Nepomuk::Vocabulary::NFO::fileName(), to.fileName() );
         Resource newParent( to.directory( KUrl::IgnoreTrailingSlash ) );
         if ( newParent.exists() ) {
             newResource.setProperty( Nepomuk::Vocabulary::NIE::isPartOf(), newParent );
@@ -241,10 +244,10 @@ void Nepomuk::MetadataMover::updateMetadata( const KUrl& from, const KUrl& to, b
                         .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ),
                               from.url(KUrl::AddTrailingSlash) );
         kDebug() << query;
-        
+
         const QString oldBasePath = from.path( KUrl::AddTrailingSlash );
         const QString newBasePath = to.path( KUrl::AddTrailingSlash );
-        
+
         Soprano::QueryResultIterator it = m_model->executeQuery( query, Soprano::Query::QueryLanguageSparql );
         while ( it.next() ) {
 
