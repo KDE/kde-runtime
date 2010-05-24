@@ -23,6 +23,8 @@
 # include <clocale>
 # include <cstring>
 # include <cstdlib>
+#else
+# include <signal.h>
 #endif
 
 CrashedApplication::CrashedApplication(QObject *parent)
@@ -90,11 +92,12 @@ QString CrashedApplication::signalName() const
     return QString::fromLocal8Bit(name != NULL ? name : "Unknown");
 #else
     switch (m_signalNumber) {
-    case 4: return QString("SIGILL");
-    case 6: return QString("SIGABRT");
-    case 8: return QString("SIGFPE");
-    case 11: return QString("SIGSEGV");
-    default: return QString("Unknown");
+    case SIGILL: return QLatin1String("SIGILL");
+    case SIGABRT: return QLatin1String("SIGABRT");
+    case SIGFPE: return QLatin1String("SIGFPE");
+    case SIGSEGV: return QLatin1String("SIGSEGV");
+    case SIGBUS: return QLatin1String("SIGBUS");
+    default: return QLatin1String("Unknown");
     }
 #endif
 }
