@@ -1,5 +1,6 @@
 [Global]
 Name=Hardware notifications
+Name[de]=Hardware-Benachrichtigungen
 Name[ia]=Notificationes de Hardware
 Name[ja]=ハードウェアの通知
 Name[kk]=Жабдық туралы құлақтандырулары
@@ -15,6 +16,7 @@ Name[x-test]=xxHardware notificationsxx
 Name[zh_TW]=硬體通知
 IconName=emblem-mounted
 Comment=Notifications triggered by solid
+Comment[de]=Von Solid ausgelöste Benachrichtigungen
 Comment[es]=Notificaciones activadas por solid
 Comment[ia]=Notificationes discatenate per solid
 Comment[ja]=Solid が通知を引き起こしました
@@ -33,6 +35,7 @@ Version=1
 
 [Event/mounterror]
 Name=Mount or unmount error
+Name[de]=Fehler beim Einbinden oder Lösen
 Name[es]=Error al montar o desmontar
 Name[ia]=Error de montar o dismontar
 Name[ja]=マウントかアンマウントのエラー
@@ -48,6 +51,7 @@ Name[uk]=Помилка монтування або демонтування
 Name[x-test]=xxMount or unmount errorxx
 Name[zh_TW]=掛載或卸載時發生錯誤
 Comment=There has been a problem mounting or unmounting a device
+Comment[de]=Beim Einbinden oder Lösen eines Gerätes ist ein Problem aufgetreten
 Comment[es]=Ha ocurrido un error al montar o desmontar un dispositivo
 Comment[ia]=Il habeva un problema durante que il montava o dismontava un dispositivo
 Comment[ja]=デバイスをマウントかアンマウントするのに問題がありました

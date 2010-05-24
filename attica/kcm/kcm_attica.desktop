@@ -11,6 +11,7 @@ X-DocPath=kcontrol/attica/index.html
 
 Name=Social Desktop
 Name[cs]=Sociální pracovní prostředí
+Name[de]=Social-Desktop
 Name[en_GB]=Social Desktop
 Name[es]=Escritorio social
 Name[he]=שולחן עבודה חברתי
@@ -32,6 +33,7 @@ Name[uk]=Соціальна стільниця
 Name[x-test]=xxSocial Desktopxx
 Name[zh_TW]=Social 桌面
 Comment=Manage Social Desktop Providers
+Comment[de]=Social-Desktop-Anbieter verwalten
 Comment[en_GB]=Manage Social Desktop Providers
 Comment[es]=Gestionar proveedores del escritorio social
 Comment[he]=נהל ספקי שולחן עבודה חברתי
