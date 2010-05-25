@@ -409,15 +409,15 @@ void KIconConfig::slotUsage(int index)
         return;
 
     mUsage = index;
-    if ( mUsage == KIconLoader::Panel || mUsage == KIconLoader::LastGroup )
+    if ( mUsage == KIconLoader::LastGroup )
     {
         mpSizeBox->setEnabled(false);
-	mpAnimatedCheck->setEnabled( mUsage == KIconLoader::Panel );
+        mpAnimatedCheck->setEnabled(false);
     }
     else
     {
         mpSizeBox->setEnabled(true);
-	mpAnimatedCheck->setEnabled( mUsage == KIconLoader::Desktop );
+        mpAnimatedCheck->setEnabled( mUsage == KIconLoader::Desktop );
     }
 
     apply();
