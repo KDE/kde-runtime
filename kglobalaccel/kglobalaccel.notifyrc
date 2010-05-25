@@ -28,6 +28,7 @@ Comment[th]=ปุ่มพิมพ์ลัดใช้งานส่วน�
 Comment[tr]=Global Klavye Kısayolları
 Comment[uk]=Загальні клавіатурні скорочення
 Comment[x-test]=xxGlobal Keyboard Shortcutsxx
+Comment[zh_CN]=全局键盘快捷键
 Comment[zh_TW]=全域鍵盤捷徑
 Name=kglobalaccel
 Name[bg]=kglobalaccel

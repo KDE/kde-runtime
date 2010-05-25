@@ -25,6 +25,7 @@ Comment[th]=ค้นหาผ่านพื้นที่ทำงาน
 Comment[tr]=Masaüstü Araması
 Comment[uk]=Стільничний пошук
 Comment[x-test]=xxDesktop Searchxx
+Comment[zh_CN]=桌面搜索
 Comment[zh_TW]=桌面搜尋
 
 [Event/initialIndexingStarted]
