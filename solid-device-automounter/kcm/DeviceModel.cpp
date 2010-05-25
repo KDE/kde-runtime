@@ -198,6 +198,8 @@ DeviceModel::data(const QModelIndex &index, int role) const
 {
     if (index.isValid() && index.parent().isValid()) {
         if (index.parent().row() == 0) {
+			if (role == TypeRole)
+				return Attached;
             QString udi = m_attached[index.row()];
             Solid::Device dev(udi);
             if (role == Qt::UserRole)
@@ -231,6 +233,8 @@ DeviceModel::data(const QModelIndex &index, int role) const
                 }
             }
         } else if (index.parent().row() == 1) {
+			if (role == TypeRole)
+				return Detatched;
             QString udi = m_disconnected[index.row()];
             if (role == Qt::UserRole)
                 return udi;

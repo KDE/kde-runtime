@@ -76,15 +76,25 @@ DeviceAutomounterKCM::DeviceAutomounterKCM(QWidget *parent, const QVariantList &
 void
 DeviceAutomounterKCM::updateForgetDeviceButton()
 {
-    forgetDevice->setEnabled(deviceView->selectionModel()->hasSelection());
+	foreach(QModelIndex idx, deviceView->selectionModel()->selectedIndexes()) {
+		if (idx.data(DeviceModel::TypeRole) == DeviceModel::Detatched) {
+			forgetDevice->setEnabled(true);
+			return;
+		}
+	}
+	forgetDevice->setEnabled(false);
 }
 
 void
 DeviceAutomounterKCM::forgetSelectedDevices()
 {
     QItemSelectionModel* selected = deviceView->selectionModel();
-    while(selected->selectedIndexes().size()>0) {
-        m_devices->forgetDevice(selected->selectedIndexes()[0].data(Qt::UserRole).toString());
+	int offset = 0;
+    while(selected->selectedIndexes().size()>0 && selected->selectedIndexes().size() > offset) {
+		if (selected->selectedIndexes()[offset].data(DeviceModel::TypeRole) == DeviceModel::Attached)
+			offset++;
+		else
+			m_devices->forgetDevice(selected->selectedIndexes()[offset].data(DeviceModel::UdiRole).toString());
     }
     changed();
 }
@@ -168,7 +178,7 @@ DeviceAutomounterKCM::save()
         QModelIndex idx = m_devices->index(i, 0);
         for(int j = 0;j < m_devices->rowCount(idx);j++) {
             QModelIndex dev = m_devices->index(j, 1, idx);
-            QString device = dev.data(Qt::UserRole).toString();
+            QString device = dev.data(DeviceModel::UdiRole).toString();
             validDevices << device;
             if (dev.data(Qt::CheckStateRole).toInt() == Qt::Checked)
                 AutomounterSettings::deviceSettings(device).writeEntry("ForceLoginAutomount", true);

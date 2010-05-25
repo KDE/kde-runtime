@@ -11,6 +11,15 @@ class DeviceModel : public QAbstractItemModel {
     Q_OBJECT
 
     public:
+		enum DeviceType {
+			Attached,
+			Detatched
+		};
+
+		enum {
+			UdiRole = Qt::UserRole,
+			TypeRole
+		};
         DeviceModel(QObject* parent = 0);
         ~DeviceModel();
         Qt::ItemFlags flags(const QModelIndex &index) const;
