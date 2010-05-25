@@ -83,7 +83,7 @@ void
 DeviceAutomounterKCM::forgetSelectedDevices()
 {
     QItemSelectionModel* selected = deviceView->selectionModel();
-    while(selected->hasSelection()) {
+    while(selected->selectedIndexes().size()>0) {
         m_devices->forgetDevice(selected->selectedIndexes()[0].data(Qt::UserRole).toString());
     }
     changed();
