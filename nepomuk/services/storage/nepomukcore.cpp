@@ -43,7 +43,6 @@ Nepomuk::Core::Core( QObject* parent )
 Nepomuk::Core::~Core()
 {
     kDebug() << "Shutting down Nepomuk storage core.";
-    delete m_repository;
 }
 
 
@@ -72,17 +71,26 @@ Soprano::Model* Nepomuk::Core::model( const QString& name )
 {
     // we only allow the one model
     if ( name == QLatin1String( s_repositoryName ) ) {
-        if ( !m_repository ) {
-            m_repository = new Repository( name );
-            connect( m_repository, SIGNAL( opened( Repository*, bool ) ),
-                     this, SLOT( slotRepositoryOpened( Repository*, bool ) ) );
-            QTimer::singleShot( 0, m_repository, SLOT( open() ) );
-        }
-        return m_repository;
+        // we need to use createModel via ServerCore::model to ensure proper memory
+        // management. Otherwise m_repository could be deleted before all connections
+        // are down
+        return ServerCore::model( name );
     }
     else {
         return 0;
     }
+}
+
+
+Soprano::Model* Nepomuk::Core::createModel( const Soprano::BackendSettings& )
+{
+    if ( !m_repository ) {
+        m_repository = new Repository( QLatin1String( s_repositoryName ) );
+        connect( m_repository, SIGNAL( opened( Repository*, bool ) ),
+                 this, SLOT( slotRepositoryOpened( Repository*, bool ) ) );
+        QTimer::singleShot( 0, m_repository, SLOT( open() ) );
+    }
+    return m_repository;
 }
 
 #include "nepomukcore.moc"

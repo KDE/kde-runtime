@@ -58,6 +58,8 @@ namespace Nepomuk {
         void slotRepositoryOpened( Repository* repo, bool success );
 
     private:
+        Soprano::Model* createModel( const Soprano::BackendSettings& );
+
         /// the one single "main" repository Nepomuk uses
         Repository* m_repository;
     };
