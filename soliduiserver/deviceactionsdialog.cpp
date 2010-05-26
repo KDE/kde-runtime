@@ -37,7 +37,6 @@ DeviceActionsDialog::DeviceActionsDialog(QWidget *parent)
     setModal(false);
     setButtons(Ok|Cancel);
     setDefaultButton(Ok);
-    showButtonSeparator(true);
 
     QWidget *page = new QWidget(this);
     m_view.setupUi(page);
