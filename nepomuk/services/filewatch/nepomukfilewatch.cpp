@@ -21,6 +21,7 @@
 #include "strigiserviceinterface.h"
 #include "../strigi/priority.h"
 #include "nie.h"
+#include "../../common/dbusconnectionpool.h"
 
 #ifdef BUILD_KINOTIFY
 #include "kinotify.h"
@@ -194,7 +195,7 @@ void Nepomuk::FileWatch::updateFolderViaStrigi( const QString& path )
     // Tell Strigi service (if running) to update the newly created
     // folder or the folder containing the newly created file
     //
-    org::kde::nepomuk::Strigi strigi( "org.kde.nepomuk.services.nepomukstrigiservice", "/nepomukstrigiservice", QDBusConnection::sessionBus() );
+    org::kde::nepomuk::Strigi strigi( "org.kde.nepomuk.services.nepomukstrigiservice", "/nepomukstrigiservice", DBusConnectionPool::threadConnection() );
     if ( strigi.isValid() ) {
         QString dirPath;
         QFileInfo info( path );
