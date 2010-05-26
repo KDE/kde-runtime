@@ -121,7 +121,7 @@ public:
     QHash < QString, QSet < QString > > resourceActivities;
     QHash < WId, QSet < QString > > resourceWindows;
 
-    QTimer syncTimer;
+    QTimer configSyncTimer;
 
     KConfig config;
 };
@@ -157,12 +157,11 @@ ActivityManager::ActivityManager(QObject *parent, const QList<QVariant>&)
     checkBackstoreAvailability(QString(), QString(), QString());
 
     // setting the configuration syncing timer
-    connect(&d->syncTimer, SIGNAL(timeout()),
-             this, SLOT(syncConfig()));
+    connect(&d->configSyncTimer, SIGNAL(timeout()),
+             this, SLOT(configSync()));
 
-    d->syncTimer.setSingleShot(true);
-    d->syncTimer.setInterval(2 * 60 * 1000);
-    d->syncTimer.start();
+    d->configSyncTimer.setSingleShot(true);
+    d->configSyncTimer.setInterval(2 * 60 * 1000);
 }
 
 void ActivityManager::checkBackstoreAvailability(
@@ -245,6 +244,8 @@ bool ActivityManager::SetCurrentActivity(const QString & id)
     d->currentActivity = id;
     d->mainConfig().writeEntry("currentActivity", id);
 
+    scheduleConfigSync();
+
     emit CurrentActivityChanged(id);
     return true;
 }
@@ -264,7 +265,7 @@ QString ActivityManager::AddActivity(const QString & name)
 
     d->emitActivityAdded(id);
 
-    syncConfig();
+    configSync();
 
     return id;
 }
@@ -287,7 +288,7 @@ void ActivityManager::RemoveActivity(const QString & id)
         SetCurrentActivity(d->availableActivities.first());
     }
 
-    syncConfig();
+    configSync();
 
     d->emitActivityRemoved(id);
 }
@@ -313,6 +314,8 @@ void ActivityManager::SetActivityName(const QString & id, const QString & name)
     if (d->activitiesStore) {
         d->activitiesStore->add(id, name);
     }
+
+    scheduleConfigSync();
 
     emit ActivityNameChanged(id, name);
 }
@@ -397,11 +400,16 @@ void ActivityManager::activityControllerUnregistered(const QString &name)
     d->registeredActivityControllers.removeAll(name);
 }
 
-void ActivityManager::syncConfig()
+void ActivityManager::scheduleConfigSync()
 {
-    d->syncTimer.stop();
+    if (!d->configSyncTimer.isActive()) {
+        d->configSyncTimer.start();
+    }
+}
+
+void ActivityManager::configSync()
+{
     d->config.sync();
-    d->syncTimer.start();
 }
 
 QString ActivityManager::_allInfo() const
