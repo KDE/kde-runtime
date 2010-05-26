@@ -121,6 +121,8 @@ public:
     QHash < QString, QSet < QString > > resourceActivities;
     QHash < WId, QSet < QString > > resourceWindows;
 
+    QTimer syncTimer;
+
     KConfig config;
 };
 
@@ -153,6 +155,14 @@ ActivityManager::ActivityManager(QObject *parent, const QList<QVariant>&)
 
     // initializing backstore listener
     checkBackstoreAvailability(QString(), QString(), QString());
+
+    // setting the configuration syncing timer
+    connect(&d->syncTimer, SIGNAL(timeout()),
+             this, SLOT(syncConfig()));
+
+    d->syncTimer.setSingleShot(true);
+    d->syncTimer.setInterval(2 * 60 * 1000);
+    d->syncTimer.start();
 }
 
 void ActivityManager::checkBackstoreAvailability(
@@ -254,6 +264,8 @@ QString ActivityManager::AddActivity(const QString & name)
 
     d->emitActivityAdded(id);
 
+    syncConfig();
+
     return id;
 }
 
@@ -274,6 +286,8 @@ void ActivityManager::RemoveActivity(const QString & id)
     if (d->currentActivity == id) {
         SetCurrentActivity(d->availableActivities.first());
     }
+
+    syncConfig();
 
     d->emitActivityRemoved(id);
 }
@@ -381,6 +395,13 @@ QStringList ActivityManager::RegisteredActivityControllers() const
 void ActivityManager::activityControllerUnregistered(const QString &name)
 {
     d->registeredActivityControllers.removeAll(name);
+}
+
+void ActivityManager::syncConfig()
+{
+    d->syncTimer.stop();
+    d->config.sync();
+    d->syncTimer.start();
 }
 
 QString ActivityManager::_allInfo() const

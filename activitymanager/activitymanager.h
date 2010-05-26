@@ -162,6 +162,7 @@ protected Q_SLOTS:
     void backstoreIsOnline();
     void backstoreIsOffline();
     void activityControllerUnregistered(const QString &name);
+    void syncConfig();
 
 private:
     class Private;
