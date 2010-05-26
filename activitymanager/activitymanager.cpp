@@ -409,6 +409,7 @@ void ActivityManager::scheduleConfigSync()
 
 void ActivityManager::configSync()
 {
+    d->configSyncTimer.stop();
     d->config.sync();
 }
 
