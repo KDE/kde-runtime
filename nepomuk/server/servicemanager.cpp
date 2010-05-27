@@ -155,8 +155,9 @@ public:
 
     /**
      * Stop a service and all services depending on it.
+     * Return true if it was stopped, false if it was not running.
      */
-    void stopService( ServiceController* );
+    bool stopService( ServiceController* );
 
     /**
      * Start pending services based on the newly initialized service newService
@@ -244,8 +245,12 @@ void Nepomuk::ServiceManager::Private::startService( ServiceController* sc )
 }
 
 
-void Nepomuk::ServiceManager::Private::stopService( ServiceController* sc )
+bool Nepomuk::ServiceManager::Private::stopService( ServiceController* sc )
 {
+    // make sure the service is not scheduled to be started later anymore
+    pendingServices.remove( sc );
+
+    // stop it if already running
     if( sc->isRunning() ) {
         // shut down any service depending of this one first
         foreach( const QString &dep, dependencyTree.servicesDependingOn( sc->name() ) ) {
@@ -253,6 +258,10 @@ void Nepomuk::ServiceManager::Private::stopService( ServiceController* sc )
         }
 
         sc->stop();
+        return true;
+    }
+    else {
+        return false;
     }
 }
 
@@ -316,6 +325,7 @@ void Nepomuk::ServiceManager::startAllServices()
 
 void Nepomuk::ServiceManager::stopAllServices()
 {
+    d->pendingServices.clear();
     for( QHash<QString, ServiceController*>::iterator it = d->services.begin();
          it != d->services.end(); ++it ) {
         ServiceController* serviceControl = it.value();
@@ -340,12 +350,8 @@ bool Nepomuk::ServiceManager::startService( const QString& name )
 bool Nepomuk::ServiceManager::stopService( const QString& name )
 {
     if( ServiceController* sc = d->findService( name ) ) {
-        if( sc->isRunning() ) {
-            d->stopService( sc );
-            return true;
-        }
+        return d->stopService( sc );
     }
-
     return false;
 }
 
