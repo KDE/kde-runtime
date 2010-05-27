@@ -111,6 +111,12 @@ void Nepomuk::StrigiServiceAdaptor::indexFolder( const QString& path, bool force
 }
 
 
+void Nepomuk::StrigiServiceAdaptor::indexFile( const QString& path )
+{
+    m_service->indexScheduler()->analyzeFile( path );
+}
+
+
 void Nepomuk::StrigiServiceAdaptor::analyzeResource( const QString& uri, uint mTime, const QByteArray& data )
 {
     QDataStream stream( data );

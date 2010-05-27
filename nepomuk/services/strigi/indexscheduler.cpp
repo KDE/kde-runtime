@@ -32,6 +32,7 @@
 #include <QtCore/QDateTime>
 #include <QtCore/QByteArray>
 #include <QtCore/QUrl>
+#include <QtCore/QTimer>
 
 #include <KDebug>
 #include <KTemporaryFile>
@@ -129,6 +130,13 @@ Nepomuk::IndexScheduler::IndexScheduler( Strigi::IndexManager* manager, QObject*
       m_speed( FullSpeed )
 {
     m_analyzerConfig = new StoppableConfiguration;
+
+    // see updateDir(QString,bool) for details on the timer
+    m_dirsToUpdateWakeupTimer = new QTimer( this );
+    m_dirsToUpdateWakeupTimer->setSingleShot( true );
+    m_dirsToUpdateWakeupTimer->setInterval(1000);
+    connect( m_dirsToUpdateWakeupTimer, SIGNAL( timeout() ),
+             this, SLOT( slotDirsToUpdateWakeupTimeout() ) );
 
     connect( StrigiServiceConfig::self(), SIGNAL( configChanged() ),
              this, SLOT( slotConfigChanged() ) );
@@ -383,7 +391,9 @@ bool Nepomuk::IndexScheduler::updateDir( const QString& dir, Strigi::StreamAnaly
         if ( !waitForContinue() )
             return false;
 
+        m_currentUrl = file.filePath();
         analyzeFile( file, analyzer );
+        m_currentUrl = KUrl();
     }
 
     // recurse into subdirs (we do this in a separate loop to always keep a proper state:
@@ -405,7 +415,6 @@ void Nepomuk::IndexScheduler::analyzeFile( const QFileInfo& file, Strigi::Stream
     //
     // strigi asserts if the file path has a trailing slash
     //
-    m_currentUrl = file.filePath();
     QString filePath = m_currentUrl.toLocalFile( KUrl::RemoveTrailingSlash );
     QString dir = m_currentUrl.directory(KUrl::IgnoreTrailingSlash);
 
@@ -427,9 +436,6 @@ void Nepomuk::IndexScheduler::analyzeFile( const QFileInfo& file, Strigi::Stream
     else {
         analysisresult.index(0);
     }
-
-    // done with this file
-    m_currentUrl = KUrl();
 }
 
 
@@ -453,7 +459,15 @@ void Nepomuk::IndexScheduler::updateDir( const QString& path, bool forceUpdate )
 {
     QMutexLocker lock( &m_dirsToUpdateMutex );
     m_dirsToUpdate << qMakePair( path, UpdateDirFlags( forceUpdate ? ForceUpdate : NoUpdateFlags ) );
-    m_dirsToUpdateWc.wakeAll();
+
+    // sometimes the filewatch service will call this method many times in a row with the same
+    // folder (in case a whole folder is created or modified). In order not to run an update every
+    // time we slightly delay the update process
+    if ( !isSuspended() &&
+         isIndexing() &&
+         !m_dirsToUpdateWakeupTimer->isActive() ) {
+        m_dirsToUpdateWakeupTimer->start();
+    }
 }
 
 
@@ -492,6 +506,12 @@ void Nepomuk::IndexScheduler::slotConfigChanged()
     // restart to make sure we update all folders and removeOldAndUnwantedEntries
     if ( isRunning() )
         restart();
+}
+
+
+void Nepomuk::IndexScheduler::slotDirsToUpdateWakeupTimeout()
+{
+    m_dirsToUpdateWc.wakeAll();
 }
 
 
@@ -542,6 +562,14 @@ void Nepomuk::IndexScheduler::analyzeResource( const QUrl& uri, const QDateTime&
     else {
         kDebug() << uri << "up to date";
     }
+}
+
+
+void Nepomuk::IndexScheduler::analyzeFile( const QString& path )
+{
+    Strigi::StreamAnalyzer analyzer( *m_analyzerConfig );
+    analyzer.setIndexWriter( *m_indexManager->indexWriter() );
+    analyzeFile( path, &analyzer );
 }
 
 

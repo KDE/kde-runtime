@@ -59,6 +59,9 @@ namespace Nepomuk {
                     "      <arg direction=\"in\" type=\"s\" name=\"path\"/>\n"
                     "      <arg direction=\"in\" type=\"b\" name=\"forced\"/>\n"
                     "    </method>\n"
+                    "    <method name=\"indexFile\">\n"
+                    "      <arg direction=\"in\" type=\"s\" name=\"path\"/>\n"
+                    "    </method>\n"
                     "    <method name=\"analyzeResource\">\n"
                     "      <arg direction=\"in\" type=\"s\" name=\"uri\"/>\n"
                     "      <arg direction=\"in\" type=\"u\" name=\"lastModificationDate\"/>\n"
@@ -107,6 +110,11 @@ namespace Nepomuk {
          * Index a folder independant of its configuration status.
          */
         void indexFolder( const QString& path, bool forced );
+
+        /**
+         * Index a specific file
+         */
+        void indexFile( const QString& path );
 
         void analyzeResource( const QString& uri, uint mTime, const QByteArray& data );
         void analyzeResourceFromTempFileAndDeleteTempFile( const QString& uri, uint mTime, const QString& tmpFile );

@@ -27,6 +27,9 @@
       <arg name="path" type="s" direction="in" />
       <arg name="forced" type="b" direction="in" />
     </method>
+    <method name="indexFile">
+      <arg name="path" type="s" direction="in" />
+    </method>
     <method name="analyzeResource" >
       <arg name="uri" direction="in" type="s" />
       <arg name="lastModificationDate" direction="in" type="u" />
