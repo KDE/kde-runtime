@@ -828,9 +828,9 @@ void PhononServer::askToRemoveDevices(const QStringList &devList, const QList<in
 
     bool checkboxResult = false;
     int res = KMessageBox::createKMessageBox(dialog, icon,
-            i18n("<html><p>KDE detected that one or more internal sound devices were removed.</p>"
-                "<p><b>Do you want KDE to permanently forget about these devices?</b></p>"
-                "<p>This is the list of devices KDE thinks can be removed:<ul><li>%1</li></ul></p></html>",
+            i18n("<html><p>KDE Phonon detected that one or more internal sound devices were removed.</p>"
+                "<p><b>Do you want KDE Phonon to permanently forget about these devices?</b></p>"
+                "<p>This is the list of devices KDE Phonon thinks can be removed:<ul><li>%1</li></ul></p></html>",
             devList.join(QLatin1String("</li><li>"))),
             QStringList(),
             i18n("Do not ask again for these devices"),
