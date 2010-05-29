@@ -93,7 +93,7 @@ KLocaleConfig::KLocaleConfig(KControlLocale *locale, QWidget *parent)
     m_downButton->setIcon(KIcon("arrow-down"));
 
     languageAdd->loadAllLanguages();
-
+    
     KConfigGroup configGroup = KGlobal::config()->group("Locale");
     m_languageList = configGroup.readEntry("Language").split(':',QString::SkipEmptyParts);
 }
@@ -249,11 +249,11 @@ void KLocaleConfig::slotTranslate()
   m_selectedCountryLabel->setWhatsThis( str );
 
   str = ki18n
-    ( "<p>Here you can choose the languages that will be used by the KDE workspace. If the "
+    ( "<p>Here you can choose the languages that will be used by KDE. If the "
       "first language in the list is not available, the second will be used, "
       "etc. If only US English is available, no translations "
       "have been installed. You can get translation packages for many "
-      "languages from the place you got this KDE from.</p><p>"
+      "languages from the place you got KDE from.</p><p>"
       "Note that some applications may not be translated to your languages; "
       "in this case, they will automatically fall back to US English.</p>" ).toString(m_locale);
   m_languagesLabel->setWhatsThis( str );
