@@ -1,6 +1,7 @@
 [Global]
 IconName=kde
 Comment=KDE Workspace
+Comment[bn]=কে.ডি.ই. ওয়ার্কস্পেস
 Comment[cs]=Pracovní plocha KDE
 Comment[de]=KDE Arbeitsfläche
 Comment[el]=Χώρος εργασίας KDE
@@ -196,6 +197,7 @@ Name[af]=Teksvoltooiing: rotasie
 Name[ar]=تتمة النصوص: دورة
 Name[be@latin]=Zakančeńnie tekstu: ratacyja
 Name[bg]=Автоматично завършване: въртене
+Name[bn]=লেখা পরিপূরণ: আবর্তন
 Name[ca]=Compleció de text: rotació
 Name[ca@valencia]=Compleció de text: rotació
 Name[cs]=Doplňování textu: rotace

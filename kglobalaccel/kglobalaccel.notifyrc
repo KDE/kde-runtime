@@ -1,6 +1,7 @@
 [Global]
 IconName=preferences-desktop-keyboard
 Comment=Global Keyboard Shortcuts
+Comment[bn]=গ্লোবাল কীবোর্ড শর্টকাট
 Comment[cs]=Globální klávesové zkratky
 Comment[de]=Globale Kurzbefehle
 Comment[el]=Καθολικές συντομεύσεις πληκτρολογίου
@@ -33,6 +34,7 @@ Comment[zh_CN]=全局键盘快捷键
 Comment[zh_TW]=全域鍵盤捷徑
 Name=kglobalaccel
 Name[bg]=kglobalaccel
+Name[bn]=kglobalaccel
 Name[ca]=kglobalaccel
 Name[ca@valencia]=kglobalaccel
 Name[cs]=kglobalaccel
@@ -176,6 +178,7 @@ Name[zh_CN]=应用程序
 Name[zh_TW]=應用程式
 Comment=The application name
 Comment[bg]=Име на програма
+Comment[bn]=অ্যাপলিকেশন-এর নাম
 Comment[ca]=El nom de l'aplicació
 Comment[ca@valencia]=El nom de l'aplicació
 Comment[cs]=Název aplikace

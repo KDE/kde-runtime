@@ -1,5 +1,6 @@
 [Global]
 Name=Hardware notifications
+Name[bn]=হার্ডওয়্যার বিজ্ঞপ্তি
 Name[de]=Hardware-Benachrichtigungen
 Name[ia]=Notificationes de Hardware
 Name[id]=Notifikasi peranti keras
@@ -42,6 +43,7 @@ Version=1
 
 [Event/mounterror]
 Name=Mount or unmount error
+Name[bn]=মাউন্ট বা আনমাউন্ট করাকালীন সমস্যা
 Name[de]=Fehler beim Einbinden oder Lösen
 Name[es]=Error al montar o desmontar
 Name[ia]=Error de montar o dismontar
