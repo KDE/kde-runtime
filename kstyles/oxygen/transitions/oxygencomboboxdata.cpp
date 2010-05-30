@@ -68,12 +68,10 @@ namespace Oxygen
 
         switch( event->type() )
         {
-            case QEvent::Paint:
-            if( transition().data()->endPixmap().isNull() && !recursiveCheck() )
-            { timer_.start( 0, this ); }
-            break;
 
+            case QEvent::Show:
             case QEvent::Resize:
+            case QEvent::Move:
             if( !recursiveCheck() && target_.data()->isVisible() )
             { timer_.start( 0, this ); }
             break;
@@ -92,7 +90,7 @@ namespace Oxygen
         {
 
             timer_.stop();
-            if( enabled() && transition() && target_ && !target_.data()->isEditable() )
+            if( enabled() && transition() && target_ && !target_.data()->isVisible() )
             {
                 setRecursiveCheck( true );
                 transition().data()->setEndPixmap( transition().data()->grab( target_.data(), targetRect() ) );
