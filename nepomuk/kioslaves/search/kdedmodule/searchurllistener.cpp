@@ -46,13 +46,16 @@ namespace {
 }
 
 
-Nepomuk::SearchUrlListener::SearchUrlListener( const KUrl& queryUrl )
+Nepomuk::SearchUrlListener::SearchUrlListener( const KUrl& queryUrl, const KUrl& notifyUrl )
     : QObject( 0 ),
       m_ref( 0 ),
       m_queryUrl( queryUrl ),
+      m_notifyUrl( notifyUrl ),
       m_queryInterface( 0 )
 {
-    kDebug() << queryUrl;
+    kDebug() << queryUrl << notifyUrl;
+    if ( m_notifyUrl.isEmpty() )
+        m_notifyUrl = queryUrl;
 
     const QString queryService = QLatin1String( "org.kde.nepomuk.services.nepomukqueryservice" );
     if ( QDBusConnection::sessionBus().interface()->isServiceRegistered( queryService ) ) {
@@ -97,7 +100,7 @@ int Nepomuk::SearchUrlListener::unref()
 
 void Nepomuk::SearchUrlListener::slotNewEntries( const QList<Nepomuk::Query::Result>& )
 {
-    org::kde::KDirNotify::emitFilesAdded( m_queryUrl.url() );
+    org::kde::KDirNotify::emitFilesAdded( m_notifyUrl.url() );
 }
 
 
@@ -105,7 +108,7 @@ void Nepomuk::SearchUrlListener::slotEntriesRemoved( const QStringList& entries 
 {
     QStringList urls;
     foreach( const QString& uri, entries ) {
-        KUrl resultUrl( m_queryUrl );
+        KUrl resultUrl( m_notifyUrl );
         resultUrl.addPath( Nepomuk::resourceUriToUdsName( uri ) );
         urls << resultUrl.url();
     }
@@ -122,7 +125,7 @@ void Nepomuk::SearchUrlListener::slotQueryServiceInitialized( bool success )
         createInterface();
 
         // inform KIO that results are available
-        org::kde::KDirNotify::emitFilesAdded( m_queryUrl.url() );
+        org::kde::KDirNotify::emitFilesAdded( m_notifyUrl.url() );
     }
 }
 

@@ -11,11 +11,22 @@ add_definitions (${QT_DEFINITIONS} ${KDE4_DEFINITIONS} -DDISABLE_NEPOMUK_LEGACY)
 set(nepomuksearchmodule_SRCS
   nepomuksearchmodule.cpp
   searchurllistener.cpp
+  ../../common/timelinetools.cpp
 )
 
 soprano_add_ontology(nepomuksearchmodule_SRCS
   ${SHAREDDESKTOPONTOLOGIES_ROOT_DIR}/nie/nie.trig
   "NIE"
+  "Nepomuk::Vocabulary"
+  "trig")
+soprano_add_ontology(nepomuksearchmodule_SRCS
+  ${SHAREDDESKTOPONTOLOGIES_ROOT_DIR}/nie/nfo.trig
+  "NFO"
+  "Nepomuk::Vocabulary"
+  "trig")
+soprano_add_ontology(nepomuksearchmodule_SRCS
+  ${SHAREDDESKTOPONTOLOGIES_ROOT_DIR}/nepomuk/nuao.trig
+  "NUAO"
   "Nepomuk::Vocabulary"
   "trig")
 

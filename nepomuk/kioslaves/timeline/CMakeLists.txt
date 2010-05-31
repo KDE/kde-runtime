@@ -5,11 +5,30 @@ include_directories(
   ${KDE4_INCLUDES}
   ${KDE4_KIO_INCLUDES}
   ${NEPOMUK_INCLUDE_DIR}
+  ${nepomuk_kio_slaves_SOURCE_DIR}/common
 )
 
 ########### next target ###############
 
-set(kio_timeline_PART_SRCS kio_timeline.cpp)
+set(kio_timeline_PART_SRCS
+  kio_timeline.cpp
+  ../common/timelinetools.cpp)
+
+soprano_add_ontology(kio_timeline_PART_SRCS
+  ${SHAREDDESKTOPONTOLOGIES_ROOT_DIR}/nie/nfo.trig
+  "NFO"
+  "Nepomuk::Vocabulary"
+  "trig")
+soprano_add_ontology(kio_timeline_PART_SRCS
+  ${SHAREDDESKTOPONTOLOGIES_ROOT_DIR}/nie/nie.trig
+  "NIE"
+  "Nepomuk::Vocabulary"
+  "trig")
+soprano_add_ontology(kio_timeline_PART_SRCS
+  ${SHAREDDESKTOPONTOLOGIES_ROOT_DIR}/nepomuk/nuao.trig
+  "NUAO"
+  "Nepomuk::Vocabulary"
+  "trig")
 
 kde4_add_plugin(kio_timeline ${kio_timeline_PART_SRCS})
 

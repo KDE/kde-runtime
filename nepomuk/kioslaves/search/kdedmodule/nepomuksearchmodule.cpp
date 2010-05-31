@@ -21,6 +21,7 @@
 #include "searchurllistener.h"
 #include "nie.h"
 #include "dbusoperators_p.h"
+#include "timelinetools.h"
 
 #include <QtDBus/QDBusConnection>
 #include <QtDBus/QDBusServiceWatcher>
@@ -33,6 +34,17 @@ namespace {
     {
         static const char s_nepProName[] = "nepomuksearch";
         return url.protocol() == QLatin1String( s_nepProName );
+    }
+
+    inline bool isTimelineUrl( const KUrl& url )
+    {
+        static const char s_timelineProName[] = "timeline";
+        return url.protocol() == QLatin1String( s_timelineProName );
+    }
+
+    inline bool isNepomukSearchOrTimelineUrl( const KUrl& url )
+    {
+        return isNepomukSearchUrl( url ) || isTimelineUrl( url );
     }
 }
 
@@ -83,12 +95,22 @@ Nepomuk::SearchModule::~SearchModule()
 void Nepomuk::SearchModule::registerSearchUrl( const QString& urlString )
 {
     const KUrl url( urlString );
+    KUrl queryUrl;
 
     if ( isNepomukSearchUrl( url ) ) {
+        queryUrl = url;
+    }
+    else if ( isTimelineUrl( url ) ) {
+        QDate date;
+        if ( Nepomuk::parseTimelineUrl( url, &date ) == Nepomuk::DayFolder )
+            queryUrl = Nepomuk::buildTimelineQueryUrl( date );
+    }
+
+    if ( queryUrl.isValid() ) {
         kDebug() << "REGISTER REGISTER REGISTER REGISTER REGISTER REGISTER" << url;
         QHash<KUrl, SearchUrlListener*>::iterator it = m_queryHash.find( url );
         if ( it == m_queryHash.end() ) {
-            SearchUrlListener* listener = new SearchUrlListener( url );
+            SearchUrlListener* listener = new SearchUrlListener( queryUrl, url );
             listener->ref();
             m_queryHash.insert( url, listener );
         }
@@ -107,7 +129,7 @@ void Nepomuk::SearchModule::registerSearchUrl( const QString& urlString )
 void Nepomuk::SearchModule::unregisterSearchUrl( const QString& urlString )
 {
     const KUrl url( urlString );
-    if ( isNepomukSearchUrl( url ) ) {
+    if ( isNepomukSearchOrTimelineUrl( url ) ) {
         kDebug() << "UNREGISTER UNREGISTER UNREGISTER UNREGISTER UNREGISTER" << url;
         unrefUrl( url );
         if ( calledFromDBus() ) {

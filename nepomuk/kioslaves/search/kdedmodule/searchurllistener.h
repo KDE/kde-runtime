@@ -36,7 +36,7 @@ namespace Nepomuk {
         Q_OBJECT
 
     public:
-        SearchUrlListener( const KUrl& queryUrl );
+        SearchUrlListener( const KUrl& queryUrl, const KUrl& notifyUrl = KUrl() );
         ~SearchUrlListener();
 
         int ref();
@@ -52,6 +52,7 @@ namespace Nepomuk {
 
         int m_ref;
         KUrl m_queryUrl;
+        KUrl m_notifyUrl;
         org::kde::nepomuk::Query* m_queryInterface;
     };
 }
