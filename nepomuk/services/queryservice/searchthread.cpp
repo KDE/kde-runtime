@@ -128,12 +128,17 @@ void Nepomuk::Query::SearchThread::sparqlQuery( const QString& query, double bas
 
         ++m_resultCnt;
 
-        Result result = extractResult( hits );
-        result.setScore( result.score() * baseScore );
+        Resource res( hits[0].uri() );
+        if ( !res.hasType( Soprano::Vocabulary::RDFS::Class() ) &&
+             !res.hasType( Soprano::Vocabulary::RDF::Property() ) &&
+             !res.hasType( Soprano::Vocabulary::NRL::Graph() ) ) {
+            Result result = extractResult( hits );
+            result.setScore( result.score() * baseScore );
 
-        kDebug() << "Found result:" << result.resource().resourceUri() << result.score();
+            kDebug() << "Found result:" << result.resource().resourceUri() << result.score();
 
-        emit newResult( result );
+            emit newResult( result );
+        }
     }
 }
 
