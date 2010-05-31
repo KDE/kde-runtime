@@ -1,6 +1,7 @@
 [Global]
 IconName=preferences-desktop-sound
 Comment=Multimedia System
+Comment[bn]=মাল্টিমিডিয়া সিস্টেম
 Comment[cs]=Multimediální systém
 Comment[de]=Multimediasystem
 Comment[el]=Σύστημα Πολυμέσων

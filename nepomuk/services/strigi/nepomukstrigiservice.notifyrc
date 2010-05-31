@@ -1,6 +1,7 @@
 [Global]
 IconName=nepomuk
 Comment=Desktop Search
+Comment[bn]=ডেস্কটপ সন্ধান
 Comment[cs]=Vyhledávací služby
 Comment[de]=Desktopsuche
 Comment[el]=Αναζήτηση επιφάνειας εργασίας

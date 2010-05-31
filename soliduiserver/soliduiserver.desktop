@@ -6,6 +6,7 @@ X-KDE-DBus-ModuleName=soliduiserver
 X-KDE-Kded-autoload=false
 X-KDE-Kded-load-on-demand=true
 Name=Hardware Detection
+Name[bn]=হার্ডওয়্যার উদ্ঘাটন
 Name[cs]=Detekce hardwaru
 Name[de]=Hardwareerkennung
 Name[el]=Εντοπισμός υλικού
