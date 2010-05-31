@@ -5,7 +5,7 @@
   <!ENTITY % English "INCLUDE">
 ]>
 <article lang="&language;">
-<title>Multimedia</title>
+<title>Phonon</title>
 <articleinfo>
 <authorgroup>
 <author><firstname>Matthias</firstname><surname>Kretz</surname></author>
