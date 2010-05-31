@@ -46,8 +46,9 @@
 #include <KRandom>
 
 #include <QtCore/QTime>
-#include <QLatin1String>
-#include <QStringList>
+#include <QtCore/QRegExp>
+#include <QtCore/QLatin1String>
+#include <QtCore/QStringList>
 
 
 
@@ -128,14 +129,30 @@ void Nepomuk::Query::SearchThread::sparqlQuery( const QString& query, double bas
         ++m_resultCnt;
 
         Result result = extractResult( hits );
-        result.setScore( baseScore );
+        result.setScore( result.score() * baseScore );
 
-        kDebug() << "Found result:" << result.resource().resourceUri();
+        kDebug() << "Found result:" << result.resource().resourceUri() << result.score();
 
         emit newResult( result );
     }
 }
 
+
+namespace {
+    /**
+     * Tries to extract a score depth from a variable name. Full-text matching scores are encoded as ?<VARNAME>_score_<DEPTH>
+     * by the query API.
+     */
+    int extractScoreDepth( const QString& var ) {
+        static QRegExp s_scoreRegExp( QLatin1String( "\\w+_score_(\\d+)" ) );
+        if ( s_scoreRegExp.exactMatch( var ) ) {
+            return s_scoreRegExp.cap( 1 ).toInt();
+        }
+        else {
+            return -1;
+        }
+    }
+}
 
 Nepomuk::Query::Result Nepomuk::Query::SearchThread::extractResult( const Soprano::QueryResultIterator& it ) const
 {
@@ -153,9 +170,18 @@ Nepomuk::Query::Result Nepomuk::Query::SearchThread::extractResult( const Sopran
     }
 
     Soprano::BindingSet set;
-    foreach( const QString& var, names )
-        set.insert( var, it[var] );
+    int totalScore = 0;
+    Q_FOREACH( const QString& var, names ) {
+        int depth = extractScoreDepth( var );
+        if ( depth >= 0 ) {
+            totalScore += it[var].literal().toInt()/( depth+1 );
+        }
+        else
+            set.insert( var, it[var] );
+    }
+
     result.setAdditionalBindings( set );
+    result.setScore( ( double )totalScore );
 
     // score will be set above
     return result;
