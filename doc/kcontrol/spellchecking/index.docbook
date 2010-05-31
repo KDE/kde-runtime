@@ -17,7 +17,7 @@
 </authorgroup>
 
 <date>2009-11-18</date>
-<releaseinfo>4.4</releaseinfo>
+<releaseinfo>&kde; 4.4</releaseinfo>
 
 <keywordset>
 <keyword>KDE</keyword>
@@ -42,7 +42,7 @@ applications that use &sonnet;, which is a frontend to various free spell checke
 available dictionaries, which one to use for &sonnet;. </para>
 
 <!-- in case of missing language in the list which apps to install?
-HSpell??
+sonnet has pluins HSpell enchant hspell hunspell ??
 <para>(If you do not have <application>Ispell</application> installed
 you can obtain it from the <ulink
 url="http://fmg-www.cs.ucla.edu/geoff/ispell.html">International
