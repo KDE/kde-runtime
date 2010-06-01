@@ -143,22 +143,6 @@ void Nepomuk::Query::SearchThread::sparqlQuery( const QString& query, double bas
 }
 
 
-namespace {
-    /**
-     * Tries to extract a score depth from a variable name. Full-text matching scores are encoded as ?<VARNAME>_score_<DEPTH>
-     * by the query API.
-     */
-    int extractScoreDepth( const QString& var ) {
-        static QRegExp s_scoreRegExp( QLatin1String( "\\w+_score_(\\d+)" ) );
-        if ( s_scoreRegExp.exactMatch( var ) ) {
-            return s_scoreRegExp.cap( 1 ).toInt();
-        }
-        else {
-            return -1;
-        }
-    }
-}
-
 Nepomuk::Query::Result Nepomuk::Query::SearchThread::extractResult( const Soprano::QueryResultIterator& it ) const
 {
     kDebug() << it.binding( 0 ).uri();
@@ -174,19 +158,19 @@ Nepomuk::Query::Result Nepomuk::Query::SearchThread::extractResult( const Sopran
         names.removeAll( rpIt.key() );
     }
 
+    static const char* s_scoreVarName = "_n_f_t_m_s_";
+
     Soprano::BindingSet set;
-    int totalScore = 0;
+    int score = 0;
     Q_FOREACH( const QString& var, names ) {
-        int depth = extractScoreDepth( var );
-        if ( depth >= 0 ) {
-            totalScore += it[var].literal().toInt()/( depth+1 );
-        }
+        if ( var == QLatin1String( s_scoreVarName ) )
+            score = it[var].literal().toInt();
         else
             set.insert( var, it[var] );
     }
 
     result.setAdditionalBindings( set );
-    result.setScore( ( double )totalScore );
+    result.setScore( ( double )score );
 
     // score will be set above
     return result;
