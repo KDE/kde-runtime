@@ -10,8 +10,11 @@ X-KDE-Kded-phase=1
 
 Name=Activity Manager
 Name[bn]=অ্যাকটিভিটি ম্যানেজার
+Name[cs]=Správce aktivit
+Name[da]=Aktivitetshåndtering
 Name[en_GB]=Activity Manager
 Name[es]=Gestor de actividades
+Name[et]=Tegevuste haldur
 Name[ia]=Gerente de Activitate
 Name[id]=Manajer Aktivitas
 Name[is]=Virknistjóri
@@ -31,8 +34,10 @@ Name[zh_CN]=活动管理器
 Name[zh_TW]=活動管理員
 
 Comment=The activity management backend
+Comment[da]=Motor til aktivitetshåndtering
 Comment[en_GB]=The activity management backend
 Comment[es]=Motor de gestión de actividades
+Comment[et]=Tegevuste haldamise taustaprogramm
 Comment[ia]=Le Backend de gestion de activitate
 Comment[id]=Aktivitas ujung belakang manajemen
 Comment[is]=Stýringarkerfi fyrir virkni

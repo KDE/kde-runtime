@@ -1,6 +1,8 @@
 [Global]
 IconName=nepomuk
 Name=Semantic Data Storage
+Name[cs]=Úložistě sémantických dat
+Name[da]=Lagring af semantiske data
 Name[de]=Semantische Datenspeicherung
 Name[el]=Αποθήκη σημασιολογικών δεδομένων
 Name[en_GB]=Semantic Data Storage
@@ -29,6 +31,7 @@ Name[zh_CN]=语义学数据存储
 Name[zh_TW]=語意資料儲存
 Comment=Semantic Desktop
 Comment[cs]=Sémantický desktop
+Comment[da]=Semantisk skrivebordsmiljø
 Comment[de]=Semantischer Desktop
 Comment[el]=Σημασιολογική επιφάνεια εργασίας
 Comment[en_GB]=Semantic Desktop
