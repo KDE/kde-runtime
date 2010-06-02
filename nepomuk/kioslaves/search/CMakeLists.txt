@@ -18,6 +18,7 @@ add_definitions (${QT_DEFINITIONS} ${KDE4_DEFINITIONS} -DDISABLE_NEPOMUK_LEGACY)
 set(kio_nepomuksearch_PART_SRCS
   kio_nepomuksearch.cpp
   searchfolder.cpp
+  ../common/resourcestat.cpp
 )
 
 soprano_add_ontology(kio_nepomuksearch_PART_SRCS
@@ -41,6 +42,7 @@ kde4_add_plugin(kio_nepomuksearch
 
 target_link_libraries(kio_nepomuksearch
   ${KDE4_KIO_LIBS}
+  ${KDE4_SOLID_LIBS}
   ${NEPOMUK_LIBRARIES}
   ${NEPOMUK_QUERY_LIBRARIES}
   ${SOPRANO_LIBRARIES}

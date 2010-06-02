@@ -23,6 +23,7 @@
 #include "nie.h"
 #include "pimo.h"
 #include "nepomuksearchurltools.h"
+#include "resourcestat.h"
 
 #include <Soprano/Vocabulary/Xesam>
 #include <Soprano/Vocabulary/NAO>
@@ -121,7 +122,7 @@ void Nepomuk::SearchFolder::list()
 // always called in search thread
 void Nepomuk::SearchFolder::slotNewEntries( const QList<Nepomuk::Query::Result>& results )
 {
-    kDebug() << m_url << QThread::currentThread();
+    kDebug() << m_url;
 
     m_resultMutex.lock();
     m_resultsQueue += results;
@@ -137,7 +138,7 @@ void Nepomuk::SearchFolder::slotNewEntries( const QList<Nepomuk::Query::Result>&
 // always called in search thread
 void Nepomuk::SearchFolder::slotFinishedListing()
 {
-    kDebug() << m_url << QThread::currentThread();
+    kDebug() << m_url;
     QMutexLocker lock( &m_resultMutex );
     m_initialListingFinished = true;
     m_resultWaiter.wakeAll();
@@ -178,21 +179,28 @@ namespace {
         if ( url.scheme() == QLatin1String( "akonadi" ) )
             return false;
 
-        bool success = false;
-
-        if ( KIO::StatJob* job = KIO::stat( url, KIO::HideProgressInfo ) ) {
-            job->setAutoDelete( false );
-            if ( KIO::NetAccess::synchronousRun( job, 0 ) ) {
-                uds = job->statResult();
-                success = true;
+        const KUrl fileUrl = Nepomuk::nepomukToFileUrl( url );
+        if ( !fileUrl.isEmpty() ) {
+            if ( KIO::StatJob* job = KIO::stat( fileUrl, KIO::HideProgressInfo ) ) {
+                // we do not want to wait for the event loop to delete the job
+                QScopedPointer<KIO::StatJob> sp( job );
+                job->setAutoDelete( false );
+                if ( KIO::NetAccess::synchronousRun( job, 0 ) ) {
+                    uds = job->statResult();
+                    return true;
+                }
             }
-            else {
-                kDebug() << "failed to stat" << url;
+        }
+        else {
+            Nepomuk::Resource res( url );
+            if ( res.exists() ) {
+                uds = Nepomuk::statNepomukResource( res );
+                return true;
             }
-            delete job;
         }
 
-        return success;
+        kDebug() << "failed to stat" << url;
+        return false;
     }
 }
 

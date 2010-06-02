@@ -45,9 +45,6 @@ namespace Nepomuk {
          */
         bool rewriteUrl( const KUrl& url, KUrl& newURL );
 
-        void prepareUDSEntry( KIO::UDSEntry &entry,
-                              bool listing = false ) const;
-
     private:
         enum Operation {
             Get,
@@ -56,11 +53,6 @@ namespace Nepomuk {
         };
         Operation m_currentOperation;
         bool ensureNepomukRunning();
-
-        /**
-         * Creates an UDS entry for an arbitrary Nepomuk resource by relying on its properties.
-         */
-        KIO::UDSEntry statNepomukResource( const Nepomuk::Resource& res );
     };
 }
 
