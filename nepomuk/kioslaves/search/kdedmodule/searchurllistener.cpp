@@ -88,13 +88,13 @@ Nepomuk::SearchUrlListener::~SearchUrlListener()
 
 int Nepomuk::SearchUrlListener::ref()
 {
-    return --m_ref;
+    return ++m_ref;
 }
 
 
 int Nepomuk::SearchUrlListener::unref()
 {
-    return ++m_ref;
+    return --m_ref;
 }
 
 
