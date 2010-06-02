@@ -21,7 +21,7 @@
 #include "kio_nepomuk.h"
 #include "nie.h"
 #include "nfo.h"
-#include "nmm.h"
+//#include "nmm.h"
 #include "pimo.h"
 #include "resourcepagegenerator.h"
 #include "nepomuksearchurltools.h"
