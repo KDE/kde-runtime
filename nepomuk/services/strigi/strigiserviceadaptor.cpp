@@ -27,6 +27,7 @@
 #include <QtCore/QUrl>
 #include <QtCore/QDateTime>
 #include <QtCore/QFile>
+#include <QtCore/QFileInfo>
 #include <QtCore/QDataStream>
 
 #include <KDebug>
@@ -94,8 +95,17 @@ void Nepomuk::StrigiServiceAdaptor::suspend()
 
 void Nepomuk::StrigiServiceAdaptor::updateFolder( const QString& path, bool forced )
 {
-    if ( StrigiServiceConfig::self()->shouldFolderBeIndexed( path ) )
-        m_service->indexScheduler()->updateDir( path, forced );
+    QFileInfo info( path );
+    if ( info.exists() ) {
+        QString dirPath;
+        if ( info.isDir() )
+            dirPath = info.absoluteFilePath();
+        else
+            dirPath = info.absolutePath();
+
+        if ( StrigiServiceConfig::self()->shouldFolderBeIndexed( dirPath ) )
+            m_service->indexScheduler()->updateDir( dirPath, forced );
+    }
 }
 
 
@@ -107,7 +117,16 @@ void Nepomuk::StrigiServiceAdaptor::updateAllFolders( bool forced )
 
 void Nepomuk::StrigiServiceAdaptor::indexFolder( const QString& path, bool forced )
 {
-    m_service->indexScheduler()->updateDir( path, forced );
+    QFileInfo info( path );
+    if ( info.exists() ) {
+        QString dirPath;
+        if ( info.isDir() )
+            dirPath = info.absoluteFilePath();
+        else
+            dirPath = info.absolutePath();
+
+        m_service->indexScheduler()->updateDir( dirPath, forced );
+    }
 }
 
 

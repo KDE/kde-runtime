@@ -205,16 +205,7 @@ void Nepomuk::FileWatch::updateFolderViaStrigi( const QString& path )
     //
     org::kde::nepomuk::Strigi strigi( "org.kde.nepomuk.services.nepomukstrigiservice", "/nepomukstrigiservice", QDBusConnection::sessionBus() );
     if ( strigi.isValid() ) {
-        QString dirPath;
-        QFileInfo info( path );
-        if ( !info.exists() )
-            return;
-        if ( info.isDir() )
-            dirPath = info.absoluteFilePath();
-        else
-            dirPath = info.absolutePath();
-
-        strigi.updateFolder( dirPath, false /* no forced update */ );
+        strigi.updateFolder( path, false /* no forced update */ );
     }
 }
 
