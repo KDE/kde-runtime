@@ -53,6 +53,10 @@ namespace Nepomuk {
     private Q_SLOTS:
         void slotClearRecentlyFinishedRequests();
 
+        /// This slot is only here to ensure that we do not call DBus method in another thread than the main one.
+        /// Once libdbus is finally fixed (regarding its threading issues) we can remove it.
+        void slotUpdateFolderViaStrigi( const QString& path );
+
     private:
         void run();
 

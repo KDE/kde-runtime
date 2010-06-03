@@ -282,7 +282,12 @@ void Nepomuk::MetadataMover::updateMetadata( const KUrl& from, const KUrl& to, b
         // If we have no metadata yet we need to tell strigi (if running) so it can
         // create the metadata in case the target folder is configured to be indexed.
         //
-        FileWatch::updateFolderViaStrigi( to.directory( KUrl::IgnoreTrailingSlash ) );
+        // We do this async to make sure the DBus call is done in the main thread.
+        // This can be simplyfied once libdbus threading issues are fixed.
+        //
+        QMetaObject::invokeMethod( this, "slotUpdateFolderViaStrigi",
+                                   Qt::QueuedConnection,
+                                   Q_ARG( QString, to.directory( KUrl::IgnoreTrailingSlash ) ) );
     }
 
     if ( includeChildren && QFileInfo( to.toLocalFile() ).isDir() ) {
@@ -394,6 +399,12 @@ void Nepomuk::MetadataMover::slotClearRecentlyFinishedRequests()
             ++it;
         }
     }
+}
+
+
+void Nepomuk::MetadataMover::slotUpdateFolderViaStrigi( const QString& path )
+{
+    FileWatch::updateFolderViaStrigi( path );
 }
 
 #include "metadatamover.moc"
