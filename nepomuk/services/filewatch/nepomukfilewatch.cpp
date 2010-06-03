@@ -21,7 +21,6 @@
 #include "strigiserviceinterface.h"
 #include "../strigi/priority.h"
 #include "nie.h"
-#include "../../common/dbusconnectionpool.h"
 
 #ifdef BUILD_KINOTIFY
 #include "kinotify.h"
@@ -86,6 +85,9 @@ Nepomuk::FileWatch::FileWatch( QObject* parent, const QList<QVariant>& )
 {
     // start the mover thread
     m_metadataMover = new MetadataMover( mainModel(), this );
+    connect( m_metadataMover, SIGNAL(movedWithoutData(QString)),
+             this, SLOT(slotMovedWithoutData(QString)),
+             Qt::QueuedConnection );
     m_metadataMover->start();
 
 #ifdef BUILD_KINOTIFY
@@ -188,6 +190,12 @@ void Nepomuk::FileWatch::slotFileModified( const QString& path )
 }
 
 
+void Nepomuk::FileWatch::slotMovedWithoutData( const QString& path )
+{
+    updateFolderViaStrigi( path );
+}
+
+
 // static
 void Nepomuk::FileWatch::updateFolderViaStrigi( const QString& path )
 {
@@ -195,7 +203,7 @@ void Nepomuk::FileWatch::updateFolderViaStrigi( const QString& path )
     // Tell Strigi service (if running) to update the newly created
     // folder or the folder containing the newly created file
     //
-    org::kde::nepomuk::Strigi strigi( "org.kde.nepomuk.services.nepomukstrigiservice", "/nepomukstrigiservice", DBusConnectionPool::threadConnection() );
+    org::kde::nepomuk::Strigi strigi( "org.kde.nepomuk.services.nepomukstrigiservice", "/nepomukstrigiservice", QDBusConnection::sessionBus() );
     if ( strigi.isValid() ) {
         QString dirPath;
         QFileInfo info( path );

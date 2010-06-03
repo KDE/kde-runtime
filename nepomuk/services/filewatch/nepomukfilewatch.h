@@ -63,6 +63,7 @@ namespace Nepomuk {
         void slotFilesDeleted( const QStringList& path );
         void slotFileCreated( const QString& );
         void slotFileModified( const QString& );
+        void slotMovedWithoutData( const QString& );
         void connectToKDirWatch();
 #ifdef BUILD_KINOTIFY
         void slotInotifyWatchUserLimitReached();

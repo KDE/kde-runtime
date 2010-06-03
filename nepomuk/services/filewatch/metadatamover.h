@@ -50,12 +50,18 @@ namespace Nepomuk {
 
         void stop();
 
+    Q_SIGNALS:
+        /**
+         * Emitted for files (and folders) that have been moved but
+         * do not have metadata to be moved. This allows the strigi
+         * service to pick them up in case they are of interest. The
+         * typical example would be moving a file from a non-indexed into
+         * an indexed folder.
+         */
+        void movedWithoutData( const QString& path );
+
     private Q_SLOTS:
         void slotClearRecentlyFinishedRequests();
-
-        /// This slot is only here to ensure that we do not call DBus method in another thread than the main one.
-        /// Once libdbus is finally fixed (regarding its threading issues) we can remove it.
-        void slotUpdateFolderViaStrigi( const QString& path );
 
     private:
         void run();

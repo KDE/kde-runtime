@@ -17,7 +17,6 @@ set(SRCS
   metadatamover.cpp
   updaterequest.cpp
   ../strigi/priority.cpp
-  ../../common/dbusconnectionpool.cpp
   )
 
 qt4_add_dbus_interface(SRCS ../../interfaces/org.kde.nepomuk.Strigi.xml strigiserviceinterface)
