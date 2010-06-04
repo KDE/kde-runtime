@@ -215,9 +215,8 @@ void ActivityManager::backstoreIsOnline()
 
 void ActivityManager::backstoreIsOffline()
 {
-    if (!d->activitiesStore) return;
-
     delete d->activitiesStore;
+    d->activitiesStore = NULL;
 }
 
 ActivityManager::~ActivityManager()
@@ -322,8 +321,7 @@ void ActivityManager::SetActivityName(const QString & id, const QString & name)
 
 QString ActivityManager::ActivityIcon(const QString & id) const
 {
-    if (!d->availableActivities.contains(id) ||
-            !d->activitiesStore) {
+    if (!d->availableActivities.contains(id) || !d->activitiesStore) {
         return QString();
     }
 
@@ -332,8 +330,7 @@ QString ActivityManager::ActivityIcon(const QString & id) const
 
 void ActivityManager::SetActivityIcon(const QString & id, const QString & icon)
 {
-    if (!d->availableActivities.contains(id) ||
-            !d->activitiesStore) {
+    if (!d->availableActivities.contains(id) || !d->activitiesStore) {
         return;
     }
 
@@ -433,7 +430,7 @@ QString ActivityManager::_allInfo() const
             i.next();
 
             QStringList list = i.value().toList();
-            result << QString::number((intptr_t)i.key()) + ':' + list.join(" ") + '\n';
+            result << QString::number(i.key()) + ':' + list.join(" ") + '\n';
         }
     }
 
