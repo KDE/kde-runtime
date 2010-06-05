@@ -1,6 +1,7 @@
 [Global]
 Name=Hardware notifications
 Name[bn]=হার্ডওয়্যার বিজ্ঞপ্তি
+Name[ca]=Notificacions de maquinari
 Name[cs]=Oznamování hardwaru
 Name[da]=Hardware-bekendtgørelser
 Name[de]=Hardware-Benachrichtigungen
@@ -28,6 +29,8 @@ Name[zh_CN]=硬件通知
 Name[zh_TW]=硬體通知
 IconName=emblem-mounted
 Comment=Notifications triggered by solid
+Comment[ca]=Notificacions provocades pel Solid
+Comment[cs]=Oznamování spuštěná Solidem
 Comment[da]=Bekendtgørelser udløst af Solid
 Comment[de]=Von Solid ausgelöste Benachrichtigungen
 Comment[en_GB]=Notifications triggered by solid
@@ -56,6 +59,8 @@ Version=1
 [Event/mounterror]
 Name=Mount or unmount error
 Name[bn]=মাউন্ট বা আনমাউন্ট করাকালীন সমস্যা
+Name[ca]=Error en muntar o desmuntar
+Name[cs]=Chyba při připojení nebo odpojení
 Name[da]=Fejl ved montering eller afmontering
 Name[de]=Fehler beim Einbinden oder Lösen
 Name[el]=Σφάλμα προσάρτησης ή αποπροσάρτησης
@@ -82,6 +87,8 @@ Name[x-test]=xxMount or unmount errorxx
 Name[zh_CN]=挂载或卸载错误
 Name[zh_TW]=掛載或卸載時發生錯誤
 Comment=There has been a problem mounting or unmounting a device
+Comment[ca]=Hi ha hagut un problema en muntar o desmuntar un dispositiu
+Comment[cs]=Při připojování nebo odpojování zařízení došlo k chybě
 Comment[da]=Der opstod et problem ved montering eller afmontering af en enhed
 Comment[de]=Beim Einbinden oder Lösen eines Gerätes ist ein Problem aufgetreten
 Comment[el]=Υπήρξε ένα πρόβλημα προσάρτησης ή αποπροσάρτησης μίας συσκευής

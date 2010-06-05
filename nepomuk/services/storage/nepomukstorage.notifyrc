@@ -1,6 +1,7 @@
 [Global]
 IconName=nepomuk
 Name=Semantic Data Storage
+Name[ca]=Emmagatzematge de dades semàntiques
 Name[cs]=Úložistě sémantických dat
 Name[da]=Lagring af semantiske data
 Name[de]=Semantische Datenspeicherung
@@ -31,6 +32,7 @@ Name[x-test]=xxSemantic Data Storagexx
 Name[zh_CN]=语义学数据存储
 Name[zh_TW]=語意資料儲存
 Comment=Semantic Desktop
+Comment[ca]=Escriptori semàntic
 Comment[cs]=Sémantický desktop
 Comment[da]=Semantisk skrivebordsmiljø
 Comment[de]=Semantischer Desktop
@@ -65,6 +67,7 @@ Comment[zh_TW]=語意桌面
 Name=Failed to start Nepomuk
 Name[ca]=Ha fallat en iniciar el Nepomuk
 Name[ca@valencia]=Ha fallat en iniciar el Nepomuk
+Name[cs]=Nepovedlo se spustit Nepomuk
 Name[csb]=Fela przë zrëszaniu Nepomùka
 Name[da]=Kunne ikke starte Nepomuk
 Name[de]=Fehler beim Starten von Nepomuk
