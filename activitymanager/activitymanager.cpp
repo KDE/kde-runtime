@@ -430,7 +430,7 @@ QString ActivityManager::_allInfo() const
             i.next();
 
             QStringList list = i.value().toList();
-            result << QString::number(i.key()) + ':' + list.join(" ") + '\n';
+            result << QString::number((qlonglong)i.key()) + ':' + list.join(" ") + '\n';
         }
     }
 
