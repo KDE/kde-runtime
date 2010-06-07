@@ -48,10 +48,10 @@ void CfgBrowser::load(KConfig *)
 {
     KConfigGroup config(KSharedConfig::openConfig("kdeglobals"), QLatin1String("General") );
     QString exec = config.readPathEntry( QLatin1String("BrowserApplication"), QString("") );
-    if (exec.isEmpty() || exec == QLatin1String("!"))
+    if (exec.isEmpty())
     {
         radioKIO->setChecked(true);
-        m_browserExec = QString();
+        m_browserExec = exec;
         m_browserService = 0;
     }
     else
@@ -86,7 +86,7 @@ void CfgBrowser::save(KConfig *)
         exec = lineExec->text();
         if (m_browserService && (exec == m_browserExec))
             exec = m_browserService->storageId(); // Use service
-        else
+        else if (!exec.isEmpty())
             exec = '!' + exec; // Literal command
     }
     config.writePathEntry( QLatin1String("BrowserApplication"), exec); // KConfig::Normal|KConfig::Global
