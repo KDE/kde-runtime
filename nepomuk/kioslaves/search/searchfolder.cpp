@@ -172,14 +172,14 @@ void Nepomuk::SearchFolder::statResults()
 
 
 namespace {
-    bool statFile( const KUrl& url, KIO::UDSEntry& uds )
+    bool statFile( const KUrl& url, const KUrl& nieUrl, KIO::UDSEntry& uds )
     {
         // the akonadi kio slave is just way too slow and
         // in KDE 4.4 akonadi items should have nepomuk:/res/<uuid> URIs anyway
         if ( url.scheme() == QLatin1String( "akonadi" ) )
             return false;
 
-        const KUrl fileUrl = Nepomuk::nepomukToFileUrl( url );
+        const KUrl fileUrl = nieUrl.isEmpty() ? Nepomuk::nepomukToFileUrl( url ) : nieUrl;
         if ( !fileUrl.isEmpty() ) {
             if ( KIO::StatJob* job = KIO::stat( fileUrl, KIO::HideProgressInfo ) ) {
                 // we do not want to wait for the event loop to delete the job
@@ -206,23 +206,24 @@ namespace {
 
 
 // always called in main thread
+// This method tries to avoid loading the Nepomuk::Resource as long as possible by only using the
+// request property nie:url in the Result for local files.
 KIO::UDSEntry Nepomuk::SearchFolder::statResult( const Query::Result& result )
 {
     Resource res( result.resource() );
-    KUrl url = res.resourceUri();
+    KUrl url( res.resourceUri() );
+    KUrl nieUrl( result[Nepomuk::Vocabulary::NIE::url()].uri() );
 
     KIO::UDSEntry uds;
-    if ( statFile( url, uds ) ) {
-        if ( result.resource().hasProperty( Nepomuk::Vocabulary::NIE::url() ) ) {
-            KUrl fileUrl( res.property( Nepomuk::Vocabulary::NIE::url() ).toUrl() );
-
+    if ( statFile( url, nieUrl, uds ) ) {
+        if ( !nieUrl.isEmpty() ) {
             // needed since the nepomuk:/ KIO slave does not do stating of files in its own
             // subdirs (tags and filesystems), and neither do we with real subdirs
             if ( uds.isDir() )
-                uds.insert( KIO::UDSEntry::UDS_URL, fileUrl.url() );
+                uds.insert( KIO::UDSEntry::UDS_URL, nieUrl.url() );
 
-            if ( fileUrl.isLocalFile() ) {
-                uds.insert( KIO::UDSEntry::UDS_LOCAL_PATH, fileUrl.toLocalFile() );
+            if ( nieUrl.isLocalFile() ) {
+                uds.insert( KIO::UDSEntry::UDS_LOCAL_PATH, nieUrl.toLocalFile() );
             }
         }
 
@@ -235,25 +236,26 @@ KIO::UDSEntry Nepomuk::SearchFolder::statResult( const Query::Result& result )
 
         // make sure we do not use these ugly names for display
         if ( !uds.contains( KIO::UDSEntry::UDS_DISPLAY_NAME ) ) {
-            if ( res.hasType( Nepomuk::Vocabulary::PIMO::Thing() ) ) {
+            // by checking nieUrl we avoid loading the resource for local files
+            if ( nieUrl.isEmpty() &&
+                 res.hasType( Nepomuk::Vocabulary::PIMO::Thing() ) ) {
                 if ( !res.pimoThing().groundingOccurrences().isEmpty() ) {
                     res = res.pimoThing().groundingOccurrences().first();
                 }
             }
 
-            if ( res.hasProperty( Nepomuk::Vocabulary::NIE::url() ) ) {
-                KUrl fileUrl( res.property( Nepomuk::Vocabulary::NIE::url() ).toUrl() );
-                uds.insert( KIO::UDSEntry::UDS_DISPLAY_NAME, fileUrl.fileName() );
+            if ( !nieUrl.isEmpty() ) {
+                uds.insert( KIO::UDSEntry::UDS_DISPLAY_NAME, nieUrl.fileName() );
 
                 // since we change the UDS_NAME KFileItem cannot handle mimetype and such anymore
                 QString mimetype = uds.stringValue( KIO::UDSEntry::UDS_MIME_TYPE );
                 if ( mimetype.isEmpty() ) {
-                    mimetype = KMimeType::findByUrl(fileUrl)->name();
+                    mimetype = KMimeType::findByUrl(nieUrl)->name();
                     uds.insert( KIO::UDSEntry::UDS_MIME_TYPE, mimetype );
                 }
             }
             else {
-                uds.insert( KIO::UDSEntry::UDS_DISPLAY_NAME, result.resource().genericLabel() );
+                uds.insert( KIO::UDSEntry::UDS_DISPLAY_NAME, res.genericLabel() );
             }
         }
 
