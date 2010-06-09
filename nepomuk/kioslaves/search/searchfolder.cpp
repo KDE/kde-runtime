@@ -172,14 +172,13 @@ void Nepomuk::SearchFolder::statResults()
 
 
 namespace {
-    bool statFile( const KUrl& url, const KUrl& nieUrl, KIO::UDSEntry& uds )
+    bool statFile( const KUrl& url, const KUrl& fileUrl, KIO::UDSEntry& uds )
     {
         // the akonadi kio slave is just way too slow and
         // in KDE 4.4 akonadi items should have nepomuk:/res/<uuid> URIs anyway
         if ( url.scheme() == QLatin1String( "akonadi" ) )
             return false;
 
-        const KUrl fileUrl = nieUrl.isEmpty() ? Nepomuk::nepomukToFileUrl( url ) : nieUrl;
         if ( !fileUrl.isEmpty() ) {
             if ( KIO::StatJob* job = KIO::stat( fileUrl, KIO::HideProgressInfo ) ) {
                 // we do not want to wait for the event loop to delete the job
@@ -191,12 +190,11 @@ namespace {
                 }
             }
         }
-        else {
-            Nepomuk::Resource res( url );
-            if ( res.exists() ) {
-                uds = Nepomuk::statNepomukResource( res );
-                return true;
-            }
+
+        Nepomuk::Resource res( url );
+        if ( res.exists() ) {
+            uds = Nepomuk::statNepomukResource( res );
+            return true;
         }
 
         kDebug() << "failed to stat" << url;
@@ -213,6 +211,8 @@ KIO::UDSEntry Nepomuk::SearchFolder::statResult( const Query::Result& result )
     Resource res( result.resource() );
     KUrl url( res.resourceUri() );
     KUrl nieUrl( result[Nepomuk::Vocabulary::NIE::url()].uri() );
+    if ( nieUrl.isEmpty() )
+        nieUrl = Nepomuk::nepomukToFileUrl( url );
 
     KIO::UDSEntry uds;
     if ( statFile( url, nieUrl, uds ) ) {
