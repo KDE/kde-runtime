@@ -110,9 +110,6 @@ void Nepomuk::SearchFolder::list()
 
     kDebug() << "listing done";
 
-    m_slave->listEntry( KIO::UDSEntry(), true );
-    m_slave->finished();
-
     // shutdown and delete
     exit();
     deleteLater();

@@ -209,6 +209,8 @@ void Nepomuk::SearchProtocol::listDir( const KUrl& url )
         }
         else if ( SearchFolder* folder = extractSearchFolder( url ) ) {
             folder->list();
+            listEntry( KIO::UDSEntry(), true );
+            finished();
         }
         else {
             error( KIO::ERR_DOES_NOT_EXIST, url.prettyUrl() );
@@ -376,6 +378,8 @@ void Nepomuk::SearchProtocol::listDefaultSearch( const QString& name )
     kDebug() << name;
     if ( m_defaultSearches.contains( name ) ) {
         getDefaultQueryFolder( name )->list();
+        listEntry( KIO::UDSEntry(), true );
+        finished();
     }
     else {
         error( KIO::ERR_CANNOT_ENTER_DIRECTORY, "Unknown default search: " + name );
