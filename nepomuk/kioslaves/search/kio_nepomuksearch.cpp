@@ -107,9 +107,6 @@ namespace {
         return( !url.hasQuery() &&
                 ( path.isEmpty() || path == QLatin1String("/") ) );
     }
-
-    // do not cache more than SEARCH_CACHE_MAX search folders at the same time
-    const int SEARCH_CACHE_MAX = 5;
 }
 
 
