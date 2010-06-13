@@ -241,8 +241,11 @@ KIO::UDSEntry Nepomuk::statNepomukResource( const Nepomuk::Resource& res )
         }
         else {
             // a fallback icon for nepomuk resources
-            uds.insert( KIO::UDSEntry::UDS_ICON_NAME, "nepomuk" );
+            uds.insert( KIO::UDSEntry::UDS_ICON_NAME, QLatin1String( "nepomuk" ) );
         }
+
+        if ( uds.stringValue( KIO::UDSEntry::UDS_ICON_NAME ) != QLatin1String( "nepomuk" ) )
+            uds.insert( KIO::UDSEntry::UDS_ICON_OVERLAY_NAMES, QLatin1String( "nepomuk" ) );
     }
 
     //
