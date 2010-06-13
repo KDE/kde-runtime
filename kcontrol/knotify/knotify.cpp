@@ -101,6 +101,8 @@ KCMKNotify::KCMKNotify(QWidget *parent, const QVariantList & )
     tab->addTab(app_tab, i18n("&Applications"));
     tab->addTab(m_playerSettings, i18n("&Player Settings"));
 
+    m_appCombo->setFocus();
+
     connect( m_appCombo, SIGNAL( activated( int ) ),
              SLOT( slotAppActivated( int )) );
 
