@@ -166,7 +166,7 @@ SmallSizes=16
 PanelDefault=32
 PanelSizes=16,22,32,48
 Hidden=true
-Directories=192x192/apps,128x128/actions,128x128/apps,128x128/devices,128x128/filesystems,128x128/mimetypes,96x96/actions,96x96/apps,96x96/devices,96x96/filesystems,96x96/mimetypes,72x72/apps,64x64/actions,64x64/apps,64x64/devices,64x64/filesystems,64x64/mimetypes,48x48/actions,48x48/apps,48x48/devices,48x48/filesystems,48x48/mimetypes,36x36/apps,32x32/actions,32x32/apps,32x32/devices,32x32/filesystems,32x32/mimetypes,24x24/apps,22x22/actions,22x22/apps,22x22/devices,22x22/filesystems,22x22/mimetypes,16x16/actions,16x16/apps,16x16/devices,16x16/filesystems,16x16/mimetypes,scalable/actions,scalable/apps,scalable/devices,scalable/filesystems,scalable/mimetypes,16x16/stock/chart,16x16/stock/code,16x16/stock/data,16x16/stock/document,16x16/stock/form,16x16/stock/generic,16x16/stock/image,16x16/stock/io,16x16/stock/media,16x16/stock/navigation,16x16/stock/net,16x16/stock/object,16x16/stock/table,16x16/stock/text,24x24/stock/chart,24x24/stock/code,24x24/stock/data,24x24/stock/document,24x24/stock/form,24x24/stock/generic,24x24/stock/image,24x24/stock/io,24x24/stock/media,24x24/stock/navigation,24x24/stock/net,24x24/stock/object,24x24/stock/table,24x24/stock/text,32x32/stock/chart,32x32/stock/code,32x32/stock/data,32x32/stock/document,32x32/stock/form,32x32/stock/generic,32x32/stock/image,32x32/stock/io,32x32/stock/media,32x32/stock/navigation,32x32/stock/net,32x32/stock/object,32x32/stock/table,32x32/stock/text,36x36/stock/chart,36x36/stock/code,36x36/stock/data,36x36/stock/document,36x36/stock/form,36x36/stock/generic,36x36/stock/image,36x36/stock/io,36x36/stock/media,36x36/stock/navigation,36x36/stock/net,36x36/stock/object,36x36/stock/table,36x36/stock/text,48x48/stock/chart,48x48/stock/code,48x48/stock/data,48x48/stock/document,48x48/stock/form,48x48/stock/generic,48x48/stock/image,48x48/stock/io,48x48/stock/media,48x48/stock/navigation,48x48/stock/net,48x48/stock/object,48x48/stock/table,48x48/stock/text
+Directories=192x192/apps,128x128/actions,128x128/apps,128x128/devices,128x128/filesystems,128x128/mimetypes,96x96/actions,96x96/apps,96x96/devices,96x96/filesystems,96x96/mimetypes,72x72/apps,64x64/actions,64x64/apps,64x64/devices,64x64/filesystems,64x64/mimetypes,64x64/status,48x48/actions,48x48/apps,48x48/devices,48x48/filesystems,48x48/mimetypes,36x36/apps,32x32/actions,32x32/apps,32x32/devices,32x32/filesystems,32x32/mimetypes,32x32/status,24x24/apps,22x22/actions,22x22/apps,22x22/devices,22x22/filesystems,22x22/mimetypes,22x22/status,16x16/actions,16x16/apps,16x16/devices,16x16/filesystems,16x16/mimetypes,16x16/status,scalable/actions,scalable/apps,scalable/devices,scalable/filesystems,scalable/mimetypes,16x16/stock/chart,16x16/stock/code,16x16/stock/data,16x16/stock/document,16x16/stock/form,16x16/stock/generic,16x16/stock/image,16x16/stock/io,16x16/stock/media,16x16/stock/navigation,16x16/stock/net,16x16/stock/object,16x16/stock/table,16x16/stock/text,24x24/stock/chart,24x24/stock/code,24x24/stock/data,24x24/stock/document,24x24/stock/form,24x24/stock/generic,24x24/stock/image,24x24/stock/io,24x24/stock/media,24x24/stock/navigation,24x24/stock/net,24x24/stock/object,24x24/stock/table,24x24/stock/text,32x32/stock/chart,32x32/stock/code,32x32/stock/data,32x32/stock/document,32x32/stock/form,32x32/stock/generic,32x32/stock/image,32x32/stock/io,32x32/stock/media,32x32/stock/navigation,32x32/stock/net,32x32/stock/object,32x32/stock/table,32x32/stock/text,36x36/stock/chart,36x36/stock/code,36x36/stock/data,36x36/stock/document,36x36/stock/form,36x36/stock/generic,36x36/stock/image,36x36/stock/io,36x36/stock/media,36x36/stock/navigation,36x36/stock/net,36x36/stock/object,36x36/stock/table,36x36/stock/text,48x48/stock/chart,48x48/stock/code,48x48/stock/data,48x48/stock/document,48x48/stock/form,48x48/stock/generic,48x48/stock/image,48x48/stock/io,48x48/stock/media,48x48/stock/navigation,48x48/stock/net,48x48/stock/object,48x48/stock/table,48x48/stock/text
 
 [16x16/actions]
 Size=16
@@ -193,6 +193,11 @@ Size=16
 Context=MimeTypes
 Type=Threshold
 
+[16x16/status]
+Size=16
+Context=Status
+Type=Threshold
+
 [22x22/actions]
 Size=22
 Context=Actions
@@ -216,6 +221,11 @@ Type=Threshold
 [22x22/mimetypes]
 Size=22
 Context=MimeTypes
+Type=Threshold
+
+[22x22/status]
+Size=22
+Context=Status
 Type=Threshold
 
 [24x24/apps]
@@ -246,6 +256,11 @@ Type=Threshold
 [32x32/mimetypes]
 Size=32
 Context=MimeTypes
+Type=Threshold
+
+[32x32/status]
+Size=32
+Context=Status
 Type=Threshold
 
 [36x36/apps]
@@ -301,6 +316,11 @@ Type=Threshold
 [64x64/mimetypes]
 Size=64
 Context=MimeTypes
+Type=Threshold
+
+[64x64/status]
+Size=64
+Context=Status
 Type=Threshold
 
 [72x72/apps]
