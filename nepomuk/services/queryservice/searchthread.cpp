@@ -106,19 +106,19 @@ void Nepomuk::Query::SearchThread::run()
     // created via the Nepomuk query API.
     //
     if ( m_sparqlQuery.endsWith( QLatin1String( "}" ) ) ) {
-        sparqlQuery( m_sparqlQuery + QLatin1String( " LIMIT 10" ), 1.0 );
+        sparqlQuery( m_sparqlQuery + QLatin1String( " LIMIT 10" ) );
         if ( !m_canceled && m_resultCnt >= 10 )
-            sparqlQuery( m_sparqlQuery + QLatin1String( " OFFSET 10" ), 1.0 );
+            sparqlQuery( m_sparqlQuery + QLatin1String( " OFFSET 10" ) );
     }
     else {
-        sparqlQuery( m_sparqlQuery, 1.0 );
+        sparqlQuery( m_sparqlQuery );
     }
 
     kDebug() << time.elapsed();
 }
 
 
-void Nepomuk::Query::SearchThread::sparqlQuery( const QString& query, double baseScore )
+void Nepomuk::Query::SearchThread::sparqlQuery( const QString& query )
 {
     kDebug() << query;
 
@@ -128,12 +128,11 @@ void Nepomuk::Query::SearchThread::sparqlQuery( const QString& query, double bas
 
         ++m_resultCnt;
 
-        Resource res( hits[0].uri() );
+        Resource res = Resource::fromResourceUri( hits[0].uri() );
         if ( !res.hasType( Soprano::Vocabulary::RDFS::Class() ) &&
              !res.hasType( Soprano::Vocabulary::RDF::Property() ) &&
              !res.hasType( Soprano::Vocabulary::NRL::Graph() ) ) {
-            Result result = extractResult( hits );
-            result.setScore( result.score() * baseScore );
+            Result result = extractResult( res, hits );
 
             kDebug() << "Found result:" << result.resource().resourceUri() << result.score();
 
@@ -143,10 +142,10 @@ void Nepomuk::Query::SearchThread::sparqlQuery( const QString& query, double bas
 }
 
 
-Nepomuk::Query::Result Nepomuk::Query::SearchThread::extractResult( const Soprano::QueryResultIterator& it ) const
+Nepomuk::Query::Result Nepomuk::Query::SearchThread::extractResult( const Resource& resultResource, const Soprano::QueryResultIterator& it ) const
 {
     kDebug() << it.binding( 0 ).uri();
-    Result result( it.binding( 0 ).uri() );
+    Result result( resultResource );
 
     // make sure we do not store values twice
     QStringList names = it.bindingNames();

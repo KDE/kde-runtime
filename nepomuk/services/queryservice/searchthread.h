@@ -59,8 +59,8 @@ namespace Nepomuk {
             void run();
 
         private:
-            void sparqlQuery( const QString& query, double baseScore );
-            Nepomuk::Query::Result extractResult( const Soprano::QueryResultIterator& it ) const;
+            void sparqlQuery( const QString& query );
+            Nepomuk::Query::Result extractResult( const Resource& resultResource, const Soprano::QueryResultIterator& it ) const;
 
             QString m_sparqlQuery;
             RequestPropertyMap m_requestProperties;
