@@ -47,12 +47,31 @@ namespace Nepomuk {
         Q_OBJECT
 
     public:
+        /**
+         * Create a new search folder which reads the query from \a url.
+         * Call list() to actually let it list results via slave->listEntry()
+         */
         SearchFolder( const KUrl& url, KIO::SlaveBase* slave );
+
+        /**
+         * Destructor
+         */
         ~SearchFolder();
 
-        QString query() const { return m_query; }
+        /**
+         * Query URL used by this folder.
+         */
         KUrl url() const { return m_url; }
 
+        /**
+         * The query used by this folder or an invalid one in case
+         * the query URL contains a pure SPARQL query string.
+         */
+        Query::Query query() const { return m_query; }
+
+        /**
+         * List the results directly on the parent slave.
+         */
         void list();
 
     private Q_SLOTS:
@@ -83,8 +102,12 @@ namespace Nepomuk {
         // folder properties
         KUrl m_url;
 
+        /// might be invalid in case the url contained a SPARQL query which
+        /// we could not parse. In that case use m_sparqlQuery
+        Query::Query m_query;
+
         // SPARQL query that is actually sent to the query service
-        QString m_query;
+        QString m_sparqlQuery;
 
         // result cache, filled by the search thread
         QQueue<Query::Result> m_resultsQueue;

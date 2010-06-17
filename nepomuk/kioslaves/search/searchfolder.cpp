@@ -56,8 +56,19 @@ Nepomuk::SearchFolder::SearchFolder( const KUrl& url, KIO::SlaveBase* slave )
 
     qRegisterMetaType<QList<QUrl> >();
 
-    // parse URL
-    m_query = queryFromUrl( url );
+    // parse URL (this may fail in which case we fall back to pure SPARQL below)
+    m_query = Nepomuk::fromQueryUrl( url );
+
+    // the only request property we handle is nie:url
+    m_query.setRequestProperties( QList<Query::Query::RequestProperty>() << Query::Query::RequestProperty( Nepomuk::Vocabulary::NIE::url() ) );
+
+    if ( m_query.isValid() ) {
+        m_sparqlQuery = m_query.toSparqlQuery();
+    }
+    else {
+        // the URL contains pure sparql. We simply list it without trying to change the limit
+        m_sparqlQuery = Nepomuk::sparqlFromQueryUrl( url );
+    }
 }
 
 
@@ -88,9 +99,7 @@ void Nepomuk::SearchFolder::run()
              this, SLOT( slotFinishedListing() ),
              Qt::DirectConnection );
 
-    Query::Query q;
-    q.addRequestProperty( Query::Query::RequestProperty( Nepomuk::Vocabulary::NIE::url() ) );
-    m_client->sparqlQuery( m_query, q.requestPropertyMap() );
+    m_client->sparqlQuery( m_sparqlQuery, m_query.requestPropertyMap() );
     exec();
     delete m_client;
 

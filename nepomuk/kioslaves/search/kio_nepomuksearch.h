@@ -80,27 +80,11 @@ namespace Nepomuk {
     private:
         bool ensureNepomukRunning( bool emitError = true );
         void listRoot();
-        void listLastQueries();
-        void listActions();
-        void listDefaultSearches();
-        void listDefaultSearch( const QString& path );
-        void addDefaultSearch( const QString& name, const KUrl& url );
-
-        SearchFolder* extractSearchFolder( const KUrl& url );
 
         /**
          * Get (possibly cached) query folder
          */
         SearchFolder* getQueryFolder( const KUrl& url );
-        SearchFolder* getDefaultQueryFolder( const QString& name );
-
-        /**
-         * Store \a url in the history of last used queries.
-         */
-        void updateQueryUrlHistory( const KUrl& url );
-
-        // the default search folders
-        QHash<QString, KUrl> m_defaultSearches;
     };
 }
 

@@ -29,18 +29,25 @@
 #include <KDebug>
 #include <KAboutData>
 #include <KApplication>
-#include <KConfig>
+#include <KSharedConfig>
 #include <KConfigGroup>
 #include <KCmdLineArgs>
 #include <kio/global.h>
 #include <kio/job.h>
 #include <KMimeType>
 #include <KStandardDirs>
+#include <KFileItem>
+#include <KDirNotify>
 
-#include <Nepomuk/Resource>
+#include <Nepomuk/Thing>
 #include <Nepomuk/ResourceManager>
 #include <Nepomuk/Variant>
 #include <Nepomuk/Query/QueryServiceClient>
+#include <Nepomuk/Query/ComparisonTerm>
+#include <Nepomuk/Query/ResourceTypeTerm>
+#include <Nepomuk/Query/AndTerm>
+#include <Nepomuk/Query/NegationTerm>
+#include <Nepomuk/Query/Query>
 
 #include <Soprano/Vocabulary/RDF>
 #include <Soprano/Vocabulary/RDFS>
@@ -53,37 +60,21 @@
 
 
 namespace {
-    KIO::UDSEntry statDefaultSearchFolder( const KUrl& url, const QString& customName = QString() ) {
-        QString name( customName );
-        QString displayName( url.queryItem(QLatin1String( "title" ) ) );
-        QString userQuery( url.queryItem(QLatin1String( "userquery" ) ) );
-
-        if ( name.isEmpty() ) {
-            name = QString::fromAscii( url.toEncoded().toPercentEncoding( QByteArray(), QByteArray(), '_' ) );
-        }
-
-        if ( displayName.isEmpty() ) {
-            if ( userQuery.isEmpty() ) {
-                userQuery = Nepomuk::extractPlainQuery( url );
-            }
-
-            if ( !userQuery.isEmpty() ) {
-                displayName = i18nc( "@title UDS_DISPLAY_NAME for a KIO directory listing. %1 is the query the user entered.",
-                                     "Query Results from '%1'",
-                                     userQuery );
-            }
-            else {
-                displayName = i18n("Query Results");
-            }
-        }
-
-        KIO::UDSEntry uds;
-        uds.insert( KIO::UDSEntry::UDS_NAME, name );
-        uds.insert( KIO::UDSEntry::UDS_DISPLAY_NAME, displayName );
+    void addGenericSearchFolderItems( KIO::UDSEntry& uds ) {
         uds.insert( KIO::UDSEntry::UDS_ACCESS, 0700 );
         uds.insert( KIO::UDSEntry::UDS_USER, KUser().loginName() );
         uds.insert( KIO::UDSEntry::UDS_FILE_TYPE, S_IFDIR );
         uds.insert( KIO::UDSEntry::UDS_MIME_TYPE, QString::fromLatin1( "inode/directory" ) );
+        uds.insert( KIO::UDSEntry::UDS_CUSTOM_SORT_WEIGHT, -1 );
+        uds.insert( KIO::UDSEntry::UDS_ICON_OVERLAY_NAMES, QLatin1String( "nepomuk" ) );
+    }
+
+    KIO::UDSEntry statSearchFolder( const KUrl& url ) {
+        KIO::UDSEntry uds;
+        addGenericSearchFolderItems( uds );
+        uds.insert( KIO::UDSEntry::UDS_NAME, Nepomuk::resourceUriToUdsName( url ) );
+        uds.insert( KIO::UDSEntry::UDS_DISPLAY_NAME, Nepomuk::Query::Query::titleFromQueryUrl( url ) );
+        uds.insert( KIO::UDSEntry::UDS_URL, url.url() );
         return uds;
     }
 
@@ -94,6 +85,7 @@ namespace {
     QString fileNameFromUrl( const KUrl& url ) {
         if ( url.hasQueryItem( QLatin1String( "sparql" ) ) ||
              url.hasQueryItem( QLatin1String( "query" ) ) ||
+             url.hasQueryItem( QLatin1String( "encodedquery" ) ) ||
              url.directory() != QLatin1String( "/" ) ) {
             return url.fileName();
         }
@@ -107,27 +99,13 @@ namespace {
         return( !url.hasQuery() &&
                 ( path.isEmpty() || path == QLatin1String("/") ) );
     }
+    const int s_historyMax = 10;
 }
 
 
 Nepomuk::SearchProtocol::SearchProtocol( const QByteArray& poolSocket, const QByteArray& appSocket )
     : KIO::ForwardingSlaveBase( "nepomuksearch", poolSocket, appSocket )
 {
-    // FIXME: trueg: install a file watch on this file and update it whenever the queries change.
-    // FIXME: trueg: also emit a KDirNotify signal to inform KIO about that change
-    KConfig config("kionepomukuserqueriesrc" );
-
-    foreach( QString search, config.group("Searches").readEntry("All searches", QStringList() ) )
-    {
-        search = search.simplified();
-        KConfigGroup grp = config.group(search);
-        KUrl url( grp.readEntry("Query", QString() ) );
-        url.setScheme( QLatin1String( "nepomuksearch" ) );
-        QString name = grp.readEntry( "Name", QString() );
-        if ( !name.isEmpty() ) {
-            addDefaultSearch( name, url );
-        }
-    }
 }
 
 
@@ -156,44 +134,9 @@ bool Nepomuk::SearchProtocol::ensureNepomukRunning( bool emitError )
 }
 
 
-void Nepomuk::SearchProtocol::addDefaultSearch( const QString& name, const KUrl& url )
-{
-    m_defaultSearches.insert( name, url );
-}
-
-
-Nepomuk::SearchFolder* Nepomuk::SearchProtocol::extractSearchFolder( const KUrl& url )
-{
-    kDebug() << url;
-    if ( SearchFolder* sf = getDefaultQueryFolder( url.fileName() ) ) {
-        kDebug() << "-----> is default search folder";
-        return sf;
-    }
-    else if ( SearchFolder* sf = getQueryFolder( url ) ) {
-        kDebug() << "-----> is on-the-fly search folder";
-        return sf;
-    }
-    else {
-        kDebug() << "-----> does not exist.";
-        return 0;
-    }
-}
-
-
 void Nepomuk::SearchProtocol::listDir( const KUrl& url )
 {
     kDebug() << url;
-
-    //
-    // Root dir: * list default searches: "all music files", "recent files"
-    //           * list configuration entries: "create new default search"
-    //
-    // Root dir with query:
-    //           * execute the query (cached) and list its results
-    //
-    // some folder:
-    //           * Look for a default search and execute that
-    //
 
     if ( isRootUrl( url ) ) {
         listRoot();
@@ -204,7 +147,7 @@ void Nepomuk::SearchProtocol::listDir( const KUrl& url )
             listEntry( KIO::UDSEntry(),  true);
             finished();
         }
-        else if ( SearchFolder* folder = extractSearchFolder( url ) ) {
+        else if ( SearchFolder* folder = getQueryFolder( url ) ) {
             folder->list();
             listEntry( KIO::UDSEntry(), true );
             finished();
@@ -247,8 +190,7 @@ void Nepomuk::SearchProtocol::mimetype( const KUrl& url )
         mimeType( QString::fromLatin1( "inode/directory" ) );
         finished();
     }
-    else if ( url.directory() == QLatin1String( "/" ) &&
-              m_defaultSearches.contains( url.fileName() ) ) {
+    else if ( url.directory() == QLatin1String( "/" ) ) {
         mimeType( QString::fromLatin1( "inode/directory" ) );
         finished();
     }
@@ -279,7 +221,7 @@ void Nepomuk::SearchProtocol::stat( const KUrl& url )
     }
     else if ( fileNameFromUrl( url ).isEmpty() ) {
         kDebug() << "Stat search folder" << url;
-        statEntry( statDefaultSearchFolder( url ) );
+        statEntry( statSearchFolder( url ) );
         finished();
     }
     else {
@@ -304,8 +246,8 @@ bool Nepomuk::SearchProtocol::rewriteUrl( const KUrl& url, KUrl& newURL )
 {
     // we do it the speedy but slightly umpf way: decode the encoded URI from the filename
     newURL = Nepomuk::udsNameToResourceUri( url.fileName() );
-    kDebug() << "NEW URL:" << newURL << newURL.protocol() << newURL.path() << newURL.fileName();
-    return newURL.isValid();
+    kDebug() << "URL:" << url << "NEW URL:" << newURL << newURL.protocol() << newURL.path() << newURL.fileName();
+    return !newURL.isEmpty();
 }
 
 
@@ -319,70 +261,33 @@ void Nepomuk::SearchProtocol::listRoot()
 {
     kDebug();
 
-    listDefaultSearches();
-    listActions();
-
     listEntry( KIO::UDSEntry(), true );
     finished();
 }
 
 
-void Nepomuk::SearchProtocol::listActions()
-{
-    // FIXME: manage default searches
-}
-
-
 Nepomuk::SearchFolder* Nepomuk::SearchProtocol::getQueryFolder( const KUrl& url )
 {
-    // here we strip off the entry's name since that is not part of the query URL
-    KUrl strippedUrl( url );
-    if ( url.hasQuery() ) {
-        strippedUrl.setPath( QLatin1String( "/" ) );
-    }
-    else if ( url.directory() != QLatin1String( "/" ) ) {
-        strippedUrl.setPath( QLatin1String( "/" ) + url.path().section( '/', 0, 0 ) );
+    // this is necessary to properly handle user queries which are encoded in the filename in
+    // statSearchFolder(). This is necessary for cases in which UDS_URL is ignored like in
+    // KUrlNavigator's popup menus
+    KUrl normalizedUrl = Nepomuk::udsNameToResourceUri( url.fileName() );
+    if ( normalizedUrl.protocol() != QLatin1String( "nepomuksearch" ) ) {
+        normalizedUrl = url;
     }
 
-    QString urlStr = strippedUrl.url();
-    SearchFolder* folder = new SearchFolder( strippedUrl, this );
+    // here we strip off the entry's name since that is not part of the query URL
+    if ( url.hasQuery() ) {
+        normalizedUrl.setPath( QLatin1String( "/" ) );
+    }
+    else if ( url.directory() != QLatin1String( "/" ) ) {
+        normalizedUrl.setPath( QLatin1String( "/" ) + url.path().section( '/', 0, 0 ) );
+    }
+
+    SearchFolder* folder = new SearchFolder( normalizedUrl, this );
     return folder;
 }
 
-
-Nepomuk::SearchFolder* Nepomuk::SearchProtocol::getDefaultQueryFolder( const QString& name )
-{
-    if ( m_defaultSearches.contains( name ) ) {
-        return getQueryFolder( m_defaultSearches[name] );
-    }
-    else {
-        return 0;
-    }
-}
-
-
-void Nepomuk::SearchProtocol::listDefaultSearches()
-{
-    for ( QHash<QString, KUrl>::const_iterator it = m_defaultSearches.constBegin();
-          it != m_defaultSearches.constEnd(); ++it ) {
-        listEntry( statDefaultSearchFolder( it.key() ), false );
-    }
-}
-
-
-void Nepomuk::SearchProtocol::listDefaultSearch( const QString& name )
-{
-    kDebug() << name;
-    if ( m_defaultSearches.contains( name ) ) {
-        getDefaultQueryFolder( name )->list();
-        listEntry( KIO::UDSEntry(), true );
-        finished();
-    }
-    else {
-        error( KIO::ERR_CANNOT_ENTER_DIRECTORY, "Unknown default search: " + name );
-        finished();
-    }
-}
 
 extern "C"
 {

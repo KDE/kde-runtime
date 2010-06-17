@@ -141,7 +141,7 @@ void Nepomuk::SearchUrlListener::createInterface()
                                                            "/nepomukqueryservice",
                                                            QDBusConnection::sessionBus() );
 
-    QDBusReply<QDBusObjectPath> r = queryServiceInterface.sparqlQuery( Nepomuk::queryFromUrl( m_queryUrl ),
+    QDBusReply<QDBusObjectPath> r = queryServiceInterface.sparqlQuery( Nepomuk::sparqlFromQueryUrl( m_queryUrl ),
                                                                        nieUriReqProp() );
 
     if ( r.isValid() ) {
