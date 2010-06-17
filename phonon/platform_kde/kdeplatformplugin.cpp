@@ -166,10 +166,12 @@ QObject *KdePlatformPlugin::createBackend(KService::Ptr newService)
         kError(600) << "Can not create backend object from factory for " <<
             newService->name() << ", " << newService->library() << ":\n" << errorReason;
 
+        return 0;
+
+        // keep the translated text below for reuse later
         KMessageBox::error(0,
                 i18n("<qt>Unable to use the <b>%1</b> Multimedia Backend:<br/>%2</qt>",
                     newService->name(), errorReason));
-        return 0;
     }
 
     kDebug() << "using backend: " << newService->name();
