@@ -42,7 +42,7 @@ Name[it]=Banca dati cinematografica in rete
 Name[ja]=インターネット映画データベース
 Name[kk]=Internet фильмдер қоры
 Name[km]=មូលដ្ឋាន​ទិន្នន័យ​ភាពយន្ត​តាម​អ៊ីនធឺណិត
-Name[kn]=ಜಾಲ ಚಲಚ್ಚಿತ್ರ ದತ್ತಸಂಚಯ
+Name[kn]=ಜಾಲ ಚಲನಚಿತ್ರ ದತ್ತಸಂಚಯ
 Name[ko]=인터넷 영화 데이터베이스
 Name[ku]=Danegeha Fîlman a Înternetê
 Name[lt]=Interneto kinofilmų duomenų bazė
@@ -107,6 +107,7 @@ Query[is]=http://imdb.com/find?s=all&q=\\{@}
 Query[it]=http://italian.imdb.com/find?s=all&q=\\{@}
 Query[ja]=http://imdb.com/find?s=all&q=\\{@}
 Query[kk]=http://imdb.com/find?s=all&q=\\{@}
+Query[kn]=http://imdb.com/find?s=all&q=\\{@}
 Query[lt]=http://imdb.com/find?s=all&q=\\{@}
 Query[lv]=http://imdb.com/find?s=all&q=\\{@}
 Query[nb]=http://imdb.com/find?s=all&q=\\{@}
