@@ -115,4 +115,16 @@ void Nepomuk::Query::FolderConnection::close()
     deleteLater();
 }
 
+
+bool Nepomuk::Query::FolderConnection::isListingFinished() const
+{
+    return m_folder->initialListingDone();
+}
+
+
+QString Nepomuk::Query::FolderConnection::queryString() const
+{
+    return m_folder->query();
+}
+
 #include "folderconnection.moc"

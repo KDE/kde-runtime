@@ -48,6 +48,13 @@ namespace Nepomuk {
             /// close the connection to the folder. Will delete this connection
             void close();
 
+            /// \return \p true if the initial listing has been finished and the finishedListing()
+            /// has been emitted
+            bool isListingFinished() const;
+
+            /// \return the SPARQL query of the folder
+            QString queryString() const;
+
         Q_SIGNALS:
             void newEntries( const QList<Nepomuk::Query::Result>& );
             void entriesRemoved( const QStringList& );

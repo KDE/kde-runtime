@@ -63,6 +63,8 @@ namespace Nepomuk {
 
             QList<FolderConnection*> openConnections() const;
 
+            QString query() const { return m_query; }
+
         public Q_SLOTS:
             void update();
 
