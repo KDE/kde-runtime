@@ -80,10 +80,11 @@ void DeviceServiceAction::execute(Solid::Device &device)
 void DelayedExecutor::_k_storageSetupDone(Solid::ErrorType error, QVariant errorData,
                                           const QString &udi)
 {
-    Q_UNUSED(error);
     Q_UNUSED(errorData);
 
-    delayedExecute(udi);
+    if (!error) {
+        delayedExecute(udi);
+    }
 }
 
 void DeviceServiceAction::setService(const KServiceAction& service)
