@@ -1,6 +1,6 @@
 /*
    This file is part of the KDE libraries
-   Copyright (c) 2005-2009 David Jarvie <djarvie@kde.org>
+   Copyright (c) 2005-2010 David Jarvie <djarvie@kde.org>
    Copyright (c) 2005 S.R.Haque <srhaque@iee.org>.
 
    This library is free software; you can redistribute it and/or
@@ -50,6 +50,10 @@ K_PLUGIN_FACTORY(KTimeZonedFactory,
     )
 K_EXPORT_PLUGIN(KTimeZonedFactory("ktimezoned"))
 
+// The maximum allowed length for reading a zone.tab line. This is set to
+// provide plenty of leeway, given that the maximum length of lines in a valid
+// zone.tab will be around 100 - 120 characters.
+const int MAX_ZONE_TAB_LINE_LENGTH = 2000;
 
 // Config file entry names
 const char ZONEINFO_DIR[]   = "ZoneinfoDir";   // path to zoneinfo/ directory
@@ -307,7 +311,9 @@ void KTimeZoned::readZoneTab(QFile &f)
     QTextStream str(&f);
     while (!str.atEnd())
     {
-        QString line = str.readLine();
+        // Read the next line, but limit its length to guard against crashing
+        // due to a corrupt very large zone.tab (see KDE bug 224868).
+        QString line = str.readLine(MAX_ZONE_TAB_LINE_LENGTH);
         if (line.isEmpty() || line[0] == '#')
             continue;
         QStringList tokens = KStringHandler::perlSplit(lineSeparator, line, 4);
