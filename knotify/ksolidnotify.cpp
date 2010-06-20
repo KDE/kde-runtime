@@ -111,7 +111,7 @@ void KSolidNotify::connectSignals(Solid::Device* device)
 	}
 	if (device->is<Solid::OpticalDisc>())
 	{
-		Solid::OpticalDrive *drive = device->as<Solid::OpticalDrive>();
+		Solid::OpticalDrive *drive = device->parent().as<Solid::OpticalDrive>();
 		connect(drive, SIGNAL(ejectDone(Solid::ErrorType, QVariant, const QString &)),
 				this, SLOT(storageEjectDone(Solid::ErrorType, QVariant , const QString &)));
 	}
@@ -157,8 +157,20 @@ void KSolidNotify::storageEjectDone(Solid::ErrorType error, QVariant errorData, 
 {
 	if (error)
 	{
-		Solid::Device device(udi);
-		QString errorMessage = i18n("Could not eject the following device: %1\nOne or more files on this device are open within an application ", device.description());
+		QString discUdi;
+		foreach (Solid::Device device, m_devices) {
+		if (device.parentUdi() == udi) {
+			discUdi = device.udi();
+			}
+		}
+
+		if (discUdi.isNull()) {
+			//This should not happen, bail out
+			return;
+		}
+
+		Solid::Device discDevice(discUdi);
+		QString errorMessage = i18n("Could not eject the following device: %1\nOne or more files on this device are open within an application ", discDevice.description());
 		if (!m_dbusServiceExists)
 		{
 			m_kNotify->event("mounterror", "hardwarenotifications", ContextList(), i18n("Device error"), errorMessage, KNotifyImage(), QStringList(), -1);
