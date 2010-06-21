@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=SRD
 CurrencyCodeIsoNumeric3=968
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Surinamese Dollar
+Name[bg]=Суринамски долар
 Name[bn]=সুরিনাম ডলার
 Name[ca]=Dòlar de Surinam
 Name[ca@valencia]=Dòlar de Surinam

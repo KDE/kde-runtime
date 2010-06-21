@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=LRD
 CurrencyCodeIsoNumeric3=430
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Liberian Dollar
+Name[bg]=Либерийски долар
 Name[ca]=Dòlar de Libèria
 Name[ca@valencia]=Dòlar de Libèria
 Name[cs]=Liberijský dolar

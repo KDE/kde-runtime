@@ -83,7 +83,7 @@ Name[vi]=Một cái tên đẹp bạn đã chọn cho giao diện của mình
 Name[wa]=On clapant no ki vos avoz tchoezi po voste eterface
 Name[xh]=Igama elihle olikhetileyo kujongano lwakho
 Name[x-test]=xxA nice name you have chosen for your interfacexx
-Name[zh_CN]=选择您的界面的好名字
+Name[zh_CN]=您为界面选择的好名字
 Name[zh_TW]=您為您的界面選擇的好名字
 Comment=A helpful description of the interface for the top right info box
 Comment[af]='n hulpvaardig beskrywing van die koppelvlak vir die bo regterkant inligting boks
@@ -167,7 +167,7 @@ Comment[vi]=Một mô tả giao diện có ích cho hộp thông tin ở trên c
 Comment[wa]=Èn ahessåve discrijhaedje di l' eterface, pol boesse d' infôrmåcion del coine å dzeu a droete
 Comment[xh]=Uchazo oluluncedo lojongano olungaphezulu ekunene kwebhokisi yolwazi
 Comment[x-test]=xxA helpful description of the interface for the top right info boxxx
-Comment[zh_CN]=右上方信息框中界面的帮助描述
+Comment[zh_CN]=右上方信息框中显示的界面描述
 Comment[zh_TW]=用於右上方資訊方塊界面的有用敘述
 
 configurationType=Possible values are component and application. Only component is handled at the moment though

@@ -368,7 +368,7 @@ Name[th]=การทำดัชนีถูกหยุดพักไว้�
 Name[tr]=İndeksleme beklemeye alındı
 Name[uk]=Пауза індексування
 Name[x-test]=xxIndexing suspendedxx
-Name[zh_CN]=索引已中断
+Name[zh_CN]=索引已被推迟
 Name[zh_TW]=索引暫停
 Comment=File indexing has been suspended by the search service.
 Comment[ca]=El servei de cerca ha suspès la indexació de fitxers.
@@ -421,7 +421,7 @@ Comment[th]=การทำดัชนีถูกหยุดพักชั�
 Comment[tr]=Dosya indeksleyici arama servisi tarafından durduruldu.
 Comment[uk]=Індексування файлів було призупинено службою пошуку.
 Comment[x-test]=xxFile indexing has been suspended by the search service.xx
-Comment[zh_CN]=Strigi 文件索引操作已经被搜索服务中断。
+Comment[zh_CN]=Strigi 文件索引操作已经被搜索服务推迟。
 Comment[zh_TW]=檔案索引已被暫停。
 Action=Popup
 

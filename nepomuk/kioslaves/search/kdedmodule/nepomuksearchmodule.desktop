@@ -6,6 +6,7 @@ X-KDE-DBus-ModuleName=nepomuksearchmodule
 X-KDE-Kded-autoload=true
 X-KDE-Kded-load-on-demand=false
 Name=Nepomuk Search Module
+Name[bg]=Модул за търсене Nepomuk
 Name[bn]=নেপোমুক সন্ধান মডিউল
 Name[ca]=Mòdul de cerques del Nepomuk
 Name[ca@valencia]=Mòdul de cerques del Nepomuk

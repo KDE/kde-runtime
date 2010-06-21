@@ -147,5 +147,5 @@ Comment[tr]=Strigidaemon uygulamasını yöneten Nepomuk servisi, masaüstünüz
 Comment[uk]=Служба Nepomuk, яка контролює фонову службу strigi, тобто, індексує файли на стільниці
 Comment[wa]=Siervice Nepomuk ki controle li démon strigi, ki fwait ls indecses des fitchîs sol sicribanne
 Comment[x-test]=xxNepomuk Service which controls the strigidaemon, i.e. indexes files on the desktopxx
-Comment[zh_CN]=控制 strigidaemon 进程的 Nepomuk 服务，其作用比如对桌面上的文件进行索引
+Comment[zh_CN]=Nepomuk 服务，它控制 strigidaemon， 也就是索引系统中的文件
 Comment[zh_TW]=控制 Strigi 桌面索引守護程式的 Nepomuk 服務
