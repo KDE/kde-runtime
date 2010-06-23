@@ -62,7 +62,7 @@ available for that region.</para>
 switch to the corresponding values.</para>
 
 <para>The main part of this tab is a list of all available languages. 
-&kde; programs will be displayed in the first language in this list. 
+The &GUI; of &kde; programs will be displayed in the first language in this list. 
 If the first language in the list is not available, the second will be used, &etc;</para>
 
 <para>Using the buttons on the left side of the list you can move the order of a 
@@ -76,7 +76,7 @@ list, it will be moved up to the first place in the list instead.</para>
 </para>
 
 <note><para>
-Note that some applications may not be translated to your languages; in 
+Note that some applications and documentations may not be translated to your languages; in 
 this case, they will automatically fall back to US English.</para></note>
 <note><para>
 Language and Country/Region are independent settings. Changing a language

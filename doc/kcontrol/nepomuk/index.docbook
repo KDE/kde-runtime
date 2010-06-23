@@ -14,8 +14,8 @@
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
 </authorgroup>
 
-<date>2009-05-25</date>
-<releaseinfo>1.0</releaseinfo>
+<date>2010-06-23</date>
+<releaseinfo>&kde; 4.5</releaseinfo>
 
 <keywordset>
 <keyword>KDE</keyword>
@@ -32,9 +32,7 @@
 <para>This module allows to configure certain parts of the desktop search and the Nepomuk semantic desktop. More information
 about the Nepomuk semantic desktop can be found at the <ulink url="http://nepomuk.kde.org/">Nepomuk homepage</ulink>.</para>
 
-</sect1>
-
-<sect1 id="basic">
+<sect2 id="basic">
 <title>Basic Settings</title>
 
 <para>The basic settings page allows to enable or disable the semantic desktop and desktop search systems.</para>
@@ -75,12 +73,12 @@ to a faulty setup of the &kde; plugin system.</para></listitem>
 to be evaluated case by case.</para></listitem>
 </itemizedlist>
 
-</sect1>
+</sect2>
 
-<sect1 id="advanced">
-<title>Advanced Settings</title>
+<sect2 id="file-indexing">
+<title>File Indexing</title>
 
-<para>The advanced settings allow to fine tune the files and folders that are to be analyzed by the Strigi file indexer explained
+<para>The file indexing settings allow to fine tune the files and folders that are to be analyzed by the Strigi file indexer explained
 above. The left panel allows to select and de-select folders that should be searched for files to be analyzed. By default the home folder
 and all subfolders are analyzed. By simply unchecking a folder it can be excluded. It is also possible to include a subfolder of an
 excluded one by checking it again. This allows a rather fine selection of the folders to be analyzed.</para>
@@ -88,6 +86,15 @@ excluded one by checking it again. This allows a rather fine selection of the fo
 <para>The right panel allows to define exclude filters. The filenames of all files found in the configured folders will be matched
 against these filters. Only if none of them matches the file will be analyzed. This is very helpful to exclude log and backup files
 and the like.</para>
+</sect2>
+
+<sect2 id="advanced">
+<title>Advanced Settings</title>
+
+<para>On this tab you can determine the maximum amount of main memory the Nepomuk system should use for its 
+database process. The more memory is available to Nepomuk the better will be 
+its performance.</para>
+</sect2>
 
 </sect1>
 
