@@ -25,6 +25,7 @@
 #include <kdirnotify.h>
 #include <kdebug.h>
 #include <nepomuk/result.h>
+#include <nepomuk/query.h>
 
 #include <QtCore/QHash>
 #include <QtDBus/QDBusConnection>
@@ -141,7 +142,7 @@ void Nepomuk::SearchUrlListener::createInterface()
                                                            "/nepomukqueryservice",
                                                            QDBusConnection::sessionBus() );
 
-    QDBusReply<QDBusObjectPath> r = queryServiceInterface.sparqlQuery( Nepomuk::sparqlFromQueryUrl( m_queryUrl ),
+    QDBusReply<QDBusObjectPath> r = queryServiceInterface.sparqlQuery( Nepomuk::Query::Query::sparqlFromQueryUrl( m_queryUrl ),
                                                                        nieUriReqProp() );
 
     if ( r.isValid() ) {

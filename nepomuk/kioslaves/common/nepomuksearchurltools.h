@@ -47,63 +47,6 @@ namespace Nepomuk {
     {
         return QUrl::fromEncoded( QByteArray::fromPercentEncoding( name.toAscii(), '_' ) );
     }
-
-    /// can be removed on Monday when we start using the Nepomuk::Query::Query methods
-    inline QString extractPlainQuery( const KUrl& url ) {
-        if( url.queryItems().contains( "query" ) ) {
-            return url.queryItem( "query" );
-        }
-        else if ( !url.queryItems().contains( "sparql" ) &&
-                  !url.queryItems().contains( "encodedquery" ) ) {
-            return url.path().section( '/', 0, 0, QString::SectionSkipEmpty );
-        }
-        else {
-            return QString();
-        }
-    }
-
-    /// can be removed on Monday and be replaced with Nepomuk::Query::Query::fromQueryUrl
-    inline Nepomuk::Query::Query fromQueryUrl( const KUrl& url )
-    {
-        if( url.protocol() != QLatin1String("nepomuksearch") ) {
-            return Nepomuk::Query::Query();
-        }
-
-        if ( url.queryItems().contains( "sparql" ) ) {
-            return Nepomuk::Query::Query();
-        }
-        else if( url.queryItems().contains( "encodedquery" ) ) {
-            return Nepomuk::Query::Query::fromString( url.queryItem( "encodedquery") );
-        }
-        else {
-            Nepomuk::Query::Query query = Nepomuk::Query::QueryParser::parseQuery( extractPlainQuery(url) );
-            query.setRequestProperties( QList<Nepomuk::Query::Query::RequestProperty>() << Nepomuk::Query::Query::RequestProperty( Nepomuk::Vocabulary::NIE::url(), true ) );
-            return query;
-        }
-    }
-
-
-    /// can be removed on Monday and be replaced with Nepomuk::Query::Query::sparqlFromQueryUrl
-    inline QString sparqlFromQueryUrl( const KUrl& url )
-    {
-        if( url.protocol() != QLatin1String("nepomuksearch") ) {
-            return QString();
-        }
-
-        if( url.queryItems().contains( "sparql" ) ) {
-            return url.queryItem( "sparql" );
-        }
-        else {
-            Nepomuk::Query::Query query = Nepomuk::Query::Query::fromQueryUrl( url );
-            if( query.isValid() ) {
-                query.setRequestProperties( QList<Nepomuk::Query::Query::RequestProperty>() << Nepomuk::Query::Query::RequestProperty( Nepomuk::Vocabulary::NIE::url(), true ) );
-                return query.toSparqlQuery();
-            }
-            else {
-                return QString();
-            }
-        }
-    }
 }
 
 #endif
