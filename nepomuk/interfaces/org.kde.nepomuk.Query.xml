@@ -5,6 +5,12 @@
     <method name="list" />
     <method name="listen" />
     <method name="close" />
+    <method name="isListingFinished">
+      <arg type="b" direction="out" />
+    </method>
+    <method name="queryString">
+      <arg type="s" direction="out" />
+    </method>
     <signal name="newEntries">
       <arg name="entries" type="a(sda{s(isss)})" />
       <annotation name="com.trolltech.QtDBus.QtTypeName.In0" value="QList&lt;Nepomuk::Query::Result&gt;" />
