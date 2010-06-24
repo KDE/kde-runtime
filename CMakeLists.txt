@@ -4,8 +4,8 @@ project(KDEBASE_RUNTIME)
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
 
 #search packages used by KDE
-set(KDE_MIN_VERSION "4.4.85")  # for the < 4.2 macro
-find_package(KDE4 4.4.85 REQUIRED)
+set(KDE_MIN_VERSION "4.4.90")  # for the < 4.2 macro
+find_package(KDE4 4.4.90 REQUIRED)
 find_package(Strigi REQUIRED)
 # I don't see any package requiring it. please explain why this dependency
 # is necessary (dirk)
@@ -16,7 +16,7 @@ include(MacroLibrary)
 include(CheckFunctionExists)
 include(CheckIncludeFiles)
 
-set(SOPRANO_MIN_VERSION "2.3.70")
+set(SOPRANO_MIN_VERSION "2.4.63")
 set(SDO_MIN_VERSION "0.3.0")
 macro_optional_find_package(SharedDesktopOntologies ${SDO_MIN_VERSION})
 macro_optional_find_package(Nepomuk)
@@ -82,7 +82,7 @@ endif ( NOT WIN32 )
 add_subdirectory(kcmshell)
 add_subdirectory(kdebugdialog)
 if ( ${QT_QT3SUPPORT_FOUND} )
-    add_subdirectory(khelpcenter)
+   add_subdirectory(khelpcenter)
 endif ( ${QT_QT3SUPPORT_FOUND} )
 add_subdirectory(knetattach)
 add_subdirectory(knewstuff)
