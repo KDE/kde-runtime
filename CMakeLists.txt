@@ -4,8 +4,8 @@ project(KDEBASE_RUNTIME)
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
 
 #search packages used by KDE
-set(KDE_MIN_VERSION "4.4.4")
-find_package(KDE4 4.4.4 REQUIRED)
+set(KDE_MIN_VERSION "4.4.5")
+find_package(KDE4 4.4.5 REQUIRED)
 find_package(Strigi REQUIRED)
 # I don't see any package requiring it. please explain why this dependency
 # is necessary (dirk)
