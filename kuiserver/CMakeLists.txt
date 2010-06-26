@@ -11,8 +11,6 @@ uiserver.cpp
 jobview.cpp
 progresslistmodel.cpp
 progresslistdelegate.cpp
-requestviewcallwatcher.cpp
-
 )
 
 set(kuiserver_KDEINIT_PRIVATE

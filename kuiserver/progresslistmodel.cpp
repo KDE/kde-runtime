@@ -22,13 +22,15 @@
 
 #include <QDBusServiceWatcher>
 
+
 #include <KDebug>
 
 #include "jobviewserveradaptor.h"
 #include "kuiserveradaptor.h"
 #include "jobviewserver_interface.h"
-#include "requestviewcallwatcher.h"
 #include "uiserver.h"
+#include <kdebug.h>
+
 
 ProgressListModel::ProgressListModel(QObject *parent)
         : QAbstractItemModel(parent), m_jobId(1),
@@ -210,11 +212,12 @@ QDBusObjectPath ProgressListModel::newJob(const QString &appName, const QString 
     //Forward this new job over to existing DBus clients.
     foreach(QDBusAbstractInterface* interface, m_registeredServices) {
 
-        QDBusPendingCall pendingCall = interface->asyncCall("requestView", appName, appIcon, capabilities);
-        RequestViewCallWatcher *watcher = new RequestViewCallWatcher(newJob, interface->service(), pendingCall, this);
+        QDBusReply<QDBusObjectPath> reply = interface->call("requestView", appName, appIcon, capabilities);
 
-        connect(watcher, SIGNAL(callFinished(RequestViewCallWatcher*)),
-                this, SLOT(pendingCallFinished(RequestViewCallWatcher*)));
+        kDebug(7024) << "newjob, reply objectpath(where we can contact newjob):" << reply.value().path();
+        kDebug(7024) << "interface service we were contacting:" << interface->service();
+
+        newJob->addJobContact(reply.value().path(), interface->service());
     }
 
     return newJob->objectPath();
@@ -280,12 +283,8 @@ void ProgressListModel::registerService(const QString &service, const QString &o
                 //TODO: KDE5 remember to replace current org.kde.JobView interface with the V2 one.. (it's named V2 for compat. reasons).
                 foreach(JobView* jobView, m_jobViews) {
 
-                    QDBusPendingCall pendingCall =
-                        client->asyncCall("requestView", jobView->appName(), jobView->appIconName(), jobView->capabilities());
-
-                    RequestViewCallWatcher *watcher = new RequestViewCallWatcher(jobView, service, pendingCall, this);
-                    connect(watcher, SIGNAL(callFinished(RequestViewCallWatcher*)),
-                            this, SLOT(pendingCallFinished(RequestViewCallWatcher*)));
+                    QDBusReply<QDBusObjectPath> reply = client->call("requestView", jobView->appName(), jobView->appIconName(), jobView->capabilities());
+                    jobView->addJobContact(reply.value().path(), service);
                 }
             } else {
                 delete client;
@@ -299,20 +298,13 @@ bool ProgressListModel::requiresJobTracker()
     return m_registeredServices.isEmpty();
 }
 
-void ProgressListModel::pendingCallFinished(RequestViewCallWatcher *watcher)
-{
-    QDBusPendingReply<QDBusObjectPath> reply = *watcher;
-    QDBusObjectPath objectPath = reply.argumentAt<0>();
-    watcher->jobView()->addJobContact(objectPath.path(), watcher->service());
-}
-
 void ProgressListModel::serviceUnregistered(const QString &name)
 {
     m_serviceWatcher->removeWatchedService(name);
     if (m_registeredServices.contains(name)) {
 
         emit serviceDropped(name);
-        delete m_registeredServices.take(name);
+        m_registeredServices.remove(name);
 
         /* unused
         if (m_registeredServices.isEmpty()) {
