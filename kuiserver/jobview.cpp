@@ -24,9 +24,7 @@
 #include "jobview_interface.h"
 
 #include <klocale.h>
-
 #include <kdebug.h>
-
 
 JobView::JobView(uint jobId, QObject *parent)
         : QObject(parent), m_jobId(jobId),
@@ -44,14 +42,15 @@ JobView::~JobView()
 
 void JobView::terminate(const QString &errorMessage)
 {
+    QDBusConnection::sessionBus().unregisterObject(m_objectPath.path(), QDBusConnection::UnregisterTree);
+
     typedef QPair<QString, QDBusAbstractInterface*> iFacePair;
     foreach(const iFacePair &pair, m_objectPaths) {
-        kDebug(7024) << "forwarding terminate call over dbus, to objectPath...: " << pair.first;
+        kDebug(7024) << "making async call of terminate for: " << pair.first;
         pair.second->asyncCall("terminate", errorMessage);
     }
 
     m_error = errorMessage;
-    QDBusConnection::sessionBus().unregisterObject(m_objectPath.path(), QDBusConnection::UnregisterTree);
 
     emit finished(this);
 }
@@ -288,7 +287,6 @@ void JobView::requestCancel()
 
 void JobView::addJobContact(const QString& objectPath, const QString& address)
 {
-    kDebug(7024) << "adding job contact objectPath: " << objectPath << " and address/service: " << address;
     org::kde::JobViewV2 *client =
             new org::kde::JobViewV2(address, objectPath, QDBusConnection::sessionBus());
 
