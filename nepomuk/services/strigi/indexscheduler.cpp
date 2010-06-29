@@ -662,13 +662,13 @@ void Nepomuk::IndexScheduler::removeOldAndUnwantedEntries()
     //
     QStringList filters;
     foreach( const QRegExp& re, Nepomuk::StrigiServiceConfig::self()->excludeFilterRegExps() ) {
-        filters << QString::fromLatin1( "REGEX(STR(?fn),\"/%1$\")" ).arg( re.pattern().replace( '\\',"\\\\" ) );
+        filters << QString::fromLatin1( "REGEX(STR(?fn),\"^%1$\")" ).arg( re.pattern().replace( '\\',"\\\\" ) );
     }
     query = QString::fromLatin1( "select distinct ?g ?url where { "
                                  "?r %1 ?url . "
                                  "?r %2 ?fn . "
                                  "?g <http://www.strigi.org/fields#indexGraphFor> ?r . "
-                                 "FILTER(REGEX(STR(?url),'^file:/')) . "
+                                 "FILTER(REGEX(STR(?url),\"^file:/\")) . "
                                  "FILTER((%3) && (%4)) . }" )
             .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ),
                   Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NFO::fileName() ),
