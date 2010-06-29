@@ -56,7 +56,7 @@ class KInotify::Private
 {
 public:
     Private( KInotify* parent )
-        : watchHiddenFolders( true ),
+        : watchHiddenFolders( false ),
           m_inotifyFd( -1 ),
           m_notifier( 0 ),
           q( parent) {
