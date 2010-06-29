@@ -67,6 +67,7 @@ Nepomuk::MetadataMover::~MetadataMover()
 
 void Nepomuk::MetadataMover::stop()
 {
+    QMutexLocker lock( &m_queueMutex );
     m_stopped = true;
     m_queueWaiter.wakeAll();
 }
@@ -294,32 +295,40 @@ void Nepomuk::MetadataMover::updateMetadata( const KUrl& from, const KUrl& to, b
         // CAUTION: The trailing slash on the from URL is essential! Otherwise we might match the newly added
         //          URLs, too (in case a rename only added chars to the name)
         //
-        QString query = QString::fromLatin1( "select distinct ?r ?url where { "
-                                             "?r %1 ?url . "
-                                             "FILTER(REGEX(STR(?url),'^%2')) . "
-                                             "}" )
-                        .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ),
-                              from.url(KUrl::AddTrailingSlash) );
+        const QString query = QString::fromLatin1( "select distinct ?url where { "
+                                                   "?r %1 ?url . "
+                                                   "FILTER(REGEX(STR(?url),'^%2')) . "
+                                                   "}" )
+                              .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ),
+                                    from.url(KUrl::AddTrailingSlash) );
         kDebug() << query;
 
         const QString oldBasePath = from.path( KUrl::AddTrailingSlash );
         const QString newBasePath = to.path( KUrl::AddTrailingSlash );
 
-        Soprano::QueryResultIterator it = m_model->executeQuery( query, Soprano::Query::QueryLanguageSparql );
-        while ( it.next() ) {
+        //
+        // We cannot use one big loop since our updateMetadata calls below can change the iterator
+        // which could have bad effects like row skipping. Thus, we handle the urls in chunks of
+        // cached items.
+        //
+        while ( 1 ) {
+            QList<Soprano::Node> urls = m_model->executeQuery( query + QLatin1String( " LIMIT 100" ),
+                                                               Soprano::Query::QueryLanguageSparql )
+                                        .iterateBindings( 0 ).allNodes();
+            if ( urls.isEmpty() )
+                break;
 
-            // the resource URI of the resource to update
-            const QUrl uri = it[0].uri();
+            for ( int i = 0; i < urls.count(); ++i ) {
+                // the old URL of the resource to update
+                const KUrl url = urls[i].uri();
 
-            // the old URL of the resource to update
-            const KUrl url = it[1].uri();
+                // now construct the new URL
+                QString oldRelativePath = url.path().mid( oldBasePath.length() );
+                KUrl newUrl( newBasePath + oldRelativePath );
 
-            // now construct the new URL
-            QString oldRelativePath = url.path().mid( oldBasePath.length() );
-            KUrl newUrl( newBasePath + oldRelativePath );
-
-            // finally update the metadata (excluding children since we already handle them all here)
-            updateMetadata( url, newUrl, false );
+                // finally update the metadata (excluding children since we already handle them all here)
+                updateMetadata( url, newUrl, false );
+            }
         }
     }
 }

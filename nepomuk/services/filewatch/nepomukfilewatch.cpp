@@ -52,29 +52,58 @@ namespace {
     class RemoveInvalidThread : public QThread {
     public :
         RemoveInvalidThread(QObject* parent = 0);
+        ~RemoveInvalidThread();
         void run();
+
+    private:
+        bool m_stopped;
     };
 
-    RemoveInvalidThread::RemoveInvalidThread(QObject* parent): QThread(parent)
+    RemoveInvalidThread::RemoveInvalidThread(QObject* parent)
+        : QThread(parent),
+          m_stopped( false )
     {
         connect( this, SIGNAL(finished()), this, SLOT(deleteLater()) );
     }
 
+    RemoveInvalidThread::~RemoveInvalidThread()
+    {
+        // gently terminate the thread
+        m_stopped = true;
+        wait();
+    }
+
     void RemoveInvalidThread::run()
     {
-        QString query = QString::fromLatin1( "select distinct ?g ?url where { ?r %1 ?url. FILTER( regex(str(?url), 'file://') ). graph ?g { ?r ?p ?o. } }" )
-                                        .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ) );
+        kDebug() << "Searching for invalid local file entries";
+        //
+        // Since the removal of the graphs could intefere with the iterator and result
+        // in jumping of rows (worst case) we cache all graphs to remove
+        //
+        QList<Soprano::Node> graphsToRemove;
+        QString query = QString::fromLatin1( "select distinct ?g ?url where { "
+                                             "?r %1 ?url. "
+                                             "FILTER(regex(str(?url), 'file://')) . "
+                                             "graph ?g { ?r ?p ?o. } }" )
+                        .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ) );
         Soprano::QueryResultIterator it = Nepomuk::ResourceManager::instance()->mainModel()->executeQuery( query, Soprano::Query::QueryLanguageSparql );
 
-        while( it.next() ) {
+        while( it.next() && !m_stopped ) {
             QUrl url( it["url"].uri() );
             QString file = url.toLocalFile();
 
             if( !file.isEmpty() && !QFile::exists(file) ) {
                 kDebug() << "REMOVING " << file;
-                Nepomuk::ResourceManager::instance()->mainModel()->removeContext( it["g"] );
+                graphsToRemove << it["g"];
             }
         }
+
+        Q_FOREACH( const Soprano::Node& g, graphsToRemove ) {
+            if ( m_stopped )
+                break;
+            Nepomuk::ResourceManager::instance()->mainModel()->removeContext( g );
+        }
+        kDebug() << "Done searching for invalid local file entries";
     }
 
 }
@@ -125,7 +154,7 @@ Nepomuk::FileWatch::FileWatch( QObject* parent, const QList<QVariant>& )
     connectToKDirWatch();
 #endif
 
-    (new RemoveInvalidThread())->start();
+    (new RemoveInvalidThread(this))->start();
 }
 
 
