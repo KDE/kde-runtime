@@ -44,6 +44,11 @@ void JobView::terminate(const QString &errorMessage)
 {
     QDBusConnection::sessionBus().unregisterObject(m_objectPath.path(), QDBusConnection::UnregisterTree);
 
+    // if hit it means a job exists for *something* but can't be terminated properly
+    // because the async call to create the job didn't come back fast enough.
+    // (thus addJobContact wasn't called before this was hit).
+    Q_ASSERT(!m_objectPaths.isEmpty());
+
     typedef QPair<QString, QDBusAbstractInterface*> iFacePair;
     foreach(const iFacePair &pair, m_objectPaths) {
         kDebug(7024) << "making async call of terminate for: " << pair.first;
