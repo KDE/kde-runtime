@@ -208,15 +208,15 @@ QDBusObjectPath ProgressListModel::newJob(const QString &appName, const QString 
     connect(newJob, SIGNAL(destUrlSet()), this, SLOT(emitJobUrlsChanged()));
     connect(this, SIGNAL(serviceDropped(const QString&)), newJob, SLOT(serviceDropped(const QString&)));
 
-
     //Forward this new job over to existing DBus clients.
     foreach(QDBusAbstractInterface* interface, m_registeredServices) {
 
         QDBusPendingCall pendingCall = interface->asyncCall("requestView", appName, appIcon, capabilities);
         RequestViewCallWatcher *watcher = new RequestViewCallWatcher(newJob, interface->service(), pendingCall, this);
+        newJob->pendingCallStarted();
 
         connect(watcher, SIGNAL(callFinished(RequestViewCallWatcher*)),
-                this, SLOT(pendingCallFinished(RequestViewCallWatcher*)));
+                newJob, SLOT(pendingCallFinished(RequestViewCallWatcher*)));
     }
 
     return newJob->objectPath();
@@ -299,19 +299,6 @@ void ProgressListModel::registerService(const QString &service, const QString &o
 bool ProgressListModel::requiresJobTracker()
 {
     return m_registeredServices.isEmpty();
-}
-
-void ProgressListModel::pendingCallFinished(RequestViewCallWatcher *watcher)
-{
-    QDBusPendingReply<QDBusObjectPath> reply = *watcher;
-    if (reply.isError()) {
-        kDebug(7024) << "error in dbus reply for object path: ";
-    }
-
-    QDBusObjectPath objectPath = reply.argumentAt<0>();
-    kDebug(7024) << "pending calling finished..";
-    kDebug(7024) << "the pending call's object path was: " << objectPath.path();
-    watcher->jobView()->addJobContact(objectPath.path(), watcher->service());
 }
 
 void ProgressListModel::serviceUnregistered(const QString &name)

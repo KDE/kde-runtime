@@ -144,8 +144,6 @@ private Q_SLOTS:
     */
     void serviceUnregistered(const QString &name);
 
-    void pendingCallFinished(RequestViewCallWatcher *watcher);
-
 Q_SIGNALS:
     void serviceDropped(const QString&);
 

@@ -32,6 +32,7 @@
 class OrgKdeJobViewV2Interface;
 class JobViewV2Adaptor;
 class QDBusAbstractInterface;
+class RequestViewCallWatcher;
 
 class JobView : public QObject
 {
@@ -104,6 +105,8 @@ public:
 
     QDBusObjectPath objectPath() const;
 
+
+
      /**
      * Set the dest Url of the job...
      * sent from the jobtracker (once upon construction)
@@ -116,18 +119,19 @@ public:
 
     QVariant destUrl() const;
 
-
     /**
-     * The below methods force an emission of the respective signal.
-     * Only use case is kfileitemdelegate, where we need to control
-     * the state of a job, but can't because the signals are private
-     * NOTE: it isn't used for job's propagating their children jobs
-     * all the way up to KJob, use the other signals in here for that.
-     * (although it does the same thing).
+     *  The below methods force an emission of the respective signal.
+     *  Only use case is kuiserver's delegate, where we need to control
+     *  the state of a job, but can't emit them because they are signals
+     * 
+     *  Note: it isn't used for job's propagating their children jobs
+     *  all the way up to KJob, use the other signals in here for that.
+     *  (although it does the same thing).
      */
     void requestSuspend();
     void requestResume();
     void requestCancel();
+
 
     /**
      * Called by the model.
@@ -137,6 +141,11 @@ public:
      * due to some signal magic from the model.
      */
     void addJobContact(const QString& objectPath, const QString& address);
+
+    void pendingCallStarted();
+
+public Q_SLOTS:
+    void pendingCallFinished(RequestViewCallWatcher *watcher);
 
 Q_SIGNALS:
     void suspendRequested();
@@ -186,7 +195,6 @@ private:
 
     QHash<uint, QPair<QString, QString> > m_descFields;
 
-    QVariant m_srcUrl;
     QVariant m_destUrl;
 
     QDBusObjectPath m_objectPath;
@@ -200,6 +208,10 @@ private:
     const uint m_jobId;
     JobState m_state;          ///< Current state of this job
 
+    ///< if the job has been terminated (but it could still be awaiting a pendingReply)
+    bool m_isTerminated;
+
+    int m_currentPendingCalls;
 };
 
 #endif //JOBVIEW_H
