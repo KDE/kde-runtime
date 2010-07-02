@@ -208,15 +208,15 @@ QDBusObjectPath ProgressListModel::newJob(const QString &appName, const QString 
     connect(newJob, SIGNAL(destUrlSet()), this, SLOT(emitJobUrlsChanged()));
     connect(this, SIGNAL(serviceDropped(const QString&)), newJob, SLOT(serviceDropped(const QString&)));
 
-
     //Forward this new job over to existing DBus clients.
     foreach(QDBusAbstractInterface* interface, m_registeredServices) {
 
         QDBusPendingCall pendingCall = interface->asyncCall("requestView", appName, appIcon, capabilities);
         RequestViewCallWatcher *watcher = new RequestViewCallWatcher(newJob, interface->service(), pendingCall, this);
+        newJob->pendingCallStarted();
 
         connect(watcher, SIGNAL(callFinished(RequestViewCallWatcher*)),
-                this, SLOT(pendingCallFinished(RequestViewCallWatcher*)));
+                newJob, SLOT(pendingCallFinished(RequestViewCallWatcher*)));
     }
 
     return newJob->objectPath();
@@ -281,6 +281,9 @@ void ProgressListModel::registerService(const QString &service, const QString &o
                 //also connect them so that when the method comes back, it will return a
                 //QDBusObjectPath value, which is where we can contact that job, within "org.kde.JobViewV2"
                 //TODO: KDE5 remember to replace current org.kde.JobView interface with the V2 one.. (it's named V2 for compat. reasons).
+
+                //TODO: this falls victim to what newJob used to be vulnerable to...async calls returning too slowly and a terminate ensuing before that.
+                // it may not be a problem (yet), though.
                 foreach(JobView* jobView, m_jobViews) {
 
                     QDBusPendingCall pendingCall = client->asyncCall("requestView", jobView->appName(), jobView->appIconName(), jobView->capabilities());
@@ -299,19 +302,6 @@ void ProgressListModel::registerService(const QString &service, const QString &o
 bool ProgressListModel::requiresJobTracker()
 {
     return m_registeredServices.isEmpty();
-}
-
-void ProgressListModel::pendingCallFinished(RequestViewCallWatcher *watcher)
-{
-    QDBusPendingReply<QDBusObjectPath> reply = *watcher;
-    if (reply.isError()) {
-        kDebug(7024) << "error in dbus reply for object path: ";
-    }
-
-    QDBusObjectPath objectPath = reply.argumentAt<0>();
-    kDebug(7024) << "pending calling finished..";
-    kDebug(7024) << "the pending call's object path was: " << objectPath.path();
-    watcher->jobView()->addJobContact(objectPath.path(), watcher->service());
 }
 
 void ProgressListModel::serviceUnregistered(const QString &name)

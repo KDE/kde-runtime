@@ -22,13 +22,19 @@
 #include "uiserver.h"
 #include "jobviewadaptor.h"
 #include "jobview_interface.h"
+#include "requestviewcallwatcher.h"
 
 #include <klocale.h>
 #include <kdebug.h>
 
+#include <QtDBus/QDBusPendingReply>
+
 JobView::JobView(uint jobId, QObject *parent)
-        : QObject(parent), m_jobId(jobId),
-        m_state(Running)
+    : QObject(parent),
+    m_jobId(jobId),
+    m_state(Running),
+    m_isTerminated(false),
+    m_currentPendingCalls(0)
 {
     new JobViewV2Adaptor(this);
 
@@ -57,7 +63,27 @@ void JobView::terminate(const QString &errorMessage)
 
     m_error = errorMessage;
 
-    emit finished(this);
+    if (m_currentPendingCalls < 1) {
+        // no more calls waiting. Lets mark ourselves for deletion.
+        emit finished(this);
+    }
+
+    m_isTerminated = true;
+}
+
+void JobView::requestSuspend()
+{
+    emit suspendRequested();
+}
+
+void JobView::requestResume()
+{
+    emit resumeRequested();
+}
+
+void JobView::requestCancel()
+{
+    emit cancelRequested();
 }
 
 void JobView::setSuspended(bool suspended)
@@ -275,21 +301,6 @@ QVariant JobView::destUrl() const
     return m_destUrl;
 }
 
-void JobView::requestSuspend()
-{
-    emit suspendRequested();
-}
-
-void JobView::requestResume()
-{
-    emit resumeRequested();
-}
-
-void JobView::requestCancel()
-{
-    emit cancelRequested();
-}
-
 void JobView::addJobContact(const QString& objectPath, const QString& address)
 {
     org::kde::JobViewV2 *client =
@@ -306,9 +317,47 @@ void JobView::addJobContact(const QString& objectPath, const QString& address)
     m_objectPaths.insert(address, pair);
 }
 
+void JobView::pendingCallStarted()
+{
+    ++m_currentPendingCalls;
+}
+
+void JobView::pendingCallFinished(RequestViewCallWatcher* watcher)
+{
+    QDBusPendingReply<QDBusObjectPath> reply = *watcher;
+
+    // note: this is the *remote* jobview objectpath, not the kuiserver one.
+    QDBusObjectPath objectPath = reply.argumentAt<0>();
+    QString address = watcher->service();
+
+    --m_currentPendingCalls;
+
+    if (m_isTerminated) {
+
+        // do basically the same as terminate() except only for service
+        // since this one missed out.
+
+        org::kde::JobViewV2 *client = new org::kde::JobViewV2(address, objectPath.path(), QDBusConnection::sessionBus());
+        kDebug() << "making async terminate call to objectPath: " << objectPath.path();
+        kDebug() << "this was because a pending call was finished, but the job was already terminated before it returned.";
+        kDebug() << "current pending calls left: " << m_currentPendingCalls;
+        client->asyncCall("terminate", m_error);
+
+        if (m_currentPendingCalls < 1) {
+            kDebug() << "no more async calls left pending..emitting finished so we can have ourselves deleted.";
+            emit finished(this);
+        }
+    } else {
+        // add this job contact because we are _not_ just terminating here.
+        // we'll need it for regular things like speed changes, etc.
+        addJobContact(objectPath.path(), address);
+    }
+}
+
 void JobView::serviceDropped(const QString &address)
 {
     m_objectPaths.remove(address);
+    --m_currentPendingCalls;
 }
 
 #include "jobview.moc"
