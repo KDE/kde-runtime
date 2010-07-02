@@ -211,7 +211,7 @@ QDBusObjectPath ProgressListModel::newJob(const QString &appName, const QString 
     //Forward this new job over to existing DBus clients.
     foreach(QDBusAbstractInterface* interface, m_registeredServices) {
 
-        QDBusPendingCall pendingCall = interface->asyncCall("requestView", appName, appIcon, capabilities);
+        QDBusPendingCall pendingCall = interface->asyncCall(QLatin1String("requestView"), appName, appIcon, capabilities);
         RequestViewCallWatcher *watcher = new RequestViewCallWatcher(newJob, interface->service(), pendingCall, this);
         newJob->pendingCallStarted();
 
@@ -286,7 +286,7 @@ void ProgressListModel::registerService(const QString &service, const QString &o
                 // it may not be a problem (yet), though.
                 foreach(JobView* jobView, m_jobViews) {
 
-                    QDBusPendingCall pendingCall = client->asyncCall("requestView", jobView->appName(), jobView->appIconName(), jobView->capabilities());
+                    QDBusPendingCall pendingCall = client->asyncCall(QLatin1String("requestView"), jobView->appName(), jobView->appIconName(), jobView->capabilities());
 
                     RequestViewCallWatcher *watcher = new RequestViewCallWatcher(jobView, service, pendingCall, this);
                     connect(watcher, SIGNAL(callFinished(RequestViewCallWatcher*)),

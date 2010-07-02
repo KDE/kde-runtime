@@ -50,20 +50,21 @@ void JobView::terminate(const QString &errorMessage)
 {
     QDBusConnection::sessionBus().unregisterObject(m_objectPath.path(), QDBusConnection::UnregisterTree);
 
-    // if hit it means a job exists for *something* but can't be terminated properly
-    // because the async call to create the job didn't come back fast enough.
-    // (thus addJobContact wasn't called before this was hit).
-    Q_ASSERT(!m_objectPaths.isEmpty());
 
     typedef QPair<QString, QDBusAbstractInterface*> iFacePair;
     foreach(const iFacePair &pair, m_objectPaths) {
         kDebug(7024) << "making async call of terminate for: " << pair.first;
-        pair.second->asyncCall("terminate", errorMessage);
+        pair.second->asyncCall(QLatin1String("terminate"), errorMessage);
     }
 
     m_error = errorMessage;
 
     if (m_currentPendingCalls < 1) {
+        // if hit it means a job exists for *something* but can't be terminated properly
+        // because the async call to create the job didn't come back fast enough.
+        // (thus addJobContact wasn't called before this was hit).
+        Q_ASSERT(!m_objectPaths.isEmpty());
+
         // no more calls waiting. Lets mark ourselves for deletion.
         emit finished(this);
     }
@@ -90,7 +91,7 @@ void JobView::setSuspended(bool suspended)
 {
     typedef QPair<QString, QDBusAbstractInterface*> iFacePair;
     foreach(const iFacePair &pair, m_objectPaths) {
-        pair.second->asyncCall("setSuspended", suspended);
+        pair.second->asyncCall(QLatin1String("setSuspended"), suspended);
     }
 
     m_state = suspended ? Suspended : Running;
@@ -106,7 +107,7 @@ void JobView::setTotalAmount(qulonglong amount, const QString &unit)
 {
     typedef QPair<QString, QDBusAbstractInterface*> iFacePair;
     foreach(const iFacePair &pair, m_objectPaths) {
-        pair.second->asyncCall("setTotalAmount", amount, unit);
+        pair.second->asyncCall(QLatin1String("setTotalAmount"), amount, unit);
     }
 
     if (unit == "bytes") {
@@ -131,7 +132,7 @@ void JobView::setProcessedAmount(qulonglong amount, const QString &unit)
 {
     typedef QPair<QString, QDBusAbstractInterface*> iFacePair;
     foreach(const iFacePair &pair, m_objectPaths) {
-        pair.second->asyncCall("setProcessedAmount", amount, unit);
+        pair.second->asyncCall(QLatin1String("setProcessedAmount"), amount, unit);
     }
 
     if (unit == "bytes") {
@@ -155,7 +156,7 @@ void JobView::setPercent(uint value)
 {
     typedef QPair<QString, QDBusAbstractInterface*> iFacePair;
     foreach(const iFacePair &pair, m_objectPaths) {
-        pair.second->asyncCall("setPercent", value);
+        pair.second->asyncCall(QLatin1String("setPercent"), value);
     }
 
     m_percent = value;
@@ -171,7 +172,7 @@ void JobView::setSpeed(qulonglong bytesPerSecond)
 {
     typedef QPair<QString, QDBusAbstractInterface*> iFacePair;
     foreach(const iFacePair &pair, m_objectPaths) {
-        pair.second->asyncCall("setSpeed", bytesPerSecond);
+        pair.second->asyncCall(QLatin1String("setSpeed"), bytesPerSecond);
     }
 
     m_speed = bytesPerSecond ? KGlobal::locale()->formatByteSize(bytesPerSecond) : QString();
@@ -187,7 +188,7 @@ void JobView::setInfoMessage(const QString &infoMessage)
 {
     typedef QPair<QString, QDBusAbstractInterface*> iFacePair;
     foreach(const iFacePair &pair, m_objectPaths) {
-        pair.second->asyncCall("setInfoMessage", infoMessage);
+        pair.second->asyncCall(QLatin1String("setInfoMessage"), infoMessage);
     }
 
     m_infoMessage = infoMessage;
@@ -203,7 +204,7 @@ bool JobView::setDescriptionField(uint number, const QString &name, const QStrin
 {
     typedef QPair<QString, QDBusAbstractInterface*> iFacePair;
     foreach(const iFacePair &pair, m_objectPaths) {
-       pair.second->asyncCall("setDescriptionField", number, name, value);
+        pair.second->asyncCall(QLatin1String("setDescriptionField"), number, name, value);
     }
 
     if (m_descFields.contains(number)) {
@@ -221,7 +222,7 @@ void JobView::clearDescriptionField(uint number)
 {
     typedef QPair<QString, QDBusAbstractInterface*> iFacePair;
     foreach(const iFacePair &pair, m_objectPaths) {
-        pair.second->asyncCall("clearDescriptionField", number);
+        pair.second->asyncCall(QLatin1String("clearDescriptionField"), number);
     }
 
     if (m_descFields.contains(number)) {
@@ -234,7 +235,7 @@ void JobView::setAppName(const QString &appName)
 {
     typedef QPair<QString, QDBusAbstractInterface*> iFacePair;
     foreach(const iFacePair &pair, m_objectPaths) {
-        pair.second->asyncCall("setAppName", appName);
+        pair.second->asyncCall(QLatin1String("setAppName"), appName);
     }
 
     m_applicationName = appName;
@@ -249,7 +250,7 @@ void JobView::setAppIconName(const QString &appIconName)
 {
     typedef QPair<QString, QDBusAbstractInterface*> iFacePair;
     foreach(const iFacePair &pair, m_objectPaths) {
-        pair.second->asyncCall("setAppIconName", appIconName);
+        pair.second->asyncCall(QLatin1String("setAppIconName"), appIconName);
     }
 
     m_appIconName = appIconName;
@@ -264,7 +265,7 @@ void JobView::setCapabilities(int capabilities)
 {
     typedef QPair<QString, QDBusAbstractInterface*> iFacePair;
     foreach(const iFacePair &pair, m_objectPaths) {
-        pair.second->asyncCall("setCapabilities", capabilities);
+        pair.second->asyncCall(QLatin1String("setCapabilities"), capabilities);
     }
 
     m_capabilities = capabilities;
@@ -313,7 +314,7 @@ void JobView::addJobContact(const QString& objectPath, const QString& address)
     connect(client, SIGNAL(suspendRequested()), this, SIGNAL(suspendRequested()));
     connect(client, SIGNAL(resumeRequested()), this, SIGNAL(resumeRequested()));
     connect(client, SIGNAL(cancelRequested()), this, SIGNAL(cancelRequested()));
-
+    Q_ASSERT(!m_objectPaths.contains(address));
     m_objectPaths.insert(address, pair);
 }
 
@@ -330,6 +331,9 @@ void JobView::pendingCallFinished(RequestViewCallWatcher* watcher)
     QDBusObjectPath objectPath = reply.argumentAt<0>();
     QString address = watcher->service();
 
+    Q_ASSERT(!reply.isError());
+    Q_ASSERT(reply.isValid());
+
     --m_currentPendingCalls;
 
     if (m_isTerminated) {
@@ -338,10 +342,14 @@ void JobView::pendingCallFinished(RequestViewCallWatcher* watcher)
         // since this one missed out.
 
         org::kde::JobViewV2 *client = new org::kde::JobViewV2(address, objectPath.path(), QDBusConnection::sessionBus());
-        kDebug() << "making async terminate call to objectPath: " << objectPath.path();
-        kDebug() << "this was because a pending call was finished, but the job was already terminated before it returned.";
-        kDebug() << "current pending calls left: " << m_currentPendingCalls;
-        client->asyncCall("terminate", m_error);
+
+        kDebug(7024) << "making async terminate call to objectPath: " << objectPath.path();
+        kDebug(7024) << "this was because a pending call was finished, but the job was already terminated before it returned.";
+        kDebug(7024) << "current pending calls left: " << m_currentPendingCalls;
+
+        // forcibly set the percent (should be 100). Since the job missed out on that too.
+        client->asyncCall(QLatin1String("setPercent"), m_percent);
+        client->asyncCall(QLatin1String("terminate"), m_error);
 
         if (m_currentPendingCalls < 1) {
             kDebug() << "no more async calls left pending..emitting finished so we can have ourselves deleted.";
@@ -350,6 +358,7 @@ void JobView::pendingCallFinished(RequestViewCallWatcher* watcher)
     } else {
         // add this job contact because we are _not_ just terminating here.
         // we'll need it for regular things like speed changes, etc.
+        kDebug(7024) << "adding job contact for address: " << address << " objectPath: " << objectPath.path();
         addJobContact(objectPath.path(), address);
     }
 }
