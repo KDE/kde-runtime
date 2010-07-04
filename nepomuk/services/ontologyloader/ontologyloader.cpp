@@ -127,7 +127,7 @@ Nepomuk::OntologyLoader::OntologyLoader( QObject* parent, const QList<QVariant>&
       d( new Private(this) )
 {
     // register ontology resource dir
-    KGlobal::dirs()->addResourceType( "ontology", 0, "share/ontology" );
+    KGlobal::dirs()->addResourceType( "xdgdata-ontology", 0, "ontology" );
 
     ( void )new OntologyManagerAdaptor( this );
 
@@ -144,7 +144,7 @@ Nepomuk::OntologyLoader::OntologyLoader( QObject* parent, const QList<QVariant>&
     connect( dirWatch, SIGNAL( created(QString) ),
              this, SLOT( updateLocalOntologies() ) );
 
-    foreach( const QString& dir, KGlobal::dirs()->resourceDirs( "ontology" ) ) {
+    foreach( const QString& dir, KGlobal::dirs()->resourceDirs( "xdgdata-ontology" ) ) {
         kDebug() << "watching" << dir;
         dirWatch->addDir( dir, KDirWatch::WatchFiles|KDirWatch::WatchSubDirs );
     }
@@ -159,7 +159,7 @@ Nepomuk::OntologyLoader::~OntologyLoader()
 
 void Nepomuk::OntologyLoader::updateLocalOntologies()
 {
-    d->desktopFilesToUpdate = KGlobal::dirs()->findAllResources( "ontology", "*.ontology", KStandardDirs::Recursive|KStandardDirs::NoDuplicates );
+    d->desktopFilesToUpdate = KGlobal::dirs()->findAllResources( "xdgdata-ontology", "*.ontology", KStandardDirs::Recursive|KStandardDirs::NoDuplicates );
     d->updateTimer.start(0);
 }
 
