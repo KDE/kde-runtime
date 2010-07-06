@@ -33,7 +33,6 @@ set(strigiservice_SRCS
   eventmonitor.cpp
   systray.cpp
   statuswidget.cpp
-  useractivitymonitor.cpp
   )
 
 soprano_add_ontology(strigiservice_SRCS
