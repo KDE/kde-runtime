@@ -13,7 +13,17 @@ set(storage_SRCS
   nepomukcore.cpp
   modelcopyjob.cpp
   repository.cpp
+  ontologyloader.cpp
+  ontologymanagermodel.cpp
+  graphretriever.cpp
+  crappyinferencer.cpp
   )
+
+qt4_add_dbus_adaptor(storage_SRCS
+  ../../interfaces/org.kde.nepomuk.OntologyManager.xml
+  ontologyloader.h
+  Nepomuk::OntologyLoader)
+
 
 set(HAVE_SOPRANO_INDEX ${SopranoIndex_FOUND})
 

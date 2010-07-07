@@ -26,6 +26,8 @@
 
 namespace Nepomuk {
 
+    class OntologyLoader;
+
     class Core : public Soprano::Server::ServerCore
     {
         Q_OBJECT
@@ -56,6 +58,7 @@ namespace Nepomuk {
 
     private Q_SLOTS:
         void slotRepositoryOpened( Repository* repo, bool success );
+        void slotOntologiesLoaded( Nepomuk::OntologyLoader* loader );
 
     private:
         Soprano::Model* createModel( const Soprano::BackendSettings& );

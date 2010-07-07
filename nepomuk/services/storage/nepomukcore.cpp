@@ -18,6 +18,7 @@
 
 #include "nepomukcore.h"
 #include "repository.h"
+#include "ontologyloader.h"
 
 #include <KDebug>
 #include <KSharedConfig>
@@ -61,9 +62,31 @@ bool Nepomuk::Core::initialized() const
 }
 
 
-void Nepomuk::Core::slotRepositoryOpened( Repository*, bool success )
+void Nepomuk::Core::slotRepositoryOpened( Repository* repo, bool success )
 {
-    emit initializationDone( success );
+    if( !success ) {
+        emit initializationDone( success );
+    }
+    else {
+        // create the ontology loader, let it update all the ontologies,
+        // and only then mark the service as initialized
+        // TODO: fail the initialization in case loading the ontologies
+        // failed.
+        OntologyLoader* ontologyLoader = new OntologyLoader( repo, this );
+        connect( ontologyLoader, SIGNAL(ontologyLoadingFinished(Nepomuk::OntologyLoader*)),
+                 this, SLOT(slotOntologiesLoaded(Nepomuk::OntologyLoader*)) );
+        ontologyLoader->updateLocalOntologies();
+    }
+}
+
+
+void Nepomuk::Core::slotOntologiesLoaded( Nepomuk::OntologyLoader* loader )
+{
+    // we never want to get informed about ontology updates again.
+    loader->disconnect(this);
+
+    // and finally we are done: the repository is online and the ontologies are loaded.
+    emit initializationDone( true );
 }
 
 

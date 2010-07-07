@@ -42,8 +42,6 @@
 #include <kpluginfactory.h>
 #include <kpluginloader.h>
 
-NEPOMUK_EXPORT_SERVICE( Nepomuk::OntologyLoader, "nepomukontologyloader")
-
 
 using namespace Soprano;
 
@@ -122,20 +120,18 @@ void Nepomuk::OntologyLoader::Private::updateOntology( const QString& filename )
 
 
 
-Nepomuk::OntologyLoader::OntologyLoader( QObject* parent, const QList<QVariant>& )
-    : Service( parent ),
+Nepomuk::OntologyLoader::OntologyLoader( Soprano::Model* model, QObject* parent )
+    : QObject( parent ),
       d( new Private(this) )
 {
     // register ontology resource dir
-    KGlobal::dirs()->addResourceType( "ontology", 0, "share/ontology" );
+    KGlobal::dirs()->addResourceType( "xdgdata-ontology", 0, "ontology" );
 
+    // export ourselves on DBus
     ( void )new OntologyManagerAdaptor( this );
 
-    d->model = new OntologyManagerModel( mainModel(), this );
+    d->model = new OntologyManagerModel( model, this );
     connect( &d->updateTimer, SIGNAL(timeout()), this, SLOT(updateNextOntology()) );
-
-    // only update changed ontologies
-    updateLocalOntologies();
 
     // watch both the global and local ontology folder for changes
     KDirWatch* dirWatch = KDirWatch::self();
@@ -144,7 +140,7 @@ Nepomuk::OntologyLoader::OntologyLoader( QObject* parent, const QList<QVariant>&
     connect( dirWatch, SIGNAL( created(QString) ),
              this, SLOT( updateLocalOntologies() ) );
 
-    foreach( const QString& dir, KGlobal::dirs()->resourceDirs( "ontology" ) ) {
+    foreach( const QString& dir, KGlobal::dirs()->resourceDirs( "xdgdata-ontology" ) ) {
         kDebug() << "watching" << dir;
         dirWatch->addDir( dir, KDirWatch::WatchFiles|KDirWatch::WatchSubDirs );
     }
@@ -159,7 +155,7 @@ Nepomuk::OntologyLoader::~OntologyLoader()
 
 void Nepomuk::OntologyLoader::updateLocalOntologies()
 {
-    d->desktopFilesToUpdate = KGlobal::dirs()->findAllResources( "ontology", "*.ontology", KStandardDirs::Recursive|KStandardDirs::NoDuplicates );
+    d->desktopFilesToUpdate = KGlobal::dirs()->findAllResources( "xdgdata-ontology", "*.ontology", KStandardDirs::Recursive|KStandardDirs::NoDuplicates );
     if(d->desktopFilesToUpdate.isEmpty())
         kError() << "No ontology files found! Make sure the shared-desktop-ontologies project is installed and XDG_DATA_DIRS is set properly.";
     d->updateTimer.start(0);
@@ -181,6 +177,7 @@ void Nepomuk::OntologyLoader::updateNextOntology()
     else {
         d->forceOntologyUpdate = false;
         d->updateTimer.stop();
+        emit ontologyLoadingFinished(this);
     }
 }
 

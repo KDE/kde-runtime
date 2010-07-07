@@ -1,5 +1,5 @@
 /* This file is part of the KDE Project
-   Copyright (c) 2007 Sebastian Trueg <trueg@kde.org>
+   Copyright (c) 2007-2010 Sebastian Trueg <trueg@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -19,7 +19,7 @@
 #ifndef _NEPOMUK_SERVER_ONTOLOGY_LOADER_H_
 #define _NEPOMUK_SERVER_ONTOLOGY_LOADER_H_
 
-#include <Nepomuk/Service>
+#include <QtCore/QObject>
 #include <QtCore/QUrl>
 
 namespace Soprano {
@@ -31,12 +31,12 @@ class KJob;
 
 // Hint: Using QString instead of QUrl for URIs since this API will be exported via DBus and not used otherwise
 namespace Nepomuk {
-    class OntologyLoader : public Nepomuk::Service
+    class OntologyLoader : public QObject
     {
         Q_OBJECT
 
     public:
-        OntologyLoader( QObject* parent = 0, const QList<QVariant>& args = QList<QVariant>() );
+        OntologyLoader( Soprano::Model* model, QObject* parent = 0 );
         ~OntologyLoader();
 
     public Q_SLOTS:
@@ -66,6 +66,13 @@ namespace Nepomuk {
         void importOntology( const QString& url );
 
     Q_SIGNALS:
+        /**
+         * Emitted once the update of the ontologies is done.
+         * This signal is emited whenever the ontologies change
+         * and needed updating.
+         */
+        void ontologyLoadingFinished( Nepomuk::OntologyLoader* );
+
         /**
          * Emitted once an ontology has been updated. This holds for both
          * locally installed ontology files (which are read automaticall)
