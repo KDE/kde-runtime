@@ -18,6 +18,9 @@
     <signal name="entriesRemoved">
       <arg name="entries" type="as" />
     </signal>
+    <signal name="totalCount">
+      <arg name="count" type="i" />
+    </signal>
     <signal name="finishedListing" />
   </interface>
 </node>

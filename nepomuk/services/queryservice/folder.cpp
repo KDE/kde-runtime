@@ -22,6 +22,7 @@
 
 #include <Soprano/Model>
 #include <Soprano/Node>
+#include <Soprano/Util/AsyncQuery>
 
 #include <Nepomuk/Resource>
 #include <Nepomuk/ResourceManager>
@@ -29,13 +30,29 @@
 #include <KDebug>
 
 
+Nepomuk::Query::Folder::Folder( const Query& query, QObject* parent )
+    : QObject( parent ),
+      m_query( query )
+{
+    init();
+}
+
+
 Nepomuk::Query::Folder::Folder( const QString& query, const RequestPropertyMap& requestProps, QObject* parent )
     : QObject( parent ),
-      m_query( query ),
-      m_requestProperties( requestProps ),
-      m_initialListingDone( false ),
-      m_storageChanged( false )
+      m_sparqlQuery( query ),
+      m_requestProperties( requestProps )
 {
+    init();
+}
+
+
+void Nepomuk::Query::Folder::init()
+{
+    m_totalCount = -1;
+    m_initialListingDone = false;
+    m_storageChanged = false;
+
     m_updateTimer.setSingleShot( true );
     m_updateTimer.setInterval( 2000 );
 
@@ -64,8 +81,22 @@ Nepomuk::Query::Folder::~Folder()
 void Nepomuk::Query::Folder::update()
 {
     if ( !m_searchThread->isRunning() ) {
-        // run the search and forward signals to all connections that requested it
-        m_searchThread->query( m_query, m_requestProperties );
+        if ( m_query.isValid() ) {
+            // count the results
+            kDebug() << "Count query:" << m_query.toSparqlQuery( Query::CreateCountQuery );
+            delete m_countQuery;
+            m_countQuery = Soprano::Util::AsyncQuery::executeQuery( ResourceManager::instance()->mainModel(),
+                                                                    m_query.toSparqlQuery( Query::CreateCountQuery ),
+                                                                    Soprano::Query::QueryLanguageSparql );
+            connect( m_countQuery, SIGNAL( nextReady( Soprano::Util::AsyncQuery* ) ),
+                     this, SLOT( slotCountQueryFinished( Soprano::Util::AsyncQuery* ) ) );
+
+            // and get the results
+            m_searchThread->query( m_query.toSparqlQuery(), m_query.requestPropertyMap() );
+        }
+        else {
+            m_searchThread->query( m_sparqlQuery, m_requestProperties );
+        }
     }
 }
 
@@ -79,6 +110,15 @@ QList<Nepomuk::Query::Result> Nepomuk::Query::Folder::entries() const
 bool Nepomuk::Query::Folder::initialListingDone() const
 {
     return m_initialListingDone;
+}
+
+
+QString Nepomuk::Query::Folder::sparqlQuery() const
+{
+    if ( m_query.isValid() )
+        return m_query.toSparqlQuery();
+    else
+        return m_sparqlQuery;
 }
 
 
@@ -112,6 +152,7 @@ void Nepomuk::Query::Folder::slotSearchFinished()
         m_newResults.clear();
     }
     else {
+        kDebug() << "Listing done. Total:" << m_results.count();
         m_initialListingDone = true;
         emit finishedListing();
     }
@@ -142,6 +183,15 @@ void Nepomuk::Query::Folder::slotUpdateTimeout()
 }
 
 
+void Nepomuk::Query::Folder::slotCountQueryFinished( Soprano::Util::AsyncQuery* query )
+{
+    m_countQuery = 0;
+    m_totalCount = query->binding( 0 ).literal().toInt();
+    kDebug() << m_totalCount;
+    emit totalCount( m_totalCount );
+}
+
+
 void Nepomuk::Query::Folder::addConnection( FolderConnection* conn )
 {
     Q_ASSERT( conn != 0 );
@@ -160,6 +210,7 @@ void Nepomuk::Query::Folder::removeConnection( FolderConnection* conn )
 
     if ( m_connections.isEmpty() ) {
         kDebug() << "Folder unused. Deleting.";
+        emit aboutToBeDeleted( this );
         deleteLater();
     }
 }

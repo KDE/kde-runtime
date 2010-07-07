@@ -25,10 +25,17 @@
 
 #include <QtCore/QHash>
 #include <QtCore/QTimer>
+#include <QtCore/QPointer>
 
 #include <KUrl>
 
 #include "searchthread.h"
+
+namespace Soprano {
+    namespace Util {
+        class AsyncQuery;
+    }
+}
 
 namespace Nepomuk {
     namespace Query {
@@ -45,7 +52,8 @@ namespace Nepomuk {
             Q_OBJECT
 
         public:
-            Folder( const QString& query, const RequestPropertyMap& requestProps, QObject* parent = 0 );
+            Folder( const Query& query, QObject* parent = 0 );
+            Folder( const QString& sparqlQuery, const RequestPropertyMap& requestProps, QObject* parent = 0 );
             ~Folder();
 
             /**
@@ -63,7 +71,19 @@ namespace Nepomuk {
 
             QList<FolderConnection*> openConnections() const;
 
-            QString query() const { return m_query; }
+            Query query() const { return m_query; }
+
+            QString sparqlQuery() const;
+
+            /**
+             * Get the total result count. This value will not be available
+             * right away since it is calculated async.
+             *
+             * As soon as the total count is ready totalCount() is emitted.
+             *
+             * \return The total result count or -1 in case it is not ready yet.
+             */
+            int getTotalCount() const { return m_totalCount; }
 
         public Q_SLOTS:
             void update();
@@ -71,15 +91,26 @@ namespace Nepomuk {
         Q_SIGNALS:
             void newEntries( const QList<Nepomuk::Query::Result>& entries );
             void entriesRemoved( const QList<QUrl>& entries );
+
+            /**
+             * Emitted once the total result count is available.
+             *
+             * \sa getTotalCount()
+             */
+            void totalCount( int count );
             void finishedListing();
+            void aboutToBeDeleted( Nepomuk::Query::Folder* );
 
         private Q_SLOTS:
             void slotSearchNewResult( const Nepomuk::Query::Result& );
             void slotSearchFinished();
             void slotStorageChanged();
             void slotUpdateTimeout();
+            void slotCountQueryFinished( Soprano::Util::AsyncQuery* );
 
         private:
+            void init();
+
             /**
              * Called by the FolderConnection constructor.
              */
@@ -90,20 +121,44 @@ namespace Nepomuk {
              */
             void removeConnection( FolderConnection* );
 
-            QString m_query;
+            /// if valid m_sparqlQuery and m_requestProperties are ignored
+            Query m_query;
+
+            /// only used if m_query is not valid
+            QString m_sparqlQuery;
+
+            /// only used if m_query is not valid
             RequestPropertyMap m_requestProperties;
+
+            /// all listening connections
             QList<FolderConnection*> m_connections;
 
-            bool m_initialListingDone;
-            QHash<QUrl, Result> m_results;    // the actual current results
-            QHash<QUrl, Result> m_newResults; // the results gathered during an update, needed to find removed items
+            /// the total result count. -1 until determined
+            int m_totalCount;
 
+            /// Query used to get the total count. Only non-null during execution
+            QPointer<Soprano::Util::AsyncQuery> m_countQuery;
+
+            /// true once the initial listing is done and only updates are to be signalled
+            bool m_initialListingDone;
+
+            /// the actual current results
+            QHash<QUrl, Result> m_results;
+
+            /// the results gathered during an update, needed to find removed items
+            QHash<QUrl, Result> m_newResults;
+
+            /// the thread doing the work
             SearchThread* m_searchThread;
 
-            bool m_storageChanged;            // did the nepomuk store change after the last update
-            QTimer m_updateTimer;             // used to ensure that we do not update all the time if the storage changes a lot
+            /// did the nepomuk store change after the last update - used for caching of update signals via m_updateTimer
+            bool m_storageChanged;
 
-            friend class FolderConnection;    // for addConnection and removeConnection
+            /// used to ensure that we do not update all the time if the storage changes a lot
+            QTimer m_updateTimer;
+
+            // for addConnection and removeConnection
+            friend class FolderConnection;
         };
     }
 }

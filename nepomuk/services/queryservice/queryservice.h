@@ -1,5 +1,5 @@
 /*
-   Copyright (c) 2008-2009 Sebastian Trueg <trueg@kde.org>
+   Copyright (c) 2008-2010 Sebastian Trueg <trueg@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -20,6 +20,7 @@
 #define _NEPOMUK_QUERY_SERVICE_H_
 
 #include <Nepomuk/Service>
+#include <Nepomuk/Query/Query>
 
 #include "dbusoperators_p.h"
 
@@ -47,14 +48,16 @@ namespace Nepomuk {
             QueryService( QObject* parent, const QVariantList& );
             ~QueryService();
 
-            static QueryService* instance();
-
         public Q_SLOTS:
             /**
-             * Create a query folder from desktop query string \p query. The optional properties in \p requestProps will be
-             * added to the Query object once \p query has been parsed by QueryParser.
+             * Create a query folder from encoded query \p query.
              */
             Q_SCRIPTABLE QDBusObjectPath query( const QString& query, const QDBusMessage& msg );
+
+            /**
+             * Create a query folder from desktop query string \p query which needs to be parsable by QueryParser.
+             */
+            Q_SCRIPTABLE QDBusObjectPath desktopQuery( const QString& query, const QDBusMessage& msg );
 
             /**
              * Create a query folder from SPARQL query string \p query. The optional properties in \p requestProps are assumed
@@ -63,25 +66,23 @@ namespace Nepomuk {
             Q_SCRIPTABLE QDBusObjectPath sparqlQuery( const QString& query, const RequestPropertyMapDBus& requestProps, const QDBusMessage& msg );
 
         private Q_SLOTS:
-            void slotServiceUnregistered( const QString& serviceName );
-            void slotFolderDestroyed( QObject* folder );
-            void slotFolderConnectionDestroyed( QObject* conn );
+            void slotFolderAboutToBeDeleted( Nepomuk::Query::Folder* folder );
 
         private:
             /**
              * Creates a new folder or reuses an existing one.
              */
+            Folder* getFolder( const Query& query );
+
+            /**
+             * Creates a new folder or reuses an existing one.
+             */
             Folder* getFolder( const QString& sparql, const RequestPropertyMap& requestProps );
 
-            static QueryService* s_instance;
-
-            QHash<QString, Folder*> m_openFolders;
-            QHash<Folder*, QString> m_folderQueryHash;
-            QMultiHash<QString, FolderConnection*> m_openConnections;      // maps from DBus service to connection
-            QHash<FolderConnection*, QString> m_connectionDBusServiceHash; // maps connections to their using dbus service
+            QHash<QString, Folder*> m_openSparqlFolders;
+            QHash<Query, Folder*> m_openQueryFolders;
 
             int m_folderConnectionCnt; // only used for unique dbus object path generation
-            QDBusServiceWatcher *m_serviceWatcher;
         };
     }
 }

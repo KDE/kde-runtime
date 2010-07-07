@@ -1,5 +1,5 @@
 /*
-   Copyright (c) 2008-2009 Sebastian Trueg <trueg@kde.org>
+   Copyright (c) 2008-2010 Sebastian Trueg <trueg@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -18,8 +18,11 @@
 
 #include "folderconnection.h"
 #include "folder.h"
+#include "queryadaptor.h"
 
 #include <QtCore/QStringList>
+#include <QtDBus/QDBusServiceWatcher>
+#include <QtDBus/QDBusConnection>
 
 #include <KDebug>
 
@@ -46,6 +49,8 @@ void Nepomuk::Query::FolderConnection::list()
              this, SIGNAL( newEntries( QList<Nepomuk::Query::Result> ) ) );
     connect( m_folder, SIGNAL( entriesRemoved( QList<QUrl> ) ),
              this, SLOT( slotEntriesRemoved( QList<QUrl> ) ) );
+    connect( m_folder, SIGNAL( totalCount( int ) ),
+             this, SIGNAL( totalCount( int ) ) );
 
     // report cached entries
     if ( !m_folder->entries().isEmpty() ) {
@@ -78,6 +83,8 @@ void Nepomuk::Query::FolderConnection::listen()
                  this, SIGNAL( newEntries( QList<Nepomuk::Query::Result> ) ) );
         connect( m_folder, SIGNAL( entriesRemoved( QList<QUrl> ) ),
                  this, SLOT( slotEntriesRemoved( QList<QUrl> ) ) );
+        connect( m_folder, SIGNAL( totalCount( int ) ),
+                 this, SLOT( totalCount( int ) ) );
     }
 
     // otherwise we need to wait for it finishing the listing
@@ -124,7 +131,30 @@ bool Nepomuk::Query::FolderConnection::isListingFinished() const
 
 QString Nepomuk::Query::FolderConnection::queryString() const
 {
-    return m_folder->query();
+    return m_folder->sparqlQuery();
+}
+
+
+QDBusObjectPath Nepomuk::Query::FolderConnection::registerDBusObject( const QString& dbusClient, int id )
+{
+    // create the query adaptor on this connection
+    ( void )new QueryAdaptor( this );
+
+    // build the dbus object path from the id and register the connection as a Query dbus object
+    const QString dbusObjectPath = QString( "/nepomukqueryservice/query%1" ).arg( id );
+    QDBusConnection::sessionBus().registerObject( dbusObjectPath, this );
+
+    // watch the dbus client for unregistration for auto-cleanup
+    m_serviceWatcher = new QDBusServiceWatcher( QString(),
+                                                QDBusConnection::sessionBus(),
+                                                QDBusServiceWatcher::WatchForUnregistration,
+                                                this );
+    connect( m_serviceWatcher, SIGNAL(serviceUnregistered(const QString&)),
+             this, SLOT(close()) );
+    m_serviceWatcher->addWatchedService( dbusClient );
+
+    // finally return the dbus object path this connection can be found on
+    return QDBusObjectPath( dbusObjectPath );
 }
 
 #include "folderconnection.moc"

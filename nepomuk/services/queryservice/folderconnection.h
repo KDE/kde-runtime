@@ -1,5 +1,5 @@
 /*
-   Copyright (c) 2008-2009 Sebastian Trueg <trueg@kde.org>
+   Copyright (c) 2008-2010 Sebastian Trueg <trueg@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -20,8 +20,10 @@
 #define _NEPOMUK_VIRTUAL_FOLDER_CONNECTION_H_
 
 #include <QtCore/QObject>
+#include <QtDBus/QDBusObjectPath>
 
 class QUrl;
+class QDBusServiceWatcher;
 
 namespace Nepomuk {
     namespace Query {
@@ -37,6 +39,8 @@ namespace Nepomuk {
         public:
             FolderConnection( Folder* parentFolder );
             ~FolderConnection();
+
+            QDBusObjectPath registerDBusObject( const QString& dbusClient, int id );
 
         public Q_SLOTS:
             /// List all entries in the folder, used by the public kdelibs API
@@ -58,6 +62,7 @@ namespace Nepomuk {
         Q_SIGNALS:
             void newEntries( const QList<Nepomuk::Query::Result>& );
             void entriesRemoved( const QStringList& );
+            void totalCount( int count );
             void finishedListing();
 
         private Q_SLOTS:
@@ -66,6 +71,7 @@ namespace Nepomuk {
 
         private:
             Folder* m_folder;
+            QDBusServiceWatcher* m_serviceWatcher;
         };
     }
 }
