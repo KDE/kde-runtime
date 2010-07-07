@@ -66,7 +66,7 @@ namespace {
         uds.insert( KIO::UDSEntry::UDS_USER, KUser().loginName() );
         uds.insert( KIO::UDSEntry::UDS_FILE_TYPE, S_IFDIR );
         uds.insert( KIO::UDSEntry::UDS_MIME_TYPE, QString::fromLatin1( "inode/directory" ) );
-// FIXME        uds.insert( KIO::UDSEntry::UDS_CUSTOM_SORT_WEIGHT, -1 );
+        uds.insert( KIO::UDSEntry::UDS_CUSTOM_SORT_WEIGHT, -1 );
         uds.insert( KIO::UDSEntry::UDS_ICON_OVERLAY_NAMES, QLatin1String( "nepomuk" ) );
         uds.insert( KIO::UDSEntry::UDS_DISPLAY_TYPE, i18n( "Query folder" ) );
     }
