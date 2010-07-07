@@ -47,45 +47,24 @@
 
 
 namespace {
-    QString typesToHtml( const QList<QUrl>& types )
-    {
-        QList<Nepomuk::Types::Class> typeClasses;
-        foreach( const QUrl& type, types ) {
-            typeClasses << Nepomuk::Types::Class( type );
-        }
+    const char* s_noFollow = "noFollow";
+    const char* s_showUri = "showUris";
+    const char* s_true = "true";
 
-        // remove all types that are supertypes of others in the list
-        QList<Nepomuk::Types::Class> normalizedTypes;
-        for ( int i = 0; i < typeClasses.count(); ++i ) {
-            Nepomuk::Types::Class& type = typeClasses[i];
-            bool use = true;
-            for ( int j = 0; j < typeClasses.count(); ++j ) {
-                if ( type != typeClasses[j] &&
-                     typeClasses[j].isSubClassOf( type ) ) {
-                    use = false;
-                    break;
-                }
-            }
-            if ( use ) {
-                normalizedTypes << type;
-            }
-        }
+    KUrl configureUrl( const KUrl& url, Nepomuk::ResourcePageGenerator::Flags flags ) {
+        KUrl newUrl( url );
 
-        // extract the labels
-        QStringList typeStrings;
-        for ( int i = 0; i < normalizedTypes.count(); ++i ) {
-            typeStrings << normalizedTypes[i].label();
-        }
-
-        return typeStrings.join( ", " );
-    }
-
-    QString encodeUrl( const QUrl& u ) {
-        QUrl url( u );
+        newUrl.removeEncodedQueryItem( s_noFollow );
         if ( url.scheme() == QLatin1String( "nepomuk" ) ) {
-            url.setEncodedQuery( "noFollow=true" );
+            newUrl.addEncodedQueryItem( s_noFollow, s_true );
         }
-        return QString::fromAscii( url.toEncoded() );
+
+        newUrl.removeEncodedQueryItem( s_showUri );
+        if ( flags & Nepomuk::ResourcePageGenerator::ShowUris ) {
+            newUrl.addEncodedQueryItem( s_showUri, s_true );
+        }
+
+        return newUrl;
     }
 }
 
@@ -98,6 +77,20 @@ Nepomuk::ResourcePageGenerator::ResourcePageGenerator( const Nepomuk::Resource& 
 
 Nepomuk::ResourcePageGenerator::~ResourcePageGenerator()
 {
+}
+
+
+void Nepomuk::ResourcePageGenerator::setFlagsFromUrl( const KUrl& url )
+{
+    m_flags = NoFlags;
+    if ( url.encodedQueryItemValue( s_showUri ) == s_true )
+        m_flags |= ShowUris;
+}
+
+
+KUrl Nepomuk::ResourcePageGenerator::url() const
+{
+    return configureUrl( m_resource.resourceUri(), m_flags );
 }
 
 
@@ -185,7 +178,9 @@ QByteArray Nepomuk::ResourcePageGenerator::generatePage() const
         "#relations { "
         "  padding: 0 20 0 20; }"
         "</style></head>"
-       << "<body><div id=\"body_wrapper\"><div id=\"body\"><div class=\"content\"><div id=\"main\"><div class=\"clearer\">&nbsp;</div>";
+       << "<body>"
+       << createConfigureBoxHtml()
+       << "<div id=\"body_wrapper\"><div id=\"body\"><div class=\"content\"><div id=\"main\"><div class=\"clearer\">&nbsp;</div>";
 
     os << "<h1>" << label << "</h1>"
        << "Type: " << ( exists ? typesToHtml( m_resource.types() ) : i18n( "Resource does not exist" ) );
@@ -198,7 +193,7 @@ QByteArray Nepomuk::ResourcePageGenerator::generatePage() const
         Soprano::Statement s = it.current();
         if ( s.predicate().uri() != Soprano::Vocabulary::RDF::type() ) {
             Nepomuk::Types::Property p( s.predicate().uri() );
-            os << "<tr><td align=right><i>" << ( p.label().isEmpty() ? p.name() : p.label() ) << "</i></td><td width=16px></td><td>";
+            os << "<tr><td align=right><i>" << entityLabel( p ) << "</i></td><td width=16px></td><td>";
             if ( s.object().isLiteral() ) {
                 if ( s.object().literal().isDateTime() )
                     os << KGlobal::locale()->formatDateTime( s.object().literal().toDateTime(), KLocale::FancyShortDate );
@@ -217,7 +212,7 @@ QByteArray Nepomuk::ResourcePageGenerator::generatePage() const
                     Resource resource( uri );
                     uri = resource.resourceUri();
                     label = QString::fromLatin1( "%1 (%2)" )
-                            .arg( resource.genericLabel(),
+                            .arg( resourceLabel( resource ),
                                   typesToHtml( resource.types() ) );
                 }
                 os << QString( "<a href=\"%1\">%2</a>" )
@@ -240,11 +235,11 @@ QByteArray Nepomuk::ResourcePageGenerator::generatePage() const
             os << "<td align=right>"
                << QString( "<a href=\"%1\">%2</a> (%3)" )
                 .arg( encodeUrl( s.subject().uri() ),
-                      resource.genericLabel(),
+                      resourceLabel( resource ),
                       typesToHtml( resource.types() ) )
                << "</td>"
                << "<td width=16px></td>"
-               << "<td><i>" << ( p.label().isEmpty() ? p.name() : p.label() ) << "</i></td></tr>";
+               << "<td><i>" << entityLabel( p ) << "</i></td></tr>";
         }
     }
     os << "</table></div>";
@@ -258,4 +253,73 @@ QByteArray Nepomuk::ResourcePageGenerator::generatePage() const
     os.flush();
 
     return output;
+}
+
+
+QString Nepomuk::ResourcePageGenerator::resourceLabel( const Resource& res ) const
+{
+    if ( m_flags & ShowUris )
+        return KUrl( res.resourceUri() ).prettyUrl();
+    else
+        return res.genericLabel();
+}
+
+
+QString Nepomuk::ResourcePageGenerator::entityLabel( const Nepomuk::Types::Entity& e ) const
+{
+    if ( m_flags & ShowUris )
+        return KUrl( e.uri() ).prettyUrl();
+    else
+        return e.label();
+}
+
+
+QString Nepomuk::ResourcePageGenerator::typesToHtml( const QList<QUrl>& types ) const
+{
+    QList<Nepomuk::Types::Class> typeClasses;
+    foreach( const QUrl& type, types ) {
+        typeClasses << Nepomuk::Types::Class( type );
+    }
+
+    // remove all types that are supertypes of others in the list
+    QList<Nepomuk::Types::Class> normalizedTypes;
+    for ( int i = 0; i < typeClasses.count(); ++i ) {
+        Nepomuk::Types::Class& type = typeClasses[i];
+        bool use = true;
+        for ( int j = 0; j < typeClasses.count(); ++j ) {
+            if ( type != typeClasses[j] &&
+                 typeClasses[j].isSubClassOf( type ) ) {
+                use = false;
+                break;
+            }
+        }
+        if ( use ) {
+            normalizedTypes << type;
+        }
+    }
+
+    // extract the labels
+    QStringList typeStrings;
+    for ( int i = 0; i < normalizedTypes.count(); ++i ) {
+        typeStrings << entityLabel( normalizedTypes[i] );
+    }
+
+    return typeStrings.join( ", " );
+}
+
+
+QString Nepomuk::ResourcePageGenerator::encodeUrl( const QUrl& url ) const
+{
+    return QString::fromAscii( configureUrl( url, m_flags ).toEncoded() );
+}
+
+
+QString Nepomuk::ResourcePageGenerator::createConfigureBoxHtml() const
+{
+    QString html
+        = QString::fromLatin1( "<div style=\"position:fixed; right:10px; top:10px; text-align:right;\"><a href=\"%1\">%2</a></div>" )
+        .arg( configureUrl( url(), m_flags^ShowUris ).url(),
+              m_flags&ShowUris ? i18n( "Hide URIs" ) : i18n( "Show URIs" ) );
+
+    return html;
 }

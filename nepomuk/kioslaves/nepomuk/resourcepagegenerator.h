@@ -23,20 +23,53 @@
 
 #include <Nepomuk/Resource>
 
+#include <QtCore/QList>
+#include <KUrl>
+
 class QByteArray;
 
 namespace Nepomuk {
+    namespace Types {
+        class Entity;
+    }
+
     class ResourcePageGenerator
     {
     public:
         ResourcePageGenerator( const Nepomuk::Resource& res );
         ~ResourcePageGenerator();
 
+        enum Flag {
+            NoFlags = 0x0,
+            ShowUris = 0x1
+        };
+        Q_DECLARE_FLAGS( Flags, Flag )
+
+        void setFlags( Flags flags ) {
+            m_flags = flags;
+        }
+
+        void setFlagsFromUrl( const KUrl& url );
+
+        /**
+         * Constructs the URL that represents the current configuration.
+         */
+        KUrl url() const;
+
         QByteArray generatePage() const;
 
     private:
+        QString resourceLabel( const Resource& res ) const;
+        QString entityLabel( const Nepomuk::Types::Entity& e ) const;
+        QString typesToHtml( const QList<QUrl>& types ) const;
+        QString encodeUrl( const QUrl& u ) const;
+        QString createConfigureBoxHtml() const;
+
         Nepomuk::Resource m_resource;
+        Flags m_flags;
     };
 }
+
+Q_DECLARE_OPERATORS_FOR_FLAGS( Nepomuk::ResourcePageGenerator::Flags )
 
 #endif

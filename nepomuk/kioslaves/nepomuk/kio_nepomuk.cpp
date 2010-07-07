@@ -137,6 +137,7 @@ void Nepomuk::NepomukProtocol::get( const KUrl& url )
         }
         else {
             ResourcePageGenerator gen( res );
+            gen.setFlagsFromUrl( url );
             data( gen.generatePage() );
         }
         finished();
