@@ -135,22 +135,6 @@ namespace {
         return uds;
     }
 
-
-    /**
-     * Empty if the path only contains the query.
-     */
-    QString fileNameFromQueryUrl( const KUrl& url ) {
-        if ( url.hasQueryItem( QLatin1String( "sparql" ) ) ||
-             url.hasQueryItem( QLatin1String( "query" ) ) ||
-             url.hasQueryItem( QLatin1String( "encodedquery" ) ) ||
-             url.directory() != QLatin1String( "/" ) ) {
-            return url.fileName();
-        }
-        else {
-            return QString();
-        }
-    }
-
     bool isRootUrl( const KUrl& url ) {
         const QString path = url.path(KUrl::RemoveTrailingSlash);
         return( !url.hasQuery() &&
@@ -215,7 +199,6 @@ void Nepomuk::SearchProtocol::listDir( const KUrl& url )
             if ( folder->haveMoreResults() ) {
                 listEntry( statMoreResultsItem( folder->query(), Query::Query::titleFromQueryUrl( url ) ), false );
             }
-
 
             listEntry( KIO::UDSEntry(), true );
             finished();
@@ -291,7 +274,7 @@ void Nepomuk::SearchProtocol::stat( const KUrl& url )
         statEntry( statLastQueriesFolder() );
         finished();
     }
-    else if ( fileNameFromQueryUrl( url ).isEmpty() ) {
+    else if ( url.fileName().isEmpty() ) {
         kDebug() << "Stat search folder" << url;
         statEntry( statSearchFolder( url ) );
         finished();
@@ -352,7 +335,7 @@ void Nepomuk::SearchProtocol::listRoot()
     Query::Query rootQuery = Query::Query::fromString( KConfig( "kio_nepomuksearchrc" ).group( "General" ).readEntry( "Root query", Nepomuk::lastModifiedFilesQuery().toString() ) );
     if ( rootQuery.isValid() ) {
         rootQuery.setLimit( KConfig( "kio_nepomuksearchrc" ).group( "General" ).readEntry( "Default limit", 10 )+1 );
-        getQueryFolder( rootQuery.toSearchUrl() )->list( true /*We force usage of UDS_URL. Otherwise stat() would treat the entries as query old-school folders*/);
+        getQueryFolder( rootQuery.toSearchUrl() )->list();
     }
 
     listEntry( KIO::UDSEntry(), true );
@@ -391,12 +374,7 @@ Nepomuk::SearchFolder* Nepomuk::SearchProtocol::getQueryFolder( const KUrl& url 
     }
 
     // here we strip off the entry's name since that is not part of the query URL
-    if ( url.hasQuery() ) {
-        normalizedUrl.setPath( QLatin1String( "/" ) );
-    }
-    else if ( url.directory() != QLatin1String( "/" ) ) {
-        normalizedUrl.setPath( QLatin1String( "/" ) + url.path().section( '/', 0, 0 ) );
-    }
+    normalizedUrl.setPath( QLatin1String( "/" ) );
 
     SearchFolder* folder = new SearchFolder( normalizedUrl, this );
     return folder;

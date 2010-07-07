@@ -59,8 +59,7 @@ Nepomuk::SearchFolder::SearchFolder( const KUrl& url, KIO::SlaveBase* slave )
     : QThread(),
       m_url( url ),
       m_initialListingFinished( false ),
-      m_slave( slave ),
-      m_forceUdsUrl( false )
+      m_slave( slave )
 {
     kDebug() <<  url;
 
@@ -129,11 +128,9 @@ void Nepomuk::SearchFolder::run()
 }
 
 
-void Nepomuk::SearchFolder::list( bool forceUdsUrl )
+void Nepomuk::SearchFolder::list()
 {
     kDebug() << m_url << QThread::currentThread();
-
-    m_forceUdsUrl = forceUdsUrl;
 
     // start the search thread
     start();
@@ -250,7 +247,7 @@ KIO::UDSEntry Nepomuk::SearchFolder::statResult( const Query::Result& result )
         if ( !nieUrl.isEmpty() ) {
             // needed since the nepomuk:/ KIO slave does not do stating of files in its own
             // subdirs (tags and filesystems), and neither do we with real subdirs
-            if ( uds.isDir() || m_forceUdsUrl )
+            if ( uds.isDir() )
                 uds.insert( KIO::UDSEntry::UDS_URL, nieUrl.url() );
 
             if ( nieUrl.isLocalFile() ) {
@@ -263,9 +260,6 @@ KIO::UDSEntry Nepomuk::SearchFolder::statResult( const Query::Result& result )
         else {
             // make sure we have unique names for everything
             uds.insert( KIO::UDSEntry::UDS_NAME, resourceUriToUdsName( url ) );
-
-            if ( m_forceUdsUrl )
-                uds.insert( KIO::UDSEntry::UDS_URL, url.url() );
         }
 
         // needed since the file:/ KIO slave does not create them and KFileItem::nepomukUri()

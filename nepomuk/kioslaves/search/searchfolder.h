@@ -42,6 +42,10 @@ namespace Nepomuk {
         class QueryServiceClient;
     }
 
+    /**
+     * A SearchFolder lists all results from one query and then deletes
+     * itself.
+     */
     class SearchFolder : public QThread
     {
         Q_OBJECT
@@ -78,7 +82,7 @@ namespace Nepomuk {
         /**
          * List the results directly on the parent slave.
          */
-        void list( bool forceUdsUrl = false );
+        void list();
 
     private Q_SLOTS:
         /// connected to the QueryServiceClient in the search thread
@@ -136,9 +140,6 @@ namespace Nepomuk {
 
         // used to wait in the main thread for the serch thread to deliver results
         QWaitCondition m_resultWaiter;
-
-        /// true if UDS_URL should be set on all results, not only folders
-        bool m_forceUdsUrl;
     };
 }
 
