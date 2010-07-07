@@ -89,6 +89,9 @@ namespace Nepomuk {
         void slotNewEntries( const QList<Nepomuk::Query::Result>& );
 
         /// connected to the QueryServiceClient in the search thread
+        void slotTotalCount( int );
+
+        /// connected to the QueryServiceClient in the search thread
         void slotFinishedListing();
 
     private:
@@ -137,6 +140,9 @@ namespace Nepomuk {
 
         // mutex to protect the results
         QMutex m_resultMutex;
+
+        // mutex to protect the slave
+        QMutex m_slaveMutex;
 
         // used to wait in the main thread for the serch thread to deliver results
         QWaitCondition m_resultWaiter;
