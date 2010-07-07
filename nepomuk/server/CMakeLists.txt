@@ -18,7 +18,6 @@ set(nepomukserver_SRCS
   servicecontroller.cpp
   processcontrol.cpp
   main.cpp
-  legacystoragebridge.cpp
   )
 
 # Server configuration

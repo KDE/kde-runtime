@@ -30,7 +30,6 @@ namespace Soprano {
 namespace Nepomuk {
 
     class ServiceManager;
-    class LegacyStorageBridge;
 
     class Server : public QObject
     {
@@ -62,8 +61,6 @@ namespace Nepomuk {
 
         ServiceManager* m_serviceManager;
         bool m_enabled;
-
-        LegacyStorageBridge* m_legacyStorageBridge;
 
         KSharedConfigPtr m_config;
 
