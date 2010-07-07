@@ -259,9 +259,10 @@ void Nepomuk::StrigiServiceConfig::buildExcludeFilterRegExpCache()
 {
     m_excludeFilterRegExpCache.clear();
     foreach( const QString& filter, excludeFilters() ) {
-        QRegExp rx( filter );
-        rx.setPatternSyntax( QRegExp::Wildcard );
-        m_excludeFilterRegExpCache << rx;
+        QString filterRxStr = QRegExp::escape( filter );
+        filterRxStr.replace( "\\*", QLatin1String( ".*" ) );
+        filterRxStr.replace( "\\?", QLatin1String( "." ) );
+        m_excludeFilterRegExpCache << QRegExp( filterRxStr );
     }
 }
 
