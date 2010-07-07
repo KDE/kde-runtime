@@ -30,8 +30,6 @@ set(strigiservice_SRCS
   priority.cpp
   strigiserviceconfig.cpp
   eventmonitor.cpp
-  systray.cpp
-  statuswidget.cpp
   )
 
 soprano_add_ontology(strigiservice_SRCS
@@ -49,9 +47,6 @@ qt4_add_dbus_adaptor(strigiservice_SRCS ../../interfaces/org.kde.nepomuk.Strigi.
 
 qt4_add_dbus_interface(strigiservice_SRCS ../../interfaces/org.kde.nepomuk.RemovableStorage.xml removablestorageserviceinterface)
 qt4_add_dbus_interface(strigiservice_SRCS ../../interfaces/org.kde.nepomuk.FileWatch.xml filewatchserviceinterface)
-
-kde4_add_ui_files(strigiservice_SRCS
-  statuswidget.ui)
 
 kde4_add_plugin(nepomukstrigiservice ${strigiservice_SRCS})
 

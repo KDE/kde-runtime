@@ -21,14 +21,13 @@
 #include "priority.h"
 #include "indexscheduler.h"
 #include "eventmonitor.h"
-#include "systray.h"
 #include "strigiserviceconfig.h"
-#include "statuswidget.h"
 #include "filewatchserviceinterface.h"
 
 #include <KDebug>
 #include <KDirNotify>
 #include <KIdleTime>
+#include <KLocale>
 
 #include <strigi/indexpluginloader.h>
 #include <strigi/indexmanager.h>
@@ -66,12 +65,6 @@ Nepomuk::StrigiService::StrigiService( QObject* parent, const QList<QVariant>& )
 
         // export on dbus
         ( void )new StrigiAdaptor( this );
-
-        // create the status widget (hidden)
-        StatusWidget* sw = new StatusWidget( mainModel(), this );
-
-        // create the systray
-        new SystemTray( this, sw );
 
         // setup status connections
         connect( m_indexScheduler, SIGNAL( indexingStarted() ),
