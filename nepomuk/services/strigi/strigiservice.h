@@ -37,16 +37,22 @@ namespace Nepomuk {
     class StrigiService : public Nepomuk::Service
     {
         Q_OBJECT
+        Q_CLASSINFO("D-Bus Interface", "org.kde.nepomuk.Strigi")
 
     public:
         StrigiService( QObject* parent = 0, const QList<QVariant>& args = QList<QVariant>() );
         ~StrigiService();
 
+        //vHanda: Is this really required? I've removed all the code that uses it.
         IndexScheduler* indexScheduler() const { return m_indexScheduler; }
 
     Q_SIGNALS:
         void statusStringChanged();
-
+        void statusChanged(); //vHanda: Can't we just use statusStringChanged? or should that be renamed
+        void indexingFolder( const QString& path );
+        void indexingStarted();
+        void indexingStopped();
+        
     public Q_SLOTS:
         /**
          * \return A user readable status string. Includes the currently indexed folder.
@@ -57,9 +63,39 @@ namespace Nepomuk {
          * Simplified status string without details.
          */
         QString simpleUserStatusString() const;
-        bool isIdle() const;
-        void setSuspended( bool );
+
         bool isSuspended() const;
+        bool isIndexing() const;
+
+        void resume() const;
+        void suspend() const;
+        void setSuspended( bool );
+
+        QString currentFolder() const;
+        QString currentFile() const;
+        
+        /**
+         * Update folder \a path if it is configured to be indexed.
+         */
+        void updateFolder( const QString& path, bool forced );
+
+        /**
+         * Update all folders configured to be indexed.
+         */
+        void updateAllFolders( bool forced );
+
+        /**
+         * Index a folder independant of its configuration status.
+         */
+        void indexFolder( const QString& path, bool forced );
+
+        /**
+         * Index a specific file
+         */
+        void indexFile( const QString& path );
+
+        void analyzeResource( const QString& uri, uint mTime, const QByteArray& data );
+        void analyzeResourceFromTempFileAndDeleteTempFile( const QString& uri, uint mTime, const QString& tmpFile );
 
     private Q_SLOTS:
         void finishInitialization();

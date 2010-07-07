@@ -26,7 +26,6 @@ endif(${STRIGI_HAS_FILEINPUTSTREAM_OPEN})
 
 set(strigiservice_SRCS
   strigiservice.cpp
-  strigiserviceadaptor.cpp
   indexscheduler.cpp
   priority.cpp
   strigiserviceconfig.cpp
@@ -45,6 +44,8 @@ soprano_add_ontology(strigiservice_SRCS
   "NIE"
   "Nepomuk::Vocabulary"
   "trig")
+
+qt4_add_dbus_adaptor(strigiservice_SRCS ../../interfaces/org.kde.nepomuk.Strigi.xml strigiservice.h Nepomuk::StrigiService )
 
 qt4_add_dbus_interface(strigiservice_SRCS ../../interfaces/org.kde.nepomuk.RemovableStorage.xml removablestorageserviceinterface)
 qt4_add_dbus_interface(strigiservice_SRCS ../../interfaces/org.kde.nepomuk.FileWatch.xml filewatchserviceinterface)

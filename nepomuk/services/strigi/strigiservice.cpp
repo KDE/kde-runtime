@@ -17,7 +17,7 @@
 */
 
 #include "strigiservice.h"
-#include "strigiserviceadaptor.h"
+#include "strigiadaptor.h"
 #include "priority.h"
 #include "indexscheduler.h"
 #include "eventmonitor.h"
@@ -65,7 +65,7 @@ Nepomuk::StrigiService::StrigiService( QObject* parent, const QList<QVariant>& )
                  this, SLOT( updateWatches() ) );
 
         // export on dbus
-        ( void )new StrigiServiceAdaptor( this );
+        ( void )new StrigiAdaptor( this );
 
         // create the status widget (hidden)
         StatusWidget* sw = new StatusWidget( mainModel(), this );
@@ -97,6 +97,15 @@ Nepomuk::StrigiService::StrigiService( QObject* parent, const QList<QVariant>& )
         kDebug() << "Failed to load sopranobackend Strigi index manager.";
     }
 
+    // Connect some signals used in the DBus interface
+    connect( this, SIGNAL( statusStringChanged() ),
+             this, SIGNAL( statusChanged() ) );
+    connect( m_indexScheduler, SIGNAL( indexingStarted() ),
+             this, SIGNAL( indexingStarted() ) );
+    connect( m_indexScheduler, SIGNAL( indexingStopped() ),
+             this, SIGNAL( indexingStopped() ) );
+    connect( m_indexScheduler, SIGNAL( indexingFolder(QString) ),
+             this, SIGNAL( indexingFolder(QString) ) );
 
     // service initialization done if creating a strigi index manager was successful
     // ==============================================================
@@ -126,6 +135,8 @@ void Nepomuk::StrigiService::finishInitialization()
     // full speed until the user is active
     m_indexScheduler->setIndexingSpeed( IndexScheduler::FullSpeed );
 
+    // Creation of watches is a memory intensive process as a large number of
+    // watch file descriptors need to be created ( one for each directory )
     updateWatches();
 }
 
@@ -184,12 +195,6 @@ QString Nepomuk::StrigiService::userStatusString( bool simple ) const
 }
 
 
-bool Nepomuk::StrigiService::isIdle() const
-{
-    return ( !m_indexScheduler->isIndexing() );
-}
-
-
 void Nepomuk::StrigiService::setSuspended( bool suspend )
 {
     if ( suspend ) {
@@ -205,6 +210,107 @@ bool Nepomuk::StrigiService::isSuspended() const
 {
     return m_indexScheduler->isSuspended();
 }
+
+
+bool Nepomuk::StrigiService::isIndexing() const
+{
+    return m_indexScheduler->isIndexing();
+}
+
+
+void Nepomuk::StrigiService::suspend() const
+{
+    m_indexScheduler->suspend();
+}
+
+
+void Nepomuk::StrigiService::resume() const
+{
+    m_indexScheduler->resume();
+}
+
+
+QString Nepomuk::StrigiService::currentFile() const
+{
+   return m_indexScheduler->currentFile();
+}
+
+
+QString Nepomuk::StrigiService::currentFolder() const
+{
+    return m_indexScheduler->currentFolder();
+}
+
+
+void Nepomuk::StrigiService::updateFolder(const QString& path, bool forced)
+{
+    kDebug() << "Called with path: " << path;
+    QFileInfo info( path );
+    if ( info.exists() ) {
+        QString dirPath;
+        if ( info.isDir() )
+            dirPath = info.absoluteFilePath();
+        else
+            dirPath = info.absolutePath();
+
+        if ( StrigiServiceConfig::self()->shouldFolderBeIndexed( dirPath ) ) {
+            kDebug() << "Updating : " << path;
+            m_indexScheduler->updateDir( dirPath, forced );
+        }
+    }
+}
+
+
+void Nepomuk::StrigiService::updateAllFolders(bool forced)
+{
+    m_indexScheduler->updateAll( forced );
+}
+
+
+void Nepomuk::StrigiService::indexFile(const QString& path)
+{
+    m_indexScheduler->analyzeFile( path );
+}
+
+//FIXME: Code duplication in updateFolder, avoid if possible. Maybe with an extra
+//       default parameter
+void Nepomuk::StrigiService::indexFolder(const QString& path, bool forced)
+{
+    QFileInfo info( path );
+    if ( info.exists() ) {
+        QString dirPath;
+        if ( info.isDir() )
+            dirPath = info.absoluteFilePath();
+        else
+            dirPath = info.absolutePath();
+
+        m_indexScheduler->updateDir( dirPath, forced );
+    }
+}
+
+
+void Nepomuk::StrigiService::analyzeResource(const QString& uri, uint mTime, const QByteArray& data)
+{
+    QDataStream stream( data );
+    m_indexScheduler->analyzeResource( QUrl::fromEncoded( uri.toAscii() ), QDateTime::fromTime_t( mTime ), stream );
+}
+
+
+void Nepomuk::StrigiService::analyzeResourceFromTempFileAndDeleteTempFile(const QString& uri, uint mTime, const QString& tmpFile)
+{
+    QFile file( tmpFile );
+    if ( file.open( QIODevice::ReadOnly ) ) {
+        QDataStream stream( &file );
+        m_indexScheduler->analyzeResource( QUrl::fromEncoded( uri.toAscii() ), QDateTime::fromTime_t( mTime ), stream );
+        file.remove();
+    }
+    else {
+        kDebug() << "Failed to open" << tmpFile;
+    }
+}
+
+
+
 
 #include <kpluginfactory.h>
 #include <kpluginloader.h>

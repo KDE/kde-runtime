@@ -77,7 +77,7 @@ void Nepomuk::SystemTray::slotUpdateStrigiStatus()
     // make sure we do not update the systray icon all the time
 
     // a manually suspended service should not be passive
-    ItemStatus newStatus = m_service->isIdle() && !m_service->isSuspended() ? Passive : Active;
+    ItemStatus newStatus = !m_service->isIndexing() && !m_service->isSuspended() ? Passive : Active;
     if ( newStatus != status() ) {
         setStatus( newStatus );
     }

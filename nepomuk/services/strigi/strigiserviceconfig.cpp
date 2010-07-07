@@ -23,9 +23,9 @@
 #include <QtCore/QStringList>
 #include <QtCore/QDir>
 
-#include <kdirwatch.h>
-#include <kstandarddirs.h>
-#include <kconfiggroup.h>
+#include <KDirWatch>
+#include <KStandardDirs>
+#include <KConfigGroup>
 
 
 Nepomuk::StrigiServiceConfig::StrigiServiceConfig()
@@ -145,7 +145,7 @@ bool Nepomuk::StrigiServiceConfig::shouldFolderBeIndexed( const QString& path ) 
         if ( !indexHiddenFolders() && isDirHidden( dir ) )
             return false;
 
-        // reset dir
+        // reset dir, cause isDirHidden modifies the QDir
         dir = path;
 
         // check the filters
