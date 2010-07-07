@@ -27,7 +27,6 @@ endif(${STRIGI_HAS_FILEINPUTSTREAM_OPEN})
 set(strigiservice_SRCS
   strigiservice.cpp
   indexscheduler.cpp
-  priority.cpp
   strigiserviceconfig.cpp
   eventmonitor.cpp
   )

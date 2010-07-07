@@ -18,8 +18,12 @@
 */
 
 #include "strigiservice.h"
+<<<<<<< HEAD
 #include "strigiadaptor.h"
 #include "priority.h"
+=======
+#include "strigiserviceadaptor.h"
+>>>>>>> Moved the scheduling and IO priority lowering from the Strigi service into the service stub.
 #include "indexscheduler.h"
 #include "eventmonitor.h"
 #include "strigiserviceconfig.h"
@@ -42,16 +46,6 @@ Nepomuk::StrigiService::StrigiService( QObject* parent, const QList<QVariant>& )
     : Service( parent, true ),
       m_indexManager( 0 )
 {
-    // lower process priority - we do not want to spoil KDE usage
-    // ==============================================================
-    if ( !lowerPriority() )
-        kDebug() << "Failed to lower priority.";
-    if ( !lowerSchedulingPriority() )
-        kDebug() << "Failed to lower scheduling priority.";
-    if ( !lowerIOPriority() )
-        kDebug() << "Failed to lower io priority.";
-
-
     // setup the actual index scheduler including strigi stuff
     // ==============================================================
     if ( ( m_indexManager = Strigi::IndexPluginLoader::createIndexManager( "nepomukbackend", 0 ) ) ) {
@@ -125,7 +119,7 @@ void Nepomuk::StrigiService::finishInitialization()
 
     connect( idleTime, SIGNAL(timeoutReached(int)), this, SLOT(slotIdleTimerPause()) );
     connect( idleTime, SIGNAL(resumingFromIdle()), this, SLOT(slotIdleTimerResume()) );
-    
+
     // full speed until the user is active
     m_indexScheduler->setIndexingSpeed( IndexScheduler::FullSpeed );
 

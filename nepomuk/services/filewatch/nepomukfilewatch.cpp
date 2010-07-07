@@ -19,7 +19,6 @@
 #include "nepomukfilewatch.h"
 #include "metadatamover.h"
 #include "strigiserviceinterface.h"
-#include "../strigi/priority.h"
 #include "nie.h"
 
 #ifdef BUILD_KINOTIFY
@@ -120,10 +119,6 @@ Nepomuk::FileWatch::FileWatch( QObject* parent, const QList<QVariant>& )
     m_metadataMover->start();
 
 #ifdef BUILD_KINOTIFY
-    // listing all folders in watchFolder below will be IO-intensive. Do not grab it all
-    if ( !lowerIOPriority() )
-        kDebug() << "Failed to lower io priority.";
-
     // monitor the file system for changes (restricted by the inotify limit)
     m_dirWatch = new KInotify( this );
 
