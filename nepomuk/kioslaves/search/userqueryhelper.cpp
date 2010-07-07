@@ -42,10 +42,10 @@ int main( int argc, char** argv )
                           "0.1",
                           ki18n("Helper application which saves user queries"),
                           KAboutData::License_GPL,
-                          ki18n("(c) 2010, Sebastian Trüg"),
+                          ki18n("(c) 2010, Sebastian TrÃ¼g"),
                           KLocalizedString(),
                           "http://nepomuk.kde.org" );
-    aboutData.addAuthor(ki18n("Sebastian Trüg"),ki18n("Maintainer"), "trueg@kde.org");
+    aboutData.addAuthor(ki18n("Sebastian TrÃ¼g"),ki18n("Maintainer"), "trueg@kde.org");
     aboutData.setProgramIconName( "nepomuk" );
 
     KCmdLineArgs::init( argc, argv, &aboutData );
