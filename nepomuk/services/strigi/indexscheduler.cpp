@@ -1,5 +1,6 @@
 /* This file is part of the KDE Project
    Copyright (c) 2008-2010 Sebastian Trueg <trueg@kde.org>
+   Copyright (c) 2010 Vishesh Handa <handa.vish@gmail.com>
 
    Parts of this file are based on code from Strigi
    Copyright (C) 2006-2007 Jos van den Oever <jos@vandenoever.info>
