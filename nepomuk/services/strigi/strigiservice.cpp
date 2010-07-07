@@ -18,12 +18,7 @@
 */
 
 #include "strigiservice.h"
-<<<<<<< HEAD
 #include "strigiadaptor.h"
-#include "priority.h"
-=======
-#include "strigiserviceadaptor.h"
->>>>>>> Moved the scheduling and IO priority lowering from the Strigi service into the service stub.
 #include "indexscheduler.h"
 #include "eventmonitor.h"
 #include "strigiserviceconfig.h"
