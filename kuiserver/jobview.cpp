@@ -63,7 +63,7 @@ void JobView::terminate(const QString &errorMessage)
         // if hit it means a job exists for *something* but can't be terminated properly
         // because the async call to create the job didn't come back fast enough.
         // (thus addJobContact wasn't called before this was hit).
-        Q_ASSERT(!m_objectPaths.isEmpty());
+//        Q_ASSERT(!m_objectPaths.isEmpty());
 
         // no more calls waiting. Lets mark ourselves for deletion.
         emit finished(this);
