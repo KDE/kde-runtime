@@ -22,6 +22,7 @@
 #include "../kioslaves/common/standardqueries.h"
 #include "nepomukservicecontrolinterface.h"
 #include "indexfolderselectiondialog.h"
+#include "statuswidget.h"
 
 #include <KPluginFactory>
 #include <KPluginLoader>
@@ -35,6 +36,7 @@
 
 #include <QtGui/QRadioButton>
 #include <QtGui/QInputDialog>
+#include <QtGui/QPushButton>
 #include <QtCore/QDir>
 #include <QtDBus/QDBusServiceWatcher>
 
@@ -101,6 +103,7 @@ Nepomuk::ServerConfigModule::ServerConfigModule( QWidget* parent, const QVariant
     : KCModule( NepomukConfigModuleFactory::componentData(), parent, args ),
       m_serverInterface( 0 ),
       m_strigiInterface( 0 ),
+      m_statusDialog( 0 ),
       m_failedToInitialize( false )
 {
     KAboutData *about = new KAboutData(
@@ -151,6 +154,8 @@ Nepomuk::ServerConfigModule::ServerConfigModule( QWidget* parent, const QVariant
                  this, SLOT( slotCustomQueryButtonClicked() ) );
         connect( m_buttonCustomizeIndexFolders, SIGNAL( leftClickedUrl() ),
                  this, SLOT( slotEditIndexFolders() ) );
+        connect( m_buttonDetails, SIGNAL( clicked() ),
+                 this, SLOT( slotStatusDetailsClicked() ) );
 
         m_customQueryLabel->hide();
         m_buttonEditCustomQuery->hide();
@@ -363,6 +368,14 @@ void Nepomuk::ServerConfigModule::slotCustomQueryButtonClicked()
         m_customQueryLabel->setText( queryString );
         changed();
     }
+}
+
+
+void Nepomuk::ServerConfigModule::slotStatusDetailsClicked()
+{
+    if( !m_statusDialog )
+        m_statusDialog = new StatusWidget( this );
+    m_statusDialog->exec();
 }
 
 

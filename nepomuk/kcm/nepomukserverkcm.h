@@ -32,6 +32,7 @@ class QAbstractButton;
 namespace Nepomuk {
 
     class IndexFolderSelectionDialog;
+    class StatusWidget;
 
     class ServerConfigModule : public KCModule, private Ui::NepomukConfigWidget
     {
@@ -53,6 +54,7 @@ namespace Nepomuk {
         void slotCustomQueryButtonClicked();
         void slotEditIndexFolders();
         void slotCustomQueryToggled( bool );
+        void slotStatusDetailsClicked();
 
     private:
         QRadioButton* buttonForQuery( const Query::Query& query ) const;
@@ -64,6 +66,7 @@ namespace Nepomuk {
         org::kde::nepomuk::Strigi* m_strigiInterface;
 
         IndexFolderSelectionDialog* m_indexFolderSelectionDialog;
+        StatusWidget* m_statusDialog;
 
         bool m_failedToInitialize;
 
