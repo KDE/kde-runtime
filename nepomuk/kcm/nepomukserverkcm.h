@@ -23,11 +23,16 @@
 #include "ui_nepomukconfigwidget.h"
 #include "nepomukserverinterface.h"
 #include "strigiserviceinterface.h"
-#include "nepomukservicemanagerinterface.h"
 
-class FolderSelectionModel;
+#include <Nepomuk/Query/Query>
+
+class QRadioButton;
+class QAbstractButton;
 
 namespace Nepomuk {
+
+    class IndexFolderSelectionDialog;
+
     class ServerConfigModule : public KCModule, private Ui::NepomukConfigWidget
     {
         Q_OBJECT
@@ -42,17 +47,27 @@ namespace Nepomuk {
         void defaults();
 
     private Q_SLOTS:
-        void slotUpdateStrigiStatus();
-        void recreateStrigiInterface();
+        void updateNepomukServerStatus();
+        void updateStrigiStatus();
+        void recreateInterfaces();
+        void slotCustomQueryButtonClicked();
+        void slotEditIndexFolders();
+        void slotCustomQueryToggled( bool );
 
     private:
-        org::kde::NepomukServer m_serverInterface;
-        org::kde::nepomuk::ServiceManager m_serviceManagerInterface;
+        QRadioButton* buttonForQuery( const Query::Query& query ) const;
+        Nepomuk::Query::Query queryForButton( QAbstractButton* button ) const;
+
+        bool m_nepomukAvailable;
+
+        org::kde::NepomukServer* m_serverInterface;
         org::kde::nepomuk::Strigi* m_strigiInterface;
 
-        FolderSelectionModel* m_folderModel;
+        IndexFolderSelectionDialog* m_indexFolderSelectionDialog;
 
         bool m_failedToInitialize;
+
+        QString m_customQuery;
     };
 }
 

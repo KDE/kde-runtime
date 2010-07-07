@@ -3,7 +3,7 @@
  <author>Sebastian Trueg</author>
  <class>NepomukConfigWidget</class>
  <widget class="QWidget" name="NepomukConfigWidget">
-  <layout class="QVBoxLayout">
+  <layout class="QVBoxLayout" name="verticalLayout_8">
    <item>
     <widget class="KTabWidget" name="tabWidget">
      <property name="currentIndex">
@@ -19,7 +19,7 @@
          <property name="title">
           <string>Nepomuk Semantic Desktop</string>
          </property>
-         <layout class="QVBoxLayout">
+         <layout class="QVBoxLayout" name="verticalLayout_9">
           <item>
            <widget class="QLabel" name="label_3">
             <property name="text">
@@ -36,6 +36,43 @@
              <string>Enable Nepomuk Semantic Desktop</string>
             </property>
            </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_6">
+            <item>
+             <spacer name="horizontalSpacer_3">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Fixed</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>1</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="KSqueezedTextLabel" name="m_labelNepomukStatus">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                <horstretch>1</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="font">
+               <font>
+                <weight>75</weight>
+                <italic>true</italic>
+                <bold>true</bold>
+               </font>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
          </layout>
         </widget>
@@ -118,39 +155,52 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab_2">
+     <widget class="QWidget" name="tab_4">
       <attribute name="title">
-       <string>File Indexing</string>
+       <string>Desktop Query</string>
       </attribute>
-      <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="3,2">
+      <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
-        <widget class="QGroupBox" name="groupBox_3">
+        <widget class="QGroupBox" name="groupBox_7">
          <property name="title">
-          <string>Strigi Index Folders</string>
+          <string>File Indexing</string>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout_3">
+         <layout class="QVBoxLayout" name="verticalLayout_7">
           <item>
-           <widget class="QLabel" name="label">
+           <widget class="QLabel" name="label_7">
             <property name="text">
              <string>Select the local folders that contain files to be indexed for fast desktop searches</string>
             </property>
-            <property name="wordWrap">
-             <bool>true</bool>
-            </property>
            </widget>
           </item>
           <item>
-           <widget class="QTreeView" name="m_viewIndexFolders"/>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="m_checkShowHiddenFolders">
-            <property name="toolTip">
-             <string>Check to be able to select hidden folders</string>
-            </property>
-            <property name="text">
-             <string>Show hidden folders</string>
-            </property>
-           </widget>
+           <layout class="QHBoxLayout" name="horizontalLayout_7">
+            <item>
+             <widget class="KSqueezedTextLabel" name="m_labelIndexFolders">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <horstretch>1</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="font">
+               <font>
+                <italic>true</italic>
+               </font>
+              </property>
+              <property name="text">
+               <string>KSqueezedTextLabel</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="KUrlLabel" name="m_buttonCustomizeIndexFolders">
+              <property name="text">
+               <string>Customize index folders...</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
           <item>
            <widget class="QCheckBox" name="m_checkIndexRemovableMedia">
@@ -166,17 +216,247 @@
         </widget>
        </item>
        <item>
-        <widget class="KEditListBox" name="m_editStrigiExcludeFilters">
-         <property name="toolTip">
-          <string>Filters which define the files that Strigi should ignore</string>
-         </property>
-         <property name="whatsThis">
-          <string/>
-         </property>
+        <widget class="QGroupBox" name="groupBox_5">
          <property name="title">
-          <string>Strigi Index Exclude Filters</string>
+          <string>Query Base Folder Listing</string>
          </property>
+         <layout class="QVBoxLayout" name="verticalLayout_6">
+          <item>
+           <widget class="QLabel" name="label_5">
+            <property name="text">
+             <string>Please choose what should be listed in the Desktop Query root folder besides the history and the saved queries.</string>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QGridLayout" name="gridLayout">
+            <item row="0" column="2">
+             <widget class="QRadioButton" name="m_checkRootQueryNeverOpened">
+              <property name="toolTip">
+               <string>Show the latest never opened files</string>
+              </property>
+              <property name="text">
+               <string>Never opened</string>
+              </property>
+              <attribute name="buttonGroup">
+               <string>m_rootQueryButtonGroup</string>
+              </attribute>
+             </widget>
+            </item>
+            <item row="0" column="0">
+             <widget class="QRadioButton" name="m_checkRootQueryFancy">
+              <property name="toolTip">
+               <string>Tries to show the most important files.</string>
+              </property>
+              <property name="text">
+               <string>Most important files</string>
+              </property>
+              <attribute name="buttonGroup">
+               <string>m_rootQueryButtonGroup</string>
+              </attribute>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QRadioButton" name="m_checkRootQueryLastModified">
+              <property name="toolTip">
+               <string>Show the most recently modified files.</string>
+              </property>
+              <property name="text">
+               <string>Last modified files</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+              <attribute name="buttonGroup">
+               <string>m_rootQueryButtonGroup</string>
+              </attribute>
+             </widget>
+            </item>
+            <item row="1" column="2">
+             <layout class="QHBoxLayout" name="horizontalLayout_4">
+              <item>
+               <widget class="QRadioButton" name="m_checkRootQueryCustom">
+                <property name="toolTip">
+                 <string>Specify the query that should be listed.</string>
+                </property>
+                <property name="text">
+                 <string>Custom query</string>
+                </property>
+                <attribute name="buttonGroup">
+                 <string>m_rootQueryButtonGroup</string>
+                </attribute>
+               </widget>
+              </item>
+              <item>
+               <widget class="KSqueezedTextLabel" name="m_customQueryLabel">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="font">
+                 <font>
+                  <italic>true</italic>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>KSqueezedTextLabel</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="KUrlLabel" name="m_buttonEditCustomQuery">
+                <property name="text">
+                 <string>Edit...</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer_2">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>1</width>
+                  <height>1</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+            <item row="1" column="1">
+             <spacer name="horizontalSpacer_4">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Fixed</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>10</width>
+                <height>1</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+         </layout>
         </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_6">
+         <property name="title">
+          <string>Miscellaneous</string>
+         </property>
+         <layout class="QFormLayout" name="formLayout">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_6">
+            <property name="toolTip">
+             <string>Specify the maximum number of results that should be listed in query folders.</string>
+            </property>
+            <property name="text">
+             <string>Maximum number of results in initial listing:</string>
+            </property>
+            <property name="buddy">
+             <cstring>m_spinMaxResults</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="KIntNumInput" name="m_spinMaxResults">
+            <property name="value">
+             <number>10</number>
+            </property>
+            <property name="minimum">
+             <number>0</number>
+            </property>
+            <property name="specialValueText">
+             <string>Show all results</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0" colspan="2">
+           <layout class="QHBoxLayout" name="horizontalLayout_5">
+            <item>
+             <widget class="QCheckBox" name="m_checkAlwaysSortByScore">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="toolTip">
+               <string>Sort all desktop query results by importance as deducted by Nepomuk</string>
+              </property>
+              <property name="whatsThis">
+               <string>Sort all search resulty by the importance deducted by Nepomuk.
+The importance of a resource is determined by its usage times, its usage frequence, its type, and other criteria.</string>
+              </property>
+              <property name="text">
+               <string>Always sort results by importance</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="KUrlLabel" name="m_buttonEditDocumentPriorities">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="toolTip">
+               <string>Modify the importance of document types</string>
+              </property>
+              <property name="text">
+               <string>Modify document types priorities...</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_5">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>146</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </widget>
@@ -266,10 +546,9 @@
    <header>ksqueezedtextlabel.h</header>
   </customwidget>
   <customwidget>
-   <class>KEditListBox</class>
-   <extends>QGroupBox</extends>
-   <header>keditlistbox.h</header>
-   <container>1</container>
+   <class>KUrlLabel</class>
+   <extends>QLabel</extends>
+   <header>kurllabel.h</header>
   </customwidget>
   <customwidget>
    <class>KTabWidget</class>
@@ -277,9 +556,13 @@
    <header>ktabwidget.h</header>
    <container>1</container>
   </customwidget>
+  <customwidget>
+   <class>KIntNumInput</class>
+   <extends>QWidget</extends>
+   <header>knuminput.h</header>
+  </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>tabWidget</tabstop>
   <tabstop>m_checkEnableNepomuk</tabstop>
  </tabstops>
  <resources/>
@@ -291,12 +574,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>52</x>
-     <y>58</y>
+     <x>68</x>
+     <y>102</y>
     </hint>
     <hint type="destinationlabel">
-     <x>34</x>
-     <y>52</y>
+     <x>42</x>
+     <y>154</y>
     </hint>
    </hints>
   </connection>
@@ -307,12 +590,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>564</x>
-     <y>118</y>
+     <x>122</x>
+     <y>143</y>
     </hint>
     <hint type="destinationlabel">
-     <x>632</x>
-     <y>118</y>
+     <x>696</x>
+     <y>140</y>
     </hint>
    </hints>
   </connection>
@@ -323,14 +606,49 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>642</x>
-     <y>121</y>
+     <x>696</x>
+     <y>140</y>
     </hint>
     <hint type="destinationlabel">
-     <x>426</x>
-     <y>118</y>
+     <x>122</x>
+     <y>143</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>m_checkRootQueryCustom</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>m_customQueryLabel</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>95</x>
+     <y>192</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>197</x>
+     <y>194</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>m_checkRootQueryCustom</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>m_buttonEditCustomQuery</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>43</x>
+     <y>193</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>230</x>
+     <y>190</y>
     </hint>
    </hints>
   </connection>
  </connections>
+ <buttongroups>
+  <buttongroup name="m_rootQueryButtonGroup"/>
+ </buttongroups>
 </ui>

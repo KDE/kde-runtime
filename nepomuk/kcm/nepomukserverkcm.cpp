@@ -18,19 +18,28 @@
 
 #include "nepomukserverkcm.h"
 #include "nepomukserverinterface.h"
-#include "folderselectionmodel.h"
 #include "../services/strigi/strigiservicedefaults.h"
+#include "../kioslaves/common/standardqueries.h"
+#include "nepomukservicecontrolinterface.h"
+#include "indexfolderselectiondialog.h"
 
 #include <KPluginFactory>
 #include <KPluginLoader>
 #include <KAboutData>
 #include <KSharedConfig>
 #include <KMessageBox>
+#include <KUrlLabel>
 
-#include <QtGui/QTreeView>
+#include <Nepomuk/Query/QueryParser>
+#include <Nepomuk/Query/FileQuery>
+
+#include <QtGui/QRadioButton>
+#include <QtGui/QInputDialog>
+#include <QtCore/QDir>
 #include <QtDBus/QDBusServiceWatcher>
 
 #include <Soprano/PluginManager>
+#include <Soprano/Backend>
 
 
 K_PLUGIN_FACTORY( NepomukConfigModuleFactory, registerPlugin<Nepomuk::ServerConfigModule>(); )
@@ -42,172 +51,189 @@ namespace {
         return QStringList() << QDir::homePath();
     }
 
-    void expandRecursively( const QModelIndex& index, QTreeView* view ) {
-        if ( index.isValid() ) {
-            view->expand( index );
-            expandRecursively( index.parent(), view );
-        }
-    }
-
-    bool isDirHidden( const QString& dir ) {
-        QDir d( dir );
-        while ( !d.isRoot() ) {
-            if ( QFileInfo( d.path() ).isHidden() )
-                return true;
-            if ( !d.cdUp() )
-                return false; // dir does not exist or is not readable
-        }
-        return false;
-    }
-
-    QStringList removeHiddenFolders( const QStringList& folders ) {
-        QStringList newFolders( folders );
-        for ( QStringList::iterator it = newFolders.begin(); it != newFolders.end(); /* do nothing here */ ) {
-            if ( isDirHidden( *it ) ) {
-                it = newFolders.erase( it );
-            }
-            else {
-                ++it;
+    /**
+     * Extracts the top level folders from the include list and optionally adds a hint about
+     * subfolders being excluded to them.
+     */
+    QString buildFolderLabel( const QStringList& includeFolders, const QStringList& excludeFolders ) {
+        QStringList sortedIncludeFolders( includeFolders );
+        qSort( sortedIncludeFolders );
+        QStringList topLevelFolders;
+        Q_FOREACH( const QString& folder, sortedIncludeFolders ) {
+            if ( topLevelFolders.isEmpty() ||
+                 !folder.startsWith( topLevelFolders.first() ) ) {
+                topLevelFolders.append( folder );
             }
         }
-        return newFolders;
+        QHash<QString, bool> topLevelFolderExcludeHash;
+        Q_FOREACH( const QString& folder, topLevelFolders ) {
+            topLevelFolderExcludeHash.insert( folder, false );
+        }
+        Q_FOREACH( const QString& folder, excludeFolders ) {
+            QMutableHashIterator<QString, bool> it( topLevelFolderExcludeHash );
+            while ( it.hasNext() ) {
+                it.next();
+                const QString topLevelFolder = it.key();
+                if ( folder.startsWith( topLevelFolder ) ) {
+                    it.setValue( true );
+                    break;
+                }
+            }
+        }
+        QStringList labels;
+        QHashIterator<QString, bool> it( topLevelFolderExcludeHash );
+        while ( it.hasNext() ) {
+            it.next();
+            QString path = it.key();
+            if ( KUrl( path ).equals( KUrl( QDir::homePath() ), KUrl::CompareWithoutTrailingSlash ) )
+                path = i18nc( "'Home' as in 'Home path', i.e. /home/username",  "Home" );
+            QString label = i18n( "<strong><filename>%1</filename></strong>", path );
+            if ( it.value() )
+                label += QLatin1String( " (" ) + i18n( "some subfolders excluded" ) + ')';
+            labels << label;
+        }
+        return labels.join( QLatin1String( ", " ) );
     }
 }
 
 
 Nepomuk::ServerConfigModule::ServerConfigModule( QWidget* parent, const QVariantList& args )
     : KCModule( NepomukConfigModuleFactory::componentData(), parent, args ),
-      m_serverInterface( "org.kde.NepomukServer", "/nepomukserver", QDBusConnection::sessionBus() ),
-      m_serviceManagerInterface( "org.kde.NepomukServer", "/servicemanager", QDBusConnection::sessionBus() ),
+      m_serverInterface( 0 ),
       m_strigiInterface( 0 ),
       m_failedToInitialize( false )
 {
     KAboutData *about = new KAboutData(
         "kcm_nepomuk", 0, ki18n("Nepomuk Configuration Module"),
         KDE_VERSION_STRING, KLocalizedString(), KAboutData::License_GPL,
-        ki18n("Copyright 2007 Sebastian Trüg"));
+        ki18n("Copyright 2007-2010 Sebastian Trüg"));
     about->addAuthor(ki18n("Sebastian Trüg"), KLocalizedString(), "trueg@kde.org");
     setAboutData(about);
     setButtons(Help|Apply|Default);
-    setupUi( this );
-    m_editStrigiExcludeFilters->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
-    m_folderModel = new FolderSelectionModel( m_viewIndexFolders );
-    m_viewIndexFolders->setModel( m_folderModel );
-    m_viewIndexFolders->setHeaderHidden( true );
-    m_viewIndexFolders->header()->setStretchLastSection( false );
-    m_viewIndexFolders->header()->setResizeMode( QHeaderView::ResizeToContents );
-    m_viewIndexFolders->setRootIsDecorated( true );
-    m_viewIndexFolders->setAnimated( true );
-    m_viewIndexFolders->setRootIndex( m_folderModel->setRootPath( QDir::rootPath() ) );
+    const Soprano::Backend* virtuosoBackend = Soprano::PluginManager::instance()->discoverBackendByName( QLatin1String( "virtuoso" ) );
+    m_nepomukAvailable = ( virtuosoBackend && virtuosoBackend->isAvailable() );
 
-    connect( m_checkEnableStrigi, SIGNAL( toggled(bool) ),
-             this, SLOT( changed() ) );
-    connect( m_checkEnableNepomuk, SIGNAL( toggled(bool) ),
-             this, SLOT( changed() ) );
-    connect( m_checkShowHiddenFolders, SIGNAL( toggled(bool) ),
-             this, SLOT( changed() ) );
-    connect( m_folderModel, SIGNAL( dataChanged(const QModelIndex&, const QModelIndex&) ),
-             this, SLOT( changed() ) );
-    connect( m_editStrigiExcludeFilters, SIGNAL( changed() ),
-             this, SLOT( changed() ) );
-    connect( m_sliderMemoryUsage, SIGNAL( valueChanged(int) ),
-             this, SLOT( changed() ) );
-    connect( m_checkIndexRemovableMedia, SIGNAL( toggled(bool) ),
-             this, SLOT( changed() ) );
-    connect( m_checkShowHiddenFolders, SIGNAL( toggled( bool ) ),
-             m_folderModel, SLOT( setHiddenFoldersShown( bool ) ) );
+    if ( m_nepomukAvailable ) {
+        setupUi( this );
 
-    QDBusServiceWatcher * watcher = new QDBusServiceWatcher( this );
-    watcher->addWatchedService( QLatin1String("org.kde.nepomuk.services.nepomukstrigiservice") );
-    watcher->setConnection( QDBusConnection::sessionBus() );
-    watcher->setWatchMode( QDBusServiceWatcher::WatchForRegistration | QDBusServiceWatcher::WatchForUnregistration );
-    
-    connect( watcher, SIGNAL( serviceRegistered(const QString&) ),
-             this, SLOT( slotUpdateStrigiStatus() ) );
-    connect( watcher, SIGNAL( serviceUnregistered(const QString&) ),
-             this, SLOT( slotUpdateStrigiStatus() ) );
+        m_indexFolderSelectionDialog = new IndexFolderSelectionDialog( this );
 
-    recreateStrigiInterface();
+        QDBusServiceWatcher * watcher = new QDBusServiceWatcher( this );
+        watcher->addWatchedService( QLatin1String("org.kde.nepomuk.services.nepomukstrigiservice") );
+        watcher->addWatchedService( QLatin1String("org.kde.NepomukServer") );
+        watcher->setConnection( QDBusConnection::sessionBus() );
+        watcher->setWatchMode( QDBusServiceWatcher::WatchForRegistration | QDBusServiceWatcher::WatchForUnregistration );
+
+        connect( watcher, SIGNAL( serviceRegistered(const QString&) ),
+                 this, SLOT( recreateInterfaces() ) );
+        connect( watcher, SIGNAL( serviceUnregistered(const QString&) ),
+                 this, SLOT( recreateInterfaces() ) );
+
+        recreateInterfaces();
+
+        connect( m_checkEnableStrigi, SIGNAL( toggled(bool) ),
+                 this, SLOT( changed() ) );
+        connect( m_checkEnableNepomuk, SIGNAL( toggled(bool) ),
+                 this, SLOT( changed() ) );
+        connect( m_sliderMemoryUsage, SIGNAL( valueChanged(int) ),
+                 this, SLOT( changed() ) );
+        connect( m_checkIndexRemovableMedia, SIGNAL( toggled(bool) ),
+                 this, SLOT( changed() ) );
+        connect( m_spinMaxResults, SIGNAL( valueChanged( int ) ),
+                 this, SLOT( changed() ) );
+        connect( m_rootQueryButtonGroup, SIGNAL( buttonClicked( int ) ),
+                 this, SLOT( changed() ) );
+
+        connect( m_checkRootQueryCustom, SIGNAL( toggled(bool) ),
+                 this, SLOT( slotCustomQueryToggled( bool ) ) );
+        connect( m_buttonEditCustomQuery, SIGNAL( leftClickedUrl() ),
+                 this, SLOT( slotCustomQueryButtonClicked() ) );
+        connect( m_buttonCustomizeIndexFolders, SIGNAL( leftClickedUrl() ),
+                 this, SLOT( slotEditIndexFolders() ) );
+
+        m_customQueryLabel->hide();
+        m_buttonEditCustomQuery->hide();
+    }
+    else {
+        QLabel* label = new QLabel( i18n( "The Nepomuk installation is not complete. No Nepomuk settings can be provided." ) );
+        label->setAlignment( Qt::AlignCenter );
+        QVBoxLayout* layout = new QVBoxLayout( this );
+        layout->addWidget( label );
+    }
 }
 
 
 Nepomuk::ServerConfigModule::~ServerConfigModule()
 {
     delete m_strigiInterface;
+    delete m_serverInterface;
 }
 
 
 void Nepomuk::ServerConfigModule::load()
 {
-    bool sopranoBackendAvailable = !Soprano::PluginManager::instance()->allBackends().isEmpty();
+    if ( !m_nepomukAvailable )
+        return;
 
-    m_checkEnableNepomuk->setEnabled( sopranoBackendAvailable );
+    // 1. basic setup
+    KConfig config( "nepomukserverrc" );
+    m_checkEnableNepomuk->setChecked( config.group( "Basic Settings" ).readEntry( "Start Nepomuk", true ) );
+    m_checkEnableStrigi->setChecked( config.group( "Service-nepomukstrigiservice" ).readEntry( "autostart", true ) );
 
-    if ( !sopranoBackendAvailable ) {
-        KMessageBox::sorry( this,
-                            i18n( "No Soprano Database backend available. Please check your installation." ),
-                            i18n( "Nepomuk cannot be started" ) );
-    }
-    else if ( m_serverInterface.isValid() ) {
-        m_checkEnableStrigi->setChecked( m_serverInterface.isStrigiEnabled().value() );
-        m_checkEnableNepomuk->setChecked( m_serverInterface.isNepomukEnabled().value() );
-    }
-    else {
-        KMessageBox::sorry( this,
-                            i18n( "The Nepomuk Server is not running. The settings "
-                                  "will be used the next time the server is started." ),
-                            i18n( "Nepomuk server not running" ) );
 
-        KConfig config( "nepomukserverrc" );
-        m_checkEnableNepomuk->setChecked( config.group( "Basic Settings" ).readEntry( "Start Nepomuk", true ) );
-        m_checkEnableStrigi->setChecked( config.group( "Service-nepomukstrigiservice" ).readEntry( "autostart", true ) );
-    }
-
+    // 2. strigi settings
     KConfig strigiConfig( "nepomukstrigirc" );
-    m_checkShowHiddenFolders->setChecked( strigiConfig.group( "General" ).readEntry( "index hidden folders", false ) );
-    m_folderModel->setFolders( strigiConfig.group( "General" ).readPathEntry( "folders", defaultFolders() ),
-                               strigiConfig.group( "General" ).readPathEntry( "exclude folders", QStringList() ) );
-    m_editStrigiExcludeFilters->setItems( strigiConfig.group( "General" ).readEntry( "exclude filters", Nepomuk::defaultExcludeFilterList() ) );
+    m_indexFolderSelectionDialog->setIndexHiddenFolders( strigiConfig.group( "General" ).readEntry( "index hidden folders", false ) );
+    m_indexFolderSelectionDialog->setFolders( strigiConfig.group( "General" ).readPathEntry( "folders", defaultFolders() ),
+                                              strigiConfig.group( "General" ).readPathEntry( "exclude folders", QStringList() ) );
+    m_indexFolderSelectionDialog->setExcludeFilters( strigiConfig.group( "General" ).readEntry( "exclude filters", Nepomuk::defaultExcludeFilterList() ) );
     m_checkIndexRemovableMedia->setChecked( strigiConfig.group( "General" ).readEntry( "index newly mounted", false ) );
 
+    groupBox->setEnabled(m_checkEnableNepomuk->isChecked());
+
+    // 3. storage service
     KConfig serverConfig( "nepomukserverrc" );
     const int maxMem = qMax( 20, serverConfig.group( "main Settings" ).readEntry( "Maximum memory", 50 ) );
     m_sliderMemoryUsage->setValue( maxMem );
     m_editMemoryUsage->setValue( maxMem );
 
-    // make sure we do not have a hidden folder to expand which would make QFileSystemModel crash
-    // + it would be weird to have a hidden folder indexed but not shown
-    if ( !m_checkShowHiddenFolders->isChecked() ) {
-        foreach( const QString& dir, m_folderModel->includeFolders() + m_folderModel->excludeFolders() ) {
-            if ( isDirHidden( dir ) ) {
-                m_checkShowHiddenFolders->setChecked( true );
-                break;
-            }
-        }
-    }
 
-    // make sure that the tree is expanded to show all selected items
-    foreach( const QString& dir, m_folderModel->includeFolders() + m_folderModel->excludeFolders() ) {
-        expandRecursively( m_folderModel->index( dir ), m_viewIndexFolders );
-    }
-    groupBox->setEnabled(m_checkEnableNepomuk->isChecked());
-    recreateStrigiInterface();
-    slotUpdateStrigiStatus();
+    // 4. kio_nepomuksearch settings
+    KConfig kio_nepomuksearchConfig( "kio_nepomuksearchrc" );
+    KConfigGroup kio_nepomuksearchGeneral = kio_nepomuksearchConfig.group( "General" );
+    m_spinMaxResults->setValue( kio_nepomuksearchGeneral.readEntry( "Default limit", 10 ) );
+
+    // this is a temp solution until we have a proper query builder
+    m_customQuery = kio_nepomuksearchGeneral.readEntry( "Custom query", QString() );
+    m_customQueryLabel->setText( m_customQuery );
+
+    buttonForQuery( Query::Query::fromString(
+                        kio_nepomuksearchGeneral.readEntry(
+                            "Root query",
+                            Nepomuk::lastModifiedFilesQuery().toString() ) ) )->setChecked( true );
+
+
+
+    // 5. update state
+    m_labelIndexFolders->setText( buildFolderLabel( m_indexFolderSelectionDialog->includeFolders(),
+                                                    m_indexFolderSelectionDialog->excludeFolders() ) );
+    recreateInterfaces();
+    updateStrigiStatus();
+    updateNepomukServerStatus();
+
+    // 6. all values loaded -> no changes
     emit changed(false);
 }
 
 
 void Nepomuk::ServerConfigModule::save()
 {
-    QStringList includeFolders = m_folderModel->includeFolders();
-    QStringList excludeFolders = m_folderModel->excludeFolders();
+    if ( !m_nepomukAvailable )
+        return;
 
-    // 0. remove all hidden dirs from the folder lists if hidden folders are not to be indexed
-    if ( !m_checkShowHiddenFolders->isChecked() ) {
-        includeFolders = removeHiddenFolders( includeFolders );
-        excludeFolders = removeHiddenFolders( excludeFolders );
-    }
+    QStringList includeFolders = m_indexFolderSelectionDialog->includeFolders();
+    QStringList excludeFolders = m_indexFolderSelectionDialog->excludeFolders();
 
     // 1. change the settings (in case the server is not running)
     KConfig config( "nepomukserverrc" );
@@ -220,44 +246,75 @@ void Nepomuk::ServerConfigModule::save()
     KConfig strigiConfig( "nepomukstrigirc" );
     strigiConfig.group( "General" ).writePathEntry( "folders", includeFolders );
     strigiConfig.group( "General" ).writePathEntry( "exclude folders", excludeFolders );
-    strigiConfig.group( "General" ).writeEntry( "exclude filters", m_editStrigiExcludeFilters->items() );
-    strigiConfig.group( "General" ).writeEntry( "index hidden folders", m_checkShowHiddenFolders->isChecked() );
+    strigiConfig.group( "General" ).writeEntry( "exclude filters", m_indexFolderSelectionDialog->excludeFilters() );
+    strigiConfig.group( "General" ).writeEntry( "index hidden folders", m_indexFolderSelectionDialog->indexHiddenFolders() );
     strigiConfig.group( "General" ).writeEntry( "index newly mounted", m_checkIndexRemovableMedia->isChecked() );
 
 
     // 3. update the current state of the nepomuk server
-    if ( m_serverInterface.isValid() ) {
-        m_serverInterface.enableNepomuk( m_checkEnableNepomuk->isChecked() );
-        m_serverInterface.enableStrigi( m_checkEnableStrigi->isChecked() );
+    if ( m_serverInterface->isValid() ) {
+        m_serverInterface->enableNepomuk( m_checkEnableNepomuk->isChecked() );
+        m_serverInterface->enableStrigi( m_checkEnableStrigi->isChecked() );
     }
     else {
-        KMessageBox::sorry( this,
-                            i18n( "The Nepomuk Server is not running. The settings have been saved "
-                                  "and will be used the next time the server is started." ),
-                            i18n( "Nepomuk server not running" ) );
+        if ( !QProcess::startDetached( QLatin1String( "nepomukserver" ) ) ) {
+            KMessageBox::error( this,
+                                i18n( "Failed to start Nepomuk Server. The settings have been saved "
+                                      "and will be used the next time the server is started." ),
+                                i18n( "Nepomuk server not running" ) );
+        }
     }
 
-    recreateStrigiInterface();
-    slotUpdateStrigiStatus();
 
+    // 4. update kio_nepomuksearch config
+    KConfig kio_nepomuksearchConfig( "kio_nepomuksearchrc" );
+    kio_nepomuksearchConfig.group( "General" ).writeEntry( "Default limit", m_spinMaxResults->value() );
+    kio_nepomuksearchConfig.group( "General" ).writeEntry( "Root query", queryForButton( m_rootQueryButtonGroup->checkedButton() ).toString() );
+    kio_nepomuksearchConfig.group( "General" ).writeEntry( "Custom query", m_customQuery );
+
+
+    // 5. update state
+    recreateInterfaces();
+    updateStrigiStatus();
+    updateNepomukServerStatus();
+
+
+    // 6. all values saved -> no changes
     emit changed(false);
 }
 
 
 void Nepomuk::ServerConfigModule::defaults()
 {
+    if ( !m_nepomukAvailable )
+        return;
+
     m_checkEnableStrigi->setChecked( true );
     m_checkEnableNepomuk->setChecked( true );
-    m_checkShowHiddenFolders->setChecked( false );
-    m_editStrigiExcludeFilters->setItems( Nepomuk::defaultExcludeFilterList() );
-    m_folderModel->setFolders( defaultFolders(), QStringList() );
+    m_indexFolderSelectionDialog->setIndexHiddenFolders( false );
+    m_indexFolderSelectionDialog->setExcludeFilters( Nepomuk::defaultExcludeFilterList() );
+    m_indexFolderSelectionDialog->setFolders( defaultFolders(), QStringList() );
+    m_spinMaxResults->setValue( 10 );
+    m_checkRootQueryLastModified->setChecked( true );
 }
 
 
-void Nepomuk::ServerConfigModule::slotUpdateStrigiStatus()
+void Nepomuk::ServerConfigModule::updateNepomukServerStatus()
 {
-    if ( m_serviceManagerInterface.isServiceRunning( "nepomukstrigiservice") ) {
-        if ( m_serviceManagerInterface.isServiceInitialized( "nepomukstrigiservice") ) {
+    if ( m_serverInterface &&
+         m_serverInterface->isNepomukEnabled() ) {
+        m_labelNepomukStatus->setText( i18nc( "@info:status", "Nepomuk system is active" ) );
+    }
+    else {
+        m_labelNepomukStatus->setText( i18nc( "@info:status", "Nepomuk system is inactive" ) );
+    }
+}
+
+
+void Nepomuk::ServerConfigModule::updateStrigiStatus()
+{
+    if ( QDBusConnection::sessionBus().interface()->isServiceRegistered( "org.kde.nepomuk.services.nepomukstrigiservice" ) ) {
+        if ( org::kde::nepomuk::ServiceControl( "org.kde.nepomuk.services.nepomukstrigiservice", "/servicecontrol", QDBusConnection::sessionBus() ).isInitialized() ) {
             QString status = m_strigiInterface->userStatusString();
             if ( status.isEmpty() ) {
                 m_labelStrigiStatus->setText( i18nc( "@info:status %1 is an error message returned by a dbus interface.",
@@ -280,12 +337,89 @@ void Nepomuk::ServerConfigModule::slotUpdateStrigiStatus()
 }
 
 
-void Nepomuk::ServerConfigModule::recreateStrigiInterface()
+void Nepomuk::ServerConfigModule::recreateInterfaces()
 {
     delete m_strigiInterface;
+    delete m_serverInterface;
+
     m_strigiInterface = new org::kde::nepomuk::Strigi( "org.kde.nepomuk.services.nepomukstrigiservice", "/nepomukstrigiservice", QDBusConnection::sessionBus() );
+    m_serverInterface = new org::kde::NepomukServer( "org.kde.NepomukServer", "/nepomukserver", QDBusConnection::sessionBus() );
+
     connect( m_strigiInterface, SIGNAL( statusChanged() ),
-             this, SLOT( slotUpdateStrigiStatus() ) );
+             this, SLOT( updateStrigiStatus() ) );
+}
+
+
+void Nepomuk::ServerConfigModule::slotCustomQueryButtonClicked()
+{
+    // this is a temp solution until we have a proper query builder
+    QString queryString = QInputDialog::getText( this,
+                                                 i18n( "Custom root folder query" ),
+                                                 i18n( "Please enter a query to be listed in the root folder" ),
+                                                 QLineEdit::Normal,
+                                                 m_customQuery );
+    if ( !queryString.isEmpty() ) {
+        m_customQuery = queryString;
+        m_customQueryLabel->setText( queryString );
+    }
+}
+
+
+void Nepomuk::ServerConfigModule::slotEditIndexFolders()
+{
+    const QStringList oldIncludeFolders = m_indexFolderSelectionDialog->includeFolders();
+    const QStringList oldExcludeFolders = m_indexFolderSelectionDialog->excludeFolders();
+    const QStringList oldExcludeFilters = m_indexFolderSelectionDialog->excludeFilters();
+    const bool oldIndexHidden = m_indexFolderSelectionDialog->indexHiddenFolders();
+
+    if ( m_indexFolderSelectionDialog->exec() ) {
+        m_labelIndexFolders->setText( buildFolderLabel( m_indexFolderSelectionDialog->includeFolders(),
+                                                        m_indexFolderSelectionDialog->excludeFolders() ) );
+    }
+    else {
+        // revert to previous settings
+        m_indexFolderSelectionDialog->setFolders( oldIncludeFolders, oldExcludeFolders );
+        m_indexFolderSelectionDialog->setExcludeFilters( oldExcludeFilters );
+        m_indexFolderSelectionDialog->setIndexHiddenFolders( oldIndexHidden );
+    }
+}
+
+
+void Nepomuk::ServerConfigModule::slotCustomQueryToggled( bool on )
+{
+    if ( on && m_customQuery.isEmpty() ) {
+        slotCustomQueryButtonClicked();
+    }
+}
+
+
+QRadioButton* Nepomuk::ServerConfigModule::buttonForQuery( const Query::Query& query ) const
+{
+    if ( query == Nepomuk::neverOpenedFilesQuery() )
+        return m_checkRootQueryNeverOpened;
+    else if ( query == Nepomuk::lastModifiedFilesQuery() )
+        return m_checkRootQueryLastModified;
+    else if ( query == Nepomuk::mostImportantFilesQuery() )
+        return m_checkRootQueryFancy;
+    else
+        return m_checkRootQueryCustom;
+}
+
+
+Nepomuk::Query::Query Nepomuk::ServerConfigModule::queryForButton( QAbstractButton* button ) const
+{
+    if ( button == m_checkRootQueryNeverOpened )
+        return Nepomuk::neverOpenedFilesQuery();
+    else if ( button == m_checkRootQueryLastModified )
+        return Nepomuk::lastModifiedFilesQuery();
+    else if ( button == m_checkRootQueryFancy )
+        return Nepomuk::mostImportantFilesQuery();
+    else {
+        // force to always only query for files
+        Nepomuk::Query::FileQuery query = Query::QueryParser::parseQuery( m_customQuery );
+        query.setFileMode( Query::FileQuery::QueryFiles );
+        return query;
+    }
 }
 
 #include "nepomukserverkcm.moc"
