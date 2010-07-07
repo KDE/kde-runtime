@@ -80,11 +80,9 @@ namespace Nepomuk {
     private:
         bool ensureNepomukRunning( bool emitError = true );
         void listRoot();
-        void listLastQueries();
-        void listUserQueries();
 
         /**
-         * Get (possibly cached) query folder
+         * Create a query folder for a query url
          */
         SearchFolder* getQueryFolder( const KUrl& url );
 

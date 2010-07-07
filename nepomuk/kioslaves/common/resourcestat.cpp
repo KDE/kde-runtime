@@ -280,9 +280,6 @@ KIO::UDSEntry Nepomuk::statNepomukResource( const Nepomuk::Resource& res )
     if ( !reUrl.isEmpty() ) {
         uds.insert( KIO::UDSEntry::UDS_MIME_TYPE, QLatin1String( "inode/directory" ) );
         uds.insert( KIO::UDSEntry::UDS_FILE_TYPE, S_IFDIR );
-
-        // FIXME: not sure this is necessary if we already do the redirect in listDir()
-        uds.insert( KIO::UDSEntry::UDS_URL, reUrl.url() );
     }
 
     return uds;

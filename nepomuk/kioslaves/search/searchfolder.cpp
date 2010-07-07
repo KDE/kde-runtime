@@ -72,6 +72,7 @@ Nepomuk::SearchFolder::SearchFolder( const KUrl& url, KIO::SlaveBase* slave )
     m_query.setRequestProperties( QList<Query::Query::RequestProperty>() << Query::Query::RequestProperty( Nepomuk::Vocabulary::NIE::url() ) );
 
     if ( m_query.isValid() ) {
+        kDebug() << "Extracted query" << m_query;
         // we default to a limit to get results as fast as possible
         // the "+1" is necessary to determine if there are actually more results we could list
         if ( m_query.limit() == 0 ) {
@@ -83,6 +84,7 @@ Nepomuk::SearchFolder::SearchFolder( const KUrl& url, KIO::SlaveBase* slave )
     else {
         // the URL contains pure sparql. We simply list it without trying to change the limit
         m_sparqlQuery = Nepomuk::Query::Query::sparqlFromQueryUrl( url );
+        kDebug() << "Extracted SPARQL query:" << m_sparqlQuery;
     }
 }
 
@@ -268,12 +270,13 @@ KIO::UDSEntry Nepomuk::SearchFolder::statResult( const Query::Result& result )
     KIO::UDSEntry uds;
     if ( statFile( url, nieUrl, uds ) ) {
         if ( !nieUrl.isEmpty() ) {
-            // needed since the nepomuk:/ KIO slave does not do stating of files in its own
-            // subdirs (tags and filesystems), and neither do we with real subdirs
-            if ( uds.isDir() )
-                uds.insert( KIO::UDSEntry::UDS_URL, nieUrl.url() );
-
             if ( nieUrl.isLocalFile() ) {
+                // There is a trade-off between using UDS_TARGET_URL or not. The advantage is that we get proper
+                // file names in opening applications and non-KDE apps can handle the URLs properly. The downside
+                // is that we lose the context information, i.e. query results cannot be browsed in the opening
+                // application. We decide pro-filenames and pro-non-kde-apps here.
+                if( !uds.isDir() )
+                    uds.insert( KIO::UDSEntry::UDS_TARGET_URL, nieUrl.url() );
                 uds.insert( KIO::UDSEntry::UDS_LOCAL_PATH, nieUrl.toLocalFile() );
             }
 

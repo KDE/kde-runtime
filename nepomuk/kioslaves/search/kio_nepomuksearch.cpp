@@ -61,77 +61,16 @@
 
 
 namespace {
-    void addGenericSearchFolderItems( KIO::UDSEntry& uds ) {
+    KIO::UDSEntry statSearchFolder( const KUrl& url ) {
+        KIO::UDSEntry uds;
         uds.insert( KIO::UDSEntry::UDS_ACCESS, 0700 );
         uds.insert( KIO::UDSEntry::UDS_USER, KUser().loginName() );
         uds.insert( KIO::UDSEntry::UDS_FILE_TYPE, S_IFDIR );
         uds.insert( KIO::UDSEntry::UDS_MIME_TYPE, QString::fromLatin1( "inode/directory" ) );
-        uds.insert( KIO::UDSEntry::UDS_CUSTOM_SORT_WEIGHT, -1 );
         uds.insert( KIO::UDSEntry::UDS_ICON_OVERLAY_NAMES, QLatin1String( "nepomuk" ) );
         uds.insert( KIO::UDSEntry::UDS_DISPLAY_TYPE, i18n( "Query folder" ) );
-    }
-
-    KIO::UDSEntry statSearchFolder( const KUrl& url ) {
-        KIO::UDSEntry uds;
-        addGenericSearchFolderItems( uds );
-        uds.insert( KIO::UDSEntry::UDS_NAME, Nepomuk::resourceUriToUdsName( url ) );
+        uds.insert( KIO::UDSEntry::UDS_NAME, Nepomuk::Query::Query::titleFromQueryUrl( url ) );
         uds.insert( KIO::UDSEntry::UDS_DISPLAY_NAME, Nepomuk::Query::Query::titleFromQueryUrl( url ) );
-        uds.insert( KIO::UDSEntry::UDS_URL, url.url() );
-        return uds;
-    }
-
-
-    KIO::UDSEntry statLastQueriesFolder() {
-        KIO::UDSEntry uds;
-        addGenericSearchFolderItems( uds );
-        uds.insert( KIO::UDSEntry::UDS_NAME, QLatin1String( "lastqueries" ) );
-        uds.insert( KIO::UDSEntry::UDS_DISPLAY_NAME, i18n( "Last Used Queries" ) );
-        uds.insert( KIO::UDSEntry::UDS_ICON_NAME, QLatin1String( "view-history" ) );
-        uds.insert( KIO::UDSEntry::UDS_CUSTOM_SORT_WEIGHT, -2 );
-        return uds;
-    }
-
-
-    KIO::UDSEntry statLastQuery( const KUrl& url, const QDateTime& timestamp ) {
-        KIO::UDSEntry uds;
-        addGenericSearchFolderItems( uds );
-
-        // use a unique name
-        uds.insert( KIO::UDSEntry::UDS_NAME, Nepomuk::resourceUriToUdsName( url ) );
-
-        // if we do not have a user-readable representation of the query we use something generic
-        QString displayName( Nepomuk::Query::Query::titleFromQueryUrl( url ) );
-        if ( displayName.isEmpty() ) {
-            displayName = i18nc( "%1 is a datetime formatted via KLocale::formatDateTime",
-                                 "Query from %1",
-                                 KGlobal::locale()->formatDateTime( timestamp, KLocale::FancyShortDate ) );
-        }
-        uds.insert( KIO::UDSEntry::UDS_DISPLAY_NAME, displayName );
-
-        // fancy type
-        uds.insert( KIO::UDSEntry::UDS_DISPLAY_TYPE, i18n( "Previously used query" ) );
-
-        // allow sorting by query date
-        uds.insert( KIO::UDSEntry::UDS_MODIFICATION_TIME, timestamp.toTime_t() );
-
-        // we do not handle listing subfolders in /lastqueries/
-        uds.insert( KIO::UDSEntry::UDS_URL, url.url() );
-        return uds;
-    }
-
-
-    KIO::UDSEntry statMoreResultsItem( const Nepomuk::Query::Query& query, const QString& title ) {
-        KIO::UDSEntry uds;
-        addGenericSearchFolderItems( uds );
-        uds.insert( KIO::UDSEntry::UDS_NAME, QLatin1String( "_nepomuksearch_show_all_results_" ) );
-        uds.insert( KIO::UDSEntry::UDS_DISPLAY_NAME, i18n( "More Results..." ) );
-        uds.insert( KIO::UDSEntry::UDS_CUSTOM_SORT_WEIGHT, 1 );
-
-        // create the new query which does not use a limit (-1 make SearchFolder ignore the limit)
-        Nepomuk::Query::Query newQuery( query );
-        newQuery.setLimit( -1 );
-        uds.insert( KIO::UDSEntry::UDS_URL, newQuery.toSearchUrl( title ).url() );
-
         return uds;
     }
 
@@ -139,6 +78,31 @@ namespace {
         const QString path = url.path(KUrl::RemoveTrailingSlash);
         return( !url.hasQuery() &&
                 ( path.isEmpty() || path == QLatin1String("/") ) );
+    }
+
+    // a query folder has a non-empty path with a single section and a query parameter
+    // Example: nepomuksearch:/My Query?query=foobar
+    bool isQueryFolder( const KUrl& url ) {
+        return( url.hasQuery() &&
+                url.directory() == QLatin1String("/") );
+    }
+
+    // Legacy query URLs look like: nepomuksearch:/?query=xyz&title=foobar
+    // i.e. an empty path and a query, new URLs have their title as path
+    bool isLegacyQueryUrl( const KUrl& url ) {
+        const QString path = url.path(KUrl::RemoveTrailingSlash);
+        return( url.hasQuery() &&
+                ( path.isEmpty() || path == QLatin1String("/") ) );
+    }
+
+    KUrl convertLegacyQueryUrl( const KUrl& url ) {
+        KUrl newUrl(QLatin1String("nepomuksearch:/") + Nepomuk::Query::Query::titleFromQueryUrl(url));
+        Nepomuk::Query::Query query = Nepomuk::Query::Query::fromQueryUrl(url);
+        if(query.isValid())
+            newUrl.addQueryItem(QLatin1String("encodedquery"), query.toString());
+        else
+            newUrl.addQueryItem(QLatin1String("sparql"), Nepomuk::Query::Query::sparqlFromQueryUrl(url));
+        return newUrl;
     }
     const int s_historyMax = 10;
 }
@@ -179,13 +143,19 @@ void Nepomuk::SearchProtocol::listDir( const KUrl& url )
 {
     kDebug() << url;
 
+    // list the root folder
     if ( isRootUrl( url ) ) {
         listRoot();
     }
-    else if ( url.path(KUrl::RemoveTrailingSlash) == QLatin1String( "/lastqueries" ) ) {
-        listLastQueries();
+
+    // backwards compatibility with pre-4.6 query URLs
+    else if( isLegacyQueryUrl( url ) ) {
+        redirection( convertLegacyQueryUrl(url) );
+        finished();
     }
-    else {
+
+    // list the actual query folders
+    else if( isQueryFolder( url ) ) {
         if ( !ensureNepomukRunning(false) ) {
             // we defer the listing to later when Nepomuk is up and running
             listEntry( KIO::UDSEntry(),  true);
@@ -197,7 +167,8 @@ void Nepomuk::SearchProtocol::listDir( const KUrl& url )
 
             // did we limit the search
             if ( folder->haveMoreResults() ) {
-                listEntry( statMoreResultsItem( folder->query(), Query::Query::titleFromQueryUrl( url ) ), false );
+                //setMetaData( QLatin1String("total query count"), QString::number(folder->totalCount()) );
+                setMetaData(QLatin1String("more results"), QLatin1String("true"));
             }
 
             listEntry( KIO::UDSEntry(), true );
@@ -206,6 +177,11 @@ void Nepomuk::SearchProtocol::listDir( const KUrl& url )
         else {
             error( KIO::ERR_DOES_NOT_EXIST, url.prettyUrl() );
         }
+    }
+
+    // listing of query results that are folders
+    else {
+        ForwardingSlaveBase::listDir(url);
     }
 }
 
@@ -237,14 +213,22 @@ void Nepomuk::SearchProtocol::mimetype( const KUrl& url )
 {
     kDebug() << url;
 
+    // the root url is always a folder
     if ( isRootUrl( url ) ) {
         mimeType( QString::fromLatin1( "inode/directory" ) );
         finished();
     }
-    else if ( url.directory() == QLatin1String( "/" ) ) {
+
+    // Query result URLs in the root folder do not include a query
+    // while all query folders do. The latter ones are what we check
+    // for here.
+    else if ( url.directory() == QLatin1String( "/" ) &&
+              url.hasQuery() ) {
         mimeType( QString::fromLatin1( "inode/directory" ) );
         finished();
     }
+
+    // results are forwarded
     else {
         ForwardingSlaveBase::mimetype( url );
     }
@@ -255,6 +239,7 @@ void Nepomuk::SearchProtocol::stat( const KUrl& url )
 {
     kDebug() << url;
 
+    // the root folder
     if ( isRootUrl( url ) ) {
         kDebug() << "Stat root" << url;
         //
@@ -270,15 +255,15 @@ void Nepomuk::SearchProtocol::stat( const KUrl& url )
         statEntry( uds );
         finished();
     }
-    else if ( url.path(KUrl::RemoveTrailingSlash) == QLatin1String( "/lastqueries" ) ) {
-        statEntry( statLastQueriesFolder() );
-        finished();
-    }
-    else if ( url.fileName().isEmpty() ) {
+
+    // query folders
+    else if( isQueryFolder( url ) ) {
         kDebug() << "Stat search folder" << url;
         statEntry( statSearchFolder( url ) );
         finished();
     }
+
+    // results are forwarded
     else {
         kDebug() << "Stat forward" << url;
         ForwardingSlaveBase::stat(url);
@@ -288,22 +273,7 @@ void Nepomuk::SearchProtocol::stat( const KUrl& url )
 
 void Nepomuk::SearchProtocol::del(const KUrl& url, bool isFile)
 {
-    // we handle both cases just to be sure
-    Nepomuk::UserQueryUrlList userQueries;
-    if ( userQueries.containsQueryUrl( url ) ) {
-        userQueries.removeUserQuery( url );
-        finished();
-    }
-    else if ( userQueries.contains( Nepomuk::queryUrlFromUserQueryUrl( url ) ) ) {
-        userQueries.removeUserQuery( Nepomuk::queryUrlFromUserQueryUrl( url ) );
-        finished();
-    }
-    else if ( isFile ) {
-        ForwardingSlaveBase::del( url, isFile );
-    }
-    else {
-        error( KIO::ERR_UNSUPPORTED_ACTION, url.prettyUrl() );
-    }
+    ForwardingSlaveBase::del( url, isFile );
 }
 
 
@@ -316,18 +286,50 @@ bool Nepomuk::SearchProtocol::rewriteUrl( const KUrl& url, KUrl& newURL )
 }
 
 
-void Nepomuk::SearchProtocol::prepareUDSEntry( KIO::UDSEntry&, bool ) const
+void Nepomuk::SearchProtocol::prepareUDSEntry( KIO::UDSEntry& uds, bool listing ) const
 {
-    // we already handle UDS_URL in SearchFolder. No need to do anything more here.
+    // for performace reasons we do encode the result's resource URI in the UDS_NAME
+    // Otherwise we would have to re-query for each stat operation
+    // This is simple for "direct" query results (SearchFolder takes care of that)
+    // but a bit harder for items in results that are folders.
+    // In the latter case we get the parent folder's resource URI (which is encoded in
+    // the UDS_NAME) and append the filename.
+    //
+    // Also note that results listed via a SearchFolder will never go through this method
+    // since they are listed directly and not via a forward. Forwarding will only happen
+    // for search results that are folders and for non-listing operations.
+
+    kDebug() << requestedUrl() << processedUrl() << uds.stringValue(KIO::UDSEntry::UDS_NAME);
+    const QString name = uds.stringValue(KIO::UDSEntry::UDS_NAME);
+    if(name != QLatin1String(".") && name != QLatin1String("..")) {
+        // let the ForwardingSlaveBase create UDS_LOCAL_PATH and mimetype entries
+        // This call depends on the original UDS_NAME which we change below. Thus, it
+        // is important to let ForwardingSlaveBase do its thing before we start ours
+        ForwardingSlaveBase::prepareUDSEntry( uds, listing );
+
+        // encode the URL in the UDS_NAME to prevent a re-query in stat and friends
+        KUrl resourceUrl(processedUrl());
+        if(listing) {
+            resourceUrl.addPath(name);
+        }
+        uds.insert(KIO::UDSEntry::UDS_NAME, Nepomuk::resourceUriToUdsName(resourceUrl));
+        if ( !uds.contains( KIO::UDSEntry::UDS_DISPLAY_NAME ) ) {
+            uds.insert(KIO::UDSEntry::UDS_DISPLAY_NAME, name);
+        }
+
+        // There is a trade-off between using UDS_TARGET_URL or not. The advantage is that we get proper
+        // file names in opening applications and non-KDE apps can handle the URLs properly. The downside
+        // is that we lose the context information, i.e. query results cannot be browsed in the opening
+        // application. We decide pro-filenames and pro-non-kde-apps here.
+        if( !uds.isDir() && resourceUrl.isLocalFile() )
+            uds.insert( KIO::UDSEntry::UDS_TARGET_URL, resourceUrl.url() );
+    }
 }
 
 
 void Nepomuk::SearchProtocol::listRoot()
 {
     kDebug();
-
-    listEntry( statLastQueriesFolder(), false );
-    listUserQueries();
 
     // flush
     listEntry( KIO::UDSEntry(), true );
@@ -343,52 +345,9 @@ void Nepomuk::SearchProtocol::listRoot()
 }
 
 
-void Nepomuk::SearchProtocol::listLastQueries()
-{
-    KSharedConfigPtr cfg = KSharedConfig::openConfig( "kio_nepomuksearchrc" );
-    KConfigGroup grp = cfg->group( "Last Queries" );
-
-    // read config
-    const int cnt = grp.readEntry( "count", 0 );
-    QList<QPair<KUrl, QDateTime> > entries;
-    for ( int i = 0; i < cnt; ++i ) {
-        KUrl u = grp.readEntry( QString::fromLatin1( "query_%1_url" ).arg( i ), QString() );
-        QDateTime t = grp.readEntry( QString::fromLatin1( "query_%1_timestamp" ).arg( i ), QDateTime() );
-        if ( !u.isEmpty() && t.isValid() )
-            listEntry( statLastQuery( u, t ), false );
-    }
-
-    listEntry( KIO::UDSEntry(), true );
-    finished();
-}
-
-
 Nepomuk::SearchFolder* Nepomuk::SearchProtocol::getQueryFolder( const KUrl& url )
 {
-    // this is necessary to properly handle user queries which are encoded in the filename in
-    // statSearchFolder(). This is necessary for cases in which UDS_URL is ignored like in
-    // KUrlNavigator's popup menus
-    KUrl normalizedUrl = Nepomuk::queryUrlFromUserQueryUrl( url );
-    if ( normalizedUrl.protocol() != QLatin1String( "nepomuksearch" ) ) {
-        normalizedUrl = url;
-    }
-
-    // here we strip off the entry's name since that is not part of the query URL
-    normalizedUrl.setPath( QLatin1String( "/" ) );
-
-    SearchFolder* folder = new SearchFolder( normalizedUrl, this );
-    return folder;
-}
-
-
-void Nepomuk::SearchProtocol::listUserQueries()
-{
-    UserQueryUrlList userQueries;
-    Q_FOREACH( const KUrl& url, userQueries ) {
-        KIO::UDSEntry uds = statSearchFolder( url );
-        uds.insert( KIO::UDSEntry::UDS_DISPLAY_TYPE, i18n( "Saved Query" ) );
-        listEntry( uds, false );
-    }
+    return new SearchFolder( url, this );
 }
 
 
@@ -458,5 +417,36 @@ extern "C"
         return 0;
     }
 }
+
+
+#if 0
+void Nepomuk::SearchProtocol::listUserQueries()
+{
+    UserQueryUrlList userQueries;
+    Q_FOREACH( const KUrl& url, userQueries ) {
+        KIO::UDSEntry uds = statSearchFolder( url );
+        uds.insert( KIO::UDSEntry::UDS_DISPLAY_TYPE, i18n( "Saved Query" ) );
+        listEntry( uds, false );
+    }
+}
+void Nepomuk::SearchProtocol::listLastQueries()
+{
+    KSharedConfigPtr cfg = KSharedConfig::openConfig( "kio_nepomuksearchrc" );
+    KConfigGroup grp = cfg->group( "Last Queries" );
+
+    // read config
+    const int cnt = grp.readEntry( "count", 0 );
+    QList<QPair<KUrl, QDateTime> > entries;
+    for ( int i = 0; i < cnt; ++i ) {
+        KUrl u = grp.readEntry( QString::fromLatin1( "query_%1_url" ).arg( i ), QString() );
+        QDateTime t = grp.readEntry( QString::fromLatin1( "query_%1_timestamp" ).arg( i ), QDateTime() );
+        if ( !u.isEmpty() && t.isValid() )
+            listEntry( statLastQuery( u, t ), false );
+    }
+
+    listEntry( KIO::UDSEntry(), true );
+    finished();
+}
+#endif
 
 #include "kio_nepomuksearch.moc"
