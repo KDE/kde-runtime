@@ -5,6 +5,7 @@ include_directories(
   ${KDE4_INCLUDES}
   ${KDE4_KIO_INCLUDES}
   ${NEPOMUK_INCLUDE_DIR}
+  ${CMAKE_CURRENT_BINARY_DIR}
   ${nepomuk_kio_slaves_SOURCE_DIR}/common
 )
 
@@ -29,6 +30,8 @@ soprano_add_ontology(kio_timeline_PART_SRCS
   "NUAO"
   "Nepomuk::Vocabulary"
   "trig")
+
+qt4_add_dbus_interface(kio_timeline_PART_SRCS ../../interfaces/org.kde.nepomuk.ServiceControl.xml nepomukservicecontrolinterface)
 
 kde4_add_plugin(kio_timeline ${kio_timeline_PART_SRCS})
 

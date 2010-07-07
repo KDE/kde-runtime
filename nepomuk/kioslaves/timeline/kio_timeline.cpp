@@ -19,6 +19,7 @@
 */
 
 #include "kio_timeline.h"
+#include "nepomukservicecontrolinterface.h"
 
 #include "nfo.h"
 #include "nie.h"
@@ -43,7 +44,9 @@
 #include <Soprano/Node>
 
 #include <QtCore/QDate>
-#include <QCoreApplication>
+#include <QtCore/QCoreApplication>
+#include <QtDBus/QDBusConnection>
+#include <QtDBus/QDBusConnectionInterface>
 
 #include <sys/types.h>
 #include <unistd.h>
@@ -107,6 +110,16 @@ Nepomuk::TimelineProtocol::~TimelineProtocol()
 
 void Nepomuk::TimelineProtocol::listDir( const KUrl& url )
 {
+    // without a running strigi service timeline is not at all reliable
+    if ( !QDBusConnection::sessionBus().interface()->isServiceRegistered( "org.kde.nepomuk.services.nepomukstrigiservice" ) ||
+         !org::kde::nepomuk::ServiceControl( "org.kde.nepomuk.services.nepomukstrigiservice",
+                                             "/servicecontrol",
+                                             QDBusConnection::sessionBus() ).isInitialized() ) {
+        error( KIO::ERR_SLAVE_DEFINED,
+               i18n( "The Nepomuk Strigi file indexing service is not running. Without it timeline results are not available." ) );
+        return;
+    }
+
     switch( parseTimelineUrl( url, &m_date, &m_filename ) ) {
     case RootFolder:
         listEntry( createFolderUDSEntry( QLatin1String("today"), i18n("Today"), QDate::currentDate() ), false );
