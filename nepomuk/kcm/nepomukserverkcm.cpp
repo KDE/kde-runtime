@@ -361,6 +361,7 @@ void Nepomuk::ServerConfigModule::slotCustomQueryButtonClicked()
     if ( !queryString.isEmpty() ) {
         m_customQuery = queryString;
         m_customQueryLabel->setText( queryString );
+        changed();
     }
 }
 
@@ -375,6 +376,7 @@ void Nepomuk::ServerConfigModule::slotEditIndexFolders()
     if ( m_indexFolderSelectionDialog->exec() ) {
         m_labelIndexFolders->setText( buildFolderLabel( m_indexFolderSelectionDialog->includeFolders(),
                                                         m_indexFolderSelectionDialog->excludeFolders() ) );
+        changed();
     }
     else {
         // revert to previous settings
