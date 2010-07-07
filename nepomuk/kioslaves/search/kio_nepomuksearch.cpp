@@ -22,7 +22,6 @@
 #include "nie.h"
 #include "pimo.h"
 #include "nepomuksearchurltools.h"
-#include "userqueries.h"
 #include "standardqueries.h"
 
 #include <QtCore/QFile>

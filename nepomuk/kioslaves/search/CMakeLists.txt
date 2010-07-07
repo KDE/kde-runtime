@@ -53,25 +53,11 @@ target_link_libraries(kio_nepomuksearch
   ${SOPRANO_LIBRARIES}
   )
 
-kde4_add_executable(kio_nepomuksearch_userquery_helper userqueryhelper.cpp)
-target_link_libraries(kio_nepomuksearch_userquery_helper
-  ${KDE4_KIO_LIBS}
-  ${NEPOMUK_LIBRARIES}
-  ${NEPOMUK_QUERY_LIBRARIES}
-  )
-
 install(
   TARGETS kio_nepomuksearch
   DESTINATION ${PLUGIN_INSTALL_DIR})
 install(
-  TARGETS kio_nepomuksearch_userquery_helper
-  DESTINATION ${KDE4_LIBEXEC_INSTALL_DIR})
-install(
   FILES nepomuksearch.protocol
   DESTINATION  ${SERVICES_INSTALL_DIR})
-install( FILES
-  nepomuksearch_userquery_actions.desktop
-  DESTINATION
-  ${SERVICES_INSTALL_DIR}/ServiceMenus )
 
 add_subdirectory(kdedmodule)
