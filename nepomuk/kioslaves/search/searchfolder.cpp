@@ -44,13 +44,23 @@
 #include <KIO/NetAccess>
 #include <KUser>
 #include <KMimeType>
+#include <KConfig>
+#include <KConfigGroup>
+
+
+namespace {
+    int defaultQueryLimit() {
+        return qMax( 0, KConfig( "kio_nepomuksearchrc" ).group( "General" ).readEntry( "Default limit", 10 ) );
+    }
+}
 
 
 Nepomuk::SearchFolder::SearchFolder( const KUrl& url, KIO::SlaveBase* slave )
     : QThread(),
       m_url( url ),
       m_initialListingFinished( false ),
-      m_slave( slave )
+      m_slave( slave ),
+      m_forceUdsUrl( false )
 {
     kDebug() <<  url;
 
@@ -63,6 +73,10 @@ Nepomuk::SearchFolder::SearchFolder( const KUrl& url, KIO::SlaveBase* slave )
     m_query.setRequestProperties( QList<Query::Query::RequestProperty>() << Query::Query::RequestProperty( Nepomuk::Vocabulary::NIE::url() ) );
 
     if ( m_query.isValid() ) {
+        // we default to a limit to get results as fast as possible
+        // the "+1" is necessary to determine if there are actually more results we could list
+        if ( m_query.limit() == 0 )
+            m_query.setLimit( defaultQueryLimit() + 1 );
         m_sparqlQuery = m_query.toSparqlQuery();
     }
     else {
@@ -79,6 +93,13 @@ Nepomuk::SearchFolder::~SearchFolder()
     // properly shut down the search thread
     quit();
     wait();
+}
+
+
+bool Nepomuk::SearchFolder::haveMoreResults() const
+{
+    return( m_query.limit() > 0 &&
+            m_resultCnt >= m_query.limit() );
 }
 
 
@@ -99,6 +120,7 @@ void Nepomuk::SearchFolder::run()
              this, SLOT( slotFinishedListing() ),
              Qt::DirectConnection );
 
+    m_resultCnt = 0;
     m_client->sparqlQuery( m_sparqlQuery, m_query.requestPropertyMap() );
     exec();
     delete m_client;
@@ -107,9 +129,11 @@ void Nepomuk::SearchFolder::run()
 }
 
 
-void Nepomuk::SearchFolder::list()
+void Nepomuk::SearchFolder::list( bool forceUdsUrl )
 {
     kDebug() << m_url << QThread::currentThread();
+
+    m_forceUdsUrl = forceUdsUrl;
 
     // start the search thread
     start();
@@ -160,9 +184,10 @@ void Nepomuk::SearchFolder::statResults()
             Query::Result result = m_resultsQueue.dequeue();
             m_resultMutex.unlock();
             KIO::UDSEntry uds = statResult( result );
-            if ( uds.count() ) {
+            if ( uds.count() &&
+                ( m_query.limit() <= 0 || ++m_resultCnt < m_query.limit() ) ) {
                 kDebug() << "listing" << result.resource().resourceUri();
-                m_slave->listEntry( uds, false );
+                m_slave->listEntries( KIO::UDSEntryList() << uds );
             }
         }
         else if ( !m_initialListingFinished ) {
@@ -225,20 +250,27 @@ KIO::UDSEntry Nepomuk::SearchFolder::statResult( const Query::Result& result )
         if ( !nieUrl.isEmpty() ) {
             // needed since the nepomuk:/ KIO slave does not do stating of files in its own
             // subdirs (tags and filesystems), and neither do we with real subdirs
-            if ( uds.isDir() )
+            if ( uds.isDir() || m_forceUdsUrl )
                 uds.insert( KIO::UDSEntry::UDS_URL, nieUrl.url() );
 
             if ( nieUrl.isLocalFile() ) {
                 uds.insert( KIO::UDSEntry::UDS_LOCAL_PATH, nieUrl.toLocalFile() );
             }
+
+            // make sure we have unique names for everything
+            uds.insert( KIO::UDSEntry::UDS_NAME, resourceUriToUdsName( nieUrl ) );
+        }
+        else {
+            // make sure we have unique names for everything
+            uds.insert( KIO::UDSEntry::UDS_NAME, resourceUriToUdsName( url ) );
+
+            if ( m_forceUdsUrl )
+                uds.insert( KIO::UDSEntry::UDS_URL, url.url() );
         }
 
         // needed since the file:/ KIO slave does not create them and KFileItem::nepomukUri()
         // cannot know that it is a local file since it is forwarded
         uds.insert( KIO::UDSEntry::UDS_NEPOMUK_URI, url.url() );
-
-        // make sure we have unique names for everything
-        uds.insert( KIO::UDSEntry::UDS_NAME, resourceUriToUdsName( url ) );
 
         // make sure we do not use these ugly names for display
         if ( !uds.contains( KIO::UDSEntry::UDS_DISPLAY_NAME ) ) {

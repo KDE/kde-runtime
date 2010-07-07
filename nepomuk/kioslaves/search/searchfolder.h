@@ -70,9 +70,15 @@ namespace Nepomuk {
         Query::Query query() const { return m_query; }
 
         /**
+         * \return \p true if the query had a limit and there were more results
+         * thatn the reported ones.
+         */
+        bool haveMoreResults() const;
+
+        /**
          * List the results directly on the parent slave.
          */
-        void list();
+        void list( bool forceUdsUrl = false );
 
     private Q_SLOTS:
         /// connected to the QueryServiceClient in the search thread
@@ -117,6 +123,9 @@ namespace Nepomuk {
         // KDirNotify
         bool m_initialListingFinished;
 
+        /// number of emitted results
+        int m_resultCnt;
+
         // the parent slave used for listing and stating
         KIO::SlaveBase* m_slave;
 
@@ -127,6 +136,9 @@ namespace Nepomuk {
 
         // used to wait in the main thread for the serch thread to deliver results
         QWaitCondition m_resultWaiter;
+
+        /// true if UDS_URL should be set on all results, not only folders
+        bool m_forceUdsUrl;
     };
 }
 
