@@ -26,11 +26,13 @@ Name[km]=ក្រុម​របស់ Identi.ca
 Name[kn]=identi.ca ಗುಂಪುಗಳು
 Name[ko]=Identi.ca 그룹
 Name[lt]=Identi.ca grupės
+Name[lv]=Identi.ca grupas
 Name[ml]=ഐഡന്റിക്ക ഗ്രൂപ്പുകള്‍
 Name[nb]=Identi.ca-grupper
 Name[nds]=Identi.ca - Koppeln
 Name[nl]=Identi.ca Groepen
 Name[pa]=Identi.ca ਗਰੁੱਪ
+Name[pl]=Grupy Identi.ca
 Name[pt]=Grupos do Identi.ca
 Name[pt_BR]=Grupos do Identi.ca
 Name[ro]=Identi.ca Grupuri
@@ -69,11 +71,13 @@ Query[km]=http://identi.ca/search/group?q=\\{@}
 Query[kn]=http://identi.ca/search/group?q=\\{@}
 Query[ko]=http://identi.ca/search/group?q=\\{@}
 Query[lt]=http://identi.ca/search/group?q=\\{@}
+Query[lv]=http://identi.ca/search/group?q=\\{@}
 Query[ml]=http://identi.ca/search/group?q=\\{@}
 Query[nb]=http://identi.ca/search/group?q=\\{@}
 Query[nds]=http://identi.ca/search/group?q=\\{@}
 Query[nl]=http://identi.ca/search/group?q=\\{@}
 Query[pa]=http://identi.ca/search/group?q=\\{@}
+Query[pl]=http://identi.ca/search/group?q=\\{@}
 Query[pt]=http://identi.ca/search/group?q=\\{@}
 Query[pt_BR]=http://identi.ca/search/group?q=\\{@}
 Query[ro]=http://identi.ca/search/group?q=\\{@}

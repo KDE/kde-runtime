@@ -25,11 +25,13 @@ Name[km]=រូបរាង​របស់ KDE
 Name[kn]=ಕೆಡಿಇ ನೋಟ
 Name[ko]=KDE Look
 Name[lt]=KDE Išvaizda
+Name[lv]=KDE izskats
 Name[ml]=കെഡിഇ ലുക്ക്
 Name[nb]=KDE utseende
 Name[nds]=KDE-Look
 Name[nl]=KDE Look
 Name[pa]=KDE ਦਿੱਖ
+Name[pl]=KDE Look
 Name[pt]=KDE Look
 Name[pt_BR]=KDE Look
 Name[ro]=KDE Look
@@ -68,11 +70,13 @@ Query[km]=http://www.kde-look.org/content/search.php?search=Search&name=\\{@}
 Query[kn]=http://www.kde-look.org/content/search.php?search=Search&name=\\{@}
 Query[ko]=http://www.kde-look.org/content/search.php?search=Search&name=\\{@}
 Query[lt]=http://www.kde-look.org/content/search.php?search=Search&name=\\{@}
+Query[lv]=http://www.kde-look.org/content/search.php?search=Search&name=\\{@}
 Query[ml]=http://www.kde-look.org/content/search.php?search=Search&name=\\{@}
 Query[nb]=http://www.kde-look.org/content/search.php?search=Search&name=\\{@}
 Query[nds]=http://www.kde-look.org/content/search.php?search=Search&name=\\{@}
 Query[nl]=http://www.kde-look.org/content/search.php?search=Search&name=\\{@}
 Query[pa]=http://www.kde-look.org/content/search.php?search=Search&name=\\{@}
+Query[pl]=http://www.kde-look.org/content/search.php?search=Search&name=\\{@}
 Query[pt]=http://www.kde-look.org/content/search.php?search=Search&name=\\{@}
 Query[pt_BR]=http://www.kde-look.org/content/search.php?search=Search&name=\\{@}
 Query[ro]=http://www.kde-look.org/content/search.php?search=Search&name=\\{@}

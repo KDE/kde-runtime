@@ -24,11 +24,13 @@ Name[km]=YouTube
 Name[kn]=ಯೂಟ್ಯೂಬ್
 Name[ko]=YouTube
 Name[lt]=YouTube
+Name[lv]=YouTube
 Name[ml]=യുട്യൂബ്
 Name[nb]=YouTube
 Name[nds]=YouTube
 Name[nl]=YouTube
 Name[pa]=ਯੂਟਿਊਬ
+Name[pl]=YouTube
 Name[pt]=YouTube
 Name[pt_BR]=YouTube
 Name[ro]=YouTube
@@ -69,11 +71,13 @@ Query[km]=http://www.youtube.com/results?search_query=\\{@}&search_type=&aq=f
 Query[kn]=http://www.youtube.com/results?search_query=\\{@}&search_type=&aq=f
 Query[ko]=http://www.youtube.com/results?search_query=\\{@}&search_type=&aq=f
 Query[lt]=http://www.youtube.com/results?search_query=\\{@}&search_type=&aq=f
+Query[lv]=http://www.youtube.com/results?search_query=\\{@}&search_type=&aq=f
 Query[ml]=http://www.youtube.com/results?search_query=\\{@}&search_type=&aq=f
 Query[nb]=http://www.youtube.com/results?search_query=\\{@}&search_type=&aq=f
 Query[nds]=http://www.youtube.com/results?search_query=\\{@}&search_type=&aq=f
 Query[nl]=http://www.youtube.com/results?search_query=\\{@}&search_type=&aq=f
 Query[pa]=http://www.youtube.com/results?search_query=\\{@}&search_type=&aq=f
+Query[pl]=http://www.youtube.com/results?search_query=\\{@}&search_type=&aq=f
 Query[pt]=http://www.youtube.com/results?search_query=\\{@}&search_type=&aq=f
 Query[pt_BR]=http://www.youtube.com/results?search_query=\\{@}&search_type=&aq=f
 Query[ro]=http://www.youtube.com/results?search_query=\\{@}&search_type=&aq=f

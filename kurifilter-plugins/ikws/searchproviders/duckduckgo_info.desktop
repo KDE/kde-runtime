@@ -22,10 +22,12 @@ Name[kk]=Duck Duck Go Info
 Name[km]=ព័ត៌មាន​របស់ Duck Duck Go
 Name[ko]=Duck Duck Go 정보
 Name[lt]=Duck Duck Go Info
+Name[lv]=Duck Duck Go informācija
 Name[ml]=ഡക്ക് ഡക്ക് ഗോ വിവരം
 Name[nb]=Duck Duck Go Info
 Name[nds]=Duck Duck Go - Informatschonen
 Name[nl]=Duck Duck Go Info
+Name[pl]=Duck Duck Go Info
 Name[pt]=Informação do Duck Duck Go
 Name[pt_BR]=Informações do Duck Duck Go
 Name[ro]=Informații Duck Duck Go
@@ -64,11 +66,13 @@ Query[km]=http://duckduckgo.com/?q=\\{@}&v=r
 Query[kn]=http://duckduckgo.com/?q=\\{@}&v=r
 Query[ko]=http://duckduckgo.com/?q=\\{@}&v=r
 Query[lt]=http://duckduckgo.com/?q=\\{@}&v=r
+Query[lv]=http://duckduckgo.com/?q=\\{@}&v=r
 Query[ml]=http://duckduckgo.com/?q=\\{@}&v=r
 Query[nb]=http://duckduckgo.com/?q=\\{@}&v=r
 Query[nds]=http://duckduckgo.com/?q=\\{@}&v=r
 Query[nl]=http://duckduckgo.com/?q=\\{@}&v=r
 Query[pa]=http://duckduckgo.com/?q=\\{@}&v=r
+Query[pl]=http://duckduckgo.com/?q=\\{@}&v=r
 Query[pt]=http://duckduckgo.com/?q=\\{@}&v=r
 Query[pt_BR]=http://duckduckgo.com/?q=\\{@}&v=r
 Query[ro]=http://duckduckgo.com/?q=\\{@}&v=r

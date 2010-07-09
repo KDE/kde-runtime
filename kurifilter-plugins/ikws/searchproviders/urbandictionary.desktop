@@ -25,11 +25,13 @@ Name[km]=វចនុក្រម Urban
 Name[kn]=ಅರ್ಬಾನ್(Urban) ಶಬ್ದಕೋಶ 
 Name[ko]=Urban Dictionary
 Name[lt]=Miesto žodynas
+Name[lv]=Urban Dictionary
 Name[ml]=അര്‍ബന്‍ നിഘണ്ടു
 Name[nb]=Urban ordbok
 Name[nds]=Urban-Wöörbook
 Name[nl]=Urban woordenboek
 Name[pa]=ਅਰਬਨ ਡਿਕਸ਼ਨਰੀ
+Name[pl]=Słownik miejski (Urban Dictionary)
 Name[pt]=Urban Dictionary
 Name[pt_BR]=Urban Dictionary
 Name[ro]=Dicționar urban
@@ -69,11 +71,13 @@ Query[km]=http://www.urbandictionary.com/define.php?term=\\{@}
 Query[kn]=http://www.urbandictionary.com/define.php?term=\\{@}
 Query[ko]=http://www.urbandictionary.com/define.php?term=\\{@}
 Query[lt]=http://www.urbandictionary.com/define.php?term=\\{@}
+Query[lv]=http://www.urbandictionary.com/define.php?term=\\{@}
 Query[ml]=http://www.urbandictionary.com/define.php?term=\\{@}
 Query[nb]=http://www.urbandictionary.com/define.php?term=\\{@}
 Query[nds]=http://www.urbandictionary.com/define.php?term=\\{@}
 Query[nl]=http://www.urbandictionary.com/define.php?term=\\{@}
 Query[pa]=http://www.urbandictionary.com/define.php?term=\\{@}
+Query[pl]=http://www.urbandictionary.com/define.php?term=\\{@}
 Query[pt]=http://www.urbandictionary.com/define.php?term=\\{@}
 Query[pt_BR]=http://www.urbandictionary.com/define.php?term=\\{@}
 Query[ro]=http://www.urbandictionary.com/define.php?term=\\{@}

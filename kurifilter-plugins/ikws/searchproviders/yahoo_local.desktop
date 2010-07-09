@@ -24,11 +24,13 @@ Name[km]=មូលដ្ឋាន​របស់​យ៉ាហ៊ូ
 Name[kn]=ಯಾಹೂ ಸ್ಥಳೀಯ
 Name[ko]=Yahoo 지역
 Name[lt]=Yahoo Local
+Name[lv]=Yahoo Local
 Name[ml]=യാഹൂ പ്രാദേശികം
 Name[nb]=Yahoo lokalt
 Name[nds]=Yahoo - Lokaal
 Name[nl]=Yahoo lokaal
 Name[pa]=ਯਾਹੂ ਲੋਕਲ
+Name[pl]=Yahoo - lokalne
 Name[pt]=Yahoo Local
 Name[pt_BR]=Yahoo Local
 Name[ro]=Yahoo Local
@@ -66,11 +68,13 @@ Query[km]=http://local.yahoo.com/results?stx=\\{@}&ei=UTF-8&fr=yfp-t-701&fr2=tab
 Query[kn]=http://local.yahoo.com/results?stx=\\{@}&ei=UTF-8&fr=yfp-t-701&fr2=tab-img
 Query[ko]=http://local.yahoo.com/results?stx=\\{@}&ei=UTF-8&fr=yfp-t-701&fr2=tab-img
 Query[lt]=http://local.yahoo.com/results?stx=\\{@}&ei=UTF-8&fr=yfp-t-701&fr2=tab-img
+Query[lv]=http://local.yahoo.com/results?stx=\\{@}&ei=UTF-8&fr=yfp-t-701&fr2=tab-img
 Query[ml]=http://local.yahoo.com/results?stx=\\{@}&ei=UTF-8&fr=yfp-t-701&fr2=tab-img
 Query[nb]=http://local.yahoo.com/results?stx=\\{@}&ei=UTF-8&fr=yfp-t-701&fr2=tab-img
 Query[nds]=http://local.yahoo.com/results?stx=\\{@}&ei=UTF-8&fr=yfp-t-701&fr2=tab-img
 Query[nl]=http://local.yahoo.com/results?stx=\\{@}&ei=UTF-8&fr=yfp-t-701&fr2=tab-img
 Query[pa]=http://local.yahoo.com/results?stx=\\{@}&ei=UTF-8&fr=yfp-t-701&fr2=tab-img
+Query[pl]=http://local.yahoo.com/results?stx=\\{@}&ei=UTF-8&fr=yfp-t-701&fr2=tab-img
 Query[pt]=http://local.yahoo.com/results?stx=\\{@}&ei=UTF-8&fr=yfp-t-701&fr2=tab-img
 Query[pt_BR]=http://local.yahoo.com/results?stx=\\{@}&ei=UTF-8&fr=yfp-t-701&fr2=tab-img
 Query[ro]=http://local.yahoo.com/results?stx=\\{@}&ei=UTF-8&fr=yfp-t-701&fr2=tab-img

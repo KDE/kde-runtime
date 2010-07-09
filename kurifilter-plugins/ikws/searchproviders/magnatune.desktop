@@ -26,11 +26,13 @@ Name[km]=Magnatune
 Name[kn]=ಮ್ಯಾಗ್ನಾಟ್ಯುನ್
 Name[ko]=Magnatune
 Name[lt]=Magnatune
+Name[lv]=Magnatune
 Name[ml]=മാഗ്നാട്യൂണ്‍
 Name[nb]=Magnatune
 Name[nds]=Magnatune
 Name[nl]=Magnatune
 Name[pa]=ਮੰਗਨਟੋਨ
+Name[pl]=Magnatune
 Name[pt]=Magnatune
 Name[pt_BR]=Magnatune
 Name[ro]=Magnatune
@@ -70,11 +72,13 @@ Query[km]=http://my.magnatune.com/search?w=\\{@}&t=m&x=0&y=0
 Query[kn]=http://my.magnatune.com/search?w=\\{@}&t=m&x=0&y=0
 Query[ko]=http://my.magnatune.com/search?w=\\{@}&t=m&x=0&y=0
 Query[lt]=http://my.magnatune.com/search?w=\\{@}&t=m&x=0&y=0
+Query[lv]=http://my.magnatune.com/search?w=\\{@}&t=m&x=0&y=0
 Query[ml]=http://my.magnatune.com/search?w=\\{@}&t=m&x=0&y=0
 Query[nb]=http://my.magnatune.com/search?w=\\{@}&t=m&x=0&y=0
 Query[nds]=http://my.magnatune.com/search?w=\\{@}&t=m&x=0&y=0
 Query[nl]=http://my.magnatune.com/search?w=\\{@}&t=m&x=0&y=0
 Query[pa]=http://my.magnatune.com/search?w=\\{@}&t=m&x=0&y=0
+Query[pl]=http://my.magnatune.com/search?w=\\{@}&t=m&x=0&y=0
 Query[pt]=http://my.magnatune.com/search?w=\\{@}&t=m&x=0&y=0
 Query[pt_BR]=http://my.magnatune.com/search?w=\\{@}&t=m&x=0&y=0
 Query[ro]=http://my.magnatune.com/search?w=\\{@}&t=m&x=0&y=0

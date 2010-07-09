@@ -25,11 +25,13 @@ Name[km]=ចំណាំ​របស់ Identi.ca
 Name[kn]=identi.ca ಸೂಚನೆ
 Name[ko]=Identi.ca 공지
 Name[lt]=Identi.ca pranešimai
+Name[lv]=Identi.ca piezīmes
 Name[ml]=ഐഡന്റിക്ക നോട്ടീസുകള്‍
 Name[nb]=Identi.ca notiser
 Name[nds]=Identi.ca - Henwiesen
 Name[nl]=Identi.ca Notities
 Name[pa]=Identi.ca ਨੋਟਿਸ
+Name[pl]=Powiadomienia Identi.ca
 Name[pt]=Avisos do Identi.ca
 Name[pt_BR]=Notícias do Identi.ca
 Name[sr]=Идентика-обавештења
@@ -66,11 +68,13 @@ Query[km]=http://identi.ca/search/notice?q=\\{@}
 Query[kn]=http://identi.ca/search/notice?q=\\{@}
 Query[ko]=http://identi.ca/search/notice?q=\\{@}
 Query[lt]=http://identi.ca/search/notice?q=\\{@}
+Query[lv]=http://identi.ca/search/notice?q=\\{@}
 Query[ml]=http://identi.ca/search/notice?q=\\{@}
 Query[nb]=http://identi.ca/search/notice?q=\\{@}
 Query[nds]=http://identi.ca/search/notice?q=\\{@}
 Query[nl]=http://identi.ca/search/notice?q=\\{@}
 Query[pa]=http://identi.ca/search/notice?q=\\{@}
+Query[pl]=http://identi.ca/search/notice?q=\\{@}
 Query[pt]=http://identi.ca/search/notice?q=\\{@}
 Query[pt_BR]=http://identi.ca/search/notice?q=\\{@}
 Query[ro]=http://identi.ca/search/notice?q=\\{@}
