@@ -418,8 +418,8 @@
                <string>Sort all desktop query results by importance as deducted by Nepomuk</string>
               </property>
               <property name="whatsThis">
-               <string>Sort all search resulty by the importance deducted by Nepomuk.
-The importance of a resource is determined by its usage times, its usage frequence, its type, and other criteria.</string>
+               <string>Sort all search results by the importance deducted by Nepomuk.
+The importance of a resource is determined by its usage times, its usage frequency, its type, and other criteria.</string>
               </property>
               <property name="text">
                <string>Always sort results by importance</string>
