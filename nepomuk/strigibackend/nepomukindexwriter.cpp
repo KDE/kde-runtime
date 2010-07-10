@@ -35,10 +35,8 @@
 #include <QtCore/QFileInfo>
 #include <QtCore/QFile>
 #include <QtCore/QUrl>
-#include <QtCore/QThread>
 #include <QtCore/QDateTime>
 #include <QtCore/QByteArray>
-#include <QtCore/QUuid>
 #include <QtCore/QStack>
 
 #include <KUrl>
@@ -63,7 +61,6 @@
 // IMPORTANT: strings in Strigi are apparently UTF8! Except for file names. Those are in local encoding.
 
 using namespace Soprano;
-using namespace std;
 
 
 uint qHash( const std::string& s )
@@ -182,7 +179,7 @@ namespace {
         : m_analysisResult( idx )
     {
         fileUrl = createFileUrl( idx );
-        fileInfo = fileUrl.toLocalFile();
+        fileInfo = QFileInfo( fileUrl.toLocalFile() );
 
         // determine the resource URI by using Nepomuk::Resource's power
         // this will automatically find previous uses of the file in question
@@ -601,8 +598,8 @@ void Strigi::NepomukIndexWriter::finishAnalysis( const AnalysisResult* idx )
 
 void Strigi::NepomukIndexWriter::initWriterData( const Strigi::FieldRegister& f )
 {
-    map<string, RegisteredField*>::const_iterator i;
-    map<string, RegisteredField*>::const_iterator end = f.fields().end();
+    std::map<std::string, RegisteredField*>::const_iterator i;
+    std::map<std::string, RegisteredField*>::const_iterator end = f.fields().end();
     for (i = f.fields().begin(); i != end; ++i) {
         QUrl prop = Util::fieldUri( i->second->key() );
         i->second->setWriterData( new RegisteredFieldData( prop,
@@ -615,8 +612,8 @@ void Strigi::NepomukIndexWriter::initWriterData( const Strigi::FieldRegister& f 
 
 void Strigi::NepomukIndexWriter::releaseWriterData( const Strigi::FieldRegister& f )
 {
-    map<string, RegisteredField*>::const_iterator i;
-    map<string, RegisteredField*>::const_iterator end = f.fields().end();
+    std::map<std::string, RegisteredField*>::const_iterator i;
+    std::map<std::string, RegisteredField*>::const_iterator end = f.fields().end();
     for (i = f.fields().begin(); i != end; ++i) {
         delete static_cast<RegisteredFieldData*>( i->second->writerData() );
         i->second->setWriterData( 0 );
