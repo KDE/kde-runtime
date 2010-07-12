@@ -3,6 +3,12 @@ project(KDEBASE_RUNTIME)
 # where to look first for cmake modules, before ${CMAKE_ROOT}/Modules/ is checked
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
 
+if(WINCE)
+    find_package(Wcecompat REQUIRED)
+    #Needs to be set because otherwise he wouldn't find kde parts
+    set(KDE4_DATA_DIR "${CMAKE_PREFIX_PATH}/share/apps")
+endif(WINCE)
+
 #search packages used by KDE
 set(KDE_MIN_VERSION "4.5.60")  # for the < 4.2 macro
 find_package(KDE4 4.5.60 REQUIRED)
@@ -36,7 +42,6 @@ set(LIBATTICA_MIN_VERSION "0.1.4")
 find_package(LibAttica)
 macro_log_feature(LIBATTICA_FOUND "libattica" "A library to access Open Collaboration Service providers" "http://websvn.kde.org/trunk/kdesupport/attica/" TRUE "" "Required for Get Hot New Stuff."
 )
-
 
 check_include_files(sys/wait.h HAVE_SYS_WAIT_H)
 check_include_files(sys/time.h HAVE_SYS_TIME_H)
@@ -116,8 +121,10 @@ add_subdirectory(platforms)
 # Default settings, content and config
 add_subdirectory(l10n)
 add_subdirectory(localization)
+if(NOT WINCE)
 add_subdirectory(kde-menu)
 macro_optional_add_subdirectory(doc)
+endif(NOT WINCE)
 
 # Artwork
 add_subdirectory(desktoptheme)

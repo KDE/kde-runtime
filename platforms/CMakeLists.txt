@@ -1,3 +1,3 @@
-if(WIN32)
+if(WIN32 AND NOT WINCE)
    add_subdirectory( win ) 
-endif(WIN32)
+endif(WIN32 AND NOT WINCE)

@@ -68,6 +68,8 @@ class RegistryWatcherThread : public QThread
 
     void run()
     {
+//FIXME: the timezonechange needs to be handled diffrently
+#ifndef _WIN32
         if ( RegOpenKeyEx( HKEY_LOCAL_MACHINE, currentTimeZoneKey, 0, KEY_READ, &key ) == ERROR_SUCCESS )
         {
             while(true)
@@ -77,6 +79,7 @@ class RegistryWatcherThread : public QThread
                 q->updateLocalZone();
             }
         }
+#endif
     }
     private:
         KTimeZoned* q;

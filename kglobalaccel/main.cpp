@@ -84,8 +84,11 @@ extern "C" KDE_EXPORT int kdemain(int argc, char **argv)
     app.setQuitOnLastWindowClosed( false );
 
     // Stop gracefully
+    //There is no SIGINT and SIGTERM under wince
+#ifndef _WIN32_WCE
     KDE_signal(SIGINT, sighandler);
     KDE_signal(SIGTERM, sighandler);
+#endif
     KDE_signal(SIGHUP, sighandler);
 
     // Restart on a crash
