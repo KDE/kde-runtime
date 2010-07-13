@@ -22,7 +22,7 @@
 #include "nepomukactivitiesservice_interface.h"
 #include "activitycontroller_interface.h"
 
-#include <cstdint>
+#include <stdint.h>
 
 #include <QUuid>
 #include <QDBusConnection>
