@@ -19,6 +19,7 @@
 #include "nepomukserverkcm.h"
 #include "nepomukserverinterface.h"
 #include "folderselectionmodel.h"
+#include "nepomukservicecontrolinterface.h"
 #include "../services/strigi/strigiservicedefaults.h"
 
 #include <KPluginFactory>
@@ -122,7 +123,7 @@ Nepomuk::ServerConfigModule::ServerConfigModule( QWidget* parent, const QVariant
     watcher->addWatchedService( QLatin1String("org.kde.nepomuk.services.nepomukstrigiservice") );
     watcher->setConnection( QDBusConnection::sessionBus() );
     watcher->setWatchMode( QDBusServiceWatcher::WatchForRegistration | QDBusServiceWatcher::WatchForUnregistration );
-    
+
     connect( watcher, SIGNAL( serviceRegistered(const QString&) ),
              this, SLOT( slotUpdateStrigiStatus() ) );
     connect( watcher, SIGNAL( serviceUnregistered(const QString&) ),
@@ -256,8 +257,10 @@ void Nepomuk::ServerConfigModule::defaults()
 
 void Nepomuk::ServerConfigModule::slotUpdateStrigiStatus()
 {
-    if ( m_serviceManagerInterface.isServiceRunning( "nepomukstrigiservice") ) {
-        if ( m_serviceManagerInterface.isServiceInitialized( "nepomukstrigiservice") ) {
+    if ( QDBusConnection::sessionBus().interface()->isServiceRegistered( "org.kde.nepomuk.services.nepomukstrigiservice" ) ) {
+        if ( org::kde::nepomuk::ServiceControl( "org.kde.nepomuk.services.nepomukstrigiservice",
+                                                "/servicecontrol",
+                                                QDBusConnection::sessionBus() ).isInitialized() ) {
             QString status = m_strigiInterface->userStatusString();
             if ( status.isEmpty() ) {
                 m_labelStrigiStatus->setText( i18nc( "@info:status %1 is an error message returned by a dbus interface.",
