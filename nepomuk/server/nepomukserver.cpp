@@ -78,15 +78,13 @@ void Nepomuk::Server::enableNepomuk( bool enabled )
 {
     kDebug() << "enableNepomuk" << enabled;
     if ( enabled != m_enabled ) {
+        m_enabled = enabled;
         if ( enabled ) {
             // start all autostart services
             m_serviceManager->startAllServices();
 
             // register the service manager interface
             QDBusConnection::sessionBus().registerObject( "/servicemanager", m_serviceManager );
-
-            // now nepomuk is enabled
-            m_enabled = true;
         }
         else {
             // stop all running services
@@ -94,9 +92,6 @@ void Nepomuk::Server::enableNepomuk( bool enabled )
 
             // unregister the service manager interface
             QDBusConnection::sessionBus().unregisterObject( "/servicemanager" );
-
-            // nepomuk is disabled
-            m_enabled = false;
         }
     }
 }

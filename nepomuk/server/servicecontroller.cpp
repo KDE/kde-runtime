@@ -46,6 +46,7 @@ public:
           serviceControlInterface( 0 ),
           dbusServiceWatcher( 0 ),
           attached( false ),
+          started( false ),
           initialized( false ),
           failedToInitialize( false ) {
     }
@@ -63,6 +64,9 @@ public:
     // starting our own (in that case processControl will be 0)
     bool attached;
 
+    // true if we were asked to start the service
+    bool started;
+
     bool initialized;
     bool failedToInitialize;
 
@@ -70,6 +74,7 @@ public:
     QList<QEventLoop*> loops;
 
     void init( KService::Ptr service );
+    void reset();
 };
 
 
@@ -90,11 +95,31 @@ void Nepomuk::ServiceController::Private::init( KService::Ptr s )
 }
 
 
+void Nepomuk::ServiceController::Private::reset()
+{
+    initialized = false;
+    attached = false;
+    started = false;
+    failedToInitialize = false;
+    delete serviceControlInterface;
+    serviceControlInterface = 0;
+}
+
+
 Nepomuk::ServiceController::ServiceController( KService::Ptr service, QObject* parent )
     : QObject( parent ),
       d(new Private())
 {
     d->init( service );
+
+    d->dbusServiceWatcher = new QDBusServiceWatcher( dbusServiceName(name()),
+                                                     QDBusConnection::sessionBus(),
+                                                     QDBusServiceWatcher::WatchForRegistration | QDBusServiceWatcher::WatchForUnregistration,
+                                                     this );
+    connect( d->dbusServiceWatcher, SIGNAL( serviceRegistered( QString ) ),
+             this, SLOT( slotServiceRegistered( QString ) ) );
+    connect( d->dbusServiceWatcher, SIGNAL( serviceUnregistered( QString ) ),
+             this, SLOT( slotServiceUnregistered( QString ) ) );
 }
 
 
@@ -159,28 +184,15 @@ bool Nepomuk::ServiceController::start()
         return true;
     }
 
-    d->initialized = false;
-    d->failedToInitialize = false;
-
-    if ( !d->dbusServiceWatcher ) {
-        d->dbusServiceWatcher = new QDBusServiceWatcher( dbusServiceName(name()),
-                                                         QDBusConnection::sessionBus(),
-                                                         QDBusServiceWatcher::WatchForRegistration | QDBusServiceWatcher::WatchForUnregistration,
-                                                         this );
-    }
-    d->dbusServiceWatcher->disconnect( this );
+    d->reset();
+    d->started = true;
 
     // check if the service is already running, ie. has been started by someone else or by a crashed instance of the server
-    // we cannot rely on the auto-restart feature of ProcessControl here. So we handle that completely in slotServiceOwnerChanged
+    // we cannot rely on the auto-restart feature of ProcessControl here. So we handle that completely via DBus signals
     if( QDBusConnection::sessionBus().interface()->isServiceRegistered( dbusServiceName( name() ) ) ) {
         kDebug() << "Attaching to already running service" << name();
         d->attached = true;
         createServiceControlInterface();
-
-        // we do not have ProcessControl to take care of restarting. Thus, we monitor the service via DBus
-        connect( d->dbusServiceWatcher, SIGNAL( serviceUnregistered( QString ) ),
-                 this, SLOT( slotServiceUnregistered( QString ) ) );
-
         return true;
     }
     else {
@@ -193,8 +205,6 @@ bool Nepomuk::ServiceController::start()
         }
 
         // wait for the service to be registered with DBus before creating the service interface
-        connect( d->dbusServiceWatcher, SIGNAL( serviceRegistered( QString ) ),
-                 this, SLOT( slotServiceRegistered( QString ) ) );
 
         d->processControl->setCrashPolicy( ProcessControl::RestartOnCrash );
         return d->processControl->start( KGlobal::dirs()->locate( "exe", "nepomukservicestub" ),
@@ -209,6 +219,7 @@ void Nepomuk::ServiceController::stop()
         kDebug() << "Stopping" << name();
 
         d->attached = false;
+        d->started = false;
 
         if( d->processControl ) {
             d->processControl->setCrashPolicy( ProcessControl::StopOnCrash );
@@ -270,11 +281,7 @@ bool Nepomuk::ServiceController::waitForInitialized( int timeout )
 void Nepomuk::ServiceController::slotProcessFinished( bool /*clean*/ )
 {
     kDebug() << "Service" << name() << "went down";
-    d->initialized = false;
-    d->attached = false;
-    disconnect( QDBusConnection::sessionBus().interface() );
-    delete d->serviceControlInterface;
-    d->serviceControlInterface = 0;
+    d->reset();
     foreach( QEventLoop* loop, d->loops ) {
         loop->exit();
     }
@@ -284,7 +291,11 @@ void Nepomuk::ServiceController::slotProcessFinished( bool /*clean*/ )
 void Nepomuk::ServiceController::slotServiceRegistered( const QString& serviceName )
 {
     if( serviceName == dbusServiceName( name() ) ) {
+        kDebug() << serviceName;
         createServiceControlInterface();
+        if( !d->processControl || !d->processControl->isRunning() ) {
+            d->attached = true;
+        }
     }
 }
 
@@ -293,10 +304,17 @@ void Nepomuk::ServiceController::slotServiceUnregistered( const QString& service
     // an attached service was not started through ProcessControl. Thus, we cannot rely
     // on its restart-on-crash feature and have to do it manually. Afterwards it is back
     // to normal
-    if( d->attached && serviceName == dbusServiceName( name() ) ) {
-        kDebug() << "Attached service" << name() << "went down. Restarting ourselves.";
-        d->attached = false;
-        start();
+    if( serviceName == dbusServiceName( name() ) ) {
+        if( d->attached && d->started ) {
+            kDebug() << "Attached service" << name() << "went down. Restarting ourselves.";
+            start();
+        }
+        else {
+            d->reset();
+            foreach( QEventLoop* loop, d->loops ) {
+                loop->exit();
+            }
+        }
     }
 }
 
@@ -309,8 +327,13 @@ void Nepomuk::ServiceController::createServiceControlInterface()
                                                                            "/servicecontrol",
                                                                            QDBusConnection::sessionBus(),
                                                                            this );
-    connect( d->serviceControlInterface, SIGNAL( serviceInitialized( bool ) ),
-             this, SLOT( slotServiceInitialized( bool ) ) );
+    if( d->serviceControlInterface->isInitialized() ) {
+        slotServiceInitialized( true );
+    }
+    else {
+        connect( d->serviceControlInterface, SIGNAL( serviceInitialized( bool ) ),
+                 this, SLOT( slotServiceInitialized( bool ) ) );
+    }
 
     if ( d->serviceControlInterface->isInitialized() ) {
         slotServiceInitialized( true );

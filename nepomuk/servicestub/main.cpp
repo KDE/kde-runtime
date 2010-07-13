@@ -155,12 +155,12 @@ int main( int argc, char** argv )
 
     // register the service control
     // ====================================
-    Nepomuk::ServiceControl control( serviceName, service, 0 );
+    Nepomuk::ServiceControl* control = new Nepomuk::ServiceControl( serviceName, service, &app );
 
 
     // start the service (queued since we need an event loop)
     // ====================================
-    QTimer::singleShot( 0, &control, SLOT( start() ) );
+    QTimer::singleShot( 0, control, SLOT( start() ) );
 
     return app.exec();
 }
