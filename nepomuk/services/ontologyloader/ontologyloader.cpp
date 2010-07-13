@@ -1,5 +1,5 @@
 /* This file is part of the KDE Project
-   Copyright (c) 2007 Sebastian Trueg <trueg@kde.org>
+   Copyright (c) 2007-2010 Sebastian Trueg <trueg@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -160,6 +160,8 @@ Nepomuk::OntologyLoader::~OntologyLoader()
 void Nepomuk::OntologyLoader::updateLocalOntologies()
 {
     d->desktopFilesToUpdate = KGlobal::dirs()->findAllResources( "xdgdata-ontology", "*.ontology", KStandardDirs::Recursive|KStandardDirs::NoDuplicates );
+    if(d->desktopFilesToUpdate.isEmpty())
+        kError() << "No ontology files found! Make sure the shared-desktop-ontologies project is installed and XDG_DATA_DIRS is set properly.";
     d->updateTimer.start(0);
 }
 
