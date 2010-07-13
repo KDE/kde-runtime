@@ -21,7 +21,6 @@
 #include "nepomukserversettings.h"
 #include "servicemanager.h"
 #include "servicemanageradaptor.h"
-#include "legacystoragebridge.h"
 
 #include <Soprano/Global>
 
@@ -39,7 +38,6 @@ Nepomuk::Server* Nepomuk::Server::s_self = 0;
 Nepomuk::Server::Server( QObject* parent )
     : QObject( parent ),
       m_enabled( false ),
-      m_legacyStorageBridge( 0 ),
       m_strigiServiceName( "nepomukstrigiservice" )
 {
     s_self = this;
@@ -80,20 +78,13 @@ void Nepomuk::Server::enableNepomuk( bool enabled )
 {
     kDebug() << "enableNepomuk" << enabled;
     if ( enabled != m_enabled ) {
+        m_enabled = enabled;
         if ( enabled ) {
             // start all autostart services
             m_serviceManager->startAllServices();
 
             // register the service manager interface
             QDBusConnection::sessionBus().registerObject( "/servicemanager", m_serviceManager );
-
-            // provide the storage interface for backwards compatibility
-            if ( !m_legacyStorageBridge ) {
-                m_legacyStorageBridge = new LegacyStorageBridge( this );
-            }
-
-            // now nepomuk is enabled
-            m_enabled = true;
         }
         else {
             // stop all running services
@@ -101,13 +92,6 @@ void Nepomuk::Server::enableNepomuk( bool enabled )
 
             // unregister the service manager interface
             QDBusConnection::sessionBus().unregisterObject( "/servicemanager" );
-
-            // we delete since Soprano::Server::ServerCore does not have an unregister method yet
-            delete m_legacyStorageBridge;
-            m_legacyStorageBridge = 0;
-
-            // nepomuk is disabled
-            m_enabled = false;
         }
     }
 }
