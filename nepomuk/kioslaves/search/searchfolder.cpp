@@ -162,7 +162,7 @@ void Nepomuk::SearchFolder::statResults()
             KIO::UDSEntry uds = statResult( result );
             if ( uds.count() ) {
                 kDebug() << "listing" << result.resource().resourceUri();
-                m_slave->listEntry( uds, false );
+                m_slave->listEntries( KIO::UDSEntryList() << uds );
             }
         }
         else if ( !m_initialListingFinished ) {
@@ -229,16 +229,26 @@ KIO::UDSEntry Nepomuk::SearchFolder::statResult( const Query::Result& result )
                 uds.insert( KIO::UDSEntry::UDS_URL, nieUrl.url() );
 
             if ( nieUrl.isLocalFile() ) {
+                // There is a trade-off between using UDS_TARGET_URL or not. The advantage is that we get proper
+                // file names in opening applications and non-KDE apps can handle the URLs properly. The downside
+                // is that we lose the context information, i.e. query results cannot be browsed in the opening
+                // application. We decide pro-filenames and pro-non-kde-apps here.
+                if( !uds.isDir() )
+                    uds.insert( KIO::UDSEntry::UDS_TARGET_URL, nieUrl.url() );
                 uds.insert( KIO::UDSEntry::UDS_LOCAL_PATH, nieUrl.toLocalFile() );
             }
+
+            // make sure we have unique names for everything
+            uds.insert( KIO::UDSEntry::UDS_NAME, resourceUriToUdsName( nieUrl ) );
+        }
+        else {
+            // make sure we have unique names for everything
+            uds.insert( KIO::UDSEntry::UDS_NAME, resourceUriToUdsName( url ) );
         }
 
         // needed since the file:/ KIO slave does not create them and KFileItem::nepomukUri()
         // cannot know that it is a local file since it is forwarded
         uds.insert( KIO::UDSEntry::UDS_NEPOMUK_URI, url.url() );
-
-        // make sure we have unique names for everything
-        uds.insert( KIO::UDSEntry::UDS_NAME, resourceUriToUdsName( url ) );
 
         // make sure we do not use these ugly names for display
         if ( !uds.contains( KIO::UDSEntry::UDS_DISPLAY_NAME ) ) {

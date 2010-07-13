@@ -60,18 +60,13 @@
 
 
 namespace {
-    void addGenericSearchFolderItems( KIO::UDSEntry& uds ) {
+    KIO::UDSEntry statSearchFolder( const KUrl& url ) {
+        KIO::UDSEntry uds;
         uds.insert( KIO::UDSEntry::UDS_ACCESS, 0700 );
         uds.insert( KIO::UDSEntry::UDS_USER, KUser().loginName() );
         uds.insert( KIO::UDSEntry::UDS_FILE_TYPE, S_IFDIR );
         uds.insert( KIO::UDSEntry::UDS_MIME_TYPE, QString::fromLatin1( "inode/directory" ) );
-// FIXME        uds.insert( KIO::UDSEntry::UDS_CUSTOM_SORT_WEIGHT, -1 );
         uds.insert( KIO::UDSEntry::UDS_ICON_OVERLAY_NAMES, QLatin1String( "nepomuk" ) );
-    }
-
-    KIO::UDSEntry statSearchFolder( const KUrl& url ) {
-        KIO::UDSEntry uds;
-        addGenericSearchFolderItems( uds );
         uds.insert( KIO::UDSEntry::UDS_NAME, Nepomuk::resourceUriToUdsName( url ) );
         uds.insert( KIO::UDSEntry::UDS_DISPLAY_NAME, Nepomuk::Query::Query::titleFromQueryUrl( url ) );
         uds.insert( KIO::UDSEntry::UDS_URL, url.url() );
