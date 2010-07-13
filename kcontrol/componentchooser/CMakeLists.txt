@@ -42,10 +42,6 @@ kde4_add_plugin(kcm_componentchooser ${kcm_componentchooser_SRCS})
 
 target_link_libraries(kcm_componentchooser  ${KDE4_KIO_LIBS})
 
-if(WINCE)
-target_link_libraries(kcm_componentchooser ${WCECOMPAT_LIBRARIES})
-endif(WINCE)
-
 install(TARGETS kcm_componentchooser  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 

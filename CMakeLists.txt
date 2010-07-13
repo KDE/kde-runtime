@@ -4,7 +4,6 @@ project(KDEBASE_RUNTIME)
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
 
 if(WINCE)
-    find_package(Wcecompat REQUIRED)
     #Needs to be set because otherwise he wouldn't find kde parts
     set(KDE4_DATA_DIR "${CMAKE_PREFIX_PATH}/share/apps")
 endif(WINCE)

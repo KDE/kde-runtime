@@ -11,10 +11,6 @@ kde4_add_plugin(kcm_icons ${kcm_icons_PART_SRCS})
 
 target_link_libraries(kcm_icons ${KDE4_KIO_LIBS} ${KDE4_KNEWSTUFF3_LIBS})
 
-if(WINCE)
-target_link_libraries(kcm_icons ${WCECOMPAT_LIBRARIES})
-endif(WINCE)
-
 install(TARGETS kcm_icons  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 
