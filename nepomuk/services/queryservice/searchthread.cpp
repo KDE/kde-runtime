@@ -128,24 +128,18 @@ void Nepomuk::Query::SearchThread::sparqlQuery( const QString& query )
 
         ++m_resultCnt;
 
-        Resource res = Resource::fromResourceUri( hits[0].uri() );
-        if ( !res.hasType( Soprano::Vocabulary::RDFS::Class() ) &&
-             !res.hasType( Soprano::Vocabulary::RDF::Property() ) &&
-             !res.hasType( Soprano::Vocabulary::NRL::Graph() ) ) {
-            Result result = extractResult( res, hits );
+        Result result = extractResult( hits );
 
-            kDebug() << "Found result:" << result.resource().resourceUri() << result.score();
+        kDebug() << "Found result:" << result.resource().resourceUri() << result.score();
 
-            emit newResult( result );
-        }
+        emit newResult( result );
     }
 }
 
 
-Nepomuk::Query::Result Nepomuk::Query::SearchThread::extractResult( const Resource& resultResource, const Soprano::QueryResultIterator& it ) const
+Nepomuk::Query::Result Nepomuk::Query::SearchThread::extractResult( const Soprano::QueryResultIterator& it ) const
 {
-    kDebug() << it.binding( 0 ).uri();
-    Result result( resultResource );
+    Result result( Resource::fromResourceUri( it[0].uri() ) );
 
     // make sure we do not store values twice
     QStringList names = it.bindingNames();
