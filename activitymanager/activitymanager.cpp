@@ -22,7 +22,7 @@
 #include "nepomukactivitiesservice_interface.h"
 #include "activitycontroller_interface.h"
 
-#include <stdint.h>
+#include <cstdint>
 
 #include <QUuid>
 #include <QDBusConnection>
@@ -344,6 +344,10 @@ void ActivityManager::RegisterResourceWindow(const QString & application, uint w
 {
     d->resourceWindows[(WId)wid] << uri;
     d->resourceActivities[uri] << CurrentActivity();
+
+    if (d->activitiesStore) {
+        d->activitiesStore->associateResource(CurrentActivity(), uri);
+    }
 
     d->emitResourceWindowRegistered(application, wid, uri);
 }

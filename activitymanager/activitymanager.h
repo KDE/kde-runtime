@@ -110,6 +110,7 @@ public Q_SLOTS:
     /**
      * Should be called when the client application
      * opens a new resource identifiable by an uri.
+     * Application name will be guessed from the window.
      * @param ID of the window that registers the resource
      * @param uri uri of the resource
      */
