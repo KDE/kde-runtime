@@ -35,6 +35,9 @@
 #include <KConfigGroup>
 #include <KDebug>
 
+#include <KWindowInfo>
+#include <KWindowSystem>
+
 #define ActivityManagerServicePath "org.kde.ActivityManager"
 #define NepomukActivitiesServicePath "org.kde.nepomuk.services.nepomukactivitiesservice"
 
@@ -93,9 +96,9 @@ public:
         notifyActivityControllers( ActivityRemoved(id) );
     }
 
-    void emitResourceWindowRegistered(uint wid, const QString & uri)
+    void emitResourceWindowRegistered(const QString & application, uint wid, const QString & uri)
     {
-        notifyActivityControllers( ResourceWindowRegistered(wid, uri) );
+        notifyActivityControllers( ResourceWindowRegistered(application, wid, uri) );
     }
 
     void emitResourceWindowUnregistered(uint wid, const QString & uri)
@@ -337,12 +340,20 @@ void ActivityManager::SetActivityIcon(const QString & id, const QString & icon)
     d->activitiesStore->setIcon(id, icon);
 }
 
-void ActivityManager::RegisterResourceWindow(uint wid, const QString & uri)
+void ActivityManager::RegisterResourceWindow(const QString & application, uint wid, const QString & uri)
 {
     d->resourceWindows[(WId)wid] << uri;
     d->resourceActivities[uri] << CurrentActivity();
 
-    d->emitResourceWindowRegistered(wid, uri);
+    d->emitResourceWindowRegistered(application, wid, uri);
+}
+
+void ActivityManager::RegisterResourceWindow(uint wid, const QString & uri)
+{
+    KWindowInfo winInfo = KWindowSystem::windowInfo(wid,
+        0, NET::NET::WM2WindowClass);
+
+    RegisterResourceWindow(winInfo.windowClassClass(), wid, uri);
 }
 
 void ActivityManager::UnregisterResourceWindow(uint wid, const QString & uri)

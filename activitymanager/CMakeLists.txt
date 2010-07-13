@@ -29,6 +29,7 @@ kde4_add_plugin(
 
 target_link_libraries(kded_activitymanager
     ${KDE4_KDECORE_LIBS}
+    ${KDE4_KDEUI_LIBS}
 )
 
 install( TARGETS kded_activitymanager DESTINATION ${PLUGIN_INSTALL_DIR} )

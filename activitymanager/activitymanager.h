@@ -101,6 +101,15 @@ public Q_SLOTS:
     /**
      * Should be called when the client application
      * opens a new resource identifiable by an uri.
+     * @param application unformatted name of the application
+     * @param ID of the window that registers the resource
+     * @param uri uri of the resource
+     */
+    void RegisterResourceWindow(const QString & application, uint wid, const QString & uri);
+
+    /**
+     * Should be called when the client application
+     * opens a new resource identifiable by an uri.
      * @param ID of the window that registers the resource
      * @param uri uri of the resource
      */
