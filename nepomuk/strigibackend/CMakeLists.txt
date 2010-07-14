@@ -2,7 +2,7 @@ project(strigi_nepomuk_indexer)
 
 include(SopranoAddOntology)
 
-include_directories( 
+include_directories(
   ${STRIGI_INCLUDE_DIR}
   ${SOPRANO_INCLUDE_DIR}
 )
@@ -11,6 +11,7 @@ set( strigi_nepomuk_indexer_SRCS
   nepomukindexmanager.cpp
   nepomukindexreader.cpp
   nepomukindexwriter.cpp
+  nepomukindexfeeder.cpp
   util.cpp
 )
 
