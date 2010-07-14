@@ -354,8 +354,8 @@ void ActivityManager::RegisterResourceWindow(const QString & application, uint w
 
 void ActivityManager::RegisterResourceWindow(uint wid, const QString & uri)
 {
-    KWindowInfo winInfo = KWindowSystem::windowInfo(wid,
-        0, NET::NET::WM2WindowClass);
+    KWindowInfo winInfo = KWindowSystem::windowInfo((WId)wid,
+        0, NET::WM2WindowClass);
 
     RegisterResourceWindow(winInfo.windowClassClass(), wid, uri);
 }
