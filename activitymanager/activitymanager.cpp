@@ -354,10 +354,13 @@ void ActivityManager::RegisterResourceWindow(const QString & application, uint w
 
 void ActivityManager::RegisterResourceWindow(uint wid, const QString & uri)
 {
+//FIXME: windowClassClass is not supported by windows right now
+#ifndef WIN32
     KWindowInfo winInfo = KWindowSystem::windowInfo((WId)wid,
         0, NET::WM2WindowClass);
 
     RegisterResourceWindow(winInfo.windowClassClass(), wid, uri);
+#endif
 }
 
 void ActivityManager::UnregisterResourceWindow(uint wid, const QString & uri)
