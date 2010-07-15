@@ -22,7 +22,6 @@
 #include "util.h"
 #include "nfo.h"
 #include "nie.h"
-#include "nrl.h"
 #include "nepomukindexfeeder.h"
 
 #include <Soprano/Soprano>
@@ -63,6 +62,7 @@
 // IMPORTANT: strings in Strigi are apparently UTF8! Except for file names. Those are in local encoding.
 
 using namespace Soprano;
+using namespace Strigi;
 
 
 uint qHash( const std::string& s )
@@ -223,7 +223,7 @@ namespace {
 }
 
 
-class Strigi::NepomukIndexWriter::Private
+class Nepomuk::StrigiIndexWriter::Private
 {
 public:
     Private( Soprano::Model * model )
@@ -287,15 +287,15 @@ private:
 };
 
 
-Strigi::NepomukIndexWriter::NepomukIndexWriter( Soprano::Model* model )
+Nepomuk::StrigiIndexWriter::StrigiIndexWriter( Soprano::Model* model )
     : Strigi::IndexWriter()
 {
     d = new Private( model );
-    Util::storeStrigiMiniOntology( d->repository );
+    Strigi::Util::storeStrigiMiniOntology( d->repository );
 }
 
 
-Strigi::NepomukIndexWriter::~NepomukIndexWriter()
+Nepomuk::StrigiIndexWriter::~StrigiIndexWriter()
 {
     kDebug();
     delete d;
@@ -303,14 +303,14 @@ Strigi::NepomukIndexWriter::~NepomukIndexWriter()
 
 
 // unused
-void Strigi::NepomukIndexWriter::commit()
+void Nepomuk::StrigiIndexWriter::commit()
 {
     // do nothing
 }
 
 
 // delete all indexed data for the files listed in entries
-void Strigi::NepomukIndexWriter::deleteEntries( const std::vector<std::string>& entries )
+void Nepomuk::StrigiIndexWriter::deleteEntries( const std::vector<std::string>& entries )
 {
     for ( unsigned int i = 0; i < entries.size(); ++i ) {
         QString path = QString::fromUtf8( entries[i].c_str() );
@@ -320,14 +320,14 @@ void Strigi::NepomukIndexWriter::deleteEntries( const std::vector<std::string>& 
 
 
 // unused
-void Strigi::NepomukIndexWriter::deleteAllEntries()
+void Nepomuk::StrigiIndexWriter::deleteAllEntries()
 {
     // do nothing
 }
 
 
 // called for each indexed file
-void Strigi::NepomukIndexWriter::startAnalysis( const AnalysisResult* idx )
+void Nepomuk::StrigiIndexWriter::startAnalysis( const AnalysisResult* idx )
 {
     // we need to remember the AnalysisResult since addTriplet does not provide it
     d->currentResultStack.push(idx);
@@ -369,7 +369,7 @@ void Strigi::NepomukIndexWriter::startAnalysis( const AnalysisResult* idx )
 }
 
 
-void Strigi::NepomukIndexWriter::addText( const AnalysisResult* idx, const char* text, int32_t length )
+void Nepomuk::StrigiIndexWriter::addText( const AnalysisResult* idx, const char* text, int32_t length )
 {
     if ( idx->depth() > 0 ) {
         return;
@@ -380,7 +380,7 @@ void Strigi::NepomukIndexWriter::addText( const AnalysisResult* idx, const char*
 }
 
 
-void Strigi::NepomukIndexWriter::addValue( const AnalysisResult* idx,
+void Nepomuk::StrigiIndexWriter::addValue( const AnalysisResult* idx,
                                            const RegisteredField* field,
                                            const std::string& value )
 {
@@ -446,7 +446,7 @@ void Strigi::NepomukIndexWriter::addValue( const AnalysisResult* idx,
 
 
 // the main addValue method
-void Strigi::NepomukIndexWriter::addValue( const AnalysisResult* idx,
+void Nepomuk::StrigiIndexWriter::addValue( const AnalysisResult* idx,
                                            const RegisteredField* field,
                                            const unsigned char* data,
                                            uint32_t size )
@@ -455,14 +455,14 @@ void Strigi::NepomukIndexWriter::addValue( const AnalysisResult* idx,
 }
 
 
-void Strigi::NepomukIndexWriter::addValue( const AnalysisResult*, const RegisteredField*,
+void Nepomuk::StrigiIndexWriter::addValue( const AnalysisResult*, const RegisteredField*,
                                            const std::string&, const std::string& )
 {
     // we do not support map types
 }
 
 
-void Strigi::NepomukIndexWriter::addValue( const AnalysisResult* idx,
+void Nepomuk::StrigiIndexWriter::addValue( const AnalysisResult* idx,
                                            const RegisteredField* field,
                                            uint32_t value )
 {
@@ -482,7 +482,7 @@ void Strigi::NepomukIndexWriter::addValue( const AnalysisResult* idx,
 }
 
 
-void Strigi::NepomukIndexWriter::addValue( const AnalysisResult* idx,
+void Nepomuk::StrigiIndexWriter::addValue( const AnalysisResult* idx,
                                            const RegisteredField* field,
                                            int32_t value )
 {
@@ -497,7 +497,7 @@ void Strigi::NepomukIndexWriter::addValue( const AnalysisResult* idx,
 }
 
 
-void Strigi::NepomukIndexWriter::addValue( const AnalysisResult* idx,
+void Nepomuk::StrigiIndexWriter::addValue( const AnalysisResult* idx,
                                            const RegisteredField* field,
                                            double value )
 {
@@ -512,7 +512,7 @@ void Strigi::NepomukIndexWriter::addValue( const AnalysisResult* idx,
 }
 
 
-void Strigi::NepomukIndexWriter::addTriplet( const std::string& s,
+void Nepomuk::StrigiIndexWriter::addTriplet( const std::string& s,
                                              const std::string& p,
                                              const std::string& o )
 {
@@ -535,7 +535,7 @@ void Strigi::NepomukIndexWriter::addTriplet( const std::string& s,
 
 
 // called after each indexed file
-void Strigi::NepomukIndexWriter::finishAnalysis( const AnalysisResult* idx )
+void Nepomuk::StrigiIndexWriter::finishAnalysis( const AnalysisResult* idx )
 {
     d->currentResultStack.pop();
 
@@ -560,21 +560,21 @@ void Strigi::NepomukIndexWriter::finishAnalysis( const AnalysisResult* idx )
 }
 
 
-void Strigi::NepomukIndexWriter::initWriterData( const Strigi::FieldRegister& f )
+void Nepomuk::StrigiIndexWriter::initWriterData( const Strigi::FieldRegister& f )
 {
     std::map<std::string, RegisteredField*>::const_iterator i;
     std::map<std::string, RegisteredField*>::const_iterator end = f.fields().end();
     for (i = f.fields().begin(); i != end; ++i) {
-        QUrl prop = Util::fieldUri( i->second->key() );
+        QUrl prop = Strigi::Util::fieldUri( i->second->key() );
         i->second->setWriterData( new RegisteredFieldData( prop,
-                                                           prop == Vocabulary::RDF::type()
+                                                           prop == Soprano::Vocabulary::RDF::type()
                                                            ? QVariant::Invalid
                                                            : d->literalType( i->second->properties() ) ) );
     }
 }
 
 
-void Strigi::NepomukIndexWriter::releaseWriterData( const Strigi::FieldRegister& f )
+void Nepomuk::StrigiIndexWriter::releaseWriterData( const Strigi::FieldRegister& f )
 {
     std::map<std::string, RegisteredField*>::const_iterator i;
     std::map<std::string, RegisteredField*>::const_iterator end = f.fields().end();
@@ -585,7 +585,7 @@ void Strigi::NepomukIndexWriter::releaseWriterData( const Strigi::FieldRegister&
 }
 
 
-void Strigi::NepomukIndexWriter::removeIndexedData( const KUrl& uri, const KUrl& url )
+void Nepomuk::StrigiIndexWriter::removeIndexedData( const KUrl& uri, const KUrl& url )
 {
 //    kDebug() << url;
 
@@ -632,7 +632,7 @@ void Strigi::NepomukIndexWriter::removeIndexedData( const KUrl& uri, const KUrl&
 }
 
 
-QUrl Strigi::NepomukIndexWriter::determineFolderResourceUri( const KUrl& fileUrl )
+QUrl Nepomuk::StrigiIndexWriter::determineFolderResourceUri( const KUrl& fileUrl )
 {
     Nepomuk::Resource res( fileUrl );
     if ( res.exists() ) {

@@ -22,6 +22,7 @@
 
 #include "indexscheduler.h"
 #include "strigiserviceconfig.h"
+#include "nepomukindexwriter.h"
 #include "nfo.h"
 #include "nie.h"
 
@@ -72,12 +73,12 @@ namespace {
                               Soprano::Node::resourceToN3( KUrl( dir ) ) );
         return Nepomuk::ResourceManager::instance()->mainModel()->executeQuery( query, Soprano::Query::QueryLanguageSparql ).boolValue();
     }
-    
+
     QHash<QString, QDateTime> getChildren( const QString& dir )
     {
         QHash<QString, QDateTime> children;
         QString query;
-        
+
         if( !isResourcePresent( dir ) ) {
             query = QString::fromLatin1( "select distinct ?url ?mtime where { "
                                          "?r %1 ?url . "
@@ -141,14 +142,14 @@ private:
 };
 
 
-Nepomuk::IndexScheduler::IndexScheduler( Strigi::IndexManager* manager, QObject* parent )
+Nepomuk::IndexScheduler::IndexScheduler( Soprano::Model* model, QObject* parent )
     : QThread( parent ),
       m_suspended( false ),
       m_stopped( false ),
       m_indexing( false ),
-      m_indexManager( manager ),
       m_speed( FullSpeed )
 {
+    m_indexWriter = new StrigiIndexWriter( model );
     m_analyzerConfig = new StoppableConfiguration;
 
     // see updateDir(QString,bool) for details on the timer
@@ -165,6 +166,7 @@ Nepomuk::IndexScheduler::IndexScheduler( Strigi::IndexManager* manager, QObject*
 
 Nepomuk::IndexScheduler::~IndexScheduler()
 {
+    delete m_indexWriter;
     delete m_analyzerConfig;
 }
 
@@ -285,7 +287,7 @@ void Nepomuk::IndexScheduler::run()
     removeOldAndUnwantedEntries();
 
     Strigi::StreamAnalyzer analyzer( *m_analyzerConfig );
-    analyzer.setIndexWriter( *m_indexManager->indexWriter() );
+    analyzer.setIndexWriter( *m_indexWriter );
 
     while ( waitForContinue() ) {
         // wait for more dirs to analyze in case the initial
@@ -440,7 +442,7 @@ void Nepomuk::IndexScheduler::analyzeFile( const QFileInfo& file, Strigi::Stream
 
     Strigi::AnalysisResult analysisresult( QFile::encodeName( filePath ).data(),
                                            file.lastModified().toTime_t(),
-                                           *m_indexManager->indexWriter(),
+                                           *m_indexWriter,
                                            *analyzer,
                                            QFile::encodeName( dir ).data() );
     if ( file.isFile() && !file.isSymLink() ) {
@@ -571,10 +573,10 @@ void Nepomuk::IndexScheduler::analyzeResource( const QUrl& uri, const QDateTime&
     if ( !dirRes.exists() ||
          dirRes.property( Nepomuk::Vocabulary::NIE::lastModified() ).toDateTime() != modificationTime ) {
         Strigi::StreamAnalyzer analyzer( *m_analyzerConfig );
-        analyzer.setIndexWriter( *m_indexManager->indexWriter() );
+        analyzer.setIndexWriter( *m_indexWriter );
         Strigi::AnalysisResult analysisresult( uri.toEncoded().data(),
                                                modificationTime.toTime_t(),
-                                               *m_indexManager->indexWriter(),
+                                               *m_indexWriter,
                                                analyzer );
         QDataStreamStrigiBufferedStream stream( data );
         analysisresult.index( &stream );
@@ -588,7 +590,7 @@ void Nepomuk::IndexScheduler::analyzeResource( const QUrl& uri, const QDateTime&
 void Nepomuk::IndexScheduler::analyzeFile( const QString& path )
 {
     Strigi::StreamAnalyzer analyzer( *m_analyzerConfig );
-    analyzer.setIndexWriter( *m_indexManager->indexWriter() );
+    analyzer.setIndexWriter( *m_indexWriter );
     analyzeFile( path, &analyzer );
 }
 
@@ -602,7 +604,7 @@ void Nepomuk::IndexScheduler::deleteEntries( const QStringList& entries )
         deleteEntries( getChildren( entries[i] ).keys() );
         stdEntries.push_back( QFile::encodeName( entries[i] ).data() );
     }
-    m_indexManager->indexWriter()->deleteEntries( stdEntries );
+    m_indexWriter->deleteEntries( stdEntries );
 }
 
 

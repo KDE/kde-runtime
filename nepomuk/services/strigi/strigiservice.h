@@ -53,7 +53,7 @@ namespace Nepomuk {
         void indexingFolder( const QString& path );
         void indexingStarted();
         void indexingStopped();
-        
+
     public Q_SLOTS:
         /**
          * \return A user readable status string. Includes the currently indexed folder.
@@ -74,7 +74,7 @@ namespace Nepomuk {
 
         QString currentFolder() const;
         QString currentFile() const;
-        
+
         /**
          * Update folder \a path if it is configured to be indexed.
          */
@@ -108,7 +108,6 @@ namespace Nepomuk {
         void updateStrigiConfig();
         QString userStatusString( bool simple ) const;
 
-        Strigi::IndexManager* m_indexManager;
         IndexScheduler* m_indexScheduler;
     };
 }

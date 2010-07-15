@@ -29,6 +29,9 @@ set(strigiservice_SRCS
   indexscheduler.cpp
   strigiserviceconfig.cpp
   eventmonitor.cpp
+  nepomukindexwriter.cpp
+  nepomukindexfeeder.cpp
+  util.cpp
   )
 
 soprano_add_ontology(strigiservice_SRCS

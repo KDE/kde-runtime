@@ -29,56 +29,47 @@
 #include <KIdleTime>
 #include <KLocale>
 
-#include <strigi/indexpluginloader.h>
-#include <strigi/indexmanager.h>
-
 #include <nepomuk/resourcemanager.h>
 
 #include <QtCore/QTimer>
 
 
 Nepomuk::StrigiService::StrigiService( QObject* parent, const QList<QVariant>& )
-    : Service( parent, true ),
-      m_indexManager( 0 )
+    : Service( parent )
 {
     // setup the actual index scheduler including strigi stuff
     // ==============================================================
-    if ( ( m_indexManager = Strigi::IndexPluginLoader::createIndexManager( "nepomukbackend", 0 ) ) ) {
-        m_indexScheduler = new IndexScheduler( m_indexManager, this );
+    m_indexScheduler = new IndexScheduler( mainModel(), this );
 
-        // monitor all kinds of events
-        ( void )new EventMonitor( m_indexScheduler, this );
+    // monitor all kinds of events
+    ( void )new EventMonitor( m_indexScheduler, this );
 
-        // update the watches if the config changes
-        connect( StrigiServiceConfig::self(), SIGNAL( configChanged() ),
-                 this, SLOT( updateWatches() ) );
+    // update the watches if the config changes
+    connect( StrigiServiceConfig::self(), SIGNAL( configChanged() ),
+             this, SLOT( updateWatches() ) );
 
-        // export on dbus
-        ( void )new StrigiAdaptor( this );
+    // export on dbus
+    ( void )new StrigiAdaptor( this );
 
-        // setup status connections
-        connect( m_indexScheduler, SIGNAL( indexingStarted() ),
-                 this, SIGNAL( statusStringChanged() ) );
-        connect( m_indexScheduler, SIGNAL( indexingStopped() ),
-                 this, SIGNAL( statusStringChanged() ) );
-        connect( m_indexScheduler, SIGNAL( indexingFolder(QString) ),
-                 this, SIGNAL( statusStringChanged() ) );
-        connect( m_indexScheduler, SIGNAL( indexingSuspended(bool) ),
-                 this, SIGNAL( statusStringChanged() ) );
+    // setup status connections
+    connect( m_indexScheduler, SIGNAL( indexingStarted() ),
+             this, SIGNAL( statusStringChanged() ) );
+    connect( m_indexScheduler, SIGNAL( indexingStopped() ),
+             this, SIGNAL( statusStringChanged() ) );
+    connect( m_indexScheduler, SIGNAL( indexingFolder(QString) ),
+             this, SIGNAL( statusStringChanged() ) );
+    connect( m_indexScheduler, SIGNAL( indexingSuspended(bool) ),
+             this, SIGNAL( statusStringChanged() ) );
 
-        // setup the indexer to index at snail speed for the first two minutes
-        // this is done for KDE startup - to not slow that down too much
-        m_indexScheduler->setIndexingSpeed( IndexScheduler::SnailPace );
+    // setup the indexer to index at snail speed for the first two minutes
+    // this is done for KDE startup - to not slow that down too much
+    m_indexScheduler->setIndexingSpeed( IndexScheduler::SnailPace );
 
-        // delayed init for the rest which uses IO and CPU
-        QTimer::singleShot( 2*60*1000, this, SLOT( finishInitialization() ) );
+    // delayed init for the rest which uses IO and CPU
+    QTimer::singleShot( 2*60*1000, this, SLOT( finishInitialization() ) );
 
-        // start the actual indexing
-        m_indexScheduler->start();
-    }
-    else {
-        kDebug() << "Failed to load sopranobackend Strigi index manager.";
-    }
+    // start the actual indexing
+    m_indexScheduler->start();
 
     // Connect some signals used in the DBus interface
     connect( this, SIGNAL( statusStringChanged() ),
@@ -89,20 +80,13 @@ Nepomuk::StrigiService::StrigiService( QObject* parent, const QList<QVariant>& )
              this, SIGNAL( indexingStopped() ) );
     connect( m_indexScheduler, SIGNAL( indexingFolder(QString) ),
              this, SIGNAL( indexingFolder(QString) ) );
-
-    // service initialization done if creating a strigi index manager was successful
-    // ==============================================================
-    setServiceInitialized( m_indexManager != 0 );
 }
 
 
 Nepomuk::StrigiService::~StrigiService()
 {
-    if ( m_indexManager ) {
-        m_indexScheduler->stop();
-        m_indexScheduler->wait();
-        Strigi::IndexPluginLoader::deleteIndexManager( m_indexManager );
-    }
+    m_indexScheduler->stop();
+    m_indexScheduler->wait();
 }
 
 

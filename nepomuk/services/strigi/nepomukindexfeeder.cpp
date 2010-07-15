@@ -19,7 +19,6 @@
 
 
 #include "nepomukindexfeeder.h"
-#include "nrl.h"
 #include "util.h"
 
 #include <QtCore/QDateTime>
@@ -29,6 +28,7 @@
 #include <Soprano/QueryResultIterator>
 #include <Soprano/Vocabulary/RDF>
 #include <Soprano/Vocabulary/NAO>
+#include <Soprano/Vocabulary/NRL>
 
 #include <Nepomuk/ResourceManager>
 #include <Nepomuk/Resource>
@@ -241,7 +241,7 @@ QUrl Nepomuk::NepomukIndexFeeder::generateGraph( const QUrl& resourceUri ) const
     QUrl metaDataContext = Nepomuk::ResourceManager::instance()->generateUniqueUri( "ctx" );
     m_model->addStatement( context,
                            Soprano::Vocabulary::RDF::type(),
-                           Nepomuk::Vocabulary::NRL::DiscardableInstanceBase(),
+                           Soprano::Vocabulary::NRL::DiscardableInstanceBase(),
                            metaDataContext );
     m_model->addStatement( context,
                            Soprano::Vocabulary::NAO::created(),
@@ -253,10 +253,10 @@ QUrl Nepomuk::NepomukIndexFeeder::generateGraph( const QUrl& resourceUri ) const
                            metaDataContext );
     m_model->addStatement( metaDataContext,
                            Soprano::Vocabulary::RDF::type(),
-                           Nepomuk::Vocabulary::NRL::GraphMetadata(),
+                           Soprano::Vocabulary::NRL::GraphMetadata(),
                            metaDataContext );
     m_model->addStatement( metaDataContext,
-                           Nepomuk::Vocabulary::NRL::coreGraphMetadataFor(),
+                           Soprano::Vocabulary::NRL::coreGraphMetadataFor(),
                            context,
                            metaDataContext );
 

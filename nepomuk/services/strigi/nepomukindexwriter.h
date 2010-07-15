@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2007-2009 Sebastian Trueg <trueg@kde.org>
+  Copyright (C) 2007-2010 Sebastian Trueg <trueg@kde.org>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU General Public License as
@@ -31,12 +31,12 @@ namespace Soprano {
 class KUrl;
 class QUrl;
 
-namespace Strigi {
-    class NepomukIndexWriter : public Strigi::IndexWriter
+namespace Nepomuk {
+    class StrigiIndexWriter : public Strigi::IndexWriter
     {
     public:
-        NepomukIndexWriter( Soprano::Model* );
-        ~NepomukIndexWriter();
+        StrigiIndexWriter( Soprano::Model* );
+        ~StrigiIndexWriter();
 
         void commit();
 
@@ -55,23 +55,23 @@ namespace Strigi {
         void initWriterData( const Strigi::FieldRegister& );
         void releaseWriterData( const Strigi::FieldRegister& );
 
-        void startAnalysis( const AnalysisResult* );
-        void addText( const AnalysisResult*, const char* text, int32_t length );
-        void addValue( const AnalysisResult*, const RegisteredField* field,
+        void startAnalysis( const Strigi::AnalysisResult* );
+        void addText( const Strigi::AnalysisResult*, const char* text, int32_t length );
+        void addValue( const Strigi::AnalysisResult*, const Strigi::RegisteredField* field,
                        const std::string& value );
-        void addValue( const AnalysisResult*, const RegisteredField* field,
+        void addValue( const Strigi::AnalysisResult*, const Strigi::RegisteredField* field,
                        const unsigned char* data, uint32_t size );
-        void addValue( const AnalysisResult*, const RegisteredField* field,
+        void addValue( const Strigi::AnalysisResult*, const Strigi::RegisteredField* field,
                        int32_t value );
-        void addValue( const AnalysisResult*, const RegisteredField* field,
+        void addValue( const Strigi::AnalysisResult*, const Strigi::RegisteredField* field,
                        uint32_t value );
-        void addValue( const AnalysisResult*, const RegisteredField* field,
+        void addValue( const Strigi::AnalysisResult*, const Strigi::RegisteredField* field,
                        double value );
         void addTriplet( const std::string& subject,
                          const std::string& predicate, const std::string& object );
-        void addValue( const AnalysisResult*, const RegisteredField* field,
+        void addValue( const Strigi::AnalysisResult*, const Strigi::RegisteredField* field,
                        const std::string& name, const std::string& value );
-        void finishAnalysis( const AnalysisResult* );
+        void finishAnalysis( const Strigi::AnalysisResult* );
 
     private:
         /**

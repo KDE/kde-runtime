@@ -32,14 +32,18 @@
 
 namespace Strigi {
     class StreamAnalyzer;
-    class IndexManager;
 }
-
+namespace Soprano {
+    class Model;
+}
 class QFileInfo;
 class QByteArray;
 class QTimer;
 
 namespace Nepomuk {
+
+    class StrigiIndexWriter;
+
     /**
      * The IndexScheduler performs the normal indexing,
      * ie. the initial indexing and the timed updates
@@ -52,7 +56,7 @@ namespace Nepomuk {
         Q_OBJECT
 
     public:
-        IndexScheduler( Strigi::IndexManager* manager, QObject* parent );
+        IndexScheduler( Soprano::Model*, QObject* parent );
         ~IndexScheduler();
 
         bool isSuspended() const;
@@ -214,7 +218,7 @@ namespace Nepomuk {
 
         class StoppableConfiguration;
         StoppableConfiguration* m_analyzerConfig;
-        Strigi::IndexManager* m_indexManager;
+        StrigiIndexWriter* m_indexWriter;
 
         // set of folders to update (+flags defined in the source file) - changed by updateDir
         QSet<QPair<QString, UpdateDirFlags> > m_dirsToUpdate;
