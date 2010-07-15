@@ -64,21 +64,39 @@ namespace {
     const int s_reducedSpeedDelay = 500; // ms
     const int s_snailPaceDelay = 3000;   // ms
 
+    bool isResourcePresent( const QString & dir ) {
+        QString query = QString::fromLatin1(" ask { ?r %1 %2. } ")
+                        .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ),
+                              Soprano::Node::resourceToN3( KUrl( dir ) ) );
+        return Nepomuk::ResourceManager::instance()->mainModel()->executeQuery( query, Soprano::Query::QueryLanguageSparql ).boolValue();
+    }
 
     QHash<QString, QDateTime> getChildren( const QString& dir )
     {
         QHash<QString, QDateTime> children;
+        QString query;
 
-        QString query = QString( "select distinct ?url ?mtime where { "
-                                 "?r %1 ?parent . ?parent %2 %3 . "
-                                 "?r %4 ?mtime . "
-                                 "?r %2 ?url . "
-                                 "}")
-                        .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::isPartOf() ),
-                              Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ),
-                              Soprano::Node::resourceToN3( KUrl( dir ) ),
-                              Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::lastModified() ) );
-
+        if( !isResourcePresent( dir ) ) {
+            query = QString::fromLatin1( "select distinct ?url ?mtime where { "
+                                         "?r %1 ?url . "
+                                         "FILTER( regex(str(?url), '^file://%2/([^/]*)$') ) . "
+                                         "?r %3 ?mtime ."
+                                         "}" )
+                    .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ),
+                          dir,
+                          Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::lastModified() ) );
+        }
+        else {
+            query = QString::fromLatin1( "select distinct ?url ?mtime where { "
+                                        "?r %1 ?parent . ?parent %2 %3 . "
+                                        "?r %4 ?mtime . "
+                                        "?r %2 ?url . "
+                                        "}" )
+                    .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::isPartOf() ),
+                        Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ),
+                        Soprano::Node::resourceToN3( KUrl( dir ) ),
+                        Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::lastModified() ) );
+        }
         //kDebug() << "running getChildren query:" << query;
 
         Soprano::QueryResultIterator result = Nepomuk::ResourceManager::instance()->mainModel()->executeQuery( query, Soprano::Query::QueryLanguageSparql );
