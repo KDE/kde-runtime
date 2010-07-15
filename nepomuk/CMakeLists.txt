@@ -8,7 +8,6 @@ include_directories(
   ${STRIGI_INCLUDE_DIR}
 )
 
-add_subdirectory(strigibackend)
 add_subdirectory(server)
 add_subdirectory(kcm)
 add_subdirectory(services)
