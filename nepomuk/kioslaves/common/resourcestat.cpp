@@ -290,7 +290,8 @@ bool Nepomuk::willBeRedirected( const Nepomuk::Resource& res )
 {
     return( res.hasType( Nepomuk::Vocabulary::NFO::Folder() ) ||
             res.hasType( Soprano::Vocabulary::NAO::Tag() ) ||
-            res.hasType( Nepomuk::Vocabulary::NFO::Filesystem() ) );
+            res.hasType( Nepomuk::Vocabulary::NFO::Filesystem() ) ||
+            !res.hasType( Nepomuk::Vocabulary::NFO::FileDataObject() ) );
 }
 
 
@@ -310,6 +311,13 @@ KUrl Nepomuk::redirectionUrl( const Nepomuk::Resource& res )
         KUrl queryUrl( Query::Query( term ).toSearchUrl() );
         queryUrl.addQueryItem( QLatin1String( "title" ), i18n( "Things tagged '%1'", res.genericLabel() ) );
         return queryUrl.url();
+    }
+    else if ( !res.hasType( Nepomuk::Vocabulary::NFO::FileDataObject() ) ) {
+        Query::ComparisonTerm term( QUrl(), Query::ResourceTerm( res ), Query::ComparisonTerm::Equal );
+
+        Query::Query query( term );
+        
+        return query.toSearchUrl( res.genericLabel() ).url();
     }
 
 #if 0 // disabled as long as the strigi service does create a dedicated album resource for each track
