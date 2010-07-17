@@ -24,11 +24,11 @@
 #include "systray.h"
 #include "strigiserviceconfig.h"
 #include "statuswidget.h"
-#include "useractivitymonitor.h"
 #include "filewatchserviceinterface.h"
 
 #include <KDebug>
 #include <KDirNotify>
+#include <KIdleTime>
 
 #include <strigi/indexpluginloader.h>
 #include <strigi/indexmanager.h>
@@ -117,15 +117,26 @@ Nepomuk::StrigiService::~StrigiService()
 void Nepomuk::StrigiService::finishInitialization()
 {
     // slow down on user activity (start also only after 2 minutes)
-    UserActivityMonitor* userActivityMonitor = new UserActivityMonitor( this );
-    connect( userActivityMonitor, SIGNAL( userActive( bool ) ),
-             m_indexScheduler, SLOT( setReducedIndexingSpeed( bool ) ) );
-    userActivityMonitor->start();
+    KIdleTime * idleTime = KIdleTime::instance();
+    idleTime->addIdleTimeout( 1000 * 60 * 2 ); // 2 min
+
+    connect( idleTime, SIGNAL(timeoutReached(int)), this, SLOT(slotIdleTimerPause()) );
+    connect( idleTime, SIGNAL(resumingFromIdle()), this, SLOT(slotIdleTimerResume()) );
 
     // full speed until the user is active
     m_indexScheduler->setIndexingSpeed( IndexScheduler::FullSpeed );
 
     updateWatches();
+}
+
+void Nepomuk::StrigiService::slotIdleTimerPause()
+{
+    m_indexScheduler->setIndexingSpeed( IndexScheduler::ReducedSpeed );
+}
+
+void Nepomuk::StrigiService::slotIdleTimerResume()
+{
+    m_indexScheduler->setIndexingSpeed( IndexScheduler::FullSpeed );
 }
 
 

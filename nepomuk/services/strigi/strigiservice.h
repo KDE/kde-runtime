@@ -64,6 +64,8 @@ namespace Nepomuk {
     private Q_SLOTS:
         void finishInitialization();
         void updateWatches();
+        void slotIdleTimerPause();
+        void slotIdleTimerResume();
 
     private:
         void updateStrigiConfig();
