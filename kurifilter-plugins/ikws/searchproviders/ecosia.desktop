@@ -12,7 +12,9 @@ Name[en_GB]=Ecosia search engine
 Name[es]=Motor de búsqueda Ecosia
 Name[et]=Ecosia otsingumootor
 Name[fr]=Moteur de recherche Ecosia
+Name[fy]=Ecosia sykmotor
 Name[he]=מנוע חיפוש Ecosia
+Name[hi]=इकोसिया खोज इंजिन
 Name[hr]=Tražilica Ecosia
 Name[ia]=motore de cerca Ecosia
 Name[id]=Mesin pencari Ecosia
@@ -60,8 +62,10 @@ Query[en_GB]=http://ecosia.org/search.php?q=\\{@}&meta=normal
 Query[es]=http://ecosia.org/search.php?q=\\{@}&meta=normal
 Query[et]=http://ecosia.org/search.php?q=\\{@}&meta=normal
 Query[fr]=http://ecosia.org/search.php?q=\\{@}&meta=normal
+Query[fy]=http://ecosia.org/search.php?q=\\{@}&meta=normal
 Query[gu]=http://ecosia.org/search.php?q=\\{@}&meta=normal
 Query[he]=http://ecosia.org/search.php?q=\\{@}&meta=normal
+Query[hi]=http://ecosia.org/search.php?q=\\{@}&meta=normal
 Query[hr]=http://ecosia.org/search.php?q=\\{@}&meta=normal
 Query[ia]=http://ecosia.org/search.php?q=\\{@}&meta=normal
 Query[id]=http://ecosia.org/search.php?q=\\{@}&meta=normal

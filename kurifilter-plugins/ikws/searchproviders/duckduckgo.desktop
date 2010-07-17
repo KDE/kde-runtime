@@ -13,6 +13,8 @@ Name[en_GB]=Duck Duck Go
 Name[es]=Duck Duck Go
 Name[et]=Duck Duck Go
 Name[fr]=Duck Duck Go
+Name[fy]=Duck Duck Go
+Name[hi]=बतख़ जा जा
 Name[hr]=Duck Duck Go
 Name[ia]=Duck Duck Go
 Name[id]=Duck Duck Go
@@ -55,7 +57,9 @@ Query[en_GB]=http://duckduckgo.com/?q=\\{@}&v=
 Query[es]=http://duckduckgo.com/?q=\\{@}&v=
 Query[et]=http://duckduckgo.com/?q=\\{@}&v=
 Query[fr]=http://duckduckgo.com/?q=\\{@}&v=
+Query[fy]=http://duckduckgo.com/?q=\\{@}&v=
 Query[gu]=http://duckduckgo.com/?q=\\{@}&v=
+Query[hi]=http://duckduckgo.com/?q=\\{@}&v=
 Query[hr]=http://duckduckgo.com/?q=\\{@}&v=
 Query[ia]=http://duckduckgo.com/?q=\\{@}&v=
 Query[id]=http://duckduckgo.com/?q=\\{@}&v=

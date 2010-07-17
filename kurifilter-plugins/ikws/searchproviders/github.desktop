@@ -15,6 +15,8 @@ Name[en_GB]=GitHub
 Name[es]=GitHub
 Name[et]=GitHub
 Name[fr]=GitHub
+Name[fy]=GitHub
+Name[hi]=गिटहब
 Name[hr]=GitHub
 Name[ia]=GitHub
 Name[id]=GitHub
@@ -61,7 +63,9 @@ Query[en_GB]=http://github.com/search?q=\\{@}&x=0&y=0
 Query[es]=http://github.com/search?q=\\{@}&x=0&y=0
 Query[et]=http://github.com/search?q=\\{@}&x=0&y=0
 Query[fr]=http://github.com/search?q=\\{@}&x=0&y=0
+Query[fy]=http://github.com/search?q=\\{@}&x=0&y=0
 Query[gu]=http://github.com/search?q=\\{@}&x=0&y=0
+Query[hi]=http://github.com/search?q=\\{@}&x=0&y=0
 Query[hr]=http://github.com/search?q=\\{@}&x=0&y=0
 Query[ia]=http://github.com/search?q=\\{@}&x=0&y=0
 Query[id]=http://github.com/search?q=\\{@}&x=0&y=0

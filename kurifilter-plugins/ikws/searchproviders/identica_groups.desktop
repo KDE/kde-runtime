@@ -15,6 +15,8 @@ Name[en_GB]=Identi.ca Groups
 Name[es]=Grupos Identi.ca
 Name[et]=Identi.ca grupid
 Name[fr]=Groupes Icenti.ca
+Name[fy]=Identi.ca groepen
+Name[hi]=Identi.ca समूह
 Name[hr]=Grupe na Identi.ci
 Name[ia]=Gruppos de Identi.ca
 Name[id]=Identi.ca Groups
@@ -59,7 +61,9 @@ Query[en_GB]=http://identi.ca/search/group?q=\\{@}
 Query[es]=http://identi.ca/search/group?q=\\{@}
 Query[et]=http://identi.ca/search/group?q=\\{@}
 Query[fr]=http://identi.ca/search/group?q=\\{@}
+Query[fy]=http://identi.ca/search/group?q=\\{@}
 Query[gu]=http://identi.ca/search/group?q=\\{@}
+Query[hi]=http://identi.ca/search/group?q=\\{@}
 Query[hr]=http://identi.ca/search/group?q=\\{@}
 Query[ia]=http://identi.ca/search/group?q=\\{@}
 Query[id]=http://identi.ca/search/group?q=\\{@}

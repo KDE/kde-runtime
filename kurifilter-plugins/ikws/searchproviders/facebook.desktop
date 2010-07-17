@@ -15,7 +15,9 @@ Name[en_GB]=Facebook
 Name[es]=Facebook
 Name[et]=Facebook
 Name[fr]=Facebook
+Name[fy]=Facebook
 Name[gu]=ફેસબુક
+Name[hi]=फेसबुक
 Name[hr]=Facebook
 Name[ia]=Facebook
 Name[id]=Facebook
@@ -61,7 +63,9 @@ Query[en_GB]=http://www.facebook.com/search/?q=\\{@}&init=quick
 Query[es]=http://www.facebook.com/search/?q=\\{@}&init=quick
 Query[et]=http://www.facebook.com/search/?q=\\{@}&init=quick
 Query[fr]=http://www.facebook.com/search/?q=\\{@}&init=quick
+Query[fy]=http://www.facebook.com/search/?q=\\{@}&init=quick
 Query[gu]=http://www.facebook.com/search/?q=\\{@}&init=quick
+Query[hi]=http://www.facebook.com/search/?q=\\{@}&init=quick
 Query[hr]=http://www.facebook.com/search/?q=\\{@}&init=quick
 Query[ia]=http://www.facebook.com/search?q=\\{@}&init=quick
 Query[id]=http://www.facebook.com/search/?q=\\{@}&init=quick
