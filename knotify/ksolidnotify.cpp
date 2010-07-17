@@ -36,9 +36,8 @@
 
 #include <KLocale>
 
-static const char dbusServiceName[] = "org.kde.DeviceNotifications";
-static const char dbusInterfaceName[] = "org.kde.DeviceNotifications";
-static const char dbusPath[] = "/org/kde/DeviceNotifications";
+static const char dbusDeviceNotificationsName[] = "org.kde.DeviceNotifications";
+static const char dbusDeviceNotificationsPath[] = "/org/kde/DeviceNotifications";
 
 
 KSolidNotify::KSolidNotify(KNotify* parent):
@@ -62,16 +61,16 @@ KSolidNotify::KSolidNotify(KNotify* parent):
 
 	// check if service already exists on plugin instantiation
 	QDBusConnectionInterface* interface = QDBusConnection::sessionBus().interface();
-	m_dbusServiceExists = interface && interface->isServiceRegistered(dbusServiceName);
+	m_dbusServiceExists = interface && interface->isServiceRegistered(dbusDeviceNotificationsName);
 
 	if( m_dbusServiceExists )
-		slotServiceOwnerChanged(dbusServiceName, QString(), "_"); //connect signals
+		slotServiceOwnerChanged(dbusDeviceNotificationsName, QString(), "_"); //connect signals
 
 	// to catch register/unregister events from service in runtime
 	QDBusServiceWatcher *watcher = new QDBusServiceWatcher(this);
 	watcher->setConnection(QDBusConnection::sessionBus());
 	watcher->setWatchMode(QDBusServiceWatcher::WatchForOwnerChange);
-	watcher->addWatchedService(dbusServiceName);
+	watcher->addWatchedService(dbusDeviceNotificationsName);
 	connect(watcher, SIGNAL(serviceOwnerChanged(const QString&, const QString&, const QString&)),
 			SLOT(slotServiceOwnerChanged(const QString&, const QString&, const QString&)));
 }
@@ -128,7 +127,7 @@ void KSolidNotify::storageSetupDone(Solid::ErrorType error, QVariant errorData, 
 			m_kNotify->event("mounterror", "hardwarenotifications", ContextList(), i18n("Device error"), errorMessage, KNotifyImage(), QStringList(), -1);
 		} else
 		{
-			QDBusMessage m = QDBusMessage::createMethodCall( dbusServiceName, dbusPath, dbusInterfaceName, "notify" );
+			QDBusMessage m = QDBusMessage::createMethodCall( dbusDeviceNotificationsName, dbusDeviceNotificationsPath, dbusDeviceNotificationsName, "notify" );
 			m << error << errorMessage << errorData.toString().simplified() << udi;
 			QDBusConnection::sessionBus().call(m);
 		}
@@ -146,7 +145,7 @@ void KSolidNotify::storageTeardownDone(Solid::ErrorType error, QVariant errorDat
 			m_kNotify->event("mounterror", "hardwarenotifications", ContextList(), i18n("Device error"), errorMessage, KNotifyImage(), QStringList(), -1);
 		} else
 		{
-			QDBusMessage m = QDBusMessage::createMethodCall( dbusServiceName, dbusPath, dbusInterfaceName, "notify" );
+			QDBusMessage m = QDBusMessage::createMethodCall( dbusDeviceNotificationsName, dbusDeviceNotificationsPath, dbusDeviceNotificationsName, "notify" );
 			m << error << errorMessage << errorData.toString().simplified() << udi;
 			QDBusConnection::sessionBus().call(m);
 		}
@@ -176,7 +175,7 @@ void KSolidNotify::storageEjectDone(Solid::ErrorType error, QVariant errorData, 
 			m_kNotify->event("mounterror", "hardwarenotifications", ContextList(), i18n("Device error"), errorMessage, KNotifyImage(), QStringList(), -1);
 		} else
 		{
-			QDBusMessage m = QDBusMessage::createMethodCall( dbusServiceName, dbusPath, dbusInterfaceName, "notify" );
+			QDBusMessage m = QDBusMessage::createMethodCall( dbusDeviceNotificationsName, dbusDeviceNotificationsPath, dbusDeviceNotificationsName, "notify" );
 			m << error << errorMessage << errorData.toString().simplified() << udi;
 			QDBusConnection::sessionBus().call(m);
 		}
