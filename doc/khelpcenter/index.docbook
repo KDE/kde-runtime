@@ -244,25 +244,6 @@ entries:
 <variablelist>
 
 <varlistentry>
-<term><guilabel>Quickstart Guide</guilabel></term>
-<listitem>
-<para>
-A short introduction to the &kde; desktop and some key applications running on it.
-</para>
-</listitem>
-</varlistentry>
-
-<varlistentry>
-<term><guilabel>&kde; User's manual</guilabel></term>
-<listitem>
-<para>
-The &kde; User's manual is an in-depth exploration of &kde;, including
-installation, configuration and customization, and use.
-</para>
-</listitem> 
-</varlistentry>
-
-<varlistentry>
 <term><guilabel>Application manuals</guilabel></term>
 <listitem>
 <para>
