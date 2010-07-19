@@ -66,6 +66,7 @@ Nepomuk::StrigiService::StrigiService( QObject* parent, const QList<QVariant>& )
     m_indexScheduler->setIndexingSpeed( IndexScheduler::SnailPace );
 
     // delayed init for the rest which uses IO and CPU
+    // FIXME: do not use a random delay value but wait for KDE to be started completely (using the session manager)
     QTimer::singleShot( 2*60*1000, this, SLOT( finishInitialization() ) );
 
     // start the actual indexing
@@ -93,28 +94,29 @@ Nepomuk::StrigiService::~StrigiService()
 void Nepomuk::StrigiService::finishInitialization()
 {
     // slow down on user activity (start also only after 2 minutes)
-    KIdleTime * idleTime = KIdleTime::instance();
+    KIdleTime* idleTime = KIdleTime::instance();
     idleTime->addIdleTimeout( 1000 * 60 * 2 ); // 2 min
 
-    connect( idleTime, SIGNAL(timeoutReached(int)), this, SLOT(slotIdleTimerPause()) );
+    connect( idleTime, SIGNAL(timeoutReached(int)), this, SLOT(slotIdleTimeoutReached()) );
     connect( idleTime, SIGNAL(resumingFromIdle()), this, SLOT(slotIdleTimerResume()) );
 
-    // full speed until the user is active
-    m_indexScheduler->setIndexingSpeed( IndexScheduler::FullSpeed );
+    // start out with reduced speed until the user is idle for 2 min
+    m_indexScheduler->setIndexingSpeed( IndexScheduler::ReducedSpeed );
 
     // Creation of watches is a memory intensive process as a large number of
     // watch file descriptors need to be created ( one for each directory )
     updateWatches();
 }
 
-void Nepomuk::StrigiService::slotIdleTimerPause()
+void Nepomuk::StrigiService::slotIdleTimeoutReached()
 {
-    m_indexScheduler->setIndexingSpeed( IndexScheduler::ReducedSpeed );
+    m_indexScheduler->setIndexingSpeed( IndexScheduler::FullSpeed );
+    KIdleTime::instance()->catchNextResumeEvent();
 }
 
 void Nepomuk::StrigiService::slotIdleTimerResume()
 {
-    m_indexScheduler->setIndexingSpeed( IndexScheduler::FullSpeed );
+    m_indexScheduler->setIndexingSpeed( IndexScheduler::ReducedSpeed );
 }
 
 
