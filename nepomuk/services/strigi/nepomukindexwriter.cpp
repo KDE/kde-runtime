@@ -638,13 +638,6 @@ QUrl Nepomuk::StrigiIndexWriter::determineFolderResourceUri( const KUrl& fileUrl
     if ( res.exists() ) {
         return res.resourceUri();
     }
-//     QString query = QString::fromLatin1( "select ?r where { ?r %1 %2 . }" )
-//                     .arg( Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ),
-//                           Node::resourceToN3( fileUrl ) );
-//     QueryResultIterator result = d->repository->executeQuery( query, Soprano::Query::QueryLanguageSparql );
-//     if ( result.next() ) {
-//         return result["r"].uri();
-//     }
     else {
         kDebug() << "Could not find resource URI for folder (this is not an error)" << fileUrl;
         return QUrl();
