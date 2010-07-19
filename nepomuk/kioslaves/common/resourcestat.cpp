@@ -288,6 +288,7 @@ KIO::UDSEntry Nepomuk::statNepomukResource( const Nepomuk::Resource& res )
 
 bool Nepomuk::willBeRedirected( const Nepomuk::Resource& res )
 {
+    // here the same canditions as in redirectionUrl need to be listed
     return( res.hasType( Nepomuk::Vocabulary::NFO::Folder() ) ||
             res.hasType( Soprano::Vocabulary::NAO::Tag() ) ||
             res.hasType( Nepomuk::Vocabulary::NFO::Filesystem() ) ||
@@ -297,38 +298,33 @@ bool Nepomuk::willBeRedirected( const Nepomuk::Resource& res )
 
 KUrl Nepomuk::redirectionUrl( const Nepomuk::Resource& res )
 {
+    // list folders by forwarding to the actual folder on disk
     if ( res.hasType( Nepomuk::Vocabulary::NFO::Folder() ) ) {
         return res.property( Nepomuk::Vocabulary::NIE::url() ).toUrl();
     }
+
+    // list filesystems by forwarding to the mounted path on disk (in case the fs is mounted)
     else if ( res.hasType( Nepomuk::Vocabulary::NFO::Filesystem() ) ) {
         KUrl fsUrl = determineFilesystemPath( res );
         if ( fsUrl.isValid() ) {
             return fsUrl;
         }
     }
+
+    // list tags by listing everything tagged with that tag
     else if ( res.hasType( Soprano::Vocabulary::NAO::Tag() ) ) {
         Query::ComparisonTerm term( Soprano::Vocabulary::NAO::hasTag(), Query::ResourceTerm( res ), Query::ComparisonTerm::Equal );
-        KUrl queryUrl( Query::Query( term ).toSearchUrl() );
-        queryUrl.addQueryItem( QLatin1String( "title" ), i18n( "Things tagged '%1'", res.genericLabel() ) );
-        return queryUrl.url();
+        return Query::Query( term ).toSearchUrl( i18n( "Things tagged '%1'", res.genericLabel() ) );
     }
+
+    // list everything else besides files by querying things related to the resource in some way
+    // this works for music albums or artists but it would also work for tags
     else if ( !res.hasType( Nepomuk::Vocabulary::NFO::FileDataObject() ) ) {
         Query::ComparisonTerm term( QUrl(), Query::ResourceTerm( res ), Query::ComparisonTerm::Equal );
-
-        Query::Query query( term );
-        
-        return query.toSearchUrl( res.genericLabel() ).url();
+        return Query::Query( term ).toSearchUrl( res.genericLabel() );
     }
 
-#if 0 // disabled as long as the strigi service does create a dedicated album resource for each track
-    else if ( res.hasType( Nepomuk::Vocabulary::NMM::MusicAlbum() ) ) {
-        Query::ComparisonTerm term( Nepomuk::Vocabulary::NMM::musicAlbum(), Query::ResourceTerm( res ) );
-        KUrl queryUrl( Query::Query( term ).toSearchUrl() );
-        queryUrl.addQueryItem( QLatin1String( "title" ), res.genericLabel() );
-        return queryUrl.url();
-    }
-#endif
-
+    // no forwarding done
     return KUrl();
 }
 
