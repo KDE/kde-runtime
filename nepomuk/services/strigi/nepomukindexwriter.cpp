@@ -493,7 +493,7 @@ void Nepomuk::StrigiIndexWriter::addValue( const AnalysisResult* idx,
     FileMetaData* md = fileDataForResult( idx );
     RegisteredFieldData* rfd = reinterpret_cast<RegisteredFieldData*>( field->writerData() );
 
-    d->repository->addStatement( md->resourceUri, rfd->property, LiteralValue( value ) );
+    d->feeder->addStatement( md->resourceUri, rfd->property, LiteralValue( value ) );
 }
 
 
@@ -508,7 +508,7 @@ void Nepomuk::StrigiIndexWriter::addValue( const AnalysisResult* idx,
     FileMetaData* md = fileDataForResult( idx );
     RegisteredFieldData* rfd = reinterpret_cast<RegisteredFieldData*>( field->writerData() );
 
-    d->repository->addStatement( md->resourceUri, rfd->property, LiteralValue( value ) );
+    d->feeder->addStatement( md->resourceUri, rfd->property, LiteralValue( value ) );
 }
 
 
@@ -620,7 +620,7 @@ void Nepomuk::StrigiIndexWriter::removeIndexedData( const KUrl& uri, const KUrl&
     }
 
 //        kDebug() << "deleteEntries query:" << query;
-
+//
     QueryResultIterator result = d->repository->executeQuery( query, Soprano::Query::QueryLanguageSparql );
     while ( result.next() ) {
         Node indexGraph = result.binding( "g" );
