@@ -20,6 +20,7 @@
 
 #include "nepomukindexfeeder.h"
 #include "util.h"
+#include "nie.h"
 
 #include <QtCore/QDateTime>
 
@@ -36,9 +37,8 @@
 #include <KDebug>
 
 
-Nepomuk::NepomukIndexFeeder::NepomukIndexFeeder(Soprano::Model* model, QObject* parent)
-    : QThread( parent ),
-      m_model( model )
+Nepomuk::NepomukIndexFeeder::NepomukIndexFeeder( QObject* parent )
+    : QThread( parent )
 {
     m_stopped = false;
     start();
@@ -144,7 +144,7 @@ void Nepomuk::NepomukIndexFeeder::addToModel(const Nepomuk::NepomukIndexFeeder::
 
         Soprano::Statement st( rs.uri, iter.key(), iter.value(), context );
         //kDebug() << "ADDING : " << st;
-        m_model->addStatement( st );
+        ResourceManager::instance()->mainModel()->addStatement( st );
     }
 }
 
@@ -180,7 +180,7 @@ void Nepomuk::NepomukIndexFeeder::run()
 
                 QString query = buildResourceQuery( rs );
                 //kDebug() << query;
-                Soprano::QueryResultIterator it =  m_model->executeQuery( query, Soprano::Query::QueryLanguageSparql );
+                Soprano::QueryResultIterator it = ResourceManager::instance()->mainModel()->executeQuery( query, Soprano::Query::QueryLanguageSparql );
 
                 if( it.next() ) {
                     //kDebug() << "Found exact match " << rs.uri << " " << it[0].uri();
@@ -234,31 +234,81 @@ void Nepomuk::NepomukIndexFeeder::run()
 
 QUrl Nepomuk::NepomukIndexFeeder::generateGraph( const QUrl& resourceUri ) const
 {
+    Soprano::Model* model = ResourceManager::instance()->mainModel();
     QUrl context = Nepomuk::ResourceManager::instance()->generateUniqueUri( "ctx" );
 
     // create the provedance data for the data graph
     // TODO: add more data at some point when it becomes of interest
     QUrl metaDataContext = Nepomuk::ResourceManager::instance()->generateUniqueUri( "ctx" );
-    m_model->addStatement( context,
-                           Soprano::Vocabulary::RDF::type(),
-                           Soprano::Vocabulary::NRL::DiscardableInstanceBase(),
-                           metaDataContext );
-    m_model->addStatement( context,
-                           Soprano::Vocabulary::NAO::created(),
-                           Soprano::LiteralValue( QDateTime::currentDateTime() ),
-                           metaDataContext );
-    m_model->addStatement( context,
-                           Strigi::Ontology::indexGraphFor(),
-                           resourceUri,
-                           metaDataContext );
-    m_model->addStatement( metaDataContext,
-                           Soprano::Vocabulary::RDF::type(),
-                           Soprano::Vocabulary::NRL::GraphMetadata(),
-                           metaDataContext );
-    m_model->addStatement( metaDataContext,
-                           Soprano::Vocabulary::NRL::coreGraphMetadataFor(),
-                           context,
-                           metaDataContext );
+    model->addStatement( context,
+                         Soprano::Vocabulary::RDF::type(),
+                         Soprano::Vocabulary::NRL::DiscardableInstanceBase(),
+                         metaDataContext );
+    model->addStatement( context,
+                         Soprano::Vocabulary::NAO::created(),
+                         Soprano::LiteralValue( QDateTime::currentDateTime() ),
+                         metaDataContext );
+    model->addStatement( context,
+                         Strigi::Ontology::indexGraphFor(),
+                         resourceUri,
+                         metaDataContext );
+    model->addStatement( metaDataContext,
+                         Soprano::Vocabulary::RDF::type(),
+                         Soprano::Vocabulary::NRL::GraphMetadata(),
+                         metaDataContext );
+    model->addStatement( metaDataContext,
+                         Soprano::Vocabulary::NRL::coreGraphMetadataFor(),
+                         context,
+                         metaDataContext );
 
     return context;
+}
+
+
+// static
+bool Nepomuk::NepomukIndexFeeder::removeIndexedDataForUrl( const KUrl& url )
+{
+    if ( url.isEmpty() )
+        return false;
+
+    QString query = QString::fromLatin1( "select ?g where { "
+                                         "{ "
+                                         "?r %2 %1 . "
+                                         "?g %3 ?r . } "
+                                         "UNION "
+                                         "{ ?g %3 %1 . }"
+                                         "}")
+                    .arg( Soprano::Node::resourceToN3( url ),
+                          Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ),
+                          Soprano::Node::resourceToN3( Strigi::Ontology::indexGraphFor() ) );
+
+    Soprano::QueryResultIterator result = Nepomuk::ResourceManager::instance()->mainModel()->executeQuery( query, Soprano::Query::QueryLanguageSparql );
+    while ( result.next() ) {
+        // delete the indexed data (The Soprano::NRLModel in the storage service will take care of
+        // the metadata graph)
+        Nepomuk::ResourceManager::instance()->mainModel()->removeContext( result.binding( "g" ) );
+    }
+
+    return true;
+}
+
+
+// static
+bool Nepomuk::NepomukIndexFeeder::removeIndexedDataForResourceUri( const KUrl& res )
+{
+    if ( res.isEmpty() )
+        return false;
+
+    QString query = QString::fromLatin1( "select ?g where { ?g %1 %2 . }" )
+                    .arg( Soprano::Node::resourceToN3( Strigi::Ontology::indexGraphFor() ),
+                          Soprano::Node::resourceToN3( res ) );
+
+    Soprano::QueryResultIterator result = Nepomuk::ResourceManager::instance()->mainModel()->executeQuery( query, Soprano::Query::QueryLanguageSparql );
+    while ( result.next() ) {
+        // delete the indexed data (The Soprano::NRLModel in the storage service will take care of
+        // the metadata graph)
+        Nepomuk::ResourceManager::instance()->mainModel()->removeContext( result.binding( "g" ) );
+    }
+
+    return true;
 }

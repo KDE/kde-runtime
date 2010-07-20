@@ -30,19 +30,13 @@
 
 #include <KUrl>
 
-namespace Strigi {
-    class StreamAnalyzer;
-}
-namespace Soprano {
-    class Model;
-}
 class QFileInfo;
 class QByteArray;
 class QTimer;
 
 namespace Nepomuk {
 
-    class StrigiIndexWriter;
+    class Indexer;
 
     /**
      * The IndexScheduler performs the normal indexing,
@@ -56,7 +50,7 @@ namespace Nepomuk {
         Q_OBJECT
 
     public:
-        IndexScheduler( Soprano::Model*, QObject* parent );
+        IndexScheduler( QObject* parent );
         ~IndexScheduler();
 
         bool isSuspended() const;
@@ -189,8 +183,7 @@ namespace Nepomuk {
         void run();
 
         bool waitForContinue( bool disableDelay = false );
-        bool updateDir( const QString& dir, Strigi::StreamAnalyzer* analyzer, UpdateDirFlags flags );
-        void analyzeFile( const QFileInfo& file, Strigi::StreamAnalyzer* analyzer );
+        bool analyzeDir( const QString& dir, UpdateDirFlags flags );
         void queueAllFoldersForUpdate( bool forceUpdate = false );
 
         /**
@@ -216,9 +209,7 @@ namespace Nepomuk {
         QMutex m_resumeStopMutex;
         QWaitCondition m_resumeStopWc;
 
-        class StoppableConfiguration;
-        StoppableConfiguration* m_analyzerConfig;
-        StrigiIndexWriter* m_indexWriter;
+        Indexer* m_indexer;
 
         // set of folders to update (+flags defined in the source file) - changed by updateDir
         QSet<QPair<QString, UpdateDirFlags> > m_dirsToUpdate;

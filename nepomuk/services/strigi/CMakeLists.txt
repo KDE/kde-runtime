@@ -32,6 +32,7 @@ set(strigiservice_SRCS
   nepomukindexwriter.cpp
   nepomukindexfeeder.cpp
   util.cpp
+  nepomukindexer.cpp
   )
 
 soprano_add_ontology(strigiservice_SRCS

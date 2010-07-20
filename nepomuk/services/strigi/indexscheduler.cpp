@@ -22,7 +22,7 @@
 
 #include "indexscheduler.h"
 #include "strigiserviceconfig.h"
-#include "nepomukindexwriter.h"
+#include "nepomukindexer.h"
 #include "nfo.h"
 #include "nie.h"
 
@@ -52,14 +52,6 @@
 
 #include <map>
 #include <vector>
-
-#include <strigi/strigiconfig.h>
-#include <strigi/indexwriter.h>
-#include <strigi/indexmanager.h>
-#include <strigi/indexreader.h>
-#include <strigi/analysisresult.h>
-#include <strigi/fileinputstream.h>
-#include <strigi/analyzerconfiguration.h>
 
 
 namespace {
@@ -113,44 +105,14 @@ namespace {
 }
 
 
-class Nepomuk::IndexScheduler::StoppableConfiguration : public Strigi::AnalyzerConfiguration
-{
-public:
-    StoppableConfiguration()
-        : m_stop(false) {
-#if defined(STRIGI_IS_VERSION)
-#if STRIGI_IS_VERSION( 0, 6, 1 )
-        setIndexArchiveContents( false );
-#endif
-#endif
-    }
-
-    bool indexMore() const {
-        return !m_stop;
-    }
-
-    bool addMoreText() const {
-        return !m_stop;
-    }
-
-    void setStop( bool s ) {
-        m_stop = s;
-    }
-
-private:
-    bool m_stop;
-};
-
-
-Nepomuk::IndexScheduler::IndexScheduler( Soprano::Model* model, QObject* parent )
+Nepomuk::IndexScheduler::IndexScheduler( QObject* parent )
     : QThread( parent ),
       m_suspended( false ),
       m_stopped( false ),
       m_indexing( false ),
       m_speed( FullSpeed )
 {
-    m_indexWriter = new StrigiIndexWriter( model );
-    m_analyzerConfig = new StoppableConfiguration;
+    m_indexer = new Nepomuk::Indexer( this );
 
     // see updateDir(QString,bool) for details on the timer
     m_dirsToUpdateWakeupTimer = new QTimer( this );
@@ -166,8 +128,6 @@ Nepomuk::IndexScheduler::IndexScheduler( Soprano::Model* model, QObject* parent 
 
 Nepomuk::IndexScheduler::~IndexScheduler()
 {
-    delete m_indexWriter;
-    delete m_analyzerConfig;
 }
 
 
@@ -207,7 +167,7 @@ void Nepomuk::IndexScheduler::stop()
         QMutexLocker locker( &m_resumeStopMutex );
         m_stopped = true;
         m_suspended = false;
-        m_analyzerConfig->setStop( true );
+        m_indexer->stop();
         m_dirsToUpdateWc.wakeAll();
         m_resumeStopWc.wakeAll();
     }
@@ -286,9 +246,6 @@ void Nepomuk::IndexScheduler::run()
 
     removeOldAndUnwantedEntries();
 
-    Strigi::StreamAnalyzer analyzer( *m_analyzerConfig );
-    analyzer.setIndexWriter( *m_indexWriter );
-
     while ( waitForContinue() ) {
         // wait for more dirs to analyze in case the initial
         // indexing is done
@@ -315,7 +272,7 @@ void Nepomuk::IndexScheduler::run()
         m_dirsToUpdateMutex.unlock();
 
         // update until stopped
-        if ( !updateDir( dir.first, &analyzer, dir.second | UpdateRecursive ) ) {
+        if ( !analyzeDir( dir.first, dir.second | UpdateRecursive ) ) {
             break;
         }
         m_currentFolder.clear();
@@ -326,12 +283,11 @@ void Nepomuk::IndexScheduler::run()
     // reset state
     m_suspended = false;
     m_stopped = false;
-    m_analyzerConfig->setStop( false );
     m_currentFolder.clear();
 }
 
 
-bool Nepomuk::IndexScheduler::updateDir( const QString& dir, Strigi::StreamAnalyzer* analyzer, UpdateDirFlags flags )
+bool Nepomuk::IndexScheduler::analyzeDir( const QString& dir, UpdateDirFlags flags )
 {
 //    kDebug() << dir << analyzer << recursive;
 
@@ -348,7 +304,7 @@ bool Nepomuk::IndexScheduler::updateDir( const QString& dir, Strigi::StreamAnaly
     Nepomuk::Resource dirRes( dirUrl );
     if ( !dirRes.exists() ||
          dirRes.property( Nepomuk::Vocabulary::NIE::lastModified() ).toDateTime() != dirInfo.lastModified() ) {
-        analyzeFile( dirInfo, analyzer );
+        m_indexer->indexFile( dirInfo );
     }
 
     // get a map of all indexed files from the dir including their stored mtime
@@ -367,7 +323,7 @@ bool Nepomuk::IndexScheduler::updateDir( const QString& dir, Strigi::StreamAnaly
         QString path = dirIt.next();
 
         // FIXME: we cannot use canonialFilePath here since that could lead into another folder. Thus, we probably
-        // need to use another approach then the getChildren one.
+        // need to use another approach than the getChildren one.
         QFileInfo fileInfo = dirIt.fileInfo();//.canonialFilePath();
 
         bool indexFile = Nepomuk::StrigiServiceConfig::self()->shouldFileBeIndexed( fileInfo.fileName() );
@@ -414,7 +370,7 @@ bool Nepomuk::IndexScheduler::updateDir( const QString& dir, Strigi::StreamAnaly
             return false;
 
         m_currentUrl = file.filePath();
-        analyzeFile( file, analyzer );
+        m_indexer->indexFile( file );
         m_currentUrl = KUrl();
     }
 
@@ -423,41 +379,12 @@ bool Nepomuk::IndexScheduler::updateDir( const QString& dir, Strigi::StreamAnaly
     if ( recursive ) {
         foreach( const QString& folder, subFolders ) {
             if ( StrigiServiceConfig::self()->shouldFolderBeIndexed( folder ) &&
-                 !updateDir( folder, analyzer, flags ) )
+                 !analyzeDir( folder, flags ) )
                 return false;
         }
     }
 
     return true;
-}
-
-
-void Nepomuk::IndexScheduler::analyzeFile( const QFileInfo& file, Strigi::StreamAnalyzer* analyzer )
-{
-    //
-    // strigi asserts if the file path has a trailing slash
-    //
-    QString filePath = m_currentUrl.toLocalFile( KUrl::RemoveTrailingSlash );
-    QString dir = m_currentUrl.directory(KUrl::IgnoreTrailingSlash);
-
-    Strigi::AnalysisResult analysisresult( QFile::encodeName( filePath ).data(),
-                                           file.lastModified().toTime_t(),
-                                           *m_indexWriter,
-                                           *analyzer,
-                                           QFile::encodeName( dir ).data() );
-    if ( file.isFile() && !file.isSymLink() ) {
-#ifdef STRIGI_HAS_FILEINPUTSTREAM_OPEN
-        Strigi::InputStream* stream = Strigi::FileInputStream::open( QFile::encodeName( file.filePath() ) );
-        analysisresult.index( stream );
-        delete stream;
-#else
-        Strigi::FileInputStream stream( QFile::encodeName( file.filePath() ) );
-        analysisresult.index( &stream );
-#endif
-    }
-    else {
-        analysisresult.index(0);
-    }
 }
 
 
@@ -537,61 +464,17 @@ void Nepomuk::IndexScheduler::slotDirsToUpdateWakeupTimeout()
 }
 
 
-namespace {
-    class QDataStreamStrigiBufferedStream : public Strigi::BufferedStream<char>
-    {
-    public:
-        QDataStreamStrigiBufferedStream( QDataStream& stream )
-            : m_stream( stream ) {
-        }
-
-        int32_t fillBuffer( char* start, int32_t space ) {
-            int r = m_stream.readRawData( start, space );
-            if ( r == 0 ) {
-                // Strigi's API is so weird!
-                return -1;
-            }
-            else if ( r < 0 ) {
-                // Again: weird API. m_status is a protected member of StreamBaseBase (yes, 2x Base)
-                m_status = Strigi::Error;
-                return -1;
-            }
-            else {
-                return r;
-            }
-        }
-
-    private:
-        QDataStream& m_stream;
-    };
-}
-
-
 void Nepomuk::IndexScheduler::analyzeResource( const QUrl& uri, const QDateTime& modificationTime, QDataStream& data )
 {
-    Resource dirRes( uri );
-    if ( !dirRes.exists() ||
-         dirRes.property( Nepomuk::Vocabulary::NIE::lastModified() ).toDateTime() != modificationTime ) {
-        Strigi::StreamAnalyzer analyzer( *m_analyzerConfig );
-        analyzer.setIndexWriter( *m_indexWriter );
-        Strigi::AnalysisResult analysisresult( uri.toEncoded().data(),
-                                               modificationTime.toTime_t(),
-                                               *m_indexWriter,
-                                               analyzer );
-        QDataStreamStrigiBufferedStream stream( data );
-        analysisresult.index( &stream );
-    }
-    else {
-        kDebug() << uri << "up to date";
-    }
+    Indexer indexer;
+    indexer.indexResource( uri, modificationTime, data );
 }
 
 
 void Nepomuk::IndexScheduler::analyzeFile( const QString& path )
 {
-    Strigi::StreamAnalyzer analyzer( *m_analyzerConfig );
-    analyzer.setIndexWriter( *m_indexWriter );
-    analyzeFile( path, &analyzer );
+    Indexer indexer;
+    indexer.indexFile( QFileInfo( path ) );
 }
 
 
@@ -599,12 +482,10 @@ void Nepomuk::IndexScheduler::deleteEntries( const QStringList& entries )
 {
     // recurse into subdirs
     // TODO: use a less mem intensive method
-    std::vector<std::string> stdEntries;
     for ( int i = 0; i < entries.count(); ++i ) {
         deleteEntries( getChildren( entries[i] ).keys() );
-        stdEntries.push_back( QFile::encodeName( entries[i] ).data() );
+        m_indexer->removeIndexedData( KUrl( entries[i] ) );
     }
-    m_indexWriter->deleteEntries( stdEntries );
 }
 
 

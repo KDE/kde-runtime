@@ -19,12 +19,11 @@
 */
 
 #include "nepomukindexwriter.h"
+#include "nepomukindexfeeder.h"
 #include "util.h"
 #include "nfo.h"
 #include "nie.h"
-#include "nepomukindexfeeder.h"
 
-#include <Soprano/Soprano>
 #include <Soprano/Vocabulary/RDF>
 #include <Soprano/LiteralValue>
 #include <Soprano/Node>
@@ -226,21 +225,17 @@ namespace {
 class Nepomuk::StrigiIndexWriter::Private
 {
 public:
-    Private( Soprano::Model * model )
-        : repository( model )
+    Private()
     {
         literalTypes[FieldRegister::stringType] = QVariant::String;
         literalTypes[FieldRegister::floatType] = QVariant::Double;
         literalTypes[FieldRegister::integerType] = QVariant::Int;
         literalTypes[FieldRegister::binaryType] = QVariant::ByteArray;
         literalTypes[FieldRegister::datetimeType] = QVariant::DateTime; // Strigi encodes datetime as unsigned integer, i.e. addValue( ..., uint )
-
-        feeder = new Nepomuk::NepomukIndexFeeder( model );
     }
 
     ~Private()
     {
-        delete feeder;
     }
 
     QVariant::Type literalType( const Strigi::FieldProperties& strigiType ) {
@@ -270,14 +265,12 @@ public:
         }
     }
 
-    Soprano::Model* repository;
-
     //
     // The Strigi API does not provide context information in addTriplet, i.e. the AnalysisResult.
     // However, we only use one thread, only one AnalysisResult at the time.
     // Thus, we can just remember that and use it in addTriplet.
     //
-
+    QMutex resultStackMutex;
     QStack<const Strigi::AnalysisResult*> currentResultStack;
 
     Nepomuk::NepomukIndexFeeder* feeder;
@@ -287,11 +280,11 @@ private:
 };
 
 
-Nepomuk::StrigiIndexWriter::StrigiIndexWriter( Soprano::Model* model )
-    : Strigi::IndexWriter()
+Nepomuk::StrigiIndexWriter::StrigiIndexWriter( NepomukIndexFeeder* feeder )
+    : Strigi::IndexWriter(),
+    d( new Private() )
 {
-    d = new Private( model );
-    Strigi::Util::storeStrigiMiniOntology( d->repository );
+    d->feeder = feeder;
 }
 
 
@@ -314,7 +307,7 @@ void Nepomuk::StrigiIndexWriter::deleteEntries( const std::vector<std::string>& 
 {
     for ( unsigned int i = 0; i < entries.size(); ++i ) {
         QString path = QString::fromUtf8( entries[i].c_str() );
-        removeIndexedData( KUrl(), path );
+        NepomukIndexFeeder::removeIndexedDataForUrl( KUrl( path ) );
     }
 }
 
@@ -341,7 +334,7 @@ void Nepomuk::StrigiIndexWriter::startAnalysis( const AnalysisResult* idx )
     FileMetaData* data = new FileMetaData( idx );
 
     // remove previously indexed data
-    removeIndexedData( data->resourceUri, data->fileUrl );
+    NepomukIndexFeeder::removeIndexedDataForResourceUri( data->resourceUri );
 
     // It is important to keep the resource URI between updates (especially for sharing of files)
     // However, when updating data from pre-KDE 4.4 times we want to get rid of old file:/ resource
@@ -581,53 +574,6 @@ void Nepomuk::StrigiIndexWriter::releaseWriterData( const Strigi::FieldRegister&
     for (i = f.fields().begin(); i != end; ++i) {
         delete static_cast<RegisteredFieldData*>( i->second->writerData() );
         i->second->setWriterData( 0 );
-    }
-}
-
-
-void Nepomuk::StrigiIndexWriter::removeIndexedData( const KUrl& uri, const KUrl& url )
-{
-//    kDebug() << url;
-
-    if ( url.isEmpty() )
-        return;
-
-    QString query;
-    if ( uri == url || url.isEmpty() ) {
-         query = QString::fromLatin1( "select ?g where { ?g %1 %2 . }" )
-                    .arg( Soprano::Node::resourceToN3( Strigi::Ontology::indexGraphFor() ),
-                          Soprano::Node::resourceToN3( uri ) );
-    }
-    else if ( !uri.isEmpty() ) {
-        // makes sure we also catch data created by buggy versions of ourselves.
-        query = QString::fromLatin1( "select ?g where { { ?g %1 %2 . } UNION { ?g %1 %3 . } }" )
-                    .arg( Soprano::Node::resourceToN3( Strigi::Ontology::indexGraphFor() ),
-                          Soprano::Node::resourceToN3( uri ),
-                          Soprano::Node::resourceToN3( url ) );
-    }
-    else {
-        // The last UNION makes sure we also catch data created by buggy versions of ourselves.
-        query = QString::fromLatin1( "select ?g where { "
-                                     "{ "
-                                     "?r %2 %1 . "
-                                     "?g %3 ?r . } "
-                                     "UNION "
-                                     "{ ?g %3 %1 . }"
-                                     "}")
-                    .arg( Node::resourceToN3( url ),
-                          Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ),
-                          Node::resourceToN3( Strigi::Ontology::indexGraphFor() ) );
-    }
-
-//        kDebug() << "deleteEntries query:" << query;
-//
-    QueryResultIterator result = d->repository->executeQuery( query, Soprano::Query::QueryLanguageSparql );
-    while ( result.next() ) {
-        Node indexGraph = result.binding( "g" );
-
-        // delete the indexed data (The Soprano::NRLModel in the storage service will take care of
-        // the metadata graph)
-        d->repository->removeContext( indexGraph );
     }
 }
 

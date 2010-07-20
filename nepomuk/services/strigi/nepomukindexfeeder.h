@@ -30,21 +30,20 @@
 #include <QtCore/QSet>
 
 namespace Soprano {
-    class Model;
     class Statement;
     class Node;
 }
+class KUrl;
 
 namespace Nepomuk {
     class NepomukIndexFeeder : public QThread
     {
         Q_OBJECT
     public:
-        NepomukIndexFeeder( Soprano::Model* model, QObject* parent = 0);
+        NepomukIndexFeeder( QObject* parent = 0 );
         virtual ~NepomukIndexFeeder();
 
         void stop();
-        void run();
 
     public Q_SLOTS:
         /**
@@ -89,6 +88,9 @@ namespace Nepomuk {
          */
         void end();
 
+        static bool removeIndexedDataForUrl( const KUrl& url );
+        static bool removeIndexedDataForResourceUri( const KUrl& res );
+
     private:
 
         struct ResourceStruct {
@@ -114,11 +116,11 @@ namespace Nepomuk {
          */
         QStack<Request> m_stack;
 
-        Soprano::Model* m_model;
-
         QMutex m_queueMutex;
         QWaitCondition m_queueWaiter;
         bool m_stopped;
+
+        void run();
 
         /// Generates a discardable graph for \p resourceUri
         QUrl generateGraph( const QUrl& resourceUri ) const;

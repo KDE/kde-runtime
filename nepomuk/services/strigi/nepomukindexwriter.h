@@ -24,18 +24,18 @@
 #include <strigi/analysisresult.h>
 #include <strigi/analyzerconfiguration.h>
 
-namespace Soprano {
-    class Model;
-}
-
 class KUrl;
 class QUrl;
 
 namespace Nepomuk {
+
+    class Resource;
+    class NepomukIndexFeeder;
+
     class StrigiIndexWriter : public Strigi::IndexWriter
     {
     public:
-        StrigiIndexWriter( Soprano::Model* );
+        StrigiIndexWriter( NepomukIndexFeeder* );
         ~StrigiIndexWriter();
 
         void commit();
@@ -74,12 +74,6 @@ namespace Nepomuk {
         void finishAnalysis( const Strigi::AnalysisResult* );
 
     private:
-        /**
-         * \param uri The resource URI. Can be empty if \p url is not.
-         * \param url The file URL. Can be empty if \p uri is not.
-         */
-        void removeIndexedData( const KUrl& uri, const KUrl& url );
-
         QUrl determineFolderResourceUri( const KUrl& fileUrl );
 
         class Private;
