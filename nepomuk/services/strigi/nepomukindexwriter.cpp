@@ -195,6 +195,7 @@ namespace {
             feeder->addStatement( resourceUri,
                                   Vocabulary::RDF::type(),
                                   Nepomuk::Vocabulary::NFO::Folder() );
+            feeder->quickFeed();
         }
     }
 

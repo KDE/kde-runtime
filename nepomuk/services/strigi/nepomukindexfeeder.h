@@ -91,6 +91,15 @@ namespace Nepomuk {
         static bool removeIndexedDataForUrl( const KUrl& url );
         static bool removeIndexedDataForResourceUri( const KUrl& res );
 
+        /**
+         * A special function that synchronously pushes all the collected data into the
+         * model without checking for duplicates.
+         * It should be called between begin() and end()
+         *
+         * \sa begin end
+         */
+        void quickFeed();
+
     private:
 
         struct ResourceStruct {

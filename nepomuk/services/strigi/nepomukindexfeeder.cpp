@@ -312,3 +312,19 @@ bool Nepomuk::IndexFeeder::removeIndexedDataForResourceUri( const KUrl& res )
 
     return true;
 }
+
+
+void Nepomuk::IndexFeeder::quickFeed()
+{
+    if( m_stack.isEmpty() )
+        return;
+
+    Request & req = m_stack.top();
+    QMutableHashIterator<QUrl, ResourceStruct> it( req.hash );
+    while( it.hasNext() ) {
+        it.next();
+
+        addToModel( it.value() );
+        it.remove();
+    }
+}
