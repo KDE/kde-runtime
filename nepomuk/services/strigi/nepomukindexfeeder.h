@@ -36,12 +36,12 @@ namespace Soprano {
 class KUrl;
 
 namespace Nepomuk {
-    class NepomukIndexFeeder : public QThread
+    class IndexFeeder : public QThread
     {
         Q_OBJECT
     public:
-        NepomukIndexFeeder( QObject* parent = 0 );
-        virtual ~NepomukIndexFeeder();
+        IndexFeeder( QObject* parent = 0 );
+        virtual ~IndexFeeder();
 
         void stop();
 

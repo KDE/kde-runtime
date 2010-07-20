@@ -30,12 +30,12 @@ class QUrl;
 namespace Nepomuk {
 
     class Resource;
-    class NepomukIndexFeeder;
+    class IndexFeeder;
 
     class StrigiIndexWriter : public Strigi::IndexWriter
     {
     public:
-        StrigiIndexWriter( NepomukIndexFeeder* );
+        StrigiIndexWriter( IndexFeeder* );
         ~StrigiIndexWriter();
 
         void commit();

@@ -148,7 +148,7 @@ namespace {
         FileMetaData( const Strigi::AnalysisResult* idx );
 
         /// stores basic data including the nie:url and the nrl:GraphMetadata in \p model
-        void storeBasicData( Nepomuk::NepomukIndexFeeder* feeder );
+        void storeBasicData( Nepomuk::IndexFeeder* feeder );
 
         /// map a blank node to a resource
         QUrl mapNode( const std::string& s );
@@ -182,7 +182,7 @@ namespace {
         resourceUri = Nepomuk::Resource( fileUrl ).resourceUri();
     }
 
-    void FileMetaData::storeBasicData( Nepomuk::NepomukIndexFeeder * feeder )
+    void FileMetaData::storeBasicData( Nepomuk::IndexFeeder * feeder )
     {
         feeder->addStatement( resourceUri, Nepomuk::Vocabulary::NIE::url(), fileUrl );
 
@@ -273,14 +273,16 @@ public:
     QMutex resultStackMutex;
     QStack<const Strigi::AnalysisResult*> currentResultStack;
 
-    Nepomuk::NepomukIndexFeeder* feeder;
+    Nepomuk::IndexFeeder
+* feeder;
 
 private:
     QHash<std::string, QVariant::Type> literalTypes;
 };
 
 
-Nepomuk::StrigiIndexWriter::StrigiIndexWriter( NepomukIndexFeeder* feeder )
+Nepomuk::StrigiIndexWriter::StrigiIndexWriter( IndexFeeder
+* feeder )
     : Strigi::IndexWriter(),
     d( new Private() )
 {
@@ -307,7 +309,7 @@ void Nepomuk::StrigiIndexWriter::deleteEntries( const std::vector<std::string>& 
 {
     for ( unsigned int i = 0; i < entries.size(); ++i ) {
         QString path = QString::fromUtf8( entries[i].c_str() );
-        NepomukIndexFeeder::removeIndexedDataForUrl( KUrl( path ) );
+        IndexFeeder::removeIndexedDataForUrl( KUrl( path ) );
     }
 }
 
@@ -334,7 +336,7 @@ void Nepomuk::StrigiIndexWriter::startAnalysis( const AnalysisResult* idx )
     FileMetaData* data = new FileMetaData( idx );
 
     // remove previously indexed data
-    NepomukIndexFeeder::removeIndexedDataForResourceUri( data->resourceUri );
+    IndexFeeder::removeIndexedDataForResourceUri( data->resourceUri );
 
     // It is important to keep the resource URI between updates (especially for sharing of files)
     // However, when updating data from pre-KDE 4.4 times we want to get rid of old file:/ resource

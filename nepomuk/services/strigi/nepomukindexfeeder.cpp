@@ -37,7 +37,7 @@
 #include <KDebug>
 
 
-Nepomuk::NepomukIndexFeeder::NepomukIndexFeeder( QObject* parent )
+Nepomuk::IndexFeeder::IndexFeeder( QObject* parent )
     : QThread( parent )
 {
     m_stopped = false;
@@ -45,14 +45,14 @@ Nepomuk::NepomukIndexFeeder::NepomukIndexFeeder( QObject* parent )
 }
 
 
-Nepomuk::NepomukIndexFeeder::~NepomukIndexFeeder()
+Nepomuk::IndexFeeder::~IndexFeeder()
 {
     stop();
     wait();
 }
 
 
-void Nepomuk::NepomukIndexFeeder::begin( const QUrl & url )
+void Nepomuk::IndexFeeder::begin( const QUrl & url )
 {
     //kDebug() << "BEGINING";
     Request req;
@@ -62,7 +62,7 @@ void Nepomuk::NepomukIndexFeeder::begin( const QUrl & url )
 }
 
 
-void Nepomuk::NepomukIndexFeeder::addStatement(const Soprano::Statement& st)
+void Nepomuk::IndexFeeder::addStatement(const Soprano::Statement& st)
 {
     Q_ASSERT( !m_stack.isEmpty() );
     Request & req = m_stack.top();
@@ -88,13 +88,13 @@ void Nepomuk::NepomukIndexFeeder::addStatement(const Soprano::Statement& st)
 }
 
 
-void Nepomuk::NepomukIndexFeeder::addStatement(const Soprano::Node& subject, const Soprano::Node& predicate, const Soprano::Node& object)
+void Nepomuk::IndexFeeder::addStatement(const Soprano::Node& subject, const Soprano::Node& predicate, const Soprano::Node& object)
 {
     addStatement( Soprano::Statement( subject, predicate, object, Soprano::Node() ) );
 }
 
 
-void Nepomuk::NepomukIndexFeeder::end()
+void Nepomuk::IndexFeeder::end()
 {
     if( m_stack.isEmpty() )
         return;
@@ -110,7 +110,7 @@ void Nepomuk::NepomukIndexFeeder::end()
 }
 
 
-void Nepomuk::NepomukIndexFeeder::stop()
+void Nepomuk::IndexFeeder::stop()
 {
     QMutexLocker lock( &m_queueMutex );
     m_stopped = true;
@@ -118,7 +118,7 @@ void Nepomuk::NepomukIndexFeeder::stop()
 }
 
 
-QString Nepomuk::NepomukIndexFeeder::buildResourceQuery(const Nepomuk::NepomukIndexFeeder::ResourceStruct& rs) const
+QString Nepomuk::IndexFeeder::buildResourceQuery(const Nepomuk::IndexFeeder::ResourceStruct& rs) const
 {
     QString query = QString::fromLatin1("select distinct ?r where { ");
 
@@ -135,7 +135,7 @@ QString Nepomuk::NepomukIndexFeeder::buildResourceQuery(const Nepomuk::NepomukIn
 }
 
 
-void Nepomuk::NepomukIndexFeeder::addToModel(const Nepomuk::NepomukIndexFeeder::ResourceStruct& rs) const
+void Nepomuk::IndexFeeder::addToModel(const Nepomuk::IndexFeeder::ResourceStruct& rs) const
 {
     QUrl context = generateGraph( rs.uri );
     QHashIterator<QUrl, Soprano::Node> iter( rs.propHash );
@@ -152,7 +152,7 @@ void Nepomuk::NepomukIndexFeeder::addToModel(const Nepomuk::NepomukIndexFeeder::
 //BUG: When indexing a file, there is one main uri ( in Request ) and other additional uris
 //     If there is a statement connecting the main uri with the additional ones, it will be
 //     resolved correctly, but not if one of the additional one links to another additional one.
-void Nepomuk::NepomukIndexFeeder::run()
+void Nepomuk::IndexFeeder::run()
 {
     m_stopped = false;
     while( !m_stopped ) {
@@ -232,7 +232,7 @@ void Nepomuk::NepomukIndexFeeder::run()
 }
 
 
-QUrl Nepomuk::NepomukIndexFeeder::generateGraph( const QUrl& resourceUri ) const
+QUrl Nepomuk::IndexFeeder::generateGraph( const QUrl& resourceUri ) const
 {
     Soprano::Model* model = ResourceManager::instance()->mainModel();
     QUrl context = Nepomuk::ResourceManager::instance()->generateUniqueUri( "ctx" );
@@ -266,7 +266,7 @@ QUrl Nepomuk::NepomukIndexFeeder::generateGraph( const QUrl& resourceUri ) const
 
 
 // static
-bool Nepomuk::NepomukIndexFeeder::removeIndexedDataForUrl( const KUrl& url )
+bool Nepomuk::IndexFeeder::removeIndexedDataForUrl( const KUrl& url )
 {
     if ( url.isEmpty() )
         return false;
@@ -294,7 +294,7 @@ bool Nepomuk::NepomukIndexFeeder::removeIndexedDataForUrl( const KUrl& url )
 
 
 // static
-bool Nepomuk::NepomukIndexFeeder::removeIndexedDataForResourceUri( const KUrl& res )
+bool Nepomuk::IndexFeeder::removeIndexedDataForResourceUri( const KUrl& res )
 {
     if ( res.isEmpty() )
         return false;

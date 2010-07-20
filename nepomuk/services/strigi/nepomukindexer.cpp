@@ -78,7 +78,7 @@ class Nepomuk::Indexer::Private
 {
 public:
     StoppableConfiguration m_analyzerConfig;
-    NepomukIndexFeeder* m_indexFeeder;
+    IndexFeeder* m_indexFeeder;
     StrigiIndexWriter* m_indexWriter;
     Strigi::StreamAnalyzer* m_streamAnalyzer;
 };
@@ -88,7 +88,7 @@ Nepomuk::Indexer::Indexer( QObject* parent )
     : QObject( parent ),
       d( new Private() )
 {
-    d->m_indexFeeder = new NepomukIndexFeeder( this );
+    d->m_indexFeeder = new IndexFeeder( this );
     d->m_indexWriter = new StrigiIndexWriter( d->m_indexFeeder );
     d->m_streamAnalyzer = new Strigi::StreamAnalyzer( d->m_analyzerConfig );
     d->m_streamAnalyzer->setIndexWriter( *d->m_indexWriter );
@@ -193,13 +193,13 @@ void Nepomuk::Indexer::indexResource( const KUrl& uri, const QDateTime& modifica
 
 void Nepomuk::Indexer::removeIndexedData( const KUrl& url )
 {
-    Nepomuk::NepomukIndexFeeder::removeIndexedDataForUrl( url );
+    Nepomuk::IndexFeeder::removeIndexedDataForUrl( url );
 }
 
 
 void Nepomuk::Indexer::removeIndexedData( const Nepomuk::Resource& res )
 {
-    Nepomuk::NepomukIndexFeeder::removeIndexedDataForResourceUri( res.resourceUri() );
+    Nepomuk::IndexFeeder::removeIndexedDataForResourceUri( res.resourceUri() );
 }
 
 
