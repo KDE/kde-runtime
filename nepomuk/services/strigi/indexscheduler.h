@@ -181,7 +181,14 @@ namespace Nepomuk {
         void run();
 
         bool waitForContinue( bool disableDelay = false );
+
+        /**
+         * It first indexes \p dir. Then it indexes all the files in \p dir, and
+         * finally recursivly analyzes all the subfolders in \p dir IF \p flags
+         * contains the 'UpdateRecursive' flag. It even sets m_currentFolder
+         */
         bool analyzeDir( const QString& dir, UpdateDirFlags flags );
+
         void queueAllFoldersForUpdate( bool forceUpdate = false );
 
         /**
