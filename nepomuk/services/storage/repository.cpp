@@ -22,9 +22,7 @@
 #include <Soprano/StorageModel>
 #include <Soprano/Error/Error>
 #include <Soprano/Vocabulary/RDF>
-
-#define USING_SOPRANO_NRLMODEL_UNSTABLE_API
-#include <Soprano/NRLModel>
+#include <Soprano/Util/SignalCacheModel>
 
 #include <KStandardDirs>
 #include <KDebug>
@@ -163,13 +161,12 @@ void Nepomuk::Repository::open()
 
     kDebug() << "Successfully created new model for repository" << name();
 
-    // create a NRLModel for those extra nice features
+    // create a SignalCacheModel to make sure no client slows us down by listening to the stupid signals
     // =================================
-    Soprano::NRLModel* nrlModel = new Soprano::NRLModel( m_model );
-    nrlModel->setParent(this); // memory management
-    nrlModel->setEnableQueryPrefixExpansion( true );
+    Soprano::Util::SignalCacheModel* scm = new Soprano::Util::SignalCacheModel( m_model );
+    scm->setParent(this); // memory management
 
-    setParentModel( nrlModel );
+    setParentModel( scm );
 
     // check if we have to convert
     // =================================

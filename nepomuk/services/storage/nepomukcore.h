@@ -25,9 +25,6 @@
 #include <QtCore/QStringList>
 
 namespace Nepomuk {
-
-    class OntologyLoader;
-
     class Core : public Soprano::Server::ServerCore
     {
         Q_OBJECT
@@ -58,13 +55,15 @@ namespace Nepomuk {
 
     private Q_SLOTS:
         void slotRepositoryOpened( Repository* repo, bool success );
-        void slotOntologiesLoaded( Nepomuk::OntologyLoader* loader );
+        void slotOntologiesLoaded();
 
     private:
         Soprano::Model* createModel( const Soprano::BackendSettings& );
 
         /// the one single "main" repository Nepomuk uses
         Repository* m_repository;
+
+        bool m_initialized;
     };
 }
 

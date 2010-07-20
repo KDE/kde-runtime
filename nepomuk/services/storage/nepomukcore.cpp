@@ -1,5 +1,5 @@
 /* This file is part of the KDE Project
-   Copyright (c) 2007 Sebastian Trueg <trueg@kde.org>
+   Copyright (c) 2007-2010 Sebastian Trueg <trueg@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -33,7 +33,8 @@ static const char s_repositoryName[] = "main";
 
 Nepomuk::Core::Core( QObject* parent )
     : Soprano::Server::ServerCore( parent ),
-      m_repository( 0 )
+      m_repository( 0 ),
+      m_initialized( false )
 {
     // we give the Virtuoso server a server thread max of 100 which is already an insane number
     // just make sure we never reach that limit
@@ -58,7 +59,7 @@ void Nepomuk::Core::init()
 
 bool Nepomuk::Core::initialized() const
 {
-    return( m_repository && m_repository->state() == Repository::OPEN );
+    return m_initialized;
 }
 
 
@@ -74,19 +75,23 @@ void Nepomuk::Core::slotRepositoryOpened( Repository* repo, bool success )
         // failed.
         OntologyLoader* ontologyLoader = new OntologyLoader( repo, this );
         connect( ontologyLoader, SIGNAL(ontologyLoadingFinished(Nepomuk::OntologyLoader*)),
-                 this, SLOT(slotOntologiesLoaded(Nepomuk::OntologyLoader*)) );
+                 this, SLOT(slotOntologiesLoaded()) );
         ontologyLoader->updateLocalOntologies();
     }
 }
 
 
-void Nepomuk::Core::slotOntologiesLoaded( Nepomuk::OntologyLoader* loader )
+void Nepomuk::Core::slotOntologiesLoaded()
 {
-    // we never want to get informed about ontology updates again.
-    loader->disconnect(this);
+    // once ontologies are updated we should update the query prefixes
+    m_repository->setEnableQueryPrefixExpansion(false);
+    m_repository->setEnableQueryPrefixExpansion(true);
 
-    // and finally we are done: the repository is online and the ontologies are loaded.
-    emit initializationDone( true );
+    if ( !m_initialized ) {
+        // and finally we are done: the repository is online and the ontologies are loaded.
+        m_initialized = true;
+        emit initializationDone( true );
+    }
 }
 
 

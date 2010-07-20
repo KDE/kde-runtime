@@ -18,8 +18,9 @@
 #include <QtCore/QString>
 #include <QtCore/QMap>
 
-#include <Soprano/Util/SignalCacheModel>
 #include <Soprano/BackendSettings>
+#define USING_SOPRANO_NRLMODEL_UNSTABLE_API
+#include <Soprano/NRLModel>
 
 
 namespace Soprano {
@@ -33,7 +34,7 @@ namespace Nepomuk {
 
     class ModelCopyJob;
 
-    class Repository : public Soprano::Util::SignalCacheModel
+    class Repository : public Soprano::NRLModel
     {
         Q_OBJECT
 
