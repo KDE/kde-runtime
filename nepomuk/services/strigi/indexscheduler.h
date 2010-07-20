@@ -32,7 +32,6 @@
 
 class QFileInfo;
 class QByteArray;
-class QTimer;
 
 namespace Nepomuk {
 
@@ -177,7 +176,6 @@ namespace Nepomuk {
 
     private Q_SLOTS:
         void slotConfigChanged();
-        void slotDirsToUpdateWakeupTimeout();
 
     private:
         void run();
@@ -216,7 +214,6 @@ namespace Nepomuk {
 
         QMutex m_dirsToUpdateMutex;
         QWaitCondition m_dirsToUpdateWc;
-        QTimer* m_dirsToUpdateWakeupTimer;
 
         QString m_currentFolder;
         KUrl m_currentUrl;

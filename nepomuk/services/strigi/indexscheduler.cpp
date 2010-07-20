@@ -34,7 +34,6 @@
 #include <QtCore/QDateTime>
 #include <QtCore/QByteArray>
 #include <QtCore/QUrl>
-#include <QtCore/QTimer>
 
 #include <KDebug>
 #include <KTemporaryFile>
@@ -113,14 +112,6 @@ Nepomuk::IndexScheduler::IndexScheduler( QObject* parent )
       m_speed( FullSpeed )
 {
     m_indexer = new Nepomuk::Indexer( this );
-
-    // see updateDir(QString,bool) for details on the timer
-    m_dirsToUpdateWakeupTimer = new QTimer( this );
-    m_dirsToUpdateWakeupTimer->setSingleShot( true );
-    m_dirsToUpdateWakeupTimer->setInterval(1000);
-    connect( m_dirsToUpdateWakeupTimer, SIGNAL( timeout() ),
-             this, SLOT( slotDirsToUpdateWakeupTimeout() ) );
-
     connect( StrigiServiceConfig::self(), SIGNAL( configChanged() ),
              this, SLOT( slotConfigChanged() ) );
 }
@@ -408,15 +399,7 @@ void Nepomuk::IndexScheduler::updateDir( const QString& path, bool forceUpdate )
 {
     QMutexLocker lock( &m_dirsToUpdateMutex );
     m_dirsToUpdate << qMakePair( path, UpdateDirFlags( forceUpdate ? ForceUpdate : NoUpdateFlags ) );
-
-    // sometimes the filewatch service will call this method many times in a row with the same
-    // folder (in case a whole folder is created or modified). In order not to run an update every
-    // time we slightly delay the update process
-    if ( !isSuspended() &&
-         !isIndexing() &&
-         !m_dirsToUpdateWakeupTimer->isActive() ) {
-        m_dirsToUpdateWakeupTimer->start();
-    }
+    m_dirsToUpdateWc.wakeAll();
 }
 
 
@@ -455,12 +438,6 @@ void Nepomuk::IndexScheduler::slotConfigChanged()
     // restart to make sure we update all folders and removeOldAndUnwantedEntries
     if ( isRunning() )
         restart();
-}
-
-
-void Nepomuk::IndexScheduler::slotDirsToUpdateWakeupTimeout()
-{
-    m_dirsToUpdateWc.wakeAll();
 }
 
 
