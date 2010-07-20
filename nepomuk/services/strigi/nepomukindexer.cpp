@@ -97,9 +97,9 @@ Nepomuk::Indexer::Indexer( QObject* parent )
 
 Nepomuk::Indexer::~Indexer()
 {
+    delete d->m_streamAnalyzer;
     delete d->m_indexWriter;
     delete d->m_indexFeeder;
-    delete d->m_streamAnalyzer;
     delete d;
 }
 
