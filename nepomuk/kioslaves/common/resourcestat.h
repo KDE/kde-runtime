@@ -85,7 +85,7 @@ namespace Nepomuk {
     /**
      * Stat a Nepomuk resource. Might start a local event loop
      */
-    KIO::UDSEntry statNepomukResource( const Nepomuk::Resource& res );
+    KIO::UDSEntry statNepomukResource( const Nepomuk::Resource& res, bool doNotForward = false );
 
     /**
      * \return \p true for all resources that will get a valid redirection url in

@@ -61,6 +61,12 @@
 #include <Solid/StorageAccess>
 
 
+namespace {
+    bool noFollowSet( const KUrl& url ) {
+        return( url.encodedQueryItemValue( "noFollow" ) == "true" );
+    }
+}
+
 Nepomuk::NepomukProtocol::NepomukProtocol( const QByteArray& poolSocket, const QByteArray& appSocket )
     : KIO::ForwardingSlaveBase( "nepomuk", poolSocket, appSocket )
 {
@@ -104,14 +110,15 @@ void Nepomuk::NepomukProtocol::get( const KUrl& url )
     kDebug() << url;
 
     m_currentOperation = Get;
+    const bool noFollow = noFollowSet( url );
 
     Nepomuk::Resource res = splitNepomukUrl( url );
-    if ( Nepomuk::isRemovableMediaFile( res ) ) {
+    if ( !noFollow && Nepomuk::isRemovableMediaFile( res ) ) {
         error( KIO::ERR_SLAVE_DEFINED,
                i18nc( "@info", "Please insert the removable medium <resource>%1</resource> to access this file.",
                       getFileSystemLabelForRemovableMediaFileUrl( res ) ) );
     }
-    else if ( !Nepomuk::nepomukToFileUrl( url ).isEmpty() ) {
+    else if ( !noFollow && !Nepomuk::nepomukToFileUrl( url ).isEmpty() ) {
         ForwardingSlaveBase::get( url );
     }
     else {
@@ -165,7 +172,8 @@ void Nepomuk::NepomukProtocol::stat( const KUrl& url )
     kDebug() << url;
 
     m_currentOperation = Stat;
-    if ( !Nepomuk::nepomukToFileUrl( url ).isEmpty() ) {
+    const bool noFollow = noFollowSet( url );
+    if ( !noFollow && !Nepomuk::nepomukToFileUrl( url ).isEmpty() ) {
         ForwardingSlaveBase::stat( url );
     }
     else {
@@ -176,7 +184,7 @@ void Nepomuk::NepomukProtocol::stat( const KUrl& url )
             error( KIO::ERR_DOES_NOT_EXIST, strippedUrl.prettyUrl() );
         }
         else {
-            KIO::UDSEntry uds = Nepomuk::statNepomukResource( res );
+            KIO::UDSEntry uds = Nepomuk::statNepomukResource( res, noFollow );
             statEntry( uds );
             finished();
         }
@@ -192,6 +200,11 @@ void Nepomuk::NepomukProtocol::mimetype( const KUrl& url )
     kDebug() << url;
 
     m_currentOperation = Other;
+    if ( noFollowSet( url ) ) {
+        mimeType( "text/html" );
+        finished();
+        return;
+    }
 
     QString filename;
     Nepomuk::Resource res = Nepomuk::splitNepomukUrl( url, &filename );
@@ -251,7 +264,7 @@ void Nepomuk::NepomukProtocol::del(const KUrl& url, bool isFile)
 
 bool Nepomuk::NepomukProtocol::rewriteUrl( const KUrl& url, KUrl& newURL )
 {
-    if ( url.queryItemValue( QLatin1String( "noFollow" ) ) == QLatin1String( "true" ) )
+    if ( noFollowSet( url ) )
         return false;
 
     newURL = Nepomuk::nepomukToFileUrl( url, m_currentOperation == Get );

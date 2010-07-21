@@ -179,7 +179,7 @@ KUrl Nepomuk::convertRemovableMediaFileUrl( const KUrl& url, bool evenMountIfNec
 }
 
 
-KIO::UDSEntry Nepomuk::statNepomukResource( const Nepomuk::Resource& res )
+KIO::UDSEntry Nepomuk::statNepomukResource( const Nepomuk::Resource& res, bool doNotForward )
 {
     //
     // We do not have a local file
@@ -220,7 +220,7 @@ KIO::UDSEntry Nepomuk::statNepomukResource( const Nepomuk::Resource& res )
         uds.insert( KIO::UDSEntry::UDS_MIME_TYPE, mimeTypes.first() );
     }
     else */
-    if ( isFileOnRemovableMedium ) {
+    if ( !doNotForward && isFileOnRemovableMedium ) {
         KMimeType::Ptr mt = KMimeType::findByUrl( res.property( Vocabulary::NIE::url() ).toUrl(),
                                                   0,
                                                   false, /* no local file as it is not accessible at the moment */
@@ -276,10 +276,12 @@ KIO::UDSEntry Nepomuk::statNepomukResource( const Nepomuk::Resource& res )
     //
     uds.insert( KIO::UDSEntry::UDS_NEPOMUK_URI, KUrl( res.resourceUri() ).url() );
 
-    KUrl reUrl = Nepomuk::redirectionUrl( res );
-    if ( !reUrl.isEmpty() ) {
-        uds.insert( KIO::UDSEntry::UDS_MIME_TYPE, QLatin1String( "inode/directory" ) );
-        uds.insert( KIO::UDSEntry::UDS_FILE_TYPE, S_IFDIR );
+    if ( !doNotForward ) {
+        KUrl reUrl = Nepomuk::redirectionUrl( res );
+        if ( !reUrl.isEmpty() ) {
+            uds.insert( KIO::UDSEntry::UDS_MIME_TYPE, QLatin1String( "inode/directory" ) );
+            uds.insert( KIO::UDSEntry::UDS_FILE_TYPE, S_IFDIR );
+        }
     }
 
     return uds;
