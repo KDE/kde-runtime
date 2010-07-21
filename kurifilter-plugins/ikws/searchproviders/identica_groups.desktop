@@ -44,6 +44,7 @@ Name[sr@ijekavianlatin]=identi.ca‑grupe
 Name[sr@latin]=identi.ca‑grupe
 Name[sv]=Identi.ca grupper
 Name[th]=กลุ่มต่าง ๆ ของ Identi.ca
+Name[tr]=Identi.ca Grupları
 Name[uk]=Групи Identi.ca
 Name[x-test]=xxIdenti.ca Groupsxx
 Name[zh_CN]=Identi.ca 群组
@@ -92,6 +93,7 @@ Query[sr@ijekavianlatin]=http://identi.ca/search/group?q=\\{@}
 Query[sr@latin]=http://identi.ca/search/group?q=\\{@}
 Query[sv]=http://identi.ca/search/group?q=\\{@}
 Query[th]=http://identi.ca/search/group?q=\\{@}
+Query[tr]=http://identi.ca/search/group?q=\\{@}
 Query[uk]=http://identi.ca/search/group?q=\\{@}
 Query[x-test]=xxhttp://identi.ca/search/group?q=\\{@}xx
 Query[zh_CN]=http://identi.ca/search/group?q=\\{@}

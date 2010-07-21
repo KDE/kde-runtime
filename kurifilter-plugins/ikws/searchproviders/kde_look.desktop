@@ -43,6 +43,7 @@ Name[sr@ijekavianlatin]=KDE‑izgled
 Name[sr@latin]=KDE‑izgled
 Name[sv]=KDE Look
 Name[th]=KDE Look
+Name[tr]=KDE Look
 Name[uk]=KDE Look
 Name[x-test]=xxKDE Lookxx
 Name[zh_CN]=KDE 美化资源站
@@ -91,6 +92,7 @@ Query[sr@ijekavianlatin]=http://www.kde-look.org/content/search.php?search=Searc
 Query[sr@latin]=http://www.kde-look.org/content/search.php?search=Search&name=\\{@}
 Query[sv]=http://www.kde-look.org/content/search.php?search=Search&name=\\{@}
 Query[th]=http://www.kde-look.org/content/search.php?search=Search&name=\\{@}
+Query[tr]=http://www.kde-look.org/content/search.php?search=Search&name=\\{@}
 Query[uk]=http://www.kde-look.org/content/search.php?search=Search&name=\\{@}
 Query[x-test]=xxhttp://www.kde-look.org/content/search.php?search=Search&name=\\{@}xx
 Query[zh_CN]=http://www.kde-look.org/content/search.php?search=Search&name=\\{@}

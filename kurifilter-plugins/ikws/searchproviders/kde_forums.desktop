@@ -44,6 +44,7 @@ Name[sr@ijekavianlatin]=Forumi KDE‑a
 Name[sr@latin]=Forumi KDE‑a
 Name[sv]=KDE:s forum
 Name[th]=ฟอรัมของ KDE
+Name[tr]=KDE Forumları
 Name[uk]=Форуми KDE
 Name[x-test]=xxKDE Forumsxx
 Name[zh_CN]=KDE 社区论坛
@@ -91,6 +92,7 @@ Query[sr@ijekavianlatin]=http://forum.kde.org/search.php?keywords=\\{@}&terms=al
 Query[sr@latin]=http://forum.kde.org/search.php?keywords=\\{@}&terms=all&author=&tags=&sv=0&sc=1&sf=all&sr=posts&sk=t&sd=d&st=0&ch=300&feed_type=NONE&feed_style=HTML&countlimit=100&t=0&sid=77c16bc0abb91ff1347597c69835d5bd&submit=Search
 Query[sv]=http://forum.kde.org/search.php?keywords=\\{@}&terms=all&author=&tags=&sv=0&sc=1&sf=all&sr=posts&sk=t&sd=d&st=0&ch=300&feed_type=NONE&feed_style=HTML&countlimit=100&t=0&sid=77c16bc0abb91ff1347597c69835d5bd&submit=Search
 Query[th]=http://forum.kde.org/search.php?keywords=\\{@}&terms=all&author=&tags=&sv=0&sc=1&sf=all&sr=posts&sk=t&sd=d&st=0&ch=300&feed_type=NONE&feed_style=HTML&countlimit=100&t=0&sid=77c16bc0abb91ff1347597c69835d5bd&submit=Search
+Query[tr]=http://forum.kde.org/search.php?keywords=\\{@}&terms=all&author=&tags=&sv=0&sc=1&sf=all&sr=posts&sk=t&sd=d&st=0&ch=300&feed_type=NONE&feed_style=HTML&countlimit=100&t=0&sid=77c16bc0abb91ff1347597c69835d5bd&submit=Search
 Query[uk]=http://forum.kde.org/search.php?keywords=\\{@}&terms=all&author=&tags=&sv=0&sc=1&sf=all&sr=posts&sk=t&sd=d&st=0&ch=300&feed_type=NONE&feed_style=HTML&countlimit=100&t=0&sid=77c16bc0abb91ff1347597c69835d5bd&submit=Search
 Query[x-test]=xxhttp://forum.kde.org/search.php?keywords=\\{@}&terms=all&author=&tags=&sv=0&sc=1&sf=all&sr=posts&sk=t&sd=d&st=0&ch=300&feed_type=NONE&feed_style=HTML&countlimit=100&t=0&sid=77c16bc0abb91ff1347597c69835d5bd&submit=Searchxx
 Query[zh_CN]=http://forum.kde.org/search.php?keywords=\\{@}&terms=all&author=&tags=&sv=0&sc=1&sf=all&sr=posts&sk=t&sd=d&st=0&ch=300&feed_type=NONE&feed_style=HTML&countlimit=100&t=0&sid=77c16bc0abb91ff1347597c69835d5bd&submit=Search

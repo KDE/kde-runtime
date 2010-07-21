@@ -46,6 +46,7 @@ Name[sr@latin]=GitHub
 Name[sv]=GitHub
 Name[tg]=GitHub
 Name[th]=GitHub
+Name[tr]=GitHub
 Name[uk]=GitHub
 Name[x-test]=xxGitHubxx
 Name[zh_CN]=GitHub
@@ -94,6 +95,7 @@ Query[sr@ijekavianlatin]=http://github.com/search?q=\\{@}&x=0&y=0
 Query[sr@latin]=http://github.com/search?q=\\{@}&x=0&y=0
 Query[sv]=http://github.com/search?q=\\{@}&x=0&y=0
 Query[th]=http://github.com/search?q=\\{@}&x=0&y=0
+Query[tr]=http://github.com/search?q=\\{@}&x=0&y=0
 Query[uk]=http://github.com/search?q=\\{@}&x=0&y=0
 Query[x-test]=xxhttp://github.com/search?q=\\{@}&x=0&y=0xx
 Query[zh_CN]=http://github.com/search?q=\\{@}&x=0&y=0
