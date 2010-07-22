@@ -179,6 +179,57 @@ KUrl Nepomuk::convertRemovableMediaFileUrl( const KUrl& url, bool evenMountIfNec
 }
 
 
+void Nepomuk::addGenericNepomukResourceData( const Nepomuk::Resource& res, KIO::UDSEntry& uds, bool includeMimeType )
+{
+    //
+    // Add some random values
+    //
+    uds.insert( KIO::UDSEntry::UDS_ACCESS, 0700 );
+    uds.insert( KIO::UDSEntry::UDS_USER, KUser().loginName() );
+    if ( res.hasProperty( Vocabulary::NIE::lastModified() ) ) {
+        // remotely stored files
+        uds.insert( KIO::UDSEntry::UDS_MODIFICATION_TIME, res.property( Vocabulary::NIE::lastModified() ).toDateTime().toTime_t() );
+    }
+    else {
+        // all nepomuk resources
+        uds.insert( KIO::UDSEntry::UDS_MODIFICATION_TIME, res.property( Soprano::Vocabulary::NAO::lastModified() ).toDateTime().toTime_t() );
+        uds.insert( KIO::UDSEntry::UDS_CREATION_TIME, res.property( Soprano::Vocabulary::NAO::created() ).toDateTime().toTime_t() );
+    }
+
+    if ( res.hasProperty( Vocabulary::NIE::contentSize() ) ) {
+        // remotely stored files
+        uds.insert( KIO::UDSEntry::UDS_SIZE, res.property( Vocabulary::NIE::contentSize() ).toInt() );
+    }
+
+
+    //
+    // Starting with KDE 4.4 we have the pretty UDS_NEPOMUK_URI which makes
+    // everything much cleaner since kio slaves can decide if the resources can be
+    // annotated or not.
+    //
+    uds.insert( KIO::UDSEntry::UDS_NEPOMUK_URI, KUrl( res.resourceUri() ).url() );
+
+    if ( includeMimeType ) {
+        // Use nice display types like "Person", "Project" and so on
+        Nepomuk::Types::Class type( res.resourceType() );
+        if (!type.label().isEmpty())
+            uds.insert( KIO::UDSEntry::UDS_DISPLAY_TYPE, type.label() );
+
+        QString icon = res.genericIcon();
+        if ( !icon.isEmpty() ) {
+            uds.insert( KIO::UDSEntry::UDS_ICON_NAME, icon );
+        }
+        else {
+            // a fallback icon for nepomuk resources
+            uds.insert( KIO::UDSEntry::UDS_ICON_NAME, QLatin1String( "nepomuk" ) );
+        }
+
+        if ( uds.stringValue( KIO::UDSEntry::UDS_ICON_NAME ) != QLatin1String( "nepomuk" ) )
+            uds.insert( KIO::UDSEntry::UDS_ICON_OVERLAY_NAMES, QLatin1String( "nepomuk" ) );
+    }
+}
+
+
 KIO::UDSEntry Nepomuk::statNepomukResource( const Nepomuk::Resource& res, bool doNotForward )
 {
     //
@@ -229,52 +280,8 @@ KIO::UDSEntry Nepomuk::statNepomukResource( const Nepomuk::Resource& res, bool d
             uds.insert( KIO::UDSEntry::UDS_MIME_TYPE, mt->name() );
         }
     }
-    else {
-        // Use nice display types like "Person", "Project" and so on
-        Nepomuk::Types::Class type( res.resourceType() );
-        if (!type.label().isEmpty())
-            uds.insert( KIO::UDSEntry::UDS_DISPLAY_TYPE, type.label() );
 
-        QString icon = res.genericIcon();
-        if ( !icon.isEmpty() ) {
-            uds.insert( KIO::UDSEntry::UDS_ICON_NAME, icon );
-        }
-        else {
-            // a fallback icon for nepomuk resources
-            uds.insert( KIO::UDSEntry::UDS_ICON_NAME, QLatin1String( "nepomuk" ) );
-        }
-
-        if ( uds.stringValue( KIO::UDSEntry::UDS_ICON_NAME ) != QLatin1String( "nepomuk" ) )
-            uds.insert( KIO::UDSEntry::UDS_ICON_OVERLAY_NAMES, QLatin1String( "nepomuk" ) );
-    }
-
-    //
-    // Add some random values
-    //
-    uds.insert( KIO::UDSEntry::UDS_ACCESS, 0700 );
-    uds.insert( KIO::UDSEntry::UDS_USER, KUser().loginName() );
-    if ( res.hasProperty( Vocabulary::NIE::lastModified() ) ) {
-        // remotely stored files
-        uds.insert( KIO::UDSEntry::UDS_MODIFICATION_TIME, res.property( Vocabulary::NIE::lastModified() ).toDateTime().toTime_t() );
-    }
-    else {
-        // all nepomuk resources
-        uds.insert( KIO::UDSEntry::UDS_MODIFICATION_TIME, res.property( Soprano::Vocabulary::NAO::lastModified() ).toDateTime().toTime_t() );
-        uds.insert( KIO::UDSEntry::UDS_CREATION_TIME, res.property( Soprano::Vocabulary::NAO::created() ).toDateTime().toTime_t() );
-    }
-
-    if ( res.hasProperty( Vocabulary::NIE::contentSize() ) ) {
-        // remotely stored files
-        uds.insert( KIO::UDSEntry::UDS_SIZE, res.property( Vocabulary::NIE::contentSize() ).toInt() );
-    }
-
-
-    //
-    // Starting with KDE 4.4 we have the pretty UDS_NEPOMUK_URI which makes
-    // everything much cleaner since kio slaves can decide if the resources can be
-    // annotated or not.
-    //
-    uds.insert( KIO::UDSEntry::UDS_NEPOMUK_URI, KUrl( res.resourceUri() ).url() );
+    addGenericNepomukResourceData( res, uds, !uds.contains( KIO::UDSEntry::UDS_MIME_TYPE ) );
 
     if ( !doNotForward ) {
         KUrl reUrl = Nepomuk::redirectionUrl( res );
@@ -316,14 +323,19 @@ KUrl Nepomuk::redirectionUrl( const Nepomuk::Resource& res )
     // list tags by listing everything tagged with that tag
     else if ( res.hasType( Soprano::Vocabulary::NAO::Tag() ) ) {
         Query::ComparisonTerm term( Soprano::Vocabulary::NAO::hasTag(), Query::ResourceTerm( res ), Query::ComparisonTerm::Equal );
-        return Query::Query( term ).toSearchUrl( i18n( "Things tagged '%1'", res.genericLabel() ) );
+        KUrl url = Query::Query( term ).toSearchUrl( i18n( "Things tagged '%1'", res.genericLabel() ) );
+        url.addQueryItem( QLatin1String( "resource" ), KUrl( res.resourceUri() ).url() );
+        return url;
     }
 
     // list everything else besides files by querying things related to the resource in some way
     // this works for music albums or artists but it would also work for tags
     else if ( !res.hasType( Nepomuk::Vocabulary::NFO::FileDataObject() ) ) {
         Query::ComparisonTerm term( QUrl(), Query::ResourceTerm( res ), Query::ComparisonTerm::Equal );
-        return Query::Query( term ).toSearchUrl( res.genericLabel() );
+        KUrl url = Query::Query( term ).toSearchUrl( res.genericLabel() );
+        url.addQueryItem( QLatin1String( "resource" ), KUrl( res.resourceUri() ).url() );
+        kDebug() << url;
+        return url;
     }
 
     // no forwarding done

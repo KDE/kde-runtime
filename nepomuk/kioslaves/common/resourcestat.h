@@ -82,6 +82,8 @@ namespace Nepomuk {
      */
     KUrl convertRemovableMediaFileUrl( const KUrl& url, bool evenMountIfNecessary = false );
 
+    void addGenericNepomukResourceData( const Nepomuk::Resource& res, KIO::UDSEntry& uds, bool includeMimeType = true );
+
     /**
      * Stat a Nepomuk resource. Might start a local event loop
      */

@@ -23,6 +23,7 @@
 #include "pimo.h"
 #include "nepomuksearchurltools.h"
 #include "standardqueries.h"
+#include "resourcestat.h"
 
 #include <QtCore/QFile>
 
@@ -70,6 +71,9 @@ namespace {
         uds.insert( KIO::UDSEntry::UDS_DISPLAY_TYPE, i18n( "Query folder" ) );
         uds.insert( KIO::UDSEntry::UDS_NAME, Nepomuk::Query::Query::titleFromQueryUrl( url ) );
         uds.insert( KIO::UDSEntry::UDS_DISPLAY_NAME, Nepomuk::Query::Query::titleFromQueryUrl( url ) );
+        if ( url.hasQueryItem( QLatin1String( "resource" ) ) ) {
+            Nepomuk::addGenericNepomukResourceData( Nepomuk::Resource( KUrl( url.queryItemValue( QLatin1String( "resource" ) ) ) ), uds );
+        }
         return uds;
     }
 
