@@ -15,6 +15,7 @@ Name[es]=KDE Look
 Name[et]=KDE Look
 Name[fr]=KDE Look
 Name[fy]=KDE Uterlik
+Name[ga]=KDE Look
 Name[hi]=केडीई दिखावट
 Name[hr]=KDE Look
 Name[ia]=Semblante KDE
@@ -62,6 +63,7 @@ Query[es]=http://www.kde-look.org/content/search.php?search=Search&name=\\{@}
 Query[et]=http://www.kde-look.org/content/search.php?search=Search&name=\\{@}
 Query[fr]=http://www.kde-look.org/content/search.php?search=Search&name=\\{@}
 Query[fy]=http://www.kde-look.org/content/search.php?search=Search&name=\\{@}
+Query[ga]=http://www.kde-look.org/content/search.php?search=Search&name=\\{@}
 Query[gu]=http://www.kde-look.org/content/search.php?search=Search&name=\\{@}
 Query[hi]=http://www.kde-look.org/content/search.php?search=Search&name=\\{@}
 Query[hr]=http://www.kde-look.org/content/search.php?search=Search&name=\\{@}

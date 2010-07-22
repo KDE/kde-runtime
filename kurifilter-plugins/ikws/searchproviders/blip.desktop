@@ -16,6 +16,7 @@ Name[es]=Blip.tv
 Name[et]=Blip.tv
 Name[fr]=Blip.tv
 Name[fy]=Blip.tv
+Name[ga]=Blip.tv
 Name[hi]=Blip.tv
 Name[hr]=Blip.tv
 Name[ia]=Blip.tv
@@ -65,6 +66,7 @@ Query[es]=http://blip.tv/search?q=\\{@}
 Query[et]=http://blip.tv/search?q=\\{@}
 Query[fr]=http://blip.tv/search?q=\\{@}
 Query[fy]=http://blip.tv/search?q=\\{@}
+Query[ga]=http://blip.tv/search?q=\\{@}
 Query[gu]=http://blip.tv/search?q=\\{@}
 Query[hi]=http://blip.tv/search?q=\\{@}
 Query[hr]=http://blip.tv/search?q=\\{@}

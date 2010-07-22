@@ -59,6 +59,7 @@ Query[es]=http://www.flickr.com/search/?q=\\{@}&l=cc&ct=0&mt=all&adv=1
 Query[et]=http://www.flickr.com/search/?q=\\{@}&l=cc&ct=0&mt=all&adv=1
 Query[fr]=http://www.flickr.com/search/?q=\\{@}&l=cc&ct=0&mt=all&adv=1
 Query[fy]=http://www.flickr.com/search/?q=\\{@}&l=cc&ct=0&mt=all&adv=1
+Query[ga]=http://www.flickr.com/search/?q=\\{@}&l=cc&ct=0&mt=all&adv=1
 Query[gu]=http://www.flickr.com/search/?q=\\{@}&l=cc&ct=0&mt=all&adv=1
 Query[hi]=http://www.flickr.com/search/?q=\\{@}&l=cc&ct=0&mt=all&adv=1
 Query[hr]=http://www.flickr.com/search/?q=\\{@}&l=cc&ct=0&mt=all&adv=1

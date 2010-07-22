@@ -13,6 +13,7 @@ Name[es]=Duck Duck Go Info
 Name[et]=Duck Duck Go Info
 Name[fr]=Duck Duck Go Info
 Name[fy]=Duck Duck Go Ynfo
+Name[ga]=Eolas Duck Duck Go
 Name[hi]=बतख़ जा जा जानकारी
 Name[hr]=Duck Duck Go Info
 Name[ia]=Duck Duck Go Info
@@ -58,6 +59,7 @@ Query[es]=http://duckduckgo.com/?q=\\{@}&v=r
 Query[et]=http://duckduckgo.com/?q=\\{@}&v=r
 Query[fr]=http://duckduckgo.com/?q=\\{@}&v=r
 Query[fy]=http://duckduckgo.com/?q=\\{@}&v=r
+Query[ga]=http://duckduckgo.com/?q=\\{@}&v=r
 Query[gu]=http://duckduckgo.com/?q=\\{@}&v=r
 Query[hi]=http://duckduckgo.com/?q=\\{@}&v=r
 Query[hr]=http://duckduckgo.com/?q=\\{@}&v=r
