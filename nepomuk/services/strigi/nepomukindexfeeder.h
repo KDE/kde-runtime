@@ -1,5 +1,6 @@
 /*
   Copyright (C) 2010 Vishesh Handa <handa.vish@gmail.com>
+  Copyright (C) 2010 Sebastian Trueg <trueg@kde.org>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU General Public License as
@@ -84,21 +85,15 @@ namespace Nepomuk {
          * addStatement should not be called after this function, unless begin has already
          * been called.
          *
+         * \param forceCommit If true the request will be handled syncroneously. This is used
+         * to commit folder resources to Nepomuk right away since they might be needed later on.
+         *
          * \sa begin
          */
-        void end();
+        void end( bool forceCommit = false );
 
         static bool removeIndexedDataForUrl( const KUrl& url );
         static bool removeIndexedDataForResourceUri( const KUrl& res );
-
-        /**
-         * A special function that synchronously pushes all the collected data into the
-         * model without checking for duplicates.
-         * It should be called between begin() and end()
-         *
-         * \sa begin end
-         */
-        void quickFeed();
 
     private:
 
@@ -130,6 +125,11 @@ namespace Nepomuk {
         bool m_stopped;
 
         void run();
+
+        /**
+         * Handle a single request, i.e. store all its data to Nepomuk.
+         */
+        void handleRequest( Request& request ) const;
 
         /// Generates a discardable graph for \p resourceUri
         QUrl generateGraph( const QUrl& resourceUri ) const;

@@ -1,5 +1,6 @@
 /*
   Copyright (C) 2010 Vishesh Handa <handa.vish@gmail.com>
+  Copyright (C) 2010 Sebastian Trueg <trueg@kde.org>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU General Public License as
@@ -94,7 +95,7 @@ void Nepomuk::IndexFeeder::addStatement(const Soprano::Node& subject, const Sopr
 }
 
 
-void Nepomuk::IndexFeeder::end()
+void Nepomuk::IndexFeeder::end( bool forceCommit )
 {
     if( m_stack.isEmpty() )
         return;
@@ -102,11 +103,14 @@ void Nepomuk::IndexFeeder::end()
 
     Request req = m_stack.pop();
 
-    m_queueMutex.lock();
-    m_updateQueue.enqueue( req );
-
-    m_queueMutex.unlock();
-    m_queueWaiter.wakeAll();
+    if ( forceCommit ) {
+        handleRequest( req );
+    }
+    else {
+        QMutexLocker lock( &m_queueMutex );
+        m_updateQueue.enqueue( req );
+        m_queueWaiter.wakeAll();
+    }
 }
 
 
@@ -167,56 +171,7 @@ void Nepomuk::IndexFeeder::run()
             // unlock after queue utilization
             m_queueMutex.unlock();
 
-            // Search for the resources or create them
-            //kDebug() << " Searching for duplicates or creating them ... ";
-            QMutableHashIterator<QUrl, ResourceStruct> it( request.hash );
-            while( it.hasNext() ) {
-                it.next();
-
-                // If it already exists
-                ResourceStruct & rs = it.value();
-                if( !rs.uri.isEmpty() )
-                    continue;
-
-                QString query = buildResourceQuery( rs );
-                //kDebug() << query;
-                Soprano::QueryResultIterator it = ResourceManager::instance()->mainModel()->executeQuery( query, Soprano::Query::QueryLanguageSparql );
-
-                if( it.next() ) {
-                    //kDebug() << "Found exact match " << rs.uri << " " << it[0].uri();
-                    rs.uri = it[0].uri();
-                }
-                else {
-                    //kDebug() << "Creating ..";
-                    rs.uri = ResourceManager::instance()->generateUniqueUri( QString() );
-
-                    // Add to the repository
-                    addToModel( rs );
-                }
-            }
-
-            // Fix links for main
-            ResourceStruct & rs = request.hash[ request.uri ];
-            QMutableHashIterator<QUrl, Soprano::Node> iter( rs.propHash );
-            while( iter.hasNext() ) {
-                iter.next();
-                Soprano::Node & n = iter.value();
-
-                if( n.isEmpty() )
-                    continue;
-
-                if( n.isBlank() ) {
-                    const QString & id = n.identifier();
-                    if( !request.hash.contains( id ) )
-                        continue;
-                    QUrl newUri = request.hash.value( id ).uri;
-                    //kDebug() << id << " ---> " << newUri;
-                    iter.value() = Soprano::Node( newUri );
-                }
-            }
-
-            // Add main file to the repository
-            addToModel( rs );
+            handleRequest( request );
 
             // lock for next iteration
             m_queueMutex.lock();
@@ -229,6 +184,61 @@ void Nepomuk::IndexFeeder::run()
         kDebug() << "Woke up.";
 
     }
+}
+
+
+void Nepomuk::IndexFeeder::handleRequest( Request& request ) const
+{
+    // Search for the resources or create them
+    //kDebug() << " Searching for duplicates or creating them ... ";
+    QMutableHashIterator<QUrl, ResourceStruct> it( request.hash );
+    while( it.hasNext() ) {
+        it.next();
+
+        // If it already exists
+        ResourceStruct & rs = it.value();
+        if( !rs.uri.isEmpty() )
+            continue;
+
+        QString query = buildResourceQuery( rs );
+        //kDebug() << query;
+        Soprano::QueryResultIterator it = ResourceManager::instance()->mainModel()->executeQuery( query, Soprano::Query::QueryLanguageSparql );
+
+        if( it.next() ) {
+            //kDebug() << "Found exact match " << rs.uri << " " << it[0].uri();
+            rs.uri = it[0].uri();
+        }
+        else {
+            //kDebug() << "Creating ..";
+            rs.uri = ResourceManager::instance()->generateUniqueUri( QString() );
+
+            // Add to the repository
+            addToModel( rs );
+        }
+    }
+
+    // Fix links for main
+    ResourceStruct & rs = request.hash[ request.uri ];
+    QMutableHashIterator<QUrl, Soprano::Node> iter( rs.propHash );
+    while( iter.hasNext() ) {
+        iter.next();
+        Soprano::Node & n = iter.value();
+
+        if( n.isEmpty() )
+            continue;
+
+        if( n.isBlank() ) {
+            const QString & id = n.identifier();
+            if( !request.hash.contains( id ) )
+                continue;
+            QUrl newUri = request.hash.value( id ).uri;
+            //kDebug() << id << " ---> " << newUri;
+            iter.value() = Soprano::Node( newUri );
+        }
+    }
+
+    // Add main file to the repository
+    addToModel( rs );
 }
 
 
@@ -311,20 +321,4 @@ bool Nepomuk::IndexFeeder::removeIndexedDataForResourceUri( const KUrl& res )
     }
 
     return true;
-}
-
-
-void Nepomuk::IndexFeeder::quickFeed()
-{
-    if( m_stack.isEmpty() )
-        return;
-
-    Request & req = m_stack.top();
-    QMutableHashIterator<QUrl, ResourceStruct> it( req.hash );
-    while( it.hasNext() ) {
-        it.next();
-
-        addToModel( it.value() );
-        it.remove();
-    }
 }

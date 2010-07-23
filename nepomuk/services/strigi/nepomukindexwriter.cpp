@@ -46,6 +46,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+#include <stdio.h>
 
 #include <map>
 #include <sstream>
@@ -119,24 +120,59 @@ namespace {
         return uri;
     }
 
+
+    /**
+     * Creates a Blank or Resource Node based on the contents of the string provided.
+     * If the string is of the form ':identifier', a Blank node is created.
+     * Otherwise a Resource Node is returned.
+     */
+    Soprano::Node createBlankOrResourceNode( const std::string & str ) {
+        QString identifier = QString::fromUtf8( str.c_str() );
+
+        if( !identifier.isEmpty() && identifier[0] == ':' ) {
+            identifier.remove( 0, 1 );
+            return Soprano::Node::createBlankNode( identifier );
+        }
+
+        //Not a blank node
+        return Soprano::Node( QUrl(identifier) );
+    }
+
+
+    /**
+     * A simple cache for properties that are used in Strigi.
+     * This avoids matching them again and again.
+     *
+     * Also the class provides easy conversion methods for
+     * values provided by Strigi to values that Nepomuk understands.
+     */
     class RegisteredFieldData
     {
     public:
-        RegisteredFieldData( const QUrl& prop, QVariant::Type t )
-        : property( prop ),
-        dataType( t ),
-        isRdfType( prop == Vocabulary::RDF::type() ) {
+        RegisteredFieldData( const Nepomuk::Types::Property& prop, QVariant::Type t )
+            : m_property( prop ),
+              m_dataType( t ),
+              m_isRdfType( prop == Soprano::Vocabulary::RDF::type() ) {
         }
 
+        const Nepomuk::Types::Property& property() const { return m_property; }
+        bool isRdfType() const { return m_isRdfType; }
+
+        Soprano::Node createObject( const std::string& value );
+
+    private:
+        Soprano::LiteralValue createLiteralValue( const std::string& value );
+
         /// The actual property URI
-        QUrl property;
+        Nepomuk::Types::Property m_property;
 
         /// the literal range of the property (if applicable)
-        QVariant::Type dataType;
+        QVariant::Type m_dataType;
 
         /// caching QUrl comparison
-        bool isRdfType;
+        bool m_isRdfType;
     };
+
 
     /**
      * Data objects that are used to store information relative to one
@@ -170,6 +206,67 @@ namespace {
         const Strigi::AnalysisResult* m_analysisResult;
     };
 
+
+    Soprano::Node RegisteredFieldData::createObject( const std::string& value )
+    {
+        //
+        // Strigi uses anonymeous nodes prefixed with ':'. However, it is possible that literals
+        // start with a ':'. Thus, we also check the range of the property
+        //
+        if ( value[0] == ':' &&
+             m_property.range().isValid() ) {
+            return createBlankOrResourceNode( value );
+        }
+        else {
+            return createLiteralValue( value );
+        }
+    }
+
+
+    Soprano::LiteralValue RegisteredFieldData::createLiteralValue( const std::string& value )
+    {
+        QString s = QString::fromUtf8( ( const char* )value.c_str(), value.length() );
+
+        // This is a workaround for a Strigi bug which sometimes stores datatime values as strings
+        // but the format is not supported by Soprano::LiteralValue
+        if ( m_dataType == QVariant::DateTime ) {
+            // dateTime is stored as integer (time_t) in strigi
+            bool ok = false;
+            uint t = s.toUInt( &ok );
+            if ( ok )
+                return LiteralValue( QDateTime::fromTime_t( t ) );
+
+            // workaround for at least nie:contentCreated which is encoded like this: "2005:06:03 17:13:33"
+            QDateTime dt = QDateTime::fromString( s, QLatin1String( "yyyy:MM:dd hh:mm:ss" ) );
+            if ( dt.isValid() )
+                return LiteralValue( dt );
+        }
+
+        // this is a workaround for EXIF values stored as "1/10" and the like which need to
+        // be converted to double values.
+        else if ( m_dataType == QVariant::Double ) {
+            bool ok = false;
+            double d = s.toDouble( &ok );
+            if ( ok )
+                return LiteralValue( d );
+
+            int x = 0;
+            int y = 0;
+            if ( sscanf( s.toLatin1().data(), "%d/%d", &x, &y ) == 2 ) {
+                return LiteralValue( double( x )/double( y ) );
+            }
+        }
+
+        if ( m_dataType != QVariant::Invalid ) {
+            return LiteralValue::fromString( s, m_dataType );
+        }
+        else {
+            // we default to string
+            return LiteralValue( s );
+        }
+    }
+
+
     FileMetaData::FileMetaData( const Strigi::AnalysisResult* idx )
         : m_analysisResult( idx )
     {
@@ -195,7 +292,6 @@ namespace {
             feeder->addStatement( resourceUri,
                                   Vocabulary::RDF::type(),
                                   Nepomuk::Vocabulary::NFO::Folder() );
-            feeder->quickFeed();
         }
     }
 
@@ -203,69 +299,12 @@ namespace {
     {
         return static_cast<FileMetaData*>( idx->writerData() );
     }
-
-    /**
-     * Creates a Blank or Resource Node based on the contents of the string provided.
-     * If the string is of the form ':identifier', a Blank node is created.
-     * Otherwise a Resource Node is returned.
-     */
-    Soprano::Node createBlankOrResourceNode( const std::string & str ) {
-        QString identifier = QString::fromUtf8( str.c_str() );
-
-        if( !identifier.isEmpty() && identifier[0] == ':' ) {
-            identifier.remove( 0, 1 );
-            return Soprano::Node::createBlankNode( identifier );
-        }
-
-        //Not a blank node
-        return Soprano::Node( QUrl(identifier) );
-    }
 }
 
 
 class Nepomuk::StrigiIndexWriter::Private
 {
 public:
-    Private()
-    {
-        literalTypes[FieldRegister::stringType] = QVariant::String;
-        literalTypes[FieldRegister::floatType] = QVariant::Double;
-        literalTypes[FieldRegister::integerType] = QVariant::Int;
-        literalTypes[FieldRegister::binaryType] = QVariant::ByteArray;
-        literalTypes[FieldRegister::datetimeType] = QVariant::DateTime; // Strigi encodes datetime as unsigned integer, i.e. addValue( ..., uint )
-    }
-
-    ~Private()
-    {
-    }
-
-    QVariant::Type literalType( const Strigi::FieldProperties& strigiType ) {
-        // it looks as if the typeUri can contain arbitrary values, URIs or stuff like "string"
-        QHash<std::string, QVariant::Type>::const_iterator it = literalTypes.constFind( strigiType.typeUri() );
-        if ( it == literalTypes.constEnd() ) {
-            return LiteralValue::typeFromDataTypeUri( QUrl::fromEncoded( strigiType.typeUri().c_str() ) );
-        }
-        else {
-            return *it;
-        }
-    }
-
-    LiteralValue createLiteralValue( QVariant::Type type,
-                                     const unsigned char* data,
-                                     uint32_t size ) {
-        QString value = QString::fromUtf8( ( const char* )data, size );
-        if ( type == QVariant::DateTime ) { // dataTime is stored as integer in strigi!
-            return LiteralValue( QDateTime::fromTime_t( value.toUInt() ) );
-        }
-        else if ( type != QVariant::Invalid ) {
-            return LiteralValue::fromString( value, type );
-        }
-        else {
-            // we default to string
-            return LiteralValue( value );
-        }
-    }
-
     //
     // The Strigi API does not provide context information in addTriplet, i.e. the AnalysisResult.
     // However, we only use one thread, only one AnalysisResult at the time.
@@ -274,16 +313,11 @@ public:
     QMutex resultStackMutex;
     QStack<const Strigi::AnalysisResult*> currentResultStack;
 
-    Nepomuk::IndexFeeder
-* feeder;
-
-private:
-    QHash<std::string, QVariant::Type> literalTypes;
+    Nepomuk::IndexFeeder* feeder;
 };
 
 
-Nepomuk::StrigiIndexWriter::StrigiIndexWriter( IndexFeeder
-* feeder )
+Nepomuk::StrigiIndexWriter::StrigiIndexWriter( IndexFeeder* feeder )
     : Strigi::IndexWriter(),
     d( new Private() )
 {
@@ -389,54 +423,39 @@ void Nepomuk::StrigiIndexWriter::addValue( const AnalysisResult* idx,
         RegisteredFieldData* rfd = reinterpret_cast<RegisteredFieldData*>( field->writerData() );
 
         // the statement we will create, we will determine the object below
-        Soprano::Statement statement( md->resourceUri, rfd->property, Soprano::Node() );
+        Soprano::Statement statement( md->resourceUri, rfd->property().uri(), Soprano::Node() );
 
         //
         // Strigi uses rdf:type improperly since it stores the value as a string. We have to
         // make sure it is a resource.
+        // only we handle the basic File/Folder typing ourselves
         //
-        if ( rfd->isRdfType ) {
-            statement.setPredicate( Soprano::Vocabulary::RDF::type() );
-            statement.setObject( QUrl::fromEncoded( value.c_str(), QUrl::StrictMode ) );
-
-            // we handle the basic File/Folder typing ourselves
-            if ( statement.object().uri() == Nepomuk::Vocabulary::NFO::FileDataObject() ) {
-                return;
+        if ( rfd->isRdfType() ) {
+            const QUrl type = QUrl::fromEncoded( value.c_str(), QUrl::StrictMode );
+            if ( statement.object().uri() != Nepomuk::Vocabulary::NFO::FileDataObject() ) {
+                statement.setObject( type );
             }
         }
 
-        else if ( field->key() == FieldRegister::pathFieldName ) {
-            // ignore it as we handle that ourselves in startAnalysis
-            return;
-        }
-
-        else {
-            //
-            // Like the URIs of the files themselves the folders also need uuid resource URIs.
-            //
-            if ( field->key() == FieldRegister::parentLocationFieldName ) {
-                QUrl folderUri = determineFolderResourceUri( QUrl::fromLocalFile( QFile::decodeName( QByteArray::fromRawData( value.c_str(), value.length() ) ) ) );
-                if ( folderUri.isEmpty() )
-                    return;
+        //
+        // parent location is a special case as we need the URI of the corresponding resource instead of the path
+        //
+        else if ( field->key() == FieldRegister::parentLocationFieldName ) {
+            QUrl folderUri = determineFolderResourceUri( QUrl::fromLocalFile( QFile::decodeName( QByteArray::fromRawData( value.c_str(), value.length() ) ) ) );
+            if ( !folderUri.isEmpty() )
                 statement.setObject( folderUri );
-            }
-            else {
-                statement.setObject( d->createLiteralValue( rfd->dataType, ( unsigned char* )value.c_str(), value.length() ) );
-            }
-
-            //
-            // Strigi uses anonymeous nodes prefixed with ':'. However, it is possible that literals
-            // start with a ':'. Thus, we also check the range of the property
-            //
-            if ( value[0] == ':' ) {
-                Nepomuk::Types::Property property( rfd->property );
-                if ( property.range().isValid() ) {
-                    statement.setObject( createBlankOrResourceNode( value ) );
-                }
-            }
         }
 
-        d->feeder->addStatement( statement );
+        //
+        // ignore the path as we handle that ourselves in startAnalysis
+        //
+        else if ( field->key() != FieldRegister::pathFieldName ) {
+            statement.setObject( rfd->createObject( value ) );
+        }
+
+        if ( !statement.object().isEmpty() ) {
+            d->feeder->addStatement( statement );
+        }
     }
 }
 
@@ -474,7 +493,7 @@ void Nepomuk::StrigiIndexWriter::addValue( const AnalysisResult* idx,
         val = QDateTime::fromTime_t( value );
     }
 
-    d->feeder->addStatement( md->resourceUri, rfd->property, val);
+    d->feeder->addStatement( md->resourceUri, rfd->property().uri(), val);
 }
 
 
@@ -489,7 +508,7 @@ void Nepomuk::StrigiIndexWriter::addValue( const AnalysisResult* idx,
     FileMetaData* md = fileDataForResult( idx );
     RegisteredFieldData* rfd = reinterpret_cast<RegisteredFieldData*>( field->writerData() );
 
-    d->feeder->addStatement( md->resourceUri, rfd->property, LiteralValue( value ) );
+    d->feeder->addStatement( md->resourceUri, rfd->property().uri(), LiteralValue( value ) );
 }
 
 
@@ -504,7 +523,7 @@ void Nepomuk::StrigiIndexWriter::addValue( const AnalysisResult* idx,
     FileMetaData* md = fileDataForResult( idx );
     RegisteredFieldData* rfd = reinterpret_cast<RegisteredFieldData*>( field->writerData() );
 
-    d->feeder->addStatement( md->resourceUri, rfd->property, LiteralValue( value ) );
+    d->feeder->addStatement( md->resourceUri, rfd->property().uri(), LiteralValue( value ) );
 }
 
 
@@ -548,7 +567,7 @@ void Nepomuk::StrigiIndexWriter::finishAnalysis( const AnalysisResult* idx )
                                  LiteralValue( QString::fromUtf8( md->content.c_str() ) ) );
     }
 
-    d->feeder->end();
+    d->feeder->end( md->fileInfo.isDir() );
 
     // cleanup
     delete md;
@@ -558,14 +577,33 @@ void Nepomuk::StrigiIndexWriter::finishAnalysis( const AnalysisResult* idx )
 
 void Nepomuk::StrigiIndexWriter::initWriterData( const Strigi::FieldRegister& f )
 {
+    // build a temp hash for built-in strigi types
+    QHash<std::string, QVariant::Type> literalTypes;
+    literalTypes[FieldRegister::stringType] = QVariant::String;
+    literalTypes[FieldRegister::floatType] = QVariant::Double;
+    literalTypes[FieldRegister::integerType] = QVariant::Int;
+    literalTypes[FieldRegister::binaryType] = QVariant::ByteArray;
+    literalTypes[FieldRegister::datetimeType] = QVariant::DateTime; // Strigi encodes datetime as unsigned integer, i.e. addValue( ..., uint )
+
+    // cache type conversion for all strigi fields
     std::map<std::string, RegisteredField*>::const_iterator i;
     std::map<std::string, RegisteredField*>::const_iterator end = f.fields().end();
     for (i = f.fields().begin(); i != end; ++i) {
-        QUrl prop = Strigi::Util::fieldUri( i->second->key() );
-        i->second->setWriterData( new RegisteredFieldData( prop,
-                                                           prop == Soprano::Vocabulary::RDF::type()
-                                                           ? QVariant::Invalid
-                                                           : d->literalType( i->second->properties() ) ) );
+        Nepomuk::Types::Property prop = Strigi::Util::fieldUri( i->second->key() );
+
+        QVariant::Type type( QVariant::Invalid );
+
+        QHash<std::string, QVariant::Type>::const_iterator it = literalTypes.constFind( i->second->properties().typeUri() );
+        if ( it != literalTypes.constEnd() ) {
+            type = *it;
+        }
+        else if ( prop.literalRangeType().isValid() ) {
+            type = LiteralValue::typeFromDataTypeUri( prop.literalRangeType().dataTypeUri() );
+        }
+
+        kDebug() << prop << type;
+
+        i->second->setWriterData( new RegisteredFieldData( prop, type ) );
     }
 }
 
