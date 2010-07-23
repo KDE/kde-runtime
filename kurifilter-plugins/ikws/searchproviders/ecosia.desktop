@@ -11,6 +11,7 @@ Name[el]=Ecosia Μηχανή αναζήτησης
 Name[en_GB]=Ecosia search engine
 Name[es]=Motor de búsqueda Ecosia
 Name[et]=Ecosia otsingumootor
+Name[fi]=Ecosia-hakukone
 Name[fr]=Moteur de recherche Ecosia
 Name[fy]=Ecosia sykmotor
 Name[ga]=Inneall cuardaigh Ecosia
@@ -37,6 +38,7 @@ Name[pl]=Wyszukiwarka Ecosia
 Name[pt]=Motor de busca Ecosia
 Name[pt_BR]=Mecanismo de busca Ecosia
 Name[ro]=Motor de căutare Ecosia
+Name[ru]=Поиск Ecosia
 Name[sr]=Екозија
 Name[sr@ijekavian]=Екозија
 Name[sr@ijekavianlatin]=Ecosia
@@ -63,6 +65,7 @@ Query[el]=http://ecosia.org/search.php?q=\\{@}&meta=normal
 Query[en_GB]=http://ecosia.org/search.php?q=\\{@}&meta=normal
 Query[es]=http://ecosia.org/search.php?q=\\{@}&meta=normal
 Query[et]=http://ecosia.org/search.php?q=\\{@}&meta=normal
+Query[fi]=http://ecosia.org/search.php?q=\\{@}&meta=normal
 Query[fr]=http://ecosia.org/search.php?q=\\{@}&meta=normal
 Query[fy]=http://ecosia.org/search.php?q=\\{@}&meta=normal
 Query[ga]=http://ecosia.org/search.php?q=\\{@}&meta=normal

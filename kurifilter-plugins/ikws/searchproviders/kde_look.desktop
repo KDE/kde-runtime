@@ -13,6 +13,7 @@ Name[el]=KDE Look
 Name[en_GB]=KDE Look
 Name[es]=KDE Look
 Name[et]=KDE Look
+Name[fi]=KDE Look
 Name[fr]=KDE Look
 Name[fy]=KDE Uterlik
 Name[ga]=KDE Look
@@ -38,6 +39,7 @@ Name[pl]=KDE Look
 Name[pt]=KDE Look
 Name[pt_BR]=KDE Look
 Name[ro]=KDE Look
+Name[ru]=KDE-Look
 Name[sr]=КДЕ‑изглед
 Name[sr@ijekavian]=КДЕ‑изглед
 Name[sr@ijekavianlatin]=KDE‑izgled
@@ -61,6 +63,7 @@ Query[el]=http://www.kde-look.org/content/search.php?search=Search&name=\\{@}
 Query[en_GB]=http://www.kde-look.org/content/search.php?search=Search&name=\\{@}
 Query[es]=http://www.kde-look.org/content/search.php?search=Search&name=\\{@}
 Query[et]=http://www.kde-look.org/content/search.php?search=Search&name=\\{@}
+Query[fi]=http://www.kde-look.org/content/search.php?search=Search&name=\\{@}
 Query[fr]=http://www.kde-look.org/content/search.php?search=Search&name=\\{@}
 Query[fy]=http://www.kde-look.org/content/search.php?search=Search&name=\\{@}
 Query[ga]=http://www.kde-look.org/content/search.php?search=Search&name=\\{@}

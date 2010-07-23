@@ -3,52 +3,7 @@ Charset=
 Hidden=false
 Keys=opendesktop,odesk,od
 Name=openDesktop.org
-Name[bn]=Open
-Name[ca]=Open
-Name[ca@valencia]=Open
-Name[cs]=Otevřít
-Name[da]=Open
-Name[de]=Open
-Name[el]=Άνοιγμα
-Name[en_GB]=Open
-Name[es]=Abrir
-Name[et]=OpenDesktop
-Name[fr]=Ouvert
-Name[fy]=Iepenje
-Name[ga]=Deasc Oscailte
-Name[gu]=ખોલો
-Name[hi]=मुक्त
-Name[hr]=Open
-Name[ia]=Aperir
-Name[id]=Buka
-Name[is]=Opið
-Name[it]=OpenDesktop
-Name[ja]=Open
-Name[kk]=Open
-Name[km]=បើក
-Name[kn]=ತೆರೆ
-Name[ko]=OpenDesktop
-Name[lt]=Open
-Name[lv]=Opendesktop
-Name[ml]=ഓപ്പണ്‍
-Name[nb]=Open
-Name[nds]=OpenDesktop
-Name[nl]=Openen
-Name[pa]=ਖੋਲ੍ਹੋ
-Name[pl]=Open
-Name[pt]=Open
-Name[pt_BR]=Open
-Name[ro]=Open
-Name[sr]=Отворена површ
-Name[sr@ijekavian]=Отворена површ
-Name[sr@ijekavianlatin]=Otvorena površ
-Name[sr@latin]=Otvorena površ
-Name[sv]=Öppet skrivbord
-Name[th]=Open
-Name[uk]=Open
-Name[x-test]=xxOpenxx
-Name[zh_CN]=开放桌面
-Name[zh_TW]=Open
+Name[x-test]=xxopenDesktop.orgxx
 Query=http://www.opendesktop.org/content/search.php?search=Search&name=\\{@}
 Query[bg]=http://www.opendesktop.org/content/search.php?search=Search&name=\\{@}
 Query[bn]=http://www.opendesktop.org/content/search.php?search=Search&name=\\{@}
@@ -61,6 +16,7 @@ Query[el]=http://www.opendesktop.org/content/search.php?search=Search&name=\\{@}
 Query[en_GB]=http://www.opendesktop.org/content/search.php?search=Search&name=\\{@}
 Query[es]=http://www.opendesktop.org/content/search.php?search=Search&name=\\{@}
 Query[et]=http://www.opendesktop.org/content/search.php?search=Search&name=\\{@}
+Query[fi]=http://www.opendesktop.org/content/search.php?search=Search&name=\\{@}
 Query[fr]=http://www.opendesktop.org/content/search.php?search=Search&name=\\{@}
 Query[fy]=http://www.opendesktop.org/content/search.php?search=Search&name=\\{@}
 Query[ga]=http://www.opendesktop.org/content/search.php?search=Search&name=\\{@}
