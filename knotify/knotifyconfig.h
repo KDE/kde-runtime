@@ -41,7 +41,7 @@ class KNotifyImage
 		bool isNull() {
 			return dirty ? source.isEmpty() : image.isNull();
 		}
-		QByteArray data() {
+		QByteArray data() const {
 			return source;
 		}
 	private:
@@ -60,6 +60,8 @@ class KNotifyConfig
 	public:
 		KNotifyConfig(const QString &appname, const ContextList &_contexts , const QString &_eventid);
 		~KNotifyConfig();
+
+		KNotifyConfig *copy() const;
 	
 		/**
 		 * @return entry from the knotifyrc file

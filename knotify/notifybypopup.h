@@ -25,6 +25,7 @@
 #include "knotifyplugin.h"
 #include <QMap>
 #include <QHash>
+#include <QStringList>
 
 class KPassivePopup;
 
@@ -38,12 +39,29 @@ class NotifyByPopup : public KNotifyPlugin
 		virtual void notify(int id , KNotifyConfig *config);
 		virtual void close( int id );
 		virtual void update(int id, KNotifyConfig *config);
+
+		QStringList popupServerCapabilities();
+
 	private:
 		QMap<int, KPassivePopup * > m_popups;
 		// the y coordinate of the next position popup should appears
 		int m_nextPosition;
 		int m_animationTimer;
 		void fillPopup(KPassivePopup *,int id,KNotifyConfig *config);
+		/**
+		 * Make sure a popup is completely supported by the notification backend.
+		 * Changes the popup to be compatible if needed.
+		 * @param config the notification data to check
+		 * @return the new notification data allocated with 'new'
+		 */
+		KNotifyConfig *ensurePopupCompatibility( const KNotifyConfig *config );
+		/**
+		 * Removes HTML from a given string. Replaces line breaks with \n and
+		 * HTML entities by their 'normal forms'.
+		 * @param string the HTML to remove.
+		 * @return the cleaned string.
+		 */
+		QString stripHtml( const QString &text );
 		/**
 		 * Sends notification to DBus "/Notifications" interface.
 		 * @param id knotify-sid identifier of notification
@@ -62,6 +80,16 @@ class NotifyByPopup : public KNotifyPlugin
 		 * Specifies if DBus Notifications interface exists on session bus
 		 */
 		bool m_dbusServiceExists;
+		/**
+		 * DBus notification daemon capabilities cache.
+		 * Do not use this variable. Use #popupServerCapabilities() instead.
+		 * @see popupServerCapabilities
+		 */
+		QStringList m_dbusServiceCapabilities;
+		/**
+		 * Whether the DBus notification daemon capability cache is up-to-date.
+		 */
+		bool m_dbusServiceCapCacheDirty;
 		/**
 		 * Find the caption and the icon name of the application
 		 */

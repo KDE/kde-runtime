@@ -38,6 +38,7 @@
 #include <QDBusConnection>
 #include <QDBusConnectionInterface>
 #include <QDBusServiceWatcher>
+#include <QXmlStreamReader>
 #include <kconfiggroup.h>
 
 static const char dbusServiceName[] = "org.freedesktop.Notifications";
@@ -45,7 +46,8 @@ static const char dbusInterfaceName[] = "org.freedesktop.Notifications";
 static const char dbusPath[] = "/org/freedesktop/Notifications";
 
 NotifyByPopup::NotifyByPopup(QObject *parent) 
-  : KNotifyPlugin(parent) , m_animationTimer(0), m_dbusServiceExists(false)
+  : KNotifyPlugin(parent) , m_animationTimer(0), m_dbusServiceExists(false),
+		m_dbusServiceCapCacheDirty(true)
 {
 	QRect screen = QApplication::desktop()->availableGeometry();
 	m_nextPosition = screen.top();
@@ -266,6 +268,9 @@ void NotifyByPopup::slotServiceOwnerChanged( const QString & serviceName,
 		finished(id);
 	m_idMap.clear();
 
+	m_dbusServiceCapCacheDirty = true;
+	m_dbusServiceCapabilities.clear();
+
 	if(newOwner.isEmpty())
 	{
 		m_dbusServiceExists = false;
@@ -336,7 +341,7 @@ void NotifyByPopup::getAppCaptionAndIconName(KNotifyConfig *config, QString *app
 	*iconName = globalgroup.readEntry("IconName", config->appname);
 }
 
-bool NotifyByPopup::sendNotificationDBus(int id, int replacesId, KNotifyConfig* config)
+bool NotifyByPopup::sendNotificationDBus(int id, int replacesId, KNotifyConfig* config_nocheck)
 {
 	// figure out dbus id to replace if needed
 	uint dbus_replaces_id = 0;
@@ -351,7 +356,9 @@ bool NotifyByPopup::sendNotificationDBus(int id, int replacesId, KNotifyConfig* 
 	QList<QVariant> args;
 
 	QString appCaption, iconName;
-	getAppCaptionAndIconName(config, &appCaption, &iconName);
+	getAppCaptionAndIconName(config_nocheck, &appCaption, &iconName);
+
+	KNotifyConfig *config = ensurePopupCompatibility( config_nocheck );
 
 	args.append( appCaption ); // app_name
 	args.append( dbus_replaces_id ); // replaces_id
@@ -385,6 +392,9 @@ bool NotifyByPopup::sendNotificationDBus(int id, int replacesId, KNotifyConfig* 
 
 	m.setArguments( args );
 	QDBusMessage replyMsg = QDBusConnection::sessionBus().call(m);
+
+	delete config;
+
 	if(replyMsg.type() == QDBusMessage::ReplyMessage) {
 		if (!replyMsg.arguments().isEmpty()) {
 			uint dbus_id = replyMsg.arguments().at(0).toUInt();
@@ -437,6 +447,87 @@ void NotifyByPopup::closeNotificationDBus(int id)
 		kDebug() << "warning: failed to queue dbus message";
 	}
 	
+}
+
+QStringList NotifyByPopup::popupServerCapabilities()
+{
+	if (!m_dbusServiceExists) {
+		// Return capabilities of the KPassivePopup implementation
+		return QStringList() << "actions" << "body" << "body-hyperlinks"
+		                     << "body-markup" << "icon-static";
+	}
+
+	if(m_dbusServiceCapCacheDirty) {
+		QDBusMessage m = QDBusMessage::createMethodCall( dbusServiceName, dbusPath,
+				                  dbusInterfaceName, "GetCapabilities" );
+		QDBusMessage replyMsg = QDBusConnection::sessionBus().call(m);
+		if (replyMsg.type() != QDBusMessage::ReplyMessage) {
+			kWarning(300) << "Error while calling popup server GetCapabilities()";
+			return QStringList();
+		}
+
+		if (replyMsg.arguments().isEmpty()) {
+			kWarning(300) << "popup server GetCapabilities() returned an empty reply";
+			return QStringList();
+		}
+
+		m_dbusServiceCapabilities = replyMsg.arguments().at(0).toStringList();
+		m_dbusServiceCapCacheDirty = false;
+	}
+
+	return m_dbusServiceCapabilities;
+}
+
+
+KNotifyConfig *NotifyByPopup::ensurePopupCompatibility( const KNotifyConfig *config )
+{
+	KNotifyConfig *c = config->copy();
+	QStringList cap = popupServerCapabilities();
+
+	if( !cap.contains( "actions" ) )
+	{
+		c->actions.clear();
+	}
+
+	if( !cap.contains( "body-markup" ) )
+	{
+		if( c->title.startsWith( "<html>" ) )
+			c->title = stripHtml( config->title );
+		if( c->text.startsWith( "<html>" ) )
+			c->text  = stripHtml( config->text  );
+	}
+
+	return c;
+}
+
+QString NotifyByPopup::stripHtml( const QString &text )
+{
+	QXmlStreamReader r( "<elem>" + text + "</elem>" );
+	QString result;
+	while( !r.atEnd() ) {
+		r.readNext();
+		if( r.tokenType() == QXmlStreamReader::Characters )
+		{
+			result.append( r.text() );
+		}
+		else if( r.tokenType() == QXmlStreamReader::StartElement
+		      && r.name()      == "br" )
+		{
+			result.append( "\n" );
+		}
+	}
+
+	if(r.hasError())
+	{
+		// XML error in the given text, just return the original string
+		kWarning(300) << "Notification to send to backend which does "
+		                 "not support HTML, contains invalid XML:"
+		              << r.errorString() << "line" << r.lineNumber()
+		              << "col" << r.columnNumber();
+		return text;
+	}
+
+	return result;
 }
 
 #include "notifybypopup.moc"
