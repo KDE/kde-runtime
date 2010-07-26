@@ -25,6 +25,11 @@
 class DevicePreference;
 class BackendSelection;
 
+#ifdef HAVE_PULSEAUDIO
+class SpeakerSetup;
+#endif
+class KTabWidget;
+
 class PhononKcm : public KCModule
 {
     Q_OBJECT
@@ -35,9 +40,18 @@ class PhononKcm : public KCModule
         void save();
         void defaults();
 
+#ifdef HAVE_PULSEAUDIO
+    private Q_SLOTS:
+        void speakerSetupReady();
+#endif
+
     private:
+        KTabWidget* m_tabs;
         DevicePreference *m_devicePreferenceWidget;
         BackendSelection *m_backendSelection;
+#ifdef HAVE_PULSEAUDIO
+        SpeakerSetup* m_speakerSetup;
+#endif
 };
 
 #endif // MAIN_H

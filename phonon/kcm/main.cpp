@@ -1,5 +1,6 @@
 /*  This file is part of the KDE project
     Copyright (C) 2006-2007 Matthias Kretz <kretz@kde.org>
+    Copyright (C) 2010 Colin Guthrie <cguthrie@mandriva.org>
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -28,6 +29,10 @@
 #include "devicepreference.h"
 #include "backendselection.h"
 
+#ifdef HAVE_PULSEAUDIO
+#  include "speakersetup.h"
+#endif
+
 K_PLUGIN_FACTORY(PhononKcmFactory, registerPlugin<PhononKcm>();)
 K_EXPORT_PLUGIN(PhononKcmFactory("kcm_phonon"))
 
@@ -39,23 +44,33 @@ PhononKcm::PhononKcm(QWidget *parent, const QVariantList &args)
             KDE_VERSION_STRING, KLocalizedString(), KAboutData::License_GPL,
             ki18n("Copyright 2006 Matthias Kretz"));
     about->addAuthor(ki18n("Matthias Kretz"), KLocalizedString(), "kretz@kde.org");
+    about->addAuthor(ki18n("Colin Guthrie"), KLocalizedString(), "cguthrie@mandriva.org");
     setAboutData(about);
 
     setLayout(new QHBoxLayout);
     layout()->setMargin(0);
     layout()->setSpacing(0);
 
-    KTabWidget *tabs = new KTabWidget(this);
-    layout()->addWidget(tabs);
+    m_tabs = new KTabWidget(this);
+    layout()->addWidget(m_tabs);
 
     m_devicePreferenceWidget = new DevicePreference(this);
-    tabs->addTab(m_devicePreferenceWidget, i18n("Device Preference"));
+    m_tabs->addTab(m_devicePreferenceWidget, i18n("Device Preference"));
     m_backendSelection = new BackendSelection(this);
-    tabs->addTab(m_backendSelection, i18n("Backend"));
+    m_tabs->addTab(m_backendSelection, i18n("Backend"));
+
     load();
     connect(m_backendSelection, SIGNAL(changed()), SLOT(changed()));
     connect(m_devicePreferenceWidget, SIGNAL(changed()), SLOT(changed()));
+
     setButtons( KCModule::Default|KCModule::Apply|KCModule::Help );
+
+#ifdef HAVE_PULSEAUDIO
+    m_speakerSetup = new SpeakerSetup(this);
+    m_speakerSetup->setVisible(false);
+    connect(m_speakerSetup, SIGNAL(ready()), SLOT(speakerSetupReady()));
+    connect(m_speakerSetup, SIGNAL(changed()), SLOT(changed()));
+#endif
 }
 
 void PhononKcm::load()
@@ -75,6 +90,14 @@ void PhononKcm::defaults()
     m_devicePreferenceWidget->defaults();
     m_backendSelection->defaults();
 }
+
+#ifdef HAVE_PULSEAUDIO
+void PhononKcm::speakerSetupReady()
+{
+  m_tabs->insertTab(1, m_speakerSetup, i18n("Speaker Setup"));
+  emit changed();
+}
+#endif
 
 #include "main.moc"
 // vim: ts=4
