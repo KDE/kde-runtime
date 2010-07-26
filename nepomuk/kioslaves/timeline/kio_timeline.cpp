@@ -266,7 +266,8 @@ bool Nepomuk::TimelineProtocol::rewriteUrl( const KUrl& url, KUrl& newURL )
 {
     if ( parseTimelineUrl( url, &m_date, &m_filename ) == DayFolder ) {
         newURL = buildTimelineQueryUrl( m_date );
-        newURL.setPath( QLatin1String( "/" ) + m_filename );
+        newURL.addPath( m_filename );
+        kDebug() << url << newURL;
         return true;
     }
     else {

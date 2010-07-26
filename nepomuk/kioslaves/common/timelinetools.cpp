@@ -27,6 +27,12 @@
 #include "nie.h"
 #include "nuao.h"
 
+#include <Nepomuk/Query/FileQuery>
+#include <Nepomuk/Query/AndTerm>
+#include <Nepomuk/Query/OrTerm>
+#include <Nepomuk/Query/ComparisonTerm>
+#include <Nepomuk/Query/LiteralTerm>
+
 #include <KUrl>
 #include <KCalendarSystem>
 #include <KGlobal>
@@ -143,31 +149,35 @@ Nepomuk::TimelineFolderType Nepomuk::parseTimelineUrl( const KUrl& url, QDate* d
 
 KUrl Nepomuk::buildTimelineQueryUrl( const QDate& date )
 {
-    static const char* DATEFORMATSTART("yyyy-MM-ddT00:00:00.000Z");
-    static const char* DATEFORMATEND("yyyy-MM-ddT23:59:59.999Z");
+    // create our range
+    const Query::LiteralTerm dateFrom( QDateTime( date, QTime( 0,0,0 ) ) );
+    const Query::LiteralTerm dateTo( QDateTime( date, QTime( 23, 59, 59, 999 ) ) );
 
-    QString dateFrom = date.toString(DATEFORMATSTART);
-    QString dateTo = date.toString(DATEFORMATEND);
+    // include files modified in our date range
+    Query::ComparisonTerm lastModifiedStart = Nepomuk::Vocabulary::NIE::lastModified() > dateFrom;
+    Query::ComparisonTerm lastModifiedEnd = Nepomuk::Vocabulary::NIE::lastModified() < dateTo;
 
-    QString query = QString("select distinct ?r where { "
-                            "?r a %1 . "
-                            "{ ?r %2 ?date . } "
-                            "UNION "
-                            "{ ?r %3 ?date . } "
-                            "UNION "
-                            "{ ?r %4 ?date . } "
-                            "FILTER(?date > '%5'^^%7 && ?date < '%6'^^%7) . "
-                            "OPTIONAL { ?r2 a %8 . FILTER(?r=?r2) . } . FILTER(!BOUND(?r2)) . "
-                            "}")
-                    .arg( Soprano::Node::resourceToN3(Nepomuk::Vocabulary::NFO::FileDataObject()),
-                          Soprano::Node::resourceToN3(Nepomuk::Vocabulary::NIE::lastModified()),
-                          Soprano::Node::resourceToN3(Nepomuk::Vocabulary::NUAO::lastUsage()),
-                          Soprano::Node::resourceToN3(Nepomuk::Vocabulary::NIE::contentCreated()),
-                          dateFrom,
-                          dateTo,
-                          Soprano::Node::resourceToN3(Soprano::Vocabulary::XMLSchema::dateTime()),
-                          Soprano::Node::resourceToN3(Nepomuk::Vocabulary::NFO::Folder()) );
-    KUrl url("nepomuksearch:/");
-    url.addQueryItem( "sparql", query );
-    return url;
+
+    // include files created (as in photos taken) in our data range
+    Query::ComparisonTerm contentCreatedStart = Nepomuk::Vocabulary::NIE::contentCreated() > dateFrom;
+    Query::ComparisonTerm contentCreatedEnd = Nepomuk::Vocabulary::NIE::contentCreated() < dateTo;
+
+
+    // include files opened (and optionally modified) in our date range
+    // TODO: also take the end of the event into account
+    // TODO: via the date facet one should be able to exclude usage events since that could clutter the result
+    Query::ComparisonTerm accessEventStart = Nepomuk::Vocabulary::NUAO::start() > dateFrom;
+    Query::ComparisonTerm accessEventEnd = Nepomuk::Vocabulary::NUAO::start() < dateTo;
+    Query::ComparisonTerm accessEventCondition = Nepomuk::Vocabulary::NUAO::involves() == ( accessEventStart && accessEventEnd );
+
+    Query::FileQuery query(
+        ( lastModifiedStart && lastModifiedEnd )
+        ||
+        ( contentCreatedStart && contentCreatedEnd )
+        ||
+        accessEventCondition.inverted() );
+
+    query.setFileMode( Query::FileQuery::QueryFiles );
+
+    return query.toSearchUrl();
 }

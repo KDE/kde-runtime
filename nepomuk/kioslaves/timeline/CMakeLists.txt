@@ -38,6 +38,7 @@ kde4_add_plugin(kio_timeline ${kio_timeline_PART_SRCS})
 target_link_libraries(kio_timeline
   ${KDE4_KIO_LIBS}
   ${NEPOMUK_LIBRARIES}
+  ${NEPOMUK_QUERY_LIBRARIES}
   ${SOPRANO_LIBRARIES}
 )
 
