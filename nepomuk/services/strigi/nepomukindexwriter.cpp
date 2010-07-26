@@ -225,7 +225,9 @@ namespace {
 
     Soprano::LiteralValue RegisteredFieldData::createLiteralValue( const std::string& value )
     {
-        QString s = QString::fromUtf8( ( const char* )value.c_str(), value.length() );
+        QString s = QString::fromUtf8( ( const char* )value.c_str(), value.length() ).trimmed();
+        if( s.isEmpty() ) 
+            return Soprano::LiteralValue();
 
         // This is a workaround for a Strigi bug which sometimes stores datatime values as strings
         // but the format is not supported by Soprano::LiteralValue
