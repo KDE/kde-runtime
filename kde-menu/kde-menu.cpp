@@ -110,7 +110,7 @@ int main(int argc, char **argv)
 
    KAboutData d(appName, "kde-menu", ki18n("kde-menu"), appVersion,
                 ki18n(description),
-                KAboutData::License_GPL, ki18n("Copyright © 2003 Waldo Bastian"));
+                KAboutData::License_GPL, ki18n("(c) 2003 Waldo Bastian"));
    d.addAuthor(ki18n("Waldo Bastian"), ki18n("Author"), "bastian@kde.org");
 
    KCmdLineArgs::init(argc, argv, &d);
