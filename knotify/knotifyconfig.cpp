@@ -61,6 +61,22 @@ KNotifyConfig::~KNotifyConfig()
 {
 }
 
+KNotifyConfig *KNotifyConfig::copy() const
+{
+	KNotifyConfig *config = new KNotifyConfig( appname, contexts, eventid );
+	config->title      = title;
+	config->text       = text;
+	config->image      = KNotifyImage( image.data() );
+	config->timeout    = timeout;
+	config->winId      = winId;
+	config->actions    = actions;
+	config->eventsfile = eventsfile;
+	config->configfile = configfile;
+	// appname, contexts, eventid already done in constructor
+
+	return config;
+}
+
 QString KNotifyConfig::readEntry( const QString & entry, bool path )
 {
 	QPair<QString , QString> context;
