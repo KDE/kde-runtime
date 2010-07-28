@@ -15,6 +15,7 @@ Name[et]=Beolinguse võrgusõnastik
 Name[fi]=Beolingus-verkkosanakirja
 Name[fr]=Dictionnaire en ligne Beolingus
 Name[fy]=Beolingus Online wurdboek
+Name[ga]=Foclóir Ar Líne Beolingus
 Name[hi]=बिओलिंगस ऑनलाइन शब्दकोश
 Name[hr]=Beolingus Online Rječnik
 Name[ia]=Dictionario in linea Beolingus
@@ -67,6 +68,7 @@ Query[et]=http://dict.tu-chemnitz.de/dings.cgi?lang=de&service=deen&opterrors=0&
 Query[fi]=http://dict.tu-chemnitz.de/dings.cgi?lang=de&service=deen&opterrors=0&optpro=0&query=\\{@}&iservice=&comment=&email
 Query[fr]=http://dict.tu-chemnitz.de/dings.cgi?lang=de&service=deen&opterrors=0&optpro=0&query=\\{@}&iservice=&comment=&email
 Query[fy]=http://dict.tu-chemnitz.de/dings.cgi?lang=de&service=deen&opterrors=0&optpro=0&query=\\{@}&iservice=&comment=&email
+Query[ga]=http://dict.tu-chemnitz.de/dings.cgi?lang=de&service=deen&opterrors=0&optpro=0&query=\\{@}&iservice=&comment=&email
 Query[hi]=http://dict.tu-chemnitz.de/dings.cgi?lang=de&service=deen&opterrors=0&optpro=0&query=\\{@}&iservice=&comment=&email
 Query[hr]=http://dict.tu-chemnitz.de/dings.cgi?lang=de&service=deen&opterrors=0&optpro=0&query=\\{@}&iservice=&comment=&email
 Query[ia]=http://dict.tu-chemnitz.de/dings.cgi?lang=de&service=deen&opterrors=0&optpro=0&query=\\{@}&iservice=&comment=&email
