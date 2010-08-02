@@ -537,6 +537,8 @@ void Nepomuk::IndexScheduler::removeOldAndUnwantedEntries()
     // be indexed at once.
     //
     QString folderFilter = constructFolderFilter();
+    if( !folderFilter.isEmpty() )
+        folderFilter = QString::fromLatin1("FILTER(%1) .").arg(folderFilter);
 
     //
     // We query all files that should not be in the store
@@ -546,7 +548,7 @@ void Nepomuk::IndexScheduler::removeOldAndUnwantedEntries()
                                          "?r %1 ?url . "
                                          "?g <http://www.strigi.org/fields#indexGraphFor> ?r . "
                                          "FILTER(REGEX(STR(?url),'^file:/')) . "
-                                         "FILTER(%2) . }" )
+                                         "%2 }" )
                     .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ),
                           folderFilter );
     kDebug() << query;
@@ -568,20 +570,29 @@ void Nepomuk::IndexScheduler::removeOldAndUnwantedEntries()
     //
     // Build filter query for all exclude filters
     //
-    QStringList filters;
+    QStringList fileFilters;
     foreach( const QRegExp& re, Nepomuk::StrigiServiceConfig::self()->excludeFilterRegExps() ) {
-        filters << QString::fromLatin1( "REGEX(STR(?fn),\"^%1$\")" ).arg( re.pattern().replace( '\\',"\\\\" ) );
+        fileFilters << QString::fromLatin1( "REGEX(STR(?fn),\"^%1$\")" ).arg( re.pattern().replace( '\\',"\\\\" ) );
     }
+    QString includeExcludeFilters = constructExcludeIncludeFoldersFilter();
+
+    QString filters;
+    if( !includeExcludeFilters.isEmpty() && !fileFilters.isEmpty() )
+        filters = QString::fromLatin1("FILTER((%1) && (%2)) .").arg( includeExcludeFilters, fileFilters.join(" || ") );
+    else if( !fileFilters.isEmpty() )
+        filters = QString::fromLatin1("FILTER(%1) .").arg( fileFilters.join(" || ") );
+    else if( !includeExcludeFilters.isEmpty() )
+        filters = QString::fromLatin1("FILTER(%1) .").arg( includeExcludeFilters );
+    
     query = QString::fromLatin1( "select distinct ?g ?url where { "
                                  "?r %1 ?url . "
                                  "?r %2 ?fn . "
                                  "?g <http://www.strigi.org/fields#indexGraphFor> ?r . "
                                  "FILTER(REGEX(STR(?url),\"^file:/\")) . "
-                                 "FILTER((%3) && (%4)) . }" )
+                                 "%3 }" )
             .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ),
                   Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NFO::fileName() ),
-                  constructExcludeIncludeFoldersFilter(),
-                  filters.join( " || " ) );
+                  filters );
     kDebug() << query;
     it = ResourceManager::instance()->mainModel()->executeQuery( query, Soprano::Query::QueryLanguageSparql );
     while ( it.next() ) {

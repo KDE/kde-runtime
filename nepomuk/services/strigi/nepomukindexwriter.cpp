@@ -603,7 +603,7 @@ void Nepomuk::StrigiIndexWriter::initWriterData( const Strigi::FieldRegister& f 
             type = LiteralValue::typeFromDataTypeUri( prop.literalRangeType().dataTypeUri() );
         }
 
-        kDebug() << prop << type;
+        //kDebug() << prop << type;
 
         i->second->setWriterData( new RegisteredFieldData( prop, type ) );
     }
