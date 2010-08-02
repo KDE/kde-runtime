@@ -6,6 +6,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_P
 if(WINCE)
     #Needs to be set because otherwise he wouldn't find kde parts
     set(KDE4_DATA_DIR "${CMAKE_PREFIX_PATH}/share/apps")
+    add_definitions(-DKDELIBS_STATIC_LIBS)
 endif(WINCE)
 
 #search packages used by KDE
