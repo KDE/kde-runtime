@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=SEK
 CurrencyCodeIsoNumeric3=752
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Swedish Krona
+Name[ar]=كرونا سويدي
 Name[bg]=Шведска крона
 Name[bn]=সুইডিশ ক্রোনা
 Name[ca]=Corona sueca

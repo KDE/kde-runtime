@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=RWF
 CurrencyCodeIsoNumeric3=646
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Rwandan Franc
+Name[ar]=فرنك رواندي
 Name[bg]=Руандски франк
 Name[ca]=Franc de Rwanda
 Name[ca@valencia]=Franc de Rwanda

@@ -1,6 +1,7 @@
 [Global]
 IconName=kde
 Comment=KDE Workspace
+Comment[ar]=مكان عمل كدي
 Comment[bg]=Работен плот на KDE
 Comment[bn]=কে.ডি.ই. ওয়ার্কস্পেস
 Comment[ca]=Espai de treball del KDE

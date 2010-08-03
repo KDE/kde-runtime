@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=USN
 CurrencyCodeIsoNumeric3=997
 #Context for Name: Adjectival Country Name and Currency Name
 Name=United States Dollar (Next Day)
+Name[ar]=دولار الولايات المتحدة الأمريكية (اليوم التالي)
 Name[ca]=Dòlar d'Estats Units (dia següent)
 Name[ca@valencia]=Dòlar d'Estats Units (dia següent)
 Name[csb]=Amerëkóńsczi Dolar (Nôslédny Dzéń)

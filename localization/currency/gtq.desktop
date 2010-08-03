@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=GTQ
 CurrencyCodeIsoNumeric3=320
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Guatemalan Quetzal
+Name[ar]=كواتزل غواتيمالا
 Name[ca]=Quetzal de Guatemala
 Name[ca@valencia]=Quetzal de Guatemala
 Name[cs]=Guatemalský quetzal

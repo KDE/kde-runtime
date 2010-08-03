@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=GBP
 CurrencyCodeIsoNumeric3=826
 #Context for Name: Adjectival Country Name and Currency Name
 Name=British Pound Sterling
+Name[ar]=الجنيه الإستيرليني البريطاني
 Name[bg]=Британска лира стерлинг
 Name[bn]=বৃটিশ পাউন্ড স্টারলিং
 Name[ca]=Lliura esterlina britànica

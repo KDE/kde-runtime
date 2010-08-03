@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=ZAR
 CurrencyCodeIsoNumeric3=710
 #Context for Name: Adjectival Country Name and Currency Name
 Name=South African Rand
+Name[ar]=راند جنوب أفريقيا
 Name[bg]=Южноафрикански ранд
 Name[ca]=Rand de Sud-àfrica
 Name[ca@valencia]=Rand de Sud-àfrica

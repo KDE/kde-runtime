@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=GIP
 CurrencyCodeIsoNumeric3=292
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Gibraltar Pound
+Name[ar]=جنيه جبل طارق
 Name[bg]=Гибралтарска лира
 Name[ca]=Lliura gibraltarenca
 Name[ca@valencia]=Lliura gibraltarenca

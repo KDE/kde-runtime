@@ -1,5 +1,6 @@
 [General]
 Name=gdb
+Name[ar]=gdb
 Name[bg]=gdb
 Name[bn]=gdb
 Name[ca]=gdb

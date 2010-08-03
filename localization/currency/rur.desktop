@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=RUR
 CurrencyCodeIsoNumeric3=810
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Russian Ruble A/97
+Name[ar]=روبل روسي  A/97
 Name[ca]=Ruble rus A/97
 Name[ca@valencia]=Ruble rus A/97
 Name[cs]=Ruský rubl A/97

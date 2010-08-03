@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=CUP
 CurrencyCodeIsoNumeric3=192
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Cuban Peso
+Name[ar]=بيسو كوبي
 Name[bg]=Кубинско песо
 Name[ca]=Pes cubà
 Name[ca@valencia]=Pes cubà

@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=ESP
 CurrencyCodeIsoNumeric3=724
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Spanish Peseta
+Name[ar]=بسيتا الأسبانية
 Name[bg]=Испанска песета
 Name[bn]=স্প্যানিশ পেসেটা
 Name[ca]=Pesseta espanyola

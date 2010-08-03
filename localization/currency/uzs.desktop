@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=UZS
 CurrencyCodeIsoNumeric3=860
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Uzbekistan Som
+Name[ar]=سوم أوزبكستان
 Name[ca]=Som d'Uzbekistan
 Name[ca@valencia]=Som d'Uzbekistan
 Name[cs]=Uzbekistánský som

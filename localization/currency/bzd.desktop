@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=BZD
 CurrencyCodeIsoNumeric3=084
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Belize Dollar
+Name[ar]=دولار بيليز
 Name[bg]=Белийзки долар
 Name[bn]=বেলিজ-এর ডলার
 Name[ca]=Dòlar de Belize

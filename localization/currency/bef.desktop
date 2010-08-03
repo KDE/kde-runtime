@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=BEF
 CurrencyCodeIsoNumeric3=056
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Belgian Franc
+Name[ar]=فرنك البليجي
 Name[bg]=Белгийски франк
 Name[bn]=Belgian Franc
 Name[ca]=Franc belga

@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=MGA
 CurrencyCodeIsoNumeric3=969
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Malagasy Ariary
+Name[ar]=ارياري مدغشقري
 Name[ca]=Ariary malgaix
 Name[ca@valencia]=Ariary malgaix
 Name[csb]=Madagarsczi Ariar
