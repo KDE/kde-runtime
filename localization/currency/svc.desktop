@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=SVC
 CurrencyCodeIsoNumeric3=222
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Salvadoran Colon
+Name[ar]=كولون السلفادور
 Name[ca]=Colón salvadorenc
 Name[ca@valencia]=Colón salvadorenc
 Name[csb]=Salwadorsczi Colon

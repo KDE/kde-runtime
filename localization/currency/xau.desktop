@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=XAU
 CurrencyCodeIsoNumeric3=959
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Gold
+Name[ar]=الذهب
 Name[bg]=Злато
 Name[ca]=Or
 Name[ca@valencia]=Or

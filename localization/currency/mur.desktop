@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=MUR
 CurrencyCodeIsoNumeric3=480
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Mauritius Rupee
+Name[ar]=روبيه موريشيوس
 Name[ca]=Rupia de Maurici
 Name[ca@valencia]=Rupia de Maurici
 Name[cs]=Mauricijská rupie

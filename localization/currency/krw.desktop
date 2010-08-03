@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=KRW
 CurrencyCodeIsoNumeric3=410
 #Context for Name: Adjectival Country Name and Currency Name
 Name=South Korean Won
+Name[ar]=ون كوريا الجنوبية
 Name[bg]=Южнокорейски вон
 Name[ca]=Won sud-coreà
 Name[ca@valencia]=Won sud-coreà

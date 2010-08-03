@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=AFA
 CurrencyCodeIsoNumeric3=004
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Afghan Afghani
+Name[ar]=أفغاني أفغانستان
 Name[bn]=আফগান আফগানি
 Name[ca]=Afghani afganès
 Name[ca@valencia]=Afghani afganés

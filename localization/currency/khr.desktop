@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=KHR
 CurrencyCodeIsoNumeric3=116
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Cambodian Riel
+Name[ar]=ريل كمبوديا
 Name[bg]=Камбоджански риал
 Name[ca]=Riel de Cambodja
 Name[ca@valencia]=Riel de Cambodja

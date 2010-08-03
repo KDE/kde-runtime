@@ -1,6 +1,7 @@
 [Global]
 IconName=nepomuk
 Name=Semantic Data Storage
+Name[ar]=مخزن بيانات دلالي
 Name[bg]=Хранилище за семантични данни
 Name[ca]=Emmagatzematge de dades semàntiques
 Name[ca@valencia]=Emmagatzematge de dades semàntiques
@@ -49,6 +50,7 @@ Name[x-test]=xxSemantic Data Storagexx
 Name[zh_CN]=语义学数据存储
 Name[zh_TW]=語意資料儲存
 Comment=Semantic Desktop
+Comment[ar]=سطح المكتب دلالي
 Comment[bg]=Семантичен работен плот
 Comment[ca]=Escriptori semàntic
 Comment[ca@valencia]=Escriptori semàntic
@@ -99,6 +101,7 @@ Comment[zh_TW]=語意桌面
 
 [Event/failedToStart]
 Name=Failed to start Nepomuk
+Name[ar]=فشل في بدء نبومك
 Name[bg]=Грешка при зареждане на Nepomuk
 Name[ca]=Ha fallat en iniciar el Nepomuk
 Name[ca@valencia]=Ha fallat en iniciar el Nepomuk
@@ -158,6 +161,7 @@ Name[x-test]=xxFailed to start Nepomukxx
 Name[zh_CN]=启动 Nepomuk 失败
 Name[zh_TW]=無法啟動 Nepomuk
 Comment=The Nepomuk Semantic Desktop system could not be started
+Comment[ar]=لم يستطع نظام سطح مكتب نبومك الدلالي البدء
 Comment[ca]=El sistema de l'escriptori semàntic del Nepomuk no s'ha pogut engegar
 Comment[ca@valencia]=El sistema de l'escriptori semàntic del Nepomuk no s'ha pogut engegar
 Comment[csb]=Semanticznô systema pùltu Nepomùka nié mòże bëc zrëszonô

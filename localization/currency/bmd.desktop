@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=BMD
 CurrencyCodeIsoNumeric3=060
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Bermuda Dollar
+Name[ar]=دولار برمودا
 Name[bg]=Бермудски долар
 Name[bn]=বার্মুডার ডলার
 Name[ca]=Dòlar de Bermuda

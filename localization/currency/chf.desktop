@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=CHF
 CurrencyCodeIsoNumeric3=756
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Swiss Franc
+Name[ar]=الفرنك السويسري
 Name[bg]=Швейцарски франк
 Name[bn]=সুইস ফ্রাঙ্ক
 Name[ca]=Franc suís

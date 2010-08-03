@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=HTG
 CurrencyCodeIsoNumeric3=332
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Haitian Gourde
+Name[ar]=جورد هياتي
 Name[ca]=Gourde d'Haití
 Name[ca@valencia]=Gourde d'Haití
 Name[cs]=Haitské gourde

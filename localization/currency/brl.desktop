@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=BRL
 CurrencyCodeIsoNumeric3=986
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Brazilian Real
+Name[ar]=ريال برازيلي
 Name[bg]=Бразилски реал
 Name[bn]=ব্রাজিলের রিয়াল
 Name[ca]=Real brasiler

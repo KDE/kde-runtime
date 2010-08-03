@@ -4,6 +4,7 @@ CurrencyCodeIsoNumeric3=978
 CurrencyNameIso=euro
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Euro
+Name[ar]=يورو
 Name[bg]=Евро
 Name[bn]=ইউরো
 Name[ca]=Euro

@@ -1,6 +1,7 @@
 [Global]
 IconName=preferences-desktop-keyboard
 Comment=Global Keyboard Shortcuts
+Comment[ar]=اختصارات لوحة المفاتيح العامة
 Comment[bg]=Глобални бързи клавиши
 Comment[bn]=গ্লোবাল কীবোর্ড শর্টকাট
 Comment[ca]=Dreceres de teclat globals
@@ -56,6 +57,7 @@ Comment[x-test]=xxGlobal Keyboard Shortcutsxx
 Comment[zh_CN]=全局键盘快捷键
 Comment[zh_TW]=全域鍵盤捷徑
 Name=kglobalaccel
+Name[ar]=kglobalaccel
 Name[bg]=kglobalaccel
 Name[bn]=kglobalaccel
 Name[ca]=kglobalaccel
@@ -200,6 +202,7 @@ Name[x-test]=xxApplicationxx
 Name[zh_CN]=应用程序
 Name[zh_TW]=應用程式
 Comment=The application name
+Comment[ar]=اسم التطبيق
 Comment[bg]=Име на програма
 Comment[bn]=অ্যাপলিকেশন-এর নাম
 Comment[ca]=El nom de l'aplicació
@@ -264,6 +267,7 @@ Comment[zh_TW]=應用程式名稱
 
 [Event/newshortcutregistered]
 Name=Global Shortcut Registration
+Name[ar]=تسجيل الاختصارات العامة
 Name[bg]=Централно указване на съкратени клавиши
 Name[ca]=Registre de drecera global
 Name[ca@valencia]=Registre de drecera global
@@ -325,6 +329,7 @@ Name[x-test]=xxGlobal Shortcut Registrationxx
 Name[zh_CN]=全局快捷键注册
 Name[zh_TW]=全域捷徑註冊
 Comment=An application registered new global shortcuts.
+Comment[ar]=تطبيق يسجل الاختصارات العامة الجديدة.
 Comment[ca]=Una aplicació ha registrat dreceres globals noves.
 Comment[ca@valencia]=Una aplicació ha registrat dreceres globals noves.
 Comment[cs]=Aplikace zaregistrovala nové globální klávesové zkratky.
@@ -389,6 +394,7 @@ Action=
 
 [Event/globalshortcutpressed]
 Name=Global Shortcut Triggered
+Name[ar]=أثير اختصار عام
 Name[bg]=Задействан е общ бърз клавиш
 Name[ca]=Activació de drecera global
 Name[ca@valencia]=Activació de drecera global
@@ -448,6 +454,7 @@ Name[x-test]=xxGlobal Shortcut Triggeredxx
 Name[zh_CN]=全局快捷键被触发
 Name[zh_TW]=全域捷徑被觸發
 Comment=The user triggered a global shortcut
+Comment[ar]=لقد أثرت المستخدم اختصار عاما
 Comment[ca]=L'usuari ha activat una drecera global
 Comment[ca@valencia]=L'usuari ha activat una drecera global
 Comment[cs]=Uživatel aktivoval globální klávesovou zkratku

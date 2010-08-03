@@ -11,6 +11,7 @@ X-KDE-System-Settings-Parent-Category=audio-and-video
 X-DocPath=kcontrol/phonon/index.html
 
 Name=Phonon
+Name[ar]=فونون
 Name[bn]=ফোনন
 Name[ca]=Phonon
 Name[ca@valencia]=Phonon

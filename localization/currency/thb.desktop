@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=THB
 CurrencyCodeIsoNumeric3=764
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Thai Baht
+Name[ar]=بهت تايلاند
 Name[ca]=Baht de Tailàndia
 Name[ca@valencia]=Baht de Tailàndia
 Name[cs]=Thajský baht

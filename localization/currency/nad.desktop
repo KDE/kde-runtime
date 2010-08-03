@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=NAD
 CurrencyCodeIsoNumeric3=516
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Namibian Dollar
+Name[ar]=دولار ناميبيا
 Name[bg]=Намибски долар
 Name[ca]=Dòlar namibià
 Name[ca@valencia]=Dòlar namibià

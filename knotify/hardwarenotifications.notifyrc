@@ -1,5 +1,6 @@
 [Global]
 Name=Hardware notifications
+Name[ar]=إشعارات العتاد
 Name[bn]=হার্ডওয়্যার বিজ্ঞপ্তি
 Name[ca]=Notificacions de maquinari
 Name[ca@valencia]=Notificacions de maquinari
@@ -50,6 +51,7 @@ Name[zh_CN]=硬件通知
 Name[zh_TW]=硬體通知
 IconName=emblem-mounted
 Comment=Notifications triggered by solid
+Comment[ar]=الإشعارات أثيرت بواسطة سولد
 Comment[ca]=Notificacions provocades pel Solid
 Comment[ca@valencia]=Notificacions provocades pel Solid
 Comment[cs]=Oznamování spuštěná Solidem
@@ -98,6 +100,7 @@ Version=1
 
 [Event/mounterror]
 Name=Mount or unmount error
+Name[ar]=خطأ في الضم أو فك الضم
 Name[bn]=মাউন্ট বা আনমাউন্ট করাকালীন সমস্যা
 Name[ca]=Error en muntar o desmuntar
 Name[ca@valencia]=Error en muntar o desmuntar
@@ -146,6 +149,7 @@ Name[x-test]=xxMount or unmount errorxx
 Name[zh_CN]=挂载或卸载错误
 Name[zh_TW]=掛載或卸載時發生錯誤
 Comment=There has been a problem mounting or unmounting a device
+Comment[ar]=توجد مشكلة في ضم أو فك ضم الجهاز
 Comment[ca]=Hi ha hagut un problema en muntar o desmuntar un dispositiu
 Comment[ca@valencia]=Hi ha hagut un problema en muntar o desmuntar un dispositiu
 Comment[cs]=Při připojování nebo odpojování zařízení došlo k chybě

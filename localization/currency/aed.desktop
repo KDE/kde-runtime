@@ -3,6 +3,7 @@ CurrencyCodeIsoAlpha3=AED
 CurrencyCodeIsoNumeric3=784
 #Context for Name: Adjectival Country Name and Currency Name
 Name=United Arab Emirates Dirham
+Name[ar]=درهم الإمارات العربية المتحدة
 Name[bn]=সংযুক্ত আরব আমিরশাহি ডারহাম
 Name[ca]=Dírham de la Unió dels Emirats Àrabs
 Name[ca@valencia]=Dírham de la Unió dels Emirats Àrabs
