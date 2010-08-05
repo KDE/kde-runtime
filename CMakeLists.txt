@@ -55,6 +55,8 @@ include_directories (${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} ${KDE4_INCL
 # Build infrastructure
 add_subdirectory(cmake)
 
+add_definitions(-DDISABLE_NEPOMUK_LEGACY)
+
 # Background processes
 add_subdirectory(kpasswdserver)
 add_subdirectory(kdontchangethehostname)
