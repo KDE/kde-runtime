@@ -14,6 +14,7 @@ Name[el]=KDE Look
 Name[en_GB]=KDE Look
 Name[es]=KDE Look
 Name[et]=KDE Look
+Name[eu]=KDE Look
 Name[fi]=KDE Look
 Name[fr]=KDE Look
 Name[fy]=KDE Uterlik
@@ -66,6 +67,7 @@ Query[el]=http://www.kde-look.org/content/search.php?search=Search&name=\\{@}
 Query[en_GB]=http://www.kde-look.org/content/search.php?search=Search&name=\\{@}
 Query[es]=http://www.kde-look.org/content/search.php?search=Search&name=\\{@}
 Query[et]=http://www.kde-look.org/content/search.php?search=Search&name=\\{@}
+Query[eu]=http://www.kde-look.org/content/search.php?search=Search&name=\\{@}
 Query[fi]=http://www.kde-look.org/content/search.php?search=Search&name=\\{@}
 Query[fr]=http://www.kde-look.org/content/search.php?search=Search&name=\\{@}
 Query[fy]=http://www.kde-look.org/content/search.php?search=Search&name=\\{@}
