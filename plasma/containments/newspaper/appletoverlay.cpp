@@ -21,7 +21,7 @@
 #include "newspaper.h"
 #include "appletscontainer.h"
 #include "appletsview.h"
-#include "../common/appletmovespacer.h"
+#include "appletmovespacer.h"
 
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsLinearLayout>
