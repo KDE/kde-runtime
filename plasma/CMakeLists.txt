@@ -1,3 +1,4 @@
 add_subdirectory(remotewidgetshelper)
 add_subdirectory(scriptengines)
 add_subdirectory(tools)
+add_subdirectory(containments)
