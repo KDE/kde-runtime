@@ -1,0 +1,5 @@
+#kdeeject is a shell script, so let's not check there.
+IGNORESUBS kdeeject
+
+#no code in these
+IGNORESUBS menu
