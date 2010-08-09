@@ -1,9 +1,5 @@
 project(kdbgwin)
 
-include(KDE4Defaults)
-
-add_definitions (${KDE4_DEFINITIONS})
-
 set(kdbgwin_SRCS
     common.h
     main.cpp
