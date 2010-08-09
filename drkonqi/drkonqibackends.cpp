@@ -126,6 +126,7 @@ CrashedApplication *KCrashBackend::constructCrashedApplication()
     a->m_pid = args->getOption("pid").toInt();
     a->m_signalNumber = args->getOption("signal").toInt();
     a->m_restarted = args->isSet("restarted");
+    a->m_thread = args->getOption("thread").toInt();
 
     //try to determine the executable that crashed
     if ( QFileInfo(QString("/proc/%1/exe").arg(a->m_pid)).exists() ) {
@@ -163,7 +164,11 @@ DebuggerManager *KCrashBackend::constructDebuggerManager()
 {
     QList<Debugger> internalDebuggers = Debugger::availableInternalDebuggers("KCrash");
     KConfigGroup config(KGlobal::config(), "drkonqi");
+#ifndef Q_OS_WIN
     QString defaultDebuggerName = config.readEntry("Debugger", QString("gdb"));
+#else
+    QString defaultDebuggerName = config.readEntry("Debugger", QString("kdbgwin"));
+#endif
 
     Debugger firstKnownGoodDebugger, preferredDebugger;
     foreach (const Debugger & debugger, internalDebuggers) {

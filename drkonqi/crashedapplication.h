@@ -60,6 +60,8 @@ public:
 
     bool hasBeenRestarted() const;
 
+    int thread() const;
+
 public slots:
     void restart();
 
@@ -78,6 +80,7 @@ protected:
     QString m_version;
     BugReportAddress m_reportAddress;
     bool m_restarted;
+    int m_thread;
 };
 
 #endif // CRASHEDAPPLICATION_H

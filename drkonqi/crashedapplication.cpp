@@ -96,7 +96,7 @@ QString CrashedApplication::signalName() const
     case SIGABRT: return QLatin1String("SIGABRT");
     case SIGFPE: return QLatin1String("SIGFPE");
     case SIGSEGV: return QLatin1String("SIGSEGV");
-    case SIGBUS: return QLatin1String("SIGBUS");
+    //case SIGBUS: return QLatin1String("SIGBUS");
     default: return QLatin1String("Unknown");
     }
 #endif
@@ -105,6 +105,11 @@ QString CrashedApplication::signalName() const
 bool CrashedApplication::hasBeenRestarted() const
 {
     return m_restarted;
+}
+
+int CrashedApplication::thread() const
+{
+    return m_thread;
 }
 
 void CrashedApplication::restart()

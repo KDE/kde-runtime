@@ -86,6 +86,7 @@ int main(int argc, char* argv[])
     options.add("restarted", ki18nc("@info:shell","The program has already been restarted"));
     options.add("keeprunning", ki18nc("@info:shell","Keep the program running and generate "
                                                     "the backtrace at startup"));
+    options.add("thread <threadid>", ki18nc("@info:shell","The thread id of the failing thread"));
     KCmdLineArgs::addCmdLineOptions(options);
 
     KComponentData inst(KCmdLineArgs::aboutData());

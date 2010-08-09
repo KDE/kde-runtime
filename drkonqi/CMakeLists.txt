@@ -1,3 +1,15 @@
+project(drkonqi) 
+
+find_package(KDE4 REQUIRED)
+include(KDE4Defaults)
+include(MacroLibrary)
+include(CheckFunctionExists)
+include(CheckIncludeFiles)
+add_definitions (${QT_DEFINITIONS} ${KDE4_DEFINITIONS})
+include_directories(${CMAKE_CURRENT_BINARY_DIR} ${KDE4_INCLUDES})
+
+
+
 check_function_exists("strsignal" HAVE_STRSIGNAL)
 check_function_exists("uname" HAVE_UNAME)
 
@@ -11,6 +23,9 @@ add_definitions(-DKDE_DEFAULT_DEBUG_AREA=1410)
 
 add_subdirectory( data ) 
 add_subdirectory( tests ) 
+if ( WIN32 )
+    add_subdirectory( kdbgwin ) 
+endif ( WIN32 )
 
 set(drkonqi_SRCS 
     main.cpp
