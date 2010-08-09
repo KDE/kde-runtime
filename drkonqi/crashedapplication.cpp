@@ -96,7 +96,9 @@ QString CrashedApplication::signalName() const
     case SIGABRT: return QLatin1String("SIGABRT");
     case SIGFPE: return QLatin1String("SIGFPE");
     case SIGSEGV: return QLatin1String("SIGSEGV");
-    //case SIGBUS: return QLatin1String("SIGBUS");
+#ifdef SIGBUS
+    case SIGBUS: return QLatin1String("SIGBUS");
+#endif
     default: return QLatin1String("Unknown");
     }
 #endif
