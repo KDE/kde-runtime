@@ -31,7 +31,6 @@ namespace Plasma
     class Applet;
     class FrameSvg;
     class Svg;
-    class AbstractAnimation;
 }
 
 class AppletTitleBar : public QGraphicsWidget
