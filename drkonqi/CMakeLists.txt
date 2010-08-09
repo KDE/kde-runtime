@@ -1,14 +1,4 @@
-project(drkonqi) 
-
-find_package(KDE4 REQUIRED)
-include(KDE4Defaults)
-include(MacroLibrary)
-include(CheckFunctionExists)
-include(CheckIncludeFiles)
-add_definitions (${QT_DEFINITIONS} ${KDE4_DEFINITIONS})
-include_directories(${CMAKE_CURRENT_BINARY_DIR} ${KDE4_INCLUDES})
-
-
+project(drkonqi)
 
 check_function_exists("strsignal" HAVE_STRSIGNAL)
 check_function_exists("uname" HAVE_UNAME)
