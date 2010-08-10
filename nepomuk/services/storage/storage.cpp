@@ -76,10 +76,13 @@ void Nepomuk::Storage::slotNepomukCoreInitialized( bool success )
 
 QString Nepomuk::Storage::usedSopranoBackend() const
 {
-    if ( Repository* rep = static_cast<Repository*>( m_core->model( QLatin1String( "main" ) ) ) )
+    if ( Repository* rep = dynamic_cast<Repository*>( m_core->model( QLatin1String( "main" ) ) ) )
         return rep->usedSopranoBackend();
-    else
-        return QString();
+    else if ( Soprano::FilterModel *fm = dynamic_cast<Soprano::FilterModel*>( m_core->model( QLatin1String( "main" ) ) ) ) {
+        if ( Repository *rep = dynamic_cast<Repository*>( fm->parentModel() ) )
+            return rep->usedSopranoBackend();
+    }
+    return QString();
 }
 
 #include "storage.moc"
