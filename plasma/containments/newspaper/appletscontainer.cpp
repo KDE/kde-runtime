@@ -51,11 +51,16 @@ AppletsContainer::AppletsContainer(AppletsView *parent)
    m_automaticAppletLayout(true),
    m_expandAll(false),
    m_appletsPerColumn(1),
-   m_appletsPerRow(1)
+   m_appletsPerRow(1),
+   m_viewScrollState(QAbstractAnimation::Stopped)
 {
     setFlag(QGraphicsItem::ItemHasNoContents);
     m_mainLayout = new QGraphicsLinearLayout(this);
     m_mainLayout->setContentsMargins(0,0,0,0);
+
+    m_viewSyncTimer = new QTimer(this);
+    m_viewSyncTimer->setSingleShot(true);
+    connect(m_viewSyncTimer, SIGNAL(timeout()), this, SLOT(syncView()));
 
     m_viewportGeometryUpdateTimer = new QTimer(this);
     m_viewportGeometryUpdateTimer->setSingleShot(true);
@@ -65,6 +70,7 @@ AppletsContainer::AppletsContainer(AppletsView *parent)
             this, SLOT(viewportGeometryChanged(const QRectF &)));
 
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(themeChanged()));
+    connect(m_scrollWidget, SIGNAL(scrollStateChanged(QAbstractAnimation::State, QAbstractAnimation::State)), this, SLOT(scrollStateChanged(QAbstractAnimation::State, QAbstractAnimation::State)));
     themeChanged();
 }
 
@@ -447,6 +453,12 @@ void AppletsContainer::viewportGeometryChanged(const QRectF &geometry)
     m_viewportGeometryUpdateTimer->start(250);
 }
 
+void AppletsContainer::scrollStateChanged(QAbstractAnimation::State newState, QAbstractAnimation::State oldState)
+{
+    Q_UNUSED(oldState)
+    m_viewScrollState = newState;
+}
+
 void AppletsContainer::updateViewportGeometry()
 {
     m_viewportSize = m_scrollWidget->viewportGeometry().size();
@@ -502,9 +514,6 @@ void AppletsContainer::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 void AppletsContainer::setCurrentApplet(Plasma::Applet *applet)
 {
     if (m_currentApplet.data() == applet) {
-        if (applet) {
-            m_scrollWidget->ensureRectVisible(QRectF(applet->pos(), QSizeF(applet->size().width(), applet->preferredHeight())));
-        }
         return;
     }
 
@@ -525,7 +534,7 @@ void AppletsContainer::setCurrentApplet(Plasma::Applet *applet)
 
         updateSize();
 
-        m_scrollWidget->ensureRectVisible(QRectF(applet->pos(), QSizeF(applet->size().width(), applet->preferredHeight())));
+        m_viewSyncTimer->start(200);
 
         QList<AppletTitleBar *> titles = applet->findChildren<AppletTitleBar *>("TitleBar");
 
@@ -540,6 +549,14 @@ void AppletsContainer::setCurrentApplet(Plasma::Applet *applet)
         m_scrollWidget->setSnapSize(QSizeF());
     }
     emit appletActivated(m_currentApplet.data());
+}
+
+void AppletsContainer::syncView()
+{
+    Plasma::Applet *applet = m_currentApplet.data();
+    if (applet && m_viewScrollState == QAbstractAnimation::Stopped) {
+        m_scrollWidget->ensureRectVisible(QRectF(applet->pos(), QSizeF(applet->size().width(), applet->preferredHeight())));
+    }
 }
 
 Plasma::Applet *AppletsContainer::currentApplet() const

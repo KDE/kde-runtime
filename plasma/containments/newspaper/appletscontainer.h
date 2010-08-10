@@ -27,6 +27,8 @@
 
 #include <QGraphicsWidget>
 
+#include <QAbstractAnimation>
+
 namespace Plasma
 {
     class Applet;
@@ -35,6 +37,7 @@ namespace Plasma
 
 class QGraphicsLinearLayout;
 class QPropertyAnimation;
+class QTimer;
 
 class AppletsView;
 
@@ -90,6 +93,8 @@ public Q_SLOTS:
 private Q_SLOTS:
     void viewportGeometryChanged(const QRectF &geometry);
     void updateViewportGeometry();
+    void scrollStateChanged(QAbstractAnimation::State newState, QAbstractAnimation::State oldState);
+    void syncView();
 
 Q_SIGNALS:
     void appletSizeHintChanged();
@@ -111,6 +116,8 @@ private:
     QTimer *m_viewportGeometryUpdateTimer;
     int m_appletsPerColumn;
     int m_appletsPerRow;
+    QAbstractAnimation::State m_viewScrollState;
+    QTimer *m_viewSyncTimer;
 };
 
 #endif
