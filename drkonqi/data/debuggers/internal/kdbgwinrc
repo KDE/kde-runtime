@@ -1,5 +1,8 @@
 [General]
 Name=kdbgwin
+Name[pt]=kdbgwin
+Name[sv]=kdbgwin
+Name[uk]=kdbgwin
 Name[x-test]=xxkdbgwinxx
 TryExec=kdbgwin
 Backends=KCrash
