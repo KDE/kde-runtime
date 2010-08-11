@@ -60,6 +60,7 @@ target_link_libraries(nepomukstrigiservice
   ${KDE4_KIO_LIBS}
   ${KDE4_SOLID_LIBS}
   ${KDE4_KIDLETIME_LIBS}
+  ${NEPOMUK_QUERY_LIBRARIES}
   ${NEPOMUK_LIBRARIES}
   ${SOPRANO_LIBRARIES}
   )

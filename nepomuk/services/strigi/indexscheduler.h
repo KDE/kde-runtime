@@ -206,6 +206,7 @@ namespace Nepomuk {
          * to index anymore.
          */
         void removeOldAndUnwantedEntries();
+        bool removeAllGraphsFromQuery( const QString& query_ );
 
         bool m_suspended;
         bool m_stopped;

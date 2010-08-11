@@ -23,6 +23,7 @@
 #include "indexscheduler.h"
 #include "strigiserviceconfig.h"
 #include "nepomukindexer.h"
+#include "util.h"
 #include "nfo.h"
 #include "nie.h"
 
@@ -42,11 +43,15 @@
 #include <Nepomuk/Resource>
 #include <Nepomuk/ResourceManager>
 #include <Nepomuk/Variant>
+#include <Nepomuk/Query/Query>
+#include <Nepomuk/Query/ComparisonTerm>
+#include <Nepomuk/Query/ResourceTerm>
 
 #include <Soprano/Model>
 #include <Soprano/QueryResultIterator>
 #include <Soprano/NodeIterator>
 #include <Soprano/Node>
+#include <Soprano/Vocabulary/RDF>
 #include <Soprano/Vocabulary/Xesam>
 
 #include <map>
@@ -544,7 +549,7 @@ void Nepomuk::IndexScheduler::removeOldAndUnwantedEntries()
     // We query all files that should not be in the store
     // This for example excludes all filex:/ URLs.
     //
-    QString query = QString::fromLatin1( "select distinct ?g ?url where { "
+    QString query = QString::fromLatin1( "select distinct ?g where { "
                                          "?r %1 ?url . "
                                          "?g <http://www.strigi.org/fields#indexGraphFor> ?r . "
                                          "FILTER(REGEX(STR(?url),'^file:/')) . "
@@ -552,19 +557,8 @@ void Nepomuk::IndexScheduler::removeOldAndUnwantedEntries()
                     .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ),
                           folderFilter );
     kDebug() << query;
-
-    Soprano::QueryResultIterator it = ResourceManager::instance()->mainModel()->executeQuery( query, Soprano::Query::QueryLanguageSparql );
-    while ( it.next() ) {
-
-        // wait for resume or stop (or simply continue)
-        if ( !waitForContinue() ) {
-            break;
-        }
-
-        const Soprano::Node& g = it[0];
-        kDebug() << "REMOVING" << it["url"].uri();
-        ResourceManager::instance()->mainModel()->removeContext( g );
-    }
+    if ( !removeAllGraphsFromQuery( query ) )
+        return;
 
 
     //
@@ -583,8 +577,8 @@ void Nepomuk::IndexScheduler::removeOldAndUnwantedEntries()
         filters = QString::fromLatin1("FILTER(%1) .").arg( fileFilters.join(" || ") );
     else if( !includeExcludeFilters.isEmpty() )
         filters = QString::fromLatin1("FILTER(%1) .").arg( includeExcludeFilters );
-    
-    query = QString::fromLatin1( "select distinct ?g ?url where { "
+
+    query = QString::fromLatin1( "select distinct ?g where { "
                                  "?r %1 ?url . "
                                  "?r %2 ?fn . "
                                  "?g <http://www.strigi.org/fields#indexGraphFor> ?r . "
@@ -594,18 +588,8 @@ void Nepomuk::IndexScheduler::removeOldAndUnwantedEntries()
                   Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NFO::fileName() ),
                   filters );
     kDebug() << query;
-    it = ResourceManager::instance()->mainModel()->executeQuery( query, Soprano::Query::QueryLanguageSparql );
-    while ( it.next() ) {
-
-        // wait for resume or stop (or simply continue)
-        if ( !waitForContinue() ) {
-            break;
-        }
-
-        const Soprano::Node& g = it[0];
-        kDebug() << "REMOVING" << it["url"].uri();
-        ResourceManager::instance()->mainModel()->removeContext( g );
-    }
+    if ( !removeAllGraphsFromQuery( query ) )
+        return;
 
 
     //
@@ -620,16 +604,59 @@ void Nepomuk::IndexScheduler::removeOldAndUnwantedEntries()
                                  "{ graph ?g { ?r2 %1 ?u2 . } } "
                                  "}" )
             .arg( Soprano::Node::resourceToN3( Soprano::Vocabulary::Xesam::url() ) );
-    it = ResourceManager::instance()->mainModel()->executeQuery( query, Soprano::Query::QueryLanguageSparql );
-    while ( it.next() ) {
+    kDebug() << query;
+    if ( !removeAllGraphsFromQuery( query ) )
+        return;
 
-        // wait for resume or stop (or simply continue)
-        if ( !waitForContinue() ) {
-            break;
+
+    //
+    // Remove data which is useless but still around from before. This could happen due to some buggy version of
+    // the indexer or the filewatch service or even some application messing up the data.
+    // We look for indexed files that do not have a nie:url defined and thus, will never be catched by any of the
+    // other queries.
+    //
+    query = Query::Query(
+        Strigi::Ontology::indexGraphFor() == ( Soprano::Vocabulary::RDF::type() == Query::ResourceTerm( Nepomuk::Vocabulary::NFO::FileDataObject() ) &&
+                                               !( Nepomuk::Vocabulary::NIE::url() == Query::Term() ) )
+        ).toSparqlQuery(Query::Query::NoResultRestrictions);
+    kDebug() << query;
+    removeAllGraphsFromQuery( query );
+}
+
+
+
+/**
+ * Runs the query using a limit until all graphs have been deleted. This is not done
+ * in one big loop to avoid the problems with messed up iterators when one of the iterated
+ * item is deleted.
+ */
+bool Nepomuk::IndexScheduler::removeAllGraphsFromQuery( const QString& query )
+{
+    while ( 1 ) {
+        // get the next batch of graphs
+        QList<Soprano::Node> graphs
+            = ResourceManager::instance()->mainModel()->executeQuery( query + QLatin1String( " LIMIT 200" ),
+                                                                      Soprano::Query::QueryLanguageSparql ).iterateBindings( 0 ).allNodes();
+
+        // remove all graphs in the batch
+        Q_FOREACH( const Soprano::Node& graph, graphs ) {
+
+            // wait for resume or stop (or simply continue)
+            if ( !waitForContinue() ) {
+                return false;
+            }
+
+            ResourceManager::instance()->mainModel()->removeContext( graph );
         }
 
-        ResourceManager::instance()->mainModel()->removeContext( it[0] );
+        // we are done when the last graphs are queried
+        if ( graphs.count() < 200 ) {
+            return true;
+        }
     }
+
+    // make gcc shut up
+    return true;
 }
 
 
