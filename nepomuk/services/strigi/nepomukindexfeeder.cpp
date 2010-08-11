@@ -177,11 +177,16 @@ void Nepomuk::IndexFeeder::run()
             m_queueMutex.lock();
         }
 
-        // wait for more input
-        kDebug() << "Waiting...";
-        m_queueWaiter.wait( &m_queueMutex );
-        m_queueMutex.unlock();
-        kDebug() << "Woke up.";
+        // FIXME: this is not very secure. In theory m_stopped could be changed
+        // just after the if but before the m_queueWaiter has been entered.
+        // Then we would just hang there forever!
+        if ( !m_stopped ) {
+            // wait for more input
+            kDebug() << "Waiting...";
+            m_queueWaiter.wait( &m_queueMutex );
+            m_queueMutex.unlock();
+            kDebug() << "Woke up.";
+        }
 
     }
 }
