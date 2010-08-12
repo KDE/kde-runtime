@@ -111,6 +111,10 @@ signals:
     /// or newlines
     void DebugLine(const QString&);
 
+    /// This signal is emitted when a module is loaded, and its symbols are missing. This is
+    /// caught by the PackageSuggester
+    void MissingSymbol(const QString&);
+
     /// Will be emitted when the generation finishes
     void Finished();
 };

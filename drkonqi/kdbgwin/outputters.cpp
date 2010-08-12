@@ -29,5 +29,5 @@
 void Outputter::OnDebugLine(const QString& line)
 {
     std::cout << (const char*) line.toUtf8() << std::endl;
-    kDebug() << line;
+    //kDebug() << line;
 }

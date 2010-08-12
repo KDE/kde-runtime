@@ -224,6 +224,11 @@ void AbstractBTGenerator::LoadSymbols()
             0);
 
         LoadSymbol(strModule, (DWORD64) modInfo.lpBaseOfDll);
+
+        if (!IsSymbolLoaded(strModule))
+        {
+            emit MissingSymbol(strModule);
+        }
     }
     emit DebugLine(QString());
     emit DebugLine(QString());

@@ -107,13 +107,12 @@ void MsvcGenerator::LoadSymbol(const QString& module, DWORD64 dwBaseAddr)
     moduleInfo.SizeOfStruct = sizeof(moduleInfo);
     SymGetModuleInfo64(m_process.GetHandle(), dwBaseAddr, &moduleInfo);
 
-    m_symbolsMap[module] = true; // default
+    m_symbolsMap[module] = false; // default
     QString symbolType;
     switch (moduleInfo.SymType)
     {
     case SymNone:
         symbolType = QString::fromLatin1("no symbols loaded");
-        m_symbolsMap[module] = false;
         break;
     case SymCoff:
     case SymCv:
@@ -121,6 +120,7 @@ void MsvcGenerator::LoadSymbol(const QString& module, DWORD64 dwBaseAddr)
     case SymSym:
     case SymDia:
         symbolType = QString::fromLatin1("symbols loaded");
+        m_symbolsMap[module] = true;
         break;
     case SymExport:
         symbolType = QString::fromLatin1("export table only");

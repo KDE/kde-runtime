@@ -27,17 +27,13 @@
 #include "mingw_generator.h"
 #include "outputters.h"
 #include "process.h"
-#include <QCoreApplication>
+#include "suggester.h"
+#include <QApplication>
 
 int main(int argc, char *argv[], char *envp[])
 {
-    QCoreApplication app(argc, argv);
-    QCoreApplication::setApplicationName("kdbgwin");
-    //MessageBox(NULL, L"Attach to this process and press OK", L"", MB_OK);
-    //for (int i = 0; i < argc; i++)
-    //{
-    //    kDebug() << i << " " << argv[i];
-    //}
+    QApplication app(argc, argv);
+    QApplication::setApplicationName("kdbgwin");
 
     if (argc != 3)
     {
@@ -61,19 +57,40 @@ int main(int argc, char *argv[], char *envp[])
     }
 
 #if defined(_MSC_VER)
-    MsvcGenerator bg(proc);
+    MsvcGenerator generator(proc);
 #else
 #if defined(__GNUG__)
-    MingwGenerator bg(proc);
+    MingwGenerator generator(proc);
 #endif
 #endif
-    Outputter o;
+    Outputter outputter;
+    PackageSuggester suggester;
 
-    QObject::connect(&bg, SIGNAL(DebugLine(const QString&)), &o, SLOT(OnDebugLine(const QString&)));
+    QObject::connect
+    (
+        &generator,
+        SIGNAL(DebugLine(const QString&)),
+        &outputter,
+        SLOT(OnDebugLine(const QString&))
+    );
+    QObject::connect
+    (
+        &generator,
+        SIGNAL(MissingSymbol(const QString&)),
+        &suggester,
+        SLOT(OnMissingSymbol(const QString&))
+    );
+    QObject::connect
+    (
+        &generator,
+        SIGNAL(Finished()),
+        &suggester,
+        SLOT(OnFinished())
+    );
 
     TThreadsMap::const_iterator it;
     for (it = proc.GetThreads().constBegin(); it != proc.GetThreads().constEnd(); it++)
     {
-        bg.Run(it.value(), (it.key() == proc.GetThreadId())? true : false);
+        generator.Run(it.value(), (it.key() == proc.GetThreadId())? true : false);
     }
 }
