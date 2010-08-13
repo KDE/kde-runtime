@@ -24,6 +24,10 @@
 
 #include "appletscontainer.h"
 
+class QTimer;
+
+class AppletMoveSpacer;
+
 class AppletsView : public Plasma::ScrollWidget
 {
     Q_OBJECT
@@ -38,8 +42,26 @@ public:
 protected:
     bool sceneEventFilter(QGraphicsItem *watched, QEvent *event);
 
+    void manageHoverMoveEvent(QGraphicsSceneHoverEvent *event);
+    void manageMouseMoveEvent(QGraphicsSceneMouseEvent *event);
+    void manageMouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+    void showSpacer(const QPointF &pos);
+
+protected Q_SLOTS:
+    void appletDragRequested();
+    void scrollTimeout();
+
 private:
     AppletsContainer *m_appletsContainer;
+    QTimer *m_apletDragTimer;
+    QWeakPointer<Plasma::Applet>m_appletMoved;
+    AppletMoveSpacer *m_spacer;
+    QGraphicsLinearLayout *m_spacerLayout;
+    int m_spacerIndex;
+    QTimer *m_scrollTimer;
+    bool m_scrollDown;
+    bool m_clickDrag;
+    bool m_movingApplets;
 };
 
 #endif

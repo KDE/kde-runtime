@@ -18,16 +18,36 @@
  */
 
 #include "appletsview.h"
+#include "appletmovespacer.h"
+#include "applettitlebar.h"
 
+#include <QGraphicsLinearLayout>
 #include <QGraphicsSceneMouseEvent>
+#include <QTimer>
 
 #include <KGlobalSettings>
 
 #include <Plasma/Containment>
 
 AppletsView::AppletsView(QGraphicsItem *parent)
-    : Plasma::ScrollWidget(parent)
+    : Plasma::ScrollWidget(parent),
+      m_spacer(0),
+      m_spacerLayout(0),
+      m_spacerIndex(0),
+      m_scrollDown(false),
+      m_clickDrag(false),
+      m_movingApplets(false)
 {
+    m_apletDragTimer = new QTimer(this);
+    m_apletDragTimer->setSingleShot(true);
+    connect(m_apletDragTimer, SIGNAL(timeout()), this, SLOT(appletDragRequested()));
+
+    setAcceptHoverEvents(true);
+    setAcceptDrops(true);
+    setZValue(900);
+    m_scrollTimer = new QTimer(this);
+    m_scrollTimer->setSingleShot(false);
+    connect(m_scrollTimer, SIGNAL(timeout()), this, SLOT(scrollTimeout()));
 }
 
 AppletsView::~AppletsView()
@@ -58,18 +78,45 @@ bool AppletsView::sceneEventFilter(QGraphicsItem *watched, QEvent *event)
 
     if (event->type() == QEvent::GraphicsSceneMousePress) {
 
-        foreach (Plasma::Applet *applet, m_appletsContainer->containment()->applets()) {
-            if (applet->isAncestorOf(watched)) {
-                if (applet == m_appletsContainer->currentApplet()) {
-                    return Plasma::ScrollWidget::sceneEventFilter(watched, event);
-                }
+        m_apletDragTimer->start(2000);
+        bool found = false;
 
-                event->ignore();
-                return Plasma::ScrollWidget::sceneEventFilter(watched, event);
+        foreach (Plasma::Applet *applet, m_appletsContainer->containment()->applets()) {
+
+            if (applet->isAncestorOf(watched) || applet == watched) {
+                m_appletMoved = applet;
+
+                if (applet == m_appletsContainer->currentApplet()) {
+                    found = true;
+                }
+                break;
             }
+        }
+
+        if (found) {
+            //TODO: the label of the titlebar breaks this check
+            if (watched->isWidget() && qobject_cast<AppletTitleBar *>(static_cast<QGraphicsWidget *>(watched))) {
+                m_apletDragTimer->start(2000);
+            } else {
+                m_apletDragTimer->stop();
+            }
+            return Plasma::ScrollWidget::sceneEventFilter(watched, event);
+        } else {
+            m_apletDragTimer->start(2000);
+            event->ignore();
+            return Plasma::ScrollWidget::sceneEventFilter(watched, event);
         }
     } else if (event->type() == QEvent::GraphicsSceneMouseMove) {
         QGraphicsSceneMouseEvent *me = static_cast<QGraphicsSceneMouseEvent *>(event);
+
+        if (m_movingApplets) {
+            manageMouseMoveEvent(me);
+            return true;
+        }
+
+        if (QPointF(me->buttonDownScenePos(me->button()) - me->scenePos()).manhattanLength() > KGlobalSettings::dndEventDelay()) {
+            m_apletDragTimer->stop();
+        }
 
         if (!m_appletsContainer->currentApplet() || !m_appletsContainer->currentApplet()->isAncestorOf(watched)) {
             Plasma::ScrollWidget::sceneEventFilter(watched, event);
@@ -82,10 +129,17 @@ bool AppletsView::sceneEventFilter(QGraphicsItem *watched, QEvent *event)
     } else if (event->type() == QEvent::GraphicsSceneWheel && m_appletsContainer->currentApplet() && m_appletsContainer->currentApplet()->isAncestorOf(watched)) {
         return false;
     } else if (event->type() == QEvent::GraphicsSceneMouseRelease) {
+        QGraphicsSceneMouseEvent *me = static_cast<QGraphicsSceneMouseEvent *>(event);
+
+        if (m_movingApplets) {
+            manageMouseReleaseEvent(me);
+            return true;
+        } else {
+            m_apletDragTimer->stop();
+        }
+
         foreach (Plasma::Applet *applet, m_appletsContainer->containment()->applets()) {
             if (applet->isAncestorOf(watched) || applet == watched) {
-
-                QGraphicsSceneMouseEvent *me = static_cast<QGraphicsSceneMouseEvent *>(event);
 
                 if (QPointF(me->pos() - me->buttonDownPos(me->button())).manhattanLength() > KGlobalSettings::dndEventDelay()) {
                     return Plasma::ScrollWidget::sceneEventFilter(watched, event);
@@ -100,12 +154,260 @@ bool AppletsView::sceneEventFilter(QGraphicsItem *watched, QEvent *event)
         if (!m_appletsContainer->currentApplet() || !m_appletsContainer->currentApplet()->isAncestorOf(watched)) {
             return Plasma::ScrollWidget::sceneEventFilter(watched, event);
         }
+    } else if (event->type() == QEvent::GraphicsSceneHoverMove) {
+        QGraphicsSceneHoverEvent *he = static_cast<QGraphicsSceneHoverEvent *>(event);
+        manageHoverMoveEvent(he);
     }
 
     if (watched == m_appletsContainer->currentApplet()) {
         return false;
     } else {
         return Plasma::ScrollWidget::sceneEventFilter(watched, event);
+    }
+}
+
+void AppletsView::appletDragRequested()
+{
+    if (!m_appletMoved) {
+        return;
+    }
+
+    m_movingApplets = true;
+    m_appletsContainer->setCurrentApplet(0);
+
+    showSpacer(m_appletMoved.data()->geometry().center());
+    if (m_spacerLayout) {
+        m_spacerLayout->removeItem(m_appletMoved.data());
+        m_appletMoved.data()->raise();
+    }
+    if (m_spacer) {
+        m_spacer->setMinimumHeight(m_appletMoved.data()->size().height());
+    }
+}
+
+void AppletsView::manageHoverMoveEvent(QGraphicsSceneHoverEvent *event)
+{
+    if (m_clickDrag) {
+        //Cheat and pretend a mousemoveevent is arrived
+        QGraphicsSceneMouseEvent me;
+        me.setPos(event->pos());
+        me.setScenePos(event->scenePos());
+        me.setLastScenePos(event->lastScenePos());
+        manageMouseMoveEvent(&me);
+        return;
+    }
+}
+
+void AppletsView::manageMouseMoveEvent(QGraphicsSceneMouseEvent *event)
+{
+    if (!m_appletMoved) {
+        return;
+    }
+
+    QPointF position = mapFromScene(event->scenePos());
+
+    if (m_spacer) {
+        QPointF delta = event->scenePos()-event->lastScenePos();
+        m_appletMoved.data()->moveBy(delta.x(), delta.y());
+        showSpacer(position);
+    }
+
+    if (m_appletsContainer->orientation() == Qt::Vertical) {
+        if (pos().y() + position.y() > size().height()*0.70) {
+            m_scrollTimer->start(50);
+            m_scrollDown = true;
+        } else if (position.y() < size().height()*0.30) {
+            m_scrollTimer->start(50);
+            m_scrollDown = false;
+        } else {
+            m_scrollTimer->stop();
+        }
+    } else {
+        if (position.x() > size().width()*0.70) {
+            m_scrollTimer->start(50);
+            m_scrollDown = true;
+        } else if (position.x() < size().width()*0.30) {
+            m_scrollTimer->start(50);
+            m_scrollDown = false;
+        } else {
+            m_scrollTimer->stop();
+        }
+    }
+
+    update();
+}
+
+void AppletsView::manageMouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+{
+    if (!m_appletMoved) {
+        return;
+    }
+
+    m_scrollTimer->stop();
+
+    QPointF origin = event->buttonDownScenePos(event->button());
+    QPoint delta = event->scenePos().toPoint() - origin.toPoint();
+    if (!m_clickDrag && origin != QPointF() && delta.manhattanLength() < KGlobalSettings::dndEventDelay()) {
+        m_clickDrag = true;
+        setAcceptHoverEvents(true);
+        return;
+    } else {
+        setAcceptHoverEvents(false);
+        m_clickDrag = false;
+    }
+
+    m_movingApplets = false;
+
+    if (m_spacer && m_spacerLayout) {
+        m_spacerLayout->insertItem(m_spacerIndex, m_appletMoved.data());
+        m_spacerLayout->removeItem(m_spacer);
+    }
+
+    delete m_spacer;
+    m_spacer = 0;
+    m_spacerLayout = 0;
+    m_spacerIndex = 0;
+}
+
+void AppletsView::showSpacer(const QPointF &pos)
+{
+    if (!scene()) {
+        return;
+    }
+
+    QPointF translatedPos = pos - m_appletsContainer->pos();
+
+    QGraphicsLinearLayout *lay = 0;
+
+    for (int i = 0; i < m_appletsContainer->count(); ++i) {
+        QGraphicsLinearLayout *candidateLay = dynamic_cast<QGraphicsLinearLayout *>(m_appletsContainer->itemAt(i));
+
+        //normally should never happen
+        if (!candidateLay) {
+            continue;
+        }
+
+        if (m_appletsContainer->orientation() == Qt::Horizontal) {
+            if (translatedPos.y() < candidateLay->geometry().bottom()) {
+                lay = candidateLay;
+                break;
+            }
+        //vertical
+        } else {
+            if (translatedPos.x() < candidateLay->geometry().right()) {
+                lay = candidateLay;
+                break;
+            }
+        }
+    }
+
+    //couldn't decide: is the last column empty?
+    if (!lay) {
+        QGraphicsLinearLayout *candidateLay = dynamic_cast<QGraphicsLinearLayout *>(m_appletsContainer->itemAt(m_appletsContainer->count()-1));
+
+        if (candidateLay && candidateLay->count() <= 2) {
+            lay = candidateLay;
+        }
+    }
+
+    //give up, make a new column
+    if (!lay) {
+        lay = m_appletsContainer->addColumn();
+    }
+
+    if (pos == QPoint()) {
+        if (m_spacer) {
+            lay->removeItem(m_spacer);
+            m_spacer->hide();
+        }
+        return;
+    }
+
+    //lucky case: the spacer is already in the right position
+    if (m_spacer && m_spacer->geometry().contains(translatedPos)) {
+        return;
+    }
+
+    int insertIndex = -1;
+
+    for (int i = 0; i < lay->count(); ++i) {
+        QRectF siblingGeometry = lay->itemAt(i)->geometry();
+
+        if (m_appletsContainer->orientation() == Qt::Horizontal) {
+            qreal middle = siblingGeometry.center().x();
+            if (translatedPos.x() < middle) {
+                insertIndex = i;
+                break;
+            } else if (translatedPos.x() <= siblingGeometry.right()) {
+                insertIndex = i + 1;
+                break;
+            }
+        } else { // Vertical
+            qreal middle = siblingGeometry.center().y();
+
+            if (translatedPos.y() < middle) {
+                insertIndex = i;
+                break;
+            } else if (translatedPos.y() <= siblingGeometry.bottom()) {
+                insertIndex = i + 1;
+                break;
+            }
+        }
+    }
+
+    if (m_spacerLayout == lay && m_spacerIndex < insertIndex) {
+        --insertIndex;
+    }
+    if (lay->count() > 1 && insertIndex >= lay->count() - 1) {
+        --insertIndex;
+    }
+
+    m_spacerIndex = insertIndex;
+    if (insertIndex != -1) {
+        if (!m_spacer) {
+            m_spacer = new AppletMoveSpacer(this);
+            connect (m_spacer, SIGNAL(dropRequested(QGraphicsSceneDragDropEvent *)),
+                     this, SLOT(spacerRequestedDrop(QGraphicsSceneDragDropEvent *)));
+        }
+        if (m_spacerLayout) {
+            m_spacerLayout->removeItem(m_spacer);
+        }
+        m_spacer->show();
+        lay->insertItem(insertIndex, m_spacer);
+        m_spacerLayout = lay;
+    }
+}
+
+void AppletsView::scrollTimeout()
+{
+    if (!m_appletMoved) {
+        return;
+    }
+
+    if (m_appletsContainer->orientation() == Qt::Vertical) {
+        if (m_scrollDown) {
+            if (m_appletsContainer->geometry().bottom() > geometry().bottom()) {
+                m_appletsContainer->moveBy(0, -10);
+                m_appletMoved.data()->moveBy(0, 10);
+            }
+        } else {
+            if (m_appletsContainer->pos().y() < 0) {
+                m_appletsContainer->moveBy(0, 10);
+                m_appletMoved.data()->moveBy(0, -10);
+            }
+        }
+    } else {
+        if (m_scrollDown) {
+            if (m_appletsContainer->geometry().right() > geometry().right()) {
+                m_appletsContainer->moveBy(-10, 0);
+                m_appletMoved.data()->moveBy(10, 0);
+            }
+        } else {
+            if (m_appletsContainer->pos().x() < 0) {
+                m_appletsContainer->moveBy(10, 0);
+                m_appletMoved.data()->moveBy(-10, 0);
+            }
+        }
     }
 }
 
