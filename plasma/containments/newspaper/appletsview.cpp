@@ -417,5 +417,49 @@ void AppletsView::scrollTimeout()
     }
 }
 
+
+void AppletsView::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
+{
+    showSpacer(event->pos());
+    event->accept();
+}
+
+void AppletsView::dragMoveEvent(QGraphicsSceneDragDropEvent *event)
+{
+    if (event->pos().y() > size().height()*0.70) {
+        m_scrollTimer->start(50);
+        m_scrollDown = true;
+    } else if (event->pos().y() < size().height()*0.30) {
+        m_scrollTimer->start(50);
+        m_scrollDown = false;
+    } else {
+        m_scrollTimer->stop();
+    }
+
+    showSpacer(event->pos());
+}
+
+void AppletsView::dropEvent(QGraphicsSceneDragDropEvent *event)
+{
+    if (m_spacerLayout) {
+        m_spacerLayout->removeItem(m_spacer);
+    }
+
+    if (m_spacer) {
+        m_spacer->deleteLater();
+    }
+
+    m_spacer = 0;
+    m_spacerLayout = 0;
+    m_spacerIndex = 0;
+
+    emit dropRequested(event);
+}
+
+void AppletsView::spacerRequestedDrop(QGraphicsSceneDragDropEvent *event)
+{
+    dropEvent(event);
+}
+
 #include "appletsview.moc"
 

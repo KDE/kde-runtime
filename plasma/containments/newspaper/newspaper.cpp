@@ -51,8 +51,7 @@ Newspaper::Newspaper(QObject *parent, const QVariantList &args)
     : Containment(parent, args),
       m_orientation(Qt::Vertical),
       m_expandAll(false),
-      m_appletOverlay(0),
-      m_dragging(0)
+      m_appletOverlay(0)
 {
     setContainmentType(Containment::CustomContainment);
 

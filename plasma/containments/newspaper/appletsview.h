@@ -42,6 +42,9 @@ public:
 
 protected:
     bool sceneEventFilter(QGraphicsItem *watched, QEvent *event);
+    void dragEnterEvent(QGraphicsSceneDragDropEvent *event);
+    void dragMoveEvent(QGraphicsSceneDragDropEvent *event);
+    void dropEvent(QGraphicsSceneDragDropEvent *event);
 
     void manageHoverMoveEvent(QGraphicsSceneHoverEvent *event);
     void manageMouseMoveEvent(QGraphicsSceneMouseEvent *event);
@@ -51,6 +54,10 @@ protected:
 protected Q_SLOTS:
     void appletDragRequested();
     void scrollTimeout();
+    void spacerRequestedDrop(QGraphicsSceneDragDropEvent *event);
+
+Q_SIGNALS:
+    void dropRequested(QGraphicsSceneDragDropEvent *event);
 
 private:
     AppletsContainer *m_appletsContainer;

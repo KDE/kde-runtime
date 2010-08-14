@@ -84,7 +84,6 @@ private:
     bool m_expandAll;
     Plasma::FrameSvg *m_background;
     AppletOverlay *m_appletOverlay;
-    bool m_dragging;
     QTimer *m_updateSizeTimer;
     QTimer *m_relayoutTimer;
     AppletsContainer *m_container;

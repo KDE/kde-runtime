@@ -215,7 +215,6 @@ void AppletOverlay::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 void AppletOverlay::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
 {
     showSpacer(event->pos());
-    m_newspaper->m_dragging = true;
     event->accept();
 }
 
@@ -237,7 +236,6 @@ void AppletOverlay::dragMoveEvent(QGraphicsSceneDragDropEvent *event)
 void AppletOverlay::dropEvent(QGraphicsSceneDragDropEvent *event)
 {
     m_newspaper->dropEvent(event);
-    m_newspaper->m_dragging = false;
 
     if (m_spacerLayout) {
         m_spacerLayout->removeItem(m_spacer);
