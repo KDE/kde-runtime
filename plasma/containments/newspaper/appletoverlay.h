@@ -23,16 +23,6 @@
 
 #include <QGraphicsWidget>
 
-namespace Plasma
-{
-    class Applet;
-    class Svg;
-}
-
-class Newspaper;
-class AppletMoveSpacer;
-class QGraphicsLinearLayout;
-class QTimer;
 
 class AppletOverlay : public QGraphicsWidget
 {
@@ -41,36 +31,12 @@ class AppletOverlay : public QGraphicsWidget
     friend class AppletMoveSpacer;
 
 public:
-    explicit AppletOverlay(QGraphicsWidget *parent = 0, Newspaper *newspaper = 0);
+    explicit AppletOverlay(QGraphicsWidget *parent = 0);
     ~AppletOverlay();
-
-    void showSpacer(const QPointF &pos);
 
 protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget=0);
-    void mousePressEvent(QGraphicsSceneMouseEvent *event);
-    void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
-    void hoverMoveEvent(QGraphicsSceneHoverEvent *event);
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
-    void dragEnterEvent(QGraphicsSceneDragDropEvent *event);
-    void dragMoveEvent(QGraphicsSceneDragDropEvent *event);
-    void dropEvent(QGraphicsSceneDragDropEvent *event);
 
-protected Q_SLOTS:
-    void scrollTimeout();
-    void spacerRequestedDrop(QGraphicsSceneDragDropEvent *event);
-
-private:
-    QWeakPointer<Plasma::Applet>m_applet;
-    Newspaper *m_newspaper;
-    AppletMoveSpacer *m_spacer;
-    Plasma::Svg *m_icons;
-    QGraphicsLinearLayout *m_spacerLayout;
-    int m_spacerIndex;
-    QTimer *m_scrollTimer;
-    bool m_scrollDown;
-    bool m_clickDrag;
-    QPointF m_origin;
 };
 
 #endif

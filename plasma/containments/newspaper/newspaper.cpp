@@ -349,7 +349,7 @@ void Newspaper::constraintsEvent(Plasma::Constraints constraints)
         }
 
         if (immutability() == Plasma::Mutable && !m_appletOverlay && toolBox() && toolBox()->isShowing()) {
-            m_appletOverlay = new AppletOverlay(this, this);
+            m_appletOverlay = new AppletOverlay(this);
             m_appletOverlay->resize(size());
             m_scrollWidget->setImmediateDrag(true);
         } else if (immutability() != Plasma::Mutable && m_appletOverlay && toolBox() && toolBox()->isShowing()) {
@@ -365,7 +365,7 @@ void Newspaper::updateConfigurationMode(bool config)
 {
 
     if (config && !m_appletOverlay && immutability() == Plasma::Mutable) {
-        m_appletOverlay = new AppletOverlay(this, this);
+        m_appletOverlay = new AppletOverlay(this);
         m_appletOverlay->resize(size());
         m_scrollWidget->setImmediateDrag(true);
     } else if (!config) {
