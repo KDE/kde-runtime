@@ -96,18 +96,18 @@ bool AppletsView::sceneEventFilter(QGraphicsItem *watched, QEvent *event)
 
         if (m_appletMoved) {
             m_dragCountdown->setPos(mapFromItem(m_appletMoved.data(), m_appletMoved.data()->boundingRect().center()) - QPoint(m_dragCountdown->size().width()/2, m_dragCountdown->size().height()/2));
+
+            if (!found || (watched->isWidget() && qobject_cast<AppletTitleBar *>(static_cast<QGraphicsWidget *>(watched)))) {
+                m_dragCountdown->start(1000);
+            } else {
+                m_appletMoved.clear();
+                m_dragCountdown->stop();
+            }
         }
 
         if (found) {
-            //TODO: the label of the titlebar breaks this check
-            if (watched->isWidget() && qobject_cast<AppletTitleBar *>(static_cast<QGraphicsWidget *>(watched))) {
-                m_dragCountdown->start(1000);
-            } else {
-                m_dragCountdown->stop();
-            }
             return Plasma::ScrollWidget::sceneEventFilter(watched, event);
         } else {
-            m_dragCountdown->start(1000);
             event->ignore();
             return Plasma::ScrollWidget::sceneEventFilter(watched, event);
         }
@@ -260,10 +260,11 @@ void AppletsView::manageMouseReleaseEvent(QGraphicsSceneMouseEvent *event)
         m_clickDrag = true;
         setAcceptHoverEvents(true);
         return;
-    } else {
-        setAcceptHoverEvents(false);
-        m_clickDrag = false;
     }
+
+    setAcceptHoverEvents(false);
+    m_clickDrag = false;
+
 
     m_movingApplets = false;
 
@@ -276,6 +277,7 @@ void AppletsView::manageMouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     m_spacer = 0;
     m_spacerLayout = 0;
     m_spacerIndex = 0;
+    m_appletMoved.clear();
 }
 
 void AppletsView::showSpacer(const QPointF &pos)
