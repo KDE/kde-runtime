@@ -27,6 +27,7 @@
 class QTimer;
 
 class AppletMoveSpacer;
+class DragCountdown;
 
 class AppletsView : public Plasma::ScrollWidget
 {
@@ -53,7 +54,7 @@ protected Q_SLOTS:
 
 private:
     AppletsContainer *m_appletsContainer;
-    QTimer *m_apletDragTimer;
+    DragCountdown *m_dragCountdown;
     QWeakPointer<Plasma::Applet>m_appletMoved;
     AppletMoveSpacer *m_spacer;
     QGraphicsLinearLayout *m_spacerLayout;
