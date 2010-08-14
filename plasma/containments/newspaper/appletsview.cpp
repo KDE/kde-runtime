@@ -162,6 +162,9 @@ bool AppletsView::sceneEventFilter(QGraphicsItem *watched, QEvent *event)
     } else if (event->type() == QEvent::GraphicsSceneHoverMove) {
         QGraphicsSceneHoverEvent *he = static_cast<QGraphicsSceneHoverEvent *>(event);
         manageHoverMoveEvent(he);
+    } else if (event->type() == QEvent::GraphicsSceneDragMove) {
+        QGraphicsSceneDragDropEvent *de = static_cast<QGraphicsSceneDragDropEvent *>(event);
+        dragMoveEvent(de);
     }
 
     if (watched == m_appletsContainer->currentApplet()) {
@@ -420,23 +423,25 @@ void AppletsView::scrollTimeout()
 
 void AppletsView::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
 {
-    showSpacer(event->pos());
+    showSpacer(mapFromScene(event->scenePos()));
     event->accept();
 }
 
 void AppletsView::dragMoveEvent(QGraphicsSceneDragDropEvent *event)
 {
-    if (event->pos().y() > size().height()*0.70) {
+    QPointF pos = mapFromScene(event->scenePos());
+
+    if (pos.y() > size().height()*0.70) {
         m_scrollTimer->start(50);
         m_scrollDown = true;
-    } else if (event->pos().y() < size().height()*0.30) {
+    } else if (pos.y() < size().height()*0.30) {
         m_scrollTimer->start(50);
         m_scrollDown = false;
     } else {
         m_scrollTimer->stop();
     }
 
-    showSpacer(event->pos());
+    showSpacer(pos);
 }
 
 void AppletsView::dropEvent(QGraphicsSceneDragDropEvent *event)
@@ -458,6 +463,7 @@ void AppletsView::dropEvent(QGraphicsSceneDragDropEvent *event)
 
 void AppletsView::spacerRequestedDrop(QGraphicsSceneDragDropEvent *event)
 {
+    event->setPos(mapFromScene(event->scenePos()));
     dropEvent(event);
 }
 

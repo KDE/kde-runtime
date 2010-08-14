@@ -547,6 +547,7 @@ void Newspaper::containmentRemoved(QObject *containment)
 
 void Newspaper::viewRequestedDrop(QGraphicsSceneDragDropEvent *event)
 {
+    event->setPos(mapFromScene(event->scenePos()));
     dropEvent(event);
 }
 
