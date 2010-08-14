@@ -106,7 +106,10 @@ bool AppletsView::sceneEventFilter(QGraphicsItem *watched, QEvent *event)
         }
 
         if (m_appletMoved) {
-            m_dragCountdown->setPos(mapFromItem(m_appletMoved.data(), m_appletMoved.data()->boundingRect().center()) - QPoint(m_dragCountdown->size().width()/2, m_dragCountdown->size().height()/2));
+            //put the move indicator in the center of the VISIBLE area of the applet
+            const QRectF mappedAppleRect(mapFromItem(m_appletMoved.data(), m_appletMoved.data()->boundingRect()).boundingRect().intersected(boundingRect()));
+
+            m_dragCountdown->setPos(mappedAppleRect.center() - QPoint(m_dragCountdown->size().width()/2, m_dragCountdown->size().height()/2));
 
             if (!found || (watched->isWidget() && qobject_cast<AppletTitleBar *>(static_cast<QGraphicsWidget *>(watched)))) {
                 m_dragCountdown->start(m_dragTimeout);
@@ -228,8 +231,12 @@ void AppletsView::manageMouseMoveEvent(QGraphicsSceneMouseEvent *event)
     if (m_spacer) {
         QPointF delta = event->scenePos()-event->lastScenePos();
         m_appletMoved.data()->moveBy(delta.x(), delta.y());
-        m_dragCountdown->setPos(mapFromItem(m_appletMoved.data(), m_appletMoved.data()->boundingRect().center()) - QPoint(m_dragCountdown->size().width()/2, m_dragCountdown->size().height()/2));
         showSpacer(position);
+
+        //put the move indicator in the center of the VISIBLE area of the applet
+        const QRectF mappedAppleRect(mapFromItem(m_appletMoved.data(), m_appletMoved.data()->boundingRect()).boundingRect().intersected(boundingRect()));
+
+        m_dragCountdown->setPos(mappedAppleRect.center() - QPoint(m_dragCountdown->size().width()/2, m_dragCountdown->size().height()/2));
     }
 
     if (m_appletsContainer->orientation() == Qt::Vertical) {
