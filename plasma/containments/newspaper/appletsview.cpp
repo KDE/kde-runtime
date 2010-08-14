@@ -101,13 +101,13 @@ bool AppletsView::sceneEventFilter(QGraphicsItem *watched, QEvent *event)
         if (found) {
             //TODO: the label of the titlebar breaks this check
             if (watched->isWidget() && qobject_cast<AppletTitleBar *>(static_cast<QGraphicsWidget *>(watched))) {
-                m_dragCountdown->start(2000);
+                m_dragCountdown->start(1000);
             } else {
                 m_dragCountdown->stop();
             }
             return Plasma::ScrollWidget::sceneEventFilter(watched, event);
         } else {
-            m_dragCountdown->start(2000);
+            m_dragCountdown->start(1000);
             event->ignore();
             return Plasma::ScrollWidget::sceneEventFilter(watched, event);
         }

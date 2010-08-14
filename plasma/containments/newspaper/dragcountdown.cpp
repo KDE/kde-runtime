@@ -19,6 +19,7 @@
 
 #include "dragcountdown.h"
 
+#include <QColor>
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>
 #include <QTimer>
@@ -27,6 +28,7 @@
 #include <KIconLoader>
 
 #include <Plasma/Svg>
+#include <Plasma/Theme>
 
 DragCountdown::DragCountdown(QGraphicsItem *parent)
     : QGraphicsWidget(parent),
@@ -79,7 +81,9 @@ void DragCountdown::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
     painter->save();
 
     painter->setRenderHint(QPainter::Antialiasing);
-    painter->setPen(QPen(Qt::white, 4));
+    QColor color(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
+    color.setAlphaF(0.6);
+    painter->setPen(QPen(color, 4));
 
     if (m_animationTimer->isActive()) {
         painter->drawArc(boundingRect(), 0, m_progress * 360 * 16);
