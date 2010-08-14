@@ -99,6 +99,7 @@ void AppletOverlay::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
 
 void AppletOverlay::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
+    event->ignore();return;
     if (event->button() != Qt::LeftButton) {
         //Hack to make scene::itemAt() work
         int z = zValue();

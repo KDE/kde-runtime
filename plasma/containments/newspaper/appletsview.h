@@ -40,6 +40,9 @@ public:
     void setAppletsContainer(AppletsContainer *appletsContainer);
     AppletsContainer *appletsContainer() const;
 
+    void setImmediateDrag(const bool immediate);
+    bool immediateDrag() const;
+
 protected:
     bool sceneEventFilter(QGraphicsItem *watched, QEvent *event);
     void dragEnterEvent(QGraphicsSceneDragDropEvent *event);
@@ -70,6 +73,7 @@ private:
     bool m_scrollDown;
     bool m_clickDrag;
     bool m_movingApplets;
+    int m_dragTimeout;
 };
 
 #endif

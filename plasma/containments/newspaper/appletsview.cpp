@@ -38,7 +38,8 @@ AppletsView::AppletsView(QGraphicsItem *parent)
       m_spacerIndex(0),
       m_scrollDown(false),
       m_clickDrag(false),
-      m_movingApplets(false)
+      m_movingApplets(false),
+      m_dragTimeout(1000)
 {
     m_dragCountdown = new DragCountdown(this);
 
@@ -65,6 +66,16 @@ void AppletsView::setAppletsContainer(AppletsContainer *appletsContainer)
 AppletsContainer *AppletsView::appletsContainer() const
 {
     return m_appletsContainer;
+}
+
+void AppletsView::setImmediateDrag(const bool immediate)
+{
+    m_dragTimeout = immediate?0:1000;
+}
+
+bool AppletsView::immediateDrag() const
+{
+    return m_dragTimeout == 0;
 }
 
 bool AppletsView::sceneEventFilter(QGraphicsItem *watched, QEvent *event)
@@ -98,7 +109,7 @@ bool AppletsView::sceneEventFilter(QGraphicsItem *watched, QEvent *event)
             m_dragCountdown->setPos(mapFromItem(m_appletMoved.data(), m_appletMoved.data()->boundingRect().center()) - QPoint(m_dragCountdown->size().width()/2, m_dragCountdown->size().height()/2));
 
             if (!found || (watched->isWidget() && qobject_cast<AppletTitleBar *>(static_cast<QGraphicsWidget *>(watched)))) {
-                m_dragCountdown->start(1000);
+                m_dragCountdown->start(m_dragTimeout);
             } else {
                 m_appletMoved.clear();
                 m_dragCountdown->stop();

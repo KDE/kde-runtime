@@ -351,9 +351,11 @@ void Newspaper::constraintsEvent(Plasma::Constraints constraints)
         if (immutability() == Plasma::Mutable && !m_appletOverlay && toolBox() && toolBox()->isShowing()) {
             m_appletOverlay = new AppletOverlay(this, this);
             m_appletOverlay->resize(size());
+            m_scrollWidget->setImmediateDrag(true);
         } else if (immutability() != Plasma::Mutable && m_appletOverlay && toolBox() && toolBox()->isShowing()) {
             m_appletOverlay->deleteLater();
             m_appletOverlay = 0;
+            m_scrollWidget->setImmediateDrag(false);
         }
         updateRemoveActionVisibility();
     }
@@ -365,9 +367,11 @@ void Newspaper::updateConfigurationMode(bool config)
     if (config && !m_appletOverlay && immutability() == Plasma::Mutable) {
         m_appletOverlay = new AppletOverlay(this, this);
         m_appletOverlay->resize(size());
+        m_scrollWidget->setImmediateDrag(true);
     } else if (!config) {
         delete m_appletOverlay;
         m_appletOverlay = 0;
+        m_scrollWidget->setImmediateDrag(false);
     }
 
     if (!config) {
