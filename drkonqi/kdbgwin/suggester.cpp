@@ -49,8 +49,10 @@ void PackageSuggester::OnFinished()
     }
     str = str.mid(0, str.length() - 2);
     str.append(". Do you wish to install debug packages now?");
-    //MessageBoxA(NULL, whatToShow.toLatin1().constData(), "", MB_OK);
-    KMessageBox::warningYesNo(NULL, str);
+    if (KMessageBox::warningYesNo(NULL, str) == KMessageBox::Yes)
+    {
+        // start kdewin-installer
+    }
 }
 
 // I need the file name for the current module, which is the executable
@@ -68,7 +70,6 @@ bool PackageSuggester::IsKdeModule(const QString& module)
     {
         ushort modulePath[MAX_PATH] = {0};
         GetModuleFileName((HMODULE) &__ImageBase, (LPWCH) modulePath, MAX_PATH);
-        
         PathRemoveFileSpec((LPWSTR) modulePath);
         PathRemoveBackslash((LPWSTR) modulePath);
         PathRemoveFileSpec((LPWSTR) modulePath);
