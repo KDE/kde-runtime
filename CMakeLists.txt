@@ -87,9 +87,7 @@ add_subdirectory(phonon)
 macro_optional_add_subdirectory(renamedlgplugins)
 
 # UI Helper applications
-if ( NOT WIN32 )
-  add_subdirectory(drkonqi)
-endif ( NOT WIN32 )
+add_subdirectory(drkonqi)
 add_subdirectory(kcmshell)
 add_subdirectory(kdebugdialog)
 if ( ${QT_QT3SUPPORT_FOUND} )
