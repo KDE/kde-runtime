@@ -197,7 +197,8 @@ void AppletsView::appletDragRequested()
     m_movingApplets = true;
     m_appletsContainer->setCurrentApplet(0);
 
-    showSpacer(m_appletMoved.data()->geometry().center());
+    showSpacer(m_appletMoved.data()->mapToItem(this, m_appletMoved.data()->boundingRect().center()));
+
     if (m_spacerLayout) {
         m_spacerLayout->removeItem(m_appletMoved.data());
         m_appletMoved.data()->raise();
