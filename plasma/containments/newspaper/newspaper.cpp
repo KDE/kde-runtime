@@ -60,6 +60,8 @@ Newspaper::Newspaper(QObject *parent, const QVariantList &args)
 
     connect(this, SIGNAL(appletRemoved(Plasma::Applet*)),
             this, SLOT(refreshLayout()));
+    connect (m_scrollWidget, SIGNAL(dropRequested(QGraphicsSceneDragDropEvent *)),
+             this, SLOT(viewRequestedDrop(QGraphicsSceneDragDropEvent *)));
 
 
     connect(this, SIGNAL(toolBoxVisibilityChanged(bool)), this, SLOT(updateConfigurationMode(bool)));
@@ -541,6 +543,11 @@ void Newspaper::containmentRemoved(QObject *containment)
     if (qobject_cast<Newspaper *>(containment)) {
         updateRemoveActionVisibility();
     }
+}
+
+void Newspaper::viewRequestedDrop(QGraphicsSceneDragDropEvent *event)
+{
+    dropEvent(event);
 }
 
 //They all have to be reimplemented in order to accept them

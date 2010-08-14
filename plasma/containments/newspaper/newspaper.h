@@ -71,6 +71,7 @@ private Q_SLOTS:
     void appletSizeHintChanged();
     void updateConfigurationMode(bool config);
     void refreshLayout();
+    void viewRequestedDrop(QGraphicsSceneDragDropEvent *event);
 
     void updateRemoveActionVisibility();
     void containmentAdded(Plasma::Containment *containment);
