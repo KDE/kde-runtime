@@ -21,6 +21,7 @@
 #include "notifybypopup.h"
 #include "knotifyconfig.h"
 #include "imageconverter.h"
+#include "notifybypopupgrowl.h"
 
 #include <kdebug.h>
 #include <kpassivepopup.h>
@@ -95,6 +96,28 @@ void NotifyByPopup::notify( int id, KNotifyConfig * config )
 		return;
 	}
 
+	// Default to 6 seconds if no timeout has been defined
+	int timeout = config->timeout == -1 ? 6000 : config->timeout;
+
+	// if Growl can display our popups, use that instead
+	if(NotifyByPopupGrowl::canPopup())
+	{
+		KNotifyConfig *c = ensurePopupCompatibility( config );
+
+		QString appCaption, iconName;
+		getAppCaptionAndIconName(c, &appCaption, &iconName);
+
+		KIconLoader iconLoader(iconName);
+		QPixmap appIcon = iconLoader.loadIcon( iconName, KIconLoader::Small );
+
+		NotifyByPopupGrowl::popup( &appIcon, timeout, appCaption, c->text );
+
+		// Finish immediately, because current NotifyByPopupGrowl can't callback
+		finish(id);
+		delete c;
+		return;
+	}
+
 	KPassivePopup *pop = new KPassivePopup( config->winId );
 	m_popups[id]=pop;
 	fillPopup(pop,id,config);
@@ -102,10 +125,7 @@ void NotifyByPopup::notify( int id, KNotifyConfig * config )
 	pop->setAutoDelete( true );
 	connect(pop, SIGNAL(destroyed()) , this, SLOT(slotPopupDestroyed()) );
 
-	// Default to 6 seconds if no timeout has been defined
-	int timeout = config->timeout == -1 ? 6000 : config->timeout;
 	pop->setTimeout(timeout);
-
 	pop->adjustSize();
 	pop->show(QPoint(screen.left() + screen.width()/2 - pop->width()/2  , m_nextPosition));
 	m_nextPosition+=pop->height();
@@ -199,6 +219,12 @@ void NotifyByPopup::update(int id, KNotifyConfig * config)
 	{
 		sendNotificationDBus(id, id, config);
 		return;
+	}
+
+	// otherwise, just display a new Growl notification
+	if(NotifyByPopupGrowl::canPopup())
+	{
+		notify( id, config );
 	}
 }
 
@@ -452,9 +478,13 @@ void NotifyByPopup::closeNotificationDBus(int id)
 QStringList NotifyByPopup::popupServerCapabilities()
 {
 	if (!m_dbusServiceExists) {
-		// Return capabilities of the KPassivePopup implementation
-		return QStringList() << "actions" << "body" << "body-hyperlinks"
-		                     << "body-markup" << "icon-static";
+		if( NotifyByPopupGrowl::canPopup() ) {
+			return NotifyByPopupGrowl::capabilities();
+		} else {
+			// Return capabilities of the KPassivePopup implementation
+			return QStringList() << "actions" << "body" << "body-hyperlinks"
+			                     << "body-markup" << "icon-static";
+		}
 	}
 
 	if(m_dbusServiceCapCacheDirty) {
