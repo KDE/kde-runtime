@@ -92,7 +92,7 @@ int MsvcGenerator::GetLine()
     if (!SymGetLineFromAddr64(m_process.GetHandle(), m_currentFrame.AddrPC.Offset, &dwDisplacement, &line))
     {
         //kError() << "SymGetLineFromAddr64 failed: " << GetLastError();
-        return -1;
+        return DEFAULT_LINE;
     }
 
     return (int) line.LineNumber;

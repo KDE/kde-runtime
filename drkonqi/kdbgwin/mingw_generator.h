@@ -45,7 +45,7 @@ protected:
     /// The current function
     const char* func;
     /// The current line
-    unsigned line;
+    int line;
 public:
     /// Constructor
     MingwGenerator(const Process& process);

@@ -34,6 +34,7 @@ const static char*      BACKTRACE_FORMAT    = "%1!%2() [%3 @ %4] at 0x%5";
 const static char*      DEFAULT_MODULE  = "[unknown]";
 const static char*      DEFAULT_FUNC    = "[unknown]";
 const static char*      DEFAULT_FILE    = "[unknown]";
+const static int        DEFAULT_LINE    = -1;
 
 /**
  * \brief Base generator class

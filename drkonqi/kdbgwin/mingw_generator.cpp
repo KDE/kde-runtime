@@ -80,6 +80,9 @@ void MingwGenerator::FrameChanged()
     MyBFD bfd = bfds[pos];
     text = bfd_get_section_by_name(bfd.abfd, ".text");
     long offset = m_currentFrame.AddrPC.Offset - text->vma;
+    file = DEFAULT_FILE;
+    func = DEFAULT_FUNC;
+    line = DEFAULT_LINE;
     if (offset > 0)
     {
         bfd_find_nearest_line(bfd.abfd, text, bfd.syms, offset, &file, &func, &line);
