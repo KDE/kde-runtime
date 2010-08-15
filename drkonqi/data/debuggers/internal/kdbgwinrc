@@ -1,6 +1,8 @@
 [General]
 Name=kdbgwin
+Name[en_GB]=kdbgwin
 Name[eu]=kdbgwin
+Name[ka]=kdbgwin
 Name[pt]=kdbgwin
 Name[pt_BR]=kdbgwin
 Name[sv]=kdbgwin
