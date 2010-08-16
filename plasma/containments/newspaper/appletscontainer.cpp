@@ -463,9 +463,9 @@ void AppletsContainer::updateViewportGeometry()
 {
     m_viewportSize = m_scrollWidget->viewportGeometry().size();
 
-    //each applet with an optimal of 40 columns, 18 lines of text
+    //each applet with an optimal of 40 columns, 15 lines of text
     m_appletsPerColumn = qMax((qreal)1, m_viewportSize.width() / (m_mSize.width()*40));
-    m_appletsPerRow = qMax((qreal)1, m_viewportSize.height() / (m_mSize.height()*16));
+    m_appletsPerRow = qMax((qreal)1, m_viewportSize.height() / (m_mSize.height()*15));
 
     if (!m_containment || (m_expandAll && m_orientation != Qt::Horizontal)) {
         syncColumnSizes();
