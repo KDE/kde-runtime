@@ -756,7 +756,7 @@ protected:
 
             QString lineStr = text.mid(cur, diff).append('\n');
             // -1 since we skip the first line
-            QMap< int, BacktraceLineGdb >::const_iterator it = lines.lowerBound(lineNr - 1);
+            QMap< int, BacktraceLineGdb >::iterator it = lines.lowerBound(lineNr - 1);
             // lowerbound would return the next higher item, even though we want the former one
             if (it.key() > lineNr - 1) {
                 --it;
