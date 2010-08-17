@@ -30,6 +30,7 @@
 #include <QtGui/QLabel>
 #include <QtGui/QHBoxLayout>
 #include <QtGui/QVBoxLayout>
+#include <QtGui/QScrollBar>
 
 #include <KIcon>
 #include <KMessageBox>
@@ -197,6 +198,13 @@ void BacktraceWidget::loadData()
     if (m_btGenerator->state() == BacktraceGenerator::Loaded) {
         ui.m_backtraceEdit->setEnabled(true);
         ui.m_backtraceEdit->setPlainText(m_btGenerator->backtrace());
+
+        // scroll to crash
+        QTextCursor crashCursor = ui.m_backtraceEdit->document()->find("[KCrash Handler]");
+        if (!crashCursor.isNull()) {
+            crashCursor.movePosition(QTextCursor::Up, QTextCursor::MoveAnchor);
+            ui.m_backtraceEdit->verticalScrollBar()->setValue(ui.m_backtraceEdit->cursorRect(crashCursor).top());
+        }
 
         BacktraceParser * btParser = m_btGenerator->parser();
         m_backtraceRatingWidget->setUsefulness(btParser->backtraceUsefulness());
