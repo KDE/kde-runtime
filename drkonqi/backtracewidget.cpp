@@ -206,6 +206,9 @@ void BacktraceWidget::loadData()
             ui.m_backtraceEdit->verticalScrollBar()->setValue(ui.m_backtraceEdit->cursorRect(crashCursor).top());
         }
 
+        // highlight if possible
+        m_btGenerator->parser()->highlightBacktrace(ui.m_backtraceEdit->document());
+
         BacktraceParser * btParser = m_btGenerator->parser();
         m_backtraceRatingWidget->setUsefulness(btParser->backtraceUsefulness());
 

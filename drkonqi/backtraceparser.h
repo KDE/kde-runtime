@@ -21,6 +21,10 @@
 #include <QtCore/QObject>
 #include <QtCore/QStringList>
 #include <QtCore/QMetaType>
+
+class QTextDocument;
+class QSyntaxHighlighter;
+
 class BacktraceGenerator;
 
 class BacktraceParser : public QObject
@@ -41,8 +45,11 @@ public:
     virtual QString simplifiedBacktrace() const = 0;
     virtual Usefulness backtraceUsefulness() const = 0;
     virtual QStringList firstValidFunctions() const = 0;
-    
+
     virtual QSet<QString> librariesWithMissingDebugSymbols() const = 0;
+
+    /// default implementation does nothing, overload to provide syntax highlighting
+    virtual QSyntaxHighlighter* highlightBacktrace(QTextDocument* document) const;
 
 protected Q_SLOTS:
     virtual void resetState() = 0;
@@ -62,7 +69,9 @@ public:
     virtual QStringList firstValidFunctions() const;
 
     virtual QSet<QString> librariesWithMissingDebugSymbols() const;
-    
+
+    QSyntaxHighlighter* highlightBacktrace(QTextDocument* document) const;
+
 protected Q_SLOTS:
     virtual void resetState();
     virtual void newLine(const QString & lineStr);

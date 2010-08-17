@@ -1,5 +1,6 @@
 /*
     Copyright (C) 2009  George Kiagiadakis <gkiagia@users.sourceforge.net>
+    Copyright (C) 2010  Milian Wolff <mail@milianw.de>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -59,6 +60,11 @@
 #include <QtCore/QStack>
 #include <QtCore/QMetaEnum> //used for a kDebug() in BacktraceParserGdb::backtraceUsefulness()
 
+#include <QtGui/QTextDocument>
+#include <QtGui/QSyntaxHighlighter>
+
+#include <KColorScheme>
+
 //BEGIN BacktraceParser
 
 //factory
@@ -78,6 +84,11 @@ void BacktraceParser::connectToGenerator(BacktraceGenerator *generator)
 {
     connect(generator, SIGNAL(starting()), this, SLOT(resetState()));
     connect(generator, SIGNAL(newLine(QString)), this, SLOT(newLine(QString)));
+}
+
+QSyntaxHighlighter* BacktraceParser::highlightBacktrace(QTextDocument* /*document*/) const
+{
+  return 0;
 }
 
 //END BacktraceParser
@@ -692,6 +703,135 @@ QString BacktraceParserGdb::simplifiedBacktrace() const
 QSet<QString> BacktraceParserGdb::librariesWithMissingDebugSymbols() const
 {
     return d->m_librariesWithMissingDebugSymbols;
+}
+
+//BEGIN SUB GdbHighlighter
+
+class GdbHighlighter : public QSyntaxHighlighter
+{
+public:
+    GdbHighlighter(QTextDocument* parent, QList<BacktraceLineGdb> gdbLines)
+        : QSyntaxHighlighter(parent)
+    {
+        // setup line lookup
+        int l = 0;
+        foreach(const BacktraceLineGdb& line, gdbLines) {
+            lines.insert(l, line);
+            l += line.toString().count('\n');
+        }
+
+        // setup formates
+        KColorScheme scheme(QPalette::Active);
+
+        crashFormat.setForeground(scheme.foreground(KColorScheme::NegativeText));
+        threadFormat.setForeground(scheme.foreground(KColorScheme::NeutralText));
+        urlFormat.setForeground(scheme.foreground(KColorScheme::LinkText));
+        funcFormat.setForeground(scheme.foreground(KColorScheme::VisitedText));
+        funcFormat.setFontWeight(QFont::Bold);
+        otheridFormat.setForeground(scheme.foreground(KColorScheme::PositiveText));
+        crapFormat.setForeground(scheme.foreground(KColorScheme::InactiveText));
+    }
+
+protected:
+    virtual void highlightBlock(const QString& text)
+    {
+        int cur = 0;
+        int next;
+        int diff;
+        const QRegExp hexptrPattern("0x[0-9a-f]+", Qt::CaseSensitive, QRegExp::RegExp2);
+        int lineNr = currentBlock().firstLineNumber();
+        while ( cur < text.length() ) {
+            next = text.indexOf('\n', cur);
+            if (next == -1) {
+                next = text.length();
+            }
+            if (lineNr == 0) {
+                // line that contains 'Application: ...'
+                ++lineNr;
+                cur = next;
+                continue;
+            }
+
+            diff = next - cur;
+
+            QString lineStr = text.mid(cur, diff).append('\n');
+            // -1 since we skip the first line
+            QMap< int, BacktraceLineGdb >::const_iterator it = lines.lowerBound(lineNr - 1);
+            // lowerbound would return the next higher item, even though we want the former one
+            if (it.key() > lineNr - 1) {
+                --it;
+            }
+            const BacktraceLineGdb& line = it.value();
+
+            if (line.type() == BacktraceLineGdb::KCrash) {
+                setFormat(cur, diff, crashFormat);
+            } else if (line.type() == BacktraceLineGdb::ThreadStart || line.type() == BacktraceLineGdb::ThreadIndicator) {
+                setFormat(cur, diff, threadFormat);
+            } else if (line.type() == BacktraceLineGdb::StackFrame) {
+                if (!line.fileName().isEmpty()) {
+                    int colonPos = line.fileName().lastIndexOf(':');
+                    setFormat(lineStr.indexOf(line.fileName()), colonPos == -1 ? line.fileName().length() : colonPos, urlFormat);
+                }
+                if (!line.libraryName().isEmpty()) {
+                    setFormat(lineStr.indexOf(line.libraryName()), line.libraryName().length(), urlFormat);
+                }
+                if (!line.functionName().isEmpty()) {
+                    int idx = lineStr.indexOf(line.functionName());
+                    if (idx != -1) {
+                        // highlight Id::Id::Id::Func
+                        // Id should have otheridFormat, :: no format and Func funcFormat
+                        int i = idx;
+                        int from = idx;
+                        while (i < idx + line.functionName().length()) {
+                            if (lineStr.at(i) == ':') {
+                                setFormat(from, i - from, otheridFormat);
+                                // skip ::
+                                i += 2;
+                                from = i;
+                                continue;
+                            } else if (lineStr.at(i) == '<' || lineStr.at(i) == '>') {
+                                setFormat(from, i - from, otheridFormat);
+                                ++i;
+                                from = i;
+                                continue;
+                            }
+                            ++i;
+                        }
+                        setFormat(from, i - from, funcFormat);
+                    }
+                }
+                // highlight hexadecimal ptrs
+                int idx = 0;
+                while ((idx = hexptrPattern.indexIn(lineStr, idx)) != -1) {
+                    if (hexptrPattern.cap() == "0x0") {
+                        setFormat(idx, hexptrPattern.matchedLength(), crashFormat);
+                    }
+                    idx += hexptrPattern.matchedLength();
+                }
+            } else if (line.type() == BacktraceLineGdb::Crap) {
+                setFormat(cur, diff, crapFormat);
+            }
+
+            cur = next;
+            ++lineNr;
+        }
+    }
+
+private:
+    QMap<int, BacktraceLineGdb> lines;
+    QTextCharFormat crashFormat;
+    QTextCharFormat threadFormat;
+    QTextCharFormat urlFormat;
+    QTextCharFormat funcFormat;
+    QTextCharFormat otheridFormat;
+    QTextCharFormat crapFormat;
+};
+
+//END SUB GdbHighlighter
+
+QSyntaxHighlighter* BacktraceParserGdb::highlightBacktrace(QTextDocument* document) const
+{
+    return new GdbHighlighter(document, d->m_linesList);
 }
 
 //END BacktraceParserGdb
