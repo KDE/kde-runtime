@@ -204,7 +204,7 @@ void AppletsView::appletDragRequested()
         m_appletMoved.data()->raise();
     }
     if (m_spacer) {
-        m_spacer->setMinimumHeight(m_appletMoved.data()->size().height());
+        m_spacer->setMinimumSize(m_appletMoved.data()->size());
     }
 }
 
