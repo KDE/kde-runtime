@@ -24,6 +24,7 @@
 #include <xine.h>
 #include <QtDBus/QDBusConnection>
 #include <QtDBus/QDBusInterface>
+#include <QSettings>
 
 K_PLUGIN_FACTORY(XineOptionsFactory, registerPlugin<XineOptions>(); )
 K_EXPORT_PLUGIN(XineOptionsFactory("kcm_phononxine"))
@@ -97,10 +98,10 @@ void XineOptions::load()
 {
     QSettings cg("kde.org", "Phonon-Xine");
     if (!m_noDeinterlace) {
-        deinterlaceMediaList->item(0)->setCheckState(cg.value("deinterlaceDVD", true) ? Qt::Checked : Qt::Unchecked);
-        deinterlaceMediaList->item(1)->setCheckState(cg.value("deinterlaceVCD", false) ? Qt::Checked : Qt::Unchecked);
-        deinterlaceMediaList->item(2)->setCheckState(cg.value("deinterlaceFile", false) ? Qt::Checked : Qt::Unchecked);
-        deinterlaceMethodBox->setCurrentIndex(cg.readEntry("deinterlaceMethod", 0));
+        deinterlaceMediaList->item(0)->setCheckState(cg.value("deinterlaceDVD", true).toBool() ? Qt::Checked : Qt::Unchecked);
+        deinterlaceMediaList->item(1)->setCheckState(cg.value("deinterlaceVCD", false).toBool() ? Qt::Checked : Qt::Unchecked);
+        deinterlaceMediaList->item(2)->setCheckState(cg.value("deinterlaceFile", false).toBool() ? Qt::Checked : Qt::Unchecked);
+        deinterlaceMethodBox->setCurrentIndex(cg.value("deinterlaceMethod", 0).toInt());
     }
 }
 
