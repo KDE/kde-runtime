@@ -17,6 +17,7 @@
 */
 #include "backtraceparser_p.h"
 #include "backtraceparsergdb.h"
+#include "backtraceparserkdbgwin.h"
 #include "backtraceparsernull.h"
 #include <QtCore/QRegExp>
 #include <QtCore/QMetaEnum>
@@ -27,6 +28,8 @@ BacktraceParser *BacktraceParser::newParser(const QString & debuggerName, QObjec
 {
     if (debuggerName == "gdb") {
         return new BacktraceParserGdb(parent);
+    } else if (debuggerName == "kdbgwin") {
+        return new BacktraceParserKdbgwin(parent);
     } else {
         return new BacktraceParserNull(parent);
     }
@@ -187,7 +190,11 @@ static bool lineShouldBeIgnored(const BacktraceLine & line)
         || line.libraryName().contains("libstdc++.so")
         || line.functionName().startsWith(QLatin1String("*__GI_")) //glibc2.9 uses *__GI_ as prefix
         || line.libraryName().contains("libpthread.so")
-        || line.libraryName().contains("libglib-2.0.so") )
+        || line.libraryName().contains("libglib-2.0.so")
+        || line.libraryName().contains("ntdll.dll")
+        || line.libraryName().contains("kernel32.dll")
+        || line.functionName().contains("_tmain")
+        || line.functionName() == QLatin1String("WinMain") )
         return true;
 
     return false;
