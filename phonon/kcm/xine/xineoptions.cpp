@@ -33,8 +33,6 @@ XineOptions::XineOptions(QWidget *parent, const QVariantList &args)
 {
     setupUi(this);
 
-    m_config = KSharedConfig::openConfig("xinebackendrc");
-
     connect(deinterlaceMediaList, SIGNAL(clicked(const QModelIndex &)), SLOT(changed()));
     connect(deinterlaceMethodBox, SIGNAL(currentIndexChanged(int)), SLOT(changed()));
 
@@ -97,23 +95,23 @@ XineOptions::XineOptions(QWidget *parent, const QVariantList &args)
 
 void XineOptions::load()
 {
-    KConfigGroup cg(m_config, "Settings");
+    QSettings cg("kde.org", "Phonon-Xine");
     if (!m_noDeinterlace) {
-        deinterlaceMediaList->item(0)->setCheckState(cg.readEntry("deinterlaceDVD", true) ? Qt::Checked : Qt::Unchecked);
-        deinterlaceMediaList->item(1)->setCheckState(cg.readEntry("deinterlaceVCD", false) ? Qt::Checked : Qt::Unchecked);
-        deinterlaceMediaList->item(2)->setCheckState(cg.readEntry("deinterlaceFile", false) ? Qt::Checked : Qt::Unchecked);
+        deinterlaceMediaList->item(0)->setCheckState(cg.value("deinterlaceDVD", true) ? Qt::Checked : Qt::Unchecked);
+        deinterlaceMediaList->item(1)->setCheckState(cg.value("deinterlaceVCD", false) ? Qt::Checked : Qt::Unchecked);
+        deinterlaceMediaList->item(2)->setCheckState(cg.value("deinterlaceFile", false) ? Qt::Checked : Qt::Unchecked);
         deinterlaceMethodBox->setCurrentIndex(cg.readEntry("deinterlaceMethod", 0));
     }
 }
 
 void XineOptions::save()
 {
-    KConfigGroup cg(m_config, "Settings");
+    QSettings cg("kde.org", "Phonon-Xine");
     if (!m_noDeinterlace) {
-        cg.writeEntry("deinterlaceDVD", deinterlaceMediaList->item(0)->checkState() == Qt::Checked);
-        cg.writeEntry("deinterlaceVCD", deinterlaceMediaList->item(1)->checkState() == Qt::Checked);
-        cg.writeEntry("deinterlaceFile", deinterlaceMediaList->item(2)->checkState() == Qt::Checked);
-        cg.writeEntry("deinterlaceMethod", deinterlaceMethodBox->currentIndex());
+        cg.setValue("deinterlaceDVD", deinterlaceMediaList->item(0)->checkState() == Qt::Checked);
+        cg.setValue("deinterlaceVCD", deinterlaceMediaList->item(1)->checkState() == Qt::Checked);
+        cg.setValue("deinterlaceFile", deinterlaceMediaList->item(2)->checkState() == Qt::Checked);
+        cg.setValue("deinterlaceMethod", deinterlaceMethodBox->currentIndex());
     }
 }
 

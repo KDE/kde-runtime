@@ -23,7 +23,7 @@
 
 #include <kdedmodule.h>
 #include <ksharedconfig.h>
-#include <Phonon/ObjectDescription>
+#include <phonon/objectdescription.h>
 #include <QtCore/QBasicTimer>
 #include <QtCore/QHash>
 #include <QtCore/QVector>

@@ -37,7 +37,6 @@ class XineOptions : public KCModule, private Ui::XineOptions
         void defaults();
 
     private:
-        KSharedConfigPtr m_config;
         bool m_noDeinterlace;
 };
 
