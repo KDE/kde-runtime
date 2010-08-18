@@ -23,7 +23,7 @@
 #include "drkonqi.h"
 #include "crashedapplication.h"
 #include "backtracegenerator.h"
-#include "backtraceparser.h"
+#include "parser/backtraceparser.h"
 #include "drkonqi_globals.h"
 #include "debuggermanager.h"
 

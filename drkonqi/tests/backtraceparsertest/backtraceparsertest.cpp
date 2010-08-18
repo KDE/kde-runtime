@@ -26,7 +26,7 @@
 #define TEST_PREFIX "test_"
 #define MAP_FILE "usefulness_map"
 
-void BacktraceGenerator::sendData(const QString & filename)
+void FakeBacktraceGenerator::sendData(const QString & filename)
 {
     QFile file(filename);
     file.open(QIODevice::ReadOnly | QIODevice::Text);
@@ -40,7 +40,7 @@ void BacktraceGenerator::sendData(const QString & filename)
 }
 
 BacktraceParserTest::BacktraceParserTest(QObject *parent)
-    : QObject(parent), m_generator(new BacktraceGenerator(this))
+    : QObject(parent), m_generator(new FakeBacktraceGenerator(this))
 {
 }
 

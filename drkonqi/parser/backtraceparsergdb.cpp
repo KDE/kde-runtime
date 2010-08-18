@@ -2,9 +2,9 @@
     Copyright (C) 2009  George Kiagiadakis <gkiagia@users.sourceforge.net>
     Copyright (C) 2010  Milian Wolff <mail@milianw.de>
 
-    This program is free software: you can redistribute it and/or modify
+    This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 2 of the License, or
+    the Free Software Foundation; either version 2 of the License, or
     (at your option) any later version.
 
     This program is distributed in the hope that it will be useful,
@@ -12,86 +12,19 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-
-    Some parts of this code are based on older drkonqi code (backtracegdb.cpp)
-    that was under the following license:
-
-    * Copyright (C) 2000-2003 Hans Petter Bieker <bieker@kde.org>
-    * Copyright (C) 2008 Lubos Lunak <l.lunak@kde.org>
-    *
-    * Redistribution and use in source and binary forms, with or without
-    * modification, are permitted provided that the following conditions
-    * are met:
-    *
-    * 1. Redistributions of source code must retain the above copyright
-    *    notice, this list of conditions and the following disclaimer.
-    * 2. Redistributions in binary form must reproduce the above copyright
-    *    notice, this list of conditions and the following disclaimer in the
-    *    documentation and/or other materials provided with the distribution.
-    *
-    * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
-    * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
-    * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
-    * IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
-    * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
-    * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-    * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-    * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-    * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
-    * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+    You should have received a copy of the GNU General Public License along
+    with this program; if not, write to the Free Software Foundation, Inc.,
+    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-
-#include "backtraceparser.h"
-
-#ifndef BACKTRACEPARSER_TEST
-# include "backtracegenerator.h"
-# include <KDebug>
-#else
-# include "tests/backtraceparsertest/backtraceparsertest.h"
-# include <QDebug>
-# define kDebug qDebug
-#endif
-
+#include "backtraceparsergdb.h"
 #include <QtCore/QRegExp>
 #include <QtCore/QSharedData>
 #include <QtCore/QStack>
 #include <QtCore/QMetaEnum> //used for a kDebug() in BacktraceParserGdb::backtraceUsefulness()
-
 #include <QtGui/QTextDocument>
 #include <QtGui/QSyntaxHighlighter>
-
 #include <KColorScheme>
-
-//BEGIN BacktraceParser
-
-//factory
-BacktraceParser *BacktraceParser::newParser(const QString & debuggerName, QObject *parent)
-{
-    if (debuggerName == "gdb") {
-        return new BacktraceParserGdb(parent);
-    } else {
-        return new BacktraceParserNull(parent);
-    }
-}
-
-BacktraceParser::BacktraceParser(QObject *parent) : QObject(parent) {}
-BacktraceParser::~BacktraceParser() {}
-
-void BacktraceParser::connectToGenerator(BacktraceGenerator *generator)
-{
-    connect(generator, SIGNAL(starting()), this, SLOT(resetState()));
-    connect(generator, SIGNAL(newLine(QString)), this, SLOT(newLine(QString)));
-}
-
-QSyntaxHighlighter* BacktraceParser::highlightBacktrace(QTextDocument* /*document*/) const
-{
-  return 0;
-}
-
-//END BacktraceParser
+#include <KDebug>
 
 //BEGIN BacktraceLineGdb
 
@@ -481,7 +414,7 @@ static bool lineShouldBeIgnored(const BacktraceLineGdb & line)
     if ( line.libraryName().contains("libc.so")
         || line.libraryName().contains("libstdc++.so")
         || line.functionName().startsWith(QLatin1String("*__GI_")) //glibc2.9 uses *__GI_ as prefix
-        || line.libraryName().contains("libpthread.so") 
+        || line.libraryName().contains("libpthread.so")
         || line.libraryName().contains("libglib-2.0.so") )
         return true;
 
@@ -597,7 +530,7 @@ BacktraceParser::Usefulness BacktraceParserGdb::backtraceUsefulness() const
             continue;
         }
 
-        if ( line.rating() == BacktraceLineGdb::MissingFunction 
+        if ( line.rating() == BacktraceLineGdb::MissingFunction
             || line.rating() == BacktraceLineGdb::MissingSourceFile) {
             d->m_librariesWithMissingDebugSymbols.insert(line.libraryName().trimmed());
         }
@@ -836,46 +769,4 @@ QSyntaxHighlighter* BacktraceParserGdb::highlightBacktrace(QTextDocument* docume
 
 //END BacktraceParserGdb
 
-//BEGIN BacktraceParserNull
-
-BacktraceParserNull::BacktraceParserNull(QObject *parent) : BacktraceParser(parent) {}
-BacktraceParserNull::~BacktraceParserNull() {}
-
-QString BacktraceParserNull::parsedBacktrace() const
-{
-    return m_lines.join("");
-}
-
-QString BacktraceParserNull::simplifiedBacktrace() const
-{
-    return QString();
-}
-
-BacktraceParser::Usefulness BacktraceParserNull::backtraceUsefulness() const
-{
-    return MayBeUseful;
-}
-
-QStringList BacktraceParserNull::firstValidFunctions() const
-{
-    return QStringList();
-}
-
-void BacktraceParserNull::resetState()
-{
-    m_lines.clear();
-}
-
-void BacktraceParserNull::newLine(const QString & lineStr)
-{
-    m_lines.append(lineStr);
-}
-
-QSet<QString> BacktraceParserNull::librariesWithMissingDebugSymbols() const
-{
-    return QSet<QString>();
-}
-
-//END BacktraceParserNull
-
-#include "backtraceparser.moc"
+#include "backtraceparsergdb.moc"

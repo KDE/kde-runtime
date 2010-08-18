@@ -24,7 +24,7 @@
 #include "debuggermanager.h"
 #include "crashedapplication.h"
 #include "reportinterface.h"
-#include "backtraceparser.h"
+#include "parser/backtraceparser.h"
 #include "backtracegenerator.h"
 #include "drkonqi_globals.h"
 #include "applicationdetailsexamples.h"

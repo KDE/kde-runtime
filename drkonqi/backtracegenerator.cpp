@@ -26,7 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************/
 #include "backtracegenerator.h"
-#include "backtraceparser.h"
+#include "parser/backtraceparser.h"
 
 #include <KDebug>
 #include <KStandardDirs>

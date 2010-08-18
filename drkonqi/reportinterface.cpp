@@ -26,7 +26,7 @@
 #include "systeminformation.h"
 #include "crashedapplication.h"
 #include "debuggermanager.h"
-#include "backtraceparser.h"
+#include "parser/backtraceparser.h"
 #include "backtracegenerator.h"
 #include "applicationdetailsexamples.h"
 

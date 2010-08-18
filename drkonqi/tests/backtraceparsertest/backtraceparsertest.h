@@ -18,13 +18,13 @@
 #define BACKTRACEPARSERTEST_H
 
 #include <QtTest>
-#include "../../backtraceparser.h"
+#include "../../parser/backtraceparser.h"
 
-class BacktraceGenerator : public QObject
+class FakeBacktraceGenerator : public QObject
 {
     Q_OBJECT
 public:
-    BacktraceGenerator(QObject *parent = 0) : QObject(parent) {}
+    FakeBacktraceGenerator(QObject *parent = 0) : QObject(parent) {}
     void sendData(const QString & filename);
 
 signals:
@@ -47,7 +47,7 @@ private slots:
 private:
     void readMap(QHash<QByteArray, BacktraceParser::Usefulness> & map);
 
-    BacktraceGenerator *m_generator;
+    FakeBacktraceGenerator *m_generator;
 };
 
 #endif

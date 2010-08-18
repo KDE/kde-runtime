@@ -12,6 +12,7 @@ configure_file (config-drkonqi.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-drkonq
 add_definitions(-DKDE_DEFAULT_DEBUG_AREA=1410)
 
 add_subdirectory( data ) 
+add_subdirectory( parser )
 add_subdirectory( tests ) 
 if ( WIN32 )
     add_subdirectory( kdbgwin ) 
@@ -32,7 +33,6 @@ set(drkonqi_SRCS
     backtraceratingwidget.cpp
     backtracewidget.cpp
     backtracegenerator.cpp 
-    backtraceparser.cpp
     drkonqi.cpp
     drkonqibackends.cpp
     detachedprocessmonitor.cpp
@@ -69,6 +69,6 @@ kde4_add_ui_files(drkonqi_SRCS
 
 kde4_add_executable(drkonqi ${drkonqi_SRCS})
 
-target_link_libraries(drkonqi ${KDE4_KIO_LIBS})
+target_link_libraries(drkonqi ${KDE4_KIO_LIBS} drkonqi_backtrace_parser)
 
 install(TARGETS drkonqi DESTINATION ${LIBEXEC_INSTALL_DIR})

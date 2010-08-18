@@ -20,7 +20,7 @@
 #ifndef BACKTRACERATINGWIDGET__H
 #define BACKTRACERATINGWIDGET__H
 
-#include "backtraceparser.h"
+#include "parser/backtraceparser.h"
 #include "backtracegenerator.h"
 
 #include <QtGui/QWidget>
