@@ -131,7 +131,7 @@ Name[zh_TW]=應用程式
 #Comment=The name of the group of the contact
 
 [Event/AudioDeviceFallback]
-Name=Audio Device Fallback
+Name=Audio Output Device Changed
 Name[ar]=جهاز الصوت الاحتياطي
 Name[be@latin]=Zapasnaja hukavaja pryłada
 Name[bg]=Подразбиращо се аудио устройство
@@ -203,7 +203,7 @@ Name[wa]=Tcheyåjhe d' éndjin son
 Name[x-test]=xxAudio Device Fallbackxx
 Name[zh_CN]=备用音频设备
 Name[zh_TW]=預設音效裝置
-Comment=Notification on automatic fallback if the preferred device is unavailable
+Comment=Notification when audio output device has automatically changed
 Comment[ar]=التبديل الآلي للجهاز الاحتياطي عند تعطل الجهاز الرئيسي
 Comment[be@latin]=Paviedamleńnie pra aŭtamatyčnaje vykarystańnie zapasnoj pryłady, kali niama hałoŭnaj.
 Comment[bg]=Съобщаване при явтоматично  връщане ако устройството е заето
