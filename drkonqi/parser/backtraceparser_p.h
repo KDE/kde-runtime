@@ -20,8 +20,9 @@
 
 #include "backtraceparser.h"
 
-struct BacktraceParserPrivate
+class BacktraceParserPrivate
 {
+public:
     BacktraceParserPrivate() : m_usefulness(BacktraceParser::InvalidUsefulness) {}
     virtual ~BacktraceParserPrivate() {}
 

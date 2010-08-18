@@ -147,8 +147,9 @@ void BacktraceLineGdb::rate()
 
 //BEGIN BacktraceParserGdb
 
-struct BacktraceParserGdbPrivate : public BacktraceParserPrivate
+class BacktraceParserGdbPrivate : public BacktraceParserPrivate
 {
+public:
     BacktraceParserGdbPrivate()
         : BacktraceParserPrivate(),
           m_possibleKCrashStart(0), m_threadsCount(0),
