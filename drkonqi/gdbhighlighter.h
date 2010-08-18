@@ -24,7 +24,7 @@
 class GdbHighlighter : public QSyntaxHighlighter
 {
 public:
-    GdbHighlighter(QTextDocument* parent, QList<BacktraceLine> gdbLines);
+    GdbHighlighter(QTextDocument* parent, const QList<BacktraceLine> & gdbLines);
 
 protected:
     virtual void highlightBlock(const QString& text);

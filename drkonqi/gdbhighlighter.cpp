@@ -19,7 +19,7 @@
 #include <QtGui/QTextDocument>
 #include <KColorScheme>
 
-GdbHighlighter::GdbHighlighter(QTextDocument* parent, QList<BacktraceLine> gdbLines)
+GdbHighlighter::GdbHighlighter(QTextDocument* parent, const QList<BacktraceLine> & gdbLines)
     : QSyntaxHighlighter(parent)
 {
     // setup line lookup
