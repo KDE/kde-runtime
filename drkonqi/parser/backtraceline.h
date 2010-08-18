@@ -79,9 +79,8 @@ protected:
     class Data : public QSharedData
     {
     public:
-        Data()
-            : m_type(Unknown), m_rating(InvalidRating),
-              m_stackFrameNumber(-1), m_functionName(QLatin1String("??")) {}
+        Data() : m_type(Unknown), m_rating(InvalidRating),
+                 m_stackFrameNumber(-1) {}
 
         QString m_line;
         LineType m_type;
@@ -90,7 +89,6 @@ protected:
         QString m_functionName;
         QString m_file;
         QString m_library;
-
     };
     QExplicitlySharedDataPointer<Data> d;
 };

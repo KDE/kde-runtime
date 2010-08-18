@@ -40,6 +40,7 @@ BacktraceLineGdb::BacktraceLineGdb(const QString & lineStr)
         : BacktraceLine()
 {
     d->m_line = lineStr;
+    d->m_functionName = QLatin1String("??");
     parse();
     if (d->m_type == StackFrame) {
         rate();
