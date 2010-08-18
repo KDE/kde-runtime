@@ -18,7 +18,7 @@ if ( WIN32 )
     add_subdirectory( kdbgwin ) 
 endif ( WIN32 )
 
-set(drkonqi_SRCS 
+set(drkonqi_SRCS
     main.cpp
     bugzillalib.cpp
     drkonqidialog.cpp
@@ -44,6 +44,7 @@ set(drkonqi_SRCS
     debuggerlaunchers.cpp
     debuggermanager.cpp
     applicationdetailsexamples.cpp
+    gdbhighlighter.cpp
 )
 
 kde4_add_ui_files(drkonqi_SRCS

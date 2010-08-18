@@ -26,6 +26,7 @@
 #include "parser/backtraceparser.h"
 #include "drkonqi_globals.h"
 #include "debuggermanager.h"
+#include "gdbhighlighter.h"
 
 #include <QtGui/QLabel>
 #include <QtGui/QHBoxLayout>
@@ -207,7 +208,10 @@ void BacktraceWidget::loadData()
         }
 
         // highlight if possible
-        m_btGenerator->parser()->highlightBacktrace(ui.m_backtraceEdit->document());
+        if (m_btGenerator->debugger().codeName() == "gdb") {
+            new GdbHighlighter(ui.m_backtraceEdit->document(),
+                               m_btGenerator->parser()->parsedBacktraceLines());
+        }
 
         BacktraceParser * btParser = m_btGenerator->parser();
         m_backtraceRatingWidget->setUsefulness(btParser->backtraceUsefulness());

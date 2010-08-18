@@ -23,8 +23,6 @@
 #include <QtCore/QStringList>
 #include <QtCore/QMetaType>
 #include <QtCore/QSet>
-class QTextDocument;
-class QSyntaxHighlighter;
 class BacktraceParserPrivate;
 
 class BacktraceParser : public QObject
@@ -68,9 +66,6 @@ public:
 
     /*! Returns a list of libraries/executables that are missing debug symbols. */
     virtual QSet<QString> librariesWithMissingDebugSymbols() const;
-
-    /// default implementation does nothing, overload to provide syntax highlighting
-    virtual QSyntaxHighlighter* highlightBacktrace(QTextDocument* document) const;
 
 private Q_SLOTS:
     void resetState();

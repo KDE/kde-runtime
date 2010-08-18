@@ -20,8 +20,6 @@
 #include "backtraceparsernull.h"
 #include <QtCore/QRegExp>
 #include <QtCore/QMetaEnum>
-#include <QtGui/QTextDocument>
-#include <QtGui/QSyntaxHighlighter>
 #include <KDebug>
 
 //factory
@@ -41,11 +39,6 @@ void BacktraceParser::connectToGenerator(QObject *generator)
 {
     connect(generator, SIGNAL(starting()), this, SLOT(resetState()));
     connect(generator, SIGNAL(newLine(QString)), this, SLOT(newLine(QString)));
-}
-
-QSyntaxHighlighter* BacktraceParser::highlightBacktrace(QTextDocument* /*document*/) const
-{
-    return 0;
 }
 
 QString BacktraceParser::parsedBacktrace() const

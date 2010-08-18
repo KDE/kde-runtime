@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2009-2010 George Kiagiadakis <kiagiadakis.george@gmail.com>
+    Copyright (C) 2010  Milian Wolff <mail@milianw.de>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -15,30 +15,28 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-#ifndef BACKTRACEPARSERGDB_H
-#define BACKTRACEPARSERGDB_H
+#ifndef GDBHIGHLIGHTER_H
+#define GDBHIGHLIGHTER_H
 
-#include "backtraceparser.h"
-class BacktraceParserGdbPrivate;
+#include "parser/backtraceline.h"
+#include <QSyntaxHighlighter>
 
-class BacktraceParserGdb : public BacktraceParser
+class GdbHighlighter : public QSyntaxHighlighter
 {
-    Q_OBJECT
-    Q_DECLARE_PRIVATE(BacktraceParserGdb)
 public:
-    explicit BacktraceParserGdb(QObject *parent = 0);
-
-    virtual QString parsedBacktrace() const;
-    virtual QList<BacktraceLine> parsedBacktraceLines() const;
+    GdbHighlighter(QTextDocument* parent, QList<BacktraceLine> gdbLines);
 
 protected:
-    virtual BacktraceParserPrivate *constructPrivate() const;
-
-protected Q_SLOTS:
-    virtual void newLine(const QString & lineStr);
+    virtual void highlightBlock(const QString& text);
 
 private:
-    void parseLine(const QString & lineStr);
+    QMap<int, BacktraceLine> lines;
+    QTextCharFormat crashFormat;
+    QTextCharFormat threadFormat;
+    QTextCharFormat urlFormat;
+    QTextCharFormat funcFormat;
+    QTextCharFormat otheridFormat;
+    QTextCharFormat crapFormat;
 };
 
-#endif // BACKTRACEPARSERGDB_H
+#endif // GDBHIGHLIGHTER_H
