@@ -32,6 +32,7 @@ Name[ml]=ഡക്ക് ഡക്ക് ഗോ വിവരം
 Name[nb]=Duck Duck Go Info
 Name[nds]=Duck Duck Go - Informatschonen
 Name[nl]=Duck Duck Go Info
+Name[nn]=Duck Duck Go-informasjon
 Name[pa]=ਡੱਕ ਡੱਕ ਗੋ ਜਾਣਕਾਰੀ
 Name[pl]=Duck Duck Go Info
 Name[pt]=Informação do Duck Duck Go
@@ -85,6 +86,7 @@ Query[ml]=http://duckduckgo.com/?q=\\{@}&v=r
 Query[nb]=http://duckduckgo.com/?q=\\{@}&v=r
 Query[nds]=http://duckduckgo.com/?q=\\{@}&v=r
 Query[nl]=http://duckduckgo.com/?q=\\{@}&v=r
+Query[nn]=http://duckduckgo.com/?q=\\{@}&v=r
 Query[pa]=http://duckduckgo.com/?q=\\{@}&v=r
 Query[pl]=http://duckduckgo.com/?q=\\{@}&v=r
 Query[pt]=http://duckduckgo.com/?q=\\{@}&v=r

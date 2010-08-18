@@ -37,6 +37,7 @@ Name[ml]=ഗിറ്റോറിയസ്
 Name[nb]=Gitorious
 Name[nds]=Gitorious
 Name[nl]=Gitorious
+Name[nn]=Gitorious
 Name[pa]=ਗਿਟੋਰੀਅਸ
 Name[pl]=Gitorious
 Name[pt]=Gitorious
@@ -90,6 +91,7 @@ Query[lv]=http://gitorious.org/search?q=\\{@}&commit=Search
 Query[nb]=http://gitorious.org/search?q=\\{@}&commit=Search
 Query[nds]=http://gitorious.org/search?q=\\{@}&commit=Search
 Query[nl]=http://gitorious.org/search?q=\\{@}&commit=Search
+Query[nn]=http://gitorious.org/search?q=\\{@}&commit=Search
 Query[pa]=http://gitorious.org/search?q=\\{@}&commit=Search
 Query[pl]=http://gitorious.org/search?q=\\{@}&commit=Search
 Query[pt]=http://gitorious.org/search?q=\\{@}&commit=Search

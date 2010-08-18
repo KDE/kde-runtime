@@ -36,6 +36,7 @@ Name[ml]=കെഡിഇ ലുക്ക്
 Name[nb]=KDE utseende
 Name[nds]=KDE-Look
 Name[nl]=KDE Look
+Name[nn]=KDE Look
 Name[pa]=KDE ਦਿੱਖ
 Name[pl]=KDE Look
 Name[pt]=KDE Look
@@ -90,6 +91,7 @@ Query[ml]=http://www.kde-look.org/content/search.php?search=Search&name=\\{@}
 Query[nb]=http://www.kde-look.org/content/search.php?search=Search&name=\\{@}
 Query[nds]=http://www.kde-look.org/content/search.php?search=Search&name=\\{@}
 Query[nl]=http://www.kde-look.org/content/search.php?search=Search&name=\\{@}
+Query[nn]=http://www.kde-look.org/content/search.php?search=Search&name=\\{@}
 Query[pa]=http://www.kde-look.org/content/search.php?search=Search&name=\\{@}
 Query[pl]=http://www.kde-look.org/content/search.php?search=Search&name=\\{@}
 Query[pt]=http://www.kde-look.org/content/search.php?search=Search&name=\\{@}

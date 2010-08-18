@@ -36,6 +36,7 @@ Name[ml]=അര്‍ബന്‍ നിഘണ്ടു
 Name[nb]=Urban ordbok
 Name[nds]=Urban-Wöörbook
 Name[nl]=Urban woordenboek
+Name[nn]=Urban Dictionary
 Name[pa]=ਅਰਬਨ ਡਿਕਸ਼ਨਰੀ
 Name[pl]=Słownik miejski (Urban Dictionary)
 Name[pt]=Urban Dictionary
@@ -89,6 +90,7 @@ Query[ml]=http://www.urbandictionary.com/define.php?term=\\{@}
 Query[nb]=http://www.urbandictionary.com/define.php?term=\\{@}
 Query[nds]=http://www.urbandictionary.com/define.php?term=\\{@}
 Query[nl]=http://www.urbandictionary.com/define.php?term=\\{@}
+Query[nn]=http://www.urbandictionary.com/define.php?term=\\{@}
 Query[pa]=http://www.urbandictionary.com/define.php?term=\\{@}
 Query[pl]=http://www.urbandictionary.com/define.php?term=\\{@}
 Query[pt]=http://www.urbandictionary.com/define.php?term=\\{@}

@@ -37,6 +37,7 @@ Name[ml]=വിക്കിയ
 Name[nb]=Wikia
 Name[nds]=Wikia
 Name[nl]=Wikia
+Name[nn]=Wikia
 Name[pa]=ਵਿਕਿਆ
 Name[pl]=Wikia
 Name[pt]=Wikia
@@ -92,6 +93,7 @@ Query[ml]=http://www.wikia.com/Special:Search?search=\\{@}&wikia_search_submit=S
 Query[nb]=http://www.wikia.com/Special:Search?search=\\{@}&wikia_search_submit=Search
 Query[nds]=http://www.wikia.com/Special:Search?search=\\{@}&wikia_search_submit=Search
 Query[nl]=http://www.wikia.com/Special:Search?search=\\{@}&wikia_search_submit=Search
+Query[nn]=http://www.wikia.com/Special:Search?search=\\{@}&wikia_search_submit=Search
 Query[pa]=http://www.wikia.com/Special:Search?search=\\{@}&wikia_search_submit=Search
 Query[pl]=http://www.wikia.com/Special:Search?search=\\{@}&wikia_search_submit=Search
 Query[pt]=http://www.wikia.com/Special:Search?search=\\{@}&wikia_search_submit=Search
