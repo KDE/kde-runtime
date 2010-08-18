@@ -50,7 +50,7 @@
       </widget>
      </item>
      <item row="1" column="1" >
-      <widget class="QPushButton" name="m_up" >
+      <widget class="QToolButton" name="m_up" >
        <property name="enabled" >
         <bool>false</bool>
        </property>
@@ -63,7 +63,7 @@
       </widget>
      </item>
      <item row="1" column="2" >
-      <widget class="QPushButton" name="m_down" >
+      <widget class="QToolButton" name="m_down" >
        <property name="enabled" >
         <bool>false</bool>
        </property>
