@@ -15,22 +15,22 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-#ifndef BACKTRACEPARSERNULL_H
-#define BACKTRACEPARSERNULL_H
+#ifndef BACKTRACEPARSER_P_H
+#define BACKTRACEPARSER_P_H
 
 #include "backtraceparser.h"
 
-class BacktraceParserNull : public BacktraceParser
+struct BacktraceParserPrivate
 {
-    Q_OBJECT
-public:
-    explicit BacktraceParserNull(QObject *parent = 0);
+    BacktraceParserPrivate() : m_usefulness(BacktraceParser::InvalidUsefulness) {}
+    virtual ~BacktraceParserPrivate() {}
 
-protected Q_SLOTS:
-    virtual void newLine(const QString & lineStr);
-
-protected:
-    virtual BacktraceParserPrivate *constructPrivate() const;
+    QList<BacktraceLine> m_linesList;
+    QList<BacktraceLine> m_linesToRate;
+    QStringList m_firstUsefulFunctions;
+    QString m_simplifiedBacktrace;
+    QSet<QString> m_librariesWithMissingDebugSymbols;
+    BacktraceParser::Usefulness m_usefulness;
 };
 
-#endif // BACKTRACEPARSERNULL_H
+#endif //BACKTRACEPARSER_P_H

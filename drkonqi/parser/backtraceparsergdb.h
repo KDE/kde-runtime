@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2009 George Kiagiadakis <kiagiadakis.george@gmail.com>
+    Copyright (C) 2009-2010 George Kiagiadakis <kiagiadakis.george@gmail.com>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -19,31 +19,28 @@
 #define BACKTRACEPARSERGDB_H
 
 #include "backtraceparser.h"
+class BacktraceParserGdbPrivate;
 
 class BacktraceParserGdb : public BacktraceParser
 {
     Q_OBJECT
+    Q_DECLARE_PRIVATE(BacktraceParserGdb)
 public:
     explicit BacktraceParserGdb(QObject *parent = 0);
-    virtual ~BacktraceParserGdb();
 
     virtual QString parsedBacktrace() const;
-    virtual QString simplifiedBacktrace() const;
-    virtual Usefulness backtraceUsefulness() const;
-    virtual QStringList firstValidFunctions() const;
-    virtual QSet<QString> librariesWithMissingDebugSymbols() const;
+    virtual QList<BacktraceLine> parsedBacktraceLines() const;
 
     virtual QSyntaxHighlighter* highlightBacktrace(QTextDocument* document) const;
 
+protected:
+    virtual BacktraceParserPrivate *constructPrivate() const;
+
 protected Q_SLOTS:
-    virtual void resetState();
     virtual void newLine(const QString & lineStr);
 
 private:
     void parseLine(const QString & lineStr);
-
-    class Private;
-    Private *d;
 };
 
 #endif // BACKTRACEPARSERGDB_H

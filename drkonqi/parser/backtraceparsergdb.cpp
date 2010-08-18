@@ -17,10 +17,8 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 #include "backtraceparsergdb.h"
-#include "backtraceline.h"
+#include "backtraceparser_p.h"
 #include <QtCore/QRegExp>
-#include <QtCore/QStack>
-#include <QtCore/QMetaEnum> //used for a kDebug() in BacktraceParserGdb::backtraceUsefulness()
 #include <QtGui/QTextDocument>
 #include <QtGui/QSyntaxHighlighter>
 #include <KColorScheme>
@@ -152,44 +150,34 @@ void BacktraceLineGdb::rate()
 
 //BEGIN BacktraceParserGdb
 
-struct BacktraceParserGdb::Private {
-    Private() : m_possibleKCrashStart(0), m_threadsCount(0),
-            m_isBelowSignalHandler(false), m_frameZeroAppeared(false),
-            m_cachedUsefulness(BacktraceParser::InvalidUsefulness) {}
+struct BacktraceParserGdbPrivate : public BacktraceParserPrivate
+{
+    BacktraceParserGdbPrivate()
+        : BacktraceParserPrivate(),
+          m_possibleKCrashStart(0), m_threadsCount(0),
+          m_isBelowSignalHandler(false), m_frameZeroAppeared(false) {}
 
     QString m_lineInputBuffer;
-    QList<BacktraceLineGdb> m_linesList;
-    QList<BacktraceLineGdb> m_linesToRate;
-    QStringList m_firstUsefulFunctions;
-    QString m_simplifiedBacktrace;
-    QSet<QString> m_librariesWithMissingDebugSymbols;
     int m_possibleKCrashStart;
     int m_threadsCount;
     bool m_isBelowSignalHandler;
     bool m_frameZeroAppeared;
-
-    mutable BacktraceParser::Usefulness m_cachedUsefulness;
 };
 
 BacktraceParserGdb::BacktraceParserGdb(QObject *parent)
-        : BacktraceParser(parent), d(NULL)
+        : BacktraceParser(parent)
 {
 }
 
-BacktraceParserGdb::~BacktraceParserGdb()
+BacktraceParserPrivate* BacktraceParserGdb::constructPrivate() const
 {
-    delete d;
-}
-
-void BacktraceParserGdb::resetState()
-{
-    //reset the state of the parser by getting a new instance of Private
-    delete d;
-    d = new Private;
+    return new BacktraceParserGdbPrivate;
 }
 
 void BacktraceParserGdb::newLine(const QString & lineStr)
 {
+    Q_D(BacktraceParserGdb);
+
     //when the line is too long, gdb splits it into two lines.
     //This breaks parsing and results in two Unknown lines instead of a StackFrame one.
     //Here we workaround this by joining the two lines when such a scenario is detected.
@@ -206,11 +194,13 @@ void BacktraceParserGdb::newLine(const QString & lineStr)
 
 void BacktraceParserGdb::parseLine(const QString & lineStr)
 {
+    Q_D(BacktraceParserGdb);
+
     BacktraceLineGdb line(lineStr);
     switch (line.type()) {
-    case BacktraceLineGdb::Crap:
+    case BacktraceLine::Crap:
         break; //we don't want crap in the backtrace ;)
-    case BacktraceLineGdb::ThreadStart:
+    case BacktraceLine::ThreadStart:
         d->m_linesList.append(line);
         d->m_possibleKCrashStart = d->m_linesList.size();
         d->m_threadsCount++;
@@ -218,7 +208,7 @@ void BacktraceParserGdb::parseLine(const QString & lineStr)
         d->m_isBelowSignalHandler = false;
         d->m_frameZeroAppeared = false; // gdb bug workaround flag, see below
         break;
-    case BacktraceLineGdb::SignalHandlerStart:
+    case BacktraceLine::SignalHandlerStart:
         if (!d->m_isBelowSignalHandler) {
             //replace the stack frames of KCrash with a nice message
             d->m_linesList.erase(d->m_linesList.begin() + d->m_possibleKCrashStart, d->m_linesList.end());
@@ -230,7 +220,7 @@ void BacktraceParserGdb::parseLine(const QString & lineStr)
             d->m_linesList.append(line);
         }
         break;
-    case BacktraceLineGdb::StackFrame:
+    case BacktraceLine::StackFrame:
         // gdb workaround - (v6.8 at least) - 'thread apply all bt' writes
         // the #0 stack frame again at the end.
         // Here we ignore this frame by using a flag that tells us whether
@@ -258,307 +248,46 @@ void BacktraceParserGdb::parseLine(const QString & lineStr)
 
 QString BacktraceParserGdb::parsedBacktrace() const
 {
+    Q_D(const BacktraceParserGdb);
+
     QString result;
-
-    //if there is no d, the debugger has not run, so we return an empty string.
-    if (!d) {
-        return result;
-    }
-
-    QList<BacktraceLineGdb>::const_iterator i;
-    for (i = d->m_linesList.constBegin(); i != d->m_linesList.constEnd(); ++i) {
-        //if there is only one thread, we can omit the thread indicator,
-        //the thread header and all the empty lines.
-        if (d->m_threadsCount == 1 && ((*i).type() == BacktraceLineGdb::ThreadIndicator
-                                       || (*i).type() == BacktraceLineGdb::ThreadStart
-                                       || (*i).type() == BacktraceLineGdb::EmptyLine))
-            continue;
-        result += (*i).toString();
+    if (d) {
+        QList<BacktraceLine>::const_iterator i;
+        for (i = d->m_linesList.constBegin(); i != d->m_linesList.constEnd(); ++i) {
+            //if there is only one thread, we can omit the thread indicator,
+            //the thread header and all the empty lines.
+            if (d->m_threadsCount == 1 && ((*i).type() == BacktraceLine::ThreadIndicator
+                                        || (*i).type() == BacktraceLine::ThreadStart
+                                        || (*i).type() == BacktraceLine::EmptyLine))
+            {
+                continue;
+            }
+            result += i->toString();
+        }
     }
     return result;
 }
 
-
-/* This function returns true if the given stack frame line is the base of the backtrace
-   and thus the parser should not rate any frames below that one. */
-static bool lineIsStackBase(const BacktraceLineGdb & line)
+QList<BacktraceLine> BacktraceParserGdb::parsedBacktraceLines() const
 {
-    //optimization. if there is no function name, do not bother to check it
-    if ( line.rating() == BacktraceLineGdb::MissingEverything
-        || line.rating() == BacktraceLineGdb::MissingFunction )
-        return false;
+    Q_D(const BacktraceParserGdb);
 
-    //this is the base frame for all threads except the main thread
-    //FIXME that probably works only on linux
-    if ( line.functionName() == "start_thread" )
-        return true;
-
-    QRegExp regExp;
-    regExp.setPattern("(kde)?main"); //main() or kdemain() is the base for the main thread
-    if ( regExp.exactMatch(line.functionName()) )
-        return true;
-
-    //HACK for better rating. we ignore all stack frames below any function that matches
-    //the following regular expression. The functions that match this expression are usually
-    //"QApplicationPrivate::notify_helper", "QApplication::notify" and similar, which
-    //are used to send any kind of event to the Qt application. All stack frames below this,
-    //with or without debug symbols, are useless to KDE developers, so we ignore them.
-    regExp.setPattern("(Q|K)(Core)?Application(Private)?::notify.*");
-    if ( regExp.exactMatch(line.functionName()) )
-        return true;
-
-    return false;
-}
-
-/* This function returns true if the given stack frame line is the top of the bactrace
-   and thus the parser should not rate any frames above that one. This is used to avoid
-   rating the stack frames of abort(), assert(), Q_ASSERT() and qFatal() */
-static bool lineIsStackTop(const BacktraceLineGdb & line)
-{
-    //optimization. if there is no function name, do not bother to check it
-    if ( line.rating() == BacktraceLineGdb::MissingEverything
-        || line.rating() == BacktraceLineGdb::MissingFunction )
-        return false;
-
-    if ( line.functionName().startsWith(QLatin1String("qt_assert")) //qt_assert and qt_assert_x
-        || line.functionName() == "qFatal"
-        || line.functionName() == "abort"
-        || line.functionName() == "*__GI_abort"
-        || line.functionName() == "*__GI___assert_fail" )
-        return true;
-
-    return false;
-}
-
-/* This function returns true if the given stack frame line should be ignored from rating
-   for some reason. Currently it ignores all libc/libstdc++/libpthread functions. */
-static bool lineShouldBeIgnored(const BacktraceLineGdb & line)
-{
-    if ( line.libraryName().contains("libc.so")
-        || line.libraryName().contains("libstdc++.so")
-        || line.functionName().startsWith(QLatin1String("*__GI_")) //glibc2.9 uses *__GI_ as prefix
-        || line.libraryName().contains("libpthread.so")
-        || line.libraryName().contains("libglib-2.0.so") )
-        return true;
-
-    return false;
-}
-
-static bool isFunctionUseful(const BacktraceLineGdb & line)
-{
-    //We need the function name
-    if ( line.rating() == BacktraceLineGdb::MissingEverything
-        || line.rating() == BacktraceLineGdb::MissingFunction ) {
-        return false;
-    }
-
-    //Misc ignores
-    if ( line.functionName() == "__kernel_vsyscall"
-         || line.functionName() == "raise"
-         || line.functionName() == "abort" ) {
-        return false;
-    }
-
-    //Ignore core Qt functions
-    //(QObject can be useful in some cases)
-    if ( line.functionName().startsWith(QLatin1String("QBasicAtomicInt::"))
-        || line.functionName().startsWith(QLatin1String("QBasicAtomicPointer::"))
-        || line.functionName().startsWith(QLatin1String("QAtomicInt::"))
-        || line.functionName().startsWith(QLatin1String("QAtomicPointer::"))
-        || line.functionName().startsWith(QLatin1String("QMetaObject::"))
-        || line.functionName().startsWith(QLatin1String("QPointer::"))
-        || line.functionName().startsWith(QLatin1String("QWeakPointer::"))
-        || line.functionName().startsWith(QLatin1String("QSharedPointer::"))
-        || line.functionName().startsWith(QLatin1String("QScopedPointer::"))
-        || line.functionName().startsWith(QLatin1String("QMetaCallEvent::")) ) {
-        return false;
-    }
-
-    //Ignore core Qt containers misc functions
-    if ( line.functionName().endsWith(QLatin1String("::detach"))
-        || line.functionName().endsWith(QLatin1String("::detach_helper"))
-        || line.functionName().endsWith(QLatin1String("::node_create")) ) {
-        return false;
-    }
-
-    //Misc Qt stuff
-    if ( line.functionName() == "qt_message_output"
-        || line.functionName() == "qt_message"
-        || line.functionName() == "qFatal"
-        || line.functionName().startsWith(QLatin1String("qGetPtrHelper"))
-        || line.functionName().startsWith(QLatin1String("qt_meta_")) ) {
-        return false;
-    }
-
-    return true;
-}
-
-static bool isFunctionUsefulForSearch(const BacktraceLineGdb & line)
-{
-    //Ignore Qt containers (and iterators Q*Iterator)
-    if ( line.functionName().startsWith(QLatin1String("QList"))
-        || line.functionName().startsWith(QLatin1String("QLinkedList"))
-        || line.functionName().startsWith(QLatin1String("QVector"))
-        || line.functionName().startsWith(QLatin1String("QStack"))
-        || line.functionName().startsWith(QLatin1String("QQueue"))
-        || line.functionName().startsWith(QLatin1String("QSet"))
-        || line.functionName().startsWith(QLatin1String("QMap"))
-        || line.functionName().startsWith(QLatin1String("QMultiMap"))
-        || line.functionName().startsWith(QLatin1String("QHash"))
-        || line.functionName().startsWith(QLatin1String("QMultiHash")) ) {
-        return false;
-    }
-
-    return true;
-}
-
-BacktraceParser::Usefulness BacktraceParserGdb::backtraceUsefulness() const
-{
-    //if there is no d, the debugger has not run,
-    //so we can say that the (inexistent) backtrace is Useless.
-    if (!d || d->m_linesToRate.isEmpty()) {
-        return Useless;
-    }
-
-    //cache the usefulness value because this function will probably be called many times
-    if (d->m_cachedUsefulness != InvalidUsefulness) {
-        return d->m_cachedUsefulness;
-    }
-
-    uint rating = 0, bestPossibleRating = 0, counter = 0;
-    bool haveSeenStackBase = false;
-
-    QListIterator<BacktraceLineGdb> i(d->m_linesToRate);
-    i.toBack(); //start from the end of the list
-
-    while( i.hasPrevious() ) {
-        const BacktraceLineGdb & line = i.previous();
-
-        if ( !i.hasPrevious() && line.rating() == BacktraceLineGdb::MissingEverything ) {
-            //Under some circumstances, the very first stack frame is invalid (ex, calling a function
-            //at an invalid address could result in a stack frame like "0x00000000 in ?? ()"),
-            //which however does not necessarily mean that the backtrace has a missing symbol on
-            //the first line. Here we make sure to ignore this line from rating. (bug 190882)
-            break; //there are no more items anyway, just break the loop
-        }
-
-        if ( lineIsStackBase(line) ) {
-            rating = bestPossibleRating = counter = 0; //restart rating ignoring any previous frames
-            haveSeenStackBase = true;
-        } else if ( lineIsStackTop(line) ) {
-            break; //we have reached the top, no need to inspect any more frames
-        }
-
-        if ( lineShouldBeIgnored(line) ) {
-            continue;
-        }
-
-        if ( line.rating() == BacktraceLineGdb::MissingFunction
-            || line.rating() == BacktraceLineGdb::MissingSourceFile) {
-            d->m_librariesWithMissingDebugSymbols.insert(line.libraryName().trimmed());
-        }
-
-        uint multiplier = ++counter; //give weight to the first lines
-        rating += static_cast<uint>(line.rating()) * multiplier;
-        bestPossibleRating += static_cast<uint>(BacktraceLineGdb::BestRating) * multiplier;
-
-        kDebug() << line.rating() << line.toString();
-    }
-
-    //Generate a simplified backtrace
-    //- Starts from the first useful function
-    //- Max of 5 lines
-    //- Replaces garbage with [...]
-    //At the same time, grab the first three useful functions for search queries
-
-    i.toFront(); //Reuse the list iterator
-    int functionIndex = 0;
-    int usefulFunctionsCount = 0;
-    bool firstUsefulFound = false;
-    while( i.hasNext() && functionIndex < 5 ) {
-        const BacktraceLineGdb & line = i.next();
-        if ( !lineShouldBeIgnored(line) && isFunctionUseful(line) ) { //Line is not garbage to use
-            if (!firstUsefulFound) {
-                firstUsefulFound = true;
+    QList<BacktraceLine> result;
+    if (d) {
+        QList<BacktraceLine>::const_iterator i;
+        for (i = d->m_linesList.constBegin(); i != d->m_linesList.constEnd(); ++i) {
+            //if there is only one thread, we can omit the thread indicator,
+            //the thread header and all the empty lines.
+            if (d->m_threadsCount == 1 && ((*i).type() == BacktraceLine::ThreadIndicator
+                                        || (*i).type() == BacktraceLine::ThreadStart
+                                        || (*i).type() == BacktraceLine::EmptyLine))
+            {
+                continue;
             }
-            //Save simplified backtrace line
-            d->m_simplifiedBacktrace += line.toString();
-
-            //Fetch three useful functions (only functionName) for search queries
-            if (usefulFunctionsCount < 3 && isFunctionUsefulForSearch(line) &&
-                !d->m_firstUsefulFunctions.contains(line.functionName())) {
-                d->m_firstUsefulFunctions.append(line.functionName());
-                usefulFunctionsCount++;
-            }
-
-            functionIndex++;
-        } else if (firstUsefulFound) {
-            //Add "[...]" if there are invalid functions in the middle
-            d->m_simplifiedBacktrace += QLatin1String("[...]\n");
+            result.append(*i);
         }
     }
-
-    //calculate rating
-    Usefulness usefulness = Useless;
-    if (rating >= (bestPossibleRating*0.90)) {
-        usefulness = ReallyUseful;
-    } else if (rating >= (bestPossibleRating*0.70)) {
-        usefulness = MayBeUseful;
-    } else if (rating >= (bestPossibleRating*0.40)) {
-        usefulness = ProbablyUseless;
-    }
-
-    //if there is no stack base, the executable is probably stripped,
-    //so we need to be more strict with rating
-    if ( !haveSeenStackBase ) {
-        //less than 4 stack frames is useless
-        if ( counter < 4 ) {
-            usefulness = Useless;
-        //more than 4 stack frames might have some value, so let's not be so strict, just lower the rating
-        } else if ( usefulness > Useless ) {
-            usefulness = (Usefulness) (usefulness - 1);
-        }
-    }
-
-    kDebug() << "Rating:" << rating << "out of" << bestPossibleRating << "Usefulness:"
-             << staticMetaObject.enumerator(staticMetaObject.indexOfEnumerator("Usefulness")).valueToKey(usefulness);
-    kDebug() << "90%:" << (bestPossibleRating*0.90) << "70%:" << (bestPossibleRating*0.70)
-             << "40%:" << (bestPossibleRating*0.40);
-    kDebug() << "Have seen stack base:" << haveSeenStackBase << "Lines counted:" << counter;
-
-    d->m_cachedUsefulness = usefulness;
-    return usefulness;
-}
-
-QStringList BacktraceParserGdb::firstValidFunctions() const
-{
-    //if there is no cached usefulness, the usefulness calculation function has not run yet.
-    //in this case, we need to run it because the useful functions are also saved from there.
-    if (d && d->m_cachedUsefulness == InvalidUsefulness) {
-        kDebug() << "backtrace usefulness has not been calculated yet. calculating...";
-        backtraceUsefulness();
-    }
-
-    //if there is no d, the debugger has not run, so we have no functions to return.
-    return d ? d->m_firstUsefulFunctions : QStringList();
-}
-
-QString BacktraceParserGdb::simplifiedBacktrace() const
-{
-    //if there is no cached usefulness, the usefulness calculation function has not run yet.
-    //in this case, we need to run it because the simplified backtrace is also saved from there.
-    if (d && d->m_cachedUsefulness == InvalidUsefulness) {
-        kDebug() << "backtrace usefulness has not been calculated yet. calculating...";
-        backtraceUsefulness();
-    }
-
-    //if there is no d, the debugger has not run, so we have backtrace.
-    return d ? d->m_simplifiedBacktrace : QString();
-}
-
-QSet<QString> BacktraceParserGdb::librariesWithMissingDebugSymbols() const
-{
-    return d->m_librariesWithMissingDebugSymbols;
+    return result;
 }
 
 //BEGIN SUB GdbHighlighter
@@ -566,12 +295,12 @@ QSet<QString> BacktraceParserGdb::librariesWithMissingDebugSymbols() const
 class GdbHighlighter : public QSyntaxHighlighter
 {
 public:
-    GdbHighlighter(QTextDocument* parent, QList<BacktraceLineGdb> gdbLines)
+    GdbHighlighter(QTextDocument* parent, QList<BacktraceLine> gdbLines)
         : QSyntaxHighlighter(parent)
     {
         // setup line lookup
         int l = 0;
-        foreach(const BacktraceLineGdb& line, gdbLines) {
+        foreach(const BacktraceLine& line, gdbLines) {
             lines.insert(l, line);
             l += line.toString().count('\n');
         }
@@ -612,18 +341,18 @@ protected:
 
             QString lineStr = text.mid(cur, diff).append('\n');
             // -1 since we skip the first line
-            QMap< int, BacktraceLineGdb >::iterator it = lines.lowerBound(lineNr - 1);
+            QMap< int, BacktraceLine >::iterator it = lines.lowerBound(lineNr - 1);
             // lowerbound would return the next higher item, even though we want the former one
             if (it.key() > lineNr - 1) {
                 --it;
             }
-            const BacktraceLineGdb& line = it.value();
+            const BacktraceLine& line = it.value();
 
-            if (line.type() == BacktraceLineGdb::KCrash) {
+            if (line.type() == BacktraceLine::KCrash) {
                 setFormat(cur, diff, crashFormat);
-            } else if (line.type() == BacktraceLineGdb::ThreadStart || line.type() == BacktraceLineGdb::ThreadIndicator) {
+            } else if (line.type() == BacktraceLine::ThreadStart || line.type() == BacktraceLine::ThreadIndicator) {
                 setFormat(cur, diff, threadFormat);
-            } else if (line.type() == BacktraceLineGdb::StackFrame) {
+            } else if (line.type() == BacktraceLine::StackFrame) {
                 if (!line.fileName().isEmpty()) {
                     int colonPos = line.fileName().lastIndexOf(':');
                     setFormat(lineStr.indexOf(line.fileName()), colonPos == -1 ? line.fileName().length() : colonPos, urlFormat);
@@ -664,7 +393,7 @@ protected:
                     }
                     idx += hexptrPattern.matchedLength();
                 }
-            } else if (line.type() == BacktraceLineGdb::Crap) {
+            } else if (line.type() == BacktraceLine::Crap) {
                 setFormat(cur, diff, crapFormat);
             }
 
@@ -674,7 +403,7 @@ protected:
     }
 
 private:
-    QMap<int, BacktraceLineGdb> lines;
+    QMap<int, BacktraceLine> lines;
     QTextCharFormat crashFormat;
     QTextCharFormat threadFormat;
     QTextCharFormat urlFormat;
@@ -687,7 +416,7 @@ private:
 
 QSyntaxHighlighter* BacktraceParserGdb::highlightBacktrace(QTextDocument* document) const
 {
-    return new GdbHighlighter(document, d->m_linesList);
+    return new GdbHighlighter(document, parsedBacktraceLines());
 }
 
 //END BacktraceParserGdb

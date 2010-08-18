@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2009 George Kiagiadakis <kiagiadakis.george@gmail.com>
+    Copyright (C) 2009-2010 George Kiagiadakis <kiagiadakis.george@gmail.com>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,44 +16,42 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 #include "backtraceparsernull.h"
-#include <QtCore/QSet>
+#include "backtraceparser_p.h"
+
+//BEGIN BacktraceLineNull
+
+class BacktraceLineNull : public BacktraceLine
+{
+public:
+    BacktraceLineNull(const QString & line);
+};
+
+BacktraceLineNull::BacktraceLineNull(const QString & line)
+    : BacktraceLine()
+{
+    d->m_line = line;
+    d->m_rating = MissingEverything;
+}
+
+//END BacktraceLineNull
+
+//BEGIN BacktraceParserNull
 
 BacktraceParserNull::BacktraceParserNull(QObject *parent) : BacktraceParser(parent) {}
-BacktraceParserNull::~BacktraceParserNull() {}
 
-QString BacktraceParserNull::parsedBacktrace() const
+BacktraceParserPrivate *BacktraceParserNull::constructPrivate() const
 {
-    return m_lines.join("");
-}
-
-QString BacktraceParserNull::simplifiedBacktrace() const
-{
-    return QString();
-}
-
-BacktraceParser::Usefulness BacktraceParserNull::backtraceUsefulness() const
-{
-    return MayBeUseful;
-}
-
-QStringList BacktraceParserNull::firstValidFunctions() const
-{
-    return QStringList();
-}
-
-void BacktraceParserNull::resetState()
-{
-    m_lines.clear();
+    BacktraceParserPrivate *d = BacktraceParser::constructPrivate();
+    d->m_usefulness = MayBeUseful;
+    return d;
 }
 
 void BacktraceParserNull::newLine(const QString & lineStr)
 {
-    m_lines.append(lineStr);
+    d_ptr->m_linesList.append(BacktraceLineNull(lineStr));
 }
 
-QSet<QString> BacktraceParserNull::librariesWithMissingDebugSymbols() const
-{
-    return QSet<QString>();
-}
+
+//END BacktraceParserNull
 
 #include "backtraceparsernull.moc"
