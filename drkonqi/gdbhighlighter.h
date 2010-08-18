@@ -36,7 +36,6 @@ private:
     QTextCharFormat urlFormat;
     QTextCharFormat funcFormat;
     QTextCharFormat otheridFormat;
-    QTextCharFormat crapFormat;
 };
 
 #endif // GDBHIGHLIGHTER_H

@@ -38,7 +38,6 @@ GdbHighlighter::GdbHighlighter(QTextDocument* parent, QList<BacktraceLine> gdbLi
     funcFormat.setForeground(scheme.foreground(KColorScheme::VisitedText));
     funcFormat.setFontWeight(QFont::Bold);
     otheridFormat.setForeground(scheme.foreground(KColorScheme::PositiveText));
-    crapFormat.setForeground(scheme.foreground(KColorScheme::InactiveText));
 }
 
 void GdbHighlighter::highlightBlock(const QString& text)
@@ -116,8 +115,6 @@ void GdbHighlighter::highlightBlock(const QString& text)
                 }
                 idx += hexptrPattern.matchedLength();
             }
-        } else if (line.type() == BacktraceLine::Crap) {
-            setFormat(cur, diff, crapFormat);
         }
 
         cur = next;
