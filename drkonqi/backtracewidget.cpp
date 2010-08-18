@@ -37,6 +37,7 @@
 #include <KMessageBox>
 #include <KLocale>
 #include <KToolInvocation>
+#include <KGlobalSettings>
 
 const char *extraDetailsLabelMargin = " margin: 5px; ";
 
@@ -118,6 +119,8 @@ BacktraceWidget::BacktraceWidget(BacktraceGenerator *generator, QWidget *parent,
                 SLOT(toggleBacktrace(bool)));
         toggleBacktrace(false);
     }
+
+    ui.m_backtraceEdit->setFont( KGlobalSettings::fixedFont() );
 }
 
 void BacktraceWidget::setAsLoading()
