@@ -26,19 +26,6 @@
 #define TEST_PREFIX "test_"
 #define MAP_FILE "usefulness_map"
 
-void FakeBacktraceGenerator::sendData(const QString & filename)
-{
-    QFile file(filename);
-    file.open(QIODevice::ReadOnly | QIODevice::Text);
-    QTextStream stream(&file);
-
-    emit starting();
-    while (!stream.atEnd()) {
-        emit newLine(stream.readLine() + '\n');
-    }
-    emit newLine(QString());
-}
-
 BacktraceParserTest::BacktraceParserTest(QObject *parent)
     : QObject(parent), m_generator(new FakeBacktraceGenerator(this))
 {
@@ -100,11 +87,6 @@ void BacktraceParserTest::btParserTest()
     QTextStream(stdout) << "\n(" << QFileInfo(filename).fileName() << "): Received: "
                         << metaUsefulness.valueToKey(parser->backtraceUsefulness())
                         << " Expected: " << metaUsefulness.valueToKey(result) << endl;
-
-    QTextStream(stdout) << "First valid functions: " << parser->firstValidFunctions().join(" ") << endl;
-    QTextStream(stdout) << "Simplified backtrace:\n" << parser->simplifiedBacktrace() << endl;
-    QStringList l = (QStringList)parser->librariesWithMissingDebugSymbols().toList();
-    QTextStream(stdout) << "Missing dbgsym libs: " << l.join(" ") << endl;
 
     QEXPECT_FAIL("test_e", "Working on it", Continue);
     QCOMPARE(parser->backtraceUsefulness(), result);

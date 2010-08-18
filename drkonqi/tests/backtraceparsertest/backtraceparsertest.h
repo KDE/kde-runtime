@@ -18,19 +18,8 @@
 #define BACKTRACEPARSERTEST_H
 
 #include <QtTest>
+#include "fakebacktracegenerator.h"
 #include "../../parser/backtraceparser.h"
-
-class FakeBacktraceGenerator : public QObject
-{
-    Q_OBJECT
-public:
-    FakeBacktraceGenerator(QObject *parent = 0) : QObject(parent) {}
-    void sendData(const QString & filename);
-
-signals:
-    void starting();
-    void newLine(const QString & line);
-};
 
 class BacktraceParserTest : public QObject
 {
