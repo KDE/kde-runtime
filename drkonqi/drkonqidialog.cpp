@@ -137,8 +137,16 @@ void DrKonqiDialog::buildMainWidget()
     ui.detailsLabel->setText(i18nc("@info","<para>Executable: <application>%1"
                                             "</application> PID: <numid>%2</numid> Signal: %3 (%4)"
                                             "</para>", crashedApp->executable().fileName(),
-                                             crashedApp->pid(), crashedApp->signalNumber(),
-                                             crashedApp->signalName()));
+                                             crashedApp->pid(),
+                                             crashedApp->signalName(),
+                                    #if defined(Q_OS_UNIX)
+                                             crashedApp->signalNumber()
+                                    #else
+                                             //windows uses weird big numbers for exception codes,
+                                             //so it doesn't make sense to display them in decimal
+                                             QString().sprintf("0x%8x", crashedApp->signalNumber())
+                                    #endif
+                                             ));
 }
 
 void DrKonqiDialog::buildDialogOptions()
