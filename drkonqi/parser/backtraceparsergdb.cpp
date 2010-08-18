@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2009  George Kiagiadakis <gkiagia@users.sourceforge.net>
+    Copyright (C) 2009-2010  George Kiagiadakis <gkiagia@users.sourceforge.net>
     Copyright (C) 2010  Milian Wolff <mail@milianw.de>
 
     This program is free software; you can redistribute it and/or modify
@@ -17,8 +17,8 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 #include "backtraceparsergdb.h"
+#include "backtraceline.h"
 #include <QtCore/QRegExp>
-#include <QtCore/QSharedData>
 #include <QtCore/QStack>
 #include <QtCore/QMetaEnum> //used for a kDebug() in BacktraceParserGdb::backtraceUsefulness()
 #include <QtGui/QTextDocument>
@@ -28,97 +28,18 @@
 
 //BEGIN BacktraceLineGdb
 
-class BacktraceLineGdbData : public QSharedData
+class BacktraceLineGdb : public BacktraceLine
 {
 public:
-    BacktraceLineGdbData()
-            : m_stackFrameNumber(-1), m_functionName("??"),
-            m_hasFileInfo(false), m_hasSourceFile(false),
-            m_type(0), m_rating(-1) {}
-
-    QString m_line;
-    int m_stackFrameNumber;
-    QString m_functionName;
-    QString m_functionArguments;
-    bool m_hasFileInfo;
-    bool m_hasSourceFile;
-    QString m_file;
-
-    //these are enums defined below, in BacktraceLineGdb.
-    int m_type; //LineType
-    int m_rating; //LineRating
-};
-
-class BacktraceLineGdb
-{
-public:
-    enum LineType {
-        Unknown, //unknown type. the default
-        EmptyLine, //line is empty
-        Crap, //line is gdb's crap (like "(no debugging symbols found)",
-              //"[New Thread 0x4275c950 (LWP 11931)]", etc...)
-        KCrash, //line is "[KCrash Handler]"
-        ThreadIndicator, //line indicates the current thread,
-                         //ex. "[Current thread is 0 (process 11313)]"
-        ThreadStart, //line indicates the start of a thread's stack.
-        SignalHandlerStart, //line indicates the signal handler start
-                            //(contains "<signal handler called>")
-        StackFrame //line is a normal stack frame
-    };
-
-    enum LineRating {
-        /* RATING           --          EXAMPLE */
-        MissingEverything = 0, // #0 0x0000dead in ?? ()
-        MissingFunction = 1, // #0 0x0000dead in ?? () from /usr/lib/libfoobar.so.4
-        MissingLibrary = 2, // #0 0x0000dead in foobar()
-        MissingSourceFile = 3, // #0 0x0000dead in FooBar::FooBar () from /usr/lib/libfoobar.so.4
-        Good = 4, // #0 0x0000dead in FooBar::crash (this=0x0) at /home/user/foobar.cpp:204
-        InvalidRating = -1 // (dummy invalid value)
-    };
-
-    static const LineRating BestRating = Good;
-
-    BacktraceLineGdb() {} //needed for using BacktraceLineGdb in QStack
     BacktraceLineGdb(const QString & line);
-
-    QString toString() const {
-        return d->m_line;
-    }
-    LineType type() const {
-        return (LineType) d->m_type;
-    }
-    LineRating rating() const {
-        Q_ASSERT(d->m_rating >= 0); return (LineRating) d->m_rating;
-    }
-
-    int frameNumber() const {
-        return d->m_stackFrameNumber;
-    }
-    QString functionName() const {
-        return d->m_functionName;
-    }
-    QString functionArgs() const {
-        return d->m_functionArguments;
-    }
-    QString fileName() const {
-        return d->m_hasSourceFile ? d->m_file : QString();
-    }
-    QString libraryName() const {
-        return d->m_hasSourceFile ? QString() : d->m_file;
-    }
-
-    bool operator==(const BacktraceLineGdb & other) const {
-        return d == other.d;
-    }
 
 private:
     void parse();
     void rate();
-    QExplicitlySharedDataPointer<BacktraceLineGdbData> d;
 };
 
 BacktraceLineGdb::BacktraceLineGdb(const QString & lineStr)
-        : d(new BacktraceLineGdbData)
+        : BacktraceLine()
 {
     d->m_line = lineStr;
     parse();
@@ -162,14 +83,16 @@ void BacktraceLineGdb::parse()
         d->m_type = StackFrame;
         d->m_stackFrameNumber = regExp.cap(1).toInt();
         d->m_functionName = regExp.cap(3).trimmed();
-        //remove \n because arguments may be split in two lines
-        d->m_functionArguments = regExp.cap(5).remove('\n');
-        d->m_hasFileInfo = !regExp.cap(6).isEmpty();
-        d->m_hasSourceFile = d->m_hasFileInfo ? (regExp.cap(7) == "at") : false;
-        d->m_file = d->m_hasFileInfo ? regExp.cap(8) : QString();
 
-        kDebug() << d->m_stackFrameNumber << d->m_functionName << d->m_functionArguments
-                 << d->m_hasFileInfo << d->m_hasSourceFile << d->m_file;
+        if (!regExp.cap(6).isEmpty()) { //we have file information (stuff after from|at)
+            if (regExp.cap(7) == "at") { //'at' means we have a source file
+                d->m_file = regExp.cap(8);
+            } else { //'from' means we have a library
+                d->m_library == regExp.cap(8);
+            }
+        }
+
+        kDebug() << d->m_stackFrameNumber << d->m_functionName << d->m_file << d->m_library;
         return;
     }
 
@@ -205,7 +128,7 @@ void BacktraceLineGdb::rate()
 {
     LineRating r;
 
-    //for explanations, see the LineRating enum definition above
+    //for explanations, see the LineRating enum definition
     if (!fileName().isEmpty()) {
         r = Good;
     } else if (!libraryName().isEmpty()) {
