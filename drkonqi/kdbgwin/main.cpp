@@ -27,7 +27,6 @@
 #include "mingw_generator.h"
 #include "outputters.h"
 #include "process.h"
-#include "suggester.h"
 #include <QApplication>
 
 int main(int argc, char *argv[], char *envp[])
@@ -64,7 +63,6 @@ int main(int argc, char *argv[], char *envp[])
 #endif
 #endif
     Outputter outputter;
-    PackageSuggester suggester;
 
     QObject::connect
     (
@@ -72,20 +70,6 @@ int main(int argc, char *argv[], char *envp[])
         SIGNAL(DebugLine(const QString&)),
         &outputter,
         SLOT(OnDebugLine(const QString&))
-    );
-    QObject::connect
-    (
-        &generator,
-        SIGNAL(MissingSymbol(const QString&)),
-        &suggester,
-        SLOT(OnMissingSymbol(const QString&))
-    );
-    QObject::connect
-    (
-        &generator,
-        SIGNAL(Finished()),
-        &suggester,
-        SLOT(OnFinished())
     );
 
     TThreadsMap::const_iterator it;

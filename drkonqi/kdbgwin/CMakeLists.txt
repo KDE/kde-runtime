@@ -11,8 +11,6 @@ set(kdbgwin_SRCS
     callbacks.cpp
     outputters.h
     outputters.cpp
-    suggester.h
-    suggester.cpp
 )
 
 set(COMMON_LIBS ${KDE4_KDECORE_LIBS} ${KDE4_KDEUI_LIBS} dbghelp psapi shlwapi)
