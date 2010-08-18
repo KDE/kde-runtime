@@ -87,7 +87,7 @@ void BacktraceLineGdb::parse()
             if (regExp.cap(7) == "at") { //'at' means we have a source file
                 d->m_file = regExp.cap(8);
             } else { //'from' means we have a library
-                d->m_library == regExp.cap(8);
+                d->m_library = regExp.cap(8);
             }
         }
 
