@@ -25,9 +25,6 @@
 #include "debugpackageinstaller.h"
 #include "ui_backtracewidget.h"
 
-class KTextBrowser;
-class QLabel;
-class KPushButton;
 class BacktraceRatingWidget;
 class BacktraceGenerator;
 

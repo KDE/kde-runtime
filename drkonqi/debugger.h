@@ -19,7 +19,6 @@
 
 #include <QtCore/QString>
 #include <KSharedConfig>
-class CrashedApplication;
 
 class Debugger
 {
