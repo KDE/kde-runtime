@@ -77,6 +77,7 @@ void do_threads()
 {
     QStringList foo;
     foo << "thread 1" << "thread 2" << "thread 3" << "thread 4" << "thread 5";
+    QThreadPool::globalInstance()->setMaxThreadCount(5);
     QtConcurrent::blockingMap(foo, map_function);
 }
 
