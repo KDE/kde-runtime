@@ -33,6 +33,9 @@ GdbHighlighter::GdbHighlighter(QTextDocument* parent, const QList<BacktraceLine>
     KColorScheme scheme(QPalette::Active);
 
     crashFormat.setForeground(scheme.foreground(KColorScheme::NegativeText));
+    nullptrFormat.setForeground(scheme.foreground(KColorScheme::NegativeText));
+    nullptrFormat.setFontWeight(QFont::Bold);
+    assertFormat = nullptrFormat;
     threadFormat.setForeground(scheme.foreground(KColorScheme::NeutralText));
     urlFormat.setForeground(scheme.foreground(KColorScheme::LinkText));
     funcFormat.setForeground(scheme.foreground(KColorScheme::VisitedText));
@@ -104,14 +107,18 @@ void GdbHighlighter::highlightBlock(const QString& text)
                         }
                         ++i;
                     }
-                    setFormat(from, i - from, funcFormat);
+                    if (line.functionName() == "qFatal" || line.functionName() == "abort" || line.functionName() == "__assert_fail") {
+                        setFormat(from, i - from, assertFormat);
+                    } else {
+                        setFormat(from, i - from, funcFormat);
+                    }
                 }
             }
             // highlight hexadecimal ptrs
             int idx = 0;
             while ((idx = hexptrPattern.indexIn(lineStr, idx)) != -1) {
                 if (hexptrPattern.cap() == "0x0") {
-                    setFormat(idx, hexptrPattern.matchedLength(), crashFormat);
+                    setFormat(idx, hexptrPattern.matchedLength(), nullptrFormat);
                 }
                 idx += hexptrPattern.matchedLength();
             }

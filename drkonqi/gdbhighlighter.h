@@ -32,6 +32,8 @@ protected:
 private:
     QMap<int, BacktraceLine> lines;
     QTextCharFormat crashFormat;
+    QTextCharFormat nullptrFormat;
+    QTextCharFormat assertFormat;
     QTextCharFormat threadFormat;
     QTextCharFormat urlFormat;
     QTextCharFormat funcFormat;
