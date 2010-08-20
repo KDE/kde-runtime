@@ -103,9 +103,9 @@ should be prefixed to positive and negative numbers respectively.
 For example, the default for English is not to have any prefix for
 positive numbers, and a <userinput>-</userinput> for negative numbers.</para>
 
-<para>In the spinbox <guilabel>Dezimal places</guilabel> 
+<para>In the spinbox <guilabel>Decimal places</guilabel> 
 you can set the number of decimal places displayed for numeric values, 
-&ie;. the number of digits <emphasis>after</emphasis> the decimal separator.</para>
+&ie; the number of digits <emphasis>after</emphasis> the decimal separator.</para>
 
 <para>The <guilabel>Digit set</guilabel> drop down box presents digit sets
 which may be used instead of basic Arabic when displaying numbers.
