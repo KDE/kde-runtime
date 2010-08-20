@@ -64,10 +64,10 @@ void BacktraceLineGdb::parse()
                       // which is the start of the arguments section)
                       "(\\(.*\\))?" //matches the function arguments
                                     //(when the app doesn't have debugging symbols)
-                      "[\\s]+\\(" //matches " ("
-                      "(.*)" //matches the arguments of the function with their values
-                             //(when the app has debugging symbols)
-                      "\\)([\\s]+" //matches ") "
+                      "[\\s]+(const[\\s]+)?" //matches a traling const, if it exists
+                      "\\(.*\\)" //matches the arguments of the function with their values
+                                 //(when the app has debugging symbols)
+                      "([\\s]+" //beginning of optional file information
                       "(from|at)[\\s]+" //matches "from " or "at "
                       "(.+)" //matches the filename (source file or shared library file)
                       ")?\n$"); //matches trailing newline.
