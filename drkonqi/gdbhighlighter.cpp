@@ -41,6 +41,7 @@ GdbHighlighter::GdbHighlighter(QTextDocument* parent, const QList<BacktraceLine>
     funcFormat.setForeground(scheme.foreground(KColorScheme::VisitedText));
     funcFormat.setFontWeight(QFont::Bold);
     otheridFormat.setForeground(scheme.foreground(KColorScheme::PositiveText));
+    crapFormat.setForeground(scheme.foreground(KColorScheme::InactiveText));
 }
 
 void GdbHighlighter::highlightBlock(const QString& text)
@@ -77,6 +78,8 @@ void GdbHighlighter::highlightBlock(const QString& text)
             setFormat(cur, diff, crashFormat);
         } else if (line.type() == BacktraceLine::ThreadStart || line.type() == BacktraceLine::ThreadIndicator) {
             setFormat(cur, diff, threadFormat);
+        } else if (line.type() == BacktraceLine::Crap) {
+            setFormat(cur, diff, crapFormat);
         } else if (line.type() == BacktraceLine::StackFrame) {
             if (!line.fileName().isEmpty()) {
                 int colonPos = line.fileName().lastIndexOf(':');
