@@ -78,9 +78,9 @@ if(SHAREDDESKTOPONTOLOGIES_FOUND AND Nepomuk_FOUND AND STRIGI_STRIGIQTDBUSCLIENT
 endif(SHAREDDESKTOPONTOLOGIES_FOUND AND Nepomuk_FOUND AND STRIGI_STRIGIQTDBUSCLIENT_LIBRARY AND SOPRANO_PLUGIN_REDLANDBACKEND_FOUND AND SOPRANO_PLUGIN_VIRTUOSOBACKEND_FOUND AND SOPRANO_PLUGIN_RAPTORPARSER_FOUND)
 
 # Plugins/components required for basic utility
-if ( NOT WIN32 )
+if ( NOT WINCE )
     add_subdirectory(kcontrol)
-endif ( NOT WIN32 )
+endif ( NOT WINCE )
 add_subdirectory(kioslave)
 add_subdirectory(kurifilter-plugins)
 add_subdirectory(phonon)
@@ -116,9 +116,9 @@ if (Q_WS_X11)
 endif (Q_WS_X11)
 add_subdirectory(kquitapp)
 add_subdirectory(menu)
-if ( NOT WIN32 )
+if ( NOT WINCE )
     add_subdirectory(plasma)
-endif ( NOT WIN32 )
+endif ( NOT WINCE )
 add_subdirectory(solid-hardware)
 
 # Platform-specific integration
@@ -134,9 +134,9 @@ endif(NOT WINCE)
 
 # Artwork
 add_subdirectory(desktoptheme)
-if ( NOT WIN32 )
+if ( NOT WINCE )
   add_subdirectory(pics)
-endif ( NOT WIN32 )
+endif ( NOT WINCE )
 
 # KDE integration for attica
 if(LIBATTICA_FOUND)
