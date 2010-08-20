@@ -37,11 +37,17 @@
 
 enum CrashType { Crash, Malloc, Div0, Assert, QAssert, Threads };
 
+struct SomeStruct
+{
+    int foo() { return ret; }
+    int ret;
+};
+
 void do_crash()
 {
-  KCmdLineArgs *args = 0;
-  QString type = args->arg(0);
-  printf("result = %s\n", type.toLocal8Bit().data());
+  SomeStruct *obj = 0;
+  int ret = obj->foo();
+  printf("result = %d\n", ret);
 }
 
 void do_malloc()
