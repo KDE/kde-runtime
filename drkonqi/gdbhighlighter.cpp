@@ -110,7 +110,8 @@ void GdbHighlighter::highlightBlock(const QString& text)
                         }
                         ++i;
                     }
-                    if (line.functionName() == "qFatal" || line.functionName() == "abort" || line.functionName() == "__assert_fail") {
+                    if (line.functionName() == "qFatal" || line.functionName() == "abort" || line.functionName() == "__assert_fail"
+                        || line.functionName() == "*__GI___assert_fail" || line.functionName() == "*__GI_abort") {
                         setFormat(from, i - from, assertFormat);
                     } else {
                         setFormat(from, i - from, funcFormat);
