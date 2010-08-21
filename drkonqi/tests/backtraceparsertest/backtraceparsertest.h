@@ -28,14 +28,15 @@ public:
     BacktraceParserTest(QObject *parent = 0);
 
 private slots:
-    void btParserTest_data();
-    void btParserTest();
+    void btParserUsefulnessTest_data();
+    void btParserUsefulnessTest();
     void btParserBenchmark_data();
     void btParserBenchmark();
 
 private:
-    void readMap(QHash<QByteArray, BacktraceParser::Usefulness> & map);
+    void fetchData(const QString & group);
 
+    QSettings m_settings;
     FakeBacktraceGenerator *m_generator;
 };
 
