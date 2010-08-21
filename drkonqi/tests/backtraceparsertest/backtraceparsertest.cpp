@@ -34,6 +34,10 @@ BacktraceParserTest::BacktraceParserTest(QObject *parent)
 
 void BacktraceParserTest::fetchData(const QString & group)
 {
+    QTest::addColumn<QString>("filename");
+    QTest::addColumn<QString>("result");
+    QTest::addColumn<QString>("debugger");
+
     m_settings.beginGroup(group);
     QStringList keys = m_settings.allKeys();
     m_settings.endGroup();
@@ -48,9 +52,6 @@ void BacktraceParserTest::fetchData(const QString & group)
 
 void BacktraceParserTest::btParserUsefulnessTest_data()
 {
-    QTest::addColumn<QString>("filename");
-    QTest::addColumn<QString>("result");
-    QTest::addColumn<QString>("debugger");
     fetchData("usefulness");
 }
 
@@ -78,6 +79,27 @@ void BacktraceParserTest::btParserUsefulnessTest()
     //compare
     QEXPECT_FAIL("test_e", "Working on it", Continue);
     QCOMPARE(btUsefulness, result);
+}
+
+void BacktraceParserTest::btParserFunctionsTest_data()
+{
+    fetchData("firstValidFunctions");
+}
+
+void BacktraceParserTest::btParserFunctionsTest()
+{
+    QFETCH(QString, filename);
+    QFETCH(QString, result);
+    QFETCH(QString, debugger);
+
+    //parse
+    QSharedPointer<BacktraceParser> parser(BacktraceParser::newParser(debugger));
+    parser->connectToGenerator(m_generator);
+    m_generator->sendData(filename);
+
+    //compare
+    QString functions = parser->firstValidFunctions().join("|");
+    QCOMPARE(functions, result);
 }
 
 void BacktraceParserTest::btParserBenchmark_data()
