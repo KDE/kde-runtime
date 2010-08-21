@@ -159,6 +159,13 @@ static bool lineIsStackBase(const BacktraceLine & line)
     if ( regExp.exactMatch(line.functionName()) )
         return true;
 
+    //attempt to recognize crashes that happen after main has returned (bug 200993)
+    if ( line.functionName() == "~KCleanUpGlobalStatic" ||
+         line.functionName() == "~QGlobalStatic" ||
+         line.functionName() == "exit" ||
+         line.functionName() == "*__GI_exit" )
+        return true;
+
     return false;
 }
 
