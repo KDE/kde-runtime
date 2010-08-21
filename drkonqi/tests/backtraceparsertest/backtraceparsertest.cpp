@@ -71,11 +71,6 @@ void BacktraceParserTest::btParserUsefulnessTest()
                                     BacktraceParser::staticMetaObject.indexOfEnumerator("Usefulness"));
     QString btUsefulness = metaUsefulness.valueToKey(parser->backtraceUsefulness());
 
-    //debugging output
-    QTextStream(stdout) << "\n(" << QFileInfo(filename).fileName() << "): "
-                        << "Received: " << btUsefulness
-                        << " Expected: " << result << endl;
-
     //compare
     QEXPECT_FAIL("test_e", "Working on it", Continue);
     QCOMPARE(btUsefulness, result);
