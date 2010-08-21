@@ -60,8 +60,9 @@ void BacktraceLineGdb::parse()
 
     regExp.setPattern("^#([0-9]+)" //matches the stack frame number, ex. "#0"
                       "[\\s]+(0x[0-9a-f]+[\\s]+in[\\s]+)?" // matches " 0x0000dead in " (optionally)
-                      "([^\\(]+)" //matches the function name (anything except left parenthesis,
-                      // which is the start of the arguments section)
+                      "((\\(anonymous namespace\\)::)?[^\\(]+)" //matches the function name
+                      //(anything except left parenthesis, which is the start of the arguments section)
+                      //and optionally the prefix "(anonymous namespace)::"
                       "(\\(.*\\))?" //matches the function arguments
                                     //(when the app doesn't have debugging symbols)
                       "[\\s]+(const[\\s]+)?" //matches a traling const, if it exists
@@ -79,11 +80,11 @@ void BacktraceLineGdb::parse()
         d->m_stackFrameNumber = regExp.cap(1).toInt();
         d->m_functionName = regExp.cap(3).trimmed();
 
-        if (!regExp.cap(6).isEmpty()) { //we have file information (stuff after from|at)
-            if (regExp.cap(7) == "at") { //'at' means we have a source file
-                d->m_file = regExp.cap(8);
+        if (!regExp.cap(7).isEmpty()) { //we have file information (stuff after from|at)
+            if (regExp.cap(8) == "at") { //'at' means we have a source file
+                d->m_file = regExp.cap(9);
             } else { //'from' means we have a library
-                d->m_library = regExp.cap(8);
+                d->m_library = regExp.cap(9);
             }
         }
 
