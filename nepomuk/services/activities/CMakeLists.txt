@@ -4,13 +4,6 @@ set(nepomukactivitiesservice_SRCS
    nepomukactivitiesservice.cpp
    )
 
-soprano_add_ontology(nepomukactivitiesservice_SRCS
-  ${SHAREDDESKTOPONTOLOGIES_ROOT_DIR}/nie/nie.trig
-  "NIE"
-  "Nepomuk::Vocabulary"
-  "trig"
-  )
-
 qt4_add_dbus_adaptor(nepomukactivitiesservice_SRCS
    org.kde.nepomuk.ActivitiesService.xml
    nepomukactivitiesservice.h
