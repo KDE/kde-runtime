@@ -16,6 +16,7 @@ set(SRCS
   nepomukfilewatch.cpp
   metadatamover.cpp
   updaterequest.cpp
+  invalidfileresourcecleaner.cpp
   ../strigi/strigiserviceconfig.cpp
   )
 
