@@ -54,6 +54,7 @@ qt4_add_dbus_interface(strigiservice_SRCS ../../interfaces/org.kde.nepomuk.FileW
 kde4_add_plugin(nepomukstrigiservice ${strigiservice_SRCS})
 
 target_link_libraries(nepomukstrigiservice
+  nepomukcommon
   ${STRIGI_STREAMANALYZER_LIBRARY}
   ${STRIGI_STREAMS_LIBRARY}
   ${KDE4_KDEUI_LIBS}

@@ -20,6 +20,8 @@
 #include "metadatamover.h"
 #include "strigiserviceinterface.h"
 #include "nie.h"
+#include "fileexcludefilters.h"
+#include "../strigi/strigiserviceconfig.h"
 
 #ifdef BUILD_KINOTIFY
 #include "kinotify.h"
@@ -40,14 +42,11 @@
 #include <Soprano/Node>
 
 
-using namespace Soprano;
-
-
 NEPOMUK_EXPORT_SERVICE( Nepomuk::FileWatch, "nepomukfilewatch")
 
 
 namespace {
-
+    // TODO: put this thread in a dedicated class and source file for better readability
     class RemoveInvalidThread : public QThread {
     public :
         RemoveInvalidThread(QObject* parent = 0);
@@ -105,12 +104,57 @@ namespace {
         kDebug() << "Done searching for invalid local file entries";
     }
 
+    /**
+     * A variant of KInotify which ignores all paths in the Nepomuk
+     * ignore list.
+     */
+    class IgnoringKInotify : public KInotify
+    {
+    public:
+        IgnoringKInotify( RegExpCache* rec, QObject* parent );
+        ~IgnoringKInotify();
+
+        bool addWatch( const QString& path, WatchEvents modes, WatchFlags flags = WatchFlags() );
+
+    private:
+        RegExpCache* m_pathExcludeRegExpCache;
+    };
+
+    IgnoringKInotify::IgnoringKInotify( RegExpCache* rec, QObject* parent )
+        : KInotify( parent ),
+          m_pathExcludeRegExpCache( rec )
+    {
+    }
+
+    IgnoringKInotify::~IgnoringKInotify()
+    {
+    }
+
+    bool IgnoringKInotify::addWatch( const QString& path, WatchEvents modes, WatchFlags flags )
+    {
+        if( !m_pathExcludeRegExpCache->filenameMatch( path ) ) {
+            return KInotify::addWatch( path, modes, flags );
+        }
+        else {
+            kDebug() << "Ignoring watch patch" << path;
+            return true;
+        }
+    }
 }
 
 
 Nepomuk::FileWatch::FileWatch( QObject* parent, const QList<QVariant>& )
     : Service( parent )
 {
+    // the list of default exclude filters we use here differs from those
+    // that can be configured for the strigi service
+    // the default list should only contain files and folders that users are
+    // very unlikely to ever annotate but that change very often. This way
+    // we avoid a lot of work while hopefully not breaking the workflow of
+    // too many users.
+    m_pathExcludeRegExpCache = new RegExpCache();
+    m_pathExcludeRegExpCache->rebuildCacheFromFilterList( defaultExcludeFilterList() );
+
     // start the mover thread
     m_metadataMover = new MetadataMover( mainModel(), this );
     connect( m_metadataMover, SIGNAL(movedWithoutData(QString)),
@@ -120,18 +164,18 @@ Nepomuk::FileWatch::FileWatch( QObject* parent, const QList<QVariant>& )
 
 #ifdef BUILD_KINOTIFY
     // monitor the file system for changes (restricted by the inotify limit)
-    m_dirWatch = new KInotify( this );
+    m_dirWatch = new IgnoringKInotify( m_pathExcludeRegExpCache, this );
 
     // FIXME: force to only use maxUserWatches-500 or something or always leave 500 free watches
 
-    connect( m_dirWatch, SIGNAL( moved( const QString&, const QString& ) ),
-             this, SLOT( slotFileMoved( const QString&, const QString& ) ) );
-    connect( m_dirWatch, SIGNAL( deleted( const QString& ) ),
-             this, SLOT( slotFileDeleted( const QString& ) ) );
-    connect( m_dirWatch, SIGNAL( created( const QString& ) ),
-             this, SLOT( slotFileCreated( const QString& ) ) );
-    connect( m_dirWatch, SIGNAL( modified( const QString& ) ),
-             this, SLOT( slotFileModified( const QString& ) ) );
+    connect( m_dirWatch, SIGNAL( moved( QString, QString ) ),
+             this, SLOT( slotFileMoved( QString, QString ) ) );
+    connect( m_dirWatch, SIGNAL( deleted( QString ) ),
+             this, SLOT( slotFileDeleted( QString ) ) );
+    connect( m_dirWatch, SIGNAL( created( QString, bool ) ),
+             this, SLOT( slotFileCreated( QString, bool ) ) );
+    connect( m_dirWatch, SIGNAL( modified( QString ) ),
+             this, SLOT( slotFileModified( QString ) ) );
     connect( m_dirWatch, SIGNAL( watchUserLimitReached() ),
              this, SLOT( slotInotifyWatchUserLimitReached() ) );
 
@@ -155,6 +199,7 @@ Nepomuk::FileWatch::FileWatch( QObject* parent, const QList<QVariant>& )
 
 Nepomuk::FileWatch::~FileWatch()
 {
+    kDebug();
     m_metadataMover->stop();
     m_metadataMover->wait();
 }
@@ -174,12 +219,14 @@ void Nepomuk::FileWatch::watchFolder( const QString& path )
 
 void Nepomuk::FileWatch::slotFileMoved( const QString& urlFrom, const QString& urlTo )
 {
-    KUrl from( urlFrom );
-    KUrl to( urlTo );
+    if( !ignorePath( urlFrom ) ) {
+        KUrl from( urlFrom );
+        KUrl to( urlTo );
 
-    kDebug() << from << to;
+        kDebug() << from << to;
 
-    m_metadataMover->moveFileMetadata( from, to );
+        m_metadataMover->moveFileMetadata( from, to );
+    }
 }
 
 
@@ -187,12 +234,15 @@ void Nepomuk::FileWatch::slotFilesDeleted( const QStringList& paths )
 {
     KUrl::List urls;
     foreach( const QString& path, paths ) {
-        urls << KUrl(path);
+        if( !ignorePath( path ) ) {
+            urls << KUrl(path);
+        }
     }
 
-    kDebug() << urls;
-
-    m_metadataMover->removeFileMetadata( urls );
+    if( !urls.isEmpty() ) {
+        kDebug() << urls;
+        m_metadataMover->removeFileMetadata( urls );
+    }
 }
 
 
@@ -223,13 +273,15 @@ void Nepomuk::FileWatch::slotMovedWithoutData( const QString& path )
 // static
 void Nepomuk::FileWatch::updateFolderViaStrigi( const QString& path )
 {
-    //
-    // Tell Strigi service (if running) to update the newly created
-    // folder or the folder containing the newly created file
-    //
-    org::kde::nepomuk::Strigi strigi( "org.kde.nepomuk.services.nepomukstrigiservice", "/nepomukstrigiservice", QDBusConnection::sessionBus() );
-    if ( strigi.isValid() ) {
-        strigi.updateFolder( path, false /* no forced update */ );
+    if( StrigiServiceConfig::self()->shouldBeIndexed(path) ) {
+        //
+        // Tell Strigi service (if running) to update the newly created
+        // folder or the folder containing the newly created file
+        //
+        org::kde::nepomuk::Strigi strigi( "org.kde.nepomuk.services.nepomukstrigiservice", "/nepomukstrigiservice", QDBusConnection::sessionBus() );
+        if ( strigi.isValid() ) {
+            strigi.updateFolder( path, false /* no forced update */ );
+        }
     }
 }
 
@@ -253,5 +305,13 @@ void Nepomuk::FileWatch::slotInotifyWatchUserLimitReached()
     connectToKDirWatch();
 }
 #endif
+
+
+bool Nepomuk::FileWatch::ignorePath( const QString& path )
+{
+    // when using KInotify there is no need to check the folder since
+    // we only watch interesting folders to begin with.
+    return m_pathExcludeRegExpCache->filenameMatch( path );
+}
 
 #include "nepomukfilewatch.moc"

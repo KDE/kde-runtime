@@ -18,7 +18,7 @@
 
 #include "nepomukserverkcm.h"
 #include "nepomukserverinterface.h"
-#include "../services/strigi/strigiservicedefaults.h"
+#include "fileexcludefilters.h"
 #include "../kioslaves/common/standardqueries.h"
 #include "nepomukservicecontrolinterface.h"
 #include "indexfolderselectiondialog.h"

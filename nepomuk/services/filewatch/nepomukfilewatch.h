@@ -32,8 +32,8 @@ namespace Soprano {
 }
 
 class KInotify;
-
 class KUrl;
+class RegExpCache;
 
 namespace Nepomuk {
 
@@ -70,11 +70,20 @@ namespace Nepomuk {
 #endif
 
     private:
+        /**
+         * Returns true if the path is one that should be always ignored.
+         * This includes such things like temporary files and folders as
+         * they are created for example by build systems.
+         */
+        bool ignorePath( const QString& path );
+
         MetadataMover* m_metadataMover;
 
 #ifdef BUILD_KINOTIFY
         KInotify* m_dirWatch;
 #endif
+
+        RegExpCache* m_pathExcludeRegExpCache;
     };
 }
 

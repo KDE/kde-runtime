@@ -18,7 +18,7 @@
 
 #include "strigiserviceconfig.h"
 #include "removablestorageserviceinterface.h"
-#include "strigiservicedefaults.h"
+#include "fileexcludefilters.h"
 
 #include <QtCore/QStringList>
 #include <QtCore/QDir>
@@ -119,6 +119,18 @@ bool Nepomuk::StrigiServiceConfig::isInitialRun() const
 }
 
 
+bool Nepomuk::StrigiServiceConfig::shouldBeIndexed( const QString& path ) const
+{
+    QFileInfo fi( path );
+    if( fi.isDir() ) {
+        return shouldFolderBeIndexed( path );
+    }
+    else {
+        return shouldFolderBeIndexed( fi.absolutePath() ) && shouldFileBeIndexed( fi.fileName() );
+    }
+}
+
+
 namespace {
     /// recursively check if a folder is hidden
     bool isDirHidden( QDir& dir ) {
@@ -160,12 +172,7 @@ bool Nepomuk::StrigiServiceConfig::shouldFolderBeIndexed( const QString& path ) 
 bool Nepomuk::StrigiServiceConfig::shouldFileBeIndexed( const QString& fileName ) const
 {
     // check the filters
-    foreach( const QRegExp& filter, m_excludeFilterRegExpCache ) {
-        if ( filter.exactMatch( fileName ) ) {
-            return false;
-        }
-    }
-    return true;
+    return !m_excludeFilterRegExpCache.exactMatch( fileName );
 }
 
 
@@ -257,13 +264,7 @@ void Nepomuk::StrigiServiceConfig::buildFolderCache()
 
 void Nepomuk::StrigiServiceConfig::buildExcludeFilterRegExpCache()
 {
-    m_excludeFilterRegExpCache.clear();
-    foreach( const QString& filter, excludeFilters() ) {
-        QString filterRxStr = QRegExp::escape( filter );
-        filterRxStr.replace( "\\*", QLatin1String( ".*" ) );
-        filterRxStr.replace( "\\?", QLatin1String( "." ) );
-        m_excludeFilterRegExpCache << QRegExp( filterRxStr );
-    }
+    m_excludeFilterRegExpCache.rebuildCacheFromFilterList( excludeFilters() );
 }
 
 #include "strigiserviceconfig.moc"

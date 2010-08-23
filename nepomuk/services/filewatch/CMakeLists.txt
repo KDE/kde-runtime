@@ -8,17 +8,19 @@ include_directories(
   ${QT_INCLUDES}
   ${KDE4_INCLUDES}
   ${SOPRANO_INCLUDE_DIR}
-  ${CMAKE_SOURCE_DIR}
   ${NEPOMUK_INCLUDE_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}/../strigi
   )
 
 set(SRCS
   nepomukfilewatch.cpp
   metadatamover.cpp
   updaterequest.cpp
+  ../strigi/strigiserviceconfig.cpp
   )
 
 qt4_add_dbus_interface(SRCS ../../interfaces/org.kde.nepomuk.Strigi.xml strigiserviceinterface)
+qt4_add_dbus_interface(SRCS ../../interfaces/org.kde.nepomuk.RemovableStorage.xml removablestorageserviceinterface)
 
 if(CMAKE_SYSTEM_NAME MATCHES "Linux")
   set(SRCS
@@ -42,6 +44,7 @@ soprano_add_ontology(SRCS
 kde4_add_plugin(nepomukfilewatch ${SRCS})
 
 target_link_libraries(nepomukfilewatch
+  nepomukcommon
   ${SOPRANO_CLIENT_LIBRARIES}
   ${SOPRANO_LIBRARIES}
   ${KDE4_KDEUI_LIBS}

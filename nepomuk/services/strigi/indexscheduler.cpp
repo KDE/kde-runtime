@@ -565,8 +565,12 @@ void Nepomuk::IndexScheduler::removeOldAndUnwantedEntries()
     // Build filter query for all exclude filters
     //
     QStringList fileFilters;
-    foreach( const QRegExp& re, Nepomuk::StrigiServiceConfig::self()->excludeFilterRegExps() ) {
-        fileFilters << QString::fromLatin1( "REGEX(STR(?fn),\"^%1$\")" ).arg( re.pattern().replace( '\\',"\\\\" ) );
+    foreach( const QString& filter, Nepomuk::StrigiServiceConfig::self()->excludeFilters() ) {
+        QString filterRxStr = QRegExp::escape( filter );
+        filterRxStr.replace( "\\*", QLatin1String( ".*" ) );
+        filterRxStr.replace( "\\?", QLatin1String( "." ) );
+        filterRxStr.replace( '\\',"\\\\" );
+        fileFilters << QString::fromLatin1( "REGEX(STR(?fn),\"^%1$\")" ).arg( filterRxStr );
     }
     QString includeExcludeFilters = constructExcludeIncludeFoldersFilter();
 

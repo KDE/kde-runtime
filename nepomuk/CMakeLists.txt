@@ -6,8 +6,10 @@ add_definitions(-DDISABLE_NEPOMUK_LEGACY=1)
 include_directories(
   ${SOPRANO_INCLUDE_DIR}
   ${STRIGI_INCLUDE_DIR}
+  ${nepomuk_SOURCE_DIR}/common
 )
 
+add_subdirectory(common)
 add_subdirectory(server)
 add_subdirectory(kcm)
 add_subdirectory(services)

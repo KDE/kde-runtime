@@ -26,6 +26,7 @@
 #include <kconfig.h>
 #include <kio/global.h>
 
+#include "regexpcache.h"
 
 namespace Nepomuk {
     /**
@@ -60,8 +61,6 @@ namespace Nepomuk {
 
         QStringList excludeFilters() const;
 
-        QList<QRegExp> excludeFilterRegExps() const { return m_excludeFilterRegExpCache; }
-
         bool indexHiddenFolders() const;
 
         /**
@@ -77,14 +76,37 @@ namespace Nepomuk {
         bool isInitialRun() const;
 
         /**
-         * Check if the folder should be indexed based on
-         * folders() and excludeFolders()
+         * Check if \p path should be indexed taking into account
+         * the includeFolders(), the excludeFolders(), and the
+         * excludeFilters().
+         *
+         * Be aware that this method does not check if parent dirs
+         * match any of the exclude filters. Only the name of the
+         * dir itself it checked.
+         *
+         * \return \p true if the file or folder at \p path should
+         * be indexed according to the configuration.
          */
-        bool shouldFolderBeIndexed( const QString& ) const;
+        bool shouldBeIndexed( const QString& path ) const;
+
+        /**
+         * Check if the folder at \p path should be indexed.
+         *
+         * Be aware that this method does not check if parent dirs
+         * match any of the exclude filters. Only the name of the
+         * dir itself it checked.
+         *
+         * \return \p true if the folder at \p path should
+         * be indexed according to the configuration.
+         */
+        bool shouldFolderBeIndexed( const QString& path ) const;
 
         /**
          * Check \p fileName for all exclude filters. This does
          * not take file paths into account.
+         *
+         * \return \p true if a file with name \p filename should
+         * be indexed according to the configuration.
          */
         bool shouldFileBeIndexed( const QString& fileName ) const;
 
@@ -114,7 +136,7 @@ namespace Nepomuk {
 
         /// cache of regexp objects for all exclude filters
         /// to prevent regexp parsing over and over
-        QList<QRegExp> m_excludeFilterRegExpCache;
+        RegExpCache m_excludeFilterRegExpCache;
     };
 }
 

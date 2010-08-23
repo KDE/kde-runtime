@@ -33,7 +33,7 @@ class KInotify : public QObject
 
 public:
     KInotify( QObject* parent );
-    ~KInotify();
+    virtual ~KInotify();
 
     /**
      * Inotify events that can occur. Use with addWatch
@@ -93,7 +93,7 @@ public:
     bool watchingPath( const QString& path ) const;
 
 public Q_SLOTS:
-    bool addWatch( const QString& path, WatchEvents modes, WatchFlags flags = WatchFlags() );
+    virtual bool addWatch( const QString& path, WatchEvents modes, WatchFlags flags = WatchFlags() );
     bool removeWatch( const QString& path );
 
 Q_SIGNALS:
