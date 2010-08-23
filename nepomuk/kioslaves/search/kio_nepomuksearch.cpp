@@ -74,6 +74,9 @@ namespace {
         if ( url.hasQueryItem( QLatin1String( "resource" ) ) ) {
             Nepomuk::addGenericNepomukResourceData( Nepomuk::Resource( KUrl( url.queryItemValue( QLatin1String( "resource" ) ) ) ), uds );
         }
+        Nepomuk::Query::Query query = Nepomuk::Query::Query::fromQueryUrl( url );
+        if ( query.isValid() )
+            uds.insert( KIO::UDSEntry::UDS_NEPOMUK_QUERY, query.toString() );
         return uds;
     }
 
@@ -106,6 +109,14 @@ namespace {
         else
             newUrl.addQueryItem(QLatin1String("sparql"), Nepomuk::Query::Query::sparqlFromQueryUrl(url));
         return newUrl;
+    }
+
+    Nepomuk::Query::Query rootQuery() {
+        QString queryStr = KConfig( "kio_nepomuksearchrc" ).group( "General" ).readEntry( "Root query", QString() );
+        if ( queryStr.isEmpty() )
+            return Nepomuk::lastModifiedFilesQuery();
+        else
+            return Nepomuk::Query::Query::fromString( queryStr );
     }
     const int s_historyMax = 10;
 }
@@ -254,6 +265,7 @@ void Nepomuk::SearchProtocol::stat( const KUrl& url )
         uds.insert( KIO::UDSEntry::UDS_ICON_NAME, QString::fromLatin1( "nepomuk" ) );
         uds.insert( KIO::UDSEntry::UDS_FILE_TYPE, S_IFDIR );
         uds.insert( KIO::UDSEntry::UDS_MIME_TYPE, QString::fromLatin1( "inode/directory" ) );
+        uds.insert( KIO::UDSEntry::UDS_NEPOMUK_QUERY, rootQuery().toString() );
 
         statEntry( uds );
         finished();
@@ -324,8 +336,16 @@ void Nepomuk::SearchProtocol::prepareUDSEntry( KIO::UDSEntry& uds, bool listing 
         // file names in opening applications and non-KDE apps can handle the URLs properly. The downside
         // is that we lose the context information, i.e. query results cannot be browsed in the opening
         // application. We decide pro-filenames and pro-non-kde-apps here.
-        if( !uds.isDir() && resourceUrl.isLocalFile() )
-            uds.insert( KIO::UDSEntry::UDS_TARGET_URL, resourceUrl.url() );
+        if( resourceUrl.isLocalFile() ) {
+            if ( uds.isDir() ) {
+                Query::FileQuery query;
+                query.addIncludeFolder( resourceUrl );
+                uds.insert( KIO::UDSEntry::UDS_NEPOMUK_QUERY, query.toString() );
+            }
+            else {
+                uds.insert( KIO::UDSEntry::UDS_TARGET_URL, resourceUrl.url() );
+            }
+        }
     }
 }
 
@@ -337,10 +357,10 @@ void Nepomuk::SearchProtocol::listRoot()
     // flush
     listEntry( KIO::UDSEntry(), true );
 
-    Query::Query rootQuery = Query::Query::fromString( KConfig( "kio_nepomuksearchrc" ).group( "General" ).readEntry( "Root query", Nepomuk::lastModifiedFilesQuery().toString() ) );
-    if ( rootQuery.isValid() ) {
-        rootQuery.setLimit( KConfig( "kio_nepomuksearchrc" ).group( "General" ).readEntry( "Default limit", 10 )+1 );
-        getQueryFolder( rootQuery.toSearchUrl() )->list();
+    Query::Query query = rootQuery();
+    if ( query.isValid() ) {
+        query.setLimit( KConfig( "kio_nepomuksearchrc" ).group( "General" ).readEntry( "Default limit", 10 )+1 );
+        getQueryFolder( query.toSearchUrl() )->list();
     }
 
     listEntry( KIO::UDSEntry(), true );
