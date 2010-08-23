@@ -10,6 +10,7 @@ Name[pt_BR]=kdbgwin
 Name[sv]=kdbgwin
 Name[uk]=kdbgwin
 Name[x-test]=xxkdbgwinxx
+Name[zh_TW]=kdbgwin
 TryExec=kdbgwin
 Backends=KCrash
 
