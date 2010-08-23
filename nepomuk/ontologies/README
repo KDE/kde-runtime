@@ -1,0 +1,5 @@
+This folder contains ontologies that build upon the ones
+from shared-desktop-ontologies and contain KDE-specific
+extensions that can not be or are hard to generalize.
+
+Sebastian Trueg <trueg@kde.org> 2010-08-18

@@ -14,5 +14,6 @@ add_subdirectory(services)
 add_subdirectory(servicestub)
 add_subdirectory(kioslaves)
 add_subdirectory(interfaces)
+add_subdirectory(ontologies)
 
 #add_subdirectory(test)

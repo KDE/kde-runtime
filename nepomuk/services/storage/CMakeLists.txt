@@ -19,11 +19,16 @@ set(storage_SRCS
   crappyinferencer.cpp
   )
 
+soprano_add_ontology(storage_SRCS
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../ontologies/kuvo.trig
+  "KUVO"
+  "Nepomuk::Vocabulary"
+  "trig")
+
 qt4_add_dbus_adaptor(storage_SRCS
   ../../interfaces/org.kde.nepomuk.OntologyManager.xml
   ontologyloader.h
   Nepomuk::OntologyLoader)
-
 
 set(HAVE_SOPRANO_INDEX ${SopranoIndex_FOUND})
 

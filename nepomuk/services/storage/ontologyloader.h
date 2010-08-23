@@ -65,6 +65,12 @@ namespace Nepomuk {
          */
         void importOntology( const QString& url );
 
+        /**
+         * Creates nao:userVisible properties for all classes and properties
+         * and stores them in the kuvo namespace.
+         */
+        void updateUserVisibility();
+
     Q_SIGNALS:
         /**
          * Emitted once the update of the ontologies is done.

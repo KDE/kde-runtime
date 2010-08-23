@@ -1,0 +1,8 @@
+[Ontology]
+Version=1.0
+Name=KDE User Visibility Ontology
+Comment=The KDE User Visibility Ontology does not define any new classes or properties. It simply defines nao:userVisible on existing classes and properties.
+Namespace=http://nepomuk.kde.org/ontologies/2010/08/18/kuvo#
+Path=${CMAKE_INSTALL_PREFIX}/share/ontology/kde/kuvo.trig
+MimeType=application/x-trig
+Type=Data
