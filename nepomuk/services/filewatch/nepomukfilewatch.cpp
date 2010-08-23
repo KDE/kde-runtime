@@ -115,8 +115,8 @@ Nepomuk::FileWatch::FileWatch( QObject* parent, const QList<QVariant>& )
              this, SLOT( slotFileMoved( QString, QString ) ) );
     connect( m_dirWatch, SIGNAL( deleted( QString ) ),
              this, SLOT( slotFileDeleted( QString ) ) );
-    connect( m_dirWatch, SIGNAL( created( QString, bool ) ),
-             this, SLOT( slotFileCreated( QString, bool ) ) );
+    connect( m_dirWatch, SIGNAL( created( QString ) ),
+             this, SLOT( slotFileCreated( QString ) ) );
     connect( m_dirWatch, SIGNAL( modified( QString ) ),
              this, SLOT( slotFileModified( QString ) ) );
     connect( m_dirWatch, SIGNAL( watchUserLimitReached() ),
