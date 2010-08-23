@@ -15,27 +15,12 @@ set(kio_timeline_PART_SRCS
   kio_timeline.cpp
   ../common/timelinetools.cpp)
 
-soprano_add_ontology(kio_timeline_PART_SRCS
-  ${SHAREDDESKTOPONTOLOGIES_ROOT_DIR}/nie/nfo.trig
-  "NFO"
-  "Nepomuk::Vocabulary"
-  "trig")
-soprano_add_ontology(kio_timeline_PART_SRCS
-  ${SHAREDDESKTOPONTOLOGIES_ROOT_DIR}/nie/nie.trig
-  "NIE"
-  "Nepomuk::Vocabulary"
-  "trig")
-soprano_add_ontology(kio_timeline_PART_SRCS
-  ${SHAREDDESKTOPONTOLOGIES_ROOT_DIR}/nepomuk/nuao.trig
-  "NUAO"
-  "Nepomuk::Vocabulary"
-  "trig")
-
 qt4_add_dbus_interface(kio_timeline_PART_SRCS ../../interfaces/org.kde.nepomuk.ServiceControl.xml nepomukservicecontrolinterface)
 
 kde4_add_plugin(kio_timeline ${kio_timeline_PART_SRCS})
 
 target_link_libraries(kio_timeline
+  nepomukcommon
   ${KDE4_KIO_LIBS}
   ${NEPOMUK_LIBRARIES}
   ${NEPOMUK_QUERY_LIBRARIES}

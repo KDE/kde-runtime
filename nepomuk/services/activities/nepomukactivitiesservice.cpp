@@ -295,8 +295,8 @@ QString NepomukActivitiesService::urlForResource(const Nepomuk::Resource & resou
     if (resource.identifiers().size()) {
         return resource.identifiers()[0];
 
-    } else if (resource.hasProperty(Ontologies::nie::url())) {
-        return KUrl(resource.property(Ontologies::nie::url()).toUrl()).url();
+    } else if (resource.hasProperty(Nepomuk::Vocabulary::NIE::url())) {
+        return KUrl(resource.property(Nepomuk::Vocabulary::NIE::url()).toUrl()).url();
 
     } else {
         kDebug() << resource.properties().keys();

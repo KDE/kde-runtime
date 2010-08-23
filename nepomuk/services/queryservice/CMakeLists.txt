@@ -18,17 +18,6 @@ set(queryservice_SRCS
   folderconnection.cpp
 )
 
-soprano_add_ontology(queryservice_SRCS
-  ${SHAREDDESKTOPONTOLOGIES_ROOT_DIR}/nie/nfo.trig
-  "NFO"
-  "Nepomuk::Vocabulary"
-  "trig")
-soprano_add_ontology(queryservice_SRCS
-  ${SHAREDDESKTOPONTOLOGIES_ROOT_DIR}/nie/nie.trig
-  "NIE"
-  "Nepomuk::Vocabulary"
-  "trig")
-
 qt4_add_dbus_adaptor(queryservice_SRCS
   ../../interfaces/org.kde.nepomuk.Query.xml
   folderconnection.h
@@ -37,6 +26,7 @@ qt4_add_dbus_adaptor(queryservice_SRCS
 kde4_add_plugin(nepomukqueryservice ${queryservice_SRCS})
 
 target_link_libraries(nepomukqueryservice
+  nepomukcommon
   ${SOPRANO_CLIENT_LIBRARIES}
   ${SOPRANO_LIBRARIES}
   ${KDE4_KDEUI_LIBS}

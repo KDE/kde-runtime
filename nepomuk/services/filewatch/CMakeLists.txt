@@ -30,17 +30,6 @@ if(CMAKE_SYSTEM_NAME MATCHES "Linux")
 add_definitions(-DBUILD_KINOTIFY)
 endif(CMAKE_SYSTEM_NAME MATCHES "Linux")
 
-soprano_add_ontology(SRCS
-  ${SHAREDDESKTOPONTOLOGIES_ROOT_DIR}/nie/nie.trig
-  "NIE"
-  "Nepomuk::Vocabulary"
-  "trig")
-soprano_add_ontology(SRCS
-  ${SHAREDDESKTOPONTOLOGIES_ROOT_DIR}/nie/nfo.trig
-  "NFO"
-  "Nepomuk::Vocabulary"
-  "trig")
-
 kde4_add_plugin(nepomukfilewatch ${SRCS})
 
 target_link_libraries(nepomukfilewatch
