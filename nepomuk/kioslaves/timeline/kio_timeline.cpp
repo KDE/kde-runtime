@@ -88,9 +88,11 @@ namespace {
 
     KIO::UDSEntry createDayUDSEntry( const QDate& date )
     {
-        return createFolderUDSEntry( date.toString("yyyy-MM-dd"),
-                                     KGlobal::locale()->formatDate( date, KLocale::FancyLongDate ),
-                                     date );
+        KIO::UDSEntry uds = createFolderUDSEntry( date.toString("yyyy-MM-dd"),
+                                                  KGlobal::locale()->formatDate( date, KLocale::FancyLongDate ),
+                                                  date );
+        uds.insert( KIO::UDSEntry::UDS_NEPOMUK_QUERY, Nepomuk::buildTimelineQuery( date ).toString() );
+        return uds;
     }
 }
 
@@ -265,7 +267,7 @@ void Nepomuk::TimelineProtocol::stat( const KUrl& url )
 bool Nepomuk::TimelineProtocol::rewriteUrl( const KUrl& url, KUrl& newURL )
 {
     if ( parseTimelineUrl( url, &m_date, &m_filename ) == DayFolder ) {
-        newURL = buildTimelineQueryUrl( m_date );
+        newURL = buildTimelineQuery( m_date ).toSearchUrl();
         newURL.addPath( m_filename );
         kDebug() << url << newURL;
         return true;

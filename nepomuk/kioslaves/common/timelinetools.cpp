@@ -3,18 +3,20 @@
    Copyright (C) 2010 Sebastian Trueg <trueg@kde.org>
 
    This library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Library General Public
-   License version 2 as published by the Free Software Foundation.
+   modify it under the terms of the GNU Lesser General Public
+   License as published by the Free Software Foundation; either
+   version 2.1 of the License, or (at your option) version 3, or any
+   later version accepted by the membership of KDE e.V. (or its
+   successor approved by the membership of KDE e.V.), which shall
+   act as a proxy defined in Section 6 of version 3 of the license.
 
    This library is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   Library General Public License for more details.
+   Lesser General Public License for more details.
 
-   You should have received a copy of the GNU Library General Public License
-   along with this library; see the file COPYING.LIB.  If not, write to
-   the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-   Boston, MA 02110-1301, USA.
+   You should have received a copy of the GNU Lesser General Public
+   License along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "timelinetools.h"
@@ -32,6 +34,7 @@
 #include <Nepomuk/Query/OrTerm>
 #include <Nepomuk/Query/ComparisonTerm>
 #include <Nepomuk/Query/LiteralTerm>
+#include <Nepomuk/Query/StandardQuery>
 
 #include <KUrl>
 #include <KCalendarSystem>
@@ -147,37 +150,9 @@ Nepomuk::TimelineFolderType Nepomuk::parseTimelineUrl( const KUrl& url, QDate* d
 }
 
 
-KUrl Nepomuk::buildTimelineQueryUrl( const QDate& date )
+Nepomuk::Query::Query Nepomuk::buildTimelineQuery( const QDate& date )
 {
-    // create our range
-    const Query::LiteralTerm dateFrom( QDateTime( date, QTime( 0,0,0 ) ) );
-    const Query::LiteralTerm dateTo( QDateTime( date, QTime( 23, 59, 59, 999 ) ) );
-
-    // include files modified in our date range
-    Query::ComparisonTerm lastModifiedStart = Nepomuk::Vocabulary::NIE::lastModified() > dateFrom;
-    Query::ComparisonTerm lastModifiedEnd = Nepomuk::Vocabulary::NIE::lastModified() < dateTo;
-
-
-    // include files created (as in photos taken) in our data range
-    Query::ComparisonTerm contentCreatedStart = Nepomuk::Vocabulary::NIE::contentCreated() > dateFrom;
-    Query::ComparisonTerm contentCreatedEnd = Nepomuk::Vocabulary::NIE::contentCreated() < dateTo;
-
-
-    // include files opened (and optionally modified) in our date range
-    // TODO: also take the end of the event into account
-    // TODO: via the date facet one should be able to exclude usage events since that could clutter the result
-    Query::ComparisonTerm accessEventStart = Nepomuk::Vocabulary::NUAO::start() > dateFrom;
-    Query::ComparisonTerm accessEventEnd = Nepomuk::Vocabulary::NUAO::start() < dateTo;
-    Query::ComparisonTerm accessEventCondition = Nepomuk::Vocabulary::NUAO::involves() == ( accessEventStart && accessEventEnd );
-
-    Query::FileQuery query(
-        ( lastModifiedStart && lastModifiedEnd )
-        ||
-        ( contentCreatedStart && contentCreatedEnd )
-        ||
-        accessEventCondition.inverted() );
-
+    Nepomuk::Query::FileQuery query = Nepomuk::Query::dateRangeQuery( date, date );
     query.setFileMode( Query::FileQuery::QueryFiles );
-
-    return query.toSearchUrl();
+    return query;
 }

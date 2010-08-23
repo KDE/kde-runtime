@@ -24,6 +24,8 @@ class QDate;
 class KUrl;
 class QString;
 
+#include <Nepomuk/Query/Query>
+
 namespace Nepomuk {
     enum TimelineFolderType {
         NoFolder = 0,    /// nothing
@@ -44,7 +46,7 @@ namespace Nepomuk {
     /**
      * Create a nepomuksearch:/ URL that lists all files modified at \p date.
      */
-    KUrl buildTimelineQueryUrl( const QDate& date );
+    Query::Query buildTimelineQuery( const QDate& date );
 }
 
 #endif

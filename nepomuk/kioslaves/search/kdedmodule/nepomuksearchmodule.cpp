@@ -103,7 +103,7 @@ void Nepomuk::SearchModule::registerSearchUrl( const QString& urlString )
     else if ( isTimelineUrl( url ) ) {
         QDate date;
         if ( Nepomuk::parseTimelineUrl( url, &date ) == Nepomuk::DayFolder )
-            queryUrl = Nepomuk::buildTimelineQueryUrl( date );
+            queryUrl = Nepomuk::buildTimelineQuery( date ).toSearchUrl();
     }
 
     if ( queryUrl.isValid() ) {
