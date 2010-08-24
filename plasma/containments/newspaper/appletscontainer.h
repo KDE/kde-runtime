@@ -80,6 +80,7 @@ public:
 
 protected:
     QSizeF optimalAppletSize(Plasma::Applet *applet, const bool maximized) const;
+    void updateSnapSize();
 
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);

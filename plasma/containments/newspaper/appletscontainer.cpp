@@ -173,11 +173,7 @@ void AppletsContainer::setExpandAll(const bool expand)
         }
     }
 
-    if (m_orientation == Qt::Horizontal || (!m_expandAll && !m_currentApplet)) {
-        m_scrollWidget->setSnapSize(m_scrollWidget->viewportGeometry().size()/2);
-    } else {
-        m_scrollWidget->setSnapSize(QSizeF());
-    }
+    updateSnapSize();
 
     updateSize();
 }
@@ -485,12 +481,17 @@ void AppletsContainer::updateViewportGeometry()
         }
     }
 
+    updateSnapSize();
+    syncColumnSizes();
+}
+
+void AppletsContainer::updateSnapSize()
+{
     if (m_orientation == Qt::Horizontal || (!m_expandAll && !m_currentApplet)) {
         m_scrollWidget->setSnapSize(QSize(m_viewportSize.width()/m_appletsPerColumn, m_viewportSize.height()/m_appletsPerRow));
     } else {
         m_scrollWidget->setSnapSize(QSizeF());
     }
-    syncColumnSizes();
 }
 
 void AppletsContainer::mousePressEvent(QGraphicsSceneMouseEvent *event)
@@ -543,11 +544,7 @@ void AppletsContainer::setCurrentApplet(Plasma::Applet *applet)
         }
     }
 
-    if (m_orientation == Qt::Horizontal || (!m_expandAll && !m_currentApplet)) {
-        m_scrollWidget->setSnapSize(m_scrollWidget->viewportGeometry().size()/2);
-    } else {
-        m_scrollWidget->setSnapSize(QSizeF());
-    }
+    updateSnapSize();
     emit appletActivated(m_currentApplet.data());
 }
 
