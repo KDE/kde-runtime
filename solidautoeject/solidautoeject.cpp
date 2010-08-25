@@ -56,8 +56,10 @@ void SolidAutoEject::onEjectPressed(const QString &udi)
 
 void SolidAutoEject::connectDevice(const Solid::Device &device)
 {
-    connect(device.as<Solid::OpticalDrive>(), SIGNAL(ejectPressed(QString)),
-            this, SLOT(onEjectPressed(QString)));
+    if ( device.as<Solid::OpticalDrive>() ) {
+        connect(device.as<Solid::OpticalDrive>(), SIGNAL(ejectPressed(QString)),
+                this, SLOT(onEjectPressed(QString)));
+    }
 }
 
 #include "solidautoeject.moc"
