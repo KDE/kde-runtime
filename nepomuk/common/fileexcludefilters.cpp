@@ -70,6 +70,7 @@ namespace {
         "CVS",
         ".svn",
         ".git",
+        "_darcs",
 
         // development
         "CMakeFiles",
