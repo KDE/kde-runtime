@@ -91,7 +91,7 @@ QStringList Nepomuk::StrigiServiceConfig::excludeFilters() const
 }
 
 
-bool Nepomuk::StrigiServiceConfig::indexHiddenFolders() const
+bool Nepomuk::StrigiServiceConfig::indexHiddenFilesAndFolders() const
 {
     return m_config.group( "General" ).readEntry( "index hidden folders", false );
 }
@@ -126,7 +126,9 @@ bool Nepomuk::StrigiServiceConfig::shouldBeIndexed( const QString& path ) const
         return shouldFolderBeIndexed( path );
     }
     else {
-        return shouldFolderBeIndexed( fi.absolutePath() ) && shouldFileBeIndexed( fi.fileName() );
+        return( shouldFolderBeIndexed( fi.absolutePath() ) &&
+                ( !fi.isHidden() || indexHiddenFilesAndFolders() ) &&
+                shouldFileBeIndexed( fi.fileName() ) );
     }
 }
 
@@ -154,7 +156,7 @@ bool Nepomuk::StrigiServiceConfig::shouldFolderBeIndexed( const QString& path ) 
 
         // check for hidden folders
         QDir dir( path );
-        if ( !indexHiddenFolders() && isDirHidden( dir ) )
+        if ( !indexHiddenFilesAndFolders() && isDirHidden( dir ) )
             return false;
 
         // reset dir, cause isDirHidden modifies the QDir
