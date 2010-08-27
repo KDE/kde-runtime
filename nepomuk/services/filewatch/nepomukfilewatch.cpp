@@ -46,6 +46,7 @@
 NEPOMUK_EXPORT_SERVICE( Nepomuk::FileWatch, "nepomukfilewatch")
 
 
+#ifdef BUILD_KINOTIFY
 namespace {
     /**
      * A variant of KInotify which ignores all paths in the Nepomuk
@@ -84,6 +85,7 @@ namespace {
         }
     }
 }
+#endif // BUILD_KINOTIFY
 
 
 Nepomuk::FileWatch::FileWatch( QObject* parent, const QList<QVariant>& )
