@@ -1,5 +1,6 @@
 [General]
 Name=kdbgwin
+Name[cs]=kdbgwin
 Name[en_GB]=kdbgwin
 Name[es]=kdbgwin
 Name[eu]=kdbgwin
