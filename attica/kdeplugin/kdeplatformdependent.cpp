@@ -26,8 +26,9 @@
 
 #include <QtCore/QDebug>
 
-#include <KDebug>
 #include <KConfigGroup>
+#include <kcomponentdata.h>
+#include <KDebug>
 #include <KWallet/Wallet>
 #include <kcmultidialog.h>
 #include <KStringHandler>
@@ -38,6 +39,11 @@ using namespace Attica;
 KdePlatformDependent::KdePlatformDependent()
     : m_config(KSharedConfig::openConfig("atticarc")), m_accessManager(0), m_wallet(0)
 {
+    // when a plain Qt application loads this plugin, it needs a valid KGlobal object
+    if (!KGlobal::hasMainComponent()) {
+        KComponentData componentData("attica_kde");
+    }
+
     KLocale* locale = KGlobal::locale();
     if (locale) {
         locale->insertCatalog("attica_kde");
