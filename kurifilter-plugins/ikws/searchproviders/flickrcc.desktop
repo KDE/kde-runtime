@@ -74,6 +74,7 @@ Query[ga]=http://www.flickr.com/search/?q=\\{@}&l=cc&ct=0&mt=all&adv=1
 Query[gu]=http://www.flickr.com/search/?q=\\{@}&l=cc&ct=0&mt=all&adv=1
 Query[hi]=http://www.flickr.com/search/?q=\\{@}&l=cc&ct=0&mt=all&adv=1
 Query[hr]=http://www.flickr.com/search/?q=\\{@}&l=cc&ct=0&mt=all&adv=1
+Query[hu]=http://www.flickr.com/search/?q=\\{@}&l=cc&ct=0&mt=all&adv=1
 Query[ia]=http://www.flickr.com/search?q=\\{@}&|=cc&ct=0&mt=all&adv=1
 Query[id]=http://www.flickr.com/search/?q=\\{@}&l=cc&ct=0&mt=all&adv=1
 Query[is]=http://www.flickr.com/search/?q=\\{@}&l=cc&ct=0&mt=all&adv=1

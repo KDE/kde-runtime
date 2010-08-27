@@ -20,6 +20,7 @@ Name[fy]=Identi.ca minsken
 Name[ga]=Daoine Identi.ca
 Name[hi]=Identi.ca लोग
 Name[hr]=Ljudi na Identi.ci
+Name[hu]=Identi.ca személyek
 Name[ia]=Gente de Identi.ca
 Name[id]=Identi.ca People
 Name[is]=Identi.ca fólk
@@ -74,6 +75,7 @@ Query[ga]=http://identi.ca/search/people?q=\\{@}&search=Search
 Query[gu]=http://identi.ca/search/people?q=\\{@}&search=Search
 Query[hi]=http://identi.ca/search/people?q=\\{@}&search=Search
 Query[hr]=http://identi.ca/search/people?q=\\{@}&search=Search
+Query[hu]=http://identi.ca/search/people?q=\\{@}&search=Search
 Query[ia]=http://identi.ca/search/people?q=\\{@}&search=Search
 Query[id]=http://identi.ca/search/people?q=\\{@}&search=Search
 Query[is]=http://identi.ca/search/people?q=\\{@}&search=Search
