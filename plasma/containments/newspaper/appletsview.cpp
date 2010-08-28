@@ -90,12 +90,13 @@ bool AppletsView::sceneEventFilter(QGraphicsItem *watched, QEvent *event)
     }
 
     if (event->type() == QEvent::GraphicsSceneMousePress) {
+        QGraphicsSceneMouseEvent *me = static_cast<QGraphicsSceneMouseEvent *>(event);
 
         bool found = false;
 
         foreach (Plasma::Applet *applet, m_appletsContainer->containment()->applets()) {
 
-            if (applet->isAncestorOf(watched) || applet == watched) {
+            if (applet->boundingRect().contains(applet->mapFromScene(me->scenePos()))) {
                 m_appletMoved = applet;
 
                 if (applet == m_appletsContainer->currentApplet()) {
@@ -158,7 +159,7 @@ bool AppletsView::sceneEventFilter(QGraphicsItem *watched, QEvent *event)
         }
 
         foreach (Plasma::Applet *applet, m_appletsContainer->containment()->applets()) {
-            if (applet->isAncestorOf(watched) || applet == watched) {
+            if (applet->boundingRect().contains(applet->mapFromScene(me->scenePos()))) {
 
                 if (QPointF(me->pos() - me->buttonDownPos(me->button())).manhattanLength() > KGlobalSettings::dndEventDelay()) {
                     return Plasma::ScrollWidget::sceneEventFilter(watched, event);

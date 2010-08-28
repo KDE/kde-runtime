@@ -32,6 +32,7 @@
 #include <QGraphicsLinearLayout>
 #include <QGraphicsSceneMouseEvent>
 #include <QTimer>
+#include <QPainter>
 
 #include <KIconLoader>
 
@@ -41,6 +42,7 @@
 #include <Plasma/Theme>
 
 using namespace Plasma;
+
 
 AppletsContainer::AppletsContainer(AppletsView *parent)
  : QGraphicsWidget(parent),
@@ -131,7 +133,7 @@ void AppletsContainer::updateSize()
     m_mainLayout->invalidate();
 
     QSizeF hint = sizeHint(Qt::PreferredSize, QSize());
-    
+
     if (m_orientation == Qt::Horizontal) {
         resize(hint.width(), qMin(size().height(), m_scrollWidget->viewportGeometry().height()));
     } else {
