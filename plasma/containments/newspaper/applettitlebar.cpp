@@ -34,6 +34,37 @@
 #include <plasma/applet.h>
 #include <plasma/svg.h>
 #include <plasma/theme.h>
+#include <Plasma/PaintUtils>
+
+class AppletActivationOverlay : public QGraphicsWidget
+{
+public:
+    AppletActivationOverlay(QGraphicsItem *parent = 0)
+        : QGraphicsWidget(parent)
+    {}
+    ~AppletActivationOverlay()
+    {}
+
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+    {
+        painter->save();
+
+        QColor c(Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor));
+        c.setAlphaF(0.4);
+        painter->setBrush(c);
+        painter->setRenderHint(QPainter::Antialiasing);
+        painter->setPen(Qt::NoPen);
+        painter->drawPath(Plasma::PaintUtils::roundedRectangle(option->rect, 8));
+
+        painter->restore();
+    }
+
+protected:
+    void mousePressEvent(QGraphicsSceneMouseEvent *event)
+    {
+        event->accept();
+    }
+};
 
 AppletTitleBar::AppletTitleBar(Plasma::Applet *applet)
        : QGraphicsWidget(applet),
@@ -48,6 +79,11 @@ AppletTitleBar::AppletTitleBar(Plasma::Applet *applet)
          m_active(false)
 {
     setObjectName("TitleBar");
+
+    setZValue(10000);
+    m_appletOverlay = new AppletActivationOverlay(this);
+    m_appletOverlay->show();
+
     m_pulse =
     Plasma::Animator::create(Plasma::Animator::PulseAnimation);
     m_pulse->setTargetWidget(applet);
@@ -131,6 +167,7 @@ void AppletTitleBar::setActive(bool visible)
     }
 
     setButtonsVisible(visible);
+    m_appletOverlay->setVisible(!visible);
     m_active = visible;
 }
 
@@ -200,6 +237,9 @@ void AppletTitleBar::syncSize()
     setGeometry(QRectF(QPointF(m_applet->contentsRect().left(), m_savedAppletTopMargin),
                 QSizeF(m_applet->contentsRect().size().width(),
                 size().height())));
+
+    m_appletOverlay->setGeometry(QRectF(mapFromScene(m_applet->mapToScene(m_applet->contentsRect().topLeft())),
+                                    m_applet->contentsRect().size()));
 
     //sometimes the background of applets change on the go...
     if (m_separator) {

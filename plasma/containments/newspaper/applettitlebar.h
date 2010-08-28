@@ -33,6 +33,8 @@ namespace Plasma
     class Svg;
 }
 
+class AppletActivationOverlay;
+
 class AppletTitleBar : public QGraphicsWidget
 {
     Q_OBJECT
@@ -74,6 +76,8 @@ private:
     };
 
     Plasma::Applet *m_applet;
+
+    AppletActivationOverlay *m_appletOverlay;
 
     PressedButton m_pressedButton;
     QRectF m_maximizeButtonRect;
