@@ -45,7 +45,7 @@ AppletTitleBar::AppletTitleBar(Plasma::Applet *applet)
          m_underMouse(false),
          m_buttonsVisible(false),
          m_appletHasBackground(false),
-         m_forcedButtonsVisible(false)
+         m_active(false)
 {
     setObjectName("TitleBar");
     m_pulse =
@@ -124,19 +124,19 @@ bool AppletTitleBar::buttonsVisible() const
     return m_buttonsVisible;
 }
 
-void AppletTitleBar::setForcedButtonsVisible(bool visible)
+void AppletTitleBar::setActive(bool visible)
 {
-    if (visible == m_forcedButtonsVisible) {
+    if (visible == m_active) {
         return;
     }
 
     setButtonsVisible(visible);
-    m_forcedButtonsVisible = visible;
+    m_active = visible;
 }
 
-bool AppletTitleBar::forcedButtonsVisible() const
+bool AppletTitleBar::isActive() const
 {
-    return m_forcedButtonsVisible;
+    return m_active;
 }
 
 void AppletTitleBar::initAnimations()
@@ -245,13 +245,13 @@ bool AppletTitleBar::eventFilter(QObject *watched, QEvent *event)
         m_underMouse = true;
         syncIconRects();
 
-        if (!m_forcedButtonsVisible) {
+        if (!m_active) {
             setButtonsVisible(true);
         }
     } else if (event->type() == QEvent::GraphicsSceneHoverLeave) {
         m_underMouse = false;
 
-        if (!m_forcedButtonsVisible) {
+        if (!m_active) {
             setButtonsVisible(false);
         }
     }

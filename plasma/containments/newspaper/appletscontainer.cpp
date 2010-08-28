@@ -526,7 +526,7 @@ void AppletsContainer::setCurrentApplet(Plasma::Applet *applet)
         QList<AppletTitleBar *> titles = m_currentApplet.data()->findChildren<AppletTitleBar *>("TitleBar");
 
         if (!titles.isEmpty()) {
-            titles.first()->setForcedButtonsVisible(false);
+            titles.first()->setActive(false);
         }
     }
 
@@ -542,7 +542,7 @@ void AppletsContainer::setCurrentApplet(Plasma::Applet *applet)
         QList<AppletTitleBar *> titles = applet->findChildren<AppletTitleBar *>("TitleBar");
 
         if (!titles.isEmpty()) {
-            titles.first()->setForcedButtonsVisible(true);
+            titles.first()->setActive(true);
         }
     }
 

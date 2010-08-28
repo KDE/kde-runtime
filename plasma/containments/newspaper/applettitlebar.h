@@ -44,8 +44,8 @@ public:
     void setButtonsVisible(bool force);
     bool buttonsVisible() const;
 
-    void setForcedButtonsVisible(bool force);
-    bool forcedButtonsVisible() const;
+    void setActive(bool force);
+    bool isActive() const;
 
 protected:
     void syncSize();
@@ -91,7 +91,7 @@ private:
     bool m_underMouse;
     bool m_buttonsVisible;
     bool m_appletHasBackground;
-    bool m_forcedButtonsVisible;
+    bool m_active;
 };
 
 #endif
