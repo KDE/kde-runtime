@@ -50,7 +50,7 @@ public:
         painter->save();
 
         QColor c(Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor));
-        c.setAlphaF(0.4);
+        c.setAlphaF(0.3);
         painter->setBrush(c);
         painter->setRenderHint(QPainter::Antialiasing);
         painter->setPen(Qt::NoPen);
