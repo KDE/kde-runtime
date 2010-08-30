@@ -68,6 +68,7 @@ void GdbHighlighter::highlightBlock(const QString& text)
         QString lineStr = text.mid(cur, diff).append('\n');
         // -1 since we skip the first line
         QMap< int, BacktraceLine >::iterator it = lines.lowerBound(lineNr - 1);
+        Q_ASSERT(it != lines.end());
         // lowerbound would return the next higher item, even though we want the former one
         if (it.key() > lineNr - 1) {
             --it;

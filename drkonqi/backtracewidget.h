@@ -25,6 +25,7 @@
 #include "debugpackageinstaller.h"
 #include "ui_backtracewidget.h"
 
+class QSyntaxHighlighter;
 class BacktraceRatingWidget;
 class BacktraceGenerator;
 
@@ -53,7 +54,7 @@ private:
     BacktraceGenerator * m_btGenerator;
     Ui::Form    ui;
     BacktraceRatingWidget *   m_backtraceRatingWidget;
-
+    QSyntaxHighlighter *m_highlighter;
     DebugPackageInstaller * m_debugPackageInstaller;
     
 private Q_SLOTS:

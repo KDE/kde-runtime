@@ -44,7 +44,8 @@ const char *extraDetailsLabelMargin = " margin: 5px; ";
 BacktraceWidget::BacktraceWidget(BacktraceGenerator *generator, QWidget *parent,
     bool showToggleBacktrace) :
         QWidget(parent),
-        m_btGenerator(generator)
+        m_btGenerator(generator),
+        m_highlighter(0)
 {
     ui.setupUi(this);
 
@@ -125,6 +126,10 @@ BacktraceWidget::BacktraceWidget(BacktraceGenerator *generator, QWidget *parent,
 
 void BacktraceWidget::setAsLoading()
 {
+    //remove the syntax highlighter
+    delete m_highlighter;
+    m_highlighter = 0;
+
     //Set the widget as loading and disable all the action buttons
     ui.m_backtraceEdit->setText(i18nc("@info:status", "Loading..."));
     ui.m_backtraceEdit->setEnabled(false);
@@ -212,8 +217,8 @@ void BacktraceWidget::loadData()
 
         // highlight if possible
         if (m_btGenerator->debugger().codeName() == "gdb") {
-            new GdbHighlighter(ui.m_backtraceEdit->document(),
-                               m_btGenerator->parser()->parsedBacktraceLines());
+            m_highlighter = new GdbHighlighter(ui.m_backtraceEdit->document(),
+                                               m_btGenerator->parser()->parsedBacktraceLines());
         }
 
         BacktraceParser * btParser = m_btGenerator->parser();
