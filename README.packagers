@@ -11,3 +11,15 @@ This kio-slave (in runtime/kioslave/network) has an optional runtime dependency:
  * Cagibi daemon (0.1.1 or higher)  <http://websvn.kde.org/trunk/kdesupport/cagibi/>
    SSDP (Simple Service Discovery Protocol, used by UPnP) cache/proxy daemon
    Provides listing of UPnP devices/services in the network:/ kio-slave.
+
+Nepomuk
+-------
+Nepomuk has four runtime dependancies:
+* The Soprano redland storage plugin (also build-time dep)
+  <http://soprano.sf.net>
+* The Soprano raptor parser plugin (also build-time dep)
+  <http://soprano.sf.net>
+* The Soprano Virtuoso storage plugin
+  <http://soprano.sf.net>
+* Virtuoso server and ODBC driver (recommended version >= 6.1.2)
+  <http://www.sf.net/projects/virtuoso-opensource>
