@@ -36,6 +36,7 @@
 
 #include <KIconLoader>
 
+#include <Plasma/AbstractToolBox>
 #include <Plasma/Applet>
 #include <Plasma/Containment>
 #include <Plasma/ScrollWidget>
@@ -54,7 +55,8 @@ AppletsContainer::AppletsContainer(AppletsView *parent)
    m_expandAll(false),
    m_appletsPerColumn(1),
    m_appletsPerRow(1),
-   m_viewScrollState(QAbstractAnimation::Stopped)
+   m_viewScrollState(QAbstractAnimation::Stopped),
+   m_toolBox(0)
 {
     setFlag(QGraphicsItem::ItemHasNoContents);
     m_mainLayout = new QGraphicsLinearLayout(this);
@@ -96,7 +98,7 @@ void AppletsContainer::themeChanged()
 
     QFontMetrics fm(font);
     m_mSize = fm.boundingRect("M").size();
-    
+
     updateViewportGeometry();
 }
 
@@ -134,10 +136,25 @@ void AppletsContainer::updateSize()
 
     QSizeF hint = sizeHint(Qt::PreferredSize, QSize());
 
+    int toolBoxSpace = 0;
     if (m_orientation == Qt::Horizontal) {
-        resize(hint.width(), qMin(size().height(), m_scrollWidget->viewportGeometry().height()));
+        if (m_toolBox) {
+            toolBoxSpace = m_viewportSize.width()/m_appletsPerColumn;
+        }
+        resize(hint.width() + toolBoxSpace, qMin(size().height(), m_scrollWidget->viewportGeometry().height()));
+        if (m_toolBox) {
+            m_toolBox->setPos(QPoint(size().width() - toolBoxSpace/2, size().height()/2) -
+            QPoint(m_toolBox->size().width()/2, m_toolBox->size().height()/2));
+        }
     } else {
-        resize(qMin(size().width(), m_scrollWidget->viewportGeometry().width()), hint.height());
+        if (m_toolBox) {
+            toolBoxSpace = m_viewportSize.height()/m_appletsPerRow;
+        }
+        resize(qMin(size().width(), m_scrollWidget->viewportGeometry().width()), hint.height() + toolBoxSpace);
+        if (m_toolBox) {
+            m_toolBox->setPos(QPoint(size().width()/2, size().height() - toolBoxSpace/2) -
+            QPoint(m_toolBox->size().width()/2, m_toolBox->size().height()/2));
+        }
     }
 }
 
@@ -384,6 +401,14 @@ void AppletsContainer::createAppletTitle(Plasma::Applet *applet)
 
     if (!m_containment) {
         m_containment = applet->containment();
+        if (m_containment) {
+            m_toolBox = Plasma::AbstractToolBox::load("org.kde.mobiletoolbox", QVariantList(), m_containment);
+            m_toolBox->setParentItem(this);
+            if (m_toolBox) {
+                m_toolBox->show();
+                m_toolBox->addTool(m_containment->action("add widgets"));
+            }
+        }
     }
     if (m_orientation == Qt::Horizontal) {
          applet->setPreferredSize(-1, -1);

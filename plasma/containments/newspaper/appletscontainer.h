@@ -31,6 +31,7 @@
 
 namespace Plasma
 {
+    class AbstractToolBox;
     class Applet;
     class Containment;
 }
@@ -119,6 +120,7 @@ private:
     int m_appletsPerRow;
     QAbstractAnimation::State m_viewScrollState;
     QTimer *m_viewSyncTimer;
+    Plasma::AbstractToolBox *m_toolBox;
 };
 
 #endif
