@@ -303,7 +303,8 @@ void Nepomuk::OntologyLoader::updateUserVisibility()
                 UserVisibleNode* r_uvn = new UserVisibleNode( r );
                 all.insert( r, r_uvn );
             }
-            all[r]->userVisible = ( v.isLiteral() ? ( v.literal().toBool() ? 1 : -1 ) : 0 );
+            if( v.isLiteral() )
+                all[r]->userVisible = (v.literal().toBool() ? 1 : -1);
             if ( p.isResource() &&
                  p.uri() != r &&
                  p.uri() != Soprano::Vocabulary::RDFS::Resource() ) {
