@@ -96,6 +96,7 @@ bool AppletsView::sceneEventFilter(QGraphicsItem *watched, QEvent *event)
 
         foreach (Plasma::Applet *applet, m_appletsContainer->containment()->applets()) {
 
+            m_appletMoved.clear();
             if (applet->boundingRect().contains(applet->mapFromScene(me->scenePos()))) {
                 m_appletMoved = applet;
 
@@ -120,12 +121,6 @@ bool AppletsView::sceneEventFilter(QGraphicsItem *watched, QEvent *event)
             }
         }
 
-        if (found) {
-            return Plasma::ScrollWidget::sceneEventFilter(watched, event);
-        } else {
-            event->ignore();
-            return Plasma::ScrollWidget::sceneEventFilter(watched, event);
-        }
     } else if (event->type() == QEvent::GraphicsSceneMouseMove) {
         QGraphicsSceneMouseEvent *me = static_cast<QGraphicsSceneMouseEvent *>(event);
 
