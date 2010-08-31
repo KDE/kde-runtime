@@ -37,7 +37,6 @@ namespace Plasma
 class Newspaper : public Plasma::Containment
 {
     Q_OBJECT
-    friend class AppletOverlay;
 
 public:
     Newspaper(QObject *parent, const QVariantList &args);
