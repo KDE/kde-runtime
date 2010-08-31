@@ -96,6 +96,8 @@ AppletTitleBar::AppletTitleBar(Plasma::Applet *applet)
 
     if (applet->backgroundHints() != Plasma::Applet::NoBackground) {
         m_appletHasBackground = true;
+    } else {
+        m_appletOverlay->setFlag(QGraphicsItem::ItemHasNoContents);
     }
 
     if (applet->backgroundHints() & Plasma::Applet::StandardBackground ||
