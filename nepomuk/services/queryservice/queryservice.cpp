@@ -62,6 +62,9 @@ Nepomuk::Query::QueryService::QueryService( QObject* parent, const QVariantList&
 
 Nepomuk::Query::QueryService::~QueryService()
 {
+    // cannot use qDeleteAll since deleting a folder changes m_openQueryFolders
+    while ( !m_openConnections.isEmpty() )
+        delete m_openConnections.begin().value();
 }
 
 
