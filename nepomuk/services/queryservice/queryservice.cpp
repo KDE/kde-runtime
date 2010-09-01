@@ -98,8 +98,8 @@ QDBusObjectPath Nepomuk::Query::QueryService::sparqlQuery( const QString& sparql
 
 Nepomuk::Query::Folder* Nepomuk::Query::QueryService::getFolder( const Query& query )
 {
-    QHash<Query, Folder*>::iterator it = m_openQueryFolders.find( query );
-    if ( it != m_openQueryFolders.end() ) {
+    QHash<Query, Folder*>::const_iterator it = m_openQueryFolders.constFind( query );
+    if ( it != m_openQueryFolders.constEnd() ) {
         kDebug() << "Recycling folder" << *it;
         return *it;
     }
@@ -116,8 +116,8 @@ Nepomuk::Query::Folder* Nepomuk::Query::QueryService::getFolder( const Query& qu
 
 Nepomuk::Query::Folder* Nepomuk::Query::QueryService::getFolder( const QString& query, const Nepomuk::Query::RequestPropertyMap& requestProps )
 {
-    QHash<QString, Folder*>::iterator it = m_openSparqlFolders.find( query );
-    if ( it != m_openSparqlFolders.end() ) {
+    QHash<QString, Folder*>::const_iterator it = m_openSparqlFolders.constFind( query );
+    if ( it != m_openSparqlFolders.constEnd() ) {
         kDebug() << "Recycling folder" << *it;
         return *it;
     }
