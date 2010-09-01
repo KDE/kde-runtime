@@ -56,6 +56,8 @@ namespace Nepomuk {
             Folder( const QString& sparqlQuery, const RequestPropertyMap& requestProps, QObject* parent = 0 );
             ~Folder();
 
+            bool isSparqlQueryFolder() const { return m_isSparqlQueryFolder; }
+
             /**
              * \return A list of all cached results in the folder.
              * If initial listing is not finished yet, the results found
@@ -120,6 +122,9 @@ namespace Nepomuk {
              * Called by the FolderConnection destructor.
              */
             void removeConnection( FolderConnection* );
+
+            /// true if this query has been created with a string query rather than a Query object
+            const bool m_isSparqlQueryFolder;
 
             /// if valid m_sparqlQuery and m_requestProperties are ignored
             Query m_query;

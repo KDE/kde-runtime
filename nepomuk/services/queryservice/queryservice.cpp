@@ -49,6 +49,11 @@ Nepomuk::Query::QueryService::QueryService( QObject* parent, const QVariantList&
 
 Nepomuk::Query::QueryService::~QueryService()
 {
+    // cannot use qDeleteAll since deleting a folder changes m_openQueryFolders
+    while ( !m_openQueryFolders.isEmpty() )
+        delete m_openQueryFolders.begin().value();
+    while ( !m_openSparqlFolders.isEmpty() )
+        delete m_openSparqlFolders.begin().value();
 }
 
 
@@ -135,10 +140,10 @@ Nepomuk::Query::Folder* Nepomuk::Query::QueryService::getFolder( const QString& 
 void Nepomuk::Query::QueryService::slotFolderAboutToBeDeleted( Folder* folder )
 {
     kDebug() << folder;
-    if ( folder->query().isValid() )
-        m_openQueryFolders.remove( folder->query() );
-    else
+    if ( folder->isSparqlQueryFolder() )
         m_openSparqlFolders.remove( folder->sparqlQuery() );
+    else
+        m_openQueryFolders.remove( folder->query() );
 }
 
 #include "queryservice.moc"

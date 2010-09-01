@@ -32,6 +32,7 @@
 
 Nepomuk::Query::Folder::Folder( const Query& query, QObject* parent )
     : QObject( parent ),
+      m_isSparqlQueryFolder( false ),
       m_query( query )
 {
     init();
@@ -40,6 +41,7 @@ Nepomuk::Query::Folder::Folder( const Query& query, QObject* parent )
 
 Nepomuk::Query::Folder::Folder( const QString& query, const RequestPropertyMap& requestProps, QObject* parent )
     : QObject( parent ),
+      m_isSparqlQueryFolder( true ),
       m_sparqlQuery( query ),
       m_requestProperties( requestProps )
 {
@@ -75,6 +77,9 @@ void Nepomuk::Query::Folder::init()
 Nepomuk::Query::Folder::~Folder()
 {
     m_searchThread->cancel();
+    // cannot use qDeleteAll since deleting a connection changes m_connections
+    while ( !m_connections.isEmpty() )
+        delete m_connections.first();
 }
 
 
