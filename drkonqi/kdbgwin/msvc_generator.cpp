@@ -23,7 +23,6 @@
  * License along with this library.  If not, see <http://www.gnu.org/licenses/>
  *****************************************************************/
 
-#if defined(_MSC_VER)
 #include "msvc_generator.h"
 
 MsvcGenerator::MsvcGenerator(const Process& process)
@@ -52,7 +51,7 @@ QString MsvcGenerator::GetFunctionName()
     if (!SymFromAddr(m_process.GetHandle(), m_currentFrame.AddrPC.Offset, &dwDisplacement, symbol))
     {
         kError() << "SymFromAddr() failed: " << GetLastError();
-        return QLatin1String(DEFAULT_FUNC);
+        return QString::fromLatin1(DEFAULT_FUNC);
     }
 
     char undecoratedName[MAX_PATH] = {0};
@@ -60,10 +59,10 @@ QString MsvcGenerator::GetFunctionName()
     {
         // if this fails, show the decorated name anyway, don't fail
         kError() << "UnDecorateSymbolName() failed: " << GetLastError();
-        return QLatin1String(symbol->Name);
+        return QString::fromLatin1(symbol->Name);
     }
 
-    return QLatin1String(undecoratedName);
+    return QString::fromLatin1(undecoratedName);
 }
 
 QString MsvcGenerator::GetFile()
@@ -76,7 +75,7 @@ QString MsvcGenerator::GetFile()
     if (!SymGetLineFromAddr64(m_process.GetHandle(), m_currentFrame.AddrPC.Offset, &dwDisplacement, &line))
     {
         kError() << "SymGetLineFromAddr64 failed: " << GetLastError();
-        return QLatin1String(DEFAULT_FILE);
+        return QString::fromLatin1(DEFAULT_FILE);
     }
 
     return QString(line.FileName);
@@ -138,5 +137,3 @@ void MsvcGenerator::LoadSymbol(const QString& module, DWORD64 dwBaseAddr)
 
     emit DebugLine(strOutput);
 }
-
-#endif // _MSC_VER

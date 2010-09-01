@@ -132,16 +132,19 @@ void AbstractBTGenerator::Run(HANDLE hThread, bool bFaultingThread)
 
     // some of this stuff is taken from StackWalker
     ZeroMemory(&m_currentFrame, sizeof(m_currentFrame));
+    DWORD machineType = IMAGE_FILE_MACHINE_UNKNOWN;
 #if defined(_M_IX86)
+    machineType = IMAGE_FILE_MACHINE_I386;
     m_currentFrame.AddrPC.Offset = context.Eip;
     m_currentFrame.AddrFrame.Offset = context.Ebp;
     m_currentFrame.AddrStack.Offset = context.Esp;
-#else
-#if defined(_M_X64)
+#elif defined(_M_X64)
+    machineType = IMAGE_FILE_MACHINE_AMD64;
     m_currentFrame.AddrPC.Offset = context.Rip;
     m_currentFrame.AddrFrame.Offset = context.Rbp;
     m_currentFrame.AddrStack.Offset = context.Rsp;
-#endif
+#else
+# error This architecture is not supported.
 #endif
     m_currentFrame.AddrPC.Mode = AddrModeFlat;
     m_currentFrame.AddrFrame.Mode = AddrModeFlat;
@@ -157,7 +160,7 @@ void AbstractBTGenerator::Run(HANDLE hThread, bool bFaultingThread)
         SetLastError(0);
 
         if (!StackWalk64(
-            IMAGE_FILE_MACHINE_I386,
+            machineType,
             m_process.GetHandle(),
             hThread,
             &m_currentFrame,

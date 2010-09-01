@@ -27,12 +27,12 @@
 #include "mingw_generator.h"
 #include "outputters.h"
 #include "process.h"
-#include <QApplication>
+#include <QCoreApplication>
 
-int main(int argc, char *argv[], char *envp[])
+int main(int argc, char *argv[])
 {
-    QApplication app(argc, argv);
-    QApplication::setApplicationName("kdbgwin");
+    QCoreApplication app(argc, argv);
+    QCoreApplication::setApplicationName("kdbgwin");
 
     if (argc != 3)
     {
@@ -55,13 +55,12 @@ int main(int argc, char *argv[], char *envp[])
         return -1;
     }
 
-#if defined(_MSC_VER)
+#if defined(Q_CC_MSVC)
     MsvcGenerator generator(proc);
-#else
-#if defined(__GNUG__)
+#elif defined(Q_CC_GNU)
     MingwGenerator generator(proc);
 #endif
-#endif
+
     Outputter outputter;
 
     QObject::connect

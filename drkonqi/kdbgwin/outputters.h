@@ -26,6 +26,7 @@
 #pragma once
 
 #include "common.h"
+#include <QTextStream>
 
 /**
  * \brief Basic outputter.
@@ -35,6 +36,13 @@
 class Outputter : public QObject
 {
     Q_OBJECT
+
+protected:
+    QTextStream stream;
+
+public:
+    Outputter();
+
 public slots:
     /// The slot that will be called for each line emitted by the generator. This method
     /// sends the string to stdout and kDebug()

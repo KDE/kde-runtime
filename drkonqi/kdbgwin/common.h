@@ -50,7 +50,7 @@
 
 
 // third: KDE includes
-#include <kdebug.h>
+#include <KDebug>
 
 
 // common defines

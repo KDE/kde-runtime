@@ -24,10 +24,12 @@
  *****************************************************************/
 
 #include "outputters.h"
-#include <iostream>
+
+Outputter::Outputter() : stream(stdout)
+{
+}
 
 void Outputter::OnDebugLine(const QString& line)
 {
-    std::cout << (const char*) line.toUtf8() << std::endl;
-    //kDebug() << line;
+    stream << line << '\n';
 }

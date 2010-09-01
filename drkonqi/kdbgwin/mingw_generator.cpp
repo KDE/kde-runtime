@@ -23,7 +23,6 @@
  * License along with this library.  If not, see <http://www.gnu.org/licenses/>
  *****************************************************************/
 
-#if defined(__GNUG__)
 #include "mingw_generator.h"
 #include <bfd.h>
 #include <cxxabi.h>
@@ -49,8 +48,6 @@ typedef QList<MyBFD> TBFDList;
 TBFDList bfds;
 
 asection* text = NULL;
-
-#define MAX_FRAMES (20)
 
 bool MingwGenerator::Init()
 {
@@ -85,7 +82,7 @@ void MingwGenerator::FrameChanged()
     line = DEFAULT_LINE;
     if (offset > 0)
     {
-        bfd_find_nearest_line(bfd.abfd, text, bfd.syms, offset, &file, &func, &line);
+        bfd_find_nearest_line(bfd.abfd, text, bfd.syms, offset, &file, &func, (unsigned int*) &line);
     }
 }
 
@@ -96,32 +93,32 @@ QString MingwGenerator::GetFunctionName()
         char* realname = abi::__cxa_demangle(func, NULL, NULL, NULL);
         if (realname != NULL)
         {
-            QString strReturn = QLatin1String(realname);
+            QString strReturn = QString::fromLatin1(realname);
             free(realname);
             return strReturn;
         }
         else
         {
-            return QLatin1String(func);
+            return QString::fromLatin1(func);
         }
     }
-    return QLatin1String(DEFAULT_FUNC);
+    return QString::fromLatin1(DEFAULT_FUNC);
 }
 
 QString MingwGenerator::GetFile()
 {
     if (file != NULL)
     {
-        return QLatin1String(file);
+        return QString::fromLatin1(file);
     }
-    return QLatin1String(DEFAULT_FILE);
+    return QString::fromLatin1(DEFAULT_FILE);
 }
 
 int MingwGenerator::GetLine()
 {
     if (line > 0)
     {
-        return int(line);
+        return line;
     }
     return -1;
 }
@@ -169,5 +166,3 @@ void MingwGenerator::LoadSymbol(const QString& module, DWORD64 dwBaseAddr)
         .arg(module).arg(symbolType);
     emit DebugLine(strOutput);
 }
-
-#endif // __GNUG__

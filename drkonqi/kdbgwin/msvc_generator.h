@@ -23,7 +23,6 @@
  * License along with this library.  If not, see <http://www.gnu.org/licenses/>
  *****************************************************************/
 
-#if defined(_MSC_VER) || defined(Q_MOC_RUN)
 #pragma once
 
 #include "abstract_generator.h"
@@ -57,5 +56,3 @@ public:
 
     virtual void LoadSymbol(const QString& module, DWORD64 dwBaseAddr);
 };
-
-#endif // _MSC_VER
