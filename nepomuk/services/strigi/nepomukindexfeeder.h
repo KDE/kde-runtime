@@ -92,8 +92,8 @@ namespace Nepomuk {
          */
         void end( bool forceCommit = false );
 
-        static bool removeIndexedDataForUrl( const KUrl& url );
-        static bool removeIndexedDataForResourceUri( const KUrl& res );
+        static bool clearIndexedDataForUrl( const KUrl& url );
+        static bool clearIndexedDataForResourceUri( const KUrl& res );
 
     private:
 

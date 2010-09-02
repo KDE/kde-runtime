@@ -87,14 +87,23 @@ namespace Nepomuk {
         void indexResource( const KUrl& url, const QDateTime& modificationTime, QDataStream& data );
 
         /**
-         * Remove all indexed data for the file at local url \p url.
-         */
-        void removeIndexedData( const KUrl& url );
-
-        /**
          * Remove all indexed data for the file/resource identified by \p res.
          */
-        void removeIndexedData( const Nepomuk::Resource& res );
+        void clearIndexedData( const Nepomuk::Resource& res );
+
+        /**
+         * \overload
+         *
+         * Remove all indexed data for the file at local url \p url.
+         */
+        void clearIndexedData( const KUrl& url );
+
+        /**
+         * \overload
+         *
+         * Remove all indexed data for the file identifies by \p info.
+         */
+        void clearIndexedData( const QFileInfo& info );
 
         /**
          * This method stops the indexer, i.e. cancels potentially

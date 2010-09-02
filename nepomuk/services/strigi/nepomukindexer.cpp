@@ -191,15 +191,21 @@ void Nepomuk::Indexer::indexResource( const KUrl& uri, const QDateTime& modifica
 }
 
 
-void Nepomuk::Indexer::removeIndexedData( const KUrl& url )
+void Nepomuk::Indexer::clearIndexedData( const KUrl& url )
 {
-    Nepomuk::IndexFeeder::removeIndexedDataForUrl( url );
+    Nepomuk::IndexFeeder::clearIndexedDataForUrl( url );
 }
 
 
-void Nepomuk::Indexer::removeIndexedData( const Nepomuk::Resource& res )
+void Nepomuk::Indexer::clearIndexedData( const QFileInfo& info )
 {
-    Nepomuk::IndexFeeder::removeIndexedDataForResourceUri( res.resourceUri() );
+    Nepomuk::IndexFeeder::clearIndexedDataForUrl( KUrl(info.filePath()) );
+}
+
+
+void Nepomuk::Indexer::clearIndexedData( const Nepomuk::Resource& res )
+{
+    Nepomuk::IndexFeeder::clearIndexedDataForResourceUri( res.resourceUri() );
 }
 
 

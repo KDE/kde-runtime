@@ -281,7 +281,7 @@ QUrl Nepomuk::IndexFeeder::generateGraph( const QUrl& resourceUri ) const
 
 
 // static
-bool Nepomuk::IndexFeeder::removeIndexedDataForUrl( const KUrl& url )
+bool Nepomuk::IndexFeeder::clearIndexedDataForUrl( const KUrl& url )
 {
     if ( url.isEmpty() )
         return false;
@@ -309,7 +309,7 @@ bool Nepomuk::IndexFeeder::removeIndexedDataForUrl( const KUrl& url )
 
 
 // static
-bool Nepomuk::IndexFeeder::removeIndexedDataForResourceUri( const KUrl& res )
+bool Nepomuk::IndexFeeder::clearIndexedDataForResourceUri( const KUrl& res )
 {
     if ( res.isEmpty() )
         return false;

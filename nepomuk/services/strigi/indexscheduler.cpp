@@ -466,7 +466,7 @@ void Nepomuk::IndexScheduler::deleteEntries( const QStringList& entries )
     // TODO: use a less mem intensive method
     for ( int i = 0; i < entries.count(); ++i ) {
         deleteEntries( getChildren( entries[i] ).keys() );
-        m_indexer->removeIndexedData( KUrl( entries[i] ) );
+        m_indexer->clearIndexedData( KUrl( entries[i] ) );
     }
 }
 
