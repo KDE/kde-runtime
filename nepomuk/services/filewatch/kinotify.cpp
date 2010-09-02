@@ -98,7 +98,13 @@ public:
 
     bool addWatch( const QByteArray& path ) {
         // we always need the unmount event to maintain our path hash
-        const int mask = mode|flags|EventUnmount;
+        WatchEvents newMode = mode;
+        WatchFlags newFlags = flags;
+
+        if( !q->filterWatch( path, newMode, newFlags ) ) {
+            return true;
+        }
+        const int mask = newMode|newFlags|EventUnmount;
 
         int wd = inotify_add_watch( inotify(), path.data(), mask );
         if ( wd > 0 ) {
@@ -288,6 +294,14 @@ bool KInotify::removeWatch( const QString& path )
     return true;
 }
 
+
+bool KInotify::filterWatch( const QString & path, WatchEvents & modes, WatchFlags & flags )
+{
+    Q_UNUSED( path );
+    Q_UNUSED( modes );
+    Q_UNUSED( flags );
+    return true;
+}
 
 void KInotify::slotEvent( int socket )
 {

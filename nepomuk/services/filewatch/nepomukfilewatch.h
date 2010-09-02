@@ -23,6 +23,7 @@
 
 #include <QtCore/QUrl>
 #include <QtCore/QVariant>
+#include <QtCore/QSet>
 
 namespace Soprano {
     class Model;
@@ -68,6 +69,12 @@ namespace Nepomuk {
 #ifdef BUILD_KINOTIFY
         void slotInotifyWatchUserLimitReached();
 #endif
+        /**
+         * To be called whenever the list of indexed folders changes. This is done because
+         * the indexed folders are watched with the 'KInotify::EventCreate' event, and the
+         * non-indexed folders are not.
+         */
+        void updateIndexedFoldersWatches();
 
     private:
         /**

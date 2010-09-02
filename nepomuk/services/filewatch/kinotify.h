@@ -92,6 +92,13 @@ public:
 
     bool watchingPath( const QString& path ) const;
 
+protected:
+    /**
+     * Called for every folder that is being watched.
+     * Returns true if the watch should be add or false if it should NOT be added.
+     */
+    virtual bool filterWatch( const QString & path, WatchEvents & modes, WatchFlags & flags );
+
 public Q_SLOTS:
     virtual bool addWatch( const QString& path, WatchEvents modes, WatchFlags flags = WatchFlags() );
     bool removeWatch( const QString& path );

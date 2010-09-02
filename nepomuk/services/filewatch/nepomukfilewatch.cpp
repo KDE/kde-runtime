@@ -59,6 +59,8 @@ namespace {
         ~IgnoringKInotify();
 
         bool addWatch( const QString& path, WatchEvents modes, WatchFlags flags = WatchFlags() );
+    protected:
+        bool filterWatch( const QString & path, WatchEvents & modes, WatchFlags & flags );
 
     private:
         RegExpCache* m_pathExcludeRegExpCache;
@@ -83,6 +85,21 @@ namespace {
             kDebug() << "Ignoring watch patch" << path;
             return false;
         }
+    }
+
+    bool IgnoringKInotify::filterWatch( const QString & path, WatchEvents & modes, WatchFlags & flags )
+    {
+        Q_UNUSED( flags );
+
+        //Only watch the strigi index folders for file creation.
+        if( Nepomuk::StrigiServiceConfig::self()->shouldFolderBeIndexed( path ) ) {
+            modes |= KInotify::EventCreate;
+        }
+        else {
+            modes &= (~KInotify::EventCreate);
+        }
+
+        return true;
     }
 }
 #endif // BUILD_KINOTIFY
@@ -139,6 +156,9 @@ Nepomuk::FileWatch::FileWatch( QObject* parent, const QList<QVariant>& )
 #endif
 
     (new InvalidFileResourceCleaner(this))->start();
+    
+    connect( StrigiServiceConfig::self(), SIGNAL( configChanged() ),
+             this, SLOT( updateIndexedFoldersWatches() ) );
 }
 
 
@@ -199,6 +219,7 @@ void Nepomuk::FileWatch::slotFileDeleted( const QString& urlString )
 
 void Nepomuk::FileWatch::slotFileCreated( const QString& path )
 {
+    kDebug() << path;
     updateFolderViaStrigi( path );
 }
 
@@ -258,5 +279,16 @@ bool Nepomuk::FileWatch::ignorePath( const QString& path )
     // we only watch interesting folders to begin with.
     return m_pathExcludeRegExpCache->filenameMatch( path );
 }
+
+
+void Nepomuk::FileWatch::updateIndexedFoldersWatches()
+{
+    QStringList folders = StrigiServiceConfig::self()->includeFolders();
+    foreach( const QString & folder, folders ) {
+        m_dirWatch->removeWatch( folder );
+        watchFolder( folder );
+    }
+}
+
 
 #include "nepomukfilewatch.moc"
