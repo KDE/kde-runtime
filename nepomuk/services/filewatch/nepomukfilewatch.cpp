@@ -283,11 +283,13 @@ bool Nepomuk::FileWatch::ignorePath( const QString& path )
 
 void Nepomuk::FileWatch::updateIndexedFoldersWatches()
 {
+#ifdef BUILD_KINOTIFY
     QStringList folders = StrigiServiceConfig::self()->includeFolders();
     foreach( const QString & folder, folders ) {
         m_dirWatch->removeWatch( folder );
         watchFolder( folder );
     }
+#endif
 }
 
 
