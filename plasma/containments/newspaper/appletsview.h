@@ -47,6 +47,7 @@ protected:
     bool sceneEventFilter(QGraphicsItem *watched, QEvent *event);
     void dragEnterEvent(QGraphicsSceneDragDropEvent *event);
     void dragMoveEvent(QGraphicsSceneDragDropEvent *event);
+    void dragLeaveEvent(QGraphicsSceneDragDropEvent *event);
     void dropEvent(QGraphicsSceneDragDropEvent *event);
 
     void manageHoverMoveEvent(QGraphicsSceneHoverEvent *event);

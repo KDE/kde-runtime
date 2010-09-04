@@ -406,32 +406,37 @@ void AppletsView::showSpacer(const QPointF &pos)
 
 void AppletsView::scrollTimeout()
 {
-    if (!m_appletMoved) {
-        return;
-    }
 
     if (m_appletsContainer->orientation() == Qt::Vertical) {
         if (m_scrollDown) {
             if (m_appletsContainer->geometry().bottom() > geometry().bottom()) {
                 m_appletsContainer->moveBy(0, -10);
-                m_appletMoved.data()->moveBy(0, 10);
+                if (m_appletMoved) {
+                    m_appletMoved.data()->moveBy(0, 10);
+                }
             }
         } else {
             if (m_appletsContainer->pos().y() < 0) {
                 m_appletsContainer->moveBy(0, 10);
-                m_appletMoved.data()->moveBy(0, -10);
+                if (m_appletMoved) {
+                    m_appletMoved.data()->moveBy(0, -10);
+                }
             }
         }
     } else {
         if (m_scrollDown) {
             if (m_appletsContainer->geometry().right() > geometry().right()) {
                 m_appletsContainer->moveBy(-10, 0);
-                m_appletMoved.data()->moveBy(10, 0);
+                if (m_appletMoved) {
+                    m_appletMoved.data()->moveBy(10, 0);
+                }
             }
         } else {
             if (m_appletsContainer->pos().x() < 0) {
                 m_appletsContainer->moveBy(10, 0);
-                m_appletMoved.data()->moveBy(-10, 0);
+                if (m_appletMoved) {
+                    m_appletMoved.data()->moveBy(-10, 0);
+                }
             }
         }
     }
@@ -461,6 +466,11 @@ void AppletsView::dragMoveEvent(QGraphicsSceneDragDropEvent *event)
     showSpacer(pos);
 }
 
+void AppletsView::dragLeaveEvent(QGraphicsSceneDragDropEvent *event)
+{
+    m_scrollTimer->stop();
+}
+
 void AppletsView::dropEvent(QGraphicsSceneDragDropEvent *event)
 {
     if (m_spacerLayout) {
@@ -470,6 +480,8 @@ void AppletsView::dropEvent(QGraphicsSceneDragDropEvent *event)
     if (m_spacer) {
         m_spacer->deleteLater();
     }
+
+    m_scrollTimer->stop();
 
     m_spacer = 0;
     m_spacerLayout = 0;
