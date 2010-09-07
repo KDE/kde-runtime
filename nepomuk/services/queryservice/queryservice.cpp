@@ -51,9 +51,8 @@ Nepomuk::Query::QueryService::QueryService( QObject* parent, const QVariantList&
 
     s_instance = this;
 
-    m_serviceWatcher = new QDBusServiceWatcher( QString(),
-                                                QDBusConnection::sessionBus(),
-                                                QDBusServiceWatcher::WatchForUnregistration, this);
+    m_serviceWatcher = new QDBusServiceWatcher( this );
+    m_serviceWatcher->setWatchMode( QDBusServiceWatcher::WatchForUnregistration );
 
     connect( m_serviceWatcher, SIGNAL( serviceUnregistered(const QString& ) ),
              this, SLOT( slotServiceUnregistered( const QString& ) ) );
