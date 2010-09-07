@@ -145,13 +145,12 @@ QDBusObjectPath Nepomuk::Query::FolderConnection::registerDBusObject( const QStr
     QDBusConnection::sessionBus().registerObject( dbusObjectPath, this );
 
     // watch the dbus client for unregistration for auto-cleanup
-    m_serviceWatcher = new QDBusServiceWatcher( QString(),
+    m_serviceWatcher = new QDBusServiceWatcher( dbusClient,
                                                 QDBusConnection::sessionBus(),
                                                 QDBusServiceWatcher::WatchForUnregistration,
                                                 this );
-    connect( m_serviceWatcher, SIGNAL(serviceUnregistered(const QString&)),
+    connect( m_serviceWatcher, SIGNAL(serviceUnregistered(QString)),
              this, SLOT(close()) );
-    m_serviceWatcher->addWatchedService( dbusClient );
 
     // finally return the dbus object path this connection can be found on
     return QDBusObjectPath( dbusObjectPath );
