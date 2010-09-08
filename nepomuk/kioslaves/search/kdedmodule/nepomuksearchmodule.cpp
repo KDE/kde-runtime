@@ -61,6 +61,7 @@ Nepomuk::SearchModule::SearchModule( QObject* parent, const QList<QVariant>& )
     // themselves
     //
     m_watcher = new QDBusServiceWatcher( this );
+    m_watcher->setConnection( QDBusConnection::sessionBus() );
     m_watcher->setWatchMode( QDBusServiceWatcher::WatchForUnregistration );
     connect( m_watcher, SIGNAL( serviceUnregistered( const QString& ) ),
              this, SLOT( slotServiceUnregistered( const QString& ) ) );
