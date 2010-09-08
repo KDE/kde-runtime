@@ -1,8 +1,18 @@
 [Desktop Entry]
 Name=Newspaper Layout
+Name[ia]=Disposition de jornal
+Name[pt]=Disposição do Jornal
+Name[pt_BR]=Leiaute do jornal
+Name[sv]=Tidningslayout
+Name[uk]=Газетне компонування
 Name[x-test]=xxNewspaper Layoutxx
 
 Comment=A layout that puts widgets into columns
+Comment[ia]=Un disposition que pone elementos graphicos (widget) in columnas
+Comment[pt]=Uma disposição que coloca os elementos em colunas
+Comment[pt_BR]=Um leiaute que coloca os widgets em colunas
+Comment[sv]=En layout som placerar grafiska komponenter i kolumner
+Comment[uk]=Компонування з віджетами, розподіленими за стовпчиками
 Comment[x-test]=xxA layout that puts widgets into columnsxx
 
 
