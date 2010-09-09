@@ -336,6 +336,10 @@ Soprano::BackendSettings Nepomuk::Repository::readVirtuosoSettings() const
     // Always force the start, ie. kill previously started Virtuoso instances
     settings << Soprano::BackendSetting( "forcedstart", true );
 
+    // 100 server threads is hopefully enough - at some point the problem of maximum server threads == max client
+    // needs to be addressed as well
+    settings << Soprano::BackendSetting( "thread", 100 );
+
     return settings;
 }
 
