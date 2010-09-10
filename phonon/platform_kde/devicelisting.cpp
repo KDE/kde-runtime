@@ -34,9 +34,6 @@
 #include <alsa/asoundlib.h>
 #endif // HAVE_ALSA_ASOUNDLIB_H
 
-typedef QList<QPair<QByteArray, QString> > PhononDeviceAccessList;
-Q_DECLARE_METATYPE(PhononDeviceAccessList)
-
 static void installAlsaPhononDeviceHandle()
 {
 #ifdef HAVE_LIBASOUND2
@@ -114,8 +111,8 @@ DeviceListing::DeviceListing()
             QLatin1String("/modules/phononserver"),
             QLatin1String("org.kde.PhononServer"))
 {
-    qRegisterMetaType<PhononDeviceAccessList>();
-    qRegisterMetaTypeStreamOperators<PhononDeviceAccessList>("PhononDeviceAccessList");
+    qRegisterMetaType<Phonon::DeviceAccessList>();
+    qRegisterMetaTypeStreamOperators<Phonon::DeviceAccessList>("Phonon::DeviceAccessList");
 
     KSharedConfigPtr config;
     config = KSharedConfig::openConfig("phonon_platform_kde");

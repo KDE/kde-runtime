@@ -41,11 +41,6 @@
 #include <kstandarddirs.h>
 #include "devicelisting.h"
 
-typedef QPair<QByteArray, QString> PhononDeviceAccess;
-typedef QList<PhononDeviceAccess> PhononDeviceAccessList;
-#ifndef KDE_USE_FINAL
-Q_DECLARE_METATYPE(PhononDeviceAccessList)
-#endif
 namespace Phonon
 {
 
@@ -302,9 +297,9 @@ QList<QPair<QByteArray, QString> > KdePlatformPlugin::deviceAccessListFor(const 
 {
     const QVariant &deviceAccessListVariant = deviceDesc.property("deviceAccessList");
     if (deviceAccessListVariant.isValid()) {
-        return qvariant_cast<PhononDeviceAccessList>(deviceAccessListVariant);
+        return qvariant_cast<Phonon::DeviceAccessList>(deviceAccessListVariant);
     }
-    PhononDeviceAccessList ret;
+    Phonon::DeviceAccessList ret;
     const QVariant &v = deviceDesc.property("driver");
     if (v.isValid()) {
         const QByteArray &driver = v.toByteArray();

@@ -55,9 +55,6 @@ K_PLUGIN_FACTORY(PhononServerFactory,
         )
 K_EXPORT_PLUGIN(PhononServerFactory("phononserver"))
 
-typedef QList<QPair<QByteArray, QString> > PhononDeviceAccessList;
-Q_DECLARE_METATYPE(PhononDeviceAccessList)
-
 PhononServer::PhononServer(QObject *parent, const QList<QVariant> &)
     : KDEDModule(parent),
     m_config(KSharedConfig::openConfig("phonondevicesrc", KConfig::SimpleConfig))
@@ -65,8 +62,8 @@ PhononServer::PhononServer(QObject *parent, const QList<QVariant> &)
     findDevices();
     connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceAdded(const QString &)), SLOT(deviceAdded(const QString &)));
     connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceRemoved(const QString &)), SLOT(deviceRemoved(const QString &)));
-    qRegisterMetaType<PhononDeviceAccessList>();
-    qRegisterMetaTypeStreamOperators<PhononDeviceAccessList>("PhononDeviceAccessList");
+    qRegisterMetaType<Phonon::DeviceAccessList>();
+    qRegisterMetaTypeStreamOperators<Phonon::DeviceAccessList>("Phonon::DeviceAccessList");
 }
 
 PhononServer::~PhononServer()
@@ -691,7 +688,7 @@ void PhononServer::updateAudioDevicesCache()
         properties.insert("initialPreference", dev.initialPreference());
         properties.insert("isAdvanced", dev.isAdvanced());
         properties.insert("icon", dev.icon());
-        PhononDeviceAccessList deviceAccessList;
+        Phonon::DeviceAccessList deviceAccessList;
         bool first = true;
         QStringList oldDeviceIds;
         PS::AudioDeviceAccess::AudioDriver driverId = PS::AudioDeviceAccess::InvalidDriver;
@@ -729,7 +726,7 @@ void PhononServer::updateAudioDevicesCache()
         properties.insert("initialPreference", dev.initialPreference());
         properties.insert("isAdvanced", dev.isAdvanced());
         properties.insert("icon", dev.icon());
-        PhononDeviceAccessList deviceAccessList;
+        Phonon::DeviceAccessList deviceAccessList;
         foreach (const PS::AudioDeviceAccess &access, dev.accessList()) {
             const QByteArray &driver = nameForDriver(access.driver());
             foreach (const QString &deviceId, access.deviceIds()) {
