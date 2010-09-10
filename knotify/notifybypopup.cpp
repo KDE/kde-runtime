@@ -29,6 +29,7 @@
 #include <kdialog.h>
 #include <khbox.h>
 #include <kvbox.h>
+#include <kcharsets.h>
 
 #include <QBuffer>
 #include <QImage>
@@ -533,6 +534,8 @@ KNotifyConfig *NotifyByPopup::ensurePopupCompatibility( const KNotifyConfig *con
 QString NotifyByPopup::stripHtml( const QString &text )
 {
 	QXmlStreamReader r( "<elem>" + text + "</elem>" );
+	HtmlEntityResolver resolver;
+	r.setEntityResolver( &resolver );
 	QString result;
 	while( !r.atEnd() ) {
 		r.readNext();
@@ -558,6 +561,24 @@ QString NotifyByPopup::stripHtml( const QString &text )
 	}
 
 	return result;
+}
+
+QString NotifyByPopup::HtmlEntityResolver::resolveUndeclaredEntity(
+		const QString &name )
+{
+	QString result =
+		QXmlStreamEntityResolver::resolveUndeclaredEntity(name);
+	if( !result.isEmpty() )
+		return result;
+
+	QChar ent = KCharsets::fromEntity( '&' + name );
+	if( ent.isNull() ) {
+		kWarning(300) << "Notification to send to backend which does "
+		                 "not support HTML, contains invalid entity: "
+		              << name;
+		ent = ' ';
+	}
+	return QString(ent);
 }
 
 #include "notifybypopup.moc"

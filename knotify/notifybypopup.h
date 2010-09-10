@@ -26,6 +26,7 @@
 #include <QMap>
 #include <QHash>
 #include <QStringList>
+#include <QXmlStreamEntityResolver>
 
 class KPassivePopup;
 
@@ -113,6 +114,15 @@ class NotifyByPopup : public KNotifyPlugin
 		 * Maps knotify notification IDs to DBus notifications IDs
 		 */
 		QHash<int,uint> m_idMap;
+
+		/**
+		 * A class for resolving HTML entities in XML documents (used
+		 * during HTML stripping)
+		 */
+		class HtmlEntityResolver : public QXmlStreamEntityResolver
+		{
+			QString resolveUndeclaredEntity( const QString &name );
+		};
 };
 
 #endif
