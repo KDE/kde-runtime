@@ -236,7 +236,7 @@ void NotifyByPopup::fillPopup(KPassivePopup *pop,int id,KNotifyConfig * config)
 	KIconLoader iconLoader(iconName);
 	QPixmap appIcon = iconLoader.loadIcon( iconName, KIconLoader::Small );
 
-	KVBox *vb = pop->standardView( appCaption , config->image.isNull() ? config->text : QString() , appIcon );
+	KVBox *vb = pop->standardView( config->title.isEmpty() ? appCaption : config->title , config->image.isNull() ? config->text : QString() , appIcon );
 	KVBox *vb2 = vb;
 
 	if(!config->image.isNull())
