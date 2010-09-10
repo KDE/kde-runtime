@@ -62,8 +62,8 @@ PhononServer::PhononServer(QObject *parent, const QList<QVariant> &)
     findDevices();
     connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceAdded(const QString &)), SLOT(deviceAdded(const QString &)));
     connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceRemoved(const QString &)), SLOT(deviceRemoved(const QString &)));
-    qRegisterMetaType<Phonon::DeviceAccessList>();
-    qRegisterMetaTypeStreamOperators<Phonon::DeviceAccessList>("Phonon::DeviceAccessList");
+
+    Phonon::registerMetaTypes();
 }
 
 PhononServer::~PhononServer()
@@ -704,7 +704,7 @@ void PhononServer::updateAudioDevicesCache()
                 if (access.driver() == driverId) {
                     oldDeviceIds << deviceId;
                 }
-                deviceAccessList << QPair<QByteArray, QString>(driver, deviceId);
+                deviceAccessList << Phonon::DeviceAccess(driver, deviceId);
             }
         }
         properties.insert("deviceAccessList", QVariant::fromValue(deviceAccessList));
@@ -730,7 +730,7 @@ void PhononServer::updateAudioDevicesCache()
         foreach (const PS::AudioDeviceAccess &access, dev.accessList()) {
             const QByteArray &driver = nameForDriver(access.driver());
             foreach (const QString &deviceId, access.deviceIds()) {
-                deviceAccessList << QPair<QByteArray, QString>(driver, deviceId);
+                deviceAccessList << Phonon::DeviceAccess(driver, deviceId);
             }
         }
         properties.insert("deviceAccessList", QVariant::fromValue(deviceAccessList));

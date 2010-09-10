@@ -111,9 +111,6 @@ DeviceListing::DeviceListing()
             QLatin1String("/modules/phononserver"),
             QLatin1String("org.kde.PhononServer"))
 {
-    qRegisterMetaType<Phonon::DeviceAccessList>();
-    qRegisterMetaTypeStreamOperators<Phonon::DeviceAccessList>("Phonon::DeviceAccessList");
-
     KSharedConfigPtr config;
     config = KSharedConfig::openConfig("phonon_platform_kde");
     installAlsaPhononDeviceHandle();
