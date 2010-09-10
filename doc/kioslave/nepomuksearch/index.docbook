@@ -1,0 +1,110 @@
+<?xml version="1.0" ?>
+<!DOCTYPE article PUBLIC "-//KDE//DTD DocBook XML V4.2-Based Variant V1.1//EN"
+"dtd/kdex.dtd" [
+<!ENTITY % addindex "IGNORE">
+<!ENTITY % English "INCLUDE" >
+<!-- change language only here -->
+]>
+
+<article lang="&language;" id="nepomuksearch">
+  <title>nepomuksearch</title>
+  <articleinfo>
+    <authorgroup>
+      <author>
+        <personname>
+          <firstname>Sebastian</firstname>
+          <surname>Tr&uuml;g</surname>
+        </personname>
+        <email>trueg@kde.org</email>
+      </author>
+      <!-- TRANS:ROLES_OF_TRANSLATORS -->
+    </authorgroup>
+
+    <date>2010-09-10</date>
+    <releaseinfo>1.0.0</releaseinfo>
+  </articleinfo>
+
+  <sect1>
+    <title>Overview</title>
+
+    <para>The <acronym>nepomuksearch</acronym> protocol allows to search the Nepomuk meta data store for files or any other type of resource (although files is the most important use case since we are talking about virtual file systems here).</para>
+    <note>
+      <para>For it to work the Nepomuk system needs to be activated. Activating the Strigi file indexer provides better results and way more search possibilities.</para>
+    </note>
+
+    <para>Typically <acronym>nepomuksearch</acronym> is used transparently to the user through an application like <application>Dolphin</application> which provide GUI elements to construct the necessary query and the corresponding URL. However, it is also possible to write a query URL manually. There are two different possibilities which might be of interest to the user (be aware that queries created as presented below are not restricted to files):</para>
+    <variablelist>
+      <varlistentry>
+        <term>
+          <userinput>nepomuksearch:/?query=Nepomuk</userinput>
+        </term>
+        <listitem>
+          <para>will look for anything containing the word 'Nepomuk'. 'Nepomuk' can be replaced with anything the simple <xref linkend="query_syntax" /> allows.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>
+          <userinput>nepomuksearch:/?sparql=select ?r where { ?r nao:hasTag ?tag . ?tag nao:prefLabel 'Nepomuk'^^xsd:string . }</userinput>
+        </term>
+        <listitem>
+          <para>will execute the <acronym>SPARQL</acronym> query which in this case looks for all resources that are tagged with a tag that has the label 'Nepomuk'. Be aware that the query needs to be percent-encoded, ie. a URI like <userinput>&lt;http://www.semanticdesktop.org/ontologies/2007/08/15/nao#Tag&gt;</userinput> would have to be written as <userinput>%3chttp:%2f%2fwww.semanticdesktop.org%2fontologies%2f2007%2f08%2f15%2fnao#Tag%3e</userinput>.</para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+
+  </sect1>
+
+  <sect1 id="query_syntax">
+    <title>Nepomuk Query Syntax</title>
+    <para>The syntax is fairly simple. Multiple query terms can be combined with the keywords <command>AND</command> or <command>OR</command>, terms can be excluded by prefixing them with a minus, and specific properties can be searched by combining the property name with a comparator and the value.</para>
+    <tip>
+      <para>This syntax can also be used in standard search fields such as the <application>Dolphin</application> one.</para>
+    </tip>
+    <sect2>
+      <title>Examples</title>
+      <variablelist>
+        <varlistentry>
+          <term>
+            <userinput>Nepomuk KDE</userinput> or <userinput>Nepomuk AND KDE</userinput>
+          </term>
+          <listitem>
+            <para>search for everything containing the words 'Nepomuk' and 'KDE' in any of their properties (this includes the content of files).</para>
+          </listitem>
+        </varlistentry>
+        <varlistentry>
+          <term>
+            <userinput>Nepomuk OR KDE</userinput>
+          </term>
+          <listitem>
+            <para>search for everything containing either the word "Nepomuk" or the word 'KDE' in any of their properties.</para>
+          </listitem>
+        </varlistentry>
+        <varlistentry>
+          <term>
+            <userinput>"Nepomuk KDE"</userinput>
+          </term>
+          <listitem>
+            <para>search for everything containing the exact phrase "Nepomuk KDE" in any of their properties.</para>
+          </listitem>
+        </varlistentry>
+        <varlistentry>
+          <term>
+            <userinput>hastag:Nepomuk</userinput>
+          </term>
+          <listitem>
+            <para>search for everything that is tagged with a tag named "Nepomuk".</para>
+          </listitem>
+        </varlistentry>
+        <varlistentry>
+          <term>
+            <userinput>+hastag:nepomuk AND -hastag:scribo</userinput>
+          </term>
+          <listitem>
+            <para>search for everything that has a tag labeled "nepomuk" but not a tag labeled "scribo".</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+    </sect2>
+  </sect1>
+
+</article>
