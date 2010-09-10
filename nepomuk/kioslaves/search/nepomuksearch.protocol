@@ -14,4 +14,4 @@ source=false
 Icon=nepomuk
 Class=:local
 maxInstances=20
-DocPath=kioslave/nepomuksearch/index.html
+X-DocPath=kioslave/nepomuksearch/index.html
