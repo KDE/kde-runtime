@@ -39,7 +39,7 @@
           <userinput>nepomuksearch:/?query=Nepomuk</userinput>
         </term>
         <listitem>
-          <para>will look for anything containing the word 'Nepomuk'. 'Nepomuk' can be replaced with anything the simple <xref linkend="query_syntax" /> allows.</para>
+          <para>will look for anything containing the word "Nepomuk". "Nepomuk" can be replaced with anything the simple <xref linkend="query_syntax" /> allows.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
@@ -47,7 +47,7 @@
           <userinput>nepomuksearch:/?sparql=select ?r where { ?r nao:hasTag ?tag . ?tag nao:prefLabel 'Nepomuk'^^xsd:string . }</userinput>
         </term>
         <listitem>
-          <para>will execute the <acronym>SPARQL</acronym> query which in this case looks for all resources that are tagged with a tag that has the label 'Nepomuk'. Be aware that the query needs to be percent-encoded, ie. a URI like <userinput>&lt;http://www.semanticdesktop.org/ontologies/2007/08/15/nao#Tag&gt;</userinput> would have to be written as <userinput>%3chttp:%2f%2fwww.semanticdesktop.org%2fontologies%2f2007%2f08%2f15%2fnao#Tag%3e</userinput>.</para>
+          <para>will execute the <acronym>SPARQL</acronym> query which in this case looks for all resources that are tagged with a tag that has the label "Nepomuk". Be aware that the query needs to be percent-encoded, &ie; a URI like <userinput>&lt;http://www.semanticdesktop.org/ontologies/2007/08/15/nao#Tag&gt;</userinput> would have to be written as <userinput>%3chttp:%2f%2fwww.semanticdesktop.org%2fontologies%2f2007%2f08%2f15%2fnao#Tag%3e</userinput>.</para>
         </listitem>
       </varlistentry>
     </variablelist>
@@ -68,7 +68,7 @@
             <userinput>Nepomuk KDE</userinput> or <userinput>Nepomuk AND KDE</userinput>
           </term>
           <listitem>
-            <para>search for everything containing the words 'Nepomuk' and 'KDE' in any of their properties (this includes the content of files).</para>
+            <para>search for everything containing the words "Nepomuk" and "KDE" in any of their properties (this includes the content of files).</para>
           </listitem>
         </varlistentry>
         <varlistentry>
@@ -76,7 +76,7 @@
             <userinput>Nepomuk OR KDE</userinput>
           </term>
           <listitem>
-            <para>search for everything containing either the word "Nepomuk" or the word 'KDE' in any of their properties.</para>
+            <para>search for everything containing either the word "Nepomuk" or the word "KDE" in any of their properties.</para>
           </listitem>
         </varlistentry>
         <varlistentry>
