@@ -46,6 +46,7 @@ public:
     void constraintsEvent(Plasma::Constraints constraints);
 
 public Q_SLOTS:
+    void configChanged();
     Plasma::Applet *addApplet(const QString &appletName, const int row = -1, const int column = -1);
     Plasma::Applet *addApplet(Plasma::Applet *applet, const int row, const int column);
 

@@ -91,11 +91,7 @@ void Newspaper::init()
     connect(m_relayoutTimer, SIGNAL(timeout()), m_container, SLOT(cleanupColumns()));
     connect(m_container, SIGNAL(appletSizeHintChanged()), this, SLOT(appletSizeHintChanged()));
 
-    m_orientation = (Qt::Orientation)config().readEntry("orientation", (int)Qt::Vertical);
-    m_container->setOrientation(m_orientation);
-
-    m_expandAll = config().readEntry("ExpandAllApplets", false);
-    m_container->setExpandAll(m_expandAll);
+    configChanged();
 
     m_container->addColumn();
     setOrientation(m_orientation);
@@ -179,6 +175,15 @@ void Newspaper::init()
         connect(corona(), SIGNAL(availableScreenRegionChanged()), this, SLOT(availableScreenRegionChanged()));
         availableScreenRegionChanged();
     }
+}
+
+void Newspaper::configChanged()
+{
+    m_orientation = (Qt::Orientation)config().readEntry("orientation", (int)Qt::Vertical);
+    m_container->setOrientation(m_orientation);
+
+    m_expandAll = config().readEntry("ExpandAllApplets", false);
+    m_container->setExpandAll(m_expandAll);
 }
 
 void Newspaper::updateSize()
