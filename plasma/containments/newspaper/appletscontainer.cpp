@@ -403,8 +403,8 @@ void AppletsContainer::createAppletTitle(Plasma::Applet *applet)
         m_containment = applet->containment();
         if (m_containment) {
             m_toolBox = Plasma::AbstractToolBox::load("org.kde.mobiletoolbox", QVariantList(), m_containment);
-            m_toolBox->setParentItem(this);
             if (m_toolBox) {
+                m_toolBox->setParentItem(this);
                 m_toolBox->show();
                 m_toolBox->addTool(m_containment->action("add widgets"));
             }
