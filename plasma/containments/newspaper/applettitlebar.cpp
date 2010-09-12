@@ -303,7 +303,9 @@ bool AppletTitleBar::eventFilter(QObject *watched, QEvent *event)
 
 void AppletTitleBar::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    if (m_applet->hasValidAssociatedApplication() &&
+    if (!m_active) {
+        event->setAccepted(false);
+    } else if (m_applet->hasValidAssociatedApplication() &&
         m_maximizeButtonRect.contains(event->pos())) {
         m_pressedButton = MaximizeButton;
         m_maximizeButtonRect.translate(1, 1);
@@ -320,7 +322,6 @@ void AppletTitleBar::mousePressEvent(QGraphicsSceneMouseEvent *event)
         update(m_closeButtonRect);
         event->accept();
     }
-    event->setAccepted(!m_active);
 }
 
 void AppletTitleBar::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
