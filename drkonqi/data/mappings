@@ -91,7 +91,6 @@ akonaditray=Akonadi|general
 kalarmautostart=kalarm|general
 kpilotDaemon=kpilot|kpilotDaemon
 korgac=korganizer|reminder daemon (korgac)
-kmail=KMail 2|general
 
 #KDE Konqueror
 kjs=konqueror|kjs
