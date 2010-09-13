@@ -152,12 +152,15 @@ Nepomuk::Query::Result Nepomuk::Query::SearchThread::extractResult( const Sopran
     }
 
     static const char* s_scoreVarName = "_n_f_t_m_s_";
+    static const char* s_excerptVarName = "_n_f_t_m_ex_";
 
     Soprano::BindingSet set;
     int score = 0;
     Q_FOREACH( const QString& var, names ) {
         if ( var == QLatin1String( s_scoreVarName ) )
             score = it[var].literal().toInt();
+        else if ( var == QLatin1String( s_excerptVarName ) )
+            result.setExcerpt( it[var].toString() );
         else
             set.insert( var, it[var] );
     }
