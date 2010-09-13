@@ -619,14 +619,14 @@ void Nepomuk::IndexScheduler::removeOldAndUnwantedEntries()
     // We look for indexed files that do not have a nie:url defined and thus, will never be catched by any of the
     // other queries.
     //
-#if 0
-    query = Query::Query(
+    Query::Query q(
         Strigi::Ontology::indexGraphFor() == ( Soprano::Vocabulary::RDF::type() == Query::ResourceTerm( Nepomuk::Vocabulary::NFO::FileDataObject() ) &&
                                                !( Nepomuk::Vocabulary::NIE::url() == Query::Term() ) )
-        ).toSparqlQuery(Query::Query::NoResultRestrictions);
+        );
+    q.setQueryFlags(Query::Query::NoResultRestrictions);
+    query = q.toSparqlQuery();
     kDebug() << query;
     removeAllGraphsFromQuery( query );
-#endif
 }
 
 
