@@ -35,6 +35,7 @@
 #include <stdio.h>
 
 #include "servicecontrol.h"
+#include "priority.h"
 
 namespace {
 #ifndef Q_OS_WIN
@@ -138,6 +139,18 @@ int main( int argc, char** argv )
             return Nepomuk::ServiceControl::ErrorMissingDependency;
         }
     }
+
+
+    // Lower our priority by default which makes sense for most services since Nepomuk
+    // does not want to get in the way of the user
+    // TODO: make it configurable
+    // ====================================
+    if ( !lowerPriority() )
+        kDebug() << "Failed to lower priority.";
+    if ( !lowerSchedulingPriority() )
+        kDebug() << "Failed to lower scheduling priority.";
+    if ( !lowerIOPriority() )
+        kDebug() << "Failed to lower io priority.";
 
 
     // register the service control

@@ -12,6 +12,7 @@ include_directories(
 set(servicestub_SRCS
   main.cpp
   servicecontrol.cpp
+  priority.cpp
 )
 
 qt4_add_dbus_adaptor(servicestub_SRCS
