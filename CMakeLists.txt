@@ -22,7 +22,7 @@ include(MacroLibrary)
 include(CheckFunctionExists)
 include(CheckIncludeFiles)
 
-set(SOPRANO_MIN_VERSION "2.5.60")
+set(SOPRANO_MIN_VERSION "2.5.63")
 set(SDO_MIN_VERSION "0.5.0")
 macro_optional_find_package(SharedDesktopOntologies ${SDO_MIN_VERSION})
 macro_optional_find_package(Nepomuk)

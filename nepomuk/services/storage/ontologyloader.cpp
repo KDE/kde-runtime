@@ -265,7 +265,7 @@ namespace {
                 statements << Soprano::Statement( uri,
                                                   Soprano::Vocabulary::NAO::userVisible(),
                                                   Soprano::LiteralValue( userVisible == 1 ),
-                                                  Nepomuk::Vocabulary::KUVO::kuvoNamespace() );
+                                                  Nepomuk::Vocabulary::KUVO::nrlOntologyGraph() );
                 kDebug() << "Setting nao:userVisible of" << uri.toString() << ( userVisible == 1 );
                 return userVisible;
             }
