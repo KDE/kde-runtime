@@ -262,11 +262,13 @@ namespace {
                     // default to visible
                     userVisible = 1;
                 }
+#if 0
                 statements << Soprano::Statement( uri,
                                                   Soprano::Vocabulary::NAO::userVisible(),
                                                   Soprano::LiteralValue( userVisible == 1 ),
                                                   Nepomuk::Vocabulary::KUVO::nrlOntologyGraph() );
                 kDebug() << "Setting nao:userVisible of" << uri.toString() << ( userVisible == 1 );
+#endif
                 return userVisible;
             }
         }
