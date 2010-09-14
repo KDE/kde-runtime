@@ -13,9 +13,6 @@ endif(WINCE)
 set(KDE_MIN_VERSION "4.5.60")  # for the < 4.2 macro
 find_package(KDE4 4.5.60 REQUIRED)
 find_package(Strigi REQUIRED)
-# I don't see any package requiring it. please explain why this dependency
-# is necessary (dirk)
-#find_package(KdepimLibs REQUIRED)
 
 include(KDE4Defaults)
 include(MacroLibrary)
