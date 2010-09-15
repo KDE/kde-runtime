@@ -1,6 +1,10 @@
 /*  This file is part of kdebase/workspace/solid
     Copyright (C) 2005,2007 Will Stephenson <wstephenson@kde.org>
 
+    Copyright (c) 2010 Klarälvdalens Datakonsult AB,
+                       a KDAB Group company <info@kdab.com>
+    Author: Kevin Ottens <kevin.ottens@kdab.com>
+
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
     License version 2 as published by the Free Software Foundation.
@@ -32,6 +36,12 @@
 #include "clientadaptor.h"
 #include "serviceadaptor.h"
 
+#include "systemstatusinterface.h"
+
+#ifdef NM_BACKEND_ENABLED
+#include "networkmanagerstatus.h"
+#endif
+
 #include <kpluginfactory.h>
 
 K_PLUGIN_FACTORY(NetworkStatusFactory,
@@ -46,7 +56,7 @@ typedef QMap< QString, Network * > NetworkMap;
 class NetworkStatusModule::Private
 {
 public:
-    Private() : status( Solid::Networking::Unknown ), serviceWatcher( 0 )
+    Private() : status( Solid::Networking::Unknown ), backend( 0 ), serviceWatcher( 0 )
     {
 
     }
@@ -56,7 +66,7 @@ public:
     }
     NetworkMap networks;
     Solid::Networking::Status status;
-    Solid::Control::NetworkManager::Notifier * notifier;
+    SystemStatusInterface *backend;
     QDBusServiceWatcher *serviceWatcher;
 };
 
@@ -184,11 +194,28 @@ void NetworkStatusModule::unregisterNetwork( const QString & networkName )
 
 void NetworkStatusModule::init()
 {
-    d->notifier = Solid::Control::NetworkManager::notifier();
-    connect( d->notifier, SIGNAL(statusChanged(Solid::Networking::Status)),
-            this, SLOT(solidNetworkingStatusChanged(Solid::Networking::Status)));
-    Solid::Networking::Status status = Solid::Control::NetworkManager::status();
-    registerNetwork( QLatin1String("SolidNetwork"), status, QLatin1String("org.kde.kded") );
+    QList<SystemStatusInterface*> backends;
+#ifdef NM_BACKEND_ENABLED
+    backends << new NetworkManagerStatus( this );
+#endif
+
+    while ( !backends.isEmpty() ) {
+        d->backend = backends.takeFirst();
+        if ( d->backend->isSupported() ) {
+            qDeleteAll(backends);
+            backends.clear();
+        } else {
+            delete d->backend;
+            d->backend = 0;
+        }
+    }
+
+    if ( d->backend != 0 ) {
+        connect( d->backend, SIGNAL(statusChanged(Solid::Networking::Status)),
+                 this, SLOT(solidNetworkingStatusChanged(Solid::Networking::Status)));
+        Solid::Networking::Status status = d->backend->status();
+        registerNetwork( QLatin1String("SolidNetwork"), status, QLatin1String("org.kde.kded") );
+    }
 
     d->serviceWatcher = new QDBusServiceWatcher(this);
     d->serviceWatcher->setConnection(QDBusConnection::sessionBus());
