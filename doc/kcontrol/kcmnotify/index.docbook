@@ -117,7 +117,7 @@ a message box appear in response to a system notification.  One notification doe
 
 <varlistentry>
 <term><guilabel>Speech</guilabel></term>
-<listitem><para>If a mark is in this checkbox, &kde; will use KTTS to speak the event 
+<listitem><para>If a mark is in this checkbox, &kde; will use Jovie to speak the event 
 message, event name or custom text.</para>
 <para>If you select <guilabel>Speak Custom Text</guilabel>, enter the text in the box.  
 You may use the following 
