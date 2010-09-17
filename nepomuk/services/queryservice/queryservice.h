@@ -32,6 +32,7 @@
 class QDBusObjectPath;
 class QDBusMessage;
 class QDBusServiceWatcher;
+class QThreadPool;
 
 namespace Nepomuk {
     namespace Query {
@@ -47,6 +48,8 @@ namespace Nepomuk {
         public:
             QueryService( QObject* parent, const QVariantList& );
             ~QueryService();
+
+            static QThreadPool* searchThreadPool();
 
         public Q_SLOTS:
             /**

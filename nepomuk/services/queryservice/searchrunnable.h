@@ -20,14 +20,12 @@
 #ifndef _NEPOMUK_SEARCH_THREAD_H_
 #define _NEPOMUK_SEARCH_THREAD_H_
 
-#include <QtCore/QThread>
-#include <QtCore/QHash>
-#include <QtCore/QPair>
+#include <QtCore/QRunnable>
+#include <QtCore/QPointer>
 
 #include <Nepomuk/Query/Result>
-#include <Nepomuk/Query/Query>
 
-#include <KUrl>
+#include "folder.h"
 
 
 namespace Soprano {
@@ -36,36 +34,26 @@ namespace Soprano {
 
 namespace Nepomuk {
     namespace Query {
-        class SearchThread : public QThread
+        class Folder;
+
+        class SearchRunnable : public QRunnable
         {
-            Q_OBJECT
-
         public:
-            SearchThread( QObject* parent = 0 );
-            ~SearchThread();
+            SearchRunnable( Folder* folder );
+            ~SearchRunnable();
 
-            /**
-             * Use instead of QThread::start()
-             */
-            void query( const QString& query, const RequestPropertyMap& requestProps, double cutOffScore = 0.0 );
             void cancel();
 
-            double cutOffScore() const { return m_cutOffScore; }
-
-        signals:
+        Q_SIGNALS:
             void newResult( const Nepomuk::Query::Result& result );
 
         protected:
             void run();
 
         private:
-            void sparqlQuery( const QString& query );
             Nepomuk::Query::Result extractResult( const Soprano::QueryResultIterator& it ) const;
 
-            QString m_sparqlQuery;
-            RequestPropertyMap m_requestProperties;
-
-            double m_cutOffScore;
+            QPointer<Folder> m_folder;
 
             // status
             bool m_canceled;

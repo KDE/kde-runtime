@@ -17,14 +17,12 @@
   Boston, MA 02110-1301, USA.
 */
 
-#include "searchthread.h"
+#include "searchrunnable.h"
+#include "folder.h"
 #include "nfo.h"
 
 #include <Nepomuk/ResourceManager>
 #include <Nepomuk/Resource>
-#include <Nepomuk/Types/Property>
-#include <Nepomuk/Types/Class>
-#include <Nepomuk/Types/Literal>
 
 #include <Soprano/Version>
 #include <Soprano/Model>
@@ -54,75 +52,35 @@
 
 using namespace Soprano;
 
-Nepomuk::Query::SearchThread::SearchThread( QObject* parent )
-    : QThread( parent ),
+Nepomuk::Query::SearchRunnable::SearchRunnable( Folder* folder )
+    : QRunnable(),
+      m_folder( folder ),
       m_resultCnt( 0 )
 {
-}
-
-
-Nepomuk::Query::SearchThread::~SearchThread()
-{
-}
-
-
-void Nepomuk::Query::SearchThread::query( const QString& query, const RequestPropertyMap& requestProps, double cutOffScore )
-{
-    kDebug() << query << cutOffScore;
-
-    if( isRunning() ) {
-        cancel();
-    }
-
     m_canceled = false;
-    m_sparqlQuery = query;
-    m_requestProperties = requestProps;
-    m_cutOffScore = qMin( 1.0, qMax( cutOffScore, 0.0 ) );
-
-    start();
 }
 
 
-void Nepomuk::Query::SearchThread::cancel()
+Nepomuk::Query::SearchRunnable::~SearchRunnable()
+{
+}
+
+
+void Nepomuk::Query::SearchRunnable::cancel()
 {
     m_canceled = true;
     wait();
 }
 
 
-void Nepomuk::Query::SearchThread::run()
+void Nepomuk::Query::SearchRunnable::run()
 {
     QTime time;
     time.start();
 
     m_resultCnt = 0;
 
-    //
-    // To speed up the user experience and since in most cases users would only
-    // look at the first few results anyway, we run the query twice: once with a
-    // limit of 10 and once without a limit. To check if the query already has a
-    // limit or an offset we do not do any fancy things. We simply check if the
-    // query ends with a closing bracket which always suceeds for queries
-    // created via the Nepomuk query API.
-    //
-    if ( m_sparqlQuery.endsWith( QLatin1String( "}" ) ) ) {
-        sparqlQuery( m_sparqlQuery + QLatin1String( " LIMIT 10" ) );
-        if ( !m_canceled && m_resultCnt >= 10 )
-            sparqlQuery( m_sparqlQuery + QLatin1String( " OFFSET 10" ) );
-    }
-    else {
-        sparqlQuery( m_sparqlQuery );
-    }
-
-    kDebug() << time.elapsed();
-}
-
-
-void Nepomuk::Query::SearchThread::sparqlQuery( const QString& query )
-{
-    kDebug() << query;
-
-    Soprano::QueryResultIterator hits = ResourceManager::instance()->mainModel()->executeQuery( query, Soprano::Query::QueryLanguageSparql );
+    Soprano::QueryResultIterator hits = ResourceManager::instance()->mainModel()->executeQuery( m_folder->sparqlQuery(), Soprano::Query::QueryLanguageSparql );
     while ( hits.next() ) {
         if ( m_canceled ) break;
 
@@ -132,12 +90,20 @@ void Nepomuk::Query::SearchThread::sparqlQuery( const QString& query )
 
         kDebug() << "Found result:" << result.resource().resourceUri() << result.score();
 
-        emit newResult( result );
+        if( m_folder )
+            m_folder->addResult( result );
+        else
+            break;
     }
+
+    kDebug() << time.elapsed();
+
+    if( m_folder )
+        m_folder->listingFinished();
 }
 
 
-Nepomuk::Query::Result Nepomuk::Query::SearchThread::extractResult( const Soprano::QueryResultIterator& it ) const
+Nepomuk::Query::Result Nepomuk::Query::SearchRunnable::extractResult( const Soprano::QueryResultIterator& it ) const
 {
     Result result( Resource::fromResourceUri( it[0].uri() ) );
 
@@ -145,8 +111,9 @@ Nepomuk::Query::Result Nepomuk::Query::SearchThread::extractResult( const Sopran
     QStringList names = it.bindingNames();
     names.removeAll( QLatin1String( "r" ) );
 
-    for ( RequestPropertyMap::const_iterator rpIt = m_requestProperties.constBegin();
-          rpIt != m_requestProperties.constEnd(); ++rpIt ) {
+    RequestPropertyMap requestProperties = m_folder->requestPropertyMap();
+    for ( RequestPropertyMap::const_iterator rpIt = requestProperties.constBegin();
+          rpIt != requestProperties.constEnd(); ++rpIt ) {
         result.addRequestProperty( rpIt.value(), it.binding( rpIt.key() ) );
         names.removeAll( rpIt.key() );
     }
@@ -171,5 +138,3 @@ Nepomuk::Query::Result Nepomuk::Query::SearchThread::extractResult( const Sopran
     // score will be set above
     return result;
 }
-
-#include "searchthread.moc"

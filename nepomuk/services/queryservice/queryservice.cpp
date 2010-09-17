@@ -21,6 +21,7 @@
 #include "folderconnection.h"
 #include "dbusoperators_p.h"
 
+#include <QtCore/QThreadPool>
 #include <QtDBus/QDBusConnection>
 #include <QtDBus/QDBusConnectionInterface>
 #include <QtDBus/QDBusObjectPath>
@@ -38,11 +39,16 @@
 
 NEPOMUK_EXPORT_SERVICE( Nepomuk::Query::QueryService, "nepomukqueryservice" )
 
+static QThreadPool* s_searchThreadPool = 0;
 
 Nepomuk::Query::QueryService::QueryService( QObject* parent, const QVariantList& )
     : Service( parent ),
       m_folderConnectionCnt( 0 )
 {
+    // this looks wrong but there is only one QueryService instance at all time!
+    s_searchThreadPool = new QThreadPool( this );
+    s_searchThreadPool->setMaxThreadCount( 10 );
+
     Nepomuk::Query::registerDBusTypes();
 }
 
@@ -54,6 +60,13 @@ Nepomuk::Query::QueryService::~QueryService()
         delete m_openQueryFolders.begin().value();
     while ( !m_openSparqlFolders.isEmpty() )
         delete m_openSparqlFolders.begin().value();
+}
+
+
+// static
+QThreadPool* Nepomuk::Query::QueryService::searchThreadPool()
+{
+    return s_searchThreadPool;
 }
 
 

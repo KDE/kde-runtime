@@ -13,9 +13,10 @@ include_directories(
 
 set(queryservice_SRCS
   queryservice.cpp
-  searchthread.cpp
   folder.cpp
   folderconnection.cpp
+  searchrunnable.cpp
+  countqueryrunnable.cpp
 )
 
 qt4_add_dbus_adaptor(queryservice_SRCS

@@ -22,14 +22,13 @@
 #include <QtCore/QObject>
 
 #include <Nepomuk/Query/Result>
+#include <Nepomuk/Query/Query>
 
 #include <QtCore/QHash>
 #include <QtCore/QTimer>
 #include <QtCore/QPointer>
 
 #include <KUrl>
-
-#include "searchthread.h"
 
 namespace Soprano {
     namespace Util {
@@ -40,6 +39,7 @@ namespace Soprano {
 namespace Nepomuk {
     namespace Query {
 
+        class SearchRunnable;
         class FolderConnection;
 
         /**
@@ -77,6 +77,8 @@ namespace Nepomuk {
 
             QString sparqlQuery() const;
 
+            RequestPropertyMap requestPropertyMap() const;
+
             /**
              * Get the total result count. This value will not be available
              * right away since it is calculated async.
@@ -86,6 +88,12 @@ namespace Nepomuk {
              * \return The total result count or -1 in case it is not ready yet.
              */
             int getTotalCount() const { return m_totalCount; }
+
+            void addResult( const Result& result );
+
+            void listingFinished();
+
+            void countQueryFinished( int count );
 
         public Q_SLOTS:
             void update();
@@ -104,11 +112,8 @@ namespace Nepomuk {
             void aboutToBeDeleted( Nepomuk::Query::Folder* );
 
         private Q_SLOTS:
-            void slotSearchNewResult( const Nepomuk::Query::Result& );
-            void slotSearchFinished();
             void slotStorageChanged();
             void slotUpdateTimeout();
-            void slotCountQueryFinished( Soprano::Util::AsyncQuery* );
 
         private:
             void init();
@@ -153,8 +158,8 @@ namespace Nepomuk {
             /// the results gathered during an update, needed to find removed items
             QHash<QUrl, Result> m_newResults;
 
-            /// the thread doing the work
-            SearchThread* m_searchThread;
+            /// the runnable doing work at the moment or 0 if idle
+            SearchRunnable* m_currentSearchRunnable;
 
             /// did the nepomuk store change after the last update - used for caching of update signals via m_updateTimer
             bool m_storageChanged;

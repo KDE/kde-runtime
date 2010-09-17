@@ -19,21 +19,24 @@
 #include "folder.h"
 #include "folderconnection.h"
 #include "queryservice.h"
-
-#include <Soprano/Model>
-#include <Soprano/Node>
-#include <Soprano/Util/AsyncQuery>
+#include "countqueryrunnable.h"
+#include "searchrunnable.h"
 
 #include <Nepomuk/Resource>
 #include <Nepomuk/ResourceManager>
 
+#include <Soprano/Model>
+
 #include <KDebug>
+
+#include <QtCore/QThreadPool>
 
 
 Nepomuk::Query::Folder::Folder( const Query& query, QObject* parent )
     : QObject( parent ),
       m_isSparqlQueryFolder( false ),
-      m_query( query )
+      m_query( query ),
+      m_currentSearchRunnable( 0 )
 {
     init();
 }
@@ -58,13 +61,6 @@ void Nepomuk::Query::Folder::init()
     m_updateTimer.setSingleShot( true );
     m_updateTimer.setInterval( 2000 );
 
-    m_searchThread = new SearchThread( this );
-
-    connect( m_searchThread, SIGNAL( newResult( const Nepomuk::Query::Result& ) ),
-             this, SLOT( slotSearchNewResult( const Nepomuk::Query::Result& ) ),
-             Qt::QueuedConnection );
-    connect( m_searchThread, SIGNAL( finished() ),
-             this, SLOT( slotSearchFinished() ) );
     connect( ResourceManager::instance()->mainModel(), SIGNAL( statementsAdded() ),
              this, SLOT( slotStorageChanged() ) );
     connect( ResourceManager::instance()->mainModel(), SIGNAL( statementsRemoved() ),
@@ -76,7 +72,9 @@ void Nepomuk::Query::Folder::init()
 
 Nepomuk::Query::Folder::~Folder()
 {
-    m_searchThread->cancel();
+    if( m_currentSearchRunnable )
+        m_currentSearchRunnable->cancel();
+
     // cannot use qDeleteAll since deleting a connection changes m_connections
     while ( !m_connections.isEmpty() )
         delete m_connections.first();
@@ -85,22 +83,14 @@ Nepomuk::Query::Folder::~Folder()
 
 void Nepomuk::Query::Folder::update()
 {
-    if ( !m_searchThread->isRunning() ) {
-        if ( m_query.isValid() ) {
-            // count the results
-            kDebug() << "Count query:" << m_query.toSparqlQuery( Query::CreateCountQuery );
-            delete m_countQuery;
-            m_countQuery = Soprano::Util::AsyncQuery::executeQuery( ResourceManager::instance()->mainModel(),
-                                                                    m_query.toSparqlQuery( Query::CreateCountQuery ),
-                                                                    Soprano::Query::QueryLanguageSparql );
-            connect( m_countQuery, SIGNAL( nextReady( Soprano::Util::AsyncQuery* ) ),
-                     this, SLOT( slotCountQueryFinished( Soprano::Util::AsyncQuery* ) ) );
+    if ( !m_currentSearchRunnable ) {
+        m_currentSearchRunnable = new SearchRunnable( this );
+        QueryService::searchThreadPool()->start( m_currentSearchRunnable, 1 );
 
-            // and get the results
-            m_searchThread->query( m_query.toSparqlQuery(), m_query.requestPropertyMap() );
-        }
-        else {
-            m_searchThread->query( m_sparqlQuery, m_requestProperties );
+        // we only need the count for initialListingDone
+        if ( !m_initialListingDone &&
+             m_sparqlQuery.isEmpty() ) {
+            QueryService::searchThreadPool()->start( new CountQueryRunnable( this ), 0 );
         }
     }
 }
@@ -120,14 +110,23 @@ bool Nepomuk::Query::Folder::initialListingDone() const
 
 QString Nepomuk::Query::Folder::sparqlQuery() const
 {
-    if ( m_query.isValid() )
+    if ( m_sparqlQuery.isEmpty() )
         return m_query.toSparqlQuery();
     else
         return m_sparqlQuery;
 }
 
 
-void Nepomuk::Query::Folder::slotSearchNewResult( const Nepomuk::Query::Result& result )
+Nepomuk::Query::RequestPropertyMap Nepomuk::Query::Folder::requestPropertyMap() const
+{
+    if ( m_sparqlQuery.isEmpty() )
+        return m_query.requestPropertyMap();
+    else
+        return m_requestProperties;
+}
+
+
+void Nepomuk::Query::Folder::addResult( const Nepomuk::Query::Result& result )
 {
     if ( m_initialListingDone ) {
         m_newResults.insert( result.resource().resourceUri(), result );
@@ -142,8 +141,10 @@ void Nepomuk::Query::Folder::slotSearchNewResult( const Nepomuk::Query::Result& 
 }
 
 
-void Nepomuk::Query::Folder::slotSearchFinished()
+void Nepomuk::Query::Folder::listingFinished()
 {
+    m_currentSearchRunnable = 0;
+
     if ( m_initialListingDone ) {
         // inform about removed items
         foreach( const Result& result, m_results ) {
@@ -169,7 +170,7 @@ void Nepomuk::Query::Folder::slotSearchFinished()
 
 void Nepomuk::Query::Folder::slotStorageChanged()
 {
-    if ( !m_updateTimer.isActive() && !m_searchThread->isRunning() ) {
+    if ( !m_updateTimer.isActive() && !m_currentSearchRunnable ) {
         update();
     }
     else {
@@ -181,19 +182,19 @@ void Nepomuk::Query::Folder::slotStorageChanged()
 // if there was a change in the nepomuk store we update
 void Nepomuk::Query::Folder::slotUpdateTimeout()
 {
-    if ( m_storageChanged && !m_searchThread->isRunning() ) {
+    if ( m_storageChanged && !m_currentSearchRunnable ) {
         m_storageChanged = false;
         update();
     }
 }
 
 
-void Nepomuk::Query::Folder::slotCountQueryFinished( Soprano::Util::AsyncQuery* query )
+void Nepomuk::Query::Folder::countQueryFinished( int count )
 {
-    m_countQuery = 0;
-    m_totalCount = query->binding( 0 ).literal().toInt();
+    m_totalCount = count;
     kDebug() << m_totalCount;
-    emit totalCount( m_totalCount );
+    if( count >= 0 )
+        emit totalCount( m_totalCount );
 }
 
 
