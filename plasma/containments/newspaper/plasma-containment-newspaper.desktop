@@ -9,6 +9,7 @@ Name[pt_BR]=Leiaute do jornal
 Name[sv]=Tidningslayout
 Name[uk]=Газетне компонування
 Name[x-test]=xxNewspaper Layoutxx
+Name[zh_TW]=報紙佈局
 
 Comment=A layout that puts widgets into columns
 Comment[en_GB]=A layout that puts widgets into columns
@@ -19,6 +20,7 @@ Comment[pt_BR]=Um leiaute que coloca os widgets em colunas
 Comment[sv]=En layout som placerar grafiska komponenter i kolumner
 Comment[uk]=Компонування з віджетами, розподіленими за стовпчиками
 Comment[x-test]=xxA layout that puts widgets into columnsxx
+Comment[zh_TW]=將元件放到欄位內的佈局
 
 
 Icon=knewsticker
