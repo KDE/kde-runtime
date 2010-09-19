@@ -1,5 +1,8 @@
 [General]
 Name=dbx
+Name[en_GB]=dbx
+Name[pt]=dbx
+Name[uk]=dbx
 Name[x-test]=xxdbxxx
 TryExec=dbx
 Backends=KCrash
