@@ -69,7 +69,8 @@ Nepomuk::Query::SearchRunnable::~SearchRunnable()
 void Nepomuk::Query::SearchRunnable::cancel()
 {
     m_canceled = true;
-    wait();
+    //wait(); ## imported from when this was called SearchThread and
+    //           there was a QThread::wait() to call
 }
 
 
