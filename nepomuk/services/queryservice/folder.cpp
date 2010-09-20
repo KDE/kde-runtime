@@ -46,7 +46,8 @@ Nepomuk::Query::Folder::Folder( const QString& query, const RequestPropertyMap& 
     : QObject( parent ),
       m_isSparqlQueryFolder( true ),
       m_sparqlQuery( query ),
-      m_requestProperties( requestProps )
+      m_requestProperties( requestProps ),
+      m_currentSearchRunnable( 0 )
 {
     init();
 }
