@@ -61,7 +61,7 @@ void NotifyByKTTS::notify( int id, KNotifyConfig * config )
                 QString error;
                 if (KToolInvocation::startServiceByDesktopName("kttsd", QStringList(), &error))
                 {
-                    KMessageBox::error(0, i18n( "Starting KTTSD Failed"), error );
+                    KMessageBox::error(0, i18n( "Starting Jovie Text-to-Speech Service Failed"), error );
                     tryToStartKttsd = true;
                     return;
                 }
