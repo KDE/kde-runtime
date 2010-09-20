@@ -69,8 +69,6 @@ Nepomuk::Query::SearchRunnable::~SearchRunnable()
 void Nepomuk::Query::SearchRunnable::cancel()
 {
     m_canceled = true;
-    //wait(); ## imported from when this was called SearchThread and
-    //           there was a QThread::wait() to call
 }
 
 
@@ -99,7 +97,7 @@ void Nepomuk::Query::SearchRunnable::run()
 
     kDebug() << time.elapsed();
 
-    if( m_folder )
+    if( m_folder && !m_canceled )
         m_folder->listingFinished();
 }
 
