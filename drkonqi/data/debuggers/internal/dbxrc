@@ -2,6 +2,8 @@
 Name=dbx
 Name[en_GB]=dbx
 Name[pt]=dbx
+Name[pt_BR]=dbx
+Name[sv]=dbx
 Name[uk]=dbx
 Name[x-test]=xxdbxxx
 TryExec=dbx
