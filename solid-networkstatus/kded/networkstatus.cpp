@@ -28,7 +28,6 @@
 #include <QMap>
 
 #include <KDebug>
-#include <solid/control/networkmanager.h>
 
 #include "network.h"
 #include "clientadaptor.h"
