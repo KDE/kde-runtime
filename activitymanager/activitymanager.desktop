@@ -9,7 +9,7 @@ X-KDE-Kded-load-on-demand=false
 X-KDE-Kded-phase=1
 
 Name=Activity Manager
-Name[ar]=مدير النشاط
+Name[ar]=مدير الأنشطة
 Name[bg]=Управление на активността
 Name[bn]=অ্যাকটিভিটি ম্যানেজার
 Name[ca]=Gestor d'activitats
@@ -62,9 +62,10 @@ Name[zh_CN]=活动管理器
 Name[zh_TW]=活動管理員
 
 Comment=The activity management backend
-Comment[ar]=خلفية إدارة النشاط
+Comment[ar]=المنتهى الخلفي لإدارة الأنشطة
 Comment[ca]=Dorsal de gestió d'activitats
 Comment[ca@valencia]=Dorsal de gestió d'activitats
+Comment[cs]=Backend pro správu aktivit
 Comment[da]=Motor til aktivitetshåndtering
 Comment[de]=Backend zur Aktivitätenverwaltung
 Comment[el]=Σύστημα διαχείρισης δραστηριότητας

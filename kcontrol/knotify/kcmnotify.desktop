@@ -12,7 +12,7 @@ X-KDE-System-Settings-Parent-Category=application-and-system-notifications
 X-KDE-Weight=50
 
 Name=Manage Notifications
-Name[ar]=إدارة التنبيهات
+Name[ar]=أدر التنبيهات
 Name[bg]=Управление на уведомяването
 Name[bn]=বিজ্ঞপ্তি ব্যবস্থাপনা
 Name[ca]=Gestiona les notificacions
@@ -66,7 +66,7 @@ Name[zh_CN]=管理通知
 Name[zh_TW]=管理通知
 Comment=System Notification Configuration
 Comment[af]=Stelsel Inkennisstelling Opstelling
-Comment[ar]=تشكيل تنبيهات النظام
+Comment[ar]=ضبط تنبيهات النظام
 Comment[be]=Настаўленні сістэмных абвяшчэнняў
 Comment[be@latin]=Naładžvańnie systemnaha infarmavańnia
 Comment[bg]=Настройване на системата за уведомяване

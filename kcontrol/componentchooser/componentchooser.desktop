@@ -12,7 +12,7 @@ X-DocPath=kcontrol/componentchooser/index.html
 
 Name=Default Applications
 Name[af]=Verstektoepassings
-Name[ar]=التطبيقات الافتراضية
+Name[ar]=التطبيقات المبدئية
 Name[be]=Праграмы па змаўчанні
 Name[be@latin]=Zmoŭčanyja aplikacyi
 Name[bg]=Стандартни програми
@@ -95,7 +95,7 @@ Name[zh_CN]=默认应用程序
 Name[zh_TW]=預設應用程式
 Comment=Choose the default components for various services
 Comment[af]=Kies die verstek komponente vir verskeie dienste
-Comment[ar]=اختر المكونات الافتراضية للخدمات المتنوعة
+Comment[ar]=اختر المكونات المبدئية للخدمات المتنوعة
 Comment[be]=Выбірае стандартныя кампаненты для розных сервісаў
 Comment[be@latin]=Vybiery zmoŭčanyja kampanenty dla roznych słužbaŭ
 Comment[bg]=Избор на предпочитани компоненти за е-поща, редактиране на текст и др.

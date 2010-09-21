@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Newspaper Layout
+Name[cs]=Rozvržení novin
 Name[en_GB]=Newspaper Layout
 Name[ia]=Disposition de jornal
 Name[is]=Dagblaðsframsetning
@@ -12,6 +13,7 @@ Name[x-test]=xxNewspaper Layoutxx
 Name[zh_TW]=報紙佈局
 
 Comment=A layout that puts widgets into columns
+Comment[cs]=Rozvržení, které skládá widgety do dvou sloupců
 Comment[en_GB]=A layout that puts widgets into columns
 Comment[ia]=Un disposition que pone elementos graphicos (widget) in columnas
 Comment[nl]=Een indeling die widgets in kolommen zet

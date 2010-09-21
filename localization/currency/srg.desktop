@@ -3,10 +3,11 @@ CurrencyCodeIsoAlpha3=SRG
 CurrencyCodeIsoNumeric3=740
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Surinamese Guilder
-Name[ar]=غلدر سورينام
+Name[ar]=الغلدر السورينامي
 Name[bn]=সুরিনাম গিল্ডার
 Name[ca]=Florí de Surinam
 Name[ca@valencia]=Florí de Surinam
+Name[cs]=Surinamský gulden
 Name[csb]=Surinamsczi Gùlden
 Name[da]=Surinamsk gylden
 Name[de]=Suriname-Gulden

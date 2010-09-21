@@ -1,11 +1,13 @@
 [General]
 Name=dbx
 Name[en_GB]=dbx
+Name[ia]=dbx
 Name[pt]=dbx
 Name[pt_BR]=dbx
 Name[sv]=dbx
 Name[uk]=dbx
 Name[x-test]=xxdbxxx
+Name[zh_TW]=dbx
 TryExec=dbx
 Backends=KCrash
 

@@ -135,6 +135,7 @@ Name[zh_TW]=應用程式
 
 [Event/AudioDeviceFallback]
 Name=Audio Output Device Changed
+Name[cs]=Zvukové výstupní zařízení změněno
 Name[en_GB]=Audio Output Device Changed
 Name[es]=Cambios en dispositivos de salida de audio
 Name[hr]=Promijenjen je uređaj za izlaz zvuka

@@ -10,7 +10,7 @@ X-KDE-System-Settings-Parent-Category=account-details
 X-DocPath=kcontrol/attica/index.html
 
 Name=Social Desktop
-Name[ar]=سطح المكتب اجتماعي
+Name[ar]=سطح المكتب
 Name[bg]=Социален работен плот
 Name[bn]=সামাজিক ডেস্কটপ
 Name[ca]=Escriptori social
@@ -64,7 +64,7 @@ Name[x-test]=xxSocial Desktopxx
 Name[zh_CN]=社会化桌面
 Name[zh_TW]=Social 桌面
 Comment=Manage Social Desktop Providers
-Comment[ar]=تدير مزودي سطح المكتب الاجتماعي
+Comment[ar]=أدر مزودي سطح المكتب الاجتماعي
 Comment[ca]=Gestiona els proveïdors de l'escriptori social
 Comment[ca@valencia]=Gestiona els proveïdors de l'escriptori social
 Comment[cs]=Spravovat poskytovatele sociálního pracovního prostředí
