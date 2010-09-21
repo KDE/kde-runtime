@@ -42,6 +42,8 @@
 #include <kdesktopfile.h>
 #include <kdeversion.h>
 
+GlobalOptions globalOptions;
+
 bool removeDirectory(const QString& aDir)
 {
     QDir dir( aDir );
@@ -225,7 +227,12 @@ bool generateMenuEntries(QList<LinkFile> &files, const KUrl &url, const QString 
                 continue;
             }
             
-            QString linkPath = getKDEStartMenuPath() + relPathTranslated + '/';
+            QString linkPath = getKDEStartMenuPath();
+
+            if (globalOptions.useCategories)
+                linkPath +=  relPathTranslated;
+            linkPath += '/';
+                            
             QString linkName = s->name();
             if (!s->genericName().isEmpty() && s->genericName() != s->name()) 
                 linkName += " (" + s->genericName().replace('/','-') + ')';

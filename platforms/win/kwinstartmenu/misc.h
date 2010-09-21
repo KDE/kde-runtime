@@ -27,6 +27,18 @@ class QDir;
 
 #include <KUrl>
 
+/** 
+ contains global options 
+*/
+class GlobalOptions {
+public: 
+    GlobalOptions() : useCategories(true) {}
+
+    bool useCategories;
+};
+
+extern GlobalOptions globalOptions;
+
 bool removeDirectory(const QString& aDir);
 QString getStartMenuPath(bool bAllUsers=false);
 QString getKDEStartMenuPath();
