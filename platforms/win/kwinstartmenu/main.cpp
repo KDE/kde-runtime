@@ -47,6 +47,7 @@ int main(int argc, char **argv)
     options.add("remove",     ki18n("Remove installed Start Menu entries"));
     options.add("install",    ki18n("Install Start Menu entries (this is also the default when this option is not used)"));
     options.add("query-path", ki18n("query root path of Start Menu entries"));
+    options.add("nocategories", ki18n("don't use categories for start menu entries"));
     KCmdLineArgs::addCmdLineOptions( options ); // Add my own options.
 
     KComponentData a(&about);
@@ -56,6 +57,8 @@ int main(int argc, char **argv)
 
     KApplication app(false);
 
+    globalOptions.useCategories = args->isSet("categories");
+    
     if (args->isSet("query-path"))
         fprintf(stdout,"%s",qPrintable(QDir::toNativeSeparators(getKDEStartMenuPath())));
     else if (args->isSet("remove"))
