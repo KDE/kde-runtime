@@ -58,6 +58,8 @@ WinStartMenuModule::WinStartMenuModule(QObject* parent, const QList<QVariant>&)
 
     if (group.readEntry("Enabled", true))
       connect(KSycoca::self(), SIGNAL(databaseChanged()), this, SLOT(databaseChanged()));
+
+    globalOptions.useCategories = group.readEntry("useCategories", true));
     
     new WinStartMenuAdaptor( this );
 }
