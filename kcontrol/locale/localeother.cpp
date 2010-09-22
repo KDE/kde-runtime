@@ -45,7 +45,7 @@ KLocaleConfigOther::KLocaleConfigOther(KLocale *locale,
   QGridLayout *lay = new QGridLayout(this );
 
   m_labPageSize = new QLabel(this);
-  m_labPageSize->setObjectName(I18N_NOOP("Paper format:") );
+  m_labPageSize->setObjectName( QLatin1String(I18N_NOOP("Paper format:" )) );
   m_labPageSize->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
   lay->addWidget(m_labPageSize, 0, 0);
   m_combPageSize = new QComboBox(this);
@@ -54,7 +54,7 @@ KLocaleConfigOther::KLocaleConfigOther(KLocale *locale,
            SLOT( slotPageSizeChanged(int) ) );
 
   m_labMeasureSystem = new QLabel(this);
-  m_labMeasureSystem->setObjectName( I18N_NOOP("Measure system:") );
+  m_labMeasureSystem->setObjectName( QLatin1String( I18N_NOOP("Measure system:" )) );
   m_labMeasureSystem->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
   lay->addWidget(m_labMeasureSystem, 1, 0);
   m_combMeasureSystem = new QComboBox(this);

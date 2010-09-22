@@ -44,18 +44,18 @@ KLocaleConfigMoney::KLocaleConfigMoney(KLocale *locale,
   setupUi(this);
 
   // Money
-  m_labelCurrencyCode->setObjectName( I18N_NOOP("Currency:") );
-  m_labelCurrencySymbol->setObjectName( I18N_NOOP("Currency symbol:") );
-  m_labMonDecSym->setObjectName( I18N_NOOP("Decimal symbol:") );
-  m_labMonThoSep->setObjectName( I18N_NOOP("Thousands separator:") );
-  m_labelMonetaryDecimalPlaces->setObjectName( I18N_NOOP("Decimal places:") );
-  m_positiveGB->setObjectName( I18N_NOOP("Positive") );
-  m_chMonPosPreCurSym->setObjectName(I18N_NOOP("Prefix currency symbol"));
-  m_labMonPosMonSignPos->setObjectName( I18N_NOOP("Sign position:") );
-  m_negativeGB->setObjectName( I18N_NOOP("Negative") );
-  m_chMonNegPreCurSym->setObjectName(I18N_NOOP("Prefix currency symbol"));
-  m_labMonNegMonSignPos->setObjectName( I18N_NOOP("Sign position:") );
-  m_labMonDigSet->setObjectName( I18N_NOOP("Digit set:") );
+  m_labelCurrencyCode->setObjectName( QLatin1String( I18N_NOOP("Currency:" )) );
+  m_labelCurrencySymbol->setObjectName( QLatin1String( I18N_NOOP("Currency symbol:" )) );
+  m_labMonDecSym->setObjectName( QLatin1String( I18N_NOOP("Decimal symbol:" )) );
+  m_labMonThoSep->setObjectName( QLatin1String( I18N_NOOP("Thousands separator:" )) );
+  m_labelMonetaryDecimalPlaces->setObjectName( QLatin1String( I18N_NOOP("Decimal places:" )) );
+  m_positiveGB->setObjectName( QLatin1String( I18N_NOOP("Positive" )) );
+  m_chMonPosPreCurSym->setObjectName( QLatin1String(I18N_NOOP("Prefix currency symbol" )));
+  m_labMonPosMonSignPos->setObjectName( QLatin1String( I18N_NOOP("Sign position:" )) );
+  m_negativeGB->setObjectName( QLatin1String( I18N_NOOP("Negative" )) );
+  m_chMonNegPreCurSym->setObjectName( QLatin1String(I18N_NOOP("Prefix currency symbol" )));
+  m_labMonNegMonSignPos->setObjectName( QLatin1String( I18N_NOOP("Sign position:" )) );
+  m_labMonDigSet->setObjectName( QLatin1String( I18N_NOOP("Digit set:" )) );
 
   connect( m_comboCurrencyCode, SIGNAL( activated(int) ),
            SLOT( slotCurrencyCodeChanged(int) ) );

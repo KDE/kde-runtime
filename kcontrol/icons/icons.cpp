@@ -71,7 +71,7 @@ KIconConfig::KIconConfig(const KComponentData &inst, QWidget *parent)
     connect(push, SIGNAL(clicked()), SLOT(slotEffectSetup2()));
 
     m_pTab1 = new QWidget(this);
-    m_pTab1->setObjectName("General Tab");
+    m_pTab1->setObjectName( QLatin1String("General Tab" ));
     top->addWidget(m_pTab1, 0, 1);
 
     QGridLayout *grid = new QGridLayout(m_pTab1);

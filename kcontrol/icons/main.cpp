@@ -51,12 +51,12 @@ IconModule::IconModule(QWidget *parent, const QVariantList &)
   layout->addWidget(tab);
 
   tab1 = new IconThemesConfig(IconsFactory::componentData(), this);
-  tab1->setObjectName( "themes" );
+  tab1->setObjectName( QLatin1String( "themes" ) );
   tab->addTab(tab1, i18n("&Theme"));
   connect(tab1, SIGNAL(changed(bool)), this, SLOT(moduleChanged(bool)));
 
   tab2 = new KIconConfig(IconsFactory::componentData(), this);
-  tab2->setObjectName( "effects" );
+  tab2->setObjectName( QLatin1String( "effects" ) );
   tab->addTab(tab2, i18n("Ad&vanced"));
   connect(tab2, SIGNAL(changed(bool)), this, SLOT(moduleChanged(bool)));
 

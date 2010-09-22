@@ -45,7 +45,7 @@ KLocaleConfigNumber::KLocaleConfigNumber(KLocale *locale,
 
   m_labDecSym = new QLabel(this);
   lay->addWidget(m_labDecSym, 0, 0);
-  m_labDecSym->setObjectName( I18N_NOOP("&Decimal symbol:") );
+  m_labDecSym->setObjectName( QLatin1String( I18N_NOOP("&Decimal symbol:" )) );
   m_labDecSym->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
   m_edDecSym = new QLineEdit(this);
   lay->addWidget(m_edDecSym, 0, 1);
@@ -55,7 +55,7 @@ KLocaleConfigNumber::KLocaleConfigNumber(KLocale *locale,
 
   m_labThoSep = new QLabel(this);
   lay->addWidget(m_labThoSep, 1, 0);
-  m_labThoSep->setObjectName( I18N_NOOP("Tho&usands separator:") );
+  m_labThoSep->setObjectName( QLatin1String( I18N_NOOP("Tho&usands separator:" )) );
   m_labThoSep->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
   m_edThoSep = new QLineEdit(this);
   lay->addWidget(m_edThoSep, 1, 1);
@@ -65,7 +65,7 @@ KLocaleConfigNumber::KLocaleConfigNumber(KLocale *locale,
 
   m_labMonPosSign = new QLabel(this);
   lay->addWidget(m_labMonPosSign, 2, 0);
-  m_labMonPosSign->setObjectName( I18N_NOOP("Positive si&gn:") );
+  m_labMonPosSign->setObjectName( QLatin1String( I18N_NOOP("Positive si&gn:" )) );
   m_labMonPosSign->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
   m_edMonPosSign = new QLineEdit(this);
   lay->addWidget(m_edMonPosSign, 2, 1);
@@ -75,7 +75,7 @@ KLocaleConfigNumber::KLocaleConfigNumber(KLocale *locale,
 
   m_labMonNegSign = new QLabel(this);
   lay->addWidget(m_labMonNegSign, 3, 0);
-  m_labMonNegSign->setObjectName( I18N_NOOP("&Negative sign:") );
+  m_labMonNegSign->setObjectName( QLatin1String( I18N_NOOP("&Negative sign:" )) );
   m_labMonNegSign->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
   m_edMonNegSign = new QLineEdit(this);
   lay->addWidget(m_edMonNegSign, 3, 1);
@@ -85,7 +85,7 @@ KLocaleConfigNumber::KLocaleConfigNumber(KLocale *locale,
 
   m_labelDecimalPlaces = new QLabel(this);
   lay->addWidget(m_labelDecimalPlaces, 4, 0);
-  m_labelDecimalPlaces->setObjectName( I18N_NOOP("Decimal &places:") );
+  m_labelDecimalPlaces->setObjectName( QLatin1String( I18N_NOOP("Decimal &places:" )) );
   m_labelDecimalPlaces->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
   m_intDecimalPlaces = new KIntNumInput(this);
   m_intDecimalPlaces->setRange(0, 10, 1);
@@ -96,7 +96,7 @@ KLocaleConfigNumber::KLocaleConfigNumber(KLocale *locale,
 
   m_labDigSet = new QLabel(this);
   lay->addWidget(m_labDigSet, 5, 0);
-  m_labDigSet->setObjectName( I18N_NOOP("Di&git set:") );
+  m_labDigSet->setObjectName( QLatin1String( I18N_NOOP("Di&git set:" )) );
   m_labDigSet->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
   m_cmbDigSet = new QComboBox(this);
   lay->addWidget(m_cmbDigSet, 5, 1);

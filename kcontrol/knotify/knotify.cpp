@@ -74,7 +74,7 @@ KCMKNotify::KCMKNotify(QWidget *parent, const QVariantList & )
     QLabel *label = new QLabel( i18n( "Event source:" ), app_tab );
     m_appCombo = new KComboBox( false, app_tab );
     m_appCombo->setSizeAdjustPolicy( QComboBox::AdjustToContents );
-    m_appCombo->setObjectName( "app combo" );
+    m_appCombo->setObjectName( QLatin1String( "app combo" ) );
 
     // We want to sort the combo box
     QSortFilterProxyModel *proxyModel = new QSortFilterProxyModel(this);

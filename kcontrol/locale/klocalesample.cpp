@@ -44,27 +44,27 @@ KLocaleSample::KLocaleSample(KLocale *locale, QWidget *parent)
   QFormLayout *lay = new QFormLayout(this);
 
   m_labNumber = new QLabel(this);
-  m_labNumber->setObjectName( I18N_NOOP("Numbers:") );
+  m_labNumber->setObjectName( QLatin1String( I18N_NOOP("Numbers:" )) );
   m_numberSample = new QLabel(this);
   lay->addRow(m_labNumber, m_numberSample);
 
   m_labMoney = new QLabel(this);
-  m_labMoney->setObjectName( I18N_NOOP("Money:") );
+  m_labMoney->setObjectName( QLatin1String( I18N_NOOP("Money:" )) );
   m_moneySample = new QLabel(this);
   lay->addRow(m_labMoney, m_moneySample);
 
   m_labDate = new QLabel(this);
-  m_labDate->setObjectName( I18N_NOOP("Date:") );
+  m_labDate->setObjectName( QLatin1String( I18N_NOOP("Date:" )) );
   m_dateSample = new QLabel(this);
   lay->addRow(m_labDate, m_dateSample);
 
   m_labDateShort = new QLabel(this);
-  m_labDateShort->setObjectName( I18N_NOOP("Short date:") );
+  m_labDateShort->setObjectName( QLatin1String( I18N_NOOP("Short date:" )) );
   m_dateShortSample = new QLabel(this);
   lay->addRow(m_labDateShort, m_dateShortSample);
 
   m_labTime = new QLabel(this);
-  m_labTime->setObjectName( I18N_NOOP("Time:") );
+  m_labTime->setObjectName( QLatin1String( I18N_NOOP("Time:" )) );
   m_timeSample = new QLabel(this);
   lay->addRow(m_labTime, m_timeSample);
 

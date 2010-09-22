@@ -78,7 +78,7 @@ AppletTitleBar::AppletTitleBar(Plasma::Applet *applet)
          m_appletHasBackground(false),
          m_active(false)
 {
-    setObjectName("TitleBar");
+    setObjectName( QLatin1String("TitleBar" ));
 
     setZValue(10000);
     m_appletOverlay = new AppletActivationOverlay(this);
