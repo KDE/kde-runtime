@@ -4,4 +4,4 @@ add_subdirectory(queryservice)
 add_subdirectory(strigi)
 add_subdirectory(removablestorage)
 
-#add_subdirectory(activities)
+add_subdirectory(activities)
