@@ -36,6 +36,7 @@
 #include <Nepomuk/Query/Query>
 #include <Nepomuk/Query/QueryParser>
 
+Q_DECLARE_METATYPE( QList<QUrl> )
 
 NEPOMUK_EXPORT_SERVICE( Nepomuk::Query::QueryService, "nepomukqueryservice" )
 
@@ -49,7 +50,11 @@ Nepomuk::Query::QueryService::QueryService( QObject* parent, const QVariantList&
     s_searchThreadPool = new QThreadPool( this );
     s_searchThreadPool->setMaxThreadCount( 10 );
 
+    // register types used in the DBus adaptor
     Nepomuk::Query::registerDBusTypes();
+
+    // register type used to communicate removeEntries between threads
+    qRegisterMetaType<QList<QUrl> >();
 }
 
 
