@@ -81,12 +81,9 @@
              </layout>
             </item>
             <item row="1" column="1">
-             <widget class="QPushButton" name="m_buttonDetails">
+             <widget class="KUrlLabel" name="m_buttonDetails">
               <property name="text">
                <string>Details...</string>
-              </property>
-              <property name="flat">
-               <bool>true</bool>
               </property>
              </widget>
             </item>

@@ -45,8 +45,8 @@ Nepomuk::StatusWidget::StatusWidget( QWidget* parent )
     setupUi( mainWidget() );
 
     setCaption( m_title->text() );
-    setButtons( Ok );
-    setDefaultButton( Ok );
+    setButtons( Close );
+    setDefaultButton( Close );
 
     KIcon icon( "nepomuk" );
     m_title->setPixmap( icon.pixmap( 32, 32 ) );

@@ -154,7 +154,7 @@ Nepomuk::ServerConfigModule::ServerConfigModule( QWidget* parent, const QVariant
                  this, SLOT( slotCustomQueryButtonClicked() ) );
         connect( m_buttonCustomizeIndexFolders, SIGNAL( leftClickedUrl() ),
                  this, SLOT( slotEditIndexFolders() ) );
-        connect( m_buttonDetails, SIGNAL( clicked() ),
+        connect( m_buttonDetails, SIGNAL( leftClickedUrl() ),
                  this, SLOT( slotStatusDetailsClicked() ) );
 
         m_customQueryLabel->hide();
