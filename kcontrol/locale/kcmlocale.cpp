@@ -30,6 +30,7 @@
 #include <KDebug>
 #include <KConfig>
 #include <KConfigGroup>
+#include <KMessageBox>
 #include <KStandardDirs>
 
 #include "kcmlocale.moc"
@@ -211,8 +212,31 @@ void KLocaleConfig::slotLocaleChanged()
 {
   // update language widget
   m_languages->clear();
+  QStringList brokenLangs;
   foreach (const QString& langCode, m_languageList)
-    m_languages->addItem(readLocale(m_locale->language(),langCode));
+  {
+    const QString langName = readLocale(m_locale->language(),langCode);
+    if (!langName.isEmpty())
+    {
+      m_languages->addItem(langName);
+    }
+    else
+    {
+      brokenLangs << langCode;
+    }
+  }
+  if (!brokenLangs.isEmpty())
+  {
+    foreach (const QString& brokenLang, brokenLangs)
+    {
+      KMessageBox::information(this, i18n("You have the language with code \"%1\" in your list of languages to use for translation "
+                                           "but the localization files for it could not be found. The language has been removed from "
+                                           "your configuration. If you want to add it again please install the localization files "
+                                           "for it and add the language again.", brokenLang));
+      m_languageList.removeAll (brokenLang);
+    }
+    save ();
+  }
   slotCheckButtons();
 
   QString country = m_locale->countryCodeToName(m_locale->country());
