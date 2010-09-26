@@ -262,21 +262,3 @@ void KLocaleConfig::slotTranslate()
   languageRemove->setWhatsThis( str );
 }
 
-
-void KLocaleConfig::changedCountry(const QString & code)
-{
-  m_locale->setCountry(code);
-
-  // change to the preferred languages in that country, installed only
-  QStringList languages = languageList(m_locale->country());
-  QStringList newLanguageList;
-  foreach (const QString& langCode, languages)
-  {
-    if (!readLocale(m_locale->language(),langCode).isEmpty())
-      newLanguageList += langCode;
-  }
-  m_locale->setLanguage( newLanguageList );
-
-  emit localeChanged();
-  emit languageChanged();
-}

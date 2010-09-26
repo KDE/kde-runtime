@@ -56,8 +56,6 @@ Q_SIGNALS:
 private Q_SLOTS:
   void changeCountry();
 
-  void changedCountry(const QString & code);
-
   void slotCheckButtons();
   void slotAddLanguage(const QString & id);
   void slotRemoveLanguage();
