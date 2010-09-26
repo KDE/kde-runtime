@@ -12,8 +12,8 @@
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
 </authorgroup>
 
-<date>2008-09-12</date>
-<releaseinfo>&kde; 4.1.2</releaseinfo>
+<date>2010-09-25</date>
+<releaseinfo>&kde; 4.5</releaseinfo>
 
 <keywordset>
 <keyword>KDE</keyword>
@@ -110,7 +110,7 @@ This action allows you to install a theme you downloaded yourself. A theme file 
 <varlistentry><term><guilabel>Remove Theme</guilabel></term>
 <listitem>
 <para>
-This action will remove the theme from your disk. Select the theme you want to remove in the list. Click the <guibutton>Remove Theme</guibutton> button. A dialog appears to ask you confirmation. 
+This action will remove the theme from your disk. Select the theme you want to remove in the list. Click the <guibutton>Remove Theme</guibutton> button. The Design will be removed from the disk if you click <guibutton>Apply</guibutton> or leave this module confirming to apply your change. 
 </para>
 </listitem>
 </varlistentry>
