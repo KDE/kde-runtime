@@ -40,6 +40,7 @@
 #endif
 
 #include <kpluginfactory.h>
+#include "ntracknetworkstate.h"
 
 K_PLUGIN_FACTORY(NetworkStatusFactory,
                  registerPlugin<NetworkStatusModule>();
@@ -74,6 +75,10 @@ NetworkStatusModule::NetworkStatusModule(QObject* parent, const QList<QVariant>&
 {
     new ClientAdaptor( this );
     new ServiceAdaptor( this );
+
+#ifdef HAVE_QNTRACK
+    new NtrackNetworkState( this );
+#endif
 
     init();
 }
@@ -225,5 +230,6 @@ void NetworkStatusModule::solidNetworkingStatusChanged( Solid::Networking::Statu
     kDebug( 1222 ) << "SolidNetwork changed status: " << status;
     setNetworkStatus( QLatin1String("SolidNetwork"), status );
 }
+
 
 #include "networkstatus.moc"

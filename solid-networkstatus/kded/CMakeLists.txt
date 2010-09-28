@@ -18,6 +18,20 @@ if(NETWORKMANAGER_FOUND)
     endif(NM_0_7)
 endif(NETWORKMANAGER_FOUND)
 
+find_package(QNtrack)
+
+if(QNTRACK_FOUND)
+    MESSAGE(STATUS "Found QNtrack, will use it as a data input for Solid network status")
+    set(kded_networkstatus_PART_SRCS ${kded_networkstatus_PART_SRCS} ntracknetworkstate.cpp)
+    add_definitions(-DHAVE_QNTRACK)
+else(QNTRACK_FOUND)
+    MESSAGE(STATUS "QNtrack not found.  Can be used as a data input to Solid network status.  See https://launchpad.net/ntrack")
+endif(QNTRACK_FOUND)
+
+macro_log_feature(QNTRACK_FOUND "QNtrack" "Network status tracking library" "http://launchpad.net/ntrack" FALSE "" "Provides data input for Solid network status")
+
+include_directories(${QNTRACK_INCLUDE_DIR})
+
 qt4_add_dbus_adaptor(kded_networkstatus_PART_SRCS ../org.kde.Solid.Networking.Service.xml
         networkstatus.h NetworkStatusModule)
 
@@ -29,7 +43,11 @@ qt4_add_dbus_adaptor(kded_networkstatus_PART_SRCS
 
 kde4_add_plugin(kded_networkstatus ${kded_networkstatus_PART_SRCS})
 
-target_link_libraries(kded_networkstatus ${KDE4_KDECORE_LIBS})
+if(QNTRACK_FOUND)
+   target_link_libraries(kded_networkstatus ${KDE4_KDECORE_LIBS} ${QNTRACK_LIBRARIES})
+else(QNTRACK_FOUND)
+   target_link_libraries(kded_networkstatus ${KDE4_KDECORE_LIBS})
+endif(QNTRACK_FOUND)
 
 install(TARGETS kded_networkstatus DESTINATION ${PLUGIN_INSTALL_DIR})
 
