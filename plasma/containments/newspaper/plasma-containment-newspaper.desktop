@@ -2,6 +2,7 @@
 Name=Newspaper Layout
 Name[cs]=Rozvržení novin
 Name[en_GB]=Newspaper Layout
+Name[es]=Disposición de periódico
 Name[ia]=Disposition de jornal
 Name[is]=Dagblaðsframsetning
 Name[ja]=新聞のレイアウト
@@ -19,6 +20,7 @@ Name[zh_TW]=報紙佈局
 Comment=A layout that puts widgets into columns
 Comment[cs]=Rozvržení, které skládá widgety do dvou sloupců
 Comment[en_GB]=A layout that puts widgets into columns
+Comment[es]=Una disposición que coloca los elementos gráficos en columnas
 Comment[eu]=Trepetak bi zutabetan jartzen dituen diseinu bat
 Comment[ia]=Un disposition que pone elementos graphicos (widget) in columnas
 Comment[ja]=ウィジェットを列配置するレイアウト
