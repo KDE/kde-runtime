@@ -603,7 +603,7 @@ The importance of a resource is determined by its usage times, its usage frequen
   </connection>
   <connection>
    <sender>m_sliderMemoryUsage</sender>
-   <signal>sliderMoved(int)</signal>
+   <signal>valueChanged(int)</signal>
    <receiver>m_editMemoryUsage</receiver>
    <slot>setValue(int)</slot>
    <hints>
