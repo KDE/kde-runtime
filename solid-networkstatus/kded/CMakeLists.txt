@@ -18,7 +18,7 @@ if(NETWORKMANAGER_FOUND)
     endif(NM_0_7)
 endif(NETWORKMANAGER_FOUND)
 
-find_package(QNtrack)
+macro_optional_find_package(QNtrack)
 
 if(QNTRACK_FOUND)
     MESSAGE(STATUS "Found QNtrack, will use it as a data input for Solid network status")
