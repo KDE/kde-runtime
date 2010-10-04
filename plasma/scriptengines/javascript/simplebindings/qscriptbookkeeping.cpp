@@ -44,6 +44,7 @@ Q_DECLARE_METATYPE(Plasma::Extender*)
 Q_DECLARE_METATYPE(Plasma::VideoWidget::Controls)
 Q_DECLARE_METATYPE(Plasma::Svg*)
 Q_DECLARE_METATYPE(Qt::MouseButton)
+Q_DECLARE_METATYPE(QList<double>)
 
 Q_DECLARE_METATYPE(AppletInterface*)
 
@@ -220,6 +221,7 @@ void registerSimpleAppletMetaTypes(QScriptEngine *engine)
     qScriptRegisterMetaType<KJob *>(engine, qScriptValueFromKJob, qKJobFromQScriptValue);
     qScriptRegisterMetaType<KIO::Job *>(engine, qScriptValueFromKIOJob, qKIOJobFromQScriptValue);
 
+    qScriptRegisterSequenceMetaType<QList<double> >(engine);
     qScriptRegisterMetaType<Plasma::Animation *>(engine, qScriptValueFromAnimation, abstractAnimationFromQScriptValue);
     qScriptRegisterMetaType<Plasma::Extender *>(engine, qScriptValueFromExtender, extenderFromQScriptValue);
     qScriptRegisterMetaType<Plasma::VideoWidget::Controls>(engine, qScriptValueFromControls, controlsFromScriptValue, QScriptValue());
