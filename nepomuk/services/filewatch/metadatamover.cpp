@@ -176,43 +176,47 @@ void Nepomuk::MetadataMover::removeMetadata( const KUrl& url )
         kDebug() << "empty path. Looks like a bug somewhere...";
     }
     else {
+        bool isFolder = true;
         Resource res( url );
         if ( res.exists() ) {
+            isFolder = res.hasType( Nepomuk::Vocabulary::NFO::Folder() );
             kDebug() << "removing metadata for file" << url << "with resource URI" << res.resourceUri();
             res.remove();
         }
 
-        //
-        // Recursively remove children
-        // We cannot use the nie:isPartOf relation since only children could have metadata. Thus, we do a regex
-        // match on all files and folders below the URL we got.
-        //
-        // CAUTION: The trailing slash on the from URL is essential! Otherwise we might match the newly added
-        //          URLs, too (in case a rename only added chars to the name)
-        //
-        const QString query = QString::fromLatin1( "select distinct ?r where { "
-                                                   "?r %1 ?url . "
-                                                   "FILTER(REGEX(STR(?url),'^%2')) . "
-                                                   "}" )
-                              .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ),
-                                    url.url(KUrl::AddTrailingSlash) );
-        kDebug() << query;
+        if( isFolder ) {
+            //
+            // Recursively remove children
+            // We cannot use the nie:isPartOf relation since only children could have metadata. Thus, we do a regex
+            // match on all files and folders below the URL we got.
+            //
+            // CAUTION: The trailing slash on the from URL is essential! Otherwise we might match the newly added
+            //          URLs, too (in case a rename only added chars to the name)
+            //
+            const QString query = QString::fromLatin1( "select distinct ?r where { "
+                                                    "?r %1 ?url . "
+                                                    "FILTER(REGEX(STR(?url),'^%2')) . "
+                                                    "}" )
+                                .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ),
+                                        url.url(KUrl::AddTrailingSlash) );
+            kDebug() << query;
 
-        //
-        // We cannot use one big loop since our updateMetadata calls below can change the iterator
-        // which could have bad effects like row skipping. Thus, we handle the urls in chunks of
-        // cached items.
-        //
-        while ( 1 ) {
-            QList<Soprano::Node> urls = m_model->executeQuery( query + QLatin1String( " LIMIT 100" ),
-                                                               Soprano::Query::QueryLanguageSparql )
-                                        .iterateBindings( 0 ).allNodes();
-            if ( urls.isEmpty() )
-                break;
+            //
+            // We cannot use one big loop since our updateMetadata calls below can change the iterator
+            // which could have bad effects like row skipping. Thus, we handle the urls in chunks of
+            // cached items.
+            //
+            while ( 1 ) {
+                QList<Soprano::Node> urls = m_model->executeQuery( query + QLatin1String( " LIMIT 100" ),
+                                                                Soprano::Query::QueryLanguageSparql )
+                                            .iterateBindings( 0 ).allNodes();
+                if ( urls.isEmpty() )
+                    break;
 
-            for ( int i = 0; i < urls.count(); ++i ) {
-                // the old URL of the resource to update
-                Resource::fromResourceUri( urls[i].uri() ).remove();
+                for ( int i = 0; i < urls.count(); ++i ) {
+                    // the old URL of the resource to update
+                    Resource::fromResourceUri( urls[i].uri() ).remove();
+                }
             }
         }
     }
