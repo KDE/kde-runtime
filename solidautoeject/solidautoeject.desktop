@@ -97,6 +97,7 @@ Comment[sr@ijekavianlatin]=Automatsko oslobađanje uređaja kada im se prisne du
 Comment[sr@latin]=Automatsko oslobađanje uređaja kada im se prisne dugme za izbacivanje
 Comment[sv]=Frisläpper automatiskt enheter vid tryck på deras utmatningsknapp
 Comment[th]=เปิดถาดไดรฟ์ให้อัตโนมัติเมื่อมีการกดปุ่มเอาแผ่นสื่อออก
+Comment[tr]=Çıkarma düğmesine basıldığında sürücüleri otomatik olarak ayırır
 Comment[uk]=Автоматичне вилучення файли пристроїв, після натискання на них кнопки виштовхування
 Comment[x-test]=xxAutomatically releases drives when their eject button is pushedxx
 Comment[zh_CN]=当按下弹出钮时，可自动释放驱动器资源
