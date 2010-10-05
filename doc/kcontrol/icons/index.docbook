@@ -15,8 +15,8 @@
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
 </authorgroup>
 
-<date>2008-05-28</date>
-<releaseinfo>3.2</releaseinfo>
+<date>2010-08-25</date>
+<releaseinfo>&kde; 4.5</releaseinfo>
 
 <keywordset>
 <keyword>KDE</keyword>
@@ -207,9 +207,8 @@ changes in effect.</para>
 </screenshot>
 </para>
 
-<para>You have two options relating to icon sizes. First, you can choose
-from a list of icon sizes. Second, you can tell &kde; to draw all icons
-using double sized pixels. The largest icon sizes are especially useful
+<para>You can choose
+from a list of icon sizes. The largest icon sizes are especially useful
 for visually impaired people.</para>
 
 <para>Which sizes will be offered by the icon size listbox depends on
@@ -220,7 +219,7 @@ offers icon sizes 16, 32 and 48 as well as sizes from 64 to 128.
 However, as &kde; can not have all these icon sizes in store, icons
 using size 64 to 128 will be automatically generated which may result in
 a loss of quality.</para>
-
+<!-- not in 4.5
 <para>If the icon sizes offered by your chosen icon theme are not enough
 for you, there is still the option <guilabel>Double-sized
 pixels</guilabel>. If this option is selected, all icons will have
@@ -231,6 +230,7 @@ if you've grown up using a Sinclair ZX Spectrum or similar. If this is
 an option for you, using the large sizes offered by &kde;'s HiColor
 icon theme will always result in a much better quality than using the
 low color icon theme with double sized pixels.</para> 
+-->
 <!-- 
 <para>You can also choose to have smoothed icons, an effect similar to
 anti-aliasing of fonts.  Enable the checkbox <guilabel>Blend alpha

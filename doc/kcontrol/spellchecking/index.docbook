@@ -16,8 +16,8 @@
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
 </authorgroup>
 
-<date>2009-11-18</date>
-<releaseinfo>&kde; 4.4</releaseinfo>
+<date>2010-09-02</date>
+<releaseinfo>&kde; 4.5</releaseinfo>
 
 <keywordset>
 <keyword>KDE</keyword>
@@ -36,20 +36,19 @@ kdeui/sonnet/configui.ui
 <para>The configuration options available here are used as default by all &kde;
 applications that use &sonnet;, which is a frontend to various free spell checkers.</para>
 
+<para>To use &sonnet; you need to install spell checkers like &eg; 
+<ulink url="http://aspell.net/">GNU Aspell</ulink>, 
+<ulink url="http://www.abisource.com/projects/enchant/">Enchant</ulink>, 
+<ulink url="http://hspell.ivrix.org.il/">Hspell</ulink>, 
+<ulink url="http://fmg-www.cs.ucla.edu/geoff/ispell.html">ISpell</ulink> or 
+<ulink url="http://hunspell.sourceforge.net/">Hunspell</ulink>
+and additionally the corresponding dictionaries for your language.</para>
+
 <para>The configuration options selected here can be overridden by each application.</para>
 
 <para>In the drop down box <guilabel>Default language</guilabel> choose from the 
 available dictionaries, which one to use for &sonnet;. </para>
 
-<!-- in case of missing language in the list which apps to install?
-sonnet has pluins HSpell enchant hspell hunspell ??
-<para>(If you do not have <application>Ispell</application> installed
-you can obtain it from the <ulink
-url="http://fmg-www.cs.ucla.edu/geoff/ispell.html">International
-ISpell home page</ulink>.  <application>ASpell</application> is available from the <ulink
-url="http://aspell.sourceforge.net/">ASpell home page</ulink>.)
-</para>
--->
 <sect2 id="spell-options">
 <title>Spell Options</title>
 
