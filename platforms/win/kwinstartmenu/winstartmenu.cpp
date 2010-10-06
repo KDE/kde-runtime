@@ -1,6 +1,6 @@
 /* This file is part of the KDE project
 
-   Copyright (C) 2008 Ralf Habacker <ralf.habacker@freenet.de>
+   Copyright (C) 2008-2010 Ralf Habacker <ralf.habacker@freenet.de>
    All rights reserved.
 
    This library is free software; you can redistribute it and/or
@@ -58,6 +58,8 @@ WinStartMenuModule::WinStartMenuModule(QObject* parent, const QList<QVariant>&)
 
     if (group.readEntry("Enabled", true))
       connect(KSycoca::self(), SIGNAL(databaseChanged()), this, SLOT(databaseChanged()));
+
+    globalOptions.useCategories = group.readEntry("useCategories", true);
     
     new WinStartMenuAdaptor( this );
 }

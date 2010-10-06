@@ -1,6 +1,6 @@
 /* This file is part of the KDE Project
 
-   Copyright (C) 2006-2009 Ralf Habacker <ralf.habacker@freenet.de>
+   Copyright (C) 2006-2010 Ralf Habacker <ralf.habacker@freenet.de>
    All rights reserved.
 
    This library is free software; you can redistribute it and/or
@@ -37,16 +37,17 @@
 
 int main(int argc, char **argv)
 {
-    KAboutData about("winstartmenu", "kdebase-runtime", ki18n("winstartmenu"), "1.0",
+    KAboutData about("kwinstartmenu", "kdebase-runtime", ki18n("kwinstartmenu"), "1.1",
                      ki18n("An application to create/update or remove Windows Start Menu entries"),
                      KAboutData::License_GPL,
-                     ki18n("(C) 2008 Ralf Habacker"));
+                     ki18n("(C) 2008-2010 Ralf Habacker"));
     KCmdLineArgs::init( argc, argv, &about);
 
     KCmdLineOptions options;
     options.add("remove",     ki18n("Remove installed Start Menu entries"));
     options.add("install",    ki18n("Install Start Menu entries (this is also the default when this option is not used)"));
     options.add("query-path", ki18n("query root path of Start Menu entries"));
+    options.add("nocategories", ki18n("don't use categories for start menu entries"));
     KCmdLineArgs::addCmdLineOptions( options ); // Add my own options.
 
     KComponentData a(&about);
@@ -56,6 +57,8 @@ int main(int argc, char **argv)
 
     KApplication app(false);
 
+    globalOptions.useCategories = args->isSet("categories");
+    
     if (args->isSet("query-path"))
         fprintf(stdout,"%s",qPrintable(QDir::toNativeSeparators(getKDEStartMenuPath())));
     else if (args->isSet("remove"))

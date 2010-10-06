@@ -1,6 +1,6 @@
 /* This file is part of the KDE project
 
-   Copyright (C) 2006-2009 Ralf Habacker <ralf.habacker@freenet.de>
+   Copyright (C) 2006-2010 Ralf Habacker <ralf.habacker@freenet.de>
    All rights reserved.
 
    This library is free software; you can redistribute it and/or
@@ -41,6 +41,8 @@
 #include <kconfiggroup.h>
 #include <kdesktopfile.h>
 #include <kdeversion.h>
+
+GlobalOptions globalOptions;
 
 bool removeDirectory(const QString& aDir)
 {
@@ -225,7 +227,12 @@ bool generateMenuEntries(QList<LinkFile> &files, const KUrl &url, const QString 
                 continue;
             }
             
-            QString linkPath = getKDEStartMenuPath() + relPathTranslated + '/';
+            QString linkPath = getKDEStartMenuPath();
+
+            if (globalOptions.useCategories)
+                linkPath +=  relPathTranslated;
+            linkPath += '/';
+                            
             QString linkName = s->name();
             if (!s->genericName().isEmpty() && s->genericName() != s->name()) 
                 linkName += " (" + s->genericName().replace('/','-') + ')';

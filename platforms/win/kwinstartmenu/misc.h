@@ -1,6 +1,6 @@
 /* This file is part of the KDE Project
 
-   Copyright (C) 2006-2008 Ralf Habacker <ralf.habacker@freenet.de>
+   Copyright (C) 2006-2010 Ralf Habacker <ralf.habacker@freenet.de>
    All rights reserved.
 
    This library is free software; you can redistribute it and/or
@@ -26,6 +26,18 @@
 class QDir;
 
 #include <KUrl>
+
+/** 
+ contains global options 
+*/
+class GlobalOptions {
+public: 
+    GlobalOptions() : useCategories(true) {}
+
+    bool useCategories;
+};
+
+extern GlobalOptions globalOptions;
 
 bool removeDirectory(const QString& aDir);
 QString getStartMenuPath(bool bAllUsers=false);

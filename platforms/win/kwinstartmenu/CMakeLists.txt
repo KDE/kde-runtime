@@ -24,6 +24,7 @@ target_link_libraries( kded_winstartmenu ${KDE4_KIO_LIBS} ole32 uuid )
 install(TARGETS kded_winstartmenu  DESTINATION ${PLUGIN_INSTALL_DIR} )
 install( FILES winstartmenu.desktop  DESTINATION  ${SERVICES_INSTALL_DIR}/kded )
 install( FILES org.kde.WinStartMenu.xml DESTINATION ${DBUS_INTERFACES_INSTALL_DIR} )
+install( FILES kwinstartmenurc DESTINATION  ${CONFIG_INSTALL_DIR} )
 
 ########### next target ###############
 
