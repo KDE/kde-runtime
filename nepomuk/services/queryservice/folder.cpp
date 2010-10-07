@@ -127,6 +127,7 @@ Nepomuk::Query::RequestPropertyMap Nepomuk::Query::Folder::requestPropertyMap() 
 }
 
 
+// called from SearchRunnable in the search thread
 void Nepomuk::Query::Folder::addResult( const Nepomuk::Query::Result& result )
 {
     if ( m_initialListingDone ) {
@@ -142,6 +143,7 @@ void Nepomuk::Query::Folder::addResult( const Nepomuk::Query::Result& result )
 }
 
 
+// called from SearchRunnable in the search thread
 void Nepomuk::Query::Folder::listingFinished()
 {
     m_currentSearchRunnable = 0;
@@ -165,7 +167,9 @@ void Nepomuk::Query::Folder::listingFinished()
     }
 
     // make sure we do not update again right away
-    m_updateTimer.start();
+    // but we need to do it from the main thread but this
+    // method is called sync from the SearchRunnable
+    QMetaObject::invokeMethod( &m_updateTimer, "start", Qt::QueuedConnection );
 }
 
 
@@ -190,6 +194,7 @@ void Nepomuk::Query::Folder::slotUpdateTimeout()
 }
 
 
+// called from CountQueryRunnable in the search thread
 void Nepomuk::Query::Folder::countQueryFinished( int count )
 {
     m_totalCount = count;
