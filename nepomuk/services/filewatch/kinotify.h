@@ -134,7 +134,7 @@ Q_SIGNALS:
      * Emitted if a watched file or folder has been deleted.
      * This includes files in watched foldes (KInotify::EventDelete and KInotify::EventDeleteSelf)
      */
-    void deleted( const QString& file );
+    void deleted( const QString& file, bool isDir );
 
     /**
      * Emitted if a watched file is modified (KInotify::EventModify)

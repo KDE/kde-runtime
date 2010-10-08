@@ -176,10 +176,9 @@ void Nepomuk::MetadataMover::removeMetadata( const KUrl& url )
         kDebug() << "empty path. Looks like a bug somewhere...";
     }
     else {
-        bool isFolder = true;
+        bool isFolder = url.url().endsWith('/');
         Resource res( url );
         if ( res.exists() ) {
-            isFolder = res.hasType( Nepomuk::Vocabulary::NFO::Folder() );
             kDebug() << "removing metadata for file" << url << "with resource URI" << res.resourceUri();
             res.remove();
         }

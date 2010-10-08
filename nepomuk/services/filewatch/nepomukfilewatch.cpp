@@ -132,8 +132,8 @@ Nepomuk::FileWatch::FileWatch( QObject* parent, const QList<QVariant>& )
 
     connect( m_dirWatch, SIGNAL( moved( QString, QString ) ),
              this, SLOT( slotFileMoved( QString, QString ) ) );
-    connect( m_dirWatch, SIGNAL( deleted( QString ) ),
-             this, SLOT( slotFileDeleted( QString ) ) );
+    connect( m_dirWatch, SIGNAL( deleted( QString, bool ) ),
+             this, SLOT( slotFileDeleted( QString, bool ) ) );
     connect( m_dirWatch, SIGNAL( created( QString ) ),
              this, SLOT( slotFileCreated( QString ) ) );
     connect( m_dirWatch, SIGNAL( modified( QString ) ),
@@ -211,9 +211,14 @@ void Nepomuk::FileWatch::slotFilesDeleted( const QStringList& paths )
 }
 
 
-void Nepomuk::FileWatch::slotFileDeleted( const QString& urlString )
+void Nepomuk::FileWatch::slotFileDeleted( const QString& urlString, bool isDir )
 {
-    slotFilesDeleted( QStringList( urlString ) );
+    // Directories must always end with a trailing slash '/'
+    QString url = urlString;
+    if( isDir && url[ url.length() - 1 ] != '/') {
+        url.append('/');
+    }
+    slotFilesDeleted( QStringList( url ) );
 }
 
 
