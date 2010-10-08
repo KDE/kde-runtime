@@ -344,17 +344,8 @@ void KInotify::slotEvent( int socket )
             }
             emit created( path );
         }
-        if ( event->mask & EventDelete ) {
-//            kDebug() << path << "EventDelete";
-            bool isDir = false;
-            if ( event->mask & IN_ISDIR ) {
-                isDir = true;
-                d->removeWatch( event->wd );
-            }
-            emit deleted( path, isDir );
-        }
-        if ( event->mask & EventDeleteSelf ) {
-//            kDebug() << path << "EventDeleteSelf";
+        if ( ( event->mask & EventDelete ) || ( event->mask & EventDeleteSelf ) ) {
+//            kDebug() << path << "EventDelete" << " EventDeleteSelf";
             bool isDir = false;
             if ( event->mask & IN_ISDIR ) {
                 isDir = true;
