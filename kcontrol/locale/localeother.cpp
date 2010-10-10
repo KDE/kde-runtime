@@ -62,13 +62,42 @@ KLocaleConfigOther::KLocaleConfigOther(KLocale *locale,
   connect( m_combMeasureSystem, SIGNAL( activated(int) ),
            SLOT( slotMeasureSystemChanged(int) ) );
 
+  m_labBinaryUnit = new QLabel(this);
+  m_labBinaryUnit->setObjectName( QLatin1String( I18N_NOOP( "Units for byte sizes:" )) );
+  m_labBinaryUnit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+  lay->addWidget(m_labBinaryUnit, 2, 0);
+  m_combBinaryUnit = new QComboBox(this);
+  lay->addWidget(m_combBinaryUnit, 2, 1);
+  connect( m_combBinaryUnit, SIGNAL( activated(int) ),
+           SLOT( slotByteSizeUnitsChanged(int) ) );
+
+  m_labBinaryUnitExample = new QLabel(this);
+  lay->addWidget(m_labBinaryUnitExample, 3, 1);
+
+  QString binaryUnitsWhatsThis = ki18n("<qt>This changes the units used by most KDE "
+    "programs to display numbers counted in bytes. Traditionally \"kilobytes\" meant "
+    "units of 1024, instead of the metric 1000, for most (but not all) byte sizes."
+    "<ul><li>To reduce confusion you can use the recently standardized IEC units which "
+    "are always in multiples of 1024.</li>"
+    "<li>You can also select metric, which is always in units of 1000.</li>"
+    "<li>Selecting JEDEC restores the older-style units used in KDE 3.5 and some other "
+    "operating systems.</li></qt>").toString(m_locale);
+
+  m_combBinaryUnit->setWhatsThis(binaryUnitsWhatsThis);
+  m_labBinaryUnit->setWhatsThis(binaryUnitsWhatsThis);
+
+  // Pre-fill the number of entries needed in each combo box for the translated
+  // options.
   m_combPageSize->addItem(QString());
   m_combPageSize->addItem(QString());
   m_combMeasureSystem->addItem(QString());
   m_combMeasureSystem->addItem(QString());
+  m_combBinaryUnit->addItem(QString());
+  m_combBinaryUnit->addItem(QString());
+  m_combBinaryUnit->addItem(QString());
 
   lay->setColumnStretch(1, 1);
-  lay->setRowStretch(2, 1);
+  lay->setRowStretch(4, 1);
 
   adjustSize();
 }
@@ -100,6 +129,12 @@ void KLocaleConfigOther::save()
     group.writeEntry("MeasureSystem",
                        int(m_locale->measureSystem()), KConfig::Persistent|KConfig::Global);
 
+  i = entGrp.readEntry("BinaryUnitDialect", (int)KLocale::DefaultBinaryDialect);
+  group.deleteEntry("BinaryUnitDialect", KConfig::Persistent | KConfig::Global);
+  if (i != m_locale->binaryUnitDialect())
+    group.writeEntry("BinaryUnitDialect",
+                       int(m_locale->binaryUnitDialect()), KConfig::Persistent|KConfig::Global);
+
   group.sync();
 }
 
@@ -113,6 +148,13 @@ void KLocaleConfigOther::slotLocaleChanged()
   if ( pageSize == (int)QPrinter::Letter )
     i = 1;
   m_combPageSize->setCurrentIndex(i);
+
+  m_combBinaryUnit->setCurrentIndex(static_cast<int>(m_locale->binaryUnitDialect()));
+
+  m_labBinaryUnitExample->setText(
+    ki18nc("Example test for binary unit dialect", "Example: 2000 bytes equals %1")
+      .subs(m_locale->formatByteSize(2000, 2))
+      .toString());
 }
 
 void KLocaleConfigOther::slotTranslate()
@@ -122,6 +164,13 @@ void KLocaleConfigOther::slotTranslate()
 
   m_combPageSize->setItemText( 0, ki18n("A4").toString(m_locale) );
   m_combPageSize->setItemText( 1, ki18n("US Letter").toString(m_locale) );
+
+  m_combBinaryUnit->setItemText( 0,
+    ki18nc("Unit of binary measurement", "IEC Units (KiB, MiB, etc.)").toString(m_locale) );
+  m_combBinaryUnit->setItemText( 1,
+    ki18nc("Unit of binary measurement", "JEDEC Units (KB, MB, etc.)").toString(m_locale) );
+  m_combBinaryUnit->setItemText( 2,
+    ki18nc("Unit of binary measurement", "Metric Units (kB, MB, etc.)").toString(m_locale) );
 }
 
 void KLocaleConfigOther::slotPageSizeChanged(int i)
@@ -138,5 +187,17 @@ void KLocaleConfigOther::slotPageSizeChanged(int i)
 void KLocaleConfigOther::slotMeasureSystemChanged(int i)
 {
   m_locale->setMeasureSystem((KLocale::MeasureSystem)i);
+  emit localeChanged();
+}
+
+void KLocaleConfigOther::slotByteSizeUnitsChanged(int i)
+{
+  m_locale->setBinaryUnitDialect(static_cast<KLocale::BinaryUnitDialect>(i));
+
+  m_labBinaryUnitExample->setText(
+    ki18nc("Example test for binary unit dialect", "Example: 2000 bytes equals %1")
+      .subs(m_locale->formatByteSize(2000, 2))
+      .toString());
+
   emit localeChanged();
 }

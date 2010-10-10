@@ -57,6 +57,7 @@ Q_SIGNALS:
 private Q_SLOTS:
   void slotPageSizeChanged(int i);
   void slotMeasureSystemChanged(int i);
+  void slotByteSizeUnitsChanged(int i);
 
 private:
   KLocale *m_locale;
@@ -65,6 +66,9 @@ private:
   QComboBox *m_combMeasureSystem;
   QLabel *m_labPageSize;
   QComboBox *m_combPageSize;
+  QLabel *m_labBinaryUnit;
+  QComboBox *m_combBinaryUnit;
+  QLabel *m_labBinaryUnitExample;
 };
 
 #endif // LOCALEOTHER_H
