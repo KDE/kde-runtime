@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Newspaper Layout
 Name[cs]=Rozvržení novin
+Name[de]=Zeitungs-Anordnung
 Name[en_GB]=Newspaper Layout
 Name[es]=Disposición de periódico
 Name[et]=Ajalehepaigutus
@@ -21,6 +22,7 @@ Name[zh_TW]=報紙佈局
 
 Comment=A layout that puts widgets into columns
 Comment[cs]=Rozvržení, které skládá widgety do dvou sloupců
+Comment[de]=Anordnung der Miniprogramme in Spalten
 Comment[en_GB]=A layout that puts widgets into columns
 Comment[es]=Una disposición que coloca los elementos gráficos en columnas
 Comment[et]=Paigutus, mis asetab vidinad veergudesse

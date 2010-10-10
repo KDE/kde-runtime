@@ -155,6 +155,7 @@ Name[uk]=Змінено пристрій відтворення звуку
 Name[x-test]=xxAudio Output Device Changedxx
 Name[zh_TW]=音效輸出裝置已變更
 Comment=Notification when audio output device has automatically changed
+Comment[de]=Benachrichtigung, wenn das Audioausgabegerät automatisch geändert worden ist
 Comment[en_GB]=Notification when audio output device has automatically changed
 Comment[es]=Notificación de cambios automáticos en los dispositivos de salida de audio
 Comment[et]=Märguanne, kui heli väljundseadet on automaatselt muudetud
