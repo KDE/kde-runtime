@@ -14,8 +14,8 @@
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
  </authorgroup>
 
-	  <date>2010-08-19</date>
-	  <releaseinfo>4.5</releaseinfo>
+	  <date>2010-10-11</date>
+	  <releaseinfo>4.6</releaseinfo>
 
 	  <keywordset>
 		<keyword>KDE</keyword>
@@ -247,6 +247,18 @@ in your country.</para>
 
 <para>Use the drop down box labeled <guilabel>Measure system</guilabel> to select Imperial or
 Metric systems of measurement.</para>
+
+<para>The units used by most KDE programs to display numbers 
+counted in bytes can be changed using drop down box <guilabel>Units for byte sizes</guilabel>. Traditionally <quote>kilobytes</quote> meant units of 1024, instead of the metric 1000, for most (but not all) byte sizes.
+  <itemizedlist>
+    <listitem><para>To reduce confusion you can use the recently standardized <guilabel>IEC Units</guilabel> which are always in multiples of 1024.</para>
+    </listitem>
+    <listitem><para>You can also select <guilabel>Metric Units</guilabel>, which is always in units of 1000.</para>
+    </listitem>
+    <listitem><para>Selecting <guilabel>JEDEC Units</guilabel> restores the older-style units used in &kde; 3.5 and some other operating systems.</para>
+    </listitem>
+  </itemizedlist>
+</para>
 
 </sect2>
 
