@@ -410,7 +410,7 @@ void AppletsContainer::createAppletTitle(Plasma::Applet *applet)
 
     AppletTitleBar *appletTitleBar = new AppletTitleBar(applet);
     appletTitleBar->setOverlayVisible(m_orientation == Qt::Horizontal || !m_expandAll);
-    kWarning()<<"AAAA"<<(m_orientation == Qt::Horizontal || !m_expandAll);
+
     appletTitleBar->setParent(applet);
     appletTitleBar->show();
 
