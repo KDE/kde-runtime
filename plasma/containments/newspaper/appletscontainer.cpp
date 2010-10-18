@@ -175,6 +175,12 @@ void AppletsContainer::setExpandAll(const bool expand)
             if (applet->effectiveSizeHint(Qt::MinimumSize).height() > KIconLoader::SizeSmall) {
                 applet->setPreferredHeight(-1);
             }
+            QList<AppletTitleBar *> titles = applet->findChildren<AppletTitleBar *>("TitleBar");
+
+            if (!titles.isEmpty()) {
+                titles.first()->setActive(false);
+                titles.first()->setOverlayVisible(true);
+            }
         }
 
     } else {
@@ -188,6 +194,13 @@ void AppletsContainer::setExpandAll(const bool expand)
             } else {
                 applet->setPreferredSize(-1, -1);
                 applet->setPreferredWidth((m_scrollWidget->viewportGeometry().size().width()/2)-8);
+            }
+
+            QList<AppletTitleBar *> titles = applet->findChildren<AppletTitleBar *>("TitleBar");
+
+            if (!titles.isEmpty()) {
+                titles.first()->setActive(applet == m_currentApplet.data());
+                titles.first()->setOverlayVisible(false);
             }
         }
     }
@@ -396,6 +409,8 @@ void AppletsContainer::createAppletTitle(Plasma::Applet *applet)
     }
 
     AppletTitleBar *appletTitleBar = new AppletTitleBar(applet);
+    appletTitleBar->setOverlayVisible(m_orientation == Qt::Horizontal || !m_expandAll);
+    kWarning()<<"AAAA"<<(m_orientation == Qt::Horizontal || !m_expandAll);
     appletTitleBar->setParent(applet);
     appletTitleBar->show();
 

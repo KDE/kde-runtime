@@ -76,7 +76,8 @@ AppletTitleBar::AppletTitleBar(Plasma::Applet *applet)
          m_underMouse(false),
          m_buttonsVisible(false),
          m_appletHasBackground(false),
-         m_active(false)
+         m_active(false),
+         m_overlayVisible(true)
 {
     setObjectName( QLatin1String("TitleBar" ));
 
@@ -169,13 +170,28 @@ void AppletTitleBar::setActive(bool visible)
     }
 
     setButtonsVisible(visible);
-    m_appletOverlay->setVisible(!visible);
+    m_appletOverlay->setVisible(!visible && m_overlayVisible);
     m_active = visible;
 }
 
 bool AppletTitleBar::isActive() const
 {
     return m_active;
+}
+
+void AppletTitleBar::setOverlayVisible(bool visible)
+{
+    if (visible == m_overlayVisible) {
+        return;
+    }
+
+    m_appletOverlay->setVisible(visible);
+    m_overlayVisible = visible;
+}
+
+bool AppletTitleBar::overlayVisible() const
+{
+    return m_overlayVisible;
 }
 
 void AppletTitleBar::initAnimations()
@@ -303,7 +319,7 @@ bool AppletTitleBar::eventFilter(QObject *watched, QEvent *event)
 
 void AppletTitleBar::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    if (!m_active) {
+    if (!m_active && m_overlayVisible) {
         event->setAccepted(false);
     } else if (m_applet->hasValidAssociatedApplication() &&
         m_maximizeButtonRect.contains(event->pos())) {

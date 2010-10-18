@@ -49,6 +49,9 @@ public:
     void setActive(bool force);
     bool isActive() const;
 
+    void setOverlayVisible(bool visible);
+    bool overlayVisible() const;
+
 protected:
     void syncSize();
     void syncIconRects();
@@ -96,6 +99,7 @@ private:
     bool m_buttonsVisible;
     bool m_appletHasBackground;
     bool m_active;
+    bool m_overlayVisible;
 };
 
 #endif
