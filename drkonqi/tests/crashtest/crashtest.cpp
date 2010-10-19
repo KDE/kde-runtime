@@ -129,14 +129,20 @@ int main(int argc, char *argv[])
   KCmdLineArgs::init(argc, argv, &aboutData);
 
   KCmdLineOptions options;
+  options.add("autorestart", ki18n("Automatically restart"));
   options.add("+crash|malloc|div0|assert|threads", ki18n("Type of crash."));
   KCmdLineArgs::addCmdLineOptions(options);
 
   KApplication app(false);
-  //start drkonqi directly so that drkonqi's output goes to the console
-  KCrash::setFlags(KCrash::AlwaysDirectly);
-
   KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
+
+  //start drkonqi directly so that drkonqi's output goes to the console
+  KCrash::CrashFlags flags = KCrash::AlwaysDirectly;
+  if (args->isSet("autorestart"))
+    flags |= KCrash::AutoRestart;
+  KCrash::setFlags(flags);
+  kDebug() << flags;
+
   QByteArray type = args->count() ? args->arg(0).toUtf8() : "";
   int crashtype = Crash;
   if (type == "malloc")
