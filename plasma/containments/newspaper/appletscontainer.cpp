@@ -463,7 +463,19 @@ QSizeF AppletsContainer::optimalAppletSize(Plasma::Applet *applet, const bool ma
                                      m_viewportSize.height() / m_appletsPerRow);
 
     //4,4 is the size of the margins of the scroll view
-    QSizeF normalAppletSize = QSizeF(applet->effectiveSizeHint(Qt::MinimumSize)).expandedTo(minNormalAppletSize);
+    QSizeF normalAppletSize = QSizeF(applet->effectiveSizeHint(Qt::PreferredSize));
+
+    if (normalAppletSize.height() <= minNormalAppletSize.height()/2) {
+        normalAppletSize.setHeight(minNormalAppletSize.height()/2);
+    } else {
+        normalAppletSize.setHeight(minNormalAppletSize.height());
+    }
+
+    if (normalAppletSize.width() <= minNormalAppletSize.width()/2) {
+        normalAppletSize.setWidth(minNormalAppletSize.width()/2);
+    } else {
+        normalAppletSize.setWidth(minNormalAppletSize.width());
+    }
 
     normalAppletSize -= QSize(4/m_appletsPerColumn, 4/m_appletsPerRow);
 
