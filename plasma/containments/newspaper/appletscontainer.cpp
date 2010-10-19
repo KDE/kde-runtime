@@ -462,9 +462,12 @@ QSizeF AppletsContainer::optimalAppletSize(Plasma::Applet *applet, const bool ma
     const QSizeF minNormalAppletSize(m_viewportSize.width() / m_appletsPerColumn,
                                      m_viewportSize.height() / m_appletsPerRow);
 
-    //4,4 is the size of the margins of the scroll view
-    QSizeF normalAppletSize = QSizeF(applet->effectiveSizeHint(Qt::PreferredSize));
 
+    //FIXME: this change of fixed preferred height could cause a relayout, unfortunately there is no other way
+    int preferred = applet->preferredHeight();
+    applet->setPreferredHeight(-1);
+    QSizeF normalAppletSize = QSizeF(applet->effectiveSizeHint(Qt::PreferredSize));
+kWarning()<<"AAA"<<applet->name()<<normalAppletSize<<minNormalAppletSize<<m_appletsPerColumn<<m_appletsPerRow;
     if (normalAppletSize.height() <= minNormalAppletSize.height()/2) {
         normalAppletSize.setHeight(minNormalAppletSize.height()/2);
     } else {
@@ -477,16 +480,15 @@ QSizeF AppletsContainer::optimalAppletSize(Plasma::Applet *applet, const bool ma
         normalAppletSize.setWidth(minNormalAppletSize.width());
     }
 
+    //4,4 is the size of the margins of the scroll view
     normalAppletSize -= QSize(4/m_appletsPerColumn, 4/m_appletsPerRow);
 
     if (maximized) {
-        //FIXME: this change of fixed preferred height could cause a relayout, unfortunately there is no other way
-        int preferred = applet->preferredHeight();
-        applet->setPreferredHeight(-1);
         QSizeF size = QSizeF(applet->effectiveSizeHint(Qt::PreferredSize)).boundedTo(m_viewportSize).expandedTo(normalAppletSize);
         applet->setPreferredHeight(preferred-4);
         return size;
     } else {
+        applet->setPreferredHeight(preferred);
         return normalAppletSize;
     }
 }
