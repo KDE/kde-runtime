@@ -467,7 +467,7 @@ QSizeF AppletsContainer::optimalAppletSize(Plasma::Applet *applet, const bool ma
     int preferred = applet->preferredHeight();
     applet->setPreferredHeight(-1);
     QSizeF normalAppletSize = QSizeF(applet->effectiveSizeHint(Qt::PreferredSize));
-kWarning()<<"AAA"<<applet->name()<<normalAppletSize<<minNormalAppletSize<<m_appletsPerColumn<<m_appletsPerRow;
+
     if (normalAppletSize.height() <= minNormalAppletSize.height()/2) {
         normalAppletSize.setHeight(minNormalAppletSize.height()/2);
     } else {
