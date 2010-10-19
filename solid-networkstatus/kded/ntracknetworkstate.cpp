@@ -60,7 +60,6 @@ NtrackNetworkState::NtrackNetworkState( NetworkStatusModule* statusmodule ) : QO
 
 NtrackNetworkState::~NtrackNetworkState()
 {
-    m_statusmodule->setNetworkStatus("ntrack",Solid::Networking::Unknown);
 }
 
 
