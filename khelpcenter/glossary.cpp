@@ -322,8 +322,7 @@ QString Glossary::entryToHtml( const GlossaryEntry &entry )
            .arg( i18n( "KDE Glossary" ) )
            .arg( entry.term() )
            .arg( entry.definition() )
-           .arg( seeAlso)
-           .arg( View::langLookup( QLatin1String("khelpcenter/kdelogo2.png") ) );
+           .arg( seeAlso );
 }
 
 void Glossary::slotSelectGlossEntry( const QString &id )
