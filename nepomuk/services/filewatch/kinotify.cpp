@@ -44,10 +44,18 @@ namespace {
     // is a variable length array
     const int EVENT_BUFFER_SIZE = EVENT_STRUCT_SIZE + 1024*16;
 
-    QByteArray normalizePath( const QByteArray& path ) {
+    QByteArray stripTrailingSlash( const QByteArray& path ) {
         QByteArray p( path );
         if ( p.endsWith( '/' ) )
             p.truncate( p.length()-1 );
+        return p;
+    }
+
+    QByteArray concatPath( const QByteArray& p1, const QByteArray& p2 ) {
+        QByteArray p(p1);
+        if( p.isEmpty() || p[p.length()-1] != '/' )
+            p.append('/');
+        p.append(p2);
         return p;
     }
 }
@@ -66,8 +74,9 @@ public:
         close();
     }
 
-    QHash<int, QString> cookies;
-    QHash<int, QByteArray> pathHash;
+    QHash<int, QByteArray> cookies;
+    QHash<int, QByteArray> watchPathHash;
+    QHash<QByteArray, int> pathWatchHash;
 
     /// queue of paths to install watches for
     QQueue<QByteArray> pathsToWatch;
@@ -97,6 +106,7 @@ public:
     }
 
     bool addWatch( const QByteArray& path ) {
+        kDebug() << path;
         // we always need the unmount event to maintain our path hash
         WatchEvents newMode = mode;
         WatchFlags newFlags = flags;
@@ -109,7 +119,9 @@ public:
         int wd = inotify_add_watch( inotify(), path.data(), mask );
         if ( wd > 0 ) {
 //            kDebug() << "Successfully added watch for" << path << pathHash.count();
-            pathHash.insert( wd, normalizePath( path ) );
+            QByteArray normalized = stripTrailingSlash( path );
+            watchPathHash.insert( wd, normalized );
+            pathWatchHash.insert( normalized, wd );
             return true;
         }
         else {
@@ -129,8 +141,8 @@ public:
         if ( !addWatch( path ) )
             return false;
 
-        int len = offsetof(struct dirent, d_name) +
-                  pathconf(path.data(), _PC_NAME_MAX) + 1;
+        const int len = offsetof(struct dirent, d_name) +
+                pathconf(path.data(), _PC_NAME_MAX) + 1;
         struct dirent* entry = ( struct dirent* )new char[len];
 
         DIR* dir = opendir( path.data() );
@@ -144,13 +156,13 @@ public:
                 }
 
                 if ( ( entry->d_type == DT_UNKNOWN ||
-                       entry->d_type == DT_DIR ) &&
-                     ( watchHiddenFolders ||
-                       qstrncmp( entry->d_name, ".", 1 ) ) &&
-                     qstrcmp( entry->d_name, "." ) &&
-                     qstrcmp( entry->d_name, ".." ) ) {
+                      entry->d_type == DT_DIR ) &&
+                        ( watchHiddenFolders ||
+                         qstrncmp( entry->d_name, ".", 1 ) ) &&
+                        qstrcmp( entry->d_name, "." ) &&
+                        qstrcmp( entry->d_name, ".." ) ) {
                     bool isDir = true;
-                    QByteArray subDir = path + '/' + QByteArray::fromRawData( entry->d_name, qstrlen( entry->d_name ) );
+                    QByteArray subDir = concatPath( path, QByteArray::fromRawData( entry->d_name, qstrlen( entry->d_name ) ) );
                     if ( entry->d_type == DT_UNKNOWN ) {
                         struct stat buf;
                         lstat( subDir.data(), &buf );
@@ -175,7 +187,8 @@ public:
     }
 
     void removeWatch( int wd ) {
-        pathHash.remove( wd );
+        kDebug() << wd << watchPathHash[wd];
+        pathWatchHash.remove( watchPathHash.take( wd ) );
         inotify_rm_watch( inotify(), wd );
     }
 
@@ -254,14 +267,8 @@ bool KInotify::available() const
 
 bool KInotify::watchingPath( const QString& path ) const
 {
-    QByteArray p( normalizePath( QFile::encodeName( path ) ) );
-    QHash<int, QByteArray>::const_iterator end = d->pathHash.constEnd();
-    for ( QHash<int, QByteArray>::const_iterator it = d->pathHash.constBegin();
-          it != end; ++it ) {
-        if ( it.value() == p )
-            return true;
-    }
-    return false;
+    const QByteArray p( stripTrailingSlash( QFile::encodeName( path ) ) );
+    return d->pathWatchHash.contains(p);
 }
 
 
@@ -277,15 +284,16 @@ bool KInotify::addWatch( const QString& path, WatchEvents mode, WatchFlags flags
 }
 
 
-// TODO: do this more efficiently
 bool KInotify::removeWatch( const QString& path )
 {
+    kDebug() << path;
     QByteArray encodedPath = QFile::encodeName( path );
-    QHash<int, QByteArray>::iterator it = d->pathHash.begin();
-    while ( it != d->pathHash.end() ) {
+    QHash<int, QByteArray>::iterator it = d->watchPathHash.begin();
+    while ( it != d->watchPathHash.end() ) {
         if ( it.value().startsWith( encodedPath ) ) {
             inotify_rm_watch( d->inotify(), it.key() );
-            it = d->pathHash.erase( it );
+            d->pathWatchHash.remove(it.value());
+            it = d->watchPathHash.erase( it );
         }
         else {
             ++it;
@@ -303,62 +311,75 @@ bool KInotify::filterWatch( const QString & path, WatchEvents & modes, WatchFlag
     return true;
 }
 
+
 void KInotify::slotEvent( int socket )
 {
     // read at least one event
-    int len = read( socket, d->eventBuffer, EVENT_BUFFER_SIZE );
+    const int len = read( socket, d->eventBuffer, EVENT_BUFFER_SIZE );
     int i = 0;
     while ( i < len && len-i >= EVENT_STRUCT_SIZE  ) {
-        struct inotify_event* event = ( struct inotify_event* )&d->eventBuffer[i];
+        const struct inotify_event* event = ( struct inotify_event* )&d->eventBuffer[i];
 
-        QByteArray encodedPath = QByteArray::fromRawData( event->name, event->len );
+        QByteArray path;
 
-        if ( encodedPath[0] != '/' ) {
-            encodedPath = d->pathHash.value( event->wd ) + '/' + encodedPath;
+        // the event name only contains an interesting value if we get an event for a file/folder inside
+        // a watched folder. Otherwise we should ignore it
+        if ( event->mask & (EventDeleteSelf|EventMoveSelf) ) {
+            path = d->watchPathHash.value( event->wd );
+        }
+        else {
+            // we cannot use event->len here since it contains the size of the buffer and not the length of the string
+            const QByteArray eventName = QByteArray::fromRawData( event->name, qstrlen(event->name) );
+            const QByteArray hashedPath = d->watchPathHash.value( event->wd );
+            path = concatPath( hashedPath, eventName );
         }
 
-        QString path = QFile::decodeName( encodedPath );
+        Q_ASSERT( !path.isEmpty() || event->mask & EventIgnored );
+        Q_ASSERT( path != "/" || event->mask & EventIgnored );
 
         // now signal the event
         if ( event->mask & EventAccess) {
 //            kDebug() << path << "EventAccess";
-            emit accessed( path );
+            emit accessed( QFile::decodeName(path) );
         }
         if ( event->mask & EventAttributeChange ) {
 //            kDebug() << path << "EventAttributeChange";
-            emit attributeChanged( path );
+            emit attributeChanged( QFile::decodeName(path) );
         }
         if ( event->mask & EventCloseWrite ) {
 //            kDebug() << path << "EventCloseWrite";
-            emit closedWrite( path );
+            emit closedWrite( QFile::decodeName(path) );
         }
         if ( event->mask & EventCloseRead ) {
 //            kDebug() << path << "EventCloseRead";
-            emit closedRead( path );
+            emit closedRead( QFile::decodeName(path) );
         }
         if ( event->mask & EventCreate ) {
 //            kDebug() << path << "EventCreate";
             if ( event->mask & IN_ISDIR ) {
                 // FIXME: store the mode and flags somewhere
-                addWatch( encodedPath, d->mode, d->flags );
+                addWatch( path, d->mode, d->flags );
             }
-            emit created( path );
+            emit created( QFile::decodeName(path) );
         }
-        if ( ( event->mask & EventDelete ) || ( event->mask & EventDeleteSelf ) ) {
-//            kDebug() << path << "EventDelete" << " EventDeleteSelf";
-            bool isDir = false;
-            if ( event->mask & IN_ISDIR ) {
-                isDir = true;
-                d->removeWatch( event->wd );
-            }
-            emit deleted( path, isDir );
+        if ( event->mask & EventDeleteSelf ) {
+            kDebug() << path << "EventDeleteSelf";
+            d->removeWatch( event->wd );
+            emit deleted( QFile::decodeName(path), event->mask & IN_ISDIR );
+        }
+        if ( event->mask & EventDelete ) {
+//            kDebug() << path << "EventDelete";
+            // we watch all folders recursively. Thus, folder removing is reported in DeleteSelf.
+            if( !(event->mask & IN_ISDIR) )
+                emit deleted( QFile::decodeName(path), false );
         }
         if ( event->mask & EventModify ) {
 //            kDebug() << path << "EventModify";
-            emit modified( path );
+            emit modified( QFile::decodeName(path) );
         }
         if ( event->mask & EventMoveSelf ) {
 //            kDebug() << path << "EventMoveSelf";
+            kWarning() << "EventMoveSelf: THIS CASE IS NOT HANDLED PROPERLY!";
         }
         if ( event->mask & EventMoveFrom ) {
 //            kDebug() << path << "EventMoveFrom";
@@ -367,10 +388,21 @@ void KInotify::slotEvent( int socket )
         if ( event->mask & EventMoveTo ) {
             // check if we have a cookie for this one
             if ( d->cookies.contains( event->cookie ) ) {
-                QString oldPath = d->cookies[event->cookie];
-                d->cookies.remove( event->cookie );
+                const QByteArray oldPath = d->cookies.take(event->cookie);
+
+                // update the path cache
+                if( event->mask & IN_ISDIR ) {
+                    QHash<QByteArray, int>::iterator it = d->pathWatchHash.find(oldPath);
+                    if( it != d->pathWatchHash.end() ) {
+                        kDebug() << oldPath << path;
+                        const int wd = it.value();
+                        d->watchPathHash[wd] = path;
+                        d->pathWatchHash.erase(it);
+                        d->pathWatchHash.insert( path, wd );
+                    }
+                }
 //                kDebug() << oldPath << "EventMoveTo" << path;
-                emit moved( oldPath, path );
+                emit moved( QFile::encodeName(oldPath), QFile::decodeName(path) );
             }
             else {
                 kDebug() << "No cookie for move information of" << path;
@@ -378,14 +410,14 @@ void KInotify::slotEvent( int socket )
         }
         if ( event->mask & EventOpen ) {
 //            kDebug() << path << "EventOpen";
-            emit opened( path );
+            emit opened( QFile::decodeName(path) );
         }
         if ( event->mask & EventUnmount ) {
 //            kDebug() << path << "EventUnmount. removing from path hash";
             if ( event->mask & IN_ISDIR ) {
                 d->removeWatch( event->wd );
             }
-            emit unmounted( path );
+            emit unmounted( QFile::decodeName(path) );
         }
         if ( event->mask & EventQueueOverflow ) {
             // This should not happen since we grab all events as soon as they arrive

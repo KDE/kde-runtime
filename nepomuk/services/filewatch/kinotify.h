@@ -26,13 +26,16 @@
 /**
  * A simple wrapper around inotify which only allows
  * to add folders recursively.
+ *
+ * Warning: moving of top-level folders is not supported and
+ * results in undefined behaviour.
  */
 class KInotify : public QObject
 {
     Q_OBJECT
 
 public:
-    KInotify( QObject* parent );
+    KInotify( QObject* parent = 0 );
     virtual ~KInotify();
 
     /**

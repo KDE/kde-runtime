@@ -128,8 +128,6 @@ Nepomuk::FileWatch::FileWatch( QObject* parent, const QList<QVariant>& )
     // monitor the file system for changes (restricted by the inotify limit)
     m_dirWatch = new IgnoringKInotify( m_pathExcludeRegExpCache, this );
 
-    // FIXME: force to only use maxUserWatches-500 or something or always leave 500 free watches
-
     connect( m_dirWatch, SIGNAL( moved( QString, QString ) ),
              this, SLOT( slotFileMoved( QString, QString ) ) );
     connect( m_dirWatch, SIGNAL( deleted( QString, bool ) ),

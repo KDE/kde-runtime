@@ -49,3 +49,5 @@ install(
 install(
   TARGETS nepomukfilewatch
   DESTINATION ${PLUGIN_INSTALL_DIR})
+
+add_subdirectory(test)
