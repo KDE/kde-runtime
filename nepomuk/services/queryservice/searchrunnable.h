@@ -22,6 +22,7 @@
 
 #include <QtCore/QRunnable>
 #include <QtCore/QPointer>
+#include <QtCore/QMutex>
 
 #include <Nepomuk/Query/Result>
 
@@ -42,6 +43,10 @@ namespace Nepomuk {
             SearchRunnable( Folder* folder );
             ~SearchRunnable();
 
+            /**
+             * Cancel the search. When this method returns
+             * the runnable is not running.
+             */
             void cancel();
 
         Q_SIGNALS:
@@ -58,6 +63,9 @@ namespace Nepomuk {
             // status
             bool m_canceled;
             int m_resultCnt;
+
+            // used only for ensuring that the runnable is actually done after a call to cancel()
+            QMutex m_cancelMutex;
         };
     }
 }

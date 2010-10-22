@@ -69,13 +69,21 @@ Nepomuk::Query::SearchRunnable::~SearchRunnable()
 void Nepomuk::Query::SearchRunnable::cancel()
 {
     m_canceled = true;
+    // we wait for the runnable to finish by locking the mutex the run() method locks, too
+    QMutexLocker lock( &m_cancelMutex );
 }
 
 
 void Nepomuk::Query::SearchRunnable::run()
 {
+    if( m_canceled )
+        return;
+
     QTime time;
     time.start();
+
+    // lock the cancel mutex to make the cancel() method block until we are actually done
+    m_cancelMutex.lock();
 
     m_resultCnt = 0;
 
@@ -94,6 +102,8 @@ void Nepomuk::Query::SearchRunnable::run()
         else
             break;
     }
+
+    m_cancelMutex.unlock();
 
     kDebug() << time.elapsed();
 
