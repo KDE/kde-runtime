@@ -332,7 +332,8 @@ void Nepomuk::ServiceController::createServiceControlInterface()
     }
     else {
         connect( d->serviceControlInterface, SIGNAL( serviceInitialized( bool ) ),
-                 this, SLOT( slotServiceInitialized( bool ) ) );
+                 this, SLOT( slotServiceInitialized( bool ) ),
+                 Qt::QueuedConnection );
     }
 
     if ( d->serviceControlInterface->isInitialized() ) {
