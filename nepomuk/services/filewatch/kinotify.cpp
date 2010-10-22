@@ -106,7 +106,6 @@ public:
     }
 
     bool addWatch( const QByteArray& path ) {
-        kDebug() << path;
         // we always need the unmount event to maintain our path hash
         WatchEvents newMode = mode;
         WatchFlags newFlags = flags;
