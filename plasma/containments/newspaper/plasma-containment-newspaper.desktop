@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Newspaper Layout
+Name[ca]=Disposició dels diaris
 Name[cs]=Rozvržení novin
 Name[de]=Zeitungs-Anordnung
 Name[en_GB]=Newspaper Layout
@@ -22,6 +23,7 @@ Name[x-test]=xxNewspaper Layoutxx
 Name[zh_TW]=報紙佈局
 
 Comment=A layout that puts widgets into columns
+Comment[ca]=Una disposició que posa els estris en columnes
 Comment[cs]=Rozvržení, které skládá widgety do dvou sloupců
 Comment[de]=Anordnung der Miniprogramme in Spalten
 Comment[en_GB]=A layout that puts widgets into columns

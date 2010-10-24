@@ -135,6 +135,7 @@ Name[zh_TW]=應用程式
 
 [Event/AudioDeviceFallback]
 Name=Audio Output Device Changed
+Name[ca]=Ha canviat el dispositiu de sortida de l'àudio
 Name[cs]=Zvukové výstupní zařízení změněno
 Name[de]=Audioausgabegerät geändert
 Name[en_GB]=Audio Output Device Changed
@@ -155,6 +156,7 @@ Name[uk]=Змінено пристрій відтворення звуку
 Name[x-test]=xxAudio Output Device Changedxx
 Name[zh_TW]=音效輸出裝置已變更
 Comment=Notification when audio output device has automatically changed
+Comment[ca]=Notificació quan canviï automàticament el dispositiu de sortida de l'àudio
 Comment[de]=Benachrichtigung, wenn das Audioausgabegerät automatisch geändert worden ist
 Comment[en_GB]=Notification when audio output device has automatically changed
 Comment[es]=Notificación de cambios automáticos en los dispositivos de salida de audio
