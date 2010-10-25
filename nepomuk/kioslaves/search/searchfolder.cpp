@@ -19,9 +19,6 @@
 */
 
 #include "searchfolder.h"
-#include "nfo.h"
-#include "nie.h"
-#include "pimo.h"
 #include "nepomuksearchurltools.h"
 #include "resourcestat.h"
 
@@ -35,6 +32,9 @@
 #include <Nepomuk/Query/Query>
 #include <Nepomuk/Query/QueryParser>
 #include <Nepomuk/Query/QueryServiceClient>
+#include <Nepomuk/Vocabulary/NFO>
+#include <Nepomuk/Vocabulary/NIE>
+#include <Nepomuk/Vocabulary/PIMO>
 
 #include <QtCore/QMutexLocker>
 

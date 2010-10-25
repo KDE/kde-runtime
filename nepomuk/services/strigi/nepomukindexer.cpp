@@ -22,11 +22,11 @@
 #include "nepomukindexer.h"
 #include "nepomukindexwriter.h"
 #include "nepomukindexfeeder.h"
-#include "nie.h"
 
 #include <Nepomuk/ResourceManager>
 #include <Nepomuk/Resource>
 #include <Nepomuk/Variant>
+#include <Nepomuk/Vocabulary/NIE>
 
 #include <KUrl>
 #include <KDebug>

@@ -17,8 +17,6 @@
 */
 
 #include "metadatamover.h"
-#include "nie.h"
-#include "nfo.h"
 #include "nepomukfilewatch.h"
 
 #include <QtCore/QDir>
@@ -43,6 +41,9 @@
 #include <Nepomuk/Query/ComparisonTerm>
 #include <Nepomuk/Query/ResourceTerm>
 #include <Nepomuk/Query/LiteralTerm>
+
+#include <Nepomuk/Vocabulary/NFO>
+#include <Nepomuk/Vocabulary/NIE>
 
 #include <KDebug>
 

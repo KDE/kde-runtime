@@ -27,7 +27,7 @@
 
 #include <kurl.h>
 
-#include "nie.h"
+#include <Nepomuk/Vocabulary/NIE>
 
 namespace Nepomuk {
     /**

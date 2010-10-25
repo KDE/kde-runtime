@@ -17,8 +17,6 @@
 */
 
 #include "removablestorageservice.h"
-#include "nfo.h"
-#include "nie.h"
 #include "strigiserviceinterface.h"
 #include "filewatchserviceinterface.h"
 
@@ -60,6 +58,8 @@
 #include <Soprano/Vocabulary/NRL>
 #include <Soprano/Vocabulary/Xesam>
 
+#include <Nepomuk/Vocabulary/NFO>
+#include <Nepomuk/Vocabulary/NIE>
 #include <Nepomuk/Resource>
 #include <Nepomuk/Variant>
 

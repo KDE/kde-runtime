@@ -24,8 +24,6 @@
 #include "strigiserviceconfig.h"
 #include "nepomukindexer.h"
 #include "util.h"
-#include "nfo.h"
-#include "nie.h"
 
 #include <QtCore/QMutexLocker>
 #include <QtCore/QList>
@@ -51,8 +49,11 @@
 #include <Soprano/QueryResultIterator>
 #include <Soprano/NodeIterator>
 #include <Soprano/Node>
+
 #include <Soprano/Vocabulary/RDF>
 #include <Soprano/Vocabulary/Xesam>
+#include <Nepomuk/Vocabulary/NFO>
+#include <Nepomuk/Vocabulary/NIE>
 
 #include <map>
 #include <vector>

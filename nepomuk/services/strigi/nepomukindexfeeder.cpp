@@ -21,7 +21,6 @@
 
 #include "nepomukindexfeeder.h"
 #include "util.h"
-#include "nie.h"
 
 #include <QtCore/QDateTime>
 
@@ -32,6 +31,7 @@
 #include <Soprano/Vocabulary/NAO>
 #include <Soprano/Vocabulary/NRL>
 
+#include <Nepomuk/Vocabulary/NIE>
 #include <Nepomuk/ResourceManager>
 #include <Nepomuk/Resource>
 

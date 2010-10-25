@@ -21,8 +21,6 @@
 #include "nepomukindexwriter.h"
 #include "nepomukindexfeeder.h"
 #include "util.h"
-#include "nfo.h"
-#include "nie.h"
 
 #include <Soprano/Vocabulary/RDF>
 #include <Soprano/LiteralValue>
@@ -57,6 +55,9 @@
 #include <Nepomuk/Types/Literal>
 #include <Nepomuk/ResourceManager>
 #include <Nepomuk/Resource>
+#include <Nepomuk/Vocabulary/NFO>
+#include <Nepomuk/Vocabulary/NIE>
+
 
 
 // IMPORTANT: strings in Strigi are apparently UTF8! Except for file names. Those are in local encoding.

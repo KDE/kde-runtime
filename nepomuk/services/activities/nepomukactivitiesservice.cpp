@@ -48,7 +48,7 @@
 #include <Nepomuk/Query/ResourceTerm>
 #include <Nepomuk/Query/LiteralTerm>
 
-#include "nie.h"
+#include <Nepomuk/Vocabulary/NIE>
 
 #define URL_ACTIVITY_TYPE "http://www.kde.org/ontologies/activities#Activity"
 #define ACTIVITIES_PROTOCOL "activities://"

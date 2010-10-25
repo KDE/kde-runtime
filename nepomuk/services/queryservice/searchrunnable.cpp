@@ -19,7 +19,6 @@
 
 #include "searchrunnable.h"
 #include "folder.h"
-#include "nfo.h"
 
 #include <Nepomuk/ResourceManager>
 #include <Nepomuk/Resource>
@@ -38,6 +37,7 @@
 #include <Soprano/Vocabulary/XMLSchema>
 #include <Soprano/Vocabulary/OWL>
 #include <Soprano/Vocabulary/Xesam>
+#include <Nepomuk/Vocabulary/NFO>
 
 #include <KDebug>
 #include <KDateTime>

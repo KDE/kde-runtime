@@ -20,9 +20,6 @@
 
 #include "resourcestat.h"
 #include "nepomuksearchurltools.h"
-#include "nie.h"
-#include "nfo.h"
-#include "pimo.h"
 
 #include <QtCore/QEventLoop>
 #include <QtCore/QTimer>
@@ -41,6 +38,9 @@
 #include <Nepomuk/Query/Query>
 #include <Nepomuk/Query/ComparisonTerm>
 #include <Nepomuk/Query/ResourceTerm>
+#include <Nepomuk/Vocabulary/NFO>
+#include <Nepomuk/Vocabulary/NIE>
+#include <Nepomuk/Vocabulary/PIMO>
 
 #include <Soprano/Vocabulary/RDF>
 #include <Soprano/Vocabulary/NAO>

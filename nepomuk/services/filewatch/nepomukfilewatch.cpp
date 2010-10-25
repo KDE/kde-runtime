@@ -19,7 +19,6 @@
 #include "nepomukfilewatch.h"
 #include "metadatamover.h"
 #include "strigiserviceinterface.h"
-#include "nie.h"
 #include "fileexcludefilters.h"
 #include "invalidfileresourcecleaner.h"
 #include "../strigi/strigiserviceconfig.h"
@@ -37,6 +36,7 @@
 #include <KPluginFactory>
 
 #include <Nepomuk/ResourceManager>
+#include <Nepomuk/Vocabulary/NIE>
 
 #include <Soprano/Model>
 #include <Soprano/QueryResultIterator>

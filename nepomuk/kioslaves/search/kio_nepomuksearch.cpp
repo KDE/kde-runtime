@@ -18,9 +18,6 @@
 
 #include "kio_nepomuksearch.h"
 #include "searchfolder.h"
-#include "nfo.h"
-#include "nie.h"
-#include "pimo.h"
 #include "nepomuksearchurltools.h"
 #include "standardqueries.h"
 #include "resourcestat.h"
@@ -55,6 +52,9 @@
 #include <Soprano/Vocabulary/NRL>
 #include <Soprano/Vocabulary/NAO>
 #include <Soprano/Vocabulary/XMLSchema>
+#include <Nepomuk/Vocabulary/NFO>
+#include <Nepomuk/Vocabulary/NIE>
+#include <Nepomuk/Vocabulary/PIMO>
 
 #include <sys/types.h>
 #include <unistd.h>

@@ -19,7 +19,6 @@
 */
 
 #include "resourcepagegenerator.h"
-#include "nie.h"
 
 #include <QtCore/QByteArray>
 #include <QtCore/QTextStream>
@@ -37,6 +36,7 @@
 #include <nepomuk/variant.h>
 #include <nepomuk/class.h>
 #include <nepomuk/property.h>
+#include <Nepomuk/Vocabulary/NIE>
 
 #include <Soprano/Model>
 #include <Soprano/Node>

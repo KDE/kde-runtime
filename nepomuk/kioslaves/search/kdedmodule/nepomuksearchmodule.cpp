@@ -19,12 +19,13 @@
 
 #include "nepomuksearchmodule.h"
 #include "searchurllistener.h"
-#include "nie.h"
 #include "dbusoperators_p.h"
 #include "timelinetools.h"
 
 #include <QtDBus/QDBusConnection>
 #include <QtDBus/QDBusServiceWatcher>
+
+#include <Nepomuk/Vocabulary/NIE>
 
 #include <kdebug.h>
 #include <kdirnotify.h>

@@ -31,9 +31,9 @@
 #include <Soprano/Vocabulary/NAO>
 #include <Soprano/Vocabulary/RDF>
 
-#include "nie.h"
-#include "nfo.h"
-#include "nuao.h"
+#include <Nepomuk/Vocabulary/NIE>
+#include <Nepomuk/Vocabulary/NFO>
+#include <Nepomuk/Vocabulary/NUAO>
 
 namespace Nepomuk {
     /**

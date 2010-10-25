@@ -24,10 +24,9 @@
 #include <Soprano/Node>
 #include <Soprano/Vocabulary/XMLSchema>
 
-#include "nie.h"
-#include "nfo.h"
-#include "nie.h"
-#include "nuao.h"
+#include <Nepomuk/Vocabulary/NFO>
+#include <Nepomuk/Vocabulary/NIE>
+#include <Nepomuk/Vocabulary/NUAO>
 
 #include <Nepomuk/Query/FileQuery>
 #include <Nepomuk/Query/AndTerm>

@@ -19,10 +19,6 @@
 */
 
 #include "kio_nepomuk.h"
-#include "nie.h"
-#include "nfo.h"
-//#include "nmm.h"
-#include "pimo.h"
 #include "resourcepagegenerator.h"
 #include "nepomuksearchurltools.h"
 #include "resourcestat.h"
@@ -49,6 +45,9 @@
 #include <Nepomuk/Query/Query>
 #include <Nepomuk/Query/ComparisonTerm>
 #include <Nepomuk/Query/ResourceTerm>
+#include <Nepomuk/Vocabulary/NFO>
+#include <Nepomuk/Vocabulary/NIE>
+#include <Nepomuk/Vocabulary/PIMO>
 
 #include <Soprano/Vocabulary/RDF>
 #include <Soprano/Vocabulary/NAO>

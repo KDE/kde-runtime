@@ -17,7 +17,6 @@
 */
 
 #include "statuswidget.h"
-#include "nfo.h"
 
 #include <KIcon>
 #include <KLocale>
@@ -27,6 +26,7 @@
 #include <kio/directorysizejob.h>
 
 #include <Nepomuk/ResourceManager>
+#include <Nepomuk/Vocabulary/NFO>
 
 #include <Soprano/Model>
 #include <Soprano/QueryResultIterator>
