@@ -28,6 +28,7 @@
 #include <pulse/glib-mainloop.h>
 #include <QtCore/QAbstractEventDispatcher>
 #include <QtCore/QFileInfo>
+#include <QtCore/QDebug>
 #include <QtCore/QDir>
 #include <QtDBus/QDBusConnection>
 #include <QtDBus/QDBusInterface>
