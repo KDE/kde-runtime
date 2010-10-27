@@ -36,7 +36,7 @@
 
 class AudioPlugin : public KIO::RenameDialogPlugin{
 public:
-  AudioPlugin( QDialog *dialog, const QStringList & );
+  AudioPlugin( QWidget *dialog, const QVariantList & );
   ~AudioPlugin();
 
   bool wantToHandle( KIO::RenameDialog_Mode mode, const KIO::RenameDialogPlugin::FileItem& src,
@@ -45,7 +45,8 @@ public:
                const KIO::RenameDialogPlugin::FileItem& dst );
 };
 
-AudioPlugin::AudioPlugin( QDialog *dialog, const QStringList & ) : RenameDialogPlugin( dialog) {
+AudioPlugin::AudioPlugin( QWidget *dialog, const QVariantList & )
+    : RenameDialogPlugin(static_cast<QDialog*>(dialog)) {
   qWarning("loaded" );
 }
 AudioPlugin::~AudioPlugin()
@@ -95,5 +96,7 @@ void AudioPlugin::handle( KIO::RenameDialog_Mode mode, const KIO::RenameDialogPl
  adjustSize();
 }
 
-typedef KGenericFactory<AudioPlugin, QDialog> AudioPluginFactory;
-K_EXPORT_COMPONENT_FACTORY( librenaudioplugin, AudioPluginFactory("audiorename_plugin") )
+K_PLUGIN_FACTORY(AudioPluginFactory,
+                         registerPlugin<AudioPlugin>();)
+K_EXPORT_PLUGIN(AudioPluginFactory("audiorename_plugin"))
+

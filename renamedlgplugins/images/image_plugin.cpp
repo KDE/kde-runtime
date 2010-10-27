@@ -46,15 +46,15 @@
 
 class ImagePlugin : public KIO::RenameDialogPlugin {
 public:
-    ImagePlugin( QDialog *dialog, const QStringList & );
+    ImagePlugin( QWidget *dialog, const QVariantList & );
     virtual bool wantToHandle( KIO::RenameDialog_Mode, const KIO::RenameDialogPlugin::FileItem&,
                                const KIO::RenameDialogPlugin::FileItem& ) const;
     virtual void handle( KIO::RenameDialog_Mode, const KIO::RenameDialogPlugin::FileItem&,
                          const KIO::RenameDialogPlugin::FileItem& );
 };
 
-ImagePlugin::ImagePlugin( QDialog *dialog, const QStringList & )
-  : RenameDialogPlugin( dialog)
+ImagePlugin::ImagePlugin( QWidget *dialog, const QVariantList & )
+  : RenameDialogPlugin(static_cast<QDialog*>(dialog))
 {
 }
 
@@ -82,5 +82,7 @@ void ImagePlugin::handle( KIO::RenameDialog_Mode mode, const KIO::RenameDialogPl
     adjustSize();
 }
 
-typedef KGenericFactory<ImagePlugin, QDialog> ImagePluginFactory;
-K_EXPORT_COMPONENT_FACTORY( librenimageplugin, ImagePluginFactory("imagerename_plugin") )
+
+K_PLUGIN_FACTORY(ImagePluginFactory,
+                 registerPlugin<ImagePlugin>();)
+K_EXPORT_PLUGIN(ImagePluginFactory("imagerename_plugin"))
