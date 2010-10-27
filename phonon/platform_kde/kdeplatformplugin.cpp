@@ -30,7 +30,6 @@
 #include <kcomponentdata.h>
 #include <kglobal.h>
 #include <kicon.h>
-#include <klibloader.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kmimetype.h>
@@ -241,7 +240,7 @@ bool KdePlatformPlugin::isMimeTypeAvailable(const QString &mimeType) const
     const KService::List offers = KServiceTypeTrader::self()->query("PhononBackend",
             "Type == 'Service' and [X-KDE-PhononBackendInfo-InterfaceVersion] == 1");
     if (!offers.isEmpty()) {
-        return offers.first()->hasMimeType(KMimeType::mimeType(mimeType).data());
+        return offers.first()->hasMimeType(mimeType);
     }
     return false;
 }
