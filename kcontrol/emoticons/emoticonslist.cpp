@@ -25,6 +25,7 @@
 #include <QLabel>
 #include <QListWidgetItem>
 #include <KMessageBox>
+#include <KDebug>
 #include <KIcon>
 #include <KAboutData>
 #include <KStandardDirs>
