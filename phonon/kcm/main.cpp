@@ -20,7 +20,7 @@
 */
 
 #include "main.h"
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
 #include <ktabwidget.h>
 #include <kaboutdata.h>
 #include <kdeversion.h>

@@ -25,7 +25,7 @@
 #include <QtDebug>
 
 #include <KAboutData>
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
 
 #include "registryManager.h"
 #include "shellEdit.h"
@@ -102,7 +102,7 @@ void Platform::showCustShellDlg()
         regMan.customShell["Description"] = shellEditDlg.shellDescrEdit->text();
         regMan.customShell["Command"] = shellEditDlg.shellCmdEdit->text();
     }
-    
+
     emit changed(true);
 }
 

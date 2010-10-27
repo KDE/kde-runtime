@@ -33,7 +33,7 @@
 #include <KUrlRequesterDialog>
 #include <kdecore_export.h>
 #include <kio/netaccess.h>
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
 #include <KNS3/DownloadDialog>
 
 EditDialog::EditDialog(QWidget *parent, const QString &name)

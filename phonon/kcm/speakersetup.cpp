@@ -19,7 +19,6 @@
 
 #include "speakersetup.h"
 #include "testspeakerwidget.h"
-#include <kgenericfactory.h>
 #include <kconfiggroup.h>
 #include <kaboutdata.h>
 #include <kicon.h>
@@ -83,8 +82,8 @@ static void logMessage(const QString &message, int priority, QObject *obj)
             QString className(obj->metaObject()->className());
             int nameLength = className.length() - className.lastIndexOf(':') - 1;
             className = className.right(nameLength);
-            output.sprintf("%s %s (%s %p)", message.toLatin1().constData(), 
-                           obj->objectName().toLatin1().constData(), 
+            output.sprintf("%s %s (%s %p)", message.toLatin1().constData(),
+                           obj->objectName().toLatin1().constData(),
                            className.toLatin1().constData(), obj);
         }
         else {

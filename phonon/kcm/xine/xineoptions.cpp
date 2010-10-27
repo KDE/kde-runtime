@@ -18,8 +18,9 @@
 */
 
 #include "xineoptions.h"
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
 #include <kconfiggroup.h>
+#include <kdebug.h>
 
 #include <xine.h>
 #include <QtDBus/QDBusConnection>
