@@ -1,7 +1,8 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>ConfigDialog</class>
- <widget class="QWidget" name="ConfigDialog" >
-  <property name="geometry" >
+ <widget class="QWidget" name="ConfigDialog">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -9,60 +10,57 @@
     <height>486</height>
    </rect>
   </property>
-  <property name="sizePolicy" >
-   <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
-  <property name="minimumSize" >
+  <property name="minimumSize">
    <size>
     <width>0</width>
     <height>0</height>
    </size>
   </property>
-  <layout class="QGridLayout" >
-   <property name="leftMargin" >
-    <number>0</number>
-   </property>
-   <property name="topMargin" >
-    <number>0</number>
-   </property>
-   <property name="rightMargin" >
-    <number>0</number>
-   </property>
-   <property name="bottomMargin" >
-    <number>0</number>
-   </property>
-   <item row="0" column="0" >
-    <widget class="KEditListBox" name="kcfg_DomainList" >
-     <property name="sizePolicy" >
-      <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="whatsThis" >
-      <string>List of Internet domains that will be browsed for services in addition to default domain (typically local network). </string>
-     </property>
-     <property name="title" >
+  <layout class="QGridLayout" name="gridLayout_2">
+   <item row="0" column="0">
+    <widget class="QGroupBox" name="groupBox">
+     <property name="title">
       <string>Additional Domains</string>
      </property>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0">
+       <widget class="KEditListWidget" name="kcfg_DomainList">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="whatsThis">
+         <string>List of Internet domains that will be browsed for services in addition to default domain (typically local network). </string>
+        </property>
+        <property name="title" stdset="0">
+         <string>Additional Domains</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
   </layout>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>KEditListBox</class>
-   <extends>QGroupBox</extends>
-   <header>keditlistbox.h</header>
+   <class>KEditListWidget</class>
+   <extends>QWidget</extends>
+   <header>keditlistwidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
  <includes>
-  <include location="local" >keditlistbox.h</include>
-  <include location="local" >klineedit.h</include>
+  <include location="local">keditlistbox.h</include>
+  <include location="local">klineedit.h</include>
  </includes>
  <resources/>
  <connections/>
