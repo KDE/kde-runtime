@@ -23,13 +23,13 @@
 #include <QtGui/QStandardItemModel>
 #include <QtGui/QItemSelectionModel>
 
-#include <KGenericFactory>
 #include <KAboutData>
 #include <KConfigGroup>
 #include <KInputDialog>
 #include <Solid/DeviceNotifier>
 #include <Solid/StorageVolume>
 
+#include <KPluginFactory>
 #include <KGlobal>
 #include <KLocale>
 
