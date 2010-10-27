@@ -27,7 +27,8 @@
 #include <kio/global.h>
 
 #include <kdebug.h>
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
+#include <klocale.h>
 #include <kiconloader.h>
 
 

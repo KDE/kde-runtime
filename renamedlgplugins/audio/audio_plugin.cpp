@@ -19,7 +19,8 @@
    Boston, MA 02110-1301, USA.
 */
 
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
+#include <klocale.h>
 #include <ksqueezedtextlabel.h>
 #include <kio/renamedialogplugin.h>
 #include <qlabel.h>
@@ -27,8 +28,8 @@
 #include <qwidget.h>
 #include <qstringlist.h>
 #include <QGridLayout>
+#include <kdebug.h>
 #include <kio/global.h>
-#include <qlayout.h>
 
 #include <sys/types.h>
 
@@ -47,7 +48,7 @@ public:
 
 AudioPlugin::AudioPlugin( QWidget *dialog, const QVariantList & )
     : RenameDialogPlugin(static_cast<QDialog*>(dialog)) {
-  qWarning("loaded" );
+    kDebug() << "loaded";
 }
 AudioPlugin::~AudioPlugin()
 {
