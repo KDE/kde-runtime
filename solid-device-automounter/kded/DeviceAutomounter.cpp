@@ -19,7 +19,7 @@
 
 #include "DeviceAutomounter.h"
 
-#include <KGenericFactory>
+#include <KPluginFactory>
 
 #include <Solid/Device>
 #include <Solid/DeviceNotifier>
