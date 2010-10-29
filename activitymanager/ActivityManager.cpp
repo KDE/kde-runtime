@@ -403,9 +403,11 @@ void ActivityManager::SetActivityName(const QString & id, const QString & name)
 
     d->activitiesConfig().writeEntry(id, name);
 
+#ifdef HAVE_NEPOMUK
     if (NEPOMUK_RUNNING) {
         d->activityResource(id).setLabel(name);
     }
+#endif
 
     d->scheduleConfigSync();
 
@@ -419,7 +421,9 @@ QString ActivityManager::ActivityDescription(const QString & id) const
         return QString();
     }
 
+#ifdef HAVE_NEPOMUK
     return d->activityResource(id).description();
+#endif
 }
 
 void ActivityManager::SetActivityDescription(const QString & id, const QString & description)
@@ -430,7 +434,9 @@ void ActivityManager::SetActivityDescription(const QString & id, const QString &
         return;
     }
 
+#ifdef HAVE_NEPOMUK
     d->activityResource(id).setDescription(description);
+#endif
 
     kDebug() << "emit ActivityChanged" << id;
     emit ActivityChanged(id);
@@ -442,6 +448,7 @@ QString ActivityManager::ActivityIcon(const QString & id) const
         return QString();
     }
 
+#ifdef HAVE_NEPOMUK
     QStringList symbols = d->activityResource(id).symbols();
 
     if (symbols.isEmpty()) {
@@ -449,6 +456,9 @@ QString ActivityManager::ActivityIcon(const QString & id) const
     } else {
         return symbols.first();
     }
+#else
+    return QString();
+#endif
 }
 
 void ActivityManager::SetActivityIcon(const QString & id, const QString & icon)
@@ -459,10 +469,12 @@ void ActivityManager::SetActivityIcon(const QString & id, const QString & icon)
         return;
     }
 
+#ifdef HAVE_NEPOMUK
     d->activityResource(id).setSymbols(QStringList() << icon);
 
     kDebug() << "emit ActivityChanged" << id;
     emit ActivityChanged(id);
+#endif
 }
 
 
