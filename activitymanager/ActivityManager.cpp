@@ -261,6 +261,8 @@ QString ActivityManager::CurrentActivity() const
 
 bool ActivityManager::SetCurrentActivity(const QString & id)
 {
+    kDebug() << id;
+
     if (id.isEmpty()) {
         return false;
     }
@@ -270,6 +272,8 @@ bool ActivityManager::SetCurrentActivity(const QString & id)
 
 QString ActivityManager::AddActivity(const QString & name)
 {
+    kDebug() << name;
+
     QString id;
 
     // Ensuring a new Uuid. The loop should usually end after only

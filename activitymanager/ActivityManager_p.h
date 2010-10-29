@@ -34,6 +34,7 @@
 #include <Nepomuk/ResourceManager>
 #include <Nepomuk/Resource>
 
+#include "ActivityManager.h"
 #include "config-features.h"
 
 #ifndef HAVE_NEPOMUK
