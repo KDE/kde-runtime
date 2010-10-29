@@ -80,6 +80,16 @@ namespace Nepomuk {
             RequestPropertyMap requestPropertyMap() const;
 
             /**
+             * Get the result count. This value will not be available
+             * right away since it is calculated async.
+             *
+             * As soon as the count is ready resultCount() is emitted.
+             *
+             * \return The result count or -1 in case it is not ready yet.
+             */
+            int getResultCount() const { return m_resultCount; }
+
+            /**
              * Get the total result count. This value will not be available
              * right away since it is calculated async.
              *
@@ -87,13 +97,16 @@ namespace Nepomuk {
              *
              * \return The total result count or -1 in case it is not ready yet.
              */
-            int getTotalCount() const { return m_totalCount; }
+            int getTotalResultCount() const { return m_totalResultCount; }
 
             void addResult( const Result& result );
 
             void listingFinished();
 
+            /// called by the CountQueryRunnable
             void countQueryFinished( int count );
+            /// called by the CountQueryRunnable
+            void totalCountQueryFinished( int count );
 
         public Q_SLOTS:
             void update();
@@ -103,11 +116,18 @@ namespace Nepomuk {
             void entriesRemoved( const QList<QUrl>& entries );
 
             /**
+             * Emitted once the result count is available.
+             *
+             * \sa getResultCount()
+             */
+            void resultCount( int count );
+
+            /**
              * Emitted once the total result count is available.
              *
-             * \sa getTotalCount()
+             * \sa getTotalResultCount()
              */
-            void totalCount( int count );
+            void totalResultCount( int count );
             void finishedListing();
             void aboutToBeDeleted( Nepomuk::Query::Folder* );
 
@@ -143,8 +163,11 @@ namespace Nepomuk {
             /// all listening connections
             QList<FolderConnection*> m_connections;
 
+            /// the result count. -1 until determined
+            int m_resultCount;
+
             /// the total result count. -1 until determined
-            int m_totalCount;
+            int m_totalResultCount;
 
             /// Query used to get the total count. Only non-null during execution
             QPointer<Soprano::Util::AsyncQuery> m_countQuery;

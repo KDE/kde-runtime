@@ -89,7 +89,7 @@ namespace Nepomuk {
         void slotNewEntries( const QList<Nepomuk::Query::Result>& );
 
         /// connected to the QueryServiceClient in the search thread
-        void slotTotalCount( int );
+        void slotResultCount( int );
 
         /// connected to the QueryServiceClient in the search thread
         void slotFinishedListing();

@@ -49,8 +49,6 @@ void Nepomuk::Query::FolderConnection::list()
              this, SIGNAL( newEntries( QList<Nepomuk::Query::Result> ) ) );
     connect( m_folder, SIGNAL( entriesRemoved( QList<QUrl> ) ),
              this, SLOT( slotEntriesRemoved( QList<QUrl> ) ) );
-    connect( m_folder, SIGNAL( totalCount( int ) ),
-             this, SIGNAL( totalCount( int ) ) );
 
     // report cached entries
     if ( !m_folder->entries().isEmpty() ) {
@@ -69,6 +67,24 @@ void Nepomuk::Query::FolderConnection::list()
         // make sure the search has actually been started
         m_folder->update();
     }
+
+    // report the count or connect to the signal
+    if( m_folder->getResultCount() >= 0 ) {
+        emit resultCount( m_folder->getResultCount() );
+    }
+    else {
+        connect( m_folder, SIGNAL( resultCount( int ) ),
+                 this, SIGNAL( resultCount( int ) ) );
+    }
+
+    // report the total result count or connect to the signal
+    if( m_folder->getTotalResultCount() >= 0 ) {
+        emit totalResultCount( m_folder->getTotalResultCount() );
+    }
+    else {
+        connect( m_folder, SIGNAL( totalResultCount( int ) ),
+                 this, SIGNAL( totalResultCount( int ) ) );
+    }
 }
 
 
@@ -83,8 +99,10 @@ void Nepomuk::Query::FolderConnection::listen()
                  this, SIGNAL( newEntries( QList<Nepomuk::Query::Result> ) ) );
         connect( m_folder, SIGNAL( entriesRemoved( QList<QUrl> ) ),
                  this, SLOT( slotEntriesRemoved( QList<QUrl> ) ) );
-        connect( m_folder, SIGNAL( totalCount( int ) ),
-                 this, SLOT( totalCount( int ) ) );
+        connect( m_folder, SIGNAL( resultCount( int ) ),
+                 this, SIGNAL( resultCount( int ) ) );
+        connect( m_folder, SIGNAL( totalResultCount( int ) ),
+                 this, SIGNAL( totalResultCount( int ) ) );
     }
 
     // otherwise we need to wait for it finishing the listing

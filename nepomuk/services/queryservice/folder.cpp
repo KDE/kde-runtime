@@ -55,7 +55,8 @@ Nepomuk::Query::Folder::Folder( const QString& query, const RequestPropertyMap& 
 
 void Nepomuk::Query::Folder::init()
 {
-    m_totalCount = -1;
+    m_resultCount = -1;
+    m_totalResultCount = -1;
     m_initialListingDone = false;
     m_storageChanged = false;
 
@@ -197,10 +198,20 @@ void Nepomuk::Query::Folder::slotUpdateTimeout()
 // called from CountQueryRunnable in the search thread
 void Nepomuk::Query::Folder::countQueryFinished( int count )
 {
-    m_totalCount = count;
-    kDebug() << m_totalCount;
+    m_resultCount = count;
+    kDebug() << m_resultCount;
     if( count >= 0 )
-        emit totalCount( m_totalCount );
+        emit resultCount( m_resultCount );
+}
+
+
+// called from CountQueryRunnable in the search thread
+void Nepomuk::Query::Folder::totalCountQueryFinished( int count )
+{
+    m_totalResultCount = count;
+    kDebug() << m_totalResultCount;
+    if( count >= 0 )
+        emit totalResultCount( m_totalResultCount );
 }
 
 

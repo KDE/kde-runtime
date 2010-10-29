@@ -37,6 +37,7 @@
 #include <Nepomuk/Vocabulary/PIMO>
 
 #include <QtCore/QMutexLocker>
+#include <QtGui/QTextDocument>
 
 #include <KUrl>
 #include <KDebug>
@@ -119,8 +120,8 @@ void Nepomuk::SearchFolder::run()
     connect( m_client, SIGNAL( newEntries( const QList<Nepomuk::Query::Result>& ) ),
              this, SLOT( slotNewEntries( const QList<Nepomuk::Query::Result>& ) ),
              Qt::DirectConnection );
-    connect( m_client, SIGNAL( totalCount(int) ),
-             this, SLOT( slotTotalCount(int) ),
+    connect( m_client, SIGNAL( resultCount(int) ),
+             this, SLOT( slotResultCount(int) ),
              Qt::DirectConnection );
     connect( m_client, SIGNAL( finishedListing() ),
              this, SLOT( slotFinishedListing() ),
@@ -172,7 +173,7 @@ void Nepomuk::SearchFolder::slotNewEntries( const QList<Nepomuk::Query::Result>&
 }
 
 
-void Nepomuk::SearchFolder::slotTotalCount( int count )
+void Nepomuk::SearchFolder::slotResultCount( int count )
 {
     if ( !m_initialListingFinished ) {
         QMutexLocker lock( &m_slaveMutex );
@@ -315,6 +316,15 @@ KIO::UDSEntry Nepomuk::SearchFolder::statResult( const Query::Result& result )
             else {
                 uds.insert( KIO::UDSEntry::UDS_DISPLAY_NAME, res.genericLabel() );
             }
+        }
+
+        QString excerpt = result.excerpt();
+        if( !excerpt.isEmpty() ) {
+            // KFileItemDelegate cannot handle rich text yet. Thus we need to remove the formatting.
+            QTextDocument doc;
+            doc.setHtml(excerpt);
+            excerpt = doc.toPlainText();
+            uds.insert( KIO::UDSEntry::UDS_COMMENT, i18n("Search excerpt: %1", excerpt) );
         }
 
         return uds;
