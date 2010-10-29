@@ -298,6 +298,8 @@ QString ActivityManager::AddActivity(const QString & name)
 
 void ActivityManager::RemoveActivity(const QString & id)
 {
+    kDebug() << id;
+
     if (d->activities.size() < 2 ||
             !d->activities.contains(id)) {
         return;
@@ -324,6 +326,8 @@ void ActivityManager::RemoveActivity(const QString & id)
 
 void ActivityManager::StartActivity(const QString & id)
 {
+    kDebug() << id;
+
     if (!d->activities.contains(id) ||
             d->activities[id] == Running) {
         return;
@@ -343,6 +347,8 @@ void ActivityManager::StartActivity(const QString & id)
 
 void ActivityManager::StopActivity(const QString & id)
 {
+    kDebug() << id;
+
     if (!d->activities.contains(id) ||
             d->activities[id] == Stopped) {
         return;
@@ -389,6 +395,8 @@ QString ActivityManager::ActivityName(const QString & id) const
 
 void ActivityManager::SetActivityName(const QString & id, const QString & name)
 {
+    kDebug() << id << name;
+
     if (!d->activities.contains(id)) {
         return;
     }
@@ -400,6 +408,8 @@ void ActivityManager::SetActivityName(const QString & id, const QString & name)
     }
 
     d->scheduleConfigSync();
+
+    kDebug() << "emit ActivityChanged" << id;
     emit ActivityChanged(id);
 }
 
@@ -414,12 +424,15 @@ QString ActivityManager::ActivityDescription(const QString & id) const
 
 void ActivityManager::SetActivityDescription(const QString & id, const QString & description)
 {
+    kDebug() << id << description;
+
     if (!NEPOMUK_RUNNING || !d->activities.contains(id)) {
         return;
     }
 
     d->activityResource(id).setDescription(description);
 
+    kDebug() << "emit ActivityChanged" << id;
     emit ActivityChanged(id);
 }
 
@@ -440,12 +453,15 @@ QString ActivityManager::ActivityIcon(const QString & id) const
 
 void ActivityManager::SetActivityIcon(const QString & id, const QString & icon)
 {
+    kDebug() << id << icon;
+
     if (!NEPOMUK_RUNNING || !d->activities.contains(id)) {
         return;
     }
 
     d->activityResource(id).setSymbols(QStringList() << icon);
 
+    kDebug() << "emit ActivityChanged" << id;
     emit ActivityChanged(id);
 }
 
