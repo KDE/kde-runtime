@@ -60,19 +60,23 @@ ActivityManagerPrivate::ActivityManagerPrivate(ActivityManager * parent)
     configSyncTimer.setSingleShot(true);
     configSyncTimer.setInterval(2 * 60 * 1000);
 
+    kDebug() << "reading activities:";
     foreach(const QString & activity, activitiesConfig().keyList()) {
+        kDebug() << activity;
         activities[activity] = ActivityManager::Stopped;
     }
 
     foreach(const QString & activity, mainConfig().readEntry("runningActivities", activities.keys())) {
+        kDebug() << "setting" << activity << "as" << "running";
         if (activities.contains(activity)) {
             activities[activity] = ActivityManager::Running;
         }
     }
 
     currentActivity = mainConfig().readEntry("currentActivity", QString());
+    kDebug() << "currentActivity is" << currentActivity;
 
-    connect(KWindowSystem::self(), SIGNAL(windowClosed(WId)),
+    connect(KWindowSystem::self(), SIGNAL(windowRemoved(WId)),
             this, SLOT(windowClosed(WId)));
 }
 
@@ -96,20 +100,24 @@ void ActivityManagerPrivate::setActivityState(const QString & id, ActivityManage
 {
     if (activities[id] == state) return;
 
+    kDebug() << "Set the state of" << id << "to" << state;
+
     /**
      * Treating 'Starting' as 'Running', and 'Stopping' as 'Stopped'
      * as far as the config file is concerned
      */
     bool configNeedsUpdating = ((activities[id] & 4) != (state & 4));
 
-    activities[id] == state;
+    activities[id] = state;
 
     switch (state) {
         case ActivityManager::Running:
+            kDebug() << "sending ActivityStarted signal";
             emit q->ActivityStarted(id);
             break;
 
         case ActivityManager::Stopped:
+            kDebug() << "sending ActivityStopped signal";
             emit q->ActivityStopped(id);
             break;
 
@@ -117,6 +125,7 @@ void ActivityManagerPrivate::setActivityState(const QString & id, ActivityManage
             break;
     }
 
+    kDebug() << "sending ActivityStateChanged signal";
     emit q->ActivityStateChanged(id, state);
 
     if (configNeedsUpdating) {
@@ -350,11 +359,13 @@ void ActivityManager::StopActivity(const QString & id)
 
 int ActivityManager::ActivityState(const QString & id) const
 {
+    kDebug() << id << "- is it in" << d->activities << "?";
     if (!d->activities.contains(id)) {
         return Invalid;
+    } else {
+        kDebug() << "state of" << id << "is" << d->activities[id];
+        return d->activities[id];
     }
-
-    else return d->activities[id];
 }
 
 QStringList ActivityManager::ListActivities() const
