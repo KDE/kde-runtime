@@ -227,7 +227,7 @@ namespace {
     Soprano::LiteralValue RegisteredFieldData::createLiteralValue( const std::string& value )
     {
         QString s = QString::fromUtf8( ( const char* )value.c_str(), value.length() ).trimmed();
-        if( s.isEmpty() ) 
+        if( s.isEmpty() )
             return Soprano::LiteralValue();
 
         // This is a workaround for a Strigi bug which sometimes stores datatime values as strings
@@ -286,15 +286,17 @@ namespace {
     {
         feeder->addStatement( resourceUri, Nepomuk::Vocabulary::NIE::url(), fileUrl );
 
-        // Strigi only indexes files and extractors mostly (if at all) store the nie:DataObject type (i.e. the contents)
-        // Thus, here we go the easy way and mark each indexed file as a nfo:FileDataObject.
-        feeder->addStatement( resourceUri,
-                              Vocabulary::RDF::type(),
-                              Nepomuk::Vocabulary::NFO::FileDataObject() );
-        if ( fileInfo.isDir() ) {
+        if ( fileInfo.exists() ) {
+            // Strigi only indexes files and extractors mostly (if at all) store the nie:DataObject type (i.e. the contents)
+            // Thus, here we go the easy way and mark each indexed file as a nfo:FileDataObject.
             feeder->addStatement( resourceUri,
                                   Vocabulary::RDF::type(),
-                                  Nepomuk::Vocabulary::NFO::Folder() );
+                                  Nepomuk::Vocabulary::NFO::FileDataObject() );
+            if ( fileInfo.isDir() ) {
+                feeder->addStatement( resourceUri,
+                                      Vocabulary::RDF::type(),
+                                      Nepomuk::Vocabulary::NFO::Folder() );
+            }
         }
     }
 
