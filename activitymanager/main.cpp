@@ -18,23 +18,38 @@
  */
 
 #include <ActivityManager.h>
-#include <QCoreApplication>
+
 #include <QDBusConnection>
 #include <QDBusConnectionInterface>
 
+#include <KAboutData>
+#include <KCmdLineArgs>
+#include <KCrash>
+#include <KUniqueApplication>
+
 int main(int argc, char ** argv)
 {
+    KAboutData about("kactivitymanagerd", 0, ki18n("KDE Activity Manager"), "1.0",
+            ki18n("KDE Activity Management Service"),
+            KAboutData::License_GPL,
+            ki18n("(c) 2010 Ivan Cukic, Sebastian Trueg"), KLocalizedString(),
+            "http://www.kde.org/");
 
-    QCoreApplication app(argc, argv);
+    KCmdLineArgs::init(argc, argv, &about);
+
+    KUniqueApplication app;
 
     // Checking whether we are already running
 
     QDBusConnection dbus = QDBusConnection::sessionBus();
     if (!dbus.interface()->registerService(ActivityManagerServicePath)) {
-        qFatal("Another instance is allready running, quitting");
+        qWarning("Another instance is allready running, quitting");
+        return 1;
     }
 
     ActivityManager ad;
+
+    KCrash::setFlags(KCrash::AutoRestart);
 
     return app.exec();
 }
