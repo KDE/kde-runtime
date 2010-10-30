@@ -26,19 +26,19 @@
 #include <QString>
 #include <QStringList>
 
+#include <KUniqueApplication>
+
 class ActivityManagerPrivate;
 
 /**
  * Service for tracking the user actions and managing the
  * activities
  */
-class ActivityManager: public QObject {
+class ActivityManager: public KUniqueApplication {
     Q_OBJECT
     Q_CLASSINFO("D-Bus Interface", "org.kde.ActivityManager")
 
 public:
-
-
     /**
      * Activity state
      * @note: Do not change the values, needed for bit-operations

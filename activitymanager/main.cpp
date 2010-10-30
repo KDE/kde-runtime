@@ -24,21 +24,9 @@
 
 #include <KAboutData>
 #include <KCmdLineArgs>
-#include <KCrash>
-#include <KUniqueApplication>
 
 int main(int argc, char ** argv)
 {
-    KAboutData about("kactivitymanagerd", 0, ki18n("KDE Activity Manager"), "1.0",
-            ki18n("KDE Activity Management Service"),
-            KAboutData::License_GPL,
-            ki18n("(c) 2010 Ivan Cukic, Sebastian Trueg"), KLocalizedString(),
-            "http://www.kde.org/");
-
-    KCmdLineArgs::init(argc, argv, &about);
-
-    KUniqueApplication app;
-
     // Checking whether we are already running
 
     QDBusConnection dbus = QDBusConnection::sessionBus();
@@ -47,9 +35,17 @@ int main(int argc, char ** argv)
         return 1;
     }
 
-    ActivityManager ad;
+    // Initializing KUniqueApplication
 
-    KCrash::setFlags(KCrash::AutoRestart);
+    KAboutData about("kactivitymanagerd", 0, ki18n("KDE Activity Manager"), "1.0",
+            ki18n("KDE Activity Management Service"),
+            KAboutData::License_GPL,
+            ki18n("(c) 2010 Ivan Cukic, Sebastian Trueg"), KLocalizedString(),
+            "http://www.kde.org/");
 
-    return app.exec();
+    KCmdLineArgs::init(argc, argv, &about);
+
+    ActivityManager application;
+
+    return application.exec();
 }

@@ -212,7 +212,6 @@ Nepomuk::Resource ActivityManagerPrivate::activityResource(const QString & id) c
 ActivityManager::ActivityManager()
     : d(new ActivityManagerPrivate(this))
 {
-    // KCrash::setFlags(KCrash::AutoRestart);
 
     QDBusConnection dbus = QDBusConnection::sessionBus();
     new ActivityManagerAdaptor(this);
@@ -227,7 +226,7 @@ ActivityManager::ActivityManager()
 
     // ensureCurrentActivityIsRunning();
 
-    EventProcessor::self()->start();
+    KCrash::setFlags(KCrash::AutoRestart);
 }
 
 ActivityManager::~ActivityManager()
