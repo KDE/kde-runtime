@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Network Status
 Name[ar]=حالة الشبكة
+Name[ast]=Estáu de la rede
 Name[bn]=নেটওয়ার্কের অবস্থা
 Name[ca]=Estat de la xarxa
 Name[ca@valencia]=Estat de la xarxa
@@ -51,6 +52,7 @@ Name[zh_CN]=网络状态
 Name[zh_TW]=網路狀態
 Comment=Tracks status of network interfaces and provides notification to applications using the network.
 Comment[ar]=يتابع حالة واجهات الشبكة ويوفر التنبيهات للتطبيقات التي تستخدم الشبكة
+Comment[ast]=Estudia l'estáu de los interfaces de rede y notifica les aplicaciones de rede.
 Comment[be@latin]=Naziraje za stanoviščam sietkavych interfejsaŭ, infarmuje aplikacyi pra źmieny.
 Comment[bg]=Проверява състоянието на мрежата и изпраща уведомление на програмите в мрежата
 Comment[ca]=Fa un seguiment de l'estat de les interfícies de xarxa i proporciona notificació a les aplicacions usant la xarxa.

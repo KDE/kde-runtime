@@ -6,6 +6,7 @@ X-KDE-Nepomuk-autostart=true
 X-KDE-Nepomuk-start-on-demand=false
 Name=Nepomuk Activities Service
 Name[ar]=خدمة سراتجي نبومك
+Name[ast]=Serviciu d'actividaes de Nepomuk
 Name[bg]=Услуга за активност Nepomuk
 Name[ca]=Servei d'activitats del Nepomuk
 Name[ca@valencia]=Servei d'activitats del Nepomuk

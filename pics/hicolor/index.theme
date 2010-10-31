@@ -1,6 +1,7 @@
 [Icon Theme]
 Name=KDE-HiColor
 Name[ar]=ألوان كيدي العالية
+Name[ast]=KDE-Alta-resolución
 Name[be]=KDE-HiColor
 Name[be@latin]=Vysoki kantrast „KDE-HiColor”
 Name[bg]=KDE-HiColor
@@ -79,6 +80,7 @@ Name[zh_CN]=KDE-HiColor
 Name[zh_TW]=KDE-高彩
 Comment=Fallback icon theme
 Comment[ar]=سمة أيقونات احتياطية
+Comment[ast]=Tema predefiníu d'iconos
 Comment[be]=Дадатковая тэма значак
 Comment[be@latin]=Zapasny matyŭ ikonaŭ
 Comment[bg]=Тема по подразбиране

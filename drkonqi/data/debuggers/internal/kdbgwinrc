@@ -1,5 +1,6 @@
 [General]
 Name=kdbgwin
+Name[ast]=kdbgwin
 Name[ca]=kdbgwin
 Name[cs]=kdbgwin
 Name[de]=kdbgwin
@@ -24,6 +25,7 @@ Name[pt_BR]=kdbgwin
 Name[ru]=kdbgwin
 Name[sv]=kdbgwin
 Name[tg]=kdbgwin
+Name[th]=kdbgwin
 Name[tr]=kdbgwin
 Name[uk]=kdbgwin
 Name[wa]=kdbgwin

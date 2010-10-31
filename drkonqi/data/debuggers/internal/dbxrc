@@ -1,5 +1,6 @@
 [General]
 Name=dbx
+Name[ast]=dbx
 Name[ca]=dbx
 Name[de]=dbx
 Name[en_GB]=dbx
@@ -18,6 +19,7 @@ Name[pt]=dbx
 Name[pt_BR]=dbx
 Name[ru]=dbx
 Name[sv]=dbx
+Name[th]=dbx
 Name[tr]=dbx
 Name[uk]=dbx
 Name[wa]=dbx

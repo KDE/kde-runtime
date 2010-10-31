@@ -10,6 +10,7 @@ X-KDE-StartupNotify=false
 
 Name=KDED Global Shortcuts Server
 Name[ar]=خادم الاختصارات العمومية
+Name[ast]=Sirvidor d'accesos rápidos globales KDED
 Name[be@latin]=Słužba paŭsiudnych klavijaturnych skarotaŭ dla „KDE”
 Name[bg]=Сървър KDED Global Shortcuts
 Name[ca]=Servidor KDED de dreceres globals

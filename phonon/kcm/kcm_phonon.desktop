@@ -12,6 +12,7 @@ X-DocPath=kcontrol/phonon/index.html
 
 Name=Phonon
 Name[ar]=فونون
+Name[ast]=Phonon
 Name[bn]=ফোনন
 Name[ca]=Phonon
 Name[ca@valencia]=Phonon
@@ -64,6 +65,7 @@ Name[zh_CN]=Phonon
 Name[zh_TW]=Phonon
 Comment=Sound and Video Configuration
 Comment[ar]=ضبط الصوت و الفيديو
+Comment[ast]=Configuración del sistema de soníu y video
 Comment[be@latin]=Nałady huku j videa
 Comment[bg]=Настройване на звук и видео
 Comment[bn]=সাউণ্ড এবং ভিডিও কনফিগারেশন

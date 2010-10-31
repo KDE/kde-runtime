@@ -12,6 +12,7 @@ X-KDE-System-Settings-Parent-Category=workspace-appearance-and-behavior
 
 Name=Desktop Search
 Name[ar]=بحث سطح المكتب
+Name[ast]=Gueta d'escritoriu
 Name[be@latin]=Pošuk
 Name[bg]=Търсене върху работния плот
 Name[bn]=ডেস্কটপ সন্ধান
@@ -88,6 +89,7 @@ Name[zh_TW]=桌面搜尋
 Comment=Nepomuk/Strigi Server Configuration
 Comment[af]=Nepomuk/Strigi bedienerkonfigurasie
 Comment[ar]=ضبط خادم نبومك/ستريجي
+Comment[ast]=Configuración del sirvidor Nepomuk/Strigi
 Comment[be@latin]=Nałady servera „Nepomuk”/„Strigi”
 Comment[bg]=Настройване на Nepomuk/Strigi
 Comment[bn]=নেপোমুক/স্ট্রিগি সার্ভার কনফিগারেশন
