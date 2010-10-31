@@ -48,6 +48,21 @@
 
 #define ACTIVITIES_PROTOCOL "activities://"
 
+// copied from kdelibs\kdeui\notifications\kstatusnotifieritemdbus_p.cpp
+// if there is a common place for such definitions please move 
+#ifdef Q_OS_WIN64    
+__inline int toInt(WId wid) 
+{
+	return (int)((__int64)wid);
+}
+
+#else
+__inline int toInt(WId wid) 
+{
+	return (int)wid;
+}
+#endif        
+
 // Private
 
 ActivityManagerPrivate::ActivityManagerPrivate(ActivityManager * parent)
@@ -92,7 +107,7 @@ void ActivityManagerPrivate::windowClosed(WId windowId)
     }
 
     foreach(const KUrl & uri, resourcesForWindow[windowId]) {
-        q->NotifyResourceClosed(windowId, uri.url());
+        q->NotifyResourceClosed(toInt(windowId), uri.url());
     }
 }
 
@@ -484,8 +499,9 @@ void ActivityManager::NotifyResourceAccessed(const QString & application, const 
     EventProcessor::addEvent(application, uri, EventProcessor::Accessed);
 }
 
-void ActivityManager::NotifyResourceClosed(uint windowId, const QString & uri)
+void ActivityManager::NotifyResourceClosed(uint _windowId, const QString & uri)
 {
+    WId windowId = (WId)_windowId;
     d->resourcesForWindow[windowId].remove(KUrl(uri));
 
     EventProcessor::addEvent(d->applicationForWindow[windowId], uri, EventProcessor::Closed);
@@ -498,11 +514,12 @@ void ActivityManager::NotifyResourceClosed(uint windowId, const QString & uri)
 
 void ActivityManager::NotifyResourceModified(uint windowId, const QString & uri)
 {
-    EventProcessor::addEvent(d->applicationForWindow[windowId], uri, EventProcessor::Modified);
+    EventProcessor::addEvent(d->applicationForWindow[(WId)windowId], uri, EventProcessor::Modified);
 }
 
-void ActivityManager::NotifyResourceOpened(const QString & application, uint windowId, const QString & uri)
+void ActivityManager::NotifyResourceOpened(const QString & application, uint _windowId, const QString & uri)
 {
+    WId windowId = (WId)_windowId;
     if (!d->applicationForWindow.contains(windowId)) {
         d->applicationForWindow[windowId] = application;
     }
