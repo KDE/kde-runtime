@@ -171,6 +171,8 @@ namespace Nepomuk {
     Q_SIGNALS:
         void indexingStarted();
         void indexingStopped();
+        /// a combination of the two signals above
+        void indexingStateChanged( bool indexing );
         void indexingFolder( const QString& );
         void indexingSuspended( bool suspended );
 

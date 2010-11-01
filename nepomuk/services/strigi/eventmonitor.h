@@ -45,6 +45,7 @@ namespace Nepomuk {
         void pauseIndexing(int pauseState);
         void resumeIndexing();
         void slotIndexingSuspended( bool suspended );
+        void slotIndexingStateChanged( bool indexing );
 
     private:
         enum {

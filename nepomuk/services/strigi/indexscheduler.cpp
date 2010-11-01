@@ -223,6 +223,7 @@ void Nepomuk::IndexScheduler::setIndexingStarted( bool started )
 {
     if ( started != m_indexing ) {
         m_indexing = started;
+        emit indexingStateChanged( m_indexing );
         if ( m_indexing )
             emit indexingStarted();
         else

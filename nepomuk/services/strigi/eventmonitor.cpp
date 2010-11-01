@@ -51,10 +51,13 @@ Nepomuk::EventMonitor::EventMonitor( IndexScheduler* scheduler, QObject* parent 
     connect( Solid::PowerManagement::notifier(), SIGNAL( appShouldConserveResourcesChanged( bool ) ),
              this, SLOT( slotPowerManagementStatusChanged( bool ) ) );
 
+    // monitor the index scheduler since there is no need for certain checks when it is not indexing
+    connect( m_indexScheduler, SIGNAL(indexingStateChanged(bool)),
+             this, SLOT(slotIndexingStateChanged(bool)) );
+
     // setup the avail disk usage monitor
     connect( &m_availSpaceTimer, SIGNAL( timeout() ),
              this, SLOT( slotCheckAvailableSpace() ) );
-    m_availSpaceTimer.start( 20*1000 ); // every 20 seconds should be enough
 
     if ( StrigiServiceConfig::self()->isInitialRun() ) {
         // TODO: add actions to this notification
@@ -175,6 +178,22 @@ void Nepomuk::EventMonitor::slotIndexingSuspended( bool suspended )
     else {
         //Again, used to set the correct state, and adjust the timing.
         resumeIndexing();
+    }
+}
+
+
+void Nepomuk::EventMonitor::slotIndexingStateChanged(bool indexing)
+{
+    // there is no need to check the available space (and wasting IO) when we are not indexing
+    // the only exception is when we suspended due to disk space shortage since we can resume once
+    // disk space has been freed up
+    if( indexing ) {
+        kDebug() << "Starting available disk space timer.";
+        m_availSpaceTimer.start( 20*1000 ); // every 20 seconds should be enough
+    }
+    else if( m_pauseState != PausedDueToAvailSpace ) {
+        kDebug() << "Stopping available disk space timer.";
+        m_availSpaceTimer.stop();
     }
 }
 
