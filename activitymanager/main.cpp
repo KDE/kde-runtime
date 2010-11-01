@@ -21,6 +21,7 @@
 
 #include <QDBusConnection>
 #include <QDBusConnectionInterface>
+#include <KDebug>
 
 #include <KAboutData>
 #include <KCmdLineArgs>
@@ -28,6 +29,7 @@
 int main(int argc, char ** argv)
 {
     // Checking whether we are already running
+    qDebug() << "Checking whether we are already running...";
 
     QDBusConnection dbus = QDBusConnection::sessionBus();
     if (!dbus.interface()->registerService(ActivityManagerServicePath)) {
@@ -36,6 +38,7 @@ int main(int argc, char ** argv)
     }
 
     // Initializing KUniqueApplication
+    qDebug() << "Initializing KUniqueApplication...";
 
     KAboutData about("kactivitymanagerd", 0, ki18n("KDE Activity Manager"), "1.0",
             ki18n("KDE Activity Management Service"),
@@ -45,7 +48,11 @@ int main(int argc, char ** argv)
 
     KCmdLineArgs::init(argc, argv, &about);
 
+    qDebug() << "Instantiating the application...";
+
     ActivityManager application;
+
+    qDebug() << "Starting the application...";
 
     return application.exec();
 }

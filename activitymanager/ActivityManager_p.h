@@ -78,6 +78,8 @@ public:
 
 #ifdef HAVE_NEPOMUK
     Nepomuk::Resource activityResource(const QString & id) const;
+    bool nepomukInitialized() const;
+    mutable bool m_nepomukInitCalled;
 #endif // HAVE_NEPOMUK
 
 public Q_SLOTS:

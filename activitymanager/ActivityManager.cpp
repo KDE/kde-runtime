@@ -41,7 +41,7 @@
 #include "config-features.h"
 
 #ifdef HAVE_NEPOMUK
-    #define NEPOMUK_RUNNING (Nepomuk::ResourceManager::instance()->initialized())
+    #define NEPOMUK_RUNNING d->nepomukInitialized()
 #else
     #define NEPOMUK_RUNNING false
 #endif
@@ -49,24 +49,24 @@
 #define ACTIVITIES_PROTOCOL "activities://"
 
 // copied from kdelibs\kdeui\notifications\kstatusnotifieritemdbus_p.cpp
-// if there is a common place for such definitions please move 
-#ifdef Q_OS_WIN64    
-__inline int toInt(WId wid) 
+// if there is a common place for such definitions please move
+#ifdef Q_OS_WIN64
+__inline int toInt(WId wid)
 {
 	return (int)((__int64)wid);
 }
 
 #else
-__inline int toInt(WId wid) 
+__inline int toInt(WId wid)
 {
 	return (int)wid;
 }
-#endif        
+#endif
 
 // Private
 
 ActivityManagerPrivate::ActivityManagerPrivate(ActivityManager * parent)
-    : config("activitymanagerrc"), q(parent)
+    : config("activitymanagerrc"), m_nepomukInitCalled(false), q(parent)
 {
     // Initializing config
     connect(&configSyncTimer, SIGNAL(timeout()),
@@ -217,10 +217,26 @@ void ActivityManagerPrivate::configSync()
 #ifdef HAVE_NEPOMUK
 Nepomuk::Resource ActivityManagerPrivate::activityResource(const QString & id) const
 {
-    return Nepomuk::Resource(KUrl(ACTIVITIES_PROTOCOL + id));
+    kDebug() << "testing for nepomuk";
+
+    if (nepomukInitialized()) {
+        return Nepomuk::Resource(KUrl(ACTIVITIES_PROTOCOL + id));
+    } else {
+        return Nepomuk::Resource();
+    }
+}
+
+/* lazy init of nepomuk */
+bool ActivityManagerPrivate::nepomukInitialized() const
+{
+    if (m_nepomukInitCalled) return
+        Nepomuk::ResourceManager::instance()->initialized();
+
+    m_nepomukInitCalled = true;
+
+    return (Nepomuk::ResourceManager::instance()->init() == 0);
 }
 #endif // HAVE_NEPOMUK
-
 
 // Main
 
@@ -232,12 +248,8 @@ ActivityManager::ActivityManager()
     new ActivityManagerAdaptor(this);
     dbus.registerObject("/ActivityManager", this);
 
-    // Initializing Nepomuk
-#ifdef HAVE_NEPOMUK
-    Nepomuk::ResourceManager::instance()->init();
-#endif // HAVE_NEPOMUK
-
     // TODO: Sync activities in nepomuk with currently existing ones
+    // but later, when we are sure nepomuk is running
 
     // ensureCurrentActivityIsRunning();
 
@@ -256,7 +268,7 @@ void ActivityManager::Start()
 
 void ActivityManager::Stop()
 {
-    this->deleteLater();
+    d->configSync();
     QCoreApplication::quit();
 }
 
