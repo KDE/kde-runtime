@@ -47,7 +47,7 @@ KNotify::KNotify( QObject *parent )
 	loadConfig();
 	(void)new KNotifyAdaptor(this);
 	(void)new KSolidNotify(this);
-	QDBusConnection::sessionBus().registerObject("/Notify", this, QDBusConnection::ExportAdaptors 
+	QDBusConnection::sessionBus().registerObject("/Notify", this, QDBusConnection::ExportAdaptors
 	 /*|  QDBusConnection::ExportScriptableSlots |  QDBusConnection::ExportScriptableSignals*/ );
 }
 
@@ -57,7 +57,7 @@ KNotify::~KNotify()
 }
 
 
-void KNotify::loadConfig() 
+void KNotify::loadConfig()
 {
 	qDeleteAll(m_plugins);
 	m_plugins.clear();
@@ -93,12 +93,12 @@ void KNotify::closeNotification(int id)
 	if(!m_notifications.contains(id))
 		return;
 	Event *e=m_notifications[id];
-	
+
 	kDebug() << e->id << " ref=" << e->ref;
-	
+
 	//this has to be called before  plugin->close or we will get double deletion because of slotPluginFinished
 	m_notifications.remove(id);
-	
+
 	if(e->ref>0)
 	{
 		e->ref++;
@@ -125,10 +125,10 @@ int KNotify::event( const QString & event, const QString & appname, const Contex
 	e->config.image=image;
 	e->config.timeout=timeout;
 	e->config.winId=(WId)winId;
-	
+
 	m_notifications.insert(m_counter,e);
 	emitEvent(e);
-	
+
 	e->ref--;
 	kDebug() << e->id << " ref=" << e->ref;
 	if(e->ref==0)
@@ -146,12 +146,12 @@ void KNotify::update(int id, const QString &title, const QString &text, const KN
 		return;
 
 	Event *e=m_notifications[id];
-	
+
 	e->config.title=title;
 	e->config.text=text;
 	e->config.image = image;
 	e->config.actions = actions;
-	
+
 	foreach(KNotifyPlugin *p, m_plugins)
 	{
 		p->update(id, &e->config);
@@ -163,7 +163,7 @@ void KNotify::reemit(int id, const ContextList& contexts)
 		return;
 	Event *e=m_notifications[id];
 	e->config.contexts=contexts;
-	
+
 	emitEvent(e);
 }
 
@@ -213,7 +213,7 @@ int KNotifyAdaptor::event(const QString &event, const QString &fromApp, const QV
 						const QString &title, const QString &text, const QByteArray& image,  const QStringList& actions,
 						int timeout, qlonglong winId)
 //						  const QDBusMessage & , int _return )
-								  
+
 {
 	/* I'm not sure this is the right way to read a a(ss) type,  but it seems to work */
 	ContextList contextlist;
@@ -234,7 +234,7 @@ int KNotifyAdaptor::event(const QString &event, const QString &fromApp, const QV
 		else
 			contextlist << qMakePair(context_key , s);
 	}
-	
+
 	return static_cast<KNotify *>(parent())->event(event, fromApp, contextlist, title, text, image, actions, timeout, WId(winId));
 }
 
