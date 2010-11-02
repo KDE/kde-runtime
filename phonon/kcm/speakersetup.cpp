@@ -312,11 +312,16 @@ SpeakerSetup::SpeakerSetup(QWidget *parent)
 
 SpeakerSetup::~SpeakerSetup()
 {
-    ca_context_destroy(m_Canberra);
-    pa_context_unref(s_context);
-    s_context = NULL;
-    pa_glib_mainloop_free(s_mainloop);
-    s_mainloop = NULL;
+    if (m_Canberra)
+        ca_context_destroy(m_Canberra);
+    if (s_context) {
+        pa_context_unref(s_context);
+        s_context = NULL;
+    }
+    if (s_mainloop) {
+        pa_glib_mainloop_free(s_mainloop);
+        s_mainloop = NULL;
+    }
 }
 
 void SpeakerSetup::load()
