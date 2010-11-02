@@ -90,6 +90,14 @@ QString KNotifyConfig::readEntry( const QString & entry, bool path )
 			if(!p.isNull())
 				return p;
 		}
+
+		if( eventsfile->hasGroup( group ) )
+		{
+			KConfigGroup cg(eventsfile, group);
+			QString p=path ?  cg.readPathEntry(entry, QString()) : cg.readEntry(entry,QString());
+			if(!p.isNull())
+				return p;
+		}
 	}
 //	kDebug() << entry << " not found in contexts ";
 	const QString group="Event/" + eventid ;

@@ -172,6 +172,36 @@ void KNotify::emitEvent(Event *e)
 	QString presentstring=e->config.readEntry("Action");
 	QStringList presents=presentstring.split ('|');
 	
+	if (!e->config.contexts.isEmpty() && !presents.first().isEmpty()) 
+	{
+		//Check whether the present actions are absolute, relative or invalid
+		bool relative = presents.first().startsWith('+') || presents.first().startsWith('-');
+		bool valid = true;
+		foreach (const QString & presentAction, presents)
+			valid &=  ((presentAction.startsWith('+') || presentAction.startsWith('-')) == relative);
+		if (!valid) 
+		{
+			kDebug() << "Context " << e->config.contexts << "present actions are invalid! Fallback to default present actions";
+			Event defaultEvent = Event(e->config.appname, ContextList(), e->config.eventid);
+			QString defaultPresentstring=defaultEvent.config.readEntry("Action");
+			presents = defaultPresentstring.split ('|');
+		} else if (relative) 
+		{
+			// Obtain the list of present actions without context
+			Event noContextEvent = Event(e->config.appname, ContextList(), e->config.eventid);
+			QString noContextPresentstring = noContextEvent.config.readEntry("Action");
+			QSet<QString> noContextPresents = noContextPresentstring.split ('|').toSet();
+			foreach (const QString & presentAction, presents)
+			{
+				if (presentAction.startsWith('+'))
+					noContextPresents << presentAction.mid(1);
+				else
+					noContextPresents.remove(presentAction.mid(1));
+			}
+			presents = noContextPresents.toList();
+		}
+	}
+
 	foreach(const QString & action , presents)
 	{
 		if(!m_plugins.contains(action))
