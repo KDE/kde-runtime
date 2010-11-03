@@ -166,6 +166,7 @@ Comment[de]=Benachrichtigung, wenn das Audioausgabegerät automatisch geändert 
 Comment[en_GB]=Notification when audio output device has automatically changed
 Comment[es]=Notificación de cambios automáticos en los dispositivos de salida de audio
 Comment[et]=Märguanne, kui heli väljundseadet on automaatselt muudetud
+Comment[hr]=Obavijest prilikom automatske promijene izlaznog audio uređaja
 Comment[ia]=Notification quando un dispositivo de egresso de sono ha modificate automaticamente
 Comment[ja]=オーディオ出力デバイスが自動的に変更された時の通知
 Comment[ko]=오디오 출력 장치가 자동으로 변경되었을 때의 알림
