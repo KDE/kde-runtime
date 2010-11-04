@@ -35,7 +35,7 @@
 #include <kdialog.h>
 #include <kmessagebox.h>
 #include <kservice.h>
-#include <kstandarddirs.h>
+#include <kservicetypetrader.h>
 
 #include <KPluginFactory>
 #include <KPluginLoader>
@@ -169,58 +169,55 @@ void KDEDConfig::setAutoloadEnabled(KConfig *config, const QString &filename, bo
 	return cg.writeEntry("autoload", b);
 }
 
-void KDEDConfig::load() {
+void KDEDConfig::load()
+{
 	KConfig kdedrc( "kdedrc", KConfig::NoGlobals );
 
 	_lvStartup->clear();
 	_lvLoD->clear();
 
-	QStringList files;
-	KGlobal::dirs()->findAllResources( "services",
-			QLatin1String( "kded/*.desktop" ),
-			KStandardDirs::Recursive | KStandardDirs::NoDuplicates,
-			files );
-
+	KService::List offers = KServiceTypeTrader::self()->query( "KDEDModule" );
 	QTreeWidgetItem* treeitem = 0L;
-	for ( QStringList::ConstIterator it = files.constBegin(); it != files.constEnd(); ++it ) {
-        kDebug() << *it;
+	for ( KService::List::const_iterator it = offers.constBegin();
+	      it != offers.constEnd(); ++it)
+	{
+		QString servicePath = (*it)->entryPath();
+		kDebug() << servicePath;
 
-		if ( KDesktopFile::isDesktopFile( *it ) ) {
-			KDesktopFile file( "services", *it );
-			Q_ASSERT( file.desktopGroup().readEntry("X-KDE-ServiceTypes") == "KDEDModule" );
-			// The logic has to be identical to Kded::initModules.
-			// They interpret X-KDE-Kded-autoload as false if not specified
-			//                X-KDE-Kded-load-on-demand as true if not specified
-			if ( file.desktopGroup().readEntry("X-KDE-Kded-autoload", false) ) {
-				treeitem = new QTreeWidgetItem();
-				treeitem->setCheckState( StartupUse, autoloadEnabled(&kdedrc, *it) ? Qt::Checked : Qt::Unchecked );
-				treeitem->setText( StartupService, file.readName() );
-				treeitem->setText( StartupDescription, file.readComment() );
-				treeitem->setText( StartupStatus, NOT_RUNNING );
-				if (file.desktopGroup().hasKey("X-KDE-DBus-ModuleName")) {
-					treeitem->setData( StartupService, LibraryRole, file.desktopGroup().readEntry("X-KDE-DBus-ModuleName") );
-				} else {
-					kWarning() << "X-KDE-DBUS-ModuleName not set for module " << file.readName();
-					treeitem->setData( StartupService, LibraryRole, file.desktopGroup().readEntry("X-KDE-Library") );
-				}
-				_lvStartup->addTopLevelItem( treeitem );
+		const KDesktopFile file( "services", servicePath );
+		const KConfigGroup grp = file.desktopGroup();
+		// The logic has to be identical to Kded::initModules.
+		// They interpret X-KDE-Kded-autoload as false if not specified
+		//                X-KDE-Kded-load-on-demand as true if not specified
+		if ( grp.readEntry("X-KDE-Kded-autoload", false) ) {
+			treeitem = new QTreeWidgetItem();
+			treeitem->setCheckState( StartupUse, autoloadEnabled(&kdedrc, file.name()) ? Qt::Checked : Qt::Unchecked );
+			treeitem->setText( StartupService, file.readName() );
+			treeitem->setText( StartupDescription, file.readComment() );
+			treeitem->setText( StartupStatus, NOT_RUNNING );
+			if (grp.hasKey("X-KDE-DBus-ModuleName")) {
+				treeitem->setData( StartupService, LibraryRole, grp.readEntry("X-KDE-DBus-ModuleName") );
+			} else {
+				kWarning() << "X-KDE-DBUS-ModuleName not set for module " << file.readName();
+				treeitem->setData( StartupService, LibraryRole, grp.readEntry("X-KDE-Library") );
 			}
-			else if ( file.desktopGroup().readEntry("X-KDE-Kded-load-on-demand", true) ) {
-				treeitem = new QTreeWidgetItem();
-				treeitem->setText( OnDemandService, file.readName() );
-				treeitem->setText( OnDemandDescription, file.readComment() );
-				treeitem->setText( OnDemandStatus, NOT_RUNNING );
-				if (file.desktopGroup().hasKey("X-KDE-DBus-ModuleName")) {
-					treeitem->setData( OnDemandService, LibraryRole, file.desktopGroup().readEntry("X-KDE-DBus-ModuleName") );
-				} else {
-					kWarning() << "X-KDE-DBUS-ModuleName not set for module " << file.readName();
-					treeitem->setData( OnDemandService, LibraryRole, file.desktopGroup().readEntry("X-KDE-Library") );
-				}
-				_lvLoD->addTopLevelItem( treeitem );
+			_lvStartup->addTopLevelItem( treeitem );
+		}
+		else if ( grp.readEntry("X-KDE-Kded-load-on-demand", true) ) {
+			treeitem = new QTreeWidgetItem();
+			treeitem->setText( OnDemandService, file.readName() );
+			treeitem->setText( OnDemandDescription, file.readComment() );
+			treeitem->setText( OnDemandStatus, NOT_RUNNING );
+			if (grp.hasKey("X-KDE-DBus-ModuleName")) {
+				treeitem->setData( OnDemandService, LibraryRole, grp.readEntry("X-KDE-DBus-ModuleName") );
+			} else {
+				kWarning() << "X-KDE-DBUS-ModuleName not set for module " << file.readName();
+				treeitem->setData( OnDemandService, LibraryRole, grp.readEntry("X-KDE-Library") );
 			}
-			else {
-				kWarning() << "kcmkded: Module " << file.readName() << " not loaded on demand or startup! Skipping.";
-			}
+			_lvLoD->addTopLevelItem( treeitem );
+		}
+		else {
+			kWarning() << "kcmkded: Module " << file.readName() << " not loaded on demand or startup! Skipping.";
 		}
 	}
 
@@ -236,35 +233,31 @@ void KDEDConfig::load() {
 	emit changed(false);
 }
 
-void KDEDConfig::save() {
-	QStringList files;
-	KGlobal::dirs()->findAllResources( "services",
-			QLatin1String( "kded/*.desktop" ),
-			KStandardDirs::Recursive | KStandardDirs::NoDuplicates,
-			files );
-
+void KDEDConfig::save()
+{
 	KConfig kdedrc("kdedrc", KConfig::NoGlobals);
 
-	for ( QStringList::ConstIterator it = files.constBegin(); it != files.constEnd(); ++it ) {
+	KService::List offers = KServiceTypeTrader::self()->query( "KDEDModule" );
+	for ( KService::List::const_iterator it = offers.constBegin();
+	      it != offers.constEnd(); ++it)
+	{
+		QString servicePath = (*it)->entryPath();
+		kDebug() << servicePath;
 
-		if ( KDesktopFile::isDesktopFile( *it ) ) {
+		const KDesktopFile file( "services", servicePath );
+		const KConfigGroup grp = file.desktopGroup();
+		if (grp.readEntry("X-KDE-Kded-autoload", false)){
 
-                        KConfig _file( *it, KConfig::NoGlobals, "services"  );
-                        KConfigGroup file(&_file, "Desktop Entry");
-
-			if (file.readEntry("X-KDE-Kded-autoload", false)){
-
-				QString libraryName = file.readEntry( "X-KDE-Library" );
-				int count = _lvStartup->topLevelItemCount();
-				for( int i = 0; i < count; ++i )
+			QString libraryName = grp.readEntry( "X-KDE-Library" );
+			int count = _lvStartup->topLevelItemCount();
+			for( int i = 0; i < count; ++i )
+			{
+				QTreeWidgetItem *treeitem = _lvStartup->topLevelItem( i );
+				if ( treeitem->data( StartupService, LibraryRole ).toString() == libraryName )
 				{
-					QTreeWidgetItem *treeitem = _lvStartup->topLevelItem( i );
-					if ( treeitem->data( StartupService, LibraryRole ).toString() == libraryName )
-					{
-						// we found a match, now compare and see what changed
-						setAutoloadEnabled( &kdedrc, *it, treeitem->checkState( StartupUse ) == Qt::Checked);
-						break;
-					}
+					// we found a match, now compare and see what changed
+					setAutoloadEnabled( &kdedrc, servicePath, treeitem->checkState( StartupUse ) == Qt::Checked);
+					break;
 				}
 			}
 		}
