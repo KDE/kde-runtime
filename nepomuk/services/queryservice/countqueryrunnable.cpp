@@ -47,7 +47,6 @@ Nepomuk::Query::CountQueryRunnable::~CountQueryRunnable()
 
 void Nepomuk::Query::CountQueryRunnable::run()
 {
-    // start with the basic count of the actual query
     int count = -1;
     Query query = m_folder->query();
     QString sparql = query.toSparqlQuery( Query::CreateCountQuery );
@@ -58,17 +57,4 @@ void Nepomuk::Query::CountQueryRunnable::run()
     kDebug() << "Count:" << count;
     if( m_folder )
         m_folder->countQueryFinished( count );
-
-    // continue with the total count used for paged query results
-    if( query.limit() > 0 || query.offset() > 0 ) {
-        count = -1;
-        sparql = query.toSparqlQuery( Query::CreateCountQuery );
-        it = ResourceManager::instance()->mainModel()->executeQuery( sparql, Soprano::Query::QueryLanguageSparql );
-        if( it.next() ) {
-            count = it.binding( 0 ).literal().toInt();
-        }
-    }
-    kDebug() << "Total Count:" << count;
-    if( m_folder )
-        m_folder->totalCountQueryFinished( count );
 }

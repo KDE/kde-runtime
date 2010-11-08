@@ -56,7 +56,6 @@ Nepomuk::Query::Folder::Folder( const QString& query, const RequestPropertyMap& 
 void Nepomuk::Query::Folder::init()
 {
     m_resultCount = -1;
-    m_totalResultCount = -1;
     m_initialListingDone = false;
     m_storageChanged = false;
 
@@ -91,7 +90,7 @@ void Nepomuk::Query::Folder::update()
 
         // we only need the count for initialListingDone
         if ( !m_initialListingDone &&
-             m_sparqlQuery.isEmpty() ) {
+             !m_isSparqlQueryFolder ) {
             QueryService::searchThreadPool()->start( new CountQueryRunnable( this ), 0 );
         }
     }
@@ -112,7 +111,7 @@ bool Nepomuk::Query::Folder::initialListingDone() const
 
 QString Nepomuk::Query::Folder::sparqlQuery() const
 {
-    if ( m_sparqlQuery.isEmpty() )
+    if ( !m_isSparqlQueryFolder )
         return m_query.toSparqlQuery();
     else
         return m_sparqlQuery;
@@ -121,7 +120,7 @@ QString Nepomuk::Query::Folder::sparqlQuery() const
 
 Nepomuk::Query::RequestPropertyMap Nepomuk::Query::Folder::requestPropertyMap() const
 {
-    if ( m_sparqlQuery.isEmpty() )
+    if ( !m_isSparqlQueryFolder )
         return m_query.requestPropertyMap();
     else
         return m_requestProperties;
@@ -202,16 +201,6 @@ void Nepomuk::Query::Folder::countQueryFinished( int count )
     kDebug() << m_resultCount;
     if( count >= 0 )
         emit resultCount( m_resultCount );
-}
-
-
-// called from CountQueryRunnable in the search thread
-void Nepomuk::Query::Folder::totalCountQueryFinished( int count )
-{
-    m_totalResultCount = count;
-    kDebug() << m_totalResultCount;
-    if( count >= 0 )
-        emit totalResultCount( m_totalResultCount );
 }
 
 

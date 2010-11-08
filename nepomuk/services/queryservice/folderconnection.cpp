@@ -76,15 +76,6 @@ void Nepomuk::Query::FolderConnection::list()
         connect( m_folder, SIGNAL( resultCount( int ) ),
                  this, SIGNAL( resultCount( int ) ) );
     }
-
-    // report the total result count or connect to the signal
-    if( m_folder->getTotalResultCount() >= 0 ) {
-        emit totalResultCount( m_folder->getTotalResultCount() );
-    }
-    else {
-        connect( m_folder, SIGNAL( totalResultCount( int ) ),
-                 this, SIGNAL( totalResultCount( int ) ) );
-    }
 }
 
 
@@ -101,8 +92,6 @@ void Nepomuk::Query::FolderConnection::listen()
                  this, SLOT( slotEntriesRemoved( QList<QUrl> ) ) );
         connect( m_folder, SIGNAL( resultCount( int ) ),
                  this, SIGNAL( resultCount( int ) ) );
-        connect( m_folder, SIGNAL( totalResultCount( int ) ),
-                 this, SIGNAL( totalResultCount( int ) ) );
     }
 
     // otherwise we need to wait for it finishing the listing

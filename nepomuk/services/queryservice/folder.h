@@ -89,24 +89,12 @@ namespace Nepomuk {
              */
             int getResultCount() const { return m_resultCount; }
 
-            /**
-             * Get the total result count. This value will not be available
-             * right away since it is calculated async.
-             *
-             * As soon as the total count is ready totalCount() is emitted.
-             *
-             * \return The total result count or -1 in case it is not ready yet.
-             */
-            int getTotalResultCount() const { return m_totalResultCount; }
-
             void addResult( const Result& result );
 
             void listingFinished();
 
             /// called by the CountQueryRunnable
             void countQueryFinished( int count );
-            /// called by the CountQueryRunnable
-            void totalCountQueryFinished( int count );
 
         public Q_SLOTS:
             void update();
@@ -122,12 +110,6 @@ namespace Nepomuk {
              */
             void resultCount( int count );
 
-            /**
-             * Emitted once the total result count is available.
-             *
-             * \sa getTotalResultCount()
-             */
-            void totalResultCount( int count );
             void finishedListing();
             void aboutToBeDeleted( Nepomuk::Query::Folder* );
 
@@ -165,9 +147,6 @@ namespace Nepomuk {
 
             /// the result count. -1 until determined
             int m_resultCount;
-
-            /// the total result count. -1 until determined
-            int m_totalResultCount;
 
             /// Query used to get the total count. Only non-null during execution
             QPointer<Soprano::Util::AsyncQuery> m_countQuery;
