@@ -41,6 +41,8 @@
     #warning "No Nepomuk, disabling some activity related features"
 #endif
 
+class QDBusInterface;
+
 class ActivityManagerPrivate: public QObject {
     Q_OBJECT
 
@@ -65,6 +67,10 @@ public:
     // Current activity
     QString currentActivity;
 
+    //opening/closing activity (ksmserver can only handle one at a time)
+    QString transitioningActivity;
+    bool haveSessions; //whether ksmserver's available
+
     // Configuration
     QTimer configSyncTimer;
     KConfig config;
@@ -86,9 +92,13 @@ public Q_SLOTS:
     void scheduleConfigSync();
     void configSync();
     void windowClosed(WId windowId);
+    void startCompleted();
+    void stopCompleted();
+    void stopCancelled();
 
 private:
     ActivityManager * const q;
+    QDBusInterface *ksmserverInterface; //just keeping it for the signals
 
 };
 
