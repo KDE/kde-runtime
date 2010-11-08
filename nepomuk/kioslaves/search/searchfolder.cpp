@@ -126,6 +126,9 @@ void Nepomuk::SearchFolder::run()
     connect( m_client, SIGNAL( finishedListing() ),
              this, SLOT( slotFinishedListing() ),
              Qt::DirectConnection );
+    connect( m_client, SIGNAL( error(QString) ),
+             this, SLOT( slotFinishedListing() ),
+             Qt::DirectConnection );
 
     m_resultCnt = 0;
     if ( m_query.isValid() )
