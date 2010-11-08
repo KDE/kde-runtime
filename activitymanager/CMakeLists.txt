@@ -12,7 +12,6 @@ macro_log_feature(
         "STRONGLY_RECOMMENDED: Nepomuk is needed for resource tracking and for storing some activity-related info")
 
 if(Nepomuk_FOUND)
-    message("############################ Nepomuk: True")
     set(HAVE_NEPOMUK 1)
     set(ADDITIONAL_LINK_LIBS
         ${ADDITIONAL_LINK_LIBS}
