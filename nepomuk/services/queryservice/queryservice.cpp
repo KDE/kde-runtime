@@ -82,19 +82,27 @@ QDBusObjectPath Nepomuk::Query::QueryService::query( const QString& query, const
         // backwards compatibility: in KDE <= 4.5 query() was what desktopQuery() is now
         return desktopQuery( query, msg );
     }
-
-    kDebug() << "Query request:" << q;
-    Folder* folder = getFolder( q );
-    return ( new FolderConnection( folder ) )->registerDBusObject( msg.service(), ++m_folderConnectionCnt );
+    else {
+        kDebug() << "Query request:" << q;
+        Folder* folder = getFolder( q );
+        return ( new FolderConnection( folder ) )->registerDBusObject( msg.service(), ++m_folderConnectionCnt );
+    }
 }
 
 
 QDBusObjectPath Nepomuk::Query::QueryService::desktopQuery( const QString& query, const QDBusMessage& msg )
 {
     Query q = QueryParser::parseQuery( query );
-    kDebug() << "Query request:" << q;
-    Folder* folder = getFolder( q );
-    return ( new FolderConnection( folder ) )->registerDBusObject( msg.service(), ++m_folderConnectionCnt );
+    if( !q.isValid() ) {
+        kDebug() << "Invalid desktop query:" << query;
+        QDBusConnection::sessionBus().send( msg.createErrorReply( QDBusError::InvalidArgs, i18n("Invalid desktop query: '%1'", query) ) );
+        return QDBusObjectPath(QLatin1String("/non/existing/path"));
+    }
+    else {
+        kDebug() << "Query request:" << q;
+        Folder* folder = getFolder( q );
+        return ( new FolderConnection( folder ) )->registerDBusObject( msg.service(), ++m_folderConnectionCnt );
+    }
 }
 
 
@@ -113,9 +121,16 @@ QDBusObjectPath Nepomuk::Query::QueryService::sparqlQuery( const QString& sparql
 {
     kDebug() << "Query request:" << sparql << requestProps;
 
-    // create query folder + connection
-    Folder* folder = getFolder( sparql, decodeRequestPropertiesList( requestProps ) );
-    return ( new FolderConnection( folder ) )->registerDBusObject( msg.service(), ++m_folderConnectionCnt );
+    if( sparql.isEmpty() ) {
+        kDebug() << "Invalid SPARQL query:" << sparql;
+        QDBusConnection::sessionBus().send( msg.createErrorReply( QDBusError::InvalidArgs, i18n("Invalid SPARQL query: '%1'", sparql) ) );
+        return QDBusObjectPath(QLatin1String("/non/existing/path"));
+    }
+    else {
+        // create query folder + connection
+        Folder* folder = getFolder( sparql, decodeRequestPropertiesList( requestProps ) );
+        return ( new FolderConnection( folder ) )->registerDBusObject( msg.service(), ++m_folderConnectionCnt );
+    }
 }
 
 
