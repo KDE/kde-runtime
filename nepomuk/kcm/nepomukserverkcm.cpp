@@ -102,7 +102,6 @@ Nepomuk::ServerConfigModule::ServerConfigModule( QWidget* parent, const QVariant
     : KCModule( NepomukConfigModuleFactory::componentData(), parent, args ),
       m_serverInterface( 0 ),
       m_strigiInterface( 0 ),
-      m_statusDialog( 0 ),
       m_failedToInitialize( false )
 {
     KAboutData *about = new KAboutData(
@@ -372,9 +371,8 @@ void Nepomuk::ServerConfigModule::slotCustomQueryButtonClicked()
 
 void Nepomuk::ServerConfigModule::slotStatusDetailsClicked()
 {
-    if( !m_statusDialog )
-        m_statusDialog = new StatusWidget( this );
-    m_statusDialog->exec();
+    StatusWidget statusDialog( this );
+    statusDialog.exec();
 }
 
 

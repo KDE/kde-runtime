@@ -66,7 +66,6 @@ namespace Nepomuk {
         org::kde::nepomuk::Strigi* m_strigiInterface;
 
         IndexFolderSelectionDialog* m_indexFolderSelectionDialog;
-        StatusWidget* m_statusDialog;
 
         bool m_failedToInitialize;
 
