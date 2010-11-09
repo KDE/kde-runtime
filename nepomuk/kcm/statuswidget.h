@@ -29,7 +29,6 @@ class QHideEvent;
 class KJob;
 
 namespace Soprano {
-    class Model;
     namespace Util {
         class AsyncQuery;
     }
@@ -37,7 +36,6 @@ namespace Soprano {
 
 namespace Nepomuk {
 
-    class StrigiService;
 
     class StatusWidget : public KDialog, public Ui::StatusWidget
     {
