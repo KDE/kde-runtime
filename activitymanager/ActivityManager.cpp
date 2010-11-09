@@ -472,7 +472,9 @@ void ActivityManager::StopActivity(const QString & id)
         //maybe they use compiz?
         //go ahead without the session
         d->setActivityState(id, Stopped);
-        d->ensureCurrentActivityIsRunning();
+        if (d->currentActivity == id) {
+            d->ensureCurrentActivityIsRunning();
+        }
         d->configSync(); //force immediate sync
     }
 }
@@ -484,8 +486,10 @@ void ActivityManagerPrivate::stopCompleted()
         return;
     }
     setActivityState(transitioningActivity, ActivityManager::Stopped);
+    if (currentActivity == transitioningActivity) {
+        ensureCurrentActivityIsRunning();
+    }
     transitioningActivity.clear();
-    ensureCurrentActivityIsRunning();
     configSync(); //force immediate sync
 }
 
