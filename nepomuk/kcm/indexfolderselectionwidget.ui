@@ -3,9 +3,6 @@
  <author>Sebastian Trueg &lt;trueg@kde.org&gt;</author>
  <class>IndexFolderSelectionWidget</class>
  <widget class="QWidget" name="IndexFolderSelectionWidget">
-  <property name="windowTitle">
-   <string>Form</string>
-  </property>
   <layout class="QHBoxLayout" name="horizontalLayout">
    <item>
     <widget class="QGroupBox" name="groupBox_3">
