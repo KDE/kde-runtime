@@ -29,7 +29,6 @@
 #include <KUrl>
 #include <KDebug>
 
-#include <KWindowInfo>
 #include <KWindowSystem>
 
 #include <Nepomuk/ResourceManager>

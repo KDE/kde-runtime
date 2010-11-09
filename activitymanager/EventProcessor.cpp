@@ -26,8 +26,6 @@
 #endif
 
 #include <QList>
-#include <QPair>
-#include <QDebug>
 #include <QMutex>
 
 #include <KDebug>

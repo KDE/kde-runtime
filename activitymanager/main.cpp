@@ -20,7 +20,6 @@
 #include <ActivityManager.h>
 
 #include <QDBusConnection>
-#include <QDBusConnectionInterface>
 #include <KDebug>
 
 #include <KAboutData>

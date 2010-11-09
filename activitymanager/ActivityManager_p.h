@@ -22,14 +22,11 @@
 
 #include <QSet>
 #include <QString>
-#include <QStringList>
 #include <QTimer>
 
 #include <KConfig>
 #include <KConfigGroup>
 #include <KUrl>
-#include <KWindowInfo>
-#include <KWindowSystem>
 
 #include <Nepomuk/ResourceManager>
 #include <Nepomuk/Resource>

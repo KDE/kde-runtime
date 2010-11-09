@@ -22,7 +22,6 @@
 
 #define ActivityManagerServicePath "org.kde.ActivityManager"
 
-#include <QObject>
 #include <QString>
 #include <QStringList>
 
