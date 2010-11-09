@@ -20,7 +20,6 @@
 
 #include <KIcon>
 #include <KLocale>
-#include <KTitleWidget>
 #include <KStandardDirs>
 #include <KIO/NetAccess>
 #include <kio/directorysizejob.h>

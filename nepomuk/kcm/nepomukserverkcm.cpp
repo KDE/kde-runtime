@@ -29,7 +29,6 @@
 #include <KAboutData>
 #include <KSharedConfig>
 #include <KMessageBox>
-#include <KUrlLabel>
 
 #include <Nepomuk/Query/QueryParser>
 #include <Nepomuk/Query/FileQuery>
