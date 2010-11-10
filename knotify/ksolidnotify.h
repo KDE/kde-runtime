@@ -52,13 +52,13 @@ class KSolidNotify : public QObject
 
 	private slots:
 
-		  void storageEjectDone(Solid::ErrorType error, QVariant errorData, const QString & udi);
-		  void storageTeardownDone(Solid::ErrorType error, QVariant errorData, const QString & udi);
-		  void storageSetupDone(Solid::ErrorType error, QVariant errorData, const QString & udi);
+		void storageEjectDone(Solid::ErrorType error, QVariant errorData, const QString & udi);
+		void storageTeardownDone(Solid::ErrorType error, QVariant errorData, const QString & udi);
+		void storageSetupDone(Solid::ErrorType error, QVariant errorData, const QString & udi);
 
-	  void slotServiceOwnerChanged(const QString &, const QString &, const QString &);
+		void slotServiceOwnerChanged(const QString &, const QString &, const QString &);
 
-		private:
+	private:
 		void connectSignals(Solid::Device* device);
 
 		KNotify* m_kNotify;
