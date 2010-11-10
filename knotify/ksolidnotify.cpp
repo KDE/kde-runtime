@@ -88,9 +88,7 @@ void KSolidNotify::onDeviceRemoved(const QString &udi)
 	{
 		Solid::StorageAccess *access = m_devices[udi].as<Solid::StorageAccess>();
 		if (access)
-		{
 			disconnect(access, 0, this, 0);
-		}
 	}
 	m_devices.remove(udi);
 }
@@ -100,7 +98,7 @@ void KSolidNotify::connectSignals(Solid::Device* device)
 	if (device->is<Solid::StorageVolume>())
 	{
 		Solid::StorageAccess *access = device->as<Solid::StorageAccess>();
-		if (access )
+		if (access)
 		{
 			connect(access, SIGNAL(teardownDone(Solid::ErrorType, QVariant, const QString &)),
 					this, SLOT(storageTeardownDone(Solid::ErrorType, QVariant , const QString &)));
