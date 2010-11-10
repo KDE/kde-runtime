@@ -20,10 +20,10 @@
 
 
 #include "notifybytaskbar.h"
-#include "knotifyconfig.h"
 
 #include <kdebug.h>
 #include <kwindowsystem.h>
+#include <knotifyconfig.h>
 
 NotifyByTaskbar::NotifyByTaskbar(QObject *parent) : KNotifyPlugin(parent)
 {

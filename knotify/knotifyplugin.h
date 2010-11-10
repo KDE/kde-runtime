@@ -24,7 +24,9 @@
 #define KNOTIFYPLUGIN_H
 
 #include <QtCore/QObject>
+#include <KPluginFactory>
 
+class KNotifyPluginPrivate;
 class KNotifyConfig;
 
 
@@ -32,63 +34,60 @@ class KNotifyConfig;
  * @brief abstract class for KNotify actions
  *
  * A KNotifyPlugin is responsible of one presentation.  You can subclass it to have your own knotify presentation.
- * 
- * You should reimplement the KNotifyPlugin::notify method to display the notification.
  *
- * Dynamic plugin support is not yet implemented in KNotify.
- * In order to load your plugin you need to add a line to KNotify::loadConfig() in knotify.cpp
+ * You should reimplement the KNotifyPlugin::notify method to display the notification.
  *
  * @author Olivier Goffart <ogoffart at kde.org>
 */
-class KNotifyPlugin : public QObject
+class KDE_EXPORT KNotifyPlugin : public QObject
 { Q_OBJECT
 	public:
-		KNotifyPlugin(QObject *parent=0l);
+	        KNotifyPlugin(QObject *parent=0l, const QVariantList &args=QVariantList());
 		virtual ~KNotifyPlugin();
 
 		/**
 		 * @brief return the name of this plugin.
 		 *
-		 * this is the name that should appears in the .knotifyrc file, 
-		 * in the field Action=... if a notification
+		 * this is the name that should appear in the .knotifyrc file,
+		 * in the field Action=... if a notification is set to use this plugin
 		 */
 		virtual QString optionName() =0;
 		/**
-		 * This function is called when the notification is sent. 
+		 * This function is called when the notification is sent.
 		 * (or re-sent)
 		 * You should implement this function to display a notification
-		 * 
+		 *
 		 * for each call to this function (even for re-notification), you MUST call finish(int)
 		 *
 		 * @param id is the notification id
 		 * @param config is the configuration of the notification
 		 */
 		virtual void notify(int id , KNotifyConfig *config )=0;
-		
+
 		/**
 		 * This function is called when the notification has changed (such as the text or the icon)
 		 */
-		virtual void update(int /*id*/, KNotifyConfig * /*config*/) {}
-		
+		virtual void update(int id, KNotifyConfig *config);
+
 		/**
 		 * This function is called when the notification has been closed
 		 */
-		virtual void close(int id) { emit finished(id);}
-	
+		virtual void close(int id);
+
 	protected:
 		/**
 		 * emit the finished signal
 		 * you MUST call this function for each call to notify(), even if you do nothing there
 		 *
 		 * call it when the presentation is finished (because the user closed the popup or the sound is finished)
-		 * 
-		 * If your presentation is syncronious, you can even call this function from the notify() call itself
+		 *
+		 * If your presentation is syncronous, you can even call this function from the notify() call itself
 		 */
-		void finish(int id) { emit finished(id); }
-	
+		void finish(int id);
+
 	Q_SIGNALS:
 		/**
-		 * the presentation is finished. 
+		 * the presentation is finished.
 		 */
 		void finished(int id);
 		/**
@@ -97,6 +96,14 @@ class KNotifyPlugin : public QObject
 		 * @param action is the action number.  zero for the default action
 		 */
 		void actionInvoked(int id , int action);
+
+	private:
+		KNotifyPluginPrivate *const d;
+
 };
+
+#define K_EXPORT_KNOTIFY_METHOD(libname,classname) \
+K_PLUGIN_FACTORY(KNotifyMethodPluginFactory, registerPlugin<classname>();) \
+K_EXPORT_PLUGIN(KNotifyMethodPluginFactory("knotify_method_" #libname))
 
 #endif

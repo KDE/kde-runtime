@@ -20,9 +20,9 @@
 
 
 #include "notifybylogfile.h"
-#include "knotifyconfig.h"
 
 #include <kdebug.h>
+#include <knotifyconfig.h>
 #include <KUrl>
 #include <QDateTime>
 #include <QFile>

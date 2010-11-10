@@ -19,7 +19,6 @@
  */
 
 #include "notifybypopup.h"
-#include "knotifyconfig.h"
 #include "imageconverter.h"
 #include "notifybypopupgrowl.h"
 
@@ -30,6 +29,7 @@
 #include <khbox.h>
 #include <kvbox.h>
 #include <kcharsets.h>
+#include <knotifyconfig.h>
 
 #include <QBuffer>
 #include <QImage>

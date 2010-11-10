@@ -32,7 +32,7 @@ typedef QList< QPair<QString,QString> > ContextList;
 /**
  * An image with lazy loading from the byte array
  */
-class KNotifyImage
+class KDE_EXPORT KNotifyImage
 {
 	public:
 		KNotifyImage() : dirty(false) {}
@@ -55,7 +55,7 @@ class KNotifyImage
  * Represent the configuration for an event
  * @author Olivier Goffart <ogoffart@kde.org>
 */
-class KNotifyConfig
+class KDE_EXPORT KNotifyConfig
 {
 	public:
 		KNotifyConfig(const QString &appname, const ContextList &_contexts , const QString &_eventid);

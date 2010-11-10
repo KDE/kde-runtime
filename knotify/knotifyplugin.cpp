@@ -18,16 +18,34 @@
 
  */
 
+#include <KPluginFactory>
 
 #include "knotifyplugin.h"
 
-KNotifyPlugin::KNotifyPlugin(QObject *parent) : QObject(parent)
+KNotifyPlugin::KNotifyPlugin(QObject *parent, const QVariantList &args)
+    : QObject(parent),
+      d(0)
 {
 }
 
 
 KNotifyPlugin::~KNotifyPlugin()
 {
+}
+
+
+void KNotifyPlugin::update(int id, KNotifyConfig * config)
+{
+}
+
+void KNotifyPlugin::close(int id)
+{
+	emit finished(id);
+}
+
+void KNotifyPlugin::finish(int id)
+{
+	emit finished(id);
 }
 
 #include "knotifyplugin.moc"

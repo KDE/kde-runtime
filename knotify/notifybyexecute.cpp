@@ -22,8 +22,7 @@
 
 #include <QHash>
 #include <KProcess>
-
-#include "knotifyconfig.h"
+#include <knotifyconfig.h>
 
 #include <kdebug.h>
 #include <kmacroexpander.h>

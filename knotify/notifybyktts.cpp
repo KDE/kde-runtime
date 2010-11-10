@@ -25,7 +25,7 @@
 #include <kmessagebox.h>
 #include <kmacroexpander.h>
 #include <klocale.h>
-#include "knotifyconfig.h"
+#include <knotifyconfig.h>
 
 NotifyByKTTS::NotifyByKTTS(QObject *parent) : KNotifyPlugin(parent),m_kspeech(0), tryToStartKttsd( false )
 {

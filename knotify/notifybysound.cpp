@@ -25,8 +25,6 @@
 
 
 #include "notifybysound.h"
-#include "knotifyconfig.h"
-
 
 // QT headers
 #include <QHash>
@@ -46,6 +44,7 @@
 #include <kurl.h>
 #include <config-runtime.h>
 #include <kcomponentdata.h>
+#include <knotifyconfig.h>
 
 // Phonon headers
 #include <phonon/mediaobject.h>
