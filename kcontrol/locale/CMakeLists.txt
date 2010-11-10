@@ -1,8 +1,5 @@
 
-add_subdirectory( default ) 
-add_subdirectory( pics ) 
-
-
+add_subdirectory( pics )
 
 ########### next target ###############
 
