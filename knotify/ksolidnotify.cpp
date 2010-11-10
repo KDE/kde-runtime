@@ -18,6 +18,7 @@
  */
 
 #include "ksolidnotify.h"
+#include "knotify.h"
 
 //solid specific includes
 #include <Solid/DeviceNotifier>
@@ -93,6 +94,18 @@ void KSolidNotify::onDeviceRemoved(const QString &udi)
 	m_devices.remove(udi);
 }
 
+bool KSolidNotify::isSafelyRemovable(const QString &udi)
+{
+	Solid::Device parent = m_devices[udi].parent();
+	if (parent.is<Solid::StorageDrive>()) 
+	{
+		Solid::StorageDrive *drive = parent.as<Solid::StorageDrive>();
+		return (!drive->isInUse() && (drive->isHotpluggable() || drive->isRemovable()));
+	}
+
+	return !m_devices[udi].as<Solid::StorageAccess>()->isAccessible();
+}
+
 void KSolidNotify::connectSignals(Solid::Device* device)
 {
 	if (device->is<Solid::StorageVolume>())
@@ -114,21 +127,32 @@ void KSolidNotify::connectSignals(Solid::Device* device)
 	}
 }
 
+void KSolidNotify::notifySolidEvent(QString event, Solid::ErrorType error, QVariant errorData, const QString & udi, const QString & errorMessage)
+{
+	ContextList context;
+	if (m_dbusServiceExists)
+	{
+		KNotifyConfig mountConfig("hardwarenotifications", ContextList(), event);
+		if (mountConfig.readEntry("Action").split('|').contains("Popup"))
+		{
+			QDBusMessage m = QDBusMessage::createMethodCall( dbusDeviceNotificationsName, dbusDeviceNotificationsPath, dbusDeviceNotificationsName, "notify" );
+			m << error << errorMessage << errorData.toString().simplified() << udi;
+			QDBusConnection::sessionBus().call(m);
+		}
+	context << QPair<QString, QString>("devnotifier", "present");
+	}
+
+	m_kNotify->event(event, "hardwarenotifications", context, i18n("Devices notification"), errorMessage, KNotifyImage(), QStringList(), -1);
+
+}
+
 void KSolidNotify::storageSetupDone(Solid::ErrorType error, QVariant errorData, const QString &udi)
 {
 	if (error)
 	{
 		Solid::Device device(udi);
 		QString errorMessage = i18n("Could not mount the following device: %1", device.description());
-		if (!m_dbusServiceExists)
-		{
-			m_kNotify->event("mounterror", "hardwarenotifications", ContextList(), i18n("Device error"), errorMessage, KNotifyImage(), QStringList(), -1);
-		} else
-		{
-			QDBusMessage m = QDBusMessage::createMethodCall( dbusDeviceNotificationsName, dbusDeviceNotificationsPath, dbusDeviceNotificationsName, "notify" );
-			m << error << errorMessage << errorData.toString().simplified() << udi;
-			QDBusConnection::sessionBus().call(m);
-		}
+		notifySolidEvent("mounterror", error, errorData, udi, errorMessage);
 	}
 }
 
@@ -138,15 +162,11 @@ void KSolidNotify::storageTeardownDone(Solid::ErrorType error, QVariant errorDat
 	{
 		Solid::Device device(udi);
 		QString errorMessage = i18n("Could not unmount the following device: %1\nOne or more files on this device are open within an application ", device.description());
-		if (!m_dbusServiceExists)
-		{
-			m_kNotify->event("mounterror", "hardwarenotifications", ContextList(), i18n("Device error"), errorMessage, KNotifyImage(), QStringList(), -1);
-		} else
-		{
-			QDBusMessage m = QDBusMessage::createMethodCall( dbusDeviceNotificationsName, dbusDeviceNotificationsPath, dbusDeviceNotificationsName, "notify" );
-			m << error << errorMessage << errorData.toString().simplified() << udi;
-			QDBusConnection::sessionBus().call(m);
-		}
+		notifySolidEvent("mounterror", error, errorData, udi, errorMessage);
+	} else if (isSafelyRemovable(udi))
+	{
+		Solid::Device device(udi);
+		notifySolidEvent("safetoremove", error, errorData, udi, i18nc("The term \"remove\" here means \"physically disconnect the device from the computer\", whereas \"safely\" means \"without risk of data loss\"", "The following device can now be safely removed: %1", device.description()));
 	}
 }
 
@@ -168,15 +188,11 @@ void KSolidNotify::storageEjectDone(Solid::ErrorType error, QVariant errorData, 
 
 		Solid::Device discDevice(discUdi);
 		QString errorMessage = i18n("Could not eject the following device: %1\nOne or more files on this device are open within an application ", discDevice.description());
-		if (!m_dbusServiceExists)
-		{
-			m_kNotify->event("mounterror", "hardwarenotifications", ContextList(), i18n("Device error"), errorMessage, KNotifyImage(), QStringList(), -1);
-		} else
-		{
-			QDBusMessage m = QDBusMessage::createMethodCall( dbusDeviceNotificationsName, dbusDeviceNotificationsPath, dbusDeviceNotificationsName, "notify" );
-			m << error << errorMessage << errorData.toString().simplified() << udi;
-			QDBusConnection::sessionBus().call(m);
-		}
+		notifySolidEvent("mounterror", error, errorData, udi, errorMessage);
+	} else if (isSafelyRemovable(udi))
+	{
+		Solid::Device device(udi);
+		notifySolidEvent("safetoremove", error, errorData, udi, i18n("The following device can now be safely removed: %1", device.description()));
 	}
 }
 

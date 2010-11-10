@@ -60,6 +60,8 @@ class KSolidNotify : public QObject
 
 	private:
 		void connectSignals(Solid::Device* device);
+		bool isSafelyRemovable(const QString &udi);
+		void notifySolidEvent(QString event, Solid::ErrorType error, QVariant errorData, const QString & udi, const QString & errorMessage);
 
 		KNotify* m_kNotify;
 		QHash<QString, Solid::Device> m_devices;

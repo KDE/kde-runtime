@@ -56,7 +56,7 @@ Name[x-test]=xxHardware notificationsxx
 Name[zh_CN]=硬件通知
 Name[zh_TW]=硬體通知
 IconName=emblem-mounted
-Comment=Notifications triggered by solid
+Comment=Notifications triggered by hardware devices
 Comment[ar]=تنبيهات أطلقها سوليد
 Comment[ast]=Notificaciones activaes por solid
 Comment[ca]=Notificacions provocades pel Solid
@@ -107,7 +107,13 @@ Comment[wa]=Notifiaedjes eclitchîs pa solid
 Comment[x-test]=xxNotifications triggered by solidxx
 Comment[zh_CN]=Solid 触发的通知
 Comment[zh_TW]=solid 觸發的通知
+Contexts=devnotifier
 Version=1
+
+[Context/devnotifier]
+Name=Device Notifier
+Comment=The Plasma device notifier is present
+Icon=highlight
 
 [Event/mounterror]
 Name=Mount or unmount error
@@ -218,3 +224,16 @@ Comment[x-test]=xxThere has been a problem mounting or unmounting a devicexx
 Comment[zh_CN]=挂载或卸载设备时出现问题
 Comment[zh_TW]=掛載或卸載裝置時發生錯誤
 Action=Popup
+Contexts=devnotifier
+
+[Event/mounterror/devnotifier/present]
+Action=-Popup
+
+[Event/safetoremove]
+Name=The device can be safely removed
+Comment=The device which has been just unmounted is now safe to remove. 
+Action=Popup
+Contexts=devnotifier
+
+[Event/safetoremove/devnotifier/present]
+Action=-Popup 
