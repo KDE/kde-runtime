@@ -649,10 +649,10 @@ QString BugzillaManager::getErrorMessage(const QString & response, bool fallback
     int pos = reg.indexIn(response);
     if (pos != -1) {
         errorMessage = reg.cap(1).trimmed();
-    } else {
-        if (fallbackMessage) {
-            errorMessage = i18nc("@info","Unknown error");
-        }
+    } else if (response.contains("Log in to Bugzilla")) {
+        errorMessage = i18nc("@info", "You are not logged in. Make sure cookies are enabled.");
+    } else if (fallbackMessage) {
+        errorMessage = i18nc("@info","Unknown error");
     }
 
     return errorMessage;
