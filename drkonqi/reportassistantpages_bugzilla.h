@@ -58,6 +58,7 @@ Q_SIGNALS:
 private:
     bool kWalletEntryExists();
     void openWallet();
+    bool canSetCookies();
     
     Ui::AssistantPageBugzillaLogin      ui;
 
