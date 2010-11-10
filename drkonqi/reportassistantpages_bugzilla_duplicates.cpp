@@ -172,10 +172,18 @@ bool BugzillaDuplicatesPage::showNextPage()
         //Double check this, we need to reduce the duplicate count.
         KGuiItem noDuplicatesButton;
         noDuplicatesButton.setText(i18n("There are no real duplicates"));
+        noDuplicatesButton.setWhatsThis(i18n("Press this button to declare that, in your opinion "
+                                             "and according to your experience, the reports found "
+                                             "as similar do not match the crash you have "
+                                             "experienced, and you believe it is unlikely that a "
+                                             "better match would be found after further review."));
         noDuplicatesButton.setIcon(KIcon("dialog-cancel"));
 
         KGuiItem letMeCheckMoreReportsButton;
         letMeCheckMoreReportsButton.setText(i18n("Let me check more reports"));
+        letMeCheckMoreReportsButton.setWhatsThis(i18n("Press this button if you would rather "
+                                                      "review more reports in order to find a "
+                                                      "match for the crash you have exerienced."));
         letMeCheckMoreReportsButton.setIcon(KIcon("document-preview"));
 
         if (KMessageBox::questionYesNo(this,
