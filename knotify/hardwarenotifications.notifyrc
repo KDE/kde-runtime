@@ -231,7 +231,7 @@ Action=-Popup
 
 [Event/safetoremove]
 Name=The device can be safely removed
-Comment=The device which has been just unmounted is now safe to remove. 
+Comment=The device which has been just unmounted is now safe to remove.
 Action=Popup
 Contexts=devnotifier
 
