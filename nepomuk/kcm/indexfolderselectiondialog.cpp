@@ -60,6 +60,7 @@ Nepomuk::IndexFolderSelectionDialog::IndexFolderSelectionDialog( QWidget* parent
     : KDialog( parent )
 {
     setupUi( mainWidget() );
+    setCaption( i18nc("@title:window Referring to the folders which will be searched for files to index for desktop search", "Customizing Index Folders"));
 
     m_editStrigiExcludeFilters->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
