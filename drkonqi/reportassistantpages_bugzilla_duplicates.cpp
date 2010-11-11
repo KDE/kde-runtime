@@ -183,7 +183,7 @@ bool BugzillaDuplicatesPage::showNextPage()
         letMeCheckMoreReportsButton.setText(i18n("Let me check more reports"));
         letMeCheckMoreReportsButton.setWhatsThis(i18n("Press this button if you would rather "
                                                       "review more reports in order to find a "
-                                                      "match for the crash you have exerienced."));
+                                                      "match for the crash you have experienced."));
         letMeCheckMoreReportsButton.setIcon(KIcon("document-preview"));
 
         if (KMessageBox::questionYesNo(this,
