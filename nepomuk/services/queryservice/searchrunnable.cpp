@@ -80,7 +80,10 @@ void Nepomuk::Query::SearchRunnable::run()
     if( m_canceled )
         return;
 
+    m_folderMutex.lock();
     kDebug() << m_folder->query() << m_folder->sparqlQuery();
+    const QString sparql = m_folder->sparqlQuery();
+    m_folderMutex.unlock();
 
     QTime time;
     time.start();
@@ -88,7 +91,7 @@ void Nepomuk::Query::SearchRunnable::run()
     // we push the results in batches to lower the traffic and improve the user experience
     QList<Result> resultCache;
 
-    Soprano::QueryResultIterator hits = ResourceManager::instance()->mainModel()->executeQuery( m_folder->sparqlQuery(), Soprano::Query::QueryLanguageSparql );
+    Soprano::QueryResultIterator hits = ResourceManager::instance()->mainModel()->executeQuery( sparql, Soprano::Query::QueryLanguageSparql );
     while ( !m_canceled &&
             m_folder &&
             hits.next() ) {
@@ -111,8 +114,12 @@ void Nepomuk::Query::SearchRunnable::run()
 
     kDebug() << time.elapsed();
 
-    if( m_folder && !m_canceled )
+    QMutexLocker lock( &m_folderMutex );
+    if( m_folder && !m_canceled ) {
+        if( !resultCache.isEmpty() )
+            m_folder->addResults( resultCache );
         m_folder->listingFinished();
+    }
 }
 
 
