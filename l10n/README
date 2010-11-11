@@ -5,34 +5,22 @@ In KDE we support localization of calendars, dates, time, numbers and
 money. KDE will use this when displaying such information, giving you
 a feeling that KDE was written to fit your national standards. To make
 this possible, we need to gather some information on your national
-standards. Currently there are some 231 countries supported. If your
+standards. Currently there are some 237 countries supported. If your
 country is missing, please let us know.
 
 The official ISO codes unsupported as at 18/11/2008 are:
 
     * AQ Antarctica
-    * BL Saint Barthelemy
     * BV Bouvet Island
-    * GG Guernsey
     * GS South Georgia and the South Sandwich Islands
     * HM Heard Island and MacDonald Islands
-    * IM Isle of Man
     * IO British Indian Ocean Territory
-    * JE Jersey
-    * MF Saint Martin
-    * MP Northern Mariana Islands
     * SJ Svalbard and Jan Mayen
     * TF French Southern Territories
     * UM United States Minor Outlying Islands
 
 Of these, the following codes are likely to be considered for support:
 
-    * BL Saint Barthelemy
-    * GG Guernsey
-    * IM Isle of Man
-    * JE Jersey
-    * MF Saint Martin
-    * MP Northern Mariana Islands
     * SJ Svalbard and Jan Mayen
 
 The other codes are unlikely to be considered due to lack of population.

@@ -1,0 +1,26 @@
+[KCM Locale]
+Name=Northern Mariana Islands
+Region=oceania
+Languages=en_US
+DecimalSymbol=.
+ThousandsSeparator=,
+MonetaryDecimalSymbol=.
+MonetaryThousandsSeparator=,
+PositiveSign=
+NegativeSign=-
+PositivePrefixCurrencySymbol=true
+NegativePrefixCurrencySymbol=true
+PositiveMonetarySignPosition=1
+NegativeMonetarySignPosition=1
+DateFormat=%A, %B %d, %Y
+DateFormatShort=%m/%d/%y
+TimeFormat=%I:%M:%S %p
+WeekStartDay=7
+PageSize=2
+MeasureSystem=1
+AddressFormat=%0(%n\n)%0(%cm\n)%0(%s\n)%0(PO BOX %p\n)%0(%l%,%w%r)%w%z
+AddressCountryPosition=BELOW
+DecimalPlaces=2
+MonetaryDecimalPlaces=2
+CurrencyCodesInUse=USD
+CurrencyCode=USD

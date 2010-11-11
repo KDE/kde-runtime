@@ -1,0 +1,26 @@
+[KCM Locale]
+Name=Saint Barthélemy
+Region=caribbean
+Languages=fr
+DecimalSymbol=,
+ThousandsSeparator=$0 $0
+MonetaryDecimalSymbol=,
+MonetaryThousandsSeparator=$0 $0
+PositiveSign=
+NegativeSign=-
+PositivePrefixCurrencySymbol=false
+NegativePrefixCurrencySymbol=false
+PositiveMonetarySignPosition=1
+NegativeMonetarySignPosition=1
+DateFormat=%A %e %B %Y
+DateFormatShort=%d/%m/%Y
+TimeFormat=%H:%M:%S
+WeekStartDay=1
+PageSize=0
+MeasureSystem=0
+AddressFormat=%0(%cm\n)%0(%n\n)%0(%s\n)%0(BP %p\n)%z%w%L
+AddressCountryPosition=BELOW
+DecimalPlaces=2
+MonetaryDecimalPlaces=2
+CurrencyCodesInUse=EUR
+CurrencyCode=EUR

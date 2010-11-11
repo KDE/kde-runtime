@@ -1,0 +1,16 @@
+[KCM Locale]
+Name=Guernsey
+Region=westeurope
+Languages=en_GB,fr
+NegativeMonetarySignPosition=1
+DateFormat=%A %d %b %Y
+DateFormat[eo]=%A, la %ea de %B %Y
+DateFormatShort=%d/%m/%Y
+TimeFormat=%H:%M:%S
+PageSize=0
+MeasureSystem=0
+WeekStartDay=7
+DecimalPlaces=2
+MonetaryDecimalPlaces=2
+CurrencyCodesInUse=GBP
+CurrencyCode=GBP
