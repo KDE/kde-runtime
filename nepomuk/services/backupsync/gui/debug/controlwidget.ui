@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ControlWidget</class>
+ <widget class="QWidget" name="ControlWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>271</width>
+    <height>202</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>271</width>
+    <height>202</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="KPushButton" name="m_backupButton">
+     <property name="minimumSize">
+      <size>
+       <width>263</width>
+       <height>24</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>Backup</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="KPushButton" name="m_restoreBackupButton">
+     <property name="minimumSize">
+      <size>
+       <width>263</width>
+       <height>24</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>Restore Backup</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="KPushButton" name="m_createSyncFileButton">
+     <property name="minimumSize">
+      <size>
+       <width>263</width>
+       <height>24</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>Create SyncFile</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="KPushButton" name="m_syncButton">
+     <property name="minimumSize">
+      <size>
+       <width>263</width>
+       <height>24</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>Sync</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>KPushButton</class>
+   <extends>QPushButton</extends>
+   <header>kpushbutton.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

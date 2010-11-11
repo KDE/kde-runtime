@@ -1,0 +1,8 @@
+[Ontology]
+Version=1.0
+Name=Nepomuk Identification Ontology
+Comment=Required for backup and sync.
+Namespace=http://www.aorotos.wordpress.org/ontologies/2010/06/16/backupsync#
+Path=${ONTO_INSTALL_DIR}/identification.trig
+MimeType=application/x-trig
+Type=Data

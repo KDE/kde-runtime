@@ -1,0 +1,29 @@
+==== README ======
+
+Well, not if you don't want to!
+This document explains the internals of the nepomukbackupsync service.
+
+The service is divided into 2 parts -
+1. Core - Read the core's README file.
+2. Outer -
+
+While the core performs rather lower level tasks like file handling, the outer parts perform the higher level stuff.
+
+Consists of -
+1. Diff Generator
+2. Identifier
+3. Merger
+
+Diff Generator - This class is responsible for slowing down the entire Nepomuk framework a little bit. It connects itself to Soprano::Model's statementAdded() and statementRemoved() signals, and logs them all, along with the time stamp (in UTC) in a logfile. It only logs statements which cannot be reproduced.
+
+diffgenerator.h diffgenerator.cpp
+
+Identifier - This is one of the two giants. It' responsible for matching Nepomuk uri's from a foriegn machine to the local machine. It needs to do this because Nepomuk randomly assigns a uri ( of the form nepomuk:/res/unique-32-bit-identifier ) The uri matching takes place in 4 levels -
+1. Simple Identify - All the identifying properties are matched. The resource with the highest match score is taken
+2. Exists Identify - Unfortunately, all the files aren't always indexed. And some files may exists, but aren't in the Nepomuk database. This method checks if the file/folder mentioned in the nie:url exists, if it does, it is added. ( This could be faulty if the user moves files around with similar names )
+4. Advanced Identify - The names is a little misleading. It's nothing that advanced. It checks the logfile for earlier versions of identifyingProperties and tries to find the resource using the earlier values.
+3. Add Identify - If the resource doesn't have a nie:url, it can be added to the database without any serious consequences. This needs to be done for new tags, contacts, and other similar stuff.
+
+Quite often, the resource we're looking for doesn't actually exist on the system. There is no definate way to differentiate between "Not Found" and "Does Not Exist". Hence signals are emitted, and the user is asked for help.
+
+Merger - This is the other giant. 
