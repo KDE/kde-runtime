@@ -55,6 +55,9 @@ namespace Nepomuk {
         void slotEditIndexFolders();
         void slotCustomQueryToggled( bool );
         void slotStatusDetailsClicked();
+        void slotBackupFrequencyChanged();
+        void slotManualBackup();
+        void slotRestoreBackup();
 
     private:
         QRadioButton* buttonForQuery( const Query::Query& query ) const;

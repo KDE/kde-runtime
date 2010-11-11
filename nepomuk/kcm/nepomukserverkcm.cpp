@@ -29,6 +29,10 @@
 #include <KAboutData>
 #include <KSharedConfig>
 #include <KMessageBox>
+#include <KUrlLabel>
+#include <KProcess>
+#include <KStandardDirs>
+#include <KCalendarSystem>
 
 #include <Nepomuk/Query/QueryParser>
 #include <Nepomuk/Query/FileQuery>
@@ -95,6 +99,35 @@ namespace {
         }
         return labels.join( QLatin1String( ", " ) );
     }
+
+    enum BackupFrequency {
+        DisableAutomaticBackups = 0,
+        DailyBackup = 1,
+        WeeklyBackup = 2,
+        MonthlyBackup = 3
+    };
+
+
+    QString backupFrequencyToString( BackupFrequency freq ) {
+        switch( freq ) {
+        case DailyBackup:
+            return QLatin1String("daily");
+        case WeeklyBackup:
+            return QLatin1String("weekly");
+        case MonthlyBackup:
+            return QLatin1String("monthly");
+        default:
+            return QLatin1String("disabled");
+        }
+    }
+
+    BackupFrequency parseBackupFrequency( const QString& s ) {
+        for( int i = 0; i < 4; ++i ) {
+            if( s == backupFrequencyToString(BackupFrequency(i)) )
+                return BackupFrequency(i);
+        }
+        return DisableAutomaticBackups;
+    }
 }
 
 
@@ -157,6 +190,32 @@ Nepomuk::ServerConfigModule::ServerConfigModule( QWidget* parent, const QVariant
 
         m_customQueryLabel->hide();
         m_buttonEditCustomQuery->hide();
+
+        // Backup
+        m_comboBackupFrequency->addItem(i18nc("@item:inlistbox", "Disable Automatic Backups"));
+        m_comboBackupFrequency->addItem(i18nc("@item:inlistbox", "Daily Backup"));
+        m_comboBackupFrequency->addItem(i18nc("@item:inlistbox", "Weekly Backup"));
+        m_comboBackupFrequency->addItem(i18nc("@item:inlistbox", "Monthly Backup"));
+
+        for( int i = 1; i <= 7; ++i )
+            m_comboBackupDay->addItem(KGlobal::locale()->calendar()->weekDayName(i), i);
+
+        connect( m_comboBackupFrequency, SIGNAL(currentIndexChanged(int)),
+                 this, SLOT(slotBackupFrequencyChanged()) );
+        connect( m_comboBackupFrequency, SIGNAL(currentIndexChanged(int)),
+                 this, SLOT(changed()) );
+        connect( m_comboBackupDay, SIGNAL(currentIndexChanged(int)),
+                 this, SLOT(changed()) );
+        connect( m_editBackupTime, SIGNAL(timeChanged(QTime)),
+                 this, SLOT(changed()) );
+        connect( m_spinBackupMax, SIGNAL(valueChanged(int)),
+                 this, SLOT(changed()) );
+
+        connect( m_buttonManualBackup, SIGNAL(clicked(bool)),
+                 this, SLOT(slotManualBackup()) );
+        connect( m_buttonRestoreBackup, SIGNAL(clicked(bool)),
+                 this, SLOT(slotRestoreBackup()) );
+
     }
     else {
         QLabel* label = new QLabel( i18n( "The Nepomuk installation is not complete. No Nepomuk settings can be provided." ) );
@@ -218,14 +277,38 @@ void Nepomuk::ServerConfigModule::load()
 
 
 
-    // 5. update state
+    // 5. Backup settings
+    KConfig backupConfig( "nepomukbackuprc" );
+    KConfigGroup backupCfg = backupConfig.group("Backup");
+    m_comboBackupFrequency->setCurrentIndex(parseBackupFrequency(backupCfg.readEntry("backup frequency", "disabled")));
+    m_editBackupTime->setTime( QTime::fromString( backupCfg.readEntry("backup time", "18:00:00"), Qt::ISODate ) );
+    m_comboBackupDay->setCurrentIndex( backupCfg.readEntry("backup day", 1) - 1 );
+    m_spinBackupMax->setValue( backupCfg.readEntry("max backups", 10) );
+
+    slotBackupFrequencyChanged();
+
+    QString backupUrl = KStandardDirs::locateLocal( "data", "nepomuk/backupsync/backups/" );
+    QDir dir( backupUrl );
+    QStringList backupFiles = dir.entryList( QDir::Files | QDir::NoDotAndDotDot, QDir::Name );
+
+    QString text = i18np("1 existing backup", "%1 existing backups", backupFiles.size() );
+    if( !backupFiles.isEmpty() ) {
+        text += QLatin1String(" (");
+        text += i18nc("@info %1 is the creation date of a backup formatted vi KLocale::formatDateTime",
+                      "Oldest: %1",
+                      KGlobal::locale()->formatDateTime(QFileInfo(backupFiles.last()).created(), KLocale::FancyShortDate) );
+        text += QLatin1String(")");
+    }
+    m_labelBackupStats->setText( text );
+
+    // 6. update state
     m_labelIndexFolders->setText( buildFolderLabel( m_indexFolderSelectionDialog->includeFolders(),
                                                     m_indexFolderSelectionDialog->excludeFolders() ) );
     recreateInterfaces();
     updateStrigiStatus();
     updateNepomukServerStatus();
 
-    // 6. all values loaded -> no changes
+    // 7. all values loaded -> no changes
     emit changed(false);
 }
 
@@ -276,13 +359,22 @@ void Nepomuk::ServerConfigModule::save()
     kio_nepomuksearchConfig.group( "General" ).writeEntry( "Custom query", m_customQuery );
 
 
-    // 5. update state
+    // 5. Update backup config
+    KConfig backup("nepomukbackuprc");
+    KConfigGroup backupCfg = backup.group("Backup");
+    backupCfg.writeEntry("backup frequency", backupFrequencyToString(BackupFrequency(m_comboBackupFrequency->currentIndex())));
+    backupCfg.writeEntry("backup day", m_comboBackupDay->itemData(m_comboBackupDay->currentIndex()).toInt());
+    backupCfg.writeEntry("backup time", m_editBackupTime->time().toString(Qt::ISODate));
+    backupCfg.writeEntry("max backups", m_spinBackupMax->value());
+
+
+    // 6. update state
     recreateInterfaces();
     updateStrigiStatus();
     updateNepomukServerStatus();
 
 
-    // 6. all values saved -> no changes
+    // 7. all values saved -> no changes
     emit changed(false);
 }
 
@@ -299,6 +391,8 @@ void Nepomuk::ServerConfigModule::defaults()
     m_indexFolderSelectionDialog->setFolders( defaultFolders(), QStringList() );
     m_spinMaxResults->setValue( 10 );
     m_checkRootQueryLastModified->setChecked( true );
+
+    // FIXME: set backup config
 }
 
 
@@ -432,6 +526,24 @@ Nepomuk::Query::Query Nepomuk::ServerConfigModule::queryForButton( QAbstractButt
         query.setFileMode( Query::FileQuery::QueryFiles );
         return query;
     }
+}
+
+void Nepomuk::ServerConfigModule::slotBackupFrequencyChanged()
+{
+    m_comboBackupDay->setShown(m_comboBackupFrequency->currentIndex() >= WeeklyBackup);
+    m_comboBackupDay->setDisabled(m_comboBackupFrequency->currentIndex() == DisableAutomaticBackups);
+    m_editBackupTime->setDisabled(m_comboBackupFrequency->currentIndex() == DisableAutomaticBackups);
+    m_spinBackupMax->setDisabled(m_comboBackupFrequency->currentIndex() == DisableAutomaticBackups);
+}
+
+void Nepomuk::ServerConfigModule::slotManualBackup()
+{
+    KProcess::execute( "nepomukbackup", QStringList() << "--backup" );
+}
+
+void Nepomuk::ServerConfigModule::slotRestoreBackup()
+{
+    KProcess::execute( "nepomukbackup", QStringList() << "--restore" );
 }
 
 #include "nepomukserverkcm.moc"

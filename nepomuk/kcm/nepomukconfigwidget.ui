@@ -414,6 +414,154 @@
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="tab_2">
+      <attribute name="title">
+       <string>Backup</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_12">
+       <item>
+        <widget class="QGroupBox" name="groupBox_3">
+         <property name="title">
+          <string>Automatic Backups</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_13">
+          <item>
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string extracomment="@info">Nepomuk can perform regular automatic updates of all data that could not be restored otherwise. This includes manually created tags, ratings, but also statistical data.</string>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QFormLayout" name="formLayout">
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_9">
+              <property name="text">
+               <string>Backup frequency:</string>
+              </property>
+              <property name="buddy">
+               <cstring>m_comboBackupFrequency</cstring>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="KComboBox" name="m_comboBackupFrequency">
+              <property name="toolTip">
+               <string>How often should a backup of the Nepomuk database be created</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="label_8">
+              <property name="text">
+               <string>Backup Time:</string>
+              </property>
+              <property name="buddy">
+               <cstring>m_editBackupTime</cstring>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <layout class="QHBoxLayout" name="horizontalLayout_6">
+              <item>
+               <widget class="KComboBox" name="m_comboBackupDay"/>
+              </item>
+              <item>
+               <widget class="QTimeEdit" name="m_editBackupTime">
+                <property name="toolTip">
+                 <string>When should the backup be created</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item row="2" column="0">
+             <widget class="QLabel" name="label_10">
+              <property name="text">
+               <string>Max number of backups:</string>
+              </property>
+              <property name="buddy">
+               <cstring>m_spinBackupMax</cstring>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="QSpinBox" name="m_spinBackupMax">
+              <property name="toolTip">
+               <string>How many previous backups should be kept</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_6">
+         <property name="title">
+          <string>Tools</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_2">
+          <item>
+           <widget class="QLabel" name="m_labelBackupStats">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_5">
+            <item>
+             <spacer name="horizontalSpacer_5">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="KPushButton" name="m_buttonManualBackup">
+              <property name="text">
+               <string>Manual Backup...</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="KPushButton" name="m_buttonRestoreBackup">
+              <property name="text">
+               <string>Restore Backup...</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer_3">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>49</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
      <widget class="QWidget" name="tab_3">
       <attribute name="title">
        <string>Advanced Settings</string>
@@ -500,9 +648,19 @@
    <header>ksqueezedtextlabel.h</header>
   </customwidget>
   <customwidget>
+   <class>KPushButton</class>
+   <extends>QPushButton</extends>
+   <header>kpushbutton.h</header>
+  </customwidget>
+  <customwidget>
    <class>KUrlLabel</class>
    <extends>QLabel</extends>
    <header>kurllabel.h</header>
+  </customwidget>
+  <customwidget>
+   <class>KComboBox</class>
+   <extends>QComboBox</extends>
+   <header>kcombobox.h</header>
   </customwidget>
   <customwidget>
    <class>KTabWidget</class>
@@ -522,18 +680,18 @@
  <resources/>
  <connections>
   <connection>
-   <sender>m_checkRootQueryCustom</sender>
+   <sender>m_checkEnableNepomuk</sender>
    <signal>toggled(bool)</signal>
-   <receiver>m_customQueryLabel</receiver>
-   <slot>setVisible(bool)</slot>
+   <receiver>groupBox</receiver>
+   <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>95</x>
-     <y>192</y>
+     <x>68</x>
+     <y>102</y>
     </hint>
     <hint type="destinationlabel">
-     <x>197</x>
-     <y>194</y>
+     <x>42</x>
+     <y>154</y>
     </hint>
    </hints>
   </connection>
@@ -554,22 +712,6 @@
    </hints>
   </connection>
   <connection>
-   <sender>m_checkRootQueryCustom</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>m_buttonEditCustomQuery</receiver>
-   <slot>setVisible(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>43</x>
-     <y>193</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>230</x>
-     <y>190</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>m_editMemoryUsage</sender>
    <signal>valueChanged(int)</signal>
    <receiver>m_sliderMemoryUsage</receiver>
@@ -586,18 +728,34 @@
    </hints>
   </connection>
   <connection>
-   <sender>m_checkEnableNepomuk</sender>
+   <sender>m_checkRootQueryCustom</sender>
    <signal>toggled(bool)</signal>
-   <receiver>groupBox</receiver>
-   <slot>setEnabled(bool)</slot>
+   <receiver>m_customQueryLabel</receiver>
+   <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>68</x>
-     <y>102</y>
+     <x>95</x>
+     <y>192</y>
     </hint>
     <hint type="destinationlabel">
-     <x>42</x>
-     <y>154</y>
+     <x>197</x>
+     <y>194</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>m_checkRootQueryCustom</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>m_buttonEditCustomQuery</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>43</x>
+     <y>193</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>230</x>
+     <y>190</y>
     </hint>
    </hints>
   </connection>
